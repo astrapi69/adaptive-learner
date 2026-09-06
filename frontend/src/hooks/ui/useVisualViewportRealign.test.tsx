@@ -18,6 +18,7 @@ import { render } from "@testing-library/react";
 import { act } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { clearVvLog, readVvLog } from "../../lib/diagnostics/vv-log";
 import { useVisualViewportRealign } from "./useVisualViewportRealign";
 
 function Harness() {
@@ -209,6 +210,64 @@ describe("useVisualViewportRealign (#1569)", () => {
             configurable: true,
         });
         expect(() => render(<Harness />)).not.toThrow();
+    });
+
+    it("logs its decisions to the protocol while the probe is enabled (#2995)", () => {
+        localStorage.setItem("adaptive-learner.vv_diag", "1");
+        clearVvLog();
+        try {
+            render(<Harness />);
+            // A due reset fires and is recorded with the pre-reset state.
+            setWindowScroll(0, 48);
+            act(() => {
+                viewport.dispatchEvent(new Event("resize"));
+            });
+            const logged = readVvLog().filter((e) => e.kind === "hook");
+            expect(logged).toHaveLength(1);
+            expect(logged[0].decision).toBe("reset");
+            expect(logged[0].winY).toBe(48);
+        } finally {
+            clearVvLog();
+            localStorage.removeItem("adaptive-learner.vv_diag");
+        }
+    });
+
+    it("logs a held reset once, not per scroll event (#2995)", () => {
+        localStorage.setItem("adaptive-learner.vv_diag", "1");
+        clearVvLog();
+        try {
+            const { getByTestId } = render(
+                <>
+                    <Harness />
+                    <input data-testid="field" />
+                </>,
+            );
+            (getByTestId("field") as HTMLInputElement).focus();
+            setWindowScroll(0, 253);
+            act(() => {
+                viewport.dispatchEvent(new Event("scroll"));
+                viewport.dispatchEvent(new Event("scroll"));
+                viewport.dispatchEvent(new Event("scroll"));
+            });
+            const logged = readVvLog().filter((e) => e.kind === "hook");
+            expect(logged).toHaveLength(1);
+            expect(logged[0].decision).toBe("hold:focus");
+        } finally {
+            clearVvLog();
+            localStorage.removeItem("adaptive-learner.vv_diag");
+        }
+    });
+
+    it("logs nothing while the probe is disabled (#2995)", () => {
+        clearVvLog();
+        render(<Harness />);
+        setWindowScroll(0, 48);
+        act(() => {
+            viewport.dispatchEvent(new Event("resize"));
+        });
+        expect(readVvLog()).toHaveLength(0);
+        // The realign itself still works — logging is observation only.
+        expect(scrollToSpy).toHaveBeenCalledWith(0, 0);
     });
 
     it("removes its listeners on unmount", () => {

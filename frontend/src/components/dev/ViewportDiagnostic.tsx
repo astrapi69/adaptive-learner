@@ -290,6 +290,20 @@ function eventLine(e: VvEventInfo): string {
   );
 }
 
+/**
+ * Which build produced this report (#2994): version + commit + branch from
+ * the #1873/#1172 build defines. A pasted report must answer "does this
+ * device even RUN the fix?" itself — the public site (main, releases only)
+ * and the develop preview diverge for weeks, and a fresh install of the
+ * wrong one reads exactly like a failed fix.
+ */
+function buildStamp(): string {
+  const v = typeof __APP_VERSION__ === "string" ? __APP_VERSION__ : "?";
+  const hash = typeof __BUILD_HASH__ === "string" ? __BUILD_HASH__ : "?";
+  const branch = typeof __BUILD_BRANCH__ === "string" ? __BUILD_BRANCH__ : "?";
+  return `v=${v} build=${hash} branch=${branch}`;
+}
+
 /** The plain-text report the Copy button (and the selectable block) share. */
 function buildReport(
   snap: Snapshot,
@@ -302,7 +316,7 @@ function buildReport(
     `vvW=${snap.vvWidth} innerW=${snap.innerWidth} docW=${snap.docWidth} ` +
     `rootY=${snap.rootScrollY} docH=${snap.docHeight} ` +
     `screenW=${snap.screenWidth} screenH=${snap.screenHeight} dpr=${snap.dpr} ` +
-    `standalone=${snap.standalone ? 1 : 0}`;
+    `standalone=${snap.standalone ? 1 : 0} ${buildStamp()}`;
   const ua = `ua=${typeof navigator === "undefined" ? "?" : navigator.userAgent}`;
   const tapBody = taps.length
     ? taps.map((t, i) => `${i + 1}. ${tapLine(t)}`).join("\n")

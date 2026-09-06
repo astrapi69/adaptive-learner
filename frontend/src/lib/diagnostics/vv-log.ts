@@ -26,8 +26,9 @@ export const VV_LOG_MAX_ENTRIES = 500;
 
 /** One recorded diagnostics event. */
 export interface VvLogEntry {
-  /** ``tap`` = a pointerdown record; ``viewport`` = a vv state transition. */
-  kind: "tap" | "viewport";
+  /** ``tap`` = a pointerdown record; ``viewport`` = a vv state
+   *  transition; ``hook`` = a realign-hook decision (#2995). */
+  kind: "tap" | "viewport" | "hook";
   /** ``Date.now()`` at record time. */
   ts: number;
   /** The active ``?vvfix`` candidate (``"off"`` when none). */

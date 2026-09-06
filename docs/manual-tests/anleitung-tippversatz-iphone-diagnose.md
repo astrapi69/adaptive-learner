@@ -65,9 +65,12 @@ gerade gescrollt war - die dritte Scroll-Quelle neben `winY` und `vvTop`).
 Die Kopfzeile trägt entsprechend `rootY` und `docH` (Gesamthöhe des
 Dokuments) sowie die Umgebung, nach der sonst gefragt werden müsste:
 `screenW`/`screenH`/`dpr` (aus `innerW × scale = screenW` folgt ein
-aktiver Safari-Seitenzoom, ohne das aA-Menü zu prüfen) und `standalone=`
-(1 = als Homescreen-App gestartet). Unter der Kopfzeile steht eine
-`ua=`-Zeile (Browser-/iOS-Version).
+aktiver Safari-Seitenzoom, ohne das aA-Menü zu prüfen), `standalone=`
+(1 = als Homescreen-App gestartet) und den Build-Stempel
+`v=`/`build=`/`branch=` - daran ist ablesbar, ob die Messung überhaupt
+auf dem Stand mit dem zu prüfenden Fix lief (die öffentliche Seite hängt
+dem Entwicklungs-Preview um Wochen hinterher). Unter der Kopfzeile steht
+eine `ua=`-Zeile (Browser-/iOS-Version).
 
 Der Bericht enthält außerdem eine Sektion `events (newest first)`: jede
 deutliche Viewport-Änderung (Tastatur auf/zu, Zoomwechsel, ein Sprung der

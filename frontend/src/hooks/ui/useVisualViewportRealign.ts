@@ -53,6 +53,21 @@
 
 import {useEffect} from "react";
 
+import {appendVvLogEntry} from "../../lib/diagnostics/vv-log";
+
+/** Same flag the ``?vvdiag=1`` probe persists (#2782). */
+const DIAG_FLAG_KEY = "adaptive-learner.vv_diag";
+
+/** Whether the diagnostics probe is enabled — hook decisions are logged
+ *  only then (#2995); normal users pay nothing. */
+function diagEnabled(): boolean {
+    try {
+        return localStorage.getItem(DIAG_FLAG_KEY) === "1";
+    } catch {
+        return false;
+    }
+}
+
 /**
  * Minimum visual-viewport shrink (px) that counts as "keyboard open".
  * Same threshold the #1570 attempt used: on-screen keyboards are
@@ -97,20 +112,56 @@ export function useVisualViewportRealign(): void {
             return;
         }
 
+        // #2995 — while the probe is enabled, every decision that MATTERS
+        // (a reset fired, or a due reset held back by a guard) lands in the
+        // persistent protocol, deduplicated so a stream of scroll events
+        // repeating the same verdict cannot flood the 500-entry ring. Reading
+        // 5 had to reconstruct the hook's firing from vvTop/winY transitions;
+        // this makes the actor visible directly.
+        let lastDecision = "";
+        const note = (decision: string) => {
+            if (decision === lastDecision) return;
+            lastDecision = decision;
+            if (!diagEnabled()) return;
+            appendVvLogEntry({
+                kind: "hook",
+                ts: Date.now(),
+                fix: document.documentElement.dataset.vvfix ?? "off",
+                decision,
+                winY: Math.round(window.scrollY),
+                vvTop: Math.round(viewport.offsetTop ?? 0),
+                kbd: Math.round(window.innerHeight - viewport.height),
+                vvH: Math.round(viewport.height),
+                innerH: Math.round(window.innerHeight),
+            });
+        };
+
         const realign = () => {
+            const wantsReset = window.scrollX !== 0 || window.scrollY !== 0;
             // Pinch-zoom shrinks the visual viewport too — never fight it.
-            if (viewport.scale > 1.001) return;
+            if (viewport.scale > 1.001) {
+                if (wantsReset) note("hold:zoom");
+                return;
+            }
             // Keyboard open: Safari's reveal scroll is load-bearing.
             if (window.innerHeight - viewport.height >= KEYBOARD_OPEN_MIN_PX) {
+                if (wantsReset) note("hold:kbd");
                 return;
             }
             // A focused text field means the keyboard is (or is about to
             // be) open even when the shrink reads 0 — the resized
             // representation under interactive-widget=resizes-content
             // (#2983). Safari owns the reveal for as long as it holds.
-            if (isTextEntry(document.activeElement)) return;
-            if (window.scrollX !== 0 || window.scrollY !== 0) {
+            if (isTextEntry(document.activeElement)) {
+                if (wantsReset) note("hold:focus");
+                return;
+            }
+            if (wantsReset) {
+                note("reset");
                 window.scrollTo(0, 0);
+            } else {
+                // Clean state ends the episode: the NEXT verdict logs again.
+                lastDecision = "";
             }
         };
 

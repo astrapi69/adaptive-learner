@@ -187,6 +187,20 @@ describe("ViewportDiagnostic", () => {
     expect(report.value).toContain("(no events yet)");
   });
 
+  it("the report head names the build it came from (#2994)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-toggle"));
+    const report = screen.getByTestId(
+      "viewport-diagnostic-report",
+    ) as HTMLTextAreaElement;
+    // Version + commit + branch from the #1873/#1172 defines — a pasted
+    // report must answer "does this device even run the fix?" itself.
+    expect(report.value).toMatch(/v=\S+/);
+    expect(report.value).toMatch(/build=\S+/);
+    expect(report.value).toMatch(/branch=\S+/);
+  });
+
   it("tap lines carry the relative timestamp t= (#2883)", () => {
     localStorage.setItem("adaptive-learner.vv_diag", "1");
     render(
