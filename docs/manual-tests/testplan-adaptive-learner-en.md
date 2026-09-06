@@ -1575,6 +1575,15 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       **Regression:** dictation + image description still work unchanged,
       including their "→ free text" conversion control (only speak & record
       omits it, by design)
+- [ ] **Keyboard pre-reveal (#3002, touch devices only):** in a lesson, tap
+      a free-text or cloze field sitting in the LOWER half of the screen.
+      On focus the page IMMEDIATELY scrolls the field into the upper third
+      (the app's own scroll, no whole-layout jump), the keyboard opens
+      below it, the field stays visible. Then: tap other elements while
+      the field keeps focus - taps land on the visible target (no 1-2 line
+      offset, the #1569 core). A field already sitting HIGH is NOT moved
+      on focus; checkboxes/radios/dropdowns trigger no scroll. Desktop
+      (mouse): no scroll on focus
 - [ ] **Header updates badge (#2904):** an installed content set has a newer
       version (e.g. tap "Update available" on a set in the content browser
       OR bump the set's manifest version in the test repo). Reload/reopen

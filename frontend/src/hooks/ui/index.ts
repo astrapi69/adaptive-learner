@@ -9,4 +9,5 @@ export * from "./useScrollDirection";
 export * from "./useScrollSpy";
 export * from "./useSwipe";
 export * from "./useTheme";
+export * from "./useKeyboardPreReveal";
 export * from "./useVisualViewportRealign";
