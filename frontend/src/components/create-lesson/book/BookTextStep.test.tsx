@@ -250,3 +250,39 @@ describe("BookTextStep — exercise-type selection (#2510)", () => {
         expect(screen.getByTestId("book-gen-missing-matching")).toBeTruthy();
     });
 });
+
+describe("BookTextStep — post-answer explanations opt-in (#2992)", () => {
+    it("is off by default and generation runs without explanations", async () => {
+        globalThis.localStorage?.clear();
+        setup();
+        expect(
+            (screen.getByTestId("book-explanations") as HTMLInputElement).checked,
+        ).toBe(false);
+        fireEvent.click(screen.getByTestId("book-generate"));
+        await waitFor(() => expect(exercisesOk).toHaveBeenCalled());
+        const lastCall = exercisesOk.mock.calls.at(-1) as unknown[] | undefined;
+        const opts = lastCall?.[2] as {explanations?: boolean} | undefined;
+        expect(opts?.explanations).toBe(false);
+    });
+
+    it("forwards the opt-in to generation once checked", async () => {
+        globalThis.localStorage?.clear();
+        setup();
+        fireEvent.click(screen.getByTestId("book-explanations"));
+        fireEvent.click(screen.getByTestId("book-generate"));
+        await waitFor(() => expect(exercisesOk).toHaveBeenCalled());
+        const lastCall = exercisesOk.mock.calls.at(-1) as unknown[] | undefined;
+        const opts = lastCall?.[2] as {explanations?: boolean} | undefined;
+        expect(opts?.explanations).toBe(true);
+    });
+
+    it("sits with the type selection, before the textbook textarea", () => {
+        globalThis.localStorage?.clear();
+        setup();
+        const field = screen.getByTestId("book-explanations-field");
+        const textarea = screen.getByTestId("book-text-input");
+        expect(
+            field.compareDocumentPosition(textarea) & Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+    });
+});

@@ -22,7 +22,7 @@ import {Input} from "@/components/ui/input";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import StringListEditor from "../../shared/forms/StringListEditor";
-import {AiSuggestButton, CardImageField} from "./fields";
+import {AiSuggestButton, CardImageField, ExplanationField} from "./fields";
 import {
     suggestClozeSentence,
     suggestDistractors,
@@ -153,6 +153,12 @@ export default function ExerciseEditor({
             )}
 
             <TypeFields draft={draft} onPatch={patch} />
+
+            <ExplanationField
+                value={draft.explanation}
+                onChange={(explanation) => patch({explanation})}
+                idPrefix={`exercise-edit-${id}`}
+            />
 
             {!issue.valid && issue.code && (
                 <FormHint
