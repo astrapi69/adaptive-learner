@@ -3261,6 +3261,8 @@
         "unavailable_reason": "Les images et l'audio ne peuvent pas être générés à partir du texte. Tu peux ajouter ces types plus tard dans l'éditeur.",
         "floor_hint": "Au moins un type d'exercice doit rester sélectionné."
       },
+      "explanations_label": "Générer des explications (affichées après la réponse)",
+      "explanations_hint": "Ajoute à chaque exercice une règle, une glose mot à mot et d'autres exemples. Environ un tiers à la moitié de sortie IA en plus par exercice.",
       "generate_to_advance": "Générez la leçon à partir de votre texte pour continuer.",
       "review_theory": "{n} étape(s) de théorie",
       "review_exercises": "{n} exercice(s)",
@@ -3454,7 +3456,13 @@
         "err_free_text": "Ajoutez au moins une réponse acceptée.",
         "err_cloze": "Chaque marque ___ nécessite un blanc, et chaque blanc nécessite une réponse.",
         "err_word_tiles": "Ajoutez au moins 2 tuiles.",
-        "err_picture_choice": "Ajoutez au moins 2 images, chacune avec un libellé et une image, et marquez-en exactement une comme correcte."
+        "err_picture_choice": "Ajoutez au moins 2 images, chacune avec un libellé et une image, et marquez-en exactement une comme correcte.",
+        "err_explanation": "L'explication est trop longue (2000 caractères maximum).",
+        "explanation_label": "Explication après la réponse (facultatif, Markdown)",
+        "explanation_hint": "Affichée après la réponse : règle, mot à mot, autres exemples, erreur typique.",
+        "explanation_counter": "{n} / {max} caractères",
+        "explanation_template": "Insérer le modèle",
+        "explanation_template_body": "**Règle :** \n\n**Mot à mot :**\n- *mot* - sens littéral (note grammaticale)\n\n**Autres exemples :**\n- *phrase* - traduction\n\n**Erreur typique :** "
       },
       "dir": {
         "auto": "Auto",
@@ -3489,6 +3497,7 @@
         "err_reading_comprehension": "Ajoutez un texte et au moins une question complète (choix multiple avec une option correcte, ou texte libre avec une réponse acceptée).",
         "err_graded_quiz": "Ajoutez au moins une question complète avec des points positifs (choix multiple avec une option correcte, ou texte libre avec une réponse acceptée).",
         "err_dictation": "Ajoutez un chemin de fichier audio et au moins une transcription acceptée.",
+        "err_explanation": "L'explication est trop longue (2000 caractères maximum).",
         "dict_audio_label": "Audio",
         "dict_audio_placeholder": "assets/audio/clip.mp3",
         "dict_audio_hint": "Chemin relatif vers le clip audio dans le dossier assets de l'ensemble.",
