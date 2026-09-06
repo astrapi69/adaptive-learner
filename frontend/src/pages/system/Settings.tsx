@@ -6,6 +6,8 @@ import { AiSettingsPanel } from "@astrapi69/ai-key-vault-react";
 import SettingsSidebar from "../../components/settings/SettingsSidebar";
 import SettingsMobileMenu from "../../components/settings/SettingsMobileMenu";
 import type { SidebarGroup } from "../../lib/settings/sidebar-model";
+import { LEARNING_SECTION_PARAM } from "../../lib/settings/learning-sections";
+import { useDeferredScroll } from "../../hooks/settings/useDeferredScroll";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { readLearnerState } from "../../lib/learning/learnerState";
 import { subscribeSettingsRefresh } from "../../lib/settings/settings-refresh-bus";
@@ -91,10 +93,14 @@ export default function Settings() {
   const activeTab: SettingsTab = isSettingsTab(searchParams.get("tab"))
     ? (searchParams.get("tab") as SettingsTab)
     : "general";
+  // A tab switch also drops ``?section=`` (#2961): the section request
+  // belongs to the Learning tab, and a stale one would re-scroll the next
+  // time that tab opens.
   const setActiveTab = (tab: string) => {
     setSearchParams(
       (prev) => {
         prev.set("tab", tab);
+        prev.delete(LEARNING_SECTION_PARAM);
         return prev;
       },
       { replace: true },
@@ -124,45 +130,21 @@ export default function Settings() {
   // #1773 / #1831 — perform the deferred scroll once the Data tab is the active
   // (visible) one. Panels stay mounted but inactive ones carry ``hidden``
   // (``display:none``), so a node in an inactive panel has NO layout and
-  // ``scrollIntoView`` is a no-op. A single rAF covers the panel
-  // display:none -> visible toggle, but NOT the async layout inside the panel:
-  // ``KeyVaultSection`` loads ``hasKeys`` asynchronously and the export block
-  // above the import target changes height when it resolves, so a one-shot
-  // scroll fired before that landed and the target was pushed back out of view
-  // (pendingScroll was cleared unconditionally, so it never re-scrolled -> the
-  // #1831 dexie-smoke failure). Retry across a bounded frame window, re-issuing
-  // the scroll until the target is actually in the viewport, then clear. The
+  // ``scrollIntoView`` is a no-op; ``KeyVaultSection`` additionally loads
+  // ``hasKeys`` asynchronously and the export block above the import target
+  // changes height when it resolves. The bounded retry loop lives in
+  // ``useDeferredScroll`` (#2961, shared with the Learning section bar). The
   // import target only exists in Dexie mode, so fall back to the section top.
-  useEffect(() => {
-    if (activeTab !== "data" || pendingScroll === null) return;
-    let raf = 0;
-    let frame = 0;
-    const maxFrames = 60; // ~1s at 60fps: enough for the async panel content to settle
-    const findTarget = () =>
-      pendingScroll === "import"
-        ? document.querySelector('[data-testid="key-vault-import"]') ??
-          document.querySelector('[data-testid="key-vault-section"]')
-        : document.querySelector('[data-testid="key-vault-section"]');
-    const inView = (el: Element) => {
-      const rect = el.getBoundingClientRect();
-      return rect.height > 0 && rect.bottom > 0 && rect.top < window.innerHeight;
-    };
-    const tick = () => {
-      const target = findTarget();
-      if (target && inView(target)) {
-        setPendingScroll(null);
-        return;
-      }
-      target?.scrollIntoView?.({ block: "start" });
-      if (++frame < maxFrames) {
-        raf = requestAnimationFrame(tick);
-      } else {
-        setPendingScroll(null);
-      }
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [activeTab, pendingScroll]);
+  useDeferredScroll({
+    active: activeTab === "data",
+    target: pendingScroll,
+    findTarget: (kind) =>
+      kind === "import"
+        ? (document.querySelector('[data-testid="key-vault-import"]') ??
+          document.querySelector('[data-testid="key-vault-section"]'))
+        : document.querySelector('[data-testid="key-vault-section"]'),
+    onSettled: () => setPendingScroll(null),
+  });
 
   // Shared nav model for both the desktop sidebar and the mobile menu
   // (#546). The nine tabs are grouped into four groups; tabs are never

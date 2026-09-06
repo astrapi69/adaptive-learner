@@ -1,3 +1,6 @@
+import { useRef } from "react";
+import type { CSSProperties } from "react";
+
 import FeedbackIntensityControl from "../../../../components/settings/controls/motivation/FeedbackIntensityControl";
 import DirectionStrategyControl from "../../../../components/settings/controls/lesson/DirectionStrategyControl";
 import MatchingResolveControl from "../../../../components/settings/controls/lesson/MatchingResolveControl";
@@ -16,9 +19,12 @@ import SoundSettingsControl from "../../../../components/settings/controls/motiv
 import VoiceSettingsSection from "../../../../components/voice/VoiceSettingsSection";
 import { SettingsCluster } from "../../../../components/settings/SettingsCluster";
 import { SettingsSection } from "../../../../components/settings/SettingsSection";
+import SettingsSubNav from "../../../../components/settings/SettingsSubNav";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import { isSpeechRecognitionSupported } from "../../../../lib/voice/speech-recognition";
 import { isSpeechSynthesisSupported } from "../../../../lib/voice/speech-synthesis";
+import { useLearningSections } from "./useLearningSections";
+import { useLearningAnchorOffset } from "./useLearningAnchorOffset";
 
 interface LearningPanelProps {
   /** Whether the Learning tab is the active tab (drives ``hidden``). */
@@ -51,6 +57,15 @@ interface LearningPanelProps {
  * when inactive) so deep links and ``data-testid`` assertions keep
  * working.
  *
+ * A section bar above the clusters (#2961, ``SettingsSubNav``) jumps
+ * between them and mirrors ``?tab=learning&section=<id>``: the deep link
+ * scrolls the cluster into view once the panel is visible (the deferred
+ * loop, {@link useLearningSections}), a chip click writes the param with
+ * replace-state, and the Settings shell drops the param on a tab switch.
+ * The bar is sticky on ``md+`` below the app header; the measured offset
+ * of both strips feeds the clusters' ``scroll-margin-top`` through the
+ * ``--settings-anchor-offset`` custom property.
+ *
  * @example
  * <LearningPanel active={activeTab === "learning"} />
  */
@@ -58,6 +73,12 @@ export default function LearningPanel({ active }: LearningPanelProps) {
   const { t } = useI18n();
   const speechSupported =
     isSpeechSynthesisSupported() || isSpeechRecognitionSupported();
+  const subNavRef = useRef<HTMLElement>(null);
+  const { stickyTop, anchorOffset } = useLearningAnchorOffset(subNavRef);
+  const { sections, activeSection, openSection } = useLearningSections({
+    active,
+    speechSupported,
+  });
 
   return (
     <div
@@ -65,7 +86,19 @@ export default function LearningPanel({ active }: LearningPanelProps) {
       role="tabpanel"
       hidden={!active}
       data-testid="settings-panel-learning"
+      style={{ "--settings-anchor-offset": `${anchorOffset}px` } as CSSProperties}
     >
+      <SettingsSubNav
+        ref={subNavRef}
+        items={sections.map((section) => ({
+          id: section.id,
+          label: t(section.labelKey, section.fallback),
+        }))}
+        activeId={activeSection}
+        onSelect={openSection}
+        ariaLabel={t("settings.learning_nav_aria", "Learning sections")}
+        stickyTop={stickyTop}
+      />
       <SettingsCluster
         id="basics"
         testid="settings-cluster-basics"

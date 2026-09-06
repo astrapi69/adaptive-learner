@@ -3,6 +3,7 @@
 export * from "./useApiKeyStatus";
 export * from "./useAppMode";
 export * from "./useButtonTooltips";
+export * from "./useDeferredScroll";
 export * from "./useDevMode";
 export * from "./useDirectionStrategy";
 export * from "./useFeedbackIntensity";
