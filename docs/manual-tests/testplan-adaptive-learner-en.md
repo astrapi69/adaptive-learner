@@ -1579,9 +1579,11 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       version (e.g. tap "Update available" on a set in the content browser
       OR bump the set's manifest version in the test repo). Reload/reopen
       the app: **without** visiting `/content`, a header badge ("N updates")
-      appears next to the reviews badge, linking to `/content`. Click →
-      lands on `/content`, the affected set shows **"Update available"** in
-      its row (matches the badge's count). **After applying (#2985):** apply
+      appears next to the reviews badge, linking to `/content?tab=my`.
+      Click → lands on the **My content** tab (#2998: regardless of the tab
+      order configured under Settings → General, even when Import or
+      Discover comes first), the affected set shows **"Update available"**
+      in its row (matches the badge's count). **After applying (#2985):** apply
       the update(s) on `/content` (or sync the repo source) → the badge's
       count drops **immediately, without a reload**; once every update is
       applied the badge disappears (held breaking updates keep counting
