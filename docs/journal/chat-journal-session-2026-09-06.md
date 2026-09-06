@@ -200,6 +200,11 @@ Container) auf dem vorgegebenen Branch
   zwei `labeled`-Events; der Lauf für `refresh-visual-baselines` wurde von
   der Concurrency-Gruppe gecancelt, der für `ui` übersprungen. Das Label
   darum immer allein und nach dem letzten Push setzen.
+- Visual-Baselines (Sync-Lauf 34036362746, Commit b7434ac): genau die
+  drei `settings-learning-*`-Motive geändert, jedes einzeln angesehen
+  (Leiste über den Clustern, aktiver Chip "Grundlagen" per Scroll-Spy,
+  am Handy die seitlich scrollende Zeile); kein fremdes Churn, nichts
+  zurückgesetzt.
 - Konservativ angenommen: `?section=` schreibt der Scroll-Spy nie in die
   Adresse (nur Chip-Klick und Deep-Link), damit Scrollen keinen
   replace-state-Sturm erzeugt.
