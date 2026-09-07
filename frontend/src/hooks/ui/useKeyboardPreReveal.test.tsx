@@ -44,6 +44,36 @@ function focusIn(field: Element) {
     });
 }
 
+function focusOut(field: Element, relatedTarget: Element | null = null) {
+    act(() => {
+        field.dispatchEvent(
+            new FocusEvent("focusout", { bubbles: true, relatedTarget }),
+        );
+    });
+}
+
+/**
+ * A scroller whose scrollTop CLAMPS like a real browser's: the maximum
+ * grows with inline bottom padding, mirroring how padding extends
+ * scrollHeight (#3014 - reading 8's clamped reveal, max 61 of 218).
+ */
+function makeClampingScroller(maxScroll: number): HTMLDivElement {
+    const scroller = document.createElement("div");
+    scroller.style.overflowY = "auto";
+    Object.defineProperty(scroller, "scrollHeight", { value: 2000 });
+    Object.defineProperty(scroller, "clientHeight", { value: VIEWPORT_HEIGHT });
+    let position = 0;
+    Object.defineProperty(scroller, "scrollTop", {
+        get: () => position,
+        set: (value: number) => {
+            const pad = parseFloat(scroller.style.paddingBottom) || 0;
+            position = Math.max(0, Math.min(value, maxScroll + pad));
+        },
+    });
+    document.body.appendChild(scroller);
+    return scroller;
+}
+
 let coarsePointer = true;
 
 beforeEach(() => {
@@ -114,6 +144,39 @@ describe("useKeyboardPreReveal (#3002)", () => {
         const field = placeField(scroller, 660);
         focusIn(field);
         expect(scroller.scrollTop).toBe(0);
+    });
+
+    it("grants missing headroom when the scroller clamps the reveal (#3014)", () => {
+        // Repro (reading 8): delta=218 wanted, scroller at its end after 61
+        // (docH == viewport height) - Safari panned 327 anyway.
+        render(<Harness />);
+        const scroller = makeClampingScroller(61);
+        const field = placeField(scroller, 660); // delta = 360
+        focusIn(field);
+        // The shortfall (360 - 61 = 299) became temporary bottom padding and
+        // the reveal then completed in full.
+        expect(scroller.style.paddingBottom).toBe("299px");
+        expect(scroller.scrollTop).toBe(360);
+    });
+
+    it("releases the granted headroom when focus leaves the keyboard (#3014)", () => {
+        render(<Harness />);
+        const scroller = makeClampingScroller(61);
+        const field = placeField(scroller, 660);
+        focusIn(field);
+        expect(scroller.style.paddingBottom).toBe("299px");
+        focusOut(field, null);
+        expect(scroller.style.paddingBottom).toBe("");
+    });
+
+    it("keeps the headroom across a field-to-field focus move (#3014)", () => {
+        render(<Harness />);
+        const scroller = makeClampingScroller(61);
+        const field = placeField(scroller, 660);
+        const nextField = placeField(scroller, 200);
+        focusIn(field);
+        focusOut(field, nextField);
+        expect(scroller.style.paddingBottom).toBe("299px");
     });
 
     it("logs the applied reveal to the protocol while the probe is enabled", () => {
