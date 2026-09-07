@@ -534,3 +534,23 @@ develop. Kein Backend-venv (die Änderung berührt nur eine Vitest-Datei).
 - Ein fehlgeschlagener Peek (`assessSetUpdate` wirft) gilt wie im
   manuellen Pfad als "nicht breaking" und wird angewendet (der Nutzer hat
   den Lauf ausgelöst; nur der stille Auto-Sync hält bei Peek-Fehlern).
+
+## G. Erstellen-Einstieg in "Meine Lektionen" (#3007, Branch claude/create-entry-my-lessons-3007)
+
+- Herkunft: Nebenfund der #3006-Recherche. EXP-021 nennt drei Einstiegspunkte
+  zum Lektions-Creator; der "+"-Knopf im Meine-Lektionen-Bereich war nie
+  gebaut (verifiziert: kein Treffer für `create-lesson` oder `Plus` in
+  `MyLessonsSection.tsx`).
+- RED zuerst, neue `MyLessonsSection.test.tsx` mit vier Tests: Knopf im
+  Abschnittskopf, ruft den Host-Handler statt selbst zu navigieren, trägt
+  einen zugänglichen Namen und 44px Trefferfläche, bleibt während der
+  Mehrfachauswahl sichtbar.
+- GREEN: Knopf im Kopf neben "Zu einem Set zusammenfassen", props-getrieben
+  (`onCreateLesson`), der Host liefert die Navigation. Kein neuer i18n-Text:
+  `content.create_lesson.button` existiert bereits in allen elf Katalogen.
+- Beobachtung, nicht geändert: der Abschnitt rendert nur bei mindestens einer
+  eigenen Lektion (`ImportActionsPanel`), sein interner Leer-Zustand
+  (`content-my-lessons-empty`) ist damit unerreichbar. EXP-026 Punkt 4 hatte
+  das bewusst so entschieden, mit der Begründung "Erstellen-Einstieg lebt
+  ohnehin in der Toolbar". Diese Begründung trägt nach #3006 nicht mehr, aber
+  das Aufräumen ist eine eigene Entscheidung und kein Teil dieses Vorgangs.

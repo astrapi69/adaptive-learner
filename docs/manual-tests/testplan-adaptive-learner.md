@@ -1686,6 +1686,16 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       das ist der #1569-Kern). Ein Feld, das schon OBEN sitzt, wird beim
       Fokussieren NICHT bewegt; Checkboxen/Radios/Dropdowns lösen keinen
       Scroll aus. Desktop (Maus): kein Scroll beim Fokussieren
+- [ ] **Erstellen-Knopf in "Meine Lektionen" (#3007):** Voraussetzung: es
+      existiert mindestens eine eigene Lektion (sonst wird der Abschnitt gar
+      nicht gezeigt). Inhalte → Importieren öffnen → im Abschnitt **Meine
+      Lektionen** steht im Kopf neben "Zu einem Set zusammenfassen" der Knopf
+      **"Neue Lektion erstellen"**. Klick → der Lektions-Assistent öffnet
+      sich. Der Knopf bleibt auch sichtbar, während die Mehrfachauswahl zum
+      Zusammenfassen aktiv ist. Auf dem Telefon: beide Knöpfe im Kopf sind
+      mindestens 44px hoch und umbrechen sauber, der Titel bleibt lesbar.
+      **iOS-Standalone:** vom Home-Bildschirm gestartet verhält sich der Knopf
+      gleich, der Assistent öffnet in derselben Ansicht ohne Browser-Leiste.
 - [ ] **Aktualisierungs-Badge in der Kopfzeile (#2904):** ein installiertes
       Content-Set hat eine neuere Version (z. B. im Content-Browser bei einem
       Set "Aktualisierung verfügbar" antippen ODER die Set-Manifest-Version
