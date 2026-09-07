@@ -534,3 +534,84 @@ develop. Kein Backend-venv (die Änderung berührt nur eine Vitest-Datei).
 - Ein fehlgeschlagener Peek (`assessSetUpdate` wirft) gilt wie im
   manuellen Pfad als "nicht breaking" und wird angewendet (der Nutzer hat
   den Lauf ausgelöst; nur der stille Auto-Sync hält bei Peek-Fehlern).
+
+## H. Reiterleisten auf schmalen Geräten (#3012, Branch claude/tabbar-narrow-devices)
+
+### 1. Prämissenkorrektur durch den Architekten (2026-09-07)
+
+Der Architekt las den #3006-Bericht und fasste den Auftrag neu: nicht der
+vierte Reiter ist das Thema, sondern der Zustand der Leiste. Zwei seiner
+Angaben stimmten allerdings nicht mit dem Code überein und wurden vor
+Auftragsannahme geprüft:
+
+- "Fünf Reiter, die längst scrollen": Es gibt sechs `role="tablist"` im
+  Frontend, die drei mit mehreren Reitern haben je drei. Keine Leiste
+  scrollt, nirgends steht `overflow-x`. Fünf Elemente hat nur die mobile
+  Bodenleiste, und die verteilt mit `justify-around` und kürzt per
+  `truncate`.
+- "Der sechste kostet 23 Pixel": gemessen kostet der vierte Reiter 93,7px
+  Überhang bei 390px.
+
+Seine Schlussfolgerung trug trotzdem, nur mit anderem Mechanismus: die
+Inhalte-Leiste bricht mit deutschen Beschriftungen schon bei DREI Reitern
+auf 375px und darunter um. Umbruch statt Scrollen, aber derselbe Befund
+"sieht nach Absicht aus, ist es aber nicht".
+
+Zweiter Einwand des Architekten, der zutraf und gegen die eigene
+Vorarbeit ging: der Erstellen-Knopf aus #3007 sitzt im selben Reiter, in
+dem die Aktionsleiste schon einen trägt. Die Begründung von #3010 war auf
+Abschnittsebene richtig und auf Reiterebene falsch; #3010 wurde auf
+Entwurf zurückgestuft.
+
+### 2. Ist-Vermessung
+
+Echtes Rendering im Dexie-Build, deutsche Beschriftungen, identische
+Reiter-Klassen in allen drei Leisten (32px Polsterung, 14px Schrift):
+
+| Leiste | braucht | 320px | 375px | 390px |
+|---|---|---|---|---|
+| Inhalte (3) | 354,4px | fehlen 66,4 | fehlen 11,4 | passt |
+| Inhalte (4, #3006) | 451,7px | fehlen 163,7 | fehlen 108,7 | fehlen 93,7 |
+| Dashboard (3) | 299,0px | fehlen 11 | passt | passt |
+| Fortschritt (3) | 313,9px | fehlen 25,9 | passt | passt |
+
+Drei Leisten, drei Verhalten: Inhalte bricht um (#989), Fortschritt und
+Dashboard stauchen, letzteres ohne eigene Polsterung. Nur das erste war je
+eine Entscheidung.
+
+### 3. Umsetzung (TDD)
+
+- RED: neue `shared/layout/TabBar.test.tsx`, acht Tests (Rollen, genau ein
+  aktiver Reiter, Klick meldet an den Host, 44px, kompakt auf dem Telefon
+  und grosszügig ab `sm`, schmaler Abstand, Umbruch statt Scrollen,
+  Host-Abstände bleiben erhalten).
+- GREEN: `TabBar` als gemeinsame Komponente, die drei Hubs stellen darauf
+  um. Ihre bestehenden Tests blieben unverändert grün, das ist der Beweis
+  für Verhaltenserhalt (gleiche testids, Rollen, Auswahl).
+- Nachgemessen: Inhalte 270,6px (passt ab 320px, vorher ab 390px),
+  Dashboard 223,1px, Fortschritt 228px, alle überall einzeilig. Vier
+  Reiter 343,1px, passt ab 390px.
+- Bei 375px fehlten vier Reitern zunächst 0,1px. Das ist innerhalb von
+  Rundung und Schriftmetrik, deshalb zusätzlich `gap-0.5 sm:gap-1`: rund
+  6px Reserve genau dort, wo sie gebraucht wird.
+- Neuer e2e-Spec `tab-bars-single-line.spec.ts`: misst, was
+  `no-horizontal-scroll` strukturell nicht sieht. Jener prüft Überlauf;
+  eine umbrechende oder gestauchte Leiste erzeugt keinen Überlauf und ist
+  für ihn dasselbe wie eine saubere einzeilige. Der neue Spec prüft
+  Einzeiligkeit und Nicht-Stauchung, meldet die gemessenen Breiten im
+  Fehlerfall und schlägt fehl, wenn er weniger als zwei Reiter findet
+  (Gate-Vertrag #2083 Punkt 4).
+
+### Fragen und Annahmen
+
+- Kein Scrollen als Ausweg, obwohl #989 es nicht verboten hatte (der Gate
+  nimmt Elemente mit eigenem `overflow-x` aus). Begründung des
+  Architekten übernommen: hintere Reiter, die man nur durch Wischen
+  findet, sind schlechter als eine zweite Zeile.
+- Die Umschaltgrenze ist `sm` (640px). Zwischen 430 und 640px bleibt es
+  kompakt; dort passen vier Reiter mit Reserve.
+- Vier Reiter bei 320px passen weiterhin nicht (fehlen 55,1px). Dort
+  bleibt der Umbruch, jetzt aber als definierter Ausweg für alle drei
+  Leisten statt nur für eine.
+- #3009 (der vierte Reiter) berührt dieselbe Datei und wird nach diesem
+  PR neu aufgesetzt statt gestapelt.
