@@ -1686,6 +1686,20 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       das ist der #1569-Kern). Ein Feld, das schon OBEN sitzt, wird beim
       Fokussieren NICHT bewegt; Checkboxen/Radios/Dropdowns lösen keinen
       Scroll aus. Desktop (Maus): kein Scroll beim Fokussieren
+- [ ] **Reiterleisten auf dem Telefon einzeilig (#3012):** auf einem echten
+      Telefon im Hochformat nacheinander **Inhalte**, **Fortschritt** und
+      **Dashboard** öffnen. Jede Reiterleiste steht in **einer** Zeile, keine
+      Beschriftung ist abgeschnitten oder gequetscht, jeder Reiter ist
+      mindestens 44px hoch antippbar. Vorher brach die Inhalte-Leiste auf
+      schmalen Geräten (375px und darunter) unbemerkt in zwei Zeilen um.
+      **Vergleich Tablet/Desktop:** dort sind die Reiter wieder grösser
+      gesetzt und weiter gepolstert als auf dem Telefon; der Wechsel liegt
+      bei 640px Fensterbreite (am Desktop die Fensterbreite verkleinern und
+      den Umschlag beobachten). **Auswahl und Tastatur:** genau ein Reiter
+      ist als aktiv markiert, Tabulator erreicht jeden Reiter, Enter wechselt
+      ihn, die Adresse führt den Reiter mit (`?tab=`). **iOS-Standalone:** vom
+      Home-Bildschirm gestartet gilt dasselbe; nach dem Drehen ins Querformat
+      und zurück bleibt die Leiste einzeilig und springt nicht.
 - [ ] **Erstellen-Knopf in "Meine Lektionen" (#3007):** Voraussetzung: es
       existiert mindestens eine eigene Lektion (sonst wird der Abschnitt gar
       nicht gezeigt). Inhalte → Importieren öffnen → im Abschnitt **Meine

@@ -19,6 +19,11 @@
  * Reuses existing, fully-translated i18n keys (no new keys): the tab labels are
  * ``discover.tab.discover`` / ``nav.content`` / ``discover.tab.import``.
  *
+ * #3012 — the bar itself is the shared {@link TabBar}: one behaviour for the
+ * three hubs instead of three accidental ones, compact on phones so three
+ * tabs fit on one line at every phone width (they wrapped at 375px and below
+ * before, unnoticed).
+ *
  * The tab ORDER is user-configurable (#1378, Settings → General). The FIRST
  * configured tab is the initial active tab when ``/content`` is opened with no
  * ``?tab`` param; an explicit ``?tab=<id>`` deep link always wins over that.
@@ -27,6 +32,7 @@
 import { Suspense, lazy } from "react";
 import { useSearchParams } from "react-router";
 
+import TabBar from "../../shared/layout/TabBar";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useContentTabOrder } from "../../hooks/content/useContentTabOrder";
 import type { ContentTabId } from "../../lib/content/contentTabOrderPref";
@@ -70,33 +76,15 @@ export default function ContentHub() {
 
   return (
     <div data-testid="content-hub">
-      <div
-        role="tablist"
-        aria-label={t("nav.tab.content", "Content")}
-        data-testid="content-hub-tabs"
-        className="flex flex-wrap gap-1 border-b border-border px-4 pt-3"
-      >
-        {tabs.map((tab) => {
-          const isActive = tab.id === active;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => selectTab(tab.id)}
-              data-testid={`content-tab-${tab.id}`}
-              className={`min-h-[44px] rounded-t-app px-4 text-sm font-medium ${
-                isActive
-                  ? "border-b-2 border-accent text-accent"
-                  : "text-fg-muted hover:text-fg-primary"
-              }`}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      <TabBar
+        tabs={tabs}
+        active={active}
+        onSelect={selectTab}
+        ariaLabel={t("nav.tab.content", "Content")}
+        testId="content-hub-tabs"
+        tabTestIdPrefix="content-tab-"
+        className="px-4 pt-3"
+      />
 
       <Suspense fallback={null}>
         {active === "discover" && <Discover />}

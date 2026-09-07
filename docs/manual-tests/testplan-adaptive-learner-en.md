@@ -1584,6 +1584,18 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       offset, the #1569 core). A field already sitting HIGH is NOT moved
       on focus; checkboxes/radios/dropdowns trigger no scroll. Desktop
       (mouse): no scroll on focus
+- [ ] **Tab bars stay on one line on phones (#3012):** on a real phone in
+      portrait, open **Content**, **Progress** and **Dashboard** in turn. Each
+      tab bar sits on **one** line, no label is clipped or squeezed, every tab
+      is at least 44px tall to tap. Before this, the Content bar wrapped onto
+      two lines on narrow phones (375px and below) unnoticed.
+      **Tablet/desktop comparison:** there the tabs are set larger and padded
+      wider than on the phone; the switch is at 640px window width (shrink the
+      desktop window and watch it flip). **Selection and keyboard:** exactly
+      one tab is marked active, Tab reaches every tab, Enter switches it, the
+      address carries the tab (`?tab=`). **iOS standalone:** launched from the
+      home screen the same holds; after rotating to landscape and back the bar
+      stays on one line and does not jump.
 - [ ] **Create button in "My Lessons" (#3007):** Precondition: at least one
       own lesson exists (otherwise the section is not shown at all). Open
       Content → Import → in the **My Lessons** section head, next to "Combine

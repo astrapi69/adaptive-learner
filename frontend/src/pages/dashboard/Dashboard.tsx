@@ -9,6 +9,7 @@ import { useFeature } from "@astrapi69/feature-strategy-react";
 import { ApiError } from "../../api/client";
 import { FEATURES } from "../../features/featureConfig";
 import { useHasIncompleteAssessment } from "../../hooks/learning/useAssessmentProgress";
+import TabBar from "../../shared/layout/TabBar";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { readLearnerState } from "../../lib/learning/learnerState";
 import { getStorage } from "../../storage";
@@ -213,33 +214,18 @@ export default function Dashboard() {
       {/* #858 — three tabs: Übersicht (default) / Aktivität / Missionen.
                 The data fetched above is passed into the active (lazy) tab,
                 so only the active tab's bundle mounts. */}
-      <div
-        role="tablist"
-        aria-label={t("dashboard.title", "Dashboard")}
-        data-testid="dashboard-tabs"
-        className="mb-4 flex gap-1 border-b border-border"
-      >
-        {DASHBOARD_TAB_ORDER.map((id) => {
-          const isActive = id === activeTab;
-          return (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => selectTab(id)}
-              data-testid={`dashboard-tab-${id}`}
-              className={`min-h-[44px] rounded-t-app px-4 text-sm font-medium ${
-                isActive
-                  ? "border-b-2 border-accent text-accent"
-                  : "text-fg-muted hover:text-fg-primary"
-              }`}
-            >
-              {t(`dashboard.tab.${id}`, id)}
-            </button>
-          );
-        })}
-      </div>
+      <TabBar
+        tabs={DASHBOARD_TAB_ORDER.map((id) => ({
+          id,
+          label: t(`dashboard.tab.${id}`, id),
+        }))}
+        active={activeTab}
+        onSelect={selectTab}
+        ariaLabel={t("dashboard.title", "Dashboard")}
+        testId="dashboard-tabs"
+        tabTestIdPrefix="dashboard-tab-"
+        className="mb-4"
+      />
 
       <Suspense fallback={null}>
         {activeTab === "overview" && (
