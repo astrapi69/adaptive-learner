@@ -787,6 +787,28 @@ eine Entscheidung.
   jetzt eine Aussage, die die Messung stützt, statt eine, die sie
   widerlegt hat.
 
+### Nebenbefund beim Zurechnen: #3016
+
+- Der Sync lieferte 16 Bilder, zwölf zurechenbar. Die drei
+  `create-lesson`-Flächen waren nicht eingeplant und sind der beste Beleg,
+  dass die Weiterleitung greift: `/create-lesson` rendert jetzt im Hub, das
+  Bild zeigt vier Reiter in einer Zeile mit aktivem "Erstellen".
+- `dashboard-populated-desktop` zurückgenommen wie beim letzten Mal:
+  verschobener Inhalt an einer Stelle, die dieser PR nicht berührt (#2682).
+- Die drei `settings-general`-Bilder **hätten** sich ändern müssen, die
+  Reihenfolge-Einstellung bekommt einen vierten Eintrag. Die Bildhöhe blieb
+  bei 1912px. Nachgesehen statt weggewinkt: die Bilder enden mitten im
+  Themen-Raster, und `ContentTabsOrderControl` steht dahinter. Rund die
+  halbe Seite ist in keinem Motiv enthalten; der Gate war die ganze Zeit
+  grün, weil Ist und Referenz an derselben Stelle abgeschnitten sind.
+- Das ist die #2696-Klasse an einer Stelle, die deren Fix nicht erfasst: der
+  dortige Helfer wächst auf die Dokumenthöhe, die Settings-Seite scrollt aber
+  in einem eigenen Container. Als #3016 aufgenommen, hier nicht gefixt.
+- Der Punkt für das nächste Mal: dass sich ein Bild NICHT ändert, obwohl es
+  sich ändern müsste, ist genauso ein Befund wie eine unerklärliche Änderung.
+  Ohne die Erwartung "hier kommt ein Eintrag dazu" wäre der abgeschnittene
+  Motiv-Satz weiter unentdeckt geblieben.
+
 ### Fragen und Annahmen
 
 - Angenommen, dass der ursprüngliche Auftrag mit dem Passen der vier
