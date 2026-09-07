@@ -2676,6 +2676,8 @@ content:
     ready: तैयार
     update_available: अपडेट उपलब्ध
     downloading: डाउनलोड हो रहा है…
+  tab:
+    create: "बनाएँ"
   action:
     refresh: ताज़ा करें
     refreshing: रीफ़्रेश हो रहा है…

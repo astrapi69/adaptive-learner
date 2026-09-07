@@ -534,3 +534,80 @@ develop. Kein Backend-venv (die Änderung berührt nur eine Vitest-Datei).
 - Ein fehlgeschlagener Peek (`assessSetUpdate` wirft) gilt wie im
   manuellen Pfad als "nicht breaking" und wird angewendet (der Nutzer hat
   den Lauf ausgelöst; nur der stille Auto-Sync hält bei Peek-Fehlern).
+
+## F. Inhalte-Hub: Reiter "Erstellen" (#3006, #3007, #3008, Branch claude/button-update-top-bar-k1ogua)
+
+### 1. Recherche: wo der geplante Reiter hängen geblieben ist (17:55)
+
+- Original prompt: "Wir hatten mal für den Button neue Lektionen eine Tab
+  geplant, das ist irgendwie untergegangen. Schau mal wo das hängen
+  geblieben ist."
+- Optimierter Prompt: "Suche im gesamten Repo nach einer geplanten, nie
+  umgesetzten Idee eines eigenen Reiters für das Erstellen; unterscheide
+  belegten Fund von Interpretation."
+- Ergebnis: **Kein Beleg.** Weder Issue noch Journal noch Exploration noch
+  Code-Rest. Geprüft: alle Session-Journale, ROADMAP samt Archiv, Backlog,
+  alle EXP-Dokumente, Audits, Changelogs, Hilfe, Testpläne, Regeldateien,
+  GitHub-Issues in beiden Sprachen, dazu die Historie von `ContentHub.tsx`
+  (seit #856 immer dieselben drei Reiter, nie ein vierter angefangen).
+  Stattdessen belegt: #1253 entschied am 29.06. bewusst das Gegenteil, die
+  fünf Aktionen inklusive Erstellen gehören in den Importieren-Reiter, weil
+  sie "all import/creation-related" seien. Nebenfund: EXP-021 nennt drei
+  Einstiegspunkte, zwei davon weichen bis heute vom Plan ab (#3007, #3008).
+
+### 2. Architekten-Entscheidung und Umsetzung (18:10)
+
+- Der Architekt revidiert #1253 ausdrücklich: "etwas Vorhandenes holen" und
+  "etwas Neues machen" sind verschiedene Absichten, wer erstellen will sucht
+  nicht unter Importieren. Die Revision ist in #3006 und im Code-Kommentar
+  des Hubs benannt, damit sie nicht unbemerkt zurückgedreht wird.
+- RED zuerst: `contentTabOrderPref.test.ts` (Reiter bekannt, wird an eine vor
+  seiner Zeit gespeicherte Reihenfolge angehängt), `ContentHub.test.tsx`
+  (vierter Reiter, `?tab=create` mountet den Assistenten, kurzes Label),
+  neuer `ContentActionButtons.test.tsx` (Erstellen-Knopf entfernt, vier
+  übrige bleiben). 9 rot.
+- GREEN: `ContentTabId` um "create" erweitert, Hub mountet `CreateLesson`
+  lazy wie die anderen Seiten, `/create-lesson` leitet auf
+  `/content?tab=create` weiter (dasselbe Muster wie `/import` und
+  `/discover`), `/create-lesson/edit/:source/:setId` bleibt eigenständig.
+  Einordnung der fünf Aktionen: nur Erstellen wandert; Lektion importieren
+  und Chat importieren sind Import, Anki-Export ist Ausgabe, Lernpfad ist
+  Navigation. i18n `content.tab.create` in allen elf Katalogen.
+- Zwei Bestandstests folgten der Verhaltensänderung (Aktionsleiste fünf auf
+  vier, Reihenfolge-Einstellung drei auf vier Einträge).
+
+### 3. Der Prüfpunkt: vier Reiter auf dem Telefon (18:40)
+
+Gemessen statt geschätzt, echtes Rendering im Dexie-Build, Chromium mit
+`isMobile`, deutsche Beschriftungen, Umbruch an den y-Koordinaten abgelesen.
+Reiterbreiten: Entdecken 105,5px, Meine Inhalte 127px, Importieren 113,9px,
+Erstellen 93,3px, Abstand 4px.
+
+| Gerät | Leiste innen | 3 Reiter | 4 Reiter | Zeilen |
+|---|---|---|---|---|
+| 320px | 288px | 354,4px nein | 451,7px nein | 2 |
+| 375px | 343px | 354,4px nein | 451,7px nein | 2 |
+| 390px | 358px | 354,4px ja | 451,7px nein | 2 |
+| 430px | 398px | 354,4px ja | 451,7px nein | 2 |
+
+Befund: bei 390px und 430px echte Verschlechterung von einer auf zwei
+Zeilen. Bei 375px und 320px brach die Leiste mit deutschen Beschriftungen
+schon vorher um, die Annahme im Auftrag ("drei passen heute vermutlich
+nebeneinander") trifft dort nicht zu. Nach Vorgabe wurde das **gemeldet
+statt erzwungen**: der PR bleibt Entwurf, die Gegenmassnahme ist eine eigene
+Entscheidung.
+
+### Fragen und Annahmen
+
+- Bildgrundlinien bewusst NICHT erneuert: bei einer Layout-Entscheidung
+  (kürzere Beschriftungen, andere Anordnung) wären sie sofort wieder
+  hinfällig. Abweichung von der Regel "Grundlinien im selben PR", im PR und
+  im Vorgang begründet; der Gate ist entsprechend rot und das ist bei einem
+  Entwurf das richtige Signal.
+- Die Reiterleiste trägt seit jeher `role="tablist"` mit `role="tab"`, aber
+  ohne `aria-controls` und ohne Pfeiltasten-Navigation. Der neue Reiter erbt
+  genau das Muster, verschlechtert also nichts; die bestehende Lücke ist ein
+  eigener Befund und kein Teil dieses Vorgangs.
+- Sprachwahl der Messung: Deutsch, weil es die Standardsprache der App ist.
+  Auf Englisch liegt die Umbruchgrenze günstiger (drei Reiter passen dort
+  noch bei 375px), das ist aber nicht der maßgebliche Fall.

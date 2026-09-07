@@ -1584,6 +1584,36 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       offset, the #1569 core). A field already sitting HIGH is NOT moved
       on focus; checkboxes/radios/dropdowns trigger no scroll. Desktop
       (mouse): no scroll on focus
+- [ ] **"Create" tab in the content hub (#3006):** open `/content` → the tab
+      bar shows **four** tabs: Discover, My content, Import, **Create**.
+      Click Create → the lesson wizard appears in the tab, the address reads
+      `/content?tab=create`. **Old address:** open `/create-lesson` directly →
+      it redirects to `/content?tab=create` and the wizard is there (no 404,
+      no duplicated page). **The edit deep link stays standalone:** choose
+      "Edit" on one of your own lessons → `/create-lesson/edit/...` opens the
+      pre-filled wizard as its own page, NOT inside the tab. **Other entry
+      points:** the "Create new lesson" button on the Dashboard and the link
+      in Discover still reach the wizard. **In the Import tab** the "Create
+      new lesson" button is gone (the tab replaces it); the four remaining
+      actions (Import lesson, Import chat, Anki export, Learning path) are
+      unchanged. **Order:** Settings → General → content tab order lists
+      Create as well and can move it; the new order applies without a reload.
+      Anyone who had set a custom order before this version finds Create at
+      the end of the list, the other three unchanged.
+      **Phone (BLOCKING, #3006):** on a real phone in portrait, check whether
+      the four tabs fit on ONE line. Measured in the container (Chromium,
+      German labels) they wrap onto two lines at 430px device width and
+      below. At 390px and 430px that is a regression against before (three
+      tabs fitted on one line there); at 375px and 320px the bar already
+      wrapped. If the wrap is confirmed on the device, REPORT it rather than
+      accepting it: the remedy (shorter labels, a different arrangement) is a
+      separate decision.
+      **iOS standalone:** launch the app from the home screen (no browser
+      chrome), open `/content` → the same tab bar, clicking Create switches
+      the tab without a page change, and the back gesture does not leave the
+      app. Then remove the app from the app switcher and relaunch → the last
+      selected tab is not "frozen"; `/content` starts on the first configured
+      tab again.
 - [ ] **Header updates badge (#2904):** an installed content set has a newer
       version (e.g. tap "Update available" on a set in the content browser
       OR bump the set's manifest version in the test repo). Reload/reopen

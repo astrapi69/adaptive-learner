@@ -30,6 +30,7 @@ export default function ContentTabsOrderControl() {
     discover: t("discover.tab.discover", "Discover"),
     my: t("nav.content", "My content"),
     import: t("discover.tab.import", "Import"),
+    create: t("content.tab.create", "Create"),
   };
 
   const move = (id: ContentTabId, direction: -1 | 1) => {

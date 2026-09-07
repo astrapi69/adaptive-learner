@@ -2903,6 +2903,9 @@
       "update_available": "Διαθέσιμη ενημέρωση",
       "downloading": "Λήψη…"
     },
+    "tab": {
+      "create": "Δημιουργία"
+    },
     "action": {
       "refresh": "Ανανέωση",
       "refreshing": "Ανανέωση…",

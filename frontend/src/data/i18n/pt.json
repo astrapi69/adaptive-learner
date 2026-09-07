@@ -2903,6 +2903,9 @@
       "update_available": "Atualização disponível",
       "downloading": "A transferir…"
     },
+    "tab": {
+      "create": "Criar"
+    },
     "action": {
       "refresh": "Atualizar",
       "refreshing": "A atualizar…",

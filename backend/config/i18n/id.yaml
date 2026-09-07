@@ -2692,6 +2692,8 @@ content:
     ready: "Siap"
     update_available: "Pembaruan tersedia"
     downloading: "Mengunduh…"
+  tab:
+    create: "Buat"
   action:
     refresh: "Segarkan"
     refreshing: "Menyegarkan…"

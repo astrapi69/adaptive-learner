@@ -1686,6 +1686,41 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       das ist der #1569-Kern). Ein Feld, das schon OBEN sitzt, wird beim
       Fokussieren NICHT bewegt; Checkboxen/Radios/Dropdowns lösen keinen
       Scroll aus. Desktop (Maus): kein Scroll beim Fokussieren
+- [ ] **Reiter "Erstellen" im Inhalte-Hub (#3006):** `/content` öffnen → die
+      Reiterleiste zeigt **vier** Reiter: Entdecken, Meine Inhalte,
+      Importieren, **Erstellen**. Klick auf Erstellen → der Lektions-Assistent
+      erscheint im Reiter, die Adresse lautet `/content?tab=create`.
+      **Alte Adresse:** `/create-lesson` direkt aufrufen → leitet auf
+      `/content?tab=create` weiter, der Assistent ist da (kein 404, keine
+      doppelte Seite). **Bearbeiten-Deeplink bleibt eigenständig:** bei einer
+      eigenen Lektion "Bearbeiten" wählen → `/create-lesson/edit/...` öffnet
+      den vorbefüllten Assistenten als eigene Seite, NICHT im Reiter.
+      **Andere Einstiege:** der Knopf "Neue Lektion erstellen" auf dem
+      Dashboard und der Link in Entdecken führen weiterhin zum Assistenten.
+      **Im Importieren-Reiter** gibt es den Knopf "Neue Lektion erstellen"
+      nicht mehr (der Reiter ersetzt ihn); die vier übrigen Aktionen
+      (Lektion importieren, Chat importieren, Anki-Export, Lernpfad) sind
+      unverändert da. **Reihenfolge:** Einstellungen → Allgemein → Reihenfolge
+      der Inhalte-Reiter listet auch Erstellen und kann ihn verschieben; die
+      neue Reihenfolge greift ohne Neuladen. Wer vor dieser Version eine
+      eigene Reihenfolge gesetzt hatte, findet Erstellen am Ende der Liste,
+      die übrigen drei unverändert.
+      **Telefon (BLOCKIEREND, #3006):** auf einem echten Telefon im Hochformat
+      prüfen, ob die vier Reiter in EINE Zeile passen. Gemessen im Container
+      (Chromium, deutsche Beschriftungen) brechen sie ab 430px Gerätebreite
+      abwärts in zwei Zeilen um. Bei 390px und 430px ist das eine
+      Verschlechterung gegenüber vorher (drei Reiter passten dort in eine
+      Zeile); bei 375px und 320px brach die Leiste schon vorher um. Wenn der
+      Umbruch auf dem Gerät bestätigt wird, ist das zu MELDEN, nicht
+      hinzunehmen: die Gegenmassnahme (kürzere Beschriftungen, andere
+      Anordnung) ist eine eigene Entscheidung.
+      **iOS-Standalone:** die App vom Home-Bildschirm starten (ohne
+      Browser-Leiste), `/content` öffnen → dieselbe Reiterleiste, Klick auf
+      Erstellen wechselt den Reiter ohne Seitenwechsel, und der Zurück-Gestus
+      führt nicht aus der App heraus. Danach die App aus dem
+      App-Umschalter entfernen und neu starten → der zuletzt gewählte Reiter
+      ist nicht "eingefroren", `/content` startet wieder auf dem ersten
+      konfigurierten Reiter.
 - [ ] **Aktualisierungs-Badge in der Kopfzeile (#2904):** ein installiertes
       Content-Set hat eine neuere Version (z. B. im Content-Browser bei einem
       Set "Aktualisierung verfügbar" antippen ODER die Set-Manifest-Version

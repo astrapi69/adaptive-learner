@@ -6,6 +6,7 @@
  *   - Entdecken     → the {@link Discover} page (find + download sets) — DEFAULT
  *   - Meine Inhalte → the {@link Content} page (downloaded sets + repos)
  *   - Importieren   → the {@link Import} page (chat import list)
+ *   - Erstellen     → the {@link CreateLesson} wizard (#3006)
  *
  * As with {@link ProgressHub} / the former DiscoverHub, the page components are
  * embedded unchanged and only the active tab is mounted (lazy), so the active
@@ -13,11 +14,17 @@
  * (``?tab=discover|my|import``), so ``/discover`` redirects to
  * ``/content?tab=discover`` and ``/import`` to ``/content?tab=import`` while the
  * deep-link route ``/content/import/:conversationId`` (ImportDetail) stays
- * separate. The default tab is **Entdecken** so a first-time user is guided to
+ * separate. ``/create-lesson`` redirects the same way (#3006), while its own
+ * deep link ``/create-lesson/edit/:source/:setId`` stays separate too. The default tab is **Entdecken** so a first-time user is guided to
  * find content instead of landing on an empty "My content" page.
  *
  * Reuses existing, fully-translated i18n keys (no new keys): the tab labels are
  * ``discover.tab.discover`` / ``nav.content`` / ``discover.tab.import``.
+ *
+ * #3006 — the Erstellen tab REVISES the #1253 decision that put "Neue Lektion
+ * erstellen" under Importieren as "import/creation-related". Getting something
+ * that exists and making something new are different intents; nobody looks for
+ * creating under importing. Do not fold it back without revisiting #3006.
  *
  * The tab ORDER is user-configurable (#1378, Settings → General). The FIRST
  * configured tab is the initial active tab when ``/content`` is opened with no
@@ -34,10 +41,11 @@ import type { ContentTabId } from "../../lib/content/contentTabOrderPref";
 const Discover = lazy(() => import("./Discover"));
 const Content = lazy(() => import("./Content"));
 const Import = lazy(() => import("./Import"));
+const CreateLesson = lazy(() => import("../lesson/CreateLesson"));
 
 type TabId = ContentTabId;
 
-const KNOWN_TABS: readonly TabId[] = ["discover", "my", "import"];
+const KNOWN_TABS: readonly TabId[] = ["discover", "my", "import", "create"];
 
 /** The explicit ``?tab`` value when it names a known tab; else null. */
 function tabFromParam(raw: string | null): TabId | null {
@@ -56,6 +64,9 @@ export default function ContentHub() {
     discover: t("discover.tab.discover", "Discover"),
     my: t("nav.content", "My content"),
     import: t("discover.tab.import", "Import"),
+    // Deliberately short: the long button wording ("Neue Lektion erstellen")
+    // would push a fourth tab into a second row on a phone (#989).
+    create: t("content.tab.create", "Create"),
   };
   const tabs = order.map((id) => ({ id, label: labels[id] }));
 
@@ -102,6 +113,7 @@ export default function ContentHub() {
         {active === "discover" && <Discover />}
         {active === "my" && <Content />}
         {active === "import" && <Import />}
+        {active === "create" && <CreateLesson />}
       </Suspense>
     </div>
   );

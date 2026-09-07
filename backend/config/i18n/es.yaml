@@ -2683,6 +2683,8 @@ content:
     ready: "Listo"
     update_available: "Actualización disponible"
     downloading: "Descargando…"
+  tab:
+    create: "Crear"
   action:
     refresh: "Refrescar"
     refreshing: "Refrescando…"
