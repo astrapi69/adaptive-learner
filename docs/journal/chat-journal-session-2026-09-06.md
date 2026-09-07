@@ -745,6 +745,36 @@ eine Entscheidung.
 - Bei 320px bleibt der Umbruch. Das ist seit #3012 der definierte Ausweg
   aller drei Leisten und kein Sonderfall dieses Reiters mehr.
 
+### Nachgemessen, nicht weitergerechnet
+
+- Die 337,1px aus #3012 waren eine Rechnung: der vierte Reiter existierte auf
+  jenem Branch nicht, seine Breite kam aus einem geklonten Prüfling. Jetzt
+  existiert er wirklich, also neu gemessen, mit realem Rendering bei jeder
+  Breite und Umbruch an den y-Koordinaten abgelesen.
+- Ergebnis identisch zur Rechnung: Entdecken 79px, Meine Inhalte 97,4px,
+  Importieren 86,2px, Erstellen 68,5px, Abstand 2px, zusammen 337,1px.
+  320px zwei Zeilen (288px innen), 375/390/414/430px einzeilig, ab 640px
+  wieder 451,7px auf 608px Innenbreite. Trefferfläche überall 44px, kein
+  Überlauf.
+- Dass die Rechnung diesmal stimmte, ist kein Argument dafür, beim nächsten
+  Mal zu rechnen: der geklonte Prüfling erbt genau die Annahmen, die er
+  belegen soll.
+
+### Der Gate und die 320px
+
+- Mit vier Reitern bricht die Inhalte-Leiste bei 320px um, der neue Spec
+  wäre also rot. Statt die Prüfbreite zu streichen, wird die Ausnahme
+  benannt: `wrapAllowedAt: [320]` mit einem `wrapReason`, den der Spec
+  einfordert und mitprotokolliert.
+- Der Punkt ist die Nichtstreichbarkeit: 375, 390 und 414px bleiben streng,
+  eine Regression, die die Leiste dort kippt, wird weiterhin rot. Eine
+  Ausnahme ohne Begründung schlägt fehl, damit sie nicht später still
+  gesetzt werden kann (Gate-Vertrag #2083).
+- `@playwright/test` ist im Container nicht installiert, der Spec selbst
+  konnte hier also nicht laufen. Stattdessen wurde seine Messlogik
+  zeilengleich gegen den echten Dexie-Build repliziert: 320px erlaubt
+  zweizeilig, die drei anderen Breiten einzeilig, nichts gestaucht.
+
 ### Zusammenführung
 
 - Der Branch trug den Reiter aus dem Entwurf vom Vormittag. `git merge
