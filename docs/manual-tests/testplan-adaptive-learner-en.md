@@ -1596,6 +1596,15 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       address carries the tab (`?tab=`). **iOS standalone:** launched from the
       home screen the same holds; after rotating to landscape and back the bar
       stays on one line and does not jump.
+- [ ] **Create button in "My Lessons" (#3007):** Precondition: at least one
+      own lesson exists (otherwise the section is not shown at all). Open
+      Content → Import → in the **My Lessons** section head, next to "Combine
+      into a set", there is a **"Create New Lesson"** button. Click → the
+      lesson wizard opens. The button stays visible while the combine
+      multi-select mode is active. On a phone: both head buttons are at least
+      44px tall and wrap cleanly, the heading stays readable.
+      **iOS standalone:** launched from the home screen the button behaves the
+      same, the wizard opens in the same view without browser chrome.
 - [ ] **Header updates badge (#2904):** an installed content set has a newer
       version (e.g. tap "Update available" on a set in the content browser
       OR bump the set's manifest version in the test repo). Reload/reopen

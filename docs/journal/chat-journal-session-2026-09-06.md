@@ -535,6 +535,26 @@ develop. Kein Backend-venv (die Änderung berührt nur eine Vitest-Datei).
   manuellen Pfad als "nicht breaking" und wird angewendet (der Nutzer hat
   den Lauf ausgelöst; nur der stille Auto-Sync hält bei Peek-Fehlern).
 
+## G. Erstellen-Einstieg in "Meine Lektionen" (#3007, Branch claude/create-entry-my-lessons-3007)
+
+- Herkunft: Nebenfund der #3006-Recherche. EXP-021 nennt drei Einstiegspunkte
+  zum Lektions-Creator; der "+"-Knopf im Meine-Lektionen-Bereich war nie
+  gebaut (verifiziert: kein Treffer für `create-lesson` oder `Plus` in
+  `MyLessonsSection.tsx`).
+- RED zuerst, neue `MyLessonsSection.test.tsx` mit vier Tests: Knopf im
+  Abschnittskopf, ruft den Host-Handler statt selbst zu navigieren, trägt
+  einen zugänglichen Namen und 44px Trefferfläche, bleibt während der
+  Mehrfachauswahl sichtbar.
+- GREEN: Knopf im Kopf neben "Zu einem Set zusammenfassen", props-getrieben
+  (`onCreateLesson`), der Host liefert die Navigation. Kein neuer i18n-Text:
+  `content.create_lesson.button` existiert bereits in allen elf Katalogen.
+- Beobachtung, nicht geändert: der Abschnitt rendert nur bei mindestens einer
+  eigenen Lektion (`ImportActionsPanel`), sein interner Leer-Zustand
+  (`content-my-lessons-empty`) ist damit unerreichbar. EXP-026 Punkt 4 hatte
+  das bewusst so entschieden, mit der Begründung "Erstellen-Einstieg lebt
+  ohnehin in der Toolbar". Diese Begründung trägt nach #3006 nicht mehr, aber
+  das Aufräumen ist eine eigene Entscheidung und kein Teil dieses Vorgangs.
+
 ## H. Reiterleisten auf schmalen Geräten (#3012, Branch claude/tabbar-narrow-devices)
 
 ### 1. Prämissenkorrektur durch den Architekten (2026-09-07)
@@ -560,8 +580,15 @@ auf 375px und darunter um. Umbruch statt Scrollen, aber derselbe Befund
 Zweiter Einwand des Architekten, der zutraf und gegen die eigene
 Vorarbeit ging: der Erstellen-Knopf aus #3007 sitzt im selben Reiter, in
 dem die Aktionsleiste schon einen trägt. Die Begründung von #3010 war auf
-Abschnittsebene richtig und auf Reiterebene falsch; #3010 wurde auf
-Entwurf zurückgestuft.
+Abschnittsebene richtig und auf Reiterebene falsch.
+
+Nachtrag: #3010 war zu diesem Zeitpunkt bereits gemergt (develop 9bcb83bc,
+11:02 UTC), die Korrektur kam also zu spät. Der Importieren-Reiter trägt
+damit vorerst ZWEI Erstellen-Knöpfe. Das löst sich mit #3009 auf, denn dort
+entfällt der Knopf der Aktionsleiste; bleibt #3009 aus, ist die Doppelung
+mit einem Einzeiler rückgängig zu machen. Festgehalten statt stillschweigend
+korrigiert, weil die Reihenfolge (mergen, dann Einwand) genau der Grund für
+die Doppelung ist.
 
 ### 2. Ist-Vermessung
 

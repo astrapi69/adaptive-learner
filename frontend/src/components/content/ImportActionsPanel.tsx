@@ -107,6 +107,7 @@ export default function ImportActionsPanel() {
           onEditLessonFile={(e, filename) => actions.handleEditUserSet(e, filename)}
           onRequestDeleteLesson={actions.setDeleteLessonTarget}
           onRequestBulkDeleteLesson={actions.setBulkDeleteLessonsTarget}
+          onCreateLesson={() => navigate("/create-lesson")}
           selectMode={combine.selectMode}
           selectedCount={combine.selectedCount}
           isSelected={combine.isSelected}
