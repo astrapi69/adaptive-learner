@@ -14,3 +14,5 @@ export * from "./ShareButton";
 export {default as ShareButton} from "./ShareButton";
 export * from "./Tile";
 export {default as Tile} from "./Tile";
+export * from "./TabBar";
+export {default as TabBar} from "./TabBar";

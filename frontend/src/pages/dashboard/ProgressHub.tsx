@@ -20,6 +20,7 @@
 import { Suspense, lazy } from "react";
 import { useSearchParams } from "react-router";
 
+import TabBar from "../../shared/layout/TabBar";
 import { useI18n } from "../../hooks/ui/useI18n";
 
 const Progress = lazy(() => import("./Progress"));
@@ -54,33 +55,15 @@ export default function ProgressHub() {
 
   return (
     <div data-testid="progress-hub">
-      <div
-        role="tablist"
-        aria-label={t("progress.title", "Progress")}
-        data-testid="progress-hub-tabs"
-        className="flex gap-1 border-b border-border px-4 pt-3"
-      >
-        {tabs.map((tab) => {
-          const isActive = tab.id === active;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => selectTab(tab.id)}
-              data-testid={`progress-tab-${tab.id}`}
-              className={`min-h-[44px] rounded-t-app px-4 text-sm font-medium ${
-                isActive
-                  ? "border-b-2 border-accent text-accent"
-                  : "text-fg-muted hover:text-fg-primary"
-              }`}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      <TabBar
+        tabs={tabs}
+        active={active}
+        onSelect={selectTab}
+        ariaLabel={t("progress.title", "Progress")}
+        testId="progress-hub-tabs"
+        tabTestIdPrefix="progress-tab-"
+        className="px-4 pt-3"
+      />
 
       <Suspense fallback={null}>
         {active === "overview" && <Progress />}

@@ -611,3 +611,159 @@ Entscheidung.
 - Sprachwahl der Messung: Deutsch, weil es die Standardsprache der App ist.
   Auf Englisch liegt die Umbruchgrenze günstiger (drei Reiter passen dort
   noch bei 375px), das ist aber nicht der maßgebliche Fall.
+
+## G. Erstellen-Einstieg in "Meine Lektionen" (#3007, Branch claude/create-entry-my-lessons-3007)
+
+- Herkunft: Nebenfund der #3006-Recherche. EXP-021 nennt drei Einstiegspunkte
+  zum Lektions-Creator; der "+"-Knopf im Meine-Lektionen-Bereich war nie
+  gebaut (verifiziert: kein Treffer für `create-lesson` oder `Plus` in
+  `MyLessonsSection.tsx`).
+- RED zuerst, neue `MyLessonsSection.test.tsx` mit vier Tests: Knopf im
+  Abschnittskopf, ruft den Host-Handler statt selbst zu navigieren, trägt
+  einen zugänglichen Namen und 44px Trefferfläche, bleibt während der
+  Mehrfachauswahl sichtbar.
+- GREEN: Knopf im Kopf neben "Zu einem Set zusammenfassen", props-getrieben
+  (`onCreateLesson`), der Host liefert die Navigation. Kein neuer i18n-Text:
+  `content.create_lesson.button` existiert bereits in allen elf Katalogen.
+- Beobachtung, nicht geändert: der Abschnitt rendert nur bei mindestens einer
+  eigenen Lektion (`ImportActionsPanel`), sein interner Leer-Zustand
+  (`content-my-lessons-empty`) ist damit unerreichbar. EXP-026 Punkt 4 hatte
+  das bewusst so entschieden, mit der Begründung "Erstellen-Einstieg lebt
+  ohnehin in der Toolbar". Diese Begründung trägt nach #3006 nicht mehr, aber
+  das Aufräumen ist eine eigene Entscheidung und kein Teil dieses Vorgangs.
+
+## H. Reiterleisten auf schmalen Geräten (#3012, Branch claude/tabbar-narrow-devices)
+
+### 1. Prämissenkorrektur durch den Architekten (2026-09-07)
+
+Der Architekt las den #3006-Bericht und fasste den Auftrag neu: nicht der
+vierte Reiter ist das Thema, sondern der Zustand der Leiste. Zwei seiner
+Angaben stimmten allerdings nicht mit dem Code überein und wurden vor
+Auftragsannahme geprüft:
+
+- "Fünf Reiter, die längst scrollen": Es gibt sechs `role="tablist"` im
+  Frontend, die drei mit mehreren Reitern haben je drei. Keine Leiste
+  scrollt, nirgends steht `overflow-x`. Fünf Elemente hat nur die mobile
+  Bodenleiste, und die verteilt mit `justify-around` und kürzt per
+  `truncate`.
+- "Der sechste kostet 23 Pixel": gemessen kostet der vierte Reiter 93,7px
+  Überhang bei 390px.
+
+Seine Schlussfolgerung trug trotzdem, nur mit anderem Mechanismus: die
+Inhalte-Leiste bricht mit deutschen Beschriftungen schon bei DREI Reitern
+auf 375px und darunter um. Umbruch statt Scrollen, aber derselbe Befund
+"sieht nach Absicht aus, ist es aber nicht".
+
+Zweiter Einwand des Architekten, der zutraf und gegen die eigene
+Vorarbeit ging: der Erstellen-Knopf aus #3007 sitzt im selben Reiter, in
+dem die Aktionsleiste schon einen trägt. Die Begründung von #3010 war auf
+Abschnittsebene richtig und auf Reiterebene falsch.
+
+Nachtrag: #3010 war zu diesem Zeitpunkt bereits gemergt (develop 9bcb83bc,
+11:02 UTC), die Korrektur kam also zu spät. Der Importieren-Reiter trägt
+damit vorerst ZWEI Erstellen-Knöpfe. Das löst sich mit #3009 auf, denn dort
+entfällt der Knopf der Aktionsleiste; bleibt #3009 aus, ist die Doppelung
+mit einem Einzeiler rückgängig zu machen. Festgehalten statt stillschweigend
+korrigiert, weil die Reihenfolge (mergen, dann Einwand) genau der Grund für
+die Doppelung ist.
+
+### 2. Ist-Vermessung
+
+Echtes Rendering im Dexie-Build, deutsche Beschriftungen, identische
+Reiter-Klassen in allen drei Leisten (32px Polsterung, 14px Schrift):
+
+| Leiste | braucht | 320px | 375px | 390px |
+|---|---|---|---|---|
+| Inhalte (3) | 354,4px | fehlen 66,4 | fehlen 11,4 | passt |
+| Inhalte (4, #3006) | 451,7px | fehlen 163,7 | fehlen 108,7 | fehlen 93,7 |
+| Dashboard (3) | 299,0px | fehlen 11 | passt | passt |
+| Fortschritt (3) | 313,9px | fehlen 25,9 | passt | passt |
+
+Drei Leisten, drei Verhalten: Inhalte bricht um (#989), Fortschritt und
+Dashboard stauchen, letzteres ohne eigene Polsterung. Nur das erste war je
+eine Entscheidung.
+
+### 3. Umsetzung (TDD)
+
+- RED: neue `shared/layout/TabBar.test.tsx`, acht Tests (Rollen, genau ein
+  aktiver Reiter, Klick meldet an den Host, 44px, kompakt auf dem Telefon
+  und grosszügig ab `sm`, schmaler Abstand, Umbruch statt Scrollen,
+  Host-Abstände bleiben erhalten).
+- GREEN: `TabBar` als gemeinsame Komponente, die drei Hubs stellen darauf
+  um. Ihre bestehenden Tests blieben unverändert grün, das ist der Beweis
+  für Verhaltenserhalt (gleiche testids, Rollen, Auswahl).
+- Nachgemessen: Inhalte 270,6px (passt ab 320px, vorher ab 390px),
+  Dashboard 223,1px, Fortschritt 228px, alle überall einzeilig. Vier
+  Reiter 343,1px, passt ab 390px.
+- Bei 375px fehlten vier Reitern zunächst 0,1px. Das ist innerhalb von
+  Rundung und Schriftmetrik, deshalb zusätzlich `gap-0.5 sm:gap-1`: rund
+  6px Reserve genau dort, wo sie gebraucht wird.
+- Neuer e2e-Spec `tab-bars-single-line.spec.ts`: misst, was
+  `no-horizontal-scroll` strukturell nicht sieht. Jener prüft Überlauf;
+  eine umbrechende oder gestauchte Leiste erzeugt keinen Überlauf und ist
+  für ihn dasselbe wie eine saubere einzeilige. Der neue Spec prüft
+  Einzeiligkeit und Nicht-Stauchung, meldet die gemessenen Breiten im
+  Fehlerfall und schlägt fehl, wenn er weniger als zwei Reiter findet
+  (Gate-Vertrag #2083 Punkt 4).
+
+### Fragen und Annahmen
+
+- Kein Scrollen als Ausweg, obwohl #989 es nicht verboten hatte (der Gate
+  nimmt Elemente mit eigenem `overflow-x` aus). Begründung des
+  Architekten übernommen: hintere Reiter, die man nur durch Wischen
+  findet, sind schlechter als eine zweite Zeile.
+- Die Umschaltgrenze ist `sm` (640px). Zwischen 430 und 640px bleibt es
+  kompakt; dort passen vier Reiter mit Reserve.
+- Vier Reiter bei 320px passen weiterhin nicht: 343,1px vor der
+  `gap-0.5`-Reserve, 337,1px danach, gegen 288px Innenbreite fehlen also
+  49,1px. Dort bleibt der Umbruch, jetzt aber als definierter Ausweg für
+  alle drei Leisten statt nur für eine.
+- #3009 (der vierte Reiter) berührt dieselbe Datei und wird nach diesem
+  PR neu aufgesetzt statt gestapelt.
+
+
+## I. Der vierte Reiter auf der neuen Leiste (#3006 / #3009, Branch claude/button-update-top-bar-k1ogua)
+
+### Anlass
+
+- #3013 (die gemeinsame Reiterleiste) ist gemergt. Damit ist der Prüfpunkt
+  aus dem #3006-Auftrag neu zu beantworten: er lautete nicht "der Reiter
+  ist verboten", sondern "melden statt erzwingen, wenn er nicht passt".
+  Er passt jetzt.
+
+### Was sich an der Antwort ändert
+
+| | vorher (32px Polsterung, 14px Schrift) | jetzt (16px / 12px, `gap-0.5`) |
+|---|---|---|
+| vier Reiter brauchen | 451,7px | 337,1px |
+| passen ab | nirgends | 375px |
+| 320px | zwei Zeilen | zwei Zeilen |
+
+- Der Reiter wurde also nicht "durchgedrückt", sondern die Voraussetzung
+  wurde geschaffen und dann erneut gemessen. Die Reihenfolge ist der
+  Punkt: erst der Befund, dann der Umbau, dann der Reiter.
+- Bei 320px bleibt der Umbruch. Das ist seit #3012 der definierte Ausweg
+  aller drei Leisten und kein Sonderfall dieses Reiters mehr.
+
+### Zusammenführung
+
+- Der Branch trug den Reiter aus dem Entwurf vom Vormittag. `git merge
+  origin/develop` löste den Rumpf von `ContentHub.tsx` automatisch auf:
+  die neue `TabBar` und der vierte Reiter berühren verschiedene Zeilen.
+  Von Hand waren nur der Kopfkommentar und die drei Doku-Dateien zu
+  entscheiden, alle additiv.
+- Die Testplan-Einträge DE und EN tragen die neue Messung statt der alten.
+  Der Telefon-Punkt bleibt, verliert aber das "BLOCKIEREND": er prüft
+  jetzt eine Aussage, die die Messung stützt, statt eine, die sie
+  widerlegt hat.
+
+### Fragen und Annahmen
+
+- Angenommen, dass der ursprüngliche Auftrag mit dem Passen der vier
+  Reiter erfüllt ist und keine erneute Freigabe braucht. Grundlage: die
+  Prämissenkorrektur des Architekten hat den Reiter ausdrücklich zum
+  **Teil** des Überlauf-Vorgangs erklärt statt zu dessen Anlass. Ist das
+  zu weit ausgelegt, ist der PR ein Entwurf und leicht zurückzuhalten.
+- Nicht angefasst: die Platzierung der vier übrigen Aktionen im
+  Importieren-Reiter (#1253) und die fehlende Pfeiltasten-Navigation der
+  Leisten. Beides sind eigene Befunde.

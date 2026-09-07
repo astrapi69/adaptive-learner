@@ -1686,6 +1686,30 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       das ist der #1569-Kern). Ein Feld, das schon OBEN sitzt, wird beim
       Fokussieren NICHT bewegt; Checkboxen/Radios/Dropdowns lösen keinen
       Scroll aus. Desktop (Maus): kein Scroll beim Fokussieren
+- [ ] **Reiterleisten auf dem Telefon einzeilig (#3012):** auf einem echten
+      Telefon im Hochformat nacheinander **Inhalte**, **Fortschritt** und
+      **Dashboard** öffnen. Jede Reiterleiste steht in **einer** Zeile, keine
+      Beschriftung ist abgeschnitten oder gequetscht, jeder Reiter ist
+      mindestens 44px hoch antippbar. Vorher brach die Inhalte-Leiste auf
+      schmalen Geräten (375px und darunter) unbemerkt in zwei Zeilen um.
+      **Vergleich Tablet/Desktop:** dort sind die Reiter wieder grösser
+      gesetzt und weiter gepolstert als auf dem Telefon; der Wechsel liegt
+      bei 640px Fensterbreite (am Desktop die Fensterbreite verkleinern und
+      den Umschlag beobachten). **Auswahl und Tastatur:** genau ein Reiter
+      ist als aktiv markiert, Tabulator erreicht jeden Reiter, Enter wechselt
+      ihn, die Adresse führt den Reiter mit (`?tab=`). **iOS-Standalone:** vom
+      Home-Bildschirm gestartet gilt dasselbe; nach dem Drehen ins Querformat
+      und zurück bleibt die Leiste einzeilig und springt nicht.
+- [ ] **Erstellen-Knopf in "Meine Lektionen" (#3007):** Voraussetzung: es
+      existiert mindestens eine eigene Lektion (sonst wird der Abschnitt gar
+      nicht gezeigt). Inhalte → Importieren öffnen → im Abschnitt **Meine
+      Lektionen** steht im Kopf neben "Zu einem Set zusammenfassen" der Knopf
+      **"Neue Lektion erstellen"**. Klick → der Lektions-Assistent öffnet
+      sich. Der Knopf bleibt auch sichtbar, während die Mehrfachauswahl zum
+      Zusammenfassen aktiv ist. Auf dem Telefon: beide Knöpfe im Kopf sind
+      mindestens 44px hoch und umbrechen sauber, der Titel bleibt lesbar.
+      **iOS-Standalone:** vom Home-Bildschirm gestartet verhält sich der Knopf
+      gleich, der Assistent öffnet in derselben Ansicht ohne Browser-Leiste.
 - [ ] **Reiter "Erstellen" im Inhalte-Hub (#3006):** `/content` öffnen → die
       Reiterleiste zeigt **vier** Reiter: Entdecken, Meine Inhalte,
       Importieren, **Erstellen**. Klick auf Erstellen → der Lektions-Assistent
@@ -1705,15 +1729,15 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       neue Reihenfolge greift ohne Neuladen. Wer vor dieser Version eine
       eigene Reihenfolge gesetzt hatte, findet Erstellen am Ende der Liste,
       die übrigen drei unverändert.
-      **Telefon (BLOCKIEREND, #3006):** auf einem echten Telefon im Hochformat
-      prüfen, ob die vier Reiter in EINE Zeile passen. Gemessen im Container
-      (Chromium, deutsche Beschriftungen) brechen sie ab 430px Gerätebreite
-      abwärts in zwei Zeilen um. Bei 390px und 430px ist das eine
-      Verschlechterung gegenüber vorher (drei Reiter passten dort in eine
-      Zeile); bei 375px und 320px brach die Leiste schon vorher um. Wenn der
-      Umbruch auf dem Gerät bestätigt wird, ist das zu MELDEN, nicht
-      hinzunehmen: die Gegenmassnahme (kürzere Beschriftungen, andere
-      Anordnung) ist eine eigene Entscheidung.
+      **Telefon (#3006 auf der Leiste aus #3012):** auf einem echten Telefon im
+      Hochformat prüfen, ob die vier Reiter in EINE Zeile passen. Gemessen im
+      Container (Chromium, deutsche Beschriftungen) brauchen sie mit der
+      kompakten Leiste 337,1px und passen ab 375px Gerätebreite; ohne sie
+      brauchten sie 451,7px und passten auf keinem Telefon. Auf einem sehr
+      schmalen Gerät (320px, iPhone SE der ersten Generation) bricht die Leiste
+      weiterhin in zwei Zeilen um - das ist der definierte Ausweg, kein Fehler.
+      Bricht sie auf einem Gerät ab 375px um, ist das zu MELDEN: dann trägt die
+      Messung nicht, und die Gegenmassnahme ist eine eigene Entscheidung.
       **iOS-Standalone:** die App vom Home-Bildschirm starten (ohne
       Browser-Leiste), `/content` öffnen → dieselbe Reiterleiste, Klick auf
       Erstellen wechselt den Reiter ohne Seitenwechsel, und der Zurück-Gestus

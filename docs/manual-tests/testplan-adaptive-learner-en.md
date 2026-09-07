@@ -1584,6 +1584,27 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       offset, the #1569 core). A field already sitting HIGH is NOT moved
       on focus; checkboxes/radios/dropdowns trigger no scroll. Desktop
       (mouse): no scroll on focus
+- [ ] **Tab bars stay on one line on phones (#3012):** on a real phone in
+      portrait, open **Content**, **Progress** and **Dashboard** in turn. Each
+      tab bar sits on **one** line, no label is clipped or squeezed, every tab
+      is at least 44px tall to tap. Before this, the Content bar wrapped onto
+      two lines on narrow phones (375px and below) unnoticed.
+      **Tablet/desktop comparison:** there the tabs are set larger and padded
+      wider than on the phone; the switch is at 640px window width (shrink the
+      desktop window and watch it flip). **Selection and keyboard:** exactly
+      one tab is marked active, Tab reaches every tab, Enter switches it, the
+      address carries the tab (`?tab=`). **iOS standalone:** launched from the
+      home screen the same holds; after rotating to landscape and back the bar
+      stays on one line and does not jump.
+- [ ] **Create button in "My Lessons" (#3007):** Precondition: at least one
+      own lesson exists (otherwise the section is not shown at all). Open
+      Content → Import → in the **My Lessons** section head, next to "Combine
+      into a set", there is a **"Create New Lesson"** button. Click → the
+      lesson wizard opens. The button stays visible while the combine
+      multi-select mode is active. On a phone: both head buttons are at least
+      44px tall and wrap cleanly, the heading stays readable.
+      **iOS standalone:** launched from the home screen the button behaves the
+      same, the wizard opens in the same view without browser chrome.
 - [ ] **"Create" tab in the content hub (#3006):** open `/content` → the tab
       bar shows **four** tabs: Discover, My content, Import, **Create**.
       Click Create → the lesson wizard appears in the tab, the address reads
@@ -1600,14 +1621,14 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       Create as well and can move it; the new order applies without a reload.
       Anyone who had set a custom order before this version finds Create at
       the end of the list, the other three unchanged.
-      **Phone (BLOCKING, #3006):** on a real phone in portrait, check whether
-      the four tabs fit on ONE line. Measured in the container (Chromium,
-      German labels) they wrap onto two lines at 430px device width and
-      below. At 390px and 430px that is a regression against before (three
-      tabs fitted on one line there); at 375px and 320px the bar already
-      wrapped. If the wrap is confirmed on the device, REPORT it rather than
-      accepting it: the remedy (shorter labels, a different arrangement) is a
-      separate decision.
+      **Phone (#3006 on the bar from #3012):** on a real phone in portrait,
+      check whether the four tabs fit on ONE line. Measured in the container
+      (Chromium, German labels) they need 337.1px with the compact bar and fit
+      from 375px device width up; without it they needed 451.7px and fitted on
+      no phone at all. On a very narrow device (320px, first-generation iPhone
+      SE) the bar still wraps onto two lines - that is the defined fallback,
+      not a defect. If it wraps on a device at 375px or wider, REPORT it: the
+      measurement then does not hold, and the remedy is a separate decision.
       **iOS standalone:** launch the app from the home screen (no browser
       chrome), open `/content` → the same tab bar, clicking Create switches
       the tab without a page change, and the back gesture does not leave the
