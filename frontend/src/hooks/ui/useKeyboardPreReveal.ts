@@ -76,6 +76,23 @@ export function useKeyboardPreReveal(): void {
         // around there. (matchMedia is absent in some old stubs: no-op.)
         if (!window.matchMedia?.("(pointer: coarse)").matches) return;
 
+        // #3014 — reading 8 caught the reveal CLAMPED at the scroll end
+        // (wanted 218 px, got 61: the lesson page is exactly viewport-high,
+        // docH=895, so a low field simply cannot be scrolled into the safe
+        // band). When that happens the scroller is granted the missing
+        // headroom as temporary inline bottom padding, removed again when
+        // the keyboard context ends (focus leaves for a non-summoner).
+        let headroom: {
+            scroller: HTMLElement;
+            prevPadding: string;
+        } | null = null;
+
+        const clearHeadroom = () => {
+            if (!headroom) return;
+            headroom.scroller.style.paddingBottom = headroom.prevPadding;
+            headroom = null;
+        };
+
         const onFocusIn = (event: FocusEvent) => {
             const el = event.target as Element | null;
             if (!el || !isKeyboardSummoner(el)) return;
@@ -89,7 +106,30 @@ export function useKeyboardPreReveal(): void {
             if (delta <= 0) return;
             // Synchronous, instant: must be applied before Safari decides
             // whether the caret needs its own reveal scroll.
-            scroller.scrollTop += delta;
+            const before = scroller.scrollTop;
+            scroller.scrollTop = before + delta;
+            let applied = Math.round(scroller.scrollTop - before);
+            let short = delta - applied;
+            if (short > 0) {
+                // Clamped (#3014): grant exactly the missing headroom, then
+                // finish the reveal. Cumulative while the same scroller
+                // stays padded; a different scroller releases the old one.
+                if (headroom && headroom.scroller !== scroller) {
+                    clearHeadroom();
+                }
+                if (!headroom) {
+                    headroom = {
+                        scroller,
+                        prevPadding: scroller.style.paddingBottom,
+                    };
+                }
+                const inlinePad =
+                    parseFloat(scroller.style.paddingBottom) || 0;
+                scroller.style.paddingBottom = `${inlinePad + short}px`;
+                scroller.scrollTop = before + delta;
+                applied = Math.round(scroller.scrollTop - before);
+                short = delta - applied;
+            }
             if (vvDiagEnabled()) {
                 appendVvLogEntry({
                     kind: "hook",
@@ -97,14 +137,30 @@ export function useKeyboardPreReveal(): void {
                     fix: document.documentElement.dataset.vvfix ?? "off",
                     decision: "prereveal",
                     delta,
+                    applied,
+                    short,
+                    scroller: scroller.id || scroller.tagName.toLowerCase(),
                     rootY: Math.round(scroller.scrollTop),
                 });
             }
         };
 
+        // The keyboard context ends when focus leaves for a non-summoner —
+        // the same boundary at which the realign hook takes over again. A
+        // field-to-field move keeps the granted headroom (keyboard stays up).
+        const onFocusOut = (event: FocusEvent) => {
+            if (isKeyboardSummoner(event.relatedTarget as Element | null)) {
+                return;
+            }
+            clearHeadroom();
+        };
+
         window.addEventListener("focusin", onFocusIn);
+        window.addEventListener("focusout", onFocusOut);
         return () => {
             window.removeEventListener("focusin", onFocusIn);
+            window.removeEventListener("focusout", onFocusOut);
+            clearHeadroom();
         };
     }, []);
 }
