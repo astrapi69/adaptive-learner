@@ -2247,6 +2247,9 @@ lesson:
     breakdown_heading: "연습 상세"
     breakdown_correct_answer: "정답: {answer}"
     breakdown_unattempted: "시도 안 함"
+    detailed_hide: "간단한 평가"
+    detailed_hint: "이번 회차의 모든 항목, 모든 답과 모든 오답 설명을 보여줍니다"
+    detailed_show: "자세한 평가"
     view_all_answers: "모든 답 보기 ({n})"
     export:
       copy: "결과 복사"

@@ -2471,6 +2471,9 @@
       "breakdown_heading": "Detalhe dos exercícios",
       "breakdown_correct_answer": "Resposta certa: {answer}",
       "breakdown_unattempted": "Não tentado",
+      "detailed_hide": "Avaliação compacta",
+      "detailed_hint": "Mostra todas as secções, todas as respostas e todas as explicações de erros desta ronda",
+      "detailed_show": "Avaliação detalhada",
       "view_all_answers": "Ver todas as respostas ({n})",
       "export": {
         "copy": "Copiar resultado",

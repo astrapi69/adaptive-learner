@@ -2416,6 +2416,9 @@
       "breakdown_heading": "Rincian latihan",
       "breakdown_correct_answer": "Jawaban yang benar: {answer}",
       "breakdown_unattempted": "Tidak dicoba",
+      "detailed_hide": "Evaluasi ringkas",
+      "detailed_hint": "Menampilkan semua bagian, semua jawaban, dan semua penjelasan kesalahan pada putaran ini",
+      "detailed_show": "Evaluasi terperinci",
       "view_all_answers": "Lihat semua jawaban ({n})",
       "export": {
         "copy": "Salin hasil",
