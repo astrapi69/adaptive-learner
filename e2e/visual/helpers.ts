@@ -1285,6 +1285,19 @@ async function settleDashboard(
         await expect(page.getByTestId("review-queue-card")).toBeVisible({
             timeout: 20_000,
         });
+        // #3016 — the "Weiterlernen" card is the last racing element and
+        // the reason the dashboard measured 1449 or 1580 px per run. It
+        // renders NOTHING while its lookup is in flight and NOTHING when
+        // empty (PausedLessonsCard: ``paused === null`` and
+        // ``length === 0`` both return null), so it publishes no loading
+        // state to wait on - the shot simply caught it before or after.
+        // The played lesson always produces its row, so waiting for the
+        // card turns that race into a signal: if the row ever stops
+        // appearing the motif fails loudly instead of quietly baselining
+        // a dashboard with one card missing.
+        await expect(page.getByTestId("paused-lessons-card")).toBeVisible({
+            timeout: 20_000,
+        });
     }
 }
 
