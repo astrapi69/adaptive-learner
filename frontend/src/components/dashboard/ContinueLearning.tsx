@@ -11,7 +11,10 @@
  *                     counter.
  *   - next          — the just-completed lesson's stars + a pointer
  *                     to the next lesson in the set.
- *   - set complete  — every lesson in the set is done.
+ *   - set complete  - every lesson in the set is done; the row carries a
+ *                     visible completion tag and ranks below every actionable
+ *                     row, so the finish is reported without being proposed
+ *                     as the next thing to do (#2123 + #3020).
  *
  * Storage-mode-agnostic: every read routes through getStorage()
  * so the Dexie-mode GitHub-Pages build computes the section
@@ -192,8 +195,14 @@ export default function ContinueLearning({
             const resolved = await Promise.all(
                 ranked.map(async (input) => {
                     const {group, action} = input;
-                    const isReview =
-                        classifyEntryCandidate(input) === "review";
+                    const tier = classifyEntryCandidate(input);
+                    const isReview = tier === "review";
+                    // #3020 - a finished set is reported as finished even when
+                    // its most-recent row still resolves to a forward action
+                    // (the learner marked the set completed by hand). The
+                    // revisit target is then the lesson they last worked on,
+                    // not an unstarted successor.
+                    const isDone = tier === "done";
 
                     // Fetch lesson detail for the displayed lessons — bounded
                     // by maxItems, cheap from the local cache, and guarded so
@@ -206,7 +215,7 @@ export default function ContinueLearning({
                         ),
                     );
                     const nextLesson =
-                        !isReview && action.mode === "next"
+                        !isReview && !isDone && action.mode === "next"
                             ? await safe(() =>
                                   storage.contentLoader.getLesson(
                                       group.source,
@@ -245,22 +254,34 @@ export default function ContinueLearning({
                         return item;
                     }
 
+                    const mode: ContinueMode = isDone
+                        ? "set_complete"
+                        : action.mode;
                     const item: DisplayItem = {
                         source: group.source,
                         setId: group.setId,
                         setTitle,
-                        mode: action.mode,
+                        mode,
                         targetRoute: lessonRoute(
                             group.source,
                             group.setId,
-                            action.targetFilename,
+                            isDone
+                                ? group.mostRecent.lesson_filename
+                                : action.targetFilename,
                         ),
                         lessonTitle,
                         updatedAt: group.mostRecent.updated_at,
                     };
-                    if (action.mode === "resume") {
+                    if (mode === "resume") {
                         item.stepsDone = completedStepCount(group.mostRecent);
                         item.totalSteps = lessonStepTotal(rowLesson);
+                    } else if (
+                        mode === "set_complete" &&
+                        group.mostRecent.status !== "completed"
+                    ) {
+                        // A hand-marked set whose last row is unfinished has no
+                        // honest score - show the tag without stars.
+                        item.stars = 0;
                     } else {
                         item.stars = rowStars(group.mostRecent);
                         const correct = group.mostRecent.score_correct ?? 0;
@@ -350,15 +371,32 @@ export default function ContinueLearning({
                                 )}
                             </span>
                             <span className="flex min-w-0 flex-1 flex-col">
-                                <span
-                                    className="truncate font-medium text-foreground"
-                                    title={`${item.setTitle} - ${item.lessonTitle}`}
-                                >
-                                    {item.setTitle}
-                                    <span className="text-muted-foreground">
-                                        {" - "}
-                                        {item.lessonTitle}
+                                <span className="flex min-w-0 items-center gap-2">
+                                    <span
+                                        className="truncate font-medium text-foreground"
+                                        title={`${item.setTitle} - ${item.lessonTitle}`}
+                                    >
+                                        {item.setTitle}
+                                        <span className="text-muted-foreground">
+                                            {" - "}
+                                            {item.lessonTitle}
+                                        </span>
                                     </span>
+                                    {/* #3020 - the finish itself is the message:
+                                        a completed set carries a visible tag so
+                                        the learner sees the set is done instead
+                                        of watching the row silently disappear. */}
+                                    {item.mode === "set_complete" && (
+                                        <span
+                                            className="shrink-0 rounded-full border border-border bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                                            data-testid={`continue-learning-badge-${item.setId}`}
+                                        >
+                                            {t(
+                                                "content.continue_learning.completed",
+                                                "Set completed",
+                                            )}
+                                        </span>
+                                    )}
                                 </span>
                                 <span className="flex min-w-0 text-sm text-muted-foreground">
                                     {item.mode === "review" && (
@@ -431,12 +469,6 @@ export default function ContinueLearning({
                                         >
                                             <span className="shrink-0">
                                                 <StarRow stars={item.stars ?? 0} />
-                                            </span>
-                                            <span className="min-w-0 truncate">
-                                                {t(
-                                                    "content.continue_learning.completed",
-                                                    "Set completed",
-                                                )}
                                             </span>
                                         </span>
                                     )}
