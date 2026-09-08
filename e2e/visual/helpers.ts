@@ -998,8 +998,7 @@ export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
             // the content. Two motifs of one surface with two different
             // ready contracts is how one of them stays flaky.
             await waitForSrsQuiescence(page, {expectRows: true});
-            await waitForNoPausedProgress(page);
-            await page.goto("/dashboard");
+            await gotoDashboardInApp(page);
             await settleDashboard(page, {populated: true});
             return true;
         case "learning-path":
@@ -1161,59 +1160,6 @@ async function gotoLessonMatching(page: Page): Promise<boolean> {
     return reached;
 }
 
-/**
- * Wait until no lesson-progress row is still ``paused`` (#3016).
- *
- * The playthrough marks its lesson ``paused`` while it runs and
- * ``completed`` at the end; that final Dexie write is asynchronous. The
- * dashboard's "Weiterlernen" card reads exactly those rows, so a capture
- * that lands between the two states shows one card more than a capture
- * after it - a 131 px page-height flip, per run and per theme, on a
- * surface nothing else distinguishes. Same shape as
- * {@link waitForSrsQuiescence}: wait for the store, not for the pixel.
- *
- * Call it BEFORE navigating to the dashboard. The card reads its rows
- * ONCE on mount and never re-reads, so a wait placed after the mount
- * measures a state the render no longer depends on - the reason the
- * first attempt at this (inside {@link settleDashboard}) left the split
- * exactly as it was.
- */
-async function waitForNoPausedProgress(page: Page): Promise<void> {
-    await page.waitForFunction(
-        () =>
-            new Promise<boolean>((resolve, reject) => {
-                const open = indexedDB.open("adaptive-learner");
-                open.onerror = () => reject(open.error);
-                open.onsuccess = () => {
-                    const db = open.result;
-                    try {
-                        const req = db
-                            .transaction("lessonProgress", "readonly")
-                            .objectStore("lessonProgress")
-                            .getAll();
-                        req.onsuccess = () => {
-                            db.close();
-                            const rows = req.result as Array<
-                                Record<string, unknown>
-                            >;
-                            resolve(
-                                rows.every((row) => row.status !== "paused"),
-                            );
-                        };
-                        req.onerror = () => {
-                            db.close();
-                            reject(req.error);
-                        };
-                    } catch (err) {
-                        db.close();
-                        reject(err);
-                    }
-                };
-            }),
-        undefined,
-        {timeout: 20_000},
-    );
-}
 
 /**
  * #1540 — the exercise flow persists SRS rows fire-and-forget
@@ -1278,6 +1224,28 @@ async function waitForSrsQuiescence(
         {expectRows: opts.expectRows, setId: SET_ID},
         {timeout: 15_000, polling: 500},
     );
+}
+
+/**
+ * Open the dashboard by CLIENT-SIDE navigation from wherever the seed
+ * left the browser (#3016).
+ *
+ * Not ``page.goto``: a full navigation fires ``beforeunload`` on the
+ * lesson route, and its handler writes a "paused" lesson-progress row
+ * (``useLessonFlowControl``, Phase 63B). That write races the dashboard's
+ * own read of those rows, and the "Weiterlernen" card it feeds is exactly
+ * the 131 px by which the dashboard measured 1449 or 1580 px - per run,
+ * per theme, in both directions. No wait can order the two: the write is
+ * started by the very navigation the read follows.
+ *
+ * A route change inside the app removes the listener through the effect
+ * cleanup instead of firing it, so no row is written and the card is
+ * deterministically absent. The brand link in the nav points at
+ * /dashboard in every nav state, the lesson-compact one included.
+ */
+async function gotoDashboardInApp(page: Page): Promise<void> {
+    await page.locator("a.nav-brand").first().click();
+    await page.waitForURL("**/dashboard", {timeout: 20_000});
 }
 
 /** Every loading placeholder the dashboard publishes (#3016). A card
@@ -1449,8 +1417,7 @@ export async function gotoSurface(
             await seedLearner(page);
             await playBundledLesson(page, "summary");
             await waitForSrsQuiescence(page, {expectRows: true});
-            await waitForNoPausedProgress(page);
-            await page.goto("/dashboard");
+            await gotoDashboardInApp(page);
             await settleDashboard(page, {populated: true});
             return true;
         case "content-browser":
