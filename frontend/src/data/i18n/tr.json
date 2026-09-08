@@ -2471,6 +2471,9 @@
       "breakdown_heading": "Alıştırma dökümü",
       "breakdown_correct_answer": "Doğru cevap: {answer}",
       "breakdown_unattempted": "Denenmedi",
+      "detailed_hide": "Kısa değerlendirme",
+      "detailed_hint": "Bu turdaki tüm bölümleri, tüm yanıtları ve tüm hata açıklamalarını gösterir",
+      "detailed_show": "Ayrıntılı değerlendirme",
       "view_all_answers": "Tüm yanıtları gör ({n})",
       "export": {
         "copy": "Sonucu kopyala",

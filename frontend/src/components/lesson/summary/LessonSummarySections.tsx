@@ -14,7 +14,15 @@
  */
 
 import { useState } from "react";
-import { ClipboardCopy, Download, FileJson, Star, Zap } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  ClipboardCopy,
+  Download,
+  FileJson,
+  Star,
+  Zap,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
@@ -489,6 +497,7 @@ export function SummaryXp({
 export function SummaryExplanations({
   sessionErrors,
   lesson,
+  detailed = false,
   t,
 }: {
   sessionErrors: ElementError[];
@@ -497,9 +506,14 @@ export function SummaryExplanations({
    *  (or when an error's exercise no longer resolves) the entry keeps the
    *  answer-only rendering. */
   lesson?: ContentLesson;
+  /** #3031 — the summary's detailed-evaluation view. The learner asked for
+   *  the complete picture in this moment, so the section renders regardless
+   *  of its own Settings toggle and without the compact 5-entry cap. The
+   *  stored preference is never written; it only stops deciding this render. */
+  detailed?: boolean;
   t: TFn;
 }) {
-  if (!readExplanationsEnabled()) return null;
+  if (!detailed && !readExplanationsEnabled()) return null;
   // #2547 — ``mastered`` is an SRS-streak flag (3 consecutive correct
   // answers), not "the last attempt was wrong". A freshly correct answer
   // (even the very first, or a case-insensitive match) advances
@@ -509,9 +523,12 @@ export function SummaryExplanations({
   // attempt resets correct_streak to 0 (applyScoreOutcome,
   // element-errors-dexie.ts), so correct_streak === 0 is exactly "the
   // last attempt on this element was wrong".
-  const mistakes = sessionErrors
-    .filter((e) => e.correct_streak === 0 && (e.user_answer ?? "").trim() !== "")
-    .slice(0, 5);
+  const wrong = sessionErrors.filter(
+    (e) => e.correct_streak === 0 && (e.user_answer ?? "").trim() !== "",
+  );
+  // #3031 — the cap exists to keep the compact summary compact. The detailed
+  // view is the place where every mistake of the run belongs.
+  const mistakes = detailed ? wrong : wrong.slice(0, 5);
   if (mistakes.length === 0) return null;
   return (
     <section
@@ -636,6 +653,55 @@ export function SummaryExportActions({
           {t("lesson.summary.export.anki", "Export cards (Anki)")}
         </Button>
       )}
+    </div>
+  );
+}
+
+/**
+ * The detailed-evaluation toggle (#3031). Lifts, for the current view only,
+ * the three things the compact summary holds back: sections switched off in
+ * Settings, the collapsed answers overview, and the mistake explanations
+ * (own toggle plus a 5-entry cap).
+ *
+ * Lives here rather than inline in the parent so LessonSummary's render stays
+ * under the complexity ratchet - the label and icon branches are this
+ * component's business, not the panel's.
+ *
+ * @param detailed - True while the detailed view is showing.
+ * @param onToggle - Flip the view. Writes no preference: the detailed view is
+ *   derived from the run's data, so there is nothing to persist.
+ */
+export function SummaryDetailedToggle({
+  detailed,
+  onToggle,
+  t,
+}: {
+  detailed: boolean;
+  onToggle: () => void;
+  t: TFn;
+}) {
+  const label = detailed
+    ? t("lesson.summary.detailed_hide", "Compact evaluation")
+    : t("lesson.summary.detailed_show", "Detailed evaluation");
+  const Icon = detailed ? ChevronUp : ChevronDown;
+  return (
+    <div className="mb-4 flex justify-end">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="min-h-11 gap-2"
+        aria-expanded={detailed}
+        title={t(
+          "lesson.summary.detailed_hint",
+          "Shows every section, all answers and every mistake explanation of this run",
+        )}
+        onClick={onToggle}
+        data-testid="lesson-summary-detailed-toggle"
+      >
+        <Icon aria-hidden="true" />
+        {label}
+      </Button>
     </div>
   );
 }

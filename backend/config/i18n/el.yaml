@@ -2289,6 +2289,9 @@ lesson:
     breakdown_heading: "Ανάλυση ασκήσεων"
     breakdown_correct_answer: "Σωστή απάντηση: {answer}"
     breakdown_unattempted: "Δεν επιχειρήθηκε"
+    detailed_hide: "Συνοπτική αξιολόγηση"
+    detailed_hint: "Δείχνει όλες τις ενότητες, όλες τις απαντήσεις και όλες τις εξηγήσεις λαθών αυτού του γύρου"
+    detailed_show: "Αναλυτική αξιολόγηση"
     view_all_answers: "Δείτε όλες τις απαντήσεις ({n})"
     export:
       copy: "Αντιγραφή αποτελέσματος"

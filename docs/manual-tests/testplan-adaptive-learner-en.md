@@ -1938,6 +1938,23 @@ each card row (`CardImageField`).
       spelled out
 - [ ] A fully correct row shows its question but no mistake diff
 
+### Summary: the detailed evaluation on one button (#3031)
+- [ ] Finish a lesson: the "Detailed evaluation" button sits directly
+      under the heading
+- [ ] Switch a section off in Settings > Learning > "Lesson summary"
+      (e.g. "Result export"), then finish a lesson: the section is
+      missing - after pressing "Detailed evaluation" it is there
+- [ ] In the detailed view "View all answers" is already expanded
+- [ ] "Why you missed these" appears even with its own toggle off, and
+      shows more than five mistakes when the run had more
+- [ ] Press again ("Compact evaluation"): everything is back as before,
+      the switched-off section is gone again
+- [ ] Back in Settings: the switched-off sections are still switched
+      off - the button stores nothing
+- [ ] The correction round stays collapsed in the detailed view too (no
+      keyboard pops up on the phone)
+- [ ] Toggling keeps the button in place, the page does not jump
+
 ### Leaving a lesson returns to its set (#2811)
 - [ ] Pause and leave a set lesson: the app lands on the SET page with
       the lesson list, not on "My content"

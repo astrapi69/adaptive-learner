@@ -2287,6 +2287,9 @@ lesson:
     breakdown_heading: "演習の内訳"
     breakdown_correct_answer: "正解: {answer}"
     breakdown_unattempted: "未挑戦"
+    detailed_hide: "簡易表示"
+    detailed_hint: "この回のすべてのセクション、すべての回答、すべての誤答の解説を表示します"
+    detailed_show: "詳細な評価"
     view_all_answers: "すべての回答を見る ({n})"
     export:
       copy: "結果をコピー"

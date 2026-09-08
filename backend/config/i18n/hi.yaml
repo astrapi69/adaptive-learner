@@ -2232,6 +2232,9 @@ lesson:
     breakdown_heading: अभ्यास विवरण
     breakdown_correct_answer: 'सही उत्तर: {answer}'
     breakdown_unattempted: प्रयास नहीं किया
+    detailed_hide: "संक्षिप्त मूल्यांकन"
+    detailed_hint: "इस दौर के सभी अनुभाग, सभी उत्तर और सभी गलती स्पष्टीकरण दिखाता है"
+    detailed_show: "विस्तृत मूल्यांकन"
     view_all_answers: "सभी उत्तर देखें ({n})"
     export:
       copy: परिणाम कॉपी करें

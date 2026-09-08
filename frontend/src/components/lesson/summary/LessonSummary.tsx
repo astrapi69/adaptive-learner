@@ -12,6 +12,12 @@
  * all default ON). The heading, the mark-as-complete action and the
  * secondary next / repeat / exit actions are always rendered so the panel
  * never becomes a dead end.
+ *
+ * #3031 — the "Detailed evaluation" toggle under the heading renders the
+ * complete evaluation on demand: the switched-off sections included, the
+ * answers overview expanded, the mistake explanations regardless of their
+ * own toggle and without the compact 5-entry cap. It is view state only,
+ * derived from this run's data on every render - no preference is written.
  */
 
 import {
@@ -35,6 +41,7 @@ import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";
 import {
   SummaryConfetti,
+  SummaryDetailedToggle,
   SummaryExamPanel,
   SummaryExplanations,
   SummaryExportActions,
@@ -333,6 +340,14 @@ export default function LessonSummary({
   const sections = useSummarySections();
   const nextStepsEnabled = isSummarySectionEnabled(sections, "next_steps");
 
+  // #3031 — the detailed-evaluation view. The compact summary holds three
+  // things back: sections switched off in Settings, the collapsed answers
+  // overview, and the mistake explanations (own toggle + a 5-entry cap). One
+  // button lifts all three at once, for THIS view only: every stored
+  // preference is left exactly as it is, and the detailed view is derived
+  // from the run's data on each render, so there is nothing to persist.
+  const [detailed, setDetailed] = useState(false);
+
   // The exact exercises failed in THIS run — drives the
   // "Retry Errors" card + the ErrorReplay page (via router state).
   const failedExercises = useMemo(
@@ -562,7 +577,9 @@ export default function LessonSummary({
       />
     ),
     // #1007 Phase 2 — the collected-answers "View all answers" detail.
-    answers: <LessonAnswersDetail enabled breakdown={breakdown} />,
+    answers: (
+      <LessonAnswersDetail enabled open={detailed} breakdown={breakdown} />
+    ),
     // #138 — export the result for AI-assisted practice.
     export: (
       <SummaryExportActions
@@ -635,6 +652,7 @@ export default function LessonSummary({
       className={`lesson-summary${immediateStars === 3 ? " is-celebrating" : ""}`}
       data-testid="lesson-summary"
       data-stars={String(stars)}
+      data-detailed={String(detailed)}
       aria-label={t("lesson.summary.aria_label", "Lesson summary")}
     >
       <SummaryConfetti active={celebrateConfetti} />
@@ -643,9 +661,19 @@ export default function LessonSummary({
           item's min-content width so a long unbreakable title word wraps
           instead of overflowing the viewport on mobile. */}
       <h2 className="wrap-anywhere">
-        {isCompleted ? <CheckCircle2 size={20} aria-hidden="true" /> : null}
+        {isCompleted && <CheckCircle2 size={20} aria-hidden="true" />}
         {t("lesson.summary.heading", "You finished")}: {lesson.title}
       </h2>
+
+      {/* #3031 — the detailed-evaluation toggle. Sits directly under the
+          heading on purpose: everything it reveals grows BELOW it, so the
+          button keeps its position and the page does not jump under the
+          learner's finger when the view expands. */}
+      <SummaryDetailedToggle
+        detailed={detailed}
+        onToggle={() => setDetailed((shown) => !shown)}
+        t={t}
+      />
 
       {/* #2889 — the ticket-economy banner: banks the tickets this run
           earned (full score / full hearts / streak milestones) and offers
@@ -662,8 +690,8 @@ export default function LessonSummary({
       />
 
       {/* #1426 — the configurable sections, in the user-configured order.
-          Only sections the config marks ON are rendered; each keeps its own
-          data self-gate.
+          Only sections the config marks ON are rendered (#3031: the detailed
+          view renders them all); each keeps its own data self-gate.
 
           #1432 — the #599 "why you missed these" mistake review renders
           immediately ABOVE the correction round (following it wherever the user
@@ -678,13 +706,17 @@ export default function LessonSummary({
           ``review/reviewPref``), so it is spliced in here rather than added
           to the order block. */}
       {sections.map(({ id, enabled }) => {
-        if (!enabled) return null;
+        // #3031 — the detailed view renders every section, including the ones
+        // the learner switched off; their stored flags are untouched and take
+        // effect again the moment the view returns to compact.
+        if (!enabled && !detailed) return null;
         if (id === "correction") {
           return (
             <Fragment key={id}>
               <SummaryExplanations
                 sessionErrors={sessionErrors}
                 lesson={lesson}
+                detailed={detailed}
                 t={t}
               />
               {sectionNodes[id]}
@@ -707,7 +739,7 @@ export default function LessonSummary({
           the mistake review (#599) falls back to just above the continue-actions
           — it is gated by its own toggle and must never be lost with correction
           off. */}
-      {!isSummarySectionEnabled(sections, "correction") && (
+      {!isSummarySectionEnabled(sections, "correction") && !detailed && (
         <SummaryExplanations
           sessionErrors={sessionErrors}
           lesson={lesson}
