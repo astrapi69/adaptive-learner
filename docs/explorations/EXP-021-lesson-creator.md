@@ -80,7 +80,16 @@ Analyse-Input) und den Share-Wizard aus Phase 64C.
 
 - **Content-Browser:** prominenter Button "Neue Lektion erstellen".
 - **Meine-Lektionen-Bereich:** "+"-Button.
-- **Dashboard:** Schnellaktion, wenn der Nutzer noch keine Lektion hat.
+- **Dashboard:** Schnellaktion, dauerhaft sichtbar (#3008).
+
+Die Dashboard-Zeile stand ursprünglich unter der Bedingung "wenn der
+Nutzer noch keine Lektion hat". Umgesetzt ist sie ohne Bedingung, und das
+bleibt so: "hat eigene Lektionen" ist heute nur über
+``contentLoader.listSets()`` zu beantworten, also über einen zusätzlichen
+Ladepfad auf dem Dashboard. Der Knopf wäre dann erst nach dem Laden
+entscheidbar und würde ausgerechnet der Zielgruppe nachträglich
+eingeblendet. Das Flackern wiegt schwerer als ein Knopf weniger in der
+Schnellaktionsleiste.
 
 ## Wiederverwendung statt Neubau
 
