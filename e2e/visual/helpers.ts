@@ -1161,6 +1161,54 @@ async function gotoLessonMatching(page: Page): Promise<boolean> {
 }
 
 /**
+ * Wait until no lesson-progress row is still ``paused`` (#3016).
+ *
+ * The playthrough marks its lesson ``paused`` while it runs and
+ * ``completed`` at the end; that final Dexie write is asynchronous. The
+ * dashboard's "Weiterlernen" card reads exactly those rows, so a capture
+ * that lands between the two states shows one card more than a capture
+ * after it - a 131 px page-height flip, per run and per theme, on a
+ * surface nothing else distinguishes. Same shape as
+ * {@link waitForSrsQuiescence}: wait for the store, not for the pixel.
+ */
+async function waitForNoPausedProgress(page: Page): Promise<void> {
+    await page.waitForFunction(
+        () =>
+            new Promise<boolean>((resolve, reject) => {
+                const open = indexedDB.open("adaptive-learner");
+                open.onerror = () => reject(open.error);
+                open.onsuccess = () => {
+                    const db = open.result;
+                    try {
+                        const req = db
+                            .transaction("lessonProgress", "readonly")
+                            .objectStore("lessonProgress")
+                            .getAll();
+                        req.onsuccess = () => {
+                            db.close();
+                            const rows = req.result as Array<
+                                Record<string, unknown>
+                            >;
+                            resolve(
+                                rows.every((row) => row.status !== "paused"),
+                            );
+                        };
+                        req.onerror = () => {
+                            db.close();
+                            reject(req.error);
+                        };
+                    } catch (err) {
+                        db.close();
+                        reject(err);
+                    }
+                };
+            }),
+        undefined,
+        {timeout: 20_000},
+    );
+}
+
+/**
  * #1540 — the exercise flow persists SRS rows fire-and-forget
  * (``void onComplete(scored)`` -> ``elementErrors.recordBulk``), so a
  * cross-document navigation right after a check can kill the write
@@ -1286,18 +1334,15 @@ async function settleDashboard(
             timeout: 20_000,
         });
         // #3016 — the "Weiterlernen" card is the last racing element and
-        // the reason the dashboard measured 1449 or 1580 px per run. It
-        // renders NOTHING while its lookup is in flight and NOTHING when
-        // empty (PausedLessonsCard: ``paused === null`` and
-        // ``length === 0`` both return null), so it publishes no loading
-        // state to wait on - the shot simply caught it before or after.
-        // The played lesson always produces its row, so waiting for the
-        // card turns that race into a signal: if the row ever stops
-        // appearing the motif fails loudly instead of quietly baselining
-        // a dashboard with one card missing.
-        await expect(page.getByTestId("paused-lessons-card")).toBeVisible({
-            timeout: 20_000,
-        });
+        // the reason the dashboard measured 1449 or 1580 px per run: it
+        // lists lessonProgress rows with ``status === "paused"``, and the
+        // playthrough leaves exactly such a row until its completion
+        // write lands. The card publishes no loading state to wait on
+        // (``paused === null`` and ``length === 0`` both render null), so
+        // the frame caught it before or after that write. Waiting for the
+        // write itself is the deterministic end of the race - after it,
+        // the card is absent for a reason, not by timing.
+        await waitForNoPausedProgress(page);
     }
 }
 
