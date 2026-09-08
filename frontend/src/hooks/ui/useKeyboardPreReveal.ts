@@ -28,9 +28,23 @@
  *     applied synchronously (no smooth animation) so it wins the race
  *     against Safari's own reveal evaluation.
  *
+ * The reveal runs TWICE per focus episode (#3019). At ``focusin`` the
+ * shell still measures ``100dvh`` with the content exactly filling it
+ * (measured: ``docH === innerH``), so there is NO scroll room and the
+ * reveal is clamped (reading 8: wanted 218 px, applied 61). Moments
+ * later the keyboard opens, ``interactive-widget=resizes-content``
+ * shrinks the layout viewport (``innerH`` 895 -> 421) and the same
+ * content now overflows a much shorter scroller — roughly 474 px of
+ * room appear. A ``visualViewport`` resize listener therefore retries
+ * the reveal once, when the room finally exists. Only the app scroller
+ * moves, never ``window``, so this never competes with Safari's pan
+ * channel (the #1832 mistake), and nothing about the layout changes —
+ * the padding approach that did was reverted in #3017.
+ *
  * While the ``?vvdiag=1`` probe is enabled, each applied reveal is
  * logged to the persistent protocol (``kind: "hook"``,
- * ``decision: "prereveal"``) so device readings show the actor.
+ * ``decision: "prereveal"`` / ``"prereveal-late"``) so device readings
+ * show the actor.
  *
  * @example
  * export default function App() {
@@ -52,6 +66,13 @@ import {isKeyboardSummoner} from "../../lib/viewport/keyboard-focus";
  * lower ~53% of the screen) while leaving its context visible above.
  */
 const TARGET_VIEWPORT_FRACTION = 1 / 3;
+
+/**
+ * Minimum visual-viewport shrink (px) that counts as "keyboard open" —
+ * the same threshold ``useVisualViewportRealign`` uses, so both hooks
+ * agree on when Safari owns the reveal.
+ */
+const KEYBOARD_OPEN_MIN_PX = 150;
 
 /** The nearest ancestor that can actually scroll vertically. */
 function findScrollableAncestor(el: Element): HTMLElement | null {
@@ -76,9 +97,13 @@ export function useKeyboardPreReveal(): void {
         // around there. (matchMedia is absent in some old stubs: no-op.)
         if (!window.matchMedia?.("(pointer: coarse)").matches) return;
 
-        const onFocusIn = (event: FocusEvent) => {
-            const el = event.target as Element | null;
-            if (!el || !isKeyboardSummoner(el)) return;
+        /**
+         * Scroll ``el`` into the safe band, as far as the scroller allows.
+         * Returns what was actually applied — the ``focusin`` pass is
+         * routinely clamped to a fraction of it (#3019), which is why the
+         * keyboard-open retry below exists.
+         */
+        const reveal = (el: Element, decision: string): void => {
             const scroller =
                 findScrollableAncestor(el) ?? document.getElementById("root");
             if (!scroller) return;
@@ -89,22 +114,70 @@ export function useKeyboardPreReveal(): void {
             if (delta <= 0) return;
             // Synchronous, instant: must be applied before Safari decides
             // whether the caret needs its own reveal scroll.
-            scroller.scrollTop += delta;
+            const before = scroller.scrollTop;
+            scroller.scrollTop = before + delta;
+            const applied = Math.round(scroller.scrollTop - before);
             if (vvDiagEnabled()) {
                 appendVvLogEntry({
                     kind: "hook",
                     ts: Date.now(),
                     fix: document.documentElement.dataset.vvfix ?? "off",
-                    decision: "prereveal",
+                    decision,
                     delta,
+                    applied,
                     rootY: Math.round(scroller.scrollTop),
                 });
             }
         };
 
+        // One late retry per focus episode: the room only exists once the
+        // keyboard has shrunk the layout viewport (#3019).
+        let retried = false;
+        // The visible height at focus time. The retry compares against THIS,
+        // not against ``innerHeight - viewport.height``: under
+        // interactive-widget=resizes-content both shrink together, so that
+        // difference reads 0 while the keyboard is wide open — the very trap
+        // that made the realign hook fight Safari (#2983).
+        let heightAtFocus = 0;
+
+        const onFocusIn = (event: FocusEvent) => {
+            const el = event.target as Element | null;
+            if (!el || !isKeyboardSummoner(el)) return;
+            retried = false;
+            heightAtFocus = window.visualViewport?.height ?? window.innerHeight;
+            reveal(el, "prereveal");
+        };
+
+        // The keyboard context ends when focus leaves for a non-summoner;
+        // a field-to-field move keeps the episode (keyboard stays up).
+        const onFocusOut = (event: FocusEvent) => {
+            if (isKeyboardSummoner(event.relatedTarget as Element | null)) {
+                return;
+            }
+            retried = true;
+        };
+
+        const viewport = window.visualViewport;
+        const onViewportResize = () => {
+            if (retried || !viewport) return;
+            // Only once the keyboard is demonstrably open: the visible height
+            // dropped well below what it was when the field took focus.
+            if (heightAtFocus - viewport.height < KEYBOARD_OPEN_MIN_PX) {
+                return;
+            }
+            const active = document.activeElement;
+            if (!active || !isKeyboardSummoner(active)) return;
+            retried = true;
+            reveal(active, "prereveal-late");
+        };
+
         window.addEventListener("focusin", onFocusIn);
+        window.addEventListener("focusout", onFocusOut);
+        viewport?.addEventListener("resize", onViewportResize);
         return () => {
             window.removeEventListener("focusin", onFocusIn);
+            window.removeEventListener("focusout", onFocusOut);
+            viewport?.removeEventListener("resize", onViewportResize);
         };
     }, []);
 }
