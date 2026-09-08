@@ -1227,6 +1227,33 @@ async function waitForSrsQuiescence(
 }
 
 /**
+ * Wait until a testid's text stops changing (#3016).
+ *
+ * For values a surface keeps refining while it is open - the offline
+ * cache line counts what the service worker has stored so far - there is
+ * no "done" signal to wait for; the page simply settles. Two agreeing
+ * reads a poll apart are that settling, the same shape as
+ * {@link waitForStableLayout}, and the bound keeps a never-settling value
+ * from hanging the run.
+ */
+async function waitForStableText(
+    page: Page,
+    testId: string,
+    {intervalMs = 400, maxWaitMs = 15_000} = {},
+): Promise<void> {
+    const locator = page.getByTestId(testId);
+    await expect(locator).toBeVisible({timeout: 20_000});
+    const deadline = Date.now() + maxWaitMs;
+    let previous: string | null = null;
+    while (Date.now() < deadline) {
+        const current = ((await locator.textContent()) ?? "").trim();
+        if (current && current !== "…" && current === previous) return;
+        previous = current;
+        await page.waitForTimeout(intervalMs);
+    }
+}
+
+/**
  * Open the dashboard by CLIENT-SIDE navigation from wherever the seed
  * left the browser (#3016).
  *
@@ -1529,12 +1556,13 @@ export async function gotoSurface(
                 timeout: 20_000,
             });
             // #3016 — the offline-cache line renders a bare "…" until
-            // getCacheInfo resolves; its final text is a different number
-            // of lines, so the page height flipped by ~24px per run once
-            // the frame started following the content.
-            await expect(page.getByTestId("cache-summary")).not.toHaveText("…", {
-                timeout: 20_000,
-            });
+            // getCacheInfo resolves, and then reports what the service
+            // worker has cached SO FAR. In CI the sets are fetched over
+            // the network while the page is already open, so the number
+            // keeps moving and its text wraps to a second line at 768px:
+            // a 24px page-height flip (7028 vs 7052) that survived the
+            // plain "no longer …" wait. Sample until two reads agree.
+            await waitForStableText(page, "cache-summary");
             return true;
         case "settings-about":
             await seedLearner(page);
