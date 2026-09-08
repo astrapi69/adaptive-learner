@@ -818,6 +818,11 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Lektion mit voller Punktzahl abschließen: die Zusammenfassung
       zeigt das Ticket-Banner ("Belohnung freigeschaltet ...") mit dem
       Knopf "Jetzt spielen", der zur Arcade führt
+- [ ] Arcade-Schalter aus (#3029): dieselbe Lektion mit voller Punktzahl
+      zeigt in der Zusammenfassung WEDER Banner noch "Jetzt spielen",
+      und es wird kein Ticket gutgeschrieben; Arcade-Schalter wieder an
+      und eine weitere neue Lektion perfekt abgeschlossen: Banner und
+      Knopf sind wieder da
 - [ ] Herzen aktiv (#2878) und Durchlauf ohne Herzverlust beendet: ein
       weiteres Ticket (volle Punktzahl + alle Herzen = 2 Tickets)
 - [ ] Streak-Meilensteine (3/7/14/30 Tage): beim Erreichen gibt es je

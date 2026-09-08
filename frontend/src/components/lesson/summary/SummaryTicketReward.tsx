@@ -3,7 +3,8 @@
  * lesson summary: banks the tickets this run earned (full first-pass
  * score, a run survived with all hearts, newly reached streak
  * milestones) into the arcade ticket store and offers the jump into
- * the arcade. Self-gating on the game mode + ticket switch; the
+ * the arcade. Self-gating on the game mode + ticket switch + arcade
+ * switch (#3029); the
  * already-completed guard keeps a revisited summary from re-awarding
  * (a "Practice again" restart resets the row and earns fresh).
  *
@@ -25,6 +26,7 @@ import {
     awardTickets,
 } from "../../../lib/arcade/ticket-store";
 import {ticketsForRun} from "../../../lib/arcade/ticket-rules";
+import {playfulArcadeActive} from "../../../lib/learning/playful/playfulArcadePref";
 import {
     playfulTicketsActive,
     readTicketCap,
@@ -54,7 +56,11 @@ export default function SummaryTicketReward({
 }: SummaryTicketRewardProps) {
     const {t} = useI18n();
     const navigate = useNavigate();
-    const active = playfulTicketsActive() && userId !== "";
+    // #3029 — the arcade switch gates the banner too: it is the button's
+    // destination, and "off" means the arcade card and games are hidden
+    // completely. Without this the summary offered "Play now" into a page
+    // that only shows the gate notice.
+    const active = playfulTicketsActive() && playfulArcadeActive() && userId !== "";
     const [granted, setGranted] = useState(0);
 
     // The run award fires ONCE per summary mount (the ref guards the
