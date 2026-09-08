@@ -2282,7 +2282,7 @@ im API-Modus auftrat.
       neu öffnen → zurückgestellter Status ist noch da
 - [ ] iPhone-PWA: gleicher Ablauf (dort ursprünglich beobachtet)
 
-### Weitermachen-Vorschlag: keine abgeschlossenen/zurueckgestellten Sets ohne faellige Wiederholungen (#2123)
+### Weitermachen-Vorschlag: Rangfolge und sichtbarer Set-Abschluss (#2123, #3020)
 
 Ort: Dashboard → Übersicht, oberster Block "Weitermachen" / "Continue
 Learning". In BEIDEN Speichermodi prüfen (API + Dexie), die Logik ist
@@ -2290,18 +2290,27 @@ modus-unabhängig.
 
 - [ ] Ein Set komplett durchspielen (alle Lektionen abschliessen) ODER über
       das Set-Aktionen-Menü auf "Abgeschlossen" setzen, KEINE fälligen
-      Wiederholungskarten → der "Weitermachen"-Block schlägt dieses Set NICHT
-      mehr vor (früher stand es dort als "Set abgeschlossen")
-- [ ] Kein offenes Set UND keine fälligen Karten → ehrlicher Leerzustand
-      ("Starte deine erste Lektion", Link zu Meine Inhalte) statt irgendein
-      Set als Lueckenfueller
+      Wiederholungskarten → die Zeile trägt sichtbar das Abschluss-Tag
+      "Set abgeschlossen" (Häkchen-Symbol, Sterne der letzten Lektion) und
+      verschwindet NICHT stillschweigend
+- [ ] Klick auf die abgeschlossene Zeile → führt zurück in die zuletzt
+      bearbeitete Lektion des Sets (Nachschlagen bleibt möglich)
+- [ ] Gleichzeitig ein angefangenes Set vorhanden → das angefangene Set steht
+      OBEN, das abgeschlossene darunter; der Abschluss ist nie der oberste
+      Vorschlag
+- [ ] Mehrere abgeschlossene Sets → höchstens EINES wird getaggt angezeigt
+      (das zuletzt abgeschlossene), der Block wird kein Abschluss-Archiv
+- [ ] Weder ein offenes noch ein abgeschlossenes Set und keine fälligen Karten
+      → ehrlicher Leerzustand ("Starte deine erste Lektion", Link zu Meine
+      Inhalte) statt irgendein Set als Lueckenfueller
 - [ ] Abgeschlossenes Set MIT fälligen Wiederholungen → erscheint als
       Wiederholungs-Zeile ("N Elemente fällig") und führt in die
-      Wiederholungs-Session (`/review/{setId}`), nicht als "Set abgeschlossen"
-- [ ] Zurueckgestelltes Set ohne faellige Karten → wird NICHT vorgeschlagen
+      Wiederholungs-Session (`/review/{setId}`), nicht als Abschluss-Tag
+- [ ] Zurueckgestelltes Set ohne faellige Karten → wird NICHT angezeigt
+      (bewusst weggelegt, es gibt keinen Abschluss zu melden)
 - [ ] Angefangenes (aktives) Set → wird weiterhin zum Fortsetzen vorgeschlagen
-- [ ] Reihenfolge: faellige Wiederholungen zuerst, dann angefangene Sets
-      (jeweils zuletzt-bearbeitet zuerst)
+- [ ] Reihenfolge: faellige Wiederholungen zuerst, dann angefangene Sets, zuletzt
+      das abgeschlossene Set (innerhalb jeder Stufe zuletzt-bearbeitet zuerst)
 
 ### Update-Schutz: kein stiller Fortschrittsverlust beim Set-Update (#2128)
 

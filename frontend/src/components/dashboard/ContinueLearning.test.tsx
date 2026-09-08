@@ -296,8 +296,8 @@ describe("ContinueLearning", () => {
         expect(items[1]).toHaveAttribute("data-testid", "continue-learning-item-c");
     });
 
-    // #2123 — a finished set with nothing due is not a "continue" target.
-    it("drops a completed set with no due reviews (honest empty state)", async () => {
+    // #3020 - a finished set is TAGGED as finished instead of vanishing.
+    it("tags a completed set with no due reviews as finished", async () => {
         listProgressMock.mockResolvedValue([
             progress({
                 set_id: "done",
@@ -317,12 +317,50 @@ describe("ContinueLearning", () => {
         reviewQueueMock.mockResolvedValue([]);
 
         renderSection({showWhenEmpty: true});
-        // The finished set is dropped; the honest empty state shows instead of
-        // proposing a set with nothing to do.
-        await screen.findByTestId("continue-learning-empty-link");
+        const badge = await screen.findByTestId("continue-learning-badge-done");
+        expect(badge).toHaveTextContent("Set completed");
+        // Revisiting the finished set stays possible.
         expect(
-            screen.queryByTestId("continue-learning-item-done"),
+            screen.getByTestId("continue-learning-link-done"),
+        ).toHaveAttribute("href", "/lesson/owner--repo/done/01.json");
+        // Not the empty state any more - there IS something to report.
+        expect(
+            screen.queryByTestId("continue-learning-empty-link"),
         ).not.toBeInTheDocument();
+    });
+
+    // #2123 stays pinned: the finish is reported, never as the top action.
+    it("keeps a still-open set above the finished tag", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({
+                set_id: "done",
+                lesson_filename: "01.json",
+                updated_at: "2026-06-09T10:00:00Z",
+                status: "completed",
+                score_correct: 10,
+                score_total: 10,
+            }),
+            progress({set_id: "open", lesson_filename: "02.json", updated_at: "2026-06-01T10:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [
+                {source: "owner/repo", id: "done", title: "Finished"},
+                {source: "owner/repo", id: "open", title: "Open"},
+            ],
+            sources: [],
+        });
+        listLessonsMock.mockImplementation(async (_src: string, setId: string) =>
+            setId === "done"
+                ? {lessons: ["01.json"]}
+                : {lessons: ["01.json", "02.json", "03.json"]},
+        );
+        reviewQueueMock.mockResolvedValue([]);
+
+        renderSection({});
+        await screen.findByTestId("continue-learning-item-open");
+        const items = screen.getAllByRole("listitem");
+        expect(items[0]).toHaveAttribute("data-testid", "continue-learning-item-open");
+        expect(items[1]).toHaveAttribute("data-testid", "continue-learning-item-done");
     });
 
     // #2123 — a completed set IS worth surfacing when cards are due, but as a

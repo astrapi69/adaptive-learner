@@ -118,9 +118,16 @@ export function resolveContinueAction(
 /**
  * Which tier a candidate set falls into for the entry ("Weitermachen")
  * suggestion. ``"review"`` — cards are due; ``"started"`` — an active,
- * still-open set to resume/continue. Dropped candidates return ``null``.
+ * still-open set to resume/continue; ``"done"`` - finished, nothing left to
+ * do, shown only as a completion tag (#3020). Dropped candidates return
+ * ``null``.
  */
-export type EntryTier = "review" | "started";
+export type EntryTier = "review" | "started" | "done";
+
+/** How many ``"done"`` rows the entry may carry (#3020). The section answers
+ *  "what now?", so exactly the most recently finished set is tagged; more
+ *  would turn it into a completion archive. */
+export const DONE_TIER_LIMIT = 1;
 
 /**
  * The per-set inputs the entry-suggestion ranking needs beyond the grouped
@@ -138,14 +145,19 @@ export interface EntryRankInput {
 
 /**
  * Classify a candidate set for the entry suggestion, or return ``null`` to
- * DROP it (#2123).
+ * DROP it (#2123, refined by #3020).
  *
- * The entry must propose something worth doing next:
+ * The entry proposes something worth doing next, and reports a finish:
  *   - A finished set (lifecycle ``"completed"`` OR its most-recent row
- *     resolves to ``"set_complete"``) or a ``"deferred"`` set is only worth
- *     surfacing when reviews are due — then it is a ``"review"`` suggestion;
- *     with nothing due it is DROPPED. A completed set with nothing to do was
- *     the reported bug: it was proposed as the top "continue" target.
+ *     resolves to ``"set_complete"``) with due cards is a ``"review"``
+ *     suggestion; with nothing due it is ``"done"`` - not an action, just the
+ *     visible completion tag the learner otherwise never gets (#3020). The
+ *     #2123 bug (a finished set proposed as the TOP continue target) stays
+ *     fixed by the tier order in {@link rankEntrySuggestions}, not by hiding
+ *     the finish.
+ *   - A ``"deferred"`` set is surfaced only when reviews are due; otherwise it
+ *     is DROPPED - the learner put it aside on purpose, so there is no finish
+ *     to report.
  *   - Any other set is active and still open → a ``"started"`` suggestion
  *     (resume / next lesson).
  *
@@ -156,23 +168,33 @@ export interface EntryRankInput {
 export function classifyEntryCandidate(input: EntryRankInput): EntryTier | null {
     const finished =
         input.status === "completed" || input.action.mode === "set_complete";
-    if (finished || input.status === "deferred") {
+    if (finished) {
+        return input.dueCount > 0 ? "review" : "done";
+    }
+    if (input.status === "deferred") {
         return input.dueCount > 0 ? "review" : null;
     }
     return "started";
 }
 
 /**
- * Filter + order the entry suggestions (#2123). Review-tier sets first
- * (cards are due), then started sets, each newest-touched first; dropped
- * candidates removed; capped at ``maxItems``. When everything drops, the
- * caller shows the honest empty state rather than a filler set.
+ * Filter + order the entry suggestions (#2123, #3020). Review-tier sets first
+ * (cards are due), then started sets, then at most {@link DONE_TIER_LIMIT}
+ * finished set as a completion tag - each tier newest-touched first; dropped
+ * candidates removed; capped at ``maxItems``.
+ *
+ * The done tier is deliberately last AND capped: an actionable suggestion
+ * always outranks a finish (the #2123 fix), and the section stays an answer to
+ * "what now?" instead of degenerating into a list of everything ever finished.
+ * When everything drops, the caller shows the honest empty state rather than a
+ * filler set.
  */
 export function rankEntrySuggestions(
     inputs: readonly EntryRankInput[],
     maxItems: number,
 ): EntryRankInput[] {
-    const tierRank: Record<EntryTier, number> = {review: 0, started: 1};
+    const tierRank: Record<EntryTier, number> = {review: 0, started: 1, done: 2};
+    let doneShown = 0;
     return inputs
         .map((input) => ({input, tier: classifyEntryCandidate(input)}))
         .filter(
@@ -186,6 +208,7 @@ export function rankEntrySuggestions(
                 ? -1
                 : 1;
         })
+        .filter((x) => x.tier !== "done" || ++doneShown <= DONE_TIER_LIMIT)
         .slice(0, Math.max(0, maxItems))
         .map((x) => x.input);
 }
