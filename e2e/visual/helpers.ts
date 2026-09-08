@@ -1227,6 +1227,45 @@ async function waitForSrsQuiescence(
 }
 
 /**
+ * Pin the offline-lesson cache to EMPTY for the settings-data motif
+ * (#3016).
+ *
+ * The "Offline-Cache" line counts what the service worker has stored in
+ * ``adaptive-learner-lessons``. In CI the sets arrive over the network
+ * while the page is open, so the count differs from run to run, and at
+ * the narrow viewports its text wraps to one more line: a 24 px height
+ * difference between the run that RENDERED the baseline and the run that
+ * compares against it (8286 vs 8262 on mobile). Waiting for the value to
+ * settle fixes it within a run and cannot make two runs agree - this is
+ * the live-data class of #1653, and the remedy there is the same: pin the
+ * source to a synthetic fixture instead of photographing whatever the
+ * network happened to deliver.
+ *
+ * Only ``keys()`` on that ONE cache is replaced, so the empty state is
+ * deterministic; every other cache and every other method still reaches
+ * the real Cache Storage.
+ */
+async function pinLessonCacheEmpty(page: Page): Promise<void> {
+    await page.addInitScript((cacheName: string) => {
+        if (typeof caches === "undefined") return;
+        const openOriginal = caches.open.bind(caches);
+        caches.open = async (name: string): Promise<Cache> => {
+            const cache = await openOriginal(name);
+            if (name !== cacheName) return cache;
+            return new Proxy(cache, {
+                get(target, prop, receiver) {
+                    if (prop === "keys") return async () => [];
+                    const value = Reflect.get(target, prop, receiver);
+                    return typeof value === "function"
+                        ? value.bind(target)
+                        : value;
+                },
+            });
+        };
+    }, "adaptive-learner-lessons");
+}
+
+/**
  * Wait until a testid's text stops changing (#3016).
  *
  * For values a surface keeps refining while it is open - the offline
@@ -1551,6 +1590,10 @@ export async function gotoSurface(
             return true;
         case "settings-data":
             await seedLearner(page);
+            // #3016 — pin the offline-cache count before the settings
+            // navigation; see pinLessonCacheEmpty for why the live value
+            // cannot be photographed reproducibly.
+            await pinLessonCacheEmpty(page);
             await page.goto("/settings?tab=data");
             await expect(page.getByTestId("settings")).toBeVisible({
                 timeout: 20_000,
