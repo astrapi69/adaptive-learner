@@ -998,6 +998,7 @@ export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
             // the content. Two motifs of one surface with two different
             // ready contracts is how one of them stays flaky.
             await waitForSrsQuiescence(page, {expectRows: true});
+            await waitForNoPausedProgress(page);
             await page.goto("/dashboard");
             await settleDashboard(page, {populated: true});
             return true;
@@ -1170,6 +1171,12 @@ async function gotoLessonMatching(page: Page): Promise<boolean> {
  * after it - a 131 px page-height flip, per run and per theme, on a
  * surface nothing else distinguishes. Same shape as
  * {@link waitForSrsQuiescence}: wait for the store, not for the pixel.
+ *
+ * Call it BEFORE navigating to the dashboard. The card reads its rows
+ * ONCE on mount and never re-reads, so a wait placed after the mount
+ * measures a state the render no longer depends on - the reason the
+ * first attempt at this (inside {@link settleDashboard}) left the split
+ * exactly as it was.
  */
 async function waitForNoPausedProgress(page: Page): Promise<void> {
     await page.waitForFunction(
@@ -1333,16 +1340,6 @@ async function settleDashboard(
         await expect(page.getByTestId("review-queue-card")).toBeVisible({
             timeout: 20_000,
         });
-        // #3016 — the "Weiterlernen" card is the last racing element and
-        // the reason the dashboard measured 1449 or 1580 px per run: it
-        // lists lessonProgress rows with ``status === "paused"``, and the
-        // playthrough leaves exactly such a row until its completion
-        // write lands. The card publishes no loading state to wait on
-        // (``paused === null`` and ``length === 0`` both render null), so
-        // the frame caught it before or after that write. Waiting for the
-        // write itself is the deterministic end of the race - after it,
-        // the card is absent for a reason, not by timing.
-        await waitForNoPausedProgress(page);
     }
 }
 
@@ -1452,6 +1449,7 @@ export async function gotoSurface(
             await seedLearner(page);
             await playBundledLesson(page, "summary");
             await waitForSrsQuiescence(page, {expectRows: true});
+            await waitForNoPausedProgress(page);
             await page.goto("/dashboard");
             await settleDashboard(page, {populated: true});
             return true;
