@@ -81,6 +81,11 @@ export const MANAGED_USER_DATA_KEYS = [
     // survives a Dexie restore + rides the .alb backup's
     // localStorage snapshot.
     "adaptive-learner.arcade.tickets",
+    // #3023 — entry rows the learner took out of "Weitermachen"
+    // (lib/content/browse/prefs/continue-dismissed-store). A per-row
+    // display decision, not learning data: mode-agnostic, survives a
+    // Dexie restore + rides the .alb backup's localStorage snapshot.
+    "adaptive-learner.continue-dismissed",
 ] as const;
 
 /**

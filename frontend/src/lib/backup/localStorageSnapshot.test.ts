@@ -52,6 +52,17 @@ describe("captureLocalStorageSnapshot", () => {
         );
     });
 
+    it("carries the dismissed Weitermachen rows (#3023 pin: never drift into the exclusion list)", () => {
+        localStorage.setItem(
+            "adaptive-learner.continue-dismissed",
+            '{"owner/repo::fr-a1":"2026-06-03T10:00:00Z"}',
+        );
+        const snap = captureLocalStorageSnapshot();
+        expect(snap["adaptive-learner.continue-dismissed"]).toBe(
+            '{"owner/repo::fr-a1":"2026-06-03T10:00:00Z"}',
+        );
+    });
+
     it("carries the arcade-ticket state (#2889 pin: never drift into the exclusion list)", () => {
         localStorage.setItem(
             "adaptive-learner.arcade.tickets",

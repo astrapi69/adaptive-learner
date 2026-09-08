@@ -2646,7 +2646,9 @@
       "progress": "चरण {n}/{total}",
       "imported_analysis": "आयातित विश्लेषण",
       "lesson_fallback": "पाठ",
-      "lesson_part": "{label} · भाग {n}"
+      "lesson_part": "{label} · भाग {n}",
+      "dismiss": "सीखना जारी रखें सूची से हटाएँ",
+      "dismissed": "सीखना जारी रखें सूची से हटा दिया गया। जैसे ही आप फिर से सीखेंगे, यह वापस आ जाएगा।"
     },
     "import_chat": {
       "button": "चैट आयात करें"

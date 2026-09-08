@@ -2452,6 +2452,8 @@ content:
     imported_analysis: "Importierte Analyse"
     lesson_fallback: "Lektion"
     lesson_part: "{label} · Teil {n}"
+    dismiss: "Aus „Weitermachen“ entfernen"
+    dismissed: "Aus „Weitermachen“ entfernt. Sobald du weiterlernst, ist es wieder da."
   import_chat:
     button: "Chat importieren"
   search:

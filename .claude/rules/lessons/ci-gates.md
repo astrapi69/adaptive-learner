@@ -273,6 +273,42 @@ Passt zu "Ein 0-diff-Visual-Run ist nur ein Beweis für die Flächen im
 Motiv-Satz" (oben) - dieselbe Disziplin, auf den Sync-Workflow selbst
 angewandt.
 
+## Ein Toleranz-Vergleich schreibt keine Baseline neu (#3023)
+
+Aufgetaucht 2026-09-08. Ein neuer X-Knopf (16-px-Icon) in jeder
+"Weitermachen"-Zeile ergab im `visual-baseline-sync` einen 0-Diff: 141
+Tests grün, "nothing to push". Ursache ist nicht eine fehlende Änderung,
+sondern das Zusammenspiel zweier Eigenschaften: `--update-snapshots`
+schreibt eine Referenz NUR bei einem fehlgeschlagenen Vergleich neu
+(#2712), und `maxDiffPixels: 2500` schluckt alles Kleinere. Der Gate
+meldet also Grün für eine sichtbare Änderung, die in keiner Referenz
+steht.
+
+Die Folgekosten sind nicht theoretisch: dieselbe Lücke hielt die
+Dashboard-Baselines nach zwei Kopfzeilen-PRs (#2986, #2999) fünf Tage
+still veraltet. Die erzwungene Neuaufnahme zeigte einen um ~15 px
+verschobenen Navigationsblock, den nie jemand gesehen hatte.
+
+Regeln:
+
+- Ein 0-Diff nach einer ABSICHTLICH sichtbaren Änderung ist ein Befund,
+  kein Freibrief. Vor dem Label `visual-baselines-unaffected` prüfen, ob
+  die Änderung überhaupt über der Toleranz liegt - das Label behauptet
+  "keine visuelle Wirkung", nicht "unter dem Budget".
+- Kleine gewollte Änderungen erzwingen die Neuaufnahme über
+  Löschen-dann-Resync (#2719): betroffene PNGs löschen, committen, Sync
+  erneut anstossen. Eine gelöschte Baseline wird gerendert statt
+  verglichen.
+- Nur die Motive löschen, auf denen die Änderung erscheint (#2682). Ein
+  neu aufgenommenes Bild trägt ausserdem jede seither unter der Toleranz
+  gebliebene Fremd-Drift, deshalb gehört der Alt-gegen-neu-Vergleich
+  (Cluster-Analyse der geänderten Pixel, nicht nur der Blick aufs neue
+  Bild) in die Review - sonst wandert unbemerkte Drift als "geprüft"
+  in die Referenz.
+
+Passt zu "Ein Bildvergleich prüft nur, was die Referenz unterscheidbar
+macht" (#2696): dort war es die leere Fläche, hier die Toleranz.
+
 ## Ein Bildvergleich prüft nur, was die Referenz unterscheidbar macht (#2696)
 
 Aufgetaucht 2026-08-20. `fullPage: true` (CDP `captureBeyondViewport`)

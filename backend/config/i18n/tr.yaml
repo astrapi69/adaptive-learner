@@ -2447,6 +2447,8 @@ content:
     imported_analysis: "İçe aktarılan analiz"
     lesson_fallback: "Ders"
     lesson_part: "{label} · Bölüm {n}"
+    dismiss: "Öğrenmeye devam et listesinden kaldır"
+    dismissed: "Öğrenmeye devam et listesinden kaldırıldı. Öğrenmeye devam ettiğinde yeniden görünür."
   import_chat:
     button: "Sohbeti içe aktar"
   search:

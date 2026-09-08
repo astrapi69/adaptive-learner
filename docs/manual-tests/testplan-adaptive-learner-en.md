@@ -2163,6 +2163,29 @@ mode-agnostic.
 - [ ] Order: due reviews first, then started sets, the completed set last
       (within each tier most-recently-touched first)
 
+### Continue Learning: every row removable with an X (#3023)
+
+Where: Dashboard → Overview, the "Continue Learning" block. Test in BOTH
+storage modes (API + Dexie); the store is mode-agnostic (localStorage plus
+the Dexie userData mirror).
+
+- [ ] Every row carries an X on the right - whatever its mode: resume, next
+      lesson, due review, completed set
+- [ ] Click the X: the row disappears at once and a short message says it
+      comes back as soon as you keep learning
+- [ ] Reload: the row stays away (the decision is persisted)
+- [ ] Nothing was deleted: the set is still in My Content, the lesson's
+      progress is intact, the review cards are unchanged (check the count on
+      the review card)
+- [ ] Self-healing: open and work on the hidden lesson again → the row
+      reappears on the dashboard
+- [ ] Dismiss every row → honest empty state ("Start your first lesson"), not
+      an empty block without explanation
+- [ ] Backup round-trip: Export → wipe → Import → the dismissed rows are still
+      dismissed (the state rides in the .alb)
+- [ ] Phone: the X is tappable without mis-hits and does NOT trigger the row
+      link (44 px target)
+
 ### Update guard: no silent progress loss on a set update (#2128)
 
 Where: My Content, an already-LEARNED set (progress + review cards present) that
