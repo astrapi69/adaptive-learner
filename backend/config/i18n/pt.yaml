@@ -2447,6 +2447,8 @@ content:
     imported_analysis: "Análise importada"
     lesson_fallback: "Lição"
     lesson_part: "{label} · Parte {n}"
+    dismiss: "Remover de Continuar a aprender"
+    dismissed: "Removido de Continuar a aprender. Volta assim que continuares a aprender."
   import_chat:
     button: "Importar conversa"
   search:

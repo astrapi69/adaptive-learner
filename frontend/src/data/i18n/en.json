@@ -2646,7 +2646,9 @@
       "progress": "Step {n}/{total}",
       "imported_analysis": "Imported analysis",
       "lesson_fallback": "Lesson",
-      "lesson_part": "{label} · Part {n}"
+      "lesson_part": "{label} · Part {n}",
+      "dismiss": "Remove from Continue Learning",
+      "dismissed": "Removed from Continue Learning. It comes back as soon as you keep learning."
     },
     "import_chat": {
       "button": "Import Chat"

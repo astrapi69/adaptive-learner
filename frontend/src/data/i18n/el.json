@@ -2646,7 +2646,9 @@
       "progress": "Βήμα {n}/{total}",
       "imported_analysis": "Εισαγόμενη ανάλυση",
       "lesson_fallback": "Μάθημα",
-      "lesson_part": "{label} · Μέρος {n}"
+      "lesson_part": "{label} · Μέρος {n}",
+      "dismiss": "Αφαίρεση από τη Συνέχεια μάθησης",
+      "dismissed": "Αφαιρέθηκε από τη Συνέχεια μάθησης. Θα εμφανιστεί ξανά μόλις συνεχίσετε να μαθαίνετε."
     },
     "import_chat": {
       "button": "Εισαγωγή συνομιλίας"

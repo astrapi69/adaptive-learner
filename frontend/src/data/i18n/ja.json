@@ -2646,7 +2646,9 @@
       "progress": "ステップ {n}/{total}",
       "imported_analysis": "インポートされた分析",
       "lesson_fallback": "レッスン",
-      "lesson_part": "{label} · パート{n}"
+      "lesson_part": "{label} · パート{n}",
+      "dismiss": "「学習を続ける」から非表示にする",
+      "dismissed": "「学習を続ける」から非表示にしました。学習を再開すると再び表示されます。"
     },
     "import_chat": {
       "button": "チャットをインポート"
