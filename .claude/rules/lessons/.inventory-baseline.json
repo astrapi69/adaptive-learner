@@ -19,7 +19,7 @@
   "Doc files: existence is not discoverability": "8bb5c419ff4085fe",
   "Doc values: read from code, not from memory": "cb96a1d98be3893c",
   "Docs are specification, not a wish list": "ffac6d6b52042284",
-  "Ein Bildvergleich pr\u00fcft nur, was die Referenz unterscheidbar macht (#2696)": "f5da44f986173096",
+  "Ein Bildvergleich pr\u00fcft nur, was die Referenz unterscheidbar macht (#2696)": "74f21739784148cc",
   "Ein Byte-Gate kann eine zuf\u00e4llige \u00dcbereinstimmung pr\u00fcfen statt der Spiegelung (#2265)": "d1dc996d377be34b",
   "Ein Namens-Grep \u00fcber frontend/src ist kein \"0 Konsumenten\"-Beweis, wenn Pakete mitrendern (#2477/#2486)": "1f2b9dedf433379a",
   "Ein Toleranz-Vergleich schreibt keine Baseline neu (#3023)": "e42140011ae7cca9",
