@@ -28,7 +28,7 @@
  * Browser, where the set tree below already covers discovery).
  */
 
-import {ArrowRight, CheckCircle2, History, Play, Star} from "lucide-react";
+import {ArrowRight, CheckCircle2, History, Play, Star, X} from "lucide-react";
 import {useEffect, useState} from "react";
 import {Link} from "react-router";
 
@@ -51,8 +51,13 @@ import {
     filterAvailableProgress,
 } from "../../lib/content/browse/lifecycle/content-availability";
 import {getSetStatus} from "../../lib/content/browse/lifecycle/set-status-store";
+import {
+    dismissContinueRow,
+    isContinueRowDismissed,
+} from "../../lib/content/browse/prefs/continue-dismissed-store";
 import {dedupeReviewQueueByElement} from "../../lib/review/review-lesson";
 import {getStorage} from "../../storage";
+import {notify} from "../../utils/notify";
 import ShareResultButton from "../share/ShareResultButton";
 import type {ContentLesson, ContentSetEntry} from "../../storage/types";
 
@@ -168,7 +173,16 @@ export default function ContinueLearning({
             // Group ALL sets with progress (no early cap): the suggestion rule
             // may drop the newest set (finished, nothing due) in favour of an
             // older still-open one, so ranking has to see every candidate.
-            const groups = groupRecentProgress(loadable, loadable.length);
+            const groups = groupRecentProgress(loadable, loadable.length).filter(
+                // #3023 - rows the learner took out with the X. Keyed on the
+                // row's updated_at, so new progress on the set brings it back.
+                (group) =>
+                    !isContinueRowDismissed(
+                        group.source,
+                        group.setId,
+                        group.mostRecent.updated_at,
+                    ),
+            );
             const rankInputs: EntryRankInput[] = await Promise.all(
                 groups.map(async (group) => {
                     const listing = await safe(() =>
@@ -310,6 +324,26 @@ export default function ContinueLearning({
         };
     }, [userId, maxItems, importedAnalysisLabel, lessonFallbackLabel]);
 
+    /** #3023 - take one row out of the block. Hides the row, nothing else:
+     *  no progress, no review cards, no set is touched. */
+    function handleDismiss(item: DisplayItem) {
+        dismissContinueRow(item.source, item.setId, item.updatedAt);
+        setItems((previous) =>
+            previous
+                ? previous.filter(
+                      (row) =>
+                          row.source !== item.source || row.setId !== item.setId,
+                  )
+                : previous,
+        );
+        notify.success(
+            t(
+                "content.continue_learning.dismissed",
+                "Removed from Continue Learning. It comes back as soon as you keep learning.",
+            ),
+        );
+    }
+
     // Loading — render nothing to avoid layout shift.
     if (items === null) return null;
 
@@ -352,6 +386,7 @@ export default function ContinueLearning({
                     <ContinueLearningRow
                         key={`${item.source}#${item.setId}`}
                         item={item}
+                        onDismiss={handleDismiss}
                     />
                 ))}
             </ul>
@@ -370,8 +405,18 @@ function ModeIcon({mode}: {mode: ContinueMode}) {
 /** One row: the link to the row's target plus the share button for a
  *  scored row. Extracted from the list so each render unit stays inside
  *  the complexity ratchet's ceiling. */
-function ContinueLearningRow({item}: {item: DisplayItem}) {
+function ContinueLearningRow({
+    item,
+    onDismiss,
+}: {
+    item: DisplayItem;
+    onDismiss: (item: DisplayItem) => void;
+}) {
     const {t} = useI18n();
+    const dismissLabel = t(
+        "content.continue_learning.dismiss",
+        "Remove from Continue Learning",
+    );
     return (
         <li
             data-testid={`continue-learning-item-${item.setId}`}
@@ -429,6 +474,19 @@ function ContinueLearningRow({item}: {item: DisplayItem}) {
                     testId={`continue-learning-share-${item.setId}`}
                 />
             )}
+            {/* #3023 - every row, whatever its mode, can be taken out of the
+                block. This hides the row only; progress, review cards and the
+                set itself stay untouched. */}
+            <button
+                type="button"
+                onClick={() => onDismiss(item)}
+                aria-label={dismissLabel}
+                title={dismissLabel}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-app text-muted-foreground hover:bg-muted hover:text-foreground"
+                data-testid={`continue-learning-dismiss-${item.setId}`}
+            >
+                <X size={16} aria-hidden="true" />
+            </button>
         </li>
     );
 }

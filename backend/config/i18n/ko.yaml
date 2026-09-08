@@ -2458,6 +2458,8 @@ content:
     imported_analysis: "가져온 분석"
     lesson_fallback: "레슨"
     lesson_part: "{label} · 파트 {n}"
+    dismiss: "학습 이어가기에서 숨기기"
+    dismissed: "학습 이어가기에서 숨겼습니다. 다시 학습하면 또 나타납니다."
   import_chat:
     button: "채팅 가져오기"
   search:

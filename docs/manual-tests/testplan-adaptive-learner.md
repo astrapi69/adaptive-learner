@@ -2312,6 +2312,29 @@ modus-unabhängig.
 - [ ] Reihenfolge: faellige Wiederholungen zuerst, dann angefangene Sets, zuletzt
       das abgeschlossene Set (innerhalb jeder Stufe zuletzt-bearbeitet zuerst)
 
+### Weitermachen: jede Zeile per X ausblendbar (#3023)
+
+Ort: Dashboard → Übersicht, Block "Weitermachen". In BEIDEN Speichermodi
+prüfen (API + Dexie), die Ablage ist modus-unabhängig (localStorage +
+Dexie-userData-Spiegel).
+
+- [ ] Jede Zeile trägt rechts ein X - unabhängig vom Modus: Fortsetzen,
+      Nächste Lektion, fällige Wiederholung, abgeschlossenes Set
+- [ ] Klick auf das X: die Zeile verschwindet sofort, eine kurze Meldung sagt,
+      dass sie wiederkommt, sobald weitergelernt wird
+- [ ] Neu laden: die Zeile bleibt weg (die Entscheidung ist gespeichert)
+- [ ] Nichts wurde gelöscht: das Set steht unverändert in "Meine Inhalte",
+      der Lernfortschritt der Lektion ist erhalten, die Wiederholungskarten
+      sind unverändert (Anzahl in der Wiederholungs-Kachel prüfen)
+- [ ] Selbstheilung: die ausgeblendete Lektion erneut öffnen und bearbeiten →
+      die Zeile taucht im Dashboard wieder auf
+- [ ] Alle Zeilen ausblenden → ehrlicher Leerzustand ("Starte deine erste
+      Lektion"), kein leerer Block ohne Erklärung
+- [ ] Backup-Runde: Export → Daten löschen → Import → die ausgeblendeten
+      Zeilen sind weiterhin ausgeblendet (der Zustand reist im .alb mit)
+- [ ] Telefon: das X ist ohne Zielverfehlung antippbar und löst NICHT den
+      Zeilen-Link aus (44 px Trefferfläche)
+
 ### Update-Schutz: kein stiller Fortschrittsverlust beim Set-Update (#2128)
 
 Ort: Meine Inhalte, ein bereits GELERNTES Set (Fortschritt + Wiederholungskarten

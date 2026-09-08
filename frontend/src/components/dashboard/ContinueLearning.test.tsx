@@ -13,11 +13,12 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen, waitFor} from "@testing-library/react";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import ContinueLearning from "./ContinueLearning";
+import {dismissContinueRow} from "../../lib/content/browse/prefs/continue-dismissed-store";
 import {storeSetStatus} from "../../lib/content/browse/lifecycle/set-status-store";
 import type {LessonProgress} from "../../storage/types";
 
@@ -41,6 +42,10 @@ vi.mock("../../storage", () => ({
 
 vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({t: (_k: string, fb: string) => fb, lang: "en"}),
+}));
+
+vi.mock("../../utils/notify", () => ({
+    notify: {success: vi.fn(), error: vi.fn()},
 }));
 
 function progress(over: Partial<LessonProgress> & {
@@ -413,6 +418,76 @@ describe("ContinueLearning", () => {
         expect(
             screen.queryByTestId("continue-learning-item-later"),
         ).not.toBeInTheDocument();
+    });
+
+    // #3023 - every row carries an X that takes it out of the block.
+    it("removes a row when its X is clicked and keeps it away on reload", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({set_id: "fr-a1", lesson_filename: "02.json", updated_at: "2026-06-03T10:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "fr-a1", title: "French A1"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json", "03.json"]});
+
+        const {unmount} = renderSection({});
+        const dismiss = await screen.findByTestId("continue-learning-dismiss-fr-a1");
+        fireEvent.click(dismiss);
+        await waitFor(() =>
+            expect(
+                screen.queryByTestId("continue-learning-item-fr-a1"),
+            ).not.toBeInTheDocument(),
+        );
+
+        // The decision is persisted: a fresh mount does not bring the row back.
+        unmount();
+        renderSection({showWhenEmpty: true});
+        await screen.findByTestId("continue-learning-empty-link");
+        expect(
+            screen.queryByTestId("continue-learning-item-fr-a1"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("brings a dismissed row back when the set is touched again (#3023)", async () => {
+        dismissContinueRow("owner/repo", "fr-a1", "2026-06-03T10:00:00Z", localStorage);
+        listProgressMock.mockResolvedValue([
+            // Newer activity than the dismissal - the learner came back to it.
+            progress({set_id: "fr-a1", lesson_filename: "02.json", updated_at: "2026-06-05T09:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "fr-a1", title: "French A1"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json", "03.json"]});
+
+        renderSection({});
+        expect(
+            await screen.findByTestId("continue-learning-item-fr-a1"),
+        ).toBeInTheDocument();
+    });
+
+    it("offers the X on a completed row too (#3023)", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({
+                set_id: "done",
+                lesson_filename: "01.json",
+                updated_at: "2026-06-03T10:00:00Z",
+                status: "completed",
+                score_correct: 10,
+                score_total: 10,
+            }),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "done", title: "Finished"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json"]});
+
+        renderSection({});
+        expect(
+            await screen.findByTestId("continue-learning-dismiss-done"),
+        ).toBeInTheDocument();
     });
 
     it("hides progress whose source repo was removed (#1445)", async () => {
