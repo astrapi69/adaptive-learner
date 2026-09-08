@@ -442,6 +442,23 @@ const MAX_EXPANDED_VIEWPORT_HEIGHT = 16_000;
 const EXPANSION_ROUNDS = 6;
 
 /**
+ * Residue a viewport-tracking surface may leave outside the frame (#3016).
+ *
+ * On the lesson routes the page measures exactly ``viewport + 61px`` at
+ * EVERY frame size (measured in CI across the three theme viewports:
+ * 1438/1499, 1586/1647, 1687/1748 — the same 61 each time). The shell
+ * sizes ``#root`` off ``100dvh``, so growing the frame grows the surface
+ * with it and the residue never closes. The expansion stops at the frame
+ * it has reached: everything reachable is inside it, and one more round
+ * would only stretch the layout further from what a user sees.
+ *
+ * The cap keeps that from becoming a licence to truncate: a residue this
+ * size is viewport-sized chrome, one several times larger would be real
+ * content no capture can reach, and that fails loud instead.
+ */
+const MAX_VIEWPORT_TRACKING_RESIDUE = 200;
+
+/**
  * Grow the viewport to the full document height so a plain (non-fullPage)
  * screenshot captures the whole page — the replacement for ``fullPage: true``
  * on this app's layout (#2696).
@@ -474,6 +491,7 @@ export async function expandViewportToDocument(page: Page): Promise<number> {
     if (!viewport) return 0;
     let height = viewport.height;
     let contentHeight = height;
+    let previousResidue = -1;
     for (let i = 0; i < EXPANSION_ROUNDS; i++) {
         contentHeight = await contentHeightToCover(page);
         if (contentHeight > MAX_EXPANDED_VIEWPORT_HEIGHT) {
@@ -484,6 +502,26 @@ export async function expandViewportToDocument(page: Page): Promise<number> {
             );
         }
         if (contentHeight <= height) return contentHeight;
+        const residue = contentHeight - height;
+        // #3016 — a residue that does not move when the frame grows means
+        // the surface is sized off the viewport (``#root`` is ``100dvh``):
+        // the target travels with every round, so no frame size can ever
+        // close it. Stop here — the frame already covers everything that
+        // is reachable, and one more round would only stretch the layout
+        // further from what a user sees, for zero additional coverage.
+        if (Math.abs(residue - previousResidue) <= 2) {
+            if (residue > MAX_VIEWPORT_TRACKING_RESIDUE) {
+                throw new Error(
+                    `expandViewportToDocument: the surface tracks the viewport and ` +
+                        `still leaves ${residue}px outside the frame, over the ` +
+                        `${MAX_VIEWPORT_TRACKING_RESIDUE}px chrome allowance (#3016). ` +
+                        "That is content no capture at any frame size can reach — " +
+                        "fix the surface or its fixture, do not raise the allowance.",
+                );
+            }
+            return height;
+        }
+        previousResidue = residue;
         height = contentHeight;
         await page.setViewportSize({width: viewport.width, height});
         await page.waitForTimeout(150);
