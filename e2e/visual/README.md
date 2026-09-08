@@ -41,6 +41,26 @@ A surface that can't be reached deterministically (e.g. the bundled set
 has no cloze exercise) is `test.skip`-ped rather than committing a
 meaningless baseline.
 
+### Deterministic height, not just deterministic content (#3016)
+
+Since the capture follows the app scroller instead of the viewport, a
+late render changes the IMAGE HEIGHT, not just what sits below the fold.
+Three habits keep that from turning into flaky baselines, all of them
+already applied in `helpers.ts`:
+
+- **Wait for the surface's own ready signals**, every loading placeholder
+  it publishes, not just the first one (`settleDashboard`).
+- **Reach the surface the way the app does.** Both dashboard motifs enter
+  via a client-side route change, because `page.goto` fires
+  `beforeunload` on the lesson route and that handler writes the very
+  progress row the dashboard reads on mount. When a read and a write
+  start from the same action, no wait can order them.
+- **Pin live values.** A number that depends on what the network has
+  delivered so far (the offline-cache count) cannot agree between the run
+  that renders a baseline and the run that compares against it; pin the
+  source to a fixture, as `pinContentRegistry` and `pinLessonCacheEmpty`
+  do.
+
 ## Layout
 
 - `theme-regression.spec.ts` — the 12 themes × 5 views matrix.

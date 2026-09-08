@@ -990,10 +990,16 @@ export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
             await seedLearner(page);
             // A played lesson populates XP / progress / missions.
             await playBundledLesson(page, "summary");
-            await page.goto("/dashboard");
-            await expect(page.getByTestId("dashboard")).toBeVisible({
-                timeout: 20_000,
-            });
+            // #3016 — the SAME ready contract the critical-surfaces
+            // dashboard uses, down to the SRS quiescence wait. Waiting
+            // only for the page shell let the async cards land after the
+            // shot; harmless while the frame was viewport-sized, a
+            // per-run height flip (1449 vs 1580) once the frame follows
+            // the content. Two motifs of one surface with two different
+            // ready contracts is how one of them stays flaky.
+            await waitForSrsQuiescence(page, {expectRows: true});
+            await gotoDashboardInApp(page);
+            await settleDashboard(page, {populated: true});
             return true;
         case "learning-path":
             await seedLearner(page);
@@ -1154,6 +1160,7 @@ async function gotoLessonMatching(page: Page): Promise<boolean> {
     return reached;
 }
 
+
 /**
  * #1540 — the exercise flow persists SRS rows fire-and-forget
  * (``void onComplete(scored)`` -> ``elementErrors.recordBulk``), so a
@@ -1220,6 +1227,105 @@ async function waitForSrsQuiescence(
 }
 
 /**
+ * Pin the offline-lesson cache to EMPTY for the settings-data motif
+ * (#3016).
+ *
+ * The "Offline-Cache" line counts what the service worker has stored in
+ * ``adaptive-learner-lessons``. In CI the sets arrive over the network
+ * while the page is open, so the count differs from run to run, and at
+ * the narrow viewports its text wraps to one more line: a 24 px height
+ * difference between the run that RENDERED the baseline and the run that
+ * compares against it (8286 vs 8262 on mobile). Waiting for the value to
+ * settle fixes it within a run and cannot make two runs agree - this is
+ * the live-data class of #1653, and the remedy there is the same: pin the
+ * source to a synthetic fixture instead of photographing whatever the
+ * network happened to deliver.
+ *
+ * Only ``keys()`` on that ONE cache is replaced, so the empty state is
+ * deterministic; every other cache and every other method still reaches
+ * the real Cache Storage.
+ */
+async function pinLessonCacheEmpty(page: Page): Promise<void> {
+    await page.addInitScript((cacheName: string) => {
+        if (typeof caches === "undefined") return;
+        const openOriginal = caches.open.bind(caches);
+        caches.open = async (name: string): Promise<Cache> => {
+            const cache = await openOriginal(name);
+            if (name !== cacheName) return cache;
+            return new Proxy(cache, {
+                get(target, prop, receiver) {
+                    if (prop === "keys") return async () => [];
+                    const value = Reflect.get(target, prop, receiver);
+                    return typeof value === "function"
+                        ? value.bind(target)
+                        : value;
+                },
+            });
+        };
+    }, "adaptive-learner-lessons");
+}
+
+/**
+ * Wait until a testid's text stops changing (#3016).
+ *
+ * For values a surface keeps refining while it is open - the offline
+ * cache line counts what the service worker has stored so far - there is
+ * no "done" signal to wait for; the page simply settles. Two agreeing
+ * reads a poll apart are that settling, the same shape as
+ * {@link waitForStableLayout}, and the bound keeps a never-settling value
+ * from hanging the run.
+ */
+async function waitForStableText(
+    page: Page,
+    testId: string,
+    {intervalMs = 400, maxWaitMs = 15_000} = {},
+): Promise<void> {
+    const locator = page.getByTestId(testId);
+    await expect(locator).toBeVisible({timeout: 20_000});
+    const deadline = Date.now() + maxWaitMs;
+    let previous: string | null = null;
+    while (Date.now() < deadline) {
+        const current = ((await locator.textContent()) ?? "").trim();
+        if (current && current !== "…" && current === previous) return;
+        previous = current;
+        await page.waitForTimeout(intervalMs);
+    }
+}
+
+/**
+ * Open the dashboard by CLIENT-SIDE navigation from wherever the seed
+ * left the browser (#3016).
+ *
+ * Not ``page.goto``: a full navigation fires ``beforeunload`` on the
+ * lesson route, and its handler writes a "paused" lesson-progress row
+ * (``useLessonFlowControl``, Phase 63B). That write races the dashboard's
+ * own read of those rows, and the "Weiterlernen" card it feeds is exactly
+ * the 131 px by which the dashboard measured 1449 or 1580 px - per run,
+ * per theme, in both directions. No wait can order the two: the write is
+ * started by the very navigation the read follows.
+ *
+ * A route change inside the app removes the listener through the effect
+ * cleanup instead of firing it, so no row is written and the card is
+ * deterministically absent. The brand link in the nav points at
+ * /dashboard in every nav state, the lesson-compact one included.
+ */
+async function gotoDashboardInApp(page: Page): Promise<void> {
+    await page.locator("a.nav-brand").first().click();
+    await page.waitForURL("**/dashboard", {timeout: 20_000});
+}
+
+/** Every loading placeholder the dashboard publishes (#3016). A card
+ *  still in its loading state means the page has not reached its final
+ *  height, and the capture would freeze a transient layout. */
+const DASHBOARD_LOADING_TESTIDS = [
+    "dashboard-loading",
+    "progress-loading",
+    "focus-areas-card-loading",
+    "review-queue-card-loading",
+    "statistics-loading",
+] as const;
+
+/**
  * #1540 data anchors for the dashboard: the ``dashboard`` testid renders
  * while the Übersicht tab is still a lazy Suspense hole and its cards are
  * still fetching, so a shot raced whatever sections had landed. Wait until
@@ -1251,9 +1357,17 @@ async function settleDashboard(
     await expect(page.getByTestId("ai-invite-card")).toBeVisible({
         timeout: 20_000,
     });
-    await expect(page.getByTestId("review-queue-card-loading")).toHaveCount(0, {
-        timeout: 20_000,
-    });
+    // #3016 — EVERY async card must have landed, not just the review
+    // queue. With the frame at a fixed height a late card only changed
+    // what sat below the fold; now it changes the IMAGE height, and the
+    // dashboard flipped between two heights per run (1449/1580 at 1440
+    // wide, 1864/2016 at 375). Waiting on the loading placeholders is the
+    // ready signal the surface already publishes - no heuristic sleep.
+    for (const loadingId of DASHBOARD_LOADING_TESTIDS) {
+        await expect(page.getByTestId(loadingId)).toHaveCount(0, {
+            timeout: 20_000,
+        });
+    }
     if (opts.populated) {
         // waitForSrsQuiescence guaranteed error rows before we navigated
         // here, so the due-review card is a deterministic fixture.
@@ -1369,7 +1483,7 @@ export async function gotoSurface(
             await seedLearner(page);
             await playBundledLesson(page, "summary");
             await waitForSrsQuiescence(page, {expectRows: true});
-            await page.goto("/dashboard");
+            await gotoDashboardInApp(page);
             await settleDashboard(page, {populated: true});
             return true;
         case "content-browser":
@@ -1476,10 +1590,22 @@ export async function gotoSurface(
             return true;
         case "settings-data":
             await seedLearner(page);
+            // #3016 — pin the offline-cache count before the settings
+            // navigation; see pinLessonCacheEmpty for why the live value
+            // cannot be photographed reproducibly.
+            await pinLessonCacheEmpty(page);
             await page.goto("/settings?tab=data");
             await expect(page.getByTestId("settings")).toBeVisible({
                 timeout: 20_000,
             });
+            // #3016 — the offline-cache line renders a bare "…" until
+            // getCacheInfo resolves, and then reports what the service
+            // worker has cached SO FAR. In CI the sets are fetched over
+            // the network while the page is already open, so the number
+            // keeps moving and its text wraps to a second line at 768px:
+            // a 24px page-height flip (7028 vs 7052) that survived the
+            // plain "no longer …" wait. Sample until two reads agree.
+            await waitForStableText(page, "cache-summary");
             return true;
         case "settings-about":
             await seedLearner(page);
