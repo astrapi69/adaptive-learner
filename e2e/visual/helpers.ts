@@ -990,10 +990,16 @@ export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
             await seedLearner(page);
             // A played lesson populates XP / progress / missions.
             await playBundledLesson(page, "summary");
+            // #3016 — the SAME ready contract the critical-surfaces
+            // dashboard uses, down to the SRS quiescence wait. Waiting
+            // only for the page shell let the async cards land after the
+            // shot; harmless while the frame was viewport-sized, a
+            // per-run height flip (1449 vs 1580) once the frame follows
+            // the content. Two motifs of one surface with two different
+            // ready contracts is how one of them stays flaky.
+            await waitForSrsQuiescence(page, {expectRows: true});
             await page.goto("/dashboard");
-            await expect(page.getByTestId("dashboard")).toBeVisible({
-                timeout: 20_000,
-            });
+            await settleDashboard(page, {populated: true});
             return true;
         case "learning-path":
             await seedLearner(page);
@@ -1219,6 +1225,17 @@ async function waitForSrsQuiescence(
     );
 }
 
+/** Every loading placeholder the dashboard publishes (#3016). A card
+ *  still in its loading state means the page has not reached its final
+ *  height, and the capture would freeze a transient layout. */
+const DASHBOARD_LOADING_TESTIDS = [
+    "dashboard-loading",
+    "progress-loading",
+    "focus-areas-card-loading",
+    "review-queue-card-loading",
+    "statistics-loading",
+] as const;
+
 /**
  * #1540 data anchors for the dashboard: the ``dashboard`` testid renders
  * while the Übersicht tab is still a lazy Suspense hole and its cards are
@@ -1251,9 +1268,17 @@ async function settleDashboard(
     await expect(page.getByTestId("ai-invite-card")).toBeVisible({
         timeout: 20_000,
     });
-    await expect(page.getByTestId("review-queue-card-loading")).toHaveCount(0, {
-        timeout: 20_000,
-    });
+    // #3016 — EVERY async card must have landed, not just the review
+    // queue. With the frame at a fixed height a late card only changed
+    // what sat below the fold; now it changes the IMAGE height, and the
+    // dashboard flipped between two heights per run (1449/1580 at 1440
+    // wide, 1864/2016 at 375). Waiting on the loading placeholders is the
+    // ready signal the surface already publishes - no heuristic sleep.
+    for (const loadingId of DASHBOARD_LOADING_TESTIDS) {
+        await expect(page.getByTestId(loadingId)).toHaveCount(0, {
+            timeout: 20_000,
+        });
+    }
     if (opts.populated) {
         // waitForSrsQuiescence guaranteed error rows before we navigated
         // here, so the due-review card is a deterministic fixture.
@@ -1478,6 +1503,13 @@ export async function gotoSurface(
             await seedLearner(page);
             await page.goto("/settings?tab=data");
             await expect(page.getByTestId("settings")).toBeVisible({
+                timeout: 20_000,
+            });
+            // #3016 — the offline-cache line renders a bare "…" until
+            // getCacheInfo resolves; its final text is a different number
+            // of lines, so the page height flipped by ~24px per run once
+            // the frame started following the content.
+            await expect(page.getByTestId("cache-summary")).not.toHaveText("…", {
                 timeout: 20_000,
             });
             return true;
