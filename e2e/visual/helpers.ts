@@ -53,6 +53,19 @@ export type ViewName = (typeof VIEW_NAMES)[number];
 /** A bundled set guaranteed present in the GH-Pages build. */
 const SET_ID = "fr-a1-from-en";
 
+/** Frozen card table for the seeded own lesson (#3011). Synthetic and
+ *  stable, mirroring the fixture shape of ``combine-lessons.spec.ts`` so
+ *  the "My Lessons" motif never depends on real content. */
+const OWN_LESSON_CARDS = [
+    {front: "Bonjour", back: "Guten Tag"},
+    {front: "Merci", back: "Danke"},
+    {front: "Oui", back: "Ja"},
+    {front: "Non", back: "Nein"},
+] as const;
+
+/** Title of the seeded own lesson (#3011). */
+const OWN_LESSON_TITLE = "Mein erstes Vokabelset";
+
 /** Frozen wall-clock for every visual run (follows #244). Relative times
  *  ("vor 3 Minuten", streak dates, "Morgen neue Missionen") would otherwise
  *  drift day-to-day and make the screenshots flaky. */
@@ -442,6 +455,23 @@ const MAX_EXPANDED_VIEWPORT_HEIGHT = 16_000;
 const EXPANSION_ROUNDS = 6;
 
 /**
+ * Residue a viewport-tracking surface may leave outside the frame (#3016).
+ *
+ * On the lesson routes the page measures exactly ``viewport + 61px`` at
+ * EVERY frame size (measured in CI across the three theme viewports:
+ * 1438/1499, 1586/1647, 1687/1748 — the same 61 each time). The shell
+ * sizes ``#root`` off ``100dvh``, so growing the frame grows the surface
+ * with it and the residue never closes. The expansion stops at the frame
+ * it has reached: everything reachable is inside it, and one more round
+ * would only stretch the layout further from what a user sees.
+ *
+ * The cap keeps that from becoming a licence to truncate: a residue this
+ * size is viewport-sized chrome, one several times larger would be real
+ * content no capture can reach, and that fails loud instead.
+ */
+const MAX_VIEWPORT_TRACKING_RESIDUE = 200;
+
+/**
  * Grow the viewport to the full document height so a plain (non-fullPage)
  * screenshot captures the whole page — the replacement for ``fullPage: true``
  * on this app's layout (#2696).
@@ -474,6 +504,7 @@ export async function expandViewportToDocument(page: Page): Promise<number> {
     if (!viewport) return 0;
     let height = viewport.height;
     let contentHeight = height;
+    let previousResidue = -1;
     for (let i = 0; i < EXPANSION_ROUNDS; i++) {
         contentHeight = await contentHeightToCover(page);
         if (contentHeight > MAX_EXPANDED_VIEWPORT_HEIGHT) {
@@ -484,6 +515,26 @@ export async function expandViewportToDocument(page: Page): Promise<number> {
             );
         }
         if (contentHeight <= height) return contentHeight;
+        const residue = contentHeight - height;
+        // #3016 — a residue that does not move when the frame grows means
+        // the surface is sized off the viewport (``#root`` is ``100dvh``):
+        // the target travels with every round, so no frame size can ever
+        // close it. Stop here — the frame already covers everything that
+        // is reachable, and one more round would only stretch the layout
+        // further from what a user sees, for zero additional coverage.
+        if (Math.abs(residue - previousResidue) <= 2) {
+            if (residue > MAX_VIEWPORT_TRACKING_RESIDUE) {
+                throw new Error(
+                    `expandViewportToDocument: the surface tracks the viewport and ` +
+                        `still leaves ${residue}px outside the frame, over the ` +
+                        `${MAX_VIEWPORT_TRACKING_RESIDUE}px chrome allowance (#3016). ` +
+                        "That is content no capture at any frame size can reach — " +
+                        "fix the surface or its fixture, do not raise the allowance.",
+                );
+            }
+            return height;
+        }
+        previousResidue = residue;
         height = contentHeight;
         await page.setViewportSize({width: viewport.width, height});
         await page.waitForTimeout(150);
@@ -1005,6 +1056,7 @@ export const SURFACE_NAMES = [
     "content-browser",
     "content-discover",
     "content-import",
+    "content-my-lessons",
     "create-lesson",
     "set-detail",
     "lesson-theory",
@@ -1248,6 +1300,56 @@ async function gotoReviewSession(page: Page): Promise<boolean> {
 }
 
 /**
+ * Build ONE own lesson through the Create-Lesson wizard, then leave the
+ * browser on the Content hub (#3011).
+ *
+ * The "My Lessons" section only renders when at least one user-generated
+ * set exists (``ImportActionsPanel`` filters on ``userSets.length > 0``),
+ * and no motif seeded one — so the section and everything in it sat
+ * outside the whole screenshot set: a change there produced a green
+ * comparison by construction, exactly the #2477/#2486 class.
+ *
+ * Deterministic by construction: a fixed title and a fixed four-card
+ * table (the same synthetic fixture shape ``combine-lessons.spec.ts``
+ * uses), with the clock frozen and randomness pinned by the caller.
+ *
+ * The hand-off back to the hub uses the wizard's OWN "to browser" button
+ * rather than a hard ``goto``: a fresh navigation renders the global
+ * empty state before the IndexedDB sets have loaded, so the section
+ * would be missing at exactly the moment the shot is taken.
+ */
+async function createOwnLesson(page: Page, title: string): Promise<void> {
+    await page.goto("/create-lesson");
+    await expect(page.getByTestId("create-lesson-step-1")).toBeVisible({
+        timeout: 20_000,
+    });
+    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
+        await page.getByTestId("create-lesson-draft-fresh").click();
+    }
+    await page.getByTestId("create-lesson-title").fill(title);
+    await page.getByTestId("create-lesson-next").click();
+    for (const card of OWN_LESSON_CARDS) {
+        await page.getByTestId("card-front-input").fill(card.front);
+        await page.getByTestId("card-back-input").fill(card.back);
+        await page.getByTestId("card-add-button").click();
+    }
+    await page.getByTestId("create-lesson-next").click();
+    await expect(page.getByTestId("create-lesson-step-3")).toBeVisible({
+        timeout: 15_000,
+    });
+    await page.getByTestId("exercise-generate").click();
+    await page.getByTestId("create-lesson-next").click();
+    await expect(page.getByTestId("create-lesson-step-4")).toBeVisible({
+        timeout: 15_000,
+    });
+    await page.getByTestId("create-lesson-save-local").click();
+    await expect(page.getByTestId("create-lesson-saved")).toBeVisible({
+        timeout: 20_000,
+    });
+    await page.getByTestId("create-lesson-to-browser").click();
+}
+
+/**
  * Bring ``surface`` into its screenshot state in the DEFAULT theme. The
  * caller has already set the viewport + frozen the clock. Returns true
  * when ready, false when the surface can't be reached deterministically
@@ -1292,6 +1394,22 @@ export async function gotoSurface(
             await seedLearner(page);
             await page.goto("/content?tab=import");
             await expect(page.getByTestId("page-import")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "content-my-lessons":
+            // #3011 — the Import tab WITH an own lesson present. The
+            // existing ``content-import`` motif seeds none, so the whole
+            // section (six row actions, the combine selection, the fork
+            // badge and, since #3010, the create button) was in no motif:
+            // any change to it, however wrong, still compared green.
+            // Randomness is pinned before the first navigation because
+            // the generated exercises derive their ids from it.
+            await pinRandomness(page);
+            await seedLearner(page);
+            await createOwnLesson(page, OWN_LESSON_TITLE);
+            await page.getByTestId("content-tab-import").click();
+            await expect(page.getByTestId("content-my-lessons")).toBeVisible({
                 timeout: 20_000,
             });
             return true;
@@ -1439,6 +1557,17 @@ export async function assertSurfaceStillReady(
             await expect(page.getByTestId("review-subtitle")).toBeVisible({
                 timeout: 2_000,
             });
+            return;
+        case "content-my-lessons":
+            // #3011 — the whole point of this motif is the section; an
+            // empty set list (a lost seed, a collapsed reload) must fail
+            // loud instead of baselining the Import tab without it.
+            await expect(page.getByTestId("content-my-lessons")).toBeVisible({
+                timeout: 2_000,
+            });
+            await expect(page.getByTestId("content-my-lessons-list")).toBeVisible(
+                {timeout: 2_000},
+            );
             return;
         default:
             return;
