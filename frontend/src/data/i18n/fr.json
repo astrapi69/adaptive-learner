@@ -2471,6 +2471,9 @@
       "breakdown_heading": "Détail des exercices",
       "breakdown_correct_answer": "Bonne réponse : {answer}",
       "breakdown_unattempted": "Non tentée",
+      "detailed_hide": "Évaluation compacte",
+      "detailed_hint": "Affiche toutes les sections, toutes les réponses et toutes les explications d'erreurs de cette série",
+      "detailed_show": "Évaluation détaillée",
       "view_all_answers": "Voir toutes les réponses ({n})",
       "export": {
         "copy": "Copier le résultat",

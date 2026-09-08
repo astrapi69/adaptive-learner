@@ -2289,6 +2289,9 @@ lesson:
     breakdown_heading: "Detalle de ejercicios"
     breakdown_correct_answer: "Respuesta correcta: {answer}"
     breakdown_unattempted: "Sin intentar"
+    detailed_hide: "Evaluación compacta"
+    detailed_hint: "Muestra todas las secciones, todas las respuestas y todas las explicaciones de errores de esta ronda"
+    detailed_show: "Evaluación detallada"
     view_all_answers: "Ver todas las respuestas ({n})"
     export:
       copy: "Copiar resultado"

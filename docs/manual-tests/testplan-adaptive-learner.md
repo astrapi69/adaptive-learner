@@ -2066,6 +2066,27 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Eine vollständig richtige Zeile zeigt ihre Frage, aber keinen
       Fehler-Vergleich
 
+### Zusammenfassung: Ausführliche Auswertung auf Knopfdruck (#3031)
+- [ ] Lektion beenden: direkt unter der Überschrift steht der Knopf
+      "Ausführliche Auswertung"
+- [ ] In Einstellungen > Lernen > "Auswertung der Lektion" einen
+      Abschnitt abschalten (z. B. "Ergebnis-Export"), dann eine Lektion
+      beenden: der Abschnitt fehlt - nach Druck auf "Ausführliche
+      Auswertung" ist er da
+- [ ] Im ausführlichen Zustand ist "Alle Antworten ansehen" schon
+      aufgeklappt
+- [ ] "Warum du diese verpasst hast" erscheint auch dann, wenn sein
+      eigener Schalter aus ist, und zeigt mehr als fünf Fehler, sofern
+      der Durchgang mehr hatte
+- [ ] Erneut drücken ("Kompakte Auswertung"): alles ist wieder wie
+      vorher, der abgeschaltete Abschnitt ist wieder verschwunden
+- [ ] Zurück in die Einstellungen: die abgeschalteten Abschnitte sind
+      unverändert abgeschaltet - der Knopf speichert nichts
+- [ ] Die Korrektur-Runde bleibt auch ausführlich zugeklappt (auf dem
+      Telefon springt keine Tastatur auf)
+- [ ] Beim Umschalten bleibt der Knopf an seiner Stelle, die Seite
+      springt nicht weg
+
 ### Lektion verlassen führt zum Set (#2811)
 - [ ] In einer Set-Lektion pausieren und verlassen: die App landet auf
       der SET-Seite mit der Lektionsliste, nicht auf "Meine Inhalte"

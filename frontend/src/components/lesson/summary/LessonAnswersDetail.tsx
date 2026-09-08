@@ -22,6 +22,11 @@ import type {ExerciseBreakdownEntry} from "../../../lib/lesson/lesson-summary";
 export interface LessonAnswersDetailProps {
     /** #1411 — the "Answers overview" section toggle; defaults ON. */
     enabled?: boolean;
+    /** #3031 — start expanded. Set by the summary's detailed-evaluation
+     *  toggle, whose whole point is that nothing stays folded away. The
+     *  disclosure itself stays interactive, so the learner can still fold a
+     *  long list back up. Defaults to the collapsed compact view. */
+    open?: boolean;
     /** One entry per exercise step of the run (from ``buildExerciseBreakdown``). */
     breakdown: ExerciseBreakdownEntry[];
 }
@@ -154,6 +159,7 @@ function AnswerRow({
  */
 export default function LessonAnswersDetail({
     enabled = true,
+    open = false,
     breakdown,
 }: LessonAnswersDetailProps) {
     const {t} = useI18n();
@@ -162,6 +168,7 @@ export default function LessonAnswersDetail({
         <details
             className="lesson-summary-breakdown"
             data-testid="lesson-summary-breakdown"
+            open={open}
         >
             <summary
                 className="lesson-summary-breakdown-summary"

@@ -2416,6 +2416,9 @@
       "breakdown_heading": "Exercise breakdown",
       "breakdown_correct_answer": "Correct answer: {answer}",
       "breakdown_unattempted": "Not attempted",
+      "detailed_hide": "Compact evaluation",
+      "detailed_hint": "Shows every section, all answers and every mistake explanation of this run",
+      "detailed_show": "Detailed evaluation",
       "view_all_answers": "View all answers ({n})",
       "export": {
         "copy": "Copy result",
