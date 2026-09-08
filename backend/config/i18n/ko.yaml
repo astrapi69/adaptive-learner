@@ -2692,6 +2692,8 @@ content:
     ready: "준비됨"
     update_available: "업데이트 가능"
     downloading: "다운로드 중…"
+  tab:
+    create: "만들기"
   action:
     refresh: "새로고침"
     refreshing: "새로고침 중…"

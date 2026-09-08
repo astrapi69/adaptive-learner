@@ -1605,6 +1605,36 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       44px tall and wrap cleanly, the heading stays readable.
       **iOS standalone:** launched from the home screen the button behaves the
       same, the wizard opens in the same view without browser chrome.
+- [ ] **"Create" tab in the content hub (#3006):** open `/content` → the tab
+      bar shows **four** tabs: Discover, My content, Import, **Create**.
+      Click Create → the lesson wizard appears in the tab, the address reads
+      `/content?tab=create`. **Old address:** open `/create-lesson` directly →
+      it redirects to `/content?tab=create` and the wizard is there (no 404,
+      no duplicated page). **The edit deep link stays standalone:** choose
+      "Edit" on one of your own lessons → `/create-lesson/edit/...` opens the
+      pre-filled wizard as its own page, NOT inside the tab. **Other entry
+      points:** the "Create new lesson" button on the Dashboard and the link
+      in Discover still reach the wizard. **In the Import tab** the "Create
+      new lesson" button is gone (the tab replaces it); the four remaining
+      actions (Import lesson, Import chat, Anki export, Learning path) are
+      unchanged. **Order:** Settings → General → content tab order lists
+      Create as well and can move it; the new order applies without a reload.
+      Anyone who had set a custom order before this version finds Create at
+      the end of the list, the other three unchanged.
+      **Phone (#3006 on the bar from #3012):** on a real phone in portrait,
+      check whether the four tabs fit on ONE line. Measured in the container
+      (Chromium, German labels) they need 337.1px with the compact bar and fit
+      from 375px device width up; without it they needed 451.7px and fitted on
+      no phone at all. On a very narrow device (320px, first-generation iPhone
+      SE) the bar still wraps onto two lines - that is the defined fallback,
+      not a defect. If it wraps on a device at 375px or wider, REPORT it: the
+      measurement then does not hold, and the remedy is a separate decision.
+      **iOS standalone:** launch the app from the home screen (no browser
+      chrome), open `/content` → the same tab bar, clicking Create switches
+      the tab without a page change, and the back gesture does not leave the
+      app. Then remove the app from the app switcher and relaunch → the last
+      selected tab is not "frozen"; `/content` starts on the first configured
+      tab again.
 - [ ] **Header updates badge (#2904):** an installed content set has a newer
       version (e.g. tap "Update available" on a set in the content browser
       OR bump the set's manifest version in the test repo). Reload/reopen

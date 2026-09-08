@@ -2903,6 +2903,9 @@
       "update_available": "更新あり",
       "downloading": "ダウンロード中…"
     },
+    "tab": {
+      "create": "作成"
+    },
     "action": {
       "refresh": "更新",
       "refreshing": "更新中…",

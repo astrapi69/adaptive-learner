@@ -2686,6 +2686,8 @@ content:
     ready: "Bereit"
     update_available: "Aktualisierung verfügbar"
     downloading: "Lädt…"
+  tab:
+    create: "Erstellen"
   action:
     refresh: "Aktualisieren"
     refreshing: "Aktualisiere…"

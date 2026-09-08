@@ -34,13 +34,14 @@ describe("ContentTabsOrderControl", () => {
       "content-tabs-order-item-discover",
       "content-tabs-order-item-my",
       "content-tabs-order-item-import",
+      "content-tabs-order-item-create",
     ]);
   });
 
   it("disables Up on the first row and Down on the last row", () => {
     render(<ContentTabsOrderControl />);
     expect(screen.getByTestId("content-tabs-up-discover")).toBeDisabled();
-    expect(screen.getByTestId("content-tabs-down-import")).toBeDisabled();
+    expect(screen.getByTestId("content-tabs-down-create")).toBeDisabled();
   });
 
   it("moves a tab down and persists the new order", () => {
@@ -50,13 +51,19 @@ describe("ContentTabsOrderControl", () => {
       "content-tabs-order-item-my",
       "content-tabs-order-item-discover",
       "content-tabs-order-item-import",
+      "content-tabs-order-item-create",
     ]);
-    expect(readContentTabOrder()).toEqual(["my", "discover", "import"]);
+    expect(readContentTabOrder()).toEqual(["my", "discover", "import", "create"]);
   });
 
   it("moves a tab up and persists", () => {
     render(<ContentTabsOrderControl />);
     fireEvent.click(screen.getByTestId("content-tabs-up-import"));
-    expect(readContentTabOrder()).toEqual(["discover", "import", "my"]);
+    expect(readContentTabOrder()).toEqual([
+      "discover",
+      "import",
+      "my",
+      "create",
+    ]);
   });
 });

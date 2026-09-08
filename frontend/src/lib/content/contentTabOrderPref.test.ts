@@ -21,10 +21,20 @@ afterEach(() => {
 
 describe("sanitizeContentTabOrder (robustness)", () => {
   it("keeps a full valid order as-is", () => {
+    expect(
+      sanitizeContentTabOrder(["my", "import", "create", "discover"]),
+    ).toEqual(["my", "import", "create", "discover"]);
+  });
+
+  // #3006 — the Erstellen tab joins the hub. An order stored before it
+  // existed must keep working and gain the new tab at the end, so an
+  // upgrading user never loses a tab or sees an empty bar.
+  it("appends the create tab to an order stored before it existed", () => {
     expect(sanitizeContentTabOrder(["my", "import", "discover"])).toEqual([
       "my",
       "import",
       "discover",
+      "create",
     ]);
   });
 
@@ -35,6 +45,7 @@ describe("sanitizeContentTabOrder (robustness)", () => {
       "my",
       "discover",
       "import",
+      "create",
     ]);
   });
 
@@ -43,6 +54,7 @@ describe("sanitizeContentTabOrder (robustness)", () => {
       "my",
       "discover",
       "import",
+      "create",
     ]);
   });
 
@@ -64,18 +76,29 @@ describe("read/write persistence", () => {
   });
 
   it("persists an order and re-reads it (survives a 'reload')", () => {
-    setContentTabOrder(["import", "my", "discover"]);
-    expect(readContentTabOrder()).toEqual(["import", "my", "discover"]);
+    setContentTabOrder(["import", "my", "create", "discover"]);
+    expect(readContentTabOrder()).toEqual([
+      "import",
+      "my",
+      "create",
+      "discover",
+    ]);
     expect(JSON.parse(localStorage.getItem(KEY)!)).toEqual([
       "import",
       "my",
+      "create",
       "discover",
     ]);
   });
 
   it("sanitizes a hand-corrupted stored value on read", () => {
     localStorage.setItem(KEY, JSON.stringify(["my", "nope"]));
-    expect(readContentTabOrder()).toEqual(["my", "discover", "import"]);
+    expect(readContentTabOrder()).toEqual([
+      "my",
+      "discover",
+      "import",
+      "create",
+    ]);
   });
 
   it("returns the default on malformed JSON", () => {

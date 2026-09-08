@@ -1710,6 +1710,41 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       mindestens 44px hoch und umbrechen sauber, der Titel bleibt lesbar.
       **iOS-Standalone:** vom Home-Bildschirm gestartet verhält sich der Knopf
       gleich, der Assistent öffnet in derselben Ansicht ohne Browser-Leiste.
+- [ ] **Reiter "Erstellen" im Inhalte-Hub (#3006):** `/content` öffnen → die
+      Reiterleiste zeigt **vier** Reiter: Entdecken, Meine Inhalte,
+      Importieren, **Erstellen**. Klick auf Erstellen → der Lektions-Assistent
+      erscheint im Reiter, die Adresse lautet `/content?tab=create`.
+      **Alte Adresse:** `/create-lesson` direkt aufrufen → leitet auf
+      `/content?tab=create` weiter, der Assistent ist da (kein 404, keine
+      doppelte Seite). **Bearbeiten-Deeplink bleibt eigenständig:** bei einer
+      eigenen Lektion "Bearbeiten" wählen → `/create-lesson/edit/...` öffnet
+      den vorbefüllten Assistenten als eigene Seite, NICHT im Reiter.
+      **Andere Einstiege:** der Knopf "Neue Lektion erstellen" auf dem
+      Dashboard und der Link in Entdecken führen weiterhin zum Assistenten.
+      **Im Importieren-Reiter** gibt es den Knopf "Neue Lektion erstellen"
+      nicht mehr (der Reiter ersetzt ihn); die vier übrigen Aktionen
+      (Lektion importieren, Chat importieren, Anki-Export, Lernpfad) sind
+      unverändert da. **Reihenfolge:** Einstellungen → Allgemein → Reihenfolge
+      der Inhalte-Reiter listet auch Erstellen und kann ihn verschieben; die
+      neue Reihenfolge greift ohne Neuladen. Wer vor dieser Version eine
+      eigene Reihenfolge gesetzt hatte, findet Erstellen am Ende der Liste,
+      die übrigen drei unverändert.
+      **Telefon (#3006 auf der Leiste aus #3012):** auf einem echten Telefon im
+      Hochformat prüfen, ob die vier Reiter in EINE Zeile passen. Gemessen im
+      Container (Chromium, deutsche Beschriftungen) brauchen sie mit der
+      kompakten Leiste 337,1px und passen ab 375px Gerätebreite; ohne sie
+      brauchten sie 451,7px und passten auf keinem Telefon. Auf einem sehr
+      schmalen Gerät (320px, iPhone SE der ersten Generation) bricht die Leiste
+      weiterhin in zwei Zeilen um - das ist der definierte Ausweg, kein Fehler.
+      Bricht sie auf einem Gerät ab 375px um, ist das zu MELDEN: dann trägt die
+      Messung nicht, und die Gegenmassnahme ist eine eigene Entscheidung.
+      **iOS-Standalone:** die App vom Home-Bildschirm starten (ohne
+      Browser-Leiste), `/content` öffnen → dieselbe Reiterleiste, Klick auf
+      Erstellen wechselt den Reiter ohne Seitenwechsel, und der Zurück-Gestus
+      führt nicht aus der App heraus. Danach die App aus dem
+      App-Umschalter entfernen und neu starten → der zuletzt gewählte Reiter
+      ist nicht "eingefroren", `/content` startet wieder auf dem ersten
+      konfigurierten Reiter.
 - [ ] **Aktualisierungs-Badge in der Kopfzeile (#2904):** ein installiertes
       Content-Set hat eine neuere Version (z. B. im Content-Browser bei einem
       Set "Aktualisierung verfügbar" antippen ODER die Set-Manifest-Version

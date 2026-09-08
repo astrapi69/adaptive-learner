@@ -28,12 +28,32 @@ interface BarSpec {
   testId: string;
   /** Needs onboarding first (the route redirects otherwise). */
   auth: boolean;
-  /** Widths where a wrap is accepted and why. Everything else must be one line. */
+  /**
+   * Widths where a wrap is accepted. Everything else must be one line.
+   * Never set this without ``wrapReason``: an exemption that carries no stated
+   * reason is indistinguishable from a lowered bar (Gate-Vertrag #2083).
+   */
   wrapAllowedAt?: number[];
+  /** Why the wrap is accepted at those widths. Printed on every exempt width. */
+  wrapReason?: string;
 }
 
 const BARS: readonly BarSpec[] = [
-  { name: "Inhalte", path: "/content", testId: "content-hub-tabs", auth: false },
+  {
+    name: "Inhalte",
+    path: "/content",
+    testId: "content-hub-tabs",
+    auth: false,
+    // Four tabs since #3006. Measured on the compact bar they need 337.1px and
+    // fit from 375px up; at 320px only 288px are available, so the wrap is the
+    // bar's defined fallback there, not an accident. The other three widths
+    // stay strict, so a regression that pushes the bar over at 375px still
+    // turns this red.
+    wrapAllowedAt: [320],
+    wrapReason:
+      "vier Reiter (#3006) brauchen 337.1px, bei 320px stehen 288px zur " +
+      "Verfuegung; der Umbruch ist der definierte Ausweg aus #3012",
+  },
   { name: "Fortschritt", path: "/progress", testId: "progress-hub-tabs", auth: true },
   { name: "Dashboard", path: "/dashboard", testId: "dashboard-tabs", auth: true },
 ];
@@ -97,7 +117,16 @@ function assertBar(bar: BarSpec, width: number, r: BarReading): void {
   // Fail closed: a bar with no tabs would otherwise pass every assertion.
   expect(r.labels.length, `${detail} — keine Reiter gefunden`).toBeGreaterThan(1);
   expect(r.squeezed, `${detail} — gestauchte Beschriftungen`).toEqual([]);
-  if (bar.wrapAllowedAt?.includes(width)) return;
+  if (bar.wrapAllowedAt?.includes(width)) {
+    // Say what was NOT asserted and why, so an exempt width can never read as
+    // a checked one in the log (Gate-Vertrag #2083 Punkt 4).
+    expect(
+      bar.wrapReason,
+      `${detail} — Umbruch-Ausnahme ohne Begruendung`,
+    ).toBeTruthy();
+    console.log(`${detail} — Umbruch erlaubt: ${bar.wrapReason}`);
+    return;
+  }
   expect(r.rows, `${detail} — Leiste ist nicht einzeilig`).toBe(1);
 }
 

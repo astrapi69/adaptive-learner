@@ -243,7 +243,15 @@ export default function App() {
                 <Route path="/add-repo" element={<AddRepo />} />
                 <Route path="/invite" element={<RedeemInvite />} />
                 <Route path="/learning-path" element={<LearningPath />} />
-                <Route path="/create-lesson" element={<CreateLesson />} />
+                {/* #3006 — creating is a hub tab now; the standalone route
+                    redirects into it instead of being duplicated, exactly as
+                    /import and /discover do above. Every other entry point
+                    (Dashboard, Discover link, share dialog) keeps working
+                    through this redirect. */}
+                <Route
+                  path="/create-lesson"
+                  element={<Navigate to="/content?tab=create" replace />}
+                />
                 {/* #1740 — edit an existing own lesson in the pre-filled wizard. */}
                 <Route path="/create-lesson/edit/:source/:setId" element={<CreateLesson />} />
                 <Route path="/lesson/:setSlug/:setId/:filename" element={<LessonPage />} />

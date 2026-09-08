@@ -2903,6 +2903,9 @@
       "update_available": "Güncelleme var",
       "downloading": "İndiriliyor…"
     },
+    "tab": {
+      "create": "Oluştur"
+    },
     "action": {
       "refresh": "Yenile",
       "refreshing": "Yenileniyor…",

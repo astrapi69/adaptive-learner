@@ -19,6 +19,9 @@ vi.mock("./Content", () => ({
 vi.mock("./Import", () => ({
   default: () => <div data-testid="page-import" />,
 }));
+vi.mock("../lesson/CreateLesson", () => ({
+  default: () => <div data-testid="page-create" />,
+}));
 
 vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({
@@ -56,6 +59,7 @@ describe("ContentHub tab order (#1378)", () => {
       "content-tab-discover",
       "content-tab-my",
       "content-tab-import",
+      "content-tab-create",
     ]);
     expect(screen.getByTestId("content-tab-discover")).toHaveAttribute(
       "aria-selected",
@@ -64,11 +68,12 @@ describe("ContentHub tab order (#1378)", () => {
   });
 
   it("renders the configured order", () => {
-    setContentTabOrder(["my", "import", "discover"]);
+    setContentTabOrder(["my", "import", "create", "discover"]);
     renderAt("/content");
     expect(tabOrder()).toEqual([
       "content-tab-my",
       "content-tab-import",
+      "content-tab-create",
       "content-tab-discover",
     ]);
   });
@@ -102,5 +107,34 @@ describe("ContentHub tab order (#1378)", () => {
       "aria-selected",
       "true",
     );
+  });
+
+  // #3006 — the Erstellen tab: its own reiter in the hub, replacing the
+  // "Neue Lektion erstellen" button that #1253 had put under Importieren.
+  describe("create tab (#3006)", () => {
+    it("mounts the lesson creator on ?tab=create, and nothing else", async () => {
+      renderAt("/content?tab=create");
+      expect(await screen.findByTestId("page-create")).toBeInTheDocument();
+      expect(screen.queryByTestId("page-import")).toBeNull();
+      expect(screen.queryByTestId("page-discover")).toBeNull();
+      expect(screen.getByTestId("content-tab-create")).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+
+    it("does not mount the creator while another tab is active", () => {
+      renderAt("/content?tab=import");
+      expect(screen.queryByTestId("page-create")).toBeNull();
+    });
+
+    it("carries a short label, not the long button wording", () => {
+      renderAt("/content");
+      // "Neue Lektion erstellen" is the button text; a tab needs a short
+      // label so four tabs still fit on a phone (#989 wrap risk).
+      expect(screen.getByTestId("content-tab-create")).toHaveTextContent(
+        /^Create$/,
+      );
+    });
   });
 });

@@ -535,6 +535,83 @@ develop. Kein Backend-venv (die Änderung berührt nur eine Vitest-Datei).
   manuellen Pfad als "nicht breaking" und wird angewendet (der Nutzer hat
   den Lauf ausgelöst; nur der stille Auto-Sync hält bei Peek-Fehlern).
 
+## F. Inhalte-Hub: Reiter "Erstellen" (#3006, #3007, #3008, Branch claude/button-update-top-bar-k1ogua)
+
+### 1. Recherche: wo der geplante Reiter hängen geblieben ist (17:55)
+
+- Original prompt: "Wir hatten mal für den Button neue Lektionen eine Tab
+  geplant, das ist irgendwie untergegangen. Schau mal wo das hängen
+  geblieben ist."
+- Optimierter Prompt: "Suche im gesamten Repo nach einer geplanten, nie
+  umgesetzten Idee eines eigenen Reiters für das Erstellen; unterscheide
+  belegten Fund von Interpretation."
+- Ergebnis: **Kein Beleg.** Weder Issue noch Journal noch Exploration noch
+  Code-Rest. Geprüft: alle Session-Journale, ROADMAP samt Archiv, Backlog,
+  alle EXP-Dokumente, Audits, Changelogs, Hilfe, Testpläne, Regeldateien,
+  GitHub-Issues in beiden Sprachen, dazu die Historie von `ContentHub.tsx`
+  (seit #856 immer dieselben drei Reiter, nie ein vierter angefangen).
+  Stattdessen belegt: #1253 entschied am 29.06. bewusst das Gegenteil, die
+  fünf Aktionen inklusive Erstellen gehören in den Importieren-Reiter, weil
+  sie "all import/creation-related" seien. Nebenfund: EXP-021 nennt drei
+  Einstiegspunkte, zwei davon weichen bis heute vom Plan ab (#3007, #3008).
+
+### 2. Architekten-Entscheidung und Umsetzung (18:10)
+
+- Der Architekt revidiert #1253 ausdrücklich: "etwas Vorhandenes holen" und
+  "etwas Neues machen" sind verschiedene Absichten, wer erstellen will sucht
+  nicht unter Importieren. Die Revision ist in #3006 und im Code-Kommentar
+  des Hubs benannt, damit sie nicht unbemerkt zurückgedreht wird.
+- RED zuerst: `contentTabOrderPref.test.ts` (Reiter bekannt, wird an eine vor
+  seiner Zeit gespeicherte Reihenfolge angehängt), `ContentHub.test.tsx`
+  (vierter Reiter, `?tab=create` mountet den Assistenten, kurzes Label),
+  neuer `ContentActionButtons.test.tsx` (Erstellen-Knopf entfernt, vier
+  übrige bleiben). 9 rot.
+- GREEN: `ContentTabId` um "create" erweitert, Hub mountet `CreateLesson`
+  lazy wie die anderen Seiten, `/create-lesson` leitet auf
+  `/content?tab=create` weiter (dasselbe Muster wie `/import` und
+  `/discover`), `/create-lesson/edit/:source/:setId` bleibt eigenständig.
+  Einordnung der fünf Aktionen: nur Erstellen wandert; Lektion importieren
+  und Chat importieren sind Import, Anki-Export ist Ausgabe, Lernpfad ist
+  Navigation. i18n `content.tab.create` in allen elf Katalogen.
+- Zwei Bestandstests folgten der Verhaltensänderung (Aktionsleiste fünf auf
+  vier, Reihenfolge-Einstellung drei auf vier Einträge).
+
+### 3. Der Prüfpunkt: vier Reiter auf dem Telefon (18:40)
+
+Gemessen statt geschätzt, echtes Rendering im Dexie-Build, Chromium mit
+`isMobile`, deutsche Beschriftungen, Umbruch an den y-Koordinaten abgelesen.
+Reiterbreiten: Entdecken 105,5px, Meine Inhalte 127px, Importieren 113,9px,
+Erstellen 93,3px, Abstand 4px.
+
+| Gerät | Leiste innen | 3 Reiter | 4 Reiter | Zeilen |
+|---|---|---|---|---|
+| 320px | 288px | 354,4px nein | 451,7px nein | 2 |
+| 375px | 343px | 354,4px nein | 451,7px nein | 2 |
+| 390px | 358px | 354,4px ja | 451,7px nein | 2 |
+| 430px | 398px | 354,4px ja | 451,7px nein | 2 |
+
+Befund: bei 390px und 430px echte Verschlechterung von einer auf zwei
+Zeilen. Bei 375px und 320px brach die Leiste mit deutschen Beschriftungen
+schon vorher um, die Annahme im Auftrag ("drei passen heute vermutlich
+nebeneinander") trifft dort nicht zu. Nach Vorgabe wurde das **gemeldet
+statt erzwungen**: der PR bleibt Entwurf, die Gegenmassnahme ist eine eigene
+Entscheidung.
+
+### Fragen und Annahmen
+
+- Bildgrundlinien bewusst NICHT erneuert: bei einer Layout-Entscheidung
+  (kürzere Beschriftungen, andere Anordnung) wären sie sofort wieder
+  hinfällig. Abweichung von der Regel "Grundlinien im selben PR", im PR und
+  im Vorgang begründet; der Gate ist entsprechend rot und das ist bei einem
+  Entwurf das richtige Signal.
+- Die Reiterleiste trägt seit jeher `role="tablist"` mit `role="tab"`, aber
+  ohne `aria-controls` und ohne Pfeiltasten-Navigation. Der neue Reiter erbt
+  genau das Muster, verschlechtert also nichts; die bestehende Lücke ist ein
+  eigener Befund und kein Teil dieses Vorgangs.
+- Sprachwahl der Messung: Deutsch, weil es die Standardsprache der App ist.
+  Auf Englisch liegt die Umbruchgrenze günstiger (drei Reiter passen dort
+  noch bei 375px), das ist aber nicht der maßgebliche Fall.
+
 ## G. Erstellen-Einstieg in "Meine Lektionen" (#3007, Branch claude/create-entry-my-lessons-3007)
 
 - Herkunft: Nebenfund der #3006-Recherche. EXP-021 nennt drei Einstiegspunkte
@@ -637,8 +714,108 @@ eine Entscheidung.
   findet, sind schlechter als eine zweite Zeile.
 - Die Umschaltgrenze ist `sm` (640px). Zwischen 430 und 640px bleibt es
   kompakt; dort passen vier Reiter mit Reserve.
-- Vier Reiter bei 320px passen weiterhin nicht (fehlen 55,1px). Dort
-  bleibt der Umbruch, jetzt aber als definierter Ausweg für alle drei
-  Leisten statt nur für eine.
+- Vier Reiter bei 320px passen weiterhin nicht: 343,1px vor der
+  `gap-0.5`-Reserve, 337,1px danach, gegen 288px Innenbreite fehlen also
+  49,1px. Dort bleibt der Umbruch, jetzt aber als definierter Ausweg für
+  alle drei Leisten statt nur für eine.
 - #3009 (der vierte Reiter) berührt dieselbe Datei und wird nach diesem
   PR neu aufgesetzt statt gestapelt.
+
+
+## I. Der vierte Reiter auf der neuen Leiste (#3006 / #3009, Branch claude/button-update-top-bar-k1ogua)
+
+### Anlass
+
+- #3013 (die gemeinsame Reiterleiste) ist gemergt. Damit ist der Prüfpunkt
+  aus dem #3006-Auftrag neu zu beantworten: er lautete nicht "der Reiter
+  ist verboten", sondern "melden statt erzwingen, wenn er nicht passt".
+  Er passt jetzt.
+
+### Was sich an der Antwort ändert
+
+| | vorher (32px Polsterung, 14px Schrift) | jetzt (16px / 12px, `gap-0.5`) |
+|---|---|---|
+| vier Reiter brauchen | 451,7px | 337,1px |
+| passen ab | nirgends | 375px |
+| 320px | zwei Zeilen | zwei Zeilen |
+
+- Der Reiter wurde also nicht "durchgedrückt", sondern die Voraussetzung
+  wurde geschaffen und dann erneut gemessen. Die Reihenfolge ist der
+  Punkt: erst der Befund, dann der Umbau, dann der Reiter.
+- Bei 320px bleibt der Umbruch. Das ist seit #3012 der definierte Ausweg
+  aller drei Leisten und kein Sonderfall dieses Reiters mehr.
+
+### Nachgemessen, nicht weitergerechnet
+
+- Die 337,1px aus #3012 waren eine Rechnung: der vierte Reiter existierte auf
+  jenem Branch nicht, seine Breite kam aus einem geklonten Prüfling. Jetzt
+  existiert er wirklich, also neu gemessen, mit realem Rendering bei jeder
+  Breite und Umbruch an den y-Koordinaten abgelesen.
+- Ergebnis identisch zur Rechnung: Entdecken 79px, Meine Inhalte 97,4px,
+  Importieren 86,2px, Erstellen 68,5px, Abstand 2px, zusammen 337,1px.
+  320px zwei Zeilen (288px innen), 375/390/414/430px einzeilig, ab 640px
+  wieder 451,7px auf 608px Innenbreite. Trefferfläche überall 44px, kein
+  Überlauf.
+- Dass die Rechnung diesmal stimmte, ist kein Argument dafür, beim nächsten
+  Mal zu rechnen: der geklonte Prüfling erbt genau die Annahmen, die er
+  belegen soll.
+
+### Der Gate und die 320px
+
+- Mit vier Reitern bricht die Inhalte-Leiste bei 320px um, der neue Spec
+  wäre also rot. Statt die Prüfbreite zu streichen, wird die Ausnahme
+  benannt: `wrapAllowedAt: [320]` mit einem `wrapReason`, den der Spec
+  einfordert und mitprotokolliert.
+- Der Punkt ist die Nichtstreichbarkeit: 375, 390 und 414px bleiben streng,
+  eine Regression, die die Leiste dort kippt, wird weiterhin rot. Eine
+  Ausnahme ohne Begründung schlägt fehl, damit sie nicht später still
+  gesetzt werden kann (Gate-Vertrag #2083).
+- `@playwright/test` ist im Container nicht installiert, der Spec selbst
+  konnte hier also nicht laufen. Stattdessen wurde seine Messlogik
+  zeilengleich gegen den echten Dexie-Build repliziert: 320px erlaubt
+  zweizeilig, die drei anderen Breiten einzeilig, nichts gestaucht.
+
+### Zusammenführung
+
+- Der Branch trug den Reiter aus dem Entwurf vom Vormittag. `git merge
+  origin/develop` löste den Rumpf von `ContentHub.tsx` automatisch auf:
+  die neue `TabBar` und der vierte Reiter berühren verschiedene Zeilen.
+  Von Hand waren nur der Kopfkommentar und die drei Doku-Dateien zu
+  entscheiden, alle additiv.
+- Die Testplan-Einträge DE und EN tragen die neue Messung statt der alten.
+  Der Telefon-Punkt bleibt, verliert aber das "BLOCKIEREND": er prüft
+  jetzt eine Aussage, die die Messung stützt, statt eine, die sie
+  widerlegt hat.
+
+### Nebenbefund beim Zurechnen: #3016
+
+- Der Sync lieferte 16 Bilder, zwölf zurechenbar. Die drei
+  `create-lesson`-Flächen waren nicht eingeplant und sind der beste Beleg,
+  dass die Weiterleitung greift: `/create-lesson` rendert jetzt im Hub, das
+  Bild zeigt vier Reiter in einer Zeile mit aktivem "Erstellen".
+- `dashboard-populated-desktop` zurückgenommen wie beim letzten Mal:
+  verschobener Inhalt an einer Stelle, die dieser PR nicht berührt (#2682).
+- Die drei `settings-general`-Bilder **hätten** sich ändern müssen, die
+  Reihenfolge-Einstellung bekommt einen vierten Eintrag. Die Bildhöhe blieb
+  bei 1912px. Nachgesehen statt weggewinkt: die Bilder enden mitten im
+  Themen-Raster, und `ContentTabsOrderControl` steht dahinter. Rund die
+  halbe Seite ist in keinem Motiv enthalten; der Gate war die ganze Zeit
+  grün, weil Ist und Referenz an derselben Stelle abgeschnitten sind.
+- Das ist die #2696-Klasse an einer Stelle, die deren Fix nicht erfasst: der
+  dortige Helfer wächst auf die Dokumenthöhe, die Settings-Seite scrollt aber
+  in einem eigenen Container. Als #3016 aufgenommen, hier nicht gefixt.
+- Der Punkt für das nächste Mal: dass sich ein Bild NICHT ändert, obwohl es
+  sich ändern müsste, ist genauso ein Befund wie eine unerklärliche Änderung.
+  Ohne die Erwartung "hier kommt ein Eintrag dazu" wäre der abgeschnittene
+  Motiv-Satz weiter unentdeckt geblieben.
+
+### Fragen und Annahmen
+
+- Angenommen, dass der ursprüngliche Auftrag mit dem Passen der vier
+  Reiter erfüllt ist und keine erneute Freigabe braucht. Grundlage: die
+  Prämissenkorrektur des Architekten hat den Reiter ausdrücklich zum
+  **Teil** des Überlauf-Vorgangs erklärt statt zu dessen Anlass. Ist das
+  zu weit ausgelegt, ist der PR ein Entwurf und leicht zurückzuhalten.
+- Nicht angefasst: die Platzierung der vier übrigen Aktionen im
+  Importieren-Reiter (#1253) und die fehlende Pfeiltasten-Navigation der
+  Leisten. Beides sind eigene Befunde.

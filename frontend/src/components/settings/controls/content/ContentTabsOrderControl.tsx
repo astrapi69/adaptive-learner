@@ -1,9 +1,12 @@
 /**
- * ContentTabsOrderControl — Settings → General control to reorder the three
- * "Inhalte" tabs (Entdecken / Meine Inhalte / Importieren) (#1378).
+ * ContentTabsOrderControl — Settings → General control to reorder the
+ * "Inhalte" tabs (#1378). The tab set itself lives in
+ * ``lib/content/contentTabOrderPref``; this control renders whatever is in
+ * there rather than a list of its own, so a new tab (#3006 added Erstellen)
+ * shows up here without touching this file.
  *
  * A plain ordered list with Up/Down buttons per row (no drag-and-drop framework
- * for three entries — same pattern as the content-repo precedence reorder).
+ * at this size — same pattern as the content-repo precedence reorder).
  * The first entry becomes the initial active tab of the Content area. Persists
  * via ``lib/content/contentTabOrderPref`` (typed ordered array, localStorage,
  * both storage modes). Token-backed Tailwind, 44px touch targets.
@@ -30,6 +33,7 @@ export default function ContentTabsOrderControl() {
     discover: t("discover.tab.discover", "Discover"),
     my: t("nav.content", "My content"),
     import: t("discover.tab.import", "Import"),
+    create: t("content.tab.create", "Create"),
   };
 
   const move = (id: ContentTabId, direction: -1 | 1) => {
