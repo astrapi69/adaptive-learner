@@ -60,12 +60,20 @@ for (const surface of SURFACE_NAMES) {
             const ready = await gotoSurface(page, surface);
             test.skip(!ready, `Could not reach ${surface} deterministically`);
             await settleForScreenshot(page);
-            // #2696 - grow the viewport to the document height and take a
+            // #2696 - grow the viewport to the full page height and take a
             // plain shot instead of ``fullPage: true``: captureBeyondViewport
             // never painted below the viewport on this app's nested-scroll
             // layout, leaving every tall-page baseline blank from ~viewport
             // height down. A viewport-sized page is a no-op here.
-            await expandViewportToDocument(page);
+            // #3016 - record the height that was actually covered. "Passed"
+            // and "measured nothing" printed the same green while the oracle
+            // read ``documentElement`` (the viewport, on a page that scrolls
+            // inside ``#root``), so the number belongs in the report.
+            const coveredHeight = await expandViewportToDocument(page);
+            test.info().annotations.push({
+                type: "covered-height",
+                description: `${surface}-${viewport}: ${coveredHeight}px`,
+            });
             // #1540 - the .lesson-header h1 line-height pin removed most of the
             // bistable title-height shift, but lesson-matching@mobile keeps a
             // ~5px residual (observed ratio 0.05, content-identical). Allow it

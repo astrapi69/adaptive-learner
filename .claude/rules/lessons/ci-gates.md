@@ -311,3 +311,34 @@ Passt zu "Vorlaeufige Regel: visual-baseline-sync ungezielt" (oben,
 der Fold-Fehlschluss dort war diese Klasse) und zu core.md "Behauptete
 Durchsetzung ohne Durchsetzung" - ein Gate, das jede Nacht lief und
 auf drei Flaechen nichts absicherte.
+
+### Nachtrag #3016: der Ersatz erbte das kaputte Maß
+
+Der Fix oben tauschte das AUFNAHMEVERFAHREN und übernahm das HÖHENMASS
+ungeprüft: `expandViewportToDocument` las weiter
+`documentElement.scrollHeight`. Genau dieses Maß kennt die Seite nicht -
+die App scrollt in `#root`, und ein Scroll-Container behält seinen
+Überlauf für sich, meldet ihn also keinem Vorfahren. Gemessen an
+settings-general: Dokument 1080/1435/1913 px gegen `#root`
+2497/3088/3774 px (Desktop/Tablet/Telefon). Die Grundlinien deckten
+43-51 % der Seite ab, der Rest (Tab-Reihenfolge, Sprache, zwei
+Einstellungs-Abschnitte, Updates) war in keinem Bild - und der Vergleich
+blieb grün, weil Referenz und Ist an derselben Stelle abgeschnitten
+waren. Betroffen war jedes Motiv, nur unterschiedlich stark: von 41 px
+auf dashboard-empty@Desktop bis zu mehr als der halben Seite.
+
+Regeln:
+
+- **Ein Maß für "die ganze Seite" muss den Container nennen, der wirklich
+  scrollt.** Auf verschachtelten Layouts ist `documentElement` dieser
+  Container nicht. Die Gegenprobe kostet eine Zeile: Bildhöhe gegen
+  `#root.scrollHeight` halten. Ein Motiv, das exakt auf Viewport-Höhe
+  endet, ist verdächtig, nicht zufällig.
+- **Wer einen kaputten Mechanismus ersetzt, prüft dessen Annahmen mit.**
+  Sonst überlebt der Fehler seinen eigenen Fix, und die Reparatur trägt
+  ihn als Beleg weiter.
+- **Fail closed statt stillem Abschneiden:** die Aufnahme bricht jetzt ab,
+  wenn die Fläche nach den Wachstumsrunden noch höher ist als der
+  Viewport, und schreibt die gedeckte Höhe pro Motiv in den Bericht
+  (Gate-Vertrag Punkt 4: "0 geprüft" darf nicht dasselbe Grün drucken wie
+  "0 Befunde").

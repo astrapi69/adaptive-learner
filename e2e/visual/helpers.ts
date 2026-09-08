@@ -284,13 +284,56 @@ export async function pinContentRegistry(page: Page): Promise<void> {
 }
 
 /**
+ * The page height a capture has to cover, in CSS pixels.
+ *
+ * ``document.documentElement.scrollHeight`` is NOT that height on this
+ * app. The shell locks the viewport elements (``html,body{overflow:hidden}``)
+ * and scrolls INSIDE ``#root`` (``overflow-y:auto`` — the single-scroll
+ * contract pinned by ``frontend/src/styles/single-scroll-container.test.ts``).
+ * A scroll container keeps its own overflow to itself, so it never reaches
+ * an ancestor's ``scrollHeight``: for a page that scrolls, the document
+ * reports roughly the viewport height and nothing more (#3016).
+ *
+ * Measured on settings-general (light theme, seeded learner): document
+ * 1080 / 1435 / 1913 px versus ``#root`` 2497 / 3088 / 3774 px at
+ * desktop / tablet / mobile. The baselines covered 43-51 % of the page
+ * and stayed green, because actual and reference were cut at the same
+ * line — the #2696 class one layer deeper: that fix replaced
+ * ``fullPage`` for the DOCUMENT scroll, this one measures the NESTED
+ * container the app actually scrolls.
+ *
+ * So the oracle is the maximum of the document and the app scroller's
+ * content bottom. A missing ``#root`` is a broken assumption, not an
+ * empty page: fail loud rather than silently measure the viewport and
+ * report a truncated capture as complete.
+ */
+export async function contentHeightToCover(page: Page): Promise<number> {
+    return page.evaluate(() => {
+        const root = document.getElementById("root");
+        if (!root) {
+            throw new Error(
+                "contentHeightToCover: #root is missing — the app shell's " +
+                    "scroll container is the height oracle (#3016)",
+            );
+        }
+        return Math.ceil(
+            Math.max(
+                document.documentElement.scrollHeight,
+                root.scrollHeight + root.offsetTop,
+            ),
+        );
+    });
+}
+
+/**
  * Wait until the page layout stops growing — the fullPage screenshot height
  * is stable across consecutive samples (#1696).
  *
  * Content surfaces (content-browser, content-discover, set-detail) render
  * lists that load asynchronously (bundled content from Dexie, the registry);
  * a fullPage shot fired mid-load captures a different page height run-to-run
- * (observed ~700px swings on set-detail). Poll ``documentElement.scrollHeight``
+ * (observed ~700px swings on set-detail). Poll {@link contentHeightToCover}
+ * (the app scroller, NOT ``documentElement`` — #3016)
  * until it repeats ``stableSamples`` times in a row, or give up after
  * ``maxWaitMs`` (bounded so a perpetually-animating surface can never hang —
  * animations are already disabled by ``settleForScreenshot``).
@@ -303,9 +346,7 @@ export async function waitForStableLayout(
     let last = -1;
     let stable = 0;
     while (Date.now() < deadline) {
-        const height = await page.evaluate(
-            () => document.documentElement.scrollHeight,
-        );
+        const height = await contentHeightToCover(page);
         if (height === last) {
             stable += 1;
             if (stable >= stableSamples) return;
@@ -395,6 +436,11 @@ export async function settleForScreenshot(page: Page): Promise<void> {
  */
 const MAX_EXPANDED_VIEWPORT_HEIGHT = 16_000;
 
+/** Growth rounds before the expansion gives up and fails loud (#3016).
+ *  Each round reflows ``dvh``-sized chrome, which can uncover more content;
+ *  every real surface converges in two. */
+const EXPANSION_ROUNDS = 6;
+
 /**
  * Grow the viewport to the full document height so a plain (non-fullPage)
  * screenshot captures the whole page — the replacement for ``fullPage: true``
@@ -409,32 +455,55 @@ const MAX_EXPANDED_VIEWPORT_HEIGHT = 16_000;
  * the same place. With the viewport grown to the document height everything
  * is genuinely in-viewport, so Chromium rasters every tile.
  *
+ * #3016 — the height comes from {@link contentHeightToCover}, NOT from
+ * ``documentElement`` alone: the page scrolls inside ``#root``, whose
+ * overflow the document never reports, so the original oracle read the
+ * viewport height back on most surfaces and the expansion was a no-op
+ * exactly where it was needed. Measured before the fix: settings-general
+ * captured 43-51 % of its page at the three viewports, and the comparison
+ * stayed green because reference and actual were cut at the same line.
+ *
  * Runs to a fixpoint: growing the viewport reflows ``dvh``-sized elements,
- * which can change the document height again. No-op for pages that already
- * fit (the majority — only 3 surfaces exceed their viewport today).
+ * which can uncover more content. No-op for pages that genuinely fit.
+ * Returns the covered content height so the caller can record WHAT was
+ * measured (gate-contract point 4) instead of only that it passed.
  * Call AFTER ``settleForScreenshot`` so the measured height is stable.
  */
-export async function expandViewportToDocument(page: Page): Promise<void> {
+export async function expandViewportToDocument(page: Page): Promise<number> {
     const viewport = page.viewportSize();
-    if (!viewport) return;
+    if (!viewport) return 0;
     let height = viewport.height;
-    for (let i = 0; i < 4; i++) {
-        const docHeight = await page.evaluate(() =>
-            Math.ceil(document.documentElement.scrollHeight),
-        );
-        if (docHeight > MAX_EXPANDED_VIEWPORT_HEIGHT) {
+    let contentHeight = height;
+    for (let i = 0; i < EXPANSION_ROUNDS; i++) {
+        contentHeight = await contentHeightToCover(page);
+        if (contentHeight > MAX_EXPANDED_VIEWPORT_HEIGHT) {
             throw new Error(
-                `expandViewportToDocument: document is ${docHeight}px tall, ` +
+                `expandViewportToDocument: the surface is ${contentHeight}px tall, ` +
                     `over the ${MAX_EXPANDED_VIEWPORT_HEIGHT}px raster-safety cap — ` +
                     "shrink the surface fixture instead of capturing a degraded shot",
             );
         }
-        if (docHeight <= height) return;
-        height = docHeight;
+        if (contentHeight <= height) return contentHeight;
+        height = contentHeight;
         await page.setViewportSize({width: viewport.width, height});
         await page.waitForTimeout(150);
         await waitForStableLayout(page);
     }
+    // #3016 — fail CLOSED. Falling out of the loop means the surface kept
+    // growing; capturing here would silently cut it off, which is exactly
+    // the condition that stayed green for months. "I could not cover it" is
+    // never "there is nothing below".
+    contentHeight = await contentHeightToCover(page);
+    if (contentHeight > height) {
+        throw new Error(
+            `expandViewportToDocument: the surface still measures ${contentHeight}px ` +
+                `inside a ${height}px viewport after ${EXPANSION_ROUNDS} growth ` +
+                "rounds — the capture would cut it off (#3016). Either the layout " +
+                "keeps reflowing with the viewport, or a late async render is " +
+                "still landing; do not lower the round count to make it pass.",
+        );
+    }
+    return contentHeight;
 }
 
 /** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard.
