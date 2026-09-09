@@ -770,6 +770,10 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Finishing a lesson with a perfect score: the summary shows the
       ticket banner ("Reward unlocked ...") with a "Play now" button
       leading to the arcade
+- [ ] Arcade switch off (#3029): the same lesson finished with a perfect
+      score shows NEITHER the banner nor "Play now" in the summary, and
+      no ticket is banked; arcade switch back on and another new lesson
+      finished perfectly: banner and button are back
 - [ ] Hearts active (#2878) and a run finished without losing one:
       one more ticket (perfect score + all hearts = 2 tickets)
 - [ ] Streak milestones (3/7/14/30 days): reaching one grants a bonus

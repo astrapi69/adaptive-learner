@@ -12,6 +12,7 @@ import {beforeEach, describe, expect, it} from "vitest";
 
 import SummaryTicketReward from "./SummaryTicketReward";
 import {readTicketState} from "../../../lib/arcade/ticket-store";
+import {setPlayfulArcade} from "../../../lib/learning/playful/playfulArcadePref";
 import {setPlayfulMode} from "../../../lib/learning/playful/playfulModePref";
 import {setPlayfulTickets} from "../../../lib/learning/playful/playfulTicketsPref";
 
@@ -67,6 +68,39 @@ describe("SummaryTicketReward", () => {
         expect(
             screen.queryByTestId("summary-ticket-reward"),
         ).not.toBeInTheDocument();
+    });
+
+    it("renders nothing while the arcade switch is off (#3029)", () => {
+        setPlayfulArcade(false);
+        renderReward();
+        expect(
+            screen.queryByTestId("summary-ticket-reward"),
+        ).not.toBeInTheDocument();
+        expect(readTicketState(USER).tickets).toBe(0);
+    });
+
+    it("the arcade switch round-trips: off hides, on brings it back (#3029)", () => {
+        setPlayfulArcade(false);
+        const first = renderReward();
+        expect(
+            screen.queryByTestId("summary-ticket-play"),
+        ).not.toBeInTheDocument();
+        first.unmount();
+        setPlayfulArcade(true);
+        renderReward();
+        expect(screen.getByTestId("summary-ticket-play")).toBeInTheDocument();
+    });
+
+    it("the ticket switch round-trips: off hides, on brings it back (#3029)", () => {
+        setPlayfulTickets(false);
+        const first = renderReward();
+        expect(
+            screen.queryByTestId("summary-ticket-play"),
+        ).not.toBeInTheDocument();
+        first.unmount();
+        setPlayfulTickets(true);
+        renderReward();
+        expect(screen.getByTestId("summary-ticket-play")).toBeInTheDocument();
     });
 
     it("a full-score run banks one ticket and shows the banner", () => {
