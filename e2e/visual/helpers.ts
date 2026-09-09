@@ -1076,6 +1076,7 @@ export const SURFACE_NAMES = [
     "settings-about",
     "settings-ai",
     "settings-learning",
+    "settings-plugins",
     "shortcut-help",
 ] as const;
 
@@ -1673,6 +1674,16 @@ export async function gotoSurface(
             // nothing about a surface that is not in the matrix).
             await seedLearner(page);
             await page.goto("/settings?tab=learning");
+            await expect(page.getByTestId("settings")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "settings-plugins":
+            // #3055 - the Plugins tab had no motif (the #2486 class). In the
+            // Dexie build the installed-plugins card renders its desktop-only
+            // notice above the Learning-Repository card.
+            await seedLearner(page);
+            await page.goto("/settings?tab=plugins");
             await expect(page.getByTestId("settings")).toBeVisible({
                 timeout: 20_000,
             });

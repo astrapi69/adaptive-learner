@@ -162,6 +162,7 @@ export const apiStorage: IStorageService = {
     manifests: () => api.plugins.manifests(),
     health: () => api.plugins.health(),
     errors: () => api.plugins.errors(),
+    inspect: (name) => api.plugins.inspect(name),
   },
 
   imports: {

@@ -416,6 +416,17 @@ Streak-Heatmap überspringen), tägliches Sessions-Ziel
 Bestätigung; löscht `user_xp` + `user_badges` +
 `user_streaks`-Zeilen).
 
+## Plugins
+
+Zwei Karten. **Installierte Plugins** listet jedes Plugin, das die
+Desktop-App geladen hat: Name, Version, Quelle (Paket oder direkt
+registriert) und Aktivierungszeitpunkt. Ein Ladefehler oder ein
+Discovery-Filter steht als Markierung in der Zeile, ebenso eine
+Konfigurationsänderung nach der Aktivierung. Im Browser-Modus bleibt die
+Karte sichtbar mit dem Hinweis, dass nur die Desktop-App einen
+Plugin-Host hat. **Lern-Repository** hält die Einstellungen des
+gleichnamigen Plugins (Git-Persistenz, Repository-Verzeichnis).
+
 ## Über
 
 Fünf Read-Only-Blöcke: **Version** (kanonische Version aus
