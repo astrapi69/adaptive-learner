@@ -29,7 +29,8 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {readLearnerState} from "../../../lib/learning/learnerState";
-import {notifyLessonProgressChanged} from "../../../lib/lesson/progress-change-event";
+import {notifyLessonProgressChanged} from "../../../lib/lesson/progress/progress-change-event";
+import {resumeStepIndex} from "../../../lib/lesson/progress/resume-step";
 import {ApiError} from "../../../api/client";
 import {getStorage} from "../../../storage";
 import type {
@@ -198,37 +199,17 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             }
         }
         setProgress(loadedProgress);
-        // Resume on the LAST completed step + 1, capped at the
-        // lesson length. If the user has finished, drop them
-        // at the summary (one past the last step).
-        if (loadedProgress) {
-            const completed = Object.keys(loadedProgress.step_results);
-            // Find the highest step index that has a stored
-            // result; resume on the next one.
-            let nextIndex = 0;
-            for (let i = 0; i < loadedLesson.steps.length; i++) {
-                if (completed.includes(loadedLesson.steps[i].id)) {
-                    nextIndex = i + 1;
-                }
-            }
-            // BUG #41 — the persisted ``current_step`` is the real
-            // navigation position (theory steps + the current
-            // unanswered exercise write no step_result, so the
-            // result-derived index alone snaps back toward step 0).
-            // Take whichever is further along; pre-feature rows have
-            // current_step === 0 so they fall back to the old
-            // result-derived behaviour.
-            nextIndex = Math.max(nextIndex, loadedProgress.current_step ?? 0);
-            if (loadedProgress.status === "completed") {
-                nextIndex = loadedLesson.steps.length;  // summary view
-            }
-            const restored = Math.min(nextIndex, loadedLesson.steps.length);
-            setCurrentStepIndex(restored);
-            persistedStepRef.current = restored;
-        } else {
-            setCurrentStepIndex(0);
-            persistedStepRef.current = 0;
-        }
+        // Resume where the run left off: after the furthest graded
+        // exercise or at the persisted navigation position, whichever is
+        // further (BUG #41), on the summary for a completed run. The rule
+        // lives in lib/lesson/resume-step so the dashboard's "continue
+        // learning" row names the same step (#3076).
+        const restored = resumeStepIndex(
+            loadedLesson.steps.map((step) => step.id),
+            loadedProgress,
+        );
+        setCurrentStepIndex(restored);
+        persistedStepRef.current = restored;
         stepEntryTimeRef.current = performance.now();
         setStatus("ready");
     }, [source, setId, lessonFilename, userId]);

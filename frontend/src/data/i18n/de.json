@@ -2660,7 +2660,7 @@
       "next": "Nächste Lektion",
       "completed": "Set abgeschlossen",
       "empty": "Starte deine erste Lektion!",
-      "progress": "Aufgabe {n}/{total}",
+      "progress": "Schritt {n}/{total}",
       "imported_analysis": "Importierte Analyse",
       "lesson_fallback": "Lektion",
       "lesson_part": "{label} · Teil {n}",

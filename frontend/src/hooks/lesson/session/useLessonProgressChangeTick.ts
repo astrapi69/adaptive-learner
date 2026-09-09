@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-import {subscribeLessonProgressChanged} from "../../../lib/lesson/progress-change-event";
+import {subscribeLessonProgressChanged} from "../../../lib/lesson/progress/progress-change-event";
 
 /**
  * A counter that advances on every landed lesson-progress write (#3075).
