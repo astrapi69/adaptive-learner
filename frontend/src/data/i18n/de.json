@@ -3032,6 +3032,20 @@
       "checked_with": "Geprüft mit",
       "date": "Datum",
       "recheck": "Erneut prüfen",
+      "fix": {
+        "button": "Vorschläge übernehmen",
+        "own_only": "Nur für eigene Lektionen.",
+        "title": "Vorschläge übernehmen",
+        "intro": "Prüfe jede Zeile: Geschrieben wird nur, was angehakt ist. Vorschläge, die erklären statt einen Wert zu nennen, lässt du weg.",
+        "current": "Aktuell",
+        "manual_count": "{count} Hinweise tragen keinen übernehmbaren Wert und bleiben manuell.",
+        "confirm": "{fields} Felder in {cards} Karten übernehmen",
+        "applied": "{fields} Felder übernommen. Der Bericht ist veraltet, prüfe das Set erneut.",
+        "undo": "Letzte Übernahme rückgängig machen",
+        "undone": "Übernahme rückgängig gemacht.",
+        "failed": "Vorschläge konnten nicht übernommen werden",
+        "none_applicable": "Keine übernehmbaren Vorschläge in diesem Bericht."
+      },
       "export": {
         "button": "Bericht als Markdown exportieren",
         "lesson": "Lektion",

@@ -3032,6 +3032,20 @@
       "checked_with": "Verificado con",
       "date": "Fecha",
       "recheck": "Revisar de nuevo",
+      "fix": {
+        "button": "Aplicar sugerencias",
+        "own_only": "Solo para tus propias lecciones.",
+        "title": "Aplicar sugerencias",
+        "intro": "Revisa cada fila: solo se escribe lo marcado. Omite las sugerencias que explican en lugar de dar un valor.",
+        "current": "Actual",
+        "manual_count": "{count} hallazgos no traen un valor aplicable y quedan manuales.",
+        "confirm": "Aplicar {fields} campos en {cards} tarjetas",
+        "applied": "{fields} campos aplicados. El informe está desactualizado, revisa el conjunto de nuevo.",
+        "undo": "Deshacer la última aplicación",
+        "undone": "Aplicación deshecha.",
+        "failed": "No se pudieron aplicar las sugerencias",
+        "none_applicable": "No hay sugerencias aplicables en este informe."
+      },
       "export": {
         "button": "Exportar informe como Markdown",
         "lesson": "Lección",
