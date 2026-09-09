@@ -45,14 +45,15 @@ A consumer literal is permitted only when it is genuinely not a themeable surfac
 
 ## Enforcement (`frontend/src/styles/no-hardcoded-colors.test.ts`)
 
-Three guards, all in `make test`:
+Four guards, all in `make test` (guard 4 in `legacy-alias-ratchet.test.ts`):
 
 1. `.tsx` color literals → allowlist ratchet.
 2. Non-theme CSS consumer literals → only `--token:` definitions and `token-exempt:` lines pass (theme files are excluded — they ARE the palette).
 3. Fixed-palette Tailwind utility classes → must be zero.
+4. Legacy alias references (`var(--surface)`, …) in consumer `.ts(x)` → count per alias pinned exactly; a migration lowers the pin (#3051).
 
-Companion pins: `themes.test.ts` (every theme defines the same token set), `contrast.test.ts` (WCAG AA across all 12 themes).
+Companions: `themes.test.ts` (token parity), `contrast.test.ts` (WCAG AA, 12 themes).
 
-Standalone CLI gate (#1169): `make verify-theme` runs `scripts/verify_theme.py` (stdlib-only token-completeness + undefined `var()`-reference + WCAG-contrast + semantic-badge-contrast matrix gate, with a `.theme-baseline.json` ratchet) and then calls the three Vitest guards above. Use it as a single theme gate where the node toolchain is not available; see `docs/policies/DESIGN-TOKENS.md` § Enforcement.
+Standalone CLI gate (#1169): `make verify-theme` runs `scripts/verify_theme.py` (token completeness, undefined `var()` references, WCAG and badge contrast, `.theme-baseline.json` ratchet), then the Vitest guards above; see `docs/policies/DESIGN-TOKENS.md`.
 
 **When adding a setting/feature that needs a new color:** add a token, do not inline a value. If it varies by theme, add it to all 12 `theme-*.css`; if it is the same everywhere, add it to `global.css :root`.
