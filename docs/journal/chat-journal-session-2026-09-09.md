@@ -389,6 +389,10 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   (Knopf nur auf Browser-Zeilen heruntergeladener Sets); ohne Auslöser
   wäre AIV-07 tot gewesen, deshalb kam der Knopf auf die Zeilen unter
   "Meine Inhalte" in derselben PR.
+- Die Aufstellung der Branches und Testdeltas bis PR #3057 wurde aus
+  der Fassung vor dem Merge übernommen und nicht nachgerechnet; nur
+  die Gesamtzahlen am Ende der Session sind in dieser Sitzung
+  gemessen. Wo beide sich widersprechen, gilt die Messung.
 - Deutung von "die Logs sind zu wenig": nicht mehr Datenpunkte derselben
   Art, sondern die fehlenden Klassen (Absicht, Ergebnis, Markierung) -
   hergeleitet aus den acht Auswertungen in #1569, die genau diese drei
@@ -396,21 +400,42 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
 
 ## Zusammenfassung
 
-- Commits: 16 auf elf Branches (3 in PR #3037, 1 in PR #3038, 1 Restore,
-  1 Pin + 1 leerer CI-Anstoß in PR #3040, 2 in PR #3044, je 1 in den
-  PRs #3045, #3048, #3050, #3052, #3054, #3056, #3057).
-- Tests: +27 Vitest (ReorderRow 6, Pins 2, Sonde 6, Legacy-Alias-Ratchet
-  10, Plugin-Karte 5 minus 2 umgezogene), +5 pytest (test_repo_mirror);
-  Frontend 10066, Backend 1835, beide grün; Dead-Code-
-  und Alias-Ratchet grün; Sync für #3044 0 Diff, für #3057
-  genau die drei neuen Motive.
+- Commits: bis PR #3057 16 auf elf Branches (3 in PR #3037, 1 in PR
+  #3038, 1 Restore, 1 Pin + 1 leerer CI-Anstoß in PR #3040, 2 in PR
+  #3044, je 1 in den PRs #3045, #3048, #3050, #3052, #3054, #3056,
+  #3057), danach 11 auf vier weiteren: 1 in PR #3061, 2 in PR #3062,
+  2 in PR #3059, 6 in PR #3063 (vier eigene, zwei Baseline-Syncs des
+  Bots). Auf develop stehen daraus 18 Squash-Merges dieser Session
+  (`git log --first-parent`, ohne #3030 von heute früh); dieser
+  Journal-PR #3064 kommt hinzu.
+- Tests: bis PR #3057 +27 Vitest (ReorderRow 6, Pins 2, Sonde 6,
+  Legacy-Alias-Ratchet 10, Plugin-Karte 5 minus 2 umgezogene) und +5
+  pytest (test_repo_mirror), dazu netto +17 Vitest aus PR #3063 (18
+  neue Fälle in sechs Dateien, einer entfernt; keine `.each`-Blöcke,
+  also ein `it(` je Test). Am Ende der Session nachgemessen: Frontend
+  965 Dateien / 10089 Tests grün (`bunx vitest run` auf dem gemergten
+  Baum), Backend 1837 gesammelt (`pytest --collect-only`). Beide
+  weichen von den zuvor notierten 10066 und 1835 ab, und die Differenz
+  lässt sich mit den Commits danach nicht erklären: nach jener Notiz
+  hat kein Commit Backend-Tests berührt, und von den drei PRs vor
+  #3063 keiner eine Testdatei. Es gilt der gemessene Wert. Dead-Code-
+  und Alias-Ratchet grün; Sync für #3044 0 Diff, für #3057 genau die
+  drei neuen Motive.
 - Neue Dateien: `ReorderRow.tsx` (+ Test), `repo_mirror.py` (+ Test),
   `legacy-alias-ratchet.test.ts`, `PluginLifecycleSection.tsx` (+ Test),
   `docs/roadmap-archive/2026-09.md`; `pinUserBadgesEmpty` in den
   Visual-Helpern; Protokollarten `click`/`focus`/`mark` in `vv-log.ts`;
-  Motiv `settings-plugins`.
+  Motiv `settings-plugins`. Aus PR #3063 neun weitere: `ai-fix.ts`,
+  `ai-fix-undo-store.ts`, `useAiFix.ts` im neuen Ordner
+  `hooks/content/ai-fix/` mit Barrel, `AiFixPanel.tsx`,
+  `AiFixReview.tsx`, `AiReportStep.tsx` und die beiden neuen
+  Testdateien.
 - Bilder: 3 FeatureShots neu, 19 Baselines nachgezogen, 1 zurückgesetzt,
-  3 Baselines neu (settings-plugins).
+  3 Baselines neu (settings-plugins); aus PR #3063 4 FeatureShots neu
+  (zwei Motive je Desktop und Mobil) und die drei
+  content-my-lessons-Baselines nachgezogen.
 - Issues: #3027, #3035 geschlossen; #3036, #3043, #3046, #3049, #3051,
   #3053, #3055 angelegt und per PR geschlossen; #3047 (Cadence-Vorschlag)
-  offen beim Owner.
+  nach der Owner-Freigabe per PR #3059 geschlossen; #3060 (AIV-07)
+  angelegt und per PR #3063 geschlossen. Offen bleibt dieser
+  Journal-PR #3064.
