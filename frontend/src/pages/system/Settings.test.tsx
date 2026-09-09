@@ -54,6 +54,12 @@ vi.mock("../../api/client", async () => {
         getApiKeyBackup: (...args: unknown[]) => apiGetBackup(...args),
         restoreApiKeyBackup: (...args: unknown[]) => apiRestoreBackup(...args),
       },
+      plugins: {
+        ...actual.api.plugins,
+        // The installed-plugins card (#3055) reads the active set on mount in
+        // API mode; an empty set keeps the unit run off the network.
+        health: async () => ({}),
+      },
     },
   };
 });

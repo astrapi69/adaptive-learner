@@ -733,7 +733,26 @@ async function gotoGamificationCard(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings > Plugins: the installed-plugins card (#3055). The dexie
+ *  preview build renders its desktop-only notice; the API-mode list needs
+ *  the desktop app and is walked by hand (testplan). */
+async function gotoPluginLifecycle(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=plugins");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    await expect(page.getByTestId("settings-plugins-lifecycle-desktop-only")).toBeVisible({
+        timeout: 10_000,
+    });
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- Installed-plugins card, Plugins tab (#3055) ----------------------
+    {
+        path: "plugin-lifecycle/settings",
+        setup: gotoPluginLifecycle,
+        pinTo: "settings-plugins-lifecycle-desktop-only",
+    },
     // --- Gamification card inside the motivation cluster (#2962) ----------
     {
         path: "gamification-card/settings",

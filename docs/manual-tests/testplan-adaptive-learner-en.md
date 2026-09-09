@@ -922,8 +922,8 @@ preview delivery). In the regular build the mode does not exist.
       weekend mode, daily session goal, "Reset progress") is the LAST
       card of the tab, right behind "Reminders", set apart by a thicker
       divider with extra space above it
-- [ ] Settings > Plugins: only the "Learning Repository" card remains; no
-      Gamification card any more
+- [ ] Settings > Plugins: the "Installed plugins" card (#3055) and, below
+      it, the "Learning Repository" card; no Gamification card any more
 - [ ] Section bar, chip "Motivation and routine": the jump lands on the
       area heading, and the Gamification card belongs to the area (under
       the same heading)
@@ -1831,6 +1831,21 @@ each card row (`CardImageField`).
 - [ ] "Show measurement bar" OFF: the bar disappears immediately and
       the header/menu are reachable again - but new taps still raise
       the protocol counter (recording continues invisibly, #2785)
+
+### Settings > Plugins: installed plugins (#3055)
+- [ ] Desktop app (API mode), Settings > Plugins: at the top the
+      "Installed plugins" card with one row per loaded plugin, sorted by
+      name: name, version, source ("Package") and the activation time
+      formatted in the app language; below it the unchanged "Learning
+      Repository" card
+- [ ] Right after opening, "Reading plugins…" shows briefly, then the
+      list; with the backend running there is no error and no toast
+- [ ] Stop the backend, reload the tab: the card shows the line "Could
+      not read the plugin status: …" and a toast carries the same
+      message; the "Learning Repository" card stays visible
+- [ ] Browser mode (GitHub Pages / Dexie): the card stays visible with
+      the notice "Only available with the desktop app."; DevTools >
+      Network shows no request to /api/plugins/health
 
 ### Diagnostics probe: mis-tap mark + actions (#3043)
 - [ ] Probe ON, measurement bar visible: next to "Werte kopieren" and
