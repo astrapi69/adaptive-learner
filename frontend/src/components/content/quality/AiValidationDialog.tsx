@@ -15,11 +15,13 @@ import { Button } from "@/components/ui/button";
 
 import ModalShell from "../../../shared/feedback/ModalShell";
 import ProgressBar from "../../../shared/data-display/ProgressBar";
-import ValidationReport, {
-  type ValidationReportItem,
-} from "../../../shared/feedback/ValidationReport";
+import type { ValidationReportItem } from "../../../shared/feedback/ValidationReport";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { useAiCardValidation } from "../../../hooks/content/useAiCardValidation";
+import { useAiFix } from "../../../hooks/content/useAiFix";
+import { isOwnEditableSet } from "../../../lib/lesson/own-set";
+import AiFixPanel from "./AiFixPanel";
+import AiReportStep from "./AiReportStep";
 import {
   buildValidationMarkdown,
   type ValidationMarkdownRow,
@@ -44,6 +46,11 @@ export default function AiValidationDialog({
   const { t } = useI18n();
   const { state, rateLimited, begin, recheck, run, abort, reset } =
     useAiCardValidation();
+  // AIV-07 (#3060): apply the report's field suggestions to the learner's
+  // own set, reviewed and reversible. Foreign sets keep the button disabled
+  // with the reason (#335).
+  const fix = useAiFix(entry, t);
+  const ownSet = entry ? isOwnEditableSet(entry.source, entry.id) : false;
 
   // Open: load lessons + estimate when a target arrives.
   useEffect(() => {
@@ -56,6 +63,7 @@ export default function AiValidationDialog({
   if (!entry) return null;
 
   const close = () => {
+    fix.reset();
     reset();
     onClose();
   };
@@ -216,81 +224,36 @@ export default function AiValidationDialog({
           </div>
         )}
 
+        {/* AIV-07: review, apply, undo (replaces the report while active). */}
+        {state.phase === "done" && fix.state.phase !== "idle" && (
+          <AiFixPanel
+            fix={fix}
+            onRecheck={() => {
+              fix.reset();
+              recheck();
+            }}
+            onClose={close}
+            t={t}
+          />
+        )}
+
         {/* Final report. */}
-        {state.phase === "done" && (
-          <div className="mt-4 flex flex-col gap-4">
-            {state.cached && state.checkedAt && (
-              <p
-                className="text-xs text-fg-muted"
-                data-testid="ai-validation-last-checked"
-              >
-                {t("content.ai_check.last_checked", "Last check: {when}").replace(
-                  "{when}",
-                  formatCheckedAt(state.checkedAt),
-                )}
-              </p>
-            )}
-            <ValidationReport
-              setName={entry.title}
-              summaryText={t(
-                "content.ai_check.report.summary",
-                "Checked {cards} cards in {lessons} lessons",
-              )
-                .replace("{cards}", String(state.checkedCards))
-                .replace("{lessons}", String(state.lessonCount))}
-              okText={t("content.ai_check.report.ok", "{count} cards OK").replace(
-                "{count}",
-                String(state.okCount),
-              )}
-              issuesText={
-                reportItems.length > 0
-                  ? t("content.ai_check.report.issues", "{count} cards with issues").replace(
-                      "{count}",
-                      String(reportItems.length),
-                    )
-                  : undefined
-              }
-              allOkText={t(
-                "content.ai_check.report.all_ok",
-                "All cards passed - no issues found.",
-              )}
-              problemLabel={t("content.ai_check.report.problem", "Problem")}
-              suggestionLabel={t("content.ai_check.report.suggestion", "Suggestion")}
-              items={reportItems}
-              testId="ai-validation-report"
-            />
-            {checkedWith && (
-              <p
-                className="text-xs text-fg-muted"
-                data-testid="ai-validation-checked-with"
-              >
-                {checkedWith}
-              </p>
-            )}
-            <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleExportMarkdown}
-                data-testid="ai-validation-export-md"
-              >
-                {t("content.ai_check.export.button", "Export report as Markdown")}
-              </Button>
-              {state.cached && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={recheck}
-                  data-testid="ai-validation-recheck"
-                >
-                  {t("content.ai_check.recheck", "Re-check")}
-                </Button>
-              )}
-              <Button type="button" onClick={close} data-testid="ai-validation-close">
-                {t("common.close", "Close")}
-              </Button>
-            </div>
-          </div>
+        {state.phase === "done" && fix.state.phase === "idle" && (
+          <AiReportStep
+            entry={entry}
+            state={state}
+            reportItems={reportItems}
+            checkedWith={checkedWith}
+            formatCheckedAt={formatCheckedAt}
+            ownSet={ownSet}
+            canUndo={fix.state.canUndo}
+            onOpenFix={() => void fix.openReview(state.issueRows.map((row) => row.result))}
+            onUndo={() => void fix.undo()}
+            onExport={handleExportMarkdown}
+            onRecheck={recheck}
+            onClose={close}
+            t={t}
+          />
         )}
 
         {/* Error. */}

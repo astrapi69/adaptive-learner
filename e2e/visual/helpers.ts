@@ -64,7 +64,7 @@ const OWN_LESSON_CARDS = [
 ] as const;
 
 /** Title of the seeded own lesson (#3011). */
-const OWN_LESSON_TITLE = "Mein erstes Vokabelset";
+export const OWN_LESSON_TITLE = "Mein erstes Vokabelset";
 
 /** Frozen wall-clock for every visual run (follows #244). Relative times
  *  ("vor 3 Minuten", streak dates, "Morgen neue Missionen") would otherwise
@@ -1470,7 +1470,10 @@ async function gotoReviewSession(page: Page): Promise<boolean> {
  * empty state before the IndexedDB sets have loaded, so the section
  * would be missing at exactly the moment the shot is taken.
  */
-async function createOwnLesson(page: Page, title: string): Promise<void> {
+/** Create an own four-card lesson through the wizard and land on the
+ *  content browser (#3011). Exported for the per-feature capture script
+ *  (#3060). */
+export async function createOwnLesson(page: Page, title: string): Promise<void> {
     await page.goto("/create-lesson");
     await expect(page.getByTestId("create-lesson-step-1")).toBeVisible({
         timeout: 20_000,

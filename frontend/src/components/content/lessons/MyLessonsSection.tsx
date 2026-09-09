@@ -12,7 +12,7 @@
  * the navigation.
  */
 
-import { Layers, Pencil, Plus } from "lucide-react";
+import { Layers, Pencil, Plus, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
@@ -45,6 +45,12 @@ interface MyLessonsSectionProps {
   onRequestBulkDeleteLesson: (target: BulkLessonDeleteTarget) => void;
   /** #3007 — open the lesson creator; the host owns the navigation. */
   onCreateLesson: () => void;
+  /** AIV-07 (#3060) - the set-wide AI check for an own set; the button
+   *  renders only when given. */
+  onAiCheck?: (entry: ContentSetEntry) => void;
+  /** Why the AI check is unavailable (Dexie-only, key required); renders
+   *  the button disabled with the reason as its tooltip (#335). */
+  aiCheckDisabledReason?: string;
   // #1741 — combine-into-a-set selection mode.
   selectMode: boolean;
   selectedCount: number;
@@ -68,6 +74,8 @@ export default function MyLessonsSection({
   onRequestDeleteLesson,
   onRequestBulkDeleteLesson,
   onCreateLesson,
+  onAiCheck,
+  aiCheckDisabledReason,
   selectMode,
   selectedCount,
   isSelected,
@@ -237,9 +245,25 @@ export default function MyLessonsSection({
                   showEdit={entry.lesson_count <= 1}
                 />
                 {/* AIX-06 (#833) — batch-generate exercises for every
-                    theory-only lesson in this set. */}
-                <div className="mt-2">
+                    theory-only lesson in this set; AIV-07 (#3060) — the
+                    set-wide AI check, whose report can write its
+                    suggestions back into an own set. */}
+                <div className="mt-2 flex flex-wrap gap-2">
                   <GenerateSetExercisesButton entry={entry} t={t} />
+                  {onAiCheck && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onAiCheck(entry)}
+                      disabled={!!aiCheckDisabledReason}
+                      title={aiCheckDisabledReason || undefined}
+                      data-testid={`my-lesson-${entry.id}-ai-check`}
+                    >
+                      <Sparkles size={14} aria-hidden="true" />
+                      {t("content.ai_check.button", "Check with AI")}
+                    </Button>
+                  )}
                 </div>
                 {/* #2064 — a multi-lesson set (e.g. a book import) can drop
                     individual lessons from the lesson list. */}

@@ -33,12 +33,17 @@ import MyLessonsSection from "./lessons/MyLessonsSection";
 import ImportLessonModal from "./lessons/ImportLessonModal";
 import CombineLessonsDialog from "./lessons/CombineLessonsDialog";
 import ContentShareDialog from "./share/ContentShareDialog";
+import AiValidationDialog from "./quality/AiValidationDialog";
 import DeleteLessonModal from "./lessons/DeleteLessonModal";
 import { useContentSetsData } from "../../hooks/content/useContentSetsData";
 import { useContentSetActions } from "../../hooks/content/useContentSetActions";
 import { useCombineLessons } from "../../hooks/content/combine";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useApiKeyStatus } from "../../hooks/settings/useApiKeyStatus";
+import { useI18n } from "../../hooks/ui/useI18n";
+import { resolveAiCheckDisabledReason } from "../../lib/content/validation/ai-check-gate";
+import { resolveStorageMode } from "../../storage";
+import type { ContentSetEntry } from "../../storage/types";
 import {
   listContributions,
   recordContribution,
@@ -58,8 +63,18 @@ export default function ImportActionsPanel() {
   const data = useContentSetsData();
   const { sets, setSets, setPerSetState, loadSets } = data;
   const { hasKey, activeProvider } = useApiKeyStatus();
+  const { t } = useI18n();
 
   const [showImport, setShowImport] = useState(false);
+  // AIV-07 (#3060): the set-wide AI check reachable for OWN sets, whose
+  // report can write its suggestions back. Same gate as the browser rows
+  // (Dexie-only, key required).
+  const [aiCheckTarget, setAiCheckTarget] = useState<ContentSetEntry | null>(null);
+  const aiCheckDisabledReason = resolveAiCheckDisabledReason(
+    t,
+    resolveStorageMode() === "dexie",
+    hasKey,
+  );
 
   const actions = useContentSetActions({ navigate, setSets, setPerSetState });
   const share = useContentSharing({ sets, fetchSetLessons: actions.fetchSetLessons });
@@ -108,6 +123,8 @@ export default function ImportActionsPanel() {
           onRequestDeleteLesson={actions.setDeleteLessonTarget}
           onRequestBulkDeleteLesson={actions.setBulkDeleteLessonsTarget}
           onCreateLesson={() => navigate("/create-lesson")}
+          onAiCheck={setAiCheckTarget}
+          aiCheckDisabledReason={aiCheckDisabledReason}
           selectMode={combine.selectMode}
           selectedCount={combine.selectedCount}
           isSelected={combine.isSelected}
@@ -116,6 +133,12 @@ export default function ImportActionsPanel() {
           onOpenCombine={combine.openDialog}
         />
       )}
+
+      <AiValidationDialog
+        entry={aiCheckTarget}
+        activeProvider={activeProvider ?? null}
+        onClose={() => setAiCheckTarget(null)}
+      />
 
       <CombineLessonsDialog
         open={combine.dialogOpen}
