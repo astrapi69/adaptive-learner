@@ -3399,6 +3399,32 @@
         "too_large": "Dieses Bild ist zu groß. Versuche ein kleineres.",
         "decode_failed": "Dieses Bild konnte nicht gelesen werden. Versuche eine andere Datei."
       },
+      "token_roles": {
+        "label": "Token-Rollen (optional)",
+        "hint": "Markiere einzelne Wörter der Vorderseite mit ihrer grammatischen Rolle. Der Lückentext wählt dann eine sinnvolle Lücke statt einer nach Position.",
+        "add": "Rolle hinzufügen",
+        "remove": "Rolle entfernen",
+        "token_placeholder": "Wort aus der Vorderseite",
+        "role_label": "Rolle",
+        "suggest": "Rollen vorschlagen",
+        "suggest_none": "Kein Wort erkannt. Trage die Rollen von Hand ein.",
+        "suggest_hint": "Vorschläge sind geraten. Prüfe jede Zeile, bevor du speicherst.",
+        "count": "{n} von {max} Rollen",
+        "error": {
+          "not_in_front": "\"{token}\" kommt so nicht in der Vorderseite vor. Schreibe es genau wie dort.",
+          "duplicate": "\"{token}\" ist schon annotiert.",
+          "max_reached": "Mehr als {max} Rollen pro Karte sind nicht möglich."
+        },
+        "role": {
+          "article": "Artikel",
+          "verb": "Verb",
+          "noun": "Substantiv",
+          "adjective": "Adjektiv",
+          "preposition": "Präposition",
+          "gender_marker": "Genus-Marker",
+          "tense_marker": "Tempus-Marker"
+        }
+      },
       "add": "Karte hinzufügen",
       "import_csv": "CSV importieren",
       "csv_hint": "Zeilen als Vorderseite, Rückseite, Notizen einfügen (Komma- oder Tab-getrennt). Beispiel: Bonjour, Guten Tag, Formelle Begrüßung",
