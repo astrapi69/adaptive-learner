@@ -1813,6 +1813,21 @@ each card row (`CardImageField`).
 ### Lesson player UX (v2.3.0)
 - [ ] Pause button now lives in the sticky footer (#1644), pausing
       works from there
+- [ ] Position before the first exercise (#3075): open a lesson, page
+      through two theory steps only, answer NO exercise, reload the page ->
+      the resume dialog appears and "Continue" lands on the step that was
+      open (before: restart at step 1 without a dialog)
+- [ ] Pause button before the first exercise (#3075): as above, then press
+      the pause button in the footer -> the Continue/Pause/Abandon dialog
+      appears (before: left the lesson silently); "Pause" -> the lesson is
+      listed on the dashboard under "Paused lessons"
+- [ ] Leaving through the app navigation (#3075): answer one exercise, then
+      move two theory steps further, then leave through the menu
+      (hamburger -> "Settings"), the logo or the browser's back button ->
+      the lesson is listed under "Paused lessons"; "Resume" there opens the
+      resume dialog and lands on the theory step you were on (not on the
+      exercise before it); on the phone the same through the menu drawer
+      [E2E: `lesson-pause-position.spec.ts`]
 - [ ] Auto-advance + "Back" (#1921): with "Advance automatically"
       (Settings -> Learning) ON, answer an exercise correctly so the app
       jumps to the next step by itself -> then click "Back": the previous
