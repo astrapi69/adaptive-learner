@@ -127,7 +127,7 @@ export type EntryTier = "review" | "started" | "done";
 /** How many ``"done"`` rows the entry may carry (#3020). The section answers
  *  "what now?", so exactly the most recently finished set is tagged; more
  *  would turn it into a completion archive. */
-export const DONE_TIER_LIMIT = 1;
+const DONE_TIER_LIMIT = 1;
 
 /**
  * The per-set inputs the entry-suggestion ranking needs beyond the grouped
