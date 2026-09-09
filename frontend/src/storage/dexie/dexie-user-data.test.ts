@@ -83,7 +83,7 @@ describe("syncUserDataAtBoot (#791)", () => {
         expect(await getDb().userData.get(CONTRIB_KEY)).toBeUndefined();
     });
 
-    it("covers the contributions, contributor-name, custom-paths, dismissed-sets, set-status, lesson-order, mentor-notes, speech-recording-evicted, avatar-frames, mascot-variants, photo-stash, arcade-unlocks, arcade-tickets and continue-dismissed keys", () => {
+    it("covers the contributions, contributor-name, custom-paths, dismissed-sets, set-status, lesson-order, mentor-notes, speech-recording-evicted, avatar-frames, mascot-variants, photo-stash, arcade-unlocks, arcade-tickets, continue-dismissed and ai-fix-undo keys", () => {
         expect(MANAGED_USER_DATA_KEYS).toEqual([
             "adaptive-learner.contributions",
             "adaptive-learner.contributor-name",
@@ -108,6 +108,9 @@ describe("syncUserDataAtBoot (#791)", () => {
             // #3023 — dismissed "Weitermachen" rows
             // (lib/content/browse/prefs/continue-dismissed-store).
             "adaptive-learner.continue-dismissed",
+            // #3060 — last apply of AI-check suggestions per own set
+            // (lib/content/validation/ai-fix-undo-store).
+            "adaptive-learner.ai-fix-undo",
         ]);
     });
 });

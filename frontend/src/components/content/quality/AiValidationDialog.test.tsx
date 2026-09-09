@@ -10,6 +10,9 @@ const getLessonMock = vi.fn();
 const aiValidateCardsMock = vi.fn();
 const getCacheMock = vi.fn();
 const saveCacheMock = vi.fn();
+const listSetsMock = vi.fn();
+const saveUserSetMock = vi.fn();
+const deleteCacheMock = vi.fn();
 
 vi.mock("../../../storage", () => ({
   getStorage: () => ({
@@ -19,8 +22,15 @@ vi.mock("../../../storage", () => ({
       aiValidateCards: aiValidateCardsMock,
       getAiValidationCache: getCacheMock,
       saveAiValidationCache: saveCacheMock,
+      listSets: listSetsMock,
+      saveUserSet: saveUserSetMock,
+      deleteAiValidationCache: deleteCacheMock,
     },
   }),
+}));
+
+vi.mock("../../../utils/notify", () => ({
+  notify: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
 }));
 
 vi.mock("../../../lib/learning/learnerState", () => ({
@@ -58,6 +68,10 @@ beforeEach(() => {
   getCacheMock.mockReset();
   saveCacheMock.mockReset();
   getCacheMock.mockResolvedValue(null);
+  listSetsMock.mockReset();
+  saveUserSetMock.mockReset();
+  deleteCacheMock.mockReset();
+  localStorage.clear();
   saveCacheMock.mockResolvedValue(undefined);
   listLessonsMock.mockResolvedValue({
     set_id: "es-a1",
@@ -199,5 +213,146 @@ describe("AiValidationDialog", () => {
     await waitFor(() => {
       expect(screen.getByTestId("ai-validation-error")).toHaveTextContent("boom");
     });
+  });
+});
+
+// ----- AIV-07 (#3060): apply the report's suggestions to an own set --------
+
+const OWN_ENTRY: ContentSetEntry = {
+  ...ENTRY,
+  source: "user-generated",
+  branch: "",
+  id: "my-set",
+  title: "Meine Tiere",
+  cached_version: "1.0.0",
+  description: "Eigene Karten",
+};
+
+function cachedReport(over: Partial<Parameters<typeof saveCacheMock>[0]> = {}) {
+  return {
+    source: OWN_ENTRY.source,
+    set_id: OWN_ENTRY.id,
+    set_version: "1.0.0",
+    content_hash: null,
+    results: [
+      { card_id: "c1", ok: true, issues: [] },
+      {
+        card_id: "c2",
+        ok: false,
+        issues: [{ field: "front", problem: "Artikel fehlt", suggestion: "la casa" }],
+      },
+    ],
+    response_ids: ["r1"],
+    provider: "openai",
+    model: "gpt-4o-mini",
+    card_count: 2,
+    issue_count: 1,
+    checked_at: "2026-09-09T10:00:00.000Z",
+    ...over,
+  };
+}
+
+describe("AiValidationDialog: apply suggestions (AIV-07, #3060)", () => {
+  it("applies the ticked suggestion through saveUserSet, drops the cache, and can undo it", async () => {
+    let savedLessons: unknown[] | null = null;
+    listSetsMock.mockResolvedValue({ sets: [OWN_ENTRY] });
+    getLessonMock.mockImplementation(async () =>
+      savedLessons
+        ? savedLessons[0]
+        : {
+            id: "01",
+            title: "Lektion 1",
+            estimated_minutes: 10,
+            cards: [
+              { id: "c1", front: "libro", back: "Buch", tags: [] },
+              { id: "c2", front: "casa", back: "Haus", tags: [] },
+            ],
+            steps: [],
+          },
+    );
+    saveUserSetMock.mockImplementation(async (input: { lessons: unknown[] }) => {
+      savedLessons = input.lessons;
+      return OWN_ENTRY;
+    });
+    getCacheMock.mockResolvedValue(cachedReport());
+    render(<AiValidationDialog entry={OWN_ENTRY} activeProvider="openai" onClose={() => {}} />);
+    const open = await screen.findByTestId("ai-validation-fix-open");
+    expect(open).toBeEnabled();
+    fireEvent.click(open);
+    const row = await screen.findByTestId("ai-fix-review-row-c2::front");
+    expect(row).toHaveTextContent("casa");
+    expect(row).toHaveTextContent("la casa");
+    expect(screen.getByTestId("ai-validation-fix-confirm")).toHaveTextContent("1 fields in 1 cards");
+    fireEvent.click(screen.getByTestId("ai-validation-fix-confirm"));
+    await waitFor(() => {
+      expect(screen.getByTestId("ai-validation-fix-result")).toHaveTextContent("1 fields applied");
+    });
+    expect(saveUserSetMock).toHaveBeenCalledTimes(1);
+    const input = saveUserSetMock.mock.calls[0][0];
+    expect(input).toMatchObject({
+      set_id: "my-set",
+      title: "Meine Tiere",
+      description: "Eigene Karten",
+      origin: "imported",
+    });
+    expect(input.lessons[0].cards.map((c: { id: string; front: string }) => [c.id, c.front])).toEqual([
+      ["c1", "libro"],
+      ["c2", "la casa"],
+    ]);
+    expect(deleteCacheMock).toHaveBeenCalledWith("user-generated", "my-set");
+    // Undo plays the snapshot back through the same path.
+    fireEvent.click(screen.getByTestId("ai-validation-fix-undo"));
+    await waitFor(() => {
+      expect(screen.getByTestId("ai-validation-fix-result")).toHaveTextContent("Apply undone");
+    });
+    expect(saveUserSetMock).toHaveBeenCalledTimes(2);
+    const restored = saveUserSetMock.mock.calls[1][0];
+    expect(restored.lessons[0].cards[1].front).toBe("casa");
+    expect(localStorage.getItem("adaptive-learner.ai-fix-undo")).toBe("{}");
+  });
+
+  it("an unticked row is left untouched", async () => {
+    listSetsMock.mockResolvedValue({ sets: [OWN_ENTRY] });
+    saveUserSetMock.mockResolvedValue(OWN_ENTRY);
+    getCacheMock.mockResolvedValue(
+      cachedReport({
+        results: [
+          {
+            card_id: "c1",
+            ok: false,
+            issues: [{ field: "back", problem: "Genus", suggestion: "das Buch" }],
+          },
+          {
+            card_id: "c2",
+            ok: false,
+            issues: [
+              { field: "front", problem: "Artikel fehlt", suggestion: "la casa" },
+              { field: "tags", problem: "fehlt", suggestion: "Substantiv" },
+            ],
+          },
+        ],
+        issue_count: 2,
+      }),
+    );
+    render(<AiValidationDialog entry={OWN_ENTRY} activeProvider="openai" onClose={() => {}} />);
+    fireEvent.click(await screen.findByTestId("ai-validation-fix-open"));
+    await screen.findByTestId("ai-fix-review-row-c1::back");
+    expect(screen.getByTestId("ai-fix-review-manual")).toHaveTextContent("1 findings");
+    fireEvent.click(screen.getByTestId("ai-fix-review-check-c1::back"));
+    expect(screen.getByTestId("ai-validation-fix-confirm")).toHaveTextContent("1 fields in 1 cards");
+    fireEvent.click(screen.getByTestId("ai-validation-fix-confirm"));
+    await waitFor(() => expect(saveUserSetMock).toHaveBeenCalledTimes(1));
+    const cards = saveUserSetMock.mock.calls[0][0].lessons[0].cards;
+    expect(cards[0].back).toBe("Buch");
+    expect(cards[1].front).toBe("la casa");
+  });
+
+  it("keeps the button disabled with the own-set reason on a foreign set", async () => {
+    getCacheMock.mockResolvedValue(cachedReport({ source: ENTRY.source, set_id: ENTRY.id, set_version: "1" }));
+    render(<AiValidationDialog entry={ENTRY} activeProvider="openai" onClose={() => {}} />);
+    const open = await screen.findByTestId("ai-validation-fix-open");
+    expect(open).toBeDisabled();
+    expect(open).toHaveAttribute("title", "Only for your own lessons.");
+    expect(listSetsMock).not.toHaveBeenCalled();
   });
 });

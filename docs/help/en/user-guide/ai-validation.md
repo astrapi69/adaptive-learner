@@ -66,6 +66,25 @@ so you don't get billed twice by accident.
 
 ---
 
+## Apply suggestions (your own sets)
+
+You check your own sets under **Content > My content**: every set row
+there carries the same **Check with AI** button. For a set you created
+yourself, the report carries the **Apply suggestions** button. It opens a table with one row per suggestion that
+names a card field (front, back, notes): lesson, card, field, the
+current value and the suggested value. Every row is ticked; untick what
+is an explanation rather than a value. Findings without an applicable
+value are only counted, never written. The confirm button names the
+number of fields and cards it changes.
+
+Writing uses the same path as the editor: the whole set with all its
+lessons, so title, languages, level and description stay, card ids do
+not change and your learning progress is kept. The previous values are
+saved and **Undo the last apply** restores them. After an apply the
+stored report is out of date and dropped; re-check the set when you want
+a fresh result. For downloaded sets the button is disabled with a note
+that it only applies to your own lessons.
+
 ## Report, cache and the "AI-Checked" badge
 
 - **Cached.** The report is stored locally (IndexedDB) and shown
