@@ -1960,6 +1960,23 @@ jeder Karten-Zeile (`CardImageField`).
       weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
       weiter, #2785)
 
+### Diagnose-Sonde: Fehltipp-Markierung + Aktionen (#3043)
+- [ ] Sonde AN, Mess-Leiste sichtbar: die Leiste zeigt neben "Werte
+      kopieren" und "Details" den Knopf "Daneben!"
+- [ ] Irgendwo tippen, dann "Daneben!" antippen, dann "Details": der
+      Bericht hat eine Sektion `actions (newest first)` mit einer
+      `mark`-Zeile, deren `target=` das eben getippte Element nennt;
+      der Tipp-Zähler ("N Tipps") ist durch den Knopf NICHT gestiegen
+- [ ] Auf einer Lektionsseite eine Antwort-Kachel antippen: die
+      `actions`-Sektion bekommt eine `click`-Zeile mit `target=`,
+      `downTarget=` und `mismatch=0`; ein Textfeld antippen ergibt
+      zusätzlich eine `focus`-Zeile mit `top=`/`bottom=`/`vis=`
+- [ ] Die letzte Tipp-Zeile der Leiste trägt zusätzlich `hit=`,
+      `above1=`, `above2=`, `pageY=`, `screenY=`, `hdrTop=`, `ftrBot=`,
+      `room=` und `focusTop=`/`focusBot=`/`focusVis=`; in den
+      Einstellungen "Protokoll kopieren" liefert dieselben Felder plus
+      die `click`-/`focus`-/`mark`-Einträge
+
 ### Sticky-Knopf für die Mess-Leiste (#2799)
 - [ ] Einstellungen > Diagnose & Support: "Sticky-Knopf für die
       Mess-Leiste" einschalten (Sonde muss AN sein) - ein runder

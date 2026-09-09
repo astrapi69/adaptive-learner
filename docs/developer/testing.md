@@ -282,3 +282,27 @@ from the overlay's Copy button (last 8 taps only). Fix candidates for
 the tap-offset stay togglable at runtime via `?vvfix=<id>`
 (`novhd` / `vpheight` / `nolock` / `hardreset`, `?vvfix=off` clears); the
 active candidate is recorded with every protocol entry.
+
+Intent and outcome signals (#3043), for a read-off that can name the
+mis-tap instead of guessing it from `ΔY`'s sign:
+
+- **"Daneben!"** on the overlay marks the last tap as a mis-tap (a
+  `mark` entry with `lastTap=` and `target=`); press it right after the
+  tap that landed wrong.
+- `click` entries record what a tap actually activated (`target=`,
+  `downTarget=` = the preceding pointerdown target, `mismatch=1` when
+  they differ - the MC/SC "selection registers elsewhere" symptom,
+  measured); `focus` entries record every focus arrival with the field's
+  `top=`/`bottom=` and `vis=` (1 when the field lies inside the visual
+  viewport, so Safari has no reason to pan).
+- Each tap line additionally carries `hit=` (`elementFromPoint` at the
+  finger - differs from the event target only on a real hit-test
+  desync), `above1=`/`above2=` (the elements one and two text lines
+  above the finger, the likely intended targets), raw `pageY=`/`screenY=`,
+  `hdrTop=` (rendered top of `app-nav`, expected 0) and `ftrBot=`
+  (`lesson-footer` bottom relative to `innerHeight`, expected 0 when
+  docked; `-1` when absent), `room=` (the app scroller's remaining
+  scroll reserve, the #3019 "no space" fact) and
+  `focusTop=`/`focusBot=`/`focusVis=` for the pre-tap focused field.
+- The overlay report renders `click`/`focus`/`mark` as an `actions
+  (newest first)` section next to the `hook` decisions.
