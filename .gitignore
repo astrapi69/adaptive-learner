@@ -110,6 +110,8 @@ tmp/
 # lock file, turning CI red on every push.
 /.claude/scheduled_tasks.lock
 /.claude/settings.json
+# Claude Code agent worktrees (full checkouts with node_modules; #3036)
+/.claude/worktrees/
 
 # Phase 51D — bundled pilot content copied into the Vite build
 # at predev / prebuild time. Source is a checkout of the
