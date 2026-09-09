@@ -114,8 +114,9 @@ tiebreaker.
   I18N-10 (Exercise-RTL-Audit), I18N-12 (Arabisch-Content).
 - **EXP-022 — Lernpfad-Ausbau**: UC2 (Content-Browser als Graph), UC4
   (Beziehungs-Editor).
-- **EXP-021 — Lektions-Creator-Ausbau**: manueller Übungs-Editor,
-  CSV-Datei-Upload, Token-Rollen-UI.
+- **EXP-021 — Lektions-Creator-Ausbau**: Token-Rollen-UI (#3072, im
+  Fokus). Übungs-Editor, CSV-Datei-Upload und Bild-Upload sind
+  ausgeliefert (#3071).
 - **EXP-024 — Schichtentrennung**: Phase 2 (Plugin-Service-Module), Phase 3
   (Frontend-U1).
 

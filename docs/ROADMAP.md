@@ -10,11 +10,20 @@ Current state: **v2.14.0 (released 2026-09-05 - Sessions get a game layer: an op
 
 ## Aktueller Fokus
 
-Keiner. EXP-033 war der letzte Eintrag und ist mit AIV-07 vollständig
+- **EXP-021 — Token-Rollen-UI** (#3072). `token_roles` liegt seit
+  v1.35.0 (Phase 52I / P-130) im Schema und wird von vier Konsumenten
+  gelesen: Cloze-Generator, Fehler-Klassifikator, Übungs-Pool und
+  Korrektur-Karte. Geschrieben wird es von nichts, und keine ausgelieferte
+  Lektion trägt es. Der Cloze-Generator nennt den token_roles-Pfad
+  seine höchste Genauigkeitsstufe; gefeuert hat sie nie, weil ihre
+  Eingabe nicht herstellbar ist. Gebaut wird ein Annotations-Editor im
+  Karten-Schritt plus ein Vorschlag, den der Autor bestätigt oder
+  ändert (Owner-Entscheidung 2026-09-09).
+  Siehe [EXP-021](explorations/EXP-021-lesson-creator.md).
+
+EXP-033 war der vorherige Eintrag und ist mit AIV-07 vollständig
 (#3060, archiviert nach
-[roadmap-archive/2026-09.md](roadmap-archive/2026-09.md)). Die nächste
-Kampagne wählt der Owner aus "Nächste Phase"; bis dahin bleibt dieser
-Abschnitt bewusst leer, statt einen Fokus zu behaupten.
+[roadmap-archive/2026-09.md](roadmap-archive/2026-09.md)).
 
 ## Nächste Phase
 
@@ -26,9 +35,12 @@ Abschnitt bewusst leer, statt einen Fokus zu behaupten.
 - **EXP-024 — Curriculum Builder / Schichtentrennung Phase 2/3**: Plugin-
   Service-Module auf Repository-Pattern (Phase 2), Frontend-U1 (Phase 3).
   Phase 1 ausgeliefert.
-- **EXP-021 / EXP-022 — Content-Authoring-Ausbau**: manueller Einzel-Übungs-
-  Editor + CSV-Datei-Upload + Token-Rollen-UI (EXP-021 Folge-Ausbau);
-  Content-Browser-Baum als Graph (UC2) + Beziehungs-Editor (UC4) (EXP-022).
+- **EXP-021 / EXP-022 — Content-Authoring-Ausbau**: Token-Rollen-UI
+  (EXP-021, jetzt im Fokus, #3072); Content-Browser-Baum als Graph (UC2)
+  + Beziehungs-Editor (UC4) (EXP-022). Der Einzel-Übungs-Editor
+  (`ExerciseEditor.tsx`, #1844), der CSV-Datei-Upload und der Bild-Upload
+  für Picture Choice (`CardImageField.tsx`) sind ausgeliefert und standen
+  hier bis #3071 fälschlich als offen.
 - **EXP-027 — Weitere Sprachen** (I18N-06..12): Indonesisch-/Italienisch-UI,
   formale Uebersetzungs-QA, Content-Sprachpaar-Expansion, Exercise-RTL-Audit.
 

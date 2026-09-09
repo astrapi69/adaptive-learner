@@ -117,6 +117,14 @@ aufrufen.
   konfigurieren), CSV-Datei-Upload (vs. Einfügen), Token-Rollen-UI,
   Bild-Upload für Picture Choice.
 
+Stand 2026-09-09 (#3071): vom Folge-Ausbau sind drei Punkte
+ausgeliefert - der Übungs-Editor (`ExerciseEditor.tsx`, #1844), der
+CSV-Datei-Upload (`CardEditor.tsx`, Dateieingabe für `.csv/.tsv/.txt`)
+und der Bild-Upload (`fields/CardImageField.tsx`, dazu
+`DictationAudioField.tsx` für Audio). Offen ist allein die
+Token-Rollen-UI (#3072). Die Liste oben beschreibt den Plan von damals
+und wird als solcher stehen gelassen; dieser Absatz ist der Ist-Stand.
+
 ## Schema
 
 Keine neuen Pflichtfelder. Der Creator erzeugt eine ``ContentLesson``
