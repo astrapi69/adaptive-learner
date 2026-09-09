@@ -124,12 +124,6 @@ tiebreaker.
   CSV-Datei-Upload, Token-Rollen-UI.
 - **EXP-024 — Schichtentrennung**: Phase 2 (Plugin-Service-Module), Phase 3
   (Frontend-U1).
-- **Library-First-Follow-ups** (aus dem Library-First-Audit): #697
-  react-easy-crop für `ImageCropDialog` spiken, #698 `jsonrepair` für den
-  LLM-Prosa-JSON-Extraktor evaluieren (TS + Python gepaart), #699 `zod` für
-  die content-validator-Schema-Schicht (vorlaeufig lean BEHALTEN), #700
-  `react-activity-calendar` für die `ActivityHeatmap` (vorlaeufig lean
-  BEHALTEN).
 
 ## Deferred (Phase 2 / community-finanziert)
 
@@ -156,10 +150,6 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
-- [x] **#508 — User profile picture** — SHIPPED on `develop` (#535), pending
-  the v1.80.0 release. Avatar in nav + About + Dashboard (`InitialsAvatar` +
-  `AvatarUpload` shared primitives), both storage modes; no backend account
-  system. Closed 2026-06-15.
 - [ ] **BACKEND-RADON-REMAINDER-01**: opportunistic backend complexity
   burn-down for any module still above the radon warn band (cc > 15) now
   that the Phase 2 hard gate (#494/#495: blocks cc > 20, warns > 15) is
@@ -291,10 +281,6 @@ These activate when a specific condition is met:
 | BL-18..19 Social | 100+ active users |
 
 ## Blocked / Upstream Wait
-
-- **DEP-TS7 — TypeScript 6 → 7** (BLOCKED): no `typescript-eslint` release
-  supports TS 7 yet (peer `typescript >=4.8.4 <6.1.0`); `tsc` passes but the
-  ESLint gate crashes. See ROADMAP > Blocked / Upstream Wait; tracked in #1507.
 
 - **AUTH-03+ — cross-repo author publishing flow** (EXP-025): the
   remaining author-companion scope beyond AUTH-01/02 (#529/#531, shipped) —
