@@ -89,6 +89,27 @@ Die KI ist **beratend**: Sie hebt mögliche Probleme hervor,
 verhindert aber nie, dass du einen Satz lernst, bearbeitest oder
 teilst. Die Entscheidung bleibt bei dir.
 
+## Vorschläge übernehmen (eigene Sätze)
+
+Eigene Sätze prüfst du unter **Inhalte > Meine Inhalte**: jede Set-Zeile
+trägt dort denselben Knopf **Mit KI prüfen**. Bei einem Satz, den du
+selbst angelegt hast, trägt der Bericht den Knopf **Vorschläge
+übernehmen**. Er öffnet eine Tabelle mit einer Zeile je
+Vorschlag, der ein Kartenfeld (Vorderseite, Rückseite, Notizen) betrifft:
+Lektion, Karte, Feld, der aktuelle Wert und der vorgeschlagene Wert. Jede
+Zeile ist angehakt; hake ab, was eine Erklärung statt eines Werts ist.
+Hinweise ohne übernehmbaren Wert werden nur gezählt und nie geschrieben.
+Der Bestätigen-Knopf nennt die Zahl der Felder und Karten, die er ändert.
+
+Geschrieben wird über denselben Pfad wie im Editor: der ganze Satz mit
+allen Lektionen, Titel, Sprachen, Niveau und Beschreibung bleiben, die
+Karten-Ids ändern sich nicht, dein Lernfortschritt bleibt erhalten. Die
+vorherigen Werte werden gesichert, **Letzte Übernahme rückgängig machen**
+stellt sie wieder her. Nach einer Übernahme ist der gespeicherte Bericht
+veraltet und wird verworfen; prüfe den Satz erneut, wenn du ein frisches
+Ergebnis willst. Für heruntergeladene Sätze ist der Knopf deaktiviert,
+mit dem Hinweis, dass er nur für eigene Lektionen gilt.
+
 ---
 
 Mehr zur Funktionsweise hinter den Kulissen steht in der

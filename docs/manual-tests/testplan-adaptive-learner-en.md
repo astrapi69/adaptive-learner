@@ -1832,6 +1832,27 @@ each card row (`CardImageField`).
       the header/menu are reachable again - but new taps still raise
       the protocol counter (recording continues invisibly, #2785)
 
+### AI check: apply suggestions (AIV-07, #3060)
+- [ ] Browser mode with a configured AI key, an own lesson (Content > My
+      content) with a deliberate mistake on a card (e.g. "casa" instead
+      of "la casa"); run "Check with AI": the report lists the card and
+      the footer carries the "Apply suggestions" button
+- [ ] "Apply suggestions": a table with lesson, card, field, "Current"
+      and "Suggestion", every row ticked; below it the number of
+      findings without an applicable value (if any); the confirm button
+      counts "N fields in M cards"
+- [ ] Untick one row, confirm: only the ticked fields change (open the
+      lesson or check in the editor), the set's title, languages, level
+      and description stay; toast "N fields applied"; the lesson's
+      progress is kept
+- [ ] In the result, "Undo the last apply": the fields carry the old
+      value again, toast "Apply undone."; the undo button disappears
+- [ ] Close the dialog and open "Check with AI" again: no cached report
+      any more, the cost estimate shows (the report was dropped after the
+      apply)
+- [ ] Downloaded set (not your own): "Apply suggestions" is disabled with
+      the tooltip "Only for your own lessons."
+
 ### Settings > Plugins: installed plugins (#3055)
 - [ ] Desktop app (API mode), Settings > Plugins: at the top the
       "Installed plugins" card with one row per loaded plugin, sorted by

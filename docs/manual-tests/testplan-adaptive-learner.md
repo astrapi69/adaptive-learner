@@ -1961,6 +1961,29 @@ jeder Karten-Zeile (`CardImageField`).
       weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
       weiter, #2785)
 
+### KI-Prüfung: Vorschläge übernehmen (AIV-07, #3060)
+- [ ] Browser-Modus mit konfiguriertem KI-Schlüssel, eigene Lektion
+      (Inhalte > Meine Inhalte) mit einem absichtlichen Fehler auf einer
+      Karte (z. B. "casa" statt "la casa"); "Mit KI prüfen" ausführen:
+      der Bericht listet die Karte, die Fußzeile trägt den Knopf
+      "Vorschläge übernehmen"
+- [ ] "Vorschläge übernehmen": eine Tabelle mit Lektion, Karte, Feld,
+      "Aktuell" und "Vorschlag", jede Zeile angehakt; darunter die Zahl
+      der Hinweise ohne übernehmbaren Wert (falls vorhanden); der
+      Bestätigen-Knopf zählt "N Felder in M Karten"
+- [ ] Eine Zeile abhaken, bestätigen: nur die angehakten Felder ändern
+      sich (Lektion öffnen oder im Editor nachsehen), Titel, Sprachen,
+      Niveau und Beschreibung des Sets bleiben; Toast "N Felder
+      übernommen"; der Lernfortschritt der Lektion bleibt erhalten
+- [ ] Im Ergebnis "Letzte Übernahme rückgängig machen": die Felder tragen
+      wieder den alten Wert, Toast "Übernahme rückgängig gemacht."; der
+      Undo-Knopf verschwindet
+- [ ] Dialog schließen und "Mit KI prüfen" erneut öffnen: kein
+      gecachter Bericht mehr, die Kostenschätzung erscheint (der Bericht
+      wurde nach der Übernahme verworfen)
+- [ ] Heruntergeladenes Set (nicht eigenes): "Vorschläge übernehmen"
+      ist deaktiviert mit dem Tooltip "Nur für eigene Lektionen."
+
 ### Einstellungen > Plugins: Installierte Plugins (#3055)
 - [ ] Desktop-App (API-Modus), Einstellungen > Plugins: oben die Karte
       "Installierte Plugins" mit einer Zeile je geladenem Plugin,
