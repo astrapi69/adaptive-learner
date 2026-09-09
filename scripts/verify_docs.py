@@ -697,6 +697,111 @@ def check_help_coverage(
 
 
 # ---------------------------------------------------------------------------
+# Check: manual test plan de/en parity  (FAIL)
+# ---------------------------------------------------------------------------
+
+_TESTPLAN_DE = Path("docs") / "manual-tests" / "testplan-adaptive-learner.md"
+_TESTPLAN_EN = Path("docs") / "manual-tests" / "testplan-adaptive-learner-en.md"
+
+_CHECKPOINT_RE = re.compile(r"^\s*- \[ \]")
+_SECTION_RE = re.compile(r"^### ")
+_ISSUE_REF_RE = re.compile(r"#(\d{3,5})")
+
+
+def _testplan_shape(text: str) -> tuple[int, int, dict[str, int]]:
+    """Count checkpoints, sections and issue references in one plan.
+
+    Order is deliberately NOT part of the shape: the two plans order
+    their sections differently (positions 23 to 27 as of #3065), so a
+    positional walk reports differences that are not drift.
+    """
+    checkpoints = sections = 0
+    refs: dict[str, int] = {}
+    for line in text.splitlines():
+        if _CHECKPOINT_RE.match(line):
+            checkpoints += 1
+        if _SECTION_RE.match(line):
+            sections += 1
+        for ref in _ISSUE_REF_RE.findall(line):
+            refs[ref] = refs.get(ref, 0) + 1
+    return checkpoints, sections, refs
+
+
+def check_testplan_parity(report: Report, plan_dir: Path | None = None) -> None:
+    """TESTPLAN-PFLICHT: the DE and EN manual test plans stay in sync.
+
+    #3065 found two checkpoints that existed only in the German plan,
+    by hand, because nothing checked it. The rule is binding; this is
+    its enforcement.
+    """
+    base = plan_dir if plan_dir is not None else REPO
+    de_path, en_path = base / _TESTPLAN_DE, base / _TESTPLAN_EN
+
+    for path in (de_path, en_path):
+        if not path.exists():
+            report.fail(
+                "testplan-parity",
+                f"{path} not found - cannot verify de/en parity (basis missing; #2287)",
+            )
+            return
+
+    de_text, en_text = read(de_path), read(en_path)
+    de_boxes, de_sections, de_refs = _testplan_shape(de_text)
+    en_boxes, en_sections, en_refs = _testplan_shape(en_text)
+
+    if not de_boxes and not en_boxes:
+        report.fail(
+            "testplan-parity",
+            "neither manual test plan contains a single '- [ ]' checkpoint - the "
+            "parity comparison would be vacuously true (basis missing; #2287)",
+        )
+        return
+
+    # Point 4 of the gate contract: say what was measured, so "0 findings"
+    # and "0 inputs examined" cannot print the same green.
+    report.note(
+        f"testplan-parity: de {de_boxes} checkpoints / {de_sections} sections, "
+        f"en {en_boxes} checkpoints / {en_sections} sections"
+    )
+
+    if de_boxes != en_boxes:
+        report.fail(
+            "testplan-parity",
+            f"checkpoint counts differ: de has {de_boxes}, en has {en_boxes} "
+            "- TESTPLAN-PFLICHT wants both language versions in sync",
+        )
+    if de_sections != en_sections:
+        report.fail(
+            "testplan-parity",
+            f"section counts differ: de has {de_sections}, en has {en_sections}",
+        )
+
+    only_de = sorted(set(de_refs) - set(en_refs), key=int)
+    only_en = sorted(set(en_refs) - set(de_refs), key=int)
+    if only_de:
+        report.fail(
+            "testplan-parity",
+            f"{len(only_de)} issue reference(s) cited only in the DE plan: "
+            + ", ".join("#" + r for r in only_de[:8]),
+        )
+    if only_en:
+        report.fail(
+            "testplan-parity",
+            f"{len(only_en)} issue reference(s) cited only in the EN plan: "
+            + ", ".join("#" + r for r in only_en[:8]),
+        )
+    differing = sorted(
+        (r for r in set(de_refs) & set(en_refs) if de_refs[r] != en_refs[r]), key=int
+    )
+    if differing:
+        detail = ", ".join(f"#{r} (de {de_refs[r]}, en {en_refs[r]})" for r in differing[:8])
+        report.fail(
+            "testplan-parity",
+            f"{len(differing)} issue reference(s) cited a different number of times: {detail}",
+        )
+
+
+# ---------------------------------------------------------------------------
 # Registry + runner
 # ---------------------------------------------------------------------------
 
@@ -711,6 +816,7 @@ CHECKS = {
     "help-index-versions": lambda r, o: check_help_index_versions(r),
     "help-prose-versions": lambda r, o: check_help_prose_versions(r),
     "help-coverage": lambda r, o: check_help_coverage(r),
+    "testplan-parity": lambda r, o: check_testplan_parity(r),
     "i18n": lambda r, o: check_i18n(r, o.fix),
 }
 

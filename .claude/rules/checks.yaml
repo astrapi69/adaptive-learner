@@ -39,6 +39,13 @@ checks:
     wired_in: make check-dead-code; scripts/check_dead_code.py; .github/workflows/dead-code.yml; .github/workflows/ci.yml
     probe: make_target=check-dead-code
 
+  - id: testplan-parity
+    verifies: the DE and EN manual test plans stay in sync - equal checkpoint and section counts, and the same multiset of issue references; compares content, never order, because the two plans order their sections differently (#3069, after #3065 found two DE-only checkpoints by hand)
+    rule: ai-workflow/testplan-policy.md#core-rules
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_testplan_parity.py
+    probe: script_exists=backend/tests/test_verify_docs_testplan_parity.py
+
   - id: docs-drift
     verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics
