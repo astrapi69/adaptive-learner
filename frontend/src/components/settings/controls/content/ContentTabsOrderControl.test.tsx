@@ -56,6 +56,17 @@ describe("ContentTabsOrderControl", () => {
     expect(readContentTabOrder()).toEqual(["my", "discover", "import", "create"]);
   });
 
+  it("lets the arrows wrap under a full-width label on narrow viewports (#3027)", () => {
+    render(<ContentTabsOrderControl />);
+    expect(screen.getByTestId("content-tabs-order-list")).toHaveClass(
+      "list-none",
+      "pl-0",
+    );
+    const row = screen.getByTestId("content-tabs-order-item-discover");
+    expect(row).toHaveClass("flex", "flex-wrap");
+    expect(row.firstElementChild).toHaveClass("min-w-0", "flex-1", "basis-40");
+  });
+
   it("moves a tab up and persists", () => {
     render(<ContentTabsOrderControl />);
     fireEvent.click(screen.getByTestId("content-tabs-up-import"));
