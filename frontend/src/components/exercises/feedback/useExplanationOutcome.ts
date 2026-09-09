@@ -31,7 +31,7 @@ function initialOutcome(reviewed: unknown): ExplanationOutcome | null {
 }
 
 /** True when every scored element was correct (a fully correct answer). */
-export function isFullyCorrect(scored: ScoredCounts): boolean {
+function isFullyCorrect(scored: ScoredCounts): boolean {
     return scored.total > 0 && scored.correct >= scored.total;
 }
 
