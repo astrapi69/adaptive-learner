@@ -18,7 +18,7 @@ import ProgressBar from "../../../shared/data-display/ProgressBar";
 import type { ValidationReportItem } from "../../../shared/feedback/ValidationReport";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { useAiCardValidation } from "../../../hooks/content/useAiCardValidation";
-import { useAiFix } from "../../../hooks/content/useAiFix";
+import { useAiFix } from "../../../hooks/content/ai-fix";
 import { isOwnEditableSet } from "../../../lib/lesson/own-set";
 import AiFixPanel from "./AiFixPanel";
 import AiReportStep from "./AiReportStep";

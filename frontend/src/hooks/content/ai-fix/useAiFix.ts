@@ -23,27 +23,27 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { ApiError } from "../../api/client";
-import type { ValidationResult } from "../../lib/ai/validation/content-validator";
-import { fetchEditLessonSet } from "../../lib/content/lesson/edit/edit-session";
+import { ApiError } from "../../../api/client";
+import type { ValidationResult } from "../../../lib/ai/validation/content-validator";
+import { fetchEditLessonSet } from "../../../lib/content/lesson/edit/edit-session";
 import {
   applyFixes,
   planFixes,
   undoFixes,
   type FixPlan,
-} from "../../lib/content/validation/ai-fix";
+} from "../../../lib/content/validation/ai-fix";
 import {
   clearFixSnapshot,
   readFixSnapshot,
   writeFixSnapshot,
-} from "../../lib/content/validation/ai-fix-undo-store";
-import { getStorage } from "../../storage";
-import type { ContentLesson, ContentSetEntry } from "../../storage/types";
-import { notify } from "../../utils/notify";
+} from "../../../lib/content/validation/ai-fix-undo-store";
+import { getStorage } from "../../../storage";
+import type { ContentLesson, ContentSetEntry } from "../../../storage/types";
+import { notify } from "../../../utils/notify";
 
 type Translate = (key: string, fallback?: string) => string;
 
-export type AiFixPhase = "idle" | "loading" | "review" | "busy" | "applied" | "undone";
+type AiFixPhase = "idle" | "loading" | "review" | "busy" | "applied" | "undone";
 
 export interface AiFixState {
   phase: AiFixPhase;

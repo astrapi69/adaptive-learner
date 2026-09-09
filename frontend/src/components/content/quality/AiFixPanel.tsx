@@ -11,7 +11,7 @@
 
 import { Button } from "@/components/ui/button";
 
-import type { UseAiFix } from "../../../hooks/content/useAiFix";
+import type { UseAiFix } from "../../../hooks/content/ai-fix";
 import AiFixReview from "./AiFixReview";
 
 type Translate = (key: string, fallback?: string) => string;

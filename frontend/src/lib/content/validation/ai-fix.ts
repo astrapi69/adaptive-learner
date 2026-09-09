@@ -32,7 +32,7 @@ import type {
 import type {ValidationResult} from "../../ai/validation/content-validator";
 
 /** The card text fields a suggestion may be written into. */
-export type FixableField = "front" | "back" | "notes";
+type FixableField = "front" | "back" | "notes";
 
 const FIXABLE_FIELDS: readonly FixableField[] = ["front", "back", "notes"];
 const USER_ORIGINS: readonly UserLessonOrigin[] = ["analysis", "adaptive", "imported"];
@@ -53,7 +53,7 @@ export interface FixCandidate {
 }
 
 /** A finding the learner has to act on by hand (no card field, no value, unknown card). */
-export interface ManualFinding {
+interface ManualFinding {
     cardId: string;
     front: string;
     field: string;
@@ -67,7 +67,7 @@ export interface FixPlan {
 }
 
 /** One applied replacement, as recorded for undo. */
-export interface FixChange {
+interface FixChange {
     lessonId: string;
     cardId: string;
     field: FixableField;
