@@ -1916,6 +1916,22 @@ jeder Karten-Zeile (`CardImageField`).
 ### Lesson-Player UX (v2.3.0)
 - [ ] Pause-Button liegt jetzt im Sticky-Footer (#1644), Pausieren
       funktioniert von dort
+- [ ] Position vor der ersten Übung (#3075): Lektion öffnen, nur durch zwei
+      Theorieschritte blättern, KEINE Übung beantworten, Seite neu laden ->
+      Resume-Dialog erscheint, "Fortsetzen" landet auf dem zuletzt offenen
+      Schritt (vorher: Neustart bei Schritt 1 ohne Dialog)
+- [ ] Pause-Knopf vor der ersten Übung (#3075): wie oben, dann den
+      Pause-Knopf im Footer drücken -> der Dialog Weiter/Pausieren/Abbrechen
+      erscheint (vorher: verliess die Lektion stumm); "Pausieren" -> die
+      Lektion steht auf dem Dashboard unter "Pausierte Lektionen"
+- [ ] Verlassen über die App-Navigation (#3075): eine Übung beantworten,
+      dann zwei Theorieschritte weiter, dann über das Menü (Hamburger ->
+      "Einstellungen"), das Logo oder den Zurück-Knopf des Browsers
+      weggehen -> die Lektion steht unter "Pausierte Lektionen";
+      "Fortsetzen" dort öffnet den Resume-Dialog und landet auf dem
+      Theorieschritt, auf dem du warst (nicht auf der Übung davor); auf
+      dem Handy dasselbe über die Menü-Schublade
+      [E2E: `lesson-pause-position.spec.ts`]
 - [ ] Auto-Weiter + "Zurück" (#1921): Einstellung "Automatisch weiter"
       (Settings -> Lernen) AN -> eine Übung richtig beantworten, die App
       springt automatisch zur nächsten Aufgabe -> dann "Zurück" klicken:

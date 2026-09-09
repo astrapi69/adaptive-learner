@@ -141,6 +141,11 @@ function ready(stepIndex: number) {
         goToStepById: vi.fn(),
         recordStepResult: vi.fn(),
         markCompleted: vi.fn(),
+        markPaused: vi.fn(),
+        markAbandoned: vi.fn(),
+        markResumed: vi.fn(),
+        markRestarted: vi.fn(),
+        autosave: vi.fn(),
         refresh: vi.fn(),
     });
 }
@@ -391,6 +396,11 @@ describe("Lesson auto-read (C3)", () => {
             goToStepById: vi.fn(),
             recordStepResult: vi.fn(),
             markCompleted: vi.fn(),
+            markPaused: vi.fn(),
+            markAbandoned: vi.fn(),
+            markResumed: vi.fn(),
+            markRestarted: vi.fn(),
+            autosave: vi.fn(),
             refresh: vi.fn(),
         });
         return goToStep;

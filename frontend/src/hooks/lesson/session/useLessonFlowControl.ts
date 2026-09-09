@@ -25,6 +25,14 @@ export interface UseLessonFlowControlOptions {
     /** Flush accumulated time without changing lesson status. */
     autosave: () => Promise<void>;
     goToStep: (index: number) => void;
+    /**
+     * True while the step view shows the summary (index past the last
+     * step). Leaving from there is not an interruption: the run is
+     * played through, only "mark complete" is pending, so the unmount
+     * pause (#3075) stays off and the row keeps its ``in_progress``
+     * status (listed under "continue learning", not as paused).
+     */
+    atSummary?: boolean;
 }
 
 /**
@@ -53,7 +61,8 @@ export interface UseLessonFlowControlResult {
  *
  * Owns the back-button exit dialog, the paused-lesson resume prompt,
  * auto-pause when the tab is hidden or the window unloads (with
- * silent auto-resume on a brief tab switch), the 30-second autosave
+ * silent auto-resume on a brief tab switch), auto-pause when the page
+ * is left by in-app navigation (#3075), the 30-second autosave
  * interval, and the pause/abandon dialog actions (toast + navigate
  * back to the Content Browser).
  */
@@ -66,6 +75,7 @@ export function useLessonFlowControl({
     markRestarted,
     autosave,
     goToStep,
+    atSummary = false,
 }: UseLessonFlowControlOptions): UseLessonFlowControlResult {
     const navigate = useNavigate();
     const {t} = useI18n();
@@ -142,7 +152,45 @@ export function useLessonFlowControl({
         return () => clearInterval(id);
     }, [status, isInProgress, autosave]);
 
+    // #3075 - leaving the lesson by any in-app route (logo, nav link,
+    // browser back, the set link in the header) unmounts this hook
+    // without firing ``beforeunload``; the effect cleanup above only
+    // REMOVES that listener. Until now such an exit wrote nothing: the
+    // row stayed ``in_progress`` at the last graded exercise, every
+    // theory step after it was lost, and the lesson never reached the
+    // paused-lessons card. Pause a started run on unmount instead, the
+    // same write the exit dialog's "Pause" performs. The refs carry
+    // the latest values into the unmount closure; the dialog paths
+    // set ``leftViaDialogRef`` so their own lifecycle write is not
+    // followed by a second one.
+    const isInProgressRef = useRef(isInProgress);
+    useEffect(() => {
+        isInProgressRef.current = isInProgress;
+    }, [isInProgress]);
+    const markPausedRef = useRef(markPaused);
+    useEffect(() => {
+        markPausedRef.current = markPaused;
+    }, [markPaused]);
+    const atSummaryRef = useRef(atSummary);
+    useEffect(() => {
+        atSummaryRef.current = atSummary;
+    }, [atSummary]);
+    const leftViaDialogRef = useRef(false);
+    useEffect(
+        () => () => {
+            if (
+                isInProgressRef.current &&
+                !leftViaDialogRef.current &&
+                !atSummaryRef.current
+            ) {
+                void markPausedRef.current();
+            }
+        },
+        [],
+    );
+
     const handlePauseFromDialog = async () => {
+        leftViaDialogRef.current = true;
         await markPaused();
         setExitOpen(false);
         notify.info(
@@ -155,6 +203,7 @@ export function useLessonFlowControl({
     };
 
     const handleAbandonFromDialog = async () => {
+        leftViaDialogRef.current = true;
         await markAbandoned();
         setExitOpen(false);
         notify.info(t("lesson.exit.abandoned_toast", "Lesson abandoned."));
