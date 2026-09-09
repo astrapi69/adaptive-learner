@@ -1483,7 +1483,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       as invalid user content
 - [ ] **Template titles (#1674/#1756):** template cards show readable
       titles (even offline) + a pressed/selected state
-- [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →
+- [ ] **Advanced exercise types / extension wizard (#1852, #1887, #2817):** Step 1 →
       the "Advanced exercise types" card starts a dedicated 3-step flow (author
       → review → save) with a non-blocking notice that these types are advanced.
       Step 2: "Add extension exercise" offers seven types — **categorization**,
@@ -1796,6 +1796,7 @@ each card row (`CardImageField`).
       jumps to the next step by itself -> then click "Back": the previous
       (already-solved) exercise STAYS and does NOT jump forward again;
       the "Continue" button is still clickable
+- [ ] Title area slimmed down, no more in-lesson description (#1635)
 - [ ] Lesson summary shows only ONE favorite button (#1649)
       [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
