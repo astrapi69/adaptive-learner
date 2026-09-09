@@ -1,8 +1,9 @@
 # Chat-Journal 2026-09-09
 
-Eine Session, zwei Branches, zwei PRs gegen develop: der Umbruch-Fehler
-der Reihenfolge-Listen auf dem Telefon (#3027, PR #3037) und der dabei
-gefundene Spiegel-Fehler in den Gate-Tests (#3036, PR #3038).
+Eine Session, drei Branches, drei PRs gegen develop: der Umbruch-Fehler
+der Reihenfolge-Listen auf dem Telefon (#3027, PR #3037), der dabei
+gefundene Spiegel-Fehler in den Gate-Tests (#3036, PR #3038) und die
+driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
 
 ## 1. Reihenfolge-Listen brechen auf dem Telefon mitten im Wort (#3027)
 
@@ -71,6 +72,38 @@ gefundene Spiegel-Fehler in den Gate-Tests (#3036, PR #3038).
   Inode-Stand danach unverändert.
 - Commit: 5fccc047 (PR #3038)
 
+## 3. settings-data driftet über die Plaketten-Zeile (#3035)
+
+- Original prompt: "weiter mit:
+  https://github.com/astrapi69/adaptive-learner/issues/3035"
+- Optimierter Prompt: "Pinne für das Visual-Motiv settings-data die
+  Zählung des Blocks 'Deine Sicherung enthält' so eng wie möglich,
+  analog zur #3016-Abhilfe: nur die Leseoperationen auf dem Store
+  userBadges, alles andere unverändert; lokal dreimal identisch, dann
+  Baseline-Sync."
+- Ziel: die Datei darf auf fremden PRs nicht mehr als unzurechenbare
+  Änderung zurückkommen.
+- Ergebnis: Der Block zählt echte Sicherungszeilen (`toArray()` je
+  Store). Ob der Seed-Lerner die Plakette `first_assessment` schon
+  trägt, wenn gezählt wird, ist ein Wettlauf zwischen dem
+  Gamification-Schreibvorgang aus der Einstufung und der Navigation zu
+  den Einstellungen; deshalb "1 Plaketten" und 35 statt 34 Datensätze
+  mal da, mal nicht, 24 px Seitenhöhe. Dritte Datenquelle in diesem
+  einen Motiv nach der Empfehlungsliste (#1653) und dem Offline-Cache
+  (#3016). `pinUserBadgesEmpty(page)` in `e2e/visual/helpers.ts`: die
+  Lesemethoden des Object Stores `userBadges` (getAll, getAllKeys,
+  count, openCursor, openKeyCursor) bekommen einen Schlüsselbereich,
+  den keine Zeile trifft - der Aufruf geht weiter an die echte
+  IndexedDB, kein Fake-Request, kein anderer Store berührt. Beweis:
+  gegen den Dexie-Build einmal `--update-snapshots`, dann zwei
+  Vergleichsläufe, 3/3 grün; der Block zeigt "1 Projekte / 34
+  Datensätze gesamt". Sync änderte genau `settings-data-desktop.png`
+  (6083 -> 6059 px); Mobile und Tablet lagen auf develop schon im
+  plakettenlosen Zustand. Kein Regeltext: der Korpus steht auf
+  Headroom 0, die Klasse ist unter #1653/#3016 dokumentiert, die dritte
+  Instanz steht im Docstring des Helpers.
+- Commit: bc627c4e (Squash von PR #3040)
+
 ## Befunde neben der Arbeit
 
 - `gh pr checks --json` gibt es in gh 2.46.0 nicht; Warte-Schleifen
@@ -98,9 +131,13 @@ gefundene Spiegel-Fehler in den Gate-Tests (#3036, PR #3038).
 
 ## Zusammenfassung
 
-- Commits: 5 auf zwei Branches (3 in PR #3037, 1 in PR #3038, 1 Restore).
+- Commits: 7 auf drei Branches (3 in PR #3037, 1 in PR #3038, 1 Restore,
+  1 Pin + 1 leerer CI-Anstoß in PR #3040).
 - Tests: +6 Vitest (ReorderRow 6 Fälle, 2 Pins), +5 pytest
-  (test_repo_mirror); Frontend 10043, Backend 1835, beide grün.
-- Neue Dateien: `ReorderRow.tsx` (+ Test), `repo_mirror.py` (+ Test).
-- Bilder: 2 FeatureShots neu, 18 Baselines nachgezogen, 1 zurückgesetzt.
-- Issues: #3027 geschlossen, #3036 angelegt und per PR #3038 geschlossen.
+  (test_repo_mirror); Frontend 10043, Backend 1835, beide grün; Visual
+  settings-data lokal 3/3 in drei Läufen.
+- Neue Dateien: `ReorderRow.tsx` (+ Test), `repo_mirror.py` (+ Test);
+  `pinUserBadgesEmpty` in den Visual-Helpern.
+- Bilder: 2 FeatureShots neu, 19 Baselines nachgezogen, 1 zurückgesetzt.
+- Issues: #3027 und #3035 geschlossen, #3036 angelegt und per PR #3038
+  geschlossen.
