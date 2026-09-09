@@ -324,6 +324,10 @@ einzeln. (Trust-Level-Definitionen: siehe
 | AIV-11 | "KI-geprüft"-Badge im Content Browser | S |
 | AIV-12 | Signatur invalidieren bei Content-Änderung | S |
 
+Alle zwölf Stufen sind ausgeliefert; die Kampagne ist mit AIV-07
+(2026-09-09, #3060) abgeschlossen und aus der aktiven Roadmap
+archiviert.
+
 ---
 
 ## 7. Offene Fragen
@@ -369,7 +373,7 @@ Verworfen: ein Ein-Klick "alles korrigieren" ohne Review-Tabelle (die
 Bestätigung "Soll die KI N Karten korrigieren?" wäre unehrlich, solange
 unklar ist, was geschrieben wird) und ein zweiter KI-Aufruf, der Hinweise
 in Werte verwandelt (widerspricht Abschnitt 2.1 und verdoppelt die
-Kosten). Umsetzung: #3060.
+Kosten). Umsetzung: #3060, ausgeliefert am 2026-09-09 mit PR #3063.
 
 ## Verwandte Dokumente
 
