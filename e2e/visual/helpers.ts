@@ -1266,6 +1266,43 @@ async function pinLessonCacheEmpty(page: Page): Promise<void> {
 }
 
 /**
+ * Pin the user-badge store to EMPTY for the settings-data motif (#3035).
+ *
+ * "Deine Sicherung enthält" counts real backup rows per table
+ * (``getDexieBackupStats``: ``toArray()`` on every store, filtered to the
+ * user). Whether the seeded learner already holds the ``first_assessment``
+ * badge when that count runs is a race between the gamification write
+ * fired by the assessment and the Settings navigation - so the "Plaketten"
+ * line and the "Datensätze gesamt" total flipped between runs (35 vs 34, a
+ * 24 px page height) and the file came back as churn on unrelated PRs
+ * (#3034). Third data source in this one motif after the live
+ * recommended-repos list (#1653) and the offline-lesson cache (#3016), same
+ * remedy: pin the source instead of photographing what the run happened to
+ * produce.
+ *
+ * Only reads on the ``userBadges`` object store are pinned: each read goes
+ * to the REAL IndexedDB with a key range no row can match, so the store
+ * answers "no rows" through its own machinery - no fake request objects,
+ * and every other store, index and write is untouched. The block therefore
+ * renders the deterministic state "no badge row, total without badges".
+ */
+async function pinUserBadgesEmpty(page: Page): Promise<void> {
+    await page.addInitScript((storeName: string) => {
+        if (typeof IDBObjectStore === "undefined") return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const proto = IDBObjectStore.prototype as any;
+        const noRow = () => IDBKeyRange.only("__visual-pin-empty__");
+        for (const method of ["getAll", "getAllKeys", "count", "openCursor", "openKeyCursor"]) {
+            const original = proto[method];
+            proto[method] = function (this: IDBObjectStore, ...args: unknown[]) {
+                if (this.name !== storeName) return original.apply(this, args);
+                return original.call(this, noRow(), ...args.slice(1));
+            };
+        }
+    }, "userBadges");
+}
+
+/**
  * Wait until a testid's text stops changing (#3016).
  *
  * For values a surface keeps refining while it is open - the offline
@@ -1594,6 +1631,9 @@ export async function gotoSurface(
             // navigation; see pinLessonCacheEmpty for why the live value
             // cannot be photographed reproducibly.
             await pinLessonCacheEmpty(page);
+            // #3035 — pin the badge row count of "Deine Sicherung enthält"
+            // the same way; see pinUserBadgesEmpty for the race behind it.
+            await pinUserBadgesEmpty(page);
             await page.goto("/settings?tab=data");
             await expect(page.getByTestId("settings")).toBeVisible({
                 timeout: 20_000,
