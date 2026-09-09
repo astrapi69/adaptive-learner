@@ -33,6 +33,7 @@ import {useEffect, useState} from "react";
 import {Link} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
+import {useLessonProgressChangeTick} from "../../hooks/lesson/session/useLessonProgressChangeTick";
 import {
     classifyEntryCandidate,
     completedStepCount,
@@ -134,6 +135,10 @@ export default function ContinueLearning({
         "content.continue_learning.lesson_fallback",
         "Lesson",
     );
+
+    // #3075 - re-read when a lesson row is written in this tab (the pause
+    // an in-app exit performs lands in the commit this section mounts in).
+    const progressTick = useLessonProgressChangeTick();
 
     useEffect(() => {
         if (!userId) {
@@ -322,7 +327,7 @@ export default function ContinueLearning({
         return () => {
             cancelled = true;
         };
-    }, [userId, maxItems, importedAnalysisLabel, lessonFallbackLabel]);
+    }, [userId, maxItems, importedAnalysisLabel, lessonFallbackLabel, progressTick]);
 
     /** #3023 - take one row out of the block. Hides the row, nothing else:
      *  no progress, no review cards, no set is touched. */
