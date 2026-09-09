@@ -979,8 +979,9 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       "Fortschritt zurücksetzen") ist die LETZTE Karte des Tabs, direkt
       hinter "Erinnerungen", optisch abgesetzt durch eine dickere
       Trennlinie mit Abstand darüber
-- [ ] Einstellungen > Plugins: nur noch die Karte "Lern-Repository";
-      keine Gamification-Karte mehr
+- [ ] Einstellungen > Plugins: die Karte "Installierte Plugins" (#3055)
+      und darunter die Karte "Lern-Repository"; keine Gamification-Karte
+      mehr
 - [ ] Bereichsleiste, Chip "Motivation und Routine": der Sprung landet
       auf der Bereichs-Überschrift, die Gamification-Karte gehört zum
       Bereich (unter derselben Überschrift)
@@ -1973,6 +1974,61 @@ jeder Karten-Zeile (`CardImageField`).
       Kopfbereich/Menü sind wieder frei - aber neue Taps erhöhen
       weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
       weiter, #2785)
+
+### KI-Prüfung: Vorschläge übernehmen (AIV-07, #3060)
+- [ ] Browser-Modus mit konfiguriertem KI-Schlüssel, eigene Lektion
+      (Inhalte > Meine Inhalte) mit einem absichtlichen Fehler auf einer
+      Karte (z. B. "casa" statt "la casa"); "Mit KI prüfen" ausführen:
+      der Bericht listet die Karte, die Fußzeile trägt den Knopf
+      "Vorschläge übernehmen"
+- [ ] "Vorschläge übernehmen": eine Tabelle mit Lektion, Karte, Feld,
+      "Aktuell" und "Vorschlag", jede Zeile angehakt; darunter die Zahl
+      der Hinweise ohne übernehmbaren Wert (falls vorhanden); der
+      Bestätigen-Knopf zählt "N Felder in M Karten"
+- [ ] Eine Zeile abhaken, bestätigen: nur die angehakten Felder ändern
+      sich (Lektion öffnen oder im Editor nachsehen), Titel, Sprachen,
+      Niveau und Beschreibung des Sets bleiben; Toast "N Felder
+      übernommen"; der Lernfortschritt der Lektion bleibt erhalten
+- [ ] Im Ergebnis "Letzte Übernahme rückgängig machen": die Felder tragen
+      wieder den alten Wert, Toast "Übernahme rückgängig gemacht."; der
+      Undo-Knopf verschwindet
+- [ ] Dialog schließen und "Mit KI prüfen" erneut öffnen: kein
+      gecachter Bericht mehr, die Kostenschätzung erscheint (der Bericht
+      wurde nach der Übernahme verworfen)
+- [ ] Heruntergeladenes Set (nicht eigenes): "Vorschläge übernehmen"
+      ist deaktiviert mit dem Tooltip "Nur für eigene Lektionen."
+
+### Einstellungen > Plugins: Installierte Plugins (#3055)
+- [ ] Desktop-App (API-Modus), Einstellungen > Plugins: oben die Karte
+      "Installierte Plugins" mit einer Zeile je geladenem Plugin,
+      alphabetisch: Name, Version, Quelle ("Paket") und der
+      Aktivierungszeitpunkt in der App-Sprache formatiert; darunter
+      unverändert die Karte "Lern-Repository"
+- [ ] Direkt nach dem Öffnen steht kurz "Plugins werden gelesen…", dann
+      die Liste; bei laufendem Backend kein Fehler, kein Toast
+- [ ] Backend stoppen, Tab neu laden: die Karte zeigt die Zeile
+      "Plugin-Status konnte nicht gelesen werden: …" und ein Toast trägt
+      dieselbe Meldung; die Karte "Lern-Repository" bleibt sichtbar
+- [ ] Browser-Modus (GitHub Pages / Dexie): die Karte bleibt sichtbar mit
+      dem Hinweis "Nur mit der Desktop-App verfügbar."; DevTools >
+      Netzwerk zeigt keinen Aufruf von /api/plugins/health
+
+### Diagnose-Sonde: Fehltipp-Markierung + Aktionen (#3043)
+- [ ] Sonde AN, Mess-Leiste sichtbar: die Leiste zeigt neben "Werte
+      kopieren" und "Details" den Knopf "Daneben!"
+- [ ] Irgendwo tippen, dann "Daneben!" antippen, dann "Details": der
+      Bericht hat eine Sektion `actions (newest first)` mit einer
+      `mark`-Zeile, deren `target=` das eben getippte Element nennt;
+      der Tipp-Zähler ("N Tipps") ist durch den Knopf NICHT gestiegen
+- [ ] Auf einer Lektionsseite eine Antwort-Kachel antippen: die
+      `actions`-Sektion bekommt eine `click`-Zeile mit `target=`,
+      `downTarget=` und `mismatch=0`; ein Textfeld antippen ergibt
+      zusätzlich eine `focus`-Zeile mit `top=`/`bottom=`/`vis=`
+- [ ] Die letzte Tipp-Zeile der Leiste trägt zusätzlich `hit=`,
+      `above1=`, `above2=`, `pageY=`, `screenY=`, `hdrTop=`, `ftrBot=`,
+      `room=` und `focusTop=`/`focusBot=`/`focusVis=`; in den
+      Einstellungen "Protokoll kopieren" liefert dieselben Felder plus
+      die `click`-/`focus`-/`mark`-Einträge
 
 ### Sticky-Knopf für die Mess-Leiste (#2799)
 - [ ] Einstellungen > Diagnose & Support: "Sticky-Knopf für die

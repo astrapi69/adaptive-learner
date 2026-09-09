@@ -10,21 +10,20 @@ Current state: **v2.14.0 (released 2026-09-05 - Sessions get a game layer: an op
 
 ## Aktueller Fokus
 
-- **EXP-033 — KI-gestützte Content-Validierung** (PARTIAL). Ausgeliefert:
-  set-weite Batch-Prüfung + Report-UI + Kosten-Bestätigung (AIV-01..05),
-  Content-Hash + Signatur + "AI-Checked"-Badge (AIV-08..11),
-  #674/#676/#686/#687/#690/#691 — und **AIV-12** (Signatur bei
-  Content-Änderung invalidieren): kein separater Code nötig, folgt
-  direkt aus AIV-10s Verify-on-Read-Design (`verifySignature()` /
-  `badgeStatusForCachedSet()` liefern bei Hash-Mismatch `"stale"`,
-  `AiCheckedBadge` rendert das sichtbar anders als "verified"; gepinnt
-  in `validation-signature.test.ts`) — und **AIV-06** (CI-Action
-  `ai_review.py` + `ai-review.yml` im Content-Repo,
-  astrapi69/adaptive-learner-content#188 gemergt 2026-08-13).
-  **Offen: AIV-07** (Auto-Fix,
-  nur User-Content, L-Aufwand — mutiert Nutzerinhalte automatisch,
-  noch nicht begonnen, braucht eigene Risiko-Abwägung vor Umsetzung).
-  Siehe [EXP-033](explorations/EXP-033-ai-content-validation.md).
+- **EXP-021 — Token-Rollen-UI** (#3072). `token_roles` liegt seit
+  v1.35.0 (Phase 52I / P-130) im Schema und wird von vier Konsumenten
+  gelesen: Cloze-Generator, Fehler-Klassifikator, Übungs-Pool und
+  Korrektur-Karte. Geschrieben wird es von nichts, und keine ausgelieferte
+  Lektion trägt es. Der Cloze-Generator nennt den token_roles-Pfad
+  seine höchste Genauigkeitsstufe; gefeuert hat sie nie, weil ihre
+  Eingabe nicht herstellbar ist. Gebaut wird ein Annotations-Editor im
+  Karten-Schritt plus ein Vorschlag, den der Autor bestätigt oder
+  ändert (Owner-Entscheidung 2026-09-09).
+  Siehe [EXP-021](explorations/EXP-021-lesson-creator.md).
+
+EXP-033 war der vorherige Eintrag und ist mit AIV-07 vollständig
+(#3060, archiviert nach
+[roadmap-archive/2026-09.md](roadmap-archive/2026-09.md)).
 
 ## Nächste Phase
 
@@ -36,17 +35,14 @@ Current state: **v2.14.0 (released 2026-09-05 - Sessions get a game layer: an op
 - **EXP-024 — Curriculum Builder / Schichtentrennung Phase 2/3**: Plugin-
   Service-Module auf Repository-Pattern (Phase 2), Frontend-U1 (Phase 3).
   Phase 1 ausgeliefert.
-- **EXP-021 / EXP-022 — Content-Authoring-Ausbau**: manueller Einzel-Übungs-
-  Editor + CSV-Datei-Upload + Token-Rollen-UI (EXP-021 Folge-Ausbau);
-  Content-Browser-Baum als Graph (UC2) + Beziehungs-Editor (UC4) (EXP-022).
+- **EXP-021 / EXP-022 — Content-Authoring-Ausbau**: Token-Rollen-UI
+  (EXP-021, jetzt im Fokus, #3072); Content-Browser-Baum als Graph (UC2)
+  + Beziehungs-Editor (UC4) (EXP-022). Der Einzel-Übungs-Editor
+  (`ExerciseEditor.tsx`, #1844), der CSV-Datei-Upload und der Bild-Upload
+  für Picture Choice (`CardImageField.tsx`) sind ausgeliefert und standen
+  hier bis #3071 fälschlich als offen.
 - **EXP-027 — Weitere Sprachen** (I18N-06..12): Indonesisch-/Italienisch-UI,
   formale Uebersetzungs-QA, Content-Sprachpaar-Expansion, Exercise-RTL-Audit.
-- **Library-First-Follow-ups** (#697–#700, aus dem Library-First-Audit):
-  react-easy-crop für `ImageCropDialog` spiken (#697), `jsonrepair` für den
-  LLM-Prosa-JSON-Extraktor evaluieren (#698, TS + Python gepaart), `zod` für
-  die content-validator-Schema-Schicht evaluieren (#699, vorlaeufig lean
-  BEHALTEN), `react-activity-calendar` für die `ActivityHeatmap` evaluieren
-  (#700, vorlaeufig lean BEHALTEN).
 
 ## Zukunft (Phase 2, community-finanziert)
 
@@ -171,8 +167,8 @@ Teilweise erledigt (Rest in Aktueller Fokus / Nächste Phase): **EXP-013**
 **EXP-022** (UC1; UC2/UC4 offen), **EXP-023** (A/B/C-slice; Phase-C-Rest
 offen), **EXP-024** (Phase 1; Phase 2/3 offen), **EXP-025** (AUTH-01/02;
 AUTH-03..09 offen), **EXP-027** (Hindi-UI + Picker-Skalierung + Hindi-Content;
-weitere Sprachen + RTL offen), **EXP-033** (AIV-01..06 + AIV-08..12
-ausgeliefert; AIV-07 offen).
+weitere Sprachen + RTL offen), **EXP-033** (vollständig,
+AIV-01..12 ausgeliefert).
 
 Kürzlich geschlossene Bugs: **#656** (Complexity-Gate FreeText/WordTiles
 baselined, v1.85.0); **#675** (Review-Badge stieg nach einer Session nicht ab
@@ -358,38 +354,8 @@ above for the release each landed in.
 Items waiting on an external trigger (npm publish, upstream release,
 paid-API access, or a specific release tag). NOT P0 even when otherwise valuable.
 
-- **DEP-TS7 — TypeScript 6 → 7 (native compiler).** `typescript@7.0.2`
-  is published and `tsc --noEmit` passes on our code under TS 7, but the
-  ESLint gate crashes: `typescript-eslint`'s `typescript-estree` reads a
-  `typescript` internal (`ScriptKind.Cjs`) that TS 7's rewritten native
-  compiler no longer exposes
-  (`TypeError: Cannot read properties of undefined (reading 'Cjs')`).
-  **No released `typescript-eslint` supports TS 7** — `latest` (8.63.0),
-  `canary` (8.63.1-alpha.8) and `@typescript-eslint/parser` all peer-cap
-  `typescript` at `>=4.8.4 <6.1.0`; there is no v9 / `next` tag. Forcing
-  it would mean disabling type-aware ESLint (the `--max-warnings 0` gate
-  exists to prevent exactly that) — not acceptable.
-  **Trigger:** a `typescript-eslint` release whose `typescript` peer
-  allows `>=7.0`. Re-check with
-  `npm view typescript-eslint@latest peerDependencies` +
-  `npm view typescript-eslint dist-tags`. Then bump `typescript` +
-  `typescript-eslint` in lockstep in a dedicated migration PR (tsc +
-  eslint + full Vitest; expect the usual TS-major `lib` / `@types/node`
-  cascade). Tracked: issue #1507; supersedes the closed Dependabot bump
-  #1503. (Verified 2026-07-09.)
-
-- **BADGE-CONTENT — Sets-/Sprachen-Abzeichen zählt nur geprüfte Sets.**
-  Maintainer-Entscheidung Option A (2026-07-31, #2259): das Abzeichen
-  kommt, zählt aber nur geprüfte Sets/Sprachen; der eigentliche Wert ist
-  das maschinenlesbare Merkmal geprüft-vs-ungeprüft. Vorprüfung ergab:
-  das Merkmal existiert nicht — Engine-Schema hat kein Review-Feld
-  (`visibility` ist Display-Hint, `additionalProperties: false` verbietet
-  App-Erfindungen), Content-Repo-Manifest trägt keine Marker.
-  **Trigger:** learn-content-engine#94 (Schema-Hoheit) liefert das Feld.
-  Dann in EINEM PR: `validate_bundled_content.py` erweitert den
-  CONTENT-STATS-Schreib/Prüfpfad um die Nur-geprüft-Zählung, Badge hängt
-  an demselben Mechanismus, Content-Repo flaggt die KI-Sets; der
-  Muttersprachler-Durchgang legt das Merkmal je Set um. Tracked: #2273.
+Zurzeit kein Eintrag: DEP-TS7 (#1507) wurde als verfrüht geschlossen,
+BADGE-CONTENT (#2273) ist mit #2441 ausgeliefert.
 
 ---
 

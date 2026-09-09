@@ -4,6 +4,7 @@
  * Split out of the former ``storage/types.ts`` god-file (#354).
  */
 
+import type { PluginInspection } from "../../../api/client-core";
 import type {
   CurriculumCreateBody,
   CurriculumUpdateBody,
@@ -64,6 +65,13 @@ export interface IPluginsNamespace {
   manifests(): Promise<Record<string, unknown>>;
   health(): Promise<Record<string, unknown>>;
   errors(): Promise<Record<string, string>>;
+  /**
+   * PluginForge lifecycle metadata of one loaded plugin (#3055). API mode
+   * reads ``/api/plugins/inspect/{name}``; Dexie mode rejects, because a
+   * browser build has no plugin host (the ``PLUGIN_LIFECYCLE`` feature is
+   * desktop-only, so a gated caller never reaches this).
+   */
+  inspect(name: string): Promise<PluginInspection>;
 }
 
 /**

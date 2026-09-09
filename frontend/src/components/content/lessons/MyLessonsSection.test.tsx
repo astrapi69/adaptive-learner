@@ -120,3 +120,57 @@ describe("MyLessonsSection create entry (#3007)", () => {
     expect(screen.getByTestId("my-lessons-create")).toBeInTheDocument();
   });
 });
+
+describe("MyLessonsSection AI check (AIV-07, #3060)", () => {
+  function renderWithAiCheck(over: {
+    onAiCheck?: (e: ReturnType<typeof entry>) => void;
+    aiCheckDisabledReason?: string;
+  }) {
+    render(
+      <MyLessonsSection
+        userSets={[entry()]}
+        communitySharingEnabled={false}
+        onOpen={vi.fn()}
+        onEdit={vi.fn()}
+        onExportJson={vi.fn()}
+        onExportSet={vi.fn()}
+        onShare={vi.fn()}
+        onDelete={vi.fn()}
+        onPlayLessonFile={vi.fn()}
+        onEditLessonFile={vi.fn()}
+        onRequestDeleteLesson={vi.fn()}
+        onRequestBulkDeleteLesson={vi.fn()}
+        onCreateLesson={vi.fn()}
+        onAiCheck={over.onAiCheck}
+        aiCheckDisabledReason={over.aiCheckDisabledReason}
+        selectMode={false}
+        selectedCount={0}
+        isSelected={() => false}
+        onToggleSelectMode={vi.fn()}
+        onToggleSelect={vi.fn()}
+        onOpenCombine={vi.fn()}
+      />,
+    );
+  }
+
+  it("renders the check button per own set and hands the entry to the host", () => {
+    const onAiCheck = vi.fn();
+    renderWithAiCheck({ onAiCheck });
+    const button = screen.getByTestId(`my-lesson-${entry().id}-ai-check`);
+    expect(button).toBeEnabled();
+    fireEvent.click(button);
+    expect(onAiCheck).toHaveBeenCalledWith(expect.objectContaining({ id: entry().id }));
+  });
+
+  it("stays visible but disabled with the reason when the check is unavailable", () => {
+    renderWithAiCheck({ onAiCheck: vi.fn(), aiCheckDisabledReason: "API key required." });
+    const button = screen.getByTestId(`my-lesson-${entry().id}-ai-check`);
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute("title", "API key required.");
+  });
+
+  it("renders no check button when the host offers none", () => {
+    renderWithAiCheck({});
+    expect(screen.queryByTestId(`my-lesson-${entry().id}-ai-check`)).toBeNull();
+  });
+});

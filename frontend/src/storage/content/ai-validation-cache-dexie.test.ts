@@ -8,6 +8,7 @@ import "fake-indexeddb/auto";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import {
+  deleteAiValidationCacheDexie,
   getAiValidationCacheDexie,
   saveAiValidationCacheDexie,
 } from "./content-loader-dexie-ai";
@@ -82,5 +83,14 @@ describe("Dexie AI-validation cache", () => {
     expect(await getAiValidationCacheDexie("user/repo-a", SET_ID)).not.toBeNull();
     expect(await getAiValidationCacheDexie("user/repo-b", SET_ID)).not.toBeNull();
     expect(await getDb().aiValidationResults.count()).toBe(2);
+  });
+
+  it("delete forgets the set's report and leaves other sets alone (AIV-07, #3060)", async () => {
+    await saveAiValidationCacheDexie(record());
+    await saveAiValidationCacheDexie(record({ set_id: "fr-a1" }));
+    await deleteAiValidationCacheDexie(SOURCE, SET_ID);
+    expect(await getAiValidationCacheDexie(SOURCE, SET_ID)).toBeNull();
+    expect(await getAiValidationCacheDexie(SOURCE, "fr-a1")).not.toBeNull();
+    await deleteAiValidationCacheDexie(SOURCE, SET_ID);
   });
 });

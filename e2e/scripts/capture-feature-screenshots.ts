@@ -38,7 +38,9 @@ import {expect, test, type Page, type Route} from "@playwright/test";
 
 import {
     advanceLessonUntil,
+    createOwnLesson,
     freezeClock,
+    OWN_LESSON_TITLE,
     pinRandomness,
     openFirstBundledLesson,
     seedLearner,
@@ -733,7 +735,114 @@ async function gotoGamificationCard(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings > Plugins: the installed-plugins card (#3055). The dexie
+ *  preview build renders its desktop-only notice; the API-mode list needs
+ *  the desktop app and is walked by hand (testplan). */
+async function gotoPluginLifecycle(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=plugins");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    await expect(page.getByTestId("settings-plugins-lifecycle-desktop-only")).toBeVisible({
+        timeout: 10_000,
+    });
+    return true;
+}
+
+/**
+ * AIV-07 (#3060): the review table of "Apply suggestions". The provider is
+ * page.route-mocked (a fake Anthropic key saved through Settings > KI, the
+ * check's request answered with one finding on the first card of the seeded
+ * own lesson), so the report is real, the review step is real, and nothing
+ * leaves the machine.
+ */
+async function mockAnthropicReview(page: Page): Promise<void> {
+    await page.route("**/api.anthropic.com/**", async (route: Route) => {
+        // The prompt travels as a JSON string inside the request body, so
+        // its quotes arrive escaped: match the ids with or without the
+        // backslashes, and skip the "..." placeholder of the prompt's
+        // response-shape example, which precedes the real card list.
+        const body = route.request().postData() ?? "";
+        const ids = [...body.matchAll(/card_id\\?":\s*\\?"([^"\\]+)/g)].map((m) => m[1]);
+        const cardId = ids.find((id) => id !== "...") ?? "c1";
+        const review = [
+            {
+                card_id: cardId,
+                ok: false,
+                issues: [
+                    {field: "back", problem: "Zu förmlich für A1", suggestion: "Hallo"},
+                    {field: "notes", problem: "Aussprache fehlt", suggestion: ""},
+                ],
+            },
+        ];
+        await route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify({
+                id: "msg_capture_ai_fix",
+                content: [{type: "text", text: JSON.stringify(review)}],
+            }),
+        });
+    });
+}
+
+/** Content > My content with an own set: every own-set row carries the
+ *  "Check with AI" button (AIV-07, #3060). Key-less, so the button renders
+ *  disabled with its reason, exactly the #335 shape worth pinning. */
+async function gotoOwnSetAiCheckButton(page: Page): Promise<boolean> {
+    await pinRandomness(page);
+    await seedLearner(page);
+    await createOwnLesson(page, OWN_LESSON_TITLE);
+    await page.getByTestId("content-tab-import").click();
+    await expect(page.getByTestId("content-my-lessons")).toBeVisible({timeout: 20_000});
+    await expect(page.locator('[data-testid$="-ai-check"]').first()).toBeVisible({
+        timeout: 15_000,
+    });
+    return true;
+}
+
+async function gotoAiFixReview(page: Page): Promise<boolean> {
+    await pinRandomness(page);
+    await seedLearner(page);
+    await mockAnthropicReview(page);
+    await page.goto("/settings?tab=ai");
+    const keyInput = page.getByTestId("api-key-input-anthropic");
+    await expect(keyInput).toBeVisible({timeout: 15_000});
+    await keyInput.fill("sk-ant-" + "a".repeat(95));
+    await page.getByTestId("api-key-save-anthropic").click();
+    await page.waitForTimeout(500);
+    await createOwnLesson(page, OWN_LESSON_TITLE);
+    await page.getByTestId("content-tab-import").click();
+    await expect(page.getByTestId("content-my-lessons")).toBeVisible({timeout: 20_000});
+    const check = page.locator('[data-testid$="-ai-check"]').first();
+    await expect(check).toBeEnabled({timeout: 15_000});
+    await check.click();
+    await expect(page.getByTestId("ai-validation-estimate")).toBeVisible({timeout: 15_000});
+    await page.getByTestId("ai-validation-confirm-run").click();
+    await expect(page.getByTestId("ai-validation-report")).toBeVisible({timeout: 20_000});
+    await page.getByTestId("ai-validation-fix-open").click();
+    await expect(page.getByTestId("ai-fix-review")).toBeVisible({timeout: 15_000});
+    await expect(page.locator('[data-testid^="ai-fix-review-row-"]').first()).toBeVisible();
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- AI check: apply suggestions, review step (AIV-07, #3060) ---------
+    {
+        path: "ai-check/vorschlaege-uebernehmen",
+        setup: gotoAiFixReview,
+        pinTo: "ai-fix-review",
+    },
+    {
+        path: "ai-check/eigenes-set-pruefen",
+        setup: gotoOwnSetAiCheckButton,
+        pinTo: "content-my-lessons",
+    },
+    // --- Installed-plugins card, Plugins tab (#3055) ----------------------
+    {
+        path: "plugin-lifecycle/settings",
+        setup: gotoPluginLifecycle,
+        pinTo: "settings-plugins-lifecycle-desktop-only",
+    },
     // --- Gamification card inside the motivation cluster (#2962) ----------
     {
         path: "gamification-card/settings",

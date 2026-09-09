@@ -66,6 +66,7 @@ import {
 import {
   aiValidateDexie,
   aiValidateCardsDexie,
+  deleteAiValidationCacheDexie,
   getAiValidationCacheDexie,
   saveAiValidationCacheDexie,
 } from "./content/content-loader-dexie-ai";
@@ -156,6 +157,11 @@ export const dexieStorage: IStorageService = {
     manifests: async () => ({}),
     health: async () => ({}),
     errors: async () => ({}),
+    inspect: async (name: string) => {
+      throw new Error(
+        `Plugin lifecycle of ${name} is desktop-only: a browser build has no plugin host`,
+      );
+    },
   },
 
   // ---- Imported conversations (v0.9.0 / Phase 12C) ------------------
@@ -331,6 +337,8 @@ export const dexieStorage: IStorageService = {
     getAiValidationCache: (source, setId) =>
       getAiValidationCacheDexie(source, setId),
     saveAiValidationCache: (record) => saveAiValidationCacheDexie(record),
+    deleteAiValidationCache: (source, setId) =>
+      deleteAiValidationCacheDexie(source, setId),
   },
 
   learningRepo: dexieLearningRepo,

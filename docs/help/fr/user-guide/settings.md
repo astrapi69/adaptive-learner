@@ -182,6 +182,17 @@ et les évaluations sont préservés. Nécessite une double confirmation.
 
 ---
 
+## Extensions
+
+Deux cartes. **Extensions installées** liste chaque extension chargée
+par l'application de bureau : nom, version, source (paquet ou
+enregistrement direct) et heure d'activation. Une erreur de chargement
+ou un filtre de découverte apparaît comme marqueur sur la ligne, de même
+qu'une configuration modifiée après l'activation. En mode navigateur, la
+carte reste visible avec la mention que seule l'application de bureau
+possède un hôte d'extensions. **Dépôt d'apprentissage** regroupe les
+réglages de cette extension (persistance git, dossier du dépôt).
+
 ## Données
 
 ### Mode de stockage

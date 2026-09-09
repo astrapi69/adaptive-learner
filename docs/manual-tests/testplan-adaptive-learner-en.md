@@ -922,8 +922,8 @@ preview delivery). In the regular build the mode does not exist.
       weekend mode, daily session goal, "Reset progress") is the LAST
       card of the tab, right behind "Reminders", set apart by a thicker
       divider with extra space above it
-- [ ] Settings > Plugins: only the "Learning Repository" card remains; no
-      Gamification card any more
+- [ ] Settings > Plugins: the "Installed plugins" card (#3055) and, below
+      it, the "Learning Repository" card; no Gamification card any more
 - [ ] Section bar, chip "Motivation and routine": the jump lands on the
       area heading, and the Gamification card belongs to the area (under
       the same heading)
@@ -1483,7 +1483,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       as invalid user content
 - [ ] **Template titles (#1674/#1756):** template cards show readable
       titles (even offline) + a pressed/selected state
-- [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →
+- [ ] **Advanced exercise types / extension wizard (#1852, #1887, #2817):** Step 1 →
       the "Advanced exercise types" card starts a dedicated 3-step flow (author
       → review → save) with a non-blocking notice that these types are advanced.
       Step 2: "Add extension exercise" offers seven types — **categorization**,
@@ -1810,6 +1810,7 @@ each card row (`CardImageField`).
       jumps to the next step by itself -> then click "Back": the previous
       (already-solved) exercise STAYS and does NOT jump forward again;
       the "Continue" button is still clickable
+- [ ] Title area slimmed down, no more in-lesson description (#1635)
 - [ ] Lesson summary shows only ONE favorite button (#1649)
       [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
@@ -1845,6 +1846,59 @@ each card row (`CardImageField`).
 - [ ] "Show measurement bar" OFF: the bar disappears immediately and
       the header/menu are reachable again - but new taps still raise
       the protocol counter (recording continues invisibly, #2785)
+
+### AI check: apply suggestions (AIV-07, #3060)
+- [ ] Browser mode with a configured AI key, an own lesson (Content > My
+      content) with a deliberate mistake on a card (e.g. "casa" instead
+      of "la casa"); run "Check with AI": the report lists the card and
+      the footer carries the "Apply suggestions" button
+- [ ] "Apply suggestions": a table with lesson, card, field, "Current"
+      and "Suggestion", every row ticked; below it the number of
+      findings without an applicable value (if any); the confirm button
+      counts "N fields in M cards"
+- [ ] Untick one row, confirm: only the ticked fields change (open the
+      lesson or check in the editor), the set's title, languages, level
+      and description stay; toast "N fields applied"; the lesson's
+      progress is kept
+- [ ] In the result, "Undo the last apply": the fields carry the old
+      value again, toast "Apply undone."; the undo button disappears
+- [ ] Close the dialog and open "Check with AI" again: no cached report
+      any more, the cost estimate shows (the report was dropped after the
+      apply)
+- [ ] Downloaded set (not your own): "Apply suggestions" is disabled with
+      the tooltip "Only for your own lessons."
+
+### Settings > Plugins: installed plugins (#3055)
+- [ ] Desktop app (API mode), Settings > Plugins: at the top the
+      "Installed plugins" card with one row per loaded plugin, sorted by
+      name: name, version, source ("Package") and the activation time
+      formatted in the app language; below it the unchanged "Learning
+      Repository" card
+- [ ] Right after opening, "Reading plugins…" shows briefly, then the
+      list; with the backend running there is no error and no toast
+- [ ] Stop the backend, reload the tab: the card shows the line "Could
+      not read the plugin status: …" and a toast carries the same
+      message; the "Learning Repository" card stays visible
+- [ ] Browser mode (GitHub Pages / Dexie): the card stays visible with
+      the notice "Only available with the desktop app."; DevTools >
+      Network shows no request to /api/plugins/health
+
+### Diagnostics probe: mis-tap mark + actions (#3043)
+- [ ] Probe ON, measurement bar visible: next to "Werte kopieren" and
+      "Details" the bar shows the button "Daneben!"
+- [ ] Tap anywhere, then tap "Daneben!", then "Details": the report has
+      a section `actions (newest first)` with a `mark` line whose
+      `target=` names the element just tapped; the tap counter ("N
+      Tipps") did NOT increase because of the button
+- [ ] On a lesson page tap an answer tile: the `actions` section gains a
+      `click` line with `target=`, `downTarget=` and `mismatch=0`;
+      tapping a text field additionally adds a `focus` line with
+      `top=`/`bottom=`/`vis=`
+- [ ] The bar's last tap line additionally carries `hit=`, `above1=`,
+      `above2=`, `pageY=`, `screenY=`, `hdrTop=`, `ftrBot=`, `room=`
+      and `focusTop=`/`focusBot=`/`focusVis=`; "Copy protocol" in
+      Settings yields the same fields plus the `click`/`focus`/`mark`
+      entries
 
 ### Sticky button for the measurement bar (#2799)
 - [ ] Settings > Diagnostics & Support: enable "Sticky button for the

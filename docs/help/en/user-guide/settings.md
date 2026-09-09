@@ -384,6 +384,16 @@ daily session goal (1..10), and **Reset progress** (double-
 confirm; wipes `user_xp` + `user_badges` + `user_streaks`
 rows).
 
+## Plugins
+
+Two cards. **Installed plugins** lists every plugin the desktop app
+loaded: name, version, source (package or registered directly) and
+activation time. A load error or a discovery filter shows as a marker on
+the row, as does a config change after activation. In browser mode the
+card stays visible with a notice that only the desktop app has a plugin
+host. **Learning Repository** holds that plugin's settings (git
+persistence, repository directory).
+
 ## About
 
 Five read-only blocks: **Version** (canonical version from

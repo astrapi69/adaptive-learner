@@ -42,6 +42,9 @@ Baseline zu committen.
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
 | Lernen-Tab - Gamification-Karte als letzte Karte im Bereich "Motivation und Routine", hinter einer Trennlinie (#2962) | `gamification-card/settings.png` | `gamification-card/settings.mobile.png` | #2962 |
+| Plugins-Tab - Karte "Installierte Plugins" mit dem PluginForge-Lebenszyklus je Plugin; im Browser-Build der Desktop-only-Hinweis (#3055) | `plugin-lifecycle/settings.png` | `plugin-lifecycle/settings.mobile.png` | #3055 |
+| KI-Prüfung - Knopf "Mit KI prüfen" auf jeder eigenen Set-Zeile unter Inhalte > Meine Inhalte, ohne Schlüssel deaktiviert mit Begründung (AIV-07, #3060) | `ai-check/eigenes-set-pruefen.png` | `ai-check/eigenes-set-pruefen.mobile.png` | #3060 |
+| KI-Prüfung - Schritt "Vorschläge übernehmen": Tabelle mit aktuellem und vorgeschlagenem Wert je Kartenfeld, abhakbar, Zähler der manuellen Hinweise (AIV-07, #3060; Anbieter per page.route gemockt) | `ai-check/vorschlaege-uebernehmen.png` | `ai-check/vorschlaege-uebernehmen.mobile.png` | #3060 |
 | Lernen-Tab - Bereichsleiste über den fünf Bereichen, Deep-Link `?tab=learning&section=review`, Chip "Nach der Lektion" aktiv (#2961) | `learning-subnav/settings.png` | `learning-subnav/settings.mobile.png` | #2961 |
 | Lernen-Tab - fünf Bereiche "Grundlagen / In der Lektion / Vorlesen und Diktieren / Nach der Lektion / Motivation und Routine", Verteilte Wiederholung in der Wiederholungs-Karte (#2956) | `learning-clusters/settings.png` | `learning-clusters/settings.mobile.png` | #2956 |
 | Daten-Tab - Aufräum-Karten "Pausierte Lektionen aufbewahren" + "Maximale Lektionsgröße" (#2955) | `data-housekeeping/settings.png` | `data-housekeeping/settings.mobile.png` | #2955 |
