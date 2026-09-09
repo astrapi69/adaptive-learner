@@ -294,8 +294,32 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   gemocktem Anbieter."
 - Ziel: die letzte offene AIV-Stufe ohne die Gefahr, Erklärungstext in
   Kartenfelder zu schreiben oder fremde Sets zu verändern.
-- Ergebnis: JOURNAL_RESULT_3060
-- Commit: JOURNAL_COMMIT_3060
+- Ergebnis: Erst die Risiko-Abwägung als eigener PR (#3061, EXP-033 § 8:
+  acht Risiken je mit Abhilfe; verworfen wurden ein Ein-Klick "alles
+  korrigieren" und ein zweiter KI-Aufruf, der Hinweise in Werte
+  verwandelt), dann i18n (PR #3062, 12 Schlüssel in allen 11 Katalogen),
+  dann die Umsetzung (PR #3063). `ai-fix.ts` ist reine Logik:
+  `planFixes` trennt übernehmbare Kandidaten (bekannte Karte, Textfeld,
+  nicht-leerer Vorschlag, vom Ist-Wert verschieden) von manuellen
+  Hinweisen, `buildResaveInput` baut die Ganzsatz-Eingabe aus dem
+  Katalogeintrag plus allen Lektionen, `applyFixes` liefert Eingabe und
+  Undo-Schnappschuss, `undoFixes` stellt nur Felder zurück, deren
+  übernommener Wert noch steht. Der Schnappschuss liegt modusunabhängig
+  unter `adaptive-learner.ai-fix-undo` (localStorage, in
+  `MANAGED_USER_DATA_KEYS`, fährt im Backup mit). Karten-Ids ändern sich
+  nie, deshalb kein Remap für den Lernfortschritt. Der Auslöser fehlte:
+  der set-weite Check war nur über die Browser-Zeilen heruntergeladener
+  Sets erreichbar, also bekamen die Zeilen unter "Meine Inhalte"
+  denselben Knopf. Neu sind fünf Module (ai-fix, ai-fix-undo-store,
+  useAiFix, AiFixPanel, AiFixReview) plus AiReportStep, der den
+  Berichtsblock aus dem Dialog nimmt, damit dieser unter dem
+  Complexity-Gate bleibt; 4 FeatureShots (zwei Motive, Desktop und
+  Mobil), 3 content-my-lessons-Baselines nachgezogen. Auf dem PR-Head
+  gingen zwei Gates rot und wurden in einem eigenen Commit behoben
+  (Befunde unten): der in Eintrag 10 frisch verdrahtete Dead-Code-
+  Ratchet meldete sechs neue Typen, das Folder-Size-Gate die 16. flache
+  Datei in `hooks/content`.
+- Commit: ce4a3294 (Squash von PR #3063)
 
 ## Befunde neben der Arbeit
 
@@ -320,6 +344,24 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   geändert (heute 35 Dateien plus vier untracked Shots anderer
   Features). Erst abwarten, Churn per `git checkout --` zurücksetzen,
   nur die eigenen PNGs stagen.
+- Ein am selben Tag verdrahtetes Gate schlägt zuerst bei der eigenen
+  Folge-PR zu: der Dead-Code-Ratchet aus Eintrag 10 meldete auf #3063
+  sechs neue Typen. Vier gehörten nur ihrer Datei und verloren den
+  Export, zwei sind Props- und State-Typ exportierter Flächen und
+  wurden gebankt; `AiCheckState` war seit AIV-06 konsumiert und wurde
+  ausgebucht. Genau das ist der Zweck der neuen Cadence: die PR, die
+  einen Export einführt, räumt ihn selbst auf, statt eine vierte
+  Resync-Runde zu erzeugen.
+- Das Folder-Size-Gate zählt flach je Verzeichnis: eine einzige neue
+  Datei (`useAiFix.ts`) hob `hooks/content` von 15 auf 16 und machte
+  den Job rot. Der Fix ist ein Unterordner mit Barrel nach dem Muster
+  von `combine/`, kein Baseline-Eintrag - die Whitelist ist ein
+  Ratchet und darf nur schrumpfen. Nebenbefund: knip meldete den
+  Barrel-Re-Export NICHT als neuen Fund, anders als beim Anlegen
+  anderer Barrels erwartet.
+- Ein Ratchet-Lauf gehört hinter die letzte Strukturänderung. Erst den
+  Ordner-Split, dann `--update-baseline`: sonst misst die Baseline
+  Pfade, die es nach dem Split nicht mehr gibt.
 - Die drei Reorder-Stellen waren die dritte Kopie einer Zeilenform;
   `ContentRepoRow` (Integrationen) hat mehr Aktionen pro Zeile und
   bleibt vorerst eigenständig - Kandidat für `ReorderButtons`, wenn sie
