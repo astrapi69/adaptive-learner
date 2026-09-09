@@ -357,4 +357,149 @@ describe("ViewportDiagnostic", () => {
       ),
     );
   });
+
+  // --- #3043: intent + outcome signals the readings kept having to guess ---
+
+  it("records the layout hit-test element and the two candidates above the finger (#3043)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(
+      <>
+        <ViewportDiagnostic />
+        <p data-testid="above-line">the line the finger meant</p>
+        <button data-testid="target-btn">Tap me</button>
+      </>,
+    );
+    const above = screen.getByTestId("above-line");
+    const target = screen.getByTestId("target-btn");
+    const original = document.elementFromPoint;
+    Object.defineProperty(document, "elementFromPoint", {
+      configurable: true,
+      value: (_x: number, y: number) => (y < 300 ? above : target),
+    });
+    try {
+      fireEvent.pointerDown(target, { clientX: 10, clientY: 300 });
+      const line = screen.getByTestId("viewport-diagnostic-tap");
+      expect(line).toHaveTextContent("hit=button[target-btn]");
+      expect(line).toHaveTextContent("above1=p[above-line]");
+      expect(line).toHaveTextContent("above2=p[above-line]");
+      const logged = readVvLog().filter((entry) => entry.kind === "tap");
+      expect(logged[0].hit).toBe("button[target-btn]");
+      expect(logged[0].above1).toBe("p[above-line]");
+    } finally {
+      Object.defineProperty(document, "elementFromPoint", {
+        configurable: true,
+        value: original,
+      });
+    }
+  });
+
+  it("logs the click target and flags a mismatch against the pointerdown target (#3043)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(
+      <>
+        <ViewportDiagnostic />
+        <button data-testid="a-btn">A</button>
+        <button data-testid="b-btn">B</button>
+      </>,
+    );
+    fireEvent.pointerDown(screen.getByTestId("a-btn"), { clientX: 10, clientY: 300 });
+    fireEvent.click(screen.getByTestId("b-btn"), { clientX: 10, clientY: 330 });
+    const clicks = readVvLog().filter((entry) => entry.kind === "click");
+    expect(clicks).toHaveLength(1);
+    expect(clicks[0].target).toBe("button[b-btn]");
+    expect(clicks[0].downTarget).toBe("button[a-btn]");
+    expect(clicks[0].mismatch).toBe(1);
+    expect(clicks[0].y).toBe(330);
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-toggle"));
+    const report = screen.getByTestId("viewport-diagnostic-report") as HTMLTextAreaElement;
+    expect(report.value).toContain("actions (newest first):");
+    expect(report.value).toMatch(/click .*target=button\[b-btn\].*mismatch=1/);
+  });
+
+  it("logs focus arrivals with the field's rectangle and its visibility (#3043)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(
+      <>
+        <ViewportDiagnostic />
+        <input data-testid="field" />
+      </>,
+    );
+    fireEvent.focusIn(screen.getByTestId("field"));
+    const focus = readVvLog().filter((entry) => entry.kind === "focus");
+    expect(focus).toHaveLength(1);
+    expect(focus[0].target).toBe("input[field]");
+    expect(typeof focus[0].top).toBe("number");
+    expect(typeof focus[0].bottom).toBe("number");
+    expect([0, 1]).toContain(focus[0].vis);
+    expect(typeof focus[0].rootY).toBe("number");
+    expect(typeof focus[0].vvTop).toBe("number");
+  });
+
+  it("the mis-tap button marks the last tap without counting as a tap (#3043)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(
+      <>
+        <ViewportDiagnostic />
+        <button data-testid="target-btn">Tap me</button>
+      </>,
+    );
+    fireEvent.pointerDown(screen.getByTestId("target-btn"), { clientX: 10, clientY: 300 });
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-mark"));
+    const taps = readVvLog().filter((entry) => entry.kind === "tap");
+    expect(taps).toHaveLength(1);
+    const marks = readVvLog().filter((entry) => entry.kind === "mark");
+    expect(marks).toHaveLength(1);
+    expect(marks[0].lastTap).toBe(taps[0].t);
+    expect(marks[0].target).toBe("button[target-btn]");
+    // The mark button's own click never counts as a click measurement.
+    expect(readVvLog().filter((entry) => entry.kind === "click")).toHaveLength(0);
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-toggle"));
+    const report = screen.getByTestId("viewport-diagnostic-report") as HTMLTextAreaElement;
+    expect(report.value).toMatch(/mark .*target=button\[target-btn\]/);
+  });
+
+  it("tap lines carry the fixed-chrome position, raw coordinates and the scroller room (#3043)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    const root = document.createElement("div");
+    root.id = "root";
+    document.body.appendChild(root);
+    try {
+      render(
+        <>
+          <ViewportDiagnostic />
+          <nav data-testid="app-nav">nav</nav>
+          <button data-testid="target-btn">Tap me</button>
+          <footer data-testid="lesson-footer">footer</footer>
+        </>,
+      );
+      fireEvent.pointerDown(screen.getByTestId("target-btn"), {
+        clientX: 10,
+        clientY: 300,
+        pageY: 740,
+        screenY: 360,
+      });
+      const line = screen.getByTestId("viewport-diagnostic-tap");
+      expect(line).toHaveTextContent(/hdrTop=-?\d+/);
+      expect(line).toHaveTextContent(/ftrBot=-?\d+/);
+      // happy-dom derives pageY itself (ignores the init value); screenY is
+      // taken verbatim, which proves the raw coordinates reach the line.
+      expect(line).toHaveTextContent(/pageY=-?\d+/);
+      expect(line).toHaveTextContent("screenY=360");
+      expect(line).toHaveTextContent(/room=-?\d+/);
+      const logged = readVvLog().filter((entry) => entry.kind === "tap");
+      expect(typeof logged[0].hdrTop).toBe("number");
+      expect(typeof logged[0].room).toBe("number");
+    } finally {
+      root.remove();
+    }
+  });
+
+  it("the actions section states its empty case instead of vanishing (#3043)", () => {
+    localStorage.setItem("adaptive-learner.vv_diag", "1");
+    render(<ViewportDiagnostic />);
+    fireEvent.click(screen.getByTestId("viewport-diagnostic-toggle"));
+    const report = screen.getByTestId("viewport-diagnostic-report") as HTMLTextAreaElement;
+    expect(report.value).toContain("actions (newest first):");
+    expect(report.value).toContain("(no actions yet)");
+  });
 });

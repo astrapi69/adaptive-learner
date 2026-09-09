@@ -43,8 +43,11 @@ export const VV_LOG_MAX_ENTRIES = 500;
 /** One recorded diagnostics event. */
 export interface VvLogEntry {
   /** ``tap`` = a pointerdown record; ``viewport`` = a vv state
-   *  transition; ``hook`` = a realign-hook decision (#2995). */
-  kind: "tap" | "viewport" | "hook";
+   *  transition; ``hook`` = an actor decision (realign #2995, pre-reveal
+   *  #3002); ``click`` = what a tap actually activated, ``focus`` = a
+   *  focus arrival with the field's geometry, ``mark`` = the tester
+   *  flagging the last tap as a mis-tap (#3043). */
+  kind: "tap" | "viewport" | "hook" | "click" | "focus" | "mark";
   /** ``Date.now()`` at record time. */
   ts: number;
   /** The active ``?vvfix`` candidate (``"off"`` when none). */
