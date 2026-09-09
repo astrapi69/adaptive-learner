@@ -537,3 +537,39 @@ describe("ContinueLearning re-reads on a lesson-progress write (#3075)", () => {
         expect(listProgressMock).toHaveBeenCalledTimes(2);
     });
 });
+
+describe("ContinueLearning resume step counter (#3076)", () => {
+    it("names the step the resume lands on, not the number of graded exercises", async () => {
+        // One graded exercise (index 2) and a persisted position on the
+        // theory step after it (index 3): the lesson reopens on step 4 of 8.
+        listProgressMock.mockResolvedValue([
+            progress({
+                set_id: "fr-a1",
+                lesson_filename: "02.json",
+                updated_at: "2026-06-03T10:00:00Z",
+                status: "paused",
+                step_results: {"ex-match": {correct: 1, total: 1, attempts: 1, completed_at: "2026-06-03T09:00:00Z"}},
+                current_step: 3,
+            }),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "fr-a1", title: "French A1"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json"]});
+        getLessonMock.mockResolvedValue({
+            id: "02",
+            title: "Greetings",
+            cards: [],
+            steps: [
+                {id: "intro"}, {id: "formality"}, {id: "ex-match"}, {id: "merci"},
+                {id: "ex-cloze"}, {id: "numbers"}, {id: "ex-tiles"}, {id: "outro"},
+            ],
+        });
+
+        renderSection({});
+        const link = await screen.findByTestId("continue-learning-link-fr-a1");
+        expect(link.textContent).toContain("Step 4/8");
+        expect(link.textContent).not.toContain("Step 1/8");
+    });
+});
