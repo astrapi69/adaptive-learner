@@ -104,6 +104,22 @@ describe("SummarySectionsControl", () => {
     expect(screen.getByTestId("settings-summary-section-result")).toBeChecked();
   });
 
+  it("lets the arrows wrap under a full-width label instead of breaking words (#3027)", () => {
+    render(<SummarySectionsControl />);
+    expect(screen.getByTestId("summary-sections-order-list")).toHaveClass(
+      "list-none",
+      "pl-0",
+    );
+    const row = screen.getByTestId("summary-sections-order-item-correction");
+    expect(row).toHaveClass("flex", "flex-wrap");
+    const body = row.firstElementChild as HTMLElement;
+    expect(body).toHaveClass("min-w-0", "flex-1", "basis-40");
+    // The checkbox + number + text stay one click target inside the body.
+    expect(body.querySelector("label")).toContainElement(
+      screen.getByTestId("settings-summary-section-correction"),
+    );
+  });
+
   it("shows the migrated #1376 correction-round OFF choice (no reset)", () => {
     localStorage.setItem(
       "adaptive-learner.lesson.correction_round_enabled",

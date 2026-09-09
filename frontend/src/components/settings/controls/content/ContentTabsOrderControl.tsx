@@ -6,17 +6,16 @@
  * shows up here without touching this file.
  *
  * A plain ordered list with Up/Down buttons per row (no drag-and-drop framework
- * at this size — same pattern as the content-repo precedence reorder).
- * The first entry becomes the initial active tab of the Content area. Persists
- * via ``lib/content/contentTabOrderPref`` (typed ordered array, localStorage,
+ * at this size); the rows are the shared ``ReorderRow`` (#3027), whose arrow
+ * pair wraps under the label on a phone instead of squeezing it. The first
+ * entry becomes the initial active tab of the Content area. Persists via
+ * ``lib/content/contentTabOrderPref`` (typed ordered array, localStorage,
  * both storage modes). Token-backed Tailwind, 44px touch targets.
  */
 
-import { ArrowDown, ArrowUp } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import { ReorderList, ReorderRow } from "../../ReorderRow";
 import { SettingsSection } from "../../SettingsSection";
 import { useContentTabOrder } from "../../../../hooks/content/useContentTabOrder";
 import {
@@ -51,48 +50,27 @@ export default function ContentTabsOrderControl() {
           "Choose the order of the tabs in the Content area. The first tab opens by default.",
         )}
       </FormHint>
-      <ol className="flex flex-col gap-2" data-testid="content-tabs-order-list">
+      <ReorderList testid="content-tabs-order-list">
         {order.map((id, index) => (
-          <li
+          <ReorderRow
             key={id}
-            data-testid={`content-tabs-order-item-${id}`}
-            className="flex items-center justify-between gap-2 rounded-app border border-border bg-bg-elevated px-3 py-2"
+            index={index}
+            count={order.length}
+            onMoveUp={() => move(id, -1)}
+            onMoveDown={() => move(id, 1)}
+            moveUpLabel={t("content_repo.action.move_up", "Move up")}
+            moveDownLabel={t("content_repo.action.move_down", "Move down")}
+            testids={{
+              item: `content-tabs-order-item-${id}`,
+              up: `content-tabs-up-${id}`,
+              down: `content-tabs-down-${id}`,
+            }}
           >
-            <span className="text-sm font-medium text-fg-primary">
-              <span className="mr-2 text-fg-muted">{index + 1}.</span>
-              {labels[id]}
-            </span>
-            <span className="flex gap-1">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="min-h-11"
-                onClick={() => move(id, -1)}
-                disabled={index === 0}
-                aria-label={t("content_repo.action.move_up", "Move up")}
-                title={t("content_repo.action.move_up", "Move up")}
-                data-testid={`content-tabs-up-${id}`}
-              >
-                <ArrowUp className="h-4 w-4" aria-hidden="true" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="min-h-11"
-                onClick={() => move(id, 1)}
-                disabled={index === order.length - 1}
-                aria-label={t("content_repo.action.move_down", "Move down")}
-                title={t("content_repo.action.move_down", "Move down")}
-                data-testid={`content-tabs-down-${id}`}
-              >
-                <ArrowDown className="h-4 w-4" aria-hidden="true" />
-              </Button>
-            </span>
-          </li>
+            <span className="mr-1 shrink-0 text-fg-muted">{index + 1}.</span>
+            <span className="min-w-0 break-words">{labels[id]}</span>
+          </ReorderRow>
         ))}
-      </ol>
+      </ReorderList>
     </SettingsSection>
   );
 }
