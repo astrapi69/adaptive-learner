@@ -263,6 +263,40 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   Lern-Repository-Karte. Testplan DE + EN, Hilfe en/de/fr.
 - Commit: 9a2a8f8c (Squash von PR #3057)
 
+## 10. Dead-Code-Ratchet in der PR-CI (#3047)
+
+- Original prompt: "mach das: #3047 ... und den rest"
+- Optimierter Prompt: "Lass beide Seiten des Dead-Code-Ratchets in den
+  bestehenden CI-Jobs laufen (`--only python` im Backend-Job, `--only
+  typescript` im Frontend-Job) unter den vorhandenen Pfadfiltern; der
+  Wochenlauf bleibt als Vollumfang; Inventur, Cadence-Tabelle und die
+  gekoppelten body_sha nachziehen."
+- Ziel: die PR, die einen Export hinzufügt, bankt oder entfernt ihn
+  selbst; keine vierte Resync-Runde.
+- Ergebnis: Zwei Schritte in `ci.yml`, beide lokal exakt wie im Job
+  gelaufen (0 neue Funde). `checks.yaml` führt `ci.yml` als Verdrahtung,
+  die #575-Tabelle in quality-checks.md nennt den Ratchet; die sechs an
+  den Abschnitt gekoppelten Gates bekamen den neuen `body_sha`
+  (verify-gate-rule-links hatte die Drift gemeldet, bevor irgendetwas
+  gepusht war). Korpus unter der Decke durch Kürzen des zweiten Satzes
+  des Abschnitts. Die PR selbst berührt `ci.yml`, also feuerten beide
+  Filter und die neuen Schritte liefen auf ihr grün.
+- Commit: 4bcd752e (Squash von PR #3059)
+
+## 11. AIV-07: Vorschläge der KI-Prüfung übernehmen (#3060)
+
+- Original prompt: (aus 10., "und den rest")
+- Optimierter Prompt: "Schreibe erst die Risiko-Abwägung in EXP-033
+  (Owner-Auflage), dann i18n, dann die Umsetzung: Review-Tabelle über
+  den feldbezogenen Vorschlägen des set-weiten Checks, nur eigene Sets,
+  Schreiben über den Editor-Pfad mit allen Metadaten, Undo-Schnappschuss,
+  Cache verwerfen; Tests je Risiko; Testplan, Hilfe, FeatureShot mit
+  gemocktem Anbieter."
+- Ziel: die letzte offene AIV-Stufe ohne die Gefahr, Erklärungstext in
+  Kartenfelder zu schreiben oder fremde Sets zu verändern.
+- Ergebnis: JOURNAL_RESULT_3060
+- Commit: JOURNAL_COMMIT_3060
+
 ## Befunde neben der Arbeit
 
 - `gh pr checks --json` gibt es in gh 2.46.0 nicht; Warte-Schleifen
@@ -272,6 +306,11 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   nach einem Sync-Commit ist update-branch oder ein eigener Push nötig,
   sonst bleibt der PR mit drei Check-Runs blockiert. Heute nicht
   bissig, weil der Churn-Restore ohnehin einen Push brachte.
+- Ein FeatureShot über einen KI-Dialog braucht keinen echten Anbieter:
+  `page.route` auf den Anbieter-Host, die Antwort aus dem Request-Body
+  abgeleitet. Zwei Fallen dabei: der Prompt reist als JSON-String (Quotes
+  escaped), und sein Antwortbeispiel enthält `"card_id": "..."` VOR der
+  echten Kartenliste, also den Platzhalter überspringen.
 - `pkill -f <muster>` trifft die eigene Shell, wenn das Muster in der
   eigenen Kommandozeile steht (Exit 144, die &&-Kette stirbt mitten im
   Ablauf). Erst `pgrep` lesen, dann nach PID beenden.
@@ -298,9 +337,16 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   gehören nicht in dieses Journal.
 - "alles was offen weiter" wurde als Arbeitsauftrag in Prioritätsfolge
   gelesen (PRs, Bugs, Infrastruktur, Cleanup, Features), nicht als
-  Start eines EXP-Programms; AIV-07 (Auto-Fix, mutiert Nutzerinhalte)
-  braucht laut ROADMAP eine eigene Risiko-Abwägung und blieb beim Owner,
-  ebenso die Cadence-Frage #3047.
+  Start eines EXP-Programms; AIV-07 und die Cadence-Frage #3047 blieben
+  zunächst beim Owner und wurden nach dessen "mach das ... und den Rest"
+  am Nachmittag umgesetzt (Einträge 10 und 11).
+- AIV-07-Umfang: "Auto-Fix" wurde als Review-vor-Schreiben gelesen, nicht
+  als Ein-Klick-Korrektur; die Begründung steht in EXP-033 § 8, die
+  Alternative (zweiter KI-Aufruf für Werte) wurde verworfen.
+- Der set-weite KI-Check war für eigene Sets in der UI nicht erreichbar
+  (Knopf nur auf Browser-Zeilen heruntergeladener Sets); ohne Auslöser
+  wäre AIV-07 tot gewesen, deshalb kam der Knopf auf die Zeilen unter
+  "Meine Inhalte" in derselben PR.
 - Deutung von "die Logs sind zu wenig": nicht mehr Datenpunkte derselben
   Art, sondern die fehlenden Klassen (Absicht, Ergebnis, Markierung) -
   hergeleitet aus den acht Auswertungen in #1569, die genau diese drei
