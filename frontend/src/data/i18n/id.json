@@ -3399,6 +3399,32 @@
         "too_large": "Gambar itu terlalu besar. Coba yang lebih kecil.",
         "decode_failed": "Gambar itu tidak dapat dibaca. Coba berkas lain."
       },
+      "token_roles": {
+        "label": "Peran kata (opsional)",
+        "hint": "Tandai kata tertentu di sisi depan dengan peran gramatikalnya. Latihan isian lalu memilih rumpang yang bermakna, bukan yang berdasarkan posisi.",
+        "add": "Tambah peran",
+        "remove": "Hapus peran",
+        "token_placeholder": "Kata dari sisi depan",
+        "role_label": "Peran",
+        "suggest": "Sarankan peran",
+        "suggest_none": "Tidak ada kata yang dikenali. Isi peran secara manual.",
+        "suggest_hint": "Saran hanyalah dugaan. Periksa setiap baris sebelum menyimpan.",
+        "count": "{n} dari {max} peran",
+        "error": {
+          "not_in_front": "\"{token}\" tidak muncul persis seperti itu di sisi depan. Tulis sama seperti di sana.",
+          "duplicate": "\"{token}\" sudah ditandai.",
+          "max_reached": "Satu kartu tidak dapat memuat lebih dari {max} peran."
+        },
+        "role": {
+          "article": "Kata sandang",
+          "verb": "Verba",
+          "noun": "Nomina",
+          "adjective": "Adjektiva",
+          "preposition": "Preposisi",
+          "gender_marker": "Penanda gender",
+          "tense_marker": "Penanda kala"
+        }
+      },
       "add": "Tambah kartu",
       "import_csv": "Impor CSV",
       "csv_hint": "Tempel baris sebagai depan, belakang, catatan (dipisahkan koma atau tab). Contoh: Bonjour, Guten Tag, Sapaan formal",

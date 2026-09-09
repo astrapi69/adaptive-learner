@@ -3399,6 +3399,32 @@
         "too_large": "Essa imagem é demasiado grande. Tente uma mais pequena.",
         "decode_failed": "Não foi possível ler essa imagem. Tente outro ficheiro."
       },
+      "token_roles": {
+        "label": "Funções das palavras (opcional)",
+        "hint": "Marque palavras concretas da frente com a sua função gramatical. O exercício de lacunas passa a escolher uma lacuna com sentido em vez de uma por posição.",
+        "add": "Adicionar função",
+        "remove": "Remover função",
+        "token_placeholder": "Palavra da frente",
+        "role_label": "Função",
+        "suggest": "Sugerir funções",
+        "suggest_none": "Nenhuma palavra reconhecida. Introduza as funções à mão.",
+        "suggest_hint": "As sugestões são palpites. Verifique cada linha antes de guardar.",
+        "count": "{n} de {max} funções",
+        "error": {
+          "not_in_front": "\"{token}\" não aparece assim na frente. Escreva-o exatamente como está lá.",
+          "duplicate": "\"{token}\" já está anotado.",
+          "max_reached": "Um cartão não pode ter mais de {max} funções."
+        },
+        "role": {
+          "article": "Artigo",
+          "verb": "Verbo",
+          "noun": "Substantivo",
+          "adjective": "Adjetivo",
+          "preposition": "Preposição",
+          "gender_marker": "Marca de género",
+          "tense_marker": "Marca de tempo"
+        }
+      },
       "add": "Adicionar cartão",
       "import_csv": "Importar CSV",
       "csv_hint": "Cole linhas como frente, verso, notas (separadas por vírgula ou tabulação). Exemplo: Bonjour, Guten Tag, Saudação formal",
