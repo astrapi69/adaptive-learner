@@ -16,32 +16,23 @@ building this gate and is pinned below.
 
 from __future__ import annotations
 
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
 
+from tests.repo_mirror import mirror_repo
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CHECKER = REPO_ROOT / "scripts" / "verify_check_inventory.py"
-MUTABLE = {"scripts", ".claude", "Makefile"}
 
 
 @pytest.fixture
 def mirror(tmp_path: Path) -> Path:
-    """A repo mirror: symlinks everywhere, real copies where a test writes."""
-    for entry in REPO_ROOT.iterdir():
-        if entry.name == ".git":
-            continue
-        if entry.name in MUTABLE:
-            if entry.is_dir():
-                shutil.copytree(entry, tmp_path / entry.name, symlinks=True)
-            else:
-                shutil.copy2(entry, tmp_path / entry.name)
-        else:
-            (tmp_path / entry.name).symlink_to(entry)
-    return tmp_path
+    """A repo mirror: symlinks everywhere, real copies where a test writes
+    (#3036: ``.claude/rules`` only, never the agent worktrees beside it)."""
+    return mirror_repo(tmp_path, mutable=("scripts", "Makefile")).root
 
 
 def _run(root: Path) -> subprocess.CompletedProcess[str]:
