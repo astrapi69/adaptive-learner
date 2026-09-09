@@ -34,7 +34,7 @@ import {Link} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useLessonProgressChangeTick} from "../../hooks/lesson/session/useLessonProgressChangeTick";
-import {resumeStepNumber} from "../../lib/lesson/resume-step";
+import {resumeStepNumber} from "../../lib/lesson/progress/resume-step";
 import {
     classifyEntryCandidate,
     groupRecentProgress,

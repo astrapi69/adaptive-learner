@@ -15,7 +15,7 @@
 import "@testing-library/jest-dom/vitest";
 import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
 
-import {notifyLessonProgressChanged} from "../../lib/lesson/progress-change-event";
+import {notifyLessonProgressChanged} from "../../lib/lesson/progress/progress-change-event";
 import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 

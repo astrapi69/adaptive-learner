@@ -29,8 +29,8 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {readLearnerState} from "../../../lib/learning/learnerState";
-import {notifyLessonProgressChanged} from "../../../lib/lesson/progress-change-event";
-import {resumeStepIndex} from "../../../lib/lesson/resume-step";
+import {notifyLessonProgressChanged} from "../../../lib/lesson/progress/progress-change-event";
+import {resumeStepIndex} from "../../../lib/lesson/progress/resume-step";
 import {ApiError} from "../../../api/client";
 import {getStorage} from "../../../storage";
 import type {
