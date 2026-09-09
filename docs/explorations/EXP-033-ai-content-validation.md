@@ -345,6 +345,32 @@ einzeln. (Trust-Level-Definitionen: siehe
 
 ---
 
+## 8. AIV-07: Risiko-Abwägung und Entscheidung (2026-09-09, #3060)
+
+Der Owner hat AIV-07 mit der Auflage freigegeben, die Risiko-Abwägung vor
+dem ersten Code festzuhalten. Grundlage ist der ausgelieferte set-weite
+Check (AIV-01..05): er liefert je Karte feldbezogene Befunde
+`{field, problem, suggestion}`, wobei `suggestion` laut Prompt "der
+korrigierte Wert oder ein Hinweis" ist. Genau diese Doppeldeutigkeit ist
+das Hauptrisiko eines Auto-Fix.
+
+| Risiko | Herkunft | Abhilfe |
+|---|---|---|
+| Fremde Inhalte werden verändert (offizielle oder Community-Sets) | der Check läuft auf jedem gecachten Set | das Bedienelement erscheint nur für `isOwnEditableSet` (`user-generated`, nicht `analysis-*`); sonst deaktiviert mit Begründung (#335) |
+| Erklärungstext landet in einem Kartenfeld | `suggestion` kann Wert oder Hinweis sein | Review vor dem Schreiben: eine Zeile je anwendbarem Befund (Lektion, Karte, Feld, aktueller Wert, Vorschlag), vorausgewählt; Prosa-Zeilen hakt der Lernende ab; Befunde ohne Kartenfeld oder ohne Vorschlag gelten als "manuell" und werden nie geschrieben |
+| Nicht umkehrbare Änderung | das Set wird in place neu geschrieben | Undo-Schnappschuss (`before` je Feld) vor dem Schreiben in einem mode-agnostischen Store je Set; "Letzte Übernahme rückgängig machen" im Dialog, bis eine neuere Übernahme ihn ersetzt |
+| Set-Metadaten gehen beim Re-Save verloren | `saveUserSet` löscht und schreibt das Set komplett | die Eingabe wird aus dem Katalogeintrag (Titel, Sprachen, Niveau, Origin über `domain`, Beschreibung, Buch, Attribution) plus ALLEN Lektionen aus `fetchEditLessonSet` gebaut; ein Test pinnt jedes Feld |
+| Lernfortschritt geht verloren | Element-Keys hängen an Karten-Ids | Karten-Ids ändern sich nie, nur `front`/`back`/`notes`; kein Remap nötig, per Test gepinnt |
+| Bericht passt nicht mehr zum Inhalt | der gecachte Report ist nach der Übernahme veraltet | übernommene Zeilen werden markiert, der Cache verworfen und "Erneut prüfen" angeboten; AIV-12 zeigt die Signatur ohnehin als veraltet |
+| Kosten, Datenschutz | keine neuen | kein Provider-Aufruf, nichts verlässt das Gerät |
+| Modus | der set-weite Check ist Dexie-only | AIV-07 erbt das Gate; im API-Modus erscheint das Element nicht |
+
+Verworfen: ein Ein-Klick "alles korrigieren" ohne Review-Tabelle (die
+Bestätigung "Soll die KI N Karten korrigieren?" wäre unehrlich, solange
+unklar ist, was geschrieben wird) und ein zweiter KI-Aufruf, der Hinweise
+in Werte verwandelt (widerspricht Abschnitt 2.1 und verdoppelt die
+Kosten). Umsetzung: #3060.
+
 ## Verwandte Dokumente
 
 - [EXP-032 — Inhaltliche Content-Validierung](EXP-032-content-quality-validation.md)
