@@ -105,8 +105,8 @@ tiebreaker.
 ## Jetzt
 
 - **EXP-033 — KI-Content-Validierung** (PARTIAL): **offen AIV-07**
-  (Auto-Fix nur User-Content, L-Aufwand, noch nicht
-  begonnen). Erledigt: AIV-06 (CI-Action `ai_review.py`,
+  (Vorschläge auf eigene Sets übernehmen, reviewed und umkehrbar;
+  Abwägung in EXP-033 § 8, Umsetzung #3060). Erledigt: AIV-06 (CI-Action `ai_review.py`,
   adaptive-learner-content#188 gemergt 2026-08-13), AIV-01..05 + AIV-08..12
   (#674/#676/#686/#687/#690/#691; AIV-12 kam ohne eigenen Code mit
   AIV-10s Verify-on-Read-Design, siehe ROADMAP.md).
