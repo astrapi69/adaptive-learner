@@ -100,6 +100,17 @@ describe("useLessonFlowControl pauses a started run on unmount (#3075)", () => {
         }
     });
 
+    it("leaving from the summary does not pause: the run is played through", () => {
+        const markPaused = vi.fn().mockResolvedValue(undefined);
+        const {unmount} = renderFlow({
+            progress: progress("in_progress"),
+            markPaused,
+            atSummary: true,
+        });
+        unmount();
+        expect(markPaused).not.toHaveBeenCalled();
+    });
+
     it("the dialog's own pause is not repeated by the unmount that follows it", async () => {
         const markPaused = vi.fn().mockResolvedValue(undefined);
         const {result, unmount} = renderFlow({

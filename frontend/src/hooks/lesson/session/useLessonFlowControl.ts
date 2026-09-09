@@ -25,6 +25,14 @@ export interface UseLessonFlowControlOptions {
     /** Flush accumulated time without changing lesson status. */
     autosave: () => Promise<void>;
     goToStep: (index: number) => void;
+    /**
+     * True while the step view shows the summary (index past the last
+     * step). Leaving from there is not an interruption: the run is
+     * played through, only "mark complete" is pending, so the unmount
+     * pause (#3075) stays off and the row keeps its ``in_progress``
+     * status (listed under "continue learning", not as paused).
+     */
+    atSummary?: boolean;
 }
 
 /**
@@ -67,6 +75,7 @@ export function useLessonFlowControl({
     markRestarted,
     autosave,
     goToStep,
+    atSummary = false,
 }: UseLessonFlowControlOptions): UseLessonFlowControlResult {
     const navigate = useNavigate();
     const {t} = useI18n();
@@ -162,10 +171,18 @@ export function useLessonFlowControl({
     useEffect(() => {
         markPausedRef.current = markPaused;
     }, [markPaused]);
+    const atSummaryRef = useRef(atSummary);
+    useEffect(() => {
+        atSummaryRef.current = atSummary;
+    }, [atSummary]);
     const leftViaDialogRef = useRef(false);
     useEffect(
         () => () => {
-            if (isInProgressRef.current && !leftViaDialogRef.current) {
+            if (
+                isInProgressRef.current &&
+                !leftViaDialogRef.current &&
+                !atSummaryRef.current
+            ) {
                 void markPausedRef.current();
             }
         },

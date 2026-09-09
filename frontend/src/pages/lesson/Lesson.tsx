@@ -145,6 +145,8 @@ export default function LessonPage() {
     markRestarted,
     autosave,
     goToStep,
+    // #3075 - the summary is the end of the run, not a place to pause.
+    atSummary: lesson !== null && currentStepIndex >= lesson.steps.length,
   });
 
   // Phase 46B — userId for the elementErrors.recordBulk
