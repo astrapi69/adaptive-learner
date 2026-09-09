@@ -41,27 +41,27 @@ gates:
 
   - workflow: complexity-check.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 1c527114127397ac
+    body_sha: 2df6d1c10d797df6
     note: baseline ratchet on PRs, full warn-only report on the night shift
 
   - workflow: dexie-smoke.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 1c527114127397ac
+    body_sha: 2df6d1c10d797df6
     note: nightly + release only, never on PRs (expensive, rarely PR-relevant)
 
   - workflow: coverage.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 1c527114127397ac
+    body_sha: 2df6d1c10d797df6
     note: a report, not a merge gate - night shift by design
 
   - workflow: security-scan.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 1c527114127397ac
+    body_sha: 2df6d1c10d797df6
     note: warn-only, weekly + release branches
 
   - workflow: webkit-gate.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 1c527114127397ac
+    body_sha: 2df6d1c10d797df6
     note: real-WebKit layout gate the Chromium gates are blind to
 
   - workflow: engine-schema-parity.yml
@@ -71,7 +71,7 @@ gates:
 
   - workflow: content-stats.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 1c527114127397ac
+    body_sha: 2df6d1c10d797df6
     note: driven by the separate content repo, so a PR cannot predict it - night shift
 
 # Workflows that deliberately enforce no documented rule.
