@@ -12,15 +12,15 @@
  * panel can never become a dead end.
  *
  * Persists the whole ordered config via ``lib/learning/summarySectionsPref``
- * (one localStorage object, both storage modes). Token-backed Tailwind, 44px
- * touch targets, a11y (ordered list, aria-labelled arrows + checkboxes).
+ * (one localStorage object, both storage modes). The rows are the shared
+ * ``ReorderRow`` (#3027): on a phone the arrow pair wraps under the label
+ * instead of squeezing it into a 60 px column that broke words. 44px touch
+ * targets, a11y (ordered list, aria-labelled arrows + checkboxes).
  */
 
-import { ArrowDown, ArrowUp } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
+import { ReorderList, ReorderRow } from "../../ReorderRow";
 import { SettingsSection } from "../../SettingsSection";
 import { useSummarySections } from "../../../../hooks/settings/useSummarySections";
 import {
@@ -87,21 +87,26 @@ export default function SummarySectionsControl() {
           "Choose which sections the summary at the end of a lesson shows and in which order. The actions for continuing are always visible.",
         )}
       </FormHint>
-      <ol
-        className="flex flex-col gap-2"
-        data-testid="summary-sections-order-list"
-      >
+      <ReorderList testid="summary-sections-order-list">
         {config.map(({ id, enabled }, index) => {
           const label = SECTION_LABELS[id];
           return (
-            <li
+            <ReorderRow
               key={id}
-              data-testid={`summary-sections-order-item-${id}`}
-              className={`flex items-center justify-between gap-2 rounded-app border border-border bg-bg-elevated px-3 py-2${
-                enabled ? "" : " opacity-60"
-              }`}
+              index={index}
+              count={config.length}
+              onMoveUp={() => move(id, -1)}
+              onMoveDown={() => move(id, 1)}
+              moveUpLabel={t("content_repo.action.move_up", "Move up")}
+              moveDownLabel={t("content_repo.action.move_down", "Move down")}
+              muted={!enabled}
+              testids={{
+                item: `summary-sections-order-item-${id}`,
+                up: `summary-sections-up-${id}`,
+                down: `summary-sections-down-${id}`,
+              }}
             >
-              <label className="flex min-h-11 min-w-0 flex-1 items-center gap-2 text-sm font-medium text-fg-primary">
+              <label className="flex min-h-11 min-w-0 flex-1 items-center gap-2">
                 <input
                   type="checkbox"
                   className="h-5 w-5 shrink-0"
@@ -114,38 +119,10 @@ export default function SummarySectionsControl() {
                   {t(label.key, label.fallback)}
                 </span>
               </label>
-              <span className="flex shrink-0 gap-1">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="min-h-11"
-                  onClick={() => move(id, -1)}
-                  disabled={index === 0}
-                  aria-label={t("content_repo.action.move_up", "Move up")}
-                  title={t("content_repo.action.move_up", "Move up")}
-                  data-testid={`summary-sections-up-${id}`}
-                >
-                  <ArrowUp className="h-4 w-4" aria-hidden="true" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="min-h-11"
-                  onClick={() => move(id, 1)}
-                  disabled={index === config.length - 1}
-                  aria-label={t("content_repo.action.move_down", "Move down")}
-                  title={t("content_repo.action.move_down", "Move down")}
-                  data-testid={`summary-sections-down-${id}`}
-                >
-                  <ArrowDown className="h-4 w-4" aria-hidden="true" />
-                </Button>
-              </span>
-            </li>
+            </ReorderRow>
           );
         })}
-      </ol>
+      </ReorderList>
     </SettingsSection>
   );
 }
