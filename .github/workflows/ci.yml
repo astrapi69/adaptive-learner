@@ -189,6 +189,16 @@ jobs:
         working-directory: backend
         run: poetry run python ../scripts/sync_openapi.py --check
 
+      # Dead-code ratchet, Python side (#3047): vulture over backend/app plus
+      # every plugin package against the list baseline. The weekly
+      # dead-code.yml stays the full-scope report; running the side a PR can
+      # change here means the author who adds an export banks or removes it
+      # in the same PR instead of a resync days later (#2917, #2988, #3046).
+      - name: Dead-code ratchet, Python side (#3047)
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
+        working-directory: backend
+        run: poetry run python ../scripts/check_dead_code.py --only python
+
   # Plugin tests (#434 Goal A): run every plugin's own suite in CI via
   # `make test-plugins`, which executes each `plugins/*/tests/` through the
   # BACKEND venv (PLUGIN_PYTHON). The backend `poetry install` path-installs
@@ -348,6 +358,14 @@ jobs:
         if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
         run: bunx eslint src/ --max-warnings 0
+
+      # Dead-code ratchet, TypeScript side (#3047): knip over frontend against
+      # the list baseline; the script resolves the repo root through git and
+      # runs knip from frontend/ itself. Same rationale as the Python step in
+      # the backend job.
+      - name: Dead-code ratchet, TypeScript side (#3047)
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
+        run: python3 scripts/check_dead_code.py --only typescript
 
       # Circular-dependency guard (#251). Fails only when import cycles
       # EXCEED the documented baseline, so a NEW cycle is a hard error while
