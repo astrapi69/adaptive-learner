@@ -3032,6 +3032,20 @@
       "checked_with": "Vérifié avec",
       "date": "Date",
       "recheck": "Revérifier",
+      "fix": {
+        "button": "Appliquer les suggestions",
+        "own_only": "Seulement pour tes propres leçons.",
+        "title": "Appliquer les suggestions",
+        "intro": "Vérifie chaque ligne : seules les lignes cochées sont écrites. Laisse de côté les suggestions qui expliquent au lieu de donner une valeur.",
+        "current": "Actuel",
+        "manual_count": "{count} remarques n'apportent aucune valeur applicable et restent manuelles.",
+        "confirm": "Appliquer {fields} champs dans {cards} cartes",
+        "applied": "{fields} champs appliqués. Le rapport est obsolète, revérifie le jeu.",
+        "undo": "Annuler la dernière application",
+        "undone": "Application annulée.",
+        "failed": "Impossible d'appliquer les suggestions",
+        "none_applicable": "Aucune suggestion applicable dans ce rapport."
+      },
       "export": {
         "button": "Exporter le rapport en Markdown",
         "lesson": "Leçon",

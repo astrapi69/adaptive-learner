@@ -3032,6 +3032,20 @@
       "checked_with": "Şununla denetlendi",
       "date": "Tarih",
       "recheck": "Yeniden denetle",
+      "fix": {
+        "button": "Önerileri uygula",
+        "own_only": "Yalnızca kendi derslerin için.",
+        "title": "Önerileri uygula",
+        "intro": "Her satırı kontrol et: yalnızca işaretli satırlar yazılır. Değer yerine açıklama veren önerileri dışarıda bırak.",
+        "current": "Mevcut",
+        "manual_count": "{count} bulgunun uygulanabilir değeri yok, manuel kalır.",
+        "confirm": "{cards} kartta {fields} alanı uygula",
+        "applied": "{fields} alan uygulandı. Rapor güncelliğini yitirdi, seti yeniden denetle.",
+        "undo": "Son uygulamayı geri al",
+        "undone": "Uygulama geri alındı.",
+        "failed": "Öneriler uygulanamadı",
+        "none_applicable": "Bu raporda uygulanabilir öneri yok."
+      },
       "export": {
         "button": "Raporu Markdown olarak dışa aktar",
         "lesson": "Ders",

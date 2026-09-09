@@ -3032,6 +3032,20 @@
       "checked_with": "Verificado com",
       "date": "Data",
       "recheck": "Verificar novamente",
+      "fix": {
+        "button": "Aplicar sugestões",
+        "own_only": "Somente para as suas próprias lições.",
+        "title": "Aplicar sugestões",
+        "intro": "Confira cada linha: só o que estiver marcado é gravado. Deixe de fora sugestões que explicam em vez de dar um valor.",
+        "current": "Atual",
+        "manual_count": "{count} apontamentos não trazem valor aplicável e ficam manuais.",
+        "confirm": "Aplicar {fields} campos em {cards} cartões",
+        "applied": "{fields} campos aplicados. O relatório está desatualizado, verifique o conjunto novamente.",
+        "undo": "Desfazer a última aplicação",
+        "undone": "Aplicação desfeita.",
+        "failed": "Não foi possível aplicar as sugestões",
+        "none_applicable": "Nenhuma sugestão aplicável neste relatório."
+      },
       "export": {
         "button": "Exportar relatório como Markdown",
         "lesson": "Lição",
