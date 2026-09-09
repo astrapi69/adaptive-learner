@@ -1925,10 +1925,12 @@ jeder Karten-Zeile (`CardImageField`).
       erscheint (vorher: verliess die Lektion stumm); "Pausieren" -> die
       Lektion steht auf dem Dashboard unter "Pausierte Lektionen"
 - [ ] Verlassen über die App-Navigation (#3075): eine Übung beantworten,
-      dann zwei Theorieschritte weiter, dann auf das Logo oder "Dashboard"
-      in der Kopfzeile klicken -> die Lektion steht unter "Pausierte
-      Lektionen"; "Fortsetzen" dort öffnet den Resume-Dialog und landet auf
-      dem Theorieschritt, auf dem du warst (nicht auf der Übung davor)
+      dann zwei Theorieschritte weiter, dann über das Menü (Hamburger ->
+      "Einstellungen"), das Logo oder den Zurück-Knopf des Browsers
+      weggehen -> die Lektion steht unter "Pausierte Lektionen";
+      "Fortsetzen" dort öffnet den Resume-Dialog und landet auf dem
+      Theorieschritt, auf dem du warst (nicht auf der Übung davor); auf
+      dem Handy dasselbe über die Menü-Schublade
       [E2E: `lesson-pause-position.spec.ts`]
 - [ ] Auto-Weiter + "Zurück" (#1921): Einstellung "Automatisch weiter"
       (Settings -> Lernen) AN -> eine Übung richtig beantworten, die App

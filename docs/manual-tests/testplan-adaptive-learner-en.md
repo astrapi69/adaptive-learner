@@ -1800,10 +1800,11 @@ each card row (`CardImageField`).
       appears (before: left the lesson silently); "Pause" -> the lesson is
       listed on the dashboard under "Paused lessons"
 - [ ] Leaving through the app navigation (#3075): answer one exercise, then
-      move two theory steps further, then click the logo or "Dashboard" in
-      the header -> the lesson is listed under "Paused lessons"; "Resume"
-      there opens the resume dialog and lands on the theory step you were
-      on (not on the exercise before it)
+      move two theory steps further, then leave through the menu
+      (hamburger -> "Settings"), the logo or the browser's back button ->
+      the lesson is listed under "Paused lessons"; "Resume" there opens the
+      resume dialog and lands on the theory step you were on (not on the
+      exercise before it); on the phone the same through the menu drawer
       [E2E: `lesson-pause-position.spec.ts`]
 - [ ] Auto-advance + "Back" (#1921): with "Advance automatically"
       (Settings -> Learning) ON, answer an exercise correctly so the app

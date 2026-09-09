@@ -12,7 +12,9 @@
  *   3. a graded exercise plus theory steps, then in-app navigation
  *      (the brand link): the row is ``paused`` at the LAST step, the
  *      dashboard lists the lesson under paused lessons, the resume
- *      dialog reopens it at that step.
+ *      dialog reopens it at that step;
+ *   4. every other in-app way out pauses at the current step too: a
+ *      menu entry, the browser's back button, and the mobile drawer.
  */
 
 import {expect, test, type Page} from "@playwright/test";
@@ -104,10 +106,18 @@ test.describe("Lesson pause position (#3075)", () => {
 
         await page.reload();
         await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 20_000});
-        // The reload paused the run (beforeunload), so the resume dialog
-        // asks first; "continue" lands on the step that was open.
-        await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible({timeout: 10_000});
-        await page.getByTestId("lesson-resume-continue").click();
+        // ``beforeunload`` fires a pause write the browser may or may not
+        // let finish (best effort by nature); the position itself was
+        // written by the step change and must survive either way. When
+        // the pause landed, the resume dialog asks first.
+        const dialog = page.getByTestId("lesson-resume-dialog");
+        await Promise.race([
+            dialog.waitFor({timeout: 5_000}).catch(() => undefined),
+            page.locator(`[data-testid="${second}"]`).waitFor({timeout: 5_000}).catch(() => undefined),
+        ]);
+        if (await dialog.count()) {
+            await page.getByTestId("lesson-resume-continue").click();
+        }
         await expect(page.locator(`[data-testid="${second}"]`)).toBeVisible({timeout: 10_000});
     });
 
@@ -155,5 +165,44 @@ test.describe("Lesson pause position (#3075)", () => {
         await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible({timeout: 20_000});
         await page.getByTestId("lesson-resume-continue").click();
         await expect(page.locator(`[data-testid="${last}"]`)).toBeVisible({timeout: 10_000});
+    });
+
+    test("a menu entry pauses at the current step (wide layout)", async ({page}) => {
+        // Inside a lesson the inline link row is display:none at every
+        // width (#1512): the drawer behind the hamburger IS the menu.
+        await page.setViewportSize({width: 1280, height: 900});
+        await nextStep(page);
+        await nextStep(page);
+        await page.getByTestId("nav-hamburger").click();
+        await page.getByTestId("nav-settings").click();
+        await page.waitForURL("**/settings**");
+        await expect.poll(() => progressRow(page), {timeout: 5_000}).toMatchObject({
+            status: "paused",
+            current_step: 2,
+        });
+    });
+
+    test("the browser back button pauses at the current step", async ({page}) => {
+        await nextStep(page);
+        await nextStep(page);
+        await page.goBack();
+        await expect(page.getByTestId("lesson-page")).toHaveCount(0, {timeout: 10_000});
+        await expect.poll(() => progressRow(page), {timeout: 5_000}).toMatchObject({
+            status: "paused",
+            current_step: 2,
+        });
+    });
+
+    test("a menu entry pauses at the current step (narrow layout)", async ({page}) => {
+        await page.setViewportSize({width: 375, height: 667});
+        await nextStep(page);
+        await nextStep(page);
+        await page.getByTestId("nav-hamburger").click();
+        await page.getByTestId("nav-settings").click();
+        await page.waitForURL("**/settings**");
+        await expect.poll(() => progressRow(page), {timeout: 5_000}).toMatchObject({
+            status: "paused",
+            current_step: 2,
+        });
     });
 });
