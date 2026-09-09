@@ -1769,6 +1769,28 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
         request.
       - Each button carries a note that these are AI drafts to review and edit
         before saving. (Visual check: desktop + mobile.)
+- [ ] **Annotate token roles (#3072):** In step 2 add a card (front
+      "der Hund in dem Garten", back "the dog in the garden"), then open
+      "Edit" on its row. Below the image field sits "Token roles
+      (optional)". Check in order: (a) type a word that does NOT appear
+      in the front exactly like that (e.g. "Katze") -> "Add role" stays
+      disabled and the message below says the word does not appear.
+      Same for the wrong casing ("der" when the front starts with
+      "Der"). (b) Type the word exactly as it appears, pick a role in
+      the select, "Add role" -> the row appears with word and role name.
+      (c) Add the same word again -> the message says it is already
+      annotated. (d) The select offers EXACTLY seven roles (article,
+      noun, verb, adjective, preposition, gender marker, tense marker)
+      and no free-text field. (e) Save, reopen the card for editing ->
+      the annotations are still there.
+- [ ] **Suggest roles (#3072):** In the same row click "Suggest roles".
+      On a German front carrying articles and prepositions the list
+      fills ("der Hund in dem Garten" gives der = article, in =
+      preposition, dem = article). Nouns and verbs are NOT suggested,
+      which is deliberate. On a front without such words (e.g. "Hund
+      läuft") the hint appears saying no word was recognised and the
+      list stays empty. Below the list the note says suggestions are
+      guesses and every row wants checking.
 
 ### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 

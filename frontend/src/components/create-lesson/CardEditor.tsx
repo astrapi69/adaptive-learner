@@ -36,7 +36,7 @@ import {CARD_SIDE_MAX_LENGTH} from "../../lib/content/lesson/draft-to-lesson";
 import {useI18n} from "../../hooks/ui/useI18n";
 import FormHint from "../../shared/forms/FormHint";
 import StringListEditor from "../../shared/forms/StringListEditor";
-import {CardImageField} from "./fields";
+import {CardImageField, TokenRoleField} from "./fields";
 import {parseCsvCards, type ParsedCsvRow} from "../../lib/content/lesson/csv-cards";
 import type {LessonCardDraft} from "../../lib/content/lesson/lesson-draft";
 
@@ -57,6 +57,9 @@ export interface CardEditorProps {
     onReorder: (cards: LessonCardDraft[]) => void;
     onClearAll: () => void;
     onImport: (rows: {front: string; back: string; notes: string}[]) => void;
+    /** Language of the card fronts (#3072). Drives the token-role
+     *  suggestion lookup; an unknown code simply yields no proposals. */
+    frontLanguage: string;
 }
 
 export default function CardEditor({
@@ -67,6 +70,7 @@ export default function CardEditor({
     onReorder,
     onClearAll,
     onImport,
+    frontLanguage,
 }: CardEditorProps) {
     const {t} = useI18n();
     const [front, setFront] = useState("");
@@ -407,6 +411,7 @@ export default function CardEditor({
                                 card={card}
                                 onUpdate={onUpdate}
                                 onDelete={onDelete}
+                                frontLanguage={frontLanguage}
                             />
                         ))}
                     </ul>
@@ -461,9 +466,15 @@ interface SortableCardRowProps {
     card: LessonCardDraft;
     onUpdate: (id: string, patch: Partial<LessonCardDraft>) => void;
     onDelete: (id: string) => void;
+    frontLanguage: string;
 }
 
-function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
+function SortableCardRow({
+    card,
+    onUpdate,
+    onDelete,
+    frontLanguage,
+}: SortableCardRowProps) {
     const {t} = useI18n();
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} =
         useSortable({id: card.id});
@@ -491,6 +502,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
             image: draft.image.trim(),
             example: (draft.example ?? "").trim(),
             altAnswers: draft.altAnswers ?? [],
+            tokenRoles: draft.tokenRoles ?? [],
         });
         setEditing(false);
     }
@@ -570,6 +582,13 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                     value={draft.image}
                     onChange={(v) => setDraft({...draft, image: v})}
                     previewAlt={draft.front.trim() || undefined}
+                    idPrefix={`card-edit-${card.id}`}
+                />
+                <TokenRoleField
+                    front={draft.front}
+                    lang={frontLanguage}
+                    value={draft.tokenRoles ?? []}
+                    onChange={(tokenRoles) => setDraft({...draft, tokenRoles})}
                     idPrefix={`card-edit-${card.id}`}
                 />
                 <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
