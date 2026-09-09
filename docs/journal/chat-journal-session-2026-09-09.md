@@ -146,6 +146,123 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   0-Diff-Sync-Lauf.
 - Commit: 288a5f06 (Squash von PR #3044)
 
+## 5. Alles Offene abarbeiten: Bestandsaufnahme (12:00)
+
+- Original prompt: "gut dann alles was offen weiter"
+- Optimierter Prompt: "Prüfe, was im Repo tatsächlich offen ist (PRs,
+  Issues, Nightlies, ROADMAP, Backlog), verifiziere jede Prämisse gegen
+  den Code, und arbeite die Posten in der Prioritätsreihenfolge der
+  Vibe-Coding-Regel ab: offene PRs, Bugs, Infrastruktur, UI, Cleanup,
+  Features."
+- Ziel: kein Posten bleibt liegen, weil ein Stand in meinem Kontext
+  veraltet war.
+- Ergebnis: Die vier #2951-Reste (#2961, #2962, #2964, #2966) waren
+  schon in #2990 gelandet, der Schirm #2951 geschlossen. Offen waren
+  nur #1569 (wartet auf die Geräte-Ablesung) und #1087 (manueller
+  Testplan). Die eigentliche Arbeit lag in der Nightly-Liste und in den
+  Planungsdateien: der Red-runs-Rollup vom 2026-09-08 nannte zwei rote
+  Läufe (Dead-Code-Report, Manual-Automation), ROADMAP und Backlog
+  führten sechs geschlossene Issues und vier erledigte oder falsch
+  bemessene P3-Posten als offen. Manual-Automation vom 2026-09-08 (drei
+  Session-5-Mobile-Specs, `invite` nicht sichtbar) lief am 2026-09-07
+  und 2026-09-09 grün: eingeordnet als Umgebungs-Flake, kein Eingriff.
+- Commit: keiner (Analyse)
+
+## 6. Dead-Code-Report seit 2026-08-30 rot: dritter Resync in vier Wochen (#3046, #3047)
+
+- Original prompt: (aus 5.)
+- Optimierter Prompt: "Reproduziere den roten Dead-Code-Ratchet lokal,
+  prüfe jeden neuen knip-Fund einzeln gegen alle Konsumenten (#2486),
+  entferne echte tote export-Schlüsselwörter, banke Barrel- und
+  Typ-Exporte wie die bestehenden Einträge, und benenne die Klasse."
+- Ziel: Wochen-Report grün, ohne einen Fund blind zu banken.
+- Ergebnis: Acht neue Funde aus #2991, #3012 und #3020. Fünf sind
+  Barrel-Re-Exporte oder ein öffentlicher Props-Typ, deren Konsumenten
+  die Concern-Datei direkt importieren (gebankt wie die 109 Barrel- und
+  237 Typ-Einträge der Baseline). Zwei trugen ein totes `export`
+  (`isFullyCorrect`, `DONE_TIER_LIMIT`), jetzt modul-privat. Der
+  erledigte Eintrag `REVIEW_PREF_CHANGE_EVENT` (Konsument seit #2991)
+  wurde ausgebucht; Baseline-Diff exakt +5 / -1. Die Klasse (#2917,
+  #2988, jetzt): der Ratchet läuft nur wöchentlich, jede PR mit neuem
+  Barrel-Export macht ihn rot, und die Verifikation passiert Tage
+  später ohne den Autor. #3047 schlägt dem Owner vor, `--only typescript`
+  im Frontend-Job und `--only python` im Backend-Job der PR-CI laufen
+  zu lassen (Entscheidung offen, Cadence-Änderung gegen #575).
+- Commit: 47d5c1bd (Squash von PR #3048)
+
+## 7. ROADMAP und Backlog: geschlossene Posten raus (#3049, #3053)
+
+- Original prompt: (aus 5.)
+- Optimierter Prompt: "Prüfe jeden in ROADMAP/Backlog als offen
+  geführten Posten gegen den Issue-Stand und den Code; entferne, was
+  geschlossen ist, mit Beleg; archiviere `[x]`-Zeilen über das Skript."
+- Ziel: aktive Dateien enthalten nur offene Arbeit
+  (Documentation-Protocol, kontinuierliche Archivierung).
+- Ergebnis: Library-First-Follow-ups #697-#700 (BEHALTEN, 2026-06-17),
+  DEP-TS7 #1507 (verfrüht geschlossen), BADGE-CONTENT #2273 (mit #2441
+  ausgeliefert) und das `[x] #508` (v1.80.0; die nackte `#508`-Kennung
+  passt nicht auf das Archivierer-Muster) raus bzw. ins Archiv
+  2026-09. Drei P3-Posten mit falscher Prämisse: DEP-MYPY-2-01 längst
+  über Dependabot #263 (mypy 2.x, Pin `>=1.20,<3.0`),
+  DEP-ANTHROPIC-105-01 über #2653 (`^0.122.0`) erledigt;
+  PERF-EAGER-GLOBS-01 gemessen (Praise 34939 B roh / 5229 B gzip,
+  Plugin-Config 386 B / 248 B, die "72 KB"/"28 KB" waren du-Blockgrößen)
+  und als Behalten bewertet: ein lazy Praise-Katalog gäbe das erste Lob
+  einer Lektion bei Cache-Miss auf Englisch aus.
+- Commit: e8b0f387 (PR #3050), f0770d59 (PR #3054)
+
+## 8. Legacy-Alias-Ratchet: Pro-Alias-Zählung exakt gepinnt (#3051)
+
+- Original prompt: (aus 5.)
+- Optimierter Prompt: "Schließe die Gate-Lücke TOKEN-ALIAS-GATE-GAP-01
+  mit einem vierten Token-Guard: Alias-Namen aus dem Legacy-Block lesen,
+  Referenzen je Alias im Konsumenten-TSX zählen, exakt in beide
+  Richtungen pinnen, fail closed bei fehlendem Block oder leerem Scope."
+- Ziel: die Regel "semantische Token bevorzugen" hat ein Gate; die
+  Alias-Nutzung (138 -> 156 Stellen seit der Backlog-Aufnahme) wächst
+  nicht mehr still.
+- Ergebnis: `legacy-alias-ratchet.test.ts` (10 Tests: sieben
+  Helfer-Fälle für gleich/gewachsen/geschrumpft/ohne Pin/veralteter
+  Pin/exakter Name/Block-Parsing plus drei Scope-Tests), eingehängt in
+  `make verify-theme`. RED-Beweis mit den Backlog-Zahlen (surface +10,
+  border +25, danger +32 gegen 558 gescannte Dateien), GREEN mit den
+  gemessenen Pins (13 Aliase, 310 Referenzen). design-tokens.md nennt
+  den vierten Guard; der Korpus blieb unter der Decke, weil der
+  CLI-Gate-Satz kondensiert wurde (Headroom 7). eslint
+  `detect-non-literal-regexp` erzwang `split` statt `new RegExp`.
+- Commit: 51d68866 (Squash von PR #3052)
+
+## 9. Einstellungen > Plugins: Karte "Installierte Plugins" (#3055)
+
+- Original prompt: (aus 5.)
+- Optimierter Prompt: "Baue die Frontend-Hälfte von
+  PLUGINFORGE-LIFECYCLE-UI-01: eine Karte im Plugins-Tab, die aus
+  `plugins.health()` die aktiven Namen und je Plugin `plugins.inspect()`
+  über die Storage-Abstraktion liest; desktop-only über ein neues
+  Feature-Id, in Dexie sichtbar mit Hinweis; i18n zuerst als eigener
+  PR; Motiv `settings-plugins` und FeatureShot; Testplan DE/EN; Hilfe
+  en/de/fr."
+- Ziel: die im Mai ausgelieferte Backend-Hälfte bekommt ihre Fläche,
+  nachdem die Aufschub-Bedingung ("Settings wird strukturell angefasst")
+  mit #2951 eingetreten ist.
+- Ergebnis: i18n zuerst (PR #3056, 14 Schlüssel, Terminologie je
+  Katalog: Complementos, Extensions, Πρόσθετα, Eklentiler), dann die
+  Karte: `PluginLifecycleSection.tsx` liest über `getStorage()` die
+  aktiven Namen aus `plugins.health()` und je Plugin
+  `plugins.inspect()` (neue Interface-Methode; API delegiert, Dexie
+  lehnt ab), zeigt Name, Version, Quelle, lokalisierten
+  Aktivierungszeitpunkt und Markierungen für Ladefehler,
+  Discovery-Filter und Konfigurationsänderung nach der Aktivierung.
+  Neues Feature-Id `PLUGIN_LIFECYCLE` im Desktop-only-Satz: in Dexie
+  bleibt die Karte mit Hinweis sichtbar, ohne Aufruf. RED zuerst (Modul
+  fehlte), dann 5/5; Feature-Registry- und Delegations-Pins erweitert;
+  `Settings.test.tsx` mockt `api.plugins.health`, damit der Seitentest
+  nicht ins Netz geht. Erstes Motiv `settings-plugins` (die
+  #2486-Lücke), Sync lieferte genau die drei neuen Baselines;
+  FeatureShot aus dem Dexie-Preview zeigt den Hinweis über der
+  Lern-Repository-Karte. Testplan DE + EN, Hilfe en/de/fr.
+- Commit: 9a2a8f8c (Squash von PR #3057)
+
 ## Befunde neben der Arbeit
 
 - `gh pr checks --json` gibt es in gh 2.46.0 nicht; Warte-Schleifen
@@ -155,6 +272,15 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   nach einem Sync-Commit ist update-branch oder ein eigener Push nötig,
   sonst bleibt der PR mit drei Check-Runs blockiert. Heute nicht
   bissig, weil der Churn-Restore ohnehin einen Push brachte.
+- `pkill -f <muster>` trifft die eigene Shell, wenn das Muster in der
+  eigenen Kommandozeile steht (Exit 144, die &&-Kette stirbt mitten im
+  Ablauf). Erst `pgrep` lesen, dann nach PID beenden.
+- `make capture-screenshots` rendert ALLE FeatureShots neu und schreibt
+  jede PNG; ein Commit während des Laufs scheitert an pre-commit
+  ("files were modified by this hook"), und danach sind fremde PNGs
+  geändert (heute 35 Dateien plus vier untracked Shots anderer
+  Features). Erst abwarten, Churn per `git checkout --` zurücksetzen,
+  nur die eigenen PNGs stagen.
 - Die drei Reorder-Stellen waren die dritte Kopie einer Zeilenform;
   `ContentRepoRow` (Integrationen) hat mehr Aktionen pro Zeile und
   bleibt vorerst eigenständig - Kandidat für `ReorderButtons`, wenn sie
@@ -170,6 +296,11 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   noch, wenn ein einzelnes Wort länger als die Zeile ist.
 - Journal-Umfang: die Commits anderer Sessions von heute früh (#3030)
   gehören nicht in dieses Journal.
+- "alles was offen weiter" wurde als Arbeitsauftrag in Prioritätsfolge
+  gelesen (PRs, Bugs, Infrastruktur, Cleanup, Features), nicht als
+  Start eines EXP-Programms; AIV-07 (Auto-Fix, mutiert Nutzerinhalte)
+  braucht laut ROADMAP eine eigene Risiko-Abwägung und blieb beim Owner,
+  ebenso die Cadence-Frage #3047.
 - Deutung von "die Logs sind zu wenig": nicht mehr Datenpunkte derselben
   Art, sondern die fehlenden Klassen (Absicht, Ergebnis, Markierung) -
   hergeleitet aus den acht Auswertungen in #1569, die genau diese drei
@@ -177,14 +308,21 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
 
 ## Zusammenfassung
 
-- Commits: 9 auf vier Branches (3 in PR #3037, 1 in PR #3038, 1 Restore,
-  1 Pin + 1 leerer CI-Anstoß in PR #3040, 2 in PR #3044).
-- Tests: +12 Vitest (ReorderRow 6 Fälle, 2 Pins, 6 Sonden-Fälle), +5
-  pytest (test_repo_mirror); Frontend 10049, Backend 1835, beide grün;
-  Visual settings-data lokal 3/3 in drei Läufen; Sync für #3044 0 Diff.
-- Neue Dateien: `ReorderRow.tsx` (+ Test), `repo_mirror.py` (+ Test);
-  `pinUserBadgesEmpty` in den Visual-Helpern; Protokollarten
-  `click`/`focus`/`mark` in `vv-log.ts`.
-- Bilder: 2 FeatureShots neu, 19 Baselines nachgezogen, 1 zurückgesetzt.
-- Issues: #3027 und #3035 geschlossen, #3036 und #3043 angelegt und per
-  PR #3038 bzw. #3044 geschlossen.
+- Commits: 16 auf elf Branches (3 in PR #3037, 1 in PR #3038, 1 Restore,
+  1 Pin + 1 leerer CI-Anstoß in PR #3040, 2 in PR #3044, je 1 in den
+  PRs #3045, #3048, #3050, #3052, #3054, #3056, #3057).
+- Tests: +27 Vitest (ReorderRow 6, Pins 2, Sonde 6, Legacy-Alias-Ratchet
+  10, Plugin-Karte 5 minus 2 umgezogene), +5 pytest (test_repo_mirror);
+  Frontend 10066, Backend 1835, beide grün; Dead-Code-
+  und Alias-Ratchet grün; Sync für #3044 0 Diff, für #3057
+  genau die drei neuen Motive.
+- Neue Dateien: `ReorderRow.tsx` (+ Test), `repo_mirror.py` (+ Test),
+  `legacy-alias-ratchet.test.ts`, `PluginLifecycleSection.tsx` (+ Test),
+  `docs/roadmap-archive/2026-09.md`; `pinUserBadgesEmpty` in den
+  Visual-Helpern; Protokollarten `click`/`focus`/`mark` in `vv-log.ts`;
+  Motiv `settings-plugins`.
+- Bilder: 3 FeatureShots neu, 19 Baselines nachgezogen, 1 zurückgesetzt,
+  3 Baselines neu (settings-plugins).
+- Issues: #3027, #3035 geschlossen; #3036, #3043, #3046, #3049, #3051,
+  #3053, #3055 angelegt und per PR geschlossen; #3047 (Cadence-Vorschlag)
+  offen beim Owner.
