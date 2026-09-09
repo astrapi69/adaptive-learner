@@ -167,26 +167,6 @@ tiebreaker.
   (keep the cross-language parity golden green). Cross-cutting refactor
   of 14+ functions x2 modes -> deferred. Filed from the 2026-06-03
   performance audit (B-1 / C-1).
-- [ ] **PERF-EAGER-GLOBS-01**: Remaining `eager: true`
-  `import.meta.glob` sites bundle all-language data into their consuming
-  chunk. `src/lib/praise/phrase-picker.ts:45` (praise, 72 KB dir, lands
-  in the `celebration-bus` chunk) and `dexie-storage.ts:2304`
-  (plugin-config, 28 KB dir). Convert to lazy per-key loading like the
-  i18n glob fix (F-1). Low impact — praise loads during lessons,
-  plugin-config is small. Opportunistic. Filed from the 2026-06-03
-  performance audit (F-4).
-- [ ] **DEP-MYPY-2-01**: Upgrade mypy 1.x -> 2.0 (held back in the
-  v1.41.0 dep sweep — caret ``^1.20`` caps it). Major version;
-  needs a dedicated migration session (new/renamed error classes,
-  stricter defaults). Not urgent. Bump the pin in
-  ``backend/pyproject.toml`` + every ``plugins/*/pyproject.toml``,
-  re-lock, then fix the fallout under ``poetry run mypy app/``.
-- [ ] **DEP-ANTHROPIC-105-01**: Upgrade the ai-anthropic plugin's
-  ``anthropic`` SDK 0.55 -> 0.105 (held back in v1.41.0; out of the
-  ``^0.55`` caret). A 50-version 0.x jump: the plugin's tests MOCK
-  the SDK, so a green suite would NOT prove ``messages.create`` still
-  works. Schedule a dedicated session that exercises a REAL API call
-  (live key) before bumping the pin + lock.
 
 - [ ] **PLUGINFORGE-LIFECYCLE-UI-01**: Consume v0.9.0
   lifecycle visibility in Settings → Plugins. Backend half
