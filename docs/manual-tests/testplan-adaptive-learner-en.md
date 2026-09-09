@@ -1832,6 +1832,23 @@ each card row (`CardImageField`).
       the header/menu are reachable again - but new taps still raise
       the protocol counter (recording continues invisibly, #2785)
 
+### Diagnostics probe: mis-tap mark + actions (#3043)
+- [ ] Probe ON, measurement bar visible: next to "Werte kopieren" and
+      "Details" the bar shows the button "Daneben!"
+- [ ] Tap anywhere, then tap "Daneben!", then "Details": the report has
+      a section `actions (newest first)` with a `mark` line whose
+      `target=` names the element just tapped; the tap counter ("N
+      Tipps") did NOT increase because of the button
+- [ ] On a lesson page tap an answer tile: the `actions` section gains a
+      `click` line with `target=`, `downTarget=` and `mismatch=0`;
+      tapping a text field additionally adds a `focus` line with
+      `top=`/`bottom=`/`vis=`
+- [ ] The bar's last tap line additionally carries `hit=`, `above1=`,
+      `above2=`, `pageY=`, `screenY=`, `hdrTop=`, `ftrBot=`, `room=`
+      and `focusTop=`/`focusBot=`/`focusVis=`; "Copy protocol" in
+      Settings yields the same fields plus the `click`/`focus`/`mark`
+      entries
+
 ### Sticky button for the measurement bar (#2799)
 - [ ] Settings > Diagnostics & Support: enable "Sticky button for the
       measurement bar" (the probe must be ON) - a round floating
