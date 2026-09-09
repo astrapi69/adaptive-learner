@@ -568,7 +568,7 @@ verify-theme: ## Theme/token gate: Python token-matrix + WCAG contrast gate, the
 	python3 scripts/verify_theme.py --enforce
 	@echo ""
 	@echo "=== verify-theme: no-hardcoded-colors + token-parity + contrast (Vitest guards) ==="
-	cd frontend && bunx vitest run src/styles/no-hardcoded-colors.test.ts src/styles/contrast.test.ts src/styles/themes/themes.test.ts
+	cd frontend && bunx vitest run src/styles/no-hardcoded-colors.test.ts src/styles/legacy-alias-ratchet.test.ts src/styles/contrast.test.ts src/styles/themes/themes.test.ts
 
 verify-theme-baseline-update: ## Re-record .theme-baseline.json from current violations (ratchet only shrinks unless --allow-baseline-growth)
 	python3 scripts/verify_theme.py --update-baseline
