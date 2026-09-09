@@ -21,9 +21,9 @@ Current state: **v2.14.0 (released 2026-09-05 - Sessions get a game layer: an op
   in `validation-signature.test.ts`) — und **AIV-06** (CI-Action
   `ai_review.py` + `ai-review.yml` im Content-Repo,
   astrapi69/adaptive-learner-content#188 gemergt 2026-08-13).
-  **Offen: AIV-07** (Auto-Fix,
-  nur User-Content, L-Aufwand — mutiert Nutzerinhalte automatisch,
-  noch nicht begonnen, braucht eigene Risiko-Abwägung vor Umsetzung).
+  **Offen: AIV-07** (Vorschläge des Berichts auf eigene Sets übernehmen,
+  reviewed und umkehrbar; Risiko-Abwägung in EXP-033 § 8, Umsetzung
+  #3060).
   Siehe [EXP-033](explorations/EXP-033-ai-content-validation.md).
 
 ## Nächste Phase
