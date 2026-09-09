@@ -557,13 +557,90 @@ export async function expandViewportToDocument(page: Page): Promise<number> {
     return contentHeight;
 }
 
-/** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard.
+/**
+ * Wait until the assessment's gamification fan-out has landed (#3033).
+ *
+ * Submitting the assessment shows the result screen FIRST and awards XP
+ * plus the ``first_assessment`` badge afterwards, in a promise nobody on
+ * the page waits for. The seed clicks "Continue" the moment the result is
+ * visible, and the next ``page.goto`` is a full reload that aborts
+ * whatever part of that chain is still running - the badge evaluation
+ * (catalog seeding, per-evaluator metric reads behind dynamic imports,
+ * one rw transaction) usually is. So the ``userBadges`` row existed in
+ * some runs and not in others, and every surface that counts rows saw a
+ * different learner: "Deine Sicherung enthält" on settings-data gained a
+ * "1 Plaketten" line, 24 px, in one run out of four locally, and in
+ * exactly the one CI run that compared against a baseline without it
+ * (7028 vs 7052 on tablet).
+ *
+ * A wait on the surface cannot fix this - by the time it renders, the
+ * write is either done or aborted. The seed has to hand over a learner
+ * whose OWN writes have finished, which is the app's contract too: a real
+ * user navigates client-side and the promise simply completes. Polled
+ * straight from IndexedDB because the dashboard only reads badges on the
+ * missions tab, so no rendered signal exists on the seeded route.
+ */
+async function waitForAssessmentBadge(page: Page): Promise<void> {
+    // ``page.evaluate`` awaits a returned promise; ``waitForFunction``
+    // does NOT - it reads the pending promise itself as truthy and
+    // returns at once, which turned the first draft of this wait into a
+    // no-op (verified: a predicate resolving ``false`` after 50 ms
+    // "passed" in 74 ms).
+    const userBadgeRows = () =>
+        page.evaluate(
+            ({dbName, store}) =>
+                new Promise<number>((resolve) => {
+                    const request = indexedDB.open(dbName);
+                    request.onerror = () => resolve(-1);
+                    request.onblocked = () => resolve(-1);
+                    // Opening without a version never upgrades an existing
+                    // database; this branch only fires when it does not
+                    // exist yet, and creating an empty one would corrupt
+                    // the app's schema, so abort instead.
+                    request.onupgradeneeded = () => {
+                        request.transaction?.abort();
+                        resolve(-1);
+                    };
+                    request.onsuccess = () => {
+                        const db = request.result;
+                        const done = (rows: number) => {
+                            db.close();
+                            resolve(rows);
+                        };
+                        try {
+                            const count = db
+                                .transaction(store, "readonly")
+                                .objectStore(store)
+                                .count();
+                            count.onsuccess = () => done(count.result);
+                            count.onerror = () => done(-1);
+                        } catch {
+                            done(-1);
+                        }
+                    };
+                }),
+            {dbName: "adaptive-learner", store: "userBadges"},
+        );
+    await expect
+        .poll(userBadgeRows, {
+            message:
+                "seedLearner: the first_assessment badge row never landed in " +
+                "IndexedDB (#3033) - the seeded learner would differ from run to run",
+            timeout: 20_000,
+            intervals: [250, 250, 500, 1_000],
+        })
+        .toBeGreaterThanOrEqual(1);
+}
+
+/** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard
+ *  with the assessment's gamification writes complete (#3033).
  *  Exported so the per-feature capture script (#1023) reuses the single
  *  onboarding path instead of re-implementing it. */
 export async function seedLearner(page: Page): Promise<void> {
     await completeOnboarding(page);
     await completeAssessment(page);
     await page.waitForURL("**/dashboard", {timeout: 30_000});
+    await waitForAssessmentBadge(page);
 }
 
 /**
@@ -1240,6 +1317,11 @@ async function waitForSrsQuiescence(
  * the live-data class of #1653, and the remedy there is the same: pin the
  * source to a synthetic fixture instead of photographing whatever the
  * network happened to deliver.
+ *
+ * The 24 px on this surface had a SECOND source of the same size, the
+ * "1 Plaketten" row of the backup preview, which this pin never touched
+ * and which kept the tablet motif flipping after it (#3033). That one is
+ * a seed race, not live data, and is closed in ``seedLearner``.
  *
  * Only ``keys()`` on that ONE cache is replaced, so the empty state is
  * deterministic; every other cache and every other method still reaches

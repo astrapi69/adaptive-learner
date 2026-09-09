@@ -60,6 +60,14 @@ already applied in `helpers.ts`:
   that renders a baseline and the run that compares against it; pin the
   source to a fixture, as `pinContentRegistry` and `pinLessonCacheEmpty`
   do.
+- **Let the seed's own writes land before a full reload (#3033).** The
+  assessment awards XP and the `first_assessment` badge AFTER its result
+  screen is visible, in a promise nothing on the page waits for; the
+  seed's next `page.goto` aborts it in most runs and lets it through in
+  some. Every surface that counts rows then photographs a different
+  learner ("1 Plaketten" present or absent in the backup preview, 24 px).
+  A wait on the surface comes too late - `seedLearner` polls IndexedDB
+  for the badge row before it hands the page over.
 
 ## Layout
 
