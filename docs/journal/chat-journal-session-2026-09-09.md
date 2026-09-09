@@ -104,6 +104,48 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   Instanz steht im Docstring des Helpers.
 - Commit: bc627c4e (Squash von PR #3040)
 
+## 4. Die Tipp-Sonde sagt jetzt, welcher Tipp falsch war (#3043)
+
+- Original prompt: "zu dem: #1569 wir haben ein button der logs erstellt
+  den man bei den einstellungen ein oder ausschlaten kann. Die logs sind
+  zu wenig denke ich den wir haben das mehrmals mit verschidenen daten
+  die ich kopiert hatte aber trotzdem nicht behoben wurde."
+- Optimierter Prompt: "Erweitere die Diagnose-Sonde (#1569) um die
+  Signale, die die acht bisherigen Auswertungen jedes Mal raten
+  mussten: welcher Tipp der Fehltipp war (Markierung durch den Tester),
+  was der Tipp tatsächlich ausgelöst hat (click/focusin gegen das
+  pointerdown-Ziel), was gemeint war (Elemente ein und zwei Zeilen über
+  dem Finger), ob das fixierte Chrome dort gerendert ist, wo es
+  hingehört, und wie viel Scroll-Reserve der Pre-Reveal hatte."
+- Ziel: die nächste Geräte-Ablesung soll entscheidbar sein, nicht die
+  neunte Vermutung aus dem Vorzeichen von ΔY.
+- Ergebnis: Die acht Ablesungen (#2984, #3004, #3015 zurückgenommen in
+  #3018, #3021) lieferten Geometrie, aber keinen Befund, weil dem
+  Protokoll drei Dinge fehlten: die Absicht (welches Element gemeint
+  war), das Ergebnis (welches Element reagiert hat) und die Markierung
+  (welcher Tipp der falsche war). `ViewportDiagnostic.tsx` schreibt je
+  Tipp zusätzlich `hit=` (`elementFromPoint` am Finger, weicht nur bei
+  echter Hit-Test-Desynchronisation vom Event-Ziel ab), `above1=` und
+  `above2=` (die Elemente eine und zwei Textzeilen über dem Finger,
+  24 px), rohes `pageY=`/`screenY=`, `hdrTop=` (Oberkante `app-nav`,
+  erwartet 0) und `ftrBot=` (Unterkante `lesson-footer` gegen
+  `innerHeight`, erwartet 0 wenn angedockt), `room=` (verbleibende
+  Reserve des App-Scrollers, die "kein Platz"-Tatsache aus #3019) und
+  `focusTop=`/`focusBot=`/`focusVis=` (das vor dem Tipp fokussierte
+  Feld gegen den visuellen Viewport). Drei neue Protokollarten:
+  `click` (Ziel, `downTarget=`, `mismatch=`), `focus` (Ziel, Lage,
+  `rootY`, `vvTop`, `kbd`, `room`) und `mark` (Knopf "Daneben!" auf der
+  Sonde markiert den letzten Tipp als Fehltipp). Der Bericht bekommt
+  den Abschnitt `actions (newest first)`. Nur die Dev-Sonde; aus ist
+  aus, kein Produktverhalten geändert. RED zuerst: sechs neue Tests
+  fielen auf der alten Sonde, danach 28/28; happy-dom übernimmt
+  `pageY` nicht aus dem PointerEvent-Init, deshalb prüft der Test das
+  Feld nur auf Vorhandensein. Testplan DE + EN und
+  `docs/developer/testing.md` tragen das Ableseprotokoll. Baselines
+  unberührt (die Sonde ist in jedem Motiv aus), belegt durch einen
+  0-Diff-Sync-Lauf.
+- Commit: 288a5f06 (Squash von PR #3044)
+
 ## Befunde neben der Arbeit
 
 - `gh pr checks --json` gibt es in gh 2.46.0 nicht; Warte-Schleifen
@@ -128,16 +170,21 @@ driftende Plaketten-Zeile im settings-data-Motiv (#3035, PR #3040).
   noch, wenn ein einzelnes Wort länger als die Zeile ist.
 - Journal-Umfang: die Commits anderer Sessions von heute früh (#3030)
   gehören nicht in dieses Journal.
+- Deutung von "die Logs sind zu wenig": nicht mehr Datenpunkte derselben
+  Art, sondern die fehlenden Klassen (Absicht, Ergebnis, Markierung) -
+  hergeleitet aus den acht Auswertungen in #1569, die genau diese drei
+  jedes Mal raten mussten.
 
 ## Zusammenfassung
 
-- Commits: 7 auf drei Branches (3 in PR #3037, 1 in PR #3038, 1 Restore,
-  1 Pin + 1 leerer CI-Anstoß in PR #3040).
-- Tests: +6 Vitest (ReorderRow 6 Fälle, 2 Pins), +5 pytest
-  (test_repo_mirror); Frontend 10043, Backend 1835, beide grün; Visual
-  settings-data lokal 3/3 in drei Läufen.
+- Commits: 9 auf vier Branches (3 in PR #3037, 1 in PR #3038, 1 Restore,
+  1 Pin + 1 leerer CI-Anstoß in PR #3040, 2 in PR #3044).
+- Tests: +12 Vitest (ReorderRow 6 Fälle, 2 Pins, 6 Sonden-Fälle), +5
+  pytest (test_repo_mirror); Frontend 10049, Backend 1835, beide grün;
+  Visual settings-data lokal 3/3 in drei Läufen; Sync für #3044 0 Diff.
 - Neue Dateien: `ReorderRow.tsx` (+ Test), `repo_mirror.py` (+ Test);
-  `pinUserBadgesEmpty` in den Visual-Helpern.
+  `pinUserBadgesEmpty` in den Visual-Helpern; Protokollarten
+  `click`/`focus`/`mark` in `vv-log.ts`.
 - Bilder: 2 FeatureShots neu, 19 Baselines nachgezogen, 1 zurückgesetzt.
-- Issues: #3027 und #3035 geschlossen, #3036 angelegt und per PR #3038
-  geschlossen.
+- Issues: #3027 und #3035 geschlossen, #3036 und #3043 angelegt und per
+  PR #3038 bzw. #3044 geschlossen.
