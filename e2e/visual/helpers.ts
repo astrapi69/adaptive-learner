@@ -320,14 +320,23 @@ export async function pinContentRegistry(page: Page): Promise<void> {
  * empty page: fail loud rather than silently measure the viewport and
  * report a truncated capture as complete.
  */
-export async function contentHeightToCover(page: Page): Promise<number> {
-    return page.evaluate(() => {
+export async function contentHeightToCover(
+    page: Page,
+    {requireRoot = true}: {requireRoot?: boolean} = {},
+): Promise<number> {
+    return page.evaluate((requireRoot) => {
         const root = document.getElementById("root");
         if (!root) {
-            throw new Error(
-                "contentHeightToCover: #root is missing — the app shell's " +
-                    "scroll container is the height oracle (#3016)",
-            );
+            if (requireRoot) {
+                throw new Error(
+                    "contentHeightToCover: #root is missing — the app shell's " +
+                        "scroll container is the height oracle (#3016)",
+                );
+            }
+            // A surface outside the app shell (the static /start/ landing
+            // page) scrolls the document itself; there is no nested
+            // scroller to read. Opt-in only, via SettleOptions.noAppShell.
+            return Math.ceil(document.documentElement.scrollHeight);
         }
         return Math.ceil(
             Math.max(
@@ -335,7 +344,7 @@ export async function contentHeightToCover(page: Page): Promise<number> {
                 root.scrollHeight + root.offsetTop,
             ),
         );
-    });
+    }, requireRoot);
 }
 
 /**
@@ -353,13 +362,23 @@ export async function contentHeightToCover(page: Page): Promise<number> {
  */
 export async function waitForStableLayout(
     page: Page,
-    {stableSamples = 3, intervalMs = 120, maxWaitMs = 4_000} = {},
+    {
+        stableSamples = 3,
+        intervalMs = 120,
+        maxWaitMs = 4_000,
+        requireRoot = true,
+    }: {
+        stableSamples?: number;
+        intervalMs?: number;
+        maxWaitMs?: number;
+        requireRoot?: boolean;
+    } = {},
 ): Promise<void> {
     const deadline = Date.now() + maxWaitMs;
     let last = -1;
     let stable = 0;
     while (Date.now() < deadline) {
-        const height = await contentHeightToCover(page);
+        const height = await contentHeightToCover(page, {requireRoot});
         if (height === last) {
             stable += 1;
             if (stable >= stableSamples) return;
@@ -382,6 +401,11 @@ export interface SettleOptions {
      *  held-back-update call to action). Skips the transient-toast wait
      *  instead of racing it; every other surface keeps the #2721 cap. */
     allowPersistentToast?: boolean;
+    /** The surface is a static page OUTSIDE the app shell (the ``/start/``
+     *  landing page), so there is no ``#root`` scroller: the height oracle
+     *  reads the document instead of failing loud. Every app surface keeps
+     *  the #3016 contract. */
+    noAppShell?: boolean;
 }
 
 export async function settleForScreenshot(
@@ -414,7 +438,7 @@ export async function settleForScreenshot(
     // (async bundled-content / registry renders change the page height
     // run-to-run). Wait for the layout height to settle first. Bounded, so a
     // never-settling surface can't hang; animations are already killed above.
-    await waitForStableLayout(page);
+    await waitForStableLayout(page, {requireRoot: !options.noAppShell});
     // #2721 — wait out TRANSIENT toasts before the shot. The lesson
     // motivation toast (useLessonMotivation, autoClose: 3000) fires on
     // entering the LAST step; ``playBundledLesson`` walks through that step

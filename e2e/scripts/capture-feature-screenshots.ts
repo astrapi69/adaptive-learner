@@ -86,6 +86,9 @@ interface FeatureShot {
     /** The shot DELIBERATELY shows a persistent toast (#3081); opts out of
      *  the #2721 transient-toast wait in settleForScreenshot. */
     keepsToast?: boolean;
+    /** The surface has no app shell and therefore no ``#root`` scroller
+     *  (the static landing page); see ``SettleOptions.noAppShell``. */
+    noAppShell?: boolean;
 }
 
 /** Open ``/content`` on a given tab and wait for the hub shell. */
@@ -1065,6 +1068,7 @@ const FEATURES: FeatureShot[] = [
     // so the pinned app theme does not affect it.
     {
         path: "landing-page/de",
+        noAppShell: true,
         setup: async (p) => {
             await p.goto("/start/");
             return true;
@@ -1072,6 +1076,7 @@ const FEATURES: FeatureShot[] = [
     },
     {
         path: "landing-page/en",
+        noAppShell: true,
         setup: async (p) => {
             await p.goto("/start/en/");
             return true;
@@ -1361,7 +1366,10 @@ for (const feature of FEATURES) {
             await setTheme(page, DEFAULT_THEME);
             const ready = await feature.setup(page);
             test.skip(!ready, `Could not reach ${feature.path} deterministically`);
-            await settleForScreenshot(page, {allowPersistentToast: feature.keepsToast});
+            await settleForScreenshot(page, {
+                allowPersistentToast: feature.keepsToast,
+                noAppShell: feature.noAppShell,
+            });
             const pin = feature.pinToSelector
                 ? page.locator(feature.pinToSelector)
                 : feature.pinTo
