@@ -1894,6 +1894,32 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
         und löst **keine** KI-Anfrage aus.
       - Unter jedem Knopf steht der Hinweis, dass es KI-Entwürfe sind, die vor dem
         Speichern zu prüfen und anzupassen sind. (Sichtprüfung: Desktop + Mobil.)
+- [ ] **Token-Rollen annotieren (#3072):** Schritt 2, eine Karte anlegen
+      (z. B. Vorderseite "der Hund in dem Garten", Rückseite "the dog in
+      the garden"), dann auf der Zeile "Bearbeiten" öffnen. Unter dem
+      Bildfeld steht "Token-Rollen (optional)". Prüfe der Reihe nach:
+      (a) Ein Wort eintippen, das NICHT genau so in der Vorderseite steht
+      (z. B. "Katze") -> "Hinzufügen" bleibt grau und darunter erscheint
+      die Meldung, dass das Wort so nicht vorkommt. Gleiches bei falscher
+      Groß-/Kleinschreibung ("der" statt "Der", wenn die Vorderseite
+      groß beginnt). (b) Das Wort exakt wie in der Vorderseite eintippen,
+      Rolle im Auswahlfeld wählen, "Hinzufügen" -> die Zeile erscheint
+      mit Wort und Rollenname. (c) Dasselbe Wort noch einmal -> Meldung,
+      dass es schon annotiert ist. (d) Das Auswahlfeld bietet GENAU
+      sieben Rollen (Artikel, Substantiv, Verb, Adjektiv, Präposition,
+      Genus-Marker, Tempus-Marker) und kein Freitextfeld. (e) Speichern,
+      die Karte erneut zum Bearbeiten öffnen -> die Annotationen stehen
+      noch da.
+- [ ] **Rollen vorschlagen (#3072):** In derselben Zeile "Rollen
+      vorschlagen" klicken. Bei einer deutschen Vorderseite mit Artikeln
+      und Präpositionen füllt sich die Liste (bei "der Hund in dem
+      Garten": der = Artikel, in = Präposition, dem = Artikel).
+      Substantive und Verben werden NICHT vorgeschlagen, das ist
+      Absicht. Bei einer Vorderseite ohne solche Wörter (z. B. "Hund
+      läuft") erscheint stattdessen der Hinweis, dass kein Wort erkannt
+      wurde, und die Liste bleibt leer. Unter der Liste steht der
+      Hinweis, dass Vorschläge geraten sind und jede Zeile geprüft
+      gehört.
 
 ### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 

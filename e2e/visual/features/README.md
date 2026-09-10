@@ -83,6 +83,7 @@ Baseline zu committen.
 | Fehlerbericht — Vollvorschau (#1480) | `error-report/vollvorschau.png` | `error-report/vollvorschau.mobile.png` | v2.1.0 |
 | Sync — Desktop-only-Hinweis, Dexie-Modus (#335/#1480) | `sync/desktop-only-hinweis.png` | `sync/desktop-only-hinweis.mobile.png` | v2.1.0 |
 | Create-Lesson — Buchtext-Datei-Upload mit Kapitel-Picker (#1927) | `create-lesson/buch-upload-picker.png` | `create-lesson/buch-upload-picker.mobile.png` | v2.5.0+ |
+| Create-Lesson — Token-Rollen auf einer Karte, nach "Rollen vorschlagen" (#3072) | `create-lesson/token-rollen.png` | `create-lesson/token-rollen.mobile.png` | v2.15.0+ |
 | Viewport-Diagnose — Tap-Offset-Sonde, eingeklappt (#1569/#2779) | `viewport-diagnostic/eingeklappt.png` | `viewport-diagnostic/eingeklappt.mobile.png` | v2.13.0+ |
 | Viewport-Diagnose — Details-Block geöffnet (#1569/#2779) | `viewport-diagnostic/details.png` | `viewport-diagnostic/details.mobile.png` | v2.13.0+ |
 | Viewport-Diagnose — Settings-Sektion mit Schalter + Protokoll (#2782) | `viewport-diagnostic/settings-sektion.png` | `viewport-diagnostic/settings-sektion.mobile.png` | v2.13.0+ |
