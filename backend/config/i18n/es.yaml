@@ -2716,6 +2716,7 @@ content:
     downloaded: "Set descargado y listo para usar."
     updated_all: "{n} sets actualizados."
     updates_held: "{n} actualizaciones se han retenido porque afectarían a tu progreso. Confírmalas una a una con el botón Actualizar del set."
+    updates_held_named: "Retenidas porque afectarían a tu progreso: {titles}. Confirma cada actualización con el botón Actualizar del set."
     all_up_to_date: "Todos los sets están actualizados."
   warning:
     no_lessons_in_set: "Este set aún no tiene lecciones."

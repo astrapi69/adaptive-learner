@@ -2938,6 +2938,7 @@
       "downloaded": "Set téléchargé et prêt à utiliser.",
       "updated_all": "{n} sets mis à jour.",
       "updates_held": "{n} mises à jour ont été retenues car elles affecteraient votre progression. Confirmez-les une par une avec le bouton Mettre à jour du set.",
+      "updates_held_named": "Retenues car elles affecteraient votre progression : {titles}. Confirmez chaque mise à jour avec le bouton Mettre à jour du set.",
       "all_up_to_date": "Tous les sets sont à jour."
     },
     "warning": {
