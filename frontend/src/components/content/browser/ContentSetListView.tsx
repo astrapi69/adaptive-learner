@@ -8,12 +8,18 @@
  * show the title alone, since a source→target pair is not meaningful
  * there. On wider screens the row adds the level + lesson count.
  *
+ * A set with a pending update (#3081) is marked like the grid view marks
+ * it ("Update available") and carries the Update button IN the row, so
+ * the bulk-update hint's "confirm it with the set's Update button" points
+ * at something the learner can see without switching views.
+ *
  * The language-vs-knowledge decision reuses the shared
  * {@link isKnowledgeDomain} helper (DRY — same rule the exercise
  * renderers use), so the two surfaces can never drift. Each row links
  * to the single-set deep link ``/content/set/:setId``.
  */
 
+import { Download } from "lucide-react";
 import { Link } from "react-router";
 
 import { Checkbox } from "@/components/ui/checkbox";
@@ -47,6 +53,9 @@ interface ContentSetListViewProps extends SelectionProps {
   /** EXP-046 item 3 / #2654 — fork this set into a user-generated copy and
    *  open it in the editor (overflow menu). */
   onEditAsCopy?: (entry: ContentSetEntry) => void;
+  /** #3081 — apply a pending update for one set (the grid row's Update
+   *  path, #2128 guard included). Omit to render no per-row Update button. */
+  onUpdate?: (entry: ContentSetEntry) => void;
 }
 
 /** Stable selection key for a set (source + id). */
@@ -57,12 +66,51 @@ export function setSelectionKey(entry: {
   return `${entry.source}#${entry.id}`;
 }
 
+/** The "Update available" marker + the per-row Update button (#3081). */
+function ContentSetListUpdate({
+  entry,
+  onUpdate,
+}: {
+  entry: ContentSetEntry;
+  onUpdate?: (entry: ContentSetEntry) => void;
+}) {
+  const { t } = useI18n();
+  if (!entry.update_available) return null;
+  const label = t("content.action.update", "Update");
+  return (
+    <>
+      <span
+        className="hidden shrink-0 text-xs font-semibold text-accent sm:inline"
+        data-testid={`content-list-set-${entry.id}-update`}
+      >
+        {t("content.status.update_available", "Update available")}
+      </span>
+      {onUpdate && (
+        <button
+          type="button"
+          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-app text-accent hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          aria-label={`${label}: ${entry.title}`}
+          title={label}
+          onClick={(event) => {
+            event.stopPropagation();
+            onUpdate(entry);
+          }}
+          data-testid={`content-list-set-${entry.id}-update-button`}
+        >
+          <Download size={18} aria-hidden="true" />
+        </button>
+      )}
+    </>
+  );
+}
+
 function ContentSetListRow({
   entry,
   onSetStatus,
   onDelete,
   onRestart,
   onEditAsCopy,
+  onUpdate,
   selectable,
   selectedKeys,
   onToggleSelect,
@@ -72,6 +120,7 @@ function ContentSetListRow({
   onDelete?: (entry: ContentSetEntry) => void;
   onRestart?: (entry: ContentSetEntry) => void;
   onEditAsCopy?: (entry: ContentSetEntry) => void;
+  onUpdate?: (entry: ContentSetEntry) => void;
 } & SelectionProps) {
   const { t } = useI18n();
   const knowledge = isKnowledgeDomain(entry.domain, entry.source_language, entry.target_language);
@@ -125,6 +174,7 @@ function ContentSetListRow({
             {entry.lesson_count} {t("content.lessons", "lessons")}
           </span>
         </Link>
+        <ContentSetListUpdate entry={entry} onUpdate={onUpdate} />
         {/* #1572 — per-set Share (deep link + QR). */}
         <SetShareButton entry={entry} />
         {/* #1300 — per-set status + delete overflow menu (same component
@@ -157,6 +207,7 @@ export default function ContentSetListView({
   onDelete,
   onRestart,
   onEditAsCopy,
+  onUpdate,
   selectable,
   selectedKeys,
   onToggleSelect,
@@ -171,6 +222,7 @@ export default function ContentSetListView({
           onDelete={onDelete}
           onRestart={onRestart}
           onEditAsCopy={onEditAsCopy}
+          onUpdate={onUpdate}
           selectable={selectable}
           selectedKeys={selectedKeys}
           onToggleSelect={onToggleSelect}
