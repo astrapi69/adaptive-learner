@@ -3170,6 +3170,10 @@ create_lesson:
     start_fresh: "Νέα αρχή"
     continue: "Συνέχεια"
   exercises:
+    summary:
+      pairs: "{n} ζεύγη"
+      images: "{n} εικόνες"
+      options: "{n} επιλογές απάντησης"
     heading: "Δημιουργία ασκήσεων"
     count_label: "Αριθμός ασκήσεων"
     types_label: "Τύποι ασκήσεων"

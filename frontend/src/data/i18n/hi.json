@@ -3447,6 +3447,11 @@
       "continue": "जारी रखें"
     },
     "exercises": {
+      "summary": {
+        "pairs": "{n} जोड़े",
+        "images": "{n} चित्र",
+        "options": "{n} उत्तर विकल्प"
+      },
       "heading": "अभ्यास बनाएँ",
       "count_label": "अभ्यासों की संख्या",
       "types_label": "अभ्यास प्रकार",

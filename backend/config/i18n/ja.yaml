@@ -3168,6 +3168,10 @@ create_lesson:
     start_fresh: "最初から"
     continue: "続ける"
   exercises:
+    summary:
+      pairs: "{n} 組"
+      images: "{n} 枚の画像"
+      options: "{n} 個の選択肢"
     heading: "演習を生成"
     count_label: "演習の数"
     types_label: "演習の種類"
