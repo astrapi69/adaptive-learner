@@ -1793,7 +1793,11 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       annotated. (d) The select offers EXACTLY seven roles (article,
       noun, verb, adjective, preposition, gender marker, tense marker)
       and no free-text field. (e) Save, reopen the card for editing ->
-      the annotations are still there.
+      the annotations are still there. (f) Phone width (below 769 px,
+      #3087): the add-row stacks (word field full width, select full
+      width, "Add role" below), nothing overflows the card; from tablet
+      width up it stays one line and the word field fills the remaining
+      space.
 - [ ] **Suggest roles (#3072):** In the same row click "Suggest roles".
       On a German front carrying articles and prepositions the list
       fills ("der Hund in dem Garten" gives der = article, in =
