@@ -145,6 +145,11 @@ describe("LessonPage: load states", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -164,6 +169,11 @@ describe("LessonPage: load states", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -184,6 +194,11 @@ describe("LessonPage: load states", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -205,6 +220,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
   }
@@ -314,6 +334,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -412,6 +437,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult,
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -494,6 +524,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -531,6 +566,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -697,6 +737,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -732,6 +777,10 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      autosave: vi.fn(),
       markRestarted,
       refresh: vi.fn(),
     });
@@ -806,6 +855,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -832,6 +886,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted,
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -861,6 +920,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted,
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -915,6 +979,11 @@ describe("BUG P1: exactly one two-phase button, no internal submit", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn().mockResolvedValue(undefined),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -1051,6 +1120,11 @@ describe("LessonPage: button icons + 'Lektion pausieren' rename", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
   }

@@ -29,11 +29,13 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {readLearnerState} from "../../../lib/learning/learnerState";
+import {notifyLessonProgressChanged} from "../../../lib/lesson/progress-change-event";
 import {ApiError} from "../../../api/client";
 import {getStorage} from "../../../storage";
 import type {
     ContentLesson,
     LessonProgress,
+    LessonProgressUpsertBody,
     LessonStepResult,
 } from "../../../storage/types";
 
@@ -128,6 +130,30 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         lessonModeRef.current = lessonMode;
     }, [lessonMode]);
 
+    // #3075 - every write to the progress row goes through one promise
+    // chain, so a position write racing a step-result write (API mode:
+    // two POSTs the browser may deliver out of order) cannot let the
+    // older ``current_step`` land last. A rejected link never blocks the
+    // chain; each caller handles its own failure.
+    const upsertQueueRef = useRef<Promise<unknown>>(Promise.resolve());
+    const upsertSerial = useCallback(
+        (body: LessonProgressUpsertBody): Promise<LessonProgress> => {
+            if (!userId) {
+                return Promise.reject(new Error("no active learner"));
+            }
+            const next = upsertQueueRef.current
+                .catch(() => undefined)
+                .then(() => getStorage().lessonProgress.upsert(userId, body))
+                .then((updated) => {
+                    notifyLessonProgressChanged();
+                    return updated;
+                });
+            upsertQueueRef.current = next;
+            return next;
+        },
+        [userId],
+    );
+
     const fetchInitial = useCallback(async () => {
         setStatus("loading");
         setError(null);
@@ -196,15 +222,63 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             if (loadedProgress.status === "completed") {
                 nextIndex = loadedLesson.steps.length;  // summary view
             }
-            setCurrentStepIndex(
-                Math.min(nextIndex, loadedLesson.steps.length),
-            );
+            const restored = Math.min(nextIndex, loadedLesson.steps.length);
+            setCurrentStepIndex(restored);
+            persistedStepRef.current = restored;
         } else {
             setCurrentStepIndex(0);
+            persistedStepRef.current = 0;
         }
         stepEntryTimeRef.current = performance.now();
         setStatus("ready");
     }, [source, setId, lessonFilename, userId]);
+
+    // #3075 - persist the navigation position on EVERY step change, not
+    // only alongside a graded exercise. Before this, ``current_step``
+    // reached storage through recordStepResult, the 30 s autosave and
+    // the lifecycle flags, and every one of those was gated on a row
+    // that only the first graded exercise created: a learner who read
+    // through the theory steps and closed the tab, switched apps or
+    // pressed the pause glyph started over at step 0 next time, and
+    // theory steps after the last graded exercise were lost on any exit.
+    // The write is position-only (no step_result, no lifecycle flag), so
+    // the storage layer creates the row on first use and leaves a
+    // paused/abandoned status untouched. The marker skips the index
+    // fetchInitial restored (a resumed run must not be rewritten while
+    // the resume dialog is up), the summary index (markCompleted owns
+    // that transition) and completed runs (their position is ignored on
+    // read and browsing a finished lesson is not a run).
+    const persistedStepRef = useRef<number | null>(null);
+    useEffect(() => {
+        if (status !== "ready" || !userId || lesson === null) return;
+        if (currentStepIndex >= lesson.steps.length) return;
+        if (progress?.status === "completed") return;
+        if (persistedStepRef.current === currentStepIndex) return;
+        persistedStepRef.current = currentStepIndex;
+        upsertSerial({
+            source,
+            set_id: setId,
+            lesson_filename: lessonFilename,
+            lesson_mode: lessonModeRef.current,
+            current_step: currentStepIndex,
+        })
+            .then((updated) => setProgress(updated))
+            .catch(() => {
+                // Non-fatal: the next step change (or any other write)
+                // carries the position again.
+                persistedStepRef.current = null;
+            });
+    }, [
+        status,
+        userId,
+        lesson,
+        currentStepIndex,
+        progress?.status,
+        source,
+        setId,
+        lessonFilename,
+        upsertSerial,
+    ]);
 
     useEffect(() => {
         void fetchInitial();
@@ -261,16 +335,15 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             if (!userId || lesson === null) return;
             const timeDelta = _consumeStepTime();
             try {
-                const updated =
-                    await getStorage().lessonProgress.upsert(userId, {
-                        source,
-                        set_id: setId,
-                        lesson_filename: lessonFilename,
-                        lesson_mode: lessonModeRef.current,
-                        step_result: result,
-                        time_spent_seconds_delta: timeDelta,
-                        current_step: currentStepIndexRef.current,
-                    });
+                const updated = await upsertSerial({
+                    source,
+                    set_id: setId,
+                    lesson_filename: lessonFilename,
+                    lesson_mode: lessonModeRef.current,
+                    step_result: result,
+                    time_spent_seconds_delta: timeDelta,
+                    current_step: currentStepIndexRef.current,
+                });
                 setProgress(updated);
             } catch (err) {
                 // Persistence failures are non-fatal — the
@@ -288,6 +361,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             lessonFilename,
             lesson,
             _consumeStepTime,
+            upsertSerial,
         ],
     );
 
@@ -298,21 +372,18 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         if (!userId || lesson === null) return;
         const timeDelta = _consumeStepTime();
         try {
-            const updated = await getStorage().lessonProgress.upsert(
-                userId,
-                {
-                    source,
-                    set_id: setId,
-                    lesson_filename: lessonFilename,
-                    lesson_mode: lessonModeRef.current,
-                    time_spent_seconds_delta: timeDelta,
-                    mark_completed: true,
-                    combo_bonus_xp: Math.max(
-                        0,
-                        Math.min(20, Math.trunc(options?.comboBonusXp ?? 0)),
-                    ),
-                },
-            );
+            const updated = await upsertSerial({
+                source,
+                set_id: setId,
+                lesson_filename: lessonFilename,
+                lesson_mode: lessonModeRef.current,
+                time_spent_seconds_delta: timeDelta,
+                mark_completed: true,
+                combo_bonus_xp: Math.max(
+                    0,
+                    Math.min(20, Math.trunc(options?.comboBonusXp ?? 0)),
+                ),
+            });
             setProgress(updated);
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
@@ -329,6 +400,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         lessonFilename,
         lesson,
         _consumeStepTime,
+        upsertSerial,
     ]);
 
     // Phase 63A — shared transition writer for pause / abandon /
@@ -346,16 +418,16 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             if (!userId || lesson === null) return;
             const timeDelta = _consumeStepTime();
             try {
-                const updated =
-                    await getStorage().lessonProgress.upsert(userId, {
-                        source,
-                        set_id: setId,
-                        lesson_filename: lessonFilename,
-                        lesson_mode: lessonModeRef.current,
-                        time_spent_seconds_delta: timeDelta,
-                        current_step: currentStepIndexRef.current,
-                        [flag]: true,
-                    });
+                const updated = await upsertSerial({
+                    source,
+                    set_id: setId,
+                    lesson_filename: lessonFilename,
+                    lesson_mode: lessonModeRef.current,
+                    time_spent_seconds_delta: timeDelta,
+                    current_step: currentStepIndexRef.current,
+                    [flag]: true,
+                });
+                persistedStepRef.current = updated.current_step ?? null;
                 setProgress(updated);
             } catch (err) {
                 setError(
@@ -370,6 +442,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             lessonFilename,
             lesson,
             _consumeStepTime,
+            upsertSerial,
         ],
     );
 
@@ -399,7 +472,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         const delta = _consumeStepTime();
         if (delta < 1) return;
         try {
-            await getStorage().lessonProgress.upsert(userId, {
+            await upsertSerial({
                 source,
                 set_id: setId,
                 lesson_filename: lessonFilename,
@@ -411,7 +484,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             // Non-fatal — next interval or step-result write will
             // pick up the accumulated time.
         }
-    }, [userId, source, setId, lessonFilename, lesson, _consumeStepTime]);
+    }, [userId, source, setId, lessonFilename, lesson, _consumeStepTime, upsertSerial]);
 
     return {
         status,

@@ -12,7 +12,9 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen, waitFor} from "@testing-library/react";
+import {act, render, screen, waitFor} from "@testing-library/react";
+
+import {notifyLessonProgressChanged} from "../../lib/lesson/progress-change-event";
 import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -266,5 +268,29 @@ describe("PausedLessonsCard", () => {
             screen.queryByTestId("paused-lessons-card"),
         ).not.toBeInTheDocument();
         expect(upsertMock).not.toHaveBeenCalled();
+    });
+});
+
+describe("PausedLessonsCard re-reads on a lesson-progress write (#3075)", () => {
+    it("shows a lesson paused AFTER the mount-time read once the write is announced", async () => {
+        // First read: nothing paused (the pause of an in-app exit has not
+        // landed yet); second read: the paused row is there.
+        listMock
+            .mockResolvedValueOnce([_progress("01.json", "in_progress", null)])
+            .mockResolvedValueOnce([_progress("01.json")]);
+        render(
+            <MemoryRouter>
+                <PausedLessonsCard userId="user-1" />
+            </MemoryRouter>,
+        );
+        await waitFor(() => expect(listMock).toHaveBeenCalledTimes(1));
+        expect(screen.queryByTestId("paused-lessons-card")).not.toBeInTheDocument();
+
+        act(() => {
+            notifyLessonProgressChanged();
+        });
+
+        expect(await screen.findByTestId("paused-lessons-card")).toBeInTheDocument();
+        expect(listMock).toHaveBeenCalledTimes(2);
     });
 });

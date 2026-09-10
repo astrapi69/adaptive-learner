@@ -13,7 +13,9 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
+
+import {notifyLessonProgressChanged} from "../../lib/lesson/progress-change-event";
 import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -510,5 +512,28 @@ describe("ContinueLearning", () => {
         // hidden even though it is newer.
         expect(items).toHaveLength(1);
         expect(items[0]).toHaveAttribute("data-testid", "continue-learning-item-fr-a1");
+    });
+});
+
+describe("ContinueLearning re-reads on a lesson-progress write (#3075)", () => {
+    it("re-runs its load when a write is announced", async () => {
+        listProgressMock.mockResolvedValue([]);
+        renderSection({showWhenEmpty: true});
+        await screen.findByTestId("continue-learning-empty-link");
+        expect(listProgressMock).toHaveBeenCalledTimes(1);
+
+        listProgressMock.mockResolvedValue([
+            progress({set_id: "fr-a1", lesson_filename: "02.json", updated_at: "2026-06-03T10:00:00Z", status: "paused"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "fr-a1", title: "French A1"}],
+            sources: [],
+        });
+        act(() => {
+            notifyLessonProgressChanged();
+        });
+
+        expect(await screen.findByTestId("continue-learning-resume-fr-a1")).toBeInTheDocument();
+        expect(listProgressMock).toHaveBeenCalledTimes(2);
     });
 });

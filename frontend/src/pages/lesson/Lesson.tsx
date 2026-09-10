@@ -81,6 +81,11 @@ interface UrlParams {
   [key: string]: string | undefined;
 }
 
+/** Whether the step index sits on the summary view (past the last step). */
+function isAtSummary(lesson: {steps: unknown[]} | null, index: number): boolean {
+  return lesson !== null && index >= lesson.steps.length;
+}
+
 export default function LessonPage() {
   const params = useParams<UrlParams>();
   const navigate = useNavigate();
@@ -145,6 +150,8 @@ export default function LessonPage() {
     markRestarted,
     autosave,
     goToStep,
+    // #3075 - the summary is the end of the run, not a place to pause.
+    atSummary: isAtSummary(lesson, currentStepIndex),
   });
 
   // Phase 46B — userId for the elementErrors.recordBulk
