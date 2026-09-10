@@ -1661,8 +1661,10 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       "Update available" and is confirmed individually via its row
       button. **List view (#3081):** in the list view (toggle at the top
       right of the list) the set's row shows the "Update available" marker
-      (from tablet width) and a download-icon button
-      (`content-list-set-<id>-update-button`, tooltip "Update"); a click
+      and a download-icon button (`content-list-set-<id>-update-button`,
+      tooltip "Update"); on a phone (below 640 px) marker and button drop as
+      one group to their own line under the title (right-aligned, #3092), the
+      title keeps the width it has without an update; a click
       opens the same #2128 guard dialog as the card button for a breaking
       update, otherwise the update is applied directly; up-to-date sets show
       neither marker nor button. **After applying (#2985):** apply
