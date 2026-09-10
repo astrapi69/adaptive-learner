@@ -180,3 +180,25 @@ describe("TokenRoleField: the suggestion is a proposal", () => {
         expect(screen.getByText(/Suggestions are guesses/i)).toBeInTheDocument();
     });
 });
+
+// #3087 - at 375px the three intrinsic-width children of the add-row left
+// the input a sliver and pushed the button out of the card; below the
+// mobile breakpoint the row stacks (the CardEditor button-row pattern),
+// above it the input is the child that shrinks and grows.
+describe("TokenRoleField: the add-row on a phone (#3087)", () => {
+    it("stacks the row below the mobile breakpoint", () => {
+        setup();
+        const row = token().parentElement as HTMLElement;
+        expect(row.className).toContain("max-[769px]:flex-col");
+        expect(row.className).toContain("max-[769px]:items-stretch");
+    });
+
+    it.each([
+        ["the input shrinks and fills the row", () => token(), ["min-w-0", "flex-1"]],
+        ["the select spans the width when stacked", () => select(), ["max-[769px]:w-full"]],
+        ["the add button keeps its width", () => addButton(), ["shrink-0"]],
+    ] as const)("%s", (_name, element, classes) => {
+        setup();
+        for (const cls of classes) expect(element().className).toContain(cls);
+    });
+});
