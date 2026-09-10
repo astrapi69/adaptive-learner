@@ -24,6 +24,21 @@ import {
 } from "../../lib/exercises";
 import type {ContentLessonExercise} from "../../storage/types";
 
+// #3093 - the preview-row summaries go through the catalog. The mock keeps
+// the provider-less ``fallback ?? key`` contract every other test here
+// relies on and only tags the summary keys, so a row that still builds
+// its text by hand cannot pass.
+vi.mock("../../hooks/ui/useI18n", () => ({
+    useI18n: () => ({
+        t: (key: string, fallback?: string) =>
+            key.startsWith("create_lesson.exercises.summary.")
+                ? `${key}|${fallback ?? ""}`
+                : (fallback ?? key),
+        lang: "en",
+        setLang: () => {},
+    }),
+}));
+
 /**
  * Stateful harness: holds the config so the slider and the number
  * input actually round-trip through ``config.count`` (a faithful
@@ -577,5 +592,79 @@ describe("ExerciseGenerator — convert graded-quiz to reading-comprehension (EX
             "exercise-ext-type-select-gq9",
         ) as HTMLSelectElement;
         expect(select.value).toBe("ext:al-graded-quiz");
+    });
+});
+
+describe("ExerciseGenerator — translated preview-row summaries (#3093)", () => {
+    const rowText = (id: string) =>
+        (screen.getByTestId(`exercise-row-${id}`).querySelector(".exercise-row-desc") as HTMLElement)
+            .textContent;
+
+    it.each([
+        [
+            "matching counts its pairs",
+            {
+                id: "m1",
+                type: "matching",
+                prompt: "Match",
+                card_ids: [],
+                distractors: [],
+                pairs: [
+                    {left: "a", right: "b"},
+                    {left: "c", right: "d"},
+                ],
+            } as ContentLessonExercise,
+            "create_lesson.exercises.summary.pairs|2 pairs",
+        ],
+        [
+            "picture_choice counts its images",
+            {
+                id: "p1",
+                type: "picture_choice",
+                prompt: "Pick",
+                card_ids: [],
+                distractors: [],
+                images: [
+                    {src: "a.png", label: "a"},
+                    {src: "b.png", label: "b"},
+                    {src: "c.png", label: "c"},
+                ],
+            } as ContentLessonExercise,
+            "create_lesson.exercises.summary.images|3 images",
+        ],
+        [
+            "multiple_choice counts its answer options",
+            {
+                id: "c1",
+                type: "multiple_choice",
+                prompt: "Choose",
+                card_ids: [],
+                distractors: [],
+                options: [
+                    {text: "a", correct: true},
+                    {text: "b", correct: false},
+                    {text: "c", correct: false},
+                    {text: "d", correct: false},
+                ],
+            } as ContentLessonExercise,
+            "create_lesson.exercises.summary.options|4 answer options",
+        ],
+    ])("%s", (_name, exercise, expected) => {
+        renderWith([exercise], DEFAULT_EXERCISE_GEN_CONFIG.types);
+        expect(rowText(exercise.id)).toBe(expected);
+    });
+
+    it("leaves the content-bearing summaries untranslated (cloze sentence, word tiles, prompt)", () => {
+        renderWith(
+            [
+                {id: "z1", type: "cloze", prompt: "Fill", sentence: "Der ___ bellt.", card_ids: [], distractors: []},
+                {id: "w1", type: "word_tiles", prompt: "Order", tiles: ["der", "Hund"], card_ids: [], distractors: []},
+                {id: "f1", type: "free_text", prompt: "Übersetze: el coche rojo", card_ids: [], distractors: []},
+            ] as ContentLessonExercise[],
+            DEFAULT_EXERCISE_GEN_CONFIG.types,
+        );
+        expect(rowText("z1")).toBe("Der ___ bellt.");
+        expect(rowText("w1")).toBe("der Hund");
+        expect(rowText("f1")).toBe("Übersetze: el coche rojo");
     });
 });
