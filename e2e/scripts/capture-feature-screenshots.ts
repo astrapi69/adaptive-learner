@@ -89,6 +89,14 @@ interface FeatureShot {
     /** The surface has no app shell and therefore no ``#root`` scroller
      *  (the static landing page); see ``SettleOptions.noAppShell``. */
     noAppShell?: boolean;
+    /** Scroll the pin to sit BELOW the sticky app header (``.app-nav``)
+     *  instead of under it. ``scrollIntoView({block: "start"})`` aligns the
+     *  element with the top of the ``#root`` scroller, which the header
+     *  overlays, so a pin on a small element (a checkbox row, a form field)
+     *  vanishes behind it (#3088). Opt-in on purpose: the existing shots pin
+     *  tall containers, where the hidden strip does not matter, and a global
+     *  offset would move every baseline. */
+    pinBelowHeader?: boolean;
 }
 
 /** Open ``/content`` on a given tab and wait for the hub shell. */
@@ -1224,8 +1232,21 @@ const FEATURES: FeatureShot[] = [
     // --- Post-answer explanation (#2991) --------------------------------
     {path: "exercise-explanation/falsche-antwort", setup: gotoExerciseExplanation, pinTo: "exercise-explanation"},
     // --- Explanation authoring: assistant opt-in + editor field (#2992) --
-    {path: "create-lesson/erklaerungen-opt-in", setup: gotoBookExplanationsOptIn, pinTo: "book-explanations-field"},
-    {path: "exercise-explanation/editor-feld", setup: gotoExerciseEditorExplanation, pinTo: "create-lesson-step-3"},
+    // #3088: both motifs are small elements, so the pin sits on the block
+    // ABOVE them (type selection / the field's own label) and clears the
+    // sticky header; the previous pins put the motif behind the header.
+    {
+        path: "create-lesson/erklaerungen-opt-in",
+        setup: gotoBookExplanationsOptIn,
+        pinTo: "assistant-type-selector",
+        pinBelowHeader: true,
+    },
+    {
+        path: "exercise-explanation/editor-feld",
+        setup: gotoExerciseEditorExplanation,
+        pinToSelector: 'label:has(> textarea[data-testid$="-explanation"])',
+        pinBelowHeader: true,
+    },
 
     // --- GitHub export (desktop dialog) ---------------------------------
     {path: "github-export/share-dialog", setup: gotoGithubExport, desktopOnly: true},
@@ -1384,9 +1405,14 @@ for (const feature of FEATURES) {
                   ? page.getByTestId(feature.pinTo)
                   : null;
             if (pin) {
-                await pin
-                    .first()
-                    .evaluate((el) => el.scrollIntoView({block: "start"}));
+                await pin.first().evaluate((el, belowHeader) => {
+                    if (belowHeader) {
+                        const nav = document.querySelector(".app-nav");
+                        const navHeight = nav ? Math.round(nav.getBoundingClientRect().height) : 0;
+                        el.style.scrollMarginTop = `${navHeight}px`;
+                    }
+                    el.scrollIntoView({block: "start"});
+                }, feature.pinBelowHeader === true);
                 await page.waitForTimeout(100);
             }
             // Pass the snapshot name as an ARRAY of path segments, not a
