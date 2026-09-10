@@ -2694,8 +2694,13 @@ Click through once for EACH theme:
 - [ ] Safe-area insets respected
 - [ ] Mobile nav = hamburger drawer (the bottom tab bar was removed in
       #1512); drawer links 44px, closes after navigation
-- [ ] Known open issue #1569 (caret/touch offset by 1-2 lines in the
-      lesson flow): reproduce + add notes to the issue
+- [ ] Tap offset on the iPhone (#1569, fixed by #2984 + #3004, device
+      reading 7 on 2026-09-10): in a lesson focus a free-text field, type,
+      close the keyboard, tap the field again, then tap an MC tile. The
+      caret sits in the field and every tap hits the element under the
+      finger. On a regression: Settings > Diagnostics & Support > "Tap &
+      viewport probe" on, mark the mis-tap with "Daneben!", "Werte
+      kopieren", and attach the protocol to the reopened issue #1569.
 
 #### Theory read-aloud on iOS: long text (#1928) - MANDATORY
 

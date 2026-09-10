@@ -2877,8 +2877,14 @@ Für JEDES Theme einmal durchklicken:
 - [ ] Safe-Area Insets respektiert
 - [ ] Mobile Nav = Hamburger-Drawer (Bottom Tab Bar wurde in #1512
       entfernt); Drawer-Links 44px, schliesst nach Navigation
-- [ ] Bekanntes offenes Issue #1569 (Caret/Touch 1-2 Zeilen versetzt
-      im Lesson-Flow): reproduzieren + Notizen ans Issue
+- [ ] Tipp-Versatz auf dem iPhone (#1569, behoben mit #2984 + #3004,
+      Ablesung 7 vom 2026-09-10): in einer Lektion ein Freitextfeld
+      fokussieren, tippen, Tastatur schliessen, erneut ins Feld tippen,
+      danach eine MC-Kachel tippen. Caret sitzt im Feld, jeder Tipp trifft
+      das Element unter dem Finger. Bei Rückfall: Einstellungen >
+      Diagnose & Support > "Tipp- und Viewport-Sonde" einschalten, den
+      Fehltipp mit "Daneben!" markieren, "Werte kopieren" und das
+      Protokoll ans wiedereröffnete Issue #1569.
 
 #### Theorie-Vorlesen auf iOS: langer Text (#1928) - PFLICHT
 
