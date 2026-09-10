@@ -957,7 +957,7 @@ async function gotoUpdateAvailableRow(page: Page): Promise<{bump: () => void} | 
     await page.evaluate(() => localStorage.removeItem("adaptive-learner.content_view_mode"));
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-list-view")).toBeVisible({timeout: 15_000});
-    await expect(page.getByTestId(`content-set-${UPDATE_SET_ID}-update`)).toBeVisible({
+    await expect(page.getByTestId(`content-list-set-${UPDATE_SET_ID}-update-button`)).toBeVisible({
         timeout: 15_000,
     });
     return repo;
@@ -975,7 +975,7 @@ async function gotoHeldBackToast(page: Page): Promise<boolean> {
     await expect(page.getByText(/Zurückgehalten, weil dein Fortschritt/)).toBeVisible({
         timeout: 20_000,
     });
-    await expect(page.getByTestId(`content-set-${UPDATE_SET_ID}-update`)).toBeVisible();
+    await expect(page.getByTestId(`content-list-set-${UPDATE_SET_ID}-update-button`)).toBeVisible();
     return true;
 }
 
@@ -984,12 +984,12 @@ const FEATURES: FeatureShot[] = [
     {
         path: "content-updates/listenansicht-aktualisierung",
         setup: gotoListUpdateRow,
-        pinTo: `content-set-${UPDATE_SET_ID}-update`,
+        pinTo: `content-list-set-${UPDATE_SET_ID}-update-button`,
     },
     {
         path: "content-updates/zurueckgehalten-toast",
         setup: gotoHeldBackToast,
-        pinTo: `content-set-${UPDATE_SET_ID}-update`,
+        pinTo: `content-list-set-${UPDATE_SET_ID}-update-button`,
         keepsToast: true,
     },
     // --- AI check: apply suggestions, review step (AIV-07, #3060) ---------
