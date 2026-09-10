@@ -3447,6 +3447,11 @@
       "continue": "Devam et"
     },
     "exercises": {
+      "summary": {
+        "pairs": "{n} çift",
+        "images": "{n} görsel",
+        "options": "{n} cevap seçeneği"
+      },
       "heading": "Alıştırma oluştur",
       "count_label": "Alıştırma sayısı",
       "types_label": "Alıştırma türleri",

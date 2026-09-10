@@ -3170,6 +3170,10 @@ create_lesson:
     start_fresh: "Recommencer"
     continue: "Continuer"
   exercises:
+    summary:
+      pairs: "{n} paires"
+      images: "{n} images"
+      options: "{n} options de réponse"
     heading: "Générer des exercices"
     count_label: "Nombre d'exercices"
     types_label: "Types d'exercices"

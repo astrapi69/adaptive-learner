@@ -3447,6 +3447,11 @@
       "continue": "Lanjutkan"
     },
     "exercises": {
+      "summary": {
+        "pairs": "{n} pasangan",
+        "images": "{n} gambar",
+        "options": "{n} pilihan jawaban"
+      },
       "heading": "Buat latihan",
       "count_label": "Jumlah latihan",
       "types_label": "Jenis latihan",

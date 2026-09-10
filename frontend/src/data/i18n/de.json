@@ -3447,6 +3447,11 @@
       "continue": "Fortsetzen"
     },
     "exercises": {
+      "summary": {
+        "pairs": "{n} Paare",
+        "images": "{n} Bilder",
+        "options": "{n} Antwortoptionen"
+      },
       "heading": "Übungen erstellen",
       "count_label": "Anzahl der Übungen",
       "types_label": "Übungstypen",

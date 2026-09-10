@@ -3447,6 +3447,11 @@
       "continue": "계속"
     },
     "exercises": {
+      "summary": {
+        "pairs": "{n}개의 쌍",
+        "images": "{n}개의 이미지",
+        "options": "{n}개의 답 선택지"
+      },
       "heading": "연습 생성",
       "count_label": "연습 개수",
       "types_label": "연습 유형",
