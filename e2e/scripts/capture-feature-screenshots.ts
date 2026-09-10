@@ -207,6 +207,14 @@ async function gotoExerciseExplanation(page: Page): Promise<boolean> {
     await page.getByTestId("content-repo-url").fill(`https://github.com/${EXPLANATION_REPO}`);
     await page.getByTestId("content-repo-connect").click();
     await expect(page.getByTestId("content-repo-result")).toContainText(/passed|erfolgreich/i);
+    // The content hub defaults to the LIST view (#1257); the tree with the
+    // per-set "Öffnen" button only renders in grid mode, so seed the view
+    // pref before the navigation, as ``openFirstBundledLesson`` does. The
+    // connected set sits in its language group with the button in view; the
+    // "other" toggle + action menu of the bundled opener are not needed.
+    await page.addInitScript(() => {
+        localStorage.setItem("adaptive-learner.content_view_mode", "grid");
+    });
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
     const open = page.getByTestId(`content-set-${EXPLANATION_SET_ID}-open`);
