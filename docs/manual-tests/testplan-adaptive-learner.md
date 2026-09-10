@@ -1776,9 +1776,12 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       "Aktualisierung verfügbar" und wird einzeln über den Zeilen-Knopf
       bestätigt. **Listenansicht (#3081):** in der Listenansicht (Umschalter
       rechts über der Liste) zeigt die Zeile des Sets den Marker
-      "Aktualisierung verfügbar" (ab Tablet-Breite) und einen
-      Download-Icon-Knopf (`content-list-set-<id>-update-button`, Tooltip
-      "Aktualisieren"); Klick öffnet bei einem Breaking-Update denselben
+      "Aktualisierung verfügbar" und einen Download-Icon-Knopf
+      (`content-list-set-<id>-update-button`, Tooltip "Aktualisieren"); auf
+      dem Telefon (unter 640 px) rutschen Marker und Knopf als Gruppe in eine
+      eigene Zeile unter den Titel (rechtsbündig, #3092), der Titel behält
+      dieselbe Breite wie ohne Aktualisierung; Klick öffnet bei einem
+      Breaking-Update denselben
       #2128-Schutzdialog wie der Kachel-Knopf, sonst wird direkt
       aktualisiert; aktuelle Sets zeigen weder Marker noch Knopf. **Nach dem
       Anwenden (#2985):** die Aktualisierung(en)
