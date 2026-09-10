@@ -1654,9 +1654,18 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       then ONE summary toast "N sets updated." (no per-set toast). With
       nothing pending: toast "All sets are up to date.", no download. A
       breaking update (#2128, progress affected) is NOT applied by the
-      bulk run: info toast "N updates were held back …", the set keeps
+      bulk run: info toast "Held back because your progress would be
+      affected: <set title>. Confirm each update with the set's Update
+      button." (#3081: names EVERY held set by title, several separated by
+      commas, and stays until dismissed via its X), the set keeps
       "Update available" and is confirmed individually via its row
-      button. **After applying (#2985):** apply
+      button. **List view (#3081):** in the list view (toggle at the top
+      right of the list) the set's row shows the "Update available" marker
+      (from tablet width) and a download-icon button
+      (`content-list-set-<id>-update-button`, tooltip "Update"); a click
+      opens the same #2128 guard dialog as the card button for a breaking
+      update, otherwise the update is applied directly; up-to-date sets show
+      neither marker nor button. **After applying (#2985):** apply
       the update(s) on `/content` (header button, row button, or sync the
       repo source) → the badge's
       count drops **immediately, without a reload**; once every update is

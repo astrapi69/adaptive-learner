@@ -33,9 +33,15 @@ vi.mock("./ContentSetListView", async (importOriginal) => {
         await importOriginal<typeof import("./ContentSetListView")>();
     return {
         setSelectionKey: actual.setSelectionKey,
-        default: () => <div data-testid="list-stub" />,
+        default: (props: {onUpdate?: unknown}) => {
+            listProps.onUpdate = props.onUpdate;
+            return <div data-testid="list-stub" />;
+        },
     };
 });
+
+/** The props the list stub last received (#3081 wiring assertion). */
+const listProps: {onUpdate?: unknown} = {};
 
 vi.mock("./BulkActionBar", () => ({
     default: ({count}: {count: number}) => (
@@ -62,6 +68,9 @@ function selectionStub(
     } as unknown as ReturnType<typeof useSetSelection>;
 }
 
+/** The grid row's Update/Download handler the panel forwards to the list. */
+const rowDownload = vi.fn();
+
 function renderPanel(
     props: Partial<ComponentProps<typeof ContentBrowsePanel>> = {},
 ) {
@@ -76,7 +85,9 @@ function renderPanel(
         onBulkDelete: vi.fn(),
         onSetStatus: vi.fn(),
         onDeleteSet: vi.fn(),
-        treeProps: {} as unknown as ComponentProps<typeof ContentTree>,
+        treeProps: {setRow: {onDownload: rowDownload}} as unknown as ComponentProps<
+            typeof ContentTree
+        >,
     };
     const merged = {...defaults, ...props};
     return {...render(<ContentBrowsePanel {...merged} />), props: merged};
@@ -103,6 +114,11 @@ describe("ContentBrowsePanel", () => {
 
         renderPanel({viewMode: "list"});
         expect(screen.getByTestId("list-stub")).toBeInTheDocument();
+    });
+
+    it("hands the grid row's download path to the list view as onUpdate (#3081)", () => {
+        renderPanel({viewMode: "list"});
+        expect(listProps.onUpdate).toBe(rowDownload);
     });
 
     it("select-all covers the visible sets and the bulk bar sees the count (#1351)", () => {

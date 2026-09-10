@@ -2937,7 +2937,6 @@
     "toast": {
       "downloaded": "Set downloaded and ready to use.",
       "updated_all": "{n} sets updated.",
-      "updates_held": "{n} updates were held back because they would affect your progress. Confirm each one with its Update button.",
       "updates_held_named": "Held back because your progress would be affected: {titles}. Confirm each update with the set's Update button.",
       "all_up_to_date": "All sets are up to date."
     },

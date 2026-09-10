@@ -2713,7 +2713,6 @@ content:
   toast:
     downloaded: "Conjunto transferido e pronto a usar."
     updated_all: "{n} conjuntos atualizados."
-    updates_held: "{n} atualizações foram retidas porque afetariam o teu progresso. Confirma-as uma a uma com o botão Atualizar do conjunto."
     updates_held_named: "Retidas porque afetariam o teu progresso: {titles}. Confirma cada atualização com o botão Atualizar do conjunto."
     all_up_to_date: "Todos os conjuntos estão atualizados."
   warning:
