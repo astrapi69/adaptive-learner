@@ -80,6 +80,9 @@ interface FeatureShot {
     /** Pin the scroll position to this testid AFTER settleForScreenshot
      *  (fonts settle last and reflow the page a few px, #1540/#1567). */
     pinTo?: string;
+    /** Like ``pinTo``, but a CSS selector instead of an exact testid - for
+     *  surfaces whose testid carries a per-instance prefix (#3080). */
+    pinToSelector?: string;
     /** The shot DELIBERATELY shows a persistent toast (#3081); opts out of
      *  the #2721 transient-toast wait in settleForScreenshot. */
     keepsToast?: boolean;
@@ -617,8 +620,17 @@ async function gotoTokenRoleField(page: Page): Promise<boolean> {
         await page.getByTestId("create-lesson-draft-fresh").click();
     }
     await page.getByTestId("create-lesson-title").fill("Tiere");
+    // The suggester knows only closed word classes PER LANGUAGE and reads
+    // the card-front language from the target language (#3080). Pin it to
+    // German, otherwise the default target treats "der"/"dem" as unknown
+    // and only "in" (also an English preposition) gets a row.
+    await page.getByTestId("create-lesson-target-lang").click();
+    await page.getByRole("option", {name: "German", exact: true}).click();
+    await expect(page.getByTestId("create-lesson-target-lang")).toContainText(
+        "German",
+    );
     await page.getByTestId("create-lesson-next").click();
-    // Step 2: one card whose front carries an article and a preposition,
+    // Step 2: one card whose front carries two articles and a preposition,
     // so the suggestion has something honest to find.
     await page.getByTestId("card-front-input").fill("der Hund in dem Garten");
     await page.getByTestId("card-back-input").fill("the dog in the garden");
@@ -630,9 +642,12 @@ async function gotoTokenRoleField(page: Page): Promise<boolean> {
         .first();
     await expect(suggest).toBeVisible({timeout: 20_000});
     await suggest.click();
-    await expect(
-        page.locator('[data-testid$="-token-role-row"]').first(),
-    ).toBeVisible({timeout: 20_000});
+    // "der" (article), "in" (preposition), "dem" (article): all three rows,
+    // the same expectation token-role-suggest.test.ts pins for this front.
+    await expect(page.locator('[data-testid$="-token-role-row"]')).toHaveCount(
+        3,
+        {timeout: 20_000},
+    );
     return true;
 }
 
@@ -1257,7 +1272,9 @@ const FEATURES: FeatureShot[] = [
     {
         path: "create-lesson/token-rollen",
         setup: gotoTokenRoleField,
-        pinTo: "token-role-field",
+        // The field's testid is ``card-edit-<id>-token-roles``, prefixed per
+        // card, so an exact ``pinTo`` can never match (#3080).
+        pinToSelector: '[data-testid$="-token-roles"]',
     },
 
     // --- Mobile bottom tab bar, opt-in (#2786 restore of #1512) ---------
@@ -1345,9 +1362,13 @@ for (const feature of FEATURES) {
             const ready = await feature.setup(page);
             test.skip(!ready, `Could not reach ${feature.path} deterministically`);
             await settleForScreenshot(page, {allowPersistentToast: feature.keepsToast});
-            if (feature.pinTo) {
-                await page
-                    .getByTestId(feature.pinTo)
+            const pin = feature.pinToSelector
+                ? page.locator(feature.pinToSelector)
+                : feature.pinTo
+                  ? page.getByTestId(feature.pinTo)
+                  : null;
+            if (pin) {
+                await pin
                     .first()
                     .evaluate((el) => el.scrollIntoView({block: "start"}));
                 await page.waitForTimeout(100);
