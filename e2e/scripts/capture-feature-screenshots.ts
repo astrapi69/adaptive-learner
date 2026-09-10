@@ -604,6 +604,35 @@ async function gotoSyncDesktopOnlyNotice(page: Page): Promise<boolean> {
  * Open the Create-Lesson book-text step and upload a small Markdown book
  * so the #1927 section picker (chapter select + preview + apply) renders.
  */
+async function gotoTokenRoleField(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/create-lesson");
+    await expect(page.getByTestId("create-lesson-page")).toBeVisible({
+        timeout: 20_000,
+    });
+    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
+        await page.getByTestId("create-lesson-draft-fresh").click();
+    }
+    await page.getByTestId("create-lesson-title").fill("Tiere");
+    await page.getByTestId("create-lesson-next").click();
+    // Step 2: one card whose front carries an article and a preposition,
+    // so the suggestion has something honest to find.
+    await page.getByTestId("card-front-input").fill("der Hund in dem Garten");
+    await page.getByTestId("card-back-input").fill("the dog in the garden");
+    await page.getByTestId("card-add-button").click();
+    const editButton = page.locator('[data-testid^="card-edit-"]').first();
+    await editButton.click();
+    const suggest = page
+        .locator('[data-testid$="-token-roles-suggest"]')
+        .first();
+    await expect(suggest).toBeVisible({timeout: 20_000});
+    await suggest.click();
+    await expect(
+        page.locator('[data-testid$="-token-role-row"]').first(),
+    ).toBeVisible({timeout: 20_000});
+    return true;
+}
+
 async function gotoBookUploadPicker(page: Page): Promise<boolean> {
     await seedLearner(page);
     await page.goto("/create-lesson");
@@ -1085,6 +1114,13 @@ const FEATURES: FeatureShot[] = [
         path: "create-lesson/buch-upload-picker",
         setup: gotoBookUploadPicker,
         pinTo: "book-file-upload",
+    },
+
+    // --- Token-role annotation on a card (#3072) ------------------------
+    {
+        path: "create-lesson/token-rollen",
+        setup: gotoTokenRoleField,
+        pinTo: "token-role-field",
     },
 
     // --- Mobile bottom tab bar, opt-in (#2786 restore of #1512) ---------

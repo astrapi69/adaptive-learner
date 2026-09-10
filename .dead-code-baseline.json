@@ -612,8 +612,6 @@
     "frontend/src/storage/sync/sync-tables.ts::APPEND_ONLY_TABLES::export",
     "frontend/src/storage/types/content/content.ts::ContentCardMediaType::type",
     "frontend/src/storage/types/content/content.ts::ContentDownloadProgress::type",
-    "frontend/src/storage/types/content/content.ts::ContentLessonCardTokenRole::type",
-    "frontend/src/storage/types/content/content.ts::ContentLessonCardTokenRoleName::type",
     "frontend/src/storage/types/content/content.ts::ContentLessonResource::type",
     "frontend/src/storage/types/core/session.ts::StreamMessageHandlers::type",
     "frontend/src/storage/types/core/settings.ts::ApiKeyTestKind::type",

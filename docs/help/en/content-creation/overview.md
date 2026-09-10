@@ -87,6 +87,33 @@ A ready-made **starter kit** to study and copy is
 
 ---
 
+## Token roles: better cloze exercises
+
+While editing a card you can mark individual words of the front with
+their grammatical role: article, noun, verb, adjective, preposition,
+gender marker or tense marker.
+
+The benefit shows up in the exercises. Without annotations a cloze
+exercise picks its blank by position; with them it picks a word whose
+role matches the mistake, and draws the distractors from that same role.
+An arbitrary blank becomes one that practises what actually went wrong.
+
+Two rules apply:
+
+- The word must appear in the front **exactly** like that, same casing.
+  Otherwise the exercise cannot find it later and the annotation would
+  have no effect, so the editor refuses such an entry.
+- A card carries at most ten roles.
+
+**Suggest roles** fills the list for you, but only with articles and
+prepositions. Those word classes are countable, so a match is a lookup
+rather than a guess. Nouns, verbs and adjectives are deliberately not
+suggested: a wrongly assigned role would be worse than none, because the
+exercise would then draw its distractors from the wrong word class. You
+add those yourself, and every suggestion can be changed or removed.
+
+---
+
 ## Sharing via pull request
 
 Sharing a lesson creates a real **pull request** (fork → commit →
