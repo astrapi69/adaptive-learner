@@ -540,19 +540,25 @@ export default function ExerciseGenerator({
     );
 }
 
-/** A short human description of an exercise for the preview row. */
-function describe(ex: ContentLessonExercise): string {
+type Translate = (key: string, fallback?: string) => string;
+
+/** A short human description of an exercise for the preview row. The
+ *  counted summaries go through the catalog (#3093); the content-bearing
+ *  ones (a sentence, the tiles, the prompt) are the exercise's own text. */
+function describeExercise(ex: ContentLessonExercise, t: Translate): string {
+    const counted = (key: string, fallback: string, n: number) =>
+        t(`create_lesson.exercises.summary.${key}`, fallback).replace("{n}", String(n));
     switch (ex.type) {
         case "matching":
-            return `${ex.pairs?.length ?? 0} pairs`;
+            return counted("pairs", "{n} pairs", ex.pairs?.length ?? 0);
         case "cloze":
             return ex.sentence ?? "";
         case "word_tiles":
             return (ex.tiles ?? []).join(" ");
         case "picture_choice":
-            return `${ex.images?.length ?? 0} images`;
+            return counted("images", "{n} images", ex.images?.length ?? 0);
         case "multiple_choice":
-            return `${ex.options?.length ?? 0} options`;
+            return counted("options", "{n} answer options", ex.options?.length ?? 0);
         case "free_text":
         default:
             return ex.prompt;
@@ -669,7 +675,7 @@ function SortableExerciseRow({
             <span className="exercise-row-type shrink-0 rounded-md bg-bg-elevated px-2 py-0.5 text-xs font-medium text-fg-secondary">
                 {t(exerciseTypeLabelKey(exercise.type), exercise.type)}
             </span>
-            <span className="exercise-row-desc muted min-w-0 flex-1 truncate text-sm text-fg-muted">{describe(exercise)}</span>
+            <span className="exercise-row-desc muted min-w-0 flex-1 truncate text-sm text-fg-muted">{describeExercise(exercise, t)}</span>
             <button
                 type="button"
                 className="card-row-action flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-bg-elevated hover:text-fg-primary"
