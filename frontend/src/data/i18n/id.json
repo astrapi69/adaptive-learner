@@ -2938,6 +2938,7 @@
       "downloaded": "Set diunduh dan siap digunakan.",
       "updated_all": "{n} set diperbarui.",
       "updates_held": "{n} pembaruan ditahan karena akan memengaruhi kemajuanmu. Konfirmasi satu per satu dengan tombol Perbarui pada set.",
+      "updates_held_named": "Ditahan karena akan memengaruhi kemajuanmu: {titles}. Konfirmasi setiap pembaruan dengan tombol Perbarui pada set.",
       "all_up_to_date": "Semua set sudah mutakhir."
     },
     "warning": {

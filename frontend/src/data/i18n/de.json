@@ -2938,6 +2938,7 @@
       "downloaded": "Set wurde heruntergeladen und ist einsatzbereit.",
       "updated_all": "{n} Sets aktualisiert.",
       "updates_held": "{n} Aktualisierungen wurden zurückgehalten, weil sie deinen Fortschritt betreffen würden. Bestätige sie einzeln über den Aktualisieren-Knopf des Sets.",
+      "updates_held_named": "Zurückgehalten, weil dein Fortschritt betroffen wäre: {titles}. Bestätige jede Aktualisierung über den Aktualisieren-Knopf des Sets.",
       "all_up_to_date": "Alle Sets sind aktuell."
     },
     "warning": {

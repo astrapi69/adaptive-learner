@@ -2725,6 +2725,7 @@ content:
     downloaded: "세트를 다운로드했으며 사용할 준비가 되었습니다."
     updated_all: "세트 {n}개를 업데이트했습니다."
     updates_held: "업데이트 {n}개는 학습 진행에 영향을 주므로 보류되었습니다. 각 세트의 업데이트 버튼으로 하나씩 확인하세요."
+    updates_held_named: "학습 진행에 영향을 주므로 보류되었습니다: {titles}. 각 세트의 업데이트 버튼으로 하나씩 확인하세요."
     all_up_to_date: "모든 세트가 최신 상태입니다."
   warning:
     no_lessons_in_set: "이 세트에는 아직 레슨이 없습니다."
