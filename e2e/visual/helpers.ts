@@ -376,7 +376,18 @@ export async function waitForStableLayout(
  * any animation/transition durations, and allow one reflow after the
  * font-swap (the gap between fallback and loaded font is a flake source).
  */
-export async function settleForScreenshot(page: Page): Promise<void> {
+/** Options for {@link settleForScreenshot}. */
+export interface SettleOptions {
+    /** The surface DELIBERATELY baselines a persistent toast (#3081: the
+     *  held-back-update call to action). Skips the transient-toast wait
+     *  instead of racing it; every other surface keeps the #2721 cap. */
+    allowPersistentToast?: boolean;
+}
+
+export async function settleForScreenshot(
+    page: Page,
+    options: SettleOptions = {},
+): Promise<void> {
     await page.addStyleTag({
         content:
             "*, *::before, *::after { animation-duration: 0s !important;" +
@@ -427,6 +438,7 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     // run its own lifetime; a genuinely persistent toast still trips
     // the timeout below.
     await page.mouse.move(0, 0);
+    if (options.allowPersistentToast) return;
     try {
         await page.waitForFunction(
             () => document.querySelectorAll(".Toastify__toast").length === 0,

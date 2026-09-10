@@ -76,7 +76,11 @@ function renderPanel(
         onBulkDelete: vi.fn(),
         onSetStatus: vi.fn(),
         onDeleteSet: vi.fn(),
-        treeProps: {} as unknown as ComponentProps<typeof ContentTree>,
+        // #3081 - the list view forwards the tile view's download path;
+        // the rest of the tree props stays out of this panel's scope.
+        treeProps: {
+            setRow: {perSetState: {}, online: true, onDownload: vi.fn()},
+        } as unknown as ComponentProps<typeof ContentTree>,
     };
     const merged = {...defaults, ...props};
     return {...render(<ContentBrowsePanel {...merged} />), props: merged};

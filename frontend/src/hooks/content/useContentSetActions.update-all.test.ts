@@ -128,7 +128,12 @@ describe("handleUpdateAll (#3001)", () => {
         // The guard dialog is NOT opened by the bulk path: the learner
         // confirms held updates one by one via the row button.
         expect(result.current.updateGuard).toBeNull();
-        expect(notify.info).toHaveBeenCalledWith(expect.stringContaining("1"));
+        // #3081: the toast names the held-back set and stays open (a call
+        // to action, not a status flash).
+        expect(notify.info).toHaveBeenCalledWith(
+            expect.stringContaining("Japanisch A1"),
+            expect.objectContaining({autoClose: false}),
+        );
     });
 
     it("counts a failed download and still applies the rest", async () => {

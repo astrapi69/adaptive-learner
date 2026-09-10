@@ -8,7 +8,9 @@
  *
  * Sequential on purpose: the peek + download per set is the expensive part
  * and a parallel burst trips the source's rate limit (#1441). One summary
- * toast per outcome class instead of one toast per set.
+ * toast per outcome class instead of one toast per set. The held-back
+ * toast names the sets and stays open (#3081): it is a call to action the
+ * learner has to find the row for, not a status flash.
  *
  * @example
  * const { updatingAll, handleUpdateAll } = useUpdateAllSets({ applyDownload });
@@ -27,6 +29,12 @@ import { notify } from "../../../utils/notify";
 
 type UpdateOutcome = "applied" | "held" | "failed";
 type OutcomeCounts = Record<UpdateOutcome, number>;
+
+interface UpdateReport {
+  counts: OutcomeCounts;
+  /** Titles of the sets the #2128 guard held back, in list order. */
+  heldTitles: string[];
+}
 
 interface UseUpdateAllSetsDeps {
   /** The per-set download/update path; ``quiet`` suppresses its own toasts. */
@@ -53,7 +61,7 @@ export function useUpdateAllSets({ applyDownload }: UseUpdateAllSetsDeps) {
     return ok ? "applied" : "failed";
   };
 
-  const report = (counts: OutcomeCounts) => {
+  const report = ({ counts, heldTitles }: UpdateReport) => {
     const withCount = (key: string, fallback: string, n: number) =>
       t(key, fallback).replace("{n}", String(n));
     if (counts.applied > 0) {
@@ -62,13 +70,13 @@ export function useUpdateAllSets({ applyDownload }: UseUpdateAllSetsDeps) {
         { passThrough: true },
       );
     }
-    if (counts.held > 0) {
+    if (heldTitles.length > 0) {
       notify.info(
-        withCount(
-          "content.toast.updates_held",
-          "{n} updates were held back because they would affect your progress. Confirm each one with its Update button.",
-          counts.held,
-        ),
+        t(
+          "content.toast.updates_held_named",
+          "Held back because your progress would be affected: {titles}. Confirm each update with the set's Update button.",
+        ).replace("{titles}", heldTitles.join(", ")),
+        { autoClose: false },
       );
     }
     if (counts.failed > 0) {
@@ -85,13 +93,18 @@ export function useUpdateAllSets({ applyDownload }: UseUpdateAllSetsDeps) {
       return;
     }
     const counts: OutcomeCounts = { applied: 0, held: 0, failed: 0 };
+    const heldTitles: string[] = [];
     setUpdatingAll(true);
     try {
-      for (const entry of pending) counts[await updateOne(entry)] += 1;
+      for (const entry of pending) {
+        const outcome = await updateOne(entry);
+        counts[outcome] += 1;
+        if (outcome === "held") heldTitles.push(entry.title);
+      }
     } finally {
       setUpdatingAll(false);
     }
-    report(counts);
+    report({ counts, heldTitles });
   };
 
   return { updatingAll, handleUpdateAll };

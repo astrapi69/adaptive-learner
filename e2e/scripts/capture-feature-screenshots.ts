@@ -80,6 +80,9 @@ interface FeatureShot {
     /** Pin the scroll position to this testid AFTER settleForScreenshot
      *  (fonts settle last and reflow the page a few px, #1540/#1567). */
     pinTo?: string;
+    /** The shot DELIBERATELY shows a persistent toast (#3081); opts out of
+     *  the #2721 transient-toast wait in settleForScreenshot. */
+    keepsToast?: boolean;
 }
 
 /** Open ``/content`` on a given tab and wait for the hub shell. */
@@ -854,7 +857,141 @@ async function gotoAiFixReview(page: Page): Promise<boolean> {
     return true;
 }
 
+/**
+ * Set update available + held back (#3001, #3081): a page.route-mocked
+ * content repo whose root manifest reports version 1.0.0 while the learner
+ * downloads and plays the set, then 1.1.0 with a RENAMED lesson file, so the
+ * learner's lesson progress would be orphaned and the #2128 guard holds the
+ * update back. No fixture on disk produces that state; the mock flips it.
+ */
+const UPDATE_REPO = "e2e/update-held-back";
+const UPDATE_SET_ID = "adjektivstellung-from-de";
+
+function mockUpdatableRepo(page: Page): {bump: () => void} {
+    const lesson = readFileSync(
+        join(__dirname, "..", "fixtures", "explanation-post-answer.lesson.json"),
+        "utf-8",
+    );
+    const state = {version: "1.0.0", file: "01-adjektivstellung.json"};
+    const rootManifest = () =>
+        [
+            'schema_version: "1.13"',
+            "sets:",
+            `  - id: ${UPDATE_SET_ID}`,
+            '    title: "Adjektivstellung"',
+            "    target_language: es",
+            "    source_language: de",
+            "    level: A1",
+            `    version: "${state.version}"`,
+            "    lesson_count: 1",
+            "    domain: language",
+            "    path: sets/es/adjektivstellung",
+            "",
+        ].join("\n");
+    const setManifest = () => `metadata:\n  lessons:\n    - "${state.file}"\n`;
+    const emptyIndex = 'schema_version: "1.13"\nsets: []\n';
+    const emptyOfficial = (route: Route) => {
+        const url = route.request().url();
+        if (url.endsWith("/recommended-repos.json")) {
+            return route.fulfill({status: 200, body: '{"repos":[]}'});
+        }
+        if (url.endsWith("/books.yaml")) {
+            return route.fulfill({status: 200, body: "domains: {}\n"});
+        }
+        if (url.endsWith("/manifest.yaml")) {
+            return route.fulfill({status: 200, body: emptyIndex});
+        }
+        return route.fulfill({status: 404, body: ""});
+    };
+    void page.route("**/raw.githubusercontent.com/**", emptyOfficial);
+    void page.route("**/adaptive-learner-content/**", emptyOfficial);
+    void page.route(`**/raw.githubusercontent.com/${UPDATE_REPO}/main/**`, (route) => {
+        const url = route.request().url();
+        if (url.endsWith("/main/manifest.yaml")) {
+            return route.fulfill({status: 200, body: rootManifest()});
+        }
+        if (url.endsWith("/sets/es/adjektivstellung/manifest.yaml")) {
+            return route.fulfill({status: 200, body: setManifest()});
+        }
+        if (url.endsWith(`/${state.file}`)) {
+            return route.fulfill({status: 200, body: lesson});
+        }
+        return route.fulfill({status: 404, body: ""});
+    });
+    return {
+        bump: () => {
+            state.version = "1.1.0";
+            state.file = "01-adjektivstellung-v2.json";
+        },
+    };
+}
+
+/** Connect the mocked repo, download + play the set so progress exists,
+ *  then bump upstream and land on Meine Inhalte (list view) with the
+ *  "Update available" row. */
+async function gotoUpdateAvailableRow(page: Page): Promise<{bump: () => void} | null> {
+    const repo = mockUpdatableRepo(page);
+    await seedLearner(page);
+    await page.goto("/settings?tab=data");
+    await expect(page.getByTestId("content-repo-add")).toBeVisible({timeout: 60_000});
+    await page.getByTestId("content-repo-url").fill(`https://github.com/${UPDATE_REPO}`);
+    await page.getByTestId("content-repo-connect").click();
+    await expect(page.getByTestId("content-repo-result")).toContainText(/passed|erfolgreich/i);
+    // The Open button lives in the tile view only; the list view (default
+    // since #1257) links to the set page. Play through the tiles, then
+    // drop the preference so the shot shows the default list view.
+    await page.evaluate(() => localStorage.setItem("adaptive-learner.content_view_mode", "grid"));
+    await page.goto("/content?tab=my");
+    await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
+    const open = page.getByTestId(`content-set-${UPDATE_SET_ID}-open`);
+    await expect(open).toBeVisible({timeout: 15_000});
+    await open.click();
+    await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 15_000});
+    await page.getByTestId("lesson-next").click();
+    await expect(page.getByTestId("multiple-choice-exercise")).toBeVisible({timeout: 10_000});
+    await page.getByRole("radio", {name: "el rojo coche"}).check();
+    const check = page.getByTestId("lesson-check");
+    await expect(check).toBeEnabled({timeout: 5_000});
+    await check.click();
+    repo.bump();
+    await page.evaluate(() => localStorage.removeItem("adaptive-learner.content_view_mode"));
+    await page.goto("/content?tab=my");
+    await expect(page.getByTestId("content-list-view")).toBeVisible({timeout: 15_000});
+    await expect(page.getByTestId(`content-set-${UPDATE_SET_ID}-update`)).toBeVisible({
+        timeout: 15_000,
+    });
+    return repo;
+}
+
+async function gotoListUpdateRow(page: Page): Promise<boolean> {
+    return (await gotoUpdateAvailableRow(page)) !== null;
+}
+
+/** Press the header "Aktualisieren": the update is held back (#2128) and
+ *  the toast names the set (#3081). */
+async function gotoHeldBackToast(page: Page): Promise<boolean> {
+    if (!(await gotoUpdateAvailableRow(page))) return false;
+    await page.getByTestId("content-refresh").click();
+    await expect(page.getByText(/Zurückgehalten, weil dein Fortschritt/)).toBeVisible({
+        timeout: 20_000,
+    });
+    await expect(page.getByTestId(`content-set-${UPDATE_SET_ID}-update`)).toBeVisible();
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- Set update available in the list view + held-back toast (#3081) --
+    {
+        path: "content-updates/listenansicht-aktualisierung",
+        setup: gotoListUpdateRow,
+        pinTo: `content-set-${UPDATE_SET_ID}-update`,
+    },
+    {
+        path: "content-updates/zurueckgehalten-toast",
+        setup: gotoHeldBackToast,
+        pinTo: `content-set-${UPDATE_SET_ID}-update`,
+        keepsToast: true,
+    },
     // --- AI check: apply suggestions, review step (AIV-07, #3060) ---------
     {
         path: "ai-check/vorschlaege-uebernehmen",
@@ -1207,7 +1344,7 @@ for (const feature of FEATURES) {
             await setTheme(page, DEFAULT_THEME);
             const ready = await feature.setup(page);
             test.skip(!ready, `Could not reach ${feature.path} deterministically`);
-            await settleForScreenshot(page);
+            await settleForScreenshot(page, {allowPersistentToast: feature.keepsToast});
             if (feature.pinTo) {
                 await page
                     .getByTestId(feature.pinTo)
