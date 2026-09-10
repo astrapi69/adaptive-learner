@@ -86,6 +86,9 @@ interface FeatureShot {
     /** The shot DELIBERATELY shows a persistent toast (#3081); opts out of
      *  the #2721 transient-toast wait in settleForScreenshot. */
     keepsToast?: boolean;
+    /** The surface has no app shell and therefore no ``#root`` scroller
+     *  (the static landing page); see ``SettleOptions.noAppShell``. */
+    noAppShell?: boolean;
 }
 
 /** Open ``/content`` on a given tab and wait for the hub shell. */
@@ -204,6 +207,14 @@ async function gotoExerciseExplanation(page: Page): Promise<boolean> {
     await page.getByTestId("content-repo-url").fill(`https://github.com/${EXPLANATION_REPO}`);
     await page.getByTestId("content-repo-connect").click();
     await expect(page.getByTestId("content-repo-result")).toContainText(/passed|erfolgreich/i);
+    // The content hub defaults to the LIST view (#1257); the tree with the
+    // per-set "Öffnen" button only renders in grid mode, so seed the view
+    // pref before the navigation, as ``openFirstBundledLesson`` does. The
+    // connected set sits in its language group with the button in view; the
+    // "other" toggle + action menu of the bundled opener are not needed.
+    await page.addInitScript(() => {
+        localStorage.setItem("adaptive-learner.content_view_mode", "grid");
+    });
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
     const open = page.getByTestId(`content-set-${EXPLANATION_SET_ID}-open`);
@@ -1065,6 +1076,7 @@ const FEATURES: FeatureShot[] = [
     // so the pinned app theme does not affect it.
     {
         path: "landing-page/de",
+        noAppShell: true,
         setup: async (p) => {
             await p.goto("/start/");
             return true;
@@ -1072,6 +1084,7 @@ const FEATURES: FeatureShot[] = [
     },
     {
         path: "landing-page/en",
+        noAppShell: true,
         setup: async (p) => {
             await p.goto("/start/en/");
             return true;
@@ -1361,7 +1374,10 @@ for (const feature of FEATURES) {
             await setTheme(page, DEFAULT_THEME);
             const ready = await feature.setup(page);
             test.skip(!ready, `Could not reach ${feature.path} deterministically`);
-            await settleForScreenshot(page, {allowPersistentToast: feature.keepsToast});
+            await settleForScreenshot(page, {
+                allowPersistentToast: feature.keepsToast,
+                noAppShell: feature.noAppShell,
+            });
             const pin = feature.pinToSelector
                 ? page.locator(feature.pinToSelector)
                 : feature.pinTo
