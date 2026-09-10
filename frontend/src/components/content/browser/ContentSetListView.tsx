@@ -8,28 +8,25 @@
  * show the title alone, since a source→target pair is not meaningful
  * there. On wider screens the row adds the level + lesson count.
  *
+ * A set with a pending update (#3081) is marked like the grid view marks
+ * it ("Update available") and carries the Update button IN the row, so
+ * the bulk-update hint's "confirm it with the set's Update button" points
+ * at something the learner can see without switching views.
+ *
  * The language-vs-knowledge decision reuses the shared
  * {@link isKnowledgeDomain} helper (DRY — same rule the exercise
  * renderers use), so the two surfaces can never drift. Each row links
  * to the single-set deep link ``/content/set/:setId``.
- *
- * A set with a pending update (#3081) shows the same "Update available"
- * badge as the tile view and an Update button on the tile view's own
- * download path (``onDownload``, with the #2128 guard), so the held-back
- * toast's "confirm it with the set's Update button" points at something in
- * the list view too.
  */
 
 import { Download } from "lucide-react";
 import { Link } from "react-router";
 
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { isKnowledgeDomain } from "../../../lib/exercises/knowledge-domain";
 import DownloadedAtReadout from "../../dev/DownloadedAtReadout";
-import type { DownloadState } from "./ContentSetRow";
 import SetActionsMenu from "./SetActionsMenu";
 import SetShareButton from "../share/SetShareButton";
 import type { ContentSetEntry, SetStatus } from "../../../storage/types";
@@ -56,14 +53,9 @@ interface ContentSetListViewProps extends SelectionProps {
   /** EXP-046 item 3 / #2654 — fork this set into a user-generated copy and
    *  open it in the editor (overflow menu). */
   onEditAsCopy?: (entry: ContentSetEntry) => void;
-  /** #3081 — the tile view's download/update path for a set with a
-   *  pending update. Omit to hide the row's Update button. */
-  onDownload?: (entry: ContentSetEntry) => void;
-  /** #3081 — per-set download state (``source#id``), disables the button
-   *  while a download runs. */
-  perSetState?: Record<string, DownloadState>;
-  /** #3081 — offline disables the Update button (same rule as the tile). */
-  online?: boolean;
+  /** #3081 — apply a pending update for one set (the grid row's Update
+   *  path, #2128 guard included). Omit to render no per-row Update button. */
+  onUpdate?: (entry: ContentSetEntry) => void;
 }
 
 /** Stable selection key for a set (source + id). */
@@ -74,15 +66,51 @@ export function setSelectionKey(entry: {
   return `${entry.source}#${entry.id}`;
 }
 
+/** The "Update available" marker + the per-row Update button (#3081). */
+function ContentSetListUpdate({
+  entry,
+  onUpdate,
+}: {
+  entry: ContentSetEntry;
+  onUpdate?: (entry: ContentSetEntry) => void;
+}) {
+  const { t } = useI18n();
+  if (!entry.update_available) return null;
+  const label = t("content.action.update", "Update");
+  return (
+    <>
+      <span
+        className="hidden shrink-0 text-xs font-semibold text-accent sm:inline"
+        data-testid={`content-list-set-${entry.id}-update`}
+      >
+        {t("content.status.update_available", "Update available")}
+      </span>
+      {onUpdate && (
+        <button
+          type="button"
+          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-app text-accent hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          aria-label={`${label}: ${entry.title}`}
+          title={label}
+          onClick={(event) => {
+            event.stopPropagation();
+            onUpdate(entry);
+          }}
+          data-testid={`content-list-set-${entry.id}-update-button`}
+        >
+          <Download size={18} aria-hidden="true" />
+        </button>
+      )}
+    </>
+  );
+}
+
 function ContentSetListRow({
   entry,
   onSetStatus,
   onDelete,
   onRestart,
   onEditAsCopy,
-  onDownload,
-  downloadState,
-  online,
+  onUpdate,
   selectable,
   selectedKeys,
   onToggleSelect,
@@ -92,19 +120,13 @@ function ContentSetListRow({
   onDelete?: (entry: ContentSetEntry) => void;
   onRestart?: (entry: ContentSetEntry) => void;
   onEditAsCopy?: (entry: ContentSetEntry) => void;
-  onDownload?: (entry: ContentSetEntry) => void;
-  downloadState: DownloadState;
-  online: boolean;
+  onUpdate?: (entry: ContentSetEntry) => void;
 } & SelectionProps) {
   const { t } = useI18n();
   const knowledge = isKnowledgeDomain(entry.domain, entry.source_language, entry.target_language);
-  const showUpdate = entry.update_available && onDownload !== undefined;
   return (
     <li>
-      {/* #3081 — flex-wrap + basis-40: on a phone the badge + Update button
-          drop to a second line instead of squeezing the title to nothing
-          (the #3027 reorder-row pattern). */}
-      <div className="flex flex-wrap items-center gap-1">
+      <div className="flex items-center gap-1">
         {selectable && (
           <label className="inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center">
             <span className="sr-only">
@@ -129,7 +151,7 @@ function ContentSetListRow({
             menu stay inside the viewport for EVERY title length. */}
         <Link
           to={`/content/set/${entry.id}`}
-          className="flex min-h-11 min-w-0 flex-1 basis-40 items-center gap-2 rounded-md px-2 py-1.5 text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-fg-primary hover:bg-[var(--bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           data-testid={`content-list-set-${entry.id}`}
         >
           <span className="min-w-0 flex-1 truncate font-medium" title={entry.title}>
@@ -152,31 +174,7 @@ function ContentSetListRow({
             {entry.lesson_count} {t("content.lessons", "lessons")}
           </span>
         </Link>
-        {entry.update_available && (
-          <span className="ml-auto flex shrink-0 items-center gap-1">
-            <span
-              className="content-set-update shrink-0"
-              data-testid={`content-set-${entry.id}-update`}
-            >
-              {t("content.status.update_available", "Update available")}
-            </span>
-            {showUpdate && (
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                className="shrink-0"
-                onClick={() => onDownload?.(entry)}
-                disabled={downloadState === "downloading" || !online}
-                title={!online ? t("pwa.action_unavailable", "Not available offline") : undefined}
-                data-testid={`content-set-${entry.id}-action`}
-              >
-                <Download size={14} aria-hidden="true" />
-                {t("content.action.update", "Update")}
-              </Button>
-            )}
-          </span>
-        )}
+        <ContentSetListUpdate entry={entry} onUpdate={onUpdate} />
         {/* #1572 — per-set Share (deep link + QR). */}
         <SetShareButton entry={entry} />
         {/* #1300 — per-set status + delete overflow menu (same component
@@ -209,9 +207,7 @@ export default function ContentSetListView({
   onDelete,
   onRestart,
   onEditAsCopy,
-  onDownload,
-  perSetState,
-  online = true,
+  onUpdate,
   selectable,
   selectedKeys,
   onToggleSelect,
@@ -226,9 +222,7 @@ export default function ContentSetListView({
           onDelete={onDelete}
           onRestart={onRestart}
           onEditAsCopy={onEditAsCopy}
-          onDownload={onDownload}
-          downloadState={perSetState?.[`${entry.source}#${entry.id}`] ?? "idle"}
-          online={online}
+          onUpdate={onUpdate}
           selectable={selectable}
           selectedKeys={selectedKeys}
           onToggleSelect={onToggleSelect}

@@ -2937,7 +2937,6 @@
     "toast": {
       "downloaded": "Set indirildi ve kullanıma hazır.",
       "updated_all": "{n} set güncellendi.",
-      "updates_held": "{n} güncelleme, ilerlemeni etkileyeceği için bekletildi. Her birini setin Güncelle düğmesiyle tek tek onayla.",
       "updates_held_named": "İlerlemeni etkileyeceği için bekletildi: {titles}. Her güncellemeyi setin Güncelle düğmesiyle onayla.",
       "all_up_to_date": "Tüm setler güncel."
     },

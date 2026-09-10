@@ -8,9 +8,7 @@
  *
  * Sequential on purpose: the peek + download per set is the expensive part
  * and a parallel burst trips the source's rate limit (#1441). One summary
- * toast per outcome class instead of one toast per set. The held-back
- * toast names the sets and stays open (#3081): it is a call to action the
- * learner has to find the row for, not a status flash.
+ * toast per outcome class instead of one toast per set.
  *
  * @example
  * const { updatingAll, handleUpdateAll } = useUpdateAllSets({ applyDownload });
@@ -30,9 +28,9 @@ import { notify } from "../../../utils/notify";
 type UpdateOutcome = "applied" | "held" | "failed";
 type OutcomeCounts = Record<UpdateOutcome, number>;
 
-interface UpdateReport {
+/** The run's tally: counts per outcome plus the held sets BY NAME (#3081). */
+interface RunSummary {
   counts: OutcomeCounts;
-  /** Titles of the sets the #2128 guard held back, in list order. */
   heldTitles: string[];
 }
 
@@ -61,7 +59,7 @@ export function useUpdateAllSets({ applyDownload }: UseUpdateAllSetsDeps) {
     return ok ? "applied" : "failed";
   };
 
-  const report = ({ counts, heldTitles }: UpdateReport) => {
+  const report = ({ counts, heldTitles }: RunSummary) => {
     const withCount = (key: string, fallback: string, n: number) =>
       t(key, fallback).replace("{n}", String(n));
     if (counts.applied > 0) {
@@ -71,6 +69,9 @@ export function useUpdateAllSets({ applyDownload }: UseUpdateAllSetsDeps) {
       );
     }
     if (heldTitles.length > 0) {
+      // #3081 - a held update is a call to action, so it names the sets
+      // and stays until dismissed; a counted, auto-closing hint left the
+      // learner guessing which of their sets was blocked.
       notify.info(
         t(
           "content.toast.updates_held_named",
@@ -92,19 +93,21 @@ export function useUpdateAllSets({ applyDownload }: UseUpdateAllSetsDeps) {
       notify.info(t("content.toast.all_up_to_date", "All sets are up to date."));
       return;
     }
-    const counts: OutcomeCounts = { applied: 0, held: 0, failed: 0 };
-    const heldTitles: string[] = [];
+    const summary: RunSummary = {
+      counts: { applied: 0, held: 0, failed: 0 },
+      heldTitles: [],
+    };
     setUpdatingAll(true);
     try {
       for (const entry of pending) {
         const outcome = await updateOne(entry);
-        counts[outcome] += 1;
-        if (outcome === "held") heldTitles.push(entry.title);
+        summary.counts[outcome] += 1;
+        if (outcome === "held") summary.heldTitles.push(entry.title);
       }
     } finally {
       setUpdatingAll(false);
     }
-    report({ counts, heldTitles });
+    report(summary);
   };
 
   return { updatingAll, handleUpdateAll };

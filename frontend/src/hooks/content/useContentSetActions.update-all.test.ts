@@ -128,12 +128,31 @@ describe("handleUpdateAll (#3001)", () => {
         // The guard dialog is NOT opened by the bulk path: the learner
         // confirms held updates one by one via the row button.
         expect(result.current.updateGuard).toBeNull();
-        // #3081: the toast names the held-back set and stays open (a call
-        // to action, not a status flash).
+        // #3081 - the hint names the held set and stays until dismissed,
+        // so the learner can find it among their downloaded sets.
         expect(notify.info).toHaveBeenCalledWith(
             expect.stringContaining("Japanisch A1"),
-            expect.objectContaining({autoClose: false}),
+            {autoClose: false},
         );
+    });
+
+    it("names every held set, in run order, in ONE hint (#3081)", async () => {
+        assessSetUpdateMock
+            .mockResolvedValueOnce(breaking)
+            .mockResolvedValueOnce(safe)
+            .mockResolvedValueOnce(breaking);
+        const {result} = setup();
+        await act(async () => {
+            await result.current.handleUpdateAll([
+                entry({id: "ja-a1", title: "Japanisch A1"}),
+                entry({id: "es-a1", title: "Spanisch A1"}),
+                entry({id: "rhetorik", title: "Psychologie der Rhetorik"}),
+            ]);
+        });
+        expect(notify.info).toHaveBeenCalledTimes(1);
+        const [message] = vi.mocked(notify.info).mock.calls[0];
+        expect(message).toContain("Japanisch A1, Psychologie der Rhetorik");
+        expect(message).not.toContain("Spanisch A1");
     });
 
     it("counts a failed download and still applies the rest", async () => {

@@ -205,6 +205,42 @@ describe("ContentSetListView", () => {
 
   // #1300 — the per-set overflow menu (status + delete) appears in the list
   // view when handlers are supplied, and never otherwise.
+  describe("pending update in the row (#3081)", () => {
+    it("shows no marker and no Update button for an up-to-date set", () => {
+      render(
+        <MemoryRouter>
+          <ContentSetListView sets={[entry({ id: "ja-a1" })]} onUpdate={vi.fn()} />
+        </MemoryRouter>,
+      );
+      expect(screen.queryByTestId("content-list-set-ja-a1-update")).toBeNull();
+      expect(screen.queryByTestId("content-list-set-ja-a1-update-button")).toBeNull();
+    });
+
+    it("marks a set with update_available and applies the update from the row", () => {
+      const onUpdate = vi.fn();
+      const held = entry({ id: "rhetorik", title: "Psychologie der Rhetorik", update_available: true });
+      render(
+        <MemoryRouter>
+          <ContentSetListView sets={[held]} onUpdate={onUpdate} />
+        </MemoryRouter>,
+      );
+      expect(screen.getByTestId("content-list-set-rhetorik-update")).toHaveTextContent(
+        "Update available",
+      );
+      const button = screen.getByTestId("content-list-set-rhetorik-update-button");
+      expect(button).toHaveAttribute("aria-label", "Update: Psychologie der Rhetorik");
+      fireEvent.click(button);
+      expect(onUpdate).toHaveBeenCalledTimes(1);
+      expect(onUpdate).toHaveBeenCalledWith(held);
+    });
+
+    it("keeps the marker but renders no button when no onUpdate handler is supplied", () => {
+      renderList([entry({ id: "rhetorik", update_available: true })]);
+      expect(screen.getByTestId("content-list-set-rhetorik-update")).toBeInTheDocument();
+      expect(screen.queryByTestId("content-list-set-rhetorik-update-button")).toBeNull();
+    });
+  });
+
   describe("status/delete overflow menu (#1300)", () => {
     it("hides the menu when no handlers are supplied", () => {
       renderList([entry({ id: "a", status: "active" })]);
@@ -230,50 +266,5 @@ describe("ContentSetListView", () => {
         "completed",
       );
     });
-  });
-});
-
-describe("update available in the list view (#3081)", () => {
-  function renderWithUpdate(over: {
-    onDownload?: (entry: ContentSetEntry) => void;
-    online?: boolean;
-    perSetState?: Record<string, "idle" | "downloading" | "done" | "error">;
-    update?: boolean;
-  }) {
-    render(
-      <MemoryRouter>
-        <ContentSetListView
-          sets={[entry({ id: "psych-rhetorik", title: "Psychologie der Rhetorik", update_available: over.update ?? true })]}
-          onDownload={over.onDownload}
-          online={over.online ?? true}
-          perSetState={over.perSetState ?? {}}
-        />
-      </MemoryRouter>,
-    );
-  }
-
-  it("marks a set with a pending update like the tile view does", () => {
-    renderWithUpdate({ onDownload: vi.fn() });
-    expect(screen.getByTestId("content-set-psych-rhetorik-update")).toHaveTextContent(/update available/i);
-  });
-
-  it("offers the row Update button on the tile view's path", () => {
-    const onDownload = vi.fn();
-    renderWithUpdate({ onDownload });
-    const button = screen.getByTestId("content-set-psych-rhetorik-action");
-    expect(button).toBeEnabled();
-    fireEvent.click(button);
-    expect(onDownload).toHaveBeenCalledWith(expect.objectContaining({ id: "psych-rhetorik" }));
-  });
-
-  it("keeps the button visible but disabled while offline or downloading", () => {
-    renderWithUpdate({ onDownload: vi.fn(), online: false });
-    expect(screen.getByTestId("content-set-psych-rhetorik-action")).toBeDisabled();
-  });
-
-  it("renders neither badge nor button for an up-to-date set", () => {
-    renderWithUpdate({ onDownload: vi.fn(), update: false });
-    expect(screen.queryByTestId("content-set-psych-rhetorik-update")).toBeNull();
-    expect(screen.queryByTestId("content-set-psych-rhetorik-action")).toBeNull();
   });
 });

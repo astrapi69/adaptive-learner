@@ -1768,17 +1768,20 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Ende deaktiviert, danach EIN Sammel-Toast "N Sets aktualisiert."
       (kein Toast pro Set). Ohne ausstehende Updates: Toast "Alle Sets sind
       aktuell.", kein Download. Ein Breaking-Update (#2128, Fortschritt
-      betroffen) wird dabei NICHT angewendet: Hinweis-Toast
-      "Zurückgehalten, weil dein Fortschritt betroffen wäre: <Set-Titel>.
-      Bestätige jede Aktualisierung über den Aktualisieren-Knopf des
-      Sets." (#3081: nennt JEDES zurückgehaltene Set beim Titel, bleibt
-      stehen bis zum Schließen über das X), das Set behält
+      betroffen) wird dabei NICHT angewendet: Hinweis-Toast "Zurückgehalten,
+      weil dein Fortschritt betroffen wäre: <Set-Titel>. Bestätige jede
+      Aktualisierung über den Aktualisieren-Knopf des Sets." (#3081: nennt
+      JEDES zurückgehaltene Set beim Titel, mehrere durch Komma getrennt,
+      und bleibt stehen, bis er über das X geschlossen wird), das Set behält
       "Aktualisierung verfügbar" und wird einzeln über den Zeilen-Knopf
-      bestätigt. **Listenansicht (#3081):** auch in der Listenansicht
-      (Standard) zeigt die Zeile des Sets das Abzeichen "Aktualisierung
-      verfügbar" und einen Knopf "Aktualisieren"; er nimmt denselben Pfad
-      wie der Kachel-Knopf, bei einem Breaking-Update also den
-      #2128-Schutzdialog; offline ist er deaktiviert mit Tooltip. **Nach dem Anwenden (#2985):** die Aktualisierung(en)
+      bestätigt. **Listenansicht (#3081):** in der Listenansicht (Umschalter
+      rechts über der Liste) zeigt die Zeile des Sets den Marker
+      "Aktualisierung verfügbar" (ab Tablet-Breite) und einen
+      Download-Icon-Knopf (`content-list-set-<id>-update-button`, Tooltip
+      "Aktualisieren"); Klick öffnet bei einem Breaking-Update denselben
+      #2128-Schutzdialog wie der Kachel-Knopf, sonst wird direkt
+      aktualisiert; aktuelle Sets zeigen weder Marker noch Knopf. **Nach dem
+      Anwenden (#2985):** die Aktualisierung(en)
       auf `/content` durchführen (Kopfzeilen-Knopf, Zeilen-Knopf oder die
       Repo-Quelle synchronisieren) →
       der Badge-Zähler sinkt **sofort ohne Neuladen**; sind alle Updates

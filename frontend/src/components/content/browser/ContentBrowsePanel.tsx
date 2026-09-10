@@ -136,9 +136,7 @@ export default function ContentBrowsePanel({
               onDelete={onDeleteSet}
               onRestart={onRestartSet}
               onEditAsCopy={onEditAsCopy}
-              onDownload={treeProps.setRow.onDownload}
-              perSetState={treeProps.setRow.perSetState}
-              online={treeProps.setRow.online}
+              onUpdate={treeProps.setRow.onDownload}
               selectable
               selectedKeys={selection.selected}
               onToggleSelect={(e) => selection.toggle(setSelectionKey(e))}

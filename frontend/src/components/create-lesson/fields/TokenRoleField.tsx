@@ -246,7 +246,7 @@ export default function TokenRoleField({
 
             {error && (
                 <p
-                    className="text-sm text-[var(--danger)]"
+                    className="text-sm text-error"
                     role="alert"
                     data-testid={`${idPrefix}-token-role-error`}
                 >
