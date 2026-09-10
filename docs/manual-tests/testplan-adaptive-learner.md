@@ -2459,6 +2459,20 @@ Dexie-userData-Spiegel).
 - [ ] Telefon: das X ist ohne Zielverfehlung antippbar und löst NICHT den
       Zeilen-Link aus (44 px Trefferfläche)
 
+### Weitermachen: Schrittzähler nennt den Wiedereinstieg (#3076)
+
+Ort: Dashboard → Übersicht, Block "Weitermachen", Zeile "Fortsetzen". Vorher
+zählte "Aufgabe 1/8" die bewerteten Übungen; die Wiederaufnahme landete auf
+einem anderen Schritt.
+
+- [ ] Eine Lektion mit acht Schritten öffnen, die erste Übung beantworten,
+      dann zwei Theorieschritte weiter (Schritt 4), über das Menü verlassen
+- [ ] Dashboard: die Zeile zeigt "Fortsetzen · Schritt 4/8" (nicht "1/8")
+- [ ] Klick auf "Fortsetzen" → Resume-Dialog → "Fortsetzen" landet auf genau
+      dem Schritt, den die Zeile nennt
+- [ ] Bis zur Zusammenfassung spielen, ohne "Als abgeschlossen markieren",
+      über das Logo weggehen → die Zeile zeigt "Schritt 8/8", nie "9/8"
+
 ### Update-Schutz: kein stiller Fortschrittsverlust beim Set-Update (#2128)
 
 Ort: Meine Inhalte, ein bereits GELERNTES Set (Fortschritt + Wiederholungskarten

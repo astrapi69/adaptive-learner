@@ -34,9 +34,9 @@ import {Link} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useLessonProgressChangeTick} from "../../hooks/lesson/session/useLessonProgressChangeTick";
+import {resumeStepNumber} from "../../lib/lesson/progress/resume-step";
 import {
     classifyEntryCandidate,
-    completedStepCount,
     groupRecentProgress,
     lessonRoute,
     rankEntrySuggestions,
@@ -83,8 +83,9 @@ interface DisplayItem {
     lessonTitle: string;
     /** Next lesson's title (mode === "next"). */
     nextTitle?: string;
-    /** Resume step counter. */
-    stepsDone?: number;
+    /** Resume step counter: the 1-based step the click lands on (#3076),
+     *  of the lesson's step count. */
+    resumeStep?: number;
     totalSteps?: number;
     /** Number of review cards due (mode "review"). */
     reviewDue?: number;
@@ -291,8 +292,11 @@ export default function ContinueLearning({
                         lessonTitle,
                         updatedAt: group.mostRecent.updated_at,
                     };
-                    if (mode === "resume") {
-                        item.stepsDone = completedStepCount(group.mostRecent);
+                    if (mode === "resume" && rowLesson?.steps) {
+                        // #3076 - the same rule the lesson page restores
+                        // with, not the count of graded exercises.
+                        const stepIds = rowLesson.steps.map((step) => step.id);
+                        item.resumeStep = resumeStepNumber(stepIds, group.mostRecent);
                         item.totalSteps = lessonStepTotal(rowLesson);
                     } else if (
                         mode === "set_complete" &&
@@ -501,9 +505,9 @@ function ContinueLearningRow({
 function RowDetail({item}: {item: DisplayItem}) {
     const {t} = useI18n();
     const stepHint =
-        typeof item.totalSteps === "number" && typeof item.stepsDone === "number"
+        typeof item.totalSteps === "number" && typeof item.resumeStep === "number"
             ? ` · ${t("content.continue_learning.progress", "Step {n}/{total}")
-                  .replace("{n}", String(item.stepsDone))
+                  .replace("{n}", String(item.resumeStep))
                   .replace("{total}", String(item.totalSteps))}`
             : "";
     const nextLabel = t("content.continue_learning.next", "Next Lesson");

@@ -2298,6 +2298,20 @@ the Dexie userData mirror).
 - [ ] Phone: the X is tappable without mis-hits and does NOT trigger the row
       link (44 px target)
 
+### Continue Learning: the step counter names the resume point (#3076)
+
+Where: Dashboard → Overview, "Continue Learning" block, "Resume" row. Before,
+"Step 1/8" counted graded exercises while the resume landed on a different
+step.
+
+- [ ] Open a lesson with eight steps, answer the first exercise, then move
+      two theory steps further (step 4), leave through the menu
+- [ ] Dashboard: the row reads "Resume · Step 4/8" (not "1/8")
+- [ ] Click "Resume" → resume dialog → "Continue" lands on exactly the step
+      the row names
+- [ ] Play to the summary without "Mark complete", leave through the logo →
+      the row reads "Step 8/8", never "9/8"
+
 ### Update guard: no silent progress loss on a set update (#2128)
 
 Where: My Content, an already-LEARNED set (progress + review cards present) that
