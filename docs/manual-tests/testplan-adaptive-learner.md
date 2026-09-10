@@ -1922,7 +1922,11 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       sieben Rollen (Artikel, Substantiv, Verb, Adjektiv, Präposition,
       Genus-Marker, Tempus-Marker) und kein Freitextfeld. (e) Speichern,
       die Karte erneut zum Bearbeiten öffnen -> die Annotationen stehen
-      noch da.
+      noch da. (f) Telefon-Breite (unter 769 px, #3087): die Eingabezeile
+      steht untereinander (Wortfeld volle Breite, Auswahlfeld volle
+      Breite, "Hinzufügen" darunter), nichts ragt aus der Karte; ab
+      Tablet-Breite bleibt sie einzeilig und das Wortfeld füllt den
+      Restplatz.
 - [ ] **Rollen vorschlagen (#3072):** In derselben Zeile "Rollen
       vorschlagen" klicken. Bei einer deutschen Vorderseite mit Artikeln
       und Präpositionen füllt sich die Liste (bei "der Hund in dem
