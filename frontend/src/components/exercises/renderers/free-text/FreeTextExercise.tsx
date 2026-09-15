@@ -74,6 +74,16 @@ export interface FreeTextExerciseProps extends ControlledExerciseProps {
     codeMode?: boolean;
     /** Highlighter language hint, surfaced as a small label. */
     codeLanguage?: string | null;
+    /** #3109, schema v1.14 parametric exercises — resolveExerciseVariables's
+     *  ``toleranceByAcceptText``: an ``accept`` entry that is a variable's
+     *  resolved value grades a numeric answer within that variable's
+     *  ``tolerance``, even when the text differs. Absent for a
+     *  non-parametric exercise; grading is then byte-identical to before. */
+    toleranceByAcceptText?: ReadonlyMap<string, number>;
+    /** #3109 — the same exercise's drawn/computed variable values, echoed
+     *  into ``raw_answer.resolved_variables`` on submit so a later review
+     *  can reconstruct the exact concrete instance the learner saw. */
+    variableValues?: Record<string, number>;
     /** Called on submit with the score (0 or 1 correct of 1
      *  total) plus the single-attempt SRS payload. */
     onComplete: (result: ExerciseScored) => void;
@@ -87,10 +97,13 @@ function freeTextReviewedResult(
     reviewedInput: string | null | undefined,
     accept: readonly string[],
     codeMode: boolean,
+    toleranceByAcceptText: ReadonlyMap<string, number> | undefined,
 ): {correct: number; total: number} | null {
     if (reviewedInput == null) return null;
     return {
-        correct: isFreeTextCorrect(reviewedInput, accept, codeMode) ? 1 : 0,
+        correct: isFreeTextCorrect(reviewedInput, accept, codeMode, toleranceByAcceptText)
+            ? 1
+            : 0,
         total: 1,
     };
 }
@@ -401,6 +414,8 @@ function FreeTextExercise(
         ttsLang = null,
         onAdvance,
         advanceLabel,
+        toleranceByAcceptText,
+        variableValues,
     }: FreeTextExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -420,6 +435,7 @@ function FreeTextExercise(
         reviewedFreeText?.input,
         accept,
         codeMode,
+        toleranceByAcceptText,
     );
 
     const {submitted, result, submit, reset} = useControlledExercise({
@@ -430,7 +446,7 @@ function FreeTextExercise(
         onComplete,
         reviewedResult,
         score: (): ExerciseScored => {
-            const isCorrect = isFreeTextCorrect(input, accept, codeMode);
+            const isCorrect = isFreeTextCorrect(input, accept, codeMode, toleranceByAcceptText);
             return {
                 correct: isCorrect ? 1 : 0,
                 total: 1,
@@ -442,7 +458,10 @@ function FreeTextExercise(
                         isCorrect,
                     ),
                 ],
-                raw_answer: {kind: "free_text", input},
+                raw_answer:
+                    variableValues && Object.keys(variableValues).length > 0
+                        ? {kind: "free_text", input, resolved_variables: variableValues}
+                        : {kind: "free_text", input},
             };
         },
         resetAnswer: () => setInput(""),

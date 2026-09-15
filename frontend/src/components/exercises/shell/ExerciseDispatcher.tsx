@@ -14,7 +14,7 @@
  * any runtime type outside the closed union.
  */
 
-import {forwardRef} from "react";
+import {forwardRef, useMemo} from "react";
 import type {ReactElement, ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
@@ -38,6 +38,7 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "./exercise-control";
+import {resolveExerciseVariables} from "../../../lib/exercises/variables/resolve-exercise-variables";
 import ExerciseDifficultyBadge from "../shared/ExerciseDifficultyBadge";
 import ListenFirstAudio from "../shared/ListenFirstAudio";
 import FreeTextExercise from "../renderers/free-text/FreeTextExercise";
@@ -260,7 +261,22 @@ function ExerciseDispatcher(
     }: ExerciseDispatcherProps,
     ref: Ref<ExerciseHandle>,
 ) {
-    const ex: ContentLessonExercise | null = step.exercise ?? null;
+    const rawEx: ContentLessonExercise | null = step.exercise ?? null;
+    // #3109, schema v1.14 — a revisited free_text attempt reuses its
+    // persisted drawn/computed values (RawAnswer's free_text variant,
+    // ``resolved_variables``) so a review shows the exact concrete instance
+    // the learner originally saw, instead of a fresh random draw.
+    const reviewedVariableValues =
+        reviewed?.kind === "free_text" ? reviewed.resolved_variables : undefined;
+    // Resolved once per attempt (memoized on the exercise's identity + the
+    // reviewed values), not on every re-render (e.g. typing) - mirrors the
+    // useWordTilesDnd "stable per mount" idiom for randomized-once state.
+    const resolved = useMemo(
+        () =>
+            rawEx ? resolveExerciseVariables(rawEx, {values: reviewedVariableValues}) : null,
+        [rawEx, reviewedVariableValues],
+    );
+    const ex: ContentLessonExercise | null = resolved ? resolved.exercise : rawEx;
     if (ex === null) return <ExerciseStepPlaceholder step={step} />;
     const supported =
         SUPPORTED_EXERCISE_TYPES.has(ex.type) ||
@@ -348,6 +364,8 @@ function ExerciseDispatcher(
                     setId={setId}
                     lessonId={lessonId}
                     codeLanguage={codeLanguage}
+                    toleranceByAcceptText={resolved?.toleranceByAcceptText}
+                    variableValues={resolved?.values}
                     {...shared}
                 />
             </>
