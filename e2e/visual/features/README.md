@@ -41,6 +41,8 @@ Baseline zu committen.
 
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
+| Über-Tab - Karte "Lizenz & Ressourcen" mit den Zeilen "Impressum" und "Datenschutzerklärung", Ziel Docs-Site in der UI-Sprache (#3113) | `legal/settings-about.png` | `legal/settings-about.mobile.png` | #3113 |
+| App-Startseite - Zeile "Impressum · Datenschutzerklärung" unter dem Dokumentationslink (#3113) | `legal/landing.png` | `legal/landing.mobile.png` | #3113 |
 | Lernen-Tab - Gamification-Karte als letzte Karte im Bereich "Motivation und Routine", hinter einer Trennlinie (#2962) | `gamification-card/settings.png` | `gamification-card/settings.mobile.png` | #2962 |
 | Plugins-Tab - Karte "Installierte Plugins" mit dem PluginForge-Lebenszyklus je Plugin; im Browser-Build der Desktop-only-Hinweis (#3055) | `plugin-lifecycle/settings.png` | `plugin-lifecycle/settings.mobile.png` | #3055 |
 | KI-Prüfung - Knopf "Mit KI prüfen" auf jeder eigenen Set-Zeile unter Inhalte > Meine Inhalte, ohne Schlüssel deaktiviert mit Begründung (AIV-07, #3060) | `ai-check/eigenes-set-pruefen.png` | `ai-check/eigenes-set-pruefen.mobile.png` | #3060 |
