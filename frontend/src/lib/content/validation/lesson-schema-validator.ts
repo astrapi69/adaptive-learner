@@ -75,6 +75,9 @@ export const SUPPORTED_EXTENSIONS: readonly string[] = [
   "ext:al-speak-and-record",
   "ext:al-audio-choice",
   "ext:al-audio-tiles",
+  "ext:al-ordering",
+  "ext:al-parsons",
+  "ext:al-hotspot",
 ];
 
 /** The extension-tier load guard (#1565): structurally a lesson declaring
