@@ -932,3 +932,72 @@ describe("undeclared extension usage is refused (#1895)", () => {
     expect(() => validateGeneratedLesson(undeclared)).toThrow(/ext:al-dictation/);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Schema v1.14 (learn-content-engine 0.24.0/0.24.1, engine#151, #3108) —
+// ``exercise.variables`` for parametric exercises. The engine validates the
+// contract (sampled vs. computed shape, ranges, expressions) and never
+// samples, evaluates or substitutes; nothing in this app reads the field
+// yet (the consumer half is #3109). This only proves the structural mirror
+// accepts a lesson carrying ``variables``, braces left un-substituted.
+// ---------------------------------------------------------------------------
+describe("exercise.variables is accepted, schema 1.14 (#3108)", () => {
+  const parametricStep = {
+    id: "s1",
+    type: "exercise",
+    exercise: {
+      id: "e1",
+      type: "free_text",
+      prompt: "Was ist {{a}} + {{b}}?",
+      card_ids: [],
+      distractors: [],
+      variables: [
+        { name: "a", min: 1, max: 20 },
+        { name: "b", min: 1, max: 20, step: 0.5 },
+        { name: "sum", expression: "a + b", tolerance: 0.01 },
+      ],
+      accept: ["{{sum}}"],
+      explanation: "Die Summe von {{a}} und {{b}} ist {{sum}}.",
+    },
+  };
+
+  it("accepts a lesson whose exercise declares sampled and computed variables", () => {
+    const lesson = makeLesson({
+      steps: [parametricStep],
+    } as unknown as Partial<ContentLesson>);
+    const shape = validateLessonShape(lesson);
+    expect(shape.ok).toBe(true);
+    expect(shape.errors).toEqual([]);
+  });
+
+  it("leaves the {{name}} references untouched (no substitution at this stage)", () => {
+    const lesson = makeLesson({
+      steps: [parametricStep],
+    } as unknown as Partial<ContentLesson>);
+    const shape = validateLessonShape(lesson);
+    expect(shape.ok).toBe(true);
+    const exercise = (lesson.steps[0] as { exercise: { prompt: string } }).exercise;
+    expect(exercise.prompt).toBe("Was ist {{a}} + {{b}}?");
+  });
+
+  it("still accepts an exercise without variables (backward compatibility)", () => {
+    const lesson = makeLesson();
+    const shape = validateLessonShape(lesson);
+    expect(shape.ok).toBe(true);
+  });
+
+  it("rejects a variable object with an unknown field (additionalProperties:false)", () => {
+    const invalidVariable = {
+      ...parametricStep,
+      exercise: {
+        ...parametricStep.exercise,
+        variables: [{ name: "a", min: 1, max: 20, minimum: 1 }],
+      },
+    };
+    const lesson = makeLesson({
+      steps: [invalidVariable],
+    } as unknown as Partial<ContentLesson>);
+    const shape = validateLessonShape(lesson);
+    expect(shape.ok).toBe(false);
+  });
+});

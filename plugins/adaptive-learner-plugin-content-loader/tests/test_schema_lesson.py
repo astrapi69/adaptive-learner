@@ -17,6 +17,7 @@ from adaptive_learner_content_loader.schema import (
     ClozeBlank,
     Exercise,
     ExerciseType,
+    ExerciseVariable,
     InlineExample,
     Lesson,
     LessonStep,
@@ -1274,3 +1275,87 @@ class TestInlineExamples:
         node = schema["$defs"]["InlineExample"]
         assert "content" in node["properties"]
         assert node.get("required") == ["content"]
+
+
+class TestExerciseVariables:
+    """Schema v1.14 — ``Exercise.variables`` for parametric exercises
+    (learn-content-engine#151, adaptive-learner#3108).
+
+    Additive + optional: the engine validates the ``variables`` contract
+    (sampled vs. computed shape, range/expression/reference rules) and
+    never samples, evaluates or substitutes. This app's structural layer
+    only has to ACCEPT the field; the consumer half (sampling, expression
+    evaluation, ``{{name}}`` substitution) is a separate change
+    (adaptive-learner#3109). No renderer reads this field yet.
+    """
+
+    def test_exercise_accepts_sampled_and_computed_variables(self) -> None:
+        exercise = _exercise_free(
+            prompt="Was ist {{a}} + {{b}}?",
+            variables=[
+                ExerciseVariable(name="a", min=1, max=20),
+                ExerciseVariable(name="b", min=1, max=20, step=0.5),
+                ExerciseVariable(name="sum", expression="a + b", tolerance=0.01),
+            ],
+            accept=["{{sum}}"],
+        )
+        assert exercise.variables is not None
+        assert len(exercise.variables) == 3
+        sampled_a, sampled_b, computed_sum = exercise.variables
+        assert sampled_a.min == 1 and sampled_a.max == 20 and sampled_a.step is None
+        assert sampled_b.step == 0.5
+        assert computed_sum.expression == "a + b"
+        assert computed_sum.tolerance == 0.01
+        # The engine resolves {{...}} references; the structural layer
+        # does not touch prompt/accept text at all.
+        assert exercise.prompt == "Was ist {{a}} + {{b}}?"
+        assert exercise.accept == ["{{sum}}"]
+
+    def test_content_without_variables_stays_valid(self) -> None:
+        """Backward compatibility: pre-v1.14 content omits ``variables``."""
+        exercise = _exercise_free()
+        assert exercise.variables is None
+
+    def test_variable_requires_a_name(self) -> None:
+        with pytest.raises(ValidationError):
+            ExerciseVariable(min=1, max=10)  # type: ignore[call-arg]
+
+    def test_variable_rejects_unknown_field(self) -> None:
+        """``extra='forbid'`` guards against typo'd keys."""
+        with pytest.raises(ValidationError):
+            ExerciseVariable(name="a", minimum=1)  # type: ignore[call-arg]
+
+    def test_variables_survive_round_trip(self) -> None:
+        """``lesson_to_dict`` -> ``dict_to_lesson`` preserves variables."""
+        lesson = Lesson(
+            id="l1",
+            title="Parametric",
+            steps=[
+                LessonStep(
+                    id="s1",
+                    type=StepType.EXERCISE,
+                    exercise=_exercise_free(
+                        id="ex1",
+                        prompt="{{a}} + {{b}} = ?",
+                        variables=[
+                            ExerciseVariable(name="a", min=1, max=5),
+                            ExerciseVariable(name="b", min=1, max=5),
+                        ],
+                    ),
+                ),
+            ],
+        )
+        restored = dict_to_lesson(lesson_to_dict(lesson))
+        exercise_step = restored.get_step("s1")
+        assert exercise_step is not None and exercise_step.exercise is not None
+        restored_variables = exercise_step.exercise.variables
+        assert restored_variables is not None
+        assert [v.name for v in restored_variables] == ["a", "b"]
+
+    def test_lesson_schema_defines_exercise_variable(self) -> None:
+        """The generated JSON-Schema carries the ExerciseVariable shape."""
+        schema = lesson_schema()
+        assert "ExerciseVariable" in schema.get("$defs", {})
+        node = schema["$defs"]["ExerciseVariable"]
+        assert "name" in node["properties"]
+        assert node.get("required") == ["name"]
