@@ -39,6 +39,8 @@ import type {
     ExerciseScored,
 } from "./exercise-control";
 import {resolveExerciseVariables} from "../../../lib/exercises/variables/resolve-exercise-variables";
+import type {ResolvedExerciseVariables} from "../../../lib/exercises/variables/resolve-exercise-variables";
+import type {RawAnswer} from "../../../storage/types/content/lesson-progress";
 import ExerciseDifficultyBadge from "../shared/ExerciseDifficultyBadge";
 import ListenFirstAudio from "../shared/ListenFirstAudio";
 import FreeTextExercise from "../renderers/free-text/FreeTextExercise";
@@ -236,6 +238,27 @@ export function resolveCodeContext(
     return {codeMode, codeLanguage: card?.code_language ?? null};
 }
 
+/** #3109, schema v1.14 — resolves an exercise's ``variables`` (if any) into
+ *  concrete values once per attempt. A revisited ``free_text`` attempt
+ *  reuses its persisted drawn/computed values (RawAnswer's free_text
+ *  variant, ``resolved_variables``) so a review shows the exact concrete
+ *  instance the learner originally saw, instead of a fresh random draw.
+ *  Always returns an object (never null) so callers never need an extra
+ *  branch to unwrap it - extracted from ``ExerciseDispatcher`` to keep the
+ *  dispatcher's own cyclomatic complexity flat, mirroring
+ *  ``resolveListenAudio`` / ``resolveDifficulty`` / ``resolveCodeContext``. */
+export function resolveVariablesForAttempt(
+    rawEx: ContentLessonExercise | null,
+    reviewed: RawAnswer | null | undefined,
+): ResolvedExerciseVariables | {exercise: null; values: Record<string, number>; toleranceByAcceptText: ReadonlyMap<string, number>} {
+    if (!rawEx) {
+        return {exercise: null, values: {}, toleranceByAcceptText: new Map()};
+    }
+    const reviewedVariableValues =
+        reviewed?.kind === "free_text" ? reviewed.resolved_variables : undefined;
+    return resolveExerciseVariables(rawEx, {values: reviewedVariableValues});
+}
+
 /** Forwards a ref to the active exercise so the controlled
  *  (Lesson) parent can drive the shared "Prüfen" button.
  *  ``controlled`` / ``onInteraction`` / ``reviewed`` are
@@ -262,21 +285,14 @@ function ExerciseDispatcher(
     ref: Ref<ExerciseHandle>,
 ) {
     const rawEx: ContentLessonExercise | null = step.exercise ?? null;
-    // #3109, schema v1.14 — a revisited free_text attempt reuses its
-    // persisted drawn/computed values (RawAnswer's free_text variant,
-    // ``resolved_variables``) so a review shows the exact concrete instance
-    // the learner originally saw, instead of a fresh random draw.
-    const reviewedVariableValues =
-        reviewed?.kind === "free_text" ? reviewed.resolved_variables : undefined;
     // Resolved once per attempt (memoized on the exercise's identity + the
     // reviewed values), not on every re-render (e.g. typing) - mirrors the
     // useWordTilesDnd "stable per mount" idiom for randomized-once state.
     const resolved = useMemo(
-        () =>
-            rawEx ? resolveExerciseVariables(rawEx, {values: reviewedVariableValues}) : null,
-        [rawEx, reviewedVariableValues],
+        () => resolveVariablesForAttempt(rawEx, reviewed),
+        [rawEx, reviewed],
     );
-    const ex: ContentLessonExercise | null = resolved ? resolved.exercise : rawEx;
+    const ex: ContentLessonExercise | null = resolved.exercise;
     if (ex === null) return <ExerciseStepPlaceholder step={step} />;
     const supported =
         SUPPORTED_EXERCISE_TYPES.has(ex.type) ||
@@ -364,8 +380,8 @@ function ExerciseDispatcher(
                     setId={setId}
                     lessonId={lessonId}
                     codeLanguage={codeLanguage}
-                    toleranceByAcceptText={resolved?.toleranceByAcceptText}
-                    variableValues={resolved?.values}
+                    toleranceByAcceptText={resolved.toleranceByAcceptText}
+                    variableValues={resolved.values}
                     {...shared}
                 />
             </>
