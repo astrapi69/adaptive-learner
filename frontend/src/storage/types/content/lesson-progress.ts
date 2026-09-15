@@ -8,7 +8,13 @@
 export type RawAnswer =
   | { kind: "matching"; matches: [number, number][] }
   | { kind: "picture_choice"; selected: number }
-  | { kind: "free_text"; input: string }
+  /** #3109, schema v1.14 parametric exercises — ``resolved_variables`` is
+   *  the drawn/computed value per declared ``exercise.variables`` name
+   *  (resolveExerciseVariables's ``values``), present only when the
+   *  exercise declared ``variables``. Persisted so a revisited attempt
+   *  substitutes the SAME concrete instance instead of sampling a fresh
+   *  one. */
+  | { kind: "free_text"; input: string; resolved_variables?: Record<string, number> }
   | { kind: "word_tiles"; placed: number[] }
   | { kind: "cloze"; inputs: string[] }
   /** #1195 — cloze ``multiselect`` ("select all that apply"): the

@@ -536,3 +536,103 @@ describe("FreeTextExercise auto-advance integration (#1330)", () => {
         expect(onAdvance).not.toHaveBeenCalled();
     });
 });
+
+describe("FreeTextExercise: parametric-exercise tolerance grading (#3109)", () => {
+    // Mirrors resolveExerciseVariables's output: the dispatcher has already
+    // substituted {{sum}} -> "10" and computed the tolerance map.
+    const PARAMETRIC_EXERCISE: ContentLessonExercise = {
+        id: "e1",
+        type: "free_text",
+        prompt: "Was ist 4 + 6?",
+        card_ids: [],
+        distractors: [],
+        accept: ["10"],
+        explanation: "Die Summe von 4 und 6 ist 10.",
+    };
+    const toleranceByAcceptText = new Map([["10", 0.5]]);
+    const variableValues = {a: 4, b: 6, sum: 10};
+
+    it("accepts a numeric answer within tolerance even when the text differs", () => {
+        const onComplete = vi.fn();
+        render(
+            <FreeTextExercise
+                exercise={PARAMETRIC_EXERCISE}
+                onComplete={onComplete}
+                toleranceByAcceptText={toleranceByAcceptText}
+            />,
+        );
+        fireEvent.change(screen.getByTestId("free-text-input"), {
+            target: {value: "10.3"},
+        });
+        fireEvent.click(screen.getByTestId("free-text-submit"));
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
+    });
+
+    it("rejects a numeric answer outside tolerance", () => {
+        const onComplete = vi.fn();
+        render(
+            <FreeTextExercise
+                exercise={PARAMETRIC_EXERCISE}
+                onComplete={onComplete}
+                toleranceByAcceptText={toleranceByAcceptText}
+            />,
+        );
+        // "99" is also far outside the text matcher's edit-distance
+        // tolerance, so this pins the numeric check alone, not a Levenshtein
+        // coincidence (a value like "12" is a 1-edit typo of "10" and would
+        // pass through the fallback text matcher regardless of tolerance).
+        fireEvent.change(screen.getByTestId("free-text-input"), {
+            target: {value: "99"},
+        });
+        fireEvent.click(screen.getByTestId("free-text-submit"));
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 0, total: 1}));
+    });
+
+    it("persists the drawn variable values on raw_answer for a later review", () => {
+        const onComplete = vi.fn();
+        render(
+            <FreeTextExercise
+                exercise={PARAMETRIC_EXERCISE}
+                onComplete={onComplete}
+                toleranceByAcceptText={toleranceByAcceptText}
+                variableValues={variableValues}
+            />,
+        );
+        fireEvent.change(screen.getByTestId("free-text-input"), {
+            target: {value: "10"},
+        });
+        fireEvent.click(screen.getByTestId("free-text-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({
+                raw_answer: {kind: "free_text", input: "10", resolved_variables: variableValues},
+            }),
+        );
+    });
+
+    it("omits resolved_variables from raw_answer for a non-parametric exercise", () => {
+        const onComplete = vi.fn();
+        render(<FreeTextExercise exercise={EXERCISE} onComplete={onComplete} />);
+        fireEvent.change(screen.getByTestId("free-text-input"), {
+            target: {value: "Merci"},
+        });
+        fireEvent.click(screen.getByTestId("free-text-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({raw_answer: {kind: "free_text", input: "Merci"}}),
+        );
+    });
+
+    it("grades a reviewed (revisited) answer with the same tolerance", () => {
+        render(
+            <FreeTextExercise
+                exercise={PARAMETRIC_EXERCISE}
+                onComplete={vi.fn()}
+                toleranceByAcceptText={toleranceByAcceptText}
+                reviewed={{kind: "free_text", input: "10.2"}}
+            />,
+        );
+        expect(screen.getByTestId("free-text-result")).toHaveAttribute(
+            "data-result",
+            "correct",
+        );
+    });
+});
