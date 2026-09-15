@@ -2989,23 +2989,23 @@ bewusst keine Zahlen, die veralten könnten.
 - [ ] Sprachwechsel: "English" oben rechts führt auf `/start/en/`, dort
       führt "Deutsch" zurück.
 - [ ] Verweise unten (Dokumentation, Repository, Lerninhalte) funktionieren.
-- [ ] Fußzeile (#3113): "Impressum" führt auf `docs/legal/imprint/`,
-      "Datenschutz" auf `docs/legal/privacy/`; auf `/start/en/` heißen sie
-      "Legal notice" / "Privacy policy" und führen auf `docs/en/legal/…`.
+- [ ] Fußzeile (#3113): "Impressum" führt auf `astrapi69.github.io/adaptive-learner/docs/legal/imprint/`,
+      "Datenschutz" auf `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; auf `/start/en/` heißen sie
+      "Legal notice" / "Privacy policy" und führen auf `astrapi69.github.io/adaptive-learner/docs/en/legal/…`.
 - [ ] Dunkles System-Theme: Seite folgt (prefers-color-scheme), Text lesbar.
 - [ ] Mobil (schmales Fenster): einspaltig, kein horizontales Scrollen.
 
 ### Rechtstexte in der App erreichbar (#3113)
 
 Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
-(`docs/legal/imprint/`, `docs/legal/privacy/`; andere Sprachen unter
-`docs/<lang>/legal/…`, Locales ohne eigene Fassung fallen auf Deutsch zurück).
+(`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; andere Sprachen unter
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, Locales ohne eigene Fassung fallen auf Deutsch zurück).
 
 - [ ] App-Startseite `/` (ohne angemeldeten Lernenden): unter "Dokumentation
       lesen" stehen "Impressum · Datenschutzerklärung"
       (`landing-imprint-link`, `landing-privacy-link`); beide öffnen die
       Docs-Seite in einem neuen Tab, in der aktiven UI-Sprache (Deutsch ohne
-      Präfix, Englisch unter `docs/en/`).
+      Präfix, Englisch unter `astrapi69.github.io/adaptive-learner/docs/en/`).
 - [ ] Einstellungen → Über → Karte "Lizenz & Ressourcen": zwei neue Zeilen
       "Impressum" und "Datenschutzerklärung" (`about-imprint-link`,
       `about-privacy-link`), gleiche Ziele, neuer Tab.
