@@ -63,6 +63,8 @@ const DE: Catalog = {
         choose_language: "Sprache wählen",
         start_button: "Lernreise beginnen",
         docs_link: "Dokumentation lesen",
+        imprint_link: "Impressum",
+        privacy_link: "Datenschutzerklärung",
     },
     nav: {
         dev_badge: "DEV",
@@ -192,6 +194,8 @@ const EN: Catalog = {
         choose_language: "Choose your language",
         start_button: "Start your learning journey",
         docs_link: "Read the documentation",
+        imprint_link: "Legal notice",
+        privacy_link: "Privacy policy",
     },
     nav: {
         dev_badge: "DEV",
@@ -323,6 +327,8 @@ const ES: Catalog = {
         choose_language: "Elige tu idioma",
         start_button: "Comienza tu viaje de aprendizaje",
         docs_link: "Leer la documentación",
+        imprint_link: "Aviso legal",
+        privacy_link: "Política de privacidad",
     },
     nav: {
         dev_badge: "DEV",
@@ -449,6 +455,8 @@ const FR: Catalog = {
         choose_language: "Choisis ta langue",
         start_button: "Commencer ton parcours d'apprentissage",
         docs_link: "Lire la documentation",
+        imprint_link: "Mentions légales",
+        privacy_link: "Politique de confidentialité",
     },
     nav: {
         dev_badge: "DEV",
@@ -575,6 +583,8 @@ const EL: Catalog = {
         choose_language: "Επίλεξε τη γλώσσα σου",
         start_button: "Ξεκίνα το ταξίδι μάθησής σου",
         docs_link: "Διαβάστε την τεκμηρίωση",
+        imprint_link: "Στοιχεία εκδότη",
+        privacy_link: "Πολιτική απορρήτου",
     },
     nav: {
         dev_badge: "DEV",
