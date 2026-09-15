@@ -66,7 +66,8 @@ export function setSelectionKey(entry: {
   return `${entry.source}#${entry.id}`;
 }
 
-/** The "Update available" marker + the per-row Update button (#3081). */
+/** The "Update available" marker + the per-row Update button (#3081), as one
+ *  group so it can wrap below the title on phones (#3092). */
 function ContentSetListUpdate({
   entry,
   onUpdate,
@@ -78,9 +79,12 @@ function ContentSetListUpdate({
   if (!entry.update_available) return null;
   const label = t("content.action.update", "Update");
   return (
-    <>
+    <span
+      className="flex shrink-0 items-center gap-1 max-sm:order-last max-sm:basis-full max-sm:justify-end"
+      data-testid={`content-list-set-${entry.id}-update-group`}
+    >
       <span
-        className="hidden shrink-0 text-xs font-semibold text-accent sm:inline"
+        className="shrink-0 text-xs font-semibold text-accent"
         data-testid={`content-list-set-${entry.id}-update`}
       >
         {t("content.status.update_available", "Update available")}
@@ -100,7 +104,7 @@ function ContentSetListUpdate({
           <Download size={18} aria-hidden="true" />
         </button>
       )}
-    </>
+    </span>
   );
 }
 
@@ -126,7 +130,11 @@ function ContentSetListRow({
   const knowledge = isKnowledgeDomain(entry.domain, entry.source_language, entry.target_language);
   return (
     <li>
-      <div className="flex items-center gap-1">
+      {/* #3092 — flex-wrap lets the update group (marker + button) drop to
+          its own full-width line below ``sm``; four 44 px tap targets in one
+          line left a phone-width title with ~45 px. Rows without an update
+          render exactly as before (the group is absent, nothing wraps). */}
+      <div className="flex flex-wrap items-center gap-1">
         {selectable && (
           <label className="inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center">
             <span className="sr-only">

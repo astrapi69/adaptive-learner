@@ -197,8 +197,13 @@ export default function TokenRoleField({
                 </ul>
             )}
 
-            <div className="flex items-start gap-2">
+            {/* #3087 - below the mobile breakpoint the row stacks (the
+                CardEditor button-row pattern); in one line the input is the
+                child that shrinks and grows, so neither a 375px viewport nor
+                a long role label can collapse it or push the button out. */}
+            <div className="flex items-start gap-2 max-[769px]:flex-col max-[769px]:items-stretch">
                 <Input
+                    className="min-w-0 flex-1"
                     value={token}
                     onChange={(e) => {
                         setToken(e.target.value);
@@ -213,7 +218,7 @@ export default function TokenRoleField({
                     data-testid={`${idPrefix}-token-role-token`}
                 />
                 <select
-                    className="h-9 rounded-md border border-border bg-card px-2 text-sm text-fg-primary"
+                    className="h-9 rounded-md border border-border bg-card px-2 text-sm text-fg-primary max-[769px]:w-full"
                     value={role}
                     onChange={(e) =>
                         setRole(e.target.value as ContentLessonCardTokenRoleName)
@@ -237,6 +242,7 @@ export default function TokenRoleField({
                     size="sm"
                     onClick={add}
                     disabled={!canAdd}
+                    className="shrink-0"
                     data-testid={`${idPrefix}-token-role-add`}
                 >
                     <Plus aria-hidden="true" className="mr-1 h-4 w-4" />

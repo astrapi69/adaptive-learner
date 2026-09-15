@@ -45,6 +45,8 @@ Baseline zu committen.
 | App-Startseite - Zeile "Impressum · Datenschutzerklärung" unter dem Dokumentationslink (#3113) | `legal/landing.png` | `legal/landing.mobile.png` | #3113 |
 | Lernen-Tab - Gamification-Karte als letzte Karte im Bereich "Motivation und Routine", hinter einer Trennlinie (#2962) | `gamification-card/settings.png` | `gamification-card/settings.mobile.png` | #2962 |
 | Plugins-Tab - Karte "Installierte Plugins" mit dem PluginForge-Lebenszyklus je Plugin; im Browser-Build der Desktop-only-Hinweis (#3055) | `plugin-lifecycle/settings.png` | `plugin-lifecycle/settings.mobile.png` | #3055 |
+| Meine Inhalte, Listenansicht - Set mit ausstehender Aktualisierung: Marker "Aktualisierung verfügbar" und Download-Icon-Knopf der Zeile, auf dem Telefon als eigene Zeile unter dem Titel (#3081, #3092; Upstream per page.route auf 1.1.0 gehoben) | `content-updates/listenansicht-aktualisierung.png` | `content-updates/listenansicht-aktualisierung.mobile.png` | #3081 |
+| Meine Inhalte - Kopfzeilen-"Aktualisieren" hält ein Breaking-Update zurück: der Toast nennt das Set und bleibt stehen (#3081, #2128) | `content-updates/zurueckgehalten-toast.png` | `content-updates/zurueckgehalten-toast.mobile.png` | #3081 |
 | KI-Prüfung - Knopf "Mit KI prüfen" auf jeder eigenen Set-Zeile unter Inhalte > Meine Inhalte, ohne Schlüssel deaktiviert mit Begründung (AIV-07, #3060) | `ai-check/eigenes-set-pruefen.png` | `ai-check/eigenes-set-pruefen.mobile.png` | #3060 |
 | KI-Prüfung - Schritt "Vorschläge übernehmen": Tabelle mit aktuellem und vorgeschlagenem Wert je Kartenfeld, abhakbar, Zähler der manuellen Hinweise (AIV-07, #3060; Anbieter per page.route gemockt) | `ai-check/vorschlaege-uebernehmen.png` | `ai-check/vorschlaege-uebernehmen.mobile.png` | #3060 |
 | Lernen-Tab - Bereichsleiste über den fünf Bereichen, Deep-Link `?tab=learning&section=review`, Chip "Nach der Lektion" aktiv (#2961) | `learning-subnav/settings.png` | `learning-subnav/settings.mobile.png` | #2961 |
@@ -93,7 +95,7 @@ Baseline zu committen.
 | Lektions-Navigation — "Lektion N von M" mit Vor/Zurück (#2793) | `lesson-navigation/position-zeile.png` | `lesson-navigation/position-zeile.mobile.png` | v2.13.0+ |
 | Erklärung nach der Antwort - Kasten „Erklärung" aufgeklappt nach falscher Antwort, gerendertes Markdown (#2991) | `exercise-explanation/falsche-antwort.png` | `exercise-explanation/falsche-antwort.mobile.png` | v2.15.0+ |
 | Erklärungen generieren - Opt-in-Kontrollkästchen unter der Aufgabentyp-Auswahl im Buchtext-Schritt (#2992) | `create-lesson/erklaerungen-opt-in.png` | `create-lesson/erklaerungen-opt-in.mobile.png` | v2.15.0+ |
-| Erklärung im Inline-Editor - Markdown-Feld mit Zähler und "Vorlage einfügen" (#2992) | `exercise-explanation/editor-feld.png` | `exercise-explanation/editor-feld.mobile.png` | v2.15.0+ |
+| Erklärung im Inline-Editor - Markdown-Feld mit eingefügter Vorlage und Zeichenzähler; der Knopf "Vorlage einfügen" erscheint nur bei leerem Feld (#2992) | `exercise-explanation/editor-feld.png` | `exercise-explanation/editor-feld.mobile.png` | v2.15.0+ |
 
 > Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer
 > konsistenten Maschine geprueft — bis dahin tragen die Ordner eine `.gitkeep`.

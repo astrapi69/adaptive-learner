@@ -1661,8 +1661,10 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       "Update available" and is confirmed individually via its row
       button. **List view (#3081):** in the list view (toggle at the top
       right of the list) the set's row shows the "Update available" marker
-      (from tablet width) and a download-icon button
-      (`content-list-set-<id>-update-button`, tooltip "Update"); a click
+      and a download-icon button (`content-list-set-<id>-update-button`,
+      tooltip "Update"); on a phone (below 640 px) marker and button drop as
+      one group to their own line under the title (right-aligned, #3092), the
+      title keeps the width it has without an update; a click
       opens the same #2128 guard dialog as the card button for a breaking
       update, otherwise the update is applied directly; up-to-date sets show
       neither marker nor button. **After applying (#2985):** apply
@@ -1791,7 +1793,11 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       annotated. (d) The select offers EXACTLY seven roles (article,
       noun, verb, adjective, preposition, gender marker, tense marker)
       and no free-text field. (e) Save, reopen the card for editing ->
-      the annotations are still there.
+      the annotations are still there. (f) Phone width (below 769 px,
+      #3087): the add-row stacks (word field full width, select full
+      width, "Add role" below), nothing overflows the card; from tablet
+      width up it stays one line and the word field fills the remaining
+      space.
 - [ ] **Suggest roles (#3072):** In the same row click "Suggest roles".
       On a German front carrying articles and prepositions the list
       fills ("der Hund in dem Garten" gives der = article, in =
@@ -2688,8 +2694,13 @@ Click through once for EACH theme:
 - [ ] Safe-area insets respected
 - [ ] Mobile nav = hamburger drawer (the bottom tab bar was removed in
       #1512); drawer links 44px, closes after navigation
-- [ ] Known open issue #1569 (caret/touch offset by 1-2 lines in the
-      lesson flow): reproduce + add notes to the issue
+- [ ] Tap offset on the iPhone (#1569, fixed by #2984 + #3004, device
+      reading 7 on 2026-09-10): in a lesson focus a free-text field, type,
+      close the keyboard, tap the field again, then tap an MC tile. The
+      caret sits in the field and every tap hits the element under the
+      finger. On a regression: Settings > Diagnostics & Support > "Tap &
+      viewport probe" on, mark the mis-tap with "Daneben!", "Werte
+      kopieren", and attach the protocol to the reopened issue #1569.
 
 #### Theory read-aloud on iOS: long text (#1928) - MANDATORY
 

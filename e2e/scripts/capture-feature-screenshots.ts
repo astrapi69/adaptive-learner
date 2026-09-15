@@ -80,6 +80,23 @@ interface FeatureShot {
     /** Pin the scroll position to this testid AFTER settleForScreenshot
      *  (fonts settle last and reflow the page a few px, #1540/#1567). */
     pinTo?: string;
+    /** Like ``pinTo``, but a CSS selector instead of an exact testid - for
+     *  surfaces whose testid carries a per-instance prefix (#3080). */
+    pinToSelector?: string;
+    /** The shot DELIBERATELY shows a persistent toast (#3081); opts out of
+     *  the #2721 transient-toast wait in settleForScreenshot. */
+    keepsToast?: boolean;
+    /** The surface has no app shell and therefore no ``#root`` scroller
+     *  (the static landing page); see ``SettleOptions.noAppShell``. */
+    noAppShell?: boolean;
+    /** Scroll the pin to sit BELOW the sticky app header (``.app-nav``)
+     *  instead of under it. ``scrollIntoView({block: "start"})`` aligns the
+     *  element with the top of the ``#root`` scroller, which the header
+     *  overlays, so a pin on a small element (a checkbox row, a form field)
+     *  vanishes behind it (#3088). Opt-in on purpose: the existing shots pin
+     *  tall containers, where the hidden strip does not matter, and a global
+     *  offset would move every baseline. */
+    pinBelowHeader?: boolean;
 }
 
 /** Open ``/content`` on a given tab and wait for the hub shell. */
@@ -198,6 +215,14 @@ async function gotoExerciseExplanation(page: Page): Promise<boolean> {
     await page.getByTestId("content-repo-url").fill(`https://github.com/${EXPLANATION_REPO}`);
     await page.getByTestId("content-repo-connect").click();
     await expect(page.getByTestId("content-repo-result")).toContainText(/passed|erfolgreich/i);
+    // The content hub defaults to the LIST view (#1257); the tree with the
+    // per-set "Öffnen" button only renders in grid mode, so seed the view
+    // pref before the navigation, as ``openFirstBundledLesson`` does. The
+    // connected set sits in its language group with the button in view; the
+    // "other" toggle + action menu of the bundled opener are not needed.
+    await page.addInitScript(() => {
+        localStorage.setItem("adaptive-learner.content_view_mode", "grid");
+    });
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
     const open = page.getByTestId(`content-set-${EXPLANATION_SET_ID}-open`);
@@ -634,8 +659,17 @@ async function gotoTokenRoleField(page: Page): Promise<boolean> {
         await page.getByTestId("create-lesson-draft-fresh").click();
     }
     await page.getByTestId("create-lesson-title").fill("Tiere");
+    // The suggester knows only closed word classes PER LANGUAGE and reads
+    // the card-front language from the target language (#3080). Pin it to
+    // German, otherwise the default target treats "der"/"dem" as unknown
+    // and only "in" (also an English preposition) gets a row.
+    await page.getByTestId("create-lesson-target-lang").click();
+    await page.getByRole("option", {name: "German", exact: true}).click();
+    await expect(page.getByTestId("create-lesson-target-lang")).toContainText(
+        "German",
+    );
     await page.getByTestId("create-lesson-next").click();
-    // Step 2: one card whose front carries an article and a preposition,
+    // Step 2: one card whose front carries two articles and a preposition,
     // so the suggestion has something honest to find.
     await page.getByTestId("card-front-input").fill("der Hund in dem Garten");
     await page.getByTestId("card-back-input").fill("the dog in the garden");
@@ -647,9 +681,12 @@ async function gotoTokenRoleField(page: Page): Promise<boolean> {
         .first();
     await expect(suggest).toBeVisible({timeout: 20_000});
     await suggest.click();
-    await expect(
-        page.locator('[data-testid$="-token-role-row"]').first(),
-    ).toBeVisible({timeout: 20_000});
+    // "der" (article), "in" (preposition), "dem" (article): all three rows,
+    // the same expectation token-role-suggest.test.ts pins for this front.
+    await expect(page.locator('[data-testid$="-token-role-row"]')).toHaveCount(
+        3,
+        {timeout: 20_000},
+    );
     return true;
 }
 
@@ -874,7 +911,141 @@ async function gotoAiFixReview(page: Page): Promise<boolean> {
     return true;
 }
 
+/**
+ * Set update available + held back (#3001, #3081): a page.route-mocked
+ * content repo whose root manifest reports version 1.0.0 while the learner
+ * downloads and plays the set, then 1.1.0 with a RENAMED lesson file, so the
+ * learner's lesson progress would be orphaned and the #2128 guard holds the
+ * update back. No fixture on disk produces that state; the mock flips it.
+ */
+const UPDATE_REPO = "e2e/update-held-back";
+const UPDATE_SET_ID = "adjektivstellung-from-de";
+
+function mockUpdatableRepo(page: Page): {bump: () => void} {
+    const lesson = readFileSync(
+        join(__dirname, "..", "fixtures", "explanation-post-answer.lesson.json"),
+        "utf-8",
+    );
+    const state = {version: "1.0.0", file: "01-adjektivstellung.json"};
+    const rootManifest = () =>
+        [
+            'schema_version: "1.13"',
+            "sets:",
+            `  - id: ${UPDATE_SET_ID}`,
+            '    title: "Adjektivstellung"',
+            "    target_language: es",
+            "    source_language: de",
+            "    level: A1",
+            `    version: "${state.version}"`,
+            "    lesson_count: 1",
+            "    domain: language",
+            "    path: sets/es/adjektivstellung",
+            "",
+        ].join("\n");
+    const setManifest = () => `metadata:\n  lessons:\n    - "${state.file}"\n`;
+    const emptyIndex = 'schema_version: "1.13"\nsets: []\n';
+    const emptyOfficial = (route: Route) => {
+        const url = route.request().url();
+        if (url.endsWith("/recommended-repos.json")) {
+            return route.fulfill({status: 200, body: '{"repos":[]}'});
+        }
+        if (url.endsWith("/books.yaml")) {
+            return route.fulfill({status: 200, body: "domains: {}\n"});
+        }
+        if (url.endsWith("/manifest.yaml")) {
+            return route.fulfill({status: 200, body: emptyIndex});
+        }
+        return route.fulfill({status: 404, body: ""});
+    };
+    void page.route("**/raw.githubusercontent.com/**", emptyOfficial);
+    void page.route("**/adaptive-learner-content/**", emptyOfficial);
+    void page.route(`**/raw.githubusercontent.com/${UPDATE_REPO}/main/**`, (route) => {
+        const url = route.request().url();
+        if (url.endsWith("/main/manifest.yaml")) {
+            return route.fulfill({status: 200, body: rootManifest()});
+        }
+        if (url.endsWith("/sets/es/adjektivstellung/manifest.yaml")) {
+            return route.fulfill({status: 200, body: setManifest()});
+        }
+        if (url.endsWith(`/${state.file}`)) {
+            return route.fulfill({status: 200, body: lesson});
+        }
+        return route.fulfill({status: 404, body: ""});
+    });
+    return {
+        bump: () => {
+            state.version = "1.1.0";
+            state.file = "01-adjektivstellung-v2.json";
+        },
+    };
+}
+
+/** Connect the mocked repo, download + play the set so progress exists,
+ *  then bump upstream and land on Meine Inhalte (list view) with the
+ *  "Update available" row. */
+async function gotoUpdateAvailableRow(page: Page): Promise<{bump: () => void} | null> {
+    const repo = mockUpdatableRepo(page);
+    await seedLearner(page);
+    await page.goto("/settings?tab=data");
+    await expect(page.getByTestId("content-repo-add")).toBeVisible({timeout: 60_000});
+    await page.getByTestId("content-repo-url").fill(`https://github.com/${UPDATE_REPO}`);
+    await page.getByTestId("content-repo-connect").click();
+    await expect(page.getByTestId("content-repo-result")).toContainText(/passed|erfolgreich/i);
+    // The Open button lives in the tile view only; the list view (default
+    // since #1257) links to the set page. Play through the tiles, then
+    // drop the preference so the shot shows the default list view.
+    await page.evaluate(() => localStorage.setItem("adaptive-learner.content_view_mode", "grid"));
+    await page.goto("/content?tab=my");
+    await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
+    const open = page.getByTestId(`content-set-${UPDATE_SET_ID}-open`);
+    await expect(open).toBeVisible({timeout: 15_000});
+    await open.click();
+    await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 15_000});
+    await page.getByTestId("lesson-next").click();
+    await expect(page.getByTestId("multiple-choice-exercise")).toBeVisible({timeout: 10_000});
+    await page.getByRole("radio", {name: "el rojo coche"}).check();
+    const check = page.getByTestId("lesson-check");
+    await expect(check).toBeEnabled({timeout: 5_000});
+    await check.click();
+    repo.bump();
+    await page.evaluate(() => localStorage.removeItem("adaptive-learner.content_view_mode"));
+    await page.goto("/content?tab=my");
+    await expect(page.getByTestId("content-list-view")).toBeVisible({timeout: 15_000});
+    await expect(page.getByTestId(`content-list-set-${UPDATE_SET_ID}-update-button`)).toBeVisible({
+        timeout: 15_000,
+    });
+    return repo;
+}
+
+async function gotoListUpdateRow(page: Page): Promise<boolean> {
+    return (await gotoUpdateAvailableRow(page)) !== null;
+}
+
+/** Press the header "Aktualisieren": the update is held back (#2128) and
+ *  the toast names the set (#3081). */
+async function gotoHeldBackToast(page: Page): Promise<boolean> {
+    if (!(await gotoUpdateAvailableRow(page))) return false;
+    await page.getByTestId("content-refresh").click();
+    await expect(page.getByText(/Zurückgehalten, weil dein Fortschritt/)).toBeVisible({
+        timeout: 20_000,
+    });
+    await expect(page.getByTestId(`content-list-set-${UPDATE_SET_ID}-update-button`)).toBeVisible();
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- Set update available in the list view + held-back toast (#3081) --
+    {
+        path: "content-updates/listenansicht-aktualisierung",
+        setup: gotoListUpdateRow,
+        pinTo: `content-list-set-${UPDATE_SET_ID}-update-button`,
+    },
+    {
+        path: "content-updates/zurueckgehalten-toast",
+        setup: gotoHeldBackToast,
+        pinTo: `content-list-set-${UPDATE_SET_ID}-update-button`,
+        keepsToast: true,
+    },
     // --- AI check: apply suggestions, review step (AIV-07, #3060) ---------
     {
         path: "ai-check/vorschlaege-uebernehmen",
@@ -944,6 +1115,7 @@ const FEATURES: FeatureShot[] = [
     // so the pinned app theme does not affect it.
     {
         path: "landing-page/de",
+        noAppShell: true,
         setup: async (p) => {
             await p.goto("/start/");
             return true;
@@ -951,6 +1123,7 @@ const FEATURES: FeatureShot[] = [
     },
     {
         path: "landing-page/en",
+        noAppShell: true,
         setup: async (p) => {
             await p.goto("/start/en/");
             return true;
@@ -1090,8 +1263,21 @@ const FEATURES: FeatureShot[] = [
     // --- Post-answer explanation (#2991) --------------------------------
     {path: "exercise-explanation/falsche-antwort", setup: gotoExerciseExplanation, pinTo: "exercise-explanation"},
     // --- Explanation authoring: assistant opt-in + editor field (#2992) --
-    {path: "create-lesson/erklaerungen-opt-in", setup: gotoBookExplanationsOptIn, pinTo: "book-explanations-field"},
-    {path: "exercise-explanation/editor-feld", setup: gotoExerciseEditorExplanation, pinTo: "create-lesson-step-3"},
+    // #3088: both motifs are small elements, so the pin sits on the block
+    // ABOVE them (type selection / the field's own label) and clears the
+    // sticky header; the previous pins put the motif behind the header.
+    {
+        path: "create-lesson/erklaerungen-opt-in",
+        setup: gotoBookExplanationsOptIn,
+        pinTo: "assistant-type-selector",
+        pinBelowHeader: true,
+    },
+    {
+        path: "exercise-explanation/editor-feld",
+        setup: gotoExerciseEditorExplanation,
+        pinToSelector: 'label:has(> textarea[data-testid$="-explanation"])',
+        pinBelowHeader: true,
+    },
 
     // --- GitHub export (desktop dialog) ---------------------------------
     {path: "github-export/share-dialog", setup: gotoGithubExport, desktopOnly: true},
@@ -1151,7 +1337,9 @@ const FEATURES: FeatureShot[] = [
     {
         path: "create-lesson/token-rollen",
         setup: gotoTokenRoleField,
-        pinTo: "token-role-field",
+        // The field's testid is ``card-edit-<id>-token-roles``, prefixed per
+        // card, so an exact ``pinTo`` can never match (#3080).
+        pinToSelector: '[data-testid$="-token-roles"]',
     },
 
     // --- Mobile bottom tab bar, opt-in (#2786 restore of #1512) ---------
@@ -1238,12 +1426,24 @@ for (const feature of FEATURES) {
             await setTheme(page, DEFAULT_THEME);
             const ready = await feature.setup(page);
             test.skip(!ready, `Could not reach ${feature.path} deterministically`);
-            await settleForScreenshot(page);
-            if (feature.pinTo) {
-                await page
-                    .getByTestId(feature.pinTo)
-                    .first()
-                    .evaluate((el) => el.scrollIntoView({block: "start"}));
+            await settleForScreenshot(page, {
+                allowPersistentToast: feature.keepsToast,
+                noAppShell: feature.noAppShell,
+            });
+            const pin = feature.pinToSelector
+                ? page.locator(feature.pinToSelector)
+                : feature.pinTo
+                  ? page.getByTestId(feature.pinTo)
+                  : null;
+            if (pin) {
+                await pin.first().evaluate((el, belowHeader) => {
+                    if (belowHeader) {
+                        const nav = document.querySelector(".app-nav");
+                        const navHeight = nav ? Math.round(nav.getBoundingClientRect().height) : 0;
+                        el.style.scrollMarginTop = `${navHeight}px`;
+                    }
+                    el.scrollIntoView({block: "start"});
+                }, feature.pinBelowHeader === true);
                 await page.waitForTimeout(100);
             }
             // Pass the snapshot name as an ARRAY of path segments, not a
