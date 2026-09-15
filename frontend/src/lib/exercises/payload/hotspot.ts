@@ -154,3 +154,17 @@ export function hitTestHotspotZones(
     const index = zones.findIndex((zone) => zoneContains(zone, x, y));
     return index === -1 ? null : index;
 }
+
+/** The canonical SRS element key: ``<src>#zone-<correctIndex>``. There is
+ *  no textual label to key on (a zone is an image region, not a word), so
+ *  this composite stays stable across attempts as long as the content's
+ *  zone order doesn't change. Empty string when the payload is malformed
+ *  or carries no correct zone (mirrors the other ``canonical*`` helpers'
+ *  fail-safe contract). */
+export function canonicalHotspotKey(exercise: ContentLessonExercise): string {
+    const payload = asHotspotPayload(exercise);
+    if (!payload) return "";
+    const correctIndex = payload.zones.findIndex((zone) => zone.is_correct === "true");
+    if (correctIndex === -1) return "";
+    return `${payload.src}#zone-${correctIndex}`;
+}

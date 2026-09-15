@@ -248,7 +248,6 @@ function HotspotExercise(
                     deriveHotspotAttempt(
                         exercise,
                         {setId, lessonId},
-                        src,
                         correctZoneIndex,
                         selectedZone ?? -1,
                         isCorrect,

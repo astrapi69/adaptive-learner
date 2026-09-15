@@ -9,7 +9,10 @@ import {
     DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
+    HOTSPOT_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
+    ORDERING_EXT_TYPE,
+    PARSONS_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
     SPEAK_AND_RECORD_EXT_TYPE,
     createBlankExtensionExercise,
@@ -90,6 +93,36 @@ function sar(payload: unknown, prompt = "Say it out loud"): ContentLessonExercis
         ext_payload: payload,
     } as ContentLessonExercise;
 }
+function ord(payload: unknown, prompt = "Put the steps in order"): ContentLessonExercise {
+    return {
+        id: "o1",
+        type: ORDERING_EXT_TYPE,
+        prompt,
+        card_ids: [],
+        distractors: [],
+        ext_payload: payload,
+    } as ContentLessonExercise;
+}
+function pars(payload: unknown, prompt = "Arrange the code"): ContentLessonExercise {
+    return {
+        id: "p1",
+        type: PARSONS_EXT_TYPE,
+        prompt,
+        card_ids: [],
+        distractors: [],
+        ext_payload: payload,
+    } as ContentLessonExercise;
+}
+function hot(payload: unknown, prompt = "Click the spot"): ContentLessonExercise {
+    return {
+        id: "h1",
+        type: HOTSPOT_EXT_TYPE,
+        prompt,
+        card_ids: [],
+        distractors: [],
+        ext_payload: payload,
+    } as ContentLessonExercise;
+}
 
 describe("newExtensionExerciseId", () => {
     it("is unique + prefixed", () => {
@@ -148,6 +181,27 @@ describe("createBlankExtensionExercise", () => {
         };
         expect(p.pass_threshold).toBe(60);
         expect(p.questions[0].points).toBe(1);
+        expect(validateExtensionExercise(ex).valid).toBe(false);
+    });
+    it("ordering blank has two empty items and is invalid", () => {
+        const ex = createBlankExtensionExercise(ORDERING_EXT_TYPE, "o");
+        expect(ex.type).toBe(ORDERING_EXT_TYPE);
+        expect(ex.ext_payload).toEqual({items: ["", ""]});
+        expect(validateExtensionExercise(ex).valid).toBe(false);
+    });
+    it("parsons blank has two empty lines and is invalid", () => {
+        const ex = createBlankExtensionExercise(PARSONS_EXT_TYPE, "p");
+        expect(ex.type).toBe(PARSONS_EXT_TYPE);
+        const p = ex.ext_payload as {lines: unknown[]};
+        expect(p.lines).toHaveLength(2);
+        expect(validateExtensionExercise(ex).valid).toBe(false);
+    });
+    it("hotspot blank has an empty image + two zones and is invalid", () => {
+        const ex = createBlankExtensionExercise(HOTSPOT_EXT_TYPE, "h");
+        expect(ex.type).toBe(HOTSPOT_EXT_TYPE);
+        const p = ex.ext_payload as {src: string; zones: unknown[]};
+        expect(p.src).toBe("");
+        expect(p.zones).toHaveLength(2);
         expect(validateExtensionExercise(ex).valid).toBe(false);
     });
 });
@@ -578,5 +632,135 @@ describe("validateExtensionExercise — speak_and_record (reuses payload validat
         const res = validateExtensionExercise(sar({sentence: "   "}));
         expect(res.valid).toBe(false);
         expect(res.code).toBe("speak_and_record");
+    });
+});
+
+describe("normalizeExtensionExercise — ordering (#3110)", () => {
+    it("trims + drops empty items", () => {
+        const out = normalizeExtensionExercise(
+            ord({items: [" Engage clutch ", "", "  Select gear  "]}, "  Order it  "),
+        );
+        expect(out.prompt).toBe("Order it");
+        expect(out.ext_payload).toEqual({items: ["Engage clutch", "Select gear"]});
+    });
+});
+
+describe("validateExtensionExercise — ordering (reuses payload validator, #3110)", () => {
+    it("accepts >= 2 unique items", () => {
+        const ex = ord({items: ["a", "b", "c"]});
+        expect(validateExtensionExercise(ex).valid).toBe(true);
+    });
+    it("rejects an empty prompt", () => {
+        const res = validateExtensionExercise(ord({items: ["a", "b"]}, "   "));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("prompt");
+    });
+    it("rejects fewer than 2 items", () => {
+        const res = validateExtensionExercise(ord({items: ["a"]}));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("ordering");
+    });
+    it("rejects a duplicate item", () => {
+        const res = validateExtensionExercise(ord({items: ["a", "b", "a"]}));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("ordering");
+    });
+});
+
+describe("normalizeExtensionExercise — parsons (#3110)", () => {
+    it("trims code + drops empty lines, keeps a non-empty language", () => {
+        const out = normalizeExtensionExercise(
+            pars(
+                {
+                    lines: [
+                        {code: "  def f():  ", indent: 0},
+                        {code: "  ", indent: 1},
+                        {code: "return 1", indent: 1},
+                    ],
+                    language: "  python  ",
+                },
+                "  Arrange  ",
+            ),
+        );
+        expect(out.prompt).toBe("Arrange");
+        expect(out.ext_payload).toEqual({
+            lines: [
+                {code: "def f():", indent: 0},
+                {code: "return 1", indent: 1},
+            ],
+            language: "python",
+        });
+    });
+
+    it("drops the language key entirely when blank", () => {
+        const out = normalizeExtensionExercise(
+            pars({lines: [{code: "a", indent: 0}, {code: "b", indent: 0}], language: "  "}),
+        );
+        expect(out.ext_payload).toEqual({
+            lines: [
+                {code: "a", indent: 0},
+                {code: "b", indent: 0},
+            ],
+        });
+    });
+});
+
+describe("validateExtensionExercise — parsons (reuses payload validator, #3110)", () => {
+    it("accepts >= 2 non-empty lines", () => {
+        const ex = pars({lines: [{code: "a", indent: 0}, {code: "b", indent: 1}]});
+        expect(validateExtensionExercise(ex).valid).toBe(true);
+    });
+    it("rejects an empty prompt", () => {
+        const res = validateExtensionExercise(
+            pars({lines: [{code: "a", indent: 0}, {code: "b", indent: 0}]}, "   "),
+        );
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("prompt");
+    });
+    it("rejects fewer than 2 lines", () => {
+        const res = validateExtensionExercise(pars({lines: [{code: "a", indent: 0}]}));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("parsons");
+    });
+});
+
+describe("normalizeExtensionExercise — hotspot (#3110)", () => {
+    it("trims the src reference; zones pass through", () => {
+        const zones = [
+            {shape: "rect", coords: {x: 1, y: 1, width: 2, height: 2}, is_correct: "true"},
+            {shape: "circle", coords: {cx: 50, cy: 50, radius: 10}},
+        ];
+        const out = normalizeExtensionExercise(
+            hot({src: "  assets/img/map.png  ", zones}, "  Click it  "),
+        );
+        expect(out.prompt).toBe("Click it");
+        expect(out.ext_payload).toEqual({src: "assets/img/map.png", zones});
+    });
+});
+
+describe("validateExtensionExercise — hotspot (reuses payload validator, #3110)", () => {
+    const zones = [
+        {shape: "rect", coords: {x: 1, y: 1, width: 2, height: 2}, is_correct: "true"},
+        {shape: "circle", coords: {cx: 50, cy: 50, radius: 10}},
+    ];
+    it("accepts a non-empty src + >= 2 zones with exactly one correct", () => {
+        const ex = hot({src: "assets/img/map.png", zones});
+        expect(validateExtensionExercise(ex).valid).toBe(true);
+    });
+    it("rejects an empty prompt", () => {
+        const res = validateExtensionExercise(hot({src: "assets/img/map.png", zones}, "   "));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("prompt");
+    });
+    it("rejects a missing/empty src", () => {
+        const res = validateExtensionExercise(hot({src: "  ", zones}));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("hotspot");
+    });
+    it("rejects zero correct zones", () => {
+        const noneCorrect = zones.map((z) => ({...z, is_correct: undefined}));
+        const res = validateExtensionExercise(hot({src: "assets/img/map.png", zones: noneCorrect}));
+        expect(res.valid).toBe(false);
+        expect(res.code).toBe("hotspot");
     });
 });

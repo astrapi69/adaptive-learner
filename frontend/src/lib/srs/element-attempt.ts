@@ -35,6 +35,7 @@ import {canonicalDictationAnswer} from "../exercises/payload/dictation";
 import {canonicalImageDescriptionAnswer} from "../exercises/payload/image-description";
 import {correctAudioChoiceOption} from "../exercises/payload/audio-choice";
 import {canonicalParsonsSequence} from "../exercises/payload/parsons";
+import {canonicalHotspotKey} from "../exercises/payload/hotspot";
 import {resolveConcreteDirection} from "../exercises/direction";
 import {elementKeysOf} from "./element-keys";
 import {elementIdentityKeysOf} from "./element-identity";
@@ -440,19 +441,18 @@ export function deriveParsonsAttempt(
 
 /** HOTSPOT (#3110): single attempt. There is no textual label to key on
  *  (a zone is an image region, not a word) — element_key falls back to
- *  ``<src>#zone-<correctIndex>``, stable across attempts as long as the
- *  content's zone order doesn't change, mirroring how ``derivePictureChoiceAttempt``
- *  keys on the correct image's own identity. */
+ *  ``canonicalHotspotKey`` (``<src>#zone-<correctIndex>``), stable across
+ *  attempts as long as the content's zone order doesn't change, mirroring
+ *  how ``derivePictureChoiceAttempt`` keys on the correct image's own
+ *  identity. */
 export function deriveHotspotAttempt(
     exercise: ContentLessonExercise,
     ctx: AttemptContext,
-    src: string,
     correctZoneIndex: number,
     selectedZoneIndex: number,
     isCorrect: boolean,
 ): ElementAttempt {
-    const canonical =
-        elementKeysOf(exercise)?.[0] ?? `${src}#zone-${correctZoneIndex}`;
+    const canonical = elementKeysOf(exercise)?.[0] ?? canonicalHotspotKey(exercise);
     return {
         ..._baseAttempt(exercise, ctx),
         element_key: canonical,
