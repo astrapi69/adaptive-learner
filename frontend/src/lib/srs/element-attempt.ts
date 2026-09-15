@@ -34,6 +34,7 @@ import {asGradedQuizPayload, canonicalAnswer as gradedQuizCanonicalAnswer} from 
 import {canonicalDictationAnswer} from "../exercises/payload/dictation";
 import {canonicalImageDescriptionAnswer} from "../exercises/payload/image-description";
 import {correctAudioChoiceOption} from "../exercises/payload/audio-choice";
+import {canonicalParsonsSequence} from "../exercises/payload/parsons";
 import {resolveConcreteDirection} from "../exercises/direction";
 import {elementKeysOf} from "./element-keys";
 import {elementIdentityKeysOf} from "./element-identity";
@@ -377,6 +378,87 @@ export function deriveWordTilesAttempt(
         element_type: tiles.length > 1 ? "grammar_rule" : "vocabulary",
         user_answer: userAnswer,
         correct_answer: canonical,
+        correct: isCorrect,
+    };
+}
+
+/** ORDERING (#3110): single attempt. element_key = the canonical
+ *  ``payload.items.join(" ")`` phrase — mirrors ``deriveAudioTilesAttempt``,
+ *  but reads the item list from the ext_payload (this type has no core
+ *  ``exercise.tiles`` field). Always ``grammar_rule``: the engine rule
+ *  requires >= 2 items, so the ordering-tests-sequencing reasoning always
+ *  applies (mirrors ``deriveAudioTilesAttempt``'s own reasoning). */
+export function deriveOrderingAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    items: readonly string[],
+    placedOrder: readonly number[],
+    isCorrect: boolean,
+): ElementAttempt {
+    const canonical = elementKeysOf(exercise)?.[0] ?? items.join(" ");
+    const userAnswer = placedOrder.map((i) => items[i] ?? "").join(" ");
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "grammar_rule",
+        user_answer: userAnswer,
+        correct_answer: canonical,
+        correct: isCorrect,
+    };
+}
+
+/** PARSONS (#3110): single attempt. element_key = the canonical code
+ *  sequence (``canonicalParsonsSequence``). ``user_answer`` reconstructs
+ *  the learner's placed order at their CHOSEN indent (4 spaces per level,
+ *  matching the authoring convention), so a wrong-attempt review shows
+ *  exactly the code shape they built. */
+export function deriveParsonsAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    lines: readonly {code: string; indent: number}[],
+    placedOrder: readonly number[],
+    placedIndents: readonly number[],
+    isCorrect: boolean,
+): ElementAttempt {
+    const canonical =
+        elementKeysOf(exercise)?.[0] ?? canonicalParsonsSequence(exercise);
+    const userAnswer = placedOrder
+        .map((tileIndex, slot) => {
+            const indent = placedIndents[slot] ?? 0;
+            return "    ".repeat(Math.max(0, indent)) + (lines[tileIndex]?.code ?? "");
+        })
+        .join("\n");
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "grammar_rule",
+        user_answer: userAnswer,
+        correct_answer: canonical,
+        correct: isCorrect,
+    };
+}
+
+/** HOTSPOT (#3110): single attempt. There is no textual label to key on
+ *  (a zone is an image region, not a word) — element_key falls back to
+ *  ``<src>#zone-<correctIndex>``, stable across attempts as long as the
+ *  content's zone order doesn't change, mirroring how ``derivePictureChoiceAttempt``
+ *  keys on the correct image's own identity. */
+export function deriveHotspotAttempt(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    src: string,
+    correctZoneIndex: number,
+    selectedZoneIndex: number,
+    isCorrect: boolean,
+): ElementAttempt {
+    const canonical =
+        elementKeysOf(exercise)?.[0] ?? `${src}#zone-${correctZoneIndex}`;
+    return {
+        ..._baseAttempt(exercise, ctx),
+        element_key: canonical,
+        element_type: "vocabulary",
+        user_answer: `zone-${selectedZoneIndex}`,
+        correct_answer: `zone-${correctZoneIndex}`,
         correct: isCorrect,
     };
 }
