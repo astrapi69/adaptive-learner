@@ -998,6 +998,18 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       funktioniert normal und die Meldung verschwindet danach.
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
+- [ ] Parametrische Aufgaben (#3109, Schema v1.14): eine free_text-Aufgabe
+      mit `variables` zeigt KONKRETE Zahlen im Prompt (keine `{{name}}`-
+      Klammern sichtbar), bei jedem frischen Durchgang derselben Lektion
+      eine andere Ziehung; die exakte berechnete Antwort wird akzeptiert,
+      und eine Zahl NAHE der Antwort (innerhalb der autorisierten Toleranz)
+      wird EBENFALLS akzeptiert, auch wenn der Text abweicht (z. B. "10,3"
+      wird für eine berechnete "10" mit Toleranz 0,5 akzeptiert) - eine
+      klar falsche Zahl wird abgelehnt. Ein bereits abgeschlossener Schritt
+      zeigt beim erneuten Besuch dieselben Zahlen wie beim ersten Mal, keine
+      neue Ziehung. Eine Lektion OHNE `variables` (z. B. Inhalt, der
+      Jinja2-Templating lehrt) lässt jedes wörtliche `{{ ... }}` im Text
+      unangetastet.
 
 ### Set erneut durcharbeiten - zweiter Durchgang (#2125, EXP-051)
 

@@ -941,6 +941,17 @@ preview delivery). In the regular build the mode does not exist.
       afterwards.
 - [ ] Listen-first audio (#1687): audio button on free_text +
       matching plays, grading unaffected
+- [ ] Parametric exercises (#3109, schema v1.14): a free_text exercise
+      declaring `variables` shows CONCRETE numbers in its prompt (no
+      `{{name}}` braces visible anywhere), a different draw on each fresh
+      attempt of the same lesson; typing the exact computed answer is
+      accepted, and a numeric answer close to it (within the authored
+      tolerance) is ALSO accepted even when the text differs (e.g. "10.3"
+      accepted for a computed "10" with tolerance 0.5) - a clearly wrong
+      number is rejected. Revisiting an already-completed step shows the
+      SAME numbers the learner originally saw, not a fresh draw. A lesson
+      with NO `variables` (e.g. content teaching Jinja2 templating) keeps
+      any literal `{{ ... }}` in its text untouched.
 
 ### Lesson/set file import-export (#1672 / #1681 / #1685 hardening)
 
