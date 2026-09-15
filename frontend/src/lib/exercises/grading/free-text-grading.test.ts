@@ -159,6 +159,42 @@ describe("isFreeTextCorrect (code mode, schema v1.3)", () => {
     });
 });
 
+describe("isFreeTextCorrect with tolerance (#3109, schema v1.14 parametric exercises)", () => {
+    // An ``accept: ["10"]`` entry whose value resolves from a variable
+    // carrying ``tolerance: 0.5``, per resolveExerciseVariables's
+    // toleranceByAcceptText contract.
+    const accept = ["10"] as const;
+    const tolerances = new Map([["10", 0.5]]);
+
+    it("accepts a numeric answer within tolerance, even if the text differs", () => {
+        expect(isFreeTextCorrect("10.3", accept, false, tolerances)).toBe(true);
+        expect(isFreeTextCorrect("9.7", accept, false, tolerances)).toBe(true);
+        expect(isFreeTextCorrect("10", accept, false, tolerances)).toBe(true);
+    });
+
+    it("rejects a numeric answer outside tolerance", () => {
+        expect(isFreeTextCorrect("10.6", accept, false, tolerances)).toBe(false);
+        expect(isFreeTextCorrect("9.4", accept, false, tolerances)).toBe(false);
+    });
+
+    it("falls back to the text matcher when the tolerance map doesn't cover this accept entry", () => {
+        expect(isFreeTextCorrect("10", ["Bonjour"], false, new Map())).toBe(false);
+    });
+
+    it("falls back to the text matcher when the input is not numeric", () => {
+        expect(isFreeTextCorrect("ten", accept, false, tolerances)).toBe(false);
+    });
+
+    it("ignores surrounding whitespace in the numeric input", () => {
+        expect(isFreeTextCorrect("  10.2  ", accept, false, tolerances)).toBe(true);
+    });
+
+    it("is unaffected when no tolerances argument is passed (backward compatible)", () => {
+        expect(isFreeTextCorrect("10", accept)).toBe(true);
+        expect(isFreeTextCorrect("10.3", accept)).toBe(false);
+    });
+});
+
 describe("isFreeTextNearMiss (#627)", () => {
     const accept = ["Merci"] as const;
 
