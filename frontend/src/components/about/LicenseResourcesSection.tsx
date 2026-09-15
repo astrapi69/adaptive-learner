@@ -10,7 +10,7 @@
 import {Link} from "react-router";
 
 import type {SystemInfo} from "../../types/domain";
-import {docsHomeUrl} from "../../lib/help/help-routes";
+import {docsHomeUrl, docsUrlForSlug} from "../../lib/help/help-routes";
 import {APP_TUTORIAL_PATH} from "../../lib/content/app-tutorial";
 
 interface Props {
@@ -94,6 +94,34 @@ export default function LicenseResourcesSection({info, t, lang}: Props) {
                         data-testid="about-issues-link"
                     >
                         {info.app.issues_url.replace(/^https?:\/\//, "")}
+                    </a>
+                </dd>
+                {/* #3113 - the legal pages live on the docs site (one source
+                    for the app help, the docs site and every locale). */}
+                <dt>
+                    <strong>{t("about.imprint_label", "Legal notice")}</strong>
+                </dt>
+                <dd data-testid="about-imprint" className="m-0 min-w-0 break-all">
+                    <a
+                        href={docsUrlForSlug("legal/imprint", lang)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-testid="about-imprint-link"
+                    >
+                        {t("about.imprint_label", "Legal notice")}
+                    </a>
+                </dd>
+                <dt>
+                    <strong>{t("about.privacy_label", "Privacy policy")}</strong>
+                </dt>
+                <dd data-testid="about-privacy" className="m-0 min-w-0 break-all">
+                    <a
+                        href={docsUrlForSlug("legal/privacy", lang)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-testid="about-privacy-link"
+                    >
+                        {t("about.privacy_label", "Privacy policy")}
                     </a>
                 </dd>
             </dl>

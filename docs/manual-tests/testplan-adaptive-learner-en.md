@@ -2819,6 +2819,28 @@ no numbers that could go stale, on purpose.
 - [ ] Dark system theme: the page follows (prefers-color-scheme), text
       stays readable.
 - [ ] Mobile (narrow window): single column, no horizontal scrolling.
+- [ ] Footer (#3113): "Legal notice" leads to `astrapi69.github.io/adaptive-learner/docs/en/legal/imprint/`,
+      "Privacy policy" to `astrapi69.github.io/adaptive-learner/docs/en/legal/privacy/`; on `/start/` they read
+      "Impressum" / "Datenschutz" and lead to `astrapi69.github.io/adaptive-learner/docs/legal/…`.
+
+### Legal texts reachable in the app (#3113)
+
+Legal notice and privacy policy live as help pages on the docs site
+(`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; other languages under
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, locales without their own version fall back to German).
+
+- [ ] App start page `/` (no signed-in learner): below "Read the
+      documentation" the row "Legal notice · Privacy policy"
+      (`landing-imprint-link`, `landing-privacy-link`); both open the docs
+      page in a new tab, in the active UI language (German without prefix,
+      English under `astrapi69.github.io/adaptive-learner/docs/en/`).
+- [ ] Settings → About → card "License & resources": two new rows "Legal
+      notice" and "Privacy policy" (`about-imprint-link`,
+      `about-privacy-link`), same targets, new tab.
+- [ ] Help panel and docs site: section "Legal" with both pages in the
+      navigation (DE + EN); the legal notice names name, address, email; the
+      privacy policy carries a date and names GitHub Pages, YouTube preview
+      images and the AI providers used with the learner's own key.
 - [ ] Share preview (e.g. in a messenger): title, description and image
       appear (the landing page's Open Graph data, not the app's).
 

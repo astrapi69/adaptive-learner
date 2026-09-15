@@ -223,6 +223,8 @@ landing:
   choose_language: 언어를 선택하세요
   start_button: 학습 여정을 시작하세요
   docs_link: 문서 읽기
+  imprint_link: "운영자 정보"
+  privacy_link: "개인정보 처리방침"
   checking_session: 다시 오신 것을 환영합니다…
   recovered_toast: 다시 오신 것을 환영합니다! 학습 데이터가 그대로 남아 있습니다.
   intro: Adaptive Learner는 연구로 입증된 여섯 가지 학습법 중 당신에게 가장 잘 맞는 방법을 찾아내고, 모든 세션에서 일곱 단계 주기를 안내합니다.
@@ -1128,6 +1130,8 @@ about:
   tutorial_label: "앱 튜토리얼"
   tutorial_link: "튜토리얼 바로 열기"
   issues_label: 이슈
+  imprint_label: "운영자 정보"
+  privacy_label: "개인정보 처리방침"
 backup:
   section_title: 백업
   section_help: 계정의 모든 데이터를 JSON 파일로 내보냅니다. API 키는 포함되지 않으므로 복원 후 다시 입력해야 합니다.

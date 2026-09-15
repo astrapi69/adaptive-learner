@@ -237,6 +237,8 @@
     "choose_language": "Pilih bahasa Anda",
     "start_button": "Mulai perjalanan belajar Anda",
     "docs_link": "Baca dokumentasi",
+    "imprint_link": "Informasi hukum",
+    "privacy_link": "Kebijakan privasi",
     "checking_session": "Selamat datang kembali…",
     "recovered_toast": "Selamat datang kembali! Data belajar Anda masih ada di sini.",
     "intro": "Adaptive Learner menemukan metode yang paling cocok untuk Anda dari enam pendekatan belajar berbasis riset, dan memandu Anda melalui siklus tujuh langkah di setiap sesi.",
@@ -1200,7 +1202,9 @@
     "docs_label": "Dokumentasi",
     "tutorial_label": "Tutorial aplikasi",
     "tutorial_link": "Buka tutorial langsung",
-    "issues_label": "Isu"
+    "issues_label": "Isu",
+    "imprint_label": "Informasi hukum",
+    "privacy_label": "Kebijakan privasi"
   },
   "backup": {
     "section_title": "Cadangan",

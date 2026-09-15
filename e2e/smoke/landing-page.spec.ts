@@ -34,6 +34,15 @@ test.describe("Static landing page", () => {
             "href",
             "../",
         );
+        // #3113 - legal notice + privacy policy from the public entry page.
+        await expect(page.getByTestId("landing-imprint")).toHaveAttribute(
+            "href",
+            "../docs/legal/imprint/",
+        );
+        await expect(page.getByTestId("landing-privacy")).toHaveAttribute(
+            "href",
+            "../docs/legal/privacy/",
+        );
     });
 
     test("English page mirrors the promise and cross-links the German one", async ({
@@ -48,5 +57,9 @@ test.describe("Static landing page", () => {
         await expect(
             page.getByRole("link", {name: "Deutsch"}),
         ).toHaveAttribute("href", "../");
+        await expect(page.getByTestId("landing-imprint")).toHaveAttribute(
+            "href",
+            "../../docs/en/legal/imprint/",
+        );
     });
 });

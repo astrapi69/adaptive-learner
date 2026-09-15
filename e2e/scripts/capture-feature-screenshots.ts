@@ -433,6 +433,26 @@ async function gotoGithubExport(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Settings > About scrolled to the legal-notice row (#3113). */
+async function gotoAboutLegal(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=about");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const link = page.getByTestId("about-imprint-link");
+    if (!(await link.count())) return false;
+    await expect(link).toBeVisible({timeout: 10_000});
+    return true;
+}
+
+/** The app entry page with the legal row under the docs link (#3113). */
+async function gotoLandingLegal(page: Page): Promise<boolean> {
+    await page.goto("/");
+    const link = page.getByTestId("landing-imprint-link");
+    if (!(await link.count())) return false;
+    await expect(link).toBeVisible({timeout: 20_000});
+    return true;
+}
+
 /** Open the QR-code "share the app" modal from the About tab (#775). */
 async function gotoQrModal(page: Page): Promise<boolean> {
     await seedLearner(page);
@@ -1042,6 +1062,17 @@ const FEATURES: FeatureShot[] = [
         path: "plugin-lifecycle/settings",
         setup: gotoPluginLifecycle,
         pinTo: "settings-plugins-lifecycle-desktop-only",
+    },
+    // --- Legal notice + privacy policy links (#3113) -----------------------
+    {
+        path: "legal/settings-about",
+        setup: gotoAboutLegal,
+        pinTo: "about-imprint-link",
+    },
+    {
+        path: "legal/landing",
+        setup: gotoLandingLegal,
+        pinTo: "landing-legal",
     },
     // --- Gamification card inside the motivation cluster (#2962) ----------
     {

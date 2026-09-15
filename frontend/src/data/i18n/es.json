@@ -237,6 +237,8 @@
     "choose_language": "Elige tu idioma",
     "start_button": "Comienza tu viaje de aprendizaje",
     "docs_link": "Leer la documentación",
+    "imprint_link": "Aviso legal",
+    "privacy_link": "Política de privacidad",
     "checking_session": "Bienvenido de nuevo...",
     "recovered_toast": "Bienvenido de nuevo. Tus datos de aprendizaje siguen aquí.",
     "intro": "Adaptive Learner encuentra el método que mejor se adapta a ti entre seis enfoques de aprendizaje basados en investigación, y te acompaña en un ciclo de siete pasos en cada sesión.",
@@ -1200,7 +1202,9 @@
     "docs_label": "Documentación",
     "tutorial_label": "Tutorial de la app",
     "tutorial_link": "Abrir el tutorial directamente",
-    "issues_label": "Issues"
+    "issues_label": "Issues",
+    "imprint_label": "Aviso legal",
+    "privacy_label": "Política de privacidad"
   },
   "backup": {
     "section_title": "Copia de seguridad",

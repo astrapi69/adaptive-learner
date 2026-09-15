@@ -740,6 +740,37 @@ navigation:
         slug: api/hooks
 
   - title:
+      de: Rechtliches
+      en: Legal
+      es: Aviso legal
+      fr: Mentions légales
+      el: Νομικά
+      pt: Informação legal
+      tr: Yasal bilgiler
+      ja: 法的情報
+    children:
+      - title:
+          de: Impressum
+          en: Legal notice
+          es: Aviso legal
+          fr: Mentions légales
+          el: Στοιχεία εκδότη
+          pt: Ficha técnica
+          tr: Künye
+          ja: 運営者情報
+        slug: legal/imprint
+      - title:
+          de: Datenschutzerklärung
+          en: Privacy policy
+          es: Política de privacidad
+          fr: Politique de confidentialité
+          el: Πολιτική απορρήτου
+          pt: Política de privacidade
+          tr: Gizlilik politikası
+          ja: プライバシーポリシー
+        slug: legal/privacy
+
+  - title:
       de: Changelog
       en: Changelog
       es: Changelog
