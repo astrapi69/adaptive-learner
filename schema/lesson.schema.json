@@ -569,6 +569,24 @@
             }
           ],
           "description": "Which exercise renderer handles this step. A core ExerciseType value, or an ``ext:<vendor>-<name>`` extension type (ExtExerciseType) that the lesson declares in ``requires_extensions``."
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ExerciseVariable"
+              },
+              "maxItems": 20,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional variables of a parametric exercise (schema v1.14, engine#151): sampled ranges and computed expressions the consumer resolves per attempt, referenced as ``{{name}}`` from any string field of this exercise. Only an exercise that declares ``variables`` is scanned for references; without it, double braces are ordinary text (a lesson about Jinja2 templates is not parametric). One authored exercise, many concrete instances (Moodle Calculated, Canvas Formula, QTI template variables). Not restricted to any exercise type. Additive; content without it validates unchanged.",
+          "title": "Variables"
         }
       },
       "required": [
@@ -591,6 +609,53 @@
       ],
       "title": "ExerciseType",
       "type": "string"
+    },
+    "ExerciseVariable": {
+      "additionalProperties": false,
+      "description": "One variable of a parametric exercise (schema v1.14, engine#151). SAMPLED when it carries ``min`` and ``max`` (optional ``step``; integers when ``step`` is absent, else multiples of ``step`` from ``min``): the consumer draws a value per attempt. COMPUTED when it carries ``expression`` (arithmetic over variables declared EARLIER in the same ``variables`` list: decimal numbers, names, ``+ - * /``, parentheses, unary minus): the consumer evaluates it after sampling. Exactly one of the two shapes (semantic rule E-VAR-KIND). ``tolerance`` is the absolute tolerance a consumer applies when this variable's value is an accepted answer. Any string field of the exercise may reference a variable as ``{{name}}``; the consumer substitutes every occurrence before rendering and grading. The engine validates the contract and never samples or evaluates.",
+      "properties": {
+        "name": {
+          "description": "Lowercase identifier: a letter, then letters, digits, underscores. Unique within the exercise.",
+          "maxLength": 32,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "min": {
+          "description": "Sampled variable: inclusive lower bound.",
+          "title": "Min",
+          "type": "number"
+        },
+        "max": {
+          "description": "Sampled variable: inclusive upper bound (must exceed ``min``, rule E-VAR-RANGE).",
+          "title": "Max",
+          "type": "number"
+        },
+        "step": {
+          "description": "Sampled variable: the grid the value is drawn from, counted up from ``min``. Absent means integers.",
+          "exclusiveMinimum": 0,
+          "title": "Step",
+          "type": "number"
+        },
+        "expression": {
+          "description": "Computed variable: arithmetic over earlier variables (rules E-VAR-EXPR, E-VAR-UNDEFINED).",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Expression",
+          "type": "string"
+        },
+        "tolerance": {
+          "description": "Absolute tolerance for grading when this variable's value is the accepted answer. Absent means exact.",
+          "minimum": 0,
+          "title": "Tolerance",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ExerciseVariable",
+      "type": "object"
     },
     "ExtExerciseType": {
       "description": "Extension exercise type in the ``ext:<vendor>-<name>`` namespace (e.g. ``ext:acme-ordering``). Structurally opaque here: an exercise carrying it must be declared in the lesson's ``requires_extensions`` and is validated by a registered extension, never by the core schema. Core content never uses this branch, so pre-1.7 content validates unchanged.",
@@ -1258,5 +1323,5 @@
   ],
   "title": "Lesson",
   "type": "object",
-  "x-schema-version": "1.13"
+  "x-schema-version": "1.14"
 }

@@ -380,5 +380,5 @@
   ],
   "title": "ContentManifest",
   "type": "object",
-  "x-schema-version": "1.13"
+  "x-schema-version": "1.14"
 }

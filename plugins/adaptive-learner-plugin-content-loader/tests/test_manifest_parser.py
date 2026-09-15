@@ -220,3 +220,51 @@ class TestParseLessonJson:
         bad["unknown_field"] = "surprise"
         with pytest.raises(ContentSchemaError):
             parse_lesson_json(json.dumps(bad))
+
+
+# The worked example from learn-content-engine's own docs
+# (docs/lesson-format.md#variables-parametric-exercises, schema v1.14,
+# engine#151), copied verbatim per the #3108 acceptance criteria: "a
+# lesson carrying variables loads without error (rendered with the
+# braces visible is fine at this stage)".
+PARAMETRIC_LESSON = json.dumps(
+    {
+        "id": "addition-parametrisch",
+        "title": "Addition mit Zufallszahlen",
+        "steps": [
+            {
+                "id": "s1",
+                "type": "exercise",
+                "exercise": {
+                    "id": "e1",
+                    "type": "free_text",
+                    "prompt": "Was ist {{a}} + {{b}}?",
+                    "variables": [
+                        {"name": "a", "min": 1, "max": 20},
+                        {"name": "b", "min": 1, "max": 20, "step": 0.5},
+                        {"name": "sum", "expression": "a + b", "tolerance": 0.01},
+                    ],
+                    "accept": ["{{sum}}"],
+                    "explanation": "Die Summe von {{a}} und {{b}} ist {{sum}}.",
+                },
+            }
+        ],
+    },
+)
+
+
+class TestParseLessonJsonWithVariables:
+    """Schema v1.14 acceptance (#3108): the parser accepts a parametric
+    exercise without error. Nothing samples, evaluates or substitutes the
+    ``{{name}}`` references yet - that is the consumer half (#3109)."""
+
+    def test_parametric_lesson_loads_without_error(self) -> None:
+        lesson = parse_lesson_json(PARAMETRIC_LESSON)
+        assert lesson.id == "addition-parametrisch"
+        exercise = lesson.steps[0].exercise
+        assert exercise is not None
+        assert exercise.variables is not None
+        assert [v.name for v in exercise.variables] == ["a", "b", "sum"]
+        # Braces are left exactly as authored - visible, unsubstituted.
+        assert exercise.prompt == "Was ist {{a}} + {{b}}?"
+        assert exercise.accept == ["{{sum}}"]
