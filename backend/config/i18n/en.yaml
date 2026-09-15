@@ -223,6 +223,8 @@ landing:
   choose_language: Choose your language
   start_button: Start your learning journey
   docs_link: Read the documentation
+  imprint_link: "Legal notice"
+  privacy_link: "Privacy policy"
   checking_session: Welcome back…
   recovered_toast: Welcome back! Your learning data is still here.
   intro: Adaptive Learner finds the method that fits you best from six research-backed learning approaches, and walks you through a seven-step cycle on every session.
@@ -1128,6 +1130,8 @@ about:
   tutorial_label: "App tutorial"
   tutorial_link: "Open the tutorial directly"
   issues_label: Issues
+  imprint_label: "Legal notice"
+  privacy_label: "Privacy policy"
 backup:
   section_title: Backup
   section_help: Export everything in your account as a JSON file. API keys are NOT included; you will need to re-enter them after a restore.

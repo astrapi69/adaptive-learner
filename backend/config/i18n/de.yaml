@@ -223,6 +223,8 @@ landing:
   choose_language: Sprache wählen
   start_button: Lernreise beginnen
   docs_link: Dokumentation lesen
+  imprint_link: "Impressum"
+  privacy_link: "Datenschutzerklärung"
   checking_session: Willkommen zurück …
   recovered_toast: Willkommen zurück! Deine Lerndaten sind noch da.
   intro: Adaptive Learner findet die für dich passende Methode aus sechs wissenschaftlich fundierten Lernweisen und begleitet dich mit einem 7-Schritte-Zyklus pro Session.
@@ -1128,6 +1130,8 @@ about:
   tutorial_label: "App-Tutorial"
   tutorial_link: "Tutorial direkt öffnen"
   issues_label: Issues
+  imprint_label: "Impressum"
+  privacy_label: "Datenschutzerklärung"
 backup:
   section_title: Datensicherung
   section_help: Exportiere alle Daten deines Kontos als JSON-Datei. API-Schlüssel sind aus Sicherheitsgründen NICHT enthalten; nach einer Wiederherstellung musst du sie neu eingeben.

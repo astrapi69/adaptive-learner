@@ -223,6 +223,8 @@ landing:
   choose_language: Escolha o seu idioma
   start_button: Comece sua jornada de aprendizado
   docs_link: Leia a documentação
+  imprint_link: "Ficha técnica"
+  privacy_link: "Política de privacidade"
   checking_session: Bem-vindo de volta…
   recovered_toast: Bem-vindo de volta! Seus dados de aprendizado ainda estão aqui.
   intro: O Adaptive Learner identifica o método que melhor se encaixa em você entre seis abordagens de aprendizado embasadas em pesquisa, e te guia por um ciclo de sete passos em cada sessão.
@@ -1128,6 +1130,8 @@ about:
   tutorial_label: "Tutorial do app"
   tutorial_link: "Abrir o tutorial diretamente"
   issues_label: Issues
+  imprint_label: "Ficha técnica"
+  privacy_label: "Política de privacidade"
 backup:
   section_title: Backup
   section_help: Exporte tudo da sua conta como um arquivo JSON. As chaves de API NÃO são incluídas; você precisará digitá-las novamente após uma restauração.

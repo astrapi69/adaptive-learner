@@ -111,6 +111,9 @@ plugins:
             Core-Endpoints: Core endpoints
             Plugin-Endpoints: Plugin endpoints
             Modelle: Models
+            Rechtliches: Legal
+            Impressum: Legal notice
+            Datenschutzerklärung: Privacy policy
         - locale: es
           name: Español
           build: true
@@ -179,6 +182,9 @@ plugins:
             Core-Endpoints: Endpoints principales
             Plugin-Endpoints: Endpoints de plugins
             Modelle: Modelos
+            Rechtliches: Aviso legal
+            Impressum: Aviso legal
+            Datenschutzerklärung: Política de privacidad
         - locale: fr
           name: Français
           build: true
@@ -242,6 +248,9 @@ plugins:
             Core-Endpoints: Endpoints principaux
             Plugin-Endpoints: Endpoints des plugins
             Modelle: Modèles
+            Rechtliches: Mentions légales
+            Impressum: Mentions légales
+            Datenschutzerklärung: Politique de confidentialité
         - locale: el
           name: Ελληνικά
           build: true
@@ -310,6 +319,9 @@ plugins:
             Core-Endpoints: Βασικά endpoints
             Plugin-Endpoints: Endpoints προσθέτων
             Modelle: Μοντέλα
+            Rechtliches: Νομικά
+            Impressum: Στοιχεία εκδότη
+            Datenschutzerklärung: Πολιτική απορρήτου
         - locale: pt
           name: Português
           build: true
@@ -378,6 +390,9 @@ plugins:
             Core-Endpoints: Endpoints principais
             Plugin-Endpoints: Endpoints de plugins
             Modelle: Modelos
+            Rechtliches: Informação legal
+            Impressum: Ficha técnica
+            Datenschutzerklärung: Política de privacidade
         - locale: tr
           name: Türkçe
           build: true
@@ -446,6 +461,9 @@ plugins:
             Core-Endpoints: Temel endpoint'ler
             Plugin-Endpoints: Eklenti endpoint'leri
             Modelle: Modeller
+            Rechtliches: Yasal bilgiler
+            Impressum: Künye
+            Datenschutzerklärung: Gizlilik politikası
         - locale: ja
           name: 日本語
           build: true
@@ -516,6 +534,9 @@ plugins:
             Plugin-Endpoints: プラグインエンドポイント
             Modelle: モデル
             Hooks: フック
+            Rechtliches: 法的情報
+            Impressum: 運営者情報
+            Datenschutzerklärung: プライバシーポリシー
             Changelog: 変更履歴
         # AUTO-GENERATED-LANGUAGES-END
 markdown_extensions:
@@ -609,5 +630,8 @@ nav:
   - Plugin-Endpoints: de/api/plugin-endpoints.md
   - Modelle: de/api/models.md
   - Hooks: de/api/hooks.md
+- Rechtliches:
+  - Impressum: de/legal/imprint.md
+  - Datenschutzerklärung: de/legal/privacy.md
 - Changelog: de/changelog.md
 # AUTO-GENERATED-NAV-END

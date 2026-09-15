@@ -237,6 +237,8 @@
     "choose_language": "Dilini seç",
     "start_button": "Öğrenme yolculuğuna başla",
     "docs_link": "Belgeleri oku",
+    "imprint_link": "Künye",
+    "privacy_link": "Gizlilik politikası",
     "checking_session": "Tekrar hoş geldin…",
     "recovered_toast": "Tekrar hoş geldin! Öğrenme verilerin hâlâ burada.",
     "intro": "Adaptive Learner, araştırmalara dayanan altı öğrenme yaklaşımı arasından sana en uygun yöntemi bulur ve her oturumda yedi adımlı bir döngüden geçirir.",
@@ -1200,7 +1202,9 @@
     "docs_label": "Belgeler",
     "tutorial_label": "Uygulama eğitimi",
     "tutorial_link": "Eğitimi doğrudan aç",
-    "issues_label": "Sorunlar"
+    "issues_label": "Sorunlar",
+    "imprint_label": "Künye",
+    "privacy_label": "Gizlilik politikası"
   },
   "backup": {
     "section_title": "Yedek",
