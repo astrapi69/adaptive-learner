@@ -9,9 +9,8 @@ your own device and the operator of these pages processes no data.
 
 ## Controller
 
-Asterios Raptis
-[[ANSCHRIFT]]
-Germany
+Asterios Raptis, Seestraße 68, 71638 Ludwigsburg, Germany
+
 Email: asteri.raptis@gmail.com
 
 ## The short version

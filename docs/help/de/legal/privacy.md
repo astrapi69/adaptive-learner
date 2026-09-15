@@ -10,9 +10,8 @@ keine Daten.
 
 ## Verantwortlicher
 
-Asterios Raptis
-[[ANSCHRIFT]]
-Deutschland
+Asterios Raptis, Seestraße 68, 71638 Ludwigsburg, Deutschland
+
 E-Mail: asteri.raptis@gmail.com
 
 ## Das Wichtigste in Kürze

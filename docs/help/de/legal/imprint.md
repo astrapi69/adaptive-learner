@@ -3,8 +3,8 @@
 Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz).
 
 **Asterios Raptis**
-[[ANSCHRIFT]]
-Deutschland
+
+Seestraße 68, 71638 Ludwigsburg, Deutschland
 
 E-Mail: asteri.raptis@gmail.com
 

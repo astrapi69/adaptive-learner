@@ -3,8 +3,8 @@
 Information pursuant to Section 5 of the German Digital Services Act (DDG).
 
 **Asterios Raptis**
-[[ANSCHRIFT]]
-Germany
+
+Seestraße 68, 71638 Ludwigsburg, Germany
 
 Email: asteri.raptis@gmail.com
 
