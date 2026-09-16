@@ -1085,6 +1085,11 @@ areas of the Data tab in the fixed #1451 order.
 
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
+- [ ] matching solve toggle (#3140): after a not-fully-correct check the
+      "My answers" / "Solve" toggle is there; on a fully-correct answer NO
+      toggle appears - in the lesson only "Continue", in the review
+      session and the endless, shuffle, adaptive and error-replay lessons
+      only the graded columns
 - [ ] ext:al-categorization: assign categories, readable resolution; after
       "Check answer" the verdict chips including the red correction category
       stay INSIDE their column (no bleeding into the neighbor column, #2771) -

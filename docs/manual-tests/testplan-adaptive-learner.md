@@ -1153,6 +1153,11 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
 
 ### Neue Übungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
+- [ ] matching Auflösen-Umschalter (#3140): nach einer nicht komplett
+      richtigen Prüfung steht der Umschalter "Meine Antworten" / "Auflösen";
+      bei komplett richtiger Antwort erscheint KEIN Umschalter - in der
+      Lektion nur "Weiter", in der Wiederholungs-Sitzung, Endlos-, Shuffle-,
+      adaptiven und Fehler-Wiederholungs-Lektion nur die bewerteten Spalten
 - [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar; nach
       "Antwort prüfen" bleiben die Verdikt-Chips samt roter Korrektur-Kategorie
       INNERHALB ihrer Spalte (kein Überlaufen in die Nachbarspalte, #2771) -

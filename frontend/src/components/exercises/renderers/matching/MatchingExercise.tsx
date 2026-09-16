@@ -142,9 +142,12 @@ function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
 
 
 /** Post-check toggle row: on a fully-correct match the #1218 success-merge
- *  (badge + "Continue"); otherwise the My-answers / Solve view toggle.
- *  Renders nothing pre-check or when the toggle is mode-hidden. Extracted
- *  so the main renderer stays under the complexity gate. */
+ *  (badge + "Continue") when the caller advances, else nothing (#3140 -
+ *  there is nothing to solve, so the review / replay / endless surfaces
+ *  show the graded columns alone, like the categorization sibling);
+ *  otherwise the My-answers / Solve view toggle. Renders nothing pre-check
+ *  or when the toggle is mode-hidden. Extracted so the main renderer
+ *  stays under the complexity gate. */
 function MatchingPostCheckToggle({
     submitted,
     showAnswerToggle,
@@ -166,7 +169,8 @@ function MatchingPostCheckToggle({
 }) {
     const {t} = useI18n();
     if (!submitted || !showAnswerToggle) return null;
-    if (isAllCorrect && onAdvance) {
+    if (isAllCorrect) {
+        if (!onAdvance) return null;
         return (
             <ExerciseSuccessAdvance
                 onAdvance={onAdvance}
