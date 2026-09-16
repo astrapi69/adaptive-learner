@@ -33,29 +33,17 @@ export interface UseLessonNavigationResult {
 
 /**
  * Step-change navigation concerns of the lesson viewer (#354,
- * extracted from ``LessonPage``): scroll the viewport back to the
- * top on every step change, plus the #140 theory back-link
+ * extracted from ``LessonPage``): the #140 theory back-link
  * round-trip (exercise -> nearest preceding theory -> back to the
- * exact origin exercise).
+ * exact origin exercise). The scroll-to-top on a step change moved into
+ * ``useStepReanchor`` (#3126) so the reset and the step-anchor scroll run
+ * in one ordered place instead of racing each other.
  */
 export function useLessonNavigation({
     lesson,
     currentStepIndex,
     goToStep,
 }: UseLessonNavigationOptions): UseLessonNavigationResult {
-    // B2 (Tailwind migration) — scroll the viewport to the top on
-    // every step change so a long step doesn't leave the learner
-    // mid-page. Guarded for the headless test env (scrollTo may be
-    // a stub).
-    useEffect(() => {
-        try {
-            document.getElementById("root")?.scrollTo({top: 0});
-            window.scrollTo({top: 0});
-        } catch {
-            /* no-op in environments without a real scroll. */
-        }
-    }, [currentStepIndex]);
-
     // #140 — let an exercise step link back to the theory it
     // practices. The target is the nearest preceding theory step in
     // the same lesson (runtime-derived, no schema field). When the

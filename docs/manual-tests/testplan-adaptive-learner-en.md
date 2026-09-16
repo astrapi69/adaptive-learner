@@ -2087,6 +2087,20 @@ each card row (`CardImageField`).
 - [ ] Tablet and desktop: the header stays a single line with the full
       badge text
 
+### Step change on a phone: anchor at the top, footer at the bottom (#3126)
+- [ ] iPhone (Safari or PWA): open a lesson with a long theory step,
+      scroll to the very bottom, then "Next" onto a short step (e.g. a
+      matching exercise)
+- [ ] Without swiping: the step starts at the top (progress bar and task
+      visible), the footer with Back/Pause/Check sits at the bottom edge,
+      no empty (black) lower half
+- [ ] The same from a short onto a long step: the anchor is at the top,
+      the content scrolls normally
+- [ ] With "Reduce motion" in the system: the jump happens without
+      animation, same result
+- [ ] Rotate the device during a step (#1422): the step is still
+      re-anchored
+
 ### Settings > Data: housekeeping cards (#2955)
 - [ ] Settings > Data: the "Maximum lesson size" card sits directly
       below "Offline cache"; the "Paused lesson retention" card sits
