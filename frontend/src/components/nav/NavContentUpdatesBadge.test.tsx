@@ -94,3 +94,22 @@ describe("NavContentUpdatesBadge", () => {
         expect(badge.getAttribute("aria-label")).toContain("view content");
     });
 });
+
+describe("NavContentUpdatesBadge: count-only on phones (#3123)", () => {
+    it("renders the count in its own span and hides only the word below sm", async () => {
+        getContentUpdateCountMock.mockResolvedValue(12);
+        render(
+            <MemoryRouter>
+                <NavContentUpdatesBadge />
+            </MemoryRouter>,
+        );
+        const badge = await screen.findByTestId("nav-content-updates-badge");
+        expect(
+            screen.getByTestId("nav-content-updates-badge-count"),
+        ).toHaveTextContent("12");
+        const hidden = [...badge.querySelectorAll("span.max-sm\\:hidden")];
+        expect(hidden.map((el) => el.textContent).join("")).toBe(" updates");
+        expect(badge.getAttribute("aria-label")).toContain("12 updates");
+        expect(badge).toHaveTextContent("12 updates");
+    });
+});

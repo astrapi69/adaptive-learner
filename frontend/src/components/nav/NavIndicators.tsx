@@ -31,7 +31,9 @@ export function NavModeBadge({ mode }: { mode: string }) {
   return (
     <NavLink
       to="/content"
-      className={`nav-mode-badge nav-mode-badge-${mode}`}
+      // #3123 - no extra left margin on phones; the bar's gap already
+      // separates the badge and the pixels are needed for the logo.
+      className={`nav-mode-badge nav-mode-badge-${mode} max-sm:ml-0`}
       data-testid="nav-mode-badge"
       data-mode={mode}
       title={
@@ -68,7 +70,7 @@ export function NavThemeToggle({
       variant="ghost"
       size="icon"
       type="button"
-      className="nav-theme-toggle"
+      className="nav-theme-toggle max-sm:ml-0"
       data-testid="nav-theme-toggle"
       onClick={onToggle}
       aria-label={label}

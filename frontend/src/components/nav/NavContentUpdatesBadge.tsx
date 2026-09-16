@@ -23,6 +23,7 @@ import {
   CONTENT_UPDATES_CHANGED_EVENT,
   getContentUpdateCount,
 } from "../../lib/content/browse/content-updates-badge";
+import { splitAroundCount } from "./split-around-count";
 
 export default function NavContentUpdatesBadge() {
   const { t } = useI18n();
@@ -53,10 +54,11 @@ export default function NavContentUpdatesBadge() {
 
   if (count === 0) return null;
 
-  const label = t("content.updates_badge", "{n} updates").replace(
-    "{n}",
-    String(count),
-  );
+  const template = t("content.updates_badge", "{n} updates");
+  const label = template.replace("{n}", String(count));
+  // #3123 - phones show only the count next to the icon (see
+  // NavReviewsBadge); the full label stays in the accessible name.
+  const [wordBefore, wordAfter] = splitAroundCount(template);
   return (
     <NavLink
       to="/content?tab=my"
@@ -68,7 +70,9 @@ export default function NavContentUpdatesBadge() {
       aria-label={`${label}, ${t("content.updates_badge_action", "view content")}`}
     >
       <RefreshCw size={12} aria-hidden="true" />
-      {label}
+      <span className="max-sm:hidden">{wordBefore}</span>
+      <span data-testid="nav-content-updates-badge-count">{count}</span>
+      <span className="max-sm:hidden">{wordAfter}</span>
     </NavLink>
   );
 }

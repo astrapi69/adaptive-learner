@@ -292,3 +292,35 @@ describe("Navigation: lesson header auto-hide", () => {
         expect(nav.className).toContain("motion-reduce:transition-none");
     });
 });
+
+describe("Navigation: phone header keeps the menu button + logo (#3123)", () => {
+    // happy-dom runs no layout, so the flex contract is pinned on the
+    // classes that carry it: the hamburger and the logo never shrink, and
+    // the right-hand status cluster is the wrapping, shrinkable group
+    // (display:contents from md up, so the desktop row is untouched).
+    it("marks the hamburger and the brand logo as non-shrinking flex items", () => {
+        renderAt("/dashboard");
+        expect(screen.getByTestId("nav-hamburger").className).toContain("shrink-0");
+        const logo = screen.getByTestId("app-nav").querySelector(".nav-brand img");
+        expect(logo).not.toBeNull();
+        expect(logo!.className).toContain("shrink-0");
+    });
+
+    it("groups the badges, avatar and theme toggle in a wrapping status cluster", () => {
+        renderAt("/dashboard");
+        const cluster = screen.getByTestId("nav-status");
+        for (const cls of ["flex", "flex-wrap", "min-w-0", "justify-end", "md:contents"]) {
+            expect(cluster.className).toContain(cls);
+        }
+        // The theme toggle lives INSIDE the cluster and the cluster closes
+        // the bar (the XP badge and the avatar render nothing without a
+        // seeded learner state, so they are not asserted here - their
+        // placement is pinned by the e2e spec ``nav-header-fit``); the
+        // hamburger and the brand stay outside it.
+        const nav = screen.getByTestId("app-nav");
+        expect(cluster.contains(screen.getByTestId("nav-theme-toggle"))).toBe(true);
+        expect(nav.lastElementChild).toBe(cluster);
+        expect(cluster.contains(screen.getByTestId("nav-hamburger"))).toBe(false);
+        expect(cluster.contains(nav.querySelector(".nav-brand")!)).toBe(false);
+    });
+});
