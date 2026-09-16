@@ -155,6 +155,24 @@ export function hitTestHotspotZones(
     return index === -1 ? null : index;
 }
 
+/** Convert a click's viewport coordinates into a percentage point (0-100)
+ *  relative to ``rect``, or null when ``rect`` has no measurable size
+ *  (e.g. not yet laid out). Pure — exported so the conversion is testable
+ *  without simulating a real click. Shared between the renderer's overlay
+ *  and the authoring drag-to-draw canvas (#3110), so both convert a mouse
+ *  event into the same percentage space the exact same way. */
+export function pointToPercent(
+    rect: {left: number; top: number; width: number; height: number},
+    clientX: number,
+    clientY: number,
+): {x: number; y: number} | null {
+    if (rect.width === 0 || rect.height === 0) return null;
+    return {
+        x: ((clientX - rect.left) / rect.width) * 100,
+        y: ((clientY - rect.top) / rect.height) * 100,
+    };
+}
+
 /** The canonical SRS element key: ``<src>#zone-<correctIndex>``. There is
  *  no textual label to key on (a zone is an image region, not a word), so
  *  this composite stays stable across attempts as long as the content's

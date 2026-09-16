@@ -1143,6 +1143,15 @@ preview delivery). In the regular build the mode does not exist.
       coordinates, mark exactly one zone correct). Save is disabled with
       an inline hint until the payload is valid (e.g. fewer than 2 items,
       or zero/more-than-one correct hotspot zone).
+- [ ] Hotspot drag-to-draw zone canvas (#3110): once an image is picked,
+      a "Draw a zone on the image" canvas appears above the numeric zone
+      list. Choose Rectangle or Circle, then drag on the image — a dashed
+      preview follows the drag and, on release, a new zone is added with
+      the drawn position/size (visible immediately in the numeric fields
+      below for fine-tuning). Dragging off the image and releasing there
+      cancels the draw (no zone added). The existing zones render on the
+      canvas too (the correct one visually distinct), so the whole layout
+      is visible while drawing more.
 
 ### Lesson/set file import-export (#1672 / #1681 / #1685 hardening)
 

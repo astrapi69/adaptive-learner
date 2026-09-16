@@ -29,6 +29,7 @@ import {useControlledExercise} from "../../../../lib/exercises/useControlledExer
 import {
     asHotspotPayload,
     hitTestHotspotZones,
+    pointToPercent,
     HOTSPOT_EXT_TYPE,
     type HotspotZone,
 } from "../../../../lib/exercises/payload/hotspot";
@@ -46,7 +47,7 @@ import type {
     ExerciseScored,
 } from "../../shell/exercise-control";
 
-export {HOTSPOT_EXT_TYPE};
+export {HOTSPOT_EXT_TYPE, pointToPercent};
 
 export interface HotspotExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
@@ -88,22 +89,6 @@ function useHotspotImageSrc(
     if (isDataUri) return src;
     if (isRemote) return null;
     return asset.url;
-}
-
-/** Convert a click's viewport coordinates into a percentage point (0-100)
- *  relative to ``rect``, or null when ``rect`` has no measurable size
- *  (e.g. not yet laid out). Pure — exported so the conversion is testable
- *  without simulating a real click. */
-export function pointToPercent(
-    rect: {left: number; top: number; width: number; height: number},
-    clientX: number,
-    clientY: number,
-): {x: number; y: number} | null {
-    if (rect.width === 0 || rect.height === 0) return null;
-    return {
-        x: ((clientX - rect.left) / rect.width) * 100,
-        y: ((clientY - rect.top) / rect.height) * 100,
-    };
 }
 
 /** The image + SVG zone overlay. Split out (mirrors ``ZoneShape``) so the
