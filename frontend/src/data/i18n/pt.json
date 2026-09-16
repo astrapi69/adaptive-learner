@@ -2528,8 +2528,9 @@
       "breakdown_correct_answer": "Resposta certa: {answer}",
       "breakdown_unattempted": "Não tentado",
       "detailed_hide": "Avaliação compacta",
-      "detailed_hint": "Mostra todas as secções, todas as respostas e todas as explicações de erros desta ronda",
+      "detailed_hint": "Mostra os números-chave, os erros por tipo de exercício, os pontos fracos, todas as respostas e todas as explicações de erros desta ronda",
       "detailed_show": "Avaliação detalhada",
+      "review_subtitle": "Todos os erros desta lição num relance",
       "view_all_answers": "Ver todas as respostas ({n})",
       "export": {
         "copy": "Copiar resultado",

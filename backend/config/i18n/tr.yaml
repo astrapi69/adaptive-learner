@@ -2341,8 +2341,9 @@ lesson:
     breakdown_correct_answer: "Doğru cevap: {answer}"
     breakdown_unattempted: "Denenmedi"
     detailed_hide: "Kısa değerlendirme"
-    detailed_hint: "Bu turdaki tüm bölümleri, tüm yanıtları ve tüm hata açıklamalarını gösterir"
+    detailed_hint: "Bu turdaki temel sayıları, alıştırma türüne göre hataları, zayıf noktaları, tüm yanıtları ve tüm hata açıklamalarını gösterir"
     detailed_show: "Ayrıntılı değerlendirme"
+    review_subtitle: "Bu dersteki tüm hatalar bir bakışta"
     view_all_answers: "Tüm yanıtları gör ({n})"
     export:
       copy: "Sonucu kopyala"

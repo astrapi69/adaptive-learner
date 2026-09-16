@@ -2473,8 +2473,9 @@
       "breakdown_correct_answer": "Jawaban yang benar: {answer}",
       "breakdown_unattempted": "Tidak dicoba",
       "detailed_hide": "Evaluasi ringkas",
-      "detailed_hint": "Menampilkan semua bagian, semua jawaban, dan semua penjelasan kesalahan pada putaran ini",
+      "detailed_hint": "Menampilkan angka utama, kesalahan per jenis latihan, titik lemah, semua jawaban, dan semua penjelasan kesalahan pada putaran ini",
       "detailed_show": "Evaluasi terperinci",
+      "review_subtitle": "Semua kesalahan pada pelajaran ini sekilas",
       "view_all_answers": "Lihat semua jawaban ({n})",
       "export": {
         "copy": "Salin hasil",
