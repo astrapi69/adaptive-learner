@@ -18,6 +18,7 @@ import {join} from "node:path";
 import {test, expect, type Page} from "@playwright/test";
 
 import {DOCS_LANG} from "../playwright.docs.config";
+import {EXTENSION_WIZARD_TYPES} from "../../frontend/src/lib/exercises/authoring/extension-edit";
 
 const OUT = join(__dirname, "output", DOCS_LANG);
 
@@ -111,7 +112,9 @@ test("captures the extension-authoring path", async ({page}) => {
     const picker = page.getByTestId("extension-add-picker");
     await expect(picker).toBeVisible();
     // Guards the article's central claim: all adopted types are offered.
-    await expect(picker.getByRole("button")).toHaveCount(7); // 6 types + Cancel
+    // Derived from EXTENSION_WIZARD_TYPES (the wizard's single source, #3121)
+    // instead of hardcoded, so the next adoption cannot leave this stale.
+    await expect(picker.getByRole("button")).toHaveCount(EXTENSION_WIZARD_TYPES.length + 1); // + Cancel
     await shot(page, "e2-type-picker");
 
     await page.getByTestId("extension-add-type-dictation").click();
