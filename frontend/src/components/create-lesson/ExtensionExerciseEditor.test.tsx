@@ -18,6 +18,9 @@ import {
     DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
+    HOTSPOT_EXT_TYPE,
+    ORDERING_EXT_TYPE,
+    PARSONS_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
     SPEAK_AND_RECORD_EXT_TYPE,
 } from "../../lib/exercises";
@@ -497,5 +500,138 @@ describe("ExtensionExerciseEditor — post-answer explanation (#2992)", () => {
         const saved = JSON.parse(screen.getByTestId("saved-json").textContent ?? "{}");
         expect(saved.explanation).toBe("**Regel:** Adjektive stehen hinten.");
         expect(saved.ext_payload.accept).toEqual(["coche rojo"]);
+    });
+});
+
+describe("ExtensionExerciseEditor — ordering (#3110)", () => {
+    const ex = (): ContentLessonExercise =>
+        ({
+            id: "o1",
+            type: ORDERING_EXT_TYPE,
+            prompt: "Put the steps in order",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {items: ["Engage clutch", "Select gear"]},
+        }) as ContentLessonExercise;
+
+    it("renders the step-list editor", () => {
+        render(<Harness exercise={ex()} />);
+        expect(screen.getByTestId("exercise-ext-ordering-items-o1")).toBeInTheDocument();
+    });
+
+    it("adds a step and commits it on Save", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.change(screen.getByTestId("exercise-ext-ordering-items-o1-input"), {
+            target: {value: "Release clutch"},
+        });
+        fireEvent.click(screen.getByTestId("exercise-ext-ordering-items-o1-add"));
+        fireEvent.click(saveButton("o1"));
+        expect(savedPayload().items).toEqual([
+            "Engage clutch",
+            "Select gear",
+            "Release clutch",
+        ]);
+    });
+
+    it("disables Save when fewer than 2 items remain", () => {
+        const blank = ex();
+        (blank.ext_payload as {items: string[]}).items = ["only one"];
+        render(<Harness exercise={blank} />);
+        expect(saveButton("o1")).toBeDisabled();
+        expect(screen.getByTestId("exercise-ext-error-o1")).toBeInTheDocument();
+    });
+});
+
+describe("ExtensionExerciseEditor — parsons (#3110)", () => {
+    const ex = (): ContentLessonExercise =>
+        ({
+            id: "p1",
+            type: PARSONS_EXT_TYPE,
+            prompt: "Arrange the code",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {
+                lines: [
+                    {code: "def greet(name):", indent: 0},
+                    {code: "print(name)", indent: 1},
+                ],
+            },
+        }) as ContentLessonExercise;
+
+    it("renders the code textarea, pre-filled with indented code", () => {
+        render(<Harness exercise={ex()} />);
+        const textarea = screen.getByTestId(
+            "exercise-ext-parsons-code-p1",
+        ) as HTMLTextAreaElement;
+        expect(textarea.value).toBe("def greet(name):\n    print(name)");
+    });
+
+    it("commits edited code, re-deriving indent from leading spaces, on Save", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.change(screen.getByTestId("exercise-ext-parsons-code-p1"), {
+            target: {value: "def f():\n    return 1\n        return 2"},
+        });
+        fireEvent.click(saveButton("p1"));
+        expect(savedPayload().lines).toEqual([
+            {code: "def f():", indent: 0},
+            {code: "return 1", indent: 1},
+            {code: "return 2", indent: 2},
+        ]);
+    });
+
+    it("disables Save when fewer than 2 lines remain", () => {
+        const blank = ex();
+        (blank.ext_payload as {lines: unknown[]}).lines = [{code: "only one", indent: 0}];
+        render(<Harness exercise={blank} />);
+        expect(saveButton("p1")).toBeDisabled();
+        expect(screen.getByTestId("exercise-ext-error-p1")).toBeInTheDocument();
+    });
+});
+
+describe("ExtensionExerciseEditor — hotspot (#3110)", () => {
+    const ex = (): ContentLessonExercise =>
+        ({
+            id: "h1",
+            type: HOTSPOT_EXT_TYPE,
+            prompt: "Click the capital",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {
+                src: "assets/map.png",
+                zones: [
+                    {shape: "rect", coords: {x: 10, y: 10, width: 20, height: 20}, is_correct: "true"},
+                    {shape: "circle", coords: {cx: 70, cy: 70, radius: 15}},
+                ],
+            },
+        }) as ContentLessonExercise;
+
+    it("renders one zone row per authored zone", () => {
+        render(<Harness exercise={ex()} />);
+        expect(screen.getByTestId("exercise-ext-hotspot-zone-h1-0")).toBeInTheDocument();
+        expect(screen.getByTestId("exercise-ext-hotspot-zone-h1-1")).toBeInTheDocument();
+    });
+
+    it("adds a zone and commits it on Save", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.click(screen.getByTestId("exercise-ext-hotspot-zone-add-h1"));
+        fireEvent.click(saveButton("h1"));
+        expect((savedPayload().zones as unknown[]).length).toBe(3);
+    });
+
+    it("re-marking the correct zone moves is_correct to the new zone", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.click(screen.getByTestId("exercise-ext-hotspot-zone-correct-h1-1"));
+        fireEvent.click(saveButton("h1"));
+        const zones = savedPayload().zones as {is_correct?: string}[];
+        expect(zones[0].is_correct).toBeUndefined();
+        expect(zones[1].is_correct).toBe("true");
+    });
+
+    it("disables Save when the image src is blank", () => {
+        const blank = ex();
+        (blank.ext_payload as {src: string}).src = "";
+        render(<Harness exercise={blank} />);
+        expect(saveButton("h1")).toBeDisabled();
+        expect(screen.getByTestId("exercise-ext-error-h1")).toBeInTheDocument();
     });
 });

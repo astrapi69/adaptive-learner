@@ -1172,6 +1172,55 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       funktioniert normal und die Meldung verschwindet danach.
 - [ ] Listen-First-Audio (#1687): Audio-Button auf free_text +
       matching spielt ab, Grading unbeeinflusst
+- [ ] Parametrische Aufgaben (#3109, Schema v1.14): eine free_text-Aufgabe
+      mit `variables` zeigt KONKRETE Zahlen im Prompt (keine `{{name}}`-
+      Klammern sichtbar), bei jedem frischen Durchgang derselben Lektion
+      eine andere Ziehung; die exakte berechnete Antwort wird akzeptiert,
+      und eine Zahl NAHE der Antwort (innerhalb der autorisierten Toleranz)
+      wird EBENFALLS akzeptiert, auch wenn der Text abweicht (z. B. "10,3"
+      wird für eine berechnete "10" mit Toleranz 0,5 akzeptiert) - eine
+      klar falsche Zahl wird abgelehnt. Ein bereits abgeschlossener Schritt
+      zeigt beim erneuten Besuch dieselben Zahlen wie beim ersten Mal, keine
+      neue Ziehung. Eine Lektion OHNE `variables` (z. B. Inhalt, der
+      Jinja2-Templating lehrt) lässt jedes wörtliche `{{ ... }}` im Text
+      unangetastet.
+- [ ] ext:al-ordering (#3110): Schritte als durcheinandergewürfelte,
+      ziehbare Kacheln; auf eine durcheinandergewürfelte Kachel tippen
+      platziert sie, auf eine platzierte Kachel tippen gibt sie zurück,
+      Ziehen (oder die ◀ ▶ Pfeile / Pfeiltasten) sortiert um. "Prüfen"
+      akzeptiert NUR die exakt autorisierte Reihenfolge - eine Vertauschung
+      ist falsch. "Nochmal versuchen" setzt die Platzierung zurück; eine
+      Lektion mit `requires_extensions: ["ext:al-ordering@1"]` lädt (wird
+      nicht vom Guard abgelehnt).
+- [ ] ext:al-parsons (#3110): Code-Zeilen als durcheinandergewürfelte,
+      ziehbare Kacheln (Monospace), dieselbe Tipp-/Zieh-Umsortierung wie bei
+      ordering, PLUS ein Einrück-Stepper pro Kachel (- / Tiefe / +).
+      "Prüfen" verlangt SOWOHL die richtige Reihenfolge ALS AUCH die
+      richtige Einrückung pro Zeile - eine richtige Reihenfolge in falscher
+      Tiefe ist falsch. Die Einrückung bleibt an der Kachel, wenn sie
+      woanders hingezogen wird. "Nochmal versuchen" setzt Platzierung UND
+      jede Einrückung auf 0 zurück; eine Lektion mit
+      `requires_extensions: ["ext:al-parsons@1"]` lädt (nicht vom Guard
+      abgelehnt).
+- [ ] ext:al-hotspot (#3110): ein Bild mit unsichtbaren klickbaren Zonen -
+      die richtige Stelle anklicken. Vor "Prüfen" ist kein Umriss und keine
+      Füllung einer Zone sichtbar (die Antwort wird nie vorzeitig verraten).
+      "Prüfen" hebt die richtige Zone grün hervor; eine falsche Wahl wird
+      rot markiert. Rechteck- und Kreis-Zonen treffen beide korrekt, auch
+      bei einem Klick genau auf den Rand einer Zone. "Nochmal versuchen"
+      löscht die Auswahl; eine Lektion mit
+      `requires_extensions: ["ext:al-hotspot@1"]` lädt (nicht vom Guard
+      abgelehnt).
+- [ ] Erstellung im Erweiterungs-Assistenten (#3110): im Editor für
+      Erweiterungs-Aufgaben des Lektions-Erstellers je eine Aufgabe der drei
+      neuen Typen anlegen - ordering (Schritte hinzufügen/entfernen),
+      parsons (Code in das Textfeld tippen/einfügen; die Zeilenliste
+      spiegelt die abgeleitete Einrückung), und hotspot (Bild
+      auswählen/hochladen, eine Zone hinzufügen, ihre Form + 0-100-
+      Koordinaten setzen, genau eine Zone als richtig markieren).
+      "Speichern" ist mit einem Inline-Hinweis deaktiviert, bis die Nutzlast
+      gültig ist (z. B. weniger als 2 Elemente, oder null/mehr als eine
+      richtige Hotspot-Zone).
 
 ### Set erneut durcharbeiten - zweiter Durchgang (#2125, EXP-051)
 

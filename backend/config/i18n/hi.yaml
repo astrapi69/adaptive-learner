@@ -2214,6 +2214,28 @@ lesson:
       saving: "सहेजा जा रहा है…"
       done: "पूर्ण"
       record_again: "फिर से रिकॉर्ड करें"
+    al_hotspot:
+      empty: "इस हॉटस्पॉट अभ्यास में कोई छवि या क्षेत्र नहीं है।"
+      image_alt: "सही जगह पर क्लिक करें"
+      overlay_aria: "क्लिक करने योग्य क्षेत्र"
+      result_correct: "सही!"
+      result_wrong: "बिल्कुल नहीं।"
+      retry: "फिर से कोशिश करें"
+      submit: "उत्तर जांचें"
+    al_ordering:
+      empty: "इस क्रम अभ्यास में कोई आइटम नहीं है।"
+      result_correct: "सही!"
+      result_wrong: "बिल्कुल नहीं - फिर से कोशिश करें।"
+      retry: "फिर से कोशिश करें"
+      submit: "उत्तर जांचें"
+    al_parsons:
+      empty: "इस कोड क्रम अभ्यास में कोई पंक्ति नहीं है।"
+      indent_dec: "इंडेंट घटाएं"
+      indent_inc: "इंडेंट बढ़ाएं"
+      result_correct: "सही!"
+      result_wrong: "बिल्कुल नहीं - क्रम और इंडेंट जांचें।"
+      retry: "फिर से कोशिश करें"
+      submit: "उत्तर जांचें"
     instruction:
       matching:
         receptive: जोड़े मिलाएँ (पहचान)
@@ -3271,6 +3293,9 @@ create_lesson:
       dictation: "श्रुतलेख"
       image-description: "छवि विवरण"
       speak-and-record: "बोलें और रिकॉर्ड करें"
+      ordering: "क्रम"
+      parsons: "पार्सन्स (कोड क्रम)"
+      hotspot: "हॉटस्पॉट"
     edit:
       prompt_label: "निर्देश / प्रश्न"
       save: "सहेजें"
@@ -3346,6 +3371,25 @@ create_lesson:
       ec_accept_add: "जोड़ें"
       ec_accept_remove: "सुधार हटाएं"
       ec_accept_placeholder: "सही शब्द"
+      err_ordering: "सही क्रम में कम से कम 2 अद्वितीय चरण जोड़ें।"
+      err_parsons: "कम से कम 2 कोड पंक्तियाँ जोड़ें।"
+      err_hotspot: "एक छवि, कम से कम 2 क्षेत्र जोड़ें, और ठीक एक क्षेत्र को सही चिह्नित करें।"
+      ordering_items_label: "चरण, सही क्रम में"
+      ordering_item_add: "चरण जोड़ें"
+      ordering_item_remove: "चरण हटाएं"
+      ordering_item_placeholder: "चरण"
+      parsons_code_label: "कोड"
+      parsons_code_placeholder: "def greet(name):\n    print(name)"
+      parsons_language_label: "भाषा (वैकल्पिक, सिंटैक्स हाइलाइटिंग के लिए)"
+      hotspot_image_label: "उद्दीपक छवि"
+      hotspot_image_preview_alt: "उद्दीपक छवि"
+      hotspot_zones_label: "क्लिक करने योग्य क्षेत्र"
+      hotspot_shape_rect: "आयत"
+      hotspot_shape_circle: "वृत्त"
+      hotspot_mark_correct: "यह सही क्षेत्र है"
+      hotspot_correct_label: "सही"
+      hotspot_zone_remove: "क्षेत्र हटाएं"
+      hotspot_zone_add: "क्षेत्र जोड़ें"
   review:
     heading: समीक्षा करें और सहेजें
     title: शीर्षक

@@ -8,7 +8,13 @@
 export type RawAnswer =
   | { kind: "matching"; matches: [number, number][] }
   | { kind: "picture_choice"; selected: number }
-  | { kind: "free_text"; input: string }
+  /** #3109, schema v1.14 parametric exercises — ``resolved_variables`` is
+   *  the drawn/computed value per declared ``exercise.variables`` name
+   *  (resolveExerciseVariables's ``values``), present only when the
+   *  exercise declared ``variables``. Persisted so a revisited attempt
+   *  substitutes the SAME concrete instance instead of sampling a fresh
+   *  one. */
+  | { kind: "free_text"; input: string; resolved_variables?: Record<string, number> }
   | { kind: "word_tiles"; placed: number[] }
   | { kind: "cloze"; inputs: string[] }
   /** #1195 — cloze ``multiselect`` ("select all that apply"): the
@@ -53,7 +59,21 @@ export type RawAnswer =
   /** adopted extension ``ext:al-audio-tiles``: the learner's placed tile
    *  order (indices into ``ext_payload.tiles``), mirroring core
    *  ``word_tiles``'s own ``placed`` shape. */
-  | { kind: "al_audio_tiles"; placed: number[] };
+  | { kind: "al_audio_tiles"; placed: number[] }
+  /** #3110 — adopted extension ``ext:al-ordering``: the learner's placed
+   *  tile order (indices into ``ext_payload.items``), mirroring core
+   *  ``word_tiles``'s own ``placed`` shape (no ``accept_orderings``
+   *  equivalent — the payload's order is the sole canonical sequence). */
+  | { kind: "al_ordering"; placed: number[] }
+  /** #3110 — adopted extension ``ext:al-parsons``: the learner's placed
+   *  line order (indices into ``ext_payload.lines``) AND their chosen
+   *  indent per SLOT, persisted together so a revisited, locked exercise
+   *  restores its exact sequence AND depth. */
+  | { kind: "al_parsons"; placed: number[]; indents: number[] }
+  /** #3110 — adopted extension ``ext:al-hotspot``: the index of the
+   *  clicked zone (into ``ext_payload.zones``), persisted so a revisited,
+   *  locked exercise restores its exact selection. */
+  | { kind: "al_hotspot"; selected_zone: number };
 
 export interface LessonStepResult {
   step_id: string;

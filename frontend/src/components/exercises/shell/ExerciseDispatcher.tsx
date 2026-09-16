@@ -14,7 +14,7 @@
  * any runtime type outside the closed union.
  */
 
-import {forwardRef} from "react";
+import {forwardRef, useMemo} from "react";
 import type {ReactElement, ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
@@ -33,6 +33,9 @@ import ImageDescriptionExercise from "../renderers/image-description/ImageDescri
 import SpeakAndRecordExercise from "../renderers/speak-and-record/SpeakAndRecordExercise";
 import AudioChoiceExercise from "../renderers/audio-choice/AudioChoiceExercise";
 import AudioTilesExercise from "../renderers/audio-tiles/AudioTilesExercise";
+import OrderingExercise from "../renderers/ordering/OrderingExercise";
+import ParsonsExercise from "../renderers/parsons/ParsonsExercise";
+import HotspotExercise from "../renderers/hotspot/HotspotExercise";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -40,6 +43,9 @@ import type {
 } from "./exercise-control";
 import ExerciseExplanation from "../feedback/ExerciseExplanation";
 import {useExplanationOutcome} from "../feedback/useExplanationOutcome";
+import {resolveExerciseVariables} from "../../../lib/exercises/variables/resolve-exercise-variables";
+import type {ResolvedExerciseVariables} from "../../../lib/exercises/variables/resolve-exercise-variables";
+import type {RawAnswer} from "../../../storage/types/content/lesson-progress";
 import ExerciseDifficultyBadge from "../shared/ExerciseDifficultyBadge";
 import ListenFirstAudio from "../shared/ListenFirstAudio";
 import FreeTextExercise from "../renderers/free-text/FreeTextExercise";
@@ -72,6 +78,9 @@ export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "ext:al-speak-and-record",
     "ext:al-audio-choice",
     "ext:al-audio-tiles",
+    "ext:al-ordering",
+    "ext:al-parsons",
+    "ext:al-hotspot",
 ]);
 
 /** The prop bag every renderer shares (everything except the exercise, the
@@ -135,6 +144,21 @@ function renderAdoptedExtension(
     if (ex.type === "ext:al-audio-tiles") {
         // Needs `source` for the sentence audio, same as audio-choice.
         return <AudioTilesExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
+    }
+    if (ex.type === "ext:al-ordering") {
+        // No card/asset reference — the shuffled steps live entirely in
+        // ext_payload.items, no `source` needed.
+        return <OrderingExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-parsons") {
+        // Same as ordering — the code lines live entirely in ext_payload.lines.
+        return <ParsonsExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-hotspot") {
+        // Needs `source` for the same reason dictation/image-description do:
+        // the stimulus image can be an `assets/` path resolved by useAsset (an
+        // embedded data URI is self-contained and needs none).
+        return <HotspotExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
     }
     return null;
 }
@@ -237,6 +261,27 @@ export function resolveCodeContext(
     return {codeMode, codeLanguage: card?.code_language ?? null};
 }
 
+/** #3109, schema v1.14 — resolves an exercise's ``variables`` (if any) into
+ *  concrete values once per attempt. A revisited ``free_text`` attempt
+ *  reuses its persisted drawn/computed values (RawAnswer's free_text
+ *  variant, ``resolved_variables``) so a review shows the exact concrete
+ *  instance the learner originally saw, instead of a fresh random draw.
+ *  Always returns an object (never null) so callers never need an extra
+ *  branch to unwrap it - extracted from ``ExerciseDispatcher`` to keep the
+ *  dispatcher's own cyclomatic complexity flat, mirroring
+ *  ``resolveListenAudio`` / ``resolveDifficulty`` / ``resolveCodeContext``. */
+export function resolveVariablesForAttempt(
+    rawEx: ContentLessonExercise | null,
+    reviewed: RawAnswer | null | undefined,
+): ResolvedExerciseVariables | {exercise: null; values: Record<string, number>; toleranceByAcceptText: ReadonlyMap<string, number>} {
+    if (!rawEx) {
+        return {exercise: null, values: {}, toleranceByAcceptText: new Map()};
+    }
+    const reviewedVariableValues =
+        reviewed?.kind === "free_text" ? reviewed.resolved_variables : undefined;
+    return resolveExerciseVariables(rawEx, {values: reviewedVariableValues});
+}
+
 /** Forwards a ref to the active exercise so the controlled
  *  (Lesson) parent can drive the shared "Prüfen" button.
  *  ``controlled`` / ``onInteraction`` / ``reviewed`` are
@@ -262,7 +307,15 @@ function ExerciseDispatcher(
     }: ExerciseDispatcherProps,
     ref: Ref<ExerciseHandle>,
 ) {
-    const ex: ContentLessonExercise | null = step.exercise ?? null;
+    const rawEx: ContentLessonExercise | null = step.exercise ?? null;
+    // Resolved once per attempt (memoized on the exercise's identity + the
+    // reviewed values), not on every re-render (e.g. typing) - mirrors the
+    // useWordTilesDnd "stable per mount" idiom for randomized-once state.
+    const resolved = useMemo(
+        () => resolveVariablesForAttempt(rawEx, reviewed),
+        [rawEx, reviewed],
+    );
+    const ex: ContentLessonExercise | null = resolved.exercise;
     // #2991 - the graded outcome drives the post-answer explanation fold
     // state; held here in the shell so every renderer + surface gets the
     // explanation from ONE mount.
@@ -358,6 +411,8 @@ function ExerciseDispatcher(
                     setId={setId}
                     lessonId={lessonId}
                     codeLanguage={codeLanguage}
+                    toleranceByAcceptText={resolved.toleranceByAcceptText}
+                    variableValues={resolved.values}
                     {...shared}
                 />
             </>

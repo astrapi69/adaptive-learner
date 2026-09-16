@@ -39,7 +39,10 @@ import {
     DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
+    HOTSPOT_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
+    ORDERING_EXT_TYPE,
+    PARSONS_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
     SPEAK_AND_RECORD_EXT_TYPE,
     isExtensionType,
@@ -57,6 +60,9 @@ import {
 } from "../exercises/payload/graded-quiz";
 import {canonicalDictationAnswer} from "../exercises/payload/dictation";
 import {canonicalImageDescriptionAnswer} from "../exercises/payload/image-description";
+import {canonicalOrderingSequence} from "../exercises/payload/ordering";
+import {canonicalParsonsSequence} from "../exercises/payload/parsons";
+import {canonicalHotspotKey} from "../exercises/payload/hotspot";
 import type {ContentLessonExercise} from "../../storage/types";
 
 /**
@@ -163,6 +169,13 @@ const EXT_ELEMENT_KEY_RULES: Record<
     // this type contributes no SRS rows - `[]`, not `null` (the rule DOES
     // apply, it just yields nothing).
     [SPEAK_AND_RECORD_EXT_TYPE]: () => [],
+    [ORDERING_EXT_TYPE]: (exercise) => [
+        canonicalOrderingSequence(asFullExercise(exercise)),
+    ],
+    [PARSONS_EXT_TYPE]: (exercise) => [
+        canonicalParsonsSequence(asFullExercise(exercise)),
+    ],
+    [HOTSPOT_EXT_TYPE]: (exercise) => [canonicalHotspotKey(asFullExercise(exercise))],
 };
 
 /**

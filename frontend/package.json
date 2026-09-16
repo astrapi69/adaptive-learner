@@ -78,7 +78,7 @@
     "html5-qrcode": "2.3.8",
     "i18next": "^26.4.2",
     "jszip": "3.10.1",
-    "learn-content-engine": "0.23.0",
+    "learn-content-engine": "0.24.1",
     "lowlight": "3.3.0",
     "lucide-react": "^1.42.0",
     "qrcode": "1.5.4",

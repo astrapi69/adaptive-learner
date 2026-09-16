@@ -105,11 +105,26 @@ One exercise step. Type-tagged via ``type``.
 | `stable_id` | `string | null` | no | - |
 | `tiles` | `string[] | null` | no | - |
 | `type` | `ExerciseType | ExtExerciseType` | yes | - |
+| `variables` | `ExerciseVariable[] | null` | no | - |
 
 
 ### `ExerciseType` (enum)
 
 `matching` · `picture_choice` · `free_text` · `word_tiles` · `cloze` · `multiple_choice`
+
+### `ExerciseVariable`
+
+One variable of a parametric exercise (schema v1.14, engine#151). SAMPLED when it carries ``min`` and ``max`` (optional ``step``; integers when ``step`` is absent, else multiples of ``step`` from ``min``): the consumer draws a value per attempt. COMPUTED when it carries ``expression`` (arithmetic over variables declared EARLIER in the same ``variables`` list: decimal numbers, names, ``+ - * /``, parentheses, unary minus): the consumer evaluates it after sampling. Exactly one of the two shapes (semantic rule E-VAR-KIND). ``tolerance`` is the absolute tolerance a consumer applies when this variable's value is an accepted answer. Any string field of the exercise may reference a variable as ``{{name}}``; the consumer substitutes every occurrence before rendering and grading. The engine validates the contract and never samples or evaluates.
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `expression` | `string` | no | minLen=1, maxLen=200 |
+| `max` | `number` | no | - |
+| `min` | `number` | no | - |
+| `name` | `string` | yes | maxLen=32 |
+| `step` | `number` | no | - |
+| `tolerance` | `number` | no | min=0 |
+
 
 ### `InlineExample`
 

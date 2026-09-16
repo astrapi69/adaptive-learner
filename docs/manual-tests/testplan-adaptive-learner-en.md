@@ -1102,6 +1102,47 @@ preview delivery). In the regular build the mode does not exist.
       afterwards.
 - [ ] Listen-first audio (#1687): audio button on free_text +
       matching plays, grading unaffected
+- [ ] Parametric exercises (#3109, schema v1.14): a free_text exercise
+      declaring `variables` shows CONCRETE numbers in its prompt (no
+      `{{name}}` braces visible anywhere), a different draw on each fresh
+      attempt of the same lesson; typing the exact computed answer is
+      accepted, and a numeric answer close to it (within the authored
+      tolerance) is ALSO accepted even when the text differs (e.g. "10.3"
+      accepted for a computed "10" with tolerance 0.5) - a clearly wrong
+      number is rejected. Revisiting an already-completed step shows the
+      SAME numbers the learner originally saw, not a fresh draw. A lesson
+      with NO `variables` (e.g. content teaching Jinja2 templating) keeps
+      any literal `{{ ... }}` in its text untouched.
+- [ ] ext:al-ordering (#3110): steps shown as shuffled draggable tiles; tap
+      a scrambled tile to place it, tap a placed tile to return it, drag
+      (or the ◀ ▶ arrows / arrow keys) to reorder. Check accepts ONLY the
+      exact authored order — one swap is wrong. Try again resets the
+      placement; a lesson with `requires_extensions: ["ext:al-ordering@1"]`
+      loads (not refused by the guard).
+- [ ] ext:al-parsons (#3110): code lines shown as shuffled draggable tiles
+      (monospace), same tap/drag reorder as ordering, PLUS a per-tile
+      indent stepper (- / depth / +). Check requires BOTH the right
+      sequence AND the right indent per line — a right sequence at the
+      wrong depth is wrong. The indent stays with a tile when it is
+      dragged elsewhere. Try again resets placement AND every indent back
+      to 0; a lesson with `requires_extensions: ["ext:al-parsons@1"]` loads
+      (not refused by the guard).
+- [ ] ext:al-hotspot (#3110): an image with invisible clickable zones —
+      click the right spot. Before Check, no zone outline or fill is
+      visible (the answer is never revealed early). Check highlights the
+      correct zone green; a wrong pick highlights red. Rect and circle
+      zones both hit-test correctly, including a click right on a zone's
+      edge. Try again clears the selection; a lesson with
+      `requires_extensions: ["ext:al-hotspot@1"]` loads (not refused by
+      the guard).
+- [ ] Extension-wizard authoring (#3110): in the Lesson Creator's
+      extension-exercise editor, author one exercise of each new type —
+      ordering (add/remove steps), parsons (type/paste code in the
+      textarea; the line list preview reflects the derived indent), and
+      hotspot (pick/upload an image, add a zone, set its shape + 0-100
+      coordinates, mark exactly one zone correct). Save is disabled with
+      an inline hint until the payload is valid (e.g. fewer than 2 items,
+      or zero/more-than-one correct hotspot zone).
 
 ### Lesson/set file import-export (#1672 / #1681 / #1685 hardening)
 

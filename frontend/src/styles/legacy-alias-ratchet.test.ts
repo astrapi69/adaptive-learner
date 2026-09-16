@@ -45,17 +45,17 @@ const CONSUMER_ROOTS = ["components", "pages", "shared"] as const;
 const LEGACY_ALIAS_PINS: Record<string, number> = {
     bg: 5,
     "bg-alt": 0,
-    surface: 100,
-    "surface-2": 28,
+    surface: 105,
+    "surface-2": 32,
     "surface-3": 0,
     border: 55,
-    "border-strong": 47,
+    "border-strong": 48,
     fg: 19,
     "fg-inverted": 0,
     text: 5,
     "text-muted": 1,
     muted: 0,
-    danger: 50,
+    danger: 53,
 };
 
 /**

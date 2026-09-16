@@ -67,6 +67,43 @@ class ExerciseType(str, Enum):
     MULTIPLE_CHOICE = 'multiple_choice'
 
 
+class ExerciseVariable(BaseModel):
+    """
+    One variable of a parametric exercise (schema v1.14, engine#151). SAMPLED when it carries ``min`` and ``max`` (optional ``step``; integers when ``step`` is absent, else multiples of ``step`` from ``min``): the consumer draws a value per attempt. COMPUTED when it carries ``expression`` (arithmetic over variables declared EARLIER in the same ``variables`` list: decimal numbers, names, ``+ - * /``, parentheses, unary minus): the consumer evaluates it after sampling. Exactly one of the two shapes (semantic rule E-VAR-KIND). ``tolerance`` is the absolute tolerance a consumer applies when this variable's value is an accepted answer. Any string field of the exercise may reference a variable as ``{{name}}``; the consumer substitutes every occurrence before rendering and grading. The engine validates the contract and never samples or evaluates.
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+        frozen=True,
+    )
+    name: str = Field(..., max_length=32, pattern='^[a-z][a-z0-9_]*$', title='Name')
+    """
+    Lowercase identifier: a letter, then letters, digits, underscores. Unique within the exercise.
+    """
+    min: float | None = Field(None, title='Min')
+    """
+    Sampled variable: inclusive lower bound.
+    """
+    max: float | None = Field(None, title='Max')
+    """
+    Sampled variable: inclusive upper bound (must exceed ``min``, rule E-VAR-RANGE).
+    """
+    step: float | None = Field(None, gt=0.0, title='Step')
+    """
+    Sampled variable: the grid the value is drawn from, counted up from ``min``. Absent means integers.
+    """
+    expression: str | None = Field(
+        None, max_length=200, min_length=1, title='Expression'
+    )
+    """
+    Computed variable: arithmetic over earlier variables (rules E-VAR-EXPR, E-VAR-UNDEFINED).
+    """
+    tolerance: float | None = Field(None, ge=0.0, title='Tolerance')
+    """
+    Absolute tolerance for grading when this variable's value is the accepted answer. Absent means exact.
+    """
+
+
 ExtExerciseType = Annotated[str, StringConstraints(pattern='^ext:[a-z0-9]+-[a-z0-9-]+$')]
 """
     Extension exercise type in the ``ext:<vendor>-<name>`` namespace (e.g. ``ext:acme-ordering``). Structurally opaque here: an exercise carrying it must be declared in the lesson's ``requires_extensions`` and is validated by a registered extension, never by the core schema. Core content never uses this branch, so pre-1.7 content validates unchanged.
@@ -579,6 +616,12 @@ class Exercise(BaseModel):
     type: ExerciseType | ExtExerciseType
     """
     Which exercise renderer handles this step. A core ExerciseType value, or an ``ext:<vendor>-<name>`` extension type (ExtExerciseType) that the lesson declares in ``requires_extensions``.
+    """
+    variables: list[ExerciseVariable] | None = Field(
+        None, max_length=20, min_length=1, title='Variables'
+    )
+    """
+    Optional variables of a parametric exercise (schema v1.14, engine#151): sampled ranges and computed expressions the consumer resolves per attempt, referenced as ``{{name}}`` from any string field of this exercise. Only an exercise that declares ``variables`` is scanned for references; without it, double braces are ordinary text (a lesson about Jinja2 templates is not parametric). One authored exercise, many concrete instances (Moodle Calculated, Canvas Formula, QTI template variables). Not restricted to any exercise type. Additive; content without it validates unchanged.
     """
 
 
