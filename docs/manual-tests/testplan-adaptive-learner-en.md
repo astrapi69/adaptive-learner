@@ -1063,6 +1063,26 @@ areas of the Data tab in the fixed #1451 order.
       fix your own mistakes first, then decide where to go next. Still freely
       reorderable via Settings.
 
+### Correction round: the result stays, then Continue (#3125)
+- [ ] Finish a lesson with at least two mistakes, press "Fix now", fill
+      the first blank CORRECTLY and check: the blank turns green, "All
+      correct!" appears, below it the green success bar with "Continue".
+      The round does NOT move on by itself (auto-advance in Settings >
+      Learning off)
+- [ ] Press "Continue" (or Enter): now the next drill appears (counter
+      "2 / N")
+- [ ] Fill a blank WRONGLY and check: the blank turns red, "0 of 1
+      correct", My answer / Solution stay visible, below them a plain
+      "Continue" button; no auto-advance, not even with auto-advance on
+- [ ] Settings > Learning > auto-advance on, round again: after a CORRECT
+      answer the success bar stays briefly (as in the lesson) and the
+      round moves on by itself
+- [ ] After the last drill "Continue" leads to the completion note
+      ("Correction round complete", N elements improved); the number
+      matches the correct answers
+- [ ] Skipping stays possible at any time; the comparison with the
+      previous run (#983) is unchanged
+
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
 - [ ] ext:al-categorization: assign categories, readable resolution; after

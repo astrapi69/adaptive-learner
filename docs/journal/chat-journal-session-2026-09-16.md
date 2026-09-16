@@ -88,6 +88,28 @@ Lane: Branch `claude/github-issues-open-rig959`, Session
   Lektions-Baselines in zwölf Themes berührt.
 - Commit: siehe PR.
 
+## 4. Korrekturrunde: richtige Antwort sprang ohne Ergebnis weiter (#3125)
+
+- Original prompt: "Bei der Zusammenfassung Fehler verbessern. Wenn etwas
+  richtig ist, dann geht das gleich zur nächsten und man weiss nicht ob das
+  vielleicht ein Fehler oder richtig war das sollte der User erkennen."
+- Optimized prompt: "Die Korrekturrunde nach dem Prüfen auf dem Ergebnis
+  halten, mit demselben Weiter-Rhythmus wie in der Lektion (Erfolgsbalken,
+  Auto-Weiter-Einstellung, Enter)."
+- Goal: Jede Antwort in der Korrekturrunde hat einen sichtbaren
+  Ergebniszustand, bevor es weitergeht.
+- Result: `handleClozeComplete` in `CorrectionBlock` wechselte nach dem
+  Speichern sofort den Index, der geprüfte Lückentext wurde entladen. Jetzt
+  speichert das Prüfen nur und merkt sich das Ergebnis; `advance` (Weiter,
+  Enter, Auto-Weiter) geht weiter. Richtig: `ExerciseSuccessAdvance` der
+  Lektion (Badge, Weiter, Auto-Weiter nach derselben Einstellung und
+  Verzögerung); falsch: Meine Antwort / Lösung bleiben, schlichter
+  Weiter-Knopf, nie automatisch. Drei neue Tests (falsch hält und geht
+  weiter, Auto-Weiter nur bei richtig und eingeschaltet, Enter in zwei
+  Schritten), zwei bestehende angepasst. Keine neuen i18n-Schlüssel
+  (`lesson.button.next`).
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - Der Sync-Push mit `GITHUB_TOKEN` löst keine PR-CI aus; dieser
