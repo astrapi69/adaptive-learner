@@ -2346,8 +2346,9 @@ lesson:
     breakdown_correct_answer: "Richtige Antwort: {answer}"
     breakdown_unattempted: "Nicht versucht"
     detailed_hide: "Kompakte Auswertung"
-    detailed_hint: "Zeigt alle Abschnitte, alle Antworten und alle Fehlererklärungen dieses Durchgangs"
+    detailed_hint: "Zeigt Kennzahlen, Fehler nach Aufgabentyp, Schwachstellen, alle Antworten und jede Fehlererklärung dieses Durchgangs"
     detailed_show: "Ausführliche Auswertung"
+    review_subtitle: "Alle Fehler dieser Lektion auf einen Blick"
     view_all_answers: "Alle Antworten ansehen ({n})"
     export:
       copy: "Ergebnis kopieren"

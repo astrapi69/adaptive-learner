@@ -2301,8 +2301,9 @@ lesson:
     breakdown_correct_answer: "Correct answer: {answer}"
     breakdown_unattempted: "Not attempted"
     detailed_hide: "Compact evaluation"
-    detailed_hint: "Shows every section, all answers and every mistake explanation of this run"
+    detailed_hint: "Shows the key figures, mistakes per exercise type, weak spots, all answers and every mistake explanation of this run"
     detailed_show: "Detailed evaluation"
+    review_subtitle: "Every mistake in this lesson at a glance"
     view_all_answers: "View all answers ({n})"
     export:
       copy: "Copy result"
