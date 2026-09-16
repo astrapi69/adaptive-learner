@@ -36,6 +36,14 @@
  * Best-effort: if any IO fails (loading errors, recording bulk),
  * the user keeps their position and the block degrades to "skip
  * available" — never a hard error toast at the celebration moment.
+ *
+ * #3125 — a checked drill HOLDS on its result instead of jumping to the
+ * next one: the cloze stays mounted in its checked state (per-blank
+ * colours, "All correct!" / "N of M"), a correct answer shows the lesson's
+ * success badge + "Continue" (auto-advance follows the same Settings
+ * toggle and delay as in the lesson), a wrong answer keeps the
+ * my-answer / solution reveal in view behind a plain "Continue". Enter
+ * advances a checked drill, exactly as in the lesson runner.
  */
 
 import {ArrowRight, CheckCircle2, ChevronDown, ChevronRight, X} from "lucide-react";
@@ -75,6 +83,7 @@ import type {
     ExerciseScored,
 } from "../shell/exercise-control";
 import ClozeExercise from "../renderers/cloze/ClozeExercise";
+import ExerciseSuccessAdvance from "./ExerciseSuccessAdvance";
 
 /** i18n lookup shape used by the presentational sub-components:
  *  ``(key, fallback) -> string``. */
@@ -160,9 +169,19 @@ export default function CorrectionBlock({
     const enterStateRef = useRef<LessonEnterNav | null>(null);
     const enterLockRef = useRef(false);
     const [answerable, setAnswerable] = useState(false);
+    // #3125 — the checked drill's outcome while it holds for "Continue";
+    // null while the current cloze is still unanswered. ``advanceLockRef``
+    // keeps the Continue click, the Enter shortcut and the auto-advance
+    // timer from advancing the same drill twice.
+    const [lastResult, setLastResult] = useState<"correct" | "wrong" | null>(
+        null,
+    );
+    const advanceLockRef = useRef(false);
     useEffect(() => {
         setAnswerable(false);
+        setLastResult(null);
         enterLockRef.current = false;
+        advanceLockRef.current = false;
     }, [currentIndex]);
 
     // Filter step_results for wrong attempts. Used to short-circuit
@@ -261,36 +280,35 @@ export default function CorrectionBlock({
         [userId],
     );
 
+    // #3125 — checking records the attempt and HOLDS on the result; the
+    // move to the next drill (or the completion note) is ``advance`` below,
+    // driven by Continue / Enter / the lesson's auto-advance.
     const handleClozeComplete = useCallback(
         async (scored: {
             correct: number;
             total: number;
             attempts: ElementAttempt[];
         }) => {
+            const allCorrect =
+                scored.correct === scored.total && scored.total > 0;
+            setLastResult(allCorrect ? "correct" : "wrong");
+            if (allCorrect) setCorrectCount((c) => c + 1);
             await persistAttempts(scored.attempts);
-            if (scored.correct === scored.total && scored.total > 0) {
-                setCorrectCount((c) => c + 1);
-            }
-            const next = currentIndex + 1;
-            if (next >= clozes.length) {
-                setStatus("complete");
-                onComplete(
-                    scored.correct === scored.total && scored.total > 0
-                        ? correctCount + 1
-                        : correctCount,
-                );
-            } else {
-                setCurrentIndex(next);
-            }
         },
-        [
-            persistAttempts,
-            currentIndex,
-            clozes.length,
-            correctCount,
-            onComplete,
-        ],
+        [persistAttempts],
     );
+
+    const advance = useCallback(() => {
+        if (advanceLockRef.current || lastResult === null) return;
+        advanceLockRef.current = true;
+        const next = currentIndex + 1;
+        if (next >= clozes.length) {
+            setStatus("complete");
+            onComplete(correctCount);
+        } else {
+            setCurrentIndex(next);
+        }
+    }, [lastResult, currentIndex, clozes.length, correctCount, onComplete]);
 
     const handleSkip = useCallback(() => {
         setStatus("complete");
@@ -301,17 +319,17 @@ export default function CorrectionBlock({
     // the listener reads it through the ref. A cloze is "active" only
     // when the section is EXPANDED and in the ready/active status;
     // otherwise the state reads as a summary so Enter is a no-op (and
-    // never fires while the section is collapsed). The cloze auto-advances
-    // on submit, so there is no separate "Next" step — ``goNext`` is unused.
+    // never fires while the section is collapsed). #3125 — once checked,
+    // Enter advances (``goNext``), the same two-step rhythm as the lesson.
     const clozeActive =
         expanded && (status === "ready" || status === "active");
     enterStateRef.current = {
         isSummary: !clozeActive,
         isExerciseStep: clozeActive,
-        checked: false,
+        checked: lastResult !== null,
         enteredReviewed: false,
         answerable,
-        goNext: () => {},
+        goNext: advance,
     };
     useLessonEnterKey({
         enabled: lessonShortcutsEnabled,
@@ -398,9 +416,11 @@ export default function CorrectionBlock({
             setId={setId}
             lessonFilename={lessonFilename}
             answerable={answerable}
+            lastResult={lastResult}
             exerciseRef={exerciseRef}
             onInteraction={setAnswerable}
             onClozeComplete={handleClozeComplete}
+            onAdvance={advance}
             onSkip={handleSkip}
             replay={replay}
         />
@@ -678,9 +698,11 @@ function CorrectionDrill({
     setId,
     lessonFilename,
     answerable,
+    lastResult,
     exerciseRef,
     onInteraction,
     onClozeComplete,
+    onAdvance,
     onSkip,
     replay,
 }: {
@@ -693,9 +715,13 @@ function CorrectionDrill({
     setId: string;
     lessonFilename: string;
     answerable: boolean;
+    /** #3125 — the checked drill's outcome, null while unanswered. */
+    lastResult: "correct" | "wrong" | null;
     exerciseRef: RefObject<ExerciseHandle | null>;
     onInteraction: (answerable: boolean) => void;
     onClozeComplete: (scored: ExerciseScored) => void;
+    /** #3125 — move on from a checked drill. */
+    onAdvance: () => void;
     onSkip: () => void;
     replay: ReactNode;
 }) {
@@ -707,6 +733,7 @@ function CorrectionDrill({
             data-expanded="true"
             data-cloze-index={String(currentIndex)}
             data-cloze-total={String(total)}
+            data-cloze-result={lastResult ?? "pending"}
             aria-label={t("lesson.correction.mistakes_heading", "Fix your mistakes")}
         >
             <header className="lesson-correction-block-header">
@@ -751,16 +778,44 @@ function CorrectionDrill({
                             void onClozeComplete(scored);
                         }}
                     />
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                        <Button
-                            type="button"
-                            disabled={!answerable}
-                            onClick={() => exerciseRef.current?.submit()}
-                            data-testid="lesson-correction-block-check"
-                        >
-                            {t("lesson.exercise.cloze.submit", "Check answers")}
-                        </Button>
-                    </div>
+                    {/* #3125 — the checked drill holds on its result: the
+                        cloze above stays in its checked state and the row
+                        below turns from "Check answers" into the way on.
+                        Correct: the lesson's success badge + Continue (with
+                        the lesson's auto-advance rule). Wrong: a plain
+                        Continue, so the reveal stays in view as long as the
+                        learner wants. */}
+                    {lastResult === null ? (
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                            <Button
+                                type="button"
+                                disabled={!answerable}
+                                onClick={() => exerciseRef.current?.submit()}
+                                data-testid="lesson-correction-block-check"
+                            >
+                                {t("lesson.exercise.cloze.submit", "Check answers")}
+                            </Button>
+                        </div>
+                    ) : lastResult === "correct" ? (
+                        <div className="mt-3">
+                            <ExerciseSuccessAdvance
+                                onAdvance={onAdvance}
+                                label={t("lesson.button.next", "Continue")}
+                                testIdPrefix="lesson-correction-block"
+                            />
+                        </div>
+                    ) : (
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                            <Button
+                                type="button"
+                                onClick={onAdvance}
+                                data-testid="lesson-correction-block-next"
+                            >
+                                {t("lesson.button.next", "Continue")}
+                                <ChevronRight size={16} aria-hidden="true" />
+                            </Button>
+                        </div>
+                    )}
                 </>
             )}
             {replay && (
