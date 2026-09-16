@@ -26,6 +26,7 @@
   "End-user help is versionless; provenance belongs to the changelog": "0e83c38c74f67fc5",
   "Engine re-pin without `make sync-schema` is invisible until the release gate": "3b21b7970742be58",
   "External GitHub Action major-version drift": "4a46f63ea6f855c7",
+  "External instructions are checked against binding process rules, not just followed": "8657a3784f61cdd8",
   "Filesystem isolation: production data lives outside the project tree": "e1c8e2b61c762264",
   "Frozen-only behaviour is proven on the real artifact, not the source-tree run": "ca379eacf3ec0436",
   "General patterns": "0856baac360bf881",
