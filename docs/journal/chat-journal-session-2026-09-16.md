@@ -184,7 +184,16 @@ Lane: Branch `claude/github-issues-open-rig959`, Session
   `LessonReviewReport.tsx` aus #3134 nutzt `var(--surface)` und
   `var(--border)`; die PR-CI hatte den Ratchet nicht gewählt (er liest per
   `readFileSync`, Klasse #1620/#1665). Behoben im selben PR durch die
-  semantischen Utilities `bg-surface` / `border-border`, Pins unverändert.
+  semantischen Utilities `bg-[var(--bg-surface)]` / `border-border`, Pins
+  unverändert (`bg-surface` ist keine emittierte Utility, der
+  dead-classnames-Gate hat das gefangen).
+- Baseline-Sync geprüft (#1532): 18 Bilder, alle zurechenbar. Die 15
+  gelöschten Motive (`lesson-result-*`, `lesson-summary-*`) zeigen die
+  kompakte Fassung: Sterne, Meldung, Punktzahl, Zeit, XP, Weiter-Knöpfe,
+  sonst nichts. `settings-learning-*` (3) wuchsen um eine Zeile: Zeile 7
+  "Warum du diese verpasst hast", nur Ergebnis und XP angehakt; die
+  Pixel-Differenz unterhalb der Einfügung ist die Neunummerierung und die
+  ausgegrauten Zeilen, nichts Fremdes.
 - Commit: siehe PR.
 
 ## Fragen und Annahmen
