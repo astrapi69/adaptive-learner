@@ -37,7 +37,7 @@ function ExistingZone({zone, index, id}: {zone: HotspotZone; index: number; id: 
     const isCorrect = zone.is_correct === "true";
     const className = isCorrect
         ? "fill-[color-mix(in_srgb,var(--exercise-correct)_25%,transparent)] stroke-[var(--exercise-correct)]"
-        : "fill-[color-mix(in_srgb,var(--accent)_15%,transparent)] stroke-[var(--border)]";
+        : "fill-[color-mix(in_srgb,var(--accent)_15%,transparent)] stroke-[var(--border-primary)]";
     const common = {
         className: `${className} stroke-2`,
         "data-testid": `exercise-ext-hotspot-canvas-zone-${id}-${index}`,
