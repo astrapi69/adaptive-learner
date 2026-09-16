@@ -1221,6 +1221,18 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       "Speichern" ist mit einem Inline-Hinweis deaktiviert, bis die Nutzlast
       gültig ist (z. B. weniger als 2 Elemente, oder null/mehr als eine
       richtige Hotspot-Zone).
+- [ ] Hotspot-Zeichenfläche zum Einzeichnen von Zonen (#3110): sobald ein
+      Bild ausgewählt ist, erscheint oberhalb der numerischen Zonenliste
+      eine Fläche "Zone auf dem Bild einzeichnen". Rechteck oder Kreis
+      wählen, dann auf dem Bild ziehen - eine gestrichelte Vorschau folgt
+      der Ziehbewegung und beim Loslassen wird eine neue Zone mit der
+      gezeichneten Position/Größe angelegt (sofort sichtbar in den
+      numerischen Feldern darunter zum Feinjustieren). Wird beim Ziehen
+      der Bildbereich verlassen und dort losgelassen, wird das Zeichnen
+      abgebrochen (keine Zone wird hinzugefügt). Die bereits vorhandenen
+      Zonen werden auf der Fläche ebenfalls dargestellt (die richtige
+      optisch abgesetzt), sodass die gesamte Anordnung beim
+      Weiterzeichnen sichtbar bleibt.
 
 ### Set erneut durcharbeiten - zweiter Durchgang (#2125, EXP-051)
 

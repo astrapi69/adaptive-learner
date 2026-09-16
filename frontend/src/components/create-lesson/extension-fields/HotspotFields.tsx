@@ -4,22 +4,21 @@
  * ``ext_payload``.
  *
  * The image reuses the shared {@link CardImageField} (mirrors
- * ``ImageDescriptionFields``'s image picker). Zone authoring is a
- * STRUCTURED editor (shape + numeric coordinate fields, 0-100 percentages)
- * rather than a drag-to-draw canvas: the issue's "zone editor (draw
- * rect/circle on the image)" describes the target interaction, but a real
- * click-and-drag drawing surface over a preview image is a substantially
- * larger UI feature. This ships a fully functional path to a valid payload
- * (every field the renderer's hit-test needs, with the same 0-100 percentage
- * contract), and defers the drawing interaction as follow-up work — see the
- * PR's scope notes.
+ * ``ImageDescriptionFields``'s image picker). Zone authoring combines TWO
+ * complementary editors: {@link HotspotZoneCanvas} draws a new rect/circle
+ * directly on the image (drag to size), and the structured numeric fields
+ * below let the author fine-tune the drawn zone's exact coordinates or type
+ * them precisely without dragging. Marking the correct zone stays a radio
+ * on the structured row — no ambiguity about which control does what.
  */
 
+import {useState} from "react";
 import {Plus, X} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {CardImageField} from "../fields";
+import HotspotZoneCanvas from "./HotspotZoneCanvas";
 import type {HotspotZone} from "../../../lib/exercises/payload/hotspot";
 
 type Translate = (key: string, fallback?: string) => string;
@@ -87,6 +86,7 @@ export default function HotspotFields({
 }) {
     const src = payload?.src ?? "";
     const zones = payload?.zones ?? [];
+    const [drawShape, setDrawShape] = useState<"rect" | "circle">("rect");
 
     function setZone(index: number, next: HotspotZone) {
         onChange({src, zones: zones.map((z, i) => (i === index ? next : z))});
@@ -109,6 +109,9 @@ export default function HotspotFields({
     function addZone() {
         onChange({src, zones: [...zones, {...BLANK_RECT_ZONE}]});
     }
+    function drawZone(zone: HotspotZone) {
+        onChange({src, zones: [...zones, zone]});
+    }
     function removeZone(index: number) {
         onChange({src, zones: zones.filter((_z, i) => i !== index)});
     }
@@ -125,6 +128,40 @@ export default function HotspotFields({
                     "Stimulus image",
                 )}
             />
+
+            {src.trim().length > 0 && (
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-fg-primary">
+                            {t(
+                                "create_lesson.extensions.edit.hotspot_draw_label",
+                                "Draw a zone on the image",
+                            )}
+                        </span>
+                        <select
+                            className="flex h-9 rounded-md border border-input bg-background px-2 text-sm"
+                            value={drawShape}
+                            data-testid={`exercise-ext-hotspot-draw-shape-${id}`}
+                            onChange={(e) => setDrawShape(e.target.value as "rect" | "circle")}
+                        >
+                            <option value="rect">
+                                {t("create_lesson.extensions.edit.hotspot_shape_rect", "Rectangle")}
+                            </option>
+                            <option value="circle">
+                                {t("create_lesson.extensions.edit.hotspot_shape_circle", "Circle")}
+                            </option>
+                        </select>
+                    </div>
+                    <HotspotZoneCanvas
+                        id={id}
+                        src={src}
+                        zones={zones}
+                        drawShape={drawShape}
+                        onDraw={drawZone}
+                        t={t}
+                    />
+                </div>
+            )}
 
             <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
                 <legend className="text-sm font-medium text-fg-primary">
