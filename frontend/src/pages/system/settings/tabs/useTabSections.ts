@@ -37,7 +37,7 @@ import { prefersReducedMotion } from "../../../../lib/feedback/feedbackPref";
 import type { TabSectionDef } from "../../../../lib/settings/tab-sections";
 
 /** The query parameter every tab's section bar reads and writes. */
-export const TAB_SECTION_PARAM = "section";
+const TAB_SECTION_PARAM = "section";
 
 export interface TabSectionsOptions<Id extends string> {
   /** Whether the tab is visible (the scroll waits for it). */
