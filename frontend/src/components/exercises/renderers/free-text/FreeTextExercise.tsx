@@ -80,10 +80,6 @@ export interface FreeTextExerciseProps extends ControlledExerciseProps {
      *  ``tolerance``, even when the text differs. Absent for a
      *  non-parametric exercise; grading is then byte-identical to before. */
     toleranceByAcceptText?: ReadonlyMap<string, number>;
-    /** #3109 — the same exercise's drawn/computed variable values, echoed
-     *  into ``raw_answer.resolved_variables`` on submit so a later review
-     *  can reconstruct the exact concrete instance the learner saw. */
-    variableValues?: Record<string, number>;
     /** Called on submit with the score (0 or 1 correct of 1
      *  total) plus the single-attempt SRS payload. */
     onComplete: (result: ExerciseScored) => void;
@@ -415,7 +411,6 @@ function FreeTextExercise(
         onAdvance,
         advanceLabel,
         toleranceByAcceptText,
-        variableValues,
     }: FreeTextExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -458,10 +453,11 @@ function FreeTextExercise(
                         isCorrect,
                     ),
                 ],
-                raw_answer:
-                    variableValues && Object.keys(variableValues).length > 0
-                        ? {kind: "free_text", input, resolved_variables: variableValues}
-                        : {kind: "free_text", input},
+                // #3109 - resolved_variables is attached centrally by the
+                // dispatcher's shared onComplete wrapper (every RawAnswer
+                // kind, not just this one); this renderer stays unaware of
+                // variables beyond the tolerance-grading hook above.
+                raw_answer: {kind: "free_text", input},
             };
         },
         resetAnswer: () => setInput(""),
