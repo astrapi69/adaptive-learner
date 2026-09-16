@@ -93,12 +93,35 @@ function _normalizeCode(s: string): string {
  *  answers, 2 for sentence-length ones, #1580). Empty input never matches.
  *  In ``codeMode`` the normalizer is whitespace-stripping + quote-unifying +
  *  case-preserving, and the budget stays 1 regardless of length (code must
- *  not absorb two edits: println != print). */
+ *  not absorb two edits: println != print).
+ *
+ *  ``tolerances`` (#3109, schema v1.14 parametric exercises) is
+ *  {@link resolveExerciseVariables}'s ``toleranceByAcceptText``: when an
+ *  ``accept`` entry is a variable's resolved value and that variable
+ *  carries a ``tolerance``, a numeric ``input`` within that absolute
+ *  tolerance of the entry is graded correct even when the TEXT differs
+ *  (e.g. accepted "10", typed "10.3" within tolerance 0.5). Checked before
+ *  the text matcher; non-numeric input or an uncovered entry falls through
+ *  to it unchanged. Omitted (or empty), grading is byte-identical to
+ *  before this parameter existed. */
 export function isFreeTextCorrect(
     input: string,
     accept: readonly string[],
     codeMode = false,
+    tolerances?: ReadonlyMap<string, number>,
 ): boolean {
+    if (tolerances && tolerances.size > 0) {
+        const numericInput = Number(input.trim());
+        if (input.trim() !== "" && Number.isFinite(numericInput)) {
+            for (const candidate of accept) {
+                const tolerance = tolerances.get(candidate);
+                if (tolerance === undefined) continue;
+                const numericCandidate = Number(candidate);
+                if (!Number.isFinite(numericCandidate)) continue;
+                if (Math.abs(numericInput - numericCandidate) <= tolerance) return true;
+            }
+        }
+    }
     const norm = codeMode ? _normalizeCode : _normalize;
     const normInput = norm(input);
     if (normInput === "") return false;

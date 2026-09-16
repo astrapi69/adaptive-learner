@@ -2390,6 +2390,31 @@
         "done": "완료",
         "record_again": "다시 녹음"
       },
+      "al_hotspot": {
+        "empty": "이 핫스팟 연습에는 이미지나 구역이 없습니다.",
+        "image_alt": "올바른 위치를 클릭하세요",
+        "overlay_aria": "클릭 가능한 구역",
+        "result_correct": "정답!",
+        "result_wrong": "아쉬워요.",
+        "retry": "다시 시도",
+        "submit": "답 확인"
+      },
+      "al_ordering": {
+        "empty": "이 순서 배열 연습에는 항목이 없습니다.",
+        "result_correct": "정답!",
+        "result_wrong": "아쉬워요 - 다시 시도하세요.",
+        "retry": "다시 시도",
+        "submit": "답 확인"
+      },
+      "al_parsons": {
+        "empty": "이 코드 순서 연습에는 줄이 없습니다.",
+        "indent_dec": "들여쓰기 줄이기",
+        "indent_inc": "들여쓰기 늘리기",
+        "result_correct": "정답!",
+        "result_wrong": "아쉬워요 - 순서와 들여쓰기를 확인하세요.",
+        "retry": "다시 시도",
+        "submit": "답 확인"
+      },
       "instruction": {
         "matching": {
           "receptive": "짝을 맞추세요 (인식)",
@@ -3562,7 +3587,10 @@
         "graded-quiz": "채점 퀴즈",
         "dictation": "받아쓰기",
         "image-description": "이미지 설명",
-        "speak-and-record": "말하기 & 녹음"
+        "speak-and-record": "말하기 & 녹음",
+        "ordering": "순서 배열",
+        "parsons": "파슨스 (코드 순서)",
+        "hotspot": "핫스팟"
       },
       "edit": {
         "prompt_label": "지시문 / 문제",
@@ -3639,7 +3667,26 @@
         "ec_accept_label": "허용되는 수정",
         "ec_accept_add": "추가",
         "ec_accept_remove": "수정 제거",
-        "ec_accept_placeholder": "올바른 단어"
+        "ec_accept_placeholder": "올바른 단어",
+        "err_ordering": "올바른 순서로 고유한 단계를 2개 이상 추가하세요.",
+        "err_parsons": "코드 줄을 2개 이상 추가하세요.",
+        "err_hotspot": "이미지와 구역을 2개 이상 추가하고 정확히 하나의 구역을 정답으로 표시하세요.",
+        "ordering_items_label": "올바른 순서의 단계",
+        "ordering_item_add": "단계 추가",
+        "ordering_item_remove": "단계 제거",
+        "ordering_item_placeholder": "단계",
+        "parsons_code_label": "코드",
+        "parsons_code_placeholder": "def greet(name):\n    print(name)",
+        "parsons_language_label": "언어 (선택 사항, 구문 강조용)",
+        "hotspot_image_label": "자극 이미지",
+        "hotspot_image_preview_alt": "자극 이미지",
+        "hotspot_zones_label": "클릭 가능한 구역",
+        "hotspot_shape_rect": "직사각형",
+        "hotspot_shape_circle": "원",
+        "hotspot_mark_correct": "이것이 정답 구역입니다",
+        "hotspot_correct_label": "정답",
+        "hotspot_zone_remove": "구역 제거",
+        "hotspot_zone_add": "구역 추가"
       }
     },
     "review": {

@@ -45,6 +45,9 @@ import {
     SPEAK_AND_RECORD_EXT_TYPE,
     speakAndRecordPayloadErrors,
 } from "../payload/speak-and-record";
+import {ORDERING_EXT_TYPE, orderingPayloadErrors} from "../payload/ordering";
+import {PARSONS_EXT_TYPE, parsonsPayloadErrors} from "../payload/parsons";
+import {HOTSPOT_EXT_TYPE, hotspotPayloadErrors} from "../payload/hotspot";
 import type {ContentLessonExercise} from "../../../storage/types";
 import {createIdFactory} from "./id-factory";
 
@@ -56,6 +59,9 @@ export {
     DICTATION_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
     SPEAK_AND_RECORD_EXT_TYPE,
+    ORDERING_EXT_TYPE,
+    PARSONS_EXT_TYPE,
+    HOTSPOT_EXT_TYPE,
 };
 
 /** The extension exercise types the wizard can author (#1852, editors 1-4;
@@ -70,6 +76,9 @@ export const EXTENSION_WIZARD_TYPES = [
     DICTATION_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
     SPEAK_AND_RECORD_EXT_TYPE,
+    ORDERING_EXT_TYPE,
+    PARSONS_EXT_TYPE,
+    HOTSPOT_EXT_TYPE,
 ] as const;
 
 export type ExtensionWizardType = (typeof EXTENSION_WIZARD_TYPES)[number];
@@ -119,7 +128,10 @@ export type ExtensionEditCode =
     | "graded_quiz"
     | "dictation"
     | "image_description"
-    | "speak_and_record";
+    | "speak_and_record"
+    | "ordering"
+    | "parsons"
+    | "hotspot";
 
 /** Result of validating an extension exercise draft: whether it is saveable
  *  and, when not, the machine {@link ExtensionEditCode} of the failed rule. */
@@ -177,6 +189,20 @@ const BLANK_PAYLOAD: Record<ExtensionWizardType, () => unknown> = {
     [DICTATION_EXT_TYPE]: () => ({audio: "", accept: []}),
     [IMAGE_DESCRIPTION_EXT_TYPE]: () => ({image: "", accept: []}),
     [SPEAK_AND_RECORD_EXT_TYPE]: () => ({sentence: ""}),
+    [ORDERING_EXT_TYPE]: () => ({items: ["", ""]}),
+    [PARSONS_EXT_TYPE]: () => ({
+        lines: [
+            {code: "", indent: 0},
+            {code: "", indent: 0},
+        ],
+    }),
+    [HOTSPOT_EXT_TYPE]: () => ({
+        src: "",
+        zones: [
+            {shape: "rect", coords: {x: 10, y: 10, width: 20, height: 20}},
+            {shape: "circle", coords: {cx: 70, cy: 70, radius: 15}},
+        ],
+    }),
 };
 
 /**
@@ -198,58 +224,66 @@ export function createBlankExtensionExercise(
     } as ContentLessonExercise;
 }
 
+/** Per-type payload-validity check: true when ``ex``'s ``ext_payload``
+ *  satisfies the type's shipped payload validator. Categorization also
+ *  enforces a wizard-level non-empty-category-name rule the shipped
+ *  validator doesn't (uniqueness is enough for the load guard; an
+ *  unnamed bucket renders as a blank label in the wizard). Keyed by
+ *  {@link ExtensionWizardType} so a dispatch table replaces the former
+ *  if-cascade — keeps ``validateExtensionExercise``'s own cyclomatic
+ *  complexity flat as more extensions gain wizard authoring. */
+const VALIDATE_EXTENSION_PAYLOAD: Record<
+    ExtensionWizardType,
+    (ex: ContentLessonExercise) => boolean
+> = {
+    [CATEGORIZATION_EXT_TYPE]: (ex) => {
+        const named = categorizationCategories(ex).every(
+            (bucket) => bucket.name.trim().length > 0,
+        );
+        return categorizationPayloadErrors(ex).length === 0 && named;
+    },
+    [ERROR_CORRECTION_EXT_TYPE]: (ex) => errorCorrectionPayloadErrors(ex).length === 0,
+    [READING_COMPREHENSION_EXT_TYPE]: (ex) =>
+        readingComprehensionPayloadErrors(ex).length === 0,
+    [GRADED_QUIZ_EXT_TYPE]: (ex) => gradedQuizPayloadErrors(ex).length === 0,
+    [DICTATION_EXT_TYPE]: (ex) => dictationPayloadErrors(ex).length === 0,
+    [IMAGE_DESCRIPTION_EXT_TYPE]: (ex) => imageDescriptionPayloadErrors(ex).length === 0,
+    [SPEAK_AND_RECORD_EXT_TYPE]: (ex) => speakAndRecordPayloadErrors(ex).length === 0,
+    [ORDERING_EXT_TYPE]: (ex) => orderingPayloadErrors(ex).length === 0,
+    [PARSONS_EXT_TYPE]: (ex) => parsonsPayloadErrors(ex).length === 0,
+    [HOTSPOT_EXT_TYPE]: (ex) => hotspotPayloadErrors(ex).length === 0,
+};
+
+/** The {@link ExtensionEditCode} reported when a type's payload check
+ *  fails — the counterpart lookup to {@link VALIDATE_EXTENSION_PAYLOAD}. */
+const EXTENSION_EDIT_CODE_BY_TYPE: Record<ExtensionWizardType, ExtensionEditCode> = {
+    [CATEGORIZATION_EXT_TYPE]: "categorization",
+    [ERROR_CORRECTION_EXT_TYPE]: "error_correction",
+    [READING_COMPREHENSION_EXT_TYPE]: "reading_comprehension",
+    [GRADED_QUIZ_EXT_TYPE]: "graded_quiz",
+    [DICTATION_EXT_TYPE]: "dictation",
+    [IMAGE_DESCRIPTION_EXT_TYPE]: "image_description",
+    [SPEAK_AND_RECORD_EXT_TYPE]: "speak_and_record",
+    [ORDERING_EXT_TYPE]: "ordering",
+    [PARSONS_EXT_TYPE]: "parsons",
+    [HOTSPOT_EXT_TYPE]: "hotspot",
+};
+
 /**
  * Validate an extension exercise draft for the inline editor. Checks the
- * common prompt, then delegates to the shipped payload validator (plus a
- * wizard-level non-empty-category-name rule for categorization). Returns the
- * first failure (as a machine {@link ExtensionEditCode}) or ``{valid: true}``.
+ * common prompt, then delegates to the shipped payload validator via the
+ * per-type dispatch table above. Returns the first failure (as a machine
+ * {@link ExtensionEditCode}) or ``{valid: true}``. A type without a wizard
+ * editor (not in the table) is never blocked here.
  */
 export function validateExtensionExercise(
     ex: ContentLessonExercise,
 ): ExtensionEditIssue {
     if (ex.prompt.trim().length < 1) return fail("prompt");
     if (explanationTooLong(ex)) return fail("explanation");
-    if (ex.type === CATEGORIZATION_EXT_TYPE) {
-        // The shipped payload validator does not require a non-empty category
-        // name (uniqueness is enough for the load guard). The authoring wizard
-        // does: an unnamed bucket renders as a blank label.
-        const named = categorizationCategories(ex).every(
-            (bucket) => bucket.name.trim().length > 0,
-        );
-        return categorizationPayloadErrors(ex).length === 0 && named
-            ? ok
-            : fail("categorization");
-    }
-    if (ex.type === ERROR_CORRECTION_EXT_TYPE) {
-        return errorCorrectionPayloadErrors(ex).length === 0
-            ? ok
-            : fail("error_correction");
-    }
-    if (ex.type === READING_COMPREHENSION_EXT_TYPE) {
-        return readingComprehensionPayloadErrors(ex).length === 0
-            ? ok
-            : fail("reading_comprehension");
-    }
-    if (ex.type === GRADED_QUIZ_EXT_TYPE) {
-        return gradedQuizPayloadErrors(ex).length === 0
-            ? ok
-            : fail("graded_quiz");
-    }
-    if (ex.type === DICTATION_EXT_TYPE) {
-        return dictationPayloadErrors(ex).length === 0 ? ok : fail("dictation");
-    }
-    if (ex.type === IMAGE_DESCRIPTION_EXT_TYPE) {
-        return imageDescriptionPayloadErrors(ex).length === 0
-            ? ok
-            : fail("image_description");
-    }
-    if (ex.type === SPEAK_AND_RECORD_EXT_TYPE) {
-        return speakAndRecordPayloadErrors(ex).length === 0
-            ? ok
-            : fail("speak_and_record");
-    }
-    // A type without a wizard editor is never blocked here.
-    return ok;
+    const isValid = VALIDATE_EXTENSION_PAYLOAD[ex.type as ExtensionWizardType];
+    if (!isValid) return ok;
+    return isValid(ex) ? ok : fail(EXTENSION_EDIT_CODE_BY_TYPE[ex.type as ExtensionWizardType]);
 }
 
 function trimmedNonEmpty(values: string[] | undefined): string[] {
@@ -370,6 +404,26 @@ const NORMALIZE_EXTENSION_PAYLOAD: Record<
         const sentence = (payload?.sentence ?? "").trim();
         const audio = (payload?.audio ?? "").trim();
         return audio.length > 0 ? {sentence, audio} : {sentence};
+    },
+    [ORDERING_EXT_TYPE]: (ex) => {
+        const payload = ex.ext_payload as {items?: string[]} | undefined;
+        return {items: trimmedNonEmpty(payload?.items)};
+    },
+    [PARSONS_EXT_TYPE]: (ex) => {
+        const payload = ex.ext_payload as
+            | {lines?: {code: string; indent: number}[]; language?: string}
+            | undefined;
+        const lines = (payload?.lines ?? [])
+            .map((line) => ({code: line.code.trim(), indent: Math.max(0, line.indent)}))
+            .filter((line) => line.code.length > 0);
+        const language = (payload?.language ?? "").trim();
+        return language.length > 0 ? {lines, language} : {lines};
+    },
+    [HOTSPOT_EXT_TYPE]: (ex) => {
+        const payload = ex.ext_payload as
+            | {src?: string; zones?: unknown[]}
+            | undefined;
+        return {src: (payload?.src ?? "").trim(), zones: payload?.zones ?? []};
     },
 };
 

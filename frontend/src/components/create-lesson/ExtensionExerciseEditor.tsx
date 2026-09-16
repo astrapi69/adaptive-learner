@@ -27,7 +27,10 @@ import {
     DICTATION_EXT_TYPE,
     ERROR_CORRECTION_EXT_TYPE,
     GRADED_QUIZ_EXT_TYPE,
+    HOTSPOT_EXT_TYPE,
     IMAGE_DESCRIPTION_EXT_TYPE,
+    ORDERING_EXT_TYPE,
+    PARSONS_EXT_TYPE,
     READING_COMPREHENSION_EXT_TYPE,
     SPEAK_AND_RECORD_EXT_TYPE,
     conversionPreservesElementKeys,
@@ -46,10 +49,15 @@ import {useConfirm} from "../../contexts/ConfirmContext";
 import {
     DictationFields,
     GradedQuizFields,
+    HotspotFields,
     ImageDescriptionFields,
+    OrderingFields,
+    ParsonsFields,
     ReadingComprehensionFields,
     SpeakAndRecordFields,
 } from "./extension-fields";
+import type {HotspotZone} from "../../lib/exercises/payload/hotspot";
+import type {ParsonsLine} from "../../lib/exercises/payload/parsons";
 import type {ContentLessonExercise} from "../../storage/types";
 
 export interface ExtensionExerciseEditorProps {
@@ -89,6 +97,17 @@ interface ImageDescriptionPayload {
 interface SpeakAndRecordPayload {
     sentence: string;
     audio?: string;
+}
+interface OrderingPayload {
+    items: string[];
+}
+interface ParsonsPayload {
+    lines: ParsonsLine[];
+    language?: string;
+}
+interface HotspotPayload {
+    src: string;
+    zones: HotspotZone[];
 }
 
 export default function ExtensionExerciseEditor({
@@ -252,6 +271,30 @@ export default function ExtensionExerciseEditor({
                 <SpeakAndRecordFields
                     id={id}
                     payload={draft.ext_payload as unknown as SpeakAndRecordPayload}
+                    onChange={patchPayload}
+                    t={t}
+                />
+            )}
+            {draft.type === ORDERING_EXT_TYPE && (
+                <OrderingFields
+                    id={id}
+                    payload={draft.ext_payload as unknown as OrderingPayload}
+                    onChange={patchPayload}
+                    t={t}
+                />
+            )}
+            {draft.type === PARSONS_EXT_TYPE && (
+                <ParsonsFields
+                    id={id}
+                    payload={draft.ext_payload as unknown as ParsonsPayload}
+                    onChange={patchPayload}
+                    t={t}
+                />
+            )}
+            {draft.type === HOTSPOT_EXT_TYPE && (
+                <HotspotFields
+                    id={id}
+                    payload={draft.ext_payload as unknown as HotspotPayload}
                     onChange={patchPayload}
                     t={t}
                 />

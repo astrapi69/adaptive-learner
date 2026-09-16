@@ -2390,6 +2390,31 @@
         "done": "Έτοιμο",
         "record_again": "Ηχογράφηση ξανά"
       },
+      "al_hotspot": {
+        "empty": "Αυτή η άσκηση hotspot δεν έχει εικόνα ή ζώνες.",
+        "image_alt": "Κάντε κλικ στο σωστό σημείο",
+        "overlay_aria": "Ζώνες με δυνατότητα κλικ",
+        "result_correct": "Σωστό!",
+        "result_wrong": "Όχι ακριβώς.",
+        "retry": "Δοκιμάστε ξανά",
+        "submit": "Έλεγχος απάντησης"
+      },
+      "al_ordering": {
+        "empty": "Αυτή η άσκηση σειράς δεν έχει στοιχεία.",
+        "result_correct": "Σωστό!",
+        "result_wrong": "Όχι ακριβώς - δοκιμάστε ξανά.",
+        "retry": "Δοκιμάστε ξανά",
+        "submit": "Έλεγχος απάντησης"
+      },
+      "al_parsons": {
+        "empty": "Αυτή η άσκηση κώδικα δεν έχει γραμμές.",
+        "indent_dec": "Μείωση εσοχής",
+        "indent_inc": "Αύξηση εσοχής",
+        "result_correct": "Σωστό!",
+        "result_wrong": "Όχι ακριβώς - ελέγξτε τη σειρά και την εσοχή.",
+        "retry": "Δοκιμάστε ξανά",
+        "submit": "Έλεγχος απάντησης"
+      },
       "instruction": {
         "matching": {
           "receptive": "Αντιστοιχίστε τα ζεύγη (Αναγνώριση)",
@@ -3562,7 +3587,10 @@
         "graded-quiz": "Βαθμολογημένο κουίζ",
         "dictation": "Υπαγόρευση",
         "image-description": "Περιγραφή εικόνας",
-        "speak-and-record": "Ομιλία & εγγραφή"
+        "speak-and-record": "Ομιλία & εγγραφή",
+        "ordering": "Σειρά",
+        "parsons": "Parsons (σειρά κώδικα)",
+        "hotspot": "Σημείο-στόχος"
       },
       "edit": {
         "prompt_label": "Οδηγία / εκφώνηση",
@@ -3639,7 +3667,26 @@
         "ec_accept_label": "Αποδεκτές διορθώσεις",
         "ec_accept_add": "Προσθήκη",
         "ec_accept_remove": "Αφαίρεση διόρθωσης",
-        "ec_accept_placeholder": "Σωστή λέξη"
+        "ec_accept_placeholder": "Σωστή λέξη",
+        "err_ordering": "Προσθέστε τουλάχιστον 2 μοναδικά βήματα, με τη σωστή σειρά.",
+        "err_parsons": "Προσθέστε τουλάχιστον 2 γραμμές κώδικα.",
+        "err_hotspot": "Προσθέστε μια εικόνα, τουλάχιστον 2 ζώνες, και σημειώστε ακριβώς μία ζώνη ως σωστή.",
+        "ordering_items_label": "Βήματα, με τη σωστή σειρά",
+        "ordering_item_add": "Προσθήκη βήματος",
+        "ordering_item_remove": "Αφαίρεση βήματος",
+        "ordering_item_placeholder": "Βήμα",
+        "parsons_code_label": "Κώδικας",
+        "parsons_code_placeholder": "def greet(name):\n    print(name)",
+        "parsons_language_label": "Γλώσσα (προαιρετικό, για επισήμανση σύνταξης)",
+        "hotspot_image_label": "Εικόνα ερεθίσματος",
+        "hotspot_image_preview_alt": "Εικόνα ερεθίσματος",
+        "hotspot_zones_label": "Ζώνες με δυνατότητα κλικ",
+        "hotspot_shape_rect": "Ορθογώνιο",
+        "hotspot_shape_circle": "Κύκλος",
+        "hotspot_mark_correct": "Αυτή είναι η σωστή ζώνη",
+        "hotspot_correct_label": "Σωστό",
+        "hotspot_zone_remove": "Αφαίρεση ζώνης",
+        "hotspot_zone_add": "Προσθήκη ζώνης"
       }
     },
     "review": {

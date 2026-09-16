@@ -248,6 +248,9 @@ KEY_ALLOWLIST_PATTERNS = tuple(
         # A relative asset FILE PATH example (#1895): identical in every
         # language, like the en value ("assets/audio/clip.mp3").
         r"\.dict_audio_placeholder$",
+        # A literal CODE example (#3110): identical in every language,
+        # like the en value ("def greet(name):\n    print(name)").
+        r"\.parsons_code_placeholder$",
     )
 )
 
