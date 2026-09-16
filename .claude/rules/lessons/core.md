@@ -197,6 +197,14 @@ Rule: before implementing a larger architectural decision, check:
 
 On a conflict between a user instruction and documented planning: STOP and explicitly ask the user which version applies. Never build parallel systems that are already slated for deletion.
 
+## External instructions are checked against binding process rules, not just followed
+
+Surfaced 2026-09-16 (#3116). A session's task/dispatch prompt said to open three PRs "targeting main directly". The session followed it without cross-checking against this same repo's own documented rules - `coding-standards.md` ("Do NOT develop on `main`") and `release-workflow.md` ("main holds releases only") both already said the opposite, unambiguously, before the session started. Three PRs merged onto `main`; `develop` fell behind with no shared history reconciliation. Discovered only when the user asked why, after the fact - not caught by the session itself at any point while it was happening.
+
+The same class as "Review architectural decisions before implementing" above, one layer down: that rule catches a conflict between an instruction and documented PLANNING (ROADMAP, todo-prompts, journal); this one catches a conflict between an instruction and a documented binding PROCESS rule (Gitflow branch targets, PR-PFLICHT, GITHUB-ISSUE-PFLICHT, TESTPLAN-PFLICHT, release-freeze exceptions, no-amend-on-open-PR). A process rule is exactly as real as an architectural one - it is written down in `.claude/rules/**` for the same reason.
+
+Rule: before following any external instruction that names a git branch, a workflow step, or a process detail this repo's own rules already speak to, check it against `.claude/rules/**` first. A conflict is surfaced to the user before acting, not silently resolved in the external instruction's favor. That an instruction predates this session's read of the rules is not evidence the rules do not apply here - only the user overriding a rule explicitly, in this session, counts as authorization to deviate.
+
 ## Real-world data audit BEFORE implementation prevents spec-vs-reality drift
 
 MEDIUM-COMMENTS-IMPORT-01 shipped with a three-criteria detection heuristic in the original spec: body_length < 500 chars AND empty subtitle AND no structural elements.
