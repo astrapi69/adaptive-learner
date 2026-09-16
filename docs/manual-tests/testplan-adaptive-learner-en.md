@@ -2160,6 +2160,23 @@ each card row (`CardImageField`).
       keyboard pops up on the phone)
 - [ ] Toggling keeps the button in place, the page does not jump
 
+### Summary: the detailed evaluation like the set end (#3124)
+- [ ] Finish a lesson with at least two mistakes, press "Detailed
+      evaluation": directly under the button reads "Review: <lesson
+      title>" with "Every mistake in this lesson at a glance"
+- [ ] Below it four key figures (Total mistakes, Mastered, Still open,
+      Time spent), "Mistakes per exercise type" and "Biggest weak spots"
+      with the own wrong answer struck through next to the correct one;
+      "Mistakes per lesson" is NOT there (it is a single lesson)
+- [ ] The numbers match the set review (Content > set > "Open review")
+      for the same lesson
+- [ ] "Practise mistakes" opens the set's review session
+- [ ] With no mistakes in the run: "No mistakes recorded - excellent!"
+      instead of the figures
+- [ ] "Compact evaluation": the review disappears again; the #3031 items
+      (sections, answers, explanations) still hold
+- [ ] The button's tooltip names key figures, exercise types and weak spots
+
 ### Leaving a lesson returns to its set (#2811)
 - [ ] Pause and leave a set lesson: the app lands on the SET page with
       the lesson list, not on "My content"

@@ -62,8 +62,40 @@ Lane: Branch `claude/github-issues-open-rig959`, Session
   Fremd-Drift.
 - Commit: siehe PR.
 
+## 3. Lektionsende: ausführliche Auswertung wie am Set-Ende (#3124, Teil 1)
+
+- Original prompt: "Die ausführliche Auswertung in einer Lektion macht
+  lediglich den Dropdown alle Antworten ansehen auf ... eigentlich wollten
+  wir eine ausführliche Auswertung der Lektion wie es am Ende des Lernsets
+  gemacht wird ... Kompakte Auswertung wo ganz wenig, wo auf einem
+  Bildschirm passt, auch auf einem Handy."
+- Optimized prompt: "Den Set-Aggregator und den Set-Renderer auf eine
+  Lektion anwenden und in der ausführlichen Ansicht als erstes zeigen; die
+  kompakte Fassung als eigener Schritt verkleinern."
+- Goal: Aus der Lektions-Auswertung dieselben Ableitungen ziehen können
+  wie aus der Set-Auswertung (Kennzahlen, Aufgabentypen, Schwachstellen).
+- Result: `buildLessonReview` (`lib/statistics/lesson-review.ts`) filtert
+  die Zeilen auf die Lektion und delegiert an `buildSetReview`, eine
+  Rechenlogik für beide Sichten. Der Renderer der Set-Seite ist als
+  `ReviewReport` (`components/progress`) herausgezogen, mit Testid-Präfix,
+  Überschriftenebene und schaltbarer Lektionsaufschlüsselung; `SetSummary`
+  behält alle `set-summary-*`-Ids. `LessonReviewReport` rendert die
+  Lektionsfassung direkt unter dem Knopf der ausführlichen Ansicht, mit
+  "Fehler trainieren" in die Wiederholungs-Sitzung des Sets. Katalog-Vorlauf
+  als eigener PR (Subtitle und erweiterter Tooltip in 11 Katalogen). Die
+  kompakte Voreinstellung (weniger Abschnitte, ein Bildschirm) folgt als
+  Teil 2, weil sie Voreinstellungs-Pins, Hilfetexte und die
+  Lektions-Baselines in zwölf Themes berührt.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - Der Sync-Push mit `GITHUB_TOKEN` löst keine PR-CI aus; dieser
   Journal-Commit ist der echte Push, der die Checks auf dem Sync-Head
   startet (gleiche Lage wie am 2026-09-15).
+- #3124: "Wenn's mobil ist dann nur the Screen" ist als "die kompakte
+  Fassung passt am Telefon auf einen Bildschirm" gelesen, nicht als "am
+  Telefon gibt es keinen Knopf für die ausführliche Auswertung"; die
+  Feature-State-Policy (#335) verbietet das Verstecken eines Merkmals nach
+  Gerät. Die Verkleinerung der Voreinstellung ist offen und als Teil 2
+  angekündigt.

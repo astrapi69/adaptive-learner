@@ -2318,6 +2318,23 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Beim Umschalten bleibt der Knopf an seiner Stelle, die Seite
       springt nicht weg
 
+### Zusammenfassung: ausführliche Auswertung wie am Set-Ende (#3124)
+- [ ] Lektion mit mindestens zwei Fehlern beenden, "Ausführliche
+      Auswertung" drücken: direkt unter dem Knopf steht "Auswertung:
+      <Lektionstitel>" mit "Alle Fehler dieser Lektion auf einen Blick"
+- [ ] Darunter vier Kennzahlen (Fehler insgesamt, Gemeistert, Noch offen,
+      Lernzeit), "Fehler nach Aufgabentyp" und "Größte Schwachstellen" mit
+      der eigenen falschen Antwort durchgestrichen neben der richtigen;
+      "Fehler nach Lektion" gibt es hier NICHT (es ist nur eine Lektion)
+- [ ] Die Zahlen stimmen mit der Set-Auswertung (Inhalte > Set >
+      "Auswertung ansehen") für dieselbe Lektion überein
+- [ ] "Fehler trainieren" führt in die Wiederholungs-Sitzung des Sets
+- [ ] Ohne Fehler im Durchgang: "Keine Fehler aufgezeichnet - stark!"
+      statt der Kennzahlen
+- [ ] "Kompakte Auswertung": die Auswertung verschwindet wieder; die
+      #3031-Punkte (Abschnitte, Antworten, Erklärungen) gelten weiterhin
+- [ ] Tooltip des Knopfs nennt Kennzahlen, Aufgabentypen und Schwachstellen
+
 ### Lektion verlassen führt zum Set (#2811)
 - [ ] In einer Set-Lektion pausieren und verlassen: die App landet auf
       der SET-Seite mit der Lektionsliste, nicht auf "Meine Inhalte"
