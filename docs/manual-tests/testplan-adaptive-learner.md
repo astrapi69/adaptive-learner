@@ -2237,6 +2237,20 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Tablet und Desktop: Kopfzeile unverändert einzeilig, Abzeichen mit
       vollem Text
 
+### Schrittwechsel am Telefon: Anker oben, Fusszeile unten (#3126)
+- [ ] iPhone (Safari oder PWA): eine Lektion mit einem langen
+      Theorie-Schritt öffnen, bis ganz nach unten scrollen, dann "Weiter"
+      auf einen kurzen Schritt (z. B. eine Zuordnungsübung)
+- [ ] Ohne Wischen: der Schritt beginnt oben (Fortschrittsbalken und
+      Aufgabe sichtbar), die Fusszeile mit Zurück/Pause/Prüfen sitzt am
+      unteren Rand, keine leere (schwarze) untere Hälfte
+- [ ] Dasselbe von einem kurzen auf einen langen Schritt: der Anker liegt
+      oben, der Inhalt scrollt normal
+- [ ] Mit "Bewegung reduzieren" im System: der Sprung erfolgt ohne
+      Animation, Ergebnis gleich
+- [ ] Gerät während eines Schritts drehen (#1422): der Schritt wird
+      weiterhin neu verankert
+
 ### Einstellungen > Daten: Aufräum-Karten (#2955)
 - [ ] Einstellungen > Daten: die Karte "Maximale Lektionsgröße" steht
       direkt unter "Offline-Cache"; die Karte "Pausierte Lektionen
