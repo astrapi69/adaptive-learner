@@ -1130,6 +1130,27 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       danach - erst die eigenen Fehler ausbessern, dann entscheiden wie es
       weitergeht. Bleibt über Settings weiterhin frei umsortierbar.
 
+### Korrekturrunde: Ergebnis bleibt stehen, dann Weiter (#3125)
+- [ ] Lektion mit mindestens zwei Fehlern beenden, "Jetzt ausbessern"
+      drücken, die erste Lücke RICHTIG füllen und prüfen: die Lücke wird
+      grün, "Alles richtig!" erscheint, darunter der grüne Erfolgsbalken
+      mit "Weiter". Die Runde springt NICHT von selbst weiter (Auto-Weiter
+      in Einstellungen > Lernen aus)
+- [ ] "Weiter" drücken (oder Enter): jetzt kommt die nächste Übung
+      (Zähler "2 / N")
+- [ ] Eine Lücke FALSCH füllen und prüfen: die Lücke wird rot, "0 von 1
+      richtig", Meine Antwort / Lösung bleiben sichtbar, darunter ein
+      schlichter "Weiter"-Knopf; kein Auto-Weiter, auch nicht mit
+      eingeschaltetem Auto-Weiter
+- [ ] Einstellungen > Lernen > Auto-Weiter einschalten, Runde erneut:
+      nach einer RICHTIGEN Antwort bleibt der Erfolgsbalken kurz stehen
+      (wie in der Lektion) und die Runde geht von allein weiter
+- [ ] Nach der letzten Übung führt "Weiter" zur Abschlussmeldung
+      ("Korrekturrunde abgeschlossen", N Elemente verbessert); die Zahl
+      stimmt mit den richtigen Antworten überein
+- [ ] Überspringen bleibt jederzeit möglich; die Gegenüberstellung mit dem
+      vorigen Durchgang (#983) ist unverändert
+
 ### Neue Übungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
 - [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar; nach
