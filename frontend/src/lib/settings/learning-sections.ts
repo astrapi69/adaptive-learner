@@ -16,6 +16,8 @@
  * }
  */
 
+import type { TabSectionDef } from "./tab-sections";
+
 /** Query parameter carrying the requested section (``?section=<id>``). */
 export const LEARNING_SECTION_PARAM = "section";
 
@@ -25,11 +27,7 @@ export const LEARNING_SECTION_IDS = ["basics", "lessons", "voice", "review", "mo
 export type LearningSectionId = (typeof LEARNING_SECTION_IDS)[number];
 
 /** A section bar entry: the cluster id plus its i18n label key and English fallback. */
-export interface LearningSectionDef {
-  id: LearningSectionId;
-  labelKey: string;
-  fallback: string;
-}
+export type LearningSectionDef = TabSectionDef<LearningSectionId>;
 
 const FALLBACKS: Record<LearningSectionId, string> = {
   basics: "Basics",

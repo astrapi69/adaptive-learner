@@ -808,6 +808,18 @@ async function gotoLearningSubNav(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Open Settings → Data via the section deep link, backup area in view (#3122). */
+async function gotoDataSubNav(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=data&section=backup");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const chip = page.getByTestId("settings-subnav-backup");
+    await expect(chip).toHaveAttribute("aria-current", "location", {timeout: 10_000});
+    await expect(page.getByTestId("settings-cluster-data-backup")).toBeInViewport({timeout: 10_000});
+    await page.waitForTimeout(400);
+    return true;
+}
+
 /** Open Settings → Learning scrolled to the gamification card (#2962 -
  *  moved in from the Plugins tab as the last card of the motivation
  *  cluster, behind a separator because it holds Reset progress). */
@@ -1079,6 +1091,12 @@ const FEATURES: FeatureShot[] = [
         path: "gamification-card/settings",
         setup: gotoGamificationCard,
         pinTo: "settings-gamification-separator",
+    },
+    // --- Data-tab section bar (#3122) -------------------------------------
+    {
+        path: "data-subnav/settings",
+        setup: gotoDataSubNav,
+        pinTo: "settings-cluster-data-backup",
     },
     // --- Learning-tab section bar (#2961) ---------------------------------
     {

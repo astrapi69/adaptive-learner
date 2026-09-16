@@ -991,6 +991,42 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Handy (375 px): die Karte und die Trennlinie brechen sauber um,
       nichts scrollt horizontal
 
+### Daten-Tab: Bereichsleiste + Deep-Link (#3122)
+
+Dieselbe Mechanik wie im Lernen-Tab (#2961, #2966), über den sechs
+Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
+
+- [ ] Einstellungen > Daten: über dem ersten Bereich steht eine Zeile mit
+      Chips "Quellen", "Synchronisation", "Offline-Inhalte", "Sichern und
+      Exportieren", "Aufräumen", "Gefahrenzone" (in dieser Reihenfolge,
+      `settings-subnav-sources` … `settings-subnav-danger`). Ohne Auswahl
+      ist kein Chip hervorgehoben; jeder Bereich trägt Überschrift und
+      Beschreibung, die Karten darunter sind unverändert (Inhalte-Repos und
+      Registry unter Quellen; Cache und Lektionsgröße unter Offline-Inhalte;
+      Sicherung, Identität, Schlüsseltresor, Export unter Sichern;
+      Aufbewahrung und verwaiste Daten unter Aufräumen; Alles löschen als
+      letzte Karte, weiter abgesetzt)
+- [ ] Chip "Sichern und Exportieren" anklicken: die Seite scrollt zum
+      Bereich, die Überschrift liegt frei unter der Kopfzeile (Desktop:
+      unter Kopfzeile UND Leiste), der Chip ist hervorgehoben, die Adresse
+      endet auf `?tab=data&section=backup`, der Zurück-Knopf führt NICHT
+      zum vorherigen Chip zurück
+- [ ] Handy (375 px): die Chip-Zeile lässt sich seitlich wischen, kein
+      horizontales Scrollen der Seite; die Sicherung ist mit einem Tipp
+      erreichbar statt durch mehrere Bildschirmhöhen Scrollen
+- [ ] Deep-Link `/settings?tab=data&section=danger` in einem neuen Tab: der
+      Daten-Tab ist offen, die Gefahrenzone im Bild, der Chip hervorgehoben
+- [ ] `/settings?tab=data&section=review` (ein Lernen-Bereich) öffnen: der
+      Daten-Tab öffnet oben, kein Daten-Chip hervorgehoben, kein Fehler
+- [ ] Sprung aus KI-Tab "Schlüssel exportieren" / "importieren" (#1183,
+      #1765): landet weiterhin auf dem Schlüsseltresor im Bereich "Sichern
+      und Exportieren"; die Leiste stört den Sprung nicht
+- [ ] Ohne Auswahl langsam scrollen: der hervorgehobene Chip folgt dem
+      Bereich, dessen Überschrift oben im Bild steht; die Adresse ändert
+      sich dabei NICHT
+- [ ] Beide Speichermodi (API + Dexie): Leiste und Deep-Link gleich; im
+      Dexie-Modus zeigt der Bereich "Synchronisation" den Desktop-Hinweis
+
 ### Lernen-Tab: Bereichsleiste + Deep-Link (#2961)
 
 - [ ] Einstellungen > Lernen: über dem ersten Bereich steht eine Zeile

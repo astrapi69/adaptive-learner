@@ -126,11 +126,11 @@ function stubIntersectionObserver(): void {
   }
   vi.stubGlobal("IntersectionObserver", FakeIntersectionObserver);
 }
-function fireSpy(intersecting: Record<string, boolean>): void {
+function fireSpy(intersecting: Record<string, boolean>, prefix = "learning"): void {
   const entries = Object.entries(intersecting).map(
     ([id, isIntersecting]) =>
       ({
-        target: document.getElementById(`learning-${id}`),
+        target: document.getElementById(`${prefix}-${id}`),
         isIntersecting,
       }) as unknown as IntersectionObserverEntry,
   );
@@ -308,5 +308,109 @@ describe("Settings > Learning section bar (#2961)", () => {
     } finally {
       Element.prototype.getBoundingClientRect = original;
     }
+  });
+});
+
+// #3122 - the Data tab carries the same bar over its six #1451 clusters;
+// the shared hook (``useTabSections``) drives both, so the Data cases pin
+// only what is tab-specific: chip set + order, anchors, the aria label,
+// and that the two bars never answer each other's request.
+describe("Settings > Data section bar (#3122)", () => {
+  it("renders one chip per cluster in the #1451 causal order, danger zone last", async () => {
+    renderSettings("/settings?tab=data");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-data");
+    const nav = within(panel).getByTestId("settings-subnav");
+    expect(nav.getAttribute("aria-label")).toMatch(/^(Data sections|Datenbereiche)$/);
+    expect(
+      within(nav)
+        .getAllByRole("button")
+        .map((chip) => chip.getAttribute("data-testid")),
+    ).toEqual([
+      "settings-subnav-sources",
+      "settings-subnav-sync",
+      "settings-subnav-offline",
+      "settings-subnav-backup",
+      "settings-subnav-cleanup",
+      "settings-subnav-danger",
+    ]);
+    expect(panel.firstElementChild).toBe(nav);
+    expect(within(nav).queryByRole("button", { current: "location" })).toBeNull();
+    // The clusters carry the ``data-`` anchors, in the same order.
+    expect(
+      Array.from(panel.querySelectorAll("section[id^='data-']")).map((el) => el.id),
+    ).toEqual(["data-sources", "data-sync", "data-offline", "data-backup", "data-cleanup", "data-danger"]);
+  });
+
+  it("keeps every card inside the cluster the #1451 order assigns it", async () => {
+    renderSettings("/settings?tab=data");
+    await screen.findByTestId("settings");
+    const inCluster = (cluster: string, testid: string) =>
+      within(screen.getByTestId(`settings-cluster-data-${cluster}`)).queryByTestId(testid) !== null;
+    expect(inCluster("sources", "content-repo-section")).toBe(true);
+    expect(inCluster("offline", "settings-section-cache")).toBe(true);
+    expect(inCluster("offline", "settings-section-max-lesson-size")).toBe(true);
+    expect(inCluster("backup", "settings-backup")).toBe(true);
+    expect(inCluster("backup", "key-vault-section")).toBe(true);
+    expect(inCluster("backup", "export-section")).toBe(true);
+    expect(inCluster("cleanup", "settings-section-paused-retention")).toBe(true);
+    expect(inCluster("danger", "settings-danger-zone")).toBe(true);
+  });
+
+  it("opens a section from the ?section= deep link: chip active + data anchor scrolled", async () => {
+    renderSettings("/settings?tab=data&section=backup");
+    await screen.findByTestId("settings");
+    expect(screen.getByTestId("settings-subnav-backup")).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
+    await waitFor(() => expect(scrolledIds(scrollSpy)).toContain("data-backup"));
+    expect(scrolledIds(scrollSpy).filter((id) => id.startsWith("learning-"))).toEqual([]);
+  });
+
+  it("ignores a Learning section id on the Data tab: no Data chip, no scroll", async () => {
+    renderSettings("/settings?tab=data&section=review");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-data");
+    expect(panel.querySelector("[aria-current='location']")).toBeNull();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    // Neither bar scrolls: the Data bar rejects the id, the Learning bar
+    // accepts it but its panel is hidden (the scroll waits for the tab).
+    expect(scrolledIds(scrollSpy).filter((id) => /^(data|learning)-/.test(id))).toEqual([]);
+  });
+
+  it("writes ?section= with replace-state on a chip click and scrolls there", async () => {
+    renderSettings("/settings?tab=data");
+    await screen.findByTestId("settings");
+    fireEvent.click(screen.getByTestId("settings-subnav-danger"));
+    const probe = screen.getByTestId("location-probe");
+    expect(probe.getAttribute("data-search")).toBe("?tab=data&section=danger");
+    expect(probe.getAttribute("data-navigation-type")).toBe("REPLACE");
+    await waitFor(() => expect(scrolledIds(scrollSpy)).toContain("data-danger"));
+  });
+
+  it("drops ?section= when leaving the Data tab", async () => {
+    renderSettings("/settings?tab=data&section=cleanup");
+    await screen.findByTestId("settings");
+    fireEvent.click(screen.getByTestId("settings-tab-learning"));
+    expect(screen.getByTestId("location-probe").getAttribute("data-search")).toBe(
+      "?tab=learning",
+    );
+  });
+
+  it("follows the visible Data cluster when no section is requested (#2966)", async () => {
+    stubIntersectionObserver();
+    renderSettings("/settings?tab=data");
+    await screen.findByTestId("settings");
+    fireSpy({ offline: true, backup: true }, "data");
+    expect(screen.getByTestId("settings-subnav-offline")).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
+    fireSpy({ offline: false }, "data");
+    expect(screen.getByTestId("settings-subnav-backup")).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
   });
 });
