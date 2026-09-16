@@ -18,6 +18,11 @@
  * answers overview expanded, the mistake explanations regardless of their
  * own toggle and without the compact 5-entry cap. It is view state only,
  * derived from this run's data on every render - no preference is written.
+ *
+ * #3124 — the detailed view opens with the set-style review of this lesson
+ * (``LessonReviewReport``: key figures, mistakes per exercise type, weak
+ * spots, the jump to practice), the same aggregator and renderer the
+ * set-completion page uses.
  */
 
 import {
@@ -35,6 +40,7 @@ import { Button } from "@/components/ui/button";
 import FormHint from "../../../shared/forms/FormHint";
 import {CorrectionBlock} from "../../exercises";
 import LessonAnswersDetail from "./LessonAnswersDetail";
+import LessonReviewReport from "./LessonReviewReport";
 import MentorNotesSummary from "./MentorNotesSummary";
 import SummaryTicketReward from "./SummaryTicketReward";
 import NextStepSuggestions from "./NextStepSuggestions";
@@ -672,6 +678,20 @@ export default function LessonSummary({
       <SummaryDetailedToggle
         detailed={detailed}
         onToggle={() => setDetailed((shown) => !shown)}
+        t={t}
+      />
+
+      {/* #3124 — the actual evaluation, first thing in the detailed view: the
+          set-completion review scoped to this lesson. Self-gated on
+          ``detailed``. */}
+      <LessonReviewReport
+        detailed={detailed}
+        lesson={lesson}
+        setId={setId}
+        lessonFilename={lessonFilename}
+        sessionErrors={sessionErrors}
+        progress={progress}
+        userId={userId}
         t={t}
       />
 

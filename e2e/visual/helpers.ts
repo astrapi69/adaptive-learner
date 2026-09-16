@@ -644,7 +644,7 @@ export async function openFirstBundledLesson(page: Page): Promise<void> {
     });
 }
 
-async function playBundledLesson(
+export async function playBundledLesson(
     page: Page,
     stopAt: "summary" | "matching-result",
 ): Promise<boolean> {
