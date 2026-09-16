@@ -342,7 +342,12 @@ Review sessions, the lesson summary and retrying mistakes.
   in a row against the days until the next review), when an item
   counts as mastered, and a link to the learning method.
 - **Lesson summary** - which sections the end-of-lesson summary shows,
-  and in which order.
+  and in which order. Only *Result and statistics* and *XP reward* are on
+  by default, the compact view that fits one phone screen; everything
+  else is shown by the *Detailed evaluation* button at the end of a
+  lesson, or you tick it here for good. *Why you missed these* is one of
+  these sections; its master switch stays *Explanations after the answer*
+  under *Review*.
 - **Retry errors** - which mistakes the retry round picks up.
 
 ### Motivation and routine

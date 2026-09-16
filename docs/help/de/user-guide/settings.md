@@ -371,6 +371,12 @@ Wiederholungen, die Zusammenfassung und das Nachholen von Fehlern.
   zur Lernmethode.
 - **Zusammenfassung nach Lektionen** - welche Abschnitte die
   Zusammenfassung am Lektionsende zeigt, und in welcher Reihenfolge.
+  Voreingestellt sind nur *Ergebnis und Statistik* und *XP-Belohnung*,
+  die kompakte Fassung, die am Telefon auf einen Bildschirm passt; alles
+  Weitere zeigt der Knopf *Ausführliche Auswertung* am Lektionsende, oder
+  du hakst es hier dauerhaft an. *Warum du diese verpasst hast* ist einer
+  dieser Abschnitte; sein Hauptschalter bleibt *Erklärungen nach der
+  Antwort* unter *Wiederholung*.
 - **Fehler wiederholen** - welche Fehler die Nachhol-Runde aufgreift.
 
 ### Motivation und Routine

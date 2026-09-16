@@ -2,8 +2,9 @@
  * SummarySectionsControl — Settings → Learning sub-area "Lesson summary"
  * (#1426, generalises #1411). A numbered reorder list (Up/Down per row, same
  * pattern as the content-tabs / content-repo precedence reorder) where each
- * row ALSO carries the section's visibility checkbox — so sichtbarkeit and
- * position are set in one place. All sections default ON, in today's order.
+ * row ALSO carries the section's visibility checkbox — so visibility and
+ * position are set in one place. The default is the compact set (#3124:
+ * result and XP on, the rest off), in today's order.
  *
  * A disabled section keeps its row (greyed, checkbox unchecked) and its
  * Up/Down buttons stay usable, so it holds its list position and reappears
@@ -53,6 +54,11 @@ const SECTION_LABELS: Record<
   export: {
     key: "settings.summary_section_export",
     fallback: "Result export",
+  },
+  /** #3124 - the mistake review row reuses the block's own heading key. */
+  explanations: {
+    key: "review.explain_heading",
+    fallback: "Why you missed these",
   },
   next_steps: {
     key: "settings.summary_section_next_steps",

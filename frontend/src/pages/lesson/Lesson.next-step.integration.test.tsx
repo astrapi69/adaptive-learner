@@ -51,6 +51,7 @@ vi.mock("../../storage", () => ({
 
 import LessonPage from "./Lesson";
 import {setUserId, clearLearnerState} from "../../lib/learning/learnerState";
+import {setSummarySectionEnabled} from "../../lib/learning/summarySectionsPref";
 import type {ElementError, ReviewQueueItem} from "../../storage/types";
 
 const SET_ID = "language-fr-a1";
@@ -202,6 +203,9 @@ beforeEach(() => {
         m.mockReset();
     }
     setUserId("user-1");
+    // The smart cards are off in the compact default (#3124); these tests
+    // are about the cards, so switch the section on.
+    setSummarySectionEnabled("next_steps", true);
     listSetsMock.mockResolvedValue({sets: [], sources: []});
     getLessonMock.mockResolvedValue({...LESSON, title: "Numbers", steps: LESSON.steps});
     progressListMock.mockResolvedValue([]);
@@ -210,6 +214,7 @@ beforeEach(() => {
 
 afterEach(() => {
     clearLearnerState();
+    localStorage.clear();
 });
 
 describe("LessonPage smart next-step integration", () => {

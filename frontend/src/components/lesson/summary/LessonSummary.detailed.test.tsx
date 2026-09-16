@@ -202,15 +202,44 @@ describe("LessonSummary detailed-evaluation toggle (#3031)", () => {
   });
 
   it("shows a section the learner switched off in Settings", () => {
-    setSummarySectionEnabled("export", false);
+    setSummarySectionEnabled("xp", false);
     renderSummary();
-    expect(screen.queryByTestId("lesson-summary-export")).toBeNull();
+    expect(screen.queryByTestId("lesson-summary-xp")).toBeNull();
 
     toggleDetailed();
-    expect(screen.getByTestId("lesson-summary-export")).toBeInTheDocument();
+    expect(screen.getByTestId("lesson-summary-xp")).toBeInTheDocument();
+  });
+
+  it("shows the sections the compact default holds back (#3124)", () => {
+    renderSummary();
+    for (const testid of [
+      "lesson-summary-favorite",
+      "lesson-summary-share",
+      "lesson-summary-breakdown",
+      "lesson-summary-export",
+      "lesson-summary-explanations",
+      "correction-block-stub",
+      "next-steps-stub",
+    ]) {
+      expect(screen.queryByTestId(testid), testid).toBeNull();
+    }
+
+    toggleDetailed();
+    for (const testid of [
+      "lesson-summary-favorite",
+      "lesson-summary-share",
+      "lesson-summary-breakdown",
+      "lesson-summary-export",
+      "lesson-summary-explanations",
+      "correction-block-stub",
+      "next-steps-stub",
+    ]) {
+      expect(screen.getByTestId(testid), testid).toBeInTheDocument();
+    }
   });
 
   it("opens the collapsed answers overview", () => {
+    setSummarySectionEnabled("answers", true);
     renderSummary();
     const answers = screen.getByTestId("lesson-summary-breakdown");
     expect(answers).not.toHaveAttribute("open");
@@ -233,7 +262,9 @@ describe("LessonSummary detailed-evaluation toggle (#3031)", () => {
   });
 
   it("lifts the 5-entry cap on the mistake explanations", () => {
+    setSummarySectionEnabled("explanations", true);
     renderSummary();
+    expect(screen.getByTestId("lesson-summary-explain-e4")).toBeInTheDocument();
     expect(screen.queryByTestId("lesson-summary-explain-e5")).toBeNull();
 
     toggleDetailed();
@@ -246,6 +277,7 @@ describe("LessonSummary detailed-evaluation toggle (#3031)", () => {
   });
 
   it("returns to the compact view on a second click", () => {
+    setSummarySectionEnabled("answers", true);
     setSummarySectionEnabled("export", false);
     renderSummary();
 

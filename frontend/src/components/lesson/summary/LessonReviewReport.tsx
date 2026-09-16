@@ -69,7 +69,7 @@ export default function LessonReviewReport({
   if (!detailed) return null;
   return (
     <section
-      className="mb-6 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
+      className="mb-6 rounded-md border border-border bg-[var(--bg-surface)] p-4"
       data-testid="lesson-summary-review"
     >
       <h3 className="m-0 text-base font-semibold text-fg-primary">

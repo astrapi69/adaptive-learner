@@ -1,22 +1,25 @@
 /**
  * LessonSummary — mistake-review ("Why you missed these", #599) position vs the
- * correction round (#1432; default order revised #2570).
+ * correction round (#1432; default order revised #2570; a section of its own
+ * since #3124).
  *
- * #599's ``SummaryExplanations`` area (a standalone, separately-toggled review
- * of the run's still-weak text mistakes) is spliced in immediately ABOVE
- * wherever ``correction`` renders in the section loop (``LessonSummary.tsx``)
- * - a relative rule, not a fixed slot, so it follows ``correction`` whenever
- * the user reorders it. #2570 moved ``correction``'s DEFAULT position ahead
- * of ``next_steps`` (fixing today's mistakes belongs before the "what next"
- * cards, not trailing after them) - the splice rule itself is untouched, so
- * the review now renders directly above correction, which now precedes
- * next_steps, which is the last content section by default.
+ * #599's ``SummaryExplanations`` area (the review of the run's still-weak
+ * text mistakes, master-switched by its own Settings toggle) used to be
+ * spliced in above wherever ``correction`` rendered. #3124 made it the
+ * ``explanations`` entry of the summary-sections config so the compact
+ * default can hold it back: it now renders in its own configured slot. The
+ * #1432 adjacency survives as the DEFAULT order (explanations directly above
+ * correction, which precedes next_steps, the last content section) and as
+ * the migration rule for pre-#3124 stored configs (inserted right before
+ * the stored correction entry). A learner who reorders the two apart gets
+ * exactly what they configured.
  *
- * These pin: by default the review renders directly ABOVE the correction
- * round (and above ``next_steps``); the review follows correction when the
- * user reorders it; when correction is OFF the review still renders
- * (fallback) above the pinned actions; and rendering NEVER rewrites the
- * stored order (no silent reset of a #1427 saved order).
+ * These pin: with every section on, the review renders directly ABOVE the
+ * correction round (and above ``next_steps``); a stored pre-#3124 config
+ * keeps the review above correction after migration; the review renders in
+ * ITS OWN slot when reordered; when correction is OFF the review still
+ * renders (its own flag decides); and rendering NEVER rewrites the stored
+ * order (no silent reset of a #1427 saved order).
  *
  * CorrectionBlock + NextStepSuggestions are stubbed so we assert LessonSummary's
  * own layout, not their internals. ``useLessonSessionErrors`` returns one
@@ -100,6 +103,7 @@ vi.mock("../../../hooks/learning/useLessonSessionErrors", () => ({
 
 import LessonSummary from "./LessonSummary";
 import {
+  DEFAULT_SUMMARY_SECTION_ORDER,
   setSummarySectionEnabled,
   writeSummarySections,
   type SummarySectionKey,
@@ -159,6 +163,11 @@ function configFrom(
   return order.map((id) => ({ id, enabled: !off.has(id) }));
 }
 
+/** Every section ON, in the default order. */
+function allOn(): SummarySectionsConfig {
+  return configFrom([...DEFAULT_SUMMARY_SECTION_ORDER]);
+}
+
 function renderSummary() {
   return render(
     <MemoryRouter>
@@ -195,6 +204,7 @@ afterEach(() => {
 
 describe("LessonSummary mistake-review vs correction position (#1432)", () => {
   it("default order: 'Why you missed these' renders directly above the correction round, which now precedes next_steps as the last content section", () => {
+    writeSummarySections(allOn());
     renderSummary();
     const nextSteps = screen.getByTestId("next-steps-stub");
     const explanations = screen.getByTestId("lesson-summary-explanations");
@@ -213,30 +223,57 @@ describe("LessonSummary mistake-review vs correction position (#1432)", () => {
     );
   });
 
-  it("the review follows the correction round when it is reordered (correction first)", () => {
+  it("a pre-#3124 stored config keeps the review directly above the reordered correction round", () => {
+    // The eight-entry shape stored before #3124, correction moved first.
+    localStorage.setItem(
+      KEY_ORDER,
+      JSON.stringify(
+        configFrom([
+          "correction",
+          "next_steps",
+          "favorite",
+          "result",
+          "xp",
+          "share",
+          "answers",
+          "export",
+        ]),
+      ),
+    );
+    renderSummary();
+    const explanations = screen.getByTestId("lesson-summary-explanations");
+    const correction = screen.getByTestId("correction-block-stub");
+    const stars = screen.getByTestId("lesson-summary-stars");
+    // Migration slots the review directly above the stored correction entry.
+    expect(precedes(explanations, correction)).toBe(true);
+    // Correction (first) precedes the later sections.
+    expect(precedes(correction, stars)).toBe(true);
+  });
+
+  it("the review renders in its own slot when reordered away from the correction round (#3124)", () => {
     writeSummarySections(
       configFrom([
-        "correction",
-        "next_steps",
+        "explanations",
         "favorite",
         "result",
         "xp",
         "share",
         "answers",
         "export",
+        "correction",
+        "next_steps",
       ]),
     );
     renderSummary();
     const explanations = screen.getByTestId("lesson-summary-explanations");
-    const correction = screen.getByTestId("correction-block-stub");
     const stars = screen.getByTestId("lesson-summary-stars");
-    // The review is spliced directly above correction wherever it sits.
-    expect(precedes(explanations, correction)).toBe(true);
-    // Correction (now first) precedes the still-default later sections.
-    expect(precedes(correction, stars)).toBe(true);
+    const correction = screen.getByTestId("correction-block-stub");
+    expect(precedes(explanations, stars)).toBe(true);
+    expect(precedes(stars, correction)).toBe(true);
   });
 
-  it("correction OFF: the mistake review still renders (fallback) above the pinned actions", () => {
+  it("correction OFF: the mistake review still renders above the pinned actions", () => {
+    writeSummarySections(allOn());
     setSummarySectionEnabled("correction", false);
     renderSummary();
     expect(
@@ -256,6 +293,7 @@ describe("LessonSummary mistake-review vs correction position (#1432)", () => {
       "answers",
       "export",
       "next_steps",
+      "explanations",
       "correction",
     ];
     writeSummarySections(configFrom(custom));

@@ -2167,8 +2167,10 @@ each card row (`CardImageField`).
 - [ ] Finish every lesson of a set, then press "Start learning" again:
       it opens lesson 1 (nothing left to resume)
 ### Summary: all answers with their question (#2807)
-- [ ] Finish a lesson, open "View all answers": every row with something
-      to show is expandable (title + score stay visible)
+- [ ] Finish a lesson, open "View all answers" (the "Answers overview"
+      section switched on in Settings, or "Detailed evaluation" pressed,
+      #3124): every row with something to show is expandable (title +
+      score stay visible)
 - [ ] Expanded, the QUESTION sits above the answers - including on a
       partially correct row like "2 / 3", which previously showed nothing
 - [ ] Choice/matching exercises (no text answer) show question and
@@ -2180,8 +2182,8 @@ each card row (`CardImageField`).
 ### Summary: the detailed evaluation on one button (#3031)
 - [ ] Finish a lesson: the "Detailed evaluation" button sits directly
       under the heading
-- [ ] Switch a section off in Settings > Learning > "Lesson summary"
-      (e.g. "Result export"), then finish a lesson: the section is
+- [ ] Switch an enabled section off in Settings > Learning > "Lesson
+      summary" (e.g. "XP reward"), then finish a lesson: the section is
       missing - after pressing "Detailed evaluation" it is there
 - [ ] In the detailed view "View all answers" is already expanded
 - [ ] "Why you missed these" appears even with its own toggle off, and
@@ -2210,6 +2212,35 @@ each card row (`CardImageField`).
 - [ ] "Compact evaluation": the review disappears again; the #3031 items
       (sections, answers, explanations) still hold
 - [ ] The button's tooltip names key figures, exercise types and weak spots
+
+### Summary: the compact default, one screen (#3124)
+- [ ] Fresh install (or Settings > Learning > "Lesson summary" with only
+      "Result and statistics" and "XP reward" ticked): finish a lesson -
+      the summary shows stars, score, time, "+N XP" and directly below
+      "Mark as complete", "Next lesson", "Practice again" and "Back"; no
+      favorites hint, no sharing, no answers overview, no export, no "Why
+      you missed these", no correction round, no next-step cards
+- [ ] On a phone (portrait): everything down to the continue buttons is
+      visible without scrolling
+- [ ] "Detailed evaluation": the set-style review and every switched-off
+      section appear (favorite, share, all answers expanded, export, "Why
+      you missed these", fix mistakes, next steps); "Compact evaluation"
+      takes them away again
+- [ ] Settings > Learning > "Lesson summary": nine rows, "Why you missed
+      these" sits directly above the correction-round row; only Result and
+      XP are ticked; tick a row (e.g. Next-step suggestions), finish a
+      lesson: the section is part of the compact view for good
+- [ ] An existing choice stays: whoever configured the sections before
+      this state sees their selection unchanged; "Why you missed these" is
+      ticked there and sits directly above the correction round
+- [ ] "Why you missed these" ticked but "Explanations after the answer"
+      (Review) off: the block is missing from the compact view and only
+      appears in the detailed evaluation
+
+Note for every step of this plan that uses export, share, favorite, all
+answers, "Why you missed these", fix mistakes or the next-step cards:
+switch the section on in Settings first or press "Detailed evaluation"
+(#3124).
 
 ### Leaving a lesson returns to its set (#2811)
 - [ ] Pause and leave a set lesson: the app lands on the SET page with

@@ -197,6 +197,14 @@ test.describe("Session 2 — Learning flow", () => {
     // A learner must exist so the XP award persists + the header badge
     // renders (both are no-ops / hidden for an anonymous visitor).
     await seedLearner(page);
+    // #3124 - the export row is off in the compact default; switch it on the
+    // way Settings > Learning > "Lesson summary" would.
+    await page.evaluate(() => {
+      localStorage.setItem(
+        "adaptive-learner.lesson.summary_sections_order",
+        JSON.stringify([{ id: "export", enabled: true }]),
+      );
+    });
     await content.goto();
     await content.openBundledLesson();
 

@@ -133,6 +133,69 @@ Lane: Branch `claude/github-issues-open-rig959`, Session
   Gerät.
 - Commit: siehe PR.
 
+## 6. Lektionsende: kompakte Voreinstellung, ein Bildschirm (#3124, Teil 2)
+
+- Original prompt: "weiter mit #3124" (nach Teil 1, Abschnitt 3).
+- Optimized prompt: "Die Voreinstellung der Zusammenfassungs-Abschnitte auf
+  die kompakte Fassung setzen, die am Telefon auf einen Bildschirm passt
+  (Ergebnis, XP, Weiter-Knopf); die Höhe am echten Build messen, bevor
+  entschieden wird, welche Abschnitte drin bleiben; gespeicherte Wahlen
+  bestehender Nutzer unangetastet lassen."
+- Goal: Punkt 1 der Erwartung in #3124: Standard ist die kompakte
+  Ein-Bildschirm-Fassung, auch am Telefon.
+- Result: Messung am Dexie-Build (Playwright, 375x667 / 390x844 / 430x932)
+  mit dem im Issue vorgeschlagenen Satz (Ergebnis, XP, Korrekturrunde,
+  Nächste Schritte): Seite 1925 px hoch bei 667 px Viewport, drei
+  Bildschirme. Ergebnis plus XP enden bei 571 px und passen; der Block
+  "Warum du diese verpasst hast" (417 px), die zugeklappte Korrekturrunde
+  (180 px) und die Nächste-Schritte-Karten (427 px) nicht. Entscheidung
+  entlang des Issue-Wortlauts ("Ergebnis, XP, drei Kennzahlen,
+  Weiter-Knopf"): Voreinstellung nur `result` und `xp`; alle anderen
+  Abschnitte aus, erreichbar über "Ausführliche Auswertung" (#3031) oder
+  dauerhaft über Einstellungen > Lernen. Damit die kompakte Fassung den
+  Erklärungsblock zurückhalten kann, ist er jetzt ein eigener Abschnitt
+  `explanations` (Zeile "Warum du diese verpasst hast", Schlüssel
+  `review.explain_heading` wiederverwendet, keine neuen Katalog-Schlüssel);
+  der #599-Schalter "Erklärungen nach der Antwort" bleibt sein
+  Hauptschalter. Die #1432-Nachbarschaft (Erklärungen direkt über der
+  Korrekturrunde) bleibt als Standardreihenfolge und als Migrationsregel:
+  ein gespeicherter Acht-Einträge-Stand erhält den neuen Abschnitt
+  eingeschaltet direkt vor seinem `correction`-Eintrag. Kein stiller Reset:
+  nur eine frische Installation (kein gespeicherter Schlüssel) bekommt den
+  kompakten Satz; fehlende Einträge in gespeicherten Ständen füllen sich
+  wie bisher mit EIN. Der Splice- und der Fallback-Pfad in
+  `LessonSummary.tsx` sind weg (der Abschnitt läuft durch die normale
+  Reihenfolgeschleife). Tests: `summarySectionsPref.test.ts` (kompakter
+  Standard, Migration vor Korrektur, Anhängen ohne Anker, Garbage ->
+  Standard), `SummarySectionsControl.test.tsx`,
+  `LessonSummary.sections.test.tsx` (kompakter Standard rendert genau
+  Ergebnis + XP plus den Weiter-Fallback), `LessonSummary.detailed.test.tsx`
+  (die ausführliche Ansicht hebt alle zurückgehaltenen Abschnitte),
+  `LessonSummary.explanations-position.test.tsx` (eigener Slot,
+  Migration), `Lesson.test.tsx` (Favorit, Antworten, Nächste Schritte
+  in den Tests eingeschaltet). Nightly-Specs `lesson-summary-favorite`
+  und `session2-learning-flow` schalten den Abschnitt, den sie prüfen,
+  per gespeicherter Konfiguration ein. Baselines `lesson-result-*` (12)
+  und `lesson-summary-*` (3) gelöscht für die Neuaufnahme. Hilfe
+  (Einstellungen, Lektionen, DE + EN) und Testplan (DE + EN, neuer
+  Abschnitt plus zwei angepasste Schritte).
+- Nebenbefund (#3137): der volle Vitest-Lauf zeigte den Legacy-Alias-Ratchet
+  (#3051) rot, und zwar schon auf develop ohne die Teil-2-Änderungen:
+  `LessonReviewReport.tsx` aus #3134 nutzt `var(--surface)` und
+  `var(--border)`; die PR-CI hatte den Ratchet nicht gewählt (er liest per
+  `readFileSync`, Klasse #1620/#1665). Behoben im selben PR durch die
+  semantischen Utilities `bg-[var(--bg-surface)]` / `border-border`, Pins
+  unverändert (`bg-surface` ist keine emittierte Utility, der
+  dead-classnames-Gate hat das gefangen).
+- Baseline-Sync geprüft (#1532): 18 Bilder, alle zurechenbar. Die 15
+  gelöschten Motive (`lesson-result-*`, `lesson-summary-*`) zeigen die
+  kompakte Fassung: Sterne, Meldung, Punktzahl, Zeit, XP, Weiter-Knöpfe,
+  sonst nichts. `settings-learning-*` (3) wuchsen um eine Zeile: Zeile 7
+  "Warum du diese verpasst hast", nur Ergebnis und XP angehakt; die
+  Pixel-Differenz unterhalb der Einfügung ist die Neunummerierung und die
+  ausgegrauten Zeilen, nichts Fremdes.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - Der Sync-Push mit `GITHUB_TOKEN` löst keine PR-CI aus; dieser
@@ -142,5 +205,12 @@ Lane: Branch `claude/github-issues-open-rig959`, Session
   Fassung passt am Telefon auf einen Bildschirm" gelesen, nicht als "am
   Telefon gibt es keinen Knopf für die ausführliche Auswertung"; die
   Feature-State-Policy (#335) verbietet das Verstecken eines Merkmals nach
-  Gerät. Die Verkleinerung der Voreinstellung ist offen und als Teil 2
-  angekündigt.
+  Gerät.
+- #3124 Teil 2: der im Issue-Kommentar vorgeschlagene Satz (Korrekturrunde
+  und Nächste Schritte an) wurde nach der Messung verworfen, weil er auf
+  keinem Telefon einen Bildschirm ergibt; die Voreinstellung folgt dem
+  Wortlaut der Erwartung (Ergebnis, XP, Kennzahlen, Weiter-Knopf). Die
+  drei Kennzahlen sind die vorhandenen Sterne, Punktzahl und Zeit; eine
+  neue Kennzahlen-Zeile wurde nicht gebaut. Wer die Karten oder die
+  Korrekturrunde in der kompakten Fassung will, hakt sie in den
+  Einstellungen an.

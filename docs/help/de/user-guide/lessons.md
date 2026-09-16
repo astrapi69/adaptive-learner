@@ -179,9 +179,13 @@ Animation das.)
 Wähle, welche Bereiche die Abschluss-Zusammenfassung zeigt und in
 welcher Reihenfolge, unter **Einstellungen → Lernen**. Die Bereiche
 sind: Ergebnis und Statistik, XP-Belohnung, Favoriten-Hinweis,
-Ergebnis teilen, Antwort-Übersicht, Ergebnis-Export und
-Nächste-Schritte-Vorschläge. Die „Weiter"-Aktionen bleiben stets
-sichtbar.
+Ergebnis teilen, Antwort-Übersicht, Ergebnis-Export, „Warum du diese
+verpasst hast", die Korrekturrunde und Nächste-Schritte-Vorschläge.
+Voreingestellt sind nur Ergebnis und XP-Belohnung: die kompakte
+Fassung, die am Telefon auf einen Bildschirm passt. Alles Weitere
+öffnet der Knopf **„Ausführliche Auswertung"** direkt unter der
+Überschrift, ohne die Einstellung zu ändern. Die „Weiter"-Aktionen
+bleiben stets sichtbar.
 
 ### Ergebnis exportieren
 
