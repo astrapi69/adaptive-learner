@@ -5,16 +5,10 @@
  */
 
 
-export type RawAnswer =
+export type RawAnswer = (
   | { kind: "matching"; matches: [number, number][] }
   | { kind: "picture_choice"; selected: number }
-  /** #3109, schema v1.14 parametric exercises — ``resolved_variables`` is
-   *  the drawn/computed value per declared ``exercise.variables`` name
-   *  (resolveExerciseVariables's ``values``), present only when the
-   *  exercise declared ``variables``. Persisted so a revisited attempt
-   *  substitutes the SAME concrete instance instead of sampling a fresh
-   *  one. */
-  | { kind: "free_text"; input: string; resolved_variables?: Record<string, number> }
+  | { kind: "free_text"; input: string }
   | { kind: "word_tiles"; placed: number[] }
   | { kind: "cloze"; inputs: string[] }
   /** #1195 — cloze ``multiselect`` ("select all that apply"): the
@@ -73,7 +67,18 @@ export type RawAnswer =
   /** #3110 — adopted extension ``ext:al-hotspot``: the index of the
    *  clicked zone (into ``ext_payload.zones``), persisted so a revisited,
    *  locked exercise restores its exact selection. */
-  | { kind: "al_hotspot"; selected_zone: number };
+  | { kind: "al_hotspot"; selected_zone: number }
+) & {
+  /** #3109, schema v1.14 parametric exercises — the drawn/computed value
+   *  per declared ``exercise.variables`` name (resolveExerciseVariables's
+   *  ``values``), present only when the exercise declared ``variables``.
+   *  Applies to every kind above, not just ``free_text`` — any exercise
+   *  type's string fields can carry a ``{{name}}`` reference (the
+   *  dispatcher resolves once per attempt before any renderer sees the
+   *  exercise). Persisted so a revisited attempt substitutes the SAME
+   *  concrete instance instead of sampling a fresh one. */
+  resolved_variables?: Record<string, number>;
+};
 
 export interface LessonStepResult {
   step_id: string;
