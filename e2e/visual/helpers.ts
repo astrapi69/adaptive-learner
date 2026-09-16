@@ -1095,6 +1095,7 @@ export type ViewportName = keyof typeof VIEWPORTS;
 export const SURFACE_NAMES = [
     "dashboard-empty",
     "dashboard-populated",
+    "dashboard-badges",
     "content-browser",
     "content-discover",
     "content-import",
@@ -1488,6 +1489,82 @@ async function gotoReviewSession(page: Page): Promise<boolean> {
 }
 
 /**
+ * Move every SRS error row of the current learner ``days`` into the past
+ * (#3123). The badge in the header counts OVERDUE elements only, and a
+ * fresh wrong answer is due tomorrow (``intervalDaysForStreak(0)`` = 1
+ * day), so a playthrough alone never shows the badge. Rewriting
+ * ``last_attempt_at`` on the rows the playthrough wrote is the smallest
+ * honest seed: the rows, ids and set are the app's own, only the clock
+ * on them moves. Computed inside the page so a frozen clock
+ * (``freezeClock``) stays consistent.
+ */
+export async function backdateElementErrors(
+    page: Page,
+    days: number,
+): Promise<number> {
+    return page.evaluate(
+        ({days}) =>
+            new Promise<number>((resolve, reject) => {
+                const open = indexedDB.open("adaptive-learner");
+                open.onerror = () => reject(open.error);
+                open.onsuccess = () => {
+                    const db = open.result;
+                    const userId = localStorage.getItem("adaptive-learner.user_id");
+                    const pastIso = new Date(
+                        Date.now() - days * 86_400_000,
+                    ).toISOString();
+                    const tx = db.transaction("elementErrors", "readwrite");
+                    const store = tx.objectStore("elementErrors");
+                    const req = store.getAll();
+                    let moved = 0;
+                    req.onsuccess = () => {
+                        for (const row of req.result as Array<Record<string, unknown>>) {
+                            if (row.user_id !== userId) continue;
+                            row.last_attempt_at = pastIso;
+                            if (row.last_error_at) row.last_error_at = pastIso;
+                            store.put(row);
+                            moved += 1;
+                        }
+                    };
+                    tx.oncomplete = () => {
+                        db.close();
+                        resolve(moved);
+                    };
+                    tx.onerror = () => {
+                        db.close();
+                        reject(tx.error);
+                    };
+                };
+            }),
+        {days},
+    );
+}
+
+/**
+ * Seed a learner whose header carries the due-reviews badge and XP
+ * (#3123): the wrong-pair matching playthrough writes error rows, those
+ * rows are backdated so they count as overdue, and the dashboard is
+ * opened by in-app navigation (the route change re-reads the queue).
+ * Shared by the ``dashboard-badges`` motif and the phone-header fit spec
+ * (``e2e/dexie/nav-header-fit.spec.ts``); returns false when the
+ * playthrough could not reach the matching result.
+ */
+export async function gotoDashboardWithDueReviews(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    if (!(await playBundledLesson(page, "matching-result"))) return false;
+    await waitForSrsQuiescence(page, {expectRows: true});
+    const moved = await backdateElementErrors(page, 3);
+    if (moved === 0) return false;
+    await gotoDashboardInApp(page);
+    await settleDashboard(page, {populated: false});
+    await expect(page.getByTestId("nav-reviews-badge")).toBeVisible({
+        timeout: 20_000,
+    });
+    await expect(page.getByTestId("nav-xp-badge")).toBeVisible();
+    return true;
+}
+
+/**
  * Build ONE own lesson through the Create-Lesson wizard, then leave the
  * browser on the Content hub (#3011).
  *
@@ -1563,6 +1640,8 @@ export async function gotoSurface(
             await gotoDashboardInApp(page);
             await settleDashboard(page, {populated: true});
             return true;
+        case "dashboard-badges":
+            return gotoDashboardWithDueReviews(page);
         case "content-browser":
             await seedLearner(page);
             await page.goto("/content?tab=my");

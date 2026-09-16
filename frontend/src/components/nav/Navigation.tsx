@@ -148,7 +148,12 @@ export default function Navigation() {
   return (
     <nav
       ref={navRef}
-      className={`app-nav transition-transform duration-300 motion-reduce:transition-none${
+      // #3123 - below sm the bar spends its gap and side padding more
+      // carefully (space-2 / space-3 instead of space-3 / space-4) so the
+      // everyday row (hamburger, logo, mode badge, XP, avatar, theme) fits
+      // a 375px phone on ONE line with the logo at full size; the status
+      // cluster below still wraps when badges push it over.
+      className={`app-nav max-sm:gap-[var(--space-2)] max-sm:px-[var(--space-3)] transition-transform duration-300 motion-reduce:transition-none${
         menuOpen ? " is-menu-open" : ""
       }${lessonActive ? " is-lesson-compact" : ""}${
         navHidden ? " -translate-y-full" : ""
@@ -164,7 +169,12 @@ export default function Navigation() {
                 removed in #1583 (dead, since this always-present `ml-0!`
                 already won), which let that block wrap into @layer
                 legacy. Rendered ONLY in drawer mode (#1390) — on desktop
-                it does not exist in the DOM. */}
+                it does not exist in the DOM. `shrink-0` (#3123): the
+                button was the only shrinkable item next to the badge
+                cluster, so a row of wide badges (three-digit due count,
+                "1 Aktualisierungen") squeezed it to a few-pixel sliver
+                on a 430px phone; the overflow is now absorbed by the
+                wrapping status cluster below instead. */}
       {drawerNav && (
         <MenuToggleButton
           open={menuOpen}
@@ -172,7 +182,7 @@ export default function Navigation() {
           label={t("nav.menu", "Menu")}
           tooltip={tooltipsOn}
           controlsId="app-nav-links"
-          className="nav-hamburger ml-0!"
+          className="nav-hamburger ml-0! shrink-0"
           testId="nav-hamburger"
         />
       )}
@@ -197,6 +207,10 @@ export default function Navigation() {
           aria-hidden="true"
           width={28}
           height={28}
+          // #3123 - the logo shrank to a sliver on phones for the same
+          // reason as the hamburger (the reset's `max-width:100%` lets a
+          // flex-squeezed link squeeze its image).
+          className="shrink-0"
         />
         <span className="nav-brand-name">
           {t("app.name", "Adaptive Learner")}
@@ -289,11 +303,25 @@ export default function Navigation() {
           {t(HELP_TARGET.labelKey, HELP_TARGET.labelFallback)}
         </Button>
       </div>
-      <NavReviewsBadge />
-      <NavContentUpdatesBadge />
-      <NavXpBadge />
-      <NavAvatar />
-      <NavThemeToggle theme={theme} tooltipsOn={tooltipsOn} onToggle={toggle} />
+      {/* #3123 - the right-hand status cluster. On phones it is a
+          wrapping flex group that inherits the bar's gap: when the badges
+          (due count, content updates, XP) plus avatar and theme toggle
+          do not fit beside the hamburger and the logo, the cluster
+          shrinks (`min-w-0`) and wraps onto a second right-aligned line
+          instead of squeezing the menu button. From md up the wrapper is
+          `display: contents`, so the desktop bar keeps its exact
+          single-row layout (the children stay direct flex items of the
+          nav, as before). */}
+      <div
+        className="nav-status flex min-w-0 flex-wrap items-center justify-end gap-[inherit] md:contents"
+        data-testid="nav-status"
+      >
+        <NavReviewsBadge />
+        <NavContentUpdatesBadge />
+        <NavXpBadge />
+        <NavAvatar />
+        <NavThemeToggle theme={theme} tooltipsOn={tooltipsOn} onToggle={toggle} />
+      </div>
     </nav>
   );
 }

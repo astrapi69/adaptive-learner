@@ -2202,6 +2202,20 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Zurück auf "Oben": Leiste verschwindet sofort; Einstellung
       übersteht einen Reload
 
+### Kopfzeile am Telefon: Menü-Knopf und Logo bleiben bei vielen Abzeichen (#3123)
+- [ ] Telefon (375 und 430 px breit, z. B. iPhone 14 Pro Max) mit
+      fälligen Wiederholungen, einer verfügbaren Set-Aktualisierung und
+      XP: Dashboard öffnen. Der Menü-Knopf oben links hat seine volle
+      Breite (kein schmaler Strich) und das Logo daneben ist sichtbar
+- [ ] Die Abzeichen zeigen am Telefon nur die Zahl neben dem Symbol
+      ("718" statt "718 fällig", "1" statt "1 Aktualisierungen");
+      Tooltip bzw. Vorlesen nennt weiterhin den vollen Text
+- [ ] Passen die Abzeichen nicht mehr neben Menü-Knopf und Logo, brechen
+      sie rechtsbündig in eine zweite Zeile um; nichts wird abgeschnitten,
+      die Seite scrollt nicht seitlich
+- [ ] Tablet und Desktop: Kopfzeile unverändert einzeilig, Abzeichen mit
+      vollem Text
+
 ### Einstellungen > Daten: Aufräum-Karten (#2955)
 - [ ] Einstellungen > Daten: die Karte "Maximale Lektionsgröße" steht
       direkt unter "Offline-Cache"; die Karte "Pausierte Lektionen

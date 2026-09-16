@@ -83,7 +83,7 @@ export default function NavAvatar() {
       aria-label={label}
     >
       <span
-        className="m-1 inline-flex rounded-full"
+        className="m-1 max-sm:mx-0 inline-flex rounded-full"
         style={frameRing ? { boxShadow: frameRing } : undefined}
         data-testid={frameRing ? "nav-avatar-frame" : undefined}
       >

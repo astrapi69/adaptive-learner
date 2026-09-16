@@ -42,6 +42,7 @@ Baseline zu committen.
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
 | Daten-Tab - Bereichsleiste über den sechs Bereichen, Deep-Link `?tab=data&section=backup`, Chip "Sichern und Exportieren" aktiv (#3122) | `data-subnav/settings.png` | `data-subnav/settings.mobile.png` | #3122 |
+| Kopfzeile mit Abzeichen - fällige Wiederholungen + XP neben Menü-Knopf und Logo; am Telefon zeigt das Abzeichen nur die Zahl, die Gruppe bricht rechtsbündig um (#3123) | `nav-badges/dashboard.png` | `nav-badges/dashboard.mobile.png` | #3123 |
 | Über-Tab - Karte "Lizenz & Ressourcen" mit den Zeilen "Impressum" und "Datenschutzerklärung", Ziel Docs-Site in der UI-Sprache (#3113) | `legal/settings-about.png` | `legal/settings-about.mobile.png` | #3113 |
 | App-Startseite - Zeile "Impressum · Datenschutzerklärung" unter dem Dokumentationslink (#3113) | `legal/landing.png` | `legal/landing.mobile.png` | #3113 |
 | Lernen-Tab - Gamification-Karte als letzte Karte im Bereich "Motivation und Routine", hinter einer Trennlinie (#2962) | `gamification-card/settings.png` | `gamification-card/settings.mobile.png` | #2962 |
