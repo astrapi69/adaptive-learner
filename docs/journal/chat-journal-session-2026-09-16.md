@@ -110,6 +110,29 @@ Lane: Branch `claude/github-issues-open-rig959`, Session
   (`lesson.button.next`).
 - Commit: siehe PR.
 
+## 5. iPhone: nach "Weiter" halbleerer Bildschirm (#3126)
+
+- Original prompt: "Auf iPhone nach einer langen Seite, wenn man auf weiter
+  klickt, kommt der Bildschirm zur Hälfte wie auf dem Screenshot."
+- Optimized prompt: "Die zwei konkurrierenden Scrolls beim Schrittwechsel
+  (Reset auf #root in useLessonNavigation, weiches scrollIntoView in
+  Lesson.tsx) zu einem geordneten Ablauf zusammenführen: erst hart
+  zurücksetzen, dann nach dem Layout den Anker setzen (Muster #1422)."
+- Goal: Nach jedem Schrittwechsel liegt der Anker oben und die Fusszeile
+  unten, ohne Wischen.
+- Result: Neuer Hook `useStepReanchor` (`hooks/lesson/interaction`):
+  `#root.scrollTop = 0` plus `window.scrollTo` ohne Animation, dann hinter
+  doppeltem `requestAnimationFrame` `scrollIntoView` auf den Schrittanker
+  (smooth, ausser bei reduzierter Bewegung). Der Scroll-Effekt in
+  `useLessonNavigation` ist entfernt, der #959-Effekt in `Lesson.tsx` durch
+  den Hook ersetzt. Fünf Vitest-Pins (Reihenfolge Reset vor Anker, jeder
+  Schrittwechsel, reduzierte Bewegung, Gate, headless), ein Dexie-Spec bei
+  375 px, der nach "Weiter" Anker-Position, Offset-Grenze und
+  Fusszeilen-Lage misst (Chromium reproduziert den iOS-Klemm-Fehler nicht,
+  pinnt aber den Vertrag). Der iOS-Beweis bleibt der Testplan-Schritt am
+  Gerät.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - Der Sync-Push mit `GITHUB_TOKEN` löst keine PR-CI aus; dieser
