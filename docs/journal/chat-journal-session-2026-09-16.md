@@ -196,6 +196,28 @@ Lane: Branch `claude/github-issues-open-rig959`, Session
   ausgegrauten Zeilen, nichts Fremdes.
 - Commit: siehe PR.
 
+## 7. Paare: "Auflösen" bei komplett richtiger Antwort (#3140)
+
+- Original prompt: "Bei der Aufgaben Typ Paare da gibt es einen auflösen
+  Button. Bei Fehlern ist er ja gut aber wenn man alles richtig hat,
+  braucht man den nicht der kann dann unsichtbar sein."
+- Optimized prompt: "In MatchingPostCheckToggle bei isAllCorrect ohne
+  onAdvance nichts rendern statt des Umschalters, wie bei der
+  Kategorisierung (#2772); Regressionstest zuerst."
+- Goal: Kein "Meine Antworten" / "Auflösen" nach einer komplett richtigen
+  Zuordnung.
+- Result: Der Umschalter wurde bei allem richtig nur dann durch den
+  Weiter-Balken ersetzt, wenn ein `onAdvance` übergeben war; ohne
+  `onAdvance` (Wiederholungs-Sitzung, Endlos-, Shuffle-, adaptive und
+  Fehler-Wiederholungs-Lektion) fiel er auf den Umschalter zurück. Jetzt:
+  alles richtig ergibt Weiter-Balken oder nichts. Drei neue Tests in
+  `MatchingExercise.test.tsx` (ohne onAdvance nichts, mit onAdvance der
+  Balken, teilweise falsch weiterhin der Umschalter); die #824-Tests
+  paaren jetzt absichtlich ein Paar falsch, ebenso der #2872-Shuffle-Test
+  (die e2e-Helfer und der FeatureShot taten das schon). Testplan DE + EN,
+  eine Zeile bei den Übungstypen.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - Der Sync-Push mit `GITHUB_TOKEN` löst keine PR-CI aus; dieser

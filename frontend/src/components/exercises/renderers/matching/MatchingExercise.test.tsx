@@ -774,19 +774,75 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
         localStorage.clear();
     });
 
-    function solveAll() {
+    /** Pair every item correctly (3/3). #3140 - a fully correct answer
+     *  has nothing to solve, so the toggle tests below deliberately use
+     *  {@link pairOneWrong} instead. */
+    function pairAllCorrect() {
         for (let i = 0; i < 3; i++) {
             fireEvent.click(screen.getByTestId(`matching-left-${i}`));
             fireEvent.click(screen.getByTestId(`matching-right-${i}`));
         }
     }
 
+    /** 0->1 (wrong), 1->0 (wrong), 2->2 (correct): 1/3 correct, so the
+     *  My-answers / Solve toggle is offered after Check. */
+    function pairOneWrong() {
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        fireEvent.click(screen.getByTestId("matching-left-1"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        fireEvent.click(screen.getByTestId("matching-left-2"));
+        fireEvent.click(screen.getByTestId("matching-right-2"));
+    }
+
+    it("shows nothing to solve after a fully correct answer without onAdvance (#3140)", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pairAllCorrect();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        // Neither the toggle row nor the success bar: the graded columns
+        // are the whole result (the review / replay / endless surfaces).
+        expect(screen.queryByTestId("matching-view-toggle")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("matching-resolve")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("matching-my-answers")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("matching-success-advance")).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-left")).toBeInTheDocument();
+    });
+
+    it("replaces the toggle by the Continue bar after a fully correct answer with onAdvance (#1218)", () => {
+        const onAdvance = vi.fn();
+        render(
+            <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} onAdvance={onAdvance} />,
+        );
+        pairAllCorrect();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(screen.getByTestId("matching-success-advance")).toBeInTheDocument();
+        expect(screen.queryByTestId("matching-resolve")).not.toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("matching-advance"));
+        expect(onAdvance).toHaveBeenCalledTimes(1);
+    });
+
+    it("keeps the Solve toggle on a partly wrong answer, with or without onAdvance", () => {
+        const first = render(
+            <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} onAdvance={vi.fn()} />,
+        );
+        pairOneWrong();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(screen.getByTestId("matching-resolve")).toBeInTheDocument();
+        expect(screen.queryByTestId("matching-success-advance")).not.toBeInTheDocument();
+        first.unmount();
+
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pairOneWrong();
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(screen.getByTestId("matching-resolve")).toBeInTheDocument();
+    });
+
     it("hides the Auflösen button until the answer is checked", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
         expect(
             screen.queryByTestId("matching-resolve"),
         ).not.toBeInTheDocument();
-        solveAll();
+        pairOneWrong();
         // Still hidden before pressing Check.
         expect(
             screen.queryByTestId("matching-resolve"),
@@ -797,7 +853,7 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
 
     it("reveals the resolution view on click and hides the columns", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
-        solveAll();
+        pairOneWrong();
         fireEvent.click(screen.getByTestId("matching-submit"));
         expect(screen.queryByTestId("matching-resolution")).not.toBeInTheDocument();
         fireEvent.click(screen.getByTestId("matching-resolve"));
@@ -822,7 +878,7 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
 
     it("toggles back and forth between my answers and the solution (#977)", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
-        solveAll();
+        pairOneWrong();
         fireEvent.click(screen.getByTestId("matching-submit"));
         // Default view after checking is the learner's graded answers.
         expect(screen.getByTestId("matching-left")).toBeInTheDocument();
@@ -853,7 +909,7 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
 
     it("animates the solution only on the first reveal (#977)", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
-        solveAll();
+        pairOneWrong();
         fireEvent.click(screen.getByTestId("matching-submit"));
 
         // First reveal: the slide animation utility is present.
@@ -874,7 +930,7 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
         expect(screen.queryByTestId("matching-my-answers")).not.toBeInTheDocument();
         expect(screen.queryByTestId("matching-resolve")).not.toBeInTheDocument();
-        solveAll();
+        pairOneWrong();
         expect(screen.queryByTestId("matching-my-answers")).not.toBeInTheDocument();
         fireEvent.click(screen.getByTestId("matching-submit"));
         expect(screen.getByTestId("matching-my-answers")).toBeInTheDocument();
@@ -887,7 +943,7 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
             "stack",
         );
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
-        solveAll();
+        pairOneWrong();
         fireEvent.click(screen.getByTestId("matching-submit"));
         // Stack shows one paired row per pair, in the displayed left
         // order (#2872) - capture it before switching views.
@@ -923,7 +979,7 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
 
     it("'Try again' clears the resolved view back to the columns", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
-        solveAll();
+        pairOneWrong();
         fireEvent.click(screen.getByTestId("matching-submit"));
         fireEvent.click(screen.getByTestId("matching-resolve"));
         expect(screen.getByTestId("matching-resolution")).toBeInTheDocument();
@@ -949,7 +1005,7 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
             .spyOn(window, "matchMedia")
             .mockImplementation(() => mql);
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
-        solveAll();
+        pairOneWrong();
         fireEvent.click(screen.getByTestId("matching-submit"));
         fireEvent.click(screen.getByTestId("matching-resolve"));
         // The resolution shows immediately with no animation utility.

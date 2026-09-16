@@ -122,7 +122,13 @@ describe("MatchingExercise: column shuffle distribution (#2371)", () => {
                 />,
             );
             const displayedLeft = columnLabels("matching-left", /L\d/);
-            for (let pair = 0; pair < 4; pair++) {
+            // Two pairs swapped (wrong), two correct: a fully correct answer
+            // has nothing to solve and offers no Solve button (#3140).
+            fireEvent.click(screen.getByTestId("matching-left-0"));
+            fireEvent.click(screen.getByTestId("matching-right-1"));
+            fireEvent.click(screen.getByTestId("matching-left-1"));
+            fireEvent.click(screen.getByTestId("matching-right-0"));
+            for (let pair = 2; pair < 4; pair++) {
                 fireEvent.click(screen.getByTestId(`matching-left-${pair}`));
                 fireEvent.click(screen.getByTestId(`matching-right-${pair}`));
             }
