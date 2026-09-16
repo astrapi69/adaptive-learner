@@ -25,7 +25,7 @@ import { useI18n } from "../../../../hooks/ui/useI18n";
 import { isSpeechRecognitionSupported } from "../../../../lib/voice/speech-recognition";
 import { isSpeechSynthesisSupported } from "../../../../lib/voice/speech-synthesis";
 import { useLearningSections } from "./useLearningSections";
-import { useLearningAnchorOffset } from "./useLearningAnchorOffset";
+import { useSettingsAnchorOffset } from "./useSettingsAnchorOffset";
 
 interface LearningPanelProps {
   /** Whether the Learning tab is the active tab (drives ``hidden``). */
@@ -78,7 +78,7 @@ export default function LearningPanel({ active }: LearningPanelProps) {
   const speechSupported =
     isSpeechSynthesisSupported() || isSpeechRecognitionSupported();
   const subNavRef = useRef<HTMLElement>(null);
-  const { stickyTop, anchorOffset } = useLearningAnchorOffset(subNavRef);
+  const { stickyTop, anchorOffset } = useSettingsAnchorOffset(subNavRef);
   const { sections, activeSection, openSection } = useLearningSections({
     active,
     speechSupported,

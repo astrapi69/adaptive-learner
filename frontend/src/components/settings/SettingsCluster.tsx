@@ -9,7 +9,8 @@
  * imports, no i18n inside (the caller passes translated strings), token-
  * backed Tailwind utilities only. The heading id comes from `useId`, so
  * several clusters on one page never collide; the section's own DOM id is
- * `learning-<id>`, the anchor a `?section=<id>` deep link targets; its
+ * `<anchorPrefix>-<id>` (`learning-<id>` by default, `data-<id>` on the
+ * Data tab, #3122), the anchor a `?section=<id>` deep link targets; its
  * `scroll-margin-top` reads `--settings-anchor-offset` (set by the panel
  * from the measured sticky chrome, #2961) and falls back to 4rem so the
  * anchor stays clear of the sticky page header. The group heading is the
@@ -22,8 +23,11 @@ import type { ReactNode } from "react";
 import { SettingsHeadingLevelContext } from "./settings-heading-level";
 
 export interface SettingsClusterProps {
-  /** Anchor slug; the `<section>` gets the DOM id `learning-<id>`. */
+  /** Anchor slug; the `<section>` gets the DOM id `<anchorPrefix>-<id>`. */
   id: string;
+  /** Tab prefix of the anchor id; defaults to `learning` (#2961), the
+   *  Data tab passes `data` (#3122). */
+  anchorPrefix?: string;
   /** Group heading (already translated). */
   title: ReactNode;
   /** Optional one-line description rendered under the heading. */
@@ -53,6 +57,7 @@ export interface SettingsClusterProps {
  */
 export function SettingsCluster({
   id,
+  anchorPrefix = "learning",
   title,
   description,
   testid,
@@ -62,7 +67,7 @@ export function SettingsCluster({
 
   return (
     <section
-      id={`learning-${id}`}
+      id={`${anchorPrefix}-${id}`}
       data-testid={testid}
       aria-labelledby={headingId}
       className="scroll-mt-[var(--settings-anchor-offset,4rem)] flex flex-col gap-[var(--space-5)]"

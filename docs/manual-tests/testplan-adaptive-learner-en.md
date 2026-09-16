@@ -933,6 +933,41 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Phone (375 px): the card and the divider wrap cleanly, nothing
       scrolls horizontally
 
+### Data tab: section bar + deep link (#3122)
+
+The same mechanics as on the Learning tab (#2961, #2966), over the six
+areas of the Data tab in the fixed #1451 order.
+
+- [ ] Settings > Data: above the first area sits a row of chips "Sources",
+      "Sync", "Offline content", "Backup and export", "Housekeeping",
+      "Danger zone" (in this order, `settings-subnav-sources` …
+      `settings-subnav-danger`). With no selection no chip is highlighted;
+      every area carries a heading and a description, the cards below are
+      unchanged (content repos and registry under Sources; cache and lesson
+      size under Offline content; backup, identity, key vault, export under
+      Backup; retention and orphaned data under Housekeeping; Delete
+      everything as the last card, set apart)
+- [ ] Click the "Backup and export" chip: the page scrolls to the area, the
+      heading sits clear of the header (desktop: clear of header AND bar),
+      the chip is highlighted, the address ends in
+      `?tab=data&section=backup`, the back button does NOT return to the
+      previous chip
+- [ ] Phone (375 px): the chip row can be swiped sideways, no horizontal
+      page scroll; the backup is one tap away instead of several screen
+      heights of scrolling
+- [ ] Open the deep link `/settings?tab=data&section=danger` in a new tab:
+      the Data tab is open, the danger zone on screen, its chip highlighted
+- [ ] Open `/settings?tab=data&section=review` (a Learning area): the Data
+      tab opens at the top, no Data chip highlighted, no error
+- [ ] Jump from the AI tab "Export keys" / "Import keys" (#1183, #1765):
+      still lands on the key vault inside "Backup and export"; the bar does
+      not disturb the jump
+- [ ] With no selection scroll slowly: the highlighted chip follows the
+      area whose heading is at the top of the screen; the address does NOT
+      change
+- [ ] Both storage modes (API + Dexie): bar and deep link behave the same;
+      in Dexie mode the "Sync" area shows the desktop-only notice
+
 ### Learning tab: section bar + deep link (#2961)
 
 - [ ] Settings > Learning: above the first area sits a row of chips

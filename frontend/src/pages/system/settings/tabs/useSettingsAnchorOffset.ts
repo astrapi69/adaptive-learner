@@ -1,6 +1,7 @@
 /**
- * useLearningAnchorOffset - how far a Learning section anchor must stay
- * clear of the sticky chrome above it (#2961).
+ * useSettingsAnchorOffset - how far a Settings section anchor must stay
+ * clear of the sticky chrome above it (#2961; shared by the Learning and
+ * the Data tab since #3122).
  *
  * Two sticky strips can cover the top of the scroll viewport: the app
  * header (``.app-nav``, sticky at every width) and, on ``md+`` only, the
@@ -13,7 +14,7 @@
  *
  * @example
  * const subNavRef = useRef<HTMLElement>(null);
- * const { stickyTop, anchorOffset } = useLearningAnchorOffset(subNavRef);
+ * const { stickyTop, anchorOffset } = useSettingsAnchorOffset(subNavRef);
  */
 
 import { useLayoutEffect, useState } from "react";
@@ -24,7 +25,7 @@ const STICKY_MEDIA_QUERY = "(min-width: 768px)";
 /** Breathing room between the sticky chrome and the scrolled-to heading. */
 const ANCHOR_GAP_PX = 8;
 
-export interface LearningAnchorOffset {
+export interface SettingsAnchorOffset {
   /** Sticky ``top`` for the section bar: the app header height in px. */
   stickyTop: number;
   /** ``scroll-margin-top`` for a cluster anchor in px. */
@@ -41,16 +42,16 @@ function barIsSticky(): boolean {
   );
 }
 
-function measure(subNav: Element | null): LearningAnchorOffset {
+function measure(subNav: Element | null): SettingsAnchorOffset {
   const header = measureHeight(document.querySelector(".app-nav"));
   const bar = barIsSticky() ? measureHeight(subNav) : 0;
   return { stickyTop: header, anchorOffset: header + bar + ANCHOR_GAP_PX };
 }
 
-export function useLearningAnchorOffset(
+export function useSettingsAnchorOffset(
   subNavRef: RefObject<HTMLElement | null>,
-): LearningAnchorOffset {
-  const [offset, setOffset] = useState<LearningAnchorOffset>({
+): SettingsAnchorOffset {
+  const [offset, setOffset] = useState<SettingsAnchorOffset>({
     stickyTop: 0,
     anchorOffset: ANCHOR_GAP_PX,
   });
