@@ -1,5 +1,5 @@
 /**
- * useStepReanchor (#3126) — bring the active lesson step to the top of the
+ * useStepReanchor (#3126) - bring the active lesson step to the top of the
  * scrollport after every step change, in an order iOS Safari survives.
  *
  * Two scrolls used to race on a step change: the navigation hook reset
