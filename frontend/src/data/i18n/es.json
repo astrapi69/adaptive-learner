@@ -2352,6 +2352,31 @@
         "done": "Hecho",
         "record_again": "Grabar de nuevo"
       },
+      "al_hotspot": {
+        "empty": "Este ejercicio de zonas no tiene imagen ni zonas.",
+        "image_alt": "Haz clic en el lugar correcto",
+        "overlay_aria": "Zonas clicables",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "No del todo.",
+        "retry": "Intentar de nuevo",
+        "submit": "Comprobar respuesta"
+      },
+      "al_ordering": {
+        "empty": "Este ejercicio de orden no tiene elementos.",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "No del todo - inténtalo de nuevo.",
+        "retry": "Intentar de nuevo",
+        "submit": "Comprobar respuesta"
+      },
+      "al_parsons": {
+        "empty": "Este ejercicio de código no tiene líneas.",
+        "indent_dec": "Reducir sangría",
+        "indent_inc": "Aumentar sangría",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "No del todo - revisa el orden y la sangría.",
+        "retry": "Intentar de nuevo",
+        "submit": "Comprobar respuesta"
+      },
       "instruction": {
         "matching": {
           "receptive": "Une las parejas (Reconocer)",
@@ -3452,7 +3477,10 @@
         "graded-quiz": "Cuestionario calificado",
         "dictation": "Dictado",
         "image-description": "Descripción de imagen",
-        "speak-and-record": "Hablar y grabar"
+        "speak-and-record": "Hablar y grabar",
+        "ordering": "Ordenar",
+        "parsons": "Parsons (ordenar código)",
+        "hotspot": "Zonas"
       },
       "edit": {
         "prompt_label": "Instrucción / enunciado",
@@ -3528,7 +3556,26 @@
         "ec_accept_label": "Correcciones aceptadas",
         "ec_accept_add": "Añadir",
         "ec_accept_remove": "Eliminar corrección",
-        "ec_accept_placeholder": "Palabra correcta"
+        "ec_accept_placeholder": "Palabra correcta",
+        "err_ordering": "Añade al menos 2 pasos únicos, en el orden correcto.",
+        "err_parsons": "Añade al menos 2 líneas de código.",
+        "err_hotspot": "Añade una imagen, al menos 2 zonas, y marca exactamente una zona correcta.",
+        "ordering_items_label": "Pasos, en el orden correcto",
+        "ordering_item_add": "Añadir paso",
+        "ordering_item_remove": "Eliminar paso",
+        "ordering_item_placeholder": "Paso",
+        "parsons_code_label": "Código",
+        "parsons_code_placeholder": "def greet(name):\n    print(name)",
+        "parsons_language_label": "Idioma (opcional, para resaltado de sintaxis)",
+        "hotspot_image_label": "Imagen de estímulo",
+        "hotspot_image_preview_alt": "Imagen de estímulo",
+        "hotspot_zones_label": "Zonas clicables",
+        "hotspot_shape_rect": "Rectángulo",
+        "hotspot_shape_circle": "Círculo",
+        "hotspot_mark_correct": "Esta es la zona correcta",
+        "hotspot_correct_label": "Correcto",
+        "hotspot_zone_remove": "Eliminar zona",
+        "hotspot_zone_add": "Añadir zona"
       }
     },
     "review": {

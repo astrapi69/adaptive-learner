@@ -67,6 +67,9 @@ import { readingComprehensionPayloadErrors } from "../../exercises/payload/readi
 import { gradedQuizPayloadErrors } from "../../exercises/payload/graded-quiz";
 import { dictationPayloadErrors } from "../../exercises/payload/dictation";
 import { imageDescriptionPayloadErrors } from "../../exercises/payload/image-description";
+import { orderingPayloadErrors } from "../../exercises/payload/ordering";
+import { parsonsPayloadErrors } from "../../exercises/payload/parsons";
+import { hotspotPayloadErrors } from "../../exercises/payload/hotspot";
 import { validateLessonShape } from "../validation/lesson-schema-validator";
 
 /** Lowercase unicode slug (#1808): lesson-internal ids/tags accept
@@ -658,6 +661,18 @@ const EXERCISE_TYPE_CHECKS: Record<string, ExerciseCheck> = {
   },
   "ext:al-image-description": (exercise, fail) => {
     const payloadErrors = imageDescriptionPayloadErrors(exercise);
+    if (payloadErrors.length > 0) fail(payloadErrors[0]);
+  },
+  "ext:al-ordering": (exercise, fail) => {
+    const payloadErrors = orderingPayloadErrors(exercise);
+    if (payloadErrors.length > 0) fail(payloadErrors[0]);
+  },
+  "ext:al-parsons": (exercise, fail) => {
+    const payloadErrors = parsonsPayloadErrors(exercise);
+    if (payloadErrors.length > 0) fail(payloadErrors[0]);
+  },
+  "ext:al-hotspot": (exercise, fail) => {
+    const payloadErrors = hotspotPayloadErrors(exercise);
     if (payloadErrors.length > 0) fail(payloadErrors[0]);
   },
 };

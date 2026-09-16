@@ -33,6 +33,9 @@ import ImageDescriptionExercise from "../renderers/image-description/ImageDescri
 import SpeakAndRecordExercise from "../renderers/speak-and-record/SpeakAndRecordExercise";
 import AudioChoiceExercise from "../renderers/audio-choice/AudioChoiceExercise";
 import AudioTilesExercise from "../renderers/audio-tiles/AudioTilesExercise";
+import OrderingExercise from "../renderers/ordering/OrderingExercise";
+import ParsonsExercise from "../renderers/parsons/ParsonsExercise";
+import HotspotExercise from "../renderers/hotspot/HotspotExercise";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -73,6 +76,9 @@ export const SUPPORTED_EXT_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "ext:al-speak-and-record",
     "ext:al-audio-choice",
     "ext:al-audio-tiles",
+    "ext:al-ordering",
+    "ext:al-parsons",
+    "ext:al-hotspot",
 ]);
 
 /** The prop bag every renderer shares (everything except the exercise, the
@@ -136,6 +142,21 @@ function renderAdoptedExtension(
     if (ex.type === "ext:al-audio-tiles") {
         // Needs `source` for the sentence audio, same as audio-choice.
         return <AudioTilesExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
+    }
+    if (ex.type === "ext:al-ordering") {
+        // No card/asset reference — the shuffled steps live entirely in
+        // ext_payload.items, no `source` needed.
+        return <OrderingExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-parsons") {
+        // Same as ordering — the code lines live entirely in ext_payload.lines.
+        return <ParsonsExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} {...shared} />;
+    }
+    if (ex.type === "ext:al-hotspot") {
+        // Needs `source` for the same reason dictation/image-description do:
+        // the stimulus image can be an `assets/` path resolved by useAsset (an
+        // embedded data URI is self-contained and needs none).
+        return <HotspotExercise ref={ref} exercise={ex} setId={ids.setId} lessonId={ids.lessonId} source={ids.source} {...shared} />;
     }
     return null;
 }
