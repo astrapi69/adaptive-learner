@@ -47,6 +47,7 @@ import {
     setTheme,
     settleForScreenshot,
     gotoDashboardWithDueReviews,
+    playBundledLesson,
 } from "../visual/helpers";
 
 /** The default theme every feature baseline is captured at (spec: dark). */
@@ -821,6 +822,17 @@ async function gotoDataSubNav(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Finish the bundled lesson and open the detailed evaluation (#3124): the
+ *  set-style review of the lesson sits first under the toggle. */
+async function gotoDetailedLessonSummary(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    if (!(await playBundledLesson(page, "summary"))) return false;
+    await page.getByTestId("lesson-summary-detailed-toggle").click();
+    await expect(page.getByTestId("lesson-summary-review")).toBeVisible({timeout: 10_000});
+    await page.waitForTimeout(400);
+    return true;
+}
+
 /** Open Settings → Learning scrolled to the gamification card (#2962 -
  *  moved in from the Plugins tab as the last card of the motivation
  *  cluster, behind a separator because it holds Reset progress). */
@@ -1098,6 +1110,12 @@ const FEATURES: FeatureShot[] = [
         path: "data-subnav/settings",
         setup: gotoDataSubNav,
         pinTo: "settings-cluster-data-backup",
+    },
+    // --- Detailed lesson evaluation with the lesson review (#3124) --------
+    {
+        path: "lesson-review/summary",
+        setup: gotoDetailedLessonSummary,
+        pinTo: "lesson-summary-review",
     },
     // --- Phone header with due-reviews + XP badges (#3123) ----------------
     {

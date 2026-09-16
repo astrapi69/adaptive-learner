@@ -304,3 +304,55 @@ describe("LessonSummary detailed-evaluation toggle (#3031)", () => {
     expect(screen.getAllByTestId("lesson-summary-explanations")).toHaveLength(1);
   });
 });
+
+describe("LessonSummary detailed view carries the lesson review (#3124)", () => {
+  it("shows no review in the compact view", () => {
+    renderSummary();
+    expect(screen.queryByTestId("lesson-summary-review")).toBeNull();
+  });
+
+  it("opens the set-style review of this lesson first in the detailed view", () => {
+    renderSummary();
+    toggleDetailed();
+    const report = screen.getByTestId("lesson-summary-review");
+    expect(report).toHaveTextContent("Review: Greetings");
+    expect(report).toHaveTextContent("Every mistake in this lesson at a glance");
+    // Six session errors with error_count 1 each, none mastered.
+    expect(screen.getByTestId("lesson-summary-review-total-errors")).toHaveTextContent("6");
+    expect(screen.getByTestId("lesson-summary-review-open")).toHaveTextContent("6");
+    expect(screen.getByTestId("lesson-summary-review-mastered")).toHaveTextContent("0%");
+    // The run's 120 seconds, from the progress row.
+    expect(screen.getByTestId("lesson-summary-review-time")).toHaveTextContent("2 min");
+    expect(screen.getByTestId("lesson-summary-review-by-type")).toHaveTextContent("vocabulary: 6");
+    expect(screen.getByTestId("lesson-summary-review-weak-areas")).toHaveTextContent("wrong0");
+    // Lesson scope: no per-lesson breakdown.
+    expect(screen.queryByTestId("lesson-summary-review-by-lesson")).toBeNull();
+    // The report sits right under the toggle, before every other section.
+    const toggle = screen.getByTestId("lesson-summary-detailed-toggle");
+    expect(toggle.compareDocumentPosition(report) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(report.compareDocumentPosition(screen.getByTestId("lesson-summary-stars")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("links into the set's practice session for a learner with a profile", () => {
+    renderSummary();
+    toggleDetailed();
+    expect(screen.getByTestId("lesson-summary-review-practice")).toHaveAttribute(
+      "href",
+      "/review/set1",
+    );
+  });
+
+  it("offers no practice link on an anonymous run", () => {
+    renderSummary({ userId: "" });
+    toggleDetailed();
+    expect(screen.getByTestId("lesson-summary-review")).toBeInTheDocument();
+    expect(screen.queryByTestId("lesson-summary-review-practice")).toBeNull();
+  });
+
+  it("disappears again with the compact view", () => {
+    renderSummary();
+    toggleDetailed();
+    toggleDetailed();
+    expect(screen.queryByTestId("lesson-summary-review")).toBeNull();
+  });
+});
