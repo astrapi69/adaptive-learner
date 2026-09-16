@@ -6,8 +6,11 @@
  *
  * The preference is ONE ordered structure — an array of ``{id, enabled}`` in
  * render order — persisted as a single localStorage key holding JSON. Default:
- * every section ON, in today's fixed top-to-bottom order, so nothing changes
- * for anyone who does not touch the setting.
+ * the compact set (#3124: result and XP ON, everything else OFF) in today's
+ * fixed top-to-bottom order, so a fresh install's summary is result, XP and
+ * the continue actions - one phone screen. The switched-off sections stay
+ * one click away behind "Detailed evaluation" (#3031) and can be turned on
+ * for good under Settings > Learning.
  *
  * The essential completion navigation (mark-as-complete + the secondary
  * next / repeat / exit actions) is deliberately NOT part of this structure —
@@ -19,7 +22,12 @@
  * a future/older build (or hand-edited) can never yield an empty or broken
  * panel — it always resolves to a full, valid ordered config.
  *
- * Migration (no silent reset — cf. the #1334 language-reset lesson):
+ * Migration (no silent reset — cf. the #1334 language-reset lesson). A
+ * learner who stored a choice before #3124 keeps exactly what they saw: a
+ * section missing from a STORED config (the legacy readers and
+ * {@link sanitizeSummarySections} alike) is filled in ON, the default it had
+ * when that config was written, never with today's compact default. Only a
+ * fresh install (no stored key at all) gets the compact set.
  *   1. The #1411 visibility-only object
  *      (``adaptive-learner.lesson.summary_sections`` = ``Record<id, boolean>``)
  *      is read once when the ordered key has not been written yet, so every
@@ -49,6 +57,12 @@ export const SUMMARY_SECTION_KEYS = [
   "answers",
   /** The result-export action row (copy / Markdown / JSON / Anki). */
   "export",
+  /** The #599 "Why you missed these" mistake review (auto-generated
+   *  explanations + your-vs-correct diff). #3124 - a section of its own so
+   *  the compact summary can hold it back; sits directly above the
+   *  correction round by default (#1432: review and drill stay adjacent).
+   *  The #599 Settings toggle stays its master switch. */
+  "explanations",
   /** The SRS correction round (#1376). #2570 - moved ahead of ``next_steps``:
    *  fixing today's mistakes belongs before the cards that offer what to do
    *  next, not trailing after them. */
@@ -90,18 +104,55 @@ function isKnown(value: unknown): value is SummarySectionKey {
   return typeof value === "string" && KNOWN.has(value as SummarySectionKey);
 }
 
-/** Every section on, in the default order — the fallback for new users and
- *  unreadable state. */
+/**
+ * The compact default per section (#3124): what a fresh install shows at the
+ * end of a lesson. ON: the result (stars, score, time) and the XP reward.
+ * OFF: everything else - all of it still reachable through the detailed
+ * evaluation (#3031) and switchable on for good under Settings > Learning.
+ * Measured on the Dexie build: result + XP + the pinned continue actions
+ * fit a 390x844 phone screen; each further section (the collapsed
+ * correction round at ~180 px, the next-step cards at ~430 px) pushes the
+ * continue actions below the fold.
+ */
+const COMPACT_DEFAULT_ENABLED: Readonly<Record<SummarySectionKey, boolean>> = {
+  favorite: false,
+  result: true,
+  xp: true,
+  share: false,
+  answers: false,
+  export: false,
+  explanations: false,
+  correction: false,
+  next_steps: false,
+};
+
+/**
+ * Where a section missing from a STORED config is inserted: directly before
+ * its anchor when the anchor is present, else appended. Keeps the #1432
+ * adjacency (mistake review right above the correction round) for configs
+ * written before ``explanations`` became a section of its own (#3124).
+ */
+const INSERT_BEFORE: Partial<Record<SummarySectionKey, SummarySectionKey>> = {
+  explanations: "correction",
+};
+
+/** The compact default config, in the default order — the fallback for new
+ *  users and unreadable state. */
 export function defaultSummarySections(): SummarySectionsConfig {
-  return DEFAULT_SUMMARY_SECTION_ORDER.map((id) => ({ id, enabled: true }));
+  return DEFAULT_SUMMARY_SECTION_ORDER.map((id) => ({
+    id,
+    enabled: COMPACT_DEFAULT_ENABLED[id],
+  }));
 }
 
 /**
  * Coerce an arbitrary stored value into a complete, valid ordered config:
  * keep known IDs in their stored order (deduped), preserve each entry's
- * boolean ``enabled`` (non-boolean → ON), then append any known section that
- * was missing, in the default order, ON. A non-array / empty / all-unknown
- * value yields the full default config (all ON, default order).
+ * boolean ``enabled`` (non-boolean → ON), then fill in any known section
+ * that was missing, ON (the default it had when the config was stored -
+ * never a silent reset to today's compact default), before its
+ * {@link INSERT_BEFORE} anchor or else at the end. A non-array / empty /
+ * all-unknown value yields the full default config (the compact set).
  */
 export function sanitizeSummarySections(raw: unknown): SummarySectionsConfig {
   const seen = new Set<SummarySectionKey>();
@@ -116,14 +167,21 @@ export function sanitizeSummarySections(raw: unknown): SummarySectionsConfig {
       result.push({ id, enabled: typeof enabledRaw === "boolean" ? enabledRaw : true });
     }
   }
+  // Nothing usable stored: a fresh install, not a migration - the compact set.
+  if (result.length === 0) return defaultSummarySections();
   for (const id of DEFAULT_SUMMARY_SECTION_ORDER) {
-    if (!seen.has(id)) result.push({ id, enabled: true });
+    if (seen.has(id)) continue;
+    const anchor = INSERT_BEFORE[id];
+    const at = anchor ? result.findIndex((section) => section.id === anchor) : -1;
+    result.splice(at === -1 ? result.length : at, 0, { id, enabled: true });
   }
   return result;
 }
 
 /** Read the #1411 visibility-only object (+ #1376 correction) as an
- *  id→enabled map, used only when the ordered key has never been written. */
+ *  id→enabled map, used only when the ordered key has never been written.
+ *  Unstored sections are ON: that was the default those learners saw, so a
+ *  pre-#3124 choice migrates without a silent reset to the compact set. */
 function readLegacyEnabledMap(): Record<SummarySectionKey, boolean> | null {
   let raw: string | null = null;
   try {

@@ -492,7 +492,10 @@ export function SummaryXp({
 /**
  * Auto-generated explanations + your-vs-correct diff for the run's still-weak
  * text mistakes (#599), gated by the Settings toggle. Renders ``null`` when
- * the toggle is off or there is nothing to explain.
+ * the toggle is off or there is nothing to explain. #3124 - whether and where
+ * the compact summary shows it is the ``explanations`` entry of the
+ * summary-sections config (default OFF); the parent's order loop gates on
+ * that, this component only on the toggle and the data.
  */
 export function SummaryExplanations({
   sessionErrors,

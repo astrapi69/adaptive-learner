@@ -4,15 +4,16 @@
  *
  * Every non-essential section of the completion panel is individually
  * toggleable AND reorderable via the ``summarySectionsPref`` ordered config.
- * These pin: defaults (all ON, default order), each section disabling exactly
- * itself, the panel following a CUSTOM order, a disabled section keeping its
- * slot (re-enabling brings it back there), the essential navigation surviving
- * EVERY combination (including all-off) and staying pinned last, the migrated
- * #1376 correction choice, and the next-lesson fallback appearing when the
- * next-steps section is off.
+ * These pin: the compact default (#3124: result + XP, default order), each
+ * section disabling exactly itself, the panel following a CUSTOM order, a
+ * disabled section keeping its slot (re-enabling brings it back there), the
+ * essential navigation surviving EVERY combination (including all-off) and
+ * staying pinned last, the migrated #1376 correction choice, and the
+ * next-lesson fallback appearing when the next-steps section is off.
  *
  * CorrectionBlock + NextStepSuggestions are stubbed so we assert
- * LessonSummary's own layout, not their internals.
+ * LessonSummary's own layout, not their internals. ``useLessonSessionErrors``
+ * returns one unmastered text mistake so the #599 review section renders.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -68,13 +69,34 @@ vi.mock("../../../hooks/learning/useNextStepSuggestions", () => ({
 }));
 
 vi.mock("../../../hooks/learning/useLessonSessionErrors", () => ({
-  useLessonSessionErrors: () => [],
+  useLessonSessionErrors: () => [
+    {
+      id: "e1",
+      user_id: "u1",
+      set_id: "set1",
+      lesson_id: "01-greetings.json",
+      exercise_id: "s0",
+      element_key: "hello",
+      element_type: "free_text",
+      user_answer: "Salut",
+      correct_answer: "Bonjour",
+      error_count: 1,
+      correct_streak: 0,
+      last_error_at: "2026-06-14T10:02:00Z",
+      last_attempt_at: "2026-06-14T10:02:00Z",
+      mastered: false,
+      mastered_at: null,
+      created_at: "2026-06-14T10:00:00Z",
+      updated_at: "2026-06-14T10:02:00Z",
+    },
+  ],
 }));
 
 import LessonSummary from "./LessonSummary";
 import {
   DEFAULT_SUMMARY_SECTION_ORDER,
   SUMMARY_SECTION_KEYS,
+  defaultSummarySections,
   setSummarySectionEnabled,
   writeSummarySections,
   type SummarySectionKey,
@@ -168,9 +190,15 @@ const SECTION_PROBES: Record<SummarySectionKey, string> = {
   share: "lesson-summary-share",
   answers: "lesson-summary-breakdown",
   export: "lesson-summary-export",
+  explanations: "lesson-summary-explanations",
   next_steps: "next-steps-stub",
   correction: "correction-block-stub",
 };
+
+/** Every section ON, in the default order. */
+function allOn(): SummarySectionsConfig {
+  return configFrom([...DEFAULT_SUMMARY_SECTION_ORDER]);
+}
 
 /** The essential surface that must survive every combination, pinned last. */
 const ESSENTIAL_TESTIDS = [
@@ -230,7 +258,25 @@ describe("LessonSummary configurable + reorderable sections (#1426)", () => {
     expect(heading).toHaveClass("wrap-anywhere");
   });
 
-  it("defaults ON — renders every configurable section", () => {
+  it("compact default (#3124) — renders result + XP and nothing else configurable", () => {
+    renderSummary();
+    for (const { id, enabled } of defaultSummarySections()) {
+      const probe = screen.queryByTestId(SECTION_PROBES[id]);
+      if (enabled) expect(probe, id).toBeInTheDocument();
+      else expect(probe, id).not.toBeInTheDocument();
+    }
+    expect(screen.getByTestId("lesson-summary-stars")).toBeInTheDocument();
+    expect(screen.getByTestId("lesson-summary-xp")).toBeInTheDocument();
+    expect(screen.queryByTestId("next-steps-stub")).not.toBeInTheDocument();
+    // The essential navigation, with the plain Next fallback (next-steps off).
+    for (const testid of ESSENTIAL_TESTIDS) {
+      expect(screen.getByTestId(testid)).toBeInTheDocument();
+    }
+    expect(screen.getByTestId("lesson-summary-next")).toBeInTheDocument();
+  });
+
+  it("every section ON renders every configurable section", () => {
+    writeSummarySections(allOn());
     renderSummary();
     for (const key of SUMMARY_SECTION_KEYS) {
       expect(screen.getByTestId(SECTION_PROBES[key]), key).toBeInTheDocument();
@@ -238,6 +284,7 @@ describe("LessonSummary configurable + reorderable sections (#1426)", () => {
   });
 
   it("default order renders sections in today's fixed top-to-bottom sequence", () => {
+    writeSummarySections(allOn());
     renderSummary();
     const probes = [...DEFAULT_SUMMARY_SECTION_ORDER].map((key) =>
       screen.getByTestId(SECTION_PROBES[key]),
@@ -253,6 +300,7 @@ describe("LessonSummary configurable + reorderable sections (#1426)", () => {
   it.each(SUMMARY_SECTION_KEYS.map((key) => [key] as const))(
     "disabling only %s removes exactly that section",
     (disabledKey) => {
+      writeSummarySections(allOn());
       setSummarySectionEnabled(disabledKey, false);
       renderSummary();
       for (const key of SUMMARY_SECTION_KEYS) {
@@ -286,6 +334,7 @@ describe("LessonSummary configurable + reorderable sections (#1426)", () => {
         "share",
         "answers",
         "export",
+        "explanations",
       ]),
     );
     renderSummary();
@@ -308,6 +357,7 @@ describe("LessonSummary configurable + reorderable sections (#1426)", () => {
       "xp",
       "answers",
       "export",
+      "explanations",
       "next_steps",
       "correction",
     ];
@@ -361,6 +411,7 @@ describe("LessonSummary configurable + reorderable sections (#1426)", () => {
           "xp",
           "result",
           "favorite",
+          "explanations",
         ],
         ["result", "xp", "favorite"],
       ),
@@ -383,6 +434,7 @@ describe("LessonSummary configurable + reorderable sections (#1426)", () => {
   });
 
   it("next-steps ON + smart card available — no duplicate fallback button", () => {
+    setSummarySectionEnabled("next_steps", true);
     renderSummary();
     expect(screen.getByTestId("next-steps-stub")).toBeInTheDocument();
     expect(screen.queryByTestId("lesson-summary-next")).not.toBeInTheDocument();
@@ -397,12 +449,14 @@ describe("LessonSummary configurable + reorderable sections (#1426)", () => {
     expect(
       screen.queryByTestId("correction-block-stub"),
     ).not.toBeInTheDocument();
-    // Everything else keeps its default.
+    // Everything else keeps the ON that learner saw (no #3124 reset).
     expect(screen.getByTestId("lesson-summary-stars")).toBeInTheDocument();
     expect(screen.getByTestId("next-steps-stub")).toBeInTheDocument();
+    expect(screen.getByTestId("lesson-summary-export")).toBeInTheDocument();
   });
 
   it("correction OFF still leaves the errors reachable via the next-steps area", () => {
+    writeSummarySections(allOn());
     setSummarySectionEnabled("correction", false);
     renderSummary();
     expect(screen.getByTestId("next-steps-stub")).toBeInTheDocument();

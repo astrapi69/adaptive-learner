@@ -151,7 +151,11 @@ enabled, the animation respects that.)
 You choose which sections the end-of-lesson summary shows and in
 which order, under **Settings → Learning**. The sections are:
 Result and statistics, XP reward, Favorites hint, Share result,
-Answers overview, Result export, and Next-step suggestions. The
+Answers overview, Result export, "Why you missed these", the
+correction round, and Next-step suggestions. Only Result and XP
+reward are on by default: the compact view that fits one phone
+screen. Everything else opens with the **"Detailed evaluation"**
+button directly under the heading, without changing the setting. The
 "continue" actions stay visible at all times.
 
 ### Exporting the result

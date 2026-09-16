@@ -2321,8 +2321,10 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Jede Lektion eines Sets abschließen, dann erneut "Lernen starten"
       drücken: es öffnet Lektion 1 (nichts mehr zum Fortsetzen)
 ### Zusammenfassung: Alle Antworten mit Frage (#2807)
-- [ ] Lektion beenden, "Alle Antworten ansehen" öffnen: jede Zeile mit
-      etwas zu zeigen ist aufklappbar (Titel + Punktzahl bleibt sichtbar)
+- [ ] Lektion beenden, "Alle Antworten ansehen" öffnen (Abschnitt
+      "Antworten-Übersicht" in den Einstellungen eingeschaltet oder
+      "Ausführliche Auswertung" gedrückt, #3124): jede Zeile mit etwas zu
+      zeigen ist aufklappbar (Titel + Punktzahl bleibt sichtbar)
 - [ ] Aufgeklappt steht die FRAGE über den Antworten - auch bei einer
       teilrichtigen Zeile wie "2 / 3", die vorher gar nichts zeigte
 - [ ] Bei Auswahl-/Zuordnungsaufgaben (ohne Textantwort) erscheinen
@@ -2335,10 +2337,10 @@ jeder Karten-Zeile (`CardImageField`).
 ### Zusammenfassung: Ausführliche Auswertung auf Knopfdruck (#3031)
 - [ ] Lektion beenden: direkt unter der Überschrift steht der Knopf
       "Ausführliche Auswertung"
-- [ ] In Einstellungen > Lernen > "Auswertung der Lektion" einen
-      Abschnitt abschalten (z. B. "Ergebnis-Export"), dann eine Lektion
-      beenden: der Abschnitt fehlt - nach Druck auf "Ausführliche
-      Auswertung" ist er da
+- [ ] In Einstellungen > Lernen > "Zusammenfassung nach Lektionen" einen
+      eingeschalteten Abschnitt abschalten (z. B. "XP-Belohnung"), dann
+      eine Lektion beenden: der Abschnitt fehlt - nach Druck auf
+      "Ausführliche Auswertung" ist er da
 - [ ] Im ausführlichen Zustand ist "Alle Antworten ansehen" schon
       aufgeklappt
 - [ ] "Warum du diese verpasst hast" erscheint auch dann, wenn sein
@@ -2369,6 +2371,40 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] "Kompakte Auswertung": die Auswertung verschwindet wieder; die
       #3031-Punkte (Abschnitte, Antworten, Erklärungen) gelten weiterhin
 - [ ] Tooltip des Knopfs nennt Kennzahlen, Aufgabentypen und Schwachstellen
+
+### Zusammenfassung: kompakte Voreinstellung, ein Bildschirm (#3124)
+- [ ] Frische Installation (oder in Einstellungen > Lernen >
+      "Zusammenfassung nach Lektionen" nur "Ergebnis und Statistik" und
+      "XP-Belohnung" angehakt): Lektion beenden - die Zusammenfassung zeigt
+      Sterne, Punktzahl, Zeit, "+N XP" und direkt darunter "Als
+      abgeschlossen markieren", "Nächste Lektion", "Nochmal üben" und
+      "Zurück"; kein Favoriten-Hinweis, kein Teilen, keine
+      Antworten-Übersicht, kein Export, kein "Warum du diese verpasst
+      hast", keine Korrekturrunde, keine Nächste-Schritte-Karten
+- [ ] Am Telefon (Hochformat): alles bis zu den Weiter-Knöpfen ohne
+      Wischen sichtbar
+- [ ] "Ausführliche Auswertung": die Auswertung wie am Set-Ende und alle
+      abgeschalteten Abschnitte erscheinen (Favorit, Teilen, Alle Antworten
+      aufgeklappt, Export, "Warum du diese verpasst hast", Fehler
+      ausbessern, Nächste Schritte); "Kompakte Auswertung" nimmt sie wieder
+      weg
+- [ ] Einstellungen > Lernen > "Zusammenfassung nach Lektionen": neun
+      Zeilen, "Warum du diese verpasst hast" steht direkt über der Zeile
+      der Korrekturrunde; nur Ergebnis und XP sind angehakt; eine Zeile
+      anhaken (z. B. Nächste-Schritte-Vorschläge), Lektion beenden: der
+      Abschnitt ist dauerhaft in der kompakten Fassung
+- [ ] Bestehende Wahl bleibt: wer die Abschnitte vor diesem Stand schon
+      einmal eingestellt hatte, sieht seine Auswahl unverändert; "Warum du
+      diese verpasst hast" ist dort angehakt und steht direkt über der
+      Korrekturrunde
+- [ ] "Warum du diese verpasst hast" angehakt, aber "Erklärungen nach der
+      Antwort" (Wiederholung) aus: der Block fehlt in der kompakten Fassung
+      und erscheint erst in der ausführlichen Auswertung
+
+Hinweis zu allen Schritten dieses Plans, die Export, Teilen, Favorit, Alle
+Antworten, "Warum du diese verpasst hast", Fehler ausbessern oder die
+Nächste-Schritte-Karten nutzen: den Abschnitt vorher in den Einstellungen
+einschalten oder "Ausführliche Auswertung" drücken (#3124).
 
 ### Lektion verlassen führt zum Set (#2811)
 - [ ] In einer Set-Lektion pausieren und verlassen: die App landet auf
