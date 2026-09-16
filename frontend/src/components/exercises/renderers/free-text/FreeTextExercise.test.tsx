@@ -550,7 +550,6 @@ describe("FreeTextExercise: parametric-exercise tolerance grading (#3109)", () =
         explanation: "Die Summe von 4 und 6 ist 10.",
     };
     const toleranceByAcceptText = new Map([["10", 0.5]]);
-    const variableValues = {a: 4, b: 6, sum: 10};
 
     it("accepts a numeric answer within tolerance even when the text differs", () => {
         const onComplete = vi.fn();
@@ -586,27 +585,6 @@ describe("FreeTextExercise: parametric-exercise tolerance grading (#3109)", () =
         });
         fireEvent.click(screen.getByTestId("free-text-submit"));
         expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 0, total: 1}));
-    });
-
-    it("persists the drawn variable values on raw_answer for a later review", () => {
-        const onComplete = vi.fn();
-        render(
-            <FreeTextExercise
-                exercise={PARAMETRIC_EXERCISE}
-                onComplete={onComplete}
-                toleranceByAcceptText={toleranceByAcceptText}
-                variableValues={variableValues}
-            />,
-        );
-        fireEvent.change(screen.getByTestId("free-text-input"), {
-            target: {value: "10"},
-        });
-        fireEvent.click(screen.getByTestId("free-text-submit"));
-        expect(onComplete).toHaveBeenCalledWith(
-            expect.objectContaining({
-                raw_answer: {kind: "free_text", input: "10", resolved_variables: variableValues},
-            }),
-        );
     });
 
     it("omits resolved_variables from raw_answer for a non-parametric exercise", () => {

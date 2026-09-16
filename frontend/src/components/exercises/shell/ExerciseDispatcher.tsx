@@ -262,10 +262,10 @@ export function resolveCodeContext(
 }
 
 /** #3109, schema v1.14 — resolves an exercise's ``variables`` (if any) into
- *  concrete values once per attempt. A revisited ``free_text`` attempt
- *  reuses its persisted drawn/computed values (RawAnswer's free_text
- *  variant, ``resolved_variables``) so a review shows the exact concrete
- *  instance the learner originally saw, instead of a fresh random draw.
+ *  concrete values once per attempt. A revisited attempt of ANY kind
+ *  reuses its persisted drawn/computed values (``RawAnswer.resolved_variables``,
+ *  shared across every kind) so a review shows the exact concrete instance
+ *  the learner originally saw, instead of a fresh random draw.
  *  Always returns an object (never null) so callers never need an extra
  *  branch to unwrap it - extracted from ``ExerciseDispatcher`` to keep the
  *  dispatcher's own cyclomatic complexity flat, mirroring
@@ -277,9 +277,22 @@ export function resolveVariablesForAttempt(
     if (!rawEx) {
         return {exercise: null, values: {}, toleranceByAcceptText: new Map()};
     }
-    const reviewedVariableValues =
-        reviewed?.kind === "free_text" ? reviewed.resolved_variables : undefined;
-    return resolveExerciseVariables(rawEx, {values: reviewedVariableValues});
+    return resolveExerciseVariables(rawEx, {values: reviewed?.resolved_variables});
+}
+
+/** Merges the attempt's drawn/computed variable values (if any) into
+ *  ``scored.raw_answer`` - the single point where every renderer's
+ *  ``onComplete`` payload gains ``resolved_variables``, regardless of the
+ *  renderer's own ``RawAnswer`` kind (#3109: any exercise type's string
+ *  fields can carry a ``{{name}}`` reference, not just ``free_text``). */
+function withResolvedVariables(
+    scored: ExerciseScored,
+    values: Readonly<Record<string, number>>,
+): ExerciseScored {
+    if (!scored.raw_answer || Object.keys(values).length === 0) {
+        return scored;
+    }
+    return {...scored, raw_answer: {...scored.raw_answer, resolved_variables: values}};
 }
 
 /** Forwards a ref to the active exercise so the controlled
@@ -357,8 +370,9 @@ function ExerciseDispatcher(
         ttsLang: targetLanguage,
         codeMode,
         onComplete: (scored: ExerciseScored) => {
-            recordScored(scored);
-            void onComplete(scored);
+            const enriched = withResolvedVariables(scored, resolved.values);
+            recordScored(enriched);
+            void onComplete(enriched);
         },
     };
     const extElement = renderAdoptedExtension(ex, ref, {setId, lessonId, source}, shared);
@@ -412,7 +426,6 @@ function ExerciseDispatcher(
                     lessonId={lessonId}
                     codeLanguage={codeLanguage}
                     toleranceByAcceptText={resolved.toleranceByAcceptText}
-                    variableValues={resolved.values}
                     {...shared}
                 />
             </>
