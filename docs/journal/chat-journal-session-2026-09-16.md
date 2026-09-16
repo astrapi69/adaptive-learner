@@ -53,7 +53,13 @@ Lane: Branch `claude/github-issues-open-rig959`, Session
   verlieren ihre Extra-Ränder; nachgemessen mit dem vorinstallierten
   Chromium: Menü 44 px, Logo 28 px, eine Zeile ohne Abzeichen, zwei
   rechtsbündige Zeilen mit Abzeichen. Kein CSS geändert, keine neuen
-  i18n-Schlüssel.
+  i18n-Schlüssel. Baseline-Sync in zwei Runden: der erste lieferte nur
+  das neue Motiv, die 21 bestehenden Mobile-Bilder blieben unter der
+  2500-Pixel-Toleranz stehen (#3023), obwohl ihr Logo noch der Strich
+  war; nach Löschen-dann-Resync (#2719) zeigt jedes eine Differenz nur
+  im Kopfzeilenband (y 8 bis 56 px, 2058 bis 3285 Pixel je Motiv,
+  keine Zeile darunter), also reine Kopfzeilen-Neuordnung ohne
+  Fremd-Drift.
 - Commit: siehe PR.
 
 ## Fragen und Annahmen
