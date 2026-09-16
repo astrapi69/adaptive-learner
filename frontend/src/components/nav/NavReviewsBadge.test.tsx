@@ -78,3 +78,28 @@ describe("NavReviewsBadge: reviews-changed live recompute (#629)", () => {
         expect(reviewQueueMock).toHaveBeenCalledTimes(2);
     });
 });
+
+describe("NavReviewsBadge: count-only on phones (#3123)", () => {
+    it("renders the count in its own span and hides only the word below sm", async () => {
+        reviewQueueMock.mockResolvedValue(overdue(718));
+        render(
+            <MemoryRouter>
+                <NavReviewsBadge />
+            </MemoryRouter>,
+        );
+        const badge = await screen.findByTestId("nav-reviews-badge");
+        // The count is always visible; the surrounding word (" due") sits in
+        // a span that the sm breakpoint hides, so a 375px bar shows "718".
+        expect(screen.getByTestId("nav-reviews-badge-count")).toHaveTextContent(
+            "718",
+        );
+        expect(screen.getByTestId("nav-reviews-badge-count").className).not.toContain(
+            "max-sm:hidden",
+        );
+        const hidden = [...badge.querySelectorAll("span.max-sm\\:hidden")];
+        expect(hidden.map((el) => el.textContent).join("")).toBe(" due");
+        // The full label survives in the accessible name and the tooltip.
+        expect(badge.getAttribute("aria-label")).toContain("718 due");
+        expect(badge).toHaveTextContent("718 due");
+    });
+});

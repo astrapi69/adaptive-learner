@@ -46,6 +46,7 @@ import {
     seedLearner,
     setTheme,
     settleForScreenshot,
+    gotoDashboardWithDueReviews,
 } from "../visual/helpers";
 
 /** The default theme every feature baseline is captured at (spec: dark). */
@@ -1097,6 +1098,12 @@ const FEATURES: FeatureShot[] = [
         path: "data-subnav/settings",
         setup: gotoDataSubNav,
         pinTo: "settings-cluster-data-backup",
+    },
+    // --- Phone header with due-reviews + XP badges (#3123) ----------------
+    {
+        path: "nav-badges/dashboard",
+        setup: gotoDashboardWithDueReviews,
+        pinTo: "app-nav",
     },
     // --- Learning-tab section bar (#2961) ---------------------------------
     {

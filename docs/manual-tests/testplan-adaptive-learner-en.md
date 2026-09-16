@@ -2053,6 +2053,20 @@ each card row (`CardImageField`).
 - [ ] Back to "Top": the bar disappears immediately; the choice
       survives a reload
 
+### Phone header: menu button and logo survive many badges (#3123)
+- [ ] Phone (375 and 430 px wide, e.g. iPhone 14 Pro Max) with due
+      reviews, one available set update and XP: open the Dashboard. The
+      menu button top left keeps its full width (no thin sliver) and the
+      logo next to it is visible
+- [ ] On the phone the badges show only the number next to the icon
+      ("718" instead of "718 due", "1" instead of "1 updates"); the
+      tooltip and the screen-reader name still carry the full text
+- [ ] When the badges no longer fit beside the menu button and the logo
+      they wrap right-aligned onto a second line; nothing is cut off and
+      the page does not scroll sideways
+- [ ] Tablet and desktop: the header stays a single line with the full
+      badge text
+
 ### Settings > Data: housekeeping cards (#2955)
 - [ ] Settings > Data: the "Maximum lesson size" card sits directly
       below "Offline cache"; the "Paused lesson retention" card sits

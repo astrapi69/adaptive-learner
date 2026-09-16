@@ -24,6 +24,7 @@ import {dedupeReviewQueueByElement} from "../../lib/review/review-lesson";
 import {subscribeCelebration} from "../../lib/praise/celebration-bus";
 import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
 import {getStorage} from "../../storage";
+import {splitAroundCount} from "./split-around-count";
 import type {CelebrationType} from "../../lib/praise/celebration-bus";
 
 const REVIEW_AFFECTING: ReadonlySet<CelebrationType> = new Set<CelebrationType>(
@@ -99,10 +100,13 @@ export default function NavReviewsBadge() {
     const href = state.firstSetId
         ? `/review/${encodeURIComponent(state.firstSetId)}`
         : "/dashboard";
-    const label = t("srs.due_badge", "{n} due").replace(
-        "{n}",
-        String(state.overdue),
-    );
+    const template = t("srs.due_badge", "{n} due");
+    const label = template.replace("{n}", String(state.overdue));
+    // #3123 - on phones the badge shows only the count (the word around
+    // the number is hidden, the icon carries the meaning); the full label
+    // stays in the accessible name and the tooltip. Split on the
+    // placeholder so every catalog's word order works.
+    const [wordBefore, wordAfter] = splitAroundCount(template);
     return (
         <NavLink
             to={href}
@@ -116,7 +120,9 @@ export default function NavReviewsBadge() {
             aria-label={`${label}, ${t("srs.due_badge_action", "view reviews")}`}
         >
             <RefreshCw size={12} aria-hidden="true" />
-            {label}
+            <span className="max-sm:hidden">{wordBefore}</span>
+            <span data-testid="nav-reviews-badge-count">{state.overdue}</span>
+            <span className="max-sm:hidden">{wordAfter}</span>
         </NavLink>
     );
 }
