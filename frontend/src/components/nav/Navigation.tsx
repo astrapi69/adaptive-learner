@@ -303,7 +303,8 @@ export default function Navigation() {
           {t(HELP_TARGET.labelKey, HELP_TARGET.labelFallback)}
         </Button>
       </div>
-      {/* #3123 - the right-hand status cluster. On phones it is a
+      {/* #3123 - the right-hand status cluster (testid ``nav-status``; no
+          CSS class of its own, utilities only). On phones it is a
           wrapping flex group that inherits the bar's gap: when the badges
           (due count, content updates, XP) plus avatar and theme toggle
           do not fit beside the hamburger and the logo, the cluster
@@ -313,7 +314,7 @@ export default function Navigation() {
           single-row layout (the children stay direct flex items of the
           nav, as before). */}
       <div
-        className="nav-status flex min-w-0 flex-wrap items-center justify-end gap-[inherit] md:contents"
+        className="flex min-w-0 flex-wrap items-center justify-end gap-[inherit] md:contents"
         data-testid="nav-status"
       >
         <NavReviewsBadge />
