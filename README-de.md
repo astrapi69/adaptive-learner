@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.14.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.15.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Nachtschicht](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -261,26 +261,24 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.14.0**: ein
-optionaler **Spielmodus** mit Combo-Streaks, fliegenden Punkten,
-Checkpoints, Antwort-Physik und spielerischer Herzen-/
-Countdown-Spannung, kombinierbar mit neuen **Arcade-Minispielen**
-(Lern-Memory, Snake, TicTacToe, ein Simon-Farbfolgenspiel), die per
-XP freigeschaltet werden, plus Blitzrunden bei Set-Abschluss. Das
-**Lernfunke-Maskottchen** bekommt freischaltbare Farbvarianten, und
-Avatare erhalten eine Preset-Galerie, XP-gebundene Rahmen und einen
-Foto-Zwischenspeicher mit Bestätigungsdialog. Die
-**Content-Navigation** ist gereift: eine Set-Seite listet ihre
-Lektionen mit Fortschritt, eine Lektion zeigt ihre Position im Set,
-und eine Set-Abschluss-Übersicht sammelt jeden Fehler eines Sets an
-einem Ort. Drei neue Extension-Typen sind erstmals über den
-Erstellungs-Assistenten wählbar: **al-speak-and-record**,
-**al-audio-choice**, **al-audio-tiles**. Vollständige Notizen:
-[`changelog/releases/v2.14.0.md`](changelog/releases/v2.14.0.md).
+Aktive Entwicklung. Das aktuelle Release ist **v2.15.0**:
+**parametrische Übungen**, deren Werte bei jedem Versuch neu gezogen
+werden, drei neue Übungstypen (**Hotspot**, **Parsons**, **Ordering**),
+die sich im Lektions-Assistenten erstellen lassen, und **Erklärungen**,
+die nach einer Antwort erscheinen. Eine Lektion endet jetzt mit einer
+**kompakten Zusammenfassung**, die **ausführliche Auswertung** zeigt den
+vollständigen Rückblick, und die Position wird ab dem ersten
+Schrittwechsel gesichert. Die **Einstellungen** sind in beschriftete
+Abschnitte mit Abschnittsleisten auf den Reitern Lernen und Daten
+gegliedert, **Aktualisieren** unter Meine Inhalte spielt alle verfügbaren
+Set-Updates auf einmal ein, und Impressum und Datenschutzerklärung stehen
+auf Deutsch und Englisch bereit. Vollständige Notizen:
+[`changelog/releases/v2.15.0.md`](changelog/releases/v2.15.0.md).
 
 Frühere Releases, neueste zuerst (vollständige Details in
 [`changelog/releases/`](changelog/releases/)):
 
+- **v2.14.0** - optionaler Spielmodus (Combo-Streaks, Checkpoints, Antwort-Physik, Herzen/Countdown) mit per XP freigeschalteten Arcade-Minispielen, Farbvarianten für das Maskottchen und Avatar-Presets/-Rahmen, Set-Seiten mit Lektionsfortschritt und eine Set-Abschluss-Übersicht, drei Audio-/Sprach-Extension-Typen im Erstellungs-Assistenten.
 - **v2.13.0** - Aufgaben-Typ-Konvertierung direkt im Lesson-Editor, eine auffindbare "Als Kopie bearbeiten"-Aktion für heruntergeladene Content-Sets, eine große UI-Konsolidierung (gemeinsame Settings-/Modal-/DashboardCard-Komponenten, shadcn Button), FastAPI-0.141- + TipTap-3.30-Dependency-Auffrischung.
 - **v2.8.0** - Vertriebswechsel: der Desktop-Launcher bezieht jetzt ein veröffentlichtes, je Architektur verifiziertes Image aus der GHCR statt auf dem Gerät zu bauen, abgesichert durch einen Volume-Migrations-Stopp; Bildbeschreibungs-Aufgaben (`ext:al-image-description`), Löschen einzelner Lektionen, ein Set-Update-Wächter gegen still verwaisenden Lernfortschritt.
 - **v2.6.x** - Sitzungs-Chat neu auf assistant-ui aufgebaut, Buch-Pfad von Create-Lesson zum echten Ingestion-Werkzeug (Buchdatei-Upload, Kapitel-Mehrfachauswahl, Batch-Generierung), Diktat-Authoring mit Audio-Upload komplettiert.

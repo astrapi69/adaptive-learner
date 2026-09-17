@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.14.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.15.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Night shift](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -339,24 +339,22 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.14.0**: an optional
-**Spielmodus (game mode)** with combo streaks, flying points,
-checkpoints, answer physics, and playful hearts/countdown tension,
-stackable with new **arcade minigames** (Lern-Memory, Snake,
-TicTacToe, a Simon color-sequence game) unlocked through XP, plus
-flash rounds at set completion. The **Lernfunke mascot** gains
-unlockable color variants, and avatars get a preset gallery, XP-gated
-frames, and a photo-staging confirmation dialog. **Content
-navigation** grew up: a set page lists its lessons with progress, a
-lesson shows its position in the set, and a set-completion review
-collects every mistake of a set in one place. Three new extension
-types are adoptable from the creation wizard: **al-speak-and-record**,
-**al-audio-choice**, **al-audio-tiles**. Full notes:
-[`changelog/releases/v2.14.0.md`](changelog/releases/v2.14.0.md).
+Active development. The current release is **v2.15.0**: **parametric
+exercises** whose values are drawn fresh for every attempt, three new
+exercise types (**Hotspot**, **Parsons**, **Ordering**) authorable in the
+lesson creator, and **explanations** shown after an answer. A lesson now
+ends with a **compact summary**, with a **Detailed evaluation** for the full
+review, and your place is saved from the first step change. **Settings**
+were reorganised into labelled sections with section bars on the Learning
+and Data tabs, **Refresh** in My content applies every available set update
+at once, and a legal notice and privacy policy are available in German and
+English. Full notes:
+[`changelog/releases/v2.15.0.md`](changelog/releases/v2.15.0.md).
 
 Earlier releases, newest first (full details in
 [`changelog/releases/`](changelog/releases/)):
 
+- **v2.14.0** - optional Game Mode (combo streaks, checkpoints, answer physics, hearts/countdown) with XP-unlocked arcade minigames, mascot colour variants and avatar presets/frames, set pages with lesson progress and a set-completion review, three audio/speech extension types adoptable from the creation wizard.
 - **v2.13.0** - in-place exercise-type conversion in the lesson editor, a discoverable "Edit as a copy" action on downloaded content sets, a large UI-consolidation pass (shared Settings/Modal/DashboardCard components, shadcn Button), FastAPI 0.141 + TipTap 3.30 dependency refresh.
 - **v2.8.0** - distribution switch: the desktop launcher pulls a published, per-architecture verified image from GHCR instead of building on-device, guarded by a volume-migration stop; image-description exercises (`ext:al-image-description`), single-lesson deletion, a set-update guard against silently orphaning learning progress.
 - **v2.6.x** - session chat rebuilt on assistant-ui, Create-Lesson's book path became a real ingestion tool (book-file upload, chapter multi-select, batch generation), dictation authoring completed with audio-file upload.
