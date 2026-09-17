@@ -18,9 +18,9 @@ Pins:
 
 All tests use ``httpx.MockTransport`` patched onto
 ``httpx.AsyncClient`` so zero real network calls fire. The
-plugin's filesystem cache lives under the test-isolated
-``get_cache_dir()`` (the conftest tmp dir) so the production
-marker tripwire stays armed.
+plugin's filesystem cache lives under ``get_cache_dir()``, which
+conftest pins to a tmp dir via ``ADAPTIVE_LEARNER_CACHE_DIR``
+(#3145), so the developer's real cache is never touched.
 """
 
 from __future__ import annotations
@@ -121,8 +121,8 @@ def _clean_cache():
     """Wipe the Content-Loader cache between tests.
 
     The plugin caches under ``get_cache_dir()/content-loader/``;
-    the test conftest sets ADAPTIVE_LEARNER_DATA_DIR to a tmp
-    path so the cache lives there for the whole run. Without
+    the test conftest pins ADAPTIVE_LEARNER_CACHE_DIR to a tmp
+    path (#3145) so the cache lives there for the whole run. Without
     this fixture, downloads from earlier tests would leak into
     later tests' assertions (e.g. ``test_list_lessons_uncached_returns_404``
     would see the set cached by ``test_download_then_list_lessons``).
@@ -191,7 +191,7 @@ def test_list_sets_carries_visibility_flag(client: TestClient) -> None:
     # straight through (the frontend filters on it, in BOTH storage modes);
     # ``hidden`` is carried, a set without the field defaults to ``visible``.
     manifest = textwrap.dedent(
-        f"""
+        """
         schema_version: '1.0'
         name: Visibility Test
         sets:

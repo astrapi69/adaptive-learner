@@ -119,6 +119,16 @@ if "ADAPTIVE_LEARNER_CONFIG_DIR" not in os.environ:
         prefix="adaptive-learner-test-config-"
     )
 
+# #3145: get_cache_dir() does not derive from the data dir. Unpinned it
+# resolved to the real ~/.cache/adaptive_learner, and the autouse
+# _isolate_content_cache fixture deleted the developer's content-loader
+# cache around every test; two concurrent runs also cleared each other's
+# cache mid-test. tests/test_pytest_path_isolation.py pins the class.
+if "ADAPTIVE_LEARNER_CACHE_DIR" not in os.environ:
+    os.environ["ADAPTIVE_LEARNER_CACHE_DIR"] = tempfile.mkdtemp(
+        prefix="adaptive-learner-test-cache-"
+    )
+
 # 41+ test modules open a FastAPI TestClient, each of which triggers the
 # app lifespan startup path. Starlette's TestClient recurses through its
 # receive loop on each startup; combined with the async thread-runner
@@ -199,12 +209,17 @@ def _verify_test_isolation() -> None:
 
     # Make sure the upload subtree exists for the rest of the run.
     get_upload_dir().mkdir(parents=True, exist_ok=True)
-    # Sanity: ADAPTIVE_LEARNER_DATA_DIR points somewhere temporary.
-    resolved = Path(os.environ["ADAPTIVE_LEARNER_DATA_DIR"]).resolve()
-    assert "test" in resolved.name.lower() or resolved.parts[1:2] == ("tmp",), (
-        f"FATAL: ADAPTIVE_LEARNER_DATA_DIR={resolved} does not look like a test "
-        f"path. Set it explicitly to a /tmp/... directory."
-    )
+    # Sanity: every path env var points somewhere temporary.
+    for env_name in (
+        "ADAPTIVE_LEARNER_DATA_DIR",
+        "ADAPTIVE_LEARNER_CONFIG_DIR",
+        "ADAPTIVE_LEARNER_CACHE_DIR",
+    ):
+        resolved = Path(os.environ[env_name]).resolve()
+        assert "test" in resolved.name.lower() or resolved.parts[1:2] == ("tmp",), (
+            f"FATAL: {env_name}={resolved} does not look like a test "
+            f"path. Set it explicitly to a /tmp/... directory."
+        )
 
 
 @pytest.fixture(autouse=True)
@@ -245,8 +260,9 @@ def _isolate_secrets_files() -> None:
 def _isolate_content_cache() -> None:
     """Wipe the content-loader cache between tests (#164).
 
-    ``ADAPTIVE_LEARNER_DATA_DIR`` is set once per session, so
-    ``get_cache_dir() / "content-loader"`` is SHARED across every test.
+    ``ADAPTIVE_LEARNER_CACHE_DIR`` is pinned to one tmp dir per session
+    (#3145), so ``get_cache_dir() / "content-loader"`` is SHARED across
+    every test of the run, and never the developer's real cache.
     Tests that ``store_set`` (or download) a content set leave it there,
     and a later test that asserts a clean cache count — notably
     ``test_backup_acceptance_roundtrip`` (``content_sets == 1`` at export)
