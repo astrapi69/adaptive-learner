@@ -342,12 +342,13 @@ the in-repo files above are for contributors.
 Active development. The current release is **v2.15.0**: **parametric
 exercises** whose values are drawn fresh for every attempt, three new
 exercise types (**Hotspot**, **Parsons**, **Ordering**) authorable in the
-lesson creator, and **explanations** shown after an answer. A lesson now
-ends with a **compact summary**, with a **Detailed evaluation** for the full
+lesson creator, and **explanations** shown after an answer. Unless you have
+customised the summary sections, a lesson now ends with a **compact summary**, with a **Detailed evaluation** for the full
 review, and your place is saved from the first step change. **Settings**
 were reorganised into labelled sections with section bars on the Learning
 and Data tabs, **Refresh** in My content applies every available set update
-at once, and a legal notice and privacy policy are available in German and
+at once, holding back those that would affect your
+progress, and a legal notice and privacy policy are available in German and
 English. Full notes:
 [`changelog/releases/v2.15.0.md`](changelog/releases/v2.15.0.md).
 
@@ -356,6 +357,11 @@ Earlier releases, newest first (full details in
 
 - **v2.14.0** - optional Game Mode (combo streaks, checkpoints, answer physics, hearts/countdown) with XP-unlocked arcade minigames, mascot colour variants and avatar presets/frames, set pages with lesson progress and a set-completion review, three audio/speech extension types adoptable from the creation wizard.
 - **v2.13.0** - in-place exercise-type conversion in the lesson editor, a discoverable "Edit as a copy" action on downloaded content sets, a large UI-consolidation pass (shared Settings/Modal/DashboardCard components, shadcn Button), FastAPI 0.141 + TipTap 3.30 dependency refresh.
+- **v2.12.0** - restart a finished set as a fresh run (a "Durchgang") with the spaced-repetition history carried along, key import from a Topos `.alk` export, Perplexity as a backend AI provider.
+- **v2.11.0** - learning progress anchored to stable identities (one-time local migration), so content corrections no longer orphan review cards; a reworked matching-exercise layout.
+- **v2.10.0** - security release: the app binds to `127.0.0.1` and is reachable only from your own computer instead of on every network interface.
+- **v2.9.0** - the downloaded launcher can be closed again on desktops without a system tray.
+- **v2.8.2** - security patch on v2.8.0: no more white page in image mode, and the bare container no longer defaults to debug mode.
 - **v2.8.0** - distribution switch: the desktop launcher pulls a published, per-architecture verified image from GHCR instead of building on-device, guarded by a volume-migration stop; image-description exercises (`ext:al-image-description`), single-lesson deletion, a set-update guard against silently orphaning learning progress.
 - **v2.6.x** - session chat rebuilt on assistant-ui, Create-Lesson's book path became a real ingestion tool (book-file upload, chapter multi-select, batch generation), dictation authoring completed with audio-file upload.
 - **v2.5.0** - Create-Lesson became a full exercise authoring tool (every core type editable, hand-added exercises, an extension-authoring wizard for all AI-authored extension types plus `ext:al-dictation`); PWA updates and the AI key vault became consumed npm packages (`@astrapi69/pwa-update`, `@astrapi69/ai-key-vault`).
