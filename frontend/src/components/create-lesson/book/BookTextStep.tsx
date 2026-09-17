@@ -119,6 +119,10 @@ export default function BookTextStep({
         loadAssistantTypes(),
     );
     const [missingTypes, setMissingTypes] = useState<string[]>([]);
+    // #2992 — post-answer explanations per exercise. Opt-in and deliberately
+    // NOT remembered across runs: it costs roughly a third to half more
+    // output tokens per exercise, so every run asks again.
+    const [explanations, setExplanations] = useState(false);
 
     function changeTypes(types: string[]) {
         setSelectedTypes(types);
@@ -153,6 +157,7 @@ export default function BookTextStep({
                     ),
                     maxSectionChars: MAX_SECTION_CHARS,
                     types: selectedTypes,
+                    explanations,
                 },
                 {
                     generateTheory,
@@ -232,6 +237,7 @@ export default function BookTextStep({
                 language,
                 // #2510 — restrict generation to the user's selected types.
                 types: selectedTypes,
+                explanations,
             });
             const {exercises} = cardsToExercises(result.cards, {
                 clozePrompt: t(
@@ -367,6 +373,34 @@ export default function BookTextStep({
                 onChange={changeTypes}
                 t={t}
             />
+
+            {/* #2992 — opt-in post-answer explanations (token cost). */}
+            <label
+                className="flex items-start gap-2"
+                data-testid="book-explanations-field"
+            >
+                <input
+                    type="checkbox"
+                    className="mt-1 accent-[var(--accent)]"
+                    data-testid="book-explanations"
+                    checked={explanations}
+                    onChange={(e) => setExplanations(e.target.checked)}
+                />
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-sm font-medium text-fg-primary">
+                        {t(
+                            "create_lesson.book.explanations_label",
+                            "Generate explanations (shown after the answer)",
+                        )}
+                    </span>
+                    <FormHint as="span">
+                        {t(
+                            "create_lesson.book.explanations_hint",
+                            "Adds a rule, a word-for-word gloss and further examples to each exercise. Roughly a third to half more AI output per exercise.",
+                        )}
+                    </FormHint>
+                </span>
+            </label>
 
             <label className="flex flex-col gap-1.5">
                 <span className="text-sm font-medium text-fg-primary">

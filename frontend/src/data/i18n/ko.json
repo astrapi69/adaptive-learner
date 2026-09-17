@@ -237,6 +237,8 @@
     "choose_language": "언어를 선택하세요",
     "start_button": "학습 여정을 시작하세요",
     "docs_link": "문서 읽기",
+    "imprint_link": "운영자 정보",
+    "privacy_link": "개인정보 처리방침",
     "checking_session": "다시 오신 것을 환영합니다…",
     "recovered_toast": "다시 오신 것을 환영합니다! 학습 데이터가 그대로 남아 있습니다.",
     "intro": "Adaptive Learner는 연구로 입증된 여섯 가지 학습법 중 당신에게 가장 잘 맞는 방법을 찾아내고, 모든 세션에서 일곱 단계 주기를 안내합니다.",
@@ -579,8 +581,8 @@
     },
     "section_review": "복습",
     "section_srs": "분산 반복",
-    "explanations_enabled": "오류 설명 표시",
-    "explanations_enabled_desc": "레슨 후 각 오답에 대해 짧은 규칙 팁을 표시합니다.",
+    "explanations_enabled": "설명 표시",
+    "explanations_enabled_desc": "답변 후 연습 문제의 설명을, 레슨 후 각 오답에 대한 짧은 규칙 팁을 표시합니다.",
     "section_hints": "힌트",
     "section_lesson_summary": "레슨 후 요약",
     "summary_sections_desc": "레슨이 끝날 때 요약에 표시할 섹션과 그 순서를 선택하세요. 계속 진행하기 위한 동작은 항상 표시됩니다.",
@@ -721,7 +723,23 @@
     "nav_aria": "설정 탐색",
     "tab_ai": "AI",
     "tab_learning": "학습",
+    "learning_nav_aria": "학습 섹션",
+    "data_nav_aria": "데이터 섹션",
     "tab_plugins": "플러그인",
+    "plugins_installed_title": "설치된 플러그인",
+    "plugins_installed_desc": "데스크톱 앱이 불러온 모든 플러그인을 버전, 출처, 활성화 시각과 함께 표시합니다 (PluginForge 수명 주기).",
+    "plugins_col_name": "플러그인",
+    "plugins_col_version": "버전",
+    "plugins_col_source": "출처",
+    "plugins_col_activated": "활성화됨",
+    "plugins_source_entry_point": "패키지",
+    "plugins_source_direct": "직접 등록",
+    "plugins_marker_load_error": "로드 오류",
+    "plugins_marker_filtered": "필터링됨",
+    "plugins_marker_config_changed": "설정 변경됨",
+    "plugins_empty": "불러온 플러그인이 없습니다.",
+    "plugins_loading": "플러그인을 읽는 중…",
+    "plugins_error_load": "플러그인 상태를 읽을 수 없습니다",
     "tab_data": "데이터",
     "tab_help": "도움말",
     "tab_diagnostics": "진단 및 지원",
@@ -729,6 +747,30 @@
     "tabs_aria": "설정 섹션",
     "section_feedback": "피드백",
     "section_interaction": "상호작용",
+    "cluster_basics": "기본",
+    "cluster_basics_desc": "누가, 어떤 언어로 학습하는지.",
+    "cluster_lessons": "레슨 중",
+    "cluster_lessons_desc": "답하는 동안 연습 문제가 동작하는 방식.",
+    "cluster_voice": "읽어주기와 받아쓰기",
+    "cluster_voice_desc": "음성, 속도, 마이크, 발음 연습.",
+    "cluster_review": "레슨 후",
+    "cluster_review_desc": "복습 세션, 레슨 요약, 틀린 문제 다시 풀기.",
+    "cluster_motivation": "동기 부여와 루틴",
+    "cluster_motivation_desc": "게임 모드, 피드백, 일일 미션, 알림.",
+    "cluster_data_sources": "소스",
+    "cluster_data_sources_desc": "콘텐츠 저장소와 디렉터리 등록.",
+    "cluster_data_sync": "동기화",
+    "cluster_data_sync_desc": "기기를 연결하고 데이터를 맞춥니다.",
+    "cluster_data_offline": "오프라인 콘텐츠",
+    "cluster_data_offline_desc": "레슨 캐시와 저장된 레슨의 크기.",
+    "cluster_data_backup": "백업 및 내보내기",
+    "cluster_data_backup_desc": "백업, 신원, 키, 내보내기.",
+    "cluster_data_cleanup": "정리",
+    "cluster_data_cleanup_desc": "일시정지 레슨 보관과 고아 데이터.",
+    "cluster_data_danger": "위험 구역",
+    "cluster_data_danger_desc": "되돌릴 수 없음: 모두 삭제.",
+    "sounds_volume_shared_hint": "게임 모드 사운드에도 적용됩니다.",
+    "feedback_intensity_playful_hint": "게임 모드가 켜져 있어 이 설정과 관계없이 피드백은 항상 '상세하게'로 표시됩니다.",
     "missions_title": "일일 미션",
     "missions_enabled": "일일 미션",
     "missions_enabled_hint": "매일 대시보드에 달성 가능한 목표 몇 가지를 표시합니다. 선택 사항이며 없어도 앱은 동일하게 작동합니다.",
@@ -785,6 +827,13 @@
     "playful_mode": "놀이형 레슨",
     "playful_mode_description": "레슨을 게임처럼 바꿉니다: 정답마다 칭찬, 색종이, 이정표 축하가 나타납니다. 모든 레슨 모드에서 작동하며 채점과 진행 상황은 그대로입니다. 시스템에서 동작 줄이기가 켜져 있으면 피드백은 계속 차분하게 유지됩니다.",
     "playful_sounds": "게임 모드 사운드",
+    "playful_details": "게임 모드 세부 설정",
+    "playful_details_hint": "하트, 카운트다운, 아케이드, 특별 라운드, 티켓, 보너스 레슨, 연속 XP, 마스코트.",
+    "playful_details_off_notice": "이 옵션을 변경하려면 '놀이형 레슨'을 켜세요.",
+    "playful_cluster_tension": "긴장감",
+    "playful_cluster_arcade": "아케이드와 보상",
+    "playful_cluster_xp": "XP와 마스코트",
+    "playful_summary": "{total}개 중 {on}개 추가 기능 켜짐",
     "playful_sounds_description": "게임 모드의 짧은 효과음: 정답마다 울리는 톤(연속 정답마다 음이 높아집니다), 체크포인트 징글, 완료 팡파르. 전체 사운드 스위치와 독립적이며 음량은 슬라이더를 따릅니다.",
     "playful_sounds_offer": "사운드와 함께 플레이할까요?",
     "playful_sounds_offer_yes": "네, 사운드 켜기",
@@ -1166,7 +1215,9 @@
     "docs_label": "문서",
     "tutorial_label": "앱 튜토리얼",
     "tutorial_link": "튜토리얼 바로 열기",
-    "issues_label": "이슈"
+    "issues_label": "이슈",
+    "imprint_label": "운영자 정보",
+    "privacy_label": "개인정보 처리방침"
   },
   "backup": {
     "section_title": "백업",
@@ -2401,6 +2452,11 @@
         "productive_hint": "답을 산출하세요"
       }
     },
+    "explanation": {
+      "title": "설명",
+      "show": "왜 그럴까요?",
+      "hide": "설명 숨기기"
+    },
     "summary": {
       "heading": "완료했습니다",
       "aria_label": "레슨 요약",
@@ -2416,6 +2472,10 @@
       "breakdown_heading": "연습 상세",
       "breakdown_correct_answer": "정답: {answer}",
       "breakdown_unattempted": "시도 안 함",
+      "detailed_hide": "간단한 평가",
+      "detailed_hint": "이번 회차의 핵심 수치, 문제 유형별 오답, 약점, 모든 답과 모든 오답 설명을 보여줍니다",
+      "detailed_show": "자세한 평가",
+      "review_subtitle": "이 레슨의 모든 오답을 한눈에",
       "view_all_answers": "모든 답 보기 ({n})",
       "export": {
         "copy": "결과 복사",
@@ -2603,7 +2663,8 @@
       "bonus_badge": "보너스",
       "bonus_locked_tooltip": "이 보너스 수업을 잠금 해제하려면 이 세트의 모든 일반 수업을 별 1개 이상으로 완료하세요.",
       "progress_done": "{total}개 중 {done}개 레슨 완료",
-      "current_lesson": "여기서 계속하기"
+      "current_lesson": "여기서 계속하기",
+      "lesson_completed": "완료됨"
     },
     "repo_export": {
       "button": "저장소로 공유",
@@ -2645,7 +2706,9 @@
       "progress": "단계 {n}/{total}",
       "imported_analysis": "가져온 분석",
       "lesson_fallback": "레슨",
-      "lesson_part": "{label} · 파트 {n}"
+      "lesson_part": "{label} · 파트 {n}",
+      "dismiss": "학습 이어가기에서 숨기기",
+      "dismissed": "학습 이어가기에서 숨겼습니다. 다시 학습하면 또 나타납니다."
     },
     "import_chat": {
       "button": "채팅 가져오기"
@@ -2902,16 +2965,23 @@
       "update_available": "업데이트 가능",
       "downloading": "다운로드 중…"
     },
+    "tab": {
+      "create": "만들기"
+    },
     "action": {
       "refresh": "새로고침",
       "refreshing": "새로고침 중…",
+      "refresh_hint": "목록을 다시 불러오고 사용 가능한 모든 업데이트 적용",
       "download": "다운로드",
       "update": "업데이트",
       "installed": "설치됨",
       "open": "열기"
     },
     "toast": {
-      "downloaded": "세트를 다운로드했으며 사용할 준비가 되었습니다."
+      "downloaded": "세트를 다운로드했으며 사용할 준비가 되었습니다.",
+      "updated_all": "세트 {n}개를 업데이트했습니다.",
+      "updates_held_named": "학습 진행에 영향을 주므로 보류되었습니다: {titles}. 각 세트의 업데이트 버튼으로 하나씩 확인하세요.",
+      "all_up_to_date": "모든 세트가 최신 상태입니다."
     },
     "warning": {
       "no_lessons_in_set": "이 세트에는 아직 레슨이 없습니다."
@@ -2919,6 +2989,7 @@
     "error": {
       "list_failed": "콘텐츠 세트를 불러올 수 없었습니다.",
       "download_failed": "세트를 다운로드할 수 없었습니다.",
+      "update_all_failed": "업데이트 {n}개가 실패했습니다.",
       "open_failed": "레슨을 열 수 없었습니다."
     },
     "tree": {
@@ -3004,6 +3075,20 @@
       "checked_with": "검사 도구",
       "date": "날짜",
       "recheck": "다시 검사",
+      "fix": {
+        "button": "제안 적용",
+        "own_only": "내 레슨에만 해당합니다.",
+        "title": "제안 적용",
+        "intro": "각 행을 확인하세요. 체크한 행만 기록됩니다. 값 대신 설명만 있는 제안은 제외하세요.",
+        "current": "현재",
+        "manual_count": "{count}개 항목은 적용할 값이 없어 수동으로 남습니다.",
+        "confirm": "카드 {cards}개의 {fields}개 필드 적용",
+        "applied": "{fields}개 필드를 적용했습니다. 보고서가 오래되었으니 세트를 다시 검사하세요.",
+        "undo": "마지막 적용 되돌리기",
+        "undone": "적용을 되돌렸습니다.",
+        "failed": "제안을 적용할 수 없습니다",
+        "none_applicable": "이 보고서에는 적용할 수 있는 제안이 없습니다."
+      },
       "export": {
         "button": "보고서를 마크다운으로 내보내기",
         "lesson": "레슨",
@@ -3260,6 +3345,8 @@
         "unavailable_reason": "이미지와 오디오는 텍스트로 생성할 수 없습니다. 이러한 유형은 나중에 편집기에서 추가할 수 있습니다.",
         "floor_hint": "최소한 하나의 문제 유형은 선택된 상태로 유지해야 합니다."
       },
+      "explanations_label": "해설 생성 (답변 후 표시)",
+      "explanations_hint": "각 문제에 규칙, 단어별 직역, 추가 예문을 더합니다. 문제당 AI 출력이 약 3분의 1에서 절반 정도 늘어납니다.",
       "generate_to_advance": "계속하려면 텍스트에서 레슨을 생성하세요.",
       "review_theory": "이론 단계 {n}개",
       "review_exercises": "연습문제 {n}개",
@@ -3355,6 +3442,32 @@
         "too_large": "이미지가 너무 큽니다. 더 작은 이미지를 사용해 보세요.",
         "decode_failed": "이미지를 읽을 수 없습니다. 다른 파일을 사용해 보세요."
       },
+      "token_roles": {
+        "label": "단어 역할 (선택)",
+        "hint": "앞면의 개별 단어에 문법 역할을 표시합니다. 빈칸 채우기 문제가 위치가 아니라 의미 있는 자리를 비웁니다.",
+        "add": "역할 추가",
+        "remove": "역할 삭제",
+        "token_placeholder": "앞면의 단어",
+        "role_label": "역할",
+        "suggest": "역할 제안",
+        "suggest_none": "단어를 인식하지 못했습니다. 역할을 직접 입력하세요.",
+        "suggest_hint": "제안은 추측입니다. 저장하기 전에 각 줄을 확인하세요.",
+        "count": "역할 {max}개 중 {n}개",
+        "error": {
+          "not_in_front": "\"{token}\"은(는) 앞면에 그대로 나타나지 않습니다. 앞면과 똑같이 입력하세요.",
+          "duplicate": "\"{token}\"은(는) 이미 표시되어 있습니다.",
+          "max_reached": "카드 하나에 역할을 {max}개 넘게 지정할 수 없습니다."
+        },
+        "role": {
+          "article": "관사",
+          "verb": "동사",
+          "noun": "명사",
+          "adjective": "형용사",
+          "preposition": "전치사",
+          "gender_marker": "성 표지",
+          "tense_marker": "시제 표지"
+        }
+      },
       "add": "카드 추가",
       "import_csv": "CSV 가져오기",
       "csv_hint": "앞면, 뒷면, 메모를 행으로 붙여넣으세요 (쉼표 또는 탭으로 구분). 예: Bonjour, Guten Tag, 격식 있는 인사",
@@ -3377,6 +3490,11 @@
       "continue": "계속"
     },
     "exercises": {
+      "summary": {
+        "pairs": "{n}개의 쌍",
+        "images": "{n}개의 이미지",
+        "options": "{n}개의 답 선택지"
+      },
       "heading": "연습 생성",
       "count_label": "연습 개수",
       "types_label": "연습 유형",
@@ -3453,7 +3571,13 @@
         "err_free_text": "허용되는 답을 하나 이상 추가하세요.",
         "err_cloze": "각 ___ 표시에는 빈칸이 하나 필요하고, 각 빈칸에는 답이 필요합니다.",
         "err_word_tiles": "타일을 2개 이상 추가하세요.",
-        "err_picture_choice": "라벨과 이미지가 있는 이미지를 2개 이상 추가하고 정확히 하나를 정답으로 표시하세요."
+        "err_picture_choice": "라벨과 이미지가 있는 이미지를 2개 이상 추가하고 정확히 하나를 정답으로 표시하세요.",
+        "err_explanation": "해설이 너무 깁니다 (최대 2000자).",
+        "explanation_label": "답변 후 해설 (선택 사항, Markdown)",
+        "explanation_hint": "답변 후에 표시됩니다: 규칙, 단어별 직역, 추가 예문, 흔한 실수.",
+        "explanation_counter": "{n} / {max}자",
+        "explanation_template": "템플릿 삽입",
+        "explanation_template_body": "**규칙:** \n\n**단어별 직역:**\n- *단어* - 직역 (문법 메모)\n\n**추가 예문:**\n- *문장* - 번역\n\n**흔한 실수:** "
       },
       "dir": {
         "auto": "자동",
@@ -3491,6 +3615,7 @@
         "err_reading_comprehension": "지문과 완성된 문제를 하나 이상 추가하세요(정답이 있는 객관식 또는 허용 답안이 있는 주관식).",
         "err_graded_quiz": "양의 배점을 가진 완성된 문제를 하나 이상 추가하세요(정답이 있는 객관식 또는 허용 답안이 있는 주관식).",
         "err_dictation": "오디오 파일 경로와 최소 하나의 허용 전사를 추가하세요.",
+        "err_explanation": "해설이 너무 깁니다 (최대 2000자).",
         "dict_audio_label": "오디오",
         "dict_audio_placeholder": "assets/audio/clip.mp3",
         "dict_audio_hint": "세트의 assets 폴더 내 오디오 클립에 대한 상대 경로.",
@@ -3569,6 +3694,9 @@
         "parsons_language_label": "언어 (선택 사항, 구문 강조용)",
         "hotspot_image_label": "자극 이미지",
         "hotspot_image_preview_alt": "자극 이미지",
+        "hotspot_draw_label": "이미지에 구역 그리기",
+        "hotspot_canvas_alt": "드래그하여 구역 그리기",
+        "hotspot_canvas_aria": "이미지를 드래그하여 구역 그리기",
         "hotspot_zones_label": "클릭 가능한 구역",
         "hotspot_shape_rect": "직사각형",
         "hotspot_shape_circle": "원",
@@ -4533,6 +4661,11 @@
     "no_errors": "기록된 오답이 없습니다. 훌륭해요!",
     "lesson_errors": "오답 {count}개",
     "practice_errors": "오답 연습",
-    "back_to_set": "세트로 돌아가기"
+    "back_to_set": "세트로 돌아가기",
+    "element_type": {
+      "vocabulary": "어휘",
+      "grammar_rule": "문법 규칙",
+      "unknown": "알 수 없음"
+    }
   }
 }

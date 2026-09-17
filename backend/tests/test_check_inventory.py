@@ -16,32 +16,23 @@ building this gate and is pinned below.
 
 from __future__ import annotations
 
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
 
+from tests.repo_mirror import mirror_repo
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CHECKER = REPO_ROOT / "scripts" / "verify_check_inventory.py"
-MUTABLE = {"scripts", ".claude", "Makefile"}
 
 
 @pytest.fixture
 def mirror(tmp_path: Path) -> Path:
-    """A repo mirror: symlinks everywhere, real copies where a test writes."""
-    for entry in REPO_ROOT.iterdir():
-        if entry.name == ".git":
-            continue
-        if entry.name in MUTABLE:
-            if entry.is_dir():
-                shutil.copytree(entry, tmp_path / entry.name, symlinks=True)
-            else:
-                shutil.copy2(entry, tmp_path / entry.name)
-        else:
-            (tmp_path / entry.name).symlink_to(entry)
-    return tmp_path
+    """A repo mirror: symlinks everywhere, real copies where a test writes
+    (#3036: ``.claude/rules`` only, never the agent worktrees beside it)."""
+    return mirror_repo(tmp_path, mutable=("scripts", "Makefile")).root
 
 
 def _run(root: Path) -> subprocess.CompletedProcess[str]:
@@ -82,7 +73,7 @@ def test_red_when_an_active_check_loses_its_make_target(mirror: Path) -> None:
 
 def test_red_when_a_check_degrades_into_a_no_op(mirror: Path) -> None:
     """The real incident: the count regex stops matching, the check warns and returns."""
-    docs = mirror / "scripts" / "verify_docs.py"
+    docs = mirror / "scripts" / "verify_docs_test_counts.py"
     text = docs.read_text(encoding="utf-8")
     broken = text.replace(r"= \*{0,2}(\d+) tests\*{0,2}", r"= \*\*(\d+) tests\*\*")
     assert broken != text, "the TEST_COUNT_RE line moved - update this test with it"

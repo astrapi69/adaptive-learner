@@ -205,6 +205,87 @@ describe("ContentSetListView", () => {
 
   // #1300 — the per-set overflow menu (status + delete) appears in the list
   // view when handlers are supplied, and never otherwise.
+  describe("pending update in the row (#3081)", () => {
+    it("shows no marker and no Update button for an up-to-date set", () => {
+      render(
+        <MemoryRouter>
+          <ContentSetListView sets={[entry({ id: "ja-a1" })]} onUpdate={vi.fn()} />
+        </MemoryRouter>,
+      );
+      expect(screen.queryByTestId("content-list-set-ja-a1-update")).toBeNull();
+      expect(screen.queryByTestId("content-list-set-ja-a1-update-button")).toBeNull();
+    });
+
+    it("marks a set with update_available and applies the update from the row", () => {
+      const onUpdate = vi.fn();
+      const held = entry({ id: "rhetorik", title: "Psychologie der Rhetorik", update_available: true });
+      render(
+        <MemoryRouter>
+          <ContentSetListView sets={[held]} onUpdate={onUpdate} />
+        </MemoryRouter>,
+      );
+      expect(screen.getByTestId("content-list-set-rhetorik-update")).toHaveTextContent(
+        "Update available",
+      );
+      const button = screen.getByTestId("content-list-set-rhetorik-update-button");
+      expect(button).toHaveAttribute("aria-label", "Update: Psychologie der Rhetorik");
+      fireEvent.click(button);
+      expect(onUpdate).toHaveBeenCalledTimes(1);
+      expect(onUpdate).toHaveBeenCalledWith(held);
+    });
+
+    it("keeps the marker but renders no button when no onUpdate handler is supplied", () => {
+      renderList([entry({ id: "rhetorik", update_available: true })]);
+      expect(screen.getByTestId("content-list-set-rhetorik-update")).toBeInTheDocument();
+      expect(screen.queryByTestId("content-list-set-rhetorik-update-button")).toBeNull();
+    });
+  });
+
+  // #3092 — on a phone the row's four 44 px tap targets left the title
+  // ~45 px; the update marker + button now form a group that drops to its
+  // own full-width line below ``sm`` while the title row stays as it is
+  // without an update.
+  describe("update group wraps to its own line on phones (#3092)", () => {
+    it("lets the row wrap so the update group can drop below the title", () => {
+      renderList([entry({ id: "rhetorik", update_available: true })]);
+      const link = screen.getByTestId("content-list-set-rhetorik");
+      expect((link.parentElement as HTMLElement).className).toContain("flex-wrap");
+    });
+
+    it("groups marker and button into a full-width, last-ordered line below sm", () => {
+      render(
+        <MemoryRouter>
+          <ContentSetListView
+            sets={[entry({ id: "rhetorik", update_available: true })]}
+            onUpdate={vi.fn()}
+          />
+        </MemoryRouter>,
+      );
+      const link = screen.getByTestId("content-list-set-rhetorik");
+      const group = screen.getByTestId("content-list-set-rhetorik-update-group");
+      expect(group.parentElement).toBe(link.parentElement);
+      expect(group.className).toContain("shrink-0");
+      expect(group.className).toContain("max-sm:basis-full");
+      expect(group.className).toContain("max-sm:order-last");
+      expect(group).toContainElement(screen.getByTestId("content-list-set-rhetorik-update"));
+      expect(group).toContainElement(
+        screen.getByTestId("content-list-set-rhetorik-update-button"),
+      );
+    });
+
+    it("shows the marker on every width now that it has its own line on phones", () => {
+      renderList([entry({ id: "rhetorik", update_available: true })]);
+      expect(screen.getByTestId("content-list-set-rhetorik-update").className).not.toContain(
+        "hidden",
+      );
+    });
+
+    it("renders no update group for an up-to-date set", () => {
+      renderList([entry({ id: "rhetorik" })]);
+      expect(screen.queryByTestId("content-list-set-rhetorik-update-group")).toBeNull();
+    });
+  });
+
   describe("status/delete overflow menu (#1300)", () => {
     it("hides the menu when no handlers are supplied", () => {
       renderList([entry({ id: "a", status: "active" })]);

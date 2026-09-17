@@ -1,10 +1,10 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.14.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.15.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Nachtschicht](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
-[![Tests](https://img.shields.io/badge/tests-10293%20grün-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/tests-12729%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
 
@@ -226,14 +226,14 @@ Tests. Wie viel die Suite tatsächlich fängt, prüft das Mutationstesten
 dessen Berichte sind CI-Artefakte je Shard, keine einzelne Rate -
 darum trägt die Mutationsrate kein Abzeichen (#2257).
 
-Verifiziert am 2026-07-24 (v2.6.0):
+Verifiziert am 2026-09-05 (v2.14.0):
 
 | Suite | Anzahl |
 |---|---|
-| Backend (pytest) | 1475 |
-| Plugins (13 × pytest) | 1096 |
-| Frontend (Vitest 4) | 7722 |
-| **Gesamt** | **10293** |
+| Backend (pytest) | 1824 |
+| Plugins (14 × pytest) | 1130 |
+| Frontend (Vitest) | 9775 |
+| **Gesamt** | **12729** |
 
 Plus 17 Playwright-Smoke-Spec-Dateien, die abdecken: Landing,
 Onboarding+Assessment, Sitzung (3-Chunk-SSE), Curriculum,
@@ -261,45 +261,54 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.14.0** (Sicherheits-Patch auf v2.8.0 - CSP #2197, Debug-Default #2198, Lesson-Validator-Eval #2205; v2.8.1 wurde nie veröffentlicht); das v2.8.0-Kernstück ist dessen
-Kernstück der **Vertriebswechsel** ist: Der Desktop-Launcher **bezieht
-jetzt ein veröffentlichtes, je Architektur verifiziertes Image aus der
-GHCR** statt auf dem Gerät zu bauen (Selbstbauen aus dem Quellbaum
-bleibt erhalten), abgesichert durch einen **Volume-Migrations-Stopp**,
-der nie still zwischen zwei Datenbeständen wählt. Die App ergänzt
-**Bildbeschreibungs-Aufgaben** (`ext:al-image-description`), das
-**Löschen einzelner Lektionen** und einen **Set-Update-Wächter**, der
-verhindert, dass Content-Updates Lernfortschritt still verwaisen
-lassen (Dialog in 11 Sprachen). Das vorige **v2.6.x** baute den
-**Sitzungs-Chat auf assistant-ui** neu auf, machte den Buch-Pfad von
-Create-Lesson zum echten Ingestion-Werkzeug (**Buchdatei-Upload** mit
-Kapitel-Mehrfachauswahl und Batch-Generierung), komplettierte das
-Diktat-Authoring mit **Audio-Upload** und härtete die CI. Das vorige
-**v2.5.0** machte **Create-Lesson zu
-einem vollwertigen Aufgaben-Editor**: jeder Kern-Aufgabentyp ist
-bearbeitbar, Aufgaben lassen sich von Hand ergänzen,
-`multiple_choice` ist mit einer Single/Multi-Umschaltung
-autorierbar, und ein **Extension-Authoring-Assistent** deckt alle
-vier KI-autorierten Extension-Typen ab; **`ext:al-dictation`
-(Audio-Diktat)** kam als fünfter Extension-Typ hinzu, und das
-PWA-Update-System sowie der KI-Schlüssel-Tresor werden als
-**veröffentlichte npm-Pakete konsumiert** (`@astrapi69/pwa-update`,
-`@astrapi69/ai-key-vault`). Das vorige **v2.4.0** brachte ein
-**Create-Lesson-Authoring-Upgrade** (eine Wissens-Lektion aus
-eingefügtem Lehrbuchtext, das Bearbeiten und Kombinieren eigener
-Lektionen sowie Karten-Bild-Upload),
-**Freitext-Aufgaben mit mehreren akzeptierten Antworten** samt einer
-KI-Zweitmeinung, einen **KI-Schlüssel-Import** direkt auf dem
-Einstellungen-KI-Tab und die auf **0.13.0 (Schema 1.8)** neu
-gepinnte Content-Engine. Das vorige **v2.3.0** vollendete den
-**EXP-044-CSS-Concern-Split** (`global.css` byte-identisch in
-Per-Concern-Legacy-Dateien zerlegt, hinter einem
-Byte-Identitäts-Gate), überarbeitete die **Lesson-Player-UX**
-(einklappbares Options-Panel, Pause-Steuerung im Footer, schlankerer
-Titelbereich), ergänzte **Listen-First-Audio** und einen
-Cold-Start-Prior aus der vom Autor gesetzten Schwierigkeit und
-härtete den Datei-Import/-Export von Lektionen/Sets. Per-Release-Notes
-in [`changelog/releases/`](changelog/releases/).
+Aktive Entwicklung. Das aktuelle Release ist **v2.15.0**:
+**parametrische Übungen**, deren Werte bei jedem Versuch neu gezogen
+werden, drei neue Übungstypen (**Hotspot**, **Parsons**, **Sortieren**),
+die sich unter "Lektion erstellen" anlegen lassen, und **Erklärungen**,
+die nach einer Antwort erscheinen. Wer die Abschnitte der
+Zusammenfassung nicht angepasst hat, sieht am Lektionsende jetzt eine
+**kompakte Zusammenfassung**; die **Ausführliche Auswertung** zeigt den
+vollständigen Rückblick, und deine Position in der Lektion wird ab dem
+ersten Schrittwechsel gesichert. Die **Einstellungen** sind in beschriftete
+Abschnitte mit Abschnittsleisten auf den Reitern Lernen und Daten
+gegliedert, **Aktualisieren** unter Meine Inhalte spielt alle verfügbaren
+Set-Updates auf einmal ein (außer denen, die deinen Lernfortschritt
+betreffen würden), und Impressum und Datenschutzerklärung stehen
+auf Deutsch und Englisch bereit. Vollständige Notizen:
+[`changelog/releases/v2.15.0.md`](changelog/releases/v2.15.0.md).
+
+Frühere Releases, neueste zuerst (vollständige Details in
+[`changelog/releases/`](changelog/releases/)):
+
+- **v2.14.0** - optionaler Spielmodus (Combo-Streaks, Checkpoints, Antwort-Physik, Herzen/Countdown) mit per XP freigeschalteten Arcade-Minispielen, Farbvarianten für das Maskottchen und Avatar-Presets/-Rahmen, Set-Seiten mit Lektionsfortschritt und eine Set-Abschluss-Übersicht, drei Audio-/Sprach-Extension-Typen im Erstellungs-Assistenten.
+- **v2.13.0** - Aufgaben-Typ-Konvertierung direkt im Lesson-Editor, eine auffindbare "Als Kopie bearbeiten"-Aktion für heruntergeladene Content-Sets, eine große UI-Konsolidierung (gemeinsame Settings-/Modal-/DashboardCard-Komponenten, shadcn Button), FastAPI-0.141- + TipTap-3.30-Dependency-Auffrischung.
+- **v2.12.0** - ein abgeschlossenes Set als neuen Durchgang starten, wobei der Wiederholungsverlauf erhalten bleibt, Schlüssel-Import aus einem Topos-`.alk`-Export, Perplexity als KI-Anbieter im Backend.
+- **v2.11.0** - Lernfortschritt an stabilen Identitäten verankert (einmalige lokale Migration), sodass Inhaltskorrekturen keine Wiederholungskarten mehr verwaisen lassen; überarbeitete Zuordnungsübung.
+- **v2.10.0** - Sicherheits-Release: Die App ist nur noch unter `127.0.0.1` und damit nur vom eigenen Rechner aus erreichbar statt auf jeder Netzwerkschnittstelle.
+- **v2.9.0** - der heruntergeladene Launcher lässt sich auf Desktops ohne Systemleiste wieder schließen.
+- **v2.8.2** - Sicherheits-Patch auf v2.8.0: keine weiße Seite mehr im Image-Modus, und der nackte Container startet nicht mehr im Debug-Modus.
+- **v2.8.0** - Vertriebswechsel: der Desktop-Launcher bezieht jetzt ein veröffentlichtes, je Architektur verifiziertes Image aus der GHCR statt auf dem Gerät zu bauen, abgesichert durch einen Volume-Migrations-Stopp; Bildbeschreibungs-Aufgaben (`ext:al-image-description`), Löschen einzelner Lektionen, ein Set-Update-Wächter gegen still verwaisenden Lernfortschritt.
+- **v2.6.x** - Sitzungs-Chat neu auf assistant-ui aufgebaut, Buch-Pfad von Create-Lesson zum echten Ingestion-Werkzeug (Buchdatei-Upload, Kapitel-Mehrfachauswahl, Batch-Generierung), Diktat-Authoring mit Audio-Upload komplettiert.
+- **v2.5.0** - Create-Lesson wurde ein vollwertiger Aufgaben-Editor (jeder Kern-Aufgabentyp bearbeitbar, Aufgaben von Hand ergänzbar, ein Extension-Authoring-Assistent für alle KI-autorierten Extension-Typen plus `ext:al-dictation`); PWA-Updates und KI-Schlüssel-Tresor wurden als konsumierte npm-Pakete ausgelagert (`@astrapi69/pwa-update`, `@astrapi69/ai-key-vault`).
+- **v2.4.0** - Create-Lesson-Authoring-Upgrade (Wissens-Lektion aus eingefügtem Text, Bearbeiten/Kombinieren eigener Lektionen, Karten-Bild-Upload), Freitext-Aufgaben mit mehreren akzeptierten Antworten samt KI-Zweitmeinung, Engine neu auf 0.13.0 (Schema 1.8) gepinnt für Bild-Uploads in Bildauswahl-Aufgaben.
+- **v2.3.0** - EXP-044-CSS-Concern-Split (byte-identitätsgegated), überarbeitete Lesson-Player-UX, Listen-First-Audio-Aufgaben, gehärteter Lektions-/Set-Import/-Export.
+- **v2.2.0** - eine Extension-Aufgaben-Stufe (vier KI-autorierte Typen), natives `multiple_choice`, Lesson-Schema/-Typen aus `learn-content-engine` konsumiert, ein föderiertes Content-Repository-Register.
+
+Ebenfalls ausgeliefert: das **Content-Hub**-Redesign (Discover /
+Meine Inhalte / Import-Tabs, Listen-/Raster-Umschalter, eine kompakte
+Such-/Filterleiste), das vollständige **Lesson-Modus-System**
+(Practice / Exam / Timed / Reverse / Shuffle / Endless +
+Train-Errors), **Cloze-Mehrfachauswahl**, ein SRS-Intervall-Boost im
+Exam-Modus, **passphrasenverschlüsselter `.alk`**-Schlüsselexport und
+eine Bereinigung der primären Navigation (eine Nav pro Viewport).
+
+## Unterstütze dieses Projekt
+
+Adaptive Learner wird von einer einzelnen Person entwickelt und
+gepflegt. Wenn es dir hilft, sind Spenden willkommen und fließen
+direkt in Entwicklungszeit - siehe [`DONATE-de.md`](DONATE-de.md)
+([`DONATE.md`](DONATE.md) für Englisch) für alle Kanäle (GitHub
+Sponsors, Liberapay, Ko-fi, PayPal) und die Beweggründe dahinter.
 
 ## Herkunft
 

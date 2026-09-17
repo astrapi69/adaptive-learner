@@ -39,7 +39,12 @@ const NEEDS_KEY = [
   FEATURES.PRONUNCIATION_GENERATE,
 ];
 
-const DESKTOP_ONLY = [FEATURES.SYNC, FEATURES.GIT_PERSIST, FEATURES.LEARNING_REPO_GIT];
+const DESKTOP_ONLY = [
+  FEATURES.SYNC,
+  FEATURES.GIT_PERSIST,
+  FEATURES.LEARNING_REPO_GIT,
+  FEATURES.PLUGIN_LIFECYCLE,
+];
 
 describe("featureRegistry", () => {
   it("keeps always-active features active in every context", () => {

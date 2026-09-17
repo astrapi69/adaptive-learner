@@ -130,6 +130,10 @@ export function buildLessonFromDraft(
         notes: c.notes.trim() || null,
         image: c.image.trim() || null,
         tags: [],
+        // #3072 - only write the field when the author annotated
+        // something; `null` is the schema default and keeps old lessons
+        // byte-identical through an edit round trip.
+        token_roles: c.tokenRoles?.length ? c.tokenRoles : null,
     }));
 
     const steps: ContentLessonStep[] = [];
@@ -217,6 +221,7 @@ export function lessonToDraftInput(
         back: c.back,
         notes: c.notes ?? "",
         image: c.image ?? "",
+        tokenRoles: c.token_roles ?? [],
     }));
     const exercises: ContentLessonExercise[] = lesson.steps
         .filter((s) => s.type === "exercise" && s.exercise)

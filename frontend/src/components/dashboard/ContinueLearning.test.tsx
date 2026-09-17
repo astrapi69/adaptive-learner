@@ -13,11 +13,14 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen, waitFor} from "@testing-library/react";
+import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
+
+import {notifyLessonProgressChanged} from "../../lib/lesson/progress/progress-change-event";
 import {MemoryRouter} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import ContinueLearning from "./ContinueLearning";
+import {dismissContinueRow} from "../../lib/content/browse/prefs/continue-dismissed-store";
 import {storeSetStatus} from "../../lib/content/browse/lifecycle/set-status-store";
 import type {LessonProgress} from "../../storage/types";
 
@@ -41,6 +44,10 @@ vi.mock("../../storage", () => ({
 
 vi.mock("../../hooks/ui/useI18n", () => ({
     useI18n: () => ({t: (_k: string, fb: string) => fb, lang: "en"}),
+}));
+
+vi.mock("../../utils/notify", () => ({
+    notify: {success: vi.fn(), error: vi.fn()},
 }));
 
 function progress(over: Partial<LessonProgress> & {
@@ -296,8 +303,8 @@ describe("ContinueLearning", () => {
         expect(items[1]).toHaveAttribute("data-testid", "continue-learning-item-c");
     });
 
-    // #2123 — a finished set with nothing due is not a "continue" target.
-    it("drops a completed set with no due reviews (honest empty state)", async () => {
+    // #3020 - a finished set is TAGGED as finished instead of vanishing.
+    it("tags a completed set with no due reviews as finished", async () => {
         listProgressMock.mockResolvedValue([
             progress({
                 set_id: "done",
@@ -317,12 +324,50 @@ describe("ContinueLearning", () => {
         reviewQueueMock.mockResolvedValue([]);
 
         renderSection({showWhenEmpty: true});
-        // The finished set is dropped; the honest empty state shows instead of
-        // proposing a set with nothing to do.
-        await screen.findByTestId("continue-learning-empty-link");
+        const badge = await screen.findByTestId("continue-learning-badge-done");
+        expect(badge).toHaveTextContent("Set completed");
+        // Revisiting the finished set stays possible.
         expect(
-            screen.queryByTestId("continue-learning-item-done"),
+            screen.getByTestId("continue-learning-link-done"),
+        ).toHaveAttribute("href", "/lesson/owner--repo/done/01.json");
+        // Not the empty state any more - there IS something to report.
+        expect(
+            screen.queryByTestId("continue-learning-empty-link"),
         ).not.toBeInTheDocument();
+    });
+
+    // #2123 stays pinned: the finish is reported, never as the top action.
+    it("keeps a still-open set above the finished tag", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({
+                set_id: "done",
+                lesson_filename: "01.json",
+                updated_at: "2026-06-09T10:00:00Z",
+                status: "completed",
+                score_correct: 10,
+                score_total: 10,
+            }),
+            progress({set_id: "open", lesson_filename: "02.json", updated_at: "2026-06-01T10:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [
+                {source: "owner/repo", id: "done", title: "Finished"},
+                {source: "owner/repo", id: "open", title: "Open"},
+            ],
+            sources: [],
+        });
+        listLessonsMock.mockImplementation(async (_src: string, setId: string) =>
+            setId === "done"
+                ? {lessons: ["01.json"]}
+                : {lessons: ["01.json", "02.json", "03.json"]},
+        );
+        reviewQueueMock.mockResolvedValue([]);
+
+        renderSection({});
+        await screen.findByTestId("continue-learning-item-open");
+        const items = screen.getAllByRole("listitem");
+        expect(items[0]).toHaveAttribute("data-testid", "continue-learning-item-open");
+        expect(items[1]).toHaveAttribute("data-testid", "continue-learning-item-done");
     });
 
     // #2123 — a completed set IS worth surfacing when cards are due, but as a
@@ -377,6 +422,76 @@ describe("ContinueLearning", () => {
         ).not.toBeInTheDocument();
     });
 
+    // #3023 - every row carries an X that takes it out of the block.
+    it("removes a row when its X is clicked and keeps it away on reload", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({set_id: "fr-a1", lesson_filename: "02.json", updated_at: "2026-06-03T10:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "fr-a1", title: "French A1"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json", "03.json"]});
+
+        const {unmount} = renderSection({});
+        const dismiss = await screen.findByTestId("continue-learning-dismiss-fr-a1");
+        fireEvent.click(dismiss);
+        await waitFor(() =>
+            expect(
+                screen.queryByTestId("continue-learning-item-fr-a1"),
+            ).not.toBeInTheDocument(),
+        );
+
+        // The decision is persisted: a fresh mount does not bring the row back.
+        unmount();
+        renderSection({showWhenEmpty: true});
+        await screen.findByTestId("continue-learning-empty-link");
+        expect(
+            screen.queryByTestId("continue-learning-item-fr-a1"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("brings a dismissed row back when the set is touched again (#3023)", async () => {
+        dismissContinueRow("owner/repo", "fr-a1", "2026-06-03T10:00:00Z", localStorage);
+        listProgressMock.mockResolvedValue([
+            // Newer activity than the dismissal - the learner came back to it.
+            progress({set_id: "fr-a1", lesson_filename: "02.json", updated_at: "2026-06-05T09:00:00Z"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "fr-a1", title: "French A1"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json", "03.json"]});
+
+        renderSection({});
+        expect(
+            await screen.findByTestId("continue-learning-item-fr-a1"),
+        ).toBeInTheDocument();
+    });
+
+    it("offers the X on a completed row too (#3023)", async () => {
+        listProgressMock.mockResolvedValue([
+            progress({
+                set_id: "done",
+                lesson_filename: "01.json",
+                updated_at: "2026-06-03T10:00:00Z",
+                status: "completed",
+                score_correct: 10,
+                score_total: 10,
+            }),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "done", title: "Finished"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json"]});
+
+        renderSection({});
+        expect(
+            await screen.findByTestId("continue-learning-dismiss-done"),
+        ).toBeInTheDocument();
+    });
+
     it("hides progress whose source repo was removed (#1445)", async () => {
         listProgressMock.mockResolvedValue([
             progress({source: "owner/repo", set_id: "fr-a1", lesson_filename: "01.json", updated_at: "2026-06-03T10:00:00Z"}),
@@ -397,5 +512,64 @@ describe("ContinueLearning", () => {
         // hidden even though it is newer.
         expect(items).toHaveLength(1);
         expect(items[0]).toHaveAttribute("data-testid", "continue-learning-item-fr-a1");
+    });
+});
+
+describe("ContinueLearning re-reads on a lesson-progress write (#3075)", () => {
+    it("re-runs its load when a write is announced", async () => {
+        listProgressMock.mockResolvedValue([]);
+        renderSection({showWhenEmpty: true});
+        await screen.findByTestId("continue-learning-empty-link");
+        expect(listProgressMock).toHaveBeenCalledTimes(1);
+
+        listProgressMock.mockResolvedValue([
+            progress({set_id: "fr-a1", lesson_filename: "02.json", updated_at: "2026-06-03T10:00:00Z", status: "paused"}),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "fr-a1", title: "French A1"}],
+            sources: [],
+        });
+        act(() => {
+            notifyLessonProgressChanged();
+        });
+
+        expect(await screen.findByTestId("continue-learning-resume-fr-a1")).toBeInTheDocument();
+        expect(listProgressMock).toHaveBeenCalledTimes(2);
+    });
+});
+
+describe("ContinueLearning resume step counter (#3076)", () => {
+    it("names the step the resume lands on, not the number of graded exercises", async () => {
+        // One graded exercise (index 2) and a persisted position on the
+        // theory step after it (index 3): the lesson reopens on step 4 of 8.
+        listProgressMock.mockResolvedValue([
+            progress({
+                set_id: "fr-a1",
+                lesson_filename: "02.json",
+                updated_at: "2026-06-03T10:00:00Z",
+                status: "paused",
+                step_results: {"ex-match": {correct: 1, total: 1, attempts: 1, completed_at: "2026-06-03T09:00:00Z"}},
+                current_step: 3,
+            }),
+        ]);
+        listSetsMock.mockResolvedValue({
+            sets: [{source: "owner/repo", id: "fr-a1", title: "French A1"}],
+            sources: [],
+        });
+        listLessonsMock.mockResolvedValue({lessons: ["01.json", "02.json"]});
+        getLessonMock.mockResolvedValue({
+            id: "02",
+            title: "Greetings",
+            cards: [],
+            steps: [
+                {id: "intro"}, {id: "formality"}, {id: "ex-match"}, {id: "merci"},
+                {id: "ex-cloze"}, {id: "numbers"}, {id: "ex-tiles"}, {id: "outro"},
+            ],
+        });
+
+        renderSection({});
+        const link = await screen.findByTestId("continue-learning-link-fr-a1");
+        expect(link.textContent).toContain("Step 4/8");
+        expect(link.textContent).not.toContain("Step 1/8");
     });
 });

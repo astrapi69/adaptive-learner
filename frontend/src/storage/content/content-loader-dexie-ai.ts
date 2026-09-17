@@ -133,6 +133,14 @@ function aiCacheId(source: string, setId: string): string {
 }
 
 /** Read the cached report for a set, or null. */
+/** AIV-07 (#3060): forget a cached report (the set's cards changed). */
+export async function deleteAiValidationCacheDexie(
+  source: string,
+  setId: string,
+): Promise<void> {
+  await getDb().aiValidationResults.delete(aiCacheId(source, setId));
+}
+
 export async function getAiValidationCacheDexie(
   source: string,
   setId: string,

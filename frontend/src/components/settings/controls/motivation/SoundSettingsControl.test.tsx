@@ -20,15 +20,24 @@ beforeEach(() => {
 });
 
 describe("SoundSettingsControl", () => {
-    it("is off by default and hides the volume row", () => {
+    it("is off by default", () => {
+        render(<SoundSettingsControl />);
+        expect(screen.getByTestId("settings-sounds-toggle")).not.toBeChecked();
+    });
+
+    it("shows the volume row and the shared-volume hint while global sounds are off", () => {
         render(<SoundSettingsControl />);
         expect(screen.getByTestId("settings-sounds-toggle")).not.toBeChecked();
         expect(
-            screen.queryByTestId("settings-sounds-volume-row"),
-        ).not.toBeInTheDocument();
+            screen.getByTestId("settings-sounds-volume-row"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("settings-sounds-volume-shared-hint"),
+        ).toHaveTextContent("Also applies to the game-mode sounds.");
+        expect(screen.getByTestId("settings-sounds-test")).toBeInTheDocument();
     });
 
-    it("turning sound on persists it and reveals the volume + test controls", () => {
+    it("turning sound on persists it and keeps the volume + test controls", () => {
         render(<SoundSettingsControl />);
         fireEvent.click(screen.getByTestId("settings-sounds-toggle"));
         expect(readSoundEnabled()).toBe(true);

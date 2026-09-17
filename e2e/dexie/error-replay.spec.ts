@@ -112,6 +112,12 @@ test.describe("Error Replay — retry only failed exercises", () => {
         // ("replay_only" kind, #2570/#2571) - both are correct UI, so the
         // spec follows whichever one this run's error mix produced instead
         // of assuming "collapsed" (fixes #2581).
+        // #3138: a fresh profile gets the compact summary, which holds the
+        // correction round back behind Detailed evaluation (#3153).
+        const detailed = page.getByTestId("lesson-summary-detailed-toggle");
+        if (await detailed.count()) {
+            await detailed.click();
+        }
         const mistakes = page.getByTestId("lesson-correction-block");
         await expect(mistakes).toBeVisible({timeout: 10000});
         const expand = page.getByTestId("lesson-correction-block-expand");

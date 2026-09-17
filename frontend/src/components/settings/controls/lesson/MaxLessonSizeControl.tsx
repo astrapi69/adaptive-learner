@@ -1,10 +1,10 @@
 /**
  * MaxLessonSizeControl (Phase 63I / EXP-020).
  *
- * Settings > Learning control that lets the learner set the
- * maximum number of steps per lesson part before the
- * Save-as-Offline-Lesson flow splits the lesson.
- * Stored client-side in localStorage (same pattern as
+ * Settings > Data control (slot 3b, right after the offline cache,
+ * #2955) that lets the learner set the maximum number of steps per
+ * lesson part before the Save-as-Offline-Lesson flow splits the
+ * lesson. Stored client-side in localStorage (same pattern as
  * PausedLessonsRetentionControl).
  */
 

@@ -42,9 +42,10 @@ dezent, unabhängig von dieser Einstellung.
 Töne sind **standardmäßig aus** - du wirst nie von Audio
 überrascht. Schalte sie unter **Einstellungen > Lernen >
 Töne** ein und nutze den Lautstärkeregler und die **Test**-Taste
-zur Vorschau. Töne sind kurze synthetische Klänge und immer
-ergänzend: jeder Hinweis, den sie geben, wird auch auf dem
-Bildschirm angezeigt.
+zur Vorschau. Der Lautstärkeregler ist immer sichtbar, auch wenn
+der Töne-Schalter aus ist, und gilt auch für die Spielmodus-Sounds.
+Töne sind kurze synthetische Klänge und immer ergänzend: jeder
+Hinweis, den sie geben, wird auch auf dem Bildschirm angezeigt.
 
 ## Spielmodus
 

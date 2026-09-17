@@ -430,7 +430,27 @@ describe("CorrectionBlock: render + skip + record", () => {
                 }),
             ]),
         );
-        // Only one cloze → onComplete fires with improved=1.
+        // #3125 — the drill HOLDS on its result: the cloze stays checked, the
+        // success badge + Continue replace the Check button, and nothing has
+        // advanced yet.
+        await waitFor(() =>
+            expect(screen.getByTestId("lesson-correction-block")).toHaveAttribute(
+                "data-cloze-result",
+                "correct",
+            ),
+        );
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute("data-result", "correct");
+        expect(
+            screen.getByTestId("lesson-correction-block-success-advance"),
+        ).toBeInTheDocument();
+        expect(screen.queryByTestId("lesson-correction-block-check")).toBeNull();
+        expect(onComplete).not.toHaveBeenCalled();
+        expect(
+            screen.getByTestId("lesson-correction-block"),
+        ).toHaveAttribute("data-status", "ready");
+
+        // Continue → only one cloze → onComplete fires with improved=1.
+        fireEvent.click(screen.getByTestId("lesson-correction-block-advance"));
         await waitFor(() =>
             expect(onComplete).toHaveBeenCalledWith(1),
         );
@@ -441,6 +461,102 @@ describe("CorrectionBlock: render + skip + record", () => {
         expect(
             screen.getByTestId("lesson-correction-improvement"),
         ).toHaveTextContent(/1 element/);
+    });
+
+    it("a wrong answer holds with the reveal and a plain Continue, then moves on (#3125)", async () => {
+        recordBulkMock.mockResolvedValue([]);
+        listMock.mockResolvedValue([
+            _error({id: "err-1", exercise_id: "ex-1", correct_answer: "un", element_key: "un"}),
+            _error({id: "err-2", exercise_id: "ex-1", correct_answer: "un", element_key: "un-2"}),
+        ]);
+        const onComplete = vi.fn();
+        render(
+            <CorrectionBlock
+                lesson={_lesson()}
+                progress={_progress()}
+                userId="user-1"
+                setId="fr-a1"
+                lessonFilename="03-articles.json"
+                onComplete={onComplete}
+                onSkip={vi.fn()}
+            />,
+        );
+        fireEvent.click(await screen.findByTestId("lesson-correction-block-expand"));
+        await waitFor(() => expect(screen.queryByTestId("cloze-input-0")).toBeInTheDocument());
+        expect(screen.getByTestId("lesson-correction-block")).toHaveAttribute("data-cloze-index", "0");
+        fireEvent.change(screen.getByTestId("cloze-input-0"), {target: {value: "le"}});
+        await waitFor(() =>
+            expect(screen.getByTestId("lesson-correction-block-check")).toBeEnabled(),
+        );
+        fireEvent.click(screen.getByTestId("lesson-correction-block-check"));
+
+        // The wrong result stays on screen: no success badge, no auto-advance,
+        // a plain Continue instead of the Check button.
+        await waitFor(() =>
+            expect(screen.getByTestId("lesson-correction-block")).toHaveAttribute(
+                "data-cloze-result",
+                "wrong",
+            ),
+        );
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute("data-result", "wrong");
+        expect(screen.queryByTestId("lesson-correction-block-success-advance")).toBeNull();
+        expect(screen.queryByTestId("lesson-correction-block-check")).toBeNull();
+        expect(screen.getByTestId("lesson-correction-block")).toHaveAttribute("data-cloze-index", "0");
+
+        // Continue → the second drill, unanswered again.
+        fireEvent.click(screen.getByTestId("lesson-correction-block-next"));
+        await waitFor(() =>
+            expect(screen.getByTestId("lesson-correction-block")).toHaveAttribute("data-cloze-index", "1"),
+        );
+        expect(screen.getByTestId("lesson-correction-block")).toHaveAttribute("data-cloze-result", "pending");
+        expect(screen.getByTestId("lesson-correction-block-check")).toBeInTheDocument();
+        expect(onComplete).not.toHaveBeenCalled();
+
+        // Second drill wrong too → Continue completes with 0 improved.
+        fireEvent.change(screen.getByTestId("cloze-input-0"), {target: {value: "le"}});
+        await waitFor(() =>
+            expect(screen.getByTestId("lesson-correction-block-check")).toBeEnabled(),
+        );
+        fireEvent.click(screen.getByTestId("lesson-correction-block-check"));
+        fireEvent.click(await screen.findByTestId("lesson-correction-block-next"));
+        await waitFor(() => expect(onComplete).toHaveBeenCalledWith(0));
+        expect(screen.getByTestId("lesson-correction-improvement")).toHaveTextContent(/0 elements/);
+    });
+
+    it("a correct answer auto-advances only with the lesson's auto-advance setting on (#3125)", async () => {
+        localStorage.setItem("adaptive-learner.lesson.auto_advance_enabled", "true");
+        try {
+            recordBulkMock.mockResolvedValue([]);
+            listMock.mockResolvedValue([
+                _error({exercise_id: "ex-1", correct_answer: "un", element_key: "un"}),
+            ]);
+            const onComplete = vi.fn();
+            render(
+                <CorrectionBlock
+                    lesson={_lesson()}
+                    progress={_progress()}
+                    userId="user-1"
+                    setId="fr-a1"
+                    lessonFilename="03-articles.json"
+                    onComplete={onComplete}
+                    onSkip={vi.fn()}
+                />,
+            );
+            fireEvent.click(await screen.findByTestId("lesson-correction-block-expand"));
+            await waitFor(() => expect(screen.queryByTestId("cloze-input-0")).toBeInTheDocument());
+            fireEvent.change(screen.getByTestId("cloze-input-0"), {target: {value: "un"}});
+            await waitFor(() =>
+                expect(screen.getByTestId("lesson-correction-block-check")).toBeEnabled(),
+            );
+            fireEvent.click(screen.getByTestId("lesson-correction-block-check"));
+            // The success moment shows first ...
+            await screen.findByTestId("lesson-correction-block-success-advance");
+            expect(onComplete).not.toHaveBeenCalled();
+            // ... then the lesson's own delay fires the advance, no click.
+            await waitFor(() => expect(onComplete).toHaveBeenCalledWith(1), {timeout: 3000});
+        } finally {
+            localStorage.removeItem("adaptive-learner.lesson.auto_advance_enabled");
+        }
     });
 
     it("Enter checks the answered cloze (correction-round shortcut, #187)", async () => {
@@ -486,6 +602,13 @@ describe("CorrectionBlock: render + skip + record", () => {
         await waitFor(() =>
             expect(recordBulkMock).toHaveBeenCalled(),
         );
+        // #3125 — the first Enter checks; the drill holds on its result.
+        await screen.findByTestId("lesson-correction-block-success-advance");
+        expect(onComplete).not.toHaveBeenCalled();
+        // The success control took focus (it owns Enter in a real browser);
+        // blur it so the global shortcut is what advances here.
+        (document.activeElement as HTMLElement | null)?.blur();
+        fireEvent.keyDown(window, {key: "Enter"});
         await waitFor(() =>
             expect(onComplete).toHaveBeenCalledWith(1),
         );

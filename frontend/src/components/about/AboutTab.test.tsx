@@ -270,6 +270,24 @@ describe("LicenseResourcesSection", () => {
         ).toBe("https://github.com/astrapi69/adaptive-learner/issues");
     });
 
+    it("links the legal notice and the privacy policy on the docs site, per language (#3113)", () => {
+        render(
+            <MemoryRouter>
+                <LicenseResourcesSection info={apiInfo} t={tFn} lang="en" />
+            </MemoryRouter>,
+        );
+        const imprint = screen.getByTestId("about-imprint-link");
+        const privacy = screen.getByTestId("about-privacy-link");
+        expect(imprint.getAttribute("href")).toBe(
+            "https://astrapi69.github.io/adaptive-learner/docs/en/legal/imprint/",
+        );
+        expect(privacy.getAttribute("href")).toBe(
+            "https://astrapi69.github.io/adaptive-learner/docs/en/legal/privacy/",
+        );
+        expect(imprint.getAttribute("target")).toBe("_blank");
+        expect(privacy.getAttribute("rel")).toContain("noopener");
+    });
+
     it("links to the App-Tutorial set deep link (#1572)", () => {
         render(
             <MemoryRouter>

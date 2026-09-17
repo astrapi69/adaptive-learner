@@ -273,6 +273,42 @@ Passt zu "Ein 0-diff-Visual-Run ist nur ein Beweis für die Flächen im
 Motiv-Satz" (oben) - dieselbe Disziplin, auf den Sync-Workflow selbst
 angewandt.
 
+## Ein Toleranz-Vergleich schreibt keine Baseline neu (#3023)
+
+Aufgetaucht 2026-09-08. Ein neuer X-Knopf (16-px-Icon) in jeder
+"Weitermachen"-Zeile ergab im `visual-baseline-sync` einen 0-Diff: 141
+Tests grün, "nothing to push". Ursache ist nicht eine fehlende Änderung,
+sondern das Zusammenspiel zweier Eigenschaften: `--update-snapshots`
+schreibt eine Referenz NUR bei einem fehlgeschlagenen Vergleich neu
+(#2712), und `maxDiffPixels: 2500` schluckt alles Kleinere. Der Gate
+meldet also Grün für eine sichtbare Änderung, die in keiner Referenz
+steht.
+
+Die Folgekosten sind nicht theoretisch: dieselbe Lücke hielt die
+Dashboard-Baselines nach zwei Kopfzeilen-PRs (#2986, #2999) fünf Tage
+still veraltet. Die erzwungene Neuaufnahme zeigte einen um ~15 px
+verschobenen Navigationsblock, den nie jemand gesehen hatte.
+
+Regeln:
+
+- Ein 0-Diff nach einer ABSICHTLICH sichtbaren Änderung ist ein Befund,
+  kein Freibrief. Vor dem Label `visual-baselines-unaffected` prüfen, ob
+  die Änderung überhaupt über der Toleranz liegt - das Label behauptet
+  "keine visuelle Wirkung", nicht "unter dem Budget".
+- Kleine gewollte Änderungen erzwingen die Neuaufnahme über
+  Löschen-dann-Resync (#2719): betroffene PNGs löschen, committen, Sync
+  erneut anstossen. Eine gelöschte Baseline wird gerendert statt
+  verglichen.
+- Nur die Motive löschen, auf denen die Änderung erscheint (#2682). Ein
+  neu aufgenommenes Bild trägt ausserdem jede seither unter der Toleranz
+  gebliebene Fremd-Drift, deshalb gehört der Alt-gegen-neu-Vergleich
+  (Cluster-Analyse der geänderten Pixel, nicht nur der Blick aufs neue
+  Bild) in die Review - sonst wandert unbemerkte Drift als "geprüft"
+  in die Referenz.
+
+Passt zu "Ein Bildvergleich prüft nur, was die Referenz unterscheidbar
+macht" (#2696): dort war es die leere Fläche, hier die Toleranz.
+
 ## Ein Bildvergleich prüft nur, was die Referenz unterscheidbar macht (#2696)
 
 Aufgetaucht 2026-08-20. `fullPage: true` (CDP `captureBeyondViewport`)
@@ -311,3 +347,59 @@ Passt zu "Vorlaeufige Regel: visual-baseline-sync ungezielt" (oben,
 der Fold-Fehlschluss dort war diese Klasse) und zu core.md "Behauptete
 Durchsetzung ohne Durchsetzung" - ein Gate, das jede Nacht lief und
 auf drei Flaechen nichts absicherte.
+
+### Nachtrag #3016: der Ersatz erbte das kaputte Maß
+
+Der Fix oben tauschte das AUFNAHMEVERFAHREN und übernahm das HÖHENMASS
+ungeprüft: `expandViewportToDocument` las weiter
+`documentElement.scrollHeight`. Genau dieses Maß kennt die Seite nicht -
+die App scrollt in `#root`, und ein Scroll-Container behält seinen
+Überlauf für sich, meldet ihn also keinem Vorfahren. Gemessen an
+settings-general: Dokument 1080/1435/1913 px gegen `#root`
+2497/3088/3774 px (Desktop/Tablet/Telefon). Die Grundlinien deckten
+43-51 % der Seite ab, der Rest (Tab-Reihenfolge, Sprache, zwei
+Einstellungs-Abschnitte, Updates) war in keinem Bild - und der Vergleich
+blieb grün, weil Referenz und Ist an derselben Stelle abgeschnitten
+waren. Betroffen war jedes Motiv, nur unterschiedlich stark: von 41 px
+auf dashboard-empty@Desktop bis zu mehr als der halben Seite.
+
+Regeln:
+
+- **Ein Maß für "die ganze Seite" muss den Container nennen, der wirklich
+  scrollt.** Auf verschachtelten Layouts ist `documentElement` dieser
+  Container nicht. Die Gegenprobe kostet eine Zeile: Bildhöhe gegen
+  `#root.scrollHeight` halten. Ein Motiv, das exakt auf Viewport-Höhe
+  endet, ist verdächtig, nicht zufällig.
+- **Wer einen kaputten Mechanismus ersetzt, prüft dessen Annahmen mit.**
+  Sonst überlebt der Fehler seinen eigenen Fix, und die Reparatur trägt
+  ihn als Beleg weiter.
+- **Fail closed statt stillem Abschneiden:** die Aufnahme bricht jetzt ab,
+  wenn die Fläche nach den Wachstumsrunden noch höher ist als der
+  Viewport, und schreibt die gedeckte Höhe pro Motiv in den Bericht
+  (Gate-Vertrag Punkt 4: "0 geprüft" darf nicht dasselbe Grün drucken wie
+  "0 Befunde").
+
+**Folgekosten, die dazugehören:** sobald die Aufnahme dem Inhalt folgt,
+schlägt sich jede späte Änderung in der BILDHÖHE nieder statt nur
+unterhalb der Falz. Aus drei bis dahin unsichtbaren Wettläufen wurden
+sofort rote Motive, und jeder brauchte eine andere Sorte Antwort:
+
+- eine Karte ohne Ladezustand (`PausedLessonsCard` rendert `null`, solange
+  ihre Abfrage läuft, und `null`, wenn sie leer ist) lässt sich nicht
+  abwarten - hier war die Wurzel die NAVIGATION: `page.goto` feuert auf
+  der Lektionsroute `beforeunload`, dessen Handler die Zeile schreibt, die
+  das Dashboard gleich darauf liest. Ein Routenwechsel innerhalb der App
+  entfernt den Listener über den Effekt-Cleanup, statt ihn zu feuern. Wenn
+  Lesung und Schreibvorgang von DERSELBEN Aktion ausgehen, ordnet keine
+  Wartezeit sie; die Aktion muss sich ändern.
+- ein Wert, den die Fläche im geöffneten Zustand weiter verfeinert
+  (der Offline-Cache-Zähler), braucht ein Ausschwingen statt eines
+  Fertig-Signals.
+- ein Wert, der von LIVE-Daten abhängt (derselbe Zähler in CI, wo die
+  Sets erst über das Netz kommen), ist damit nur innerhalb eines Laufs
+  geordnet. Zwischen zwei Läufen hilft nur, die Quelle zu pinnen - die
+  #1653-Abhilfe, hier `keys()` auf genau diesem einen Cache.
+
+Regel daraus: wer ein Aufnahmeverfahren auf "ganze Seite" umstellt,
+rechnet mit einer Runde neuer Wackler und plant sie ein, statt sie als
+Rückschlag zu lesen. Sie waren vorher da und wurden nur nicht abgebildet.

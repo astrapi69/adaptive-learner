@@ -251,19 +251,21 @@ describe("classifyEntryCandidate (#2123)", () => {
         ).toBe<EntryTier>("started");
     });
 
-    it("DROPS a completed set with no due reviews (the reported bug)", () => {
+    it("tags a completed set with no due reviews as 'done' (#3020)", () => {
         // lifecycle completed, and also the finished 'set_complete' action:
-        // both signal a finished set. Nothing due → not a sensible suggestion.
+        // both signal a finished set. Nothing due → not a HANDLING suggestion,
+        // but the learner still has to see that the set is finished (#3020);
+        // the ranking keeps it below every actionable tier.
         expect(
             classifyEntryCandidate(
                 candidate({setId: "a", updatedAt: "x", status: "completed", dueCount: 0}),
             ),
-        ).toBeNull();
+        ).toBe<EntryTier>("done");
         expect(
             classifyEntryCandidate(
                 candidate({setId: "a", updatedAt: "x", mode: "set_complete", dueCount: 0}),
             ),
-        ).toBeNull();
+        ).toBe<EntryTier>("done");
     });
 
     it("keeps a completed set as a 'review' suggestion when reviews are due", () => {
@@ -292,10 +294,11 @@ describe("classifyEntryCandidate (#2123)", () => {
 });
 
 describe("rankEntrySuggestions (#2123)", () => {
-    it("a completed set without due cards yields a DIFFERENT suggestion", () => {
-        // RED proof: an in-progress set plus a (newer) completed-without-due
-        // set. Before the fix the completed set (newest) would lead; the rule
-        // drops it, so the in-progress set is the suggestion.
+    it("never lets a completed set lead over a still-open one", () => {
+        // #2123 RED proof, still pinned: an in-progress set plus a (newer)
+        // completed-without-due set. The completed set must never be the
+        // proposed next action - but since #3020 it stays visible BELOW the
+        // open one, tagged as finished, instead of vanishing.
         const ranked = rankEntrySuggestions(
             [
                 candidate({setId: "started", updatedAt: "2026-06-01T10:00:00Z", mode: "resume"}),
@@ -308,12 +311,44 @@ describe("rankEntrySuggestions (#2123)", () => {
             ],
             5,
         );
-        expect(ranked.map((r) => r.group.setId)).toEqual(["started"]);
+        expect(ranked.map((r) => r.group.setId)).toEqual(["started", "done"]);
     });
 
-    it("a completed-without-due set alone yields NO suggestion (honest empty state)", () => {
+    it("keeps a completed-without-due set as the finished tag (#3020)", () => {
         const ranked = rankEntrySuggestions(
             [candidate({setId: "done", updatedAt: "x", status: "completed", dueCount: 0})],
+            5,
+        );
+        expect(ranked.map((r) => r.group.setId)).toEqual(["done"]);
+    });
+
+    it("tags at most the most recently finished set, never an archive (#3020)", () => {
+        const ranked = rankEntrySuggestions(
+            [
+                candidate({
+                    setId: "old-done",
+                    updatedAt: "2026-06-01T10:00:00Z",
+                    status: "completed",
+                }),
+                candidate({
+                    setId: "new-done",
+                    updatedAt: "2026-06-08T10:00:00Z",
+                    mode: "set_complete",
+                }),
+                candidate({
+                    setId: "mid-done",
+                    updatedAt: "2026-06-04T10:00:00Z",
+                    status: "completed",
+                }),
+            ],
+            5,
+        );
+        expect(ranked.map((r) => r.group.setId)).toEqual(["new-done"]);
+    });
+
+    it("still drops a deferred set with nothing due (#2123)", () => {
+        const ranked = rankEntrySuggestions(
+            [candidate({setId: "later", updatedAt: "x", status: "deferred", dueCount: 0})],
             5,
         );
         expect(ranked).toEqual([]);
@@ -351,7 +386,7 @@ describe("rankEntrySuggestions (#2123)", () => {
             [
                 candidate({setId: "a", updatedAt: "2026-06-01T10:00:00Z", mode: "resume"}),
                 candidate({setId: "b", updatedAt: "2026-06-02T10:00:00Z", mode: "resume"}),
-                candidate({setId: "drop", updatedAt: "2026-06-09T10:00:00Z", status: "completed", dueCount: 0}),
+                candidate({setId: "finished", updatedAt: "2026-06-09T10:00:00Z", status: "completed", dueCount: 0}),
                 candidate({setId: "c", updatedAt: "2026-06-03T10:00:00Z", mode: "resume"}),
             ],
             2,

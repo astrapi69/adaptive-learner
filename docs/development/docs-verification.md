@@ -40,7 +40,7 @@ correct state).
 | `mkdocs` | FAIL | help pages on disk with no nav entry (orphans) + nav entries pointing at missing files (dead links) | no |
 | `help-index-versions` | FAIL | any `vX.Y[.Z]` literal on a `docs/help/*/index.md` front page -- they are versionless (#1766) | no |
 | `help-prose-versions` | FAIL | any `vX.Y[.Z]` literal in end-user help prose under `docs/help/*/**` (#1767); skips the `developer/` + `api/` reference trees, `changelog.md`, `index.md`, and `<!-- version-exempt: reason -->` lines | no |
-| `help-coverage` | FAIL/WARN | en<->de help-page parity (FAIL); App.tsx routes with no help page (WARN, heuristic) | no |
+| `help-coverage` | FAIL/WARN | en<->de help-page parity (FAIL); App.tsx routes with no help page (WARN, heuristic: the route's last static segment must appear in some help slug); a route whose page lives under an underivable slug is mapped explicitly in `_ROUTE_HELP_SLUG` (#2944), and a mapping to a page missing in en or de is a FAIL (stale claim) | no |
 | `i18n` | WARN | any `frontend/src/data/i18n/*.json` missing >5% of the `en` key set | runs `sync_i18n_to_frontend.py` |
 
 Exit codes: `0` clean (no FAIL; WARN allowed) / `1` drift (>=1 FAIL) /

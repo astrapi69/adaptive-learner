@@ -45,7 +45,14 @@ for (const theme of THEME_IDS) {
             // #2696 - viewport expansion replaces ``fullPage: true``, which
             // never painted below the viewport on this app's nested-scroll
             // layout (see expandViewportToDocument). No-op for views that fit.
-            await expandViewportToDocument(page);
+            // #3016 - the height comes from the app scroller now, and the
+            // covered value is recorded so a silent truncation cannot read
+            // as a clean pass.
+            const coveredHeight = await expandViewportToDocument(page);
+            test.info().annotations.push({
+                type: "covered-height",
+                description: `${view}-${theme}: ${coveredHeight}px`,
+            });
             await expect(page).toHaveScreenshot(`${view}-${theme}.png`);
         });
     }

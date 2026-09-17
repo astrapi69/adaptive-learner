@@ -237,6 +237,8 @@
     "choose_language": "言語を選択してください",
     "start_button": "学習の旅を始める",
     "docs_link": "ドキュメントを読む",
+    "imprint_link": "運営者情報",
+    "privacy_link": "プライバシーポリシー",
     "checking_session": "おかえりなさい…",
     "recovered_toast": "おかえりなさい！学習データはまだここにあります。",
     "intro": "Adaptive Learner は、研究に基づく 6 つの学習アプローチからあなたに 最適な方法を見つけ、毎セッションで 7 ステップのサイクルをガイドします。",
@@ -575,8 +577,8 @@
     },
     "section_review": "復習",
     "section_srs": "間隔反復",
-    "explanations_enabled": "エラーの説明を表示",
-    "explanations_enabled_desc": "レッスン後に各間違いへ短いルールのヒントを表示します。",
+    "explanations_enabled": "解説を表示",
+    "explanations_enabled_desc": "回答後に練習問題の解説を、レッスン後に各間違いへ短いルールのヒントを表示します。",
     "section_hints": "ヒント",
     "section_lesson_summary": "レッスン後のまとめ",
     "summary_sections_desc": "レッスン終了時のまとめに表示するセクションと、その順序を選択します。続行するための操作は常に表示されます。",
@@ -717,7 +719,23 @@
     "nav_aria": "設定ナビゲーション",
     "tab_ai": "AI",
     "tab_learning": "学習",
+    "learning_nav_aria": "学習セクション",
+    "data_nav_aria": "データセクション",
     "tab_plugins": "プラグイン",
+    "plugins_installed_title": "インストール済みプラグイン",
+    "plugins_installed_desc": "デスクトップアプリが読み込んだすべてのプラグインを、バージョン・ソース・有効化時刻とともに表示します（PluginForge ライフサイクル）。",
+    "plugins_col_name": "プラグイン",
+    "plugins_col_version": "バージョン",
+    "plugins_col_source": "ソース",
+    "plugins_col_activated": "有効化",
+    "plugins_source_entry_point": "パッケージ",
+    "plugins_source_direct": "直接登録",
+    "plugins_marker_load_error": "読み込みエラー",
+    "plugins_marker_filtered": "除外",
+    "plugins_marker_config_changed": "設定変更あり",
+    "plugins_empty": "読み込まれたプラグインはありません。",
+    "plugins_loading": "プラグインを読み込んでいます…",
+    "plugins_error_load": "プラグインの状態を読み取れませんでした",
     "tab_data": "データ",
     "tab_help": "ヘルプ",
     "tab_diagnostics": "診断とサポート",
@@ -725,6 +743,30 @@
     "tabs_aria": "設定セクション",
     "section_feedback": "フィードバック",
     "section_interaction": "操作",
+    "cluster_basics": "基本",
+    "cluster_basics_desc": "誰が、どの言語で学ぶか。",
+    "cluster_lessons": "レッスン中",
+    "cluster_lessons_desc": "回答中の練習問題の動作。",
+    "cluster_voice": "読み上げと音声入力",
+    "cluster_voice_desc": "音声、速度、マイク、発音練習。",
+    "cluster_review": "レッスン後",
+    "cluster_review_desc": "復習セッション、レッスンのまとめ、間違いのやり直し。",
+    "cluster_motivation": "モチベーションと習慣",
+    "cluster_motivation_desc": "ゲームモード、フィードバック、デイリーミッション、リマインダー。",
+    "cluster_data_sources": "ソース",
+    "cluster_data_sources_desc": "コンテンツリポジトリとディレクトリへの登録。",
+    "cluster_data_sync": "同期",
+    "cluster_data_sync_desc": "デバイスをペアリングしてデータを揃える。",
+    "cluster_data_offline": "オフラインコンテンツ",
+    "cluster_data_offline_desc": "レッスンキャッシュと保存レッスンのサイズ。",
+    "cluster_data_backup": "バックアップとエクスポート",
+    "cluster_data_backup_desc": "バックアップ、ID、キー、エクスポート。",
+    "cluster_data_cleanup": "整理",
+    "cluster_data_cleanup_desc": "一時停止レッスンの保持と孤立データ。",
+    "cluster_data_danger": "危険ゾーン",
+    "cluster_data_danger_desc": "取り消せません: すべて削除。",
+    "sounds_volume_shared_hint": "ゲームモードのサウンドにも適用されます。",
+    "feedback_intensity_playful_hint": "ゲームモードがオンのため、この設定に関係なくフィードバックは常に「にぎやか」になります。",
     "missions_title": "デイリーミッション",
     "missions_enabled": "デイリーミッション",
     "missions_enabled_hint": "毎日、達成可能な目標をダッシュボードに表示します。任意 - なくてもアプリは同じように動作します。",
@@ -781,6 +823,13 @@
     "playful_mode": "遊び心のあるレッスン",
     "playful_mode_description": "レッスンをゲームのように楽しくします。正解のたびに称賛、紙吹雪、節目のお祝いがあります。どのレッスンモードでも使えます。採点と進捗は変わりません。システムで視覚効果を減らす設定が有効な場合、フィードバックは控えめのままです。",
     "playful_sounds": "ゲームモードのサウンド",
+    "playful_details": "ゲームモードの詳細",
+    "playful_details_hint": "ハート、カウントダウン、アーケード、スペシャルラウンド、チケット、ボーナスレッスン、連続XP、マスコット。",
+    "playful_details_off_notice": "これらのオプションを変更するには「遊び心のあるレッスン」をオンにしてください。",
+    "playful_cluster_tension": "緊張感",
+    "playful_cluster_arcade": "アーケードと報酬",
+    "playful_cluster_xp": "XPとマスコット",
+    "playful_summary": "{total}個中{on}個のエクストラがオン",
     "playful_sounds_description": "ゲームモードの短い効果音: 正解のたびに鳴る音(連続正解でピッチが上がります)、チェックポイントのジングル、完了のファンファーレ。全体のサウンド設定とは独立で、音量はスライダーに従います。",
     "playful_sounds_offer": "サウンド付きで遊びますか?",
     "playful_sounds_offer_yes": "はい、サウンドをオン",
@@ -1166,7 +1215,9 @@
     "docs_label": "ドキュメント",
     "tutorial_label": "アプリチュートリアル",
     "tutorial_link": "チュートリアルを直接開く",
-    "issues_label": "課題"
+    "issues_label": "課題",
+    "imprint_label": "運営者情報",
+    "privacy_label": "プライバシーポリシー"
   },
   "backup": {
     "section_title": "バックアップ",
@@ -2401,6 +2452,11 @@
         "productive_hint": "答えを産出する"
       }
     },
+    "explanation": {
+      "title": "解説",
+      "show": "なぜ？",
+      "hide": "解説を隠す"
+    },
     "flash_round": {
       "title": "フラッシュラウンド: {set}",
       "card_title": "フラッシュラウンド",
@@ -2471,6 +2527,10 @@
       "breakdown_heading": "演習の内訳",
       "breakdown_correct_answer": "正解: {answer}",
       "breakdown_unattempted": "未挑戦",
+      "detailed_hide": "簡易表示",
+      "detailed_hint": "この回の主要な数値、問題タイプ別の誤答、弱点、すべての回答、すべての誤答の解説を表示します",
+      "detailed_show": "詳細な評価",
+      "review_subtitle": "このレッスンのすべての誤答を一目で",
       "view_all_answers": "すべての回答を見る ({n})",
       "export": {
         "copy": "結果をコピー",
@@ -2603,7 +2663,8 @@
       "bonus_badge": "ボーナス",
       "bonus_locked_tooltip": "このボーナスレッスンをアンロックするには、このセットの通常レッスンをすべて星1つ以上でクリアしてください。",
       "progress_done": "{total} 件中 {done} 件のレッスンが完了",
-      "current_lesson": "ここから続ける"
+      "current_lesson": "ここから続ける",
+      "lesson_completed": "完了"
     },
     "repo_export": {
       "button": "リポジトリとして共有",
@@ -2645,7 +2706,9 @@
       "progress": "ステップ {n}/{total}",
       "imported_analysis": "インポートされた分析",
       "lesson_fallback": "レッスン",
-      "lesson_part": "{label} · パート{n}"
+      "lesson_part": "{label} · パート{n}",
+      "dismiss": "「学習を続ける」から非表示にする",
+      "dismissed": "「学習を続ける」から非表示にしました。学習を再開すると再び表示されます。"
     },
     "import_chat": {
       "button": "チャットをインポート"
@@ -2902,16 +2965,23 @@
       "update_available": "更新あり",
       "downloading": "ダウンロード中…"
     },
+    "tab": {
+      "create": "作成"
+    },
     "action": {
       "refresh": "更新",
       "refreshing": "更新中…",
+      "refresh_hint": "リストを再読み込みし、利用可能なすべての更新を適用",
       "download": "ダウンロード",
       "update": "更新",
       "installed": "インストール済み",
       "open": "開く"
     },
     "toast": {
-      "downloaded": "セットをダウンロードし、使用準備が整いました。"
+      "downloaded": "セットをダウンロードし、使用準備が整いました。",
+      "updated_all": "{n} 件のセットを更新しました。",
+      "updates_held_named": "学習の進捗に影響するため保留しました: {titles}。各セットの「更新」ボタンで個別に確認してください。",
+      "all_up_to_date": "すべてのセットは最新です。"
     },
     "warning": {
       "no_lessons_in_set": "このセットにはまだレッスンがありません。"
@@ -2919,6 +2989,7 @@
     "error": {
       "list_failed": "コンテンツセットを読み込めませんでした。",
       "download_failed": "セットをダウンロードできませんでした。",
+      "update_all_failed": "{n} 件の更新に失敗しました。",
       "open_failed": "レッスンを開けませんでした。"
     },
     "tree": {
@@ -3004,6 +3075,20 @@
       "checked_with": "チェックに使用",
       "date": "日付",
       "recheck": "再確認",
+      "fix": {
+        "button": "提案を適用",
+        "own_only": "自分のレッスンのみ。",
+        "title": "提案を適用",
+        "intro": "各行を確認してください。チェックした行だけが書き込まれます。値ではなく説明になっている提案は外してください。",
+        "current": "現在",
+        "manual_count": "{count} 件の指摘には適用できる値がなく、手動のままです。",
+        "confirm": "{cards}枚のカードの {fields} 項目を適用",
+        "applied": "{fields} 項目を適用しました。レポートは古くなっています。セットを再確認してください。",
+        "undo": "直前の適用を元に戻す",
+        "undone": "適用を元に戻しました。",
+        "failed": "提案を適用できませんでした",
+        "none_applicable": "このレポートに適用できる提案はありません。"
+      },
       "export": {
         "button": "レポートをMarkdownで書き出す",
         "lesson": "レッスン",
@@ -3260,6 +3345,8 @@
         "unavailable_reason": "テキストから画像や音声は生成できません。これらのタイプはエディターで後から追加できます。",
         "floor_hint": "少なくとも1つの問題タイプを選択したままにする必要があります。"
       },
+      "explanations_label": "解説を生成する（解答後に表示）",
+      "explanations_hint": "各問題にルール、逐語訳、追加の例文を加えます。問題ごとにAIの出力が約3分の1から半分ほど増えます。",
       "generate_to_advance": "続行するにはテキストからレッスンを生成してください。",
       "review_theory": "理論ステップ{n}件",
       "review_exercises": "演習{n}件",
@@ -3355,6 +3442,32 @@
         "too_large": "画像が大きすぎます。より小さい画像をお試しください。",
         "decode_failed": "画像を読み込めませんでした。別のファイルをお試しください。"
       },
+      "token_roles": {
+        "label": "単語の役割（任意）",
+        "hint": "表面の個々の単語に文法上の役割を付けます。穴埋め問題は位置ではなく意味のある箇所を空欄にします。",
+        "add": "役割を追加",
+        "remove": "役割を削除",
+        "token_placeholder": "表面の単語",
+        "role_label": "役割",
+        "suggest": "役割を提案",
+        "suggest_none": "単語を認識できませんでした。役割を手入力してください。",
+        "suggest_hint": "提案は推測です。保存する前に各行を確認してください。",
+        "count": "{max} 個中 {n} 個の役割",
+        "error": {
+          "not_in_front": "「{token}」は表面にそのままの形では現れません。表面と同じように書いてください。",
+          "duplicate": "「{token}」はすでに指定されています。",
+          "max_reached": "1 枚のカードに {max} 個を超える役割は設定できません。"
+        },
+        "role": {
+          "article": "冠詞",
+          "verb": "動詞",
+          "noun": "名詞",
+          "adjective": "形容詞",
+          "preposition": "前置詞",
+          "gender_marker": "性の標識",
+          "tense_marker": "時制の標識"
+        }
+      },
       "add": "カードを追加",
       "import_csv": "CSVをインポート",
       "csv_hint": "表、裏、メモの行を貼り付けます（カンマまたはタブ区切り）。例: Bonjour, Guten Tag, 丁寧なあいさつ",
@@ -3377,6 +3490,11 @@
       "continue": "続ける"
     },
     "exercises": {
+      "summary": {
+        "pairs": "{n} 組",
+        "images": "{n} 枚の画像",
+        "options": "{n} 個の選択肢"
+      },
       "heading": "演習を生成",
       "count_label": "演習の数",
       "types_label": "演習の種類",
@@ -3453,7 +3571,13 @@
         "err_free_text": "認める答えを1つ以上追加してください。",
         "err_cloze": "各 ___ 記号には空欄が1つ必要で、各空欄には答えが必要です。",
         "err_word_tiles": "タイルを2つ以上追加してください。",
-        "err_picture_choice": "ラベルと画像を含む画像を2つ以上追加し、ちょうど1つを正解として指定してください。"
+        "err_picture_choice": "ラベルと画像を含む画像を2つ以上追加し、ちょうど1つを正解として指定してください。",
+        "err_explanation": "解説が長すぎます（最大2000文字）。",
+        "explanation_label": "解答後の解説（任意、Markdown）",
+        "explanation_hint": "解答後に表示されます：ルール、逐語訳、追加の例文、よくある間違い。",
+        "explanation_counter": "{n} / {max} 文字",
+        "explanation_template": "テンプレートを挿入",
+        "explanation_template_body": "**ルール:** \n\n**逐語訳:**\n- *語* - 直訳（文法メモ）\n\n**追加の例文:**\n- *文* - 訳\n\n**よくある間違い:** "
       },
       "dir": {
         "auto": "自動",
@@ -3491,6 +3615,7 @@
         "err_reading_comprehension": "本文と、少なくとも1つの完成した設問を追加してください（正解のある選択式、または受け入れ可能な答えのある自由記述）。",
         "err_graded_quiz": "正の配点を持つ完成した設問を少なくとも1つ追加してください（正解のある選択式、または受け入れ可能な答えのある自由記述）。",
         "err_dictation": "音声ファイルのパスと、少なくとも1つの受理される書き起こしを追加してください。",
+        "err_explanation": "解説が長すぎます（最大2000文字）。",
         "dict_audio_label": "音声",
         "dict_audio_placeholder": "assets/audio/clip.mp3",
         "dict_audio_hint": "セットの assets フォルダー内の音声クリップへの相対パス。",
@@ -3569,6 +3694,9 @@
         "parsons_language_label": "言語 (任意、構文の強調表示用)",
         "hotspot_image_label": "刺激画像",
         "hotspot_image_preview_alt": "刺激画像",
+        "hotspot_draw_label": "画像上にゾーンを描く",
+        "hotspot_canvas_alt": "ドラッグしてゾーンを描画",
+        "hotspot_canvas_aria": "画像上をドラッグしてゾーンを描画",
         "hotspot_zones_label": "クリック可能なゾーン",
         "hotspot_shape_rect": "長方形",
         "hotspot_shape_circle": "円",
@@ -4533,6 +4661,11 @@
     "no_errors": "間違いの記録はありません。素晴らしい！",
     "lesson_errors": "{count} 件の間違い",
     "practice_errors": "間違いを練習",
-    "back_to_set": "セットに戻る"
+    "back_to_set": "セットに戻る",
+    "element_type": {
+      "vocabulary": "語彙",
+      "grammar_rule": "文法ルール",
+      "unknown": "不明"
+    }
   }
 }

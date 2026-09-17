@@ -36,6 +36,7 @@ import {
     type GqQuestion,
 } from "../payload/graded-quiz";
 import {DICTATION_EXT_TYPE, dictationPayloadErrors} from "../payload/dictation";
+import {explanationTooLong, normalizeExplanation} from "./exercise-edit";
 import {
     IMAGE_DESCRIPTION_EXT_TYPE,
     imageDescriptionPayloadErrors,
@@ -120,6 +121,7 @@ export interface WizardSubQuestion {
  */
 export type ExtensionEditCode =
     | "prompt"
+    | "explanation"
     | "categorization"
     | "error_correction"
     | "reading_comprehension"
@@ -278,6 +280,7 @@ export function validateExtensionExercise(
     ex: ContentLessonExercise,
 ): ExtensionEditIssue {
     if (ex.prompt.trim().length < 1) return fail("prompt");
+    if (explanationTooLong(ex)) return fail("explanation");
     const isValid = VALIDATE_EXTENSION_PAYLOAD[ex.type as ExtensionWizardType];
     if (!isValid) return ok;
     return isValid(ex) ? ok : fail(EXTENSION_EDIT_CODE_BY_TYPE[ex.type as ExtensionWizardType]);
@@ -437,10 +440,10 @@ export function normalizeExtensionExercise(
     const prompt = ex.prompt.trim();
     const normalizePayload =
         NORMALIZE_EXTENSION_PAYLOAD[ex.type as ExtensionWizardType];
-    if (!normalizePayload) return {...ex, prompt};
-    return {
+    if (!normalizePayload) return normalizeExplanation({...ex, prompt});
+    return normalizeExplanation({
         ...ex,
         prompt,
         ext_payload: normalizePayload(ex),
-    } as ContentLessonExercise;
+    } as ContentLessonExercise);
 }

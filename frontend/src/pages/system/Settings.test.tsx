@@ -3,7 +3,7 @@
 // in-memory implementation so it resolves instead of throwing.
 import "fake-indexeddb/auto";
 
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -53,6 +53,12 @@ vi.mock("../../api/client", async () => {
         backupApiKey: (...args: unknown[]) => apiBackupKey(...args),
         getApiKeyBackup: (...args: unknown[]) => apiGetBackup(...args),
         restoreApiKeyBackup: (...args: unknown[]) => apiRestoreBackup(...args),
+      },
+      plugins: {
+        ...actual.api.plugins,
+        // The installed-plugins card (#3055) reads the active set on mount in
+        // API mode; an empty set keeps the unit run off the network.
+        health: async () => ({}),
       },
     },
   };
@@ -113,6 +119,50 @@ function renderSettings(initialEntry = "/settings") {
   );
 }
 
+/**
+ * The section-root testids of ``ids`` that are present inside ``panel``,
+ * in DOM order, de-duplicated (a section root's own testid, not the
+ * nested ones it contains). Shared by the tab-order pins (#1451, #1459,
+ * #2955) so every pin measures the order the same way.
+ */
+function sectionRootsInDomOrder(panel: HTMLElement, ids: readonly string[]): string[] {
+  const seen = new Set<string>();
+  return Array.from(panel.querySelectorAll("[data-testid]"))
+    .map((el) => el.getAttribute("data-testid"))
+    .filter((id): id is string => id !== null && ids.includes(id))
+    .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+}
+
+/**
+ * happy-dom exposes neither Web Speech API side, so the Voice card (and
+ * since #2956 its whole cluster) is absent by default. Define a minimal
+ * ``window.speechSynthesis`` so ``isSpeechSynthesisSupported()`` reports
+ * true; ``getVoices`` returns one voice so ``loadVoices()`` resolves at
+ * once instead of arming its 2 s ``voiceschanged`` timeout. Paired with
+ * {@link unstubSpeechSynthesis} in ``afterEach``.
+ */
+function stubSpeechSynthesis(): void {
+  Object.defineProperty(window, "speechSynthesis", {
+    configurable: true,
+    writable: true,
+    value: {
+      getVoices: () => [{ name: "Test Voice", lang: "de-DE" }],
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+      speak: () => undefined,
+      cancel: () => undefined,
+      pause: () => undefined,
+      resume: () => undefined,
+      speaking: false,
+      pending: false,
+    },
+  });
+}
+
+function unstubSpeechSynthesis(): void {
+  delete (window as unknown as Record<string, unknown>).speechSynthesis;
+}
+
 describe("Settings page", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
@@ -145,6 +195,7 @@ describe("Settings page", () => {
   });
   afterEach(() => {
     vi.restoreAllMocks();
+    unstubSpeechSynthesis();
   });
 
   // #335 (supersedes #51) — Sync needs a reachable backend; in Dexie
@@ -176,12 +227,14 @@ describe("Settings page", () => {
   });
 
   // #1451 — the Data tab sections follow a FIXED causal order:
-  // source (content repos) -> sync -> what results (cache) ->
-  // securing (backup/export) -> reversible cleanup (orphaned data) ->
-  // irreversible danger zone LAST. Pinned by relative DOM order so a
-  // future edit cannot silently regress it (e.g. put the danger zone
-  // above Sync). "Install app" moved to the General tab in #1455 (it
-  // configures HOW the app runs, not WHAT it stores).
+  // source (content repos) -> sync -> what results (cache, and the
+  // max lesson size that shapes the offline lessons landing in it,
+  // #2955) -> securing (backup/export) -> retention policy + reversible
+  // cleanup (paused retention, orphaned data, #2955) -> irreversible
+  // danger zone LAST. Pinned by relative DOM order so a future edit
+  // cannot silently regress it (e.g. put the danger zone above Sync).
+  // "Install app" moved to the General tab in #1455 (it configures HOW
+  // the app runs, not WHAT it stores).
   it("orders the Data-tab sections causally (content repos first, danger zone last) (#1451)", async () => {
     storageState.mode = "api";
     apiGet.mockResolvedValue(BASE);
@@ -193,19 +246,15 @@ describe("Settings page", () => {
       "content-repo-section",
       "settings-sync",
       "settings-section-cache",
+      "settings-section-max-lesson-size",
       "settings-backup",
       "key-vault-section",
       "export-section",
+      "settings-section-paused-retention",
       "settings-section-orphaned",
       "settings-danger-zone",
     ];
-    // Collect the section roots present, in DOM order (de-duped: a
-    // section root's own testid, not the nested ones it contains).
-    const seen = new Set<string>();
-    const domOrder = Array.from(panel.querySelectorAll("[data-testid]"))
-      .map((el) => el.getAttribute("data-testid"))
-      .filter((id): id is string => id !== null && CAUSAL_ORDER.includes(id))
-      .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+    const domOrder = sectionRootsInDomOrder(panel, CAUSAL_ORDER);
     const expected = CAUSAL_ORDER.filter((id) => domOrder.includes(id));
     expect(domOrder).toEqual(expected);
     // Headline invariants (causality + safety).
@@ -216,15 +265,71 @@ describe("Settings page", () => {
     );
   });
 
+  // #2955 — the two rare-housekeeping cards moved from the Learning tab
+  // to the Data tab (the move #1459 parked). Max lesson size governs how
+  // a saved chat analysis is split into offline lessons (its only reader
+  // is SaveOfflineLessonModal), so it sits DIRECTLY after the offline
+  // cache (slot 3b); paused-lesson retention is a retention policy, so it
+  // sits DIRECTLY before the orphaned-data cleanup (slot 5a). Both are
+  // gone from the Learning tab.
+  it("hosts max lesson size after the cache and paused retention before orphaned data (#2955)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=data");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-data");
+    const SECTION_ROOTS = [
+      "content-repo-section",
+      "settings-sync",
+      "settings-section-cache",
+      "settings-section-max-lesson-size",
+      "settings-backup",
+      "key-vault-section",
+      "export-section",
+      "settings-section-paused-retention",
+      "settings-section-orphaned",
+      "settings-danger-zone",
+    ];
+    const domOrder = sectionRootsInDomOrder(panel, SECTION_ROOTS);
+    expect(domOrder).toContain("settings-section-max-lesson-size");
+    expect(domOrder).toContain("settings-section-paused-retention");
+    expect(domOrder.indexOf("settings-section-max-lesson-size")).toBe(
+      domOrder.indexOf("settings-section-cache") + 1,
+    );
+    // The orphaned card only mounts when there IS orphaned data (none in
+    // this fixture), so pin the slot rather than the neighbour: after the
+    // last securing card, and nothing but the cleanup card (when present)
+    // and the danger zone may follow paused retention.
+    const pausedIdx = domOrder.indexOf("settings-section-paused-retention");
+    expect(pausedIdx).toBeGreaterThan(domOrder.indexOf("export-section"));
+    expect(domOrder.slice(pausedIdx + 1)).toEqual(
+      ["settings-section-orphaned", "settings-danger-zone"].filter((id) =>
+        domOrder.includes(id),
+      ),
+    );
+    const learning = screen.getByTestId("settings-panel-learning");
+    expect(
+      learning.querySelector('[data-testid="settings-section-max-lesson-size"]'),
+    ).toBeNull();
+    expect(
+      learning.querySelector('[data-testid="settings-section-paused-retention"]'),
+    ).toBeNull();
+  });
+
   // #1459 — the Learning tab sections follow a FIXED causal order
   // (same principle as the #1451 Data-tab pin): foundation (profile,
-  // source languages) -> in-lesson flow (mode, direction, hints,
-  // matching effect, interaction toggles, voice) -> practice &
-  // follow-up (review, SRS, summary) -> motivation (feedback,
-  // missions) -> reminders -> rare housekeeping LAST (paused
-  // retention, max lesson size). Pinned by relative DOM order so a
-  // future edit cannot silently regress it.
-  it("orders the Learning-tab sections causally (profile first, housekeeping last) (#1459)", async () => {
+  // source languages) -> in-lesson flow (mode, hints, interaction
+  // toggles, direction, matching effect, voice) -> practice &
+  // follow-up (review with the SRS schedule inside it, summary, retry
+  // scope) -> motivation (game mode, feedback, missions) -> reminders,
+  // and since #2962 the gamification card LAST (moved in from the
+  // Plugins tab, behind a separator because it holds Reset progress).
+  // #2956 grouped these into five clusters and made ONE relative
+  // change: hints + interaction now precede direction + matching. The
+  // rare-housekeeping pair #1459 parked at the end (paused retention,
+  // max lesson size) lives on the Data tab since #2955. Pinned by
+  // relative DOM order so a future edit cannot silently regress it.
+  it("orders the Learning-tab sections causally (profile first, gamification last) (#1459)", async () => {
     storageState.mode = "api";
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=learning");
@@ -235,10 +340,10 @@ describe("Settings page", () => {
       "settings-section-learning-profile",
       "settings-section-source-languages",
       "settings-section-lesson-mode",
-      "settings-section-direction-strategy",
       "settings-section-hints",
-      "settings-section-matching-resolve",
       "settings-section-interaction",
+      "settings-section-direction-strategy",
+      "settings-section-matching-resolve",
       "settings-section-voice",
       "settings-section-review",
       "settings-section-srs",
@@ -248,16 +353,9 @@ describe("Settings page", () => {
       "settings-section-feedback",
       "settings-section-missions",
       "settings-section-reminders",
-      "settings-section-paused-retention",
-      "settings-section-max-lesson-size",
+      "settings-section-gamification",
     ];
-    // Collect the section roots present, in DOM order (de-duped: a
-    // section root's own testid, not the nested ones it contains).
-    const seen = new Set<string>();
-    const domOrder = Array.from(panel.querySelectorAll("[data-testid]"))
-      .map((el) => el.getAttribute("data-testid"))
-      .filter((id): id is string => id !== null && CAUSAL_ORDER.includes(id))
-      .filter((id) => (seen.has(id) ? false : (seen.add(id), true)));
+    const domOrder = sectionRootsInDomOrder(panel, CAUSAL_ORDER);
     // Voice hides itself when the environment supports neither TTS nor
     // STT (happy-dom does not), so compare against the present subset —
     // but require every other section explicitly, so a silently dropped
@@ -267,14 +365,154 @@ describe("Settings page", () => {
     expect(domOrder).toEqual(CAUSAL_ORDER.filter((id) => domOrder.includes(id)));
     // Headline invariants: the in-lesson interaction toggles sit with
     // the lesson-flow block (before Review), review and SRS are
-    // adjacent, and housekeeping is last.
+    // adjacent, reminders close the routine block (#2955) and the
+    // gamification card is the last card of the tab (#2962).
     expect(domOrder.indexOf("settings-section-interaction")).toBeLessThan(
       domOrder.indexOf("settings-section-review"),
     );
     expect(domOrder.indexOf("settings-section-srs")).toBe(
       domOrder.indexOf("settings-section-review") + 1,
     );
-    expect(domOrder[domOrder.length - 1]).toBe("settings-section-max-lesson-size");
+    expect(domOrder[domOrder.length - 2]).toBe("settings-section-reminders");
+    expect(domOrder[domOrder.length - 1]).toBe("settings-section-gamification");
+  });
+
+  // #2956 — the Learning tab groups its 16 cards into five labelled
+  // clusters (basics / lessons / voice / review / motivation), each a
+  // ``<section aria-labelledby>`` landmark with a ``settings-cluster-<id>``
+  // testid. Membership AND in-cluster order are pinned per cluster, and
+  // the cluster roots themselves follow the tab order. The single
+  // relative reorder vs #1459 lives inside the lessons cluster: hints +
+  // interaction now precede direction + matching (frequency-first).
+  it("places every Learning section inside its cluster (#2956)", async () => {
+    stubSpeechSynthesis();
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-learning");
+    const CLUSTER_MEMBERSHIP: Record<string, readonly string[]> = {
+      "settings-cluster-basics": [
+        "settings-section-learning-profile",
+        "settings-section-source-languages",
+      ],
+      "settings-cluster-lessons": [
+        "settings-section-lesson-mode",
+        "settings-section-hints",
+        "settings-section-interaction",
+        "settings-section-direction-strategy",
+        "settings-section-matching-resolve",
+      ],
+      "settings-cluster-voice": ["settings-section-voice"],
+      "settings-cluster-review": [
+        "settings-section-review",
+        "settings-section-srs",
+        "settings-section-summary-sections",
+        "settings-section-error-replay-scope",
+      ],
+      "settings-cluster-motivation": [
+        "settings-section-playful",
+        "settings-section-feedback",
+        "settings-section-missions",
+        "settings-section-reminders",
+        "settings-section-gamification",
+      ],
+    };
+    expect(Object.values(CLUSTER_MEMBERSHIP).flat()).toHaveLength(17);
+    const clusterIds = Object.keys(CLUSTER_MEMBERSHIP);
+    expect(sectionRootsInDomOrder(panel, clusterIds)).toEqual(clusterIds);
+    for (const [clusterId, sectionIds] of Object.entries(CLUSTER_MEMBERSHIP)) {
+      const cluster = within(panel).getByTestId(clusterId);
+      expect(cluster.tagName).toBe("SECTION");
+      // Every card inside carries its own <h2>, so resolve the cluster's
+      // heading through the aria-labelledby id rather than by role.
+      const headingId = cluster.getAttribute("aria-labelledby");
+      expect(headingId).toBeTruthy();
+      const heading = document.getElementById(headingId!);
+      expect(heading?.tagName).toBe("H2");
+      expect(cluster.contains(heading)).toBe(true);
+      sectionIds.forEach((id) => within(cluster).getByTestId(id));
+      expect(sectionRootsInDomOrder(cluster, sectionIds)).toEqual(sectionIds);
+    }
+  });
+
+  // #2962 — Gamification (XP / badge toasts, weekend mode, daily goal,
+  // Reset progress) leaves the Plugins tab and becomes the LAST card of
+  // the motivation cluster, behind a separator because it carries the
+  // destructive reset. Its testids are unchanged; the Plugins tab keeps
+  // the Learning-Repository card only.
+  it("hosts Gamification as the last motivation card, behind a separator, not on Plugins (#2962)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    expect(screen.getAllByTestId("settings-section-gamification")).toHaveLength(1);
+    const gamification = screen.getByTestId("settings-section-gamification");
+    expect(screen.getByTestId("settings-panel-plugins").contains(gamification)).toBe(false);
+    const motivation = within(screen.getByTestId("settings-panel-learning")).getByTestId(
+      "settings-cluster-motivation",
+    );
+    expect(motivation.contains(gamification)).toBe(true);
+    expect(gamification).toBeVisible();
+    const separator = screen.getByTestId("settings-gamification-separator");
+    expect(separator).toHaveClass("mt-8", "border-t-2", "border-border", "pt-8");
+    expect(separator.contains(gamification)).toBe(true);
+    expect(motivation.lastElementChild).toBe(separator);
+    expect(within(motivation).getByTestId("settings-section-reminders").compareDocumentPosition(gamification) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // The Plugins tab still exists and still carries the Learning-Repository card.
+    fireEvent.click(screen.getByTestId("settings-tab-plugins"));
+    expect(screen.getByTestId("settings-panel-plugins")).toBeVisible();
+    expect(screen.getByTestId("settings-section-gamification")).not.toBeVisible();
+  });
+
+  // #2956 — the read-only SRS schedule has no input of its own, so it is
+  // no longer a card between two "Review" headings but the LAST block
+  // inside the Review card. Its testids (``settings-section-srs``,
+  // ``srs-schedule``, ``srs-methodology-link``) are unchanged.
+  it("nests the SRS schedule inside the Review card (#2956)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    const review = within(screen.getByTestId("settings-panel-learning")).getByTestId(
+      "settings-section-review",
+    );
+    const srs = within(review).getByTestId("settings-section-srs");
+    within(srs).getByTestId("srs-schedule");
+    within(srs).getByTestId("srs-methodology-link");
+    expect(review.lastElementChild).toBe(srs);
+    expect(screen.getAllByTestId("settings-section-srs")).toHaveLength(1);
+  });
+
+  // #2956 — the voice cluster is rendered only when the browser exposes
+  // at least one Web Speech API side (the same guard the Voice card uses
+  // inside), so an unsupported browser never shows a heading over
+  // nothing. happy-dom supports neither; stubbing ``window.speechSynthesis``
+  // brings the cluster (and the card inside it) back, between lessons and
+  // review.
+  it("omits the voice cluster without speech support and shows it with window.speechSynthesis stubbed (#2956)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    const unsupported = renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    expect(screen.getByTestId("settings-cluster-review")).toBeInTheDocument();
+    expect(screen.queryByTestId("settings-cluster-voice")).toBeNull();
+    expect(screen.queryByTestId("settings-section-voice")).toBeNull();
+    unsupported.unmount();
+
+    stubSpeechSynthesis();
+    renderSettings("/settings?tab=learning");
+    await screen.findByTestId("settings");
+    const panel = screen.getByTestId("settings-panel-learning");
+    const voice = within(panel).getByTestId("settings-cluster-voice");
+    within(voice).getByTestId("settings-section-voice");
+    expect(
+      sectionRootsInDomOrder(panel, [
+        "settings-cluster-lessons",
+        "settings-cluster-voice",
+        "settings-cluster-review",
+      ]),
+    ).toEqual(["settings-cluster-lessons", "settings-cluster-voice", "settings-cluster-review"]);
   });
 
   // #1484 — the General + AI tabs wrap their sections in a

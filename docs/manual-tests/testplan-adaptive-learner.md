@@ -413,6 +413,20 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       verrät nichts. Bei Freitext/Cloze/Wort-Kacheln bleibt der Tipp-Knopf wie
       bisher erhalten. iOS PWA/Standalone: dieselbe Prüfung auf dem zum
       Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
+- [ ] Erklärung nach der Antwort (#2991): eine Übung öffnen, deren Inhalt eine
+      Erklärung trägt (Feld `explanation`, z. B. das Fixture
+      `e2e/fixtures/explanation-post-answer.lesson.json` über ein verbundenes
+      Test-Repository). Vor dem Prüfen ist KEINE Erklärung sichtbar. Falsch
+      antworten und prüfen: unter der Übung erscheint der Kasten „Erklärung"
+      AUFGEKLAPPT mit gerendertem Markdown (fette „Regel", die Wort-für-Wort-
+      Liste, die Beispiele). Nächste Übung richtig beantworten: der Kasten
+      erscheint EINGEKLAPPT mit dem Knopf „Warum?"; ein Klick öffnet ihn,
+      „Erklärung ausblenden" schließt ihn wieder. Eine Übung OHNE Erklärung
+      zeigt keinen Kasten. Einstellungen > Lernen > Wiederholung >
+      „Erklärungen anzeigen" ausschalten: der Kasten verschwindet sofort, auch
+      in der laufenden Lektion; einschalten bringt ihn zurück. Im Prüfungsmodus
+      erscheint er nie. Kein XP-Abzug. iOS PWA/Standalone: dieselbe Prüfung auf
+      dem zum Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
 - [ ] Zuordnung: kein falscher Untertitel/Spaltentitel bei Wissens-Sets (#2392):
       eine Zuordnungsübung eines WISSENS-Sets öffnen (nicht-sprachliche Domäne
       oder Quell- = Zielsprache, z. B. Sinne zu Organen). Es erscheint KEIN
@@ -537,6 +551,11 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 ### Spielmodus (#2844)
 - [ ] Settings -> Lernen: Sektion "Spielmodus" mit Schalter "Spielerische
       Lektionen" vorhanden, Standard: aus
+- [ ] Vorbereitung für alle Detail-Schritte in diesem Abschnitt (#2959):
+      Einstellungen > Lernen > Spielmodus > "Details zum Spielmodus"
+      aufklappen (Standard: eingeklappt); die Detail-Schalter sind nur bei
+      eingeschaltetem Spielmodus bedienbar, also vorher "Spielerische
+      Lektionen" einschalten
 - [ ] Lektionsstart (erster Schritt, Spielmodus aus, Hinweis nie
       ausgeblendet): Banner "Spielmodus ausprobieren" mit "Einschalten"
       und Schließen-Knopf sichtbar
@@ -580,7 +599,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Maskottchen-Varianten (#2861, Farbwelten des Lernfunke)
 
-- [ ] Settings -> Lernen -> Spielmodus: unter dem Schalter die Zeile
+- [ ] Settings -> Lernen -> Spielmodus -> Details (aufgeklappt, siehe
+      Vorbereitungsschritt #2959), Block "XP und Maskottchen": die Zeile
       "Maskottchen-Variante" mit fünf Mini-Figuren (Funke, Ozean, Wald,
       Geist, Gold) samt Hinweistext
 - [ ] Frischer Account (Level 1, keine Abzeichen, 0 XP): nur Funke
@@ -620,9 +640,29 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Prüfungsmodus + Spielmodus + Sounds: kein Ton pro Antwort (kein
       Sofort-Feedback); die Abschluss-Fanfare bleibt erlaubt
 
+#### Feedback-Karte: Lautstärke immer sichtbar + Spielmodus-Hinweis (#2957)
+
+- [ ] Settings -> Lernen -> Feedback: der Schalter "Töne" steht auf AUS,
+      trotzdem sind der Lautstärkeregler, die Prozentanzeige und die
+      "Test"-Taste sichtbar; unter dem Regler der Hinweis "Gilt auch für
+      die Spielmodus-Sounds."
+- [ ] Töne AUS, Spielmodus-Sounds AN: Regler verschieben, Lektion mit
+      Spielmodus spielen - die Spielmodus-Töne folgen der neuen
+      Lautstärke; Töne AUS + Spielmodus-Sounds AUS: "Test" bleibt still
+- [ ] Spielmodus einschalten (Settings -> Lernen -> Spielmodus): unter den
+      drei Intensitäts-Optionen erscheint SOFORT ohne Reload der Hinweis
+      "Der Spielmodus ist an, daher ist das Feedback unabhängig von
+      dieser Einstellung immer ausführlich."
+- [ ] Spielmodus wieder ausschalten: der Hinweis verschwindet sofort; die
+      gewählte Intensität bleibt unverändert markiert
+- [ ] Spielmodus an + reduzierte Bewegung im System: beide Hinweise
+      (reduzierte Bewegung + Spielmodus) sind sichtbar; das Feedback
+      bleibt dezent (reduced motion gewinnt)
+
 #### Spannungssysteme: Herzen + Countdown-Ring (#2878, opt-in, Standard aus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: die Schalter "Herzen (Leben)"
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Spannung",
+      Vorbereitungsschritt #2959): die Schalter "Herzen (Leben)"
       und "Countdown-Ring" sind standardmäßig AUS; die Zahlenfelder
       (Herzen pro Lektion, Sekunden pro Übung) sind erst nach dem
       Einschalten des jeweiligen Schalters bedienbar und klemmen auf
@@ -647,7 +687,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Serien-Bonus-XP (#2893, Standard an, nur im Spielmodus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: der Schalter
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "XP und
+      Maskottchen", Vorbereitungsschritt #2959): der Schalter
       "Serien-Bonus-XP" ist standardmäßig AN; das Zahlenfeld
       "Bonus-XP-Obergrenze pro Lektion" ist bedienbar, klemmt auf 5-20
       (Standard 10) und wird beim Ausschalten des Schalters gesperrt
@@ -668,7 +709,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Arcade-Minispiele (#2887, Standard an, nur im Spielmodus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Arcade" ist
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
+      Belohnungen", Vorbereitungsschritt #2959): der Schalter "Arcade" ist
       standardmäßig AN; die Zahlenfelder "Snake-Rundenlänge" (30-120,
       Standard 60) und "Memory-Paare" (4-12, Standard 8) klemmen und
       sind bei ausgeschaltetem Schalter gesperrt
@@ -731,7 +773,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Töne: mit aktiviertem Töne- oder Spielmodus-Sounds-Schalter
       klingt jedes Feld mit eigenem Ton (Wiedergabe und Eingabe);
       ohne Opt-in bleibt das Spiel stumm und voll spielbar
-- [ ] Einstellungen > Lernen > Spielmodus: das Zahlenfeld
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
+      Belohnungen", Vorbereitungsschritt #2959): das Zahlenfeld
       "Simon-Ziellänge" klemmt auf 5-15 (Standard 8) und ist bei
       ausgeschalteter Arcade gesperrt
 - [ ] Reduzierte Bewegung im System: Felder wechseln nur den
@@ -739,7 +782,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Blitzrunden (#2888, Standard an, nur im Spielmodus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Sonderrunden"
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
+      Belohnungen", Vorbereitungsschritt #2959): der Schalter "Sonderrunden"
       ist standardmäßig AN; das Zahlenfeld "Blitzrunden-Karten" klemmt
       auf 5-20 (Standard 10) und ist bei ausgeschaltetem Schalter
       gesperrt
@@ -766,13 +810,19 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Spiel-Tickets (#2889, Standard an, nur im Spielmodus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: der Schalter "Spiel-Tickets"
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
+      Belohnungen", Vorbereitungsschritt #2959): der Schalter "Spiel-Tickets"
       ist standardmäßig AN; das Zahlenfeld "Maximale Tickets" klemmt
       auf 1-10 (Standard 5) und ist bei ausgeschaltetem Schalter
       gesperrt
 - [ ] Lektion mit voller Punktzahl abschließen: die Zusammenfassung
       zeigt das Ticket-Banner ("Belohnung freigeschaltet ...") mit dem
       Knopf "Jetzt spielen", der zur Arcade führt
+- [ ] Arcade-Schalter aus (#3029): dieselbe Lektion mit voller Punktzahl
+      zeigt in der Zusammenfassung WEDER Banner noch "Jetzt spielen",
+      und es wird kein Ticket gutgeschrieben; Arcade-Schalter wieder an
+      und eine weitere neue Lektion perfekt abgeschlossen: Banner und
+      Knopf sind wieder da
 - [ ] Herzen aktiv (#2878) und Durchlauf ohne Herzverlust beendet: ein
       weiteres Ticket (volle Punktzahl + alle Herzen = 2 Tickets)
 - [ ] Streak-Meilensteine (3/7/14/30 Tage): beim Erreichen gibt es je
@@ -801,7 +851,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 
 #### Bonus-Lektionen (#2890, Standard an, nur im Spielmodus)
 
-- [ ] Einstellungen > Lernen > Spielmodus: der Schalter
+- [ ] Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
+      Belohnungen", Vorbereitungsschritt #2959): der Schalter
       "Bonus-Lektionen" ist standardmäßig AN
 - [ ] Set mit einer bonus--Lektionsdatei (Dateiname beginnt mit
       "bonus-"): auf der Set-Seite erscheint die Bonus-Lektion am
@@ -858,6 +909,165 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] Spielmodus aus: nichts davon erscheint; reduzierte Bewegung im
       System: Chip/Punkte erscheinen ohne Animation, das "+1" bleibt
       unsichtbar (reine Bewegungs-Dekoration)
+
+### Lernen-Tab: fünf Bereiche (#2956)
+
+- [ ] Einstellungen > Lernen: die Karten stehen in fünf beschrifteten
+      Bereichen, jeder mit einer kleinen Überschrift in Großbuchstaben
+      und einer Beschreibungszeile darunter, in dieser Reihenfolge:
+      "Grundlagen" (Wer lernt, und in welchen Sprachen.), "In der
+      Lektion" (Wie sich Übungen beim Beantworten verhalten.), "Vorlesen
+      und Diktieren" (Stimmen, Tempo, Mikrofon und Ausspracheübung.),
+      "Nach der Lektion" (Wiederholungen, die Zusammenfassung und das
+      Nachholen von Fehlern.), "Motivation und Routine" (Spielmodus,
+      Feedback, tägliche Missionen und Erinnerungen.)
+- [ ] Grundlagen: Lernprofil, dann Weitere Ausgangssprachen
+- [ ] In der Lektion: Lektionsmodus, Tipps, Interaktion, dann Bevorzugte
+      Übungsrichtung und Auflösungs-Effekt (Tipps und Interaktion stehen
+      VOR Richtung und Auflösung)
+- [ ] Vorlesen und Diktieren: nur die Karte "Sprachausgabe"; in einem
+      Browser ohne Web-Speech-Unterstützung (weder Vorlesen noch
+      Spracherkennung) fehlt der ganze Bereich samt Überschrift, und
+      "Nach der Lektion" folgt direkt auf "In der Lektion"
+- [ ] Nach der Lektion: Wiederholung, Zusammenfassung nach Lektionen,
+      Fehler wiederholen. "Verteilte Wiederholung" ist keine eigene Karte
+      mehr, sondern der letzte Block in der Karte "Wiederholung" (unter
+      einer Trennlinie, mit kleinerer Überschrift): der Intervall-Plan
+      (richtige Antworten in Folge gegen Tage bis zur nächsten
+      Wiederholung), der Hinweis, ab wann ein Element als beherrscht
+      gilt, und der Link zur Lernmethode
+- [ ] Motivation und Routine: Spielmodus, Feedback, Tägliche Missionen,
+      Erinnerungen (letzte Karte des Tabs)
+- [ ] Handy (375 px breit): Bereichs-Überschriften und Beschreibungen
+      brechen um, nichts scrollt horizontal; Tab-Wechsel und der
+      Deep-Link ?tab=learning funktionieren wie zuvor
+
+### Spielmodus: Zusammenfassungskarte + Details (#2959)
+
+- [ ] Einstellungen > Lernen > Spielmodus: die Karte zeigt den Schalter
+      "Spielerische Lektionen", die Spielmodus-Sounds und darunter die
+      Statuszeile "N von 7 Extras an" (frischer Stand: "5 von 7")
+- [ ] "Details zum Spielmodus" ist standardmäßig eingeklappt (Knopf mit
+      Pfeil, darunter der Hinweistext "Herzen, Countdown, Arcade,
+      Sonderrunden, Tickets, Bonus-Lektionen, Serien-XP und Maskottchen.");
+      Aufklappen zeigt die drei Blöcke "Spannung", "Arcade und
+      Belohnungen" und "XP und Maskottchen"
+- [ ] Aufgeklappt lassen und die Seite neu laden: der Bereich bleibt
+      aufgeklappt; eingeklappt lassen und neu laden: bleibt eingeklappt
+      (beide Speicher-Modi, localStorage)
+- [ ] Spielmodus AUS, Details aufgeklappt: jeder Schalter, jedes
+      Zahlenfeld und die Maskottchen-Knöpfe sind ausgegraut; oben im
+      Bereich steht der Hinweis "Schalte "Spielerische Lektionen" ein, um
+      diese Optionen zu ändern."
+- [ ] "Spielerische Lektionen" einschalten: der Hinweis verschwindet und
+      die Detail-Schalter werden ohne Reload bedienbar; Zahlenfelder
+      folgen weiterhin ihrem eigenen Schalter (z. B. "Herzen pro Lektion"
+      bleibt gesperrt, solange "Herzen (Leben)" aus ist); wieder
+      ausschalten sperrt alles erneut ohne Reload
+- [ ] Einen Detail-Schalter umschalten (z. B. Herzen an): die Statuszeile
+      zählt sofort mit ("6 von 7 Extras an")
+- [ ] Arcade-Hinweisseite (/arcade bei ausgeschalteter Arcade oder
+      ausgeschaltetem Spielmodus): der Link in die Einstellungen landet
+      auf dem Lernen-Tab im Bereich "Motivation und Routine" (Chip aktiv,
+      Bereich im Bild, siehe #2961)
+
+### Gamification im Bereich "Motivation und Routine" (#2962)
+
+- [ ] Einstellungen > Lernen > "Motivation und Routine": die Karte
+      "Gamification" (XP-Benachrichtigungen, Abzeichen-Benachrichtigungen,
+      "Alle Abzeichen anzeigen", Wochenend-Modus, Tägliches Sessions-Ziel,
+      "Fortschritt zurücksetzen") ist die LETZTE Karte des Tabs, direkt
+      hinter "Erinnerungen", optisch abgesetzt durch eine dickere
+      Trennlinie mit Abstand darüber
+- [ ] Einstellungen > Plugins: die Karte "Installierte Plugins" (#3055)
+      und darunter die Karte "Lern-Repository"; keine Gamification-Karte
+      mehr
+- [ ] Bereichsleiste, Chip "Motivation und Routine": der Sprung landet
+      auf der Bereichs-Überschrift, die Gamification-Karte gehört zum
+      Bereich (unter derselben Überschrift)
+- [ ] "Alle Abzeichen anzeigen" öffnet weiterhin die Abzeichen-Galerie;
+      "Fortschritt zurücksetzen" fragt weiterhin zweimal nach; der
+      Wochenend-Modus speichert (Reload) - in beiden Speicher-Modi
+- [ ] Handy (375 px): die Karte und die Trennlinie brechen sauber um,
+      nichts scrollt horizontal
+
+### Daten-Tab: Bereichsleiste + Deep-Link (#3122)
+
+Dieselbe Mechanik wie im Lernen-Tab (#2961, #2966), über den sechs
+Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
+
+- [ ] Einstellungen > Daten: über dem ersten Bereich steht eine Zeile mit
+      Chips "Quellen", "Synchronisation", "Offline-Inhalte", "Sichern und
+      Exportieren", "Aufräumen", "Gefahrenzone" (in dieser Reihenfolge,
+      `settings-subnav-sources` … `settings-subnav-danger`). Ohne Auswahl
+      ist kein Chip hervorgehoben; jeder Bereich trägt Überschrift und
+      Beschreibung, die Karten darunter sind unverändert (Inhalte-Repos und
+      Registry unter Quellen; Cache und Lektionsgröße unter Offline-Inhalte;
+      Sicherung, Identität, Schlüsseltresor, Export unter Sichern;
+      Aufbewahrung und verwaiste Daten unter Aufräumen; Alles löschen als
+      letzte Karte, weiter abgesetzt)
+- [ ] Chip "Sichern und Exportieren" anklicken: die Seite scrollt zum
+      Bereich, die Überschrift liegt frei unter der Kopfzeile (Desktop:
+      unter Kopfzeile UND Leiste), der Chip ist hervorgehoben, die Adresse
+      endet auf `?tab=data&section=backup`, der Zurück-Knopf führt NICHT
+      zum vorherigen Chip zurück
+- [ ] Handy (375 px): die Chip-Zeile lässt sich seitlich wischen, kein
+      horizontales Scrollen der Seite; die Sicherung ist mit einem Tipp
+      erreichbar statt durch mehrere Bildschirmhöhen Scrollen
+- [ ] Deep-Link `/settings?tab=data&section=danger` in einem neuen Tab: der
+      Daten-Tab ist offen, die Gefahrenzone im Bild, der Chip hervorgehoben
+- [ ] `/settings?tab=data&section=review` (ein Lernen-Bereich) öffnen: der
+      Daten-Tab öffnet oben, kein Daten-Chip hervorgehoben, kein Fehler
+- [ ] Sprung aus KI-Tab "Schlüssel exportieren" / "importieren" (#1183,
+      #1765): landet weiterhin auf dem Schlüsseltresor im Bereich "Sichern
+      und Exportieren"; die Leiste stört den Sprung nicht
+- [ ] Ohne Auswahl langsam scrollen: der hervorgehobene Chip folgt dem
+      Bereich, dessen Überschrift oben im Bild steht; die Adresse ändert
+      sich dabei NICHT
+- [ ] Beide Speichermodi (API + Dexie): Leiste und Deep-Link gleich; im
+      Dexie-Modus zeigt der Bereich "Synchronisation" den Desktop-Hinweis
+
+### Lernen-Tab: Bereichsleiste + Deep-Link (#2961)
+
+- [ ] Einstellungen > Lernen: über dem ersten Bereich steht eine Zeile
+      mit Chips "Grundlagen", "In der Lektion", "Vorlesen und Diktieren",
+      "Nach der Lektion", "Motivation und Routine" (in dieser Reihenfolge;
+      ohne Web-Speech-Unterstützung fehlt der Chip "Vorlesen und
+      Diktieren"). Ohne Auswahl ist kein Chip hervorgehoben
+- [ ] Chip "Nach der Lektion" anklicken: die Seite scrollt zum Bereich
+      "Nach der Lektion", die Bereichs-Überschrift liegt frei unter der
+      Kopfzeile (Desktop: unter Kopfzeile UND Leiste), der Chip ist
+      hervorgehoben, die Adresse endet auf `?tab=learning&section=review`
+      und der Browser-Zurück-Knopf führt NICHT zum vorherigen Chip zurück
+      (kein neuer Verlaufseintrag)
+- [ ] Desktop (>= 768 px): weiter nach unten scrollen - die Leiste bleibt
+      direkt unter der App-Kopfzeile sichtbar und überdeckt keinen Text.
+      Handy (375 px): die Leiste scrollt mit der Seite weg, die Chip-Zeile
+      lässt sich seitlich wischen, nichts scrollt horizontal auf
+      Seitenebene
+- [ ] Deep-Link `/settings?tab=learning&section=motivation` in einem neuen
+      Tab öffnen: der Lernen-Tab ist offen, der Bereich "Motivation und
+      Routine" im Bild, der Chip hervorgehoben; am Handy ist der aktive
+      Chip in der Zeile sichtbar (die Zeile wurde dorthin gescrollt)
+- [ ] `/settings?tab=learning&section=unsinn` öffnen: der Tab öffnet oben,
+      kein Chip hervorgehoben, kein Fehler
+- [ ] Mit aktivem Bereich in einen anderen Tab wechseln (z. B. Daten): die
+      Adresse trägt nur noch `?tab=data`; zurück auf Lernen: kein Chip
+      hervorgehoben, keine Scrollbewegung
+- [ ] Systemeinstellung "Bewegung reduzieren" aktiv: der Sprung erfolgt
+      ohne Animation (sofort), sonst weich
+- [ ] Ohne Auswahl langsam durch den Tab scrollen (#2966): der
+      hervorgehobene Chip folgt dem Bereich, dessen Überschrift gerade
+      oben im Bild steht (Grundlagen -> In der Lektion -> ... ->
+      Motivation und Routine); nach einem Chip-Klick bleibt der geklickte
+      Chip hervorgehoben, bis der Bereich im Bild ist, und folgt danach
+      wieder dem Scrollen. Die Adresse ändert sich beim Scrollen NICHT
+- [ ] Überschriften-Hierarchie (#2966, Screenreader / Browser-Outline):
+      im Lernen-Tab sind die Bereichs-Überschriften h2 und die
+      Karten-Titel darin h3; auf den anderen Tabs bleiben die Karten-Titel
+      h2
+- [ ] Beide Speicher-Modi (API + Dexie): Leiste und Deep-Link verhalten
+      sich identisch
 
 ### Zusammenfassung zählt Korrekturen mit (#2479)
 - [ ] Eine Lektion mit mehreren falschen Antworten spielen, dann in der
@@ -920,8 +1130,34 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       danach - erst die eigenen Fehler ausbessern, dann entscheiden wie es
       weitergeht. Bleibt über Settings weiterhin frei umsortierbar.
 
+### Korrekturrunde: Ergebnis bleibt stehen, dann Weiter (#3125)
+- [ ] Lektion mit mindestens zwei Fehlern beenden, "Jetzt ausbessern"
+      drücken, die erste Lücke RICHTIG füllen und prüfen: die Lücke wird
+      grün, "Alles richtig!" erscheint, darunter der grüne Erfolgsbalken
+      mit "Weiter". Die Runde springt NICHT von selbst weiter (Auto-Weiter
+      in Einstellungen > Lernen aus)
+- [ ] "Weiter" drücken (oder Enter): jetzt kommt die nächste Übung
+      (Zähler "2 / N")
+- [ ] Eine Lücke FALSCH füllen und prüfen: die Lücke wird rot, "0 von 1
+      richtig", Meine Antwort / Lösung bleiben sichtbar, darunter ein
+      schlichter "Weiter"-Knopf; kein Auto-Weiter, auch nicht mit
+      eingeschaltetem Auto-Weiter
+- [ ] Einstellungen > Lernen > Auto-Weiter einschalten, Runde erneut:
+      nach einer RICHTIGEN Antwort bleibt der Erfolgsbalken kurz stehen
+      (wie in der Lektion) und die Runde geht von allein weiter
+- [ ] Nach der letzten Übung führt "Weiter" zur Abschlussmeldung
+      ("Korrekturrunde abgeschlossen", N Elemente verbessert); die Zahl
+      stimmt mit den richtigen Antworten überein
+- [ ] Überspringen bleibt jederzeit möglich; die Gegenüberstellung mit dem
+      vorigen Durchgang (#983) ist unverändert
+
 ### Neue Übungstypen (seit v2.2.0, visuell + funktional)
 - [ ] multiple_choice: Auswahl, Feedback, SRS-Attempt
+- [ ] matching Auflösen-Umschalter (#3140): nach einer nicht komplett
+      richtigen Prüfung steht der Umschalter "Meine Antworten" / "Auflösen";
+      bei komplett richtiger Antwort erscheint KEIN Umschalter - in der
+      Lektion nur "Weiter", in der Wiederholungs-Sitzung, Endlos-, Shuffle-,
+      adaptiven und Fehler-Wiederholungs-Lektion nur die bewerteten Spalten
 - [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar; nach
       "Antwort prüfen" bleiben die Verdikt-Chips samt roter Korrektur-Kategorie
       INNERHALB ihrer Spalte (kein Überlaufen in die Nachbarspalte, #2771) -
@@ -1047,6 +1283,18 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       "Speichern" ist mit einem Inline-Hinweis deaktiviert, bis die Nutzlast
       gültig ist (z. B. weniger als 2 Elemente, oder null/mehr als eine
       richtige Hotspot-Zone).
+- [ ] Hotspot-Zeichenfläche zum Einzeichnen von Zonen (#3110): sobald ein
+      Bild ausgewählt ist, erscheint oberhalb der numerischen Zonenliste
+      eine Fläche "Zone auf dem Bild einzeichnen". Rechteck oder Kreis
+      wählen, dann auf dem Bild ziehen - eine gestrichelte Vorschau folgt
+      der Ziehbewegung und beim Loslassen wird eine neue Zone mit der
+      gezeichneten Position/Größe angelegt (sofort sichtbar in den
+      numerischen Feldern darunter zum Feinjustieren). Wird beim Ziehen
+      der Bildbereich verlassen und dort losgelassen, wird das Zeichnen
+      abgebrochen (keine Zone wird hinzugefügt). Die bereits vorhandenen
+      Zonen werden auf der Fläche ebenfalls dargestellt (die richtige
+      optisch abgesetzt), sodass die gesamte Anordnung beim
+      Weiterzeichnen sichtbar bleibt.
 
 ### Set erneut durcharbeiten - zweiter Durchgang (#2125, EXP-051)
 
@@ -1241,6 +1489,19 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Scrollen** erreichbar - die Auswahl drückt es nicht unter die Falz; wer
       ein Kapitel einfügt, muss danach nicht nach oben scrollen, um die Typen zu
       finden. DOM-Reihenfolge entspricht der sichtbaren (keine Axe-Regression).
+- [ ] **Erklärungen im Assistenten generieren (#2992):** Im Buchtext-Schritt
+      steht direkt unter der Aufgabentyp-Auswahl das Kontrollkästchen
+      "Erklärungen generieren (werden nach der Antwort gezeigt)" mit dem
+      Hinweis zum Mehraufwand. Es ist bei JEDEM Öffnen des Schritts
+      **abgewählt** (bewusst nicht gemerkt, weil es KI-Ausgabe kostet).
+      Abgewählt generieren → die erzeugten Übungen tragen KEIN Feld
+      `explanation` (im Inline-Editor ist das Erklärungsfeld leer). Angehakt
+      generieren → Lückentext-, Wortkacheln-, Freitext-, Multiple-Choice- und
+      Fehlerkorrektur-Übungen tragen eine Markdown-Erklärung (Regel, Wort für
+      Wort, weitere Beispiele; in der Sprache des Textes), Zuordnung trägt
+      keine; die Lektion abspielen und nach einer Antwort den Kasten
+      „Erklärung" sehen (#2991). Beide Pfade prüfen: Einzeltext UND
+      Datei-Upload mit mehreren Abschnitten (Batch).
 - [ ] **Titel-Pflichtfeld im Buchtext-Pfad (#1946):** Schritt 1 OHNE
       Titel → Karte "Wissenslektion aus Text" klicken → bleibt auf
       Schritt 1 mit dem freundlichen Hinweis "Ein Titel ist
@@ -1544,15 +1805,115 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       **Regression:** Diktat + Bildbeschreibung funktionieren unverändert,
       insbesondere bleibt deren "→ Freitext"-Konvertierung sichtbar (nur bei
       Sprechen & Aufnehmen fehlt sie, by design)
+- [ ] **Tastatur-Pre-Reveal (#3002, nur Touch-Geräte):** in einer Lektion
+      ein Freitext- oder Lückentext-Feld antippen, das in der UNTEREN
+      Bildschirmhälfte sitzt. Beim Fokussieren scrollt die Seite das Feld
+      SOFORT ins obere Drittel (eigener App-Scroll, kein Sprung des ganzen
+      Layouts), die Tastatur öffnet darunter, das Feld bleibt sichtbar.
+      Danach: andere Elemente antippen, während das Feld fokussiert ist -
+      die Tipps landen auf dem sichtbaren Ziel (kein 1-2-Zeilen-Versatz,
+      das ist der #1569-Kern). Ein Feld, das schon OBEN sitzt, wird beim
+      Fokussieren NICHT bewegt; Checkboxen/Radios/Dropdowns lösen keinen
+      Scroll aus. Desktop (Maus): kein Scroll beim Fokussieren
+- [ ] **Reiterleisten auf dem Telefon einzeilig (#3012):** auf einem echten
+      Telefon im Hochformat nacheinander **Inhalte**, **Fortschritt** und
+      **Dashboard** öffnen. Jede Reiterleiste steht in **einer** Zeile, keine
+      Beschriftung ist abgeschnitten oder gequetscht, jeder Reiter ist
+      mindestens 44px hoch antippbar. Vorher brach die Inhalte-Leiste auf
+      schmalen Geräten (375px und darunter) unbemerkt in zwei Zeilen um.
+      **Vergleich Tablet/Desktop:** dort sind die Reiter wieder grösser
+      gesetzt und weiter gepolstert als auf dem Telefon; der Wechsel liegt
+      bei 640px Fensterbreite (am Desktop die Fensterbreite verkleinern und
+      den Umschlag beobachten). **Auswahl und Tastatur:** genau ein Reiter
+      ist als aktiv markiert, Tabulator erreicht jeden Reiter, Enter wechselt
+      ihn, die Adresse führt den Reiter mit (`?tab=`). **iOS-Standalone:** vom
+      Home-Bildschirm gestartet gilt dasselbe; nach dem Drehen ins Querformat
+      und zurück bleibt die Leiste einzeilig und springt nicht.
+- [ ] **Erstellen-Knopf in "Meine Lektionen" (#3007):** Voraussetzung: es
+      existiert mindestens eine eigene Lektion (sonst wird der Abschnitt gar
+      nicht gezeigt). Inhalte → Importieren öffnen → im Abschnitt **Meine
+      Lektionen** steht im Kopf neben "Zu einem Set zusammenfassen" der Knopf
+      **"Neue Lektion erstellen"**. Klick → der Lektions-Assistent öffnet
+      sich. Der Knopf bleibt auch sichtbar, während die Mehrfachauswahl zum
+      Zusammenfassen aktiv ist. Auf dem Telefon: beide Knöpfe im Kopf sind
+      mindestens 44px hoch und umbrechen sauber, der Titel bleibt lesbar.
+      **iOS-Standalone:** vom Home-Bildschirm gestartet verhält sich der Knopf
+      gleich, der Assistent öffnet in derselben Ansicht ohne Browser-Leiste.
+- [ ] **Reiter "Erstellen" im Inhalte-Hub (#3006):** `/content` öffnen → die
+      Reiterleiste zeigt **vier** Reiter: Entdecken, Meine Inhalte,
+      Importieren, **Erstellen**. Klick auf Erstellen → der Lektions-Assistent
+      erscheint im Reiter, die Adresse lautet `/content?tab=create`.
+      **Alte Adresse:** `/create-lesson` direkt aufrufen → leitet auf
+      `/content?tab=create` weiter, der Assistent ist da (kein 404, keine
+      doppelte Seite). **Bearbeiten-Deeplink bleibt eigenständig:** bei einer
+      eigenen Lektion "Bearbeiten" wählen → `/create-lesson/edit/...` öffnet
+      den vorbefüllten Assistenten als eigene Seite, NICHT im Reiter.
+      **Andere Einstiege:** der Knopf "Neue Lektion erstellen" auf dem
+      Dashboard und der Link in Entdecken führen weiterhin zum Assistenten.
+      **Im Importieren-Reiter** gibt es den Knopf "Neue Lektion erstellen"
+      nicht mehr (der Reiter ersetzt ihn); die vier übrigen Aktionen
+      (Lektion importieren, Chat importieren, Anki-Export, Lernpfad) sind
+      unverändert da. **Reihenfolge:** Einstellungen → Allgemein → Reihenfolge
+      der Inhalte-Reiter listet auch Erstellen und kann ihn verschieben; die
+      neue Reihenfolge greift ohne Neuladen. Wer vor dieser Version eine
+      eigene Reihenfolge gesetzt hatte, findet Erstellen am Ende der Liste,
+      die übrigen drei unverändert.
+      **Telefon (#3006 auf der Leiste aus #3012):** auf einem echten Telefon im
+      Hochformat prüfen, ob die vier Reiter in EINE Zeile passen. Gemessen im
+      Container (Chromium, deutsche Beschriftungen) brauchen sie mit der
+      kompakten Leiste 337,1px und passen ab 375px Gerätebreite; ohne sie
+      brauchten sie 451,7px und passten auf keinem Telefon. Auf einem sehr
+      schmalen Gerät (320px, iPhone SE der ersten Generation) bricht die Leiste
+      weiterhin in zwei Zeilen um - das ist der definierte Ausweg, kein Fehler.
+      Bricht sie auf einem Gerät ab 375px um, ist das zu MELDEN: dann trägt die
+      Messung nicht, und die Gegenmassnahme ist eine eigene Entscheidung.
+      **iOS-Standalone:** die App vom Home-Bildschirm starten (ohne
+      Browser-Leiste), `/content` öffnen → dieselbe Reiterleiste, Klick auf
+      Erstellen wechselt den Reiter ohne Seitenwechsel, und der Zurück-Gestus
+      führt nicht aus der App heraus. Danach die App aus dem
+      App-Umschalter entfernen und neu starten → der zuletzt gewählte Reiter
+      ist nicht "eingefroren", `/content` startet wieder auf dem ersten
+      konfigurierten Reiter.
 - [ ] **Aktualisierungs-Badge in der Kopfzeile (#2904):** ein installiertes
       Content-Set hat eine neuere Version (z. B. im Content-Browser bei einem
       Set "Aktualisierung verfügbar" antippen ODER die Set-Manifest-Version
       im Test-Repo erhöhen). Neu laden/App neu öffnen: **ohne** `/content`
       zu besuchen erscheint in der Kopfzeile neben dem Wiederholungs-Badge
       ein **Aktualisierungs-Badge** ("N Aktualisierungen") mit Link zu
-      `/content`. Klick → landet auf `/content`, das betroffene Set zeigt
-      dort **"Aktualisierung verfügbar"** in der Zeile (deckungsgleich mit
-      dem Badge-Wert). **Kein Update vorhanden:** Badge erscheint **nicht**
+      `/content?tab=my`. Klick → landet auf dem Tab **Meine Inhalte**
+      (#2998: unabhängig von der in Einstellungen → Allgemein konfigurierten
+      Tab-Reihenfolge, auch wenn Importieren oder Entdecken vorne steht),
+      das betroffene Set zeigt dort **"Aktualisierung verfügbar"** in der
+      Zeile (deckungsgleich mit dem Badge-Wert). **Alle anwenden (#3001):**
+      den Kopfzeilen-Knopf **"Aktualisieren"** (`content-refresh`) drücken
+      → die Liste wird neu geladen UND jedes Set mit "Aktualisierung
+      verfügbar" wird nacheinander aktualisiert; der Knopf bleibt bis zum
+      Ende deaktiviert, danach EIN Sammel-Toast "N Sets aktualisiert."
+      (kein Toast pro Set). Ohne ausstehende Updates: Toast "Alle Sets sind
+      aktuell.", kein Download. Ein Breaking-Update (#2128, Fortschritt
+      betroffen) wird dabei NICHT angewendet: Hinweis-Toast "Zurückgehalten,
+      weil dein Fortschritt betroffen wäre: <Set-Titel>. Bestätige jede
+      Aktualisierung über den Aktualisieren-Knopf des Sets." (#3081: nennt
+      JEDES zurückgehaltene Set beim Titel, mehrere durch Komma getrennt,
+      und bleibt stehen, bis er über das X geschlossen wird), das Set behält
+      "Aktualisierung verfügbar" und wird einzeln über den Zeilen-Knopf
+      bestätigt. **Listenansicht (#3081):** in der Listenansicht (Umschalter
+      rechts über der Liste) zeigt die Zeile des Sets den Marker
+      "Aktualisierung verfügbar" und einen Download-Icon-Knopf
+      (`content-list-set-<id>-update-button`, Tooltip "Aktualisieren"); auf
+      dem Telefon (unter 640 px) rutschen Marker und Knopf als Gruppe in eine
+      eigene Zeile unter den Titel (rechtsbündig, #3092), der Titel behält
+      dieselbe Breite wie ohne Aktualisierung; Klick öffnet bei einem
+      Breaking-Update denselben
+      #2128-Schutzdialog wie der Kachel-Knopf, sonst wird direkt
+      aktualisiert; aktuelle Sets zeigen weder Marker noch Knopf. **Nach dem
+      Anwenden (#2985):** die Aktualisierung(en)
+      auf `/content` durchführen (Kopfzeilen-Knopf, Zeilen-Knopf oder die
+      Repo-Quelle synchronisieren) →
+      der Badge-Zähler sinkt **sofort ohne Neuladen**; sind alle Updates
+      angewendet, verschwindet das Badge (zurückgehaltene Breaking-Updates
+      zählen weiter, bis sie manuell entschieden sind - das ist korrekt).
+      **Kein Update vorhanden:** Badge erscheint **nicht**
       (kein leeres Pille-Element in der Kopfzeile). **Fehlertoleranz:**
       Netz beim App-Start ausschalten → kein Absturz, kein Fehler-Toast, die
       Kopfzeile rendert normal (das Badge bleibt einfach unsichtbar, es
@@ -1568,6 +1929,21 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       "Eine Antwort" → auf genau eine richtige reduziert. Eine bestehende
       MC-Übung mit gesetztem `multiple`-Wert öffnet **unverändert** in ihrem
       urspruenglichen Zustand.
+- [ ] **Erklärung im Inline-Editor (#2992):** Im Inline-Editor jeder Übung
+      (Schritt 3, `ExerciseEditor` UND `ExtensionExerciseEditor`) steht unter
+      den typspezifischen Feldern das Markdown-Textfeld **"Erklärung nach der
+      Antwort (optional, Markdown)"** mit Hinweiszeile und Zeichenzähler
+      "n / 2000 Zeichen". Solange das Feld leer ist, gibt es den Knopf
+      **"Vorlage einfügen"**: ein Klick füllt das Gerüst (**Regel**, **Wort für
+      Wort**, **Weitere Beispiele**, **Typischer Fehler**) ein und der Knopf
+      verschwindet. Text eintippen, speichern, die Zeile erneut öffnen → der
+      Text ist (getrimmt) da; die Lektion speichern und abspielen → nach der
+      Antwort erscheint der Kasten „Erklärung" mit gerendertem Markdown
+      (#2991). Feld komplett leeren und speichern → die gespeicherte Übung
+      trägt KEIN `explanation`-Feld (kein leerer String im JSON). Mehr als
+      2000 Zeichen sind nicht eintippbar (maxlength); eine geladene Übung mit
+      längerer Erklärung zeigt "Die Erklärung ist zu lang …" und Speichern ist
+      gesperrt, bis gekürzt wurde.
 - [ ] **Aufgabentyp umwandeln -> Freitext (EXP-050 Stufe 1, #2511):** Im
       Inline-Editor (Schritt 3, `ExerciseEditor`) einer **Wortkacheln**- oder
       **Multiple-Choice**-Übung steht oben ein Auswahlfeld **"Aufgabentyp"** mit
@@ -1654,6 +2030,36 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
         und löst **keine** KI-Anfrage aus.
       - Unter jedem Knopf steht der Hinweis, dass es KI-Entwürfe sind, die vor dem
         Speichern zu prüfen und anzupassen sind. (Sichtprüfung: Desktop + Mobil.)
+- [ ] **Token-Rollen annotieren (#3072):** Schritt 2, eine Karte anlegen
+      (z. B. Vorderseite "der Hund in dem Garten", Rückseite "the dog in
+      the garden"), dann auf der Zeile "Bearbeiten" öffnen. Unter dem
+      Bildfeld steht "Token-Rollen (optional)". Prüfe der Reihe nach:
+      (a) Ein Wort eintippen, das NICHT genau so in der Vorderseite steht
+      (z. B. "Katze") -> "Hinzufügen" bleibt grau und darunter erscheint
+      die Meldung, dass das Wort so nicht vorkommt. Gleiches bei falscher
+      Groß-/Kleinschreibung ("der" statt "Der", wenn die Vorderseite
+      groß beginnt). (b) Das Wort exakt wie in der Vorderseite eintippen,
+      Rolle im Auswahlfeld wählen, "Hinzufügen" -> die Zeile erscheint
+      mit Wort und Rollenname. (c) Dasselbe Wort noch einmal -> Meldung,
+      dass es schon annotiert ist. (d) Das Auswahlfeld bietet GENAU
+      sieben Rollen (Artikel, Substantiv, Verb, Adjektiv, Präposition,
+      Genus-Marker, Tempus-Marker) und kein Freitextfeld. (e) Speichern,
+      die Karte erneut zum Bearbeiten öffnen -> die Annotationen stehen
+      noch da. (f) Telefon-Breite (unter 769 px, #3087): die Eingabezeile
+      steht untereinander (Wortfeld volle Breite, Auswahlfeld volle
+      Breite, "Hinzufügen" darunter), nichts ragt aus der Karte; ab
+      Tablet-Breite bleibt sie einzeilig und das Wortfeld füllt den
+      Restplatz.
+- [ ] **Rollen vorschlagen (#3072):** In derselben Zeile "Rollen
+      vorschlagen" klicken. Bei einer deutschen Vorderseite mit Artikeln
+      und Präpositionen füllt sich die Liste (bei "der Hund in dem
+      Garten": der = Artikel, in = Präposition, dem = Artikel).
+      Substantive und Verben werden NICHT vorgeschlagen, das ist
+      Absicht. Bei einer Vorderseite ohne solche Wörter (z. B. "Hund
+      läuft") erscheint stattdessen der Hinweis, dass kein Wort erkannt
+      wurde, und die Liste bleibt leer. Unter der Liste steht der
+      Hinweis, dass Vorschläge geraten sind und jede Zeile geprüft
+      gehört.
 
 ### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
@@ -1676,6 +2082,22 @@ jeder Karten-Zeile (`CardImageField`).
 ### Lesson-Player UX (v2.3.0)
 - [ ] Pause-Button liegt jetzt im Sticky-Footer (#1644), Pausieren
       funktioniert von dort
+- [ ] Position vor der ersten Übung (#3075): Lektion öffnen, nur durch zwei
+      Theorieschritte blättern, KEINE Übung beantworten, Seite neu laden ->
+      Resume-Dialog erscheint, "Fortsetzen" landet auf dem zuletzt offenen
+      Schritt (vorher: Neustart bei Schritt 1 ohne Dialog)
+- [ ] Pause-Knopf vor der ersten Übung (#3075): wie oben, dann den
+      Pause-Knopf im Footer drücken -> der Dialog Weiter/Pausieren/Abbrechen
+      erscheint (vorher: verliess die Lektion stumm); "Pausieren" -> die
+      Lektion steht auf dem Dashboard unter "Pausierte Lektionen"
+- [ ] Verlassen über die App-Navigation (#3075): eine Übung beantworten,
+      dann zwei Theorieschritte weiter, dann über das Menü (Hamburger ->
+      "Einstellungen"), das Logo oder den Zurück-Knopf des Browsers
+      weggehen -> die Lektion steht unter "Pausierte Lektionen";
+      "Fortsetzen" dort öffnet den Resume-Dialog und landet auf dem
+      Theorieschritt, auf dem du warst (nicht auf der Übung davor); auf
+      dem Handy dasselbe über die Menü-Schublade
+      [E2E: `lesson-pause-position.spec.ts`]
 - [ ] Auto-Weiter + "Zurück" (#1921): Einstellung "Automatisch weiter"
       (Settings -> Lernen) AN -> eine Übung richtig beantworten, die App
       springt automatisch zur nächsten Aufgabe -> dann "Zurück" klicken:
@@ -1721,6 +2143,61 @@ jeder Karten-Zeile (`CardImageField`).
       weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
       weiter, #2785)
 
+### KI-Prüfung: Vorschläge übernehmen (AIV-07, #3060)
+- [ ] Browser-Modus mit konfiguriertem KI-Schlüssel, eigene Lektion
+      (Inhalte > Meine Inhalte) mit einem absichtlichen Fehler auf einer
+      Karte (z. B. "casa" statt "la casa"); "Mit KI prüfen" ausführen:
+      der Bericht listet die Karte, die Fußzeile trägt den Knopf
+      "Vorschläge übernehmen"
+- [ ] "Vorschläge übernehmen": eine Tabelle mit Lektion, Karte, Feld,
+      "Aktuell" und "Vorschlag", jede Zeile angehakt; darunter die Zahl
+      der Hinweise ohne übernehmbaren Wert (falls vorhanden); der
+      Bestätigen-Knopf zählt "N Felder in M Karten"
+- [ ] Eine Zeile abhaken, bestätigen: nur die angehakten Felder ändern
+      sich (Lektion öffnen oder im Editor nachsehen), Titel, Sprachen,
+      Niveau und Beschreibung des Sets bleiben; Toast "N Felder
+      übernommen"; der Lernfortschritt der Lektion bleibt erhalten
+- [ ] Im Ergebnis "Letzte Übernahme rückgängig machen": die Felder tragen
+      wieder den alten Wert, Toast "Übernahme rückgängig gemacht."; der
+      Undo-Knopf verschwindet
+- [ ] Dialog schließen und "Mit KI prüfen" erneut öffnen: kein
+      gecachter Bericht mehr, die Kostenschätzung erscheint (der Bericht
+      wurde nach der Übernahme verworfen)
+- [ ] Heruntergeladenes Set (nicht eigenes): "Vorschläge übernehmen"
+      ist deaktiviert mit dem Tooltip "Nur für eigene Lektionen."
+
+### Einstellungen > Plugins: Installierte Plugins (#3055)
+- [ ] Desktop-App (API-Modus), Einstellungen > Plugins: oben die Karte
+      "Installierte Plugins" mit einer Zeile je geladenem Plugin,
+      alphabetisch: Name, Version, Quelle ("Paket") und der
+      Aktivierungszeitpunkt in der App-Sprache formatiert; darunter
+      unverändert die Karte "Lern-Repository"
+- [ ] Direkt nach dem Öffnen steht kurz "Plugins werden gelesen…", dann
+      die Liste; bei laufendem Backend kein Fehler, kein Toast
+- [ ] Backend stoppen, Tab neu laden: die Karte zeigt die Zeile
+      "Plugin-Status konnte nicht gelesen werden: …" und ein Toast trägt
+      dieselbe Meldung; die Karte "Lern-Repository" bleibt sichtbar
+- [ ] Browser-Modus (GitHub Pages / Dexie): die Karte bleibt sichtbar mit
+      dem Hinweis "Nur mit der Desktop-App verfügbar."; DevTools >
+      Netzwerk zeigt keinen Aufruf von /api/plugins/health
+
+### Diagnose-Sonde: Fehltipp-Markierung + Aktionen (#3043)
+- [ ] Sonde AN, Mess-Leiste sichtbar: die Leiste zeigt neben "Werte
+      kopieren" und "Details" den Knopf "Daneben!"
+- [ ] Irgendwo tippen, dann "Daneben!" antippen, dann "Details": der
+      Bericht hat eine Sektion `actions (newest first)` mit einer
+      `mark`-Zeile, deren `target=` das eben getippte Element nennt;
+      der Tipp-Zähler ("N Tipps") ist durch den Knopf NICHT gestiegen
+- [ ] Auf einer Lektionsseite eine Antwort-Kachel antippen: die
+      `actions`-Sektion bekommt eine `click`-Zeile mit `target=`,
+      `downTarget=` und `mismatch=0`; ein Textfeld antippen ergibt
+      zusätzlich eine `focus`-Zeile mit `top=`/`bottom=`/`vis=`
+- [ ] Die letzte Tipp-Zeile der Leiste trägt zusätzlich `hit=`,
+      `above1=`, `above2=`, `pageY=`, `screenY=`, `hdrTop=`, `ftrBot=`,
+      `room=` und `focusTop=`/`focusBot=`/`focusVis=`; in den
+      Einstellungen "Protokoll kopieren" liefert dieselben Felder plus
+      die `click`-/`focus`-/`mark`-Einträge
+
 ### Sticky-Knopf für die Mess-Leiste (#2799)
 - [ ] Einstellungen > Diagnose & Support: "Sticky-Knopf für die
       Mess-Leiste" einschalten (Sonde muss AN sein) - ein runder
@@ -1750,6 +2227,48 @@ jeder Karten-Zeile (`CardImageField`).
       bleibt die Leiste verborgen (Lektions-Footer behält die Unterkante)
 - [ ] Zurück auf "Oben": Leiste verschwindet sofort; Einstellung
       übersteht einen Reload
+
+### Kopfzeile am Telefon: Menü-Knopf und Logo bleiben bei vielen Abzeichen (#3123)
+- [ ] Telefon (375 und 430 px breit, z. B. iPhone 14 Pro Max) mit
+      fälligen Wiederholungen, einer verfügbaren Set-Aktualisierung und
+      XP: Dashboard öffnen. Der Menü-Knopf oben links hat seine volle
+      Breite (kein schmaler Strich) und das Logo daneben ist sichtbar
+- [ ] Die Abzeichen zeigen am Telefon nur die Zahl neben dem Symbol
+      ("718" statt "718 fällig", "1" statt "1 Aktualisierungen");
+      Tooltip bzw. Vorlesen nennt weiterhin den vollen Text
+- [ ] Passen die Abzeichen nicht mehr neben Menü-Knopf und Logo, brechen
+      sie rechtsbündig in eine zweite Zeile um; nichts wird abgeschnitten,
+      die Seite scrollt nicht seitlich
+- [ ] Tablet und Desktop: Kopfzeile unverändert einzeilig, Abzeichen mit
+      vollem Text
+
+### Schrittwechsel am Telefon: Anker oben, Fusszeile unten (#3126)
+- [ ] iPhone (Safari oder PWA): eine Lektion mit einem langen
+      Theorie-Schritt öffnen, bis ganz nach unten scrollen, dann "Weiter"
+      auf einen kurzen Schritt (z. B. eine Zuordnungsübung)
+- [ ] Ohne Wischen: der Schritt beginnt oben (Fortschrittsbalken und
+      Aufgabe sichtbar), die Fusszeile mit Zurück/Pause/Prüfen sitzt am
+      unteren Rand, keine leere (schwarze) untere Hälfte
+- [ ] Dasselbe von einem kurzen auf einen langen Schritt: der Anker liegt
+      oben, der Inhalt scrollt normal
+- [ ] Mit "Bewegung reduzieren" im System: der Sprung erfolgt ohne
+      Animation, Ergebnis gleich
+- [ ] Gerät während eines Schritts drehen (#1422): der Schritt wird
+      weiterhin neu verankert
+
+### Einstellungen > Daten: Aufräum-Karten (#2955)
+- [ ] Einstellungen > Daten: die Karte "Maximale Lektionsgröße" steht
+      direkt unter "Offline-Cache"; die Karte "Pausierte Lektionen
+      aufbewahren" steht direkt über "Nicht verbundene Inhalte" (gibt es
+      keine nicht verbundenen Inhalte, direkt über der Gefahrenzone)
+- [ ] Einstellungen > Lernen endet mit "Erinnerungen"; beide Karten sind
+      dort nicht mehr
+- [ ] "Schritte pro Teil" auf 15 setzen, Seite neu laden: der Wert
+      bleibt 15; "Pausierte Lektionen behalten für" auf "60 Tage"
+      stellen, neu laden: die Auswahl bleibt "60 Tage"
+- [ ] Beides im Browser-Modus wiederholen (Einstellungen > Daten >
+      Speichermodus): gleiches Verhalten
+
 ### Position + Navigation im Set (#2793)
 - [ ] In einer Lektion aus einem Set steht oben "Lektion N von M" mit
       der richtigen Nummer
@@ -1792,17 +2311,25 @@ jeder Karten-Zeile (`CardImageField`).
       Lektionen mit Nummer
 - [ ] Rechts oben an der Liste steht "{x} von {y} Lektionen
       abgeschlossen"
-- [ ] Abgeschlossene Lektionen zeigen ihre Punktzahl; die erste
-      unfertige trägt die Marke "Hier weitermachen"
+- [ ] Abgeschlossene Lektionen zeigen ein grünes Häkchen plus ihre
+      Punktzahl; die erste unfertige trägt die Marke "Hier weitermachen"
+      (#2935)
 - [ ] Ein Klick auf eine beliebige Zeile öffnet genau diese Lektion -
       auch eine weit zurückliegende
 - [ ] In einer laufenden Lektion ist der Set-Name in der Kopfzeile
       anklickbar und führt auf ebendiese Liste
 - [ ] Ohne angemeldeten Lernfortschritt erscheint die Liste trotzdem,
       nur ohne Markierungen
+- [ ] Ein paar Lektionen eines Sets abschließen, verlassen, die
+      Set-Seite erneut öffnen, "Lernen starten" drücken: es öffnet die
+      erste UNFERTIGE Lektion, nicht wieder Lektion 1 (#2935)
+- [ ] Jede Lektion eines Sets abschließen, dann erneut "Lernen starten"
+      drücken: es öffnet Lektion 1 (nichts mehr zum Fortsetzen)
 ### Zusammenfassung: Alle Antworten mit Frage (#2807)
-- [ ] Lektion beenden, "Alle Antworten ansehen" öffnen: jede Zeile mit
-      etwas zu zeigen ist aufklappbar (Titel + Punktzahl bleibt sichtbar)
+- [ ] Lektion beenden, "Alle Antworten ansehen" öffnen (Abschnitt
+      "Antworten-Übersicht" in den Einstellungen eingeschaltet oder
+      "Ausführliche Auswertung" gedrückt, #3124): jede Zeile mit etwas zu
+      zeigen ist aufklappbar (Titel + Punktzahl bleibt sichtbar)
 - [ ] Aufgeklappt steht die FRAGE über den Antworten - auch bei einer
       teilrichtigen Zeile wie "2 / 3", die vorher gar nichts zeigte
 - [ ] Bei Auswahl-/Zuordnungsaufgaben (ohne Textantwort) erscheinen
@@ -1811,6 +2338,78 @@ jeder Karten-Zeile (`CardImageField`).
       die eigene Antwort im Klartext
 - [ ] Eine vollständig richtige Zeile zeigt ihre Frage, aber keinen
       Fehler-Vergleich
+
+### Zusammenfassung: Ausführliche Auswertung auf Knopfdruck (#3031)
+- [ ] Lektion beenden: direkt unter der Überschrift steht der Knopf
+      "Ausführliche Auswertung"
+- [ ] In Einstellungen > Lernen > "Zusammenfassung nach Lektionen" einen
+      eingeschalteten Abschnitt abschalten (z. B. "XP-Belohnung"), dann
+      eine Lektion beenden: der Abschnitt fehlt - nach Druck auf
+      "Ausführliche Auswertung" ist er da
+- [ ] Im ausführlichen Zustand ist "Alle Antworten ansehen" schon
+      aufgeklappt
+- [ ] "Warum du diese verpasst hast" erscheint auch dann, wenn sein
+      eigener Schalter aus ist, und zeigt mehr als fünf Fehler, sofern
+      der Durchgang mehr hatte
+- [ ] Erneut drücken ("Kompakte Auswertung"): alles ist wieder wie
+      vorher, der abgeschaltete Abschnitt ist wieder verschwunden
+- [ ] Zurück in die Einstellungen: die abgeschalteten Abschnitte sind
+      unverändert abgeschaltet - der Knopf speichert nichts
+- [ ] Die Korrektur-Runde bleibt auch ausführlich zugeklappt (auf dem
+      Telefon springt keine Tastatur auf)
+- [ ] Beim Umschalten bleibt der Knopf an seiner Stelle, die Seite
+      springt nicht weg
+
+### Zusammenfassung: ausführliche Auswertung wie am Set-Ende (#3124)
+- [ ] Lektion mit mindestens zwei Fehlern beenden, "Ausführliche
+      Auswertung" drücken: direkt unter dem Knopf steht "Auswertung:
+      <Lektionstitel>" mit "Alle Fehler dieser Lektion auf einen Blick"
+- [ ] Darunter vier Kennzahlen (Fehler insgesamt, Gemeistert, Noch offen,
+      Lernzeit), "Fehler nach Aufgabentyp" und "Größte Schwachstellen" mit
+      der eigenen falschen Antwort durchgestrichen neben der richtigen;
+      "Fehler nach Lektion" gibt es hier NICHT (es ist nur eine Lektion)
+- [ ] Die Zahlen stimmen mit der Set-Auswertung (Inhalte > Set >
+      "Auswertung ansehen") für dieselbe Lektion überein
+- [ ] "Fehler trainieren" führt in die Wiederholungs-Sitzung des Sets
+- [ ] Ohne Fehler im Durchgang: "Keine Fehler aufgezeichnet - stark!"
+      statt der Kennzahlen
+- [ ] "Kompakte Auswertung": die Auswertung verschwindet wieder; die
+      #3031-Punkte (Abschnitte, Antworten, Erklärungen) gelten weiterhin
+- [ ] Tooltip des Knopfs nennt Kennzahlen, Aufgabentypen und Schwachstellen
+
+### Zusammenfassung: kompakte Voreinstellung, ein Bildschirm (#3124)
+- [ ] Frische Installation (oder in Einstellungen > Lernen >
+      "Zusammenfassung nach Lektionen" nur "Ergebnis und Statistik" und
+      "XP-Belohnung" angehakt): Lektion beenden - die Zusammenfassung zeigt
+      Sterne, Punktzahl, Zeit, "+N XP" und direkt darunter "Als
+      abgeschlossen markieren", "Nächste Lektion", "Nochmal üben" und
+      "Zurück"; kein Favoriten-Hinweis, kein Teilen, keine
+      Antworten-Übersicht, kein Export, kein "Warum du diese verpasst
+      hast", keine Korrekturrunde, keine Nächste-Schritte-Karten
+- [ ] Am Telefon (Hochformat): alles bis zu den Weiter-Knöpfen ohne
+      Wischen sichtbar
+- [ ] "Ausführliche Auswertung": die Auswertung wie am Set-Ende und alle
+      abgeschalteten Abschnitte erscheinen (Favorit, Teilen, Alle Antworten
+      aufgeklappt, Export, "Warum du diese verpasst hast", Fehler
+      ausbessern, Nächste Schritte); "Kompakte Auswertung" nimmt sie wieder
+      weg
+- [ ] Einstellungen > Lernen > "Zusammenfassung nach Lektionen": neun
+      Zeilen, "Warum du diese verpasst hast" steht direkt über der Zeile
+      der Korrekturrunde; nur Ergebnis und XP sind angehakt; eine Zeile
+      anhaken (z. B. Nächste-Schritte-Vorschläge), Lektion beenden: der
+      Abschnitt ist dauerhaft in der kompakten Fassung
+- [ ] Bestehende Wahl bleibt: wer die Abschnitte vor diesem Stand schon
+      einmal eingestellt hatte, sieht seine Auswahl unverändert; "Warum du
+      diese verpasst hast" ist dort angehakt und steht direkt über der
+      Korrekturrunde
+- [ ] "Warum du diese verpasst hast" angehakt, aber "Erklärungen nach der
+      Antwort" (Wiederholung) aus: der Block fehlt in der kompakten Fassung
+      und erscheint erst in der ausführlichen Auswertung
+
+Hinweis zu allen Schritten dieses Plans, die Export, Teilen, Favorit, Alle
+Antworten, "Warum du diese verpasst hast", Fehler ausbessern oder die
+Nächste-Schritte-Karten nutzen: den Abschnitt vorher in den Einstellungen
+einschalten oder "Ausführliche Auswertung" drücken (#3124).
 
 ### Lektion verlassen führt zum Set (#2811)
 - [ ] In einer Set-Lektion pausieren und verlassen: die App landet auf
@@ -2028,7 +2627,7 @@ im API-Modus auftrat.
       neu öffnen → zurückgestellter Status ist noch da
 - [ ] iPhone-PWA: gleicher Ablauf (dort ursprünglich beobachtet)
 
-### Weitermachen-Vorschlag: keine abgeschlossenen/zurueckgestellten Sets ohne faellige Wiederholungen (#2123)
+### Weitermachen-Vorschlag: Rangfolge und sichtbarer Set-Abschluss (#2123, #3020)
 
 Ort: Dashboard → Übersicht, oberster Block "Weitermachen" / "Continue
 Learning". In BEIDEN Speichermodi prüfen (API + Dexie), die Logik ist
@@ -2036,18 +2635,64 @@ modus-unabhängig.
 
 - [ ] Ein Set komplett durchspielen (alle Lektionen abschliessen) ODER über
       das Set-Aktionen-Menü auf "Abgeschlossen" setzen, KEINE fälligen
-      Wiederholungskarten → der "Weitermachen"-Block schlägt dieses Set NICHT
-      mehr vor (früher stand es dort als "Set abgeschlossen")
-- [ ] Kein offenes Set UND keine fälligen Karten → ehrlicher Leerzustand
-      ("Starte deine erste Lektion", Link zu Meine Inhalte) statt irgendein
-      Set als Lueckenfueller
+      Wiederholungskarten → die Zeile trägt sichtbar das Abschluss-Tag
+      "Set abgeschlossen" (Häkchen-Symbol, Sterne der letzten Lektion) und
+      verschwindet NICHT stillschweigend
+- [ ] Klick auf die abgeschlossene Zeile → führt zurück in die zuletzt
+      bearbeitete Lektion des Sets (Nachschlagen bleibt möglich)
+- [ ] Gleichzeitig ein angefangenes Set vorhanden → das angefangene Set steht
+      OBEN, das abgeschlossene darunter; der Abschluss ist nie der oberste
+      Vorschlag
+- [ ] Mehrere abgeschlossene Sets → höchstens EINES wird getaggt angezeigt
+      (das zuletzt abgeschlossene), der Block wird kein Abschluss-Archiv
+- [ ] Weder ein offenes noch ein abgeschlossenes Set und keine fälligen Karten
+      → ehrlicher Leerzustand ("Starte deine erste Lektion", Link zu Meine
+      Inhalte) statt irgendein Set als Lueckenfueller
 - [ ] Abgeschlossenes Set MIT fälligen Wiederholungen → erscheint als
       Wiederholungs-Zeile ("N Elemente fällig") und führt in die
-      Wiederholungs-Session (`/review/{setId}`), nicht als "Set abgeschlossen"
-- [ ] Zurueckgestelltes Set ohne faellige Karten → wird NICHT vorgeschlagen
+      Wiederholungs-Session (`/review/{setId}`), nicht als Abschluss-Tag
+- [ ] Zurueckgestelltes Set ohne faellige Karten → wird NICHT angezeigt
+      (bewusst weggelegt, es gibt keinen Abschluss zu melden)
 - [ ] Angefangenes (aktives) Set → wird weiterhin zum Fortsetzen vorgeschlagen
-- [ ] Reihenfolge: faellige Wiederholungen zuerst, dann angefangene Sets
-      (jeweils zuletzt-bearbeitet zuerst)
+- [ ] Reihenfolge: faellige Wiederholungen zuerst, dann angefangene Sets, zuletzt
+      das abgeschlossene Set (innerhalb jeder Stufe zuletzt-bearbeitet zuerst)
+
+### Weitermachen: jede Zeile per X ausblendbar (#3023)
+
+Ort: Dashboard → Übersicht, Block "Weitermachen". In BEIDEN Speichermodi
+prüfen (API + Dexie), die Ablage ist modus-unabhängig (localStorage +
+Dexie-userData-Spiegel).
+
+- [ ] Jede Zeile trägt rechts ein X - unabhängig vom Modus: Fortsetzen,
+      Nächste Lektion, fällige Wiederholung, abgeschlossenes Set
+- [ ] Klick auf das X: die Zeile verschwindet sofort, eine kurze Meldung sagt,
+      dass sie wiederkommt, sobald weitergelernt wird
+- [ ] Neu laden: die Zeile bleibt weg (die Entscheidung ist gespeichert)
+- [ ] Nichts wurde gelöscht: das Set steht unverändert in "Meine Inhalte",
+      der Lernfortschritt der Lektion ist erhalten, die Wiederholungskarten
+      sind unverändert (Anzahl in der Wiederholungs-Kachel prüfen)
+- [ ] Selbstheilung: die ausgeblendete Lektion erneut öffnen und bearbeiten →
+      die Zeile taucht im Dashboard wieder auf
+- [ ] Alle Zeilen ausblenden → ehrlicher Leerzustand ("Starte deine erste
+      Lektion"), kein leerer Block ohne Erklärung
+- [ ] Backup-Runde: Export → Daten löschen → Import → die ausgeblendeten
+      Zeilen sind weiterhin ausgeblendet (der Zustand reist im .alb mit)
+- [ ] Telefon: das X ist ohne Zielverfehlung antippbar und löst NICHT den
+      Zeilen-Link aus (44 px Trefferfläche)
+
+### Weitermachen: Schrittzähler nennt den Wiedereinstieg (#3076)
+
+Ort: Dashboard → Übersicht, Block "Weitermachen", Zeile "Fortsetzen". Vorher
+zählte "Aufgabe 1/8" die bewerteten Übungen; die Wiederaufnahme landete auf
+einem anderen Schritt.
+
+- [ ] Eine Lektion mit acht Schritten öffnen, die erste Übung beantworten,
+      dann zwei Theorieschritte weiter (Schritt 4), über das Menü verlassen
+- [ ] Dashboard: die Zeile zeigt "Fortsetzen · Schritt 4/8" (nicht "1/8")
+- [ ] Klick auf "Fortsetzen" → Resume-Dialog → "Fortsetzen" landet auf genau
+      dem Schritt, den die Zeile nennt
+- [ ] Bis zur Zusammenfassung spielen, ohne "Als abgeschlossen markieren",
+      über das Logo weggehen → die Zeile zeigt "Schritt 8/8", nie "9/8"
 
 ### Update-Schutz: kein stiller Fortschrittsverlust beim Set-Update (#2128)
 
@@ -2436,8 +3081,14 @@ Für JEDES Theme einmal durchklicken:
 - [ ] Safe-Area Insets respektiert
 - [ ] Mobile Nav = Hamburger-Drawer (Bottom Tab Bar wurde in #1512
       entfernt); Drawer-Links 44px, schliesst nach Navigation
-- [ ] Bekanntes offenes Issue #1569 (Caret/Touch 1-2 Zeilen versetzt
-      im Lesson-Flow): reproduzieren + Notizen ans Issue
+- [ ] Tipp-Versatz auf dem iPhone (#1569, behoben mit #2984 + #3004,
+      Ablesung 7 vom 2026-09-10): in einer Lektion ein Freitextfeld
+      fokussieren, tippen, Tastatur schliessen, erneut ins Feld tippen,
+      danach eine MC-Kachel tippen. Caret sitzt im Feld, jeder Tipp trifft
+      das Element unter dem Finger. Bei Rückfall: Einstellungen >
+      Diagnose & Support > "Tipp- und Viewport-Sonde" einschalten, den
+      Fehltipp mit "Daneben!" markieren, "Werte kopieren" und das
+      Protokoll ans wiedereröffnete Issue #1569.
 
 #### Theorie-Vorlesen auf iOS: langer Text (#1928) - PFLICHT
 
@@ -2555,8 +3206,30 @@ bewusst keine Zahlen, die veralten könnten.
 - [ ] Sprachwechsel: "English" oben rechts führt auf `/start/en/`, dort
       führt "Deutsch" zurück.
 - [ ] Verweise unten (Dokumentation, Repository, Lerninhalte) funktionieren.
+- [ ] Fußzeile (#3113): "Impressum" führt auf `astrapi69.github.io/adaptive-learner/docs/legal/imprint/`,
+      "Datenschutz" auf `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; auf `/start/en/` heißen sie
+      "Legal notice" / "Privacy policy" und führen auf `astrapi69.github.io/adaptive-learner/docs/en/legal/…`.
 - [ ] Dunkles System-Theme: Seite folgt (prefers-color-scheme), Text lesbar.
 - [ ] Mobil (schmales Fenster): einspaltig, kein horizontales Scrollen.
+
+### Rechtstexte in der App erreichbar (#3113)
+
+Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
+(`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; andere Sprachen unter
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, Locales ohne eigene Fassung fallen auf Deutsch zurück).
+
+- [ ] App-Startseite `/` (ohne angemeldeten Lernenden): unter "Dokumentation
+      lesen" stehen "Impressum · Datenschutzerklärung"
+      (`landing-imprint-link`, `landing-privacy-link`); beide öffnen die
+      Docs-Seite in einem neuen Tab, in der aktiven UI-Sprache (Deutsch ohne
+      Präfix, Englisch unter `astrapi69.github.io/adaptive-learner/docs/en/`).
+- [ ] Einstellungen → Über → Karte "Lizenz & Ressourcen": zwei neue Zeilen
+      "Impressum" und "Datenschutzerklärung" (`about-imprint-link`,
+      `about-privacy-link`), gleiche Ziele, neuer Tab.
+- [ ] Hilfepanel und Docs-Site: Abschnitt "Rechtliches" mit beiden Seiten in
+      der Navigation (DE + EN); das Impressum nennt Name, Anschrift, E-Mail;
+      die Datenschutzerklärung trägt ein Datum und nennt GitHub Pages,
+      YouTube-Vorschaubilder und die KI-Anbieter mit eigenem Schlüssel.
 - [ ] Teilen-Vorschau (z. B. in einem Messenger): Titel, Beschreibung und
       Bild erscheinen (Open-Graph-Daten der Landeseite, nicht der App).
 

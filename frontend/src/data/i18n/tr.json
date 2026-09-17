@@ -237,6 +237,8 @@
     "choose_language": "Dilini seç",
     "start_button": "Öğrenme yolculuğuna başla",
     "docs_link": "Belgeleri oku",
+    "imprint_link": "Künye",
+    "privacy_link": "Gizlilik politikası",
     "checking_session": "Tekrar hoş geldin…",
     "recovered_toast": "Tekrar hoş geldin! Öğrenme verilerin hâlâ burada.",
     "intro": "Adaptive Learner, araştırmalara dayanan altı öğrenme yaklaşımı arasından sana en uygun yöntemi bulur ve her oturumda yedi adımlı bir döngüden geçirir.",
@@ -575,8 +577,8 @@
     },
     "section_review": "Tekrar",
     "section_srs": "Aralıklı tekrar",
-    "explanations_enabled": "Hata açıklamalarını göster",
-    "explanations_enabled_desc": "Bir dersten sonra her hata için kısa bir kural ipucu gösterir.",
+    "explanations_enabled": "Açıklamaları göster",
+    "explanations_enabled_desc": "Bir cevaptan sonra alıştırmanın açıklamasını, bir dersten sonra her hata için kısa bir kural ipucunu gösterir.",
     "section_hints": "İpuçları",
     "section_lesson_summary": "Ders sonrası özet",
     "summary_sections_desc": "Bir dersin sonunda özetin hangi bölümleri ve hangi sırayla göstereceğini seç. Devam etme eylemleri her zaman görünür.",
@@ -717,7 +719,23 @@
     "nav_aria": "Ayarlar gezinmesi",
     "tab_ai": "Yapay zeka",
     "tab_learning": "Öğrenme",
+    "learning_nav_aria": "Öğrenme bölümleri",
+    "data_nav_aria": "Veri bölümleri",
     "tab_plugins": "Eklentiler",
+    "plugins_installed_title": "Yüklü eklentiler",
+    "plugins_installed_desc": "Masaüstü uygulamasının yüklediği her eklenti; sürüm, kaynak ve etkinleştirme zamanıyla (PluginForge yaşam döngüsü).",
+    "plugins_col_name": "Eklenti",
+    "plugins_col_version": "Sürüm",
+    "plugins_col_source": "Kaynak",
+    "plugins_col_activated": "Etkinleştirildi",
+    "plugins_source_entry_point": "Paket",
+    "plugins_source_direct": "Doğrudan kaydedildi",
+    "plugins_marker_load_error": "Yükleme hatası",
+    "plugins_marker_filtered": "Filtrelendi",
+    "plugins_marker_config_changed": "Yapılandırma değişti",
+    "plugins_empty": "Yüklü eklenti yok.",
+    "plugins_loading": "Eklentiler okunuyor…",
+    "plugins_error_load": "Eklenti durumu okunamadı",
     "tab_data": "Veri",
     "tab_help": "Yardım",
     "tab_diagnostics": "Tanılama ve destek",
@@ -725,6 +743,30 @@
     "tabs_aria": "Ayar bölümleri",
     "section_feedback": "Geri bildirim",
     "section_interaction": "Etkileşim",
+    "cluster_basics": "Temeller",
+    "cluster_basics_desc": "Kim öğreniyor ve hangi dillerde.",
+    "cluster_lessons": "Ders sırasında",
+    "cluster_lessons_desc": "Siz yanıtlarken alıştırmaların nasıl davrandığı.",
+    "cluster_voice": "Sesli okuma ve dikte",
+    "cluster_voice_desc": "Sesler, hız, mikrofon ve telaffuz alıştırması.",
+    "cluster_review": "Dersten sonra",
+    "cluster_review_desc": "Tekrar oturumları, ders özeti ve hataların yeniden denenmesi.",
+    "cluster_motivation": "Motivasyon ve rutin",
+    "cluster_motivation_desc": "Oyun modu, geri bildirim, günlük görevler ve hatırlatıcılar.",
+    "cluster_data_sources": "Kaynaklar",
+    "cluster_data_sources_desc": "İçerik depoları ve dizindeki kaydın.",
+    "cluster_data_sync": "Eşitleme",
+    "cluster_data_sync_desc": "Cihazları eşleştir ve verileri güncel tut.",
+    "cluster_data_offline": "Çevrimdışı içerik",
+    "cluster_data_offline_desc": "Ders önbelleği ve kaydedilen derslerin boyutu.",
+    "cluster_data_backup": "Yedekleme ve dışa aktarma",
+    "cluster_data_backup_desc": "Yedek, kimlik, anahtarlar ve dışa aktarmalar.",
+    "cluster_data_cleanup": "Temizlik",
+    "cluster_data_cleanup_desc": "Duraklatılan derslerin saklanması ve sahipsiz veriler.",
+    "cluster_data_danger": "Tehlike bölgesi",
+    "cluster_data_danger_desc": "Geri alınamaz: her şeyi sil.",
+    "sounds_volume_shared_hint": "Oyun modu sesleri için de geçerlidir.",
+    "feedback_intensity_playful_hint": "Oyun modu açık, bu nedenle geri bildirim bu ayardan bağımsız olarak her zaman coşkuludur.",
     "missions_title": "Günlük görevler",
     "missions_enabled": "Günlük görevler",
     "missions_enabled_hint": "Her gün panoda birkaç ulaşılabilir hedef gösterir. İsteğe bağlı - uygulama bunlarsız da aynı çalışır.",
@@ -781,6 +823,13 @@
     "playful_mode": "Oyunlaştırılmış dersler",
     "playful_mode_description": "Dersleri oyuna dönüştürür: her doğru cevapta övgü, konfeti ve kilometre taşı kutlamaları. Tüm ders modlarıyla çalışır; puanlama ve ilerleme aynı kalır. Sisteminizde azaltılmış hareket açıksa geri bildirim yine sade kalır.",
     "playful_sounds": "Oyun modu sesleri",
+    "playful_details": "Oyun modu ayrıntıları",
+    "playful_details_hint": "Kalpler, geri sayım, arcade, özel turlar, biletler, bonus dersler, seri XP ve maskot.",
+    "playful_details_off_notice": "Bu seçenekleri değiştirmek için \"Oyunlaştırılmış dersler\" özelliğini açın.",
+    "playful_cluster_tension": "Gerilim",
+    "playful_cluster_arcade": "Arcade ve ödüller",
+    "playful_cluster_xp": "XP ve maskot",
+    "playful_summary": "{total} ekstradan {on} tanesi açık",
     "playful_sounds_description": "Oyun modunda kısa sesler: her doğru cevapta bir ton (seriyle birlikte yükselen perde), kontrol noktası müziği ve bitiş fanfarı. Genel ses anahtarından bağımsız; ses düzeyi kaydırıcıyı izler.",
     "playful_sounds_offer": "Sesli oyna?",
     "playful_sounds_offer_yes": "Evet, sesler açık",
@@ -1166,7 +1215,9 @@
     "docs_label": "Belgeler",
     "tutorial_label": "Uygulama eğitimi",
     "tutorial_link": "Eğitimi doğrudan aç",
-    "issues_label": "Sorunlar"
+    "issues_label": "Sorunlar",
+    "imprint_label": "Künye",
+    "privacy_label": "Gizlilik politikası"
   },
   "backup": {
     "section_title": "Yedek",
@@ -2401,6 +2452,11 @@
         "productive_hint": "Cevabı üret"
       }
     },
+    "explanation": {
+      "title": "Açıklama",
+      "show": "Neden?",
+      "hide": "Açıklamayı gizle"
+    },
     "flash_round": {
       "title": "Yıldırım turu: {set}",
       "card_title": "Yıldırım turu",
@@ -2471,6 +2527,10 @@
       "breakdown_heading": "Alıştırma dökümü",
       "breakdown_correct_answer": "Doğru cevap: {answer}",
       "breakdown_unattempted": "Denenmedi",
+      "detailed_hide": "Kısa değerlendirme",
+      "detailed_hint": "Bu turdaki temel sayıları, alıştırma türüne göre hataları, zayıf noktaları, tüm yanıtları ve tüm hata açıklamalarını gösterir",
+      "detailed_show": "Ayrıntılı değerlendirme",
+      "review_subtitle": "Bu dersteki tüm hatalar bir bakışta",
       "view_all_answers": "Tüm yanıtları gör ({n})",
       "export": {
         "copy": "Sonucu kopyala",
@@ -2603,7 +2663,8 @@
       "bonus_badge": "Bonus",
       "bonus_locked_tooltip": "Bu bonus dersin kilidini açmak için bu setin her normal dersini en az bir yıldızla bitir.",
       "progress_done": "{total} dersten {done} tanesi tamamlandı",
-      "current_lesson": "Buradan devam et"
+      "current_lesson": "Buradan devam et",
+      "lesson_completed": "Tamamlandı"
     },
     "repo_export": {
       "button": "Depo olarak paylaş",
@@ -2642,10 +2703,12 @@
       "next": "Sonraki ders",
       "completed": "Set tamamlandı",
       "empty": "İlk dersine başla!",
-      "progress": "Görev {n}/{total}",
+      "progress": "Adım {n}/{total}",
       "imported_analysis": "İçe aktarılan analiz",
       "lesson_fallback": "Ders",
-      "lesson_part": "{label} · Bölüm {n}"
+      "lesson_part": "{label} · Bölüm {n}",
+      "dismiss": "Öğrenmeye devam et listesinden kaldır",
+      "dismissed": "Öğrenmeye devam et listesinden kaldırıldı. Öğrenmeye devam ettiğinde yeniden görünür."
     },
     "import_chat": {
       "button": "Sohbeti içe aktar"
@@ -2902,16 +2965,23 @@
       "update_available": "Güncelleme var",
       "downloading": "İndiriliyor…"
     },
+    "tab": {
+      "create": "Oluştur"
+    },
     "action": {
       "refresh": "Yenile",
       "refreshing": "Yenileniyor…",
+      "refresh_hint": "Listeyi yeniden yükle ve mevcut tüm güncellemeleri uygula",
       "download": "İndir",
       "update": "Güncelle",
       "installed": "Yüklendi",
       "open": "Aç"
     },
     "toast": {
-      "downloaded": "Set indirildi ve kullanıma hazır."
+      "downloaded": "Set indirildi ve kullanıma hazır.",
+      "updated_all": "{n} set güncellendi.",
+      "updates_held_named": "İlerlemeni etkileyeceği için bekletildi: {titles}. Her güncellemeyi setin Güncelle düğmesiyle onayla.",
+      "all_up_to_date": "Tüm setler güncel."
     },
     "warning": {
       "no_lessons_in_set": "Bu sette henüz ders yok."
@@ -2919,6 +2989,7 @@
     "error": {
       "list_failed": "İçerik setleri yüklenemedi.",
       "download_failed": "Set indirilemedi.",
+      "update_all_failed": "{n} güncelleme başarısız oldu.",
       "open_failed": "Ders açılamadı."
     },
     "tree": {
@@ -3004,6 +3075,20 @@
       "checked_with": "Şununla denetlendi",
       "date": "Tarih",
       "recheck": "Yeniden denetle",
+      "fix": {
+        "button": "Önerileri uygula",
+        "own_only": "Yalnızca kendi derslerin için.",
+        "title": "Önerileri uygula",
+        "intro": "Her satırı kontrol et: yalnızca işaretli satırlar yazılır. Değer yerine açıklama veren önerileri dışarıda bırak.",
+        "current": "Mevcut",
+        "manual_count": "{count} bulgunun uygulanabilir değeri yok, manuel kalır.",
+        "confirm": "{cards} kartta {fields} alanı uygula",
+        "applied": "{fields} alan uygulandı. Rapor güncelliğini yitirdi, seti yeniden denetle.",
+        "undo": "Son uygulamayı geri al",
+        "undone": "Uygulama geri alındı.",
+        "failed": "Öneriler uygulanamadı",
+        "none_applicable": "Bu raporda uygulanabilir öneri yok."
+      },
       "export": {
         "button": "Raporu Markdown olarak dışa aktar",
         "lesson": "Ders",
@@ -3260,6 +3345,8 @@
         "unavailable_reason": "Görseller ve ses metinden oluşturulamaz. Bu türleri daha sonra düzenleyicide ekleyebilirsin.",
         "floor_hint": "En az bir alıştırma türü seçili kalmalıdır."
       },
+      "explanations_label": "Açıklama üret (cevaptan sonra gösterilir)",
+      "explanations_hint": "Her alıştırmaya bir kural, kelimesi kelimesine çeviri ve ek örnekler ekler. Alıştırma başına yaklaşık üçte bir ila yarı oranında daha fazla yapay zeka çıktısı.",
       "generate_to_advance": "Devam etmek için dersi metninizden üretin.",
       "review_theory": "{n} teori adımı",
       "review_exercises": "{n} alıştırma",
@@ -3355,6 +3442,32 @@
         "too_large": "Bu görsel çok büyük. Daha küçük birini deneyin.",
         "decode_failed": "Bu görsel okunamadı. Başka bir dosya deneyin."
       },
+      "token_roles": {
+        "label": "Sözcük rolleri (isteğe bağlı)",
+        "hint": "Ön yüzdeki tek tek sözcükleri dilbilgisel rolleriyle işaretle. Boşluk doldurma alıştırması böylece konuma göre değil, anlamlı bir boşluk seçer.",
+        "add": "Rol ekle",
+        "remove": "Rolü kaldır",
+        "token_placeholder": "Ön yüzden bir sözcük",
+        "role_label": "Rol",
+        "suggest": "Rol öner",
+        "suggest_none": "Hiçbir sözcük tanınmadı. Rolleri elle gir.",
+        "suggest_hint": "Öneriler tahmindir. Kaydetmeden önce her satırı kontrol et.",
+        "count": "{max} rolden {n} tanesi",
+        "error": {
+          "not_in_front": "\"{token}\" ön yüzde tam olarak böyle geçmiyor. Oradaki gibi yaz.",
+          "duplicate": "\"{token}\" zaten işaretlenmiş.",
+          "max_reached": "Bir kart {max} rolden fazlasını taşıyamaz."
+        },
+        "role": {
+          "article": "Tanımlık",
+          "verb": "Fiil",
+          "noun": "Ad",
+          "adjective": "Sıfat",
+          "preposition": "İlgeç",
+          "gender_marker": "Cinsiyet işareti",
+          "tense_marker": "Zaman işareti"
+        }
+      },
       "add": "Kart ekle",
       "import_csv": "CSV içe aktar",
       "csv_hint": "Satırları ön, arka, notlar olarak yapıştırın (virgül veya sekme ile ayrılmış). Örnek: Bonjour, Guten Tag, Resmi selamlama",
@@ -3377,6 +3490,11 @@
       "continue": "Devam et"
     },
     "exercises": {
+      "summary": {
+        "pairs": "{n} çift",
+        "images": "{n} görsel",
+        "options": "{n} cevap seçeneği"
+      },
       "heading": "Alıştırma oluştur",
       "count_label": "Alıştırma sayısı",
       "types_label": "Alıştırma türleri",
@@ -3453,7 +3571,13 @@
         "err_free_text": "En az bir kabul edilen yanıt ekleyin.",
         "err_cloze": "Her ___ işareti bir boşluk gerektirir ve her boşluk bir yanıt gerektirir.",
         "err_word_tiles": "En az 2 kart ekleyin.",
-        "err_picture_choice": "Her biri etiket ve görsel içeren en az 2 görsel ekleyin ve tam olarak birini doğru olarak işaretleyin."
+        "err_picture_choice": "Her biri etiket ve görsel içeren en az 2 görsel ekleyin ve tam olarak birini doğru olarak işaretleyin.",
+        "err_explanation": "Açıklama çok uzun (en fazla 2000 karakter).",
+        "explanation_label": "Cevaptan sonra açıklama (isteğe bağlı, Markdown)",
+        "explanation_hint": "Cevaptan sonra gösterilir: kural, kelimesi kelimesine, ek örnekler, tipik hata.",
+        "explanation_counter": "{n} / {max} karakter",
+        "explanation_template": "Şablon ekle",
+        "explanation_template_body": "**Kural:** \n\n**Kelimesi kelimesine:**\n- *kelime* - birebir anlam (dil bilgisi notu)\n\n**Ek örnekler:**\n- *cümle* - çeviri\n\n**Tipik hata:** "
       },
       "dir": {
         "auto": "Otomatik",
@@ -3491,6 +3615,7 @@
         "err_reading_comprehension": "Bir metin ve en az bir tam soru ekleyin (doğru seçeneği olan çoktan seçmeli veya kabul edilen yanıtı olan serbest metin).",
         "err_graded_quiz": "Pozitif puanlı en az bir tam soru ekleyin (doğru seçeneği olan çoktan seçmeli veya kabul edilen yanıtı olan serbest metin).",
         "err_dictation": "Bir ses dosyası yolu ve en az bir kabul edilen transkripsiyon ekleyin.",
+        "err_explanation": "Açıklama çok uzun (en fazla 2000 karakter).",
         "dict_audio_label": "Audio",
         "dict_audio_placeholder": "assets/audio/clip.mp3",
         "dict_audio_hint": "Setin assets klasöründeki ses klibine giden göreli yol.",
@@ -3569,6 +3694,9 @@
         "parsons_language_label": "Dil (isteğe bağlı, sözdizimi vurgulama için)",
         "hotspot_image_label": "Uyarıcı görsel",
         "hotspot_image_preview_alt": "Uyarıcı görsel",
+        "hotspot_draw_label": "Görsel üzerinde bir bölge çizin",
+        "hotspot_canvas_alt": "Bölge çizmek için sürükleyin",
+        "hotspot_canvas_aria": "Bölge çizmek için görsel üzerinde sürükleyin",
         "hotspot_zones_label": "Tıklanabilir bölgeler",
         "hotspot_shape_rect": "Dikdörtgen",
         "hotspot_shape_circle": "Daire",
@@ -4533,6 +4661,11 @@
     "no_errors": "Kayıtlı hata yok - harika!",
     "lesson_errors": "{count} hata",
     "practice_errors": "Hataları çalış",
-    "back_to_set": "Sete dön"
+    "back_to_set": "Sete dön",
+    "element_type": {
+      "vocabulary": "Kelime bilgisi",
+      "grammar_rule": "Dil bilgisi kuralı",
+      "unknown": "Bilinmeyen"
+    }
   }
 }

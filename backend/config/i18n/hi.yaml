@@ -225,6 +225,8 @@ landing:
   choose_language: अपनी भाषा चुनें
   start_button: अपनी अधिगम यात्रा शुरू करें
   docs_link: दस्तावेज़ पढ़ें
+  imprint_link: "कानूनी सूचना"
+  privacy_link: "गोपनीयता नीति"
   checking_session: वापसी पर स्वागत है…
   recovered_toast: वापसी पर स्वागत है! आपका सीखने का डेटा अभी भी यहीं है।
   intro: Adaptive Learner छह शोध-आधारित सीखने के तरीकों में से वह विधि ढूँढता है जो आपके लिए सबसे उपयुक्त हो, और हर सत्र में आपको सात-चरणीय चक्र के माध्यम से ले जाता है।
@@ -538,8 +540,8 @@ settings:
     installed: "ऐप इंस्टॉल हो गया।"
   section_review: "समीक्षा"
   section_srs: "अंतराल पुनरावृत्ति"
-  explanations_enabled: "त्रुटि स्पष्टीकरण दिखाएँ"
-  explanations_enabled_desc: "पाठ के बाद हर गलती के लिए एक संक्षिप्त नियम सुझाव दिखाता है।"
+  explanations_enabled: "स्पष्टीकरण दिखाएँ"
+  explanations_enabled_desc: "उत्तर के बाद अभ्यास का स्पष्टीकरण और पाठ के बाद हर गलती के लिए एक संक्षिप्त नियम सुझाव दिखाता है।"
   section_hints: "संकेत"
   section_lesson_summary: "पाठ के बाद सारांश"
   summary_sections_desc: "चुनें कि पाठ के अंत में सारांश कौन से खंड और किस क्रम में दिखाए। आगे बढ़ने की क्रियाएँ हमेशा दिखाई देती हैं।"
@@ -678,7 +680,23 @@ settings:
   nav_aria: सेटिंग्स नेविगेशन
   tab_ai: एआई
   tab_learning: अधिगम
+  learning_nav_aria: "सीखने के अनुभाग"
+  data_nav_aria: "डेटा अनुभाग"
   tab_plugins: प्लगइन्स
+  plugins_installed_title: "इंस्टॉल किए गए प्लगइन्स"
+  plugins_installed_desc: "डेस्कटॉप ऐप द्वारा लोड किया गया हर प्लगइन, संस्करण, स्रोत और सक्रियण समय के साथ (PluginForge जीवनचक्र)।"
+  plugins_col_name: "प्लगइन"
+  plugins_col_version: "संस्करण"
+  plugins_col_source: "स्रोत"
+  plugins_col_activated: "सक्रिय"
+  plugins_source_entry_point: "पैकेज"
+  plugins_source_direct: "सीधे पंजीकृत"
+  plugins_marker_load_error: "लोड त्रुटि"
+  plugins_marker_filtered: "फ़िल्टर किया गया"
+  plugins_marker_config_changed: "कॉन्फ़िगरेशन बदला गया"
+  plugins_empty: "कोई प्लगइन लोड नहीं हुआ।"
+  plugins_loading: "प्लगइन्स पढ़े जा रहे हैं…"
+  plugins_error_load: "प्लगइन की स्थिति पढ़ी नहीं जा सकी"
   tab_data: डेटा
   tab_help: सहायता
   tab_diagnostics: "निदान और सहायता"
@@ -686,6 +704,30 @@ settings:
   tabs_aria: सेटिंग्स अनुभाग
   section_feedback: प्रतिक्रिया
   section_interaction: अंतःक्रिया
+  cluster_basics: "मूल बातें"
+  cluster_basics_desc: "कौन सीख रहा है, और किन भाषाओं में।"
+  cluster_lessons: "पाठ के दौरान"
+  cluster_lessons_desc: "उत्तर देते समय अभ्यास कैसे व्यवहार करते हैं।"
+  cluster_voice: "ज़ोर से पढ़ना और श्रुतलेख"
+  cluster_voice_desc: "आवाज़ें, गति, माइक्रोफ़ोन और उच्चारण अभ्यास।"
+  cluster_review: "पाठ के बाद"
+  cluster_review_desc: "पुनरावलोकन सत्र, पाठ का सारांश और गलतियों को फिर से करना।"
+  cluster_motivation: "प्रेरणा और दिनचर्या"
+  cluster_motivation_desc: "खेल मोड, प्रतिक्रिया, दैनिक मिशन और अनुस्मारक।"
+  cluster_data_sources: "स्रोत"
+  cluster_data_sources_desc: "सामग्री रिपॉजिटरी और निर्देशिका में आपकी प्रविष्टि।"
+  cluster_data_sync: "सिंक"
+  cluster_data_sync_desc: "डिवाइस जोड़ें और डेटा समान रखें।"
+  cluster_data_offline: "ऑफ़लाइन सामग्री"
+  cluster_data_offline_desc: "पाठ कैश और सहेजे गए पाठों का आकार।"
+  cluster_data_backup: "बैकअप और निर्यात"
+  cluster_data_backup_desc: "बैकअप, पहचान, कुंजियाँ और निर्यात।"
+  cluster_data_cleanup: "सफ़ाई"
+  cluster_data_cleanup_desc: "रुके हुए पाठों का प्रतिधारण और अनाथ डेटा।"
+  cluster_data_danger: "खतरे का क्षेत्र"
+  cluster_data_danger_desc: "अपरिवर्तनीय: सब कुछ हटाएँ।"
+  sounds_volume_shared_hint: "यह खेल मोड की ध्वनियों पर भी लागू होता है।"
+  feedback_intensity_playful_hint: "खेल मोड चालू है, इसलिए इस सेटिंग की परवाह किए बिना प्रतिक्रिया हमेशा उत्साही रहती है।"
   missions_title: दैनिक मिशन
   missions_enabled: दैनिक मिशन
   missions_enabled_hint: हर दिन डैशबोर्ड पर कुछ हासिल करने योग्य लक्ष्य दिखाएँ। वैकल्पिक - इनके बिना भी ऐप वैसे ही काम करता है।
@@ -742,6 +784,13 @@ settings:
   playful_mode: "खेल जैसे पाठ"
   playful_mode_description: "पाठों को खेल में बदलता है: हर सही उत्तर पर प्रशंसा, कंफ़ेटी और उपलब्धि समारोह। हर पाठ मोड के साथ काम करता है; स्कोर और प्रगति वही रहते हैं। अगर आपके सिस्टम में कम एनिमेशन चालू है, तो फीडबैक फिर भी संयमित रहता है।"
   playful_sounds: "खेल मोड की ध्वनियाँ"
+  playful_details: "खेल मोड का विवरण"
+  playful_details_hint: "दिल, उलटी गिनती, आर्केड, विशेष राउंड, टिकट, बोनस पाठ, स्ट्रीक XP और शुभंकर।"
+  playful_details_off_notice: "इन विकल्पों को बदलने के लिए \"खेल जैसे पाठ\" चालू करें।"
+  playful_cluster_tension: "तनाव"
+  playful_cluster_arcade: "आर्केड और पुरस्कार"
+  playful_cluster_xp: "XP और शुभंकर"
+  playful_summary: "{total} में से {on} एक्स्ट्रा चालू"
   playful_sounds_description: "खेल मोड में छोटी ध्वनियाँ: हर सही उत्तर पर एक स्वर (श्रृंखला के साथ बढ़ती पिच), चेकपॉइंट झंकार और समापन धुन। सामान्य ध्वनि स्विच से स्वतंत्र; आवाज़ स्लाइडर के अनुसार।"
   playful_sounds_offer: "ध्वनि के साथ खेलें?"
   playful_sounds_offer_yes: "हाँ, ध्वनियाँ चालू"
@@ -1095,6 +1144,8 @@ about:
   tutorial_label: "ऐप ट्यूटोरियल"
   tutorial_link: "ट्यूटोरियल सीधे खोलें"
   issues_label: समस्याएँ
+  imprint_label: "कानूनी सूचना"
+  privacy_label: "गोपनीयता नीति"
 backup:
   section_title: बैकअप
   section_help: अपने खाते में मौजूद सब कुछ JSON फ़ाइल के रूप में निर्यात करें। API keys शामिल नहीं हैं; पुनर्स्थापना के बाद आपको उन्हें फिर से दर्ज करना होगा।
@@ -2215,6 +2266,10 @@ lesson:
     direction:
       receptive_hint: अर्थ पहचानें
       productive_hint: उत्तर बनाएँ
+  explanation:
+    title: "स्पष्टीकरण"
+    show: "क्यों?"
+    hide: "स्पष्टीकरण छिपाएँ"
   summary:
     heading: आपने पूरा किया
     aria_label: पाठ सारांश
@@ -2230,6 +2285,10 @@ lesson:
     breakdown_heading: अभ्यास विवरण
     breakdown_correct_answer: 'सही उत्तर: {answer}'
     breakdown_unattempted: प्रयास नहीं किया
+    detailed_hide: "संक्षिप्त मूल्यांकन"
+    detailed_hint: "इस दौर के मुख्य आँकड़े, अभ्यास प्रकार के अनुसार गलतियाँ, कमज़ोर बिंदु, सभी उत्तर और सभी गलती स्पष्टीकरण दिखाता है"
+    detailed_show: "विस्तृत मूल्यांकन"
+    review_subtitle: "इस पाठ की सभी गलतियाँ एक नज़र में"
     view_all_answers: "सभी उत्तर देखें ({n})"
     export:
       copy: परिणाम कॉपी करें
@@ -2402,6 +2461,7 @@ content:
     bonus_locked_tooltip: "इस बोनस पाठ को अनलॉक करने के लिए इस सेट का हर नियमित पाठ कम से कम एक स्टार के साथ पूरा करें।"
     progress_done: "{total} में से {done} पाठ पूरे"
     current_lesson: "यहाँ से जारी रखें"
+    lesson_completed: पूर्ण
   repo_export:
     button: "रिपॉज़िटरी के रूप में साझा करें"
     title: "रिपॉज़िटरी के रूप में साझा करें"
@@ -2439,6 +2499,8 @@ content:
     imported_analysis: आयातित विश्लेषण
     lesson_fallback: "पाठ"
     lesson_part: "{label} · भाग {n}"
+    dismiss: "सीखना जारी रखें सूची से हटाएँ"
+    dismissed: "सीखना जारी रखें सूची से हटा दिया गया। जैसे ही आप फिर से सीखेंगे, यह वापस आ जाएगा।"
   import_chat:
     button: चैट आयात करें
   search:
@@ -2673,20 +2735,27 @@ content:
     ready: तैयार
     update_available: अपडेट उपलब्ध
     downloading: डाउनलोड हो रहा है…
+  tab:
+    create: "बनाएँ"
   action:
     refresh: ताज़ा करें
     refreshing: रीफ़्रेश हो रहा है…
+    refresh_hint: "सूची फिर से लोड करें और सभी उपलब्ध अपडेट लागू करें"
     download: डाउनलोड करें
     update: अपडेट करें
     installed: इंस्टॉल किया गया
     open: खोलें
   toast:
     downloaded: सेट डाउनलोड हो गया और उपयोग के लिए तैयार है।
+    updated_all: "{n} सेट अपडेट किए गए।"
+    updates_held_named: "आपकी प्रगति प्रभावित होती, इसलिए रोक दिए गए: {titles}। हर अपडेट की पुष्टि सेट के अपडेट बटन से करें।"
+    all_up_to_date: "सभी सेट अप-टू-डेट हैं।"
   warning:
     no_lessons_in_set: इस सेट में अभी कोई पाठ नहीं है।
   error:
     list_failed: सामग्री सेट लोड नहीं किए जा सके।
     download_failed: सेट डाउनलोड नहीं किया जा सका।
+    update_all_failed: "{n} अपडेट विफल रहे।"
     open_failed: पाठ नहीं खोला जा सका।
   tree:
     i_speak: मैं बोलता/बोलती हूँ
@@ -2767,6 +2836,19 @@ content:
     checked_with: "इसके साथ जाँचा गया"
     date: "तिथि"
     recheck: "फिर से जाँचें"
+    fix:
+      button: "सुझाव लागू करें"
+      own_only: "केवल आपके अपने पाठों के लिए।"
+      title: "सुझाव लागू करें"
+      intro: "हर पंक्ति जाँचें: केवल चुनी हुई पंक्तियाँ लिखी जाती हैं। जो सुझाव मान देने के बजाय समझाते हैं, उन्हें छोड़ दें।"
+      current: "वर्तमान"
+      manual_count: "{count} निष्कर्षों में लागू करने योग्य मान नहीं है, वे मैन्युअल रहेंगे।"
+      confirm: "{cards} कार्ड में {fields} फ़ील्ड लागू करें"
+      applied: "{fields} फ़ील्ड लागू हुए। रिपोर्ट पुरानी है, सेट को फिर से जाँचें।"
+      undo: "अंतिम लागू को पूर्ववत करें"
+      undone: "लागू पूर्ववत किया गया।"
+      failed: "सुझाव लागू नहीं किए जा सके"
+      none_applicable: "इस रिपोर्ट में कोई लागू करने योग्य सुझाव नहीं है।"
     export:
       button: "रिपोर्ट को Markdown के रूप में एक्सपोर्ट करें"
       lesson: "पाठ"
@@ -2984,6 +3066,8 @@ create_lesson:
       group_unavailable: "टेक्स्ट से उत्पन्न नहीं"
       unavailable_reason: "टेक्स्ट से छवियाँ या ऑडियो उत्पन्न नहीं किए जा सकते। आप इन प्रकारों को बाद में एडिटर में जोड़ सकते हैं।"
       floor_hint: "कम से कम एक अभ्यास प्रकार चयनित रहना चाहिए।"
+    explanations_label: "व्याख्याएँ बनाएँ (उत्तर के बाद दिखाई जाती हैं)"
+    explanations_hint: "हर अभ्यास में एक नियम, शब्द-दर-शब्द अर्थ और अतिरिक्त उदाहरण जोड़ता है। प्रति अभ्यास लगभग एक-तिहाई से आधा अधिक AI आउटपुट।"
     generate_to_advance: "जारी रखने के लिए अपने टेक्स्ट से पाठ बनाएं।"
     review_theory: "{n} सिद्धांत चरण"
     review_exercises: "{n} अभ्यास"
@@ -3074,6 +3158,29 @@ create_lesson:
       unsupported_type: "केवल JPEG, PNG या WebP छवियाँ समर्थित हैं।"
       too_large: "यह छवि बहुत बड़ी है। कोई छोटी छवि आज़माएँ।"
       decode_failed: "यह छवि पढ़ी नहीं जा सकी। कोई अन्य फ़ाइल आज़माएँ।"
+    token_roles:
+      label: "शब्द की भूमिका (वैकल्पिक)"
+      hint: "सामने की ओर के अलग-अलग शब्दों पर उनकी व्याकरणिक भूमिका अंकित करें। रिक्त-स्थान अभ्यास तब स्थान के बजाय अर्थपूर्ण रिक्ति चुनता है।"
+      add: "भूमिका जोड़ें"
+      remove: "भूमिका हटाएँ"
+      token_placeholder: "सामने की ओर का शब्द"
+      role_label: "भूमिका"
+      suggest: "भूमिकाएँ सुझाएँ"
+      suggest_none: "कोई शब्द नहीं पहचाना गया। भूमिकाएँ स्वयं भरें।"
+      suggest_hint: "सुझाव अनुमान हैं। सहेजने से पहले हर पंक्ति जाँचें।"
+      count: "{max} में से {n} भूमिकाएँ"
+      error:
+        not_in_front: "\"{token}\" सामने की ओर ठीक इसी रूप में नहीं है। वैसा ही लिखें जैसा वहाँ है।"
+        duplicate: "\"{token}\" पहले से अंकित है।"
+        max_reached: "एक कार्ड पर {max} से अधिक भूमिकाएँ नहीं हो सकतीं।"
+      role:
+        article: "उपपद"
+        verb: "क्रिया"
+        noun: "संज्ञा"
+        adjective: "विशेषण"
+        preposition: "पूर्वसर्ग"
+        gender_marker: "लिंग चिह्न"
+        tense_marker: "काल चिह्न"
     add: कार्ड जोड़ें
     import_csv: CSV आयात करें
     csv_hint: 'पंक्तियों को front, back, notes के रूप में पेस्ट करें (अल्पविराम- या टैब-पृथक)। उदाहरण: Bonjour, Guten Tag, Formal greeting'
@@ -3094,6 +3201,10 @@ create_lesson:
     start_fresh: नए सिरे से शुरू करें
     continue: जारी रखें
   exercises:
+    summary:
+      pairs: "{n} जोड़े"
+      images: "{n} चित्र"
+      options: "{n} उत्तर विकल्प"
     heading: अभ्यास बनाएँ
     count_label: अभ्यासों की संख्या
     types_label: अभ्यास प्रकार
@@ -3169,6 +3280,12 @@ create_lesson:
       err_cloze: "प्रत्येक ___ चिह्न के लिए एक रिक्त स्थान चाहिए, और प्रत्येक रिक्त स्थान के लिए एक उत्तर चाहिए।"
       err_word_tiles: "कम से कम 2 टाइलें जोड़ें।"
       err_picture_choice: "लेबल और छवि सहित कम से कम 2 छवियाँ जोड़ें, और ठीक एक को सही के रूप में चिह्नित करें।"
+      err_explanation: "व्याख्या बहुत लंबी है (अधिकतम 2000 अक्षर)।"
+      explanation_label: "उत्तर के बाद व्याख्या (वैकल्पिक, Markdown)"
+      explanation_hint: "उत्तर देने के बाद दिखाई जाती है: नियम, शब्द-दर-शब्द, अतिरिक्त उदाहरण, सामान्य गलती।"
+      explanation_counter: "{n} / {max} अक्षर"
+      explanation_template: "टेम्पलेट डालें"
+      explanation_template_body: "**नियम:** \n\n**शब्द-दर-शब्द:**\n- *शब्द* - शाब्दिक अर्थ (व्याकरण टिप्पणी)\n\n**अतिरिक्त उदाहरण:**\n- *वाक्य* - अनुवाद\n\n**सामान्य गलती:** "
     dir:
       auto: स्वतः
       receptive: ग्रहणशील
@@ -3202,6 +3319,7 @@ create_lesson:
       err_reading_comprehension: "एक गद्यांश और कम से कम एक पूर्ण प्रश्न जोड़ें (एक सही विकल्प के साथ बहुविकल्पीय, या एक स्वीकृत उत्तर के साथ मुक्त-पाठ)।"
       err_graded_quiz: "सकारात्मक अंकों के साथ कम से कम एक पूर्ण प्रश्न जोड़ें (एक सही विकल्प के साथ बहुविकल्पीय, या एक स्वीकृत उत्तर के साथ मुक्त-पाठ)।"
       err_dictation: "एक ऑडियो फ़ाइल पथ और कम से कम एक स्वीकृत प्रतिलेखन जोड़ें।"
+      err_explanation: "व्याख्या बहुत लंबी है (अधिकतम 2000 अक्षर)।"
       dict_audio_label: "ऑडियो"
       dict_audio_placeholder: "assets/audio/clip.mp3"
       dict_audio_hint: "सेट के assets फ़ोल्डर के अंदर ऑडियो क्लिप का सापेक्ष पथ।"
@@ -3279,6 +3397,9 @@ create_lesson:
       parsons_language_label: "भाषा (वैकल्पिक, सिंटैक्स हाइलाइटिंग के लिए)"
       hotspot_image_label: "उद्दीपक छवि"
       hotspot_image_preview_alt: "उद्दीपक छवि"
+      hotspot_draw_label: "छवि पर एक क्षेत्र बनाएं"
+      hotspot_canvas_alt: "क्षेत्र बनाने के लिए खींचें"
+      hotspot_canvas_aria: "क्षेत्र बनाने के लिए छवि पर खींचें"
       hotspot_zones_label: "क्लिक करने योग्य क्षेत्र"
       hotspot_shape_rect: "आयत"
       hotspot_shape_circle: "वृत्त"
@@ -4140,3 +4261,7 @@ set_summary:
   lesson_errors: "{count} गलतियाँ"
   practice_errors: "गलतियों का अभ्यास करें"
   back_to_set: "सेट पर वापस"
+  element_type:
+    vocabulary: "शब्दावली"
+    grammar_rule: "व्याकरण नियम"
+    unknown: "अज्ञात"

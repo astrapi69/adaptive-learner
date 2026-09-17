@@ -10,6 +10,10 @@
  * user from ``readLearnerState`` and renders nothing before
  * onboarding or while the unlock data cannot load (decoration
  * only - the locks stay closed).
+ *
+ * ``disabled`` (#2959) locks every variant + buy button on top of the
+ * unlock state - the host passes it while the master game mode switch
+ * is off, because the variant only shows in game mode anyway.
  */
 
 import {useEffect, useState} from "react";
@@ -38,7 +42,14 @@ interface UnlockData {
     earnedBadgeKeys: Set<string>;
 }
 
-export default function MascotVariantControl() {
+export interface MascotVariantControlProps {
+    /** Lock every variant + buy button (the master game mode switch is off). */
+    disabled?: boolean;
+}
+
+export default function MascotVariantControl({
+    disabled = false,
+}: MascotVariantControlProps = {}) {
     const {t} = useI18n();
     const [userId] = useState(() => readLearnerState().userId);
     const [data, setData] = useState<UnlockData | null>(null);
@@ -165,7 +176,7 @@ export default function MascotVariantControl() {
                                 aria-pressed={active}
                                 aria-label={name}
                                 title={name}
-                                disabled={!unlocked || purchase.busy}
+                                disabled={disabled || !unlocked || purchase.busy}
                                 onClick={() => handleSelect(variant)}
                                 data-testid={`settings-mascot-variant-${variant.id}`}
                                 className={`relative m-1 inline-flex size-14 items-center justify-center rounded-full border-2 bg-[var(--bg-elevated)] ${
@@ -199,7 +210,7 @@ export default function MascotVariantControl() {
                             {xpCost !== null && !unlocked && (
                                 <button
                                     type="button"
-                                    disabled={!affordable || purchase.busy}
+                                    disabled={disabled || !affordable || purchase.busy}
                                     onClick={() =>
                                         void purchase.buy(variant.id, xpCost)
                                     }

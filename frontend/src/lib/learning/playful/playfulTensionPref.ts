@@ -16,8 +16,6 @@
  * Same localStorage pattern as {@link ./playfulSoundsPref}.
  */
 
-import {readPlayfulMode} from "./playfulModePref";
-
 const HEARTS_KEY = "adaptive-learner.lesson.playful_hearts";
 const HEARTS_COUNT_KEY = "adaptive-learner.lesson.playful_hearts_count";
 const COUNTDOWN_KEY = "adaptive-learner.lesson.playful_countdown";
@@ -125,14 +123,4 @@ export function setPlayfulCountdownSeconds(seconds: number): void {
         COUNTDOWN_SECONDS_KEY,
         String(clampCountdownSeconds(seconds)),
     );
-}
-
-/** The hearts gate: game mode on AND the hearts switch on. */
-export function playfulHeartsActive(): boolean {
-    return readPlayfulMode() && readPlayfulHearts();
-}
-
-/** The countdown gate: game mode on AND the countdown switch on. */
-export function playfulCountdownActive(): boolean {
-    return readPlayfulMode() && readPlayfulCountdown();
 }

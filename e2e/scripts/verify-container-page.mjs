@@ -54,7 +54,7 @@ const EXCUSED_UNLOADED = [
     // Param routes that need a real row/set the bare container cannot
     // have (lesson players, review, import detail, set deep link,
     // learning repo): each is covered by dexie-smoke / vitest suites.
-    [/^(Lesson|AdaptiveLesson|EndlessLesson|ShuffleLesson|ErrorReplayLesson|Review|ImportDetail|SetDeepLink|LearningRepo)-/,
+    [/^(Lesson|AdaptiveLesson|EndlessLesson|ShuffleLesson|ErrorReplayLesson|Review|ImportDetail|SetDeepLink|LearningRepo|SetSummary)-/,
         "param route needs a real set/import row - covered by dexie-smoke + vitest"],
     [/^exercises-/, "exercise renderers load inside a running lesson - needs a set"],
     [/^(RedeemInvite|QRScannerModal|ErrorReportDialog)-/,
@@ -158,6 +158,7 @@ try {
     await settle();
     await visit("/session");
     await visit("/progress");
+    await visit("/arcade");
     for (const tab of ["general", "learning", "ai", "plugins", "data", "integrations", "help", "about"]) {
         await visit(`/settings?tab=${tab}`);
     }

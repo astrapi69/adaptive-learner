@@ -29,6 +29,8 @@ vi.mock("../../storage", () => ({
     contentLoader: {
       listSets: (...a: unknown[]) => listSetsMock(...a),
       getAiValidationCache: (...a: unknown[]) => getAiValidationCacheMock(...a),
+      listLessons: vi.fn(async () => ({ lessons: [] })),
+      getLesson: vi.fn(),
     },
   }),
 }));
@@ -204,5 +206,44 @@ describe("useContentSetsData — lifecycle status survives a reload (status-rese
     expect(result.current.sets.find((s) => s.id === "fr-a1-from-de")?.status).toBe(
       "active",
     );
+  });
+});
+
+describe("useContentSetsData — handleRefresh hands back the fresh list (#3001)", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    listSetsMock.mockReset();
+    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
+  });
+
+  it("resolves with the visible (filtered) sets so a caller can act on them", async () => {
+    const { result } = renderHook(() => useContentSetsData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    const deleted = entry({ id: "es-a1-from-de", cached_version: null });
+    const pending = entry({ id: "fr-a1-from-de", cached_version: "1.0.0", update_available: true });
+    listSetsMock.mockResolvedValue({ sets: [deleted, pending], sources: [] });
+    dismissSet(deleted.source, deleted.id);
+
+    let refreshed: Promise<ContentSetEntry[] | null> = Promise.resolve(null);
+    act(() => {
+      refreshed = result.current.handleRefresh();
+    });
+    await waitFor(() => expect(result.current.refreshing).toBe(false));
+    const fresh = await refreshed;
+    expect((fresh ?? []).map((s) => s.id)).toEqual(["fr-a1-from-de"]);
+  });
+
+  it("resolves with null when the reload fails", async () => {
+    const { result } = renderHook(() => useContentSetsData());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    listSetsMock.mockRejectedValue(new Error("offline"));
+
+    let refreshed: Promise<ContentSetEntry[] | null> = Promise.resolve([]);
+    act(() => {
+      refreshed = result.current.handleRefresh();
+    });
+    await waitFor(() => expect(result.current.refreshing).toBe(false));
+    expect(await refreshed).toBeNull();
   });
 });

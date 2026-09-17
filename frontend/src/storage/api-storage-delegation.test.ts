@@ -157,6 +157,7 @@ describe("ApiStorage — exhaustive delegation", () => {
       [() => apiStorage.plugins.manifests(), "plugins.manifests"],
       [() => apiStorage.plugins.health(), "plugins.health"],
       [() => apiStorage.plugins.errors(), "plugins.errors"],
+      [() => apiStorage.plugins.inspect("anki"), "plugins.inspect"],
       [() => apiStorage.imports.list("u1"), "imports.list"],
       [() => apiStorage.imports.create("u1", {} as never), "imports.create"],
       [() => apiStorage.imports.get("cv1"), "imports.get"],

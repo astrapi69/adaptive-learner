@@ -4,9 +4,15 @@
  *
  * Each row carries up to six actions (Play / Edit / Export / Export as
  * set / Share / Delete); all are delivered as callbacks from the page.
+ *
+ * #3007 — the section head also carries the create entry EXP-021 planned for
+ * it and that was never built. Whoever looks at their own lessons and misses
+ * one is in the moment of intent; the other entry points all require leaving
+ * this area first. Props-driven like every other action here: the host owns
+ * the navigation.
  */
 
-import { Layers, Pencil } from "lucide-react";
+import { Layers, Pencil, Plus, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
@@ -37,6 +43,14 @@ interface MyLessonsSectionProps {
   onRequestDeleteLesson: (target: LessonDeleteTarget) => void;
   // #2065 — bulk multi-select lesson delete within a set.
   onRequestBulkDeleteLesson: (target: BulkLessonDeleteTarget) => void;
+  /** #3007 — open the lesson creator; the host owns the navigation. */
+  onCreateLesson: () => void;
+  /** AIV-07 (#3060) - the set-wide AI check for an own set; the button
+   *  renders only when given. */
+  onAiCheck?: (entry: ContentSetEntry) => void;
+  /** Why the AI check is unavailable (Dexie-only, key required); renders
+   *  the button disabled with the reason as its tooltip (#335). */
+  aiCheckDisabledReason?: string;
   // #1741 — combine-into-a-set selection mode.
   selectMode: boolean;
   selectedCount: number;
@@ -59,6 +73,9 @@ export default function MyLessonsSection({
   onEditLessonFile,
   onRequestDeleteLesson,
   onRequestBulkDeleteLesson,
+  onCreateLesson,
+  onAiCheck,
+  aiCheckDisabledReason,
   selectMode,
   selectedCount,
   isSelected,
@@ -83,20 +100,36 @@ export default function MyLessonsSection({
     >
       <div className="content-section-head flex flex-wrap items-center justify-between gap-2">
         <h2>{t("content.my_lessons.title", "My Lessons")}</h2>
-        {userSets.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          {userSets.length > 0 && (
+            <Button
+              type="button"
+              variant={selectMode ? "secondary" : "outline"}
+              size="sm"
+              onClick={onToggleSelectMode}
+              data-testid="my-lessons-combine-toggle"
+            >
+              <Layers size={14} aria-hidden="true" />
+              {selectMode
+                ? t("content.combine.cancel_select", "Cancel selection")
+                : t("content.combine.start", "Combine into a set")}
+            </Button>
+          )}
+          {/* #3007 — reuses the existing, fully translated button wording;
+              no new i18n key for a second name of the same action. */}
           <Button
             type="button"
-            variant={selectMode ? "secondary" : "outline"}
             size="sm"
-            onClick={onToggleSelectMode}
-            data-testid="my-lessons-combine-toggle"
+            className="min-h-[44px] gap-2"
+            onClick={onCreateLesson}
+            title={t("content.create_lesson.button", "Create New Lesson")}
+            aria-label={t("content.create_lesson.button", "Create New Lesson")}
+            data-testid="my-lessons-create"
           >
-            <Layers size={14} aria-hidden="true" />
-            {selectMode
-              ? t("content.combine.cancel_select", "Cancel selection")
-              : t("content.combine.start", "Combine into a set")}
+            <Plus size={14} aria-hidden="true" />
+            {t("content.create_lesson.button", "Create New Lesson")}
           </Button>
-        )}
+        </div>
       </div>
       {selectMode && userSets.length > 0 && (
         <div
@@ -212,9 +245,25 @@ export default function MyLessonsSection({
                   showEdit={entry.lesson_count <= 1}
                 />
                 {/* AIX-06 (#833) — batch-generate exercises for every
-                    theory-only lesson in this set. */}
-                <div className="mt-2">
+                    theory-only lesson in this set; AIV-07 (#3060) — the
+                    set-wide AI check, whose report can write its
+                    suggestions back into an own set. */}
+                <div className="mt-2 flex flex-wrap gap-2">
                   <GenerateSetExercisesButton entry={entry} t={t} />
+                  {onAiCheck && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onAiCheck(entry)}
+                      disabled={!!aiCheckDisabledReason}
+                      title={aiCheckDisabledReason || undefined}
+                      data-testid={`my-lesson-${entry.id}-ai-check`}
+                    >
+                      <Sparkles size={14} aria-hidden="true" />
+                      {t("content.ai_check.button", "Check with AI")}
+                    </Button>
+                  )}
                 </div>
                 {/* #2064 — a multi-lesson set (e.g. a book import) can drop
                     individual lessons from the lesson list. */}

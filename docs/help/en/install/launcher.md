@@ -21,7 +21,7 @@ stop the app, change the port, update, or uninstall everything.
 | Way | For whom | What happens |
 |-----|----------|--------------|
 | **Launcher (standard)** | Everyone | Downloads the published image from `ghcr.io/astrapi69/adaptive-learner` and runs it. This page. |
-| **Registry-free (archive)** | Machines without registry access | Download the image archive for your processor from the same release page as the launcher, place it next to the launcher's data - it is loaded INTO the pinned reference instead of being pulled. Archive and launcher must come from the **same release**; a mismatched version fails hard with the file named. |
+| **Registry-free (archive)** | Machines without registry access | Planned for a future release: a per-architecture image archive alongside the launcher on the release page, loaded INTO the pinned reference instead of being pulled. Not shipped yet - no release page currently carries this archive. |
 | **From source (developers)** | Self-builders | Clone the repository, then `install.sh` or the compose stack. Builds locally; unchanged by this release. |
 
 The **downloaded program deliberately has no tray icon**: closing the

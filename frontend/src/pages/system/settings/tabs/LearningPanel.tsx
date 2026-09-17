@@ -1,39 +1,31 @@
-import { useState } from "react";
+import { useRef } from "react";
+import type { CSSProperties } from "react";
 
+import GamificationSettingsSection from "../../../../components/settings/controls/motivation/GamificationSettingsSection";
 import FeedbackIntensityControl from "../../../../components/settings/controls/motivation/FeedbackIntensityControl";
 import DirectionStrategyControl from "../../../../components/settings/controls/lesson/DirectionStrategyControl";
 import MatchingResolveControl from "../../../../components/settings/controls/lesson/MatchingResolveControl";
-import SrsTransparencySection from "../../../../components/session/SrsTransparencySection";
 import DailyRemindersControl from "../../../../components/settings/controls/reminders/DailyRemindersControl";
 import HintSettingsControl from "../../../../components/settings/controls/lesson/HintSettingsControl";
+import InteractionControl from "../../../../components/settings/controls/lesson/InteractionControl";
 import LessonModeControl from "../../../../components/settings/controls/lesson/LessonModeControl";
 import ReviewSettingsControl from "../../../../components/settings/controls/lesson/ReviewSettingsControl";
 import SummarySectionsControl from "../../../../components/settings/controls/lesson/SummarySectionsControl";
 import ErrorReplayScopeControl from "../../../../components/settings/controls/lesson/ErrorReplayScopeControl";
 import LearningProfileControl from "../../../../components/assessment/LearningProfileControl";
-import MaxLessonSizeControl from "../../../../components/settings/controls/lesson/MaxLessonSizeControl";
-import PausedLessonsRetentionControl from "../../../../components/settings/controls/lesson/PausedLessonsRetentionControl";
 import MissionSettingsControl from "../../../../components/settings/controls/motivation/MissionSettingsControl";
 import PlayfulModeControl from "../../../../components/settings/controls/motivation/PlayfulModeControl";
 import SourceLanguagesControl from "../../../../components/settings/controls/lesson/SourceLanguagesControl";
 import SoundSettingsControl from "../../../../components/settings/controls/motivation/SoundSettingsControl";
 import VoiceSettingsSection from "../../../../components/voice/VoiceSettingsSection";
+import { SettingsCluster } from "../../../../components/settings/SettingsCluster";
 import { SettingsSection } from "../../../../components/settings/SettingsSection";
+import SettingsSubNav from "../../../../components/settings/SettingsSubNav";
 import { useI18n } from "../../../../hooks/ui/useI18n";
-import FormHint from "../../../../shared/forms/FormHint";
-import { readGesturePref, writeGesturePref } from "../../../../lib/settings/gesturePref";
-import {
-  readLessonShortcutsEnabled,
-  setLessonShortcutsEnabled,
-} from "../../../../lib/lesson/prefs/lessonShortcutsPref";
-import {
-  readLessonAutoAdvanceEnabled,
-  setLessonAutoAdvanceEnabled,
-} from "../../../../hooks/settings/useLessonAutoAdvance";
-import {
-  readAskAiVisible,
-  setAskAiVisible,
-} from "../../../../lib/lesson/prefs/askAiVisibilityPref";
+import { isSpeechRecognitionSupported } from "../../../../lib/voice/speech-recognition";
+import { isSpeechSynthesisSupported } from "../../../../lib/voice/speech-synthesis";
+import { useLearningSections } from "./useLearningSections";
+import { useSettingsAnchorOffset } from "./useSettingsAnchorOffset";
 
 interface LearningPanelProps {
   /** Whether the Learning tab is the active tab (drives ``hidden``). */
@@ -41,66 +33,57 @@ interface LearningPanelProps {
 }
 
 /**
- * Learning tab of the Settings page. The sections follow a FIXED causal
- * order (#1459, mirroring the #1451 Data-tab principle): foundation
- * (learning profile, source languages) -> in-lesson flow (lesson mode,
- * direction, hints, matching effect, interaction toggles, voice) ->
- * practice & follow-up (review, SRS, lesson summary) -> motivation
- * (feedback + sound, missions) -> reminders -> rare housekeeping LAST
- * (paused-lesson retention, max lesson size). The order is pinned by a
- * Settings.test.tsx regression test; the panel stays mounted (``hidden``
+ * Learning tab of the Settings page: 17 cards in five labelled clusters
+ * (#2956), each a ``SettingsCluster`` landmark, in the FIXED causal order
+ * #1459 established (mirroring the #1451 Data-tab principle):
+ *
+ * 1. Basics: learning profile, source languages.
+ * 2. In the lesson: lesson mode, hints, interaction, exercise direction,
+ *    matching resolve effect. Hints + interaction precede direction +
+ *    matching (the one relative reorder vs #1459: the two cards every
+ *    learner touches come before the two most learners leave alone).
+ * 3. Reading aloud and dictation: the Voice card. The whole cluster is
+ *    rendered only when the browser exposes at least one Web Speech API
+ *    side, the same guard the card uses inside, so an unsupported
+ *    browser never shows a heading over nothing.
+ * 4. After the lesson: review (which hosts the read-only SRS schedule as
+ *    its last block), lesson summary sections, retry errors scope.
+ * 5. Motivation and routine: game mode, feedback (intensity + sounds),
+ *    daily missions, the daily reminders, and (since #2962, moved in
+ *    from the Plugins tab as the final stage of the #2951 reorganisation)
+ *    the gamification card LAST, behind a separator because it holds the
+ *    destructive Reset progress.
+ *
+ * The two rare housekeeping cards #1459 parked here (paused-lesson
+ * retention, max lesson size) live on the Data tab since #2955. Cluster
+ * membership, in-cluster order and the tab order are pinned by
+ * Settings.test.tsx regression tests; the panel stays mounted (``hidden``
  * when inactive) so deep links and ``data-testid`` assertions keep
  * working.
+ *
+ * A section bar above the clusters (#2961, ``SettingsSubNav``) jumps
+ * between them and mirrors ``?tab=learning&section=<id>``: the deep link
+ * scrolls the cluster into view once the panel is visible (the deferred
+ * loop, {@link useLearningSections}), a chip click writes the param with
+ * replace-state, and the Settings shell drops the param on a tab switch.
+ * The bar is sticky on ``md+`` below the app header; the measured offset
+ * of both strips feeds the clusters' ``scroll-margin-top`` through the
+ * ``--settings-anchor-offset`` custom property.
  *
  * @example
  * <LearningPanel active={activeTab === "learning"} />
  */
 export default function LearningPanel({ active }: LearningPanelProps) {
   const { t } = useI18n();
-
-  // v1.10.0 / Phase 23E — swipe-gesture toggle. Persisted in
-  // localStorage via ``gesturePref`` so the consumer hooks
-  // (Assessment, Curriculum, Session) read the same flag.
-  const [gesturesOn, setGesturesOn] = useState<boolean>(() => readGesturePref());
-
-  const handleGesturesToggle = (next: boolean) => {
-    setGesturesOn(next);
-    writeGesturePref(next);
-  };
-
-  // Lesson Enter-key shortcut (#103). localStorage-backed so the
-  // lesson player (``useLessonShortcuts``) reads the same flag.
-  const [lessonShortcutsOn, setLessonShortcutsOn] = useState<boolean>(() =>
-    readLessonShortcutsEnabled(),
-  );
-
-  const handleLessonShortcutsToggle = (next: boolean) => {
-    setLessonShortcutsOn(next);
-    setLessonShortcutsEnabled(next);
-  };
-
-  // Auto-advance after a correct answer (#1330). localStorage-backed so the
-  // lesson exercise flow (``useLessonAutoAdvance``) reads the same flag.
-  // Default OFF (opt-in).
-  const [autoAdvanceOn, setAutoAdvanceOn] = useState<boolean>(() =>
-    readLessonAutoAdvanceEnabled(),
-  );
-
-  const handleAutoAdvanceToggle = (next: boolean) => {
-    setAutoAdvanceOn(next);
-    setLessonAutoAdvanceEnabled(next);
-  };
-
-  // "Ask AI" button visibility (#2693). localStorage-backed so
-  // AskAiPanel (via useAskAiVisible) reads the same flag. Default ON.
-  const [askAiVisibleOn, setAskAiVisibleOn] = useState<boolean>(() =>
-    readAskAiVisible(),
-  );
-
-  const handleAskAiVisibleToggle = (next: boolean) => {
-    setAskAiVisibleOn(next);
-    setAskAiVisible(next);
-  };
+  const speechSupported =
+    isSpeechSynthesisSupported() || isSpeechRecognitionSupported();
+  const subNavRef = useRef<HTMLElement>(null);
+  const { stickyTop, anchorOffset } = useSettingsAnchorOffset(subNavRef);
+  const { sections, activeSection, openSection } = useLearningSections({
+    active,
+    speechSupported,
+    topOffset: anchorOffset,
+  });
 
   return (
     <div
@@ -108,116 +91,102 @@ export default function LearningPanel({ active }: LearningPanelProps) {
       role="tabpanel"
       hidden={!active}
       data-testid="settings-panel-learning"
+      style={{ "--settings-anchor-offset": `${anchorOffset}px` } as CSSProperties}
     >
-      <LearningProfileControl />
-      <SourceLanguagesControl />
-      <LessonModeControl />
-      <DirectionStrategyControl />
-      <HintSettingsControl />
-      <MatchingResolveControl />
-      <SettingsSection
-        title={t("settings.section_interaction", "Interaction")}
-        testid="settings-section-interaction"
+      <SettingsSubNav
+        ref={subNavRef}
+        items={sections.map((section) => ({
+          id: section.id,
+          label: t(section.labelKey, section.fallback),
+        }))}
+        activeId={activeSection}
+        onSelect={openSection}
+        ariaLabel={t("settings.learning_nav_aria", "Learning sections")}
+        stickyTop={stickyTop}
+      />
+      <SettingsCluster
+        id="basics"
+        testid="settings-cluster-basics"
+        title={t("settings.cluster_basics", "Basics")}
+        description={t(
+          "settings.cluster_basics_desc",
+          "Who is learning, and in which languages.",
+        )}
       >
-        <label className="flex items-center justify-between gap-2">
-          <span className="flex flex-col gap-0.5">
-            <span className="text-[0.95rem] font-medium">{t("settings.gestures", "Swipe Gestures")}</span>
-            <FormHint as="span">
-              {t(
-                "settings.gestures_description",
-                "Swipe to navigate in Assessment, Session, and Curriculum.",
-              )}
-            </FormHint>
-          </span>
-          <input
-            type="checkbox"
-            className="m-0 size-4 flex-none p-0"
-            data-testid="settings-gestures-toggle"
-            checked={gesturesOn}
-            onChange={(e) => handleGesturesToggle(e.target.checked)}
-          />
-        </label>
-        <label className="flex items-center justify-between gap-2">
-          <span className="flex flex-col gap-0.5">
-            <span className="text-[0.95rem] font-medium">
-              {t("settings.lesson_shortcuts", "Lesson keyboard shortcuts")}
-            </span>
-            <FormHint as="span">
-              {t(
-                "settings.lesson_shortcuts_description",
-                "Press Enter to check your answer, then Enter again to go to the next step.",
-              )}
-            </FormHint>
-          </span>
-          <input
-            type="checkbox"
-            className="m-0 size-4 flex-none p-0"
-            data-testid="settings-lesson-shortcuts-toggle"
-            checked={lessonShortcutsOn}
-            onChange={(e) => handleLessonShortcutsToggle(e.target.checked)}
-          />
-        </label>
-        <label className="flex items-center justify-between gap-2">
-          <span className="flex flex-col gap-0.5">
-            <span className="text-[0.95rem] font-medium">
-              {t(
-                "settings.lesson_auto_advance",
-                "Auto-advance on a correct answer",
-              )}
-            </span>
-            <FormHint as="span">
-              {t(
-                "settings.lesson_auto_advance_description",
-                "After a correct answer, go to the next exercise automatically. A wrong answer always waits so you can review the solution.",
-              )}
-            </FormHint>
-          </span>
-          <input
-            type="checkbox"
-            className="m-0 size-4 flex-none p-0"
-            data-testid="settings-lesson-auto-advance-toggle"
-            checked={autoAdvanceOn}
-            onChange={(e) => handleAutoAdvanceToggle(e.target.checked)}
-          />
-        </label>
-        <label className="flex items-center justify-between gap-2">
-          <span className="flex flex-col gap-0.5">
-            <span className="text-[0.95rem] font-medium">
-              {t("settings.ask_ai_visible", "Show \"Ask AI\" button")}
-            </span>
-            <FormHint as="span">
-              {t(
-                "settings.ask_ai_visible_description",
-                "Show the \"Ask AI\" button under theory and exercises. Shown by default; the button still needs your own AI key (BYOK) to answer.",
-              )}
-            </FormHint>
-          </span>
-          <input
-            type="checkbox"
-            className="m-0 size-4 flex-none p-0"
-            data-testid="settings-ask-ai-visible-toggle"
-            checked={askAiVisibleOn}
-            onChange={(e) => handleAskAiVisibleToggle(e.target.checked)}
-          />
-        </label>
-      </SettingsSection>
-      <VoiceSettingsSection />
-      <ReviewSettingsControl />
-      <SrsTransparencySection />
-      <SummarySectionsControl />
-      <ErrorReplayScopeControl />
-      <PlayfulModeControl />
-      <SettingsSection
-        title={t("settings.section_feedback", "Feedback")}
-        testid="settings-section-feedback"
+        <LearningProfileControl />
+        <SourceLanguagesControl />
+      </SettingsCluster>
+
+      <SettingsCluster
+        id="lessons"
+        testid="settings-cluster-lessons"
+        title={t("settings.cluster_lessons", "In the lesson")}
+        description={t(
+          "settings.cluster_lessons_desc",
+          "How exercises behave while you answer.",
+        )}
       >
-        <FeedbackIntensityControl />
-        <SoundSettingsControl />
-      </SettingsSection>
-      <MissionSettingsControl />
-      <DailyRemindersControl />
-      <PausedLessonsRetentionControl />
-      <MaxLessonSizeControl />
+        <LessonModeControl />
+        <HintSettingsControl />
+        <InteractionControl />
+        <DirectionStrategyControl />
+        <MatchingResolveControl />
+      </SettingsCluster>
+
+      {speechSupported && (
+        <SettingsCluster
+          id="voice"
+          testid="settings-cluster-voice"
+          title={t("settings.cluster_voice", "Reading aloud and dictation")}
+          description={t(
+            "settings.cluster_voice_desc",
+            "Voices, speed, microphone and pronunciation practice.",
+          )}
+        >
+          <VoiceSettingsSection />
+        </SettingsCluster>
+      )}
+
+      <SettingsCluster
+        id="review"
+        testid="settings-cluster-review"
+        title={t("settings.cluster_review", "After the lesson")}
+        description={t(
+          "settings.cluster_review_desc",
+          "Review sessions, the lesson summary and retrying mistakes.",
+        )}
+      >
+        <ReviewSettingsControl />
+        <SummarySectionsControl />
+        <ErrorReplayScopeControl />
+      </SettingsCluster>
+
+      <SettingsCluster
+        id="motivation"
+        testid="settings-cluster-motivation"
+        title={t("settings.cluster_motivation", "Motivation and routine")}
+        description={t(
+          "settings.cluster_motivation_desc",
+          "Game mode, feedback, daily missions and reminders.",
+        )}
+      >
+        <PlayfulModeControl />
+        <SettingsSection
+          title={t("settings.section_feedback", "Feedback")}
+          testid="settings-section-feedback"
+        >
+          <FeedbackIntensityControl />
+          <SoundSettingsControl />
+        </SettingsSection>
+        <MissionSettingsControl />
+        <DailyRemindersControl />
+        <div
+          data-testid="settings-gamification-separator"
+          className="mt-8 border-t-2 border-border pt-8"
+        >
+          <GamificationSettingsSection />
+        </div>
+      </SettingsCluster>
     </div>
   );
 }

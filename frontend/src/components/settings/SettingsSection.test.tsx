@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 
 import { SettingsSection } from "./SettingsSection";
+import { SettingsCluster } from "./SettingsCluster";
 
 describe("SettingsSection", () => {
   it("renders the card shell with title, testid, and children", () => {
@@ -14,6 +15,8 @@ describe("SettingsSection", () => {
     const section = screen.getByTestId("settings-section-profile");
     expect(section.tagName).toBe("SECTION");
     expect(section).toHaveClass("settings-section");
+    // #2961 - clears the Learning tab's sticky section bar on scrollIntoView.
+    expect(section).toHaveClass("scroll-mt-[var(--settings-anchor-offset,0px)]");
     expect(screen.getByRole("heading", { level: 2, name: "Profile" })).toHaveClass(
       "settings-section-title",
     );
@@ -65,6 +68,40 @@ describe("SettingsSection", () => {
       "aria-busy",
       "true",
     );
+  });
+
+  // #2966 - cards inside a cluster sit under the cluster's <h2>, so their
+  // own title steps down to <h3>: explicitly via the prop, or implicitly
+  // through the cluster's heading-level context. The class contract is
+  // unchanged whatever the level.
+  it("renders an h3 title when headingLevel is 3", () => {
+    render(
+      <SettingsSection title="Hints" testid="settings-section-hints" headingLevel={3}>
+        <p>body</p>
+      </SettingsSection>,
+    );
+    const heading = screen.getByRole("heading", { level: 3, name: "Hints" });
+    expect(heading).toHaveClass("settings-section-title");
+    expect(screen.queryByRole("heading", { level: 2 })).not.toBeInTheDocument();
+  });
+
+  it("steps down to h3 inside a SettingsCluster, h2 outside (#2966)", () => {
+    render(
+      <>
+        <SettingsSection title="Outside" testid="settings-section-outside" />
+        <SettingsCluster id="lessons" testid="settings-cluster-lessons" title="In the lesson">
+          <SettingsSection title="Inside" testid="settings-section-inside" />
+          <SettingsSection title="Forced" testid="settings-section-forced" headingLevel={2} />
+        </SettingsCluster>
+      </>,
+    );
+    expect(screen.getByRole("heading", { level: 2, name: "Outside" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "In the lesson" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 3, name: "Inside" })).toHaveClass(
+      "settings-section-title",
+    );
+    expect(screen.getByRole("heading", { level: 2, name: "Forced" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 3, name: "Outside" })).not.toBeInTheDocument();
   });
 
   it("respects the hidden prop", () => {

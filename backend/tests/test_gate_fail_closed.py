@@ -17,32 +17,22 @@ a file or an external analyzer.
 from __future__ import annotations
 
 import os
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
 
+from tests.repo_mirror import mirror_repo
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 @pytest.fixture
 def tree(tmp_path: Path) -> Path:
-    """A mirror of the repo: symlinks, with the mutable surfaces copied."""
-    mutable = {"scripts", ".claude", "Makefile", ".complexity-baseline"}
-    for entry in REPO_ROOT.iterdir():
-        if entry.name == ".git":
-            continue
-        target = tmp_path / entry.name
-        if entry.name in mutable:
-            if entry.is_dir():
-                shutil.copytree(entry, target, symlinks=True)
-            elif entry.exists():
-                shutil.copy2(entry, target)
-        else:
-            target.symlink_to(entry)
-    return tmp_path
+    """A mirror of the repo: symlinks, with the mutable surfaces copied
+    (#3036: ``.claude/rules`` only, never the agent worktrees beside it)."""
+    return mirror_repo(tmp_path, mutable=("scripts", "Makefile", ".complexity-baseline")).root
 
 
 def _run(

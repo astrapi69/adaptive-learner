@@ -33,11 +33,18 @@ checks:
     probe: script_exists=frontend/src/i18n/full-tree-key-coverage.test.ts
 
   - id: dead-code-ratchet
-    verifies: no NEW unused Python functions/methods/classes (vulture, app+plugins one scope) or TS exports/types (knip) beyond the tracked list baseline (#2741)
-    rule: none (night-shift report; deletion discipline lives in the #2486 lesson)
+    verifies: no NEW unused Python functions/methods/classes (vulture, app+plugins one scope) or TS exports/types (knip) beyond the tracked list baseline (#2741); per side on every PR since #3047, full scope weekly
+    rule: none (PR ratchet per side + weekly full report; deletion discipline lives in the #2486 lesson)
     status: active
-    wired_in: make check-dead-code; scripts/check_dead_code.py; .github/workflows/dead-code.yml
+    wired_in: make check-dead-code; scripts/check_dead_code.py; .github/workflows/dead-code.yml; .github/workflows/ci.yml
     probe: make_target=check-dead-code
+
+  - id: testplan-parity
+    verifies: the DE and EN manual test plans stay in sync - equal checkpoint and section counts, and the same multiset of issue references; compares content, never order, because the two plans order their sections differently (#3069, after #3065 found two DE-only checkpoints by hand)
+    rule: ai-workflow/testplan-policy.md#core-rules
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_testplan_parity.py
+    probe: script_exists=backend/tests/test_verify_docs_testplan_parity.py
 
   - id: docs-drift
     verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans

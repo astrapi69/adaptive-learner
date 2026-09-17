@@ -18,11 +18,15 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts"))
 
+import verify_docs  # noqa: E402
 from verify_docs import (  # noqa: E402
     FAIL,
+    WARN,
     Report,
     check_help_coverage,
     check_help_index_versions,
@@ -35,6 +39,10 @@ from verify_docs import (  # noqa: E402
 
 def _fails(report: Report) -> list[str]:
     return [f.message for f in report.findings if f.severity == FAIL]
+
+
+def _warns(report: Report) -> list[str]:
+    return [f.message for f in report.findings if f.severity == WARN]
 
 
 def _write(path: Path, body: str) -> None:
@@ -137,6 +145,53 @@ class TestHelpCoverageFailClosed:
         check_help_coverage(report, help_root=tmp_path, app_path=app)
         assert report.fail_count == 0
         assert any("help pages" in n for n in report.notes)
+
+    def test_mapped_route_counts_as_covered(self, tmp_path: Path) -> None:
+        """#2944: /review/:setId is documented in user-guide/lessons.md, a
+        slug the keyword heuristic cannot derive from the route - the explicit
+        mapping must stop the false 'no obvious help page' WARN."""
+        _write(tmp_path / "en" / "user-guide" / "lessons.md", "x\n")
+        _write(tmp_path / "de" / "user-guide" / "lessons.md", "x\n")
+        app = tmp_path / "App.tsx"
+        app.write_text('<Route path="/review/:setId" />\n', encoding="utf-8")
+        report = Report()
+        check_help_coverage(report, help_root=tmp_path, app_path=app)
+        assert report.fail_count == 0
+        assert not _warns(report)
+
+    def test_unmapped_route_without_page_still_warns(self, tmp_path: Path) -> None:
+        """The mapping table must not blanket-suppress the heuristic."""
+        _write(tmp_path / "en" / "guide.md", "x\n")
+        _write(tmp_path / "de" / "guide.md", "x\n")
+        app = tmp_path / "App.tsx"
+        app.write_text('<Route path="/ghost" />\n', encoding="utf-8")
+        report = Report()
+        check_help_coverage(report, help_root=tmp_path, app_path=app)
+        assert report.fail_count == 0
+        assert any("/ghost" in w for w in _warns(report))
+
+    @pytest.mark.parametrize(
+        "langs_with_page",
+        [(), ("en",)],
+        ids=["page-in-neither-language", "page-in-en-only"],
+    )
+    def test_stale_mapping_fails(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, langs_with_page: tuple[str, ...]
+    ) -> None:
+        """A mapping is a claim: pointing a route at a page that is missing in
+        en or de must FAIL, never quietly count as covered (gate contract
+        point 3 - a stale table entry is a broken basis, not a finding)."""
+        _write(tmp_path / "en" / "guide.md", "x\n")
+        _write(tmp_path / "de" / "guide.md", "x\n")
+        for lang in langs_with_page:
+            _write(tmp_path / lang / "nope" / "page.md", "x\n")
+        app = tmp_path / "App.tsx"
+        app.write_text('<Route path="/ghost" />\n', encoding="utf-8")
+        monkeypatch.setattr(verify_docs, "_ROUTE_HELP_SLUG", {"/ghost": "nope/page"})
+        report = Report()
+        check_help_coverage(report, help_root=tmp_path, app_path=app)
+        assert any("stale mapping" in m for m in _fails(report))
+        assert not any("/ghost" in w for w in _warns(report))
 
 
 class TestI18nFailClosed:

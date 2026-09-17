@@ -161,7 +161,9 @@ export default function NavXpBadge() {
     <div ref={wrapRef} className="relative">
       <button
         type="button"
-        className={`nav-xp-badge${spent ? " nav-xp-badge--spent" : ""}`}
+        // #3123 - no extra left margin below sm; the status cluster's gap
+        // separates the badge and the pixels keep the phone bar one line.
+        className={`nav-xp-badge max-sm:ml-0${spent ? " nav-xp-badge--spent" : ""}`}
         data-testid="nav-xp-badge"
         data-spent={spent ? "true" : undefined}
         aria-haspopup="dialog"

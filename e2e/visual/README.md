@@ -11,7 +11,7 @@ each, not the full Cartesian product):
 | Spec | Matrix | Count |
 |------|--------|-------|
 | `theme-regression.spec.ts` (#244, Phase 2) | 5 views × 12 themes, desktop 1440×900 | 60 |
-| `critical-surfaces.spec.ts` (#705, Phase 1) | 16 surfaces × 3 viewports, default (light) theme | up to 48 |
+| `critical-surfaces.spec.ts` (#705, Phase 1) | 20 surfaces × 3 viewports, default (light) theme | up to 60 |
 
 ### Phase 2 — themes (#244)
 
@@ -20,22 +20,51 @@ lesson-result, settings) across all 12 registered themes.
 
 ### Phase 1 — critical surfaces × viewports (#705)
 
-16 surfaces at 3 responsive viewports — desktop `1920×1080`, tablet
+20 surfaces at 3 responsive viewports — desktop `1920×1080`, tablet
 `768×1024`, mobile `375×667`:
 
 dashboard (empty + populated), content-browser, content-discover,
-content-import (#1380), set-detail, lesson
-theory, lesson cloze, lesson matching, lesson summary, review session,
-statistics, settings (general/data/about), shortcut-help overlay.
+content-import (#1380), content-my-lessons (#3011), create-lesson,
+set-detail, lesson theory, lesson cloze, lesson matching, lesson summary,
+review session, statistics, settings (general/data/about/ai/learning),
+shortcut-help overlay.
+
+`content-import` and `content-my-lessons` are the same tab in two states:
+the first seeds no own lesson, so the "My Lessons" section is absent by
+construction (`ImportActionsPanel` renders it only for
+`userSets.length > 0`); the second seeds one through the Create-Lesson
+wizard. Without the second, that section and everything in it — the six
+row actions, the combine selection, the fork badge, the create button —
+sat in no motif at all, and any change to it compared green (#3011).
 
 A surface that can't be reached deterministically (e.g. the bundled set
 has no cloze exercise) is `test.skip`-ped rather than committing a
 meaningless baseline.
 
+### Deterministic height, not just deterministic content (#3016)
+
+Since the capture follows the app scroller instead of the viewport, a
+late render changes the IMAGE HEIGHT, not just what sits below the fold.
+Three habits keep that from turning into flaky baselines, all of them
+already applied in `helpers.ts`:
+
+- **Wait for the surface's own ready signals**, every loading placeholder
+  it publishes, not just the first one (`settleDashboard`).
+- **Reach the surface the way the app does.** Both dashboard motifs enter
+  via a client-side route change, because `page.goto` fires
+  `beforeunload` on the lesson route and that handler writes the very
+  progress row the dashboard reads on mount. When a read and a write
+  start from the same action, no wait can order them.
+- **Pin live values.** A number that depends on what the network has
+  delivered so far (the offline-cache count) cannot agree between the run
+  that renders a baseline and the run that compares against it; pin the
+  source to a fixture, as `pinContentRegistry` and `pinLessonCacheEmpty`
+  do.
+
 ## Layout
 
 - `theme-regression.spec.ts` — the 12 themes × 5 views matrix.
-- `critical-surfaces.spec.ts` — the 16 surfaces × 3 viewports matrix.
+- `critical-surfaces.spec.ts` — the 20 surfaces × 3 viewports matrix.
 - `helpers.ts` — `setTheme` (pins the theme before first paint via the
   real `adaptive-learner.theme` localStorage key), `freezeClock`,
   `settleForScreenshot`, and per-view/per-surface seeding (`gotoView`,

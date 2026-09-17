@@ -237,6 +237,8 @@
     "choose_language": "Escolha o seu idioma",
     "start_button": "Comece sua jornada de aprendizado",
     "docs_link": "Leia a documentação",
+    "imprint_link": "Ficha técnica",
+    "privacy_link": "Política de privacidade",
     "checking_session": "Bem-vindo de volta…",
     "recovered_toast": "Bem-vindo de volta! Seus dados de aprendizado ainda estão aqui.",
     "intro": "O Adaptive Learner identifica o método que melhor se encaixa em você entre seis abordagens de aprendizado embasadas em pesquisa, e te guia por um ciclo de sete passos em cada sessão.",
@@ -575,8 +577,8 @@
     },
     "section_review": "Revisão",
     "section_srs": "Repetição espaçada",
-    "explanations_enabled": "Mostrar explicações de erros",
-    "explanations_enabled_desc": "Após uma lição, mostra uma breve dica de regra para cada erro.",
+    "explanations_enabled": "Mostrar explicações",
+    "explanations_enabled_desc": "Após uma resposta, mostra a explicação do exercício; após uma lição, uma breve dica de regra para cada erro.",
     "section_hints": "Dicas",
     "section_lesson_summary": "Resumo após as lições",
     "summary_sections_desc": "Escolha quais seções o resumo ao final de uma lição mostra e em que ordem. As ações para continuar ficam sempre visíveis.",
@@ -717,7 +719,23 @@
     "nav_aria": "Navegação de configurações",
     "tab_ai": "IA",
     "tab_learning": "Aprendizagem",
+    "learning_nav_aria": "Seções de aprendizagem",
+    "data_nav_aria": "Secções de dados",
     "tab_plugins": "Plugins",
+    "plugins_installed_title": "Plugins instalados",
+    "plugins_installed_desc": "Cada plugin carregado pelo aplicativo para desktop, com versão, origem e hora de ativação (ciclo de vida do PluginForge).",
+    "plugins_col_name": "Plugin",
+    "plugins_col_version": "Versão",
+    "plugins_col_source": "Origem",
+    "plugins_col_activated": "Ativado",
+    "plugins_source_entry_point": "Pacote",
+    "plugins_source_direct": "Registrado diretamente",
+    "plugins_marker_load_error": "Erro de carregamento",
+    "plugins_marker_filtered": "Filtrado",
+    "plugins_marker_config_changed": "Configuração alterada",
+    "plugins_empty": "Nenhum plugin carregado.",
+    "plugins_loading": "Lendo plugins…",
+    "plugins_error_load": "Não foi possível ler o status dos plugins",
     "tab_data": "Dados",
     "tab_help": "Ajuda",
     "tab_diagnostics": "Diagnóstico e suporte",
@@ -725,6 +743,30 @@
     "tabs_aria": "Seções de configurações",
     "section_feedback": "Feedback",
     "section_interaction": "Interação",
+    "cluster_basics": "Fundamentos",
+    "cluster_basics_desc": "Quem aprende e em que idiomas.",
+    "cluster_lessons": "Na lição",
+    "cluster_lessons_desc": "Como os exercícios se comportam enquanto você responde.",
+    "cluster_voice": "Leitura em voz alta e ditado",
+    "cluster_voice_desc": "Vozes, velocidade, microfone e prática de pronúncia.",
+    "cluster_review": "Depois da lição",
+    "cluster_review_desc": "Sessões de revisão, o resumo da lição e a repetição de erros.",
+    "cluster_motivation": "Motivação e rotina",
+    "cluster_motivation_desc": "Modo de jogo, feedback, missões diárias e lembretes.",
+    "cluster_data_sources": "Fontes",
+    "cluster_data_sources_desc": "Repositórios de conteúdo e a tua entrada no diretório.",
+    "cluster_data_sync": "Sincronização",
+    "cluster_data_sync_desc": "Emparelhar dispositivos e manter os dados alinhados.",
+    "cluster_data_offline": "Conteúdo offline",
+    "cluster_data_offline_desc": "A cache de lições e o tamanho das lições guardadas.",
+    "cluster_data_backup": "Cópia de segurança e exportação",
+    "cluster_data_backup_desc": "Cópia de segurança, identidade, chaves e exportações.",
+    "cluster_data_cleanup": "Limpeza",
+    "cluster_data_cleanup_desc": "Retenção de lições em pausa e dados órfãos.",
+    "cluster_data_danger": "Zona de perigo",
+    "cluster_data_danger_desc": "Irreversível: apagar tudo.",
+    "sounds_volume_shared_hint": "Também vale para os sons do modo de jogo.",
+    "feedback_intensity_playful_hint": "O modo de jogo está ativado, por isso o feedback é sempre entusiasmado, independentemente desta configuração.",
     "missions_title": "Missões diárias",
     "missions_enabled": "Missões diárias",
     "missions_enabled_hint": "Mostra alguns objetivos alcançáveis no painel a cada dia. Opcional - o app funciona igual sem elas.",
@@ -781,6 +823,13 @@
     "playful_mode": "Lições lúdicas",
     "playful_mode_description": "Transforma as lições em um jogo: elogios a cada resposta correta, confete e celebrações de marcos. Funciona com todos os modos de lição; a pontuação e o progresso não mudam. Se o seu sistema reduz animações, o feedback continua discreto.",
     "playful_sounds": "Sons do modo de jogo",
+    "playful_details": "Detalhes do modo de jogo",
+    "playful_details_hint": "Corações, contagem regressiva, arcade, rodadas especiais, tickets, lições bônus, XP de sequência e mascote.",
+    "playful_details_off_notice": "Ative \"Lições lúdicas\" para alterar estas opções.",
+    "playful_cluster_tension": "Tensão",
+    "playful_cluster_arcade": "Arcade e recompensas",
+    "playful_cluster_xp": "XP e mascote",
+    "playful_summary": "{on} de {total} extras ativados",
     "playful_sounds_description": "Sons curtos no modo de jogo: um tom a cada resposta correta (com tom crescente por sequência), um toque nos pontos de controle e uma fanfarra na conclusão. Independentes do interruptor global de sons; o volume segue o controle.",
     "playful_sounds_offer": "Jogar com som?",
     "playful_sounds_offer_yes": "Sim, sons ativados",
@@ -1166,7 +1215,9 @@
     "docs_label": "Documentação",
     "tutorial_label": "Tutorial do app",
     "tutorial_link": "Abrir o tutorial diretamente",
-    "issues_label": "Issues"
+    "issues_label": "Issues",
+    "imprint_label": "Ficha técnica",
+    "privacy_label": "Política de privacidade"
   },
   "backup": {
     "section_title": "Backup",
@@ -2401,6 +2452,11 @@
         "productive_hint": "Produzir a resposta"
       }
     },
+    "explanation": {
+      "title": "Explicação",
+      "show": "Por quê?",
+      "hide": "Ocultar explicação"
+    },
     "flash_round": {
       "title": "Ronda relâmpago: {set}",
       "card_title": "Ronda relâmpago",
@@ -2471,6 +2527,10 @@
       "breakdown_heading": "Detalhe dos exercícios",
       "breakdown_correct_answer": "Resposta certa: {answer}",
       "breakdown_unattempted": "Não tentado",
+      "detailed_hide": "Avaliação compacta",
+      "detailed_hint": "Mostra os números-chave, os erros por tipo de exercício, os pontos fracos, todas as respostas e todas as explicações de erros desta ronda",
+      "detailed_show": "Avaliação detalhada",
+      "review_subtitle": "Todos os erros desta lição num relance",
       "view_all_answers": "Ver todas as respostas ({n})",
       "export": {
         "copy": "Copiar resultado",
@@ -2603,7 +2663,8 @@
       "bonus_badge": "Bónus",
       "bonus_locked_tooltip": "Termina cada lição normal deste conjunto com pelo menos uma estrela para desbloquear esta lição bónus.",
       "progress_done": "{done} de {total} lições concluídas",
-      "current_lesson": "Continuar aqui"
+      "current_lesson": "Continuar aqui",
+      "lesson_completed": "Concluído"
     },
     "repo_export": {
       "button": "Partilhar como repositório",
@@ -2645,7 +2706,9 @@
       "progress": "Passo {n}/{total}",
       "imported_analysis": "Análise importada",
       "lesson_fallback": "Lição",
-      "lesson_part": "{label} · Parte {n}"
+      "lesson_part": "{label} · Parte {n}",
+      "dismiss": "Remover de Continuar a aprender",
+      "dismissed": "Removido de Continuar a aprender. Volta assim que continuares a aprender."
     },
     "import_chat": {
       "button": "Importar conversa"
@@ -2902,16 +2965,23 @@
       "update_available": "Atualização disponível",
       "downloading": "A transferir…"
     },
+    "tab": {
+      "create": "Criar"
+    },
     "action": {
       "refresh": "Atualizar",
       "refreshing": "A atualizar…",
+      "refresh_hint": "Recarregar a lista e aplicar todas as atualizações disponíveis",
       "download": "Transferir",
       "update": "Atualizar",
       "installed": "Instalado",
       "open": "Abrir"
     },
     "toast": {
-      "downloaded": "Conjunto transferido e pronto a usar."
+      "downloaded": "Conjunto transferido e pronto a usar.",
+      "updated_all": "{n} conjuntos atualizados.",
+      "updates_held_named": "Retidas porque afetariam o teu progresso: {titles}. Confirma cada atualização com o botão Atualizar do conjunto.",
+      "all_up_to_date": "Todos os conjuntos estão atualizados."
     },
     "warning": {
       "no_lessons_in_set": "Este conjunto ainda não tem lições."
@@ -2919,6 +2989,7 @@
     "error": {
       "list_failed": "Não foi possível carregar os conjuntos de conteúdo.",
       "download_failed": "Não foi possível transferir o conjunto.",
+      "update_all_failed": "{n} atualizações falharam.",
       "open_failed": "Não foi possível abrir a lição."
     },
     "tree": {
@@ -3004,6 +3075,20 @@
       "checked_with": "Verificado com",
       "date": "Data",
       "recheck": "Verificar novamente",
+      "fix": {
+        "button": "Aplicar sugestões",
+        "own_only": "Somente para as suas próprias lições.",
+        "title": "Aplicar sugestões",
+        "intro": "Confira cada linha: só o que estiver marcado é gravado. Deixe de fora sugestões que explicam em vez de dar um valor.",
+        "current": "Atual",
+        "manual_count": "{count} apontamentos não trazem valor aplicável e ficam manuais.",
+        "confirm": "Aplicar {fields} campos em {cards} cartões",
+        "applied": "{fields} campos aplicados. O relatório está desatualizado, verifique o conjunto novamente.",
+        "undo": "Desfazer a última aplicação",
+        "undone": "Aplicação desfeita.",
+        "failed": "Não foi possível aplicar as sugestões",
+        "none_applicable": "Nenhuma sugestão aplicável neste relatório."
+      },
       "export": {
         "button": "Exportar relatório como Markdown",
         "lesson": "Lição",
@@ -3260,6 +3345,8 @@
         "unavailable_reason": "Imagens e áudio não podem ser gerados a partir de texto. Você pode adicionar esses tipos depois no editor.",
         "floor_hint": "Pelo menos um tipo de exercício deve permanecer selecionado."
       },
+      "explanations_label": "Gerar explicações (mostradas após a resposta)",
+      "explanations_hint": "Adiciona a cada exercício uma regra, uma glosa palavra por palavra e mais exemplos. Cerca de um terço a metade a mais de saída de IA por exercício.",
       "generate_to_advance": "Gere a lição a partir do seu texto para continuar.",
       "review_theory": "{n} passo(s) de teoria",
       "review_exercises": "{n} exercício(s)",
@@ -3355,6 +3442,32 @@
         "too_large": "Essa imagem é demasiado grande. Tente uma mais pequena.",
         "decode_failed": "Não foi possível ler essa imagem. Tente outro ficheiro."
       },
+      "token_roles": {
+        "label": "Funções das palavras (opcional)",
+        "hint": "Marque palavras concretas da frente com a sua função gramatical. O exercício de lacunas passa a escolher uma lacuna com sentido em vez de uma por posição.",
+        "add": "Adicionar função",
+        "remove": "Remover função",
+        "token_placeholder": "Palavra da frente",
+        "role_label": "Função",
+        "suggest": "Sugerir funções",
+        "suggest_none": "Nenhuma palavra reconhecida. Introduza as funções à mão.",
+        "suggest_hint": "As sugestões são palpites. Verifique cada linha antes de guardar.",
+        "count": "{n} de {max} funções",
+        "error": {
+          "not_in_front": "\"{token}\" não aparece assim na frente. Escreva-o exatamente como está lá.",
+          "duplicate": "\"{token}\" já está anotado.",
+          "max_reached": "Um cartão não pode ter mais de {max} funções."
+        },
+        "role": {
+          "article": "Artigo",
+          "verb": "Verbo",
+          "noun": "Substantivo",
+          "adjective": "Adjetivo",
+          "preposition": "Preposição",
+          "gender_marker": "Marca de género",
+          "tense_marker": "Marca de tempo"
+        }
+      },
       "add": "Adicionar cartão",
       "import_csv": "Importar CSV",
       "csv_hint": "Cole linhas como frente, verso, notas (separadas por vírgula ou tabulação). Exemplo: Bonjour, Guten Tag, Saudação formal",
@@ -3377,6 +3490,11 @@
       "continue": "Continuar"
     },
     "exercises": {
+      "summary": {
+        "pairs": "{n} pares",
+        "images": "{n} imagens",
+        "options": "{n} opções de resposta"
+      },
       "heading": "Gerar exercícios",
       "count_label": "Número de exercícios",
       "types_label": "Tipos de exercício",
@@ -3453,7 +3571,13 @@
         "err_free_text": "Adicione pelo menos uma resposta aceite.",
         "err_cloze": "Cada marca ___ precisa de uma lacuna e cada lacuna precisa de uma resposta.",
         "err_word_tiles": "Adicione pelo menos 2 peças.",
-        "err_picture_choice": "Adicione pelo menos 2 imagens, cada uma com rótulo e imagem, e marque exatamente uma como correta."
+        "err_picture_choice": "Adicione pelo menos 2 imagens, cada uma com rótulo e imagem, e marque exatamente uma como correta.",
+        "err_explanation": "A explicação é longa demais (no máximo 2000 caracteres).",
+        "explanation_label": "Explicação após a resposta (opcional, Markdown)",
+        "explanation_hint": "Mostrada após a resposta: regra, palavra por palavra, mais exemplos, erro típico.",
+        "explanation_counter": "{n} / {max} caracteres",
+        "explanation_template": "Inserir modelo",
+        "explanation_template_body": "**Regra:** \n\n**Palavra por palavra:**\n- *palavra* - significado literal (nota gramatical)\n\n**Mais exemplos:**\n- *frase* - tradução\n\n**Erro típico:** "
       },
       "dir": {
         "auto": "Automático",
@@ -3491,6 +3615,7 @@
         "err_reading_comprehension": "Adicione um texto e pelo menos uma pergunta completa (múltipla escolha com uma opção correta, ou texto livre com uma resposta aceita).",
         "err_graded_quiz": "Adicione pelo menos uma pergunta completa com pontos positivos (múltipla escolha com uma opção correta, ou texto livre com uma resposta aceita).",
         "err_dictation": "Adicione um caminho de arquivo de áudio e pelo menos uma transcrição aceita.",
+        "err_explanation": "A explicação é longa demais (no máximo 2000 caracteres).",
         "dict_audio_label": "Áudio",
         "dict_audio_placeholder": "assets/audio/clip.mp3",
         "dict_audio_hint": "Caminho relativo para o clipe de áudio dentro da pasta assets do conjunto.",
@@ -3569,6 +3694,9 @@
         "parsons_language_label": "Idioma (opcional, para destaque de sintaxe)",
         "hotspot_image_label": "Imagem de estímulo",
         "hotspot_image_preview_alt": "Imagem de estímulo",
+        "hotspot_draw_label": "Desenhe uma zona na imagem",
+        "hotspot_canvas_alt": "Arraste para desenhar uma zona",
+        "hotspot_canvas_aria": "Arraste sobre a imagem para desenhar uma zona",
         "hotspot_zones_label": "Zonas clicáveis",
         "hotspot_shape_rect": "Retângulo",
         "hotspot_shape_circle": "Círculo",
@@ -4533,6 +4661,11 @@
     "no_errors": "Nenhum erro registrado - excelente!",
     "lesson_errors": "{count} erros",
     "practice_errors": "Treinar erros",
-    "back_to_set": "Voltar ao conjunto"
+    "back_to_set": "Voltar ao conjunto",
+    "element_type": {
+      "vocabulary": "Vocabulário",
+      "grammar_rule": "Regra gramatical",
+      "unknown": "Desconhecido"
+    }
   }
 }

@@ -32,6 +32,7 @@ import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import {Link} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
+import {useLessonProgressChangeTick} from "../../hooks/lesson/session/useLessonProgressChangeTick";
 import {
     resolveLessonTitle,
     resolveSetTitle,
@@ -99,6 +100,10 @@ export default function PausedLessonsCard({
 }: PausedLessonsCardProps) {
     const {t} = useI18n();
     const [paused, setPaused] = useState<PausedRow[] | null>(null);
+    // #3075 - re-read when a lesson row is written in this tab: the pause
+    // that an in-app exit performs lands in the same commit this card
+    // mounts in, so the mount-time read can predate it.
+    const progressTick = useLessonProgressChangeTick();
 
     // Derived to stable primitive strings so the effect doesn't re-run on the
     // fresh ``t`` identity the i18n test mock returns each render.
@@ -234,7 +239,13 @@ export default function PausedLessonsCard({
         return () => {
             cancelled = true;
         };
-    }, [userId, importedAnalysisLabel, lessonFallbackLabel, lessonPartTemplate]);
+    }, [
+        userId,
+        importedAnalysisLabel,
+        lessonFallbackLabel,
+        lessonPartTemplate,
+        progressTick,
+    ]);
 
     // Still loading — render nothing to avoid layout shift.
     if (paused === null) return null;

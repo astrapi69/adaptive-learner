@@ -62,8 +62,11 @@ export interface ContentSetsData {
   sources: ContentSetSource[];
   loading: boolean;
   refreshing: boolean;
-  loadSets: () => Promise<void>;
-  handleRefresh: () => void;
+  /** Reload the list; resolves with the visible sets, or null on failure. */
+  loadSets: () => Promise<ContentSetEntry[] | null>;
+  /** #3001 — the header refresh: reload + hand the fresh list to the
+   *  caller (the page applies every pending update on it). */
+  handleRefresh: () => Promise<ContentSetEntry[] | null>;
   bookRecs: BookRecommendations;
   media: MediaResource[];
   bookCompanions: Record<string, BookMetadata>;
@@ -275,10 +278,10 @@ export function useContentSetsData(): ContentSetsData {
     };
   }, []);
 
-  const loadSets = useCallback(async () => {
+  const loadSets = useCallback(async (): Promise<ContentSetEntry[] | null> => {
     try {
       const data = await getStorage().contentLoader.listSets();
-      if (!mountedRef.current) return;
+      if (!mountedRef.current) return null;
       // #1707 — filter reference/conformance fixtures the manifest marks
       // ``visibility: "hidden"`` out of "Meine Inhalte", covering a set that
       // may already have been downloaded/imported. The manifest value flows
@@ -307,13 +310,16 @@ export function useContentSetsData(): ContentSetsData {
       // store so a deferred/completed set stays that way across a remount
       // (leave + return to the page), in BOTH storage modes. Referentially
       // stable: returns the same array when no status differs.
-      setSets(applyStoredStatuses(ordered));
+      const visibleSets = applyStoredStatuses(ordered);
+      setSets(visibleSets);
       setSources(data.sources);
+      return visibleSets;
     } catch (err) {
-      if (!mountedRef.current) return;
+      if (!mountedRef.current) return null;
       notify.error(t("content.error.list_failed", "Could not load content sets."), {
         apiError: err instanceof Error ? undefined : undefined,
       });
+      return null;
     } finally {
       if (mountedRef.current) {
         setLoading(false);
@@ -328,7 +334,7 @@ export function useContentSetsData(): ContentSetsData {
 
   const handleRefresh = () => {
     setRefreshing(true);
-    void loadSets();
+    return loadSets();
   };
 
   return {

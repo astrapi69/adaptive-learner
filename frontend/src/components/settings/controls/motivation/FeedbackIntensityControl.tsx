@@ -1,7 +1,7 @@
 /**
  * FeedbackIntensityControl (EXP-008 / Phase 55E).
  *
- * Settings > Interface control for the celebration feedback
+ * Settings > Learning control for the celebration feedback
  * intensity. Three mutually-exclusive levels (subtle / normal /
  * enthusiastic), persisted in localStorage via ``feedbackPref``.
  * Changing it dispatches the pref-change event so every
@@ -9,11 +9,16 @@
  *
  * When the OS requests reduced motion, the effective intensity is
  * forced to "subtle" regardless of this setting; a hint surfaces
- * that so the control does not look broken.
+ * that so the control does not look broken. The same applies while
+ * game mode (#2844) is on: ``effectiveIntensity`` then always returns
+ * "enthusiastic", so a second, event-driven hint (``usePlayfulMode``,
+ * #2957) explains why the radios have no effect - it appears and
+ * disappears live when the game-mode toggle changes, no reload.
  */
 
 import {useState} from "react";
 
+import {usePlayfulMode} from "../../../../hooks/settings/usePlayfulMode";
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import FormHint from "../../../../shared/forms/FormHint";
 import {
@@ -46,6 +51,7 @@ export default function FeedbackIntensityControl() {
         readFeedbackIntensity(),
     );
     const reduced = prefersReducedMotion();
+    const playful = usePlayfulMode();
 
     const handleChange = (next: FeedbackIntensity) => {
         setIntensity(next);
@@ -105,6 +111,17 @@ export default function FeedbackIntensityControl() {
                     {t(
                         "settings.feedback_intensity_reduced_motion_hint",
                         "Reduced-motion is on in your system, so feedback is kept subtle regardless of this setting.",
+                    )}
+                </FormHint>
+            )}
+            {playful && (
+                <FormHint
+                    as="span"
+                    data-testid="settings-feedback-intensity-playful-hint"
+                >
+                    {t(
+                        "settings.feedback_intensity_playful_hint",
+                        "Game mode is on, so feedback is always enthusiastic regardless of this setting.",
                     )}
                 </FormHint>
             )}

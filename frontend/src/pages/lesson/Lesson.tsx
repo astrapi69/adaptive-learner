@@ -71,6 +71,7 @@ import { useLessonSetContext } from "../../hooks/lesson/session/useLessonSetCont
 import { exitRouteForLesson, lessonRoute } from "../../lib/content/browse/continue-learning";
 import { useLessonStepState } from "../../hooks/lesson/session/useLessonStepState";
 import { useOrientationReanchor } from "../../hooks/lesson/interaction/useOrientationReanchor";
+import { useStepReanchor } from "../../hooks/lesson/interaction/useStepReanchor";
 import { clearHintUsage } from "../../lib/hints/hint-usage";
 import { readLearnerState } from "../../lib/learning/learnerState";
 
@@ -79,6 +80,11 @@ interface UrlParams {
   setId: string;
   filename: string;
   [key: string]: string | undefined;
+}
+
+/** Whether the step index sits on the summary view (past the last step). */
+function isAtSummary(lesson: {steps: unknown[]} | null, index: number): boolean {
+  return lesson !== null && index >= lesson.steps.length;
 }
 
 export default function LessonPage() {
@@ -145,6 +151,8 @@ export default function LessonPage() {
     markRestarted,
     autosave,
     goToStep,
+    // #3075 - the summary is the end of the run, not a place to pause.
+    atSummary: isAtSummary(lesson, currentStepIndex),
   });
 
   // Phase 46B — userId for the elementErrors.recordBulk
@@ -261,21 +269,12 @@ export default function LessonPage() {
   // much vertical space on EVERY viewport, so the progress bar + step
   // content start below the fold and the learner has to scroll on each of
   // the steps. After load + each step change, bring the content into view
-  // so they see the task, not the header. All viewports; honors
-  // prefers-reduced-motion.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (showResumePrompt) return; // let the resume overlay settle first
-    const target = stepScrollRef.current;
-    if (!target?.scrollIntoView) return; // jsdom/happy-dom: no-op
-    const reduceMotion = window.matchMedia?.(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    target.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-      block: "start",
-    });
-  }, [currentStepIndex, showResumePrompt]);
+  // so they see the task, not the header. #3126 — the hard scroll reset
+  // and the anchor scroll are ONE ordered hook now (reset, then anchor
+  // once the new layout is committed): the former two competing scrolls
+  // left iOS with a stale offset after a long-to-short step change, the
+  // content cut off and the sticky footer mid-screen.
+  useStepReanchor(stepScrollRef, currentStepIndex, !showResumePrompt);
 
   // #1422 — after a device ROTATION, re-anchor the same step anchor: iOS
   // leaves stale scroll offsets / sticky positions after an orientation

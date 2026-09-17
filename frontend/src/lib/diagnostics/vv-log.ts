@@ -21,13 +21,33 @@
 
 const LOG_KEY = "adaptive-learner.vv_diag_log";
 
+/** Same flag the ``?vvdiag=1`` probe persists (#2782). */
+const DIAG_FLAG_KEY = "adaptive-learner.vv_diag";
+
+/**
+ * Whether the diagnostics probe is enabled — instrumented actors (the
+ * realign hook #2995, the pre-reveal #3002) log only then; normal users
+ * pay nothing.
+ */
+export function vvDiagEnabled(): boolean {
+  try {
+    return localStorage.getItem(DIAG_FLAG_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 /** Ring-buffer cap: old entries are dropped once the log is full. */
 export const VV_LOG_MAX_ENTRIES = 500;
 
 /** One recorded diagnostics event. */
 export interface VvLogEntry {
-  /** ``tap`` = a pointerdown record; ``viewport`` = a vv state transition. */
-  kind: "tap" | "viewport";
+  /** ``tap`` = a pointerdown record; ``viewport`` = a vv state
+   *  transition; ``hook`` = an actor decision (realign #2995, pre-reveal
+   *  #3002); ``click`` = what a tap actually activated, ``focus`` = a
+   *  focus arrival with the field's geometry, ``mark`` = the tester
+   *  flagging the last tap as a mis-tap (#3043). */
+  kind: "tap" | "viewport" | "hook" | "click" | "focus" | "mark";
   /** ``Date.now()`` at record time. */
   ts: number;
   /** The active ``?vvfix`` candidate (``"off"`` when none). */

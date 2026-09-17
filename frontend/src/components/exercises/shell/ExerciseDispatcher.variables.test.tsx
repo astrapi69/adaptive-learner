@@ -124,6 +124,73 @@ describe("ExerciseDispatcher variables wiring (#3109)", () => {
         expect(screen.getByText("Was ist 4 + 6?")).toBeInTheDocument();
     });
 
+    it("records resolved_variables for a non-free_text kind too (multiple_choice)", () => {
+        const onComplete = vi.fn();
+        const step: ContentLessonStep = {
+            id: "s1",
+            type: "exercise",
+            exercise: {
+                id: "e1",
+                type: "multiple_choice",
+                prompt: "What is {{a}} + {{b}}?",
+                card_ids: [],
+                distractors: [],
+                variables: [
+                    {name: "a", min: 1, max: 1},
+                    {name: "b", min: 1, max: 1},
+                ],
+                options: [
+                    {text: "{{a}} plus {{b}} equals 2", correct: true},
+                    {text: "3", correct: false},
+                ],
+            },
+        } as unknown as ContentLessonStep;
+        renderDispatcher(step, {onComplete});
+        fireEvent.click(screen.getByTestId("multiple-choice-input-0"));
+        fireEvent.click(screen.getByTestId("multiple-choice-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({
+                raw_answer: expect.objectContaining({
+                    kind: "multiple_choice",
+                    resolved_variables: {a: 1, b: 1},
+                }),
+            }),
+        );
+    });
+
+    it("replays the exact persisted instance on a non-free_text revisit (multiple_choice)", () => {
+        // A revisit would draw a different instance (max end of range) if
+        // resolution re-sampled instead of reusing the persisted ones.
+        randomSpy.mockReturnValue(0.999999);
+        const step: ContentLessonStep = {
+            id: "s1",
+            type: "exercise",
+            exercise: {
+                id: "e1",
+                type: "multiple_choice",
+                prompt: "What is {{a}} + {{b}}?",
+                card_ids: [],
+                distractors: [],
+                variables: [
+                    {name: "a", min: 1, max: 20},
+                    {name: "b", min: 1, max: 20},
+                ],
+                options: [
+                    {text: "{{a}} plus {{b}}", correct: true},
+                    {text: "nope", correct: false},
+                ],
+            },
+        } as unknown as ContentLessonStep;
+        renderDispatcher(step, {
+            reviewed: {
+                kind: "multiple_choice",
+                selected: ["4 plus 6"],
+                resolved_variables: {a: 4, b: 6},
+            },
+        });
+        expect(screen.getByText("What is 4 + 6?")).toBeInTheDocument();
+    });
+
     it("leaves a lesson without variables untouched (Jinja2 braces stay literal)", () => {
         const step: ContentLessonStep = {
             id: "s1",

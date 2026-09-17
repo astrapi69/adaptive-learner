@@ -11,7 +11,7 @@
  * be true ONLY for a started run (status ``in_progress``).
  */
 
-import {renderHook} from "@testing-library/react";
+import {act, renderHook} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 import {useLessonFlowControl} from "./useLessonFlowControl";
@@ -66,5 +66,78 @@ describe("useLessonFlowControl isInProgress (#1027)", () => {
     it("is false for a completed run", () => {
         const {result} = renderFlow({progress: progress("completed")});
         expect(result.current.isInProgress).toBe(false);
+    });
+});
+
+describe("useLessonFlowControl pauses a started run on unmount (#3075)", () => {
+    it("unmount while in_progress calls markPaused exactly once", () => {
+        const markPaused = vi.fn().mockResolvedValue(undefined);
+        const {unmount} = renderFlow({
+            progress: progress("in_progress"),
+            markPaused,
+        });
+        expect(markPaused).not.toHaveBeenCalled();
+        unmount();
+        expect(markPaused).toHaveBeenCalledTimes(1);
+    });
+
+    it("unmount of a lesson with no started run writes nothing", () => {
+        const markPaused = vi.fn().mockResolvedValue(undefined);
+        const {unmount} = renderFlow({progress: null, markPaused});
+        unmount();
+        expect(markPaused).not.toHaveBeenCalled();
+    });
+
+    it("unmount of an already paused or completed run writes nothing", () => {
+        for (const state of ["paused", "completed"] as const) {
+            const markPaused = vi.fn().mockResolvedValue(undefined);
+            const {unmount} = renderFlow({
+                progress: progress(state),
+                markPaused,
+            });
+            unmount();
+            expect(markPaused).not.toHaveBeenCalled();
+        }
+    });
+
+    it("leaving from the summary does not pause: the run is played through", () => {
+        const markPaused = vi.fn().mockResolvedValue(undefined);
+        const {unmount} = renderFlow({
+            progress: progress("in_progress"),
+            markPaused,
+            atSummary: true,
+        });
+        unmount();
+        expect(markPaused).not.toHaveBeenCalled();
+    });
+
+    it("the dialog's own pause is not repeated by the unmount that follows it", async () => {
+        const markPaused = vi.fn().mockResolvedValue(undefined);
+        const {result, unmount} = renderFlow({
+            progress: progress("in_progress"),
+            markPaused,
+        });
+        await act(async () => {
+            await result.current.handlePauseFromDialog();
+        });
+        expect(markPaused).toHaveBeenCalledTimes(1);
+        unmount();
+        expect(markPaused).toHaveBeenCalledTimes(1);
+    });
+
+    it("abandoning through the dialog is not followed by a pause on unmount", async () => {
+        const markPaused = vi.fn().mockResolvedValue(undefined);
+        const markAbandoned = vi.fn().mockResolvedValue(undefined);
+        const {result, unmount} = renderFlow({
+            progress: progress("in_progress"),
+            markPaused,
+            markAbandoned,
+        });
+        await act(async () => {
+            await result.current.handleAbandonFromDialog();
+        });
+        unmount();
+        expect(markAbandoned).toHaveBeenCalledTimes(1);
+        expect(markPaused).not.toHaveBeenCalled();
     });
 });

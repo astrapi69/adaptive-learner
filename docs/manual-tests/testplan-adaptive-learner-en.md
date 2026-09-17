@@ -389,6 +389,19 @@ Requires domain knowledge. Not automatable.
       free-text/cloze/word-tiles the hint button stays as before. iOS
       PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen.
+- [ ] Explanation after the answer (#2991): open an exercise whose content
+      carries an explanation (the `explanation` field, e.g. the fixture
+      `e2e/fixtures/explanation-post-answer.lesson.json` through a connected
+      test repository). Before checking, NO explanation is visible. Answer
+      wrong and check: the "Explanation" box appears below the exercise,
+      EXPANDED, with rendered Markdown (bold "Rule", the word-by-word list, the
+      examples). Answer the next exercise correctly: the box appears COLLAPSED
+      with a "Why?" button; a click opens it, "Hide explanation" closes it
+      again. An exercise WITHOUT an explanation shows no box. Settings >
+      Learning > Review > "Show explanations" off: the box disappears at once,
+      also inside the running lesson; on brings it back. In exam mode it never
+      appears. No XP is deducted. iOS PWA/Standalone: repeat the check on the
+      web-app icon added to the Home Screen.
 - [ ] Matching: no wrong subtitle/column labels on knowledge sets (#2392): open
       a matching exercise from a KNOWLEDGE set (non-language domain, or source ==
       target, e.g. senses to organs). NO subtitle "Match each term with its
@@ -503,6 +516,10 @@ preview delivery). In the regular build the mode does not exist.
 ### Game mode (#2844)
 - [ ] Settings -> Learning: "Game Mode" section with the "Playful
       lessons" switch, default off
+- [ ] Preparation for every detail step in this section (#2959):
+      Settings > Learning > Game Mode > unfold "Game mode details"
+      (collapsed by default); the detail switches are only usable while
+      game mode is on, so switch "Playful lessons" on first
 - [ ] Lesson start (first step, game mode off, hint never dismissed):
       "Try game mode" banner with "Turn on" and a close control
 - [ ] "Turn on" in the banner: success toast, banner disappears, the
@@ -544,7 +561,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Mascot variants (#2861, Lernfunke color schemes)
 
-- [ ] Settings -> Learning -> Game mode: below the switch, the "Mascot
+- [ ] Settings -> Learning -> Game mode -> details (unfolded, see the
+      preparation step #2959), "XP and mascot" block: the "Mascot
       variant" row with five mini figures (Spark, Ocean, Forest, Ghost,
       Gold) plus a hint text
 - [ ] Fresh account (level 1, no badges, 0 XP): only Spark selectable;
@@ -582,9 +600,29 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Exam mode + game mode + sounds: no per-answer tone (no immediate
       feedback); the completion fanfare stays allowed
 
+#### Feedback card: volume always visible + game-mode hint (#2957)
+
+- [ ] Settings -> Learning -> Feedback: the "Sounds" switch is OFF, yet
+      the volume slider, the percentage readout and the "Test" button
+      are visible; below the slider the hint "Also applies to the
+      game-mode sounds."
+- [ ] Sounds OFF, game-mode sounds ON: move the slider, play a lesson in
+      game mode - the game-mode tones follow the new volume; sounds OFF
+      + game-mode sounds OFF: "Test" stays silent
+- [ ] Turn game mode on (Settings -> Learning -> Game mode): below the
+      three intensity options the hint "Game mode is on, so feedback is
+      always enthusiastic regardless of this setting." appears
+      IMMEDIATELY, no reload
+- [ ] Turn game mode off again: the hint disappears immediately; the
+      selected intensity stays marked unchanged
+- [ ] Game mode on + reduced motion in the system: both hints (reduced
+      motion + game mode) are visible; feedback stays subtle (reduced
+      motion wins)
+
 #### Tension systems: hearts + countdown ring (#2878, opt-in, default off)
 
-- [ ] Settings > Learning > Game Mode: the "Hearts (lives)" and
+- [ ] Settings > Learning > Game Mode > details ("Tension" block,
+      preparation step #2959): the "Hearts (lives)" and
       "Countdown ring" switches are OFF by default; the number inputs
       (hearts per lesson, seconds per exercise) only become editable
       after enabling their switch and clamp to 1-5 / 5-120
@@ -608,7 +646,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Streak bonus XP (#2893, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode: the "Streak bonus XP" switch is
+- [ ] Settings > Learning > Game Mode > details ("XP and mascot" block,
+      preparation step #2959): the "Streak bonus XP" switch is
       ON by default; the "Bonus XP cap per lesson" number input is
       editable, clamps to 5-20 (default 10) and is disabled while the
       switch is off
@@ -628,7 +667,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Arcade mini-games (#2887, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode: the "Arcade" switch is ON by
+- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+      block, preparation step #2959): the "Arcade" switch is ON by
       default; the "Snake round length" (30-120, default 60) and
       "Memory pairs" (4-12, default 8) number inputs clamp and are
       disabled while the switch is off
@@ -687,7 +727,8 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Sounds: with the sounds or game-mode-sounds switch on, each
       field plays its own tone (playback and input); without the
       opt-in the game stays silent and fully playable
-- [ ] Settings > Learning > Game Mode: the "Simon target length"
+- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+      block, preparation step #2959): the "Simon target length"
       number input clamps to 5-15 (default 8) and is disabled while
       the arcade is off
 - [ ] Reduced motion in the system: fields only change state
@@ -695,7 +736,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Flash rounds (#2888, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode: the "Special rounds" switch is
+- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+      block, preparation step #2959): the "Special rounds" switch is
       ON by default; the "Flash-round cards" number input clamps to
       5-20 (default 10) and is disabled while the switch is off
 - [ ] Set overview (/content/set/...) with game mode on: the
@@ -721,12 +763,17 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Game tickets (#2889, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode: the "Game tickets" switch is ON
+- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+      block, preparation step #2959): the "Game tickets" switch is ON
       by default; the "Maximum tickets" number input clamps to 1-10
       (default 5) and is disabled while the switch is off
 - [ ] Finishing a lesson with a perfect score: the summary shows the
       ticket banner ("Reward unlocked ...") with a "Play now" button
       leading to the arcade
+- [ ] Arcade switch off (#3029): the same lesson finished with a perfect
+      score shows NEITHER the banner nor "Play now" in the summary, and
+      no ticket is banked; arcade switch back on and another new lesson
+      finished perfectly: banner and button are back
 - [ ] Hearts active (#2878) and a run finished without losing one:
       one more ticket (perfect score + all hearts = 2 tickets)
 - [ ] Streak milestones (3/7/14/30 days): reaching one grants a bonus
@@ -754,7 +801,8 @@ preview delivery). In the regular build the mode does not exist.
 
 #### Bonus lessons (#2890, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode: the "Bonus lessons" switch is
+- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+      block, preparation step #2959): the "Bonus lessons" switch is
       ON by default
 - [ ] A set with a bonus- lesson file (filename starts with
       "bonus-"): the set page shows the bonus lesson at the END of
@@ -809,6 +857,154 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] Game mode off: none of this appears; reduced motion in the
       system: chip/dots render without animation, the "+1" stays
       invisible (pure motion decoration)
+
+### Learning tab: five clusters (#2956)
+
+- [ ] Settings > Learning: the cards sit in five labelled areas, each
+      with a small uppercase heading and a description line underneath,
+      in this order: "Basics" (Who is learning, and in which languages.),
+      "In the lesson" (How exercises behave while you answer.), "Reading
+      aloud and dictation" (Voices, speed, microphone and pronunciation
+      practice.), "After the lesson" (Review sessions, the lesson summary
+      and retrying mistakes.), "Motivation and routine" (Game mode,
+      feedback, daily missions and reminders.)
+- [ ] Basics: Learning profile, then Additional source languages
+- [ ] In the lesson: Lesson mode, Hints, Interaction, then Preferred
+      exercise direction and Solve animation (Hints and Interaction come
+      BEFORE direction and solve)
+- [ ] Reading aloud and dictation: only the "Voice" card; in a browser
+      without Web Speech support (neither synthesis nor recognition) the
+      whole area is absent, heading included, and "After the lesson"
+      follows "In the lesson" directly
+- [ ] After the lesson: Review, Lesson summary, Retry errors. "Spaced
+      repetition" is no longer a card of its own but the last block
+      inside the "Review" card (under a divider, smaller heading): the
+      interval schedule (correct answers in a row against days until the
+      next review), the note on when an item counts as mastered, and the
+      link to the learning method
+- [ ] Motivation and routine: Game Mode, Feedback, Daily Missions,
+      Reminders (last card of the tab)
+- [ ] Phone (375 px wide): area headings and descriptions wrap, nothing
+      scrolls horizontally; switching tabs and the ?tab=learning deep
+      link work as before
+
+### Game mode: summary card + details (#2959)
+
+- [ ] Settings > Learning > Game Mode: the card shows the "Playful
+      lessons" switch, the game mode sounds and, below them, the status
+      line "N of 7 extras on" (fresh state: "5 of 7")
+- [ ] "Game mode details" is collapsed by default (button with a
+      chevron, the hint "Hearts, countdown, arcade, special rounds,
+      tickets, bonus lessons, streak XP and mascot." underneath);
+      unfolding shows the three blocks "Tension", "Arcade and rewards"
+      and "XP and mascot"
+- [ ] Leave it unfolded and reload the page: the fold stays open; leave
+      it collapsed and reload: it stays collapsed (both storage modes,
+      localStorage)
+- [ ] Game mode OFF, details unfolded: every switch, every number input
+      and the mascot buttons are greyed out; the notice "Turn on "Playful
+      lessons" to change these options." sits at the top of the fold
+- [ ] Switch "Playful lessons" on: the notice disappears and the detail
+      switches become usable without a reload; number inputs still follow
+      their own switch (e.g. "Hearts per lesson" stays locked while
+      "Hearts (lives)" is off); switching off again locks everything
+      without a reload
+- [ ] Flip one detail switch (e.g. hearts on): the status line counts
+      along immediately ("6 of 7 extras on")
+- [ ] Arcade notice page (/arcade with the arcade or game mode off): the
+      link into the settings lands on the Learning tab's "Motivation and
+      routine" area (chip active, area on screen, see #2961)
+
+### Gamification inside "Motivation and routine" (#2962)
+
+- [ ] Settings > Learning > "Motivation and routine": the "Gamification"
+      card (XP notifications, badge notifications, "View all badges",
+      weekend mode, daily session goal, "Reset progress") is the LAST
+      card of the tab, right behind "Reminders", set apart by a thicker
+      divider with extra space above it
+- [ ] Settings > Plugins: the "Installed plugins" card (#3055) and, below
+      it, the "Learning Repository" card; no Gamification card any more
+- [ ] Section bar, chip "Motivation and routine": the jump lands on the
+      area heading, and the Gamification card belongs to the area (under
+      the same heading)
+- [ ] "View all badges" still opens the badge gallery; "Reset progress"
+      still asks twice; weekend mode persists (reload) - in both storage
+      modes
+- [ ] Phone (375 px): the card and the divider wrap cleanly, nothing
+      scrolls horizontally
+
+### Data tab: section bar + deep link (#3122)
+
+The same mechanics as on the Learning tab (#2961, #2966), over the six
+areas of the Data tab in the fixed #1451 order.
+
+- [ ] Settings > Data: above the first area sits a row of chips "Sources",
+      "Sync", "Offline content", "Backup and export", "Housekeeping",
+      "Danger zone" (in this order, `settings-subnav-sources` …
+      `settings-subnav-danger`). With no selection no chip is highlighted;
+      every area carries a heading and a description, the cards below are
+      unchanged (content repos and registry under Sources; cache and lesson
+      size under Offline content; backup, identity, key vault, export under
+      Backup; retention and orphaned data under Housekeeping; Delete
+      everything as the last card, set apart)
+- [ ] Click the "Backup and export" chip: the page scrolls to the area, the
+      heading sits clear of the header (desktop: clear of header AND bar),
+      the chip is highlighted, the address ends in
+      `?tab=data&section=backup`, the back button does NOT return to the
+      previous chip
+- [ ] Phone (375 px): the chip row can be swiped sideways, no horizontal
+      page scroll; the backup is one tap away instead of several screen
+      heights of scrolling
+- [ ] Open the deep link `/settings?tab=data&section=danger` in a new tab:
+      the Data tab is open, the danger zone on screen, its chip highlighted
+- [ ] Open `/settings?tab=data&section=review` (a Learning area): the Data
+      tab opens at the top, no Data chip highlighted, no error
+- [ ] Jump from the AI tab "Export keys" / "Import keys" (#1183, #1765):
+      still lands on the key vault inside "Backup and export"; the bar does
+      not disturb the jump
+- [ ] With no selection scroll slowly: the highlighted chip follows the
+      area whose heading is at the top of the screen; the address does NOT
+      change
+- [ ] Both storage modes (API + Dexie): bar and deep link behave the same;
+      in Dexie mode the "Sync" area shows the desktop-only notice
+
+### Learning tab: section bar + deep link (#2961)
+
+- [ ] Settings > Learning: above the first area sits a row of chips
+      "Basics", "In the lesson", "Reading aloud and dictation", "After the
+      lesson", "Motivation and routine" (in this order; without Web Speech
+      support the "Reading aloud and dictation" chip is absent). With no
+      selection no chip is highlighted
+- [ ] Click the "After the lesson" chip: the page scrolls to the "After
+      the lesson" area, the area heading sits clear of the header (desktop:
+      clear of header AND bar), the chip is highlighted, the address ends
+      in `?tab=learning&section=review`, and the browser back button does
+      NOT return to the previous chip (no new history entry)
+- [ ] Desktop (>= 768 px): keep scrolling down - the bar stays visible
+      right below the app header and covers no text. Phone (375 px): the
+      bar scrolls away with the page, the chip row can be swiped sideways,
+      nothing scrolls horizontally at page level
+- [ ] Open the deep link `/settings?tab=learning&section=motivation` in a
+      new tab: the Learning tab is open, the "Motivation and routine" area
+      on screen, its chip highlighted; on the phone the active chip is
+      visible in the row (the row was scrolled to it)
+- [ ] Open `/settings?tab=learning&section=nonsense`: the tab opens at the
+      top, no chip highlighted, no error
+- [ ] With an active area switch to another tab (e.g. Data): the address
+      carries only `?tab=data`; back on Learning: no chip highlighted, no
+      scroll movement
+- [ ] System setting "reduce motion" on: the jump happens without
+      animation (instant), otherwise smoothly
+- [ ] With no selection scroll slowly through the tab (#2966): the
+      highlighted chip follows the area whose heading is at the top of
+      the screen (Basics -> In the lesson -> ... -> Motivation and
+      routine); after a chip click the clicked chip stays highlighted
+      until its area is on screen, then follows the scrolling again. The
+      address does NOT change while scrolling
+- [ ] Heading hierarchy (#2966, screen reader / browser outline): on the
+      Learning tab the area headings are h2 and the card titles inside
+      are h3; on the other tabs the card titles stay h2
+- [ ] Both storage modes (API + Dexie): bar and deep link behave the same
 
 ### Summary counts corrections (#2479)
 - [ ] Play a lesson with several wrong answers, then fix them in the
@@ -867,8 +1063,33 @@ preview delivery). In the regular build the mode does not exist.
       fix your own mistakes first, then decide where to go next. Still freely
       reorderable via Settings.
 
+### Correction round: the result stays, then Continue (#3125)
+- [ ] Finish a lesson with at least two mistakes, press "Fix now", fill
+      the first blank CORRECTLY and check: the blank turns green, "All
+      correct!" appears, below it the green success bar with "Continue".
+      The round does NOT move on by itself (auto-advance in Settings >
+      Learning off)
+- [ ] Press "Continue" (or Enter): now the next drill appears (counter
+      "2 / N")
+- [ ] Fill a blank WRONGLY and check: the blank turns red, "0 of 1
+      correct", My answer / Solution stay visible, below them a plain
+      "Continue" button; no auto-advance, not even with auto-advance on
+- [ ] Settings > Learning > auto-advance on, round again: after a CORRECT
+      answer the success bar stays briefly (as in the lesson) and the
+      round moves on by itself
+- [ ] After the last drill "Continue" leads to the completion note
+      ("Correction round complete", N elements improved); the number
+      matches the correct answers
+- [ ] Skipping stays possible at any time; the comparison with the
+      previous run (#983) is unchanged
+
 ### New exercise types (since v2.2.0, visual + functional)
 - [ ] multiple_choice: selection, feedback, SRS attempt
+- [ ] matching solve toggle (#3140): after a not-fully-correct check the
+      "My answers" / "Solve" toggle is there; on a fully-correct answer NO
+      toggle appears - in the lesson only "Continue", in the review
+      session and the endless, shuffle, adaptive and error-replay lessons
+      only the graded columns
 - [ ] ext:al-categorization: assign categories, readable resolution; after
       "Check answer" the verdict chips including the red correction category
       stay INSIDE their column (no bleeding into the neighbor column, #2771) -
@@ -982,6 +1203,15 @@ preview delivery). In the regular build the mode does not exist.
       coordinates, mark exactly one zone correct). Save is disabled with
       an inline hint until the payload is valid (e.g. fewer than 2 items,
       or zero/more-than-one correct hotspot zone).
+- [ ] Hotspot drag-to-draw zone canvas (#3110): once an image is picked,
+      a "Draw a zone on the image" canvas appears above the numeric zone
+      list. Choose Rectangle or Circle, then drag on the image — a dashed
+      preview follows the drag and, on release, a new zone is added with
+      the drawn position/size (visible immediately in the numeric fields
+      below for fine-tuning). Dragging off the image and releasing there
+      cancels the draw (no zone added). The existing zones render on the
+      canvas too (the correct one visually distinct), so the whole layout
+      is visible while drawing more.
 
 ### Lesson/set file import-export (#1672 / #1681 / #1685 hardening)
 
@@ -1167,6 +1397,18 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       selector does not push it below the fold; after pasting a chapter the user
       need not scroll back up to find the types. DOM order matches the visible
       order (no axe regression).
+- [ ] **Generate explanations in the assistant (#2992):** In the book-text
+      step, right below the exercise-type selector, there is the checkbox
+      "Generate explanations (shown after the answer)" with the cost hint. It
+      is **unchecked** EVERY time the step opens (deliberately not remembered,
+      it costs AI output). Generate unchecked → the produced exercises carry NO
+      `explanation` field (the explanation field in the inline editor is
+      empty). Generate checked → cloze, word-tiles, free-text, multiple-choice
+      and error-correction exercises carry a Markdown explanation (rule, word
+      for word, further examples; in the text's language), matching carries
+      none; play the lesson and see the "Explanation" panel after an answer
+      (#2991). Check both paths: a single pasted text AND a file upload with
+      several sections (batch).
 - [ ] **Title required in the book-text path (#1946):** Step 1 WITHOUT
       a title → click the "Knowledge lesson from text" card → stays on
       step 1 with the friendly "A title is required." message (NOT the
@@ -1351,7 +1593,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       as invalid user content
 - [ ] **Template titles (#1674/#1756):** template cards show readable
       titles (even offline) + a pressed/selected state
-- [ ] **Advanced exercise types / extension wizard (#1852, #1887):** Step 1 →
+- [ ] **Advanced exercise types / extension wizard (#1852, #1887, #2817):** Step 1 →
       the "Advanced exercise types" card starts a dedicated 3-step flow (author
       → review → save) with a non-blocking notice that these types are advanced.
       Step 2: "Add extension exercise" offers seven types — **categorization**,
@@ -1447,13 +1689,100 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       **Regression:** dictation + image description still work unchanged,
       including their "→ free text" conversion control (only speak & record
       omits it, by design)
+- [ ] **Keyboard pre-reveal (#3002, touch devices only):** in a lesson, tap
+      a free-text or cloze field sitting in the LOWER half of the screen.
+      On focus the page IMMEDIATELY scrolls the field into the upper third
+      (the app's own scroll, no whole-layout jump), the keyboard opens
+      below it, the field stays visible. Then: tap other elements while
+      the field keeps focus - taps land on the visible target (no 1-2 line
+      offset, the #1569 core). A field already sitting HIGH is NOT moved
+      on focus; checkboxes/radios/dropdowns trigger no scroll. Desktop
+      (mouse): no scroll on focus
+- [ ] **Tab bars stay on one line on phones (#3012):** on a real phone in
+      portrait, open **Content**, **Progress** and **Dashboard** in turn. Each
+      tab bar sits on **one** line, no label is clipped or squeezed, every tab
+      is at least 44px tall to tap. Before this, the Content bar wrapped onto
+      two lines on narrow phones (375px and below) unnoticed.
+      **Tablet/desktop comparison:** there the tabs are set larger and padded
+      wider than on the phone; the switch is at 640px window width (shrink the
+      desktop window and watch it flip). **Selection and keyboard:** exactly
+      one tab is marked active, Tab reaches every tab, Enter switches it, the
+      address carries the tab (`?tab=`). **iOS standalone:** launched from the
+      home screen the same holds; after rotating to landscape and back the bar
+      stays on one line and does not jump.
+- [ ] **Create button in "My Lessons" (#3007):** Precondition: at least one
+      own lesson exists (otherwise the section is not shown at all). Open
+      Content → Import → in the **My Lessons** section head, next to "Combine
+      into a set", there is a **"Create New Lesson"** button. Click → the
+      lesson wizard opens. The button stays visible while the combine
+      multi-select mode is active. On a phone: both head buttons are at least
+      44px tall and wrap cleanly, the heading stays readable.
+      **iOS standalone:** launched from the home screen the button behaves the
+      same, the wizard opens in the same view without browser chrome.
+- [ ] **"Create" tab in the content hub (#3006):** open `/content` → the tab
+      bar shows **four** tabs: Discover, My content, Import, **Create**.
+      Click Create → the lesson wizard appears in the tab, the address reads
+      `/content?tab=create`. **Old address:** open `/create-lesson` directly →
+      it redirects to `/content?tab=create` and the wizard is there (no 404,
+      no duplicated page). **The edit deep link stays standalone:** choose
+      "Edit" on one of your own lessons → `/create-lesson/edit/...` opens the
+      pre-filled wizard as its own page, NOT inside the tab. **Other entry
+      points:** the "Create new lesson" button on the Dashboard and the link
+      in Discover still reach the wizard. **In the Import tab** the "Create
+      new lesson" button is gone (the tab replaces it); the four remaining
+      actions (Import lesson, Import chat, Anki export, Learning path) are
+      unchanged. **Order:** Settings → General → content tab order lists
+      Create as well and can move it; the new order applies without a reload.
+      Anyone who had set a custom order before this version finds Create at
+      the end of the list, the other three unchanged.
+      **Phone (#3006 on the bar from #3012):** on a real phone in portrait,
+      check whether the four tabs fit on ONE line. Measured in the container
+      (Chromium, German labels) they need 337.1px with the compact bar and fit
+      from 375px device width up; without it they needed 451.7px and fitted on
+      no phone at all. On a very narrow device (320px, first-generation iPhone
+      SE) the bar still wraps onto two lines - that is the defined fallback,
+      not a defect. If it wraps on a device at 375px or wider, REPORT it: the
+      measurement then does not hold, and the remedy is a separate decision.
+      **iOS standalone:** launch the app from the home screen (no browser
+      chrome), open `/content` → the same tab bar, clicking Create switches
+      the tab without a page change, and the back gesture does not leave the
+      app. Then remove the app from the app switcher and relaunch → the last
+      selected tab is not "frozen"; `/content` starts on the first configured
+      tab again.
 - [ ] **Header updates badge (#2904):** an installed content set has a newer
       version (e.g. tap "Update available" on a set in the content browser
       OR bump the set's manifest version in the test repo). Reload/reopen
       the app: **without** visiting `/content`, a header badge ("N updates")
-      appears next to the reviews badge, linking to `/content`. Click →
-      lands on `/content`, the affected set shows **"Update available"** in
-      its row (matches the badge's count). **No update available:** the
+      appears next to the reviews badge, linking to `/content?tab=my`.
+      Click → lands on the **My content** tab (#2998: regardless of the tab
+      order configured under Settings → General, even when Import or
+      Discover comes first), the affected set shows **"Update available"**
+      in its row (matches the badge's count). **Apply all (#3001):** press
+      the header button **"Refresh"** (`content-refresh`) → the list is
+      reloaded AND every set showing "Update available" is updated one
+      after the other; the button stays disabled until the run is over,
+      then ONE summary toast "N sets updated." (no per-set toast). With
+      nothing pending: toast "All sets are up to date.", no download. A
+      breaking update (#2128, progress affected) is NOT applied by the
+      bulk run: info toast "Held back because your progress would be
+      affected: <set title>. Confirm each update with the set's Update
+      button." (#3081: names EVERY held set by title, several separated by
+      commas, and stays until dismissed via its X), the set keeps
+      "Update available" and is confirmed individually via its row
+      button. **List view (#3081):** in the list view (toggle at the top
+      right of the list) the set's row shows the "Update available" marker
+      and a download-icon button (`content-list-set-<id>-update-button`,
+      tooltip "Update"); on a phone (below 640 px) marker and button drop as
+      one group to their own line under the title (right-aligned, #3092), the
+      title keeps the width it has without an update; a click
+      opens the same #2128 guard dialog as the card button for a breaking
+      update, otherwise the update is applied directly; up-to-date sets show
+      neither marker nor button. **After applying (#2985):** apply
+      the update(s) on `/content` (header button, row button, or sync the
+      repo source) → the badge's
+      count drops **immediately, without a reload**; once every update is
+      applied the badge disappears (held breaking updates keep counting
+      until decided manually - that is correct). **No update available:** the
       badge does **not** appear (no empty pill in the header). **Error
       tolerance:** turn off the network at app launch → no crash, no error
       toast, the header renders normally (the badge simply stays hidden —
@@ -1468,6 +1797,20 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       **playable** with multi-select. Switching back to "Allow one answer" →
       pruned to exactly one correct. An existing MC exercise with a set
       `multiple` value opens **unchanged** in its original state.
+- [ ] **Explanation in the inline editor (#2992):** In the inline editor of
+      every exercise (Step 3, `ExerciseEditor` AND `ExtensionExerciseEditor`),
+      below the type-specific fields, there is the Markdown textarea
+      **"Explanation after the answer (optional, Markdown)"** with a hint line
+      and the counter "n / 2000 characters". While the field is empty an
+      **"Insert template"** button is offered: one click fills in the skeleton
+      (**Rule**, **Word for word**, **Further examples**, **Typical mistake**)
+      and the button disappears. Type a text, save, reopen the row → the text
+      is there (trimmed); save the lesson and play it → after the answer the
+      "Explanation" panel shows the rendered Markdown (#2991). Clear the field
+      completely and save → the saved exercise carries NO `explanation` field
+      (no empty string in the JSON). More than 2000 characters cannot be typed
+      (maxlength); a loaded exercise with a longer explanation shows "The
+      explanation is too long …" and Save stays disabled until it is shortened.
 - [ ] **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
       inline editor (Step 3, `ExerciseEditor`) of a **Word tiles** or
       **Multiple choice** exercise, a **"Exercise type"** select at the top
@@ -1547,6 +1890,32 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
         request.
       - Each button carries a note that these are AI drafts to review and edit
         before saving. (Visual check: desktop + mobile.)
+- [ ] **Annotate token roles (#3072):** In step 2 add a card (front
+      "der Hund in dem Garten", back "the dog in the garden"), then open
+      "Edit" on its row. Below the image field sits "Token roles
+      (optional)". Check in order: (a) type a word that does NOT appear
+      in the front exactly like that (e.g. "Katze") -> "Add role" stays
+      disabled and the message below says the word does not appear.
+      Same for the wrong casing ("der" when the front starts with
+      "Der"). (b) Type the word exactly as it appears, pick a role in
+      the select, "Add role" -> the row appears with word and role name.
+      (c) Add the same word again -> the message says it is already
+      annotated. (d) The select offers EXACTLY seven roles (article,
+      noun, verb, adjective, preposition, gender marker, tense marker)
+      and no free-text field. (e) Save, reopen the card for editing ->
+      the annotations are still there. (f) Phone width (below 769 px,
+      #3087): the add-row stacks (word field full width, select full
+      width, "Add role" below), nothing overflows the card; from tablet
+      width up it stays one line and the word field fills the remaining
+      space.
+- [ ] **Suggest roles (#3072):** In the same row click "Suggest roles".
+      On a German front carrying articles and prepositions the list
+      fills ("der Hund in dem Garten" gives der = article, in =
+      preposition, dem = article). Nouns and verbs are NOT suggested,
+      which is deliberate. On a front without such words (e.g. "Hund
+      läuft") the hint appears saying no word was recognised and the
+      list stays empty. Below the list the note says suggestions are
+      guesses and every row wants checking.
 
 ### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
@@ -1569,11 +1938,27 @@ each card row (`CardImageField`).
 ### Lesson player UX (v2.3.0)
 - [ ] Pause button now lives in the sticky footer (#1644), pausing
       works from there
+- [ ] Position before the first exercise (#3075): open a lesson, page
+      through two theory steps only, answer NO exercise, reload the page ->
+      the resume dialog appears and "Continue" lands on the step that was
+      open (before: restart at step 1 without a dialog)
+- [ ] Pause button before the first exercise (#3075): as above, then press
+      the pause button in the footer -> the Continue/Pause/Abandon dialog
+      appears (before: left the lesson silently); "Pause" -> the lesson is
+      listed on the dashboard under "Paused lessons"
+- [ ] Leaving through the app navigation (#3075): answer one exercise, then
+      move two theory steps further, then leave through the menu
+      (hamburger -> "Settings"), the logo or the browser's back button ->
+      the lesson is listed under "Paused lessons"; "Resume" there opens the
+      resume dialog and lands on the theory step you were on (not on the
+      exercise before it); on the phone the same through the menu drawer
+      [E2E: `lesson-pause-position.spec.ts`]
 - [ ] Auto-advance + "Back" (#1921): with "Advance automatically"
       (Settings -> Learning) ON, answer an exercise correctly so the app
       jumps to the next step by itself -> then click "Back": the previous
       (already-solved) exercise STAYS and does NOT jump forward again;
       the "Continue" button is still clickable
+- [ ] Title area slimmed down, no more in-lesson description (#1635)
 - [ ] Lesson summary shows only ONE favorite button (#1649)
       [E2E: `lesson-summary-favorite.spec.ts`]
 - [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
@@ -1610,6 +1995,59 @@ each card row (`CardImageField`).
       the header/menu are reachable again - but new taps still raise
       the protocol counter (recording continues invisibly, #2785)
 
+### AI check: apply suggestions (AIV-07, #3060)
+- [ ] Browser mode with a configured AI key, an own lesson (Content > My
+      content) with a deliberate mistake on a card (e.g. "casa" instead
+      of "la casa"); run "Check with AI": the report lists the card and
+      the footer carries the "Apply suggestions" button
+- [ ] "Apply suggestions": a table with lesson, card, field, "Current"
+      and "Suggestion", every row ticked; below it the number of
+      findings without an applicable value (if any); the confirm button
+      counts "N fields in M cards"
+- [ ] Untick one row, confirm: only the ticked fields change (open the
+      lesson or check in the editor), the set's title, languages, level
+      and description stay; toast "N fields applied"; the lesson's
+      progress is kept
+- [ ] In the result, "Undo the last apply": the fields carry the old
+      value again, toast "Apply undone."; the undo button disappears
+- [ ] Close the dialog and open "Check with AI" again: no cached report
+      any more, the cost estimate shows (the report was dropped after the
+      apply)
+- [ ] Downloaded set (not your own): "Apply suggestions" is disabled with
+      the tooltip "Only for your own lessons."
+
+### Settings > Plugins: installed plugins (#3055)
+- [ ] Desktop app (API mode), Settings > Plugins: at the top the
+      "Installed plugins" card with one row per loaded plugin, sorted by
+      name: name, version, source ("Package") and the activation time
+      formatted in the app language; below it the unchanged "Learning
+      Repository" card
+- [ ] Right after opening, "Reading plugins…" shows briefly, then the
+      list; with the backend running there is no error and no toast
+- [ ] Stop the backend, reload the tab: the card shows the line "Could
+      not read the plugin status: …" and a toast carries the same
+      message; the "Learning Repository" card stays visible
+- [ ] Browser mode (GitHub Pages / Dexie): the card stays visible with
+      the notice "Only available with the desktop app."; DevTools >
+      Network shows no request to /api/plugins/health
+
+### Diagnostics probe: mis-tap mark + actions (#3043)
+- [ ] Probe ON, measurement bar visible: next to "Werte kopieren" and
+      "Details" the bar shows the button "Daneben!"
+- [ ] Tap anywhere, then tap "Daneben!", then "Details": the report has
+      a section `actions (newest first)` with a `mark` line whose
+      `target=` names the element just tapped; the tap counter ("N
+      Tipps") did NOT increase because of the button
+- [ ] On a lesson page tap an answer tile: the `actions` section gains a
+      `click` line with `target=`, `downTarget=` and `mismatch=0`;
+      tapping a text field additionally adds a `focus` line with
+      `top=`/`bottom=`/`vis=`
+- [ ] The bar's last tap line additionally carries `hit=`, `above1=`,
+      `above2=`, `pageY=`, `screenY=`, `hdrTop=`, `ftrBot=`, `room=`
+      and `focusTop=`/`focusBot=`/`focusVis=`; "Copy protocol" in
+      Settings yields the same fields plus the `click`/`focus`/`mark`
+      entries
+
 ### Sticky button for the measurement bar (#2799)
 - [ ] Settings > Diagnostics & Support: enable "Sticky button for the
       measurement bar" (the probe must be ON) - a round floating
@@ -1639,6 +2077,47 @@ each card row (`CardImageField`).
       bar stays hidden (the lesson footer keeps the bottom edge)
 - [ ] Back to "Top": the bar disappears immediately; the choice
       survives a reload
+
+### Phone header: menu button and logo survive many badges (#3123)
+- [ ] Phone (375 and 430 px wide, e.g. iPhone 14 Pro Max) with due
+      reviews, one available set update and XP: open the Dashboard. The
+      menu button top left keeps its full width (no thin sliver) and the
+      logo next to it is visible
+- [ ] On the phone the badges show only the number next to the icon
+      ("718" instead of "718 due", "1" instead of "1 updates"); the
+      tooltip and the screen-reader name still carry the full text
+- [ ] When the badges no longer fit beside the menu button and the logo
+      they wrap right-aligned onto a second line; nothing is cut off and
+      the page does not scroll sideways
+- [ ] Tablet and desktop: the header stays a single line with the full
+      badge text
+
+### Step change on a phone: anchor at the top, footer at the bottom (#3126)
+- [ ] iPhone (Safari or PWA): open a lesson with a long theory step,
+      scroll to the very bottom, then "Next" onto a short step (e.g. a
+      matching exercise)
+- [ ] Without swiping: the step starts at the top (progress bar and task
+      visible), the footer with Back/Pause/Check sits at the bottom edge,
+      no empty (black) lower half
+- [ ] The same from a short onto a long step: the anchor is at the top,
+      the content scrolls normally
+- [ ] With "Reduce motion" in the system: the jump happens without
+      animation, same result
+- [ ] Rotate the device during a step (#1422): the step is still
+      re-anchored
+
+### Settings > Data: housekeeping cards (#2955)
+- [ ] Settings > Data: the "Maximum lesson size" card sits directly
+      below "Offline cache"; the "Paused lesson retention" card sits
+      directly above "Disconnected content" (with no disconnected
+      content, directly above the danger zone)
+- [ ] Settings > Learning ends with "Reminders"; neither card is there
+      any more
+- [ ] Set "Steps per part" to 15, reload the page: the value stays 15;
+      set "Keep paused lessons for" to "60 days", reload: the choice
+      stays "60 days"
+- [ ] Repeat both in browser mode (Settings > Data > storage mode): same
+      behaviour
 
 ### In-set position + navigation (#2793)
 - [ ] Inside a lesson from a set, the header shows "Lesson N of M"
@@ -1679,17 +2158,24 @@ each card row (`CardImageField`).
 - [ ] Open a set page (/content/set/<id> or via a shared link): below
       the set details, ALL lessons are listed with their number
 - [ ] The list header shows "{x} of {y} lessons completed"
-- [ ] Completed lessons show their score; the first unfinished one
-      carries the "Continue here" marker
+- [ ] Completed lessons show a green checkmark plus their score; the
+      first unfinished one carries the "Continue here" marker (#2935)
 - [ ] Clicking any row opens exactly that lesson - including one far
       back in the set
 - [ ] Inside a running lesson the set name in the header is clickable
       and leads to that same list
 - [ ] With no recorded progress the list still appears, just without
       markers
+- [ ] Finish a couple of lessons in a set, leave, reopen the set page,
+      press "Start learning": it opens the first UNFINISHED lesson, not
+      lesson 1 again (#2935)
+- [ ] Finish every lesson of a set, then press "Start learning" again:
+      it opens lesson 1 (nothing left to resume)
 ### Summary: all answers with their question (#2807)
-- [ ] Finish a lesson, open "View all answers": every row with something
-      to show is expandable (title + score stay visible)
+- [ ] Finish a lesson, open "View all answers" (the "Answers overview"
+      section switched on in Settings, or "Detailed evaluation" pressed,
+      #3124): every row with something to show is expandable (title +
+      score stay visible)
 - [ ] Expanded, the QUESTION sits above the answers - including on a
       partially correct row like "2 / 3", which previously showed nothing
 - [ ] Choice/matching exercises (no text answer) show question and
@@ -1697,6 +2183,69 @@ each card row (`CardImageField`).
 - [ ] Text answers keep the coloured token diff, plus your own answer
       spelled out
 - [ ] A fully correct row shows its question but no mistake diff
+
+### Summary: the detailed evaluation on one button (#3031)
+- [ ] Finish a lesson: the "Detailed evaluation" button sits directly
+      under the heading
+- [ ] Switch an enabled section off in Settings > Learning > "Lesson
+      summary" (e.g. "XP reward"), then finish a lesson: the section is
+      missing - after pressing "Detailed evaluation" it is there
+- [ ] In the detailed view "View all answers" is already expanded
+- [ ] "Why you missed these" appears even with its own toggle off, and
+      shows more than five mistakes when the run had more
+- [ ] Press again ("Compact evaluation"): everything is back as before,
+      the switched-off section is gone again
+- [ ] Back in Settings: the switched-off sections are still switched
+      off - the button stores nothing
+- [ ] The correction round stays collapsed in the detailed view too (no
+      keyboard pops up on the phone)
+- [ ] Toggling keeps the button in place, the page does not jump
+
+### Summary: the detailed evaluation like the set end (#3124)
+- [ ] Finish a lesson with at least two mistakes, press "Detailed
+      evaluation": directly under the button reads "Review: <lesson
+      title>" with "Every mistake in this lesson at a glance"
+- [ ] Below it four key figures (Total mistakes, Mastered, Still open,
+      Time spent), "Mistakes per exercise type" and "Biggest weak spots"
+      with the own wrong answer struck through next to the correct one;
+      "Mistakes per lesson" is NOT there (it is a single lesson)
+- [ ] The numbers match the set review (Content > set > "Open review")
+      for the same lesson
+- [ ] "Practise mistakes" opens the set's review session
+- [ ] With no mistakes in the run: "No mistakes recorded - excellent!"
+      instead of the figures
+- [ ] "Compact evaluation": the review disappears again; the #3031 items
+      (sections, answers, explanations) still hold
+- [ ] The button's tooltip names key figures, exercise types and weak spots
+
+### Summary: the compact default, one screen (#3124)
+- [ ] Fresh install (or Settings > Learning > "Lesson summary" with only
+      "Result and statistics" and "XP reward" ticked): finish a lesson -
+      the summary shows stars, score, time, "+N XP" and directly below
+      "Mark as complete", "Next lesson", "Practice again" and "Back"; no
+      favorites hint, no sharing, no answers overview, no export, no "Why
+      you missed these", no correction round, no next-step cards
+- [ ] On a phone (portrait): everything down to the continue buttons is
+      visible without scrolling
+- [ ] "Detailed evaluation": the set-style review and every switched-off
+      section appear (favorite, share, all answers expanded, export, "Why
+      you missed these", fix mistakes, next steps); "Compact evaluation"
+      takes them away again
+- [ ] Settings > Learning > "Lesson summary": nine rows, "Why you missed
+      these" sits directly above the correction-round row; only Result and
+      XP are ticked; tick a row (e.g. Next-step suggestions), finish a
+      lesson: the section is part of the compact view for good
+- [ ] An existing choice stays: whoever configured the sections before
+      this state sees their selection unchanged; "Why you missed these" is
+      ticked there and sits directly above the correction round
+- [ ] "Why you missed these" ticked but "Explanations after the answer"
+      (Review) off: the block is missing from the compact view and only
+      appears in the detailed evaluation
+
+Note for every step of this plan that uses export, share, favorite, all
+answers, "Why you missed these", fix mistakes or the next-step cards:
+switch the section on in Settings first or press "Detailed evaluation"
+(#3124).
 
 ### Leaving a lesson returns to its set (#2811)
 - [ ] Pause and leave a set lesson: the app lands on the SET page with
@@ -1899,24 +2448,70 @@ API mode.
       → the deferred status is still there
 - [ ] iPhone PWA: same flow (originally observed there)
 
-### Continue-Learning suggestion: no completed/deferred sets without due reviews (#2123)
+### Continue-Learning suggestion: ranking and a visible set completion (#2123, #3020)
 
 Where: Dashboard → Overview, the top "Continue Learning" / "Weitermachen"
 block. Test in BOTH storage modes (API + Dexie); the logic is
 mode-agnostic.
 
 - [ ] Finish a set completely (all lessons) OR set it to "Completed" via the
-      set actions menu, with NO cards due → the Continue-Learning block no
-      longer proposes that set (it used to show up as "Set completed")
-- [ ] No open set AND no due cards → an honest empty state ("Start your first
-      lesson", link to My Content) instead of a filler set
+      set actions menu, with NO cards due → the row carries a visible
+      "Set completed" tag (check icon, the last lesson's stars) and does NOT
+      silently disappear
+- [ ] Click the completed row → returns to the set's most recently worked
+      lesson (looking things up again stays possible)
+- [ ] A started set present as well → the started set is on TOP, the completed
+      one below it; a finish is never the top proposal
+- [ ] Several completed sets → at most ONE is shown with the tag (the most
+      recently finished); the block never becomes a completion archive
+- [ ] Neither an open nor a completed set and no due cards → an honest empty
+      state ("Start your first lesson", link to My Content) instead of a
+      filler set
 - [ ] A completed set WITH due reviews → shown as a review row ("N elements
-      due") that leads into the review session (`/review/{setId}`), not as
-      "Set completed"
-- [ ] A deferred set with no due cards → NOT proposed
+      due") that leads into the review session (`/review/{setId}`), not as a
+      completion tag
+- [ ] A deferred set with no due cards → NOT shown (deliberately set aside, so
+      there is no finish to report)
 - [ ] A started (active) set → still proposed to resume
-- [ ] Order: due reviews first, then started sets (each most-recently-touched
-      first)
+- [ ] Order: due reviews first, then started sets, the completed set last
+      (within each tier most-recently-touched first)
+
+### Continue Learning: every row removable with an X (#3023)
+
+Where: Dashboard → Overview, the "Continue Learning" block. Test in BOTH
+storage modes (API + Dexie); the store is mode-agnostic (localStorage plus
+the Dexie userData mirror).
+
+- [ ] Every row carries an X on the right - whatever its mode: resume, next
+      lesson, due review, completed set
+- [ ] Click the X: the row disappears at once and a short message says it
+      comes back as soon as you keep learning
+- [ ] Reload: the row stays away (the decision is persisted)
+- [ ] Nothing was deleted: the set is still in My Content, the lesson's
+      progress is intact, the review cards are unchanged (check the count on
+      the review card)
+- [ ] Self-healing: open and work on the hidden lesson again → the row
+      reappears on the dashboard
+- [ ] Dismiss every row → honest empty state ("Start your first lesson"), not
+      an empty block without explanation
+- [ ] Backup round-trip: Export → wipe → Import → the dismissed rows are still
+      dismissed (the state rides in the .alb)
+- [ ] Phone: the X is tappable without mis-hits and does NOT trigger the row
+      link (44 px target)
+
+### Continue Learning: the step counter names the resume point (#3076)
+
+Where: Dashboard → Overview, "Continue Learning" block, "Resume" row. Before,
+"Step 1/8" counted graded exercises while the resume landed on a different
+step.
+
+- [ ] Open a lesson with eight steps, answer the first exercise, then move
+      two theory steps further (step 4), leave through the menu
+- [ ] Dashboard: the row reads "Resume · Step 4/8" (not "1/8")
+- [ ] Click "Resume" → resume dialog → "Continue" lands on exactly the step
+      the row names
+- [ ] Play to the summary without "Mark complete", leave through the logo →
+      the row reads "Step 8/8", never "9/8"
 
 ### Update guard: no silent progress loss on a set update (#2128)
 
@@ -2285,8 +2880,13 @@ Click through once for EACH theme:
 - [ ] Safe-area insets respected
 - [ ] Mobile nav = hamburger drawer (the bottom tab bar was removed in
       #1512); drawer links 44px, closes after navigation
-- [ ] Known open issue #1569 (caret/touch offset by 1-2 lines in the
-      lesson flow): reproduce + add notes to the issue
+- [ ] Tap offset on the iPhone (#1569, fixed by #2984 + #3004, device
+      reading 7 on 2026-09-10): in a lesson focus a free-text field, type,
+      close the keyboard, tap the field again, then tap an MC tile. The
+      caret sits in the field and every tap hits the element under the
+      finger. On a regression: Settings > Diagnostics & Support > "Tap &
+      viewport probe" on, mark the mis-tap with "Daneben!", "Werte
+      kopieren", and attach the protocol to the reopened issue #1569.
 
 #### Theory read-aloud on iOS: long text (#1928) - MANDATORY
 
@@ -2405,6 +3005,28 @@ no numbers that could go stale, on purpose.
 - [ ] Dark system theme: the page follows (prefers-color-scheme), text
       stays readable.
 - [ ] Mobile (narrow window): single column, no horizontal scrolling.
+- [ ] Footer (#3113): "Legal notice" leads to `astrapi69.github.io/adaptive-learner/docs/en/legal/imprint/`,
+      "Privacy policy" to `astrapi69.github.io/adaptive-learner/docs/en/legal/privacy/`; on `/start/` they read
+      "Impressum" / "Datenschutz" and lead to `astrapi69.github.io/adaptive-learner/docs/legal/…`.
+
+### Legal texts reachable in the app (#3113)
+
+Legal notice and privacy policy live as help pages on the docs site
+(`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; other languages under
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, locales without their own version fall back to German).
+
+- [ ] App start page `/` (no signed-in learner): below "Read the
+      documentation" the row "Legal notice · Privacy policy"
+      (`landing-imprint-link`, `landing-privacy-link`); both open the docs
+      page in a new tab, in the active UI language (German without prefix,
+      English under `astrapi69.github.io/adaptive-learner/docs/en/`).
+- [ ] Settings → About → card "License & resources": two new rows "Legal
+      notice" and "Privacy policy" (`about-imprint-link`,
+      `about-privacy-link`), same targets, new tab.
+- [ ] Help panel and docs site: section "Legal" with both pages in the
+      navigation (DE + EN); the legal notice names name, address, email; the
+      privacy policy carries a date and names GitHub Pages, YouTube preview
+      images and the AI providers used with the learner's own key.
 - [ ] Share preview (e.g. in a messenger): title, description and image
       appear (the landing page's Open Graph data, not the app's).
 

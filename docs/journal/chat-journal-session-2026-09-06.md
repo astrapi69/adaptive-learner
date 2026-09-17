@@ -1,0 +1,821 @@
+# Chat-Journal 2026-09-06
+
+Zwei Sessions an diesem Tag, je ein Branch und ein PR gegen develop:
+die CI-Rot-Session (Abschnitt A, PR #2989) und die Fortsetzung der
+Reorganisation Einstellungen > Lernen (Abschnitt B, PR #2990).
+
+## A. CI-Rot-Session (Branch claude/ci-rot-34ads1)
+
+CI-Rot-Session: drei rote Nacht-Läufe geprüft und behoben. Branch:
+claude/ci-rot-34ads1, PR gegen develop. Die Lifecycle-Matrix im
+Schwesterrepo docker-app-launcher (Issue docker-app-launcher#131) lief
+in derselben Session und ist dort dokumentiert.
+
+### 1. content-stats.yml rot: README CONTENT-STATS veraltet (#2987) (08:00)
+
+- Original prompt: "CI ist rot. Checken und fixen."
+- Optimierter Prompt: "Prüfe alle roten Workflow-Läufe beider Repos,
+  lies die Job-Logs, reproduziere lokal und behebe jede Ursache mit
+  Issue, Test und PR."
+- Ziel: den nächtlichen Content-Stats-Gate wieder grün bekommen.
+- Ergebnis: das Content-Repo ist auf 329 Lektionen gewachsen (vier
+  Französisch-Sets je +1) und acht Set-Titel wurden vom Gedankenstrich
+  auf Bindestrich umbenannt. Block mit
+  `validate_bundled_content.py --write-readme` gegen einen frischen
+  Checkout regeneriert, `--check-readme` danach grün. Keine App-Ursache.
+
+### 2. dead-code.yml rot: 23 neue knip-Funde, 1 aufgelöster (#2988) (08:05)
+
+- Ziel: den wöchentlichen Dead-Code-Ratchet wieder grün bekommen, ohne
+  blind zu banken oder blind zu löschen (#2486).
+- Ergebnis: alle 23 Funde einzeln gegen den Quellbaum geprüft. 20 sind
+  Barrel-Re-Exports der Settings-Controls (Regel reusability.md, #1275)
+  plus der öffentliche Label-Typ einer shared-Komponente, alle wie die
+  bereits gebankten Geschwister in die Baseline aufgenommen. Zwei echte
+  Tote gelöscht: der Default-Export von `SettingsDisclosure` (jeder
+  Konsument nutzt den benannten Export) und das `export` an
+  `PLAYFUL_DETAILS_OPEN_KEY` (nur dateiintern genutzt). Aufgelöster
+  Eintrag `i18n/engine.ts::NAMESPACE` via `--update-baseline` gebankt.
+  Lokal: `check_dead_code.py` sauber, tsc, eslint und die zwei
+  betroffenen Vitest-Dateien grün.
+
+### Zusammenfassung
+
+- Commits: 1 (README-Regenerat, Baseline, zwei Quell-Löschungen,
+  Journal), PR gegen develop.
+- Tests: 19 Vitest-Tests der beiden betroffenen Dateien grün, keine
+  neuen Tests (Ratchet-Resync und Docs-Regenerat, kein Verhalten).
+- Offene Fragen und Annahmen: Barrel-Exports werden gebankt und nicht
+  gelöscht, weil die Regel sie fordert; das Precedent ist #2917/#2920.
+
+## B. Einstellungen > Lernen, Stufe 3/4 (Branch claude/lernen-reorganisation-fortsetzung-vu3w29)
+
+Fortsetzung der Reorganisation Einstellungen > Lernen (Umbrella #2951):
+Stufe 3/4 und die zwei Housekeeping-Issues. Remote-Session (Cloud-
+Container) auf dem vorgegebenen Branch
+`claude/lernen-reorganisation-fortsetzung-vu3w29`, PR gegen develop.
+
+### 1. Bestandsaufnahme: die Agenten-Worktrees existieren hier nicht
+
+- Original prompt: die Übergabe-Notiz vom 2026-09-05 ("Weiterführung:
+  Einstellungen > Lernen Reorganisation") mit vier unfertigen
+  Worktrees (#2961, #2962, #2964, #2966).
+- Optimierter Prompt: "Prüfe zuerst, ob die lokalen Worktree-Stände auf
+  origin liegen; wenn nicht, implementiere die vier Issues von develop
+  aus neu, in der Reihenfolge #2961, #2962, #2964, #2966."
+- Ziel: nicht auf Arbeitsstände bauen, die in dieser Umgebung nicht
+  existieren.
+- Ergebnis: kein `feat/2961-*`, `feat/2962-*`, `chore/2964-*` auf
+  origin, keine Worktrees im Container; develop = d3724ac. Frontend- und
+  e2e-Abhängigkeiten installiert (bun), kein Backend-venv (nicht nötig,
+  alle vier Issues sind Frontend + Docs). Ausgangslage: Settings-Tests
+  37/37 grün.
+- Commit: kein Code.
+
+### 2. #2961 Sektionsleiste + `?section=`-Deep-Link
+
+- Original prompt: Issue #2961 plus Übergabe-Spec (SettingsSubNav
+  props-driven, `aria-current="location"`, sticky nur md+, horizontal
+  scrollbar bei 375 px, `lib/settings/learning-sections.ts`,
+  `useDeferredScroll` aus dem Key-Vault-rAF-Loop gehoben, `?section=`
+  validiert und bei Tab-Wechsel entfernt, Arcade-Gate-Link auf
+  `section=motivation`, Scroll-Spy ausdrücklich nicht).
+- Optimierter Prompt: "RED zuerst: Modell-Test, SubNav-Test,
+  Deferred-Scroll-Test, Seiten-Integrationstest (Deep-Link, unbekannter
+  Wert, Tab-Wechsel, Chip-Klick mit replace-state) und der Arcade-Link;
+  dann die Implementierung; danach e2e-Helfer, FeatureShot, Hilfe
+  en/de/fr, Testplan DE+EN."
+- Ziel: die Leiste als reine Präsentationskomponente, das URL-Verhalten
+  in einem Hook, der Scroll-Loop wiederverwendbar.
+- Ergebnis: `learning-sections.ts` (reine Daten, Barrel-Export),
+  `SettingsSubNav` (Chips, `ref` als Prop, aktiver Chip wird in der
+  Zeile sichtbar gescrollt, sticky md+ mit gemessenem Header-Offset),
+  `useDeferredScroll<T>` (bounded rAF-Loop, `onSettled(inView)`; die
+  Key-Vault-Stelle in Settings.tsx nutzt ihn jetzt),
+  `useLearningSections` (Request validiert gegen die gerenderten
+  Cluster, Chip-Klick schreibt replace-state, reduced-motion => instant),
+  `useLearningAnchorOffset` (misst `.app-nav` + Leiste statt eines
+  69-px-Literals; die Cluster lesen `--settings-anchor-offset` in ihrer
+  `scroll-margin-top`), `setActiveTab` löscht `section`, Arcade-Link.
+  Tests: 4 + 6 + 5 + 6 + 1 neu (RED vorher beobachtet: 6 rot). Neue
+  Testdatei `Settings.sections.test.tsx`, damit `Settings.test.tsx`
+  unter der 1000-Zeilen-Grenze bleibt. e2e: `SettingsPage.ts`-Helfer
+  (`gotoLearningSection`, `openLearningSection`), FeatureShot
+  `learning-subnav/settings`, README-Zeile. Hilfe en/de/fr (settings.md,
+  arcade.md), Testplan-Block DE+EN.
+- Commit: aa7f579 (Code), 9170ee9 (e2e/Docs).
+
+### 3. #2962 Gamification in den Motivation-Cluster
+
+- Original prompt: Issue #2962 plus Übergabe-Spec (letzte Karte hinter
+  Trenner `mt-8 border-t-2 border-border pt-8`, #1459-Literal +
+  Letzte-Karte-Invariante, `pickTab("plugins")` -> `"learning"`, Hilfe
+  in jeder Locale unter Lernen als `###`, Testplan, FeatureShot
+  `gamification-card`).
+- Optimierter Prompt: "RED: erweitere Reihenfolge- und
+  Cluster-Membership-Pins um `settings-section-gamification` als letzte
+  Karte und pinne den Trenner; dann PluginsPanel/LearningPanel
+  umbauen."
+- Ziel: die Gamification-Karte dorthin, wo Spielmodus, Feedback,
+  Missionen und Erinnerungen sind; der Plugins-Tab behält das
+  Lern-Repository.
+- Ergebnis: Karte in einem `settings-gamification-separator`-Wrapper am
+  Cluster-Ende; RED per Stash gegen die alten Panels belegt (3 rot),
+  danach 38/38 grün. Hilfe: `## Gamification` -> `###` in allen acht
+  Locales, der Satz "Der Tab endet mit den Erinnerungen" in jeder
+  Sprache angepasst, fr mit `####`-Unterüberschriften; Testplan-Block
+  DE+EN; e2e-Spec öffnet die Abzeichen-Galerie vom Lernen-Tab;
+  FeatureShot + README-Zeile.
+- Commit: 24f9c44.
+
+### 4. #2964 tote Settings-Exporte
+
+- Original prompt: Issue #2964 plus Übergabe ("jeden Kandidaten gegen
+  den AKTUELLEN Baum prüfen; intern konsumiert bleibt").
+- Optimierter Prompt: "Skript über alle Exporte der Pref-/Hook-Module;
+  entferne nur Exporte ohne Nicht-Test-Konsumenten, die das Modul auch
+  selbst nicht liest."
+- Ziel: kein blindes Löschen nach einer Liste, die vor #2971/#2975/#2979
+  entstand.
+- Ergebnis: entfernt `useDirectionStrategy` (nur der Barrel), die Gates
+  `playfulHeartsActive`/`playfulCountdownActive` (nur ihre Tests; der
+  Lesson-Runner kombiniert `usePlayfulTension` mit `usePlayfulMode`)
+  und `LESSON_MODE_OPTIONS` (kein Konsument, Eintrag in <!-- doc-ref-exempt: the removed dead export itself (#2964) -->
+  `.dead-code-baseline.json` gebankt). Bewusst behalten: `DEFAULT_*`-
+  Konstanten, `playfulComboXpActive`, `refreshApiKeyStatus` (intern
+  gelesen). Nicht angefasst, weil außerhalb der Issue-Formulierung
+  (Pref-Module, `read*`/`*Active`): `useTooltipProps` und
+  `isViewportDiagnosticEnabled` haben ebenfalls nur Test-Konsumenten.
+- Commit: b4e0edb.
+
+### 5. #2966 Scroll-Spy + `headingLevel`
+
+- Original prompt: Issue #2966 (IntersectionObserver-Scroll-Spy,
+  `?section=`-Request gewinnt bis der deferred scroll "in view" meldet,
+  happy-dom braucht einen Stub; `headingLevel`-Prop auf
+  SettingsSection, h3 in Clustern).
+- Optimierter Prompt: "Hook `useScrollSpy(ids, {enabled, resolve,
+  topOffset})` mit Band vom Sticky-Offset bis 50 Prozent Viewport,
+  erster schneidender Abschnitt in Listenreihenfolge, letzter Wert
+  bleibt bei Leere; aktiver Chip = pending ?? spy ?? request.
+  Heading-Level per Prop plus Kontext aus SettingsCluster, damit die
+  ~20 Controls unangetastet bleiben."
+- Ziel: die Leiste folgt dem Scrollen, die Überschriften-Hierarchie im
+  Lernen-Tab wird ein Baum.
+- Ergebnis: `useScrollSpy`, `SettingsHeadingLevelContext` (Cluster
+  liefert 3, Prop gewinnt), Tests: 4 Hook-Tests mit aufzeichnendem
+  IO-Stub, 2 SettingsSection-Tests, 3 Integrationstests (Spy ohne
+  Request, Request gewinnt bei eingefrorenem rAF, Übergabe nach
+  in-view). RED vorher beobachtet (4 rot). Testplan DE+EN und Hilfe
+  en/de/fr um die Folge-Hervorhebung ergänzt.
+- Commit: 43fb83b.
+
+### 6. Feature-Screenshots decken zwei Scroll-Befunde auf
+
+- Original prompt: Übergabe ("Feature-Screenshots, Visual-Baseline-Gate
+  bei UI-PRs").
+- Optimierter Prompt: "Nimm die neuen und die betroffenen Lernen-Tab-Shots
+  im Container auf (Chromium vorinstalliert, Playwright-Pin verlangt eine
+  andere Headless-Shell: executablePath per Session-Config überschreiben,
+  nicht committen) und sieh jede Aufnahme an, bevor sie ins Repo geht."
+- Ziel: die Shots als echte Prüfung nutzen, nicht als Pflichtabgabe.
+- Ergebnis: Zwei Befunde. (1) Der learning-subnav-Shot landete 86 px zu
+  tief: die Deferred-Scroll-Schleife gab den weichen scrollIntoView jede
+  Frame erneut aus und kämpfte damit gegen den Instant-Pin des
+  Shot-Helfers (live gemessen: der Deep-Link allein landet korrekt bei
+  129 px). Fix: erneut ausgeben nur, wenn das Ziel seit der letzten Frame
+  stillsteht (+1 Hook-Test); das Shot-Setup wartet bis der Cluster im
+  Viewport ist. (2) Karten innerhalb des Lernen-Tabs hatten keinen
+  Anker-Offset, ein scrollIntoView auf eine Karte landete unter der
+  sticky Leiste (sichtbar am feedback-card-Shot). Fix: jede
+  SettingsSection liest `--settings-anchor-offset` in ihre
+  scroll-margin-top (0 außerhalb des Lernen-Panels).
+- Commit: 9fe1751 (Scroll-Schleife), 8832e69 (Karten-Offset).
+
+### 7. Verifikation, Docs, PR
+
+- Original prompt: Übergabe ("Vollsuite, make check-testid-refs
+  check-file-sizes verify-docs-discipline, push, PR, Visual-Gate-Label,
+  Journal, CLAUDE.md/architecture.md prüfen").
+- Optimierter Prompt: "Führe alles aus, was ohne Backend-venv läuft,
+  nenne explizit, was nicht lief."
+- Ziel: ein PR, den der Owner mit dem bekannten Ablauf mergen kann.
+- Ergebnis: siehe Abschnitt "Prüfläufe" und den PR-Text.
+- Commit: siehe Docs-Commit.
+
+### Prüfläufe
+
+- `bunx tsc --noEmit`: sauber. ESLint auf allen geänderten Dateien mit
+  `--max-warnings=0`: sauber.
+- Vitest voll (`cd frontend && bun run test`): 948 Dateien, 9896 Tests,
+  alle grün (264 s).
+- `make check-file-sizes`: 0 Fehler (62 Warnungen, Bestand).
+- `scripts/testid_reference_gate.py --base origin/develop`: nicht
+  anwendbar (kein testid entfernt oder umbenannt).
+- `scripts/verify_docs.py`: 0 FAIL, 1 WARN (help-coverage-Heuristik,
+  Bestand). `verify-mkdocs-nav` und `verify-docs-hygiene` brauchen die
+  docs-/backend-venvs und liefen hier nicht.
+- `scripts/verify_normative_changes.py --base origin/develop`: keine
+  normativen Änderungen. Rule-Corpus-Ceiling bewusst um 463 Zeichen
+  angehoben (architecture.md: Absatz zur Lernen-Tab-Navigation).
+- Feature-Screenshots: Dexie-Build + Playwright-Capture im Container mit
+  dem vorinstallierten Chromium (executablePath-Override in einer nicht
+  committeten Session-Config); neu: learning-subnav, gamification-card;
+  erneuert: learning-clusters, feedback-card, playful-details (2),
+  mascot-variants. Jede Aufnahme angesehen (siehe Eintrag 6).
+- Nicht gelaufen: `make test` (Backend + Plugins, kein venv; die
+  Änderung berührt kein Python), `make test-dexie-smoke`.
+
+### Fragen und Annahmen
+
+- Ein Branch, ein PR: die Session-Vorgabe pinnt den Branch
+  `claude/lernen-reorganisation-fortsetzung-vu3w29` und verbietet Pushes
+  auf andere Branches. Die vier Issues liegen daher als getrennte
+  Commits auf einem PR (Closes #2961, #2962, #2964, #2966), obwohl die
+  Übergabe vier PRs vorsah. Die Reihenfolge-Abhängigkeit (#2962 und
+  #2966 nach #2961) ist damit ohnehin erfüllt. Ein Split in vier PRs ist
+  eine Owner-Entscheidung (Branches abzweigen, cherry-pick).
+- Journal und Docs liegen im selben PR statt in einem eigenen Docs-PR,
+  aus demselben Grund.
+- Sticky-Offset: kein 69-px-Literal, sondern Messung von `.app-nav` und
+  Leiste (Kopfzeilenhöhe variiert je Viewport/Locale); Fallback 4rem
+  in der Cluster-Klasse.
+- Innerhalb der Spielmodus-Karte tragen die drei Detail-Blöcke weiter
+  `<h3>`; mit dem Kartentitel als `<h3>` ist das eine flache Stufe. Ein
+  `<h4>` dort wäre ein eigener, kleiner Folge-Schritt (nicht im Issue).
+- Ordner-Watcher: `hooks/settings` ist bei 15 flachen Dateien gedeckelt;
+  die zwei Scroll-Hooks liegen deshalb in `hooks/ui` (neben
+  `useScrollDirection`), nicht bei den Settings-Hooks.
+- Visual-Baseline-Sync: zwei Labels in einem API-Aufruf setzen feuert
+  zwei `labeled`-Events; der Lauf für `refresh-visual-baselines` wurde von
+  der Concurrency-Gruppe gecancelt, der für `ui` übersprungen. Das Label
+  darum immer allein und nach dem letzten Push setzen.
+- Visual-Baselines (Sync-Lauf 34036362746, Commit b7434ac): genau die
+  drei `settings-learning-*`-Motive geändert, jedes einzeln angesehen
+  (Leiste über den Clustern, aktiver Chip "Grundlagen" per Scroll-Spy,
+  am Handy die seitlich scrollende Zeile); kein fremdes Churn, nichts
+  zurückgesetzt.
+- Konservativ angenommen: `?section=` schreibt der Scroll-Spy nie in die
+  Adresse (nur Chip-Klick und Deep-Link), damit Scrollen keinen
+  replace-state-Sturm erzeugt.
+
+## C. Erklärung nach der Antwort (Branch claude/explanation-field-brainstorm-wpkafg)
+
+Brainstorming und Phase 1 zum Feld `explanation` (Engine-Schema 1.13),
+über zwei Repositories: learn-content-engine (Autorenrichtlinie) und
+adaptive-learner (Rendering). Branch in beiden Repos:
+claude/explanation-field-brainstorm-wpkafg.
+
+### 1. Brainstorming: was eine Erklärung leistet und wo sie hingehört (13:40)
+
+- Original prompt: "Wir haben ja ein Feld explanation ... bei Sprachen,
+  dass man die Syntax erklärt also Wort für Wort und warum das so ist
+  und dann ein paar Beispielsätze ... machen wir erst mal ein
+  Brainstorming ... Erklär mir, wo am besten das zu implementieren ist."
+- Optimierter Prompt: "Analysiere den Ist-Zustand von
+  `Exercise.explanation` in Engine und App, sammle Best Practices für
+  Post-Answer-Erklärungen (Regel, Wort-für-Wort-Glosse, Beispiele),
+  bewerte Format-Optionen (Markdown vs. Struktur) und ordne jede
+  Aufgabe Engine, App oder Content zu; Ergebnis als Markdown-Dokument."
+- Ziel: fundierte Entscheidungsgrundlage vor der Implementierung.
+- Ergebnis: Befund "Engine hat den Vertrag (Markdown, 2000 Zeichen,
+  nach der Antwort), die App trägt das Feld im Typ und rendert es
+  nirgends". Empfehlung: Markdown mit dokumentierter Konvention jetzt,
+  strukturierte Glosse erst nach Content-Audit; Vertrag und
+  Autorenrichtlinie in der Engine, Rendering, Setting, KI-Generierung
+  und Editor in der App; Aufhängepunkt die Exercise-Shell, nicht die
+  Renderer. Dokument als Artifact plus Markdown-Datei geliefert.
+- Commit: keiner (Analyse).
+
+### 2. Issues und Phase 1 (14:20)
+
+- Original prompt: "ja dann weiter".
+- Optimierter Prompt: "Übernimm die Empfehlungen aus Abschnitt 7,
+  lege die drei Issues an und setze Phase 1 um: Rendering in der App
+  mit Tests, Testplan und Screenshot-Eintrag; Autorenrichtlinie in
+  der Engine."
+- Ziel: das Feld sichtbar machen, ohne Engine-Schema-Änderung.
+- Ergebnis:
+  - Issues: adaptive-learner #2991 (Rendering), #2992 (KI-Generierung
+    und Editor, Phase 2), learn-content-engine #147 (Autorenrichtlinie).
+  - Engine: Abschnitt "Writing a good explanation" in
+    `docs/lesson-format.md` (Regel, Wort für Wort, Beispiele, typischer <!-- doc-ref-exempt: Pfad im Engine-Repo learn-content-engine -->
+    Fehler, Budget, Übungstypen, Wiederholung, Domänen), CHANGELOG
+    Unreleased; `make prose-check` grün; PR learn-content-engine#148. <!-- doc-ref-exempt: Make-Target im Engine-Repo -->
+  - App: `ExerciseExplanation` (feedback/), EINMAL in der
+    `ExerciseDispatcher`-Shell gemountet (alle Renderer inklusive
+    Extensions, alle Flächen); aufgeklappt nach falscher Antwort,
+    eingeklappt hinter "Warum?" nach richtiger und beim Revisit;
+    Gate über das bestehende Setting `explanations_enabled` (Label in
+    11 Katalogen umformuliert, gleicher Schlüssel, keine Migration)
+    und `immediateFeedback` (Prüfungsmodus versteckt). Drei neue
+    i18n-Schlüssel `lesson.explanation.*` in 11 Katalogen.
+  - Tests: 8 Vitest (Komponente) plus 4 Vitest (Dispatcher-Wiring),
+    Fixture `explanation-post-answer.lesson.json` plus Dexie-Spec
+    `exercise-explanation.spec.ts` (im Container gegen den echten
+    Dexie-Build gelaufen: 3 passed), Testplan DE+EN, FeatureShot-Eintrag
+    `exercise-explanation/falsche-antwort` (PNG-Aufnahme steht aus, wie
+    üblich auf der konsistenten Maschine), Hilfe settings.md DE+EN.
+  - Gates lokal: tsc, eslint, Vitest voll (945 Dateien, 9872 Tests),
+    `test_i18n_parity.py` (51), `verify-i18n-scripts`, `verify-docs`
+    (0 FAIL, 1 WARN). `verify-mkdocs-nav` konnte nicht laufen (docs-venv
+    ohne PyYAML im Container); `_meta.yaml` und `mkdocs.yml` sind
+    unberührt.
+- Commit: siehe PR-Zweig (#2991: i18n, Feature).
+
+### 3. Phase 2: Erklärungen generieren und bearbeiten (15:20)
+
+- Original prompt: "ist grün und gemerged, mach weiter".
+- Optimierter Prompt: "Setze Issue #2992 um: Opt-in-Erklärungen im
+  KI-Übungsgenerator (Prompt, Parser, Mapping, Kontrollkästchen im
+  Buchtext-Schritt) und ein Markdown-Feld mit Zähler und Vorlage im
+  Inline-Editor, mit Tests, i18n in 11 Katalogen und Testplan DE+EN."
+- Ziel: die App erzeugt das Feld, das Phase 1 sichtbar macht.
+- Ergebnis:
+  - Prompt (`exercise-generation-prompt.ts`): Option `explanations`;
+    nur dann ein EXPLANATIONS-Block, der die Konvention der Engine
+    (Regel, Wort für Wort, weitere Beispiele, typischer Fehler) und ein
+    weiches Budget von 1200 Zeichen nennt. Er nennt nur die angebotenen
+    Typen, die etwas zu erklären haben (Lückentext, Wortkacheln,
+    Freitext, Multiple Choice, Fehlerkorrektur), nie Zuordnung oder
+    Bildauswahl, und respektiert die Typ-Auswahl (#2510). Das
+    Beispiel-JSON trägt dann eine ausgearbeitete Erklärung.
+  - Pipeline: `generateExercises` reicht die Option durch und hebt den
+    Antwort-Deckel von 2000 auf 3200 Tokens, sonst schneidet das Modell
+    das JSON mitten in einer Karte ab. `generateBookLessonContent`
+    (Einzel- und Batch-Pfad) reicht sie ebenfalls durch.
+  - Parser: `explanation` wird auf jeder Karte (Kern und Text-Extension)
+    getrimmt übernommen und bei 2000 Zeichen abgeschnitten; alles, was
+    kein String ist, fällt still weg, die Karte bleibt. `cardsToExercises`
+    kopiert das Feld auf die Übung.
+  - Editor: `fields/ExplanationField` (Markdown-Textarea, Zähler
+    "n / 2000 Zeichen", "Vorlage einfügen" nur solange leer, die Vorlage
+    kommt lokalisiert aus dem Katalog), gemountet in `ExerciseEditor` UND
+    `ExtensionExerciseEditor`. `normalizeExerciseEdit` /
+    `normalizeExtensionExercise` trimmen und ENTFERNEN den Schlüssel bei
+    leerem Feld (kein `explanation: ""` im JSON); beide Validatoren
+    liefern den Code `explanation` bei mehr als 2000 Zeichen.
+  - Buchtext-Schritt: Kontrollkästchen "Erklärungen generieren" unter
+    der Typ-Auswahl, standardmäßig aus und bewusst NICHT gemerkt (es
+    kostet KI-Ausgabe, jeder Lauf fragt neu).
+  - i18n: `create_lesson.book.explanations_label/_hint`,
+    `create_lesson.exercises.edit.explanation_*` (fünf Schlüssel plus
+    `err_explanation`) und `create_lesson.extensions.edit.err_explanation`
+    in 11 Katalogen; die Vorlage ist ein Double-Quoted-String mit `\n`
+    (kein Block-Skalar, die Kataloge nutzen keine).
+  - Tests: Prompt (6), Pipeline (1), Buch-Pipeline (1), Parser (7, davon
+    ein `it.each` über vier Drop-Fälle), Mapping (1), Normalizer Kern (6)
+    und Extension (2), `ExplanationField` (4), `ExerciseEditor` (5),
+    `ExtensionExerciseEditor` (1), `BookTextStep` (3). Testplan DE+EN
+    (Assistent und Editor), zwei FeatureShot-Einträge
+    (`create-lesson/erklaerungen-opt-in`, `exercise-explanation/editor-feld`,
+    PNG-Aufnahme wie üblich auf der konsistenten Maschine).
+- Commit: siehe PR-Zweig (#2992: i18n, Feature).
+
+### Fragen und Annahmen (Phase 2)
+
+- Opt-in nicht gemerkt: die Typ-Auswahl (#2510) wird gemerkt, das
+  Erklärungs-Kontrollkästchen bewusst nicht. Begründung: ein gemerkter
+  Haken würde bei jedem späteren Lauf still Tokens kosten. Wer das
+  Gegenteil will, kann es über `saveAssistantTypes`-Muster nachrüsten.
+- Kürzen statt verwerfen: eine Erklärung über 2000 Zeichen wird im
+  Parser abgeschnitten, nicht die Karte verworfen. Ein hartes Ende mitten
+  in einer Liste ist hässlich, aber besser als eine verlorene Übung; das
+  Prompt-Budget von 1200 hält den Fall selten.
+- Sprache der Erklärung: der Prompt sagt "in der Sprache der Theorie".
+  Die Engine-Konvention verlangt die Sprache des Lernenden
+  (`source_language`); im Buchtext-Pfad ist das die Sprache des
+  eingefügten Textes, also dasselbe. Für eine Sprachlektion, deren Text
+  in der Zielsprache steht, wäre das falsch, dieser Pfad existiert im
+  Assistenten aber nicht (er erzeugt Wissenslektionen aus Text).
+- Kein Erklärungsfeld im reinen Karten-Generator (`generateExercises`
+  aus `lib/exercises`, deterministisch): der hat kein Modell, das eine
+  Regel formulieren könnte. Dort bleibt der Weg der Inline-Editor.
+
+### Fragen und Annahmen
+
+- Setting: EIN Schalter für autorisierte Erklärungen und die
+  generischen Fehlererklärungen (#599), umformuliert zu "Erklärungen
+  anzeigen". Gleicher Schlüssel, keine Migration; die Alternative (zwei
+  Schalter) bleibt offen, falls Aster die Kanäle getrennt haben will.
+- Auto-Advance nach richtiger Antwort bleibt unverändert; eine
+  eingeklappte Erklärung ist dort nur erreichbar, wenn Auto-Advance aus
+  ist. Ob eine vorhandene Erklärung den Sprung unterdrücken soll, ist
+  eine offene Produktentscheidung (im Issue #2991 dokumentiert).
+- Unkontrollierte Flächen (Review, Adaptive): "Nochmal versuchen"
+  setzt den Renderer zurück, nicht die Shell; die Erklärung bleibt bis
+  zur nächsten Prüfung sichtbar. Ein `onReset` im Renderer-Vertrag
+  würde alle Renderer berühren und ist bewusst nicht Teil von Phase 1.
+- Die bestehenden Dexie-Specs mit Repo-Connect-Flow (z. B.
+  `multiple-choice-device-check.spec.ts`) schlagen im Container am
+  gesperrten GitHub-Pages-Kanal fehl (Proxy 403, Sektion bleibt
+  `aria-busy`); der neue Spec mockt darum den offiziellen Index leer
+  (Muster aus `combine-lessons.spec.ts`) und ist hermetisch. Kein
+  Befund gegen die App.
+- TTS für den Erklärungstext ist aufgeschoben: der Dispatcher hat
+  keinen `ReadAloudController`.
+- Content-Audit (haben die Content-Repos schon `explanation`-Felder?)
+  konnte nicht laufen: die Content-Repos sind nicht in der Session.
+
+## D. Guard lesson-types-source: falsche Wurzel statt Timeout-Problem (#2972, Branch claude/github-issue-2972-ufpp2o)
+
+Remote-Session (Cloud-Container) auf dem vorgegebenen Branch, PR gegen
+develop. Kein Backend-venv (die Änderung berührt nur eine Vitest-Datei).
+
+### 1. Reproduktion und Ursache
+
+- Original prompt: "jetzt machen wir den hier: #2972" (der Guard
+  `lesson-types-source.guard.test.ts` reißt unter Vollsuiten-Last das
+  5000-ms-Budget; Vorschlag im Issue: expliziter Timeout oder weniger
+  Arbeit).
+- Optimierter Prompt: "Miss die Phasen des Guards (Walk, Read, Regex)
+  einzeln im Vitest-Worker, bevor du einen Timeout setzt; vergleiche mit
+  einer Sonde, die dieselbe Arbeit über `frontend/src` macht."
+- Ziel: die Ursache messen statt das Symptom mit einem Timeout zu
+  kaschieren.
+- Ergebnis: Der Guard lief nie über `frontend/src`. `abs("../../../../")`
+  von `src/lib/content/engine/` aus landet in `frontend/`, der Kommentar
+  `// frontend/src` daneben war falsch. Damit las der Walk jede
+  `.ts`/`.tsx` unter `node_modules`, `dist` und `e2e` mit: im Container
+  15415 Dateien statt 2150 (siebenfach), Scan-Test 735-846 ms alleine.
+  Eine Sonde mit identischem Code über `frontend/src` brauchte 90-120 ms.
+  Die 2115 Dateien im Issue-Text waren aus dem Kommentar abgeleitet, nicht
+  gemessen. Die Geschwister-Guards (`full-tree-key-coverage`,
+  `modal-exit-coverage`, `no-hardcoded-colors`,
+  `lesson-schema-validator.standalone`) wurden mitgeprüft: alle Wurzeln
+  korrekt.
+
+### 2. Fix (TDD)
+
+- RED: neuer erster Test "scans frontend/src only": pinnt die Wurzel auf
+  `.../frontend/src`, verlangt null Pfade mit `/node_modules/`, verlangt
+  mehr als 500 Dateien (fail closed, Gate-Vertrag #2083 Punkt 4) und
+  druckt `[lesson-types-source] scanned N .ts/.tsx files under <root>`.
+  Gegen den alten Walk rot (Wurzel `.../frontend`).
+- GREEN: `SRC_ROOT = abs("../../../")`, Pfad-Join über `node:path` statt
+  `${SRC_ROOT}/${entry}` (Doppel-Slash), Docstring erklärt Scope und
+  Vorgeschichte. Scan-Test danach 80 ms (vorher 735-846 ms), 4/4 grün,
+  ESLint `--max-warnings=0` und `tsc --noEmit` sauber.
+- Bewusst KEIN expliziter Timeout: mit 80 ms gegen 5000 ms ist das Budget
+  60-fach; ein hochgesetzter Timeout hätte genau diese Klasse (falsche
+  Eingabemenge liest als "0 Befunde") wieder verdeckt.
+- Commit: siehe PR.
+
+### Fragen und Annahmen
+
+- Der Guard hat mit der falschen Wurzel nie einen falschen Befund
+  geliefert (0 Treffer in beiden Mengen), nur zu viel gelesen; kein
+  Folge-Issue nötig.
+- Keine neue Lektion in `.claude/rules`: der Fall ist eine Instanz des
+  bestehenden Gate-Vertrags Punkt 4 (quality-checks.md, "reportiert, was
+  es gemessen hat"); der neue Test setzt genau das um.
+
+## E. Meine Inhalte: Kopfzeilen-"Aktualisieren" wendet alle Updates an (#3001, Branch claude/button-update-top-bar-k1ogua)
+
+### 1. Frage und Befund (17:10)
+
+- Original prompt: "Wenn ich den Button klicke, werden dann automatisch
+  aktualisiert? Und wenn ja, sollte sich der Button in der oberen Leiste
+  updaten?" Dann: "Da gibt es einen Button Aktualisieren, wenn der
+  gedrückt wird, sollen alle aktualisiert werden."
+- Optimierter Prompt: "Was tut der Kopfzeilen-Knopf 'Aktualisieren' auf
+  Meine Inhalte heute, und warum senkt er das Header-Badge nicht?"
+- Ziel: den Weg vom Header-Badge (#2904) bis zum angewendeten Update
+  verstehen und die Lücke schließen.
+- Ergebnis: Das Badge ist ein reiner Link (`/content?tab=my`, #2998).
+  Der Kopfzeilen-Knopf `content-refresh` rief nur `listSets()` neu auf
+  (englisch "Refresh"); das Anwenden hing ausschließlich am Zeilen-Knopf
+  pro Set. Beide tragen im Deutschen dasselbe Label "Aktualisieren"
+  (`content.action.refresh` und `content.action.update`), der
+  Kopfzeilen-Knopf versprach also genau das, was nur der Zeilen-Knopf tat.
+  Die Fixes #2986 und #2999 liegen ausserdem noch nicht auf `main`, der
+  GitHub-Pages-Build zeigt bis zum nächsten Release das alte Verhalten.
+  Issue #3001 angelegt.
+
+### 2. Umsetzung (TDD)
+
+- RED: `useContentSetActions.update-all.test.ts` (5 Tests: alle
+  ausstehenden Sets, Breaking-Update wird übersprungen und gemeldet,
+  Fehler gezählt, nichts ausstehend, `updatingAll`-Flag),
+  `useContentSetsData.test.tsx` (+2: `handleRefresh` liefert die frische
+  Liste bzw. null), `Content.refresh-updates.test.tsx` (+2: Klick lädt
+  neu und lädt das ausstehende Set, Knopf bleibt bis zum Ende
+  deaktiviert). 9 rot, 7 Bestandstests grün.
+- GREEN: `loadSets`/`handleRefresh` geben die sichtbare Liste zurück;
+  `applyDownload` bekommt `quiet` und liefert `boolean`; neuer Hook
+  `useUpdateAllSets` (sequenziell, #2128-Guard: Breaking wird NICHT im
+  Bulk angewendet, ein Sammel-Toast pro Ergebnisklasse); `Content.tsx`
+  verkettet Neuladen und Bulk-Update, der Knopf ist während des Laufs
+  deaktiviert; Tooltip `content.action.refresh_hint`.
+  `ImportActionsPanel` wrappt `loadSets` für die `Promise<void>`-Prop.
+- Fünf i18n-Schlüssel in allen 11 Katalogen, `make sync-i18n`,
+  `test_i18n_parity.py` 51 grün, `verify-i18n-scripts` sauber.
+- Dateigrößen-Ratchet schlug an (`useContentSetActions.ts` 913 -> 987
+  Zeilen): Bulk-Logik in `useUpdateAllSets.ts` ausgelagert statt
+  Whitelist. Der Ordner-Gate (`check-folder-size.sh`, 15 flache Dateien)
+  schlug daraufhin in CI an: die Datei liegt jetzt in
+  `hooks/content/update/` mit Barrel, nach dem Muster von `combine/`.
+- Visual-Baseline-Gate (#1640): Label `visual-baselines-unaffected` mit
+  Begründung im PR-Text (nur ein `title`-Attribut), Nachweis-Lauf von
+  `visual-regression.yml` ohne Baseline-Update auf dem Branch gestartet.
+- Testplan DE + EN am #2904-Eintrag ergänzt.
+- Commit: siehe PR.
+
+### Fragen und Annahmen
+
+- Bewusst KEIN "Alle aktualisieren" als zweiter Knopf: der Nutzer hat den
+  bestehenden Kopfzeilen-Knopf gemeint, und das deutsche Label
+  verspricht das Anwenden bereits. Wer nur die Liste neu laden will,
+  bekommt das weiterhin (ohne ausstehende Updates: Toast "Alle Sets sind
+  aktuell.").
+- Breaking-Updates im Bulk: übersprungen plus Hinweis-Toast, nicht der
+  Guard-Dialog in Serie. Der Guard hält genau ein Ziel; eine Warteschlange
+  wäre ein eigenes Design (#2128 bleibt die Einzelbestätigung).
+- Ein fehlgeschlagener Peek (`assessSetUpdate` wirft) gilt wie im
+  manuellen Pfad als "nicht breaking" und wird angewendet (der Nutzer hat
+  den Lauf ausgelöst; nur der stille Auto-Sync hält bei Peek-Fehlern).
+
+## F. Inhalte-Hub: Reiter "Erstellen" (#3006, #3007, #3008, Branch claude/button-update-top-bar-k1ogua)
+
+### 1. Recherche: wo der geplante Reiter hängen geblieben ist (17:55)
+
+- Original prompt: "Wir hatten mal für den Button neue Lektionen eine Tab
+  geplant, das ist irgendwie untergegangen. Schau mal wo das hängen
+  geblieben ist."
+- Optimierter Prompt: "Suche im gesamten Repo nach einer geplanten, nie
+  umgesetzten Idee eines eigenen Reiters für das Erstellen; unterscheide
+  belegten Fund von Interpretation."
+- Ergebnis: **Kein Beleg.** Weder Issue noch Journal noch Exploration noch
+  Code-Rest. Geprüft: alle Session-Journale, ROADMAP samt Archiv, Backlog,
+  alle EXP-Dokumente, Audits, Changelogs, Hilfe, Testpläne, Regeldateien,
+  GitHub-Issues in beiden Sprachen, dazu die Historie von `ContentHub.tsx`
+  (seit #856 immer dieselben drei Reiter, nie ein vierter angefangen).
+  Stattdessen belegt: #1253 entschied am 29.06. bewusst das Gegenteil, die
+  fünf Aktionen inklusive Erstellen gehören in den Importieren-Reiter, weil
+  sie "all import/creation-related" seien. Nebenfund: EXP-021 nennt drei
+  Einstiegspunkte, zwei davon weichen bis heute vom Plan ab (#3007, #3008).
+
+### 2. Architekten-Entscheidung und Umsetzung (18:10)
+
+- Der Architekt revidiert #1253 ausdrücklich: "etwas Vorhandenes holen" und
+  "etwas Neues machen" sind verschiedene Absichten, wer erstellen will sucht
+  nicht unter Importieren. Die Revision ist in #3006 und im Code-Kommentar
+  des Hubs benannt, damit sie nicht unbemerkt zurückgedreht wird.
+- RED zuerst: `contentTabOrderPref.test.ts` (Reiter bekannt, wird an eine vor
+  seiner Zeit gespeicherte Reihenfolge angehängt), `ContentHub.test.tsx`
+  (vierter Reiter, `?tab=create` mountet den Assistenten, kurzes Label),
+  neuer `ContentActionButtons.test.tsx` (Erstellen-Knopf entfernt, vier
+  übrige bleiben). 9 rot.
+- GREEN: `ContentTabId` um "create" erweitert, Hub mountet `CreateLesson`
+  lazy wie die anderen Seiten, `/create-lesson` leitet auf
+  `/content?tab=create` weiter (dasselbe Muster wie `/import` und
+  `/discover`), `/create-lesson/edit/:source/:setId` bleibt eigenständig.
+  Einordnung der fünf Aktionen: nur Erstellen wandert; Lektion importieren
+  und Chat importieren sind Import, Anki-Export ist Ausgabe, Lernpfad ist
+  Navigation. i18n `content.tab.create` in allen elf Katalogen.
+- Zwei Bestandstests folgten der Verhaltensänderung (Aktionsleiste fünf auf
+  vier, Reihenfolge-Einstellung drei auf vier Einträge).
+
+### 3. Der Prüfpunkt: vier Reiter auf dem Telefon (18:40)
+
+Gemessen statt geschätzt, echtes Rendering im Dexie-Build, Chromium mit
+`isMobile`, deutsche Beschriftungen, Umbruch an den y-Koordinaten abgelesen.
+Reiterbreiten: Entdecken 105,5px, Meine Inhalte 127px, Importieren 113,9px,
+Erstellen 93,3px, Abstand 4px.
+
+| Gerät | Leiste innen | 3 Reiter | 4 Reiter | Zeilen |
+|---|---|---|---|---|
+| 320px | 288px | 354,4px nein | 451,7px nein | 2 |
+| 375px | 343px | 354,4px nein | 451,7px nein | 2 |
+| 390px | 358px | 354,4px ja | 451,7px nein | 2 |
+| 430px | 398px | 354,4px ja | 451,7px nein | 2 |
+
+Befund: bei 390px und 430px echte Verschlechterung von einer auf zwei
+Zeilen. Bei 375px und 320px brach die Leiste mit deutschen Beschriftungen
+schon vorher um, die Annahme im Auftrag ("drei passen heute vermutlich
+nebeneinander") trifft dort nicht zu. Nach Vorgabe wurde das **gemeldet
+statt erzwungen**: der PR bleibt Entwurf, die Gegenmassnahme ist eine eigene
+Entscheidung.
+
+### Fragen und Annahmen
+
+- Bildgrundlinien bewusst NICHT erneuert: bei einer Layout-Entscheidung
+  (kürzere Beschriftungen, andere Anordnung) wären sie sofort wieder
+  hinfällig. Abweichung von der Regel "Grundlinien im selben PR", im PR und
+  im Vorgang begründet; der Gate ist entsprechend rot und das ist bei einem
+  Entwurf das richtige Signal.
+- Die Reiterleiste trägt seit jeher `role="tablist"` mit `role="tab"`, aber
+  ohne `aria-controls` und ohne Pfeiltasten-Navigation. Der neue Reiter erbt
+  genau das Muster, verschlechtert also nichts; die bestehende Lücke ist ein
+  eigener Befund und kein Teil dieses Vorgangs.
+- Sprachwahl der Messung: Deutsch, weil es die Standardsprache der App ist.
+  Auf Englisch liegt die Umbruchgrenze günstiger (drei Reiter passen dort
+  noch bei 375px), das ist aber nicht der maßgebliche Fall.
+
+## G. Erstellen-Einstieg in "Meine Lektionen" (#3007, Branch claude/create-entry-my-lessons-3007)
+
+- Herkunft: Nebenfund der #3006-Recherche. EXP-021 nennt drei Einstiegspunkte
+  zum Lektions-Creator; der "+"-Knopf im Meine-Lektionen-Bereich war nie
+  gebaut (verifiziert: kein Treffer für `create-lesson` oder `Plus` in
+  `MyLessonsSection.tsx`).
+- RED zuerst, neue `MyLessonsSection.test.tsx` mit vier Tests: Knopf im
+  Abschnittskopf, ruft den Host-Handler statt selbst zu navigieren, trägt
+  einen zugänglichen Namen und 44px Trefferfläche, bleibt während der
+  Mehrfachauswahl sichtbar.
+- GREEN: Knopf im Kopf neben "Zu einem Set zusammenfassen", props-getrieben
+  (`onCreateLesson`), der Host liefert die Navigation. Kein neuer i18n-Text:
+  `content.create_lesson.button` existiert bereits in allen elf Katalogen.
+- Beobachtung, nicht geändert: der Abschnitt rendert nur bei mindestens einer
+  eigenen Lektion (`ImportActionsPanel`), sein interner Leer-Zustand
+  (`content-my-lessons-empty`) ist damit unerreichbar. EXP-026 Punkt 4 hatte
+  das bewusst so entschieden, mit der Begründung "Erstellen-Einstieg lebt
+  ohnehin in der Toolbar". Diese Begründung trägt nach #3006 nicht mehr, aber
+  das Aufräumen ist eine eigene Entscheidung und kein Teil dieses Vorgangs.
+
+## H. Reiterleisten auf schmalen Geräten (#3012, Branch claude/tabbar-narrow-devices)
+
+### 1. Prämissenkorrektur durch den Architekten (2026-09-07)
+
+Der Architekt las den #3006-Bericht und fasste den Auftrag neu: nicht der
+vierte Reiter ist das Thema, sondern der Zustand der Leiste. Zwei seiner
+Angaben stimmten allerdings nicht mit dem Code überein und wurden vor
+Auftragsannahme geprüft:
+
+- "Fünf Reiter, die längst scrollen": Es gibt sechs `role="tablist"` im
+  Frontend, die drei mit mehreren Reitern haben je drei. Keine Leiste
+  scrollt, nirgends steht `overflow-x`. Fünf Elemente hat nur die mobile
+  Bodenleiste, und die verteilt mit `justify-around` und kürzt per
+  `truncate`.
+- "Der sechste kostet 23 Pixel": gemessen kostet der vierte Reiter 93,7px
+  Überhang bei 390px.
+
+Seine Schlussfolgerung trug trotzdem, nur mit anderem Mechanismus: die
+Inhalte-Leiste bricht mit deutschen Beschriftungen schon bei DREI Reitern
+auf 375px und darunter um. Umbruch statt Scrollen, aber derselbe Befund
+"sieht nach Absicht aus, ist es aber nicht".
+
+Zweiter Einwand des Architekten, der zutraf und gegen die eigene
+Vorarbeit ging: der Erstellen-Knopf aus #3007 sitzt im selben Reiter, in
+dem die Aktionsleiste schon einen trägt. Die Begründung von #3010 war auf
+Abschnittsebene richtig und auf Reiterebene falsch.
+
+Nachtrag: #3010 war zu diesem Zeitpunkt bereits gemergt (develop 9bcb83bc,
+11:02 UTC), die Korrektur kam also zu spät. Der Importieren-Reiter trägt
+damit vorerst ZWEI Erstellen-Knöpfe. Das löst sich mit #3009 auf, denn dort
+entfällt der Knopf der Aktionsleiste; bleibt #3009 aus, ist die Doppelung
+mit einem Einzeiler rückgängig zu machen. Festgehalten statt stillschweigend
+korrigiert, weil die Reihenfolge (mergen, dann Einwand) genau der Grund für
+die Doppelung ist.
+
+### 2. Ist-Vermessung
+
+Echtes Rendering im Dexie-Build, deutsche Beschriftungen, identische
+Reiter-Klassen in allen drei Leisten (32px Polsterung, 14px Schrift):
+
+| Leiste | braucht | 320px | 375px | 390px |
+|---|---|---|---|---|
+| Inhalte (3) | 354,4px | fehlen 66,4 | fehlen 11,4 | passt |
+| Inhalte (4, #3006) | 451,7px | fehlen 163,7 | fehlen 108,7 | fehlen 93,7 |
+| Dashboard (3) | 299,0px | fehlen 11 | passt | passt |
+| Fortschritt (3) | 313,9px | fehlen 25,9 | passt | passt |
+
+Drei Leisten, drei Verhalten: Inhalte bricht um (#989), Fortschritt und
+Dashboard stauchen, letzteres ohne eigene Polsterung. Nur das erste war je
+eine Entscheidung.
+
+### 3. Umsetzung (TDD)
+
+- RED: neue `shared/layout/TabBar.test.tsx`, acht Tests (Rollen, genau ein
+  aktiver Reiter, Klick meldet an den Host, 44px, kompakt auf dem Telefon
+  und grosszügig ab `sm`, schmaler Abstand, Umbruch statt Scrollen,
+  Host-Abstände bleiben erhalten).
+- GREEN: `TabBar` als gemeinsame Komponente, die drei Hubs stellen darauf
+  um. Ihre bestehenden Tests blieben unverändert grün, das ist der Beweis
+  für Verhaltenserhalt (gleiche testids, Rollen, Auswahl).
+- Nachgemessen: Inhalte 270,6px (passt ab 320px, vorher ab 390px),
+  Dashboard 223,1px, Fortschritt 228px, alle überall einzeilig. Vier
+  Reiter 343,1px, passt ab 390px.
+- Bei 375px fehlten vier Reitern zunächst 0,1px. Das ist innerhalb von
+  Rundung und Schriftmetrik, deshalb zusätzlich `gap-0.5 sm:gap-1`: rund
+  6px Reserve genau dort, wo sie gebraucht wird.
+- Neuer e2e-Spec `tab-bars-single-line.spec.ts`: misst, was
+  `no-horizontal-scroll` strukturell nicht sieht. Jener prüft Überlauf;
+  eine umbrechende oder gestauchte Leiste erzeugt keinen Überlauf und ist
+  für ihn dasselbe wie eine saubere einzeilige. Der neue Spec prüft
+  Einzeiligkeit und Nicht-Stauchung, meldet die gemessenen Breiten im
+  Fehlerfall und schlägt fehl, wenn er weniger als zwei Reiter findet
+  (Gate-Vertrag #2083 Punkt 4).
+
+### Fragen und Annahmen
+
+- Kein Scrollen als Ausweg, obwohl #989 es nicht verboten hatte (der Gate
+  nimmt Elemente mit eigenem `overflow-x` aus). Begründung des
+  Architekten übernommen: hintere Reiter, die man nur durch Wischen
+  findet, sind schlechter als eine zweite Zeile.
+- Die Umschaltgrenze ist `sm` (640px). Zwischen 430 und 640px bleibt es
+  kompakt; dort passen vier Reiter mit Reserve.
+- Vier Reiter bei 320px passen weiterhin nicht: 343,1px vor der
+  `gap-0.5`-Reserve, 337,1px danach, gegen 288px Innenbreite fehlen also
+  49,1px. Dort bleibt der Umbruch, jetzt aber als definierter Ausweg für
+  alle drei Leisten statt nur für eine.
+- #3009 (der vierte Reiter) berührt dieselbe Datei und wird nach diesem
+  PR neu aufgesetzt statt gestapelt.
+
+
+## I. Der vierte Reiter auf der neuen Leiste (#3006 / #3009, Branch claude/button-update-top-bar-k1ogua)
+
+### Anlass
+
+- #3013 (die gemeinsame Reiterleiste) ist gemergt. Damit ist der Prüfpunkt
+  aus dem #3006-Auftrag neu zu beantworten: er lautete nicht "der Reiter
+  ist verboten", sondern "melden statt erzwingen, wenn er nicht passt".
+  Er passt jetzt.
+
+### Was sich an der Antwort ändert
+
+| | vorher (32px Polsterung, 14px Schrift) | jetzt (16px / 12px, `gap-0.5`) |
+|---|---|---|
+| vier Reiter brauchen | 451,7px | 337,1px |
+| passen ab | nirgends | 375px |
+| 320px | zwei Zeilen | zwei Zeilen |
+
+- Der Reiter wurde also nicht "durchgedrückt", sondern die Voraussetzung
+  wurde geschaffen und dann erneut gemessen. Die Reihenfolge ist der
+  Punkt: erst der Befund, dann der Umbau, dann der Reiter.
+- Bei 320px bleibt der Umbruch. Das ist seit #3012 der definierte Ausweg
+  aller drei Leisten und kein Sonderfall dieses Reiters mehr.
+
+### Nachgemessen, nicht weitergerechnet
+
+- Die 337,1px aus #3012 waren eine Rechnung: der vierte Reiter existierte auf
+  jenem Branch nicht, seine Breite kam aus einem geklonten Prüfling. Jetzt
+  existiert er wirklich, also neu gemessen, mit realem Rendering bei jeder
+  Breite und Umbruch an den y-Koordinaten abgelesen.
+- Ergebnis identisch zur Rechnung: Entdecken 79px, Meine Inhalte 97,4px,
+  Importieren 86,2px, Erstellen 68,5px, Abstand 2px, zusammen 337,1px.
+  320px zwei Zeilen (288px innen), 375/390/414/430px einzeilig, ab 640px
+  wieder 451,7px auf 608px Innenbreite. Trefferfläche überall 44px, kein
+  Überlauf.
+- Dass die Rechnung diesmal stimmte, ist kein Argument dafür, beim nächsten
+  Mal zu rechnen: der geklonte Prüfling erbt genau die Annahmen, die er
+  belegen soll.
+
+### Der Gate und die 320px
+
+- Mit vier Reitern bricht die Inhalte-Leiste bei 320px um, der neue Spec
+  wäre also rot. Statt die Prüfbreite zu streichen, wird die Ausnahme
+  benannt: `wrapAllowedAt: [320]` mit einem `wrapReason`, den der Spec
+  einfordert und mitprotokolliert.
+- Der Punkt ist die Nichtstreichbarkeit: 375, 390 und 414px bleiben streng,
+  eine Regression, die die Leiste dort kippt, wird weiterhin rot. Eine
+  Ausnahme ohne Begründung schlägt fehl, damit sie nicht später still
+  gesetzt werden kann (Gate-Vertrag #2083).
+- `@playwright/test` ist im Container nicht installiert, der Spec selbst
+  konnte hier also nicht laufen. Stattdessen wurde seine Messlogik
+  zeilengleich gegen den echten Dexie-Build repliziert: 320px erlaubt
+  zweizeilig, die drei anderen Breiten einzeilig, nichts gestaucht.
+
+### Zusammenführung
+
+- Der Branch trug den Reiter aus dem Entwurf vom Vormittag. `git merge
+  origin/develop` löste den Rumpf von `ContentHub.tsx` automatisch auf:
+  die neue `TabBar` und der vierte Reiter berühren verschiedene Zeilen.
+  Von Hand waren nur der Kopfkommentar und die drei Doku-Dateien zu
+  entscheiden, alle additiv.
+- Die Testplan-Einträge DE und EN tragen die neue Messung statt der alten.
+  Der Telefon-Punkt bleibt, verliert aber das "BLOCKIEREND": er prüft
+  jetzt eine Aussage, die die Messung stützt, statt eine, die sie
+  widerlegt hat.
+
+### Nebenbefund beim Zurechnen: #3016
+
+- Der Sync lieferte 16 Bilder, zwölf zurechenbar. Die drei
+  `create-lesson`-Flächen waren nicht eingeplant und sind der beste Beleg,
+  dass die Weiterleitung greift: `/create-lesson` rendert jetzt im Hub, das
+  Bild zeigt vier Reiter in einer Zeile mit aktivem "Erstellen".
+- `dashboard-populated-desktop` zurückgenommen wie beim letzten Mal:
+  verschobener Inhalt an einer Stelle, die dieser PR nicht berührt (#2682).
+- Die drei `settings-general`-Bilder **hätten** sich ändern müssen, die
+  Reihenfolge-Einstellung bekommt einen vierten Eintrag. Die Bildhöhe blieb
+  bei 1912px. Nachgesehen statt weggewinkt: die Bilder enden mitten im
+  Themen-Raster, und `ContentTabsOrderControl` steht dahinter. Rund die
+  halbe Seite ist in keinem Motiv enthalten; der Gate war die ganze Zeit
+  grün, weil Ist und Referenz an derselben Stelle abgeschnitten sind.
+- Das ist die #2696-Klasse an einer Stelle, die deren Fix nicht erfasst: der
+  dortige Helfer wächst auf die Dokumenthöhe, die Settings-Seite scrollt aber
+  in einem eigenen Container. Als #3016 aufgenommen, hier nicht gefixt.
+- Der Punkt für das nächste Mal: dass sich ein Bild NICHT ändert, obwohl es
+  sich ändern müsste, ist genauso ein Befund wie eine unerklärliche Änderung.
+  Ohne die Erwartung "hier kommt ein Eintrag dazu" wäre der abgeschnittene
+  Motiv-Satz weiter unentdeckt geblieben.
+
+### Fragen und Annahmen
+
+- Angenommen, dass der ursprüngliche Auftrag mit dem Passen der vier
+  Reiter erfüllt ist und keine erneute Freigabe braucht. Grundlage: die
+  Prämissenkorrektur des Architekten hat den Reiter ausdrücklich zum
+  **Teil** des Überlauf-Vorgangs erklärt statt zu dessen Anlass. Ist das
+  zu weit ausgelegt, ist der PR ein Entwurf und leicht zurückzuhalten.
+- Nicht angefasst: die Platzierung der vier übrigen Aktionen im
+  Importieren-Reiter (#1253) und die fehlende Pfeiltasten-Navigation der
+  Leisten. Beides sind eigene Befunde.

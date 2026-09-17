@@ -6,6 +6,7 @@
  * on successful save or explicit discard.
  */
 
+import type {ContentLessonCardTokenRole} from "../../../storage/types";
 import {isKnownContentDomain} from "../content-domains";
 
 export const LESSON_DRAFT_KEY = "adaptive-learner.lesson-draft";
@@ -43,6 +44,13 @@ export interface LessonCardDraft {
      *  and discoverable. Optional for backward compatibility with pre-#1847
      *  drafts; the loader normalises it to ``""``. */
     example?: string;
+    /** Grammatical role annotations on tokens of ``front`` (#3072).
+     *  Each ``token`` is a VERBATIM slice of ``front`` and each ``role``
+     *  a value of the schema's closed enum; the cloze generator matches
+     *  on the token, so a non-slice would be inert. Optional for
+     *  backward compatibility with pre-#3072 drafts; the loader
+     *  normalises it to ``[]``. */
+    tokenRoles?: ContentLessonCardTokenRole[];
     /** Additional accepted answers for the generated free-text exercise
      *  (#1797). ``back`` stays the canonical answer; these are extra
      *  variants the learner may type. Optional for backward compatibility
@@ -179,6 +187,12 @@ function normalizeDraftCards(rawCards: unknown): LessonCardDraft[] {
         example: c.example ?? "",
         altAnswers: Array.isArray(c.altAnswers)
             ? c.altAnswers.filter((a): a is string => typeof a === "string")
+            : [],
+        tokenRoles: Array.isArray(c.tokenRoles)
+            ? c.tokenRoles.filter(
+                  (r): r is ContentLessonCardTokenRole =>
+                      !!r && typeof r.token === "string" && typeof r.role === "string",
+              )
             : [],
     }));
 }

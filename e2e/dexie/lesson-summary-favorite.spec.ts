@@ -31,6 +31,15 @@ async function buildSaveAndPlay(page: Page): Promise<void> {
     // The summary favorite control renders only for a signed-in learner
     // (SummaryFavorite returns null without a userId), so seed one first.
     await completeOnboarding(page);
+    // #3124 - the favorites row is off in the compact default; switch it on
+    // the way Settings > Learning > "Lesson summary" would (a partial stored
+    // config is filled in ON for every other section).
+    await page.evaluate(() => {
+        localStorage.setItem(
+            "adaptive-learner.lesson.summary_sections_order",
+            JSON.stringify([{id: "favorite", enabled: true}]),
+        );
+    });
     await page.goto("/create-lesson");
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,

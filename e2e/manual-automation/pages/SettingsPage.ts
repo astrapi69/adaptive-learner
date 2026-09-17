@@ -1,19 +1,29 @@
 /**
- * SettingsPage — Page Object for the 7-tab Settings page (#616). Real
- * selectors from ``pages/Settings.tsx`` + ``ThemePicker`` + avatar /
+ * SettingsPage — Page Object for the 9-tab Settings page (#616). Real
+ * selectors from ``pages/system/Settings.tsx`` + ``ThemePicker`` + avatar /
  * username / backup / selective-export controls.
  */
 
 import { expect, type Locator, type Page } from "@playwright/test";
 
+/** Every Settings tab, in sidebar order. Source of truth: ``SETTINGS_TABS`` in
+ *  ``frontend/src/pages/system/Settings.tsx`` (#2963). ``SETTINGS_PANELS`` is a
+ *  ``Record`` over this union, so a tab added here without a panel entry is a
+ *  type error. */
 export type SettingsTab =
   | "general"
   | "ai"
   | "learning"
   | "plugins"
   | "data"
+  | "integrations"
   | "help"
+  | "diagnostics"
   | "about";
+
+/** The Learning tab's sections (#2961), in tab order; ``voice`` renders only
+ *  with Web Speech support. */
+export type LearningSection = "basics" | "lessons" | "voice" | "review" | "motivation";
 
 /** The panel testid revealed when each tab is active. */
 export const SETTINGS_PANELS: Record<SettingsTab, string> = {
@@ -22,7 +32,9 @@ export const SETTINGS_PANELS: Record<SettingsTab, string> = {
   learning: "settings-panel-learning",
   plugins: "settings-panel-plugins",
   data: "settings-panel-data",
+  integrations: "settings-panel-integrations",
   help: "settings-panel-help",
+  diagnostics: "settings-panel-diagnostics",
   about: "settings-panel-about",
 };
 
@@ -98,6 +110,25 @@ export class SettingsPage {
   avatarFrameBuy(id: string): Locator {
     return this.page.getByTestId(`settings-avatar-frame-buy-${id}`);
   }
+  get playfulModeToggle(): Locator {
+    return this.page.getByTestId("settings-playful-mode-toggle");
+  }
+  /** The "N of M extras on" status line of the Game Mode card (#2959). */
+  get playfulSummary(): Locator {
+    return this.page.getByTestId("settings-playful-summary");
+  }
+  /** The "Game mode details" fold button (#2959); the detail controls
+   *  below (hearts, countdown, arcade, mascot, ...) live inside its body. */
+  get playfulDetailsToggle(): Locator {
+    return this.page.getByTestId("settings-playful-details-toggle");
+  }
+  get playfulDetailsBody(): Locator {
+    return this.page.getByTestId("settings-playful-details-body");
+  }
+  /** The notice shown inside the fold while the master switch is off. */
+  get playfulDetailsOffNotice(): Locator {
+    return this.page.getByTestId("settings-playful-details-off-notice");
+  }
   get playfulSoundsToggle(): Locator {
     return this.page.getByTestId("settings-playful-sounds-toggle");
   }
@@ -145,10 +176,50 @@ export class SettingsPage {
     await this.page.goto(tab ? `/settings?tab=${tab}` : "/settings");
   }
 
+  // Learning-tab section bar (#2961). Ids: ``LEARNING_SECTION_IDS`` in
+  // ``frontend/src/lib/settings/learning-sections.ts``.
+  get learningSubNav(): Locator {
+    return this.page.getByTestId("settings-subnav");
+  }
+  learningSectionChip(section: LearningSection): Locator {
+    return this.page.getByTestId(`settings-subnav-${section}`);
+  }
+  learningCluster(section: LearningSection): Locator {
+    return this.page.getByTestId(`settings-cluster-${section}`);
+  }
+
+  /** Open Settings > Learning through the ``?section=`` deep link and wait
+   *  until the chip is active and the cluster is on screen. */
+  async gotoLearningSection(section: LearningSection): Promise<void> {
+    await this.page.goto(`/settings?tab=learning&section=${section}`);
+    await expect(this.learningSectionChip(section)).toHaveAttribute("aria-current", "location");
+    await expect(this.learningCluster(section)).toBeVisible();
+  }
+
+  /** Click a section chip and wait for the URL + the cluster. */
+  async openLearningSection(section: LearningSection): Promise<void> {
+    await this.learningSectionChip(section).click();
+    await expect(this.learningSectionChip(section)).toHaveAttribute("aria-current", "location");
+    await expect(this.page).toHaveURL(new RegExp(`[?&]section=${section}(&|$)`));
+    await expect(this.learningCluster(section)).toBeVisible();
+  }
+
   /** Click a desktop sidebar tab and wait for its panel. */
   async openTab(tab: SettingsTab): Promise<void> {
     await this.tab(tab).click();
     await expect(this.tab(tab)).toHaveAttribute("aria-current", "page");
     await expect(this.panel(tab)).toBeVisible();
+  }
+
+  /** Unfold "Game mode details" (#2959) when it is collapsed - the fold
+   *  is collapsed by default and remembers its state per viewer, so a
+   *  spec must never assume either state. Idempotent. */
+  async openPlayfulDetails(): Promise<void> {
+    await this.playfulDetailsToggle.scrollIntoViewIfNeeded();
+    if ((await this.playfulDetailsToggle.getAttribute("aria-expanded")) !== "true") {
+      await this.playfulDetailsToggle.click();
+    }
+    await expect(this.playfulDetailsToggle).toHaveAttribute("aria-expanded", "true");
+    await expect(this.playfulDetailsBody).toBeVisible();
   }
 }

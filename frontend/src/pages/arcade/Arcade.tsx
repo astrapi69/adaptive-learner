@@ -127,7 +127,7 @@ export default function Arcade() {
                         )}
                     </p>
                     <Link
-                        to="/settings?tab=learning"
+                        to="/settings?tab=learning&section=motivation"
                         className="text-sm font-medium text-[var(--accent-text)]"
                     >
                         {t("arcade.open_settings", "Open settings")}

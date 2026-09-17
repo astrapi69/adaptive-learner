@@ -54,6 +54,7 @@ vi.mock("../../storage", () => ({
 }));
 
 import LessonPage from "./Lesson";
+import { setSummarySectionEnabled } from "../../lib/learning/summarySectionsPref";
 import type { ContentLessonExercise } from "../../storage/types";
 
 const LESSON = {
@@ -145,6 +146,11 @@ describe("LessonPage: load states", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -164,6 +170,11 @@ describe("LessonPage: load states", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -184,6 +195,11 @@ describe("LessonPage: load states", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -205,6 +221,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
   }
@@ -314,6 +335,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -412,6 +438,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult,
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -494,6 +525,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -531,6 +567,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -540,8 +581,10 @@ describe("LessonPage: ready state rendering", () => {
   });
 
   it("shows exactly one favorite toggle on the summary — no duplicate (#1648)", () => {
-    // A learner id is required for LessonFavoriteToggle to render at all.
+    // A learner id is required for LessonFavoriteToggle to render at all,
+    // and the favorites row is off in the compact default (#3124).
     localStorage.setItem("adaptive-learner.user_id", "user-1");
+    setSummarySectionEnabled("favorite", true);
     _ready(2, { ...PROGRESS, score_correct: 3, score_total: 4 });
     renderAtPath(VALID_PATH);
     expect(screen.getByTestId("lesson-summary")).toBeInTheDocument();
@@ -636,6 +679,8 @@ describe("LessonPage: ready state rendering", () => {
   });
 
   it("summary renders the per-exercise breakdown row for each exercise step", () => {
+    // The answers overview is off in the compact default (#3124).
+    setSummarySectionEnabled("answers", true);
     _ready(2, {
       ...PROGRESS,
       score_correct: 1,
@@ -657,6 +702,7 @@ describe("LessonPage: ready state rendering", () => {
   });
 
   it("breakdown row reveals the canonical answer when an exercise was wrong", () => {
+    setSummarySectionEnabled("answers", true);
     const lessonWithPairs = {
       ...LESSON,
       steps: [
@@ -697,6 +743,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -707,6 +758,7 @@ describe("LessonPage: ready state rendering", () => {
   });
 
   it("breakdown row marks unattempted exercise steps as such", () => {
+    setSummarySectionEnabled("answers", true);
     _ready(2, {
       ...PROGRESS,
       // No step_results entry for ex-1 → unattempted.
@@ -732,6 +784,10 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      autosave: vi.fn(),
       markRestarted,
       refresh: vi.fn(),
     });
@@ -756,6 +812,8 @@ describe("LessonPage: ready state rendering", () => {
   });
 
   it("Next lesson surfaces in the smart card when the set has a successor", async () => {
+    // The smart cards are off in the compact default (#3124).
+    setSummarySectionEnabled("next_steps", true);
     listLessonsMock.mockResolvedValue({
       set_id: "language-fr-a1",
       source: "astrapi69/adaptive-learner-content",
@@ -806,6 +864,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -832,6 +895,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted,
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -861,6 +929,11 @@ describe("LessonPage: ready state rendering", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted,
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -915,6 +988,11 @@ describe("BUG P1: exactly one two-phase button, no internal submit", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn().mockResolvedValue(undefined),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
@@ -1051,6 +1129,11 @@ describe("LessonPage: button icons + 'Lektion pausieren' rename", () => {
       goToStepById: vi.fn(),
       recordStepResult: vi.fn(),
       markCompleted: vi.fn(),
+      markPaused: vi.fn(),
+      markAbandoned: vi.fn(),
+      markResumed: vi.fn(),
+      markRestarted: vi.fn(),
+      autosave: vi.fn(),
       refresh: vi.fn(),
     });
   }

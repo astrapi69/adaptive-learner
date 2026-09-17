@@ -1,10 +1,10 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.14.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.15.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Night shift](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
-[![Tests](https://img.shields.io/badge/tests-10293%20green-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/tests-12729%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
@@ -305,14 +305,14 @@ testing (frontend logic layers, nightly interleaved shards via
 Stryker); its per-shard reports are CI artifacts, not a single rate,
 which is why no mutation-score badge exists (#2257).
 
-Verified 2026-07-24 (v2.6.0):
+Verified 2026-09-05 (v2.14.0):
 
 | Suite | Count |
 |---|---|
-| Backend (pytest) | 1475 |
-| Plugins (13 × pytest) | 1096 |
-| Frontend (Vitest 4) | 7722 |
-| **Total** | **10293** |
+| Backend (pytest) | 1824 |
+| Plugins (14 × pytest) | 1130 |
+| Frontend (Vitest) | 9775 |
+| **Total** | **12729** |
 
 Plus 17 Playwright smoke spec files covering: landing,
 onboarding+assessment, session (3-chunk SSE), curriculum,
@@ -339,54 +339,50 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.14.0** (a security patch on v2.8.0 - white-page CSP #2197, debug default #2198, lesson-validator eval #2205; v2.8.1 was never published); the v2.8.0 headline
-is the **distribution switch**: the desktop launcher now **pulls a
-published, per-architecture verified image from GHCR** instead of
-building on the user's device (building from source stays for
-self-builders), guarded by a **volume-migration stop** that never
-chooses between two data sets silently. The app adds
-**image-description exercises** (`ext:al-image-description`),
-**single-lesson deletion**, and a **set-update guard** that stops
-content updates from silently orphaning learning progress (dialog in
-11 languages). Prior **v2.6.x** rebuilt the **session chat on
-assistant-ui**, made Create-Lesson's book path a real ingestion tool
-(**book-file upload** with chapter multi-select and batch generation),
-completed dictation authoring with an **audio-file upload**, and
-hardened CI. Prior **v2.5.0** turned **Create-Lesson into a full
-exercise authoring tool**: every core exercise type is editable,
-exercises can be added by hand, `multiple_choice` is authorable with
-a single/multi mode control, and an **extension-authoring wizard**
-covers all four AI-authored extension types, with
-**`ext:al-dictation` (audio dictation)** joining as the fifth
-extension type; the PWA update system and the AI key vault became
-**consumed npm packages** (`@astrapi69/pwa-update`,
-`@astrapi69/ai-key-vault`). Prior **v2.4.0** shipped a **Create-Lesson
-authoring upgrade** (a knowledge lesson from pasted textbook text,
-editing and combining your own lessons, and card image upload),
-**free-text multiple accepted answers** with an AI second opinion, an
-**AI key-import** shortcut on the settings AI tab, and the content
-**engine re-pinned to 0.13.0 (schema 1.8)** so uploaded images feed
-picture-choice exercises. Prior **v2.3.0** completed the **EXP-044 CSS concern-split** (`global.css`
-decomposed byte-identically into per-concern legacy files behind a
-byte-identity gate), reworked the **lesson-player UX** (collapsible
-options panel, footer pause control, slimmer title area), added
-**listen-first audio** exercises and an authored-difficulty
-cold-start prior for adaptive lessons, and hardened lesson/set
-**file import/export**. Prior **v2.2.0** added an
-**extension-exercise tier** (four AI-authored exercise types) and a
-native **multiple_choice** type, with the app consuming the lesson
-schema and TypeScript types from **`learn-content-engine`** (additive
-schema 1.5 -> 1.7), a **federated content-repository registry**, and
-a simpler mobile navigation. Recent feature
-work includes the **Content hub** redesign (Discover / My content /
-Import tabs, a global list ⇄ grid view toggle, and a compact
-search/filter bar), the full **lesson-mode system** (Practice / Exam /
-Timed / Reverse / Shuffle / Endless + train-errors), **cloze
-multiselect** "select all that apply", an exam-mode SRS interval
-boost, **passphrase-encrypted `.alk`** export of AI keys, and a
-single-primary-navigation cleanup (one nav per viewport: horizontal
-top bar on desktop, bottom tab bar on mobile). Per-release notes in
-[`changelog/releases/`](changelog/releases/).
+Active development. The current release is **v2.15.0**: **parametric
+exercises** whose values are drawn fresh for every attempt, three new
+exercise types (**Hotspot**, **Parsons**, **Ordering**) authorable in the
+lesson creator, and **explanations** shown after an answer. Unless you have
+customised the summary sections, a lesson now ends with a **compact summary**, with a **Detailed evaluation** for the full
+review, and your place is saved from the first step change. **Settings**
+were reorganised into labelled sections with section bars on the Learning
+and Data tabs, **Refresh** in My content applies every available set update
+at once, holding back those that would affect your
+progress, and a legal notice and privacy policy are available in German and
+English. Full notes:
+[`changelog/releases/v2.15.0.md`](changelog/releases/v2.15.0.md).
+
+Earlier releases, newest first (full details in
+[`changelog/releases/`](changelog/releases/)):
+
+- **v2.14.0** - optional Game Mode (combo streaks, checkpoints, answer physics, hearts/countdown) with XP-unlocked arcade minigames, mascot colour variants and avatar presets/frames, set pages with lesson progress and a set-completion review, three audio/speech extension types adoptable from the creation wizard.
+- **v2.13.0** - in-place exercise-type conversion in the lesson editor, a discoverable "Edit as a copy" action on downloaded content sets, a large UI-consolidation pass (shared Settings/Modal/DashboardCard components, shadcn Button), FastAPI 0.141 + TipTap 3.30 dependency refresh.
+- **v2.12.0** - restart a finished set as a fresh run (a "Durchgang") with the spaced-repetition history carried along, key import from a Topos `.alk` export, Perplexity as a backend AI provider.
+- **v2.11.0** - learning progress anchored to stable identities (one-time local migration), so content corrections no longer orphan review cards; a reworked matching-exercise layout.
+- **v2.10.0** - security release: the app binds to `127.0.0.1` and is reachable only from your own computer instead of on every network interface.
+- **v2.9.0** - the downloaded launcher can be closed again on desktops without a system tray.
+- **v2.8.2** - security patch on v2.8.0: no more white page in image mode, and the bare container no longer defaults to debug mode.
+- **v2.8.0** - distribution switch: the desktop launcher pulls a published, per-architecture verified image from GHCR instead of building on-device, guarded by a volume-migration stop; image-description exercises (`ext:al-image-description`), single-lesson deletion, a set-update guard against silently orphaning learning progress.
+- **v2.6.x** - session chat rebuilt on assistant-ui, Create-Lesson's book path became a real ingestion tool (book-file upload, chapter multi-select, batch generation), dictation authoring completed with audio-file upload.
+- **v2.5.0** - Create-Lesson became a full exercise authoring tool (every core type editable, hand-added exercises, an extension-authoring wizard for all AI-authored extension types plus `ext:al-dictation`); PWA updates and the AI key vault became consumed npm packages (`@astrapi69/pwa-update`, `@astrapi69/ai-key-vault`).
+- **v2.4.0** - Create-Lesson authoring upgrade (knowledge lesson from pasted text, editing/combining lessons, card image upload), free-text multiple accepted answers with an AI second opinion, engine re-pinned to 0.13.0 (schema 1.8) for picture-choice image uploads.
+- **v2.3.0** - EXP-044 CSS concern-split (byte-identity gated), reworked lesson-player UX, listen-first audio exercises, hardened lesson/set import/export.
+- **v2.2.0** - an extension-exercise tier (four AI-authored types), native `multiple_choice`, lesson schema/types consumed from `learn-content-engine`, a federated content-repository registry.
+
+Also shipped: the **Content hub** redesign (Discover / My content /
+Import tabs, list/grid toggle, a compact search/filter bar), the full
+**lesson-mode system** (Practice / Exam / Timed / Reverse / Shuffle /
+Endless + train-errors), **cloze multiselect**, an exam-mode SRS
+interval boost, **passphrase-encrypted `.alk`** key export, and a
+single-primary-navigation cleanup (one nav per viewport).
+
+## Support this project
+
+Adaptive Learner is built and maintained by a single developer. If it
+helps you, donations are welcome and go directly into development
+time - see [`DONATE.md`](DONATE.md) ([`DONATE-de.md`](DONATE-de.md)
+for German) for all channels (GitHub Sponsors, Liberapay, Ko-fi,
+PayPal) and the reasoning behind them.
 
 ## Origin
 

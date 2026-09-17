@@ -353,12 +353,13 @@ binaries by itself - the checklist carries the trigger:
    the tag commit (never rebuild - bit-drift), attach with `.sha256` files
    via `gh release upload`.
 5. COMPLETENESS CHECKPOINT before going visible: the draft's asset list
-   MUST equal the expected set - 3 binaries + 3 `.sha256`, the per-arch
-   image archives + `.sha256` (the install docs describe the registry-free
-   path as AVAILABLE), and the `image-digest.txt` asset. Missing
-   anything: do not publish - a visible release must not point at
-   something absent (the image rule, applied to assets). If archives are
-   deliberately deferred, the docs must say "announced", not available.
+   MUST equal the expected set - 3 binaries + 3 `.sha256` and the
+   `image-digest.txt` asset. Per-arch image archives are NOT in this set
+   (#2938): no workflow builds them, and the install docs now say
+   "planned" - requiring an asset nothing produces would block every
+   release forever. Missing anything from the actual set: do not
+   publish. When a workflow ships archives, add them back here AND
+   flip the install docs to "available" in the same PR.
 6. Only after every station is green AND the checkpoint passed:
    `gh release edit vX.Y.Z --draft=false`. Record the publish run id in
    the checklist item below.

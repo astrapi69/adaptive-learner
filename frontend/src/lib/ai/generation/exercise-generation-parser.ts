@@ -51,6 +51,10 @@ export interface McOption {
 
 interface BaseCard {
   question: string;
+  /** #2992 - optional post-answer Markdown explanation (schema 1.13), trimmed
+   *  and capped at {@link EXPLANATION_MAX_CHARS}. Absent when the model gave
+   *  none or gave a non-string. */
+  explanation?: string;
 }
 
 export interface MatchingCard extends BaseCard {
@@ -113,6 +117,8 @@ export interface ExerciseGenerationParseResult {
 }
 
 const MIN_MATCHING_PAIRS = 3;
+/** The schema's hard cap on ``Exercise.explanation`` (engine schema 1.13). */
+export const EXPLANATION_MAX_CHARS = 2000;
 const MIN_CHOICE_OPTIONS = 3;
 const MIN_MC_OPTIONS = 2;
 
@@ -211,6 +217,18 @@ function validateMultipleChoice(
   return { type: "multiple_choice", question, options, multiple };
 }
 
+/** #2992 - attach the optional ``explanation``: a non-empty string is kept
+ *  (trimmed, cut at the schema cap); anything else is dropped silently and
+ *  the card survives without it. Never a reason to reject a card. */
+function withExplanation<T extends GeneratedCard>(
+  card: T,
+  raw: unknown,
+): T {
+  const text = cleanString(raw);
+  if (text === null) return card;
+  return { ...card, explanation: text.slice(0, EXPLANATION_MAX_CHARS).trimEnd() };
+}
+
 /** Validate one raw card object into a {@link GeneratedCard} or an error
  *  string explaining why it was dropped. */
 function validateCard(raw: unknown): GeneratedCard | string {
@@ -222,7 +240,18 @@ function validateCard(raw: unknown): GeneratedCard | string {
   if (!type) return "card has no type";
   const question = cleanString(bag.question);
   if (!question) return `${type}: missing question`;
+  const shaped = validateShape(bag, type, question);
+  if (typeof shaped === "string") return shaped;
+  return withExplanation(shaped, bag.explanation);
+}
 
+/** The per-type structural validation of a card whose type + question are
+ *  already known to be present. */
+function validateShape(
+  bag: Record<string, unknown>,
+  type: string,
+  question: string,
+): GeneratedCard | string {
   // #2355 — text extension types (``ext:al-*``) are shaped into ``ext_payload``
   // here; the quality gate validates the payload via the shipped *PayloadErrors.
   if (isTextExtensionType(type)) {

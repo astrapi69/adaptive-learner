@@ -6,18 +6,33 @@
  *   - Entdecken     → the {@link Discover} page (find + download sets) — DEFAULT
  *   - Meine Inhalte → the {@link Content} page (downloaded sets + repos)
  *   - Importieren   → the {@link Import} page (chat import list)
+ *   - Erstellen     → the {@link CreateLesson} wizard (#3006)
  *
  * As with {@link ProgressHub} / the former DiscoverHub, the page components are
  * embedded unchanged and only the active tab is mounted (lazy), so the active
  * child owns the page's ``<main id="main">``. The active tab lives in the URL
- * (``?tab=discover|my|import``), so ``/discover`` redirects to
+ * (``?tab=discover|my|import|create``), so ``/discover`` redirects to
  * ``/content?tab=discover`` and ``/import`` to ``/content?tab=import`` while the
  * deep-link route ``/content/import/:conversationId`` (ImportDetail) stays
- * separate. The default tab is **Entdecken** so a first-time user is guided to
+ * separate. ``/create-lesson`` redirects the same way (#3006), while its own
+ * deep link ``/create-lesson/edit/:source/:setId`` stays separate too. The default tab is **Entdecken** so a first-time user is guided to
  * find content instead of landing on an empty "My content" page.
  *
- * Reuses existing, fully-translated i18n keys (no new keys): the tab labels are
- * ``discover.tab.discover`` / ``nav.content`` / ``discover.tab.import``.
+ * The first three tab labels reuse existing, fully-translated keys
+ * (``discover.tab.discover`` / ``nav.content`` / ``discover.tab.import``); only
+ * ``content.tab.create`` is new (#3006), translated in all eleven catalogues.
+ *
+ * #3006 — the Erstellen tab REVISES the #1253 decision that put "Neue Lektion
+ * erstellen" under Importieren as "import/creation-related". Getting something
+ * that exists and making something new are different intents; nobody looks for
+ * creating under importing. Do not fold it back without revisiting #3006.
+ *
+ * #3012 — the bar itself is the shared {@link TabBar}: one behaviour for the
+ * three hubs instead of three accidental ones, compact on phones. That is what
+ * makes a FOURTH tab affordable here: at the old 32px padding / 14px type four
+ * tabs needed 451.7px and fit on no phone at all; compact they need 337.1px and
+ * fit from 375px up. At 320px they still wrap, which is the bar's defined
+ * fallback rather than an accident.
  *
  * The tab ORDER is user-configurable (#1378, Settings → General). The FIRST
  * configured tab is the initial active tab when ``/content`` is opened with no
@@ -27,6 +42,7 @@
 import { Suspense, lazy } from "react";
 import { useSearchParams } from "react-router";
 
+import TabBar from "../../shared/layout/TabBar";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { useContentTabOrder } from "../../hooks/content/useContentTabOrder";
 import type { ContentTabId } from "../../lib/content/contentTabOrderPref";
@@ -34,10 +50,11 @@ import type { ContentTabId } from "../../lib/content/contentTabOrderPref";
 const Discover = lazy(() => import("./Discover"));
 const Content = lazy(() => import("./Content"));
 const Import = lazy(() => import("./Import"));
+const CreateLesson = lazy(() => import("../lesson/CreateLesson"));
 
 type TabId = ContentTabId;
 
-const KNOWN_TABS: readonly TabId[] = ["discover", "my", "import"];
+const KNOWN_TABS: readonly TabId[] = ["discover", "my", "import", "create"];
 
 /** The explicit ``?tab`` value when it names a known tab; else null. */
 function tabFromParam(raw: string | null): TabId | null {
@@ -56,6 +73,11 @@ export default function ContentHub() {
     discover: t("discover.tab.discover", "Discover"),
     my: t("nav.content", "My content"),
     import: t("discover.tab.import", "Import"),
+    // Deliberately short. The four compact tabs measure 337.1px together and
+    // fit from 375px up (#3012); the long button wording ("Neue Lektion
+    // erstellen") is several times this label's width and would wrap them
+    // again on every phone.
+    create: t("content.tab.create", "Create"),
   };
   const tabs = order.map((id) => ({ id, label: labels[id] }));
 
@@ -70,38 +92,21 @@ export default function ContentHub() {
 
   return (
     <div data-testid="content-hub">
-      <div
-        role="tablist"
-        aria-label={t("nav.tab.content", "Content")}
-        data-testid="content-hub-tabs"
-        className="flex flex-wrap gap-1 border-b border-border px-4 pt-3"
-      >
-        {tabs.map((tab) => {
-          const isActive = tab.id === active;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => selectTab(tab.id)}
-              data-testid={`content-tab-${tab.id}`}
-              className={`min-h-[44px] rounded-t-app px-4 text-sm font-medium ${
-                isActive
-                  ? "border-b-2 border-accent text-accent"
-                  : "text-fg-muted hover:text-fg-primary"
-              }`}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      <TabBar
+        tabs={tabs}
+        active={active}
+        onSelect={selectTab}
+        ariaLabel={t("nav.tab.content", "Content")}
+        testId="content-hub-tabs"
+        tabTestIdPrefix="content-tab-"
+        className="px-4 pt-3"
+      />
 
       <Suspense fallback={null}>
         {active === "discover" && <Discover />}
         {active === "my" && <Content />}
         {active === "import" && <Import />}
+        {active === "create" && <CreateLesson />}
       </Suspense>
     </div>
   );

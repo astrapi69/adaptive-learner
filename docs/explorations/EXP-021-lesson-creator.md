@@ -80,7 +80,16 @@ Analyse-Input) und den Share-Wizard aus Phase 64C.
 
 - **Content-Browser:** prominenter Button "Neue Lektion erstellen".
 - **Meine-Lektionen-Bereich:** "+"-Button.
-- **Dashboard:** Schnellaktion, wenn der Nutzer noch keine Lektion hat.
+- **Dashboard:** Schnellaktion, dauerhaft sichtbar (#3008).
+
+Die Dashboard-Zeile stand ursprünglich unter der Bedingung "wenn der
+Nutzer noch keine Lektion hat". Umgesetzt ist sie ohne Bedingung, und das
+bleibt so: "hat eigene Lektionen" ist heute nur über
+``contentLoader.listSets()`` zu beantworten, also über einen zusätzlichen
+Ladepfad auf dem Dashboard. Der Knopf wäre dann erst nach dem Laden
+entscheidbar und würde ausgerechnet der Zielgruppe nachträglich
+eingeblendet. Das Flackern wiegt schwerer als ein Knopf weniger in der
+Schnellaktionsleiste.
 
 ## Wiederverwendung statt Neubau
 
@@ -107,6 +116,14 @@ aufrufen.
 - **Folge-Ausbau:** manueller Übungs-Editor (einzelne Übungen von Hand
   konfigurieren), CSV-Datei-Upload (vs. Einfügen), Token-Rollen-UI,
   Bild-Upload für Picture Choice.
+
+Stand 2026-09-09 (#3071): vom Folge-Ausbau sind drei Punkte
+ausgeliefert - der Übungs-Editor (`ExerciseEditor.tsx`, #1844), der
+CSV-Datei-Upload (`CardEditor.tsx`, Dateieingabe für `.csv/.tsv/.txt`)
+und der Bild-Upload (`fields/CardImageField.tsx`, dazu
+`DictationAudioField.tsx` für Audio). Offen ist allein die
+Token-Rollen-UI (#3072). Die Liste oben beschreibt den Plan von damals
+und wird als solcher stehen gelassen; dieser Absatz ist der Ist-Stand.
 
 ## Schema
 

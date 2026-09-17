@@ -25,7 +25,7 @@ function setup(cards: LessonCardDraft[] = []) {
         onClearAll: vi.fn(),
         onImport: vi.fn(),
     };
-    render(<CardEditor cards={cards} {...handlers} />);
+    render(<CardEditor cards={cards} {...handlers} frontLanguage="de" />);
     return handlers;
 }
 

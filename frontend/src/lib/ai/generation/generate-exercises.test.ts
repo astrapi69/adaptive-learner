@@ -56,6 +56,18 @@ describe("generateExercises", () => {
     expect(m.lastOpts()?.maxTokens).toBeGreaterThan(0);
   });
 
+  it("raises the reply cap and forwards the opt-in when explanations are requested (#2992)", async () => {
+    const plain = mockProvider(GOOD_REPLY);
+    await generateExercises(STEPS, plain.provider);
+    const withExplanations = mockProvider(GOOD_REPLY);
+    await generateExercises(STEPS, withExplanations.provider, { explanations: true });
+    expect(plain.lastPrompt()).not.toMatch(/EXPLANATIONS/);
+    expect(withExplanations.lastPrompt()).toMatch(/EXPLANATIONS/);
+    expect(withExplanations.lastOpts()?.maxTokens ?? 0).toBeGreaterThan(
+      plain.lastOpts()?.maxTokens ?? 0,
+    );
+  });
+
   it("short-circuits with an error when there are no theory steps", async () => {
     const m = mockProvider(GOOD_REPLY);
     const result = await generateExercises([], m.provider);

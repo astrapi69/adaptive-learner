@@ -341,6 +341,10 @@ export interface IContentLoaderNamespace {
   /** EXP-033 / AIV-04 — persist a report so it can be re-shown without a
    *  new API call. Dexie writes IndexedDB; API mode is a no-op. */
   saveAiValidationCache(record: AiValidationCacheRecord): Promise<void>;
+  /** AIV-07 (#3060) - forget a cached report after the set's cards changed
+   *  (the cache is keyed by ``cached_version``, which a user set never
+   *  bumps). Dexie deletes the row; API mode is a no-op (no cache there). */
+  deleteAiValidationCache(source: string, setId: string): Promise<void>;
 }
 
 /** A cached set-wide AI content-check report (EXP-033 / AIV-04). */

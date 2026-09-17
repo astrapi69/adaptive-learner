@@ -269,6 +269,30 @@ export default function Landing() {
                 </a>
             </p>
 
+            {/* #3113 - legal notice + privacy policy reachable from the public
+                entry page (the docs site carries the texts for every locale). */}
+            <p className="landing-secondary" data-testid="landing-legal">
+                <a
+                    href={docsUrlForSlug("legal/imprint", lang)}
+                    data-testid="landing-imprint-link"
+                    className="landing-secondary-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    {t("landing.imprint_link", "Legal notice")}
+                </a>
+                {" \u00b7 "}
+                <a
+                    href={docsUrlForSlug("legal/privacy", lang)}
+                    data-testid="landing-privacy-link"
+                    className="landing-secondary-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    {t("landing.privacy_link", "Privacy policy")}
+                </a>
+            </p>
+
             {showPortHint && (
                 <p
                     className="mt-3 mx-auto max-w-lg text-center text-sm leading-relaxed text-fg-muted"

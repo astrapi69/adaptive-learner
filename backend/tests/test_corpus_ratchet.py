@@ -21,6 +21,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.repo_mirror import mirror_repo
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = REPO_ROOT / "scripts" / "verify_rule_corpus_size.py"
 BASELINE = Path(".claude/rules/.corpus-baseline.json")
@@ -28,15 +30,9 @@ BASELINE = Path(".claude/rules/.corpus-baseline.json")
 
 @pytest.fixture
 def tree(tmp_path: Path) -> Path:
-    """A writable copy of the measured surface plus the scripts."""
-    for name in (".claude", "scripts", "CLAUDE.md"):
-        source = REPO_ROOT / name
-        target = tmp_path / name
-        if source.is_dir():
-            shutil.copytree(source, target, symlinks=True)
-        else:
-            shutil.copy2(source, target)
-    return tmp_path
+    """A writable copy of the measured surface plus the scripts (#3036:
+    ``.claude/rules`` only, never the agent worktrees beside it)."""
+    return mirror_repo(tmp_path, mutable=("scripts", "CLAUDE.md")).root
 
 
 def _run(root: Path, *extra: str) -> subprocess.CompletedProcess[str]:

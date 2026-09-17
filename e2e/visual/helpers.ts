@@ -53,6 +53,19 @@ export type ViewName = (typeof VIEW_NAMES)[number];
 /** A bundled set guaranteed present in the GH-Pages build. */
 const SET_ID = "fr-a1-from-en";
 
+/** Frozen card table for the seeded own lesson (#3011). Synthetic and
+ *  stable, mirroring the fixture shape of ``combine-lessons.spec.ts`` so
+ *  the "My Lessons" motif never depends on real content. */
+const OWN_LESSON_CARDS = [
+    {front: "Bonjour", back: "Guten Tag"},
+    {front: "Merci", back: "Danke"},
+    {front: "Oui", back: "Ja"},
+    {front: "Non", back: "Nein"},
+] as const;
+
+/** Title of the seeded own lesson (#3011). */
+export const OWN_LESSON_TITLE = "Mein erstes Vokabelset";
+
 /** Frozen wall-clock for every visual run (follows #244). Relative times
  *  ("vor 3 Minuten", streak dates, "Morgen neue Missionen") would otherwise
  *  drift day-to-day and make the screenshots flaky. */
@@ -284,28 +297,88 @@ export async function pinContentRegistry(page: Page): Promise<void> {
 }
 
 /**
+ * The page height a capture has to cover, in CSS pixels.
+ *
+ * ``document.documentElement.scrollHeight`` is NOT that height on this
+ * app. The shell locks the viewport elements (``html,body{overflow:hidden}``)
+ * and scrolls INSIDE ``#root`` (``overflow-y:auto`` — the single-scroll
+ * contract pinned by ``frontend/src/styles/single-scroll-container.test.ts``).
+ * A scroll container keeps its own overflow to itself, so it never reaches
+ * an ancestor's ``scrollHeight``: for a page that scrolls, the document
+ * reports roughly the viewport height and nothing more (#3016).
+ *
+ * Measured on settings-general (light theme, seeded learner): document
+ * 1080 / 1435 / 1913 px versus ``#root`` 2497 / 3088 / 3774 px at
+ * desktop / tablet / mobile. The baselines covered 43-51 % of the page
+ * and stayed green, because actual and reference were cut at the same
+ * line — the #2696 class one layer deeper: that fix replaced
+ * ``fullPage`` for the DOCUMENT scroll, this one measures the NESTED
+ * container the app actually scrolls.
+ *
+ * So the oracle is the maximum of the document and the app scroller's
+ * content bottom. A missing ``#root`` is a broken assumption, not an
+ * empty page: fail loud rather than silently measure the viewport and
+ * report a truncated capture as complete.
+ */
+export async function contentHeightToCover(
+    page: Page,
+    {requireRoot = true}: {requireRoot?: boolean} = {},
+): Promise<number> {
+    return page.evaluate((requireRoot) => {
+        const root = document.getElementById("root");
+        if (!root) {
+            if (requireRoot) {
+                throw new Error(
+                    "contentHeightToCover: #root is missing — the app shell's " +
+                        "scroll container is the height oracle (#3016)",
+                );
+            }
+            // A surface outside the app shell (the static /start/ landing
+            // page) scrolls the document itself; there is no nested
+            // scroller to read. Opt-in only, via SettleOptions.noAppShell.
+            return Math.ceil(document.documentElement.scrollHeight);
+        }
+        return Math.ceil(
+            Math.max(
+                document.documentElement.scrollHeight,
+                root.scrollHeight + root.offsetTop,
+            ),
+        );
+    }, requireRoot);
+}
+
+/**
  * Wait until the page layout stops growing — the fullPage screenshot height
  * is stable across consecutive samples (#1696).
  *
  * Content surfaces (content-browser, content-discover, set-detail) render
  * lists that load asynchronously (bundled content from Dexie, the registry);
  * a fullPage shot fired mid-load captures a different page height run-to-run
- * (observed ~700px swings on set-detail). Poll ``documentElement.scrollHeight``
+ * (observed ~700px swings on set-detail). Poll {@link contentHeightToCover}
+ * (the app scroller, NOT ``documentElement`` — #3016)
  * until it repeats ``stableSamples`` times in a row, or give up after
  * ``maxWaitMs`` (bounded so a perpetually-animating surface can never hang —
  * animations are already disabled by ``settleForScreenshot``).
  */
 export async function waitForStableLayout(
     page: Page,
-    {stableSamples = 3, intervalMs = 120, maxWaitMs = 4_000} = {},
+    {
+        stableSamples = 3,
+        intervalMs = 120,
+        maxWaitMs = 4_000,
+        requireRoot = true,
+    }: {
+        stableSamples?: number;
+        intervalMs?: number;
+        maxWaitMs?: number;
+        requireRoot?: boolean;
+    } = {},
 ): Promise<void> {
     const deadline = Date.now() + maxWaitMs;
     let last = -1;
     let stable = 0;
     while (Date.now() < deadline) {
-        const height = await page.evaluate(
-            () => document.documentElement.scrollHeight,
-        );
+        const height = await contentHeightToCover(page, {requireRoot});
         if (height === last) {
             stable += 1;
             if (stable >= stableSamples) return;
@@ -322,7 +395,23 @@ export async function waitForStableLayout(
  * any animation/transition durations, and allow one reflow after the
  * font-swap (the gap between fallback and loaded font is a flake source).
  */
-export async function settleForScreenshot(page: Page): Promise<void> {
+/** Options for {@link settleForScreenshot}. */
+export interface SettleOptions {
+    /** The surface DELIBERATELY baselines a persistent toast (#3081: the
+     *  held-back-update call to action). Skips the transient-toast wait
+     *  instead of racing it; every other surface keeps the #2721 cap. */
+    allowPersistentToast?: boolean;
+    /** The surface is a static page OUTSIDE the app shell (the ``/start/``
+     *  landing page), so there is no ``#root`` scroller: the height oracle
+     *  reads the document instead of failing loud. Every app surface keeps
+     *  the #3016 contract. */
+    noAppShell?: boolean;
+}
+
+export async function settleForScreenshot(
+    page: Page,
+    options: SettleOptions = {},
+): Promise<void> {
     await page.addStyleTag({
         content:
             "*, *::before, *::after { animation-duration: 0s !important;" +
@@ -349,7 +438,7 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     // (async bundled-content / registry renders change the page height
     // run-to-run). Wait for the layout height to settle first. Bounded, so a
     // never-settling surface can't hang; animations are already killed above.
-    await waitForStableLayout(page);
+    await waitForStableLayout(page, {requireRoot: !options.noAppShell});
     // #2721 — wait out TRANSIENT toasts before the shot. The lesson
     // motivation toast (useLessonMotivation, autoClose: 3000) fires on
     // entering the LAST step; ``playBundledLesson`` walks through that step
@@ -373,6 +462,7 @@ export async function settleForScreenshot(page: Page): Promise<void> {
     // run its own lifetime; a genuinely persistent toast still trips
     // the timeout below.
     await page.mouse.move(0, 0);
+    if (options.allowPersistentToast) return;
     try {
         await page.waitForFunction(
             () => document.querySelectorAll(".Toastify__toast").length === 0,
@@ -395,6 +485,28 @@ export async function settleForScreenshot(page: Page): Promise<void> {
  */
 const MAX_EXPANDED_VIEWPORT_HEIGHT = 16_000;
 
+/** Growth rounds before the expansion gives up and fails loud (#3016).
+ *  Each round reflows ``dvh``-sized chrome, which can uncover more content;
+ *  every real surface converges in two. */
+const EXPANSION_ROUNDS = 6;
+
+/**
+ * Residue a viewport-tracking surface may leave outside the frame (#3016).
+ *
+ * On the lesson routes the page measures exactly ``viewport + 61px`` at
+ * EVERY frame size (measured in CI across the three theme viewports:
+ * 1438/1499, 1586/1647, 1687/1748 — the same 61 each time). The shell
+ * sizes ``#root`` off ``100dvh``, so growing the frame grows the surface
+ * with it and the residue never closes. The expansion stops at the frame
+ * it has reached: everything reachable is inside it, and one more round
+ * would only stretch the layout further from what a user sees.
+ *
+ * The cap keeps that from becoming a licence to truncate: a residue this
+ * size is viewport-sized chrome, one several times larger would be real
+ * content no capture can reach, and that fails loud instead.
+ */
+const MAX_VIEWPORT_TRACKING_RESIDUE = 200;
+
 /**
  * Grow the viewport to the full document height so a plain (non-fullPage)
  * screenshot captures the whole page — the replacement for ``fullPage: true``
@@ -409,32 +521,76 @@ const MAX_EXPANDED_VIEWPORT_HEIGHT = 16_000;
  * the same place. With the viewport grown to the document height everything
  * is genuinely in-viewport, so Chromium rasters every tile.
  *
+ * #3016 — the height comes from {@link contentHeightToCover}, NOT from
+ * ``documentElement`` alone: the page scrolls inside ``#root``, whose
+ * overflow the document never reports, so the original oracle read the
+ * viewport height back on most surfaces and the expansion was a no-op
+ * exactly where it was needed. Measured before the fix: settings-general
+ * captured 43-51 % of its page at the three viewports, and the comparison
+ * stayed green because reference and actual were cut at the same line.
+ *
  * Runs to a fixpoint: growing the viewport reflows ``dvh``-sized elements,
- * which can change the document height again. No-op for pages that already
- * fit (the majority — only 3 surfaces exceed their viewport today).
+ * which can uncover more content. No-op for pages that genuinely fit.
+ * Returns the covered content height so the caller can record WHAT was
+ * measured (gate-contract point 4) instead of only that it passed.
  * Call AFTER ``settleForScreenshot`` so the measured height is stable.
  */
-export async function expandViewportToDocument(page: Page): Promise<void> {
+export async function expandViewportToDocument(page: Page): Promise<number> {
     const viewport = page.viewportSize();
-    if (!viewport) return;
+    if (!viewport) return 0;
     let height = viewport.height;
-    for (let i = 0; i < 4; i++) {
-        const docHeight = await page.evaluate(() =>
-            Math.ceil(document.documentElement.scrollHeight),
-        );
-        if (docHeight > MAX_EXPANDED_VIEWPORT_HEIGHT) {
+    let contentHeight = height;
+    let previousResidue = -1;
+    for (let i = 0; i < EXPANSION_ROUNDS; i++) {
+        contentHeight = await contentHeightToCover(page);
+        if (contentHeight > MAX_EXPANDED_VIEWPORT_HEIGHT) {
             throw new Error(
-                `expandViewportToDocument: document is ${docHeight}px tall, ` +
+                `expandViewportToDocument: the surface is ${contentHeight}px tall, ` +
                     `over the ${MAX_EXPANDED_VIEWPORT_HEIGHT}px raster-safety cap — ` +
                     "shrink the surface fixture instead of capturing a degraded shot",
             );
         }
-        if (docHeight <= height) return;
-        height = docHeight;
+        if (contentHeight <= height) return contentHeight;
+        const residue = contentHeight - height;
+        // #3016 — a residue that does not move when the frame grows means
+        // the surface is sized off the viewport (``#root`` is ``100dvh``):
+        // the target travels with every round, so no frame size can ever
+        // close it. Stop here — the frame already covers everything that
+        // is reachable, and one more round would only stretch the layout
+        // further from what a user sees, for zero additional coverage.
+        if (Math.abs(residue - previousResidue) <= 2) {
+            if (residue > MAX_VIEWPORT_TRACKING_RESIDUE) {
+                throw new Error(
+                    `expandViewportToDocument: the surface tracks the viewport and ` +
+                        `still leaves ${residue}px outside the frame, over the ` +
+                        `${MAX_VIEWPORT_TRACKING_RESIDUE}px chrome allowance (#3016). ` +
+                        "That is content no capture at any frame size can reach — " +
+                        "fix the surface or its fixture, do not raise the allowance.",
+                );
+            }
+            return height;
+        }
+        previousResidue = residue;
+        height = contentHeight;
         await page.setViewportSize({width: viewport.width, height});
         await page.waitForTimeout(150);
         await waitForStableLayout(page);
     }
+    // #3016 — fail CLOSED. Falling out of the loop means the surface kept
+    // growing; capturing here would silently cut it off, which is exactly
+    // the condition that stayed green for months. "I could not cover it" is
+    // never "there is nothing below".
+    contentHeight = await contentHeightToCover(page);
+    if (contentHeight > height) {
+        throw new Error(
+            `expandViewportToDocument: the surface still measures ${contentHeight}px ` +
+                `inside a ${height}px viewport after ${EXPANSION_ROUNDS} growth ` +
+                "rounds — the capture would cut it off (#3016). Either the layout " +
+                "keeps reflowing with the viewport, or a late async render is " +
+                "still landing; do not lower the round count to make it pass.",
+        );
+    }
+    return contentHeight;
 }
 
 /** Seed a learner (onboarding quick-start + assessment) -> lands on /dashboard.
@@ -488,7 +644,7 @@ export async function openFirstBundledLesson(page: Page): Promise<void> {
     });
 }
 
-async function playBundledLesson(
+export async function playBundledLesson(
     page: Page,
     stopAt: "summary" | "matching-result",
 ): Promise<boolean> {
@@ -870,10 +1026,16 @@ export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
             await seedLearner(page);
             // A played lesson populates XP / progress / missions.
             await playBundledLesson(page, "summary");
-            await page.goto("/dashboard");
-            await expect(page.getByTestId("dashboard")).toBeVisible({
-                timeout: 20_000,
-            });
+            // #3016 — the SAME ready contract the critical-surfaces
+            // dashboard uses, down to the SRS quiescence wait. Waiting
+            // only for the page shell let the async cards land after the
+            // shot; harmless while the frame was viewport-sized, a
+            // per-run height flip (1449 vs 1580) once the frame follows
+            // the content. Two motifs of one surface with two different
+            // ready contracts is how one of them stays flaky.
+            await waitForSrsQuiescence(page, {expectRows: true});
+            await gotoDashboardInApp(page);
+            await settleDashboard(page, {populated: true});
             return true;
         case "learning-path":
             await seedLearner(page);
@@ -933,9 +1095,11 @@ export type ViewportName = keyof typeof VIEWPORTS;
 export const SURFACE_NAMES = [
     "dashboard-empty",
     "dashboard-populated",
+    "dashboard-badges",
     "content-browser",
     "content-discover",
     "content-import",
+    "content-my-lessons",
     "create-lesson",
     "set-detail",
     "lesson-theory",
@@ -948,6 +1112,8 @@ export const SURFACE_NAMES = [
     "settings-data",
     "settings-about",
     "settings-ai",
+    "settings-learning",
+    "settings-plugins",
     "shortcut-help",
 ] as const;
 
@@ -1032,6 +1198,7 @@ async function gotoLessonMatching(page: Page): Promise<boolean> {
     return reached;
 }
 
+
 /**
  * #1540 — the exercise flow persists SRS rows fire-and-forget
  * (``void onComplete(scored)`` -> ``elementErrors.recordBulk``), so a
@@ -1098,6 +1265,142 @@ async function waitForSrsQuiescence(
 }
 
 /**
+ * Pin the offline-lesson cache to EMPTY for the settings-data motif
+ * (#3016).
+ *
+ * The "Offline-Cache" line counts what the service worker has stored in
+ * ``adaptive-learner-lessons``. In CI the sets arrive over the network
+ * while the page is open, so the count differs from run to run, and at
+ * the narrow viewports its text wraps to one more line: a 24 px height
+ * difference between the run that RENDERED the baseline and the run that
+ * compares against it (8286 vs 8262 on mobile). Waiting for the value to
+ * settle fixes it within a run and cannot make two runs agree - this is
+ * the live-data class of #1653, and the remedy there is the same: pin the
+ * source to a synthetic fixture instead of photographing whatever the
+ * network happened to deliver.
+ *
+ * Only ``keys()`` on that ONE cache is replaced, so the empty state is
+ * deterministic; every other cache and every other method still reaches
+ * the real Cache Storage.
+ */
+async function pinLessonCacheEmpty(page: Page): Promise<void> {
+    await page.addInitScript((cacheName: string) => {
+        if (typeof caches === "undefined") return;
+        const openOriginal = caches.open.bind(caches);
+        caches.open = async (name: string): Promise<Cache> => {
+            const cache = await openOriginal(name);
+            if (name !== cacheName) return cache;
+            return new Proxy(cache, {
+                get(target, prop, receiver) {
+                    if (prop === "keys") return async () => [];
+                    const value = Reflect.get(target, prop, receiver);
+                    return typeof value === "function"
+                        ? value.bind(target)
+                        : value;
+                },
+            });
+        };
+    }, "adaptive-learner-lessons");
+}
+
+/**
+ * Pin the user-badge store to EMPTY for the settings-data motif (#3035).
+ *
+ * "Deine Sicherung enthält" counts real backup rows per table
+ * (``getDexieBackupStats``: ``toArray()`` on every store, filtered to the
+ * user). Whether the seeded learner already holds the ``first_assessment``
+ * badge when that count runs is a race between the gamification write
+ * fired by the assessment and the Settings navigation - so the "Plaketten"
+ * line and the "Datensätze gesamt" total flipped between runs (35 vs 34, a
+ * 24 px page height) and the file came back as churn on unrelated PRs
+ * (#3034). Third data source in this one motif after the live
+ * recommended-repos list (#1653) and the offline-lesson cache (#3016), same
+ * remedy: pin the source instead of photographing what the run happened to
+ * produce.
+ *
+ * Only reads on the ``userBadges`` object store are pinned: each read goes
+ * to the REAL IndexedDB with a key range no row can match, so the store
+ * answers "no rows" through its own machinery - no fake request objects,
+ * and every other store, index and write is untouched. The block therefore
+ * renders the deterministic state "no badge row, total without badges".
+ */
+async function pinUserBadgesEmpty(page: Page): Promise<void> {
+    await page.addInitScript((storeName: string) => {
+        if (typeof IDBObjectStore === "undefined") return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const proto = IDBObjectStore.prototype as any;
+        const noRow = () => IDBKeyRange.only("__visual-pin-empty__");
+        for (const method of ["getAll", "getAllKeys", "count", "openCursor", "openKeyCursor"]) {
+            const original = proto[method];
+            proto[method] = function (this: IDBObjectStore, ...args: unknown[]) {
+                if (this.name !== storeName) return original.apply(this, args);
+                return original.call(this, noRow(), ...args.slice(1));
+            };
+        }
+    }, "userBadges");
+}
+
+/**
+ * Wait until a testid's text stops changing (#3016).
+ *
+ * For values a surface keeps refining while it is open - the offline
+ * cache line counts what the service worker has stored so far - there is
+ * no "done" signal to wait for; the page simply settles. Two agreeing
+ * reads a poll apart are that settling, the same shape as
+ * {@link waitForStableLayout}, and the bound keeps a never-settling value
+ * from hanging the run.
+ */
+async function waitForStableText(
+    page: Page,
+    testId: string,
+    {intervalMs = 400, maxWaitMs = 15_000} = {},
+): Promise<void> {
+    const locator = page.getByTestId(testId);
+    await expect(locator).toBeVisible({timeout: 20_000});
+    const deadline = Date.now() + maxWaitMs;
+    let previous: string | null = null;
+    while (Date.now() < deadline) {
+        const current = ((await locator.textContent()) ?? "").trim();
+        if (current && current !== "…" && current === previous) return;
+        previous = current;
+        await page.waitForTimeout(intervalMs);
+    }
+}
+
+/**
+ * Open the dashboard by CLIENT-SIDE navigation from wherever the seed
+ * left the browser (#3016).
+ *
+ * Not ``page.goto``: a full navigation fires ``beforeunload`` on the
+ * lesson route, and its handler writes a "paused" lesson-progress row
+ * (``useLessonFlowControl``, Phase 63B). That write races the dashboard's
+ * own read of those rows, and the "Weiterlernen" card it feeds is exactly
+ * the 131 px by which the dashboard measured 1449 or 1580 px - per run,
+ * per theme, in both directions. No wait can order the two: the write is
+ * started by the very navigation the read follows.
+ *
+ * A route change inside the app removes the listener through the effect
+ * cleanup instead of firing it, so no row is written and the card is
+ * deterministically absent. The brand link in the nav points at
+ * /dashboard in every nav state, the lesson-compact one included.
+ */
+async function gotoDashboardInApp(page: Page): Promise<void> {
+    await page.locator("a.nav-brand").first().click();
+    await page.waitForURL("**/dashboard", {timeout: 20_000});
+}
+
+/** Every loading placeholder the dashboard publishes (#3016). A card
+ *  still in its loading state means the page has not reached its final
+ *  height, and the capture would freeze a transient layout. */
+const DASHBOARD_LOADING_TESTIDS = [
+    "dashboard-loading",
+    "progress-loading",
+    "focus-areas-card-loading",
+    "review-queue-card-loading",
+    "statistics-loading",
+] as const;
+
+/**
  * #1540 data anchors for the dashboard: the ``dashboard`` testid renders
  * while the Übersicht tab is still a lazy Suspense hole and its cards are
  * still fetching, so a shot raced whatever sections had landed. Wait until
@@ -1129,9 +1432,17 @@ async function settleDashboard(
     await expect(page.getByTestId("ai-invite-card")).toBeVisible({
         timeout: 20_000,
     });
-    await expect(page.getByTestId("review-queue-card-loading")).toHaveCount(0, {
-        timeout: 20_000,
-    });
+    // #3016 — EVERY async card must have landed, not just the review
+    // queue. With the frame at a fixed height a late card only changed
+    // what sat below the fold; now it changes the IMAGE height, and the
+    // dashboard flipped between two heights per run (1449/1580 at 1440
+    // wide, 1864/2016 at 375). Waiting on the loading placeholders is the
+    // ready signal the surface already publishes - no heuristic sleep.
+    for (const loadingId of DASHBOARD_LOADING_TESTIDS) {
+        await expect(page.getByTestId(loadingId)).toHaveCount(0, {
+            timeout: 20_000,
+        });
+    }
     if (opts.populated) {
         // waitForSrsQuiescence guaranteed error rows before we navigated
         // here, so the due-review card is a deterministic fixture.
@@ -1178,6 +1489,135 @@ async function gotoReviewSession(page: Page): Promise<boolean> {
 }
 
 /**
+ * Move every SRS error row of the current learner ``days`` into the past
+ * (#3123). The badge in the header counts OVERDUE elements only, and a
+ * fresh wrong answer is due tomorrow (``intervalDaysForStreak(0)`` = 1
+ * day), so a playthrough alone never shows the badge. Rewriting
+ * ``last_attempt_at`` on the rows the playthrough wrote is the smallest
+ * honest seed: the rows, ids and set are the app's own, only the clock
+ * on them moves. Computed inside the page so a frozen clock
+ * (``freezeClock``) stays consistent.
+ */
+export async function backdateElementErrors(
+    page: Page,
+    days: number,
+): Promise<number> {
+    return page.evaluate(
+        ({days}) =>
+            new Promise<number>((resolve, reject) => {
+                const open = indexedDB.open("adaptive-learner");
+                open.onerror = () => reject(open.error);
+                open.onsuccess = () => {
+                    const db = open.result;
+                    const userId = localStorage.getItem("adaptive-learner.user_id");
+                    const pastIso = new Date(
+                        Date.now() - days * 86_400_000,
+                    ).toISOString();
+                    const tx = db.transaction("elementErrors", "readwrite");
+                    const store = tx.objectStore("elementErrors");
+                    const req = store.getAll();
+                    let moved = 0;
+                    req.onsuccess = () => {
+                        for (const row of req.result as Array<Record<string, unknown>>) {
+                            if (row.user_id !== userId) continue;
+                            row.last_attempt_at = pastIso;
+                            if (row.last_error_at) row.last_error_at = pastIso;
+                            store.put(row);
+                            moved += 1;
+                        }
+                    };
+                    tx.oncomplete = () => {
+                        db.close();
+                        resolve(moved);
+                    };
+                    tx.onerror = () => {
+                        db.close();
+                        reject(tx.error);
+                    };
+                };
+            }),
+        {days},
+    );
+}
+
+/**
+ * Seed a learner whose header carries the due-reviews badge and XP
+ * (#3123): the wrong-pair matching playthrough writes error rows, those
+ * rows are backdated so they count as overdue, and the dashboard is
+ * opened by in-app navigation (the route change re-reads the queue).
+ * Shared by the ``dashboard-badges`` motif and the phone-header fit spec
+ * (``e2e/dexie/nav-header-fit.spec.ts``); returns false when the
+ * playthrough could not reach the matching result.
+ */
+export async function gotoDashboardWithDueReviews(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    if (!(await playBundledLesson(page, "matching-result"))) return false;
+    await waitForSrsQuiescence(page, {expectRows: true});
+    const moved = await backdateElementErrors(page, 3);
+    if (moved === 0) return false;
+    await gotoDashboardInApp(page);
+    await settleDashboard(page, {populated: false});
+    await expect(page.getByTestId("nav-reviews-badge")).toBeVisible({
+        timeout: 20_000,
+    });
+    await expect(page.getByTestId("nav-xp-badge")).toBeVisible();
+    return true;
+}
+
+/**
+ * Build ONE own lesson through the Create-Lesson wizard, then leave the
+ * browser on the Content hub (#3011).
+ *
+ * The "My Lessons" section only renders when at least one user-generated
+ * set exists (``ImportActionsPanel`` filters on ``userSets.length > 0``),
+ * and no motif seeded one — so the section and everything in it sat
+ * outside the whole screenshot set: a change there produced a green
+ * comparison by construction, exactly the #2477/#2486 class.
+ *
+ * Deterministic by construction: a fixed title and a fixed four-card
+ * table (the same synthetic fixture shape ``combine-lessons.spec.ts``
+ * uses), with the clock frozen and randomness pinned by the caller.
+ *
+ * The hand-off back to the hub uses the wizard's OWN "to browser" button
+ * rather than a hard ``goto``: a fresh navigation renders the global
+ * empty state before the IndexedDB sets have loaded, so the section
+ * would be missing at exactly the moment the shot is taken.
+ */
+/** Create an own four-card lesson through the wizard and land on the
+ *  content browser (#3011). Exported for the per-feature capture script
+ *  (#3060). */
+export async function createOwnLesson(page: Page, title: string): Promise<void> {
+    await page.goto("/create-lesson");
+    await expect(page.getByTestId("create-lesson-step-1")).toBeVisible({
+        timeout: 20_000,
+    });
+    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
+        await page.getByTestId("create-lesson-draft-fresh").click();
+    }
+    await page.getByTestId("create-lesson-title").fill(title);
+    await page.getByTestId("create-lesson-next").click();
+    for (const card of OWN_LESSON_CARDS) {
+        await page.getByTestId("card-front-input").fill(card.front);
+        await page.getByTestId("card-back-input").fill(card.back);
+        await page.getByTestId("card-add-button").click();
+    }
+    await page.getByTestId("create-lesson-next").click();
+    await expect(page.getByTestId("create-lesson-step-3")).toBeVisible({
+        timeout: 15_000,
+    });
+    await page.getByTestId("exercise-generate").click();
+    await page.getByTestId("create-lesson-next").click();
+    await expect(page.getByTestId("create-lesson-step-4")).toBeVisible({
+        timeout: 15_000,
+    });
+    await page.getByTestId("create-lesson-save-local").click();
+    await expect(page.getByTestId("create-lesson-saved")).toBeVisible({
+        timeout: 20_000,
+    });
+    await page.getByTestId("create-lesson-to-browser").click();
+}
+
+/**
  * Bring ``surface`` into its screenshot state in the DEFAULT theme. The
  * caller has already set the viewport + frozen the clock. Returns true
  * when ready, false when the surface can't be reached deterministically
@@ -1197,9 +1637,11 @@ export async function gotoSurface(
             await seedLearner(page);
             await playBundledLesson(page, "summary");
             await waitForSrsQuiescence(page, {expectRows: true});
-            await page.goto("/dashboard");
+            await gotoDashboardInApp(page);
             await settleDashboard(page, {populated: true});
             return true;
+        case "dashboard-badges":
+            return gotoDashboardWithDueReviews(page);
         case "content-browser":
             await seedLearner(page);
             await page.goto("/content?tab=my");
@@ -1222,6 +1664,22 @@ export async function gotoSurface(
             await seedLearner(page);
             await page.goto("/content?tab=import");
             await expect(page.getByTestId("page-import")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "content-my-lessons":
+            // #3011 — the Import tab WITH an own lesson present. The
+            // existing ``content-import`` motif seeds none, so the whole
+            // section (six row actions, the combine selection, the fork
+            // badge and, since #3010, the create button) was in no motif:
+            // any change to it, however wrong, still compared green.
+            // Randomness is pinned before the first navigation because
+            // the generated exercises derive their ids from it.
+            await pinRandomness(page);
+            await seedLearner(page);
+            await createOwnLesson(page, OWN_LESSON_TITLE);
+            await page.getByTestId("content-tab-import").click();
+            await expect(page.getByTestId("content-my-lessons")).toBeVisible({
                 timeout: 20_000,
             });
             return true;
@@ -1288,10 +1746,25 @@ export async function gotoSurface(
             return true;
         case "settings-data":
             await seedLearner(page);
+            // #3016 — pin the offline-cache count before the settings
+            // navigation; see pinLessonCacheEmpty for why the live value
+            // cannot be photographed reproducibly.
+            await pinLessonCacheEmpty(page);
+            // #3035 — pin the badge row count of "Deine Sicherung enthält"
+            // the same way; see pinUserBadgesEmpty for the race behind it.
+            await pinUserBadgesEmpty(page);
             await page.goto("/settings?tab=data");
             await expect(page.getByTestId("settings")).toBeVisible({
                 timeout: 20_000,
             });
+            // #3016 — the offline-cache line renders a bare "…" until
+            // getCacheInfo resolves, and then reports what the service
+            // worker has cached SO FAR. In CI the sets are fetched over
+            // the network while the page is already open, so the number
+            // keeps moving and its text wraps to a second line at 768px:
+            // a 24px page-height flip (7028 vs 7052) that survived the
+            // plain "no longer …" wait. Sample until two reads agree.
+            await waitForStableText(page, "cache-summary");
             return true;
         case "settings-about":
             await seedLearner(page);
@@ -1308,6 +1781,27 @@ export async function gotoSurface(
             // stayed invisible to a dispatched 0-diff verify run.
             await seedLearner(page);
             await page.goto("/settings?tab=ai");
+            await expect(page.getByTestId("settings")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "settings-learning":
+            // #2953 - the Learning tab had no motif, so every Learning-tab
+            // PR could only ship under the visual-baselines-unaffected
+            // escape label (the #2486 class: a 0-diff verify run proves
+            // nothing about a surface that is not in the matrix).
+            await seedLearner(page);
+            await page.goto("/settings?tab=learning");
+            await expect(page.getByTestId("settings")).toBeVisible({
+                timeout: 20_000,
+            });
+            return true;
+        case "settings-plugins":
+            // #3055 - the Plugins tab had no motif (the #2486 class). In the
+            // Dexie build the installed-plugins card renders its desktop-only
+            // notice above the Learning-Repository card.
+            await seedLearner(page);
+            await page.goto("/settings?tab=plugins");
             await expect(page.getByTestId("settings")).toBeVisible({
                 timeout: 20_000,
             });
@@ -1358,6 +1852,17 @@ export async function assertSurfaceStillReady(
             await expect(page.getByTestId("review-subtitle")).toBeVisible({
                 timeout: 2_000,
             });
+            return;
+        case "content-my-lessons":
+            // #3011 — the whole point of this motif is the section; an
+            // empty set list (a lost seed, a collapsed reload) must fail
+            // loud instead of baselining the Import tab without it.
+            await expect(page.getByTestId("content-my-lessons")).toBeVisible({
+                timeout: 2_000,
+            });
+            await expect(page.getByTestId("content-my-lessons-list")).toBeVisible(
+                {timeout: 2_000},
+            );
             return;
         default:
             return;

@@ -1,20 +1,18 @@
 /**
  * Tests for the game-mode tension preferences (#2878): hearts and the
- * per-exercise countdown, both default OFF, with clamped counts and
- * combined gates that require the game mode itself.
+ * per-exercise countdown, both default OFF, with clamped counts. The
+ * game-mode gate lives with the consumers (``usePlayfulTension`` +
+ * ``usePlayfulMode``), not here (#2964).
  */
 
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
-import {setPlayfulMode} from "./playfulModePref";
 import {
     DEFAULT_HEARTS_COUNT,
     DEFAULT_COUNTDOWN_SECONDS,
     PLAYFUL_TENSION_CHANGE_EVENT,
     clampHeartsCount,
     clampCountdownSeconds,
-    playfulCountdownActive,
-    playfulHeartsActive,
     readPlayfulCountdown,
     readPlayfulCountdownSeconds,
     readPlayfulHearts,
@@ -74,18 +72,5 @@ describe("playfulTensionPref", () => {
         setPlayfulCountdownSeconds(1);
         expect(readPlayfulHeartsCount()).toBe(5);
         expect(readPlayfulCountdownSeconds()).toBe(5);
-    });
-
-    it("the gates need BOTH game mode and their own switch", () => {
-        setPlayfulHearts(true);
-        setPlayfulCountdown(true);
-        expect(playfulHeartsActive()).toBe(false);
-        expect(playfulCountdownActive()).toBe(false);
-        setPlayfulMode(true);
-        expect(playfulHeartsActive()).toBe(true);
-        expect(playfulCountdownActive()).toBe(true);
-        setPlayfulHearts(false);
-        expect(playfulHeartsActive()).toBe(false);
-        expect(playfulCountdownActive()).toBe(true);
     });
 });

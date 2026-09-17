@@ -39,6 +39,8 @@ export const WORD_TILES_MIN_TILES = 2;
 export const PICTURE_MIN_IMAGES = 2;
 /** Minimum answer options a multiple-choice exercise needs (#1850). */
 export const MC_MIN_OPTIONS = 2;
+/** Hard cap on the post-answer ``explanation`` (engine schema 1.13, #2992). */
+export const EXPLANATION_MAX_CHARS = 2000;
 
 /**
  * Machine code identifying which rule an exercise draft failed. App-neutral
@@ -48,6 +50,7 @@ export const MC_MIN_OPTIONS = 2;
  */
 export type ExerciseEditCode =
     | "prompt"
+    | "explanation"
     | "matching"
     | "cloze"
     | "word_tiles"
@@ -76,6 +79,30 @@ export function countClozeMarkers(sentence: string | null | undefined): number {
 
 function nonEmpty(values: string[] | null | undefined): string[] {
     return (values ?? []).map((v) => v.trim()).filter((v) => v.length > 0);
+}
+
+/** True when the draft's ``explanation`` (trimmed) exceeds the schema cap
+ *  (#2992). An absent or blank explanation is always fine - the field is
+ *  optional on every exercise type. */
+export function explanationTooLong(ex: ContentLessonExercise): boolean {
+    return (ex.explanation ?? "").trim().length > EXPLANATION_MAX_CHARS;
+}
+
+/**
+ * Normalize the optional ``explanation`` (#2992): trim it, and DROP the key
+ * when nothing is left, so a lesson whose author never touched the field
+ * serializes exactly as before (no ``explanation: ""`` noise in the JSON).
+ * Shared by the core and the extension normalizers.
+ */
+export function normalizeExplanation(
+    ex: ContentLessonExercise,
+): ContentLessonExercise {
+    const text = (ex.explanation ?? "").trim();
+    if (text.length > 0) return {...ex, explanation: text};
+    if (!("explanation" in ex)) return ex;
+    const stripped = {...ex};
+    delete stripped.explanation;
+    return stripped;
 }
 
 function validateMatching(ex: ContentLessonExercise): ExerciseEditIssue {
@@ -141,6 +168,7 @@ export function validateExerciseEdit(
     ex: ContentLessonExercise,
 ): ExerciseEditIssue {
     if (ex.prompt.trim().length < 1) return fail("prompt");
+    if (explanationTooLong(ex)) return fail("explanation");
     switch (ex.type) {
         case "matching":
             return validateMatching(ex);
@@ -163,12 +191,19 @@ export function validateExerciseEdit(
 
 /**
  * Normalize a validated exercise draft before it is committed: trim the
- * prompt, trim + drop empty type-specific entries, and sync a cloze
- * exercise's ``blanks`` to its ``___`` marker count. ``id``, ``type``,
- * ``card_ids``, ``distractors`` and every other field pass through
- * untouched.
+ * prompt, trim + drop empty type-specific entries, sync a cloze
+ * exercise's ``blanks`` to its ``___`` marker count, and trim / drop the
+ * optional ``explanation`` (#2992). ``id``, ``type``, ``card_ids``,
+ * ``distractors`` and every other field pass through untouched.
  */
 export function normalizeExerciseEdit(
+    ex: ContentLessonExercise,
+): ContentLessonExercise {
+    return normalizeExplanation(normalizeTypeFields(ex));
+}
+
+/** The per-type half of {@link normalizeExerciseEdit}. */
+function normalizeTypeFields(
     ex: ContentLessonExercise,
 ): ContentLessonExercise {
     const prompt = ex.prompt.trim();

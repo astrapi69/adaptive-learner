@@ -1,10 +1,11 @@
 /**
  * PausedLessonsRetentionControl (Phase 63F / EXP-020).
  *
- * Settings > Learning control that lets the learner choose how
- * long paused lessons are kept before being auto-abandoned.
- * Stored client-side in localStorage (same pattern as
- * DirectionStrategyControl / MissionSettingsControl).
+ * Settings > Data control (slot 5a, right before the orphaned-data
+ * cleanup, #2955) that lets the learner choose how long paused
+ * lessons are kept before being auto-abandoned. Stored client-side
+ * in localStorage (same pattern as DirectionStrategyControl /
+ * MissionSettingsControl).
  */
 
 import {useState} from "react";

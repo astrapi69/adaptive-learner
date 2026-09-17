@@ -134,7 +134,7 @@ the matching layer above) and reference it — never inline a value.
 ## Enforcement
 
 `frontend/src/styles/no-hardcoded-colors.test.ts` (in `make test`) has
-three guards:
+three guards, and `legacy-alias-ratchet.test.ts` beside it a fourth:
 
 1. **`.tsx` color literals** — none, except a shrinking `ALLOWLIST`
    ratchet (chart colors, camera surfaces, user-tag seed colors,
@@ -147,6 +147,15 @@ three guards:
    palette.
 3. **Fixed-palette Tailwind classes** — `bg-blue-500` and friends must
    be zero.
+4. **Legacy alias references** (#3051) — `var(--surface)`, `var(--border)`,
+   `var(--danger)` and the other aliases of the legacy block in
+   `styles/legacy/00-head.css` are `var()`-bound, so guard 1 passes them;
+   this ratchet counts them per alias in consumer `.ts`/`.tsx` under
+   `components`, `pages` and `shared` (tests excluded) and pins each count
+   EXACTLY, in both directions: a new reference fails naming the alias and
+   the delta, a migration lowers the pin in the same PR. The alias names
+   are read from the legacy block and the scope size is asserted, so a
+   missing block or an empty scan fails instead of passing empty.
 
 Companions: `themes.test.ts` (token parity) and `contrast.test.ts`
 (WCAG AA across all 12 themes).
@@ -171,7 +180,7 @@ contexts before an npm install). It bundles four checks:
   on their `-bg` surfaces) stay legible across all variants.
 
 `make verify-theme` runs this gate (`--enforce`) **and then calls** the
-three Vitest guards above (no duplication of the literal scan). The
+four Vitest guards above (no duplication of the literal scan). The
 Python gate carries a **baseline ratchet** (`.theme-baseline.json`):
 only NEW violations vs the baseline fail `--enforce`, and the baseline
 only shrinks. The current state is clean (0 known violations), so the

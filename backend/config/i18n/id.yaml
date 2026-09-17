@@ -223,6 +223,8 @@ landing:
   choose_language: Pilih bahasa Anda
   start_button: Mulai perjalanan belajar Anda
   docs_link: Baca dokumentasi
+  imprint_link: "Informasi hukum"
+  privacy_link: "Kebijakan privasi"
   checking_session: Selamat datang kembali…
   recovered_toast: Selamat datang kembali! Data belajar Anda masih ada di sini.
   intro: Adaptive Learner menemukan metode yang paling cocok untuk Anda dari enam pendekatan belajar berbasis riset, dan memandu Anda melalui siklus tujuh langkah di setiap sesi.
@@ -539,8 +541,8 @@ settings:
     installed: "Aplikasi terpasang."
   section_review: "Ulasan"
   section_srs: "Pengulangan berjarak"
-  explanations_enabled: "Tampilkan penjelasan kesalahan"
-  explanations_enabled_desc: "Setelah pelajaran, tampilkan kiat aturan singkat untuk setiap kesalahan."
+  explanations_enabled: "Tampilkan penjelasan"
+  explanations_enabled_desc: "Setelah menjawab, tampilkan penjelasan latihan; setelah pelajaran, kiat aturan singkat untuk setiap kesalahan."
   section_hints: "Petunjuk"
   section_lesson_summary: "Ringkasan setelah pelajaran"
   summary_sections_desc: "Pilih bagian mana yang ditampilkan ringkasan di akhir pelajaran dan dalam urutan apa. Tindakan untuk melanjutkan selalu terlihat."
@@ -679,7 +681,23 @@ settings:
   nav_aria: "Navigasi pengaturan"
   tab_ai: "AI"
   tab_learning: "Pembelajaran"
+  learning_nav_aria: "Bagian pembelajaran"
+  data_nav_aria: "Bagian data"
   tab_plugins: "Plugin"
+  plugins_installed_title: "Plugin terpasang"
+  plugins_installed_desc: "Setiap plugin yang dimuat aplikasi desktop, dengan versi, sumber, dan waktu aktivasi (siklus hidup PluginForge)."
+  plugins_col_name: "Plugin"
+  plugins_col_version: "Versi"
+  plugins_col_source: "Sumber"
+  plugins_col_activated: "Diaktifkan"
+  plugins_source_entry_point: "Paket"
+  plugins_source_direct: "Didaftarkan langsung"
+  plugins_marker_load_error: "Kesalahan pemuatan"
+  plugins_marker_filtered: "Difilter"
+  plugins_marker_config_changed: "Konfigurasi berubah"
+  plugins_empty: "Tidak ada plugin yang dimuat."
+  plugins_loading: "Membaca plugin…"
+  plugins_error_load: "Status plugin tidak dapat dibaca"
   tab_data: "Data"
   tab_help: "Bantuan"
   tab_diagnostics: "Diagnostik & Dukungan"
@@ -687,6 +705,30 @@ settings:
   tabs_aria: "Bagian pengaturan"
   section_feedback: "Umpan balik"
   section_interaction: "Interaksi"
+  cluster_basics: "Dasar"
+  cluster_basics_desc: "Siapa yang belajar, dan dalam bahasa apa."
+  cluster_lessons: "Selama pelajaran"
+  cluster_lessons_desc: "Cara latihan berperilaku saat Anda menjawab."
+  cluster_voice: "Baca nyaring dan dikte"
+  cluster_voice_desc: "Suara, kecepatan, mikrofon, dan latihan pelafalan."
+  cluster_review: "Setelah pelajaran"
+  cluster_review_desc: "Sesi ulasan, ringkasan pelajaran, dan mengulang kesalahan."
+  cluster_motivation: "Motivasi dan rutinitas"
+  cluster_motivation_desc: "Mode permainan, umpan balik, misi harian, dan pengingat."
+  cluster_data_sources: "Sumber"
+  cluster_data_sources_desc: "Repositori konten dan entrimu di direktori."
+  cluster_data_sync: "Sinkronisasi"
+  cluster_data_sync_desc: "Pasangkan perangkat dan selaraskan data."
+  cluster_data_offline: "Konten offline"
+  cluster_data_offline_desc: "Cache pelajaran dan ukuran pelajaran tersimpan."
+  cluster_data_backup: "Cadangan dan ekspor"
+  cluster_data_backup_desc: "Cadangan, identitas, kunci, dan ekspor."
+  cluster_data_cleanup: "Pembersihan"
+  cluster_data_cleanup_desc: "Retensi pelajaran yang dijeda dan data yatim."
+  cluster_data_danger: "Zona bahaya"
+  cluster_data_danger_desc: "Tidak dapat dibatalkan: hapus semuanya."
+  sounds_volume_shared_hint: "Berlaku juga untuk suara mode permainan."
+  feedback_intensity_playful_hint: "Mode permainan aktif, jadi umpan balik selalu terperinci terlepas dari pengaturan ini."
   missions_title: "Misi Harian"
   missions_enabled: "Misi harian"
   missions_enabled_hint: "Tampilkan beberapa sasaran yang dapat dicapai di Beranda setiap hari. Opsional - aplikasi tetap berfungsi tanpanya."
@@ -743,6 +785,13 @@ settings:
   playful_mode: "Pelajaran yang menyenangkan"
   playful_mode_description: "Mengubah pelajaran menjadi permainan: pujian di setiap jawaban benar, konfeti, dan perayaan pencapaian. Berfungsi dengan semua mode pelajaran; penilaian dan kemajuan tetap sama. Jika sistem Anda mengurangi animasi, umpan balik tetap sederhana."
   playful_sounds: "Suara mode permainan"
+  playful_details: "Detail mode permainan"
+  playful_details_hint: "Hati, hitung mundur, arcade, ronde spesial, tiket, pelajaran bonus, XP runtun, dan maskot."
+  playful_details_off_notice: "Aktifkan \"Pelajaran yang menyenangkan\" untuk mengubah opsi ini."
+  playful_cluster_tension: "Ketegangan"
+  playful_cluster_arcade: "Arcade dan hadiah"
+  playful_cluster_xp: "XP dan maskot"
+  playful_summary: "{on} dari {total} ekstra aktif"
   playful_sounds_description: "Suara singkat di mode permainan: nada pada setiap jawaban benar (nada naik per runtunan), jingle di titik pemeriksaan, dan fanfar saat selesai. Terpisah dari sakelar suara global; volume mengikuti penggeser."
   playful_sounds_offer: "Main dengan suara?"
   playful_sounds_offer_yes: "Ya, suara aktif"
@@ -1094,6 +1143,8 @@ about:
   tutorial_label: "Tutorial aplikasi"
   tutorial_link: "Buka tutorial langsung"
   issues_label: Isu
+  imprint_label: "Informasi hukum"
+  privacy_label: "Kebijakan privasi"
 backup:
   section_title: Cadangan
   section_help: Ekspor semua yang ada di akun Anda sebagai file JSON. Kunci API TIDAK disertakan; Anda perlu memasukkannya kembali setelah pemulihan.
@@ -2230,6 +2281,10 @@ lesson:
     direction:
       receptive_hint: Kenali maknanya
       productive_hint: Hasilkan jawabannya
+  explanation:
+    title: "Penjelasan"
+    show: "Mengapa?"
+    hide: "Sembunyikan penjelasan"
   summary:
     heading: "Selesai"
     aria_label: "Ringkasan pelajaran"
@@ -2245,6 +2300,10 @@ lesson:
     breakdown_heading: "Rincian latihan"
     breakdown_correct_answer: "Jawaban yang benar: {answer}"
     breakdown_unattempted: "Tidak dicoba"
+    detailed_hide: "Evaluasi ringkas"
+    detailed_hint: "Menampilkan angka utama, kesalahan per jenis latihan, titik lemah, semua jawaban, dan semua penjelasan kesalahan pada putaran ini"
+    detailed_show: "Evaluasi terperinci"
+    review_subtitle: "Semua kesalahan pada pelajaran ini sekilas"
     view_all_answers: "Lihat semua jawaban ({n})"
     export:
       copy: "Salin hasil"
@@ -2418,6 +2477,7 @@ content:
     bonus_locked_tooltip: "Selesaikan setiap pelajaran reguler set ini dengan minimal satu bintang untuk membuka pelajaran bonus ini."
     progress_done: "{done} dari {total} pelajaran selesai"
     current_lesson: "Lanjutkan di sini"
+    lesson_completed: "Selesai"
   repo_export:
     button: "Bagikan sebagai repositori"
     title: "Bagikan sebagai repositori"
@@ -2455,6 +2515,8 @@ content:
     imported_analysis: "Analisis yang diimpor"
     lesson_fallback: "Pelajaran"
     lesson_part: "{label} · Bagian {n}"
+    dismiss: "Sembunyikan dari Lanjutkan Belajar"
+    dismissed: "Disembunyikan dari Lanjutkan Belajar. Akan muncul lagi begitu kamu belajar lagi."
   import_chat:
     button: "Impor Obrolan"
   search:
@@ -2689,20 +2751,27 @@ content:
     ready: "Siap"
     update_available: "Pembaruan tersedia"
     downloading: "Mengunduh…"
+  tab:
+    create: "Buat"
   action:
     refresh: "Segarkan"
     refreshing: "Menyegarkan…"
+    refresh_hint: "Muat ulang daftar dan terapkan semua pembaruan yang tersedia"
     download: "Unduh"
     update: "Perbarui"
     installed: "Terpasang"
     open: "Buka"
   toast:
     downloaded: "Set diunduh dan siap digunakan."
+    updated_all: "{n} set diperbarui."
+    updates_held_named: "Ditahan karena akan memengaruhi kemajuanmu: {titles}. Konfirmasi setiap pembaruan dengan tombol Perbarui pada set."
+    all_up_to_date: "Semua set sudah mutakhir."
   warning:
     no_lessons_in_set: "Set ini belum memiliki pelajaran."
   error:
     list_failed: "Tidak dapat memuat set konten."
     download_failed: "Tidak dapat mengunduh set."
+    update_all_failed: "{n} pembaruan gagal."
     open_failed: "Tidak dapat membuka pelajaran."
   tree:
     i_speak: Saya berbicara
@@ -2783,6 +2852,19 @@ content:
     checked_with: "Diperiksa dengan"
     date: "Tanggal"
     recheck: "Periksa ulang"
+    fix:
+      button: "Terapkan saran"
+      own_only: "Hanya untuk pelajaranmu sendiri."
+      title: "Terapkan saran"
+      intro: "Periksa setiap baris: hanya baris yang dicentang yang ditulis. Lewati saran yang menjelaskan alih-alih memberi nilai."
+      current: "Saat ini"
+      manual_count: "{count} temuan tidak membawa nilai yang bisa diterapkan dan tetap manual."
+      confirm: "Terapkan {fields} bidang di {cards} kartu"
+      applied: "{fields} bidang diterapkan. Laporan sudah usang, periksa ulang set ini."
+      undo: "Batalkan penerapan terakhir"
+      undone: "Penerapan dibatalkan."
+      failed: "Saran tidak dapat diterapkan"
+      none_applicable: "Tidak ada saran yang bisa diterapkan dalam laporan ini."
     export:
       button: "Ekspor laporan sebagai Markdown"
       lesson: "Pelajaran"
@@ -3001,6 +3083,8 @@ create_lesson:
       group_unavailable: "Tidak dapat dibuat dari teks"
       unavailable_reason: "Gambar dan audio tidak dapat dibuat dari teks. Kamu dapat menambahkan tipe ini nanti di editor."
       floor_hint: "Setidaknya satu jenis latihan harus tetap dipilih."
+    explanations_label: "Buat penjelasan (ditampilkan setelah jawaban)"
+    explanations_hint: "Menambahkan aturan, terjemahan kata per kata, dan contoh tambahan ke setiap latihan. Sekitar sepertiga hingga setengah lebih banyak keluaran AI per latihan."
     generate_to_advance: "Buat pelajaran dari teks Anda untuk melanjutkan."
     review_theory: "{n} langkah teori"
     review_exercises: "{n} latihan"
@@ -3091,6 +3175,29 @@ create_lesson:
       unsupported_type: "Hanya gambar JPEG, PNG, atau WebP yang didukung."
       too_large: "Gambar itu terlalu besar. Coba yang lebih kecil."
       decode_failed: "Gambar itu tidak dapat dibaca. Coba berkas lain."
+    token_roles:
+      label: "Peran kata (opsional)"
+      hint: "Tandai kata tertentu di sisi depan dengan peran gramatikalnya. Latihan isian lalu memilih rumpang yang bermakna, bukan yang berdasarkan posisi."
+      add: "Tambah peran"
+      remove: "Hapus peran"
+      token_placeholder: "Kata dari sisi depan"
+      role_label: "Peran"
+      suggest: "Sarankan peran"
+      suggest_none: "Tidak ada kata yang dikenali. Isi peran secara manual."
+      suggest_hint: "Saran hanyalah dugaan. Periksa setiap baris sebelum menyimpan."
+      count: "{n} dari {max} peran"
+      error:
+        not_in_front: "\"{token}\" tidak muncul persis seperti itu di sisi depan. Tulis sama seperti di sana."
+        duplicate: "\"{token}\" sudah ditandai."
+        max_reached: "Satu kartu tidak dapat memuat lebih dari {max} peran."
+      role:
+        article: "Kata sandang"
+        verb: "Verba"
+        noun: "Nomina"
+        adjective: "Adjektiva"
+        preposition: "Preposisi"
+        gender_marker: "Penanda gender"
+        tense_marker: "Penanda kala"
     add: "Tambah kartu"
     import_csv: "Impor CSV"
     csv_hint: "Tempel baris sebagai depan, belakang, catatan (dipisahkan koma atau tab). Contoh: Bonjour, Guten Tag, Sapaan formal"
@@ -3111,6 +3218,10 @@ create_lesson:
     start_fresh: "Mulai dari awal"
     continue: "Lanjutkan"
   exercises:
+    summary:
+      pairs: "{n} pasangan"
+      images: "{n} gambar"
+      options: "{n} pilihan jawaban"
     heading: "Buat latihan"
     count_label: "Jumlah latihan"
     types_label: "Jenis latihan"
@@ -3186,6 +3297,12 @@ create_lesson:
       err_cloze: "Setiap penanda ___ memerlukan satu rumpang, dan setiap rumpang memerlukan jawaban."
       err_word_tiles: "Tambahkan minimal 2 ubin."
       err_picture_choice: "Tambahkan minimal 2 gambar, masing-masing dengan label dan gambar, dan tandai tepat satu sebagai benar."
+      err_explanation: "Penjelasan terlalu panjang (maksimal 2000 karakter)."
+      explanation_label: "Penjelasan setelah jawaban (opsional, Markdown)"
+      explanation_hint: "Ditampilkan setelah menjawab: aturan, kata per kata, contoh tambahan, kesalahan umum."
+      explanation_counter: "{n} / {max} karakter"
+      explanation_template: "Sisipkan templat"
+      explanation_template_body: "**Aturan:** \n\n**Kata per kata:**\n- *kata* - arti harfiah (catatan tata bahasa)\n\n**Contoh tambahan:**\n- *kalimat* - terjemahan\n\n**Kesalahan umum:** "
     dir:
       auto: "Otomatis"
       receptive: "Reseptif"
@@ -3219,6 +3336,7 @@ create_lesson:
       err_reading_comprehension: "Tambahkan sebuah teks dan minimal satu pertanyaan lengkap (pilihan ganda dengan satu opsi benar, atau teks bebas dengan satu jawaban yang diterima)."
       err_graded_quiz: "Tambahkan minimal satu pertanyaan lengkap dengan poin positif (pilihan ganda dengan satu opsi benar, atau teks bebas dengan satu jawaban yang diterima)."
       err_dictation: "Tambahkan jalur file audio dan setidaknya satu transkripsi yang diterima."
+      err_explanation: "Penjelasan terlalu panjang (maksimal 2000 karakter)."
       dict_audio_label: "Audio"
       dict_audio_placeholder: "assets/audio/clip.mp3"
       dict_audio_hint: "Jalur relatif ke klip audio di dalam folder assets set."
@@ -3296,6 +3414,9 @@ create_lesson:
       parsons_language_label: "Bahasa (opsional, untuk penyorotan sintaks)"
       hotspot_image_label: "Gambar stimulus"
       hotspot_image_preview_alt: "Gambar stimulus"
+      hotspot_draw_label: "Gambar zona pada gambar"
+      hotspot_canvas_alt: "Seret untuk menggambar zona"
+      hotspot_canvas_aria: "Seret pada gambar untuk menggambar zona"
       hotspot_zones_label: "Zona yang dapat diklik"
       hotspot_shape_rect: "Persegi panjang"
       hotspot_shape_circle: "Lingkaran"
@@ -4164,3 +4285,7 @@ set_summary:
   lesson_errors: "{count} kesalahan"
   practice_errors: "Latih kesalahan"
   back_to_set: "Kembali ke set"
+  element_type:
+    vocabulary: "Kosakata"
+    grammar_rule: "Aturan tata bahasa"
+    unknown: "Tidak diketahui"

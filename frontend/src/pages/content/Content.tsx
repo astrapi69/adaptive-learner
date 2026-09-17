@@ -99,7 +99,7 @@ export default function ContentPage() {
     sources,
     loading,
     refreshing,
-    handleRefresh,
+    handleRefresh: reloadSets,
     bookRecs,
     media,
     bookCompanions,
@@ -195,7 +195,16 @@ export default function ContentPage() {
     updateGuard,
     confirmUpdate,
     dismissUpdateGuard,
+    updatingAll,
+    handleUpdateAll,
   } = useContentSetActions({ navigate, setSets, setPerSetState });
+
+  // #3001 — the header "Aktualisieren" reloads the list AND applies every
+  // update it finds; the per-row button stays for held (breaking) ones.
+  const handleRefresh = async () => {
+    const fresh = await reloadSets();
+    if (fresh) await handleUpdateAll(fresh);
+  };
 
   // #1351 — multi-select state for the bulk-action bar.
   const selection = useSetSelection();
@@ -266,8 +275,8 @@ export default function ContentPage() {
       <ContentPageHeader
         headerInfo={headerInfo}
         sources={sources}
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
+        refreshing={refreshing || updatingAll}
+        onRefresh={() => void handleRefresh()}
       />
 
       {/* EXP-025 / AUTH-02 — book-companion headers for connected repos

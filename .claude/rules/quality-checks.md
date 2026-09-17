@@ -435,12 +435,12 @@ addition defensible, the sum unmeasured.
 ## CI cadence: PR gates vs the night shift (#575)
 
 PRs run correctness gates only - the checks whose failure must block a merge.
-Everything informational, warn-only, or driven by external state runs on the
-night shift (schedule + `workflow_dispatch`).
+Informational, warn-only or externally driven checks run on the night shift
+(schedule and dispatch).
 
 | Every PR (correctness gates) | Night shift (schedule + dispatch) |
 |---|---|
-| `ci.yml`: backend / plugin / frontend tests, ruff + mypy, pre-commit, docs-drift verifier | Security scan (pip-audit / npm audit / bandit), weekly + `push: release/**` |
+| `ci.yml`: backend / plugin / frontend tests, ruff + mypy, pre-commit, docs-drift verifier, dead-code ratchet (#3047) | Security scan (pip-audit / npm audit / bandit), weekly + `push: release/**` |
 | `complexity-check.yml` (baseline ratchet, hard fail) | Coverage (`coverage.yml`) - a report, not a gate |
 | `cohesion-check.yml`, `visual-baseline-gate.yml`, `testid-reference-gate.yml` | Content-stats drift, complexity report, dexie-smoke (#552), mutation testing |
 | `docker-build-smoke.yml` (path-filtered, #1990) | WebKit gate (#1843, `ENABLE_NIGHTLY_WEBKIT`) |

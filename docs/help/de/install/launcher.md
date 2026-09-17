@@ -24,7 +24,7 @@ deinstallieren.
 | Weg | Für wen | Was passiert |
 |-----|---------|--------------|
 | **Launcher (Standard)** | Alle | Lädt das veröffentlichte Image von `ghcr.io/astrapi69/adaptive-learner` und startet es. Diese Seite. |
-| **Registryfrei (Archiv)** | Rechner ohne Registry-Zugang | Lade das Image-Archiv für deinen Prozessor von derselben Release-Seite wie den Launcher und lege es zu den Launcher-Daten - es wird in die hinterlegte Referenz GELADEN statt bezogen. Archiv und Launcher müssen aus dem **selben Release** stammen; eine andere Version führt zum harten Fehler mit Dateinamen. |
+| **Registryfrei (Archiv)** | Rechner ohne Registry-Zugang | Für ein zukünftiges Release geplant: ein Image-Archiv pro Architektur neben dem Launcher auf der Release-Seite, das in die hinterlegte Referenz GELADEN wird statt bezogen zu werden. Noch nicht ausgeliefert - derzeit trägt keine Release-Seite dieses Archiv. |
 | **Aus dem Quellbaum (Entwickler)** | Selbstbauer | Repository klonen, dann `install.sh` oder der Compose-Stack. Baut lokal; durch dieses Release unverändert. |
 
 Das **heruntergeladene Programm hat bewusst kein Tray-Symbol**: das

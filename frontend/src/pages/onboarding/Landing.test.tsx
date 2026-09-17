@@ -119,6 +119,23 @@ describe("Landing page", () => {
         );
     });
 
+    it("offers the legal notice and the privacy policy from the entry page (#3113)", async () => {
+        renderLanding();
+        const imprint = (await screen.findByTestId(
+            "landing-imprint-link",
+        )) as HTMLAnchorElement;
+        const privacy = screen.getByTestId("landing-privacy-link") as HTMLAnchorElement;
+        // Default language (de) -> docs root, no locale prefix.
+        expect(imprint.getAttribute("href")).toBe(
+            "https://astrapi69.github.io/adaptive-learner/docs/legal/imprint/",
+        );
+        expect(privacy.getAttribute("href")).toBe(
+            "https://astrapi69.github.io/adaptive-learner/docs/legal/privacy/",
+        );
+        expect(imprint.target).toBe("_blank");
+        expect(privacy.rel).toContain("noopener");
+    });
+
     it("clicking the start button routes to /onboarding", async () => {
         renderLanding();
         await waitFor(() => {

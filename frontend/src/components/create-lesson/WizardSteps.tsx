@@ -99,6 +99,7 @@ export default function WizardSteps({
                         onReorder={onReorderCards}
                         onClearAll={() => onReorderCards([])}
                         onImport={onImportCards}
+                        frontLanguage={meta.targetLanguage}
                     />
                     {cardError && cards.length < MIN_CARDS && (
                         <FormHint

@@ -79,6 +79,9 @@ export interface ExtensionCard {
   type: TextExtensionType;
   question: string;
   ext_payload: Record<string, unknown>;
+  /** #2992 - optional post-answer Markdown explanation (attached by the
+   *  parser, same rules as the core cards). */
+  explanation?: string;
 }
 
 /** Narrow a generated card to an {@link ExtensionCard}. */

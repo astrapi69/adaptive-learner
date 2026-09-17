@@ -1,10 +1,16 @@
 /**
  * Tests for PlayfulModeControl (#2844): default-off rendering, the
- * persisted round-trip, and the live change event on toggle.
+ * persisted round-trip, the live change event on toggle, the game-mode
+ * sounds offer (#2875), and the summary card + remembered details fold
+ * (#2959): collapsed by default with every detail control still MOUNTED,
+ * disabled with a notice while the master is off, enabled live when the
+ * master flips, the open state surviving a remount, and the status line
+ * counting the enabled extras. The per-block control tests live next to
+ * the blocks in ``./playful``.
  */
 
 import "@testing-library/jest-dom/vitest";
-import {fireEvent, render, screen} from "@testing-library/react";
+import {act, fireEvent, render, screen} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import PlayfulModeControl from "./PlayfulModeControl";
@@ -13,31 +19,28 @@ import {
     readPlayfulMode,
     setPlayfulMode,
 } from "../../../../lib/learning/playful/playfulModePref";
-import {
-    readPlayfulCountdown,
-    readPlayfulCountdownSeconds,
-    readPlayfulHearts,
-    readPlayfulHeartsCount,
-} from "../../../../lib/learning/playful/playfulTensionPref";
-import {
-    readComboXpCap,
-    readPlayfulComboXp,
-} from "../../../../lib/learning/playful/playfulComboXpPref";
-import {
-    readMemoryPairs,
-    readSimonTarget,
-    readPlayfulArcade,
-    readSnakeSeconds,
-} from "../../../../lib/learning/playful/playfulArcadePref";
-import {
-    readFlashRoundCards,
-    readPlayfulSpecialRounds,
-} from "../../../../lib/learning/playful/playfulSpecialRoundsPref";
-import {
-    readPlayfulTickets,
-    readTicketCap,
-} from "../../../../lib/learning/playful/playfulTicketsPref";
-import {readPlayfulBonus} from "../../../../lib/learning/playful/playfulBonusPref";
+
+const DETAILS_OPEN_KEY = "adaptive-learner.settings.playful_details_open";
+
+/** Every detail control the fold hosts (all 24 pre-#2959 testids minus
+ *  the master / sounds / offer ids that stay on the summary card). */
+const DETAIL_CONTROLS = [
+    "settings-playful-hearts-toggle",
+    "settings-playful-hearts-count",
+    "settings-playful-countdown-toggle",
+    "settings-playful-countdown-seconds",
+    "settings-playful-arcade-toggle",
+    "settings-playful-arcade-snake-seconds",
+    "settings-playful-arcade-memory-pairs",
+    "settings-playful-arcade-simon-target",
+    "settings-playful-special-rounds-toggle",
+    "settings-playful-flash-round-cards",
+    "settings-playful-tickets-toggle",
+    "settings-playful-ticket-cap",
+    "settings-playful-bonus-toggle",
+    "settings-playful-combo-xp-toggle",
+    "settings-playful-combo-xp-cap",
+];
 
 beforeEach(() => {
     localStorage.clear();
@@ -70,6 +73,9 @@ describe("PlayfulModeControl", () => {
         fireEvent.click(screen.getByTestId("settings-playful-mode-toggle"));
         expect(readPlayfulMode()).toBe(true);
         expect(listener).toHaveBeenCalledTimes(1);
+        expect(
+            screen.getByTestId("settings-playful-mode-toggle"),
+        ).toBeChecked();
 
         fireEvent.click(screen.getByTestId("settings-playful-mode-toggle"));
         expect(readPlayfulMode()).toBe(false);
@@ -79,15 +85,11 @@ describe("PlayfulModeControl", () => {
 });
 
 describe("game-mode sounds (#2875)", async () => {
-    const {setPlayfulMode} = await import(
-        "../../../../lib/learning/playful/playfulModePref"
-    );
     const {
         readPlayfulSounds,
         readPlayfulSoundsPrompted,
         setPlayfulSounds,
     } = await import("../../../../lib/learning/playful/playfulSoundsPref");
-    const {fireEvent} = await import("@testing-library/react");
 
     it("renders the sound toggle and persists a change", () => {
         render(<PlayfulModeControl />);
@@ -139,206 +141,91 @@ describe("game-mode sounds (#2875)", async () => {
     });
 });
 
-describe("PlayfulModeControl: tension systems (#2878)", () => {
-    it("renders both switches off by default with disabled number inputs", () => {
+describe("PlayfulModeControl: summary card + details fold (#2959)", () => {
+    it("collapses the game details by default and keeps every sub-control mounted", () => {
         render(<PlayfulModeControl />);
+        const toggle = screen.getByTestId("settings-playful-details-toggle");
+        expect(toggle).toHaveAttribute("aria-expanded", "false");
+        expect(
+            screen.getByTestId("settings-playful-details-body"),
+        ).not.toBeVisible();
+        ["tension", "arcade", "xp"].forEach((block) =>
+            expect(
+                screen.getByTestId(`settings-playful-block-${block}`),
+            ).toBeInTheDocument(),
+        );
+        DETAIL_CONTROLS.forEach((testid) =>
+            expect(screen.getByTestId(testid)).toBeInTheDocument(),
+        );
+    });
+
+    it("disables every detail control and shows the notice while game mode is off", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.click(screen.getByTestId("settings-playful-details-toggle"));
+        expect(
+            screen.getByTestId("settings-playful-details-off-notice"),
+        ).toBeVisible();
+        DETAIL_CONTROLS.forEach((testid) =>
+            expect(screen.getByTestId(testid)).toBeDisabled(),
+        );
+        // The summary-card controls stay usable: the master is the way out.
+        expect(
+            screen.getByTestId("settings-playful-mode-toggle"),
+        ).not.toBeDisabled();
+        expect(
+            screen.getByTestId("settings-playful-sounds-toggle"),
+        ).not.toBeDisabled();
+    });
+
+    it("enables them without reload when the master is switched on", () => {
+        render(<PlayfulModeControl />);
+        fireEvent.click(screen.getByTestId("settings-playful-details-toggle"));
+        act(() => setPlayfulMode(true));
+        expect(
+            screen.queryByTestId("settings-playful-details-off-notice"),
+        ).not.toBeInTheDocument();
         expect(
             screen.getByTestId("settings-playful-hearts-toggle"),
-        ).not.toBeChecked();
-        expect(
-            screen.getByTestId("settings-playful-countdown-toggle"),
-        ).not.toBeChecked();
-        expect(screen.getByTestId("settings-playful-hearts-count")).toBeDisabled();
-        expect(
-            screen.getByTestId("settings-playful-countdown-seconds"),
-        ).toBeDisabled();
-    });
-
-    it("toggling hearts persists and enables the count input", () => {
-        render(<PlayfulModeControl />);
-        fireEvent.click(screen.getByTestId("settings-playful-hearts-toggle"));
-        expect(readPlayfulHearts()).toBe(true);
-        expect(
-            screen.getByTestId("settings-playful-hearts-count"),
         ).not.toBeDisabled();
-        fireEvent.change(screen.getByTestId("settings-playful-hearts-count"), {
-            target: {value: "99"},
-        });
-        expect(readPlayfulHeartsCount()).toBe(5);
-    });
-
-    it("toggling the countdown persists and clamps the seconds", () => {
-        render(<PlayfulModeControl />);
-        fireEvent.click(
-            screen.getByTestId("settings-playful-countdown-toggle"),
-        );
-        expect(readPlayfulCountdown()).toBe(true);
-        fireEvent.change(
-            screen.getByTestId("settings-playful-countdown-seconds"),
-            {target: {value: "2"}},
-        );
-        expect(readPlayfulCountdownSeconds()).toBe(5);
-    });
-});
-
-describe("PlayfulModeControl: combo bonus XP (#2893)", () => {
-    it("renders the switch ON by default with the cap enabled at 10", () => {
-        render(<PlayfulModeControl />);
         expect(
-            screen.getByTestId("settings-playful-combo-xp-toggle"),
-        ).toBeChecked();
-        const cap = screen.getByTestId("settings-playful-combo-xp-cap");
-        expect(cap).not.toBeDisabled();
-        expect(cap).toHaveValue(10);
-    });
-
-    it("disabling persists and disables the cap input", () => {
-        render(<PlayfulModeControl />);
-        fireEvent.click(
-            screen.getByTestId("settings-playful-combo-xp-toggle"),
-        );
-        expect(readPlayfulComboXp()).toBe(false);
+            screen.getByTestId("settings-playful-combo-xp-cap"),
+        ).not.toBeDisabled();
+        // A control's OWN gate still applies: hearts are off, so the count stays locked.
+        expect(screen.getByTestId("settings-playful-hearts-count")).toBeDisabled();
+        act(() => setPlayfulMode(false));
+        expect(
+            screen.getByTestId("settings-playful-details-off-notice"),
+        ).toBeVisible();
         expect(
             screen.getByTestId("settings-playful-combo-xp-cap"),
         ).toBeDisabled();
     });
 
-    it("clamps the cap on change and persists the clamped value", () => {
-        render(<PlayfulModeControl />);
-        fireEvent.change(screen.getByTestId("settings-playful-combo-xp-cap"), {
-            target: {value: "99"},
-        });
-        expect(readComboXpCap()).toBe(20);
-        expect(
-            screen.getByTestId("settings-playful-combo-xp-cap"),
-        ).toHaveValue(20);
-    });
-});
+    it("remembers the open state across mounts", () => {
+        const first = render(<PlayfulModeControl />);
+        fireEvent.click(screen.getByTestId("settings-playful-details-toggle"));
+        expect(localStorage.getItem(DETAILS_OPEN_KEY)).toBe("true");
+        first.unmount();
 
-describe("PlayfulModeControl: arcade (#2887)", () => {
-    it("renders the switch ON by default with editable snake/memory fields", () => {
         render(<PlayfulModeControl />);
         expect(
-            screen.getByTestId("settings-playful-arcade-toggle"),
-        ).toBeChecked();
+            screen.getByTestId("settings-playful-details-toggle"),
+        ).toHaveAttribute("aria-expanded", "true");
         expect(
-            screen.getByTestId("settings-playful-arcade-snake-seconds"),
-        ).toHaveValue(60);
-        expect(
-            screen.getByTestId("settings-playful-arcade-memory-pairs"),
-        ).toHaveValue(8);
-        expect(
-            screen.getByTestId("settings-playful-arcade-simon-target"),
-        ).toHaveValue(8);
+            screen.getByTestId("settings-playful-details-body"),
+        ).toBeVisible();
     });
 
-    it("disabling persists and disables the number inputs", () => {
+    it("the summary line counts the enabled extras", () => {
+        setPlayfulMode(true);
         render(<PlayfulModeControl />);
+        const summary = screen.getByTestId("settings-playful-summary");
+        expect(summary).toHaveTextContent("5 of 7 extras on");
+        fireEvent.click(screen.getByTestId("settings-playful-details-toggle"));
+        fireEvent.click(screen.getByTestId("settings-playful-hearts-toggle"));
+        expect(summary).toHaveTextContent("6 of 7 extras on");
         fireEvent.click(screen.getByTestId("settings-playful-arcade-toggle"));
-        expect(readPlayfulArcade()).toBe(false);
-        expect(
-            screen.getByTestId("settings-playful-arcade-snake-seconds"),
-        ).toBeDisabled();
-        expect(
-            screen.getByTestId("settings-playful-arcade-memory-pairs"),
-        ).toBeDisabled();
-        expect(
-            screen.getByTestId("settings-playful-arcade-simon-target"),
-        ).toBeDisabled();
-    });
-
-    it("clamps and persists the number settings", () => {
-        render(<PlayfulModeControl />);
-        fireEvent.change(
-            screen.getByTestId("settings-playful-arcade-snake-seconds"),
-            {target: {value: "999"}},
-        );
-        fireEvent.change(
-            screen.getByTestId("settings-playful-arcade-memory-pairs"),
-            {target: {value: "1"}},
-        );
-        fireEvent.change(
-            screen.getByTestId("settings-playful-arcade-simon-target"),
-            {target: {value: "99"}},
-        );
-        expect(readSnakeSeconds()).toBe(120);
-        expect(readMemoryPairs()).toBe(4);
-        expect(readSimonTarget()).toBe(15);
-    });
-});
-
-describe("PlayfulModeControl: special rounds (#2888)", () => {
-    it("renders the switch ON by default with an editable card count of 10", () => {
-        render(<PlayfulModeControl />);
-        expect(
-            screen.getByTestId("settings-playful-special-rounds-toggle"),
-        ).toBeChecked();
-        expect(
-            screen.getByTestId("settings-playful-flash-round-cards"),
-        ).toHaveValue(10);
-    });
-
-    it("disabling persists and disables the card-count input", () => {
-        render(<PlayfulModeControl />);
-        fireEvent.click(
-            screen.getByTestId("settings-playful-special-rounds-toggle"),
-        );
-        expect(readPlayfulSpecialRounds()).toBe(false);
-        expect(
-            screen.getByTestId("settings-playful-flash-round-cards"),
-        ).toBeDisabled();
-    });
-
-    it("clamps and persists the card count", () => {
-        render(<PlayfulModeControl />);
-        fireEvent.change(
-            screen.getByTestId("settings-playful-flash-round-cards"),
-            {target: {value: "99"}},
-        );
-        expect(readFlashRoundCards()).toBe(20);
-    });
-});
-
-describe("PlayfulModeControl: ticket economy (#2889)", () => {
-    it("renders the switch ON by default with an editable cap of 5", () => {
-        render(<PlayfulModeControl />);
-        expect(
-            screen.getByTestId("settings-playful-tickets-toggle"),
-        ).toBeChecked();
-        expect(screen.getByTestId("settings-playful-ticket-cap")).toHaveValue(
-            5,
-        );
-    });
-
-    it("disabling persists and disables the cap input", () => {
-        render(<PlayfulModeControl />);
-        fireEvent.click(screen.getByTestId("settings-playful-tickets-toggle"));
-        expect(readPlayfulTickets()).toBe(false);
-        expect(
-            screen.getByTestId("settings-playful-ticket-cap"),
-        ).toBeDisabled();
-    });
-
-    it("clamps and persists the cap", () => {
-        render(<PlayfulModeControl />);
-        fireEvent.change(screen.getByTestId("settings-playful-ticket-cap"), {
-            target: {value: "99"},
-        });
-        expect(readTicketCap()).toBe(10);
-    });
-});
-
-describe("PlayfulModeControl: bonus lessons (#2890)", () => {
-    it("renders the switch ON by default", () => {
-        render(<PlayfulModeControl />);
-        expect(
-            screen.getByTestId("settings-playful-bonus-toggle"),
-        ).toBeChecked();
-    });
-
-    it("disabling persists the pref", () => {
-        render(<PlayfulModeControl />);
         fireEvent.click(screen.getByTestId("settings-playful-bonus-toggle"));
-        expect(readPlayfulBonus()).toBe(false);
+        expect(summary).toHaveTextContent("4 of 7 extras on");
     });
 });

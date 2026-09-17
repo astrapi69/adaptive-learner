@@ -49,6 +49,14 @@ describe("Arcade gate", () => {
         expect(screen.getByTestId("arcade-gate-notice")).toBeInTheDocument();
         expect(screen.queryByTestId("arcade-page")).not.toBeInTheDocument();
     });
+
+    // #2961 - the gate link lands on the motivation cluster of the
+    // Learning tab (where the game mode card lives), not on the tab top.
+    it("links the notice to the Learning tab's motivation section", () => {
+        renderArcade();
+        const link = screen.getByRole("link", {name: /open settings|einstellungen öffnen/i});
+        expect(link).toHaveAttribute("href", "/settings?tab=learning&section=motivation");
+    });
 });
 
 describe("Arcade game list", () => {

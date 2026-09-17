@@ -381,3 +381,78 @@ describe("useLesson: persistence", () => {
         expect(result.current.error).toBe("IndexedDB write failed");
     });
 });
+
+describe("useLesson: position persistence on step change (#3075)", () => {
+    async function _setupWith(progressRow: unknown) {
+        getLessonMock.mockResolvedValue(LESSON_PAYLOAD);
+        getProgressMock.mockResolvedValue(progressRow);
+        upsertProgressMock.mockImplementation(
+            async (_userId: string, body: {current_step?: number}) => ({
+                ...FRESH_PROGRESS,
+                current_step: body.current_step ?? 0,
+            }),
+        );
+        const {result} = renderHook(() =>
+            useLesson({
+                source: SOURCE,
+                setId: SET_ID,
+                lessonFilename: LESSON,
+            }),
+        );
+        await waitFor(() => {
+            expect(result.current.status).toBe("ready");
+        });
+        return result;
+    }
+
+    it("goNext writes current_step before any exercise was graded", async () => {
+        const result = await _setupWith(null);
+        expect(upsertProgressMock).not.toHaveBeenCalled();
+        act(() => result.current.goNext());
+        await waitFor(() => {
+            expect(upsertProgressMock).toHaveBeenCalledTimes(1);
+        });
+        const body = upsertProgressMock.mock.calls[0][1];
+        expect(body).toMatchObject({
+            source: SOURCE,
+            set_id: SET_ID,
+            lesson_filename: LESSON,
+            current_step: 1,
+        });
+        expect(body.step_result).toBeUndefined();
+        expect(body.mark_paused).toBeUndefined();
+        // The row the write created now drives the in-progress guards.
+        await waitFor(() => {
+            expect(result.current.progress?.status).toBe("in_progress");
+        });
+    });
+
+    it("the position restored on load is not written back", async () => {
+        const result = await _setupWith({
+            ...FRESH_PROGRESS,
+            status: "paused",
+            current_step: 1,
+        });
+        expect(result.current.currentStepIndex).toBe(1);
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        expect(upsertProgressMock).not.toHaveBeenCalled();
+    });
+
+    it("reaching the summary index writes no position (completion owns it)", async () => {
+        const result = await _setupWith(null);
+        act(() => result.current.goToStep(LESSON_PAYLOAD.steps.length));
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        expect(upsertProgressMock).not.toHaveBeenCalled();
+    });
+
+    it("a completed lesson is not repositioned by browsing its steps", async () => {
+        const result = await _setupWith({
+            ...FRESH_PROGRESS,
+            status: "completed",
+            completed_at: "2026-05-26T00:10:00Z",
+        });
+        act(() => result.current.goToStep(1));
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        expect(upsertProgressMock).not.toHaveBeenCalled();
+    });
+});

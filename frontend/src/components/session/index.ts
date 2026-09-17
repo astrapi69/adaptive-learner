@@ -14,8 +14,6 @@ export * from "./SessionHeader";
 export { default as SessionHeader } from "./SessionHeader";
 export * from "./SpacedRecommendations";
 export { default as SpacedRecommendations } from "./SpacedRecommendations";
-export * from "./SrsTransparencySection";
-export { default as SrsTransparencySection } from "./SrsTransparencySection";
 export * from "./StepEvaluationInsights";
 export { default as StepEvaluationInsights } from "./StepEvaluationInsights";
 export * from "./ToolRecommendations";

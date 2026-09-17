@@ -58,6 +58,10 @@ export default function ContentPageHeader({
           disabled={refreshing}
           data-testid="content-refresh"
           aria-label={t("content.action.refresh", "Refresh")}
+          title={t(
+            "content.action.refresh_hint",
+            "Reload the list and apply all available updates",
+          )}
         >
           <RefreshCw size={16} aria-hidden="true" />
           {refreshing

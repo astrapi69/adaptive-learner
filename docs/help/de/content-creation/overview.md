@@ -89,6 +89,35 @@ Ein fertiges **Starter-Kit** zum Abgucken und Kopieren ist
 
 ---
 
+## Token-Rollen: bessere Lückentexte
+
+Beim Bearbeiten einer Karte kannst du einzelne Wörter der Vorderseite mit
+ihrer grammatischen Rolle versehen: Artikel, Substantiv, Verb, Adjektiv,
+Präposition, Genus-Marker oder Tempus-Marker.
+
+Der Nutzen liegt in den Übungen. Ohne Annotation wählt der Lückentext die
+Lücke nach Position; mit Annotation wählt er ein Wort, dessen Rolle zum
+Fehler passt, und zieht die Ablenker aus derselben Rolle. Aus einer
+beliebigen Lücke wird eine, die genau das übt, was zuletzt schiefging.
+
+Zwei Regeln gelten dabei:
+
+- Das Wort muss **genau so** in der Vorderseite stehen, mit derselben
+  Groß- und Kleinschreibung. Sonst findet die Übung es später nicht, und
+  die Annotation bliebe wirkungslos. Die Oberfläche lässt eine solche
+  Eingabe deshalb nicht zu.
+- Pro Karte sind höchstens zehn Rollen möglich.
+
+**Rollen vorschlagen** füllt die Liste automatisch, aber nur mit
+Artikeln und Präpositionen. Diese Wortarten sind abzählbar, ein Treffer
+ist also ein Nachschlagen und keine Vermutung. Substantive, Verben und
+Adjektive schlägt die App bewusst nicht vor: eine falsch gesetzte Rolle
+wäre schlechter als gar keine, weil die Übung dann aus der falschen
+Wortart Ablenker zieht. Diese Rollen trägst du selbst ein, und jeder
+Vorschlag lässt sich ändern oder löschen.
+
+---
+
 ## Teilen per Pull Request
 
 Lektion teilen erzeugt einen echten **Pull Request** (Fork →

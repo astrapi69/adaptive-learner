@@ -1,6 +1,7 @@
 /**
- * content/contentTabOrderPref — the user-configurable order of the three
- * "Inhalte" tabs (Entdecken / Meine Inhalte / Importieren) (#1378).
+ * content/contentTabOrderPref — the user-configurable order of the four
+ * "Inhalte" tabs (Entdecken / Meine Inhalte / Importieren / Erstellen)
+ * (#1378; Erstellen added in #3006).
  *
  * Persisted as ONE typed value — an ordered array of tab IDs — in localStorage
  * (works in both storage modes, same pattern as the other lesson/feedback
@@ -12,13 +13,16 @@
  * empty tab bar or a crash — it always resolves to a full, valid order.
  */
 
-export type ContentTabId = "discover" | "my" | "import";
+export type ContentTabId = "discover" | "my" | "import" | "create";
 
 /** The canonical (default) order. */
 export const DEFAULT_CONTENT_TAB_ORDER: ContentTabId[] = [
   "discover",
   "my",
   "import",
+  // #3006 — last by default: an order stored before this tab existed gains
+  // it here, so an upgrading user's arrangement stays otherwise untouched.
+  "create",
 ];
 
 const KEY = "adaptive-learner.content.tab_order";

@@ -1,9 +1,10 @@
 /**
  * SummarySectionsControl (#1426, generalises #1411) — a numbered reorder list
- * with an in-row visibility checkbox per section. Pins: all sections listed +
- * checked by default in the default order, Up/Down reorders and persists, a
- * disabled section keeps its position + its arrows usable, and the migrated
- * #1376 correction choice is reflected instead of reset.
+ * with an in-row visibility checkbox per section. Pins: all sections listed
+ * in the default order with the compact default checked (#3124: result and
+ * XP on, the rest off), Up/Down reorders and persists, a disabled section
+ * keeps its position + its arrows usable, and the migrated #1376 correction
+ * choice is reflected instead of reset.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -13,7 +14,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import SummarySectionsControl from "./SummarySectionsControl";
 import {
   DEFAULT_SUMMARY_SECTION_ORDER,
-  SUMMARY_SECTION_KEYS,
+  defaultSummarySections,
   readSummarySections,
 } from "../../../../lib/learning/summarySectionsPref";
 
@@ -31,15 +32,21 @@ function renderedOrder(): string[] {
 }
 
 describe("SummarySectionsControl", () => {
-  it("lists one row per section, all checked, in the default order", () => {
+  it("lists one row per section in the default order, checked per the compact default (#3124)", () => {
     render(<SummarySectionsControl />);
     expect(renderedOrder()).toEqual([...DEFAULT_SUMMARY_SECTION_ORDER]);
-    for (const key of SUMMARY_SECTION_KEYS) {
-      expect(
-        screen.getByTestId(`settings-summary-section-${key}`),
-        key,
-      ).toBeChecked();
+    for (const { id, enabled } of defaultSummarySections()) {
+      const box = screen.getByTestId(`settings-summary-section-${id}`);
+      if (enabled) expect(box, id).toBeChecked();
+      else expect(box, id).not.toBeChecked();
     }
+    expect(screen.getByTestId("settings-summary-section-result")).toBeChecked();
+    expect(screen.getByTestId("settings-summary-section-xp")).toBeChecked();
+    expect(screen.getByTestId("settings-summary-section-next_steps")).not.toBeChecked();
+    // The #599 mistake review is a row of its own, labelled by its heading.
+    expect(screen.getByTestId("summary-sections-order-item-explanations")).toHaveTextContent(
+      "Why you missed these",
+    );
   });
 
   it("Move-up reorders the list and persists the new order", () => {
@@ -74,7 +81,8 @@ describe("SummarySectionsControl", () => {
 
   it("a disabled section keeps its row + its arrows stay usable", () => {
     render(<SummarySectionsControl />);
-    fireEvent.click(screen.getByTestId("settings-summary-section-share"));
+    // share is OFF in the compact default (#3124).
+    expect(screen.getByTestId("settings-summary-section-share")).not.toBeChecked();
     // Row still present, arrow enabled, and moving it keeps it OFF.
     const upShare = screen.getByTestId("summary-sections-up-share");
     expect(upShare).toBeEnabled();
@@ -97,11 +105,36 @@ describe("SummarySectionsControl", () => {
       ]),
     );
     render(<SummarySectionsControl />);
-    expect(renderedOrder().slice(0, 2)).toEqual(["correction", "result"]);
+    // #3124 - the stored config predates the mistake-review section, so it
+    // slots in directly above the stored correction entry, ON.
+    expect(renderedOrder().slice(0, 3)).toEqual([
+      "explanations",
+      "correction",
+      "result",
+    ]);
+    expect(
+      screen.getByTestId("settings-summary-section-explanations"),
+    ).toBeChecked();
     expect(
       screen.getByTestId("settings-summary-section-correction"),
     ).not.toBeChecked();
     expect(screen.getByTestId("settings-summary-section-result")).toBeChecked();
+  });
+
+  it("lets the arrows wrap under a full-width label instead of breaking words (#3027)", () => {
+    render(<SummarySectionsControl />);
+    expect(screen.getByTestId("summary-sections-order-list")).toHaveClass(
+      "list-none",
+      "pl-0",
+    );
+    const row = screen.getByTestId("summary-sections-order-item-correction");
+    expect(row).toHaveClass("flex", "flex-wrap");
+    const body = row.firstElementChild as HTMLElement;
+    expect(body).toHaveClass("min-w-0", "flex-1", "basis-40");
+    // The checkbox + number + text stay one click target inside the body.
+    expect(body.querySelector("label")).toContainElement(
+      screen.getByTestId("settings-summary-section-correction"),
+    );
   });
 
   it("shows the migrated #1376 correction-round OFF choice (no reset)", () => {

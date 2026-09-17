@@ -165,7 +165,7 @@ beforeEach(() => {
 });
 
 describe("ImportActionsPanel — action buttons", () => {
-  it("renders the five import/creation action buttons", async () => {
+  it("renders the four action buttons", async () => {
     listSetsMock.mockResolvedValue({ sets: [], sources: [] });
     renderPanel();
     await screen.findByTestId("import-actions-panel");
@@ -174,10 +174,18 @@ describe("ImportActionsPanel — action buttons", () => {
       "content-import-chat",
       "content-anki-export",
       "content-learning-path",
-      "content-create-lesson",
     ]) {
       expect(screen.getByTestId(testId)).toBeInTheDocument();
     }
+  });
+
+  // #3006 — creating is its own hub tab now, so the button that #1253 had
+  // put here would only point at the neighbouring tab.
+  it("no longer renders the create-lesson button (#3006)", async () => {
+    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
+    renderPanel();
+    await screen.findByTestId("import-actions-panel");
+    expect(screen.queryByTestId("content-create-lesson")).toBeNull();
   });
 
   it("opens the import-lesson modal from the Import button", async () => {
@@ -201,7 +209,7 @@ describe("ImportActionsPanel — action buttons", () => {
     expect(importBtn).toHaveAccessibleName(/Import Lesson/i);
   });
 
-  it("uses the outline variant for the secondary actions, primary for create", async () => {
+  it("uses the outline variant for the remaining actions", async () => {
     listSetsMock.mockResolvedValue({ sets: [], sources: [] });
     renderPanel();
     await screen.findByTestId("import-actions-panel");
@@ -214,7 +222,6 @@ describe("ImportActionsPanel — action buttons", () => {
       expect(btn.className).toContain("border");
       expect(btn.className).toContain("text-foreground");
     }
-    expect(screen.getByTestId("content-create-lesson").className).toContain("bg-primary");
   });
 });
 

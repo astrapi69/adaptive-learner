@@ -83,6 +83,7 @@ export const FEATURES = {
   SYNC: "sync",
   GIT_PERSIST: "git-persist",
   LEARNING_REPO_GIT: "learning-repo-git",
+  PLUGIN_LIFECYCLE: "plugin-lifecycle",
 } as const;
 
 /** Union of all registered feature ids. */
@@ -139,6 +140,7 @@ const DESKTOP_ONLY: readonly FeatureId[] = [
   FEATURES.SYNC,
   FEATURES.GIT_PERSIST,
   FEATURES.LEARNING_REPO_GIT,
+  FEATURES.PLUGIN_LIFECYCLE,
 ];
 
 function needsAiKeyRule(): FeatureCondition<FeatureContext> {

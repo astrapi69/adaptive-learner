@@ -1,0 +1,87 @@
+{
+  "id": "01-adjektivstellung",
+  "title": "Adjektivstellung: el coche rojo",
+  "description": "Kleine Referenz-Lektion für das Feld explanation (Schema 1.13, #2991): eine Theorie, eine Übung MIT Erklärung, eine Übung OHNE Erklärung. Spanisch A1 für Deutschsprachige.",
+  "target_language": "es",
+  "source_language": "de",
+  "domain": "language",
+  "estimated_minutes": 3,
+  "cards": [
+    {
+      "id": "coche-rojo",
+      "front": "el coche rojo",
+      "back": "das rote Auto",
+      "notes": "Beschreibende Adjektive stehen im Spanischen meist nach dem Nomen.",
+      "media_type": "text",
+      "difficulty": 1,
+      "tags": [
+        "adjektive"
+      ]
+    },
+    {
+      "id": "casa-blanca",
+      "front": "la casa blanca",
+      "back": "das weiße Haus",
+      "notes": null,
+      "media_type": "text",
+      "difficulty": 1,
+      "tags": [
+        "adjektive"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Adjektive stehen hinten",
+      "body": "Im Spanischen steht ein beschreibendes Adjektiv meist **nach** dem Nomen: *el coche rojo*, *la casa blanca*."
+    },
+    {
+      "id": "ex-mit-erklaerung",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-mit-erklaerung",
+        "type": "multiple_choice",
+        "prompt": "Wie heißt „das rote Auto\" auf Spanisch?",
+        "card_ids": [
+          "coche-rojo"
+        ],
+        "options": [
+          {
+            "text": "el rojo coche"
+          },
+          {
+            "text": "el coche rojo",
+            "correct": true
+          },
+          {
+            "text": "rojo el coche"
+          }
+        ],
+        "explanation": "**Regel:** Beschreibende Adjektive stehen im Spanischen meist NACH dem Nomen.\n\n**Wort für Wort:**\n- *el* - der (Artikel, maskulin Singular)\n- *coche* - Auto (Nomen)\n- *rojo* - rot (Adjektiv, nachgestellt, richtet sich nach *coche*)\n\n**Weitere Beispiele:**\n- *la casa blanca* - das weiße Haus\n- *un libro interesante* - ein interessantes Buch\n\n**Typischer Fehler:** *el rojo coche* nach deutschem Muster."
+      }
+    },
+    {
+      "id": "ex-ohne-erklaerung",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-ohne-erklaerung",
+        "type": "multiple_choice",
+        "prompt": "Wie heißt „das weiße Haus\" auf Spanisch?",
+        "card_ids": [
+          "casa-blanca"
+        ],
+        "options": [
+          {
+            "text": "la casa blanca",
+            "correct": true
+          },
+          {
+            "text": "la blanca casa"
+          }
+        ]
+      }
+    }
+  ]
+}
