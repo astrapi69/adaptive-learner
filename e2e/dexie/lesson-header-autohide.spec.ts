@@ -67,6 +67,10 @@ test.describe("Lesson header auto-hide (real browser)", () => {
 
     const nav = page.getByTestId("app-nav");
     await expect(nav).toBeVisible();
+    // Opening a lesson anchors the step to the top (#959); since #3136 that
+    // scroll is no longer cancelled, so the nav may already be hidden. Start
+    // the auto-hide check from a known top position (#3153).
+    await scrollRoot(page, 0);
     await expect(nav).toHaveAttribute("data-nav-hidden", "false");
 
     // Scroll down -> the sticky nav slides up out of view.
