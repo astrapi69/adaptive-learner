@@ -127,6 +127,8 @@ Build a clean CHANGELOG entry from the commits. Do not paste raw, group and summ
 
 Also produce a separate file `changelog/releases/v0.X.0.md` containing only the new entry, for the GitHub release notes.
 
+Add a user-facing section for the release to `docs/help/<lang>/changelog.md` in all 8 help languages; `verify_docs --check help-changelog` fails while a page lags the minor version (#3161).
+
 **Commit**: `docs: changelog for v0.X.0`
 
 ## Step 4: Bump version
@@ -446,6 +448,7 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
 - [ ] Version number picked per SemVer and confirmed by the user
 - [ ] CHANGELOG.md with the new entry committed
 - [ ] `changelog/releases/v0.X.0.md` created for the GitHub release
+- [ ] `docs/help/*/changelog.md` lists the release in all 8 languages (#3161)
 - [ ] Version updated in all pyproject.toml and package.json
 - [ ] Version updated in `__version__` and other Python modules
 - [ ] pluginforge and other externally-owned Adaptive Learner deps at the current version
