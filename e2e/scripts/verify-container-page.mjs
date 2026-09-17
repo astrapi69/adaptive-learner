@@ -56,6 +56,8 @@ const EXCUSED_UNLOADED = [
     // learning repo): each is covered by dexie-smoke / vitest suites.
     [/^(Lesson|AdaptiveLesson|EndlessLesson|ShuffleLesson|ErrorReplayLesson|Review|ImportDetail|SetDeepLink|LearningRepo|SetSummary)-/,
         "param route needs a real set/import row - covered by dexie-smoke + vitest"],
+    [/^set-review-/,
+        "set-completion aggregator shared by SetSummary and the lesson summary's Detailed evaluation (#3134) - both need a real set (#3155)"],
     [/^exercises-/, "exercise renderers load inside a running lesson - needs a set"],
     [/^(RedeemInvite|QRScannerModal|ErrorReportDialog)-/,
         "loads on user action (invite link, QR scan, error report dialog)"],
