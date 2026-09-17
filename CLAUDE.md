@@ -107,7 +107,7 @@ scripts/               sync_versions, sync_i18n, verify_docs, ...
 - No --amend + force-push on open PRs
 
 ## Tests
-v2.14.0: backend 1824 + plugins 1130 + Vitest 9775 = 12729 tests
+v2.15.0: backend 1858 + plugins 1137 + Vitest 10438 = 13433 tests
 E2E: cd e2e && npx playwright test (separate from make test)
 Dexie-mode gate: make test-dexie-smoke (aggregated in make release-test)
 Current counts: docs/audits/current-coverage.md (canonical, do not duplicate)
