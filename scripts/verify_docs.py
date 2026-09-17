@@ -157,6 +157,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 # verifier stays under the cohesion file-size gate; re-exported here so the
 # CHECKS registry and the tests keep importing it from ``verify_docs``.
 from verify_docs_i18n import check_i18n  # noqa: E402,F401
+from verify_docs_help_changelog import check_help_changelog as _check_help_changelog  # noqa: E402
 from verify_docs_test_counts import check_test_counts  # noqa: E402,F401
 from version_display_sites import VERSION_DISPLAY_SITES  # noqa: E402
 
@@ -478,6 +479,16 @@ def check_help_index_versions(report: Report, help_dir: Path | None = None) -> N
                     f"{match.group(0)} (help index pages are versionless - "
                     "link to GitHub Releases instead, #1766)",
                 )
+
+
+def check_help_changelog(report: Report, help_dir: Path | None = None, canonical: str | None = None) -> None:
+    """FAIL when a docs/help/<locale>/changelog.md lags the canonical minor version (#3161)."""
+    _check_help_changelog(
+        report,
+        help_dir=help_dir if help_dir is not None else REPO / "docs" / "help",
+        canonical=canonical if canonical is not None else canonical_version(),
+        read=read,
+    )
 
 
 # End-user help prose must be VERSIONLESS (#1767): the help tree carried
@@ -815,6 +826,7 @@ CHECKS = {
     "mkdocs": lambda r, o: check_mkdocs(r),
     "help-index-versions": lambda r, o: check_help_index_versions(r),
     "help-prose-versions": lambda r, o: check_help_prose_versions(r),
+    "help-changelog": lambda r, o: check_help_changelog(r),
     "help-coverage": lambda r, o: check_help_coverage(r),
     "testplan-parity": lambda r, o: check_testplan_parity(r),
     "i18n": lambda r, o: check_i18n(r, o.fix),
