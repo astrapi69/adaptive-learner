@@ -2260,7 +2260,6 @@
         "placeholder": "Escreve a tua resposta…",
         "code_placeholder": "Digite o código…",
         "input_label": "A tua resposta",
-        "hint_show": "Precisas de uma dica?",
         "result_correct": "Correto!",
         "result_wrong": "Quase.",
         "result_almost": "Quase! Atenção a:",
@@ -2278,7 +2277,6 @@
         "answer_placeholder": "Toca nas peças abaixo para construir a tua resposta",
         "scrambled_label": "Peças disponíveis",
         "scrambled_done": "Todas as peças colocadas.",
-        "hint_show": "Precisas de uma dica?",
         "result_correct": "Correto!",
         "result_wrong": "Quase.",
         "empty": "Este exercício de peças não tem peças."
@@ -2286,7 +2284,6 @@
       "cloze": {
         "submit": "Verificar respostas",
         "retry": "Tentar de novo",
-        "hint_show": "Precisas de uma dica?",
         "sentence_label": "Frase com lacunas",
         "blank_label": "Lacuna {n}",
         "select_placeholder": "Escolher…",

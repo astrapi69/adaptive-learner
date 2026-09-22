@@ -631,3 +631,49 @@ describe("ClozeExercise: Tab advances to the next blank (#623)", () => {
         expect(document.activeElement).toBe(second);
     });
 });
+
+describe("ClozeExercise: hint affordance (#3168, one surface)", () => {
+    const WITH_HINT: ContentLessonExercise = {
+        ...SINGLE_BLANK,
+        id: "ex-cloze-hint",
+        hint: "Denk daran, warum man className statt class schreibt.",
+    };
+
+    it("renders ONLY the XP hint button, never the old cloze-hint-show link", () => {
+        render(<ClozeExercise exercise={WITH_HINT} onComplete={vi.fn()} />);
+        expect(
+            screen.getByTestId("cloze-hint-button-reveal"),
+        ).toBeInTheDocument();
+        expect(screen.queryByTestId("cloze-hint-show")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("cloze-hint")).not.toBeInTheDocument();
+    });
+
+    it("the first paid reveal shows the AUTHORED hint text", () => {
+        render(<ClozeExercise exercise={WITH_HINT} onComplete={vi.fn()} />);
+        fireEvent.click(screen.getByTestId("cloze-hint-button-reveal"));
+        expect(screen.getByTestId("cloze-hint-button-hint-0")).toHaveTextContent(
+            "Denk daran, warum man className statt class schreibt.",
+        );
+        expect(screen.queryByTestId("cloze-hint-show")).not.toBeInTheDocument();
+    });
+
+    it("keeps the XP hint button (generated stages) when exercise.hint is absent", () => {
+        render(<ClozeExercise exercise={SINGLE_BLANK} onComplete={vi.fn()} />);
+        expect(
+            screen.getByTestId("cloze-hint-button-reveal"),
+        ).toBeInTheDocument();
+        expect(screen.queryByTestId("cloze-hint-show")).not.toBeInTheDocument();
+    });
+
+    it("hides every hint affordance after submit", () => {
+        render(<ClozeExercise exercise={WITH_HINT} onComplete={vi.fn()} />);
+        fireEvent.change(screen.getByTestId("cloze-input-0"), {
+            target: {value: "un"},
+        });
+        fireEvent.click(screen.getByTestId("cloze-submit"));
+        expect(
+            screen.queryByTestId("cloze-hint-button"),
+        ).not.toBeInTheDocument();
+        expect(screen.queryByTestId("cloze-hint-show")).not.toBeInTheDocument();
+    });
+});

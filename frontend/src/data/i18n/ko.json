@@ -2260,7 +2260,6 @@
         "placeholder": "답을 입력하세요…",
         "code_placeholder": "코드를 입력하세요…",
         "input_label": "당신의 답변",
-        "hint_show": "힌트가 필요한가요?",
         "result_correct": "정답입니다!",
         "result_wrong": "아쉬워요.",
         "result_almost": "거의 맞았어요! 다음에 유의하세요:",
@@ -2278,7 +2277,6 @@
         "answer_placeholder": "아래 타일을 탭하여 답을 만드세요",
         "scrambled_label": "사용 가능한 타일",
         "scrambled_done": "모든 타일이 배치되었습니다.",
-        "hint_show": "힌트가 필요한가요?",
         "result_correct": "정답입니다!",
         "result_wrong": "아쉬워요.",
         "empty": "이 단어 타일 연습에는 타일이 없습니다."
@@ -2286,7 +2284,6 @@
       "cloze": {
         "submit": "답 확인",
         "retry": "다시 시도",
-        "hint_show": "힌트가 필요한가요?",
         "sentence_label": "빈칸 채우기 문장",
         "blank_label": "빈칸 {n}",
         "select_placeholder": "선택하세요…",

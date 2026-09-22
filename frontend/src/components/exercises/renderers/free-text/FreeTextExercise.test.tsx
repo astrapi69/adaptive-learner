@@ -9,8 +9,8 @@
  * - Submit disabled while input is empty / whitespace.
  * - Enter key submits when input is non-empty.
  * - Wrong attempt surfaces the canonical (first) accept entry.
- * - Hint toggle: shown only when ``exercise.hint`` is set,
- *   reveals the hint, hides itself once revealed.
+ * - Hint: ONE affordance, the XP ``ExerciseHint`` button (#3168); the
+ *   authored ``exercise.hint`` is its first stage, the old free link is gone.
  * - Try-again resets state.
  * - Empty ``accept`` surfaces the empty-state testid.
  *
@@ -356,8 +356,8 @@ describe("FreeTextExercise: submit lifecycle", () => {
     });
 });
 
-describe("FreeTextExercise: hint affordance", () => {
-    it("renders the hint toggle when exercise.hint is set", () => {
+describe("FreeTextExercise: hint affordance (#3168, one surface)", () => {
+    it("renders ONLY the XP hint button, never the old free-text-hint-show link", () => {
         render(
             <FreeTextExercise
                 exercise={EXERCISE}
@@ -365,30 +365,33 @@ describe("FreeTextExercise: hint affordance", () => {
             />,
         );
         expect(
-            screen.getByTestId("free-text-hint-show"),
+            screen.getByTestId("free-text-hint-button-reveal"),
         ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("free-text-hint-show"),
+        ).not.toBeInTheDocument();
         expect(
             screen.queryByTestId("free-text-hint"),
         ).not.toBeInTheDocument();
     });
 
-    it("reveals the hint and hides the toggle on click", () => {
+    it("the first paid reveal shows the AUTHORED hint text", () => {
         render(
             <FreeTextExercise
                 exercise={EXERCISE}
                 onComplete={vi.fn()}
             />,
         );
-        fireEvent.click(screen.getByTestId("free-text-hint-show"));
-        expect(screen.getByTestId("free-text-hint")).toHaveTextContent(
-            "It starts with M.",
-        );
+        fireEvent.click(screen.getByTestId("free-text-hint-button-reveal"));
+        expect(
+            screen.getByTestId("free-text-hint-button-hint-0"),
+        ).toHaveTextContent("It starts with M.");
         expect(
             screen.queryByTestId("free-text-hint-show"),
         ).not.toBeInTheDocument();
     });
 
-    it("does not render the hint toggle when exercise.hint is absent", () => {
+    it("keeps the XP hint button (generated stages) when exercise.hint is absent", () => {
         const noHint: ContentLessonExercise = {...EXERCISE, hint: null};
         render(
             <FreeTextExercise
@@ -397,11 +400,14 @@ describe("FreeTextExercise: hint affordance", () => {
             />,
         );
         expect(
+            screen.getByTestId("free-text-hint-button-reveal"),
+        ).toBeInTheDocument();
+        expect(
             screen.queryByTestId("free-text-hint-show"),
         ).not.toBeInTheDocument();
     });
 
-    it("hides the hint toggle after submit", () => {
+    it("hides every hint affordance after submit", () => {
         render(
             <FreeTextExercise
                 exercise={EXERCISE}
@@ -412,6 +418,9 @@ describe("FreeTextExercise: hint affordance", () => {
             target: {value: "Merci"},
         });
         fireEvent.click(screen.getByTestId("free-text-submit"));
+        expect(
+            screen.queryByTestId("free-text-hint-button"),
+        ).not.toBeInTheDocument();
         expect(
             screen.queryByTestId("free-text-hint-show"),
         ).not.toBeInTheDocument();

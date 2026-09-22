@@ -2260,7 +2260,6 @@
         "placeholder": "Saisis ta réponse…",
         "code_placeholder": "Saisis le code…",
         "input_label": "Ta réponse",
-        "hint_show": "Besoin d'un indice ?",
         "result_correct": "Correct !",
         "result_wrong": "Pas tout à fait.",
         "result_almost": "Presque ! Attention à :",
@@ -2278,7 +2277,6 @@
         "answer_placeholder": "Touche les tuiles ci-dessous pour construire ta réponse",
         "scrambled_label": "Tuiles disponibles",
         "scrambled_done": "Toutes les tuiles sont placées.",
-        "hint_show": "Besoin d'un indice ?",
         "result_correct": "Correct !",
         "result_wrong": "Pas tout à fait.",
         "empty": "Cet exercice de tuiles n'a pas de tuiles."
@@ -2286,7 +2284,6 @@
       "cloze": {
         "submit": "Vérifier les réponses",
         "retry": "Réessayer",
-        "hint_show": "Besoin d'un indice ?",
         "sentence_label": "Phrase à trous",
         "blank_label": "Trou {n}",
         "select_placeholder": "Choisir…",
