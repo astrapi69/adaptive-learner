@@ -2322,6 +2322,10 @@ jeder Karten-Zeile (`CardImageField`).
       öffnet sich; zurück im Lernpfad steht das Set ohne Sterne und ohne
       Fortschritt, "Fehler trainieren" ist verschwunden (neuer Durchgang,
       wie bei "Erneut durcharbeiten")
+- [ ] Ein Set, das in "Meine Inhalte" als "Abgeschlossen" oder
+      "Zurückgestellt" markiert war, steht nach dem Reset wieder unter
+      "Aktiv" (Statusfilter in "Meine Inhalte"); das Dashboard führt es
+      unter "Weitermachen" wieder als begonnenes Set, nicht als erledigt
 - [ ] Dashboard: XP-Stand und Abzeichen sind nach dem Reset unverändert
 - [ ] Beides prüfen: Desktop-App (API-Modus) und Browser-Modus ohne Server
       (Dexie) - der Reset schreibt in beide Speicher

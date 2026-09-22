@@ -2168,6 +2168,10 @@ each card row (`CardImageField`).
 - [ ] "Reset and start over": success toast, lesson 1 of the set opens;
       back on the learning path the set shows no stars and no progress,
       "Train errors" is gone (new run, as with "Work through again")
+- [ ] A set marked "Completed" or "Deferred" in My Content is listed under
+      "Active" again after the reset (status filter in My Content); the
+      dashboard's "Continue Learning" shows it as a started set again, not
+      as done
 - [ ] Dashboard: XP and badges are unchanged after the reset
 - [ ] Check both: desktop app (API mode) and browser mode without a server
       (Dexie) - the reset writes to both stores

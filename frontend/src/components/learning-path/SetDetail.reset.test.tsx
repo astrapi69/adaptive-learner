@@ -9,6 +9,10 @@ import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter, Route, Routes} from "react-router";
 
 import SetDetail from "./SetDetail";
+import {
+    getSetStatus,
+    storeSetStatus,
+} from "../../lib/content/browse/lifecycle/set-status-store";
 import type {
     PersonalPathLesson,
     PersonalPathSet,
@@ -115,6 +119,10 @@ function renderDetail(set: PersonalPathSet, onResultsReset?: () => void) {
 }
 
 beforeEach(() => {
+    // The learner had marked the set completed in "Meine Inhalte"; the
+    // reset must bring it back to active (finding on #3180).
+    localStorage.clear();
+    storeSetStatus("src", "psych", "completed");
     listProgress.mockReset();
     deleteLearningData.mockReset();
     startRun.mockReset();
@@ -160,6 +168,7 @@ describe("SetDetail: Alles wiederholen (#3171)", () => {
         expect(screen.queryByTestId("reset-set-results-confirm")).toBeNull();
         expect(deleteLearningData).not.toHaveBeenCalled();
         expect(startRun).not.toHaveBeenCalled();
+        expect(getSetStatus("src", "psych")).toBe("completed");
     });
 
     it("on confirm resets only this set's progress, starts a new run, toasts, notifies and opens lesson 1", async () => {
@@ -181,6 +190,19 @@ describe("SetDetail: Alles wiederholen (#3171)", () => {
         expect(onResultsReset).toHaveBeenCalledTimes(1);
     });
 
+    it("on confirm reactivates a set the learner had marked completed, in the mode-agnostic status store", async () => {
+        renderDetail(setFixture());
+        fireEvent.click(screen.getByTestId("set-reset-results-psych"));
+        const confirm = await screen.findByTestId("reset-set-results-confirm-confirm");
+        await waitFor(() => expect(confirm).toBeEnabled());
+
+        fireEvent.click(confirm);
+
+        await screen.findByTestId("lesson-target");
+        const stored = JSON.parse(localStorage.getItem("adaptive-learner.set-status") ?? "{}");
+        expect(stored).toEqual({"src::psych": "active"});
+    });
+
     it("reports a failed reset and stays on the page", async () => {
         deleteLearningData.mockRejectedValue(new Error("boom"));
         renderDetail(setFixture());
@@ -194,5 +216,6 @@ describe("SetDetail: Alles wiederholen (#3171)", () => {
         expect(notifyError.mock.calls[0][0]).toContain("boom");
         expect(startRun).not.toHaveBeenCalled();
         expect(screen.queryByTestId("lesson-target")).toBeNull();
+        expect(getSetStatus("src", "psych")).toBe("completed");
     });
 });

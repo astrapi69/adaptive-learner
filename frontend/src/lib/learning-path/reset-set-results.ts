@@ -11,6 +11,11 @@
  *   - ``elementErrors.startRun`` opens a new Durchgang (EXP-051 / #2188):
  *     the previous run's element-error rows stay frozen under their
  *     ``run_id`` for the Fehlerhistorie, the new run starts without errors.
+ *   - ``storeSetStatus(..., "active")`` reactivates the set's lifecycle
+ *     status (the mode-agnostic localStorage store of "Meine Inhalte"),
+ *     exactly as "Set erneut durcharbeiten" does: a set the learner had
+ *     marked completed or deferred would otherwise keep that tag on the
+ *     dashboard and in Meine Inhalte while sitting at zero progress.
  *
  * XP, badges and streaks are deliberately not touched (earned stays
  * earned). Takes the storage facade as a parameter (seam-driven) so it can
@@ -21,6 +26,7 @@
  * await resetSetResults(getStorage(), userId, {source, setId});
  */
 
+import {storeSetStatus} from "../content/browse/lifecycle/set-status-store";
 import type {IStorageService, LessonProgress} from "../../storage/types";
 
 /** Which set to summarise / reset. */
@@ -52,7 +58,7 @@ function rowsOfSet(rows: readonly LessonProgress[], scope: SetResultsScope): Les
 }
 
 /** Percent correct across the scored rows, rounded; null without a score. */
-export function averagePercentOf(rows: readonly LessonProgress[]): number | null {
+function averagePercentOf(rows: readonly LessonProgress[]): number | null {
     let correct = 0;
     let total = 0;
     for (const row of rows) {
@@ -83,9 +89,11 @@ export async function summarizeSetResults(
 }
 
 /**
- * Reset the set: delete its progress rows (only when there are any) and
- * open a new run. Element-error rows are kept as the previous run's
- * history; XP and badges are untouched.
+ * Reset the set: delete its progress rows (only when there are any),
+ * open a new run and reactivate the set's lifecycle status. Element-error
+ * rows are kept as the previous run's history; XP and badges are
+ * untouched. The status is written last, so a failed delete or run leaves
+ * it as it was.
  */
 export async function resetSetResults(
     storage: IStorageService,
@@ -102,5 +110,6 @@ export async function resetSetResults(
         lessonsDeleted = deleted.lessonsDeleted;
     }
     const run = await storage.elementErrors.startRun(userId, scope.setId);
+    storeSetStatus(scope.source, scope.setId, "active");
     return {lessonsDeleted, runId: run.run_id};
 }

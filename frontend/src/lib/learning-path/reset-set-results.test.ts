@@ -11,6 +11,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {apiStorage} from "../../storage/api-storage";
 import {_resetDbForTests, getDb} from "../../storage/dexie/db";
 import {dexieStorage} from "../../storage/dexie-storage";
+import {getSetStatus, storeSetStatus} from "../content/browse/lifecycle/set-status-store";
 import {resetSetResults, summarizeSetResults} from "./reset-set-results";
 
 const USER = "learner-1";
@@ -26,6 +27,7 @@ describe("reset-set-results (Dexie mode)", () => {
         await db.lessonProgress.clear();
         await db.elementErrors.clear();
         await db.setRuns.clear();
+        localStorage.clear();
     });
 
     afterEach(async () => {
@@ -132,6 +134,21 @@ describe("reset-set-results (Dexie mode)", () => {
         expect(outcome.lessonsDeleted).toBe(0);
         expect(outcome.runId).toBe(2);
     });
+
+    // The lifecycle status is a mode-agnostic localStorage store; a set the
+    // learner had marked completed/deferred in "Meine Inhalte" must come
+    // back as active, exactly as "Set erneut durcharbeiten" does.
+    it.each(["completed", "deferred"] as const)(
+        "reactivates a set stored as %s, like the restart-set flow",
+        async (stored) => {
+            storeSetStatus(SCOPE.source, SCOPE.setId, stored);
+            await seedTwoLessonsAndOneError();
+
+            await resetSetResults(dexieStorage, USER, SCOPE);
+
+            expect(getSetStatus(SCOPE.source, SCOPE.setId)).toBe("active");
+        },
+    );
 });
 
 describe("reset-set-results (API mode)", () => {
@@ -189,6 +206,7 @@ describe("reset-set-results (API mode)", () => {
 
     beforeEach(() => {
         calls = [];
+        localStorage.clear();
         global.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
             const url = typeof input === "string" ? input : (input as URL).toString();
             const method = (init?.method ?? "GET").toUpperCase();
@@ -258,5 +276,32 @@ describe("reset-set-results (API mode)", () => {
         expect(outcome.lessonsDeleted).toBe(0);
         expect(calls.map((c) => c.method)).toEqual(["GET", "POST"]);
         expect(calls[1].url.endsWith("/set-runs")).toBe(true);
+    });
+
+    it.each(["completed", "deferred"] as const)(
+        "reactivates a set stored as %s, like the restart-set flow",
+        async (stored) => {
+            storeSetStatus(SCOPE.source, SCOPE.setId, stored);
+
+            await resetSetResults(apiStorage, USER, SCOPE);
+
+            expect(getSetStatus(SCOPE.source, SCOPE.setId)).toBe("active");
+        },
+    );
+
+    it("leaves the stored status alone when opening the new run fails", async () => {
+        storeSetStatus(SCOPE.source, SCOPE.setId, "completed");
+        const passThrough = global.fetch;
+        global.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+            const url = typeof input === "string" ? input : (input as URL).toString();
+            if (url.endsWith("/set-runs")) {
+                return new Response(JSON.stringify({detail: "boom"}), {status: 500});
+            }
+            return passThrough(input, init);
+        }) as unknown as typeof fetch;
+
+        await expect(resetSetResults(apiStorage, USER, SCOPE)).rejects.toThrow();
+
+        expect(getSetStatus(SCOPE.source, SCOPE.setId)).toBe("completed");
     });
 });
