@@ -111,7 +111,7 @@ export default function ReviewReport({
         <Figure
           testId={`${testIdPrefix}-open`}
           label={t("set_summary.elements_open", "Still open")}
-          value={String(review.elementsTracked - review.elementsMastered)}
+          value={String(review.elementsOpen)}
         />
         <Figure
           testId={`${testIdPrefix}-time`}
