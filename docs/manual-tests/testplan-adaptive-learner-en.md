@@ -2154,6 +2154,24 @@ each card row (`CardImageField`).
 - [ ] Check both in browser mode (no server) - the figures come from
       the local database there
 
+### Learning-path set: "Repeat everything" resets the results (#3171)
+- [ ] Open the learning path and expand a set with results: the action bar
+      shows "Repeat everything" (`set-reset-results-<id>`) next to "Train
+      errors"; a never-started set does not show the button
+- [ ] Press it: the confirmation "Reset all results?" names the set title,
+      the number of lessons with results, that score, stars and study time
+      are reset, that the previous run's mistakes stay as history and that
+      XP and badges are unchanged; below it "Average so far: N%" (for a
+      set without a scored lesson "No average yet.")
+- [ ] "Cancel" (also Escape): nothing changes, the set's stars and progress
+      are as before
+- [ ] "Reset and start over": success toast, lesson 1 of the set opens;
+      back on the learning path the set shows no stars and no progress,
+      "Train errors" is gone (new run, as with "Work through again")
+- [ ] Dashboard: XP and badges are unchanged after the reset
+- [ ] Check both: desktop app (API mode) and browser mode without a server
+      (Dexie) - the reset writes to both stores
+
 ### Set page: lesson list + progress (#2793 stages 2-3)
 - [ ] Open a set page (/content/set/<id> or via a shared link): below
       the set details, ALL lessons are listed with their number

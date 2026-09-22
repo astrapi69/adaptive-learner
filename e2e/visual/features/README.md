@@ -41,6 +41,7 @@ Baseline zu committen.
 
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
+| Lernpfad-Set - "Alles wiederholen" mit Bestätigung: nennt Punktzahl, Sterne und Lernzeit der Lektionen, den bisherigen Schnitt, und dass die Fehler als Verlauf sowie XP und Abzeichen bleiben (#3171) | `reset-set-results/dialog.png` | `reset-set-results/dialog.mobile.png` | #3171 |
 | Daten-Tab - Bereichsleiste über den sechs Bereichen, Deep-Link `?tab=data&section=backup`, Chip "Sichern und Exportieren" aktiv (#3122) | `data-subnav/settings.png` | `data-subnav/settings.mobile.png` | #3122 |
 | Ausführliche Lektions-Auswertung - Set-Auswertung dieser Lektion (Kennzahlen, Fehler nach Aufgabentyp, Schwachstellen, Fehler trainieren) direkt unter dem Knopf (#3124) | `lesson-review/summary.png` | `lesson-review/summary.mobile.png` | #3124 |
 | Kopfzeile mit Abzeichen - fällige Wiederholungen + XP neben Menü-Knopf und Logo; am Telefon zeigt das Abzeichen nur die Zahl, die Gruppe bricht rechtsbündig um (#3123) | `nav-badges/dashboard.png` | `nav-badges/dashboard.mobile.png` | #3123 |
