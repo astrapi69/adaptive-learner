@@ -13,7 +13,10 @@
  *   "select" → ``<select>`` per blank with options shuffled from
  *              ``distractors`` + the canonical accept. Schema
  *              validation guarantees ``distractors`` is non-empty
- *              when ``cloze_mode === "select"``.
+ *              when ``cloze_mode === "select"``. Graded by EXACT
+ *              membership (``isClozeSelectCorrect``, #3167): a pick
+ *              has no typo to forgive, and the typed-answer tolerance
+ *              let near-answer distractors pass as correct.
  *
  * Element-attempt fan-out: one ElementAttempt per blank via
  * ``deriveClozeAttempts`` — so per-blank mastery tracking lights
@@ -57,7 +60,12 @@ import type {
     ExerciseHandle,
     ExerciseScored,
 } from "../../shell/exercise-control";
+import {isClozeSelectCorrect} from "../../../../lib/exercises/grading/cloze-select-grading";
 import {isFreeTextCorrect} from "../../../../lib/exercises/grading/free-text-grading";
+
+/** The two blank-based answer modes this renderer handles (``multiselect``
+ *  is dispatched to ``ClozeMultiSelect`` before it gets here). */
+type ClozeBlankMode = "type" | "select";
 
 export interface ClozeExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
@@ -81,20 +89,40 @@ function _splitOnMarkers(sentence: string): string[] {
     return sentence.split("___");
 }
 
+/** Grade ONE blank by the mode it was answered in (#3167). A typed
+ *  answer goes through the tolerant free-text matcher (NFC + lowercase +
+ *  Levenshtein budget; ``codeMode`` swaps in the code normalizer, #1595).
+ *  A picked option goes through exact membership: the learner chose a
+ *  string from a fixed list, so there is no typo to forgive, and the
+ *  typed budget would wave a near-answer distractor through as correct.
+ *  Every grading call site in this renderer (fresh submit, post-check
+ *  display, reviewed revisit) routes through here so the verdict cannot
+ *  drift between them. */
+function isBlankCorrect(
+    input: string,
+    blank: ClozeBlank,
+    mode: ClozeBlankMode,
+    codeMode: boolean,
+): boolean {
+    if (mode === "select") return isClozeSelectCorrect(input, blank.accept);
+    return isFreeTextCorrect(input, blank.accept, codeMode);
+}
+
 /** Score a reviewed (read-only) cloze attempt: how many of the frozen
- *  inputs match their blank's accept list. ``codeMode`` selects the
- *  code normalizer (case-sensitive, whitespace-stripping, quote-unifying)
- *  so a reviewed code cloze re-scores exactly like a fresh submission
- *  (#1595). Returns null when there is no reviewed answer to score. */
+ *  inputs match their blank's accept list, graded by the same
+ *  {@link isBlankCorrect} rule as a fresh submission so a reviewed code
+ *  cloze (#1595) or select cloze (#3167) re-scores identically. Returns
+ *  null when there is no reviewed answer to score. */
 function clozeReviewedResult(
     reviewedInputs: readonly string[] | null,
     blanks: readonly ClozeBlank[],
+    mode: ClozeBlankMode,
     codeMode: boolean,
 ): {correct: number; total: number} | null {
     if (!reviewedInputs) return null;
     return {
         correct: blanks.filter((blank, i) =>
-            isFreeTextCorrect(reviewedInputs[i] ?? "", blank.accept, codeMode),
+            isBlankCorrect(reviewedInputs[i] ?? "", blank, mode, codeMode),
         ).length,
         total: blanks.length,
     };
@@ -122,7 +150,7 @@ function ClozeExercise(
     const blanks = useMemo(() => exercise.blanks ?? [], [exercise.blanks]);
     // ``multiselect`` is handled by the dispatch wrapper before reaching
     // this blank-based renderer, so only type/select arrive here.
-    const mode: "type" | "select" =
+    const mode: ClozeBlankMode =
         exercise.cloze_mode === "select" ? "select" : "type";
     const reviewedCloze = reviewed?.kind === "cloze" ? reviewed : null;
 
@@ -157,6 +185,7 @@ function ClozeExercise(
     const reviewedResult = clozeReviewedResult(
         reviewedCloze ? reviewedCloze.inputs : null,
         blanks,
+        mode,
         codeMode,
     );
 
@@ -169,7 +198,7 @@ function ClozeExercise(
         reviewedResult,
         score: (): ExerciseScored => {
             const perCorrect = blanks.map((blank, i) =>
-                isFreeTextCorrect(inputs[i], blank.accept, codeMode),
+                isBlankCorrect(inputs[i], blank, mode, codeMode),
             );
             return {
                 correct: perCorrect.filter(Boolean).length,
@@ -190,7 +219,7 @@ function ClozeExercise(
     // stored): inputs are frozen once submitted, so this stays stable.
     const perBlankCorrect = submitted
         ? blanks.map((blank, i) =>
-              isFreeTextCorrect(inputs[i], blank.accept, codeMode),
+              isBlankCorrect(inputs[i], blank, mode, codeMode),
           )
         : blanks.map(() => false);
 
