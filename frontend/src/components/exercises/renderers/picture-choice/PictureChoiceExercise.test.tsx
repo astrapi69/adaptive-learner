@@ -423,3 +423,30 @@ describe("PictureChoiceExercise: edge cases", () => {
         expect(img?.getAttribute("src")).toBe("/api/cdn/assets/cat.png");
     });
 });
+
+describe("PictureChoiceExercise #3174: long label words wrap", () => {
+    it("every tile label carries hyphenation + the overflow-wrap fallback", () => {
+        render(<PictureChoiceExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        const labels = screen.getAllByText("Cat");
+        expect(labels.length).toBeGreaterThan(0);
+        for (const label of labels) {
+            expect(label).toHaveClass("hyphens-auto", "[overflow-wrap:anywhere]");
+        }
+    });
+
+    it("the tile grid carries the content language for hyphenation", () => {
+        render(
+            <PictureChoiceExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                ttsLang="fr"
+            />,
+        );
+        expect(screen.getByTestId("picture-grid")).toHaveAttribute("lang", "fr");
+    });
+
+    it("without a content language the grid carries no lang", () => {
+        render(<PictureChoiceExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(screen.getByTestId("picture-grid")).not.toHaveAttribute("lang");
+    });
+});

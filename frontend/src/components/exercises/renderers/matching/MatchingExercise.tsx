@@ -62,6 +62,7 @@ import {
     MatchingResultFooter,
     MatchingViewToggle,
     matchingPairIsCorrect,
+    matchingColumnLangs,
     type LeftTile,
     type RightTile,
     type MatchingPairs,
@@ -230,6 +231,11 @@ function MatchingExercise(
             domain,
             t,
         });
+    const columnLangs = matchingColumnLangs({
+        productive,
+        targetLanguage,
+        sourceLanguage,
+    });
 
     // Stable seed per-mount so reshuffling on every render
     // doesn't move the columns under the user.
@@ -577,6 +583,7 @@ function MatchingExercise(
                         className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-left"
                         aria-label={leftLabel}
+                        lang={columnLangs.left}
                     >
                         {leftTiles.map((tile) => (
                             <MatchingLeftTile
@@ -607,6 +614,7 @@ function MatchingExercise(
                         className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-right"
                         aria-label={rightLabel}
+                        lang={columnLangs.right}
                     >
                         {rightTiles.map((tile) => (
                             <MatchingRightTile
@@ -642,6 +650,8 @@ function MatchingExercise(
                     totalCount={pairs.length}
                     leftLabel={leftLabel}
                     rightLabel={rightLabel}
+                    leftLang={columnLangs.left}
+                    rightLang={columnLangs.right}
                 />
             )}
 

@@ -25,6 +25,7 @@ import {forwardRef, useMemo, useState} from "react";
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
 import {cn} from "@/lib/utils";
+import {LONG_WORD_WRAP} from "../../../../lib/exercises/long-word-wrap";
 import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
 import ReadAloudButton from "../../../lesson/tts/ReadAloudButton";
 import {deriveClozeMultiSelectAttempt} from "../../../../lib/srs/element-attempt";
@@ -237,6 +238,7 @@ function ClozeMultiSelect(
                     "Select all that apply",
                 )}
                 className="flex flex-col gap-2"
+                lang={ttsLang ?? undefined}
                 data-testid="cloze-multiselect-options"
             >
                 {options.map((option, idx) => {
@@ -271,7 +273,7 @@ function ClozeMultiSelect(
                                 aria-label={option}
                                 data-testid={`cloze-multiselect-checkbox-${idx}`}
                             />
-                            <span className="flex-1">
+                            <span className={cn("min-w-0 flex-1", LONG_WORD_WRAP)}>
                                 <InlineMarkdown>{option}</InlineMarkdown>
                             </span>
                             {submitted && verdict !== "neutral" && (
