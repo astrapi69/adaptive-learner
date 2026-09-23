@@ -7,7 +7,7 @@
  * back from MatchingExercise, so there is no cycle.
  */
 
-import {ArrowRight, Check, HelpCircle, Sparkles, X} from "lucide-react";
+import {ArrowRight, Check, HelpCircle, ListChecks, Sparkles, X} from "lucide-react";
 import type {CSSProperties, ReactNode} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
@@ -237,6 +237,9 @@ interface LeftTileViewState {
     correctPartner: string | undefined;
     chosenPartner: string | undefined;
     pairStyle: CSSProperties | undefined;
+    /** #3186 - whether a wrong pair also spells out its correct partner
+     *  (the Corrections view). False in the plain My-answers view. */
+    showCorrection: boolean;
 }
 
 interface LeftTileContext {
@@ -246,6 +249,9 @@ interface LeftTileContext {
     slotByLeft: ReadonlyMap<number, number>;
     pairs: MatchingPairs;
     productive: boolean;
+    /** #3186 - see {@link LeftTileViewState.showCorrection}. Absent = true,
+     *  the pre-#3186 behaviour. */
+    showCorrection?: boolean;
 }
 
 /** Derived render state for one left tile (selection / pairing / grading
@@ -254,7 +260,15 @@ export function computeLeftTileState(
     tile: LeftTile,
     ctx: LeftTileContext,
 ): LeftTileViewState {
-    const {selectedLeft, matches, submitted, slotByLeft, pairs, productive} = ctx;
+    const {
+        selectedLeft,
+        matches,
+        submitted,
+        slotByLeft,
+        pairs,
+        productive,
+        showCorrection = true,
+    } = ctx;
     const isPaired = matches.has(tile.index);
     const chosenRight = matches.get(tile.index);
     // Correct by VALUE, not index — duplicate right-column values are
@@ -297,6 +311,7 @@ export function computeLeftTileState(
         correctPartner,
         chosenPartner,
         pairStyle,
+        showCorrection,
     };
 }
 
@@ -312,7 +327,8 @@ function MatchingTileFeedback({
     state: LeftTileViewState;
 }) {
     const {t} = useI18n();
-    const {isWrong, isCorrect, chosenPartner, correctPartner} = state;
+    const {isWrong, isCorrect, chosenPartner, correctPartner, showCorrection} =
+        state;
     return (
         <>
             {isWrong && (
@@ -339,7 +355,7 @@ function MatchingTileFeedback({
                             ).replace("{label}", chosenPartner)}
                         </p>
                     )}
-                    {correctPartner && (
+                    {showCorrection && correctPartner && (
                         <p
                             className={cn(
                                 "m-0 flex min-w-0 items-center gap-1.5 rounded-sm border-l-2 border-dashed border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] px-2 py-1 text-[0.8125rem] font-semibold text-[var(--matching-correct-fg)]",
@@ -603,29 +619,43 @@ export function MatchingRightTile({
     );
 }
 
+/** The post-check views (#977, #3186): the learner's own graded pairs,
+ *  the same pairs with the correct partner under each mistake, and the
+ *  revealed solution. */
+export type MatchingPostCheckView = "user-answers" | "corrections" | "solution";
+
 /** #977 — after checking, the learner toggles between their own graded
  *  answers and the revealed solution. The active view is a ``default``
  *  (filled) button carrying a Check; the inactive view is an ``outline``
  *  button. ``aria-pressed`` conveys the active state to assistive tech.
  *  Shown only after submit (the caller gates it). ``testidPrefix``
  *  (#2772) lets sibling exercise types (categorization) reuse the toggle
- *  under their own testid namespace; matching keeps its defaults. */
+ *  under their own testid namespace; matching keeps its defaults.
+ *  #3186: matching also passes ``onShowCorrections`` for a middle
+ *  "Corrections" view; categorization keeps the two-view toggle. */
 export function MatchingViewToggle({
     view,
     onShowUserAnswers,
+    onShowCorrections,
     onShowSolution,
     myAnswersLabel,
+    correctionsLabel,
     solveLabel,
     testidPrefix = "matching",
 }: {
-    view: "user-answers" | "solution";
+    view: MatchingPostCheckView;
     onShowUserAnswers: () => void;
+    /** #3186 - renders the middle "Corrections" button when given
+     *  together with ``correctionsLabel``; absent = the two-view toggle. */
+    onShowCorrections?: () => void;
     onShowSolution: () => void;
     myAnswersLabel: string;
+    correctionsLabel?: string;
     solveLabel: string;
     testidPrefix?: string;
 }) {
     const userActive = view === "user-answers";
+    const correctionsActive = view === "corrections";
     const solutionActive = view === "solution";
     return (
         <div
@@ -644,6 +674,23 @@ export function MatchingViewToggle({
                 {userActive && <Check size={14} aria-hidden="true" />}
                 {myAnswersLabel}
             </Button>
+            {onShowCorrections && correctionsLabel && (
+                <Button
+                    type="button"
+                    variant={correctionsActive ? "default" : "outline"}
+                    size="sm"
+                    aria-pressed={correctionsActive}
+                    onClick={onShowCorrections}
+                    data-testid={`${testidPrefix}-corrections`}
+                >
+                    {correctionsActive ? (
+                        <Check size={14} aria-hidden="true" />
+                    ) : (
+                        <ListChecks size={14} aria-hidden="true" />
+                    )}
+                    {correctionsLabel}
+                </Button>
+            )}
             <Button
                 type="button"
                 variant={solutionActive ? "default" : "outline"}

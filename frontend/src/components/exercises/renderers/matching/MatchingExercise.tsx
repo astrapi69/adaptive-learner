@@ -29,6 +29,7 @@ import type {ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
+import {useMatchingSeparateCorrections} from "../../../../hooks/settings/useMatchingSeparateCorrections";
 import {playfulDataAttr} from "../../../../lib/learning/lessonModeConfig";
 import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
@@ -64,6 +65,7 @@ import {
     matchingPairIsCorrect,
     matchingColumnLangs,
     type LeftTile,
+    type MatchingPostCheckView,
     type RightTile,
     type MatchingPairs,
 } from "./matching-parts";
@@ -146,7 +148,9 @@ function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
  *  (badge + "Continue") when the caller advances, else nothing (#3140 -
  *  there is nothing to solve, so the review / replay / endless surfaces
  *  show the graded columns alone, like the categorization sibling);
- *  otherwise the My-answers / Solve view toggle. Renders nothing pre-check
+ *  otherwise the My-answers / (Corrections, #3186) / Solve view toggle.
+ *  The Corrections button shows only when ``onShowCorrections`` is given
+ *  (the learner's "separate corrections" setting). Renders nothing pre-check
  *  or when the toggle is mode-hidden. Extracted so the main renderer
  *  stays under the complexity gate. */
 function MatchingPostCheckToggle({
@@ -157,6 +161,7 @@ function MatchingPostCheckToggle({
     advanceLabel,
     view,
     onShowUserAnswers,
+    onShowCorrections,
     onShowSolution,
 }: {
     submitted: boolean;
@@ -164,8 +169,9 @@ function MatchingPostCheckToggle({
     isAllCorrect: boolean;
     onAdvance?: () => void;
     advanceLabel?: string;
-    view: "user-answers" | "solution";
+    view: MatchingPostCheckView;
     onShowUserAnswers: () => void;
+    onShowCorrections?: () => void;
     onShowSolution: () => void;
 }) {
     const {t} = useI18n();
@@ -184,8 +190,10 @@ function MatchingPostCheckToggle({
         <MatchingViewToggle
             view={view}
             onShowUserAnswers={onShowUserAnswers}
+            onShowCorrections={onShowCorrections}
             onShowSolution={onShowSolution}
             myAnswersLabel={t("lesson.exercise.matching.my_answers", "My answers")}
+            correctionsLabel={t("lesson.exercise.matching.corrections", "Corrections")}
             solveLabel={t("lesson.exercise.matching.resolve", "Solve")}
         />
     );
@@ -302,13 +310,30 @@ function MatchingExercise(
         return () => window.clearTimeout(id);
     }, [wrongFlash]);
 
-    /** #824 / #977 — after the answer is checked, the learner toggles
-     *  between their own graded answers ("user-answers") and the revealed
-     *  solution ("solution"). Default is the graded grid, which is what
-     *  the columns already render after submit. */
-    const [view, setView] = useState<"user-answers" | "solution">(
+    /** #824 / #977 / #3186 — after the answer is checked, the learner
+     *  toggles between their own graded answers ("user-answers"), the same
+     *  grid with the correct partner under each mistake ("corrections")
+     *  and the revealed solution ("solution"). Default is the plain graded
+     *  grid, which is what the columns already render after submit. */
+    const [selectedView, setView] = useState<MatchingPostCheckView>(
         "user-answers",
     );
+    /** #3186 — Settings > Learning "Corrections as a separate view"
+     *  (default on). Off = the #977 two-view toggle with the corrections
+     *  inline in "My answers". */
+    const separateCorrections = useMatchingSeparateCorrections();
+    // A live switch to the two-view layout while "corrections" is open
+    // falls back to "My answers" (which then carries the corrections), so
+    // the toggle never ends up with no active button.
+    const view: MatchingPostCheckView =
+        !separateCorrections && selectedView === "corrections"
+            ? "user-answers"
+            : selectedView;
+    // Correct partners show in the Corrections view, in the two-view
+    // layout, and whenever the mode hides the toggle (exam): there the
+    // inline corrections are the only way to see the right answer.
+    const showCorrection =
+        view === "corrections" || !separateCorrections || !showAnswerToggle;
     /** Whether the solution view has been shown at least once, so the
      *  reveal animation plays only on the FIRST switch (#977). A ref (not
      *  state) so flipping it never triggers a re-render mid-animation. */
@@ -391,6 +416,7 @@ function MatchingExercise(
         setView("solution");
     };
     const showUserAnswers = () => setView("user-answers");
+    const showCorrections = () => setView("corrections");
 
     /** The correct pairs for the resolution view (#824), in the
      *  displayed left-column order — which since #2882 IS the authored
@@ -567,10 +593,11 @@ function MatchingExercise(
                 advanceLabel={advanceLabel}
                 view={view}
                 onShowUserAnswers={showUserAnswers}
+                onShowCorrections={separateCorrections ? showCorrections : undefined}
                 onShowSolution={showSolution}
             />
 
-            {view === "user-answers" && (
+            {view !== "solution" && (
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
                 <div className="flex min-w-0 flex-col gap-2">
                     <MatchingColumnHeader
@@ -596,6 +623,7 @@ function MatchingExercise(
                                     slotByLeft,
                                     pairs,
                                     productive,
+                                    showCorrection,
                                 })}
                                 onClick={() => handleLeftClick(tile.index)}
                                 playful={playful}

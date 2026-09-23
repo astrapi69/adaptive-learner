@@ -967,7 +967,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       Feedback, tägliche Missionen und Erinnerungen.)
 - [ ] Grundlagen: Lernprofil, dann Weitere Ausgangssprachen
 - [ ] In der Lektion: Lektionsmodus, Tipps, Interaktion, dann Bevorzugte
-      Übungsrichtung und Auflösungs-Effekt (Tipps und Interaktion stehen
+      Übungsrichtung und Zuordnungsübung (Tipps und Interaktion stehen
       VOR Richtung und Auflösung)
 - [ ] Vorlesen und Diktieren: nur die Karte "Sprachausgabe"; in einem
       Browser ohne Web-Speech-Unterstützung (weder Vorlesen noch
@@ -1202,6 +1202,19 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       bei komplett richtiger Antwort erscheint KEIN Umschalter - in der
       Lektion nur "Weiter", in der Wiederholungs-Sitzung, Endlos-, Shuffle-,
       adaptiven und Fehler-Wiederholungs-Lektion nur die bewerteten Spalten
+- [ ] matching Korrektur-Ansicht (#3186): nach einer nicht komplett
+      richtigen Prüfung stehen drei Knöpfe "Meine Antworten" / "Korrektur" /
+      "Auflösen". "Meine Antworten" ist aktiv und zeigt nur die eigenen Paare
+      (grün/rot plus "Deine Antwort"), KEINE Zeile "Richtige Antwort".
+      "Korrektur" zeigt unter jedem Fehler zusätzlich die richtige Antwort,
+      "Auflösen" die Lösung. "Nochmal versuchen" und erneutes Prüfen startet
+      wieder in "Meine Antworten"
+- [ ] matching Korrektur-Einstellung (#3186): Einstellungen > Lernen >
+      Karte "Zuordnungsübung" > "Korrektur als eigene Ansicht" ist
+      standardmäßig an. Aus: nur zwei Knöpfe "Meine Antworten" / "Auflösen",
+      die richtige Antwort steht direkt unter jedem Fehler. Umschalten wirkt
+      sofort auf eine offene Übung. Im Prüfungsmodus (kein Umschalter) steht
+      die richtige Antwort immer direkt unter dem Fehler
 - [ ] ext:al-categorization: Kategorien zuordnen, Auflösung lesbar; nach
       "Antwort prüfen" bleiben die Verdikt-Chips samt roter Korrektur-Kategorie
       INNERHALB ihrer Spalte (kein Überlaufen in die Nachbarspalte, #2771) -
