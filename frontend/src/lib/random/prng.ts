@@ -3,8 +3,15 @@
  * mulberry32 generator (#3214).
  *
  * Both used to exist twice (``missions/generator.ts`` and the option shuffle
- * in ``exercises/grading/seeded-shuffle.ts``); this module is now the only
- * implementation in ``frontend/src``. The visual harness keeps a serialised
+ * in ``exercises/grading/seeded-shuffle.ts``). mulberry32 is now implemented
+ * only here in ``frontend/src``. FNV-1a has one more, deliberately different
+ * variant: ``anki/apkg-builder.ts`` ``fieldChecksum`` multiplies in floating
+ * point, so its values differ, and it stays that way so exported Anki
+ * checksums do not change. The avatar palette index in
+ * ``content/media/placeholder-svg.ts`` builds on ``fnv1a32``. The other
+ * string hashes in the app (``exercises/direction.ts``,
+ * ``storage/ai/model-discovery.ts``) are different algorithms, not copies.
+ * The visual harness keeps a serialised
  * copy of the same algorithm in its init script (``e2e/visual/helpers.ts``
  * ``pinRandomness``), because code injected with ``page.addInitScript`` cannot
  * import app modules.
