@@ -41,6 +41,8 @@ Baseline zu committen.
 
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
+| Wiederholungssitzung auf der Runner-Hülle - Sitzungskopf (Zurück, Titel, Element-Untertitel), geteilter Fortschrittsbalken, Lektions-Fuß mit Chevron-Zurück und Haken-Prüfen (EXP-052 Scheibe 1, #3169) | `review-session/schritt.png` | `review-session/schritt.mobile.png` | #3169 |
+| Wiederholungssitzung - Zusammenfassung über den Summary-Einschub der Hülle: Auswertung, SRS-Hinweis, Wiederkomm-Zeile; der Fuß behält Zurück als gesperrten Rückblick (#3169) | `review-session/zusammenfassung.png` | `review-session/zusammenfassung.mobile.png` | #3169 |
 | Lernpfad-Set - "Alles wiederholen" mit Bestätigung: nennt Punktzahl, Sterne und Lernzeit der Lektionen, den bisherigen Schnitt, und dass die Fehler als Verlauf sowie XP und Abzeichen bleiben (#3171) | `reset-set-results/dialog.png` | `reset-set-results/dialog.mobile.png` | #3171 |
 | Daten-Tab - Bereichsleiste über den sechs Bereichen, Deep-Link `?tab=data&section=backup`, Chip "Sichern und Exportieren" aktiv (#3122) | `data-subnav/settings.png` | `data-subnav/settings.mobile.png` | #3122 |
 | Ausführliche Lektions-Auswertung - Set-Auswertung dieser Lektion (Kennzahlen, Fehler nach Aufgabentyp, Schwachstellen, Fehler trainieren) direkt unter dem Knopf (#3124) | `lesson-review/summary.png` | `lesson-review/summary.mobile.png` | #3124 |

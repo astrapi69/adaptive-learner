@@ -1,29 +1,13 @@
 /**
- * Runner shell barrel (EXP-052, refs #3169): the contracts, the six
- * policy constants and the building blocks a migrated page composes.
+ * Runner shell barrel (EXP-052, refs #3169): what a migrated page
+ * imports. The barrel carries only the consumed surface (the dead-code
+ * ratchet, #2741, counts an unconsumed re-export as a finding): the
+ * shell and, per migrated page, its policy. Slices 2 to 4 add
+ * ``SHUFFLE_POLICY`` and the rest as their pages consume them; the
+ * building blocks (``RunnerHeader``, ``RunnerProgress``, ``RunnerStep``,
+ * ``RunnerFooter``, ``RunnerStatusView``, ``useRunStepResults``) and the
+ * contracts in ``types.ts`` are composed by ``LessonRunner`` itself.
  */
 
 export { default as LessonRunner } from "./LessonRunner";
-export type { LessonRunnerProps } from "./LessonRunner";
-export {
-  ADAPTIVE_POLICY,
-  ENDLESS_POLICY,
-  ERROR_REPLAY_POLICY,
-  LESSON_POLICY,
-  REVIEW_POLICY,
-  RUNNER_POLICIES,
-  SHUFFLE_POLICY,
-} from "./policies";
-export { default as RunnerFooter } from "./RunnerFooter";
-export type { RunnerFooterProps } from "./RunnerFooter";
-export { default as RunnerStatusView, resolveRunnerStatusKind } from "./RunnerStatusView";
-export type { RunnerStatusKind, RunnerStatusViewProps } from "./RunnerStatusView";
-export type {
-  RunnerExit,
-  RunnerHeaderExtraRenderer,
-  RunnerPolicy,
-  RunnerSource,
-  RunnerSourceStatus,
-  RunnerSummaryRenderer,
-  RunnerTestIdPrefix,
-} from "./types";
+export { REVIEW_POLICY } from "./policies";

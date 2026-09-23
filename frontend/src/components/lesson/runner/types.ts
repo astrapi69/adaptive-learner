@@ -50,9 +50,31 @@ export interface RunnerSource {
   /** For the attempt derivation in the dispatcher (Review: the source
    *  ``lesson_id`` embedded in the synthesised step id). */
   lessonId: string;
+  /**
+   * The content set the run plays. The dispatcher stamps it on every
+   * attempt (``set_id``); an empty string is the missing-params screen,
+   * exactly as the pages resolve ``!setId`` today (slice 1).
+   */
+  setId: string;
+  /**
+   * Identity of the run (slice 1). A NEW value starts a new run: the
+   * shell clears hint usage (#594 / #3196) and drops the run-local step
+   * results that lock an answered step (#1790). A re-render with the
+   * same key touches neither. Review: the set plus a round counter
+   * ("another round" is a new run); the lesson (slice 4): source, set
+   * and file.
+   */
+  runKey: string;
   /** Indexed runs carry a position; the Endless stream has none. */
   position: { index: number; total: number } | null;
   isSummary: boolean;
+  /**
+   * What the summary render prop receives (slice 1). The mode hook owns
+   * the numbers, not the shell: Review tallies per ELEMENT with the last
+   * outcome winning (#3170), which a per-step sum in the shell could not
+   * reproduce.
+   */
+  tallies: RunnerSummaryTallies;
   goNext: () => void;
   /** Absent when the run cannot go back (Endless: no previous step exists). */
   goPrev?: () => void;

@@ -17,11 +17,13 @@ import type {
 /**
  * The persisted result for the step at ``currentStepIndex``, or
  * ``undefined`` when the lesson/step isn't loaded or has no result yet.
+ * Reads only ``step_results``, so an ephemeral runner's run-local
+ * results (EXP-052) qualify as well as a persisted progress row.
  */
 export function storedStepResult(
   lesson: ContentLesson | null,
   currentStepIndex: number,
-  progress: LessonProgress | null,
+  progress: Pick<LessonProgress, "step_results"> | null,
 ): LessonStepResultStored | undefined {
   const steps = lesson?.steps;
   if (!steps || currentStepIndex >= steps.length) return undefined;

@@ -3437,6 +3437,43 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       "fällig"); bei EIN gilt wieder die Drei-in-Folge-Regel
 - [ ] Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
 
+### Wiederholungssitzung auf der Runner-Hülle (EXP-052 Scheibe 1, #3169)
+
+- [ ] `/review/<set>` mit fälligen Elementen öffnen: Kopf mit
+      "Zurück zum Dashboard", Titel "Wiederholungssitzung" und dem
+      Element-Untertitel; darunter der Fortschrittsbalken "Schritt 1 von N";
+      der Fuß sieht aus wie in einer Lektion (Chevron-Pfeil "Zurück" links,
+      "Prüfen" mit Haken rechts), keine Pause, keine Optionen-Leiste
+- [ ] "Zurück" ist auf dem ersten Schritt deaktiviert; nach "Weiter" führt
+      es einen Schritt zurück im selben Durchlauf (nicht zum Dashboard)
+- [ ] Enter in einer Lückentext-Antwort: erster Enter prüft, zweiter Enter
+      geht weiter; ohne Antwort tut Enter nichts; mit ausgeschaltetem
+      Enter-Kürzel (Einstellungen > Lernen) tut Enter nichts
+- [ ] Am Telefon nach "Weiter" (oder Enter): die Ansicht springt an den
+      Anfang des neuen Schritts (Kopf schiebt sich weg, Balken und Aufgabe
+      sind sichtbar, kein abgeschnittener Anfang); Gerät drehen: die Aufgabe
+      und der Fuß liegen wieder im Sichtfeld
+- [ ] Zurück auf einen bereits beantworteten Schritt: die Antwort ist
+      gesperrt (Lösung sichtbar, keine Eingabe), der Fuß zeigt "Weiter" statt
+      "Prüfen", Enter geht weiter statt zu prüfen; in Statistik / Fehler
+      trainieren zählt das Element danach GENAU EINMAL für diese Runde (kein
+      zweiter Versuch durch erneutes Beantworten)
+- [ ] Zurück auf einen NOCH NICHT beantworteten Schritt (z. B. nach einem
+      Sprung nach vorn und wieder zurück): der Schritt bleibt beantwortbar,
+      "Prüfen" ist da
+- [ ] Hinweise aus einem früheren Durchlauf zählen nicht (#3196): in einer
+      Lektion einen Tipp aufdecken, dann `/review/<set>` öffnen und dasselbe
+      Element ohne Tipp beantworten: in der Statistik ist der Versuch NICHT
+      als "mit Tipp" markiert; ein Tipp, der IN der Sitzung aufgedeckt wird,
+      zählt weiterhin; "Weitere Runde" beginnt wieder ohne Tipp-Merker
+- [ ] Zusammenfassung: unverändert (Auswertung, SRS-Hinweis, "Weitere
+      Runde" bei Rest, Wiederkomm-Zeile); der Fuß zeigt dort nur "Zurück"
+      (Rückblick auf den letzten, gesperrten Schritt)
+- [ ] Ladezustand, "Alles erledigt", "Set nicht heruntergeladen" und Fehler
+      zeigen dieselben Bildschirme wie zuvor (Zurück zum Dashboard bzw.
+      Inhaltsbrowser öffnen)
+- [ ] Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
+
 ---
 
 # TEIL B: AUTOMATISIERTE TESTS (Referenz)
