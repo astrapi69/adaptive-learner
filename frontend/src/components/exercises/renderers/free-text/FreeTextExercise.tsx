@@ -37,7 +37,6 @@ import {forwardRef, useEffect, useRef, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
-import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ExercisePromptRow from "../../shell/ExercisePromptRow";
 import ExerciseHint from "../../feedback/ExerciseHint";
@@ -200,45 +199,6 @@ function FreeTextInput({
             spellCheck={false}
             data-testid="free-text-input"
         />
-    );
-}
-
-/** The "Need a hint?" disclosure; null until shown or once submitted. */
-function FreeTextHint({
-    hint,
-    submitted,
-    showHint,
-    onShowHint,
-}: {
-    hint: string | null | undefined;
-    submitted: boolean;
-    showHint: boolean;
-    onShowHint: () => void;
-}) {
-    const {t} = useI18n();
-    if (!hint || submitted) return null;
-    return (
-        <div className="flex items-center gap-2">
-            {!showHint ? (
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    type="button"
-                    className="text-[var(--accent-text)] underline underline-offset-2 hover:no-underline"
-                    onClick={onShowHint}
-                    data-testid="free-text-hint-show"
-                >
-                    {t("lesson.exercise.free_text.hint_show", "Need a hint?")}
-                </Button>
-            ) : (
-                <p
-                    className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
-                    data-testid="free-text-hint"
-                >
-                    {hint}
-                </p>
-            )}
-        </div>
     );
 }
 
@@ -421,7 +381,6 @@ function FreeTextExercise(
         reviewed?.kind === "free_text" ? reviewed : null;
 
     const [input, setInput] = useState(reviewedFreeText?.input ?? "");
-    const [showHint, setShowHint] = useState(false);
 
     const trimmed = input.trim();
     const isInputEmpty = trimmed === "";
@@ -521,13 +480,6 @@ function FreeTextExercise(
                 onKeyDown={handleKeyDown}
                 submitted={submitted}
                 inputBase={inputBase}
-            />
-
-            <FreeTextHint
-                hint={exercise.hint}
-                submitted={submitted}
-                showHint={showHint}
-                onShowHint={() => setShowHint(true)}
             />
 
             <FreeTextResult

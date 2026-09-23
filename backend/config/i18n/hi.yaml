@@ -2094,7 +2094,6 @@ lesson:
       placeholder: अपना उत्तर लिखें…
       code_placeholder: कोड लिखें…
       input_label: आपका उत्तर
-      hint_show: संकेत चाहिए?
       result_correct: सही!
       result_wrong: बिल्कुल नहीं।
       result_almost: "लगभग! इस पर ध्यान दें:"
@@ -2111,14 +2110,12 @@ lesson:
       answer_placeholder: अपना उत्तर बनाने के लिए नीचे टाइलों पर टैप करें
       scrambled_label: उपलब्ध टाइलें
       scrambled_done: सभी टाइलें रखी गईं।
-      hint_show: संकेत चाहिए?
       result_correct: सही!
       result_wrong: बिल्कुल नहीं।
       empty: इस शब्द-टाइल अभ्यास में कोई टाइलें नहीं हैं।
     cloze:
       submit: उत्तर जाँचें
       retry: फिर से कोशिश करें
-      hint_show: संकेत चाहिए?
       sentence_label: रिक्त-स्थान वाक्य
       blank_label: रिक्त स्थान {n}
       select_placeholder: चुनें…
@@ -3487,6 +3484,16 @@ learning_path:
   train_errors: "गलतियाँ अभ्यास करें"
   shuffle: "मिश्रण"
   endless: "अनवरत"
+  reset_all:
+    button: "सब कुछ दोहराएँ"
+    title: "सभी परिणाम रीसेट करें?"
+    message: "“{title}” के परिणाम रीसेट किए जाएँगे: {lessons} पाठों के अंक, सितारे और अध्ययन समय। नया दौर पाठ 1 से शुरू होगा; पिछले दौर की गलतियाँ इतिहास के रूप में बनी रहेंगी। XP और बैज नहीं बदलते।"
+    average: "अब तक का औसत: {percent} %"
+    no_average: "अभी कोई औसत नहीं है।"
+    confirm: "रीसेट करें और फिर से शुरू करें"
+    cancel: "रद्द करें"
+    success: "परिणाम रीसेट हो गए। नया दौर पाठ 1 से शुरू होता है।"
+    failed: "परिणाम रीसेट नहीं किए जा सके।"
   personal:
     title: आपका सीखने का पथ
     progress: "कुल मिलाकर: {n}% पूर्ण"

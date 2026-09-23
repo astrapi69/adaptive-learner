@@ -15,6 +15,7 @@ function review(overrides: Partial<SetReview> = {}): SetReview {
     totalErrors: 7,
     elementsTracked: 4,
     elementsMastered: 1,
+    elementsOpen: 3,
     masteredShare: 25,
     lessonsCompleted: 2,
     timeSpentSeconds: 150,
@@ -52,6 +53,13 @@ describe("ReviewReport (#3124)", () => {
     expect(screen.getByTestId("rr-by-type")).toHaveTextContent("vocabulary: 7");
     expect(screen.getByTestId("rr-weak-areas")).toHaveTextContent("bonjor");
     expect(screen.getByTestId("rr-weak-areas")).toHaveTextContent("4 mistakes");
+  });
+
+  it("renders Still open from the aggregate's elementsOpen instead of re-deriving it (#3166)", () => {
+    // The fixture deliberately disagrees with tracked minus mastered (4 - 1):
+    // the aggregate owns the maths, the renderer must not compute a second one.
+    renderReport({ review: review({ elementsOpen: 2 }) });
+    expect(screen.getByTestId("rr-open")).toHaveTextContent("2");
   });
 
   it("shows the per-lesson breakdown only for the set scope", () => {

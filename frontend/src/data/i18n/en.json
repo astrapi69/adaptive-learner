@@ -2260,7 +2260,6 @@
         "placeholder": "Type your answer…",
         "code_placeholder": "Type the code…",
         "input_label": "Your answer",
-        "hint_show": "Need a hint?",
         "result_correct": "Correct!",
         "result_wrong": "Not quite.",
         "result_almost": "Almost! Watch out for:",
@@ -2278,7 +2277,6 @@
         "answer_placeholder": "Tap tiles below to build your answer",
         "scrambled_label": "Available tiles",
         "scrambled_done": "All tiles placed.",
-        "hint_show": "Need a hint?",
         "result_correct": "Correct!",
         "result_wrong": "Not quite.",
         "empty": "This word-tiles exercise has no tiles."
@@ -2286,7 +2284,6 @@
       "cloze": {
         "submit": "Check answers",
         "retry": "Try again",
-        "hint_show": "Need a hint?",
         "sentence_label": "Cloze sentence",
         "blank_label": "Blank {n}",
         "select_placeholder": "Choose…",
@@ -3797,6 +3794,17 @@
     "train_errors": "Train errors",
     "shuffle": "Shuffle",
     "endless": "Endless",
+    "reset_all": {
+      "button": "Repeat everything",
+      "title": "Reset all results?",
+      "message": "The results of “{title}” are reset: score, stars and study time of {lessons} lessons. A new run starts at lesson 1; the mistakes of the previous run stay as history. XP and badges are not affected.",
+      "average": "Average so far: {percent}%",
+      "no_average": "No average yet.",
+      "confirm": "Reset and start over",
+      "cancel": "Cancel",
+      "success": "Results reset. A new run starts with lesson 1.",
+      "failed": "The results could not be reset."
+    },
     "personal": {
       "title": "Your Learning Path",
       "progress": "Overall: {n}% complete",

@@ -364,6 +364,17 @@ Requires domain knowledge. Not automatable.
       ("Correct!") and the Continue button appear below it. iOS PWA/Standalone:
       run the same check on the web app icon added to the home screen.
 - [ ] Free Text: correction READABLE (token diff understandable)
+- [ ] Cloze, select mode (#3167): pick a distractor -> graded wrong. Open a
+      cloze exercise with word choices whose distractors are very close to
+      the answer (e.g. alc-programming, react-grundlagen, lesson 02 "JSX",
+      question "Wie bettet man in JSX den Wert einer Variablen name in den
+      Text ein?"). Pick the wrong option `<p>Hallo $name</p>` and check:
+      result "0 of 1 correct", the picked option red, the correct option
+      `<p>Hallo {name}</p>` green. Then pick the correct option: "All
+      correct!". Cross-check, type mode: in a typed cloze ONE typo is still
+      graded correct (the tolerance applies to typed answers only). Review:
+      the same exercise in a review session, pick the wrong option -> wrong;
+      the exercise is NOT marked mastered afterwards.
 - [ ] Picture Choice: tiles SAME height
 - [ ] Answer order shuffled (#2317): open a picture_choice exercise across
       several lessons - the correct tile is NOT always in the same slot
@@ -389,6 +400,21 @@ Requires domain knowledge. Not automatable.
       free-text/cloze/word-tiles the hint button stays as before. iOS
       PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen.
+- [ ] One hint affordance per exercise (#3168): open a cloze, a free-text and a
+      word-tiles exercise whose content carries an authored hint (field `hint`,
+      e.g. French A1 lesson 1: free-text "It starts with M.", word-tiles
+      "Literally 'until the re-seeing' ...", cloze "Daytime greeting, starts
+      with B."). Before checking there is EXACTLY ONE hint surface: the "Show a
+      hint −5 XP" button above the input. Below the options or the input there
+      is NO "Need a hint?" link any more. The first hint click shows the
+      authored hint verbatim and deducts XP (the header badge flashes red);
+      further clicks show the generated stages (length, first letter or first
+      tile), each again for XP. Without an authored hint the button keeps the
+      generated stages as before. After "Check" no hint surface is visible. In
+      exam mode the authored hint does not appear either (no hints in exam
+      mode). Repeat in the review session and in the audio-tiles exercise
+      (extension type). iOS PWA/Standalone: repeat the check on the web-app
+      icon added to the Home Screen.
 - [ ] Explanation after the answer (#2991): open an exercise whose content
       carries an explanation (the `explanation` field, e.g. the fixture
       `e2e/fixtures/explanation-post-answer.lesson.json` through a connected
@@ -2161,6 +2187,13 @@ each card row (`CardImageField`).
       mastered percentage, still open, time spent) and below them
       mistakes per lesson, per exercise type, and the biggest weak
       spots with your own wrong answer next to the correct one
+- [ ] The two middle figures follow the mistakes, not the review flag
+      (#3166): "Still open" counts the elements with at least one mistake
+      that the review has not marked mastered yet; "Mastered" is the share
+      of all played elements that were never wrong or have cleared their
+      mistake since. A set with 12 played elements, 3 of them wrong once:
+      "3 Total mistakes", "75% Mastered", "3 Still open" - not "0%" and
+      "12"
 - [ ] "Practise mistakes" leads into the set's review session,
       "Back to the set" to the set page
 - [ ] A set with no recorded mistakes shows the friendly message
@@ -2223,6 +2256,11 @@ each card row (`CardImageField`).
       Time spent), "Mistakes per exercise type" and "Biggest weak spots"
       with the own wrong answer struck through next to the correct one;
       "Mistakes per lesson" is NOT there (it is a single lesson)
+- [ ] First run of a lesson, e.g. 12 elements, 9 right, 3 wrong: "3 Total
+      mistakes", "75% Mastered", "3 Still open" - the same 75% as the run's
+      score (#3166). "Mastered" counts the elements that were never wrong or
+      whose mistake the review has cleared since, "Still open" those with a
+      mistake and no mastery; not "0%" and "12" for 3 mistakes
 - [ ] The numbers match the set review (Content > set > "Open review")
       for the same lesson
 - [ ] "Practise mistakes" opens the set's review session

@@ -2260,7 +2260,6 @@
         "placeholder": "Ketik jawaban Anda…",
         "code_placeholder": "Ketik kodenya…",
         "input_label": "Jawaban Anda",
-        "hint_show": "Butuh petunjuk?",
         "result_correct": "Benar!",
         "result_wrong": "Belum tepat.",
         "result_almost": "Hampir! Perhatikan:",
@@ -2278,7 +2277,6 @@
         "answer_placeholder": "Ketuk ubin di bawah untuk menyusun jawaban Anda",
         "scrambled_label": "Ubin yang tersedia",
         "scrambled_done": "Semua ubin telah ditempatkan.",
-        "hint_show": "Butuh petunjuk?",
         "result_correct": "Benar!",
         "result_wrong": "Belum tepat.",
         "empty": "Latihan ubin kata ini tidak memiliki ubin."
@@ -2286,7 +2284,6 @@
       "cloze": {
         "submit": "Periksa jawaban",
         "retry": "Coba lagi",
-        "hint_show": "Butuh petunjuk?",
         "sentence_label": "Kalimat isian rumpang",
         "blank_label": "Rumpang {n}",
         "select_placeholder": "Pilih…",
@@ -3797,6 +3794,17 @@
     "train_errors": "Latih kesalahan",
     "shuffle": "Acak",
     "endless": "Tanpa henti",
+    "reset_all": {
+      "button": "Ulangi semua",
+      "title": "Setel ulang semua hasil?",
+      "message": "Hasil “{title}” disetel ulang: skor, bintang, dan waktu belajar dari {lessons} pelajaran. Sesi baru dimulai dari pelajaran 1; kesalahan sesi sebelumnya tetap tersimpan sebagai riwayat. XP dan lencana tidak berubah.",
+      "average": "Rata-rata sejauh ini: {percent} %",
+      "no_average": "Belum ada rata-rata.",
+      "confirm": "Setel ulang dan mulai lagi",
+      "cancel": "Batal",
+      "success": "Hasil disetel ulang. Sesi baru dimulai dengan pelajaran 1.",
+      "failed": "Hasil tidak dapat disetel ulang."
+    },
     "personal": {
       "title": "Jalur Pembelajaranmu",
       "progress": "Keseluruhan: {n}% selesai",
