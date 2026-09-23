@@ -77,6 +77,21 @@ describe("ReadingComprehensionExercise: render", () => {
         ).toBeInTheDocument();
     });
 
+    it("keeps a fenced code passage as a multi-line code block (#3217)", () => {
+        const codeExercise = {
+            ...EXERCISE,
+            ext_payload: {
+                ...(EXERCISE.ext_payload as object),
+                passage: "```jsx\nfunction Formular() {\n    return null;\n}\n```",
+            },
+        } as unknown as ContentLessonExercise;
+        render(<ReadingComprehensionExercise exercise={codeExercise} onComplete={vi.fn()} />);
+        const code = screen
+            .getByTestId("reading-comprehension-passage")
+            .querySelector("pre > code");
+        expect(code?.textContent).toBe("function Formular() {\n    return null;\n}\n");
+    });
+
     it("renders the empty state for a malformed payload", () => {
         const broken = {
             ...EXERCISE,
