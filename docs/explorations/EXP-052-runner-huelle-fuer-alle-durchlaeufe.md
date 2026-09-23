@@ -469,6 +469,28 @@ der Scheibe zurechenbar oder wird zurückgesetzt.
   `docs/manual-tests/testplan-adaptive-learner.md` 1155-1160 und
   `docs/manual-tests/testplan-adaptive-learner-en.md` 1091).
 
+- Entscheide vor dem ersten Commit (Owner-Review 2026-09-23 zum Start):
+  - **Spielbar heisst eins.** Shuffle und Endless filtern heute inline nur
+    `SUPPORTED_EXERCISE_TYPES` (Kerntypen); die Hülle nutzt
+    `isPlayableExerciseStep` (Kern- oder Extension-Typen). Mit der
+    Umstellung spielen beide Läufe auch Extension-Übungen, die dort nie
+    gerendert wurden (im echten Inhalt 20 `ext:al-speak-and-record` in
+    `adaptive-learner-content`, 12 in `alc-dog-training`, in
+    `alc-psychology` 8 `categorization`, 4 `error-correction`, 3
+    `reading-comprehension`, 2 `graded-quiz`). Das ist gewollt und eine
+    inhaltliche Erweiterung, keine Refactoring-Nebenwirkung: eine
+    Definition von "spielbar", kein Policy-Feld für eine Typmenge;
+    Testplan-pflichtig, und der Visual-Device-Check enthält mindestens ein
+    `speak-and-record` in einer Endlossitzung auf dem Gerät.
+  - **`endRun` als eigene Policy-Spalte.** Endless ist der einzige Lauf
+    ohne letzten Schritt und braucht ein explizites Ende. Pause und Ende
+    werden zusammen im Fuß bedient (`pause: true`, `endRun: true` nur für
+    Endless); die Statuszeile wird reine Anzeige, damit ist Befund 2
+    vollständig aufgelöst.
+  - Randnotiz: die zwei `<main>` in `EndlessLesson.tsx` schliessen sich
+    gegenseitig aus (früher Rücksprung mit `EndlessSummary`); das ist
+    Code-Dopplung, kein doppeltes Landmark zur Laufzeit.
+
 ### Scheibe 3: Adaptiv und Fehler-Replay
 
 - Beide haben Dexie-Specs (`e2e/dexie/adaptive-lesson.spec.ts`,
