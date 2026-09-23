@@ -400,6 +400,21 @@ Requires domain knowledge. Not automatable.
       free-text/cloze/word-tiles the hint button stays as before. iOS
       PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen.
+- [ ] One hint affordance per exercise (#3168): open a cloze, a free-text and a
+      word-tiles exercise whose content carries an authored hint (field `hint`,
+      e.g. French A1 lesson 1: free-text "It starts with M.", word-tiles
+      "Literally 'until the re-seeing' ...", cloze "Daytime greeting, starts
+      with B."). Before checking there is EXACTLY ONE hint surface: the "Show a
+      hint −5 XP" button above the input. Below the options or the input there
+      is NO "Need a hint?" link any more. The first hint click shows the
+      authored hint verbatim and deducts XP (the header badge flashes red);
+      further clicks show the generated stages (length, first letter or first
+      tile), each again for XP. Without an authored hint the button keeps the
+      generated stages as before. After "Check" no hint surface is visible. In
+      exam mode the authored hint does not appear either (no hints in exam
+      mode). Repeat in the review session and in the audio-tiles exercise
+      (extension type). iOS PWA/Standalone: repeat the check on the web-app
+      icon added to the Home Screen.
 - [ ] Explanation after the answer (#2991): open an exercise whose content
       carries an explanation (the `explanation` field, e.g. the fixture
       `e2e/fixtures/explanation-post-answer.lesson.json` through a connected

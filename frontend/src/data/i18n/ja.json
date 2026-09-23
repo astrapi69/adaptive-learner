@@ -2260,7 +2260,6 @@
         "placeholder": "答えを入力…",
         "code_placeholder": "コードを入力…",
         "input_label": "あなたの答え",
-        "hint_show": "ヒントが必要ですか？",
         "result_correct": "正解です！",
         "result_wrong": "惜しい。",
         "result_almost": "おしい！次に注意:",
@@ -2278,7 +2277,6 @@
         "answer_placeholder": "下のタイルをタップして答えを作ってください",
         "scrambled_label": "使えるタイル",
         "scrambled_done": "すべてのタイルを配置しました。",
-        "hint_show": "ヒントが必要ですか？",
         "result_correct": "正解です！",
         "result_wrong": "惜しい。",
         "empty": "この単語タイル演習にはタイルがありません。"
@@ -2286,7 +2284,6 @@
       "cloze": {
         "submit": "答えを確認",
         "retry": "もう一度",
-        "hint_show": "ヒントが必要ですか？",
         "sentence_label": "穴埋め文",
         "blank_label": "空欄 {n}",
         "select_placeholder": "選んでください…",

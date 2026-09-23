@@ -425,6 +425,23 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       verrät nichts. Bei Freitext/Cloze/Wort-Kacheln bleibt der Tipp-Knopf wie
       bisher erhalten. iOS PWA/Standalone: dieselbe Prüfung auf dem zum
       Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
+- [ ] Ein Tipp-Aufruf je Übung (#3168): eine Cloze-, eine Freitext- und eine
+      Wort-Kacheln-Übung öffnen, deren Inhalt einen Autoren-Hinweis trägt (Feld
+      `hint`, z. B. Französisch A1, Lektion 1: Freitext "It starts with M.",
+      Wort-Kacheln "Literally 'until the re-seeing' ...", Cloze "Daytime
+      greeting, starts with B."). Vor dem Prüfen gibt es GENAU EINE
+      Tipp-Fläche: den Knopf "Tipp anzeigen −5 XP" über der Eingabe. Unter den
+      Optionen bzw. unter der Eingabe erscheint KEIN Link "Tipp anzeigen?"
+      mehr. Der erste Tipp-Klick zeigt den Autoren-Hinweis wörtlich und zieht
+      XP ab (Kopfzeilen-Abzeichen blinkt rot); weitere Klicks zeigen die
+      erzeugten Stufen (Länge, Anfangsbuchstabe bzw. erste Kachel), jeder
+      erneut gegen XP. Ohne Autoren-Hinweis bleibt der Knopf mit den erzeugten
+      Stufen wie bisher. Nach "Prüfen" ist keine Tipp-Fläche mehr sichtbar. Im
+      Prüfungsmodus erscheint auch der Autoren-Hinweis nicht (kein Tipp im
+      Prüfungsmodus). Dieselbe Prüfung in der Wiederholungssitzung und in der
+      Audio-Kacheln-Übung (Erweiterungstyp). iOS PWA/Standalone: dieselbe
+      Prüfung auf dem zum Home-Bildschirm hinzugefügten Web-App-Icon
+      durchführen.
 - [ ] Erklärung nach der Antwort (#2991): eine Übung öffnen, deren Inhalt eine
       Erklärung trägt (Feld `explanation`, z. B. das Fixture
       `e2e/fixtures/explanation-post-answer.lesson.json` über ein verbundenes

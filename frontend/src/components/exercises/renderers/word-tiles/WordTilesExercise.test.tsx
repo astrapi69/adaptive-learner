@@ -20,7 +20,8 @@
  *   (D4 confirmed).
  * - accept_orderings present: any listed permutation passes.
  * - Try-again resets state.
- * - Hint toggle: shown only when ``exercise.hint`` is set.
+ * - Hint: ONE affordance, the XP ``ExerciseHint`` button (#3168); the
+ *   authored ``exercise.hint`` is its first stage, the old free link is gone.
  * - Empty ``tiles`` surfaces the empty-state testid.
  *
  * Also unit-tests the ``isWordTilesCorrect`` matcher in
@@ -409,8 +410,8 @@ describe("WordTilesExercise: duplicate tokens graded by string (#1544)", () => {
     });
 });
 
-describe("WordTilesExercise: hint affordance", () => {
-    it("renders the hint toggle when exercise.hint is set", () => {
+describe("WordTilesExercise: hint affordance (#3168, one surface)", () => {
+    it("renders ONLY the XP hint button, never the old word-tiles-hint-show link", () => {
         render(
             <WordTilesExercise
                 exercise={EXERCISE}
@@ -418,30 +419,33 @@ describe("WordTilesExercise: hint affordance", () => {
             />,
         );
         expect(
-            screen.getByTestId("word-tiles-hint-show"),
+            screen.getByTestId("word-tiles-hint-button-reveal"),
         ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("word-tiles-hint-show"),
+        ).not.toBeInTheDocument();
         expect(
             screen.queryByTestId("word-tiles-hint"),
         ).not.toBeInTheDocument();
     });
 
-    it("reveals the hint on click and hides the toggle", () => {
+    it("the first paid reveal shows the AUTHORED hint text", () => {
         render(
             <WordTilesExercise
                 exercise={EXERCISE}
                 onComplete={vi.fn()}
             />,
         );
-        fireEvent.click(screen.getByTestId("word-tiles-hint-show"));
-        expect(screen.getByTestId("word-tiles-hint")).toHaveTextContent(
-            "Two short words",
-        );
+        fireEvent.click(screen.getByTestId("word-tiles-hint-button-reveal"));
+        expect(
+            screen.getByTestId("word-tiles-hint-button-hint-0"),
+        ).toHaveTextContent("Two short words");
         expect(
             screen.queryByTestId("word-tiles-hint-show"),
         ).not.toBeInTheDocument();
     });
 
-    it("does not render the hint toggle when exercise.hint is absent", () => {
+    it("keeps the XP hint button (generated stages) when exercise.hint is absent", () => {
         const noHint: ContentLessonExercise = {...EXERCISE, hint: null};
         render(
             <WordTilesExercise
@@ -450,11 +454,14 @@ describe("WordTilesExercise: hint affordance", () => {
             />,
         );
         expect(
+            screen.getByTestId("word-tiles-hint-button-reveal"),
+        ).toBeInTheDocument();
+        expect(
             screen.queryByTestId("word-tiles-hint-show"),
         ).not.toBeInTheDocument();
     });
 
-    it("hides the hint toggle after submit", () => {
+    it("hides every hint affordance after submit", () => {
         render(
             <WordTilesExercise
                 exercise={EXERCISE}
@@ -464,6 +471,9 @@ describe("WordTilesExercise: hint affordance", () => {
         fireEvent.click(screen.getByTestId("word-tile-scrambled-0"));
         fireEvent.click(screen.getByTestId("word-tile-scrambled-1"));
         fireEvent.click(screen.getByTestId("word-tiles-submit"));
+        expect(
+            screen.queryByTestId("word-tiles-hint-button"),
+        ).not.toBeInTheDocument();
         expect(
             screen.queryByTestId("word-tiles-hint-show"),
         ).not.toBeInTheDocument();

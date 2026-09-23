@@ -49,7 +49,6 @@ import type {ContentLessonExercise} from "../../../../storage/types";
 import ClozeMultiSelect from "./ClozeMultiSelect";
 import {
     type ClozeBlank,
-    ClozeHint,
     ClozePromptRow,
     ClozeResult,
     ClozeSelectChoices,
@@ -159,7 +158,6 @@ function ClozeExercise(
             ? blanks.map((_, i) => reviewedCloze.inputs[i] ?? "")
             : blanks.map(() => ""),
     );
-    const [showHint, setShowHint] = useState(false);
     const sectionRef = useRef<HTMLElement>(null);
 
     /** For ``select`` mode, build the per-blank option list once
@@ -338,13 +336,6 @@ function ClozeExercise(
                     codeMode={codeMode}
                 />
             )}
-
-            <ClozeHint
-                hint={exercise.hint}
-                submitted={submitted}
-                showHint={showHint}
-                onShowHint={() => setShowHint(true)}
-            />
 
             <ClozeResult
                 submitted={submitted}

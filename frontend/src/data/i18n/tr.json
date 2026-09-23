@@ -2260,7 +2260,6 @@
         "placeholder": "Cevabını yaz…",
         "code_placeholder": "Kodu yaz…",
         "input_label": "Senin cevabın",
-        "hint_show": "İpucu ister misin?",
         "result_correct": "Doğru!",
         "result_wrong": "Pek değil.",
         "result_almost": "Neredeyse! Şuna dikkat et:",
@@ -2278,7 +2277,6 @@
         "answer_placeholder": "Cevabını oluşturmak için aşağıdaki kutucuklara dokun",
         "scrambled_label": "Kullanılabilir kutucuklar",
         "scrambled_done": "Tüm kutucuklar yerleştirildi.",
-        "hint_show": "İpucu ister misin?",
         "result_correct": "Doğru!",
         "result_wrong": "Pek değil.",
         "empty": "Bu kelime kutucukları alıştırmasında kutucuk yok."
@@ -2286,7 +2284,6 @@
       "cloze": {
         "submit": "Cevapları kontrol et",
         "retry": "Tekrar dene",
-        "hint_show": "İpucu ister misin?",
         "sentence_label": "Boşluk doldurma cümlesi",
         "blank_label": "Boşluk {n}",
         "select_placeholder": "Seç…",
