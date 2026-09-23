@@ -9,7 +9,9 @@
  *
  * Nothing in the app writes the pin. Without it the seam is inert: no
  * storage, no URL parameter, no UI, and exactly the production randomness
- * the callers had before. The pin is read at call time, never at import.
+ * the callers had before. The pin is read at call time, never at import, and
+ * only an own, readable, well-formed property counts: an inherited or
+ * throwing one reads as no pin (fail open).
  */
 
 import {fnv1a32, mulberry32} from "./prng";
@@ -43,30 +45,60 @@ function isIntegerInRange(value: unknown, max: number): boolean {
 }
 
 /**
+ * ``target[key]`` when ``key`` is an OWN property whose read succeeds, else
+ * ``undefined``. Inherited values (a polluted ``Object.prototype``, the named
+ * properties a ``<iframe name>`` puts on the window's prototype chain) never
+ * count, and a read that throws (a cross-origin ``WindowProxy``, a hostile
+ * getter) reads as absent instead of escaping into a render.
+ */
+function readOwn(target: object, key: string): unknown {
+    try {
+        return Object.hasOwn(target, key)
+            ? (target as Record<string, unknown>)[key]
+            : undefined;
+    } catch {
+        return undefined;
+    }
+}
+
+/**
  * Whether ``value`` is a well-formed {@link RandomPin}. The app treats a
  * malformed value as absent (fail open to production behaviour); the visual
  * harness uses the same check to refuse installing a pin the app would ignore.
+ * Only OWN fields count, and a field whose read throws makes the value
+ * malformed rather than throwing.
  *
  * @param value - Anything, typically ``globalThis[RANDOM_PIN_GLOBAL]``.
- * @returns ``true`` for a non-null object with an integer ``streamSeed`` in
- *     ``0..0xffffffff`` and an integer ``mountSalt`` in ``0..0xffff``.
+ * @returns ``true`` for a non-null object with an own integer ``streamSeed``
+ *     in ``0..0xffffffff`` and an own integer ``mountSalt`` in ``0..0xffff``.
  *
  * @example
  * isRandomPin({streamSeed: 0x1567, mountSalt: 13056}); // true
  * isRandomPin({streamSeed: 1.5, mountSalt: 0}); // false
+ * isRandomPin(Object.create({streamSeed: 1, mountSalt: 1})); // false
  */
 export function isRandomPin(value: unknown): value is RandomPin {
     if (typeof value !== "object" || value === null) return false;
-    const candidate = value as Record<string, unknown>;
     return (
-        isIntegerInRange(candidate.streamSeed, 0xffffffff) &&
-        isIntegerInRange(candidate.mountSalt, 0xffff)
+        isIntegerInRange(readOwn(value, "streamSeed"), 0xffffffff) &&
+        isIntegerInRange(readOwn(value, "mountSalt"), 0xffff)
     );
 }
 
+/**
+ * A plain snapshot of the installed pin, or ``null``. Fails open: an
+ * inherited, unreadable or malformed global is no pin, so production
+ * randomness applies. Each field is read exactly once, so a getter cannot
+ * validate one value and hand the caller another.
+ */
 function readRandomPin(): RandomPin | null {
-    const value = (globalThis as Record<string, unknown>)[RANDOM_PIN_GLOBAL];
-    return isRandomPin(value) ? value : null;
+    const value = readOwn(globalThis, RANDOM_PIN_GLOBAL);
+    if (typeof value !== "object" || value === null) return null;
+    const snapshot = {
+        streamSeed: readOwn(value, "streamSeed"),
+        mountSalt: readOwn(value, "mountSalt"),
+    };
+    return isRandomPin(snapshot) ? snapshot : null;
 }
 
 /**

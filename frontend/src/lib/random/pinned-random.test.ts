@@ -42,14 +42,72 @@ describe("without a pin (production)", () => {
     });
 
     it.each([
-        {name: "an ordinary instant", now: 1781100000000},
+        {name: "an ordinary instant", now: 1781100004099},
         {name: "the last value before the 16-bit wrap", now: 0xffff},
         {name: "the first value after the 16-bit wrap", now: 0x10000},
         {name: "the epoch", now: 0},
     ])("mountShuffleSeed keeps the clock suffix at $name", ({now}) => {
+        expect(
+            now & 0xffff,
+            "an instant whose low bits ARE the visual salt cannot tell the clock " +
+                "suffix from a leaked pin",
+        ).not.toBe(PIN.mountSalt);
         vi.useFakeTimers();
         vi.setSystemTime(now);
         expect(mountShuffleSeed("ex")).toBe(`ex#${now & 0xffff}`);
+    });
+});
+
+/**
+ * Define ``name`` on ``target`` for one test; ``afterEach`` cannot undo a
+ * prototype or getter definition, so every caller removes it in ``finally``.
+ */
+function withProperty(
+    target: object,
+    descriptor: PropertyDescriptor,
+    run: () => void,
+): void {
+    Object.defineProperty(target, RANDOM_PIN_GLOBAL, {configurable: true, ...descriptor});
+    try {
+        run();
+    } finally {
+        delete (target as Record<string, unknown>)[RANDOM_PIN_GLOBAL];
+    }
+}
+
+describe("only an own, readable global is a pin", () => {
+    const NOW = 1781100004099;
+
+    function expectNoPin(): void {
+        vi.useFakeTimers();
+        vi.setSystemTime(NOW);
+        expect(pinnedRandom("shuffle-order")).toBeUndefined();
+        expect(mountShuffleSeed("ex")).toBe(`ex#${NOW & 0xffff}`);
+    }
+
+    it("a pin inherited through Object.prototype does not switch it on", () => {
+        withProperty(Object.prototype, {value: PIN, writable: true}, () => {
+            expect((globalThis as Record<string, unknown>)[RANDOM_PIN_GLOBAL]).toBe(PIN);
+            expectNoPin();
+        });
+    });
+
+    it("a global whose read throws (a cross-origin named frame) yields no pin", () => {
+        const blocked = (): never => {
+            throw new DOMException("Blocked a frame from accessing", "SecurityError");
+        };
+        withProperty(globalThis, {get: blocked}, () => {
+            expect(() => pinnedRandom("endless-repeat")).not.toThrow();
+            expect(() => mountShuffleSeed("ex")).not.toThrow();
+            expectNoPin();
+        });
+    });
+
+    it("a pin read through a getter that returns a valid pin still counts", () => {
+        withProperty(globalThis, {get: () => PIN}, () => {
+            expect(pinnedRandom("shuffle-order")).toBeDefined();
+            expect(mountShuffleSeed("ex")).toBe("ex#13056");
+        });
     });
 });
 
@@ -63,6 +121,19 @@ describe("a malformed pin counts as absent", () => {
         {name: "a NaN mountSalt", value: {streamSeed: 1, mountSalt: Number.NaN}},
         {name: "null", value: null},
         {name: "an empty object", value: {}},
+        {
+            name: "fields inherited from a prototype",
+            value: Object.create({streamSeed: 1, mountSalt: 1}) as unknown,
+        },
+        {
+            name: "a field whose read throws",
+            value: Object.defineProperty({mountSalt: 1}, "streamSeed", {
+                enumerable: true,
+                get: (): never => {
+                    throw new DOMException("Blocked", "SecurityError");
+                },
+            }) as unknown,
+        },
     ])("$name", ({value}) => {
         expect(isRandomPin(value)).toBe(false);
         setPin(value);
