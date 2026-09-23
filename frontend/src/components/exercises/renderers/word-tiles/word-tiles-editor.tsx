@@ -163,16 +163,20 @@ export function WordTilesScrambledRow({
     tiles,
     submitted,
     onPlace,
+    lang,
 }: {
     scrambledIndices: number[];
     tiles: string[];
     submitted: boolean;
     onPlace: (index: number) => void;
+    /** #3174 - BCP-47 content language of the tiles, for CSS hyphenation. */
+    lang?: string;
 }) {
     const {t} = useI18n();
     return (
         <div
             className="rounded-sm border border-border bg-[var(--surface)] p-2"
+            lang={lang}
             data-testid="word-tiles-scrambled-row"
             aria-label={t(
                 "lesson.exercise.word_tiles.scrambled_label",
@@ -217,6 +221,8 @@ export interface WordTilesEditorProps {
     reduceMotion: boolean;
     activeId: number | null;
     isCorrect: boolean;
+    /** #3174 - BCP-47 content language of the tiles, for CSS hyphenation. */
+    lang?: string;
     t: (key: string, fallback?: string) => string;
     onDragStart: (event: DragStartEvent) => void;
     onDragEnd: (event: DragEndEvent) => void;
@@ -244,6 +250,7 @@ export function WordTilesEditor({
     reduceMotion,
     activeId,
     isCorrect,
+    lang,
     t,
     onDragStart,
     onDragEnd,
@@ -275,6 +282,7 @@ export function WordTilesEditor({
             >
                 <div
                     className="min-h-16 rounded-sm border border-dashed border-[var(--border-strong)] bg-[var(--surface-2)] p-2"
+                    lang={lang}
                     data-testid="word-tiles-answer-row"
                     aria-label={t(
                         "lesson.exercise.word_tiles.answer_label",
@@ -345,6 +353,7 @@ export function WordTilesEditor({
             </DndContext>
 
             <WordTilesScrambledRow
+                lang={lang}
                 scrambledIndices={scrambledIndices}
                 tiles={tiles}
                 submitted={submitted}

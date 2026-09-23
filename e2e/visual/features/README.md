@@ -74,6 +74,8 @@ Baseline zu committen.
 | Progress Hub — Meine Pfade | `progress-hub/meine-pfade.png` | `progress-hub/meine-pfade.mobile.png` | v1.94.1 |
 | Matching — Paarung (+ Landscape `matching-pairing.landscape.png`, #1410) | `matching-animation/matching-pairing.png` | `matching-animation/matching-pairing.mobile.png` | v2.1.0 |
 | Matching — Auflösung | `matching-animation/matching-resolved.png` | `matching-animation/matching-resolved.mobile.png` | v2.1.0 |
+| Matching - langes Wort in der Kachel: die rechte Kachel „kleinste bedeutungsunterscheidende Lauteinheit" (alc-psychology, Sprachebenen) bleibt bei 375px zweizeilig innerhalb des Kachelrahmens; Fixture `e2e/fixtures/matching-long-word.lesson.json` (#3174) | `matching-animation/matching-long-word.png` | `matching-animation/matching-long-word.mobile.png` | v2.15.0+ |
+| Matching - langes Wort, Auflösung: dieselbe Übung nach dem Prüfen mit einem falschen Paar; die schmaleren Kacheln und die Zeilen „Deine Antwort"/„Richtige Antwort" trennen das Wort mit Trennstrich („bedeutungsunter-scheidende") statt es abzuschneiden (#3174) | `matching-animation/matching-long-word-resolved.png` | `matching-animation/matching-long-word-resolved.mobile.png` | v2.15.0+ |
 | Lektions-Modi — Übung | `lesson-modes/practice.png` | `lesson-modes/practice.mobile.png` | v2.1.0 |
 | Lektions-Modi — Prüfung | `lesson-modes/exam.png` | `lesson-modes/exam.mobile.png` | v2.1.0 |
 | Lektions-Modi — Zeit | `lesson-modes/timed.png` | `lesson-modes/timed.mobile.png` | v2.1.0 |

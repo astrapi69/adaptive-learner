@@ -2094,7 +2094,6 @@ lesson:
       placeholder: अपना उत्तर लिखें…
       code_placeholder: कोड लिखें…
       input_label: आपका उत्तर
-      hint_show: संकेत चाहिए?
       result_correct: सही!
       result_wrong: बिल्कुल नहीं।
       result_almost: "लगभग! इस पर ध्यान दें:"
@@ -2111,14 +2110,12 @@ lesson:
       answer_placeholder: अपना उत्तर बनाने के लिए नीचे टाइलों पर टैप करें
       scrambled_label: उपलब्ध टाइलें
       scrambled_done: सभी टाइलें रखी गईं।
-      hint_show: संकेत चाहिए?
       result_correct: सही!
       result_wrong: बिल्कुल नहीं।
       empty: इस शब्द-टाइल अभ्यास में कोई टाइलें नहीं हैं।
     cloze:
       submit: उत्तर जाँचें
       retry: फिर से कोशिश करें
-      hint_show: संकेत चाहिए?
       sentence_label: रिक्त-स्थान वाक्य
       blank_label: रिक्त स्थान {n}
       select_placeholder: चुनें…

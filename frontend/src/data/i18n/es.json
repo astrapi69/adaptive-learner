@@ -2260,7 +2260,6 @@
         "placeholder": "Escribe tu respuesta…",
         "code_placeholder": "Escribe el código…",
         "input_label": "Tu respuesta",
-        "hint_show": "¿Necesitas una pista?",
         "result_correct": "¡Correcto!",
         "result_wrong": "Casi.",
         "result_almost": "¡Casi! Fíjate en:",
@@ -2278,7 +2277,6 @@
         "answer_placeholder": "Toca las fichas de abajo para formar tu respuesta",
         "scrambled_label": "Fichas disponibles",
         "scrambled_done": "Todas las fichas colocadas.",
-        "hint_show": "¿Necesitas una pista?",
         "result_correct": "¡Correcto!",
         "result_wrong": "Casi.",
         "empty": "Este ejercicio de fichas no tiene fichas."
@@ -2286,7 +2284,6 @@
       "cloze": {
         "submit": "Comprobar respuestas",
         "retry": "Intentar de nuevo",
-        "hint_show": "¿Necesitas una pista?",
         "sentence_label": "Frase con huecos",
         "blank_label": "Hueco {n}",
         "select_placeholder": "Elegir…",

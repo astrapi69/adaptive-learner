@@ -1,0 +1,52 @@
+{
+  "id": "32-sprachebenen",
+  "title": "Sprachebenen zuordnen",
+  "description": "Referenz-Lektion für #3174: eine Zuordnungsübung, deren rechte Kachel das 25-Zeichen-Wort „bedeutungsunterscheidende\" trägt. Bei 375px ist das Wort breiter als die Kachel und lief über den Kachelrand hinaus. Inhalt aus alc-psychology, Lektion 32 (Kognition vertieft); Sachthema auf Deutsch, Material und Erklärung in derselben Sprache.",
+  "target_language": "de",
+  "source_language": "de",
+  "domain": "psychology",
+  "estimated_minutes": 2,
+  "cards": [
+    {
+      "id": "sprachebenen",
+      "front": "Sprachebenen: Phonem, Morphem, Syntax, Semantik",
+      "back": "Vier Analyseebenen der Sprache: **Phonem** (kleinste Lauteinheit), **Morphem** (kleinste bedeutungstragende Einheit), **Syntax** (Regeln zur Satzkonstruktion), **Semantik** (Bedeutung von Wörtern und Sätzen).",
+      "media_type": "text",
+      "difficulty": 3,
+      "tags": ["sprache", "kognition"]
+    },
+    {
+      "id": "phonem",
+      "front": "Phonem (Phoneme)",
+      "back": "Die kleinste bedeutungsunterscheidende Lauteinheit einer Sprache. Beispiel: /p/ und /b/ sind im Deutschen zwei verschiedene Phoneme ('packen' vs. 'backen').",
+      "media_type": "text",
+      "difficulty": 2,
+      "tags": ["sprache", "kognition"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Vier Ebenen der Sprache",
+      "body": "Sprache lässt sich auf vier Ebenen analysieren: **Phonologie** (Laute), **Morphologie** (Wortbausteine), **Syntax** (Satzbau) und **Semantik** (Bedeutung). Die kleinste Einheit der Phonologie ist das Phonem, die kleinste bedeutungsunterscheidende Lauteinheit."
+    },
+    {
+      "id": "ex-match-sprachebenen",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-match-sprachebenen",
+        "type": "matching",
+        "prompt": "Ordne jede Sprachebene ihrer Einheit bzw. ihrem Gegenstand zu.",
+        "card_ids": ["sprachebenen", "phonem"],
+        "pairs": [
+          {"left": "Phonologie", "right": "kleinste bedeutungsunterscheidende Lauteinheit"},
+          {"left": "Morphologie", "right": "kleinste bedeutungstragende Einheit"},
+          {"left": "Syntax", "right": "Regeln zur Satzkonstruktion"},
+          {"left": "Semantik", "right": "Bedeutung von Wörtern und Sätzen"}
+        ],
+        "direction": "target_to_source"
+      }
+    }
+  ]
+}

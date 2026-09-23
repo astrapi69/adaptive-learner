@@ -41,7 +41,6 @@ import ExerciseHint from "../../feedback/ExerciseHint";
 import ExercisePromptRow from "../../shell/ExercisePromptRow";
 import {
     WordTilesEditor,
-    WordTilesHint,
     WordTilesResult,
     WordTilesReveal,
     useWordTilesDnd,
@@ -142,7 +141,6 @@ function WordTilesExercise(
     const [placed, setPlaced] = useState<number[]>(
         reviewedWordTiles ? [...reviewedWordTiles.placed] : [],
     );
-    const [showHint, setShowHint] = useState(false);
     /** #1005 — after checking, toggle between the learner's graded order
      *  ("my-answer") and the correct order ("solution"). Default is the
      *  learner's own answer. */
@@ -247,6 +245,7 @@ function WordTilesExercise(
             />
 
             <WordTilesEditor
+                lang={targetLanguage ?? undefined}
                 submitted={submitted}
                 sensors={dnd.sensors}
                 placed={placed}
@@ -266,14 +265,8 @@ function WordTilesExercise(
                 onKeyReorder={dnd.handleTileKeyDown}
             />
 
-            <WordTilesHint
-                hint={exercise.hint}
-                submitted={submitted}
-                showHint={showHint}
-                onShowHint={() => setShowHint(true)}
-            />
-
             <WordTilesReveal
+                lang={targetLanguage ?? undefined}
                 submitted={submitted}
                 showAnswerToggle={showAnswerToggle}
                 isCorrect={isCorrect}
