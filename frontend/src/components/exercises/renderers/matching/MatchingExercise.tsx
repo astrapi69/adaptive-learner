@@ -24,15 +24,15 @@
  * ``recordStepResult`` keyed by step id.
  */
 
-import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {forwardRef, useEffect, useMemo, useState} from "react";
 import type {ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
-import {useMatchingSeparateCorrections} from "../../../../hooks/settings/useMatchingSeparateCorrections";
 import {playfulDataAttr} from "../../../../lib/learning/lessonModeConfig";
 import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
+import {useMatchingPostCheckView} from "./useMatchingPostCheckView";
 import {deriveMatchingAttempts} from "../../../../lib/srs/element-attempt";
 import {prefersReducedMotion} from "../../../../lib/feedback/feedbackPref";
 import {
@@ -310,37 +310,15 @@ function MatchingExercise(
         return () => window.clearTimeout(id);
     }, [wrongFlash]);
 
-    /** #824 / #977 / #3186 — after the answer is checked, the learner
-     *  toggles between their own graded answers ("user-answers"), the same
-     *  grid with the correct partner under each mistake ("corrections")
-     *  and the revealed solution ("solution"). Default is the plain graded
-     *  grid, which is what the columns already render after submit. */
-    const [selectedView, setView] = useState<MatchingPostCheckView>(
-        "user-answers",
-    );
-    /** #3186 — Settings > Learning "Corrections as a separate view"
-     *  (default on). Off = the #977 two-view toggle with the corrections
-     *  inline in "My answers". */
-    const separateCorrections = useMatchingSeparateCorrections();
-    // A live switch to the two-view layout while "corrections" is open
-    // falls back to "My answers" (which then carries the corrections), so
-    // the toggle never ends up with no active button.
-    const view: MatchingPostCheckView =
-        !separateCorrections && selectedView === "corrections"
-            ? "user-answers"
-            : selectedView;
-    // Correct partners show in the Corrections view, in the two-view
-    // layout, and whenever the mode hides the toggle (exam): there the
-    // inline corrections are the only way to see the right answer.
-    const showCorrection =
-        view === "corrections" || !separateCorrections || !showAnswerToggle;
-    /** Whether the solution view has been shown at least once, so the
-     *  reveal animation plays only on the FIRST switch (#977). A ref (not
-     *  state) so flipping it never triggers a re-render mid-animation. */
-    const solutionShownRef = useRef(false);
-    /** The animate flag handed to MatchingResolution for the current
-     *  solution view; set once per switch in ``showSolution``. */
-    const [animateSolution, setAnimateSolution] = useState(false);
+    const {
+        view,
+        showCorrection,
+        animateSolution,
+        showUserAnswers,
+        showCorrections,
+        showSolution,
+        resetView,
+    } = useMatchingPostCheckView(showAnswerToggle);
     const [resolveEffect, setResolveEffect] = useState<MatchingResolveEffect>(
         () => readMatchingResolveEffect(),
     );
@@ -398,25 +376,10 @@ function MatchingExercise(
             setSlotByLeft(new Map());
             setSelectedLeft(null);
             setSelectedRight(null);
-            setView("user-answers");
-            solutionShownRef.current = false;
-            setAnimateSolution(false);
+            resetView();
         },
     });
 
-    /** Switch to the revealed-solution view (#977). Animates only the
-     *  first time it is shown; toggling back to it later renders the end
-     *  result immediately. No-op when already on the solution view so a
-     *  repeat click can't restart a mid-play animation. */
-    const showSolution = () => {
-        if (view === "solution") return;
-        const firstTime = !solutionShownRef.current;
-        solutionShownRef.current = true;
-        setAnimateSolution(firstTime);
-        setView("solution");
-    };
-    const showUserAnswers = () => setView("user-answers");
-    const showCorrections = () => setView("corrections");
 
     /** The correct pairs for the resolution view (#824), in the
      *  displayed left-column order — which since #2882 IS the authored
@@ -593,7 +556,7 @@ function MatchingExercise(
                 advanceLabel={advanceLabel}
                 view={view}
                 onShowUserAnswers={showUserAnswers}
-                onShowCorrections={separateCorrections ? showCorrections : undefined}
+                onShowCorrections={showCorrections}
                 onShowSolution={showSolution}
             />
 
