@@ -14,6 +14,7 @@ import {MemoryRouter, Route, Routes} from "react-router";
 import {describe, expect, it} from "vitest";
 
 import ErrorReplayLesson from "./ErrorReplayLesson";
+import {markHintUsed, wasHintUsed} from "../../lib/hints/hint-usage";
 import type {ContentLessonExercise} from "../../storage/types";
 
 const FREE = (id: string, accept: string): ContentLessonExercise => ({
@@ -65,6 +66,20 @@ describe("ErrorReplayLesson", () => {
         expect(
             screen.queryByTestId("error-replay-page"),
         ).not.toBeInTheDocument();
+    });
+
+    // #3196 — the replay re-plays the SAME exercise ids the lesson just
+    // used, so a hint revealed in the lesson must not stamp the replay's
+    // attempt as hinted.
+    it("forgets the lesson's hint usage when the replay starts", () => {
+        markHintUsed("ex-a");
+        renderWithState({
+            exercises: [FREE("ex-a", "hola")],
+            cards: [],
+            lessonTitle: "Greetings",
+        });
+        expect(screen.getByTestId("error-replay-page")).toBeInTheDocument();
+        expect(wasHintUsed("ex-a")).toBe(false);
     });
 
     it("plays ONLY the failed exercises and titles the run", () => {

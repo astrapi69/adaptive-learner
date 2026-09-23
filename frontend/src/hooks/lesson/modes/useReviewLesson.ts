@@ -42,7 +42,7 @@ import {
 } from "../../../lib/review/review-lesson";
 import {loadReviewQueue} from "../../../lib/review/review-queue";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
-import {stampHintUsage} from "../../../lib/hints/hint-usage";
+import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
 import {getStorage} from "../../../storage";
 import type {
     ContentLesson,
@@ -181,6 +181,8 @@ export function useReviewLesson(
         }
         let cancelled = false;
         setStatus("loading");
+        // #3196 — hint usage is per run: forget the previous run's reveals.
+        clearHintUsage();
         setError(null);
         void (async () => {
             try {

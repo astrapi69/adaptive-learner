@@ -40,7 +40,7 @@
 
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {stampHintUsage} from "../../../lib/hints/hint-usage";
+import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
 import {analyzeErrors} from "../../../lib/adaptive/error-analyzer";
 import {buildExercisePool} from "../../../lib/adaptive/exercise-pool";
 import {focusAreaTags} from "../../../lib/adaptive/error-classifier";
@@ -142,6 +142,8 @@ export function useAdaptiveLesson(
         }
         let cancelled = false;
         setStatus("loading");
+        // #3196 — hint usage is per run: forget the previous run's reveals.
+        clearHintUsage();
         setError(null);
         void (async () => {
             try {
