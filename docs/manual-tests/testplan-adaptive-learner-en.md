@@ -910,7 +910,7 @@ preview delivery). In the regular build the mode does not exist.
       feedback, daily missions and reminders.)
 - [ ] Basics: Learning profile, then Additional source languages
 - [ ] In the lesson: Lesson mode, Hints, Interaction, then Preferred
-      exercise direction and Solve animation (Hints and Interaction come
+      exercise direction and Matching exercise (Hints and Interaction come
       BEFORE direction and solve)
 - [ ] Reading aloud and dictation: only the "Voice" card; in a browser
       without Web Speech support (neither synthesis nor recognition) the
@@ -1130,6 +1130,18 @@ areas of the Data tab in the fixed #1451 order.
       toggle appears - in the lesson only "Continue", in the review
       session and the endless, shuffle, adaptive and error-replay lessons
       only the graded columns
+- [ ] matching corrections view (#3186): after a not-fully-correct check
+      there are three buttons "My answers" / "Corrections" / "Solve".
+      "My answers" is active and shows only your own pairs (green/red plus
+      "Your answer"), NO "Correct answer" row. "Corrections" adds the
+      correct answer under each mistake, "Solve" shows the solution. "Try
+      again" and a new check start in "My answers" again
+- [ ] matching corrections setting (#3186): Settings > Learning > card
+      "Matching exercise" > "Corrections as a separate view" is on by
+      default. Off: only two buttons "My answers" / "Solve", the correct
+      answer sits directly under each mistake. Toggling applies at once to
+      an open exercise. In exam mode (no toggle) the correct answer always
+      sits directly under the mistake
 - [ ] ext:al-categorization: assign categories, readable resolution; after
       "Check answer" the verdict chips including the red correction category
       stay INSIDE their column (no bleeding into the neighbor column, #2771) -

@@ -5,5 +5,6 @@ export * from "./useAppMode";
 export * from "./useButtonTooltips";
 export * from "./useDevMode";
 export * from "./useFeedbackIntensity";
+export * from "./useMatchingSeparateCorrections";
 export * from "./usePlayfulMode";
 export * from "./useSourceLanguages";

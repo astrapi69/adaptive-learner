@@ -341,8 +341,12 @@ Wie sich Übungen beim Beantworten verhalten.
   automatisch weiter** und ob der Button **KI fragen** angezeigt wird.
 - **Bevorzugte Übungsrichtung** - in welcher Richtung Übungen mit
   Richtung starten.
-- **Auflösungs-Effekt** - der Effekt, mit dem eine gelöste
-  Zuordnungs-Übung aufgelöst wird.
+- **Zuordnungsübung** - **Korrektur als eigene Ansicht** (Standard AN):
+  nach dem Prüfen zeigt "Meine Antworten" nur deine eigenen Paare mit den
+  Fehlern, die richtigen Antworten stehen unter "Korrektur", die Lösung
+  unter "Auflösen". Aus: die richtige Antwort steht direkt unter jedem
+  Fehler in "Meine Antworten". Dazu der **Auflösungs-Effekt**, mit dem
+  eine gelöste Zuordnungs-Übung aufgelöst wird.
 
 ### Vorlesen und Diktieren
 

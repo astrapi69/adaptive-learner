@@ -316,7 +316,12 @@ How exercises behave while you answer.
   whether the **Ask AI** button is shown.
 - **Preferred exercise direction** - which direction directional
   exercises open with.
-- **Solve animation** - the effect a solved matching exercise plays.
+- **Matching exercise** - **Corrections as a separate view** (default
+  ON): after checking, "My answers" shows only your own pairs with your
+  mistakes, the correct answers are under "Corrections", the solution
+  under "Solve". Off: the correct answer sits directly under each mistake
+  in "My answers". Plus the **Solve animation**, the effect a solved
+  matching exercise plays.
 
 ### Reading aloud and dictation
 

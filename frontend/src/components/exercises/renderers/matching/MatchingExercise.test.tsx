@@ -13,7 +13,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {fireEvent, render, screen, within} from "@testing-library/react";
+import {act, fireEvent, render, screen, within} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import MatchingExercise, {
@@ -22,6 +22,8 @@ import MatchingExercise, {
 } from "./MatchingExercise";
 import type {ContentLessonExercise} from "../../../../storage/types";
 import {readLegacyCssSum} from "../../../../styles/legacy-css-sum";
+import {LessonModeProvider} from "../../../../hooks/lesson/modes/useLessonMode";
+import {writeMatchingSeparateCorrections} from "../../../../lib/lesson/prefs/matchingReviewViewsPref";
 
 /** Convert ``#rrggbb`` to its HSL hue (degrees) + saturation (0-1). */
 function hexToHsl(hex: string): {hue: number; sat: number} {
@@ -405,6 +407,8 @@ describe("MatchingExercise: scoring + completion", () => {
         );
         // #191 — the wrong pair spells out BOTH sides: the learner picked
         // right-1 ("Thank you") for left-0, whose correct partner is "Hello".
+        // #3186 - the correct partner lives in the Corrections view.
+        fireEvent.click(screen.getByTestId("matching-corrections"));
         expect(
             screen.getByTestId("matching-your-answer-0"),
         ).toHaveTextContent("Thank you");
@@ -1029,5 +1033,126 @@ describe("MatchingExercise: equal-height tiles (#822)", () => {
             expect(classes).toContain("flex-1");
             expect(classes).toContain("[grid-auto-rows:1fr]");
         }
+    });
+});
+
+describe("MatchingExercise: separate corrections view (#3186)", () => {
+    afterEach(() => {
+        localStorage.clear();
+    });
+
+    /** 0->1 (wrong), 1->0 (wrong), 2->2 (correct): 1/3 correct. */
+    function pairOneWrongAndCheck() {
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        fireEvent.click(screen.getByTestId("matching-left-1"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        fireEvent.click(screen.getByTestId("matching-left-2"));
+        fireEvent.click(screen.getByTestId("matching-right-2"));
+        fireEvent.click(screen.getByTestId("matching-submit"));
+    }
+
+    it("offers three views by default: my answers, corrections, solve", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pairOneWrongAndCheck();
+        const toggle = screen.getByTestId("matching-view-toggle");
+        const buttons = within(toggle).getAllByRole("button");
+        expect(buttons.map((b) => b.getAttribute("data-testid"))).toEqual([
+            "matching-my-answers",
+            "matching-corrections",
+            "matching-resolve",
+        ]);
+        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
+        expect(screen.getByTestId("matching-corrections")).toHaveAttribute(
+            "aria-pressed",
+            "false",
+        );
+    });
+
+    it("shows only the learner's own graded pairs in 'My answers', no correct partners", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pairOneWrongAndCheck();
+        // Mistakes stay marked, with the learner's own pick spelled out.
+        expect(screen.getByTestId("matching-left-0").className).toContain("is-wrong");
+        expect(screen.getByTestId("matching-right-1").className).toContain("is-wrong");
+        expect(screen.getByTestId("matching-your-answer-0")).toHaveTextContent("Thank you");
+        expect(screen.getByTestId("matching-left-2").className).toContain("is-correct");
+        // ... but no correction rows.
+        expect(screen.queryByTestId("matching-correct-hint-0")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("matching-correct-hint-1")).not.toBeInTheDocument();
+    });
+
+    it("shows the correct partner under each mistake in 'Corrections' and switches back", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pairOneWrongAndCheck();
+        fireEvent.click(screen.getByTestId("matching-corrections"));
+        expect(screen.getByTestId("matching-corrections")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
+        expect(screen.getByTestId("matching-left")).toBeInTheDocument();
+        expect(screen.getByTestId("matching-correct-hint-0")).toHaveTextContent("Hello");
+        expect(screen.getByTestId("matching-correct-hint-1")).toHaveTextContent("Thank you");
+        // No correction row for the pair that was right.
+        expect(screen.queryByTestId("matching-correct-hint-2")).not.toBeInTheDocument();
+
+        fireEvent.click(screen.getByTestId("matching-resolve"));
+        expect(screen.getByTestId("matching-resolution")).toBeInTheDocument();
+
+        fireEvent.click(screen.getByTestId("matching-my-answers"));
+        expect(screen.queryByTestId("matching-correct-hint-0")).not.toBeInTheDocument();
+    });
+
+    it("'Try again' returns to the plain 'My answers' view on the next check", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pairOneWrongAndCheck();
+        fireEvent.click(screen.getByTestId("matching-corrections"));
+        fireEvent.click(screen.getByTestId("matching-retry"));
+        pairOneWrongAndCheck();
+        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
+        expect(screen.queryByTestId("matching-correct-hint-0")).not.toBeInTheDocument();
+    });
+
+    it("keeps the two-view layout with inline corrections when the setting is off", () => {
+        writeMatchingSeparateCorrections(false);
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pairOneWrongAndCheck();
+        expect(screen.queryByTestId("matching-corrections")).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-my-answers")).toBeInTheDocument();
+        expect(screen.getByTestId("matching-resolve")).toBeInTheDocument();
+        expect(screen.getByTestId("matching-correct-hint-0")).toHaveTextContent("Hello");
+    });
+
+    it("follows a live settings change while the exercise is open", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pairOneWrongAndCheck();
+        fireEvent.click(screen.getByTestId("matching-corrections"));
+        act(() => writeMatchingSeparateCorrections(false));
+        // The corrections button is gone; the corrections stay inline and
+        // 'My answers' is the active view instead of none at all.
+        expect(screen.queryByTestId("matching-corrections")).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
+        expect(screen.getByTestId("matching-correct-hint-0")).toBeInTheDocument();
+    });
+
+    it("keeps inline corrections when the mode hides the view toggle (exam)", () => {
+        render(
+            <LessonModeProvider mode="exam">
+                <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />
+            </LessonModeProvider>,
+        );
+        pairOneWrongAndCheck();
+        expect(screen.queryByTestId("matching-view-toggle")).not.toBeInTheDocument();
+        // Without a toggle the corrections are the only way to see the answer.
+        expect(screen.getByTestId("matching-correct-hint-0")).toHaveTextContent("Hello");
     });
 });

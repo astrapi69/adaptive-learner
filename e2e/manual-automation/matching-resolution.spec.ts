@@ -92,6 +92,18 @@ test.describe("Matching resolution (#824/#825)", () => {
     const reached = await reachCheckedMatching(content, lesson);
     test.skip(!reached, "no matching exercise reached in this lesson");
 
+    // #3186 - after checking, "My answers" is active and carries no
+    // correction rows; the middle "Corrections" view adds them.
+    await expect(page.getByTestId("matching-my-answers")).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect(page.getByTestId(/^matching-correct-hint-\d+$/)).toHaveCount(0);
+    await page.getByTestId("matching-corrections").click();
+    await expect(
+      page.getByTestId(/^matching-correct-hint-\d+$/).first(),
+    ).toBeVisible();
+
     // After checking, the Solve button is offered.
     const solve = page.getByTestId("matching-resolve");
     await expect(solve).toBeVisible();

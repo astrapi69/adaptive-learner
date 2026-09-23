@@ -756,7 +756,9 @@ async function pairMatchingWithOneWrong(page: Page): Promise<boolean> {
     // flake). Pin the LAST wrong-pair hint row (pairs 0+1 are the swapped
     // ones) and the last correct-pair row, then wait for the page height
     // to stop moving. Same determinism class as #1696.
-    await expect(page.getByTestId("matching-correct-hint-1")).toBeVisible({
+    // #3186 - the default post-check view is "My answers" (no correction
+    // rows), so pin the learner's own-answer row instead.
+    await expect(page.getByTestId("matching-your-answer-1")).toBeVisible({
         timeout: 5_000,
     });
     if (n > 2) {
