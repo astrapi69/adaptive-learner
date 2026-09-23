@@ -98,4 +98,32 @@ describe("useLessonStepState", () => {
         expect(result.current.checked).toBe(true);
         expect(result.current.enteredReviewed).toBe(false);
     });
+
+    describe("optional progress (EXP-052 slice 0: the ephemeral runners pass none)", () => {
+        function mountWithoutProgress(initialStep: number) {
+            return renderHook(
+                ({stepIndex}) =>
+                    useLessonStepState({lesson: LESSON, currentStepIndex: stepIndex}),
+                {initialProps: {stepIndex: initialStep}},
+            );
+        }
+
+        it("treats an omitted progress like null: no step is ever entered locked", () => {
+            const {result} = mountWithoutProgress(1);
+            expect(result.current.enteredReviewed).toBe(false);
+            expect(result.current.reviewedRaw).toBeNull();
+        });
+
+        it("still resets the two-phase state on a step change without progress", () => {
+            const {result, rerender} = mountWithoutProgress(0);
+            act(() => {
+                result.current.setAnswerable(true);
+                result.current.setChecked(true);
+            });
+            rerender({stepIndex: 1});
+            expect(result.current.answerable).toBe(false);
+            expect(result.current.checked).toBe(false);
+            expect(result.current.enteredReviewed).toBe(false);
+        });
+    });
 });
