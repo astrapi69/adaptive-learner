@@ -1013,13 +1013,17 @@
       "whole_set": "Ganzes Set wiederholen"
     },
     "matching_resolve": {
-      "title": "Auflösungs-Effekt",
+      "title": "Zuordnungsübung",
       "hint": "Wie die Zuordnungsübung die korrekten Paare zeigt, wenn du nach dem Prüfen auf 'Auflösen' tippst.",
-      "label": "Effekt",
+      "label": "Auflösungs-Effekt",
       "slide": "Gleiten",
       "color": "Farbe",
       "connect": "Verbinden",
       "stack": "Stapeln"
+    },
+    "matching_review_views": {
+      "label": "Korrektur als eigene Ansicht",
+      "desc": "Nach dem Prüfen zeigt 'Meine Antworten' nur deine eigenen Paare mit den Fehlern, die richtigen Partner stehen unter 'Korrektur'. Aus: die richtigen Partner stehen direkt unter jedem Fehler in 'Meine Antworten'."
     },
     "paused_retention": {
       "title": "Pausierte Lektionen aufbewahren",
@@ -2236,7 +2240,8 @@
         "selected_sr": "Ausgewählt: {label}",
         "resolve": "Auflösen",
         "resolve_announce": "Lösung angezeigt. {correct} von {total} Paaren waren korrekt.",
-        "my_answers": "Meine Antworten"
+        "my_answers": "Meine Antworten",
+        "corrections": "Korrektur"
       },
       "picture": {
         "submit": "Antwort prüfen",

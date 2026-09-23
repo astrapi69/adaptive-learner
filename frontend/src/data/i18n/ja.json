@@ -1013,13 +1013,17 @@
       "whole_set": "セット全体をやり直す"
     },
     "matching_resolve": {
-      "title": "解答アニメーション",
+      "title": "マッチング問題",
       "hint": "確認後に「解答を表示」を押したとき、マッチング演習が正しいペアをどのように表示するか。",
-      "label": "効果",
+      "label": "解答アニメーション",
       "slide": "スライド",
       "color": "色",
       "connect": "線でつなぐ",
       "stack": "重ねる"
+    },
+    "matching_review_views": {
+      "label": "訂正を別のビューで表示",
+      "desc": "確認後、「自分の回答」には自分のペアと間違いだけが表示され、正しい組み合わせは「訂正」に表示されます。オフ：正しい組み合わせは「自分の回答」の各間違いのすぐ下に表示されます。"
     },
     "paused_retention": {
       "title": "一時停止中のレッスンの保持期間",
@@ -2236,7 +2240,8 @@
         "selected_sr": "選択中: {label}",
         "resolve": "解答を表示",
         "resolve_announce": "解答を表示しました。{total} 組中 {correct} 組が正解でした。",
-        "my_answers": "自分の回答"
+        "my_answers": "自分の回答",
+        "corrections": "訂正"
       },
       "picture": {
         "submit": "答えを確認",

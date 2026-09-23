@@ -967,13 +967,16 @@ settings:
     errors_only: "Mostrar apenas os erros (predefinição)"
     whole_set: "Repetir o conjunto inteiro"
   matching_resolve:
-    title: "Animação de resolução"
+    title: "Exercício de correspondência"
     hint: "Como o exercício de correspondência revela os pares corretos ao tocar em 'Resolver' após verificar."
-    label: "Efeito"
+    label: "Animação de resolução"
     slide: "Deslizar"
     color: "Cor"
     connect: "Conectar"
     stack: "Empilhar"
+  matching_review_views:
+    label: "Correção como visualização separada"
+    desc: "Depois de verificar, 'Minhas respostas' mostra apenas os seus próprios pares com os erros; os pares corretos ficam em 'Correção'. Desativado: o par correto aparece logo abaixo de cada erro em 'Minhas respostas'."
   paused_retention:
     title: Retenção de aulas pausadas
     hint: "As aulas pausadas mais antigas que este período são automaticamente abandonadas. Até 10 aulas pausadas são mantidas independentemente da idade."
@@ -2077,6 +2080,7 @@ lesson:
       resolve: "Resolver"
       resolve_announce: "Solução exibida. {correct} de {total} pares estavam corretos."
       my_answers: "Minhas respostas"
+      corrections: "Correção"
     picture:
       submit: "Verificar resposta"
       retry: "Tentar de novo"

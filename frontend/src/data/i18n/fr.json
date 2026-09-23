@@ -1013,13 +1013,17 @@
       "whole_set": "Rejouer l'ensemble complet"
     },
     "matching_resolve": {
-      "title": "Animation de résolution",
+      "title": "Exercice d'association",
       "hint": "Comment l'exercice d'association révèle les paires correctes lorsque tu appuies sur 'Résoudre' après vérification.",
-      "label": "Effet",
+      "label": "Animation de résolution",
       "slide": "Glisser",
       "color": "Couleur",
       "connect": "Relier",
       "stack": "Empiler"
+    },
+    "matching_review_views": {
+      "label": "Correction dans une vue séparée",
+      "desc": "Après vérification, 'Mes réponses' affiche uniquement tes propres paires avec tes erreurs ; les bons partenaires sont sous 'Correction'. Désactivé : le bon partenaire s'affiche directement sous chaque erreur dans 'Mes réponses'."
     },
     "paused_retention": {
       "title": "Conservation des leçons en pause",
@@ -2236,7 +2240,8 @@
         "selected_sr": "Sélectionné : {label}",
         "resolve": "Résoudre",
         "resolve_announce": "Solution affichée. {correct} paires correctes sur {total}.",
-        "my_answers": "Mes réponses"
+        "my_answers": "Mes réponses",
+        "corrections": "Correction"
       },
       "picture": {
         "submit": "Vérifier la réponse",

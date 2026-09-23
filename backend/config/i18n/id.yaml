@@ -973,13 +973,16 @@ settings:
     errors_only: "Hanya tampilkan kesalahan (default)"
     whole_set: "Ulangi seluruh set"
   matching_resolve:
-    title: "Efek penyelesaian"
+    title: "Latihan pencocokan"
     hint: "Cara latihan menjodohkan menampilkan pasangan yang benar saat Anda menekan 'Selesaikan' setelah memeriksa."
-    label: "Efek"
+    label: "Efek penyelesaian"
     slide: "Geser"
     color: "Warna"
     connect: "Hubungkan"
     stack: "Tumpuk"
+  matching_review_views:
+    label: "Koreksi sebagai tampilan terpisah"
+    desc: "Setelah diperiksa, 'Jawaban saya' hanya menampilkan pasanganmu sendiri beserta kesalahannya; pasangan yang benar ada di 'Koreksi'. Nonaktif: pasangan yang benar muncul langsung di bawah setiap kesalahan di 'Jawaban saya'."
   paused_retention:
     title: Retensi pelajaran yang dijeda
     hint: "Pelajaran yang dijeda lebih lama dari ini secara otomatis ditinggalkan. Hingga 10 pelajaran yang dijeda tetap disimpan terlepas dari usianya."
@@ -2088,6 +2091,7 @@ lesson:
       resolve: "Selesaikan"
       resolve_announce: "Solusi ditampilkan. {correct} dari {total} pasangan sudah benar."
       my_answers: "Jawaban saya"
+      corrections: "Koreksi"
     picture:
       submit: "Periksa jawaban"
       retry: "Coba lagi"
