@@ -47,7 +47,9 @@ import {
     setTheme,
     settleForScreenshot,
     gotoDashboardWithDueReviews,
+    gotoEndlessSession,
     gotoReviewSession,
+    gotoShuffleSession,
     playBundledLesson,
 } from "../visual/helpers";
 
@@ -979,6 +981,18 @@ async function gotoReviewSummary(page: Page): Promise<boolean> {
 }
 
 /**
+ * EXP-052 slice 2 (#3169) - wrap a set-runner opener (Shuffle, Endless)
+ * so the shot waits the same settle beat as the review step.
+ */
+function settledSetRunner(open: (page: Page) => Promise<boolean>) {
+    return async (page: Page): Promise<boolean> => {
+        if (!(await open(page))) return false;
+        await page.waitForTimeout(400);
+        return true;
+    };
+}
+
+/**
  * Answer the open review step and check it. The seeded error row comes
  * from a matching exercise, so the review presents a matching question:
  * pair every left tile with the right tile of the same index (right or
@@ -1640,6 +1654,18 @@ const FEATURES: FeatureShot[] = [
     // --- Review session on the LessonRunner shell (EXP-052 slice 1, #3169) ---
     {path: "review-session/schritt", setup: gotoReviewStep, pinTo: "review-page"},
     {path: "review-session/zusammenfassung", setup: gotoReviewSummary, pinTo: "review-summary"},
+
+    // --- Shuffle and Endless on the LessonRunner shell (EXP-052 slice 2, #3169) ---
+    // Shuffle: session header with the "Mixing n questions" subtitle, the
+    // shared progress bar, the lesson footer with Previous. Endless: the
+    // stat line as pure display in the progress slot and the footer with
+    // pause and End (Befund 2), no Previous.
+    {path: "shuffle-session/schritt", setup: settledSetRunner(gotoShuffleSession), pinTo: "shuffle-page"},
+    {
+        path: "endless-session/statuszeile",
+        setup: settledSetRunner(gotoEndlessSession),
+        pinTo: "endless-page",
+    },
 
     // --- ViewportDiagnostic tap-offset probe (#1569, collapsed #2779) ---
     {path: "viewport-diagnostic/eingeklappt", setup: gotoViewportDiagnostic},

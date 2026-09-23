@@ -1109,6 +1109,8 @@ export const SURFACE_NAMES = [
     "lesson-matching",
     "lesson-summary",
     "review-session",
+    "shuffle-session",
+    "endless-session",
     "statistics",
     "settings-general",
     "settings-data",
@@ -1491,6 +1493,65 @@ export async function gotoReviewSession(page: Page): Promise<boolean> {
 }
 
 /**
+ * Open a set-level runner route on the bundled set and wait for its
+ * ready anchors (EXP-052 slice 2). Opening the first bundled lesson
+ * first guarantees the set is cached: Shuffle and Endless resolve the set
+ * through ``listSets`` and render their not-cached screen otherwise. The
+ * route is re-entered while the anchors are missing (the cache write can
+ * still be landing), the same bounded retry as ``gotoReviewSession``.
+ */
+async function gotoSetRunner(
+    page: Page,
+    route: string,
+    anchors: readonly string[],
+): Promise<boolean> {
+    await seedLearner(page);
+    await openFirstBundledLesson(page);
+    for (let attempt = 0; attempt < 3; attempt++) {
+        await page.goto(`${route}/${SET_ID}`);
+        try {
+            for (const anchor of anchors) {
+                await expect(page.getByTestId(anchor)).toBeVisible({timeout: 5_000});
+            }
+            return true;
+        } catch {
+            // Set list not materialised yet - re-enter the route.
+        }
+    }
+    return false;
+}
+
+/**
+ * Seed a learner and open the Shuffle session of the bundled set on its
+ * first step (EXP-052 slice 2). ``pinRandomness`` makes the Fisher-Yates
+ * order the same on every run, so the first question is stable.
+ */
+export async function gotoShuffleSession(page: Page): Promise<boolean> {
+    return gotoSetRunner(page, "/shuffle-lesson", [
+        "shuffle-page",
+        "shuffle-subtitle",
+        "shuffle-check",
+    ]);
+}
+
+/**
+ * Seed a learner and open the Endless stream of the bundled set on its
+ * first card (EXP-052 slice 2): header, the stat line in the progress
+ * slot, the card, and the footer with pause and End. The stream opens
+ * with new cards in lesson order, so the first card is stable; the stat
+ * line's clock ticks with real time, a few-pixel digit change the
+ * comparison tolerance absorbs.
+ */
+export async function gotoEndlessSession(page: Page): Promise<boolean> {
+    return gotoSetRunner(page, "/endless-lesson", [
+        "endless-page",
+        "endless-stat-line",
+        "endless-step",
+        "endless-end",
+    ]);
+}
+
+/**
  * Move every SRS error row of the current learner ``days`` into the past
  * (#3123). The badge in the header counts OVERDUE elements only, and a
  * fresh wrong answer is due tomorrow (``intervalDaysForStreak(0)`` = 1
@@ -1730,6 +1791,10 @@ export async function gotoSurface(
             return playBundledLesson(page, "summary");
         case "review-session":
             return gotoReviewSession(page);
+        case "shuffle-session":
+            return gotoShuffleSession(page);
+        case "endless-session":
+            return gotoEndlessSession(page);
         case "statistics":
             await seedLearner(page);
             await playBundledLesson(page, "summary");
