@@ -17,6 +17,7 @@
  */
 
 import {act, renderHook, waitFor} from "@testing-library/react";
+import {StrictMode} from "react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {endlessStepAt} from "../../../lib/endless/endless-stream";
@@ -115,13 +116,23 @@ async function streamWithRandomSeed(
     return {ids: await renderStream(0), random};
 }
 
-async function renderStream(foreignDrawsPerAdvance: number): Promise<string[]> {
-    const {result, unmount} = renderHook(() =>
-        useEndlessLesson({setId: "set-1", title: "Endless"}),
+interface RenderStreamOptions {
+    /** Render inside ``React.StrictMode``, as ``main.tsx`` does. */
+    strict?: boolean;
+    advances?: number;
+}
+
+async function renderStream(
+    foreignDrawsPerAdvance: number,
+    {strict = false, advances = ADVANCES}: RenderStreamOptions = {},
+): Promise<string[]> {
+    const {result, unmount} = renderHook(
+        () => useEndlessLesson({setId: "set-1", title: "Endless"}),
+        strict ? {wrapper: StrictMode} : undefined,
     );
     await waitFor(() => expect(result.current.status).toBe("ready"));
     const ids = [result.current.step!.id];
-    for (let n = 0; n < ADVANCES; n++) {
+    for (let n = 0; n < advances; n++) {
         for (let i = 0; i < foreignDrawsPerAdvance; i++) Math.random();
         act(() => result.current.advance());
         ids.push(result.current.step!.id);
@@ -170,6 +181,21 @@ describe("Endless repetition under the visual random pin (#3214)", () => {
     it("sensitivity guard: without a pin the shared stream does move the sequence", async () => {
         const reference = await streamIds(0);
         expect(await streamIds(17)).not.toEqual(reference);
+    });
+});
+
+describe("Endless repetition under React.StrictMode (#3214)", () => {
+    /** StrictMode runs every state updater twice in development; a draw made
+     *  inside the updater is then consumed twice and the pinned sequence
+     *  shifts from the second card on. */
+    it("draws each repetition once: 8 advances match the non-strict render", async () => {
+        installVisualRandomPin();
+        Math.random = mulberry32(0x1567);
+        const plain = await renderStream(0, {advances: 8});
+        Math.random = mulberry32(0x1567);
+        const strict = await renderStream(0, {strict: true, advances: 8});
+        expect(strict).toHaveLength(9);
+        expect(strict).toEqual(plain);
     });
 });
 

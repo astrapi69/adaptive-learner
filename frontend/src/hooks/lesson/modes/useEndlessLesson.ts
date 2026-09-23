@@ -221,14 +221,26 @@ export function useEndlessLesson(
         };
     }, [setId, title, userId]);
 
+    /**
+     * Draw the next card and show it. The draw happens here, once, and the
+     * result is handed to ``setStep`` as a value: a state updater runs twice
+     * under ``React.StrictMode`` and would consume the pinned
+     * ``"endless-repeat"`` stream twice (#3214). ``stepRef`` is advanced
+     * immediately, so two advances before a re-render still chain.
+     */
     const advance = useCallback(() => {
         const plan = planRef.current;
         if (!plan) return;
-        const next = positionRef.current + 1;
-        positionRef.current = next;
-        setStep((prev) =>
-            endlessStepAt(plan, next, prev?.id ?? null, rngRef.current),
+        const position = positionRef.current + 1;
+        positionRef.current = position;
+        const nextStep = endlessStepAt(
+            plan,
+            position,
+            stepRef.current?.id ?? null,
+            rngRef.current,
         );
+        stepRef.current = nextStep;
+        setStep(nextStep);
     }, []);
 
     const recordStepAttempts = useCallback(
