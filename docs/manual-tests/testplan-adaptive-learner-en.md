@@ -2158,6 +2158,13 @@ each card row (`CardImageField`).
       mastered percentage, still open, time spent) and below them
       mistakes per lesson, per exercise type, and the biggest weak
       spots with your own wrong answer next to the correct one
+- [ ] The two middle figures follow the mistakes, not the review flag
+      (#3166): "Still open" counts the elements with at least one mistake
+      that the review has not marked mastered yet; "Mastered" is the share
+      of all played elements that were never wrong or have cleared their
+      mistake since. A set with 12 played elements, 3 of them wrong once:
+      "3 Total mistakes", "75% Mastered", "3 Still open" - not "0%" and
+      "12"
 - [ ] "Practise mistakes" leads into the set's review session,
       "Back to the set" to the set page
 - [ ] A set with no recorded mistakes shows the friendly message
@@ -2220,6 +2227,11 @@ each card row (`CardImageField`).
       Time spent), "Mistakes per exercise type" and "Biggest weak spots"
       with the own wrong answer struck through next to the correct one;
       "Mistakes per lesson" is NOT there (it is a single lesson)
+- [ ] First run of a lesson, e.g. 12 elements, 9 right, 3 wrong: "3 Total
+      mistakes", "75% Mastered", "3 Still open" - the same 75% as the run's
+      score (#3166). "Mastered" counts the elements that were never wrong or
+      whose mistake the review has cleared since, "Still open" those with a
+      mistake and no mastery; not "0%" and "12" for 3 mistakes
 - [ ] The numbers match the set review (Content > set > "Open review")
       for the same lesson
 - [ ] "Practise mistakes" opens the set's review session
