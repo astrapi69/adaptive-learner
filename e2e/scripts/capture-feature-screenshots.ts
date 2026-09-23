@@ -42,6 +42,7 @@ import {
     freezeClock,
     OWN_LESSON_TITLE,
     pinRandomness,
+    pinRandomStreams,
     openFirstBundledLesson,
     seedLearner,
     setTheme,
@@ -1694,6 +1695,7 @@ for (const feature of FEATURES) {
             // before the first navigation, then seed the feature state, then
             // settle fonts + kill animations.
             await freezeClock(page);
+            await pinRandomStreams(page);
             await pinRandomness(page);
             await setTheme(page, DEFAULT_THEME);
             const ready = await feature.setup(page);

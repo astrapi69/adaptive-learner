@@ -18,6 +18,11 @@
 import {expect, type Page} from "@playwright/test";
 
 import {completeAssessment, completeOnboarding} from "../helpers";
+import {
+    RANDOM_PIN_GLOBAL,
+    isRandomPin,
+} from "../../frontend/src/lib/random/pinned-random";
+import {FIXED_NOW_ISO, VISUAL_RANDOM_PIN} from "./visual-pins";
 
 /** All 12 registered themes (6 recommended + 6 classic). */
 export const THEME_IDS = [
@@ -66,15 +71,17 @@ const OWN_LESSON_CARDS = [
 /** Title of the seeded own lesson (#3011). */
 export const OWN_LESSON_TITLE = "Mein erstes Vokabelset";
 
-/** Frozen wall-clock for every visual run (follows #244). Relative times
- *  ("vor 3 Minuten", streak dates, "Morgen neue Missionen") would otherwise
- *  drift day-to-day and make the screenshots flaky. */
-const FIXED_NOW_ISO = "2026-06-10T14:00:00Z";
-
 /**
- * Freeze ``Date`` to a fixed instant before any page script runs, so every
- * relative-time / timestamp render is deterministic. Added before the first
- * navigation (``addInitScript`` re-applies on each navigation in the context).
+ * Freeze ``Date`` to a fixed instant (``FIXED_NOW_ISO`` in ``visual-pins.ts``)
+ * before any page script runs, so every relative-time / timestamp render is
+ * deterministic. Added before the first navigation (``addInitScript``
+ * re-applies on each navigation in the context).
+ *
+ * No shuffle reads this clock any more (#3214): the matching and word-tiles
+ * mount seeds take their suffix from the pin ``pinRandomStreams`` installs.
+ * Call ``pinRandomStreams`` right after this at every visual entry point, or
+ * those seeds fall back to the page clock and the set-run builders to
+ * ``Math.random``.
  */
 export async function freezeClock(page: Page): Promise<void> {
     await page.addInitScript((iso) => {
@@ -98,14 +105,24 @@ export async function freezeClock(page: Page): Promise<void> {
 }
 
 /**
- * Pin every in-page randomness source so ID- and shuffle-derived UI is
- * identical run-to-run (#1567): ``crypto.randomUUID`` becomes a counter
- * sequence (the seeded user's id feeds the missions PRNG
- * ``userId:dateISO`` — a random UUID re-rolls the daily missions on
- * every capture run) and ``Math.random`` becomes a fixed-seed
- * mulberry32 stream (exercise/option shuffles). Deterministic, still
- * unique per call. Call ONCE before the first navigation, alongside
+ * Pin the page-wide randomness sources so ID-derived UI is identical
+ * run-to-run (#1567): ``crypto.randomUUID`` becomes a counter sequence (the
+ * seeded user's id feeds the missions PRNG ``userId:dateISO`` - a random UUID
+ * re-rolls the daily missions on every capture run) and ``Math.random``
+ * becomes ONE fixed-seed mulberry32 stream shared by every remaining
+ * ``Math.random`` consumer on the page (confetti, sound, arcade games,
+ * exercise variables, the cloze generator, custom paths). Deterministic,
+ * still unique per call. Call ONCE before the first navigation, alongside
  * ``freezeClock``.
+ *
+ * This shared stream no longer drives the option shuffles or the set-run
+ * builders (#3214). A draw from a shared stream depends on every draw before
+ * it anywhere on the page, so the Shuffle order differed between viewports
+ * under the same seed. Those consumers now draw from their OWN named streams,
+ * which ``pinRandomStreams`` installs; no other draw can move them.
+ *
+ * The mulberry32 below is a serialised copy of ``frontend/src/lib/random/prng.ts``:
+ * an init script cannot import app modules.
  */
 export async function pinRandomness(page: Page): Promise<void> {
     await page.addInitScript(() => {
@@ -124,6 +141,40 @@ export async function pinRandomness(page: Page): Promise<void> {
             return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
         };
     });
+}
+
+/**
+ * Install the visual random pin (#3214) before the first navigation:
+ * ``VISUAL_RANDOM_PIN`` on ``globalThis[RANDOM_PIN_GLOBAL]``, read by
+ * ``frontend/src/lib/random/pinned-random.ts``.
+ *
+ * With it, the Shuffle builder draws from its own ``"shuffle-order"`` stream,
+ * the Endless repetitions from ``"endless-repeat"``, and the matching and
+ * word-tiles mount seeds use ``VISUAL_RANDOM_PIN.mountSalt`` instead of the
+ * page clock. Each stream is a fresh generator only its consumer advances,
+ * so a draw anywhere else on the page cannot move a baseline.
+ *
+ * Fails closed: a pin the app would reject (``isRandomPin``) throws here
+ * instead of letting the run capture unpinned, browser-random orders.
+ *
+ * @example
+ * await freezeClock(page);
+ * await pinRandomStreams(page);
+ */
+export async function pinRandomStreams(page: Page): Promise<void> {
+    if (!isRandomPin(VISUAL_RANDOM_PIN)) {
+        throw new Error(
+            `pinRandomStreams: VISUAL_RANDOM_PIN ${JSON.stringify(VISUAL_RANDOM_PIN)} ` +
+                "is not a valid RandomPin; the app would ignore it and draw " +
+                "unpinned randomness (#3214).",
+        );
+    }
+    await page.addInitScript(
+        ({name, pin}) => {
+            (globalThis as Record<string, unknown>)[name] = Object.freeze(pin);
+        },
+        {name: RANDOM_PIN_GLOBAL, pin: VISUAL_RANDOM_PIN},
+    );
 }
 
 /**
@@ -1523,8 +1574,10 @@ async function gotoSetRunner(
 
 /**
  * Seed a learner and open the Shuffle session of the bundled set on its
- * first step (EXP-052 slice 2). ``pinRandomness`` makes the Fisher-Yates
- * order the same on every run, so the first question is stable.
+ * first step (EXP-052 slice 2). The Fisher-Yates order comes from the
+ * ``"shuffle-order"`` stream ``pinRandomStreams`` installs (#3214), so it is
+ * the same on every run and at every viewport, whatever else drew from
+ * ``Math.random`` first; the first question is stable.
  */
 export async function gotoShuffleSession(page: Page): Promise<boolean> {
     return gotoSetRunner(page, "/shuffle-lesson", [
@@ -1538,7 +1591,9 @@ export async function gotoShuffleSession(page: Page): Promise<boolean> {
  * Seed a learner and open the Endless stream of the bundled set on its
  * first card (EXP-052 slice 2): header, the stat line in the progress
  * slot, the card, and the footer with pause and End. The stream opens
- * with new cards in lesson order, so the first card is stable; the stat
+ * with new cards in lesson order, so the first card is stable (the
+ * repetitions after the queue draw from the ``"endless-repeat"`` stream
+ * ``pinRandomStreams`` installs, #3214); the stat
  * line's clock ticks with real time, a few-pixel digit change the
  * comparison tolerance absorbs.
  */
