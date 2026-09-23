@@ -8,15 +8,20 @@
  * markup is byte-identical to ``LessonStatusView`` (pinned by test);
  * the four ``render*Status`` page copies are replaced slice by slice.
  *
- * The chrome every run shares (missing params, not cached, invalid data,
- * back to dashboard) reads ``runner.*``, its ONE catalog home (#3203);
- * the namespace names only the runner's own title and loading line; the
- * empty body and the load-failed line, which explain WHY this run shows
- * nothing, come through the policy keys (``emptyBodyKey`` /
- * ``loadFailedKey``). The fallbacks carry the en wording. The
- * content-browser exit reads the shared ``lesson.action.open_browser``
- * every page already uses; the dashboard exit of the empty screen is the
- * route all four session pages use.
+ * The chrome every run shares under the SAME triggering condition (back
+ * to dashboard, the friendly invalid-data line) reads ``runner.*``, its
+ * ONE catalog home (#3203); the namespace names only the runner's own
+ * title and loading line; everything whose condition or content differs
+ * per runner comes through the policy keys: the empty body and the
+ * load-failed line (WHY this run shows nothing), the not-cached body (a
+ * missing set for the session runners, a missing file inside a possibly
+ * downloaded set for the lesson) and the missing-params body (one param
+ * against three). The fallbacks carry the en wording; for the
+ * policy-driven keys they come from ``EN_FALLBACKS`` so a lesson-keyed
+ * view falls back to the lesson sentence. The content-browser exit reads
+ * the shared ``lesson.action.open_browser`` every page already uses; the
+ * dashboard exit of the empty screen is the route all four session pages
+ * use.
  *
  * @example
  * const kind = resolveRunnerStatusKind(Boolean(setId), source.status);
@@ -27,6 +32,8 @@
  *       i18nNamespace="review"
  *       emptyBodyKey={policy.emptyBodyKey}
  *       loadFailedKey={policy.loadFailedKey}
+ *       notCachedBodyKey={policy.notCachedBodyKey}
+ *       missingParamsKey={policy.missingParamsKey}
  *       kind={kind}
  *       error={source.error}
  *     />
@@ -65,6 +72,10 @@ export interface RunnerStatusViewProps {
   emptyBodyKey: string | null;
   /** ``RunnerPolicy.loadFailedKey``. */
   loadFailedKey: string;
+  /** ``RunnerPolicy.notCachedBodyKey``. */
+  notCachedBodyKey: string;
+  /** ``RunnerPolicy.missingParamsKey``. */
+  missingParamsKey: string;
   kind: RunnerStatusKind;
   error: string | null;
 }
@@ -73,6 +84,15 @@ const MAIN_CLASS = "page lesson-page flex flex-col min-h-full";
 const CONTENT_BROWSER_ROUTE = "/content?tab=my";
 const DASHBOARD_ROUTE = "/dashboard";
 const EMPTY_FALLBACK = "Nothing to practise in this set right now.";
+/** en wording of the policy-driven keys, shown until the catalog resolves. */
+const EN_FALLBACKS: Record<string, string> = {
+  "lesson.not_cached_body":
+    "This lesson isn't downloaded yet. Open the content browser and download the set first.",
+  "runner.not_cached_body":
+    "This set isn't downloaded yet. Open the content browser to download it first.",
+  "lesson.error.missing_params": "No lesson selected. Browse content sets to pick one.",
+  "runner.error.missing_params": "No content set selected.",
+};
 
 /** Renders the missing / loading / empty / not-cached / error status screen. */
 export default function RunnerStatusView({
@@ -80,6 +100,8 @@ export default function RunnerStatusView({
   i18nNamespace,
   emptyBodyKey,
   loadFailedKey,
+  notCachedBodyKey,
+  missingParamsKey,
   kind,
   error,
 }: RunnerStatusViewProps) {
@@ -94,7 +116,7 @@ export default function RunnerStatusView({
     return (
       <main id="main" className={MAIN_CLASS} data-testid={testId("missing-params")}>
         <h1>{pageTitle}</h1>
-        <p>{t("runner.error.missing_params", "No content set selected.")}</p>
+        <p>{t(missingParamsKey, EN_FALLBACKS[missingParamsKey] ?? "No content set selected.")}</p>
         <Button asChild variant="default">
           <Link to={CONTENT_BROWSER_ROUTE}>{openBrowser}</Link>
         </Button>
@@ -142,8 +164,9 @@ export default function RunnerStatusView({
         </header>
         <p className="lesson-not-cached-body">
           {t(
-            "runner.not_cached_body",
-            "This set isn't downloaded yet. Open the content browser to download it first.",
+            notCachedBodyKey,
+            EN_FALLBACKS[notCachedBodyKey] ??
+              "This set isn't downloaded yet. Open the content browser to download it first.",
           )}
         </p>
         <p>

@@ -49,6 +49,14 @@ function renderStatus(
                   i18nNamespace={prefix}
                   emptyBodyKey={prefix === "lesson" ? null : "review.empty_body"}
                   loadFailedKey={`${prefix}.error.load_failed`}
+                  notCachedBodyKey={
+                    prefix === "lesson" ? "lesson.not_cached_body" : "runner.not_cached_body"
+                  }
+                  missingParamsKey={
+                    prefix === "lesson"
+                      ? "lesson.error.missing_params"
+                      : "runner.error.missing_params"
+                  }
                   kind={kind}
                   error={error}
                 />
@@ -149,10 +157,13 @@ describe("RunnerStatusView - lesson prefix is byte-identical to LessonStatusView
   });
 
   // #3203 — the lesson prefix keeps the lesson markup byte for byte; the
-  // ONLY permitted difference is the three chrome sentences the shell reads
-  // from runner.* instead of lesson.* (missing params, not cached, invalid
-  // data). Both views render their fallbacks here (no catalog fetch under
-  // the test provider), and the fallbacks carry the en wording, so the
+  // ONLY permitted difference is the one chrome sentence the shell reads
+  // from runner.* for every run (invalid data, the friendly non-dev
+  // fallback that speaks about the content author). Missing params and
+  // not cached stay lesson.* for the lesson: their triggering condition
+  // differs (three params, one file inside a downloaded set). Both views
+  // render their fallbacks here (no catalog fetch under the test
+  // provider), and the fallbacks carry the en wording, so the
   // substitution comes from en.json: a fallback that drifts from the
   // catalog, or any other markup difference, stays red.
   const EN = JSON.parse(
@@ -162,11 +173,7 @@ describe("RunnerStatusView - lesson prefix is byte-identical to LessonStatusView
     dotted.split(".").reduce<unknown>((node, part) => {
       return node && typeof node === "object" ? (node as Record<string, unknown>)[part] : undefined;
     }, EN) as string;
-  const SHARED: [string, string][] = [
-    ["lesson.error.missing_params", "runner.error.missing_params"],
-    ["lesson.not_cached_body", "runner.not_cached_body"],
-    ["lesson.error.invalid_data", "runner.error.invalid_data"],
-  ];
+  const SHARED: [string, string][] = [["lesson.error.invalid_data", "runner.error.invalid_data"]];
   function withRunnerChrome(markup: string): string {
     return SHARED.reduce((acc, [lessonKey, runnerKey]) => {
       expect(en(lessonKey), lessonKey).toBeTypeOf("string");
@@ -176,7 +183,7 @@ describe("RunnerStatusView - lesson prefix is byte-identical to LessonStatusView
   }
 
   it.each(["missing", "loading", "not-cached", "error"] as LessonStatusKind[])(
-    "kind %s renders the same markup through both entry points, apart from the runner.* chrome sentences (#3203)",
+    "kind %s renders the same markup through both entry points, apart from the shared invalid-data sentence (#3203)",
     (kind) => {
       const viaLesson = html(<LessonStatusView kind={kind} error={RAW_ERROR} />);
       const viaRunner = html(
@@ -185,6 +192,8 @@ describe("RunnerStatusView - lesson prefix is byte-identical to LessonStatusView
           i18nNamespace="lesson"
           emptyBodyKey={null}
           loadFailedKey="lesson.error.load_failed"
+          notCachedBodyKey="lesson.not_cached_body"
+          missingParamsKey="lesson.error.missing_params"
           kind={kind}
           error={RAW_ERROR}
         />,
@@ -203,6 +212,8 @@ describe("RunnerStatusView - lesson prefix is byte-identical to LessonStatusView
         i18nNamespace="lesson"
         emptyBodyKey={null}
         loadFailedKey="lesson.error.load_failed"
+        notCachedBodyKey="lesson.not_cached_body"
+        missingParamsKey="lesson.error.missing_params"
         kind="error"
         error={RAW_ERROR}
       />,

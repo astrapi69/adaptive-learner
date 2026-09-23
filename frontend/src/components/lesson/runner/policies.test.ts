@@ -39,6 +39,8 @@ const RATIFIED_COLUMNS = [
   "mode",
   "emptyBodyKey",
   "loadFailedKey",
+  "notCachedBodyKey",
+  "missingParamsKey",
 ].sort();
 
 const ROWS: [string, RunnerPolicy][] = Object.entries(RUNNER_POLICIES);
@@ -66,7 +68,7 @@ describe("runner policies (ratified matrix 2026-09-23)", () => {
     }
   });
 
-  it.each(ROWS)("%s carries exactly the fourteen ratified columns", (_prefix, policy) => {
+  it.each(ROWS)("%s carries exactly the sixteen ratified columns", (_prefix, policy) => {
     expect(Object.keys(policy).sort()).toEqual(RATIFIED_COLUMNS);
   });
 
@@ -163,9 +165,12 @@ describe("per-runner status keys (#3203)", () => {
   });
 
   it.each(ROWS)("%s status keys resolve in every catalog", (_prefix, policy) => {
-    const keys = [policy.emptyBodyKey, policy.loadFailedKey].filter(
-      (key): key is string => typeof key === "string",
-    );
+    const keys = [
+      policy.emptyBodyKey,
+      policy.loadFailedKey,
+      policy.notCachedBodyKey,
+      policy.missingParamsKey,
+    ].filter((key): key is string => typeof key === "string");
     expect(keys.length).toBeGreaterThan(0);
     for (const [lang, catalog] of catalogs) {
       for (const key of keys) {
@@ -190,5 +195,19 @@ describe("per-runner status keys (#3203)", () => {
     expect(ERROR_REPLAY_POLICY.emptyBodyKey).toBe("lesson.error_replay.empty");
     expect(ERROR_REPLAY_POLICY.loadFailedKey).toBe("lesson.error.load_failed");
     expect(LESSON_POLICY.loadFailedKey).toBe("lesson.error.load_failed");
+  });
+  // A key is shared when the TRIGGERING CONDITION is identical, not when
+  // the sentence looks alike: the five session runners fall into
+  // not-cached when listSets() has no set with this id, the lesson when
+  // getLesson() cannot find this one file inside a set that may well be
+  // downloaded; the lesson guards three params, the others one.
+  it("shares not-cached and missing-params only where the condition is the same", () => {
+    expect(LESSON_POLICY.notCachedBodyKey).toBe("lesson.not_cached_body");
+    expect(LESSON_POLICY.missingParamsKey).toBe("lesson.error.missing_params");
+    for (const [prefix, policy] of ROWS) {
+      if (prefix === "lesson") continue;
+      expect(policy.notCachedBodyKey, prefix).toBe("runner.not_cached_body");
+      expect(policy.missingParamsKey, prefix).toBe("runner.error.missing_params");
+    }
   });
 });

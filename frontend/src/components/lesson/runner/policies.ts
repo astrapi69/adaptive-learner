@@ -31,6 +31,8 @@ export const LESSON_POLICY: RunnerPolicy = Object.freeze({
   mode: "inherit",
   emptyBodyKey: null,
   loadFailedKey: "lesson.error.load_failed",
+  notCachedBodyKey: "lesson.not_cached_body",
+  missingParamsKey: "lesson.error.missing_params",
 });
 
 /** Review session synthesised from the SRS queue. */
@@ -49,6 +51,8 @@ export const REVIEW_POLICY: RunnerPolicy = Object.freeze({
   mode: "practice",
   emptyBodyKey: "review.empty_body",
   loadFailedKey: "review.error.load_failed",
+  notCachedBodyKey: "runner.not_cached_body",
+  missingParamsKey: "runner.error.missing_params",
 });
 
 /** Shuffle across the lessons of a set. */
@@ -67,6 +71,8 @@ export const SHUFFLE_POLICY: RunnerPolicy = Object.freeze({
   mode: "practice",
   emptyBodyKey: "shuffle.empty_body",
   loadFailedKey: "shuffle.error.load_failed",
+  notCachedBodyKey: "runner.not_cached_body",
+  missingParamsKey: "runner.error.missing_params",
 });
 
 /**
@@ -89,6 +95,8 @@ export const ENDLESS_POLICY: RunnerPolicy = Object.freeze({
   mode: "practice",
   emptyBodyKey: "endless.empty_body",
   loadFailedKey: "endless.error.load_failed",
+  notCachedBodyKey: "runner.not_cached_body",
+  missingParamsKey: "runner.error.missing_params",
 });
 
 /** Adaptive lesson generated from the learner's errors; the transparency
@@ -108,6 +116,8 @@ export const ADAPTIVE_POLICY: RunnerPolicy = Object.freeze({
   mode: "practice",
   emptyBodyKey: "adaptive.empty_body",
   loadFailedKey: "adaptive.error.load_failed",
+  notCachedBodyKey: "runner.not_cached_body",
+  missingParamsKey: "runner.error.missing_params",
 });
 
 /** Error replay opened from a lesson summary; ``"back-button"`` returns
@@ -128,6 +138,8 @@ export const ERROR_REPLAY_POLICY: RunnerPolicy = Object.freeze({
   mode: "practice",
   emptyBodyKey: "lesson.error_replay.empty",
   loadFailedKey: "lesson.error.load_failed",
+  notCachedBodyKey: "runner.not_cached_body",
+  missingParamsKey: "runner.error.missing_params",
 });
 
 /** All six, keyed by testid prefix (the table the tests iterate). */

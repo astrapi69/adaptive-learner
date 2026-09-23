@@ -4,7 +4,9 @@
  * The chrome every run shares (missing params, not cached, invalid data,
  * back to dashboard) has ONE home, ``runner.*``; the namespace names only
  * the runner's own keys (title, loading); the two texts that explain WHY
- * a run shows nothing come through the policy keys. A key-echoing ``t``
+ * a run shows nothing, and the two whose triggering condition differs
+ * per runner (not cached, missing params), come through the policy keys.
+ * A key-echoing ``t``
  * makes the contract visible in the rendered text, independent of any
  * catalog fetch.
  */
@@ -29,6 +31,8 @@ function renderKind(kind: RunnerStatusKind, error: string | null = null) {
         i18nNamespace="review"
         emptyBodyKey="review.empty_body"
         loadFailedKey="review.error.load_failed"
+        notCachedBodyKey="runner.not_cached_body"
+        missingParamsKey="runner.error.missing_params"
         kind={kind}
         error={error}
       />
@@ -82,5 +86,24 @@ describe("RunnerStatusView - catalog keys per screen (#3203)", () => {
     expect(screen.getByTestId("review-error").textContent).toContain(
       "review.error.load_failed (boom)",
     );
+  });
+  it("reads not-cached and missing-params from the policy keys, so the lesson keeps its own", () => {
+    const { container, unmount } = render(
+      <MemoryRouter>
+        <RunnerStatusView
+          testIdPrefix="lesson"
+          i18nNamespace="lesson"
+          emptyBodyKey={null}
+          loadFailedKey="lesson.error.load_failed"
+          notCachedBodyKey="lesson.not_cached_body"
+          missingParamsKey="lesson.error.missing_params"
+          kind="not-cached"
+          error={null}
+        />
+      </MemoryRouter>,
+    );
+    expect(container.textContent).toContain("lesson.not_cached_body");
+    expect(container.textContent).not.toContain("runner.not_cached_body");
+    unmount();
   });
 });
