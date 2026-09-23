@@ -8,6 +8,7 @@
  */
 
 import type {RandomPin} from "../../frontend/src/lib/random/pinned-random";
+import {mulberry32} from "../../frontend/src/lib/random/prng";
 
 /** Frozen wall-clock for every visual run (follows #244). Relative times
  *  ("vor 3 Minuten", streak dates, "Morgen neue Missionen") would otherwise
@@ -46,3 +47,45 @@ export const VISUAL_RANDOM_PIN: RandomPin = {
     streamSeed: 0x1567,
     mountSalt: VISUAL_MOUNT_SALT,
 };
+
+/** Seed of the one shared ``Math.random`` stream ``pinRandomness`` installs. */
+export const LEGACY_RANDOM_SEED = 0x1567;
+
+/**
+ * Runs IN THE PAGE, serialised by {@link legacyRandomInitScript}: a counter
+ * ``crypto.randomUUID`` and one shared ``Math.random`` stream. It may use
+ * nothing but its parameters and page globals, because only its source text
+ * reaches the page.
+ */
+function installLegacyRandomness(
+    createGenerator: (seed: number) => () => number,
+    seed: number,
+): void {
+    let uuidCounter = 0;
+    crypto.randomUUID = () => {
+        uuidCounter += 1;
+        const tail = String(uuidCounter).padStart(12, "0");
+        return `00000000-0000-4000-8000-${tail}`;
+    };
+    Math.random = createGenerator(seed);
+}
+
+/**
+ * The init-script source ``pinRandomness`` hands to ``page.addInitScript``:
+ * {@link installLegacyRandomness} called with the app's own ``mulberry32``
+ * (``frontend/src/lib/random/prng.ts``) as source text and
+ * {@link LEGACY_RANDOM_SEED}. One implementation, no serialised copy: the
+ * app sets no CSP, and an init script is plain page script anyway.
+ *
+ * The stream is bit-identical to the copy the harness carried before
+ * (``visual-pin-binding.test.ts`` compares the first 1000 draws), so the
+ * three motifs that still use it keep their baselines.
+ *
+ * @returns JavaScript source that installs the legacy pins when evaluated.
+ *
+ * @example
+ * await page.addInitScript({content: legacyRandomInitScript()});
+ */
+export function legacyRandomInitScript(): string {
+    return `(${installLegacyRandomness.toString()})(${mulberry32.toString()}, ${LEGACY_RANDOM_SEED});`;
+}

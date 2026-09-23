@@ -22,7 +22,11 @@ import {
     RANDOM_PIN_GLOBAL,
     isRandomPin,
 } from "../../frontend/src/lib/random/pinned-random";
-import {FIXED_NOW_ISO, VISUAL_RANDOM_PIN} from "./visual-pins";
+import {
+    FIXED_NOW_ISO,
+    VISUAL_RANDOM_PIN,
+    legacyRandomInitScript,
+} from "./visual-pins";
 
 /** All 12 registered themes (6 recommended + 6 classic). */
 export const THEME_IDS = [
@@ -121,26 +125,12 @@ export async function freezeClock(page: Page): Promise<void> {
  * under the same seed. Those consumers now draw from their OWN named streams,
  * which ``pinRandomStreams`` installs; no other draw can move them.
  *
- * The mulberry32 below is a serialised copy of ``frontend/src/lib/random/prng.ts``:
- * an init script cannot import app modules.
+ * The generator is the app's own ``mulberry32`` (``prng.ts``), shipped as
+ * source text by ``legacyRandomInitScript`` in ``visual-pins.ts``; the
+ * stream is bit-identical to the copy this helper used to carry.
  */
 export async function pinRandomness(page: Page): Promise<void> {
-    await page.addInitScript(() => {
-        let uuidCounter = 0;
-        crypto.randomUUID = () => {
-            uuidCounter += 1;
-            const tail = String(uuidCounter).padStart(12, "0");
-            return `00000000-0000-4000-8000-${tail}`;
-        };
-        let mulberryState = 0x1567 >>> 0;
-        Math.random = () => {
-            mulberryState = (mulberryState + 0x6d2b79f5) >>> 0;
-            let mixed = mulberryState;
-            mixed = Math.imul(mixed ^ (mixed >>> 15), mixed | 1);
-            mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61);
-            return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
-        };
-    });
+    await page.addInitScript({content: legacyRandomInitScript()});
 }
 
 /**

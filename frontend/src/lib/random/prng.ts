@@ -11,10 +11,11 @@
  * ``content/media/placeholder-svg.ts`` builds on ``fnv1a32``. The other
  * string hashes in the app (``exercises/direction.ts``,
  * ``storage/ai/model-discovery.ts``) are different algorithms, not copies.
- * The visual harness keeps a serialised
- * copy of the same algorithm in its init script (``e2e/visual/helpers.ts``
- * ``pinRandomness``), because code injected with ``page.addInitScript`` cannot
- * import app modules.
+ *
+ * The visual harness ships ``mulberry32`` into the page as source text
+ * (``legacyRandomInitScript`` in ``e2e/visual/visual-pins.ts`` calls its
+ * ``toString()``), so it has to stay self-contained: nothing outside its
+ * own body except ``Math``.
  *
  * Pure: no imports, no state outside the returned closure, no side effects on
  * import.
