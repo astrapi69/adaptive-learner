@@ -54,9 +54,27 @@ Eine Sitzung über zwei Tage. Der Owner meldete acht Gerätebefunde vom iPhone, 
 - Frontend nutzt weder MobX noch Signals noch Zustand (nur als Override für @assistant-ui); 37 window-CustomEvents als Event-Bus sind der De-facto-Global-State. Kandidat für ein Zustand-Issue.
 - Weitere Session des Owners parallel: #3186 und #3188 (Zuordnungs-Korrekturansicht), unangetastet.
 
+## 6. EXP-052: Owner-Review, ratifizierte Matrix, zwei Vorbedingungen (2026-09-23, 08:45 bis 09:40)
+
+- Original prompt: Review von #3169 ("Es fehlen technische Entscheidungen für die Slotimplementierung und explizite Akzeptanzkriterien ... drei Fragen fürs Refinement"), danach "EXP-052, Offene Entscheidungen Punkt 1: ratifizierte Verhaltensmatrix ... Startfreigabe".
+- Optimized prompt: Entscheidungen als Tabelle mit Spaltennamen, die der `RunnerPolicy`-Typ wörtlich übernimmt; Vorbedingungen mit Issue-Nummer.
+- Goal: EXP-052 trägt die Entscheidungen (Slots als Props + Render-Props, Migration direkt ohne Flags, Tastatur in der Hülle) und die Matrix (`exit, prevStep, pause, optionsBar, theoryLink, enterShortcut, reanchor, clearHints, persistProgress, mode` + `headerExtra`), Scheibe 0 startet.
+- Result: PR #3195 (Owner-Review) und #3198 (Matrix, Befunde 1 bis 4, Nebenfund) gemerged. Befund 4 als #3196 (Hinweis-Set wird nur in Lesson.tsx geleert; Review/Shuffle/Endless/Adaptive/Error-Replay stempeln fremde Hinweise) und Nebenfund als #3197 (`LESSON_ROUTE_PREFIXES` kennt Shuffle und Endless nicht) angelegt. #3197: PR #3199 (c995a8a20, Tabellentest über alle sechs Routen). #3196: PR #3200 (336889a07, `clearHintUsage()` am Anfang des Lade-Effekts der vier Hooks, Replay-Seite beim Mount; RED 5 Fälle, GREEN 254). Scheibe 0 läuft als Hintergrund-Agentin auf `refactor/3169-slice-0-runner-foundation`.
+- Commit: c995a8a20, 336889a07.
+
+## 7. EXP-052 Scheibe 0: Fundament der Runner-Hülle (2026-09-23, 09:10 bis 10:15)
+
+- Original prompt: "Startfreigabe: Scheibe 0 ist nach diesem Entscheid startklar, mit zwei Vorbedingungen".
+- Optimized prompt: Scheibe 0 als eigene Agentin im Worktree von origin/develop; nur `components/lesson/runner/`, nirgends verdrahtet; Spaltennamen der Matrix wörtlich; Vergleichslauf der Baselines statt Sync.
+- Goal: `RunnerSource`/`RunnerPolicy`-Typen, sechs eingefrorene Policies, `RunnerFooter` (aus `LessonFooterNav`), `RunnerStatusView`, leere `LessonRunner`-Hülle, alles mit Tests, ohne sichtbare Änderung.
+- Result: PR #3201 (Agentin, 6d97ca438): 12 Dateien, 80 neue Tests, Vollsuite 10667 grün, Komplexitäts- und Dead-Code-Gate sauber; `useLessonStepState.progress` optional (Default `null`) für die flüchtigen Läufe. Prüfung gegen die Matrix Zeile für Zeile bestanden (Endless `prevStep: false` strukturell, `pause: true`; ErrorReplay `prevStep: true`; nur Lesson `persistProgress` und `mode: "inherit"`). Vergleichslauf visual-regression.yml 35832381098 als Beleg für `visual-baselines-unaffected`. Bewusste Dopplung: `RunnerFooter` und `RunnerStatusView` liegen neben den Originalen (Byte-Paritätstests), Scheibe 4 entfernt die Originale. Befund für Scheibe 1 bis 3: `lesson.error_replay` trägt keine Statusbildschirm-Schlüssel, Empfehlung `lesson.*` wiederverwenden (Kommentar auf #3169).
+- Commit: c1ff0fdf0.
+
 ## Fragen und Annahmen
 
 - #3170: Option A als Standard plus Schalter für B, entschieden von der Orchestratorin; Mastery-Semantik `isSettledElement` als Annahme im PR-Body, Alternativen benannt.
 - #3172 und #3173 brauchen das Gerät des Owners (Sonde), nicht automatisiert.
 - Die 5,3-MB-Schrumpfung des Images ist Bauumfeld-Drift; was genau kleiner wurde, druckt das Skript nicht (nur gzip-Größe), Folgearbeit in #3187.
 - FeatureShots `lesson-review/summary` für #3176 fehlen auf develop schon vor dem PR (#3182), deshalb dort nicht nachgeholt.
+- #3196: Replay-Seite leert das Hinweis-Set beim Mount (Schlüssel `[setId, filename]`, wie `Lesson.tsx`), nicht pro Runde; ein "Nochmal" innerhalb derselben Replay-Sitzung behält die Hinweise dieser Sitzung. Konservative Wahl, im PR benannt.
+- Scheibe 0: `RunnerFooter`/`RunnerStatusView` liegen bewusst NEBEN `LessonFooterNav`/`LessonStatusView` (Byte-Paritätstests statt Wrapper, damit kein Unter-Toleranz-Versatz im Fuß entsteht, #3023); die Dopplung endet mit Scheibe 4.
