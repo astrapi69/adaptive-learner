@@ -126,6 +126,34 @@ export interface RunnerPolicy {
   persistProgress: boolean;
   /** The mode the run pins, or ``"inherit"`` for the learner's own choice. */
   mode: LessonMode | "inherit";
+  /**
+   * Catalog key of the empty-screen body ("all caught up", "needs two
+   * lessons", "nothing to adapt yet"): content that explains WHY this run
+   * shows nothing, so it stays per runner while the shared chrome reads
+   * ``runner.*`` (#3203). ``null`` only for the lesson, whose source never
+   * reports ``empty`` (a lesson is a file; missing or not cached, never
+   * empty).
+   */
+  emptyBodyKey: string | null;
+  /** Catalog key of the load-failed line; per runner by content (#3203). */
+  loadFailedKey: string;
+  /**
+   * Catalog key of the not-cached body. A key is shared (``runner.*``)
+   * when the TRIGGERING CONDITION is identical, not when the sentence
+   * looks alike: the five session runners fall into ``not-cached`` when
+   * ``listSets()`` has no set with this id (the set is missing, the
+   * content browser is the next step); the lesson falls into it when
+   * ``getLesson()`` cannot find THIS file inside a set that may well be
+   * downloaded, so its text (``lesson.*``) must not send the learner to a
+   * set that is already there.
+   */
+  notCachedBodyKey: string;
+  /**
+   * Catalog key of the missing-params body: the lesson guards three
+   * params (source, set, file), the others one (set). Different missing
+   * things, different sentences; same rule as ``notCachedBodyKey``.
+   */
+  missingParamsKey: string;
 }
 
 /** The run-time tallies the shell hands to the summary render prop. */
