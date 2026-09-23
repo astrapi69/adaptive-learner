@@ -15,7 +15,7 @@ import MatchingResolveControl from "./MatchingResolveControl";
 import {
     readMatchingSeparateCorrections,
     writeMatchingSeparateCorrections,
-} from "../../../../lib/learning/matchingReviewViewsPref";
+} from "../../../../lib/lesson/prefs/matchingReviewViewsPref";
 import {readMatchingResolveEffect} from "../../../../lib/learning/matchingResolvePref";
 
 afterEach(() => {

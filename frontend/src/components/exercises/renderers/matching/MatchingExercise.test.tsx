@@ -23,7 +23,7 @@ import MatchingExercise, {
 import type {ContentLessonExercise} from "../../../../storage/types";
 import {readLegacyCssSum} from "../../../../styles/legacy-css-sum";
 import {LessonModeProvider} from "../../../../hooks/lesson/modes/useLessonMode";
-import {writeMatchingSeparateCorrections} from "../../../../lib/learning/matchingReviewViewsPref";
+import {writeMatchingSeparateCorrections} from "../../../../lib/lesson/prefs/matchingReviewViewsPref";
 
 /** Convert ``#rrggbb`` to its HSL hue (degrees) + saturation (0-1). */
 function hexToHsl(hex: string): {hue: number; sat: number} {

@@ -3,7 +3,6 @@ export { clearLearnerState, readLearnerState, setLanguage, setProjectId, setUser
 export { filterStandardProjects, isStandardProject } from "./learning-project";
 export { DEFAULT_RESOLVE_EFFECT, MATCHING_RESOLVE_EFFECT_OPTIONS, MATCHING_RESOLVE_PREF_CHANGE_EVENT, readMatchingResolveEffect, writeMatchingResolveEffect } from "./matchingResolvePref";
 export type { MatchingResolveEffect } from "./matchingResolvePref";
-export { DEFAULT_MATCHING_SEPARATE_CORRECTIONS, MATCHING_REVIEW_VIEWS_PREF_CHANGE_EVENT, readMatchingSeparateCorrections, writeMatchingSeparateCorrections } from "./matchingReviewViewsPref";
 export { DEFAULT_MAX_LESSON_SIZE, MAX_LESSON_SIZE_PREF_KEY, MAX_MAX_LESSON_SIZE, MIN_MAX_LESSON_SIZE, readMaxLessonSize, writeMaxLessonSize } from "./maxLessonSizePref";
 export { DEFAULT_RETENTION_DAYS, MAX_PAUSED, RETENTION_OPTIONS, RETENTION_PREF_KEY, readRetentionDays, writeRetentionDays } from "./pausedRetentionPref";
 export { PROFILE_UPDATED_EVENT, notifyProfileUpdated } from "./profileSignal";

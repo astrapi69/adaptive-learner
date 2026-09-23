@@ -24,7 +24,7 @@ import {useI18n} from "../../../../hooks/ui/useI18n";
 import {useMatchingSeparateCorrections} from "../../../../hooks/settings/useMatchingSeparateCorrections";
 import FormHint from "../../../../shared/forms/FormHint";
 import {SettingsSection} from "../../SettingsSection";
-import {writeMatchingSeparateCorrections} from "../../../../lib/learning/matchingReviewViewsPref";
+import {writeMatchingSeparateCorrections} from "../../../../lib/lesson/prefs/matchingReviewViewsPref";
 import {
     MATCHING_RESOLVE_EFFECT_OPTIONS,
     MATCHING_RESOLVE_PREF_CHANGE_EVENT,

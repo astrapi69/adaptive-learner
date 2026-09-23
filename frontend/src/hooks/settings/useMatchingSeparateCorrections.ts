@@ -13,7 +13,7 @@ import {useEffect, useState} from "react";
 import {
     MATCHING_REVIEW_VIEWS_PREF_CHANGE_EVENT,
     readMatchingSeparateCorrections,
-} from "../../lib/learning/matchingReviewViewsPref";
+} from "../../lib/lesson/prefs/matchingReviewViewsPref";
 
 export function useMatchingSeparateCorrections(): boolean {
     const [separate, setSeparate] = useState<boolean>(() =>
