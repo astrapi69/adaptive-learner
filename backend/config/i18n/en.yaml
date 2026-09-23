@@ -379,6 +379,8 @@ review:
   question_label: "Question:"
   summary_corrected: "{corrected} of {total} corrected"
   summary_trend: "Nice - your weak spots are getting stronger."
+  summary_reinforced: "{corrected} of {total} reinforced"
+  summary_trend_reinforced: "Good - this is settling in."
   summary_next: "Mastered items drop out; the rest return for review soon."
   summary_remaining: "Still {n} due. Keep going?"
   another_round: "Another round"
@@ -984,6 +986,9 @@ settings:
   review_limit:
     label: "Questions per review"
     desc: "How many elements one review session presents before it ends. More due items roll over to the next round."
+  review_include_never_wrong:
+    label: "Also review error-free elements"
+    desc: "Also brings elements you never got wrong back for spaced review (after 3 and 7 days). Off: the review holds only elements with mistakes."
   max_lesson_size:
     title: Maximum lesson size
     hint: "When saving a long chat analysis as an offline lesson, lessons with more than this many steps are automatically split into multiple parts."

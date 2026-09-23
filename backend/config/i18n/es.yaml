@@ -379,6 +379,8 @@ review:
   question_label: "Pregunta:"
   summary_corrected: "{corrected} de {total} corregidos"
   summary_trend: "Bien: tus puntos débiles van mejorando."
+  summary_reinforced: "{corrected} de {total} afianzados"
+  summary_trend_reinforced: "Bien: esto se va asentando."
   summary_next: "Los elementos dominados desaparecen; el resto vuelve pronto para repaso."
   summary_remaining: "Aún quedan {n}. ¿Seguimos?"
   another_round: "Otra ronda"
@@ -984,6 +986,9 @@ settings:
   review_limit:
     label: "Preguntas por repaso"
     desc: "Cuántos elementos muestra una sesión de repaso antes de terminar. Los elementos pendientes pasan a la siguiente ronda."
+  review_include_never_wrong:
+    label: "Repasar también los elementos sin errores"
+    desc: "Vuelve a traer al repaso espaciado también los elementos que nunca fallaste (a los 3 y 7 días). Desactivado: el repaso solo contiene elementos con errores."
   max_lesson_size:
     title: Tamaño máximo de lección
     hint: "Al guardar un análisis de chat largo como lección sin conexión, las lecciones con más pasos que este número se dividen automáticamente en varias partes."

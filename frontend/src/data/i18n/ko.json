@@ -408,6 +408,8 @@
     "question_label": "질문:",
     "summary_corrected": "{total}개 중 {corrected}개 교정됨",
     "summary_trend": "좋아요 - 약한 부분이 점점 강해지고 있어요.",
+    "summary_reinforced": "{total}개 중 {corrected}개 다져짐",
+    "summary_trend_reinforced": "좋아요 - 점점 더 단단해지고 있어요.",
     "summary_next": "숙달한 항목은 제외되고, 나머지는 곧 복습으로 돌아옵니다.",
     "summary_repeat": "약 2일 후에 다시 와서 이 항목들을 신선하게 유지하세요.",
     "explain_heading": "이 문제들을 틀린 이유",
@@ -570,6 +572,10 @@
     "review_limit": {
       "label": "복습당 문제 수",
       "desc": "복습 세션이 끝나기 전에 제시하는 요소 수입니다. 남은 항목은 다음 회차로 넘어갑니다."
+    },
+    "review_include_never_wrong": {
+      "label": "틀리지 않은 요소도 복습",
+      "desc": "한 번도 틀리지 않은 요소도 간격 복습으로 다시 가져옵니다(3일과 7일 후). 끔: 복습에는 틀린 요소만 포함됩니다."
     },
     "install": {
       "heading": "앱 설치",
