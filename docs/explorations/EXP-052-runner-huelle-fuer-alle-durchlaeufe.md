@@ -641,6 +641,53 @@ Für das Gesamtvorhaben; je Scheibe der zutreffende Teil.
 
 ---
 
+## Owner-Review 2026-09-23: technische Entscheidungen
+
+Der Owner hat Analyse und Migrationsstrategie freigegeben, sobald drei
+technische Fragen geklärt sind, und Akzeptanzkriterien ergänzt (Wortlaut im
+Issue #3169). Die Antworten, in dieses Dokument zurückgeschrieben, damit es
+die Spezifikation bleibt:
+
+1. **Standard-Props oder Render-Props?** Gemischt, nach Datenfluss.
+   `source` und `policy` sind Standard-Props (Daten, keine Darstellung; die
+   Policy ist ein Konfigurationsobjekt, das die Hülle zur Laufzeit
+   auswertet). Nur `summary` ist eine Render-Prop `(tallies) => ReactNode`,
+   weil die Zusammenfassung Laufdaten braucht, die erst die Hülle kennt.
+   Keine Kinder-Slots für Kopf oder Fuß: die kommen aus der Policy, sonst
+   wandern die JSX-Verzweigungen zurück in die Seiten. State Management
+   bleibt in den bestehenden Modus-Hooks; die Seite ruft ihren Hook und
+   normiert das Ergebnis zu `RunnerSource`.
+2. **Feature Flags oder direkt?** Direkt, in Scheiben. Scheibe 0 baut die
+   Hülle ohne Konsumenten (0-Diff-Lauf als Beleg), jede weitere Scheibe
+   stellt genau eine Seite um und trägt Bildgrundlinien und FeatureShots im
+   selben PR; der Rückweg ist der Revert der Scheiben-PR. Ein Flag hielte
+   zwei Hüllen parallel, beide bräuchten Grundlinien, und das Flag wäre
+   nach #335 eine tote Kontrolle. `strict: true` und das Visual-Gate sind
+   das Sicherheitsnetz.
+3. **Tastaturmapping ohne Fuß-Navigation?** Das Mapping lag nie im Fuß.
+   Enter kommt aus `useLessonStepState` / `useLessonEnterKey`, die
+   Kürzel-Freigabe aus `useLessonShortcuts`; beide mountet die Hülle einmal
+   (`policy.enterShortcut: true` ist ein Literal, das schließt die
+   Adaptiv-Lücke). Der Fuß wird nicht entfernt, sondern zu `RunnerFooter`
+   (aus `LessonFooterNav`, wo die #1834-Korrekturen liegen) mit der
+   Fuß-Policy `{prev, pause, icons, onSummary}`; `LessonStepNav` fällt nach
+   Scheibe 2 weg. Die Enter-Aktion löst die Hülle aus dem Schrittzustand
+   auf (Prüfen bei offener Antwort, Weiter nach dem Ergebnis), der Fuß
+   rendert nur denselben Zustand.
+
+Ergänzte Akzeptanzkriterien des Owners (zusätzlich zu "Abnahmekriterien"
+oben): alle sechs Modi nutzen `LessonRunner`; die Seitendateien sind
+entfernt oder reine Routing-Wrapper; Bildgrundlinien und FeatureShots für
+alle sechs Modi existieren und bestehen; keine Regressionen in #1569, #3016
+und #590/#594 (je ein Test pro Läufer und Verhalten); Testabdeckung der
+Policy-Logik mindestens 80 Prozent (Policy-Auswertung als reine Funktionen
+mit Tabellentests über die sechs Konstanten, praktisch vollständig).
+
+Vor Scheibe 1 bleibt die Verhaltensmatrix (Offene Entscheidungen, Punkt 1)
+vom Owner zu ratifizieren.
+
+---
+
 ## Verwandte Dokumente
 
 - EXP-020 (Lektions-Flusssteuerung Prüfen/Weiter): der Zwei-Phasen-Knopf,
