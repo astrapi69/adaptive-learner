@@ -8,6 +8,10 @@
  * random repetition phase. Reproduction: ``advance`` passed no ``rng``, so
  * ``endlessStepAt`` drew from the page's shared ``Math.random`` stream.
  *
+ * The clock is pinned out as well: under the pin the sequence at any other
+ * instant equals the sequence at the frozen visual instant, so a stream seed
+ * that mixed in the date would fail here.
+ *
  * The production direction is pinned too: without the pin ``endlessStepAt``
  * gets no ``rng``, so ``Math.random`` is consumed and drives the repetitions.
  */
@@ -19,6 +23,8 @@ import {endlessStepAt} from "../../../lib/endless/endless-stream";
 import {mulberry32} from "../../../lib/random";
 import type {ContentLesson} from "../../../storage/types";
 import {
+    FROZEN_VISUAL_NOW,
+    OTHER_INSTANTS,
     clearRandomPin,
     installVisualRandomPin,
 } from "../../../test-utils/visual-random-pin";
@@ -87,6 +93,19 @@ async function streamIds(foreignDrawsPerAdvance: number): Promise<string[]> {
     return renderStream(foreignDrawsPerAdvance);
 }
 
+/** The stream with only ``Date`` frozen at ``now`` (timers stay real, so
+ *  ``waitFor`` keeps polling). */
+async function streamIdsAt(now: number): Promise<string[]> {
+    vi.useFakeTimers({toFake: ["Date"]});
+    vi.setSystemTime(now);
+    try {
+        expect(Date.now()).toBe(now);
+        return await streamIds(0);
+    } finally {
+        vi.useRealTimers();
+    }
+}
+
 /** Render with ``Math.random`` replaced by a spy over its own seeded stream. */
 async function streamWithRandomSeed(
     seed: number,
@@ -123,6 +142,7 @@ beforeEach(() => {
 
 afterEach(() => {
     Math.random = originalRandom;
+    vi.useRealTimers();
     clearRandomPin();
     vi.mocked(endlessStepAt).mockClear();
 });
@@ -137,6 +157,15 @@ describe("Endless repetition under the visual random pin (#3214)", () => {
         const reference = await streamIds(0);
         expect(await streamIds(foreignDraws)).toEqual(reference);
     });
+
+    it.each(OTHER_INSTANTS)(
+        "ignores the clock: at $name the sequence equals the frozen visual clock's",
+        async ({now}) => {
+            installVisualRandomPin();
+            const atFrozenClock = await streamIdsAt(FROZEN_VISUAL_NOW);
+            expect(await streamIdsAt(now)).toEqual(atFrozenClock);
+        },
+    );
 
     it("sensitivity guard: without a pin the shared stream does move the sequence", async () => {
         const reference = await streamIds(0);

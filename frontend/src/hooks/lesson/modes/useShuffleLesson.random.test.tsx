@@ -9,6 +9,10 @@
  * hook. Reproduction: the hook passed no ``rng``, so the builder drew from
  * the shared stream and every foreign draw shifted the order.
  *
+ * The clock is pinned out as well: under the pin the order at any other
+ * instant equals the order at the frozen visual instant, so a stream seed
+ * that mixed in the date would fail here.
+ *
  * The production direction is pinned too: without the pin the hook hands
  * the builder no ``rng`` at all, so ``Math.random`` is consumed and drives
  * the order, and a learner gets a new shuffle every time.
@@ -21,6 +25,8 @@ import {mulberry32, pinnedRandom} from "../../../lib/random";
 import {buildShuffleLesson} from "../../../lib/shuffle/shuffle-lesson";
 import type {ContentLesson} from "../../../storage/types";
 import {
+    FROZEN_VISUAL_NOW,
+    OTHER_INSTANTS,
     clearRandomPin,
     installVisualRandomPin,
 } from "../../../test-utils/visual-random-pin";
@@ -92,6 +98,19 @@ async function shuffledExerciseIds(foreignDraws: number): Promise<string[]> {
     return renderShuffledIds();
 }
 
+/** The shuffled order with only ``Date`` frozen at ``now`` (timers stay real,
+ *  so ``waitFor`` keeps polling). */
+async function shuffledAt(now: number): Promise<string[]> {
+    vi.useFakeTimers({toFake: ["Date"]});
+    vi.setSystemTime(now);
+    try {
+        expect(Date.now()).toBe(now);
+        return await shuffledExerciseIds(0);
+    } finally {
+        vi.useRealTimers();
+    }
+}
+
 /** Render with ``Math.random`` replaced by a spy over its own seeded stream. */
 async function shuffledWithRandomSeed(
     seed: number,
@@ -111,6 +130,7 @@ beforeEach(() => {
 
 afterEach(() => {
     Math.random = originalRandom;
+    vi.useRealTimers();
     clearRandomPin();
     vi.mocked(buildShuffleLesson).mockClear();
 });
@@ -133,6 +153,15 @@ describe("Shuffle order under the visual random pin (#3214)", () => {
         for (let i = 0; i < 13; i++) endless();
         expect(await shuffledExerciseIds(0)).toEqual(reference);
     });
+
+    it.each(OTHER_INSTANTS)(
+        "ignores the clock: at $name the order equals the frozen visual clock's",
+        async ({now}) => {
+            installVisualRandomPin();
+            const atFrozenClock = await shuffledAt(FROZEN_VISUAL_NOW);
+            expect(await shuffledAt(now)).toEqual(atFrozenClock);
+        },
+    );
 
     it("sensitivity guard: without a pin the shared stream does move the order", async () => {
         const reference = await shuffledExerciseIds(0);
