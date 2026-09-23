@@ -1,13 +1,18 @@
 /**
  * The values every visual run pins, in one Playwright-free module (#3214).
  *
- * ``helpers.ts`` installs them in the page; this module holds them so the
- * frontend Vitest suite can import the real values and pin how they relate
+ * ``helpers.ts`` installs them in the page; this module holds them, and the
+ * init-script sources that install them, so the frontend Vitest suite can
+ * import the real values and scripts and pin how they behave
  * (``frontend/src/lib/random/visual-pin-binding.test.ts``). No Playwright
  * import, no side effects on import.
  */
 
-import type {RandomPin} from "../../frontend/src/lib/random/pinned-random";
+import {
+    RANDOM_PIN_GLOBAL,
+    isRandomPin,
+    type RandomPin,
+} from "../../frontend/src/lib/random/pinned-random";
 import {mulberry32} from "../../frontend/src/lib/random/prng";
 
 /** Frozen wall-clock for every visual run (follows #244). Relative times
@@ -47,6 +52,66 @@ export const VISUAL_RANDOM_PIN: RandomPin = {
     streamSeed: 0x1567,
     mountSalt: VISUAL_MOUNT_SALT,
 };
+
+/**
+ * Runs IN THE PAGE, serialised by {@link randomPinInitScript}: defines the
+ * pin as a frozen, own, non-writable, non-configurable, non-enumerable
+ * property, so no page script can replace, delete or edit it mid-capture.
+ * A second run in the same document keeps the first pin instead of throwing
+ * on the non-configurable property.
+ */
+function defineRandomPin(target: object, name: string, pin: RandomPin): void {
+    if (Object.hasOwn(target, name)) return;
+    Object.defineProperty(target, name, {
+        value: Object.freeze({streamSeed: pin.streamSeed, mountSalt: pin.mountSalt}),
+        writable: false,
+        configurable: false,
+        enumerable: false,
+    });
+}
+
+/**
+ * The init-script source ``pinRandomStreams`` hands to
+ * ``page.addInitScript``: {@link defineRandomPin} applied to ``globalThis``
+ * with ``RANDOM_PIN_GLOBAL`` and {@link VISUAL_RANDOM_PIN}.
+ *
+ * @returns JavaScript source that installs the visual pin when evaluated.
+ *
+ * @example
+ * await page.addInitScript({content: randomPinInitScript()});
+ */
+export function randomPinInitScript(): string {
+    const name = JSON.stringify(RANDOM_PIN_GLOBAL);
+    const pin = JSON.stringify(VISUAL_RANDOM_PIN);
+    return `(${defineRandomPin.toString()})(globalThis, ${name}, ${pin});`;
+}
+
+/**
+ * Why a value read from a page is not the installed visual pin, or ``null``
+ * when it is. The harness asserts this after every visual navigation so a
+ * spec that forgot ``pinRandomStreams`` fails instead of capturing
+ * browser-random orders (#3214).
+ *
+ * @param installed - The page's own ``RANDOM_PIN_GLOBAL`` property value.
+ * @returns A reason to put in the error, or ``null`` for the visual pin.
+ *
+ * @example
+ * randomPinProblem(undefined); // "no pin is installed"
+ * randomPinProblem({...VISUAL_RANDOM_PIN}); // null
+ */
+export function randomPinProblem(installed: unknown): string | null {
+    if (installed === undefined) return "no pin is installed";
+    if (!isRandomPin(installed)) {
+        return `the installed pin ${JSON.stringify(installed)} is malformed`;
+    }
+    if (
+        installed.streamSeed !== VISUAL_RANDOM_PIN.streamSeed ||
+        installed.mountSalt !== VISUAL_RANDOM_PIN.mountSalt
+    ) {
+        return `the installed pin ${JSON.stringify(installed)} is not VISUAL_RANDOM_PIN`;
+    }
+    return null;
+}
 
 /** Seed of the one shared ``Math.random`` stream ``pinRandomness`` installs. */
 export const LEGACY_RANDOM_SEED = 0x1567;

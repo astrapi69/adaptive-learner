@@ -38,6 +38,7 @@ import {expect, test, type Page, type Route} from "@playwright/test";
 
 import {
     advanceLessonUntil,
+    assertRandomPinInstalled,
     createOwnLesson,
     freezeClock,
     OWN_LESSON_TITLE,
@@ -1700,6 +1701,7 @@ for (const feature of FEATURES) {
             await setTheme(page, DEFAULT_THEME);
             const ready = await feature.setup(page);
             test.skip(!ready, `Could not reach ${feature.path} deterministically`);
+            await assertRandomPinInstalled(page);
             await settleForScreenshot(page, {
                 allowPersistentToast: feature.keepsToast,
                 noAppShell: feature.noAppShell,

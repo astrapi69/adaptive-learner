@@ -26,6 +26,8 @@ import {
     FIXED_NOW_ISO,
     VISUAL_RANDOM_PIN,
     legacyRandomInitScript,
+    randomPinInitScript,
+    randomPinProblem,
 } from "./visual-pins";
 
 /** All 12 registered themes (6 recommended + 6 classic). */
@@ -144,8 +146,12 @@ export async function pinRandomness(page: Page): Promise<void> {
  * page clock. Each stream is a fresh generator only its consumer advances,
  * so a draw anywhere else on the page cannot move a baseline.
  *
- * Fails closed: a pin the app would reject (``isRandomPin``) throws here
- * instead of letting the run capture unpinned, browser-random orders.
+ * The pin is a frozen, non-writable, non-configurable property
+ * (``randomPinInitScript``), so no page script can swap it mid-capture.
+ *
+ * Fails closed twice: a pin the app would reject (``isRandomPin``) throws
+ * here, and every shared visual navigation helper checks afterwards that
+ * the page carries it (``assertRandomPinInstalled``).
  *
  * @example
  * await freezeClock(page);
@@ -159,12 +165,36 @@ export async function pinRandomStreams(page: Page): Promise<void> {
                 "unpinned randomness (#3214).",
         );
     }
-    await page.addInitScript(
-        ({name, pin}) => {
-            (globalThis as Record<string, unknown>)[name] = Object.freeze(pin);
-        },
-        {name: RANDOM_PIN_GLOBAL, pin: VISUAL_RANDOM_PIN},
+    await page.addInitScript({content: randomPinInitScript()});
+}
+
+/**
+ * Throw unless the current page carries the visual random pin (#3214).
+ *
+ * Without the pin a visual spec still passes: it just photographs
+ * browser-random Shuffle, Endless, Matching and word-tiles orders. So the
+ * shared navigation helpers every visual loop goes through (``gotoView``,
+ * ``gotoSurface``, the set runners, the FeatureShot loop) call this once
+ * after they have navigated; one ``evaluate`` per navigation. Only an own
+ * property counts, the same rule the app applies.
+ *
+ * @example
+ * await page.goto("/shuffle-lesson/fr-a1-from-en");
+ * await assertRandomPinInstalled(page);
+ */
+export async function assertRandomPinInstalled(page: Page): Promise<void> {
+    const installed = await page.evaluate(
+        (name) => Object.getOwnPropertyDescriptor(globalThis, name)?.value,
+        RANDOM_PIN_GLOBAL,
     );
+    const problem = randomPinProblem(installed);
+    if (problem !== null) {
+        throw new Error(
+            `Visual random pin missing on ${page.url()}: ${problem}. Call ` +
+                "pinRandomStreams(page) before the first navigation (#3214); " +
+                "without it the shot captures browser-random orders.",
+        );
+    }
 }
 
 /**
@@ -1054,9 +1084,20 @@ async function gotoGradedQuizChecked(page: Page): Promise<boolean> {
 /**
  * Bring ``view`` into its screenshot state (theme already pinned by the
  * caller). Returns true when ready, false when the view could not be
- * deterministically reached (caller skips).
+ * deterministically reached (caller skips). A reached view must carry the
+ * random pin, or this throws (``assertRandomPinInstalled``, #3214).
+ *
+ * @example
+ * test.skip(!(await gotoView(page, "dashboard")), "not reachable");
  */
 export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
+    const ready = await reachView(page, view);
+    if (ready) await assertRandomPinInstalled(page);
+    return ready;
+}
+
+/** The per-view navigation behind {@link gotoView}. */
+async function reachView(page: Page, view: ViewName): Promise<boolean> {
     switch (view) {
         case "settings":
             await seedLearner(page);
@@ -1540,6 +1581,8 @@ export async function gotoReviewSession(page: Page): Promise<boolean> {
  * through ``listSets`` and render their not-cached screen otherwise. The
  * route is re-entered while the anchors are missing (the cache write can
  * still be landing), the same bounded retry as ``gotoReviewSession``.
+ * Fails closed without the random pin: the order on screen would be
+ * browser-random (#3214).
  */
 async function gotoSetRunner(
     page: Page,
@@ -1554,10 +1597,14 @@ async function gotoSetRunner(
             for (const anchor of anchors) {
                 await expect(page.getByTestId(anchor)).toBeVisible({timeout: 5_000});
             }
-            return true;
         } catch {
             // Set list not materialised yet - re-enter the route.
+            continue;
         }
+        // Outside the try: a missing pin must fail the test, not read as
+        // "not ready yet" and end in a silent skip.
+        await assertRandomPinInstalled(page);
+        return true;
     }
     return false;
 }
@@ -1729,9 +1776,23 @@ export async function createOwnLesson(page: Page, title: string): Promise<void> 
  * Bring ``surface`` into its screenshot state in the DEFAULT theme. The
  * caller has already set the viewport + frozen the clock. Returns true
  * when ready, false when the surface can't be reached deterministically
- * (caller skips).
+ * (caller skips). A reached surface must carry the random pin, or this
+ * throws (``assertRandomPinInstalled``, #3214).
+ *
+ * @example
+ * test.skip(!(await gotoSurface(page, "shuffle-session")), "not reachable");
  */
 export async function gotoSurface(
+    page: Page,
+    surface: SurfaceName,
+): Promise<boolean> {
+    const ready = await reachSurface(page, surface);
+    if (ready) await assertRandomPinInstalled(page);
+    return ready;
+}
+
+/** The per-surface navigation behind {@link gotoSurface}. */
+async function reachSurface(
     page: Page,
     surface: SurfaceName,
 ): Promise<boolean> {

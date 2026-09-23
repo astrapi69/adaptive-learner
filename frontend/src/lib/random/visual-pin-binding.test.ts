@@ -22,8 +22,10 @@ import {
     VISUAL_MOUNT_SALT,
     VISUAL_RANDOM_PIN,
     legacyRandomInitScript,
+    randomPinInitScript,
+    randomPinProblem,
 } from "../../../../e2e/visual/visual-pins";
-import {isRandomPin} from "./pinned-random";
+import {RANDOM_PIN_GLOBAL, isRandomPin} from "./pinned-random";
 import {mulberry32} from "./prng";
 
 /** The suffix every existing matching and tile baseline was captured with. */
@@ -121,5 +123,67 @@ describe("legacy Math.random pin from the shared mulberry32 (#3214)", () => {
 
     it("carries the generator as the shared prng.ts source, not a copy", () => {
         expect(legacyRandomInitScript()).toContain(mulberry32.toString());
+    });
+});
+
+/**
+ * Evaluate the pin init script exactly as the page receives it, against a
+ * stand-in for ``globalThis``: the property is non-configurable, so
+ * installing it on the test process's real global could never be undone.
+ */
+function installPinOn(target: object): void {
+    new Function("globalThis", randomPinInitScript())(target);
+}
+
+describe("the pin init script installs a pin page code cannot change (#3214)", () => {
+    it("defines the visual pin as a frozen, own, read-only, hidden property", () => {
+        const target = {};
+        installPinOn(target);
+        const descriptor = Object.getOwnPropertyDescriptor(target, RANDOM_PIN_GLOBAL);
+        expect(descriptor).toMatchObject({
+            writable: false,
+            configurable: false,
+            enumerable: false,
+        });
+        expect(descriptor!.value).toEqual(VISUAL_RANDOM_PIN);
+        expect(Object.isFrozen(descriptor!.value)).toBe(true);
+        expect(randomPinProblem(descriptor!.value)).toBeNull();
+    });
+
+    it("refuses reassignment, deletion and mutation from page code", () => {
+        const target: Record<string, unknown> = {};
+        installPinOn(target);
+        const installed = target[RANDOM_PIN_GLOBAL] as Record<string, unknown>;
+        expect(Reflect.set(target, RANDOM_PIN_GLOBAL, {streamSeed: 1, mountSalt: 1})).toBe(false);
+        expect(Reflect.deleteProperty(target, RANDOM_PIN_GLOBAL)).toBe(false);
+        expect(Reflect.set(installed, "mountSalt", 1)).toBe(false);
+        expect(target[RANDOM_PIN_GLOBAL]).toEqual(VISUAL_RANDOM_PIN);
+    });
+
+    it("running twice in one document keeps the first pin and does not throw", () => {
+        const target = {};
+        installPinOn(target);
+        expect(() => installPinOn(target)).not.toThrow();
+        expect(Object.getOwnPropertyDescriptor(target, RANDOM_PIN_GLOBAL)!.value).toEqual(
+            VISUAL_RANDOM_PIN,
+        );
+    });
+});
+
+describe("randomPinProblem names what a visual page is missing (#3214)", () => {
+    it.each([
+        {name: "no pin at all", value: undefined, reason: /no pin/},
+        {name: "a malformed pin", value: {streamSeed: 1.5, mountSalt: 1}, reason: /malformed/},
+        {
+            name: "a valid pin that is not the visual one",
+            value: {streamSeed: 1, mountSalt: VISUAL_MOUNT_SALT},
+            reason: /not VISUAL_RANDOM_PIN/,
+        },
+    ])("reports $name", ({value, reason}) => {
+        expect(randomPinProblem(value)).toMatch(reason);
+    });
+
+    it("accepts the visual pin", () => {
+        expect(randomPinProblem({...VISUAL_RANDOM_PIN})).toBeNull();
     });
 });
