@@ -930,8 +930,28 @@ Satz ab statt drei; der Key-Echo-Test pinnt die anderen beiden.
 
 Scheibe 0 ist gemerged (#3201, c1ff0fdf0); die Vorbedingungen #3196
 (b33eddd23) und #3197 (2cc1beb14) lagen vorher auf `develop`. Der i18n-PR
-#3204 ist gemerged (0c116d8d9, #3203 geschlossen). Scheibe 1 beginnt nach
-dem Policy-PR #3206 (vier Schlüssel-Spalten, Regel oben).
+#3204 (0c116d8d9, #3203 geschlossen) und der Policy-PR #3206 (13074eb0d,
+vier Schlüssel-Spalten, Regel oben) sind gemerged.
+
+Scheibe 1 ist gemerged (#3210, 7c74e234b): `Review.tsx` 569 auf 63 Zeilen,
+die Hülle komponiert Kopf (`RunnerHeader`, Session-Ausprägung), Balken
+(`RunnerProgress`), Schritt (`RunnerStep`), Fuß, Statusbildschirme,
+Zusammenfassung, Enter, Neuausrichtung, Hinweis-Löschen und die Sperre
+(`useRunStepResults` als lauf-lokale Ergebnisquelle für
+`useLessonStepState`, das dafür `stepId` und einen auf `step_results`
+verengten `progress`-Typ bekam). Adapter `hooks/lesson/sources/useReviewSource`.
+Drei Abweichungen vom Entwurf, jede im PR benannt: `RunnerSource` trägt
+`setId`, `runKey` und `tallies` (der Modus-Hook besitzt die Zahlen, die
+Hülle kann die Element-Zählung aus #3170 nicht nachbauen); das Runner-Barrel
+exportiert nur die konsumierte Fläche (Dead-Code-Ratchet, kein Banking; jede
+Scheibe ergänzt ihre Policy beim Konsum); die Sticky-Kette bleibt bei 7, weil
+`Review.tsx` sie nie inline trug (`LessonStepNav`, das Shuffle noch nutzt;
+Abbau in Scheibe 2). Baselines per Löschen-dann-Resync, Bänder-Analyse im
+PR-Kommentar: Fuß und +12 px (flex-Spalte) sind die Scheibe, Untertitel
+(#3170), Matching-Reihenfolge (#2882) und Nav-Knöpfe (#3123) Fremd-Drift
+unter der Toleranz seit der Aufnahme vom 21.08. Vier FeatureShots
+`review-session/{schritt,zusammenfassung}`. Nächste: Scheibe 2 (Shuffle
+und Endless), mit dem Abbau von `LessonStepNav`.
 
 ---
 
