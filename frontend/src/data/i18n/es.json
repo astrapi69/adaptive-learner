@@ -381,8 +381,8 @@
     "session_title": "Lección adaptativa",
     "loading": "Analizando tus errores…",
     "empty_body": "Aún no hay nada que adaptar - practica una lección para acumular datos.",
-    "not_cached_body": "Este conjunto aún no se ha descargado. Abre el navegador de contenido para descargarlo primero.",
-    "back_to_dashboard": "Volver al Panel",
+    "not_cached_body": "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero.",
+    "back_to_dashboard": "Volver al panel",
     "transparency": {
       "focus_prefix": "Esta lección se centra en:",
       "tag_none": "tus elementos más débiles",
@@ -396,7 +396,7 @@
       "note": "Las puntuaciones de los elementos se han actualizado. Tu próxima lección adaptativa se centrará en los elementos que aún necesitan trabajo."
     },
     "error": {
-      "missing_params": "No se ha seleccionado ningún conjunto de contenido.",
+      "missing_params": "Ningún conjunto de contenido seleccionado.",
       "load_failed": "No se pudo generar la lección adaptativa."
     }
   },
@@ -423,7 +423,7 @@
     "subtitle_capped": "{shown} de {due} elemento(s) para repasar",
     "loading": "Cargando sesión de repaso…",
     "empty_body": "¡Todo al día! No hay elementos para repasar en este conjunto.",
-    "not_cached_body": "Este conjunto aún no se ha descargado. Abre el explorador de contenido primero.",
+    "not_cached_body": "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero.",
     "back_to_dashboard": "Volver al panel",
     "summary": {
       "aria_label": "Resumen del repaso",
@@ -4528,7 +4528,7 @@
     "subtitle": "Mezclando {n} preguntas de {lessons} lecciones",
     "error": {
       "load_failed": "No se pudo cargar la sesión aleatoria.",
-      "missing_params": "Ningún conjunto seleccionado."
+      "missing_params": "Ningún conjunto de contenido seleccionado."
     },
     "summary": {
       "heading": "¡Entrenamiento aleatorio completado!",
@@ -4685,6 +4685,14 @@
       "vocabulary": "Vocabulario",
       "grammar_rule": "Regla gramatical",
       "unknown": "Desconocido"
+    }
+  },
+  "runner": {
+    "back_to_dashboard": "Volver al panel",
+    "not_cached_body": "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero.",
+    "error": {
+      "missing_params": "Ningún conjunto de contenido seleccionado.",
+      "invalid_data": "Este contenido no se puede abrir porque contiene datos no válidos o dañados. Ponte en contacto con el autor del contenido."
     }
   }
 }

@@ -4493,7 +4493,7 @@
     "back_to_dashboard": "Kembali ke Dasbor",
     "loading": "Memuat sesi latihan…",
     "empty_body": "Set ini belum memiliki latihan untuk dikerjakan.",
-    "not_cached_body": "Set ini belum diunduh. Buka peramban konten untuk mengunduhnya terlebih dahulu.",
+    "not_cached_body": "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu.",
     "paused": "Dijeda - istirahat sejenak.",
     "resume": "Lanjutkan",
     "pause": "Jeda",
@@ -4523,12 +4523,12 @@
     "page_title": "Acak",
     "loading": "Memuat sesi acak…",
     "empty_body": "Set ini perlu setidaknya dua pelajaran dengan latihan untuk diacak.",
-    "not_cached_body": "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya dulu.",
+    "not_cached_body": "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu.",
     "back_to_dashboard": "Kembali ke Dasbor",
     "subtitle": "Mencampur {n} pertanyaan dari {lessons} pelajaran",
     "error": {
       "load_failed": "Tidak dapat memuat sesi acak.",
-      "missing_params": "Tidak ada set konten dipilih."
+      "missing_params": "Tidak ada set konten yang dipilih."
     },
     "summary": {
       "heading": "Latihan acak selesai!",
@@ -4685,6 +4685,14 @@
       "vocabulary": "Kosakata",
       "grammar_rule": "Aturan tata bahasa",
       "unknown": "Tidak diketahui"
+    }
+  },
+  "runner": {
+    "back_to_dashboard": "Kembali ke Dasbor",
+    "not_cached_body": "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu.",
+    "error": {
+      "missing_params": "Tidak ada set konten yang dipilih.",
+      "invalid_data": "Konten ini tidak dapat dibuka karena berisi data yang tidak valid atau rusak. Silakan hubungi penulis konten."
     }
   }
 }

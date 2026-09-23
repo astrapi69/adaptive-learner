@@ -382,7 +382,7 @@
     "loading": "Analyse de tes erreurs…",
     "empty_body": "Rien à adapter pour l'instant - fais d'abord une leçon pour accumuler des données.",
     "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
-    "back_to_dashboard": "Retour au Tableau de bord",
+    "back_to_dashboard": "Retour au tableau de bord",
     "transparency": {
       "focus_prefix": "Cette leçon se concentre sur :",
       "tag_none": "tes éléments les plus faibles",
@@ -423,7 +423,7 @@
     "subtitle_capped": "{shown} sur {due} élément(s) à réviser",
     "loading": "Chargement de la session de révision…",
     "empty_body": "Tout est à jour ! Aucun élément à réviser dans cet ensemble.",
-    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre l'explorateur de contenu d'abord.",
+    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
     "back_to_dashboard": "Retour au tableau de bord",
     "summary": {
       "aria_label": "Résumé de la révision",
@@ -4523,12 +4523,12 @@
     "page_title": "Mode aléatoire",
     "loading": "Chargement de la session aléatoire…",
     "empty_body": "Ce jeu a besoin d'au moins deux leçons avec des exercices pour être mélangé.",
-    "not_cached_body": "Ce jeu n'est pas encore téléchargé. Ouvre l'explorateur de contenu pour le télécharger d'abord.",
+    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
     "back_to_dashboard": "Retour au tableau de bord",
     "subtitle": "Mélange de {n} questions issues de {lessons} leçons",
     "error": {
       "load_failed": "Impossible de charger la session aléatoire.",
-      "missing_params": "Aucun jeu de contenu sélectionné."
+      "missing_params": "Aucun ensemble de contenu sélectionné."
     },
     "summary": {
       "heading": "Entraînement aléatoire terminé !",
@@ -4685,6 +4685,14 @@
       "vocabulary": "Vocabulaire",
       "grammar_rule": "Règle de grammaire",
       "unknown": "Inconnu"
+    }
+  },
+  "runner": {
+    "back_to_dashboard": "Retour au tableau de bord",
+    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
+    "error": {
+      "missing_params": "Aucun ensemble de contenu sélectionné.",
+      "invalid_data": "Ce contenu ne peut pas être ouvert car il contient des données invalides ou corrompues. Contactez l'auteur du contenu."
     }
   }
 }

@@ -381,7 +381,7 @@
     "session_title": "Adaptive Lektion",
     "loading": "Deine Fehler werden analysiert…",
     "empty_body": "Noch nichts zum Anpassen - übe zuerst eine Lektion, um Daten aufzubauen.",
-    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst zu laden.",
+    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen.",
     "back_to_dashboard": "Zurück zum Dashboard",
     "transparency": {
       "focus_prefix": "Diese Lektion konzentriert sich auf:",
@@ -423,7 +423,7 @@
     "subtitle_capped": "{shown} von {due} Element(en) zur Wiederholung",
     "loading": "Wiederholungssitzung wird geladen…",
     "empty_body": "Alles erledigt! Keine Elemente für dieses Set zu wiederholen.",
-    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhalts-Browser zuerst.",
+    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen.",
     "back_to_dashboard": "Zurück zum Dashboard",
     "summary": {
       "aria_label": "Wiederholungs-Zusammenfassung",
@@ -4504,7 +4504,7 @@
       "correct": "{n} richtig"
     },
     "error": {
-      "missing_params": "Kein Inhaltsset ausgewählt.",
+      "missing_params": "Kein Inhalts-Set ausgewählt.",
       "load_failed": "Übungssitzung konnte nicht geladen werden."
     },
     "summary": {
@@ -4685,6 +4685,14 @@
       "vocabulary": "Wortschatz",
       "grammar_rule": "Grammatikregel",
       "unknown": "Unbekannt"
+    }
+  },
+  "runner": {
+    "back_to_dashboard": "Zurück zum Dashboard",
+    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen.",
+    "error": {
+      "missing_params": "Kein Inhalts-Set ausgewählt.",
+      "invalid_data": "Dieser Inhalt kann nicht geöffnet werden, weil er ungültige oder beschädigte Daten enthält. Bitte kontaktiere den Autor des Inhalts."
     }
   }
 }

@@ -4305,3 +4305,9 @@ set_summary:
     vocabulary: "Vocabulary"
     grammar_rule: "Grammar rule"
     unknown: "Unknown"
+runner:
+  back_to_dashboard: "Back to Dashboard"
+  not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
+  error:
+    missing_params: "No content set selected."
+    invalid_data: "This content can't be opened because it contains invalid or corrupted data. Please contact the content author."
