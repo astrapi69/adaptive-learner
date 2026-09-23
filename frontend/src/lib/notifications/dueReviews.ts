@@ -5,8 +5,8 @@
  * the badge count never drift.
  */
 
-import {getStorage} from "../../storage";
 import {dedupeReviewQueueByElement} from "../review/review-lesson";
+import {loadReviewQueue} from "../review/review-queue";
 
 export interface DueReviewsSummary {
     /** Count of UNIQUE overdue elements (deduped across EXP-018 directions). */
@@ -24,7 +24,8 @@ export async function getDueReviewsSummary(
     userId: string,
 ): Promise<DueReviewsSummary> {
     try {
-        const queue = await getStorage().elementErrors.reviewQueue(userId);
+        // #3170 — the Settings > Learning toggle is applied inside.
+        const queue = await loadReviewQueue(userId);
         const overdue = dedupeReviewQueueByElement(
             queue.filter((item) => item.overdue),
         );

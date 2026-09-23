@@ -3185,6 +3185,37 @@ Location: Settings > General > Profile, below the figure gallery.
       data, import - selection and purchase are back
 - [ ] Both storage modes behave identically (XP deduction included)
 
+### Review: errors only, no endless round (#3170)
+
+- [ ] Play a lesson with NO mistakes: the learning path shows NO "Train
+      errors (N)" for the set or the lesson, the header badge "N due" and
+      the dashboard card "Due for review" do not count these elements;
+      `/review/<set>` reports "All caught up"
+- [ ] Play a lesson with some mistakes: "Train errors (N)" counts exactly
+      the elements answered wrong (N), not every element played; never-wrong
+      elements do not appear in the review session
+- [ ] Review session with more due elements than "Questions per review":
+      subtitle "{shown} of {due} elements"; after the round "Still N due.
+      Keep going?" names EXACTLY the elements not played yet; "Another
+      round" presents only those; then it ends ("All caught up"), no further
+      "Another round", no endless loop
+- [ ] A matching exercise covering several due elements (only ONE question
+      in the flow): the subtitle counts the ELEMENTS covered (e.g. "3
+      elements", not "1 of 3"), the summary "N of N corrected" uses the same
+      basis, and nothing lingers as "Still N due" after the round
+- [ ] Settings > Learning > Review: the new toggle "Also review error-free
+      elements" sits under "Questions per review", is OFF by default and
+      survives a reload
+- [ ] Toggle ON: never-wrong elements return for review after 3 and 7 days
+      (badge, dashboard card, session). When the session holds such
+      elements, the summary reads "N of N reinforced" with the neutral trend
+      line (no "corrected", no "weak spots"); "Train errors (N)" still
+      counts errors only
+- [ ] Learning-path status: a lesson played without mistakes counts as
+      mastered while OFF (both directions, SRS status "mastered", not "due"
+      for ever); with ON the three-in-a-row rule applies again
+- [ ] Check both in browser mode (no server) AND in server mode
+
 ---
 
 # PART B: AUTOMATED TESTS (reference)

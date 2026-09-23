@@ -3403,6 +3403,40 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       Daten löschen, Import → Auswahl und Kauf sind wieder da
 - [ ] Beide Speicher-Modi verhalten sich identisch (XP-Abzug inklusive)
 
+### Wiederholung: nur Fehler, keine Endlosrunde (#3170)
+
+- [ ] Eine Lektion OHNE Fehler durchspielen: der Lernpfad zeigt für das Set
+      und die Lektion KEIN "Fehler trainieren (N)", der Kopfzeilen-Badge
+      "N fällig" und die Dashboard-Karte "Fällig zur Wiederholung" zählen
+      diese Elemente nicht mit; `/review/<set>` meldet "Alles erledigt"
+- [ ] Eine Lektion mit einigen Fehlern durchspielen: "Fehler trainieren (N)"
+      zählt genau die falsch beantworteten Elemente (N), nicht alle
+      gespielten; nie-falsche Elemente erscheinen in der Wiederholungssitzung
+      nicht
+- [ ] Wiederholungssitzung mit mehr fälligen Elementen als "Fragen pro
+      Wiederholung": Untertitel "{gezeigt} von {fällig} Element(en)"; nach
+      der Runde "Noch N fällig. Weitermachen?" nennt GENAU die noch nicht
+      gespielten Elemente; "Weitere Runde" zeigt nur diese; danach ist
+      Schluss ("Alles erledigt"), kein "Weitere Runde" mehr, keine
+      Endlosrunde
+- [ ] Eine Zuordnungsübung, die mehrere fällige Elemente abdeckt (nur EINE
+      Frage im Ablauf): der Untertitel zählt die abgedeckten ELEMENTE (also
+      z. B. "3 Element(e)", nicht "1 von 3"), die Zusammenfassung "N von N
+      korrigiert" rechnet auf derselben Basis, und nach der Runde bleibt
+      nichts als "Noch N fällig" zurück
+- [ ] Einstellungen > Lernen > Wiederholung: der neue Schalter "Auch
+      fehlerfreie Elemente wiederholen" steht unter "Fragen pro Wiederholung",
+      ist standardmäßig AUS und überlebt einen Reload
+- [ ] Schalter EIN: nie-falsche Elemente kommen wieder nach 3 bzw. 7 Tagen in
+      die Wiederholung (Badge, Dashboard-Karte, Sitzung). Enthält die Sitzung
+      solche Elemente, sagt die Zusammenfassung "N von N gefestigt" mit der
+      neutralen Trend-Zeile (kein "korrigiert", keine "Schwachstellen");
+      "Fehler trainieren (N)" zählt weiterhin nur Fehler
+- [ ] Lernpfad-Status: eine fehlerfrei gespielte Lektion gilt bei AUS als
+      gemeistert (beide Richtungen, SRS-Status "gemeistert", nicht ewig
+      "fällig"); bei EIN gilt wieder die Drei-in-Folge-Regel
+- [ ] Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
+
 ---
 
 # TEIL B: AUTOMATISIERTE TESTS (Referenz)

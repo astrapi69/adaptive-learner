@@ -25,6 +25,7 @@ import {
     type EndlessPlan,
     type EndlessSourceLesson,
 } from "../../../lib/endless/endless-stream";
+import {loadReviewQueue} from "../../../lib/review/review-queue";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
 import {stampHintUsage} from "../../../lib/hints/hint-usage";
 import {getStorage} from "../../../storage";
@@ -262,7 +263,7 @@ async function loadSrsState(
     const dueExerciseIds: string[] = [];
     const dueSeen = new Set<string>();
     try {
-        const queue = await storage.elementErrors.reviewQueue(userId, {setId});
+        const queue = await loadReviewQueue(userId, {setId});
         for (const item of queue) {
             if (!dueSeen.has(item.exercise_id)) {
                 dueSeen.add(item.exercise_id);

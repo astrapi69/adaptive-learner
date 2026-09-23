@@ -44,6 +44,7 @@ import {useEffect, useMemo, useState} from "react";
 import {analyzeErrors} from "../../lib/adaptive/error-analyzer";
 import {focusAreaTags} from "../../lib/adaptive/error-classifier";
 import type {ErrorTag} from "../../lib/adaptive/error-classifier";
+import {loadReviewQueue} from "../../lib/review/review-queue";
 import {getStorage} from "../../storage";
 import type {ElementError} from "../../storage/types";
 
@@ -356,11 +357,7 @@ export function useNextStepSuggestions(
                         storage.contentLoader.listLessons(source, setId),
                     ),
                     userId
-                        ? safe(() =>
-                              storage.elementErrors.reviewQueue(userId, {
-                                  setId,
-                              }),
-                          )
+                        ? safe(() => loadReviewQueue(userId, {setId}))
                         : Promise.resolve(null),
                     safe(() => storage.contentLoader.listSets()),
                     userId

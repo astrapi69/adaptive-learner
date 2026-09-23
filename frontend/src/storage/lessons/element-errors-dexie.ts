@@ -546,6 +546,12 @@ export interface ComputeReviewQueueOpts {
     nowIso?: string;
     /** #603 — cap the returned list (a review session passes 20). */
     limit?: number;
+    /** #3170 — also schedule rows that were never answered wrong
+     *  (``error_count 0``). Default false: the queue holds errors only.
+     *  The Settings > Learning toggle "Auch fehlerfreie Elemente
+     *  wiederholen" passes true. Mirrors the backend
+     *  ``compute_review_queue(include_never_wrong=...)``. */
+    includeNeverWrong?: boolean;
 }
 
 export async function computeReviewQueueDexie(
@@ -572,6 +578,12 @@ export async function computeReviewQueueDexie(
     rows = rows.filter((r) => isActiveRunRow(r, openBySet));
     // #2188 — archived (author-retired) rows never schedule.
     rows = rows.filter((r) => !r.mastered && !r.retired_at);
+    // #3170 — error training is error training: a row seeded by a correct
+    // first attempt (error_count 0) is not scheduled unless the learner
+    // opted into spaced repetition of never-wrong elements.
+    if (!opts.includeNeverWrong) {
+        rows = rows.filter((r) => r.error_count > 0);
+    }
     const items = rows.map((r) => _projectReviewItem(r, nowIso));
     // Sort (mirrors the backend ``element_srs._sort_key``, #603):
     // overdue first → weakness tier (wrong > almost-right > correct) →
