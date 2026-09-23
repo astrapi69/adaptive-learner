@@ -241,10 +241,19 @@ def compute_review_queue(
     set_id: str | None = None,
     now: datetime | None = None,
     limit: int | None = None,
+    include_never_wrong: bool = False,
 ) -> list[ReviewQueueItem]:
     """Project active element-error rows into a prioritised
     review queue. Mastered elements are excluded; each element
     appears once (the row identity guarantees no duplicates).
+
+    #3170: ``record_attempts`` seeds a row for EVERY played element, a
+    correct first attempt included (``error_count 0``). By default those
+    never-wrong rows are NOT scheduled - the queue feeds "Fehler
+    trainieren" and the review session, and a flawless element is not an
+    error. ``include_never_wrong=True`` (the Settings > Learning toggle
+    "Auch fehlerfreie Elemente wiederholen") restores the spaced repetition
+    of every non-mastered row. Mirrored by ``computeReviewQueueDexie``.
 
     ``now`` is injectable for deterministic tests. ``limit`` caps the
     returned list (the review SESSION uses ``MAX_REVIEW_SESSION``); the
@@ -258,6 +267,8 @@ def compute_review_queue(
         set_id=set_id,
         include_mastered=False,
     )
+    if not include_never_wrong:
+        rows = [row for row in rows if row.error_count > 0]
     items = [_project(row, clock) for row in rows]
     items.sort(key=_sort_key)
     if limit is not None and limit >= 0:

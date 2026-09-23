@@ -25,6 +25,7 @@ import {
     buildContentAvailability,
     filterAvailableSetId,
 } from "../../lib/content/browse/lifecycle/content-availability";
+import {loadReviewQueue} from "../../lib/review/review-queue";
 import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
 import {getStorage} from "../../storage";
 import type {ReviewQueueItem} from "../../storage/types";
@@ -47,7 +48,7 @@ export default function ReviewQueueCard({userId}: ReviewQueueCardProps) {
         async function refresh() {
             try {
                 const [queue, setsRes] = await Promise.all([
-                    getStorage().elementErrors.reviewQueue(userId),
+                    loadReviewQueue(userId),
                     getStorage().contentLoader.listSets(),
                 ]);
                 // #1445 Part A — drop review items whose set is no longer

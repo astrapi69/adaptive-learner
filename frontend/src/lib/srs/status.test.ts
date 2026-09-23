@@ -93,6 +93,56 @@ describe("srsLessonSummary", () => {
     });
 });
 
+describe("never-wrong rows (#3170)", () => {
+    /** The row ``recordBulk`` writes for a correct first attempt, a month old
+     *  (so the 3-day band would long be over). */
+    const clean = ee({
+        error_count: 0,
+        correct_streak: 1,
+        last_error_at: null,
+        last_attempt_at: "2026-01-01T00:00:00Z",
+    });
+
+    it("repro: a never-wrong row is settled by default, not due for ever", () => {
+        const s = srsLessonSummary([clean], NOW);
+        expect(s.status).toBe("mastered");
+        expect(s.mastered).toBe(1);
+        expect(s.due).toBe(0);
+        expect(s.nextReviewAt).toBeNull();
+    });
+
+    it("with the toggle ON the SRS flag rules: the same row is due", () => {
+        const s = srsLessonSummary([clean], NOW, {includeNeverWrong: true});
+        expect(s.status).toBe("due");
+        expect(s.mastered).toBe(0);
+        expect(s.due).toBe(1);
+    });
+
+    it("an open error next to a never-wrong row keeps the lesson due", () => {
+        const s = srsLessonSummary([clean, ee({id: "wrong"})], NOW);
+        expect(s.status).toBe("due");
+        expect(s.mastered).toBe(1);
+        expect(s.due).toBe(1);
+    });
+
+    it("elementSrsDetails shows the never-wrong row as mastered by default and sorts it last", () => {
+        const details = elementSrsDetails([clean, ee({id: "wrong", element_key: "wrong"})], NOW);
+        expect(details.map((d) => d.elementKey)).toEqual(["wrong", "el libro"]);
+        const settled = details[1];
+        expect(settled.mastered).toBe(true);
+        expect(settled.nextReviewAt).toBeNull();
+        expect(settled.overdue).toBe(false);
+        expect(settled.errorCount).toBe(0);
+    });
+
+    it("elementSrsDetails keeps the SRS schedule for the never-wrong row when the toggle is ON", () => {
+        const [detail] = elementSrsDetails([clean], NOW, {includeNeverWrong: true});
+        expect(detail.mastered).toBe(false);
+        expect(detail.nextReviewAt).toBe("2026-01-04T00:00:00.000Z");
+        expect(detail.overdue).toBe(true);
+    });
+});
+
 describe("elementSrsDetails", () => {
     it("orders non-mastered/overdue/most-errors first; mastered last", () => {
         const rows = [

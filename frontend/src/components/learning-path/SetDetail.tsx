@@ -55,10 +55,17 @@ export interface SetDetailProps {
 
 type T = (key: string, fallback?: string) => string;
 
-/** Active (non-mastered) error-card count for one lesson, derived from its
- *  SRS roll-up (total tracked elements minus mastered). Mirrors the set-wide
- *  ``errorCount`` definition in ``buildPersonalPath`` (#1012). */
+/** Open-error count for one lesson: elements wrong at least once and not
+ *  yet mastered, derived from its per-element SRS detail. Mirrors the
+ *  set-wide ``errorCount`` definition in ``buildPersonalPath`` (#1012):
+ *  a never-wrong row is never an error, whatever the review toggle says
+ *  (#3170). Objects built outside ``buildPersonalPath`` carry no detail;
+ *  they fall back to the SRS roll-up (total tracked minus mastered). */
 function lessonErrorCount(lesson: PersonalPathLesson): number {
+    const details = lesson.elementDetails;
+    if (details) {
+        return details.filter((d) => !d.mastered && d.errorCount > 0).length;
+    }
     const srs = lesson.srs;
     if (!srs) return 0;
     return Math.max(0, srs.total - srs.mastered);

@@ -54,6 +54,7 @@ import {
 } from "../../hooks/lesson/interaction/useLessonEnterKey";
 import {useReviewLesson} from "../../hooks/lesson/modes/useReviewLesson";
 import {readReviewLimit} from "../../lib/learning/reviewLimitPref";
+import {countCoveredElements} from "../../lib/review/review-lesson";
 import ReviewSummaryView from "../../shared/gamification/ReviewSummary";
 import type {
     ContentLesson,
@@ -87,6 +88,7 @@ export default function ReviewPage() {
     const {
         status,
         lesson,
+        queue,
         currentStepIndex,
         dueCount,
         error,
@@ -95,6 +97,7 @@ export default function ReviewPage() {
         recordStepAttempts,
         sessionScoreCorrect,
         sessionScoreTotal,
+        remaining,
         reload,
     } = useReviewLesson({
         setId,
@@ -160,6 +163,13 @@ export default function ReviewPage() {
     }
 
     const totalSteps = lesson.steps.length;
+    // #3170 — the subtitle counts ELEMENTS, not questions: a matching
+    // question that collapsed several due cards (#664) covers them all, so
+    // "8 von 10" no longer appears for a round that plays all 10.
+    const coveredCount = countCoveredElements(lesson.steps);
+    // #3170 — a session that holds never-wrong elements (the Settings >
+    // Learning toggle) must not call them "corrected" / "weak spots".
+    const neutralWording = queue.some((item) => item.error_count === 0);
     const isSummary = currentStepIndex >= totalSteps;
     const step = isSummary ? null : lesson.steps[currentStepIndex];
     const isExerciseStep = isPlayableExerciseStep(step);
@@ -209,22 +219,23 @@ export default function ReviewPage() {
                     English fallback was baked in. */}
                 <h1>{t("review.session_title", "Review session")}</h1>
                 <p className="lesson-description" data-testid="review-subtitle">
-                    {/* #664 — the header MUST match the progress bar: both
-                        read the actually-presented step count, never the raw
-                        (pre-synthesis) queue length. When the cap or an
-                        unresolvable element trims the pool, show
+                    {/* #664 — the header reads the actually-presented pool,
+                        never the raw (pre-synthesis) queue length. #3170 —
+                        it counts the ELEMENTS the presented questions cover
+                        (the summary tallies the same elements). When the cap
+                        or an unresolvable element trims the pool, show
                         "{shown} of {due}" so the gap is transparent. */}
-                    {totalSteps < dueCount
+                    {coveredCount < dueCount
                         ? t(
                               "review.subtitle_capped",
                               "Reviewing {shown} of {due} elements due for SRS",
                           )
-                              .replace("{shown}", String(totalSteps))
+                              .replace("{shown}", String(coveredCount))
                               .replace("{due}", String(dueCount))
                         : t(
                               "review.subtitle",
                               "Reviewing {n} element(s) due for SRS",
-                          ).replace("{n}", String(totalSteps))}
+                          ).replace("{n}", String(coveredCount))}
                 </p>
             </header>
 
@@ -249,8 +260,11 @@ export default function ReviewPage() {
                     total={sessionScoreTotal}
                     // #718 — elements that didn't fit this round are still
                     // due; offer another round in place rather than only an
-                    // exit to the Dashboard.
-                    remaining={Math.max(0, dueCount - totalSteps)}
+                    // exit to the Dashboard. #3170 — the hook derives the
+                    // rest from the elements actually not played, so a
+                    // collapsed question never lingers as "Noch N fällig".
+                    remaining={remaining}
+                    neutral={neutralWording}
                     onAnotherRound={reload}
                     onExit={() => navigate("/dashboard")}
                 />
@@ -400,7 +414,10 @@ interface ReviewExerciseProps {
     exerciseRef: Ref<ExerciseHandle>;
     onInteraction: (answerable: boolean) => void;
     onChecked: () => void;
-    recordStepAttempts: (attempts: readonly ElementAttempt[]) => Promise<void>;
+    recordStepAttempts: (
+        attempts: readonly ElementAttempt[],
+        step?: ContentLessonStep,
+    ) => Promise<void>;
 }
 
 /** The active review exercise step: the controlled ExerciseDispatcher
@@ -437,9 +454,11 @@ function ReviewExercise({
                 lessonId={step.review_lesson_id ?? _extractLessonId(step.id)}
                 onComplete={async (scored: ExerciseScored) => {
                     // Flip to the "Weiter" phase the moment the answer
-                    // is graded, then record attempts.
+                    // is graded, then record attempts. #3170 — the step
+                    // travels along so every element it covers counts as
+                    // played.
                     onChecked();
-                    await recordStepAttempts(scored.attempts);
+                    await recordStepAttempts(scored.attempts, step);
                 }}
             />
         </article>
@@ -469,6 +488,10 @@ interface ReviewSummaryProps {
     total: number;
     /** #718 — elements still due that didn't fit this round. */
     remaining: number;
+    /** #3170 — the session held elements that were never wrong (the
+     *  Settings > Learning toggle): say "reinforced", not "corrected", and
+     *  drop the "weak spots" trend line. */
+    neutral?: boolean;
     onAnotherRound: () => void;
     onExit: () => void;
 }
@@ -477,29 +500,26 @@ function ReviewSummary({
     correct,
     total,
     remaining,
+    neutral = false,
     onAnotherRound,
     onExit,
 }: ReviewSummaryProps) {
     const {t} = useI18n();
+    const correctedLabel = neutral
+        ? t("review.summary_reinforced", "{corrected} of {total} reinforced")
+        : t("review.summary_corrected", "{corrected} of {total} corrected");
+    const trendLabel = neutral
+        ? t("review.summary_trend_reinforced", "Good - this is settling in.")
+        : t("review.summary_trend", "Nice - your weak spots are getting stronger.");
     return (
         <ReviewSummaryView
             heading={t("review.summary.heading", "Review complete")}
             corrected={correct}
             total={total}
-            correctedLabel={t(
-                "review.summary_corrected",
-                "{corrected} of {total} corrected",
-            )
+            correctedLabel={correctedLabel
                 .replace("{corrected}", String(correct))
                 .replace("{total}", String(total))}
-            trendLabel={
-                correct > 0
-                    ? t(
-                          "review.summary_trend",
-                          "Nice - your weak spots are getting stronger.",
-                      )
-                    : undefined
-            }
+            trendLabel={correct > 0 ? trendLabel : undefined}
             nextReviewLabel={t(
                 "review.summary_next",
                 "Mastered items drop out; the rest return for review soon.",

@@ -364,7 +364,10 @@ Wiederholungen, die Zusammenfassung und das Nachholen von Fehlern.
 - **Wiederholung** - Erklärungen nach der Antwort (die vom Autor der
   Übung geschriebene Erklärung, die nach dem Prüfen unter der Übung
   erscheint, und die automatisch erzeugten Regeltipps nach einer Lektion)
-  sowie die Zahl der Fragen pro Wiederholungs-Sitzung. Die Karte endet mit dem
+  sowie die Zahl der Fragen pro Wiederholungs-Sitzung. Der Schalter "Auch
+  fehlerfreie Elemente wiederholen" (standardmäßig aus) entscheidet, ob die
+  Wiederholung nur Elemente mit Fehlern enthält oder auch nie falsch
+  beantwortete Elemente nach 3 und 7 Tagen zurückholt. Die Karte endet mit dem
   schreibgeschützten Block **Verteilte Wiederholung**: der Intervall-Plan
   (richtige Antworten in Folge gegen die Tage bis zur nächsten
   Wiederholung), ab wann ein Element als beherrscht gilt, und ein Link
