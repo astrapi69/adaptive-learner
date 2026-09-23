@@ -485,6 +485,21 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       Screenreader auch zugeklappt erreichbar (natives <details>). iOS PWA/
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
+- [ ] Zuordnung: lange Wörter brechen in der Kachel um (#3174): eine
+      Zuordnungsübung mit einem Wort, das breiter als die Kachel ist, auf
+      einem SCHMALEN Gerät (iPhone, 375px) öffnen, z. B. alc-psychology
+      „Sprachebenen zuordnen" mit „kleinste bedeutungsunterscheidende
+      Lauteinheit". Das lange Wort wird mit Trennstrich getrennt oder
+      notfalls ohne Trennstrich umgebrochen und bleibt VOLLSTÄNDIG innerhalb
+      des Kachelrahmens; kein Text läuft über den rechten Rand hinaus, die
+      Seite scrollt nicht horizontal. Nach dem Prüfen gilt dasselbe für die
+      Zeilen „Deine Antwort"/„Richtige Antwort" und für die Auflösen-Ansicht.
+      Die Silbentrennung folgt der Sprache des INHALTS (Set-Sprache), nicht
+      der UI-Sprache: die Kachelspalten tragen ein `lang`-Attribut mit der
+      Ziel- bzw. Quellsprache (UI-Sprache umstellen ändert die Trennstellen
+      nicht). Gleiches gilt für Mehrfachauswahl-Optionen, Wort-Kacheln und
+      Bildauswahl-Beschriftungen. iOS PWA/Standalone: dieselbe Prüfung auf dem
+      zum Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
 - [ ] Schwierigkeits-Indikator (#1693): eine Übung, deren Karte(n) eine
       authored `difficulty` (1-5) tragen, zeigt über der Übung ein kleines
       Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.

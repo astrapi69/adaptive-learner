@@ -245,6 +245,7 @@ function WordTilesExercise(
             />
 
             <WordTilesEditor
+                lang={targetLanguage ?? undefined}
                 submitted={submitted}
                 sensors={dnd.sensors}
                 placed={placed}
@@ -265,6 +266,7 @@ function WordTilesExercise(
             />
 
             <WordTilesReveal
+                lang={targetLanguage ?? undefined}
                 submitted={submitted}
                 showAnswerToggle={showAnswerToggle}
                 isCorrect={isCorrect}

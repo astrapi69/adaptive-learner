@@ -106,6 +106,7 @@ export function WordTilesReveal({
     myAnswerCorrectness,
     tiles,
     t,
+    lang,
 }: {
     submitted: boolean;
     showAnswerToggle: boolean;
@@ -119,6 +120,8 @@ export function WordTilesReveal({
     myAnswerCorrectness: boolean[];
     tiles: string[];
     t: Translate;
+    /** #3174 - BCP-47 content language of the tiles, for CSS hyphenation. */
+    lang?: string;
 }) {
     if (!submitted || !showAnswerToggle) return null;
     if (isCorrect && onAdvance) {
@@ -128,6 +131,7 @@ export function WordTilesReveal({
         return (
             <>
                 <WordTilesAnswerView
+                    lang={lang}
                     labels={myAnswerLabels}
                     correctness={null}
                     testId="word-tiles-correct-sentence"
@@ -154,6 +158,7 @@ export function WordTilesReveal({
             />
             {view === "my-answer" ? (
                 <WordTilesAnswerView
+                    lang={lang}
                     labels={myAnswerLabels}
                     correctness={myAnswerCorrectness}
                     testId="word-tiles-my-answer-view"
@@ -161,6 +166,7 @@ export function WordTilesReveal({
                 />
             ) : (
                 <WordTilesAnswerView
+                    lang={lang}
                     labels={tiles}
                     correctness={null}
                     testId="word-tiles-solution-view"

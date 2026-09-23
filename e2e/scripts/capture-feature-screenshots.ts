@@ -155,26 +155,92 @@ async function gotoLessonRunner(page: Page): Promise<boolean> {
 const EXPLANATION_REPO = "e2e/explanation-post-answer";
 const EXPLANATION_SET_ID = "adjektivstellung-from-de";
 
-async function mockExplanationRepo(page: Page): Promise<void> {
+/** One fixture lesson served as a whole content repo (root manifest, set
+ *  manifest, lesson JSON) through ``page.route``; see ``mockLessonRepo``. */
+interface FixtureRepo {
+    /** GitHub ``owner/name`` the app connects to; never fetched for real. */
+    repo: string;
+    /** Set id in the root manifest (``content-set-<id>-open`` testid). */
+    setId: string;
+    /** Root-manifest fields of that one set, ``id`` and ``path`` excluded. */
+    manifest: {
+        title: string;
+        targetLanguage: string;
+        sourceLanguage: string;
+        domain: string;
+    };
+    /** ``sets/<lang>/<folder>`` path inside the repo. */
+    setPath: string;
+    /** File name under ``e2e/fixtures/`` AND inside the set folder. */
+    lessonFile: string;
+}
+
+const EXPLANATION_FIXTURE: FixtureRepo = {
+    repo: EXPLANATION_REPO,
+    setId: EXPLANATION_SET_ID,
+    manifest: {
+        title: "Adjektivstellung",
+        targetLanguage: "es",
+        sourceLanguage: "de",
+        domain: "language",
+    },
+    setPath: "sets/es/adjektivstellung",
+    lessonFile: "01-adjektivstellung.json",
+};
+
+/**
+ * Long word inside a matching tile (#3174): the "Sprachebenen zuordnen"
+ * pairs of alc-psychology lesson 32, the content the bug was reported from,
+ * as ``e2e/fixtures/matching-long-word.lesson.json``. The right tile
+ * "kleinste bedeutungsunterscheidende Lauteinheit" is wider than a 375px
+ * tile, so the mobile shot shows the wrap; the bundled set's matching words
+ * are all short, which is why the ``matching-pairing`` motif cannot.
+ */
+const LONG_WORD_FIXTURE: FixtureRepo = {
+    repo: "e2e/matching-long-word",
+    setId: "sprachebenen-from-de",
+    manifest: {
+        title: "Sprachebenen",
+        targetLanguage: "de",
+        sourceLanguage: "de",
+        domain: "psychology",
+    },
+    setPath: "sets/de/sprachebenen",
+    lessonFile: "32-sprachebenen.json",
+};
+
+/** The fixture file on disk is named after its purpose, the served copy
+ *  after the lesson (the set manifest lists the served name). */
+const FIXTURE_FILES: Record<string, string> = {
+    [EXPLANATION_FIXTURE.lessonFile]: "explanation-post-answer.lesson.json",
+    [LONG_WORD_FIXTURE.lessonFile]: "matching-long-word.lesson.json",
+};
+
+/**
+ * Serve ONE fixture lesson as a complete content repo through page.route,
+ * exactly as ``e2e/dexie/exercise-explanation.spec.ts`` does, and silence
+ * the official repo index so the content hub shows only the fixture set.
+ */
+async function mockLessonRepo(page: Page, fixture: FixtureRepo): Promise<void> {
     const lesson = readFileSync(
-        join(__dirname, "..", "fixtures", "explanation-post-answer.lesson.json"),
+        join(__dirname, "..", "fixtures", FIXTURE_FILES[fixture.lessonFile]),
         "utf-8",
     );
     const rootManifest = [
         'schema_version: "1.13"',
         "sets:",
-        `  - id: ${EXPLANATION_SET_ID}`,
-        '    title: "Adjektivstellung"',
-        "    target_language: es",
-        "    source_language: de",
+        `  - id: ${fixture.setId}`,
+        `    title: "${fixture.manifest.title}"`,
+        `    target_language: ${fixture.manifest.targetLanguage}`,
+        `    source_language: ${fixture.manifest.sourceLanguage}`,
         "    level: A1",
         '    version: "1.0.0"',
         "    lesson_count: 1",
-        "    domain: language",
-        "    path: sets/es/adjektivstellung",
+        `    domain: ${fixture.manifest.domain}`,
+        `    path: ${fixture.setPath}`,
         "",
     ].join("\n");
-    const setManifest = 'metadata:\n  lessons:\n    - "01-adjektivstellung.json"\n';
+    const setManifest = `metadata:\n  lessons:\n    - "${fixture.lessonFile}"\n`;
     const emptyIndex = 'schema_version: "1.13"\nsets: []\n';
     const emptyOfficial = (route: Route) => {
         const url = route.request().url();
@@ -192,16 +258,16 @@ async function mockExplanationRepo(page: Page): Promise<void> {
     await page.route("**/raw.githubusercontent.com/**", emptyOfficial);
     await page.route("**/adaptive-learner-content/**", emptyOfficial);
     await page.route(
-        `**/raw.githubusercontent.com/${EXPLANATION_REPO}/main/**`,
+        `**/raw.githubusercontent.com/${fixture.repo}/main/**`,
         (route) => {
             const url = route.request().url();
             if (url.endsWith("/main/manifest.yaml")) {
                 return route.fulfill({status: 200, body: rootManifest});
             }
-            if (url.endsWith("/sets/es/adjektivstellung/manifest.yaml")) {
+            if (url.endsWith(`/${fixture.setPath}/manifest.yaml`)) {
                 return route.fulfill({status: 200, body: setManifest});
             }
-            if (url.endsWith("/01-adjektivstellung.json")) {
+            if (url.endsWith(`/${fixture.lessonFile}`)) {
                 return route.fulfill({status: 200, body: lesson});
             }
             return route.fulfill({status: 404, body: ""});
@@ -209,12 +275,16 @@ async function mockExplanationRepo(page: Page): Promise<void> {
     );
 }
 
-async function gotoExerciseExplanation(page: Page): Promise<boolean> {
-    await mockExplanationRepo(page);
+/**
+ * Seed a learner, connect the mocked fixture repo in Settings > Data and
+ * open its one lesson, leaving the runner on the theory step.
+ */
+async function openFixtureLesson(page: Page, fixture: FixtureRepo): Promise<void> {
+    await mockLessonRepo(page, fixture);
     await seedLearner(page);
     await page.goto("/settings?tab=data");
     await expect(page.getByTestId("content-repo-add")).toBeVisible({timeout: 60_000});
-    await page.getByTestId("content-repo-url").fill(`https://github.com/${EXPLANATION_REPO}`);
+    await page.getByTestId("content-repo-url").fill(`https://github.com/${fixture.repo}`);
     await page.getByTestId("content-repo-connect").click();
     await expect(page.getByTestId("content-repo-result")).toContainText(/passed|erfolgreich/i);
     // The content hub defaults to the LIST view (#1257); the tree with the
@@ -227,10 +297,14 @@ async function gotoExerciseExplanation(page: Page): Promise<boolean> {
     });
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
-    const open = page.getByTestId(`content-set-${EXPLANATION_SET_ID}-open`);
+    const open = page.getByTestId(`content-set-${fixture.setId}-open`);
     await expect(open).toBeVisible({timeout: 15_000});
     await open.click();
     await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 15_000});
+}
+
+async function gotoExerciseExplanation(page: Page): Promise<boolean> {
+    await openFixtureLesson(page, EXPLANATION_FIXTURE);
     await page.getByTestId("lesson-next").click();
     await expect(page.getByTestId("multiple-choice-exercise")).toBeVisible({timeout: 10_000});
     await page.getByRole("radio", {name: "el rojo coche"}).check();
@@ -335,6 +409,13 @@ async function gotoLessonMatching(page: Page): Promise<boolean> {
  */
 async function gotoLessonMatchingResolved(page: Page): Promise<boolean> {
     if (!(await gotoLessonMatching(page))) return false;
+    return resolveOpenMatching(page);
+}
+
+/** Pair the OPEN matching exercise with the first two pairs swapped (one
+ *  wrong + the rest correct) and check it, so the green/red feedback shows.
+ *  Returns false when there are fewer than two pairs to swap. */
+async function resolveOpenMatching(page: Page): Promise<boolean> {
     const lefts = page.getByTestId(/^matching-left-\d+$/);
     const n = await lefts.count();
     if (n < 2) return false;
@@ -353,6 +434,33 @@ async function gotoLessonMatchingResolved(page: Page): Promise<boolean> {
         timeout: 5_000,
     });
     return true;
+}
+
+/**
+ * Matching tile with a word wider than the tile (#3174): open the
+ * ``LONG_WORD_FIXTURE`` lesson and advance to its matching step. The mobile
+ * shot is the one that shows the wrap (375px), the desktop shot the normal
+ * width of the same tiles.
+ */
+async function gotoMatchingLongWord(page: Page): Promise<boolean> {
+    await openFixtureLesson(page, LONG_WORD_FIXTURE);
+    const reached = await advanceLessonUntil(
+        page,
+        async () => (await page.getByTestId("matching-exercise").count()) > 0,
+    );
+    if (reached) {
+        await expect(page.getByTestId("matching-exercise").first()).toBeVisible({
+            timeout: 10_000,
+        });
+    }
+    return reached;
+}
+
+/** The long-word matching exercise checked with one wrong pair, so the
+ *  "Deine Antwort" / "Richtige Antwort" lines carry the long word too. */
+async function gotoMatchingLongWordResolved(page: Page): Promise<boolean> {
+    if (!(await gotoMatchingLongWord(page))) return false;
+    return resolveOpenMatching(page);
 }
 
 /**
@@ -1293,6 +1401,10 @@ const FEATURES: FeatureShot[] = [
     // portrait one.
     {path: "matching-animation/matching-pairing", setup: gotoLessonMatching, landscape: true, pinTo: "matching-exercise"},
     {path: "matching-animation/matching-resolved", setup: gotoLessonMatchingResolved, pinTo: "matching-exercise"},
+    // #3174: a word wider than the tile hyphenates / wraps INSIDE the tile
+    // (fixture lesson; the bundled set has no long matching word).
+    {path: "matching-animation/matching-long-word", setup: gotoMatchingLongWord, pinTo: "matching-exercise"},
+    {path: "matching-animation/matching-long-word-resolved", setup: gotoMatchingLongWordResolved, pinTo: "matching-exercise"},
 
     // --- Lesson modes (practice / exam / timed) -------------------------
     {path: "lesson-modes/practice", setup: (p) => gotoLessonModeToggle(p, "practice")},

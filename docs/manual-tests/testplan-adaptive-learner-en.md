@@ -453,6 +453,20 @@ Requires domain knowledge. Not automatable.
       the content stays reachable for screen readers even when collapsed (native
       <details>). iOS PWA/Standalone: repeat the check on the web-app icon added
       to the Home Screen.
+- [ ] Matching: long words wrap inside the tile (#3174): open a matching
+      exercise whose word is wider than the tile on a NARROW device (iPhone,
+      375px), e.g. alc-psychology "Sprachebenen zuordnen" with "kleinste
+      bedeutungsunterscheidende Lauteinheit". The long word is hyphenated or,
+      failing that, wrapped without a hyphen and stays ENTIRELY inside the tile
+      border; no text runs past the right edge and the page does not scroll
+      horizontally. After checking, the same holds for the "Your answer" /
+      "Correct answer" lines and for the Solve view. Hyphenation follows the
+      language of the CONTENT (set language), not the UI language: the tile
+      columns carry a `lang` attribute with the target or source language
+      (switching the UI language does not move the break points). The same
+      applies to multiple-choice options, word tiles and picture-choice
+      captions. iOS PWA/Standalone: repeat the check on the web-app icon added
+      to the Home Screen.
 - [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
