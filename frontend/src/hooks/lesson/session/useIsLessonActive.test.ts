@@ -3,7 +3,7 @@ import {describe, expect, it} from "vitest";
 import {isLessonRoute, LESSON_ROUTE_PREFIXES} from "./useIsLessonActive";
 
 describe("isLessonRoute", () => {
-    it("matches the four active-learning route families", () => {
+    it("matches the active-learning route families", () => {
         expect(
             isLessonRoute(
                 "/lesson/astrapi69--adaptive-learner-content/es-a1/01.json",
@@ -16,6 +16,20 @@ describe("isLessonRoute", () => {
                 "/error-replay/astrapi69--adaptive-learner-content/es-a1/01.json",
             ),
         ).toBe(true);
+    });
+
+    // #3197 - every runner route registered in App.tsx (lines 257-264) must
+    // collapse the navigation; the list here mirrors those routes on purpose
+    // so a new runner without a prefix entry turns this table red.
+    it.each([
+        ["/lesson/es-a1-from-de/es-a1/01-greetings.json", "lesson"],
+        ["/review/es-a1", "review"],
+        ["/adaptive-lesson/es-a1", "adaptive lesson"],
+        ["/shuffle-lesson/es-a1", "shuffle lesson"],
+        ["/endless-lesson/es-a1", "endless lesson"],
+        ["/error-replay/es-a1-from-de/es-a1/01-greetings.json", "error replay"],
+    ])("treats %s (%s) as an active lesson route", (path) => {
+        expect(isLessonRoute(path)).toBe(true);
     });
 
     it("does not match non-lesson routes", () => {
