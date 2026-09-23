@@ -46,7 +46,8 @@ export const VISUAL_MOUNT_SALT = new Date(FIXED_NOW_ISO).getTime() & 0xffff;
  * meaning; ``mountSalt`` is {@link VISUAL_MOUNT_SALT}.
  *
  * @example
- * await page.addInitScript(install, {name: RANDOM_PIN_GLOBAL, pin: VISUAL_RANDOM_PIN});
+ * await freezeClock(page);
+ * await pinRandomStreams(page); // installs VISUAL_RANDOM_PIN (helpers.ts)
  */
 export const VISUAL_RANDOM_PIN: RandomPin = {
     streamSeed: 0x1567,
