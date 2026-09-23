@@ -379,6 +379,8 @@ review:
   question_label: "質問:"
   summary_corrected: "{total}問中{corrected}問を修正"
   summary_trend: "いいですね - 弱点が強くなっています。"
+  summary_reinforced: "{total}問中{corrected}問を定着"
+  summary_trend_reinforced: "いいですね - しっかり定着してきています。"
   summary_next: "習得した項目は外れ、残りはまもなく復習に戻ります。"
   summary_remaining: "あと {n} 件。続けますか？"
   another_round: "もう1ラウンド"
@@ -984,6 +986,9 @@ settings:
   review_limit:
     label: "復習あたりの問題数"
     desc: "1回の復習セッションで終了前に出題する要素数。残りの要素は次のラウンドに回ります。"
+  review_include_never_wrong:
+    label: "間違えなかった要素も復習する"
+    desc: "一度も間違えなかった要素も間隔をあけた復習に戻します(3日後と7日後)。オフ: 復習には間違えた要素だけが含まれます。"
   max_lesson_size:
     title: "レッスンの最大サイズ"
     hint: "長いチャット分析をオフラインレッスンとして保存する場合、このステップ数を超えるレッスンは自動的に複数のパートに分割されます。"

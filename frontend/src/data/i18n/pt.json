@@ -406,6 +406,8 @@
     "question_label": "Pergunta:",
     "summary_corrected": "{corrected} de {total} corrigidos",
     "summary_trend": "Boa - os seus pontos fracos estão a melhorar.",
+    "summary_reinforced": "{corrected} de {total} consolidados",
+    "summary_trend_reinforced": "Boa - isto está a ficar mais sólido.",
     "summary_next": "Os elementos dominados saem; os restantes voltam em breve para revisão.",
     "summary_remaining": "Ainda faltam {n}. Continuar?",
     "another_round": "Outra ronda",
@@ -1032,6 +1034,10 @@
     "review_limit": {
       "label": "Perguntas por revisão",
       "desc": "Quantos elementos uma sessão de revisão apresenta antes de terminar. Os restantes passam para a ronda seguinte."
+    },
+    "review_include_never_wrong": {
+      "label": "Rever também os elementos sem erros",
+      "desc": "Traz também os elementos que nunca errou de volta à revisão espaçada (após 3 e 7 dias). Desligado: a revisão contém apenas elementos com erros."
     },
     "max_lesson_size": {
       "title": "Tamanho máximo de aula",

@@ -381,6 +381,8 @@ review:
   question_label: "Pertanyaan:"
   summary_corrected: "{corrected} dari {total} diperbaiki"
   summary_trend: "Bagus - titik lemah Anda semakin kuat."
+  summary_reinforced: "{corrected} dari {total} dimantapkan"
+  summary_trend_reinforced: "Bagus - ini semakin melekat."
   summary_next: "Item yang dikuasai keluar; sisanya akan kembali untuk ditinjau segera."
   summary_repeat: "Kembalilah sekitar 2 hari lagi untuk menjaganya tetap segar."
   explain_heading: "Mengapa Anda melewatkan ini"
@@ -532,6 +534,9 @@ settings:
   review_limit:
     label: "Pertanyaan per ulasan"
     desc: "Berapa banyak elemen yang ditampilkan satu sesi ulasan sebelum berakhir. Item jatuh tempo lainnya dialihkan ke putaran berikutnya."
+  review_include_never_wrong:
+    label: "Ulas juga elemen tanpa kesalahan"
+    desc: "Mengembalikan juga elemen yang tidak pernah Anda jawab salah ke ulasan berjarak (setelah 3 dan 7 hari). Nonaktif: ulasan hanya berisi elemen dengan kesalahan."
   install:
     heading: "Pasang aplikasi"
     description: "Pasang Adaptive Learner sebagai aplikasi mandiri: jendela sendiri, ikon di layar utama, dan dapat dijalankan bahkan tanpa jaringan. Konten belajarmu tidak terpengaruh."
