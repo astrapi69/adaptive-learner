@@ -406,6 +406,8 @@
     "question_label": "Soru:",
     "summary_corrected": "{total} işlemden {corrected} tanesi düzeltildi",
     "summary_trend": "Güzel - zayıf noktaların güçleniyor.",
+    "summary_reinforced": "{total} öğeden {corrected} tanesi pekiştirildi",
+    "summary_trend_reinforced": "Güzel - bu artık daha sağlam oturuyor.",
     "summary_next": "Pekiştirilen ögeler çıkar; geri kalanlar kısa süre içinde tekrara döner.",
     "summary_remaining": "{n} tane daha var. Devam?",
     "another_round": "Bir tur daha",
@@ -1032,6 +1034,10 @@
     "review_limit": {
       "label": "Tekrar başına soru",
       "desc": "Bir tekrar oturumunun bitmeden önce kaç öğe gösterdiği. Kalan öğeler sonraki tura aktarılır."
+    },
+    "review_include_never_wrong": {
+      "label": "Hatasız öğeleri de tekrar et",
+      "desc": "Hiç yanlış yapmadığın öğeleri de aralıklı tekrara geri getirir (3 ve 7 gün sonra). Kapalı: tekrar yalnızca hatalı öğeleri içerir."
     },
     "max_lesson_size": {
       "title": "Maksimum ders boyutu",

@@ -20,6 +20,7 @@ import {
     resolveConcreteDirection,
 } from "../../../../lib/exercises/direction";
 import {isKnowledgeDomain} from "../../../../lib/exercises/knowledge-domain";
+import {LONG_WORD_WRAP} from "../../../../lib/exercises/long-word-wrap";
 import type {ContentLessonExercise} from "../../../../storage/types";
 import AnswerCelebration from "../../feedback/AnswerCelebration";
 import ExerciseFooter from "../../shell/ExerciseFooter";
@@ -205,6 +206,26 @@ export function computeMatchingLabels(
     return {direction, productive, isKnowledge, leftLabel, rightLabel, instruction};
 }
 
+/** #3174 - BCP-47 code of the CONTENT language of each tile column, for
+ *  the ``lang`` attribute that CSS hyphenation (``hyphens: auto``) reads.
+ *  ``<html lang>`` follows the UI language, which is the wrong dictionary
+ *  for a German set played in an English UI. A productive drill shows the
+ *  source language on the left, so the languages flip with the columns.
+ *  ``undefined`` (not ``null``) for an unknown side, so React omits the
+ *  attribute and the tile inherits the document language. Pure. */
+export function matchingColumnLangs(opts: {
+    productive: boolean;
+    targetLanguage: string | null;
+    sourceLanguage: string | null;
+}): {left: string | undefined; right: string | undefined} {
+    const {productive, targetLanguage, sourceLanguage} = opts;
+    const target = targetLanguage ?? undefined;
+    const source = sourceLanguage ?? undefined;
+    return productive
+        ? {left: source, right: target}
+        : {left: target, right: source};
+}
+
 interface LeftTileViewState {
     isSelected: boolean;
     isPaired: boolean;
@@ -301,7 +322,10 @@ function MatchingTileFeedback({
                 >
                     {chosenPartner && (
                         <p
-                            className="m-0 flex items-center gap-1.5 rounded-sm border-l-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] px-2 py-1 text-[0.8125rem] text-[var(--matching-error-fg)]"
+                            className={cn(
+                                "m-0 flex min-w-0 items-center gap-1.5 rounded-sm border-l-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] px-2 py-1 text-[0.8125rem] text-[var(--matching-error-fg)]",
+                                LONG_WORD_WRAP,
+                            )}
                             data-testid={`matching-your-answer-${tile.index}`}
                         >
                             <X
@@ -317,7 +341,10 @@ function MatchingTileFeedback({
                     )}
                     {correctPartner && (
                         <p
-                            className="m-0 flex items-center gap-1.5 rounded-sm border-l-2 border-dashed border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] px-2 py-1 text-[0.8125rem] font-semibold text-[var(--matching-correct-fg)]"
+                            className={cn(
+                                "m-0 flex min-w-0 items-center gap-1.5 rounded-sm border-l-2 border-dashed border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] px-2 py-1 text-[0.8125rem] font-semibold text-[var(--matching-correct-fg)]",
+                                LONG_WORD_WRAP,
+                            )}
                             data-testid={`matching-correct-hint-${tile.index}`}
                         >
                             <Check
@@ -412,7 +439,7 @@ export function MatchingLeftTile({
                 {isPaired && slot !== undefined && (
                     <PairBadge slot={slot} tone={badgeTone} />
                 )}
-                <span className="min-w-0 flex-1">
+                <span className={cn("min-w-0 flex-1", LONG_WORD_WRAP)}>
                     <InlineMarkdown>{tile.label}</InlineMarkdown>
                 </span>
                 {isCorrect && <Check size={14} aria-hidden="true" />}
@@ -566,7 +593,7 @@ export function MatchingRightTile({
                 {isPaired && slot !== undefined && (
                     <PairBadge slot={slot} tone={badgeTone} />
                 )}
-                <span className="min-w-0 flex-1">
+                <span className={cn("min-w-0 flex-1", LONG_WORD_WRAP)}>
                     <InlineMarkdown>{tile.label}</InlineMarkdown>
                 </span>
                 {isCorrect && <Check size={14} aria-hidden="true" />}

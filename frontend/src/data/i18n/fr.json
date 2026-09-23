@@ -406,6 +406,8 @@
     "question_label": "Question :",
     "summary_corrected": "{corrected} sur {total} corrigés",
     "summary_trend": "Bien - tes points faibles se renforcent.",
+    "summary_reinforced": "{corrected} sur {total} consolidés",
+    "summary_trend_reinforced": "Bien - ça se consolide.",
     "summary_next": "Les éléments maîtrisés disparaissent ; le reste revient bientôt en révision.",
     "summary_remaining": "Encore {n} à revoir. On continue ?",
     "another_round": "Encore un tour",
@@ -1032,6 +1034,10 @@
     "review_limit": {
       "label": "Questions par révision",
       "desc": "Combien d'éléments une session de révision présente avant de se terminer. Les éléments restants passent au tour suivant."
+    },
+    "review_include_never_wrong": {
+      "label": "Réviser aussi les éléments sans erreur",
+      "desc": "Ramène aussi en révision espacée les éléments que tu n'as jamais ratés (après 3 et 7 jours). Désactivé : la révision ne contient que les éléments avec des erreurs."
     },
     "max_lesson_size": {
       "title": "Taille maximale de leçon",

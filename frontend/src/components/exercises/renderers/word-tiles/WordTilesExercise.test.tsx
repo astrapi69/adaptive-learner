@@ -750,3 +750,63 @@ describe("WordTilesExercise: domain-aware instruction (#1226)", () => {
         ).toMatch(/Build the translation/i);
     });
 });
+
+describe("WordTilesExercise #3174: long tile words wrap", () => {
+    it("a scrambled tile carries hyphenation + the overflow-wrap fallback", () => {
+        render(<WordTilesExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(screen.getByTestId("word-tile-scrambled-0")).toHaveClass(
+            "hyphens-auto",
+            "[overflow-wrap:anywhere]",
+        );
+    });
+
+    it("the tile bank and the answer row carry the target language", () => {
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                targetLanguage="fr"
+            />,
+        );
+        expect(screen.getByTestId("word-tiles-scrambled-row")).toHaveAttribute(
+            "lang",
+            "fr",
+        );
+        expect(screen.getByTestId("word-tiles-answer-row")).toHaveAttribute(
+            "lang",
+            "fr",
+        );
+    });
+
+    it("the post-check answer views keep the language and the wrap classes", () => {
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                targetLanguage="fr"
+            />,
+        );
+        fireEvent.click(screen.getByTestId("word-tile-scrambled-1"));
+        fireEvent.click(screen.getByTestId("word-tile-scrambled-0"));
+        fireEvent.click(screen.getByTestId("word-tiles-submit"));
+        expect(screen.getByTestId("word-tiles-my-answer-view")).toHaveAttribute(
+            "lang",
+            "fr",
+        );
+        expect(
+            screen.getByTestId("word-tiles-my-answer-view-tile-0"),
+        ).toHaveClass("hyphens-auto", "[overflow-wrap:anywhere]");
+        fireEvent.click(screen.getByTestId("word-tiles-solution"));
+        expect(screen.getByTestId("word-tiles-solution-view")).toHaveAttribute(
+            "lang",
+            "fr",
+        );
+    });
+
+    it("without a target language the tile bank carries no lang", () => {
+        render(<WordTilesExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(
+            screen.getByTestId("word-tiles-scrambled-row"),
+        ).not.toHaveAttribute("lang");
+    });
+});

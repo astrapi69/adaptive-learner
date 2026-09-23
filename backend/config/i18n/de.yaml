@@ -379,6 +379,8 @@ review:
   question_label: "Frage:"
   summary_corrected: "{corrected} von {total} korrigiert"
   summary_trend: "Stark - deine Schwachstellen werden besser."
+  summary_reinforced: "{corrected} von {total} gefestigt"
+  summary_trend_reinforced: "Gut - das sitzt jetzt fester."
   summary_next: "Gemeisterte Elemente fallen weg; der Rest kommt bald zur Wiederholung."
   summary_remaining: "Noch {n} fällig. Weitermachen?"
   another_round: "Weitere Runde"
@@ -984,6 +986,9 @@ settings:
   review_limit:
     label: "Fragen pro Wiederholung"
     desc: "Wie viele Elemente eine Wiederholungssitzung zeigt, bevor sie endet. Weitere fällige Elemente kommen in die nächste Runde."
+  review_include_never_wrong:
+    label: "Auch fehlerfreie Elemente wiederholen"
+    desc: "Holt auch nie falsch beantwortete Elemente zur verteilten Wiederholung zurück (nach 3 und 7 Tagen). Aus: die Wiederholung enthält nur Elemente mit Fehlern."
   max_lesson_size:
     title: Maximale Lektionsgröße
     hint: "Wenn eine lange Chat-Analyse als Offline-Lektion gespeichert wird, werden Lektionen mit mehr als dieser Anzahl an Schritten automatisch in mehrere Teile aufgeteilt."

@@ -453,6 +453,20 @@ Requires domain knowledge. Not automatable.
       the content stays reachable for screen readers even when collapsed (native
       <details>). iOS PWA/Standalone: repeat the check on the web-app icon added
       to the Home Screen.
+- [ ] Matching: long words wrap inside the tile (#3174): open a matching
+      exercise whose word is wider than the tile on a NARROW device (iPhone,
+      375px), e.g. alc-psychology "Sprachebenen zuordnen" with "kleinste
+      bedeutungsunterscheidende Lauteinheit". The long word is hyphenated or,
+      failing that, wrapped without a hyphen and stays ENTIRELY inside the tile
+      border; no text runs past the right edge and the page does not scroll
+      horizontally. After checking, the same holds for the "Your answer" /
+      "Correct answer" lines and for the Solve view. Hyphenation follows the
+      language of the CONTENT (set language), not the UI language: the tile
+      columns carry a `lang` attribute with the target or source language
+      (switching the UI language does not move the break points). The same
+      applies to multiple-choice options, word tiles and picture-choice
+      captions. iOS PWA/Standalone: repeat the check on the web-app icon added
+      to the Home Screen.
 - [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
@@ -2186,6 +2200,28 @@ each card row (`CardImageField`).
       instead of empty sections
 - [ ] Check both in browser mode (no server) - the figures come from
       the local database there
+
+### Learning-path set: "Repeat everything" resets the results (#3171)
+- [ ] Open the learning path and expand a set with results: the action bar
+      shows "Repeat everything" (`set-reset-results-<id>`) next to "Train
+      errors"; a never-started set does not show the button
+- [ ] Press it: the confirmation "Reset all results?" names the set title,
+      the number of lessons with results, that score, stars and study time
+      are reset, that the previous run's mistakes stay as history and that
+      XP and badges are unchanged; below it "Average so far: N%" (for a
+      set without a scored lesson "No average yet.")
+- [ ] "Cancel" (also Escape): nothing changes, the set's stars and progress
+      are as before
+- [ ] "Reset and start over": success toast, lesson 1 of the set opens;
+      back on the learning path the set shows no stars and no progress,
+      "Train errors" is gone (new run, as with "Work through again")
+- [ ] A set marked "Completed" or "Deferred" in My Content is listed under
+      "Active" again after the reset (status filter in My Content); the
+      dashboard's "Continue Learning" shows it as a started set again, not
+      as done
+- [ ] Dashboard: XP and badges are unchanged after the reset
+- [ ] Check both: desktop app (API mode) and browser mode without a server
+      (Dexie) - the reset writes to both stores
 
 ### Set page: lesson list + progress (#2793 stages 2-3)
 - [ ] Open a set page (/content/set/<id> or via a shared link): below

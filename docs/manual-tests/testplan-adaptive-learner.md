@@ -485,6 +485,21 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       Screenreader auch zugeklappt erreichbar (natives <details>). iOS PWA/
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
+- [ ] Zuordnung: lange Wörter brechen in der Kachel um (#3174): eine
+      Zuordnungsübung mit einem Wort, das breiter als die Kachel ist, auf
+      einem SCHMALEN Gerät (iPhone, 375px) öffnen, z. B. alc-psychology
+      „Sprachebenen zuordnen" mit „kleinste bedeutungsunterscheidende
+      Lauteinheit". Das lange Wort wird mit Trennstrich getrennt oder
+      notfalls ohne Trennstrich umgebrochen und bleibt VOLLSTÄNDIG innerhalb
+      des Kachelrahmens; kein Text läuft über den rechten Rand hinaus, die
+      Seite scrollt nicht horizontal. Nach dem Prüfen gilt dasselbe für die
+      Zeilen „Deine Antwort"/„Richtige Antwort" und für die Auflösen-Ansicht.
+      Die Silbentrennung folgt der Sprache des INHALTS (Set-Sprache), nicht
+      der UI-Sprache: die Kachelspalten tragen ein `lang`-Attribut mit der
+      Ziel- bzw. Quellsprache (UI-Sprache umstellen ändert die Trennstellen
+      nicht). Gleiches gilt für Mehrfachauswahl-Optionen, Wort-Kacheln und
+      Bildauswahl-Beschriftungen. iOS PWA/Standalone: dieselbe Prüfung auf dem
+      zum Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
 - [ ] Schwierigkeits-Indikator (#1693): eine Übung, deren Karte(n) eine
       authored `difficulty` (1-5) tragen, zeigt über der Übung ein kleines
       Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.
@@ -2341,6 +2356,31 @@ jeder Karten-Zeile (`CardImageField`).
       Meldung statt leerer Abschnitte
 - [ ] Beides im Browser-Modus (ohne Server) prüfen - die Zahlen
       kommen dort aus der lokalen Datenbank
+
+### Lernpfad-Set: "Alles wiederholen" setzt die Ergebnisse zurück (#3171)
+- [ ] Lernpfad öffnen, ein Set mit Ergebnissen aufklappen: in der
+      Aktionsleiste steht "Alles wiederholen" (`set-reset-results-<id>`)
+      neben "Fehler trainieren"; ein nie begonnenes Set zeigt den Knopf
+      nicht
+- [ ] Knopf drücken: die Bestätigung "Alle Ergebnisse zurücksetzen?" nennt
+      den Set-Titel, die Zahl der Lektionen mit Ergebnis, dass Punktzahl,
+      Sterne und Lernzeit zurückgesetzt werden, dass die Fehler des
+      bisherigen Durchgangs als Verlauf bleiben und dass XP und Abzeichen
+      unverändert sind; darunter "Bisheriger Schnitt: N %" (bei einem Set
+      ohne bewertete Lektion "Noch kein Schnitt vorhanden.")
+- [ ] "Abbrechen" (auch Escape): nichts ändert sich, Sterne und Fortschritt
+      des Sets sind wie vorher
+- [ ] "Zurücksetzen und neu starten": Erfolgs-Toast, Lektion 1 des Sets
+      öffnet sich; zurück im Lernpfad steht das Set ohne Sterne und ohne
+      Fortschritt, "Fehler trainieren" ist verschwunden (neuer Durchgang,
+      wie bei "Erneut durcharbeiten")
+- [ ] Ein Set, das in "Meine Inhalte" als "Abgeschlossen" oder
+      "Zurückgestellt" markiert war, steht nach dem Reset wieder unter
+      "Aktiv" (Statusfilter in "Meine Inhalte"); das Dashboard führt es
+      unter "Weitermachen" wieder als begonnenes Set, nicht als erledigt
+- [ ] Dashboard: XP-Stand und Abzeichen sind nach dem Reset unverändert
+- [ ] Beides prüfen: Desktop-App (API-Modus) und Browser-Modus ohne Server
+      (Dexie) - der Reset schreibt in beide Speicher
 
 ### Set-Seite: Lektionsliste + Fortschritt (#2793 Stufen 2-3)
 - [ ] Eine Set-Seite öffnen (/content/set/<id> oder über einen
