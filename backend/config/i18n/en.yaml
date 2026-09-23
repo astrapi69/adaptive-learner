@@ -967,13 +967,16 @@ settings:
     errors_only: "Only show errors (default)"
     whole_set: "Replay the whole set"
   matching_resolve:
-    title: "Solve animation"
+    title: "Matching exercise"
     hint: "How the matching exercise reveals the correct pairs when you press 'Solve' after checking."
-    label: "Effect"
+    label: "Solve animation"
     slide: "Slide"
     color: "Color"
     connect: "Connect"
     stack: "Stack"
+  matching_review_views:
+    label: "Corrections as a separate view"
+    desc: "After checking, 'My answers' shows only your own pairs with your mistakes; the correct partners are under 'Corrections'. Off: the correct partner appears directly under each mistake in 'My answers'."
   paused_retention:
     title: Paused lesson retention
     hint: "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age."
@@ -2088,6 +2091,7 @@ lesson:
       resolve: "Solve"
       resolve_announce: "Solution shown. {correct} of {total} pairs were correct."
       my_answers: "My answers"
+      corrections: "Corrections"
     picture:
       submit: "Check answer"
       retry: "Try again"
