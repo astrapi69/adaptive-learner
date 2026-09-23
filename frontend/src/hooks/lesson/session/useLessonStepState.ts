@@ -24,7 +24,13 @@ import type {ContentLesson, LessonProgress, RawAnswer} from "../../../storage/ty
 export interface UseLessonStepStateOptions {
     lesson: ContentLesson | null;
     currentStepIndex: number;
-    progress: LessonProgress | null;
+    /**
+     * The persisted progress row that locks an already-answered step.
+     * Only the lesson persists progress; the ephemeral runners (review,
+     * shuffle, endless, adaptive, error replay, EXP-052) pass nothing,
+     * which behaves like ``null``: no step is ever entered locked.
+     */
+    progress?: LessonProgress | null;
 }
 
 /**
@@ -38,7 +44,7 @@ export interface UseLessonStepStateOptions {
 export function useLessonStepState({
     lesson,
     currentStepIndex,
-    progress,
+    progress = null,
 }: UseLessonStepStateOptions) {
     // BUG P1 / Problem 1 — two-phase "Prüfen" → "Weiter" button.
     // The active exercise reports whether its answer is checkable
