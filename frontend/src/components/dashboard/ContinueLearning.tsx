@@ -57,6 +57,7 @@ import {
     isContinueRowDismissed,
 } from "../../lib/content/browse/prefs/continue-dismissed-store";
 import {dedupeReviewQueueByElement} from "../../lib/review/review-lesson";
+import {loadReviewQueue} from "../../lib/review/review-queue";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
 import ShareResultButton from "../share/ShareResultButton";
@@ -155,7 +156,7 @@ export default function ContinueLearning({
             const [progress, setsRes, reviewQueue] = await Promise.all([
                 safe(() => storage.lessonProgress.list(userId)),
                 safe(() => storage.contentLoader.listSets()),
-                safe(() => storage.elementErrors.reviewQueue(userId)),
+                safe(() => loadReviewQueue(userId)),
             ]);
             if (cancelled) return;
             const sets: ContentSetEntry[] = setsRes?.sets ?? [];

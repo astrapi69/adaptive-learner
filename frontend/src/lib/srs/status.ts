@@ -39,6 +39,34 @@ export const SRS_SCHEDULE: readonly SrsScheduleStep[] = [
     {streak: 2, openEnded: true, days: 7},
 ];
 
+/** #3170 — the one knob behind the never-wrong semantics. */
+export interface SrsStatusOpts {
+    /** Mirror of the Settings > Learning toggle "Auch fehlerfreie Elemente
+     *  wiederholen". OFF (default): a row that was never answered wrong is
+     *  SETTLED - it is not scheduled, not due, and counts as mastered for
+     *  every status roll-up, exactly as the review queue leaves it alone.
+     *  ON: the SRS flag rules again (three correct in a row), as before. */
+    includeNeverWrong?: boolean;
+}
+
+/**
+ * Whether an element row is settled: mastered by the SRS flag, or (by
+ * default) never answered wrong. ``recordBulk`` seeds a row for every
+ * played element, a correct first attempt included; while never-wrong
+ * rows are excluded from the review queue (#3170) they can only advance
+ * by replaying the lesson, so treating them as open would leave a
+ * flawless lesson "learning" for ever. The same rule feeds the review
+ * queue, the "Fehler trainieren" counters and the learning-path mastery,
+ * so the surfaces cannot disagree.
+ */
+export function isSettledElement(
+    row: Pick<ElementError, "mastered" | "error_count">,
+    opts: SrsStatusOpts = {},
+): boolean {
+    if (row.mastered) return true;
+    return !opts.includeNeverWrong && row.error_count === 0;
+}
+
 function addDaysUtc(iso: string, days: number): string {
     const d = new Date(iso);
     d.setUTCDate(d.getUTCDate() + days);
@@ -78,6 +106,7 @@ function suggestedReviewAt(row: ElementError): string {
 export function srsLessonSummary(
     rows: readonly ElementError[],
     now: Date = new Date(),
+    opts: SrsStatusOpts = {},
 ): SrsLessonSummary {
     const total = rows.length;
     if (total === 0) {
@@ -88,7 +117,8 @@ export function srsLessonSummary(
     let due = 0;
     let nextReviewAt: string | null = null;
     for (const row of rows) {
-        if (row.mastered) {
+        // #3170 — a never-wrong row is settled unless the toggle is on.
+        if (isSettledElement(row, opts)) {
             mastered += 1;
             continue;
         }
@@ -133,16 +163,19 @@ export interface SrsElementDetail {
 export function elementSrsDetails(
     rows: readonly ElementError[],
     now: Date = new Date(),
+    opts: SrsStatusOpts = {},
 ): SrsElementDetail[] {
     const nowIso = now.toISOString();
     return rows
         .map((row): SrsElementDetail => {
             const intervalDays = intervalForStreak(row.correct_streak);
-            const suggested = row.mastered ? null : suggestedReviewAt(row);
+            // #3170 — a settled never-wrong row has no next review.
+            const settled = isSettledElement(row, opts);
+            const suggested = settled ? null : suggestedReviewAt(row);
             return {
                 elementKey: row.element_key,
                 direction: row.direction ?? "target_to_source",
-                mastered: row.mastered,
+                mastered: settled,
                 correctStreak: row.correct_streak,
                 errorCount: row.error_count,
                 intervalDays,

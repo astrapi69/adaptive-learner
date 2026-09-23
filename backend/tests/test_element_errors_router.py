@@ -681,3 +681,46 @@ def test_archived_rows_leave_the_review_queue(
     _archive(client, user_id, ["greetings-match-x7"])
     r = client.get(f"/api/users/{user_id}/element-errors/review-queue")
     assert r.json() == []
+
+
+# --- #3170: the review queue holds errors only unless opted in -------------
+
+
+def test_review_queue_excludes_never_wrong_rows_by_default(
+    client: TestClient,
+    user_id: str,
+) -> None:
+    """#3170 (API mode): a flawless attempt must not surface in the queue
+    the review session and the "N due" badges read."""
+    client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={"attempts": [_attempt_payload(correct=True)]},
+    )
+    r = client.get(f"/api/users/{user_id}/element-errors/review-queue")
+    assert r.status_code == 200
+    assert r.json() == []
+
+
+def test_review_queue_include_never_wrong_query_param(
+    client: TestClient,
+    user_id: str,
+) -> None:
+    """``?include_never_wrong=true`` is the API-mode carrier of the
+    Settings > Learning toggle: never-wrong rows are scheduled again."""
+    client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                _attempt_payload(element_key="clean", correct=True),
+                _attempt_payload(element_key="wrong", correct=False),
+            ]
+        },
+    )
+    default = client.get(f"/api/users/{user_id}/element-errors/review-queue")
+    assert [item["element_key"] for item in default.json()] == ["wrong"]
+    opted_in = client.get(
+        f"/api/users/{user_id}/element-errors/review-queue",
+        params={"include_never_wrong": "true"},
+    )
+    assert opted_in.status_code == 200
+    assert sorted(item["element_key"] for item in opted_in.json()) == ["clean", "wrong"]
