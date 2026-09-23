@@ -30,7 +30,7 @@ import {
     type ShuffleSourceLesson,
 } from "../../../lib/shuffle/shuffle-lesson";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
-import {stampHintUsage} from "../../../lib/hints/hint-usage";
+import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
 import {getStorage} from "../../../storage";
 import type {ContentLesson, ElementAttempt} from "../../../storage/types";
 
@@ -95,6 +95,8 @@ export function useShuffleLesson(
         }
         let cancelled = false;
         setStatus("loading");
+        // #3196 — hint usage is per run: forget the previous run's reveals.
+        clearHintUsage();
         setError(null);
         void (async () => {
             try {

@@ -19,6 +19,8 @@ export const LESSON_ROUTE_PREFIXES: readonly string[] = [
     "/lesson/",
     "/review/",
     "/adaptive-lesson/",
+    "/shuffle-lesson/",
+    "/endless-lesson/",
     "/error-replay/",
 ];
 
