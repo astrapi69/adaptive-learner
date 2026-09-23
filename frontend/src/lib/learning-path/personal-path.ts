@@ -25,9 +25,11 @@ import {computeStars, type StarRating} from "../lesson/lesson-summary";
 import {compareByDownloadPriority} from "../content/browse/discovery/download-priority";
 import {
     elementSrsDetails,
+    isSettledElement,
     srsLessonSummary,
     type SrsElementDetail,
     type SrsLessonSummary,
+    type SrsStatusOpts,
 } from "../srs/status";
 import type {ContentSetEntry} from "../../storage/types";
 import type {ElementError, LessonProgress} from "../../storage/types";
@@ -138,6 +140,12 @@ export interface BuildPersonalPathInput {
     errors: Record<string, ElementError[]>;
     /** Available-but-not-downloaded sets (for the bottom section). */
     notDownloaded: ContentSetEntry[];
+    /** #3170 — the Settings > Learning toggle "Auch fehlerfreie Elemente
+     *  wiederholen". Off (default): a never-wrong row is settled - not due,
+     *  and mastered for the path status. On: the SRS flag rules. The
+     *  ``errorCount`` ("Fehler trainieren") counts rows with an error in
+     *  BOTH cases; the wording decides that, not the toggle. */
+    includeNeverWrong?: boolean;
 }
 
 function dotFor(status: LessonNodeStatus): DotState {
@@ -166,6 +174,7 @@ function statusFor(
 function directionMastery(
     rows: ElementError[],
     direction: "target_to_source" | "source_to_target",
+    opts: SrsStatusOpts,
 ): MasteryState {
     const inDir =
         direction === "target_to_source"
@@ -176,8 +185,16 @@ function directionMastery(
               )
             : rows.filter((r) => r.direction === "source_to_target");
     if (inDir.length === 0) return "na";
-    if (inDir.every((r) => r.mastered)) return "mastered";
+    // #3170 — settled = SRS flag, or (by default) never answered wrong.
+    if (inDir.every((r) => isSettledElement(r, opts))) return "mastered";
     return "in_progress";
+}
+
+/** #3170 — "Fehler trainieren (N)" counts elements with an OPEN error:
+ *  wrong at least once and not yet mastered. A never-wrong row is a
+ *  streak / statistics row, never an error, whatever the toggle says. */
+function countOpenErrors(rows: readonly ElementError[]): number {
+    return rows.filter((r) => !r.mastered && r.error_count > 0).length;
 }
 
 /**
@@ -213,6 +230,7 @@ function buildSet(
     input: PersonalSetInput,
     progress: Record<string, LessonProgress>,
     errors: Record<string, ElementError[]>,
+    opts: SrsStatusOpts,
 ): PersonalPathSet {
     const {entry} = input;
     let completedCount = 0;
@@ -223,10 +241,10 @@ function buildSet(
         const key = lessonKey(entry.id, l.filename);
         const row = progress[key];
         const rows = errors[key] ?? [];
-        const mastery = masteryForLesson(rows);
+        const mastery = masteryForLesson(rows, opts);
         const status = statusFor(row, mastery.receptive, mastery.productive);
         if (status === "completed" || status === "mastered") completedCount += 1;
-        errorCount += rows.filter((r) => !r.mastered).length;
+        errorCount += countOpenErrors(rows);
         if (row && (lastActivity === null || row.updated_at > lastActivity)) {
             lastActivity = row.updated_at;
         }
@@ -241,12 +259,12 @@ function buildSet(
                 : (0 as StarRating),
             status,
             dot: dotFor(status),
-            receptive: directionMastery(rows, "target_to_source"),
-            productive: directionMastery(rows, "source_to_target"),
+            receptive: directionMastery(rows, "target_to_source", opts),
+            productive: directionMastery(rows, "source_to_target", opts),
             lastActivity: row?.updated_at ?? null,
             isCurrent: false,
-            srs: srsLessonSummary(rows),
-            elementDetails: elementSrsDetails(rows),
+            srs: srsLessonSummary(rows, new Date(), opts),
+            elementDetails: elementSrsDetails(rows, new Date(), opts),
         };
     });
 
@@ -344,8 +362,9 @@ export function buildPersonalPath(
     // All active sets are downloaded; the shared comparator (#909) orders them
     // started-first (most-recent activity), then untouched downloaded by title.
     // Not-downloaded sets are tier 3, handled as a separate section below.
+    const opts: SrsStatusOpts = {includeNeverWrong: input.includeNeverWrong};
     const activeSets = input.sets
-        .map((s) => buildSet(s, input.progress, input.errors))
+        .map((s) => buildSet(s, input.progress, input.errors, opts))
         .sort((a, b) =>
             compareByDownloadPriority(
                 {

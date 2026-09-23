@@ -223,9 +223,13 @@ export interface IElementErrorsNamespace {
    *  (overdue → weakness tier → error frequency → oldest error first,
    *  #603). ``limit`` caps the list (a review session passes 20); omit
    *  for the full queue (the "N due" count). */
+  /** #3170 — ``includeNeverWrong`` (default false) also schedules rows that
+   *  were never answered wrong; without it the queue holds errors only.
+   *  Callers go through ``lib/review/review-queue.loadReviewQueue`` so the
+   *  Settings > Learning toggle is applied in ONE place. */
   reviewQueue(
     userId: string,
-    opts?: { setId?: string; limit?: number },
+    opts?: { setId?: string; limit?: number; includeNeverWrong?: boolean },
   ): Promise<ReviewQueueItem[]>;
 }
 

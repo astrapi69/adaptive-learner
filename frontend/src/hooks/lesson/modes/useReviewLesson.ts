@@ -40,11 +40,13 @@ import {
     dedupeReviewQueueByElement,
     synthesizeReviewLesson,
 } from "../../../lib/review/review-lesson";
+import {loadReviewQueue} from "../../../lib/review/review-queue";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
 import {stampHintUsage} from "../../../lib/hints/hint-usage";
 import {getStorage} from "../../../storage";
 import type {
     ContentLesson,
+    ContentLessonStep,
     ElementAttempt,
     ReviewQueueItem,
 } from "../../../storage/types";
@@ -81,10 +83,11 @@ export interface UseReviewLessonResult {
      *  per-step scoring; the mastered-this-session count is
      *  reserved for the C16 review-mode summary. */
     currentStepIndex: number;
-    /** #664 — total UNIQUE elements due for review in this set (deduped by
-     *  ``element_key``, uncapped). The session presents at most ``limit`` of
-     *  these; the page shows "{presented} of {dueCount}" so the cap is
-     *  transparent. ``lesson.steps.length`` is the presented count. */
+    /** #664 — total UNIQUE elements due for review in this round (deduped
+     *  by ``element_key``, uncapped; #3170: minus the elements already
+     *  played earlier in this session). The session presents at most
+     *  ``limit`` questions covering these; the page shows "{covered} of
+     *  {dueCount}" so the cap is transparent. */
     dueCount: number;
     error: string | null;
     goNext: () => void;
@@ -93,18 +96,39 @@ export interface UseReviewLessonResult {
     /** Persist a step's element attempts. The hook does NOT
      *  track per-step scores in LessonProgress (review
      *  sessions are ephemeral — only ElementError rows are
-     *  affected). */
+     *  affected). #3170: pass the completed ``step`` so the elements it
+     *  covers (a collapsed matching question covers several, #664) count
+     *  as played even when the recorder reports fewer keys. */
     recordStepAttempts: (
         attempts: readonly ElementAttempt[],
+        step?: ContentLessonStep,
     ) => Promise<void>;
-    /** Tally for the summary screen — incremented when
-     *  recordStepAttempts gets a non-empty payload. */
+    /** Tally for the summary screen, per ELEMENT (#3170): distinct
+     *  element keys recorded this round, and how many of them ended
+     *  correct (a later attempt on the same element wins). Same basis as
+     *  the subtitle's element count. */
     sessionScoreCorrect: number;
     sessionScoreTotal: number;
-    /** #718 — re-fetch the (now smaller) due queue and start a fresh round
-     *  in place: resets the step index + session tallies and rebuilds the
-     *  synthesised lesson from whatever is still due. */
+    /** #3170 — elements of this round's queue not yet played. Drives the
+     *  "Noch {n} fällig. Weitermachen?" offer; 0 once every due element
+     *  was played, so a round cannot loop on a dedupe rest. */
+    remaining: number;
+    /** #718 — re-fetch the due queue and start a fresh round in place:
+     *  resets the step index + round tallies and rebuilds the synthesised
+     *  lesson from whatever is still due AND not yet played this session
+     *  (#3170), so "Weitere Runde" walks the rest and then ends. */
     reload: () => void;
+}
+
+/** Element keys a completed step counts as played: the recorded attempts
+ *  plus every queue element the step covers (#3170). */
+function playedKeysOf(
+    attempts: readonly ElementAttempt[],
+    step: ContentLessonStep | undefined,
+): string[] {
+    const keys = attempts.map((a) => a.element_key);
+    for (const key of step?.review_element_keys ?? []) keys.push(key);
+    return keys;
 }
 
 export function useReviewLesson(
@@ -120,6 +144,15 @@ export function useReviewLesson(
     const [sessionScoreCorrect, setSessionScoreCorrect] = useState(0);
     const [sessionScoreTotal, setSessionScoreTotal] = useState(0);
     const [reloadKey, setReloadKey] = useState(0);
+    // #3170 — element keys played in THIS SESSION (across rounds). The ref
+    // is the source of truth the fetch effect reads; the state mirror
+    // re-renders ``remaining``. The tally map is per round (reset by
+    // ``reload``) and keyed by element, so a matching question that fans
+    // out three attempts scores three elements, and a retried element
+    // scores once (last outcome wins).
+    const playedRef = useRef<Set<string>>(new Set());
+    const [played, setPlayed] = useState<ReadonlySet<string>>(() => new Set());
+    const tallyRef = useRef<Map<string, boolean>>(new Map());
 
     const userId = useMemo(() => readLearnerState().userId, []);
 
@@ -156,17 +189,22 @@ export function useReviewLesson(
                 // limit), de-dup by element, THEN cap. Capping at the
                 // storage layer first could fill the cap with repeats of
                 // one word, leaving the session short on unique elements.
-                const fetchedQueue = await storage.elementErrors.reviewQueue(
-                    userId,
-                    {setId},
-                );
+                // #3170 — ``loadReviewQueue`` applies the "also review
+                // error-free elements" toggle (errors only by default).
+                const fetchedQueue = await loadReviewQueue(userId, {setId});
                 if (cancelled) return;
                 // #664 — de-dup by element_key but do NOT cap here. The cap is
                 // applied AFTER the synthesizer collapses duplicate questions
                 // (a matching/picture_choice exercise covering several due
                 // cards is one question, not N), so capping the queue first
                 // would leave the session short on unique questions.
-                const dedupedQueue = dedupeReviewQueueByElement(fetchedQueue);
+                // #3170 — a further round presents only what this session
+                // has not played yet; a played element is rescheduled by
+                // its recording, not re-served because it is still in the
+                // (uncapped, non-overdue-filtered) queue.
+                const dedupedQueue = dedupeReviewQueueByElement(
+                    fetchedQueue,
+                ).filter((item) => !playedRef.current.has(item.element_key));
                 setQueue(dedupedQueue);
                 setDueCount(dedupedQueue.length);
 
@@ -238,12 +276,20 @@ export function useReviewLesson(
 
     const reload = useCallback(() => {
         setCurrentStepIndex(0);
+        // #3170 — the tally is per round; the played set is per session.
+        tallyRef.current = new Map();
         setSessionScoreCorrect(0);
         setSessionScoreTotal(0);
         setLesson(null);
         setStatus("loading");
         setReloadKey((k) => k + 1);
     }, []);
+
+    // #3170 — elements of this round's queue not yet played.
+    const remaining = useMemo(
+        () => queue.filter((item) => !played.has(item.element_key)).length,
+        [queue, played],
+    );
 
     const totalSteps = lesson?.steps.length ?? 0;
 
@@ -265,14 +311,22 @@ export function useReviewLesson(
     );
 
     const recordStepAttempts = useCallback(
-        async (attempts: readonly ElementAttempt[]) => {
+        async (attempts: readonly ElementAttempt[], step?: ContentLessonStep) => {
             if (attempts.length === 0 || !userId) return;
-            // Tally for the session summary (correct items
-            // beat attempts since matching produces multiple
-            // attempts per submit).
-            const correct = attempts.filter((a) => a.correct).length;
-            setSessionScoreCorrect((n) => n + correct);
-            setSessionScoreTotal((n) => n + attempts.length);
+            // #3170 — mark the elements played BEFORE the storage call, so a
+            // failed write still ends the round instead of re-serving them.
+            const next = new Set(playedRef.current);
+            for (const key of playedKeysOf(attempts, step)) next.add(key);
+            playedRef.current = next;
+            setPlayed(next);
+            // Tally per element for the session summary: a matching
+            // question fans out one attempt per pair (several elements), a
+            // retried element counts once.
+            for (const a of attempts) tallyRef.current.set(a.element_key, a.correct);
+            let correct = 0;
+            for (const ok of tallyRef.current.values()) if (ok) correct += 1;
+            setSessionScoreCorrect(correct);
+            setSessionScoreTotal(tallyRef.current.size);
             try {
                 await getStorage().elementErrors.recordBulk(
                     userId,
@@ -305,6 +359,7 @@ export function useReviewLesson(
         recordStepAttempts,
         sessionScoreCorrect,
         sessionScoreTotal,
+        remaining,
         reload,
     };
 }

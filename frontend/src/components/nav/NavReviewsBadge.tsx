@@ -22,6 +22,7 @@ import {
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {dedupeReviewQueueByElement} from "../../lib/review/review-lesson";
 import {subscribeCelebration} from "../../lib/praise/celebration-bus";
+import {loadReviewQueue} from "../../lib/review/review-queue";
 import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
 import {getStorage} from "../../storage";
 import {splitAroundCount} from "./split-around-count";
@@ -51,7 +52,7 @@ export default function NavReviewsBadge() {
         async function refresh() {
             try {
                 const [queue, setsRes] = await Promise.all([
-                    getStorage().elementErrors.reviewQueue(userId!),
+                    loadReviewQueue(userId!),
                     getStorage().contentLoader.listSets(),
                 ]);
                 if (cancelled) return;

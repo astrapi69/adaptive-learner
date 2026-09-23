@@ -226,7 +226,8 @@ def test_exam_correct_lengthens_the_review_interval(user_id: str) -> None:
         db.commit()
         assert row.last_attempt_exam is True
         assert row.correct_streak == 1
-        queue = compute_review_queue(repo, user_id)
+        # #3170: a never-wrong row is scheduled only when opted in.
+        queue = compute_review_queue(repo, user_id, include_never_wrong=True)
         item = queue[0]
         last = item.last_attempt_at
         if last.tzinfo is None:
@@ -277,7 +278,8 @@ def test_exam_boost_is_bounded_and_does_not_runaway(user_id: str) -> None:
             a.exam = True
             element_errors_service.record_attempt(repo, user_id, a)
         db.commit()
-        queue = compute_review_queue(repo, user_id)
+        # #3170: a never-wrong row is scheduled only when opted in.
+        queue = compute_review_queue(repo, user_id, include_never_wrong=True)
         item = queue[0]
         assert item.correct_streak == 2
         last = item.last_attempt_at
@@ -292,7 +294,7 @@ def test_exam_boost_is_bounded_and_does_not_runaway(user_id: str) -> None:
         a3.exam = True
         element_errors_service.record_attempt(repo, user_id, a3)
         db.commit()
-        assert compute_review_queue(repo, user_id) == []
+        assert compute_review_queue(repo, user_id, include_never_wrong=True) == []
     finally:
         db.close()
 
@@ -309,12 +311,11 @@ def test_exam_flag_clears_on_a_later_practice_answer(user_id: str) -> None:
         exam.exam = True
         element_errors_service.record_attempt(repo, user_id, exam)
         # Plain practice answer (exam defaults to False) → streak 2.
-        row = element_errors_service.record_attempt(
-            repo, user_id, _attempt(correct=True)
-        )
+        row = element_errors_service.record_attempt(repo, user_id, _attempt(correct=True))
         db.commit()
         assert row.last_attempt_exam is False
-        queue = compute_review_queue(repo, user_id)
+        # #3170: a never-wrong row is scheduled only when opted in.
+        queue = compute_review_queue(repo, user_id, include_never_wrong=True)
         item = queue[0]
         last = item.last_attempt_at
         if last.tzinfo is None:
@@ -614,5 +615,100 @@ def test_same_element_both_directions_appear_twice(user_id: str) -> None:
             "target_to_source",
             "source_to_target",
         }
+    finally:
+        db.close()
+
+
+# --- #3170: error training is error training --------------------------------
+
+
+def test_never_wrong_rows_are_excluded_by_default(user_id: str) -> None:
+    """#3170 reproduction: a single correct first attempt seeds a row with
+    ``error_count 0`` / ``correct_streak 1``. The queue used to schedule it
+    3 days later, so a flawless lesson still produced "Fehler trainieren
+    (N)" and a review session that called never-wrong elements
+    "korrigiert". By default the queue now holds only rows with at least
+    one recorded error."""
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        element_errors_service.record_attempt(repo, user_id, _attempt(correct=True))
+        db.commit()
+        assert compute_review_queue(repo, user_id) == []
+    finally:
+        db.close()
+
+
+def test_never_wrong_rows_are_included_when_opted_in(user_id: str) -> None:
+    """The Settings > Learning toggle "Auch fehlerfreie Elemente wiederholen"
+    keeps the pre-#3170 behaviour: never-wrong rows are scheduled too."""
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        element_errors_service.record_attempt(repo, user_id, _attempt(correct=True))
+        db.commit()
+        queue = compute_review_queue(repo, user_id, include_never_wrong=True)
+        assert len(queue) == 1
+        assert queue[0].error_count == 0
+        assert queue[0].correct_streak == 1
+    finally:
+        db.close()
+
+
+@pytest.mark.parametrize(
+    ("outcomes", "expected_error_count"),
+    [
+        pytest.param([False], 1, id="wrong-once"),
+        pytest.param([False, True], 1, id="wrong-then-corrected"),
+        pytest.param([True, False], 1, id="right-then-wrong"),
+        pytest.param([False, True, True], 1, id="corrected-twice-not-yet-mastered"),
+    ],
+)
+def test_rows_with_an_error_stay_in_the_default_queue(
+    user_id: str,
+    outcomes: list[bool],
+    expected_error_count: int,
+) -> None:
+    """Boundary: any row that was wrong at least once (and is not mastered)
+    stays in the default queue, whatever the later corrections did to the
+    streak."""
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        for correct in outcomes:
+            element_errors_service.record_attempt(repo, user_id, _attempt(correct=correct))
+        db.commit()
+        queue = compute_review_queue(repo, user_id)
+        assert len(queue) == 1
+        assert queue[0].error_count == expected_error_count
+    finally:
+        db.close()
+
+
+def test_default_queue_mixes_only_error_rows_and_keeps_the_sort(user_id: str) -> None:
+    """Happy path: two never-wrong rows and two error rows; the default queue
+    returns exactly the two error rows, still ordered by the #603 priority
+    (the wrong one before the corrected one)."""
+    db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
+    try:
+        for key in ("clean-a", "clean-b"):
+            element_errors_service.record_attempt(
+                repo, user_id, _attempt(element_key=key, correct=True)
+            )
+        element_errors_service.record_attempt(
+            repo, user_id, _attempt(element_key="corrected", correct=False)
+        )
+        element_errors_service.record_attempt(
+            repo, user_id, _attempt(element_key="corrected", correct=True)
+        )
+        element_errors_service.record_attempt(
+            repo, user_id, _attempt(element_key="wrong", correct=False)
+        )
+        db.commit()
+        queue = compute_review_queue(repo, user_id)
+        assert [item.element_key for item in queue] == ["wrong", "corrected"]
+        everything = compute_review_queue(repo, user_id, include_never_wrong=True)
+        assert len(everything) == 4
     finally:
         db.close()

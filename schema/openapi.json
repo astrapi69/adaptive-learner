@@ -14506,7 +14506,7 @@
     },
     "/api/users/{user_id}/element-errors/review-queue": {
       "get": {
-        "description": "SRS review queue for the user (Phase 46C / P-129; #603).\n\nReturns active (non-mastered) element-error rows projected into\nreview items with computed ``suggested_review_at`` + ``overdue``\nfields. Sorted by overdue → weakness tier (wrong > almost-right >\ncorrect) → error frequency → oldest error first, capped at\n``limit`` when given, so the review session stays focused.",
+        "description": "SRS review queue for the user (Phase 46C / P-129; #603; #3170).\n\nReturns active (non-mastered) element-error rows projected into\nreview items with computed ``suggested_review_at`` + ``overdue``\nfields. Sorted by overdue → weakness tier (wrong > almost-right >\ncorrect) → error frequency → oldest error first, capped at\n``limit`` when given, so the review session stays focused. Rows\nthat were never wrong are left out unless ``include_never_wrong``.",
         "operationId": "review_queue_api_users__user_id__element_errors_review_queue_get",
         "parameters": [
           {
@@ -14553,6 +14553,18 @@
               ],
               "description": "#603 - cap the returned items (a review session uses MAX_REVIEW_SESSION=20). Omit for the full queue (the 'N due' count).",
               "title": "Limit"
+            }
+          },
+          {
+            "description": "#3170 - also schedule elements that were never answered wrong (error_count 0). Off by default: the queue holds errors only. The Settings > Learning toggle 'Also review error-free elements' sends true.",
+            "in": "query",
+            "name": "include_never_wrong",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "#3170 - also schedule elements that were never answered wrong (error_count 0). Off by default: the queue holds errors only. The Settings > Learning toggle 'Also review error-free elements' sends true.",
+              "title": "Include Never Wrong",
+              "type": "boolean"
             }
           }
         ],
