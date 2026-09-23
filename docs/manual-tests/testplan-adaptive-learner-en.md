@@ -3216,6 +3216,40 @@ Location: Settings > General > Profile, below the figure gallery.
       for ever); with ON the three-in-a-row rule applies again
 - [ ] Check both in browser mode (no server) AND in server mode
 
+### Review session on the runner shell (EXP-052 slice 1, #3169)
+
+- [ ] Open `/review/<set>` with due elements: header with "Back to
+      Dashboard", the title "Review session" and the element subtitle; the
+      progress bar "Step 1 of N" below; the footer looks like a lesson's
+      (chevron "Previous" on the left, "Check" with a check icon on the
+      right), no pause, no options bar
+- [ ] "Previous" is disabled on the first step; after "Next" it goes one
+      step back within the same run (not to the dashboard)
+- [ ] Enter in a cloze answer: the first Enter checks, the second Enter
+      advances; without an answer Enter does nothing; with the Enter
+      shortcut switched off (Settings > Learning) Enter does nothing
+- [ ] On the phone after "Next" (or Enter): the view jumps to the top of
+      the new step (the header slides away, bar and task are visible, no
+      cut-off top); rotate the device: task and footer are back in view
+- [ ] Going back to an already answered step: the answer is locked
+      (solution visible, no input), the footer shows "Next" instead of
+      "Check", Enter advances instead of checking; in Statistics / Train
+      errors the element then counts EXACTLY ONCE for this round (no second
+      attempt from answering again)
+- [ ] Going back to a step NOT answered yet (e.g. after jumping forward
+      and back): the step stays answerable, "Check" is there
+- [ ] Hints from an earlier run do not count (#3196): reveal a hint in a
+      lesson, then open `/review/<set>` and answer the same element without
+      a hint: the attempt is NOT marked "with hint" in Statistics; a hint
+      revealed IN the session still counts; "Another round" starts without
+      hint marks again
+- [ ] Summary: unchanged (recap, SRS note, "Another round" while elements
+      remain, come-back line); the footer there shows only "Previous" (a
+      look back at the last, locked step)
+- [ ] Loading, "All caught up", "set not downloaded" and error show the
+      same screens as before (Back to Dashboard or Open content browser)
+- [ ] Check both in browser mode (no server) AND in server mode
+
 ---
 
 # PART B: AUTOMATED TESTS (reference)

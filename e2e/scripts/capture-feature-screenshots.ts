@@ -47,6 +47,7 @@ import {
     setTheme,
     settleForScreenshot,
     gotoDashboardWithDueReviews,
+    gotoReviewSession,
     playBundledLesson,
 } from "../visual/helpers";
 
@@ -946,6 +947,61 @@ async function gotoDetailedLessonSummary(page: Page): Promise<boolean> {
 const BUNDLED_SET_ID = "fr-a1-from-en";
 
 /**
+ * EXP-052 slice 1 (#3169) - the review session on the LessonRunner shell:
+ * the session header (back button, title, element-count subtitle), the
+ * shared progress bar and the lesson footer (chevron Previous, check icon
+ * on the two-phase button). ``gotoReviewSession`` seeds the SRS rows with a
+ * wrong matching pair and re-enters the route until the active session
+ * renders (#1540).
+ */
+async function gotoReviewStep(page: Page): Promise<boolean> {
+    if (!(await gotoReviewSession(page))) return false;
+    await expect(page.getByTestId("review-check")).toBeVisible({timeout: 10_000});
+    await page.waitForTimeout(400);
+    return true;
+}
+
+/**
+ * EXP-052 slice 1 (#3169) - the review summary rendered through the shell's
+ * summary render prop: the recap with the SRS note and the come-back line;
+ * the footer keeps the Previous button on the summary (a locked read-only
+ * look back, #1790). The seeded round has exactly one due element, so the
+ * summary is one answered step away.
+ */
+async function gotoReviewSummary(page: Page): Promise<boolean> {
+    if (!(await gotoReviewStep(page))) return false;
+    const answered = await answerReviewStep(page);
+    if (!answered) return false;
+    await page.getByTestId("review-next").click();
+    await expect(page.getByTestId("review-summary")).toBeVisible({timeout: 10_000});
+    await page.waitForTimeout(400);
+    return true;
+}
+
+/**
+ * Answer the open review step and check it. The seeded error row comes
+ * from a matching exercise, so the review presents a matching question:
+ * pair every left tile with the right tile of the same index (right or
+ * wrong does not matter for the shot), then check. Returns false when the
+ * step is not a matching exercise (a future seed may change the type).
+ */
+async function answerReviewStep(page: Page): Promise<boolean> {
+    const lefts = page.locator("[data-testid^='matching-left-']");
+    const rights = page.locator("[data-testid^='matching-right-']");
+    const count = await lefts.count();
+    if (count === 0 || count !== (await rights.count())) return false;
+    for (let i = 0; i < count; i++) {
+        await lefts.nth(i).click();
+        await rights.nth(i).click();
+    }
+    const check = page.getByTestId("review-check");
+    await expect(check).toBeEnabled({timeout: 10_000});
+    await check.click();
+    await expect(page.getByTestId("review-next")).toBeVisible({timeout: 10_000});
+    return true;
+}
+
+/**
  * #3171 — the "Repeat everything" confirmation on the learning-path set
  * panel. A played lesson gives the set results, so the button is offered
  * and the dialog has an average to name; the shot is taken once the
@@ -1580,6 +1636,10 @@ const FEATURES: FeatureShot[] = [
         },
         pinTo: "settings-diagnostics",
     },
+
+    // --- Review session on the LessonRunner shell (EXP-052 slice 1, #3169) ---
+    {path: "review-session/schritt", setup: gotoReviewStep, pinTo: "review-page"},
+    {path: "review-session/zusammenfassung", setup: gotoReviewSummary, pinTo: "review-summary"},
 
     // --- ViewportDiagnostic tap-offset probe (#1569, collapsed #2779) ---
     {path: "viewport-diagnostic/eingeklappt", setup: gotoViewportDiagnostic},

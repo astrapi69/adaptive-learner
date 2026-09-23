@@ -1466,7 +1466,7 @@ async function settleDashboard(
  * the route while the write is still in flight instead of accepting
  * whichever state renders first.
  */
-async function gotoReviewSession(page: Page): Promise<boolean> {
+export async function gotoReviewSession(page: Page): Promise<boolean> {
     await seedLearner(page);
     await playBundledLesson(page, "matching-result");
     // The wrong pair guarantees error rows; make sure they LANDED before

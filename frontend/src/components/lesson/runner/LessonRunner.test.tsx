@@ -1,38 +1,110 @@
 /**
- * LessonRunner placeholder (EXP-052 slice 0, refs #3169).
+ * LessonRunner composition (EXP-052 slice 1, refs #3169).
  *
- * Slice 0 ships the shell's frame only: the ``<main>`` every runner
- * will render through, with the policy's testid prefix and the #959
- * scroll anchor id. Nothing is composed yet (no status view, no
- * footer, no summary); slices 1 to 4 fill the frame one page at a
- * time. These pins hold the frame contract until then.
+ * Slice 0 pinned an empty frame; slice 1 composes it: status view,
+ * header, scroll anchor, progress, the exercise step, the summary render
+ * prop at exactly one place, the policy-driven footer, the pinned lesson
+ * mode, the two-phase state and the hint clear keyed on the run. Each
+ * pin holds the shell's contract for the pages that migrate in slices 2
+ * to 4.
  */
 
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import "@testing-library/jest-dom/vitest";
+import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {MemoryRouter, Route, Routes} from "react-router";
+import {beforeEach, describe, expect, it, vi} from "vitest";
 
+import {useLessonMode} from "../../../hooks/lesson/modes/useLessonMode";
+import {clearHintUsage, markHintUsed, wasHintUsed} from "../../../lib/hints/hint-usage";
 import LessonRunner from "./LessonRunner";
-import { RUNNER_POLICIES } from "./policies";
-import type { RunnerSource } from "./types";
+import {ENDLESS_POLICY, LESSON_POLICY, REVIEW_POLICY, RUNNER_POLICIES} from "./policies";
+import type {RunnerPolicy, RunnerSource, RunnerSourceStatus} from "./types";
 
-const SOURCE: RunnerSource = {
-  status: "ready",
-  error: null,
-  title: "Test",
-  step: null,
-  cards: [],
-  lessonId: "l1",
-  position: { index: 0, total: 1 },
-  isSummary: false,
-  goNext: () => {},
-  recordStepAttempts: async () => {},
+vi.mock("../../exercises/shell/ExerciseDispatcher", async (orig) => {
+  const actual = await orig<typeof import("../../exercises/shell/ExerciseDispatcher")>();
+  const {forwardRef, useImperativeHandle} = await import("react");
+  type Props = {
+    onInteraction?: (a: boolean) => void;
+    onComplete: (r: unknown) => Promise<void>;
+  };
+  const Mock = forwardRef<{submit: () => void}, Props>((props, ref) => {
+    useImperativeHandle(ref, () => ({
+      submit: () => void props.onComplete({correct: 1, total: 1, attempts: []}),
+    }));
+    return <input data-testid="mock-input" onChange={() => props.onInteraction?.(true)} />;
+  });
+  Mock.displayName = "MockExerciseDispatcher";
+  return {...actual, ExerciseDispatcher: Mock};
+});
+
+const STEP = {
+  id: "s0",
+  type: "exercise" as const,
+  title: null,
+  exercise: {
+    id: "ex-a",
+    type: "cloze" as const,
+    prompt: "Fill in",
+    card_ids: [],
+    sentence: "___",
+    blanks: [{accept: ["a"]}],
+    distractors: [],
+  },
 };
 
-describe("LessonRunner placeholder", () => {
+function makeSource(overrides: Partial<RunnerSource> = {}): RunnerSource {
+  return {
+    status: "ready",
+    error: null,
+    title: "Review session",
+    subtitle: "Reviewing 2 elements",
+    step: STEP,
+    cards: [],
+    setId: "fr-a1",
+    lessonId: "l1",
+    runKey: "fr-a1#0",
+    position: {index: 0, total: 2},
+    isSummary: false,
+    tallies: {correct: 1, total: 2, remaining: 3},
+    goNext: vi.fn(),
+    goPrev: vi.fn(),
+    recordStepAttempts: vi.fn().mockResolvedValue(undefined),
+    ...overrides,
+  };
+}
+
+function mount(source: RunnerSource, policy: RunnerPolicy = REVIEW_POLICY, extra = {}) {
+  return render(
+    <MemoryRouter initialEntries={["/review/fr-a1"]}>
+      <Routes>
+        <Route
+          path="/review/:setId"
+          element={
+            <LessonRunner
+              source={source}
+              policy={policy}
+              summary={(tallies) => (
+                <div data-testid="summary-probe">{`${tallies.correct}/${tallies.total}/${tallies.remaining}`}</div>
+              )}
+              {...extra}
+            />
+          }
+        />
+        <Route path="/dashboard" element={<div data-testid="dashboard-stub" />} />
+      </Routes>
+    </MemoryRouter>,
+  );
+}
+
+beforeEach(() => {
+  clearHintUsage();
+});
+
+describe("LessonRunner: frame", () => {
   it.each(Object.entries(RUNNER_POLICIES))(
     "%s renders main#main.lesson-page with the prefixed page testid",
     (prefix, policy) => {
-      render(<LessonRunner source={SOURCE} policy={policy} summary={() => null} />);
+      mount(makeSource(), policy);
       const main = screen.getByTestId(`${prefix}-page`);
       expect(main.tagName).toBe("MAIN");
       expect(main).toHaveAttribute("id", "main");
@@ -40,34 +112,178 @@ describe("LessonRunner placeholder", () => {
     },
   );
 
-  it("composes nothing yet: the frame is empty", () => {
-    render(<LessonRunner source={SOURCE} policy={RUNNER_POLICIES.review} summary={() => null} />);
-    expect(screen.getByTestId("review-page").childElementCount).toBe(0);
+  it("renders the step anchor before the progress bar", () => {
+    mount(makeSource());
+    const anchor = screen.getByTestId("review-step-anchor");
+    const bar = screen.getByTestId("review-progress-bar");
+    expect(anchor.compareDocumentPosition(bar) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+});
+
+describe("LessonRunner: status screens", () => {
+  it.each([
+    ["loading", "review-loading"],
+    ["empty", "review-empty"],
+    ["not-cached", "review-not-cached"],
+    ["error", "review-error"],
+  ] as Array<[RunnerSourceStatus, string]>)("%s renders %s and no frame", (status, testId) => {
+    mount(makeSource({status, step: null}));
+    expect(screen.getByTestId(testId)).toBeInTheDocument();
+    expect(screen.queryByTestId("review-page")).toBeNull();
   });
 
-  it("does not invoke the summary or headerExtra render props yet", () => {
-    const summary = vi.fn(() => null);
-    const headerExtra = vi.fn(() => null);
-    render(
-      <LessonRunner
-        source={{ ...SOURCE, isSummary: true }}
-        policy={RUNNER_POLICIES.endless}
-        summary={summary}
-        headerExtra={headerExtra}
-      />,
-    );
-    expect(summary).not.toHaveBeenCalled();
-    expect(headerExtra).not.toHaveBeenCalled();
+  it("boundary: a missing set id wins over a ready source", () => {
+    mount(makeSource({setId: ""}));
+    expect(screen.getByTestId("review-missing-params")).toBeInTheDocument();
+  });
+});
+
+describe("LessonRunner: header and progress", () => {
+  it("renders the session header with back button, title and subtitle", () => {
+    mount(makeSource());
+    expect(screen.getByTestId("review-back-btn")).toBeInTheDocument();
+    expect(screen.getByRole("heading", {level: 1})).toHaveTextContent("Review session");
+    expect(screen.getByTestId("review-subtitle")).toHaveTextContent("Reviewing 2 elements");
   });
 
-  it("accepts a stream source without a position (Endless)", () => {
+  it("computes the percent once from the position", () => {
+    mount(makeSource({position: {index: 1, total: 4}}));
+    expect(screen.getByTestId("review-progress-bar")).toHaveAttribute("aria-valuenow", "25");
+    expect(screen.getByTestId("review-progress-bar")).toHaveTextContent("Step 2 of 4");
+  });
+
+  it("renders the header extension", () => {
+    mount(makeSource(), REVIEW_POLICY, {
+      headerExtra: (source: RunnerSource) => <p data-testid="extra">{source.title}</p>,
+    });
+    expect(screen.getByTestId("extra")).toHaveTextContent("Review session");
+  });
+});
+
+describe("LessonRunner: step, footer and two-phase state", () => {
+  it("renders the step article under the prefix and the policy footer (prev, check, no pause)", () => {
+    mount(makeSource());
+    expect(screen.getByTestId("review-step-s0")).toBeInTheDocument();
+    expect(screen.getByTestId("review-prev")).toBeDisabled();
+    expect(screen.getByTestId("review-check")).toBeDisabled();
+    expect(screen.queryByTestId("review-pause-btn")).toBeNull();
+    expect(screen.queryByTestId("review-next")).toBeNull();
+  });
+
+  it("policy table: Endless has no Previous, the lesson carries the pause control", () => {
+    const {unmount} = mount(makeSource({position: null, goPrev: undefined}), ENDLESS_POLICY);
+    expect(screen.queryByTestId("endless-prev")).toBeNull();
+    unmount();
+    mount(makeSource(), LESSON_POLICY);
+    expect(screen.getByTestId("lesson-pause-btn")).toBeInTheDocument();
+  });
+
+  it("Check grades through the exercise ref, then Next advances through the source", async () => {
+    const source = makeSource();
+    mount(source);
+    fireEvent.change(screen.getByTestId("mock-input"), {target: {value: "a"}});
+    await waitFor(() => expect(screen.getByTestId("review-check")).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId("review-check"));
+    await waitFor(() => expect(screen.getByTestId("review-next")).toBeInTheDocument());
+    expect(source.recordStepAttempts).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByTestId("review-next"));
+    expect(source.goNext).toHaveBeenCalledTimes(1);
+  });
+
+  it("Previous goes back through the source", () => {
+    const source = makeSource({position: {index: 1, total: 2}});
+    mount(source);
+    fireEvent.click(screen.getByTestId("review-prev"));
+    expect(source.goPrev).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("LessonRunner: summary render prop", () => {
+  it("renders the summary exactly once, between progress and footer, with the source tallies", () => {
+    mount(makeSource({step: null, isSummary: true, position: {index: 2, total: 2}}));
+    const probes = screen.getAllByTestId("summary-probe");
+    expect(probes).toHaveLength(1);
+    expect(probes[0]).toHaveTextContent("1/2/3");
+    const bar = screen.getByTestId("review-progress-bar");
+    const footer = screen.getByTestId("review-footer");
+    expect(bar.compareDocumentPosition(probes[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(probes[0].compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.queryByTestId("review-check")).toBeNull();
+    expect(screen.queryByTestId("review-next")).toBeNull();
+  });
+
+  it("does not render the summary on a step", () => {
+    mount(makeSource());
+    expect(screen.queryByTestId("summary-probe")).toBeNull();
+  });
+});
+
+describe("LessonRunner: pinned lesson mode", () => {
+  function ModeProbe() {
+    const {mode} = useLessonMode();
+    return <span data-testid="mode-probe">{mode}</span>;
+  }
+
+  it("wraps the content in the policy's mode (review pins practice)", () => {
     render(
-      <LessonRunner
-        source={{ ...SOURCE, position: null }}
-        policy={RUNNER_POLICIES.endless}
-        summary={() => null}
-      />,
+      <MemoryRouter>
+        <LessonRunner
+          source={makeSource({step: null, isSummary: true})}
+          policy={REVIEW_POLICY}
+          summary={() => <ModeProbe />}
+        />
+      </MemoryRouter>,
     );
-    expect(screen.getByTestId("endless-page")).toBeInTheDocument();
+    expect(screen.getByTestId("mode-probe")).toHaveTextContent("practice");
+  });
+
+  it("a policy pinning another mode reaches the content", () => {
+    render(
+      <MemoryRouter>
+        <LessonRunner
+          source={makeSource({step: null, isSummary: true})}
+          policy={{...REVIEW_POLICY, mode: "exam"}}
+          summary={() => <ModeProbe />}
+        />
+      </MemoryRouter>,
+    );
+    expect(screen.getByTestId("mode-probe")).toHaveTextContent("exam");
+  });
+});
+
+describe("LessonRunner: hint usage cleared per run", () => {
+  it("clears at run start", () => {
+    markHintUsed("ex-a");
+    mount(makeSource());
+    expect(wasHintUsed("ex-a")).toBe(false);
+  });
+
+  it("edge: does not clear on a re-render of the same run", async () => {
+    mount(makeSource());
+    markHintUsed("ex-a");
+    fireEvent.change(screen.getByTestId("mock-input"), {target: {value: "a"}});
+    await waitFor(() => expect(screen.getByTestId("review-check")).not.toBeDisabled());
+    expect(wasHintUsed("ex-a")).toBe(true);
+  });
+
+  it("boundary: a new run key clears again", () => {
+    const {rerender} = render(
+      <MemoryRouter>
+        <LessonRunner source={makeSource()} policy={REVIEW_POLICY} summary={() => null} />
+      </MemoryRouter>,
+    );
+    markHintUsed("ex-a");
+    act(() => {
+      rerender(
+        <MemoryRouter>
+          <LessonRunner
+            source={makeSource({runKey: "fr-a1#1"})}
+            policy={REVIEW_POLICY}
+            summary={() => null}
+          />
+        </MemoryRouter>,
+      );
+    });
+    expect(wasHintUsed("ex-a")).toBe(false);
   });
 });

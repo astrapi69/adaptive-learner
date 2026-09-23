@@ -21,16 +21,33 @@ import {
 import {useLessonShortcuts} from "../interaction/useLessonShortcuts";
 import type {ContentLesson, LessonProgress, RawAnswer} from "../../../storage/types";
 
+/**
+ * Where the stored step results come from: the persisted
+ * ``LessonProgress`` row of a lesson, or the run-local results an
+ * ephemeral runner keeps for the current run only (EXP-052 slice 1,
+ * ``useRunStepResults``). Both carry ``step_results`` keyed by step id;
+ * nothing else is read here.
+ */
+export type StepResultsSource = Pick<LessonProgress, "step_results">;
+
 export interface UseLessonStepStateOptions {
-    lesson: ContentLesson | null;
+    /** The lesson whose steps are indexed by ``currentStepIndex``; the
+     *  runner shell holds no lesson and passes ``stepId`` instead. */
+    lesson?: ContentLesson | null;
     currentStepIndex: number;
     /**
-     * The persisted progress row that locks an already-answered step.
-     * Only the lesson persists progress; the ephemeral runners (review,
-     * shuffle, endless, adaptive, error replay, EXP-052) pass nothing,
-     * which behaves like ``null``: no step is ever entered locked.
+     * The step results that lock an already-answered step: the lesson's
+     * persisted progress row, or an ephemeral runner's run-local results
+     * (EXP-052 slice 1, the #1790 lock for review and its siblings).
+     * Omitted or ``null``: no step is ever entered locked.
      */
-    progress?: LessonProgress | null;
+    progress?: StepResultsSource | null;
+    /**
+     * The id of the current step, for a caller without a lesson (the
+     * runner shell reads it off its source). When given it wins over the
+     * ``lesson`` + ``currentStepIndex`` lookup; ``null`` on the summary.
+     */
+    stepId?: string | null;
 }
 
 /**
@@ -42,9 +59,10 @@ export interface UseLessonStepStateOptions {
  *     onInteraction={stepState.setAnswerable} ... />
  */
 export function useLessonStepState({
-    lesson,
+    lesson = null,
     currentStepIndex,
     progress = null,
+    stepId,
 }: UseLessonStepStateOptions) {
     // BUG P1 / Problem 1 — two-phase "Prüfen" → "Weiter" button.
     // The active exercise reports whether its answer is checkable
@@ -87,7 +105,10 @@ export function useLessonStepState({
     const prevStepIndexRef = useRef(-1);
     if (prevStepIndexRef.current !== currentStepIndex) {
         prevStepIndexRef.current = currentStepIndex;
-        const stored = storedStepResult(lesson, currentStepIndex, progress);
+        const stored =
+            stepId != null
+                ? progress?.step_results?.[stepId]
+                : storedStepResult(lesson, currentStepIndex, progress);
         setAnswerable(false);
         setChecked(false);
         setEnteredReviewed(stored != null);
