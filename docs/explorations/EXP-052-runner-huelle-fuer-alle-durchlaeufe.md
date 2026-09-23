@@ -788,6 +788,96 @@ also klappt die Navigation dort nicht ein. Unabhängig von der Hülle: #3197.
    plus der Render-Prop `headerExtra` an der Hülle); die Endless-Zeile
    trägt die strukturelle Begründung im Docstring.
 
+## i18n-Entscheid vor Scheibe 1 (Owner-Entscheid 2026-09-23)
+
+Grundlage `develop` dfefc8e05 und die elf Kataloge. Scheibe 0 (#3201) hatte
+gemeldet, dass `lesson.error_replay` keine Statusbildschirm-Schlüssel trägt
+und `error.invalid_data` nur unter `lesson.*` liegt; die vorgeschlagenen
+Auswege (neue `lesson.error_replay.*`-Schlüssel, oder die Hülle liest immer
+`lesson.*`) tragen beide nicht.
+
+### Was die Kataloge sagen
+
+Fünf Statustexte, vier Namensräume (`review`, `shuffle`, `endless`,
+`adaptive`), alle elf Sprachen besetzt. Drei davon sind in der Quelle (en)
+wortgleich, also echte Dopplung: `back_to_dashboard`, `not_cached_body`,
+`error.missing_params`. Zwei sind zu Recht verschieden, weil sie der
+lernenden Person erklären, warum genau dieser Lauf nichts zeigt:
+`empty_body` ("All caught up! ..." gegen "This set needs at least two
+lessons ..." gegen "Nothing to adapt yet ...") und `error.load_failed`.
+
+"Immer `lesson.*`" geht nicht: `lesson.back_to_dashboard` und
+`lesson.empty_body` existieren nicht, und `lesson.error.missing_params`
+("No lesson selected ...") sowie `lesson.not_cached_body` ("This lesson
+isn't downloaded ...") sprechen von einer Lektion, wo fünf Läufer ein Set
+brauchen.
+
+Nebenbefund: die Dopplung hatte bereits Drift erzeugt. Im Deutschen drei
+Fassungen eines englischen Satzes (`not_cached_body`: "Öffne den
+Inhalts-Browser zuerst." gegen "... um es zuerst herunterzuladen." gegen
+"... um es zuerst zu laden."), dazu "Inhalts-Set" gegen "Inhaltsset"; el,
+es, fr, hi, id, ja, ko, pt, tr trugen ebenfalls Varianten, und
+`repo.back_to_dashboard` war eine fünfte Kopie desselben Satzes. Dieselbe
+Fehlerklasse wie die fünf Fuß-Implementierungen: kopierte Wahrheit driftet,
+und kein Test vergleicht sie. Issue #3203.
+
+### Entscheid
+
+1. **Neuer Namensraum `runner.*` für die geteilte Chrome**, in allen elf
+   Katalogen: `runner.back_to_dashboard`, `runner.not_cached_body`,
+   `runner.error.missing_params`, `runner.error.invalid_data`. Letzterer
+   kommt von `lesson.error.invalid_data`, von "lesson" auf "content"
+   neutralisiert. Für jede Sprache gewinnt die Fassung, die der englischen
+   Quelle und den Begriffen des eigenen Katalogs am nächsten liegt (de:
+   "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser,
+   um es zuerst herunterzuladen." und "Kein Inhalts-Set ausgewählt."; el
+   `σετ` statt `σύνολο`; pt die im Katalog vorherrschende
+   "baixado"-Varietät; tr "Panoya dön", weil die Navigation "Pano" sagt).
+   Alle bestehenden Kopien werden auf diese eine Fassung gezogen, damit
+   alter und neuer Pfad bis Scheibe 4 dasselbe rendern. Eigener i18n-PR
+   vor Scheibe 1 (#2578): PR #3204.
+2. **`empty_body` und `error.load_failed` bleiben pro Läufer** und werden
+   über die Policy adressiert: zwei neue Felder `emptyBodyKey: string` und
+   `loadFailedKey: string` in `RunnerPolicy`; die sechs eingefrorenen
+   Policies tragen die bestehenden Schlüssel als Literale. Kein Katalog
+   ändert sich dafür, die Hülle bekommt keine Verzweigung.
+3. **ErrorReplay braucht keine neuen Schlüssel.** `lesson.error_replay.empty`
+   existiert in allen elf Katalogen und ist genau der Leerzustandstext, den
+   die Seite heute inline rendert; die Policy zeigt mit `emptyBodyKey`
+   darauf. Für `loadFailedKey` ist `lesson.error.load_failed` sachlich
+   richtig, weil der Replay aus einer konkreten Lektion kommt.
+4. **Abräumen der ersetzten Kopien erst in Scheibe 4**, wenn die letzte
+   Seite umgestellt ist. Solange die Originale neben `RunnerFooter` und
+   `RunnerStatusView` liegen, laufen beide Pfade. Kein Test schlägt auf
+   unbenutzte Schlüssel an (geprüft: `i18n-sync`, `update-guard-parity`,
+   `full-tree-key-coverage` prüfen nur Schlüssel, die der Code liest).
+5. **Ein Test macht die Drift künftig rot**: für jeden `runner.*`-Schlüssel
+   darf kein Namensraum in keiner Sprache eine abweichende Kopie desselben
+   englischen Texts führen. Er lebt in `i18n-sync.test.ts`, weil das die
+   eine Datei ist, die der `i18n_only`-Pfad der PR-CI namentlich ausführt;
+   ein reiner Katalog-PR kann einen Runner-Satz also nicht unbemerkt neu
+   abzweigen. RED-Beleg: mit den Schlüsseln, aber ohne Konsolidierung,
+   fielen drei der vier Drift-Prüfungen.
+
+### Zu den beiden Annahmen aus Scheibe 0
+
+- **Replay leert Hinweise beim Mount, nicht pro Runde**: bestätigt. Die
+  Blitzrunde ist kein neuer Lauf, sondern ein Abschnitt desselben; pro
+  Runde zu leeren hiesse, einen in Runde eins aufgedeckten Tipp beim
+  erneuten Antreffen desselben Elements zu vergessen.
+- **`RunnerFooter` und `RunnerStatusView` neben den Originalen, mit
+  Byte-Paritätstests, Dopplung endet mit Scheibe 4**: bestätigt, mit
+  Auflage: die Paritätstests werden in derselben PR gelöscht, die das
+  letzte Original entfernt. Ein Paritätstest gegen eine gelöschte Datei
+  ist entweder rot oder er testet nichts, und die zweite Variante ist die
+  gefährlichere.
+
+### Stand
+
+Scheibe 0 ist gemerged (#3201, c1ff0fdf0); die Vorbedingungen #3196
+(b33eddd23) und #3197 (2cc1beb14) lagen vorher auf `develop`. Scheibe 1
+beginnt nach dem i18n-PR (#3204) und dem Policy-PR zu Punkt 2 und 3.
+
 ---
 
 ## Verwandte Dokumente
