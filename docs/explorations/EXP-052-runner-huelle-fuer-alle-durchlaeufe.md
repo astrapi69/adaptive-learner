@@ -554,7 +554,9 @@ der Scheibe zurechenbar oder wird zurückgesetzt.
 
 Vor Scheibe 1 zu treffen; jede Zeile ist eine Policy-Spalte.
 
-1. **Verhaltensmatrix.** Vorschlag als Startpunkt:
+1. **Verhaltensmatrix.** Ratifiziert am 2026-09-23, siehe Abschnitt
+   "Ratifizierte Verhaltensmatrix" unten; die Tabelle hier bleibt als
+   Vorschlagsstand stehen. Vorschlag als Startpunkt:
 
    | Policy | Lesson | Review | Shuffle | Endless | Adaptive | ErrorReplay |
    |---|---|---|---|---|---|---|
@@ -683,8 +685,108 @@ und #590/#594 (je ein Test pro Läufer und Verhalten); Testabdeckung der
 Policy-Logik mindestens 80 Prozent (Policy-Auswertung als reine Funktionen
 mit Tabellentests über die sechs Konstanten, praktisch vollständig).
 
-Vor Scheibe 1 bleibt die Verhaltensmatrix (Offene Entscheidungen, Punkt 1)
-vom Owner zu ratifizieren.
+Die Verhaltensmatrix ist inzwischen ratifiziert (nächster Abschnitt).
+
+---
+
+## Ratifizierte Verhaltensmatrix (Owner-Entscheid 2026-09-23)
+
+Grundlage ist der Code auf `develop` d576575a0. Vier Befunde gehen der
+Ratifikation voraus; drei ändern die Matrix, einer ist ein Datenfehler mit
+eigenem Vorgang.
+
+### Befund 1: "Zurück" sind zwei Bedienelemente
+
+Der Kopf-Ausstieg verlässt den Durchlauf (`review-back-btn`,
+`shuffle-back-btn`, `endless-back-btn`, `adaptive-lesson-back-btn`,
+`error-replay-back-btn` zur Lektion; die Lektion hat stattdessen den
+Set-Link in `LessonHeader`, #2793). Das Fuß-Schritt-Zurück geht einen
+Schritt zurück im selben Durchlauf (`lesson-prev`, `LessonStepNav.onPrev`,
+`AdaptiveLessonNav.onPrev`; fehlt in Endless und im `ErrorReplayNav`). Eine
+Zeile dafür entscheidet zwei Dinge mit einem Default; die Zeile wird in
+`exit` und `prevStep` gesplittet.
+
+### Befund 2: "Statuszeile" ist kein Policy-Wert
+
+`EndlessStatLine` mischt Anzeige (Zeit, Karten, Trefferquote) mit Bedienung
+(Pause, Ende). Entscheid: der Pause-Knopf wandert in den Fuß, an dieselbe
+Stelle wie bei der Lektion; `EndlessStatLine` wird reine Anzeige im
+Fortschritts-Bereich. `pause` ist damit ein Boolean, Endless volles Mitglied
+ohne Sonderweg (deckt Punkt 6 mit ab). Sichtbare Änderung, gehört in die
+Endless-Scheibe mit eigener Grundlinie, nicht in Scheibe 0.
+
+### Befund 3: der Kopf trägt Inhalt, den keine Flagge ausdrückt
+
+`ReplayTitle` rendert den `LessonCountdownRing` der Blitzrunde,
+`AdaptiveTransparencyDisplay` den Erklärblock aus `transparency`. Entscheid:
+ein zweiter Render-Prop `headerExtra?: (source) => ReactNode`, derselbe
+Mechanismus wie `summary` und aus demselben Grund. Kopf-Ausstieg, Titel und
+Textuntertitel bleiben Standard-Props. Zwei Render-Props, nicht sechs
+Kinder-Slots; Antwort 1 des Owner-Reviews bleibt in der Sache erhalten.
+
+### Befund 4: die Hinweis-Zeile ist ein Datenfehler
+
+`clearHintUsage()` wird nur in `Lesson.tsx` gerufen; fünf Läufer stempeln
+`hint_used` aus dem vorigen Durchlauf weiter und verkürzen damit
+SRS-Intervalle falsch. Eigener Vorgang #3196, eigener PR VOR Scheibe 1 und
+unabhängig von der Hülle: ein Datenkorrektur-Fix darf nicht in einem
+Refactoring-PR verschwinden, sonst nimmt der Revert der Scheibe den Fix
+mit. In der Matrix steht die Zeile danach als hergestellter Zustand.
+
+### Matrix
+
+| Policy | Lesson | Review | Shuffle | Endless | Adaptive | ErrorReplay |
+|---|---|---|---|---|---|---|
+| `exit` (Kopf) | Set-Link | ja | ja | ja | ja | ja (zur Lektion) |
+| `prevStep` (Fuß) | ja | ja | ja | nein (strukturell) | ja | ja (neu) |
+| `pause` (Fuß) | ja | nein | nein | ja (neu, aus der Statuszeile) | nein | nein |
+| `optionsBar` | ja | nein | nein | nein | nein | nein |
+| `theoryLink` / Schwierigkeit / TTS | ja | nein | nein | nein | nein | nein |
+| `enterShortcut` | ja | ja | ja | ja | ja (neu) | ja |
+| `reanchor` (Schritt + Drehung) | ja | ja (neu) | ja (neu) | ja (neu) | ja (neu) | ja (neu) |
+| `clearHints` beim Start | ja | ja | ja | ja | ja | ja (#3196) |
+| `persistProgress` | ja | nein | nein | nein | nein | nein |
+| `mode` | Wahl der Lernenden | `practice` | `practice` | `practice` | `practice` | `practice` |
+| `headerExtra` | nein | nein | nein | nein | Transparenzblock | Countdown-Ring |
+
+Begründung der drei festgelegten Zellen:
+
+- **ErrorReplay `prevStep`: ja.** Das heutige Nein ist keine Entscheidung
+  gegen das Zurück, sondern Folge des inline geführten Zwei-Phasen-Zustands
+  (ErrorReplay wie Endless), dem die Sperre bereits beantworteter Schritte
+  aus `useLessonStepState` (#1790) fehlt. Die Hülle mountet den Hook für
+  alle; mit der Sperre ist Zurück ein Nur-Lesen-Rückblick. Abnahme: je
+  Läufer ein Test, dass nach Zurück auf einen beantworteten Schritt die
+  Eingabe gesperrt ist und kein zweiter `recordStepAttempts`-Aufruf erfolgt;
+  ohne diesen Test wird das Ja nicht gemerged.
+- **Endless `prevStep`: nein, strukturell.** `position: null`, Schritte aus
+  dem Strom; es gibt keinen vorherigen Schritt ohne Rückwärts-
+  Materialisierung. Eigenschaft der Quelle, kein Policy-Wert; im
+  `RunnerPolicy`-Docstring vermerken, damit es niemand als Inkonsistenz
+  "korrigiert".
+- **Review `mode`: `practice`, ohne Fragezeichen.** Die Vererbungsfrage
+  lebt ausschliesslich in Punkt 10 (eigener Vorgang nach Scheibe 4); ein
+  Fragezeichen in einer ratifizierten Tabelle würde im Code zur Bedingung.
+
+Mit ratifiziert: Punkt 2 (Lektions-Fuß für alle; ohne ihn gäbe es keine
+gemeinsame Stelle für den Endless-Pause-Knopf) und Punkt 6 (Endless volles
+Mitglied).
+
+### Nebenfund mit eigenem Vorgang
+
+`LESSON_ROUTE_PREFIXES` (`hooks/lesson/session/useIsLessonActive.ts`) kennt
+vier der sechs Routen; `/shuffle-lesson/` und `/endless-lesson/` fehlen,
+also klappt die Navigation dort nicht ein. Unabhängig von der Hülle: #3197.
+
+### Startfreigabe für Scheibe 0
+
+1. Der Hinweis-Fix #3196 läuft als eigener PR, vor oder parallel zu
+   Scheibe 0, gemerged bevor eine Scheibe eine Grundlinie zieht.
+2. Der `RunnerPolicy`-Typ trägt die Spalten dieser Tabelle mit genau diesen
+   Namen (`exit`, `prevStep`, `pause`, `optionsBar`, `theoryLink`,
+   `enterShortcut`, `reanchor`, `clearHints`, `persistProgress`, `mode`,
+   plus der Render-Prop `headerExtra` an der Hülle); die Endless-Zeile
+   trägt die strukturelle Begründung im Docstring.
 
 ---
 
