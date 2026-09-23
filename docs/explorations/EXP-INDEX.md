@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-08-07 (v2.11.0)
-**Anzahl EXPs:** 49 (Zeilen der Übersichtstabelle; die Nummern 019 und 043
+**Stand:** 2026-09-22 (v2.15.0)
+**Anzahl EXPs:** 50 (Zeilen der Übersichtstabelle; die Nummern 019 und 043
 existieren nicht, 001-017 sind in `docs/roadmap-archive/phase-1-complete.md`
 archiviert und bleiben als historische Zeilen stehen)
 
@@ -70,6 +70,7 @@ archiviert und bleiben als historische Zeilen stehen)
 | 049 | Auffindbarkeit der öffentlichen Flächen (SEO, drei Zielgruppen, Lerninhalte; mit Engine-Fassung zusammengeführt, Entscheidungen eingetragen) | Querschnitt | Analyse + Entscheidung | P3 | #1104, 034, 048/#2297, #2299, #2400, #2403-#2406 |
 | 050 | Aufgaben zwischen Typen umwandeln (Matrix, Fortschritts-Verwaisung, Zuschnitt) | Feature | Analyse | P3 | 041, 045/#2455, 036, #2510 |
 | 051 | Durchgänge und Fehlerhistorie (gemeinsames Generationsmodell, Entscheidungen eingetragen) | Querschnitt | Analyse + Entscheidung | P2 | AUTH-05, 045, #2308/#2161/#2519, #2125 |
+| 052 | Eine Runner-Hülle für alle Durchläufe (sechs Lektionsseiten, drei Einschübe source/summary/policy, Migration in Scheiben) | Querschnitt | Analyse | P4 | 020, 044, #3169, #3173, #3168, #1569, #3016 |
 
 ## Umsetzungsstand (Stand v1.99.0)
 

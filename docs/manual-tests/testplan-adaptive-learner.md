@@ -385,6 +385,18 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verständlich)
+- [ ] Lückentext, Modus Auswahl (#3167): Distraktor wählen -> als falsch
+      gewertet. Eine Lückentext-Übung mit Wortauswahl öffnen, deren
+      Distraktoren der Lösung sehr ähnlich sind (z. B. alc-programming,
+      react-grundlagen, Lektion 02 "JSX", Frage "Wie bettet man in JSX den
+      Wert einer Variablen name in den Text ein?"). Die falsche Option
+      `<p>Hallo $name</p>` wählen und prüfen: Ergebnis "0 von 1 richtig",
+      die gewählte Option rot, die richtige Option `<p>Hallo {name}</p>`
+      grün. Dann die richtige Option wählen: "Alles richtig!". Gegenprobe
+      Tippen-Modus: bei einem Lückentext zum Tippen bleibt EIN Tippfehler
+      weiterhin als richtig gewertet (Toleranz nur für getippte Antworten).
+      Wiederholung: dieselbe Übung in der Wiederholungssitzung, falsche Option
+      wählen -> falsch; die Übung gilt danach NICHT als gemeistert.
 - [ ] Picture Choice: Kacheln GLEICHE Höhe
 - [ ] Antwort-Reihenfolge gemischt (#2317): eine Bildauswahl (picture_choice)
       mehrfach in verschiedenen Lektionen öffnen - die richtige Kachel steht
