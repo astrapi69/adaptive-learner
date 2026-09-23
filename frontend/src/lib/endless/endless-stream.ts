@@ -20,19 +20,11 @@
  * pool.
  */
 
+import {isPlayableExerciseStep} from "../lesson/lesson-step-state";
 import type {
     ContentLesson,
     ContentLessonStep,
 } from "../../storage/types";
-
-/** The five exercise types the player can render (mirrors the dispatcher). */
-const SUPPORTED_TYPES = new Set([
-    "matching",
-    "picture_choice",
-    "free_text",
-    "word_tiles",
-    "cloze",
-]);
 
 /** One source lesson feeding the endless pool. */
 export interface EndlessSourceLesson {
@@ -70,18 +62,16 @@ export interface EndlessPlan {
 }
 
 /**
- * Collect a lesson's supported exercise steps, re-keyed for uniqueness and
+ * Collect a lesson's playable exercise steps, re-keyed for uniqueness and
  * source-tagged so the SRS recorder addresses the right lesson. The
- * exercise id is preserved (the attempt is recorded under it).
+ * exercise id is preserved (the attempt is recorded under it). "Playable"
+ * is the shell's one definition (``isPlayableExerciseStep``: core types
+ * plus the adopted ``ext:al-*`` extensions, EXP-052 slice 2).
  */
 function poolFromLesson(source: EndlessSourceLesson): ContentLessonStep[] {
     const out: ContentLessonStep[] = [];
     for (const step of source.lesson.steps) {
-        if (
-            step.type !== "exercise" ||
-            step.exercise == null ||
-            !SUPPORTED_TYPES.has(step.exercise.type)
-        ) {
+        if (!isPlayableExerciseStep(step) || step.exercise == null) {
             continue;
         }
         out.push({

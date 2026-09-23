@@ -19,6 +19,7 @@
  * exact order; production defaults to ``Math.random``.
  */
 
+import {isPlayableExerciseStep} from "../lesson/lesson-step-state";
 import type {
     ContentLesson,
     ContentLessonCard,
@@ -30,17 +31,6 @@ export const DEFAULT_SHUFFLE_LIMIT = 20;
 
 /** Never more than this many consecutive questions from one source lesson. */
 export const MAX_CONSECUTIVE_SAME_LESSON = 3;
-
-/** The five exercise types the player can render. Mirrors
- *  ``SUPPORTED_EXERCISE_TYPES`` in ``ExerciseDispatcher`` — kept local so the
- *  builder stays a pure, React-free module. */
-const SUPPORTED_TYPES = new Set([
-    "matching",
-    "picture_choice",
-    "free_text",
-    "word_tiles",
-    "cloze",
-]);
 
 /** One source lesson feeding the shuffle pool. */
 export interface ShuffleSourceLesson {
@@ -118,16 +108,14 @@ function limitConsecutive(pool: PooledStep[]): PooledStep[] {
     return out;
 }
 
-/** Collect the supported exercise steps from one source lesson, re-keyed +
- *  source-tagged for the shuffle pool. */
+/** Collect the playable exercise steps from one source lesson, re-keyed +
+ *  source-tagged for the shuffle pool. "Playable" is the shell's one
+ *  definition (``isPlayableExerciseStep``: the dispatcher's core types plus
+ *  the adopted ``ext:al-*`` extensions, EXP-052 slice 2), not a local list. */
 function poolFromLesson(source: ShuffleSourceLesson): PooledStep[] {
     const pooled: PooledStep[] = [];
     for (const step of source.lesson.steps) {
-        if (
-            step.type !== "exercise" ||
-            step.exercise == null ||
-            !SUPPORTED_TYPES.has(step.exercise.type)
-        ) {
+        if (!isPlayableExerciseStep(step) || step.exercise == null) {
             continue;
         }
         pooled.push({

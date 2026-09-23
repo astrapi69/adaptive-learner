@@ -19,6 +19,7 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {readLearnerState} from "../../../lib/learning/learnerState";
+import {isPlayableExerciseStep} from "../../../lib/lesson/lesson-step-state";
 import {
     buildEndlessPlan,
     endlessStepAt,
@@ -155,12 +156,9 @@ export function useEndlessLesson(
                             setId,
                             filename,
                         );
-                        if (
-                            fetched.steps.some(
-                                (s) =>
-                                    s.type === "exercise" && s.exercise != null,
-                            )
-                        ) {
+                        // EXP-052 slice 2: the shell's one "playable"
+                        // definition (core + adopted ext:al-* types).
+                        if (fetched.steps.some(isPlayableExerciseStep)) {
                             sources.push({
                                 lessonId: filename,
                                 title: fetched.title,
