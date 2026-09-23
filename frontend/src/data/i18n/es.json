@@ -3797,6 +3797,17 @@
     "train_errors": "Entrenar errores",
     "shuffle": "Modo aleatorio",
     "endless": "Sin fin",
+    "reset_all": {
+      "button": "Repetir todo",
+      "title": "¿Restablecer todos los resultados?",
+      "message": "Se restablecen los resultados de «{title}»: puntuación, estrellas y tiempo de estudio de {lessons} lecciones. Una nueva ronda empieza en la lección 1; los errores de la ronda anterior se conservan como historial. Los XP y las insignias no cambian.",
+      "average": "Promedio hasta ahora: {percent} %",
+      "no_average": "Todavía no hay promedio.",
+      "confirm": "Restablecer y empezar de nuevo",
+      "cancel": "Cancelar",
+      "success": "Resultados restablecidos. Una nueva ronda empieza con la lección 1.",
+      "failed": "No se pudieron restablecer los resultados."
+    },
     "personal": {
       "title": "Tu ruta de aprendizaje",
       "progress": "En total: {n}% completado",
