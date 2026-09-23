@@ -33,11 +33,15 @@ import {
     asParsonsPayload,
     PARSONS_EXT_TYPE,
 } from "../../../../lib/exercises/payload/parsons";
-import {isParsonsCorrect} from "../../../../lib/exercises/grading/parsons-correctness";
+import {
+    diagnoseParsonsLines,
+    isParsonsCorrect,
+} from "../../../../lib/exercises/grading/parsons-correctness";
 import {deriveParsonsAttempt} from "../../../../lib/srs/element-attempt";
 import {useWordTilesDnd} from "../word-tiles/useWordTilesDnd";
 import {TileSequenceEditor} from "../../shared/TileSequenceEditor";
 import ExercisePromptRow from "../../shell/ExercisePromptRow";
+import {ParsonsReview} from "./parsons-review";
 import ExerciseHint from "../../feedback/ExerciseHint";
 import ExerciseFooter from "../../shell/ExerciseFooter";
 import AnswerCelebration from "../../feedback/AnswerCelebration";
@@ -85,7 +89,7 @@ function ParsonsExercise(
     ref: Ref<ExerciseHandle>,
 ) {
     const {t} = useI18n();
-    const {showAnswerToggle} = useLessonMode();
+    const {showAnswerToggle, immediateFeedback} = useLessonMode();
     const payload = useMemo(() => asParsonsPayload(exercise), [exercise]);
     const lines = useMemo(() => payload?.lines ?? [], [payload]);
     const codeLines = useMemo(() => lines.map((line) => line.code), [lines]);
@@ -217,6 +221,20 @@ function ParsonsExercise(
                     />
                 )}
             />
+
+            {/* #3218: the editor unmounts on check; show WHAT was wrong. */}
+            {submitted && immediateFeedback && (
+                <ParsonsReview
+                    diagnosis={diagnoseParsonsLines(
+                        placed,
+                        indentsBySlot(placed, indentByTile),
+                        lines,
+                    )}
+                    solution={lines}
+                    isCorrect={isCorrect}
+                    t={t}
+                />
+            )}
 
             <ParsonsResult
                 submitted={submitted}

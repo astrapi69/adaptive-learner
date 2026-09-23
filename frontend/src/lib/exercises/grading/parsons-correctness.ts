@@ -40,3 +40,49 @@ export function isParsonsCorrect(
         return indents[slot] === lines[tileIndex]?.indent;
     });
 }
+
+/** Post-check verdict for one placed line. ``wrong_position`` wins over
+ *  ``wrong_indent``: a line in the wrong slot is wrong whatever its depth. */
+export type ParsonsLineStatus = "correct" | "wrong_position" | "wrong_indent";
+
+/** One placed line as the learner left it, with its verdict. */
+export interface ParsonsLineDiagnosis {
+    code: string;
+    /** The indent the learner chose for this slot. */
+    indent: number;
+    /** The canonical indent of the tile in this slot. */
+    expectedIndent: number;
+    status: ParsonsLineStatus;
+}
+
+/**
+ * Explain a Parsons answer line by line (#3218), using exactly the rules of
+ * {@link isParsonsCorrect}, so the per-line marks never disagree with the
+ * overall verdict: a slot is ``wrong_position`` when the tile in it is not
+ * the canonical tile for that slot, else ``wrong_indent`` when its chosen
+ * depth differs from the tile's own canonical ``indent``.
+ *
+ * @param placed - Indices into ``lines`` in the learner's chosen order.
+ * @param indents - The learner's chosen indent per SLOT.
+ * @param lines - The payload's canonical ``{code, indent}`` lines.
+ * @returns One entry per placed slot, in the learner's order.
+ *
+ * @example
+ * diagnoseParsonsLines([0, 1], [0, 0], lines)
+ * // -> [{..., status: "correct"}, {..., status: "wrong_indent"}]
+ */
+export function diagnoseParsonsLines(
+    placed: readonly number[],
+    indents: readonly number[],
+    lines: readonly (IndentedLine & {code: string})[],
+): ParsonsLineDiagnosis[] {
+    return placed.map((tileIndex, slot) => {
+        const line = lines[tileIndex];
+        const indent = indents[slot] ?? 0;
+        const expectedIndent = line?.indent ?? 0;
+        let status: ParsonsLineStatus = "correct";
+        if (tileIndex !== slot) status = "wrong_position";
+        else if (indent !== expectedIndent) status = "wrong_indent";
+        return {code: line?.code ?? "", indent, expectedIndent, status};
+    });
+}

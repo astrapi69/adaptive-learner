@@ -2251,9 +2251,13 @@ lesson:
       empty: "इस कोड क्रम अभ्यास में कोई पंक्ति नहीं है।"
       indent_dec: "इंडेंट घटाएं"
       indent_inc: "इंडेंट बढ़ाएं"
+      line_wrong_indent: "इंडेंट {actual}, अपेक्षित {expected}"
+      line_wrong_position: "गलत स्थान"
       result_correct: "सही!"
       result_wrong: "बिल्कुल नहीं - क्रम और इंडेंट जांचें।"
       retry: "फिर से कोशिश करें"
+      review_heading: "आपका उत्तर"
+      solution_heading: "समाधान"
       submit: "उत्तर जांचें"
     instruction:
       matching:

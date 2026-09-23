@@ -1321,6 +1321,17 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       jede Einrückung auf 0 zurück; eine Lektion mit
       `requires_extensions: ["ext:al-parsons@1"]` lädt (nicht vom Guard
       abgelehnt).
+- [ ] ext:al-parsons Auswertung (#3218): nach "Prüfen" erscheint unter
+      "Deine Antwort" der eingereichte Code in der gewählten Einrückung, jede
+      Zeile mit grünem Haken oder rotem X; falsche Zeilen nennen den Grund
+      ("Falsche Position" bzw. "Einrückung 0, erwartet 2"). Bei falscher
+      Antwort folgt darunter die "Lösung" mit richtiger Reihenfolge und
+      Einrückung; bei richtiger Antwort keine Lösung. Im Prüfungsmodus
+      erscheint keine Aufschlüsselung.
+- [ ] ext:al-reading-comprehension Lesetext (#3217): ein Lesetext mit
+      Codeblock (```-Zaun) zeigt den Code mehrzeilig, eingerückt, in
+      Monospace und bei langen Zeilen horizontal scrollbar; Absätze und
+      einfache Zeilenumbrüche im Lesetext bleiben erhalten.
 - [ ] ext:al-hotspot (#3110): ein Bild mit unsichtbaren klickbaren Zonen -
       die richtige Stelle anklicken. Vor "Prüfen" ist kein Umriss und keine
       Füllung einer Zone sichtbar (die Antwort wird nie vorzeitig verraten).

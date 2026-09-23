@@ -1239,6 +1239,16 @@ areas of the Data tab in the fixed #1451 order.
       dragged elsewhere. Try again resets placement AND every indent back
       to 0; a lesson with `requires_extensions: ["ext:al-parsons@1"]` loads
       (not refused by the guard).
+- [ ] ext:al-parsons review (#3218): after Check, "Your answer" shows the
+      submitted code at the chosen indent, each line with a green check or
+      a red X; wrong lines name the reason ("Wrong position" or "Indent 0,
+      expected 2"). A wrong answer adds the "Solution" below with the right
+      order and indent; a correct answer shows no solution. Exam mode shows
+      no breakdown.
+- [ ] ext:al-reading-comprehension passage (#3217): a passage with a fenced
+      code block (```) shows the code on multiple lines, indented, in
+      monospace and horizontally scrollable for long lines; paragraphs and
+      single line breaks in the passage are kept.
 - [ ] ext:al-hotspot (#3110): an image with invisible clickable zones —
       click the right spot. Before Check, no zone outline or fill is
       visible (the answer is never revealed early). Check highlights the

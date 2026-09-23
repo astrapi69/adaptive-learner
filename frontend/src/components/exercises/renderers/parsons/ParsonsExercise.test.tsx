@@ -151,6 +151,56 @@ describe("ParsonsExercise: placement, indent, and scoring", () => {
     });
 });
 
+describe("ParsonsExercise: post-check diagnosis (#3218)", () => {
+    it("marks each wrong line and shows the solution after a wrong answer", () => {
+        render(<ParsonsExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        placeAllInOrder();
+        incIndent(1, 1);
+        fireEvent.click(screen.getByTestId("parsons-submit"));
+        expect(screen.getByTestId("parsons-review-line-0")).toHaveAttribute(
+            "data-status",
+            "correct",
+        );
+        expect(screen.getByTestId("parsons-review-line-1")).toHaveAttribute(
+            "data-status",
+            "correct",
+        );
+        expect(screen.getByTestId("parsons-review-line-2")).toHaveAttribute(
+            "data-status",
+            "wrong_indent",
+        );
+        expect(screen.getByTestId("parsons-review-line-2")).toHaveTextContent("print(name)");
+        expect(screen.getByTestId("parsons-solution")).toHaveTextContent("if name:");
+    });
+
+    it("marks swapped lines as wrong position", () => {
+        render(<ParsonsExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        fireEvent.click(screen.getByTestId("parsons-scrambled-1"));
+        fireEvent.click(screen.getByTestId("parsons-scrambled-0"));
+        fireEvent.click(screen.getByTestId("parsons-scrambled-2"));
+        fireEvent.click(screen.getByTestId("parsons-submit"));
+        expect(screen.getByTestId("parsons-review-line-0")).toHaveAttribute(
+            "data-status",
+            "wrong_position",
+        );
+    });
+
+    it("shows the answer but no solution block after a correct answer", () => {
+        render(<ParsonsExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        placeAllInOrder();
+        incIndent(1, 1);
+        incIndent(2, 2);
+        fireEvent.click(screen.getByTestId("parsons-submit"));
+        expect(screen.getByTestId("parsons-review")).toBeInTheDocument();
+        expect(screen.queryByTestId("parsons-solution")).not.toBeInTheDocument();
+    });
+
+    it("renders no diagnosis before checking", () => {
+        render(<ParsonsExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(screen.queryByTestId("parsons-review")).not.toBeInTheDocument();
+    });
+});
+
 describe("ParsonsExercise: reviewed (revisited, locked) reconstruction", () => {
     it("restores the exact placed order + indents and shows the locked result", () => {
         render(
