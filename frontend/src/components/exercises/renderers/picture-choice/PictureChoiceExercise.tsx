@@ -45,6 +45,7 @@ import {
     type ShortcutDefinition,
 } from "../../../../shared/hooks/useKeyboardShortcuts";
 import {cn} from "@/lib/utils";
+import {LONG_WORD_WRAP} from "../../../../lib/exercises/long-word-wrap";
 import ReadAloudButton from "../../../lesson/tts/ReadAloudButton";
 import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
 import ExerciseHint from "../../feedback/ExerciseHint";
@@ -386,6 +387,7 @@ function PictureChoiceExercise(
 
             <ul
                 className="m-0 grid list-none grid-cols-2 gap-2 p-0 [grid-auto-rows:1fr] min-[600px]:grid-cols-4"
+                lang={ttsLang ?? undefined}
                 data-testid="picture-grid"
                 aria-label={t(
                     "lesson.exercise.picture.grid_label",
@@ -500,7 +502,9 @@ function PictureChoiceTile({
                     aria-hidden="true"
                 />
             ) : useTextFallback ? (
-                <span className="text-base font-semibold">
+                <span
+                    className={cn("min-w-0 text-base font-semibold", LONG_WORD_WRAP)}
+                >
                     <InlineMarkdown>{choice.label}</InlineMarkdown>
                 </span>
             ) : (
@@ -521,7 +525,7 @@ function PictureChoiceTile({
                     height={100}
                 />
             )}
-            <span className="leading-[1.3]">
+            <span className={cn("min-w-0 leading-[1.3]", LONG_WORD_WRAP)}>
                 <InlineMarkdown>{choice.label}</InlineMarkdown>
             </span>
             {showAsCorrect && (

@@ -385,6 +385,18 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verständlich)
+- [ ] Lückentext, Modus Auswahl (#3167): Distraktor wählen -> als falsch
+      gewertet. Eine Lückentext-Übung mit Wortauswahl öffnen, deren
+      Distraktoren der Lösung sehr ähnlich sind (z. B. alc-programming,
+      react-grundlagen, Lektion 02 "JSX", Frage "Wie bettet man in JSX den
+      Wert einer Variablen name in den Text ein?"). Die falsche Option
+      `<p>Hallo $name</p>` wählen und prüfen: Ergebnis "0 von 1 richtig",
+      die gewählte Option rot, die richtige Option `<p>Hallo {name}</p>`
+      grün. Dann die richtige Option wählen: "Alles richtig!". Gegenprobe
+      Tippen-Modus: bei einem Lückentext zum Tippen bleibt EIN Tippfehler
+      weiterhin als richtig gewertet (Toleranz nur für getippte Antworten).
+      Wiederholung: dieselbe Übung in der Wiederholungssitzung, falsche Option
+      wählen -> falsch; die Übung gilt danach NICHT als gemeistert.
 - [ ] Picture Choice: Kacheln GLEICHE Höhe
 - [ ] Antwort-Reihenfolge gemischt (#2317): eine Bildauswahl (picture_choice)
       mehrfach in verschiedenen Lektionen öffnen - die richtige Kachel steht
@@ -413,6 +425,23 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       verrät nichts. Bei Freitext/Cloze/Wort-Kacheln bleibt der Tipp-Knopf wie
       bisher erhalten. iOS PWA/Standalone: dieselbe Prüfung auf dem zum
       Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
+- [ ] Ein Tipp-Aufruf je Übung (#3168): eine Cloze-, eine Freitext- und eine
+      Wort-Kacheln-Übung öffnen, deren Inhalt einen Autoren-Hinweis trägt (Feld
+      `hint`, z. B. Französisch A1, Lektion 1: Freitext "It starts with M.",
+      Wort-Kacheln "Literally 'until the re-seeing' ...", Cloze "Daytime
+      greeting, starts with B."). Vor dem Prüfen gibt es GENAU EINE
+      Tipp-Fläche: den Knopf "Tipp anzeigen −5 XP" über der Eingabe. Unter den
+      Optionen bzw. unter der Eingabe erscheint KEIN Link "Tipp anzeigen?"
+      mehr. Der erste Tipp-Klick zeigt den Autoren-Hinweis wörtlich und zieht
+      XP ab (Kopfzeilen-Abzeichen blinkt rot); weitere Klicks zeigen die
+      erzeugten Stufen (Länge, Anfangsbuchstabe bzw. erste Kachel), jeder
+      erneut gegen XP. Ohne Autoren-Hinweis bleibt der Knopf mit den erzeugten
+      Stufen wie bisher. Nach "Prüfen" ist keine Tipp-Fläche mehr sichtbar. Im
+      Prüfungsmodus erscheint auch der Autoren-Hinweis nicht (kein Tipp im
+      Prüfungsmodus). Dieselbe Prüfung in der Wiederholungssitzung und in der
+      Audio-Kacheln-Übung (Erweiterungstyp). iOS PWA/Standalone: dieselbe
+      Prüfung auf dem zum Home-Bildschirm hinzugefügten Web-App-Icon
+      durchführen.
 - [ ] Erklärung nach der Antwort (#2991): eine Übung öffnen, deren Inhalt eine
       Erklärung trägt (Feld `explanation`, z. B. das Fixture
       `e2e/fixtures/explanation-post-answer.lesson.json` über ein verbundenes
@@ -456,6 +485,21 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       Screenreader auch zugeklappt erreichbar (natives <details>). iOS PWA/
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
+- [ ] Zuordnung: lange Wörter brechen in der Kachel um (#3174): eine
+      Zuordnungsübung mit einem Wort, das breiter als die Kachel ist, auf
+      einem SCHMALEN Gerät (iPhone, 375px) öffnen, z. B. alc-psychology
+      „Sprachebenen zuordnen" mit „kleinste bedeutungsunterscheidende
+      Lauteinheit". Das lange Wort wird mit Trennstrich getrennt oder
+      notfalls ohne Trennstrich umgebrochen und bleibt VOLLSTÄNDIG innerhalb
+      des Kachelrahmens; kein Text läuft über den rechten Rand hinaus, die
+      Seite scrollt nicht horizontal. Nach dem Prüfen gilt dasselbe für die
+      Zeilen „Deine Antwort"/„Richtige Antwort" und für die Auflösen-Ansicht.
+      Die Silbentrennung folgt der Sprache des INHALTS (Set-Sprache), nicht
+      der UI-Sprache: die Kachelspalten tragen ein `lang`-Attribut mit der
+      Ziel- bzw. Quellsprache (UI-Sprache umstellen ändert die Trennstellen
+      nicht). Gleiches gilt für Mehrfachauswahl-Optionen, Wort-Kacheln und
+      Bildauswahl-Beschriftungen. iOS PWA/Standalone: dieselbe Prüfung auf dem
+      zum Home-Bildschirm hinzugefügten Web-App-Icon durchführen.
 - [ ] Schwierigkeits-Indikator (#1693): eine Übung, deren Karte(n) eine
       authored `difficulty` (1-5) tragen, zeigt über der Übung ein kleines
       Badge mit Stufenwort (Leicht/Mittel/Schwer) + 5-Punkt-Anzeige.
@@ -2298,12 +2342,45 @@ jeder Karten-Zeile (`CardImageField`).
       gemeistert in Prozent, noch offen, Lernzeit) und darunter
       Fehler nach Lektion, nach Aufgabentyp und die größten
       Schwachstellen mit eigener falscher Antwort neben der richtigen
+- [ ] Die zwei mittleren Kennzahlen folgen den Fehlern, nicht der
+      Wiederholungs-Marke (#3166): "Noch offen" zählt die Elemente mit
+      mindestens einem Fehler, die die Wiederholung noch nicht als
+      gemeistert führt; "Gemeistert" ist der Anteil aller gespielten
+      Elemente, die nie falsch waren oder ihren Fehler seither abgetragen
+      haben. Ein Set mit 12 gespielten Elementen, 3 davon einmal falsch:
+      "3 Fehler insgesamt", "75 % Gemeistert", "3 Noch offen" - nicht
+      "0 %" und "12"
 - [ ] "Fehler trainieren" führt in die Wiederholung des Sets,
       "Zurück zum Set" auf die Set-Seite
 - [ ] Ein Set ohne aufgezeichnete Fehler zeigt die freundliche
       Meldung statt leerer Abschnitte
 - [ ] Beides im Browser-Modus (ohne Server) prüfen - die Zahlen
       kommen dort aus der lokalen Datenbank
+
+### Lernpfad-Set: "Alles wiederholen" setzt die Ergebnisse zurück (#3171)
+- [ ] Lernpfad öffnen, ein Set mit Ergebnissen aufklappen: in der
+      Aktionsleiste steht "Alles wiederholen" (`set-reset-results-<id>`)
+      neben "Fehler trainieren"; ein nie begonnenes Set zeigt den Knopf
+      nicht
+- [ ] Knopf drücken: die Bestätigung "Alle Ergebnisse zurücksetzen?" nennt
+      den Set-Titel, die Zahl der Lektionen mit Ergebnis, dass Punktzahl,
+      Sterne und Lernzeit zurückgesetzt werden, dass die Fehler des
+      bisherigen Durchgangs als Verlauf bleiben und dass XP und Abzeichen
+      unverändert sind; darunter "Bisheriger Schnitt: N %" (bei einem Set
+      ohne bewertete Lektion "Noch kein Schnitt vorhanden.")
+- [ ] "Abbrechen" (auch Escape): nichts ändert sich, Sterne und Fortschritt
+      des Sets sind wie vorher
+- [ ] "Zurücksetzen und neu starten": Erfolgs-Toast, Lektion 1 des Sets
+      öffnet sich; zurück im Lernpfad steht das Set ohne Sterne und ohne
+      Fortschritt, "Fehler trainieren" ist verschwunden (neuer Durchgang,
+      wie bei "Erneut durcharbeiten")
+- [ ] Ein Set, das in "Meine Inhalte" als "Abgeschlossen" oder
+      "Zurückgestellt" markiert war, steht nach dem Reset wieder unter
+      "Aktiv" (Statusfilter in "Meine Inhalte"); das Dashboard führt es
+      unter "Weitermachen" wieder als begonnenes Set, nicht als erledigt
+- [ ] Dashboard: XP-Stand und Abzeichen sind nach dem Reset unverändert
+- [ ] Beides prüfen: Desktop-App (API-Modus) und Browser-Modus ohne Server
+      (Dexie) - der Reset schreibt in beide Speicher
 
 ### Set-Seite: Lektionsliste + Fortschritt (#2793 Stufen 2-3)
 - [ ] Eine Set-Seite öffnen (/content/set/<id> oder über einen
@@ -2368,6 +2445,12 @@ jeder Karten-Zeile (`CardImageField`).
       Lernzeit), "Fehler nach Aufgabentyp" und "Größte Schwachstellen" mit
       der eigenen falschen Antwort durchgestrichen neben der richtigen;
       "Fehler nach Lektion" gibt es hier NICHT (es ist nur eine Lektion)
+- [ ] Erster Durchlauf einer Lektion, z. B. 12 Elemente, 9 richtig, 3
+      falsch: "3 Fehler insgesamt", "75 % Gemeistert", "3 Noch offen" -
+      dieselben 75 % wie die Punktzahl des Durchlaufs (#3166). "Gemeistert"
+      zählt die Elemente, die nie falsch waren oder deren Fehler die
+      Wiederholung seither abgetragen hat, "Noch offen" die mit Fehler und
+      ohne Meisterung; nicht "0 %" und "12" bei 3 Fehlern
 - [ ] Die Zahlen stimmen mit der Set-Auswertung (Inhalte > Set >
       "Auswertung ansehen") für dieselbe Lektion überein
 - [ ] "Fehler trainieren" führt in die Wiederholungs-Sitzung des Sets

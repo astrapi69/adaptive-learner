@@ -25,6 +25,7 @@ import type {CSSProperties} from "react";
 import {cn} from "@/lib/utils";
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
+import {LONG_WORD_WRAP} from "../../../../lib/exercises/long-word-wrap";
 import {matchingPairColorVar} from "./matching-parts";
 import type {MatchingResolveEffect} from "../../../../lib/learning/matchingResolvePref";
 
@@ -69,11 +70,15 @@ function StackRow({
     index,
     effect,
     reduceMotion,
+    leftLang,
+    rightLang,
 }: {
     pair: ResolvedPair;
     index: number;
     effect: MatchingResolveEffect;
     reduceMotion: boolean;
+    leftLang?: string;
+    rightLang?: string;
 }) {
     return (
         <li
@@ -92,11 +97,17 @@ function StackRow({
             }
             data-testid={`matching-resolved-row-${index}`}
         >
-            <span className="min-w-0 flex-1 font-medium">
+            <span
+                className={cn("min-w-0 flex-1 font-medium", LONG_WORD_WRAP)}
+                lang={leftLang}
+            >
                 <InlineMarkdown>{pair.left}</InlineMarkdown>
             </span>
             <ArrowRight size={14} aria-hidden="true" className="shrink-0" />
-            <span className="min-w-0 flex-1 text-right">
+            <span
+                className={cn("min-w-0 flex-1 text-right", LONG_WORD_WRAP)}
+                lang={rightLang}
+            >
                 <InlineMarkdown>{pair.right}</InlineMarkdown>
             </span>
         </li>
@@ -150,7 +161,7 @@ function ColumnTile({
             >
                 {slot + 1}
             </span>
-            <span className="min-w-0 flex-1">
+            <span className={cn("min-w-0 flex-1", LONG_WORD_WRAP)}>
                 <InlineMarkdown>{label}</InlineMarkdown>
             </span>
         </li>
@@ -218,6 +229,11 @@ export interface MatchingResolutionProps {
      *  to true so direct callers (and the Review/AdaptiveLesson paths)
      *  keep the original behaviour. */
     animate?: boolean;
+    /** #3174 - BCP-47 content language per column, for CSS hyphenation of
+     *  long words (see ``matchingColumnLangs``). Omitted: the tiles inherit
+     *  the document language. */
+    leftLang?: string;
+    rightLang?: string;
 }
 
 /**
@@ -234,6 +250,8 @@ export default function MatchingResolution({
     leftLabel,
     rightLabel,
     animate = true,
+    leftLang,
+    rightLang,
 }: MatchingResolutionProps) {
     const {t} = useI18n();
     // Suppress every animation utility when the caller disabled animation
@@ -270,6 +288,8 @@ export default function MatchingResolution({
                             index={i}
                             effect={effect}
                             reduceMotion={noMotion}
+                            leftLang={leftLang}
+                            rightLang={rightLang}
                         />
                     ))}
                 </ul>
@@ -287,6 +307,7 @@ export default function MatchingResolution({
                 <ul
                     className="m-0 grid list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                     aria-label={leftLabel}
+                    lang={leftLang}
                 >
                     {pairs.map((pair, i) => (
                         <ColumnTile
@@ -304,6 +325,7 @@ export default function MatchingResolution({
                 <ul
                     className="m-0 grid list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                     aria-label={rightLabel}
+                    lang={rightLang}
                 >
                     {pairs.map((pair, i) => (
                         <ColumnTile

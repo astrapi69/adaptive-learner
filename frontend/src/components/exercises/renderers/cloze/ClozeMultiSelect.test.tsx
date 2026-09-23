@@ -214,3 +214,27 @@ describe("ClozeMultiSelect: retry", () => {
         expect(checkbox("Vienna").checked).toBe(false);
     });
 });
+
+describe("ClozeMultiSelect #3174: long option words wrap", () => {
+    it("an option label carries hyphenation + the overflow-wrap fallback", () => {
+        render(<ClozeMultiSelect exercise={MULTISELECT} onComplete={vi.fn()} />);
+        expect(screen.getByText("Berlin")).toHaveClass(
+            "hyphens-auto",
+            "[overflow-wrap:anywhere]",
+        );
+    });
+
+    it("the option group carries the content language for hyphenation", () => {
+        render(
+            <ClozeMultiSelect
+                exercise={MULTISELECT}
+                onComplete={vi.fn()}
+                ttsLang="de"
+            />,
+        );
+        expect(screen.getByTestId("cloze-multiselect-options")).toHaveAttribute(
+            "lang",
+            "de",
+        );
+    });
+});

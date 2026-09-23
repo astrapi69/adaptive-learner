@@ -34,6 +34,7 @@ import {deriveMultipleChoiceAttempt} from "../../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
 import {seededShuffle} from "../../../../lib/exercises/grading/seeded-shuffle";
 import {playfulDataAttr} from "../../../../lib/learning/lessonModeConfig";
+import {LONG_WORD_WRAP} from "../../../../lib/exercises/long-word-wrap";
 import {
     correctOptionTexts,
     isMultipleChoiceCorrect,
@@ -115,6 +116,7 @@ function MultipleChoiceExercise(
         controlled = false,
         onInteraction,
         reviewed = null,
+        ttsLang = null,
         onAdvance,
         advanceLabel,
     }: MultipleChoiceExerciseProps,
@@ -269,6 +271,7 @@ function MultipleChoiceExercise(
                         ? "grid gap-2 sm:grid-cols-2"
                         : "flex flex-col gap-2",
                 )}
+                lang={ttsLang ?? undefined}
                 data-testid="multiple-choice-options"
             >
                 {optionTexts.map((optionText, idx) => {
@@ -302,7 +305,7 @@ function MultipleChoiceExercise(
                                 aria-label={optionText}
                                 data-testid={`multiple-choice-input-${idx}`}
                             />
-                            <span className="flex-1">
+                            <span className={cn("min-w-0 flex-1", LONG_WORD_WRAP)}>
                                 <InlineMarkdown>{optionText}</InlineMarkdown>
                             </span>
                             {submitted && verdict !== "neutral" && (

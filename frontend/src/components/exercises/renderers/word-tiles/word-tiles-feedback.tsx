@@ -2,15 +2,15 @@
  * Word-Tiles post-answer surfaces (#1776 — extracted from
  * WordTilesExercise.tsx, sibling of word-tiles-parts.tsx).
  *
- * Holds the hint disclosure, the correct/wrong result line with the
- * shared exercise footer, and the post-check My-answer / Solution
- * reveal. Pure presentation — all state arrives via props.
+ * Holds the correct/wrong result line with the shared exercise footer
+ * and the post-check My-answer / Solution reveal. Pure presentation —
+ * all state arrives via props. The hint is NOT here: ``ExerciseHint``
+ * (the XP button) is the only hint surface (#3168), and the authored
+ * ``exercise.hint`` is its first stage.
  */
 
 import {Check, X} from "lucide-react";
 
-import {useI18n} from "../../../../hooks/ui/useI18n";
-import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import AnswerCelebration from "../../feedback/AnswerCelebration";
 import ExerciseAnswerToggle, {type AnswerView} from "../../feedback/ExerciseAnswerToggle";
@@ -19,45 +19,6 @@ import ExerciseFooter from "../../shell/ExerciseFooter";
 import {WordTilesAnswerView} from "./word-tiles-parts";
 
 export type Translate = (key: string, fallback?: string) => string;
-
-/** The "Need a hint?" disclosure; null until shown or once submitted. */
-export function WordTilesHint({
-    hint,
-    submitted,
-    showHint,
-    onShowHint,
-}: {
-    hint: string | null | undefined;
-    submitted: boolean;
-    showHint: boolean;
-    onShowHint: () => void;
-}) {
-    const {t} = useI18n();
-    if (!hint || submitted) return null;
-    return (
-        <div className="flex items-center gap-2">
-            {!showHint ? (
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    type="button"
-                    className="text-[var(--accent-text)] underline underline-offset-2 hover:no-underline"
-                    onClick={onShowHint}
-                    data-testid="word-tiles-hint-show"
-                >
-                    {t("lesson.exercise.word_tiles.hint_show", "Need a hint?")}
-                </Button>
-            ) : (
-                <p
-                    className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
-                    data-testid="word-tiles-hint"
-                >
-                    {hint}
-                </p>
-            )}
-        </div>
-    );
-}
 
 /** Correct/wrong feedback + celebration + the shared exercise footer.
  *  The readable correction (My answer / Solution tiles) lives in the
@@ -145,6 +106,7 @@ export function WordTilesReveal({
     myAnswerCorrectness,
     tiles,
     t,
+    lang,
 }: {
     submitted: boolean;
     showAnswerToggle: boolean;
@@ -158,6 +120,8 @@ export function WordTilesReveal({
     myAnswerCorrectness: boolean[];
     tiles: string[];
     t: Translate;
+    /** #3174 - BCP-47 content language of the tiles, for CSS hyphenation. */
+    lang?: string;
 }) {
     if (!submitted || !showAnswerToggle) return null;
     if (isCorrect && onAdvance) {
@@ -167,6 +131,7 @@ export function WordTilesReveal({
         return (
             <>
                 <WordTilesAnswerView
+                    lang={lang}
                     labels={myAnswerLabels}
                     correctness={null}
                     testId="word-tiles-correct-sentence"
@@ -193,6 +158,7 @@ export function WordTilesReveal({
             />
             {view === "my-answer" ? (
                 <WordTilesAnswerView
+                    lang={lang}
                     labels={myAnswerLabels}
                     correctness={myAnswerCorrectness}
                     testId="word-tiles-my-answer-view"
@@ -200,6 +166,7 @@ export function WordTilesReveal({
                 />
             ) : (
                 <WordTilesAnswerView
+                    lang={lang}
                     labels={tiles}
                     correctness={null}
                     testId="word-tiles-solution-view"

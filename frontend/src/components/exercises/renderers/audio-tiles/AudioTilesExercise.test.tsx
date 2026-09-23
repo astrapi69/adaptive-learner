@@ -143,3 +143,24 @@ describe("AudioTilesExercise: reviewed reconstruction", () => {
         expect(screen.getByTestId("word-tiles-result")).toHaveAttribute("data-result", "correct");
     });
 });
+
+describe("AudioTilesExercise: hint affordance (#3168, one surface)", () => {
+    it("routes the authored hint through the XP button; no old word-tiles-hint-show link", () => {
+        const withHint: ContentLessonExercise = {
+            ...EXERCISE,
+            hint: "Literally 'until the re-seeing'.",
+        };
+        render(<AudioTilesExercise exercise={withHint} setId="set-1" source="own/repo" onComplete={vi.fn()} />);
+        expect(screen.queryByTestId("word-tiles-hint-show")).not.toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("audio-tiles-hint-button-reveal"));
+        expect(screen.getByTestId("audio-tiles-hint-button-hint-0")).toHaveTextContent(
+            "Literally 'until the re-seeing'.",
+        );
+    });
+
+    it("renders no hint affordance at all without an authored hint", () => {
+        render(<AudioTilesExercise exercise={EXERCISE} setId="set-1" source="own/repo" onComplete={vi.fn()} />);
+        expect(screen.queryByTestId("word-tiles-hint-show")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("audio-tiles-hint-button")).not.toBeInTheDocument();
+    });
+});

@@ -2266,7 +2266,6 @@
         "placeholder": "Escribe tu respuesta…",
         "code_placeholder": "Escribe el código…",
         "input_label": "Tu respuesta",
-        "hint_show": "¿Necesitas una pista?",
         "result_correct": "¡Correcto!",
         "result_wrong": "Casi.",
         "result_almost": "¡Casi! Fíjate en:",
@@ -2284,7 +2283,6 @@
         "answer_placeholder": "Toca las fichas de abajo para formar tu respuesta",
         "scrambled_label": "Fichas disponibles",
         "scrambled_done": "Todas las fichas colocadas.",
-        "hint_show": "¿Necesitas una pista?",
         "result_correct": "¡Correcto!",
         "result_wrong": "Casi.",
         "empty": "Este ejercicio de fichas no tiene fichas."
@@ -2292,7 +2290,6 @@
       "cloze": {
         "submit": "Comprobar respuestas",
         "retry": "Intentar de nuevo",
-        "hint_show": "¿Necesitas una pista?",
         "sentence_label": "Frase con huecos",
         "blank_label": "Hueco {n}",
         "select_placeholder": "Elegir…",
@@ -3803,6 +3800,17 @@
     "train_errors": "Entrenar errores",
     "shuffle": "Modo aleatorio",
     "endless": "Sin fin",
+    "reset_all": {
+      "button": "Repetir todo",
+      "title": "¿Restablecer todos los resultados?",
+      "message": "Se restablecen los resultados de «{title}»: puntuación, estrellas y tiempo de estudio de {lessons} lecciones. Una nueva ronda empieza en la lección 1; los errores de la ronda anterior se conservan como historial. Los XP y las insignias no cambian.",
+      "average": "Promedio hasta ahora: {percent} %",
+      "no_average": "Todavía no hay promedio.",
+      "confirm": "Restablecer y empezar de nuevo",
+      "cancel": "Cancelar",
+      "success": "Resultados restablecidos. Una nueva ronda empieza con la lección 1.",
+      "failed": "No se pudieron restablecer los resultados."
+    },
     "personal": {
       "title": "Tu ruta de aprendizaje",
       "progress": "En total: {n}% completado",
