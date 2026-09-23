@@ -417,8 +417,19 @@ der Scheibe zurechenbar oder wird zurückgesetzt.
   den Lektions-Fuß (Chevrons, Haken, Text am Telefon versteckt); der Kopf
   wird zur `session`-Ausprägung von `LessonHeader`.
 - Verhalten, das neu dazukommt: Neuausrichtung nach Schrittwechsel und
-  Drehung, Hinweis-Löschen beim Start. Beides ist nutzersichtbar, also
-  Testplan-pflichtig (DE + EN).
+  Drehung, Hinweis-Löschen beim Start, und die Sperre beantworteter
+  Schritte (#1790, aus `useLessonStepState`). `Review.tsx` setzt heute bei
+  jedem Schrittwechsel `setChecked(false)` und `setAnswerable(false)`
+  (132 bis 137), unabhängig von der Richtung: wer zurückgeht, bekommt einen
+  beantworteten Schritt als unbeantwortet vorgelegt und löst mit der
+  zweiten Antwort einen zweiten `recordStepAttempts` für dasselbe Element
+  im selben Lauf aus. Derselbe Fehlertyp wie die Hinweis-Buchführung: eine
+  Messung, die in einem von sechs Läufern richtig ist. Alle drei sind
+  nutzersichtbar, also Testplan-pflichtig (DE + EN); die Sperre bekommt
+  einen Test (nach Zurück: Eingabe gesperrt, kein zweiter
+  `recordStepAttempts`, derselbe Test, der für das ErrorReplay-Ja Bedingung
+  ist), und der PR-Body benennt, dass sich aufgezeichnete Versuche ändern
+  können (Owner-Ergänzung 2026-09-23 zum Start von Scheibe 1).
 - Testids: `review-page`, `review-subtitle`, `review-progress-bar`,
   `review-prev`, `review-check`, `review-next`, `review-step-*`,
   `review-summary*` bleiben über `testIdPrefix`. `Review.test.tsx`,
