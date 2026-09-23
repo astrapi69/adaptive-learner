@@ -382,7 +382,7 @@
     "loading": "Hataların inceleniyor…",
     "empty_body": "Henüz uyarlanacak bir şey yok - veri biriktirmek için önce bir derse çalış.",
     "not_cached_body": "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç.",
-    "back_to_dashboard": "Panele Dön",
+    "back_to_dashboard": "Panoya dön",
     "transparency": {
       "focus_prefix": "Bu ders şuna odaklanıyor:",
       "tag_none": "en zayıf öğelerin",
@@ -396,7 +396,7 @@
       "note": "Öğe puanları güncellendi. Bir sonraki uyarlanabilir dersin hâlâ çalışılması gereken öğelere odaklanacak."
     },
     "error": {
-      "missing_params": "Hiçbir içerik seti seçilmedi.",
+      "missing_params": "İçerik seti seçilmedi.",
       "load_failed": "Uyarlanabilir ders oluşturulamadı."
     }
   },
@@ -423,8 +423,8 @@
     "subtitle_capped": "Tekrar için {due} öğeden {shown} tanesi",
     "loading": "Tekrar oturumu yükleniyor…",
     "empty_body": "Hepsi tamam! Bu sette tekrar edilecek öğe yok.",
-    "not_cached_body": "Bu set henüz indirilmedi. Önce içerik tarayıcısını aç.",
-    "back_to_dashboard": "Panele dön",
+    "not_cached_body": "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç.",
+    "back_to_dashboard": "Panoya dön",
     "summary": {
       "aria_label": "Tekrar özeti",
       "heading": "Tekrar tamamlandı",
@@ -2008,7 +2008,7 @@
     "settings_description": "Oturum verilerinizden proje başına Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmada commit atar.",
     "settings_enable_git": "Git kalıcılığını etkinleştir",
     "dexie_unavailable_body": "Bu özellik yalnızca sunucu modunda kullanılabilir. Git tabanlı öğrenme depolarını etkinleştirmek için Ayarlar'dan sunucu moduna geçin.",
-    "back_to_dashboard": "Panele dön",
+    "back_to_dashboard": "Panoya dön",
     "page": {
       "title": "Öğrenme deposu",
       "rendered_at": "Oluşturulma",
@@ -4685,6 +4685,14 @@
       "vocabulary": "Kelime bilgisi",
       "grammar_rule": "Dil bilgisi kuralı",
       "unknown": "Bilinmeyen"
+    }
+  },
+  "runner": {
+    "back_to_dashboard": "Panoya dön",
+    "not_cached_body": "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç.",
+    "error": {
+      "missing_params": "İçerik seti seçilmedi.",
+      "invalid_data": "Bu içerik geçersiz veya bozuk veriler içerdiği için açılamıyor. Lütfen içerik yazarıyla iletişime geçin."
     }
   }
 }

@@ -381,8 +381,8 @@
     "session_title": "Lição adaptativa",
     "loading": "A analisar os teus erros…",
     "empty_body": "Nada para adaptar ainda - pratica uma lição para acumular dados.",
-    "not_cached_body": "Este conjunto ainda não foi descarregado. Abre o navegador de conteúdo para o descarregar primeiro.",
-    "back_to_dashboard": "Voltar ao Painel",
+    "not_cached_body": "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro.",
+    "back_to_dashboard": "Voltar ao painel",
     "transparency": {
       "focus_prefix": "Esta lição foca-se em:",
       "tag_none": "os teus elementos mais fracos",
@@ -423,7 +423,7 @@
     "subtitle_capped": "{shown} de {due} elemento(s) para rever",
     "loading": "A carregar sessão de revisão…",
     "empty_body": "Tudo em dia! Sem elementos para rever neste conjunto.",
-    "not_cached_body": "Este conjunto ainda não foi descarregado. Abre o explorador de conteúdo primeiro.",
+    "not_cached_body": "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro.",
     "back_to_dashboard": "Voltar ao painel",
     "summary": {
       "aria_label": "Resumo da revisão",
@@ -4685,6 +4685,14 @@
       "vocabulary": "Vocabulário",
       "grammar_rule": "Regra gramatical",
       "unknown": "Desconhecido"
+    }
+  },
+  "runner": {
+    "back_to_dashboard": "Voltar ao painel",
+    "not_cached_body": "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro.",
+    "error": {
+      "missing_params": "Nenhum conjunto de conteúdo selecionado.",
+      "invalid_data": "Este conteúdo não pode ser aberto porque contém dados inválidos ou corrompidos. Entre em contato com o autor do conteúdo."
     }
   }
 }
