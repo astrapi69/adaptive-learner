@@ -837,10 +837,14 @@ und kein Test vergleicht sie. Issue #3203.
    alter und neuer Pfad bis Scheibe 4 dasselbe rendern. Eigener i18n-PR
    vor Scheibe 1 (#2578): PR #3204.
 2. **`empty_body` und `error.load_failed` bleiben pro Läufer** und werden
-   über die Policy adressiert: zwei neue Felder `emptyBodyKey: string` und
-   `loadFailedKey: string` in `RunnerPolicy`; die sechs eingefrorenen
-   Policies tragen die bestehenden Schlüssel als Literale. Kein Katalog
-   ändert sich dafür, die Hülle bekommt keine Verzweigung.
+   über die Policy adressiert: zwei neue Felder `emptyBodyKey` und
+   `loadFailedKey` in `RunnerPolicy`; die sechs eingefrorenen Policies
+   tragen die bestehenden Schlüssel als Literale. Kein Katalog ändert sich
+   dafür, die Hülle bekommt keine Verzweigung. `emptyBodyKey` ist
+   `string | null`: `LessonStatusKind` kennt keinen Leerzustand, eine
+   Lektion ist fehlend oder ungeladen, nie leer; ein Pflichtschlüssel hätte
+   einen toten Eintrag in elf Katalogen erzwungen (Owner-Entscheid zur
+   ersten Fassung von PR #3206).
 3. **ErrorReplay braucht keine neuen Schlüssel.** `lesson.error_replay.empty`
    existiert in allen elf Katalogen und ist genau der Leerzustandstext, den
    die Seite heute inline rendert; die Policy zeigt mit `emptyBodyKey`
@@ -859,6 +863,45 @@ und kein Test vergleicht sie. Issue #3203.
    abzweigen. RED-Beleg: mit den Schlüsseln, aber ohne Konsolidierung,
    fielen drei der vier Drift-Prüfungen.
 
+### Die Regel: geteilt wird bei gleicher Bedingung, nicht bei gleichem Satz
+
+Die erste Fassung von PR #3206 liess die Hülle `not_cached_body` und
+`error.missing_params` für jeden Lauf aus `runner.*` lesen, auch für die
+Lektion, mit der Begründung, das Set sei ohnehin das, was geladen wird. Der
+Owner lehnte das ab, und zwar nicht wegen des Wortlauts, sondern weil die
+auslösenden Bedingungen verschieden sind:
+
+- Fünf Läufer: `not-cached` fällt, wenn `listSets()` kein Set mit dieser
+  `setId` findet. Das Set fehlt tatsächlich; der Inhaltsbrowser ist der
+  nächste Schritt.
+- Lektion: `not-cached` fällt, wenn `getLesson(source, setId, filename)`
+  mit 404 oder `not found|not cached` wirft (`useLesson.ts` 170/177). Das
+  Set kann vollständig heruntergeladen sein und trotzdem genau diese
+  Lektionsdatei fehlen, oder der Dateiname in der URL ist falsch. Mit
+  `runner.not_cached_body` sähe die Person das Set im Inhaltsbrowser
+  heruntergeladen stehen und hätte keinen nächsten Schritt: nicht nur
+  unpräzise, sondern nicht handlungsfähig.
+- `missing_params`: der Lektions-Guard ist `!source || !setId ||
+  !filename`, den fünf anderen fehlt nur die `setId`. "No lesson selected"
+  und "No content set selected" beschreiben verschiedene fehlende Dinge.
+
+**Regel:** Ein Schlüssel wird geteilt, wenn die auslösende Bedingung
+identisch ist, nicht wenn der Satz gleich aussieht. Sie sagt alle vier
+Policy-Schlüssel korrekt voraus, ohne dass man sie einzeln diskutiert:
+`emptyBodyKey`, `loadFailedKey`, `notCachedBodyKey`, `missingParamsKey`.
+Nach dem Kriterium "klingt gleich" wäre `not_cached_body` in `runner.*`
+gelandet, was in der ersten Fassung gerade passiert ist; nach dem
+Kriterium "gleiche Bedingung" nicht.
+
+Folge für `RunnerPolicy`: zwei weitere Felder `notCachedBodyKey` und
+`missingParamsKey`, gleiches Muster wie `emptyBodyKey`. Die Lektion zeigt
+auf `lesson.*`, die fünf anderen auf `runner.*`. `runner.back_to_dashboard`
+übernimmt die Lektion dagegen (den Schlüssel hat sie heute gar nicht), und
+`runner.error.invalid_data` bleibt geteilt: das ist der freundliche
+Nicht-Dev-Fallback, der über den Inhaltsautor spricht, nicht über den
+Läufer. Der Paritätstest zur Lektion deckt damit nur noch einen geteilten
+Satz ab statt drei; der Key-Echo-Test pinnt die anderen beiden.
+
 ### Zu den beiden Annahmen aus Scheibe 0
 
 - **Replay leert Hinweise beim Mount, nicht pro Runde**: bestätigt. Die
@@ -875,8 +918,9 @@ und kein Test vergleicht sie. Issue #3203.
 ### Stand
 
 Scheibe 0 ist gemerged (#3201, c1ff0fdf0); die Vorbedingungen #3196
-(b33eddd23) und #3197 (2cc1beb14) lagen vorher auf `develop`. Scheibe 1
-beginnt nach dem i18n-PR (#3204) und dem Policy-PR zu Punkt 2 und 3.
+(b33eddd23) und #3197 (2cc1beb14) lagen vorher auf `develop`. Der i18n-PR
+#3204 ist gemerged (0c116d8d9, #3203 geschlossen). Scheibe 1 beginnt nach
+dem Policy-PR #3206 (vier Schlüssel-Spalten, Regel oben).
 
 ---
 
