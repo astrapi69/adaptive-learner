@@ -15,10 +15,36 @@ import { describe, expect, it, vi } from "vitest";
 import LessonFooterNav from "../chrome/LessonFooterNav";
 import RunnerFooter from "./RunnerFooter";
 
-const LESSON = { testIdPrefix: "lesson", prevStep: true, pause: true } as const;
-const REVIEW = { testIdPrefix: "review", prevStep: true, pause: false } as const;
-const ENDLESS = { testIdPrefix: "endless", prevStep: false, pause: true } as const;
-const BARE = { testIdPrefix: "error-replay", prevStep: false, pause: false } as const;
+const LESSON = {
+  testIdPrefix: "lesson",
+  i18nNamespace: "lesson",
+  prevStep: true,
+  pause: true,
+  endRun: false,
+} as const;
+const REVIEW = {
+  testIdPrefix: "review",
+  i18nNamespace: "review",
+  prevStep: true,
+  pause: false,
+  endRun: false,
+} as const;
+const ENDLESS = {
+  testIdPrefix: "endless",
+  i18nNamespace: "endless",
+  prevStep: false,
+  pause: true,
+  endRun: true,
+} as const;
+/** A prev-less footer with a lone pause (no End): the centred-pause layout. */
+const PAUSE_ONLY = { ...ENDLESS, endRun: false } as const;
+const BARE = {
+  testIdPrefix: "error-replay",
+  i18nNamespace: "lesson.error_replay",
+  prevStep: false,
+  pause: false,
+  endRun: false,
+} as const;
 
 const BASE = {
   isSummary: false,
@@ -98,20 +124,74 @@ describe("RunnerFooter - prevStep: false (Endless: stream source, no step to go 
     expect(screen.getByTestId("endless-check")).toBeInTheDocument();
   });
 
-  it("keeps the pause centred with mx-auto and every button shrink-0 (#1834)", () => {
-    render(<RunnerFooter policy={ENDLESS} {...BASE} />);
+  it("keeps a lone pause centred with mx-auto and every button shrink-0 (#1834)", () => {
+    render(<RunnerFooter policy={PAUSE_ONLY} {...BASE} />);
     const nav = screen.getByTestId("endless-footer");
     expect(screen.getByTestId("endless-pause-btn")).toHaveClass("mx-auto", "shrink-0");
     expect(screen.getByTestId("endless-check")).toHaveClass("shrink-0");
     expect(nav.className).not.toContain("justify-between");
   });
 
-  it("orders the footer Pause -> action", () => {
-    render(<RunnerFooter policy={ENDLESS} {...BASE} />);
+  it("orders the Endless footer Pause -> End -> action", () => {
+    render(<RunnerFooter policy={ENDLESS} {...BASE} paused={false} onEnd={() => {}} />);
     const ids = Array.from(
       screen.getByTestId("endless-footer").querySelectorAll("[data-testid]"),
     ).map((el) => el.getAttribute("data-testid"));
-    expect(ids).toEqual(["endless-pause-btn", "endless-check"]);
+    expect(ids).toEqual(["endless-pause", "endless-end", "endless-check"]);
+  });
+});
+
+// EXP-052 slice 2, Befund 2: pause and End leave the Endless stat line and
+// are operated together in the footer; endRun is Endless-only.
+describe("RunnerFooter - endRun + toggle pause (Endless)", () => {
+  const ENDLESS_BASE = { ...BASE, paused: false, onEnd: () => {} };
+
+  it("reproduction + happy path: End ends the run, the pause toggles in place", () => {
+    const onEnd = vi.fn();
+    const onPause = vi.fn();
+    render(<RunnerFooter policy={ENDLESS} {...ENDLESS_BASE} onEnd={onEnd} onPause={onPause} />);
+    fireEvent.click(screen.getByTestId("endless-end"));
+    fireEvent.click(screen.getByTestId("endless-pause"));
+    expect(onEnd).toHaveBeenCalledTimes(1);
+    expect(onPause).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("endless-pause")).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("lays out Pause at the leading edge and End taking the free space (#1834)", () => {
+    render(<RunnerFooter policy={ENDLESS} {...ENDLESS_BASE} />);
+    const pause = screen.getByTestId("endless-pause");
+    expect(pause).toHaveClass("shrink-0");
+    expect(pause).not.toHaveClass("mx-auto");
+    expect(screen.getByTestId("endless-end")).toHaveClass("mr-auto", "shrink-0");
+    expect(screen.getByTestId("endless-check")).not.toHaveClass("ml-auto");
+  });
+
+  it("edge: while paused the action is hidden and the pause reads as pressed (resume)", () => {
+    const onPause = vi.fn();
+    render(<RunnerFooter policy={ENDLESS} {...ENDLESS_BASE} paused onPause={onPause} checked />);
+    const toggle = screen.getByTestId("endless-pause");
+    expect(toggle).toHaveAttribute("aria-pressed", "true");
+    expect(screen.queryByTestId("endless-check")).toBeNull();
+    expect(screen.queryByTestId("endless-next")).toBeNull();
+    expect(screen.getByTestId("endless-end")).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(onPause).toHaveBeenCalledTimes(1);
+  });
+
+  it("boundary: the summary of a stream renders no footer at all (#1864 sole exit)", () => {
+    const { container } = render(
+      <RunnerFooter policy={ENDLESS} {...ENDLESS_BASE} isSummary isInProgress={false} />,
+    );
+    expect(container.innerHTML).toBe("");
+  });
+
+  it.each([
+    ["lesson", LESSON],
+    ["review", REVIEW],
+    ["error-replay", BARE],
+  ] as const)("%s (endRun false) renders no End control", (prefix, policy) => {
+    render(<RunnerFooter policy={policy} {...BASE} />);
+    expect(screen.queryByTestId(`${prefix}-end`)).toBeNull();
   });
 });
 

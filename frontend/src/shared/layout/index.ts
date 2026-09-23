@@ -2,8 +2,6 @@
 export * from "./DashboardCard";
 export * from "./IconBadge";
 export {default as IconBadge} from "./IconBadge";
-export * from "./LessonStepNav";
-export {default as LessonStepNav} from "./LessonStepNav";
 export * from "./ListRow";
 export {default as ListRow} from "./ListRow";
 export * from "./MenuToggleButton";

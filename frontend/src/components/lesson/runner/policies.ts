@@ -22,6 +22,7 @@ export const LESSON_POLICY: RunnerPolicy = Object.freeze({
   exit: "set-link",
   prevStep: true,
   pause: true,
+  endRun: false,
   optionsBar: true,
   theoryLink: true,
   enterShortcut: true,
@@ -42,6 +43,7 @@ export const REVIEW_POLICY: RunnerPolicy = Object.freeze({
   exit: DASHBOARD_EXIT,
   prevStep: true,
   pause: false,
+  endRun: false,
   optionsBar: false,
   theoryLink: false,
   enterShortcut: true,
@@ -62,6 +64,7 @@ export const SHUFFLE_POLICY: RunnerPolicy = Object.freeze({
   exit: DASHBOARD_EXIT,
   prevStep: true,
   pause: false,
+  endRun: false,
   optionsBar: false,
   theoryLink: false,
   enterShortcut: true,
@@ -78,7 +81,8 @@ export const SHUFFLE_POLICY: RunnerPolicy = Object.freeze({
 /**
  * The Endless stream. ``prevStep: false`` is structural, not a
  * preference: the source has ``position: null`` and no ``goPrev``.
- * The pause control moves from the stat line into the footer.
+ * Pause and End move from the stat line into the footer (EXP-052
+ * Befund 2); ``endRun`` because a stream has no last step to end on.
  */
 export const ENDLESS_POLICY: RunnerPolicy = Object.freeze({
   testIdPrefix: "endless",
@@ -86,6 +90,7 @@ export const ENDLESS_POLICY: RunnerPolicy = Object.freeze({
   exit: DASHBOARD_EXIT,
   prevStep: false,
   pause: true,
+  endRun: true,
   optionsBar: false,
   theoryLink: false,
   enterShortcut: true,
@@ -107,6 +112,7 @@ export const ADAPTIVE_POLICY: RunnerPolicy = Object.freeze({
   exit: DASHBOARD_EXIT,
   prevStep: true,
   pause: false,
+  endRun: false,
   optionsBar: false,
   theoryLink: false,
   enterShortcut: true,
@@ -129,6 +135,7 @@ export const ERROR_REPLAY_POLICY: RunnerPolicy = Object.freeze({
   exit: "back-button",
   prevStep: true,
   pause: false,
+  endRun: false,
   optionsBar: false,
   theoryLink: false,
   enterShortcut: true,
