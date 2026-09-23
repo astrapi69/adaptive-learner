@@ -8,6 +8,9 @@
  * options / theory / persist / mode columns row by row.
  */
 
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import {
@@ -34,6 +37,8 @@ const RATIFIED_COLUMNS = [
   "clearHints",
   "persistProgress",
   "mode",
+  "emptyBodyKey",
+  "loadFailedKey",
 ].sort();
 
 const ROWS: [string, RunnerPolicy][] = Object.entries(RUNNER_POLICIES);
@@ -61,7 +66,7 @@ describe("runner policies (ratified matrix 2026-09-23)", () => {
     }
   });
 
-  it.each(ROWS)("%s carries exactly the twelve ratified columns", (_prefix, policy) => {
+  it.each(ROWS)("%s carries exactly the fourteen ratified columns", (_prefix, policy) => {
     expect(Object.keys(policy).sort()).toEqual(RATIFIED_COLUMNS);
   });
 
@@ -134,5 +139,56 @@ describe("runner policies (ratified matrix 2026-09-23)", () => {
       "adaptive",
       "lesson.error_replay",
     ]);
+  });
+});
+
+// #3203 — the two status texts that explain WHY a run shows nothing stay
+// per runner and are addressed through the policy, not through runner.*.
+// The keys are plain strings the scanner of full-tree-key-coverage never
+// sees as t() calls, so this pin resolves them against every catalog.
+describe("per-runner status keys (#3203)", () => {
+  const LANGS = ["de", "el", "en", "es", "fr", "hi", "id", "ja", "ko", "pt", "tr"];
+  const I18N_DIR = join(__dirname, "..", "..", "..", "data", "i18n");
+  const lookup = (catalog: Record<string, unknown>, dotted: string): unknown =>
+    dotted.split(".").reduce<unknown>((node, part) => {
+      return node && typeof node === "object" ? (node as Record<string, unknown>)[part] : undefined;
+    }, catalog);
+  const catalogs = LANGS.map(
+    (lang) => [lang, JSON.parse(readFileSync(join(I18N_DIR, `${lang}.json`), "utf-8"))] as const,
+  );
+
+  it("only the lesson has no empty screen (its source never reports empty)", () => {
+    const without = ROWS.filter(([, policy]) => policy.emptyBodyKey === null).map(([p]) => p);
+    expect(without).toEqual(["lesson"]);
+  });
+
+  it.each(ROWS)("%s status keys resolve in every catalog", (_prefix, policy) => {
+    const keys = [policy.emptyBodyKey, policy.loadFailedKey].filter(
+      (key): key is string => typeof key === "string",
+    );
+    expect(keys.length).toBeGreaterThan(0);
+    for (const [lang, catalog] of catalogs) {
+      for (const key of keys) {
+        expect(lookup(catalog, key), `${lang}: ${key}`).toBeTypeOf("string");
+        expect(lookup(catalog, key), `${lang}: ${key} empty`).not.toBe("");
+      }
+    }
+  });
+
+  it("the four session runners keep their own empty and load-failed texts", () => {
+    expect(REVIEW_POLICY.emptyBodyKey).toBe("review.empty_body");
+    expect(SHUFFLE_POLICY.emptyBodyKey).toBe("shuffle.empty_body");
+    expect(ENDLESS_POLICY.emptyBodyKey).toBe("endless.empty_body");
+    expect(ADAPTIVE_POLICY.emptyBodyKey).toBe("adaptive.empty_body");
+    expect(REVIEW_POLICY.loadFailedKey).toBe("review.error.load_failed");
+    expect(SHUFFLE_POLICY.loadFailedKey).toBe("shuffle.error.load_failed");
+    expect(ENDLESS_POLICY.loadFailedKey).toBe("endless.error.load_failed");
+    expect(ADAPTIVE_POLICY.loadFailedKey).toBe("adaptive.error.load_failed");
+  });
+
+  it("ErrorReplay reads the existing replay empty text and the lesson's load-failed line", () => {
+    expect(ERROR_REPLAY_POLICY.emptyBodyKey).toBe("lesson.error_replay.empty");
+    expect(ERROR_REPLAY_POLICY.loadFailedKey).toBe("lesson.error.load_failed");
+    expect(LESSON_POLICY.loadFailedKey).toBe("lesson.error.load_failed");
   });
 });

@@ -126,6 +126,17 @@ export interface RunnerPolicy {
   persistProgress: boolean;
   /** The mode the run pins, or ``"inherit"`` for the learner's own choice. */
   mode: LessonMode | "inherit";
+  /**
+   * Catalog key of the empty-screen body ("all caught up", "needs two
+   * lessons", "nothing to adapt yet"): content that explains WHY this run
+   * shows nothing, so it stays per runner while the shared chrome reads
+   * ``runner.*`` (#3203). ``null`` only for the lesson, whose source never
+   * reports ``empty`` (a lesson is a file; missing or not cached, never
+   * empty).
+   */
+  emptyBodyKey: string | null;
+  /** Catalog key of the load-failed line; per runner by content (#3203). */
+  loadFailedKey: string;
 }
 
 /** The run-time tallies the shell hands to the summary render prop. */

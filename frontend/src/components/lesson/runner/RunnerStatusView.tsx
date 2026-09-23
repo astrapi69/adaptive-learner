@@ -8,13 +8,15 @@
  * markup is byte-identical to ``LessonStatusView`` (pinned by test);
  * the four ``render*Status`` page copies are replaced slice by slice.
  *
- * Keys are read as ``{namespace}.{suffix}``; the fallbacks carry the
- * lesson wording. A namespace that lacks a suffix (today
- * ``error.invalid_data`` outside ``lesson``) shows the fallback until
- * its catalog PR lands (#2578 order: catalog first, then the page
- * slice). The content-browser exit reads the shared
- * ``lesson.action.open_browser`` every page already uses; the dashboard
- * exit of the empty screen is the route all four session pages use.
+ * The chrome every run shares (missing params, not cached, invalid data,
+ * back to dashboard) reads ``runner.*``, its ONE catalog home (#3203);
+ * the namespace names only the runner's own title and loading line; the
+ * empty body and the load-failed line, which explain WHY this run shows
+ * nothing, come through the policy keys (``emptyBodyKey`` /
+ * ``loadFailedKey``). The fallbacks carry the en wording. The
+ * content-browser exit reads the shared ``lesson.action.open_browser``
+ * every page already uses; the dashboard exit of the empty screen is the
+ * route all four session pages use.
  *
  * @example
  * const kind = resolveRunnerStatusKind(Boolean(setId), source.status);
@@ -23,6 +25,8 @@
  *     <RunnerStatusView
  *       testIdPrefix="review"
  *       i18nNamespace="review"
+ *       emptyBodyKey={policy.emptyBodyKey}
+ *       loadFailedKey={policy.loadFailedKey}
  *       kind={kind}
  *       error={source.error}
  *     />
@@ -55,7 +59,12 @@ export function resolveRunnerStatusKind(
 
 export interface RunnerStatusViewProps {
   testIdPrefix: RunnerTestIdPrefix;
+  /** Namespace of the runner's own keys (``page_title``, ``loading``). */
   i18nNamespace: string;
+  /** ``RunnerPolicy.emptyBodyKey``; ``null`` when the source never reports empty. */
+  emptyBodyKey: string | null;
+  /** ``RunnerPolicy.loadFailedKey``. */
+  loadFailedKey: string;
   kind: RunnerStatusKind;
   error: string | null;
 }
@@ -63,11 +72,14 @@ export interface RunnerStatusViewProps {
 const MAIN_CLASS = "page lesson-page flex flex-col min-h-full";
 const CONTENT_BROWSER_ROUTE = "/content?tab=my";
 const DASHBOARD_ROUTE = "/dashboard";
+const EMPTY_FALLBACK = "Nothing to practise in this set right now.";
 
 /** Renders the missing / loading / empty / not-cached / error status screen. */
 export default function RunnerStatusView({
   testIdPrefix,
   i18nNamespace,
+  emptyBodyKey,
+  loadFailedKey,
   kind,
   error,
 }: RunnerStatusViewProps) {
@@ -82,12 +94,7 @@ export default function RunnerStatusView({
     return (
       <main id="main" className={MAIN_CLASS} data-testid={testId("missing-params")}>
         <h1>{pageTitle}</h1>
-        <p>
-          {t(
-            `${i18nNamespace}.error.missing_params`,
-            "No lesson selected. Browse content sets to pick one.",
-          )}
-        </p>
+        <p>{t("runner.error.missing_params", "No content set selected.")}</p>
         <Button asChild variant="default">
           <Link to={CONTENT_BROWSER_ROUTE}>{openBrowser}</Link>
         </Button>
@@ -110,7 +117,7 @@ export default function RunnerStatusView({
           <h1>{pageTitle}</h1>
         </header>
         <p className="lesson-not-cached-body">
-          {t(`${i18nNamespace}.empty_body`, "Nothing to practise in this set right now.")}
+          {emptyBodyKey === null ? EMPTY_FALLBACK : t(emptyBodyKey, EMPTY_FALLBACK)}
         </p>
         <p>
           <Button
@@ -120,7 +127,7 @@ export default function RunnerStatusView({
             data-testid={testId("back-to-dashboard")}
           >
             <ArrowLeft size={14} aria-hidden="true" />
-            {t(`${i18nNamespace}.back_to_dashboard`, "Back to Dashboard")}
+            {t("runner.back_to_dashboard", "Back to Dashboard")}
           </Button>
         </p>
       </main>
@@ -135,8 +142,8 @@ export default function RunnerStatusView({
         </header>
         <p className="lesson-not-cached-body">
           {t(
-            `${i18nNamespace}.not_cached_body`,
-            "This lesson isn't downloaded yet. Open the content browser and download the set first.",
+            "runner.not_cached_body",
+            "This set isn't downloaded yet. Open the content browser to download it first.",
           )}
         </p>
         <p>
@@ -155,10 +162,10 @@ export default function RunnerStatusView({
 
   // #1824: the raw underlying error is diagnostic detail, not user copy;
   // only Dev Mode appends it (the DEV-MODE-FRIENDLY-ERRORS-01 posture).
-  const loadFailed = t(`${i18nNamespace}.error.load_failed`, "Could not load lesson.");
+  const loadFailed = t(loadFailedKey, "Could not load lesson.");
   const invalidData = t(
-    `${i18nNamespace}.error.invalid_data`,
-    "This lesson can't be opened because it contains invalid or corrupted data. Please contact the content author.",
+    "runner.error.invalid_data",
+    "This content can't be opened because it contains invalid or corrupted data. Please contact the content author.",
   );
   return (
     <main id="main" className={MAIN_CLASS} data-testid={testId("error")}>
