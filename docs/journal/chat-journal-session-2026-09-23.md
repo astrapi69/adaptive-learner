@@ -70,6 +70,14 @@ Eine Sitzung über zwei Tage. Der Owner meldete acht Gerätebefunde vom iPhone, 
 - Result: PR #3201 (Agentin, 6d97ca438): 12 Dateien, 80 neue Tests, Vollsuite 10667 grün, Komplexitäts- und Dead-Code-Gate sauber; `useLessonStepState.progress` optional (Default `null`) für die flüchtigen Läufe. Prüfung gegen die Matrix Zeile für Zeile bestanden (Endless `prevStep: false` strukturell, `pause: true`; ErrorReplay `prevStep: true`; nur Lesson `persistProgress` und `mode: "inherit"`). Vergleichslauf visual-regression.yml 35832381098 als Beleg für `visual-baselines-unaffected`. Bewusste Dopplung: `RunnerFooter` und `RunnerStatusView` liegen neben den Originalen (Byte-Paritätstests), Scheibe 4 entfernt die Originale. Befund für Scheibe 1 bis 3: `lesson.error_replay` trägt keine Statusbildschirm-Schlüssel, Empfehlung `lesson.*` wiederverwenden (Kommentar auf #3169).
 - Commit: c1ff0fdf0.
 
+## 8. EXP-052: i18n-Entscheid vor Scheibe 1 (2026-09-23, 10:30 bis 12:30)
+
+- Original prompt: "EXP-052, i18n-Entscheid vor Scheibe 1 ... Dritter Weg, weder neue error_replay-Schlüssel noch lesson.*", danach die Prüfung der zwei Abweichungen: "eine geht durch, eine nicht".
+- Optimized prompt: Bei jedem Vorschlag, Schlüssel zusammenzulegen, die auslösende Bedingung je Konsument aus dem Code nennen (Guard, Fehlerpfad, Parameter), nicht den Wortlaut.
+- Goal: `runner.*` als einziges Zuhause der geteilten Chrome, Drift der Kopien beheben, Test gegen künftige Drift, Policy-Schlüssel für die läuferspezifischen Texte.
+- Result: Issue #3203 (Drift: de drei Fassungen eines Satzes, sieben Sprachen mit Varianten, fünfte Kopie `repo.back_to_dashboard`). PR #3204 (0c116d8d9): vier `runner.*`-Schlüssel in elf Katalogen, alle Kopien auf die der englischen Quelle nächste Fassung, Drift-Test in `i18n-sync.test.ts` (RED-Beleg: mit Schlüsseln ohne Konsolidierung fielen 3 von 4). PR #3205 (506873dc0): Entscheid in EXP-052. PR #3206 (13074eb0d): `RunnerPolicy` mit `emptyBodyKey | null`, `loadFailedKey`, `notCachedBodyKey`, `missingParamsKey`; Hülle liest `runner.back_to_dashboard` und `runner.error.invalid_data` geteilt, alles andere über die Policy; Key-Echo-Test; Paritätstest substituiert genau einen Satz aus `en.json`. Erste Fassung (Lektion liest `runner.*`) vom Owner abgelehnt: die Bedingungen sind verschieden (`listSets()` ohne Set gegen `getLesson()` ohne Datei im geladenen Set; drei Parameter gegen einen). PR #3207 (ce1bd0bbd): die Regel "geteilt wird bei gleicher Bedingung, nicht bei gleichem Satz" in EXP-052.
+- Commit: 0c116d8d9, 506873dc0, 13074eb0d, ce1bd0bbd.
+
 ## Fragen und Annahmen
 
 - #3170: Option A als Standard plus Schalter für B, entschieden von der Orchestratorin; Mastery-Semantik `isSettledElement` als Annahme im PR-Body, Alternativen benannt.
@@ -78,3 +86,4 @@ Eine Sitzung über zwei Tage. Der Owner meldete acht Gerätebefunde vom iPhone, 
 - FeatureShots `lesson-review/summary` für #3176 fehlen auf develop schon vor dem PR (#3182), deshalb dort nicht nachgeholt.
 - #3196: Replay-Seite leert das Hinweis-Set beim Mount (Schlüssel `[setId, filename]`, wie `Lesson.tsx`), nicht pro Runde; ein "Nochmal" innerhalb derselben Replay-Sitzung behält die Hinweise dieser Sitzung. Konservative Wahl, im PR benannt.
 - Scheibe 0: `RunnerFooter`/`RunnerStatusView` liegen bewusst NEBEN `LessonFooterNav`/`LessonStatusView` (Byte-Paritätstests statt Wrapper, damit kein Unter-Toleranz-Versatz im Fuß entsteht, #3023); die Dopplung endet mit Scheibe 4.
+- Sprachwahl je Katalog bei der Konsolidierung (#3204): Mehrheitsvariante bzw. die dem Katalogbegriff nächste (el `σετ` 117 gegen `σύνολο` 19; es `explorador` 9 gegen `navegador` 2; pt `baix` 50 gegen `descarreg` 4; tr `Pano` aus der Navigation). Im PR-Body benannt, vom Owner nicht widersprochen.
