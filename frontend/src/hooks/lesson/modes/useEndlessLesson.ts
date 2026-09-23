@@ -26,6 +26,7 @@ import {
     type EndlessPlan,
     type EndlessSourceLesson,
 } from "../../../lib/endless/endless-stream";
+import {pinnedRandom} from "../../../lib/random";
 import {loadReviewQueue} from "../../../lib/review/review-queue";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
 import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
@@ -109,6 +110,10 @@ export function useEndlessLesson(
 
     // Imperative cursor state (the random phase isn't derivable in render).
     const planRef = useRef<EndlessPlan | null>(null);
+    // The repetition draws of this plan: a pinned stream in visual runs
+    // (#3214), undefined in production so endlessStepAt's Math.random default
+    // applies per call.
+    const rngRef = useRef<(() => number) | undefined>(undefined);
     const positionRef = useRef(0);
     const dueSetRef = useRef<ReadonlySet<string>>(new Set());
     const newSetRef = useRef<ReadonlySet<string>>(new Set());
@@ -191,6 +196,7 @@ export function useEndlessLesson(
                 }
 
                 planRef.current = plan;
+                rngRef.current = pinnedRandom("endless-repeat");
                 positionRef.current = 0;
                 dueSetRef.current = new Set(dueExerciseIds);
                 seenSetRef.current = seenExerciseIds;
@@ -202,7 +208,7 @@ export function useEndlessLesson(
                 learnedRef.current = new Set();
                 setCards(allCards);
                 setStats(EMPTY_STATS);
-                setStep(endlessStepAt(plan, 0, null));
+                setStep(endlessStepAt(plan, 0, null, rngRef.current));
                 setStatus("ready");
             } catch (err) {
                 if (cancelled) return;
@@ -220,7 +226,9 @@ export function useEndlessLesson(
         if (!plan) return;
         const next = positionRef.current + 1;
         positionRef.current = next;
-        setStep((prev) => endlessStepAt(plan, next, prev?.id ?? null));
+        setStep((prev) =>
+            endlessStepAt(plan, next, prev?.id ?? null, rngRef.current),
+        );
     }, []);
 
     const recordStepAttempts = useCallback(

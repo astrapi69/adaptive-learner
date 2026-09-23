@@ -140,6 +140,10 @@ export function buildEndlessPlan(input: BuildEndlessPlanInput): EndlessPlan {
  * @param index - 0-based position in the session.
  * @param lastStepId - The previously shown step id (repeat avoidance).
  * @param rng - Injectable RNG in ``[0, 1)``; defaults to ``Math.random``.
+ *     In visual runs ``useEndlessLesson`` passes one
+ *     ``pinnedRandom("endless-repeat")`` generator per plan, so the
+ *     repetitions depend on no other draw on the page (#3214); in production
+ *     that is ``undefined`` and the default applies per call.
  */
 export function endlessStepAt(
     plan: EndlessPlan,

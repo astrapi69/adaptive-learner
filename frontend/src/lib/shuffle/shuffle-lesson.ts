@@ -51,7 +51,10 @@ export interface BuildShuffleOptions {
     /** Optional description shown under the title. */
     description?: string | null;
     /** Injectable RNG in ``[0, 1)`` for deterministic tests.
-     *  Default ``Math.random``. */
+     *  Default ``Math.random``. In visual runs ``useShuffleLesson`` passes
+     *  ``pinnedRandom("shuffle-order")`` here, so the order depends on no
+     *  other draw on the page (#3214); in production that is ``undefined``
+     *  and the default applies. */
     rng?: () => number;
 }
 

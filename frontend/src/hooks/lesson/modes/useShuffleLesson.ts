@@ -30,6 +30,7 @@ import {
     buildShuffleLesson,
     type ShuffleSourceLesson,
 } from "../../../lib/shuffle/shuffle-lesson";
+import {pinnedRandom} from "../../../lib/random";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
 import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
 import {getStorage} from "../../../storage";
@@ -151,6 +152,7 @@ export function useShuffleLesson(
                     title,
                     description,
                     limit,
+                    rng: pinnedRandom("shuffle-order"),
                 });
                 if (built.steps.length === 0) {
                     setStatus("empty");

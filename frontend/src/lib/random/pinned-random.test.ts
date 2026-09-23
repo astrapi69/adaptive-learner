@@ -124,6 +124,28 @@ describe("with a pin (visual runs)", () => {
     });
 });
 
+describe("baseline preservation (#3214)", () => {
+    /** The instant every visual run froze ``Date`` at before #3214. Written
+     *  as a literal on purpose: the e2e constant may move (#3215), the
+     *  preserved suffix must not. */
+    const FROZEN_VISUAL_ISO = "2026-06-10T14:00:00Z";
+
+    it("the visual mount salt is the suffix the frozen clock produced", () => {
+        expect(Date.parse(FROZEN_VISUAL_ISO) & 0xffff).toBe(PIN.mountSalt);
+    });
+
+    it.each([
+        {name: "a matching exercise", id: "ex-match-colors"},
+        {name: "a word-tiles exercise", id: "ex-tiles-greeting"},
+        {name: "a numeric lesson id", id: "01-a-ex3"},
+    ])("the pinned mount seed of $name equals its pre-#3214 visual seed", ({id}) => {
+        setPin(PIN);
+        expect(mountShuffleSeed(id)).toBe(
+            `${id}#${Date.parse(FROZEN_VISUAL_ISO) & 0xffff}`,
+        );
+    });
+});
+
 describe("inertness", () => {
     it("writes nothing to localStorage in either mode", () => {
         const setItem = vi.spyOn(Storage.prototype, "setItem");
