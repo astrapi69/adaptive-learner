@@ -27,7 +27,7 @@ import {
 } from "../../../lib/endless/endless-stream";
 import {loadReviewQueue} from "../../../lib/review/review-queue";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
-import {stampHintUsage} from "../../../lib/hints/hint-usage";
+import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
 import {getStorage} from "../../../storage";
 import type {
     ContentLessonCard,
@@ -125,6 +125,8 @@ export function useEndlessLesson(
         }
         let cancelled = false;
         setStatus("loading");
+        // #3196 — hint usage is per run: forget the previous run's reveals.
+        clearHintUsage();
         setError(null);
         void (async () => {
             try {

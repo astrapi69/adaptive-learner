@@ -44,7 +44,7 @@ import {useLessonShortcuts} from "../../hooks/lesson/interaction/useLessonShortc
 import {useLessonCountdown} from "../../hooks/lesson/useLessonCountdown";
 import LessonCountdownRing from "../../components/lesson/chrome/tension/LessonCountdownRing";
 import {prefersReducedMotion} from "../../lib/feedback/feedbackPref";
-import {stampHintUsage} from "../../lib/hints/hint-usage";
+import {clearHintUsage, stampHintUsage} from "../../lib/hints/hint-usage";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {notifyReviewsChanged} from "../../lib/review/reviewsChanged";
 import {getStorage} from "../../storage";
@@ -156,6 +156,12 @@ export default function ErrorReplayLesson() {
     const [index, setIndex] = useState(0);
     const [checked, setChecked] = useState(false);
     const [answerable, setAnswerable] = useState(false);
+
+    // #3196 — the replay re-plays the lesson's exercise ids; forget the
+    // lesson's hint reveals so only hints opened in this round count.
+    useEffect(() => {
+        clearHintUsage();
+    }, [setId, filename]);
 
     const exerciseRef = useRef<ExerciseHandle>(null);
     // #154 — Enter-key shortcut, identical to the main lesson runner.
