@@ -941,6 +941,31 @@ async function gotoDetailedLessonSummary(page: Page): Promise<boolean> {
     return true;
 }
 
+/** The bundled set the visual helpers download and play (mirrors the
+ *  ``SET_ID`` constant in ``e2e/visual/helpers.ts``). */
+const BUNDLED_SET_ID = "fr-a1-from-en";
+
+/**
+ * #3171 — the "Repeat everything" confirmation on the learning-path set
+ * panel. A played lesson gives the set results, so the button is offered
+ * and the dialog has an average to name; the shot is taken once the
+ * summary has loaded (confirm enabled).
+ */
+async function gotoResetSetResultsDialog(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    if (!(await playBundledLesson(page, "summary"))) return false;
+    await page.goto("/learning-path");
+    await expect(page.getByTestId("learning-path-sets")).toBeVisible({timeout: 20_000});
+    await page.getByTestId(`set-toggle-${BUNDLED_SET_ID}`).click();
+    await page.getByTestId(`set-reset-results-${BUNDLED_SET_ID}`).click();
+    await expect(page.getByTestId("reset-set-results-confirm")).toBeVisible({timeout: 10_000});
+    await expect(page.getByTestId("reset-set-results-confirm-confirm")).toBeEnabled({
+        timeout: 10_000,
+    });
+    await page.waitForTimeout(400);
+    return true;
+}
+
 /** Open Settings → Learning scrolled to the gamification card (#2962 -
  *  moved in from the Plugins tab as the last card of the motivation
  *  cluster, behind a separator because it holds Reset progress). */
@@ -1218,6 +1243,12 @@ const FEATURES: FeatureShot[] = [
         path: "data-subnav/settings",
         setup: gotoDataSubNav,
         pinTo: "settings-cluster-data-backup",
+    },
+    // --- "Repeat everything" confirmation on the set panel (#3171) --------
+    {
+        path: "reset-set-results/dialog",
+        setup: gotoResetSetResultsDialog,
+        pinTo: "reset-set-results-confirm",
     },
     // --- Detailed lesson evaluation with the lesson review (#3124) --------
     {

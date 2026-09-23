@@ -2357,6 +2357,31 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] Beides im Browser-Modus (ohne Server) prüfen - die Zahlen
       kommen dort aus der lokalen Datenbank
 
+### Lernpfad-Set: "Alles wiederholen" setzt die Ergebnisse zurück (#3171)
+- [ ] Lernpfad öffnen, ein Set mit Ergebnissen aufklappen: in der
+      Aktionsleiste steht "Alles wiederholen" (`set-reset-results-<id>`)
+      neben "Fehler trainieren"; ein nie begonnenes Set zeigt den Knopf
+      nicht
+- [ ] Knopf drücken: die Bestätigung "Alle Ergebnisse zurücksetzen?" nennt
+      den Set-Titel, die Zahl der Lektionen mit Ergebnis, dass Punktzahl,
+      Sterne und Lernzeit zurückgesetzt werden, dass die Fehler des
+      bisherigen Durchgangs als Verlauf bleiben und dass XP und Abzeichen
+      unverändert sind; darunter "Bisheriger Schnitt: N %" (bei einem Set
+      ohne bewertete Lektion "Noch kein Schnitt vorhanden.")
+- [ ] "Abbrechen" (auch Escape): nichts ändert sich, Sterne und Fortschritt
+      des Sets sind wie vorher
+- [ ] "Zurücksetzen und neu starten": Erfolgs-Toast, Lektion 1 des Sets
+      öffnet sich; zurück im Lernpfad steht das Set ohne Sterne und ohne
+      Fortschritt, "Fehler trainieren" ist verschwunden (neuer Durchgang,
+      wie bei "Erneut durcharbeiten")
+- [ ] Ein Set, das in "Meine Inhalte" als "Abgeschlossen" oder
+      "Zurückgestellt" markiert war, steht nach dem Reset wieder unter
+      "Aktiv" (Statusfilter in "Meine Inhalte"); das Dashboard führt es
+      unter "Weitermachen" wieder als begonnenes Set, nicht als erledigt
+- [ ] Dashboard: XP-Stand und Abzeichen sind nach dem Reset unverändert
+- [ ] Beides prüfen: Desktop-App (API-Modus) und Browser-Modus ohne Server
+      (Dexie) - der Reset schreibt in beide Speicher
+
 ### Set-Seite: Lektionsliste + Fortschritt (#2793 Stufen 2-3)
 - [ ] Eine Set-Seite öffnen (/content/set/<id> oder über einen
       geteilten Link): unter den Set-Angaben steht die Liste ALLER
