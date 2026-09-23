@@ -204,11 +204,13 @@ export const contentApi = {
     /** GET /api/users/{user_id}/element-errors/review-queue */
     reviewQueue: (
       userId: string,
-      opts: { setId?: string; limit?: number } = {},
+      opts: { setId?: string; limit?: number; includeNeverWrong?: boolean } = {},
     ) => {
       const params = new URLSearchParams();
       if (opts.setId !== undefined) params.set("set_id", opts.setId);
       if (opts.limit !== undefined) params.set("limit", String(opts.limit));
+      // #3170 — only the opt-in travels; the backend default is errors only.
+      if (opts.includeNeverWrong) params.set("include_never_wrong", "true");
       const qs = params.toString();
       const path = qs
         ? `/users/${encodeURIComponent(userId)}/element-errors/review-queue?${qs}`

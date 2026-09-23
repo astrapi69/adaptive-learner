@@ -132,7 +132,8 @@ describe("Dexie elementErrors: #1040 exam-mode SRS boost", () => {
         await recordElementAttemptsDexie(USER, [
             attempt({correct: true, exam: true}),
         ]);
-        const queue = await computeReviewQueueDexie(USER);
+        // #3170: a never-wrong row is scheduled only when opted in.
+        const queue = await computeReviewQueueDexie(USER, {includeNeverWrong: true});
         expect(queue).toHaveLength(1);
         const last = new Date(queue[0].last_attempt_at).getTime();
         const suggested = new Date(queue[0].suggested_review_at).getTime();
@@ -159,7 +160,8 @@ describe("Dexie elementErrors: #1040 exam-mode SRS boost", () => {
         await recordElementAttemptsDexie(USER, [
             attempt({correct: true, exam: true}),
         ]);
-        let queue = await computeReviewQueueDexie(USER);
+        // #3170: a never-wrong row is scheduled only when opted in.
+        let queue = await computeReviewQueueDexie(USER, {includeNeverWrong: true});
         expect(queue).toHaveLength(1);
         expect(queue[0].correct_streak).toBe(2);
         const last = new Date(queue[0].last_attempt_at).getTime();
@@ -169,7 +171,7 @@ describe("Dexie elementErrors: #1040 exam-mode SRS boost", () => {
         await recordElementAttemptsDexie(USER, [
             attempt({correct: true, exam: true}),
         ]);
-        queue = await computeReviewQueueDexie(USER);
+        queue = await computeReviewQueueDexie(USER, {includeNeverWrong: true});
         expect(queue).toHaveLength(0);
     });
 });
