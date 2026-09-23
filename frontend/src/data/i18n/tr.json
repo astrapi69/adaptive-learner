@@ -1013,13 +1013,17 @@
       "whole_set": "Tüm seti tekrar et"
     },
     "matching_resolve": {
-      "title": "Çözme animasyonu",
+      "title": "Eşleştirme alıştırması",
       "hint": "Eşleştirme alıştırması, kontrolden sonra 'Çöz'e bastığınızda doğru çiftleri nasıl gösterir.",
-      "label": "Efekt",
+      "label": "Çözme animasyonu",
       "slide": "Kaydır",
       "color": "Renk",
       "connect": "Bağla",
       "stack": "Yığ"
+    },
+    "matching_review_views": {
+      "label": "Düzeltmeyi ayrı görünümde göster",
+      "desc": "Kontrol ettikten sonra 'Cevaplarım' yalnızca kendi eşleştirmelerini ve hatalarını gösterir; doğru eşler 'Düzeltme' altındadır. Kapalı: doğru eş, 'Cevaplarım' içinde her hatanın hemen altında görünür."
     },
     "paused_retention": {
       "title": "Duraklatılmış ders saklama süresi",
@@ -2236,7 +2240,8 @@
         "selected_sr": "Seçildi: {label}",
         "resolve": "Çöz",
         "resolve_announce": "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu.",
-        "my_answers": "Cevaplarım"
+        "my_answers": "Cevaplarım",
+        "corrections": "Düzeltme"
       },
       "picture": {
         "submit": "Cevabı kontrol et",

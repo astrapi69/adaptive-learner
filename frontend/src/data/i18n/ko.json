@@ -1021,13 +1021,17 @@
       "whole_set": "전체 세트 다시 풀기"
     },
     "matching_resolve": {
-      "title": "정답 애니메이션",
+      "title": "짝맞추기 연습",
       "hint": "확인 후 '정답 보기'를 누르면 짝맞추기 연습이 올바른 짝을 어떻게 표시하는지.",
-      "label": "효과",
+      "label": "정답 애니메이션",
       "slide": "슬라이드",
       "color": "색상",
       "connect": "연결",
       "stack": "쌓기"
+    },
+    "matching_review_views": {
+      "label": "교정을 별도 보기로 표시",
+      "desc": "확인 후 '내 답변'에는 내가 만든 짝과 틀린 부분만 표시되고, 올바른 짝은 '교정'에 있습니다. 끄기: 올바른 짝이 '내 답변'의 각 오답 바로 아래에 표시됩니다."
     },
     "paused_retention": {
       "title": "일시 정지된 레슨 보관",
@@ -2236,7 +2240,8 @@
         "selected_sr": "선택됨: {label}",
         "resolve": "정답 보기",
         "resolve_announce": "정답을 표시했습니다. {total}쌍 중 {correct}쌍이 정확했습니다.",
-        "my_answers": "내 답변"
+        "my_answers": "내 답변",
+        "corrections": "교정"
       },
       "picture": {
         "submit": "답 확인",
