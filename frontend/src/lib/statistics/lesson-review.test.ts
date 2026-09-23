@@ -86,6 +86,17 @@ describe("buildLessonReview (#3124)", () => {
     expect(review.totalErrors).toBe(0);
   });
 
+  it("derives open and mastered from this lesson's errors, not the SRS flag alone (#3166)", () => {
+    const errors = Array.from({length: 12}, (_, i) =>
+      error({id: `e${i}`, element_key: `k${i}`, error_count: i < 3 ? 1 : 0}),
+    ).concat(error({id: "x", element_key: "x", lesson_id: "02.json", error_count: 1}));
+    const review = buildLessonReview({setId: "s1", lessonId: "01.json", errors, progress: []});
+    expect(review.elementsTracked).toBe(12);
+    expect(review.totalErrors).toBe(3);
+    expect(review.elementsOpen).toBe(3);
+    expect(review.masteredShare).toBe(75);
+  });
+
   it("honours the weak-area cap", () => {
     const errors = Array.from({length: 4}, (_, i) =>
       error({id: `e${i}`, element_key: `k${i}`, error_count: i + 1}),

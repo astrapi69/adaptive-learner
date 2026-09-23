@@ -3794,6 +3794,17 @@
     "train_errors": "Train errors",
     "shuffle": "Shuffle",
     "endless": "Endless",
+    "reset_all": {
+      "button": "Repeat everything",
+      "title": "Reset all results?",
+      "message": "The results of “{title}” are reset: score, stars and study time of {lessons} lessons. A new run starts at lesson 1; the mistakes of the previous run stay as history. XP and badges are not affected.",
+      "average": "Average so far: {percent}%",
+      "no_average": "No average yet.",
+      "confirm": "Reset and start over",
+      "cancel": "Cancel",
+      "success": "Results reset. A new run starts with lesson 1.",
+      "failed": "The results could not be reset."
+    },
     "personal": {
       "title": "Your Learning Path",
       "progress": "Overall: {n}% complete",

@@ -3502,6 +3502,16 @@ learning_path:
   train_errors: "Latih kesalahan"
   shuffle: "Acak"
   endless: "Tanpa henti"
+  reset_all:
+    button: "Ulangi semua"
+    title: "Setel ulang semua hasil?"
+    message: "Hasil “{title}” disetel ulang: skor, bintang, dan waktu belajar dari {lessons} pelajaran. Sesi baru dimulai dari pelajaran 1; kesalahan sesi sebelumnya tetap tersimpan sebagai riwayat. XP dan lencana tidak berubah."
+    average: "Rata-rata sejauh ini: {percent} %"
+    no_average: "Belum ada rata-rata."
+    confirm: "Setel ulang dan mulai lagi"
+    cancel: "Batal"
+    success: "Hasil disetel ulang. Sesi baru dimulai dengan pelajaran 1."
+    failed: "Hasil tidak dapat disetel ulang."
   personal:
     title: "Jalur Pembelajaranmu"
     progress: "Keseluruhan: {n}% selesai"

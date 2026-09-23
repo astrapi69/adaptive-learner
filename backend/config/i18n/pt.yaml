@@ -3492,6 +3492,16 @@ learning_path:
   train_errors: "Treinar erros"
   shuffle: "Modo aleatório"
   endless: "Sem fim"
+  reset_all:
+    button: "Repetir tudo"
+    title: "Repor todos os resultados?"
+    message: "Os resultados de “{title}” são repostos: pontuação, estrelas e tempo de estudo de {lessons} lições. Uma nova rodada começa na lição 1; os erros da rodada anterior ficam como histórico. XP e emblemas não mudam."
+    average: "Média até agora: {percent} %"
+    no_average: "Ainda não há média."
+    confirm: "Repor e recomeçar"
+    cancel: "Cancelar"
+    success: "Resultados repostos. Uma nova rodada começa com a lição 1."
+    failed: "Não foi possível repor os resultados."
   personal:
     title: "O teu percurso de aprendizagem"
     progress: "No total: {n}% concluído"

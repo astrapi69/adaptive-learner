@@ -3794,6 +3794,17 @@
     "train_errors": "Fehler trainieren",
     "shuffle": "Zufallsmodus",
     "endless": "Endlos",
+    "reset_all": {
+      "button": "Alles wiederholen",
+      "title": "Alle Ergebnisse zurücksetzen?",
+      "message": "Die Ergebnisse von „{title}“ werden zurückgesetzt: Punktzahl, Sterne und Lernzeit von {lessons} Lektionen. Ein neuer Durchgang beginnt ab Lektion 1; die Fehler des bisherigen Durchgangs bleiben als Verlauf erhalten. XP und Abzeichen bleiben unverändert.",
+      "average": "Bisheriger Schnitt: {percent} %",
+      "no_average": "Noch kein Schnitt vorhanden.",
+      "confirm": "Zurücksetzen und neu starten",
+      "cancel": "Abbrechen",
+      "success": "Ergebnisse zurückgesetzt. Ein neuer Durchgang beginnt mit Lektion 1.",
+      "failed": "Ergebnisse konnten nicht zurückgesetzt werden."
+    },
     "personal": {
       "title": "Dein Lernpfad",
       "progress": "Insgesamt: {n}% abgeschlossen",

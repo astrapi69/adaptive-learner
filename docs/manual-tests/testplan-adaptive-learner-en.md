@@ -364,6 +364,17 @@ Requires domain knowledge. Not automatable.
       ("Correct!") and the Continue button appear below it. iOS PWA/Standalone:
       run the same check on the web app icon added to the home screen.
 - [ ] Free Text: correction READABLE (token diff understandable)
+- [ ] Cloze, select mode (#3167): pick a distractor -> graded wrong. Open a
+      cloze exercise with word choices whose distractors are very close to
+      the answer (e.g. alc-programming, react-grundlagen, lesson 02 "JSX",
+      question "Wie bettet man in JSX den Wert einer Variablen name in den
+      Text ein?"). Pick the wrong option `<p>Hallo $name</p>` and check:
+      result "0 of 1 correct", the picked option red, the correct option
+      `<p>Hallo {name}</p>` green. Then pick the correct option: "All
+      correct!". Cross-check, type mode: in a typed cloze ONE typo is still
+      graded correct (the tolerance applies to typed answers only). Review:
+      the same exercise in a review session, pick the wrong option -> wrong;
+      the exercise is NOT marked mastered afterwards.
 - [ ] Picture Choice: tiles SAME height
 - [ ] Answer order shuffled (#2317): open a picture_choice exercise across
       several lessons - the correct tile is NOT always in the same slot
@@ -2162,6 +2173,13 @@ each card row (`CardImageField`).
       mastered percentage, still open, time spent) and below them
       mistakes per lesson, per exercise type, and the biggest weak
       spots with your own wrong answer next to the correct one
+- [ ] The two middle figures follow the mistakes, not the review flag
+      (#3166): "Still open" counts the elements with at least one mistake
+      that the review has not marked mastered yet; "Mastered" is the share
+      of all played elements that were never wrong or have cleared their
+      mistake since. A set with 12 played elements, 3 of them wrong once:
+      "3 Total mistakes", "75% Mastered", "3 Still open" - not "0%" and
+      "12"
 - [ ] "Practise mistakes" leads into the set's review session,
       "Back to the set" to the set page
 - [ ] A set with no recorded mistakes shows the friendly message
@@ -2224,6 +2242,11 @@ each card row (`CardImageField`).
       Time spent), "Mistakes per exercise type" and "Biggest weak spots"
       with the own wrong answer struck through next to the correct one;
       "Mistakes per lesson" is NOT there (it is a single lesson)
+- [ ] First run of a lesson, e.g. 12 elements, 9 right, 3 wrong: "3 Total
+      mistakes", "75% Mastered", "3 Still open" - the same 75% as the run's
+      score (#3166). "Mastered" counts the elements that were never wrong or
+      whose mistake the review has cleared since, "Still open" those with a
+      mistake and no mastery; not "0%" and "12" for 3 mistakes
 - [ ] The numbers match the set review (Content > set > "Open review")
       for the same lesson
 - [ ] "Practise mistakes" opens the set's review session

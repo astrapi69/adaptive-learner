@@ -3794,6 +3794,17 @@
     "train_errors": "Hataları çalış",
     "shuffle": "Karışık mod",
     "endless": "Sonsuz",
+    "reset_all": {
+      "button": "Hepsini tekrarla",
+      "title": "Tüm sonuçlar sıfırlansın mı?",
+      "message": "“{title}” sonuçları sıfırlanır: {lessons} dersin puanı, yıldızları ve çalışma süresi. Yeni bir tur 1. dersten başlar; önceki turun hataları geçmiş olarak kalır. XP ve rozetler değişmez.",
+      "average": "Şimdiye kadarki ortalama: %{percent}",
+      "no_average": "Henüz ortalama yok.",
+      "confirm": "Sıfırla ve yeniden başla",
+      "cancel": "İptal",
+      "success": "Sonuçlar sıfırlandı. Yeni bir tur 1. dersle başlıyor.",
+      "failed": "Sonuçlar sıfırlanamadı."
+    },
     "personal": {
       "title": "Öğrenme yolun",
       "progress": "Genel: %{n} tamamlandı",

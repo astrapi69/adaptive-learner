@@ -428,6 +428,127 @@ describe("ClozeExercise: select mode (button radiogroup)", () => {
     });
 });
 
+describe("ClozeExercise: select mode grades by exact match (#3167)", () => {
+    // The issue's real exercise: three distractors sit within two edits of
+    // the answer, so the typed-answer Levenshtein budget (2 edits from 16
+    // chars, #1580) waved every one of them through as correct.
+    const JSX_SELECT: ContentLessonExercise = {
+        id: "ex-mc-ausdruck",
+        type: "cloze",
+        prompt: "Wie bettet man in JSX den Wert einer Variablen name ein?",
+        card_ids: [],
+        sentence: "___",
+        blanks: [{accept: ["<p>Hallo {name}</p>"]}],
+        cloze_mode: "select",
+        distractors: [
+            "<p>Hallo $name</p>",
+            "<p>Hallo %name%</p>",
+            '<p>Hallo "name"</p>',
+        ],
+    };
+
+    function pickAndSubmit(name: string) {
+        fireEvent.click(screen.getByRole("radio", {name}));
+        fireEvent.click(screen.getByTestId("cloze-submit"));
+    }
+
+    it("repro: a distractor within two edits of the answer is WRONG", () => {
+        const onComplete = vi.fn();
+        render(<ClozeExercise exercise={JSX_SELECT} onComplete={onComplete} />);
+        pickAndSubmit("<p>Hallo $name</p>");
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 0, total: 1}),
+        );
+        // recordBulk must see correct: false, or the streak grows on a miss.
+        const scored = onComplete.mock.calls[0][0];
+        expect(scored.attempts).toHaveLength(1);
+        expect(scored.attempts[0].correct).toBe(false);
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute(
+            "data-result",
+            "wrong",
+        );
+        expect(screen.getByTestId("cloze-result")).toHaveTextContent(
+            "0 of 1 correct",
+        );
+    });
+
+    it("happy: the exact answer is correct", () => {
+        const onComplete = vi.fn();
+        render(<ClozeExercise exercise={JSX_SELECT} onComplete={onComplete} />);
+        pickAndSubmit("<p>Hallo {name}</p>");
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 1, total: 1}),
+        );
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute(
+            "data-result",
+            "correct",
+        );
+    });
+
+    it("regression #1877: type mode keeps the typo tolerance for a sentence-length answer", () => {
+        const onComplete = vi.fn();
+        render(
+            <ClozeExercise
+                exercise={{
+                    ...JSX_SELECT,
+                    id: "ex-typed-sentence",
+                    cloze_mode: "type",
+                    blanks: [{accept: ["the quick brown fox"]}],
+                    distractors: [],
+                }}
+                onComplete={onComplete}
+            />,
+        );
+        // One typo in a 19-char answer: still within the typed budget.
+        fireEvent.change(screen.getByTestId("cloze-input-0"), {
+            target: {value: "the quikc brown fox"},
+        });
+        fireEvent.click(screen.getByTestId("cloze-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 1, total: 1}),
+        );
+    });
+
+    it("edge: select mode is case-sensitive (a case-only distractor is WRONG)", () => {
+        const onComplete = vi.fn();
+        render(
+            <ClozeExercise
+                exercise={{
+                    ...JSX_SELECT,
+                    id: "ex-case-variant",
+                    blanks: [{accept: ["useState"]}],
+                    distractors: ["usestate", "UseState", "useEffect"],
+                }}
+                onComplete={onComplete}
+            />,
+        );
+        pickAndSubmit("UseState");
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 0, total: 1}),
+        );
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute(
+            "data-result",
+            "wrong",
+        );
+    });
+
+    it("boundary: a reviewed (locked) select cloze re-scores a distractor as WRONG", () => {
+        // Third grading call site (clozeReviewedResult): a revisit must
+        // show the same verdict as the fresh submission did.
+        render(
+            <ClozeExercise
+                exercise={JSX_SELECT}
+                reviewed={{kind: "cloze", inputs: ["<p>Hallo $name</p>"]}}
+                onComplete={vi.fn()}
+            />,
+        );
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute(
+            "data-result",
+            "wrong",
+        );
+    });
+});
+
 describe("ClozeExercise: multiselect dispatch (#1195)", () => {
     const MULTISELECT: ContentLessonExercise = {
         id: "ex-cloze-ms",

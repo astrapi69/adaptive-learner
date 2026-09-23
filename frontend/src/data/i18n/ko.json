@@ -3794,6 +3794,17 @@
     "train_errors": "오답 연습",
     "shuffle": "셔플",
     "endless": "무한",
+    "reset_all": {
+      "button": "전체 다시 하기",
+      "title": "모든 결과를 초기화할까요?",
+      "message": "“{title}”의 결과가 초기화됩니다: {lessons}개 레슨의 점수, 별, 학습 시간. 새 회차가 레슨 1부터 시작되며, 이전 회차의 오답은 기록으로 남습니다. XP와 배지는 변하지 않습니다.",
+      "average": "지금까지의 평균: {percent} %",
+      "no_average": "아직 평균이 없습니다.",
+      "confirm": "초기화하고 다시 시작",
+      "cancel": "취소",
+      "success": "결과가 초기화되었습니다. 새 회차가 레슨 1부터 시작됩니다.",
+      "failed": "결과를 초기화할 수 없습니다."
+    },
     "personal": {
       "title": "당신의 학습 경로",
       "progress": "전체: {n}% 완료",

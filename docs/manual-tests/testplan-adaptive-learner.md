@@ -385,6 +385,18 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
 - [ ] Free Text: Korrektur LESBAR (Token-Diff verständlich)
+- [ ] Lückentext, Modus Auswahl (#3167): Distraktor wählen -> als falsch
+      gewertet. Eine Lückentext-Übung mit Wortauswahl öffnen, deren
+      Distraktoren der Lösung sehr ähnlich sind (z. B. alc-programming,
+      react-grundlagen, Lektion 02 "JSX", Frage "Wie bettet man in JSX den
+      Wert einer Variablen name in den Text ein?"). Die falsche Option
+      `<p>Hallo $name</p>` wählen und prüfen: Ergebnis "0 von 1 richtig",
+      die gewählte Option rot, die richtige Option `<p>Hallo {name}</p>`
+      grün. Dann die richtige Option wählen: "Alles richtig!". Gegenprobe
+      Tippen-Modus: bei einem Lückentext zum Tippen bleibt EIN Tippfehler
+      weiterhin als richtig gewertet (Toleranz nur für getippte Antworten).
+      Wiederholung: dieselbe Übung in der Wiederholungssitzung, falsche Option
+      wählen -> falsch; die Übung gilt danach NICHT als gemeistert.
 - [ ] Picture Choice: Kacheln GLEICHE Höhe
 - [ ] Antwort-Reihenfolge gemischt (#2317): eine Bildauswahl (picture_choice)
       mehrfach in verschiedenen Lektionen öffnen - die richtige Kachel steht
@@ -2315,6 +2327,14 @@ jeder Karten-Zeile (`CardImageField`).
       gemeistert in Prozent, noch offen, Lernzeit) und darunter
       Fehler nach Lektion, nach Aufgabentyp und die größten
       Schwachstellen mit eigener falscher Antwort neben der richtigen
+- [ ] Die zwei mittleren Kennzahlen folgen den Fehlern, nicht der
+      Wiederholungs-Marke (#3166): "Noch offen" zählt die Elemente mit
+      mindestens einem Fehler, die die Wiederholung noch nicht als
+      gemeistert führt; "Gemeistert" ist der Anteil aller gespielten
+      Elemente, die nie falsch waren oder ihren Fehler seither abgetragen
+      haben. Ein Set mit 12 gespielten Elementen, 3 davon einmal falsch:
+      "3 Fehler insgesamt", "75 % Gemeistert", "3 Noch offen" - nicht
+      "0 %" und "12"
 - [ ] "Fehler trainieren" führt in die Wiederholung des Sets,
       "Zurück zum Set" auf die Set-Seite
 - [ ] Ein Set ohne aufgezeichnete Fehler zeigt die freundliche
@@ -2385,6 +2405,12 @@ jeder Karten-Zeile (`CardImageField`).
       Lernzeit), "Fehler nach Aufgabentyp" und "Größte Schwachstellen" mit
       der eigenen falschen Antwort durchgestrichen neben der richtigen;
       "Fehler nach Lektion" gibt es hier NICHT (es ist nur eine Lektion)
+- [ ] Erster Durchlauf einer Lektion, z. B. 12 Elemente, 9 richtig, 3
+      falsch: "3 Fehler insgesamt", "75 % Gemeistert", "3 Noch offen" -
+      dieselben 75 % wie die Punktzahl des Durchlaufs (#3166). "Gemeistert"
+      zählt die Elemente, die nie falsch waren oder deren Fehler die
+      Wiederholung seither abgetragen hat, "Noch offen" die mit Fehler und
+      ohne Meisterung; nicht "0 %" und "12" bei 3 Fehlern
 - [ ] Die Zahlen stimmen mit der Set-Auswertung (Inhalte > Set >
       "Auswertung ansehen") für dieselbe Lektion überein
 - [ ] "Fehler trainieren" führt in die Wiederholungs-Sitzung des Sets

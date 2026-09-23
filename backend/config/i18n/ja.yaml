@@ -3492,6 +3492,16 @@ learning_path:
   train_errors: "間違いを練習"
   shuffle: "シャッフル"
   endless: "エンドレス"
+  reset_all:
+    button: "すべてやり直す"
+    title: "すべての結果をリセットしますか？"
+    message: "「{title}」の結果をリセットします：{lessons} レッスンのスコア、星、学習時間。新しい周回がレッスン 1 から始まり、前回の周回のミスは履歴として残ります。XP とバッジは変わりません。"
+    average: "これまでの平均：{percent} %"
+    no_average: "まだ平均はありません。"
+    confirm: "リセットして最初から"
+    cancel: "キャンセル"
+    success: "結果をリセットしました。新しい周回がレッスン 1 から始まります。"
+    failed: "結果をリセットできませんでした。"
   personal:
     title: "あなたの学習パス"
     progress: "全体: {n}% 完了"
