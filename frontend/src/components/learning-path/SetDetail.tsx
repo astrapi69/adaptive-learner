@@ -6,7 +6,8 @@
  * filter and a per-lesson element-detail expansion (the SRS element
  * breakdown), plus a context-aware action bar: "Start adaptive lesson"
  * and, when the set has active errors, "Retry errors" (the set-wide SRS
- * review queue). Tailwind, 44px targets.
+ * review queue). "Repeat everything" (#3171) resets the set's results
+ * behind a confirmation and reopens it at lesson 1. Tailwind, 44px targets.
  */
 
 import {
@@ -14,20 +15,30 @@ import {
     Infinity as InfinityIcon,
     ListChecks,
     RefreshCw,
+    RotateCcw,
     Shuffle,
 } from "lucide-react";
 import {useState} from "react";
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useFavorites} from "../../hooks/learning/useFavorites";
+import {lessonRoute} from "../../lib/content/browse/continue-learning";
 import {readLearnerState} from "../../lib/learning/learnerState";
+import {
+    resetSetResults,
+    summarizeSetResults,
+    type SetResultsSummary,
+} from "../../lib/learning-path/reset-set-results";
+import {getStorage} from "../../storage";
+import {notify} from "../../utils/notify";
 import ElementDetailList, {
     type ElementDetailItem,
 } from "../../shared/gamification/ElementDetailList";
 import FavoriteToggle from "../../shared/media/FavoriteToggle";
 import type {SrsBadgeTone} from "../../shared/gamification/SrsStatusBadge";
 import LessonRow from "./LessonRow";
+import ResetSetResultsDialog from "./ResetSetResultsDialog";
 import TrainErrorsButton from "../lesson/TrainErrorsButton";
 import type {
     PersonalPathLesson,
@@ -37,6 +48,9 @@ import type {SrsElementDetail} from "../../lib/srs/status";
 
 export interface SetDetailProps {
     set: PersonalPathSet;
+    /** Called after "Repeat everything" reset the set (#3171), so the
+     *  owning page can reload its progress data. */
+    onResultsReset?: () => void;
 }
 
 type T = (key: string, fallback?: string) => string;
@@ -55,6 +69,12 @@ function lessonErrorCount(lesson: PersonalPathLesson): number {
     const srs = lesson.srs;
     if (!srs) return 0;
     return Math.max(0, srs.total - srs.mastered);
+}
+
+/** "Repeat everything" only makes sense once the set has results: any
+ *  progress row (``lastActivity``) or an active error card (#3171). */
+function hasResults(set: PersonalPathSet): boolean {
+    return set.lastActivity !== null || set.errorCount > 0;
 }
 
 function toElementItems(
@@ -107,12 +127,69 @@ function toElementItems(
     });
 }
 
-export default function SetDetail({set}: SetDetailProps) {
+export default function SetDetail({set, onResultsReset}: SetDetailProps) {
     const {t} = useI18n();
+    const navigate = useNavigate();
     const userId = readLearnerState().userId;
     const {isFavorite, toggle} = useFavorites(userId);
     const [showOnlyDue, setShowOnlyDue] = useState(false);
     const [openLesson, setOpenLesson] = useState<string | null>(null);
+    const [resetOpen, setResetOpen] = useState(false);
+    const [resetSummary, setResetSummary] = useState<SetResultsSummary | null>(null);
+    const [resetting, setResetting] = useState(false);
+
+    // #3171 — open the confirmation, then load the set's current results so
+    // the dialog can name the average; confirm stays disabled until then.
+    const requestReset = async () => {
+        if (!userId) return;
+        setResetSummary(null);
+        setResetOpen(true);
+        try {
+            const summary = await summarizeSetResults(getStorage(), userId, {
+                source: set.source,
+                setId: set.setId,
+            });
+            setResetSummary(summary);
+        } catch (err) {
+            const detail = err instanceof Error ? err.message : String(err);
+            notify.error(
+                `${t("learning_path.reset_all.failed", "The results could not be reset.")} ${detail}`,
+            );
+            setResetOpen(false);
+        }
+    };
+
+    // #3171 — delete the set's progress, open a new run (the previous run's
+    // mistakes stay as history), then land in lesson 1. XP/badges untouched.
+    const confirmReset = async () => {
+        if (!userId) return;
+        setResetting(true);
+        try {
+            await resetSetResults(getStorage(), userId, {
+                source: set.source,
+                setId: set.setId,
+            });
+            notify.success(
+                t(
+                    "learning_path.reset_all.success",
+                    "Results reset. A new run starts with lesson 1.",
+                ),
+            );
+            setResetOpen(false);
+            onResultsReset?.();
+            const first = set.lessons[0];
+            if (first) {
+                navigate(lessonRoute(set.source, set.setId, first.filename));
+            }
+        } catch (err) {
+            const detail = err instanceof Error ? err.message : String(err);
+            notify.error(
+                `${t("learning_path.reset_all.failed", "The results could not be reset.")} ${detail}`,
+            );
+        } finally {
+            setResetting(false);
+        }
+    };
 
     const actionClass =
         "inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-app px-3 py-2 text-sm font-medium";
@@ -250,6 +327,20 @@ export default function SetDetail({set}: SetDetailProps) {
                     setId={set.setId}
                     errorCount={set.errorCount}
                 />
+                {/* #3171 — "Alles wiederholen": reset the set's results and
+                    rebuild the average from lesson 1. Only offered once the
+                    set has results to reset. */}
+                {hasResults(set) && (
+                    <button
+                        type="button"
+                        onClick={() => void requestReset()}
+                        className={`${actionClass} border border-border text-foreground hover:bg-muted`}
+                        data-testid={`set-reset-results-${set.setId}`}
+                    >
+                        <RotateCcw size={16} aria-hidden="true" />
+                        {t("learning_path.reset_all.button", "Repeat everything")}
+                    </button>
+                )}
                 {/* #1014 — set-level Zufallsmodus: interleave every lesson's
                     exercises. Needs >= 2 lessons to interleave; the page itself
                     re-checks "with exercises" and shows an empty state if the
@@ -293,6 +384,15 @@ export default function SetDetail({set}: SetDetailProps) {
                     </Link>
                 )}
             </div>
+
+            <ResetSetResultsDialog
+                open={resetOpen}
+                setTitle={set.title}
+                summary={resetSummary}
+                busy={resetting}
+                onConfirm={() => void confirmReset()}
+                onCancel={() => setResetOpen(false)}
+            />
         </div>
     );
 }

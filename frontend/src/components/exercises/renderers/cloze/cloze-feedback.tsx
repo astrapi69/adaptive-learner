@@ -2,10 +2,11 @@
  * Cloze post-answer surfaces (#1782 — extracted from
  * ClozeExercise.tsx).
  *
- * Holds the exercise-level hint disclosure, the per-blank diff row,
- * the solution view, the My-answer/Solution reveal, and the result
- * block with the shared exercise footer. Pure presentation — all
- * state arrives via props.
+ * Holds the per-blank diff row, the solution view, the My-answer/Solution
+ * reveal, and the result block with the shared exercise footer. Pure
+ * presentation — all state arrives via props. The exercise-level hint is
+ * NOT here: ``ExerciseHint`` (the XP button) is the only hint surface
+ * (#3168), and the authored ``exercise.hint`` is its first stage.
  */
 
 import {Check, X} from "lucide-react";
@@ -16,7 +17,6 @@ import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
 import ExerciseAnswerToggle, {
     type AnswerView,
 } from "../../feedback/ExerciseAnswerToggle";
-import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {tokenDiff} from "../../../../lib/exercises/grading/token-diff";
 import AnswerCelebration from "../../feedback/AnswerCelebration";
@@ -24,47 +24,6 @@ import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
 import DiffHighlight from "../../feedback/DiffHighlight";
 import ExerciseFooter from "../../shell/ExerciseFooter";
 import type {ClozeBlank} from "./cloze-types";
-
-/** Exercise-level "Need a hint?" toggle (distinct from the per-blank
- *  inline hints). Renders nothing once submitted or when the exercise
- *  carries no hint. */
-export function ClozeHint({
-    hint,
-    submitted,
-    showHint,
-    onShowHint,
-}: {
-    hint: string | null | undefined;
-    submitted: boolean;
-    showHint: boolean;
-    onShowHint: () => void;
-}) {
-    const {t} = useI18n();
-    if (!hint || submitted) return null;
-    return (
-        <div className="flex items-center gap-2">
-            {!showHint ? (
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    type="button"
-                    className="text-[var(--accent-text)] hover:underline"
-                    onClick={onShowHint}
-                    data-testid="cloze-hint-show"
-                >
-                    {t("lesson.exercise.cloze.hint_show", "Need a hint?")}
-                </Button>
-            ) : (
-                <p
-                    className="m-0 rounded-sm bg-[var(--surface-2)] p-2 text-sm text-[var(--fg-muted)]"
-                    data-testid="cloze-hint"
-                >
-                    {hint}
-                </p>
-            )}
-        </div>
-    );
-}
 
 /** The "My answer" view: one token diff per WRONG blank (the learner's
  *  input struck through against the canonical answer). */

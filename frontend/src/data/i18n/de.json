@@ -2266,7 +2266,6 @@
         "placeholder": "Antwort eingeben…",
         "code_placeholder": "Code eingeben…",
         "input_label": "Deine Antwort",
-        "hint_show": "Tipp anzeigen?",
         "result_correct": "Richtig!",
         "result_wrong": "Nicht ganz.",
         "result_almost": "Fast! Achte auf:",
@@ -2284,7 +2283,6 @@
         "answer_placeholder": "Tippe Kacheln unten an, um deine Antwort zu bauen",
         "scrambled_label": "Verfügbare Kacheln",
         "scrambled_done": "Alle Kacheln platziert.",
-        "hint_show": "Tipp anzeigen?",
         "result_correct": "Richtig!",
         "result_wrong": "Nicht ganz.",
         "empty": "Diese Wortkachel-Übung hat keine Kacheln."
@@ -2292,7 +2290,6 @@
       "cloze": {
         "submit": "Antworten prüfen",
         "retry": "Erneut versuchen",
-        "hint_show": "Tipp anzeigen?",
         "sentence_label": "Lückentext",
         "blank_label": "Lücke {n}",
         "select_placeholder": "Auswählen…",
@@ -3803,6 +3800,17 @@
     "train_errors": "Fehler trainieren",
     "shuffle": "Zufallsmodus",
     "endless": "Endlos",
+    "reset_all": {
+      "button": "Alles wiederholen",
+      "title": "Alle Ergebnisse zurücksetzen?",
+      "message": "Die Ergebnisse von „{title}“ werden zurückgesetzt: Punktzahl, Sterne und Lernzeit von {lessons} Lektionen. Ein neuer Durchgang beginnt ab Lektion 1; die Fehler des bisherigen Durchgangs bleiben als Verlauf erhalten. XP und Abzeichen bleiben unverändert.",
+      "average": "Bisheriger Schnitt: {percent} %",
+      "no_average": "Noch kein Schnitt vorhanden.",
+      "confirm": "Zurücksetzen und neu starten",
+      "cancel": "Abbrechen",
+      "success": "Ergebnisse zurückgesetzt. Ein neuer Durchgang beginnt mit Lektion 1.",
+      "failed": "Ergebnisse konnten nicht zurückgesetzt werden."
+    },
     "personal": {
       "title": "Dein Lernpfad",
       "progress": "Insgesamt: {n}% abgeschlossen",
