@@ -15,7 +15,7 @@ Every bug and every issue MUST have a GitHub issue BEFORE the fix begins. This i
 
 1. **Search first.** Look for an existing issue (`gh issue list --search "<keywords>" --state all`). If it exists and was closed but the bug recurred, REOPEN it rather than filing a duplicate.
 
-2. **No fix without an issue.** If none exists, create one (`gh issue create`, `bug` label, enough context that the fix is actionable without follow-up) BEFORE touching code. This applies RETROACTIVELY: if you discover a NEW bug while working on another one, file a SEPARATE issue for it before fixing it.
+2. **No fix without an issue, no issue without the owner's OK.** If none exists, propose it to the owner first (title, two-line summary, labels incl. a `P0`..`P5` tier) and run `gh issue create` only after the OK; then it gets the `bug` label and enough context that the fix is actionable without follow-up, BEFORE touching code. Subagents never create issues; they report the proposal back. This applies RETROACTIVELY: if you discover a NEW bug while working on another one, file a SEPARATE issue for it before fixing it.
 
 3. **No commit without an issue reference.** The commit subject (and the PR) cite the issue number — `(#NN)` or `(fixes #NN)`.
 

@@ -37,7 +37,7 @@ Full reference: .claude/rules/architecture.md
 | release-workflow.md | on release | 11-step release process |
 | reusability.md | backend/plugins/frontend | Props-driven, barrel exports, implementation hierarchy |
 | tdd.md | tests | Red-Green-Refactor workflow, four-test guideline |
-| text-formatting.md | always | Text (not code): em-dash/UTF-8/emoji rules, doc prose style, commit/PR text |
+| text-formatting.md | always | Text (not code): em-dash/UTF-8/emoji rules, doc prose style, commit/PR text, GitHub artifacts in English |
 | vibe-coding.md | always | Release freeze, no-amend-on-open-PR, priority order |
 
 ## Makefile Targets
