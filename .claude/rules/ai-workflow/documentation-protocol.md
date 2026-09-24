@@ -91,16 +91,21 @@ IMMEDIATELY when a phase is completed. Do not accumulate in CLAUDE.md.
 
 ## ROADMAP priority tiers
 
-`docs/ROADMAP.md` and `docs/backlog.md` are sorted by priority. Section headers `## P0` through `## P5` mark the tiers, top to bottom; a `## Blocked / Upstream Wait` section sits between P5 and the archive link.
+Two orders meet here, and both are in use:
+
+- **Planned work is ordered by phase.** `docs/ROADMAP.md` and `docs/backlog.md` open with the phase sections: the current focus (backlog: `Jetzt`), the next phase, and the later phase (`Zukunft`, backlog: `Deferred`). Their order is the order of work for the explorations they name.
+- **Everything else is ordered by tier.** Issues carry a `P0`..`P5` label, and the open items outside the phase plan sit in the `P3`, `P4` and `P5` sections below the phases, followed by `Blocked / Upstream Wait` (backlog: after `Trigger-Gated Items`).
+
+The tier is urgency: a rank from top to bottom, and the order in which issues are worked (`github-issue-policy.md`). The examples show what typically lands in a tier; they do not define it.
 
 | Tier | Meaning |
 |------|---------|
-| P0 | Deadline pressure, active blocker, security issue, or production-data risk. "Do this now." |
-| P1 | Architecture / hygiene debt. Code-rule violations, test isolation gaps, things that would block a clean release. |
-| P2 | High-value user features. Anything moving AdaptiveLearner from "toy to serious tool". |
-| P3 | Infrastructure / quality. Test coverage, CI / tooling, internal refactors with no user-visible effect. |
-| P4 | Roadmap / future phases. Items deliberately deferred to a later phase. |
-| P5 | Speculative / nice-to-have. No concrete trigger or user demand. |
+| P0 | Now. Examples: deadline pressure, an active blocker, a security issue, a risk to user data. |
+| P1 | Next, ahead of new work: it blocks a clean release, or it raises the cost of every later change. Examples: a red develop; architecture or hygiene debt, code-rule violations, test isolation gaps. |
+| P2 | Soon: users can notice it. Examples: a visible malfunction; a high-value feature (anything moving AdaptiveLearner from "toy to serious tool"). |
+| P3 | When capacity allows: no user can notice it. Examples: test coverage, CI and tooling, internal refactors without user-visible effect. |
+| P4 | Deliberately deferred to a later phase. |
+| P5 | Speculative: no concrete trigger or user demand. |
 | Blocked / Upstream Wait | Items waiting on an external trigger (npm publish, paid-API access, hardware availability, user report). NOT P0 even when critical. |
 
 Within each tier, sub-order by:
@@ -108,7 +113,7 @@ Within each tier, sub-order by:
 2. Items unblocking other items first.
 3. Alphabetical by ID as final tiebreaker.
 
-Document the tier of each item by section header. Do NOT add P-prefixes to the IDs themselves (T-01 stays T-01, not P2-T-01). The tier is a section header, the ID is the task.
+In the `P3` to `P5` sections the tier of an item is its section header. Do NOT add P-prefixes to the IDs themselves (T-01 stays T-01, not P2-T-01). The tier is a section header or a label, the ID is the task.
 
 ## Backlog-as-pointer convention
 

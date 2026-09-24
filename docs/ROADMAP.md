@@ -255,7 +255,7 @@ ecosystem triple is validated.
 
 ---
 
-### P3 — Lower value or large effort
+### P3: when capacity allows
 
 - **PT/TR/JA native-speaker review.** Phase 26 / v1.13.0
   shipped AI-translated PT/TR/JA. Native review of the
@@ -319,7 +319,7 @@ ecosystem triple is validated.
 
 ---
 
-### P4 — Future / SaaS
+### P4: deliberately deferred (future, SaaS)
 
 - **BL-14 — PostgreSQL migration**
 - **BL-15 — JWT authentication**
@@ -328,7 +328,7 @@ ecosystem triple is validated.
 
 ---
 
-### P5 — Speculative
+### P5: speculative
 
 - **BL-19 — Social features (share progress, study groups)** (requires multi-user; see P4).
 - **Method-experiment branching for the Learning Repository.**
