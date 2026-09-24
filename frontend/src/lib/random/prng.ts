@@ -13,7 +13,7 @@
  * ``storage/ai/model-discovery.ts``) are different algorithms, not copies.
  *
  * The visual harness ships ``mulberry32`` into the page as source text
- * (``legacyRandomInitScript`` in ``e2e/visual/visual-pins.ts`` calls its
+ * (``legacyRandomInitScript`` in ``src/test-utils/visual-pins.ts`` calls its
  * ``toString()``), so it has to stay self-contained: nothing outside its
  * own body except ``Math``.
  *

@@ -1,6 +1,6 @@
 /**
  * The visual random pin for Vitest (#3214): installs the REAL harness pin
- * (``e2e/visual/visual-pins.ts``) on ``globalThis`` the way ``pinRandomStreams``
+ * (``visual-pins.ts``) on ``globalThis`` the way ``pinRandomStreams``
  * does in the page, and names the instants the clock tests run at.
  *
  * @example
@@ -12,7 +12,7 @@
 import {
     FIXED_NOW_ISO,
     VISUAL_RANDOM_PIN,
-} from "../../../e2e/visual/visual-pins";
+} from "./visual-pins";
 import {RANDOM_PIN_GLOBAL} from "../lib/random";
 
 export {VISUAL_RANDOM_PIN};

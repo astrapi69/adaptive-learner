@@ -28,7 +28,7 @@ import {
     legacyRandomInitScript,
     randomPinInitScript,
     randomPinProblem,
-} from "./visual-pins";
+} from "../../frontend/src/test-utils/visual-pins";
 
 /** All 12 registered themes (6 recommended + 6 classic). */
 export const THEME_IDS = [
@@ -78,10 +78,11 @@ const OWN_LESSON_CARDS = [
 export const OWN_LESSON_TITLE = "Mein erstes Vokabelset";
 
 /**
- * Freeze ``Date`` to a fixed instant (``FIXED_NOW_ISO`` in ``visual-pins.ts``)
- * before any page script runs, so every relative-time / timestamp render is
- * deterministic. Added before the first navigation (``addInitScript``
- * re-applies on each navigation in the context).
+ * Freeze ``Date`` to a fixed instant (``FIXED_NOW_ISO`` in
+ * ``frontend/src/test-utils/visual-pins.ts``) before any page script runs,
+ * so every relative-time / timestamp render is deterministic. Added before
+ * the first navigation (``addInitScript`` re-applies on each navigation in
+ * the context).
  *
  * No shuffle reads this clock any more (#3214): the matching and word-tiles
  * mount seeds take their suffix from the pin ``pinRandomStreams`` installs.
@@ -128,7 +129,8 @@ export async function freezeClock(page: Page): Promise<void> {
  * which ``pinRandomStreams`` installs; no other draw can move them.
  *
  * The generator is the app's own ``mulberry32`` (``prng.ts``), shipped as
- * source text by ``legacyRandomInitScript`` in ``visual-pins.ts``; the
+ * source text by ``legacyRandomInitScript`` in
+ * ``frontend/src/test-utils/visual-pins.ts``; the
  * stream is bit-identical to the copy this helper used to carry.
  */
 export async function pinRandomness(page: Page): Promise<void> {

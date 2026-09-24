@@ -56,9 +56,6 @@ jobs:
               - 'Makefile'
               - 'schema/**'
               - '.github/workflows/ci.yml'
-              # Imported by frontend Vitest (visual-pin-binding.test.ts, #3214);
-              # this one file only, not e2e/**, which would pull every e2e edit in.
-              - 'e2e/visual/visual-pins.ts'
 
       # i18n_only (translation-PR-policy): true only when EVERY changed file
       # is a translation catalog - backend/config/i18n/*.yaml (the authoring

@@ -137,6 +137,13 @@ checks:
     wired_in: make verify-docker-context; .github/workflows/docker-build-smoke.yml
     probe: make_target=verify-docker-context
 
+  - id: frontend-build-context
+    verifies: every import in frontend/src resolves inside what the frontend-build stage of backend/Dockerfile copies (read from its COPY lines), and no module alias points outside frontend/ - a test importing e2e/ broke the production image while every full-checkout build stayed green (#3239, #2559)
+    rule: "-"
+    status: active
+    wired_in: frontend/src/test/build-context-boundary.test.ts; make test; full Vitest on develop push (vitest --changed does not select it, so docker-build-smoke.yml on frontend/** is the PR-level signal)
+    probe: script_exists=frontend/src/test/build-context-boundary.test.ts
+
   - id: image-size
     verifies: the published image's compressed size may shrink, not grow silently
     rule: "-"
