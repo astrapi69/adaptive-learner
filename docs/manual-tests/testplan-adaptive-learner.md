@@ -3550,6 +3550,95 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       zeigen die gewohnten Bildschirme
 - [ ] Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
 
+### Adaptive Lektion auf der Runner-Hülle (EXP-052 Scheibe 3, #3169)
+
+- [ ] `/adaptive-lesson/<set>` für ein Set mit aktiven Fehlern öffnen: Kopf
+      mit "Zurück zum Dashboard" und dem Titel der Lektion; direkt unter dem
+      Titel der Transparenzblock ("Diese Lektion konzentriert sich auf: ..."
+      und "Basierend auf N aktiven Fehler(n)"); darunter der
+      Fortschrittsbalken "Schritt 1 von N"; der Fuß sieht aus wie in einer
+      Lektion (Chevron-Pfeil "Zurück" links, "Prüfen" mit Haken rechts),
+      keine Pause, keine Optionen-Leiste
+- [ ] "Zurück" ist auf dem ersten Schritt deaktiviert; nach "Weiter" führt
+      es einen Schritt zurück im selben Durchlauf
+- [ ] NEU: Enter (die adaptive Lektion hatte bisher kein Enter-Kürzel):
+      erster Enter prüft eine beantwortete Aufgabe, zweiter Enter geht
+      weiter; ohne Antwort tut Enter nichts; mit ausgeschaltetem
+      Enter-Kürzel (Einstellungen > Lernen) tut Enter nichts
+- [ ] NEU: Zurück auf einen bereits beantworteten Schritt: die Antwort ist
+      gesperrt (Lösung sichtbar, keine Eingabe), der Fuß zeigt "Weiter"
+      statt "Prüfen", Enter geht weiter; in Statistik / Fehler trainieren
+      zählt das Element danach GENAU EINMAL für diese Runde (erneutes
+      Beantworten zeichnet keinen zweiten Versuch mehr auf, anders als
+      bisher)
+- [ ] Zurück auf einen NOCH NICHT beantworteten Schritt: bleibt
+      beantwortbar, "Prüfen" ist da
+- [ ] NEU, am Telefon: nach "Weiter" (oder Enter) springt die Ansicht an
+      den Anfang des neuen Schritts; Gerät drehen: Aufgabe und Fuß liegen
+      wieder im Sichtfeld
+- [ ] Hinweise aus einem früheren Durchlauf zählen nicht (#3196): in einer
+      Lektion einen Tipp aufdecken, dann die adaptive Lektion desselben
+      Sets öffnen und das Element ohne Tipp beantworten: in der Statistik
+      NICHT als "mit Tipp" markiert; ein Tipp IN der Sitzung zählt
+- [ ] Zusammenfassung unverändert: Punktzahl mit Prozent, die Zeile
+      "Verbesserung: +N Element(e) in dieser Sitzung gemeistert!" wenn in
+      der Sitzung Elemente gemeistert wurden, der SRS-Hinweis, "Zurück zum
+      Dashboard", darunter "Als Offline-Lektion speichern"; der Fuß zeigt
+      dort nur "Zurück"
+- [ ] Ladezustand ("Deine Fehler werden analysiert..."), "Noch nichts zum
+      Anpassen" und "Set nicht heruntergeladen" zeigen die gewohnten
+      Bildschirme; NEU: der Fehlerbildschirm ist der gemeinsame der Hülle
+      (freundlicher Hinweis, den Rohfehler nur im Entwicklermodus, Knopf
+      "Inhalts-Browser öffnen" statt "Zurück zum Dashboard")
+- [ ] Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
+
+### Fehler wiederholen auf der Runner-Hülle (EXP-052 Scheibe 3, #3169)
+
+- [ ] Eine Lektion mit mindestens zwei Fehlern beenden, in der
+      Zusammenfassung "Fehler wiederholen" öffnen: Kopf mit "Zurück zur
+      Lektion" und dem Titel "Fehler wiederholen: <Lektion>"; darunter der
+      Fortschrittsbalken "Schritt 1 von N" (N = Zahl der falschen
+      Aufgaben); der Fuß sieht aus wie in einer Lektion (Chevron-Pfeil
+      "Zurück" links, "Prüfen" mit Haken rechts), keine Pause
+- [ ] NEU: "Zurück" im Fuß (bisher gab es hier keins). Auf dem ersten
+      Schritt deaktiviert; nach "Weiter" führt es einen Schritt zurück im
+      selben Durchlauf, als reiner Rückblick
+- [ ] NEU: Zurück auf einen bereits beantworteten Schritt: die Antwort ist
+      gesperrt (Lösung sichtbar, keine Eingabe), der Fuß zeigt "Weiter"
+      statt "Prüfen", Enter geht weiter; in Statistik / Fehler trainieren
+      zählt das Element GENAU EINMAL für diese Runde (kein zweiter Versuch
+      durch erneutes Beantworten)
+- [ ] Zurück, BEVOR der aktuelle Schritt beantwortet ist, und wieder vor:
+      dieser Schritt bleibt beantwortbar, "Prüfen" ist da
+- [ ] Enter: erster Enter prüft eine beantwortete Aufgabe, zweiter Enter
+      geht weiter; ohne Antwort tut Enter nichts
+- [ ] NEU, am Telefon: nach "Weiter" (oder Enter) springt die Ansicht an
+      den Anfang des neuen Schritts; Gerät drehen: Aufgabe und Fuß liegen
+      wieder im Sichtfeld; ein sehr langes Wort im Lektionstitel bricht um,
+      statt die Seite seitlich zu verbreitern (#2761)
+- [ ] Hinweise aus einem früheren Durchlauf zählen nicht (#3196): einen in
+      der Lektion aufgedeckten Tipp stempelt die Wiederholung NICHT als
+      "mit Tipp"; ein Tipp, der in Runde eins aufgedeckt wird, zählt auch
+      in der nächsten Runde ("Nochmal?") noch
+- [ ] Zusammenfassung: "X/Y jetzt richtig!"; alle richtig: "Alle Fehler
+      korrigiert!" mit Konfetti, "Zurück zur Lektion" hat den Fokus, Enter
+      führt zur Lektion; noch Fehler: "Noch N Fehler. Nochmal?" und
+      "Zurück zur Lektion"; NEU: der Fuß zeigt dort "Zurück"
+      (Rückblick auf den letzten, gesperrten Schritt)
+- [ ] "Nochmal?" spielt NUR die noch falschen Aufgaben, und die sind wieder
+      beantwortbar (nicht gesperrt), "Zurück" ist auf deren erstem Schritt
+      deaktiviert
+- [ ] Blitzrunde (#2888): Titel "Blitzrunde: <Set>", der Countdown-Ring
+      steht direkt unter dem Titel und läuft pro Aufgabe; nach "Prüfen" hält
+      er an; auf einem über "Zurück" wieder geöffneten, beantworteten
+      Schritt läuft er nicht; "Zurück zur Lektion" und das Ende der Runde
+      führen zur Set-Übersicht; eine gewöhnliche Wiederholung zeigt keinen
+      Ring
+- [ ] NEU: die Seite direkt aufrufen (Adresse neu laden, ohne Aufgaben):
+      Titel "Fehler wiederholen", "Nichts zu wiederholen - ...", Knopf
+      "Zurück zum Dashboard" (bisher "Inhalts-Browser öffnen")
+- [ ] Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
+
 ---
 
 # TEIL B: AUTOMATISIERTE TESTS (Referenz)
