@@ -25,10 +25,12 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {readLearnerState} from "../../../lib/learning/learnerState";
+import {isPlayableExerciseStep} from "../../../lib/lesson/lesson-step-state";
 import {
     buildShuffleLesson,
     type ShuffleSourceLesson,
 } from "../../../lib/shuffle/shuffle-lesson";
+import {pinnedRandom} from "../../../lib/random";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
 import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
 import {getStorage} from "../../../storage";
@@ -68,9 +70,12 @@ export interface UseShuffleLessonResult {
     reload: () => void;
 }
 
-/** A lesson contributes to the shuffle only if it has >= 1 exercise step. */
+/** A lesson contributes to the shuffle only if it has >= 1 PLAYABLE exercise
+ *  step: the shell's one definition (core types plus the adopted ``ext:al-*``
+ *  extensions, EXP-052 slice 2), so a lesson the pool would drop entirely
+ *  does not count towards "at least two lessons" / "from N lessons". */
 function hasExercise(lesson: ContentLesson): boolean {
-    return lesson.steps.some((s) => s.type === "exercise" && s.exercise != null);
+    return lesson.steps.some(isPlayableExerciseStep);
 }
 
 export function useShuffleLesson(
@@ -147,6 +152,7 @@ export function useShuffleLesson(
                     title,
                     description,
                     limit,
+                    rng: pinnedRandom("shuffle-order"),
                 });
                 if (built.steps.length === 0) {
                     setStatus("empty");

@@ -17,6 +17,17 @@
  * action button is hidden on the summary; a summary footer that would
  * carry neither Previous nor pause renders nothing at all.
  *
+ * Endless (EXP-052 slice 2, Befund 2) brings the two controls a stream
+ * needs: an End button (``policy.endRun``, the only run without a last
+ * step) next to the pause, and a TOGGLE pause (``paused`` given): the
+ * button pauses and resumes in place (``aria-pressed``, Pause / Play icon,
+ * the runner's own ``pause`` / ``resume`` label) instead of opening the
+ * lesson's pause dialog, and the action button is hidden while paused.
+ * The toggle keeps the ``{prefix}-pause`` testid of the old stat-line
+ * toggle (a different control than the dialog's ``{prefix}-pause-btn``),
+ * End keeps ``{prefix}-end``.
+ * Both belong to a running run, so neither renders on the summary.
+ *
  * For the lesson policy the markup is byte-identical to
  * ``LessonFooterNav`` (pinned by ``RunnerFooter.test.tsx``); the lesson
  * page keeps its own footer until slice 4 swaps it.
@@ -37,15 +48,20 @@
  * />
  */
 
-import { Check, ChevronLeft, ChevronRight, Pause } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
+import {
+  CheckButton,
+  EndButton,
+  NextButton,
+  PauseButton,
+  PrevButton,
+  TogglePauseButton,
+} from "./RunnerFooterButtons";
 import type { RunnerPolicy } from "./types";
 
 export interface RunnerFooterProps {
   /** The footer slice of the runner policy. */
-  policy: Pick<RunnerPolicy, "testIdPrefix" | "prevStep" | "pause">;
+  policy: Pick<RunnerPolicy, "testIdPrefix" | "i18nNamespace" | "prevStep" | "pause" | "endRun">;
   isSummary: boolean;
   isExerciseStep: boolean;
   checked: boolean;
@@ -61,8 +77,17 @@ export interface RunnerFooterProps {
   goPrev?: () => void;
   goNext: () => void;
   onCheck: () => void;
-  /** Open the pause / exit dialog; required whenever ``policy.pause`` is set. */
+  /** Open the pause / exit dialog; required whenever ``policy.pause`` is set.
+   *  With ``paused`` given it toggles pause and resume instead. */
   onPause?: () => void;
+  /**
+   * Toggle pause (Endless): the run's paused state. Given, the pause
+   * control is a pressed / unpressed toggle and the action is hidden while
+   * paused; omitted, the pause opens the lesson's pause dialog.
+   */
+  paused?: boolean;
+  /** End the run; required whenever ``policy.endRun`` is set. */
+  onEnd?: () => void;
   /** Leave the run; required whenever ``policy.pause`` is set. */
   onExit?: () => void;
   /** Exam flow: submit the current answer AND advance in one click. */
@@ -77,178 +102,133 @@ function actionClass(hasPause: boolean): string {
   return hasPause ? "shrink-0" : "ml-auto shrink-0";
 }
 
-interface PauseButtonProps {
-  testId: string;
-  marginClass: string;
-  isInProgress: boolean;
-  onPause?: () => void;
-  onExit?: () => void;
-}
-
-function PauseButton({ testId, marginClass, isInProgress, onPause, onExit }: PauseButtonProps) {
-  const { t } = useI18n();
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      className={`shrink-0 ${marginClass}`}
-      onClick={isInProgress ? onPause : onExit}
-      data-testid={testId}
-      aria-label={t("lesson.action.pause", "Pause lesson")}
-      title={t("lesson.action.pause", "Pause lesson")}
-    >
-      <Pause aria-hidden="true" />
-    </Button>
-  );
-}
-
-interface PrevButtonProps {
-  testId: string;
-  disabled: boolean;
-  onClick?: () => void;
-}
-
-function PrevButton({ testId, disabled, onClick }: PrevButtonProps) {
-  const { t } = useI18n();
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      className="min-w-[44px] shrink-0"
-      onClick={onClick}
-      disabled={disabled}
-      data-testid={testId}
-      aria-label={t("lesson.action.prev", "Previous")}
-      title={t("lesson.action.prev", "Previous")}
-    >
-      <ChevronLeft size={20} aria-hidden="true" />
-      <span className="hidden md:inline">{t("lesson.action.prev", "Previous")}</span>
-    </Button>
-  );
-}
-
-interface CheckButtonProps {
-  testId: string;
-  className: string;
-  answerable: boolean;
-  onCheck: () => void;
-}
-
-function CheckButton({ testId, className, answerable, onCheck }: CheckButtonProps) {
-  const { t } = useI18n();
-  return (
-    <Button
-      type="button"
-      className={className}
-      onClick={onCheck}
-      disabled={!answerable}
-      title={
-        !answerable
-          ? t("lesson.button.check_disabled_hint", "Answer the exercise first")
-          : undefined
-      }
-      data-testid={testId}
-    >
-      <Check size={20} aria-hidden="true" />
-      {t("lesson.button.check", "Check")}
-    </Button>
-  );
-}
-
-interface NextButtonProps {
-  testId: string;
-  className: string;
-  isLastStep: boolean;
-  onClick: () => void;
-  /** Exam flow: gate the forward button on an answer for an exercise step. */
-  gated?: boolean;
-}
-
-function NextButton({ testId, className, isLastStep, onClick, gated = false }: NextButtonProps) {
-  const { t } = useI18n();
-  return (
-    <Button
-      type="button"
-      className={className}
-      onClick={onClick}
-      disabled={gated}
-      title={
-        gated ? t("lesson.button.check_disabled_hint", "Answer the exercise first") : undefined
-      }
-      data-testid={testId}
-    >
-      {isLastStep ? t("lesson.action.finish", "Finish lesson") : t("lesson.button.next", "Next")}
-      <ChevronRight size={20} aria-hidden="true" />
-    </Button>
-  );
-}
-
 /** Policy-driven Previous / pause / Check-Next footer (or the exam forward flow). */
-export default function RunnerFooter({
-  policy,
-  isSummary,
-  isExerciseStep,
-  checked,
-  enteredReviewed,
-  answerable,
-  isLastStep,
-  currentStepIndex,
-  delayedFeedback = false,
-  isInProgress = false,
-  goPrev,
-  goNext,
-  onCheck,
-  onPause,
-  onExit,
-  onSubmitAndAdvance,
-}: RunnerFooterProps) {
-  const { t } = useI18n();
-  const testId = (suffix: string) => `${policy.testIdPrefix}-${suffix}`;
-  const navLabel = t("lesson.nav.aria_label", "Step navigation");
-  const pauseProps = { testId: testId("pause-btn"), isInProgress, onPause, onExit };
+type TestIdOf = (suffix: string) => string;
 
-  if (delayedFeedback && !isSummary) {
-    const advanceExam = isExerciseStep && onSubmitAndAdvance ? onSubmitAndAdvance : goNext;
+interface FooterPauseProps {
+  props: RunnerFooterProps;
+  testId: TestIdOf;
+  marginClass: string;
+}
+
+/** The lesson's dialog pause, or the Endless toggle when ``paused`` is given. */
+function FooterPause({ props, testId, marginClass }: FooterPauseProps) {
+  const { policy, paused, onPause, onExit, isInProgress = false } = props;
+  if (paused !== undefined) {
     return (
-      <nav className={NAV_CLASS} data-testid={testId("footer")} aria-label={navLabel}>
-        {policy.pause && <PauseButton {...pauseProps} marginClass="mr-auto" />}
-        <NextButton
-          testId={testId("next")}
-          className={actionClass(policy.pause)}
-          isLastStep={isLastStep}
-          onClick={advanceExam}
-          gated={isExerciseStep && !answerable}
-        />
-      </nav>
+      <TogglePauseButton
+        testId={testId("pause")}
+        i18nNamespace={policy.i18nNamespace}
+        marginClass={marginClass}
+        paused={paused}
+        onToggle={onPause}
+      />
     );
   }
-
-  if (isSummary && !policy.prevStep && !policy.pause) return null;
-
-  const showCheck = isExerciseStep && !checked && !enteredReviewed;
   return (
-    <nav className={NAV_CLASS} data-testid={testId("footer")} aria-label={navLabel}>
+    <PauseButton
+      testId={testId("pause-btn")}
+      marginClass={marginClass}
+      isInProgress={isInProgress}
+      onPause={onPause}
+      onExit={onExit}
+    />
+  );
+}
+
+interface FooterActionProps {
+  props: RunnerFooterProps;
+  testId: TestIdOf;
+  className: string;
+}
+
+/** The two-phase action: Check while the answer is open, then Next. */
+function FooterAction({ props, testId, className }: FooterActionProps) {
+  const { isExerciseStep, checked, enteredReviewed, answerable, isLastStep } = props;
+  if (isExerciseStep && !checked && !enteredReviewed) {
+    return (
+      <CheckButton
+        testId={testId("check")}
+        className={className}
+        answerable={answerable}
+        onCheck={props.onCheck}
+      />
+    );
+  }
+  return (
+    <NextButton
+      testId={testId("next")}
+      className={className}
+      isLastStep={isLastStep}
+      onClick={props.goNext}
+    />
+  );
+}
+
+/** #1007 Phase 2 exam flow: one forward button that submits and advances. */
+function ExamFooter({ props, testId }: { props: RunnerFooterProps; testId: TestIdOf }) {
+  const { t } = useI18n();
+  const { policy, isExerciseStep, answerable, onSubmitAndAdvance, goNext } = props;
+  const advanceExam = isExerciseStep && onSubmitAndAdvance ? onSubmitAndAdvance : goNext;
+  return (
+    <nav
+      className={NAV_CLASS}
+      data-testid={testId("footer")}
+      aria-label={t("lesson.nav.aria_label", "Step navigation")}
+    >
+      {policy.pause && <FooterPause props={props} testId={testId} marginClass="mr-auto" />}
+      <NextButton
+        testId={testId("next")}
+        className={actionClass(policy.pause)}
+        isLastStep={props.isLastStep}
+        onClick={advanceExam}
+        gated={isExerciseStep && !answerable}
+      />
+    </nav>
+  );
+}
+
+/** Policy-driven Previous / pause / End / Check-Next footer (or the exam forward flow). */
+export default function RunnerFooter(props: RunnerFooterProps) {
+  const { t } = useI18n();
+  const { policy, isSummary, paused } = props;
+  const testId: TestIdOf = (suffix) => `${policy.testIdPrefix}-${suffix}`;
+
+  if (props.delayedFeedback && !isSummary) return <ExamFooter props={props} testId={testId} />;
+
+  // A toggle pause and End operate a RUNNING stream; the summary has neither.
+  const showPause = policy.pause && !(paused !== undefined && isSummary);
+  const showEnd = policy.endRun && !isSummary;
+  if (isSummary && !policy.prevStep && !showPause) return null;
+
+  // With End beside it the pause sits at the leading edge and End takes the
+  // free space (mr-auto); alone it is centred (mx-auto), as in the lesson.
+  return (
+    <nav
+      className={NAV_CLASS}
+      data-testid={testId("footer")}
+      aria-label={t("lesson.nav.aria_label", "Step navigation")}
+    >
       {policy.prevStep && (
-        <PrevButton testId={testId("prev")} disabled={currentStepIndex === 0} onClick={goPrev} />
+        <PrevButton
+          testId={testId("prev")}
+          disabled={props.currentStepIndex === 0}
+          onClick={props.goPrev}
+        />
       )}
-      {policy.pause && <PauseButton {...pauseProps} marginClass="mx-auto" />}
-      {!isSummary &&
-        (showCheck ? (
-          <CheckButton
-            testId={testId("check")}
-            className={actionClass(policy.pause)}
-            answerable={answerable}
-            onCheck={onCheck}
-          />
-        ) : (
-          <NextButton
-            testId={testId("next")}
-            className={actionClass(policy.pause)}
-            isLastStep={isLastStep}
-            onClick={goNext}
-          />
-        ))}
+      {showPause && (
+        <FooterPause props={props} testId={testId} marginClass={showEnd ? "" : "mx-auto"} />
+      )}
+      {showEnd && (
+        <EndButton
+          testId={testId("end")}
+          i18nNamespace={policy.i18nNamespace}
+          onEnd={props.onEnd}
+        />
+      )}
+      {!isSummary && !paused && (
+        <FooterAction props={props} testId={testId} className={actionClass(showPause || showEnd)} />
+      )}
     </nav>
   );
 }

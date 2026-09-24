@@ -38,11 +38,7 @@ import { ExerciseDispatcher } from "../../exercises";
 import type { ExerciseHandle, ExerciseScored } from "../../exercises";
 import ReviewedFallbackPanel from "../summary/ReviewedFallbackPanel";
 import { stampHintUsage } from "../../../lib/hints/hint-usage";
-import type {
-  ContentLessonStep,
-  LessonStepResultStored,
-  RawAnswer,
-} from "../../../storage/types";
+import type { ContentLessonStep, LessonStepResultStored, RawAnswer } from "../../../storage/types";
 import type { RunnerSource, RunnerTestIdPrefix } from "./types";
 
 export interface RunnerStepProps {
@@ -57,6 +53,12 @@ export interface RunnerStepProps {
   onInteraction: (answerable: boolean) => void;
   onChecked: () => void;
   onScored: (stepId: string, scored: ExerciseScored) => void;
+  /** A paused stream (slice 2): the step stays mounted, so a half-typed
+   *  answer survives the pause, but is hidden behind the paused notice. */
+  hidden?: boolean;
+  /** A stream step (Endless): the testid carries no step id, because a
+   *  stream repeats cards and the page has always rendered ``{prefix}-step``. */
+  stream?: boolean;
 }
 
 /** The prefixed step article around the controlled exercise. */
@@ -71,6 +73,8 @@ export default function RunnerStep({
   onInteraction,
   onChecked,
   onScored,
+  hidden,
+  stream = false,
 }: RunnerStepProps) {
   const handleComplete = async (scored: ExerciseScored) => {
     onChecked();
@@ -81,7 +85,8 @@ export default function RunnerStep({
   return (
     <article
       className="lesson-step"
-      data-testid={`${testIdPrefix}-step-${step.id}`}
+      hidden={hidden}
+      data-testid={stream ? `${testIdPrefix}-step` : `${testIdPrefix}-step-${step.id}`}
       data-step-type={step.type}
     >
       {step.title && <h2>{step.title}</h2>}

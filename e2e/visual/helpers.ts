@@ -18,6 +18,17 @@
 import {expect, type Page} from "@playwright/test";
 
 import {completeAssessment, completeOnboarding} from "../helpers";
+import {
+    RANDOM_PIN_GLOBAL,
+    isRandomPin,
+} from "../../frontend/src/lib/random/pinned-random";
+import {
+    FIXED_NOW_ISO,
+    VISUAL_RANDOM_PIN,
+    legacyRandomInitScript,
+    randomPinInitScript,
+    randomPinProblem,
+} from "./visual-pins";
 
 /** All 12 registered themes (6 recommended + 6 classic). */
 export const THEME_IDS = [
@@ -66,15 +77,17 @@ const OWN_LESSON_CARDS = [
 /** Title of the seeded own lesson (#3011). */
 export const OWN_LESSON_TITLE = "Mein erstes Vokabelset";
 
-/** Frozen wall-clock for every visual run (follows #244). Relative times
- *  ("vor 3 Minuten", streak dates, "Morgen neue Missionen") would otherwise
- *  drift day-to-day and make the screenshots flaky. */
-const FIXED_NOW_ISO = "2026-06-10T14:00:00Z";
-
 /**
- * Freeze ``Date`` to a fixed instant before any page script runs, so every
- * relative-time / timestamp render is deterministic. Added before the first
- * navigation (``addInitScript`` re-applies on each navigation in the context).
+ * Freeze ``Date`` to a fixed instant (``FIXED_NOW_ISO`` in ``visual-pins.ts``)
+ * before any page script runs, so every relative-time / timestamp render is
+ * deterministic. Added before the first navigation (``addInitScript``
+ * re-applies on each navigation in the context).
+ *
+ * No shuffle reads this clock any more (#3214): the matching and word-tiles
+ * mount seeds take their suffix from the pin ``pinRandomStreams`` installs.
+ * Call ``pinRandomStreams`` right after this at every visual entry point, or
+ * those seeds fall back to the page clock and the set-run builders to
+ * ``Math.random``.
  */
 export async function freezeClock(page: Page): Promise<void> {
     await page.addInitScript((iso) => {
@@ -98,32 +111,90 @@ export async function freezeClock(page: Page): Promise<void> {
 }
 
 /**
- * Pin every in-page randomness source so ID- and shuffle-derived UI is
- * identical run-to-run (#1567): ``crypto.randomUUID`` becomes a counter
- * sequence (the seeded user's id feeds the missions PRNG
- * ``userId:dateISO`` — a random UUID re-rolls the daily missions on
- * every capture run) and ``Math.random`` becomes a fixed-seed
- * mulberry32 stream (exercise/option shuffles). Deterministic, still
- * unique per call. Call ONCE before the first navigation, alongside
+ * Pin the page-wide randomness sources so ID-derived UI is identical
+ * run-to-run (#1567): ``crypto.randomUUID`` becomes a counter sequence (the
+ * seeded user's id feeds the missions PRNG ``userId:dateISO`` - a random UUID
+ * re-rolls the daily missions on every capture run) and ``Math.random``
+ * becomes ONE fixed-seed mulberry32 stream shared by every remaining
+ * ``Math.random`` consumer on the page (confetti, sound, arcade games,
+ * exercise variables, the cloze generator, custom paths). Deterministic,
+ * still unique per call. Call ONCE before the first navigation, alongside
  * ``freezeClock``.
+ *
+ * This shared stream no longer drives the option shuffles or the set-run
+ * builders (#3214). A draw from a shared stream depends on every draw before
+ * it anywhere on the page, so the Shuffle order differed between viewports
+ * under the same seed. Those consumers now draw from their OWN named streams,
+ * which ``pinRandomStreams`` installs; no other draw can move them.
+ *
+ * The generator is the app's own ``mulberry32`` (``prng.ts``), shipped as
+ * source text by ``legacyRandomInitScript`` in ``visual-pins.ts``; the
+ * stream is bit-identical to the copy this helper used to carry.
  */
 export async function pinRandomness(page: Page): Promise<void> {
-    await page.addInitScript(() => {
-        let uuidCounter = 0;
-        crypto.randomUUID = () => {
-            uuidCounter += 1;
-            const tail = String(uuidCounter).padStart(12, "0");
-            return `00000000-0000-4000-8000-${tail}`;
-        };
-        let mulberryState = 0x1567 >>> 0;
-        Math.random = () => {
-            mulberryState = (mulberryState + 0x6d2b79f5) >>> 0;
-            let mixed = mulberryState;
-            mixed = Math.imul(mixed ^ (mixed >>> 15), mixed | 1);
-            mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61);
-            return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
-        };
-    });
+    await page.addInitScript({content: legacyRandomInitScript()});
+}
+
+/**
+ * Install the visual random pin (#3214) before the first navigation:
+ * ``VISUAL_RANDOM_PIN`` on ``globalThis[RANDOM_PIN_GLOBAL]``, read by
+ * ``frontend/src/lib/random/pinned-random.ts``.
+ *
+ * With it, the Shuffle builder draws from its own ``"shuffle-order"`` stream,
+ * the Endless repetitions from ``"endless-repeat"``, and the matching and
+ * word-tiles mount seeds use ``VISUAL_RANDOM_PIN.mountSalt`` instead of the
+ * page clock. Each stream is a fresh generator only its consumer advances,
+ * so a draw anywhere else on the page cannot move a baseline.
+ *
+ * The pin is a frozen, non-writable, non-configurable property
+ * (``randomPinInitScript``), so no page script can swap it mid-capture.
+ *
+ * Fails closed twice: a pin the app would reject (``isRandomPin``) throws
+ * here, and every shared visual navigation helper checks afterwards that
+ * the page carries it (``assertRandomPinInstalled``).
+ *
+ * @example
+ * await freezeClock(page);
+ * await pinRandomStreams(page);
+ */
+export async function pinRandomStreams(page: Page): Promise<void> {
+    if (!isRandomPin(VISUAL_RANDOM_PIN)) {
+        throw new Error(
+            `pinRandomStreams: VISUAL_RANDOM_PIN ${JSON.stringify(VISUAL_RANDOM_PIN)} ` +
+                "is not a valid RandomPin; the app would ignore it and draw " +
+                "unpinned randomness (#3214).",
+        );
+    }
+    await page.addInitScript({content: randomPinInitScript()});
+}
+
+/**
+ * Throw unless the current page carries the visual random pin (#3214).
+ *
+ * Without the pin a visual spec still passes: it just photographs
+ * browser-random Shuffle, Endless, Matching and word-tiles orders. So the
+ * shared navigation helpers every visual loop goes through (``gotoView``,
+ * ``gotoSurface``, the set runners, the FeatureShot loop) call this once
+ * after they have navigated; one ``evaluate`` per navigation. Only an own
+ * property counts, the same rule the app applies.
+ *
+ * @example
+ * await page.goto("/shuffle-lesson/fr-a1-from-en");
+ * await assertRandomPinInstalled(page);
+ */
+export async function assertRandomPinInstalled(page: Page): Promise<void> {
+    const installed = await page.evaluate(
+        (name) => Object.getOwnPropertyDescriptor(globalThis, name)?.value,
+        RANDOM_PIN_GLOBAL,
+    );
+    const problem = randomPinProblem(installed);
+    if (problem !== null) {
+        throw new Error(
+            `Visual random pin missing on ${page.url()}: ${problem}. Call ` +
+                "pinRandomStreams(page) before the first navigation (#3214); " +
+                "without it the shot captures browser-random orders.",
+        );
+    }
 }
 
 /**
@@ -1013,9 +1084,20 @@ async function gotoGradedQuizChecked(page: Page): Promise<boolean> {
 /**
  * Bring ``view`` into its screenshot state (theme already pinned by the
  * caller). Returns true when ready, false when the view could not be
- * deterministically reached (caller skips).
+ * deterministically reached (caller skips). A reached view must carry the
+ * random pin, or this throws (``assertRandomPinInstalled``, #3214).
+ *
+ * @example
+ * test.skip(!(await gotoView(page, "dashboard")), "not reachable");
  */
 export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
+    const ready = await reachView(page, view);
+    if (ready) await assertRandomPinInstalled(page);
+    return ready;
+}
+
+/** The per-view navigation behind {@link gotoView}. */
+async function reachView(page: Page, view: ViewName): Promise<boolean> {
     switch (view) {
         case "settings":
             await seedLearner(page);
@@ -1109,6 +1191,8 @@ export const SURFACE_NAMES = [
     "lesson-matching",
     "lesson-summary",
     "review-session",
+    "shuffle-session",
+    "endless-session",
     "statistics",
     "settings-general",
     "settings-data",
@@ -1491,6 +1575,75 @@ export async function gotoReviewSession(page: Page): Promise<boolean> {
 }
 
 /**
+ * Open a set-level runner route on the bundled set and wait for its
+ * ready anchors (EXP-052 slice 2). Opening the first bundled lesson
+ * first guarantees the set is cached: Shuffle and Endless resolve the set
+ * through ``listSets`` and render their not-cached screen otherwise. The
+ * route is re-entered while the anchors are missing (the cache write can
+ * still be landing), the same bounded retry as ``gotoReviewSession``.
+ * Fails closed without the random pin: the order on screen would be
+ * browser-random (#3214).
+ */
+async function gotoSetRunner(
+    page: Page,
+    route: string,
+    anchors: readonly string[],
+): Promise<boolean> {
+    await seedLearner(page);
+    await openFirstBundledLesson(page);
+    for (let attempt = 0; attempt < 3; attempt++) {
+        await page.goto(`${route}/${SET_ID}`);
+        try {
+            for (const anchor of anchors) {
+                await expect(page.getByTestId(anchor)).toBeVisible({timeout: 5_000});
+            }
+        } catch {
+            // Set list not materialised yet - re-enter the route.
+            continue;
+        }
+        // Outside the try: a missing pin must fail the test, not read as
+        // "not ready yet" and end in a silent skip.
+        await assertRandomPinInstalled(page);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Seed a learner and open the Shuffle session of the bundled set on its
+ * first step (EXP-052 slice 2). The Fisher-Yates order comes from the
+ * ``"shuffle-order"`` stream ``pinRandomStreams`` installs (#3214), so it is
+ * the same on every run and at every viewport, whatever else drew from
+ * ``Math.random`` first; the first question is stable.
+ */
+export async function gotoShuffleSession(page: Page): Promise<boolean> {
+    return gotoSetRunner(page, "/shuffle-lesson", [
+        "shuffle-page",
+        "shuffle-subtitle",
+        "shuffle-check",
+    ]);
+}
+
+/**
+ * Seed a learner and open the Endless stream of the bundled set on its
+ * first card (EXP-052 slice 2): header, the stat line in the progress
+ * slot, the card, and the footer with pause and End. The stream opens
+ * with new cards in lesson order, so the first card is stable (the
+ * repetitions after the queue draw from the ``"endless-repeat"`` stream
+ * ``pinRandomStreams`` installs, #3214); the stat
+ * line's clock ticks with real time, a few-pixel digit change the
+ * comparison tolerance absorbs.
+ */
+export async function gotoEndlessSession(page: Page): Promise<boolean> {
+    return gotoSetRunner(page, "/endless-lesson", [
+        "endless-page",
+        "endless-stat-line",
+        "endless-step",
+        "endless-end",
+    ]);
+}
+
+/**
  * Move every SRS error row of the current learner ``days`` into the past
  * (#3123). The badge in the header counts OVERDUE elements only, and a
  * fresh wrong answer is due tomorrow (``intervalDaysForStreak(0)`` = 1
@@ -1623,9 +1776,23 @@ export async function createOwnLesson(page: Page, title: string): Promise<void> 
  * Bring ``surface`` into its screenshot state in the DEFAULT theme. The
  * caller has already set the viewport + frozen the clock. Returns true
  * when ready, false when the surface can't be reached deterministically
- * (caller skips).
+ * (caller skips). A reached surface must carry the random pin, or this
+ * throws (``assertRandomPinInstalled``, #3214).
+ *
+ * @example
+ * test.skip(!(await gotoSurface(page, "shuffle-session")), "not reachable");
  */
 export async function gotoSurface(
+    page: Page,
+    surface: SurfaceName,
+): Promise<boolean> {
+    const ready = await reachSurface(page, surface);
+    if (ready) await assertRandomPinInstalled(page);
+    return ready;
+}
+
+/** The per-surface navigation behind {@link gotoSurface}. */
+async function reachSurface(
     page: Page,
     surface: SurfaceName,
 ): Promise<boolean> {
@@ -1730,6 +1897,10 @@ export async function gotoSurface(
             return playBundledLesson(page, "summary");
         case "review-session":
             return gotoReviewSession(page);
+        case "shuffle-session":
+            return gotoShuffleSession(page);
+        case "endless-session":
+            return gotoEndlessSession(page);
         case "statistics":
             await seedLearner(page);
             await playBundledLesson(page, "summary");

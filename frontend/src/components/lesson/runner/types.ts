@@ -67,6 +67,20 @@ export interface RunnerSource {
   runKey: string;
   /** Indexed runs carry a position; the Endless stream has none. */
   position: { index: number; total: number } | null;
+  /**
+   * A stream source (``position: null``, Endless): its own monotonic step
+   * counter, one up per ``goNext`` (slice 2). The shell keys the per-step
+   * two-phase reset and the step re-anchor on it, because a stream may
+   * repeat a card with the SAME step id, which an id change cannot see.
+   * Ignored while ``position`` is set.
+   */
+  streamStep?: number;
+  /**
+   * The toggle pause and the explicit End of a run whose policy has
+   * ``pause`` and ``endRun`` (Endless, slice 2): the paused state, the
+   * footer toggle and the End that leads to the summary.
+   */
+  pause?: RunnerPauseControl;
   isSummary: boolean;
   /**
    * What the summary render prop receives (slice 1). The mode hook owns
@@ -81,6 +95,16 @@ export interface RunnerSource {
   recordStepAttempts: (attempts: readonly ElementAttempt[]) => Promise<void>;
   /** Only the persisting lesson: the progress row for the reviewed-step lock. */
   progress?: LessonProgress | null;
+}
+
+/** The paused state plus the two footer handlers of a pausable stream. */
+interface RunnerPauseControl {
+  /** While ``true`` the step is hidden (its answer kept) and Enter is off. */
+  paused: boolean;
+  /** Footer pause button: pause, or resume when paused. */
+  onToggle: () => void;
+  /** Footer End button: end the run, the summary follows. */
+  onEnd: () => void;
 }
 
 /** The six testid prefixes the pages already carry; they stay (policy). */
@@ -124,6 +148,14 @@ export interface RunnerPolicy {
   prevStep: boolean;
   /** Whether the footer carries the pause control (#1642). */
   pause: boolean;
+  /**
+   * Whether the footer carries an explicit End control next to the pause.
+   * ``true`` only for Endless: it is the only run without a last step (a
+   * stream never reaches a summary by itself), so the learner needs an
+   * explicit way to end it; every indexed run ends with its last step.
+   * Pause and End are operated together in the footer (EXP-052 Befund 2).
+   */
+  endRun: boolean;
   /** Whether the options bar (favourite, mode toggle, read-aloud) renders. */
   optionsBar: boolean;
   /** Whether the step view offers the theory back-link. */
@@ -184,7 +216,10 @@ interface RunnerSummaryTallies {
   total: number;
   remaining?: number;
   masteredDelta?: number | null;
+  /** A stream's running counters (Endless): the stat line and the recap. */
   stats?: EndlessStats;
+  /** Active seconds of a stream run (the timer pauses with the run). */
+  elapsedSec?: number;
 }
 
 /**

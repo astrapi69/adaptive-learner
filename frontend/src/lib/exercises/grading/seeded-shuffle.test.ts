@@ -80,3 +80,19 @@ describe("seededShuffle: distribution for near-identical seeds (#2317)", () => {
         expect(new Set(positions)).toEqual(new Set([0, 1, 2, 3]));
     });
 });
+
+describe("seededShuffle: golden orders (#3214)", () => {
+    /** Captured from the implementation BEFORE the PRNG moved to
+     *  ``lib/random``. Every option shuffle and every rendered matching or
+     *  tile baseline depends on these exact permutations, so the move must
+     *  reproduce them bit for bit. */
+    it.each([
+        {seed: "ex-1", expected: ["b", "a", "c", "e", "f", "d"]},
+        {seed: "ex-1#13056#right", expected: ["a", "d", "e", "b", "f", "c"]},
+        {seed: "01-a", expected: ["c", "e", "a", "f", "d", "b"]},
+    ])("seed $seed keeps its pre-move order", ({seed, expected}) => {
+        expect(seededShuffle(["a", "b", "c", "d", "e", "f"], seed)).toEqual(
+            expected,
+        );
+    });
+});

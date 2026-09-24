@@ -30,6 +30,7 @@ const RATIFIED_COLUMNS = [
   "exit",
   "prevStep",
   "pause",
+  "endRun",
   "optionsBar",
   "theoryLink",
   "enterShortcut",
@@ -51,6 +52,7 @@ function varyingColumns(policy: RunnerPolicy) {
     exit: policy.exit,
     prevStep: policy.prevStep,
     pause: policy.pause,
+    endRun: policy.endRun,
     optionsBar: policy.optionsBar,
     theoryLink: policy.theoryLink,
     persistProgress: policy.persistProgress,
@@ -68,7 +70,7 @@ describe("runner policies (ratified matrix 2026-09-23)", () => {
     }
   });
 
-  it.each(ROWS)("%s carries exactly the sixteen ratified columns", (_prefix, policy) => {
+  it.each(ROWS)("%s carries exactly the seventeen ratified columns", (_prefix, policy) => {
     expect(Object.keys(policy).sort()).toEqual(RATIFIED_COLUMNS);
   });
 
@@ -90,6 +92,7 @@ describe("runner policies (ratified matrix 2026-09-23)", () => {
       exit: "set-link",
       prevStep: true,
       pause: true,
+      endRun: false,
       optionsBar: true,
       theoryLink: true,
       persistProgress: true,
@@ -99,6 +102,7 @@ describe("runner policies (ratified matrix 2026-09-23)", () => {
       exit: { backTo: "/dashboard" },
       prevStep: true,
       pause: false,
+      endRun: false,
       optionsBar: false,
       theoryLink: false,
       persistProgress: false,
@@ -111,6 +115,7 @@ describe("runner policies (ratified matrix 2026-09-23)", () => {
       ...session,
       prevStep: false,
       pause: true,
+      endRun: true,
     });
     expect(varyingColumns(ERROR_REPLAY_POLICY)).toEqual({
       ...session,
@@ -121,6 +126,11 @@ describe("runner policies (ratified matrix 2026-09-23)", () => {
   it("Endless is the only runner without a previous step (structural, not a preference)", () => {
     const withoutPrev = ROWS.filter(([, policy]) => !policy.prevStep).map(([p]) => p);
     expect(withoutPrev).toEqual(["endless"]);
+  });
+
+  it("Endless is the only runner with an explicit End (the only run without a last step)", () => {
+    const withEnd = ROWS.filter(([, policy]) => policy.endRun).map(([p]) => p);
+    expect(withEnd).toEqual(["endless"]);
   });
 
   it("only the lesson persists progress, inherits the mode and shows options bar + theory link", () => {

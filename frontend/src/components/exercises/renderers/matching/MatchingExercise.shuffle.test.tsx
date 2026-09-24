@@ -11,6 +11,11 @@
  * - the order is stable within one mount (no reshuffle under the user),
  * - the solve view keeps the displayed left order (#2872),
  * - grading stays value-based and untouched by display order.
+ *
+ * #3214 adds both directions of the per-mount seed: in production the right
+ * column follows ``Date.now() & 0xffff`` (a learner never sees the same order
+ * on every encounter), under the visual random pin it ignores the clock and
+ * keeps the order the frozen visual clock produced before.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -18,6 +23,14 @@ import {fireEvent, render, screen, within} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import MatchingExercise from "./MatchingExercise";
+import {seededShuffle} from "../../../../lib/exercises/grading/seeded-shuffle";
+import {
+    FROZEN_VISUAL_NOW,
+    OTHER_INSTANTS,
+    VISUAL_RANDOM_PIN,
+    clearRandomPin,
+    installVisualRandomPin,
+} from "../../../../test-utils/visual-random-pin";
 import type {ContentLessonExercise} from "../../../../storage/types";
 
 function makeExercise(id: string): ContentLessonExercise {
@@ -50,6 +63,7 @@ beforeEach(() => {
 
 afterEach(() => {
     vi.restoreAllMocks();
+    clearRandomPin();
 });
 
 describe("MatchingExercise: column shuffle distribution (#2371)", () => {
@@ -169,5 +183,68 @@ describe("MatchingExercise: column shuffle distribution (#2371)", () => {
         expect(onComplete).toHaveBeenCalledWith(
             expect.objectContaining({correct: 4, total: 4}),
         );
+    });
+});
+
+const CLOCK_ID = "ex-match-clock";
+const SIX_RIGHT = ["R0", "R1", "R2", "R3", "R4", "R5"];
+
+function makeSixPairExercise(id: string): ContentLessonExercise {
+    return {
+        ...makeExercise(id),
+        pairs: SIX_RIGHT.map((right, i) => ({left: `L${i}`, right})),
+    };
+}
+
+function rightColumnAt(now: number): string[] {
+    vi.spyOn(Date, "now").mockReturnValue(now);
+    const {unmount} = render(
+        <MatchingExercise
+            exercise={makeSixPairExercise(CLOCK_ID)}
+            onComplete={vi.fn()}
+        />,
+    );
+    const labels = columnLabels("matching-right", /R\d/);
+    unmount();
+    return labels;
+}
+
+/** The right-column order ``seededShuffle`` gives for a mount suffix. */
+function rightOrderForSuffix(suffix: number): string[] {
+    return seededShuffle(SIX_RIGHT, `${CLOCK_ID}#${suffix}#right`);
+}
+
+describe("MatchingExercise: production mount seed follows the clock (#3214)", () => {
+    it.each([
+        {name: "the frozen visual instant", now: FROZEN_VISUAL_NOW},
+        ...OTHER_INSTANTS,
+    ])("seeds with id#(Date.now() & 0xffff) at $name", ({now}) => {
+        expect(rightColumnAt(now)).toEqual(rightOrderForSuffix(now & 0xffff));
+        expect(Date.now).toHaveBeenCalled();
+    });
+
+    it("two mounts whose clock low bits differ get different orders", () => {
+        const [first, second] = OTHER_INSTANTS;
+        expect(first.now & 0xffff).not.toBe(second.now & 0xffff);
+        expect(rightColumnAt(second.now)).not.toEqual(rightColumnAt(first.now));
+    });
+});
+
+describe("MatchingExercise: mount seed under the visual random pin (#3214)", () => {
+    it.each(OTHER_INSTANTS)(
+        "renders the visual-seed order at $name",
+        ({now}) => {
+            expect(now & 0xffff).not.toBe(VISUAL_RANDOM_PIN.mountSalt);
+            installVisualRandomPin();
+            expect(rightColumnAt(now)).toEqual(
+                rightOrderForSuffix(VISUAL_RANDOM_PIN.mountSalt),
+            );
+        },
+    );
+
+    it("keeps the order the frozen visual clock produced before #3214", () => {
+        const unpinnedAtFrozenClock = rightColumnAt(FROZEN_VISUAL_NOW);
+        installVisualRandomPin();
+        expect(rightColumnAt(OTHER_INSTANTS[1].now)).toEqual(unpinnedAtFrozenClock);
     });
 });

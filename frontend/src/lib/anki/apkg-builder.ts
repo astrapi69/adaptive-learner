@@ -76,9 +76,23 @@ async function loadSqlJs(): Promise<SqlJsStatic> {
 
 // ---- Helpers ----
 
-/** Anki uses CRC-style checksums on the first field. We use a
- *  simple FNV-1a hash truncated to 31 bits; Anki only requires
- *  determinism + uniqueness within the export. */
+/**
+ * Checksum of a note's first field (Anki's ``notes.csum``). Anki only
+ * requires it to be deterministic within an export; this is an FNV-1a
+ * variant truncated to 31 bits.
+ *
+ * Deliberately NOT ``fnv1a32`` from ``lib/random`` (#3214): it multiplies
+ * in floating point (``hash * 16777619``), not with ``Math.imul``, which
+ * loses low bits once the product exceeds 2^53 and so yields different
+ * values. Swapping it would change the checksum of every exported note
+ * for the same deck; keep it as is.
+ *
+ * @param text - The first field of the note.
+ * @returns A non-negative 31-bit integer.
+ *
+ * @example
+ * const csum = fieldChecksum(card.front);
+ */
 function fieldChecksum(text: string): number {
     let hash = 2166136261;
     for (let i = 0; i < text.length; i++) {
