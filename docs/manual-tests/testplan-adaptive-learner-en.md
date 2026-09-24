@@ -3334,6 +3334,87 @@ Location: Settings > General > Profile, below the figure gallery.
       usual screens
 - [ ] Check both in browser mode (no server) AND in server mode
 
+### Adaptive lesson on the runner shell (EXP-052 slice 3, #3169)
+
+- [ ] Open `/adaptive-lesson/<set>` for a set with active errors: header
+      with "Back to Dashboard" and the lesson title; right under the title
+      the transparency block ("This lesson focuses on: ..." and "Based on N
+      active error(s)"); below it the progress bar "Step 1 of N"; the footer
+      looks like a lesson's (chevron "Previous" on the left, "Check" with a
+      check mark on the right), no pause, no options bar
+- [ ] "Previous" is disabled on the first step; after "Next" it goes one
+      step back in the same run
+- [ ] NEW: Enter (the adaptive lesson had no Enter shortcut before): the
+      first Enter checks an answered exercise, the second Enter moves on;
+      without an answer Enter does nothing; with the Enter shortcut switched
+      off (Settings > Learning) Enter does nothing
+- [ ] NEW: back to an already answered step: the answer is locked
+      (solution visible, no input), the footer shows "Next" instead of
+      "Check", Enter moves on; in statistics / train errors the element then
+      counts EXACTLY ONCE for this round (answering again no longer records
+      a second attempt, unlike before)
+- [ ] Back to a step NOT YET answered: stays answerable, "Check" is there
+- [ ] NEW, on a phone: after "Next" (or Enter) the view jumps to the start
+      of the new step; rotate the device: exercise and footer are back in
+      view
+- [ ] Hints from an earlier run do not count (#3196): reveal a hint in a
+      lesson, then open the same set's adaptive lesson and answer that
+      element without a hint: NOT marked "with hint" in the statistics; a
+      hint revealed IN the session counts
+- [ ] Summary unchanged: score with percentage, the line "Improvement: +N
+      element(s) mastered this session!" when elements were mastered in the
+      session, the SRS note, "Back to Dashboard", below it "Save as Offline
+      Lesson"; the footer there shows only "Previous"
+- [ ] Loading ("Analyzing your errors..."), "Nothing to adapt yet" and "set
+      not downloaded" show the usual screens; NEW: the error screen is the
+      shell's shared one (a friendly note, the raw error only in developer
+      mode, button "Open content browser" instead of "Back to Dashboard")
+- [ ] Check both in browser mode (no server) AND in server mode
+
+### Retry errors on the runner shell (EXP-052 slice 3, #3169)
+
+- [ ] Finish a lesson with at least two mistakes, open "Retry Errors" from
+      the summary: header with "Back to lesson" and the title "Retry errors:
+      <lesson>"; below it the progress bar "Step 1 of N" (N = the number of
+      wrong exercises); the footer looks like a lesson's (chevron "Previous"
+      on the left, "Check" with a check mark on the right), no pause
+- [ ] NEW: "Previous" in the footer (there was none before). Disabled on
+      the first step; after "Next" it goes one step back in the same run,
+      as a read-only look back
+- [ ] NEW: back to an already answered step: the answer is locked
+      (solution visible, no input), the footer shows "Next" instead of
+      "Check", Enter moves on; in statistics / train errors the element
+      counts EXACTLY ONCE for this round (no second attempt by answering
+      again)
+- [ ] Back BEFORE the current step is answered, then forward again: that
+      step stays answerable, "Check" is there
+- [ ] Enter: the first Enter checks an answered exercise, the second Enter
+      moves on; without an answer Enter does nothing
+- [ ] NEW, on a phone: after "Next" (or Enter) the view jumps to the start
+      of the new step; rotate the device: exercise and footer are back in
+      view; a very long word in the lesson title wraps instead of widening
+      the page sideways (#2761)
+- [ ] Hints from an earlier run do not count (#3196): a hint revealed in
+      the lesson does NOT mark the replay's attempt "with hint"; a hint
+      revealed in round one still counts in the next round ("Try again?")
+- [ ] Summary: "X/Y correct now!"; all correct: "All errors corrected!"
+      with confetti, "Back to lesson" has the focus, Enter goes to the
+      lesson; errors left: "Still N errors. Try again?" and "Back to
+      lesson"; NEW: the footer there shows "Previous" (a look back at the
+      last, locked step)
+- [ ] "Try again?" replays ONLY the still-wrong exercises, and they are
+      answerable again (not locked); "Previous" is disabled on their first
+      step
+- [ ] Flash round (#2888): title "Flash round: <set>", the countdown ring
+      sits right under the title and runs per exercise; it stops after
+      "Check"; on an answered step reopened through "Previous" it does not
+      run; "Back to lesson" and the end of the round lead to the set
+      overview; a plain replay shows no ring
+- [ ] NEW: open the page directly (reload the address, no exercises): title
+      "Retry Errors", "Nothing to retry - ...", button "Back to Dashboard"
+      (before: "Open content browser")
+- [ ] Check both in browser mode (no server) AND in server mode
+
 ---
 
 # PART B: AUTOMATED TESTS (reference)

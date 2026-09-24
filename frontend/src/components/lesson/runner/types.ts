@@ -11,6 +11,7 @@
 
 import type { ReactNode } from "react";
 
+import type { ExerciseScored } from "../../exercises";
 import type { EndlessStats } from "../../../hooks/lesson/modes/useEndlessLesson";
 import type { LessonMode } from "../../../lib/learning/lessonModePref";
 import type {
@@ -43,6 +44,17 @@ export interface RunnerSource {
   status: RunnerSourceStatus;
   error: string | null;
   title: string;
+  /**
+   * The title carries content text (Error Replay: the lesson's or set's
+   * name) that may hold a long unbreakable word ("Organisationspsychologie"):
+   * break it anywhere (#2761) instead of widening the page, which iOS WebKit
+   * answers by clipping the sticky footer's Next button (#1834 class). Off
+   * for the fixed titles, which keep their markup byte for byte: at 375px
+   * the wrap broke "Wiederholungssitzung" as "Wiederholungssitzun / g". A
+   * title change for every runner belongs to the compact header (#3173,
+   * EXP-052 slice 5).
+   */
+  wrapTitle?: boolean;
   subtitle?: string;
   /** The current step, or ``null`` on the summary. */
   step: ContentLessonStep | null;
@@ -65,6 +77,30 @@ export interface RunnerSource {
    * and file.
    */
   runKey: string;
+  /**
+   * A section of the same run (slice 3: Error Replay's "try again" round
+   * over the still-wrong exercises). A NEW value drops the run-local step
+   * results, so a replayed exercise is answerable again, but keeps hint
+   * usage: a round is part of the run, not a new one, and a hint revealed
+   * in round one still counts when the same element comes back. Absent for
+   * runs without sections.
+   */
+  sectionKey?: string;
+  /**
+   * Where the ``"back-button"`` exit leaves to (slice 3). Error Replay
+   * returns to the lesson it was opened from, or to a flash round's origin;
+   * only the source knows that route. Without it that exit renders no back
+   * button (a guessed history step could leave the app).
+   */
+  backTo?: string;
+  /**
+   * The graded result of a step, as the dispatcher reported it (slice 3).
+   * Error Replay decides "fully correct this round" from ``correct ===
+   * total``, which the element attempts alone cannot tell (an exercise may
+   * yield none). Called once per graded answer, before the attempts are
+   * recorded; never for a locked, re-entered step.
+   */
+  onStepScored?: (stepId: string, scored: ExerciseScored) => void;
   /** Indexed runs carry a position; the Endless stream has none. */
   position: { index: number; total: number } | null;
   /**
@@ -116,8 +152,9 @@ export type RunnerTestIdPrefix =
  *
  * - ``"set-link"``: the lesson header's link back to the content set,
  *   no back button.
- * - ``"back-button"``: a back button whose destination the page supplies
- *   at run time. Error Replay returns to the lesson it was opened from,
+ * - ``"back-button"``: a "Back to lesson" button whose destination the
+ *   source supplies at run time (``RunnerSource.backTo``). Error Replay
+ *   returns to the lesson it was opened from (or a flash round's origin),
  *   a parameterised route a constant cannot name.
  * - ``{ backTo }``: a back button to one fixed route. The four session
  *   runners return to the dashboard.
@@ -180,6 +217,15 @@ export interface RunnerPolicy {
   persistProgress: boolean;
   /** The mode the run pins, or ``"inherit"`` for the learner's own choice. */
   mode: LessonMode | "inherit";
+  /**
+   * Catalog key of the status screens' title: the runner's own name
+   * (slice 3). Not derived from ``i18nNamespace``: Error Replay's
+   * namespace (``lesson.error_replay``) has no ``page_title`` in any
+   * catalog, so the derived key fell back to the English "Lesson" in every
+   * language; the replay's name has always been
+   * ``lesson.next_step.error_replay``.
+   */
+  pageTitleKey: string;
   /**
    * Catalog key of the empty-screen body ("all caught up", "needs two
    * lessons", "nothing to adapt yet"): content that explains WHY this run

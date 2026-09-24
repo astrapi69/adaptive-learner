@@ -47,6 +47,7 @@ function renderStatus(
                 <RunnerStatusView
                   testIdPrefix={prefix}
                   i18nNamespace={prefix}
+                  pageTitleKey={`${prefix}.page_title`}
                   emptyBodyKey={prefix === "lesson" ? null : "review.empty_body"}
                   loadFailedKey={`${prefix}.error.load_failed`}
                   notCachedBodyKey={
@@ -190,6 +191,7 @@ describe("RunnerStatusView - lesson prefix is byte-identical to LessonStatusView
         <RunnerStatusView
           testIdPrefix="lesson"
           i18nNamespace="lesson"
+          pageTitleKey="lesson.page_title"
           emptyBodyKey={null}
           loadFailedKey="lesson.error.load_failed"
           notCachedBodyKey="lesson.not_cached_body"
@@ -210,6 +212,7 @@ describe("RunnerStatusView - lesson prefix is byte-identical to LessonStatusView
       <RunnerStatusView
         testIdPrefix="lesson"
         i18nNamespace="lesson"
+        pageTitleKey="lesson.page_title"
         emptyBodyKey={null}
         loadFailedKey="lesson.error.load_failed"
         notCachedBodyKey="lesson.not_cached_body"

@@ -29,6 +29,7 @@ function renderKind(kind: RunnerStatusKind, error: string | null = null) {
       <RunnerStatusView
         testIdPrefix="review"
         i18nNamespace="review"
+        pageTitleKey="review.page_title"
         emptyBodyKey="review.empty_body"
         loadFailedKey="review.error.load_failed"
         notCachedBodyKey="runner.not_cached_body"
@@ -93,6 +94,7 @@ describe("RunnerStatusView - catalog keys per screen (#3203)", () => {
         <RunnerStatusView
           testIdPrefix="lesson"
           i18nNamespace="lesson"
+          pageTitleKey="lesson.page_title"
           emptyBodyKey={null}
           loadFailedKey="lesson.error.load_failed"
           notCachedBodyKey="lesson.not_cached_body"
@@ -106,4 +108,32 @@ describe("RunnerStatusView - catalog keys per screen (#3203)", () => {
     expect(container.textContent).not.toContain("runner.not_cached_body");
     unmount();
   });
+
+  // EXP-052 slice 3: the title is a policy key, not ``${ns}.page_title``;
+  // the replay's namespace has no page_title (it would fall back to the
+  // English "Lesson"), so the replay titles its empty screen with its name.
+  it.each(["missing", "empty", "not-cached"] as RunnerStatusKind[])(
+    "kind %s titles the screen from pageTitleKey, never from the namespace",
+    (kind) => {
+      const { container } = render(
+        <MemoryRouter>
+          <RunnerStatusView
+            testIdPrefix="error-replay"
+            i18nNamespace="lesson.error_replay"
+            pageTitleKey="lesson.next_step.error_replay"
+            emptyBodyKey="lesson.error_replay.empty"
+            loadFailedKey="lesson.error.load_failed"
+            notCachedBodyKey="runner.not_cached_body"
+            missingParamsKey="runner.error.missing_params"
+            kind={kind}
+            error={null}
+          />
+        </MemoryRouter>,
+      );
+      expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+        "lesson.next_step.error_replay",
+      );
+      expect(container.textContent).not.toContain("lesson.error_replay.page_title");
+    },
+  );
 });

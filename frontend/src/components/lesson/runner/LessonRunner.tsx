@@ -26,6 +26,12 @@
  * and its pause control hides the step (answer kept) behind a notice
  * and switches Enter off while paused.
  *
+ * A run may have sections (slice 3, Error Replay's "try again" round over
+ * the still-wrong exercises): a new ``sectionKey`` re-opens the steps the
+ * previous section answered (same step ids) while hint usage stays per
+ * run. The graded result reaches the source through ``onStepScored`` for
+ * the source whose tally needs more than the element attempts.
+ *
  * @example
  * <LessonRunner
  *   source={useReviewSource({ setId, limit })}
@@ -79,6 +85,15 @@ function stepIndexOf(source: RunnerSource): number {
   return source.position?.index ?? source.streamStep ?? 0;
 }
 
+/**
+ * Identity of the run-local step results: the run, narrowed to its current
+ * section when the source has sections (slice 3, Error Replay's retry
+ * round). A new section re-opens the steps; hint usage stays per run.
+ */
+function resultsKeyOf(source: RunnerSource): string {
+  return source.sectionKey === undefined ? source.runKey : `${source.runKey}#${source.sectionKey}`;
+}
+
 /** The runner shell: status view, or the composed frame under ``{prefix}-page``. */
 export default function LessonRunner({ source, policy, summary, headerExtra }: LessonRunnerProps) {
   const prefix = policy.testIdPrefix;
@@ -90,7 +105,7 @@ export default function LessonRunner({ source, policy, summary, headerExtra }: L
   // The #1790 lock: the lesson's persisted row, or this run's own results.
   // A stream has no Previous, so there is nothing to lock: a repeated card
   // is a new attempt, not a re-entered step.
-  const runResults = useRunStepResults(source.runKey);
+  const runResults = useRunStepResults(resultsKeyOf(source));
   const progress = policy.persistProgress
     ? (source.progress ?? null)
     : source.position === null
@@ -114,6 +129,7 @@ export default function LessonRunner({ source, policy, summary, headerExtra }: L
       <RunnerStatusView
         testIdPrefix={prefix}
         i18nNamespace={policy.i18nNamespace}
+        pageTitleKey={policy.pageTitleKey}
         emptyBodyKey={policy.emptyBodyKey}
         loadFailedKey={policy.loadFailedKey}
         notCachedBodyKey={policy.notCachedBodyKey}
@@ -165,7 +181,10 @@ export default function LessonRunner({ source, policy, summary, headerExtra }: L
             stored: stepId ? progress?.step_results?.[stepId] : undefined,
             onInteraction: stepState.setAnswerable,
             onChecked: () => stepState.setChecked(true),
-            onScored: runResults.record,
+            onScored: (scoredStepId, scored) => {
+              runResults.record(scoredStepId, scored);
+              source.onStepScored?.(scoredStepId, scored);
+            },
           }}
         />
       </RunnerMode>

@@ -68,6 +68,35 @@ describe("useRunStepResults", () => {
     expect(result.current.progress.step_results).toEqual({});
   });
 
+  // EXP-052 slice 3: a replay retry changes the key AND the step in one
+  // update. The step-state lock reads the results in that very render, so a
+  // stale read there locks a step the new round must present open.
+  it("reproduction: the render that brings a new key already reads no results", () => {
+    const seen: number[] = [];
+    const {result, rerender} = renderHook(
+      ({key}) => {
+        const results = useRunStepResults(key);
+        seen.push(Object.keys(results.progress.step_results).length);
+        return results;
+      },
+      {initialProps: {key: "run-1"}},
+    );
+    act(() => result.current.record("s0", SCORED));
+    seen.length = 0;
+    rerender({key: "run-1#1"});
+    expect(seen[0]).toBe(0);
+  });
+
+  it("boundary: a record right after a key change lands in the new run", () => {
+    const {result, rerender} = renderHook(({key}) => useRunStepResults(key), {
+      initialProps: {key: "run-1"},
+    });
+    act(() => result.current.record("s0", SCORED));
+    rerender({key: "run-2"});
+    act(() => result.current.record("s1", SCORED));
+    expect(Object.keys(result.current.progress.step_results)).toEqual(["s1"]);
+  });
+
   it("keeps the results across re-renders with the same run key", () => {
     const {result, rerender} = renderHook(({key}) => useRunStepResults(key), {
       initialProps: {key: "run-1"},

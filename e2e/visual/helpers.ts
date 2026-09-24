@@ -1193,6 +1193,8 @@ export const SURFACE_NAMES = [
     "review-session",
     "shuffle-session",
     "endless-session",
+    "adaptive-lesson",
+    "error-replay",
     "statistics",
     "settings-general",
     "settings-data",
@@ -1644,6 +1646,102 @@ export async function gotoEndlessSession(page: Page): Promise<boolean> {
 }
 
 /**
+ * Seed a learner, record SRS error rows with the wrong matching pair and
+ * open the set's adaptive lesson on its first EXERCISE (EXP-052 slice 3):
+ * the session header with the F-115 transparency block under the title,
+ * the shared progress bar, the lesson footer with Previous. The generator
+ * draws no randomness (``lesson-generator.ts``), so the steps follow the
+ * analysis of the seeded rows. It may open with a theory step borrowed
+ * from the source lesson; the helper steps past it, the shot is about the
+ * runner around an exercise. The route is re-entered while the lesson is
+ * not generated yet (the error write can still be landing), the same
+ * bounded retry as ``gotoReviewSession``.
+ */
+export async function gotoAdaptiveLesson(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    if (!(await playBundledLesson(page, "matching-result"))) return false;
+    await waitForSrsQuiescence(page, {expectRows: true});
+    for (let attempt = 0; attempt < 3; attempt++) {
+        await page.goto(`/adaptive-lesson/${SET_ID}`);
+        try {
+            for (const anchor of ["adaptive-lesson-page", "adaptive-transparency", "adaptive-lesson-footer"]) {
+                await expect(page.getByTestId(anchor)).toBeVisible({timeout: 5_000});
+            }
+        } catch {
+            // Lesson not generated yet - re-enter the route.
+            continue;
+        }
+        return reachAdaptiveExercise(page);
+    }
+    return false;
+}
+
+/** Step past leading non-exercise steps until the two-phase Check shows. */
+async function reachAdaptiveExercise(page: Page): Promise<boolean> {
+    const check = page.getByTestId("adaptive-lesson-check");
+    for (let i = 0; i < 3 && !(await check.count()); i++) {
+        const next = page.getByTestId("adaptive-lesson-next");
+        if (!(await next.count())) return false;
+        await next.click();
+    }
+    await expect(check).toBeVisible({timeout: 5_000});
+    return true;
+}
+
+/**
+ * Answer and check every remaining step of the OPEN lesson until its
+ * summary renders (the tail of a ``playBundledLesson(page,
+ * "matching-result")`` run, which stops right after the checked matching
+ * step).
+ */
+async function playOpenLessonToSummary(page: Page): Promise<void> {
+    for (let i = 0; i < 60; i++) {
+        if (await page.getByTestId("lesson-summary").count()) return;
+        const next = page.getByTestId("lesson-next");
+        if (await next.count()) {
+            await next.click();
+            await page.waitForTimeout(80);
+            continue;
+        }
+        await answerCurrentStep(page);
+        const check = page.getByTestId("lesson-check");
+        if (await check.count()) {
+            await expect(check).toBeEnabled({timeout: 5_000});
+            await check.click();
+        }
+    }
+    await expect(page.getByTestId("lesson-summary")).toBeVisible({timeout: 20_000});
+}
+
+/**
+ * Seed a learner, play the bundled lesson with the wrong matching pair to
+ * its summary, and open "Retry errors" from its mistakes section
+ * (EXP-052 slice 3): the replay on its first failed exercise with the
+ * session header (Back to lesson, "Retry errors: <lesson>"), the shared
+ * progress bar and the lesson footer with Previous. The replay reads its
+ * exercises from router state, so it can only be reached through the
+ * summary, never by URL. The compact summary holds the mistakes section
+ * behind "Detailed evaluation" (#3153) and the section itself may land
+ * collapsed (#2496); both are opened when present.
+ */
+export async function gotoErrorReplay(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    if (!(await playBundledLesson(page, "matching-result"))) return false;
+    await playOpenLessonToSummary(page);
+    const detailed = page.getByTestId("lesson-summary-detailed-toggle");
+    if (await detailed.count()) await detailed.click();
+    await expect(page.getByTestId("lesson-correction-block")).toBeVisible({timeout: 10_000});
+    const expand = page.getByTestId("lesson-correction-block-expand");
+    if (await expand.count()) await expand.click();
+    const replay = page.getByTestId("lesson-correction-replay");
+    if (!(await replay.count())) return false;
+    await replay.click();
+    await expect(page.getByTestId("error-replay-page")).toBeVisible({timeout: 15_000});
+    await expect(page.getByTestId("error-replay-check")).toBeVisible({timeout: 10_000});
+    return true;
+}
+
+/**
  * Move every SRS error row of the current learner ``days`` into the past
  * (#3123). The badge in the header counts OVERDUE elements only, and a
  * fresh wrong answer is due tomorrow (``intervalDaysForStreak(0)`` = 1
@@ -1901,6 +1999,10 @@ async function reachSurface(
             return gotoShuffleSession(page);
         case "endless-session":
             return gotoEndlessSession(page);
+        case "adaptive-lesson":
+            return gotoAdaptiveLesson(page);
+        case "error-replay":
+            return gotoErrorReplay(page);
         case "statistics":
             await seedLearner(page);
             await playBundledLesson(page, "summary");

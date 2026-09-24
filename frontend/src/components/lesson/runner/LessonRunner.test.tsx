@@ -251,6 +251,74 @@ describe("LessonRunner: pinned lesson mode", () => {
   });
 });
 
+describe("LessonRunner: a section of the run (Error Replay retry round, slice 3)", () => {
+  function Shell({source}: {source: RunnerSource}) {
+    return (
+      <MemoryRouter>
+        <LessonRunner source={source} policy={REVIEW_POLICY} summary={() => null} />
+      </MemoryRouter>
+    );
+  }
+
+  async function answerFirstStep(source: RunnerSource) {
+    const view = render(<Shell source={source} />);
+    fireEvent.change(screen.getByTestId("mock-input"), {target: {value: "a"}});
+    await waitFor(() => expect(screen.getByTestId("review-check")).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId("review-check"));
+    await waitFor(() => expect(screen.getByTestId("review-next")).toBeInTheDocument());
+    return view;
+  }
+
+  it("reproduction: a new section re-opens a step answered in the previous one", async () => {
+    const first = makeSource({sectionKey: "0"});
+    const {rerender} = await answerFirstStep(first);
+    rerender(<Shell source={{...first, step: null, isSummary: true, position: {index: 2, total: 2}}} />);
+    // The retry round replays the SAME step id at index 0, in one update.
+    rerender(<Shell source={{...first, sectionKey: "1", position: {index: 0, total: 1}}} />);
+    expect(screen.getByTestId("review-check")).toBeInTheDocument();
+    expect(screen.queryByTestId("review-next")).toBeNull();
+  });
+
+  it("edge: without a new section the answered step stays locked on re-entry", async () => {
+    const first = makeSource({sectionKey: "0"});
+    const {rerender} = await answerFirstStep(first);
+    rerender(<Shell source={{...first, step: null, isSummary: true, position: {index: 2, total: 2}}} />);
+    rerender(<Shell source={{...first, position: {index: 0, total: 2}}} />);
+    expect(screen.queryByTestId("review-check")).toBeNull();
+    expect(screen.getByTestId("review-next")).toBeInTheDocument();
+  });
+
+  it("boundary: a new section keeps the run's hint usage (only a new run clears it)", async () => {
+    const first = makeSource({sectionKey: "0"});
+    const {rerender} = await answerFirstStep(first);
+    markHintUsed("ex-a");
+    rerender(<Shell source={{...first, sectionKey: "1", position: {index: 0, total: 1}}} />);
+    expect(wasHintUsed("ex-a")).toBe(true);
+  });
+});
+
+describe("LessonRunner: the graded result reaches the source (slice 3)", () => {
+  it("hands onStepScored the step id and the dispatcher's score", async () => {
+    const onStepScored = vi.fn();
+    const source = makeSource({onStepScored});
+    mount(source);
+    fireEvent.change(screen.getByTestId("mock-input"), {target: {value: "a"}});
+    await waitFor(() => expect(screen.getByTestId("review-check")).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId("review-check"));
+    await waitFor(() => expect(onStepScored).toHaveBeenCalledTimes(1));
+    expect(onStepScored).toHaveBeenCalledWith("s0", expect.objectContaining({correct: 1, total: 1}));
+  });
+
+  it("edge: a source without onStepScored still records", async () => {
+    const source = makeSource();
+    mount(source);
+    fireEvent.change(screen.getByTestId("mock-input"), {target: {value: "a"}});
+    await waitFor(() => expect(screen.getByTestId("review-check")).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId("review-check"));
+    await waitFor(() => expect(source.recordStepAttempts).toHaveBeenCalledTimes(1));
+  });
+});
+
 describe("LessonRunner: hint usage cleared per run", () => {
   it("clears at run start", () => {
     markHintUsed("ex-a");

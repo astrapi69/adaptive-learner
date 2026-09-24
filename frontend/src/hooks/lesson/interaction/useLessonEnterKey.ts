@@ -5,9 +5,10 @@
  * lesson's primary action: check an answered exercise (via
  * ``exerciseRef.current.submit()``), then advance. The pure decision
  * (`decideLessonEnterAction`) is shared with the Settings toggle, so
- * this hook only owns the DOM wiring. Used by the main lesson runner
- * (`Lesson.tsx`) AND the Error-Replay runner (`ErrorReplayLesson.tsx`)
- * so Enter behaves identically in both.
+ * this hook only owns the DOM wiring. Mounted once per runner through
+ * ``useLessonStepState`` (the lesson and, via the ``LessonRunner`` shell,
+ * every other run, EXP-052) and by the ``CorrectionBlock``, so Enter
+ * behaves identically everywhere.
  *
  * It steps aside for controls that own Enter (button / link /
  * textarea / select / contenteditable / role=button) and for
