@@ -996,6 +996,28 @@ eine undichte Pin-Prüfung. Neue Grundlinien `shuffle-session` und
 `lesson-generator.ts` zieht kein `Math.random`, der Replay spielt aus dem
 Router-State.
 
+Scheibe 3 ist gemerged (#3223, 2b3e989bb): `AdaptiveLesson.tsx` 614 auf
+68 Zeilen, `ErrorReplayLesson.tsx` 569 auf 78. Adaptiv hat erstmals das
+Enter-Kürzel; der Replay hat das Zurück im Fuß als Nur-Lesen-Rückblick
+mit Sperre, und die Merge-Bedingung des Owners (Sperr-Test mit
+`recordStepAttempts`-Zähler) ist erfüllt. Kopf-Erweiterungen über
+`headerExtra` (Transparenzblock, Countdown-Ring der Blitzrunde); der
+Replay-Ausstieg führt zur Ursprungslektion bzw. zum Ursprung der
+Blitzrunde (`backTo` aus der Quelle). Neue Policy-Spalte `pageTitleKey`:
+der aus dem Namensraum abgeleitete Titel wäre für den Replay ein Schlüssel
+gewesen, den kein Katalog kennt. `AdaptiveLessonNav` und `ErrorReplayNav`
+sind gelöscht, die Sticky-Kette sinkt auf 3. Neue Grundlinien
+`adaptive-lesson` und `error-replay`.
+
+Direkt danach #3224 (#3231, 3bbcc0534): die adaptive Lektion öffnete auf
+"This exercise is missing its type", weil die geliehene Theorieseite durch
+den Übungs-Dispatcher lief. `RunnerStep` entscheidet jetzt an einer Stelle
+nach `step.type`; Theorie rendert über `TheoryBody`, aus `TheoryStep`
+herausgelöst. Der Fehler blieb unentdeckt, weil der Aufnahme-Helfer die
+Theorieseite übersprang und der Seed unter der Schwelle von 3 Fehlern aus
+einer Lektion lag; beides ist behoben, die Grundlinie zeigt jetzt die
+Theorieseite als ersten Schirm. Nächste: Scheibe 4 (Lesson).
+
 ---
 
 ## Verwandte Dokumente

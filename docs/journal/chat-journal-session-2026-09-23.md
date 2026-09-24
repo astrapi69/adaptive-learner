@@ -100,6 +100,14 @@ Eine Sitzung über zwei Tage. Der Owner meldete acht Gerätebefunde vom iPhone, 
 - Result: PR #3220 (031ed4b50): `text-formatting.md` "Language of GitHub artifacts" und `github-issue-policy.md` Schritt 2 (Vorschlag mit Titel, Zusammenfassung, P-Tier, dann OK, dann anlegen; Subagenten legen nie an). Korpus-Decke um 606 plus 217 Zeichen angehoben, deklariert. Durchsicht aller 23 in dieser Sitzung angelegten Issues mit Grund; vier ohne Prio-Tag nachgetragen; P0 bis P5 in alle zwölf Repos des Ökosystems übertragen, P2 und P3 mit Beschreibung.
 - Commit: 031ed4b50.
 
+## 12. EXP-052 Scheibe 3, #3224 und die Helfer-Inventur (2026-09-24)
+
+- Original prompt: "Guten Morgen, und weiter"; später "Beide anlegen" (#3224, #3225), die Helfer-Inventur ("jeder e2e-Helfer, der auf dem Weg zum Ziel etwas wegklickt"), Prioritäten je Teil.
+- Optimized prompt: Merge-Bedingungen und Matrix-Entscheide der Scheibe vor dem Start im Auftrag festhalten; Issue-Vorschläge immer mit Priorität je Teil.
+- Goal: Adaptiv und Fehler-Replay auf der Hülle, der Theorieseiten-Fehler direkt danach, die Blenden in den e2e-Helfern sichtbar.
+- Result: #3223 (2b3e989bb) und #3231 (3bbcc0534). Scheibe 3 per Agentin; die Scheiben-Liste in EXP-052 widersprach der jüngeren Matrix beim Replay-Zurück und wurde vor dem Start korrigiert. #3224: die geliehene Theorieseite lief durch den Übungs-Dispatcher; unentdeckt, weil der Aufnahme-Helfer sie übersprang und der Seed unter der 3-Fehler-Schwelle lag (die Prämisse "jede adaptive Lektion" war zu weit, im Issue korrigiert). Helfer-Inventur über 22 Dateien: #3226 (Onboarding-Helfer verschluckt den Migrationsdialog, P2), #3227 (Entwurfs-Dialog und Sound-Angebot nie gezeigt, P3), #3228 (Weg "Entwurf fortsetzen" ungetestet, P2), #3229 (`force: true` in `sendChatMessage` auf überholter Prämisse, im Browser gemessen: ein leerer Toast-Container fängt nichts ab, P3). Prio-Labels an allen offenen Issues der zwölf Repos. ARCADE-SCORES-01 im Backlog (#3230).
+- Commit: 2b3e989bb, 3bbcc0534, ec204db45.
+
 ## Fragen und Annahmen
 
 - #3170: Option A als Standard plus Schalter für B, entschieden von der Orchestratorin; Mastery-Semantik `isSettledElement` als Annahme im PR-Body, Alternativen benannt.
@@ -111,3 +119,4 @@ Eine Sitzung über zwei Tage. Der Owner meldete acht Gerätebefunde vom iPhone, 
 - Sprachwahl je Katalog bei der Konsolidierung (#3204): Mehrheitsvariante bzw. die dem Katalogbegriff nächste (el `σετ` 117 gegen `σύνολο` 19; es `explorador` 9 gegen `navegador` 2; pt `baix` 50 gegen `descarreg` 4; tr `Pano` aus der Navigation). Im PR-Body benannt, vom Owner nicht widersprochen.
 - Scheibe 1: `hasParams` als `source.setId !== ""` (ein Parameter bei den fünf Läufern; die Lektion mit drei Parametern meldet in Scheibe 4 ein eigenes Flag); `"back-button"`-Exit navigiert vorerst `-1` (Scheibe 3 liefert die Lektionsroute); `"set-link"` rendert nur die `h1` (Scheibe 4). Alle drei im PR-Body benannt.
 - Grep-Treffer als Befund (drei Mal am 23.09., darunter meine Zuordnung von `lesson-generator.ts` in #3214): als Memory-Regel festgehalten, Fundstelle vor dem Zitieren lesen.
+- Toast über dem Lektionsfuß: der Motivations-Toast ist seit #589 durchklickbar (`passThrough`), 3 s, nur in der Lektion; offen bleibt nur der nicht durchklickbare Spielmodus-Toast aus `PlayfulModeHint`. Vorschlag an den Owner, nicht angelegt.
