@@ -28,6 +28,15 @@ name: Docker build smoke
 #   - push: release/** -> every release branch builds the images, closing the
 #     "release skipped the Docker build" hole that caused the #1771 latency.
 #   - weekly + workflow_dispatch -> backstop for drift from moving base images.
+#   - frontend/** (#3239): the image compiles frontend/ with `tsc -b` over all
+#     of src, tests included, but sees only what the frontend-build stage of
+#     backend/Dockerfile copies (frontend/, schema/). A frontend-only change
+#     (#3213: a Vitest import of e2e/visual/visual-pins.ts) broke the image
+#     while every other build, which sees the whole checkout, stayed green,
+#     and the Docker-inputs-only filter never ran this smoke on that PR. The
+#     guard frontend/src/test/build-context-boundary.test.ts names such an
+#     import precisely, but only on full Vitest runs (vitest --changed does
+#     not select it), so this filter is the PR-level signal.
 #
 # The PR that adds this workflow is itself in the pull_request paths, so it is
 # the first real run (#301 "wired != working" precedent).
@@ -43,6 +52,8 @@ on:
       - "backend/pyproject.toml"
       - "backend/poetry.lock"
       - "install.sh"
+      # #3239: every frontend file is an input of the image's tsc -b step.
+      - "frontend/**"
       - ".github/workflows/docker-build-smoke.yml"
   push:
     branches: ["release/**"]
