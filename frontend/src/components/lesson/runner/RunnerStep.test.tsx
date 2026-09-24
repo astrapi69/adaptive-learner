@@ -194,3 +194,82 @@ describe("RunnerStep", () => {
     expect(screen.getByTestId("review-step-review-s0")).toBeInTheDocument();
   });
 });
+
+const THEORY_STEP = {
+  id: "adaptive-theory-01-greetings-intro",
+  type: "theory" as const,
+  title: "Greetings",
+  body: "## Saying hello\n\n**Bonjour** means hello.",
+  exercise: null,
+};
+
+type StepUnderTest = Parameters<typeof RunnerStep>[0]["step"];
+
+function renderStep(step: StepUnderTest, testIdPrefix: Parameters<typeof RunnerStep>[0]["testIdPrefix"] = "review") {
+  return render(
+    <RunnerStep
+      testIdPrefix={testIdPrefix}
+      step={step}
+      source={makeSource()}
+      exerciseRef={createRef<ExerciseHandle>()}
+      enteredReviewed={false}
+      reviewedRaw={null}
+      stored={undefined}
+      onInteraction={vi.fn()}
+      onChecked={vi.fn()}
+      onScored={vi.fn()}
+    />,
+  );
+}
+
+describe("RunnerStep: the one decision between theory and exercise (#3224)", () => {
+  it("reproduction: a theory step renders its content, not the exercise dispatcher", () => {
+    renderStep(THEORY_STEP, "adaptive-lesson");
+    const article = screen.getByTestId(`adaptive-lesson-step-${THEORY_STEP.id}`);
+    expect(article).toHaveAttribute("data-step-type", "theory");
+    expect(screen.getByRole("heading", {level: 2, name: "Greetings"})).toBeInTheDocument();
+    const body = screen.getByTestId("adaptive-lesson-theory-body");
+    expect(body).toHaveTextContent("Saying hello");
+    expect(body.querySelector("strong")).toHaveTextContent("Bonjour");
+    expect(dispatcherProps).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("mock-exercise")).toBeNull();
+  });
+
+  it.each([
+    ["a theory step", "theory", THEORY_STEP],
+    ["a theory step that also carries an exercise (the type decides)", "theory", {...THEORY_STEP, exercise: STEP.exercise}],
+    ["an exercise step", "exercise", STEP],
+    ["an exercise step without an exercise (the dispatcher's content-defect path)", "exercise", {...STEP, exercise: null}],
+  ] as const)("%s goes to the %s renderer", (_name, renderer, step) => {
+    renderStep(step as StepUnderTest);
+    const theoryBodies = screen.queryAllByTestId("review-theory-body");
+    if (renderer === "theory") {
+      expect(theoryBodies).toHaveLength(1);
+      expect(dispatcherProps).not.toHaveBeenCalled();
+    } else {
+      expect(theoryBodies).toHaveLength(0);
+      expect(dispatcherProps).toHaveBeenCalled();
+    }
+  });
+
+  it("edge: a theory step without a body renders an empty theory body", () => {
+    renderStep({...THEORY_STEP, title: null, body: null});
+    expect(screen.getByTestId("review-theory-body")).toBeInTheDocument();
+    expect(screen.queryByRole("heading", {level: 2})).toBeNull();
+    expect(dispatcherProps).not.toHaveBeenCalled();
+  });
+
+  it("boundary: the theory content keeps its worked examples and example link, without the lesson-only chrome", () => {
+    renderStep({
+      ...THEORY_STEP,
+      example_url: "https://example.org/greetings",
+      example_label: "See it in use",
+      examples: [{content: "Bonjour, Marie !"}],
+    } as StepUnderTest);
+    expect(screen.getByTestId("theory-example-link")).toHaveAttribute("href", "https://example.org/greetings");
+    expect(screen.getByTestId("review-theory-body")).toHaveTextContent("Bonjour, Marie !");
+    for (const lessonOnly of ["read-aloud-theory", "ask-ai-theory", "theory-back-to-exercise", "exercise-theory-link"]) {
+      expect(screen.queryByTestId(lessonOnly)).toBeNull();
+    }
+  });
+});

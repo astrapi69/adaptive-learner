@@ -48,6 +48,7 @@ import {
     seedLearner,
     setTheme,
     settleForScreenshot,
+    gotoAdaptiveExercise,
     gotoAdaptiveLesson,
     gotoDashboardWithDueReviews,
     gotoEndlessSession,
@@ -1001,7 +1002,7 @@ function settledSetRunner(open: (page: Page) => Promise<boolean>) {
  * Answer the open replay exercise WRONG on purpose, the way the seed got
  * it wrong in the lesson: free text and typed cloze with a nonsense word,
  * matching with its first two pairs swapped (the rest by index, the mixed
- * result ``pairMatchingWithOneWrong`` seeds; the pinned mount salt keeps
+ * result ``pairMatchingWithWrongCycle`` seeds by default; the pinned mount salt keeps
  * the column order of the lesson). Any other type falls back to
  * ``answerCurrentStep``.
  */
@@ -1731,11 +1732,20 @@ const FEATURES: FeatureShot[] = [
     // --- Adaptive and Error Replay on the LessonRunner shell (EXP-052 slice 3, #3169) ---
     // Adaptive: the F-115 transparency block under the title (the shell's
     // headerExtra), the shared progress bar, the lesson footer with Previous.
+    // "theorie" is the first screen every adaptive lesson opens on (#3224):
+    // the theory page borrowed from the source lesson, Next without Check.
+    // "transparenz" is one named Next later, the runner around the first
+    // exercise with the two-phase Check.
     // Error Replay: the round's recap through the summary render prop, the
     // footer keeping Previous as a read-only look back.
     {
-        path: "adaptive-lesson/transparenz",
+        path: "adaptive-lesson/theorie",
         setup: settledSetRunner(gotoAdaptiveLesson),
+        pinTo: "adaptive-lesson-page",
+    },
+    {
+        path: "adaptive-lesson/transparenz",
+        setup: settledSetRunner(gotoAdaptiveExercise),
         pinTo: "adaptive-lesson-page",
     },
     {path: "error-replay/zusammenfassung", setup: gotoErrorReplaySummary, pinTo: "error-replay-summary"},
