@@ -133,6 +133,35 @@ function _scoreMatches(
 /** Lowest non-negative slot not already assigned to a pair, so
  *  colors + labels stay compact (1, 2, 3 …) and an existing pair
  *  keeps its slot when another is added or removed. */
+/** #3233 - one pair slot per reviewed match (in answer order), so the
+ *  ungraded "My answers" view shows which tiles were paired. */
+function _seedSlots(
+    reviewedMatches: ReadonlyArray<readonly [number, number]> | undefined,
+): Map<number, number> {
+    return new Map(
+        (reviewedMatches ?? []).map(([leftIdx], slot) => [leftIdx, slot]),
+    );
+}
+
+/** Whether a checked answer got every pair right. */
+function _isAllCorrect(
+    result: {correct: number} | null,
+    total: number,
+): boolean {
+    return result !== null && result.correct === total;
+}
+
+/** #3233 - the columns render graded only where the grading belongs:
+ *  "My answers" (three-view layout) shows the pairs as the learner formed
+ *  them. A fully correct answer has no toggle, so it stays graded. */
+function _gradedColumns(
+    submitted: boolean,
+    showGrading: boolean,
+    isAllCorrect: boolean,
+): boolean {
+    return submitted && (showGrading || isAllCorrect);
+}
+
 function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
     const used = new Set(slots.values());
     let slot = 0;
@@ -295,15 +324,7 @@ function MatchingExercise(
      *  tiles of a pair share a stable color + number. Only consulted
      *  before submit (graded tiles switch to correct/wrong colors). */
     const [slotByLeft, setSlotByLeft] = useState<Map<number, number>>(
-        () =>
-            // #3233 - a reviewed answer seeds one slot per pair, so the
-            // ungraded "My answers" view can show which tiles were paired.
-            new Map(
-                (reviewedMatching?.matches ?? []).map(([leftIdx], slot) => [
-                    leftIdx,
-                    slot,
-                ]),
-            ),
+        () => _seedSlots(reviewedMatching?.matches),
     );
     /** Wrong-flash trigger for visual feedback. */
     const [wrongFlash, setWrongFlash] = useState<{
@@ -519,12 +540,8 @@ function MatchingExercise(
         enabled: !submitted && matches.size > 0,
     });
 
-    const isAllCorrect = result !== null && result.correct === pairs.length;
-    /** #3233 - the columns render graded only where the grading belongs:
-     *  "My answers" (three-view layout) shows the pairs as the learner
-     *  formed them. A fully correct answer has no toggle, so it stays
-     *  graded. */
-    const gradedColumns = submitted && (showGrading || isAllCorrect);
+    const isAllCorrect = _isAllCorrect(result, pairs.length);
+    const gradedColumns = _gradedColumns(submitted, showGrading, isAllCorrect);
 
     if (pairs.length === 0) {
         return (
