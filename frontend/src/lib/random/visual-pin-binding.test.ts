@@ -24,7 +24,7 @@ import {
     legacyRandomInitScript,
     randomPinInitScript,
     randomPinProblem,
-} from "../../../../e2e/visual/visual-pins";
+} from "../../test-utils/visual-pins";
 import {RANDOM_PIN_GLOBAL, isRandomPin} from "./pinned-random";
 import {mulberry32} from "./prng";
 
