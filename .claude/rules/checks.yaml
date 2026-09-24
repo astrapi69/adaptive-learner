@@ -207,8 +207,11 @@ checks:
     rule: "-"
     status: disabled
     reason: >-
-      wired with continue-on-error until the tree is fully formatted and the
-      format-on-touch hook has caught up (ci.yml "Prettier check (non-blocking)").
+      the step runs with continue-on-error and only lists files in the log.
+      Most of src/ fails it, mainly because .prettierrc sets tabWidth 2 while
+      most files are written with 4-space indentation, so blocking on it needs
+      a separate cleanup and a decision on the indent width first. No
+      condition here turns it on by itself; turning it on is that decision.
     wired_in: .github/workflows/ci.yml
     probe: none
 

@@ -376,10 +376,12 @@ jobs:
         working-directory: frontend
         run: bun run check:circular
 
-      # Prettier (#254, step 1 — non-blocking). Reports formatting drift in
-      # the log without failing the build; the repo-wide reformat is a
-      # separate step-2 PR. Remove continue-on-error once the codebase is
-      # formatted and the format-on-touch hook has caught up.
+      # Prettier (#254). Declared OFF in .claude/rules/checks.yaml
+      # (prettier-ci-check): it only lists unformatted files in the log.
+      # Most of src/ fails because .prettierrc (tabWidth 2) contradicts the
+      # 4-space style most files are written in. Making it blocking takes a
+      # separate cleanup plus a decision on the indent width; nothing here
+      # turns it on by itself.
       - name: Prettier check (non-blocking)
         if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
