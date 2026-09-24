@@ -976,7 +976,7 @@ settings:
     stack: "Stapeln"
   matching_review_views:
     label: "Korrektur als eigene Ansicht"
-    desc: "Nach dem Prüfen zeigt 'Meine Antworten' nur deine eigenen Paare mit den Fehlern, die richtigen Partner stehen unter 'Korrektur'. Aus: die richtigen Partner stehen direkt unter jedem Fehler in 'Meine Antworten'."
+    desc: "Nach dem Prüfen zeigt 'Meine Antworten' deine Paare so, wie du sie gebildet hast, ohne Bewertung; Bewertung und richtige Partner stehen unter 'Korrektur'. Aus: die richtigen Partner stehen direkt unter jedem Fehler in 'Meine Antworten'."
   paused_retention:
     title: Pausierte Lektionen aufbewahren
     hint: "Pausierte Lektionen, die älter als dieser Zeitraum sind, werden automatisch aufgegeben. Bis zu 10 pausierte Lektionen werden unabhängig vom Alter behalten."
