@@ -2431,9 +2431,13 @@
         "empty": "Bu kod sıralama alıştırmasının satırı yok.",
         "indent_dec": "Girintiyi azalt",
         "indent_inc": "Girintiyi artır",
+        "line_wrong_indent": "Girinti {actual}, beklenen {expected}",
+        "line_wrong_position": "Yanlış konum",
         "result_correct": "Doğru!",
         "result_wrong": "Tam değil - sırayı ve girintiyi kontrol et.",
         "retry": "Tekrar dene",
+        "review_heading": "Cevabın",
+        "solution_heading": "Çözüm",
         "submit": "Cevabı kontrol et"
       },
       "instruction": {

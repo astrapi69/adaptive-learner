@@ -2266,9 +2266,13 @@ lesson:
       empty: "Latihan pengurutan kode ini tidak memiliki baris."
       indent_dec: "Kurangi indentasi"
       indent_inc: "Tambah indentasi"
+      line_wrong_indent: "Indentasi {actual}, seharusnya {expected}"
+      line_wrong_position: "Posisi salah"
       result_correct: "Benar!"
       result_wrong: "Belum tepat - periksa urutan dan indentasi."
       retry: "Coba lagi"
+      review_heading: "Jawabanmu"
+      solution_heading: "Solusi"
       submit: "Periksa jawaban"
     instruction:
       matching:

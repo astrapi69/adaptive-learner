@@ -2257,9 +2257,13 @@ lesson:
       empty: "Cet exercice de code n'a pas de lignes."
       indent_dec: "Réduire l'indentation"
       indent_inc: "Augmenter l'indentation"
+      line_wrong_indent: "Indentation {actual}, attendu {expected}"
+      line_wrong_position: "Mauvaise position"
       result_correct: "Correct !"
       result_wrong: "Pas tout à fait - vérifiez l'ordre et l'indentation."
       retry: "Réessayer"
+      review_heading: "Ta réponse"
+      solution_heading: "Solution"
       submit: "Vérifier la réponse"
     instruction:
       matching:

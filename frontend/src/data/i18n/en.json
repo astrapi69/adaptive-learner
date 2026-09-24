@@ -2431,9 +2431,13 @@
         "empty": "This code-ordering exercise has no lines.",
         "indent_dec": "Decrease indent",
         "indent_inc": "Increase indent",
+        "line_wrong_indent": "Indent {actual}, expected {expected}",
+        "line_wrong_position": "Wrong position",
         "result_correct": "Correct!",
         "result_wrong": "Not quite - check the order and the indentation.",
         "retry": "Try again",
+        "review_heading": "Your answer",
+        "solution_heading": "Solution",
         "submit": "Check answer"
       },
       "instruction": {

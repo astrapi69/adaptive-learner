@@ -2257,9 +2257,13 @@ lesson:
       empty: "Αυτή η άσκηση κώδικα δεν έχει γραμμές."
       indent_dec: "Μείωση εσοχής"
       indent_inc: "Αύξηση εσοχής"
+      line_wrong_indent: "Εσοχή {actual}, αναμενόταν {expected}"
+      line_wrong_position: "Λάθος θέση"
       result_correct: "Σωστό!"
       result_wrong: "Όχι ακριβώς - ελέγξτε τη σειρά και την εσοχή."
       retry: "Δοκιμάστε ξανά"
+      review_heading: "Η απάντησή σου"
+      solution_heading: "Λύση"
       submit: "Έλεγχος απάντησης"
     instruction:
       matching:

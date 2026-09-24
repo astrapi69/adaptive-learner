@@ -2255,9 +2255,13 @@ lesson:
       empty: "Este exercício de código não tem linhas."
       indent_dec: "Diminuir recuo"
       indent_inc: "Aumentar recuo"
+      line_wrong_indent: "Recuo {actual}, esperado {expected}"
+      line_wrong_position: "Posição errada"
       result_correct: "Correto!"
       result_wrong: "Não exatamente - verifique a ordem e o recuo."
       retry: "Tentar novamente"
+      review_heading: "Sua resposta"
+      solution_heading: "Solução"
       submit: "Verificar resposta"
     instruction:
       matching:
