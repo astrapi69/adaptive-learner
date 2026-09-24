@@ -1,19 +1,26 @@
 /**
  * The values every visual run pins, in one Playwright-free module (#3214).
  *
- * ``helpers.ts`` installs them in the page; this module holds them, and the
- * init-script sources that install them, so the frontend Vitest suite can
- * import the real values and scripts and pin how they behave
- * (``frontend/src/lib/random/visual-pin-binding.test.ts``). No Playwright
+ * ``e2e/visual/helpers.ts`` installs them in the page; this module holds
+ * them, and the init-script sources that install them, so the frontend
+ * Vitest suite can import the real values and scripts and pin how they
+ * behave (``src/lib/random/visual-pin-binding.test.ts``). No Playwright
  * import, no side effects on import.
+ *
+ * It lives under ``frontend/`` (#3239) because the production image builds
+ * the frontend from ``frontend/`` alone: ``tsc -b`` type-checks every test,
+ * so a Vitest import of a module outside that directory breaks the image.
+ * The e2e harness imports it from here instead; the e2e -> frontend
+ * direction is the one both builds can resolve
+ * (``src/test/build-context-boundary.test.ts`` pins it).
  */
 
 import {
     RANDOM_PIN_GLOBAL,
     isRandomPin,
     type RandomPin,
-} from "../../frontend/src/lib/random/pinned-random";
-import {mulberry32} from "../../frontend/src/lib/random/prng";
+} from "../lib/random/pinned-random";
+import {mulberry32} from "../lib/random/prng";
 
 /** Frozen wall-clock for every visual run (follows #244). Relative times
  *  ("vor 3 Minuten", streak dates, "Morgen neue Missionen") would otherwise

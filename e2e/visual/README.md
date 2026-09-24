@@ -70,9 +70,12 @@ already applied in `helpers.ts`:
   `settleForScreenshot`, and per-view/per-surface seeding (`gotoView`,
   `gotoSurface`) that reuses the onboarding + lesson-playthrough patterns
   from the dexie smoke specs.
-- `visual-pins.ts` - the pinned values (`FIXED_NOW_ISO`,
-  `VISUAL_RANDOM_PIN`) and the init scripts that install them, free of
-  Playwright so the frontend Vitest suite can test the real values.
+- `frontend/src/test-utils/visual-pins.ts` (not in this directory) - the
+  pinned values (`FIXED_NOW_ISO`, `VISUAL_RANDOM_PIN`) and the init
+  scripts that install them, free of Playwright so the frontend Vitest
+  suite can test the real values. It lives under `frontend/` because the
+  production image builds the frontend from that directory alone
+  (#3239); `helpers.ts` imports it from there.
 - `screenshots/` — committed baseline PNGs. `*.png` is `binary` in
   `.gitattributes`.
 - `../playwright.visual.config.ts` — dexie preview build, no backend,
