@@ -2244,8 +2244,10 @@ lesson:
     al_ordering:
       empty: "इस क्रम अभ्यास में कोई आइटम नहीं है।"
       result_correct: "सही!"
-      result_wrong: "बिल्कुल नहीं - फिर से कोशिश करें।"
+      result_wrong: "बिल्कुल नहीं - क्रम अभी सही नहीं है।"
       retry: "फिर से कोशिश करें"
+      review_heading: "आपका उत्तर"
+      solution_heading: "समाधान"
       submit: "उत्तर जांचें"
     al_parsons:
       empty: "इस कोड क्रम अभ्यास में कोई पंक्ति नहीं है।"

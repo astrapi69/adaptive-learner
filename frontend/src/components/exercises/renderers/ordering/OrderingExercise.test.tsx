@@ -112,6 +112,59 @@ describe("OrderingExercise: tap-to-place + scoring", () => {
     });
 });
 
+function placeInOrder(order: number[]) {
+    for (const idx of order) fireEvent.click(screen.getByTestId(`ordering-scrambled-${idx}`));
+}
+
+describe("OrderingExercise: post-check review (#3260)", () => {
+    it("shows the submitted order with a verdict per position after a wrong answer", () => {
+        render(<OrderingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        placeInOrder([1, 0, 2]);
+        fireEvent.click(screen.getByTestId("ordering-submit"));
+        expect(screen.getByTestId("ordering-review-item-0")).toHaveTextContent("Select gear");
+        expect(screen.getByTestId("ordering-review-item-0")).toHaveAttribute("data-correct", "false");
+        expect(screen.getByTestId("ordering-review-item-1")).toHaveAttribute("data-correct", "false");
+        expect(screen.getByTestId("ordering-review-item-2")).toHaveAttribute("data-correct", "true");
+    });
+
+    it("shows the canonical solution after a wrong answer", () => {
+        render(<OrderingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        placeInOrder([2, 1, 0]);
+        fireEvent.click(screen.getByTestId("ordering-submit"));
+        const solution = screen.getByTestId("ordering-solution");
+        expect(solution).toHaveTextContent("Engage clutch");
+        expect(solution.querySelectorAll("li")).toHaveLength(3);
+        expect(solution.querySelectorAll("li")[0]).toHaveTextContent("Engage clutch");
+        expect(solution.querySelectorAll("li")[2]).toHaveTextContent("Release clutch");
+    });
+
+    it("shows the answer but no solution block after a correct answer", () => {
+        render(<OrderingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        placeInOrder([0, 1, 2]);
+        fireEvent.click(screen.getByTestId("ordering-submit"));
+        expect(screen.getByTestId("ordering-review")).toBeInTheDocument();
+        expect(screen.queryByTestId("ordering-solution")).not.toBeInTheDocument();
+    });
+
+    it("renders no review before checking", () => {
+        render(<OrderingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        placeInOrder([1, 0, 2]);
+        expect(screen.queryByTestId("ordering-review")).not.toBeInTheDocument();
+    });
+
+    it("shows the review for a revisited wrong answer", () => {
+        render(
+            <OrderingExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                reviewed={{kind: "al_ordering", placed: [2, 0, 1]}}
+            />,
+        );
+        expect(screen.getByTestId("ordering-review-item-0")).toHaveTextContent("Release clutch");
+        expect(screen.getByTestId("ordering-solution")).toBeInTheDocument();
+    });
+});
+
 describe("OrderingExercise: reviewed (revisited, locked) reconstruction", () => {
     it("restores the exact placed order and shows the locked result", () => {
         render(

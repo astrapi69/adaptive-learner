@@ -2423,8 +2423,10 @@
       "al_ordering": {
         "empty": "Latihan pengurutan ini tidak memiliki item.",
         "result_correct": "Benar!",
-        "result_wrong": "Belum tepat - coba lagi.",
+        "result_wrong": "Belum tepat - urutannya belum benar.",
         "retry": "Coba lagi",
+        "review_heading": "Jawabanmu",
+        "solution_heading": "Solusi",
         "submit": "Periksa jawaban"
       },
       "al_parsons": {

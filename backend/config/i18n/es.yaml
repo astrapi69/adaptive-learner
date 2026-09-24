@@ -2250,8 +2250,10 @@ lesson:
     al_ordering:
       empty: "Este ejercicio de orden no tiene elementos."
       result_correct: "¡Correcto!"
-      result_wrong: "No del todo - inténtalo de nuevo."
+      result_wrong: "No del todo - el orden todavía no es correcto."
       retry: "Intentar de nuevo"
+      review_heading: "Tu respuesta"
+      solution_heading: "Solución"
       submit: "Comprobar respuesta"
     al_parsons:
       empty: "Este ejercicio de código no tiene líneas."

@@ -2423,8 +2423,10 @@
       "al_ordering": {
         "empty": "Este exercício de ordenação não tem itens.",
         "result_correct": "Correto!",
-        "result_wrong": "Não exatamente - tente novamente.",
+        "result_wrong": "Não exatamente - a ordem ainda não está correta.",
         "retry": "Tentar novamente",
+        "review_heading": "Sua resposta",
+        "solution_heading": "Solução",
         "submit": "Verificar resposta"
       },
       "al_parsons": {

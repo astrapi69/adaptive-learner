@@ -2423,8 +2423,10 @@
       "al_ordering": {
         "empty": "Bu sıralama alıştırmasının öğesi yok.",
         "result_correct": "Doğru!",
-        "result_wrong": "Tam değil - tekrar dene.",
+        "result_wrong": "Tam değil - sıralama henüz doğru değil.",
         "retry": "Tekrar dene",
+        "review_heading": "Cevabın",
+        "solution_heading": "Çözüm",
         "submit": "Cevabı kontrol et"
       },
       "al_parsons": {
