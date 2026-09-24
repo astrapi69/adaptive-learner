@@ -1204,10 +1204,12 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       adaptiven und Fehler-Wiederholungs-Lektion nur die bewerteten Spalten
 - [ ] matching Korrektur-Ansicht (#3186): nach einer nicht komplett
       richtigen Prüfung stehen drei Knöpfe "Meine Antworten" / "Korrektur" /
-      "Auflösen". "Meine Antworten" ist aktiv und zeigt nur die eigenen Paare
-      (grün/rot plus "Deine Antwort"), KEINE Zeile "Richtige Antwort".
-      "Korrektur" zeigt unter jedem Fehler zusätzlich die richtige Antwort,
-      "Auflösen" die Lösung. "Nochmal versuchen" und erneutes Prüfen startet
+      "Auflösen". "Meine Antworten" ist aktiv und zeigt die Paare genau so,
+      wie du sie gebildet hast (nummerierte, farbige Paar-Markierungen),
+      OHNE Bewertung: kein Grün/Rot, keine Zeile "Deine Antwort" oder
+      "Richtige Antwort" (#3233). "Korrektur" zeigt das bewertete Raster
+      (grün/rot, "Deine Antwort") plus unter jedem Fehler die richtige
+      Antwort, "Auflösen" die Lösung. "Nochmal versuchen" und erneutes Prüfen startet
       wieder in "Meine Antworten"
 - [ ] matching Korrektur-Einstellung (#3186): Einstellungen > Lernen >
       Karte "Zuordnungsübung" > "Korrektur als eigene Ansicht" ist
