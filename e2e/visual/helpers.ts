@@ -794,8 +794,9 @@ export async function answerCurrentStep(page: Page): Promise<void> {
 
 /**
  * Pair a matching exercise so that the first ``cycle`` pairs are WRONG and
- * the rest correct, then check, leaving the post-submit feedback (green +
- * red) on screen. Returns false when the grid is too small for the cycle.
+ * the rest correct, then check, leaving the default post-check view ("My
+ * answers", the pairs as formed, #3233) on screen. Returns false when the
+ * grid is too small for the cycle.
  *
  * The wrong pairs form a rotation (left ``i`` -> right ``(i + 1) % cycle``;
  * the testids carry the ORIGINAL pair index, so any other right is wrong):
@@ -828,22 +829,17 @@ async function pairMatchingWithWrongCycle(page: Page, cycle: number): Promise<bo
     await expect(page.getByTestId("matching-result")).toBeVisible({
         timeout: 5_000,
     });
-    // #1785 - "matching-result visible" is NOT the settled graded state:
-    // the per-pair result rows still expand the page height afterwards, so
-    // a fullPage shot fired here captures mid-reflow (the theme-matrix
-    // flake). Pin the LAST wrong-pair hint row and the last correct-pair
-    // row, then wait for the page height to stop moving. Same determinism
-    // class as #1696.
-    // #3186 - the default post-check view is "My answers" (no correction
-    // rows), so pin the learner's own-answer row instead.
-    await expect(page.getByTestId(`matching-your-answer-${cycle - 1}`)).toBeVisible({
-        timeout: 5_000,
-    });
-    if (n > cycle) {
-        await expect(
-            page.getByTestId(`matching-pair-correct-${n - 1}`),
-        ).toBeVisible({timeout: 5_000});
-    }
+    // #1785 - "matching-result visible" is NOT the settled post-check
+    // state; pin the view toggle, then wait for the page height to stop
+    // moving (same determinism class as #1696).
+    // #3233 - the default post-check view is "My answers", which shows the
+    // pairs as formed, ungraded (no feedback rows, no red/green), so the
+    // pin is the active My-answers toggle, not a grading row.
+    await expect(page.getByTestId("matching-my-answers")).toHaveAttribute(
+        "aria-pressed",
+        "true",
+        {timeout: 5_000},
+    );
     await waitForStableLayout(page);
     return true;
 }

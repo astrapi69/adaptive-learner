@@ -349,6 +349,8 @@ describe("MatchingExercise: scoring + completion", () => {
         fireEvent.click(screen.getByTestId("matching-left-2"));
         fireEvent.click(screen.getByTestId("matching-right-2"));
         fireEvent.click(screen.getByTestId("matching-submit"));
+        // #3233 - the feedback block renders in the graded Corrections view.
+        fireEvent.click(screen.getByTestId("matching-corrections"));
         // The button and the feedback must share ONE <li> that is a flex
         // column. Pre-#242 the button was ``h-full`` in a ``grid-auto-rows:1fr``
         // row, so the sibling feedback overflowed into the next tile at 375px.
@@ -398,6 +400,9 @@ describe("MatchingExercise: scoring + completion", () => {
         fireEvent.click(screen.getByTestId("matching-left-2"));
         fireEvent.click(screen.getByTestId("matching-right-2"));
         fireEvent.click(screen.getByTestId("matching-submit"));
+        // #3186 / #3233 - grading and the correct partner live in the
+        // Corrections view; "My answers" shows the ungraded pairs.
+        fireEvent.click(screen.getByTestId("matching-corrections"));
         // The wrongly-paired left + the right it chose are both flagged wrong.
         expect(screen.getByTestId("matching-left-0").className).toContain(
             "is-wrong",
@@ -407,8 +412,6 @@ describe("MatchingExercise: scoring + completion", () => {
         );
         // #191 — the wrong pair spells out BOTH sides: the learner picked
         // right-1 ("Thank you") for left-0, whose correct partner is "Hello".
-        // #3186 - the correct partner lives in the Corrections view.
-        fireEvent.click(screen.getByTestId("matching-corrections"));
         expect(
             screen.getByTestId("matching-your-answer-0"),
         ).toHaveTextContent("Thank you");
@@ -1072,17 +1075,72 @@ describe("MatchingExercise: separate corrections view (#3186)", () => {
         );
     });
 
-    it("shows only the learner's own graded pairs in 'My answers', no correct partners", () => {
+    it("shows the pairs as the learner formed them in 'My answers', ungraded (#3233)", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
         pairOneWrongAndCheck();
-        // Mistakes stay marked, with the learner's own pick spelled out.
+        // No grading at all: no red/green tiles, no feedback rows.
+        for (const idx of [0, 1, 2]) {
+            expect(screen.getByTestId(`matching-left-${idx}`).className).not.toMatch(
+                /is-(wrong|correct)/,
+            );
+            expect(screen.getByTestId(`matching-right-${idx}`).className).not.toMatch(
+                /is-(wrong|correct)/,
+            );
+        }
+        expect(screen.queryByTestId("matching-your-answer-0")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("matching-correct-hint-0")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("matching-pair-correct-2")).not.toBeInTheDocument();
+        // ... but the original pairing stays visible: both tiles of a pair
+        // share the same numbered badge, as before checking.
+        expect(screen.getByTestId("matching-left-0")).toHaveTextContent(/^1/);
+        expect(screen.getByTestId("matching-right-1")).toHaveTextContent(/^1/);
+        expect(screen.getByTestId("matching-left-1")).toHaveTextContent(/^2/);
+        expect(screen.getByTestId("matching-right-0")).toHaveTextContent(/^2/);
+    });
+
+    it("carries the grading in 'Corrections' (#3233)", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pairOneWrongAndCheck();
+        fireEvent.click(screen.getByTestId("matching-corrections"));
         expect(screen.getByTestId("matching-left-0").className).toContain("is-wrong");
         expect(screen.getByTestId("matching-right-1").className).toContain("is-wrong");
-        expect(screen.getByTestId("matching-your-answer-0")).toHaveTextContent("Thank you");
         expect(screen.getByTestId("matching-left-2").className).toContain("is-correct");
-        // ... but no correction rows.
-        expect(screen.queryByTestId("matching-correct-hint-0")).not.toBeInTheDocument();
-        expect(screen.queryByTestId("matching-correct-hint-1")).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-your-answer-0")).toHaveTextContent("Thank you");
+    });
+
+    it("keeps a fully correct answer graded, since it has no view toggle (#3233)", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        for (const idx of [0, 1, 2]) {
+            fireEvent.click(screen.getByTestId(`matching-left-${idx}`));
+            fireEvent.click(screen.getByTestId(`matching-right-${idx}`));
+        }
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(screen.queryByTestId("matching-view-toggle")).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-left-0").className).toContain("is-correct");
+    });
+
+    it("shows a reviewed answer's pairing in 'My answers' (#3233)", () => {
+        render(
+            <MatchingExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                reviewed={{
+                    kind: "matching",
+                    matches: [
+                        [0, 1],
+                        [1, 0],
+                        [2, 2],
+                    ],
+                }}
+            />,
+        );
+        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
+        expect(screen.getByTestId("matching-left-0").className).not.toContain("is-wrong");
+        expect(screen.getByTestId("matching-left-0")).toHaveTextContent(/^1/);
+        expect(screen.getByTestId("matching-right-1")).toHaveTextContent(/^1/);
     });
 
     it("shows the correct partner under each mistake in 'Corrections' and switches back", () => {

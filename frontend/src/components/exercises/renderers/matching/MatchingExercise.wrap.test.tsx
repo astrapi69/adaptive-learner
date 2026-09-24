@@ -78,11 +78,11 @@ describe("MatchingExercise #3174: long words wrap inside the tile", () => {
         fireEvent.click(screen.getByTestId("matching-left-1"));
         fireEvent.click(screen.getByTestId("matching-right-0"));
         fireEvent.click(screen.getByTestId("matching-submit"));
+        // #3186 / #3233 - the feedback rows live in the Corrections view.
+        fireEvent.click(screen.getByTestId("matching-corrections"));
         expect(screen.getByTestId("matching-your-answer-0")).toHaveClass(
             ...WRAP_CLASSES,
         );
-        // #3186 - the correct partner lives in the Corrections view.
-        fireEvent.click(screen.getByTestId("matching-corrections"));
         expect(screen.getByTestId("matching-correct-hint-0")).toHaveClass(
             ...WRAP_CLASSES,
         );
