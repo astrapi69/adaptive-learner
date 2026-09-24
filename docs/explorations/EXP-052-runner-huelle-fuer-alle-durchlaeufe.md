@@ -499,8 +499,12 @@ der Scheibe zurechenbar oder wird zurückgesetzt.
   Countdown-Ring) über `header.extra` und eine
   Zusammenfassungs-Erweiterung (`SaveAdaptiveLessonButton`, Konfetti) über
   `summary`.
-- Adaptiv bekommt das Enter-Kürzel; Fehler-Replay behält keinen
-  Zurück-Knopf (Entscheidung). Beides Testplan-pflichtig.
+- Adaptiv bekommt das Enter-Kürzel; Fehler-Replay bekommt das Zurück im
+  Fuß als Nur-Lesen-Rückblick mit der Sperre beantworteter Schritte
+  (ratifizierte Matrix, `prevStep` "ja (neu)"; die frühere Zeile "behält
+  keinen Zurück-Knopf" ist damit überholt). Das Ja wird nur mit dem Test
+  gemerged, dass nach Zurück die Eingabe gesperrt ist und kein zweiter
+  `recordStepAttempts` erfolgt. Beides Testplan-pflichtig.
 - Der Router-State-Ursprung des Replays wird zu `useErrorReplaySource`;
   die Rundenlogik bekommt erstmals eigene Tests.
 - Bildgrundlinien: keine vorhanden, neu anlegen (`adaptive-lesson`,
