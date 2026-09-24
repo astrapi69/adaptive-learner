@@ -499,8 +499,12 @@ der Scheibe zurechenbar oder wird zurückgesetzt.
   Countdown-Ring) über `header.extra` und eine
   Zusammenfassungs-Erweiterung (`SaveAdaptiveLessonButton`, Konfetti) über
   `summary`.
-- Adaptiv bekommt das Enter-Kürzel; Fehler-Replay behält keinen
-  Zurück-Knopf (Entscheidung). Beides Testplan-pflichtig.
+- Adaptiv bekommt das Enter-Kürzel; Fehler-Replay bekommt das Zurück im
+  Fuß als Nur-Lesen-Rückblick mit der Sperre beantworteter Schritte
+  (ratifizierte Matrix, `prevStep` "ja (neu)"; die frühere Zeile "behält
+  keinen Zurück-Knopf" ist damit überholt). Das Ja wird nur mit dem Test
+  gemerged, dass nach Zurück die Eingabe gesperrt ist und kein zweiter
+  `recordStepAttempts` erfolgt. Beides Testplan-pflichtig.
 - Der Router-State-Ursprung des Replays wird zu `useErrorReplaySource`;
   die Rundenlogik bekommt erstmals eigene Tests.
 - Bildgrundlinien: keine vorhanden, neu anlegen (`adaptive-lesson`,
@@ -972,8 +976,25 @@ Abbau in Scheibe 2). Baselines per Löschen-dann-Resync, Bänder-Analyse im
 PR-Kommentar: Fuß und +12 px (flex-Spalte) sind die Scheibe, Untertitel
 (#3170), Matching-Reihenfolge (#2882) und Nav-Knöpfe (#3123) Fremd-Drift
 unter der Toleranz seit der Aufnahme vom 21.08. Vier FeatureShots
-`review-session/{schritt,zusammenfassung}`. Nächste: Scheibe 2 (Shuffle
-und Endless), mit dem Abbau von `LessonStepNav`.
+`review-session/{schritt,zusammenfassung}`.
+
+Scheibe 2 ist gemerged (#3213, 8864d8296): `ShuffleLesson.tsx` 429 auf 64
+Zeilen, `EndlessLesson.tsx` 492 auf 55. Beide Pools nutzen
+`isPlayableExerciseStep` (Extension-Übungen spielen jetzt mit, gewollte
+Erweiterung); `RunnerPolicy` hat die Spalte `endRun` (nur Endless), Pause
+und Beenden sitzen zusammen im Fuß, die Statuszeile ist reine Anzeige im
+Fortschritts-Slot; die Hülle zählt Schritte einer Quelle ohne Position
+selbst (`streamStep`). `LessonStepNav` ist gelöscht, die Sticky-Kette sinkt
+von 7 auf 5. Shuffle hat die Sperre beantworteter Schritte wie Review.
+Im selben PR die Zufalls-Naht (#3214): eigene Ströme für den
+Shuffle-Bauer und die Endless-Wiederholung, der Mount-Seed von Matching
+und Wortkacheln an `FIXED_NOW_ISO` gebunden; nebenbei behoben ein unreiner
+State-Updater in Endless (unter StrictMode wichen 6 von 8 Karten ab) und
+eine undichte Pin-Prüfung. Neue Grundlinien `shuffle-session` und
+`endless-session` (je 3 Viewports), vier FeatureShots. Nächste: Scheibe 3
+(Adaptiv und Fehler-Replay); sie braucht keine Zufalls-Naht,
+`lesson-generator.ts` zieht kein `Math.random`, der Replay spielt aus dem
+Router-State.
 
 ---
 

@@ -86,6 +86,20 @@ Eine Sitzung über zwei Tage. Der Owner meldete acht Gerätebefunde vom iPhone, 
 - Result: PR #3210 (0dbad4701, Agentin): `Review.tsx` 569 auf 63 Zeilen; neue Bausteine `RunnerHeader`, `RunnerProgress`, `RunnerStep`, `useRunStepResults`, Adapter `hooks/lesson/sources/useReviewSource`; `RunnerSource` um `setId`, `runKey`, `tallies` gewachsen (der Hook besitzt die Zahlen, die Hülle kann die Element-Zählung aus #3170 nicht nachbauen); `useLessonStepState` mit `stepId` und verbreitertem `progress`-Typ für die Sperre ohne Lektion. RED 7 + 22 Fälle, GREEN Vollsuite 10828, Dexie-Smoke 164, Komplexitäts-, Dead-Code-, Testid- und Ordnergrößen-Gate sauber. Runner-Barrel auf die konsumierte Fläche gekürzt (Dead-Code-Ratchet, kein Banking). Vier FeatureShots `review-session/{schritt,zusammenfassung}` lokal aufgenommen, 63 fremde PNGs zurückgesetzt. Baselines: drei `review-session`-PNGs gelöscht, Sync 35848897860 schrieb genau diese drei; Bänder-Analyse alt (21.08.) gegen neu: Fuß und +12 px (flex-Spalte, Ränder addieren sich) sind die Scheibe; Untertitel (#3170), Matching-Reihenfolge links (#2882) und Nav-Knöpfe (#3123) sind Fremd-Drift unter der Toleranz. Sticky-Kette 7 vor, 7 nach: `Review.tsx` trug sie nie inline (`LessonStepNav`, das Shuffle noch nutzt), Abbau in Scheibe 2.
 - Commit: 7c74e234b.
 
+## 10. EXP-052 Scheibe 2 und die Zufalls-Naht (2026-09-23, 15:30 bis 2026-09-24)
+
+- Original prompt: "go" für Scheibe 2; vorher zwei Owner-Entscheide (eine Definition von "spielbar", `endRun` als Policy-Spalte); nach dem ersten Sync der Befund, dass Desktop und Mobile verschiedene erste Shuffle-Schritte zeigen.
+- Optimized prompt: Entscheide, die die Matrix berühren, vor dem ersten Commit festlegen, nicht der Agentin zur Begründung im PR überlassen.
+- Goal: Shuffle und Endless auf der Hülle, und Grundlinien, die nicht vom geteilten Zufallsstrom abhängen.
+- Result: PR #3213 (8864d8296). Scheibe 2 von einer Agentin; die Zufalls-Naht (#3214) in einem Workflow (drei Entwürfe, Jury, Umsetzung) und drei einzelnen Prüferinnen (Unabhängigkeit, Produktion, Prozess): zwei schwere und neun kleine Befunde, alle in neun Folge-Commits behoben. Testvertrag in beide Richtungen: im Bildlauf ändert die Zeit nichts, in Produktion muss sie etwas ändern; die Produktionsprüferin stellte den Fehlweg her und belegte, dass die Tests rot werden. Nach der Naht zeigen Desktop und Mobile denselben ersten Shuffle-Schritt. Issues: #3214 (geschlossen), #3215 (Uhr-Maske, mit der Sammlung dreier Toleranz-Fälle), #3216 (Motivation: eine Belohnung, die ihr Ausbleiben erklärt).
+- Commit: 8864d8296.
+
+## 11. Regeln: GitHub englisch, kein Issue ohne Owner-OK (2026-09-23)
+
+- Original prompt: "warum legt ihr issues in deutsch und in englisch an?", "Ja alles auf englisch und rule dafür", "Bevor du ein issue anlegst mit mir vorher besprechen. rule dafür".
+- Result: PR #3220 (031ed4b50): `text-formatting.md` "Language of GitHub artifacts" und `github-issue-policy.md` Schritt 2 (Vorschlag mit Titel, Zusammenfassung, P-Tier, dann OK, dann anlegen; Subagenten legen nie an). Korpus-Decke um 606 plus 217 Zeichen angehoben, deklariert. Durchsicht aller 23 in dieser Sitzung angelegten Issues mit Grund; vier ohne Prio-Tag nachgetragen; P0 bis P5 in alle zwölf Repos des Ökosystems übertragen, P2 und P3 mit Beschreibung.
+- Commit: 031ed4b50.
+
 ## Fragen und Annahmen
 
 - #3170: Option A als Standard plus Schalter für B, entschieden von der Orchestratorin; Mastery-Semantik `isSettledElement` als Annahme im PR-Body, Alternativen benannt.
@@ -96,3 +110,4 @@ Eine Sitzung über zwei Tage. Der Owner meldete acht Gerätebefunde vom iPhone, 
 - Scheibe 0: `RunnerFooter`/`RunnerStatusView` liegen bewusst NEBEN `LessonFooterNav`/`LessonStatusView` (Byte-Paritätstests statt Wrapper, damit kein Unter-Toleranz-Versatz im Fuß entsteht, #3023); die Dopplung endet mit Scheibe 4.
 - Sprachwahl je Katalog bei der Konsolidierung (#3204): Mehrheitsvariante bzw. die dem Katalogbegriff nächste (el `σετ` 117 gegen `σύνολο` 19; es `explorador` 9 gegen `navegador` 2; pt `baix` 50 gegen `descarreg` 4; tr `Pano` aus der Navigation). Im PR-Body benannt, vom Owner nicht widersprochen.
 - Scheibe 1: `hasParams` als `source.setId !== ""` (ein Parameter bei den fünf Läufern; die Lektion mit drei Parametern meldet in Scheibe 4 ein eigenes Flag); `"back-button"`-Exit navigiert vorerst `-1` (Scheibe 3 liefert die Lektionsroute); `"set-link"` rendert nur die `h1` (Scheibe 4). Alle drei im PR-Body benannt.
+- Grep-Treffer als Befund (drei Mal am 23.09., darunter meine Zuordnung von `lesson-generator.ts` in #3214): als Memory-Regel festgehalten, Fundstelle vor dem Zitieren lesen.
