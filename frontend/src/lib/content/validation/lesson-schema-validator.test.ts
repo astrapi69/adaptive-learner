@@ -340,78 +340,108 @@ describe("#1205 fixture 7 — slug-safe + uniqueness (imperative)", () => {
 
 // ---------------------------------------------------------------------------
 // #3222 - the schema's ``$defs/SlugId`` (via the Ajv shape layer) is the
-// only slug check. These pin that it refuses a non-slug value at every place
-// the app's former ``SLUG_RE`` checked, and that its length counts
-// characters (code points) the way JSON Schema ``maxLength`` does: the
-// engine's ``isSlugId`` counts UTF-16 code units instead, so it would refuse
-// the 61-astral-letter id below that the schema accepts.
+// only slug check. Per place the app's former ``SLUG_RE`` checked, every
+// refusal must come from the schema layer: the assertion names the schema
+// error's instance path and message, not just "throws". The pattern and the
+// length limit each get their own cases. The accepted cases catch an
+// ASCII-only re-implementation ("über-uns") and a length count in UTF-16
+// code units (the astral id; the engine's ``isSlugId`` counts code units,
+// JSON Schema ``maxLength`` counts characters, so it would refuse it).
 // ---------------------------------------------------------------------------
 
 /** U+1D41A MATHEMATICAL BOLD SMALL A: a lowercase letter (\p{Ll}) outside
  *  the BMP, one character but two UTF-16 code units. */
 const ASTRAL_LOWERCASE_A = "\u{1D41A}";
 
-/** The lesson places the SlugId guards, each setting a value on a fresh
- *  lesson (keeping referential integrity where an id is referenced). */
-const SLUG_PLACES: [string, (lesson: ContentLesson, value: string) => void][] = [
-  [
-    "lesson id",
-    (lesson, value) => {
+/** One place the schema's SlugId guards: its Ajv instance path and how to
+ *  put a value there (keeping referential integrity where it is referenced). */
+interface SlugPlace {
+  place: string;
+  path: string;
+  setValue: (lesson: ContentLesson, value: string) => void;
+}
+
+const SLUG_PLACES: SlugPlace[] = [
+  {
+    place: "lesson id",
+    path: "/id",
+    setValue: (lesson, value) => {
       lesson.id = value;
     },
-  ],
-  [
-    "card id",
-    (lesson, value) => {
+  },
+  {
+    place: "card id",
+    path: "/cards/0/id",
+    setValue: (lesson, value) => {
       lesson.cards[0].id = value;
       lesson.steps[1].exercise!.card_ids = [value];
     },
-  ],
-  [
-    "card tag",
-    (lesson, value) => {
+  },
+  {
+    place: "card tag",
+    path: "/cards/0/tags/0",
+    setValue: (lesson, value) => {
       lesson.cards[0].tags = [value];
     },
-  ],
-  [
-    "step id",
-    (lesson, value) => {
+  },
+  {
+    place: "step id",
+    path: "/steps/0/id",
+    setValue: (lesson, value) => {
       lesson.steps[0].id = value;
     },
-  ],
-  [
-    "exercise id",
-    (lesson, value) => {
+  },
+  {
+    place: "exercise id",
+    path: "/steps/1/exercise/id",
+    setValue: (lesson, value) => {
       lesson.steps[1].exercise!.id = value;
     },
-  ],
+  },
 ];
 
+const PATTERN_ERROR = "must match pattern";
+const LENGTH_ERROR = "must NOT have more than 120 characters";
+
+const REFUSED_VALUES = [
+  { label: '"Bad Id" (uppercase and a space)', value: "Bad Id", schemaError: PATTERN_ERROR },
+  { label: '"a--b" (double hyphen)', value: "a--b", schemaError: PATTERN_ERROR },
+  { label: '"a_b" (underscore)', value: "a_b", schemaError: PATTERN_ERROR },
+  { label: "a 121-character slug", value: "a".repeat(121), schemaError: LENGTH_ERROR },
+];
+
+const ACCEPTED_VALUES = [
+  { label: '"über-uns" (non-ASCII lowercase)', value: "über-uns" },
+  { label: "a 120-character slug", value: "a".repeat(120) },
+  {
+    label: "120 astral lowercase letters (240 UTF-16 code units)",
+    value: ASTRAL_LOWERCASE_A.repeat(120),
+  },
+];
+
+const REFUSED_CASES = SLUG_PLACES.flatMap((place) =>
+  REFUSED_VALUES.map((refused) => ({ ...place, ...refused })),
+);
+const ACCEPTED_CASES = SLUG_PLACES.flatMap((place) =>
+  ACCEPTED_VALUES.map((accepted) => ({ ...place, ...accepted })),
+);
+
 describe("#3222 slug ids - the schema shape layer is the only slug check", () => {
-  it.each(SLUG_PLACES)(
-    "refuses a non-slug %s with the schema pattern error",
-    (_place, setValue) => {
+  it.each(REFUSED_CASES)(
+    "the schema refuses $label as the $place (at $path)",
+    ({ path, setValue, value, schemaError }) => {
       const lesson = makeLesson();
-      setValue(lesson, "Not Slug");
-      expect(() => validateGeneratedLesson(lesson)).toThrow(/must match pattern/);
+      setValue(lesson, value);
+      expect(() => validateGeneratedLesson(lesson)).toThrow(
+        `generated lesson invalid: ${path} ${schemaError}`,
+      );
     },
   );
 
-  it.each([
-    ["120 ASCII letters", "a".repeat(120)],
-    ["61 astral lowercase letters (122 UTF-16 code units)", ASTRAL_LOWERCASE_A.repeat(61)],
-    ["120 astral lowercase letters", ASTRAL_LOWERCASE_A.repeat(120)],
-  ])("accepts a lesson id of %s", (_label, id) => {
-    const lesson = makeLesson({ id });
+  it.each(ACCEPTED_CASES)("accepts $label as the $place", ({ setValue, value }) => {
+    const lesson = makeLesson();
+    setValue(lesson, value);
     expect(() => validateGeneratedLesson(lesson)).not.toThrow();
-  });
-
-  it.each([
-    ["121 ASCII letters", "a".repeat(121)],
-    ["121 astral lowercase letters", ASTRAL_LOWERCASE_A.repeat(121)],
-  ])("refuses a lesson id of %s as too long", (_label, id) => {
-    const lesson = makeLesson({ id });
-    expect(() => validateGeneratedLesson(lesson)).toThrow(/must NOT have more than 120 characters/);
   });
 });
 
