@@ -117,9 +117,9 @@ export function useLessonStepState({
     }
 
     // Keyboard shortcut (#103): Enter drives the two-phase Check / Next
-    // button. The listener (shared with the Error-Replay runner via
-    // ``useLessonEnterKey``) reads the latest step state through
-    // ``enterStateRef`` (updated each render by the page).
+    // button. The listener (``useLessonEnterKey``) reads the latest step
+    // state through ``enterStateRef`` (updated each render by the page or
+    // the ``LessonRunner`` shell).
     useLessonEnterKey({
         enabled: lessonShortcutsEnabled,
         exerciseRef,

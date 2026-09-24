@@ -1,569 +1,78 @@
 /**
- * /error-replay/:setSlug/:setId/:filename — "Fehler wiederholen".
+ * /error-replay/:setSlug/:setId/:filename — "Fehler wiederholen"
+ * (on the LessonRunner shell since EXP-052 slice 3, refs #3169).
  *
- * Replays the EXACT exercises the learner just failed in a lesson,
- * one more time. Distinct from:
+ * Replays the EXACT exercises the learner just failed in a lesson, one
+ * more time. Distinct from:
  *   - the Correction Block (generates NEW cloze exercises),
  *   - the Adaptive Lesson (all errors across all lessons, regenerated),
  *   - the SRS Review queue (all lessons, on a schedule).
  *
  * The failed exercises arrive via router state (the lesson summary's
- * "Retry Errors" card builds the payload from ``step_results``).
- * Ephemeral + practice-only: no LessonProgress / step_results writes
- * (re-entering the original lesson is unaffected). Reuses the shared
- * ExerciseDispatcher + the same two-phase Check→Next button as the
- * main viewer + Review, so the exercises behave identically.
+ * correction block, or a set's flash-round card, #2888).
+ * ``useErrorReplaySource`` owns the round (only the failed exercises; "try
+ * again" narrows to the still-wrong ones as a new section of the same run)
+ * and the SRS merge (#1304). The shell renders header, progress, the
+ * controlled exercise, the footer, Enter, the re-anchoring and the
+ * answered-step lock with the replay policy: the back button leaves to the
+ * lesson (or the flash round's origin), and Previous is a read-only look
+ * back, an answered step stays answered and is recorded once. The flash
+ * round's countdown ring hangs in under the title (``headerExtra``), the
+ * celebration-or-retry recap is ``ErrorReplaySummary``.
  *
- * Iterative: after a round the summary shows "X/Y correct now". All
- * correct → celebration; still wrong → replay ONLY the still-wrong
- * exercises. Dexie-friendly (no backend).
+ * Ephemeral and practice-only: no LessonProgress / step_results writes, so
+ * re-entering the original lesson is unaffected. Dexie-friendly.
  */
 
-import {ArrowRight, BookOpen, PartyPopper, RotateCcw} from "lucide-react";
-import {useEffect, useMemo, useRef, useState, type Ref} from "react";
 import {useLocation, useNavigate, useParams} from "react-router";
 
-import {Button} from "@/components/ui/button";
-
-import Confetti from "../../components/feedback/Confetti";
-import ProgressBar from "../../shared/data-display/ProgressBar";
-import {ExerciseDispatcher} from "../../components/exercises";
-import {isPlayableExerciseStep} from "../../lib/lesson/lesson-step-state";
-import type {
-    ExerciseHandle,
-    ExerciseScored,
-} from "../../components/exercises";
-import {useI18n} from "../../hooks/ui/useI18n";
-
-type Translate = (key: string, fallback?: string) => string;
-import {
-    useLessonEnterKey,
-    type LessonEnterNav,
-} from "../../hooks/lesson/interaction/useLessonEnterKey";
-import {useLessonShortcuts} from "../../hooks/lesson/interaction/useLessonShortcuts";
-import {useLessonCountdown} from "../../hooks/lesson/useLessonCountdown";
-import LessonCountdownRing from "../../components/lesson/chrome/tension/LessonCountdownRing";
-import {prefersReducedMotion} from "../../lib/feedback/feedbackPref";
-import {clearHintUsage, stampHintUsage} from "../../lib/hints/hint-usage";
-import {readLearnerState} from "../../lib/learning/learnerState";
-import {notifyReviewsChanged} from "../../lib/review/reviewsChanged";
-import {getStorage} from "../../storage";
-import type {
-    ContentLessonCard,
-    ContentLessonExercise,
-    ContentLessonStep,
-} from "../../storage/types";
-
-interface ReplayState {
-    exercises: ContentLessonExercise[];
-    cards: ContentLessonCard[];
-    lessonTitle: string;
-    /** #2888 - present when this round is a set flash round: adds the
-     *  per-exercise countdown ring and retargets the back navigation
-     *  (a flash round has no source lesson file). */
-    flashRound?: {seconds: number; backTo: string};
-}
+import {ERROR_REPLAY_POLICY, LessonRunner} from "../../components/lesson/runner";
+import FlashRoundCountdown from "../../components/lesson/runner/header-extras/FlashRoundCountdown";
+import ErrorReplaySummary from "../../components/lesson/runner/summaries/ErrorReplaySummary";
+import {useErrorReplaySource, type ReplayState} from "../../hooks/lesson/sources";
 
 interface UrlParams {
+    setSlug?: string;
     setId?: string;
     filename?: string;
     [key: string]: string | undefined;
 }
 
-function toStep(exercise: ContentLessonExercise): ContentLessonStep {
-    return {id: exercise.id, type: "exercise", exercise};
-}
-
-/** #2888 - the round title plus, in flash-round mode, the per-exercise
- *  countdown ring (the #2878 semantics: expiry breaks the streak via the
- *  celebration bus inside ``useLessonCountdown``, nothing auto-submits).
- *  Extracted so the flash-round branches stay off the page component's
- *  complexity budget; plain replays render title-only (enabled=false). */
-function ReplayTitle({
-    flashRound,
-    lessonTitle,
-    stepIndex,
-    isSummary,
-    isExerciseStep,
-    checked,
-    t,
-}: {
-    flashRound: {seconds: number; backTo: string} | null;
-    lessonTitle: string;
-    stepIndex: number;
-    isSummary: boolean;
-    isExerciseStep: boolean;
-    checked: boolean;
-    t: Translate;
-}) {
-    const countdown = useLessonCountdown({
-        enabled: flashRound !== null && !isSummary,
-        seconds: flashRound?.seconds ?? 0,
-        stepIndex,
-        isExerciseStep,
-        checked,
-    });
-    return (
-        <>
-            {/* #2761 — ``wrap-anywhere`` breaks long unbreakable title
-                words ("Organisationspsychologie"); without it the h1
-                widens the page sideways and iOS WebKit clips the sticky
-                footer's "Weiter" button (#1834 class). */}
-            <h1 className="wrap-anywhere">
-                {flashRound
-                    ? t(
-                          "lesson.flash_round.title",
-                          "Flash round: {set}",
-                      ).replace("{set}", lessonTitle)
-                    : t(
-                          "lesson.error_replay.title",
-                          "Retry errors: {lesson}",
-                      ).replace("{lesson}", lessonTitle)}
-            </h1>
-            {flashRound && !isSummary && isExerciseStep && (
-                <LessonCountdownRing
-                    remaining={countdown.remaining}
-                    total={countdown.total}
-                    expired={countdown.expired}
-                />
-            )}
-        </>
-    );
-}
-
 export default function ErrorReplayLesson() {
     const params = useParams<UrlParams>();
-    const navigate = useNavigate();
     const location = useLocation();
-    const {t} = useI18n();
-    const setId = params.setId ?? "";
-    const filename = params.filename ?? "";
+    const navigate = useNavigate();
 
-    const state = location.state as ReplayState | null;
-    const cards = state?.cards ?? [];
-    const lessonTitle = state?.lessonTitle ?? "";
-    // #1304 — the learner whose SRS error list this round trains. Read
-    // once; absent only on an unconfigured install (recording skips).
-    const userId = useMemo(() => readLearnerState().userId, []);
-
-    // The exercises to replay THIS round + the running per-exercise
-    // result (true = answered fully correct this round). A "Try again"
-    // narrows the round to the still-wrong exercises.
-    const [round, setRound] = useState<ContentLessonExercise[]>(
-        () => state?.exercises ?? [],
-    );
-    const [results, setResults] = useState<Record<string, boolean>>({});
-    const [index, setIndex] = useState(0);
-    const [checked, setChecked] = useState(false);
-    const [answerable, setAnswerable] = useState(false);
-
-    // #3196 — the replay re-plays the lesson's exercise ids; forget the
-    // lesson's hint reveals so only hints opened in this round count.
-    useEffect(() => {
-        clearHintUsage();
-    }, [setId, filename]);
-
-    const exerciseRef = useRef<ExerciseHandle>(null);
-    // #154 — Enter-key shortcut, identical to the main lesson runner.
-    const lessonShortcutsEnabled = useLessonShortcuts();
-    const enterStateRef = useRef<LessonEnterNav | null>(null);
-    const enterLockRef = useRef(false);
-    useEffect(() => {
-        setChecked(false);
-        setAnswerable(false);
-        enterLockRef.current = false;
-    }, [index, round]);
-
-    const steps = useMemo(() => round.map(toStep), [round]);
-    const total = steps.length;
-    const isSummary = index >= total;
-    const step = isSummary ? null : steps[index];
-    const isExerciseStep = isPlayableExerciseStep(step);
-
-    const flashRound = state?.flashRound ?? null;
-
-    // Refresh the Enter-decision state every render (no re-subscribe);
-    // the listener reads it through the ref. Error-Replay has no
-    // "reviewed/locked" step, so ``enteredReviewed`` is always false.
-    enterStateRef.current = {
-        isSummary,
-        isExerciseStep,
-        checked,
-        enteredReviewed: false,
-        answerable,
-        goNext: () => setIndex((i) => i + 1),
-    };
-    useLessonEnterKey({
-        enabled: lessonShortcutsEnabled,
-        exerciseRef,
-        enterStateRef,
-        enterLockRef,
+    const source = useErrorReplaySource({
+        state: location.state as ReplayState | null,
+        setSlug: params.setSlug ?? "",
+        setId: params.setId ?? "",
+        filename: params.filename ?? "",
     });
 
-    // No exercises to replay (direct nav / refresh lost the state, or a
-    // clean run). Offer a graceful exit.
-    if (!state || (state.exercises?.length ?? 0) === 0) {
-        return (
-            <main
-                id="main"
-                className="lesson-page"
-                data-testid="error-replay-empty"
-            >
-                <header className="lesson-header">
-                    <h1>{t("lesson.next_step.error_replay", "Retry Errors")}</h1>
-                </header>
-                <p className="lesson-not-cached-body">
-                    {t(
-                        "lesson.error_replay.empty",
-                        "Nothing to retry - open this from a lesson summary after making some mistakes.",
-                    )}
-                </p>
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => navigate("/content?tab=my")}
-                    data-testid="error-replay-exit"
-                >
-                    <BookOpen size={14} aria-hidden="true" />
-                    {t("lesson.action.open_browser", "Open content browser")}
-                </Button>
-            </main>
-        );
-    }
-
-    // #1304 — merge each graded attempt back into the SRS error list
-    // through the SAME path the main viewer / review / correction-block
-    // use: a fully-correct answer advances mastery (eventually removing
-    // the element from the error/review surfaces), a wrong one keeps it.
-    // Failure-tolerant: a recording error must never block the round.
-    const recordAttempts = async (scored: ExerciseScored) => {
-        if (scored.attempts.length === 0 || !userId) return;
-        try {
-            await getStorage().elementErrors.recordBulk(
-                userId,
-                stampHintUsage(scored.attempts),
-            );
-            notifyReviewsChanged();
-        } catch (err) {
-            console.warn("elementErrors.recordBulk failed:", err);
-        }
-    };
-
-    const correctNow = Object.values(results).filter(Boolean).length;
-    const stillWrong = round.filter((ex) => results[ex.id] !== true);
-
-    const retryStillWrong = () => {
-        setRound(stillWrong);
-        setResults({});
-        setIndex(0);
-    };
-
-    const backToLesson = () => {
-        if (flashRound) {
-            navigate(flashRound.backTo);
-            return;
-        }
-        navigate(`/lesson/${params.setSlug}/${setId}/${filename}`);
-    };
-
-    const progressPct =
-        total === 0 ? 100 : Math.round((index / total) * 100);
-
     return (
-        <main
-            id="main"
-            className="lesson-page"
-            data-testid="error-replay-page"
-        >
-            <header className="lesson-header">
-                <button
-                    type="button"
-                    className="lesson-back-btn"
-                    onClick={backToLesson}
-                    data-testid="error-replay-back-btn"
-                    aria-label={t(
-                        "lesson.action.back_to_lesson",
-                        "Back to lesson",
-                    )}
-                >
-                    <BookOpen size={16} aria-hidden="true" />
-                    {t("lesson.action.back_to_lesson", "Back to lesson")}
-                </button>
-                <ReplayTitle
-                    flashRound={flashRound}
-                    lessonTitle={lessonTitle}
-                    stepIndex={index}
-                    isSummary={isSummary}
-                    isExerciseStep={isExerciseStep}
-                    checked={checked}
-                    t={t}
-                />
-            </header>
-
-            <ProgressBar
-                valueNow={progressPct}
-                ariaLabel={t("lesson.progress.aria_label", "Lesson progress")}
-                className="lesson-progress-bar"
-                fillClassName="lesson-progress-fill"
-                labelClassName="lesson-progress-label"
-                testId="error-replay-progress-bar"
-            >
-                {isSummary
-                    ? t("lesson.progress.summary", "Summary")
-                    : t("lesson.progress.step_of", "Step {current} of {total}")
-                          .replace("{current}", String(index + 1))
-                          .replace("{total}", String(total))}
-            </ProgressBar>
-
-            {isSummary ? (
+        <LessonRunner
+            source={source}
+            policy={ERROR_REPLAY_POLICY}
+            headerExtra={(run) =>
+                source.flashRound && (
+                    <FlashRoundCountdown
+                        seconds={source.flashRound.seconds}
+                        step={run.step}
+                        stepIndex={run.position?.index ?? 0}
+                        answered={source.stepAnswered}
+                    />
+                )
+            }
+            summary={(tallies) => (
                 <ErrorReplaySummary
-                    correct={correctNow}
-                    total={total}
-                    stillWrong={stillWrong.length}
-                    onRetry={retryStillWrong}
-                    onDone={backToLesson}
-                />
-            ) : (
-                <ErrorReplayExercise
-                    step={step!}
-                    setId={setId}
-                    filename={filename}
-                    cards={cards}
-                    exerciseRef={exerciseRef}
-                    onInteraction={setAnswerable}
-                    onChecked={() => setChecked(true)}
-                    onResult={(exerciseId, correct) =>
-                        setResults((prev) => ({...prev, [exerciseId]: correct}))
-                    }
-                    onRecord={recordAttempts}
+                    correct={tallies.correct}
+                    total={tallies.total}
+                    stillWrong={source.stillWrong}
+                    onRetry={source.retryStillWrong}
+                    onDone={() => navigate(source.backTo)}
                 />
             )}
-
-            <ErrorReplayNav
-                isSummary={isSummary}
-                isExerciseStep={isExerciseStep}
-                checked={checked}
-                answerable={answerable}
-                isLast={index + 1 === total}
-                onCheck={() => exerciseRef.current?.submit()}
-                onNext={() => setIndex((i) => i + 1)}
-                t={t}
-            />
-        </main>
-    );
-}
-
-interface ErrorReplayExerciseProps {
-    step: ContentLessonStep;
-    setId: string;
-    filename: string;
-    cards: ContentLessonCard[];
-    exerciseRef: Ref<ExerciseHandle>;
-    onInteraction: (answerable: boolean) => void;
-    onChecked: () => void;
-    onResult: (exerciseId: string, correct: boolean) => void;
-    /** #1304 — persist the graded attempts into the SRS error list. */
-    onRecord: (scored: ExerciseScored) => Promise<void>;
-}
-
-/** The active replay exercise step: the controlled ExerciseDispatcher
- *  wrapped in the lesson-step article. On completion it flips to the
- *  "Weiter" phase and records whether the exercise was fully correct
- *  this round. */
-function ErrorReplayExercise({
-    step,
-    setId,
-    filename,
-    cards,
-    exerciseRef,
-    onInteraction,
-    onChecked,
-    onResult,
-    onRecord,
-}: ErrorReplayExerciseProps) {
-    return (
-        <article
-            className="lesson-step"
-            data-testid={`error-replay-step-${step.id}`}
-            data-step-type="exercise"
-        >
-            <ExerciseDispatcher
-                key={step.id}
-                ref={exerciseRef}
-                controlled
-                onInteraction={onInteraction}
-                step={step}
-                setId={setId}
-                lessonId={filename}
-                cards={cards}
-                onComplete={async (scored: ExerciseScored) => {
-                    onChecked();
-                    onResult(step.exercise!.id, scored.correct === scored.total);
-                    await onRecord(scored);
-                }}
-            />
-        </article>
-    );
-}
-
-interface ErrorReplayNavProps {
-    isSummary: boolean;
-    isExerciseStep: boolean;
-    checked: boolean;
-    answerable: boolean;
-    isLast: boolean;
-    onCheck: () => void;
-    onNext: () => void;
-    t: Translate;
-}
-
-/** Step navigation footer for the replay: the single two-phase
- *  Check/Next button (no "Previous"; hidden entirely on the summary). */
-function ErrorReplayNav({
-    isSummary,
-    isExerciseStep,
-    checked,
-    answerable,
-    isLast,
-    onCheck,
-    onNext,
-    t,
-}: ErrorReplayNavProps) {
-    if (isSummary) return null;
-    return (
-        <nav
-            // #1419 — same sticky-footer pattern as LessonFooterNav
-            // (#43/#1410); the old .lesson-nav* CSS was removed in the
-            // Phase B migration.
-            className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary pt-3 pb-safe"
-            aria-label={t("lesson.nav.aria_label", "Step navigation")}
-        >
-            {isExerciseStep && !checked ? (
-                <Button
-                    type="button"
-                    className="ml-auto"
-                    onClick={onCheck}
-                    disabled={!answerable}
-                    title={
-                        !answerable
-                            ? t(
-                                  "lesson.button.check_disabled_hint",
-                                  "Answer the exercise first",
-                              )
-                            : undefined
-                    }
-                    data-testid="error-replay-check"
-                >
-                    {t("lesson.button.check", "Check")}
-                </Button>
-            ) : (
-                <Button
-                    type="button"
-                    className="ml-auto"
-                    onClick={onNext}
-                    data-testid="error-replay-next"
-                >
-                    {isLast
-                        ? t("lesson.action.finish", "Finish lesson")
-                        : t("lesson.action.next", "Next")}
-                    <ArrowRight size={14} aria-hidden="true" />
-                </Button>
-            )}
-        </nav>
-    );
-}
-
-interface ErrorReplaySummaryProps {
-    correct: number;
-    total: number;
-    stillWrong: number;
-    onRetry: () => void;
-    onDone: () => void;
-}
-
-function ErrorReplaySummary({
-    correct,
-    total,
-    stillWrong,
-    onRetry,
-    onDone,
-}: ErrorReplaySummaryProps) {
-    const {t} = useI18n();
-    const allCorrected = stillWrong === 0;
-    const [showConfetti, setShowConfetti] = useState(
-        () => allCorrected && !prefersReducedMotion(),
-    );
-
-    return (
-        <section
-            className={`lesson-summary${allCorrected ? " is-celebrating" : ""}`}
-            data-testid="error-replay-summary"
-            data-all-corrected={allCorrected ? "true" : "false"}
-            aria-label={t(
-                "lesson.error_replay.summary_aria",
-                "Retry errors summary",
-            )}
-        >
-            {showConfetti && <Confetti onDone={() => setShowConfetti(false)} />}
-            <h2>
-                {allCorrected ? (
-                    <>
-                        <PartyPopper size={20} aria-hidden="true" />{" "}
-                        {t(
-                            "lesson.next_step.errors_corrected",
-                            "All errors corrected!",
-                        )}
-                    </>
-                ) : (
-                    t("lesson.error_replay.heading", "Retry complete")
-                )}
-            </h2>
-            <p
-                className="error-replay-summary-score text-lg font-semibold"
-                data-testid="error-replay-summary-score"
-            >
-                {t("lesson.error_replay.score", "{correct}/{total} correct now!")
-                    .replace("{correct}", String(correct))
-                    .replace("{total}", String(total))}
-            </p>
-            <div className="lesson-summary-actions">
-                {allCorrected ? (
-                    <Button
-                        type="button"
-                        // #1864 — the sole next step: auto-focus it so
-                        // Enter activates it natively (a focused button
-                        // owns Enter; useLessonEnterKey steps aside). Only
-                        // done here, where there is one clear next step.
-                        autoFocus
-                        onClick={onDone}
-                        data-testid="error-replay-summary-done"
-                    >
-                        {t("lesson.error_replay.done", "Back to lesson")}
-                    </Button>
-                ) : (
-                    <>
-                        <Button
-                            type="button"
-                            onClick={onRetry}
-                            data-testid="error-replay-summary-retry"
-                        >
-                            <RotateCcw size={14} aria-hidden="true" />
-                            {t(
-                                "lesson.next_step.still_errors",
-                                "Still {count} errors. Try again?",
-                            ).replace("{count}", String(stillWrong))}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={onDone}
-                            data-testid="error-replay-summary-done"
-                        >
-                            {t("lesson.error_replay.done", "Back to lesson")}
-                        </Button>
-                    </>
-                )}
-            </div>
-        </section>
+        />
     );
 }
