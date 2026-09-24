@@ -6,8 +6,9 @@
  * summary render prop, plus an optional header extension. The shell
  * composes, once, what six pages used to build each for themselves:
  * the status screens, the header, the #959 scroll anchor, the progress
- * bar (or a stream's stat line), the controlled exercise step, the
- * summary at exactly one place, the policy-driven footer, the pinned
+ * bar (or a stream's stat line), the step (the controlled exercise, or
+ * a theory step's content with Next alone, #3224), the summary at
+ * exactly one place, the policy-driven footer, the pinned
  * lesson mode, the two-phase step state with the Enter shortcut, the
  * step and orientation re-anchoring and the per-run hint clear.
  *

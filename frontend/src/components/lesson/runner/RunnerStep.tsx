@@ -1,7 +1,7 @@
 /**
  * RunnerStep (EXP-052 slice 1, refs #3169).
  *
- * The active exercise step of the runner shell: the controlled
+ * The active step of the runner shell. An exercise step is the controlled
  * ``ExerciseDispatcher`` inside the ``{prefix}-step-{id}`` article the
  * pages render today. ``onComplete`` flips the two-phase button to Next
  * the moment the answer is graded, keeps the graded result in the
@@ -11,9 +11,15 @@
  * raw answer, or the fallback panel when no raw answer exists; the
  * auto-advance is suppressed on such a re-entry (#1921).
  *
- * The lesson-only chrome (theory steps with the back-to-exercise link,
- * the re-read-theory link, Ask-AI, TTS) stays in ``LessonStepView`` and
- * arrives with slice 4.
+ * A theory step (the adaptive lesson opens on one it borrows from the
+ * source lesson, #3224) renders its authored content through
+ * ``TheoryBody`` under ``{prefix}-theory-body``, never through the
+ * dispatcher, which would read it as an exercise missing its type. The
+ * step type decides, here and only here; the footer already shows Next
+ * alone for it (``isPlayableExerciseStep`` is false). The lesson-only
+ * chrome around theory and exercises (the back-to-exercise link, the
+ * re-read-theory link, Ask-AI, TTS, step-anchor navigation) stays in
+ * ``LessonStepView`` and arrives with slice 4.
  *
  * @example
  * <RunnerStep
@@ -36,6 +42,7 @@ import type { Ref } from "react";
 import { AutoAdvanceSuppressedProvider } from "../../exercises/feedback/auto-advance-gate";
 import { ExerciseDispatcher } from "../../exercises";
 import type { ExerciseHandle, ExerciseScored } from "../../exercises";
+import TheoryBody from "../steps/TheoryBody";
 import ReviewedFallbackPanel from "../summary/ReviewedFallbackPanel";
 import { stampHintUsage } from "../../../lib/hints/hint-usage";
 import type { ContentLessonStep, LessonStepResultStored, RawAnswer } from "../../../storage/types";
@@ -61,9 +68,18 @@ export interface RunnerStepProps {
   stream?: boolean;
 }
 
-/** The prefixed step article around the controlled exercise. */
-export default function RunnerStep({
-  testIdPrefix,
+/** Which renderer a step goes to: the step type decides (#3224). */
+function isTheoryStep(step: ContentLessonStep): boolean {
+  return step.type === "theory";
+}
+
+type RunnerExerciseProps = Omit<RunnerStepProps, "testIdPrefix" | "hidden" | "stream">;
+
+/**
+ * The exercise branch: the controlled dispatcher, or the fallback panel for
+ * a locked re-entry without a raw answer.
+ */
+function RunnerExercise({
   step,
   source,
   exerciseRef,
@@ -73,15 +89,41 @@ export default function RunnerStep({
   onInteraction,
   onChecked,
   onScored,
-  hidden,
-  stream = false,
-}: RunnerStepProps) {
+}: RunnerExerciseProps) {
   const handleComplete = async (scored: ExerciseScored) => {
     onChecked();
     onScored(step.id, scored);
     await source.recordStepAttempts(stampHintUsage(scored.attempts));
   };
 
+  if (enteredReviewed && reviewedRaw === null && step.exercise != null) {
+    return <ReviewedFallbackPanel exercise={step.exercise} stored={stored} />;
+  }
+  return (
+    <AutoAdvanceSuppressedProvider suppressed={enteredReviewed}>
+      <ExerciseDispatcher
+        ref={exerciseRef}
+        controlled
+        onInteraction={onInteraction}
+        reviewed={reviewedRaw}
+        step={step}
+        setId={source.setId}
+        lessonId={source.lessonId}
+        cards={source.cards}
+        onComplete={handleComplete}
+      />
+    </AutoAdvanceSuppressedProvider>
+  );
+}
+
+/** The prefixed step article around the theory content or the controlled exercise. */
+export default function RunnerStep({
+  testIdPrefix,
+  hidden,
+  stream = false,
+  ...exerciseProps
+}: RunnerStepProps) {
+  const { step } = exerciseProps;
   return (
     <article
       className="lesson-step"
@@ -90,22 +132,16 @@ export default function RunnerStep({
       data-step-type={step.type}
     >
       {step.title && <h2>{step.title}</h2>}
-      {enteredReviewed && reviewedRaw === null && step.exercise != null ? (
-        <ReviewedFallbackPanel exercise={step.exercise} stored={stored} />
+      {isTheoryStep(step) ? (
+        <TheoryBody
+          testId={`${testIdPrefix}-theory-body`}
+          body={step.body ?? ""}
+          exampleUrl={step.example_url}
+          exampleLabel={step.example_label}
+          examples={step.examples}
+        />
       ) : (
-        <AutoAdvanceSuppressedProvider suppressed={enteredReviewed}>
-          <ExerciseDispatcher
-            ref={exerciseRef}
-            controlled
-            onInteraction={onInteraction}
-            reviewed={reviewedRaw}
-            step={step}
-            setId={source.setId}
-            lessonId={source.lessonId}
-            cards={source.cards}
-            onComplete={handleComplete}
-          />
-        </AutoAdvanceSuppressedProvider>
+        <RunnerExercise {...exerciseProps} />
       )}
     </article>
   );

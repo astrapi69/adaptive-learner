@@ -3568,8 +3568,14 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       Titel der Transparenzblock ("Diese Lektion konzentriert sich auf: ..."
       und "Basierend auf N aktiven Fehler(n)"); darunter der
       Fortschrittsbalken "Schritt 1 von N"; der Fuß sieht aus wie in einer
-      Lektion (Chevron-Pfeil "Zurück" links, "Prüfen" mit Haken rechts),
-      keine Pause, keine Optionen-Leiste
+      Lektion (Chevron-Pfeil "Zurück" links, bei einer Aufgabe "Prüfen" mit
+      Haken rechts), keine Pause, keine Optionen-Leiste
+- [ ] NEU (#3224): mit mindestens 3 aktiven Fehlern aus derselben Lektion
+      beginnt die adaptive Lektion mit einer Theorieseite aus dieser
+      Lektion: ihr Text mit Überschriften und Fettdruck, NICHT "Dieser
+      Übung fehlt ein Übungstyp"; der Fuß zeigt nur "Weiter", kein
+      "Prüfen"; "Weiter" (oder Enter) führt zur ersten Aufgabe, dort
+      erscheint "Prüfen"
 - [ ] "Zurück" ist auf dem ersten Schritt deaktiviert; nach "Weiter" führt
       es einen Schritt zurück im selben Durchlauf
 - [ ] NEU: Enter (die adaptive Lektion hatte bisher kein Enter-Kürzel):

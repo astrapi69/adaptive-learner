@@ -3340,8 +3340,13 @@ Location: Settings > General > Profile, below the figure gallery.
       with "Back to Dashboard" and the lesson title; right under the title
       the transparency block ("This lesson focuses on: ..." and "Based on N
       active error(s)"); below it the progress bar "Step 1 of N"; the footer
-      looks like a lesson's (chevron "Previous" on the left, "Check" with a
-      check mark on the right), no pause, no options bar
+      looks like a lesson's (chevron "Previous" on the left, on an exercise
+      "Check" with a check mark on the right), no pause, no options bar
+- [ ] NEW (#3224): with at least 3 active errors from the same lesson the
+      adaptive lesson opens on a theory page taken from that lesson: its
+      text with headings and bold, NOT "This exercise is missing its type";
+      the footer shows only "Next", no "Check"; "Next" (or Enter) leads to
+      the first exercise, where "Check" appears
 - [ ] "Previous" is disabled on the first step; after "Next" it goes one
       step back in the same run
 - [ ] NEW: Enter (the adaptive lesson had no Enter shortcut before): the
