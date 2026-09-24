@@ -42,6 +42,7 @@ import {
 } from "../../../../lib/learning/matchingResolvePref";
 import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
 import {seededShuffle} from "../../../../lib/exercises/grading/seeded-shuffle";
+import {mountShuffleSeed} from "../../../../lib/random";
 import {
     useKeyboardShortcuts,
     type ShortcutDefinition,
@@ -247,9 +248,7 @@ function MatchingExercise(
 
     // Stable seed per-mount so reshuffling on every render
     // doesn't move the columns under the user.
-    const [shuffleSeed] = useState(
-        () => `${exercise.id}#${Date.now() & 0xffff}`,
-    );
+    const [shuffleSeed] = useState(() => mountShuffleSeed(exercise.id));
 
     const leftTiles: LeftTile[] = useMemo(
         () =>

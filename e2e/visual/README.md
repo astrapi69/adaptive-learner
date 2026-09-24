@@ -70,10 +70,26 @@ already applied in `helpers.ts`:
   `settleForScreenshot`, and per-view/per-surface seeding (`gotoView`,
   `gotoSurface`) that reuses the onboarding + lesson-playthrough patterns
   from the dexie smoke specs.
+- `visual-pins.ts` - the pinned values (`FIXED_NOW_ISO`,
+  `VISUAL_RANDOM_PIN`) and the init scripts that install them, free of
+  Playwright so the frontend Vitest suite can test the real values.
 - `screenshots/` — committed baseline PNGs. `*.png` is `binary` in
   `.gitattributes`.
 - `../playwright.visual.config.ts` — dexie preview build, no backend,
   `maxDiffPixelRatio: 0.01`, `threshold: 0.2`, animations disabled.
+
+### Randomness pinning (#3214)
+
+`pinRandomStreams` gives each random consumer its own seeded stream
+(Shuffle order, Endless repetitions) and derives the Matching and
+word-tiles mount salt from `FIXED_NOW_ISO` instead of the page clock, so
+no draw elsewhere on the page can move a baseline. The legacy
+`pinRandomness` (one shared `Math.random` stream on the app's own
+`mulberry32`) stays only for the three motifs captured with it:
+lesson-reading-comprehension-checked, lesson-graded-quiz-checked and
+content-my-lessons. `gotoView`, `gotoSurface`, the set runners and the
+FeatureShot loop fail closed when a page lacks the pin, so a forgotten
+`pinRandomStreams` fails the test instead of capturing random orders.
 
 ## Generating / updating the baseline (maintainer)
 

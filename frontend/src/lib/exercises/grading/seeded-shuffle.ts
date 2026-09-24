@@ -1,3 +1,5 @@
+import {fnv1a32, mulberry32} from "../../random";
+
 /**
  * Deterministic, seed-stable Fisher-Yates shuffle for exercise option
  * lists. The same ``seed`` always yields the same order, so rendered
@@ -16,6 +18,12 @@
  * the whole corpus (#2317). A modulo only ever reads low bits, so the fix has
  * to reach them.
  *
+ * The hash and the PRNG are the app's one implementation in ``lib/random``
+ * (#3214). The raw 32-bit step is recovered as
+ * ``Math.floor(next() * 0x100000000)``: mulberry32 returns ``uint32 / 2^32``,
+ * which binary64 represents exactly, so multiplying back is lossless and the
+ * permutation for every seed is unchanged from the earlier inline step.
+ *
  * @param items - the values to shuffle (not mutated).
  * @param seed - any string; typically ``exercise.id`` or ``${exercise.id}#${index}``.
  * @returns a new shuffled array.
@@ -23,29 +31,11 @@
  * @example
  * seededShuffle(["a", "b", "c"], "ex-1"); // stable order for that seed
  */
-
-/** FNV-1a 32-bit string hash. Avalanches so two seeds differing only in a
- *  suffix diverge across ALL bits, including the low bits a modulo reads. */
-function _hash32(seed: string): number {
-    let hash = 0x811c9dc5;
-    for (let i = 0; i < seed.length; i++) {
-        hash ^= seed.charCodeAt(i);
-        hash = Math.imul(hash, 0x01000193);
-    }
-    return hash >>> 0;
-}
-
 export function seededShuffle<T>(items: readonly T[], seed: string): T[] {
     const out = [...items];
-    let state = _hash32(seed);
+    const next = mulberry32(fnv1a32(seed));
     for (let i = out.length - 1; i > 0; i--) {
-        // mulberry32 step: a small PRNG whose output avalanches in every bit,
-        // so ``rnd % (i + 1)`` is well-distributed even for near-identical seeds.
-        state = (state + 0x6d2b79f5) >>> 0;
-        let t = state;
-        t = Math.imul(t ^ (t >>> 15), t | 1);
-        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-        const rnd = (t ^ (t >>> 14)) >>> 0;
+        const rnd = Math.floor(next() * 0x100000000);
         const j = rnd % (i + 1);
         [out[i], out[j]] = [out[j], out[i]];
     }

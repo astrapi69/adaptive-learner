@@ -3260,6 +3260,80 @@ Location: Settings > General > Profile, below the figure gallery.
       same screens as before (Back to Dashboard or Open content browser)
 - [ ] Check both in browser mode (no server) AND in server mode
 
+### Shuffle mode on the runner shell (EXP-052 slice 2, #3169)
+
+- [ ] Open `/shuffle-lesson/<set>` for a downloaded set with at least two
+      lessons: header with "Back to Dashboard", the title and the subtitle
+      "Mixing N questions from M lessons"; the progress bar "Step 1 of N"
+      below; the footer looks like a lesson's (chevron "Previous" on the
+      left, "Check" with a check icon on the right), no pause, no options
+      bar
+- [ ] NEW: "Previous" is disabled on the first step; after "Next" it goes
+      one step back within the same run
+- [ ] NEW: going back to an already answered step: the answer is locked
+      (solution visible, no input), the footer shows "Next" instead of
+      "Check", Enter advances; in Statistics / Train errors the element
+      then counts EXACTLY ONCE for this round (answering again no longer
+      records a second attempt, unlike before)
+- [ ] Going back to a step NOT answered yet: it stays answerable, "Check"
+      is there
+- [ ] Enter: the first Enter checks an answered task, the second Enter
+      advances; without an answer Enter does nothing; with the Enter
+      shortcut switched off (Settings > Learning) Enter does nothing
+- [ ] NEW, on the phone: after "Next" (or Enter) the view jumps to the top
+      of the new step; rotate the device: task and footer are back in view
+- [ ] Hints from an earlier run do not count (#3196): reveal a hint in a
+      lesson, then open shuffle mode for the same set and answer the
+      element without a hint: NOT marked "with hint" in Statistics; a hint
+      revealed IN the session counts; "Shuffle again" starts without hint
+      marks and without locked steps
+- [ ] NEW: extension exercises (e.g. speak and record, categorization,
+      error correction, reading comprehension, graded quiz) and multiple
+      choice from the set are shuffled in and played with "Check"
+      (previously only the core exercise types)
+- [ ] Summary unchanged: score with percentage, "from M different
+      lessons", "Shuffle again", "Back to Dashboard"; the footer there shows
+      only "Previous"
+- [ ] Loading, "too few lessons", "set not downloaded" and error show the
+      usual screens
+- [ ] Check both in browser mode (no server) AND in server mode
+
+### Endless mode on the runner shell (EXP-052 slice 2, #3169)
+
+- [ ] Open `/endless-lesson/<set>` for a downloaded set: header with "Back
+      to Dashboard" and the title "Endless practice"; below it the stat
+      line "m:ss | N cards | K correct (P%)"; the clock runs
+- [ ] NEW: the stat line is display only (no buttons in it any more);
+      "Pause" and "End" sit in the footer on the left, "Check" with a check
+      icon on the right; there is NO "Previous" (a stream has no previous
+      step)
+- [ ] NEW: "Pause" in the footer: the task disappears behind "Paused -
+      take a breather.", the clock stops, "Check" is gone, Enter does
+      nothing; the same button (now "Resume") continues, a half-typed
+      answer is still there, the clock runs again
+- [ ] "End" (also while paused) shows the recap: duration, cards, correct
+      with percentage, reviews done, new learned, errors practised,
+      practice XP; the only button "Back to Dashboard" has focus, Enter goes
+      to the dashboard; the recap has no footer
+- [ ] Enter: the first Enter checks, the second Enter fetches the next
+      card; without an answer Enter does nothing
+- [ ] NEW, on the phone: after "Next" the view jumps to the top of the new
+      card; rotate the device: card and footer are back in view
+- [ ] When the stream brings the same card again, it is freshly answerable
+      (no lock) and counts as a new attempt
+- [ ] Hints from an earlier run do not count (#3196): reveal a hint in a
+      lesson, then open endless mode and answer the element without a hint:
+      NOT marked "with hint" in Statistics
+- [ ] NEW: extension exercises and multiple choice from the set appear in
+      the stream. With a set that contains "speak and record" (e.g.
+      adaptive-learner-content or alc-dog-training): the card appears, the
+      browser asks for the microphone, start and stop a recording, "Check",
+      then "Next": the stream continues with the next card (Visual Device
+      Check on a real phone)
+- [ ] Loading, "no exercises", "set not downloaded" and error show the
+      usual screens
+- [ ] Check both in browser mode (no server) AND in server mode
+
 ---
 
 # PART B: AUTOMATED TESTS (reference)

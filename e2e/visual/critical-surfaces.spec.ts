@@ -38,6 +38,7 @@ import {
     freezeClock,
     gotoSurface,
     pinContentRegistry,
+    pinRandomStreams,
     setTheme,
     settleForScreenshot,
 } from "./helpers";
@@ -53,8 +54,10 @@ for (const surface of SURFACE_NAMES) {
             // the recommended-repos list is otherwise fetched live and
             // re-stales the settings-data / content-discover baselines) before
             // the first navigation, then seed/await the surface's own ready
-            // signal (gotoSurface), then settle fonts + kill animations.
+            // signal (gotoSurface), then settle fonts + kill animations. The
+            // random pin gives every shuffle its own stream (#3214).
             await freezeClock(page);
+            await pinRandomStreams(page);
             await setTheme(page, "light");
             await pinContentRegistry(page);
             const ready = await gotoSurface(page, surface);

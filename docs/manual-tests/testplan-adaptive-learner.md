@@ -3485,6 +3485,82 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       Inhaltsbrowser öffnen)
 - [ ] Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
 
+### Zufallsmodus auf der Runner-Hülle (EXP-052 Scheibe 2, #3169)
+
+- [ ] `/shuffle-lesson/<set>` für ein heruntergeladenes Set mit mindestens
+      zwei Lektionen öffnen: Kopf mit "Zurück zum Dashboard", Titel und
+      Untertitel "N Fragen aus M Lektionen gemischt"; darunter der
+      Fortschrittsbalken "Schritt 1 von N"; der Fuß sieht aus wie in einer
+      Lektion (Chevron-Pfeil "Zurück" links, "Prüfen" mit Haken rechts),
+      keine Pause, keine Optionen-Leiste
+- [ ] NEU: "Zurück" ist auf dem ersten Schritt deaktiviert; nach "Weiter"
+      führt es einen Schritt zurück im selben Durchlauf
+- [ ] NEU: Zurück auf einen bereits beantworteten Schritt: die Antwort ist
+      gesperrt (Lösung sichtbar, keine Eingabe), der Fuß zeigt "Weiter"
+      statt "Prüfen", Enter geht weiter; in Statistik / Fehler trainieren
+      zählt das Element danach GENAU EINMAL für diese Runde (erneutes
+      Beantworten zeichnet keinen zweiten Versuch mehr auf, anders als
+      bisher)
+- [ ] Zurück auf einen NOCH NICHT beantworteten Schritt: bleibt
+      beantwortbar, "Prüfen" ist da
+- [ ] Enter: erster Enter prüft eine beantwortete Aufgabe, zweiter Enter
+      geht weiter; ohne Antwort tut Enter nichts; mit ausgeschaltetem
+      Enter-Kürzel (Einstellungen > Lernen) tut Enter nichts
+- [ ] NEU, am Telefon: nach "Weiter" (oder Enter) springt die Ansicht an
+      den Anfang des neuen Schritts; Gerät drehen: Aufgabe und Fuß liegen
+      wieder im Sichtfeld
+- [ ] Hinweise aus einem früheren Durchlauf zählen nicht (#3196): in einer
+      Lektion einen Tipp aufdecken, dann den Zufallsmodus desselben Sets
+      öffnen und das Element ohne Tipp beantworten: in der Statistik NICHT
+      als "mit Tipp" markiert; ein Tipp IN der Sitzung zählt; "Nochmal
+      mischen" beginnt wieder ohne Tipp-Merker und ohne gesperrte Schritte
+- [ ] NEU: Erweiterungsaufgaben (z. B. Sprechen und Aufnehmen,
+      Kategorisieren, Fehler korrigieren, Leseverständnis, Bewertetes Quiz)
+      und Multiple Choice aus dem Set werden mitgemischt und mit "Prüfen"
+      gespielt (bisher nur die Kernaufgaben)
+- [ ] Zusammenfassung unverändert: Punktzahl mit Prozent, "aus M
+      verschiedenen Lektionen", "Nochmal mischen", "Zurück zum Dashboard";
+      der Fuß zeigt dort nur "Zurück"
+- [ ] Ladezustand, "zu wenige Lektionen", "Set nicht heruntergeladen" und
+      Fehler zeigen die gewohnten Bildschirme
+- [ ] Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
+
+### Endlosmodus auf der Runner-Hülle (EXP-052 Scheibe 2, #3169)
+
+- [ ] `/endless-lesson/<set>` für ein heruntergeladenes Set öffnen: Kopf
+      mit "Zurück zum Dashboard" und Titel "Endlos-Übung"; darunter die
+      Statuszeile "m:ss | N Karten | K richtig (P%)"; die Uhr läuft
+- [ ] NEU: die Statuszeile ist reine Anzeige (keine Knöpfe mehr darin);
+      "Pause" und "Beenden" sitzen im Fuß links, "Prüfen" mit Haken rechts;
+      es gibt KEIN "Zurück" (ein Strom hat keinen vorigen Schritt)
+- [ ] NEU: "Pause" im Fuß: die Aufgabe verschwindet hinter "Pausiert - mach
+      eine kurze Pause.", die Uhr steht, "Prüfen" ist weg, Enter tut
+      nichts; derselbe Knopf (jetzt "Fortsetzen") setzt fort, eine halb
+      eingegebene Antwort ist noch da, die Uhr läuft weiter
+- [ ] "Beenden" (auch während der Pause) zeigt die Auswertung: Dauer,
+      Karten, Richtig mit Prozent, erledigte Wiederholungen, neu gelernt,
+      geübte Fehler, Übungs-XP; der einzige Knopf "Zurück zum Dashboard" hat
+      den Fokus, Enter führt zum Dashboard; auf der Auswertung gibt es
+      keinen Fuß
+- [ ] Enter: erster Enter prüft, zweiter Enter holt die nächste Karte; ohne
+      Antwort tut Enter nichts
+- [ ] NEU, am Telefon: nach "Weiter" springt die Ansicht an den Anfang der
+      neuen Karte; Gerät drehen: Karte und Fuß liegen wieder im Sichtfeld
+- [ ] Kommt dieselbe Karte im Strom wieder, ist sie frisch beantwortbar
+      (keine Sperre) und zählt als neuer Versuch
+- [ ] Hinweise aus einem früheren Durchlauf zählen nicht (#3196): Tipp in
+      einer Lektion aufdecken, dann den Endlosmodus öffnen und das Element
+      ohne Tipp beantworten: in der Statistik NICHT als "mit Tipp" markiert
+- [ ] NEU: Erweiterungsaufgaben und Multiple Choice aus dem Set kommen im
+      Strom vor. Mit einem Set, das "Sprechen und Aufnehmen" enthält (z. B.
+      adaptive-learner-content oder alc-dog-training): Karte erscheint, der
+      Browser fragt nach dem Mikrofon, Aufnahme starten und stoppen,
+      "Prüfen", dann "Weiter": der Strom läuft mit der nächsten Karte weiter
+      (Visual Device Check auf einem echten Telefon)
+- [ ] Ladezustand, "keine Aufgaben", "Set nicht heruntergeladen" und Fehler
+      zeigen die gewohnten Bildschirme
+- [ ] Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
+
 ---
 
 # TEIL B: AUTOMATISIERTE TESTS (Referenz)
