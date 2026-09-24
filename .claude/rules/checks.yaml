@@ -141,7 +141,7 @@ checks:
     verifies: every import in frontend/src resolves inside what the frontend-build stage of backend/Dockerfile copies (read from its COPY lines), and no module alias points outside frontend/ - a test importing e2e/ broke the production image while every full-checkout build stayed green (#3239, #2559)
     rule: "-"
     status: active
-    wired_in: frontend/src/test/build-context-boundary.test.ts; make test; full Vitest on develop push (vitest --changed does not select it, so docker-build-smoke.yml on frontend/** is the PR-level signal)
+    wired_in: frontend/src/test/build-context-boundary.test.ts; make test; .github/workflows/ci.yml fixed PR step "Build-context boundary guard (#3239)" on every frontend PR (vitest --changed never selects an fs-reading guard); full Vitest on develop push; docker-build-smoke.yml on frontend/** builds the real image
     probe: script_exists=frontend/src/test/build-context-boundary.test.ts
 
   - id: image-size

@@ -395,6 +395,21 @@ jobs:
         working-directory: frontend
         run: bun run lint:css
 
+      # Build-context boundary guard (#3239), a fixed step on every frontend
+      # PR. The guard reads frontend/src, backend/Dockerfile and the alias
+      # configs through fs, not imports, so the selective run below
+      # (`vitest --changed`) never selects it unless the guard file itself
+      # changed: the "selection mechanics" sub-class of lessons/ci-gates.md
+      # "PR-CI vs nightly gates" (#1620/#1665). A PR adding an import from
+      # frontend/src into e2e/ would otherwise run green without the guard
+      # ever seeing it. Push runs the full suite, which includes it. Skipped
+      # on i18n_only PRs like the other code steps: catalog JSON carries no
+      # imports.
+      - name: Build-context boundary guard (#3239)
+        if: github.event_name == 'pull_request' && needs.changes.outputs.frontend == 'true' && needs.changes.outputs.i18n_only != 'true'
+        working-directory: frontend
+        run: bunx vitest run src/test/build-context-boundary.test.ts
+
       # Test Impact Analysis (#615): on a PR run only the Vitest files related
       # to files changed since the base branch (`--changed origin/<base>`).
       # Real test failures propagate (no masking). The ONLY fallback to the

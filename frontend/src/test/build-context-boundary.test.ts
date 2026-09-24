@@ -43,10 +43,11 @@
  * and ``.dockerignore`` exclusions inside a copied root.
  *
  * Cadence: the guard reads files through ``fs``, so ``vitest --changed`` on
- * a PR does not select it (the #1620 class). It runs in every full suite
- * (develop push, nightly, ``make test``); on the PR itself the
- * ``frontend/**`` path filter of ``docker-build-smoke.yml`` builds the real
- * image (#3239).
+ * a PR never selects it (the #1620 class). ``ci.yml`` therefore runs it as a
+ * fixed step on every frontend PR; it also runs in every full suite
+ * (develop push, nightly, ``make test``), and the ``frontend/**`` path
+ * filter of ``docker-build-smoke.yml`` builds the real image behind it
+ * (#3239).
  *
  * Gate contract (quality-checks.md, #2083): seeded negative controls prove
  * the detection, the run reports how many files and specifiers it checked
