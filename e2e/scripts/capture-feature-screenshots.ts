@@ -48,10 +48,13 @@ import {
     seedLearner,
     setTheme,
     settleForScreenshot,
+    gotoAdaptiveLesson,
     gotoDashboardWithDueReviews,
     gotoEndlessSession,
+    gotoErrorReplay,
     gotoReviewSession,
     gotoShuffleSession,
+    answerCurrentStep,
     playBundledLesson,
 } from "../visual/helpers";
 
@@ -995,6 +998,62 @@ function settledSetRunner(open: (page: Page) => Promise<boolean>) {
 }
 
 /**
+ * Answer the open replay exercise WRONG on purpose, the way the seed got
+ * it wrong in the lesson: free text and typed cloze with a nonsense word,
+ * matching with its first two pairs swapped (the rest by index, the mixed
+ * result ``pairMatchingWithOneWrong`` seeds; the pinned mount salt keeps
+ * the column order of the lesson). Any other type falls back to
+ * ``answerCurrentStep``.
+ */
+async function answerReplayStepWrong(page: Page): Promise<void> {
+    if (await page.getByTestId("free-text-input").count()) {
+        await page.getByTestId("free-text-input").fill("zzzzz");
+        return;
+    }
+    const blanks = page.locator('[data-testid^="cloze-input-"]');
+    if (await blanks.count()) {
+        for (let j = 0; j < (await blanks.count()); j++) await blanks.nth(j).fill("zzzzz");
+        return;
+    }
+    const lefts = page.getByTestId(/^matching-left-\d+$/);
+    const n = await lefts.count();
+    if (n >= 2) {
+        for (let j = 0; j < n; j++) {
+            await page.getByTestId(`matching-left-${j}`).click();
+            await page.getByTestId(`matching-right-${j < 2 ? 1 - j : j}`).click();
+        }
+        return;
+    }
+    await answerCurrentStep(page);
+}
+
+/**
+ * EXP-052 slice 3 (#3169) - the Error Replay recap through the shell's
+ * summary render prop, in its "still errors" state: every replayed exercise
+ * is answered wrong on purpose, so the shot shows the score, "Try again?"
+ * and "Back to lesson" and no confetti (its particles would make the frame
+ * timing-dependent). The footer keeps Previous as a locked read-only look
+ * back. A round that came out all corrected is skipped, not captured.
+ */
+async function gotoErrorReplaySummary(page: Page): Promise<boolean> {
+    if (!(await gotoErrorReplay(page))) return false;
+    const summary = page.getByTestId("error-replay-summary");
+    for (let i = 0; i < 20 && !(await summary.count()); i++) {
+        await answerReplayStepWrong(page);
+        const check = page.getByTestId("error-replay-check");
+        if (await check.count()) {
+            await expect(check).toBeEnabled({timeout: 5_000});
+            await check.click();
+        }
+        await page.getByTestId("error-replay-next").click();
+    }
+    await expect(summary).toBeVisible({timeout: 10_000});
+    if ((await summary.getAttribute("data-all-corrected")) !== "false") return false;
+    await page.waitForTimeout(400);
+    return true;
+}
+
+/**
  * Answer the open review step and check it. The seeded error row comes
  * from a matching exercise, so the review presents a matching question:
  * pair every left tile with the right tile of the same index (right or
@@ -1668,6 +1727,18 @@ const FEATURES: FeatureShot[] = [
         setup: settledSetRunner(gotoEndlessSession),
         pinTo: "endless-page",
     },
+
+    // --- Adaptive and Error Replay on the LessonRunner shell (EXP-052 slice 3, #3169) ---
+    // Adaptive: the F-115 transparency block under the title (the shell's
+    // headerExtra), the shared progress bar, the lesson footer with Previous.
+    // Error Replay: the round's recap through the summary render prop, the
+    // footer keeping Previous as a read-only look back.
+    {
+        path: "adaptive-lesson/transparenz",
+        setup: settledSetRunner(gotoAdaptiveLesson),
+        pinTo: "adaptive-lesson-page",
+    },
+    {path: "error-replay/zusammenfassung", setup: gotoErrorReplaySummary, pinTo: "error-replay-summary"},
 
     // --- ViewportDiagnostic tap-offset probe (#1569, collapsed #2779) ---
     {path: "viewport-diagnostic/eingeklappt", setup: gotoViewportDiagnostic},
