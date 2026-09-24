@@ -14,11 +14,13 @@
  * procedure), run ``make sync-schema``, and ajv automatically validates the
  * new shape — no hand-maintained mirror.
  *
- * This module covers ONLY the structural shape. Imperative cross-field /
+ * This module covers ONLY the structural shape, which includes slug-safety:
+ * the schema's ``$defs/SlugId`` (pattern + length) guards every lesson,
+ * card, step and exercise id and every card tag. Imperative cross-field /
  * semantic rules JSON-Schema cannot express (referential integrity
- * ``card_ids -> cards``, cloze ``___``-count == blanks, slug-safety +
- * uniqueness, picture-choice single-correct, ``accept_orderings``
- * permutation) stay in ``validateGeneratedLesson``.
+ * ``card_ids -> cards``, cloze ``___``-count == blanks, id uniqueness,
+ * picture-choice single-correct, ``accept_orderings`` permutation) stay in
+ * ``validateGeneratedLesson``.
  */
 
 import { type ErrorObject, type ValidateFunction } from "ajv/dist/2020";
