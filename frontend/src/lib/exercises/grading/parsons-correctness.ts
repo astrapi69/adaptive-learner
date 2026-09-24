@@ -43,7 +43,7 @@ export function isParsonsCorrect(
 
 /** Post-check verdict for one placed line. ``wrong_position`` wins over
  *  ``wrong_indent``: a line in the wrong slot is wrong whatever its depth. */
-export type ParsonsLineStatus = "correct" | "wrong_position" | "wrong_indent";
+type ParsonsLineStatus = "correct" | "wrong_position" | "wrong_indent";
 
 /** One placed line as the learner left it, with its verdict. */
 export interface ParsonsLineDiagnosis {
