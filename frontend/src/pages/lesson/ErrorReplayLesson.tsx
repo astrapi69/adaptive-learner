@@ -1,5 +1,5 @@
 /**
- * /error-replay/:setSlug/:setId/:filename — "Fehler wiederholen"
+ * /error-replay/:setSlug/:setId/:filename - "Fehler wiederholen"
  * (on the LessonRunner shell since EXP-052 slice 3, refs #3169).
  *
  * Replays the EXACT exercises the learner just failed in a lesson, one

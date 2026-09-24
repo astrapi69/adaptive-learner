@@ -1,5 +1,5 @@
 /**
- * /adaptive-lesson/:setId — adaptive lesson session
+ * /adaptive-lesson/:setId - adaptive lesson session
  * (Phase 53G / EXP-013 / F-115, F-116; on the LessonRunner shell since
  * EXP-052 slice 3, refs #3169).
  *
@@ -40,7 +40,7 @@ export default function AdaptiveLessonPage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const setId = params.setId ?? "";
-    // #1012 — optional ?lesson= scope: train only this lesson's failed cards.
+    // #1012 - optional ?lesson= scope: train only this lesson's failed cards.
     const lessonId = searchParams.get("lesson") ?? undefined;
 
     const source = useAdaptiveSource({setId, lessonId});

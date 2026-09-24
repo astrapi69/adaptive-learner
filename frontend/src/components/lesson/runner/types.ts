@@ -44,6 +44,17 @@ export interface RunnerSource {
   status: RunnerSourceStatus;
   error: string | null;
   title: string;
+  /**
+   * The title carries content text (Error Replay: the lesson's or set's
+   * name) that may hold a long unbreakable word ("Organisationspsychologie"):
+   * break it anywhere (#2761) instead of widening the page, which iOS WebKit
+   * answers by clipping the sticky footer's Next button (#1834 class). Off
+   * for the fixed titles, which keep their markup byte for byte: at 375px
+   * the wrap broke "Wiederholungssitzung" as "Wiederholungssitzun / g". A
+   * title change for every runner belongs to the compact header (#3173,
+   * EXP-052 slice 5).
+   */
+  wrapTitle?: boolean;
   subtitle?: string;
   /** The current step, or ``null`` on the summary. */
   step: ContentLessonStep | null;

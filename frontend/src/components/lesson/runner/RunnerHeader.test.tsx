@@ -59,12 +59,21 @@ describe("RunnerHeader: session variant", () => {
     expect(screen.getByTestId("dashboard-stub")).toBeInTheDocument();
   });
 
-  // #2761 moved into the shell (slice 3): a long unbreakable title word
-  // ("Organisationspsychologie") must break instead of widening the page,
-  // or iOS WebKit clips the sticky footer's Next button (#1834 class).
-  it("the title wraps a long unbreakable word instead of overflowing sideways (#2761)", () => {
-    mount(<RunnerHeader policy={REVIEW_POLICY} source={SOURCE} />);
+  // #2761 moved into the shell (slice 3): a title that carries content text
+  // (the replay's lesson name) must break a long unbreakable word instead of
+  // widening the page, or iOS WebKit clips the sticky footer's Next button
+  // (#1834 class).
+  it("a content title wraps a long unbreakable word instead of overflowing sideways (#2761)", () => {
+    mount(<RunnerHeader policy={REVIEW_POLICY} source={{...SOURCE, wrapTitle: true}} />);
     expect(screen.getByRole("heading", {level: 1})).toHaveClass("wrap-anywhere");
+  });
+
+  // Byte for byte for the session runners: at 375px "Wiederholungssitzung"
+  // broke as "Wiederholungssitzun / g" with the wrap on every title. A
+  // header change for every runner belongs to the compact header (#3173).
+  it("edge: a fixed title keeps the unclassed h1 the session runners render today", () => {
+    mount(<RunnerHeader policy={REVIEW_POLICY} source={SOURCE} />);
+    expect(screen.getByRole("heading", {level: 1})).not.toHaveAttribute("class");
   });
 
   it("edge: no subtitle element when the source carries none", () => {

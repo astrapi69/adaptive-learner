@@ -80,6 +80,7 @@ describe("useErrorReplaySource: the round", () => {
         const source = result.current;
         expect(source.status).toBe("ready");
         expect(source.title).toBe("Retry errors: Greetings");
+        expect(source.wrapTitle).toBe(true);
         expect(source.step).toMatchObject({id: "ex-a", type: "exercise", exercise: {id: "ex-a"}});
         expect(source.position).toEqual({index: 0, total: 2});
         expect(source.lessonId).toBe("03.json");

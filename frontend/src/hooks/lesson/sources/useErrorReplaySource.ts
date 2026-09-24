@@ -171,6 +171,8 @@ export function useErrorReplaySource({
         status: empty ? "empty" : "ready",
         error: null,
         title: replayTitle(t, state?.lessonTitle ?? "", flashRound),
+        // #2761: the title carries the lesson's (or set's) own name.
+        wrapTitle: true,
         step,
         cards: state?.cards ?? [],
         setId,
