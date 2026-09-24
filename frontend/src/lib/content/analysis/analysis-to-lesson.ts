@@ -72,11 +72,6 @@ import { parsonsPayloadErrors } from "../../exercises/payload/parsons";
 import { hotspotPayloadErrors } from "../../exercises/payload/hotspot";
 import { validateLessonShape } from "../validation/lesson-schema-validator";
 
-/** Lowercase unicode slug (#1808): lesson-internal ids/tags accept
- *  non-ASCII lowercase letters ('währung', 'präsenz'), matching the
- *  canonical engine schema. Set-level ids/paths stay ASCII elsewhere. */
-const SLUG_RE = /^[\p{Ll}\p{Nd}]+(-[\p{Ll}\p{Nd}]+)*$/u;
-
 /** Localised strings. ``{word}`` in a prompt template is replaced
  *  with the vocabulary word. */
 export interface AnalysisLessonLabels {
@@ -532,17 +527,20 @@ export function summarizeGeneratedLesson(
 // Validation (#1205 / EXP-039)
 //
 // Two layers: ajv validates the STRUCTURAL shape against the generated
-// ``schema/lesson.schema.json`` (the SoT mirror) — fields, types, closed
-// enums, length/range bounds, ``additionalProperties: false`` — so the shape
-// can no longer drift from the Pydantic models. The imperative checks below
-// cover only the cross-field / semantic rules JSON-Schema cannot express:
-// slug-safety + uniqueness, referential integrity, cloze marker/blank parity,
-// picture-choice single-correct, and ``accept_orderings`` permutations.
+// ``schema/lesson.schema.json`` (the SoT mirror): fields, types, closed
+// enums, length/range bounds, the ``$defs/SlugId`` pattern and length on
+// every lesson, card, step and exercise id and every card tag, and
+// ``additionalProperties: false``, so the shape can no longer drift from
+// the Pydantic models. The imperative checks below cover only the
+// cross-field / semantic rules JSON-Schema cannot express: id uniqueness,
+// referential integrity, cloze marker/blank parity, picture-choice
+// single-correct, and ``accept_orderings`` permutations.
 // ---------------------------------------------------------------------------
 
 /** Throws an Error on the first violation. Structural shape comes from ajv
- *  against the App-authoritative schema (Dexie path); the imperative checks
- *  guard the semantics JSON-Schema cannot express. */
+ *  against the App-authoritative schema (Dexie path), slug-safety of ids
+ *  and tags included; the imperative checks guard the semantics
+ *  JSON-Schema cannot express. */
 export function validateGeneratedLesson(lesson: ContentLesson): void {
   const fail = (msg: string): never => {
     throw new Error(`generated lesson invalid: ${msg}`);
@@ -550,35 +548,29 @@ export function validateGeneratedLesson(lesson: ContentLesson): void {
   const shape = validateLessonShape(lesson);
   if (!shape.ok) fail(shape.errors[0] ?? "shape does not match the schema");
 
-  if (!SLUG_RE.test(lesson.id)) fail(`lesson id '${lesson.id}' not slug-safe`);
   const cardIds = validateCards(lesson.cards, fail);
   validateSteps(lesson.steps, cardIds, fail);
 }
 
-/** Validate every card (slug-safe + unique id, front + back present,
- *  slug-safe tags) and return the set of card ids for cross-reference
- *  checks in the step validation. */
+/** Validate that card ids are unique and return the set of card ids for
+ *  cross-reference checks in the step validation. Slug-safety of ids and
+ *  tags, and front/back presence + length, are enforced by the ajv shape
+ *  layer. */
 function validateCards(
   cards: ContentLesson["cards"],
   fail: (msg: string) => never,
 ): Set<string> {
   const cardIds = new Set<string>();
   for (const card of cards) {
-    if (!SLUG_RE.test(card.id)) fail(`card id '${card.id}' not slug-safe`);
     if (cardIds.has(card.id)) fail(`duplicate card id '${card.id}'`);
     cardIds.add(card.id);
-    // front/back presence + length is enforced by the ajv shape layer.
-    for (const tag of card.tags) {
-      if (!SLUG_RE.test(tag))
-        fail(`card '${card.id}' tag '${tag}' not slug-safe`);
-    }
   }
   return cardIds;
 }
 
-/** Validate every step: slug-safe + unique id, theory steps carry a
- *  body and no exercise, exercise steps carry an exercise (validated
- *  against ``cardIds``) and no body. */
+/** Validate every step: unique id, theory steps carry a body and no
+ *  exercise, exercise steps carry an exercise (validated against
+ *  ``cardIds``) and no body. */
 function validateSteps(
   steps: ContentLesson["steps"],
   cardIds: Set<string>,
@@ -586,7 +578,6 @@ function validateSteps(
 ): void {
   const stepIds = new Set<string>();
   for (const step of steps) {
-    if (!SLUG_RE.test(step.id)) fail(`step id '${step.id}' not slug-safe`);
     if (stepIds.has(step.id)) fail(`duplicate step id '${step.id}'`);
     stepIds.add(step.id);
     if (step.type === "theory") {
@@ -682,8 +673,6 @@ function validateExercise(
   cardIds: Set<string>,
   fail: (msg: string) => never,
 ): void {
-  if (!SLUG_RE.test(exercise.id))
-    fail(`exercise id '${exercise.id}' not slug-safe`);
   if (!exercise.prompt) fail(`exercise '${exercise.id}' needs a prompt`);
   for (const cid of exercise.card_ids) {
     if (!cardIds.has(cid))

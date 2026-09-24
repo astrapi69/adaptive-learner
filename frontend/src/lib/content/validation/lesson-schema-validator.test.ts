@@ -292,16 +292,16 @@ describe("#1205 fixture 6 — accept_orderings permutation (imperative)", () => 
 });
 
 // ---------------------------------------------------------------------------
-// Fixture 7 — slug-safe ids + uniqueness (imperative). Since engine
+// Fixture 7 - slug-safe ids (Ajv) + uniqueness (imperative). Since engine
 // schema 1.11 (0.20.0 re-pin, #2335) the unicode SlugId pattern rejects
-// bad ids at the Ajv layer BEFORE the imperative slug check fires, so the
-// message is the pattern error; the assertions accept either channel.
+// bad ids at the Ajv layer; the app's own slug regex was unreachable behind
+// it and is gone (#3222), so the pattern error is the only channel.
 // ---------------------------------------------------------------------------
 describe("#1205 fixture 7 — slug-safe + uniqueness (imperative)", () => {
   it("rejects a non-slug card id", () => {
     const lesson = makeLesson();
     lesson.cards[0].id = "Not Slug";
-    expect(() => validateGeneratedLesson(lesson)).toThrow(/slug-safe|must match pattern/);
+    expect(() => validateGeneratedLesson(lesson)).toThrow(/must match pattern/);
   });
 
   it("rejects a duplicate card id", () => {
@@ -334,7 +334,84 @@ describe("#1205 fixture 7 — slug-safe + uniqueness (imperative)", () => {
   it("still rejects uppercase umlauts and inner spaces", () => {
     const lesson = makeLesson();
     lesson.cards[0].tags = ["\u00c4rger"];
-    expect(() => validateGeneratedLesson(lesson)).toThrow(/slug-safe|must match pattern/);
+    expect(() => validateGeneratedLesson(lesson)).toThrow(/must match pattern/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// #3222 - the schema's ``$defs/SlugId`` (via the Ajv shape layer) is the
+// only slug check. These pin that it refuses a non-slug value at every place
+// the app's former ``SLUG_RE`` checked, and that its length counts
+// characters (code points) the way JSON Schema ``maxLength`` does: the
+// engine's ``isSlugId`` counts UTF-16 code units instead, so it would refuse
+// the 61-astral-letter id below that the schema accepts.
+// ---------------------------------------------------------------------------
+
+/** U+1D41A MATHEMATICAL BOLD SMALL A: a lowercase letter (\p{Ll}) outside
+ *  the BMP, one character but two UTF-16 code units. */
+const ASTRAL_LOWERCASE_A = "\u{1D41A}";
+
+/** The lesson places the SlugId guards, each setting a value on a fresh
+ *  lesson (keeping referential integrity where an id is referenced). */
+const SLUG_PLACES: [string, (lesson: ContentLesson, value: string) => void][] = [
+  [
+    "lesson id",
+    (lesson, value) => {
+      lesson.id = value;
+    },
+  ],
+  [
+    "card id",
+    (lesson, value) => {
+      lesson.cards[0].id = value;
+      lesson.steps[1].exercise!.card_ids = [value];
+    },
+  ],
+  [
+    "card tag",
+    (lesson, value) => {
+      lesson.cards[0].tags = [value];
+    },
+  ],
+  [
+    "step id",
+    (lesson, value) => {
+      lesson.steps[0].id = value;
+    },
+  ],
+  [
+    "exercise id",
+    (lesson, value) => {
+      lesson.steps[1].exercise!.id = value;
+    },
+  ],
+];
+
+describe("#3222 slug ids - the schema shape layer is the only slug check", () => {
+  it.each(SLUG_PLACES)(
+    "refuses a non-slug %s with the schema pattern error",
+    (_place, setValue) => {
+      const lesson = makeLesson();
+      setValue(lesson, "Not Slug");
+      expect(() => validateGeneratedLesson(lesson)).toThrow(/must match pattern/);
+    },
+  );
+
+  it.each([
+    ["120 ASCII letters", "a".repeat(120)],
+    ["61 astral lowercase letters (122 UTF-16 code units)", ASTRAL_LOWERCASE_A.repeat(61)],
+    ["120 astral lowercase letters", ASTRAL_LOWERCASE_A.repeat(120)],
+  ])("accepts a lesson id of %s", (_label, id) => {
+    const lesson = makeLesson({ id });
+    expect(() => validateGeneratedLesson(lesson)).not.toThrow();
+  });
+
+  it.each([
+    ["121 ASCII letters", "a".repeat(121)],
+    ["121 astral lowercase letters", ASTRAL_LOWERCASE_A.repeat(121)],
+  ])("refuses a lesson id of %s as too long", (_label, id) => {
+    const lesson = makeLesson({ id });
+    expect(() => validateGeneratedLesson(lesson)).toThrow(/must NOT have more than 120 characters/);
   });
 });
 
