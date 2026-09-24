@@ -91,29 +91,26 @@ IMMEDIATELY when a phase is completed. Do not accumulate in CLAUDE.md.
 
 ## ROADMAP priority tiers
 
-Two orders meet here, and both are in use:
+`docs/ROADMAP.md` and `docs/backlog.md` order planned work by phase (focus / `Jetzt`, next, later); other items sit in the `P3` to `P5` sections below, then `Blocked / Upstream Wait`.
 
-- **Planned work is ordered by phase.** `docs/ROADMAP.md` and `docs/backlog.md` open with the phase sections: the current focus (backlog: `Jetzt`), the next phase, and the later phase (`Zukunft`, backlog: `Deferred`). Their order is the order of work for the explorations they name.
-- **Everything else is ordered by tier.** Issues carry a `P0`..`P5` label, and the open items outside the phase plan sit in the `P3`, `P4` and `P5` sections below the phases, followed by `Blocked / Upstream Wait` (backlog: after `Trigger-Gated Items`).
-
-The tier is urgency: a rank from top to bottom, and the order in which issues are worked (`github-issue-policy.md`). The examples show what typically lands in a tier; they do not define it.
+The tier, also the `P0`..`P5` issue label, is urgency, worked top to bottom (`github-issue-policy.md`). Examples illustrate, they do not define.
 
 | Tier | Meaning |
 |------|---------|
-| P0 | Now. Examples: deadline pressure, an active blocker, a security issue, a risk to user data. |
-| P1 | Next, ahead of new work: it blocks a clean release, or it raises the cost of every later change. Examples: a red develop; architecture or hygiene debt, code-rule violations, test isolation gaps. |
-| P2 | Soon: users can notice it. Examples: a visible malfunction; a high-value feature (anything moving AdaptiveLearner from "toy to serious tool"). |
-| P3 | When capacity allows: no user can notice it. Examples: test coverage, CI and tooling, internal refactors without user-visible effect. |
+| P0 | Now. E.g. a deadline, an active blocker, a security issue, a risk to user data. |
+| P1 | Next: blocks a clean release, or raises the cost of every later change. E.g. a red develop, architecture or hygiene debt, test isolation gaps. |
+| P2 | Soon: users can notice it. E.g. a visible malfunction, a high-value feature. |
+| P3 | When capacity allows: no user can notice it. E.g. tests, CI, tooling, internal refactors. |
 | P4 | Deliberately deferred to a later phase. |
 | P5 | Speculative: no concrete trigger or user demand. |
-| Blocked / Upstream Wait | Items waiting on an external trigger (npm publish, paid-API access, hardware availability, user report). NOT P0 even when critical. |
+| Blocked / Upstream Wait | Waiting on an external trigger (npm publish, paid-API access, hardware, user report). NOT P0 even when critical. |
 
 Within each tier, sub-order by:
 1. Smaller scope first (faster wins).
 2. Items unblocking other items first.
 3. Alphabetical by ID as final tiebreaker.
 
-In the `P3` to `P5` sections the tier of an item is its section header. Do NOT add P-prefixes to the IDs themselves (T-01 stays T-01, not P2-T-01). The tier is a section header or a label, the ID is the task.
+In the `P3` to `P5` sections the section header is the tier. Do NOT add P-prefixes to IDs (T-01 stays T-01, not P2-T-01).
 
 ## Backlog-as-pointer convention
 
