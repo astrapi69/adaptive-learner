@@ -234,6 +234,21 @@ tiebreaker.
 - [ ] **BL-17**: Stripe integration — Premium plugins,
   subscription tiers. Requires BL-14 + BL-15 + BL-16.
 
+- [ ] **ARCADE-SCORES-01**: Personal best list per arcade game (idea
+  2026-09-24, pick up after EXP-052 slice 4). An `arcade-score-store.ts`
+  next to `ticket-store.ts` and `arcade-unlock-store.ts`, same Dexie
+  namespace pattern, showing the best five runs with date per game like an
+  arcade cabinet's high-score screen. The four games have four notions of a
+  score, so the record stores value AND direction per game: Snake counts
+  up (`score`), Simon's value is the longest repeated sequence, Memory's
+  completed two-card reveals count DOWN (fewer is better), TicTacToe has
+  only an outcome (won/lost/draw), so a win/draw/loss tally or no entry.
+  A leaderboard across people is out of reach: offline-first, data local in
+  Dexie, no accounts, no shared state (same blocker as BL-15/BL-16). A
+  shared ranking would also reach back into learning, because arcade play
+  time comes from tickets earned by perfect lessons and streaks; a personal
+  list does not. Hidden behind the game-mode and arcade switches, see #3216.
+
 ## P5 — Speculative (No concrete trigger)
 
 - [ ] **BL-19**: Social features (share progress, study
