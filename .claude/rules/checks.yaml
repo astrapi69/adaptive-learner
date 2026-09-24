@@ -155,7 +155,7 @@ checks:
     verifies: no release-driven job publishes from a commit whose checks did not pass
     rule: quality-checks.md#gate-test-contract-five-tests-and-fail-closed-2083
     status: active
-    wired_in: .github/workflows/publish-image.yml; launcher-{linux,macos,windows}.yml
+    wired_in: .github/workflows/publish-image.yml (the launcher builds lost the call in #2475 and carry the release-racing marker instead)
     probe: script_exists=scripts/verify_release_commit_green.py
 
   - id: normative-changes
@@ -173,18 +173,25 @@ checks:
     wired_in: make rule-change-log-check; .github/workflows/ci.yml
     probe: make_target=rule-change-log-check
 
-  # --- declared as OFF: visible in the diff, with a reason ---
-  - id: prettier-frontend
-    verifies: Prettier formatting of frontend/src
-    rule: "-"
-    status: disabled
-    reason: >-
-      frontend/ has no prettier config, so the hook reformats 4-space files to
-      its 2-space defaults; CI skips it via SKIP=prettier-frontend,eslint in
-      ci.yml. Re-enable together with a committed .prettierrc.
-    wired_in: .pre-commit-config.yaml (skipped in ci.yml)
-    probe: none
+  # The two scheduled gates below are armed by repo variables that live in
+  # the repository settings, outside the tree. The probe can only prove the
+  # workflow file exists; whether the schedule is armed is read with
+  # `gh api repos/astrapi69/adaptive-learner/actions/variables`.
+  - id: nightly-mutation
+    verifies: frontend mutation testing on a schedule
+    rule: quality-checks.md#mutation-testing
+    status: active
+    wired_in: .github/workflows/mutation-frontend.yml (schedule armed by the repo variable ENABLE_NIGHTLY_MUTATION="true"; workflow_dispatch always runs)
+    probe: script_exists=.github/workflows/mutation-frontend.yml
 
+  - id: nightly-webkit
+    verifies: real-WebKit layout gate on a schedule
+    rule: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
+    status: active
+    wired_in: .github/workflows/webkit-gate.yml (schedule armed by the repo variable ENABLE_NIGHTLY_WEBKIT="true"; workflow_dispatch and release/** pushes always run, #1843)
+    probe: script_exists=.github/workflows/webkit-gate.yml
+
+  # --- declared as OFF: visible in the diff, with a reason ---
   - id: eslint-precommit
     verifies: ESLint inside the pre-commit job
     rule: "-"
@@ -203,26 +210,6 @@ checks:
       wired with continue-on-error until the tree is fully formatted and the
       format-on-touch hook has caught up (ci.yml "Prettier check (non-blocking)").
     wired_in: .github/workflows/ci.yml
-    probe: none
-
-  - id: nightly-mutation
-    verifies: frontend mutation testing on a schedule
-    rule: quality-checks.md#mutation-testing
-    status: disabled
-    reason: >-
-      the scheduled run is a no-op unless the repo variable
-      ENABLE_NIGHTLY_MUTATION is "true"; manual workflow_dispatch always runs.
-    wired_in: .github/workflows/mutation-frontend.yml
-    probe: none
-
-  - id: nightly-webkit
-    verifies: real-WebKit layout gate on a schedule
-    rule: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    status: disabled
-    reason: >-
-      the scheduled run is gated behind ENABLE_NIGHTLY_WEBKIT (off by default);
-      workflow_dispatch and release/** pushes always run (#1843).
-    wired_in: .github/workflows/webkit-gate.yml
     probe: none
 
   - id: docs-umlaut-ratchet
