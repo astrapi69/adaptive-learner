@@ -42,6 +42,17 @@ words are written for this project, not just code comments.
   PR body is text too, not exempt because it isn't a code comment.
 - The body explains WHY, not WHAT - the diff already shows what changed.
 
+## Language of GitHub artifacts
+
+- Everything on GitHub is **English**, in every ecosystem repo: issue
+  and PR titles, bodies and comments, commit messages, release notes,
+  whatever language the triggering report was in. Quote German wording
+  only where the exact phrasing matters, marked as a quote.
+- German stays where the owner or the learner reads: explorations, the
+  journal, German help pages, i18n catalogs, lesson content.
+- Why: the issue list is what a visitor reads first; a list switching
+  language per issue reads as two projects (20/20 split, 2026-09-23).
+
 ## What this does NOT cover
 
 - Code formatting itself (ruff/Prettier/indentation) - `code-hygiene.md`.
