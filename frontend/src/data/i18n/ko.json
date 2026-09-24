@@ -2431,9 +2431,13 @@
         "empty": "이 코드 순서 연습에는 줄이 없습니다.",
         "indent_dec": "들여쓰기 줄이기",
         "indent_inc": "들여쓰기 늘리기",
+        "line_wrong_indent": "들여쓰기 {actual}, 정답 {expected}",
+        "line_wrong_position": "잘못된 위치",
         "result_correct": "정답!",
         "result_wrong": "아쉬워요 - 순서와 들여쓰기를 확인하세요.",
         "retry": "다시 시도",
+        "review_heading": "내 답",
+        "solution_heading": "정답",
         "submit": "답 확인"
       },
       "instruction": {

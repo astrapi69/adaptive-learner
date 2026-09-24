@@ -2260,9 +2260,13 @@ lesson:
       empty: "Diese Code-Sortier-Übung hat keine Zeilen."
       indent_dec: "Einrückung verringern"
       indent_inc: "Einrückung erhöhen"
+      line_wrong_indent: "Einrückung {actual}, erwartet {expected}"
+      line_wrong_position: "Falsche Position"
       result_correct: "Richtig!"
       result_wrong: "Nicht ganz - prüfe Reihenfolge und Einrückung."
       retry: "Nochmal versuchen"
+      review_heading: "Deine Antwort"
+      solution_heading: "Lösung"
       submit: "Antwort prüfen"
     instruction:
       matching:

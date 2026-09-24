@@ -2431,9 +2431,13 @@
         "empty": "Este ejercicio de código no tiene líneas.",
         "indent_dec": "Reducir sangría",
         "indent_inc": "Aumentar sangría",
+        "line_wrong_indent": "Sangría {actual}, se esperaba {expected}",
+        "line_wrong_position": "Posición incorrecta",
         "result_correct": "¡Correcto!",
         "result_wrong": "No del todo - revisa el orden y la sangría.",
         "retry": "Intentar de nuevo",
+        "review_heading": "Tu respuesta",
+        "solution_heading": "Solución",
         "submit": "Comprobar respuesta"
       },
       "instruction": {

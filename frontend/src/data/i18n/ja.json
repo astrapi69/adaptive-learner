@@ -2431,9 +2431,13 @@
         "empty": "このコード並べ替え問題には行がありません。",
         "indent_dec": "インデントを減らす",
         "indent_inc": "インデントを増やす",
+        "line_wrong_indent": "インデント {actual}、正しくは {expected}",
+        "line_wrong_position": "位置が違います",
         "result_correct": "正解!",
         "result_wrong": "惜しい - 順序とインデントを確認してください。",
         "retry": "もう一度",
+        "review_heading": "あなたの答え",
+        "solution_heading": "正解",
         "submit": "答えを確認"
       },
       "instruction": {
