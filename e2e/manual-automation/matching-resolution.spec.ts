@@ -99,6 +99,8 @@ test.describe("Matching resolution (#824/#825)", () => {
       "true",
     );
     await expect(page.getByTestId(/^matching-correct-hint-\d+$/)).toHaveCount(0);
+    // #3233 - "My answers" is ungraded: no own-answer rows either.
+    await expect(page.getByTestId(/^matching-your-answer-\d+$/)).toHaveCount(0);
     await page.getByTestId("matching-corrections").click();
     await expect(
       page.getByTestId(/^matching-correct-hint-\d+$/).first(),
