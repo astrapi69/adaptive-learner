@@ -3,10 +3,11 @@
  *
  * The post-check view state of the matching exercise, extracted from
  * MatchingExercise for the complexity gate. After the answer is checked
- * the learner toggles between their own graded answers ("user-answers"),
- * the same grid with the correct partner under each mistake
- * ("corrections", #3186) and the revealed solution ("solution"). Default
- * is the plain graded grid, which is what the columns render after submit.
+ * the learner toggles between their own answers ("user-answers"), the
+ * graded grid with the correct partner under each mistake ("corrections",
+ * #3186) and the revealed solution ("solution"). With the separate
+ * Corrections view, "My answers" shows the pairs exactly as the learner
+ * formed them, ungraded (#3233); the grading lives in "Corrections".
  */
 
 import {useRef, useState} from "react";
@@ -19,6 +20,9 @@ export interface MatchingPostCheckViewState {
     view: MatchingPostCheckView;
     /** Whether a wrong pair spells out its correct partner. */
     showCorrection: boolean;
+    /** Whether the grid shows the grading (red/green, feedback rows).
+     *  False only on "My answers" in the three-view layout (#3233). */
+    showGrading: boolean;
     /** The animate flag for MatchingResolution: true only on the first
      *  reveal of the solution (#977). */
     animateSolution: boolean;
@@ -26,7 +30,7 @@ export interface MatchingPostCheckViewState {
     /** Undefined in the two-view layout, so the toggle hides the button. */
     showCorrections: (() => void) | undefined;
     showSolution: () => void;
-    /** Back to the plain graded view, animation re-armed (Try again). */
+    /** Back to the "My answers" view, animation re-armed (Try again). */
     resetView: () => void;
 }
 
@@ -67,8 +71,13 @@ export function useMatchingPostCheckView(
         setView("solution");
     };
 
+    // Corrections view, two-view layout and toggle-less modes (exam).
+    const graded =
+        view !== "user-answers" || !separateCorrections || !showAnswerToggle;
+
     return {
         view,
+        showGrading: graded,
         // Correct partners show in the Corrections view, in the two-view
         // layout, and whenever the mode hides the toggle (exam): there the
         // inline corrections are the only way to see the right answer.

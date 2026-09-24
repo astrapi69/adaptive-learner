@@ -295,7 +295,15 @@ function MatchingExercise(
      *  tiles of a pair share a stable color + number. Only consulted
      *  before submit (graded tiles switch to correct/wrong colors). */
     const [slotByLeft, setSlotByLeft] = useState<Map<number, number>>(
-        () => new Map(),
+        () =>
+            // #3233 - a reviewed answer seeds one slot per pair, so the
+            // ungraded "My answers" view can show which tiles were paired.
+            new Map(
+                (reviewedMatching?.matches ?? []).map(([leftIdx], slot) => [
+                    leftIdx,
+                    slot,
+                ]),
+            ),
     );
     /** Wrong-flash trigger for visual feedback. */
     const [wrongFlash, setWrongFlash] = useState<{
@@ -312,6 +320,7 @@ function MatchingExercise(
     const {
         view,
         showCorrection,
+        showGrading,
         animateSolution,
         showUserAnswers,
         showCorrections,
@@ -510,6 +519,13 @@ function MatchingExercise(
         enabled: !submitted && matches.size > 0,
     });
 
+    const isAllCorrect = result !== null && result.correct === pairs.length;
+    /** #3233 - the columns render graded only where the grading belongs:
+     *  "My answers" (three-view layout) shows the pairs as the learner
+     *  formed them. A fully correct answer has no toggle, so it stays
+     *  graded. */
+    const gradedColumns = submitted && (showGrading || isAllCorrect);
+
     if (pairs.length === 0) {
         return (
             <div data-testid="matching-empty">
@@ -550,7 +566,7 @@ function MatchingExercise(
             <MatchingPostCheckToggle
                 submitted={submitted}
                 showAnswerToggle={showAnswerToggle}
-                isAllCorrect={result !== null && result.correct === pairs.length}
+                isAllCorrect={isAllCorrect}
                 onAdvance={onAdvance}
                 advanceLabel={advanceLabel}
                 view={view}
@@ -581,7 +597,7 @@ function MatchingExercise(
                                 state={computeLeftTileState(tile, {
                                     selectedLeft,
                                     matches,
-                                    submitted,
+                                    submitted: gradedColumns,
                                     slotByLeft,
                                     pairs,
                                     productive,
@@ -614,7 +630,7 @@ function MatchingExercise(
                                     pairedRightIndices,
                                     matches,
                                     slotByLeft,
-                                    submitted,
+                                    submitted: gradedColumns,
                                     wrongFlash,
                                     pairs,
                                     productive,
