@@ -498,17 +498,13 @@ jobs:
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run hooks on all files
-        # SKIP the format-on-touch Prettier hook (#254): it --writes whatever
-        # files it's given, and --all-files passes the whole tree — which
-        # (step 1, ~90% unformatted) would reformat everything and fail. It's
-        # a per-commit incremental hook, not an all-files gate; the
-        # non-blocking `format:check` step in frontend-tests reports drift.
-        # `eslint` is skipped too (#268): the hook runs `npx eslint src/`,
-        # which needs frontend/node_modules — this job never runs `npm ci`,
-        # so it would fail with `Cannot find package '@eslint/js'`. The
-        # Frontend Tests job already runs ESLint with deps installed.
+        # SKIP `eslint` (#268): the hook runs `npx eslint src/`, which needs
+        # frontend/node_modules, and this job installs no frontend deps, so it would
+        # fail with `Cannot find package '@eslint/js'`. The Frontend Tests
+        # job already runs ESLint with deps installed. (The Prettier hook
+        # this list also named was removed in #318.)
         env:
-          SKIP: prettier-frontend,eslint
+          SKIP: eslint
         run: pre-commit run --all-files --show-diff-on-failure
 
   lint-and-type-check:
