@@ -130,6 +130,21 @@ test.describe("Adaptive lesson — generation + completion", () => {
       // Generated: transparency panel shows focus areas, then play
       // through to the scored summary.
       await expect(page.getByTestId("adaptive-transparency")).toBeVisible();
+      // #3224: the first screen is the theory page the generator borrows
+      // from the source lesson. The seed answers far more than 3 exercises
+      // of lesson 1 wrong, so the analyzer forms a lesson cluster and the
+      // theory step leads. It shows its content with Next alone, never the
+      // dispatcher's "missing its type" placeholder; playAdaptive then
+      // moves past it with Next like any step without an exercise.
+      // Not reached today: the journey seeds no learner, errors record per
+      // user, so the route renders the empty state below. Probed while
+      // fixing #3224: with a seeded learner these four checks pass, then
+      // playAdaptive stalls on a matching step at 3 of 4 pairs (a defect
+      // of its own, not of the theory page).
+      await expect(page.getByTestId("adaptive-lesson-theory-body")).toBeVisible();
+      await expect(page.getByTestId("adaptive-lesson-next")).toBeVisible();
+      await expect(page.getByTestId("adaptive-lesson-check")).toHaveCount(0);
+      await expect(page.getByTestId("lesson-exercise-placeholder-missing")).toHaveCount(0);
       await playAdaptive(page, 40);
       await expect(page.getByTestId("adaptive-lesson-summary")).toBeVisible({
         timeout: 15000,

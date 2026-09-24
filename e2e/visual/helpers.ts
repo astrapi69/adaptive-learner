@@ -677,9 +677,10 @@ export async function seedLearner(page: Page): Promise<void> {
  * Download the bundled set and play its first lesson. ``stopAt`` controls
  * where the playthrough halts:
  *   - "summary": answer every step, land on the lesson summary.
- *   - "matching-result": pair the FIRST matching exercise with one
- *     deliberate wrong pair, check it (showing correct + wrong feedback),
- *     and stop there.
+ *   - "matching-result": pair the FIRST matching exercise with a
+ *     deliberate wrong rotation of ``wrongPairs`` pairs (default 2, the
+ *     one swapped pair), check it (showing correct + wrong feedback), and
+ *     stop there.
  * Returns true if the requested state was reached, false otherwise (so the
  * caller can skip rather than commit a meaningless baseline).
  */
@@ -718,6 +719,7 @@ export async function openFirstBundledLesson(page: Page): Promise<void> {
 export async function playBundledLesson(
     page: Page,
     stopAt: "summary" | "matching-result",
+    {wrongPairs = 2}: {wrongPairs?: number} = {},
 ): Promise<boolean> {
     await openFirstBundledLesson(page);
 
@@ -726,7 +728,7 @@ export async function playBundledLesson(
 
         const isMatching = (await page.getByTestId("matching-exercise").count()) > 0;
         if (isMatching && stopAt === "matching-result") {
-            const reached = await pairMatchingWithOneWrong(page);
+            const reached = await pairMatchingWithWrongCycle(page, wrongPairs);
             if (reached) return true;
         }
 
@@ -791,27 +793,32 @@ export async function answerCurrentStep(page: Page): Promise<void> {
 }
 
 /**
- * Pair a matching exercise so that at least one pair is WRONG and one is
- * correct, then check — leaving the post-submit feedback (green + red) on
- * screen. Returns false when the grid is too small to make a mixed result.
+ * Pair a matching exercise so that the first ``cycle`` pairs are WRONG and
+ * the rest correct, then check, leaving the post-submit feedback (green +
+ * red) on screen. Returns false when the grid is too small for the cycle.
+ *
+ * The wrong pairs form a rotation (left ``i`` -> right ``(i + 1) % cycle``;
+ * the testids carry the ORIGINAL pair index, so any other right is wrong):
+ * the default ``cycle`` of 2 is the one swapped pair every lesson-matching
+ * view shows; the adaptive seed rotates 3, because the analyzer needs 3
+ * errors from one lesson before it forms a cluster, and only a cluster
+ * makes the generator borrow the source lesson's theory step (#3224).
  *
  * Inside a lesson the MatchingExercise is rendered ``controlled`` (see
  * ``Lesson.tsx``), so its internal ``matching-submit`` button is NOT
- * rendered — submission is driven by the shared external ``lesson-check``
+ * rendered: submission is driven by the shared external ``lesson-check``
  * button (``exerciseRef.submit()`` -> ``setSubmitted(true)``), which then
  * renders ``matching-result``. Issue #270.
  */
-async function pairMatchingWithOneWrong(page: Page): Promise<boolean> {
+async function pairMatchingWithWrongCycle(page: Page, cycle: number): Promise<boolean> {
     const lefts = page.getByTestId(/^matching-left-\d+$/);
     const n = await lefts.count();
-    if (n < 2) return false;
-    // First left -> a non-matching right (wrong); the rest -> their own
-    // index (correct), so the result shows both states.
-    await page.getByTestId("matching-left-0").click();
-    await page.getByTestId("matching-right-1").click();
-    await page.getByTestId("matching-left-1").click();
-    await page.getByTestId("matching-right-0").click();
-    for (let j = 2; j < n; j++) {
+    if (n < cycle) return false;
+    for (let i = 0; i < cycle; i++) {
+        await page.getByTestId(`matching-left-${i}`).click();
+        await page.getByTestId(`matching-right-${(i + 1) % cycle}`).click();
+    }
+    for (let j = cycle; j < n; j++) {
         await page.getByTestId(`matching-left-${j}`).click();
         await page.getByTestId(`matching-right-${j}`).click();
     }
@@ -821,18 +828,18 @@ async function pairMatchingWithOneWrong(page: Page): Promise<boolean> {
     await expect(page.getByTestId("matching-result")).toBeVisible({
         timeout: 5_000,
     });
-    // #1785 — "matching-result visible" is NOT the settled graded state:
+    // #1785 - "matching-result visible" is NOT the settled graded state:
     // the per-pair result rows still expand the page height afterwards, so
     // a fullPage shot fired here captures mid-reflow (the theme-matrix
-    // flake). Pin the LAST wrong-pair hint row (pairs 0+1 are the swapped
-    // ones) and the last correct-pair row, then wait for the page height
-    // to stop moving. Same determinism class as #1696.
+    // flake). Pin the LAST wrong-pair hint row and the last correct-pair
+    // row, then wait for the page height to stop moving. Same determinism
+    // class as #1696.
     // #3186 - the default post-check view is "My answers" (no correction
     // rows), so pin the learner's own-answer row instead.
-    await expect(page.getByTestId("matching-your-answer-1")).toBeVisible({
+    await expect(page.getByTestId(`matching-your-answer-${cycle - 1}`)).toBeVisible({
         timeout: 5_000,
     });
-    if (n > 2) {
+    if (n > cycle) {
         await expect(
             page.getByTestId(`matching-pair-correct-${n - 1}`),
         ).toBeVisible({timeout: 5_000});
@@ -1646,20 +1653,33 @@ export async function gotoEndlessSession(page: Page): Promise<boolean> {
 }
 
 /**
- * Seed a learner, record SRS error rows with the wrong matching pair and
- * open the set's adaptive lesson on its first EXERCISE (EXP-052 slice 3):
- * the session header with the F-115 transparency block under the title,
- * the shared progress bar, the lesson footer with Previous. The generator
- * draws no randomness (``lesson-generator.ts``), so the steps follow the
- * analysis of the seeded rows. It may open with a theory step borrowed
- * from the source lesson; the helper steps past it, the shot is about the
- * runner around an exercise. The route is re-entered while the lesson is
- * not generated yet (the error write can still be landing), the same
- * bounded retry as ``gotoReviewSession``.
+ * Seed a learner, record SRS error rows with three wrong matching pairs and
+ * open the set's adaptive lesson on its FIRST screen, the one a learner
+ * sees (EXP-052 slice 3, #3224): the session header with the F-115
+ * transparency block under the title, the shared progress bar, the theory
+ * page the generator borrows from the source lesson, and the footer with
+ * Previous and Next (no Check: a theory page has nothing to grade).
+ *
+ * Three wrong pairs, not the lesson views' one swapped pair: the analyzer
+ * forms a cluster only from 3 errors of one lesson, and only a cluster
+ * makes the generator borrow the theory step (``lesson-generator.ts``,
+ * ``_theoryStepForCluster``). With two errors the lesson had no theory
+ * page, and the capture never showed the state every real adaptive lesson
+ * opens on; the old helper additionally clicked past any leading
+ * non-exercise step, which is how "This exercise is missing its type" on
+ * that page stayed invisible (#3224).
+ *
+ * Fails closed on the first screen: a missing theory page, a Check in the
+ * footer or the missing-type placeholder throws instead of skipping. The
+ * generator draws no randomness, so the steps follow the analysis of the
+ * seeded rows. The route is re-entered while the lesson is not generated
+ * yet (the error write can still be landing), the same bounded retry as
+ * ``gotoReviewSession``. The first exercise is its own named step:
+ * {@link gotoAdaptiveExercise}.
  */
 export async function gotoAdaptiveLesson(page: Page): Promise<boolean> {
     await seedLearner(page);
-    if (!(await playBundledLesson(page, "matching-result"))) return false;
+    if (!(await playBundledLesson(page, "matching-result", {wrongPairs: 3}))) return false;
     await waitForSrsQuiescence(page, {expectRows: true});
     for (let attempt = 0; attempt < 3; attempt++) {
         await page.goto(`/adaptive-lesson/${SET_ID}`);
@@ -1671,20 +1691,31 @@ export async function gotoAdaptiveLesson(page: Page): Promise<boolean> {
             // Lesson not generated yet - re-enter the route.
             continue;
         }
-        return reachAdaptiveExercise(page);
+        await assertAdaptiveTheoryPage(page);
+        return true;
     }
     return false;
 }
 
-/** Step past leading non-exercise steps until the two-phase Check shows. */
-async function reachAdaptiveExercise(page: Page): Promise<boolean> {
-    const check = page.getByTestId("adaptive-lesson-check");
-    for (let i = 0; i < 3 && !(await check.count()); i++) {
-        const next = page.getByTestId("adaptive-lesson-next");
-        if (!(await next.count())) return false;
-        await next.click();
-    }
-    await expect(check).toBeVisible({timeout: 5_000});
+/** The adaptive lesson's opening theory page, asserted (never skipped past). */
+async function assertAdaptiveTheoryPage(page: Page): Promise<void> {
+    await expect(page.getByTestId("adaptive-lesson-theory-body")).toBeVisible({timeout: 5_000});
+    await expect(page.getByTestId("adaptive-lesson-next")).toBeVisible();
+    await expect(page.getByTestId("adaptive-lesson-check")).toHaveCount(0);
+    await expect(page.getByTestId("lesson-exercise-placeholder-missing")).toHaveCount(0);
+}
+
+/**
+ * The adaptive lesson's first EXERCISE, one Next after the opening theory
+ * page {@link gotoAdaptiveLesson} asserts: the runner around an exercise,
+ * with the two-phase Check in the footer. A named step of its own, so the
+ * theory page is shown or passed on purpose, never stepped around.
+ */
+export async function gotoAdaptiveExercise(page: Page): Promise<boolean> {
+    if (!(await gotoAdaptiveLesson(page))) return false;
+    await page.getByTestId("adaptive-lesson-next").click();
+    await expect(page.getByTestId("adaptive-lesson-theory-body")).toHaveCount(0);
+    await expect(page.getByTestId("adaptive-lesson-check")).toBeVisible({timeout: 5_000});
     return true;
 }
 
