@@ -11,7 +11,9 @@
  * The chrome every run shares under the SAME triggering condition (back
  * to dashboard, the friendly invalid-data line) reads ``runner.*``, its
  * ONE catalog home (#3203); the namespace names only the runner's own
- * title and loading line; everything whose condition or content differs
+ * loading line; the title is the policy's ``pageTitleKey`` (slice 3: the
+ * replay's namespace has no page_title, so a derived key fell back to the
+ * English "Lesson"); everything whose condition or content differs
  * per runner comes through the policy keys: the empty body and the
  * load-failed line (WHY this run shows nothing), the not-cached body (a
  * missing set for the session runners, a missing file inside a possibly
@@ -30,6 +32,7 @@
  *     <RunnerStatusView
  *       testIdPrefix="review"
  *       i18nNamespace="review"
+ *       pageTitleKey={policy.pageTitleKey}
  *       emptyBodyKey={policy.emptyBodyKey}
  *       loadFailedKey={policy.loadFailedKey}
  *       notCachedBodyKey={policy.notCachedBodyKey}
@@ -66,8 +69,10 @@ export function resolveRunnerStatusKind(
 
 export interface RunnerStatusViewProps {
   testIdPrefix: RunnerTestIdPrefix;
-  /** Namespace of the runner's own keys (``page_title``, ``loading``). */
+  /** Namespace of the runner's own loading line (``{ns}.loading``). */
   i18nNamespace: string;
+  /** ``RunnerPolicy.pageTitleKey``: the runner's name, the screens' title. */
+  pageTitleKey: string;
   /** ``RunnerPolicy.emptyBodyKey``; ``null`` when the source never reports empty. */
   emptyBodyKey: string | null;
   /** ``RunnerPolicy.loadFailedKey``. */
@@ -92,12 +97,14 @@ const EN_FALLBACKS: Record<string, string> = {
     "This set isn't downloaded yet. Open the content browser to download it first.",
   "lesson.error.missing_params": "No lesson selected. Browse content sets to pick one.",
   "runner.error.missing_params": "No content set selected.",
+  "lesson.next_step.error_replay": "Retry Errors",
 };
 
 /** Renders the missing / loading / empty / not-cached / error status screen. */
 export default function RunnerStatusView({
   testIdPrefix,
   i18nNamespace,
+  pageTitleKey,
   emptyBodyKey,
   loadFailedKey,
   notCachedBodyKey,
@@ -109,7 +116,7 @@ export default function RunnerStatusView({
   const navigate = useNavigate();
   const devMode = useDevMode();
   const testId = (suffix: string) => `${testIdPrefix}-${suffix}`;
-  const pageTitle = t(`${i18nNamespace}.page_title`, "Lesson");
+  const pageTitle = t(pageTitleKey, EN_FALLBACKS[pageTitleKey] ?? "Lesson");
   const openBrowser = t("lesson.action.open_browser", "Open content browser");
 
   if (kind === "missing") {

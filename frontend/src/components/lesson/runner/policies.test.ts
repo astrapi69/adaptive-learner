@@ -38,6 +38,7 @@ const RATIFIED_COLUMNS = [
   "clearHints",
   "persistProgress",
   "mode",
+  "pageTitleKey",
   "emptyBodyKey",
   "loadFailedKey",
   "notCachedBodyKey",
@@ -70,7 +71,7 @@ describe("runner policies (ratified matrix 2026-09-23)", () => {
     }
   });
 
-  it.each(ROWS)("%s carries exactly the seventeen ratified columns", (_prefix, policy) => {
+  it.each(ROWS)("%s carries exactly the eighteen policy columns", (_prefix, policy) => {
     expect(Object.keys(policy).sort()).toEqual(RATIFIED_COLUMNS);
   });
 
@@ -176,6 +177,7 @@ describe("per-runner status keys (#3203)", () => {
 
   it.each(ROWS)("%s status keys resolve in every catalog", (_prefix, policy) => {
     const keys = [
+      policy.pageTitleKey,
       policy.emptyBodyKey,
       policy.loadFailedKey,
       policy.notCachedBodyKey,
@@ -199,6 +201,30 @@ describe("per-runner status keys (#3203)", () => {
     expect(SHUFFLE_POLICY.loadFailedKey).toBe("shuffle.error.load_failed");
     expect(ENDLESS_POLICY.loadFailedKey).toBe("endless.error.load_failed");
     expect(ADAPTIVE_POLICY.loadFailedKey).toBe("adaptive.error.load_failed");
+  });
+
+  // EXP-052 slice 3: the status screens used to derive their title from
+  // the namespace (``${ns}.page_title``). For ErrorReplay that is
+  // ``lesson.error_replay.page_title``, which no catalog has, so the empty
+  // screen fell back to the English "Lesson" in every language. The title
+  // is a policy key like the four below; the replay points at the name
+  // its page has always shown, the others keep their own page title.
+  it("every runner titles its status screens with its own name", () => {
+    expect(ROWS.map(([, policy]) => policy.pageTitleKey)).toEqual([
+      "lesson.page_title",
+      "review.page_title",
+      "shuffle.page_title",
+      "endless.page_title",
+      "adaptive.page_title",
+      "lesson.next_step.error_replay",
+    ]);
+  });
+
+  it("reproduction: the namespace-derived replay title exists in no catalog", () => {
+    const derived = `${ERROR_REPLAY_POLICY.i18nNamespace}.page_title`;
+    for (const [lang, catalog] of catalogs) {
+      expect(lookup(catalog, derived), `${lang}: ${derived}`).toBeUndefined();
+    }
   });
 
   it("ErrorReplay reads the existing replay empty text and the lesson's load-failed line", () => {

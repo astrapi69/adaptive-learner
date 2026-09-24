@@ -30,6 +30,7 @@ export const LESSON_POLICY: RunnerPolicy = Object.freeze({
   clearHints: true,
   persistProgress: true,
   mode: "inherit",
+  pageTitleKey: "lesson.page_title",
   emptyBodyKey: null,
   loadFailedKey: "lesson.error.load_failed",
   notCachedBodyKey: "lesson.not_cached_body",
@@ -51,6 +52,7 @@ export const REVIEW_POLICY: RunnerPolicy = Object.freeze({
   clearHints: true,
   persistProgress: false,
   mode: "practice",
+  pageTitleKey: "review.page_title",
   emptyBodyKey: "review.empty_body",
   loadFailedKey: "review.error.load_failed",
   notCachedBodyKey: "runner.not_cached_body",
@@ -72,6 +74,7 @@ export const SHUFFLE_POLICY: RunnerPolicy = Object.freeze({
   clearHints: true,
   persistProgress: false,
   mode: "practice",
+  pageTitleKey: "shuffle.page_title",
   emptyBodyKey: "shuffle.empty_body",
   loadFailedKey: "shuffle.error.load_failed",
   notCachedBodyKey: "runner.not_cached_body",
@@ -98,6 +101,7 @@ export const ENDLESS_POLICY: RunnerPolicy = Object.freeze({
   clearHints: true,
   persistProgress: false,
   mode: "practice",
+  pageTitleKey: "endless.page_title",
   emptyBodyKey: "endless.empty_body",
   loadFailedKey: "endless.error.load_failed",
   notCachedBodyKey: "runner.not_cached_body",
@@ -120,6 +124,7 @@ export const ADAPTIVE_POLICY: RunnerPolicy = Object.freeze({
   clearHints: true,
   persistProgress: false,
   mode: "practice",
+  pageTitleKey: "adaptive.page_title",
   emptyBodyKey: "adaptive.empty_body",
   loadFailedKey: "adaptive.error.load_failed",
   notCachedBodyKey: "runner.not_cached_body",
@@ -127,8 +132,10 @@ export const ADAPTIVE_POLICY: RunnerPolicy = Object.freeze({
 });
 
 /** Error replay opened from a lesson summary; ``"back-button"`` returns
- *  to that lesson (a route only the page knows), the countdown ring
- *  arrives through ``headerExtra``. */
+ *  to that lesson (a route only the source knows, ``RunnerSource.backTo``),
+ *  the countdown ring arrives through ``headerExtra``. ``prevStep`` is a
+ *  read-only look back: the #1790 lock keeps an answered step answered.
+ *  The title is the replay's own name; its namespace has no page_title. */
 export const ERROR_REPLAY_POLICY: RunnerPolicy = Object.freeze({
   testIdPrefix: "error-replay",
   i18nNamespace: "lesson.error_replay",
@@ -143,6 +150,7 @@ export const ERROR_REPLAY_POLICY: RunnerPolicy = Object.freeze({
   clearHints: true,
   persistProgress: false,
   mode: "practice",
+  pageTitleKey: "lesson.next_step.error_replay",
   emptyBodyKey: "lesson.error_replay.empty",
   loadFailedKey: "lesson.error.load_failed",
   notCachedBodyKey: "runner.not_cached_body",
