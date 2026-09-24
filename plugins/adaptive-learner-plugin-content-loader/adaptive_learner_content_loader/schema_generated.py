@@ -53,7 +53,7 @@ class ExerciseType(str, Enum):
 
     EXP-001 + EXP-006: the four base types ship in Phase 43-45.
     Phase 52D / v1.35.0 added CLOZE (fill-in-the-blank with
-    ``___`` markers) — see the schema_version bump in
+    ``___`` markers) - see the schema_version bump in
     ``models.py``. Adding a sixth type (ordering, drag-image-
     pair, etc.) requires a minor schema_version bump and a new
     enum value plus its renderer.
@@ -114,8 +114,7 @@ class InlineExample(BaseModel):
     """
     One inline worked example on a theory step or exercise (schema v1.5).
 
-    An inline example carries REAL content the learner reads in place —
-    a sample sentence (language lessons) or a code snippet with syntax
+    An inline example carries REAL content the learner reads in place - a sample sentence (language lessons) or a code snippet with syntax
     highlighting (programming lessons). This is DISTINCT from
     ``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an
     external illustration: ``example_url`` is the LINK variant,
@@ -156,7 +155,7 @@ class LessonResource(BaseModel):
     section after the lesson summary. Optional + additive, so
     pre-EXP-029 lessons load unchanged. Added to the authoritative
     schema (EXP-039) so the JSON-Schema / generated TS types cover
-    it — previously this shape lived only in the frontend
+    it - previously this shape lived only in the frontend
     ``ContentLessonResource`` interface, and a lesson carrying
     ``resources`` was rejected by ``extra="forbid"`` here.
     """
@@ -258,13 +257,13 @@ class TokenRole(str, Enum):
     Phase 52I / v1.35.0 / P-130. Annotates individual tokens
     inside a card's ``front`` so the v1.35.0+ cloze generator
     can pick a semantically-meaningful blank instead of a
-    position-based one. Optional field on Card — old content
+    position-based one. Optional field on Card - old content
     without token_roles still validates and the generator
     falls back to a positional heuristic.
 
     Closed enum to keep author input disciplined. Adding a
     role (e.g. ``pronoun``, ``conjunction``, ``auxiliary``)
-    is a minor schema_version bump — extending an open enum
+    is a minor schema_version bump - extending an open enum
     silently would let typos masquerade as valid roles and
     the generator would skip them without warning.
     """
@@ -284,7 +283,7 @@ class CardTokenRole(BaseModel):
 
     Phase 52I / v1.35.0 / P-130. The cloze generator looks up
     its target blank by matching ``token`` against the
-    ``ElementError.element_key`` — when a role is present, the
+    ``ElementError.element_key`` - when a role is present, the
     generator can pick a same-role distractor pool instead of
     a position-based heuristic.
 
@@ -320,7 +319,7 @@ class ClozeBlank(BaseModel):
     is unambiguous at render time.
 
     ``accept`` carries the per-blank canonical + acceptable
-    variants — the renderer reuses FreeText's ``isFreeTextCorrect``
+    variants - the renderer reuses FreeText's ``isFreeTextCorrect``
     matcher (NFC-normalised + Levenshtein <= 1) so authors only
     need to enumerate semantic variants (gendered article,
     capitalisation, et cetera), not typos.
@@ -424,7 +423,7 @@ class Card(BaseModel):
     Convention: ``card.id`` is unique within the lesson, not
     globally. Cross-lesson card sharing happens via a
     separate ``shared/`` directory inside the set (P-111
-    territory — not yet implemented).
+    territory - not yet implemented).
     """
 
     model_config = ConfigDict(
@@ -489,7 +488,7 @@ class Card(BaseModel):
     """
     notes: str | None = Field(None, max_length=2000, title='Notes')
     """
-    Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings — anything that helps long-term retention.
+    Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings - anything that helps long-term retention.
     """
     tags: list[SlugId] = Field([], max_length=20, title='Tags', validate_default=True)
     """
@@ -653,7 +652,7 @@ class LessonStep(BaseModel):
     """
     examples: list[InlineExample] | None = Field(None, max_length=20, title='Examples')
     """
-    THEORY: optional inline worked examples rendered under the step body (schema v1.5, additive). DISTINCT from ``example_url``: that links OUT to an external illustration, ``examples`` carries the example content INLINE (a sample sentence, or a syntax-highlighted code snippet — see ``InlineExample.language``). The two may coexist on one step. Additive + optional; steps without ``examples`` validate unchanged.
+    THEORY: optional inline worked examples rendered under the step body (schema v1.5, additive). DISTINCT from ``example_url``: that links OUT to an external illustration, ``examples`` carries the example content INLINE (a sample sentence, or a syntax-highlighted code snippet - see ``InlineExample.language``). The two may coexist on one step. Additive + optional; steps without ``examples`` validate unchanged.
     """
     exercise: Exercise | None = None
     """
@@ -691,8 +690,7 @@ class Lesson(BaseModel):
     """
     One lesson in a content set (Phase 43 / 2B-lesson).
 
-    A lesson is the unit a user works through end-to-end —
-    typically 5-15 minutes of content. The viewer (Phase 44)
+    A lesson is the unit a user works through end-to-end - typically 5-15 minutes of content. The viewer (Phase 44)
     walks the steps in order; SRS (Phase 46) tracks the
     cards referenced by each exercise.
 
@@ -760,7 +758,7 @@ class Lesson(BaseModel):
     """
     target_language: str | None = Field(None, title='Target Language')
     """
-    Optional BCP-47 code of the language taught (Phase 60 / v1.44.0). Mirrors the parent set's ``target_language``; lets an exported standalone lesson carry its own pair. Absent on pre-v1.2 lessons — the parent set is authoritative.
+    Optional BCP-47 code of the language taught (Phase 60 / v1.44.0). Mirrors the parent set's ``target_language``; lets an exported standalone lesson carry its own pair. Absent on pre-v1.2 lessons - the parent set is authoritative.
     """
     title: str = Field(..., max_length=200, min_length=1, title='Title')
     """
