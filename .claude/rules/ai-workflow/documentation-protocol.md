@@ -91,24 +91,26 @@ IMMEDIATELY when a phase is completed. Do not accumulate in CLAUDE.md.
 
 ## ROADMAP priority tiers
 
-`docs/ROADMAP.md` and `docs/backlog.md` are sorted by priority. Section headers `## P0` through `## P5` mark the tiers, top to bottom; a `## Blocked / Upstream Wait` section sits between P5 and the archive link.
+`docs/ROADMAP.md` and `docs/backlog.md` order planned work by phase (focus / `Jetzt`, next, later); other items sit in the `P3` to `P5` sections below, then `Blocked / Upstream Wait`.
+
+The tier, also the `P0`..`P5` issue label, is urgency, worked top to bottom (`github-issue-policy.md`). Examples illustrate, they do not define.
 
 | Tier | Meaning |
 |------|---------|
-| P0 | Deadline pressure, active blocker, security issue, or production-data risk. "Do this now." |
-| P1 | Architecture / hygiene debt. Code-rule violations, test isolation gaps, things that would block a clean release. |
-| P2 | High-value user features. Anything moving AdaptiveLearner from "toy to serious tool". |
-| P3 | Infrastructure / quality. Test coverage, CI / tooling, internal refactors with no user-visible effect. |
-| P4 | Roadmap / future phases. Items deliberately deferred to a later phase. |
-| P5 | Speculative / nice-to-have. No concrete trigger or user demand. |
-| Blocked / Upstream Wait | Items waiting on an external trigger (npm publish, paid-API access, hardware availability, user report). NOT P0 even when critical. |
+| P0 | Now. E.g. a deadline, an active blocker, a security issue, a risk to user data. |
+| P1 | Next: blocks a clean release, or raises the cost of every later change. E.g. a red develop, architecture or hygiene debt, test isolation gaps. |
+| P2 | Soon: users can notice it. E.g. a visible malfunction, a high-value feature. |
+| P3 | When capacity allows: no user can notice it. E.g. tests, CI, tooling, internal refactors. |
+| P4 | Deliberately deferred to a later phase. |
+| P5 | Speculative: no concrete trigger or user demand. |
+| Blocked / Upstream Wait | Waiting on an external trigger (npm publish, paid-API access, hardware, user report). NOT P0 even when critical. |
 
 Within each tier, sub-order by:
 1. Smaller scope first (faster wins).
 2. Items unblocking other items first.
 3. Alphabetical by ID as final tiebreaker.
 
-Document the tier of each item by section header. Do NOT add P-prefixes to the IDs themselves (T-01 stays T-01, not P2-T-01). The tier is a section header, the ID is the task.
+In the `P3` to `P5` sections the section header is the tier. Do NOT add P-prefixes to IDs (T-01 stays T-01, not P2-T-01).
 
 ## Backlog-as-pointer convention
 
