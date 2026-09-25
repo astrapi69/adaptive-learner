@@ -275,6 +275,10 @@ class TestPassesOnACleanTree:
     def test_assigned_fixture_is_clean(self, tmp_path: Path) -> None:
         assert check(_assigned(tmp_path)).findings == []
 
+    def test_the_shipped_plans_are_clean(self) -> None:
+        result = check()
+        assert result.findings == [], result.findings[:10]
+
 
 # --- 3. it fails closed when its basis is missing --------------------------
 
