@@ -25,16 +25,16 @@ cd launcher
 python3 -m adaptive_learner_launcher
 ```
 
-- [ ] Window appears immediately (no empty screen)
-- [ ] Docker check is the first step
-- [ ] If Docker is not running: notice + "Start Docker" button
-- [ ] If Docker is running: progress is visible
-- [ ] Step 1: "Check Docker ✓"
-- [ ] Step 2: "Download image..." (spinner)
-- [ ] Step 3: "Start container..." (spinner)
-- [ ] Step 4: "App is ready!" + "Open in browser" button
-- [ ] Browser opens on the correct port
-- [ ] Window stays open until the user closes it
+- [ ] LTC-0001 Window appears immediately (no empty screen)
+- [ ] LTC-0002 Docker check is the first step
+- [ ] LTC-0003 If Docker is not running: notice + "Start Docker" button
+- [ ] LTC-0004 If Docker is running: progress is visible
+- [ ] LTC-0005 Step 1: "Check Docker ✓"
+- [ ] LTC-0006 Step 2: "Download image..." (spinner)
+- [ ] LTC-0007 Step 3: "Start container..." (spinner)
+- [ ] LTC-0008 Step 4: "App is ready!" + "Open in browser" button
+- [ ] LTC-0009 Browser opens on the correct port
+- [ ] LTC-0010 Window stays open until the user closes it
 
 ## State 2: App already running
 
@@ -46,10 +46,10 @@ docker ps | grep adaptive-learner
 python3 -m adaptive_learner_launcher
 ```
 
-- [ ] Window shows "Adaptive Learner running on port XXXX"
-- [ ] "Open in browser" button -> opens the app
-- [ ] "Stop" button -> container stops
-- [ ] "Uninstall" button -> confirmation -> removes container
+- [ ] LTC-0011 Window shows "Adaptive Learner running on port XXXX"
+- [ ] LTC-0012 "Open in browser" button -> opens the app
+- [ ] LTC-0013 "Stop" button -> container stops
+- [ ] LTC-0014 "Uninstall" button -> confirmation -> removes container
 
 ## State 3: App installed but stopped
 
@@ -61,9 +61,9 @@ docker stop adaptive-learner
 python3 -m adaptive_learner_launcher
 ```
 
-- [ ] Window shows "Installed but stopped"
-- [ ] "Start" button -> container starts + app opens
-- [ ] "Uninstall" button -> removes container
+- [ ] LTC-0015 Window shows "Installed but stopped"
+- [ ] LTC-0016 "Start" button -> container starts + app opens
+- [ ] LTC-0017 "Uninstall" button -> removes container
 
 ## State 4: Port conflict
 
@@ -75,9 +75,9 @@ python3 -c "import http.server; http.server.HTTPServer(('', 8501), None).serve_f
 python3 -m adaptive_learner_launcher
 ```
 
-- [ ] Launcher detects the port conflict
-- [ ] Suggests an alternative port
-- [ ] User can change the port
+- [ ] LTC-0018 Launcher detects the port conflict
+- [ ] LTC-0019 Suggests an alternative port
+- [ ] LTC-0020 User can change the port
 
 ## State 5: Docker not installed / not started
 
@@ -88,17 +88,17 @@ python3 -m adaptive_learner_launcher
 python3 -m adaptive_learner_launcher
 ```
 
-- [ ] FIRST dialog: "Docker Desktop must be started"
-- [ ] "Start Docker" or "Retry" button
-- [ ] No further step until Docker is running
+- [ ] LTC-0021 FIRST dialog: "Docker Desktop must be started"
+- [ ] LTC-0022 "Start Docker" or "Retry" button
+- [ ] LTC-0023 No further step until Docker is running
 
 ## State 6: Window interaction
 
-- [ ] Window title: "Adaptive Learner" (not "Bibliogon")
-- [ ] Icon: Adaptive Learner icon (not Bibliogon)
-- [ ] X button closes the window cleanly (no crash)
-- [ ] Window is not resizable below its minimum size
-- [ ] All text readable (no truncation)
+- [ ] LTC-0024 Window title: "Adaptive Learner" (not "Bibliogon")
+- [ ] LTC-0025 Icon: Adaptive Learner icon (not Bibliogon)
+- [ ] LTC-0026 X button closes the window cleanly (no crash)
+- [ ] LTC-0027 Window is not resizable below its minimum size
+- [ ] LTC-0028 All text readable (no truncation)
 
 ## State 7: Command-line options
 
@@ -109,10 +109,10 @@ python3 -m adaptive_learner_launcher --debug
 python3 -m adaptive_learner_launcher --version
 ```
 
-- [ ] `--port` sets the port (default 8501)
-- [ ] `--help` shows the options (incl. `--version`)
-- [ ] `--debug` prints verbose logs to stdout and writes `launcher-debug.log`
-- [ ] `--version` prints the launcher version and exits
+- [ ] LTC-0029 `--port` sets the port (default 8501)
+- [ ] LTC-0030 `--help` shows the options (incl. `--version`)
+- [ ] LTC-0031 `--debug` prints verbose logs to stdout and writes `launcher-debug.log`
+- [ ] LTC-0032 `--version` prints the launcher version and exits
 
 ## State 8: Error handling
 
@@ -121,9 +121,9 @@ python3 -m adaptive_learner_launcher --version
 # Test: airplane mode during the image download
 ```
 
-- [ ] Error message visible (not a silent crash)
-- [ ] Window stays open with error details
-- [ ] Retry possible
+- [ ] LTC-0033 Error message visible (not a silent crash)
+- [ ] LTC-0034 Window stays open with error details
+- [ ] LTC-0035 Retry possible
 
 ---
 
