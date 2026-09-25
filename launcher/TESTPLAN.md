@@ -13,7 +13,7 @@ actually appears, is readable, and behaves.
 
 ---
 
-## State 1: First install (no container)
+## LTS-0001 State 1: First install (no container)
 
 ```bash
 # Prep: make sure there is no old container
@@ -36,7 +36,7 @@ python3 -m adaptive_learner_launcher
 - [ ] LTC-0009 Browser opens on the correct port
 - [ ] LTC-0010 Window stays open until the user closes it
 
-## State 2: App already running
+## LTS-0002 State 2: App already running
 
 ```bash
 # Prep: container is running
@@ -51,7 +51,7 @@ python3 -m adaptive_learner_launcher
 - [ ] LTC-0013 "Stop" button -> container stops
 - [ ] LTC-0014 "Uninstall" button -> confirmation -> removes container
 
-## State 3: App installed but stopped
+## LTS-0003 State 3: App installed but stopped
 
 ```bash
 # Prep:
@@ -65,7 +65,7 @@ python3 -m adaptive_learner_launcher
 - [ ] LTC-0016 "Start" button -> container starts + app opens
 - [ ] LTC-0017 "Uninstall" button -> removes container
 
-## State 4: Port conflict
+## LTS-0004 State 4: Port conflict
 
 ```bash
 # Prep: occupy the port
@@ -79,7 +79,7 @@ python3 -m adaptive_learner_launcher
 - [ ] LTC-0019 Suggests an alternative port
 - [ ] LTC-0020 User can change the port
 
-## State 5: Docker not installed / not started
+## LTS-0005 State 5: Docker not installed / not started
 
 ```bash
 # Prep: quit Docker Desktop
@@ -92,7 +92,7 @@ python3 -m adaptive_learner_launcher
 - [ ] LTC-0022 "Start Docker" or "Retry" button
 - [ ] LTC-0023 No further step until Docker is running
 
-## State 6: Window interaction
+## LTS-0006 State 6: Window interaction
 
 - [ ] LTC-0024 Window title: "Adaptive Learner" (not "Bibliogon")
 - [ ] LTC-0025 Icon: Adaptive Learner icon (not Bibliogon)
@@ -100,7 +100,7 @@ python3 -m adaptive_learner_launcher
 - [ ] LTC-0027 Window is not resizable below its minimum size
 - [ ] LTC-0028 All text readable (no truncation)
 
-## State 7: Command-line options
+## LTS-0007 State 7: Command-line options
 
 ```bash
 python3 -m adaptive_learner_launcher --port 9000
@@ -114,7 +114,7 @@ python3 -m adaptive_learner_launcher --version
 - [ ] LTC-0031 `--debug` prints verbose logs to stdout and writes `launcher-debug.log`
 - [ ] LTC-0032 `--version` prints the launcher version and exits
 
-## State 8: Error handling
+## LTS-0008 State 8: Error handling
 
 ```bash
 # Docker image build fails (e.g. no network)
