@@ -1,4 +1,4 @@
-"""#3274 - every manual test-plan checkpoint carries a permanent ID.
+"""#3274 / #3279 - every manual test-plan case and suite carries a permanent ID.
 
 `scripts/testplan_ids.py` assigns (`--assign`) and checks (`--check`) the
 IDs. The tests follow the gate contract (quality-checks.md "Gate test
@@ -70,9 +70,9 @@ SINGLE_PLAN = """# Plan
 """
 
 EMPTY_REGISTER = {
-    "TC": {"highest": 0, "retired": []},
-    "RTC": {"highest": 0, "retired": []},
-    "LTC": {"highest": 0, "retired": []},
+    prefix: {"highest": 0, "retired": []}
+    for spec in testplan_ids.PLANS
+    for prefix in (spec.prefix, spec.suite_prefix)
 }
 
 
@@ -91,8 +91,8 @@ def _tree(
     for rel, body in ((DE_REL, de), (EN_REL, en)):
         if body is not None:
             _write(root, rel, body)
-    _write(root, REFERENCE_REL, SINGLE_PLAN)
-    _write(root, LAUNCHER_REL, SINGLE_PLAN)
+    for spec in testplan_ids.PLANS[1:]:
+        _write(root, spec.files[0], SINGLE_PLAN)
     _write(root, REGISTER_REL, json.dumps(register or EMPTY_REGISTER))
     return root
 
@@ -145,8 +145,9 @@ class TestAssign:
 
     def test_only_the_id_is_inserted_nothing_else_changes(self, tmp_path: Path) -> None:
         root = _assigned(tmp_path)
-        stripped = _read(root, DE_REL).replace("TC-0001 ", "")
-        stripped = stripped.replace("TC-0002 ", "").replace("TC-0003 ", "")
+        stripped = _read(root, DE_REL)
+        for label in ("TC-0001 ", "TC-0002 ", "TC-0003 ", "TS-0001 ", "TS-0002 "):
+            stripped = stripped.replace(label, "")
         assert stripped == DE_PLAN
 
     def test_second_run_is_a_no_op(self, tmp_path: Path) -> None:
@@ -209,6 +210,79 @@ class TestAssign:
         assert any("Erster Abschnitt" in item for item in outcome.unresolved)
 
 
+class TestCheckedBoxes:
+    def test_a_checked_box_is_a_case_and_gets_an_id(self, tmp_path: Path) -> None:
+        """The device checklists tick boxes off; a ticked case keeps being a case."""
+        root = _tree(tmp_path)
+        _write(
+            root,
+            testplan_ids.DEVICE_CHECK_REL,
+            "# Liste\n\n## Block\n- [x] Erledigt\n- [ ] Offen\n",
+        )
+        assign(root)
+        text = _read(root, testplan_ids.DEVICE_CHECK_REL)
+        assert "## GTS-0001 Block" in text
+        assert "- [x] GTC-0001 Erledigt" in text
+        assert "- [ ] GTC-0002 Offen" in text
+        assert check(root).findings == []
+
+
+class TestAssignSuites:
+    """#3279: every heading that directly holds checkboxes is a suite with an ID."""
+
+    def test_de_and_en_suites_share_the_id_despite_different_order(self, tmp_path: Path) -> None:
+        root = _assigned(tmp_path)
+        de, en = _read(root, DE_REL), _read(root, EN_REL)
+        assert "### TS-0001 Erster Abschnitt (#1111)" in de
+        assert "### TS-0001 First section (#1111)" in en
+        assert "### TS-0002 Zweiter Abschnitt" in de
+        assert "### TS-0002 Second section" in en
+
+    def test_grouping_headings_without_cases_get_no_id(self, tmp_path: Path) -> None:
+        root = _assigned(tmp_path)
+        assert _read(root, DE_REL).startswith("# Testplan\n")
+        assert "## LTS-" not in _read(root, LAUNCHER_REL).split("\n")[0]
+        assert "# Plan\n" in _read(root, LAUNCHER_REL)
+
+    def test_single_plans_get_their_own_suite_prefix(self, tmp_path: Path) -> None:
+        root = _assigned(tmp_path)
+        assert "## RTS-0001 State 1" in _read(root, REFERENCE_REL)
+        assert "## LTS-0001 State 1" in _read(root, LAUNCHER_REL)
+
+    def test_register_records_the_suite_highest(self, tmp_path: Path) -> None:
+        register = json.loads(_read(_assigned(tmp_path), REGISTER_REL))
+        assert register["TS"] == {"highest": 2, "retired": []}
+        assert register["LTS"]["highest"] == 1
+
+    def test_new_suite_takes_the_next_free_number(self, tmp_path: Path) -> None:
+        root = _assigned(tmp_path)
+        _write(root, DE_REL, _read(root, DE_REL) + "\n### Neu\n- [ ] Neuer Punkt (#4444)\n")
+        _write(root, EN_REL, _read(root, EN_REL) + "\n### New\n- [ ] New item (#4444)\n")
+        assign(root)
+        assert "### TS-0003 Neu" in _read(root, DE_REL)
+        assert "### TS-0003 New" in _read(root, EN_REL)
+        assert check(root).findings == []
+
+    def test_deleted_suite_is_retired(self, tmp_path: Path) -> None:
+        root = _assigned(tmp_path)
+        _edit(
+            root, DE_REL, "### TS-0002 Zweiter Abschnitt\n- [ ] TC-0003 Dritter Punkt (#3333)\n", ""
+        )
+        _edit(root, EN_REL, "### TS-0002 Second section\n- [ ] TC-0003 Third item (#3333)\n", "")
+        outcome = assign(root)
+        assert {"TS-0002", "TC-0003"} <= set(outcome.retired_now)
+        assert json.loads(_read(root, REGISTER_REL))["TS"] == {"highest": 2, "retired": [2]}
+        assert check(root).findings == []
+
+    def test_one_sided_suite_id_is_restored_from_the_other_side(self, tmp_path: Path) -> None:
+        """Suites pair through their case IDs, so copying is not a guess."""
+        root = _assigned(tmp_path)
+        _edit(root, EN_REL, "### TS-0002 Second section", "### Second section")
+        outcome = assign(root)
+        assert outcome.suites_assigned == 0
+        assert "### TS-0002 Second section" in _read(root, EN_REL)
+
+
 # --- 1. the check detects each violation class -----------------------------
 
 
@@ -234,7 +308,7 @@ class TestDetectsTheViolation:
         root = _assigned(tmp_path)
         _edit(root, EN_REL, "- [ ] TC-0002 Second item\n      with a continuation line\n", "")
         joined = _joined(root)
-        assert "section '### Erster Abschnitt (#1111)'" in joined
+        assert "section '### TS-0001 Erster Abschnitt (#1111)'" in joined
         assert "has 2 checkpoint(s)" in joined
 
     def test_id_above_register_limit_fails(self, tmp_path: Path) -> None:
@@ -261,6 +335,40 @@ class TestDetectsTheViolation:
         _edit(root, EN_REL, "TC-0001 First item (#2222)", "TC-0002 First item (#2222)")
         _edit(root, EN_REL, "TC-0002 Second item", "TC-0001 Second item")
         assert "the ID may name two different cases" in _joined(root)
+
+    def test_suite_heading_without_id_fails(self, tmp_path: Path) -> None:
+        root = _assigned(tmp_path)
+        _edit(root, DE_REL, "### TS-0002 Zweiter", "### Zweiter")
+        assert f"{DE_REL}:8: suite heading without an ID" in _joined(root)
+
+    def test_duplicate_suite_id_fails(self, tmp_path: Path) -> None:
+        root = _assigned(tmp_path)
+        _edit(root, DE_REL, "### TS-0002 Zweiter", "### TS-0001 Zweiter")
+        assert "TS-0001 used twice" in _joined(root)
+
+    def test_suite_id_only_in_de_fails(self, tmp_path: Path) -> None:
+        root = _assigned(tmp_path)
+        _edit(root, EN_REL, "### TS-0002 Second", "### TS-0009 Second")
+        assert f"TS-0002 exists only in {DE_REL}" in _joined(root)
+
+    def test_swapped_suite_ids_fail(self, tmp_path: Path) -> None:
+        """The suite that holds the same cases must carry the same suite ID."""
+        root = _assigned(tmp_path)
+        _edit(root, EN_REL, "### TS-0002 Second", "### TS-000X Second")
+        _edit(root, EN_REL, "### TS-0001 First", "### TS-0002 First")
+        _edit(root, EN_REL, "### TS-000X Second", "### TS-0001 Second")
+        assert "holds the same cases as EN suite" in _joined(root)
+
+    def test_suite_id_on_a_heading_without_cases_fails(self, tmp_path: Path) -> None:
+        root = _assigned(tmp_path)
+        _edit(root, LAUNCHER_REL, "# Plan", "# LTS-0001 Plan")
+        joined = _joined(root)
+        assert "sits on a heading without checkpoints" in joined
+
+    def test_checkbox_before_the_first_heading_fails(self, tmp_path: Path) -> None:
+        root = _assigned(tmp_path)
+        _write(root, LAUNCHER_REL, "- [ ] LTC-0003 Stray\n" + _read(root, LAUNCHER_REL))
+        assert "checkbox before the first heading" in _joined(root)
 
     def test_wrong_prefix_fails(self, tmp_path: Path) -> None:
         root = _assigned(tmp_path)
@@ -314,6 +422,9 @@ class TestReportsWhatItMeasured:
         assert any(
             n.startswith("testplan-ids TC:") and "3 distinct IDs" in n and "TC-0003" in n
             for n in notes
+        ), notes
+        assert any(
+            n.startswith("testplan-ids TS:") and "2 suites" in n and "TS-0002" in n for n in notes
         ), notes
         assert any(n.startswith("testplan-ids LTC:") for n in notes)
 

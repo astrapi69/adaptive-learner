@@ -833,13 +833,13 @@ def _report_testplan_ids(
 
 
 def check_testplan_ids(report: Report, plan_dir: Path | None = None) -> None:
-    """Checkpoint IDs of the single-language plans (RTC-, LTC-; #3274).
+    """Case and suite IDs of the single-language plans and checklists (#3274, #3279).
 
     The DE/EN main plan (TC-) is checked inside ``check_testplan_parity``,
     because its IDs are part of the de/en contract.
     """
     base = plan_dir if plan_dir is not None else REPO
-    _report_testplan_ids(report, "testplan-ids", base, ("RTC", "LTC"))
+    _report_testplan_ids(report, "testplan-ids", base, ("RTC", "LTC", "GTC", "OTC", "DTC"))
 
 
 # ---------------------------------------------------------------------------
