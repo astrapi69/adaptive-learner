@@ -663,6 +663,26 @@ describe("MatchingExercise: per-pair color + label (#145)", () => {
         }
     });
 
+    it("the --matching-pair-* palette carries no green (correct) hue (#3261)", () => {
+        // #3261 - since #3233 the ungraded "My answers" view shows the pair
+        // colours after checking, so a green pair reads as "correct" even
+        // when the pair is wrong. Green band: hue 80..160 at meaningful
+        // saturation. Teal (~173) and cyan (~189) stay allowed.
+        const css = readLegacyCssSum();
+        const matches = [
+            ...css.matchAll(/--matching-pair-(\d+):\s*(#[0-9a-fA-F]{6})/g),
+        ];
+        expect(matches.length).toBe(MATCHING_PAIR_COLORS);
+        for (const [, index, hex] of matches) {
+            const {hue, sat} = hexToHsl(hex);
+            const isGreen = sat > 0.2 && hue >= 80 && hue <= 160;
+            expect(
+                isGreen,
+                `--matching-pair-${index} (${hex}) is a green "correct" hue (${hue.toFixed(0)} deg)`,
+            ).toBe(false);
+        }
+    });
+
     it("labels both tiles of a matched pair with the same number", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
         // Pair the first left term with its correct right tile.
