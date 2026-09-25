@@ -46,6 +46,13 @@ checks:
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_testplan_parity.py
     probe: script_exists=backend/tests/test_verify_docs_testplan_parity.py
 
+  - id: testplan-ids
+    verifies: every manual test-plan checkpoint carries a permanent ID (TC- DE/EN, RTC-, LTC-), unique, from the register, never reused; DE and EN carry the same ID for the same case (#3274)
+    rule: ai-workflow/testplan-policy.md#checkpoint-ids
+    status: active
+    wired_in: make verify-docs (testplan-parity + testplan-ids); scripts/testplan_ids.py --check; .github/workflows/ci.yml; backend/tests/test_testplan_ids.py
+    probe: called_in=scripts/verify_docs.py::_report_testplan_ids
+
   - id: docs-drift
     verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics

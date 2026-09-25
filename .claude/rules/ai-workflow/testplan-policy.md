@@ -22,6 +22,16 @@ Both language versions stay in sync; updating one without the other is an incomp
 
 - **Same-PR is the default.** If the testplan delta would genuinely blow up the PR's scope (e.g. a large feature landing in slices), the fallback is an IMMEDIATE, referenced follow-up: leave a comment on issue #1087 (the manual-test-plan umbrella) listing the pending testplan additions, and reference that comment from the feature PR. A silent "later" without the #1087 comment is not the fallback — it is exactly the gap this rule closes.
 
+## Checkpoint IDs
+
+Every `- [ ]` checkbox carries a permanent ID right after the box: `- [ ] TC-0042 ...`. `TC-` is the DE/EN main plan, `RTC-` is `docs/reference/MANUAL-TESTPLAN.md`, `LTC-` is `launcher/TESTPLAN.md`; separate number spaces, so an insert in one plan never touches another. The register `docs/manual-tests/testplan-ids.json` holds the highest number and the retired numbers per prefix.
+
+- **New checkbox: run `python3 scripts/testplan_ids.py --assign`**, never pick a number by hand. It takes the next free number, also for a case inserted mid-document; numbers do not follow document order.
+- **IDs are never reused and never renumbered.** A deleted case keeps its number retired, a reworded case keeps its number, a case that becomes a different case gets a new one. Why: issues, PR comments and device protocols cite the ID; renumbering "for order" silently points every old citation at the wrong case. Same discipline as the engine's `stable_id`.
+- **DE and EN carry the same ID for the same case**, also where their section or checkbox order differs. Where `--assign` cannot pair a case unambiguously it refuses and names it; decide by hand (`--pairs`), never by position.
+
+Gated by `verify-docs` (`testplan-parity` for `TC-`, `testplan-ids` for `RTC-`/`LTC-`, #3274).
+
 ## Exemptions
 
 No testplan update required for:

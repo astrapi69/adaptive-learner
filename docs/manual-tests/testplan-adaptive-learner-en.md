@@ -41,35 +41,35 @@ Prerequisite: #2050 merged, current `develop` deployed (or a preview build).
 
 A real round-trip, not a simulation:
 
-- [ ] App in standalone mode with real data: at least one imported set,
+- [ ] TC-0001 App in standalone mode with real data: at least one imported set,
       learning progress in several lessons, one set set to "deferred", one
       set completed, an own exercise created.
-- [ ] Export the backup (`.alb`), demonstrably save the file OUTSIDE the app
+- [ ] TC-0002 Export the backup (`.alb`), demonstrably save the file OUTSIDE the app
       (Files app / AirDrop).
-- [ ] Hard wipe: delete the app data completely (remove Safari website data
+- [ ] TC-0003 Hard wipe: delete the app data completely (remove Safari website data
       for the domain, reinstall/reopen the app - that is the real WKWebView
       eviction, NOT `localStorage.clear()`).
-- [ ] Verify the fresh state: app empty.
-- [ ] Import the backup.
-- [ ] Check: learning progress present, the deferred marker present (the
+- [ ] TC-0004 Verify the fresh state: app empty.
+- [ ] TC-0005 Import the backup.
+- [ ] TC-0006 Check: learning progress present, the deferred marker present (the
       #2050 path!), completed set correct, own exercise present, settings
       plausible.
-- [ ] Then continue one lesson normally - no follow-on error.
+- [ ] TC-0007 Then continue one lesson normally - no follow-on error.
 
 Document the result (partial failures individually too). On ANY deviation:
 screenshot + which step, which becomes an issue with forensics.
 
 #### A2. Mobile scroll-to-error (#2039, visual device check before merge)
 
-- [ ] Provoke a validation error outside the viewport (long form, error at
+- [ ] TC-0008 Provoke a validation error outside the viewport (long form, error at
       the top, submit from the bottom).
-- [ ] Expected: automatic scroll to the first error field, error visible and
+- [ ] TC-0009 Expected: automatic scroll to the first error field, error visible and
       focused.
-- [ ] Once in portrait, once with the keyboard shown.
+- [ ] TC-0010 Once in portrait, once with the keyboard shown.
 
 #### A3. iOS backlog issues
 
-- [ ] Work through the open iOS verification points from the tracker in the
+- [ ] TC-0011 Work through the open iOS verification points from the tracker in the
       same session (list from the respective issues, each result as an issue
       comment).
 
@@ -78,13 +78,13 @@ screenshot + which step, which becomes an issue with forensics.
 Content-load resilience on iOS - the entry flow must never leave a blank
 content area under an intact header/nav:
 
-- [ ] As a RETURNING user (data present) open the app URL fresh (e.g. scan a
+- [ ] TC-0012 As a RETURNING user (data present) open the app URL fresh (e.g. scan a
       shared QR code of the app URL). Expected: you land on the Dashboard -
       never a completely empty content area between the header and the bottom
       nav.
-- [ ] While a view loads, a visible loading indicator shows (spinner +
+- [ ] TC-0013 While a view loads, a visible loading indicator shows (spinner +
       "Loading..."), never an empty box.
-- [ ] Force the failure: put the device offline / throttle so a lazy view
+- [ ] TC-0014 Force the failure: put the device offline / throttle so a lazy view
       cannot load, then open a route. Expected: after a short wait a readable
       "taking longer than expected" (or "this view could not be loaded")
       message with a Reload button - not a silent blank screen.
@@ -96,49 +96,49 @@ round-trip including iOS standalone. In substance that is the same flow as
 A1. Do both in one pass (see also the "Delete a single lesson (#2064)"
 section further below):
 
-- [ ] In "My Content" delete a lesson that has learning progress.
-- [ ] Check the confirm dialog: does it name the learning progress (learned
+- [ ] TC-0015 In "My Content" delete a lesson that has learning progress.
+- [ ] TC-0016 Check the confirm dialog: does it name the learning progress (learned
       cards), not just the exercise count?
-- [ ] After deletion: lesson gone, no orphaned review cards, favorite
+- [ ] TC-0017 After deletion: lesson gone, no orphaned review cards, favorite
       removed, numbering with a gap as decided.
-- [ ] Import a backup from BEFORE the deletion: the lesson comes back (a
+- [ ] TC-0018 Import a backup from BEFORE the deletion: the lesson comes back (a
       backup is a point in time, as decided). That is expected behaviour, not
       a bug.
-- [ ] Both storage modes.
+- [ ] TC-0019 Both storage modes.
 
 #### A5. Wizard step reset (#2061, merged) - short, doable on desktop too
 
-- [ ] Open a book set, "Edit lesson", navigate to step 2.
-- [ ] Pick a different chapter in the dropdown: step 2 stays, the new
+- [ ] TC-0020 Open a book set, "Edit lesson", navigate to step 2.
+- [ ] TC-0021 Pick a different chapter in the dropdown: step 2 stays, the new
       lesson's exercises appear.
-- [ ] Edge cases: switch to a lesson without exercises, switch backwards.
+- [ ] TC-0022 Edge cases: switch to a lesson without exercises, switch backwards.
 
 #### A6. Reorder lessons (#2172, merged)
 
 Display order is its own field; moving a lesson changes the sort, never a
 lesson's identity. iOS-standalone is the trickier case (reordering on a phone).
 
-- [ ] In "My Content" expand a multi-lesson (book) set -> "Manage lessons".
-- [ ] Each lesson shows Up/Down controls. On the first row "Up" is disabled,
+- [ ] TC-0023 In "My Content" expand a multi-lesson (book) set -> "Manage lessons".
+- [ ] TC-0024 Each lesson shows Up/Down controls. On the first row "Up" is disabled,
       on the last row "Down" is disabled (no dead clicking).
-- [ ] Keyboard only: Tab to the Up/Down control, trigger with Space/Enter.
+- [ ] TC-0025 Keyboard only: Tab to the Up/Down control, trigger with Space/Enter.
       The screen reader announces an understandable label ("Move lesson X up")
       and, after the move, the new position ("X is now at position n of m").
-- [ ] The order is saved IMMEDIATELY - there is no separate Save action.
+- [ ] TC-0026 The order is saved IMMEDIATELY - there is no separate Save action.
       Reload the page (or collapse and re-expand the set): the changed order
       persists.
-- [ ] Drives the LEARNING sequence (#2212), not just the list: after a move,
+- [ ] TC-0027 Drives the LEARNING sequence (#2212), not just the list: after a move,
       opening the set starts on the new first lesson, and "next lesson"
       navigation follows the chosen order - in both storage modes.
-- [ ] Existing sets: without an explicit move, the current order is shown
+- [ ] TC-0028 Existing sets: without an explicit move, the current order is shown
       unchanged (no silent resort).
-- [ ] Identity untouched: after several moves of a lesson that has learning
+- [ ] TC-0029 Identity untouched: after several moves of a lesson that has learning
       progress, the progress stays attached, no orphaned review cards, delete
       still hits the correct lesson.
-- [ ] Backup round-trip: Export -> wipe storage -> Import brings the chosen
+- [ ] TC-0030 Backup round-trip: Export -> wipe storage -> Import brings the chosen
       order back.
-- [ ] Both storage modes (API + Dexie).
-- [ ] iOS standalone (PWA from the home screen): moving via touch and the
+- [ ] TC-0031 Both storage modes (API + Dexie).
+- [ ] TC-0032 iOS standalone (PWA from the home screen): moving via touch and the
       position feedback work, and the order survives closing and reopening.
 
 #### A6b. Import order follows the source (#2173, merged)
@@ -149,24 +149,24 @@ The order is written to the SAME overlay store the reorder feature (#2172)
 uses; filenames/identities stay untouched. The tricky part is provenance: a
 re-import must NOT overwrite an order the user set by hand.
 
-- [ ] Import a book whose chapter titles do NOT sort alphabetically into
+- [ ] TC-0033 Import a book whose chapter titles do NOT sort alphabetically into
       chapter order (e.g. an "Epilogue" or "Appendix"). After the import,
       "Manage lessons" shows the chapters in book order, not alphabetically.
-- [ ] Drives the LEARNING sequence, not just the list: the set opens on the
+- [ ] TC-0034 Drives the LEARNING sequence, not just the list: the set opens on the
       first source lesson and "next lesson" follows the source order - in both
       storage modes (API + Dexie).
-- [ ] Identity untouched: learning progress / review cards stay attached (no
+- [ ] TC-0035 Identity untouched: learning progress / review cards stay attached (no
       renumbering of filenames).
-- [ ] The user wins: move a lesson by hand, then re-import the same book (or
+- [ ] TC-0036 The user wins: move a lesson by hand, then re-import the same book (or
       update content). The user's order is preserved, NOT silently reset.
-- [ ] After a re-import following a manual move, NEW lessons land at the end
+- [ ] TC-0037 After a re-import following a manual move, NEW lessons land at the end
       (visible, not interspersed); REMOVED lessons disappear while the rest of
       the chosen order is preserved.
-- [ ] Existing sets (imported before #2173) are not auto-resorted; the user
+- [ ] TC-0038 Existing sets (imported before #2173) are not auto-resorted; the user
       straightens them via "Manage lessons" (#2172).
-- [ ] Backup round-trip: Export -> wipe storage -> Import brings the order
+- [ ] TC-0039 Backup round-trip: Export -> wipe storage -> Import brings the order
       back.
-- [ ] iOS standalone (PWA from the home screen): open a freshly imported book
+- [ ] TC-0040 iOS standalone (PWA from the home screen): open a freshly imported book
       in the installed PWA - the chapters are in book order, and a manual move
       survives closing and reopening.
 
@@ -179,15 +179,15 @@ alphabetically, 100- sorts between 10- and 11-. Applies at both seams: the
 Dexie download (overlay seed like the import, #2173) and API mode (the
 backend listing follows the manifest).
 
-- [ ] Download a set with mixed prefixes (e.g. alc-psychology psych-intro,
+- [ ] TC-0041 Download a set with mixed prefixes (e.g. alc-psychology psych-intro,
       01- through 112-). "Manage lessons" shows the lessons in manifest
       order: 99- before 100-.
-- [ ] Drives the LEARNING sequence: the set opens on the first lesson per the
+- [ ] TC-0042 Drives the LEARNING sequence: the set opens on the first lesson per the
       manifest and "next lesson" follows the manifest order - in both storage
       modes (API + Dexie).
-- [ ] The user wins: move a lesson by hand, then re-download / update the
+- [ ] TC-0043 The user wins: move a lesson by hand, then re-download / update the
       set. The user's order is preserved.
-- [ ] Sets without metadata.lessons in the manifest behave unchanged
+- [ ] TC-0044 Sets without metadata.lessons in the manifest behave unchanged
       (alphabetical order, no silent resorting).
 
 #### A7. Edit belongs to the lesson, not the set (#2210)
@@ -197,20 +197,20 @@ which lesson was meant and always opened the first. Three similar per-row
 buttons (Play/Edit/Delete) need distinct, title-bearing labels. iOS standalone
 is the trickier case (three plus Up/Down per row on a phone).
 
-- [ ] In "My Content" expand a multi-lesson (book) set -> "Manage lessons".
+- [ ] TC-0045 In "My Content" expand a multi-lesson (book) set -> "Manage lessons".
       Each lesson now shows Play, Edit and Delete (in addition to Up/Down).
-- [ ] A set with SEVERAL lessons no longer has a set-level Edit button (it
+- [ ] TC-0046 A set with SEVERAL lessons no longer has a set-level Edit button (it
       would only guess).
-- [ ] A set with ONE lesson keeps the set-level Edit button (unambiguous =
+- [ ] TC-0047 A set with ONE lesson keeps the set-level Edit button (unambiguous =
       that one lesson).
-- [ ] Editing the SECOND or third lesson opens exactly THAT lesson in the
+- [ ] TC-0048 Editing the SECOND or third lesson opens exactly THAT lesson in the
       editor (not the first). After a reorder, Edit still hits the correct
       lesson (identity, not position).
-- [ ] Keyboard only: Tab to Play/Edit/Delete, trigger with Space/Enter. The
+- [ ] TC-0049 Keyboard only: Tab to Play/Edit/Delete, trigger with Space/Enter. The
       screen reader announces a distinct label per button with the lesson
       title ("Edit lesson X"), not three identical-sounding buttons.
-- [ ] Both storage modes (API + Dexie).
-- [ ] iOS standalone (PWA from the home screen): every per-row button is
+- [ ] TC-0050 Both storage modes (API + Dexie).
+- [ ] TC-0051 iOS standalone (PWA from the home screen): every per-row button is
       reliably tappable without mis-taps; Edit opens the correct lesson.
 
 ### Session B: Ubuntu (launcher binary, after the launcher session)
@@ -219,22 +219,22 @@ Prerequisite: the v2.8.2 release binaries (the launcher runs in IMAGE mode
 since v2.8.0, #2167; engine pin docker-app-launcher ^0.25.1). Use only these
 binaries; all older ones are obsolete.
 
-- [ ] Daemon running + a test user WITHOUT the docker group (qatest):
+- [ ] TC-0052 Daemon running + a test user WITHOUT the docker group (qatest):
       permission message + pkexec-fix offer, NOT "Start Docker". [since the
       0.16.0 failure without real proof]
-- [ ] Run the pkexec fix, real re-login: state switches to "Docker running".
-- [ ] Console visible, detection lines streaming, text wrap correct, window
+- [ ] TC-0053 Run the pkexec fix, real re-login: state switches to "Docker running".
+- [ ] TC-0054 Console visible, detection lines streaming, text wrap correct, window
       resizable.
-- [ ] Branding "Adaptive Learner", About: app 2.8.2 with a source label;
+- [ ] TC-0055 Branding "Adaptive Learner", About: app 2.8.2 with a source label;
       note the launcher version shown (actual value from the v2.8.2 binary).
-- [ ] Setup runs through to a reachable app frontend in the browser. Proof
+- [ ] TC-0056 Setup runs through to a reachable app frontend in the browser. Proof
       goal (image mode): an anonymous pull of
       ghcr.io/astrapi69/adaptive-learner:2.8.2 and a start - NO build, no
       buildx, no Compose; pull progress visible in the console.
-- [ ] Second start while the launcher is running: focuses the existing window
+- [ ] TC-0057 Second start while the launcher is running: focuses the existing window
       (#31).
-- [ ] Stop, restart, uninstall: no errors, the console reports intelligibly.
-- [ ] Port change: test via the three #2069 cases under "PRIO 2 -> Port
+- [ ] TC-0058 Stop, restart, uninstall: no errors, the console reports intelligibly.
+- [ ] TC-0059 Port change: test via the three #2069 cases under "PRIO 2 -> Port
       change: data carry-over" (the earlier caveat has been delivered).
 
 ### Recommended order
@@ -249,31 +249,31 @@ binaries are available.
 ## PRIO 1: BACKUP ACCEPTANCE TEST (launch gate!)
 
 **New test case under PRIO 1 backup acceptance test:**
-- [ ] GitHub Pages: create backup
-- [ ] Install locally (launcher)
-- [ ] Import the `.alb` from GH Pages → everything carried over
+- [ ] TC-0060 GitHub Pages: create backup
+- [ ] TC-0061 Install locally (launcher)
+- [ ] TC-0062 Import the `.alb` from GH Pages → everything carried over
 
 This test has been defined as a launch gate since Session 2.
 Never run yet. Do it NOW.
 
-- [ ] Produce data: download at least 2 sets, start 3 lessons, switch theme
-- [ ] Export: Settings → Data → Create backup → download the `.alb` file
-- [ ] Check file size (should be >1MB when sets are loaded)
-- [ ] Clear browser data COMPLETELY:
+- [ ] TC-0063 Produce data: download at least 2 sets, start 3 lessons, switch theme
+- [ ] TC-0064 Export: Settings → Data → Create backup → download the `.alb` file
+- [ ] TC-0065 Check file size (should be >1MB when sets are loaded)
+- [ ] TC-0066 Clear browser data COMPLETELY:
       DevTools → Application → Storage → "Clear site data"
       AND: delete the "adaptive-learner" IndexedDB
       AND: localStorage.clear()
-- [ ] Open app → onboarding → "Restore from backup"
-- [ ] Pick the `.alb` file → import starts
-- [ ] NO HTTP 413 error (nginx 50MB limit fixed)
-- [ ] Sets present (My Content → all previously loaded sets)
-- [ ] Progress preserved (started lessons, scores)
-- [ ] Settings correct (theme, language, voice settings)
-- [ ] Learning-mode settings preserved
-- [ ] XP + level correct
-- [ ] Legacy `.json` import: old backup format → works
-- [ ] API keys NOT in the backup (security check)
-- [ ] After restore: the provider overview (Settings → AI) shows the
+- [ ] TC-0067 Open app → onboarding → "Restore from backup"
+- [ ] TC-0068 Pick the `.alb` file → import starts
+- [ ] TC-0069 NO HTTP 413 error (nginx 50MB limit fixed)
+- [ ] TC-0070 Sets present (My Content → all previously loaded sets)
+- [ ] TC-0071 Progress preserved (started lessons, scores)
+- [ ] TC-0072 Settings correct (theme, language, voice settings)
+- [ ] TC-0073 Learning-mode settings preserved
+- [ ] TC-0074 XP + level correct
+- [ ] TC-0075 Legacy `.json` import: old backup format → works
+- [ ] TC-0076 API keys NOT in the backup (security check)
+- [ ] TC-0077 After restore: the provider overview (Settings → AI) shows the
       restored settings WITHOUT a reload (settings-refresh-bus, #1769)
 
 ---
@@ -281,48 +281,48 @@ Never run yet. Do it NOW.
 ## PRIO 2: LAUNCHER (desktop)
 
 ### Basic function (Ubuntu)
-- [ ] `python3 -m adaptive_learner_launcher --debug` → ONE window opens
-- [ ] Window NEVER disappears on its own
-- [ ] Docker check as the first step (hint when Docker isn't running)
-- [ ] Live progress during install in the log area (line by line)
-- [ ] "Building image..." visible (not a silent background step)
-- [ ] At the end: "App is ready." in green
+- [ ] TC-0078 `python3 -m adaptive_learner_launcher --debug` → ONE window opens
+- [ ] TC-0079 Window NEVER disappears on its own
+- [ ] TC-0080 Docker check as the first step (hint when Docker isn't running)
+- [ ] TC-0081 Live progress during install in the log area (line by line)
+- [ ] TC-0082 "Building image..." visible (not a silent background step)
+- [ ] TC-0083 At the end: "App is ready." in green
 
 ### Port
-- [ ] Port field visible (default 8501)
-- [ ] Port editable when stopped/not installed
-- [ ] Port read-only when running
-- [ ] CHANGE the port: 8501 → 9000 → app reachable on 9000
-- [ ] Port indicator: green when running (not red)
+- [ ] TC-0084 Port field visible (default 8501)
+- [ ] TC-0085 Port editable when stopped/not installed
+- [ ] TC-0086 Port read-only when running
+- [ ] TC-0087 CHANGE the port: 8501 → 9000 → app reachable on 9000
+- [ ] TC-0088 Port indicator: green when running (not red)
 
 ### Port change: data portability (#2069)
-- [ ] Server mode (default): populate data, change the port, reopen → sets + progress still there (backend data survives; auto-recovered on the Landing route via identity.yaml)
-- [ ] Browser storage mode (Settings > Data > storage mode): populate data, change the port, reopen → empty app with the "Used Adaptive Learner before on a different port?" hint on the welcome screen (data NOT deleted, just tied to the old origin)
-- [ ] The hint links to the "Changing the port" help page
-- [ ] Recovery (browser mode): back to the old port → Settings > Data > Export backup (`.alb`) → new port → "Restore from backup" → sets, progress, exercises, settings all restored
-- [ ] Canonical web version (astrapi69.github.io, browser mode, no explicit port): the hint does NOT appear
+- [ ] TC-0089 Server mode (default): populate data, change the port, reopen → sets + progress still there (backend data survives; auto-recovered on the Landing route via identity.yaml)
+- [ ] TC-0090 Browser storage mode (Settings > Data > storage mode): populate data, change the port, reopen → empty app with the "Used Adaptive Learner before on a different port?" hint on the welcome screen (data NOT deleted, just tied to the old origin)
+- [ ] TC-0091 The hint links to the "Changing the port" help page
+- [ ] TC-0092 Recovery (browser mode): back to the old port → Settings > Data > Export backup (`.alb`) → new port → "Restore from backup" → sets, progress, exercises, settings all restored
+- [ ] TC-0093 Canonical web version (astrapi69.github.io, browser mode, no explicit port): the hint does NOT appear
 
 ### States
-- [ ] Not installed: [Install] visible
-- [ ] Running: [Open in browser] [Stop] [Uninstall]
-- [ ] Stopped: [Start] [Uninstall]
-- [ ] All buttons fully visible (620px wide, no clipping)
+- [ ] TC-0094 Not installed: [Install] visible
+- [ ] TC-0095 Running: [Open in browser] [Stop] [Uninstall]
+- [ ] TC-0096 Stopped: [Start] [Uninstall]
+- [ ] TC-0097 All buttons fully visible (620px wide, no clipping)
 
 ### Uninstall
-- [ ] Verbose output: each container/image individually with ✓/✗
-- [ ] Image sizes shown
-- [ ] Summary: "X artifacts removed, Y MB freed"
-- [ ] State switches to "Not installed"
+- [ ] TC-0098 Verbose output: each container/image individually with ✓/✗
+- [ ] TC-0099 Image sizes shown
+- [ ] TC-0100 Summary: "X artifacts removed, Y MB freed"
+- [ ] TC-0101 State switches to "Not installed"
 
 ### Cleanup on start
-- [ ] Finds orphaned artifacts (if any)
-- [ ] User can choose (learning data OFF by default)
-- [ ] Verbose progress
+- [ ] TC-0102 Finds orphaned artifacts (if any)
+- [ ] TC-0103 User can choose (learning data OFF by default)
+- [ ] TC-0104 Verbose progress
 
 ### Windows
-- [ ] `.exe` starts (from the GitHub Release)
-- [ ] Persistent window (NO dialog chain!)
-- [ ] All functions as on Linux
+- [ ] TC-0105 `.exe` starts (from the GitHub Release)
+- [ ] TC-0106 Persistent window (NO dialog chain!)
+- [ ] TC-0107 All functions as on Linux
 
 ---
 
@@ -330,15 +330,15 @@ Never run yet. Do it NOW.
 
 Requires domain knowledge. Not automatable.
 
-- [ ] German-English A1/B1: translations correct?
-- [ ] AI for beginners (DE): technical terms correct? explanations clear?
-- [ ] Ansible QE: commands correct? syntax right?
-- [ ] Japanese A1: hiragana/katakana correct? romanization right?
-- [ ] Korean A1: hangul correct? romanization right?
-- [ ] Chinese A1: pinyin correct? characters right?
-- [ ] Italian A1: spot check grammar/vocabulary
-- [ ] Portuguese-BR A1: spot check
-- [ ] AI-generated error correction (#2355/#2364): for a generated
+- [ ] TC-0108 German-English A1/B1: translations correct?
+- [ ] TC-0109 AI for beginners (DE): technical terms correct? explanations clear?
+- [ ] TC-0110 Ansible QE: commands correct? syntax right?
+- [ ] TC-0111 Japanese A1: hiragana/katakana correct? romanization right?
+- [ ] TC-0112 Korean A1: hangul correct? romanization right?
+- [ ] TC-0113 Chinese A1: pinyin correct? characters right?
+- [ ] TC-0114 Italian A1: spot check grammar/vocabulary
+- [ ] TC-0115 Portuguese-BR A1: spot check
+- [ ] TC-0116 AI-generated error correction (#2355/#2364): for a generated
       `ext:al-error-correction` exercise, check that the marked token is really
       the wrong one and the accepted correction actually fixes it.
       Schema-conformant is not the same as meaningful: an already-correct marked
@@ -351,20 +351,20 @@ Requires domain knowledge. Not automatable.
 ## PRIO 4: LEARNING - MANUAL UX CHECK
 
 ### Exercise types (check visually)
-- [ ] Matching: pairs SAME height (no visual offset)
-- [ ] Matching: "Resolve" animation looks good (test all 4 effects)
-- [ ] Matching: left column ALWAYS in lesson order (#2882), only the right
+- [ ] TC-0117 Matching: pairs SAME height (no visual offset)
+- [ ] TC-0118 Matching: "Resolve" animation looks good (test all 4 effects)
+- [ ] TC-0119 Matching: left column ALWAYS in lesson order (#2882), only the right
       column is shuffled; on "Resolve" the left column keeps its order (no
       jumping, #2872), each row shows the correct partner on the right,
       number badges run 1..n
-- [ ] Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
-- [ ] Word Tiles: on a CORRECT answer the built sentence stays visible (#2494):
+- [ ] TC-0120 Word Tiles: correction READABLE (spaces, not "TheBrainforgets...")
+- [ ] TC-0121 Word Tiles: on a CORRECT answer the built sentence stays visible (#2494):
       assemble a sentence correctly and check it. The composed sentence remains
       shown (all green) afterwards and does NOT disappear; the success message
       ("Correct!") and the Continue button appear below it. iOS PWA/Standalone:
       run the same check on the web app icon added to the home screen.
-- [ ] Free Text: correction READABLE (token diff understandable)
-- [ ] Cloze, select mode (#3167): pick a distractor -> graded wrong. Open a
+- [ ] TC-0122 Free Text: correction READABLE (token diff understandable)
+- [ ] TC-0123 Cloze, select mode (#3167): pick a distractor -> graded wrong. Open a
       cloze exercise with word choices whose distractors are very close to
       the answer (e.g. alc-programming, react-grundlagen, lesson 02 "JSX",
       question "Wie bettet man in JSX den Wert einer Variablen name in den
@@ -375,8 +375,8 @@ Requires domain knowledge. Not automatable.
       graded correct (the tolerance applies to typed answers only). Review:
       the same exercise in a review session, pick the wrong option -> wrong;
       the exercise is NOT marked mastered afterwards.
-- [ ] Picture Choice: tiles SAME height
-- [ ] Answer order shuffled (#2317): open a picture_choice exercise across
+- [ ] TC-0124 Picture Choice: tiles SAME height
+- [ ] TC-0125 Answer order shuffled (#2317): open a picture_choice exercise across
       several lessons - the correct tile is NOT always in the same slot
       (previously always first). Within ONE session the order stays stable (no
       jump when re-viewing the same exercise). A correct tap still scores
@@ -384,7 +384,7 @@ Requires domain knowledge. Not automatable.
       not position-based). Same for the options in ext:al-graded-quiz and
       ext:al-reading-comprehension. iOS PWA/Standalone: repeat the check on the
       web-app icon added to the Home Screen.
-- [ ] Matching + word tiles shuffled (#2371, #2372): open a matching exercise
+- [ ] TC-0126 Matching + word tiles shuffled (#2371, #2372): open a matching exercise
       several times (different exercises/visits) - the first left entry does
       NOT consistently pair with the last right one (previously a near-constant
       reversed order); both columns are shuffled independently. In word tiles
@@ -393,14 +393,14 @@ Requires domain knowledge. Not automatable.
       still score correct (grading is content-based, not position-based).
       iOS PWA/Standalone: repeat the check on the web-app icon added to the
       Home Screen.
-- [ ] Matching: NO hint button (#2443, replaces #2390): open a matching
+- [ ] TC-0127 Matching: NO hint button (#2443, replaces #2390): open a matching
       exercise. There is NO "Show a hint" button above the columns, and no XP is
       deducted for one. Reason: in a matching exercise every word of both columns
       is already fully on screen, so a first-letter hint reveals nothing. For
       free-text/cloze/word-tiles the hint button stays as before. iOS
       PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen.
-- [ ] One hint affordance per exercise (#3168): open a cloze, a free-text and a
+- [ ] TC-0128 One hint affordance per exercise (#3168): open a cloze, a free-text and a
       word-tiles exercise whose content carries an authored hint (field `hint`,
       e.g. French A1 lesson 1: free-text "It starts with M.", word-tiles
       "Literally 'until the re-seeing' ...", cloze "Daytime greeting, starts
@@ -415,7 +415,7 @@ Requires domain knowledge. Not automatable.
       mode). Repeat in the review session and in the audio-tiles exercise
       (extension type). iOS PWA/Standalone: repeat the check on the web-app
       icon added to the Home Screen.
-- [ ] Explanation after the answer (#2991): open an exercise whose content
+- [ ] TC-0129 Explanation after the answer (#2991): open an exercise whose content
       carries an explanation (the `explanation` field, e.g. the fixture
       `e2e/fixtures/explanation-post-answer.lesson.json` through a connected
       test repository). Before checking, NO explanation is visible. Answer
@@ -428,7 +428,7 @@ Requires domain knowledge. Not automatable.
       also inside the running lesson; on brings it back. In exam mode it never
       appears. No XP is deducted. iOS PWA/Standalone: repeat the check on the
       web-app icon added to the Home Screen.
-- [ ] Matching: no wrong subtitle/column labels on knowledge sets (#2392): open
+- [ ] TC-0130 Matching: no wrong subtitle/column labels on knowledge sets (#2392): open
       a matching exercise from a KNOWLEDGE set (non-language domain, or source ==
       target, e.g. senses to organs). NO subtitle "Match each term with its
       definition" appears; the columns carry NO "Term"/"Definition" label, only
@@ -436,7 +436,7 @@ Requires domain knowledge. Not automatable.
       (language names or Term/Translation + the direction hint stay visible). iOS
       PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen.
-- [ ] Matching: the preamble no longer eats the screen (#2391/#2444/#2453): open a
+- [ ] TC-0131 Matching: the preamble no longer eats the screen (#2391/#2444/#2453): open a
       matching exercise on a SMALL device (iPhone). The "How it works" button
       sits at the TOP in the button row under the title, right next to "Re-read
       theory" (#2453) — when a theory chapter precedes this step. Without a
@@ -453,7 +453,7 @@ Requires domain knowledge. Not automatable.
       the content stays reachable for screen readers even when collapsed (native
       <details>). iOS PWA/Standalone: repeat the check on the web-app icon added
       to the Home Screen.
-- [ ] Matching: long words wrap inside the tile (#3174): open a matching
+- [ ] TC-0132 Matching: long words wrap inside the tile (#3174): open a matching
       exercise whose word is wider than the tile on a NARROW device (iPhone,
       375px), e.g. alc-psychology "Sprachebenen zuordnen" with "kleinste
       bedeutungsunterscheidende Lauteinheit". The long word is hyphenated or,
@@ -467,7 +467,7 @@ Requires domain knowledge. Not automatable.
       applies to multiple-choice options, word tiles and picture-choice
       captions. iOS PWA/Standalone: repeat the check on the web-app icon added
       to the Home Screen.
-- [ ] Difficulty indicator (#1693): an exercise whose card(s) carry an
+- [ ] TC-0133 Difficulty indicator (#1693): an exercise whose card(s) carry an
       authored `difficulty` (1-5) shows a small badge above the exercise
       with a tier word (Easy/Medium/Hard) + a 5-dot meter. Cards WITHOUT
       `difficulty` (the whole legacy corpus) show NO badge (exercise looks
@@ -481,242 +481,242 @@ Requires domain knowledge. Not automatable.
 Only relevant when the build was produced with `VITE_TEST_MODE=true` (the
 preview delivery). In the regular build the mode does not exist.
 
-- [ ] Activate via the hidden gesture: six quick taps on the progress bar at
+- [ ] TC-0134 Activate via the hidden gesture: six quick taps on the progress bar at
       the top of a running lesson. The test-mode banner then appears ("Answers
       are not graded and no progress is saved").
-- [ ] Not accidentally triggerable: single or slow taps on the progress bar do
+- [ ] TC-0135 Not accidentally triggerable: single or slow taps on the progress bar do
       NOT activate the mode.
-- [ ] Every answer counts as correct: a deliberately WRONG choice/input (choice,
+- [ ] TC-0136 Every answer counts as correct: a deliberately WRONG choice/input (choice,
       free text, matching) is shown as correct; the lesson can be clicked all
       the way through without knowing the content.
-- [ ] No progress: after clicking through in test mode the lesson shows NO
+- [ ] TC-0137 No progress: after clicking through in test mode the lesson shows NO
       progress, and no review cards or error counters were created (check the
       dashboard / review).
-- [ ] Exit: "Exit test mode" in the banner switches it off; leaving the lesson
+- [ ] TC-0138 Exit: "Exit test mode" in the banner switches it off; leaving the lesson
       resets the mode (re-entering starts without test mode).
-- [ ] iOS PWA/Standalone: repeat the check on the web-app icon added to the Home
+- [ ] TC-0139 iOS PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen (gesture by tap, banner visible, click-through works).
 
 ### Learning modes (play each once)
-- [ ] Mode toggle reachable in the collapsible options panel (since #1628
+- [ ] TC-0140 Mode toggle reachable in the collapsible options panel (since #1628
       it lives behind the panel, no longer directly visible)
-- [ ] Options panel of an OWN lesson (created, imported, or an
+- [ ] TC-0141 Options panel of an OWN lesson (created, imported, or an
       "Edit as a copy" fork): entry "Edit this lesson in the editor"
       visible; clicking lands in the editor with exactly this set and
       lesson preloaded (#2766)
-- [ ] Options panel of a DOWNLOADED lesson and of an analysis lesson:
+- [ ] TC-0142 Options panel of a DOWNLOADED lesson and of an analysis lesson:
       NO editor entry (#2766)
-- [ ] Mentor note (own lesson): below every step the "Mentor note"
+- [ ] TC-0143 Mentor note (own lesson): below every step the "Mentor note"
       button; save category + text, reopening shows the note prefilled,
       removing deletes it (#2768)
-- [ ] Mentor notes survive a reload and re-entering the lesson
+- [ ] TC-0144 Mentor notes survive a reload and re-entering the lesson
       (localStorage store, identical in both storage modes) (#2768)
-- [ ] Summary of an own lesson with notes: "Mentor notes (n)" block with
+- [ ] TC-0145 Summary of an own lesson with notes: "Mentor notes (n)" block with
       category, text, per-row removal, and the editor link; without
       notes and on non-own lessons the block does not appear (#2768)
-- [ ] Downloaded/analysis lesson: no mentor-note UI anywhere (#2768)
-- [ ] Editor of an own lesson with mentor notes: panel
+- [ ] TC-0146 Downloaded/analysis lesson: no mentor-note UI anywhere (#2768)
+- [ ] TC-0147 Editor of an own lesson with mentor notes: panel
       "Mentor notes for this lesson (n)" above the wizard; removing a
       note updates the panel, the runner and the summary (#2769)
-- [ ] "AI suggestion" per note: with a configured key a short text
+- [ ] TC-0148 "AI suggestion" per note: with a configured key a short text
       proposal appears; without a key the BYOK hint; an empty reply
       shows the "nothing usable" message (#2769)
-- [ ] "Options" button sits in the SAME ROW as the progress indicator
+- [ ] TC-0149 "Options" button sits in the SAME ROW as the progress indicator
       ("Step n of m"), not below it (desktop: bar on the left, button
       beside it on the right; mobile: tightly packed or a clean wrap,
       no overlap) (#1942)
-- [ ] Exam mode: no hints, result at the end, 1.5x XP
-- [ ] Timed mode: countdown bar visible, color transition
-- [ ] Error mode: only error cards (after at least 1 error)
-- [ ] Reverse: matching columns swapped
-- [ ] Shuffle: cards mixed from different lessons
-- [ ] Endless: no session end, statistics keep running
-- [ ] Endless completion ("Practice session complete!"): Enter (without a
+- [ ] TC-0150 Exam mode: no hints, result at the end, 1.5x XP
+- [ ] TC-0151 Timed mode: countdown bar visible, color transition
+- [ ] TC-0152 Error mode: only error cards (after at least 1 error)
+- [ ] TC-0153 Reverse: matching columns swapped
+- [ ] TC-0154 Shuffle: cards mixed from different lessons
+- [ ] TC-0155 Endless: no session end, statistics keep running
+- [ ] TC-0156 Endless completion ("Practice session complete!"): Enter (without a
       click) triggers "Back to Dashboard" (#1864, button auto-focused)
-- [ ] Error-replay completion ("All errors corrected!"): Enter (without a
+- [ ] TC-0157 Error-replay completion ("All errors corrected!"): Enter (without a
       click) triggers "Back to lesson" (#1864); clicking the button still
       works
-- [ ] Lesson summary ("You finished: ..."): with a next lesson available,
+- [ ] TC-0158 Lesson summary ("You finished: ..."): with a next lesson available,
       Enter (without a click) triggers the PRIMARY card "Next Lesson ->
       Start" - not a secondary card (e.g. "Review"); clicking the buttons
       still works (#1943)
-- [ ] Last lesson of a set (no "Next Lesson"): on the summary, Enter does
+- [ ] TC-0159 Last lesson of a set (no "Next Lesson"): on the summary, Enter does
       nothing wrong - no error, no navigation to a non-existent lesson
       (#1943)
-- [ ] Retry errors for matching (#1874): play a matching exercise with a
+- [ ] TC-0160 Retry errors for matching (#1874): play a matching exercise with a
       mix of correct/wrong pairs, open "Retry errors" -> only the wrong
       pairs appear (not all). With a single wrong pair, correct pairs are
       added as distractors (min. 2 pairs so there is something to match)
-- [ ] "Retry errors" setting (Settings -> Learning): switch to "Replay the
+- [ ] TC-0161 "Retry errors" setting (Settings -> Learning): switch to "Replay the
       whole set" -> the next "Retry errors" shows ALL pairs; switch back to
       "Only show errors" (default) -> only the wrong ones again
-- [ ] Regression, other types: free-text/cloze in "Retry errors" still show
+- [ ] TC-0162 Regression, other types: free-text/cloze in "Retry errors" still show
       only the wrong elements
 
 ### Game mode (#2844)
-- [ ] Settings -> Learning: "Game Mode" section with the "Playful
+- [ ] TC-0163 Settings -> Learning: "Game Mode" section with the "Playful
       lessons" switch, default off
-- [ ] Preparation for every detail step in this section (#2959):
+- [ ] TC-0164 Preparation for every detail step in this section (#2959):
       Settings > Learning > Game Mode > unfold "Game mode details"
       (collapsed by default); the detail switches are only usable while
       game mode is on, so switch "Playful lessons" on first
-- [ ] Lesson start (first step, game mode off, hint never dismissed):
+- [ ] TC-0165 Lesson start (first step, game mode off, hint never dismissed):
       "Try game mode" banner with "Turn on" and a close control
-- [ ] "Turn on" in the banner: success toast, banner disappears, the
+- [ ] TC-0166 "Turn on" in the banner: success toast, banner disappears, the
       Settings switch is on afterwards
-- [ ] Closing the banner ("Don't show again"): banner disappears and does
+- [ ] TC-0167 Closing the banner ("Don't show again"): banner disappears and does
       not come back on the next lesson; game mode stays off
-- [ ] Game mode on: praise phrase on EVERY correct answer (not just
+- [ ] TC-0168 Game mode on: praise phrase on EVERY correct answer (not just
       periodically), confetti/milestone overlays allowed, regardless of
       the configured feedback intensity
-- [ ] Game mode on + reduced motion in the system: feedback stays subtle
+- [ ] TC-0169 Game mode on + reduced motion in the system: feedback stays subtle
       (reduced motion wins)
-- [ ] Game mode off: behaviour unchanged (feedback intensity applies as
+- [ ] TC-0170 Game mode off: behaviour unchanged (feedback intensity applies as
       before)
-- [ ] Toggling takes effect without a reload (change event) and behaves
+- [ ] TC-0171 Toggling takes effect without a reload (change event) and behaves
       identically in both storage modes (localStorage)
 
 #### Lernfunke mascot (#2849, only while game mode is on)
 
-- [ ] Game mode on, open a lesson: small flame figure next to the
+- [ ] TC-0172 Game mode on, open a lesson: small flame figure next to the
       progress bar (tooltip/screen reader: "Your learning companion");
       game mode off: no figure, row unchanged
-- [ ] Correct answer: the figure cheers briefly (hop, happy eyes) and
+- [ ] TC-0173 Correct answer: the figure cheers briefly (hop, happy eyes) and
       returns to its resting pose
-- [ ] Wrong answer: the figure encourages (wiggle, surprised look), no
+- [ ] TC-0174 Wrong answer: the figure encourages (wiggle, surprised look), no
       praise text at the figure (the praise line under the exercise
       stays as before)
-- [ ] Milestone during the lesson (level-up, streak, badge): the figure
+- [ ] TC-0175 Milestone during the lesson (level-up, streak, badge): the figure
       celebrates (star eyes + sparkles); the milestone overlay still
       appears undisturbed at the top center
-- [ ] Lesson completion: the figure grows, celebrates, and shows ONE
+- [ ] TC-0176 Lesson completion: the figure grows, celebrates, and shows ONE
       localized praise phrase as a speech bubble; the bubble dismisses
       itself
-- [ ] Reduced motion in the system: poses still change (expression),
+- [ ] TC-0177 Reduced motion in the system: poses still change (expression),
       but without hop/wiggle animation
-- [ ] Exam mode + game mode: no per-answer reactions (no immediate
+- [ ] TC-0178 Exam mode + game mode: no per-answer reactions (no immediate
       feedback); the figure stays resting until completion
-- [ ] Narrow viewport (mobile): the figure does not crowd out the
+- [ ] TC-0179 Narrow viewport (mobile): the figure does not crowd out the
       progress bar; the row wraps cleanly
 
 #### Mascot variants (#2861, Lernfunke color schemes)
 
-- [ ] Settings -> Learning -> Game mode -> details (unfolded, see the
+- [ ] TC-0180 Settings -> Learning -> Game mode -> details (unfolded, see the
       preparation step #2959), "XP and mascot" block: the "Mascot
       variant" row with five mini figures (Spark, Ocean, Forest, Ghost,
       Gold) plus a hint text
-- [ ] Fresh account (level 1, no badges, 0 XP): only Spark selectable;
+- [ ] TC-0181 Fresh account (level 1, no badges, 0 XP): only Spark selectable;
       Ocean "From level 3", Forest "From level 7", Ghost "Needs the
       badge: First session", Gold with a "250 XP" button (disabled
       while XP is insufficient)
-- [ ] At level 3+: Ocean clickable; the choice survives a reload
+- [ ] TC-0182 At level 3+: Ocean clickable; the choice survives a reload
       (highlight ring on the selected variant)
-- [ ] With a lesson open (game mode on), switch the variant: the flame
+- [ ] TC-0183 With a lesson open (game mode on), switch the variant: the flame
       figure next to the progress bar recolors immediately, no reload
-- [ ] Gold purchase with enough XP: first click shows "Confirm", the
+- [ ] TC-0184 Gold purchase with enough XP: first click shows "Confirm", the
       second deducts 250 XP (the header XP badge updates), the variant
       is selected and permanently unlocked
-- [ ] Backup round-trip: export -> wipe -> import restores selected and
+- [ ] TC-0185 Backup round-trip: export -> wipe -> import restores selected and
       purchased variants (both storage modes)
 
 #### Game mode sounds (#2875)
 
-- [ ] Settings -> Learning -> Game mode: below the mode switch, the
+- [ ] TC-0186 Settings -> Learning -> Game mode: below the mode switch, the
       "Game mode sounds" switch (default off) with a hint text
-- [ ] Turn game mode on without ever answering the sound question: the
+- [ ] TC-0187 Turn game mode on without ever answering the sound question: the
       "Play with sound?" offer with "Yes, sounds on" / "Later"; "Yes"
       enables the sounds, "Later" does not - both make the offer
       disappear permanently
-- [ ] Lesson-start banner (game mode off, never dismissed): next to
+- [ ] TC-0188 Lesson-start banner (game mode off, never dismissed): next to
       "Turn on", the "Turn on with sound" button - enables mode AND
       sounds in one click
-- [ ] Sounds on, global sounds OFF: a correct answer plays a tone
+- [ ] TC-0189 Sounds on, global sounds OFF: a correct answer plays a tone
       (audibly rising with the streak), a wrong answer a low thud, a
       checkpoint jingle on crossing, a fanfare on lesson completion;
       volume follows the existing slider
-- [ ] Game mode sounds OFF and global sounds OFF: everything silent;
+- [ ] TC-0190 Game mode sounds OFF and global sounds OFF: everything silent;
       global sounds ON behave as before (no game-mode fanfare, no
       streak rise outside game mode)
-- [ ] Exam mode + game mode + sounds: no per-answer tone (no immediate
+- [ ] TC-0191 Exam mode + game mode + sounds: no per-answer tone (no immediate
       feedback); the completion fanfare stays allowed
 
 #### Feedback card: volume always visible + game-mode hint (#2957)
 
-- [ ] Settings -> Learning -> Feedback: the "Sounds" switch is OFF, yet
+- [ ] TC-0192 Settings -> Learning -> Feedback: the "Sounds" switch is OFF, yet
       the volume slider, the percentage readout and the "Test" button
       are visible; below the slider the hint "Also applies to the
       game-mode sounds."
-- [ ] Sounds OFF, game-mode sounds ON: move the slider, play a lesson in
+- [ ] TC-0193 Sounds OFF, game-mode sounds ON: move the slider, play a lesson in
       game mode - the game-mode tones follow the new volume; sounds OFF
       + game-mode sounds OFF: "Test" stays silent
-- [ ] Turn game mode on (Settings -> Learning -> Game mode): below the
+- [ ] TC-0194 Turn game mode on (Settings -> Learning -> Game mode): below the
       three intensity options the hint "Game mode is on, so feedback is
       always enthusiastic regardless of this setting." appears
       IMMEDIATELY, no reload
-- [ ] Turn game mode off again: the hint disappears immediately; the
+- [ ] TC-0195 Turn game mode off again: the hint disappears immediately; the
       selected intensity stays marked unchanged
-- [ ] Game mode on + reduced motion in the system: both hints (reduced
+- [ ] TC-0196 Game mode on + reduced motion in the system: both hints (reduced
       motion + game mode) are visible; feedback stays subtle (reduced
       motion wins)
 
 #### Tension systems: hearts + countdown ring (#2878, opt-in, default off)
 
-- [ ] Settings > Learning > Game Mode > details ("Tension" block,
+- [ ] TC-0197 Settings > Learning > Game Mode > details ("Tension" block,
       preparation step #2959): the "Hearts (lives)" and
       "Countdown ring" switches are OFF by default; the number inputs
       (hearts per lesson, seconds per exercise) only become editable
       after enabling their switch and clamp to 1-5 / 5-120
-- [ ] Hearts on + game mode on: the hearts row appears next to the
+- [ ] TC-0198 Hearts on + game mode on: the hearts row appears next to the
       streak chip (filled); every wrong answer empties one heart with
       a short shake
-- [ ] At 0 hearts: a friendly "Out of hearts!" dialog offers "Try
+- [ ] TC-0199 At 0 hearts: a friendly "Out of hearts!" dialog offers "Try
       again" (restarts the lesson, hearts refilled) and "Leave lesson"
       (back to the overview); nothing solved is lost
-- [ ] Correction round on the summary: fixing mistakes costs NO
+- [ ] TC-0200 Correction round on the summary: fixing mistakes costs NO
       hearts (the row is hidden there)
-- [ ] Countdown ring on: a small ring runs per exercise (green >
+- [ ] TC-0201 Countdown ring on: a small ring runs per exercise (green >
       yellow > red, pulse in the last 5 seconds); expiry breaks the
       streak, costs a heart (if on) and plays the wrong tone - but
       the exercise stays open and normally solvable, nothing is
       auto-submitted; the ring pauses after checking
-- [ ] Exam mode and timed mode: neither hearts nor ring appear (the
+- [ ] TC-0202 Exam mode and timed mode: neither hearts nor ring appear (the
       timed mode keeps its own time bar)
-- [ ] Grading unchanged: score, stars and progress are identical with
+- [ ] TC-0203 Grading unchanged: score, stars and progress are identical with
       and without the tension systems
 
 #### Streak bonus XP (#2893, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode > details ("XP and mascot" block,
+- [ ] TC-0204 Settings > Learning > Game Mode > details ("XP and mascot" block,
       preparation step #2959): the "Streak bonus XP" switch is
       ON by default; the "Bonus XP cap per lesson" number input is
       editable, clamps to 5-20 (default 10) and is disabled while the
       switch is off
-- [ ] Game mode on, play a lesson with a streak of at least 3 correct
+- [ ] TC-0205 Game mode on, play a lesson with a streak of at least 3 correct
       answers in a row: the summary shows a green "+N XP" next to
       "Best streak: N"; the displayed lesson XP include the bonus, and
       "Mark as complete" credits exactly the same value (dashboard XP
       rise by the displayed sum)
-- [ ] The bonus counts from the THIRD streak answer (+1 per further
+- [ ] TC-0206 The bonus counts from the THIRD streak answer (+1 per further
       correct answer in a row); a wrong answer stops the growth, a new
       streak from 3 keeps counting
-- [ ] Cap: with the cap at 5 and a long streak, the summary shows at
+- [ ] TC-0207 Cap: with the cap at 5 and a long streak, the summary shows at
       most "+5 XP"
-- [ ] Switch off OR game mode off: no "+N XP" on the summary, XP are
+- [ ] TC-0208 Switch off OR game mode off: no "+N XP" on the summary, XP are
       identical to normal mode
-- [ ] Exam mode: no streak bonus (the exam multiplier is unchanged)
+- [ ] TC-0209 Exam mode: no streak bonus (the exam multiplier is unchanged)
 
 #### Arcade mini-games (#2887, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+- [ ] TC-0210 Settings > Learning > Game Mode > details ("Arcade and rewards"
       block, preparation step #2959): the "Arcade" switch is ON by
       default; the "Snake round length" (30-120, default 60) and
       "Memory pairs" (4-12, default 8) number inputs clamp and are
       disabled while the switch is off
-- [ ] Game mode on: the arcade card appears on the dashboard; "To the
+- [ ] TC-0211 Game mode on: the arcade card appears on the dashboard; "To the
       arcade" opens the game list. Arcade switch off OR game mode off:
       the card disappears entirely; visiting /arcade directly shows a
       friendly notice with a link to the settings
-- [ ] Learn Memory (free): the set picker lists downloaded sets only
+- [ ] TC-0212 Learn Memory (free): the set picker lists downloaded sets only
       and is preselected with the most recently learned set (#2899),
       not the first in the list; without any progress the first set
       stays preselected;
@@ -724,183 +724,183 @@ preview delivery). In the regular build the mode does not exist.
       lesson cards); a matched pair stays open, a mismatch counts a
       try and folds away on the next reveal; finding every pair shows
       the win message with the try count
-- [ ] Snake (locked): the game card offers "Unlock for 200 XP"; with
+- [ ] TC-0213 Snake (locked): the game card offers "Unlock for 200 XP"; with
       too little XP the button is disabled (tooltip); the purchase
       takes TWO clicks (confirm text), deducts 200 XP (header XP
       drops) and Snake stays playable permanently (survives a reload
       and rides the backup)
-- [ ] Playing Snake: arrow keys/WASD AND swipe gestures steer; pause
+- [ ] TC-0214 Playing Snake: arrow keys/WASD AND swipe gestures steer; pause
       halts clock and snake; food grows the snake (+1 point); wall or
       own body ends the round; the round clock running out shows the
       result (won from 5 points); the local best score is display-only
-- [ ] Games award NO XP (header XP unchanged after a won round)
-- [ ] Reduced motion in the system: no flip/flash effects in either
+- [ ] TC-0215 Games award NO XP (header XP unchanged after a won round)
+- [ ] TC-0216 Reduced motion in the system: no flip/flash effects in either
       game
 
 #### Arcade: Tic-Tac-Toe (#2906, 100-XP unlock)
 
-- [ ] Arcade game list: Tic-Tac-Toe appears between Learn Memory and
+- [ ] TC-0217 Arcade game list: Tic-Tac-Toe appears between Learn Memory and
       Snake, locked behind "Unlock for 100 XP" (two-step confirm as
       with Snake); a ticket plays one round without the purchase
-- [ ] A round: clicking places X, a short "the app is thinking"
+- [ ] TC-0218 A round: clicking places X, a short "the app is thinking"
       beat, then the app places O; occupied cells and the thinking
       beat are disabled
-- [ ] The AI is beatable: it does not block every winning chance -
+- [ ] TC-0219 The AI is beatable: it does not block every winning chance -
       over a few rounds you can win (three in a row highlighted,
       friendly win message)
-- [ ] Losing and a draw end friendly with "Restart"; the game awards
+- [ ] TC-0220 Losing and a draw end friendly with "Restart"; the game awards
       no XP
 
 #### Arcade: Simon (#2907, 300-XP unlock)
 
-- [ ] Arcade game list: Simon appears after Snake, locked behind
+- [ ] TC-0221 Arcade game list: Simon appears after Snake, locked behind
       "Unlock for 300 XP" (two-step confirm); a ticket plays one
       round without the purchase
-- [ ] A round: the app shows the color sequence field by field
+- [ ] TC-0222 A round: the app shows the color sequence field by field
       (status "Watch the sequence"), then the four fields become
       active ("Your turn"); during playback they are disabled
-- [ ] A correct input extends the sequence by one field and replays
+- [ ] TC-0223 A correct input extends the sequence by one field and replays
       it; the round label counts "Sequence {n} of {m}" up
-- [ ] A wrong input ends friendly with the reached length and
+- [ ] TC-0224 A wrong input ends friendly with the reached length and
       "Restart"; reaching the target length wins the round; the game
       awards no XP
-- [ ] Sounds: with the sounds or game-mode-sounds switch on, each
+- [ ] TC-0225 Sounds: with the sounds or game-mode-sounds switch on, each
       field plays its own tone (playback and input); without the
       opt-in the game stays silent and fully playable
-- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+- [ ] TC-0226 Settings > Learning > Game Mode > details ("Arcade and rewards"
       block, preparation step #2959): the "Simon target length"
       number input clamps to 5-15 (default 8) and is disabled while
       the arcade is off
-- [ ] Reduced motion in the system: fields only change state
+- [ ] TC-0227 Reduced motion in the system: fields only change state
       (ring/brightness), no flash/scale effect
 
 #### Flash rounds (#2888, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+- [ ] TC-0228 Settings > Learning > Game Mode > details ("Arcade and rewards"
       block, preparation step #2959): the "Special rounds" switch is
       ON by default; the "Flash-round cards" number input clamps to
       5-20 (default 10) and is disabled while the switch is off
-- [ ] Set overview (/content/set/...) with game mode on: the
+- [ ] TC-0229 Set overview (/content/set/...) with game mode on: the
       flash-round card appears; while not every lesson of the set is
       completed with at least one star, the start button is disabled
       with the unlock-condition tooltip
-- [ ] Set finished (every lesson with at least one star) and error
+- [ ] TC-0230 Set finished (every lesson with at least one star) and error
       cards present: starting opens the flash round - title
       "Flash round: {set}", the countdown ring runs per exercise
       (expiry breaks the streak, nothing is auto-submitted), the
       exercises come from the set's most error-prone cards
-- [ ] The flash round's back button returns to the set overview (not
+- [ ] TC-0231 The flash round's back button returns to the set overview (not
       to a lesson)
-- [ ] Perfect set (no error cards): the start button stays disabled
+- [ ] TC-0232 Perfect set (no error cards): the start button stays disabled
       with the perfect tooltip
-- [ ] Special-rounds switch off OR game mode off: the flash-round card
+- [ ] TC-0233 Special-rounds switch off OR game mode off: the flash-round card
       disappears entirely
-- [ ] A plain "Retry errors" from a lesson summary: unchanged, NO
+- [ ] TC-0234 A plain "Retry errors" from a lesson summary: unchanged, NO
       countdown ring
-- [ ] Scoring/SRS: the flash round writes no lesson progress;
+- [ ] TC-0235 Scoring/SRS: the flash round writes no lesson progress;
       corrected error cards only advance the SRS state, as in retry
       errors
 
 #### Game tickets (#2889, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+- [ ] TC-0236 Settings > Learning > Game Mode > details ("Arcade and rewards"
       block, preparation step #2959): the "Game tickets" switch is ON
       by default; the "Maximum tickets" number input clamps to 1-10
       (default 5) and is disabled while the switch is off
-- [ ] Finishing a lesson with a perfect score: the summary shows the
+- [ ] TC-0237 Finishing a lesson with a perfect score: the summary shows the
       ticket banner ("Reward unlocked ...") with a "Play now" button
       leading to the arcade
-- [ ] Arcade switch off (#3029): the same lesson finished with a perfect
+- [ ] TC-0238 Arcade switch off (#3029): the same lesson finished with a perfect
       score shows NEITHER the banner nor "Play now" in the summary, and
       no ticket is banked; arcade switch back on and another new lesson
       finished perfectly: banner and button are back
-- [ ] Hearts active (#2878) and a run finished without losing one:
+- [ ] TC-0239 Hearts active (#2878) and a run finished without losing one:
       one more ticket (perfect score + all hearts = 2 tickets)
-- [ ] Streak milestones (3/7/14/30 days): reaching one grants a bonus
+- [ ] TC-0240 Streak milestones (3/7/14/30 days): reaching one grants a bonus
       ticket, each milestone only once
-- [ ] Cap: no more tickets than the maximum can be saved up; a
+- [ ] TC-0241 Cap: no more tickets than the maximum can be saved up; a
       milestone blocked by the cap is granted later once a slot is
       free
-- [ ] Revisiting the summary of an already-completed lesson: NO new
+- [ ] TC-0242 Revisiting the summary of an already-completed lesson: NO new
       ticket (no farming); "Practice again" with a fresh perfect run
       earns normally
-- [ ] The correction round and retry-errors award no tickets; a run
+- [ ] TC-0243 The correction round and retry-errors award no tickets; a run
       corrected after the fact never counts as a perfect score
-- [ ] Exam mode: a perfect score earns the ticket by the same rule
-- [ ] The arcade page and the dashboard arcade card show the balance
+- [ ] TC-0244 Exam mode: a perfect score earns the ticket by the same rule
+- [ ] TC-0245 The arcade page and the dashboard arcade card show the balance
       ("Tickets: N"); the line disappears while the ticket switch is
       off
-- [ ] A locked game (snake without the XP purchase) with a balance:
+- [ ] TC-0246 A locked game (snake without the XP purchase) with a balance:
       the "Play one round with a ticket" button starts one round and
       deducts exactly one ticket; without a balance the button is
       absent
-- [ ] Ticket switch off: the arcade offers only the XP purchase /
+- [ ] TC-0247 Ticket switch off: the arcade offers only the XP purchase /
       existing unlocks
-- [ ] Backup export > wipe > import: the ticket balance survives the
+- [ ] TC-0248 Backup export > wipe > import: the ticket balance survives the
       round-trip (localStorage snapshot)
 
 #### Bonus lessons (#2890, default on, game mode only)
 
-- [ ] Settings > Learning > Game Mode > details ("Arcade and rewards"
+- [ ] TC-0249 Settings > Learning > Game Mode > details ("Arcade and rewards"
       block, preparation step #2959): the "Bonus lessons" switch is
       ON by default
-- [ ] A set with a bonus- lesson file (filename starts with
+- [ ] TC-0250 A set with a bonus- lesson file (filename starts with
       "bonus-"): the set page shows the bonus lesson at the END of
       the list with a "Bonus" badge, even when the file would sort
       first alphabetically
-- [ ] Game mode on, set unfinished: the bonus row is locked (lock
+- [ ] TC-0251 Game mode on, set unfinished: the bonus row is locked (lock
       icon, no link); the tooltip names the condition (every regular
       lesson with at least one star)
-- [ ] Every regular lesson completed with at least one star: the
+- [ ] TC-0252 Every regular lesson completed with at least one star: the
       bonus row becomes a normal link and opens the lesson
-- [ ] Bonus switch off OR game mode off: the bonus lesson is a normal
+- [ ] TC-0253 Bonus switch off OR game mode off: the bonus lesson is a normal
       link (only the badge stays) - no content is withheld
-- [ ] "Start learning" on the set page opens the first REGULAR
+- [ ] TC-0254 "Start learning" on the set page opens the first REGULAR
       lesson, never the bonus file
-- [ ] Flash round (#2888): a still-locked bonus lesson does NOT block
+- [ ] TC-0255 Flash round (#2888): a still-locked bonus lesson does NOT block
       the flash-round unlock (only regular lessons count)
 
 #### Playful exercise renderers (#2876, only while game mode is on)
 
-- [ ] Multiple-choice exercise: the answers render as large tiles
+- [ ] TC-0256 Multiple-choice exercise: the answers render as large tiles
       (two columns from tablet width); the chosen tile pops briefly
       and gets an accent border; after checking, the correctly chosen
       tile hops and a wrongly chosen one shakes
-- [ ] Cloze with word choices: the tapped word "jumps" into the blank
+- [ ] TC-0257 Cloze with word choices: the tapped word "jumps" into the blank
       in the sentence with a small hop; changing the pick replays the
       hop with the new word
-- [ ] Matching exercise: a freshly formed pair "snaps" together with a
+- [ ] TC-0258 Matching exercise: a freshly formed pair "snaps" together with a
       pop on both tiles; after checking, correct pairs hop briefly;
       tapping a pair still undoes it
-- [ ] Behaviour unchanged: selection, checking, score and resolution
+- [ ] TC-0259 Behaviour unchanged: selection, checking, score and resolution
       are identical to normal mode in all three exercise types
-- [ ] Game mode off: classic lists/chips/tiles without the game look;
+- [ ] TC-0260 Game mode off: classic lists/chips/tiles without the game look;
       reduced motion in the system: the shapes stay, all hop/pop
       animations are suppressed
 
 #### Juice package (#2874, only while game mode is on)
 
-- [ ] Play a lesson, two correct answers in a row: the streak chip
+- [ ] TC-0261 Play a lesson, two correct answers in a row: the streak chip
       (flame + "x2") appears next to the progress bar and hops on every
       further correct answer ("x3", "x4", ...)
-- [ ] Wrong answer: the chip disappears (streak broken); the next two
+- [ ] TC-0262 Wrong answer: the chip disappears (streak broken); the next two
       correct answers rebuild it
-- [ ] Correct answer: a "+1" floats off the check mark and fades; the
+- [ ] TC-0263 Correct answer: a "+1" floats off the check mark and fades; the
       check hops briefly; on a wrong answer the X shakes
-- [ ] Lesson with at least 3 steps: two checkpoint dots at 1/3 and 2/3
+- [ ] TC-0264 Lesson with at least 3 steps: two checkpoint dots at 1/3 and 2/3
       on the progress bar; crossing one lights it up in the accent
       color (small pop)
-- [ ] Summary: instead of the live chip, "Best streak: N" is shown
+- [ ] TC-0265 Summary: instead of the live chip, "Best streak: N" is shown
       (from streak 2; no chip without a real streak)
-- [ ] Exam mode + game mode: no chip, no "+1", no per-answer checkpoint
+- [ ] TC-0266 Exam mode + game mode: no chip, no "+1", no per-answer checkpoint
       celebration (no immediate feedback)
-- [ ] Game mode off: none of this appears; reduced motion in the
+- [ ] TC-0267 Game mode off: none of this appears; reduced motion in the
       system: chip/dots render without animation, the "+1" stays
       invisible (pure motion decoration)
 
 ### Learning tab: five clusters (#2956)
 
-- [ ] Settings > Learning: the cards sit in five labelled areas, each
+- [ ] TC-0268 Settings > Learning: the cards sit in five labelled areas, each
       with a small uppercase heading and a description line underneath,
       in this order: "Basics" (Who is learning, and in which languages.),
       "In the lesson" (How exercises behave while you answer.), "Reading
@@ -908,69 +908,69 @@ preview delivery). In the regular build the mode does not exist.
       practice.), "After the lesson" (Review sessions, the lesson summary
       and retrying mistakes.), "Motivation and routine" (Game mode,
       feedback, daily missions and reminders.)
-- [ ] Basics: Learning profile, then Additional source languages
-- [ ] In the lesson: Lesson mode, Hints, Interaction, then Preferred
+- [ ] TC-0269 Basics: Learning profile, then Additional source languages
+- [ ] TC-0270 In the lesson: Lesson mode, Hints, Interaction, then Preferred
       exercise direction and Matching exercise (Hints and Interaction come
       BEFORE direction and solve)
-- [ ] Reading aloud and dictation: only the "Voice" card; in a browser
+- [ ] TC-0271 Reading aloud and dictation: only the "Voice" card; in a browser
       without Web Speech support (neither synthesis nor recognition) the
       whole area is absent, heading included, and "After the lesson"
       follows "In the lesson" directly
-- [ ] After the lesson: Review, Lesson summary, Retry errors. "Spaced
+- [ ] TC-0272 After the lesson: Review, Lesson summary, Retry errors. "Spaced
       repetition" is no longer a card of its own but the last block
       inside the "Review" card (under a divider, smaller heading): the
       interval schedule (correct answers in a row against days until the
       next review), the note on when an item counts as mastered, and the
       link to the learning method
-- [ ] Motivation and routine: Game Mode, Feedback, Daily Missions,
+- [ ] TC-0273 Motivation and routine: Game Mode, Feedback, Daily Missions,
       Reminders (last card of the tab)
-- [ ] Phone (375 px wide): area headings and descriptions wrap, nothing
+- [ ] TC-0274 Phone (375 px wide): area headings and descriptions wrap, nothing
       scrolls horizontally; switching tabs and the ?tab=learning deep
       link work as before
 
 ### Game mode: summary card + details (#2959)
 
-- [ ] Settings > Learning > Game Mode: the card shows the "Playful
+- [ ] TC-0275 Settings > Learning > Game Mode: the card shows the "Playful
       lessons" switch, the game mode sounds and, below them, the status
       line "N of 7 extras on" (fresh state: "5 of 7")
-- [ ] "Game mode details" is collapsed by default (button with a
+- [ ] TC-0276 "Game mode details" is collapsed by default (button with a
       chevron, the hint "Hearts, countdown, arcade, special rounds,
       tickets, bonus lessons, streak XP and mascot." underneath);
       unfolding shows the three blocks "Tension", "Arcade and rewards"
       and "XP and mascot"
-- [ ] Leave it unfolded and reload the page: the fold stays open; leave
+- [ ] TC-0277 Leave it unfolded and reload the page: the fold stays open; leave
       it collapsed and reload: it stays collapsed (both storage modes,
       localStorage)
-- [ ] Game mode OFF, details unfolded: every switch, every number input
+- [ ] TC-0278 Game mode OFF, details unfolded: every switch, every number input
       and the mascot buttons are greyed out; the notice "Turn on "Playful
       lessons" to change these options." sits at the top of the fold
-- [ ] Switch "Playful lessons" on: the notice disappears and the detail
+- [ ] TC-0279 Switch "Playful lessons" on: the notice disappears and the detail
       switches become usable without a reload; number inputs still follow
       their own switch (e.g. "Hearts per lesson" stays locked while
       "Hearts (lives)" is off); switching off again locks everything
       without a reload
-- [ ] Flip one detail switch (e.g. hearts on): the status line counts
+- [ ] TC-0280 Flip one detail switch (e.g. hearts on): the status line counts
       along immediately ("6 of 7 extras on")
-- [ ] Arcade notice page (/arcade with the arcade or game mode off): the
+- [ ] TC-0281 Arcade notice page (/arcade with the arcade or game mode off): the
       link into the settings lands on the Learning tab's "Motivation and
       routine" area (chip active, area on screen, see #2961)
 
 ### Gamification inside "Motivation and routine" (#2962)
 
-- [ ] Settings > Learning > "Motivation and routine": the "Gamification"
+- [ ] TC-0282 Settings > Learning > "Motivation and routine": the "Gamification"
       card (XP notifications, badge notifications, "View all badges",
       weekend mode, daily session goal, "Reset progress") is the LAST
       card of the tab, right behind "Reminders", set apart by a thicker
       divider with extra space above it
-- [ ] Settings > Plugins: the "Installed plugins" card (#3055) and, below
+- [ ] TC-0283 Settings > Plugins: the "Installed plugins" card (#3055) and, below
       it, the "Learning Repository" card; no Gamification card any more
-- [ ] Section bar, chip "Motivation and routine": the jump lands on the
+- [ ] TC-0284 Section bar, chip "Motivation and routine": the jump lands on the
       area heading, and the Gamification card belongs to the area (under
       the same heading)
-- [ ] "View all badges" still opens the badge gallery; "Reset progress"
+- [ ] TC-0285 "View all badges" still opens the badge gallery; "Reset progress"
       still asks twice; weekend mode persists (reload) - in both storage
       modes
-- [ ] Phone (375 px): the card and the divider wrap cleanly, nothing
+- [ ] TC-0286 Phone (375 px): the card and the divider wrap cleanly, nothing
       scrolls horizontally
 
 ### Data tab: section bar + deep link (#3122)
@@ -978,7 +978,7 @@ preview delivery). In the regular build the mode does not exist.
 The same mechanics as on the Learning tab (#2961, #2966), over the six
 areas of the Data tab in the fixed #1451 order.
 
-- [ ] Settings > Data: above the first area sits a row of chips "Sources",
+- [ ] TC-0287 Settings > Data: above the first area sits a row of chips "Sources",
       "Sync", "Offline content", "Backup and export", "Housekeeping",
       "Danger zone" (in this order, `settings-subnav-sources` …
       `settings-subnav-danger`). With no selection no chip is highlighted;
@@ -987,150 +987,150 @@ areas of the Data tab in the fixed #1451 order.
       size under Offline content; backup, identity, key vault, export under
       Backup; retention and orphaned data under Housekeeping; Delete
       everything as the last card, set apart)
-- [ ] Click the "Backup and export" chip: the page scrolls to the area, the
+- [ ] TC-0288 Click the "Backup and export" chip: the page scrolls to the area, the
       heading sits clear of the header (desktop: clear of header AND bar),
       the chip is highlighted, the address ends in
       `?tab=data&section=backup`, the back button does NOT return to the
       previous chip
-- [ ] Phone (375 px): the chip row can be swiped sideways, no horizontal
+- [ ] TC-0289 Phone (375 px): the chip row can be swiped sideways, no horizontal
       page scroll; the backup is one tap away instead of several screen
       heights of scrolling
-- [ ] Open the deep link `/settings?tab=data&section=danger` in a new tab:
+- [ ] TC-0290 Open the deep link `/settings?tab=data&section=danger` in a new tab:
       the Data tab is open, the danger zone on screen, its chip highlighted
-- [ ] Open `/settings?tab=data&section=review` (a Learning area): the Data
+- [ ] TC-0291 Open `/settings?tab=data&section=review` (a Learning area): the Data
       tab opens at the top, no Data chip highlighted, no error
-- [ ] Jump from the AI tab "Export keys" / "Import keys" (#1183, #1765):
+- [ ] TC-0292 Jump from the AI tab "Export keys" / "Import keys" (#1183, #1765):
       still lands on the key vault inside "Backup and export"; the bar does
       not disturb the jump
-- [ ] With no selection scroll slowly: the highlighted chip follows the
+- [ ] TC-0293 With no selection scroll slowly: the highlighted chip follows the
       area whose heading is at the top of the screen; the address does NOT
       change
-- [ ] Both storage modes (API + Dexie): bar and deep link behave the same;
+- [ ] TC-0294 Both storage modes (API + Dexie): bar and deep link behave the same;
       in Dexie mode the "Sync" area shows the desktop-only notice
 
 ### Learning tab: section bar + deep link (#2961)
 
-- [ ] Settings > Learning: above the first area sits a row of chips
+- [ ] TC-0295 Settings > Learning: above the first area sits a row of chips
       "Basics", "In the lesson", "Reading aloud and dictation", "After the
       lesson", "Motivation and routine" (in this order; without Web Speech
       support the "Reading aloud and dictation" chip is absent). With no
       selection no chip is highlighted
-- [ ] Click the "After the lesson" chip: the page scrolls to the "After
+- [ ] TC-0296 Click the "After the lesson" chip: the page scrolls to the "After
       the lesson" area, the area heading sits clear of the header (desktop:
       clear of header AND bar), the chip is highlighted, the address ends
       in `?tab=learning&section=review`, and the browser back button does
       NOT return to the previous chip (no new history entry)
-- [ ] Desktop (>= 768 px): keep scrolling down - the bar stays visible
+- [ ] TC-0297 Desktop (>= 768 px): keep scrolling down - the bar stays visible
       right below the app header and covers no text. Phone (375 px): the
       bar scrolls away with the page, the chip row can be swiped sideways,
       nothing scrolls horizontally at page level
-- [ ] Open the deep link `/settings?tab=learning&section=motivation` in a
+- [ ] TC-0298 Open the deep link `/settings?tab=learning&section=motivation` in a
       new tab: the Learning tab is open, the "Motivation and routine" area
       on screen, its chip highlighted; on the phone the active chip is
       visible in the row (the row was scrolled to it)
-- [ ] Open `/settings?tab=learning&section=nonsense`: the tab opens at the
+- [ ] TC-0299 Open `/settings?tab=learning&section=nonsense`: the tab opens at the
       top, no chip highlighted, no error
-- [ ] With an active area switch to another tab (e.g. Data): the address
+- [ ] TC-0300 With an active area switch to another tab (e.g. Data): the address
       carries only `?tab=data`; back on Learning: no chip highlighted, no
       scroll movement
-- [ ] System setting "reduce motion" on: the jump happens without
+- [ ] TC-0301 System setting "reduce motion" on: the jump happens without
       animation (instant), otherwise smoothly
-- [ ] With no selection scroll slowly through the tab (#2966): the
+- [ ] TC-0302 With no selection scroll slowly through the tab (#2966): the
       highlighted chip follows the area whose heading is at the top of
       the screen (Basics -> In the lesson -> ... -> Motivation and
       routine); after a chip click the clicked chip stays highlighted
       until its area is on screen, then follows the scrolling again. The
       address does NOT change while scrolling
-- [ ] Heading hierarchy (#2966, screen reader / browser outline): on the
+- [ ] TC-0303 Heading hierarchy (#2966, screen reader / browser outline): on the
       Learning tab the area headings are h2 and the card titles inside
       are h3; on the other tabs the card titles stay h2
-- [ ] Both storage modes (API + Dexie): bar and deep link behave the same
+- [ ] TC-0304 Both storage modes (API + Dexie): bar and deep link behave the same
 
 ### Summary counts corrections (#2479)
-- [ ] Play a lesson with several wrong answers, then fix them in the
+- [ ] TC-0305 Play a lesson with several wrong answers, then fix them in the
       end-of-lesson correction round. The score bar shows two segments: what
       was right on the first try (solid fill) and what was fixed after
       correcting (hatched), with a legend "N on the first try" / "N after
       correcting".
-- [ ] Stars, message and the "+N XP" follow the final state: fixing every
+- [ ] TC-0306 Stars, message and the "+N XP" follow the final state: fixing every
       mistake earns full stars and "Perfect score!", not "1 of 3 stars" /
       "Good start". The credited XP matches the number shown.
-- [ ] Without a correction round the bar stays a single solid segment (no empty
+- [ ] TC-0307 Without a correction round the bar stays a single solid segment (no empty
       second segment, no legend); stars + message unchanged.
-- [ ] Exam mode: the result does NOT follow the correction - an exam result is
+- [ ] TC-0308 Exam mode: the result does NOT follow the correction - an exam result is
       the first pass (single-segment bar, stars + XP unchanged).
-- [ ] Accessibility: the two bar segments are distinguishable without colour
+- [ ] TC-0309 Accessibility: the two bar segments are distinguishable without colour
       (hatch + legend) - check in BOTH light and dark themes.
-- [ ] iOS PWA/Standalone: same check on the icon added to the home screen
+- [ ] TC-0310 iOS PWA/Standalone: same check on the icon added to the home screen
       (the report came from there). Bar, stars, message and XP show the final
       state after correction.
 
 ### "Why you missed these" shows the question (#2757)
-- [ ] Play a lesson with at least one wrongly answered element (explanations
+- [ ] TC-0311 Play a lesson with at least one wrongly answered element (explanations
       enabled in Settings > Learning). In the "Why you missed these" section,
       each answer comparison carries a "Question:" line above it showing what
       was asked (the exercise prompt, the sentence with "___" for cloze, the
       asked term for matching) - not just "Your answer" / "Correct".
-- [ ] Matching exercise with one wrong pair: the question shown is the asked
+- [ ] TC-0312 Matching exercise with one wrong pair: the question shown is the asked
       term (the pair's left side), never an internal ID.
-- [ ] When the question cannot be resolved (e.g. the content was updated in
+- [ ] TC-0313 When the question cannot be resolved (e.g. the content was updated in
       the meantime), the entry renders as before without a question line -
       no error, no empty line.
 
 ### One collapsed mistakes section (#2496)
-- [ ] Play a lesson with at least one mistake. On the summary the
+- [ ] TC-0314 Play a lesson with at least one mistake. On the summary the
       "Fix your mistakes (N)" section appears COLLAPSED: NO text field has
       focus, NO keyboard pops up (check on a phone - that was the report).
       The score stays visible.
-- [ ] Tap "Fix now" -> the section expands, the first correction drill
+- [ ] TC-0315 Tap "Fix now" -> the section expands, the first correction drill
       (cloze) appears and NOW takes focus (the keyboard may open here - it is
       the user's deliberate action).
-- [ ] Inside the expanded section there is a secondary "Redo all exercises (N)"
+- [ ] TC-0316 Inside the expanded section there is a secondary "Redo all exercises (N)"
       action -> goes to the error-replay page with the real failed exercises.
-- [ ] The "What's next?" cards no longer contain a separate "Retry errors"
+- [ ] TC-0317 The "What's next?" cards no longer contain a separate "Retry errors"
       card (folded into the one section). Enter still activates the primary
       forward card (Next lesson / Adaptive / Review), never the collapsed
       mistakes section.
-- [ ] When every mistake is already corrected, the section shows a short
+- [ ] TC-0318 When every mistake is already corrected, the section shows a short
       success note ("All errors corrected!") instead of a drill.
-- [ ] #2570: only non-cloze-able mistakes (no cloze can be generated) - the
+- [ ] TC-0319 #2570: only non-cloze-able mistakes (no cloze can be generated) - the
       section shows "Repeat your mistakes" DIRECTLY, with "These can't be
       practiced as a quick drill - redo the exercises instead." + the "Redo
       all exercises (N)" button. NO "Fix now" intermediate step that would
       only expand into nothing.
-- [ ] #2570 placement: the mistakes section sits BEFORE the "What's next?"
+- [ ] TC-0320 #2570 placement: the mistakes section sits BEFORE the "What's next?"
       cards (Next lesson / Adaptive / ...) in the default order, not after -
       fix your own mistakes first, then decide where to go next. Still freely
       reorderable via Settings.
 
 ### Correction round: the result stays, then Continue (#3125)
-- [ ] Finish a lesson with at least two mistakes, press "Fix now", fill
+- [ ] TC-0321 Finish a lesson with at least two mistakes, press "Fix now", fill
       the first blank CORRECTLY and check: the blank turns green, "All
       correct!" appears, below it the green success bar with "Continue".
       The round does NOT move on by itself (auto-advance in Settings >
       Learning off)
-- [ ] Press "Continue" (or Enter): now the next drill appears (counter
+- [ ] TC-0322 Press "Continue" (or Enter): now the next drill appears (counter
       "2 / N")
-- [ ] Fill a blank WRONGLY and check: the blank turns red, "0 of 1
+- [ ] TC-0323 Fill a blank WRONGLY and check: the blank turns red, "0 of 1
       correct", My answer / Solution stay visible, below them a plain
       "Continue" button; no auto-advance, not even with auto-advance on
-- [ ] Settings > Learning > auto-advance on, round again: after a CORRECT
+- [ ] TC-0324 Settings > Learning > auto-advance on, round again: after a CORRECT
       answer the success bar stays briefly (as in the lesson) and the
       round moves on by itself
-- [ ] After the last drill "Continue" leads to the completion note
+- [ ] TC-0325 After the last drill "Continue" leads to the completion note
       ("Correction round complete", N elements improved); the number
       matches the correct answers
-- [ ] Skipping stays possible at any time; the comparison with the
+- [ ] TC-0326 Skipping stays possible at any time; the comparison with the
       previous run (#983) is unchanged
 
 ### New exercise types (since v2.2.0, visual + functional)
-- [ ] multiple_choice: selection, feedback, SRS attempt
-- [ ] matching solve toggle (#3140): after a not-fully-correct check the
+- [ ] TC-0327 multiple_choice: selection, feedback, SRS attempt
+- [ ] TC-0328 matching solve toggle (#3140): after a not-fully-correct check the
       "My answers" / "Solve" toggle is there; on a fully-correct answer NO
       toggle appears - in the lesson only "Continue", in the review
       session and the endless, shuffle, adaptive and error-replay lessons
       only the graded columns
-- [ ] matching corrections view (#3186): after a not-fully-correct check
+- [ ] TC-0329 matching corrections view (#3186): after a not-fully-correct check
       there are three buttons "My answers" / "Corrections" / "Solve".
       "My answers" is active and shows your pairs exactly as you formed
       them (numbered, colour-coded pair badges), with NO grading: no
@@ -1139,25 +1139,25 @@ areas of the Data tab in the fixed #1451 order.
       "Corrections" shows the graded grid (green/red, "Your answer") plus
       the correct answer under each mistake, "Solve" shows the solution.
       "Try again" and a new check start in "My answers" again
-- [ ] matching corrections setting (#3186): Settings > Learning > card
+- [ ] TC-0330 matching corrections setting (#3186): Settings > Learning > card
       "Matching exercise" > "Corrections as a separate view" is on by
       default. Off: only two buttons "My answers" / "Solve", the correct
       answer sits directly under each mistake. Toggling applies at once to
       an open exercise. In exam mode (no toggle) the correct answer always
       sits directly under the mistake
-- [ ] ext:al-categorization: assign categories, readable resolution; after
+- [ ] TC-0331 ext:al-categorization: assign categories, readable resolution; after
       "Check answer" the verdict chips including the red correction category
       stay INSIDE their column (no bleeding into the neighbor column, #2771) -
       the correction sits on its own line under the item
-- [ ] ext:al-categorization solve toggle (#2772): after a not-fully-correct
+- [ ] TC-0332 ext:al-categorization solve toggle (#2772): after a not-fully-correct
       check, the "My answers" / "Solve" toggle appears next to the result
       line (like the pairs exercise). "Solve" shows every category with its
       correct items; items you had placed correctly yourself are tinted green
       with a check mark. "My answers" returns to the graded view, "Try again"
       resets to the interactive view. On a fully-correct answer NO toggle
       appears (only "Continue")
-- [ ] ext:al-error-correction: find + correct errors
-- [ ] ext:al-error-correction solve view (#2803): after a wrong check,
+- [ ] TC-0333 ext:al-error-correction: find + correct errors
+- [ ] TC-0334 ext:al-error-correction solve view (#2803): after a wrong check,
       the "My answer" / "Solution" toggle appears next to the result
       line (like pairs/categories). "Solution" renders the sentence as
       word tiles: the wrong word struck through in red with an X, the
@@ -1165,8 +1165,8 @@ areas of the Data tab in the fixed #1451 order.
       you see WHERE in the sentence the error sat. "My answer" returns
       to the graded view (incl. the solution line); "Try again" resets
       to the interactive view. On a correct answer NO toggle appears
-- [ ] ext:al-reading-comprehension: text + questions
-- [ ] ext:al-reading-comprehension resolution (#2633): after "Check answers"
+- [ ] TC-0335 ext:al-reading-comprehension: text + questions
+- [ ] TC-0336 ext:al-reading-comprehension resolution (#2633): after "Check answers"
       the correct multiple-choice option is highlighted GREEN — with a check
       icon and a text badge, never by color alone. If you picked it yourself it
       reads "Correct"; if you picked wrong, the right option reads "Correct
@@ -1175,12 +1175,12 @@ areas of the Data tab in the fixed #1451 order.
       a check instead of as grey body text. Same color language as the pairs
       (matching). Check across all 12 themes: the text stays readable on the
       tint.
-- [ ] ext:al-graded-quiz: grading + result display
-- [ ] ext:al-dictation (#1881): "Listen first" plays the clip, type the
+- [ ] TC-0337 ext:al-graded-quiz: grading + result display
+- [ ] TC-0338 ext:al-dictation (#1881): "Listen first" plays the clip, type the
       transcription; correct / near-miss ("Almost!") / wrong shows the
       solution; a lesson with `requires_extensions: ["ext:al-dictation@1"]`
       loads (not refused by the guard)
-- [ ] ext:al-image-description (#2095): the image is shown, type a free-text
+- [ ] TC-0339 ext:al-image-description (#2095): the image is shown, type a free-text
       description; correct / near-miss ("Almost!") / wrong shows the solution;
       a lesson with `requires_extensions: ["ext:al-image-description@1"]`
       loads (not refused by the guard). An embedded image renders WITHOUT a
@@ -1190,7 +1190,7 @@ areas of the Data tab in the fixed #1451 order.
       this type is visually gated by design (the answer IS the image
       description) — a screen reader hears a neutral image label, not the
       solution.
-- [ ] ext:al-speak-and-record (engine#68 idea 3): the sentence is read aloud
+- [ ] TC-0340 ext:al-speak-and-record (engine#68 idea 3): the sentence is read aloud
       via TTS (falls back to speech synthesis when no authored `audio` is
       present; with `audio` the authored clip plays instead); "Show text"
       reveals the sentence only after clicking; "Record" requests the
@@ -1205,7 +1205,7 @@ areas of the Data tab in the fixed #1451 order.
       type). Microphone access denied yields a friendly error, no crash. No
       microphone present disables/hides the record button accordingly, no
       crash.
-- [ ] **Storage cap + eviction (#2841):** recordings are auto-evicted
+- [ ] TC-0341 **Storage cap + eviction (#2841):** recordings are auto-evicted
       oldest-first once total storage crosses a cap - practically
       unreachable in normal use (~170 max-length recordings needed), so
       only the regression check applies here: the normal record flow
@@ -1215,9 +1215,9 @@ areas of the Data tab in the fixed #1451 order.
       "Your previous recording was removed…" message ever appears: no
       crash, "Record again" works normally and the message clears
       afterwards.
-- [ ] Listen-first audio (#1687): audio button on free_text +
+- [ ] TC-0342 Listen-first audio (#1687): audio button on free_text +
       matching plays, grading unaffected
-- [ ] Parametric exercises (#3109, schema v1.14): a free_text exercise
+- [ ] TC-0343 Parametric exercises (#3109, schema v1.14): a free_text exercise
       declaring `variables` shows CONCRETE numbers in its prompt (no
       `{{name}}` braces visible anywhere), a different draw on each fresh
       attempt of the same lesson; typing the exact computed answer is
@@ -1228,19 +1228,19 @@ areas of the Data tab in the fixed #1451 order.
       SAME numbers the learner originally saw, not a fresh draw. A lesson
       with NO `variables` (e.g. content teaching Jinja2 templating) keeps
       any literal `{{ ... }}` in its text untouched.
-- [ ] ext:al-ordering (#3110): steps shown as shuffled draggable tiles; tap
+- [ ] TC-0344 ext:al-ordering (#3110): steps shown as shuffled draggable tiles; tap
       a scrambled tile to place it, tap a placed tile to return it, drag
       (or the ◀ ▶ arrows / arrow keys) to reorder. Check accepts ONLY the
       exact authored order — one swap is wrong. Try again resets the
       placement; a lesson with `requires_extensions: ["ext:al-ordering@1"]`
       loads (not refused by the guard).
-- [ ] ext:al-ordering review (#3260): after Check, "Your answer" shows the
+- [ ] TC-0345 ext:al-ordering review (#3260): after Check, "Your answer" shows the
       submitted order, numbered, each step with a green check or a red X. A
       wrong answer adds the "Solution" below with the right order; a correct
       answer shows no solution. The wrong-answer line reads "Not quite - the
       order is not right yet." (no prompt to retry). Exam mode shows no
       breakdown. On a phone (narrow width) long steps stay readable and wrap.
-- [ ] ext:al-parsons (#3110): code lines shown as shuffled draggable tiles
+- [ ] TC-0346 ext:al-parsons (#3110): code lines shown as shuffled draggable tiles
       (monospace), same tap/drag reorder as ordering, PLUS a per-tile
       indent stepper (- / depth / +). Check requires BOTH the right
       sequence AND the right indent per line — a right sequence at the
@@ -1248,17 +1248,17 @@ areas of the Data tab in the fixed #1451 order.
       dragged elsewhere. Try again resets placement AND every indent back
       to 0; a lesson with `requires_extensions: ["ext:al-parsons@1"]` loads
       (not refused by the guard).
-- [ ] ext:al-parsons review (#3218): after Check, "Your answer" shows the
+- [ ] TC-0347 ext:al-parsons review (#3218): after Check, "Your answer" shows the
       submitted code at the chosen indent, each line with a green check or
       a red X; wrong lines name the reason ("Wrong position" or "Indent 0,
       expected 2"). A wrong answer adds the "Solution" below with the right
       order and indent; a correct answer shows no solution. Exam mode shows
       no breakdown.
-- [ ] ext:al-reading-comprehension passage (#3217): a passage with a fenced
+- [ ] TC-0348 ext:al-reading-comprehension passage (#3217): a passage with a fenced
       code block (```) shows the code on multiple lines, indented, in
       monospace and horizontally scrollable for long lines; paragraphs and
       single line breaks in the passage are kept.
-- [ ] ext:al-hotspot (#3110): an image with invisible clickable zones —
+- [ ] TC-0349 ext:al-hotspot (#3110): an image with invisible clickable zones —
       click the right spot. Before Check, no zone outline or fill is
       visible (the answer is never revealed early). Check highlights the
       correct zone green; a wrong pick highlights red. Rect and circle
@@ -1266,7 +1266,7 @@ areas of the Data tab in the fixed #1451 order.
       edge. Try again clears the selection; a lesson with
       `requires_extensions: ["ext:al-hotspot@1"]` loads (not refused by
       the guard).
-- [ ] Extension-wizard authoring (#3110): in the Lesson Creator's
+- [ ] TC-0350 Extension-wizard authoring (#3110): in the Lesson Creator's
       extension-exercise editor, author one exercise of each new type —
       ordering (add/remove steps), parsons (type/paste code in the
       textarea; the line list preview reflects the derived indent), and
@@ -1274,7 +1274,7 @@ areas of the Data tab in the fixed #1451 order.
       coordinates, mark exactly one zone correct). Save is disabled with
       an inline hint until the payload is valid (e.g. fewer than 2 items,
       or zero/more-than-one correct hotspot zone).
-- [ ] Hotspot drag-to-draw zone canvas (#3110): once an image is picked,
+- [ ] TC-0351 Hotspot drag-to-draw zone canvas (#3110): once an image is picked,
       a "Draw a zone on the image" canvas appears above the numeric zone
       list. Choose Rectangle or Circle, then drag on the image — a dashed
       preview follows the drag and, on release, a new zone is added with
@@ -1290,13 +1290,13 @@ Location: My Content (`/content?tab=my`) → "Import a lesson" modal +
 per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 + `.zip` (a whole set = `manifest.yaml` + `lessons/`).
 
-- [ ] Import a `.json` lesson: preview shows title · language · N
+- [ ] TC-0381 Import a `.json` lesson: preview shows title · language · N
       lessons · M exercises BEFORE confirming
-- [ ] Import a `.zip` set: preview + correct lesson count
-- [ ] Name collision: three-way dialog appears (Overwrite /
+- [ ] TC-0382 Import a `.zip` set: preview + correct lesson count
+- [ ] TC-0383 Name collision: three-way dialog appears (Overwrite /
       Import as copy / Cancel), NO silent overwrite;
       "Import as copy" creates a fresh id + "(copy)" title
-- [ ] **#2592 Overwrite carries the learning progress across:** create a set
+- [ ] TC-0384 **#2592 Overwrite carries the learning progress across:** create a set
       with your own lesson, answer one exercise wrongly (so an error/review
       row exists), export the set, correct ONE answer text in the exported
       file (e.g. a typo in `free_text.accept[0]`), re-import → collision
@@ -1304,21 +1304,21 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
       card(s)", and the error history still shows the row (with its old error
       count) under the NEW answer text — not as a fresh row and not gone.
       Before this fix the row was orphaned silently.
-- [ ] **#2592 an unresolvable case is reported, not silent:** same setup, but
+- [ ] TC-0385 **#2592 an unresolvable case is reported, not silent:** same setup, but
       DELETE an exercise in the file (so positions shift) → "Overwrite".
       Expected: an info toast "… could not be confidently matched", no silent
       loss
-- [ ] **#2592 "Import as copy" is untouched:** same flow but choose "Import
+- [ ] TC-0386 **#2592 "Import as copy" is untouched:** same flow but choose "Import
       as copy" → the original keeps its progress AND review cards, the copy
       starts without either
-- [ ] Partial import (ZIP with broken lessons): valid ones import,
+- [ ] TC-0387 Partial import (ZIP with broken lessons): valid ones import,
       warning "N lesson(s) skipped" is shown
-- [ ] Set with ONLY broken lessons: clean error, no crash
-- [ ] Size guard: a file > 5 MiB is refused BEFORE parsing with a
+- [ ] TC-0388 Set with ONLY broken lessons: clean error, no crash
+- [ ] TC-0389 Size guard: a file > 5 MiB is refused BEFORE parsing with a
       friendly message; malformed JSON/ZIP names the reason, no crash
-- [ ] Round-trip: export a lesson → re-import → identical in
+- [ ] TC-0390 Round-trip: export a lesson → re-import → identical in
       My Content
-- [ ] Create-Lesson "Save as file": the save step offers a file
+- [ ] TC-0391 Create-Lesson "Save as file": the save step offers a file
       download of the just-created lesson (canonical JSON)
 
 ### Work through a set again - second run (#2125, EXP-051)
@@ -1327,21 +1327,21 @@ Location: My Content (`/content?tab=my`), the three-dot menu of a set with
 status **Completed**. A new run keeps the first one for later analysis
 instead of overwriting or resetting it.
 
-- [ ] Mark a set **Completed** -> the three-dot menu shows **"Work through
+- [ ] TC-0352 Mark a set **Completed** -> the three-dot menu shows **"Work through
       again"** (NOT present for active/deferred sets)
-- [ ] Click it -> a **simple** confirmation ("a new run starts from
+- [ ] TC-0353 Click it -> a **simple** confirmation ("a new run starts from
       scratch, the previous one is kept"), with NO counted deletion figures
-- [ ] Confirm -> toast "A new run has started …", the set flips back to
+- [ ] TC-0354 Confirm -> toast "A new run has started …", the set flips back to
       **Active**, no error, no data loss
-- [ ] Cancel -> nothing happens, the status stays Completed
-- [ ] After restarting, answer a previously-learned exercise wrong -> the
+- [ ] TC-0355 Cancel -> nothing happens, the status stays Completed
+- [ ] TC-0356 After restarting, answer a previously-learned exercise wrong -> the
       review queue fills **fresh** (cold scheduling; the first run's cards
       do NOT appear as overdue)
-- [ ] Delete the set (with "delete progress") -> ALL of the set's runs are
+- [ ] TC-0357 Delete the set (with "delete progress") -> ALL of the set's runs are
       gone, no orphan rows
-- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+- [ ] TC-0358 Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the flow must work in BOTH modes
-- [ ] Backup round-trip: Export -> wipe -> Import; the runs (incl. the
+- [ ] TC-0359 Backup round-trip: Export -> wipe -> Import; the runs (incl. the
       completed first one) survive the import. An older backup with no run
       data imports as the implicit run 1 (no crash)
 
@@ -1351,22 +1351,22 @@ Location: My Content (`/content`), the three-dot menu of a DOWNLOADED
 (foreign) set - not shown on your own "My Lessons" sets, which already
 have a direct "Edit".
 
-- [ ] Open a downloaded set -> the three-dot menu shows **"Edit as a
+- [ ] TC-0360 Open a downloaded set -> the three-dot menu shows **"Edit as a
       copy"** as the FIRST entry
-- [ ] Click it -> a confirmation dialog: notes that the original stays
+- [ ] TC-0361 Click it -> a confirmation dialog: notes that the original stays
       unchanged and remains downloadable, PLUS the progress note ("A copy
       starts without learning progress …")
-- [ ] Cancel in the dialog -> nothing happens, no new set is created
-- [ ] Confirm -> toast "Saved as your own copy", the app switches
+- [ ] TC-0362 Cancel in the dialog -> nothing happens, no new set is created
+- [ ] TC-0363 Confirm -> toast "Saved as your own copy", the app switches
       automatically into the lesson editor, PRE-FILLED with the
       original's content
-- [ ] The new copy then shows up under "My Lessons"; the original stays
+- [ ] TC-0364 The new copy then shows up under "My Lessons"; the original stays
       unchanged among the downloaded sets with its status unchanged and
       remains downloadable
-- [ ] Edit the same source as a copy a second time -> the second copy
+- [ ] TC-0365 Edit the same source as a copy a second time -> the second copy
       gets its OWN, collision-free id (e.g. `...-copy-2`), never
       overwriting the first copy
-- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+- [ ] TC-0366 Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the fork must work in BOTH modes
 
 ### Derivation on fork - "Your edit" badge + "based on" credit (#2655, EXP-046)
@@ -1375,25 +1375,25 @@ Location: Import tab (`/content?tab=import`), "My Lessons" section - every
 forked copy (whether created via "Edit as a copy", "Import a lesson", or
 "Save as a copy" in the lesson editor).
 
-- [ ] Fork a downloaded set that has a visible author credit on one of its
+- [ ] TC-0367 Fork a downloaded set that has a visible author credit on one of its
       lessons (e.g. "Contributed by …") via "Edit as a copy" -> the new
       copy shows up under "My Lessons" WITH the **"Your edit"** badge next
       to its title
-- [ ] Below it, a compact **"Based on {author}"** line appears - hovering
+- [ ] TC-0368 Below it, a compact **"Based on {author}"** line appears - hovering
       the line shows a tooltip stating that credits are self-declared and
       not verified (NO checkmark, NO "verified" badge)
-- [ ] Fork a set with NO author credit at all -> the "Your edit" badge
+- [ ] TC-0369 Fork a set with NO author credit at all -> the "Your edit" badge
       still appears, but NO "Based on" line (nothing to credit)
-- [ ] A SELF-authored lesson under "My Lessons" that was never forked
+- [ ] TC-0370 A SELF-authored lesson under "My Lessons" that was never forked
       (no prior import/copy step) shows NEITHER the badge NOR a credit
       line
-- [ ] Same flow via "Import a lesson" (import a shared `.json` carrying an
+- [ ] TC-0371 Same flow via "Import a lesson" (import a shared `.json` carrying an
       author credit) -> the same two indicators appear
-- [ ] Same flow via "Save as a copy" in the lesson editor (save an
+- [ ] TC-0372 Same flow via "Save as a copy" in the lesson editor (save an
       already-forked own lesson as a copy again) -> the new copy still
       carries the same "based on" credit (the chain does not grow
       unbounded)
-- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+- [ ] TC-0373 Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the badge + credit line must appear in BOTH modes
 
 ### Share Wizard - hint + removal for carried-over foreign credits (#2656, EXP-046)
@@ -1403,31 +1403,31 @@ Location: `ShareWizard` step 1, directly below the existing "Your name
 lesson carrying a "based on" credit (#2655) or an imported lesson whose
 `contributed_by` is already set before the wizard opens.
 
-- [ ] Share a self-authored, never-forked lesson -> NO foreign-credit
+- [ ] TC-0374 Share a self-authored, never-forked lesson -> NO foreign-credit
       hint appears (nothing to disclose)
-- [ ] Share a forked lesson with set-level attribution (#2655) -> the
+- [ ] TC-0375 Share a forked lesson with set-level attribution (#2655) -> the
       hint "This content credits {author}. Their name travels when you
       share, you can remove it." appears, WITH the name from the
       attribution
-- [ ] Share an imported lesson with `contributed_by` set but no set-level
+- [ ] TC-0376 Share an imported lesson with `contributed_by` set but no set-level
       attribution -> the same hint, with the name from `contributed_by`
-- [ ] Share WITHOUT clicking "Remove credits" -> the foreign credit
+- [ ] TC-0377 Share WITHOUT clicking "Remove credits" -> the foreign credit
       travels with the shared content (default behavior, now visible
       instead of silent)
-- [ ] Click "Remove credits" -> the button disappears, a "Credits
+- [ ] TC-0378 Click "Remove credits" -> the button disappears, a "Credits
       removed." confirmation appears; sharing afterwards -> the name no
       longer appears in the shared content (the structural
       `variation_of` link stays untouched)
-- [ ] Enter your own name AND enable "Show name", WITHOUT removing the
+- [ ] TC-0379 Enter your own name AND enable "Show name", WITHOUT removing the
       foreign credit -> YOUR OWN name wins in the shared content, the
       foreign-credit hint stays visible but gets overwritten on share (no
       double credit)
-- [ ] Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
+- [ ] TC-0380 Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the hint + removal button must work in BOTH modes
 
 ### Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
-- [ ] **Step-1 order + template disclosure (#2755):** In step 1 the
+- [ ] TC-0392 **Step-1 order + template disclosure (#2755):** In step 1 the
       required **Title field comes first** (right under the heading,
       focused). The template picker behind it is a disclosure
       "Start from a template", **collapsed by default**; the collapsed
@@ -1435,14 +1435,14 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       Opening it shows the four template cards plus "Knowledge lesson
       from text" and "Advanced exercise types"; picking a card marks it
       pressed and the collapsed row then shows the new pick.
-- [ ] **Book-text path (#1745):** Step 1 → open the template disclosure
+- [ ] TC-0393 **Book-text path (#1745):** Step 1 → open the template disclosure
       → the "Knowledge lesson from
       text" card (below the template grid) starts a 3-step flow
       (Metadata → Book text → Review); paste text + Generate → the AI
       rephrases theory in its own words + generates exercises; WITHOUT
       an AI key: friendly notice, no crash; "Next" only after a
       successful generation
-- [ ] **Exercise-type selection in the assistant (#2510):** In the book-text
+- [ ] TC-0394 **Exercise-type selection in the assistant (#2510):** In the book-text
       step, **above the textbook textarea** (between the file/sections area and
       the textarea, #2522) there is an "Exercise types"
       selector with three groups: **Standard types** (Matching, Free text,
@@ -1461,14 +1461,14 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       groups), is tappable, and the remembered selection survives a reload.
       **Accessible:** the greyed fields carry a label + `aria-describedby` to the
       reason.
-- [ ] **Order of the type selection (#2522):** The selector sits **above** the
+- [ ] TC-0395 **Order of the type selection (#2522):** The selector sits **above** the
       textbook textarea, not below it (see what was detected, choose the types,
       then paste). **iOS standalone (PWA, small device):** on opening the
       book-text step the textarea is reachable **without scrolling** - the
       selector does not push it below the fold; after pasting a chapter the user
       need not scroll back up to find the types. DOM order matches the visible
       order (no axe regression).
-- [ ] **Generate explanations in the assistant (#2992):** In the book-text
+- [ ] TC-0396 **Generate explanations in the assistant (#2992):** In the book-text
       step, right below the exercise-type selector, there is the checkbox
       "Generate explanations (shown after the answer)" with the cost hint. It
       is **unchecked** EVERY time the step opens (deliberately not remembered,
@@ -1480,12 +1480,12 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       none; play the lesson and see the "Explanation" panel after an answer
       (#2991). Check both paths: a single pasted text AND a file upload with
       several sections (batch).
-- [ ] **Title required in the book-text path (#1946):** Step 1 WITHOUT
+- [ ] TC-0397 **Title required in the book-text path (#1946):** Step 1 WITHOUT
       a title → click the "Knowledge lesson from text" card → stays on
       step 1 with the friendly "A title is required." message (NOT the
       book-text step, NOT the raw schema error on save); with a title →
       the book-text step opens normally and saving succeeds
-- [ ] **[MOBILE] Title warning is scrolled into view (#2036):** iPhone /
+- [ ] TC-0398 **[MOBILE] Title warning is scrolled into view (#2036):** iPhone /
       narrow viewport, step 1 WITHOUT a title, scroll down to the Next button
       (the title field is off-screen above) → press Next: the view scrolls to
       the title field, the field takes focus and is marked invalid (red
@@ -1494,19 +1494,19 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       (card path), the "Knowledge lesson from text" card (book) and the
       "Extensions" card (extension). Desktop regression: if the field is
       already visible there is no scroll jump
-- [ ] **File upload in the book-text step (#1927):** "Load from file
+- [ ] TC-0399 **File upload in the book-text step (#1927):** "Load from file
       (EPUB, DOCX, TXT, MD)" button above the text field; pick an EPUB → a
       section list appears (checkboxes, title + character count);
       Markdown file → split at headings; TXT without headings → one
       section; broken / oversized file (> 20 MiB) → clear error
       message, no crash; the rights hint mentions uploading
-- [ ] **DOCX upload (#1927, phase 2b):** a Word file with heading
+- [ ] TC-0400 **DOCX upload (#1927, phase 2b):** a Word file with heading
       styles (including German Word, "Ueberschrift 1") → chapters are
       detected and offered as a list; a Word file WITHOUT heading
       styles (only bold-formatted "headings") → ONE whole-document
       section, the text still lands editable in the field; a broken
       .docx → clear error message, no crash
-- [ ] **Multi-select + exclusion heuristic + batch (#1949):** upload a
+- [ ] TC-0401 **Multi-select + exclusion heuristic + batch (#1949):** upload a
       file with several sections INCLUDING a preface / glossary / table
       of contents → typical non-learning-content sections are UNCHECKED
       by default, yet still visible and manually checkable (a hint line
@@ -1520,7 +1520,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       the title list; Save → one set with N lessons; if a single
       generation fails, the others continue and the summary reports "X of
       N" + the failed sections; with no AI key → key hint, no batch
-- [ ] **AI exercise generation produces multiple_choice (#2353):** generate a
+- [ ] TC-0402 **AI exercise generation produces multiple_choice (#2353):** generate a
       knowledge lesson from text/book text (with an AI key) whose theory has
       clear factual questions with several answer options (e.g. "Which of these
       modules belong to X?") → the "Generated exercises" preview shows, at least
@@ -1529,7 +1529,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       exercise (single-choice radios, or "select all that apply" checkboxes),
       feedback + SRS work like the other types. Regression: the other five types
       still get generated
-- [ ] **AI exercise generation produces text extensions (#2355):** generate a
+- [ ] TC-0403 **AI exercise generation produces text extensions (#2355):** generate a
       book-text lesson (with an AI key) from non-fiction whose theory suits
       extensions structurally (a longer passage with several follow-up
       questions, terms that group into categories, a statement with one wrong
@@ -1542,7 +1542,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       most ONE reading-comprehension and ONE graded quiz per lesson; the core
       types still dominate. Regression: a core-only lesson declares NO
       requires_extensions
-- [ ] **Book path no longer offers picture-choice + set type variety (#2356):**
+- [ ] TC-0404 **Book path no longer offers picture-choice + set type variety (#2356):**
       generate a multi-section book upload (several lessons) → NONE of the
       generated lessons contains a **picture-choice** exercise (the book path
       has no images, so the type is not offered at all instead of being
@@ -1550,7 +1550,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       exercise types appear (not just cloze/matching/free-text/word-tiles).
       Regression: the single book path and the set exercise-generation still
       produce valid lessons
-- [ ] **Edit a lesson (#1740):** My Content → an OWN lesson's card →
+- [ ] TC-0405 **Edit a lesson (#1740):** My Content → an OWN lesson's card →
       pencil/Edit → wizard opens pre-filled; Review shows "Save changes"
       (overwrites the same id, progress kept) + "Save as a copy";
       foreign-repo lessons show NO Edit; analysis lessons route to the
@@ -1558,7 +1558,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       "Import as copy") both show a note that a copy starts WITHOUT
       learning progress, while the original keeps its progress and
       review cards
-- [ ] **A review card survives an answer-text correction (#2519):**
+- [ ] TC-0406 **A review card survives an answer-text correction (#2519):**
       create/save an own lesson with a free_text exercise → practice it
       until a review card exists for that exercise (the review queue shows
       it) → edit the lesson, fix a typo in the accepted answer (e.g.
@@ -1566,13 +1566,13 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       review card(s) for the changed answer." appears, the review card
       survives (no silent loss of the error/SRS history). Applies to BOTH
       storage modes (API + Dexie)
-- [ ] **Reopen a plain (no-extension) lesson stays saveable (#1919):**
+- [ ] TC-0407 **Reopen a plain (no-extension) lesson stays saveable (#1919):**
       create a lesson via Auto-generate (only the six CORE types, no
       extension exercise), Save locally → reopen via Edit → step to Review:
       the "Valid lesson structure" check is GREEN and "Save changes" works
       (previously it failed with "ext_payload must be object" in API/server
       mode)
-- [ ] **Edit a book-text lesson (#1967):** create a lesson via "Knowledge
+- [ ] TC-0408 **Edit a book-text lesson (#1967):** create a lesson via "Knowledge
       lesson from text" (the book-text path — theory + generated exercises,
       NO vocabulary cards), Save locally → reopen via "Edit lesson" → "Next"
       goes STRAIGHT to the exercise editor with the actually generated
@@ -1582,7 +1582,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       enabled; after saving, theory + exercise steps are preserved.
       Regression: a normal card lesson (Vocabulary list) AND an extension
       lesson still open correctly for editing
-- [ ] **Edit a small book-text lesson (< 5 exercises) (#1970):** a book-text
+- [ ] TC-0409 **Edit a small book-text lesson (< 5 exercises) (#1970):** a book-text
       lesson whose generator produced only a few exercises (e.g. 4, because
       word-tiles/picture-choice/multiple-choice were skipped for lack of
       example sentences/images), Save locally → reopen via "Edit lesson" →
@@ -1593,7 +1593,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       produced no exercises" hint + the generate config do NOT appear in edit
       (no cards to generate from). IMPORTANT: opening Edit does NOT change the
       stored file (no auto-save); no exercises are lost
-- [ ] **Edit a multi-lesson set (lesson picker) (#1971):** a set that holds
+- [ ] TC-0410 **Edit a multi-lesson set (lesson picker) (#1971):** a set that holds
       MORE THAN ONE lesson (e.g. a book-text upload with multi-section select →
       one lesson per section), reopen via "Edit lesson" → a **lesson picker**
       (dropdown of all lessons in the set) appears at the top; the first lesson
@@ -1603,7 +1603,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       Save → only that lesson is replaced, the others survive, and the SET
       title/level/languages are NOT changed (not overwritten by the edited
       lesson's title). Regression: a set with a single lesson shows NO picker
-- [ ] **Switching lesson keeps the step (#2061):** open a multi-lesson set via
+- [ ] TC-0411 **Switching lesson keeps the step (#2061):** open a multi-lesson set via
       "Edit lesson", navigate to **step 2 (exercises)** (exercise list visible) →
       pick a DIFFERENT lesson in the "Lesson in this set" dropdown → the wizard
       STAYS on step 2, only the exercise list switches to the chosen lesson
@@ -1612,7 +1612,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       lesson with NO exercises shows an empty list with no crash and no fall-back;
       with unsaved changes the "Switch lesson?" confirm dialog still appears
       first. Verify on Desktop + iOS standalone
-- [ ] **Book reference survives editing (#1989):** create a lesson via the
+- [ ] TC-0412 **Book reference survives editing (#1989):** create a lesson via the
       book-text wizard WITH the "book (optional)" fields filled in (title,
       author, URL, ISBN/ASIN) + Save → the lesson's "Vertiefe das Thema" section
       shows the book reference. Reopen via "Edit lesson", change something, Save
@@ -1620,7 +1620,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       edit). It survives across MULTIPLE edit cycles; "Save as a copy" also keeps
       the book reference. Regression: a lesson WITHOUT a book gets NO forced
       empty book object on edit
-- [ ] **Migrate legacy English prompts on edit (#1860):** open a
+- [ ] TC-0413 **Migrate legacy English prompts on edit (#1860):** open a
       pre-#1855 legacy lesson (exercise instructions hardcoded in English,
       e.g. "Match each word with its translation.") via "Edit a lesson" →
       the affected instructions appear in the UI language automatically +
@@ -1630,14 +1630,14 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       English) stays unchanged. Leave the editor WITHOUT saving → the
       original in Dexie is unchanged (no silent write); only saving
       (overwrite / save-as-copy) persists the migrated version
-- [ ] **Combine lessons (#1741):** [E2E: `combine-lessons.spec.ts`] My Content → "Combine into a set"
+- [ ] TC-0414 **Combine lessons (#1741):** [E2E: `combine-lessons.spec.ts`] My Content → "Combine into a set"
       toggle → checkbox selection (own sets only) → "Combine" dialog:
       New set (title required) vs. add to an existing set; originals are
       kept; mixed languages/levels → non-blocking warning
-- [ ] **Same-language hint (#1721/#1730):** source == target shows a
+- [ ] TC-0415 **Same-language hint (#1721/#1730):** source == target shows a
       neutral hint, does NOT block "Next"; Save enables once the checklist
       passes
-- [ ] **Content-domain selector in Step 1 (#1716):** Step 1 shows a
+- [ ] TC-0416 **Content-domain selector in Step 1 (#1716):** Step 1 shows a
       "Domain" field. Default "Language" → source/target languages + CEFR
       level are shown (as before). Choosing a knowledge domain (e.g.
       "Psychology", "Programming", "Knowledge") collapses the pair to a
@@ -1649,22 +1649,22 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       (`domain: psychology` …); a language lesson carries NO `domain` field.
       Editing a saved knowledge lesson reopens with the right domain +
       content language
-- [ ] **Language-pair check row (#1929):** Review shows SIX checklist rows
+- [ ] TC-0417 **Language-pair check row (#1929):** Review shows SIX checklist rows
       (title, "Language pair is valid", ≥4 cards, ≥5 exercises, ≥2 types,
       valid structure). "Language pair is valid" is green once BOTH source
       and target are supported codes — a same-language pair (de → de) is
       VALID (no "source != target" gate)
-- [ ] **Structure-check reason (#1724):** a failing "Valid lesson
+- [ ] TC-0418 **Structure-check reason (#1724):** a failing "Valid lesson
       structure" check names a concrete reason, not just a ✗
-- [ ] **Internal structure error (#2384):** when the "Valid lesson
+- [ ] TC-0419 **Internal structure error (#2384):** when the "Valid lesson
       structure" check fails with an INTERNAL error (e.g.
       `(0 , T.default) is not a function`), the message explains it is a
       problem in the app, NOT the lesson, gives a reload/retry path and a
       "Report this problem" link — instead of framing the technical string
       as invalid user content
-- [ ] **Template titles (#1674/#1756):** template cards show readable
+- [ ] TC-0420 **Template titles (#1674/#1756):** template cards show readable
       titles (even offline) + a pressed/selected state
-- [ ] **Advanced exercise types / extension wizard (#1852, #1887, #2817):** Step 1 →
+- [ ] TC-0421 **Advanced exercise types / extension wizard (#1852, #1887, #2817):** Step 1 →
       the "Advanced exercise types" card starts a dedicated 3-step flow (author
       → review → save) with a non-blocking notice that these types are advanced.
       Step 2: "Add extension exercise" offers seven types — **categorization**,
@@ -1685,7 +1685,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       upload in v1) + the accepted-transcriptions list. Review shows the count;
       "Save locally" → the saved lesson is **playable** (each type renders + is
       answerable); the set JSON carries `requires_extensions: ["ext:al-...@1"]`
-- [ ] **Dictation in the core type picker (#1895):** Main wizard (card-based),
+- [ ] TC-0422 **Dictation in the core type picker (#1895):** Main wizard (card-based),
       Step 3 "Generate exercises" → "Add exercise" opens the "Choose an exercise
       type" picker. Beside the six core types (Matching, Free text, Cloze, Word
       tiles, Picture choice, Multiple choice) a **seventh option "Dictation"**
@@ -1697,7 +1697,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       `requires_extensions: ["ext:al-dictation@1"]`** (whether added via the core
       picker OR the extension wizard) and is playable. **Regression:** the
       existing extension-wizard path for dictation still works unchanged
-- [ ] **Extension types in the core picker (#2508):** Main wizard (card-based),
+- [ ] TC-0423 **Extension types in the core picker (#2508):** Main wizard (card-based),
       Step 3 "Generate exercises" → "Add exercise" opens the "Choose an exercise
       type" picker. Below the standard types (six core types + Dictation) a
       second, labelled group **"Extension types"** now appears with
@@ -1712,7 +1712,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       are visible and tappable, the chosen extension exercise is saved and
       renders after a reload. **Regression:** the separate extension wizard still
       works unchanged
-- [ ] **Dictation audio upload (#1911, Slice 3):** In the dictation editor
+- [ ] TC-0424 **Dictation audio upload (#1911, Slice 3):** In the dictation editor
       (core picker OR extension wizard) the audio field shows an **"Upload
       audio"** button above a **"…assets/audio/clip.mp3"** path input. Click
       Upload → a file picker offers MP3/OGG/WAV. Pick a real clip → an inline
@@ -1725,7 +1725,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       alternative (no upload). **Errors:** a too-large file (> 2 MB) OR a wrong
       format (e.g. `.mp4`) shows a clear inline error and does not crash;
       nothing is stored
-- [ ] **Image-description authoring (#2095):** In the extension wizard pick
+- [ ] TC-0425 **Image-description authoring (#2095):** In the extension wizard pick
       **image description**. The editor shows an **"Upload image"** button
       (labelled "Image to describe", NOT "(optional)"), a visible size-budget
       hint ("compressed and embedded, max ~150 KB / 512 px, remote links not
@@ -1743,7 +1743,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       intact and the image displays with no network (proves the embedded image
       survives the iOS IndexedDB + backup round-trip, the known eviction-risk
       surface)
-- [ ] **Speak & record authoring (#2817):** In the extension wizard (Step 1 →
+- [ ] TC-0426 **Speak & record authoring (#2817):** In the extension wizard (Step 1 →
       "Advanced exercise types") OR the core picker (Step 3, second group
       "Extension types") pick **"Speak & record"**. The editor shows a text
       field **"Sentence to speak"** and, below it, the (reused) audio field
@@ -1760,7 +1760,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       **Regression:** dictation + image description still work unchanged,
       including their "→ free text" conversion control (only speak & record
       omits it, by design)
-- [ ] **Keyboard pre-reveal (#3002, touch devices only):** in a lesson, tap
+- [ ] TC-0427 **Keyboard pre-reveal (#3002, touch devices only):** in a lesson, tap
       a free-text or cloze field sitting in the LOWER half of the screen.
       On focus the page IMMEDIATELY scrolls the field into the upper third
       (the app's own scroll, no whole-layout jump), the keyboard opens
@@ -1769,7 +1769,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       offset, the #1569 core). A field already sitting HIGH is NOT moved
       on focus; checkboxes/radios/dropdowns trigger no scroll. Desktop
       (mouse): no scroll on focus
-- [ ] **Tab bars stay on one line on phones (#3012):** on a real phone in
+- [ ] TC-0428 **Tab bars stay on one line on phones (#3012):** on a real phone in
       portrait, open **Content**, **Progress** and **Dashboard** in turn. Each
       tab bar sits on **one** line, no label is clipped or squeezed, every tab
       is at least 44px tall to tap. Before this, the Content bar wrapped onto
@@ -1781,7 +1781,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       address carries the tab (`?tab=`). **iOS standalone:** launched from the
       home screen the same holds; after rotating to landscape and back the bar
       stays on one line and does not jump.
-- [ ] **Create button in "My Lessons" (#3007):** Precondition: at least one
+- [ ] TC-0429 **Create button in "My Lessons" (#3007):** Precondition: at least one
       own lesson exists (otherwise the section is not shown at all). Open
       Content → Import → in the **My Lessons** section head, next to "Combine
       into a set", there is a **"Create New Lesson"** button. Click → the
@@ -1790,7 +1790,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       44px tall and wrap cleanly, the heading stays readable.
       **iOS standalone:** launched from the home screen the button behaves the
       same, the wizard opens in the same view without browser chrome.
-- [ ] **"Create" tab in the content hub (#3006):** open `/content` → the tab
+- [ ] TC-0430 **"Create" tab in the content hub (#3006):** open `/content` → the tab
       bar shows **four** tabs: Discover, My content, Import, **Create**.
       Click Create → the lesson wizard appears in the tab, the address reads
       `/content?tab=create`. **Old address:** open `/create-lesson` directly →
@@ -1820,7 +1820,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       app. Then remove the app from the app switcher and relaunch → the last
       selected tab is not "frozen"; `/content` starts on the first configured
       tab again.
-- [ ] **Header updates badge (#2904):** an installed content set has a newer
+- [ ] TC-0431 **Header updates badge (#2904):** an installed content set has a newer
       version (e.g. tap "Update available" on a set in the content browser
       OR bump the set's manifest version in the test repo). Reload/reopen
       the app: **without** visiting `/content`, a header badge ("N updates")
@@ -1858,7 +1858,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       tolerance:** turn off the network at app launch → no crash, no error
       toast, the header renders normally (the badge simply stays hidden —
       it is supplementary chrome, never a blocking load state)
-- [ ] **Multiple-choice single/multi mode control (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] In the MC inline
+- [ ] TC-0432 **Multiple-choice single/multi mode control (#1888):** [E2E: `mc-single-multi-toggle.spec.ts`] In the MC inline
       editor (Step 3, `ExerciseEditor`) the mode control ("How many answers are
       correct?") is a segmented control **at the very top, before the first
       option row**. A new MC exercise (AI-generated OR manually added) defaults
@@ -1868,7 +1868,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       **playable** with multi-select. Switching back to "Allow one answer" →
       pruned to exactly one correct. An existing MC exercise with a set
       `multiple` value opens **unchanged** in its original state.
-- [ ] **Explanation in the inline editor (#2992):** In the inline editor of
+- [ ] TC-0433 **Explanation in the inline editor (#2992):** In the inline editor of
       every exercise (Step 3, `ExerciseEditor` AND `ExtensionExerciseEditor`),
       below the type-specific fields, there is the Markdown textarea
       **"Explanation after the answer (optional, Markdown)"** with a hint line
@@ -1882,7 +1882,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       (no empty string in the JSON). More than 2000 characters cannot be typed
       (maxlength); a loaded exercise with a longer explanation shows "The
       explanation is too long …" and Save stays disabled until it is shortened.
-- [ ] **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
+- [ ] TC-0434 **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
       inline editor (Step 3, `ExerciseEditor`) of a **Word tiles** or
       **Multiple choice** exercise, a **"Exercise type"** select at the top
       lists the current type plus **"Free text"**. Switching to "Free text":
@@ -1893,7 +1893,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       picture choice) **no** select appears. Expectation: the converted
       exercise keeps the learner's progress (same answer key), and Cancel
       discards the conversion.
-- [ ] **Convert an extension exercise -> free text (EXP-050 Stage 1, #2511):**
+- [ ] TC-0435 **Convert an extension exercise -> free text (EXP-050 Stage 1, #2511):**
       **Edit an existing lesson that contains a Dictation or Image-description
       exercise** (not the "add extension exercises" flow). In that row's inline
       editor the same **"Exercise type"** select offers **"Free text"**.
@@ -1904,7 +1904,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       dictation / image-description exercise**. Note: the "add extension
       exercises" flow (`ExtensionSteps`) does **not** show the select (a core
       type is not valid there).
-- [ ] **Convert error-correction + cloze -> free text (EXP-050 Stage 2, #2511):**
+- [ ] TC-0436 **Convert error-correction + cloze -> free text (EXP-050 Stage 2, #2511):**
       While editing an existing lesson:
       - An **error-correction** exercise (`ext:al-error-correction`) shows the
         same "Exercise type" select; choosing "Free text" pre-fills the accepted
@@ -1917,7 +1917,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
         not carried over. **Confirm** converts (first blank as the free-text
         answer); **Cancel** leaves the cloze unchanged.
       - A **multiselect cloze** shows **no** select (not offered).
-- [ ] **Convert free text -> multiple choice / cloze (EXP-050 Stage 3, #2511):**
+- [ ] TC-0437 **Convert free text -> multiple choice / cloze (EXP-050 Stage 3, #2511):**
       While editing an existing lesson, open a **free-text** exercise. The
       "Exercise type" select now offers **"Multiple choice"** and **"Cloze"**.
       - **-> Multiple choice:** the accepted answer becomes the **correct
@@ -1929,7 +1929,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
         blank, valid immediately; expand the sentence around the blank and save.
       - Expectation: `id`/`stable_id` unchanged, progress preserved (same answer
         key).
-- [ ] **Convert graded quiz <-> reading comprehension (EXP-050 Stage 3b, #2511):**
+- [ ] TC-0438 **Convert graded quiz <-> reading comprehension (EXP-050 Stage 3b, #2511):**
       While editing an existing lesson (a row in the `ExerciseGenerator`, not
       the "add extension exercises" flow):
       - **Graded quiz -> Reading comprehension:** pick "Reading comprehension"
@@ -1941,7 +1941,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
         pass threshold 60%.
       - Edge: if a multiple-choice question has **several correct** options, the
         danger confirmation dialog appears (key moves); otherwise no prompt.
-- [ ] **Suggest empty fields after a conversion with AI (EXP-050 Stage 4, #2511):**
+- [ ] TC-0439 **Suggest empty fields after a conversion with AI (EXP-050 Stage 4, #2511):**
       After a conversion (Stage 3), fill the now-empty target field via AI. The
       button appears **only while the field is empty** (for multiple choice: while
       fewer than three wrong options exist).
@@ -1961,7 +1961,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
         request.
       - Each button carries a note that these are AI drafts to review and edit
         before saving. (Visual check: desktop + mobile.)
-- [ ] **Annotate token roles (#3072):** In step 2 add a card (front
+- [ ] TC-0440 **Annotate token roles (#3072):** In step 2 add a card (front
       "der Hund in dem Garten", back "the dog in the garden"), then open
       "Edit" on its row. Below the image field sits "Token roles
       (optional)". Check in order: (a) type a word that does NOT appear
@@ -1979,7 +1979,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       width, "Add role" below), nothing overflows the card; from tablet
       width up it stays one line and the word field fills the remaining
       space.
-- [ ] **Suggest roles (#3072):** In the same row click "Suggest roles".
+- [ ] TC-0441 **Suggest roles (#3072):** In the same row click "Suggest roles".
       On a German front carrying articles and prepositions the list
       fills ("der Hund in dem Garten" gives der = article, in =
       preposition, dem = article). Nouns and verbs are NOT suggested,
@@ -1993,47 +1993,47 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
 Location: Create-Lesson Step 2 (card editor), in the add-card form +
 each card row (`CardImageField`).
 
-- [ ] "Image (optional)" field with an "Upload image" button; after
+- [ ] TC-0442 "Image (optional)" field with an "Upload image" button; after
       upload a 64x64 preview + "Remove"
-- [ ] Only JPEG / PNG / WebP accepted; other type → inline error
+- [ ] TC-0443 Only JPEG / PNG / WebP accepted; other type → inline error
       (role=alert), no crash
-- [ ] Large file is downscaled (≤512px edge, ~150 KiB cap);
+- [ ] TC-0444 Large file is downscaled (≤512px edge, ~150 KiB cap);
       undecodable file → error instead of crash
-- [ ] "Advanced: use an asset path" keeps the manual `img/…png` field
+- [ ] TC-0445 "Advanced: use an asset path" keeps the manual `img/…png` field
       (for repo-published sets)
-- [ ] Round-trip: a card with an uploaded image → export →
+- [ ] TC-0446 Round-trip: a card with an uploaded image → export →
       re-import → image preserved
-- [ ] Known limitation: uploaded data-URI images are NOT yet rendered
+- [ ] TC-0447 Known limitation: uploaded data-URI images are NOT yet rendered
       in a played picture_choice exercise (engine `src` cap)
 
 ### Lesson player UX (v2.3.0)
-- [ ] Pause button now lives in the sticky footer (#1644), pausing
+- [ ] TC-0448 Pause button now lives in the sticky footer (#1644), pausing
       works from there
-- [ ] Position before the first exercise (#3075): open a lesson, page
+- [ ] TC-0449 Position before the first exercise (#3075): open a lesson, page
       through two theory steps only, answer NO exercise, reload the page ->
       the resume dialog appears and "Continue" lands on the step that was
       open (before: restart at step 1 without a dialog)
-- [ ] Pause button before the first exercise (#3075): as above, then press
+- [ ] TC-0450 Pause button before the first exercise (#3075): as above, then press
       the pause button in the footer -> the Continue/Pause/Abandon dialog
       appears (before: left the lesson silently); "Pause" -> the lesson is
       listed on the dashboard under "Paused lessons"
-- [ ] Leaving through the app navigation (#3075): answer one exercise, then
+- [ ] TC-0451 Leaving through the app navigation (#3075): answer one exercise, then
       move two theory steps further, then leave through the menu
       (hamburger -> "Settings"), the logo or the browser's back button ->
       the lesson is listed under "Paused lessons"; "Resume" there opens the
       resume dialog and lands on the theory step you were on (not on the
       exercise before it); on the phone the same through the menu drawer
       [E2E: `lesson-pause-position.spec.ts`]
-- [ ] Auto-advance + "Back" (#1921): with "Advance automatically"
+- [ ] TC-0452 Auto-advance + "Back" (#1921): with "Advance automatically"
       (Settings -> Learning) ON, answer an exercise correctly so the app
       jumps to the next step by itself -> then click "Back": the previous
       (already-solved) exercise STAYS and does NOT jump forward again;
       the "Continue" button is still clickable
-- [ ] Title area slimmed down, no more in-lesson description (#1635)
-- [ ] Lesson summary shows only ONE favorite button (#1649)
+- [ ] TC-0453 Title area slimmed down, no more in-lesson description (#1635)
+- [ ] TC-0454 Lesson summary shows only ONE favorite button (#1649)
       [E2E: `lesson-summary-favorite.spec.ts`]
-- [ ] Skip-to-content link visible when tabbing from the top (#1727, a11y)
-- [ ] **[MOBILE/VoiceOver, non-blocking] Select fields are announced with a
+- [ ] TC-0455 Skip-to-content link visible when tabbing from the top (#1727, a11y)
+- [ ] TC-0456 **[MOBILE/VoiceOver, non-blocking] Select fields are announced with a
       name (#2037):** turn on iOS VoiceOver, open `/create-lesson` step 1 and
       swipe across the select fields (domain, language(s), level): VoiceOver
       announces the VISIBLE label plus the chosen value for each (e.g.
@@ -2043,307 +2043,307 @@ each card row (`CardImageField`).
       is the real-screen-reader cross-check in the next iOS session
 
 ### Invalid lesson: friendly error message (#1808 / #1824)
-- [ ] German umlaut cards (`währung`, `präsenz`) load correctly
+- [ ] TC-0457 German umlaut cards (`währung`, `präsenz`) load correctly
       (the app accepts unicode-lowercase card ids/tags, #1808)
-- [ ] An actually broken lesson shows OUTSIDE Developer Mode a friendly
+- [ ] TC-0458 An actually broken lesson shows OUTSIDE Developer Mode a friendly
       message ("… invalid or corrupted data … contact the author"),
       NOT the raw error dump (#1824)
-- [ ] With Developer Mode ON (Settings): the technical detail text is
+- [ ] TC-0459 With Developer Mode ON (Settings): the technical detail text is
       appended again
 
 ### Diagnostics probe: Settings toggle + protocol (#2782)
-- [ ] Settings > Diagnostics & Support: enable the "Tap & viewport
+- [ ] TC-0460 Settings > Diagnostics & Support: enable the "Tap & viewport
       probe" toggle - the measurement bar appears IMMEDIATELY at the
       top (no reload); disabling removes it immediately
-- [ ] With the probe on: tap anywhere, then "Copy protocol" in
+- [ ] TC-0461 With the probe on: tap anywhere, then "Copy protocol" in
       Settings - the clipboard holds the entry (a line with `tap` and
       `deltaY=`); the counter next to it shows > 0 recorded events
-- [ ] Reload the page: the counter is preserved (the protocol survives
+- [ ] TC-0462 Reload the page: the counter is preserved (the protocol survives
       reloads); "Clear protocol" resets it to 0
-- [ ] Appending `?vvdiag=1` to the URL enables the same probe; the
+- [ ] TC-0463 Appending `?vvdiag=1` to the URL enables the same probe; the
       Settings toggle then shows ON (one shared flag)
-- [ ] "Show measurement bar" OFF: the bar disappears immediately and
+- [ ] TC-0464 "Show measurement bar" OFF: the bar disappears immediately and
       the header/menu are reachable again - but new taps still raise
       the protocol counter (recording continues invisibly, #2785)
 
 ### AI check: apply suggestions (AIV-07, #3060)
-- [ ] Browser mode with a configured AI key, an own lesson (Content > My
+- [ ] TC-0465 Browser mode with a configured AI key, an own lesson (Content > My
       content) with a deliberate mistake on a card (e.g. "casa" instead
       of "la casa"); run "Check with AI": the report lists the card and
       the footer carries the "Apply suggestions" button
-- [ ] "Apply suggestions": a table with lesson, card, field, "Current"
+- [ ] TC-0466 "Apply suggestions": a table with lesson, card, field, "Current"
       and "Suggestion", every row ticked; below it the number of
       findings without an applicable value (if any); the confirm button
       counts "N fields in M cards"
-- [ ] Untick one row, confirm: only the ticked fields change (open the
+- [ ] TC-0467 Untick one row, confirm: only the ticked fields change (open the
       lesson or check in the editor), the set's title, languages, level
       and description stay; toast "N fields applied"; the lesson's
       progress is kept
-- [ ] In the result, "Undo the last apply": the fields carry the old
+- [ ] TC-0468 In the result, "Undo the last apply": the fields carry the old
       value again, toast "Apply undone."; the undo button disappears
-- [ ] Close the dialog and open "Check with AI" again: no cached report
+- [ ] TC-0469 Close the dialog and open "Check with AI" again: no cached report
       any more, the cost estimate shows (the report was dropped after the
       apply)
-- [ ] Downloaded set (not your own): "Apply suggestions" is disabled with
+- [ ] TC-0470 Downloaded set (not your own): "Apply suggestions" is disabled with
       the tooltip "Only for your own lessons."
 
 ### Settings > Plugins: installed plugins (#3055)
-- [ ] Desktop app (API mode), Settings > Plugins: at the top the
+- [ ] TC-0471 Desktop app (API mode), Settings > Plugins: at the top the
       "Installed plugins" card with one row per loaded plugin, sorted by
       name: name, version, source ("Package") and the activation time
       formatted in the app language; below it the unchanged "Learning
       Repository" card
-- [ ] Right after opening, "Reading plugins…" shows briefly, then the
+- [ ] TC-0472 Right after opening, "Reading plugins…" shows briefly, then the
       list; with the backend running there is no error and no toast
-- [ ] Stop the backend, reload the tab: the card shows the line "Could
+- [ ] TC-0473 Stop the backend, reload the tab: the card shows the line "Could
       not read the plugin status: …" and a toast carries the same
       message; the "Learning Repository" card stays visible
-- [ ] Browser mode (GitHub Pages / Dexie): the card stays visible with
+- [ ] TC-0474 Browser mode (GitHub Pages / Dexie): the card stays visible with
       the notice "Only available with the desktop app."; DevTools >
       Network shows no request to /api/plugins/health
 
 ### Diagnostics probe: mis-tap mark + actions (#3043)
-- [ ] Probe ON, measurement bar visible: next to "Werte kopieren" and
+- [ ] TC-0475 Probe ON, measurement bar visible: next to "Werte kopieren" and
       "Details" the bar shows the button "Daneben!"
-- [ ] Tap anywhere, then tap "Daneben!", then "Details": the report has
+- [ ] TC-0476 Tap anywhere, then tap "Daneben!", then "Details": the report has
       a section `actions (newest first)` with a `mark` line whose
       `target=` names the element just tapped; the tap counter ("N
       Tipps") did NOT increase because of the button
-- [ ] On a lesson page tap an answer tile: the `actions` section gains a
+- [ ] TC-0477 On a lesson page tap an answer tile: the `actions` section gains a
       `click` line with `target=`, `downTarget=` and `mismatch=0`;
       tapping a text field additionally adds a `focus` line with
       `top=`/`bottom=`/`vis=`
-- [ ] The bar's last tap line additionally carries `hit=`, `above1=`,
+- [ ] TC-0478 The bar's last tap line additionally carries `hit=`, `above1=`,
       `above2=`, `pageY=`, `screenY=`, `hdrTop=`, `ftrBot=`, `room=`
       and `focusTop=`/`focusBot=`/`focusVis=`; "Copy protocol" in
       Settings yields the same fields plus the `click`/`focus`/`mark`
       entries
 
 ### Sticky button for the measurement bar (#2799)
-- [ ] Settings > Diagnostics & Support: enable "Sticky button for the
+- [ ] TC-0479 Settings > Diagnostics & Support: enable "Sticky button for the
       measurement bar" (the probe must be ON) - a round floating
       button appears IMMEDIATELY at the bottom left
-- [ ] Tap the button: the measurement bar disappears (exactly like
+- [ ] TC-0480 Tap the button: the measurement bar disappears (exactly like
       "Show measurement bar" OFF); tap again: it reappears - the
       Settings "Show measurement bar" toggle mirrors every tap (one
       shared flag)
-- [ ] The position choice (4 corners) appears under the toggle: pick
+- [ ] TC-0481 The position choice (4 corners) appears under the toggle: pick
       "Top right" - the button jumps to that corner immediately;
       default is "Bottom left"
-- [ ] Taps ON the button do NOT enter the diagnostics protocol (the
+- [ ] TC-0482 Taps ON the button do NOT enter the diagnostics protocol (the
       counter in Settings stays put while toggling)
-- [ ] With the bottom tab bar active (#2786): the button in a bottom
+- [ ] TC-0483 With the bottom tab bar active (#2786): the button in a bottom
       corner floats ABOVE the tab bar, covering no tabs
-- [ ] Probe OFF: the button disappears with it (without the probe
+- [ ] TC-0484 Probe OFF: the button disappears with it (without the probe
       there is no bar to toggle)
 
 ### Mobile menu position: bottom tab bar as an option (#2786)
-- [ ] Settings > General > Interface: "Menu position (mobile)" is
+- [ ] TC-0485 Settings > General > Interface: "Menu position (mobile)" is
       "Top (menu button)" (default) - NO bottom bar
-- [ ] Pick "Bottom (tab bar)": the bar appears IMMEDIATELY at the
+- [ ] TC-0486 Pick "Bottom (tab bar)": the bar appears IMMEDIATELY at the
       bottom (Learn/Content/Learning Path/Progress/More); content is
       not hidden behind it (bottom scroll reserve)
-- [ ] With the bottom bar: the top hamburger menu still works
-- [ ] During an active lesson and on Landing/Onboarding/Assessment the
+- [ ] TC-0487 With the bottom bar: the top hamburger menu still works
+- [ ] TC-0488 During an active lesson and on Landing/Onboarding/Assessment the
       bar stays hidden (the lesson footer keeps the bottom edge)
-- [ ] Back to "Top": the bar disappears immediately; the choice
+- [ ] TC-0489 Back to "Top": the bar disappears immediately; the choice
       survives a reload
 
 ### Phone header: menu button and logo survive many badges (#3123)
-- [ ] Phone (375 and 430 px wide, e.g. iPhone 14 Pro Max) with due
+- [ ] TC-0490 Phone (375 and 430 px wide, e.g. iPhone 14 Pro Max) with due
       reviews, one available set update and XP: open the Dashboard. The
       menu button top left keeps its full width (no thin sliver) and the
       logo next to it is visible
-- [ ] On the phone the badges show only the number next to the icon
+- [ ] TC-0491 On the phone the badges show only the number next to the icon
       ("718" instead of "718 due", "1" instead of "1 updates"); the
       tooltip and the screen-reader name still carry the full text
-- [ ] When the badges no longer fit beside the menu button and the logo
+- [ ] TC-0492 When the badges no longer fit beside the menu button and the logo
       they wrap right-aligned onto a second line; nothing is cut off and
       the page does not scroll sideways
-- [ ] Tablet and desktop: the header stays a single line with the full
+- [ ] TC-0493 Tablet and desktop: the header stays a single line with the full
       badge text
 
 ### Step change on a phone: anchor at the top, footer at the bottom (#3126)
-- [ ] iPhone (Safari or PWA): open a lesson with a long theory step,
+- [ ] TC-0494 iPhone (Safari or PWA): open a lesson with a long theory step,
       scroll to the very bottom, then "Next" onto a short step (e.g. a
       matching exercise)
-- [ ] Without swiping: the step starts at the top (progress bar and task
+- [ ] TC-0495 Without swiping: the step starts at the top (progress bar and task
       visible), the footer with Back/Pause/Check sits at the bottom edge,
       no empty (black) lower half
-- [ ] The same from a short onto a long step: the anchor is at the top,
+- [ ] TC-0496 The same from a short onto a long step: the anchor is at the top,
       the content scrolls normally
-- [ ] With "Reduce motion" in the system: the jump happens without
+- [ ] TC-0497 With "Reduce motion" in the system: the jump happens without
       animation, same result
-- [ ] Rotate the device during a step (#1422): the step is still
+- [ ] TC-0498 Rotate the device during a step (#1422): the step is still
       re-anchored
 
 ### Settings > Data: housekeeping cards (#2955)
-- [ ] Settings > Data: the "Maximum lesson size" card sits directly
+- [ ] TC-0499 Settings > Data: the "Maximum lesson size" card sits directly
       below "Offline cache"; the "Paused lesson retention" card sits
       directly above "Disconnected content" (with no disconnected
       content, directly above the danger zone)
-- [ ] Settings > Learning ends with "Reminders"; neither card is there
+- [ ] TC-0500 Settings > Learning ends with "Reminders"; neither card is there
       any more
-- [ ] Set "Steps per part" to 15, reload the page: the value stays 15;
+- [ ] TC-0501 Set "Steps per part" to 15, reload the page: the value stays 15;
       set "Keep paused lessons for" to "60 days", reload: the choice
       stays "60 days"
-- [ ] Repeat both in browser mode (Settings > Data > storage mode): same
+- [ ] TC-0502 Repeat both in browser mode (Settings > Data > storage mode): same
       behaviour
 
 ### In-set position + navigation (#2793)
-- [ ] Inside a lesson from a set, the header shows "Lesson N of M"
+- [ ] TC-0503 Inside a lesson from a set, the header shows "Lesson N of M"
       with the correct number
-- [ ] The left arrow opens the PREVIOUS lesson of the set; the right
+- [ ] TC-0504 The left arrow opens the PREVIOUS lesson of the set; the right
       arrow the next one
-- [ ] On the first lesson the left arrow is absent (no dead button),
+- [ ] TC-0505 On the first lesson the left arrow is absent (no dead button),
       the readout stays; on the last one the right arrow is absent
-- [ ] After jumping, the readout shows the new position
-- [ ] For a standalone lesson without a set (e.g. an own lesson) the
+- [ ] TC-0506 After jumping, the readout shows the new position
+- [ ] TC-0507 For a standalone lesson without a set (e.g. an own lesson) the
       position row is absent entirely
 
 ### First paint: no language mix (#2796)
-- [ ] Reload the app with a German UI (clear the cache): landing page,
+- [ ] TC-0508 Reload the app with a German UI (clear the cache): landing page,
       navigation, install hint, update banner and offline notice are
       German immediately - no English text, no raw key like
       `landing.intro`
-- [ ] Same in airplane mode / offline: the strings stay German (the
+- [ ] TC-0509 Same in airplane mode / offline: the strings stay German (the
       first paint needs no network)
-- [ ] Update banner: "Was ist neu?", "Release-Seite", "Später" carry
+- [ ] TC-0510 Update banner: "Was ist neu?", "Release-Seite", "Später" carry
       readable labels (not empty, sufficient contrast)
 
 ### Set-completion review (#2792)
-- [ ] Finish the last lesson of a set: the completion card offers
+- [ ] TC-0511 Finish the last lesson of a set: the completion card offers
       "View review" as the first action, "View Set" beside it
-- [ ] The review shows four headline figures (total mistakes,
+- [ ] TC-0512 The review shows four headline figures (total mistakes,
       mastered percentage, still open, time spent) and below them
       mistakes per lesson, per exercise type, and the biggest weak
       spots with your own wrong answer next to the correct one
-- [ ] The two middle figures follow the mistakes, not the review flag
+- [ ] TC-0513 The two middle figures follow the mistakes, not the review flag
       (#3166): "Still open" counts the elements with at least one mistake
       that the review has not marked mastered yet; "Mastered" is the share
       of all played elements that were never wrong or have cleared their
       mistake since. A set with 12 played elements, 3 of them wrong once:
       "3 Total mistakes", "75% Mastered", "3 Still open" - not "0%" and
       "12"
-- [ ] "Practise mistakes" leads into the set's review session,
+- [ ] TC-0514 "Practise mistakes" leads into the set's review session,
       "Back to the set" to the set page
-- [ ] A set with no recorded mistakes shows the friendly message
+- [ ] TC-0515 A set with no recorded mistakes shows the friendly message
       instead of empty sections
-- [ ] Check both in browser mode (no server) - the figures come from
+- [ ] TC-0516 Check both in browser mode (no server) - the figures come from
       the local database there
 
 ### Learning-path set: "Repeat everything" resets the results (#3171)
-- [ ] Open the learning path and expand a set with results: the action bar
+- [ ] TC-0517 Open the learning path and expand a set with results: the action bar
       shows "Repeat everything" (`set-reset-results-<id>`) next to "Train
       errors"; a never-started set does not show the button
-- [ ] Press it: the confirmation "Reset all results?" names the set title,
+- [ ] TC-0518 Press it: the confirmation "Reset all results?" names the set title,
       the number of lessons with results, that score, stars and study time
       are reset, that the previous run's mistakes stay as history and that
       XP and badges are unchanged; below it "Average so far: N%" (for a
       set without a scored lesson "No average yet.")
-- [ ] "Cancel" (also Escape): nothing changes, the set's stars and progress
+- [ ] TC-0519 "Cancel" (also Escape): nothing changes, the set's stars and progress
       are as before
-- [ ] "Reset and start over": success toast, lesson 1 of the set opens;
+- [ ] TC-0520 "Reset and start over": success toast, lesson 1 of the set opens;
       back on the learning path the set shows no stars and no progress,
       "Train errors" is gone (new run, as with "Work through again")
-- [ ] A set marked "Completed" or "Deferred" in My Content is listed under
+- [ ] TC-0521 A set marked "Completed" or "Deferred" in My Content is listed under
       "Active" again after the reset (status filter in My Content); the
       dashboard's "Continue Learning" shows it as a started set again, not
       as done
-- [ ] Dashboard: XP and badges are unchanged after the reset
-- [ ] Check both: desktop app (API mode) and browser mode without a server
+- [ ] TC-0522 Dashboard: XP and badges are unchanged after the reset
+- [ ] TC-0523 Check both: desktop app (API mode) and browser mode without a server
       (Dexie) - the reset writes to both stores
 
 ### Set page: lesson list + progress (#2793 stages 2-3)
-- [ ] Open a set page (/content/set/<id> or via a shared link): below
+- [ ] TC-0524 Open a set page (/content/set/<id> or via a shared link): below
       the set details, ALL lessons are listed with their number
-- [ ] The list header shows "{x} of {y} lessons completed"
-- [ ] Completed lessons show a green checkmark plus their score; the
+- [ ] TC-0525 The list header shows "{x} of {y} lessons completed"
+- [ ] TC-0526 Completed lessons show a green checkmark plus their score; the
       first unfinished one carries the "Continue here" marker (#2935)
-- [ ] Clicking any row opens exactly that lesson - including one far
+- [ ] TC-0527 Clicking any row opens exactly that lesson - including one far
       back in the set
-- [ ] Inside a running lesson the set name in the header is clickable
+- [ ] TC-0528 Inside a running lesson the set name in the header is clickable
       and leads to that same list
-- [ ] With no recorded progress the list still appears, just without
+- [ ] TC-0529 With no recorded progress the list still appears, just without
       markers
-- [ ] Finish a couple of lessons in a set, leave, reopen the set page,
+- [ ] TC-0530 Finish a couple of lessons in a set, leave, reopen the set page,
       press "Start learning": it opens the first UNFINISHED lesson, not
       lesson 1 again (#2935)
-- [ ] Finish every lesson of a set, then press "Start learning" again:
+- [ ] TC-0531 Finish every lesson of a set, then press "Start learning" again:
       it opens lesson 1 (nothing left to resume)
 ### Summary: all answers with their question (#2807)
-- [ ] Finish a lesson, open "View all answers" (the "Answers overview"
+- [ ] TC-0532 Finish a lesson, open "View all answers" (the "Answers overview"
       section switched on in Settings, or "Detailed evaluation" pressed,
       #3124): every row with something to show is expandable (title +
       score stay visible)
-- [ ] Expanded, the QUESTION sits above the answers - including on a
+- [ ] TC-0533 Expanded, the QUESTION sits above the answers - including on a
       partially correct row like "2 / 3", which previously showed nothing
-- [ ] Choice/matching exercises (no text answer) show question and
+- [ ] TC-0534 Choice/matching exercises (no text answer) show question and
       correct answer
-- [ ] Text answers keep the coloured token diff, plus your own answer
+- [ ] TC-0535 Text answers keep the coloured token diff, plus your own answer
       spelled out
-- [ ] A fully correct row shows its question but no mistake diff
+- [ ] TC-0536 A fully correct row shows its question but no mistake diff
 
 ### Summary: the detailed evaluation on one button (#3031)
-- [ ] Finish a lesson: the "Detailed evaluation" button sits directly
+- [ ] TC-0537 Finish a lesson: the "Detailed evaluation" button sits directly
       under the heading
-- [ ] Switch an enabled section off in Settings > Learning > "Lesson
+- [ ] TC-0538 Switch an enabled section off in Settings > Learning > "Lesson
       summary" (e.g. "XP reward"), then finish a lesson: the section is
       missing - after pressing "Detailed evaluation" it is there
-- [ ] In the detailed view "View all answers" is already expanded
-- [ ] "Why you missed these" appears even with its own toggle off, and
+- [ ] TC-0539 In the detailed view "View all answers" is already expanded
+- [ ] TC-0540 "Why you missed these" appears even with its own toggle off, and
       shows more than five mistakes when the run had more
-- [ ] Press again ("Compact evaluation"): everything is back as before,
+- [ ] TC-0541 Press again ("Compact evaluation"): everything is back as before,
       the switched-off section is gone again
-- [ ] Back in Settings: the switched-off sections are still switched
+- [ ] TC-0542 Back in Settings: the switched-off sections are still switched
       off - the button stores nothing
-- [ ] The correction round stays collapsed in the detailed view too (no
+- [ ] TC-0543 The correction round stays collapsed in the detailed view too (no
       keyboard pops up on the phone)
-- [ ] Toggling keeps the button in place, the page does not jump
+- [ ] TC-0544 Toggling keeps the button in place, the page does not jump
 
 ### Summary: the detailed evaluation like the set end (#3124)
-- [ ] Finish a lesson with at least two mistakes, press "Detailed
+- [ ] TC-0545 Finish a lesson with at least two mistakes, press "Detailed
       evaluation": directly under the button reads "Review: <lesson
       title>" with "Every mistake in this lesson at a glance"
-- [ ] Below it four key figures (Total mistakes, Mastered, Still open,
+- [ ] TC-0546 Below it four key figures (Total mistakes, Mastered, Still open,
       Time spent), "Mistakes per exercise type" and "Biggest weak spots"
       with the own wrong answer struck through next to the correct one;
       "Mistakes per lesson" is NOT there (it is a single lesson)
-- [ ] First run of a lesson, e.g. 12 elements, 9 right, 3 wrong: "3 Total
+- [ ] TC-0547 First run of a lesson, e.g. 12 elements, 9 right, 3 wrong: "3 Total
       mistakes", "75% Mastered", "3 Still open" - the same 75% as the run's
       score (#3166). "Mastered" counts the elements that were never wrong or
       whose mistake the review has cleared since, "Still open" those with a
       mistake and no mastery; not "0%" and "12" for 3 mistakes
-- [ ] The numbers match the set review (Content > set > "Open review")
+- [ ] TC-0548 The numbers match the set review (Content > set > "Open review")
       for the same lesson
-- [ ] "Practise mistakes" opens the set's review session
-- [ ] With no mistakes in the run: "No mistakes recorded - excellent!"
+- [ ] TC-0549 "Practise mistakes" opens the set's review session
+- [ ] TC-0550 With no mistakes in the run: "No mistakes recorded - excellent!"
       instead of the figures
-- [ ] "Compact evaluation": the review disappears again; the #3031 items
+- [ ] TC-0551 "Compact evaluation": the review disappears again; the #3031 items
       (sections, answers, explanations) still hold
-- [ ] The button's tooltip names key figures, exercise types and weak spots
+- [ ] TC-0552 The button's tooltip names key figures, exercise types and weak spots
 
 ### Summary: the compact default, one screen (#3124)
-- [ ] Fresh install (or Settings > Learning > "Lesson summary" with only
+- [ ] TC-0553 Fresh install (or Settings > Learning > "Lesson summary" with only
       "Result and statistics" and "XP reward" ticked): finish a lesson -
       the summary shows stars, score, time, "+N XP" and directly below
       "Mark as complete", "Next lesson", "Practice again" and "Back"; no
       favorites hint, no sharing, no answers overview, no export, no "Why
       you missed these", no correction round, no next-step cards
-- [ ] On a phone (portrait): everything down to the continue buttons is
+- [ ] TC-0554 On a phone (portrait): everything down to the continue buttons is
       visible without scrolling
-- [ ] "Detailed evaluation": the set-style review and every switched-off
+- [ ] TC-0555 "Detailed evaluation": the set-style review and every switched-off
       section appear (favorite, share, all answers expanded, export, "Why
       you missed these", fix mistakes, next steps); "Compact evaluation"
       takes them away again
-- [ ] Settings > Learning > "Lesson summary": nine rows, "Why you missed
+- [ ] TC-0556 Settings > Learning > "Lesson summary": nine rows, "Why you missed
       these" sits directly above the correction-round row; only Result and
       XP are ticked; tick a row (e.g. Next-step suggestions), finish a
       lesson: the section is part of the compact view for good
-- [ ] An existing choice stays: whoever configured the sections before
+- [ ] TC-0557 An existing choice stays: whoever configured the sections before
       this state sees their selection unchanged; "Why you missed these" is
       ticked there and sits directly above the correction round
-- [ ] "Why you missed these" ticked but "Explanations after the answer"
+- [ ] TC-0558 "Why you missed these" ticked but "Explanations after the answer"
       (Review) off: the block is missing from the compact view and only
       appears in the detailed evaluation
 
@@ -2353,56 +2353,56 @@ switch the section on in Settings first or press "Detailed evaluation"
 (#3124).
 
 ### Leaving a lesson returns to its set (#2811)
-- [ ] Pause and leave a set lesson: the app lands on the SET page with
+- [ ] TC-0559 Pause and leave a set lesson: the app lands on the SET page with
       the lesson list, not on "My content"
-- [ ] "Exit" after the summary: the set page too - the lesson just
+- [ ] TC-0560 "Exit" after the summary: the set page too - the lesson just
       finished is marked completed there
-- [ ] A lesson without a set (own lesson, standalone import) still
+- [ ] TC-0561 A lesson without a set (own lesson, standalone import) still
       lands on "My content"
 
 ### Share the result as an image (#2813)
-- [ ] After a lesson press "Share image only" next to "Share": the share
+- [ ] TC-0562 After a lesson press "Share image only" next to "Share": the share
       sheet opens WITH the result card and WITHOUT text or link
-- [ ] Pick Facebook: a photo post with the card appears (not the generic
+- [ ] TC-0563 Pick Facebook: a photo post with the card appears (not the generic
       app image)
-- [ ] WhatsApp still works through the normal "Share" button (card plus
+- [ ] TC-0564 WhatsApp still works through the normal "Share" button (card plus
       text)
-- [ ] On desktop (no share sheet): the image downloads, toast "Image
+- [ ] TC-0565 On desktop (no share sheet): the image downloads, toast "Image
       saved"
-- [ ] Dismiss the share sheet: no file lands silently in the downloads
+- [ ] TC-0566 Dismiss the share sheet: no file lands silently in the downloads
 
 ### New "Diagnostics & Support" tab unites error report + probe (#2789)
-- [ ] Settings > Info: between "Help" and "About" there is now
+- [ ] TC-0567 Settings > Info: between "Help" and "About" there is now
       "Diagnostics & Support"
-- [ ] It shows the Support section first ("Create error report",
+- [ ] TC-0568 It shows the Support section first ("Create error report",
       formerly under "About"), then the Diagnostics section with
       Developer Mode (formerly under "General > Interface") and the
       tap/viewport probe (formerly under "General > Diagnostics")
-- [ ] "About" still shows version, strand and links, but no Support
+- [ ] TC-0569 "About" still shows version, strand and links, but no Support
       button anymore
-- [ ] "General" still shows the menu position, but no Developer Mode
+- [ ] TC-0570 "General" still shows the menu position, but no Developer Mode
       toggle and no Diagnostics section anymore
-- [ ] The direct link `?tab=diagnostics` opens the tab immediately
+- [ ] TC-0571 The direct link `?tab=diagnostics` opens the tab immediately
 
 ### Discover + Registry (since v2.2.0)
-- [ ] Source-language filter as a visible chip on first view
+- [ ] TC-0572 Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists
       across reload (#1699/#1701)
-- [ ] Reference/demo sets (graded-quiz-demo) do NOT appear in
+- [ ] TC-0573 Reference/demo sets (graded-quiz-demo) do NOT appear in
       Discover/My Content (#1702/#1706)
-- [ ] Per-set share link opens the set detail page directly (#1572)
-- [ ] Add a registered content repo (register-a-repo #1511)
-- [ ] Manifest fallback for own repos without a search-index.json (#2562):
+- [ ] TC-0574 Per-set share link opens the set detail page directly (#1572)
+- [ ] TC-0575 Add a registered content repo (register-a-repo #1511)
+- [ ] TC-0576 Manifest fallback for own repos without a search-index.json (#2562):
       connect your own repo via Settings → Data → "Add a repository" that
       was NEVER built with the engine generator (no search-index.json at
       its root) - its sets still appear in Discover; once more than one
       source contributes, the "Source" filter appears (previously missing
       when only one source contributed)
-- [ ] "Share as repository" (#2376): a set with quality issues (e.g. a
+- [ ] TC-0577 "Share as repository" (#2376): a set with quality issues (e.g. a
       matching exercise with a duplicate left value) is NOT pushed on the
       first click - the issue list appears and the button flips to
       "Export anyway"; only the second click exports
-- [ ] "Share as repository" (#2376): when lesson filenames do not sort
+- [ ] TC-0578 "Share as repository" (#2376): when lesson filenames do not sort
       into the source order (kapitel-1..kapitel-10), the success screen
       reports the NN-prefix renaming; the exported repo lists the
       lessons in source order
@@ -2412,27 +2412,27 @@ switch the section on in Settings first or press "Detailed evaluation"
 Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
 (API + Dexie); the facets read the search index and are mode-independent.
 
-- [ ] Target-language facet visible next to the source language; marks carry
+- [ ] TC-0579 Target-language facet visible next to the source language; marks carry
       their set count, only targets present for the active source language,
       sorted by count; selecting one filters the list (#2322)
-- [ ] Review standing: machine-generated sets (e.g. ja-a1-from-de,
+- [ ] TC-0580 Review standing: machine-generated sets (e.g. ja-a1-from-de,
       ko-a1-from-de, zh-a1-from-de) carry a neutral badge ("Machine-made"),
       hand-written sets carry NO badge; the "Review" facet appears only when
       such sets are in the catalogue (#2321)
-- [ ] The "AI-checked" facet is gone; the AI badge on the entry stays (#2321)
-- [ ] Active restrictions (level, domain, trust, review, search) appear as
+- [ ] TC-0581 The "AI-checked" facet is gone; the AI badge on the entry stays (#2321)
+- [ ] TC-0582 Active restrictions (level, domain, trust, review, search) appear as
       removable marks above the list; clicking a mark's X clears exactly that
       restriction (#2323)
-- [ ] Domain names are translated (Dog training, Technology, Software,
+- [ ] TC-0583 Domain names are translated (Dog training, Technology, Software,
       Philosophy, Traffic knowledge instead of raw identifiers) (#2320)
-- [ ] Empty state: at zero results, computed exits appear ("Without <facet>:
+- [ ] TC-0584 Empty state: at zero results, computed exits appear ("Without <facet>:
       N sets") plus "Reset all filters"; a click restores results; the source
       language stays (#2324)
-- [ ] Empty library (no set): a pointer to "Add your own source" (/add-repo)
+- [ ] TC-0585 Empty library (no set): a pointer to "Add your own source" (/add-repo)
       or "create a lesson" (/create-lesson) (#2324)
-- [ ] Phone (narrow width): the marks row stays ONE horizontally-scrollable
+- [ ] TC-0586 Phone (narrow width): the marks row stays ONE horizontally-scrollable
       line, never wraps, and does not eat half the height
-- [ ] **iOS standalone (added to home screen, Dexie mode):** same flow on the
+- [ ] TC-0587 **iOS standalone (added to home screen, Dexie mode):** same flow on the
       iPhone PWA - the facet menus open above the list (portal/fixed, #1349),
       the marks row scrolls horizontally, and the empty-state exits are
       tappable (>=44px touch target)
@@ -2442,23 +2442,23 @@ Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
 Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
 (API + Dexie); the facets read the search index and are mode-independent.
 
-- [ ] Entry control ("I want to") as the first permanently-visible mark; three
+- [ ] TC-0588 Entry control ("I want to") as the first permanently-visible mark; three
       presets with counts: Learn a language / A subject / Everything (#2331)
-- [ ] "Learn a language" preset (the default on first visit): language sets
+- [ ] TC-0589 "Learn a language" preset (the default on first visit): language sets
       only; target-language + level facets visible, domain facet hidden (#2331)
-- [ ] Switching to "A subject": knowledge sets only; domain facet visible,
+- [ ] TC-0590 Switching to "A subject": knowledge sets only; domain facet visible,
       level + target facets hidden; the choice persists across a reload (#2331)
-- [ ] "Everything" shows both populations; switching entries clears the
+- [ ] TC-0591 "Everything" shows both populations; switching entries clears the
       restrictions the new entry hides, so the list never silently drops to
       zero (#2331)
-- [ ] Source facet: appears once more than one source is present; selecting one
+- [ ] TC-0592 Source facet: appears once more than one source is present; selecting one
       restricts to that source, with a per-source count (#2330)
-- [ ] Language-name search: switch the UI to English and type "Spanish" - the
+- [ ] TC-0593 Language-name search: switch the UI to English and type "Spanish" - the
       German-authored Spanish sets are found (the pair's UI-language names are
       searchable) (#2329)
-- [ ] Phone (narrow width): the entry mark joins the ONE horizontally-
+- [ ] TC-0594 Phone (narrow width): the entry mark joins the ONE horizontally-
       scrollable marks row and does not wrap
-- [ ] **iOS standalone (added to home screen, Dexie mode):** same flow on the
+- [ ] TC-0595 **iOS standalone (added to home screen, Dexie mode):** same flow on the
       iPhone PWA - the entry menu opens above the list (portal/fixed, #1349),
       the preset stays remembered after quitting the PWA, and the
       language-name search works
@@ -2469,12 +2469,12 @@ Where: Discover (`/content?tab=discover`). To get past 24 results, set the
 entry to "Everything" and the source language to "All languages". Testable in
 BOTH storage modes; the logic is mode-independent.
 
-- [ ] With more than 24 results, only 24 render first; "Show more" loads the
+- [ ] TC-0596 With more than 24 results, only 24 render first; "Show more" loads the
       next batch; the count above the list stays the full number (#2333)
-- [ ] No infinite scroll; the button disappears after the last batch
-- [ ] A filter, search or sort change starts over from the first batch
-- [ ] Applies to both the card grid and the list view
-- [ ] **iOS standalone (added to home screen, Dexie mode):** "Show more" is
+- [ ] TC-0597 No infinite scroll; the button disappears after the last batch
+- [ ] TC-0598 A filter, search or sort change starts over from the first batch
+- [ ] TC-0599 Applies to both the card grid and the list view
+- [ ] TC-0600 **iOS standalone (added to home screen, Dexie mode):** "Show more" is
       tappable (>=44px), and the back-path (gesture / navigation) survives the
       extra batch
 
@@ -2485,16 +2485,16 @@ overridden: the exploration scheduled this only from ~200 sets (currently ~46);
 it is built now on an explicit user decision. Testable in BOTH storage modes;
 the logic is mode-independent.
 
-- [ ] A search word with ONE typo (e.g. "spanissch" for "Spanisch") finds the
+- [ ] TC-0601 A search word with ONE typo (e.g. "spanissch" for "Spanisch") finds the
       same sets as the correct spelling
-- [ ] Two or more typos in the same word do NOT find the set (tolerance stays
+- [ ] TC-0602 Two or more typos in the same word do NOT find the set (tolerance stays
       tight)
-- [ ] Very short search words (under 4 characters) stay exact; a 3-character
+- [ ] TC-0603 Very short search words (under 4 characters) stay exact; a 3-character
       typo finds nothing wrong
-- [ ] A multi-word search still requires EVERY word to match; an unrelated
+- [ ] TC-0604 A multi-word search still requires EVERY word to match; an unrelated
       second word excludes the set
-- [ ] Exact matches rank above typo-only matches when sorting by "Relevance"
-- [ ] **iOS standalone (added to home screen, Dexie mode):** typo search works
+- [ ] TC-0605 Exact matches rank above typo-only matches when sorting by "Relevance"
+- [ ] TC-0606 **iOS standalone (added to home screen, Dexie mode):** typo search works
       offline exactly as in server mode
 
 ### Discover Stage 3: language-pair selection (alternative entry, collapsible) (EXP-048, #2337, #2359)
@@ -2506,32 +2506,32 @@ decision. Shown in the "Learn a language" and "Everything" entries once more
 than one pair is populated. Testable in BOTH storage modes; the logic is
 mode-independent.
 
-- [ ] Above the list sits ONE collapsible button, collapsed by default; with no
+- [ ] TC-0607 Above the list sits ONE collapsible button, collapsed by default; with no
       selection it reads "Choose a language pair (N)" with the pair count (#2359)
-- [ ] Expanding (click/tap the button) shows the populated pairs grouped by
+- [ ] TC-0608 Expanding (click/tap the button) shows the populated pairs grouped by
       SOURCE language (one heading per source, its targets with counts below,
       most-populated first); tapping again collapses it (#2359)
-- [ ] Tapping a target presets BOTH the source and target language at once and
+- [ ] TC-0609 Tapping a target presets BOTH the source and target language at once and
       switches to the "Learn a language" entry; the list then shows only that
       pair's sets (#2337)
-- [ ] After the choice the collapsed button summarizes it, e.g.
+- [ ] TC-0610 After the choice the collapsed button summarizes it, e.g.
       "German → Spanish"; the chosen target is highlighted (marked active) when
       expanded (#2359)
-- [ ] A pair in a DIFFERENT instruction language (e.g. the "English" group,
+- [ ] TC-0611 A pair in a DIFFERENT instruction language (e.g. the "English" group,
       "Spanish" target) jumps there too; the source language stays freely
       changeable afterwards (#2337)
-- [ ] The pair selection is not shown in the "Subject" entry (#2337)
-- [ ] Flag icons: each language name is prefixed with a flag emoji - in the
+- [ ] TC-0612 The pair selection is not shown in the "Subject" entry (#2337)
+- [ ] TC-0613 Flag icons: each language name is prefixed with a flag emoji - in the
       pair selection's group headings and target buttons AND in the
       source/target language menus; the language name stays next to it, so on
       platforms without flag emoji (e.g. Windows) the name is still readable
       (#2359). Note: a language is not a country; the mapping is a deliberate
       convention (English -> UK, Portuguese -> Portugal)
-- [ ] Keyboard: the button is reachable via Tab and toggles open/closed with
+- [ ] TC-0614 Keyboard: the button is reachable via Tab and toggles open/closed with
       Enter/Space; when expanded, the target buttons are reachable via Tab (#2359)
-- [ ] Phone (narrow width): collapsed the selection costs ONE line; expanded the
+- [ ] TC-0615 Phone (narrow width): collapsed the selection costs ONE line; expanded the
       content stays scrollable and does not eat half the screen height (#2359)
-- [ ] **iOS standalone (added to home screen, Dexie mode):** the disclosure
+- [ ] TC-0616 **iOS standalone (added to home screen, Dexie mode):** the disclosure
       button and the target buttons are tappable (>=44px), toggling works, and
       the selection acts offline exactly as in server mode (#2359)
 
@@ -2542,16 +2542,16 @@ of a downloaded set. Test in BOTH storage modes (Desktop/server = API
 mode; GitHub-Pages PWA = Dexie mode), since the bug used to occur only in
 API mode.
 
-- [ ] Set a set to **Deferred** → switch to another view (e.g. Dashboard)
+- [ ] TC-0617 Set a set to **Deferred** → switch to another view (e.g. Dashboard)
       → return to My Content → the status is STILL "Deferred" (not back to
       "Active")
-- [ ] Check both return paths: once via the menu/navigation, once via the
+- [ ] TC-0618 Check both return paths: once via the menu/navigation, once via the
       browser Back button
-- [ ] Exercise every transition: active → deferred → completed → active
+- [ ] TC-0619 Exercise every transition: active → deferred → completed → active
       again; each survives a view switch
-- [ ] Second stage (real persistence proof): fully close and reopen the app
+- [ ] TC-0620 Second stage (real persistence proof): fully close and reopen the app
       → the deferred status is still there
-- [ ] iPhone PWA: same flow (originally observed there)
+- [ ] TC-0621 iPhone PWA: same flow (originally observed there)
 
 ### Continue-Learning suggestion: ranking and a visible set completion (#2123, #3020)
 
@@ -2559,26 +2559,26 @@ Where: Dashboard → Overview, the top "Continue Learning" / "Weitermachen"
 block. Test in BOTH storage modes (API + Dexie); the logic is
 mode-agnostic.
 
-- [ ] Finish a set completely (all lessons) OR set it to "Completed" via the
+- [ ] TC-0622 Finish a set completely (all lessons) OR set it to "Completed" via the
       set actions menu, with NO cards due → the row carries a visible
       "Set completed" tag (check icon, the last lesson's stars) and does NOT
       silently disappear
-- [ ] Click the completed row → returns to the set's most recently worked
+- [ ] TC-0623 Click the completed row → returns to the set's most recently worked
       lesson (looking things up again stays possible)
-- [ ] A started set present as well → the started set is on TOP, the completed
+- [ ] TC-0624 A started set present as well → the started set is on TOP, the completed
       one below it; a finish is never the top proposal
-- [ ] Several completed sets → at most ONE is shown with the tag (the most
+- [ ] TC-0625 Several completed sets → at most ONE is shown with the tag (the most
       recently finished); the block never becomes a completion archive
-- [ ] Neither an open nor a completed set and no due cards → an honest empty
+- [ ] TC-0626 Neither an open nor a completed set and no due cards → an honest empty
       state ("Start your first lesson", link to My Content) instead of a
       filler set
-- [ ] A completed set WITH due reviews → shown as a review row ("N elements
+- [ ] TC-0627 A completed set WITH due reviews → shown as a review row ("N elements
       due") that leads into the review session (`/review/{setId}`), not as a
       completion tag
-- [ ] A deferred set with no due cards → NOT shown (deliberately set aside, so
+- [ ] TC-0628 A deferred set with no due cards → NOT shown (deliberately set aside, so
       there is no finish to report)
-- [ ] A started (active) set → still proposed to resume
-- [ ] Order: due reviews first, then started sets, the completed set last
+- [ ] TC-0629 A started (active) set → still proposed to resume
+- [ ] TC-0630 Order: due reviews first, then started sets, the completed set last
       (within each tier most-recently-touched first)
 
 ### Continue Learning: every row removable with an X (#3023)
@@ -2587,21 +2587,21 @@ Where: Dashboard → Overview, the "Continue Learning" block. Test in BOTH
 storage modes (API + Dexie); the store is mode-agnostic (localStorage plus
 the Dexie userData mirror).
 
-- [ ] Every row carries an X on the right - whatever its mode: resume, next
+- [ ] TC-0631 Every row carries an X on the right - whatever its mode: resume, next
       lesson, due review, completed set
-- [ ] Click the X: the row disappears at once and a short message says it
+- [ ] TC-0632 Click the X: the row disappears at once and a short message says it
       comes back as soon as you keep learning
-- [ ] Reload: the row stays away (the decision is persisted)
-- [ ] Nothing was deleted: the set is still in My Content, the lesson's
+- [ ] TC-0633 Reload: the row stays away (the decision is persisted)
+- [ ] TC-0634 Nothing was deleted: the set is still in My Content, the lesson's
       progress is intact, the review cards are unchanged (check the count on
       the review card)
-- [ ] Self-healing: open and work on the hidden lesson again → the row
+- [ ] TC-0635 Self-healing: open and work on the hidden lesson again → the row
       reappears on the dashboard
-- [ ] Dismiss every row → honest empty state ("Start your first lesson"), not
+- [ ] TC-0636 Dismiss every row → honest empty state ("Start your first lesson"), not
       an empty block without explanation
-- [ ] Backup round-trip: Export → wipe → Import → the dismissed rows are still
+- [ ] TC-0637 Backup round-trip: Export → wipe → Import → the dismissed rows are still
       dismissed (the state rides in the .alb)
-- [ ] Phone: the X is tappable without mis-hits and does NOT trigger the row
+- [ ] TC-0638 Phone: the X is tappable without mis-hits and does NOT trigger the row
       link (44 px target)
 
 ### Continue Learning: the step counter names the resume point (#3076)
@@ -2610,12 +2610,12 @@ Where: Dashboard → Overview, "Continue Learning" block, "Resume" row. Before,
 "Step 1/8" counted graded exercises while the resume landed on a different
 step.
 
-- [ ] Open a lesson with eight steps, answer the first exercise, then move
+- [ ] TC-0639 Open a lesson with eight steps, answer the first exercise, then move
       two theory steps further (step 4), leave through the menu
-- [ ] Dashboard: the row reads "Resume · Step 4/8" (not "1/8")
-- [ ] Click "Resume" → resume dialog → "Continue" lands on exactly the step
+- [ ] TC-0640 Dashboard: the row reads "Resume · Step 4/8" (not "1/8")
+- [ ] TC-0641 Click "Resume" → resume dialog → "Continue" lands on exactly the step
       the row names
-- [ ] Play to the summary without "Mark complete", leave through the logo →
+- [ ] TC-0642 Play to the summary without "Mark complete", leave through the logo →
       the row reads "Step 8/8", never "9/8"
 
 ### Update guard: no silent progress loss on a set update (#2128)
@@ -2625,54 +2625,54 @@ has an update available. Test in BOTH storage modes. Background: an update that
 changes exercise/card identities (e.g. an answer fix) would orphan review cards.
 The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
 
-- [ ] Prep: learn a set (at least one lesson, make a few mistakes -> review
+- [ ] TC-0643 Prep: learn a set (at least one lesson, make a few mistakes -> review
       cards) for which a changed version with a CHANGED answer/card front exists.
-- [ ] Trigger a manual update (the set's "Update" button): a confirmation appears
+- [ ] TC-0644 Trigger a manual update (the set's "Update" button): a confirmation appears
       with counts ("N review cards / N lessons would be reset"), NOT a silent
       overwrite.
-- [ ] "Keep current version" -> nothing updates, progress stays, the set still
+- [ ] TC-0645 "Keep current version" -> nothing updates, progress stays, the set still
       shows "Update available" (visible + re-decidable).
-- [ ] "Update anyway" -> the update applies.
-- [ ] A harmless update (only a new lesson/exercise added, no existing identity
+- [ ] TC-0646 "Update anyway" -> the update applies.
+- [ ] TC-0647 A harmless update (only a new lesson/exercise added, no existing identity
       changed) -> NO prompt, applies straight away.
-- [ ] Auto-sync (only with a connected user repo, 24h): an identity-changing
+- [ ] TC-0648 Auto-sync (only with a connected user repo, 24h): an identity-changing
       update is NOT silently applied in the background; the set stays on the
       current version and shows "Update available" (no background dialog, no
       data loss).
-- [ ] iOS standalone (PWA): same manual flow, the confirmation appears.
-- [ ] Language check (#2160): the confirmation text appears in the app language
+- [ ] TC-0649 iOS standalone (PWA): same manual flow, the confirmation appears.
+- [ ] TC-0659 Language check (#2160): the confirmation text appears in the app language
       (not English), spot-checked across several languages (de/ja/ko/el/hi).
-- [ ] Carry-over proposal (#2308): the confirmation dialog additionally shows an
+- [ ] TC-0650 Carry-over proposal (#2308): the confirmation dialog additionally shows an
       "old -> new" list of the review items that could be carried over, plus a
       "Carry over what still matches" checkbox (on by default, BECAUSE the pairs
       are visible right above it).
-- [ ] Confirm with the box ticked: after the update, error counts, streak and
+- [ ] TC-0651 Confirm with the box ticked: after the update, error counts, streak and
       mastery sit on the CORRECTED answer (the review does not restart from
       zero). The toast names the count.
-- [ ] UNTICK the box and confirm: the update runs and NOTHING is carried over
+- [ ] TC-0652 UNTICK the box and confirm: the update runs and NOTHING is carried over
       (pre-#2308 behaviour). The checkbox is the decision, not decoration.
-- [ ] Cases that cannot be assigned: if an exercise had its ORDER changed or an
+- [ ] TC-0653 Cases that cannot be assigned: if an exercise had its ORDER changed or an
       element inserted/removed, the dialog names those separately ("N cannot be
       assigned with confidence and will be reset"). Verify NOTHING was carried
       over for them - a wrong assignment is worse than a loss because it is
       invisible.
-- [ ] AUTH-05: the exercise's OWN id changed (not just the answer text) - e.g.
+- [ ] TC-0654 AUTH-05: the exercise's OWN id changed (not just the answer text) - e.g.
       an exercise without a `stable_id` gets renamed (slug change) on update.
       The count in the "Carry over what still matches" checkbox includes this
       case (a combined number from the exercise and element level); the
       readable preview list still shows only answer-text pairs, never raw
       exercise slugs. After confirming with the box checked: the review card
       survives under the NEW exercise id, no restart from zero.
-- [ ] Auto-sync (24h, connected user repo): NEITHER updates NOR carries anything
+- [ ] TC-0655 Auto-sync (24h, connected user repo): NEITHER updates NOR carries anything
       over. The mapping may only come into being in the manual dialog.
-- [ ] Confirm twice in a row (trigger the update again): no double carry-over, no
+- [ ] TC-0656 Confirm twice in a row (trigger the update again): no double carry-over, no
       error (idempotent).
-- [ ] Backup beforehand: the backup hint is an offer, not a requirement - the
+- [ ] TC-0657 Backup beforehand: the backup hint is an offer, not a requirement - the
       update can be confirmed without one.
-- [ ] iOS standalone (PWA): dialog including the pair list and the checkbox is
+- [ ] TC-0658 iOS standalone (PWA): dialog including the pair list and the checkbox is
       fully readable and operable (the list does not overflow the dialog, the
       checkbox is tappable); carry-over works the same in Dexie mode.
-- [ ] First minting (engine#91, element level): a set whose pairs/blanks/options
+- [ ] TC-0660 First minting (engine#91, element level): a set whose pairs/blanks/options
       get a stable_id for the first time, content otherwise unchanged or
       corrected in the same update. The transition is treated as a normal,
       safely assignable correction, not reported as "cannot be assigned".
@@ -2687,17 +2687,17 @@ not an accident - the related progress is ARCHIVED (not deleted, not
 orphaned), leaves review scheduling and due counts, and the learner is told
 once, with the count.
 
-- [ ] Apply an update of a set with declared retirements (manually or via
+- [ ] TC-0661 Apply an update of a set with declared retirements (manually or via
       sync): ONE notice toast appears with the count ("N exercises were
       retired by the author; the related progress is archived.").
-- [ ] Retirement-only update (no other identity changes): NO warning dialog
+- [ ] TC-0662 Retirement-only update (no other identity changes): NO warning dialog
       (#2128) - a declared retirement is not breaking; the update applies,
       only the notice toast appears.
-- [ ] After the update: the retired elements no longer appear in the review
+- [ ] TC-0663 After the update: the retired elements no longer appear in the review
       queue and no longer count into the "N due" number.
-- [ ] Trigger the update again: no second toast, no double archival
+- [ ] TC-0664 Trigger the update again: no second toast, no double archival
       (idempotent; the count would be 0, so no notice).
-- [ ] Language check: the notice appears in the app language (spot-check
+- [ ] TC-0665 Language check: the notice appears in the app language (spot-check
       de/ja/ko).
 
 ### Recovery: review progress after the ja/ko/zh correction (#2161)
@@ -2709,29 +2709,29 @@ cards are keyed by the answer text, so cards already created for the changed
 items quietly fell out of scheduling. Check in BOTH storage modes. Only these
 three sets are affected; all other sets are untouched.
 
-- [ ] Setup: learn one of the sets (ja/ko/zh A1) in the OLD version and create a
+- [ ] TC-0666 Setup: learn one of the sets (ja/ko/zh A1) in the OLD version and create a
       few review cards, then move it to the corrected version (or seed test data
       with the old answer keys).
-- [ ] The notice appears on the Dashboard ONLY when affected cards are actually
+- [ ] TC-0667 The notice appears on the Dashboard ONLY when affected cards are actually
       present in your own data. No notice when nothing is affected.
-- [ ] The notice shows, per affected set, the number of affected cards and offers
+- [ ] TC-0668 The notice shows, per affected set, the number of affected cards and offers
       "Export backup" (recommended, not forced).
-- [ ] "Export backup" -> produces the same .alb file as Settings → Data (toast
+- [ ] TC-0669 "Export backup" -> produces the same .alb file as Settings → Data (toast
       with the filename).
-- [ ] "Relink review cards" -> a numeric result ("N relinked, N already
+- [ ] TC-0670 "Relink review cards" -> a numeric result ("N relinked, N already
       correct"). The notice then disappears for that set (no re-asking).
-- [ ] Idempotency: triggering again (or reloading) changes nothing more; the
+- [ ] TC-0671 Idempotency: triggering again (or reloading) changes nothing more; the
       notice does not come back for that set.
-- [ ] Partial recovery: if a set changed again after the fix, unmappable cards
+- [ ] TC-0672 Partial recovery: if a set changed again after the fix, unmappable cards
       are reported by count and left unchanged (not silently dropped).
-- [ ] "Start set fresh" -> inline confirm; only after confirming are the set's
+- [ ] TC-0673 "Start set fresh" -> inline confirm; only after confirming are the set's
       progress + review cards removed; the notice is then gone for that set.
-- [ ] No double-map / no orphaned rows: after relinking, no review lands on the
+- [ ] TC-0674 No double-map / no orphaned rows: after relinking, no review lands on the
       wrong card and there are no duplicate cards.
-- [ ] Backup behavior: import a backup taken BEFORE recovery -> the old
+- [ ] TC-0675 Backup behavior: import a backup taken BEFORE recovery -> the old
       (orphaned) keys are back, the notice reappears and can be applied again.
-- [ ] iOS standalone (PWA): same flow, notice + both actions work.
-- [ ] Language check: notice and result texts appear in the app language (not
+- [ ] TC-0676 iOS standalone (PWA): same flow, notice + both actions work.
+- [ ] TC-0677 Language check: notice and result texts appear in the app language (not
       English), sampled across several languages (de/ja/ko/el/hi).
 
 #### Producing the state (test precondition)
@@ -2747,20 +2747,20 @@ Mac, and the QA machine runs Ubuntu. Hence the platform rule:
 
 First check (two-stage):
 
-- [ ] On the phone, open the Dashboard. If the notice shows by itself, real
+- [ ] TC-0678 On the phone, open the Dashboard. If the notice shows by itself, real
       affected data is present -> test there. Then the product condition applies:
       run "Export backup" (the button in the notice) FIRST.
-- [ ] If no notice shows on the phone, the check moves to the DESKTOP; produce
+- [ ] TC-0679 If no notice shows on the phone, the check moves to the DESKTOP; produce
       the state there. An orphaned entry can no longer be created through normal
       use (the corrected version already emits the new key), so this step needs
       developer tools (marked as such):
 
-- [ ] Take a backup (Settings -> Data -> Export backup) so the starting state is
+- [ ] TC-0680 Take a backup (Settings -> Data -> Export backup) so the starting state is
       restorable.
-- [ ] Learn Japanese A1, lesson "01-begruessungen", the matching exercise
+- [ ] TC-0681 Learn Japanese A1, lesson "01-begruessungen", the matching exercise
       (ex-match-begruessung) once and answer "こんにちは" wrong on purpose -> a
       review card is created on the NEW key "こんにちは (konnichiwa)".
-- [ ] [Developer tools] Reset that card's key to the old form "こんにちは"
+- [ ] TC-0682 [Developer tools] Reset that card's key to the old form "こんにちは"
       (makes it orphaned):
       - Server mode (SQLite at
         ~/.local/share/adaptive_learner/adaptive_learner.db), one row:
@@ -2773,13 +2773,13 @@ First check (two-stage):
         key segment "こんにちは (konnichiwa)" with "こんにちは" in both the
         `element_key` field and the `id` key (leave every other segment,
         including direction, unchanged).
-- [ ] Reload the Dashboard -> the notice appears (1 affected card, Japanese A1).
+- [ ] TC-0683 Reload the Dashboard -> the notice appears (1 affected card, Japanese A1).
 
 Way back (repeatable, no traces):
 
-- [ ] After the test, import the backup taken in step 1 (Settings -> Data ->
+- [ ] TC-0684 After the test, import the backup taken in step 1 (Settings -> Data ->
       Import) -> exact starting state, no traces.
-- [ ] [Developer tools] Or reverse the UPDATE (server) / set the test row back to
+- [ ] TC-0685 [Developer tools] Or reverse the UPDATE (server) / set the test row back to
       the new key (Dexie).
 
 Not covered: if the state is produced and tested only on the desktop, the
@@ -2788,11 +2788,11 @@ there without a Mac Web Inspector). That is a valid result, but note it
 explicitly as open - do not silently equate it with the desktop result.
 
 ### Download visibility (Dexie mode, #1709 / #1719 / #1731)
-- [ ] Deleted set stays deleted: delete a set in My Content →
+- [ ] TC-0686 Deleted set stays deleted: delete a set in My Content →
       Refresh → the set does NOT come back (#1719)
-- [ ] A set from a no-longer-configured source stays visible in
+- [ ] TC-0687 A set from a no-longer-configured source stays visible in
       My Content (not silently hidden) (#1731/#1734)
-- [ ] Book recommendations come from the federated registry, not the
+- [ ] TC-0688 Book recommendations come from the federated registry, not the
       removed official `books.yaml` (#1717)
 
 ### Delete a single lesson (#2064)
@@ -2800,28 +2800,28 @@ explicitly as open - do not silently equate it with the desktop result.
 Location: My Content (`/content?tab=my`) → My Lessons → a set with
 SEVERAL lessons (e.g. after a book import) → "Manage lessons".
 
-- [ ] Prep: import/generate a book (several lessons in one set) OR a
+- [ ] TC-0689 Prep: import/generate a book (several lessons in one set) OR a
       multi-lesson own set; play 1-2 lessons (create progress + review
       cards)
-- [ ] "Manage lessons" expands the per-lesson list; each lesson has Play
+- [ ] TC-0690 "Manage lessons" expands the per-lesson list; each lesson has Play
       + Delete
-- [ ] Delete opens a confirm dialog that names the lesson and says it
+- [ ] TC-0691 Delete opens a confirm dialog that names the lesson and says it
       CANNOT be undone
-- [ ] The "Also delete my learning progress" checkbox shows the REAL
+- [ ] TC-0692 The "Also delete my learning progress" checkbox shows the REAL
       review-card count of the lesson (cannot be undone)
-- [ ] Delete WITHOUT the checkbox: the lesson leaves the list,
+- [ ] TC-0693 Delete WITHOUT the checkbox: the lesson leaves the list,
       lesson_count drops, sibling lessons are untouched; the deleted
       lesson's progress is kept (orphaned, cleanable later)
-- [ ] Delete WITH the checkbox: progress + review cards of ONLY this
+- [ ] TC-0694 Delete WITH the checkbox: progress + review cards of ONLY this
       lesson are gone, sibling progress remains
-- [ ] No renumbering: the surviving lessons keep their titles/order,
+- [ ] TC-0695 No renumbering: the surviving lessons keep their titles/order,
       deep links to them still work
-- [ ] Deleting the last lesson of a set removes the WHOLE set from My
+- [ ] TC-0696 Deleting the last lesson of a set removes the WHOLE set from My
       Content
-- [ ] Keyboard-operable dialog: the Delete button is focused,
+- [ ] TC-0697 Keyboard-operable dialog: the Delete button is focused,
       Escape/Cancel dismisses
-- [ ] Check BOTH modes: desktop/server (API) AND GitHub Pages (Dexie)
-- [ ] Backup time-point: make a backup (.alb) BEFORE deleting → delete
+- [ ] TC-0698 Check BOTH modes: desktop/server (API) AND GitHub Pages (Dexie)
+- [ ] TC-0699 Backup time-point: make a backup (.alb) BEFORE deleting → delete
       the lesson → import the backup → the lesson is back (correct: a
       backup is a snapshot, NOT a bug)
 
@@ -2830,35 +2830,35 @@ SEVERAL lessons (e.g. after a book import) → "Manage lessons".
 Location: My Content (`/content?tab=my`) → My Lessons → a set with
 SEVERAL lessons → "Manage lessons".
 
-- [ ] Prep: a multi-lesson own set (e.g. a book import); play 2-3 lessons
+- [ ] TC-0700 Prep: a multi-lesson own set (e.g. a book import); play 2-3 lessons
       to create progress + review cards
-- [ ] "Select lessons" turns on a selection MODE: a checkbox appears on
+- [ ] TC-0701 "Select lessons" turns on a selection MODE: a checkbox appears on
       each row and the per-row actions (move, play, edit, delete) are
       hidden while it is active
-- [ ] "Select all" checks every lesson; clicking again clears them;
+- [ ] TC-0702 "Select all" checks every lesson; clicking again clears them;
       "N selected" counts correctly
-- [ ] "Delete N" is disabled while nothing is selected
-- [ ] Delete opens ONE confirm dialog that names the COUNT and says it
+- [ ] TC-0703 "Delete N" is disabled while nothing is selected
+- [ ] TC-0704 Delete opens ONE confirm dialog that names the COUNT and says it
       CANNOT be undone; the dialog visibly RECOMMENDS a backup first
       (without forcing it)
-- [ ] The "Also delete my learning progress" checkbox shows the
+- [ ] TC-0705 The "Also delete my learning progress" checkbox shows the
       AGGREGATED REAL review-card count across the selected lessons
-- [ ] Delete WITHOUT the checkbox: exactly the selected lessons disappear
+- [ ] TC-0706 Delete WITHOUT the checkbox: exactly the selected lessons disappear
       in ONE step, lesson_count drops accordingly, NON-selected sibling
       lessons are untouched
-- [ ] Order: the remaining lessons keep their order (no renumbering),
+- [ ] TC-0707 Order: the remaining lessons keep their order (no renumbering),
       deep links to them still work
-- [ ] Delete WITH the checkbox: progress + review cards of ONLY the
+- [ ] TC-0708 Delete WITH the checkbox: progress + review cards of ONLY the
       selected lessons are gone, sibling progress remains
-- [ ] Select and delete ALL lessons: the dialog says BEFOREHAND that the
+- [ ] TC-0709 Select and delete ALL lessons: the dialog says BEFOREHAND that the
       WHOLE set will be deleted; afterwards the set is gone from My Content
-- [ ] Keyboard-operable dialog: the Delete button is focused,
+- [ ] TC-0710 Keyboard-operable dialog: the Delete button is focused,
       Escape/Cancel dismisses; the checkboxes carry an aria-label
-- [ ] Check BOTH modes: desktop/server (API) AND GitHub Pages (Dexie)
-- [ ] Backup time-point: make a backup (.alb) BEFORE deleting → delete
+- [ ] TC-0711 Check BOTH modes: desktop/server (API) AND GitHub Pages (Dexie)
+- [ ] TC-0712 Backup time-point: make a backup (.alb) BEFORE deleting → delete
       several lessons → import the backup → the lessons are back (correct:
       a backup is a snapshot, NOT a bug)
-- [ ] iOS standalone (PWA added to the Home Screen, Dexie mode): the
+- [ ] TC-0713 iOS standalone (PWA added to the Home Screen, Dexie mode): the
       selection mode, the checkboxes and the confirm dialog are usable by
       touch; the action bar wraps cleanly on a narrow screen (no overflow)
 
@@ -2866,100 +2866,100 @@ SEVERAL lessons → "Manage lessons".
 
 Location: Settings → Data → content-repo list → "Remove".
 
-- [ ] Default (checkbox NOT set): a reassuring note that learning
+- [ ] TC-0714 Default (checkbox NOT set): a reassuring note that learning
       progress is KEPT and comes back on reconnect
-- [ ] "Delete progress" checkbox set: a warning with REAL counts
+- [ ] TC-0715 "Delete progress" checkbox set: a warning with REAL counts
       (N lessons + M review cards, cannot be undone)
-- [ ] Disconnect only → reconnect the same repo → progress back
-- [ ] Disconnect + delete → reconnect → progress empty
-- [ ] The checkbox only appears when there IS progress to delete
+- [ ] TC-0716 Disconnect only → reconnect the same repo → progress back
+- [ ] TC-0717 Disconnect + delete → reconnect → progress empty
+- [ ] TC-0718 The checkbox only appears when there IS progress to delete
       (Dexie mode)
 
 ### Recommended repositories: per-row buttons (#2558)
 
 Location: Settings → Data → Recommended repositories.
 
-- [ ] Multiple recommendations visible → click "Add repository" on ONE →
+- [ ] TC-0719 Multiple recommendations visible → click "Add repository" on ONE →
       ONLY that button disables, the others stay clickable
-- [ ] While adding, a progress indicator (label + bar once the sync
+- [ ] TC-0720 While adding, a progress indicator (label + bar once the sync
       phase reports numbers) appears right at the clicked row, not
       globally
-- [ ] Click a second recommendation while the first is still loading →
+- [ ] TC-0721 Click a second recommendation while the first is still loading →
       both run through independently, no error
-- [ ] After completion: the row disappears from "Recommended" (now
+- [ ] TC-0722 After completion: the row disappears from "Recommended" (now
       under "Your content repositories"), the other rows' button state
       is unaffected
 
 ### Social sharing (visual + native)
-- [ ] Share button visible after a lesson
-- [ ] Mobile: native share sheet (WhatsApp/Telegram)
-- [ ] Desktop: copies to clipboard + toast
-- [ ] PNG share card: looks good (1200x630, theme tokens)
+- [ ] TC-0723 Share button visible after a lesson
+- [ ] TC-0724 Mobile: native share sheet (WhatsApp/Telegram)
+- [ ] TC-0725 Desktop: copies to clipboard + toast
+- [ ] TC-0726 PNG share card: looks good (1200x630, theme tokens)
 
 ---
 
 ## PRIO 5: AI FEATURES (needs a real API key)
 
-- [ ] Provider table: enter key → "Test" → "Connection ok"
-- [ ] "Generate exercises" on theory-only: AI returns a result
-- [ ] Quality of the generated exercises: sensible? type variety?
-- [ ] "Continue session" after chat import: AI knows the context
-- [ ] Tutor chat (assistant-ui, #1126): type → send (or Enter), the reply
+- [ ] TC-0727 Provider table: enter key → "Test" → "Connection ok"
+- [ ] TC-0728 "Generate exercises" on theory-only: AI returns a result
+- [ ] TC-0729 Quality of the generated exercises: sensible? type variety?
+- [ ] TC-0730 "Continue session" after chat import: AI knows the context
+- [ ] TC-0731 Tutor chat (assistant-ui, #1126): type → send (or Enter), the reply
       streams in; the 7-step cycle progress advances; read-aloud + dictation
       work; resuming a regular session shows the prior conversation
-- [ ] Imported session opens with the AI asking the first question on its own
+- [ ] TC-0732 Imported session opens with the AI asking the first question on its own
       (no user turn first), the chat starts clean
-- [ ] AI content validation: report sensible? provider+model shown?
-- [ ] No button without a key leads to an error toast (disabled + tooltip)
+- [ ] TC-0733 AI content validation: report sensible? provider+model shown?
+- [ ] TC-0734 No button without a key leads to an error toast (disabled + tooltip)
 
 ### Batch "Generate for all lessons" (#1896)
-- [ ] My Content → My Lessons, a set where ALL lessons already have
+- [ ] TC-0735 My Content → My Lessons, a set where ALL lessons already have
       exercises: the "Generate for all lessons" button is disabled RIGHT
       AWAY with the tooltip "All lessons already have exercises."
       (no click needed, no info toast)
-- [ ] A set with at least ONE lesson without exercises: button active,
+- [ ] TC-0736 A set with at least ONE lesson without exercises: button active,
       cost confirm → progress → result toast as before
-- [ ] After a successful full run: the button turns disabled without a
+- [ ] TC-0737 After a successful full run: the button turns disabled without a
       reload
 
 ### "Ask AI" button in lessons (#2693)
-- [ ] Shown by default: the "Ask AI" button appears under every theory
+- [ ] TC-0738 Shown by default: the "Ask AI" button appears under every theory
       block and exercise, even without an AI key (then greyed-out with a
       BYOK hint popover instead of being hidden)
-- [ ] Settings → Learning → Interaction → turn off "Show 'Ask AI'
+- [ ] TC-0739 Settings → Learning → Interaction → turn off "Show 'Ask AI'
       button": the button disappears in the running lesson (theory and
       exercises), no reload needed
-- [ ] Turn the toggle back on: the button reappears immediately
-- [ ] The toggle state survives a reload (localStorage)
+- [ ] TC-0740 Turn the toggle back on: the button reappears immediately
+- [ ] TC-0741 The toggle state survives a reload (localStorage)
 
 ### AI key vault import (#1765 / #1769)
-- [ ] Settings → AI → "Configured providers" → "Import" jumps to
+- [ ] TC-0742 Settings → AI → "Configured providers" → "Import" jumps to
       Settings → Data and scrolls the KeyVault import block into view (#1765)
-- [ ] Import via "Choose file" OR paste the raw envelope JSON into the
+- [ ] TC-0743 Import via "Choose file" OR paste the raw envelope JSON into the
       textarea; passphrase always required
-- [ ] Malformed/incomplete JSON → inline error (aria-live), Import
+- [ ] TC-0744 Malformed/incomplete JSON → inline error (aria-live), Import
       stays disabled
-- [ ] After a successful import (file OR paste): switching to
+- [ ] TC-0745 After a successful import (file OR paste): switching to
       Settings → AI shows the key IMMEDIATELY, without a reload (#1769)
-- [ ] Passphrase masked with a reveal toggle; key/passphrase never logged
+- [ ] TC-0746 Passphrase masked with a reveal toggle; key/passphrase never logged
 
 ### Cross-app vault import (Topos → Adaptive Learner) (#2512)
-- [ ] An .alk file exported from Topos (format "topos-ai-keys") imports
+- [ ] TC-0747 An .alk file exported from Topos (format "topos-ai-keys") imports
       without a "foreign file" rejection; the FILE's passphrase is asked
-- [ ] The Topos key stored under "google" lands on the "Gemini" provider
+- [ ] TC-0748 The Topos key stored under "google" lands on the "Gemini" provider
       after the import (Settings → AI shows it there)
-- [ ] Wrong passphrase → warning, no key is written
-- [ ] AL export unchanged: an exported file still carries the format
+- [ ] TC-0749 Wrong passphrase → warning, no key is written
+- [ ] TC-0750 AL export unchanged: an exported file still carries the format
       "adaptive-learner-keys"
 
 ### Perplexity provider (OpenAI-compatible, server mode only) (#2512)
-- [ ] Settings → AI: "Perplexity" appears in the provider selection
+- [ ] TC-0751 Settings → AI: "Perplexity" appears in the provider selection
       (after Gemini)
-- [ ] Server mode (make dev): store a pplx- key, the model picker shows
+- [ ] TC-0752 Server mode (make dev): store a pplx- key, the model picker shows
       the static sonar list (sonar, sonar-pro, sonar-reasoning)
-- [ ] Server mode: a session message with Perplexity active returns a
+- [ ] TC-0753 Server mode: a session message with Perplexity active returns a
       response (model sonar-pro as the default)
-- [ ] Browser mode (Dexie/PWA): Perplexity is visible but marked
+- [ ] TC-0754 Browser mode (Dexie/PWA): Perplexity is visible but marked
       "desktop only" (no dead menu item, no CORS error)
 
 ---
@@ -2967,25 +2967,25 @@ Location: Settings → Data → Recommended repositories.
 ## PRIO 6: THEMES (subjective aesthetics)
 
 Click through once for EACH theme:
-- [ ] Light: readable, contrasts
-- [ ] Dark: readable, app icon light variant
-- [ ] Ocean, Forest, Sepia, High-Contrast
-- [ ] Catppuccin Mocha, Soft Pop, Amethyst Haze
-- [ ] Buttons high-contrast on ALL themes?
-- [ ] Dropdowns: opaque background (not transparent)?
-- [ ] Share card: theme tokens correct?
+- [ ] TC-0755 Light: readable, contrasts
+- [ ] TC-0756 Dark: readable, app icon light variant
+- [ ] TC-0757 Ocean, Forest, Sepia, High-Contrast
+- [ ] TC-0758 Catppuccin Mocha, Soft Pop, Amethyst Haze
+- [ ] TC-0759 Buttons high-contrast on ALL themes?
+- [ ] TC-0760 Dropdowns: opaque background (not transparent)?
+- [ ] TC-0761 Share card: theme tokens correct?
 
 ---
 
 ## PRIO 7: DEVICE-SPECIFIC (not scriptable)
 
 ### iPhone Safari
-- [ ] "Add to Home Screen" → app icon correct
-- [ ] PWA starts in Dexie mode
-- [ ] Safe-area insets respected
-- [ ] Mobile nav = hamburger drawer (the bottom tab bar was removed in
+- [ ] TC-0762 "Add to Home Screen" → app icon correct
+- [ ] TC-0763 PWA starts in Dexie mode
+- [ ] TC-0764 Safe-area insets respected
+- [ ] TC-0765 Mobile nav = hamburger drawer (the bottom tab bar was removed in
       #1512); drawer links 44px, closes after navigation
-- [ ] Tap offset on the iPhone (#1569, fixed by #2984 + #3004, device
+- [ ] TC-0766 Tap offset on the iPhone (#1569, fixed by #2984 + #3004, device
       reading 7 on 2026-09-10): in a lesson focus a free-text field, type,
       close the keyboard, tap the field again, then tap an MC tile. The
       caret sits in the field and every tap hits the element under the
@@ -3000,15 +3000,15 @@ iOS Safari silently stops an unchunked utterance after ~15 seconds. Since
 617 of 621 theory runs exceed the chunk budget; a median run is 1551
 characters.
 
-- [ ] On the iPhone, open a lesson with a long theory text and start
+- [ ] TC-0767 On the iPhone, open a lesson with a long theory text and start
       read-aloud
-- [ ] The text is read **completely** and does not break off after ~15
+- [ ] TC-0768 The text is read **completely** and does not break off after ~15
       seconds
-- [ ] On a multi-step theory block the lesson auto-advances to the next
+- [ ] TC-0769 On a multi-step theory block the lesson auto-advances to the next
       step while reading (chunking must not distort the position in the
       text)
-- [ ] No audible stutter between chunks
-- [ ] Known platform limit, NOT a bug: pause/resume has no effect on iOS
+- [ ] TC-0770 No audible stutter between chunks
+- [ ] TC-0771 Known platform limit, NOT a bug: pause/resume has no effect on iOS
       Safari (it stops and restarts there)
 
 #### Read-aloud keeps playing when the screen auto-locks (#2666) - MANDATORY
@@ -3018,15 +3018,15 @@ the device's inactivity timer doesn't interrupt speech synthesis (iOS
 Safari and mobile Chrome browsers stop `speechSynthesis` the moment the
 screen auto-locks).
 
-- [ ] On the iPhone (Safari), open a lesson, start read-aloud, and do NOT
+- [ ] TC-0772 On the iPhone (Safari), open a lesson, start read-aloud, and do NOT
       touch the device
-- [ ] Wait past the device's normal auto-lock timeout (leave the phone
+- [ ] TC-0773 Wait past the device's normal auto-lock timeout (leave the phone
       alone): the screen stays on for as long as read-aloud is playing
-- [ ] Read-aloud plays uninterrupted through to the end of the text
-- [ ] After "Stop" or the end of read-aloud, the screen is again allowed to
+- [ ] TC-0774 Read-aloud plays uninterrupted through to the end of the text
+- [ ] TC-0775 After "Stop" or the end of read-aloud, the screen is again allowed to
       auto-lock normally (the wake lock is released)
-- [ ] Repeat the same flow on an Android device (Chrome)
-- [ ] Known platform limit, NOT a bug: manually pressing the lock/power
+- [ ] TC-0776 Repeat the same flow on an Android device (Chrome)
+- [ ] TC-0777 Known platform limit, NOT a bug: manually pressing the lock/power
       button still turns the screen off immediately and stops playback -
       no web API can prevent that
 
@@ -3036,17 +3036,17 @@ The one path no automated test covers: on iOS/WKWebView a new service
 worker often does NOT activate through skipWaiting + reload, only after
 the app is fully closed and reopened.
 
-- [ ] Install the PWA on the home screen, note the build hash under
+- [ ] TC-0778 Install the PWA on the home screen, note the build hash under
       Settings > About
-- [ ] Deploy a newer build, bring the app back from the background
+- [ ] TC-0779 Deploy a newer build, bring the app back from the background
       (do not relaunch it): the update banner appears
-- [ ] The banner ALSO shows the hint "close the app and reopen it" -
+- [ ] TC-0780 The banner ALSO shows the hint "close the app and reopen it" -
       this hint must never be missing on iOS standalone
-- [ ] Tap "Update": the banner disappears and does NOT come back after
+- [ ] TC-0781 Tap "Update": the banner disappears and does NOT come back after
       a reload (accept suppression)
-- [ ] Fully close and reopen the app: the build hash under About is
+- [ ] TC-0782 Fully close and reopen the app: the build hash under About is
       the new one
-- [ ] On a NON-iOS device (Android/desktop) run the same flow: the
+- [ ] TC-0783 On a NON-iOS device (Android/desktop) run the same flow: the
       restart hint must NOT appear there
 
 #### "What's new" release-notes modal stays closable (#2266)
@@ -3056,40 +3056,40 @@ The desktop/API-mode update banner's "What's new" modal
 and installation notes are. Viewport height is most critical on a short
 window, so verify the iOS-standalone / phone-portrait shape explicitly.
 
-- [ ] In API/desktop mode with an update available, open the banner's
+- [ ] TC-0784 In API/desktop mode with an update available, open the banner's
       "What's new?" - the modal appears with a title, a scrollable body,
       and an always-visible X in the header
-- [ ] Long release notes: the body scrolls; the header X and the footer
+- [ ] TC-0785 Long release notes: the body scrolls; the header X and the footer
       "Close" button stay reachable (the notes never push the actions off
       screen)
-- [ ] Close it four ways, each works: the header X, the footer "Close"
+- [ ] TC-0786 Close it four ways, each works: the header X, the footer "Close"
       button, the Escape key, and a click on the backdrop outside the card
-- [ ] A click INSIDE the card does NOT close it
-- [ ] Short viewport / iOS-standalone: shrink the window to a
+- [ ] TC-0787 A click INSIDE the card does NOT close it
+- [ ] TC-0788 Short viewport / iOS-standalone: shrink the window to a
       phone-portrait height (or an installed iOS standalone window) - the X
       stays fixed in the header while the notes scroll; the modal is still
       closable with the X, Escape, and a backdrop tap. Repeat with the
       on-screen keyboard raised
-- [ ] Keyboard/SR: focus moves into the modal on open, Tab stays inside
+- [ ] TC-0789 Keyboard/SR: focus moves into the modal on open, Tab stays inside
       it, and focus returns to the "What's new?" button on close (no axe
       regression)
 
 ### Android Chrome
-- [ ] "Install app" → maskable icon not clipped
-- [ ] PWA works, Dexie mode
+- [ ] TC-0790 "Install app" → maskable icon not clipped
+- [ ] TC-0791 PWA works, Dexie mode
 
 ### Desktop PWA
-- [ ] Install prompt → app starts standalone
-- [ ] Dexie mode (NOT API mode, no 404)
+- [ ] TC-0792 Install prompt → app starts standalone
+- [ ] TC-0793 Dexie mode (NOT API mode, no 404)
 
 ---
 
 ## PRIO 8: SERVER MODE (via launcher)
 
-- [ ] Download a set → visible in "My Content" (no cache problem)
-- [ ] Backup import: no HTTP 413
-- [ ] Play a lesson: no workbox errors in the console
-- [ ] Change the port → app reachable on the new port
+- [ ] TC-0794 Download a set → visible in "My Content" (no cache problem)
+- [ ] TC-0795 Backup import: no HTTP 413
+- [ ] TC-0796 Play a lesson: no workbox errors in the console
+- [ ] TC-0797 Change the port → app reachable on the new port
 
 ---
 
@@ -3099,18 +3099,18 @@ The landing page at `/start/` (DE) and `/start/en/` (EN) is real static
 HTML in the Pages artifact - no React, no client-side loading. It carries
 no numbers that could go stale, on purpose.
 
-- [ ] `astrapi69.github.io/adaptive-learner/start/en/` loads; the core
+- [ ] TC-0798 `astrapi69.github.io/adaptive-learner/start/en/` loads; the core
       sentence "An app that adapts to you, not the other way around."
       is visible as the heading.
-- [ ] "Open the app in your browser" leads into the app; "Download the
+- [ ] TC-0799 "Open the app in your browser" leads into the app; "Download the
       launcher" leads to the release page.
-- [ ] Language switch: "Deutsch" (top right on the EN page) leads to
+- [ ] TC-0800 Language switch: "Deutsch" (top right on the EN page) leads to
       `/start/`, and "English" there leads back.
-- [ ] The bottom links (Documentation, Repository, Learning content) work.
-- [ ] Dark system theme: the page follows (prefers-color-scheme), text
+- [ ] TC-0801 The bottom links (Documentation, Repository, Learning content) work.
+- [ ] TC-0803 Dark system theme: the page follows (prefers-color-scheme), text
       stays readable.
-- [ ] Mobile (narrow window): single column, no horizontal scrolling.
-- [ ] Footer (#3113): "Legal notice" leads to `astrapi69.github.io/adaptive-learner/docs/en/legal/imprint/`,
+- [ ] TC-0804 Mobile (narrow window): single column, no horizontal scrolling.
+- [ ] TC-0802 Footer (#3113): "Legal notice" leads to `astrapi69.github.io/adaptive-learner/docs/en/legal/imprint/`,
       "Privacy policy" to `astrapi69.github.io/adaptive-learner/docs/en/legal/privacy/`; on `/start/` they read
       "Impressum" / "Datenschutz" and lead to `astrapi69.github.io/adaptive-learner/docs/legal/…`.
 
@@ -3120,19 +3120,19 @@ Legal notice and privacy policy live as help pages on the docs site
 (`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; other languages under
 `astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, locales without their own version fall back to German).
 
-- [ ] App start page `/` (no signed-in learner): below "Read the
+- [ ] TC-0805 App start page `/` (no signed-in learner): below "Read the
       documentation" the row "Legal notice · Privacy policy"
       (`landing-imprint-link`, `landing-privacy-link`); both open the docs
       page in a new tab, in the active UI language (German without prefix,
       English under `astrapi69.github.io/adaptive-learner/docs/en/`).
-- [ ] Settings → About → card "License & resources": two new rows "Legal
+- [ ] TC-0806 Settings → About → card "License & resources": two new rows "Legal
       notice" and "Privacy policy" (`about-imprint-link`,
       `about-privacy-link`), same targets, new tab.
-- [ ] Help panel and docs site: section "Legal" with both pages in the
+- [ ] TC-0807 Help panel and docs site: section "Legal" with both pages in the
       navigation (DE + EN); the legal notice names name, address, email; the
       privacy policy carries a date and names GitHub Pages, YouTube preview
       images and the AI providers used with the learner's own key.
-- [ ] Share preview (e.g. in a messenger): title, description and image
+- [ ] TC-0808 Share preview (e.g. in a messenger): title, description and image
       appear (the landing page's Open Graph data, not the app's).
 
 ---
@@ -3141,293 +3141,293 @@ Legal notice and privacy policy live as help pages on the docs site
 
 Location: Settings > Data > "Export selected data".
 
-- [ ] The "Media" group with the "Speech recordings" category is visible,
+- [ ] TC-0809 The "Media" group with the "Speech recordings" category is visible,
       NOT checked by default (unlike Learning projects/Curricula/
       Progress/Subjects, which are pre-selected)
-- [ ] Without checking it: the exported file contains NO
+- [ ] TC-0810 Without checking it: the exported file contains NO
       `speech_recordings` rows, even when some exist
-- [ ] Checking it + export: the file contains the user's
+- [ ] TC-0811 Checking it + export: the file contains the user's
       `speech_recordings` rows
 
 ## PRIO 11: Preset avatar gallery (#2848)
 
 Location: Settings > General > Profile, below the photo upload.
 
-- [ ] "Or pick a figure" row with 8 figures visible (Spark, Robot,
+- [ ] TC-0812 "Or pick a figure" row with 8 figures visible (Spark, Robot,
       Star, Cat, Owl, Ghost, Lightning, Heart), each with a speaking
       tooltip/screen-reader name
-- [ ] Tapping a figure: success toast, the preview above and the header
+- [ ] TC-0813 Tapping a figure: success toast, the preview above and the header
       avatar show the figure immediately (no reload)
-- [ ] The chosen figure is marked (ring); picking another moves the mark
-- [ ] Uploading a photo replaces the figure; afterwards NO figure is
+- [ ] TC-0814 The chosen figure is marked (ring); picking another moves the mark
+- [ ] TC-0815 Uploading a photo replaces the figure; afterwards NO figure is
       marked; picking a figure over a photo asks first (see the photo
       stash below)
-- [ ] "Remove" clears the avatar; the header falls back to the initials
-- [ ] Backup round-trip: pick a figure, export (`.alb`), wipe data,
+- [ ] TC-0816 "Remove" clears the avatar; the header falls back to the initials
+- [ ] TC-0817 Backup round-trip: pick a figure, export (`.alb`), wipe data,
       import - the figure is set again
-- [ ] Both storage modes (server + browser) behave identically
+- [ ] TC-0818 Both storage modes (server + browser) behave identically
 
 #### Photo stash on figure switch (#2862)
 
-- [ ] Upload and crop a photo, then tap a figure: a confirmation dialog
+- [ ] TC-0819 Upload and crop a photo, then tap a figure: a confirmation dialog
       appears ("Replace your photo?"); cancel leaves photo and selection
       unchanged
-- [ ] Confirm ("Use figure"): the figure is active and a "Restore photo"
+- [ ] TC-0820 Confirm ("Use figure"): the figure is active and a "Restore photo"
       button appears below the gallery
-- [ ] "Restore photo": the photo is back (preview + header), the button
+- [ ] TC-0821 "Restore photo": the photo is back (preview + header), the button
       disappears
-- [ ] Figure-to-figure switch: NO dialog (only a real photo is guarded)
-- [ ] Upload a NEW photo after picking a figure: the old stash is
+- [ ] TC-0822 Figure-to-figure switch: NO dialog (only a real photo is guarded)
+- [ ] TC-0823 Upload a NEW photo after picking a figure: the old stash is
       cleared (no restore button with a stale photo)
-- [ ] Backup round-trip: with a filled stash export -> wipe -> import;
+- [ ] TC-0824 Backup round-trip: with a filled stash export -> wipe -> import;
       "Restore photo" still works (both storage modes)
 
 #### Avatar frames (#2850)
 
 Location: Settings > General > Profile, below the figure gallery.
 
-- [ ] "Avatar frame" row with 7 options (None, Bronze, Silver, Gold,
+- [ ] TC-0825 "Avatar frame" row with 7 options (None, Bronze, Silver, Gold,
       Flame, Star, Accent); locked ones show a lock and the condition
       ("From level 5", "Needs the 3-day streak badge")
-- [ ] Level unlock: with a sufficient level the frame is selectable;
+- [ ] TC-0826 Level unlock: with a sufficient level the frame is selectable;
       selecting puts the ring around the preview AND the header avatar
       immediately (no reload)
-- [ ] XP purchase (Star 150 / Accent 300): the buy button shows the
+- [ ] TC-0827 XP purchase (Star 150 / Accent 300): the buy button shows the
       price, first click "Confirm", second click deducts the XP (header
       XP updates live); the frame is permanently unlocked and selected
-- [ ] Insufficient XP: the buy button is disabled, no deduction possible
-- [ ] Badge frame (Flame): selectable only after earning the 3-day
+- [ ] TC-0828 Insufficient XP: the buy button is disabled, no deduction possible
+- [ ] TC-0829 Badge frame (Flame): selectable only after earning the 3-day
       streak badge
-- [ ] The frame applies to photo avatars AND preset figures alike;
+- [ ] TC-0830 The frame applies to photo avatars AND preset figures alike;
       "None" removes the ring
-- [ ] Backup round-trip: pick a frame + buy one, export (`.alb`), wipe
+- [ ] TC-0831 Backup round-trip: pick a frame + buy one, export (`.alb`), wipe
       data, import - selection and purchase are back
-- [ ] Both storage modes behave identically (XP deduction included)
+- [ ] TC-0832 Both storage modes behave identically (XP deduction included)
 
 ### Review: errors only, no endless round (#3170)
 
-- [ ] Play a lesson with NO mistakes: the learning path shows NO "Train
+- [ ] TC-0833 Play a lesson with NO mistakes: the learning path shows NO "Train
       errors (N)" for the set or the lesson, the header badge "N due" and
       the dashboard card "Due for review" do not count these elements;
       `/review/<set>` reports "All caught up"
-- [ ] Play a lesson with some mistakes: "Train errors (N)" counts exactly
+- [ ] TC-0834 Play a lesson with some mistakes: "Train errors (N)" counts exactly
       the elements answered wrong (N), not every element played; never-wrong
       elements do not appear in the review session
-- [ ] Review session with more due elements than "Questions per review":
+- [ ] TC-0835 Review session with more due elements than "Questions per review":
       subtitle "{shown} of {due} elements"; after the round "Still N due.
       Keep going?" names EXACTLY the elements not played yet; "Another
       round" presents only those; then it ends ("All caught up"), no further
       "Another round", no endless loop
-- [ ] A matching exercise covering several due elements (only ONE question
+- [ ] TC-0836 A matching exercise covering several due elements (only ONE question
       in the flow): the subtitle counts the ELEMENTS covered (e.g. "3
       elements", not "1 of 3"), the summary "N of N corrected" uses the same
       basis, and nothing lingers as "Still N due" after the round
-- [ ] Settings > Learning > Review: the new toggle "Also review error-free
+- [ ] TC-0837 Settings > Learning > Review: the new toggle "Also review error-free
       elements" sits under "Questions per review", is OFF by default and
       survives a reload
-- [ ] Toggle ON: never-wrong elements return for review after 3 and 7 days
+- [ ] TC-0838 Toggle ON: never-wrong elements return for review after 3 and 7 days
       (badge, dashboard card, session). When the session holds such
       elements, the summary reads "N of N reinforced" with the neutral trend
       line (no "corrected", no "weak spots"); "Train errors (N)" still
       counts errors only
-- [ ] Learning-path status: a lesson played without mistakes counts as
+- [ ] TC-0839 Learning-path status: a lesson played without mistakes counts as
       mastered while OFF (both directions, SRS status "mastered", not "due"
       for ever); with ON the three-in-a-row rule applies again
-- [ ] Check both in browser mode (no server) AND in server mode
+- [ ] TC-0840 Check both in browser mode (no server) AND in server mode
 
 ### Review session on the runner shell (EXP-052 slice 1, #3169)
 
-- [ ] Open `/review/<set>` with due elements: header with "Back to
+- [ ] TC-0841 Open `/review/<set>` with due elements: header with "Back to
       Dashboard", the title "Review session" and the element subtitle; the
       progress bar "Step 1 of N" below; the footer looks like a lesson's
       (chevron "Previous" on the left, "Check" with a check icon on the
       right), no pause, no options bar
-- [ ] "Previous" is disabled on the first step; after "Next" it goes one
+- [ ] TC-0842 "Previous" is disabled on the first step; after "Next" it goes one
       step back within the same run (not to the dashboard)
-- [ ] Enter in a cloze answer: the first Enter checks, the second Enter
+- [ ] TC-0843 Enter in a cloze answer: the first Enter checks, the second Enter
       advances; without an answer Enter does nothing; with the Enter
       shortcut switched off (Settings > Learning) Enter does nothing
-- [ ] On the phone after "Next" (or Enter): the view jumps to the top of
+- [ ] TC-0844 On the phone after "Next" (or Enter): the view jumps to the top of
       the new step (the header slides away, bar and task are visible, no
       cut-off top); rotate the device: task and footer are back in view
-- [ ] Going back to an already answered step: the answer is locked
+- [ ] TC-0845 Going back to an already answered step: the answer is locked
       (solution visible, no input), the footer shows "Next" instead of
       "Check", Enter advances instead of checking; in Statistics / Train
       errors the element then counts EXACTLY ONCE for this round (no second
       attempt from answering again)
-- [ ] Going back to a step NOT answered yet (e.g. after jumping forward
+- [ ] TC-0846 Going back to a step NOT answered yet (e.g. after jumping forward
       and back): the step stays answerable, "Check" is there
-- [ ] Hints from an earlier run do not count (#3196): reveal a hint in a
+- [ ] TC-0847 Hints from an earlier run do not count (#3196): reveal a hint in a
       lesson, then open `/review/<set>` and answer the same element without
       a hint: the attempt is NOT marked "with hint" in Statistics; a hint
       revealed IN the session still counts; "Another round" starts without
       hint marks again
-- [ ] Summary: unchanged (recap, SRS note, "Another round" while elements
+- [ ] TC-0848 Summary: unchanged (recap, SRS note, "Another round" while elements
       remain, come-back line); the footer there shows only "Previous" (a
       look back at the last, locked step)
-- [ ] Loading, "All caught up", "set not downloaded" and error show the
+- [ ] TC-0849 Loading, "All caught up", "set not downloaded" and error show the
       same screens as before (Back to Dashboard or Open content browser)
-- [ ] Check both in browser mode (no server) AND in server mode
+- [ ] TC-0850 Check both in browser mode (no server) AND in server mode
 
 ### Shuffle mode on the runner shell (EXP-052 slice 2, #3169)
 
-- [ ] Open `/shuffle-lesson/<set>` for a downloaded set with at least two
+- [ ] TC-0851 Open `/shuffle-lesson/<set>` for a downloaded set with at least two
       lessons: header with "Back to Dashboard", the title and the subtitle
       "Mixing N questions from M lessons"; the progress bar "Step 1 of N"
       below; the footer looks like a lesson's (chevron "Previous" on the
       left, "Check" with a check icon on the right), no pause, no options
       bar
-- [ ] NEW: "Previous" is disabled on the first step; after "Next" it goes
+- [ ] TC-0852 NEW: "Previous" is disabled on the first step; after "Next" it goes
       one step back within the same run
-- [ ] NEW: going back to an already answered step: the answer is locked
+- [ ] TC-0853 NEW: going back to an already answered step: the answer is locked
       (solution visible, no input), the footer shows "Next" instead of
       "Check", Enter advances; in Statistics / Train errors the element
       then counts EXACTLY ONCE for this round (answering again no longer
       records a second attempt, unlike before)
-- [ ] Going back to a step NOT answered yet: it stays answerable, "Check"
+- [ ] TC-0854 Going back to a step NOT answered yet: it stays answerable, "Check"
       is there
-- [ ] Enter: the first Enter checks an answered task, the second Enter
+- [ ] TC-0855 Enter: the first Enter checks an answered task, the second Enter
       advances; without an answer Enter does nothing; with the Enter
       shortcut switched off (Settings > Learning) Enter does nothing
-- [ ] NEW, on the phone: after "Next" (or Enter) the view jumps to the top
+- [ ] TC-0856 NEW, on the phone: after "Next" (or Enter) the view jumps to the top
       of the new step; rotate the device: task and footer are back in view
-- [ ] Hints from an earlier run do not count (#3196): reveal a hint in a
+- [ ] TC-0857 Hints from an earlier run do not count (#3196): reveal a hint in a
       lesson, then open shuffle mode for the same set and answer the
       element without a hint: NOT marked "with hint" in Statistics; a hint
       revealed IN the session counts; "Shuffle again" starts without hint
       marks and without locked steps
-- [ ] NEW: extension exercises (e.g. speak and record, categorization,
+- [ ] TC-0858 NEW: extension exercises (e.g. speak and record, categorization,
       error correction, reading comprehension, graded quiz) and multiple
       choice from the set are shuffled in and played with "Check"
       (previously only the core exercise types)
-- [ ] Summary unchanged: score with percentage, "from M different
+- [ ] TC-0859 Summary unchanged: score with percentage, "from M different
       lessons", "Shuffle again", "Back to Dashboard"; the footer there shows
       only "Previous"
-- [ ] Loading, "too few lessons", "set not downloaded" and error show the
+- [ ] TC-0860 Loading, "too few lessons", "set not downloaded" and error show the
       usual screens
-- [ ] Check both in browser mode (no server) AND in server mode
+- [ ] TC-0861 Check both in browser mode (no server) AND in server mode
 
 ### Endless mode on the runner shell (EXP-052 slice 2, #3169)
 
-- [ ] Open `/endless-lesson/<set>` for a downloaded set: header with "Back
+- [ ] TC-0862 Open `/endless-lesson/<set>` for a downloaded set: header with "Back
       to Dashboard" and the title "Endless practice"; below it the stat
       line "m:ss | N cards | K correct (P%)"; the clock runs
-- [ ] NEW: the stat line is display only (no buttons in it any more);
+- [ ] TC-0863 NEW: the stat line is display only (no buttons in it any more);
       "Pause" and "End" sit in the footer on the left, "Check" with a check
       icon on the right; there is NO "Previous" (a stream has no previous
       step)
-- [ ] NEW: "Pause" in the footer: the task disappears behind "Paused -
+- [ ] TC-0864 NEW: "Pause" in the footer: the task disappears behind "Paused -
       take a breather.", the clock stops, "Check" is gone, Enter does
       nothing; the same button (now "Resume") continues, a half-typed
       answer is still there, the clock runs again
-- [ ] "End" (also while paused) shows the recap: duration, cards, correct
+- [ ] TC-0865 "End" (also while paused) shows the recap: duration, cards, correct
       with percentage, reviews done, new learned, errors practised,
       practice XP; the only button "Back to Dashboard" has focus, Enter goes
       to the dashboard; the recap has no footer
-- [ ] Enter: the first Enter checks, the second Enter fetches the next
+- [ ] TC-0866 Enter: the first Enter checks, the second Enter fetches the next
       card; without an answer Enter does nothing
-- [ ] NEW, on the phone: after "Next" the view jumps to the top of the new
+- [ ] TC-0867 NEW, on the phone: after "Next" the view jumps to the top of the new
       card; rotate the device: card and footer are back in view
-- [ ] When the stream brings the same card again, it is freshly answerable
+- [ ] TC-0868 When the stream brings the same card again, it is freshly answerable
       (no lock) and counts as a new attempt
-- [ ] Hints from an earlier run do not count (#3196): reveal a hint in a
+- [ ] TC-0869 Hints from an earlier run do not count (#3196): reveal a hint in a
       lesson, then open endless mode and answer the element without a hint:
       NOT marked "with hint" in Statistics
-- [ ] NEW: extension exercises and multiple choice from the set appear in
+- [ ] TC-0870 NEW: extension exercises and multiple choice from the set appear in
       the stream. With a set that contains "speak and record" (e.g.
       adaptive-learner-content or alc-dog-training): the card appears, the
       browser asks for the microphone, start and stop a recording, "Check",
       then "Next": the stream continues with the next card (Visual Device
       Check on a real phone)
-- [ ] Loading, "no exercises", "set not downloaded" and error show the
+- [ ] TC-0871 Loading, "no exercises", "set not downloaded" and error show the
       usual screens
-- [ ] Check both in browser mode (no server) AND in server mode
+- [ ] TC-0872 Check both in browser mode (no server) AND in server mode
 
 ### Adaptive lesson on the runner shell (EXP-052 slice 3, #3169)
 
-- [ ] Open `/adaptive-lesson/<set>` for a set with active errors: header
+- [ ] TC-0873 Open `/adaptive-lesson/<set>` for a set with active errors: header
       with "Back to Dashboard" and the lesson title; right under the title
       the transparency block ("This lesson focuses on: ..." and "Based on N
       active error(s)"); below it the progress bar "Step 1 of N"; the footer
       looks like a lesson's (chevron "Previous" on the left, on an exercise
       "Check" with a check mark on the right), no pause, no options bar
-- [ ] NEW (#3224): with at least 3 active errors from the same lesson the
+- [ ] TC-0874 NEW (#3224): with at least 3 active errors from the same lesson the
       adaptive lesson opens on a theory page taken from that lesson: its
       text with headings and bold, NOT "This exercise is missing its type";
       the footer shows only "Next", no "Check"; "Next" (or Enter) leads to
       the first exercise, where "Check" appears
-- [ ] "Previous" is disabled on the first step; after "Next" it goes one
+- [ ] TC-0875 "Previous" is disabled on the first step; after "Next" it goes one
       step back in the same run
-- [ ] NEW: Enter (the adaptive lesson had no Enter shortcut before): the
+- [ ] TC-0876 NEW: Enter (the adaptive lesson had no Enter shortcut before): the
       first Enter checks an answered exercise, the second Enter moves on;
       without an answer Enter does nothing; with the Enter shortcut switched
       off (Settings > Learning) Enter does nothing
-- [ ] NEW: back to an already answered step: the answer is locked
+- [ ] TC-0877 NEW: back to an already answered step: the answer is locked
       (solution visible, no input), the footer shows "Next" instead of
       "Check", Enter moves on; in statistics / train errors the element then
       counts EXACTLY ONCE for this round (answering again no longer records
       a second attempt, unlike before)
-- [ ] Back to a step NOT YET answered: stays answerable, "Check" is there
-- [ ] NEW, on a phone: after "Next" (or Enter) the view jumps to the start
+- [ ] TC-0878 Back to a step NOT YET answered: stays answerable, "Check" is there
+- [ ] TC-0879 NEW, on a phone: after "Next" (or Enter) the view jumps to the start
       of the new step; rotate the device: exercise and footer are back in
       view
-- [ ] Hints from an earlier run do not count (#3196): reveal a hint in a
+- [ ] TC-0880 Hints from an earlier run do not count (#3196): reveal a hint in a
       lesson, then open the same set's adaptive lesson and answer that
       element without a hint: NOT marked "with hint" in the statistics; a
       hint revealed IN the session counts
-- [ ] Summary unchanged: score with percentage, the line "Improvement: +N
+- [ ] TC-0881 Summary unchanged: score with percentage, the line "Improvement: +N
       element(s) mastered this session!" when elements were mastered in the
       session, the SRS note, "Back to Dashboard", below it "Save as Offline
       Lesson"; the footer there shows only "Previous"
-- [ ] Loading ("Analyzing your errors..."), "Nothing to adapt yet" and "set
+- [ ] TC-0882 Loading ("Analyzing your errors..."), "Nothing to adapt yet" and "set
       not downloaded" show the usual screens; NEW: the error screen is the
       shell's shared one (a friendly note, the raw error only in developer
       mode, button "Open content browser" instead of "Back to Dashboard")
-- [ ] Check both in browser mode (no server) AND in server mode
+- [ ] TC-0883 Check both in browser mode (no server) AND in server mode
 
 ### Retry errors on the runner shell (EXP-052 slice 3, #3169)
 
-- [ ] Finish a lesson with at least two mistakes, open "Retry Errors" from
+- [ ] TC-0884 Finish a lesson with at least two mistakes, open "Retry Errors" from
       the summary: header with "Back to lesson" and the title "Retry errors:
       <lesson>"; below it the progress bar "Step 1 of N" (N = the number of
       wrong exercises); the footer looks like a lesson's (chevron "Previous"
       on the left, "Check" with a check mark on the right), no pause
-- [ ] NEW: "Previous" in the footer (there was none before). Disabled on
+- [ ] TC-0885 NEW: "Previous" in the footer (there was none before). Disabled on
       the first step; after "Next" it goes one step back in the same run,
       as a read-only look back
-- [ ] NEW: back to an already answered step: the answer is locked
+- [ ] TC-0886 NEW: back to an already answered step: the answer is locked
       (solution visible, no input), the footer shows "Next" instead of
       "Check", Enter moves on; in statistics / train errors the element
       counts EXACTLY ONCE for this round (no second attempt by answering
       again)
-- [ ] Back BEFORE the current step is answered, then forward again: that
+- [ ] TC-0887 Back BEFORE the current step is answered, then forward again: that
       step stays answerable, "Check" is there
-- [ ] Enter: the first Enter checks an answered exercise, the second Enter
+- [ ] TC-0888 Enter: the first Enter checks an answered exercise, the second Enter
       moves on; without an answer Enter does nothing
-- [ ] NEW, on a phone: after "Next" (or Enter) the view jumps to the start
+- [ ] TC-0889 NEW, on a phone: after "Next" (or Enter) the view jumps to the start
       of the new step; rotate the device: exercise and footer are back in
       view; a very long word in the lesson title wraps instead of widening
       the page sideways (#2761)
-- [ ] Hints from an earlier run do not count (#3196): a hint revealed in
+- [ ] TC-0890 Hints from an earlier run do not count (#3196): a hint revealed in
       the lesson does NOT mark the replay's attempt "with hint"; a hint
       revealed in round one still counts in the next round ("Try again?")
-- [ ] Summary: "X/Y correct now!"; all correct: "All errors corrected!"
+- [ ] TC-0891 Summary: "X/Y correct now!"; all correct: "All errors corrected!"
       with confetti, "Back to lesson" has the focus, Enter goes to the
       lesson; errors left: "Still N errors. Try again?" and "Back to
       lesson"; NEW: the footer there shows "Previous" (a look back at the
       last, locked step)
-- [ ] "Try again?" replays ONLY the still-wrong exercises, and they are
+- [ ] TC-0892 "Try again?" replays ONLY the still-wrong exercises, and they are
       answerable again (not locked); "Previous" is disabled on their first
       step
-- [ ] Flash round (#2888): title "Flash round: <set>", the countdown ring
+- [ ] TC-0893 Flash round (#2888): title "Flash round: <set>", the countdown ring
       sits right under the title and runs per exercise; it stops after
       "Check"; on an answered step reopened through "Previous" it does not
       run; "Back to lesson" and the end of the round lead to the set
       overview; a plain replay shows no ring
-- [ ] NEW: open the page directly (reload the address, no exercises): title
+- [ ] TC-0894 NEW: open the page directly (reload the address, no exercises): title
       "Retry Errors", "Nothing to retry - ...", button "Back to Dashboard"
       (before: "Open content browser")
-- [ ] Check both in browser mode (no server) AND in server mode
+- [ ] TC-0895 Check both in browser mode (no server) AND in server mode
 
 ---
 
