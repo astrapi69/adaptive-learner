@@ -976,7 +976,7 @@ settings:
     stack: "Apilar"
   matching_review_views:
     label: "Corrección como vista aparte"
-    desc: "Tras comprobar, 'Mis respuestas' muestra solo tus propias parejas con tus errores; las parejas correctas están en 'Corrección'. Desactivado: la pareja correcta aparece justo debajo de cada error en 'Mis respuestas'."
+    desc: "Tras comprobar, 'Mis respuestas' muestra tus parejas tal como las formaste, sin evaluación; la evaluación y las parejas correctas están en 'Corrección'. Desactivado: la pareja correcta aparece justo debajo de cada error en 'Mis respuestas'."
   paused_retention:
     title: Retención de lecciones pausadas
     hint: "Las lecciones pausadas más antiguas que este período se abandonan automáticamente. Se conservan hasta 10 lecciones pausadas independientemente de su antigüedad."
