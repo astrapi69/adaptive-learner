@@ -91,6 +91,8 @@ export default function ImportLessonModal({
       set_id: set.set_id,
       title: set.title,
       language: set.language,
+      target_language: set.target_language,
+      source_language: set.source_language,
       level: set.level,
       origin: "imported",
       description: set.description,

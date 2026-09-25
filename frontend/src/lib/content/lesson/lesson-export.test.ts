@@ -87,6 +87,21 @@ describe("buildManifestYaml", () => {
     expect(parsed.sets[0].language).toBe("es");
     expect(parsed.sets[0].lesson_count).toBe(1);
   });
+
+  it("#3244 writes the canonical language pair next to the legacy alias", () => {
+    const parsed = parseYaml(
+      buildManifestYaml({ ...META, target_language: "es", source_language: "de" }, 1),
+    );
+    expect(parsed.sets[0].target_language).toBe("es");
+    expect(parsed.sets[0].source_language).toBe("de");
+    expect(parsed.sets[0].language).toBe("es");
+  });
+
+  it("#3244 derives target_language from language when only the alias is known", () => {
+    const parsed = parseYaml(buildManifestYaml(META, 1));
+    expect(parsed.sets[0].target_language).toBe("es");
+    expect(parsed.sets[0].source_language).toBeUndefined();
+  });
 });
 
 describe("buildContentSetZip", () => {
