@@ -412,6 +412,18 @@ jobs:
         working-directory: frontend
         run: bunx vitest run src/test/build-context-boundary.test.ts
 
+      # Full-tree i18n key coverage (#3249), a fixed step on every frontend
+      # PR, i18n_only ones included. The test walks frontend/src and reads
+      # the catalogs through fs, so `vitest --changed` below never selects
+      # it for a component that adds a t() key (same selection gap as the
+      # guard above), and an i18n_only PR that drops a key still in use
+      # runs only i18n-sync.test.ts. Push runs the full suite, which
+      # includes it.
+      - name: i18n key coverage, full tree (#3249)
+        if: github.event_name == 'pull_request' && needs.changes.outputs.frontend == 'true'
+        working-directory: frontend
+        run: bunx vitest run src/i18n/full-tree-key-coverage.test.ts
+
       # Test Impact Analysis (#615): on a PR run only the Vitest files related
       # to files changed since the base branch (`--changed origin/<base>`).
       # Real test failures propagate (no masking). The ONLY fallback to the
