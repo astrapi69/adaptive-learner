@@ -1031,7 +1031,7 @@
     },
     "matching_review_views": {
       "label": "Koreksi sebagai tampilan terpisah",
-      "desc": "Setelah diperiksa, 'Jawaban saya' hanya menampilkan pasanganmu sendiri beserta kesalahannya; pasangan yang benar ada di 'Koreksi'. Nonaktif: pasangan yang benar muncul langsung di bawah setiap kesalahan di 'Jawaban saya'."
+      "desc": "Setelah diperiksa, 'Jawaban saya' menampilkan pasanganmu seperti yang kamu buat, tanpa penilaian; penilaian dan pasangan yang benar ada di 'Koreksi'. Nonaktif: pasangan yang benar muncul langsung di bawah setiap kesalahan di 'Jawaban saya'."
     },
     "paused_retention": {
       "title": "Retensi pelajaran yang dijeda",

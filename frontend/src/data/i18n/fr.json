@@ -1023,7 +1023,7 @@
     },
     "matching_review_views": {
       "label": "Correction dans une vue séparée",
-      "desc": "Après vérification, 'Mes réponses' affiche uniquement tes propres paires avec tes erreurs ; les bons partenaires sont sous 'Correction'. Désactivé : le bon partenaire s'affiche directement sous chaque erreur dans 'Mes réponses'."
+      "desc": "Après vérification, 'Mes réponses' affiche tes paires telles que tu les as formées, sans évaluation ; l'évaluation et les bons partenaires sont sous 'Correction'. Désactivé : le bon partenaire s'affiche directement sous chaque erreur dans 'Mes réponses'."
     },
     "paused_retention": {
       "title": "Conservation des leçons en pause",

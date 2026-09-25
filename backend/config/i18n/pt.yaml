@@ -976,7 +976,7 @@ settings:
     stack: "Empilhar"
   matching_review_views:
     label: "Correção como visualização separada"
-    desc: "Depois de verificar, 'Minhas respostas' mostra apenas os seus próprios pares com os erros; os pares corretos ficam em 'Correção'. Desativado: o par correto aparece logo abaixo de cada erro em 'Minhas respostas'."
+    desc: "Depois de verificar, 'Minhas respostas' mostra os seus pares como você os formou, sem avaliação; a avaliação e os pares corretos ficam em 'Correção'. Desativado: o par correto aparece logo abaixo de cada erro em 'Minhas respostas'."
   paused_retention:
     title: Retenção de aulas pausadas
     hint: "As aulas pausadas mais antigas que este período são automaticamente abandonadas. Até 10 aulas pausadas são mantidas independentemente da idade."
