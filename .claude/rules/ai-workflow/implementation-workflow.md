@@ -91,6 +91,20 @@ Additionally for the AI:
 - Throw HTTPException from service functions. Services use AdaptiveLearnerError subclasses (see code-hygiene.md).
 - In autonomous mode, guess when something is unclear. Prefer to stop and document the uncertainty.
 
+## Working mode with the owner (2026-09-25)
+
+- The P0..P5 order (`documentation-protocol.md`) is the queue: open PRs first,
+  then top to bottom, without asking what comes next. Decide reversible steps
+  yourself; collect genuine owner decisions (new issues, direction, irreversible
+  steps) and present them once, at the end of a round. No interim status messages.
+- Before a round, list every shell command it will run in one message, wait for
+  the owner's go, then run them as ONE Bash call with the commands written out.
+  No script file: `bash step.sh` hides the commands from the permission dialog.
+- A command starts with the tool itself: a leading `VAR=`, `export`, `$(...)` or
+  a loop prompts the owner for that call. Subagent prompts carry this rule and the
+  allowed tools; a refused command is reported to the orchestrator, never worked
+  around and never asked of the owner.
+
 ## Current state
 
 See architecture.md for architectural details. Additionally note:

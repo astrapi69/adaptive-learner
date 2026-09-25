@@ -1140,7 +1140,7 @@ endif
 	@echo ""
 	@echo "Tag pushed. Next: make release-publish VERSION=$(VERSION)"
 
-release-publish: ## Create GitHub Release from changelog/releases/vX.Y.Z.md. Usage: make release-publish VERSION=X.Y.Z
+release-publish: ## Create the DRAFT GitHub Release from changelog/releases/vX.Y.Z.md. Usage: make release-publish VERSION=X.Y.Z
 ifndef VERSION
 	$(error VERSION is required, e.g. make release-publish VERSION=1.25.0)
 endif
@@ -1149,10 +1149,18 @@ endif
 		echo "Draft the per-release notes file first (release-workflow.md Step 3)."; \
 		exit 1; \
 	fi
-	@echo "=== Creating GitHub Release v$(VERSION) ==="
-	gh release create v$(VERSION) \
+# Draft, never visible (#3159): release-workflow.md Step 8 publishes only after
+# the image, the launcher binaries + .sha256 files and image-digest.txt are
+# attached and the completeness checkpoint passed. A visible release without
+# assets is what v2.15.0 shipped for two hours.
+	@echo "=== Creating DRAFT GitHub Release v$(VERSION) ==="
+	gh release create v$(VERSION) --draft \
 		--title "Adaptive Learner v$(VERSION)" \
 		--notes-file changelog/releases/v$(VERSION).md
+	@echo ""
+	@echo "Draft created. Continue with release-workflow.md Step 8: publish-image.yml,"
+	@echo "attach the launcher binaries, the completeness checkpoint, and only then"
+	@echo "gh release edit v$(VERSION) --draft=false"
 
 # --- Gitflow release branch flow (#334) ---
 
@@ -1196,11 +1204,27 @@ endif
 # with a PAT (RELEASE_PAT) for its checks to fire; a GITHUB_TOKEN-opened PR does not
 # trigger the pull_request workflows (#1265). main is unchanged - it is still merged +
 # tagged + pushed above; only the develop back-merge is routed through a PR.
+#
+# The PR must EXIST when this target ends (#3159). v2.15.0 lost its back-merge PR
+# because the token lacked the pull-request permission and `|| echo` read the
+# error as "already exists". An existing open PR is reused; anything else fails
+# the target, and main is already tagged at that point, so the message says what
+# is left to do.
 	git push origin release/$(VERSION)
-	gh pr create --base develop --head release/$(VERSION) \
-		--title "Merge release/$(VERSION) back into develop" \
-		--body "Automated back-merge of v$(VERSION) into develop (#2182). Merges once the required checks pass; if a ratchet gate blocks, raise its baseline in this branch. Delete release/$(VERSION) after this merges." \
-		|| echo "gh pr create failed or the PR already exists - check: gh pr list --head release/$(VERSION) --base develop"
+	@existing=$$(gh pr list --state open --base develop --head release/$(VERSION) --json number --jq length) || { \
+		echo "ERROR: cannot query PRs (gh pr list failed). main is tagged; open the develop back-merge PR by hand."; exit 1; }; \
+	if [ "$$existing" = "0" ]; then \
+		gh pr create --base develop --head release/$(VERSION) \
+			--title "Merge release/$(VERSION) back into develop" \
+			--body "Automated back-merge of v$(VERSION) into develop (#2182). Merges once the required checks pass; if a ratchet gate blocks, raise its baseline in this branch. Delete release/$(VERSION) after this merges." \
+		|| { echo "ERROR: gh pr create failed (token permission?). main is tagged + pushed; open the PR release/$(VERSION) -> develop by hand, then run make release-publish VERSION=$(VERSION)."; exit 1; }; \
+	else \
+		echo "Back-merge PR release/$(VERSION) -> develop already open - reusing it."; \
+	fi; \
+	count=$$(gh pr list --state open --base develop --head release/$(VERSION) --json number --jq length); \
+	if [ "$$count" != "1" ]; then \
+		echo "ERROR: expected exactly 1 open back-merge PR release/$(VERSION) -> develop, found '$$count'."; exit 1; \
+	fi
 	@echo ""
 	@echo "main is tagged + pushed. The develop back-merge is now a PR - merge it once"
 	@echo "green, THEN delete release/$(VERSION) (local: git branch -D release/$(VERSION);"

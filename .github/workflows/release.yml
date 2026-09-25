@@ -17,13 +17,13 @@ name: Release
 #                    release branch; run the full gate (make release-test, plus
 #                    make test-e2e-smoke unless skip_e2e). Then STOP for review.
 #   stage=finish  -> make release-finish (merge to main no-ff + tag v<version> +
-#                    back-merge develop + delete the branch) and
-#                    make release-publish (GitHub Release from the changelog).
+#                    open the develop back-merge PR, #2182) and
+#                    make release-publish (DRAFT GitHub Release, #3159).
 #
-# Launcher binaries are NOT built or attached here: launcher-{linux,macos,
-# windows}.yml trigger on `release: created` and attach the binaries
-# automatically once release-publish creates the GitHub Release. Keep that
-# division — building them here would duplicate and drift.
+# Launcher binaries are NOT built or attached here, and the release stays a
+# draft: release-workflow.md Step 8 dispatches publish-image.yml, attaches the
+# binaries from the green main-push launcher builds (no release trigger since
+# v2.8.0), runs the completeness checkpoint, and only then publishes.
 #
 # The per-release changelog changelog/releases/v<version>.md MUST already exist
 # (written by the author). The prepare stage fails fast if it is missing; this
@@ -316,13 +316,13 @@ jobs:
 
       - name: PAT availability notice
         # The release ALWAYS completes; this only documents whether the
-        # downstream GH-Pages deploy + launcher-binary attach will fire on
-        # their own (PAT) or need a manual trigger (GITHUB_TOKEN fallback).
+        # downstream GH-Pages deploy fires on its own (PAT) or needs a
+        # manual trigger (GITHUB_TOKEN fallback).
         run: |
           if [ "$HAS_RELEASE_PAT" = "true" ]; then
-            echo "RELEASE_PAT is set: the main push fires deploy-gh-pages.yml and the published Release fires launcher-*.yml automatically."
+            echo "RELEASE_PAT is set: the main push fires deploy-gh-pages.yml. The release is created as a DRAFT; Step 8 of release-workflow.md publishes it."
           else
-            echo "::warning::RELEASE_PAT secret is NOT set. The release will still complete, but GitHub will not fire downstream workflows from GITHUB_TOKEN events (#1265). After this run you must MANUALLY: (1) dispatch deploy-gh-pages.yml on main, and (2) attach the launcher binaries to the Release (re-publish via PAT or upload manually)."
+            echo "::warning::RELEASE_PAT secret is NOT set. The release will still complete, but GitHub will not fire downstream workflows from GITHUB_TOKEN events (#1265). After this run you must MANUALLY: (1) dispatch deploy-gh-pages.yml on main, and (2) open the develop back-merge PR if release-finish could not."
           fi
 
       - uses: actions/checkout@v7
@@ -340,8 +340,8 @@ jobs:
           # GitHub deliberately does NOT fire downstream workflows from
           # GITHUB_TOKEN-originated pushes/events (recursion guard, #1265).
           # Falls back to GITHUB_TOKEN when RELEASE_PAT is unset: the release
-          # still completes, but the GH-Pages deploy + launcher-binary attach
-          # then need a manual trigger (the v1.97.0/v1.97.1 situation).
+          # still completes, but the GH-Pages deploy then needs a manual
+          # trigger (the v1.97.0/v1.97.1 situation).
           token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Changelog precondition (release-publish needs it)
@@ -365,16 +365,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Finish (merge main no-ff + tag + back-merge develop + delete branch)
+      - name: Finish (merge main no-ff + tag + open the develop back-merge PR)
         run: make release-finish VERSION=${{ inputs.version }}
 
-      - name: Publish GitHub Release from the changelog
-        # Launcher binaries are NOT attached here: launcher-{linux,macos,windows}.yml
-        # trigger on `release: created` and attach them automatically — but ONLY
-        # when the Release is created by a PAT. `gh release create` authenticates
-        # via GH_TOKEN, so it must carry the PAT for the launcher attach to fire.
-        # Falls back to GITHUB_TOKEN when RELEASE_PAT is unset (release publishes,
-        # launcher attach then needs a manual trigger).
+      - name: Create the DRAFT GitHub Release from the changelog
+        # `gh release create --draft` (#3159). Nothing fires on a draft; the
+        # launcher binaries and the image are attached in release-workflow.md
+        # Step 8 before the draft is published.
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
         run: make release-publish VERSION=${{ inputs.version }}
