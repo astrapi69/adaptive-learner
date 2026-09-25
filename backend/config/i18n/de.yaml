@@ -2253,8 +2253,10 @@ lesson:
     al_ordering:
       empty: "Diese Sortier-Übung hat keine Elemente."
       result_correct: "Richtig!"
-      result_wrong: "Nicht ganz - versuch's nochmal."
+      result_wrong: "Nicht ganz - die Reihenfolge stimmt noch nicht."
       retry: "Nochmal versuchen"
+      review_heading: "Deine Antwort"
+      solution_heading: "Lösung"
       submit: "Antwort prüfen"
     al_parsons:
       empty: "Diese Code-Sortier-Übung hat keine Zeilen."

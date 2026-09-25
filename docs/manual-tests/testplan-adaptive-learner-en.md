@@ -1234,6 +1234,12 @@ areas of the Data tab in the fixed #1451 order.
       exact authored order — one swap is wrong. Try again resets the
       placement; a lesson with `requires_extensions: ["ext:al-ordering@1"]`
       loads (not refused by the guard).
+- [ ] ext:al-ordering review (#3260): after Check, "Your answer" shows the
+      submitted order, numbered, each step with a green check or a red X. A
+      wrong answer adds the "Solution" below with the right order; a correct
+      answer shows no solution. The wrong-answer line reads "Not quite - the
+      order is not right yet." (no prompt to retry). Exam mode shows no
+      breakdown. On a phone (narrow width) long steps stay readable and wrap.
 - [ ] ext:al-parsons (#3110): code lines shown as shuffled draggable tiles
       (monospace), same tap/drag reorder as ordering, PLUS a per-tile
       indent stepper (- / depth / +). Check requires BOTH the right

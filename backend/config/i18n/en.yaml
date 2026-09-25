@@ -2259,8 +2259,10 @@ lesson:
     al_ordering:
       empty: "This ordering exercise has no items."
       result_correct: "Correct!"
-      result_wrong: "Not quite - try again."
+      result_wrong: "Not quite - the order is not right yet."
       retry: "Try again"
+      review_heading: "Your answer"
+      solution_heading: "Solution"
       submit: "Check answer"
     al_parsons:
       empty: "This code-ordering exercise has no lines."

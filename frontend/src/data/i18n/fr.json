@@ -2423,8 +2423,10 @@
       "al_ordering": {
         "empty": "Cet exercice d'ordre n'a pas d'éléments.",
         "result_correct": "Correct !",
-        "result_wrong": "Pas tout à fait - réessayez.",
+        "result_wrong": "Pas tout à fait - l'ordre n'est pas encore correct.",
         "retry": "Réessayer",
+        "review_heading": "Ta réponse",
+        "solution_heading": "Solution",
         "submit": "Vérifier la réponse"
       },
       "al_parsons": {

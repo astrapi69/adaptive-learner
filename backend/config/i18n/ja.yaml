@@ -2248,8 +2248,10 @@ lesson:
     al_ordering:
       empty: "この並べ替え問題には項目がありません。"
       result_correct: "正解!"
-      result_wrong: "惜しい - もう一度試してください。"
+      result_wrong: "惜しい - 順番がまだ正しくありません。"
       retry: "もう一度"
+      review_heading: "あなたの答え"
+      solution_heading: "正解"
       submit: "答えを確認"
     al_parsons:
       empty: "このコード並べ替え問題には行がありません。"

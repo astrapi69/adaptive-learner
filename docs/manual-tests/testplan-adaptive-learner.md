@@ -1313,6 +1313,14 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       ist falsch. "Nochmal versuchen" setzt die Platzierung zurück; eine
       Lektion mit `requires_extensions: ["ext:al-ordering@1"]` lädt (wird
       nicht vom Guard abgelehnt).
+- [ ] ext:al-ordering Auswertung (#3260): nach "Prüfen" erscheint unter
+      "Deine Antwort" die eingereichte Reihenfolge, nummeriert, jeder Schritt
+      mit grünem Haken oder rotem X. Bei falscher Antwort folgt darunter die
+      "Lösung" mit der richtigen Reihenfolge; bei richtiger Antwort keine
+      Lösung. Die Fehlermeldung lautet "Nicht ganz - die Reihenfolge stimmt
+      noch nicht." (keine Aufforderung zum Wiederholen). Im Prüfungsmodus
+      erscheint keine Aufschlüsselung. Auch auf dem Handy (schmale Breite)
+      bleiben lange Schritte lesbar umgebrochen.
 - [ ] ext:al-parsons (#3110): Code-Zeilen als durcheinandergewürfelte,
       ziehbare Kacheln (Monospace), dieselbe Tipp-/Zieh-Umsortierung wie bei
       ordering, PLUS ein Einrück-Stepper pro Kachel (- / Tiefe / +).
