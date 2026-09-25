@@ -18,6 +18,7 @@ Plans and prefixes (case / suite):
   GTC / GTS  docs/manual-tests/geraete-check-liste.md
   OTC / OTS  docs/manual-tests/offene-punkte-in-issues.md
   DTC / DTS  docs/manual-tests/anleitung-docker-permission-geraeteverifikation.md
+  STC / STS  docs/manual-tests/device-check-session-2026-06-27.md
 
 Checked boxes (``- [x]``) are cases too and carry an ID like open ones.
 
@@ -69,6 +70,7 @@ REFERENCE_REL = Path("docs") / "reference" / "MANUAL-TESTPLAN.md"
 LAUNCHER_REL = Path("launcher") / "TESTPLAN.md"
 DEVICE_CHECK_REL = Path("docs") / "manual-tests" / "geraete-check-liste.md"
 OPEN_POINTS_REL = Path("docs") / "manual-tests" / "offene-punkte-in-issues.md"
+DEVICE_SESSION_REL = Path("docs") / "manual-tests" / "device-check-session-2026-06-27.md"
 DOCKER_CHECK_REL = (
     Path("docs") / "manual-tests" / "anleitung-docker-permission-geraeteverifikation.md"
 )
@@ -90,6 +92,7 @@ PLANS: tuple[PlanSpec, ...] = (
     PlanSpec("GTC", "GTS", (DEVICE_CHECK_REL,)),
     PlanSpec("OTC", "OTS", (OPEN_POINTS_REL,)),
     PlanSpec("DTC", "DTS", (DOCKER_CHECK_REL,)),
+    PlanSpec("STC", "STS", (DEVICE_SESSION_REL,)),
 )
 SUITE_PREFIXES = tuple(spec.suite_prefix for spec in PLANS)
 
