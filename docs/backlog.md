@@ -143,7 +143,7 @@ tiebreaker.
 
 ---
 
-## P3 — Lower Value or Large Effort
+## P3: when capacity allows
 
 - [ ] **BACKEND-RADON-REMAINDER-01**: opportunistic backend complexity
   burn-down for any module still above the radon warn band (cc > 15) now
@@ -219,7 +219,7 @@ tiebreaker.
   `pages/content/AddRepo.tsx:164` and `:183`) — those 4 stay as the
   concrete example, not the scope of this item.
 
-## P4 — Future / SaaS
+## P4: deliberately deferred (future, SaaS)
 
 - [ ] **BL-14**: PostgreSQL migration — Replace SQLite with
   PostgreSQL for multi-user/SaaS deployment. Alembic
@@ -249,7 +249,7 @@ tiebreaker.
   time comes from tickets earned by perfect lessons and streaks; a personal
   list does not. Hidden behind the game-mode and arcade switches, see #3216.
 
-## P5 — Speculative (No concrete trigger)
+## P5: speculative (no concrete trigger)
 
 - [ ] **BL-19**: Social features (share progress, study
   groups) — Requires multi-user. Far future.
