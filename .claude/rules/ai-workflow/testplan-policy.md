@@ -24,13 +24,13 @@ Both language versions stay in sync; updating one without the other is an incomp
 
 ## Checkpoint IDs
 
-Every `- [ ]` checkbox carries a permanent ID right after the box: `- [ ] TC-0042 ...`. `TC-` is the DE/EN main plan, `RTC-` is `docs/reference/MANUAL-TESTPLAN.md`, `LTC-` is `launcher/TESTPLAN.md`; separate number spaces, so an insert in one plan never touches another. The register `docs/manual-tests/testplan-ids.json` holds the highest number and the retired numbers per prefix.
+Every checkbox (`- [ ]` or `- [x]`) carries a permanent case ID right after the box: `- [ ] TC-0042 ...`. Every heading that directly holds a checkbox is a suite and carries a suite ID after the hashes: `#### TS-0004 A1. ...`; grouping headings without own checkboxes carry none. Prefixes (case/suite) per file are listed in `PLANS` in `scripts/testplan_ids.py` (`TC`/`TS` is the DE/EN main plan); separate number spaces, so an insert in one file never touches another. The register `docs/manual-tests/testplan-ids.json` holds the highest number and the retired numbers per prefix. A new checklist file joins `PLANS` before it ships.
 
-- **New checkbox: run `python3 scripts/testplan_ids.py --assign`**, never pick a number by hand. It takes the next free number, also for a case inserted mid-document; numbers do not follow document order.
+- **New checkbox or suite: run `python3 scripts/testplan_ids.py --assign`**, never pick a number by hand. It takes the next free number, also for a case inserted mid-document; numbers do not follow document order.
 - **IDs are never reused and never renumbered.** A deleted case keeps its number retired, a reworded case keeps its number, a case that becomes a different case gets a new one. Why: issues, PR comments and device protocols cite the ID; renumbering "for order" silently points every old citation at the wrong case. Same discipline as the engine's `stable_id`.
-- **DE and EN carry the same ID for the same case**, also where their section or checkbox order differs. Where `--assign` cannot pair a case unambiguously it refuses and names it; decide by hand (`--pairs`), never by position.
+- **DE and EN carry the same ID for the same case and suite**, also where their section or checkbox order differs. Where `--assign` cannot pair a case unambiguously it refuses and names it; decide by hand (`--pairs`), never by position.
 
-Gated by `verify-docs` (`testplan-parity` for `TC-`, `testplan-ids` for `RTC-`/`LTC-`, #3274).
+Gated by `verify-docs` (`testplan-parity` for the main plan, `testplan-ids` for the rest; #3274, #3279).
 
 ## Exemptions
 

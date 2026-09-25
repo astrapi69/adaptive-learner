@@ -36,7 +36,7 @@ einmal Ubuntu.
 Voraussetzung: #2050 gemerged, aktueller develop-Stand deployed (bzw.
 Preview).
 
-#### A1. BACKUP-AKZEPTANZTEST (Launch-Gate, seit frühen Sessions offen)
+#### TS-0001 A1. BACKUP-AKZEPTANZTEST (Launch-Gate, seit frühen Sessions offen)
 
 Echter Round-Trip, keine Simulation:
 
@@ -59,7 +59,7 @@ Echter Round-Trip, keine Simulation:
 Ergebnis dokumentieren (auch Teilfehler einzeln). Bei JEDEM Abweichen:
 Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.
 
-#### A2. Mobile Scroll-to-Error (#2039, Visual-Device-Check vor Merge)
+#### TS-0002 A2. Mobile Scroll-to-Error (#2039, Visual-Device-Check vor Merge)
 
 - [ ] TC-0008 Formular mit Validierungsfehler ausserhalb des Viewports provozieren
       (langes Formular, Fehler oben, Abschicken von unten).
@@ -67,13 +67,13 @@ Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.
       und fokussiert.
 - [ ] TC-0010 Einmal Hochformat, einmal mit eingeblendeter Tastatur.
 
-#### A3. Rueckstands-Issues iOS
+#### TS-0003 A3. Rueckstands-Issues iOS
 
 - [ ] TC-0011 Die offenen iOS-Verifikationspunkte aus dem Tracker in derselben
       Session abarbeiten (Liste aus den jeweiligen Issues, jeweils Ergebnis
       als Issue-Kommentar).
 
-#### A3b. Einstieg für Wiederkehrer bleibt nie leer (#2573)
+#### TS-0004 A3b. Einstieg für Wiederkehrer bleibt nie leer (#2573)
 
 Robustheit beim Nachladen auf iOS - der Einstieg darf nie einen leeren
 Inhaltsbereich unter intakter Kopf-/Navigationsleiste hinterlassen:
@@ -90,7 +90,7 @@ Inhaltsbereich unter intakter Kopf-/Navigationsleiste hinterlassen:
       „Diese Ansicht ließ sich nicht laden.") mit „Neu laden"-Knopf - kein
       stiller Leerbildschirm.
 
-#### A4. Lektion löschen (#2064, gemerged) - überschneidet sich mit A1
+#### TS-0005 A4. Lektion löschen (#2064, gemerged) - überschneidet sich mit A1
 
 Dieses Feature verlangt laut Testplan beide Speichermodi plus
 Backup-Round-Trip inklusive iOS-Standalone. Das ist in der Substanz
@@ -109,14 +109,14 @@ den Abschnitt "Einzelne Lektion löschen (#2064)" weiter unten):
       Fehler.
 - [ ] TC-0019 Beide Speichermodi.
 
-#### A5. Wizard-Schritt-Reset (#2061, gemerged) - kurz, auch am Desktop möglich
+#### TS-0006 A5. Wizard-Schritt-Reset (#2061, gemerged) - kurz, auch am Desktop möglich
 
 - [ ] TC-0020 Buch-Set öffnen, "Lektion bearbeiten", zu Schritt 2 navigieren.
 - [ ] TC-0021 Im Dropdown ein anderes Kapitel wählen: Schritt 2 bleibt, Übungen der
       neuen Lektion erscheinen.
 - [ ] TC-0022 Randfälle: Wechsel zu einer Lektion ohne Übungen, Rückwärtswechsel.
 
-#### A6. Lektionsreihenfolge verschieben (#2172, gemerged)
+#### TS-0007 A6. Lektionsreihenfolge verschieben (#2172, gemerged)
 
 Die Anzeigereihenfolge ist ein eigenes Feld; Verschieben ändert die
 Sortierung, nie die Identität einer Lektion. iOS-Standalone ist der heiklere
@@ -151,7 +151,7 @@ Fall (Verschieben auf dem Telefon).
       Positions-Rückmeldung funktionieren, Reihenfolge bleibt nach dem
       Schliessen und Wiederoeffnen.
 
-#### A6b. Importreihenfolge folgt der Quelle (#2173, gemerged)
+#### TS-0008 A6b. Importreihenfolge folgt der Quelle (#2173, gemerged)
 
 Nach einem Buch-/Text-Import stehen die Lektionen in Quell-/Kapitelreihenfolge,
 nicht alphabetisch nach Titel (früher: Epilog vor Kapitel 1). Die Reihenfolge
@@ -184,7 +184,7 @@ NICHT überschreiben.
       installierten PWA öffnen - die Kapitel stehen in Buchreihenfolge, und
       eine eigene Verschiebung überlebt ein Schliessen und Wiederoeffnen.
 
-#### A6c. Downloadreihenfolge folgt dem Manifest (#2367)
+#### TS-0009 A6c. Downloadreihenfolge folgt dem Manifest (#2367)
 
 Heruntergeladene Sets (Registry/Quellen-Browser) zeigen die Lektionen in der
 im Set-Manifest deklarierten Reihenfolge (metadata.lessons), nicht mehr
@@ -220,6 +220,7 @@ Ausgangssprache auf en zurück.
 - [ ] TC-0898 Beide Speichermodi (API + Dexie).
 
 #### A7. Bearbeiten je Lektion, nicht je Set (#2210)
+#### TS-0010 A7. Bearbeiten je Lektion, nicht je Set (#2210)
 
 Bearbeiten gehört an die Lektion, nicht an das Set. Der Set-Knopf riet
 früher, welche Lektion gemeint ist, und öffnete immer die erste. Drei
@@ -246,7 +247,7 @@ Fall (drei plus Auf/Ab je Zeile auf dem Telefon).
       dem Finger sicher und ohne Fehlgriff bedienbar; Bearbeiten öffnet die
       richtige Lektion.
 
-### Session B: Ubuntu (Launcher-Binary, nach der Launcher-Session)
+### TS-0011 Session B: Ubuntu (Launcher-Binary, nach der Launcher-Session)
 
 Voraussetzung: die v2.8.2-Release-Binaries (der Launcher ist seit v2.8.0 im
 IMAGE-Modus, #2167; Engine-Pin docker-app-launcher ^0.25.1). Nur diese
@@ -281,7 +282,7 @@ Features. Session B erst, wenn die neuen Binaries vorliegen.
 
 ---
 
-## PRIO 1: BACKUP-AKZEPTANZTEST (Launch-Gate!)
+## TS-0012 PRIO 1: BACKUP-AKZEPTANZTEST (Launch-Gate!)
 
 **Neuer Testfall unter PRIO 1 Backup-Akzeptanztest:**
 - [ ] TC-0060 GitHub Pages: Backup erstellen
@@ -315,7 +316,7 @@ Noch nie durchgefuehrt. JETZT machen.
 
 ## PRIO 2: LAUNCHER (Desktop)
 
-### Grundfunktion (Ubuntu)
+### TS-0013 Grundfunktion (Ubuntu)
 - [ ] TC-0078 `python3 -m adaptive_learner_launcher --debug` → EIN Fenster öffnet
 - [ ] TC-0079 Fenster verschwindet NIE von selbst
 - [ ] TC-0080 Docker-Check als erster Schritt (Hinweis wenn Docker nicht läuft)
@@ -323,45 +324,45 @@ Noch nie durchgefuehrt. JETZT machen.
 - [ ] TC-0082 "Image bauen..." sichtbar (nicht stiller Hintergrund)
 - [ ] TC-0083 Am Ende: "App ist bereit." in grün
 
-### Port
+### TS-0014 Port
 - [ ] TC-0084 Port-Feld sichtbar (Default 8501)
 - [ ] TC-0085 Port editierbar wenn gestoppt/nicht installiert
 - [ ] TC-0086 Port read-only wenn läuft
 - [ ] TC-0087 Port WECHSELN: 8501 → 9000 → App erreichbar auf 9000
 - [ ] TC-0088 Port-Indikator: grün wenn läuft (nicht rot)
 
-### Portwechsel: Datenmitnahme (#2069)
+### TS-0015 Portwechsel: Datenmitnahme (#2069)
 - [ ] TC-0089 Servermodus (Default): Daten anlegen, Port wechseln, neu öffnen → Sets + Fortschritt weiter da (Backend-Daten überleben; auf der Landing-Seite via identity.yaml automatisch wiederhergestellt)
 - [ ] TC-0090 Browser-Speichermodus (Einstellungen > Daten > Speichermodus): Daten anlegen, Port wechseln, neu öffnen → leere App mit Hinweis "Hast du Adaptive Learner schon einmal unter einem anderen Port genutzt?" auf dem Willkommensbildschirm (Daten NICHT gelöscht, nur an den alten Origin gebunden)
 - [ ] TC-0091 Der Hinweis verlinkt auf die Hilfeseite "Den Port ändern"
 - [ ] TC-0092 Wiederherstellung (Browser-Modus): zurück zum alten Port → Einstellungen > Daten > Backup exportieren (`.alb`) → neuer Port → "Aus Backup wiederherstellen" → Sets, Fortschritt, Übungen, Einstellungen wieder da
 - [ ] TC-0093 Kanonische Web-Version (astrapi69.github.io, Browser-Modus, kein expliziter Port): der Hinweis erscheint NICHT
 
-### Zustaende
+### TS-0016 Zustaende
 - [ ] TC-0094 Nicht installiert: [Installieren] sichtbar
 - [ ] TC-0095 Läuft: [Im Browser öffnen] [Stoppen] [Deinstallieren]
 - [ ] TC-0096 Gestoppt: [Starten] [Deinstallieren]
 - [ ] TC-0097 Alle Buttons komplett sichtbar (620px breit, kein Abschneiden)
 
-### Deinstallieren
+### TS-0017 Deinstallieren
 - [ ] TC-0098 Verbose Output: jeden Container/Image einzeln mit ✓/✗
 - [ ] TC-0099 Image-Groessen angezeigt
 - [ ] TC-0100 Summary: "X Artefakte entfernt, Y MB freigegeben"
 - [ ] TC-0101 Zustand wechselt zu "Nicht installiert"
 
-### Cleanup beim Start
+### TS-0018 Cleanup beim Start
 - [ ] TC-0102 Findet verwaiste Artefakte (falls vorhanden)
 - [ ] TC-0103 User kann auswählen (Lerndaten default AUS)
 - [ ] TC-0104 Verbose Fortschritt
 
-### Windows
+### TS-0019 Windows
 - [ ] TC-0105 .exe startet (aus GitHub Release)
 - [ ] TC-0106 Persistentes Fenster (KEINE Dialog-Kette!)
 - [ ] TC-0107 Alle Funktionen wie auf Linux
 
 ---
 
-## PRIO 3: CONTENT-QUALITAET (Native-Speaker Stichprobe)
+## TS-0020 PRIO 3: CONTENT-QUALITAET (Native-Speaker Stichprobe)
 
 Erfordert Domaenenwissen. Nicht automatisierbar.
 
@@ -385,7 +386,7 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
 
 ## PRIO 4: LERNEN - MANUELLE UX-PRUEFUNG
 
-### Übungstypen (visuell prüfen)
+### TS-0021 Übungstypen (visuell prüfen)
 - [ ] TC-0117 Matching: Paare GLEICHE Höhe (kein visueller Versatz)
 - [ ] TC-0118 Matching: "Aufloesen" Animation sieht gut aus (4 Effekte testen)
 - [ ] TC-0119 Matching: linke Spalte IMMER in Lektions-Reihenfolge (#2882), nur die
@@ -524,7 +525,7 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       + ext-Typen). Badge liest in allen 6 Themes sauber (Token-basiert).
       Nur Transparenz - beeinflusst weder Reihenfolge noch Bewertung.
 
-### Testmodus (Vorschau-Build, #2319)
+### TS-0022 Testmodus (Vorschau-Build, #2319)
 
 Nur relevant, wenn der Build mit `VITE_TEST_MODE=true` gebaut wurde (Vorschau-
 Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
@@ -547,7 +548,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       hinzugefügten Web-App-Icon (Geste per Fingertipp, Banner sichtbar,
       Durchklicken möglich).
 
-### Lern-Modi (jeden einmal durchspielen)
+### TS-0023 Lern-Modi (jeden einmal durchspielen)
 - [ ] TC-0140 Modus-Toggle im aufklappbaren Options-Panel erreichbar (seit #1628
       hinter dem Panel, nicht mehr direkt sichtbar)
 - [ ] TC-0141 Options-Panel einer EIGENEN Lektion (erstellt, importiert oder
@@ -607,7 +608,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0162 Regression andere Typen: Freitext/Lueckentext bei "Fehler
       wiederholen" weiterhin nur die falschen Elemente
 
-### Spielmodus (#2844)
+### TS-0024 Spielmodus (#2844)
 - [ ] TC-0163 Settings -> Lernen: Sektion "Spielmodus" mit Schalter "Spielerische
       Lektionen" vorhanden, Standard: aus
 - [ ] TC-0164 Vorbereitung für alle Detail-Schritte in diesem Abschnitt (#2959):
@@ -633,7 +634,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0171 Umschalten wirkt ohne Reload (Change-Event) und verhält sich in
       beiden Speicher-Modi identisch (localStorage)
 
-#### Lernfunke-Maskottchen (#2849, nur bei aktivem Spielmodus)
+#### TS-0025 Lernfunke-Maskottchen (#2849, nur bei aktivem Spielmodus)
 
 - [ ] TC-0172 Spielmodus an, Lektion öffnen: kleine Flammen-Figur neben der
       Fortschrittsleiste sichtbar (Tooltip/Screenreader: "Dein
@@ -656,7 +657,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0179 Schmaler Viewport (Mobile): Figur verdrängt die Fortschritts-
       leiste nicht; die Zeile bricht sauber um
 
-#### Maskottchen-Varianten (#2861, Farbwelten des Lernfunke)
+#### TS-0026 Maskottchen-Varianten (#2861, Farbwelten des Lernfunke)
 
 - [ ] TC-0180 Settings -> Lernen -> Spielmodus -> Details (aufgeklappt, siehe
       Vorbereitungsschritt #2959), Block "XP und Maskottchen": die Zeile
@@ -677,7 +678,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0185 Backup-Roundtrip: Export -> Wipe -> Import stellt gewählte und
       gekaufte Varianten wieder her (beide Speicher-Modi)
 
-#### Spielmodus-Sounds (#2875)
+#### TS-0027 Spielmodus-Sounds (#2875)
 
 - [ ] TC-0186 Settings -> Lernen -> Spielmodus: unter dem Modus-Schalter der
       Schalter "Spielmodus-Sounds" (Standard aus) mit Hinweistext
@@ -699,7 +700,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0191 Prüfungsmodus + Spielmodus + Sounds: kein Ton pro Antwort (kein
       Sofort-Feedback); die Abschluss-Fanfare bleibt erlaubt
 
-#### Feedback-Karte: Lautstärke immer sichtbar + Spielmodus-Hinweis (#2957)
+#### TS-0028 Feedback-Karte: Lautstärke immer sichtbar + Spielmodus-Hinweis (#2957)
 
 - [ ] TC-0192 Settings -> Lernen -> Feedback: der Schalter "Töne" steht auf AUS,
       trotzdem sind der Lautstärkeregler, die Prozentanzeige und die
@@ -718,7 +719,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       (reduzierte Bewegung + Spielmodus) sind sichtbar; das Feedback
       bleibt dezent (reduced motion gewinnt)
 
-#### Spannungssysteme: Herzen + Countdown-Ring (#2878, opt-in, Standard aus)
+#### TS-0029 Spannungssysteme: Herzen + Countdown-Ring (#2878, opt-in, Standard aus)
 
 - [ ] TC-0197 Einstellungen > Lernen > Spielmodus > Details (Block "Spannung",
       Vorbereitungsschritt #2959): die Schalter "Herzen (Leben)"
@@ -744,7 +745,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0203 Bewertung unverändert: Punktzahl, Sterne und Fortschritt sind
       mit und ohne Spannungssysteme identisch
 
-#### Serien-Bonus-XP (#2893, Standard an, nur im Spielmodus)
+#### TS-0030 Serien-Bonus-XP (#2893, Standard an, nur im Spielmodus)
 
 - [ ] TC-0204 Einstellungen > Lernen > Spielmodus > Details (Block "XP und
       Maskottchen", Vorbereitungsschritt #2959): der Schalter
@@ -766,7 +767,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0209 Prüfungsmodus: kein Serien-Bonus (der Prüfungs-Multiplikator
       bleibt unverändert)
 
-#### Arcade-Minispiele (#2887, Standard an, nur im Spielmodus)
+#### TS-0031 Arcade-Minispiele (#2887, Standard an, nur im Spielmodus)
 
 - [ ] TC-0210 Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
       Belohnungen", Vorbereitungsschritt #2959): der Schalter "Arcade" ist
@@ -801,7 +802,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0216 Reduzierte Bewegung im System: keine Flip-/Blinkeffekte in
       beiden Spielen
 
-#### Arcade: TicTacToe (#2906, 100-XP-Freischaltung)
+#### TS-0032 Arcade: TicTacToe (#2906, 100-XP-Freischaltung)
 
 - [ ] TC-0217 Arcade-Spieleliste: Tic-Tac-Toe erscheint zwischen Lern-Memory
       und Snake, gesperrt mit "Für 100 XP freischalten"
@@ -816,7 +817,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0220 Verlieren und Unentschieden enden freundlich mit
       "Neu starten"; keine XP-Vergabe durch das Spiel
 
-#### Arcade: Simon (#2907, 300-XP-Freischaltung)
+#### TS-0033 Arcade: Simon (#2907, 300-XP-Freischaltung)
 
 - [ ] TC-0221 Arcade-Spieleliste: Simon erscheint nach Snake, gesperrt mit
       "Für 300 XP freischalten" (zweistufige Bestätigung); ein
@@ -839,7 +840,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0227 Reduzierte Bewegung im System: Felder wechseln nur den
       Zustand (Ring/Helligkeit), kein Aufblink-/Skalier-Effekt
 
-#### Blitzrunden (#2888, Standard an, nur im Spielmodus)
+#### TS-0034 Blitzrunden (#2888, Standard an, nur im Spielmodus)
 
 - [ ] TC-0228 Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
       Belohnungen", Vorbereitungsschritt #2959): der Schalter "Sonderrunden"
@@ -867,7 +868,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       korrigierte Fehlerkarten verbessern wie beim Fehler-Wiederholen
       nur den SRS-Stand
 
-#### Spiel-Tickets (#2889, Standard an, nur im Spielmodus)
+#### TS-0035 Spiel-Tickets (#2889, Standard an, nur im Spielmodus)
 
 - [ ] TC-0236 Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
       Belohnungen", Vorbereitungsschritt #2959): der Schalter "Spiel-Tickets"
@@ -908,7 +909,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0248 Backup-Export > Wipe > Import: der Ticket-Stand übersteht die
       Runde (localStorage-Snapshot)
 
-#### Bonus-Lektionen (#2890, Standard an, nur im Spielmodus)
+#### TS-0036 Bonus-Lektionen (#2890, Standard an, nur im Spielmodus)
 
 - [ ] TC-0249 Einstellungen > Lernen > Spielmodus > Details (Block "Arcade und
       Belohnungen", Vorbereitungsschritt #2959): der Schalter
@@ -931,7 +932,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       die Blitzrunden-Freischaltung NICHT (nur reguläre Lektionen
       zählen)
 
-#### Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
+#### TS-0037 Spielerische Übungs-Renderer (#2876, nur bei aktivem Spielmodus)
 
 - [ ] TC-0256 Multiple-Choice-Übung: die Antworten erscheinen als große Kacheln
       (ab Tablet-Breite zweispaltig); die gewählte Kachel ploppt kurz
@@ -949,7 +950,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       Spiel-Optik; reduzierte Bewegung im System: die Formen bleiben,
       alle Hüpf-/Pop-Animationen entfallen
 
-#### Juice-Paket (#2874, nur bei aktivem Spielmodus)
+#### TS-0038 Juice-Paket (#2874, nur bei aktivem Spielmodus)
 
 - [ ] TC-0261 Lektion spielen, zwei richtige Antworten in Folge: neben der
       Fortschrittsleiste erscheint der Serien-Chip (Flamme + "x2") und
@@ -969,7 +970,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       System: Chip/Punkte erscheinen ohne Animation, das "+1" bleibt
       unsichtbar (reine Bewegungs-Dekoration)
 
-### Lernen-Tab: fünf Bereiche (#2956)
+### TS-0039 Lernen-Tab: fünf Bereiche (#2956)
 
 - [ ] TC-0268 Einstellungen > Lernen: die Karten stehen in fünf beschrifteten
       Bereichen, jeder mit einer kleinen Überschrift in Großbuchstaben
@@ -1001,7 +1002,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       brechen um, nichts scrollt horizontal; Tab-Wechsel und der
       Deep-Link ?tab=learning funktionieren wie zuvor
 
-### Spielmodus: Zusammenfassungskarte + Details (#2959)
+### TS-0040 Spielmodus: Zusammenfassungskarte + Details (#2959)
 
 - [ ] TC-0275 Einstellungen > Lernen > Spielmodus: die Karte zeigt den Schalter
       "Spielerische Lektionen", die Spielmodus-Sounds und darunter die
@@ -1030,7 +1031,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       auf dem Lernen-Tab im Bereich "Motivation und Routine" (Chip aktiv,
       Bereich im Bild, siehe #2961)
 
-### Gamification im Bereich "Motivation und Routine" (#2962)
+### TS-0041 Gamification im Bereich "Motivation und Routine" (#2962)
 
 - [ ] TC-0282 Einstellungen > Lernen > "Motivation und Routine": die Karte
       "Gamification" (XP-Benachrichtigungen, Abzeichen-Benachrichtigungen,
@@ -1050,7 +1051,7 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0286 Handy (375 px): die Karte und die Trennlinie brechen sauber um,
       nichts scrollt horizontal
 
-### Daten-Tab: Bereichsleiste + Deep-Link (#3122)
+### TS-0042 Daten-Tab: Bereichsleiste + Deep-Link (#3122)
 
 Dieselbe Mechanik wie im Lernen-Tab (#2961, #2966), über den sechs
 Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
@@ -1086,7 +1087,7 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
 - [ ] TC-0294 Beide Speichermodi (API + Dexie): Leiste und Deep-Link gleich; im
       Dexie-Modus zeigt der Bereich "Synchronisation" den Desktop-Hinweis
 
-### Lernen-Tab: Bereichsleiste + Deep-Link (#2961)
+### TS-0043 Lernen-Tab: Bereichsleiste + Deep-Link (#2961)
 
 - [ ] TC-0295 Einstellungen > Lernen: über dem ersten Bereich steht eine Zeile
       mit Chips "Grundlagen", "In der Lektion", "Vorlesen und Diktieren",
@@ -1128,7 +1129,7 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
 - [ ] TC-0304 Beide Speicher-Modi (API + Dexie): Leiste und Deep-Link verhalten
       sich identisch
 
-### Zusammenfassung zählt Korrekturen mit (#2479)
+### TS-0044 Zusammenfassung zählt Korrekturen mit (#2479)
 - [ ] TC-0305 Eine Lektion mit mehreren falschen Antworten spielen, dann in der
       Korrektur-Runde am Ende die Fehler beheben. Der Punktzahl-Balken zeigt
       zwei Abschnitte: was auf Anhieb saß (voll gefüllt) und was nach Korrektur
@@ -1149,7 +1150,7 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       hinzugefügten Symbol (der Befund kam von dort). Balken, Sterne, Botschaft
       und XP zeigen den Endstand nach der Korrektur.
 
-### "Warum du diese verpasst hast" zeigt die Frage (#2757)
+### TS-0045 "Warum du diese verpasst hast" zeigt die Frage (#2757)
 - [ ] TC-0311 Eine Lektion mit mindestens einem falsch beantworteten Element spielen
       (Erklärungen in Einstellungen > Lernen aktiv). Im Bereich "Warum du
       diese verpasst hast" steht über jedem Antwort-Vergleich die Zeile
@@ -1162,7 +1163,7 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       aktualisiert), erscheint der Eintrag wie bisher ohne Frage-Zeile -
       kein Fehler, keine leere Zeile.
 
-### Ein Fehler-Bereich, zugeklappt (#2496)
+### TS-0046 Ein Fehler-Bereich, zugeklappt (#2496)
 - [ ] TC-0314 Eine Lektion mit mindestens einem Fehler spielen. Auf der
       Zusammenfassung erscheint der Bereich "Fehler ausbessern (N)"
       ZUGEKLAPPT: KEIN Textfeld hat den Fokus, es poppt KEINE Tastatur auf
@@ -1189,7 +1190,7 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       danach - erst die eigenen Fehler ausbessern, dann entscheiden wie es
       weitergeht. Bleibt über Settings weiterhin frei umsortierbar.
 
-### Korrekturrunde: Ergebnis bleibt stehen, dann Weiter (#3125)
+### TS-0047 Korrekturrunde: Ergebnis bleibt stehen, dann Weiter (#3125)
 - [ ] TC-0321 Lektion mit mindestens zwei Fehlern beenden, "Jetzt ausbessern"
       drücken, die erste Lücke RICHTIG füllen und prüfen: die Lücke wird
       grün, "Alles richtig!" erscheint, darunter der grüne Erfolgsbalken
@@ -1210,7 +1211,7 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
 - [ ] TC-0326 Überspringen bleibt jederzeit möglich; die Gegenüberstellung mit dem
       vorigen Durchgang (#983) ist unverändert
 
-### Neue Übungstypen (seit v2.2.0, visuell + funktional)
+### TS-0048 Neue Übungstypen (seit v2.2.0, visuell + funktional)
 - [ ] TC-0327 multiple_choice: Auswahl, Feedback, SRS-Attempt
 - [ ] TC-0328 matching Auflösen-Umschalter (#3140): nach einer nicht komplett
       richtigen Prüfung steht der Umschalter "Meine Antworten" / "Auflösen";
@@ -1389,7 +1390,7 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       optisch abgesetzt), sodass die gesamte Anordnung beim
       Weiterzeichnen sichtbar bleibt.
 
-### Set erneut durcharbeiten - zweiter Durchgang (#2125, EXP-051)
+### TS-0049 Set erneut durcharbeiten - zweiter Durchgang (#2125, EXP-051)
 
 Ort: Meine Inhalte (`/content?tab=my`), Drei-Punkte-Menü eines Sets im
 Status **Abgeschlossen**. Ein neuer Durchgang hebt den ersten für die
@@ -1414,7 +1415,7 @@ spätere Auswertung auf, statt ihn zu überschreiben oder zurückzusetzen.
       abgeschlossenen ersten) überstehen den Import. Eine ältere Sicherung
       ohne Durchgangsdaten importiert als impliziter Durchgang 1 (kein Crash)
 
-### Als Kopie bearbeiten - heruntergeladene Sets forken (#2654, EXP-046)
+### TS-0050 Als Kopie bearbeiten - heruntergeladene Sets forken (#2654, EXP-046)
 
 Ort: Meine Inhalte (`/content`), Drei-Punkte-Menü eines HERUNTERGELADENEN
 (fremden) Sets - nicht bei eigenen "Meine Lektionen"-Sets, die haben direkt
@@ -1438,7 +1439,7 @@ Ort: Meine Inhalte (`/content`), Drei-Punkte-Menü eines HERUNTERGELADENEN
 - [ ] TC-0366 Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
       (Dexie-Modus) - der Fork muss in BEIDEN Modi funktionieren
 
-### Abstammung beim Fork - "Eigene Bearbeitung"-Badge + "basiert auf"-Credit (#2655, EXP-046)
+### TS-0051 Abstammung beim Fork - "Eigene Bearbeitung"-Badge + "basiert auf"-Credit (#2655, EXP-046)
 
 Ort: Import-Tab (`/content?tab=import`), Abschnitt "Meine Lektionen" - jede
 geforkte Kopie (egal ob per "Als Kopie bearbeiten", "Lektion importieren"
@@ -1467,7 +1468,7 @@ oder "Als Kopie speichern" im Lektioneditor entstanden).
 - [ ] TC-0373 Beides prüfen: Desktop/Server (API-Modus) UND iOS-PWA/GitHub Pages
       (Dexie-Modus) - Badge + Credit-Zeile müssen in BEIDEN Modi erscheinen
 
-### Teilen-Assistent - Hinweis + Entfernen für mitgereiste Fremd-Credits (#2656, EXP-046)
+### TS-0052 Teilen-Assistent - Hinweis + Entfernen für mitgereiste Fremd-Credits (#2656, EXP-046)
 
 Ort: Teilen-Assistent (`ShareWizard`) Schritt 1, direkt unter dem
 bestehenden "Dein Name (optional)"-Block. Voraussetzung für einen
@@ -1499,7 +1500,7 @@ gesetzt ist, bevor der Assistent geöffnet wird.
       (Dexie-Modus) - Hinweis + Entfernen-Knopf müssen in BEIDEN Modi
       funktionieren
 
-### Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
+### TS-0053 Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
 
 Ort: Meine Inhalte (`/content?tab=my`) → "Lektion importieren"-Modal +
 per-Karte "Exportieren" / "Als Set exportieren"; akzeptiert `.json` (eine
@@ -1537,7 +1538,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
 - [ ] TC-0391 Create-Lesson "Als Datei speichern": Speichern-Schritt bietet
       Datei-Download der eben erstellten Lektion (kanonisches JSON)
 
-### Create-Lesson-Wizard (`/create-lesson`, v2.3.0)
+### TS-0054 Create-Lesson-Wizard (`/create-lesson`, v2.3.0)
 
 - [ ] TC-0392 **Schritt-1-Reihenfolge + Vorlagen-Aufklapper (#2755):** In Schritt 1
       steht das Pflichtfeld **Titel als erstes** (direkt unter der
@@ -2154,7 +2155,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       Hinweis, dass Vorschläge geraten sind und jede Zeile geprüft
       gehört.
 
-### Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
+### TS-0055 Karten-Bild-Upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
 Ort: Create-Lesson Schritt 2 (Karten-Editor), im Hinzufügen-Formular +
 jeder Karten-Zeile (`CardImageField`).
@@ -2172,7 +2173,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0447 Bekannte Grenze: hochgeladene data-URI-Bilder werden noch NICHT in
       einer gespielten picture_choice-Übung gerendert (Engine `src`-Kappe)
 
-### Lesson-Player UX (v2.3.0)
+### TS-0056 Lesson-Player UX (v2.3.0)
 - [ ] TC-0448 Pause-Button liegt jetzt im Sticky-Footer (#1644), Pausieren
       funktioniert von dort
 - [ ] TC-0449 Position vor der ersten Übung (#3075): Lektion öffnen, nur durch zwei
@@ -2210,7 +2211,7 @@ jeder Karten-Zeile (`CardImageField`).
       axe (`select-a11y.spec.ts`); dieser Punkt ist die Gegenprobe mit
       echtem Screenreader in der nächsten iOS-Session
 
-### Ungueltige Lektion: freundliche Fehlermeldung (#1808 / #1824)
+### TS-0057 Ungueltige Lektion: freundliche Fehlermeldung (#1808 / #1824)
 - [ ] TC-0457 Deutsche Umlaut-Karten (`währung`, `präsenz`) laden korrekt
       (App akzeptiert Unicode-Kleinbuchstaben in Karten-ids/-tags, #1808)
 - [ ] TC-0458 Eine tatsächlich kaputte Lektion zeigt AUSSERHALB des Entwickler-
@@ -2219,7 +2220,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0459 Mit Entwicklermodus AN (Settings): der technische Detail-Text
       erscheint wieder angehängt
 
-### Diagnose-Sonde: Settings-Schalter + Protokoll (#2782)
+### TS-0058 Diagnose-Sonde: Settings-Schalter + Protokoll (#2782)
 - [ ] TC-0460 Einstellungen > Diagnose & Support: Schalter "Tipp- und
       Viewport-Sonde" einschalten - die Mess-Leiste erscheint SOFORT
       oben (ohne Neuladen); ausschalten entfernt sie sofort
@@ -2236,7 +2237,7 @@ jeder Karten-Zeile (`CardImageField`).
       weiterhin den Protokoll-Zähler (Aufzeichnung läuft unsichtbar
       weiter, #2785)
 
-### KI-Prüfung: Vorschläge übernehmen (AIV-07, #3060)
+### TS-0059 KI-Prüfung: Vorschläge übernehmen (AIV-07, #3060)
 - [ ] TC-0465 Browser-Modus mit konfiguriertem KI-Schlüssel, eigene Lektion
       (Inhalte > Meine Inhalte) mit einem absichtlichen Fehler auf einer
       Karte (z. B. "casa" statt "la casa"); "Mit KI prüfen" ausführen:
@@ -2259,7 +2260,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0470 Heruntergeladenes Set (nicht eigenes): "Vorschläge übernehmen"
       ist deaktiviert mit dem Tooltip "Nur für eigene Lektionen."
 
-### Einstellungen > Plugins: Installierte Plugins (#3055)
+### TS-0060 Einstellungen > Plugins: Installierte Plugins (#3055)
 - [ ] TC-0471 Desktop-App (API-Modus), Einstellungen > Plugins: oben die Karte
       "Installierte Plugins" mit einer Zeile je geladenem Plugin,
       alphabetisch: Name, Version, Quelle ("Paket") und der
@@ -2274,7 +2275,7 @@ jeder Karten-Zeile (`CardImageField`).
       dem Hinweis "Nur mit der Desktop-App verfügbar."; DevTools >
       Netzwerk zeigt keinen Aufruf von /api/plugins/health
 
-### Diagnose-Sonde: Fehltipp-Markierung + Aktionen (#3043)
+### TS-0061 Diagnose-Sonde: Fehltipp-Markierung + Aktionen (#3043)
 - [ ] TC-0475 Sonde AN, Mess-Leiste sichtbar: die Leiste zeigt neben "Werte
       kopieren" und "Details" den Knopf "Daneben!"
 - [ ] TC-0476 Irgendwo tippen, dann "Daneben!" antippen, dann "Details": der
@@ -2291,7 +2292,7 @@ jeder Karten-Zeile (`CardImageField`).
       Einstellungen "Protokoll kopieren" liefert dieselben Felder plus
       die `click`-/`focus`-/`mark`-Einträge
 
-### Sticky-Knopf für die Mess-Leiste (#2799)
+### TS-0062 Sticky-Knopf für die Mess-Leiste (#2799)
 - [ ] TC-0479 Einstellungen > Diagnose & Support: "Sticky-Knopf für die
       Mess-Leiste" einschalten (Sonde muss AN sein) - ein runder
       schwebender Knopf erscheint SOFORT unten links
@@ -2309,7 +2310,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0484 Sonde AUS: der Knopf verschwindet mit (ohne Sonde gibt es
       keine Leiste zum Umschalten)
 
-### Menüposition mobil: untere Tab-Leiste als Option (#2786)
+### TS-0063 Menüposition mobil: untere Tab-Leiste als Option (#2786)
 - [ ] TC-0485 Einstellungen > Allgemein > Oberfläche: "Menüposition (mobil)"
       steht auf "Oben (Menü-Knopf)" (Standard) - KEINE untere Leiste
 - [ ] TC-0486 "Unten (Tab-Leiste)" wählen: die Leiste erscheint SOFORT unten
@@ -2321,7 +2322,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0489 Zurück auf "Oben": Leiste verschwindet sofort; Einstellung
       übersteht einen Reload
 
-### Kopfzeile am Telefon: Menü-Knopf und Logo bleiben bei vielen Abzeichen (#3123)
+### TS-0064 Kopfzeile am Telefon: Menü-Knopf und Logo bleiben bei vielen Abzeichen (#3123)
 - [ ] TC-0490 Telefon (375 und 430 px breit, z. B. iPhone 14 Pro Max) mit
       fälligen Wiederholungen, einer verfügbaren Set-Aktualisierung und
       XP: Dashboard öffnen. Der Menü-Knopf oben links hat seine volle
@@ -2335,7 +2336,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0493 Tablet und Desktop: Kopfzeile unverändert einzeilig, Abzeichen mit
       vollem Text
 
-### Schrittwechsel am Telefon: Anker oben, Fusszeile unten (#3126)
+### TS-0065 Schrittwechsel am Telefon: Anker oben, Fusszeile unten (#3126)
 - [ ] TC-0494 iPhone (Safari oder PWA): eine Lektion mit einem langen
       Theorie-Schritt öffnen, bis ganz nach unten scrollen, dann "Weiter"
       auf einen kurzen Schritt (z. B. eine Zuordnungsübung)
@@ -2349,7 +2350,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0498 Gerät während eines Schritts drehen (#1422): der Schritt wird
       weiterhin neu verankert
 
-### Einstellungen > Daten: Aufräum-Karten (#2955)
+### TS-0066 Einstellungen > Daten: Aufräum-Karten (#2955)
 - [ ] TC-0499 Einstellungen > Daten: die Karte "Maximale Lektionsgröße" steht
       direkt unter "Offline-Cache"; die Karte "Pausierte Lektionen
       aufbewahren" steht direkt über "Nicht verbundene Inhalte" (gibt es
@@ -2362,7 +2363,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0502 Beides im Browser-Modus wiederholen (Einstellungen > Daten >
       Speichermodus): gleiches Verhalten
 
-### Position + Navigation im Set (#2793)
+### TS-0067 Position + Navigation im Set (#2793)
 - [ ] TC-0503 In einer Lektion aus einem Set steht oben "Lektion N von M" mit
       der richtigen Nummer
 - [ ] TC-0504 Der Pfeil nach links öffnet die VORIGE Lektion des Sets; der
@@ -2373,7 +2374,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0507 Bei einer Einzel-Lektion ohne Set (z. B. eigene Lektion) fehlt
       die Positionszeile vollständig
 
-### Erstanzeige: keine Sprachmischung (#2796)
+### TS-0068 Erstanzeige: keine Sprachmischung (#2796)
 - [ ] TC-0508 App bei deutscher Oberfläche neu laden (Cache leeren): Startseite,
       Navigation, Installations-Hinweis, Update-Banner und Offline-Meldung
       sind sofort deutsch - kein englischer Text, kein roher Schlüssel
@@ -2383,7 +2384,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0510 Update-Banner: "Was ist neu?", "Release-Seite", "Später" sind
       lesbar beschriftet (nicht leer, ausreichender Kontrast)
 
-### Auswertung am Set-Ende (#2792)
+### TS-0069 Auswertung am Set-Ende (#2792)
 - [ ] TC-0511 Letzte Lektion eines Sets abschließen: auf der Abschluss-Karte
       steht "Auswertung ansehen" als erste Aktion, "Set ansehen"
       daneben
@@ -2406,7 +2407,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0516 Beides im Browser-Modus (ohne Server) prüfen - die Zahlen
       kommen dort aus der lokalen Datenbank
 
-### Lernpfad-Set: "Alles wiederholen" setzt die Ergebnisse zurück (#3171)
+### TS-0070 Lernpfad-Set: "Alles wiederholen" setzt die Ergebnisse zurück (#3171)
 - [ ] TC-0517 Lernpfad öffnen, ein Set mit Ergebnissen aufklappen: in der
       Aktionsleiste steht "Alles wiederholen" (`set-reset-results-<id>`)
       neben "Fehler trainieren"; ein nie begonnenes Set zeigt den Knopf
@@ -2431,7 +2432,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0523 Beides prüfen: Desktop-App (API-Modus) und Browser-Modus ohne Server
       (Dexie) - der Reset schreibt in beide Speicher
 
-### Set-Seite: Lektionsliste + Fortschritt (#2793 Stufen 2-3)
+### TS-0071 Set-Seite: Lektionsliste + Fortschritt (#2793 Stufen 2-3)
 - [ ] TC-0524 Eine Set-Seite öffnen (/content/set/<id> oder über einen
       geteilten Link): unter den Set-Angaben steht die Liste ALLER
       Lektionen mit Nummer
@@ -2451,7 +2452,7 @@ jeder Karten-Zeile (`CardImageField`).
       erste UNFERTIGE Lektion, nicht wieder Lektion 1 (#2935)
 - [ ] TC-0531 Jede Lektion eines Sets abschließen, dann erneut "Lernen starten"
       drücken: es öffnet Lektion 1 (nichts mehr zum Fortsetzen)
-### Zusammenfassung: Alle Antworten mit Frage (#2807)
+### TS-0072 Zusammenfassung: Alle Antworten mit Frage (#2807)
 - [ ] TC-0532 Lektion beenden, "Alle Antworten ansehen" öffnen (Abschnitt
       "Antworten-Übersicht" in den Einstellungen eingeschaltet oder
       "Ausführliche Auswertung" gedrückt, #3124): jede Zeile mit etwas zu
@@ -2465,7 +2466,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0536 Eine vollständig richtige Zeile zeigt ihre Frage, aber keinen
       Fehler-Vergleich
 
-### Zusammenfassung: Ausführliche Auswertung auf Knopfdruck (#3031)
+### TS-0073 Zusammenfassung: Ausführliche Auswertung auf Knopfdruck (#3031)
 - [ ] TC-0537 Lektion beenden: direkt unter der Überschrift steht der Knopf
       "Ausführliche Auswertung"
 - [ ] TC-0538 In Einstellungen > Lernen > "Zusammenfassung nach Lektionen" einen
@@ -2486,7 +2487,7 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0544 Beim Umschalten bleibt der Knopf an seiner Stelle, die Seite
       springt nicht weg
 
-### Zusammenfassung: ausführliche Auswertung wie am Set-Ende (#3124)
+### TS-0074 Zusammenfassung: ausführliche Auswertung wie am Set-Ende (#3124)
 - [ ] TC-0545 Lektion mit mindestens zwei Fehlern beenden, "Ausführliche
       Auswertung" drücken: direkt unter dem Knopf steht "Auswertung:
       <Lektionstitel>" mit "Alle Fehler dieser Lektion auf einen Blick"
@@ -2509,7 +2510,7 @@ jeder Karten-Zeile (`CardImageField`).
       #3031-Punkte (Abschnitte, Antworten, Erklärungen) gelten weiterhin
 - [ ] TC-0552 Tooltip des Knopfs nennt Kennzahlen, Aufgabentypen und Schwachstellen
 
-### Zusammenfassung: kompakte Voreinstellung, ein Bildschirm (#3124)
+### TS-0075 Zusammenfassung: kompakte Voreinstellung, ein Bildschirm (#3124)
 - [ ] TC-0553 Frische Installation (oder in Einstellungen > Lernen >
       "Zusammenfassung nach Lektionen" nur "Ergebnis und Statistik" und
       "XP-Belohnung" angehakt): Lektion beenden - die Zusammenfassung zeigt
@@ -2543,7 +2544,7 @@ Antworten, "Warum du diese verpasst hast", Fehler ausbessern oder die
 Nächste-Schritte-Karten nutzen: den Abschnitt vorher in den Einstellungen
 einschalten oder "Ausführliche Auswertung" drücken (#3124).
 
-### Lektion verlassen führt zum Set (#2811)
+### TS-0076 Lektion verlassen führt zum Set (#2811)
 - [ ] TC-0559 In einer Set-Lektion pausieren und verlassen: die App landet auf
       der SET-Seite mit der Lektionsliste, nicht auf "Meine Inhalte"
 - [ ] TC-0560 Nach der Zusammenfassung "Verlassen": ebenfalls die Set-Seite -
@@ -2551,7 +2552,7 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
 - [ ] TC-0561 Eine Lektion ohne Set (eigene Lektion, Einzelimport) landet
       weiterhin auf "Meine Inhalte"
 
-### Ergebnis als Bild teilen (#2813)
+### TS-0077 Ergebnis als Bild teilen (#2813)
 - [ ] TC-0562 Nach einer Lektion neben "Teilen" den Knopf "Nur Bild teilen"
       drücken: die Teilen-Auswahl öffnet sich MIT der Ergebniskarte und
       OHNE Text/Link
@@ -2564,7 +2565,7 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
 - [ ] TC-0566 Teilen-Auswahl abbrechen: keine Datei landet still im
       Download-Ordner
 
-### Neuer Tab "Diagnose & Support" vereint Fehlerbericht + Sonde (#2789)
+### TS-0078 Neuer Tab "Diagnose & Support" vereint Fehlerbericht + Sonde (#2789)
 - [ ] TC-0567 Einstellungen > Info: zwischen "Hilfe" und "Über" steht jetzt
       "Diagnose & Support"
 - [ ] TC-0568 Dort zuerst der Support-Abschnitt mit "Fehlerbericht erstellen"
@@ -2577,7 +2578,7 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       Entwicklermodus-Schalter und keine Diagnose-Sektion mehr
 - [ ] TC-0571 Direkter Link `?tab=diagnostics` öffnet den Tab unmittelbar
 
-### Discover + Registry (seit v2.2.0)
+### TS-0079 Discover + Registry (seit v2.2.0)
 - [ ] TC-0572 Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert
       über Reload (#1699/#1701)
@@ -2600,7 +2601,7 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       der Erfolgs-Screen die Umbenennung mit NN-Präfixen; das exportierte
       Repo listet die Lektionen in Quellreihenfolge
 
-### Discover Stufe 1: Facetten, Marken, Leerzustand (EXP-048, #2320-#2324)
+### TS-0080 Discover Stufe 1: Facetten, Marken, Leerzustand (EXP-048, #2320-#2324)
 
 Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi prüfen
 (API + Dexie); die Facetten lesen den Suchindex und sind modusunabhängig.
@@ -2632,7 +2633,7 @@ Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi prüfen
       der Liste (Portal/Fixed, #1349), die Markenzeile scrollt waagerecht, und
       die Leerzustand-Auswege sind tippbar (>=44px Touch-Ziel)
 
-### Discover Stufe 2: Einstiege, Quellen-Facette, Sprachnamen-Suche (EXP-048, #2329-#2331)
+### TS-0081 Discover Stufe 2: Einstiege, Quellen-Facette, Sprachnamen-Suche (EXP-048, #2329-#2331)
 
 Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi prüfen
 (API + Dexie); die Facetten lesen den Suchindex und sind modusunabhängig.
@@ -2661,7 +2662,7 @@ Ort: Entdecken (`/content?tab=discover`). In BEIDEN Speichermodi prüfen
       Liste (Portal/Fixed, #1349), die Vorbelegung bleibt nach dem Beenden der
       PWA gemerkt, und die Suche nach Sprachnamen funktioniert
 
-### Discover Stufe 3: schubweises Rendern (EXP-048, #2333)
+### TS-0082 Discover Stufe 3: schubweises Rendern (EXP-048, #2333)
 
 Ort: Entdecken (`/content?tab=discover`). Um über 24 Treffer zu kommen, den
 Einstieg auf "Alles" und die Quellsprache auf "Alle Sprachen" stellen. In
@@ -2678,7 +2679,7 @@ BEIDEN Speichermodi prüfbar; die Logik ist modusunabhängig.
       "Weitere anzeigen" ist tippbar (>=44px), und der Zurück-Weg (Geste /
       Navigation) bleibt nach dem Nachladen erhalten
 
-### Discover Stufe 3: Tippfehler-Toleranz + Rangfolge in der Suche (EXP-048, #2336)
+### TS-0083 Discover Stufe 3: Tippfehler-Toleranz + Rangfolge in der Suche (EXP-048, #2336)
 
 Ort: Entdecken (`/content?tab=discover`), Suchfeld. Schwelle bewusst
 überschritten: das Merkmal war laut Exploration erst ab etwa 200 Sets
@@ -2699,7 +2700,7 @@ modusunabhängig.
 - [ ] TC-0606 **iOS-Standalone (zum Home-Bildschirm hinzugefügt, Dexie-Modus):** die
       Tippfehler-Suche funktioniert ohne Netz genauso wie im Server-Modus
 
-### Discover Stufe 3: Sprachpaar-Auswahl (alternativer Einstieg, aufklappbar) (EXP-048, #2337, #2359)
+### TS-0084 Discover Stufe 3: Sprachpaar-Auswahl (alternativer Einstieg, aufklappbar) (EXP-048, #2337, #2359)
 
 Ort: Entdecken (`/content?tab=discover`), Bereich "Sprachpaare" über der
 Trefferliste. Schwelle bewusst überschritten: laut Exploration erst ab etwa 30
@@ -2741,7 +2742,7 @@ Speichermodi prüfbar; die Logik ist modusunabhängig.
       Zuklappen funktioniert, und die Auswahl wirkt ohne Netz genauso wie im
       Server-Modus (#2359)
 
-### Set-Status bleibt erhalten (aktiv/zurückgestellt/abgeschlossen, beide Modi)
+### TS-0085 Set-Status bleibt erhalten (aktiv/zurückgestellt/abgeschlossen, beide Modi)
 
 Ort: Meine Inhalte (`/content?tab=my`) → Set-Aktionen-Menü (Drei-Punkte)
 eines heruntergeladenen Sets. In BEIDEN Speichermodi prüfen (Desktop/
@@ -2759,7 +2760,7 @@ im API-Modus auftrat.
       neu öffnen → zurückgestellter Status ist noch da
 - [ ] TC-0621 iPhone-PWA: gleicher Ablauf (dort ursprünglich beobachtet)
 
-### Weitermachen-Vorschlag: Rangfolge und sichtbarer Set-Abschluss (#2123, #3020)
+### TS-0086 Weitermachen-Vorschlag: Rangfolge und sichtbarer Set-Abschluss (#2123, #3020)
 
 Ort: Dashboard → Übersicht, oberster Block "Weitermachen" / "Continue
 Learning". In BEIDEN Speichermodi prüfen (API + Dexie), die Logik ist
@@ -2789,7 +2790,7 @@ modus-unabhängig.
 - [ ] TC-0630 Reihenfolge: faellige Wiederholungen zuerst, dann angefangene Sets, zuletzt
       das abgeschlossene Set (innerhalb jeder Stufe zuletzt-bearbeitet zuerst)
 
-### Weitermachen: jede Zeile per X ausblendbar (#3023)
+### TS-0087 Weitermachen: jede Zeile per X ausblendbar (#3023)
 
 Ort: Dashboard → Übersicht, Block "Weitermachen". In BEIDEN Speichermodi
 prüfen (API + Dexie), die Ablage ist modus-unabhängig (localStorage +
@@ -2812,7 +2813,7 @@ Dexie-userData-Spiegel).
 - [ ] TC-0638 Telefon: das X ist ohne Zielverfehlung antippbar und löst NICHT den
       Zeilen-Link aus (44 px Trefferfläche)
 
-### Weitermachen: Schrittzähler nennt den Wiedereinstieg (#3076)
+### TS-0088 Weitermachen: Schrittzähler nennt den Wiedereinstieg (#3076)
 
 Ort: Dashboard → Übersicht, Block "Weitermachen", Zeile "Fortsetzen". Vorher
 zählte "Aufgabe 1/8" die bewerteten Übungen; die Wiederaufnahme landete auf
@@ -2826,7 +2827,7 @@ einem anderen Schritt.
 - [ ] TC-0642 Bis zur Zusammenfassung spielen, ohne "Als abgeschlossen markieren",
       über das Logo weggehen → die Zeile zeigt "Schritt 8/8", nie "9/8"
 
-### Update-Schutz: kein stiller Fortschrittsverlust beim Set-Update (#2128)
+### TS-0089 Update-Schutz: kein stiller Fortschrittsverlust beim Set-Update (#2128)
 
 Ort: Meine Inhalte, ein bereits GELERNTES Set (Fortschritt + Wiederholungskarten
 vorhanden), für das ein Update verfügbar ist. In BEIDEN Speichermodi prüfen.
@@ -2888,7 +2889,7 @@ einem echten Alt-gegen-neu-Vergleich, nicht an einem pauschalen Abschalten.
       zuordenbare Korrektur behandelt, nicht als "nicht zuordenbar" gemeldet.
       Fortschritt bleibt bei bestätigter Übernahme erhalten.
 
-### Ausmusterung: archivierter Fortschritt bei retired_ids (#2188)
+### TS-0090 Ausmusterung: archivierter Fortschritt bei retired_ids (#2188)
 
 Ort: Inhalte-Seite, Set mit Lernfortschritt, dessen Update im Set-Manifest
 `retired_ids` deklariert (Autor hat Übungen bewusst ausgemustert). In BEIDEN
@@ -2910,7 +2911,7 @@ Nutzer erfährt es einmal, mit Zahl.
 - [ ] TC-0665 Sprache prüfen: der Hinweis erscheint in der App-Sprache (de/ja/ko
       stichprobenartig).
 
-### Wiederherstellung: Wiederholungsfortschritt nach ja/ko/zh-Korrektur (#2161)
+### TS-0091 Wiederherstellung: Wiederholungsfortschritt nach ja/ko/zh-Korrektur (#2161)
 
 Ort: Dashboard (Übersicht). Hintergrund: die drei A1-Sets Japanisch, Koreanisch
 und Chinesisch wurden im Juli 2026 mit einer Umschrift-Korrektur neu
@@ -2950,7 +2951,7 @@ Sets bleiben unberührt.
 - [ ] TC-0677 Sprache prüfen: Hinweis- und Ergebnistexte erscheinen in der App-Sprache
       (nicht englisch), stichprobenartig in mehreren Sprachen (de/ja/ko/el/hi).
 
-#### Zustand herstellen (Voraussetzung für den Test)
+#### TS-0092 Zustand herstellen (Voraussetzung für den Test)
 
 Der Hinweis erscheint nur, wenn betroffene Wiederholungskarten in den eigenen
 Daten liegen. Der Herstell-Weg braucht Zugriff auf die Speicherinhalte
@@ -3009,7 +3010,7 @@ Herstellung ist dort ohne Mac-Web-Inspector nicht möglich). Das ist ein
 zulässiges Ergebnis, aber ausdrücklich als offen zu vermerken, nicht
 stillschweigend mit dem Desktop-Ergebnis gleichzusetzen.
 
-### Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
+### TS-0093 Download-Sichtbarkeit (Dexie-Modus, #1709 / #1719 / #1731)
 - [ ] TC-0686 Gelöschtes Set bleibt gelöscht: Set in Meine Inhalte löschen →
       Aktualisieren → Set kommt NICHT zurück (#1719)
 - [ ] TC-0687 Set aus einer nicht mehr konfigurierten Quelle bleibt in Meine
@@ -3017,7 +3018,7 @@ stillschweigend mit dem Desktop-Ergebnis gleichzusetzen.
 - [ ] TC-0688 Buch-Empfehlungen kommen aus der foederierten Registry, nicht aus
       der entfernten offiziellen `books.yaml` (#1717)
 
-### Einzelne Lektion löschen (#2064)
+### TS-0094 Einzelne Lektion löschen (#2064)
 
 Ort: Meine Inhalte (`/content?tab=my`) → Meine Lektionen → ein Set mit
 MEHREREN Lektionen (z. B. nach einem Buch-Import) → "Lektionen verwalten".
@@ -3048,7 +3049,7 @@ MEHREREN Lektionen (z. B. nach einem Buch-Import) → "Lektionen verwalten".
       Lektion löschen → Backup importieren → die Lektion ist wieder da
       (korrekt: ein Backup ist eine Momentaufnahme, KEIN Bug)
 
-### Mehrere Lektionen auf einmal löschen (#2065)
+### TS-0095 Mehrere Lektionen auf einmal löschen (#2065)
 
 Ort: Meine Inhalte (`/content?tab=my`) → Meine Lektionen → ein Set mit
 MEHREREN Lektionen → "Lektionen verwalten".
@@ -3086,7 +3087,7 @@ MEHREREN Lektionen → "Lektionen verwalten".
       dem Finger bedienbar; die Aktionsleiste bricht auf schmalem Display
       sauber um (kein Ueberlauf)
 
-### Content-Repo trennen vs. Fortschritt löschen (#1651 / #1652)
+### TS-0096 Content-Repo trennen vs. Fortschritt löschen (#1651 / #1652)
 
 Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
 
@@ -3100,7 +3101,7 @@ Ort: Settings → Daten → Content-Repo-Liste → "Entfernen".
 - [ ] TC-0718 Häkchen erscheint nur wenn es Fortschritt zu löschen gibt
       (Dexie-Modus)
 
-### Empfohlene Repositories: Buttons pro Zeile (#2558)
+### TS-0097 Empfohlene Repositories: Buttons pro Zeile (#2558)
 
 Ort: Settings → Daten → Empfohlene Repositories.
 
@@ -3116,7 +3117,7 @@ Ort: Settings → Daten → Empfohlene Repositories.
       "Meine Content-Repositories"), Button-Zustand der übrigen Zeilen
       unverändert
 
-### Social Sharing (visuell + nativ)
+### TS-0098 Social Sharing (visuell + nativ)
 - [ ] TC-0723 Share-Button nach Lektion sichtbar
 - [ ] TC-0724 Mobile: native Share-Sheet (WhatsApp/Telegram)
 - [ ] TC-0725 Desktop: kopiert in Zwischenablage + Toast
@@ -3124,7 +3125,7 @@ Ort: Settings → Daten → Empfohlene Repositories.
 
 ---
 
-## PRIO 5: AI FEATURES (braucht echten API-Key)
+## TS-0099 PRIO 5: AI FEATURES (braucht echten API-Key)
 
 - [ ] TC-0727 Provider-Tabelle: Key eingeben → "Testen" → "Verbindung ok"
 - [ ] TC-0728 "Übungen generieren" bei theory-only: AI liefert Ergebnis
@@ -3139,7 +3140,7 @@ Ort: Settings → Daten → Empfohlene Repositories.
 - [ ] TC-0733 AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] TC-0734 Kein Button ohne Key führt zu Error-Toast (disabled + Tooltip)
 
-### Stapel-Generierung "Übungen für alle Lektionen" (#1896)
+### TS-0100 Stapel-Generierung "Übungen für alle Lektionen" (#1896)
 - [ ] TC-0735 Meine Inhalte → Meine Lektionen, Set in dem ALLE Lektionen bereits
       Übungen haben: Button "Übungen für alle Lektionen generieren" ist
       SOFORT deaktiviert, Tooltip "Alle Lektionen haben bereits Übungen."
@@ -3149,7 +3150,7 @@ Ort: Settings → Daten → Empfohlene Repositories.
 - [ ] TC-0737 Nach erfolgreichem Durchlauf (alle Lektionen fertig): Button wird
       ohne Reload deaktiviert
 
-### "KI fragen"-Button in Lektionen (#2693)
+### TS-0101 "KI fragen"-Button in Lektionen (#2693)
 - [ ] TC-0738 Standardmäßig sichtbar: unter jedem Theorie-Block und jeder Übung
       erscheint der "KI fragen"-Button, auch ohne AI-Key (dann ausgegraut
       mit BYOK-Hinweis-Popover statt versteckt)
@@ -3159,7 +3160,7 @@ Ort: Settings → Daten → Empfohlene Repositories.
 - [ ] TC-0740 Toggle wieder einschalten: Button erscheint sofort wieder
 - [ ] TC-0741 Der Toggle-Zustand bleibt nach einem Reload erhalten (localStorage)
 
-### KI-Schlüssel-Tresor Import (#1765 / #1769)
+### TS-0102 KI-Schlüssel-Tresor Import (#1765 / #1769)
 - [ ] TC-0742 Settings → KI → "Konfigurierte Provider" → "Importieren" springt zu
       Settings → Daten und scrollt den KeyVault-Import-Block sichtbar (#1765)
 - [ ] TC-0743 Import per "Datei wählen" ODER Einfügen des rohen Envelope-JSON in
@@ -3170,7 +3171,7 @@ Ort: Settings → Daten → Empfohlene Repositories.
       Settings → KI zeigt den Key SOFORT, ohne Reload (#1769)
 - [ ] TC-0746 Passphrase maskiert mit Reveal-Toggle; Key/Passphrase nie geloggt
 
-### Cross-App-Tresor-Import (Topos → Adaptive Learner) (#2512)
+### TS-0103 Cross-App-Tresor-Import (Topos → Adaptive Learner) (#2512)
 - [ ] TC-0747 Eine in Topos exportierte .alk-Datei (Format "topos-ai-keys")
       importiert ohne "Fremd-Datei"-Ablehnung; die Passphrase der DATEI
       wird abgefragt
@@ -3180,7 +3181,7 @@ Ort: Settings → Daten → Empfohlene Repositories.
 - [ ] TC-0750 AL-Export unverändert: exportierte Datei trägt weiter das Format
       "adaptive-learner-keys"
 
-### Perplexity-Provider (OpenAI-kompatibel, nur Server-Modus) (#2512)
+### TS-0104 Perplexity-Provider (OpenAI-kompatibel, nur Server-Modus) (#2512)
 - [ ] TC-0751 Settings → KI: "Perplexity" erscheint in der Provider-Auswahl
       (nach Gemini)
 - [ ] TC-0752 Server-Modus (make dev): pplx--Key speichern, Modell-Picker zeigt
@@ -3192,7 +3193,7 @@ Ort: Settings → Daten → Empfohlene Repositories.
 
 ---
 
-## PRIO 6: THEMES (subjektive Aesthetik)
+## TS-0105 PRIO 6: THEMES (subjektive Aesthetik)
 
 Für JEDES Theme einmal durchklicken:
 - [ ] TC-0755 Light: lesbar, Kontraste
@@ -3207,7 +3208,7 @@ Für JEDES Theme einmal durchklicken:
 
 ## PRIO 7: GERAETE-SPEZIFISCH (nicht scriptbar)
 
-### iPhone Safari
+### TS-0106 iPhone Safari
 - [ ] TC-0762 "Zum Home-Bildschirm" → App-Icon korrekt
 - [ ] TC-0763 PWA startet im Dexie-Modus
 - [ ] TC-0764 Safe-Area Insets respektiert
@@ -3222,7 +3223,7 @@ Für JEDES Theme einmal durchklicken:
       Fehltipp mit "Daneben!" markieren, "Werte kopieren" und das
       Protokoll ans wiedereröffnete Issue #1569.
 
-#### Theorie-Vorlesen auf iOS: langer Text (#1928) - PFLICHT
+#### TS-0107 Theorie-Vorlesen auf iOS: langer Text (#1928) - PFLICHT
 
 iOS Safari bricht eine ungestueckelte Sprachausgabe nach ~15 Sekunden ab.
 Seit #1928 wird ein Theorie-Block in Stücke zerlegt und als Warteschlange
@@ -3240,7 +3241,7 @@ Stueckgrenze, ein mittlerer Lauf hat 1551 Zeichen.
 - [ ] TC-0771 Bekanntes Plattform-Limit, KEIN Fehler: Pause/Fortsetzen wirkt auf
       iOS Safari nicht (dort stoppt + startet die App neu)
 
-#### Vorlesen läuft weiter, wenn der Bildschirm automatisch ausgeht (#2666) - PFLICHT
+#### TS-0108 Vorlesen läuft weiter, wenn der Bildschirm automatisch ausgeht (#2666) - PFLICHT
 
 Der Screen Wake Lock hält den Bildschirm während des Vorlesens wach, damit
 der Inaktivitäts-Timer des Geräts die Sprachausgabe nicht unterbricht
@@ -3259,7 +3260,7 @@ Bildschirm automatisch ausgeht).
       Sperr-/Power-Buttons schaltet den Bildschirm trotzdem sofort aus und
       stoppt die Wiedergabe - das kann keine Web-API verhindern
 
-#### App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
+#### TS-0109 App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
 
 Der einzige Pfad, den kein Test abdeckt: auf iOS/WKWebView aktiviert
 ein neuer Service Worker sich oft NICHT durch skipWaiting + Reload,
@@ -3279,7 +3280,7 @@ sondern erst nach vollstaendigem Schliessen und Neuoeffnen der App.
 - [ ] TC-0783 Auf einem NICHT-iOS-Gerät (Android/Desktop) denselben Ablauf:
       der Neustart-Hinweis darf dort NICHT erscheinen
 
-#### "Was ist neu"-Hinweisfenster bleibt schließbar (#2266)
+#### TS-0110 "Was ist neu"-Hinweisfenster bleibt schließbar (#2266)
 
 Das "Was ist neu"-Fenster des Update-Banners im Desktop-/API-Modus
 (`DesktopUpdateHost`) darf die Nutzerin nie einsperren, egal wie hoch die
@@ -3306,17 +3307,17 @@ Hochformat-Situation ausdrücklich prüfen.
       Fenster, Tab bleibt darin, und der Fokus kehrt beim Schließen zum
       "Was ist neu?"-Knopf zurück (keine Axe-Regression)
 
-### Android Chrome
+### TS-0111 Android Chrome
 - [ ] TC-0790 "App installieren" → Maskable Icon nicht abgeschnitten
 - [ ] TC-0791 PWA funktioniert, Dexie-Modus
 
-### Desktop PWA
+### TS-0112 Desktop PWA
 - [ ] TC-0792 Install-Prompt → App startet standalone
 - [ ] TC-0793 Dexie-Modus (NICHT API-Modus, keine 404)
 
 ---
 
-## PRIO 8: SERVER-MODUS (via Launcher)
+## TS-0113 PRIO 8: SERVER-MODUS (via Launcher)
 
 - [ ] TC-0794 Set herunterladen → in "Meine Inhalte" sichtbar (kein Cache-Problem)
 - [ ] TC-0795 Backup-Import: kein HTTP 413
@@ -3325,7 +3326,7 @@ Hochformat-Situation ausdrücklich prüfen.
 
 ---
 
-## PRIO 9: LANDESEITE (statisch, #2409)
+## TS-0114 PRIO 9: LANDESEITE (statisch, #2409)
 
 Die Landeseite unter `/start/` (DE) und `/start/en/` (EN) ist echtes
 statisches HTML im Pages-Artefakt - kein React, kein Nachladen. Sie trägt
@@ -3344,7 +3345,7 @@ bewusst keine Zahlen, die veralten könnten.
 - [ ] TC-0803 Dunkles System-Theme: Seite folgt (prefers-color-scheme), Text lesbar.
 - [ ] TC-0804 Mobil (schmales Fenster): einspaltig, kein horizontales Scrollen.
 
-### Rechtstexte in der App erreichbar (#3113)
+### TS-0115 Rechtstexte in der App erreichbar (#3113)
 
 Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 (`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; andere Sprachen unter
@@ -3367,7 +3368,7 @@ Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 
 ---
 
-## PRIO 10: Selektiver Datenexport - Sprachaufnahmen-Kategorie (#2840)
+## TS-0116 PRIO 10: Selektiver Datenexport - Sprachaufnahmen-Kategorie (#2840)
 
 Ort: Einstellungen > Daten > "Ausgewählte Daten exportieren".
 
@@ -3379,7 +3380,7 @@ Ort: Einstellungen > Daten > "Ausgewählte Daten exportieren".
 - [ ] TC-0811 Anhaken + Export: die Datei enthält die `speech_recordings`-Zeilen
       des Nutzers
 
-## PRIO 11: Preset-Avatar-Galerie (#2848)
+## TS-0117 PRIO 11: Preset-Avatar-Galerie (#2848)
 
 Ort: Einstellungen > Allgemein > Profil, unter dem Foto-Upload.
 
@@ -3399,7 +3400,7 @@ Ort: Einstellungen > Allgemein > Profil, unter dem Foto-Upload.
       Import → die Figur ist wieder gesetzt
 - [ ] TC-0818 Beide Speicher-Modi (Server + Browser) verhalten sich identisch
 
-#### Foto-Zwischenspeicher beim Figuren-Wechsel (#2862)
+#### TS-0118 Foto-Zwischenspeicher beim Figuren-Wechsel (#2862)
 
 - [ ] TC-0819 Foto hochladen und zuschneiden, dann eine Figur antippen: ein
       Bestätigungsdialog erscheint ("Foto ersetzen?"); Abbrechen lässt
@@ -3416,7 +3417,7 @@ Ort: Einstellungen > Allgemein > Profil, unter dem Foto-Upload.
       Import; "Foto wiederherstellen" funktioniert weiterhin (beide
       Speicher-Modi)
 
-#### Avatar-Rahmen (#2850)
+#### TS-0119 Avatar-Rahmen (#2850)
 
 Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
 
@@ -3439,7 +3440,7 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       Daten löschen, Import → Auswahl und Kauf sind wieder da
 - [ ] TC-0832 Beide Speicher-Modi verhalten sich identisch (XP-Abzug inklusive)
 
-### Wiederholung: nur Fehler, keine Endlosrunde (#3170)
+### TS-0120 Wiederholung: nur Fehler, keine Endlosrunde (#3170)
 
 - [ ] TC-0833 Eine Lektion OHNE Fehler durchspielen: der Lernpfad zeigt für das Set
       und die Lektion KEIN "Fehler trainieren (N)", der Kopfzeilen-Badge
@@ -3473,7 +3474,7 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       "fällig"); bei EIN gilt wieder die Drei-in-Folge-Regel
 - [ ] TC-0840 Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
 
-### Wiederholungssitzung auf der Runner-Hülle (EXP-052 Scheibe 1, #3169)
+### TS-0121 Wiederholungssitzung auf der Runner-Hülle (EXP-052 Scheibe 1, #3169)
 
 - [ ] TC-0841 `/review/<set>` mit fälligen Elementen öffnen: Kopf mit
       "Zurück zum Dashboard", Titel "Wiederholungssitzung" und dem
@@ -3510,7 +3511,7 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       Inhaltsbrowser öffnen)
 - [ ] TC-0850 Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
 
-### Zufallsmodus auf der Runner-Hülle (EXP-052 Scheibe 2, #3169)
+### TS-0122 Zufallsmodus auf der Runner-Hülle (EXP-052 Scheibe 2, #3169)
 
 - [ ] TC-0851 `/shuffle-lesson/<set>` für ein heruntergeladenes Set mit mindestens
       zwei Lektionen öffnen: Kopf mit "Zurück zum Dashboard", Titel und
@@ -3550,7 +3551,7 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       Fehler zeigen die gewohnten Bildschirme
 - [ ] TC-0861 Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
 
-### Endlosmodus auf der Runner-Hülle (EXP-052 Scheibe 2, #3169)
+### TS-0123 Endlosmodus auf der Runner-Hülle (EXP-052 Scheibe 2, #3169)
 
 - [ ] TC-0862 `/endless-lesson/<set>` für ein heruntergeladenes Set öffnen: Kopf
       mit "Zurück zum Dashboard" und Titel "Endlos-Übung"; darunter die
@@ -3586,7 +3587,7 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       zeigen die gewohnten Bildschirme
 - [ ] TC-0872 Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
 
-### Adaptive Lektion auf der Runner-Hülle (EXP-052 Scheibe 3, #3169)
+### TS-0124 Adaptive Lektion auf der Runner-Hülle (EXP-052 Scheibe 3, #3169)
 
 - [ ] TC-0873 `/adaptive-lesson/<set>` für ein Set mit aktiven Fehlern öffnen: Kopf
       mit "Zurück zum Dashboard" und dem Titel der Lektion; direkt unter dem
@@ -3634,7 +3635,7 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       "Inhalts-Browser öffnen" statt "Zurück zum Dashboard")
 - [ ] TC-0883 Beides im Browser-Modus (ohne Server) UND im Server-Modus prüfen
 
-### Fehler wiederholen auf der Runner-Hülle (EXP-052 Scheibe 3, #3169)
+### TS-0125 Fehler wiederholen auf der Runner-Hülle (EXP-052 Scheibe 3, #3169)
 
 - [ ] TC-0884 Eine Lektion mit mindestens zwei Fehlern beenden, in der
       Zusammenfassung "Fehler wiederholen" öffnen: Kopf mit "Zurück zur

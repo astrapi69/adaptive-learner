@@ -1,26 +1,34 @@
 #!/usr/bin/env python3
-"""Permanent checkpoint IDs for the manual test plans (#3274).
+"""Permanent case and suite IDs for the manual test plans (#3274, #3279).
 
-Every ``- [ ]`` checkbox in a manual test plan carries an ID directly after
-the box, e.g. ``- [ ] TC-0042 Matching: pairs have the SAME height``. The ID
-names one test case for good: issues, PR comments and device protocols cite
-it, so it must never move to a different case.
+Every ``- [ ]`` checkbox in a manual test plan carries a case ID directly
+after the box, e.g. ``- [ ] TC-0042 Matching: pairs have the SAME height``.
+Every heading that directly holds at least one checkbox is a suite and
+carries a suite ID directly after the hashes, e.g.
+``#### TS-0004 A1. BACKUP-AKZEPTANZTEST``. Pure grouping headings without
+their own checkboxes carry none. An ID names one case or suite for good:
+issues, PR comments and device protocols cite it, so it must never move.
 
-Plans and prefixes:
+Plans and prefixes (case / suite):
 
-  TC   docs/manual-tests/testplan-adaptive-learner.md (DE) and its -en
-       sibling. DE and EN carry the SAME ID for the same case.
-  RTC  docs/reference/MANUAL-TESTPLAN.md
-  LTC  launcher/TESTPLAN.md
+  TC / TS    docs/manual-tests/testplan-adaptive-learner.md (DE) and its -en
+             sibling. DE and EN carry the SAME ID for the same case/suite.
+  RTC / RTS  docs/reference/MANUAL-TESTPLAN.md
+  LTC / LTS  launcher/TESTPLAN.md
+  GTC / GTS  docs/manual-tests/geraete-check-liste.md
+  OTC / OTS  docs/manual-tests/offene-punkte-in-issues.md
+  DTC / DTS  docs/manual-tests/anleitung-docker-permission-geraeteverifikation.md
+
+Checked boxes (``- [x]``) are cases too and carry an ID like open ones.
 
 Assignment rule, append-only:
 
-- a new checkbox takes the next free number (register ``highest`` + 1), even
+- a new checkbox or suite takes the next free number (register ``highest`` + 1), even
   when it is inserted in the middle of the document - numbers do not follow
   document order, and that is intended;
-- a deleted checkbox never returns its number; ``--assign`` records it under
+- a deleted checkbox or suite never returns its number; ``--assign`` records it under
   ``retired`` in the register, so the gap is declared, not silent;
-- a reworded checkbox keeps its number.
+- a reworded checkbox or heading keeps its number.
 
 The register ``docs/manual-tests/testplan-ids.json`` holds ``highest`` and
 ``retired`` per prefix. It is the source for "next free number" and the proof
@@ -31,14 +39,15 @@ sections differently on purpose. A section is paired by the IDs it already
 carries, otherwise by its signature (heading level, issue references in the
 heading, checkbox count, issue references per checkbox); checkboxes inside a
 paired section pair by position. Where that is not unambiguous the pairing is
-reported and left alone - a wrongly linked ID is worse than none.
+reported and left alone - a wrongly linked ID is worse than none. Suites
+pair through the case IDs they hold, so a suite pairing is never guessed.
 
 Stdlib only: ``verify_docs.py`` imports this module and runs with a bare
 ``python3``.
 
 Usage:
   python3 scripts/testplan_ids.py --check    # gate mode, exit 1 on a finding
-  python3 scripts/testplan_ids.py --assign   # give unnumbered checkboxes IDs
+  python3 scripts/testplan_ids.py --assign   # give unnumbered cases/suites IDs
 """
 
 from __future__ import annotations
@@ -58,26 +67,38 @@ DE_REL = Path("docs") / "manual-tests" / "testplan-adaptive-learner.md"
 EN_REL = Path("docs") / "manual-tests" / "testplan-adaptive-learner-en.md"
 REFERENCE_REL = Path("docs") / "reference" / "MANUAL-TESTPLAN.md"
 LAUNCHER_REL = Path("launcher") / "TESTPLAN.md"
+DEVICE_CHECK_REL = Path("docs") / "manual-tests" / "geraete-check-liste.md"
+OPEN_POINTS_REL = Path("docs") / "manual-tests" / "offene-punkte-in-issues.md"
+DOCKER_CHECK_REL = (
+    Path("docs") / "manual-tests" / "anleitung-docker-permission-geraeteverifikation.md"
+)
 
 
 @dataclass(frozen=True)
 class PlanSpec:
-    """One ID space: a prefix and the file(s) that share it."""
+    """One ID space: a case prefix, a suite prefix and the file(s) sharing them."""
 
     prefix: str
+    suite_prefix: str
     files: tuple[Path, ...]
 
 
 PLANS: tuple[PlanSpec, ...] = (
-    PlanSpec("TC", (DE_REL, EN_REL)),
-    PlanSpec("RTC", (REFERENCE_REL,)),
-    PlanSpec("LTC", (LAUNCHER_REL,)),
+    PlanSpec("TC", "TS", (DE_REL, EN_REL)),
+    PlanSpec("RTC", "RTS", (REFERENCE_REL,)),
+    PlanSpec("LTC", "LTS", (LAUNCHER_REL,)),
+    PlanSpec("GTC", "GTS", (DEVICE_CHECK_REL,)),
+    PlanSpec("OTC", "OTS", (OPEN_POINTS_REL,)),
+    PlanSpec("DTC", "DTS", (DOCKER_CHECK_REL,)),
 )
+SUITE_PREFIXES = tuple(spec.suite_prefix for spec in PLANS)
 
 ID_WIDTH = 4
 
-_BOX_RE = re.compile(r"^(?P<lead>\s*- \[ \] )(?:(?P<prefix>[A-Z]+)-(?P<num>\d+)(?:\s+|$))?")
-_HEADING_RE = re.compile(r"^(#{1,6}) ")
+_BOX_RE = re.compile(r"^(?P<lead>\s*- \[[ xX]\] )(?:(?P<prefix>[A-Z]+)-(?P<num>\d+)(?:\s+|$))?")
+_HEADING_RE = re.compile(
+    r"^(?P<hashes>#{1,6}) (?:(?P<prefix>" + "|".join(SUITE_PREFIXES) + r")-(?P<num>\d+)(?:\s+|$))?"
+)
 _FENCE_RE = re.compile(r"^\s*```")
 _ISSUE_REF_RE = re.compile(r"#(\d{3,5})")
 
@@ -89,7 +110,7 @@ _ISSUE_REF_RE = re.compile(r"#(\d{3,5})")
 
 @dataclass
 class Box:
-    """One ``- [ ]`` checkbox, including its indented continuation lines."""
+    """One ``- [ ]`` / ``- [x]`` checkbox, including its indented continuation lines."""
 
     line_no: int  # 1-based
     prefix: str | None
@@ -112,6 +133,14 @@ class Section:
     level: int
     heading_refs: tuple[str, ...]
     boxes: list[Box] = field(default_factory=list)
+    suite_prefix: str | None = None
+    suite_number: int | None = None
+
+    @property
+    def suite_label(self) -> str | None:
+        if self.suite_prefix is None or self.suite_number is None:
+            return None
+        return format_id(self.suite_prefix, self.suite_number)
 
     def signature(self) -> tuple[object, ...]:
         return (
@@ -166,7 +195,17 @@ def parse_plan(path: Path, text: str) -> ParsedPlan:
         heading = _HEADING_RE.match(line)
         if heading:
             close_box()
-            sections.append(Section(line.strip(), index + 1, len(heading.group(1)), _refs(line)))
+            number = int(heading.group("num")) if heading.group("num") else None
+            sections.append(
+                Section(
+                    line.strip(),
+                    index + 1,
+                    len(heading.group("hashes")),
+                    _refs(line),
+                    suite_prefix=heading.group("prefix"),
+                    suite_number=number,
+                )
+            )
             continue
         box = _BOX_RE.match(line)
         if box:
@@ -202,15 +241,15 @@ def load_register(path: Path) -> dict[str, dict[str, object]]:
         raise RegisterError(f"{path} unreadable: {exc}") from exc
     if not isinstance(data, dict):
         raise RegisterError(f"{path}: expected a JSON object keyed by prefix")
-    for spec in PLANS:
-        entry = data.get(spec.prefix)
+    for prefix in [p for spec in PLANS for p in (spec.prefix, spec.suite_prefix)]:
+        entry = data.get(prefix)
         if (
             not isinstance(entry, dict)
             or not isinstance(entry.get("highest"), int)
             or not isinstance(entry.get("retired"), list)
         ):
             raise RegisterError(
-                f"{path}: entry '{spec.prefix}' needs an int 'highest' and a list 'retired'"
+                f"{path}: entry '{prefix}' needs an int 'highest' and a list 'retired'"
             )
     return data
 
@@ -355,7 +394,7 @@ def _check_register_bounds(
     for number in missing[:20]:
         result.findings.append(
             f"{format_id(prefix, number)} is in the register range but in no plan and not "
-            "retired - a deleted case must be recorded as retired (run --assign)"
+            "retired - a deleted case or suite must be recorded as retired (run --assign)"
         )
     if len(missing) > 20:
         result.findings.append(f"... and {len(missing) - 20} more unretired gaps for {prefix}")
@@ -391,6 +430,93 @@ def _check_pair_mapping(de: ParsedPlan, en: ParsedPlan, result: Result) -> None:
                     f"{box.label}: DE cites {list(box.refs) or 'no issue'}, EN cites "
                     f"{list(other.refs) or 'no issue'} - the ID may name two different cases"
                 )
+
+
+def _check_suites_in_file(plan: ParsedPlan, prefix: str, result: Result) -> dict[int, Section]:
+    """Every heading with checkboxes carries exactly one suite ID; no other heading does."""
+    seen: dict[int, Section] = {}
+    for section in plan.sections:
+        if section.line_no == 0:
+            if section.boxes:
+                result.findings.append(
+                    f"{_where(plan, section.boxes[0].line_no)}: checkbox before the first "
+                    "heading - it belongs to no suite"
+                )
+            continue
+        if section.suite_number is None:
+            if section.boxes:
+                result.findings.append(
+                    f"{_where(plan, section.line_no)}: suite heading without an ID "
+                    f"(expected '{'#' * section.level} {prefix}-NNNN ...'; "
+                    "run scripts/testplan_ids.py --assign)"
+                )
+            continue
+        if section.suite_prefix != prefix:
+            result.findings.append(
+                f"{_where(plan, section.line_no)}: suite ID {section.suite_label} has the wrong "
+                f"prefix for this plan (expected {prefix}-)"
+            )
+            continue
+        if not section.boxes:
+            result.findings.append(
+                f"{_where(plan, section.line_no)}: {section.suite_label} sits on a heading "
+                "without checkpoints - a suite holds at least one case"
+            )
+        if section.suite_number in seen:
+            result.findings.append(
+                f"{_where(plan, section.line_no)}: {section.suite_label} used twice "
+                f"(first at line {seen[section.suite_number].line_no})"
+            )
+            continue
+        seen[section.suite_number] = section
+    return seen
+
+
+def _counterpart(section: Section, en: ParsedPlan) -> Section | None:
+    """The EN section holding the same case IDs as a DE section, if exactly one."""
+    labels = {box.label for box in section.boxes if box.label}
+    hits = [s for s in en.sections if labels & {box.label for box in s.boxes}]
+    return hits[0] if len(hits) == 1 else None
+
+
+def _check_suite_pair(
+    spec: PlanSpec, de: ParsedPlan, en: ParsedPlan, suites: list[dict[int, Section]], result: Result
+) -> None:
+    """DE and EN carry the same suite ID on the suite that holds the same cases."""
+    de_ids, en_ids = set(suites[0]), set(suites[1])
+    for number in sorted(de_ids - en_ids):
+        result.findings.append(
+            f"{format_id(spec.suite_prefix, number)} exists only in {de.path} "
+            f"(line {suites[0][number].line_no})"
+        )
+    for number in sorted(en_ids - de_ids):
+        result.findings.append(
+            f"{format_id(spec.suite_prefix, number)} exists only in {en.path} "
+            f"(line {suites[1][number].line_no})"
+        )
+    for section in de.sections:
+        other = _counterpart(section, en) if section.suite_label else None
+        if other is not None and other.suite_label and other.suite_label != section.suite_label:
+            result.findings.append(
+                f"{_where(de, section.line_no)}: DE suite {section.suite_label} holds the same "
+                f"cases as EN suite {other.suite_label} ({_where(en, other.line_no)})"
+            )
+
+
+def _check_suites(
+    spec: PlanSpec, plans: list[ParsedPlan], register: dict[str, dict[str, object]], result: Result
+) -> None:
+    suites = [_check_suites_in_file(plan, spec.suite_prefix, result) for plan in plans]
+    if len(plans) == 2:
+        _check_suite_pair(spec, plans[0], plans[1], suites, result)
+    present = set().union(*(set(ids) for ids in suites))
+    _check_register_bounds(spec.suite_prefix, present, register, result)
+    counts = " / ".join(f"{p.path.name} {sum(1 for s in p.sections if s.boxes)}" for p in plans)
+    result.notes.append(
+        f"testplan-ids {spec.suite_prefix}: {counts} suites, {len(present)} distinct IDs, "
+        f"register highest {format_id(spec.suite_prefix, _highest(register, spec.suite_prefix))}, "
+        f"{len(_retired(register, spec.suite_prefix))} retired"
+    )
 
 
 def check_plan(
@@ -432,6 +558,7 @@ def check_plan(
         f"register highest {format_id(spec.prefix, _highest(register, spec.prefix))}, "
         f"{len(_retired(register, spec.prefix))} retired"
     )
+    _check_suites(spec, plans, register, result)
     return result
 
 
@@ -474,6 +601,7 @@ def check(root: Path = REPO, prefixes: tuple[str, ...] | None = None) -> Result:
 @dataclass
 class AssignOutcome:
     assigned: int = 0
+    suites_assigned: int = 0
     by_hand: int = 0
     retired_now: list[str] = field(default_factory=list)
     unresolved: list[str] = field(default_factory=list)
@@ -488,6 +616,72 @@ def _set_id(plan: ParsedPlan, box: Box, prefix: str, number: int) -> None:
     rest = line[match.end() :]
     plan.lines[index] = f"{match.group('lead')}{format_id(prefix, number)} {rest}"
     box.prefix, box.number = prefix, number
+
+
+def _set_suite_id(plan: ParsedPlan, section: Section, prefix: str, number: int) -> None:
+    index = section.line_no - 1
+    line = plan.lines[index]
+    match = _HEADING_RE.match(line)
+    assert match is not None
+    rest = line[match.end() :]
+    plan.lines[index] = f"{match.group('hashes')} {format_id(prefix, number)} {rest}"
+    section.suite_prefix, section.suite_number = prefix, number
+
+
+def _assign_suites(
+    spec: PlanSpec, plans: list[ParsedPlan], counter: list[int], out: AssignOutcome
+) -> None:
+    """Give every suite heading without an ID one; DE/EN pair through their case IDs."""
+    prefix = spec.suite_prefix
+    if len(plans) == 1:
+        for section in plans[0].sections:
+            if section.line_no and section.boxes and section.suite_number is None:
+                counter[0] += 1
+                _set_suite_id(plans[0], section, prefix, counter[0])
+                out.suites_assigned += 1
+        return
+    de, en = plans
+    for section in de.sections:
+        if not section.line_no or not section.boxes:
+            continue
+        other = _counterpart(section, en)
+        if other is None or not other.line_no:
+            if section.suite_number is None:
+                out.unresolved.append(
+                    f"{de.path}:{section.line_no} '{section.heading}': no EN suite holds the "
+                    "same case IDs - number the cases first"
+                )
+            continue
+        mine, theirs = section.suite_number, other.suite_number
+        if mine is not None and theirs is not None:
+            if mine != theirs:
+                out.unresolved.append(
+                    f"{de.path}:{section.line_no} / {en.path}:{other.line_no}: suite IDs differ "
+                    f"({section.suite_label} vs {other.suite_label})"
+                )
+        elif mine is not None:
+            _set_suite_id(en, other, prefix, mine)
+        elif theirs is not None:
+            _set_suite_id(de, section, prefix, theirs)
+        else:
+            counter[0] += 1
+            _set_suite_id(de, section, prefix, counter[0])
+            _set_suite_id(en, other, prefix, counter[0])
+            out.suites_assigned += 1
+
+
+def _retire_gaps(
+    prefix: str,
+    present: set[int],
+    counter: list[int],
+    register: dict[str, dict[str, object]],
+    out: AssignOutcome,
+) -> None:
+    retired = _retired(register, prefix)
+    gaps = set(range(1, counter[0] + 1)) - present - retired
+    out.retired_now.extend(format_id(prefix, n) for n in sorted(gaps))
+    register[prefix]["highest"] = counter[0]
+    register[prefix]["retired"] = sorted(retired | gaps)
 
 
 def _pair_slots(
@@ -586,7 +780,7 @@ def _assign_pair(
 
 
 def assign(root: Path = REPO, manual: dict[int, int] | None = None) -> AssignOutcome:
-    """Give every unnumbered checkbox an ID and update the register.
+    """Give every unnumbered checkbox and suite heading an ID; update the register.
 
     ``manual`` maps a DE checkbox line to its EN checkbox line for the cases
     the automatic pairing refuses (a section whose checkboxes are ordered
@@ -609,11 +803,11 @@ def assign(root: Path = REPO, manual: dict[int, int] | None = None) -> AssignOut
                     _set_id(plans[0], box, spec.prefix, counter[0])
                     out.assigned += 1
         present = {box.number for plan in plans for box in plan.boxes if box.number}
-        retired = _retired(register, spec.prefix)
-        gaps = set(range(1, counter[0] + 1)) - present - retired
-        out.retired_now.extend(format_id(spec.prefix, n) for n in sorted(gaps))
-        register[spec.prefix]["highest"] = counter[0]
-        register[spec.prefix]["retired"] = sorted(retired | gaps)
+        _retire_gaps(spec.prefix, present, counter, register, out)
+        suite_counter = [_highest(register, spec.suite_prefix)]
+        _assign_suites(spec, plans, suite_counter, out)
+        suites = {s.suite_number for plan in plans for s in plan.sections if s.suite_number}
+        _retire_gaps(spec.suite_prefix, suites, suite_counter, register, out)
         for plan in plans:
             (root / plan.path).write_text("".join(plan.lines), encoding="utf-8", newline="")
     register_path.write_text(
@@ -631,7 +825,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--check", action="store_true", help="gate mode: exit 1 on any finding")
-    mode.add_argument("--assign", action="store_true", help="give unnumbered checkboxes IDs")
+    mode.add_argument("--assign", action="store_true", help="give unnumbered cases/suites IDs")
     parser.add_argument(
         "--pairs",
         type=Path,
@@ -652,7 +846,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"testplan-ids: {exc}", file=sys.stderr)
             return 2
         print(
-            f"testplan-ids: {out.assigned} new ID(s) ({out.by_hand} paired by hand), "
+            f"testplan-ids: {out.assigned} new case ID(s) ({out.by_hand} paired by hand), "
+            f"{out.suites_assigned} new suite ID(s), "
             f"{len(out.retired_now)} newly retired, "
             f"{out.by_order} section pair(s) matched by order among identical signatures"
         )

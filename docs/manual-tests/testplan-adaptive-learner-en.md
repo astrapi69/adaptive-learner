@@ -37,7 +37,7 @@ Ubuntu.
 
 Prerequisite: #2050 merged, current `develop` deployed (or a preview build).
 
-#### A1. BACKUP ACCEPTANCE TEST (launch gate, open since early sessions)
+#### TS-0001 A1. BACKUP ACCEPTANCE TEST (launch gate, open since early sessions)
 
 A real round-trip, not a simulation:
 
@@ -59,7 +59,7 @@ A real round-trip, not a simulation:
 Document the result (partial failures individually too). On ANY deviation:
 screenshot + which step, which becomes an issue with forensics.
 
-#### A2. Mobile scroll-to-error (#2039, visual device check before merge)
+#### TS-0002 A2. Mobile scroll-to-error (#2039, visual device check before merge)
 
 - [ ] TC-0008 Provoke a validation error outside the viewport (long form, error at
       the top, submit from the bottom).
@@ -67,13 +67,13 @@ screenshot + which step, which becomes an issue with forensics.
       focused.
 - [ ] TC-0010 Once in portrait, once with the keyboard shown.
 
-#### A3. iOS backlog issues
+#### TS-0003 A3. iOS backlog issues
 
 - [ ] TC-0011 Work through the open iOS verification points from the tracker in the
       same session (list from the respective issues, each result as an issue
       comment).
 
-#### A3b. Returning-user entry never blanks (#2573)
+#### TS-0004 A3b. Returning-user entry never blanks (#2573)
 
 Content-load resilience on iOS - the entry flow must never leave a blank
 content area under an intact header/nav:
@@ -89,7 +89,7 @@ content area under an intact header/nav:
       "taking longer than expected" (or "this view could not be loaded")
       message with a Reload button - not a silent blank screen.
 
-#### A4. Delete a lesson (#2064, merged) - overlaps with A1
+#### TS-0005 A4. Delete a lesson (#2064, merged) - overlaps with A1
 
 Per the test plan this feature requires both storage modes plus a backup
 round-trip including iOS standalone. In substance that is the same flow as
@@ -106,14 +106,14 @@ section further below):
       a bug.
 - [ ] TC-0019 Both storage modes.
 
-#### A5. Wizard step reset (#2061, merged) - short, doable on desktop too
+#### TS-0006 A5. Wizard step reset (#2061, merged) - short, doable on desktop too
 
 - [ ] TC-0020 Open a book set, "Edit lesson", navigate to step 2.
 - [ ] TC-0021 Pick a different chapter in the dropdown: step 2 stays, the new
       lesson's exercises appear.
 - [ ] TC-0022 Edge cases: switch to a lesson without exercises, switch backwards.
 
-#### A6. Reorder lessons (#2172, merged)
+#### TS-0007 A6. Reorder lessons (#2172, merged)
 
 Display order is its own field; moving a lesson changes the sort, never a
 lesson's identity. iOS-standalone is the trickier case (reordering on a phone).
@@ -141,7 +141,7 @@ lesson's identity. iOS-standalone is the trickier case (reordering on a phone).
 - [ ] TC-0032 iOS standalone (PWA from the home screen): moving via touch and the
       position feedback work, and the order survives closing and reopening.
 
-#### A6b. Import order follows the source (#2173, merged)
+#### TS-0008 A6b. Import order follows the source (#2173, merged)
 
 After a book/text import the lessons appear in source/chapter order, not
 alphabetically by title (previously an "Epilogue" landed before chapter 1).
@@ -170,7 +170,7 @@ re-import must NOT overwrite an order the user set by hand.
       in the installed PWA - the chapters are in book order, and a manual move
       survives closing and reopening.
 
-#### A6c. Download order follows the manifest (#2367)
+#### TS-0009 A6c. Download order follows the manifest (#2367)
 
 Downloaded sets (registry / source browser) show their lessons in the order
 the set manifest declares (metadata.lessons), no longer alphabetically by
@@ -205,6 +205,7 @@ to en.
 - [ ] TC-0898 Both storage modes (API + Dexie).
 
 #### A7. Edit belongs to the lesson, not the set (#2210)
+#### TS-0010 A7. Edit belongs to the lesson, not the set (#2210)
 
 Edit belongs to the lesson, not the set. The set-level button used to guess
 which lesson was meant and always opened the first. Three similar per-row
@@ -227,7 +228,7 @@ is the trickier case (three plus Up/Down per row on a phone).
 - [ ] TC-0051 iOS standalone (PWA from the home screen): every per-row button is
       reliably tappable without mis-taps; Edit opens the correct lesson.
 
-### Session B: Ubuntu (launcher binary, after the launcher session)
+### TS-0011 Session B: Ubuntu (launcher binary, after the launcher session)
 
 Prerequisite: the v2.8.2 release binaries (the launcher runs in IMAGE mode
 since v2.8.0, #2167; engine pin docker-app-launcher ^0.25.1). Use only these
@@ -260,7 +261,7 @@ binaries are available.
 
 ---
 
-## PRIO 1: BACKUP ACCEPTANCE TEST (launch gate!)
+## TS-0012 PRIO 1: BACKUP ACCEPTANCE TEST (launch gate!)
 
 **New test case under PRIO 1 backup acceptance test:**
 - [ ] TC-0060 GitHub Pages: create backup
@@ -294,7 +295,7 @@ Never run yet. Do it NOW.
 
 ## PRIO 2: LAUNCHER (desktop)
 
-### Basic function (Ubuntu)
+### TS-0013 Basic function (Ubuntu)
 - [ ] TC-0078 `python3 -m adaptive_learner_launcher --debug` → ONE window opens
 - [ ] TC-0079 Window NEVER disappears on its own
 - [ ] TC-0080 Docker check as the first step (hint when Docker isn't running)
@@ -302,45 +303,45 @@ Never run yet. Do it NOW.
 - [ ] TC-0082 "Building image..." visible (not a silent background step)
 - [ ] TC-0083 At the end: "App is ready." in green
 
-### Port
+### TS-0014 Port
 - [ ] TC-0084 Port field visible (default 8501)
 - [ ] TC-0085 Port editable when stopped/not installed
 - [ ] TC-0086 Port read-only when running
 - [ ] TC-0087 CHANGE the port: 8501 → 9000 → app reachable on 9000
 - [ ] TC-0088 Port indicator: green when running (not red)
 
-### Port change: data portability (#2069)
+### TS-0015 Port change: data portability (#2069)
 - [ ] TC-0089 Server mode (default): populate data, change the port, reopen → sets + progress still there (backend data survives; auto-recovered on the Landing route via identity.yaml)
 - [ ] TC-0090 Browser storage mode (Settings > Data > storage mode): populate data, change the port, reopen → empty app with the "Used Adaptive Learner before on a different port?" hint on the welcome screen (data NOT deleted, just tied to the old origin)
 - [ ] TC-0091 The hint links to the "Changing the port" help page
 - [ ] TC-0092 Recovery (browser mode): back to the old port → Settings > Data > Export backup (`.alb`) → new port → "Restore from backup" → sets, progress, exercises, settings all restored
 - [ ] TC-0093 Canonical web version (astrapi69.github.io, browser mode, no explicit port): the hint does NOT appear
 
-### States
+### TS-0016 States
 - [ ] TC-0094 Not installed: [Install] visible
 - [ ] TC-0095 Running: [Open in browser] [Stop] [Uninstall]
 - [ ] TC-0096 Stopped: [Start] [Uninstall]
 - [ ] TC-0097 All buttons fully visible (620px wide, no clipping)
 
-### Uninstall
+### TS-0017 Uninstall
 - [ ] TC-0098 Verbose output: each container/image individually with ✓/✗
 - [ ] TC-0099 Image sizes shown
 - [ ] TC-0100 Summary: "X artifacts removed, Y MB freed"
 - [ ] TC-0101 State switches to "Not installed"
 
-### Cleanup on start
+### TS-0018 Cleanup on start
 - [ ] TC-0102 Finds orphaned artifacts (if any)
 - [ ] TC-0103 User can choose (learning data OFF by default)
 - [ ] TC-0104 Verbose progress
 
-### Windows
+### TS-0019 Windows
 - [ ] TC-0105 `.exe` starts (from the GitHub Release)
 - [ ] TC-0106 Persistent window (NO dialog chain!)
 - [ ] TC-0107 All functions as on Linux
 
 ---
 
-## PRIO 3: CONTENT QUALITY (native-speaker spot check)
+## TS-0020 PRIO 3: CONTENT QUALITY (native-speaker spot check)
 
 Requires domain knowledge. Not automatable.
 
@@ -364,7 +365,7 @@ Requires domain knowledge. Not automatable.
 
 ## PRIO 4: LEARNING - MANUAL UX CHECK
 
-### Exercise types (check visually)
+### TS-0021 Exercise types (check visually)
 - [ ] TC-0117 Matching: pairs SAME height (no visual offset)
 - [ ] TC-0118 Matching: "Resolve" animation looks good (test all 4 effects)
 - [ ] TC-0119 Matching: left column ALWAYS in lesson order (#2882), only the right
@@ -490,7 +491,7 @@ Requires domain knowledge. Not automatable.
       cleanly in all 6 themes (token-backed). Transparency only - it changes
       neither ordering nor scoring.
 
-### Test mode (preview build, #2319)
+### TS-0022 Test mode (preview build, #2319)
 
 Only relevant when the build was produced with `VITE_TEST_MODE=true` (the
 preview delivery). In the regular build the mode does not exist.
@@ -511,7 +512,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0139 iOS PWA/Standalone: repeat the check on the web-app icon added to the Home
       Screen (gesture by tap, banner visible, click-through works).
 
-### Learning modes (play each once)
+### TS-0023 Learning modes (play each once)
 - [ ] TC-0140 Mode toggle reachable in the collapsible options panel (since #1628
       it lives behind the panel, no longer directly visible)
 - [ ] TC-0141 Options panel of an OWN lesson (created, imported, or an
@@ -567,7 +568,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0162 Regression, other types: free-text/cloze in "Retry errors" still show
       only the wrong elements
 
-### Game mode (#2844)
+### TS-0024 Game mode (#2844)
 - [ ] TC-0163 Settings -> Learning: "Game Mode" section with the "Playful
       lessons" switch, default off
 - [ ] TC-0164 Preparation for every detail step in this section (#2959):
@@ -590,7 +591,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0171 Toggling takes effect without a reload (change event) and behaves
       identically in both storage modes (localStorage)
 
-#### Lernfunke mascot (#2849, only while game mode is on)
+#### TS-0025 Lernfunke mascot (#2849, only while game mode is on)
 
 - [ ] TC-0172 Game mode on, open a lesson: small flame figure next to the
       progress bar (tooltip/screen reader: "Your learning companion");
@@ -613,7 +614,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0179 Narrow viewport (mobile): the figure does not crowd out the
       progress bar; the row wraps cleanly
 
-#### Mascot variants (#2861, Lernfunke color schemes)
+#### TS-0026 Mascot variants (#2861, Lernfunke color schemes)
 
 - [ ] TC-0180 Settings -> Learning -> Game mode -> details (unfolded, see the
       preparation step #2959), "XP and mascot" block: the "Mascot
@@ -633,7 +634,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0185 Backup round-trip: export -> wipe -> import restores selected and
       purchased variants (both storage modes)
 
-#### Game mode sounds (#2875)
+#### TS-0027 Game mode sounds (#2875)
 
 - [ ] TC-0186 Settings -> Learning -> Game mode: below the mode switch, the
       "Game mode sounds" switch (default off) with a hint text
@@ -654,7 +655,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0191 Exam mode + game mode + sounds: no per-answer tone (no immediate
       feedback); the completion fanfare stays allowed
 
-#### Feedback card: volume always visible + game-mode hint (#2957)
+#### TS-0028 Feedback card: volume always visible + game-mode hint (#2957)
 
 - [ ] TC-0192 Settings -> Learning -> Feedback: the "Sounds" switch is OFF, yet
       the volume slider, the percentage readout and the "Test" button
@@ -673,7 +674,7 @@ preview delivery). In the regular build the mode does not exist.
       motion + game mode) are visible; feedback stays subtle (reduced
       motion wins)
 
-#### Tension systems: hearts + countdown ring (#2878, opt-in, default off)
+#### TS-0029 Tension systems: hearts + countdown ring (#2878, opt-in, default off)
 
 - [ ] TC-0197 Settings > Learning > Game Mode > details ("Tension" block,
       preparation step #2959): the "Hearts (lives)" and
@@ -698,7 +699,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0203 Grading unchanged: score, stars and progress are identical with
       and without the tension systems
 
-#### Streak bonus XP (#2893, default on, game mode only)
+#### TS-0030 Streak bonus XP (#2893, default on, game mode only)
 
 - [ ] TC-0204 Settings > Learning > Game Mode > details ("XP and mascot" block,
       preparation step #2959): the "Streak bonus XP" switch is
@@ -719,7 +720,7 @@ preview delivery). In the regular build the mode does not exist.
       identical to normal mode
 - [ ] TC-0209 Exam mode: no streak bonus (the exam multiplier is unchanged)
 
-#### Arcade mini-games (#2887, default on, game mode only)
+#### TS-0031 Arcade mini-games (#2887, default on, game mode only)
 
 - [ ] TC-0210 Settings > Learning > Game Mode > details ("Arcade and rewards"
       block, preparation step #2959): the "Arcade" switch is ON by
@@ -751,7 +752,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0216 Reduced motion in the system: no flip/flash effects in either
       game
 
-#### Arcade: Tic-Tac-Toe (#2906, 100-XP unlock)
+#### TS-0032 Arcade: Tic-Tac-Toe (#2906, 100-XP unlock)
 
 - [ ] TC-0217 Arcade game list: Tic-Tac-Toe appears between Learn Memory and
       Snake, locked behind "Unlock for 100 XP" (two-step confirm as
@@ -765,7 +766,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0220 Losing and a draw end friendly with "Restart"; the game awards
       no XP
 
-#### Arcade: Simon (#2907, 300-XP unlock)
+#### TS-0033 Arcade: Simon (#2907, 300-XP unlock)
 
 - [ ] TC-0221 Arcade game list: Simon appears after Snake, locked behind
       "Unlock for 300 XP" (two-step confirm); a ticket plays one
@@ -788,7 +789,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0227 Reduced motion in the system: fields only change state
       (ring/brightness), no flash/scale effect
 
-#### Flash rounds (#2888, default on, game mode only)
+#### TS-0034 Flash rounds (#2888, default on, game mode only)
 
 - [ ] TC-0228 Settings > Learning > Game Mode > details ("Arcade and rewards"
       block, preparation step #2959): the "Special rounds" switch is
@@ -815,7 +816,7 @@ preview delivery). In the regular build the mode does not exist.
       corrected error cards only advance the SRS state, as in retry
       errors
 
-#### Game tickets (#2889, default on, game mode only)
+#### TS-0035 Game tickets (#2889, default on, game mode only)
 
 - [ ] TC-0236 Settings > Learning > Game Mode > details ("Arcade and rewards"
       block, preparation step #2959): the "Game tickets" switch is ON
@@ -853,7 +854,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0248 Backup export > wipe > import: the ticket balance survives the
       round-trip (localStorage snapshot)
 
-#### Bonus lessons (#2890, default on, game mode only)
+#### TS-0036 Bonus lessons (#2890, default on, game mode only)
 
 - [ ] TC-0249 Settings > Learning > Game Mode > details ("Arcade and rewards"
       block, preparation step #2959): the "Bonus lessons" switch is
@@ -874,7 +875,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0255 Flash round (#2888): a still-locked bonus lesson does NOT block
       the flash-round unlock (only regular lessons count)
 
-#### Playful exercise renderers (#2876, only while game mode is on)
+#### TS-0037 Playful exercise renderers (#2876, only while game mode is on)
 
 - [ ] TC-0256 Multiple-choice exercise: the answers render as large tiles
       (two columns from tablet width); the chosen tile pops briefly
@@ -892,7 +893,7 @@ preview delivery). In the regular build the mode does not exist.
       reduced motion in the system: the shapes stay, all hop/pop
       animations are suppressed
 
-#### Juice package (#2874, only while game mode is on)
+#### TS-0038 Juice package (#2874, only while game mode is on)
 
 - [ ] TC-0261 Play a lesson, two correct answers in a row: the streak chip
       (flame + "x2") appears next to the progress bar and hops on every
@@ -912,7 +913,7 @@ preview delivery). In the regular build the mode does not exist.
       system: chip/dots render without animation, the "+1" stays
       invisible (pure motion decoration)
 
-### Learning tab: five clusters (#2956)
+### TS-0039 Learning tab: five clusters (#2956)
 
 - [ ] TC-0268 Settings > Learning: the cards sit in five labelled areas, each
       with a small uppercase heading and a description line underneath,
@@ -942,7 +943,7 @@ preview delivery). In the regular build the mode does not exist.
       scrolls horizontally; switching tabs and the ?tab=learning deep
       link work as before
 
-### Game mode: summary card + details (#2959)
+### TS-0040 Game mode: summary card + details (#2959)
 
 - [ ] TC-0275 Settings > Learning > Game Mode: the card shows the "Playful
       lessons" switch, the game mode sounds and, below them, the status
@@ -969,7 +970,7 @@ preview delivery). In the regular build the mode does not exist.
       link into the settings lands on the Learning tab's "Motivation and
       routine" area (chip active, area on screen, see #2961)
 
-### Gamification inside "Motivation and routine" (#2962)
+### TS-0041 Gamification inside "Motivation and routine" (#2962)
 
 - [ ] TC-0282 Settings > Learning > "Motivation and routine": the "Gamification"
       card (XP notifications, badge notifications, "View all badges",
@@ -987,7 +988,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0286 Phone (375 px): the card and the divider wrap cleanly, nothing
       scrolls horizontally
 
-### Data tab: section bar + deep link (#3122)
+### TS-0042 Data tab: section bar + deep link (#3122)
 
 The same mechanics as on the Learning tab (#2961, #2966), over the six
 areas of the Data tab in the fixed #1451 order.
@@ -1022,7 +1023,7 @@ areas of the Data tab in the fixed #1451 order.
 - [ ] TC-0294 Both storage modes (API + Dexie): bar and deep link behave the same;
       in Dexie mode the "Sync" area shows the desktop-only notice
 
-### Learning tab: section bar + deep link (#2961)
+### TS-0043 Learning tab: section bar + deep link (#2961)
 
 - [ ] TC-0295 Settings > Learning: above the first area sits a row of chips
       "Basics", "In the lesson", "Reading aloud and dictation", "After the
@@ -1060,7 +1061,7 @@ areas of the Data tab in the fixed #1451 order.
       are h3; on the other tabs the card titles stay h2
 - [ ] TC-0304 Both storage modes (API + Dexie): bar and deep link behave the same
 
-### Summary counts corrections (#2479)
+### TS-0044 Summary counts corrections (#2479)
 - [ ] TC-0305 Play a lesson with several wrong answers, then fix them in the
       end-of-lesson correction round. The score bar shows two segments: what
       was right on the first try (solid fill) and what was fixed after
@@ -1079,7 +1080,7 @@ areas of the Data tab in the fixed #1451 order.
       (the report came from there). Bar, stars, message and XP show the final
       state after correction.
 
-### "Why you missed these" shows the question (#2757)
+### TS-0045 "Why you missed these" shows the question (#2757)
 - [ ] TC-0311 Play a lesson with at least one wrongly answered element (explanations
       enabled in Settings > Learning). In the "Why you missed these" section,
       each answer comparison carries a "Question:" line above it showing what
@@ -1091,7 +1092,7 @@ areas of the Data tab in the fixed #1451 order.
       the meantime), the entry renders as before without a question line -
       no error, no empty line.
 
-### One collapsed mistakes section (#2496)
+### TS-0046 One collapsed mistakes section (#2496)
 - [ ] TC-0314 Play a lesson with at least one mistake. On the summary the
       "Fix your mistakes (N)" section appears COLLAPSED: NO text field has
       focus, NO keyboard pops up (check on a phone - that was the report).
@@ -1117,7 +1118,7 @@ areas of the Data tab in the fixed #1451 order.
       fix your own mistakes first, then decide where to go next. Still freely
       reorderable via Settings.
 
-### Correction round: the result stays, then Continue (#3125)
+### TS-0047 Correction round: the result stays, then Continue (#3125)
 - [ ] TC-0321 Finish a lesson with at least two mistakes, press "Fix now", fill
       the first blank CORRECTLY and check: the blank turns green, "All
       correct!" appears, below it the green success bar with "Continue".
@@ -1137,7 +1138,7 @@ areas of the Data tab in the fixed #1451 order.
 - [ ] TC-0326 Skipping stays possible at any time; the comparison with the
       previous run (#983) is unchanged
 
-### New exercise types (since v2.2.0, visual + functional)
+### TS-0048 New exercise types (since v2.2.0, visual + functional)
 - [ ] TC-0327 multiple_choice: selection, feedback, SRS attempt
 - [ ] TC-0328 matching solve toggle (#3140): after a not-fully-correct check the
       "My answers" / "Solve" toggle is there; on a fully-correct answer NO
@@ -1298,7 +1299,7 @@ areas of the Data tab in the fixed #1451 order.
       canvas too (the correct one visually distinct), so the whole layout
       is visible while drawing more.
 
-### Lesson/set file import-export (#1672 / #1681 / #1685 hardening)
+### TS-0053 Lesson/set file import-export (#1672 / #1681 / #1685 hardening)
 
 Location: My Content (`/content?tab=my`) → "Import a lesson" modal +
 per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
@@ -1335,7 +1336,7 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 - [ ] TC-0391 Create-Lesson "Save as file": the save step offers a file
       download of the just-created lesson (canonical JSON)
 
-### Work through a set again - second run (#2125, EXP-051)
+### TS-0049 Work through a set again - second run (#2125, EXP-051)
 
 Location: My Content (`/content?tab=my`), the three-dot menu of a set with
 status **Completed**. A new run keeps the first one for later analysis
@@ -1359,7 +1360,7 @@ instead of overwriting or resetting it.
       completed first one) survive the import. An older backup with no run
       data imports as the implicit run 1 (no crash)
 
-### Edit as a copy - forking a downloaded set (#2654, EXP-046)
+### TS-0050 Edit as a copy - forking a downloaded set (#2654, EXP-046)
 
 Location: My Content (`/content`), the three-dot menu of a DOWNLOADED
 (foreign) set - not shown on your own "My Lessons" sets, which already
@@ -1383,7 +1384,7 @@ have a direct "Edit".
 - [ ] TC-0366 Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the fork must work in BOTH modes
 
-### Derivation on fork - "Your edit" badge + "based on" credit (#2655, EXP-046)
+### TS-0051 Derivation on fork - "Your edit" badge + "based on" credit (#2655, EXP-046)
 
 Location: Import tab (`/content?tab=import`), "My Lessons" section - every
 forked copy (whether created via "Edit as a copy", "Import a lesson", or
@@ -1410,7 +1411,7 @@ forked copy (whether created via "Edit as a copy", "Import a lesson", or
 - [ ] TC-0373 Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the badge + credit line must appear in BOTH modes
 
-### Share Wizard - hint + removal for carried-over foreign credits (#2656, EXP-046)
+### TS-0052 Share Wizard - hint + removal for carried-over foreign credits (#2656, EXP-046)
 
 Location: `ShareWizard` step 1, directly below the existing "Your name
 (optional)" block. Precondition for a visible foreign credit: a forked
@@ -1439,7 +1440,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
 - [ ] TC-0380 Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the hint + removal button must work in BOTH modes
 
-### Create-Lesson wizard (`/create-lesson`, v2.3.0)
+### TS-0054 Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
 - [ ] TC-0392 **Step-1 order + template disclosure (#2755):** In step 1 the
       required **Title field comes first** (right under the heading,
@@ -2002,7 +2003,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       list stays empty. Below the list the note says suggestions are
       guesses and every row wants checking.
 
-### Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
+### TS-0055 Card image upload (#1763 / #1764) [E2E: `card-image-upload.spec.ts`]
 
 Location: Create-Lesson Step 2 (card editor), in the add-card form +
 each card row (`CardImageField`).
@@ -2020,7 +2021,7 @@ each card row (`CardImageField`).
 - [ ] TC-0447 Known limitation: uploaded data-URI images are NOT yet rendered
       in a played picture_choice exercise (engine `src` cap)
 
-### Lesson player UX (v2.3.0)
+### TS-0056 Lesson player UX (v2.3.0)
 - [ ] TC-0448 Pause button now lives in the sticky footer (#1644), pausing
       works from there
 - [ ] TC-0449 Position before the first exercise (#3075): open a lesson, page
@@ -2056,7 +2057,7 @@ each card row (`CardImageField`).
       pickers. Automated coverage via axe (`select-a11y.spec.ts`); this item
       is the real-screen-reader cross-check in the next iOS session
 
-### Invalid lesson: friendly error message (#1808 / #1824)
+### TS-0057 Invalid lesson: friendly error message (#1808 / #1824)
 - [ ] TC-0457 German umlaut cards (`währung`, `präsenz`) load correctly
       (the app accepts unicode-lowercase card ids/tags, #1808)
 - [ ] TC-0458 An actually broken lesson shows OUTSIDE Developer Mode a friendly
@@ -2065,7 +2066,7 @@ each card row (`CardImageField`).
 - [ ] TC-0459 With Developer Mode ON (Settings): the technical detail text is
       appended again
 
-### Diagnostics probe: Settings toggle + protocol (#2782)
+### TS-0058 Diagnostics probe: Settings toggle + protocol (#2782)
 - [ ] TC-0460 Settings > Diagnostics & Support: enable the "Tap & viewport
       probe" toggle - the measurement bar appears IMMEDIATELY at the
       top (no reload); disabling removes it immediately
@@ -2080,7 +2081,7 @@ each card row (`CardImageField`).
       the header/menu are reachable again - but new taps still raise
       the protocol counter (recording continues invisibly, #2785)
 
-### AI check: apply suggestions (AIV-07, #3060)
+### TS-0059 AI check: apply suggestions (AIV-07, #3060)
 - [ ] TC-0465 Browser mode with a configured AI key, an own lesson (Content > My
       content) with a deliberate mistake on a card (e.g. "casa" instead
       of "la casa"); run "Check with AI": the report lists the card and
@@ -2101,7 +2102,7 @@ each card row (`CardImageField`).
 - [ ] TC-0470 Downloaded set (not your own): "Apply suggestions" is disabled with
       the tooltip "Only for your own lessons."
 
-### Settings > Plugins: installed plugins (#3055)
+### TS-0060 Settings > Plugins: installed plugins (#3055)
 - [ ] TC-0471 Desktop app (API mode), Settings > Plugins: at the top the
       "Installed plugins" card with one row per loaded plugin, sorted by
       name: name, version, source ("Package") and the activation time
@@ -2116,7 +2117,7 @@ each card row (`CardImageField`).
       the notice "Only available with the desktop app."; DevTools >
       Network shows no request to /api/plugins/health
 
-### Diagnostics probe: mis-tap mark + actions (#3043)
+### TS-0061 Diagnostics probe: mis-tap mark + actions (#3043)
 - [ ] TC-0475 Probe ON, measurement bar visible: next to "Werte kopieren" and
       "Details" the bar shows the button "Daneben!"
 - [ ] TC-0476 Tap anywhere, then tap "Daneben!", then "Details": the report has
@@ -2133,7 +2134,7 @@ each card row (`CardImageField`).
       Settings yields the same fields plus the `click`/`focus`/`mark`
       entries
 
-### Sticky button for the measurement bar (#2799)
+### TS-0062 Sticky button for the measurement bar (#2799)
 - [ ] TC-0479 Settings > Diagnostics & Support: enable "Sticky button for the
       measurement bar" (the probe must be ON) - a round floating
       button appears IMMEDIATELY at the bottom left
@@ -2151,7 +2152,7 @@ each card row (`CardImageField`).
 - [ ] TC-0484 Probe OFF: the button disappears with it (without the probe
       there is no bar to toggle)
 
-### Mobile menu position: bottom tab bar as an option (#2786)
+### TS-0063 Mobile menu position: bottom tab bar as an option (#2786)
 - [ ] TC-0485 Settings > General > Interface: "Menu position (mobile)" is
       "Top (menu button)" (default) - NO bottom bar
 - [ ] TC-0486 Pick "Bottom (tab bar)": the bar appears IMMEDIATELY at the
@@ -2163,7 +2164,7 @@ each card row (`CardImageField`).
 - [ ] TC-0489 Back to "Top": the bar disappears immediately; the choice
       survives a reload
 
-### Phone header: menu button and logo survive many badges (#3123)
+### TS-0064 Phone header: menu button and logo survive many badges (#3123)
 - [ ] TC-0490 Phone (375 and 430 px wide, e.g. iPhone 14 Pro Max) with due
       reviews, one available set update and XP: open the Dashboard. The
       menu button top left keeps its full width (no thin sliver) and the
@@ -2177,7 +2178,7 @@ each card row (`CardImageField`).
 - [ ] TC-0493 Tablet and desktop: the header stays a single line with the full
       badge text
 
-### Step change on a phone: anchor at the top, footer at the bottom (#3126)
+### TS-0065 Step change on a phone: anchor at the top, footer at the bottom (#3126)
 - [ ] TC-0494 iPhone (Safari or PWA): open a lesson with a long theory step,
       scroll to the very bottom, then "Next" onto a short step (e.g. a
       matching exercise)
@@ -2191,7 +2192,7 @@ each card row (`CardImageField`).
 - [ ] TC-0498 Rotate the device during a step (#1422): the step is still
       re-anchored
 
-### Settings > Data: housekeeping cards (#2955)
+### TS-0066 Settings > Data: housekeeping cards (#2955)
 - [ ] TC-0499 Settings > Data: the "Maximum lesson size" card sits directly
       below "Offline cache"; the "Paused lesson retention" card sits
       directly above "Disconnected content" (with no disconnected
@@ -2204,7 +2205,7 @@ each card row (`CardImageField`).
 - [ ] TC-0502 Repeat both in browser mode (Settings > Data > storage mode): same
       behaviour
 
-### In-set position + navigation (#2793)
+### TS-0067 In-set position + navigation (#2793)
 - [ ] TC-0503 Inside a lesson from a set, the header shows "Lesson N of M"
       with the correct number
 - [ ] TC-0504 The left arrow opens the PREVIOUS lesson of the set; the right
@@ -2215,7 +2216,7 @@ each card row (`CardImageField`).
 - [ ] TC-0507 For a standalone lesson without a set (e.g. an own lesson) the
       position row is absent entirely
 
-### First paint: no language mix (#2796)
+### TS-0068 First paint: no language mix (#2796)
 - [ ] TC-0508 Reload the app with a German UI (clear the cache): landing page,
       navigation, install hint, update banner and offline notice are
       German immediately - no English text, no raw key like
@@ -2225,7 +2226,7 @@ each card row (`CardImageField`).
 - [ ] TC-0510 Update banner: "Was ist neu?", "Release-Seite", "Später" carry
       readable labels (not empty, sufficient contrast)
 
-### Set-completion review (#2792)
+### TS-0069 Set-completion review (#2792)
 - [ ] TC-0511 Finish the last lesson of a set: the completion card offers
       "View review" as the first action, "View Set" beside it
 - [ ] TC-0512 The review shows four headline figures (total mistakes,
@@ -2246,7 +2247,7 @@ each card row (`CardImageField`).
 - [ ] TC-0516 Check both in browser mode (no server) - the figures come from
       the local database there
 
-### Learning-path set: "Repeat everything" resets the results (#3171)
+### TS-0070 Learning-path set: "Repeat everything" resets the results (#3171)
 - [ ] TC-0517 Open the learning path and expand a set with results: the action bar
       shows "Repeat everything" (`set-reset-results-<id>`) next to "Train
       errors"; a never-started set does not show the button
@@ -2268,7 +2269,7 @@ each card row (`CardImageField`).
 - [ ] TC-0523 Check both: desktop app (API mode) and browser mode without a server
       (Dexie) - the reset writes to both stores
 
-### Set page: lesson list + progress (#2793 stages 2-3)
+### TS-0071 Set page: lesson list + progress (#2793 stages 2-3)
 - [ ] TC-0524 Open a set page (/content/set/<id> or via a shared link): below
       the set details, ALL lessons are listed with their number
 - [ ] TC-0525 The list header shows "{x} of {y} lessons completed"
@@ -2285,7 +2286,7 @@ each card row (`CardImageField`).
       lesson 1 again (#2935)
 - [ ] TC-0531 Finish every lesson of a set, then press "Start learning" again:
       it opens lesson 1 (nothing left to resume)
-### Summary: all answers with their question (#2807)
+### TS-0072 Summary: all answers with their question (#2807)
 - [ ] TC-0532 Finish a lesson, open "View all answers" (the "Answers overview"
       section switched on in Settings, or "Detailed evaluation" pressed,
       #3124): every row with something to show is expandable (title +
@@ -2298,7 +2299,7 @@ each card row (`CardImageField`).
       spelled out
 - [ ] TC-0536 A fully correct row shows its question but no mistake diff
 
-### Summary: the detailed evaluation on one button (#3031)
+### TS-0073 Summary: the detailed evaluation on one button (#3031)
 - [ ] TC-0537 Finish a lesson: the "Detailed evaluation" button sits directly
       under the heading
 - [ ] TC-0538 Switch an enabled section off in Settings > Learning > "Lesson
@@ -2315,7 +2316,7 @@ each card row (`CardImageField`).
       keyboard pops up on the phone)
 - [ ] TC-0544 Toggling keeps the button in place, the page does not jump
 
-### Summary: the detailed evaluation like the set end (#3124)
+### TS-0074 Summary: the detailed evaluation like the set end (#3124)
 - [ ] TC-0545 Finish a lesson with at least two mistakes, press "Detailed
       evaluation": directly under the button reads "Review: <lesson
       title>" with "Every mistake in this lesson at a glance"
@@ -2337,7 +2338,7 @@ each card row (`CardImageField`).
       (sections, answers, explanations) still hold
 - [ ] TC-0552 The button's tooltip names key figures, exercise types and weak spots
 
-### Summary: the compact default, one screen (#3124)
+### TS-0075 Summary: the compact default, one screen (#3124)
 - [ ] TC-0553 Fresh install (or Settings > Learning > "Lesson summary" with only
       "Result and statistics" and "XP reward" ticked): finish a lesson -
       the summary shows stars, score, time, "+N XP" and directly below
@@ -2366,7 +2367,7 @@ answers, "Why you missed these", fix mistakes or the next-step cards:
 switch the section on in Settings first or press "Detailed evaluation"
 (#3124).
 
-### Leaving a lesson returns to its set (#2811)
+### TS-0076 Leaving a lesson returns to its set (#2811)
 - [ ] TC-0559 Pause and leave a set lesson: the app lands on the SET page with
       the lesson list, not on "My content"
 - [ ] TC-0560 "Exit" after the summary: the set page too - the lesson just
@@ -2374,7 +2375,7 @@ switch the section on in Settings first or press "Detailed evaluation"
 - [ ] TC-0561 A lesson without a set (own lesson, standalone import) still
       lands on "My content"
 
-### Share the result as an image (#2813)
+### TS-0077 Share the result as an image (#2813)
 - [ ] TC-0562 After a lesson press "Share image only" next to "Share": the share
       sheet opens WITH the result card and WITHOUT text or link
 - [ ] TC-0563 Pick Facebook: a photo post with the card appears (not the generic
@@ -2385,7 +2386,7 @@ switch the section on in Settings first or press "Detailed evaluation"
       saved"
 - [ ] TC-0566 Dismiss the share sheet: no file lands silently in the downloads
 
-### New "Diagnostics & Support" tab unites error report + probe (#2789)
+### TS-0078 New "Diagnostics & Support" tab unites error report + probe (#2789)
 - [ ] TC-0567 Settings > Info: between "Help" and "About" there is now
       "Diagnostics & Support"
 - [ ] TC-0568 It shows the Support section first ("Create error report",
@@ -2398,7 +2399,7 @@ switch the section on in Settings first or press "Detailed evaluation"
       toggle and no Diagnostics section anymore
 - [ ] TC-0571 The direct link `?tab=diagnostics` opens the tab immediately
 
-### Discover + Registry (since v2.2.0)
+### TS-0079 Discover + Registry (since v2.2.0)
 - [ ] TC-0572 Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists
       across reload (#1699/#1701)
@@ -2421,7 +2422,7 @@ switch the section on in Settings first or press "Detailed evaluation"
       reports the NN-prefix renaming; the exported repo lists the
       lessons in source order
 
-### Discover Stage 1: facets, marks, empty state (EXP-048, #2320-#2324)
+### TS-0080 Discover Stage 1: facets, marks, empty state (EXP-048, #2320-#2324)
 
 Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
 (API + Dexie); the facets read the search index and are mode-independent.
@@ -2451,7 +2452,7 @@ Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
       the marks row scrolls horizontally, and the empty-state exits are
       tappable (>=44px touch target)
 
-### Discover Stage 2: entry points, source facet, language-name search (EXP-048, #2329-#2331)
+### TS-0081 Discover Stage 2: entry points, source facet, language-name search (EXP-048, #2329-#2331)
 
 Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
 (API + Dexie); the facets read the search index and are mode-independent.
@@ -2477,7 +2478,7 @@ Where: Discover (`/content?tab=discover`). Test in BOTH storage modes
       the preset stays remembered after quitting the PWA, and the
       language-name search works
 
-### Discover Stage 3: batched rendering (EXP-048, #2333)
+### TS-0082 Discover Stage 3: batched rendering (EXP-048, #2333)
 
 Where: Discover (`/content?tab=discover`). To get past 24 results, set the
 entry to "Everything" and the source language to "All languages". Testable in
@@ -2492,7 +2493,7 @@ BOTH storage modes; the logic is mode-independent.
       tappable (>=44px), and the back-path (gesture / navigation) survives the
       extra batch
 
-### Discover Stage 3: typo tolerance + ranking in search (EXP-048, #2336)
+### TS-0083 Discover Stage 3: typo tolerance + ranking in search (EXP-048, #2336)
 
 Where: Discover (`/content?tab=discover`), search box. Threshold deliberately
 overridden: the exploration scheduled this only from ~200 sets (currently ~46);
@@ -2511,7 +2512,7 @@ the logic is mode-independent.
 - [ ] TC-0606 **iOS standalone (added to home screen, Dexie mode):** typo search works
       offline exactly as in server mode
 
-### Discover Stage 3: language-pair selection (alternative entry, collapsible) (EXP-048, #2337, #2359)
+### TS-0084 Discover Stage 3: language-pair selection (alternative entry, collapsible) (EXP-048, #2337, #2359)
 
 Where: Discover (`/content?tab=discover`), the "Language pairs" area above the
 result list. Threshold deliberately overridden: the exploration scheduled this
@@ -2549,7 +2550,7 @@ mode-independent.
       button and the target buttons are tappable (>=44px), toggling works, and
       the selection acts offline exactly as in server mode (#2359)
 
-### Set status persists (active/deferred/completed, both modes)
+### TS-0085 Set status persists (active/deferred/completed, both modes)
 
 Where: My Content (`/content?tab=my`) → the set actions menu (three dots)
 of a downloaded set. Test in BOTH storage modes (Desktop/server = API
@@ -2567,7 +2568,7 @@ API mode.
       → the deferred status is still there
 - [ ] TC-0621 iPhone PWA: same flow (originally observed there)
 
-### Continue-Learning suggestion: ranking and a visible set completion (#2123, #3020)
+### TS-0086 Continue-Learning suggestion: ranking and a visible set completion (#2123, #3020)
 
 Where: Dashboard → Overview, the top "Continue Learning" / "Weitermachen"
 block. Test in BOTH storage modes (API + Dexie); the logic is
@@ -2595,7 +2596,7 @@ mode-agnostic.
 - [ ] TC-0630 Order: due reviews first, then started sets, the completed set last
       (within each tier most-recently-touched first)
 
-### Continue Learning: every row removable with an X (#3023)
+### TS-0087 Continue Learning: every row removable with an X (#3023)
 
 Where: Dashboard → Overview, the "Continue Learning" block. Test in BOTH
 storage modes (API + Dexie); the store is mode-agnostic (localStorage plus
@@ -2618,7 +2619,7 @@ the Dexie userData mirror).
 - [ ] TC-0638 Phone: the X is tappable without mis-hits and does NOT trigger the row
       link (44 px target)
 
-### Continue Learning: the step counter names the resume point (#3076)
+### TS-0088 Continue Learning: the step counter names the resume point (#3076)
 
 Where: Dashboard → Overview, "Continue Learning" block, "Resume" row. Before,
 "Step 1/8" counted graded exercises while the resume landed on a different
@@ -2632,7 +2633,7 @@ step.
 - [ ] TC-0642 Play to the summary without "Mark complete", leave through the logo →
       the row reads "Step 8/8", never "9/8"
 
-### Update guard: no silent progress loss on a set update (#2128)
+### TS-0089 Update guard: no silent progress loss on a set update (#2128)
 
 Where: My Content, an already-LEARNED set (progress + review cards present) that
 has an update available. Test in BOTH storage modes. Background: an update that
@@ -2692,7 +2693,7 @@ The guard hangs on a real old-vs-new identity diff, not a blanket switch-off.
       safely assignable correction, not reported as "cannot be assigned".
       Progress survives when carry-over is confirmed.
 
-### Retirement: archived progress on retired_ids (#2188)
+### TS-0090 Retirement: archived progress on retired_ids (#2188)
 
 Location: Content page, a set with learner progress whose update declares
 `retired_ids` in the set manifest (the author deliberately retired
@@ -2714,7 +2715,7 @@ once, with the count.
 - [ ] TC-0665 Language check: the notice appears in the app language (spot-check
       de/ja/ko).
 
-### Recovery: review progress after the ja/ko/zh correction (#2161)
+### TS-0091 Recovery: review progress after the ja/ko/zh correction (#2161)
 
 Location: Dashboard (Overview). Background: the three A1 sets Japanese, Korean
 and Chinese were re-published in July 2026 with a transliteration fix that
@@ -2748,7 +2749,7 @@ three sets are affected; all other sets are untouched.
 - [ ] TC-0677 Language check: notice and result texts appear in the app language (not
       English), sampled across several languages (de/ja/ko/el/hi).
 
-#### Producing the state (test precondition)
+#### TS-0092 Producing the state (test precondition)
 
 The notice shows only when affected review cards are present in your own data.
 Producing that state needs access to the stored data (developer tools), and that
@@ -2801,7 +2802,7 @@ notice's behaviour in iOS standalone mode remains UNPROVEN (it cannot be produce
 there without a Mac Web Inspector). That is a valid result, but note it
 explicitly as open - do not silently equate it with the desktop result.
 
-### Download visibility (Dexie mode, #1709 / #1719 / #1731)
+### TS-0093 Download visibility (Dexie mode, #1709 / #1719 / #1731)
 - [ ] TC-0686 Deleted set stays deleted: delete a set in My Content →
       Refresh → the set does NOT come back (#1719)
 - [ ] TC-0687 A set from a no-longer-configured source stays visible in
@@ -2809,7 +2810,7 @@ explicitly as open - do not silently equate it with the desktop result.
 - [ ] TC-0688 Book recommendations come from the federated registry, not the
       removed official `books.yaml` (#1717)
 
-### Delete a single lesson (#2064)
+### TS-0094 Delete a single lesson (#2064)
 
 Location: My Content (`/content?tab=my`) → My Lessons → a set with
 SEVERAL lessons (e.g. after a book import) → "Manage lessons".
@@ -2839,7 +2840,7 @@ SEVERAL lessons (e.g. after a book import) → "Manage lessons".
       the lesson → import the backup → the lesson is back (correct: a
       backup is a snapshot, NOT a bug)
 
-### Delete several lessons at once (#2065)
+### TS-0095 Delete several lessons at once (#2065)
 
 Location: My Content (`/content?tab=my`) → My Lessons → a set with
 SEVERAL lessons → "Manage lessons".
@@ -2876,7 +2877,7 @@ SEVERAL lessons → "Manage lessons".
       selection mode, the checkboxes and the confirm dialog are usable by
       touch; the action bar wraps cleanly on a narrow screen (no overflow)
 
-### Disconnect content repo vs. delete progress (#1651 / #1652)
+### TS-0096 Disconnect content repo vs. delete progress (#1651 / #1652)
 
 Location: Settings → Data → content-repo list → "Remove".
 
@@ -2889,7 +2890,7 @@ Location: Settings → Data → content-repo list → "Remove".
 - [ ] TC-0718 The checkbox only appears when there IS progress to delete
       (Dexie mode)
 
-### Recommended repositories: per-row buttons (#2558)
+### TS-0097 Recommended repositories: per-row buttons (#2558)
 
 Location: Settings → Data → Recommended repositories.
 
@@ -2904,7 +2905,7 @@ Location: Settings → Data → Recommended repositories.
       under "Your content repositories"), the other rows' button state
       is unaffected
 
-### Social sharing (visual + native)
+### TS-0098 Social sharing (visual + native)
 - [ ] TC-0723 Share button visible after a lesson
 - [ ] TC-0724 Mobile: native share sheet (WhatsApp/Telegram)
 - [ ] TC-0725 Desktop: copies to clipboard + toast
@@ -2912,7 +2913,7 @@ Location: Settings → Data → Recommended repositories.
 
 ---
 
-## PRIO 5: AI FEATURES (needs a real API key)
+## TS-0099 PRIO 5: AI FEATURES (needs a real API key)
 
 - [ ] TC-0727 Provider table: enter key → "Test" → "Connection ok"
 - [ ] TC-0728 "Generate exercises" on theory-only: AI returns a result
@@ -2926,7 +2927,7 @@ Location: Settings → Data → Recommended repositories.
 - [ ] TC-0733 AI content validation: report sensible? provider+model shown?
 - [ ] TC-0734 No button without a key leads to an error toast (disabled + tooltip)
 
-### Batch "Generate for all lessons" (#1896)
+### TS-0100 Batch "Generate for all lessons" (#1896)
 - [ ] TC-0735 My Content → My Lessons, a set where ALL lessons already have
       exercises: the "Generate for all lessons" button is disabled RIGHT
       AWAY with the tooltip "All lessons already have exercises."
@@ -2936,7 +2937,7 @@ Location: Settings → Data → Recommended repositories.
 - [ ] TC-0737 After a successful full run: the button turns disabled without a
       reload
 
-### "Ask AI" button in lessons (#2693)
+### TS-0101 "Ask AI" button in lessons (#2693)
 - [ ] TC-0738 Shown by default: the "Ask AI" button appears under every theory
       block and exercise, even without an AI key (then greyed-out with a
       BYOK hint popover instead of being hidden)
@@ -2946,7 +2947,7 @@ Location: Settings → Data → Recommended repositories.
 - [ ] TC-0740 Turn the toggle back on: the button reappears immediately
 - [ ] TC-0741 The toggle state survives a reload (localStorage)
 
-### AI key vault import (#1765 / #1769)
+### TS-0102 AI key vault import (#1765 / #1769)
 - [ ] TC-0742 Settings → AI → "Configured providers" → "Import" jumps to
       Settings → Data and scrolls the KeyVault import block into view (#1765)
 - [ ] TC-0743 Import via "Choose file" OR paste the raw envelope JSON into the
@@ -2957,7 +2958,7 @@ Location: Settings → Data → Recommended repositories.
       Settings → AI shows the key IMMEDIATELY, without a reload (#1769)
 - [ ] TC-0746 Passphrase masked with a reveal toggle; key/passphrase never logged
 
-### Cross-app vault import (Topos → Adaptive Learner) (#2512)
+### TS-0103 Cross-app vault import (Topos → Adaptive Learner) (#2512)
 - [ ] TC-0747 An .alk file exported from Topos (format "topos-ai-keys") imports
       without a "foreign file" rejection; the FILE's passphrase is asked
 - [ ] TC-0748 The Topos key stored under "google" lands on the "Gemini" provider
@@ -2966,7 +2967,7 @@ Location: Settings → Data → Recommended repositories.
 - [ ] TC-0750 AL export unchanged: an exported file still carries the format
       "adaptive-learner-keys"
 
-### Perplexity provider (OpenAI-compatible, server mode only) (#2512)
+### TS-0104 Perplexity provider (OpenAI-compatible, server mode only) (#2512)
 - [ ] TC-0751 Settings → AI: "Perplexity" appears in the provider selection
       (after Gemini)
 - [ ] TC-0752 Server mode (make dev): store a pplx- key, the model picker shows
@@ -2978,7 +2979,7 @@ Location: Settings → Data → Recommended repositories.
 
 ---
 
-## PRIO 6: THEMES (subjective aesthetics)
+## TS-0105 PRIO 6: THEMES (subjective aesthetics)
 
 Click through once for EACH theme:
 - [ ] TC-0755 Light: readable, contrasts
@@ -2993,7 +2994,7 @@ Click through once for EACH theme:
 
 ## PRIO 7: DEVICE-SPECIFIC (not scriptable)
 
-### iPhone Safari
+### TS-0106 iPhone Safari
 - [ ] TC-0762 "Add to Home Screen" → app icon correct
 - [ ] TC-0763 PWA starts in Dexie mode
 - [ ] TC-0764 Safe-area insets respected
@@ -3007,7 +3008,7 @@ Click through once for EACH theme:
       viewport probe" on, mark the mis-tap with "Daneben!", "Werte
       kopieren", and attach the protocol to the reopened issue #1569.
 
-#### Theory read-aloud on iOS: long text (#1928) - MANDATORY
+#### TS-0107 Theory read-aloud on iOS: long text (#1928) - MANDATORY
 
 iOS Safari silently stops an unchunked utterance after ~15 seconds. Since
 #1928 a theory block is split into chunks and spoken as a queue. Measured:
@@ -3025,7 +3026,7 @@ characters.
 - [ ] TC-0771 Known platform limit, NOT a bug: pause/resume has no effect on iOS
       Safari (it stops and restarts there)
 
-#### Read-aloud keeps playing when the screen auto-locks (#2666) - MANDATORY
+#### TS-0108 Read-aloud keeps playing when the screen auto-locks (#2666) - MANDATORY
 
 The screen wake lock keeps the display awake while read-aloud is playing so
 the device's inactivity timer doesn't interrupt speech synthesis (iOS
@@ -3044,7 +3045,7 @@ screen auto-locks).
       button still turns the screen off immediately and stops playback -
       no web API can prevent that
 
-#### App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
+#### TS-0109 App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
 
 The one path no automated test covers: on iOS/WKWebView a new service
 worker often does NOT activate through skipWaiting + reload, only after
@@ -3063,7 +3064,7 @@ the app is fully closed and reopened.
 - [ ] TC-0783 On a NON-iOS device (Android/desktop) run the same flow: the
       restart hint must NOT appear there
 
-#### "What's new" release-notes modal stays closable (#2266)
+#### TS-0110 "What's new" release-notes modal stays closable (#2266)
 
 The desktop/API-mode update banner's "What's new" modal
 (`DesktopUpdateHost`) must never trap the user, however tall the release
@@ -3088,17 +3089,17 @@ window, so verify the iOS-standalone / phone-portrait shape explicitly.
       it, and focus returns to the "What's new?" button on close (no axe
       regression)
 
-### Android Chrome
+### TS-0111 Android Chrome
 - [ ] TC-0790 "Install app" → maskable icon not clipped
 - [ ] TC-0791 PWA works, Dexie mode
 
-### Desktop PWA
+### TS-0112 Desktop PWA
 - [ ] TC-0792 Install prompt → app starts standalone
 - [ ] TC-0793 Dexie mode (NOT API mode, no 404)
 
 ---
 
-## PRIO 8: SERVER MODE (via launcher)
+## TS-0113 PRIO 8: SERVER MODE (via launcher)
 
 - [ ] TC-0794 Download a set → visible in "My Content" (no cache problem)
 - [ ] TC-0795 Backup import: no HTTP 413
@@ -3107,7 +3108,7 @@ window, so verify the iOS-standalone / phone-portrait shape explicitly.
 
 ---
 
-## PRIO 9: LANDING PAGE (static, #2409)
+## TS-0114 PRIO 9: LANDING PAGE (static, #2409)
 
 The landing page at `/start/` (DE) and `/start/en/` (EN) is real static
 HTML in the Pages artifact - no React, no client-side loading. It carries
@@ -3128,7 +3129,7 @@ no numbers that could go stale, on purpose.
       "Privacy policy" to `astrapi69.github.io/adaptive-learner/docs/en/legal/privacy/`; on `/start/` they read
       "Impressum" / "Datenschutz" and lead to `astrapi69.github.io/adaptive-learner/docs/legal/…`.
 
-### Legal texts reachable in the app (#3113)
+### TS-0115 Legal texts reachable in the app (#3113)
 
 Legal notice and privacy policy live as help pages on the docs site
 (`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; other languages under
@@ -3151,7 +3152,7 @@ Legal notice and privacy policy live as help pages on the docs site
 
 ---
 
-## PRIO 10: Selective data export - speech recordings category (#2840)
+## TS-0116 PRIO 10: Selective data export - speech recordings category (#2840)
 
 Location: Settings > Data > "Export selected data".
 
@@ -3163,7 +3164,7 @@ Location: Settings > Data > "Export selected data".
 - [ ] TC-0811 Checking it + export: the file contains the user's
       `speech_recordings` rows
 
-## PRIO 11: Preset avatar gallery (#2848)
+## TS-0117 PRIO 11: Preset avatar gallery (#2848)
 
 Location: Settings > General > Profile, below the photo upload.
 
@@ -3181,7 +3182,7 @@ Location: Settings > General > Profile, below the photo upload.
       import - the figure is set again
 - [ ] TC-0818 Both storage modes (server + browser) behave identically
 
-#### Photo stash on figure switch (#2862)
+#### TS-0118 Photo stash on figure switch (#2862)
 
 - [ ] TC-0819 Upload and crop a photo, then tap a figure: a confirmation dialog
       appears ("Replace your photo?"); cancel leaves photo and selection
@@ -3196,7 +3197,7 @@ Location: Settings > General > Profile, below the photo upload.
 - [ ] TC-0824 Backup round-trip: with a filled stash export -> wipe -> import;
       "Restore photo" still works (both storage modes)
 
-#### Avatar frames (#2850)
+#### TS-0119 Avatar frames (#2850)
 
 Location: Settings > General > Profile, below the figure gallery.
 
@@ -3218,7 +3219,7 @@ Location: Settings > General > Profile, below the figure gallery.
       data, import - selection and purchase are back
 - [ ] TC-0832 Both storage modes behave identically (XP deduction included)
 
-### Review: errors only, no endless round (#3170)
+### TS-0120 Review: errors only, no endless round (#3170)
 
 - [ ] TC-0833 Play a lesson with NO mistakes: the learning path shows NO "Train
       errors (N)" for the set or the lesson, the header badge "N due" and
@@ -3249,7 +3250,7 @@ Location: Settings > General > Profile, below the figure gallery.
       for ever); with ON the three-in-a-row rule applies again
 - [ ] TC-0840 Check both in browser mode (no server) AND in server mode
 
-### Review session on the runner shell (EXP-052 slice 1, #3169)
+### TS-0121 Review session on the runner shell (EXP-052 slice 1, #3169)
 
 - [ ] TC-0841 Open `/review/<set>` with due elements: header with "Back to
       Dashboard", the title "Review session" and the element subtitle; the
@@ -3283,7 +3284,7 @@ Location: Settings > General > Profile, below the figure gallery.
       same screens as before (Back to Dashboard or Open content browser)
 - [ ] TC-0850 Check both in browser mode (no server) AND in server mode
 
-### Shuffle mode on the runner shell (EXP-052 slice 2, #3169)
+### TS-0122 Shuffle mode on the runner shell (EXP-052 slice 2, #3169)
 
 - [ ] TC-0851 Open `/shuffle-lesson/<set>` for a downloaded set with at least two
       lessons: header with "Back to Dashboard", the title and the subtitle
@@ -3321,7 +3322,7 @@ Location: Settings > General > Profile, below the figure gallery.
       usual screens
 - [ ] TC-0861 Check both in browser mode (no server) AND in server mode
 
-### Endless mode on the runner shell (EXP-052 slice 2, #3169)
+### TS-0123 Endless mode on the runner shell (EXP-052 slice 2, #3169)
 
 - [ ] TC-0862 Open `/endless-lesson/<set>` for a downloaded set: header with "Back
       to Dashboard" and the title "Endless practice"; below it the stat
@@ -3357,7 +3358,7 @@ Location: Settings > General > Profile, below the figure gallery.
       usual screens
 - [ ] TC-0872 Check both in browser mode (no server) AND in server mode
 
-### Adaptive lesson on the runner shell (EXP-052 slice 3, #3169)
+### TS-0124 Adaptive lesson on the runner shell (EXP-052 slice 3, #3169)
 
 - [ ] TC-0873 Open `/adaptive-lesson/<set>` for a set with active errors: header
       with "Back to Dashboard" and the lesson title; right under the title
@@ -3399,7 +3400,7 @@ Location: Settings > General > Profile, below the figure gallery.
       mode, button "Open content browser" instead of "Back to Dashboard")
 - [ ] TC-0883 Check both in browser mode (no server) AND in server mode
 
-### Retry errors on the runner shell (EXP-052 slice 3, #3169)
+### TS-0125 Retry errors on the runner shell (EXP-052 slice 3, #3169)
 
 - [ ] TC-0884 Finish a lesson with at least two mistakes, open "Retry Errors" from
       the summary: header with "Back to lesson" and the title "Retry errors:

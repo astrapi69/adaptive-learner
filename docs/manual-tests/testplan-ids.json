@@ -3,12 +3,48 @@
     "highest": 898,
     "retired": []
   },
+  "TS": {
+    "highest": 125,
+    "retired": []
+  },
   "RTC": {
     "highest": 99,
     "retired": []
   },
+  "RTS": {
+    "highest": 8,
+    "retired": []
+  },
   "LTC": {
     "highest": 35,
+    "retired": []
+  },
+  "LTS": {
+    "highest": 8,
+    "retired": []
+  },
+  "GTC": {
+    "highest": 25,
+    "retired": []
+  },
+  "GTS": {
+    "highest": 9,
+    "retired": []
+  },
+  "OTC": {
+    "highest": 13,
+    "retired": []
+  },
+  "OTS": {
+    "highest": 4,
+    "retired": []
+  },
+  "DTC": {
+    "highest": 12,
+    "retired": []
+  },
+  "DTS": {
+    "highest": 4,
     "retired": []
   }
 }

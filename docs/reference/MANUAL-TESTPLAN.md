@@ -65,7 +65,7 @@ Gesamtgefühl des Lernflusses.
 
 ---
 
-## Session 1: Onboarding (frischer User)
+## RTS-0001 Session 1: Onboarding (frischer User)
 
 **Voraussetzung:** Inkognito-/Privat-Fenster ODER leere Datenbank.
 
@@ -85,7 +85,7 @@ Gesamtgefühl des Lernflusses.
 
 ---
 
-## Session 2: Lernflow
+## RTS-0002 Session 2: Lernflow
 
 **Voraussetzung:** Mindestens 1 Projekt angelegt.
 
@@ -127,7 +127,7 @@ Gesamtgefühl des Lernflusses.
 
 ---
 
-## Session 3: Content + Repositories
+## RTS-0003 Session 3: Content + Repositories
 
 - [ ] RTC-0040 Content Browser: Suchfeld mit Lupe rechts
 - [ ] RTC-0041 Content Browser: Quell-Badges (Offiziell, Eigenes Repo)
@@ -153,7 +153,7 @@ Gesamtgefühl des Lernflusses.
 
 ---
 
-## Session 4: Einstellungen + Backup
+## RTS-0004 Session 4: Einstellungen + Backup
 
 - [ ] RTC-0056 Einstellungen > Lernen: Sprache-Panel ist ganz oben
 - [ ] RTC-0057 Einstellungen > Lernen: Assessment fortsetzen/erneut machen
@@ -190,7 +190,7 @@ Gesamtgefühl des Lernflusses.
 
 ---
 
-## Session 5: Mobile (iPhone Safari)
+## RTS-0005 Session 5: Mobile (iPhone Safari)
 
 Alle Tests aus Session 1-4 noch einmal, plus:
 
@@ -205,7 +205,7 @@ Alle Tests aus Session 1-4 noch einmal, plus:
 
 ---
 
-## Session 6: Cross-Browser (optional)
+## RTS-0006 Session 6: Cross-Browser (optional)
 
 - [ ] RTC-0085 Firefox Desktop: Basistests aller Sessions 1-4
 - [ ] RTC-0086 Chrome Android: Basis-Lernflow
@@ -213,7 +213,7 @@ Alle Tests aus Session 1-4 noch einmal, plus:
 
 ---
 
-## Session 7: Barrierefreiheit (optional)
+## RTS-0007 Session 7: Barrierefreiheit (optional)
 
 - [ ] RTC-0088 Keyboard-Navigation: Tab durch alle Buttons
 - [ ] RTC-0089 Screenreader: Aria-Labels auf Buttons vorhanden
@@ -223,7 +223,7 @@ Alle Tests aus Session 1-4 noch einmal, plus:
 
 ---
 
-## Session 8: Tastenkürzel (optional)
+## RTS-0008 Session 8: Tastenkürzel (optional)
 
 Das globale Tastenkürzel-System (#585). Alle Kürzel sind in der
 Hilfe-Übersicht dokumentiert (Taste `?`).
