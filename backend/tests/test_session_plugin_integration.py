@@ -9,6 +9,7 @@ dispatch through the production PluginManager, and the
 from __future__ import annotations
 
 import json
+import socket
 from unittest.mock import patch
 
 import pluggy
@@ -19,6 +20,51 @@ from app.main import app, manager
 from app.openapi_metadata import iter_api_routes
 
 hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
+
+_LOOPBACK_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
+
+
+class _OutboundCallBlockedError(OSError):
+    """Raised in place of a real DNS lookup or connect to a remote host."""
+
+
+@pytest.fixture(autouse=True)
+def _no_outbound_network(monkeypatch):
+    """Fail any test in this module that reaches for a non-loopback host.
+
+    DNS lookups and connects to remote hosts raise
+    :class:`_OutboundCallBlockedError`. That exception alone is not
+    enough: the step evaluator and the provider plugins deliberately
+    swallow provider errors, so a blocked call would still leave the
+    test green. Every attempt is therefore recorded and the test fails
+    at teardown, naming the host it tried to reach (#3152).
+    """
+    attempts: list[str] = []
+    real_getaddrinfo = socket.getaddrinfo
+    real_connect = socket.socket.connect
+
+    def _guarded_getaddrinfo(host, port, *args, **kwargs):
+        host_name = host.decode() if isinstance(host, bytes) else host
+        if host_name is not None and host_name not in _LOOPBACK_HOSTS:
+            attempts.append(f"{host_name}:{port}")
+            raise _OutboundCallBlockedError(f"outbound DNS lookup blocked: {host_name}:{port}")
+        return real_getaddrinfo(host, port, *args, **kwargs)
+
+    def _guarded_connect(sock, address):
+        if isinstance(address, tuple) and address[0] not in _LOOPBACK_HOSTS:
+            attempts.append(f"{address[0]}:{address[1]}")
+            raise _OutboundCallBlockedError(f"outbound connect blocked: {address[0]}")
+        return real_connect(sock, address)
+
+    monkeypatch.setattr(socket, "getaddrinfo", _guarded_getaddrinfo)
+    monkeypatch.setattr(socket.socket, "connect", _guarded_connect)
+    yield
+    if attempts:
+        pytest.fail(
+            "test made a real outbound network call to "
+            f"{', '.join(sorted(set(attempts)))}; mock the provider call instead (#3152)",
+            pytrace=False,
+        )
 
 
 @pytest.fixture()
@@ -688,25 +734,31 @@ def test_message_returns_ai_error_when_plugin_raises(client: TestClient, mock_ai
 
 
 def test_message_returns_ai_error_when_no_provider_matches(client: TestClient):
-    """No mock plugin registered + the production ai-anthropic
-    plugin only handles claude-* models. Our default model maps
-    map to claude-3-5-haiku-latest, which IS a claude-* prefix
-    — so ai-anthropic WILL match and try the real SDK with our
-    fake key. That hits a real network failure, which the
-    route's exception handler catches and surfaces as an
-    ai_error."""
+    """No mock plugin registered, so the production ai-anthropic
+    plugin claims the default claude-* model. A provider failure
+    inside it is wrapped as ``ExternalServiceError("anthropic", ...)``
+    and the route surfaces it as ``ai_error``.
+
+    The failure is simulated at the SDK boundary
+    (``adaptive_learner_ai_anthropic.plugin._complete``) instead of
+    letting the real SDK fail against the network with the fake key
+    (#3152)."""
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id)
     sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
         "session"
     ]["id"]
-    resp = client.post(
-        f"/api/plugins/session/{sess_id}/message",
-        json={"role": "user", "content": "Trigger the real SDK."},
-    )
+    with patch(
+        "adaptive_learner_ai_anthropic.plugin._complete",
+        side_effect=ConnectionError("simulated network failure"),
+    ):
+        resp = client.post(
+            f"/api/plugins/session/{sess_id}/message",
+            json={"role": "user", "content": "Trigger the provider error path."},
+        )
     body = resp.json()
     assert body["assistant_message"] is None
-    assert body["ai_error"] is not None
+    assert "anthropic: simulated network failure" in body["ai_error"]
 
 
 def test_start_persists_system_prompt_as_first_session_message(client: TestClient):
@@ -1008,14 +1060,26 @@ def _patch_call_ai_complete(monkeypatch, captured: dict[str, object]):
     """Replace ``ai_orchestration.call_ai_complete`` with a capturing
     stub. Both routes.py and the test see the same module, so the
     monkeypatch reaches the live import.
+
+    The step evaluator imports ``call_ai_complete`` by name, so its
+    local reference is stubbed as well (same as ``_dual_call_patch``).
+    Without that the evaluator call reached the real Anthropic SDK with
+    the fake key (#3152). Its stub returns non-JSON, so the evaluator
+    takes the deterministic fallback, and only the learning call's
+    model lands in ``captured``.
     """
     from adaptive_learner_session import ai_orchestration as _aio
+    from adaptive_learner_session import step_evaluator as _se
 
     def _capture(*, pm, messages, model, api_key, max_tokens=None):  # noqa: ARG001
         captured["model"] = model
         return "captured-reply"
 
+    def _evaluator_stub(*, pm, messages, model, api_key, max_tokens=None):  # noqa: ARG001
+        return "captured-reply"
+
     monkeypatch.setattr(_aio, "call_ai_complete", _capture)
+    monkeypatch.setattr(_se, "call_ai_complete", _evaluator_stub)
 
 
 def test_message_uses_model_override_when_set(client: TestClient, monkeypatch):
