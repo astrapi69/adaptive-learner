@@ -196,13 +196,13 @@ A set ZIP whose manifest carries `target_language`/`source_language` used to
 arrive as en->en; an export followed by a re-import reset the source language
 to en.
 
-- [ ] In "My Content" export a set whose source language is German (e.g.
+- [ ] TC-0896 In "My Content" export a set whose source language is German (e.g.
       fr-a1 from the German tree) as a ZIP ("Save as file") and import it again
       under "Import". The imported set shows French as the target and German
       as the source language, and the card speech output speaks French.
-- [ ] An older set ZIP whose manifest carries only `language` still imports
+- [ ] TC-0897 An older set ZIP whose manifest carries only `language` still imports
       with that target language and English as the source.
-- [ ] Both storage modes (API + Dexie).
+- [ ] TC-0898 Both storage modes (API + Dexie).
 
 #### A7. Edit belongs to the lesson, not the set (#2210)
 

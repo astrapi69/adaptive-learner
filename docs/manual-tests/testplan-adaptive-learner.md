@@ -210,14 +210,14 @@ Ein Set-ZIP, dessen Manifest `target_language`/`source_language` trägt, kam
 vorher als en->en an; ein Export und erneuter Import setzte die
 Ausgangssprache auf en zurück.
 
-- [ ] In "Meine Inhalte" ein Set mit Ausgangssprache Deutsch (z. B. fr-a1
+- [ ] TC-0896 In "Meine Inhalte" ein Set mit Ausgangssprache Deutsch (z. B. fr-a1
       aus dem Deutsch-Baum) als ZIP exportieren ("Als Datei speichern") und
       unter "Importieren" wieder importieren. Das importierte Set zeigt
       Französisch als Zielsprache und Deutsch als Ausgangssprache, und die
       Sprachausgabe der Karten spricht Französisch.
-- [ ] Ein älteres Set-ZIP, dessen Manifest nur `language` trägt, importiert
+- [ ] TC-0897 Ein älteres Set-ZIP, dessen Manifest nur `language` trägt, importiert
       weiter mit dieser Zielsprache und Englisch als Ausgangssprache.
-- [ ] Beide Speichermodi (API + Dexie).
+- [ ] TC-0898 Beide Speichermodi (API + Dexie).
 
 #### A7. Bearbeiten je Lektion, nicht je Set (#2210)
 
