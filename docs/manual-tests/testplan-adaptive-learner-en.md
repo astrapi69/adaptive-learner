@@ -224,7 +224,6 @@ to en.
       with that target language and English as the source.
 - [ ] TC-0898 Both storage modes (API + Dexie).
 
-#### A7. Edit belongs to the lesson, not the set (#2210)
 #### TS-0010 A7. Edit belongs to the lesson, not the set (#2210)
 
 Edit belongs to the lesson, not the set. The set-level button used to guess

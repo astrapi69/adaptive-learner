@@ -241,7 +241,6 @@ Ausgangssprache auf en zurück.
       weiter mit dieser Zielsprache und Englisch als Ausgangssprache.
 - [ ] TC-0898 Beide Speichermodi (API + Dexie).
 
-#### A7. Bearbeiten je Lektion, nicht je Set (#2210)
 #### TS-0010 A7. Bearbeiten je Lektion, nicht je Set (#2210)
 
 Bearbeiten gehört an die Lektion, nicht an das Set. Der Set-Knopf riet
