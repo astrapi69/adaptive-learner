@@ -110,6 +110,13 @@ interface FeatureShot {
      *  tall containers, where the hidden strip does not matter, and a global
      *  offset would move every baseline. */
     pinBelowHeader?: boolean;
+    /** Like ``pinBelowHeader``, but below the sticky element with this
+     *  testid instead of ``.app-nav``. On the lesson route the app header
+     *  auto-hides on scroll and the sticky progress row
+     *  (``lesson-progress-options-row``) is what overlays the top of the
+     *  scroller, and it is taller than the header, so a pin on a heading
+     *  would still be clipped under it (#3260). */
+    pinBelow?: string;
 }
 
 /** Open ``/content`` on a given tab and wait for the hub shell. */
@@ -179,6 +186,9 @@ interface FixtureRepo {
         targetLanguage: string;
         sourceLanguage: string;
         domain: string;
+        /** Extensions the set declares (``ext:<name>@<major>``), for a
+         *  fixture lesson that uses an extension exercise type. */
+        requiresExtensions?: string[];
     };
     /** ``sets/<lang>/<folder>`` path inside the repo. */
     setPath: string;
@@ -220,11 +230,33 @@ const LONG_WORD_FIXTURE: FixtureRepo = {
     lessonFile: "32-sprachebenen.json",
 };
 
+/**
+ * Ordering review after a wrong answer (#3260): the "Der Ablauf eines
+ * Absendens" step of alc-programming React 19 lesson 01, an
+ * ``ext:al-ordering`` exercise with five steps, as
+ * ``e2e/fixtures/ordering-review.lesson.json``. The bundled set has no
+ * ordering exercise, so no bundled lesson reaches the review.
+ */
+const ORDERING_FIXTURE: FixtureRepo = {
+    repo: "e2e/ordering-review",
+    setId: "react-19-from-de",
+    manifest: {
+        title: "React 19",
+        targetLanguage: "de",
+        sourceLanguage: "de",
+        domain: "programming",
+        requiresExtensions: ["ext:al-ordering@1"],
+    },
+    setPath: "sets/de/react-19",
+    lessonFile: "01-actions-useactionstate.json",
+};
+
 /** The fixture file on disk is named after its purpose, the served copy
  *  after the lesson (the set manifest lists the served name). */
 const FIXTURE_FILES: Record<string, string> = {
     [EXPLANATION_FIXTURE.lessonFile]: "explanation-post-answer.lesson.json",
     [LONG_WORD_FIXTURE.lessonFile]: "matching-long-word.lesson.json",
+    [ORDERING_FIXTURE.lessonFile]: "ordering-review.lesson.json",
 };
 
 /**
@@ -249,6 +281,12 @@ async function mockLessonRepo(page: Page, fixture: FixtureRepo): Promise<void> {
         "    lesson_count: 1",
         `    domain: ${fixture.manifest.domain}`,
         `    path: ${fixture.setPath}`,
+        ...(fixture.manifest.requiresExtensions?.length
+            ? [
+                  "    requires_extensions:",
+                  ...fixture.manifest.requiresExtensions.map((ext) => `      - "${ext}"`),
+              ]
+            : []),
         "",
     ].join("\n");
     const setManifest = `metadata:\n  lessons:\n    - "${fixture.lessonFile}"\n`;
@@ -468,6 +506,38 @@ async function gotoMatchingLongWord(page: Page): Promise<boolean> {
 async function gotoMatchingLongWordResolved(page: Page): Promise<boolean> {
     if (!(await gotoMatchingLongWord(page))) return false;
     return resolveOpenMatching(page);
+}
+
+/**
+ * Ordering review after a wrong answer (#3260): open the
+ * ``ORDERING_FIXTURE`` lesson in practice mode (the review renders only
+ * with immediate feedback, which exam mode switches off), place the first
+ * two steps swapped and the rest in order, and check. "Deine Antwort" then
+ * marks positions 1 and 2 wrong and the rest right, and the solution lists
+ * the authored order below it.
+ */
+async function gotoOrderingReview(page: Page): Promise<boolean> {
+    await page.addInitScript(() => {
+        localStorage.setItem("adaptive-learner.lesson.default_mode", "practice");
+    });
+    await openFixtureLesson(page, ORDERING_FIXTURE);
+    await page.getByTestId("lesson-next").click();
+    await expect(page.getByTestId("ordering-exercise")).toBeVisible({timeout: 10_000});
+    // Tile testids carry the ITEM index (canonical position), not the
+    // scrambled display slot, so this order is the same on every run.
+    const n = await page.getByTestId(/^ordering-scrambled-\d+$/).count();
+    if (n < 2) return false;
+    const order = [1, 0, ...Array.from({length: n - 2}, (_, i) => i + 2)];
+    for (const tile of order) {
+        await page.getByTestId(`ordering-scrambled-${tile}`).click();
+    }
+    const check = page.getByTestId("lesson-check");
+    await expect(check).toBeEnabled({timeout: 5_000});
+    await check.click();
+    await expect(page.getByTestId("ordering-result")).toHaveAttribute("data-result", "wrong");
+    await expect(page.getByTestId("ordering-review")).toBeVisible({timeout: 5_000});
+    await expect(page.getByTestId("ordering-solution")).toBeVisible();
+    return true;
 }
 
 /**
@@ -1623,6 +1693,17 @@ const FEATURES: FeatureShot[] = [
     {path: "matching-animation/matching-long-word", setup: gotoMatchingLongWord, pinTo: "matching-exercise"},
     {path: "matching-animation/matching-long-word-resolved", setup: gotoMatchingLongWordResolved, pinTo: "matching-exercise"},
 
+    // --- Ordering review after a wrong answer (#3260) --------------------
+    // Fixture lesson; the bundled set has no ordering exercise. The pin
+    // clears the sticky progress row, so the "Deine Antwort" heading is
+    // not cut off on the phone.
+    {
+        path: "ordering-review/falsche-reihenfolge",
+        setup: gotoOrderingReview,
+        pinTo: "ordering-review",
+        pinBelow: "lesson-progress-options-row",
+    },
+
     // --- Lesson modes (practice / exam / timed) -------------------------
     {path: "lesson-modes/practice", setup: (p) => gotoLessonModeToggle(p, "practice")},
     {path: "lesson-modes/exam", setup: (p) => gotoLessonModeToggle(p, "exam")},
@@ -1854,14 +1935,19 @@ for (const feature of FEATURES) {
                   ? page.getByTestId(feature.pinTo)
                   : null;
             if (pin) {
-                await pin.first().evaluate((el, belowHeader) => {
-                    if (belowHeader) {
-                        const nav = document.querySelector(".app-nav");
-                        const navHeight = nav ? Math.round(nav.getBoundingClientRect().height) : 0;
-                        el.style.scrollMarginTop = `${navHeight}px`;
+                const overlay = feature.pinBelow
+                    ? `[data-testid="${feature.pinBelow}"]`
+                    : feature.pinBelowHeader
+                      ? ".app-nav"
+                      : null;
+                await pin.first().evaluate((el, overlaySelector) => {
+                    if (overlaySelector) {
+                        const bar = document.querySelector(overlaySelector);
+                        const barHeight = bar ? Math.round(bar.getBoundingClientRect().height) : 0;
+                        el.style.scrollMarginTop = `${barHeight}px`;
                     }
                     el.scrollIntoView({block: "start"});
-                }, feature.pinBelowHeader === true);
+                }, overlay);
                 await page.waitForTimeout(100);
             }
             // Pass the snapshot name as an ARRAY of path segments, not a

@@ -1,0 +1,38 @@
+{
+  "id": "01-actions-useactionstate",
+  "title": "Actions und useActionState",
+  "description": "Referenz-Lektion für #3260: eine Sortier-Übung (ext:al-ordering), die nach einer falschen Antwort die eingereichte Reihenfolge mit einer Markierung je Position und darunter die Lösung zeigt. Inhalt aus alc-programming, React 19, Lektion 01 (Actions und useActionState); Sachthema auf Deutsch.",
+  "target_language": "de",
+  "source_language": "de",
+  "domain": "programming",
+  "estimated_minutes": 2,
+  "requires_extensions": ["ext:al-ordering@1"],
+  "cards": [],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Die Action und ihr Stand",
+      "body": "# Actions\n\nEine **Action** ist eine async Funktion, die React für ein Formular aufruft. Sie bekommt zwei Parameter, in dieser Reihenfolge: den **vorherigen Stand** und die **FormData**. Was sie zurückgibt, ist der **neue Stand**.\n\n`useActionState(action, startwert)` gibt drei Dinge zurück:\n\n1. `stand` - der letzte Rückgabewert der Action,\n2. `absenden` - die umhüllte Action, die ins `action`-Attribut gehört,\n3. `pending` - `true`, solange die Action noch arbeitet.\n\nDer Ladezustand kommt also gratis: kein eigenes `useState`, kein `try/finally`."
+    },
+    {
+      "id": "ex-ablauf",
+      "type": "exercise",
+      "title": "Der Ablauf eines Absendens",
+      "exercise": {
+        "id": "ex-ablauf",
+        "type": "ext:al-ordering",
+        "prompt": "Bringe die Schritte in die Reihenfolge, in der sie bei einem Klick auf den Knopf passieren.",
+        "ext_payload": {
+          "items": [
+            "React sammelt die FormData des Formulars",
+            "pending wird true, der Knopf wird abgeschaltet",
+            "anmelden läuft mit vorherigem Stand und FormData",
+            "Der Rückgabewert der Action wird der neue stand",
+            "pending wird wieder false, die Oberfläche zeigt den neuen Stand"
+          ]
+        }
+      }
+    }
+  ]
+}
