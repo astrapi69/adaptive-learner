@@ -1,10 +1,10 @@
 {
   "TC": {
-    "highest": 898,
+    "highest": 911,
     "retired": []
   },
   "TS": {
-    "highest": 126,
+    "highest": 127,
     "retired": []
   },
   "RTC": {
@@ -45,6 +45,14 @@
   },
   "DTS": {
     "highest": 4,
+    "retired": []
+  },
+  "STC": {
+    "highest": 35,
+    "retired": []
+  },
+  "STS": {
+    "highest": 13,
     "retired": []
   }
 }

@@ -59,6 +59,28 @@ Echter Round-Trip, keine Simulation:
 Ergebnis dokumentieren (auch Teilfehler einzeln). Bei JEDEM Abweichen:
 Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.
 
+#### TS-0127 A1b. Recovery-Round-Trip (#2171, geschuldete Vorbedingung, nachzuholen)
+
+Dieser Punkt war als Vorbedingung des Merges von #2171 formuliert und wurde
+übergangen. Er wird hier nachgeholt, nicht weggelassen.
+
+- [ ] TC-0899 Prüfen, ob der Wiederherstellungs-Hinweis von selbst erscheint. Erscheint
+      er, liegen echte betroffene Daten vor: dann hier prüfen und **vorher
+      sichern**.
+- [ ] TC-0900 Erscheint er nicht, wandert die Prüfung auf den Desktop, wo der Zustand
+      mit Entwicklerwerkzeugen herstellbar ist (Anleitung: "Wiederherstellung:
+      Wiederholungsfortschritt nach ja/ko/zh-Korrektur"). Im iOS-Standalone-Modus
+      ist das nicht möglich, weil dafür ein Mac nötig wäre.
+- [ ] TC-0901 Wiederherstellen wählen, danach prüfen: Fortschritt zugeordnet, keine
+      verwaisten Zeilen, Zahlen in der Rückmeldung plausibel.
+- [ ] TC-0902 Danach das vor der Wiederherstellung erstellte Backup importieren: der
+      alte Zustand kommt zurück und der Hinweis erscheint wieder. Das ist
+      erwartetes Verhalten.
+
+**Konsequenz bei einem Fund:** Patch in einem Folgerelease, kein Rollback. Der
+Hinweis ist zustandsgetrieben und erreicht niemanden, der nicht betroffen ist.
+Nicht improvisieren, Fund melden.
+
 #### TS-0002 A2. Mobile Scroll-to-Error (#2039, Visual-Device-Check vor Merge)
 
 - [ ] TC-0008 Formular mit Validierungsfehler ausserhalb des Viewports provozieren
@@ -253,6 +275,11 @@ Voraussetzung: die v2.8.2-Release-Binaries (der Launcher ist seit v2.8.0 im
 IMAGE-Modus, #2167; Engine-Pin docker-app-launcher ^0.25.1). Nur diese
 Binaries verwenden, alle aelteren sind obsolet.
 
+**Vorher Daten sichern.** Der Launcher mountet das präfixierte Volume mit der
+echten Datenbank, der Lauf arbeitet also auf realen Daten: Backup-Export aus
+der App, zusätzlich eine Kopie des Volumes, erst dann anfangen. Die Sicherung
+einmal zurücklesen, nicht nur prüfen, dass die Datei existiert.
+
 - [ ] TC-0052 Daemon läuft + Testnutzer OHNE docker-Gruppe (qatest):
       Permission-Meldung + pkexec-Fix-Angebot, NICHT "Docker starten". [seit
       dem 0.16.0-Fehlschlag ohne realen Beweis]
@@ -272,10 +299,31 @@ Binaries verwenden, alle aelteren sind obsolet.
       nachvollziehbar.
 - [ ] TC-0059 Portwechsel: nach den drei #2069-Faellen unter "PRIO 2 -> Portwechsel:
       Datenmitnahme" testen (der fruehere Vorbehalt ist geliefert).
+- [ ] TC-0903 Vor dem ersten Klick `--doctor` ausführen: ein Durchgang meldet
+      Konfiguration, Daemon, Werkzeuge, Bereitschaftsblocker, Port und Zustand.
+      Ergebnis notieren.
+- [ ] TC-0904 Eine `~/.docker/config.json` mit defektem Credential-Helfer bleibt nach dem
+      Start und der Installation **unverändert**; im Log steht keine
+      Credential-Zeile.
+- [ ] TC-0905 Fortschrittsbalken: verschwindet nach Erfolg UND nach Fehlschlag. Ein
+      stehenbleibender Balken ist ein Befund.
+- [ ] TC-0906 Bezug abbrechen: Balken weg, die Meldung nennt die behaltenen Schichten,
+      Installation sofort erneut möglich, der zweite Versuch spürbar schneller.
+- [ ] TC-0907 Aktualisierung früh abbrechen: die Meldung sagt, dass die App gestoppt ist
+      und dass Start die vorherige Version zurückbringt. Start drücken und
+      prüfen, dass sie zurückkommt.
+- [ ] TC-0908 Beim Stoppen und Deinstallieren erscheint **kein** Abbrechen-Bedienelement.
+- [ ] TC-0909 Nebenläufigkeitsschutz: die Notiz, dass er nicht wirken kann, erscheint
+      beim Erststart **nicht**. Erscheint sie, zeigt die Konfiguration auf ein
+      unschreibbares Verzeichnis, und das ist ein Befund.
+- [ ] TC-0910 Nach einem Abbruch `--doctor` erneut: die Zeile zum letzten Vorgang zeigt
+      den Abbruch.
+- [ ] TC-0911 Deinstallieren: Container und Volume weg, keine Reste unter `~/.config` und
+      `~/.local/share`.
 
 ### Reihenfolge-Empfehlung
 
-Session A zuerst und in einem Durchgang: A1 und A4 teilen sich den
+Session A zuerst und in einem Durchgang: A1, A1b und A4 teilen sich den
 Backup-Round-Trip, A2 und A5 sind kurze Zusatzprüfungen. Damit fällt in
 einer Sitzung das aelteste Launch-Gate zusammen mit zwei frisch gemergten
 Features. Session B erst, wenn die neuen Binaries vorliegen.

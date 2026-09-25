@@ -59,6 +59,26 @@ A real round-trip, not a simulation:
 Document the result (partial failures individually too). On ANY deviation:
 screenshot + which step, which becomes an issue with forensics.
 
+#### TS-0127 A1b. Recovery round-trip (#2171, an owed precondition, to be caught up)
+
+This item was stated as a precondition for merging #2171 and was skipped. It
+is caught up here, not dropped.
+
+- [ ] TC-0899 Check whether the recovery notice appears on its own. If it does, real
+      affected data is present: check it here and **back up first**.
+- [ ] TC-0900 If it does not appear, the check moves to the desktop, where the state
+      can be produced with developer tools (guide: "Recovery: review progress
+      after the ja/ko/zh correction"). In iOS standalone mode this is not
+      possible, because it would need a Mac.
+- [ ] TC-0901 Choose recover, then check: progress assigned, no orphaned rows, the
+      numbers in the feedback plausible.
+- [ ] TC-0902 Then import the backup made before the recovery: the old state comes
+      back and the notice appears again. That is expected behaviour.
+
+**Consequence of a finding:** a patch in a follow-up release, no rollback. The
+notice is state-driven and reaches nobody who is not affected. Do not
+improvise, report the finding.
+
 #### TS-0002 A2. Mobile scroll-to-error (#2039, visual device check before merge)
 
 - [ ] TC-0008 Provoke a validation error outside the viewport (long form, error at
@@ -234,6 +254,11 @@ Prerequisite: the v2.8.2 release binaries (the launcher runs in IMAGE mode
 since v2.8.0, #2167; engine pin docker-app-launcher ^0.25.1). Use only these
 binaries; all older ones are obsolete.
 
+**Back up first.** The launcher mounts the prefixed volume with the real
+database, so the run works on real data: a backup export from the app, plus a
+copy of the volume, and only then start. Read the backup back once, do not
+only check that the file exists.
+
 - [ ] TC-0052 Daemon running + a test user WITHOUT the docker group (qatest):
       permission message + pkexec-fix offer, NOT "Start Docker". [since the
       0.16.0 failure without real proof]
@@ -251,10 +276,30 @@ binaries; all older ones are obsolete.
 - [ ] TC-0058 Stop, restart, uninstall: no errors, the console reports intelligibly.
 - [ ] TC-0059 Port change: test via the three #2069 cases under "PRIO 2 -> Port
       change: data carry-over" (the earlier caveat has been delivered).
+- [ ] TC-0903 Before the first click, run `--doctor`: one pass reports configuration,
+      daemon, tools, readiness blockers, port and state. Note the result.
+- [ ] TC-0904 A `~/.docker/config.json` with a broken credential helper stays
+      **unchanged** after the start and the install; the log carries no
+      credential line.
+- [ ] TC-0905 Progress bar: disappears after success AND after failure. A bar that
+      stays is a finding.
+- [ ] TC-0906 Cancel a pull: the bar is gone, the message names the kept layers, the
+      install can start again at once, the second attempt is noticeably faster.
+- [ ] TC-0907 Cancel an update early: the message says the app is stopped and that
+      Start brings back the previous version. Press Start and check that it
+      comes back.
+- [ ] TC-0908 Stopping and uninstalling show **no** cancel control.
+- [ ] TC-0909 Concurrency guard: the note that it cannot work does **not** appear on
+      the first start. If it does, the configuration points at an unwritable
+      directory, and that is a finding.
+- [ ] TC-0910 After a cancel, run `--doctor` again: the line for the last operation
+      shows the cancel.
+- [ ] TC-0911 Uninstall: container and volume gone, no leftovers under `~/.config` and
+      `~/.local/share`.
 
 ### Recommended order
 
-Session A first and in one pass: A1 and A4 share the backup round-trip, A2
+Session A first and in one pass: A1, A1b and A4 share the backup round-trip, A2
 and A5 are short extra checks. That makes the oldest launch gate coincide
 with two freshly merged features in one sitting. Session B only once the new
 binaries are available.
