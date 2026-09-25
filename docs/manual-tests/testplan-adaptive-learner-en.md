@@ -190,7 +190,7 @@ backend listing follows the manifest).
 - [ ] TC-0044 Sets without metadata.lessons in the manifest behave unchanged
       (alphabetical order, no silent resorting).
 
-#### A6d. ZIP import keeps the language pair (#3244)
+#### TS-0126 A6d. ZIP import keeps the language pair (#3244)
 
 A set ZIP whose manifest carries `target_language`/`source_language` used to
 arrive as en->en; an export followed by a re-import reset the source language

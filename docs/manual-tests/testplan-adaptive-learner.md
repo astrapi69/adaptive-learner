@@ -204,7 +204,7 @@ API-Modus (Backend-Listung folgt dem Manifest).
 - [ ] TC-0044 Sets ohne metadata.lessons im Manifest verhalten sich unverändert
       (alphabetische Reihenfolge, kein stilles Umsortieren).
 
-#### A6d. ZIP-Import behält das Sprachpaar (#3244)
+#### TS-0126 A6d. ZIP-Import behält das Sprachpaar (#3244)
 
 Ein Set-ZIP, dessen Manifest `target_language`/`source_language` trägt, kam
 vorher als en->en an; ein Export und erneuter Import setzte die
