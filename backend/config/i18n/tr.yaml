@@ -976,7 +976,7 @@ settings:
     stack: "Yığ"
   matching_review_views:
     label: "Düzeltmeyi ayrı görünümde göster"
-    desc: "Kontrol ettikten sonra 'Cevaplarım' yalnızca kendi eşleştirmelerini ve hatalarını gösterir; doğru eşler 'Düzeltme' altındadır. Kapalı: doğru eş, 'Cevaplarım' içinde her hatanın hemen altında görünür."
+    desc: "Kontrol ettikten sonra 'Cevaplarım' eşleştirmelerini oluşturduğun gibi, değerlendirme olmadan gösterir; değerlendirme ve doğru eşler 'Düzeltme' altındadır. Kapalı: doğru eş, 'Cevaplarım' içinde her hatanın hemen altında görünür."
   paused_retention:
     title: Duraklatılmış ders saklama süresi
     hint: "Bu süreden daha eski duraklatılmış dersler otomatik olarak terk edilir. Yaşa bakılmaksızın en fazla 10 duraklatılmış ders saklanır."

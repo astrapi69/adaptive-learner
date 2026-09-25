@@ -1023,7 +1023,7 @@
     },
     "matching_review_views": {
       "label": "Corrections as a separate view",
-      "desc": "After checking, 'My answers' shows only your own pairs with your mistakes; the correct partners are under 'Corrections'. Off: the correct partner appears directly under each mistake in 'My answers'."
+      "desc": "After checking, 'My answers' shows your pairs as you formed them, without grading; the grading and the correct partners are under 'Corrections'. Off: the correct partner appears directly under each mistake in 'My answers'."
     },
     "paused_retention": {
       "title": "Paused lesson retention",

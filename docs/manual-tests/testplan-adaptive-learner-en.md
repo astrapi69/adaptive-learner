@@ -1134,7 +1134,8 @@ areas of the Data tab in the fixed #1451 order.
       there are three buttons "My answers" / "Corrections" / "Solve".
       "My answers" is active and shows your pairs exactly as you formed
       them (numbered, colour-coded pair badges), with NO grading: no
-      green/red, no "Your answer" or "Correct answer" row (#3233).
+      green/red, no green pair colour either (#3261), no "Your answer" or
+      "Correct answer" row (#3233).
       "Corrections" shows the graded grid (green/red, "Your answer") plus
       the correct answer under each mistake, "Solve" shows the solution.
       "Try again" and a new check start in "My answers" again

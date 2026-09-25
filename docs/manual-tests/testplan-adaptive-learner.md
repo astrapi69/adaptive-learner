@@ -1206,8 +1206,8 @@ Bereichen des Daten-Tabs in der festen #1451-Reihenfolge.
       richtigen Prüfung stehen drei Knöpfe "Meine Antworten" / "Korrektur" /
       "Auflösen". "Meine Antworten" ist aktiv und zeigt die Paare genau so,
       wie du sie gebildet hast (nummerierte, farbige Paar-Markierungen),
-      OHNE Bewertung: kein Grün/Rot, keine Zeile "Deine Antwort" oder
-      "Richtige Antwort" (#3233). "Korrektur" zeigt das bewertete Raster
+      OHNE Bewertung: kein Grün/Rot, auch keine grüne Paarfarbe (#3261),
+      keine Zeile "Deine Antwort" oder "Richtige Antwort" (#3233). "Korrektur" zeigt das bewertete Raster
       (grün/rot, "Deine Antwort") plus unter jedem Fehler die richtige
       Antwort, "Auflösen" die Lösung. "Nochmal versuchen" und erneutes Prüfen startet
       wieder in "Meine Antworten"

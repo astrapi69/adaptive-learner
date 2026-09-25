@@ -1023,7 +1023,7 @@
     },
     "matching_review_views": {
       "label": "Correção como visualização separada",
-      "desc": "Depois de verificar, 'Minhas respostas' mostra apenas os seus próprios pares com os erros; os pares corretos ficam em 'Correção'. Desativado: o par correto aparece logo abaixo de cada erro em 'Minhas respostas'."
+      "desc": "Depois de verificar, 'Minhas respostas' mostra os seus pares como você os formou, sem avaliação; a avaliação e os pares corretos ficam em 'Correção'. Desativado: o par correto aparece logo abaixo de cada erro em 'Minhas respostas'."
     },
     "paused_retention": {
       "title": "Retenção de aulas pausadas",
