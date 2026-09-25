@@ -839,7 +839,7 @@ def check_testplan_ids(report: Report, plan_dir: Path | None = None) -> None:
     because its IDs are part of the de/en contract.
     """
     base = plan_dir if plan_dir is not None else REPO
-    _report_testplan_ids(report, "testplan-ids", base, ("RTC", "LTC", "GTC", "OTC", "DTC"))
+    _report_testplan_ids(report, "testplan-ids", base, ("RTC", "LTC", "GTC", "OTC", "DTC", "STC"))
 
 
 # ---------------------------------------------------------------------------

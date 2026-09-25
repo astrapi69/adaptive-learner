@@ -63,7 +63,7 @@ REGISTER = json.dumps(
     {
         prefix: {"highest": {"TC": 3, "TS": 2}.get(prefix, 0), "retired": []}
         for prefix in ("TC", "TS", "RTC", "RTS", "LTC", "LTS", "GTC", "GTS", "OTC", "OTS")
-        + ("DTC", "DTS")
+        + ("DTC", "DTS", "STC", "STS")
     }
 )
 
@@ -182,7 +182,7 @@ class TestTheIdCheckIsRegistered:
         assert report.fail_count == 0, _fails(report)
         assert any(n.startswith("testplan-ids RTC:") for n in report.notes)
         assert any(n.startswith("testplan-ids LTC:") for n in report.notes)
-        for prefix in ("GTC", "GTS", "OTC", "OTS", "DTC", "DTS"):
+        for prefix in ("GTC", "GTS", "OTC", "OTS", "DTC", "DTS", "STC", "STS"):
             assert any(n.startswith(f"testplan-ids {prefix}:") for n in report.notes), prefix
 
     def test_the_parity_check_reports_the_tc_ids(self) -> None:
