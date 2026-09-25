@@ -495,13 +495,23 @@ roadmap-header-bump-dry: ## Same as roadmap-header-bump but writes nothing (prev
 
 # --- Git Hooks ---
 
-install-hooks: ## Install scripts/git-hooks/* into .git/hooks
+# blame.ignoreRevsFile (#3270): git fails every `git blame` in a checkout that
+# lacks the file (main until the next release, older tags). Git 2.52+ reads a
+# `:(optional)` prefix as "skip when missing"; the probe falls back to the
+# plain path on older git.
+install-hooks: ## Install scripts/git-hooks/* into .git/hooks and point git blame at .git-blame-ignore-revs
 	@mkdir -p .git/hooks
 	@for hook in scripts/git-hooks/*; do \
 		name=$$(basename $$hook); \
 		ln -sf ../../$$hook .git/hooks/$$name; \
 		echo "linked .git/hooks/$$name -> $$hook"; \
 	done
+	@if git -c 'blame.ignoreRevsFile=:(optional).no-such-file' blame -L 1,1 -- Makefile >/dev/null 2>&1; then \
+		git config blame.ignoreRevsFile ':(optional).git-blame-ignore-revs'; \
+	else \
+		git config blame.ignoreRevsFile .git-blame-ignore-revs; \
+	fi
+	@echo "set blame.ignoreRevsFile = $$(git config blame.ignoreRevsFile)"
 
 # --- Type Checking ---
 

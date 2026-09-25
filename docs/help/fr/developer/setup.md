@@ -121,8 +121,8 @@ cd backend && poetry run mypy app/
 cd backend && poetry run pre-commit install
 ```
 
-Les hooks s'exécutent automatiquement avant chaque commit : ruff, prettier,
-ESLint, et vérifications YAML/JSON.
+Les hooks s'exécutent automatiquement avant chaque commit : ruff, ESLint, et
+vérifications YAML/JSON.
 
 ---
 

@@ -377,8 +377,10 @@ whitespace, end-of-file fixer, check-yaml, check-json,
 check-added-large-files, check-merge-conflict, frontend
 ESLint, a plugin lockfile/pyproject pairing guard, and a
 bundled-content stats validator. In the CI pre-commit job the
-`prettier-frontend` and `eslint` hooks are skipped (the
-Frontend Tests job runs ESLint with deps installed instead).
+`eslint` hook is skipped (the Frontend Tests job runs ESLint
+with deps installed instead). Prettier is not a hook:
+`bun run format:check` runs in the Frontend Tests job,
+non-blocking until the one-time reformat of #3270.
 
 ## CI
 

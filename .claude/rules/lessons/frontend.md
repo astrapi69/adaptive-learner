@@ -1,7 +1,7 @@
 ---
 # globs/alwaysApply below document INTENT only - Claude Code loads every rule
 # file regardless and strips this frontmatter (verified 2026-07-28, see #2089).
-description: Frontend pitfalls - TipTap, React effects, CSS specificity, Vitest/happy-dom, TypeScript/Vite toolchain, prettier hook
+description: Frontend pitfalls - TipTap, React effects, CSS specificity, Vitest/happy-dom, TypeScript/Vite toolchain, Prettier state
 globs:
   - frontend/**/*
 alwaysApply: false
@@ -248,29 +248,8 @@ Cross-platform precedent: GitHub's "Squash and merge" / "Create a merge commit" 
 - The alternatives have no clear primary: use a regular dropdown.
 - The action is destructive: a split-button can fire the primary by accident. Use a confirm dialog instead.
 
-## The `prettier-frontend` pre-commit hook reformats whole files (no config + 4-space code)
+## Prettier: the config states the defaults, `src/` does not follow it yet (#3270)
 
-Surfaced 2026-06-12 during the TipTap v2->v3 migration (#311 / #315). `frontend/` has no prettier config (no `.prettierrc`, no `prettier` key in `package.json`), but the entire `frontend/src` tree is authored in 4-space indent + `{x}` (no inner brace spaces). The `prettier-frontend` pre-commit hook (`.pre-commit-config.yaml`, `entry: cd frontend && npx prettier --write`) therefore runs prettier with its defaults (2-space, `{ x }`, 80-col) and rewrites every staged `frontend/src` file in full to a style nothing else in the repo uses. Touch one line, the hook reformats the whole file.
+The `prettier-frontend` pre-commit hook is gone (#318). `frontend/.prettierrc` exists since #250 and has stated the Prettier defaults explicitly since #3270 (80 columns, 2 spaces, double quotes, `{ x }`). `src/` is mixed, 4-space `{x}` next to 2-space `{ x }`, so `prettier --write` on one file rewrites all of it. Until the #3270 reformat lands, keep a touched file's style and commit no whole-file reformat; `bun run format:check` in CI is non-blocking.
 
-CI already skips this hook: `.github/workflows/ci.yml` sets `SKIP: prettier-frontend,eslint` for the pre-commit job. So prettier is enforced nowhere except this misconfigured local hook. Committing its output is wrong — it produces hundreds of lines of churn inconsistent with the codebase.
-
-### Rules until the config is fixed (a 4-space `.prettierrc` or dropping the hook — filed as a follow-up)
-
-1. Commit `frontend/src` changes with `SKIP=prettier-frontend git commit`. The ESLint hook still runs (and is the real gate); only the spurious reformatter is skipped. This mirrors CI exactly.
-2. Never commit the hook's reformatting. If a commit aborted after the prettier hook ran, the 2-space rewrite is sitting in your worktree — see the stash trap below.
-
-### Corollary: `git stash` captures pre-commit-hook worktree edits
-
-The same session lost time to this. Sequence that bites:
-
-1. `git add` a `frontend/src` file (clean 4-space edit), `git commit`.
-2. The `prettier-frontend` hook rewrites the file to 2-space in the worktree, then the commit aborts (e.g. the ESLint hook failed on an unrelated pre-existing error). pre-commit restores unstaged changes but leaves the prettier rewrite in the worktree (the file shows `MM`).
-3. `git stash push -- <file>` now captures the 2-space rewrite, not your clean edit.
-4. Later `git stash pop` + commit (with prettier skipped) silently commits the whole-file reformat. (This actually happened in #314 and needed the follow-up #315 to undo.)
-
-### Tells + fix
-
-- After an aborted commit, check `git diff --stat`: a ~20-line change showing as 200+ changed lines means the hook reformatted the file.
-- Recover the clean edit with `git restore <file>` before stashing — `git restore` pulls from the index (your staged clean edit), discarding the worktree reformat. Verify with `git diff --cached` (should be only your real change) before committing.
-
-General rule: a pre-commit hook that mutates files (`prettier --write`, `ruff format`, `--fix`) leaves those mutations in the worktree when the commit fails. Treat the worktree as dirty-with-hook-output after any aborted commit; don't stash or re-commit blind.
+A hook that mutates files (`ruff format`, `--fix`, `end-of-file-fixer`) leaves its edits in the worktree when the commit aborts, and `git stash` then captures them instead of your edit (#314 committed a whole-file reformat this way, #315 undid it). After an aborted commit, a small change showing 200+ lines in `git diff --stat` is hook output: `git restore <file>` brings back the staged version, and `git diff --cached` shows what will really be committed.
