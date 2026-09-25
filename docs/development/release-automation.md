@@ -103,7 +103,7 @@ Seven targets compose existing tooling for the mechanical steps of `release-work
 | `make release-build` | Step 6 | Conditional backend `poetry build` (skipped iff `package-mode=false`) + frontend `bun run build` |
 | `make release-discover` | Step 4 supplement | Run the open-set version-literal discovery script with verbose output |
 | `make release-tag VERSION=X.Y.Z` | Step 7 | `verify_version_pins.sh $(VERSION)` + `git tag -a` + push main + push tag |
-| `make release-publish VERSION=X.Y.Z` | Step 8 | `gh release create v$(VERSION) --notes-file changelog/releases/v$(VERSION).md` |
+| `make release-publish VERSION=X.Y.Z` | Step 8 | `gh release create v$(VERSION) --draft --notes-file changelog/releases/v$(VERSION).md` (#3159) |
 
 **Not automated (LLM/human value-add):**
 - Step 2 SemVer classification
