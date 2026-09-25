@@ -645,6 +645,8 @@ export function useContentSetActions({
     set_id: entry.id,
     title: entry.title,
     language: entry.language,
+    target_language: entry.target_language,
+    source_language: entry.source_language,
     level: entry.level,
     description: entry.description,
   });

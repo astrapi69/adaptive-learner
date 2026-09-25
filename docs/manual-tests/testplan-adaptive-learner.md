@@ -204,6 +204,22 @@ API-Modus (Backend-Listung folgt dem Manifest).
 - [ ] TC-0044 Sets ohne metadata.lessons im Manifest verhalten sich unverändert
       (alphabetische Reihenfolge, kein stilles Umsortieren).
 
+#### TS-0126 A6d. ZIP-Import behält das Sprachpaar (#3244)
+
+Ein Set-ZIP, dessen Manifest `target_language`/`source_language` trägt, kam
+vorher als en->en an; ein Export und erneuter Import setzte die
+Ausgangssprache auf en zurück.
+
+- [ ] TC-0896 In "Meine Inhalte" ein Set mit Ausgangssprache Deutsch (z. B. fr-a1
+      aus dem Deutsch-Baum) als ZIP exportieren ("Als Datei speichern") und
+      unter "Importieren" wieder importieren. Das importierte Set zeigt
+      Französisch als Zielsprache und Deutsch als Ausgangssprache, und die
+      Sprachausgabe der Karten spricht Französisch.
+- [ ] TC-0897 Ein älteres Set-ZIP, dessen Manifest nur `language` trägt, importiert
+      weiter mit dieser Zielsprache und Englisch als Ausgangssprache.
+- [ ] TC-0898 Beide Speichermodi (API + Dexie).
+
+#### A7. Bearbeiten je Lektion, nicht je Set (#2210)
 #### TS-0010 A7. Bearbeiten je Lektion, nicht je Set (#2210)
 
 Bearbeiten gehört an die Lektion, nicht an das Set. Der Set-Knopf riet
