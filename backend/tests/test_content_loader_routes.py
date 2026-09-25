@@ -18,6 +18,8 @@ Pins:
 
 All tests use ``httpx.MockTransport`` patched onto
 ``httpx.AsyncClient`` so zero real network calls fire. The
+autouse ``_forbid_real_network`` fixture enforces that: any request
+that reaches a real httpx transport fails the test (#3147). The
 plugin's filesystem cache lives under ``get_cache_dir()``, which
 conftest pins to a tmp dir via ``ADAPTIVE_LEARNER_CACHE_DIR``
 (#3145), so the developer's real cache is never touched.
@@ -27,6 +29,8 @@ from __future__ import annotations
 
 import json
 import textwrap
+from collections.abc import Iterator
+from typing import NoReturn
 from unittest.mock import patch
 
 import httpx
@@ -114,6 +118,50 @@ def _install_mock_transport(transport: httpx.MockTransport):
         return original(*args, transport=transport, **kwargs)
 
     return patch("httpx.AsyncClient", side_effect=_factory)
+
+
+class UnmockedNetworkCallError(RuntimeError):
+    """A test in this module reached a real httpx transport."""
+
+
+@pytest.fixture(autouse=True)
+def _forbid_real_network(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
+    """Fail loudly on any httpx request that is not served by a mock.
+
+    Replaces the real sync + async httpx transports for the duration of
+    each test, so a request that bypasses ``_install_mock_transport``
+    raises instead of reaching the network. The TestClient's own
+    transport and ``httpx.MockTransport`` are separate classes and stay
+    untouched.
+
+    The loader degrades gracefully when an upstream fetch fails, so a
+    raised error alone could be swallowed by a future catch-all and the
+    test would still pass. Every attempt is therefore also recorded and
+    re-asserted at teardown.
+    """
+    attempts: list[str] = []
+
+    def _refuse(request: httpx.Request) -> NoReturn:
+        attempts.append(f"{request.method} {request.url}")
+        raise UnmockedNetworkCallError(
+            f"Unmocked network call: {request.method} {request.url}. "
+            "Wrap the request in _install_mock_transport(...) (#3147).",
+        )
+
+    def _refuse_sync(_transport: httpx.HTTPTransport, request: httpx.Request) -> NoReturn:
+        _refuse(request)
+
+    async def _refuse_async(
+        _transport: httpx.AsyncHTTPTransport,
+        request: httpx.Request,
+    ) -> NoReturn:
+        _refuse(request)
+
+    monkeypatch.setattr(httpx.HTTPTransport, "handle_request", _refuse_sync)
+    monkeypatch.setattr(httpx.AsyncHTTPTransport, "handle_async_request", _refuse_async)
+    yield
+    if attempts:
+        pytest.fail(f"Unmocked network call(s) during this test: {attempts} (#3147)")
 
 
 @pytest.fixture(autouse=True)
@@ -472,8 +520,14 @@ def test_save_user_set_then_list_play_delete(client: TestClient) -> None:
     assert entry["id"] == "conv-route"
     assert entry["domain"] == "analysis"
 
-    # Appears in /sets under the user-generated source.
-    r = client.get("/api/plugins/content-loader/sets")
+    # Appears in /sets under the user-generated source. /sets also
+    # fetches the upstream repo manifest, so serve it from the mock.
+    transport = _make_mock_transport(
+        {f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST},
+    )
+    with _install_mock_transport(transport):
+        r = client.get("/api/plugins/content-loader/sets")
+    assert r.status_code == 200, r.text
     assert any(
         s["id"] == "conv-route" and s["source"] == "user-generated" for s in r.json()["sets"]
     ), r.text
@@ -570,7 +624,13 @@ def test_save_user_set_with_attribution_block(client: TestClient) -> None:
     assert entry["attribution"]["derived_from"] == [{"author": "Even Earlier Author"}]
 
     # Round-trip through /sets listing too, not just the save response.
-    r = client.get("/api/plugins/content-loader/sets")
+    # /sets also fetches the upstream repo manifest, so serve it from the mock.
+    transport = _make_mock_transport(
+        {f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST},
+    )
+    with _install_mock_transport(transport):
+        r = client.get("/api/plugins/content-loader/sets")
+    assert r.status_code == 200, r.text
     listed = next(s for s in r.json()["sets"] if s["id"] == "conv-attrib")
     assert listed["attribution"]["author"] == "Original Author"
 
