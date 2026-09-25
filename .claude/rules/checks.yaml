@@ -47,7 +47,7 @@ checks:
     probe: script_exists=backend/tests/test_verify_docs_testplan_parity.py
 
   - id: testplan-ids
-    verifies: every manual test-plan checkpoint carries a permanent ID (TC- DE/EN, RTC-, LTC-), unique, from the register, never reused; DE and EN carry the same ID for the same case (#3274)
+    verifies: every manual test-plan case (checkbox) and suite (heading holding checkboxes) carries a permanent ID from the register, unique, never reused, across the main plan (TC/TS, DE/EN share IDs), the reference and launcher plans and the docs/manual-tests checklists (#3274, #3279)
     rule: ai-workflow/testplan-policy.md#checkpoint-ids
     status: active
     wired_in: make verify-docs (testplan-parity + testplan-ids); scripts/testplan_ids.py --check; .github/workflows/ci.yml; backend/tests/test_testplan_ids.py
