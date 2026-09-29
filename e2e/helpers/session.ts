@@ -33,7 +33,7 @@ export async function startSessionWithMethod(
 
 /** Send a single user message in the open session.
  *
- *  Three real-world quirks the helper papers over:
+ *  Two real-world quirks the helper papers over:
  *
  *  1. The chat-send button (the assistant-ui composer's Send) is
  *     disabled while a run is in flight AND when the composer is
@@ -45,11 +45,11 @@ export async function startSessionWithMethod(
  *     ``page.keyboard.type``) updates the composer in step with
  *     the DOM value, which a single ``fill`` call does not always
  *     do.
- *  3. The bottom-right Toastify container can intercept
- *     pointer events even when no toast is visible (the
- *     react-toastify portal stays in the DOM). ``force: true``
- *     bypasses the actionability check; the real click
- *     event still dispatches.
+ *
+ *  The send itself is a plain Playwright click, so the
+ *  actionability check stays in force: a visible toast covering
+ *  the button fails the step instead of being clicked through,
+ *  which a real user could not do either (#3229).
  */
 export async function sendChatMessage(
     page: Page,
@@ -61,13 +61,7 @@ export async function sendChatMessage(
     await input.fill("");
     await page.keyboard.type(text, {delay: 5});
     await expect(sendButton).toBeEnabled({timeout: 15_000});
-    // Use the native HTMLElement click() (not Playwright's
-    // synthetic click) to avoid the Toastify portal's
-    // pointer-events intercept that produced the multi-turn
-    // hang during 28B development. The native click still
-    // fires the form's submit handler via the browser's
-    // default behaviour for ``type="submit"`` buttons.
-    await sendButton.evaluate((el: HTMLButtonElement) => el.click());
+    await sendButton.click();
 }
 
 /** Click End → submit the rating dialog at defaults. Lands
