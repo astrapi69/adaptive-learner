@@ -1,6 +1,6 @@
 {
-  "$schema-version": "1.16",
-  "_comment": "GENERATED from scripts/generate_lesson_schema.py (EXP-039). Do not edit. Shared quality minimums for the content quality gate (app + content repo).",
+  "$schema-version": "1.18",
+  "_comment": "Shared quality minimums, canonical in learn-content-engine and applied by its validateLessonQuality (engine#185). A lesson's purpose lifts some of them: bridge the exercise and exercise-type minimums, quiz the exercise-type minimum. Consumers read these numbers from the pinned engine release instead of keeping a copy.",
   "rules": {
     "minExerciseTypes": 2,
     "minExercisesPerLesson": 5,

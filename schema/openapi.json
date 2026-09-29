@@ -2643,7 +2643,7 @@
       },
       "InlineExample": {
         "additionalProperties": false,
-        "description": "One inline worked example on a theory step or exercise (schema v1.5).\n\nAn inline example carries REAL content the learner reads in place - a sample sentence (language lessons) or a code snippet with syntax\nhighlighting (programming lessons). This is DISTINCT from\n``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an\nexternal illustration: ``example_url`` is the LINK variant,\n``examples`` is the INLINE-CONTENT variant. The two are complementary\nand may coexist on the same theory step.\n\nWhen ``language`` is set, ``content`` is treated as source code in\nthat language and rendered as a syntax-highlighted block (the same\n``CodeBlock`` the theory Markdown + code cards use); when it is\nabsent, ``content`` is plain text. Additive + optional, so content\nwithout ``examples`` validates unchanged.",
+        "description": "One inline worked example on a theory step or exercise (schema v1.5).\n\nAn inline example carries REAL content the learner reads in place -\na sample sentence (language lessons) or a code snippet with syntax\nhighlighting (programming lessons). This is DISTINCT from\n``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an\nexternal illustration: ``example_url`` is the LINK variant,\n``examples`` is the INLINE-CONTENT variant. The two are complementary\nand may coexist on the same theory step.\n\nWhen ``language`` is set, ``content`` is treated as source code in\nthat language and rendered as a syntax-highlighted block (the same\n``CodeBlock`` the theory Markdown + code cards use); when it is\nabsent, ``content`` is plain text. Additive + optional, so content\nwithout ``examples`` validates unchanged.",
         "properties": {
           "content": {
             "maxLength": 5000,
@@ -3289,6 +3289,11 @@
             "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
             "title": "Id",
             "type": "string"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/Purpose",
+            "default": "practice",
+            "title": "Lesson Purpose"
           },
           "requires_extensions": {
             "anyOf": [
@@ -4453,6 +4458,16 @@
         ],
         "title": "PullResponse",
         "type": "object"
+      },
+      "Purpose": {
+        "description": "What the lesson is for (schema 1.17, engine#185). ``practice`` (the default when absent): a lesson that teaches and drills; every quality minimum applies. ``bridge``: an opening, a part divider, an interlude or a closing that carries theory and leads over, without an assessment intent; no minimum number of exercises or exercise types (schema 1.18). ``quiz``: a check of what was taught, often in one exercise type; no minimum number of exercise types. Read by the quality check (``validateLessonQuality``), never by ``validateLesson``: it does not change whether a lesson is valid.",
+        "enum": [
+          "practice",
+          "bridge",
+          "quiz"
+        ],
+        "title": "Purpose",
+        "type": "string"
       },
       "PushBody": {
         "properties": {
