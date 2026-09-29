@@ -611,14 +611,24 @@ jobs:
       - name: Verify rule corpus size
         run: python3 scripts/verify_rule_corpus_size.py
       # #2087: declared rule changes must converge in docs/rule-change-log.md.
-      # On a PR this only reports; the log is appended when the change lands.
+      # #3252 step 3: this FAILS. Rows are keyed by PR number, so a declaring
+      # PR carries its own row (make rule-change-log, then commit it): on a
+      # pull_request run the number comes from the event (--pr), on the push
+      # after the merge from the squash subject or the merge commit. Red means
+      # a declaration has no row, and nothing else.
       - name: Check the rule change log is current
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
         run: |
-          git fetch --no-tags --depth=200 origin develop >/dev/null 2>&1 || true
-          python3 scripts/append_rule_change_log.py --range "${{ github.event.before }}..${{ github.sha }}" --check || {
-            echo "::warning::declared rule changes are missing from docs/rule-change-log.md - run 'make rule-change-log'"
-          }
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags --depth=200 origin "${{ github.event.pull_request.base.ref }}" >/dev/null 2>&1 || true
+            python3 scripts/append_rule_change_log.py \
+              --range "origin/${{ github.event.pull_request.base.ref }}..HEAD" \
+              --pr "${{ github.event.pull_request.number }}" --check
+          else
+            git fetch --no-tags --depth=200 origin develop >/dev/null 2>&1 || true
+            python3 scripts/append_rule_change_log.py --range "${{ github.event.before }}..${{ github.sha }}" --check
+          fi
       # #2079: a binding rule may not change inside an undeclared diff.
       # Declare via the 'rule-change-declared' label or a
       # "RULE-CHANGE DECLARED: ..." line in the PR body.
