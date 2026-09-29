@@ -204,6 +204,16 @@ def test_red_when_a_make_target_is_a_stub(mirror: Path) -> None:
     assert "Makefile target 'verify-theme' is a stub" in result.stderr
 
 
+def _inventory_entries() -> list[dict[str, object]]:
+    """The entries of the committed checks.yaml, as the checker reads them."""
+    import yaml
+
+    inventory = yaml.safe_load(
+        (REPO_ROOT / ".claude" / "rules" / "checks.yaml").read_text(encoding="utf-8")
+    )
+    return list(inventory["checks"])
+
+
 def test_the_report_names_every_run_proof_with_its_conditions() -> None:
     """Contract point 4: the report says which step runs each check, on which
     triggers, and under which skip condition - an empty proof set cannot
@@ -219,5 +229,15 @@ def test_the_report_names_every_run_proof_with_its_conditions() -> None:
         in result.stdout
     )
     assert "runs: doc-ref-existence: .pre-commit-config.yaml hook 'doc-refs'" in result.stdout
-    assert "28 active checks proven wired" in result.stdout
-    assert "29 run proofs (25 workflow steps, 4 pre-commit hooks)" in result.stdout
+    # The counts are derived from the inventory itself, so a new entry moves
+    # the test with it, and a summary that counts fewer than the inventory
+    # declares still fails (#3182: a hard-coded 28 broke on the 29th entry).
+    active = [entry for entry in _inventory_entries() if entry.get("status") == "active"]
+    probes = " | ".join(str(entry.get("probe", "")) for entry in active)
+    steps = probes.count("ci_step=")
+    hooks = probes.count("precommit_hook=")
+    assert f"{len(active)} active checks proven wired" in result.stdout
+    assert (
+        f"{steps + hooks} run proofs ({steps} workflow steps, {hooks} pre-commit hooks)"
+        in result.stdout
+    )
