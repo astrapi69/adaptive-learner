@@ -27,6 +27,7 @@ is never a small size.
 from __future__ import annotations
 
 import argparse
+import datetime
 import gzip
 import io
 import json
@@ -156,31 +157,101 @@ def load_baseline(path: Path, arch: str | None = None) -> tuple[int | None, str 
     return value, None
 
 
-def write_baseline(path: Path, compressed: int, arch: str | None = None) -> None:
-    existing = {}
+def write_baseline(
+    path: Path,
+    compressed: int,
+    arch: str | None = None,
+    history: tuple[str, str] | None = None,
+) -> None:
+    """Edit the ceiling in place, keeping every other key (#3189).
+
+    Before this, an update without ``--arch`` rewrote the file down to two
+    keys and erased ``measured_in``, the whole ``per_arch`` block and every
+    ``_raise_`` / ``_lower_`` entry since #2132 - a tool deleting its own
+    record silently. Now: without ``arch`` the reading is the PR-gate one,
+    so ``compressed_bytes`` AND ``per_arch.amd64`` move together (the gate
+    step reads the top-level field, #2922); with ``arch`` only that
+    architecture moves, plus the top-level field when it is amd64. Every
+    other key is written back unchanged, in its order. ``history`` is
+    ``(issue, note)``: a dated ``_raise_``/``_lower_`` entry appended at
+    the end, ``_<arch>_`` prefixed for a non-amd64 architecture.
+    """
+    existing: dict[str, object] = {}
     if path.is_file():
         try:
             existing = json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
             existing = {}
-    if arch:
-        # Touch only this architecture - overwriting the sibling would erase a
-        # measurement taken in a different environment.
-        per_arch = dict(existing.get("per_arch") or {})
-        per_arch[arch] = compressed
-        existing["per_arch"] = per_arch
-        path.write_text(json.dumps(existing, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        return
-    payload = {
-        **{k: v for k, v in existing.items() if k in ("per_arch", "_tightening")},
-        "note": (
+    if not isinstance(existing, dict):
+        existing = {}
+    target = arch or "amd64"
+    per_arch = dict(existing.get("per_arch") or {})  # type: ignore[call-overload]
+    previous = per_arch.get(target)
+    if previous is None and target == "amd64":
+        previous = existing.get("compressed_bytes")
+    per_arch[target] = compressed
+    if "note" not in existing:
+        existing["note"] = (
             "Ceiling for the published image (#2132). Compressed bytes - what "
             "crosses the wire on a pull. Lower it with --update-baseline; "
             "raising it needs --allow-raise and belongs in a commit that says why."
-        ),
-        "compressed_bytes": compressed,
-    }
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        )
+    if target == "amd64":
+        existing["compressed_bytes"] = compressed
+    existing["per_arch"] = per_arch
+    if history:
+        issue, note = history
+        direction = "raise" if isinstance(previous, int) and compressed > previous else "lower"
+        key = f"_{direction}_{issue}" if target == "amd64" else f"_{target}_{direction}_{issue}"
+        moved = f"{previous} -> {compressed}" if previous is not None else f"seeded {compressed}"
+        verb = "Raised" if direction == "raise" else "Lowered"
+        existing[key] = (
+            f"{verb} {target} {moved} (#{issue}, {datetime.date.today().isoformat()}): {note}"
+        )
+    path.write_text(json.dumps(existing, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+BASE_IMAGES_FROM = Path("backend") / "Dockerfile"
+
+
+def base_images(root: Path) -> list[str]:
+    """The ``FROM`` images of the Dockerfile, in order, without stage names."""
+    dockerfile = root / BASE_IMAGES_FROM
+    if not dockerfile.is_file():
+        return []
+    images: list[str] = []
+    for line in dockerfile.read_text(encoding="utf-8").split("\n"):
+        if line.startswith("FROM "):
+            image = line.split()[1]
+            if image not in images:
+                images.append(image)
+    return images
+
+
+def describe_image(image: str, root: Path) -> None:
+    """Say what was measured beyond the gzip total (#3189, gate contract
+    point 4): the uncompressed size and the base-image digests, so a shrink
+    or a growth with no repo input changed can be attributed to the build
+    environment. Read-only, fail-open: a missing reading is named, never
+    silently skipped."""
+    try:
+        size = subprocess.run(
+            ["docker", "image", "inspect", image, "--format", "{{.Size}}"],
+            capture_output=True,
+            text=True,
+        )
+        uncompressed = size.stdout.strip() if size.returncode == 0 else "unavailable"
+        print(f"  uncompressed {uncompressed} bytes (docker image inspect .Size, store-dependent)")
+        for base in base_images(root):
+            digest = subprocess.run(
+                ["docker", "image", "inspect", base, "--format", "{{index .RepoDigests 0}}"],
+                capture_output=True,
+                text=True,
+            )
+            value = digest.stdout.strip() if digest.returncode == 0 else "not present locally"
+            print(f"  base image {base}: {value}")
+    except FileNotFoundError:
+        print("  uncompressed size and base-image digests: not read (no docker binary)")
 
 
 def main() -> int:
@@ -191,7 +262,17 @@ def main() -> int:
     parser.add_argument("--update-baseline", action="store_true")
     parser.add_argument("--allow-raise", action="store_true", help="permit a HIGHER ceiling")
     parser.add_argument("--arch", default=None, help="which architecture this reading belongs to")
+    parser.add_argument(
+        "--issue", default=None, help="with --update-baseline: the issue a history entry cites"
+    )
+    parser.add_argument(
+        "--note",
+        default=None,
+        help="with --update-baseline and --issue: append a dated _raise_/_lower_ history entry",
+    )
     args = parser.parse_args()
+    if args.note and not args.issue:
+        parser.error("--note needs --issue: the history entry is keyed by the issue number")
 
     baseline_path = Path(args.baseline) if args.baseline else Path.cwd() / BASELINE_PATH
 
@@ -220,6 +301,9 @@ def main() -> int:
         # environment this reading came from before anyone "fixes" a local
         # red by lowering the ceiling.
         print("  reading from this machine; the ceiling is measured in CI")
+        describe_image(args.image, Path.cwd())
+    else:
+        print("  uncompressed size and base-image digests: not read (size given)")
 
     ceiling, error = load_baseline(baseline_path, args.arch)
     if error and not args.update_baseline:
@@ -235,7 +319,8 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
-        write_baseline(baseline_path, compressed, args.arch)
+        history = (str(args.issue).lstrip("#"), args.note) if args.note else None
+        write_baseline(baseline_path, compressed, args.arch, history)
         print(f"baseline set: {ceiling} -> {compressed}")
         return 0
 
