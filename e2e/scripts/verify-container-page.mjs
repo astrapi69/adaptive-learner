@@ -59,6 +59,13 @@ const EXCUSED_UNLOADED = [
     [/^set-review-/,
         "set-completion aggregator shared by SetSummary and the lesson summary's Detailed evaluation (#3134) - both need a real set (#3155)"],
     [/^exercises-/, "exercise renderers load inside a running lesson - needs a set"],
+    // The LessonRunner shell refactors (#3169) split the runner internals
+    // into two shared chunks named after one member each: the summary's
+    // ReviewedFallbackPanel (shared by RunnerStep + LessonStepView) and
+    // hooks/lesson/sources. Both load only inside a running lesson; found
+    // by the first weekly dry run (#3159, run 36610482730).
+    [/^(ReviewedFallbackPanel|sources)-/,
+        "lesson-runner shell internals load inside a running lesson - needs a set; covered by dexie-smoke + vitest"],
     [/^(RedeemInvite|QRScannerModal|ErrorReportDialog)-/,
         "loads on user action (invite link, QR scan, error report dialog)"],
     [/^apkg-builder-/, "loads on Anki .apkg export click - needs cards"],
