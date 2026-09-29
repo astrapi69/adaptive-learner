@@ -13,6 +13,9 @@
  * keys, so error messages stay translatable and specific.
  */
 
+import type { Lesson as EngineLesson } from "learn-content-engine";
+import { validateLessonRules } from "learn-content-engine/rules";
+
 import type { ContentLesson } from "../../../storage/types";
 import { QUALITY } from "./quality-rules.generated";
 
@@ -391,25 +394,6 @@ function checkLessonExercises(
             min: QUALITY.minMatchingPairs,
           },
         });
-      // #2376 class 4 - a repeated left value is objectively unsolvable
-      // for the learner (which right answer belongs to which copy?) and
-      // hard-fails the engine gate (E-MATCH-DUP-LEFT,
-      // learn-content-engine#54). Mirror it here so the author learns
-      // about it BEFORE an export or share, not from a foreign repo gate.
-      const seenLeft = new Set<string>();
-      const flaggedLeft = new Set<string>();
-      for (const pair of ex.pairs ?? []) {
-        const left = (pair.left ?? "").trim();
-        if (!left) continue;
-        if (seenLeft.has(left) && !flaggedLeft.has(left)) {
-          flaggedLeft.add(left);
-          issues.push({
-            code: "matching_duplicate_left",
-            params: { lesson: id, exercise: ex.id, value: left },
-          });
-        }
-        seenLeft.add(left);
-      }
     }
     if (ex.type === "picture_choice") {
       if (ex.distractors.length === 0)
@@ -418,6 +402,39 @@ function checkLessonExercises(
           params: { lesson: id, exercise: ex.id },
         });
     }
+  }
+}
+
+/**
+ * #2376 class 4 - a repeated left value is objectively unsolvable for the
+ * learner (which right answer belongs to which copy?) and hard-fails the
+ * content-repo gate. Since #3222 PR 2 the check IS the engine's
+ * ``E-MATCH-DUP-LEFT`` (``learn-content-engine/rules``, case-insensitive
+ * and whitespace-trimmed), so the author learns about it BEFORE an export
+ * or share with exactly the verdict the repo gate will give; the app copy
+ * it replaces compared case-sensitively and disagreed in both directions.
+ * Only this rule is mapped here; reporting every engine error is #3222
+ * PR 5. The ``/rules`` entry carries no schema files and no ajv, and this
+ * module lives in a lazy chunk, so the entry chunk stays rule-free.
+ */
+function checkDuplicateLeft(
+  lesson: ContentLesson,
+  id: string,
+  issues: ValidationIssue[],
+): void {
+  const { errors } = validateLessonRules(lesson as unknown as EngineLesson);
+  for (const error of errors) {
+    if (error.id !== "E-MATCH-DUP-LEFT") continue;
+    const stepIndex = Number(/^\/steps\/(\d+)(?:\/|$)/.exec(error.path)?.[1]);
+    const exercise = lesson.steps[stepIndex]?.exercise;
+    issues.push({
+      code: "matching_duplicate_left",
+      params: {
+        lesson: id,
+        exercise: exercise?.id ?? "",
+        value: String(error.params?.term ?? ""),
+      },
+    });
   }
 }
 
@@ -439,6 +456,7 @@ function validateLesson(
   checkExampleUrls(lesson, id, issues);
   checkCards(lesson, meta, id, issues);
   checkLessonExercises(exercises, id, issues);
+  checkDuplicateLeft(lesson, id, issues);
 }
 
 /**

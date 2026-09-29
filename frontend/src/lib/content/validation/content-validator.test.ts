@@ -234,6 +234,80 @@ describe("validateSetForSharing", () => {
     );
   });
 
+  // #3222 PR 2: the check IS the engine's E-MATCH-DUP-LEFT
+  // (learn-content-engine/rules), so the app cannot define "duplicate"
+  // differently from the content-repo gate. The engine compares
+  // case-insensitively and whitespace-trimmed; the app copy it replaces
+  // compared trimmed but case-sensitively, so "Empathie" next to
+  // "empathie" passed here and failed the repo gate.
+  it("flags duplicate left values that differ only in case, as the engine does", () => {
+    const l = goodLesson();
+    const m = l.steps.find((s) => s.exercise?.type === "matching")!;
+    m.exercise!.pairs = [
+      { left: "Empathie", right: "a" },
+      { left: "empathie", right: "b" },
+      { left: "Salut", right: "Hallo" },
+    ];
+    const dup = validateSetForSharing(META, [l]).issues.find(
+      (i) => i.code === "matching_duplicate_left",
+    );
+    expect(dup).toBeDefined();
+    expect(dup!.params).toMatchObject({
+      lesson: "01-begruessung",
+      exercise: "e1",
+      value: "Empathie",
+    });
+  });
+
+  it("flags duplicate left values that differ only in surrounding whitespace", () => {
+    const l = goodLesson();
+    const m = l.steps.find((s) => s.exercise?.type === "matching")!;
+    m.exercise!.pairs = [
+      { left: " Haus ", right: "a" },
+      { left: "Haus", right: "b" },
+      { left: "Salut", right: "Hallo" },
+    ];
+    expect(codes(META, [l])).toContain("matching_duplicate_left");
+  });
+
+  it("flags two blank left values as a duplicate, as the engine does", () => {
+    const l = goodLesson();
+    const m = l.steps.find((s) => s.exercise?.type === "matching")!;
+    m.exercise!.pairs = [
+      { left: "", right: "a" },
+      { left: " ", right: "b" },
+      { left: "Salut", right: "Hallo" },
+    ];
+    expect(codes(META, [l])).toContain("matching_duplicate_left");
+  });
+
+  it("does not flag left values that differ by a diacritic", () => {
+    const l = goodLesson();
+    const m = l.steps.find((s) => s.exercise?.type === "matching")!;
+    m.exercise!.pairs = [
+      { left: "Haus", right: "a" },
+      { left: "Häus", right: "b" },
+      { left: "Salut", right: "Hallo" },
+    ];
+    expect(codes(META, [l])).not.toContain("matching_duplicate_left");
+  });
+
+  it("reports one issue per duplicate group, with the exercise id", () => {
+    const l = goodLesson();
+    const m = l.steps.find((s) => s.exercise?.type === "matching")!;
+    m.exercise!.pairs = [
+      { left: "a", right: "1" },
+      { left: "A", right: "2" },
+      { left: "b", right: "3" },
+      { left: "b", right: "4" },
+    ];
+    const dups = validateSetForSharing(META, [l]).issues.filter(
+      (i) => i.code === "matching_duplicate_left",
+    );
+    expect(dups.map((i) => i.params?.value)).toEqual(["a", "b"]);
+    expect(dups.every((i) => i.params?.exercise === "e1")).toBe(true);
+  });
+
   it("flags empty card front/back", () => {
     const l = goodLesson();
     l.cards[0].back = "";
