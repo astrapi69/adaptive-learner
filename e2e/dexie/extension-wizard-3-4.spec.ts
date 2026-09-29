@@ -13,14 +13,14 @@
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 async function openFresh(page: Page): Promise<void> {
     await page.goto("/create-lesson");
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
 }
 
 /** The id of the currently-open inline extension editor (``ex-ext-N``). */

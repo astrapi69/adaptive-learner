@@ -59,9 +59,7 @@ test.describe("#3228 - resume an interrupted lesson draft", () => {
     }) => {
         await completeOnboarding(page, {migrationOffer: "none"});
         await openCreator(page);
-        if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-            await page.getByTestId("create-lesson-draft-fresh").click();
-        }
+        await expect(page.getByTestId("create-lesson-draft-prompt")).toHaveCount(0);
 
         // Step 1: the fields an author fills before an interruption.
         await page.getByTestId("create-lesson-title").fill("E2E Resume");
@@ -121,5 +119,30 @@ test.describe("#3228 - resume an interrupted lesson draft", () => {
         // And the next visit offers no draft.
         await openCreator(page);
         await expect(page.getByTestId("create-lesson-draft-prompt")).toHaveCount(0);
+    });
+
+    test("#3227 - a stored draft raises the prompt, and 'fresh' opens an empty wizard and empties the slot", async ({
+        page,
+    }) => {
+        await completeOnboarding(page, {migrationOffer: "none"});
+        await page.evaluate((key) => {
+            localStorage.setItem(
+                key,
+                JSON.stringify({
+                    schema: 1,
+                    step: 2,
+                    meta: {title: "Verworfen", titleNative: "Discarded"},
+                    cards: [],
+                    updatedAt: new Date().toISOString(),
+                }),
+            );
+        }, DRAFT_KEY);
+        await openCreator(page);
+        await expect(page.getByTestId("create-lesson-draft-prompt")).toBeVisible();
+        await expect(page.getByTestId("create-lesson-draft-continue")).toBeVisible();
+        await page.getByTestId("create-lesson-draft-fresh").click();
+        await expect(page.getByTestId("create-lesson-draft-prompt")).toHaveCount(0);
+        await expect(page.getByTestId("create-lesson-title")).toHaveValue("");
+        expect(await draftSlot(page), "fresh empties the autosave slot").toBeNull();
     });
 });

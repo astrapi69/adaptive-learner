@@ -12,6 +12,8 @@
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 // 2 cards carry an example sentence containing the front term (so cloze can
 // blank it) with >= 2 words (so word-tiles can split it); 2 do not.
 const CARDS = [
@@ -26,9 +28,7 @@ async function openFresh(page: Page): Promise<void> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
 }
 
 async function buildAndGenerate(page: Page): Promise<void> {

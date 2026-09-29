@@ -20,6 +20,8 @@
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 // Distinct backs so the generator can build MC distractor options.
 const CARDS = [
     {front: "chat", back: "Katze"},
@@ -33,9 +35,7 @@ async function buildToMcEditor(page: Page): Promise<string> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill("E2E MC mode");
     await page.getByTestId("create-lesson-next").click();
     for (const card of CARDS) {

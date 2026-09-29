@@ -14,6 +14,8 @@ export {
     settleMigrationWelcome,
 } from "./onboarding";
 
+export {declineDraftPrompt} from "./create-lesson";
+
 export {
     endSessionWithDefaultRating,
     sendChatMessage,

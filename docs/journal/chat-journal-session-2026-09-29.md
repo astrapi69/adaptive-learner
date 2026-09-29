@@ -176,6 +176,14 @@ Der Owner bat, die offenen Issues nach Prio abzuarbeiten (37 offen, Stand 15:05 
 - Result: Auswahl nach Quelltext statt nach Coverage-Graph (den testmon für diese Bäume nie hat): 49 Dateien nennen `scripts/`, 41 nennen Plugins; Überauswahl kostet Sekunden, Unterauswahl wäre der Fehler. Fünf Tests (die Skript-Gates werden gewählt, ein Plugin-Ladetest wird gewählt, zwei Bereiche listen jede Datei einmal, eine Datei ohne Nennung bleibt draussen, fail closed bei leerer Auswahl und fehlendem Verzeichnis). `backend`-Filter kennt jetzt auch `scripts/**` (bisher nur `**/*.py`, also keine `.sh`/`.mjs`). `verify-check-inventory`: 30 aktive Checks, 32 Laufnachweise. Der Beweis per absichtlicher Verletzung folgt auf der PR: zweiter Push mit einem gebrochenen Skript-Test, der feste Schritt muss rot werden, dritter Push nimmt ihn zurück.
 - Commit: siehe PR.
 
+## 23. #3227: der Entwurfs-Hinweis und das Ton-Angebot werden gezeigt statt nur weggeklickt (00:50 bis 01:20)
+
+- Original prompt: Queue-Runde 2, P3, e2e.
+- Optimized prompt: "Ein benannter Helfer `declineDraftPrompt` in `e2e/helpers/create-lesson.ts` mit Docstring, der sagt, was er überspringt und wo der Zustand geprüft wird; die 27 stummen `if (count) click`-Stellen in 19 Dateien darauf umstellen; in `lesson-draft-resume.spec.ts` (#3228 prüft schon den Fortsetzen-Pfad) den Neu-Pfad ergänzen (Entwurf direkt in den Slot schreiben, Hinweis sichtbar, `neu`, leeres Formular, Slot leer); im Capture-Skript das Später-Klicken als `dismissSoundOffer` benennen und zwei FeatureShots `create-lesson/entwurf-hinweis` und `playful-details/ton-angebot` mit README-Zeilen anlegen."
+- Goal: Kein Helfer klickt mehr unbenannt einen Zustand weg, und beide Zustände haben eine Prüfung und ein Bild.
+- Result: 27 Stellen ersetzt (die Prüfung in `lesson-draft-resume.spec.ts` selbst behauptet jetzt "kein Hinweis" statt ihn zu schlucken), Kommentar "be defensive" entfernt. Neuer Test grün gegen die Dexie-Vorschau (mit dem Fortsetzen-Test und `select-a11y` als Stichprobe der Umstellung: 6 grün, 40,5 s): der Neu-Pfad leert den Slot. `--list` über Features-, Visual- und Dexie-Konfiguration kompiliert (139/162/170 Tests). Die zwei Shots stehen mit `shot-pending`-Marker im Katalog, `feature-shots` grün; die Aufnahme bleibt beim Owner.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - Regel "Working mode with the owner" (25.09.): "Vor einer Runde jeden Shell-Befehl auflisten und auf das Go warten" gilt dem Berechtigungsdialog der lokalen Sitzung. Diese Sitzung läuft ohne Dialog (auto mode) und mit dem ausdrücklichen Auftrag, die Queue abzuarbeiten; deshalb ohne Vorab-Liste gearbeitet. Vom Owner am 29.09. bestätigt: die Liste gilt nur lokal.

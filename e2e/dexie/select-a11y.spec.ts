@@ -17,13 +17,13 @@
 import AxeBuilder from "@axe-core/playwright";
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 /** Open a route and wait for its root testid. */
 async function open(page: Page, url: string, rootTestId: string): Promise<void> {
     await page.goto(url);
     await expect(page.getByTestId(rootTestId)).toBeVisible({timeout: 15000});
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
 }
 
 /** axe `button-name` violations within a scope, as readable targets. */
