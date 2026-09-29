@@ -186,9 +186,6 @@ interface FixtureRepo {
         targetLanguage: string;
         sourceLanguage: string;
         domain: string;
-        /** Extensions the set declares (``ext:<name>@<major>``), for a
-         *  fixture lesson that uses an extension exercise type. */
-        requiresExtensions?: string[];
     };
     /** ``sets/<lang>/<folder>`` path inside the repo. */
     setPath: string;
@@ -245,7 +242,6 @@ const ORDERING_FIXTURE: FixtureRepo = {
         targetLanguage: "de",
         sourceLanguage: "de",
         domain: "programming",
-        requiresExtensions: ["ext:al-ordering@1"],
     },
     setPath: "sets/de/react-19",
     lessonFile: "01-actions-useactionstate.json",
@@ -281,12 +277,6 @@ async function mockLessonRepo(page: Page, fixture: FixtureRepo): Promise<void> {
         "    lesson_count: 1",
         `    domain: ${fixture.manifest.domain}`,
         `    path: ${fixture.setPath}`,
-        ...(fixture.manifest.requiresExtensions?.length
-            ? [
-                  "    requires_extensions:",
-                  ...fixture.manifest.requiresExtensions.map((ext) => `      - "${ext}"`),
-              ]
-            : []),
         "",
     ].join("\n");
     const setManifest = `metadata:\n  lessons:\n    - "${fixture.lessonFile}"\n`;

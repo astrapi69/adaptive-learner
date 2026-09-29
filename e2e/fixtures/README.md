@@ -46,8 +46,9 @@ page.route-mocked content repo by the feature screenshots
 Reference lesson for the ordering review after a wrong answer (#3260):
 the "Der Ablauf eines Absendens" step of alc-programming React 19 lesson 01
 (`sets/de/react-19/lessons/01-actions-useactionstate.json`), one
-`ext:al-ordering` exercise with five steps, declared in
-`requires_extensions`. One theory step, one ordering exercise, domain
+`ext:al-ordering` exercise with five steps, declared in the lesson's own
+`requires_extensions` (the root and set manifests carry none, as in the real repo).
+One theory step, one ordering exercise, domain
 `programming` (German on both sides). The bundled set has no ordering
 exercise. Served through a page.route-mocked content repo by the feature
 screenshot `ordering-review/falsche-reihenfolge`, which places the first
