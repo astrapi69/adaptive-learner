@@ -92,8 +92,16 @@ for (const surface of SURFACE_NAMES) {
             // pinned state (the Endless clock) is masked explicitly, never
             // left to the tolerance: the tolerance would swallow a real
             // change of the same size just as silently (#3023).
+            // A mask whose locator matches nothing masks nothing, silently:
+            // a renamed testid would let the digits drift back into the
+            // comparison unnoticed. Fail closed instead (gate contract
+            // point 3, quality-checks.md).
+            const masks = surfaceMasks(page, surface);
+            for (const target of masks) {
+                await expect(target).toHaveCount(1);
+            }
             const shotOpts = {
-                mask: surfaceMasks(page, surface),
+                mask: masks,
                 ...(surface === "lesson-matching" && viewport === "mobile"
                     ? {maxDiffPixelRatio: 0.08, maxDiffPixels: 20_000}
                     : {}),
