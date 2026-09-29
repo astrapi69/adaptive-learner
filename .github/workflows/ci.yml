@@ -31,6 +31,8 @@ jobs:
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
+      scripts: ${{ steps.filter.outputs.scripts }}
+      plugins: ${{ steps.filter.outputs.plugins }}
       i18n_only: ${{ steps.scope.outputs.i18n_only }}
     steps:
       - uses: actions/checkout@v7
@@ -47,10 +49,17 @@ jobs:
             backend:
               - 'backend/**'
               - 'plugins/**'
+              - 'scripts/**'
               - '**/*.py'
               - 'Makefile'
               - 'schema/**'
               - '.github/workflows/ci.yml'
+            # #3250: testmon's graph never covers these two trees, so the
+            # backend job runs the tests naming them by a fixed step.
+            scripts:
+              - 'scripts/**'
+            plugins:
+              - 'plugins/**'
             frontend:
               - 'frontend/**'
               - 'Makefile'
@@ -177,6 +186,26 @@ jobs:
             echo "::notice::Push to ${{ github.ref_name }} — FULL backend suite"
             poetry run pytest tests/ -q
           fi
+
+      # #3250: testmon's dependency graph is built from coverage of
+      # backend/app and backend/tests, so a PR changing scripts/ or plugins/
+      # selects nothing above although backend tests drive those scripts as
+      # subprocesses and load the plugins through PluginForge (CI run
+      # 36006903648: "no tests ran" on a plugins/ push). The selector names
+      # such tests by their source and this step runs them, bypassing
+      # testmon; a push runs the full suite anyway.
+      - name: Backend tests exercising changed scripts/ or plugins/ (#3250)
+        if: github.event_name == 'pull_request' && needs.changes.outputs.i18n_only != 'true' && (needs.changes.outputs.scripts == 'true' || needs.changes.outputs.plugins == 'true')
+        working-directory: backend
+        run: |
+          set -euo pipefail
+          areas=""
+          if [ "${{ needs.changes.outputs.scripts }}" = "true" ]; then areas="$areas scripts"; fi
+          if [ "${{ needs.changes.outputs.plugins }}" = "true" ]; then areas="$areas plugins"; fi
+          files="$(python3 ../scripts/select_impacted_tests.py $areas)"
+          echo "::notice::running the backend tests that name$areas/"
+          # shellcheck disable=SC2086
+          poetry run pytest -q $files
 
       # #2281: the committed schema/openapi.json must match the spec the
       # booted app serves (13/13 plugins asserted before comparing; fails

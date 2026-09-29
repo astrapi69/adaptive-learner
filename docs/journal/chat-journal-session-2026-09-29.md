@@ -168,6 +168,14 @@ Der Owner bat, die offenen Issues nach Prio abzuarbeiten (37 offen, Stand 15:05 
 - Result: Reproduktion RED: nur der Eintrag frontend/node_modules in der Ignore-Liste, nichts auf der Platte, alter Guard grün, neuer rot mit der synthetischen #2112-Sonde frontend/public/content/linked-repo/node_modules (kein Repo-Pfad, ein Sondenpfad). 14 Sondenpfade über vier Wurzeln (schema, frontend, backend, plugins), echter Baum 5993 Pfade, sauber. Vier neue Tests (Regel-Lücke ohne Verzeichnis, Sonden folgen den COPY-Wurzeln und ignorieren `--from`, fail closed ohne Dockerfile/ohne COPY, Pfadfilter deckt jede COPY-Wurzel plus Ignore-Datei und Guard), zehn grün. `verify-check-inventory`: 31 Laufnachweise. Ob der Smoke ein Pflicht-Check wird, bleibt Owner-Entscheidung (Rundenbericht).
 - Commit: siehe PR.
 
+## 22. #3250: die Backend-Tests zu `scripts/` und `plugins/` laufen auf der PR ausserhalb von testmon (00:30 bis 00:50)
+
+- Original prompt: Queue-Runde 2, P3, CI.
+- Optimized prompt: "`scripts/select_impacted_tests.py`: die Testdateien unter `backend/tests`, deren Quelltext `scripts/` bzw. ein Plugin-Paket (`adaptive_learner_*`, `plugins/`) nennt, ausgeben; fail closed, wenn ein Bereich nichts auswählt; im `changes`-Job zwei Filter `scripts` und `plugins`; im Backend-Job ein fester Schritt, der diese Dateien auf einer PR mit solcher Änderung direkt ausführt; Eintrag in `checks.yaml`; die Verletzungsprobe auf einem späteren Push der PR."
+- Goal: Ein Fix an einem Skript oder Plugin, der auf eine offene PR gepusht wird, wird von CI geprüft, statt mit "no tests ran" durchzugehen.
+- Result: Auswahl nach Quelltext statt nach Coverage-Graph (den testmon für diese Bäume nie hat): 49 Dateien nennen `scripts/`, 41 nennen Plugins; Überauswahl kostet Sekunden, Unterauswahl wäre der Fehler. Fünf Tests (die Skript-Gates werden gewählt, ein Plugin-Ladetest wird gewählt, zwei Bereiche listen jede Datei einmal, eine Datei ohne Nennung bleibt draussen, fail closed bei leerer Auswahl und fehlendem Verzeichnis). `backend`-Filter kennt jetzt auch `scripts/**` (bisher nur `**/*.py`, also keine `.sh`/`.mjs`). `verify-check-inventory`: 30 aktive Checks, 32 Laufnachweise. Der Beweis per absichtlicher Verletzung folgt auf der PR: zweiter Push mit einem gebrochenen Skript-Test, der feste Schritt muss rot werden, dritter Push nimmt ihn zurück.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - Regel "Working mode with the owner" (25.09.): "Vor einer Runde jeden Shell-Befehl auflisten und auf das Go warten" gilt dem Berechtigungsdialog der lokalen Sitzung. Diese Sitzung läuft ohne Dialog (auto mode) und mit dem ausdrücklichen Auftrag, die Queue abzuarbeiten; deshalb ohne Vorab-Liste gearbeitet. Vom Owner am 29.09. bestätigt: die Liste gilt nur lokal.
