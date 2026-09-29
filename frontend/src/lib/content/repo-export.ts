@@ -77,6 +77,43 @@ export function exportDomain(set: ContentSetEntry): string {
     return DEFAULT_DOMAIN;
 }
 
+/**
+ * The content domain to WRITE into an exported lesson file (#3242).
+ *
+ * The Dexie read path injects the set row's ``domain`` into a lesson that
+ * carries none, and a user set stores its ORIGIN there (``imported``,
+ * ``analysis``, ``adaptive``), so the parsed lesson arrives with the origin
+ * marker as its domain and #2425's filter on the set-level files left the
+ * lesson files contradicting the manifest. A lesson's own known domain and
+ * the default language domain pass through; a lesson without a domain
+ * stays without one (the API-mode shape, the manifest is authoritative);
+ * anything else becomes the set's export domain, so lesson and manifest
+ * agree, as the community share wizard already does for the lessons it
+ * ships.
+ */
+export function exportLessonDomain(
+    lesson: ContentLesson,
+    set: ContentSetEntry,
+): string | undefined {
+    const raw = (lesson as {domain?: unknown}).domain;
+    if (raw === undefined || raw === null) return undefined;
+    const value = String(raw).trim().toLowerCase();
+    if (value === DEFAULT_DOMAIN || isKnownContentDomain(value)) return value;
+    return exportDomain(set);
+}
+
+function lessonForExport(
+    lesson: ContentLesson,
+    set: ContentSetEntry,
+): ContentLesson {
+    const domain = exportLessonDomain(lesson, set);
+    if (domain === undefined) {
+        const {domain: _dropped, ...rest} = lesson as ContentLesson & {domain?: unknown};
+        return rest as ContentLesson;
+    }
+    return {...lesson, domain} as ContentLesson;
+}
+
 /** Build the set-level ``manifest.yaml`` body. */
 export function buildManifestYaml(
     set: ContentSetEntry,
@@ -252,7 +289,7 @@ export function buildRepoExportFiles(
     input.lessons.forEach((l, i) => {
         files.push({
             path: `lessons/${plan.filenames[i]}`,
-            content: JSON.stringify(l.lesson, null, 2) + "\n",
+            content: JSON.stringify(lessonForExport(l.lesson, input.set), null, 2) + "\n",
         });
     });
     files.push({

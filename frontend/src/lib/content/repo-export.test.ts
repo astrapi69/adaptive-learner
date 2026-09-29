@@ -16,6 +16,7 @@ import {
     buildRepoExportFiles,
     buildSearchIndexJson,
     exportDomain,
+    exportLessonDomain,
     lessonFilename,
     planLessonFilenames,
     type RepoExportInput,
@@ -168,9 +169,16 @@ describe("exportDomain", () => {
         ).toBe("knowledge");
     });
 
-    it("is used by the manifest, index and README builders", () => {
+    it("is used by the manifest, index, README and every lesson file", () => {
         const importedSet = {...SET, domain: "imported"} as ContentSetEntry;
-        const input = {...INPUT, set: importedSet};
+        const input: RepoExportInput = {
+            ...INPUT,
+            set: importedSet,
+            lessons: INPUT.lessons.map((l) => ({
+                ...l,
+                lesson: {...l.lesson, domain: "imported"} as ContentLesson,
+            })),
+        };
         expect(parseYaml(buildManifestYaml(importedSet, 2)).domain).toBe(
             "language",
         );
@@ -178,6 +186,66 @@ describe("exportDomain", () => {
             "language",
         );
         expect(buildReadme(input)).toContain("Domain: language");
+        const lessonFiles = buildRepoExportFiles(input).filter((f) =>
+            f.path.startsWith("lessons/"),
+        );
+        expect(lessonFiles).toHaveLength(2);
+        for (const file of lessonFiles) {
+            expect(JSON.parse(file.content).domain).toBe("language");
+        }
+    });
+});
+
+// #3242 - #2425 filtered the origin marker out of manifest, index and
+// README; the lesson files still carried it, because the read path injects
+// the set's domain (the origin) into a lesson that has none and the export
+// wrote the parsed lesson as is. The export now judges every lesson's own
+// domain with the same rule as the set's.
+describe("exportLessonDomain (#3242)", () => {
+    const languagePair = {...SET, domain: "imported"} as ContentSetEntry;
+    const withDomain = (domain: unknown): ContentLesson =>
+        ({...lesson("Reise", 3), domain}) as unknown as ContentLesson;
+
+    it.each(["imported", "analysis", "adaptive"])(
+        "replaces the origin marker %s with the set's export domain",
+        (origin) => {
+            expect(exportLessonDomain(withDomain(origin), languagePair)).toBe("language");
+        },
+    );
+
+    it("keeps a lesson's own known non-language domain", () => {
+        expect(exportLessonDomain(withDomain("psychology"), languagePair)).toBe("psychology");
+    });
+
+    it("keeps the default language domain unchanged", () => {
+        expect(exportLessonDomain(withDomain("language"), languagePair)).toBe("language");
+    });
+
+    it("normalises case and whitespace the way exportDomain does", () => {
+        expect(exportLessonDomain(withDomain("Imported"), languagePair)).toBe("language");
+        expect(exportLessonDomain(withDomain(" imported "), languagePair)).toBe("language");
+        expect(exportLessonDomain(withDomain(" Psychology "), languagePair)).toBe("psychology");
+    });
+
+    it("gives knowledge for an origin marker on a same-language set (a book)", () => {
+        const book = {
+            ...SET,
+            domain: "imported",
+            source_language: "de",
+            target_language: "de",
+        } as ContentSetEntry;
+        expect(exportLessonDomain(withDomain("imported"), book)).toBe("knowledge");
+    });
+
+    it("leaves a lesson without a domain alone (the API-mode shape), also for null", () => {
+        expect(exportLessonDomain(withDomain(undefined), languagePair)).toBeUndefined();
+        expect(exportLessonDomain(withDomain(null), languagePair)).toBeUndefined();
+    });
+
+    it("writes no domain key into a lesson file whose lesson had none", () => {
+        const files = buildRepoExportFiles({...INPUT, set: languagePair});
+        const first = JSON.parse(files[1].content);
+        expect(first).not.toHaveProperty("domain");
     });
 });
 
