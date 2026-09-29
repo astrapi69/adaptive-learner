@@ -7,7 +7,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {MemoryRouter, Route, Routes} from "react-router";
 import {beforeEach, describe, expect, it, vi} from "vitest";
@@ -270,6 +270,34 @@ describe("CreateLesson — card step gate + draft", () => {
         );
         expect(saveUserSetMock).toHaveBeenCalled();
         expect(screen.getByTestId("create-lesson-play")).toBeInTheDocument();
+    });
+
+    it("stops autosaving once the lesson is saved, so the draft slot stays empty (#3284)", async () => {
+        // The 10 s autosave interval used to outlive the save: it wrote the
+        // saved lesson back into the draft slot, and the next visit offered
+        // to "continue" a lesson that was already saved.
+        vi.useFakeTimers({shouldAdvanceTime: true});
+        try {
+            toStep2();
+            addCard("Bonjour", "Hallo");
+            addCard("Merci", "Danke");
+            addCard("Oui", "Ja");
+            addCard("Non", "Nein");
+            fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 3
+            fireEvent.click(screen.getByTestId("exercise-generate"));
+            fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 4
+            fireEvent.click(screen.getByTestId("create-lesson-save-local"));
+            await waitFor(() =>
+                expect(
+                    screen.getByTestId("create-lesson-saved"),
+                ).toBeInTheDocument(),
+            );
+            expect(localStorage.getItem("adaptive-learner.lesson-draft")).toBeNull();
+            await act(() => vi.advanceTimersByTimeAsync(11_000));
+            expect(localStorage.getItem("adaptive-learner.lesson-draft")).toBeNull();
+        } finally {
+            vi.useRealTimers();
+        }
     });
 
     it("exports the saved lesson as a file (#1672)", async () => {
