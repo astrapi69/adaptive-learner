@@ -94,6 +94,17 @@ content-my-lessons. `gotoView`, `gotoSurface`, the set runners and the
 FeatureShot loop fail closed when a page lacks the pin, so a forgotten
 `pinRandomStreams` fails the test instead of capturing random orders.
 
+### Masks for content that ticks (#3215)
+
+`SURFACE_MASKS` in `helpers.ts` lists, per surface, the testids the
+comparison paints over (Playwright `mask`), today only the Endless stat
+clock: a `setInterval` counter `freezeClock` does not stop, so its digits
+depend on the seconds between ready and capture. A mask is for content
+that moves between two renders of the same pinned state and cannot be
+pinned, and for nothing else; everything around it stays compared. Leaving
+such a change to the diff tolerance is not an option, because the same
+tolerance swallows a real change of the same size (#3023).
+
 ## Generating / updating the baseline (maintainer)
 
 The baseline is generated and **reviewed** on a consistent machine — font

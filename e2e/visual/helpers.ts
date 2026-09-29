@@ -15,7 +15,7 @@
  * renamed there, update this list (a future enhancement could generate it).
  */
 
-import {expect, type Page} from "@playwright/test";
+import {expect, type Locator, type Page} from "@playwright/test";
 
 import {completeAssessment, completeOnboarding} from "../helpers";
 import {
@@ -1213,6 +1213,26 @@ export const SURFACE_NAMES = [
 export type SurfaceName = (typeof SURFACE_NAMES)[number];
 
 /**
+ * Elements a surface's comparison masks (Playwright ``mask``: painted over
+ * in both the baseline and the actual shot), keyed by surface, listed by
+ * testid. Only for content that MOVES between two renders of the same
+ * pinned state and cannot be pinned - today the Endless stat clock, a
+ * timer ``freezeClock`` does not stop (#3215). Everything around a masked
+ * element stays compared; a mask is never a way to hide a layout change.
+ * The other ``setInterval`` consumers (flash-round countdown, timed mode,
+ * arcade clocks, the import analysis phases, the Create-Lesson autosave)
+ * render on no captured surface or paint nothing, so they carry no entry.
+ */
+export const SURFACE_MASKS: Partial<Record<SurfaceName, readonly string[]>> = {
+    "endless-session": ["endless-stat-time"],
+};
+
+/** The ``mask`` locators of a surface (empty for surfaces without one). */
+export function surfaceMasks(page: Page, surface: SurfaceName): Locator[] {
+    return (SURFACE_MASKS[surface] ?? []).map((testId) => page.getByTestId(testId));
+}
+
+/**
  * Advance the open lesson runner until ``predicate`` reports the wanted
  * step is on screen, answering each intervening step. Returns true when
  * the predicate matched, false if the lesson ended first (so the caller
@@ -1637,9 +1657,12 @@ export async function gotoShuffleSession(page: Page): Promise<boolean> {
  * slot, the card, and the footer with pause and End. The stream opens
  * with new cards in lesson order, so the first card is stable (the
  * repetitions after the queue draw from the ``"endless-repeat"`` stream
- * ``pinRandomStreams`` installs, #3214); the stat
- * line's clock ticks with real time, a few-pixel digit change the
- * comparison tolerance absorbs.
+ * ``pinRandomStreams`` installs, #3214). The stat line's clock is a
+ * ``setInterval`` counter (``useActiveSeconds``), which ``freezeClock``
+ * does not stop, so its digits depend on the seconds between ready and
+ * capture; the comparison masks them via ``SURFACE_MASKS`` (#3215) rather
+ * than leaving them to the diff tolerance, which would also swallow a real
+ * change of the same size (#3023).
  */
 export async function gotoEndlessSession(page: Page): Promise<boolean> {
     return gotoSetRunner(page, "/endless-lesson", [
