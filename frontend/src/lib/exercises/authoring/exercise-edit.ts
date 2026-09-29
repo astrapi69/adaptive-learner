@@ -139,15 +139,14 @@ function validateCloze(ex: ContentLessonExercise): ExerciseEditIssue {
  * engine's four rules (E-CLOZE-MS-SENTENCE / -ACCEPT / -DISTRACTORS /
  * -DISJOINT) are mirrored here because this module sits in the entry
  * chunk and a static ``learn-content-engine/rules`` import would put the
- * rule bytes there (#3222 bundle condition); the save funnel still counts
- * markers against blanks until #3222 PR 4, so a ``___`` in the question is
- * rejected too, which is stricter than the engine on purpose (#3246).
+ * rule bytes there (#3222 bundle condition). A ``___`` in the question is
+ * text, as it is for the engine and the save funnel (#3222 PR 4); the
+ * marker count matters only for the ``type`` and ``select`` modes.
  */
 function validateClozeMultiselect(
     ex: ContentLessonExercise,
 ): ExerciseEditIssue {
     if ((ex.sentence ?? "").trim().length === 0) return fail("cloze_multiselect");
-    if (countClozeMarkers(ex.sentence) > 0) return fail("cloze_multiselect");
     const accept = nonEmpty(ex.accept);
     const distractors = nonEmpty(ex.distractors);
     if (accept.length < 1 || distractors.length < 1) {

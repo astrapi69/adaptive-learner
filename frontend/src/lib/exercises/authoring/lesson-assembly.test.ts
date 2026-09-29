@@ -163,10 +163,16 @@ describe("appendExercisesToLesson — merges requires_extensions (#2355)", () =>
     });
 
     it("does not duplicate an already-declared extension", () => {
-        const merged = appendExercisesToLesson(baseLesson, [CAT]);
+        const merged = appendExercisesToLesson(baseLesson, [{...CAT, id: "c1-again"}]);
         const cat = (merged.requires_extensions ?? []).filter(
             (e) => e === "ext:al-categorization@1",
         );
         expect(cat).toHaveLength(1);
+    });
+
+    it("refuses an appended exercise whose id the lesson already carries (E-EXERCISE-ID-DUP, #3222 PR 4)", () => {
+        expect(() => appendExercisesToLesson(baseLesson, [CAT])).toThrow(
+            /generated lesson invalid: \/steps exercise id 'c1' is used by the exercises of the steps at positions/,
+        );
     });
 });
