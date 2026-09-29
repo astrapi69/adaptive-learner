@@ -14,7 +14,7 @@
  * directly rather than calling the two-step pair every time.
  */
 
-import type {Page} from "@playwright/test";
+import {expect, type Page} from "@playwright/test";
 
 export interface OnboardingArgs {
     name?: string;
@@ -22,7 +22,18 @@ export interface OnboardingArgs {
     goal?: string;
     timeframe?: string;
     dailyMinutes?: number;
+    /** #3226 - which world the caller expects for the #1085 migration
+     *  welcome: ``"shown"`` on a fresh API-mode install, ``"none"`` on a
+     *  seeded install or in Dexie mode. Omitted: the helper follows the
+     *  page's own verdict (``data-migration-offer``) and still asserts the
+     *  dialog matches it, so neither world passes silently. */
+    migrationOffer?: MigrationOffer;
 }
+
+/** The onboarding page's verdict on the #1085 migration welcome, read from
+ *  ``data-migration-offer`` on the page root once its empty-install probe
+ *  has settled. */
+export type MigrationOffer = "shown" | "none";
 
 const DEFAULTS: Required<OnboardingArgs> = {
     name: "E2E Learner",
@@ -31,6 +42,41 @@ const DEFAULTS: Required<OnboardingArgs> = {
     timeframe: "8 weeks",
     dailyMinutes: 30,
 };
+
+/**
+ * #1085 migration welcome (#3226): on a fresh API-mode install the dialog
+ * overlays the form (z-10000) and intercepts every click; on a seeded
+ * install and in Dexie mode it never opens. The old helper clicked "start
+ * fresh" and swallowed the miss, so it was green in both worlds and
+ * checked nothing. Now the page reports its verdict on the root
+ * (``data-migration-offer``: ``pending`` until the empty-install probe
+ * settled, then ``shown`` or ``none``), the helper waits for that verdict,
+ * asserts the dialog agrees with it, and only then dismisses it the way a
+ * learner without online data would. A caller that knows its world passes
+ * ``expected`` and the helper asserts that too.
+ */
+export async function settleMigrationWelcome(
+    page: Page,
+    expected?: MigrationOffer,
+): Promise<MigrationOffer> {
+    const root = page.getByTestId("onboarding");
+    await expect(root).toHaveAttribute("data-migration-offer", /^(shown|none)$/, {
+        timeout: 10_000,
+    });
+    const verdict = (await root.getAttribute("data-migration-offer")) as MigrationOffer;
+    if (expected !== undefined) {
+        expect(verdict, "migration welcome: the page's verdict").toBe(expected);
+    }
+    const startFresh = page.getByTestId("migration-start-fresh");
+    if (verdict === "shown") {
+        await expect(startFresh).toBeVisible();
+        await startFresh.click();
+        await expect(startFresh).toHaveCount(0);
+    } else {
+        await expect(startFresh).toHaveCount(0);
+    }
+    return verdict;
+}
 
 /**
  * Visit /onboarding directly, fill the form, submit. Lands on
@@ -44,18 +90,7 @@ export async function completeOnboarding(
 ): Promise<void> {
     const merged = {...DEFAULTS, ...args};
     await page.goto("/onboarding");
-    // #1085 migration welcome: on a fresh API-mode install the dialog
-    // overlays the form (z-10000) and intercepts every click. It is
-    // legitimate product behaviour, so the helper dismisses it the way
-    // a learner without online data would - "start fresh". Racy by
-    // nature (an async empty-install probe opens it), hence the short
-    // wait instead of a hard expect; the react-router 8 bump (#2041)
-    // shifted effect timing so the dialog now reliably wins the race
-    // it used to lose.
-    const migration = page.getByTestId("migration-start-fresh");
-    await migration.click({timeout: 3000}).catch(() => {
-        /* dialog not shown - not an empty install, or already dismissed */
-    });
+    await settleMigrationWelcome(page, args.migrationOffer);
     // Quick start (#92): only name + topic are required.
     await page.getByTestId("onboarding-name").fill(merged.name);
     await page.getByTestId("onboarding-topic").fill(merged.topic);

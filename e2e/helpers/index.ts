@@ -11,6 +11,7 @@ export {
     completeOnboarding,
     createTestUser,
     seedTestApiKey,
+    settleMigrationWelcome,
 } from "./onboarding";
 
 export {
@@ -28,7 +29,7 @@ export {
 } from "./mock-ai";
 
 export type {LearningMethod} from "./types";
-export type {OnboardingArgs} from "./onboarding";
+export type {MigrationOffer, OnboardingArgs} from "./onboarding";
 export type {
     MockAvailableModelsOptions,
     MockConversationAnalysisOptions,

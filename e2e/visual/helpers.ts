@@ -670,7 +670,7 @@ export async function expandViewportToDocument(page: Page): Promise<number> {
  *  Exported so the per-feature capture script (#1023) reuses the single
  *  onboarding path instead of re-implementing it. */
 export async function seedLearner(page: Page): Promise<void> {
-    await completeOnboarding(page);
+    await completeOnboarding(page, {migrationOffer: "none"});
     await completeAssessment(page);
     await page.waitForURL("**/dashboard", {timeout: 30_000});
 }

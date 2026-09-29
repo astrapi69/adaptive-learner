@@ -52,7 +52,7 @@ async function settleLayout(page: Page): Promise<void> {
 /** Open /content?tab=my in LIST view. Returns false when the catalogue
  *  (bundled or runtime-fetched) did not load — the caller skips. */
 async function openListView(page: Page): Promise<boolean> {
-  await completeOnboarding(page);
+  await completeOnboarding(page, {migrationOffer: "none"});
   await page.goto("/content?tab=my");
   const toggle = page.getByTestId("content-view-list");
   try {

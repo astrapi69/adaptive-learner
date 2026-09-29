@@ -18,7 +18,7 @@ test.describe("#106 — resumable assessment", () => {
   test("abandon mid-assessment, resume from the Dashboard, finish", async ({
     page,
   }) => {
-    await completeOnboarding(page); // lands on /assessment
+    await completeOnboarding(page, {migrationOffer: "none"}); // lands on /assessment
 
     // Answer the first five questions, leaving the cursor on q06.
     for (let i = 1; i <= 5; i++) {
