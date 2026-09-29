@@ -22,6 +22,7 @@ One lesson in a content set (Phase 43 / 2B-lesson).
 | `domain` | `string | null` | no | - |
 | `estimated_minutes` | `number` | no | min=1, max=240 |
 | `id` | `SlugId` | yes | - |
+| `purpose` | `"practice" | "bridge" | "quiz"` | no | - |
 | `requires_extensions` | `string[]` | no | - |
 | `resources` | `LessonResource[] | null` | no | - |
 | `source_language` | `string | null` | no | - |
