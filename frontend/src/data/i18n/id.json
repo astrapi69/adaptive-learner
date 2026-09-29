@@ -3584,6 +3584,7 @@
         "err_matching": "Tambahkan minimal 2 pasangan lengkap (istilah dan pasangan).",
         "err_free_text": "Tambahkan minimal satu jawaban yang diterima.",
         "err_cloze": "Setiap penanda ___ memerlukan satu rumpang, dan setiap rumpang memerlukan jawaban.",
+        "err_cloze_multiselect": "Cloze pilihan ganda membutuhkan sebuah pertanyaan, minimal satu opsi benar, dan minimal satu pengecoh; tidak ada opsi yang boleh menjadi keduanya.",
         "err_word_tiles": "Tambahkan minimal 2 ubin.",
         "err_picture_choice": "Tambahkan minimal 2 gambar, masing-masing dengan label dan gambar, dan tandai tepat satu sebagai benar.",
         "err_explanation": "Penjelasan terlalu panjang (maksimal 2000 karakter).",

@@ -3584,6 +3584,7 @@
         "err_matching": "Adicione pelo menos 2 pares completos (termo e correspondência).",
         "err_free_text": "Adicione pelo menos uma resposta aceite.",
         "err_cloze": "Cada marca ___ precisa de uma lacuna e cada lacuna precisa de uma resposta.",
+        "err_cloze_multiselect": "Um cloze de seleção múltipla precisa de uma pergunta, pelo menos uma opção correta e pelo menos um distrator; nenhuma opção pode ser as duas coisas.",
         "err_word_tiles": "Adicione pelo menos 2 peças.",
         "err_picture_choice": "Adicione pelo menos 2 imagens, cada uma com rótulo e imagem, e marque exatamente uma como correta.",
         "err_explanation": "A explicação é longa demais (no máximo 2000 caracteres).",

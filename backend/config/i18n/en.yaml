@@ -3307,6 +3307,7 @@ create_lesson:
       err_matching: "Add at least 2 complete pairs (term and match)."
       err_free_text: "Add at least one accepted answer."
       err_cloze: "Each ___ marker needs one accepted-answer blank, and every blank needs an answer."
+      err_cloze_multiselect: "A 'select all that apply' cloze needs a question, at least one correct option and at least one distractor; no option may be both."
       err_word_tiles: "Add at least 2 tiles."
       err_picture_choice: "Add at least 2 images, each with a label and picture, and mark exactly one correct."
       err_explanation: "The explanation is too long (at most 2000 characters)."
