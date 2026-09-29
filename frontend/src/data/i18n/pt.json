@@ -3758,7 +3758,7 @@
     "templates": {
       "extensions": {
         "title": "Tipos de exercício avançados",
-        "desc": "Crie exercícios de categorização e correção de erros. Requer um aplicativo compatível com extensões."
+        "desc": "Crie tipos de exercício de extensão como ordenação, zonas, ditado ou questionários avaliados. Requer um aplicativo compatível com extensões."
       },
       "knowledge_from_text": {
         "title": "Lição de conhecimento a partir de texto",

@@ -3758,7 +3758,7 @@
     "templates": {
       "extensions": {
         "title": "Types d'exercices avancés",
-        "desc": "Créez des exercices de catégorisation et de correction d'erreurs. Nécessite une application prenant en charge les extensions."
+        "desc": "Créez des types d'exercices d'extension comme la mise en ordre, le repérage, la dictée ou les quiz notés. Nécessite une application prenant en charge les extensions."
       },
       "knowledge_from_text": {
         "title": "Leçon de connaissances à partir d'un texte",
