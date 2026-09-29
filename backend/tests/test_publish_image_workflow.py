@@ -178,3 +178,23 @@ def test_the_page_is_executed_not_just_requested(workflow: str) -> None:
     assert "verify-container-page.mjs" in workflow
     assert '"debug":false' in workflow
     assert "default-src 'none'" in workflow
+
+
+WALKER = Path(__file__).resolve().parents[2] / "e2e" / "scripts" / "verify-container-page.mjs"
+
+
+def test_the_walker_ignores_only_its_own_navigation_aborts() -> None:
+    """#3159, second weekly dry run (36614983886): a content-repo fetch
+    still in flight when the walk left /content?tab=my reported as a
+    failed request. ``net::ERR_ABORTED`` is the browser cancelling its
+    own request on navigation, never a network fault, so the walker
+    drops exactly that reason, counts it, prints the count (contract
+    point 4), and lets a route go network-idle before moving on."""
+    if not WALKER.is_file():
+        pytest.fail(f"{WALKER} is missing - the page walk is not a passing gate")
+    walker = WALKER.read_text(encoding="utf-8")
+    assert 'reason === "net::ERR_ABORTED"' in walker
+    assert walker.count('reason === "net::ERR_') == 1, "only the navigation abort is excused"
+    assert "abortedByNavigation += 1" in walker
+    assert "aborted by the walk's own navigation (ignored): ${abortedByNavigation}" in walker
+    assert 'waitForLoadState("networkidle"' in walker
