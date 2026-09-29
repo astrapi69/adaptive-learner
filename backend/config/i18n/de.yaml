@@ -1504,6 +1504,8 @@ arcade:
   card_description: "Kurze Runden Lern-Memory und Snake - deine Spielmodus-Belohnung."
   card_open: "Zur Arcade"
   requires_playful: "Die Arcade gehört zum Spielmodus. Schalte den Spielmodus (und den Arcade-Schalter) in den Einstellungen ein."
+  requires_game_mode: "Die Arcade gehört zum Spielmodus, und der Spielmodus ist aus. Schalte ihn in den Einstellungen ein."
+  requires_arcade_switch: "Der Spielmodus ist an, aber der Arcade-Schalter ist aus. Schalte die Arcade in den Spielmodus-Details in den Einstellungen ein."
   open_settings: "Einstellungen öffnen"
   play: "Spielen"
   pause: "Pause"
@@ -2403,6 +2405,9 @@ lesson:
     ticket_earned_one: "Belohnung freigeschaltet: ein Spiel-Ticket!"
     ticket_earned_many: "Belohnung freigeschaltet: {n} Spiel-Tickets!"
     ticket_play_now: "Jetzt spielen"
+    ticket_none_rule: "Diesmal kein Ticket: ein Ticket gibt es für eine Lektion ohne Fehler oder einen Durchlauf mit allen Herzen."
+    ticket_none_completed: "Diesmal kein Ticket: diese Lektion hattest du schon abgeschlossen."
+    ticket_none_cap: "Diesmal kein Ticket: dein Guthaben ist am Maximum von {n} Tickets."
   error:
     load_failed: "Lektion konnte nicht geladen werden."
     invalid_data: "Diese Lektion kann nicht geöffnet werden, weil sie ungültige oder beschädigte Daten enthält. Bitte kontaktiere den Autor des Inhalts."

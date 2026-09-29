@@ -1617,6 +1617,8 @@
     "card_description": "학습 메모리와 스네이크의 짧은 라운드: 게임 모드 보상입니다.",
     "card_open": "아케이드로 가기",
     "requires_playful": "아케이드는 게임 모드의 일부입니다. 설정에서 게임 모드(및 아케이드 스위치)를 켜세요.",
+    "requires_game_mode": "아케이드는 게임 모드의 일부인데, 게임 모드가 꺼져 있습니다. 설정에서 켜세요.",
+    "requires_arcade_switch": "게임 모드는 켜져 있지만 아케이드 스위치가 꺼져 있습니다. 설정의 게임 모드 세부 정보에서 아케이드를 켜세요.",
     "open_settings": "설정 열기",
     "play": "플레이",
     "pause": "일시정지",
@@ -2532,7 +2534,10 @@
       "encourage_3": "만점입니다!",
       "ticket_earned_one": "보상 잠금 해제: 게임 티켓 1장!",
       "ticket_earned_many": "보상 잠금 해제: 게임 티켓 {n}장!",
-      "ticket_play_now": "지금 플레이"
+      "ticket_play_now": "지금 플레이",
+      "ticket_none_rule": "이번에는 티켓이 없습니다. 티켓은 실수 없는 수업이나 하트를 모두 지킨 라운드에 주어집니다.",
+      "ticket_none_completed": "이번에는 티켓이 없습니다. 이 수업은 이미 완료한 수업입니다.",
+      "ticket_none_cap": "이번에는 티켓이 없습니다. 보유 티켓이 최대 {n}장에 도달했습니다."
     },
     "flash_round": {
       "title": "플래시 라운드: {set}",
