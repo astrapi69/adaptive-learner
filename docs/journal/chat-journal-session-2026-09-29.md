@@ -112,6 +112,14 @@ Der Owner bat, die offenen Issues nach Prio abzuarbeiten (37 offen, Stand 15:05 
 - Result: Reine Funktion plus `lessonForExport`, das eine fehlende Domäne nicht anlegt (API-Form, das Manifest ist massgebend). Zwölf rote Tests: der Dexie-Pfad (`saveUserSetDexie`, `listLessonsDexie`, `getLessonDexie`, dann `buildRepoExportFiles`) für alle drei Herkunftswerte, der bestehende Builder-Test auf alle Lektionsdateien erweitert, dazu bekannte Domäne, `language`, Gross-/Kleinschreibung und Leerzeichen, Buch-Fall (`de`/`de` gibt `knowledge`), fehlende und `null`-Domäne. Danach 29 grün, `tsc` und ESLint sauber. Nicht Teil des Fixes (Owner-Entscheid laut Issue): ob "Export" / "Export als Set" (ZIP für den Re-Import) dieselbe Funktion bekommt, und ob `exportDomain(set)` eine bekannte Lektions-Domäne bevorzugen soll wie der Share-Wizard.
 - Commit: siehe PR.
 
+## 15. #3189: `verify_image_size.py --update-baseline` löscht die Historie nicht mehr (21:35 bis 21:50)
+
+- Original prompt: Queue-Runde 2, nächster P3-Punkt nach Umfang.
+- Optimized prompt: "`write_baseline` ändert nur `compressed_bytes` und `per_arch[<arch>]` (ohne `--arch`: amd64 und die Top-Level-Zahl zusammen, weil der PR-Gate-Schritt die Top-Level-Zahl liest, #2922) und schreibt alle übrigen Schlüssel in ihrer Reihenfolge zurück; `--issue N --note TEXT` hängt einen datierten `_raise_`/`_lower_`-Eintrag an (`_<arch>_`-Präfix ausserhalb von amd64); bei einer echten Messung zusätzlich unkomprimierte Grösse und Basis-Image-Digests loggen (#3187-Nachtrag)."
+- Goal: Ein Werkzeug, das seinen eigenen Bestand still löscht, ist in eigener Sache fail-open; die Decke senken darf keine Handarbeit mit Datei-Reset mehr sein.
+- Result: Sechs rote Tests (Historie und Nachbar-Architektur bleiben, Reihenfolge der Schlüssel bleibt, `--arch arm64` berührt nur seine Zahl, datierter Eintrag beim Senken, `_arm64_raise_` beim Heben mit `--allow-raise`, `--note` ohne `--issue` wird abgewiesen, Bericht mit unkomprimierter Grösse und den `FROM`-Images aus `backend/Dockerfile` über einen Docker-Shim, "nicht gelesen (Grösse übergeben)" bei `--size-bytes`), danach 33 grün; ruff und mypy sauber; Trockenlauf gegen die echte Baseline unverändert grün. Die Digests werden nur gedruckt, nicht in die Baseline geschrieben; ob sie dort hingehören, entscheidet der Owner.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - Regel "Working mode with the owner" (25.09.): "Vor einer Runde jeden Shell-Befehl auflisten und auf das Go warten" gilt dem Berechtigungsdialog der lokalen Sitzung. Diese Sitzung läuft ohne Dialog (auto mode) und mit dem ausdrücklichen Auftrag, die Queue abzuarbeiten; deshalb ohne Vorab-Liste gearbeitet. Vom Owner am 29.09. bestätigt: die Liste gilt nur lokal.
