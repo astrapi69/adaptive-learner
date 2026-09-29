@@ -780,7 +780,8 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0211 Game mode on: the arcade card appears on the dashboard; "To the
       arcade" opens the game list. Arcade switch off OR game mode off:
       the card disappears entirely; visiting /arcade directly shows a
-      friendly notice with a link to the settings
+      notice naming the switch that is off (game mode off, or game mode
+      on and arcade switch off), with a link to the settings (#3216)
 - [ ] TC-0212 Learn Memory (free): the set picker lists downloaded sets only
       and is preselected with the most recently learned set (#2899),
       not the first in the list; without any progress the first set
@@ -889,6 +890,12 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0242 Revisiting the summary of an already-completed lesson: NO new
       ticket (no farming); "Practice again" with a fresh perfect run
       earns normally
+- [ ] TC-0913 Ticket and arcade switches on, a lesson with one mistake: instead of
+      the banner the summary shows the line "No ticket this time" with
+      the rule (no mistakes or all hearts); revisiting a completed
+      lesson says "already completed", a full balance names the
+      maximum; with the ticket or the arcade switch off no such line
+      appears (#3216)
 - [ ] TC-0243 The correction round and retry-errors award no tickets; a run
       corrected after the fact never counts as a perfect score
 - [ ] TC-0244 Exam mode: a perfect score earns the ticket by the same rule

@@ -184,6 +184,14 @@ Der Owner bat, die offenen Issues nach Prio abzuarbeiten (37 offen, Stand 15:05 
 - Result: 27 Stellen ersetzt (die Prüfung in `lesson-draft-resume.spec.ts` selbst behauptet jetzt "kein Hinweis" statt ihn zu schlucken), Kommentar "be defensive" entfernt. Neuer Test grün gegen die Dexie-Vorschau (mit dem Fortsetzen-Test und `select-a11y` als Stichprobe der Umstellung: 6 grün, 40,5 s): der Neu-Pfad leert den Slot. `--list` über Features-, Visual- und Dexie-Konfiguration kompiliert (139/162/170 Tests). Die zwei Shots stehen mit `shot-pending`-Marker im Katalog, `feature-shots` grün; die Aufnahme bleibt beim Owner.
 - Commit: siehe PR.
 
+## 24. #3216 Punkte 1 und 3: der Arcade-Hinweis nennt den Schalter, die Zusammenfassung den Grund für das fehlende Ticket (01:20 bis 02:00)
+
+- Original prompt: Queue-Runde 2, P3, UX; Punkt 2 (die verschwindende Dashboard-Karte) ist im Issue ausdrücklich als Architektur-Entscheidung gegen #2887 offen gelassen.
+- Optimized prompt: "i18n zuerst (#2578): `arcade.requires_game_mode`, `arcade.requires_arcade_switch`, `lesson.summary.ticket_none_rule|completed|cap` in elf Katalogen. Dann `Arcade.tsx`: der Hinweis verzweigt auf `readPlayfulMode()` und nennt den ausgeschalteten Schalter; `SummaryTicketReward`: bei aktiven Schaltern und `granted === 0` eine Zeile mit dem Grund (Regel, schon abgeschlossen, Obergrenze) statt `null`; Tests; Testplan DE+EN mit ID."
+- Goal: "Arcade geht nicht" hat für die lernende Person wieder eine lesbare Ursache.
+- Result: Fünf Schlüssel in elf Katalogen als eigener Commit (Parität 51, Schlüsselabdeckung und Sync 85, Script-Sanity sauber). Code: Verzweigung im Gate-Hinweis (`arcade-gate-reason`), der alte Schlüssel `arcade.requires_playful` bleibt vorerst im Katalog (ohne Konsumenten stolpert kein Gate, Aufräumen als i18n-PR); im Banner ein Zustand `noTicketReason`, gesetzt in demselben Effekt, der vergibt (abgeschlossen vor der Regel, Obergrenze nach `awardTickets`), Zeile `summary-ticket-none` nur bei aktiven Schaltern. Vier neue bzw. erweiterte Tests je Datei (27 grün), `tsc`, ESLint (eine Warnung `detect-non-literal-regexp` im Test beseitigt), Farbtoken-Guard 1073 grün. Testplan: TC-0211 präzisiert, neuer Fall TC-0913 (DE/EN, `--assign`), Parität und IDs grün. Visual Device Check bleibt beim Owner (zwei geänderte Flächen). Nebenbefund: ein `prettier --write` auf vier 4-Space-Dateien hatte sie komplett auf 2 Spaces umgeschrieben (die Falle aus `lessons/frontend.md`); Dateien aus HEAD zurückgeholt und die Änderungen ohne Prettier erneut angewandt.
+- Commit: siehe PRs.
+
 ## Fragen und Annahmen
 
 - Regel "Working mode with the owner" (25.09.): "Vor einer Runde jeden Shell-Befehl auflisten und auf das Go warten" gilt dem Berechtigungsdialog der lokalen Sitzung. Diese Sitzung läuft ohne Dialog (auto mode) und mit dem ausdrücklichen Auftrag, die Queue abzuarbeiten; deshalb ohne Vorab-Liste gearbeitet. Vom Owner am 29.09. bestätigt: die Liste gilt nur lokal.
