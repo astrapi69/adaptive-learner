@@ -3472,7 +3472,7 @@ create_lesson:
   templates:
     extensions:
       title: "Advanced exercise types"
-      desc: "Author categorization and error-correction exercises. Requires an app that supports extensions."
+      desc: "Author extension exercise types such as ordering, hotspot, dictation or graded quizzes. Requires an app that supports extensions."
     knowledge_from_text:
       title: "Knowledge lesson from text"
       desc: "Paste a textbook section or load a book file; the AI writes the theory in its own words and generates exercises."

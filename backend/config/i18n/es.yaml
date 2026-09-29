@@ -3464,7 +3464,7 @@ create_lesson:
   templates:
     extensions:
       title: "Tipos de ejercicio avanzados"
-      desc: "Crea ejercicios de categorización y corrección de errores. Requiere una app compatible con extensiones."
+      desc: "Crea tipos de ejercicio de extensión como ordenar, zonas, dictado o cuestionarios calificados. Requiere una app compatible con extensiones."
     knowledge_from_text:
       title: "Lección de conocimiento a partir de texto"
       desc: "Pega una sección de un libro o carga un archivo de libro; la IA escribe la teoría con sus propias palabras y genera ejercicios."

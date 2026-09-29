@@ -3472,7 +3472,7 @@ create_lesson:
   templates:
     extensions:
       title: "Tipe latihan lanjutan"
-      desc: "Buat latihan kategorisasi dan koreksi kesalahan. Memerlukan aplikasi yang mendukung ekstensi."
+      desc: "Buat tipe latihan ekstensi seperti pengurutan, hotspot, dikte, atau kuis bernilai. Memerlukan aplikasi yang mendukung ekstensi."
     knowledge_from_text:
       title: "Pelajaran pengetahuan dari teks"
       desc: "Tempel bagian buku teks atau muat berkas buku; AI menulis teori dengan kata-katanya sendiri dan membuat latihan."
