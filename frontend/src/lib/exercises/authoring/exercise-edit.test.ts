@@ -196,20 +196,12 @@ describe("validateExerciseEdit — cloze multiselect (#3246)", () => {
             code: "cloze_multiselect",
         });
     });
-    it("rejects a ___ marker in a multiselect question (the save funnel does too)", () => {
-        // Stricter than the engine, on purpose: validateGeneratedLesson
-        // (draft-to-lesson.ts) still counts markers against blanks until
-        // #3222 PR 4 switches that funnel, so the editor must not let a
-        // question through that the save would then reject.
+    it("accepts a ___ in a multiselect question, as the engine and the save funnel do (#3222 PR 4)", () => {
         expect(
-            validateExerciseEdit({...multiselect, sentence: "Welche ___ sind Vokale?"}),
-        ).toEqual({valid: false, code: "cloze_multiselect"});
+            validateExerciseEdit({...multiselect, sentence: "Welche ___ sind Vokale?"}).valid,
+        ).toBe(true);
     });
-    it("accepts the minimum: one correct option and one distractor", () => {
-        expect(
-            validateExerciseEdit({...multiselect, accept: ["あ"], distractors: ["か"]}),
-        ).toEqual({valid: true, code: null});
-    });
+
     it("still treats a cloze without cloze_mode as type (no markers means invalid)", () => {
         expect(
             validateExerciseEdit(

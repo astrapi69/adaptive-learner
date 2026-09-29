@@ -124,7 +124,7 @@ describe("#1205 fixture 3 — referential integrity (imperative)", () => {
     // Shape alone is fine (card_ids is just an array of strings)...
     expect(validateLessonShape(lesson).ok).toBe(true);
     // ...the imperative check catches it.
-    expect(() => validateGeneratedLesson(lesson)).toThrow(/missing card/);
+    expect(() => validateGeneratedLesson(lesson)).toThrow(/exercise references unknown card/);
   });
 });
 
@@ -311,13 +311,13 @@ describe("#1205 fixture 7 — slug-safe + uniqueness (imperative)", () => {
         { id: "card-01", front: "c", back: "d", tags: [] },
       ],
     });
-    expect(() => validateGeneratedLesson(lesson)).toThrow(/duplicate card/);
+    expect(() => validateGeneratedLesson(lesson)).toThrow(/card id '.*' is used at positions/);
   });
 
   it("rejects a duplicate step id", () => {
     const lesson = makeLesson();
     lesson.steps[1].id = "theory-intro";
-    expect(() => validateGeneratedLesson(lesson)).toThrow(/duplicate step/);
+    expect(() => validateGeneratedLesson(lesson)).toThrow(/step id '.*' is used at positions/);
   });
 
   it("accepts unicode-lowercase card ids and tags (#1808)", () => {
