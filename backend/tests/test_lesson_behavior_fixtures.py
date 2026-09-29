@@ -8,9 +8,9 @@ flip.
 
 The validation surface under test is
 ``adaptive_learner_content_loader.schema.dict_to_lesson`` — the
-canonical parse entry that runs ALL Pydantic validators (structural
-shape, closed enums, ``extra="forbid"``, plus the cross-field semantic
-rules JSON-Schema cannot express).
+canonical parse entry that runs the Pydantic validators (structural
+shape, closed enums, ``extra="forbid"``, plus the backend's own
+``example_url`` check).
 
 Fixture layout (shared with the frontend ajv pin in
 ``frontend/src/lib/content/validation/lesson-behavior-fixtures.test.ts``,
@@ -18,10 +18,12 @@ cross-language parity pattern):
 
 * ``valid/``            accepted by Pydantic AND by the ajv shape check
 * ``invalid/``          structural violations — rejected by BOTH layers
-* ``invalid-semantic/`` cross-field violations — rejected by Pydantic;
-                        the ajv STRUCTURAL check passes them by design
-                        (the semantic layer lives in
-                        ``validateGeneratedLesson``)
+* ``invalid-semantic/`` cross-field violations — accepted by BOTH
+                        structural layers by design; the semantic rules
+                        are the engine's (``learn-content-engine/rules``),
+                        run at authoring time and in the frontend before
+                        a user set is saved. The backend used to reject
+                        these with its own copy of the rules (#3245).
 """
 
 from __future__ import annotations
@@ -89,9 +91,11 @@ def test_structurally_invalid_lesson_fixture_is_rejected(name: str) -> None:
 
 
 @pytest.mark.parametrize("name", _fixture_names("invalid-semantic"))
-def test_semantically_invalid_lesson_fixture_is_rejected(name: str) -> None:
+def test_semantically_invalid_lesson_fixture_is_stored_as_given(name: str) -> None:
     """Cross-field violations (matching without pairs, cloze marker count
-    mismatch, dangling card reference) are rejected by the Pydantic
-    model validators."""
-    with pytest.raises(ValidationError):
-        dict_to_lesson(_load("invalid-semantic", name))
+    mismatch, dangling card reference) pass the backend: the semantic
+    rules are the engine's, and a downloaded lesson has already passed the
+    engine gate in its content repo. The backend's own copy of those rules
+    disagreed with the engine in both directions and was removed (#3245)."""
+    lesson = dict_to_lesson(_load("invalid-semantic", name))
+    assert lesson.id

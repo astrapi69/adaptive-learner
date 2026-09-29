@@ -113,19 +113,14 @@ class TestContentSetValidators:
         with pytest.raises(ValidationError):
             _valid_set(id="trailing-hyphen-")
 
-    def test_language_must_be_bcp47(self) -> None:
-        # Valid shapes (legacy ``language`` alias maps to
-        # ``target_language``, which carries the validator).
-        _valid_set(language="fr")
-        _valid_set(language="de-AT")
-        _valid_set(language="zh-Hans")
-        # Invalid shapes
-        with pytest.raises(ValidationError):
-            _valid_set(language="francais")
-        with pytest.raises(ValidationError):
-            _valid_set(language="en_US")  # underscore, not hyphen
-        with pytest.raises(ValidationError):
-            _valid_set(language="F")
+    def test_language_shape_is_the_engines_call(self) -> None:
+        # #3245: the backend stores the tag as given; the engine's
+        # E-LANG-TAG decides the shape at authoring time. It used to
+        # reject ``sr-Latn-RS`` (two subtags) with its own regex.
+        assert _valid_set(language="fr").target_language == "fr"
+        assert _valid_set(language="de-AT").target_language == "de-AT"
+        assert _valid_set(language="sr-Latn-RS").target_language == "sr-Latn-RS"
+        assert _valid_set(language="en_US").target_language == "en_US"
 
     def test_language_alias_maps_to_target_language(self) -> None:
         # Pre-v1.2 ``language`` key is accepted and mapped to
@@ -166,10 +161,6 @@ class TestContentSetValidators:
         )
         assert s.target_language == "fr"
 
-    def test_source_language_must_be_bcp47(self) -> None:
-        with pytest.raises(ValidationError):
-            _valid_set(target_language="fr", source_language="deutsch")
-
     def test_dump_emits_pair_not_legacy_language(self) -> None:
         dumped = _valid_set(target_language="fr", source_language="de").model_dump()
         assert dumped["target_language"] == "fr"
@@ -195,13 +186,11 @@ class TestContentSetValidators:
         s = _valid_set(lesson_count=0)
         assert s.lesson_count == 0
 
-    def test_tags_must_be_slugs(self) -> None:
-        s = _valid_set(tags=["beginner", "travel"])
-        assert s.tags == ["beginner", "travel"]
-        with pytest.raises(ValidationError):
-            _valid_set(tags=["Mixed Case"])
-        with pytest.raises(ValidationError):
-            _valid_set(tags=["space tag"])
+    def test_tags_are_stored_as_given(self) -> None:
+        # #3245: the tag shape is an authoring rule (engine), not a
+        # storage concern; the backend no longer rejects ``Mixed Case``.
+        s = _valid_set(tags=["beginner", "travel", "Mixed Case"])
+        assert s.tags == ["beginner", "travel", "Mixed Case"]
 
     def test_extra_fields_forbidden(self) -> None:
         with pytest.raises(ValidationError):

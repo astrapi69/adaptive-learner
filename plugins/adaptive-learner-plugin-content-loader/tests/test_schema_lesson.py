@@ -371,12 +371,6 @@ class TestMatchingExercise:
         assert ex.type is ExerciseType.MATCHING
         assert len(ex.pairs or []) == 2
 
-    def test_pairs_required(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_matching(pairs=None)
-        with pytest.raises(ValidationError):
-            _exercise_matching(pairs=[])
-
     def test_pair_keys_strict(self) -> None:
         with pytest.raises(ValidationError):
             _exercise_matching(
@@ -389,8 +383,8 @@ class TestMatchingExercise:
 
 
 class TestMatchingFromCards:
-    """``from_cards`` derives pairs from the referenced cards; parity with the
-    engine (learn-content-engine 0.7.0)."""
+    """``from_cards`` derives pairs from the referenced cards (structure
+    only; the card_ids/pairs cross-field rules are the engine's, #3245)."""
 
     def test_from_cards_without_pairs_is_valid(self) -> None:
         ex = _exercise_matching(
@@ -399,26 +393,10 @@ class TestMatchingFromCards:
         assert ex.from_cards is True
         assert ex.pairs is None
 
-    def test_from_cards_requires_card_ids(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_matching(from_cards=True, card_ids=[], pairs=None)
-
-    def test_from_cards_forbids_explicit_pairs(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_matching(
-                from_cards=True,
-                card_ids=["bonjour"],
-                pairs=[{"left": "Bonjour", "right": "Hello"}],
-            )
-
-    def test_plain_matching_still_requires_pairs(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_matching(from_cards=False, pairs=None)
-
-
 class TestMultipleChoiceExercise:
-    """Native multiple_choice (schema v1.6); parity with the engine
-    (learn-content-engine 0.8.0). Coexists with cloze select/multiselect."""
+    """Native multiple_choice (schema v1.6): option shape and closed enum
+    only; the cross-option rules are the engine's (#3245). Coexists with
+    cloze select/multiselect."""
 
     @staticmethod
     def _exercise(**overrides: object) -> Exercise:
@@ -452,36 +430,6 @@ class TestMultipleChoiceExercise:
         )
         assert ex.multiple is True
 
-    def test_requires_two_options(self) -> None:
-        with pytest.raises(ValidationError):
-            self._exercise(options=[{"text": "only", "correct": True}])
-        with pytest.raises(ValidationError):
-            self._exercise(options=None)
-
-    def test_single_requires_exactly_one_correct(self) -> None:
-        with pytest.raises(ValidationError):
-            self._exercise(options=[{"text": "a"}, {"text": "b"}])
-        with pytest.raises(ValidationError):
-            self._exercise(
-                options=[
-                    {"text": "a", "correct": True},
-                    {"text": "b", "correct": True},
-                ]
-            )
-
-    def test_multi_requires_at_least_one_correct(self) -> None:
-        with pytest.raises(ValidationError):
-            self._exercise(multiple=True, options=[{"text": "a"}, {"text": "b"}])
-
-    def test_option_texts_must_be_unique(self) -> None:
-        with pytest.raises(ValidationError):
-            self._exercise(
-                options=[
-                    {"text": "same", "correct": True},
-                    {"text": "same"},
-                ]
-            )
-
     def test_option_shape_strict(self) -> None:
         with pytest.raises(ValidationError):
             self._exercise(
@@ -498,18 +446,6 @@ class TestPictureChoiceExercise:
         assert ex.type is ExerciseType.PICTURE_CHOICE
         assert len(ex.images or []) == 3
 
-    def test_min_two_images(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_picture(images=None)
-        with pytest.raises(ValidationError):
-            _exercise_picture(
-                images=[{"src": "a.png", "label": "A", "is_correct": "true"}],
-            )
-
-    # Engine 0.13.0 / schema 1.8 (engine#66): ``src`` is an anyOf of the
-    # original assets/ path (<= 500 chars) OR an inline base64 data URI
-    # with its own 250000-char cap (sized for the 150-KiB upload
-    # compression from #1763). RED before the 0.13.0 re-pin.
     def test_data_uri_src_accepted(self) -> None:
         data_uri = "data:image/jpeg;base64," + "A" * 10_000
         ex = _exercise_picture(
@@ -547,24 +483,6 @@ class TestPictureChoiceExercise:
             "assets/bird.png",
         ]
 
-    def test_exactly_one_correct(self) -> None:
-        # Zero correct
-        with pytest.raises(ValidationError):
-            _exercise_picture(
-                images=[
-                    {"src": "a.png", "label": "A"},
-                    {"src": "b.png", "label": "B"},
-                ],
-            )
-        # Two correct
-        with pytest.raises(ValidationError):
-            _exercise_picture(
-                images=[
-                    {"src": "a.png", "label": "A", "is_correct": "true"},
-                    {"src": "b.png", "label": "B", "is_correct": "true"},
-                ],
-            )
-
     def test_image_keys_strict(self) -> None:
         with pytest.raises(ValidationError):
             _exercise_picture(
@@ -592,37 +510,10 @@ class TestFreeTextExercise:
         ex = _exercise_free()
         assert ex.accept == ["Bonjour", "bonjour"]
 
-    def test_accept_required(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_free(accept=None)
-        with pytest.raises(ValidationError):
-            _exercise_free(accept=[])
-
-
 class TestWordTilesExercise:
     def test_valid(self) -> None:
         ex = _exercise_tiles()
         assert ex.tiles == ["Je", "m'appelle", "Pierre"]
-
-    def test_min_two_tiles(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_tiles(tiles=None)
-        with pytest.raises(ValidationError):
-            _exercise_tiles(tiles=["Onlyone"])
-
-    def test_accept_orderings_must_permute(self) -> None:
-        # Valid: two permutations of [0,1,2]
-        _exercise_tiles(accept_orderings=[[0, 1, 2], [2, 1, 0]])
-        # Invalid: missing index
-        with pytest.raises(ValidationError):
-            _exercise_tiles(accept_orderings=[[0, 1]])
-        # Invalid: duplicate index
-        with pytest.raises(ValidationError):
-            _exercise_tiles(accept_orderings=[[0, 0, 1]])
-        # Invalid: out-of-range
-        with pytest.raises(ValidationError):
-            _exercise_tiles(accept_orderings=[[0, 1, 5]])
-
 
 def _exercise_cloze(**overrides: object) -> Exercise:
     defaults: dict[str, object] = {
@@ -670,31 +561,6 @@ class TestClozeExercise:
         assert ex.blanks is not None and len(ex.blanks) == 1
         assert ex.blanks[0].accept == ["un", "Un"]
 
-    def test_sentence_required(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_cloze(sentence=None)
-
-    def test_blanks_required(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_cloze(blanks=None)
-
-    def test_marker_count_must_equal_blanks_length(self) -> None:
-        # Two markers but one blank — rejected.
-        with pytest.raises(ValidationError):
-            _exercise_cloze(
-                sentence="J'ai ___ ami et ___ amie.",
-                blanks=[{"accept": ["un"]}],
-            )
-        # One marker but two blanks — rejected.
-        with pytest.raises(ValidationError):
-            _exercise_cloze(
-                sentence="J'ai ___ ami.",
-                blanks=[
-                    {"accept": ["un"]},
-                    {"accept": ["une"]},
-                ],
-            )
-
     def test_multiple_blanks_in_order(self) -> None:
         ex = _exercise_cloze(
             sentence="J'ai ___ ami et ___ amie.",
@@ -716,14 +582,8 @@ class TestClozeExercise:
         ex = _exercise_cloze(cloze_mode="type")
         assert ex.cloze_mode == "type"
 
-    def test_cloze_mode_select_requires_distractors(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_cloze(cloze_mode="select")
-        # With distractors, select is fine.
-        ex = _exercise_cloze(
-            cloze_mode="select",
-            distractors=["le", "la", "les"],
-        )
+    def test_cloze_mode_select_accepted_with_distractors(self) -> None:
+        ex = _exercise_cloze(cloze_mode="select", distractors=["le", "la", "les"])
         assert ex.cloze_mode == "select"
         assert ex.distractors == ["le", "la", "les"]
 
@@ -774,28 +634,6 @@ class TestClozeMultiSelect:
         # No blanks/markers required in this mode.
         assert ex.blanks is None
 
-    def test_requires_non_empty_accept(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_multiselect(accept=None)
-        with pytest.raises(ValidationError):
-            _exercise_multiselect(accept=[])
-
-    def test_requires_non_empty_distractors(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_multiselect(distractors=[])
-
-    def test_requires_non_empty_sentence(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_multiselect(sentence=None)
-
-    def test_accept_and_distractors_must_be_disjoint(self) -> None:
-        # The same option may not be both correct and a distractor.
-        with pytest.raises(ValidationError):
-            _exercise_multiselect(
-                accept=["Berlin", "Hamburg"],
-                distractors=["Hamburg", "Wien"],
-            )
-
     def test_does_not_require_blanks_or_markers(self) -> None:
         # A multiselect sentence has no '___' markers and no blanks; this
         # must NOT trip the blank-based marker-count check.
@@ -809,36 +647,17 @@ class TestClozeMultiSelect:
 
 
 class TestClozeBackwardCompat:
-    """The blank-based ``type`` / ``select`` modes are unchanged (#1195)."""
+    """The blank-based ``type`` / ``select`` modes still parse (#1195)."""
 
     def test_type_mode_still_valid(self) -> None:
         ex = _exercise_cloze(cloze_mode="type")
         assert ex.cloze_mode == "type"
         assert ex.blanks is not None and len(ex.blanks) == 1
 
-    def test_select_mode_still_requires_distractors(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_cloze(cloze_mode="select")
-        ex = _exercise_cloze(cloze_mode="select", distractors=["le", "la"])
-        assert ex.cloze_mode == "select"
-
-    def test_blank_based_marker_check_still_enforced(self) -> None:
-        with pytest.raises(ValidationError):
-            _exercise_cloze(
-                sentence="J'ai ___ ami et ___ amie.",
-                blanks=[{"accept": ["un"]}],
-            )
-
-
 class TestExerciseCommon:
     def test_id_must_be_slug(self) -> None:
         with pytest.raises(ValidationError):
             _exercise_matching(id="Bad Id")
-
-    def test_card_ids_must_be_slug(self) -> None:
-        _exercise_matching(card_ids=["bonjour", "merci"])
-        with pytest.raises(ValidationError):
-            _exercise_matching(card_ids=["Bad Id"])
 
     def test_extra_forbidden(self) -> None:
         with pytest.raises(ValidationError):
@@ -862,32 +681,6 @@ class TestExerciseCommon:
 
 
 class TestLessonStep:
-    def test_theory_requires_body(self) -> None:
-        with pytest.raises(ValidationError):
-            LessonStep(id="s1", type=StepType.THEORY)
-
-    def test_theory_forbids_exercise(self) -> None:
-        with pytest.raises(ValidationError):
-            LessonStep(
-                id="s1",
-                type=StepType.THEORY,
-                body="text",
-                exercise=_exercise_matching(),
-            )
-
-    def test_exercise_requires_exercise_payload(self) -> None:
-        with pytest.raises(ValidationError):
-            LessonStep(id="s1", type=StepType.EXERCISE)
-
-    def test_exercise_forbids_body(self) -> None:
-        with pytest.raises(ValidationError):
-            LessonStep(
-                id="s1",
-                type=StepType.EXERCISE,
-                body="should-not-be-here",
-                exercise=_exercise_matching(),
-            )
-
     def test_valid_theory(self) -> None:
         s = LessonStep(
             id="intro",
@@ -920,6 +713,10 @@ class TestLessonStep:
     def test_theory_ref_defaults_to_none(self) -> None:
         s = LessonStep(id="ex-1", type=StepType.EXERCISE, exercise=_exercise_matching())
         assert s.theory_ref is None
+
+
+def _step(lesson: Lesson, step_id: str) -> LessonStep:
+    return next(step for step in lesson.steps if step.id == step_id)
 
 
 # --- Lesson ------------------------------------------------------------
@@ -971,67 +768,6 @@ class TestLesson:
     def test_at_least_one_step(self) -> None:
         with pytest.raises(ValidationError):
             Lesson(id="empty", title="x", cards=[], steps=[])
-
-    def test_unique_card_ids(self) -> None:
-        with pytest.raises(ValidationError):
-            Lesson(
-                id="dup",
-                title="x",
-                cards=[
-                    Card(id="bonjour", front="Bonjour", back="Hello"),
-                    Card(id="bonjour", front="x", back="y"),
-                ],
-                steps=[
-                    LessonStep(id="s1", type=StepType.THEORY, body="x"),
-                ],
-            )
-
-    def test_unique_step_ids(self) -> None:
-        with pytest.raises(ValidationError):
-            Lesson(
-                id="dup",
-                title="x",
-                cards=[],
-                steps=[
-                    LessonStep(id="s1", type=StepType.THEORY, body="x"),
-                    LessonStep(id="s1", type=StepType.THEORY, body="y"),
-                ],
-            )
-
-    def test_referential_integrity_passes(self) -> None:
-        _minimal_lesson()  # would raise if broken
-
-    def test_referential_integrity_catches_missing_card(self) -> None:
-        with pytest.raises(ValidationError) as exc:
-            Lesson(
-                id="orphan",
-                title="x",
-                cards=[Card(id="bonjour", front="x", back="y")],
-                steps=[
-                    LessonStep(
-                        id="ex-1",
-                        type=StepType.EXERCISE,
-                        exercise=_exercise_matching(
-                            card_ids=["bonjour", "missing-card"],
-                        ),
-                    ),
-                ],
-            )
-        assert "missing-card" in str(exc.value)
-
-    def test_get_step_by_id(self) -> None:
-        lesson = _minimal_lesson()
-        step = lesson.get_step("intro")
-        assert step is not None
-        assert step.type is StepType.THEORY
-        assert lesson.get_step("not-there") is None
-
-    def test_get_card_by_id(self) -> None:
-        lesson = _minimal_lesson()
-        card = lesson.get_card("bonjour")
-        assert card is not None
-        assert card.front == "Bonjour"
-        assert lesson.get_card("not-there") is None
 
     def test_estimated_minutes_bounded(self) -> None:
         with pytest.raises(ValidationError):
@@ -1089,11 +825,98 @@ class TestLesson:
         assert revived.target_language == "fr"
         assert revived.source_language == "de"
 
-    def test_language_pair_must_be_bcp47(self) -> None:
+# --- Engine-owned rules (#3245) -----------------------------------------
+
+
+class TestEngineOwnedRulesStayInTheEngine:
+    """#3245 option (b): the backend used to carry a Python copy of 25 of
+    the engine's semantic lesson rules and differed from the engine in
+    both directions (#1808 was one such HTTP 400 on published content).
+    None of those rules protects backend data: after parsing, the backend
+    reads no exercise content. Authoring quality is the engine's job, at
+    authoring time in the content repos and in the frontend before a
+    user set is saved. These pins make a re-introduction visible: each
+    shape below is rejected by the engine and must load here."""
+
+    def _lesson(self, **overrides: object) -> Lesson:
         payload = lesson_to_dict(_minimal_lesson())
-        payload["source_language"] = "deutsch"
+        payload.update(overrides)
+        return dict_to_lesson(payload)
+
+    def test_matching_without_pairs_loads(self) -> None:
+        ex = _exercise_matching(pairs=None)
+        assert ex.pairs is None
+
+    def test_cloze_marker_count_mismatch_loads(self) -> None:
+        ex = _exercise_cloze(
+            sentence="J'ai ___ ami et ___ amie.",
+            blanks=[{"accept": ["un"]}],
+        )
+        assert ex.blanks is not None and len(ex.blanks) == 1
+
+    def test_single_choice_with_two_correct_options_loads(self) -> None:
+        ex = Exercise(
+            id="mc",
+            type=ExerciseType.MULTIPLE_CHOICE,
+            prompt="Pick one",
+            options=[
+                {"text": "a", "correct": True},
+                {"text": "b", "correct": True},
+            ],
+        )
+        assert ex.options is not None and len(ex.options) == 2
+
+    def test_theory_step_without_body_loads(self) -> None:
+        step = LessonStep(id="s1", type=StepType.THEORY)
+        assert step.body is None
+
+    def test_duplicate_card_ids_load(self) -> None:
+        lesson = self._lesson(
+            cards=[
+                {"id": "bonjour", "front": "Bonjour", "back": "Hello"},
+                {"id": "bonjour", "front": "x", "back": "y"},
+            ]
+        )
+        assert [card.id for card in lesson.cards] == ["bonjour", "bonjour"]
+
+    def test_duplicate_step_ids_load(self) -> None:
+        lesson = self._lesson(
+            steps=[
+                {"id": "s1", "type": "theory", "body": "x"},
+                {"id": "s1", "type": "theory", "body": "y"},
+            ]
+        )
+        assert [step.id for step in lesson.steps] == ["s1", "s1"]
+
+    def test_unknown_card_reference_loads(self) -> None:
+        payload = lesson_to_dict(_minimal_lesson())
+        payload["steps"][1]["exercise"]["card_ids"] = ["bonjour", "missing-card"]
+        lesson = dict_to_lesson(payload)
+        exercise = lesson.steps[1].exercise
+        assert exercise is not None and "missing-card" in exercise.card_ids
+
+    def test_language_tags_are_the_engines_call(self) -> None:
+        lesson = self._lesson(
+            target_language="sr-Latn-RS", source_language="de_AT"
+        )
+        assert lesson.target_language == "sr-Latn-RS"
+        assert lesson.source_language == "de_AT"
+
+    def test_example_url_must_still_be_http(self) -> None:
+        # Kept on purpose (owner decision on #3245): no frontend guard for
+        # rendered links has been proven active yet, so the backend keeps
+        # refusing non-http(s) schemes until one is.
         with pytest.raises(ValidationError):
-            dict_to_lesson(payload)
+            LessonStep(
+                id="s1",
+                type=StepType.THEORY,
+                body="x",
+                example_url="javascript:alert(1)",
+            )
+        step = LessonStep(
+            id="s1", type=StepType.THEORY, body="x", example_url="https://a.b/"
+        )
+        assert step.example_url == "https://a.b/"
 
 
 # --- Schema export -----------------------------------------------------
@@ -1260,10 +1083,10 @@ class TestInlineExamples:
             ],
         )
         restored = dict_to_lesson(lesson_to_dict(lesson))
-        theory = restored.get_step("s1")
+        theory = _step(restored, "s1")
         assert theory is not None and theory.examples is not None
         assert theory.examples[0].language == "python"
-        exercise_step = restored.get_step("s2")
+        exercise_step = _step(restored, "s2")
         assert exercise_step is not None and exercise_step.exercise is not None
         assert exercise_step.exercise.examples is not None
         assert exercise_step.exercise.examples[0].title == "hint"
@@ -1346,7 +1169,7 @@ class TestExerciseVariables:
             ],
         )
         restored = dict_to_lesson(lesson_to_dict(lesson))
-        exercise_step = restored.get_step("s1")
+        exercise_step = _step(restored, "s1")
         assert exercise_step is not None and exercise_step.exercise is not None
         restored_variables = exercise_step.exercise.variables
         assert restored_variables is not None

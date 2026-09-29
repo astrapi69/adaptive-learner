@@ -155,8 +155,9 @@ class TestParseManifestYaml:
         assert "string" in str(exc.value).lower()
 
     def test_pydantic_failures_wrapped(self) -> None:
-        # An invalid language code gets caught by the
-        # ContentSet validator; the parser wraps the
+        # A non-semver ``version`` gets caught by the ContentSet
+        # validator (the backend compares and sorts versions, so
+        # the shape is its own concern); the parser wraps the
         # Pydantic error.
         bad = textwrap.dedent(
             """
@@ -165,9 +166,9 @@ class TestParseManifestYaml:
             sets:
               - id: x
                 title: x
-                language: francais
+                language: fr
                 level: A1
-                version: '1.0'
+                version: latest
                 lesson_count: 1
             """
         ).strip()
@@ -177,7 +178,7 @@ class TestParseManifestYaml:
         # Pydantic error lands in ``detail`` so the Settings
         # UI can show the author what to fix.
         assert "schema validation" in str(exc.value).lower()
-        assert "language" in exc.value.detail.lower()
+        assert "version" in exc.value.detail.lower()
 
 
 # --- Lesson parser -----------------------------------------------------
@@ -201,25 +202,17 @@ class TestParseLessonJson:
             parse_lesson_json('["just", "a", "list"]')
         assert "object" in str(exc.value).lower()
 
-    def test_referential_integrity_caught(self) -> None:
-        # An exercise references a card that the lesson does
-        # not define. The Lesson model_validator catches
-        # this; the parser wraps the ValidationError.
-        bad = json.loads(VALID_LESSON)
-        bad["steps"][1]["exercise"]["card_ids"] = [
-            "bonjour",
-            "missing-card",
-        ]
-        with pytest.raises(ContentSchemaError) as exc:
-            parse_lesson_json(json.dumps(bad))
-        # Wrapped Pydantic ValidationError lands in detail.
-        assert "missing-card" in exc.value.detail
-
-    def test_unknown_field_rejected(self) -> None:
-        bad = json.loads(VALID_LESSON)
-        bad["unknown_field"] = "surprise"
-        with pytest.raises(ContentSchemaError):
-            parse_lesson_json(json.dumps(bad))
+    def test_a_language_tag_the_engine_accepts_loads(self) -> None:
+        # #3245 option (b): the backend had its own language-tag regex
+        # (``^[a-z]{2,3}(-[A-Za-z0-9]{2,8})?$``) and rejected lessons the
+        # engine's E-LANG-TAG accepts. The tag shape is the engine's
+        # call; the backend only stores and serves the lesson.
+        tagged = json.loads(VALID_LESSON)
+        tagged["target_language"] = "sr-Latn-RS"
+        tagged["source_language"] = "zh-Hant-TW"
+        lesson = parse_lesson_json(json.dumps(tagged))
+        assert lesson.target_language == "sr-Latn-RS"
+        assert lesson.source_language == "zh-Hant-TW"
 
 
 # The worked example from learn-content-engine's own docs
