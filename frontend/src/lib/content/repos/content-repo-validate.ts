@@ -5,7 +5,8 @@
  * Runs client-side in both storage modes: given an ``{owner, repo, branch}``
  * it fetches the repo's ``manifest.yaml`` from GitHub, checks the expected
  * structure (a ``sets`` array), a compatible schema major, and that a
- * sampled lesson only uses known ``exercise_type``s. Returns a result the
+ * sampled lesson is one this app loads and renders (the shape layer and the
+ * engine's rules, #3243). Returns a result the
  * Settings UI renders as "Validation passed: X sets, Y lessons" or the
  * failure reason.
  *
@@ -26,24 +27,6 @@ import {
 } from "../engine";
 import { fetchGitHubFileText } from "./github-fetch";
 import { resolveRepoToken } from "./repo-token";
-
-/** The exercise types this app renders: the core schema enum (v1.7) plus
- *  the adopted extension types (#1579). multiple_choice was missing since
- *  v1.6 - a legitimate repo sampling a native-MC lesson was rejected. */
-export const KNOWN_EXERCISE_TYPES = [
-  "matching",
-  "picture_choice",
-  "free_text",
-  "word_tiles",
-  "cloze",
-  "multiple_choice",
-  "ext:al-categorization",
-  "ext:al-error-correction",
-  "ext:al-reading-comprehension",
-  "ext:al-graded-quiz",
-  "ext:al-dictation",
-  "ext:al-image-description",
-] as const;
 
 /** Schema major the app understands (CURRENT_SCHEMA_VERSION is 1.x). */
 const SUPPORTED_SCHEMA_MAJOR = 1;
@@ -90,14 +73,6 @@ export interface RepoValidationResult {
   transient?: boolean;
 }
 
-interface ParsedExercise {
-  type?: string;
-}
-interface ParsedLesson {
-  exercises?: ParsedExercise[];
-  steps?: { exercises?: ParsedExercise[] }[];
-}
-
 /** The GitHub ``"{owner}/{repo}"`` source identifier for a repo ref. */
 function refSource(ref: RepoRef): string {
   return `${ref.owner}/${ref.repo}`;
@@ -112,18 +87,33 @@ function fetchRepoText(
   return fetchGitHubFileText(refSource(ref), ref.branch, path, token);
 }
 
-/** Collect every exercise's ``type`` from a lesson (flat or stepped). */
-function lessonExerciseTypes(lesson: ParsedLesson): string[] {
-  const types: string[] = [];
-  for (const ex of lesson.exercises ?? []) {
-    if (ex.type) types.push(ex.type);
-  }
-  for (const step of lesson.steps ?? []) {
-    for (const ex of step.exercises ?? []) {
-      if (ex.type) types.push(ex.type);
-    }
-  }
-  return types;
+/**
+ * The verdict on the sampled lesson (#3243): the app's shape layer (the
+ * schema, the slug ids, the extension load guard - undeclared and unadopted
+ * types) and then the engine's semantic rules with the app's extension
+ * registry, exactly what the lesson funnel runs before a save. Returns the
+ * first error, or ``null`` when the lesson would load and render.
+ *
+ * The validators are imported on demand: this module sits in the entry
+ * chunk (the sync path and the settings sections import it), and a static
+ * import would put the ajv validator and the rules module there (#3222's
+ * bundle condition). A chunk that cannot be loaded is an I/O failure and
+ * surfaces as such, never as a verdict on the content.
+ */
+async function judgeSampledLesson(lesson: unknown): Promise<string | null> {
+  const [{ validateLessonShape }, { validateLessonRules }, { APP_EXTENSION_REGISTRY }] =
+    await Promise.all([
+      import("../validation/lesson-schema-validator"),
+      import("learn-content-engine/rules"),
+      import("../validation/engine-extensions"),
+    ]);
+  const shape = validateLessonShape(lesson);
+  if (!shape.ok) return shape.errors[0] ?? "the lesson does not match the schema";
+  const { errors } = validateLessonRules(lesson as Parameters<typeof validateLessonRules>[0], {
+    extensions: APP_EXTENSION_REGISTRY,
+  });
+  const first = errors[0];
+  return first ? `${first.path} ${first.message}` : null;
 }
 
 function firstLessonFilename(setManifest: ParsedManifest): string {
@@ -222,9 +212,10 @@ export async function validateUserRepo(
     };
   }
 
-  // Sample the first set's first lesson and confirm its exercise types +
-  // that it carries no executable content.
+  // Sample the first set's first lesson: no executable content, and a
+  // lesson this app would load and render (shape layer + engine rules).
   const firstSet = sets[0];
+  let lesson: unknown;
   try {
     const base = setBasePath(firstSet);
     const setManifestText = await fetchRepoText(
@@ -246,18 +237,7 @@ export async function validateUserRepo(
         reason: "Lesson content contains disallowed executable code.",
       };
     }
-    const lesson = (JSON.parse(lessonText) ?? {}) as ParsedLesson;
-    const known = new Set<string>(KNOWN_EXERCISE_TYPES);
-    for (const type of lessonExerciseTypes(lesson)) {
-      if (!known.has(type)) {
-        return {
-          ok: false,
-          setCount: sets.length,
-          lessonCount,
-          reason: `Unknown exercise_type "${type}".`,
-        };
-      }
-    }
+    lesson = JSON.parse(lessonText) ?? {};
   } catch (error) {
     // An HttpError carries a ``status`` — the fetch could not complete
     // (transient I/O). A ``JSON.parse`` SyntaxError has no status — the lesson
@@ -272,6 +252,29 @@ export async function validateUserRepo(
         ? "Could not read the first set's lessons."
         : "The first set's first lesson is not valid JSON.",
       transient,
+    };
+  }
+
+  let verdict: string | null;
+  try {
+    verdict = await judgeSampledLesson(lesson);
+  } catch {
+    // The validator chunk could not be loaded (offline, a stale deploy):
+    // the lesson was not judged, so a good repo keeps its trust (#1441).
+    return {
+      ok: false,
+      setCount: sets.length,
+      lessonCount,
+      reason: "Could not load the lesson validator.",
+      transient: true,
+    };
+  }
+  if (verdict !== null) {
+    return {
+      ok: false,
+      setCount: sets.length,
+      lessonCount,
+      reason: `The first set's first lesson fails validation: ${verdict}`,
     };
   }
 
