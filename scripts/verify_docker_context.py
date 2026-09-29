@@ -175,6 +175,9 @@ def main() -> int:
 
     forbidden = tuple(args.forbid)
     probes = probe_paths(roots, forbidden)
+    if not probes:
+        print("no forbidden directory name given - refusing to probe nothing", file=sys.stderr)
+        return 1
     surviving = [probe for probe in probes if not is_ignored(probe, patterns)]
     print(
         f"docker context rules: {len(probes)} synthesized paths probed against "

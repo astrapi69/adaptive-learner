@@ -130,6 +130,18 @@ def test_fails_closed_without_a_dockerfile_or_a_copy_line(tree: Path) -> None:
     assert "no COPY line" in result.stderr
 
 
+def test_fails_closed_when_nothing_is_forbidden(tree: Path) -> None:
+    """Point 4: an empty probe set must not print the same green as a clean one."""
+    _ignore(tree, "**/node_modules")
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--repo-root", str(tree), "--forbid"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 1
+    assert "refusing to probe nothing" in result.stderr
+
+
 def test_the_smoke_path_filter_covers_every_copy_root() -> None:
     """#3253 part 2: docker-build-smoke runs on every input the image copies.
 
