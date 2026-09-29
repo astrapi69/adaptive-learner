@@ -8,8 +8,9 @@
  * saveable (and, if not, returns the machine {@link ExerciseEditCode} of the
  * failed rule for the app to localize), and
  * {@link normalizeExerciseEdit} trims + drops empty entries and syncs a
- * cloze exercise's blanks to its marker count before the edit is committed
- * to the exercise record.
+ * blank-based cloze exercise's blanks to its marker count before the edit
+ * is committed to the exercise record (a ``multiselect`` cloze has no
+ * blanks and keeps none, #3246).
  *
  * Kept framework-free so the rules are unit-testable and shared by any
  * future consumer (the #1740 edit-lesson path reuses the same wizard).
@@ -53,6 +54,7 @@ export type ExerciseEditCode =
     | "explanation"
     | "matching"
     | "cloze"
+    | "cloze_multiselect"
     | "word_tiles"
     | "picture_choice"
     | "multiple_choice"
@@ -119,6 +121,7 @@ function validateFreeText(ex: ContentLessonExercise): ExerciseEditIssue {
 }
 
 function validateCloze(ex: ContentLessonExercise): ExerciseEditIssue {
+    if (ex.cloze_mode === "multiselect") return validateClozeMultiselect(ex);
     const markers = countClozeMarkers(ex.sentence);
     if (markers < 1) return fail("cloze");
     const blanks = ex.blanks ?? [];
@@ -127,6 +130,34 @@ function validateCloze(ex: ContentLessonExercise): ExerciseEditIssue {
         (b) => nonEmpty(b.accept).length >= 1,
     );
     return everyBlankFilled ? ok : fail("cloze");
+}
+
+/**
+ * A ``multiselect`` cloze is "select all that apply" (#1195): its
+ * ``sentence`` IS the question, ``accept`` holds every correct option and
+ * ``distractors`` the wrong ones; no ``___`` markers, no blanks. The
+ * engine's four rules (E-CLOZE-MS-SENTENCE / -ACCEPT / -DISTRACTORS /
+ * -DISJOINT) are mirrored here because this module sits in the entry
+ * chunk and a static ``learn-content-engine/rules`` import would put the
+ * rule bytes there (#3222 bundle condition); the save funnel still counts
+ * markers against blanks until #3222 PR 4, so a ``___`` in the question is
+ * rejected too, which is stricter than the engine on purpose (#3246).
+ */
+function validateClozeMultiselect(
+    ex: ContentLessonExercise,
+): ExerciseEditIssue {
+    if ((ex.sentence ?? "").trim().length === 0) return fail("cloze_multiselect");
+    if (countClozeMarkers(ex.sentence) > 0) return fail("cloze_multiselect");
+    const accept = nonEmpty(ex.accept);
+    const distractors = nonEmpty(ex.distractors);
+    if (accept.length < 1 || distractors.length < 1) {
+        return fail("cloze_multiselect");
+    }
+    const correct = new Set(accept);
+    if (distractors.some((option) => correct.has(option))) {
+        return fail("cloze_multiselect");
+    }
+    return ok;
 }
 
 function validateWordTiles(ex: ContentLessonExercise): ExerciseEditIssue {
@@ -221,6 +252,15 @@ function normalizeTypeFields(
         case "word_tiles":
             return {...ex, prompt, tiles: nonEmpty(ex.tiles)};
         case "cloze":
+            if (ex.cloze_mode === "multiselect") {
+                const {blanks: _stray, ...rest} = ex;
+                return {
+                    ...rest,
+                    prompt,
+                    accept: nonEmpty(ex.accept),
+                    distractors: nonEmpty(ex.distractors),
+                };
+            }
             return {...ex, prompt, blanks: normalizeClozeBlanks(ex)};
         case "picture_choice":
             return {
@@ -249,7 +289,9 @@ function normalizeTypeFields(
 }
 
 /** Trim per-blank accepts and pad/trim the blanks array to the sentence's
- *  ``___`` marker count so ``len(blanks) == markers`` always holds. */
+ *  ``___`` marker count so ``len(blanks) == markers`` holds for the
+ *  blank-based ``type`` / ``select`` modes (never called for
+ *  ``multiselect``, which has no blanks, #3246). */
 function normalizeClozeBlanks(
     ex: ContentLessonExercise,
 ): ContentLessonClozeBlank[] {
