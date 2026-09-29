@@ -9,13 +9,13 @@ import { resolveStorageMode } from "./storage";
 import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie/dexie-user-data";
 import { lazyWithReload } from "./lib/pwa/lazy-route";
 import { Routes, Route, Navigate } from "react-router";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./styles/toast-theme.css";
 
 import type { ApiError } from "./api/client";
 import ErrorBoundary from "./components/error/ErrorBoundary";
 import { RouteLoading, RouteLoadError } from "./components/system/RouteFallback";
+import AppToastContainer from "./components/feedback/AppToastContainer";
 import MilestoneHost from "./components/feedback/MilestoneHost";
 import GlobalShortcuts from "./components/a11y/GlobalShortcuts";
 import UpdatePromptHost from "./components/pwa/UpdatePromptHost";
@@ -291,16 +291,7 @@ export default function App() {
                 />
               </Suspense>
             )}
-            <ToastContainer
-              position="bottom-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop
-              closeOnClick={false}
-              draggable={false}
-              pauseOnHover
-              theme="colored"
-            />
+            <AppToastContainer />
             </AppUpdateProvider>
             </AiKeyVaultProvider>
             </ConfirmProvider>
