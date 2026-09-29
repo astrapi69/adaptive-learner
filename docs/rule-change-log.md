@@ -10,6 +10,9 @@ declaration duty itself lives in
 are declared, not buried" and "Condensation PRs are content-neutral or
 declared").
 
+Rows are keyed by PR number and declaration text (#3252); a `legacy` row
+predates the PR-only channel to develop and is keyed by its commit.
+
 | Date | Commit | PR | Declared change |
 |---|---|---|---|
 | 2026-07-28 | `bccf3690` | #2080 | this commit adds a rule section quoting the "MANDATORY on UI PRs" wording as the incident it describes; no binding rule is weakened. The new gate flags those quoted lines on its own first live run, which is the intended behaviour, not a false positive. |
