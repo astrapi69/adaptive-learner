@@ -84,6 +84,7 @@ const EXPECTED_404 = [
 
 const problems = [];
 let expected404Hits = 0;
+let abortedByNavigation = 0;
 const loadedChunks = new Set();
 let routesVisited = 0;
 
@@ -98,11 +99,20 @@ try {
     page.on("pageerror", (err) =>
         problems.push(`[${currentRoute}] pageerror: ${String(err).slice(0, 180)}`),
     );
-    page.on("requestfailed", (req) =>
-        problems.push(
-            `[${currentRoute}] requestfailed: ${req.url().slice(0, 120)} (${req.failure()?.errorText ?? ""})`,
-        ),
-    );
+    page.on("requestfailed", (req) => {
+        const reason = req.failure()?.errorText ?? "";
+        // net::ERR_ABORTED is the browser cancelling its own request when
+        // the walk navigates on - not a failed fetch. The second weekly
+        // dry run (#3159, run 36614983886) tripped on a content-repo
+        // search-index.json still in flight when /content?tab=my was
+        // left. Every other reason (DNS, refused, reset, blocked) stays
+        // a failure; a real network problem never reports as ABORTED.
+        if (reason === "net::ERR_ABORTED") {
+            abortedByNavigation += 1;
+            return;
+        }
+        problems.push(`[${currentRoute}] requestfailed: ${req.url().slice(0, 120)} (${reason})`);
+    });
     page.on("response", (resp) => {
         const url = resp.url();
         const chunk = url.match(/\/assets\/([^/?]+\.js)$/);
@@ -116,10 +126,18 @@ try {
     });
 
     const settle = () => page.waitForTimeout(1200);
+    // Let a route's own fetches (content-repo indices, plugin manifests)
+    // finish before the walk moves on, so their responses are judged
+    // above instead of being cut off by the next navigation. Capped: a
+    // route that never goes idle is not a finding here (the abort below
+    // is then ignored, the response gate stays).
+    const quiesce = () =>
+        page.waitForLoadState("networkidle", {timeout: 5000}).catch(() => {});
     const visit = async (path) => {
         currentRoute = path;
         await page.goto(base + path, {waitUntil: "load", timeout: 30_000});
         await settle();
+        await quiesce();
         const nodes = await page.evaluate(() => document.querySelectorAll("*").length);
         if (nodes < 20) problems.push(`[${path}] barely a DOM (${nodes} nodes)`);
         routesVisited += 1;
@@ -217,6 +235,7 @@ if (!chunkListFile) {
 }
 if (routesVisited === 0) problems.push("zero routes visited - nothing was proven");
 console.log(`routes visited: ${routesVisited}`);
+console.log(`requests aborted by the walk's own navigation (ignored): ${abortedByNavigation}`);
 
 // Drop exactly as many generic resource-load console errors as expected
 // 404s occurred (the browser logs those fetches itself).
