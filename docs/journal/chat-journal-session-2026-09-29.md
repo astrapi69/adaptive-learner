@@ -152,6 +152,14 @@ Der Owner bat, die offenen Issues nach Prio abzuarbeiten (37 offen, Stand 15:05 
 - Result: Messung vor dem Gate: 68 Zeilen, 133 folder-qualifizierte Referenzen, elf fehlend (die Liste des Issues), eine scheinbare Waise (`matching-pairing.landscape.png`, im Fließtext der Zeile ohne Ordner genannt, darum die Ordner-Auflösung). Neun Tests (RED: fehlende Datei, Waise, bloßer Name ohne Ordner, veralteter Marker; GREEN: vollständiger Katalog mit Messzeile, Marker mit Fehlbestand, Landscape-Auflösung, fail closed, der echte Katalog). `make verify-docs`: 0 FAIL, Notiz `68 catalogue rows, 134 referenced files, 123 on disk, 6 rows pending`; `make verify-check-inventory`: 29 aktive Checks. Teil 1 bleibt beim Owner: `npx playwright test --config=playwright.features.config.ts --update-snapshots -g "<motiv>"` je Motiv, dann die sechs Marker entfernen (ein stehen gebliebener Marker wird rot).
 - Commit: siehe PR.
 
+## 20. #3142: Kartentext ohne Aufzählung und der Blog-Shot mit dem Generieren-Knopf (23:40 bis 00:05)
+
+- Original prompt: Queue-Runde 2, P3, das kleinste offene Issue.
+- Optimized prompt: "Teil 1: `create_lesson.templates.extensions.desc` in allen elf Katalogen so umformulieren, dass keine Typen aufgezählt werden, sondern Beispiele mit den Typ-Bezeichnungen der App (`create_lesson.extensions.type.*`); `make sync-i18n`; als eigene i18n-PR (#2578). Teil 2: `e2e/docs/blog-screenshots.spec.ts` scrollt vor `s6-book-text` den Knopf `book-generate` in den Sichtbereich und prüft `toBeInViewport`."
+- Goal: Die Karte bleibt bei der nächsten Adoption nicht wieder stehen; das Blog-Bild zeigt wieder, worauf die Bildunterschrift zeigt.
+- Result: Teil 1: elf Katalogzeilen, JSON regeneriert, `test_i18n_parity` 51 grün, `full-tree-key-coverage` 50 grün, `verify-i18n-scripts` sauber; die Beispiele verwenden die vorhandenen Typ-Labels je Sprache (es/pt `zonas`, fr `repérage`, el `σημείο-στόχος`, tr `notlu test`). Teil 2: `scrollIntoViewIfNeeded` plus Zusicherung im Spec, damit das Bild nicht stumm wieder verrutscht; Lauf im Container gegen Backend und Dev-Server, `captures the book-text path` grün (12,3 s), Ausgabe verworfen. Die Bildunterschrift im Engine-Artikel liegt im anderen Repo (Rundenbericht).
+- Commit: siehe PRs.
+
 ## Fragen und Annahmen
 
 - Regel "Working mode with the owner" (25.09.): "Vor einer Runde jeden Shell-Befehl auflisten und auf das Go warten" gilt dem Berechtigungsdialog der lokalen Sitzung. Diese Sitzung läuft ohne Dialog (auto mode) und mit dem ausdrücklichen Auftrag, die Queue abzuarbeiten; deshalb ohne Vorab-Liste gearbeitet. Vom Owner am 29.09. bestätigt: die Liste gilt nur lokal.
