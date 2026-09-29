@@ -84,6 +84,11 @@ export default function Onboarding() {
     // import (see lib/firstRunRestore.ts).
     const restoreInputRef = useRef<HTMLInputElement>(null);
     const [emptyInstall, setEmptyInstall] = useState(false);
+    // #3226 - the empty-install probe is async, so "no dialog" means either
+    // "not an empty install" or "not probed yet". The page reports which on
+    // its root (``data-migration-offer``) so a test can wait for the verdict
+    // instead of racing the probe.
+    const [probeSettled, setProbeSettled] = useState(false);
     const [restoring, setRestoring] = useState(false);
 
     // #1085 — online-to-local migration: on a fresh LOCAL (API mode) install
@@ -93,6 +98,11 @@ export default function Onboarding() {
     const [migrationOffered, setMigrationOffered] = useState(isMigrationOffered);
     const showMigration =
         storageMode === "api" && emptyInstall && !migrationOffered;
+    const migrationOffer = !probeSettled
+        ? "pending"
+        : showMigration
+          ? "shown"
+          : "none";
 
     const dismissMigration = () => {
         markMigrationOffered();
@@ -110,6 +120,9 @@ export default function Onboarding() {
             })
             .catch(() => {
                 /* leave the restore affordance hidden on failure */
+            })
+            .finally(() => {
+                if (!cancelled) setProbeSettled(true);
             });
         return () => {
             cancelled = true;
@@ -417,7 +430,12 @@ export default function Onboarding() {
     }
 
     return (
-        <main id="main" data-testid="onboarding" className="onboarding-page">
+        <main
+            id="main"
+            data-testid="onboarding"
+            data-migration-offer={migrationOffer}
+            className="onboarding-page"
+        >
             <header className="onboarding-header">
                 <h1>{t("onboarding.title", "Create a learning project")}</h1>
                 <p className="onboarding-intro">{t("onboarding.intro")}</p>

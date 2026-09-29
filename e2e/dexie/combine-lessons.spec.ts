@@ -87,7 +87,7 @@ test.describe("Combine own lessons into a set (#1741)", () => {
         page.on("pageerror", (e) => errors.push(e.message));
 
         await mockEmptyContentIndex(page);
-        await completeOnboarding(page);
+        await completeOnboarding(page, {migrationOffer: "none"});
         await createLesson(page, "E2E Combine A");
         await createLesson(page, "E2E Combine B");
 

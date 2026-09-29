@@ -30,7 +30,7 @@ const CARDS = [
 async function buildSaveAndPlay(page: Page): Promise<void> {
     // The summary favorite control renders only for a signed-in learner
     // (SummaryFavorite returns null without a userId), so seed one first.
-    await completeOnboarding(page);
+    await completeOnboarding(page, {migrationOffer: "none"});
     // #3124 - the favorites row is off in the compact default; switch it on
     // the way Settings > Learning > "Lesson summary" would (a partial stored
     // config is filled in ON for every other section).

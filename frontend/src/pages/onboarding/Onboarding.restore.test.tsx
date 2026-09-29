@@ -32,9 +32,14 @@ const findMostRecent = vi.fn();
 const projectsList = vi.fn();
 const lessonProgressList = vi.fn();
 const backupImport = vi.fn();
+// The #1085 migration welcome is gated on ``getStorage().mode``; hoisted so
+// the mock factory (which vitest lifts above the imports) can read it, and
+// mutable so one test file covers both worlds (#3226).
+const storageState = vi.hoisted(() => ({mode: "dexie" as "api" | "dexie"}));
 
 vi.mock("../../storage", () => ({
     getStorage: () => ({
+        mode: storageState.mode,
         subjects: {list: () => Promise.resolve([])},
         users: {
             findMostRecent: () => findMostRecent(),
@@ -86,6 +91,7 @@ describe("Onboarding — first-run restore (#150)", () => {
         lessonProgressList.mockReset();
         backupImport.mockReset();
         localStorage.clear();
+        storageState.mode = "dexie";
     });
     afterEach(() => {
         vi.restoreAllMocks();
@@ -137,6 +143,88 @@ describe("Onboarding — first-run restore (#150)", () => {
             expect.objectContaining({user_id: "user-9"}),
         );
         expect(toastSuccess).toHaveBeenCalled();
+    });
+
+    describe("migration welcome verdict on the page root (#3226)", () => {
+        it("reports pending until the empty-install probe settled, then none in Dexie mode", async () => {
+            let resolveProbe: (value: null) => void = () => {};
+            findMostRecent.mockReturnValue(
+                new Promise<null>((resolve) => {
+                    resolveProbe = resolve;
+                }),
+            );
+            renderOnboarding();
+            expect(screen.getByTestId("onboarding")).toHaveAttribute(
+                "data-migration-offer",
+                "pending",
+            );
+            resolveProbe(null);
+            await waitFor(() =>
+                expect(screen.getByTestId("onboarding")).toHaveAttribute(
+                    "data-migration-offer",
+                    "none",
+                ),
+            );
+            expect(screen.queryByTestId("migration-start-fresh")).toBeNull();
+        });
+
+        it("reports shown on a fresh API-mode install, and the dialog is open", async () => {
+            storageState.mode = "api";
+            findMostRecent.mockResolvedValue(null);
+            renderOnboarding();
+            await waitFor(() =>
+                expect(screen.getByTestId("onboarding")).toHaveAttribute(
+                    "data-migration-offer",
+                    "shown",
+                ),
+            );
+            expect(screen.getByTestId("migration-start-fresh")).toBeInTheDocument();
+        });
+
+        it("reports none on a seeded API-mode install", async () => {
+            storageState.mode = "api";
+            localStorage.setItem("adaptive-learner.user_id", "user-1");
+            projectsList.mockResolvedValue([{id: "proj-1"}]);
+            lessonProgressList.mockResolvedValue([]);
+            renderOnboarding();
+            await waitFor(() =>
+                expect(screen.getByTestId("onboarding")).toHaveAttribute(
+                    "data-migration-offer",
+                    "none",
+                ),
+            );
+            expect(screen.queryByTestId("migration-start-fresh")).toBeNull();
+        });
+
+        it("flips from shown to none once the learner starts fresh", async () => {
+            storageState.mode = "api";
+            findMostRecent.mockResolvedValue(null);
+            renderOnboarding();
+            const startFresh = await screen.findByTestId("migration-start-fresh");
+            fireEvent.click(startFresh);
+            await waitFor(() =>
+                expect(screen.getByTestId("onboarding")).toHaveAttribute(
+                    "data-migration-offer",
+                    "none",
+                ),
+            );
+        });
+
+        it("settles instead of staying pending when the probe fails (fails open to shown)", async () => {
+            // isEmptyInstall treats a failed probe as an empty install (the
+            // restore affordance must not vanish on a storage hiccup), so
+            // the verdict is "shown"; what matters here is that it is no
+            // longer "pending".
+            storageState.mode = "api";
+            findMostRecent.mockRejectedValue(new Error("storage not wired"));
+            renderOnboarding();
+            await waitFor(() =>
+                expect(screen.getByTestId("onboarding")).toHaveAttribute(
+                    "data-migration-offer",
+                    "shown",
+                ),
+            );
+        });
     });
 
     it("declines a non-Adaptive-Learner file with a gentle warning, not an error (#640)", async () => {
