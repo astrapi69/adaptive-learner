@@ -16,6 +16,8 @@
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 import {completeOnboarding} from "../helpers/onboarding";
 
 const CARDS = [
@@ -44,9 +46,7 @@ async function buildSaveAndPlay(page: Page): Promise<void> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill("E2E Favorite");
     await page.getByTestId("create-lesson-next").click();
     for (const card of CARDS) {

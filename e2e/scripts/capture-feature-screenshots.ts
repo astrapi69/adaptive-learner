@@ -36,6 +36,8 @@ import {join} from "node:path";
 
 import {expect, test, type Page, type Route} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 import {
     advanceLessonUntil,
     assertRandomPinInstalled,
@@ -335,9 +337,7 @@ async function gotoBookExplanationsOptIn(page: Page): Promise<boolean> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 20_000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill("Adjektivstellung");
     await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("template-knowledge-from-text").click();
@@ -361,9 +361,7 @@ async function gotoExerciseEditorExplanation(page: Page): Promise<boolean> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 20_000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill("Adjektivstellung");
     await page.getByTestId("create-lesson-next").click();
     const cards = [
@@ -600,6 +598,67 @@ async function gotoSummarySections(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Step past the one-time "Play with sound?" offer the master switch raises
+ *  (#2875) with "Later", so the card shows its steady state. The offer
+ *  itself is the ``playful-details/ton-angebot`` shot (#3227), not a state
+ *  these helpers photograph by accident. */
+async function dismissSoundOffer(page: Page): Promise<void> {
+    const later = page.getByTestId("settings-playful-sounds-offer-later");
+    if (await later.count()) await later.click();
+}
+
+/** Open Settings → Learning with the Game Mode master switch just turned
+ *  on, so the one-time sound offer (#2875) is on screen (#3227). A fresh
+ *  seeded learner has never been prompted, which is what makes the offer
+ *  appear. */
+async function gotoSoundOffer(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const card = page.getByTestId("settings-section-playful");
+    if (!(await card.count())) return false;
+    await card.scrollIntoViewIfNeeded();
+    const master = page.getByTestId("settings-playful-mode-toggle");
+    if (!(await master.isChecked())) await master.click();
+    await expect(page.getByTestId("settings-playful-sounds-offer")).toBeVisible({
+        timeout: 10_000,
+    });
+    return true;
+}
+
+/** Open the Lesson Creator over a restorable draft, so the continue-or-fresh
+ *  prompt is on screen (#3227). The draft is written straight into the
+ *  autosave slot (``adaptive-learner.lesson-draft``) before the navigation;
+ *  every other creator shot steps past this prompt via
+ *  ``declineDraftPrompt``. */
+async function gotoDraftPrompt(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.evaluate(() => {
+        localStorage.setItem(
+            "adaptive-learner.lesson-draft",
+            JSON.stringify({
+                schema: 1,
+                step: 2,
+                meta: {
+                    title: "Adjektivstellung",
+                    titleNative: "Adjective placement",
+                    sourceLanguage: "de",
+                    targetLanguage: "es",
+                    level: "A2",
+                    description: "",
+                },
+                cards: [],
+                updatedAt: new Date().toISOString(),
+            }),
+        );
+    });
+    await page.goto("/create-lesson");
+    await expect(page.getByTestId("create-lesson-draft-prompt")).toBeVisible({
+        timeout: 20_000,
+    });
+    return true;
+}
+
 /** Open Settings → Learning on the Game Mode summary card (#2959), put
  *  the master "Playful lessons" switch into ``gameModeOn``, dismiss the
  *  one-time sound offer the switch raises (#2875, so the card shows its
@@ -617,8 +676,7 @@ async function gotoPlayfulDetails(
     await card.scrollIntoViewIfNeeded();
     const master = page.getByTestId("settings-playful-mode-toggle");
     if ((await master.isChecked()) !== gameModeOn) await master.click();
-    const later = page.getByTestId("settings-playful-sounds-offer-later");
-    if (await later.count()) await later.click();
+    await dismissSoundOffer(page);
     const toggle = page.getByTestId("settings-playful-details-toggle");
     if ((await toggle.getAttribute("aria-expanded")) !== "true") {
         await toggle.click();
@@ -774,9 +832,7 @@ async function gotoTokenRoleField(page: Page): Promise<boolean> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 20_000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill("Tiere");
     // The suggester knows only closed word classes PER LANGUAGE and reads
     // the card-front language from the target language (#3080). Pin it to
@@ -815,9 +871,7 @@ async function gotoBookUploadPicker(page: Page): Promise<boolean> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 20_000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill("Lernpsychologie");
     await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("template-knowledge-from-text").click();
@@ -1635,6 +1689,13 @@ const FEATURES: FeatureShot[] = [
         setup: (page) => gotoPlayfulDetails(page, false),
         pinTo: "settings-section-playful",
     },
+    // #3227: the two states every helper used to click away unseen.
+    {
+        path: "playful-details/ton-angebot",
+        setup: gotoSoundOffer,
+        pinTo: "settings-section-playful",
+    },
+    {path: "create-lesson/entwurf-hinweis", setup: gotoDraftPrompt},
 
     // --- Error-report dialog (#1480 — pre-migration pixel net) ----------
     {path: "error-report/dialog", setup: gotoErrorReportDialog},

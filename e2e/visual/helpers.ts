@@ -17,7 +17,7 @@
 
 import {expect, type Locator, type Page} from "@playwright/test";
 
-import {completeAssessment, completeOnboarding} from "../helpers";
+import {completeAssessment, completeOnboarding, declineDraftPrompt} from "../helpers";
 import {
     RANDOM_PIN_GLOBAL,
     isRandomPin,
@@ -904,9 +904,7 @@ async function authorExtensionLesson(page: Page): Promise<boolean> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15_000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill("Visual: Extensions geprüft");
     await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("template-extensions").click();
@@ -1896,9 +1894,7 @@ export async function createOwnLesson(page: Page, title: string): Promise<void> 
     await expect(page.getByTestId("create-lesson-step-1")).toBeVisible({
         timeout: 20_000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill(title);
     await page.getByTestId("create-lesson-next").click();
     for (const card of OWN_LESSON_CARDS) {

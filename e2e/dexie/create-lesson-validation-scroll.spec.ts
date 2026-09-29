@@ -17,6 +17,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 /** Open the creator on a clean step 1 with an empty title (the only required
  *  field). Each Playwright test gets an isolated context, so no draft prompt
  *  is expected; handled defensively anyway. */
@@ -25,9 +27,7 @@ async function openFresh(page: Page): Promise<void> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await expect(page.getByTestId("create-lesson-title")).toBeVisible();
     // The title auto-focuses on mount; drop focus so the "moved focus back to
     // the title" assertion is meaningful.

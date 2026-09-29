@@ -95,6 +95,7 @@ Baseline zu committen.
 | Feedback-Karte - Lautstärkeregler immer sichtbar, Spielmodus-Hinweis bei der Intensität (#2957) | `feedback-card/settings.png` | `feedback-card/settings.mobile.png` | v2.14.0+ |
 | Spielmodus - Zusammenfassungskarte + "Details zum Spielmodus" aufgeklappt, Spielmodus an (#2959) | `playful-details/settings.png` | `playful-details/settings.mobile.png` | v2.14.0+ |
 | Spielmodus - Details aufgeklappt, Spielmodus aus: Optionen ausgegraut + Hinweis (#2959) | `playful-details/settings-off.png` | `playful-details/settings-off.mobile.png` | v2.14.0+ |
+| Spielmodus - das einmalige Ton-Angebot "Mit Ton spielen?" direkt nach dem Einschalten des Hauptschalters (#2875); jeder andere Spielmodus-Shot klickt es mit "Später" weg (#3227) | `playful-details/ton-angebot.png` | `playful-details/ton-angebot.mobile.png` | #3227 <!-- shot-pending: render on the maintainer machine, #3227 --> |
 | Fehlerbericht — Dialog (#1480) | `error-report/dialog.png` | `error-report/dialog.mobile.png` | v2.1.0 |
 | Fehlerbericht — Aktionsverlauf geöffnet (#1480) | `error-report/verlauf.png` | `error-report/verlauf.mobile.png` | v2.1.0 |
 | Fehlerbericht — Vollvorschau (#1480) | `error-report/vollvorschau.png` | `error-report/vollvorschau.mobile.png` | v2.1.0 |
@@ -108,6 +109,7 @@ Baseline zu committen.
 | Lektions-Navigation — "Lektion N von M" mit Vor/Zurück (#2793) | `lesson-navigation/position-zeile.png` | `lesson-navigation/position-zeile.mobile.png` | v2.13.0+ |
 | Erklärung nach der Antwort - Kasten „Erklärung" aufgeklappt nach falscher Antwort, gerendertes Markdown (#2991) | `exercise-explanation/falsche-antwort.png` | `exercise-explanation/falsche-antwort.mobile.png` | v2.15.0+ |
 | Erklärungen generieren - Opt-in-Kontrollkästchen unter der Aufgabentyp-Auswahl im Buchtext-Schritt (#2992) | `create-lesson/erklaerungen-opt-in.png` | `create-lesson/erklaerungen-opt-in.mobile.png` | v2.15.0+ |
+| Create-Lesson - Entwurfs-Hinweis "Fortsetzen oder neu?" über einem gespeicherten Autosave-Entwurf; jeder andere Creator-Shot wählt "neu" (#3227) | `create-lesson/entwurf-hinweis.png` | `create-lesson/entwurf-hinweis.mobile.png` | #3227 <!-- shot-pending: render on the maintainer machine, #3227 --> |
 | Erklärung im Inline-Editor - Markdown-Feld mit eingefügter Vorlage und Zeichenzähler; der Knopf "Vorlage einfügen" erscheint nur bei leerem Feld (#2992) | `exercise-explanation/editor-feld.png` | `exercise-explanation/editor-feld.mobile.png` | v2.15.0+ |
 
 > Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer

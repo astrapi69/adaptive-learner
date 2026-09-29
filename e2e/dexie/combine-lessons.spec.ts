@@ -13,6 +13,8 @@
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 import {completeOnboarding} from "../helpers/onboarding";
 
 const CARDS = [
@@ -55,9 +57,7 @@ async function createLesson(page: Page, title: string): Promise<void> {
         timeout: 15000,
     });
     // A prior save may leave a restorable draft prompt — always start fresh.
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill(title);
     await page.getByTestId("create-lesson-next").click();
     for (const card of CARDS) {
