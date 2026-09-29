@@ -120,7 +120,7 @@ checks:
     verifies: every theme defines the same token set and passes WCAG contrast
     rule: design-tokens.md#enforcement-frontendsrcstylesno-hardcoded-colorstestts
     status: active
-    wired_in: make verify-theme
+    wired_in: make verify-theme; .github/workflows/ci.yml fixed step "Theme token gate (#3251)" on every frontend change (the Python half; the four Vitest guards run in the Vitest step); backend/tests/test_verify_theme_script.py; make release-test
     probe: make_target=verify-theme
 
   - id: i18n-script-sanity

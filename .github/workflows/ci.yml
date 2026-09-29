@@ -419,6 +419,19 @@ jobs:
       # guard above), and an i18n_only PR that drops a key still in use
       # runs only i18n-sync.test.ts. Push runs the full suite, which
       # includes it.
+      # Theme token gate (#3251), a fixed step on every frontend change.
+      # scripts/verify_theme.py (token completeness, undefined var() refs,
+      # WCAG contrast, the .theme-baseline.json ratchet) used to run only in
+      # a backend test and in make release-test, so a CSS-only PR under
+      # frontend/src/styles never tripped it: probed with an undefined
+      # var(--probe-...) that a forced full Vitest run did not catch. Stdlib
+      # only, seconds. The four Vitest theme guards stay in the Vitest step
+      # (forceRerunTriggers covers src/styles/**/*.css for the selective run).
+      - name: Theme token gate (#3251)
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
+        working-directory: .
+        run: python3 scripts/verify_theme.py --enforce
+
       - name: i18n key coverage, full tree (#3249)
         if: github.event_name == 'pull_request' && needs.changes.outputs.frontend == 'true'
         working-directory: frontend
