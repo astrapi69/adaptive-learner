@@ -109,7 +109,7 @@ cd frontend && bun add -d eslint @typescript-eslint/eslint-plugin @typescript-es
 
 ## Pre-commit hooks
 
-Automatic checks before every commit. Prevents unformatted or broken code from reaching the repo in the first place.
+Automatic checks before every commit. Prevents broken code and unformatted `backend/app/` Python from reaching the repo.
 
 ```yaml
 # .pre-commit-config.yaml (in the project root)
@@ -578,4 +578,4 @@ git commit
   -> anything red? commit rejected, errors shown.
 ```
 
-No code reaches the repo that isn't formatted, linted, and tested.
+No code reaches the repo that isn't linted and tested, and no `backend/app/` Python that isn't formatted.

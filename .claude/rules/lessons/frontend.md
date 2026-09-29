@@ -250,6 +250,6 @@ Cross-platform precedent: GitHub's "Squash and merge" / "Create a merge commit" 
 
 ## Prettier: the config states the defaults, `src/` does not follow it yet (#3270)
 
-The `prettier-frontend` pre-commit hook is gone (#318). `frontend/.prettierrc` exists since #250 and has stated the Prettier defaults explicitly since #3270 (80 columns, 2 spaces, double quotes, `{ x }`). `src/` is mixed, 4-space `{x}` next to 2-space `{ x }`, so `prettier --write` on one file rewrites all of it. Until the #3270 reformat lands, keep a touched file's style and commit no whole-file reformat; `bun run format:check` in CI is non-blocking.
+The `prettier-frontend` pre-commit hook is gone (#318). `frontend/.prettierrc` exists since #250 and has stated the Prettier defaults explicitly since #3270 (80 columns, 2 spaces, double quotes, `{ x }`). `src/` is mixed, 4-space `{x}` next to 2-space `{ x }`, so `prettier --write` rewrites a 4-space file whole. Until the #3270 reformat lands, keep a touched file's style and commit no whole-file reformat (code-hygiene.md).
 
 A hook that mutates files (`ruff format`, `--fix`, `end-of-file-fixer`) leaves its edits in the worktree when the commit aborts, and `git stash` then captures them instead of your edit (#314 committed a whole-file reformat this way, #315 undid it). After an aborted commit, a small change showing 200+ lines in `git diff --stat` is hook output: `git restore <file>` brings back the staged version, and `git diff --cached` shows what will really be committed.

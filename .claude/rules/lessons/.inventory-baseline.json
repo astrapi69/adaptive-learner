@@ -45,7 +45,7 @@
   "Plugin settings YAML lives in `backend/config/plugins/`, not in the plugin's own directory": "aab9e64d094ad329",
   "PluginForge v0.9.0: filtered plugins are NOT load errors": "ad85b2908ecb861e",
   "Prefix testid selectors match every nested testid that shares the prefix": "7c064a932eea0f00",
-  "Prettier: the config states the defaults, `src/` does not follow it yet (#3270)": "a35329cc01808116",
+  "Prettier: the config states the defaults, `src/` does not follow it yet (#3270)": "e95b29f4338bf373",
   "Proposed mass scripts are inspected, not executed": "a6d1a81625cb8e69",
   "Radix DropdownMenu + happy-dom is brittle for Vitest": "c51600bad6a066f9",
   "React 18 dev-mode double-effect-mount strands `mockImplementationOnce`": "653a01e6385e93a8",
