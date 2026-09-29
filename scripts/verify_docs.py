@@ -157,6 +157,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 # verifier stays under the cohesion file-size gate; re-exported here so the
 # CHECKS registry and the tests keep importing it from ``verify_docs``.
 from testplan_ids import check as testplan_id_check  # noqa: E402
+from verify_docs_feature_shots import check_feature_shots  # noqa: E402,F401
 from verify_docs_help_changelog import check_help_changelog as _check_help_changelog  # noqa: E402
 from verify_docs_i18n import check_i18n  # noqa: E402,F401
 from verify_docs_test_counts import check_test_counts  # noqa: E402,F401
@@ -482,7 +483,9 @@ def check_help_index_versions(report: Report, help_dir: Path | None = None) -> N
                 )
 
 
-def check_help_changelog(report: Report, help_dir: Path | None = None, canonical: str | None = None) -> None:
+def check_help_changelog(
+    report: Report, help_dir: Path | None = None, canonical: str | None = None
+) -> None:
     """FAIL when a docs/help/<locale>/changelog.md lags the canonical minor version (#3161)."""
     _check_help_changelog(
         report,
@@ -846,6 +849,7 @@ def check_testplan_ids(report: Report, plan_dir: Path | None = None) -> None:
 # Registry + runner
 # ---------------------------------------------------------------------------
 
+
 CHECKS = {
     "version": lambda r, o: check_version(r, o.fix),
     "plugins": lambda r, o: check_plugins(r, o.fix),
@@ -860,6 +864,7 @@ CHECKS = {
     "help-coverage": lambda r, o: check_help_coverage(r),
     "testplan-parity": lambda r, o: check_testplan_parity(r),
     "testplan-ids": lambda r, o: check_testplan_ids(r),
+    "feature-shots": lambda r, o: check_feature_shots(r),
     "i18n": lambda r, o: check_i18n(r, o.fix),
 }
 

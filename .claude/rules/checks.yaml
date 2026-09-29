@@ -59,6 +59,13 @@ checks:
     wired_in: make verify-docs (testplan-parity + testplan-ids); scripts/testplan_ids.py --check; .github/workflows/ci.yml; backend/tests/test_testplan_ids.py
     probe: called_in=scripts/verify_docs.py::_report_testplan_ids | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
+  - id: feature-shots
+    verifies: the FeatureShot catalogue (e2e/visual/features/README.md) and the PNGs on disk agree - every referenced file exists, every file has a row, and a shot-pending marker is accepted only while a file of its row is missing (#3182, after #3080 and #3088 merged rows whose renders never landed)
+    rule: quality-checks.md#feature-screenshots-mandatory-on-ui-prs
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_feature_shots.py
+    probe: script_exists=backend/tests/test_verify_docs_feature_shots.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
   - id: docs-drift
     verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics

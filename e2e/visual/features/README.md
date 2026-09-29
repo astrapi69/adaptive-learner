@@ -49,11 +49,11 @@ Baseline zu committen.
 | Adaptive Lektion auf der Runner-Hülle - Transparenzblock (Fokus und Zahl der aktiven Fehler) unter dem Titel als Kopf-Einschub, geteilter Fortschrittsbalken, Lektions-Fuß mit Zurück und Haken-Prüfen, auf der ersten Aufgabe ein Weiter nach der Theorieseite (EXP-052 Scheibe 3, #3169, #3224) | `adaptive-lesson/transparenz.png` | `adaptive-lesson/transparenz.mobile.png` | #3169 |
 | Fehler wiederholen - Zusammenfassung über den Summary-Einschub der Hülle im Zustand "noch Fehler": Punktzahl, "Nochmal?" und "Zurück zur Lektion"; der Fuß behält Zurück als gesperrten Rückblick (EXP-052 Scheibe 3, #3169) | `error-replay/zusammenfassung.png` | `error-replay/zusammenfassung.mobile.png` | #3169 |
 | Lernpfad-Set - "Alles wiederholen" mit Bestätigung: nennt Punktzahl, Sterne und Lernzeit der Lektionen, den bisherigen Schnitt, und dass die Fehler als Verlauf sowie XP und Abzeichen bleiben (#3171) | `reset-set-results/dialog.png` | `reset-set-results/dialog.mobile.png` | #3171 |
-| Daten-Tab - Bereichsleiste über den sechs Bereichen, Deep-Link `?tab=data&section=backup`, Chip "Sichern und Exportieren" aktiv (#3122) | `data-subnav/settings.png` | `data-subnav/settings.mobile.png` | #3122 |
-| Ausführliche Lektions-Auswertung - Set-Auswertung dieser Lektion (Kennzahlen, Fehler nach Aufgabentyp, Schwachstellen, Fehler trainieren) direkt unter dem Knopf (#3124) | `lesson-review/summary.png` | `lesson-review/summary.mobile.png` | #3124 |
-| Kopfzeile mit Abzeichen - fällige Wiederholungen + XP neben Menü-Knopf und Logo; am Telefon zeigt das Abzeichen nur die Zahl, die Gruppe bricht rechtsbündig um (#3123) | `nav-badges/dashboard.png` | `nav-badges/dashboard.mobile.png` | #3123 |
-| Über-Tab - Karte "Lizenz & Ressourcen" mit den Zeilen "Impressum" und "Datenschutzerklärung", Ziel Docs-Site in der UI-Sprache (#3113) | `legal/settings-about.png` | `legal/settings-about.mobile.png` | #3113 |
-| App-Startseite - Zeile "Impressum · Datenschutzerklärung" unter dem Dokumentationslink (#3113) | `legal/landing.png` | `legal/landing.mobile.png` | #3113 |
+| Daten-Tab - Bereichsleiste über den sechs Bereichen, Deep-Link `?tab=data&section=backup`, Chip "Sichern und Exportieren" aktiv (#3122) | `data-subnav/settings.png` | `data-subnav/settings.mobile.png` | #3122 <!-- shot-pending: render on the maintainer machine, #3182 --> |
+| Ausführliche Lektions-Auswertung - Set-Auswertung dieser Lektion (Kennzahlen, Fehler nach Aufgabentyp, Schwachstellen, Fehler trainieren) direkt unter dem Knopf (#3124) | `lesson-review/summary.png` | `lesson-review/summary.mobile.png` | #3124 <!-- shot-pending: render on the maintainer machine, #3182 --> |
+| Kopfzeile mit Abzeichen - fällige Wiederholungen + XP neben Menü-Knopf und Logo; am Telefon zeigt das Abzeichen nur die Zahl, die Gruppe bricht rechtsbündig um (#3123) | `nav-badges/dashboard.png` | `nav-badges/dashboard.mobile.png` | #3123 <!-- shot-pending: render on the maintainer machine, #3182 --> |
+| Über-Tab - Karte "Lizenz & Ressourcen" mit den Zeilen "Impressum" und "Datenschutzerklärung", Ziel Docs-Site in der UI-Sprache (#3113) | `legal/settings-about.png` | `legal/settings-about.mobile.png` | #3113 <!-- shot-pending: render on the maintainer machine, #3182 --> |
+| App-Startseite - Zeile "Impressum · Datenschutzerklärung" unter dem Dokumentationslink (#3113) | `legal/landing.png` | `legal/landing.mobile.png` | #3113 <!-- shot-pending: render on the maintainer machine, #3182 --> |
 | Lernen-Tab - Gamification-Karte als letzte Karte im Bereich "Motivation und Routine", hinter einer Trennlinie (#2962) | `gamification-card/settings.png` | `gamification-card/settings.mobile.png` | #2962 |
 | Plugins-Tab - Karte "Installierte Plugins" mit dem PluginForge-Lebenszyklus je Plugin; im Browser-Build der Desktop-only-Hinweis (#3055) | `plugin-lifecycle/settings.png` | `plugin-lifecycle/settings.mobile.png` | #3055 |
 | Meine Inhalte, Listenansicht - Set mit ausstehender Aktualisierung: Marker "Aktualisierung verfügbar" und Download-Icon-Knopf der Zeile, auf dem Telefon als eigene Zeile unter dem Titel (#3081, #3092; Upstream per page.route auf 1.1.0 gehoben) | `content-updates/listenansicht-aktualisierung.png` | `content-updates/listenansicht-aktualisierung.mobile.png` | #3081 |
@@ -88,7 +88,7 @@ Baseline zu committen.
 | Lektions-Modi — Zeit | `lesson-modes/timed.png` | `lesson-modes/timed.mobile.png` | v2.1.0 |
 | Antwort-Umschalter — Meine Antwort | `answer-toggle/meine-antwort.png` | `answer-toggle/meine-antwort.mobile.png` | v2.1.0 |
 | Antwort-Umschalter — Auflösung | `answer-toggle/aufloesung.png` | `answer-toggle/aufloesung.mobile.png` | v2.1.0 |
-| GitHub-Export — Dialog | `github-export/share-dialog.png` | — (Desktop-Dialog) | v1.94.1 |
+| GitHub-Export — Dialog | `github-export/share-dialog.png` | — (Desktop-Dialog) | v1.94.1 <!-- shot-pending: render on the maintainer machine, #3182 --> |
 | QR-Code — App teilen | `qr-code/share-app.png` | — (Desktop-Dialog) | v1.94.1 |
 | Zusammenfassungs-Sektionen — Settings-Unterbereich (#1411) | `summary-sections/settings.png` | `summary-sections/settings.mobile.png` | v2.1.0 |
 | Mascot-Farbvarianten — Settings-Unterbereich, Level-/Badge-/XP-Freischaltung (#2861) | `mascot-variants/settings.png` | `mascot-variants/settings.mobile.png` | v2.13.0 |
@@ -134,6 +134,16 @@ make verify-screenshots
 **Niemals** `--update-snapshots` benutzen, um einen Diff zu uebertuenchen, der
 einen echten Bug zeigt — den Bug fixen; nur nach einer beabsichtigten visuellen
 Aenderung neu erzeugen.
+
+### Katalog gegen Dateien (#3182)
+
+`make verify-docs` (Check `feature-shots`) vergleicht jede Tabellenzeile mit
+`e2e/visual/features/**.png`: eine genannte Datei, die fehlt, und eine Datei,
+die keine Zeile nennt, sind rot. Ein Motiv, dessen Aufnahme auf der
+Maintainer-Maschine noch aussteht, traegt in seiner Zeile
+`<!-- shot-pending: <Grund> -->`; der Marker gilt nur, solange mindestens eine
+Datei der Zeile fehlt (ein Marker auf einer vollstaendigen Zeile ist rot), und
+verschwindet mit den Dateien.
 
 ## Manuell erfasste Features (nicht via Playwright erreichbar)
 
