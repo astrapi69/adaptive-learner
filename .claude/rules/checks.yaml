@@ -84,7 +84,7 @@ checks:
     verifies: verify_docs.py FAILs (not WARNs) on a missing basis - no theme files, no mkdocs.yml, no en.json, an unparseable catalog - so "could not check" never prints as a green pass (#2287)
     rule: quality-checks.md#gate-test-contract-five-tests-and-fail-closed-2083
     status: active
-    wired_in: backend/tests/test_verify_docs_fail_closed.py; make test; ci.yml backend pytest step (whether pytest --testmon selects it on a scripts/ change is #3250)
+    wired_in: backend/tests/test_verify_docs_fail_closed.py; make test; ci.yml backend pytest step (a scripts/ change runs it through the #3250 fixed step, outside testmon)
     probe: script_exists=backend/tests/test_verify_docs_fail_closed.py | ci_step=.github/workflows/ci.yml::backend-tests::Run backend tests (selective on PR, full on push)::pytest
 
   - id: openapi-snapshot
@@ -149,6 +149,13 @@ checks:
     status: active
     wired_in: make verify-rule-corpus-size; .github/workflows/ci.yml
     probe: make_target=verify-rule-corpus-size | ci_step=.github/workflows/ci.yml::docs-verification::Verify rule corpus size::verify_rule_corpus_size.py
+
+  - id: impacted-tests-outside-testmon
+    verifies: a PR that changes scripts/ or plugins/ runs the backend tests naming those trees, which pytest --testmon never selects because its graph covers backend/app and backend/tests only (#3250, CI run 36006903648 "no tests ran" on a plugins/ push); the selector fails closed when an area selects nothing
+    rule: quality-checks.md#test-impact-analysis-615
+    status: active
+    wired_in: scripts/select_impacted_tests.py; .github/workflows/ci.yml; backend/tests/test_select_impacted_tests.py
+    probe: script_exists=backend/tests/test_select_impacted_tests.py | ci_step=.github/workflows/ci.yml::backend-tests::Backend tests exercising changed scripts/ or plugins/ (#3250)::select_impacted_tests.py
 
   - id: docker-context
     verifies: no node_modules survives the .dockerignore rules (absolute symlinks dangle in the container) - probed with synthesized paths under every COPY root of backend/Dockerfile, so a checkout without node_modules cannot pass it blind (#3253), and on every PR
