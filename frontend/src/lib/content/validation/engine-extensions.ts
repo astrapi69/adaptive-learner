@@ -42,7 +42,7 @@ export const EXTENSION_MAJOR = 1;
 /** The rule id of an app payload finding. The engine's own ``ext:ref-*``
  *  extensions use their ids; this one names the source (the app's payload
  *  validator) so a consumer of the issue list can tell the two apart. */
-export const APP_EXT_PAYLOAD_RULE = "E-APP-EXT-PAYLOAD";
+const APP_EXT_PAYLOAD_RULE = "E-APP-EXT-PAYLOAD";
 
 type PayloadValidator = (exercise: ContentLessonExercise) => string[];
 
