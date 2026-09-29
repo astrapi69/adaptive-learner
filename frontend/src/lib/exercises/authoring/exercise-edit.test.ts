@@ -146,6 +146,93 @@ describe("validateExerciseEdit — cloze", () => {
     });
 });
 
+// adaptive-learner-content fa435fe, sets/de/ja-a0/lessons/01-vokale.json
+const multiselect = base({
+    id: "ex-ms-vok",
+    type: "cloze",
+    cloze_mode: "multiselect",
+    prompt: "Wähle alle fünf Vokal-Zeichen.",
+    sentence: "Welche dieser Zeichen sind Vokale?",
+    accept: ["あ", "い", "う", "え", "お"],
+    distractors: ["か", "さ", "な"],
+});
+
+describe("validateExerciseEdit — cloze multiselect (#3246)", () => {
+    // The editor used to require ___ markers and blanks for every cloze;
+    // a "select all that apply" cloze has neither by design (its sentence
+    // IS the question, accept holds the correct options, distractors the
+    // wrong ones), so every forked set holding one was stuck on step 3.
+    it("accepts an untouched multiselect cloze (no ___ by design)", () => {
+        expect(validateExerciseEdit(multiselect)).toEqual({valid: true, code: null});
+    });
+    it("does not add blanks to a multiselect cloze", () => {
+        expect(normalizeExerciseEdit(multiselect)).not.toHaveProperty("blanks");
+    });
+    it("drops a stray blanks array from a multiselect cloze", () => {
+        const out = normalizeExerciseEdit({...multiselect, blanks: [{accept: ["x"]}]});
+        expect(out).not.toHaveProperty("blanks");
+        expect(out.accept).toEqual(multiselect.accept);
+    });
+    it("keeps cloze_mode, accept and distractors as given (trimmed, non-empty)", () => {
+        const out = normalizeExerciseEdit({
+            ...multiselect,
+            accept: [" あ", "い ", ""],
+            distractors: ["か", " "],
+        });
+        expect(out.cloze_mode).toBe("multiselect");
+        expect(out.accept).toEqual(["あ", "い"]);
+        expect(out.distractors).toEqual(["か"]);
+    });
+    const broken: Array<[string, Partial<ContentLessonExercise>]> = [
+        ["empty accept", {accept: []}],
+        ["empty distractors", {distractors: []}],
+        ["empty sentence", {sentence: ""}],
+        ["whitespace-only sentence", {sentence: "   "}],
+        ["overlapping accept and distractors", {distractors: ["か", "あ"]}],
+    ];
+    it.each(broken)("rejects a multiselect with %s", (_name, over) => {
+        expect(validateExerciseEdit({...multiselect, ...over})).toEqual({
+            valid: false,
+            code: "cloze_multiselect",
+        });
+    });
+    it("rejects a ___ marker in a multiselect question (the save funnel does too)", () => {
+        // Stricter than the engine, on purpose: validateGeneratedLesson
+        // (draft-to-lesson.ts) still counts markers against blanks until
+        // #3222 PR 4 switches that funnel, so the editor must not let a
+        // question through that the save would then reject.
+        expect(
+            validateExerciseEdit({...multiselect, sentence: "Welche ___ sind Vokale?"}),
+        ).toEqual({valid: false, code: "cloze_multiselect"});
+    });
+    it("accepts the minimum: one correct option and one distractor", () => {
+        expect(
+            validateExerciseEdit({...multiselect, accept: ["あ"], distractors: ["か"]}),
+        ).toEqual({valid: true, code: null});
+    });
+    it("still treats a cloze without cloze_mode as type (no markers means invalid)", () => {
+        expect(
+            validateExerciseEdit(
+                base({type: "cloze", prompt: "Fill", sentence: "No blank.", blanks: []}),
+            ).valid,
+        ).toBe(false);
+    });
+    it("still treats select mode as blank-based", () => {
+        expect(
+            validateExerciseEdit(
+                base({
+                    type: "cloze",
+                    cloze_mode: "select",
+                    prompt: "Fill",
+                    sentence: "Je ___ un livre.",
+                    blanks: [{accept: ["lis"]}],
+                    distractors: ["mange"],
+                }),
+            ).valid,
+        ).toBe(true);
+    });
+});
+
 describe("validateExerciseEdit — word_tiles", () => {
     it("accepts >= min tiles", () => {
         const res = validateExerciseEdit(
