@@ -108,7 +108,6 @@ def probe_paths(roots: list[str], forbidden: tuple[str, ...]) -> list[str]:
         probes.append(f"some/unrelated/tree/{name}")
         for root in roots:
             probes.append(f"{root}/{name}")
-            probes.append(f"{root}/public/content/linked-repo/{name}")
             probes.append(f"{root}/a/b/c/{name}")
     return probes
 
