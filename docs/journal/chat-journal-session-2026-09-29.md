@@ -192,6 +192,14 @@ Der Owner bat, die offenen Issues nach Prio abzuarbeiten (37 offen, Stand 15:05 
 - Result: Fünf Schlüssel in elf Katalogen als eigener Commit (Parität 51, Schlüsselabdeckung und Sync 85, Script-Sanity sauber). Code: Verzweigung im Gate-Hinweis (`arcade-gate-reason`), der alte Schlüssel `arcade.requires_playful` bleibt vorerst im Katalog (ohne Konsumenten stolpert kein Gate, Aufräumen als i18n-PR); im Banner ein Zustand `noTicketReason`, gesetzt in demselben Effekt, der vergibt (abgeschlossen vor der Regel, Obergrenze nach `awardTickets`), Zeile `summary-ticket-none` nur bei aktiven Schaltern. Vier neue bzw. erweiterte Tests je Datei (27 grün), `tsc`, ESLint (eine Warnung `detect-non-literal-regexp` im Test beseitigt), Farbtoken-Guard 1073 grün. Testplan: TC-0211 präzisiert, neuer Fall TC-0913 (DE/EN, `--assign`), Parität und IDs grün. Visual Device Check bleibt beim Owner (zwei geänderte Flächen). Nebenbefund: ein `prettier --write` auf vier 4-Space-Dateien hatte sie komplett auf 2 Spaces umgeschrieben (die Falle aus `lessons/frontend.md`); Dateien aus HEAD zurückgeholt und die Änderungen ohne Prettier erneut angewandt.
 - Commit: siehe PRs.
 
+## 25. #3237 Richtung 2: Messung des Paar-Zählers bei 375 px (02:00 bis 02:20)
+
+- Original prompt: Queue-Runde 2, P3; der Owner hatte die Messbedingung genannt (vier Paare, 375 px), die drei Usability-Fragen bleiben seine Entscheidung.
+- Optimized prompt: "Wegwerf-Spec gegen die Dexie-Vorschau: das Vier-Paar-Matching der Fixture `matching-long-word.lesson.json`, Paare der Reihe nach tippen, nach jedem Tipp die Positionen von Zähler, getippter Kachel und Prüfen-Knopf relativ zum Viewport sowie `#root.scrollTop` festhalten, bei 375x667 und 375x812; Ergebnis als Kommentar auf dem Issue, keine Änderung."
+- Goal: Die dritte Frage des Owners ("ist der Zähler auf dem Bildschirm, wenn er gebraucht wird?") mit Zahlen statt mit einer Vermutung beantworten.
+- Result: 375x667: nach dem ersten Paar steht der Zähler bei y 201 (sichtbar), ab dem zweiten Paar bei y -185 (aus dem Bild, der Tipp auf eine untere Kachel scrollt die Seite auf 570), der Prüfen-Knopf bleibt bei y 595-639 sichtbar. 375x812: der Zähler bleibt bei y 40 sichtbar (scrollTop 345). Also genau die vom Owner beschriebene Geometrie auf dem kleinen Viewport. Kommentar auf #3237; Undo-Geste und Undo-Feedback nicht gemessen (Urteil, keine Sonde). Spec wieder gelöscht.
+- Commit: keiner (Messung).
+
 ## Fragen und Annahmen
 
 - Regel "Working mode with the owner" (25.09.): "Vor einer Runde jeden Shell-Befehl auflisten und auf das Go warten" gilt dem Berechtigungsdialog der lokalen Sitzung. Diese Sitzung läuft ohne Dialog (auto mode) und mit dem ausdrücklichen Auftrag, die Queue abzuarbeiten; deshalb ohne Vorab-Liste gearbeitet. Vom Owner am 29.09. bestätigt: die Liste gilt nur lokal.
