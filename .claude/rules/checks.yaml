@@ -151,11 +151,11 @@ checks:
     probe: make_target=verify-rule-corpus-size | ci_step=.github/workflows/ci.yml::docs-verification::Verify rule corpus size::verify_rule_corpus_size.py
 
   - id: docker-context
-    verifies: no node_modules survives the .dockerignore rules (absolute symlinks dangle in the container)
+    verifies: no node_modules survives the .dockerignore rules (absolute symlinks dangle in the container) - probed with synthesized paths under every COPY root of backend/Dockerfile, so a checkout without node_modules cannot pass it blind (#3253), and on every PR
     rule: "-"
     status: active
-    wired_in: make verify-docker-context; .github/workflows/docker-build-smoke.yml
-    probe: make_target=verify-docker-context | ci_step=.github/workflows/docker-build-smoke.yml::build::Verify the build context excludes dependency directories::verify_docker_context.py
+    wired_in: make verify-docker-context; .github/workflows/ci.yml; .github/workflows/docker-build-smoke.yml; backend/tests/test_docker_context.py
+    probe: make_target=verify-docker-context | ci_step=.github/workflows/ci.yml::docs-verification::Verify the Docker build context rules::verify_docker_context.py | ci_step=.github/workflows/docker-build-smoke.yml::build::Verify the build context excludes dependency directories::verify_docker_context.py
 
   - id: frontend-build-context
     verifies: every import in frontend/src resolves inside what the frontend-build stage of backend/Dockerfile copies (read from its COPY lines), and no module alias points outside frontend/ - a test importing e2e/ broke the production image while every full-checkout build stayed green (#3239, #2559)

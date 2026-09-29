@@ -160,6 +160,14 @@ Der Owner bat, die offenen Issues nach Prio abzuarbeiten (37 offen, Stand 15:05 
 - Result: Teil 1: elf Katalogzeilen, JSON regeneriert, `test_i18n_parity` 51 grün, `full-tree-key-coverage` 50 grün, `verify-i18n-scripts` sauber; die Beispiele verwenden die vorhandenen Typ-Labels je Sprache (es/pt `zonas`, fr `repérage`, el `σημείο-στόχος`, tr `notlu test`). Teil 2: `scrollIntoViewIfNeeded` plus Zusicherung im Spec, damit das Bild nicht stumm wieder verrutscht; Lauf im Container gegen Backend und Dev-Server, `captures the book-text path` grün (12,3 s), Ausgabe verworfen. Die Bildunterschrift im Engine-Artikel liegt im anderen Repo (Rundenbericht).
 - Commit: siehe PRs.
 
+## 21. #3253: der Docker-Kontext-Guard prüft die Regeln statt des Checkouts, und der Smoke sieht alle Bild-Eingaben (00:05 bis 00:30)
+
+- Original prompt: Queue-Runde 2, P3 nach Umfang, CI.
+- Optimized prompt: "`scripts/verify_docker_context.py`: aus den `COPY`-Zeilen von `backend/Dockerfile` die Kontext-Wurzeln lesen, je Wurzel synthetische `node_modules`-Pfade gegen die `.dockerignore`-Regeln prüfen (fail closed ohne Dockerfile oder ohne COPY), den Walk als zweites Signal behalten, beide Zählungen ausgeben; Schritt im `docs-verification`-Job auf jeder PR; Pfadfilter von `docker-build-smoke.yml` um `backend/**`, `plugins/**`, `schema/**`, `.dockerignore` (Test-Bäume ausgenommen) erweitern und per Test gegen die COPY-Zeilen pinnen."
+- Goal: Eine Regel-Lücke fällt in CI auf, wo kein `node_modules` liegt; eine Änderung an einer Bild-Eingabe löst den Bild-Bau aus, nicht erst der Release-Zweig.
+- Result: Reproduktion RED: nur `frontend/node_modules` ignoriert, nichts auf der Platte, alter Guard grün, neuer rot mit dem #2112-Pfad `frontend/public/content/linked-repo/node_modules`. 14 Sondenpfade über vier Wurzeln (schema, frontend, backend, plugins), echter Baum 5993 Pfade, sauber. Vier neue Tests (Regel-Lücke ohne Verzeichnis, Sonden folgen den COPY-Wurzeln und ignorieren `--from`, fail closed ohne Dockerfile/ohne COPY, Pfadfilter deckt jede COPY-Wurzel plus Ignore-Datei und Guard), zehn grün. `verify-check-inventory`: 31 Laufnachweise. Ob der Smoke ein Pflicht-Check wird, bleibt Owner-Entscheidung (Rundenbericht).
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - Regel "Working mode with the owner" (25.09.): "Vor einer Runde jeden Shell-Befehl auflisten und auf das Go warten" gilt dem Berechtigungsdialog der lokalen Sitzung. Diese Sitzung läuft ohne Dialog (auto mode) und mit dem ausdrücklichen Auftrag, die Queue abzuarbeiten; deshalb ohne Vorab-Liste gearbeitet. Vom Owner am 29.09. bestätigt: die Liste gilt nur lokal.
