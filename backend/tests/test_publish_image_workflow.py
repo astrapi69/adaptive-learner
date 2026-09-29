@@ -64,6 +64,50 @@ def test_dispatch_defaults_to_a_dry_run(parsed: dict) -> None:
     assert triggers["workflow_dispatch"]["inputs"]["dry_run"]["default"] is True
 
 
+def test_a_weekly_dry_run_exercises_the_tag_time_gates(parsed: dict) -> None:
+    """#3159 item 3: four tag-time publishes in a row (v2.12 to v2.15) failed
+    on the size ceiling (#3156) and the page-walker chunk coverage (#3155),
+    gates PR CI never runs. A scheduled dry run on develop must run BOTH
+    verify jobs (they used to be skipped on a dry run), build their own
+    architecture locally instead of pulling, and still run the size ceiling
+    and the page render. Nothing may be pushed on that path."""
+    triggers = parsed[True] if True in parsed else parsed["on"]
+    assert "schedule" in triggers, "no weekly dry run"
+    job = parsed["jobs"]["verify-anonymous-pull"]
+    assert "if" not in job, "the verify jobs are skipped on a dry run again"
+    steps = {step["name"]: step for step in job["steps"] if "name" in step}
+    build = next(
+        s for name, s in steps.items() if name.startswith("Build this architecture locally")
+    )
+    assert build["if"] == "needs.build-and-push.outputs.pushed != 'true'"
+    assert "--push" not in build["run"] and "docker push" not in build["run"]
+    assert "{{.Architecture}}" in build["run"], "the built arch is not asserted"
+    pull = steps["Pull without any credentials"]
+    assert pull["if"] == "needs.build-and-push.outputs.pushed == 'true'"
+    for name in (
+        "The published image must respect the size ceiling",
+        "The page must APPEAR, not merely respond (#2197)",
+    ):
+        assert "if" not in steps[name], f"{name!r} is skipped on a dry run"
+
+
+def test_the_schedule_can_never_be_a_sharp_run(parsed: dict) -> None:
+    """A scheduled run has no inputs, so `inputs.dry_run` is null, and the
+    expression engine coerces `null == false` to TRUE. Both places that
+    decide "sharp" (the green gate's condition and the pushed flag) must
+    therefore also require the dispatch event, or the weekly dry run
+    (#3159) would publish the develop head under the pyproject version."""
+    steps = {
+        step["name"]: step for step in parsed["jobs"]["build-and-push"]["steps"] if "name" in step
+    }
+    sharp = "github.event_name == 'workflow_dispatch' && inputs.dry_run == false"
+    gate = steps["Refuse to publish from a commit that was not green"]
+    assert gate["if"] == sharp
+    resolve = steps["Resolve version and push mode"]
+    assert f"pushed=${{{{ {sharp} }}}}" in resolve["run"]
+    assert "pushed=${{ inputs.dry_run == false }}" not in resolve["run"]
+
+
 def test_sets_the_package_public(workflow: str) -> None:
     """A GHCR package is private on first publish; a 401 on the first user
     pull looks exactly like a broken release."""
