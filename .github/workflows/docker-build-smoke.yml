@@ -29,6 +29,10 @@ name: Docker build smoke
 #   - push: release/** -> every release branch builds the images, closing the
 #     "release skipped the Docker build" hole that caused the #1771 latency.
 #   - weekly + workflow_dispatch -> backstop for drift from moving base images.
+#   - backend/**, plugins/**, schema/**, .dockerignore (#3253): the other
+#     COPY sources of backend/Dockerfile; before, a change there that broke
+#     the image surfaced only on release/**, weekly or at publish. Whether
+#     the smoke becomes a required check is an owner decision (#3253).
 #   - frontend/** (#3239): the image compiles frontend/ with `tsc -b` over all
 #     of src, tests included, but sees only what the frontend-build stage of
 #     backend/Dockerfile copies (frontend/, schema/). A frontend-only change
@@ -53,6 +57,19 @@ on:
       - "install.sh"
       # #3239: every frontend file is an input of the image's tsc -b step.
       - "frontend/**"
+      # #3253: everything else backend/Dockerfile COPYs is an image input
+      # too (schema/, plugins/, backend/); the test trees .dockerignore
+      # drops from the context are left out here as well. The ignore file
+      # and the context guard shape the context. Pinned against the COPY
+      # lines by backend/tests/test_docker_context.py.
+      - "backend/**"
+      - "!backend/tests/**"
+      - "plugins/**"
+      - "!plugins/**/tests/**"
+      - "schema/**"
+      - ".dockerignore"
+      - "scripts/verify_docker_context.py"
+      - "scripts/verify_image_size.py"
       - ".github/workflows/docker-build-smoke.yml"
   push:
     branches: ["release/**"]
