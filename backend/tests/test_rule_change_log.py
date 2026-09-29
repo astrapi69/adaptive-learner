@@ -237,3 +237,28 @@ def test_the_real_log_is_complete_over_the_full_history() -> None:
         pytest.skip("origin/develop is not available in this checkout")
     result = _run(REPO_ROOT, "--range", "origin/develop", "--check")
     assert result.returncode == 0, result.stderr
+
+
+def test_the_ci_step_fails_instead_of_warning() -> None:
+    """#3252 fault 1: the step turned its failure into a ::warning::, so
+    nothing below it was ever noticed. It now fails, and it runs on
+    pull requests too, passing the PR number the event knows."""
+    import yaml
+
+    workflow = yaml.safe_load(
+        (REPO_ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    )
+    steps = [
+        step
+        for job in workflow["jobs"].values()
+        for step in job.get("steps", [])
+        if step.get("name") == "Check the rule change log is current"
+    ]
+    assert len(steps) == 1, "the rule-change-log step is missing or duplicated"
+    step = steps[0]
+    assert "::warning::" not in step["run"]
+    script_lines = [line for line in step["run"].splitlines() if "append_rule_change_log" in line]
+    assert script_lines and all("||" not in line for line in script_lines)
+    assert "pull_request" in step["if"]
+    assert "--pr" in step["run"]
+    assert "--check" in step["run"]
