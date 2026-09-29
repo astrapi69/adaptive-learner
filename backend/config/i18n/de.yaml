@@ -3301,6 +3301,7 @@ create_lesson:
       err_matching: "Füge mindestens 2 vollständige Paare hinzu (Begriff und Zuordnung)."
       err_free_text: "Füge mindestens eine akzeptierte Antwort hinzu."
       err_cloze: "Jede ___-Markierung braucht eine Lücke, und jede Lücke braucht eine Antwort."
+      err_cloze_multiselect: "Eine Lückenaufgabe mit Mehrfachauswahl braucht eine Frage, mindestens eine richtige Option und mindestens einen Distraktor; keine Option darf beides sein."
       err_word_tiles: "Füge mindestens 2 Kacheln hinzu."
       err_picture_choice: "Füge mindestens 2 Bilder mit Bezeichnung und Bild hinzu und markiere genau eines als richtig."
       err_explanation: "Die Erklärung ist zu lang (höchstens 2000 Zeichen)."

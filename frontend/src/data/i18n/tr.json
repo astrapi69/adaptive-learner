@@ -3584,6 +3584,7 @@
         "err_matching": "En az 2 eksiksiz çift ekleyin (terim ve eşleşme).",
         "err_free_text": "En az bir kabul edilen yanıt ekleyin.",
         "err_cloze": "Her ___ işareti bir boşluk gerektirir ve her boşluk bir yanıt gerektirir.",
+        "err_cloze_multiselect": "Çoklu seçimli boşluk doldurma için bir soru, en az bir doğru seçenek ve en az bir çeldirici gerekir; hiçbir seçenek ikisi birden olamaz.",
         "err_word_tiles": "En az 2 kart ekleyin.",
         "err_picture_choice": "Her biri etiket ve görsel içeren en az 2 görsel ekleyin ve tam olarak birini doğru olarak işaretleyin.",
         "err_explanation": "Açıklama çok uzun (en fazla 2000 karakter).",
