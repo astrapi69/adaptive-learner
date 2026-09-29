@@ -97,3 +97,23 @@
 .Toastify__toast {
     pointer-events: auto;
 }
+
+/*
+ * #3235 - while a lesson runs, the container sits ABOVE the sticky run
+ * footer instead of over it. On phones react-toastify pins the bottom
+ * containers to env(safe-area-inset-bottom) at full width, exactly the
+ * strip the footer (Check / Next / Previous / Pause) occupies; an error
+ * toast stays until closed, so the person just told about an error is the
+ * one whose Next button is covered. AppToastContainer adds this class on
+ * the six runner routes only, so the rest of the app keeps its feel. The
+ * clearance is the tallest run footer at 375 px (measured 2026-09-29:
+ * two-button RunnerFooter 69 px incl. its top border and padding, toast bottom edge at 668 px against the footer top at 743 px) plus
+ * the safe-area inset the footer's pb-safe adds; the two-class selector
+ * beats the library's one-class phone rule regardless of bundle order.
+ */
+:root {
+    --run-footer-clearance: 5rem;
+}
+.Toastify__toast-container.toast-container-above-run-footer {
+    bottom: calc(var(--run-footer-clearance) + env(safe-area-inset-bottom, 0px));
+}

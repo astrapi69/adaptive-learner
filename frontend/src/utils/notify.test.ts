@@ -68,19 +68,21 @@ describe("notify.error", () => {
         expect(toast.error).toHaveBeenCalledOnce();
         const [body, opts] = vi.mocked(toast.error).mock.calls[0];
         expect(React.isValidElement(body)).toBe(true);
-        // Error toasts stay until the user closes them (X button); a
-        // click or drag must not dismiss them.
+        // Error toasts stay until the user closes them; a drag must not
+        // dismiss them. Whether a tap closes them is the container's
+        // call (#3235), so the toast does not pin closeOnClick itself.
         expect(opts).toMatchObject({
             autoClose: false,
-            closeOnClick: false,
             draggable: false,
         });
+        expect(opts).not.toHaveProperty("closeOnClick");
     });
 
     it("stays non-auto-closing even with the persistent option (#126)", () => {
         notify.error("stuck", {persistent: true});
         const [, opts] = vi.mocked(toast.error).mock.calls[0];
-        expect(opts).toMatchObject({autoClose: false, closeOnClick: false});
+        expect(opts).toMatchObject({autoClose: false});
+        expect(opts).not.toHaveProperty("closeOnClick");
     });
 
     it("without apiError shows the caller's message in both modes", () => {

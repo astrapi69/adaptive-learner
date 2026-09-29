@@ -423,6 +423,12 @@ Requires domain knowledge. Not automatable.
       ("Correct!") and the Continue button appear below it. iOS PWA/Standalone:
       run the same check on the web app icon added to the home screen.
 - [ ] TC-0122 Free Text: correction READABLE (token diff understandable)
+- [ ] TC-0912 A toast during a run sits ABOVE the footer, not on it (#3235): on a phone
+      (375 px) start a lesson and tap Turn on in the "Try game mode" hint.
+      Expected: the success toast appears ABOVE the footer with Check/Next,
+      the buttons stay uncovered and tappable; a tap on the toast (not only
+      on its X) closes it. Counter-check outside a run (e.g. the dashboard):
+      toasts appear at the bottom edge as before.
 - [ ] TC-0123 Cloze, select mode (#3167): pick a distractor -> graded wrong. Open a
       cloze exercise with word choices whose distractors are very close to
       the answer (e.g. alc-programming, react-grundlagen, lesson 02 "JSX",

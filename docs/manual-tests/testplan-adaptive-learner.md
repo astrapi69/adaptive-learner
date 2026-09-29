@@ -448,6 +448,13 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       Standalone: dieselbe Prüfung auf dem zum Home-Bildschirm hinzugefügten
       Web-App-Icon durchführen.
 - [ ] TC-0122 Free Text: Korrektur LESBAR (Token-Diff verständlich)
+- [ ] TC-0912 Toast während eines Durchlaufs liegt ÜBER der Fusszeile, nicht darauf (#3235):
+      auf dem Telefon (375 px) eine Lektion starten und im Hinweis
+      "Spielmodus ausprobieren" auf Einschalten tippen. Erwartung: der
+      Erfolgs-Toast erscheint OBERHALB der Fusszeile mit Prüfen/Weiter, die
+      Knöpfe bleiben frei und tippbar; ein Tipp auf den Toast (nicht nur auf
+      sein X) schliesst ihn. Gegenprobe ausserhalb eines Durchlaufs (z. B.
+      Dashboard): Toasts erscheinen wie bisher am unteren Rand.
 - [ ] TC-0123 Lückentext, Modus Auswahl (#3167): Distraktor wählen -> als falsch
       gewertet. Eine Lückentext-Übung mit Wortauswahl öffnen, deren
       Distraktoren der Lösung sehr ähnlich sind (z. B. alc-programming,

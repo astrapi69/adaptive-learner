@@ -216,10 +216,12 @@ export const notify = {
         recordToast("error", message);
         // Error toasts NEVER auto-dismiss: a failure the user did not
         // read is a failure they cannot act on. They stay until the
-        // user closes them via the X button (closeOnClick / drag would
-        // dismiss them by accident, so both are off). The ``persistent``
-        // option is kept for call-site compatibility but is now the
-        // only behaviour.
+        // user closes them (drag would dismiss them by accident, so it
+        // is off). Whether a TAP closes them is the container's call
+        // (#3235: yes during a lesson run, where the toast covers the
+        // footer; the Report Issue button stops propagation either
+        // way). The ``persistent`` option is kept for call-site
+        // compatibility but is now the only behaviour.
         return toast.error(
             React.createElement(ErrorContent, {
                 displayMessage,
@@ -228,7 +230,6 @@ export const notify = {
             }),
             {
                 autoClose: false,
-                closeOnClick: false,
                 draggable: false,
             },
         );
