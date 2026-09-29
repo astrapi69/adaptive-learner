@@ -9,12 +9,15 @@ layer from that mirror via ``datamodel-code-generator``, so field
 definitions can no longer drift from the canonical schema (the same
 principle as the engine's own TS type generator, engine 0.6.1).
 
-The SEMANTIC cross-field validators (matching/cloze/multiple_choice
-rules, referential integrity, slug/BCP-47/semver checks) are NOT
-generated - JSON-Schema cannot express them. They live in ``schema.py``
-/ ``models.py`` as thin subclasses of the generated models (the engine
-keeps its semantic layer hand-written in ``validate.ts`` for the same
-reason).
+The SEMANTIC cross-field rules (matching/cloze/multiple_choice rules,
+referential integrity, unique ids, slug and language-tag shapes) are
+NOT generated - JSON-Schema cannot express them - and they are NOT
+re-implemented in the app either: they are the engine's
+(``learn-content-engine/rules``, ``src/rules.ts``), run at authoring
+time in the content repos and in the frontend before a user set is
+saved (#3222, #3245). ``schema.py`` / ``models.py`` subclass the
+generated models only for what the backend needs to store and serve
+(http(s) ``example_url``, slug set ids and paths, semver versions).
 
 Outputs (both ``GENERATED ... DO NOT EDIT``):
 
@@ -58,9 +61,10 @@ HEADER = """\
 # GENERATED from {source} via scripts/generate_pydantic_models.py
 # (D3b, #1528). DO NOT EDIT.
 #
-# Structural layer only - the semantic cross-field validators live in
-# the hand-written subclasses (schema.py / models.py). Regenerate via
-# `make sync-schema` after an engine re-pin refreshed the mirror."""
+# Structural layer only - the semantic cross-field rules are the engine's
+# (learn-content-engine/rules, #3245); schema.py / models.py add only what
+# the backend needs to store and serve. Regenerate via `make sync-schema`
+# after an engine re-pin refreshed the mirror."""
 
 # The evaluated flag set (equivalence probe: 0 divergences vs the former
 # hand-written model at engine 0.8.2). Do not change casually - every flag

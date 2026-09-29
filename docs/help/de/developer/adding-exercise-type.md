@@ -24,7 +24,7 @@ korrekt/falsch-Ergebnis pro Element) - das ist die Grenze, die die
    Lektionsformats ist das Paket
    [learn-content-engine](https://github.com/astrapi69/learn-content-engine):
    den Typ dort ins Schema, in die handgeschriebene semantische Schicht
-   (`validate.ts`) und in die
+   (`src/rules.ts`) und in die
    [Format-Referenz](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md)
    aufnehmen, dann die Engine releasen. Eine Formatänderung **beginnt in der
    Engine** - das `schema/*.json` der App ist ein Byte-Spiegel des gepinnten
@@ -40,13 +40,14 @@ korrekt/falsch-Ergebnis pro Element) - das ist die Grenze, die die
    Format-Referenz-Doku. Ein gespiegeltes oder generiertes Artefakt **nie von
    Hand editieren**; das Drift-Gate `make sync-schema-check` schlägt sonst
    fehl.
-4. **Semantische Schicht + Schema-Version.** Die App-seitigen Feld-
-   übergreifenden Regeln als dünne Subklasse in
-   `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`
-   ergänzen (die strukturellen Felder sind generiert; nur die Semantik ist
-   handgeschrieben) und `CURRENT_SCHEMA_VERSION` in `models.py` an der
+4. **Schema-Version.** `CURRENT_SCHEMA_VERSION` in `models.py` an der
    Schema-Version des gepinnten Engine-Release halten (**Minor** = additiv;
-   alter Content bleibt über den Major-Version-Match gültig).
+   alter Content bleibt über den Major-Version-Match gültig). Keine
+   App-seitigen feldübergreifenden Regeln in
+   `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`
+   ergänzen: die semantischen Regeln gehören der Engine und laufen beim
+   Autorieren und im Frontend vor dem Speichern eines Nutzer-Sets (#3245);
+   das Backend speichert und liefert die Lektion nur.
 5. **Renderer registrieren.** Den Branch + den Typ zu
    `SUPPORTED_EXERCISE_TYPES` in
    `frontend/src/components/exercises/shell/ExerciseDispatcher.tsx` ergänzen.

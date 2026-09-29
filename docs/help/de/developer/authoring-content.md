@@ -46,8 +46,10 @@ Lektions-JSON-Schema, das das npm-Paket
 ausliefert (unveränderlich pro veröffentlichtem Release). Innerhalb
 dieser App wird die **strukturelle** Pydantic-Schicht im Content-Loader-
 Plugin (`adaptive_learner_content_loader.schema`) aus diesem Spiegel
-**regeneriert** (`scripts/generate_pydantic_models.py`); nur die
-semantischen feldübergreifenden Validatoren sind handgeschrieben.
+**regeneriert** (`scripts/generate_pydantic_models.py`); die semantischen
+feldübergreifenden Regeln werden in der App nicht nachgebaut, sie gehören
+der Engine (`learn-content-engine/rules`) und laufen beim Autorieren und im
+Frontend vor dem Speichern eines Nutzer-Sets.
 `make sync-schema` frischt den Spiegel auf und emittiert die abgeleiteten
 Artefakte neu, und Byte-Paritäts-Gates beweisen, dass `schema/*.json` dem
 gepinnten Engine-Release gleicht. Die Stellen, die früher
@@ -84,8 +86,8 @@ eine Änderung am Lektionsformat beginnt in der Engine oder wird dort
 ratifiziert - zuerst Engine-PR + npm-Release; dann bumpt diese App
 den Engine-Pin (`frontend/package.json` + `schema/engine-version.txt`)
 und führt `make sync-schema` erneut aus, was den Spiegel auffrischt und
-die strukturelle Pydantic-Schicht regeneriert; nur neue semantische
-Validatoren werden von Hand geschrieben; danach ziehen die Content-Repos
+die strukturelle Pydantic-Schicht regeneriert (eine neue semantische
+Regel erscheint in der Engine, die App kopiert sie nicht); danach ziehen die Content-Repos
 ihren `engine-version.txt`-Pin nach. Ein Hand-Edit am Spiegel (oder ein
 veralteter Pin) macht die Byte-Paritäts-Gates rot; der vergessene
 Schritt ist sichtbar, nie stiller Drift.

@@ -622,7 +622,7 @@
       },
       "Card": {
         "additionalProperties": false,
-        "description": "Semantic layer: slug-shaped ``id`` + ``tags`` (structure in the\ngenerated base).",
+        "description": "The smallest learnable unit (Phase 43 / 2B-lesson).\n\nA card carries a single term / concept / fact in a single\ndirection. SRS (Phase 46) tracks one card at a time;\nindividual exercises reference cards by id so a single\n'Bonjour = Hello' card can drive a matching exercise, a\nfree-text drill, and a summary review without\nduplication.\n\nConvention: ``card.id`` is unique within the lesson, not\nglobally. Cross-lesson card sharing happens via a\nseparate ``shared/`` directory inside the set (P-111\nterritory - not yet implemented).",
         "properties": {
           "audio": {
             "anyOf": [
@@ -1368,7 +1368,7 @@
       },
       "Exercise": {
         "additionalProperties": false,
-        "description": "Semantic layer: slug ids + the per-type cross-field rules\n(structure in the generated base).",
+        "description": "One exercise step. Type-tagged via ``type``.\n\nThe fields are kept in a single flat shape per\n``type`` rather than per-type discriminated unions\nbecause the JSON manifests are author-edited; flat\nshapes are easier to read and to diff in PRs. The\nvalidator enforces type-specific requirements via\nmodel_validator instead.",
         "properties": {
           "accept": {
             "anyOf": [
@@ -3220,9 +3220,10 @@
       },
       "Lesson": {
         "additionalProperties": false,
-        "description": "Semantic layer: slug/BCP-47 shapes, unique card/step ids and\nreferential integrity. ``cards``/``steps`` are retargeted to the\nsemantic subclasses so nested validation runs their rules; the\nstructural constraints (steps non-empty, cards default empty) match\nthe generated base.",
+        "description": "Structure from the generated base; ``steps`` is retargeted to the\n``LessonStep`` subclass so nested validation runs its check. The\nstructural constraint (steps non-empty) matches the generated base.",
         "properties": {
           "cards": {
+            "default": [],
             "items": {
               "$ref": "#/components/schemas/Card"
             },
@@ -3877,7 +3878,7 @@
       },
       "LessonStep": {
         "additionalProperties": false,
-        "description": "Semantic layer: theory/exercise payload rule + http(s) example_url\n+ slug id. ``exercise`` is retargeted to the semantic ``Exercise``\nsubclass so nested validation runs the cross-field rules.",
+        "description": "Structure from the generated base plus the http(s) ``example_url``\ncheck the backend keeps for rendered links (#3245).",
         "properties": {
           "body": {
             "anyOf": [

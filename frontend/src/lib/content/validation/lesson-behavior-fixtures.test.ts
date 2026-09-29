@@ -16,8 +16,10 @@
  * - ``invalid/``          structural violations — rejected by BOTH layers
  * - ``invalid-semantic/`` cross-field violations — the STRUCTURAL check
  *   here passes them BY DESIGN (JSON-Schema cannot express them); the
- *   semantic layer lives in ``validateGeneratedLesson`` / the Pydantic
- *   model validators. Pinning the pass documents the layer split.
+ *   semantic rules are the engine's (``learn-content-engine/rules``), run
+ *   at authoring time and in the frontend before a user set is saved.
+ *   The backend passes them too since #3245. Pinning the pass documents
+ *   the layer split.
  */
 
 import { readdirSync, readFileSync } from "node:fs";

@@ -1,9 +1,10 @@
 # GENERATED from schema/lesson.schema.json via scripts/generate_pydantic_models.py
 # (D3b, #1528). DO NOT EDIT.
 #
-# Structural layer only - the semantic cross-field validators live in
-# the hand-written subclasses (schema.py / models.py). Regenerate via
-# `make sync-schema` after an engine re-pin refreshed the mirror.
+# Structural layer only - the semantic cross-field rules are the engine's
+# (learn-content-engine/rules, #3245); schema.py / models.py add only what
+# the backend needs to store and serve. Regenerate via `make sync-schema`
+# after an engine re-pin refreshed the mirror.
 
 from __future__ import annotations
 
