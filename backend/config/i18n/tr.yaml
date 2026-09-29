@@ -1504,6 +1504,8 @@ arcade:
   card_description: "Kısa turlarla Öğrenme Hafıza Oyunu ve Snake: oyun modu ödülün."
   card_open: "Arcade'e git"
   requires_playful: "Arcade oyun modunun bir parçasıdır. Ayarlardan oyun modunu (ve arcade anahtarını) aç."
+  requires_game_mode: "Arcade oyun modunun bir parçasıdır ve oyun modu kapalı. Ayarlardan aç."
+  requires_arcade_switch: "Oyun modu açık ama arcade anahtarı kapalı. Ayarlardaki oyun modu ayrıntılarından arcade'i aç."
   open_settings: "Ayarları aç"
   play: "Oyna"
   pause: "Duraklat"
@@ -2398,6 +2400,9 @@ lesson:
     ticket_earned_one: "Ödül açıldı: bir oyun bileti!"
     ticket_earned_many: "Ödül açıldı: {n} oyun bileti!"
     ticket_play_now: "Şimdi oyna"
+    ticket_none_rule: "Bu sefer bilet yok: bilet, hatasız bir ders veya tüm kalplerle tamamlanan bir turla kazanılır."
+    ticket_none_completed: "Bu sefer bilet yok: bu dersi zaten tamamlamıştın."
+    ticket_none_cap: "Bu sefer bilet yok: bakiyen en fazla {n} bilet sınırında."
   error:
     load_failed: "Ders yüklenemedi."
     invalid_data: "Bu ders geçersiz veya bozuk veriler içerdiği için açılamıyor. Lütfen içerik yazarıyla iletişime geçin."

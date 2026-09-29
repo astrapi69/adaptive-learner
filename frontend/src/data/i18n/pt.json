@@ -1617,6 +1617,8 @@
     "card_description": "Rondas curtas de Memory de aprendizagem e Snake: a tua recompensa do modo jogo.",
     "card_open": "Ir para o arcade",
     "requires_playful": "O arcade faz parte do modo jogo. Ativa o modo jogo (e o interruptor do arcade) nas definições.",
+    "requires_game_mode": "O arcade faz parte do modo jogo, e o modo jogo está desligado. Ativa-o nas definições.",
+    "requires_arcade_switch": "O modo jogo está ligado, mas o interruptor do arcade está desligado. Ativa o arcade nos detalhes do modo jogo nas definições.",
     "open_settings": "Abrir definições",
     "play": "Jogar",
     "pause": "Pausa",
@@ -2587,7 +2589,10 @@
       "encourage_3": "Pontuação perfeita!",
       "ticket_earned_one": "Recompensa desbloqueada: um bilhete de jogo!",
       "ticket_earned_many": "Recompensa desbloqueada: {n} bilhetes de jogo!",
-      "ticket_play_now": "Jogar agora"
+      "ticket_play_now": "Jogar agora",
+      "ticket_none_rule": "Desta vez sem bilhete: o bilhete vem com uma lição sem erros ou uma ronda com todos os corações.",
+      "ticket_none_completed": "Desta vez sem bilhete: já tinhas concluído esta lição.",
+      "ticket_none_cap": "Desta vez sem bilhete: o teu saldo está no máximo de {n} bilhetes."
     },
     "error": {
       "load_failed": "Não foi possível carregar a lição.",

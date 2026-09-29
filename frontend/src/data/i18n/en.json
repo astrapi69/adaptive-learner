@@ -1617,6 +1617,8 @@
     "card_description": "Short rounds of Learn Memory and Snake - your game-mode reward.",
     "card_open": "To the arcade",
     "requires_playful": "The arcade is part of the game mode. Turn on the game mode (and the arcade switch) in the settings.",
+    "requires_game_mode": "The arcade is part of the game mode, and the game mode is off. Turn it on in the settings.",
+    "requires_arcade_switch": "The game mode is on, but the arcade switch is off. Turn on the arcade in the game mode details in the settings.",
     "open_settings": "Open settings",
     "play": "Play",
     "pause": "Pause",
@@ -2532,7 +2534,10 @@
       "encourage_3": "Perfect score!",
       "ticket_earned_one": "Reward unlocked: one game ticket!",
       "ticket_earned_many": "Reward unlocked: {n} game tickets!",
-      "ticket_play_now": "Play now"
+      "ticket_play_now": "Play now",
+      "ticket_none_rule": "No ticket this time: a ticket comes with a lesson without mistakes or a run with all hearts.",
+      "ticket_none_completed": "No ticket this time: you had already completed this lesson.",
+      "ticket_none_cap": "No ticket this time: your balance is at the maximum of {n} tickets."
     },
     "flash_round": {
       "title": "Flash round: {set}",

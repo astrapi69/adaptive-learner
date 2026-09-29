@@ -1504,6 +1504,8 @@ arcade:
   card_description: "Des manches courtes de Memory d'apprentissage et de Snake : ta récompense du mode jeu."
   card_open: "Vers l'arcade"
   requires_playful: "L'arcade fait partie du mode jeu. Active le mode jeu (et l'interrupteur de l'arcade) dans les réglages."
+  requires_game_mode: "L'arcade fait partie du mode jeu, et le mode jeu est désactivé. Active-le dans les réglages."
+  requires_arcade_switch: "Le mode jeu est activé, mais l'interrupteur de l'arcade est désactivé. Active l'arcade dans les détails du mode jeu dans les réglages."
   open_settings: "Ouvrir les réglages"
   play: "Jouer"
   pause: "Pause"
@@ -2400,6 +2402,9 @@ lesson:
     ticket_earned_one: "Récompense débloquée : un ticket de jeu !"
     ticket_earned_many: "Récompense débloquée : {n} tickets de jeu !"
     ticket_play_now: "Jouer maintenant"
+    ticket_none_rule: "Pas de ticket cette fois : un ticket vient avec une leçon sans erreur ou un parcours avec tous les cœurs."
+    ticket_none_completed: "Pas de ticket cette fois : tu avais déjà terminé cette leçon."
+    ticket_none_cap: "Pas de ticket cette fois : ton solde est au maximum de {n} tickets."
   error:
     load_failed: "Impossible de charger la leçon."
     invalid_data: "Cette leçon ne peut pas être ouverte car elle contient des données invalides ou corrompues. Contactez l'auteur du contenu."

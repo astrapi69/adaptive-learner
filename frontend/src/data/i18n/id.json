@@ -1617,6 +1617,8 @@
     "card_description": "Ronde singkat Memory Belajar dan Snake: hadiah mode permainanmu.",
     "card_open": "Ke arcade",
     "requires_playful": "Arcade adalah bagian dari mode permainan. Nyalakan mode permainan (dan sakelar arcade) di pengaturan.",
+    "requires_game_mode": "Arcade adalah bagian dari mode permainan, dan mode permainan sedang mati. Nyalakan di pengaturan.",
+    "requires_arcade_switch": "Mode permainan menyala, tetapi sakelar arcade mati. Nyalakan arcade di detail mode permainan di pengaturan.",
     "open_settings": "Buka pengaturan",
     "play": "Main",
     "pause": "Jeda",
@@ -2532,7 +2534,10 @@
       "encourage_3": "Skor sempurna!",
       "ticket_earned_one": "Hadiah terbuka: satu tiket permainan!",
       "ticket_earned_many": "Hadiah terbuka: {n} tiket permainan!",
-      "ticket_play_now": "Main sekarang"
+      "ticket_play_now": "Main sekarang",
+      "ticket_none_rule": "Kali ini tanpa tiket: tiket didapat dari pelajaran tanpa kesalahan atau ronde dengan semua hati.",
+      "ticket_none_completed": "Kali ini tanpa tiket: pelajaran ini sudah pernah kamu selesaikan.",
+      "ticket_none_cap": "Kali ini tanpa tiket: saldomu sudah di batas maksimum {n} tiket."
     },
     "flash_round": {
       "title": "Ronde kilat: {set}",
