@@ -14,6 +14,14 @@ name: Publish image (GHCR)
 # does not push. The sharp run (dry_run=false) REQUIRES the green gate on
 # the commit it builds from.
 #
+# A weekly SCHEDULED dry run on develop (#3159 item 3) exercises the two
+# gates that PR CI never runs and that failed four tag-time publishes in a
+# row (v2.12 to v2.15): the per-architecture size ceiling (#3156) and the
+# page-walker chunk coverage (#3155). On a dry run the verify jobs build
+# their own architecture natively and run every station that does not
+# need a registry (version agreement, size ceiling, page render), so a
+# regression surfaces on develop within a week instead of at the tag.
+#
 # Why every step here exists:
 #   - multi-arch, because macOS users run an arm64 Docker Desktop and an
 #     amd64-only image either refuses or crawls under emulation;
@@ -49,6 +57,10 @@ on:
   # and the explicit checklist dispatch is a step that has twice caught
   # something at exactly this point. An automatism that publishes an
   # unfinished draft would cost more than a forgotten checklist step.
+  # Weekly dry run on develop (#3159 item 3): nothing is pushed; the verify
+  # jobs build natively and run the size ceiling + page walker per arch.
+  schedule:
+    - cron: "30 4 * * 1"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -110,8 +122,12 @@ jobs:
       # refuse - deterministically, on every release (#2149).
       - name: Refuse to publish from a commit that was not green
         # Mandatory on every SHARP run; the dry run stays gate-free so the
-        # pipeline can be exercised from any branch.
-        if: inputs.dry_run == false
+        # pipeline can be exercised from any branch. A sharp run is ONLY an
+        # explicit dispatch with dry_run=false: on the weekly schedule
+        # (#3159) `inputs.dry_run` is null, and the expression engine
+        # coerces `null == false` to TRUE, so the event name must be part
+        # of the test or the schedule would publish.
+        if: github.event_name == 'workflow_dispatch' && inputs.dry_run == false
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -128,7 +144,9 @@ jobs:
             pushed=true
           else
             version="${{ inputs.version }}"
-            pushed=${{ inputs.dry_run == false }}
+            # Same guard as the green gate above: the schedule has no
+            # inputs, and `null == false` is true in expressions (#3159).
+            pushed=${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == false }}
             if [ -z "$version" ]; then
               version="$(python3 -c "import tomllib,pathlib; print(tomllib.loads(pathlib.Path('backend/pyproject.toml').read_text())['tool']['poetry']['version'])")"
             fi
@@ -308,9 +326,13 @@ jobs:
     # under emulation would have been found by an Apple-silicon user. Native
     # arm64 runners are free for public repositories (probed: ubuntu-24.04-arm
     # reports aarch64), so the emulation-only failure class is gone too.
+    # On a DRY RUN (dispatch default, and the weekly schedule, #3159) the job
+    # runs too: it builds its own architecture natively instead of pulling,
+    # then runs the same version, size-ceiling and page-render stations.
+    # Only the anonymous pull needs a published tag, so only that step is
+    # conditional on a sharp run.
     name: Pull and run it the way a user does (${{ matrix.arch }})
     needs: build-and-push
-    if: needs.build-and-push.outputs.pushed == 'true'
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     strategy:
@@ -324,9 +346,31 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Build this architecture locally (dry run only, #3159)
+        # A dry run pushes nothing, so there is nothing to pull. Build under
+        # the same tag the stations below expect, so every station after
+        # this one runs unchanged. No platform is forced: buildx builds the
+        # runner's own architecture (the runner IS that arch, no QEMU), and
+        # the assertion below proves the built image is that arch, the same
+        # way the pull step proves what the manifest list served. The
+        # multi-arch build in build-and-push already proved both platforms
+        # build together.
+        if: needs.build-and-push.outputs.pushed != 'true'
+        run: |
+          set -euo pipefail
+          image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
+          docker buildx build --load -f backend/Dockerfile -t "$image" .
+          got="$(docker image inspect "$image" --format '{{.Architecture}}')"
+          if [ "$got" != "${{ matrix.arch }}" ]; then
+            echo "::error::built $got on a ${{ matrix.arch }} runner"
+            exit 1
+          fi
+          echo "RESULT: dry run - built $image natively for $got, nothing pushed"
+
       - name: Pull without any credentials
         # No docker/login-action in this job on purpose. If the package is
         # private, this is where it fails - before a user finds out.
+        if: needs.build-and-push.outputs.pushed == 'true'
         run: |
           set -euo pipefail
           image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
@@ -365,8 +409,10 @@ jobs:
           echo "RESULT: on ${{ matrix.arch }}, tag, image and /api/health all report $expected"
 
       - name: The published image must respect the size ceiling
-        # #2133 ratchets what a user downloads. Running it against a local
-        # build only would gate a different artifact than the published one.
+        # #2133 ratchets what a user downloads. On a sharp run this measures
+        # the PUBLISHED artifact, never a local rebuild. On a dry run it
+        # measures the native local build (#3159): the same Dockerfile and
+        # the same ceiling, so a growth shows up on develop before the tag.
         run: |
           set -euo pipefail
           image="${{ needs.build-and-push.outputs.image }}:${{ needs.build-and-push.outputs.version }}"
@@ -419,7 +465,7 @@ jobs:
       - name: Record tag and digest
         run: |
           {
-            echo "### Published image"
+            echo "### ${{ needs.build-and-push.outputs.pushed != 'true' && 'Dry run (nothing published)' || 'Published image' }}"
             echo ""
             echo "| | |"
             echo "|---|---|"
@@ -427,8 +473,7 @@ jobs:
             echo "| tag | \`${{ needs.build-and-push.outputs.version }}\` |"
             echo "| digest | \`${{ needs.build-and-push.outputs.digest }}\` |"
             echo "| platforms | linux/amd64, linux/arm64 |"
-            echo "| mode | ${{ needs.build-and-push.outputs.reused == 'true' && 're-verified an already-published tag (build skipped, #2187)' || 'freshly built and pushed' }} |"
+            echo "| mode | ${{ needs.build-and-push.outputs.pushed != 'true' && 'dry run: built natively per architecture, nothing pushed (#3159)' || needs.build-and-push.outputs.reused == 'true' && 're-verified an already-published tag (build skipped, #2187)' || 'freshly built and pushed' }} |"
             echo ""
-            echo "Anonymous pull AND a health check on native amd64 and arm64 runners,"
-            echo "without credentials."
+            echo "${{ needs.build-and-push.outputs.pushed != 'true' && 'Native build, version agreement, size ceiling and page render on amd64 and arm64 runners; the anonymous pull needs a published tag and was skipped.' || 'Anonymous pull AND a health check on native amd64 and arm64 runners, without credentials.' }}"
           } >> "$GITHUB_STEP_SUMMARY"
