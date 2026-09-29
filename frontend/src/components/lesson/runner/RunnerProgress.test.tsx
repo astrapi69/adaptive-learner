@@ -82,6 +82,14 @@ describe("RunnerProgress - stream stat line (Endless)", () => {
     expect(screen.queryByTestId("endless-progress-bar")).toBeNull();
   });
 
+  it("the clock digits sit under their own endless-stat-time testid, the mask target of the visual baseline (#3215)", () => {
+    renderStream(STATS, 754);
+    const clock = screen.getByTestId("endless-stat-time");
+    expect(clock).toHaveTextContent("12:34");
+    expect(screen.getByTestId("endless-stat-line")).toContainElement(clock);
+    expect(clock).not.toHaveTextContent("cards");
+  });
+
   it("is pure display: no pause and no end control lives in the stat line any more", () => {
     renderStream(STATS, 0);
     expect(screen.queryByTestId("endless-pause")).toBeNull();

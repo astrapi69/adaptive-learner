@@ -46,7 +46,9 @@ interface StreamStatLineProps {
   elapsedSec: number;
 }
 
-/** ``12:34 | 45 cards | 38 correct (84%)``: the running tally of a stream. */
+/** ``12:34 | 45 cards | 38 correct (84%)``: the running tally of a stream.
+ *  The clock carries its own ``{prefix}-stat-time`` testid so the visual
+ *  baseline can mask exactly the digits that tick in real time (#3215). */
 function StreamStatLine({ testIdPrefix, i18nNamespace, stats, elapsedSec }: StreamStatLineProps) {
   const { t } = useI18n();
   return (
@@ -55,7 +57,7 @@ function StreamStatLine({ testIdPrefix, i18nNamespace, stats, elapsedSec }: Stre
         className="m-0 font-mono text-sm text-fg-primary"
         data-testid={`${testIdPrefix}-stat-line`}
       >
-        {formatDuration(elapsedSec)}
+        <span data-testid={`${testIdPrefix}-stat-time`}>{formatDuration(elapsedSec)}</span>
         {" | "}
         {t(`${i18nNamespace}.stat.cards`, "{n} cards").replace("{n}", String(stats.cards))}
         {" | "}
