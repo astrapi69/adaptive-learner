@@ -74,6 +74,14 @@ describe("NavXpBadge", () => {
     expect(screen.getByTestId("nav-xp-badge-total").textContent).toBe("1200 XP");
   });
 
+  it("never flex-shrinks in a crowded nav bar (#3339)", async () => {
+    // At 1280px with a due badge the bar shrank this wrapper, so the icon
+    // became a sliver and "Stufe 2 / 100 XP" wrapped onto four lines.
+    renderBadge();
+    const button = await screen.findByTestId("nav-xp-badge");
+    expect(button.parentElement!.className).toContain("shrink-0");
+  });
+
   it("lays out Level and XP as TWO ROWS, grid on the spans' direct parent (#756)", async () => {
     renderBadge();
     await screen.findByTestId("nav-xp-badge");

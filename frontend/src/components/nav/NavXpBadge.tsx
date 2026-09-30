@@ -158,7 +158,9 @@ export default function NavXpBadge() {
       : t("gamification.max_level", "Max level reached");
 
   return (
-    <div ref={wrapRef} className="relative">
+    // #3339 - `shrink-0`: a crowded bar squeezed this wrapper, so the icon
+    // became a sliver and the two-line text wrapped onto four lines.
+    <div ref={wrapRef} className="relative shrink-0">
       <button
         type="button"
         // #3123 - no extra left margin below sm; the status cluster's gap
