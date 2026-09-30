@@ -400,6 +400,7 @@ review:
   empty_body: "すべて完了！このセットに復習する要素はありません。"
   not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。"
   back_to_dashboard: "ダッシュボードに戻る"
+  back_to_lesson: "レッスンに戻る"
   summary:
     aria_label: "復習のまとめ"
     heading: "復習完了"

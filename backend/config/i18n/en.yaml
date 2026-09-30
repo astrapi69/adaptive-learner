@@ -400,6 +400,7 @@ review:
   empty_body: "All caught up! No elements due for review in this set."
   not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
   back_to_dashboard: "Back to Dashboard"
+  back_to_lesson: "Back to lesson"
   summary:
     aria_label: "Review summary"
     heading: "Review complete"
