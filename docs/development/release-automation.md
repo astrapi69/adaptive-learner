@@ -111,7 +111,7 @@ Seven targets compose existing tooling for the mechanical steps of `release-work
 - Step 11 CLAUDE.md + journal post-release docs
 
 **Not in scope:**
-- Playwright `--project=smoke` (needs running app; runs separately as `cd e2e && npx playwright test`)
+- Playwright `--project=smoke` (starts its own backend and frontend with a throwaway data dir, never a running `make dev`; runs separately as `make test-e2e-smoke`)
 - Backend `mypy` (no top-level target yet; would belong in `release-test` once added)
 - Launcher PyInstaller build smoke (already covered by `launcher-{linux,macos,windows}.yml` workflows)
 

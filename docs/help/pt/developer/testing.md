@@ -119,8 +119,9 @@ As especificações smoke cobrem os caminhos críticos do utilizador:
 
 As especificações usam apenas seletores `data-testid` - sem
 seletores CSS frágeis. As especificações smoke NÃO estão no
-caminho `make test`; precisam de uma aplicação em execução
-(primeiro `make dev-bg`).
+caminho `make test`; iniciam os seus próprios servidores em
+portas próprias e não precisam de uma aplicação em execução. Um
+`make dev` em execução não é afetado.
 
 ## Cobertura
 

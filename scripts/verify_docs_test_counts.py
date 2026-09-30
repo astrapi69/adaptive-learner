@@ -59,7 +59,9 @@ def check_test_counts(report: Report, fix: bool, run_collection: bool) -> None:
     text = _read(claude)
     match = re.search(TEST_COUNT_RE, text, re.DOTALL)
     if not match:
-        report.warn(
+        # Fail closed (#3254): a line the check cannot parse is a basis
+        # gone missing, not a clean tree.
+        report.fail(
             "test-counts",
             "CLAUDE.md: could not parse the 'backend N + plugins N + Vitest N = N tests' line",
         )
@@ -86,7 +88,10 @@ def check_test_counts(report: Report, fix: bool, run_collection: bool) -> None:
                     fixed=True,
                 )
         else:
-            report.warn(
+            # A total that does not add up is a documented number that is
+            # wrong; since #3254 that FAILS instead of warning into a log
+            # nobody reads (--fix rewrites the total from the parts).
+            report.fail(
                 "test-counts",
                 f"CLAUDE.md test total is {total} but {backend}+{plugins}+{vitest}={summed}",
             )
@@ -115,7 +120,7 @@ def check_test_counts(report: Report, fix: bool, run_collection: bool) -> None:
                     fixed=True,
                 )
                 continue
-        report.warn(
+        report.fail(
             "test-counts", f"{rel} test badge says {badge}, CLAUDE total is {consistent_total}"
         )
 

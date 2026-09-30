@@ -10,6 +10,11 @@ src/data/i18n
 src/data/praise
 src/data/plugin-config
 public/content
+# Outside the format glob, but a bare `prettier --write src/` would reach them
+# (#3270): the schema mirror is byte-gated by `make sync-schema-check`, the
+# validator is written by scripts/generate-lesson-validator.mjs
+src/lib/content/validation/lesson.schema.generated.json
+src/lib/content/validation/lesson-schema-validator.standalone.mjs
 
 # Non-source formats Prettier shouldn't touch here
 *.md

@@ -111,6 +111,10 @@ cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier
 ```
 
+#3270'teki tek seferlik yeniden biçimlendirmeye kadar
+`bun run format` neredeyse tüm `src/` ağacını yeniden yazar;
+rutin bir adım olarak çalıştırmayın.
+
 Ön teslim kancaları her teslimde ruff + biçimlendirici
 kontrollerini uygular:
 

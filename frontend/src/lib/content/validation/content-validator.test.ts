@@ -234,6 +234,98 @@ describe("validateSetForSharing", () => {
     );
   });
 
+  // #3222 PR 5: every engine rule reaches the author, not only the one
+  // with dedicated wording. The generic code carries what the engine says,
+  // so the content-repo gate never rejects a set the app called clean.
+  describe("engine rules (learn-content-engine/rules)", () => {
+    function withTwoCorrectOptions(): ContentLesson {
+      const l = goodLesson();
+      l.steps.push({
+        id: "e-mc",
+        type: "exercise",
+        exercise: {
+          id: "e-mc",
+          type: "multiple_choice",
+          prompt: "Was heisst Danke?",
+          card_ids: ["c2"],
+          options: ["Merci", "Bonjour", "Salut"],
+          correct: [0, 1],
+          distractors: [],
+        } as unknown as ContentLesson["steps"][number]["exercise"],
+      });
+      return l;
+    }
+
+    it("reports an engine error the app has no wording for as engine_rule", () => {
+      const result = validateSetForSharing(META, [withTwoCorrectOptions()]);
+      expect(result.ok).toBe(false);
+      const finding = result.issues.find((i) => i.code === "engine_rule");
+      expect(finding).toBeDefined();
+      expect(finding!.params).toMatchObject({
+        lesson: "01-begruessung",
+        rule: "E-MC-ONE-CORRECT",
+      });
+      expect(String(finding!.params!.path)).toMatch(/^\/steps\/\d+\/exercise/);
+      expect(String(finding!.params!.message)).toContain("exactly one option");
+    });
+
+    it("keeps the dedicated wording for a duplicate left value and does not double it", () => {
+      const l = goodLesson();
+      const m = l.steps.find((s) => s.exercise?.type === "matching")!;
+      m.exercise!.pairs = [
+        { left: "Bonjour", right: "a" },
+        { left: "Bonjour", right: "b" },
+        { left: "Salut", right: "Hallo" },
+      ];
+      const issues = validateSetForSharing(META, [l]).issues;
+      expect(issues.filter((i) => i.code === "matching_duplicate_left")).toHaveLength(1);
+      expect(
+        issues.filter(
+          (i) => i.code === "engine_rule" && i.params?.rule === "E-MATCH-DUP-LEFT",
+        ),
+      ).toHaveLength(0);
+    });
+
+    it("reports an engine lint as engine_warning without blocking the share", () => {
+      const l = goodLesson();
+      l.cards.push({ id: "c-unused", front: "Au revoir", back: "Auf Wiedersehen", tags: [] });
+      const result = validateSetForSharing(META, [l]);
+      expect(result.ok).toBe(true);
+      const lint = result.warnings.find((w) => w.code === "engine_warning");
+      expect(lint).toBeDefined();
+      expect(lint!.params).toMatchObject({ lesson: "01-begruessung", rule: "W-CARD-UNUSED" });
+    });
+
+    it("does not repeat a lint the app already reports under its own code", () => {
+      const l = goodLesson();
+      (l as ContentLesson & { domain?: string }).domain = "basket-weaving";
+      const rules = validateSetForSharing(META, [l]).warnings.map((w) => w.params?.rule);
+      expect(rules).not.toContain("W-DOMAIN-UNKNOWN");
+    });
+
+    it("accepts an adopted extension exercise through the app registry", () => {
+      const l = goodLesson();
+      (l as ContentLesson & { requires_extensions?: string[] }).requires_extensions = [
+        "ext:al-ordering@1",
+      ];
+      l.steps.push({
+        id: "e-order",
+        type: "exercise",
+        exercise: {
+          id: "e-order",
+          type: "ext:al-ordering",
+          prompt: "Ordne",
+          card_ids: ["c1"],
+          distractors: [],
+          items: ["Bonjour", "Merci", "Salut"],
+        } as unknown as ContentLesson["steps"][number]["exercise"],
+      });
+      const issues = validateSetForSharing(META, [l]).issues;
+      expect(issues.map((i) => i.params?.rule)).not.toContain("E-EXT-UNSUPPORTED");
+      expect(issues.map((i) => i.params?.rule)).not.toContain("E-EXT-UNDECLARED");
+    });
+  });
+
   // #3222 PR 2: the check IS the engine's E-MATCH-DUP-LEFT
   // (learn-content-engine/rules), so the app cannot define "duplicate"
   // differently from the content-repo gate. The engine compares

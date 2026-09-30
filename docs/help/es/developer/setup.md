@@ -114,6 +114,10 @@ cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier
 ```
 
+Hasta el reformateo único de #3270, `bun run format`
+reescribe casi todo el árbol `src/`; no lo ejecutes como
+paso rutinario.
+
 Los hooks de pre-commit aplican las comprobaciones de ruff y
 formato en cada confirmación:
 

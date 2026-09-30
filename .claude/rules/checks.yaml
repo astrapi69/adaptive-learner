@@ -74,7 +74,7 @@ checks:
     probe: make_target=verify-docs | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
   - id: docs-test-count-arithmetic
-    verifies: the CLAUDE.md test-count line adds up and matches the README badge
+    verifies: the CLAUDE.md test-count line adds up and matches the README badge; a mismatch or an unparseable line FAILs (#3254)
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics
     status: active
     wired_in: scripts/verify_docs.py check_test_counts
@@ -235,10 +235,11 @@ checks:
     status: disabled
     reason: >-
       the step runs with continue-on-error and only lists files in the log.
-      Most of src/ fails it, mainly because .prettierrc sets tabWidth 2 while
-      most files are written with 4-space indentation, so blocking on it needs
-      a separate cleanup and a decision on the indent width first. No
-      condition here turns it on by itself; turning it on is that decision.
+      Most of src/ fails it: it was never formatted and mixes 2- and 4-space.
+      The style is decided (the Prettier defaults, owner decision 2026-09-25,
+      recorded in #3270) and .prettierrc states it; only the one-time
+      reformat remains, and that PR turns this check on. No condition here
+      turns it on by itself.
     wired_in: .github/workflows/ci.yml
     probe: none
 
