@@ -8,7 +8,7 @@
  *
  * @example
  * const plan = await computeSetsDeletionPlan([entry]);
- * if (deleteProgress) await deletePlannedLearnerData(plan);
+ * const warning = await deleteConfirmedLearnerData(confirmed);
  */
 
 import {
@@ -182,7 +182,7 @@ export async function deleteConfirmedLearnerData(
 
 /** Delete the planned learner data after the cache delete (#1819).
  *  Opt-in only; an empty/unknown plan is a no-op. */
-export const deletePlannedLearnerData = async (plan: DeletionPlan | null) => {
+const deletePlannedLearnerData = async (plan: DeletionPlan | null) => {
   const userId = readLearnerState().userId;
   if (!userId || !plan || isEmptyPlan(plan)) return;
   await getStorage().learningData.deleteLearningData(userId, {
