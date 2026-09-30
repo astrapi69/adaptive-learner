@@ -1,9 +1,9 @@
 """Resolve plugin settings + the optional GitHub token
 (Phase 43 / EXP-002 / 2C-wire).
 
-The plugin settings YAML at
-``backend/config/plugins/content-loader.yaml`` is the canonical
-source for the configured content sources. The optional token
+The plugin settings come from the host's merged plugin config
+(bundled ``backend/config/plugins/content-loader.yaml`` plus the
+user overlay the Settings UI writes, #3370). The optional token
 for private repos goes through the three-layer secrets chain
 documented in CLAUDE.md:
 
@@ -81,12 +81,27 @@ def _resolve_plugin_settings_path() -> Path | None:
 
 
 def read_plugin_settings() -> dict[str, Any]:
-    """Read the plugin's settings section from the YAML.
+    """Read the plugin's effective settings.
+
+    Inside the backend this is the host's merged config (bundled
+    defaults + user overlay, ``app.config_overlay``), the same view the
+    Settings endpoint shows and writes (#3370): a saved ``user_repos``
+    no longer replaces the bundled ``default_sources``. Without the
+    backend on ``sys.path`` (pure plugin tests) the first YAML found
+    by :func:`_resolve_plugin_settings_path` is read.
 
     Returns ``{}`` when the file is missing OR malformed —
     callers fall back to defaults rather than crash. The
     plugin must never refuse to load over a typo in the YAML.
     """
+    try:
+        from app.config_overlay import (  # type: ignore[import-not-found]
+            read_plugin_settings_merged,
+        )
+    except ImportError:
+        pass
+    else:
+        return read_plugin_settings_merged(PLUGIN_SETTINGS_FILENAME.removesuffix(".yaml"))
     path = _resolve_plugin_settings_path()
     if path is None:
         logger.debug(
