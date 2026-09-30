@@ -2056,6 +2056,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_failed": "このレッスンの進捗を保存できませんでした: {detail}",
+      "load_failed": "このレッスンの保存済みの進捗を読み込めませんでした: {detail}",
+      "create_profile": "学習プロフィールを作成"
+    },
     "mascot_label": "学習のおとも",
     "combo_chip": "×{n}",
     "combo_aria": "連続正解: {n}回連続",
