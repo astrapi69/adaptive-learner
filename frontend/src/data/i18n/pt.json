@@ -2621,7 +2621,9 @@
       "heading": "Retomar aula?",
       "body": "Você pausou \"{title}\". Gostaria de continuar de onde parou ou começar novamente?",
       "action_resume": "Continuar",
-      "action_restart": "Recomeçar"
+      "action_restart": "Recomeçar",
+      "restart_confirm_title": "Recomeçar do início?",
+      "restart_confirm_body": "Sua posição e suas respostas nesta aula serão redefinidas. O que você já aprendeu (progresso de domínio) é mantido."
     }
   },
   "content": {

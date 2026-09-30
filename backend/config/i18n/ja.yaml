@@ -2428,6 +2428,8 @@ lesson:
     body: '「{title}」を一時停止しました。続きから再開しますか、それとも最初からやり直しますか？'
     action_resume: "続ける"
     action_restart: "最初からやり直す"
+    restart_confirm_title: "最初からやり直しますか？"
+    restart_confirm_body: "このレッスンでの位置と回答はリセットされます。すでに身につけた内容（習熟度）はそのまま残ります。"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:
