@@ -8,6 +8,7 @@
  * one-for-one so the same JSON file works in both directions.
  */
 
+import {AI_PROVIDERS} from "../../lib/constants";
 import type {AdaptiveLearnerDB} from "../dexie/db";
 
 export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
@@ -16,13 +17,29 @@ export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
 // backup lacks ``set_runs`` and its element-error rows have no ``run_id``
 // (they import as the implicit run 1, materialised lazily on first
 // read/write). 1.4.0 added the optional ``local_storage`` snapshot block.
-export const BACKUP_VERSION = "1.5.0";
+// 1.6.0 — #3363: the API export now carries paused_at / abandoned_at,
+// content_hash + the import language pair, cycle_count / cycle_topics and
+// the session-note kind. One version for both modes from here on; the
+// backend's BACKUP_VERSION must match (parity test in backup-tables.test).
+export const BACKUP_VERSION = "1.6.0";
 
-export const EXCLUDED_USER_SETTINGS_FIELDS: ReadonlySet<string> = new Set([
-    "api_key_anthropic",
-    "api_key_openai",
-    "api_key_gemini",
-]);
+/**
+ * The ``user_settings`` fields that never travel in a backup and that a
+ * restore never writes: one ``api_key_<provider>`` per AI provider.
+ * Derived from ``AI_PROVIDERS`` so a new provider is covered without a
+ * second edit (#3367: the hand-written list missed Perplexity). The
+ * backend derives its list from the ``AIProvider`` enum the same way.
+ */
+export const EXCLUDED_USER_SETTINGS_FIELDS: ReadonlySet<string> = new Set(
+    AI_PROVIDERS.map((provider) => `api_key_${provider}`),
+);
+
+/**
+ * Backup tables whose rows are secrets in Dexie mode: the table stays in
+ * the file (always present, zero rows) so the shape matches an API
+ * backup, but no row is exported and no incoming row is restored.
+ */
+export const SECRET_TABLES: ReadonlySet<string> = new Set(["api_key_backups"]);
 
 /**
  * Backup-table descriptor. ``store`` is the Dexie table name;
@@ -257,12 +274,13 @@ export const BACKUP_TABLES: Record<string, BackupTableSpec> = {
         appendOnly: false,
         scope: "user",
     },
-    // Phase 65 — API-key rollback cache. Carries Fernet ciphertext
-    // (same scheme as ``UserSettings.api_key_*``). The backend syncs
-    // and backs this up, so we mirror it for a "same file both
-    // directions" guarantee. Unlike the plaintext ``api_key_*``
-    // fields, the ciphertext is keyed to the install's secret and
-    // is useless without it, so it is NOT stripped on export.
+    // Phase 65 — API-key rollback cache. In Dexie mode each row holds
+    // the key in cleartext (``ApiKeyBackupRow.key``); in API mode the
+    // backend holds Fernet ciphertext keyed to the install's secret.
+    // Listed here so the file shape matches the backend, but it is in
+    // SECRET_TABLES: a Dexie export writes it empty and a Dexie restore
+    // skips it (#3367). A row from another install is useless or, as
+    // ciphertext, harmful: a rollback would write it as the live key.
     api_key_backups: {
         store: "apiKeyBackups",
         timestampField: "updated_at",

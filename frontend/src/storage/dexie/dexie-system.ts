@@ -86,7 +86,7 @@ export const dexieSystem: IStorageService["system"] = {
 
 /**
  * Phase 41F Danger Zone: typed-confirm reset for Dexie mode.
- * Clears every table on the main Dexie DB plus the separate
+ * Clears every store the main Dexie DB declares plus the separate
  * auto-backup ring (kept in its own Dexie database by
  * auto-backup.ts). The confirmation gate matches the backend
  * server-side check (CONFIRMATION_TOKEN === "RESET"), enforced
@@ -99,55 +99,22 @@ export const dexieReset: IStorageService["reset"] = async (confirmation) => {
     throw new ApiError(400, "Confirmation token mismatch.");
   }
   const db = getDb();
-  // Clear every store on the main Dexie DB. Listing them
-  // explicitly rather than iterating ``db.tables`` so a
-  // future contributor who renames a table sees a clear
-  // diff here instead of a silently expanded reset.
-  const tableNames = [
-    "users",
-    "userSettings",
-    "learningProjects",
-    "learningProfiles",
-    "curricula",
-    "learningTopics",
-    "lessons",
-    "learningSessions",
-    "sessionMessages",
-    "sessionRatings",
-    "sessionNotes",
-    "progressCommits",
-    "methodSwitches",
-    "stepEvaluations",
-    "importedConversations",
-    "importedMessages",
-    "subjects",
-    "tags",
-    "projectSubjects",
-    "projectTags",
-    "userXP",
-    "badges",
-    "userBadges",
-    "userStreaks",
-    "ankiCards",
-    "studyQuestions",
-    "contentSets",
-    "contentSetFiles",
-    "lessonProgress",
-    "elementErrors",
-    // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01)
-    "pluginSettings",
-  ];
+  // Every store the database declares (#3368). A hand-written list
+  // drifted twice: a typo ("userXP") resolved to nothing and was skipped
+  // silently, and six later stores were never added, so a reset left
+  // plaintext key backups, recordings and learning history behind.
+  // A store that fails to clear fails the reset, never a silent skip.
   let cleared = 0;
-  for (const name of tableNames) {
-    const table = (db as unknown as Record<string, unknown>)[name];
-    if (table && typeof table === "object" && "clear" in table) {
-      try {
-        await (table as { clear(): Promise<void> }).clear();
-        cleared += 1;
-      } catch (err) {
-        console.warn(`Dexie reset: clear(${name}) failed:`, err);
-      }
+  for (const table of db.tables) {
+    try {
+      await table.clear();
+    } catch (err) {
+      throw new ApiError(
+        500,
+        `Reset failed: clearing ${table.name} failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
+    cleared += 1;
   }
   await clearAllAutoBackups();
   return { reset: true, tables_cleared: cleared };

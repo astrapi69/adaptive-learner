@@ -5,10 +5,15 @@
  * and the restore order must stay in lock-step (a table added to one
  * but not the other silently drops data - the BACKUP-API-RESTORE-01
  * failure class), FK parents must restore before their children, and
- * the api-key exclusion set must keep covering all three providers.
+ * the api-key exclusion set must cover every AI provider (#3367).
  */
 
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+
 import {describe, expect, it} from "vitest";
+
+import {AI_PROVIDERS} from "../../lib/constants";
 
 import {
     BACKUP_FORMAT,
@@ -78,13 +83,44 @@ describe("backup-tables parity", () => {
         ]);
     });
 
-    it("keeps the wire constants and the 3-provider key exclusion", () => {
+    it("keeps the wire constants", () => {
         expect(BACKUP_FORMAT).toBe("adaptive-learner-backup");
-        expect(BACKUP_VERSION).toBe("1.5.0");
-        expect([...EXCLUDED_USER_SETTINGS_FIELDS].sort()).toEqual([
-            "api_key_anthropic",
-            "api_key_gemini",
-            "api_key_openai",
-        ]);
+        expect(BACKUP_VERSION).toBe("1.6.0");
+    });
+});
+
+describe("api-key exclusion (#3367)", () => {
+    it.each(AI_PROVIDERS)("excludes api_key_%s from user_settings", (provider) => {
+        expect(EXCLUDED_USER_SETTINGS_FIELDS.has(`api_key_${provider}`)).toBe(true);
+    });
+
+    it("excludes exactly one field per provider", () => {
+        expect(EXCLUDED_USER_SETTINGS_FIELDS.size).toBe(AI_PROVIDERS.length);
+    });
+
+    it("AI_PROVIDERS matches the backend AIProvider enum, which the backend exclusion derives from", () => {
+        // The backend derives EXCLUDED_USER_SETTINGS_FIELDS from AIProvider
+        // (backend/app/services/backup_export.py); this pin keeps the two
+        // provider lists, and so both exclusion lists, in parity.
+        const source = readFileSync(
+            join(__dirname, "../../../../backend/app/schemas/__init__.py"),
+            "utf-8",
+        );
+        const block = source.split("class AIProvider(str, Enum):")[1].split("\nclass ")[0];
+        const backendProviders = [...block.matchAll(/^\s+[A-Z_]+ = "([a-z_]+)"$/gm)].map(
+            (match) => match[1],
+        );
+        expect(backendProviders).toEqual([...AI_PROVIDERS]);
+    });
+});
+
+describe("backup format version parity (#3363)", () => {
+    it("matches the backend's BACKUP_VERSION, so one file format has one version", () => {
+        const source = readFileSync(
+            join(__dirname, "../../../../backend/app/services/backup_export.py"),
+            "utf-8",
+        );
+        const match = source.match(/^BACKUP_VERSION = "([^"]+)"$/m);
+        expect(match?.[1]).toBe(BACKUP_VERSION);
     });
 });

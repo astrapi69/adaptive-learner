@@ -20,7 +20,12 @@ import {
     stripExcludedFields,
     type RowDict,
 } from "./backup-scope";
-import {BACKUP_FORMAT, BACKUP_TABLES, BACKUP_VERSION} from "./backup-tables";
+import {
+    BACKUP_FORMAT,
+    BACKUP_TABLES,
+    BACKUP_VERSION,
+    SECRET_TABLES,
+} from "./backup-tables";
 
 /**
  * Return per-table row counts for the user. Cheap; UI uses it to
@@ -34,6 +39,10 @@ export async function getDexieBackupStats(
     const scopes = await scopedIdSets(db, userId);
     const tables: Record<string, number> = {};
     for (const [name, spec] of Object.entries(BACKUP_TABLES)) {
+        if (SECRET_TABLES.has(name)) {
+            tables[name] = 0;
+            continue;
+        }
         const all = await getTable(db, spec).toArray();
         tables[name] = rowsBelongToUser(spec, all, userId, scopes).length;
     }
@@ -56,6 +65,10 @@ export async function createDexieBackup(
     const scopes = await scopedIdSets(db, userId);
     const data: Record<string, RowDict[]> = {};
     for (const [name, spec] of Object.entries(BACKUP_TABLES)) {
+        if (SECRET_TABLES.has(name)) {
+            data[name] = [];
+            continue;
+        }
         const all = await getTable(db, spec).toArray();
         const scoped = rowsBelongToUser(spec, all, userId, scopes);
         data[name] = scoped.map((row) => stripExcludedFields(name, {...row}));
