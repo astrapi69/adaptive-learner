@@ -772,6 +772,39 @@ describe("session.rate / end / acceptSwitch / switchRecommendation", () => {
         expect(rec.recommended).toBe(false);
     });
 
+    /** Rate through the real writer, one minute apart, oldest first. */
+    async function rateInOrder(sessionId: string, understanding: number[]): Promise<void> {
+        vi.useFakeTimers({toFake: ["Date"]});
+        try {
+            for (const [i, u] of understanding.entries()) {
+                vi.setSystemTime(new Date(Date.UTC(2026, 8, 1, 10, i)));
+                await dexieStorage.session.rate(sessionId, {
+                    understanding: u,
+                    stress: 5,
+                    method_fit: 2,
+                });
+            }
+        } finally {
+            vi.useRealTimers();
+        }
+    }
+
+    it.each([
+        ["flat latest three", true, [5, 4, 3, 3, 3]],
+        ["recovering latest three", false, [2, 2, 2, 4, 5]],
+        ["fewer than three ratings", false, [2, 2]],
+    ])("switchRecommendation: %s -> recommended %s (#3396)", async (_name, expected, understanding) => {
+        const {projectId} = await setupUserWithKey();
+        const start = await dexieStorage.session.start({project_id: projectId});
+        await rateInOrder(start.session.id, understanding);
+        const rec = await dexieStorage.session.switchRecommendation(start.session.id);
+        expect(rec.recommended).toBe(expected);
+        if (expected) {
+            expect(rec.to_method).toBe("inductive");
+            expect(rec.reason).toContain("[3, 3, 3]");
+        }
+    });
+
     it("end writes a ProgressCommit row when a rating exists", async () => {
         const {projectId} = await setupUserWithKey();
         const start = await dexieStorage.session.start({project_id: projectId});

@@ -465,9 +465,10 @@ def get_switch_recommendation(
 
     # Pull the most recent 5 ratings for the project (across ALL
     # sessions of that project, not just this one — the
-    # recommender uses cross-session trends). Newest first;
-    # switching.recommend expects ordered-newest-first per its
-    # own docstring.
+    # recommender uses cross-session trends). The query reads them
+    # newest first; switching.recommend expects OLDEST first and
+    # takes the last three, so the list is reversed below (#3396:
+    # without it the rule read the three oldest, reversed).
     project = db.get(LearningProject, sess.project_id)
     if project is None:
         return _SwitchRecommendationOut(recommended=False)
@@ -489,7 +490,7 @@ def get_switch_recommendation(
             if db.get(LearningSession, r.session_id) is not None
             else None,
         }
-        for r in recent_rows
+        for r in reversed(recent_rows)
     ]
 
     try:

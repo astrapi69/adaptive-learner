@@ -11,7 +11,6 @@
     "backend/app/config_overlay.py::set_project_config_dir::function",
     "backend/app/config_overlay.py::user_app_config_exists::function",
     "backend/app/config_overlay.py::write_user_app_config::function",
-    "backend/app/config_overlay.py::write_user_plugin_config::function",
     "backend/app/database.py::_set_sqlite_pragma::function",
     "backend/app/database.py::get_async_db::function",
     "backend/app/db_guard.py::assert_safe_for_destructive_use::function",
