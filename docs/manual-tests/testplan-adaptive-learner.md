@@ -2256,6 +2256,10 @@ jeder Karten-Zeile (`CardImageField`).
       Pause-Knopf im Footer drücken -> der Dialog Weiter/Pausieren/Abbrechen
       erscheint (vorher: verliess die Lektion stumm); "Pausieren" -> die
       Lektion steht auf dem Dashboard unter "Pausierte Lektionen"
+- [ ] TC-0919 Ohne Lernprofil (#3364): in einem privaten Fenster ohne Onboarding
+      eine Lektion öffnen -> oben steht "Lege ein Lernprofil an, um deinen
+      Fortschritt zu speichern" mit dem Link "Lernprofil
+      anlegen", der zum Onboarding führt; mit Profil fehlt der Hinweis
 - [ ] TC-0451 Verlassen über die App-Navigation (#3075): eine Übung beantworten,
       dann zwei Theorieschritte weiter, dann über das Menü (Hamburger ->
       "Einstellungen"), das Logo oder den Zurück-Knopf des Browsers
@@ -3348,8 +3352,18 @@ Bildschirm automatisch ausgeht).
 - [ ] TC-0773 Bis kurz vor den normalen Sperr-Timeout des Geräts warten (Handy
       liegen lassen): der Bildschirm bleibt an, solange vorgelesen wird
 - [ ] TC-0774 Das Vorlesen läuft ununterbrochen bis zum Ende des Textes weiter
-- [ ] TC-0775 Nach "Stop" bzw. Ende des Vorlesens darf der Bildschirm wieder
-      normal automatisch ausgehen (Wake Lock wird freigegeben)
+- [ ] TC-0775 Mit ausgeschalteter Einstellung "Bildschirm in Lektionen
+      anlassen" (Einstellungen > Lernen > Interaktion): nach "Stop" bzw.
+      Ende des Vorlesens darf der Bildschirm wieder normal automatisch
+      ausgehen (Wake Lock wird freigegeben)
+- [ ] TC-0920 Stilles Lesen (#3358): Einstellung an (Standard), einen Theorieschritt
+      lesen, ohne das Gerät zu berühren und ohne Vorlesen: der Bildschirm
+      bleibt über den Sperr-Timeout hinaus an
+- [ ] TC-0921 In der Zusammenfassung der Lektion (#3358) darf der Bildschirm wieder
+      automatisch ausgehen; ebenso mit ausgeschalteter Einstellung
+- [ ] TC-0922 App-Wechsel während des Vorlesens (#3358): kurz in eine andere App
+      wechseln und zurückkommen, dann das Gerät liegen lassen: der
+      Bildschirm bleibt weiter an
 - [ ] TC-0776 Gleicher Ablauf auf einem Android-Gerät (Chrome)
 - [ ] TC-0777 Bekanntes Plattform-Limit, KEIN Fehler: ein manuelles Drücken des
       Sperr-/Power-Buttons schaltet den Bildschirm trotzdem sofort aus und
