@@ -2829,7 +2829,6 @@ content:
     free_text_too_few_accepts: "'{lesson}' dersi: serbest metin alıştırması '{exercise}' en az {min} kabul edilen yanıt gerektirir."
     matching_too_few_pairs: "'{lesson}' dersi: eşleştirme alıştırması '{exercise}' en az {min} çift gerektirir."
     matching_duplicate_left: "'{lesson}' dersi: '{exercise}' eşleştirme alıştırması sol değeri '{value}' tekrarlıyor - öğrenci için çözülemez."
-    missing_distractors: "'{lesson}' dersi: '{exercise}' alıştırması çeldirici (yanlış seçenek) gerektirir."
     non_cefr_level: "'{level}' seviyesi bir CEFR bandı değil (A1-C2)."
     level_too_complex: "'{lesson}' dersi: metin sayfa başına ortalama {avg} kelime, {level} seviyesi için yüksek (yaklaşık {cap} beklenir)."
     engine_rule: "Ders '{lesson}': {path} konumunda {rule} kuralı: {message}"

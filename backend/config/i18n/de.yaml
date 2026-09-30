@@ -2834,7 +2834,6 @@ content:
     free_text_too_few_accepts: "Lektion '{lesson}': Freitext-Übung '{exercise}' braucht mindestens {min} akzeptierte Antworten."
     matching_too_few_pairs: "Lektion '{lesson}': Zuordnungsübung '{exercise}' braucht mindestens {min} Paare."
     matching_duplicate_left: "Lektion '{lesson}': Zuordnungsübung '{exercise}' wiederholt den linken Wert '{value}' - für Lernende unlösbar."
-    missing_distractors: "Lektion '{lesson}': Übung '{exercise}' braucht Ablenker (falsche Optionen)."
     non_cefr_level: Niveau '{level}' ist keine CEFR-Stufe (A1-C2).
     level_too_complex: "Lektion '{lesson}': Text hat im Schnitt {avg} Wörter pro Seite, viel für Niveau {level} (etwa {cap} erwartet)."
     engine_rule: "Lektion '{lesson}': Regel {rule} bei {path}: {message}"

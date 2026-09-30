@@ -3062,7 +3062,6 @@
       "free_text_too_few_accepts": "Leçon '{lesson}' : l'exercice de texte libre '{exercise}' nécessite au moins {min} réponses acceptées.",
       "matching_too_few_pairs": "Leçon '{lesson}' : l'exercice d'association '{exercise}' nécessite au moins {min} paires.",
       "matching_duplicate_left": "Leçon '{lesson}' : l'exercice d'association '{exercise}' répète la valeur de gauche '{value}' - insoluble pour l'apprenant.",
-      "missing_distractors": "Leçon '{lesson}' : l'exercice '{exercise}' nécessite des distracteurs (mauvaises options).",
       "non_cefr_level": "Le niveau '{level}' n'est pas une échelle CECR (A1-C2).",
       "level_too_complex": "Leçon '{lesson}' : le texte fait en moyenne {avg} mots par côté, élevé pour le niveau {level} (environ {cap} attendus).",
       "engine_rule": "Leçon '{lesson}' : règle {rule} à {path} : {message}",
