@@ -1,3 +1,4 @@
+import { QUALITY_MINIMUMS } from "learn-content-engine/rules";
 import { describe, expect, it } from "vitest";
 
 import type { ContentLesson } from "../../../storage/types";
@@ -203,6 +204,90 @@ describe("validateSetForSharing", () => {
     const m = l.steps.find((s) => s.exercise?.type === "matching")!;
     m.exercise!.pairs = [{ left: "a", right: "b" }];
     expect(codes(META, [l])).toContain("matching_too_few_pairs");
+  });
+
+  // #3345 - the quality minimums are the engine's validateLessonQuality, so
+  // the share check gives the verdict the content-repo gate gives.
+  describe("quality minimums from the engine (#3345)", () => {
+    type Exercise = NonNullable<ContentLesson["steps"][number]["exercise"]>;
+
+    function withMatching(cardIds: string[]): ContentLesson {
+      const l = goodLesson();
+      const m = l.steps.find((s) => s.exercise?.type === "matching")!;
+      // The raw shape API mode serves (alc-psychology psych-rhetorik/01,
+      // ex-match-mittel): card_ids + from_cards, no literal pairs.
+      m.exercise = {
+        id: "e1",
+        type: "matching",
+        prompt: "Zuordnen",
+        card_ids: cardIds,
+        from_cards: true,
+      } as unknown as Exercise;
+      return l;
+    }
+
+    function withExercises(count: number, purpose?: string): ContentLesson {
+      const l = goodLesson();
+      const tiles = l.steps.filter((s) => s.exercise?.type === "word_tiles");
+      l.steps = [l.steps[0], ...tiles, ...tiles.map((s) => ({ ...s, id: `${s.id}b` }))]
+        .slice(0, count + 1)
+        .map((s) =>
+          s.exercise ? { ...s, exercise: { ...s.exercise, id: s.id } } : s,
+        );
+      if (purpose) (l as { purpose?: string }).purpose = purpose;
+      return l;
+    }
+
+    it("counts the pairs a from_cards matching derives", () => {
+      expect(codes(META, [withMatching(["c1", "c2", "c3"])])).not.toContain(
+        "matching_too_few_pairs",
+      );
+    });
+
+    it("flags a from_cards matching with fewer cards than the pair minimum", () => {
+      const issue = validateSetForSharing(META, [withMatching(["c1", "c2"])]).issues.find(
+        (i) => i.code === "matching_too_few_pairs",
+      );
+      expect(issue?.params).toMatchObject({
+        lesson: "01-begruessung",
+        exercise: "e1",
+        count: 2,
+        min: QUALITY.minMatchingPairs,
+      });
+    });
+
+    it.each([
+      ["practice (default)", undefined, ["lesson_too_few_exercises", "lesson_too_few_types"]],
+      ["bridge", "bridge", []],
+      ["quiz", "quiz", ["lesson_too_few_exercises"]],
+    ])("applies the count minimums of purpose %s", (_label, purpose, expected) => {
+      const found = codes(META, [withExercises(1, purpose)]).filter((c) =>
+        ["lesson_too_few_exercises", "lesson_too_few_types"].includes(c),
+      );
+      expect(found.sort()).toEqual([...expected].sort());
+    });
+
+    it("lifts the type minimum but not the count for a full quiz", () => {
+      const found = codes(META, [withExercises(5, "quiz")]);
+      expect(found).not.toContain("lesson_too_few_types");
+      expect(found).not.toContain("lesson_too_few_exercises");
+    });
+
+    it("keeps the theory minimum for a bridge lesson", () => {
+      const l = withExercises(1, "bridge");
+      l.steps = l.steps.filter((s) => s.type !== "theory");
+      expect(codes(META, [l])).toContain("lesson_no_theory");
+    });
+
+    it.each(["free_text", "picture_choice"])(
+      "no longer requires distractors on %s (removed, #3345)",
+      (type) => {
+        const l = goodLesson();
+        const ft = l.steps.find((s) => s.exercise?.type === "free_text")!;
+        ft.exercise = { ...ft.exercise!, type, distractors: [] } as Exercise;
+        expect(codes(META, [l])).not.toContain("missing_distractors");
+      },
+    );
   });
 
   // #2376 class 4 - a repeated left value is objectively unsolvable for the
@@ -418,6 +503,10 @@ describe("validateSetForSharing", () => {
 
   it("exposes the quality thresholds", () => {
     expect(QUALITY.minExercisesPerLesson).toBe(5);
+  });
+
+  it("displays the numbers the engine checks against (#3345)", () => {
+    expect({ ...QUALITY }).toEqual({ ...QUALITY_MINIMUMS });
   });
 });
 
