@@ -35,6 +35,7 @@ for the broader rule. The unit + integration tests in
 from __future__ import annotations
 
 import logging
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -133,7 +134,11 @@ def _plugin_file(directory: Path, name: str) -> Path:
     """
     if not _PLUGIN_NAME_RE.fullmatch(name):
         raise ValidationError(f"Plugin name {name!r} is not a valid identifier.")
-    return directory / f"{name}.yaml"
+    base = os.path.normpath(os.path.abspath(directory))
+    candidate = os.path.normpath(os.path.join(base, f"{name}.yaml"))
+    if not candidate.startswith(base + os.sep):
+        raise ValidationError(f"Plugin name {name!r} leaves the config directory.")
+    return Path(candidate)
 
 
 def _project_plugin_path(name: str) -> Path:
