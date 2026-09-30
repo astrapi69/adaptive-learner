@@ -34,6 +34,14 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Result: Drei `report.warn` werden `report.fail`; die Parse-Lücke fällt geschlossen. Der bestehende RED-Test der Check-Inventur (#2077, "Check degradiert zum No-op") brauchte die zweite Hälfte des Vorfalls: kaputte Regex plus jemand, der das FAIL wieder zu WARN weicht; ein neuer Test pinnt, dass die kaputte Regex allein den Verifier selbst rot macht. 23 Tests in beiden Suiten grün, `verify_docs.py` auf dem echten Baum 0 FAIL.
 - Commit: siehe PR.
 
+## 5. #3216 Punkt 2: die Arcade-Karte bleibt mit Begründung sichtbar
+
+- Original prompt: wie oben (Empfehlung: Ausnahme aufheben, disabled-with-reason).
+- Optimized prompt: "`ArcadeCard`: bei Spielmodus an und Arcade-Schalter aus die Karte mit Titel, Hinweis `arcade.requires_arcade_switch` und Link auf `/settings?tab=learning&section=motivation` rendern (`arcade-card-disabled`); bei Spielmodus aus weiter `null`; Test 'disappears' umdrehen, Fall Spielmodus aus plus Arcade an ergänzen; TC-0211 DE+EN."
+- Goal: Die Feature-State-Policy gilt auch auf dem Dashboard: niemals versteckt, deaktiviert mit Grund.
+- Result: 33 Tests (ArcadeCard plus Dashboard) grün, tsc und eslint sauber. Visual-Baselines: kein Motiv setzt die Kombination Spielmodus an und Arcade aus, darum `visual-baselines-unaffected` mit dieser Begründung.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.

@@ -829,11 +829,13 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       Standard 60) und "Memory-Paare" (4-12, Standard 8) klemmen und
       sind bei ausgeschaltetem Schalter gesperrt
 - [ ] TC-0211 Spielmodus an: auf dem Dashboard erscheint die Arcade-Karte;
-      "Zur Arcade" öffnet die Spieleliste. Arcade-Schalter aus ODER
-      Spielmodus aus: die Karte verschwindet komplett; ein direkter
-      Aufruf von /arcade zeigt einen Hinweis, der den ausgeschalteten
-      Schalter nennt (Spielmodus aus, oder Spielmodus an und
-      Arcade-Schalter aus), mit Link in die Einstellungen (#3216)
+      "Zur Arcade" öffnet die Spieleliste. Spielmodus an und
+      Arcade-Schalter aus: die Karte bleibt, ohne Knopf, mit einem Hinweis,
+      der den Arcade-Schalter nennt, und Link in die Einstellungen (#3216
+      Punkt 2). Spielmodus aus: keine Arcade-Karte. Ein direkter Aufruf
+      von /arcade zeigt einen Hinweis, der den ausgeschalteten Schalter
+      nennt (Spielmodus aus, oder Spielmodus an und Arcade-Schalter aus),
+      mit Link in die Einstellungen (#3216)
 - [ ] TC-0212 Lern-Memory (frei): Set-Auswahl zeigt nur heruntergeladene
       Sets und ist mit dem zuletzt gelernten Set vorbelegt (#2899),
       nicht mit dem ersten der Liste; ohne Lernfortschritt bleibt das
