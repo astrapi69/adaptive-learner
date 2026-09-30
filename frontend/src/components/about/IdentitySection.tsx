@@ -19,6 +19,7 @@
 import {useEffect, useState} from "react";
 
 import {api, ApiError, type IdentityStatusPayload} from "../../api/client";
+import {ABOUT_LABEL_CLASS, ABOUT_LIST_CLASS, ABOUT_VALUE_CLASS} from "./about-definition-list";
 
 interface Props {
     t: (key: string, fallback?: string) => string;
@@ -70,17 +71,17 @@ export default function IdentitySection({t}: Props) {
                 </p>
             )}
             {status && (
-                <dl className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-[0.9rem] m-0">
-                    <dt>
+                <dl className={ABOUT_LIST_CLASS}>
+                    <dt className={ABOUT_LABEL_CLASS}>
                         <strong>{t("about.identity_path_label", "Path")}</strong>
                     </dt>
-                    <dd data-testid="about-identity-path" className="m-0 break-all">
+                    <dd data-testid="about-identity-path" className={ABOUT_VALUE_CLASS}>
                         <code>{status.path}</code>
                     </dd>
-                    <dt>
+                    <dt className={ABOUT_LABEL_CLASS}>
                         <strong>{t("about.identity_status_label", "Status")}</strong>
                     </dt>
-                    <dd data-testid="about-identity-status" className="m-0 break-all">
+                    <dd data-testid="about-identity-status" className={ABOUT_VALUE_CLASS}>
                         {status.exists ? (
                             <span
                                 data-testid="about-identity-status-active"
@@ -99,14 +100,14 @@ export default function IdentitySection({t}: Props) {
                     </dd>
                     {status.exists && status.last_seen && (
                         <>
-                            <dt>
+                            <dt className={ABOUT_LABEL_CLASS}>
                                 <strong>
                                     {t("about.identity_last_seen_label", "Last updated")}
                                 </strong>
                             </dt>
                             <dd
                                 data-testid="about-identity-last-seen"
-                                className="m-0 break-all"
+                                className={ABOUT_VALUE_CLASS}
                             >
                                 {formatLastSeen(status.last_seen)}
                             </dd>
