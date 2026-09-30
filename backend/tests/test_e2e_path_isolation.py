@@ -56,3 +56,54 @@ def test_pinned_values_stay_inside_the_throwaway_dir() -> None:
             assert "E2E_DATA_DIR" in value or value.startswith("/tmp/"), (
                 f"{env} is pinned to {value!r}, which is not inside the throwaway e2e dir"
             )
+
+
+# #3316: a smoke run while ``make dev`` is up must never reach the developer's
+# backend. Two properties per config that starts a uvicorn backend: its
+# default ports differ from the ``make dev`` pair, and the backend entry
+# never reuses a server Playwright did not start (the reset specs call
+# ``POST /api/reset``, which wipes whatever database answers).
+MAKEFILE = REPO_ROOT / "Makefile"
+E2E_DIR = REPO_ROOT / "e2e"
+
+
+def _make_dev_ports() -> tuple[str, str]:
+    makefile = MAKEFILE.read_text(encoding="utf-8")
+    backend = re.search(r"BACKEND_PORT\s*\?=.*?,(\d+)\)", makefile)
+    frontend = re.search(r"FRONTEND_PORT\s*\?=.*?,(\d+)\)", makefile)
+    assert backend and frontend, "Makefile dev ports not found"
+    return backend.group(1), frontend.group(1)
+
+
+def _backend_starting_configs() -> list[Path]:
+    configs = [
+        path
+        for path in sorted(E2E_DIR.glob("playwright*.config.ts"))
+        if "uvicorn app.main:app" in path.read_text(encoding="utf-8")
+    ]
+    assert configs, "no e2e config starts a backend - the probe set is empty"
+    return configs
+
+
+def test_backend_starting_configs_default_to_ports_other_than_make_dev() -> None:
+    dev_backend, dev_frontend = _make_dev_ports()
+    for config in _backend_starting_configs():
+        text = config.read_text(encoding="utf-8")
+        defaults = re.findall(r"PORT\)\s*\|\|\s*(\d+)", text)
+        assert defaults, f"{config.name}: no port default found"
+        for port in defaults:
+            assert port not in (dev_backend, dev_frontend), (
+                f"{config.name} defaults to port {port}, the make dev port - a local run "
+                "would reuse the developer's backend and reset its database (#3316)"
+            )
+
+
+def test_backend_starting_configs_never_reuse_a_backend_they_did_not_start() -> None:
+    for config in _backend_starting_configs():
+        text = config.read_text(encoding="utf-8")
+        start = text.index("uvicorn app.main:app")
+        reuse = re.search(r"reuseExistingServer:\s*([^,\n]+)", text[start:])
+        assert reuse and reuse.group(1).strip() == "false", (
+            f"{config.name}: the backend webServer entry must set reuseExistingServer: false "
+            "(#3316) - a reused backend is one whose data dir this run did not choose"
+        )
