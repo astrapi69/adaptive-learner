@@ -35,6 +35,7 @@ import {
     canonicalErrorCorrection,
 } from "../../../../lib/exercises/payload/error-correction";
 import {isFreeTextCorrect} from "../../../../lib/exercises/grading/free-text-grading";
+import {submitOnEnter} from "../../../../hooks/lesson/interaction/enterKeyGuards";
 import type {ContentLessonExercise} from "../../../../storage/types";
 import AnswerCelebration from "../../feedback/AnswerCelebration";
 import ExerciseAnswerToggle, {
@@ -340,9 +341,10 @@ function ErrorCorrectionMyAnswer({
                 onChange={(changeEvent) =>
                     onTypeCorrection(changeEvent.target.value)
                 }
-                onKeyDown={(keyEvent) => {
-                    if (keyEvent.key === "Enter" && canCheck) onSubmit();
-                }}
+                onKeyDown={(keyEvent) => submitOnEnter(keyEvent, canCheck, onSubmit)}
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
                 aria-label={t(
                     "lesson.exercise.al_error_correction.input_label",
                     "Correction",

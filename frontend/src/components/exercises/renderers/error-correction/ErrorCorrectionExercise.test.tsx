@@ -76,6 +76,55 @@ describe("ErrorCorrectionExercise: checkability gate", () => {
     });
 });
 
+/**
+ * #3357 - the correction input submits on Enter itself. It must claim the
+ * keystroke (``preventDefault``), or the lesson's window-level Enter shortcut
+ * acts on the same key press a second time: on the device the step was
+ * already checked by then, so it advanced past the wrong-answer feedback.
+ */
+describe("ErrorCorrectionExercise: Enter on the correction input (#3357)", () => {
+    function enterSeenByWindow(onComplete: () => void, prepare: () => void): boolean[] {
+        const seen: boolean[] = [];
+        const listener = (event: KeyboardEvent) => {
+            if (event.key === "Enter") seen.push(event.defaultPrevented);
+        };
+        window.addEventListener("keydown", listener);
+        try {
+            render(<ErrorCorrectionExercise exercise={EXERCISE} onComplete={onComplete} />);
+            prepare();
+            fireEvent.keyDown(screen.getByTestId("error-correction-input"), {key: "Enter"});
+        } finally {
+            window.removeEventListener("keydown", listener);
+        }
+        return seen;
+    }
+
+    it("submits once and marks the keystroke as handled", () => {
+        const onComplete = vi.fn();
+        const seen = enterSeenByWindow(onComplete, () => {
+            pickToken(3);
+            typeCorrection("Xx");
+        });
+        expect(onComplete).toHaveBeenCalledTimes(1);
+        expect(seen).toEqual([true]);
+    });
+
+    it("claims Enter without submitting while the answer is incomplete", () => {
+        const onComplete = vi.fn();
+        const seen = enterSeenByWindow(onComplete, () => typeCorrection("dem"));
+        expect(onComplete).not.toHaveBeenCalled();
+        expect(seen).toEqual([true]);
+    });
+
+    it("keeps iOS from capitalizing or correcting the typed correction", () => {
+        render(<ErrorCorrectionExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        const input = screen.getByTestId("error-correction-input");
+        expect(input).toHaveAttribute("autocapitalize", "off");
+        expect(input).toHaveAttribute("autocorrect", "off");
+        expect(input).toHaveAttribute("spellcheck", "false");
+    });
+});
+
 describe("ErrorCorrectionExercise: submit lifecycle", () => {
     it("grades right pick + canonical correction as correct with SRS attempt + raw_answer", () => {
         const onComplete = vi.fn();
