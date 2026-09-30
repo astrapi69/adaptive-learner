@@ -755,6 +755,8 @@ settings:
   lesson_auto_advance_description: "Tras una respuesta correcta, pasa automáticamente al siguiente ejercicio. Una respuesta incorrecta siempre espera para que puedas revisar la solución."
   ask_ai_visible: "Mostrar botón 'Preguntar a la IA'"
   ask_ai_visible_description: "Muestra el botón 'Preguntar a la IA' bajo la teoría y los ejercicios. Visible de forma predeterminada; el botón sigue necesitando tu propia clave de IA (BYOK) para responder."
+  keep_screen_on: "Mantener la pantalla encendida en las lecciones"
+  keep_screen_on_description: "Mientras una lección está abierta, la pantalla no se apaga, tampoco mientras lees sin tocarla. En el resumen de la lección puede volver a apagarse. En el iPhone requiere iOS 16.4 o posterior, como app en la pantalla de inicio iOS 18.4 o posterior."
   button_tooltips: "Mostrar descripciones de botones"
   button_tooltips_description: "Muestra una descripción al pasar el cursor sobre los botones de iconos. Las etiquetas para lectores de pantalla siguen activas igualmente."
   developer_mode: Modo Desarrollador
@@ -978,9 +980,9 @@ settings:
     label: "Corrección como vista aparte"
     desc: "Tras comprobar, 'Mis respuestas' muestra tus parejas tal como las formaste, sin evaluación; la evaluación y las parejas correctas están en 'Corrección'. Desactivado: la pareja correcta aparece justo debajo de cada error en 'Mis respuestas'."
   paused_retention:
-    title: Retención de lecciones pausadas
-    hint: "Las lecciones pausadas más antiguas que este período se abandonan automáticamente. Se conservan hasta 10 lecciones pausadas independientemente de su antigüedad."
-    label: Conservar lecciones pausadas por
+    title: "Lecciones pausadas en el Panel"
+    hint: "La tarjeta de lecciones pausadas del Panel solo muestra lecciones hasta esta antigüedad. Una lección más antigua solo desaparece de la tarjeta: no se abandona nada y conserva su posición y sus respuestas."
+    label: "Ocultar lecciones pausadas con más de"
     7_days: "7 días"
     14_days: "14 días"
     30_days: "30 días"
