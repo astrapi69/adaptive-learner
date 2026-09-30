@@ -364,7 +364,7 @@ export default function LessonPage() {
 
         {/* #3364 — without a learner profile nothing here is saved; say so
             up front instead of only on the summary's disabled button. */}
-        {!learnerUserId && <LessonNoProfileNotice />}
+        <LessonNoProfileNotice userId={learnerUserId} />
 
         {/* #2844 — one-time playful-mode discovery hint at the lesson start;
             the component gates itself on the pref + dismissal flags. */}

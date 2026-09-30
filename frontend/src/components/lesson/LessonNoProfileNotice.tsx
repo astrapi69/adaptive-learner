@@ -6,8 +6,11 @@
  * "mark complete" button. The owner decision on #3364: tell the learner up
  * front and link to creating a profile; never create one automatically.
  *
+ * Renders nothing when ``userId`` is set, so the lesson page passes the id
+ * instead of branching itself (keeps LessonPage under the complexity gate).
+ *
  * @example
- * {!userId && <LessonNoProfileNotice />}
+ * <LessonNoProfileNotice userId={learnerUserId} />
  */
 
 import {UserPlus} from "lucide-react";
@@ -15,8 +18,14 @@ import {Link} from "react-router";
 
 import {useI18n} from "../../hooks/ui/useI18n";
 
-export default function LessonNoProfileNotice() {
+export interface LessonNoProfileNoticeProps {
+    /** The learner id; the notice shows only when it is missing. */
+    userId: string | null;
+}
+
+export default function LessonNoProfileNotice({userId}: LessonNoProfileNoticeProps) {
     const {t} = useI18n();
+    if (userId) return null;
     return (
         <div
             role="status"
