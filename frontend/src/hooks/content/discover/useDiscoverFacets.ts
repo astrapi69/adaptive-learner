@@ -59,7 +59,7 @@ export function useDiscoverFacets({
 
   // Source-language facet (#1343 / #1699): the instruction languages actually
   // present, each with its set count, plus an explicit "All languages".
-  // Rendered as an ALWAYS-VISIBLE chip — never hidden behind the collapsible
+  // Rendered as an ALWAYS-VISIBLE chip, never hidden behind the collapsible
   // filter panel, so the learner always sees THAT the list is filtered and
   // WHAT to (never silently). Reuses the FilterMenuButton pattern the Content
   // Browser uses for its Status/Source filters.

@@ -126,7 +126,7 @@ export function useSetDeletion({ setSets }: UseSetDeletionDeps) {
     }
   };
 
-  // Phase 59C — confirm-delete a "My Lessons" set.
+  // Phase 59C - confirm-delete a "My Lessons" set.
   const handleDeleteUserSet = async () => {
     if (!deleteTarget) return;
     setDeleting(true);

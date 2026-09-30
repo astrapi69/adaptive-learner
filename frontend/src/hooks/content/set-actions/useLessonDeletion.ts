@@ -165,7 +165,7 @@ export function useLessonDeletion({ setSets }: UseLessonDeletionDeps) {
         return;
       }
       if (removal.emptied) {
-        // The selection covered every lesson — remove the whole set.
+        // The selection covered every lesson - remove the whole set.
         await removeEmptiedSet(entry);
       } else {
         // One atomic re-save without the whole selection (saveUserSet purges +

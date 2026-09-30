@@ -44,7 +44,7 @@ interface UseSetDownloadDeps {
 interface UpdateGuardState {
   entry: ContentSetEntry;
   impact: UpdateImpact;
-  /** #2308 — the PROPOSED re-keying derived from the same peek. The plan is
+  /** #2308 - the PROPOSED re-keying derived from the same peek. The plan is
    *  an inference, so it is carried into the dialog and applied only on the
    *  learner's explicit confirmation, never here. */
   plan: SetUpdatePlan;
@@ -93,7 +93,7 @@ export function useSetDownload({ setSets, setPerSetState }: UseSetDownloadDeps) 
       assessment = null;
     }
     if (assessment?.impact.breaking) {
-      // #2308 — planning happens only on this manual path; the nightly sync
+      // #2308 - planning happens only on this manual path; the nightly sync
       // never computes it, so an inference can never be applied while nobody
       // is watching.
       const plan = await planCarryOver(entry, assessment);
