@@ -11,10 +11,13 @@ import {MemoryRouter, Route, Routes} from "react-router";
 import {beforeEach, describe, expect, it} from "vitest";
 
 import SummaryTicketReward from "./SummaryTicketReward";
-import {readTicketState} from "../../../lib/arcade/ticket-store";
+import {awardTickets, readTicketState} from "../../../lib/arcade/ticket-store";
 import {setPlayfulArcade} from "../../../lib/learning/playful/playfulArcadePref";
 import {setPlayfulMode} from "../../../lib/learning/playful/playfulModePref";
-import {setPlayfulTickets} from "../../../lib/learning/playful/playfulTicketsPref";
+import {
+    readTicketCap,
+    setPlayfulTickets,
+} from "../../../lib/learning/playful/playfulTicketsPref";
 
 const USER = "u1";
 
@@ -119,20 +122,45 @@ describe("SummaryTicketReward", () => {
         expect(readTicketState(USER).tickets).toBe(2);
     });
 
-    it("an imperfect run without hearts earns nothing", () => {
+    it("an imperfect run without hearts earns nothing and says which rule it missed (#3216)", () => {
         renderReward({scoreCorrect: 9});
         expect(
             screen.queryByTestId("summary-ticket-reward"),
         ).not.toBeInTheDocument();
         expect(readTicketState(USER).tickets).toBe(0);
+        expect(screen.getByTestId("summary-ticket-none")).toHaveTextContent(
+            /without mistakes|ohne Fehler/i,
+        );
     });
 
-    it("revisiting an already-completed lesson awards nothing", () => {
+    it("revisiting an already-completed lesson awards nothing and says so (#3216)", () => {
         renderReward({alreadyCompleted: true});
         expect(
             screen.queryByTestId("summary-ticket-reward"),
         ).not.toBeInTheDocument();
         expect(readTicketState(USER).tickets).toBe(0);
+        expect(screen.getByTestId("summary-ticket-none")).toHaveTextContent(
+            /already completed|schon abgeschlossen/i,
+        );
+    });
+
+    it("a perfect run at the ticket cap banks nothing and names the maximum (#3216)", () => {
+        const cap = readTicketCap();
+        awardTickets(USER, cap, cap);
+        renderReward();
+        expect(
+            screen.queryByTestId("summary-ticket-reward"),
+        ).not.toBeInTheDocument();
+        expect(readTicketState(USER).tickets).toBe(cap);
+        expect(screen.getByTestId("summary-ticket-none")).toHaveTextContent(/maximum/i);
+        expect(screen.getByTestId("summary-ticket-none")).toHaveTextContent(String(cap));
+    });
+
+    it("the switches off show neither the banner nor a reason line (#3216)", () => {
+        setPlayfulArcade(false);
+        renderReward({scoreCorrect: 9});
+        expect(screen.queryByTestId("summary-ticket-none")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("summary-ticket-reward")).not.toBeInTheDocument();
     });
 
     it("streak milestones bank their tickets alongside the run", () => {

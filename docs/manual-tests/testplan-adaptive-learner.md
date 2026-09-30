@@ -831,8 +831,9 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0211 Spielmodus an: auf dem Dashboard erscheint die Arcade-Karte;
       "Zur Arcade" öffnet die Spieleliste. Arcade-Schalter aus ODER
       Spielmodus aus: die Karte verschwindet komplett; ein direkter
-      Aufruf von /arcade zeigt einen freundlichen Hinweis mit Link in
-      die Einstellungen
+      Aufruf von /arcade zeigt einen Hinweis, der den ausgeschalteten
+      Schalter nennt (Spielmodus aus, oder Spielmodus an und
+      Arcade-Schalter aus), mit Link in die Einstellungen (#3216)
 - [ ] TC-0212 Lern-Memory (frei): Set-Auswahl zeigt nur heruntergeladene
       Sets und ist mit dem zuletzt gelernten Set vorbelegt (#2899),
       nicht mit dem ersten der Liste; ohne Lernfortschritt bleibt das
@@ -947,6 +948,13 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0242 Wiederbesuch der Zusammenfassung einer bereits abgeschlossenen
       Lektion: KEIN neues Ticket (kein Farmen); "Nochmal üben" mit
       neuem perfekten Durchlauf verdient regulär
+- [ ] TC-0913 Ticket- und Arcade-Schalter an, Lektion mit einem Fehler: statt des
+      Banners steht in der Zusammenfassung die Zeile "Diesmal kein
+      Ticket" mit der Regel (ohne Fehler oder alle Herzen); der
+      Wiederbesuch einer abgeschlossenen Lektion nennt "schon
+      abgeschlossen", ein volles Guthaben nennt das Maximum; mit
+      ausgeschaltetem Ticket- oder Arcade-Schalter erscheint keine
+      solche Zeile (#3216)
 - [ ] TC-0243 Korrektur-Runde und Fehler-Wiederholen vergeben keine Tickets;
       eine nachträglich korrigierte Lektion wird dadurch nicht
       "voll bepunktet"
