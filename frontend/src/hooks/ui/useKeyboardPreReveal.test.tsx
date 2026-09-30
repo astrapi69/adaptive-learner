@@ -48,7 +48,10 @@ function makeClampingScroller(maxScroll: number): HTMLDivElement {
     Object.defineProperty(scroller, "scrollTop", {
         get: () => position,
         set: (value: number) => {
-            const max = contentHeight - scroller.clientHeight;
+            // Bottom padding extends the scrollable content, as it does in a
+            // real scroller (#3173 headroom).
+            const padding = parseInt(scroller.style.paddingBottom || "0", 10);
+            const max = contentHeight + padding - scroller.clientHeight;
             position = Math.max(0, Math.min(value, max));
         },
     });
@@ -246,6 +249,55 @@ describe("useKeyboardPreReveal (#3002)", () => {
         focusOut(field, null);
         openKeyboard(scroller, 420);
         expect(scroller.scrollTop).toBe(61); // no late scroll
+    });
+
+    it("pads a short page by exactly the shortfall while the keyboard is open (#3173)", () => {
+        // A three-step page: even with the keyboard open the content is too
+        // short for the retry to reach the safe band. Field at 900 on a
+        // 961 px page; after the keyboard (viewport 420) the room is 541 px,
+        // the target is 900 - 140 = 760: 219 px short.
+        render(<Harness />);
+        const scroller = makeClampingScroller(61);
+        const field = placeField(scroller, 900);
+        focusIn(field);
+        expect(scroller.style.paddingBottom).toBe(""); // never at focusin
+        openKeyboard(scroller, 420);
+        expect(scroller.style.paddingBottom).toBe("219px");
+        expect(scroller.scrollTop).toBe(760);
+    });
+
+    it("adds no headroom when the keyboard already gave enough room (#3173)", () => {
+        render(<Harness />);
+        const scroller = makeClampingScroller(61);
+        const field = placeField(scroller, 660);
+        focusIn(field);
+        openKeyboard(scroller, 420);
+        expect(scroller.scrollTop).toBe(520);
+        expect(scroller.style.paddingBottom).toBe("");
+    });
+
+    it("drops the headroom the moment the keyboard closes (#3173, the #3017 rule)", () => {
+        render(<Harness />);
+        const scroller = makeClampingScroller(61);
+        const field = placeField(scroller, 900);
+        focusIn(field);
+        openKeyboard(scroller, 420);
+        expect(scroller.style.paddingBottom).toBe("219px");
+        // The keyboard goes away while the field keeps focus (Safari's
+        // "Done" bar): the viewport grows back to its focus-time height.
+        openKeyboard(scroller, VIEWPORT_HEIGHT);
+        expect(scroller.style.paddingBottom).toBe("");
+    });
+
+    it("drops the headroom when focus leaves the keyboard (#3173)", () => {
+        render(<Harness />);
+        const scroller = makeClampingScroller(61);
+        const field = placeField(scroller, 900);
+        focusIn(field);
+        openKeyboard(scroller, 420);
+        expect(scroller.style.paddingBottom).toBe("219px");
+        focusOut(field, null);
+        expect(scroller.style.paddingBottom).toBe("");
     });
 
     it("ignores viewport churn that is not a keyboard (#3019)", () => {

@@ -58,6 +58,14 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Result: Vier Schritte umgestellt (der Kartenansicht-Schalter des Lernpfads rendert in jedem Zustand der persönlichen Ansicht, also ebenfalls laut); das Network-Idle-Wartelimit bleibt die einzige `.catch(() => {})`-Stelle, und der Pin-Test zählt genau sie auf. 16 Tests grün, `node --check` sauber. Echter Lauf des Walkers gegen das Image: nur im CI (publish-image dry run), hier nicht möglich.
 - Commit: siehe PR.
 
+## 8. #3173 Variante 3: Platz schaffen auf kurzen Seiten, solange die Tastatur offen ist
+
+- Original prompt: wie oben (Empfehlung: Variante 3 zuerst, klein und messbar).
+- Optimized prompt: "`useKeyboardPreReveal`: wenn der späte Retry bei offener Tastatur weiter geklemmt ist (applied < delta), dem Scroller `padding-bottom` in Höhe des Fehlbetrags geben und erneut enthüllen; Padding nie beim Fokus (#3015/#3017), sofort weg, wenn der Viewport zurückwächst oder der Fokus die Tastatur verlässt; Tests mit dem bestehenden Clamping-Stub, dessen Maximum das Padding mitzählt."
+- Goal: Ein Feld am Ende einer kurzen Seite liegt nicht mehr hinter der Tastatur, ohne die sichtbare Leerfläche von #3017.
+- Result: Die #3017-Kandidatin 1 umgesetzt: Headroom nur, wenn die Tastatur nachweislich offen ist (Schrumpfung gegenüber der Fokus-Höhe über der Schwelle), exakt der Fehlbetrag, Entfernung beim Zurückwachsen und beim Fokusverlust, Log-Entscheidung `prereveal-pad` für die Sonde. Vier neue Tests (219 px Fehlbetrag auf einer 961-px-Seite, kein Padding bei ausreichend Raum, Abbau beim Schliessen, Abbau beim Fokusverlust), 29 grün, tsc und eslint sauber. Gerätemessung mit der #1569-Sonde bleibt beim Owner: ohne iPhone nicht verifizierbar, darum als eigene PR mit diesem Vorbehalt.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.
