@@ -188,10 +188,18 @@ export default function Navigation() {
       )}
       {/* Brand grows + centres on mobile (between the hamburger and
                 the right-hand cluster), reverts to left-aligned and
-                natural width from md up. */}
+                natural width from md up. #3339: from md up it is also
+                the one item that yields when the single-row bar runs
+                out of room (`md:flex-initial` + the name's
+                `md:truncate`); the status badges beside it never
+                shrink, so a crowded bar shortens the brand word instead
+                of squeezing a badge to a sliver. `md:min-w-9` (the
+                28px logo plus the space-2 gap) keeps the logo whole
+                when the word is gone. With room to spare nothing
+                changes. */}
       <NavLink
         to="/dashboard"
-        className="nav-brand flex-1 justify-center md:flex-none md:justify-start"
+        className="nav-brand flex-1 justify-center md:flex-initial md:min-w-9 md:justify-start"
         // #622 — the brand word (`.nav-brand-name`) is `display:none` in
         // the lesson-compact nav, which left the brand link with only the
         // decorative (aria-hidden, empty-alt) logo and no accessible name
@@ -212,7 +220,7 @@ export default function Navigation() {
           // flex-squeezed link squeeze its image).
           className="shrink-0"
         />
-        <span className="nav-brand-name">
+        <span className="nav-brand-name md:truncate">
           {t("app.name", "Adaptive Learner")}
         </span>
       </NavLink>

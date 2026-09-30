@@ -2240,8 +2240,10 @@ each card row (`CardImageField`).
 - [ ] TC-0492 When the badges no longer fit beside the menu button and the logo
       they wrap right-aligned onto a second line; nothing is cut off and
       the page does not scroll sideways
-- [ ] TC-0493 Tablet and desktop: the header stays a single line with the full
-      badge text
+- [ ] TC-0493 Tablet and desktop: the header stays a single line, also at
+      1280 px with reviews due (#3339): both badge icons at full size, the
+      XP badge on two lines ("Level 2" / "100 XP"). Below 1536 px the
+      badges show only the number, from 1536 px the full text
 
 ### TS-0065 Step change on a phone: anchor at the top, footer at the bottom (#3126)
 - [ ] TC-0494 iPhone (Safari or PWA): open a lesson with a long theory step,

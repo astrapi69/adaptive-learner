@@ -95,8 +95,8 @@ describe("NavContentUpdatesBadge", () => {
     });
 });
 
-describe("NavContentUpdatesBadge: count-only on phones (#3123)", () => {
-    it("renders the count in its own span and hides only the word below sm", async () => {
+describe("NavContentUpdatesBadge: count-only below 2xl (#3123, #3339)", () => {
+    it("renders the count in its own span and hides only the word below 2xl", async () => {
         getContentUpdateCountMock.mockResolvedValue(12);
         render(
             <MemoryRouter>
@@ -107,7 +107,9 @@ describe("NavContentUpdatesBadge: count-only on phones (#3123)", () => {
         expect(
             screen.getByTestId("nav-content-updates-badge-count"),
         ).toHaveTextContent("12");
-        const hidden = [...badge.querySelectorAll("span.max-sm\\:hidden")];
+        // #3339 - never flex-shrunk in a crowded bar, word hidden below 2xl.
+        expect(badge.className).toContain("shrink-0");
+        const hidden = [...badge.querySelectorAll("span.max-2xl\\:hidden")];
         expect(hidden.map((el) => el.textContent).join("")).toBe(" updates");
         expect(badge.getAttribute("aria-label")).toContain("12 updates");
         expect(badge).toHaveTextContent("12 updates");

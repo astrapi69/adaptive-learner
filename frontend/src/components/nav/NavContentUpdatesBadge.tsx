@@ -58,11 +58,13 @@ export default function NavContentUpdatesBadge() {
   const label = template.replace("{n}", String(count));
   // #3123 - phones show only the count next to the icon (see
   // NavReviewsBadge); the full label stays in the accessible name.
+  // #3339 - count-only below 2xl and never flex-shrunk, like the
+  // due-reviews badge beside it.
   const [wordBefore, wordAfter] = splitAroundCount(template);
   return (
     <NavLink
       to="/content?tab=my"
-      className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/15 px-2 py-0.5 text-xs font-medium text-accent"
+      className="inline-flex shrink-0 items-center gap-1 rounded-full border border-accent/30 bg-accent/15 px-2 py-0.5 text-xs font-medium text-accent"
       data-testid="nav-content-updates-badge"
       title={t("content.updates_badge_tooltip", "Content updates available")}
       // WCAG 2.5.3 (matches NavReviewsBadge): the accessible name is
@@ -70,9 +72,9 @@ export default function NavContentUpdatesBadge() {
       aria-label={`${label}, ${t("content.updates_badge_action", "view content")}`}
     >
       <RefreshCw size={12} aria-hidden="true" />
-      <span className="max-sm:hidden">{wordBefore}</span>
+      <span className="max-2xl:hidden">{wordBefore}</span>
       <span data-testid="nav-content-updates-badge-count">{count}</span>
-      <span className="max-sm:hidden">{wordAfter}</span>
+      <span className="max-2xl:hidden">{wordAfter}</span>
     </NavLink>
   );
 }

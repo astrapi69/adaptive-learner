@@ -70,7 +70,8 @@ export function NavThemeToggle({
       variant="ghost"
       size="icon"
       type="button"
-      className="nav-theme-toggle max-sm:ml-0"
+      // #3339 - `shrink-0`: a crowded bar squeezed the round toggle.
+      className="nav-theme-toggle max-sm:ml-0 shrink-0"
       data-testid="nav-theme-toggle"
       onClick={onToggle}
       aria-label={label}
