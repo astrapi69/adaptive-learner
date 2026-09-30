@@ -267,7 +267,7 @@ export default function SetDeepLink() {
 
         {resolution === "found" && entry && (
           <div data-testid="set-deep-link-found">
-            <h1 className="m-0 text-xl font-semibold" data-testid="set-deep-link-title">
+            <h1 className="m-0 wrap-anywhere text-xl font-semibold" data-testid="set-deep-link-title">
               {entry.title}
             </h1>
             {entry.title_native && (

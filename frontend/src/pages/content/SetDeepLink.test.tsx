@@ -136,6 +136,8 @@ describe("SetDeepLink (#892)", () => {
 
     await screen.findByTestId("set-deep-link-found");
     expect(screen.getByTestId("set-deep-link-title")).toHaveTextContent("French A1");
+    // #3406 - a set title can hold one long word; it breaks instead of widening the page.
+    expect(screen.getByTestId("set-deep-link-title")).toHaveClass("wrap-anywhere");
     expect(screen.getByTestId("set-deep-link-start")).toHaveTextContent("Start learning");
 
     fireEvent.click(screen.getByTestId("set-deep-link-start"));
