@@ -16,14 +16,16 @@ import {defineConfig} from "@playwright/test";
  * (Fernet.generate_key().decode() on a known seed) and lives
  * only in the spawned uvicorn process.
  *
- * Ports default to the project-wide non-standard pair (backend 18001,
- * frontend 15174) so Playwright coexists with anything already running
- * on the workstation. Override via ADAPTIVE_LEARNER_PORT /
- * ADAPTIVE_LEARNER_FRONTEND_PORT env vars.
+ * Ports default to a pair of their own (backend 18021, frontend 15194),
+ * deliberately NOT the ``make dev`` pair (18001 / 15174): the smoke specs
+ * call ``POST /api/reset``, and a run that reused the developer's running
+ * backend wiped the real database under ~/.local/share (#3316). Override
+ * via ADAPTIVE_LEARNER_PORT / ADAPTIVE_LEARNER_FRONTEND_PORT env vars,
+ * never to the dev pair while ``make dev`` is up.
  */
 
-const BACKEND_PORT = Number(process.env.ADAPTIVE_LEARNER_PORT) || 18001;
-const FRONTEND_PORT = Number(process.env.ADAPTIVE_LEARNER_FRONTEND_PORT) || 15174;
+const BACKEND_PORT = Number(process.env.ADAPTIVE_LEARNER_PORT) || 18021;
+const FRONTEND_PORT = Number(process.env.ADAPTIVE_LEARNER_FRONTEND_PORT) || 15194;
 
 // Test-only data dir. Each E2E run wipes + recreates it so
 // fixtures are deterministic.
@@ -68,8 +70,8 @@ export default defineConfig({
     retries: process.env.CI ? 1 : 0,
     // CI headroom: the smoke auto-starts uvicorn + the vite DEV server inside
     // the Playwright container, whose cold first-load (on-the-fly transpile)
-    // can push a test past 30s under container load (#1254). Local runs reuse
-    // an already-running dev server, so 30s stays the bar there.
+    // can push a test past 30s under container load (#1254). Local runs
+    // start their own servers too (#3316) but on an idle machine 30s holds.
     timeout: process.env.CI ? 60_000 : 30_000,
     use: {
         baseURL: `http://localhost:${FRONTEND_PORT}`,
@@ -82,16 +84,21 @@ export default defineConfig({
                 `rm -rf ${E2E_DATA_DIR} && mkdir -p ${E2E_DATA_DIR} && ` +
                 `cd ../backend && ${BACKEND_ENV} poetry run uvicorn app.main:app --port ${BACKEND_PORT}`,
             url: `http://localhost:${BACKEND_PORT}/api/health`,
-            reuseExistingServer: !process.env.CI,
+            // #3316: never reuse a backend this run did not start - only a
+            // backend started here runs against the throwaway E2E_DATA_DIR;
+            // any other one answering on the port has a database this run
+            // must not reset. Costs a cold uvicorn start locally (~10 s).
+            reuseExistingServer: false,
             // Startup headroom for a cold uvicorn in the contended CI
-            // container (#1254); only applies when Playwright starts the
-            // server (CI), not when a local dev server is reused.
+            // container (#1254).
             timeout: 120_000,
         },
         {
             command: `cd ../frontend && ADAPTIVE_LEARNER_PORT=${BACKEND_PORT} ADAPTIVE_LEARNER_FRONTEND_PORT=${FRONTEND_PORT} npm run dev`,
             url: `http://localhost:${FRONTEND_PORT}`,
-            reuseExistingServer: !process.env.CI,
+            // #3316: a reused dev server proxies to whichever backend port
+            // it was started with, so it must be this run's as well.
+            reuseExistingServer: false,
             // Startup headroom for a cold vite dev server in CI (#1254).
             timeout: 120_000,
         },

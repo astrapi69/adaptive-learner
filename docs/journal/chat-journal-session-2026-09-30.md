@@ -1,0 +1,15 @@
+# Chat-Journal 2026-09-30 (Runde 3)
+
+Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus der Ferne bearbeitbaren Issues nach Priorität, mit den am Rundenende vom Owner freigegebenen Empfehlungen (#3222 PR 5 klein halten, #3216 Punkt 2 als disabled-mit-Grund, #3237 Zähler in den Fuss, #3163 pt-BR, #3173 Variante 3, #3253 kein Pflicht-Check, #3151 heute, #3254 Option 1).
+
+## 1. #3316: der Smoke-Lauf kann das laufende Backend des Entwicklers nicht mehr zurücksetzen (06:40 bis 07:10)
+
+- Original prompt: "Gehe alle an, die aus der Ferne gemacht werden können, mit deinen Empfehlungen."
+- Optimized prompt: "`e2e/playwright.config.ts`: eigene Standard-Ports (nicht das `make dev`-Paar 18001/15174) und `reuseExistingServer: false` für beide Server; dasselbe für den Backend-Eintrag der Docs-Konfiguration; Pin in `backend/tests/test_e2e_path_isolation.py`: jede Konfiguration, die uvicorn startet, hat andere Standard-Ports als das Makefile und verwendet kein fremdes Backend wieder. Option 3 des Issues (`/api/reset` verweigert auf Produktionsverzeichnis) verworfen: der Endpunkt ist die Gefahrenzone in den Einstellungen, also eine echte Nutzerfunktion."
+- Goal: Ein lokaler Smoke-Lauf bei laufendem `make dev` trifft nie die echte Datenbank unter `~/.local/share`.
+- Result: RED zuerst (beide Pins rot: Port 18001 gleich Makefile, `reuseExistingServer: !process.env.CI`). Fix: Smoke-Ports 18021/15194, beide Einträge `reuseExistingServer: false` (Kosten: ein kalter uvicorn-Start lokal, etwa zehn Sekunden); Docs-Konfiguration behält 18011, ihr Backend-Eintrag ebenfalls `false`. Fünf Tests grün, beide Konfigurationen kompilieren (`--list`: 45 und 3 Tests). Die anderen sieben Konfigurationen starten kein Backend (vite preview), darum nicht betroffen.
+- Commit: siehe PR.
+
+## Fragen und Annahmen
+
+- #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.
