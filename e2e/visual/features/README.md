@@ -89,7 +89,7 @@ Baseline zu committen.
 | Lektions-Modi — Zeit | `lesson-modes/timed.png` | `lesson-modes/timed.mobile.png` | v2.1.0 |
 | Antwort-Umschalter — Meine Antwort | `answer-toggle/meine-antwort.png` | `answer-toggle/meine-antwort.mobile.png` | v2.1.0 |
 | Antwort-Umschalter — Auflösung | `answer-toggle/aufloesung.png` | `answer-toggle/aufloesung.mobile.png` | v2.1.0 |
-| GitHub-Export — Dialog | `github-export/share-dialog.png` | — (Desktop-Dialog) | v1.94.1 <!-- shot-pending: the setup returns false in the Dexie preview build (the button needs an own set and a GitHub token, neither is seeded); needs a seeding setup, #3182 --> |
+| GitHub-Export — Dialog | `github-export/share-dialog.png` | — (Desktop-Dialog) | v1.94.1 |
 | QR-Code — App teilen | `qr-code/share-app.png` | — (Desktop-Dialog) | v1.94.1 |
 | Zusammenfassungs-Sektionen — Settings-Unterbereich (#1411) | `summary-sections/settings.png` | `summary-sections/settings.mobile.png` | v2.1.0 |
 | Mascot-Farbvarianten — Settings-Unterbereich, Level-/Badge-/XP-Freischaltung (#2861) | `mascot-variants/settings.png` | `mascot-variants/settings.mobile.png` | v2.13.0 |
