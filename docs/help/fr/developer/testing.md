@@ -52,7 +52,7 @@ depuis la racine et échoue sur tous les tests DOM avec
 ## Tests E2E (Playwright)
 
 ```bash
-cd e2e && npx playwright test              # Suite complète (nécessite make dev)
+cd e2e && npx playwright test              # Suite complète (démarre ses propres serveurs)
 cd e2e && npx playwright test smoke/       # Tests smoke uniquement
 make test-dexie-smoke                      # Gate du mode Dexie (OBLIGATOIRE pour les releases)
 ```
