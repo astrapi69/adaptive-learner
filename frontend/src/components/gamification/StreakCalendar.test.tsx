@@ -35,4 +35,19 @@ describe("StreakCalendar", () => {
         expect(t2.getAttribute("data-tier")).toBe("2");
         expect(t4.getAttribute("data-tier")).toBe("4");
     });
+
+    it("opens scrolled to the newest week (#3400)", () => {
+        const scrollWidth = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "scrollWidth");
+        Object.defineProperty(HTMLElement.prototype, "scrollWidth", {configurable: true, get: () => 777});
+        try {
+            const entries = Array.from({length: 60}, (_, i) => ({
+                date: new Date(Date.UTC(2026, 0, 1 + i)).toISOString().slice(0, 10),
+                count: i % 3,
+            }));
+            render(<StreakCalendar entries={entries} />);
+            expect(screen.getByTestId("streak-calendar").scrollLeft).toBe(777);
+        } finally {
+            if (scrollWidth) Object.defineProperty(HTMLElement.prototype, "scrollWidth", scrollWidth);
+        }
+    });
 });
