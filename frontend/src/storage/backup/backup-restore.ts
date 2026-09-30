@@ -30,6 +30,7 @@ import {
     BACKUP_FORMAT,
     BACKUP_TABLES,
     RESTORE_ORDER,
+    SECRET_TABLES,
     type BackupTableSpec,
 } from "./backup-tables";
 
@@ -158,7 +159,12 @@ export async function restoreDexieBackup(
             perTable[table] = summary;
             continue;
         }
-        const summary = await restoreOneTable(db, table, records as RowDict[], spec, userId);
+        // #3367: a key row from a file never lands (a legacy Dexie file
+        // carries cleartext, an API file carries another install's
+        // ciphertext); each one counts as skipped.
+        const summary = SECRET_TABLES.has(table)
+            ? {...emptyTableSummary(), skipped: records.length}
+            : await restoreOneTable(db, table, records as RowDict[], spec, userId);
         perTable[table] = summary;
         totalInserted += summary.inserted;
         totalUpdated += summary.updated;

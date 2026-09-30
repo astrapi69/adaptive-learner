@@ -324,3 +324,26 @@ describe("Navigation: phone header keeps the menu button + logo (#3123)", () => 
         expect(cluster.contains(nav.querySelector(".nav-brand")!)).toBe(false);
     });
 });
+
+describe("Navigation: desktop bar keeps the badges whole (#3339)", () => {
+    // At 1280 px with a due-reviews badge the single-row desktop bar ran
+    // out of room and flexbox shrank every shrinkable item: both badge
+    // icons became slivers and the XP badge wrapped onto four lines. The
+    // contract (layout itself is measured by the FeatureShot
+    // ``nav-badges/dashboard``): the status items never shrink, and the
+    // brand word is the one item that yields (it truncates from md up).
+    it("keeps the theme toggle at full size and lets the brand word yield from md up", () => {
+        renderAt("/dashboard");
+        expect(screen.getByTestId("nav-theme-toggle").className).toContain("shrink-0");
+        const brand = screen.getByTestId("app-nav").querySelector<HTMLElement>(".nav-brand")!;
+        // The link may shrink down to the logo, never below. Not logo + gap:
+        // where the word is display:none (lesson-compact, short landscape)
+        // a gap-sized floor widened the link and moved every item after it.
+        expect(brand.className).toContain("md:min-w-7");
+        expect(brand.className).not.toContain("md:min-w-9");
+        expect(brand.className).toContain("md:flex-initial");
+        expect(brand.className).not.toContain("md:flex-none");
+        const brandName = brand.querySelector<HTMLElement>(".nav-brand-name")!;
+        expect(brandName.className).toContain("md:truncate");
+    });
+});
