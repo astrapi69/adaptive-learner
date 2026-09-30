@@ -68,11 +68,12 @@ export default defineConfig({
     fullyParallel: false,
     workers: 1,
     retries: process.env.CI ? 1 : 0,
-    // CI headroom: the smoke auto-starts uvicorn + the vite DEV server inside
-    // the Playwright container, whose cold first-load (on-the-fly transpile)
-    // can push a test past 30s under container load (#1254). Local runs
-    // start their own servers too (#3316) but on an idle machine 30s holds.
-    timeout: process.env.CI ? 60_000 : 30_000,
+    // Cold-start headroom: the smoke starts uvicorn + the vite DEV server
+    // itself, whose cold first-load (on-the-fly transpile) can push a test
+    // past 30s (#1254). Since #3316 a local run starts them cold as well; on
+    // the maintainer machine the first cold run failed one of 15 specs at
+    // 30s, so the same bar applies everywhere.
+    timeout: 60_000,
     use: {
         baseURL: `http://localhost:${FRONTEND_PORT}`,
         actionTimeout: 10_000,
@@ -94,7 +95,15 @@ export default defineConfig({
             timeout: 120_000,
         },
         {
-            command: `cd ../frontend && ADAPTIVE_LEARNER_PORT=${BACKEND_PORT} ADAPTIVE_LEARNER_FRONTEND_PORT=${FRONTEND_PORT} npm run dev`,
+            // VITE_API_PROXY_TARGET outranks ADAPTIVE_LEARNER_PORT in
+            // vite.config.ts, so it is pinned too: an exported value would
+            // otherwise route /api (and the specs' /api/reset) to another
+            // backend (#3316). BROWSER=none keeps vite's `open: true` from
+            // opening a tab on a local run; --strictPort fails instead of
+            // drifting to a free port.
+            command:
+                `cd ../frontend && ADAPTIVE_LEARNER_PORT=${BACKEND_PORT} ADAPTIVE_LEARNER_FRONTEND_PORT=${FRONTEND_PORT} ` +
+                `VITE_API_PROXY_TARGET=http://localhost:${BACKEND_PORT} BROWSER=none npm run dev -- --strictPort`,
             url: `http://localhost:${FRONTEND_PORT}`,
             // #3316: a reused dev server proxies to whichever backend port
             // it was started with, so it must be this run's as well.
