@@ -314,6 +314,9 @@ button {
     border: none;
   }
 }
+@layer base { /* #3373 - a flex-item SVG may shrink to 0: a wrapping label squeezed icons. */
+  svg.lucide { flex-shrink: 0; }
+}
 
 button:disabled {
   cursor: not-allowed;
