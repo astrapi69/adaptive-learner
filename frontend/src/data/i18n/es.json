@@ -3018,7 +3018,9 @@
       "list_failed": "No se pudieron cargar los sets de contenido.",
       "download_failed": "No se pudo descargar el set.",
       "update_all_failed": "{n} actualizaciones han fallado.",
-      "open_failed": "No se pudo abrir la lección."
+      "open_failed": "No se pudo abrir la lección.",
+      "export_failed": "No se pudo exportar el conjunto de lecciones.",
+      "share_check_failed": "No se pudo comprobar el conjunto para compartirlo."
     },
     "tree": {
       "i_speak": "Hablo",

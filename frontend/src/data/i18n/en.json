@@ -3018,7 +3018,9 @@
       "list_failed": "Could not load content sets.",
       "download_failed": "Could not download the set.",
       "update_all_failed": "{n} updates failed.",
-      "open_failed": "Could not open the lesson."
+      "open_failed": "Could not open the lesson.",
+      "export_failed": "Could not export the lesson set.",
+      "share_check_failed": "Could not check the set for sharing."
     },
     "tree": {
       "i_speak": "I speak",

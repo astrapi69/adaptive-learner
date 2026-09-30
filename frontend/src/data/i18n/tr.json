@@ -3018,7 +3018,9 @@
       "list_failed": "İçerik setleri yüklenemedi.",
       "download_failed": "Set indirilemedi.",
       "update_all_failed": "{n} güncelleme başarısız oldu.",
-      "open_failed": "Ders açılamadı."
+      "open_failed": "Ders açılamadı.",
+      "export_failed": "Ders seti dışa aktarılamadı.",
+      "share_check_failed": "Set paylaşım için kontrol edilemedi."
     },
     "tree": {
       "i_speak": "Konuştuğum dil",

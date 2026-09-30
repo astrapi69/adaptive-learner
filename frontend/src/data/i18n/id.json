@@ -3018,7 +3018,9 @@
       "list_failed": "Tidak dapat memuat set konten.",
       "download_failed": "Tidak dapat mengunduh set.",
       "update_all_failed": "{n} pembaruan gagal.",
-      "open_failed": "Tidak dapat membuka pelajaran."
+      "open_failed": "Tidak dapat membuka pelajaran.",
+      "export_failed": "Tidak dapat mengekspor set pelajaran.",
+      "share_check_failed": "Tidak dapat memeriksa set untuk dibagikan."
     },
     "tree": {
       "i_speak": "Saya berbicara",
