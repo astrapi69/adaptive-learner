@@ -2,6 +2,7 @@ import { QUALITY_MINIMUMS } from "learn-content-engine/rules";
 import { describe, expect, it } from "vitest";
 
 import type { ContentLesson } from "../../../storage/types";
+import { parseLesson } from "../engine";
 import {
   QUALITY,
   treePlacement,
@@ -503,6 +504,21 @@ describe("validateSetForSharing", () => {
 
   it("exposes the quality thresholds", () => {
     expect(QUALITY.minExercisesPerLesson).toBe(5);
+  });
+
+  // #3349 - a lesson without ``cards`` (alc-psychology
+  // psych-intro/vertiefung-*-fallanwendung) read the way Dexie mode reads
+  // it, in an A1 set: the check reports instead of throwing.
+  it("checks a lesson without cards read through parseLesson (#3349)", () => {
+    const { cards: _cards, ...cardless } = goodLesson();
+    const lesson = parseLesson(JSON.stringify(cardless), {
+      language: "fr",
+      target_language: "fr",
+      source_language: "de",
+      domain: "language",
+    });
+    const result = validateSetForSharing(META, [lesson]);
+    expect(result.issues.map((i) => i.code)).not.toContain("empty_card");
   });
 
   it("displays the numbers the engine checks against (#3345)", () => {

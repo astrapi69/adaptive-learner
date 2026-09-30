@@ -816,6 +816,20 @@ class TestLesson:
         assert lesson.target_language is None
         assert lesson.source_language is None
 
+    def test_cards_default_to_an_empty_list_when_omitted(self) -> None:
+        """API mode serves ``cards: []`` for a lesson without cards (#3349).
+
+        The schema does not require ``cards``; alc-psychology's
+        ``psych-intro/vertiefung-*-fallanwendung`` lessons ship without
+        them. The frontend's ``ContentLesson`` relies on the list being
+        present, and the Dexie read path fills it in the same way.
+        """
+        payload = lesson_to_dict(_minimal_lesson())
+        del payload["cards"]
+        revived = dict_to_lesson(payload)
+        assert revived.cards == []
+        assert lesson_to_dict(revived)["cards"] == []
+
     def test_language_pair_round_trip(self) -> None:
         # A standalone exported lesson can carry its own pair.
         payload = lesson_to_dict(_minimal_lesson())
