@@ -368,4 +368,8 @@
 # Einzug und Raender). Fundament-Reset wie der Button-Reset (#2631), mit
 # null Spezifitaet; der Guard styles/list-reset.test.ts deckt die
 # uebrigen Listen ueber Utilities an der Komponente ab, kein weiteres CSS.
-7505
+# 2026-09-30 (#3373): +3 Zeilen in 01-base.css - Base-Layer-Regel
+# svg.lucide { flex-shrink: 0 }: ein SVG als Flex-Item darf auf 0
+# schrumpfen, ein umbrechendes Label quetschte die Icons. Eine Regel
+# statt shrink-0 an 427 Icon-Stellen; Utilities gewinnen weiter.
+7508
