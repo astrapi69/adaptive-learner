@@ -511,13 +511,19 @@ Requires domain knowledge. Not automatable.
       an ugly wrap. The operating manual ("Select an item on the left …") and the "A → B"
       hint live BEHIND that button (collapsed on open; tap to expand/collapse);
       on expand the content wraps cleanly onto the next line at full width. The
-      progress counter ("2 / 5 paired") is at the TOP by the prompt (no longer at
-      the bottom next to "Check answers"), so it stays visible while pairing;
-      after checking it disappears and the score shows in the footer (#2445). The
+      progress counter ("2 / 5 paired") is at the TOP by the prompt and, while
+      pairing, mirrored in the sticky footer directly left of "Check" (#3237);
+      after checking both disappear and the score shows in the footer (#2445). The
       second column is reachable without long scrolling. A11y: the button is keyboard-operable and
       the content stays reachable for screen readers even when collapsed (native
       <details>). iOS PWA/Standalone: repeat the check on the web-app icon added
       to the Home Screen.
+- [ ] TC-0915 Matching, footer counter mirror (#3237): on a phone pair two tiles so
+      the columns push the top counter out of view; the sticky footer shows
+      "2 / 5 paired" directly left of "Check" and counts along with every
+      pair; it is absent on theory steps, after "Check" and on the summary,
+      and the same in the review / shuffle / endless runners
+
 - [ ] TC-0132 Matching: long words wrap inside the tile (#3174): open a matching
       exercise whose word is wider than the tile on a NARROW device (iPhone,
       375px), e.g. alc-psychology "Sprachebenen zuordnen" with "kleinste

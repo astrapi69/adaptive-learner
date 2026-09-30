@@ -48,6 +48,7 @@ import {
     type ShortcutDefinition,
 } from "../../../../shared/hooks/useKeyboardShortcuts";
 import type {ContentLessonExercise} from "../../../../storage/types";
+import {useFooterStatus} from "../../../lesson/runner/footer-status";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -542,6 +543,17 @@ function MatchingExercise(
 
     const isAllCorrect = _isAllCorrect(result, pairs.length);
     const gradedColumns = _gradedColumns(submitted, showGrading, isAllCorrect);
+
+    // #3237 — mirror the running counter into the sticky footer next to
+    // Check: on a phone the tile columns push the top counter out of view,
+    // and the footer is where the learner looks for "am I done?".
+    useFooterStatus(
+        !submitted && pairs.length > 0
+            ? t("lesson.exercise.matching.counter", "{matched} / {total} paired")
+                  .replace("{matched}", String(matches.size))
+                  .replace("{total}", String(pairs.length))
+            : null,
+    );
 
     if (pairs.length === 0) {
         return (

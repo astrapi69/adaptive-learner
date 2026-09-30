@@ -56,6 +56,7 @@ import LessonTensionChrome from "../../components/lesson/chrome/tension/LessonTe
 import LessonHeartsDialog from "../../components/lesson/dialogs/LessonHeartsDialog";
 import LessonStepView from "../../components/lesson/steps/LessonStepView";
 import LessonFooterNav from "../../components/lesson/chrome/LessonFooterNav";
+import { FooterStatusProvider } from "../../components/lesson/runner/footer-status";
 import LessonTtsMiniPlayerSlot from "../../components/lesson/tts/LessonTtsMiniPlayerSlot";
 import LessonStatusView, {
   resolveLessonStatusKind,
@@ -347,270 +348,272 @@ export default function LessonPage() {
       className="lesson-page flex flex-col min-h-full"
       data-testid="lesson-page"
     >
-      <LessonHeader
-        lesson={lesson}
-        setTitle={setTitle}
-        position={position}
-        prevHref={prevLessonHref}
-        nextHref={nextLessonHref}
-        setHref={setId ? `/content/set/${encodeURIComponent(setId)}` : null}
-      />
-
-      {/* #2319 — visible while test mode is active (preview build only). */}
-      <TestModeBanner />
-
-      {/* #2844 — one-time playful-mode discovery hint at the lesson start;
-          the component gates itself on the pref + dismissal flags. */}
-      {!isSummary && currentStepIndex === 0 && <PlayfulModeHint />}
-
-      {/* #1642 — the pause control moved into the footer; the exit dialog it
-          opens is lifted here (portal, controlled by the lesson's exitOpen
-          state) so both the header and the footer stay presentational. */}
-      <LessonExitDialog
-        open={exitOpen}
-        onContinue={() => setExitOpen(false)}
-        onPause={() => void handlePauseFromDialog()}
-        onAbandon={() => void handleAbandonFromDialog()}
-      />
-
-      {/* #1648 — the summary's favorite lives in the labelled
-          SummaryFavorite row inside LessonSummary; the old isolated
-          top-right star here was a duplicate of the same toggle and was
-          removed. During the active lesson the favorite lives in the
-          collapsible options group (#1625). */}
-
-      {/* Phase 63C — resume prompt overlays the step view.
-                The user must choose before they can interact with
-                the lesson content. */}
-      <LessonResumeDialog
-        open={showResumePrompt}
-        lessonTitle={lesson.title}
-        onResume={() => void handleResume()}
-        onStartOver={() => void handleStartOver()}
-      />
-
-      {/* #2878 — out of hearts: the run ends with a friendly forced
-          choice. Retry restarts the run (recorded results stay) and
-          refills the hearts; exit returns to the lesson overview. */}
-      <LessonHeartsDialog
-        open={tension.depleted}
-        onRetry={() => {
-          tension.resetHearts();
-          void handleStartOver();
-        }}
-        onExit={() => navigate(exitRouteForLesson(setId))}
-      />
-
-      {/* #959 — scroll anchor: a step change scrolls this to the top of
-          the viewport, lifting the header off-screen so the progress bar +
-          task land in view. scroll-mt leaves a little gap under the
-          (auto-hiding) nav. */}
-      <div ref={stepScrollRef} aria-hidden="true" className="scroll-mt-4" />
-
-      {/* #959 — keep "Step n of m" visible while reading: the row sticks to
-          the top of the scroll container (all viewports). The lesson nav
-          auto-hides on scroll-down, so the row fills the space it vacates;
-          z-10 stays below the nav (z-50) when the nav is shown. The
-          bg-token backs the sticky row so scrolled content never bleeds
-          through the gaps around the button.
-
-          #1942 — the progress indicator and the collapsible options group
-          share ONE flex row: the bar grows to take the available width and
-          the "Options" button sits beside it (instead of stacking on its
-          own line below). ``flex-wrap`` + a bar min-width keeps it graceful
-          — on very narrow viewports (or once the options panel is expanded
-          and its body needs the room) the options block wraps onto its own
-          line. ``items-start`` pins the bar to the top so an expanded panel
-          can't drag it to the vertical centre. */}
-      <div
-        className="sticky top-0 z-10 flex flex-wrap items-start gap-2 bg-bg-primary py-3"
-        data-testid="lesson-progress-options-row"
-      >
-        {/* #2319 — the progress bar doubles as the hidden test-mode
-            activation target (six quick taps; inert unless the build opted
-            in). display:contents keeps the bar's flex sizing. */}
-        <TestModeActivationZone>
-          <LessonProgressBar
-            isSummary={isSummary}
-            currentStepIndex={currentStepIndex}
-            totalSteps={totalSteps}
-            playful={playful}
-            className="my-0 min-w-[8rem] flex-1"
-          />
-        </TestModeActivationZone>
-
-        {/* #2874 — the streak chip (game mode only): live run during the
-            lesson, the best run on the summary. */}
-        {playful && (
-          <LessonCombo combo={combo} showBest={isSummary} bonusXp={comboBonusXp} />
-        )}
-
-        {/* #2878 — the tension systems (both opt-in): the lives row and
-            the per-exercise countdown ring. Self-gating, hidden on the
-            summary. */}
-        <LessonTensionChrome tension={tension} />
-
-        {/* #2849 — the Lernfunke companion, playful mode only. Reacts to
-            the celebration bus (cheer/encourage/celebrate) and speaks one
-            praise phrase on lesson completion; grows on the summary. */}
-        <LessonMascot large={isSummary} />
-
-        {/* #1625 — the lesson's mode/display SETTINGS (favorite, mode
-            toggle, auto read-aloud) are bundled into one compact,
-            collapsible group (LessonOptionsBar) so they stop eating the
-            vertical space above the exercise on mobile. Default collapsed;
-            the group resets to collapsed per lesson and preserves the
-            choice across step changes. Renders nothing on the summary
-            screen. */}
-        <LessonOptionsBar
-          isSummary={isSummary}
-          className="shrink-0"
-          userId={learnerUserId ?? ""}
-          source={source}
-          setId={setId}
-          filename={filename}
-          title={lesson.title}
-          setTitle={setTitle ?? ""}
-          lessonMode={lessonMode}
-          onModeChange={setLessonMode}
-          modeLocked={isInProgress}
-          showReadAloud={modeConfig.showReadAloud}
+      <FooterStatusProvider>
+        <LessonHeader
           lesson={lesson}
-          tts={tts}
-          autoRead={autoRead}
-          toggleAutoRead={toggleAutoRead}
-          startContinuous={startContinuous}
-          isContinuous={isContinuous}
-          continuousAvailable={continuousAvailable}
+          setTitle={setTitle}
+          position={position}
+          prevHref={prevLessonHref}
+          nextHref={nextLessonHref}
+          setHref={setId ? `/content/set/${encodeURIComponent(setId)}` : null}
         />
-      </div>
 
-      {/* #1009 — timed-mode per-question countdown + time-up notice. */}
-      <LessonTimedStatus
-        lessonMode={lessonMode}
-        isSummary={isSummary}
-        isExerciseStep={isExerciseStep}
-        remainingSeconds={timed.remainingSeconds}
-        limitSeconds={timed.limitSeconds}
-        bonusSeconds={timed.bonusSeconds}
-        timedOut={timed.timedOut}
-      />
+        {/* #2319 — visible while test mode is active (preview build only). */}
+        <TestModeBanner />
 
-      <LessonModeProvider mode={lessonMode}>
-      {isSummary ? (
-        <>
-        <LessonSummaryScreen
-          lesson={played}
-          originalLesson={lesson}
-          progress={progress}
+        {/* #2844 — one-time playful-mode discovery hint at the lesson start;
+            the component gates itself on the pref + dismissal flags. */}
+        {!isSummary && currentStepIndex === 0 && <PlayfulModeHint />}
+
+        {/* #1642 — the pause control moved into the footer; the exit dialog it
+            opens is lifted here (portal, controlled by the lesson's exitOpen
+            state) so both the header and the footer stay presentational. */}
+        <LessonExitDialog
+          open={exitOpen}
+          onContinue={() => setExitOpen(false)}
+          onPause={() => void handlePauseFromDialog()}
+          onAbandon={() => void handleAbandonFromDialog()}
+        />
+
+        {/* #1648 — the summary's favorite lives in the labelled
+            SummaryFavorite row inside LessonSummary; the old isolated
+            top-right star here was a duplicate of the same toggle and was
+            removed. During the active lesson the favorite lives in the
+            collapsible options group (#1625). */}
+
+        {/* Phase 63C — resume prompt overlays the step view.
+                  The user must choose before they can interact with
+                  the lesson content. */}
+        <LessonResumeDialog
+          open={showResumePrompt}
+          lessonTitle={lesson.title}
+          onResume={() => void handleResume()}
+          onStartOver={() => void handleStartOver()}
+        />
+
+        {/* #2878 — out of hearts: the run ends with a friendly forced
+            choice. Retry restarts the run (recorded results stay) and
+            refills the hearts; exit returns to the lesson overview. */}
+        <LessonHeartsDialog
+          open={tension.depleted}
+          onRetry={() => {
+            tension.resetHearts();
+            void handleStartOver();
+          }}
+          onExit={() => navigate(exitRouteForLesson(setId))}
+        />
+
+        {/* #959 — scroll anchor: a step change scrolls this to the top of
+            the viewport, lifting the header off-screen so the progress bar +
+            task land in view. scroll-mt leaves a little gap under the
+            (auto-hiding) nav. */}
+        <div ref={stepScrollRef} aria-hidden="true" className="scroll-mt-4" />
+
+        {/* #959 — keep "Step n of m" visible while reading: the row sticks to
+            the top of the scroll container (all viewports). The lesson nav
+            auto-hides on scroll-down, so the row fills the space it vacates;
+            z-10 stays below the nav (z-50) when the nav is shown. The
+            bg-token backs the sticky row so scrolled content never bleeds
+            through the gaps around the button.
+
+            #1942 — the progress indicator and the collapsible options group
+            share ONE flex row: the bar grows to take the available width and
+            the "Options" button sits beside it (instead of stacking on its
+            own line below). ``flex-wrap`` + a bar min-width keeps it graceful
+            — on very narrow viewports (or once the options panel is expanded
+            and its body needs the room) the options block wraps onto its own
+            line. ``items-start`` pins the bar to the top so an expanded panel
+            can't drag it to the vertical centre. */}
+        <div
+          className="sticky top-0 z-10 flex flex-wrap items-start gap-2 bg-bg-primary py-3"
+          data-testid="lesson-progress-options-row"
+        >
+          {/* #2319 — the progress bar doubles as the hidden test-mode
+              activation target (six quick taps; inert unless the build opted
+              in). display:contents keeps the bar's flex sizing. */}
+          <TestModeActivationZone>
+            <LessonProgressBar
+              isSummary={isSummary}
+              currentStepIndex={currentStepIndex}
+              totalSteps={totalSteps}
+              playful={playful}
+              className="my-0 min-w-[8rem] flex-1"
+            />
+          </TestModeActivationZone>
+
+          {/* #2874 — the streak chip (game mode only): live run during the
+              lesson, the best run on the summary. */}
+          {playful && (
+            <LessonCombo combo={combo} showBest={isSummary} bonusXp={comboBonusXp} />
+          )}
+
+          {/* #2878 — the tension systems (both opt-in): the lives row and
+              the per-exercise countdown ring. Self-gating, hidden on the
+              summary. */}
+          <LessonTensionChrome tension={tension} />
+
+          {/* #2849 — the Lernfunke companion, playful mode only. Reacts to
+              the celebration bus (cheer/encourage/celebrate) and speaks one
+              praise phrase on lesson completion; grows on the summary. */}
+          <LessonMascot large={isSummary} />
+
+          {/* #1625 — the lesson's mode/display SETTINGS (favorite, mode
+              toggle, auto read-aloud) are bundled into one compact,
+              collapsible group (LessonOptionsBar) so they stop eating the
+              vertical space above the exercise on mobile. Default collapsed;
+              the group resets to collapsed per lesson and preserves the
+              choice across step changes. Renders nothing on the summary
+              screen. */}
+          <LessonOptionsBar
+            isSummary={isSummary}
+            className="shrink-0"
+            userId={learnerUserId ?? ""}
+            source={source}
+            setId={setId}
+            filename={filename}
+            title={lesson.title}
+            setTitle={setTitle ?? ""}
+            lessonMode={lessonMode}
+            onModeChange={setLessonMode}
+            modeLocked={isInProgress}
+            showReadAloud={modeConfig.showReadAloud}
+            lesson={lesson}
+            tts={tts}
+            autoRead={autoRead}
+            toggleAutoRead={toggleAutoRead}
+            startContinuous={startContinuous}
+            isContinuous={isContinuous}
+            continuousAvailable={continuousAvailable}
+          />
+        </div>
+
+        {/* #1009 — timed-mode per-question countdown + time-up notice. */}
+        <LessonTimedStatus
           lessonMode={lessonMode}
-          timedStats={lessonMode === "timed" ? timed.stats : null}
-          nextLessonFilename={nextLessonFilename}
-          userId={learnerUserId ?? ""}
-          setId={setId}
-          setTitle={setTitle ?? ""}
-          source={source}
-          setSlug={params.setSlug ?? ""}
-          lessonFilename={filename}
-          setDomain={setDomain}
-          setBook={setBook}
-          comboBonusXp={comboBonusXp}
-          fullHeartsRun={tension.fullHeartsRun}
-          markCompleted={markCompleted}
-          markRestarted={markRestarted}
-          goToStep={goToStep}
-        />
-        </>
-      ) : (
-        <>
-        {/* #1013 — reverse mode can't gradeably reverse non-matching
-            exercise types, so they play in their original format with this
-            note (the issue's documented fallback). */}
-        <LessonReverseNote
-          reverseMode={modeConfig.cardDirection === "reverse"}
+          isSummary={isSummary}
           isExerciseStep={isExerciseStep}
-          step={step}
+          remainingSeconds={timed.remainingSeconds}
+          limitSeconds={timed.limitSeconds}
+          bonusSeconds={timed.bonusSeconds}
+          timedOut={timed.timedOut}
         />
-        <LessonStepView
-          step={step!}
-          lesson={played}
-          setId={setId}
-          lessonFilename={filename}
-          source={source}
-          tts={tts}
-          precedingTheoryIndex={precedingTheoryIndex}
-          theoryReturnIndex={theoryReturnIndex}
-          openTheoryFromExercise={openTheoryFromExercise}
-          returnToExercise={returnToExercise}
-          goToStepById={goToStepById}
+
+        <LessonModeProvider mode={lessonMode}>
+        {isSummary ? (
+          <>
+          <LessonSummaryScreen
+            lesson={played}
+            originalLesson={lesson}
+            progress={progress}
+            lessonMode={lessonMode}
+            timedStats={lessonMode === "timed" ? timed.stats : null}
+            nextLessonFilename={nextLessonFilename}
+            userId={learnerUserId ?? ""}
+            setId={setId}
+            setTitle={setTitle ?? ""}
+            source={source}
+            setSlug={params.setSlug ?? ""}
+            lessonFilename={filename}
+            setDomain={setDomain}
+            setBook={setBook}
+            comboBonusXp={comboBonusXp}
+            fullHeartsRun={tension.fullHeartsRun}
+            markCompleted={markCompleted}
+            markRestarted={markRestarted}
+            goToStep={goToStep}
+          />
+          </>
+        ) : (
+          <>
+          {/* #1013 — reverse mode can't gradeably reverse non-matching
+              exercise types, so they play in their original format with this
+              note (the issue's documented fallback). */}
+          <LessonReverseNote
+            reverseMode={modeConfig.cardDirection === "reverse"}
+            isExerciseStep={isExerciseStep}
+            step={step}
+          />
+          <LessonStepView
+            step={step!}
+            lesson={played}
+            setId={setId}
+            lessonFilename={filename}
+            source={source}
+            tts={tts}
+            precedingTheoryIndex={precedingTheoryIndex}
+            theoryReturnIndex={theoryReturnIndex}
+            openTheoryFromExercise={openTheoryFromExercise}
+            returnToExercise={returnToExercise}
+            goToStepById={goToStepById}
+            enteredReviewed={enteredReviewed}
+            reviewedRaw={reviewedRaw}
+            progress={progress}
+            exerciseRef={exerciseRef}
+            learnerUserId={learnerUserId}
+            onInteraction={setAnswerable}
+            onChecked={() => setChecked(true)}
+            recordStepResult={recordStepResult}
+            // #1218 — a fully-correct answer offers an in-context
+            // "Continue" (the success-merge) that calls the SAME forward
+            // navigation as the two-phase footer; the label matches the
+            // footer's Next / Finish wording.
+            onAdvance={goNext}
+            advanceLabel={
+              isLastStep
+                ? t("lesson.action.finish", "Finish lesson")
+                : t("lesson.button.next", "Continue")
+            }
+          />
+          {/* #2768 — mentor-mode Phase 2: per-step authoring note for OWN
+              lessons (self-gating, null for non-own sets). Keyed by the
+              step so a step change resets the disclosure + draft. */}
+          <LessonMentorNote
+            key={`mentor-${step!.id}`}
+            source={source}
+            setId={setId}
+            filename={filename}
+            stepId={step!.id}
+          />
+          </>
+        )}
+        </LessonModeProvider>
+
+        <LessonFooterNav
+          isSummary={isSummary}
+          isExerciseStep={isExerciseStep}
+          checked={checked}
           enteredReviewed={enteredReviewed}
-          reviewedRaw={reviewedRaw}
-          progress={progress}
-          exerciseRef={exerciseRef}
-          learnerUserId={learnerUserId}
-          onInteraction={setAnswerable}
-          onChecked={() => setChecked(true)}
-          recordStepResult={recordStepResult}
-          // #1218 — a fully-correct answer offers an in-context
-          // "Continue" (the success-merge) that calls the SAME forward
-          // navigation as the two-phase footer; the label matches the
-          // footer's Next / Finish wording.
-          onAdvance={goNext}
-          advanceLabel={
-            isLastStep
-              ? t("lesson.action.finish", "Finish lesson")
-              : t("lesson.button.next", "Continue")
-          }
+          answerable={answerable}
+          isLastStep={isLastStep}
+          currentStepIndex={currentStepIndex}
+          // #1007 Phase 2 — exam hides per-question feedback: one button that
+          // submits + advances, forward-only. The synchronous submit() grades
+          // + records, then goNext unmounts the step in the same React batch,
+          // so the renderer's correct/wrong line never paints (revealed only
+          // on the end-of-exam summary).
+          delayedFeedback={!modeConfig.immediateFeedback}
+          isInProgress={isInProgress}
+          onPause={() => setExitOpen(true)}
+          onExit={() => navigate(exitRouteForLesson(setId))}
+          goPrev={goPrev}
+          goNext={goNext}
+          onCheck={() => exerciseRef.current?.submit()}
+          onSubmitAndAdvance={() => {
+            exerciseRef.current?.submit();
+            goNext();
+          }}
         />
-        {/* #2768 — mentor-mode Phase 2: per-step authoring note for OWN
-            lessons (self-gating, null for non-own sets). Keyed by the
-            step so a step change resets the disclosure + draft. */}
-        <LessonMentorNote
-          key={`mentor-${step!.id}`}
-          source={source}
-          setId={setId}
-          filename={filename}
-          stepId={step!.id}
+
+        {/* Floating read-aloud mini-player (C8) — visible while the
+                  engine is active; step-based skip through the theory
+                  block + play/pause + stop. */}
+        <LessonTtsMiniPlayerSlot
+          tts={tts}
+          theoryBlock={theoryBlock}
+          currentStepIndex={currentStepIndex}
+          onReadStepAt={readTheoryStepAt}
         />
-        </>
-      )}
-      </LessonModeProvider>
-
-      <LessonFooterNav
-        isSummary={isSummary}
-        isExerciseStep={isExerciseStep}
-        checked={checked}
-        enteredReviewed={enteredReviewed}
-        answerable={answerable}
-        isLastStep={isLastStep}
-        currentStepIndex={currentStepIndex}
-        // #1007 Phase 2 — exam hides per-question feedback: one button that
-        // submits + advances, forward-only. The synchronous submit() grades
-        // + records, then goNext unmounts the step in the same React batch,
-        // so the renderer's correct/wrong line never paints (revealed only
-        // on the end-of-exam summary).
-        delayedFeedback={!modeConfig.immediateFeedback}
-        isInProgress={isInProgress}
-        onPause={() => setExitOpen(true)}
-        onExit={() => navigate(exitRouteForLesson(setId))}
-        goPrev={goPrev}
-        goNext={goNext}
-        onCheck={() => exerciseRef.current?.submit()}
-        onSubmitAndAdvance={() => {
-          exerciseRef.current?.submit();
-          goNext();
-        }}
-      />
-
-      {/* Floating read-aloud mini-player (C8) — visible while the
-                engine is active; step-based skip through the theory
-                block + play/pause + stop. */}
-      <LessonTtsMiniPlayerSlot
-        tts={tts}
-        theoryBlock={theoryBlock}
-        currentStepIndex={currentStepIndex}
-        onReadStepAt={readTheoryStepAt}
-      />
+      </FooterStatusProvider>
     </main>
     </TestModeProvider>
   );

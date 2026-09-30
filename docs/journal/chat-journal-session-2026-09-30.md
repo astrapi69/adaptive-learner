@@ -74,6 +74,14 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Result: 155 Zeilen geändert, Parität in beiden Richtungen grün. Bewusst nicht angefasst: `aprendizagem` (in BR gebräuchlich, 40-plus Stellen) und die Hilfeseiten. Für die Hilfeseiten ist ein Wort-Tausch keine Übersetzung (tu-Konjugationen, Gerundium, Wortstellung ziehen sich durch die Prosa), das ist eine eigene Übersetzungsrunde, siehe Owner-Entscheidungen.
 - Commit: siehe PR.
 
+## 10. #3237: der Paarzähler steht auch im Sticky-Footer neben Prüfen
+
+- Original prompt: wie oben (Empfehlung: Zähler in den Footer spiegeln, Geste und Feedback-Fragen unangetastet).
+- Optimized prompt: "Ein Footer-Status-Kanal (`footer-status.tsx`: Provider, `useFooterStatus(text)`, `FooterStatusLine`); die Matching-Übung publiziert `{matched} / {total}` solange nicht geprüft; `RunnerFooter` und `LessonFooterNav` rendern die Zeile direkt links von Check; Provider in beiden Hüllen (`LessonRunner`, `Lesson.tsx`); ohne Provider ist der Hook ein No-op. Tests: Kanal, beide Footer, Matching publiziert. Testplan TC-0131 ergänzt plus neuer Fall."
+- Goal: Auf dem Telefon sieht der Lernende beim Zuordnen, wie viele Paare noch fehlen, ohne nach oben zu scrollen.
+- Result: Spiegel statt Umzug: der obere Zähler bleibt die Live-Region (`aria-live`), die Footer-Zeile ist `aria-hidden`, damit Screenreader nicht doppelt hören. Die Byte-Identität der beiden Footer für die Lektions-Policy (RunnerFooter-Test) bleibt, weil beide dieselbe Zeile mit derselben Testid rendern. 595 plus 69 Tests grün, tsc und eslint sauber. Visual: die `lesson-matching`-Motive (12 Themes plus Desktop/Mobile) zeigen den Footer mit Zähler, also Löschen-dann-Resync über das Label, sobald die PR offen ist.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.
