@@ -23,6 +23,13 @@ make check-types     # mypy + tsc --noEmit
 | Visual regression | `e2e/playwright.visual.config.ts` | `make test-visual` |
 | **Per-feature screenshots** | `e2e/playwright.features.config.ts` | `make verify-screenshots` |
 
+The smoke specs call `POST /api/reset`, which wipes every learner row. So
+the smoke config starts its own backend and frontend on ports of their own
+with a throwaway data dir, and refuses to run when something already
+answers on those ports; it never reuses a running `make dev` (#3316). A
+running `make dev` can stay up during a smoke run. Pinned by
+`backend/tests/test_e2e_smoke_server_isolation.py`.
+
 ### Local prerequisites for the Dexie-mode gate (#2043)
 
 The dexie-smoke specs obtain lesson content at runtime through
