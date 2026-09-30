@@ -3065,6 +3065,8 @@
       "missing_distractors": "Lektion '{lesson}': Übung '{exercise}' braucht Ablenker (falsche Optionen).",
       "non_cefr_level": "Niveau '{level}' ist keine CEFR-Stufe (A1-C2).",
       "level_too_complex": "Lektion '{lesson}': Text hat im Schnitt {avg} Wörter pro Seite, viel für Niveau {level} (etwa {cap} erwartet).",
+      "engine_rule": "Lektion '{lesson}': Regel {rule} bei {path}: {message}",
+      "engine_warning": "Lektion '{lesson}': Hinweis {rule} bei {path}: {message}",
       "source_language_heuristic": "Kartenrückseiten enthalten {found}-typische Zeichen, aber die Ausgangssprache ist '{lang}'.",
       "target_language_heuristic": "Kartenvorderseiten enthalten {found}-typische Zeichen, aber die Zielsprache ist '{lang}'.",
       "failed_share_anyway": "Die Qualitätsprüfung hat Probleme gefunden. Du kannst trotzdem teilen - Prüfer sehen die im Pull Request vermerkten Befunde."

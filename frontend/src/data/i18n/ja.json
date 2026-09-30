@@ -3065,6 +3065,8 @@
       "missing_distractors": "レッスン '{lesson}': 演習 '{exercise}' には誤答選択肢が必要です。",
       "non_cefr_level": "レベル '{level}' は CEFR の区分（A1〜C2）ではありません。",
       "level_too_complex": "レッスン '{lesson}': 片面あたり平均 {avg} 語で、レベル {level} には多めです（目安は約 {cap} 語）。",
+      "engine_rule": "レッスン「{lesson}」: ルール {rule}({path}): {message}",
+      "engine_warning": "レッスン「{lesson}」: 警告 {rule}({path}): {message}",
       "source_language_heuristic": "カードの裏面に {found} 特有の文字が含まれていますが、出発言語は '{lang}' です。",
       "target_language_heuristic": "カードの表面に {found} 特有の文字が含まれていますが、対象言語は '{lang}' です。",
       "failed_share_anyway": "品質チェックで問題が見つかりました。それでも共有できます。レビュアーはプルリクエストに記載された指摘を確認できます。"
