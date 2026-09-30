@@ -3065,6 +3065,8 @@
       "missing_distractors": "पाठ '{lesson}': अभ्यास '{exercise}' को विकर्षक (गलत विकल्प) चाहिए।",
       "non_cefr_level": "स्तर '{level}' एक CEFR बैंड (A1-C2) नहीं है।",
       "level_too_complex": "पाठ '{lesson}': पाठ्य प्रति पक्ष औसतन {avg} शब्द है, जो स्तर {level} के लिए अधिक है (लगभग {cap} अपेक्षित)।",
+      "engine_rule": "पाठ '{lesson}': नियम {rule}, {path} पर: {message}",
+      "engine_warning": "पाठ '{lesson}': चेतावनी {rule}, {path} पर: {message}",
       "source_language_heuristic": "कार्ड के पिछले भागों में {found}-विशिष्ट अक्षर हैं लेकिन स्रोत भाषा '{lang}' है।",
       "target_language_heuristic": "कार्ड के अगले भागों में {found}-विशिष्ट अक्षर हैं लेकिन लक्ष्य भाषा '{lang}' है।",
       "failed_share_anyway": "गुणवत्ता जाँच में समस्याएँ मिलीं। आप फिर भी साझा कर सकते हैं - समीक्षक pull request में दर्ज निष्कर्ष देखेंगे।"

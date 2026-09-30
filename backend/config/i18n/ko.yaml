@@ -2843,6 +2843,8 @@ content:
     missing_distractors: "레슨 '{lesson}': 연습 '{exercise}'에 오답 보기(틀린 선택지)가 필요합니다."
     non_cefr_level: 레벨 '{level}'은(는) CEFR 등급(A1-C2)이 아닙니다.
     level_too_complex: "레슨 '{lesson}': 텍스트가 한쪽당 평균 {avg}단어로, 레벨 {level}에 비해 높습니다 (약 {cap}개 예상)."
+    engine_rule: "레슨 '{lesson}': 규칙 {rule} ({path}): {message}"
+    engine_warning: "레슨 '{lesson}': 경고 {rule} ({path}): {message}"
     source_language_heuristic: 카드 뒷면에 {found} 고유 문자가 포함되어 있지만 출처 언어는 '{lang}'입니다.
     target_language_heuristic: 카드 앞면에 {found} 고유 문자가 포함되어 있지만 목표어는 '{lang}'입니다.
     failed_share_anyway: "품질 검사에서 문제가 발견되었습니다. 그래도 공유할 수 있습니다 - 검토자가 풀 리퀘스트에 기록된 결과를 보게 됩니다."
