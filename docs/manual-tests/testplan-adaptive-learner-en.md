@@ -2474,6 +2474,12 @@ switch the section on in Settings first or press "Detailed evaluation"
       matching exercise with a duplicate left value) is NOT pushed on the
       first click - the issue list appears and the button flips to
       "Export anyway"; only the second click exports
+- [ ] TC-0914 "Share as repository" (#3222): a set whose lesson breaks an engine rule
+      the app has no dedicated wording for (e.g. a multiple-choice exercise
+      with TWO options marked correct) lists the finding with the rule id
+      (E-MC-ONE-CORRECT), the JSON path and the engine's message; a lint
+      (e.g. an unused card, W-CARD-UNUSED) appears yellow and does not
+      block the share
 - [ ] TC-0578 "Share as repository" (#2376): when lesson filenames do not sort
       into the source order (kapitel-1..kapitel-10), the success screen
       reports the NN-prefix renaming; the exported repo lists the
