@@ -53,3 +53,29 @@ export function clearLearnerState(): void {
     localStorage.removeItem(KEY_PROJECT_ID);
     localStorage.removeItem(KEY_LANGUAGE);
 }
+
+const APP_KEY_PREFIX = "adaptive-learner.";
+/** Mirrors ``STORAGE_MODE_KEY`` in ``storage/index.ts``: the chosen
+ *  storage backing is device configuration, not learner data. */
+const KEY_STORAGE_MODE = "adaptive-learner.storage_mode";
+
+/**
+ * Remove every ``adaptive-learner.*`` localStorage key except the storage
+ * mode (#3368): learner state, the GitHub and content-repo tokens,
+ * contributions, mentor notes and every other browser-local store. Keys
+ * of other apps on the same origin stay.
+ *
+ * @example
+ * await getStorage().reset("RESET");
+ * clearAllAppLocalStorage();
+ */
+export function clearAllAppLocalStorage(): void {
+    const doomed: string[] = [];
+    for (let i = 0; i < localStorage.length; i += 1) {
+        const key = localStorage.key(i);
+        if (key !== null && key.startsWith(APP_KEY_PREFIX) && key !== KEY_STORAGE_MODE) {
+            doomed.push(key);
+        }
+    }
+    for (const key of doomed) localStorage.removeItem(key);
+}
