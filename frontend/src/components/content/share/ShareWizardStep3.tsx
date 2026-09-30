@@ -31,7 +31,7 @@ export default function ShareWizardStep3({ wiz }: { wiz: UseShareWizardResult })
           >
             {t("content.validation.failed_share_anyway", "Quality check found issues. You can share anyway - reviewers will see the findings noted in the pull request.")}
           </p>
-          <ul className="content-share-issues">
+          <ul className="content-share-issues list-disc">
             {liveValidation.issues.map((issue, i) => (
               <li key={`${issue.code}-${i}`}>{validationMessage(issue)}</li>
             ))}
@@ -39,7 +39,7 @@ export default function ShareWizardStep3({ wiz }: { wiz: UseShareWizardResult })
         </>
       )}
       {liveValidation && liveValidation.warnings.length > 0 && (
-        <ul className="content-share-warnings">
+        <ul className="content-share-warnings list-disc">
           {liveValidation.warnings.map((w, i) => (
             <li key={`${w.code}-${i}`}>{validationMessage(w)}</li>
           ))}

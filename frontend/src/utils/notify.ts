@@ -29,6 +29,7 @@ import React from "react";
 import {toast} from "react-toastify";
 import {ApiError} from "../api/client";
 import {isDevMode} from "../hooks/settings/useDevMode";
+import {resolveI18n} from "../hooks/ui/useI18n";
 import {friendlyErrorMessage} from "./errorMessages";
 
 // Truncate the visible error message so the toast stays
@@ -149,15 +150,15 @@ function ErrorContent({
                     padding: "4px 10px",
                     fontSize: "0.75rem",
                     fontWeight: 600,
-                    color: "#fff",
-                    background: "rgba(255,255,255,0.15)",
-                    border: "1px solid rgba(255,255,255,0.3)",
+                    color: "currentColor",
+                    background: "color-mix(in srgb, currentColor 15%, transparent)",
+                    border: "1px solid color-mix(in srgb, currentColor 30%, transparent)",
                     borderRadius: 4,
                     cursor: "pointer",
                     alignSelf: "flex-start",
                 },
             },
-            "Report Issue",
+            resolveI18n("ui.error_report.report_button", "Report Issue"),
         ),
     );
 }
