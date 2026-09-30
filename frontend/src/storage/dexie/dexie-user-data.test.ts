@@ -19,6 +19,7 @@ import {
 } from "./dexie-user-data";
 import {listContributions, recordContribution} from "../../lib/content/placement/contribution-history";
 import {createCustomPath, listCustomPaths} from "../../lib/learning-path/custom-paths";
+import {restoreLocalStorageSnapshot} from "../../lib/backup/localStorageSnapshot";
 
 const CONTRIB_KEY = "adaptive-learner.contributions";
 const MODE_KEY = "adaptive-learner.storage_mode";
@@ -68,7 +69,7 @@ describe("syncUserDataAtBoot (#791)", () => {
         expect((await getDb().userData.get(CONTRIB_KEY))?.value).toBe('["from-local"]');
     });
 
-    it("lets Dexie win and hydrates the localStorage cache (restore case)", async () => {
+    it("lets Dexie win and hydrates the localStorage cache", async () => {
         localStorage.setItem(CONTRIB_KEY, '["stale-local"]');
         await getDb().userData.put({key: CONTRIB_KEY, value: '["canonical-dexie"]'});
         await syncUserDataAtBoot([CONTRIB_KEY]);
@@ -163,5 +164,32 @@ describe("lib writers mirror through to Dexie (#791)", () => {
         expect(row).toBeDefined();
         expect(JSON.parse(row!.value)).toHaveLength(1);
         expect(listCustomPaths()).toHaveLength(1);
+    });
+});
+
+describe("a restored localStorage snapshot survives the next boot (#3369)", () => {
+    const SET_STATUS_KEY = "adaptive-learner.set-status";
+
+    it.each(["dexie", "api"])("keeps the backup's value after the boot reconcile (%s mode)", async (mode) => {
+        localStorage.setItem(MODE_KEY, mode);
+        // The device already holds an older value, in Dexie (browser mode)
+        // and in the localStorage cache.
+        localStorage.setItem(SET_STATUS_KEY, '{"es-a1":"active"}');
+        await mirrorUserData(SET_STATUS_KEY, '{"es-a1":"active"}');
+
+        await restoreLocalStorageSnapshot({[SET_STATUS_KEY]: '{"es-a1":"completed"}'});
+        // Next app start.
+        await syncUserDataAtBoot([SET_STATUS_KEY]);
+
+        expect(localStorage.getItem(SET_STATUS_KEY)).toBe('{"es-a1":"completed"}');
+        if (mode === "dexie") {
+            expect((await getDb().userData.get(SET_STATUS_KEY))?.value).toBe('{"es-a1":"completed"}');
+        }
+    });
+
+    it("leaves an unmanaged key to localStorage alone", async () => {
+        await restoreLocalStorageSnapshot({"adaptive-learner.theme": "dark"});
+        expect(localStorage.getItem("adaptive-learner.theme")).toBe("dark");
+        expect(await getDb().userData.get("adaptive-learner.theme")).toBeUndefined();
     });
 });

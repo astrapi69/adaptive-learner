@@ -62,6 +62,9 @@ interface CallOptions {
   method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
   body?: unknown;
   query?: Record<string, string | number | undefined>;
+  /** Let the request outlive the page (unload flushes, #3364). Only for
+   *  small bodies: browsers cap keepalive payloads at 64 KB. */
+  keepalive?: boolean;
 }
 
 /**
@@ -73,6 +76,7 @@ export async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<
   const method = opts.method ?? "GET";
   const url = buildUrl(path, opts.query);
   const init: RequestInit = { method };
+  if (opts.keepalive) init.keepalive = true;
   if (opts.body !== undefined && opts.body !== null) {
     init.headers = { "Content-Type": "application/json" };
     init.body = JSON.stringify(opts.body);
