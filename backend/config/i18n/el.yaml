@@ -2831,7 +2831,6 @@ content:
     free_text_too_few_accepts: "Μάθημα '{lesson}': η άσκηση ελεύθερου κειμένου '{exercise}' χρειάζεται τουλάχιστον {min} αποδεκτές απαντήσεις."
     matching_too_few_pairs: "Μάθημα '{lesson}': η άσκηση αντιστοίχισης '{exercise}' χρειάζεται τουλάχιστον {min} ζεύγη."
     matching_duplicate_left: "Μάθημα '{lesson}': η άσκηση αντιστοίχισης '{exercise}' επαναλαμβάνει την αριστερή τιμή '{value}' - άλυτη για τον μαθητή."
-    missing_distractors: "Μάθημα '{lesson}': η άσκηση '{exercise}' χρειάζεται περισπαστικά (λάθος επιλογές)."
     non_cefr_level: Το επίπεδο '{level}' δεν είναι κλίμακα CEFR (A1-C2).
     level_too_complex: "Μάθημα '{lesson}': το κείμενο έχει κατά μέσο όρο {avg} λέξεις ανά πλευρά, πολλές για το επίπεδο {level} (αναμένονται περίπου {cap})."
     engine_rule: "Μάθημα '{lesson}': κανόνας {rule} στο {path}: {message}"

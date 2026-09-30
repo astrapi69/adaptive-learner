@@ -2840,7 +2840,6 @@ content:
     free_text_too_few_accepts: "Lesson '{lesson}': free-text exercise '{exercise}' needs at least {min} accepted answers."
     matching_too_few_pairs: "Lesson '{lesson}': matching exercise '{exercise}' needs at least {min} pairs."
     matching_duplicate_left: "Lesson '{lesson}': matching exercise '{exercise}' repeats the left value '{value}' - unsolvable for the learner."
-    missing_distractors: "Lesson '{lesson}': exercise '{exercise}' needs distractors (wrong options)."
     non_cefr_level: Level '{level}' is not a CEFR band (A1-C2).
     level_too_complex: "Lesson '{lesson}': text averages {avg} words per side, high for level {level} (about {cap} expected)."
     engine_rule: "Lesson '{lesson}': rule {rule} at {path}: {message}"
