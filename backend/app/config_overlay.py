@@ -38,7 +38,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from app.paths import get_data_dir
+from app.paths import get_config_dir, get_data_dir
 from app.yaml_io import read_yaml_roundtrip, write_yaml_roundtrip
 
 logger = logging.getLogger(__name__)
@@ -180,17 +180,73 @@ def user_app_config_exists() -> bool:
     return _user_app_path().exists()
 
 
+def _legacy_plugin_path(name: str) -> Path:
+    """Where the Settings endpoint wrote plugin settings before #3370.
+
+    Read-only: it sits between the bundled defaults and the user
+    overlay so values saved before the fix keep applying. Nothing
+    writes it any more.
+    """
+    return get_config_dir() / "plugins" / f"{name}.yaml"
+
+
+def _base_plugin_config(name: str) -> dict[str, Any]:
+    """Bundled defaults plus the legacy layer: what the overlay diffs against."""
+    project_path = _project_plugin_path(name)
+    legacy_path = _legacy_plugin_path(name)
+    project = _read_yaml(project_path)
+    if legacy_path.resolve() in (project_path.resolve(), _user_plugin_path(name).resolve()):
+        return project
+    return deep_merge(project, _read_yaml(legacy_path))
+
+
 def read_plugin_config_merged(name: str) -> dict[str, Any]:
     """Read plugin config with bundled defaults + user-overlay merge.
+
+    Layers, later wins: bundled (``backend/config/plugins``), the
+    pre-#3370 legacy file, the user overlay. This is THE effective
+    plugin config: the Settings endpoint, PluginForge activation and
+    the plugins all read it (#3370).
 
     Comments are stripped (deep-merge constructs a plain dict).
     Callers that intend to write the result back MUST use
     ``load_plugin_config_for_edit`` to keep ``# INTERNAL`` markers
     intact.
     """
-    project = _read_yaml(_project_plugin_path(name))
-    user = _read_yaml(_user_plugin_path(name))
-    return deep_merge(project, user)
+    return deep_merge(_base_plugin_config(name), _read_yaml(_user_plugin_path(name)))
+
+
+def read_plugin_settings_merged(name: str) -> dict[str, Any]:
+    """The effective ``settings:`` block of a plugin, ``{}`` when absent."""
+    settings = read_plugin_config_merged(name).get("settings")
+    return dict(settings) if isinstance(settings, dict) else {}
+
+
+def write_user_plugin_settings(name: str, settings: dict[str, Any]) -> None:
+    """Store ``settings`` as a delta against the bundled defaults.
+
+    Only top-level keys whose value differs from the base land in the
+    user overlay; a key back at its default leaves it, and a key
+    missing from ``settings`` falls back to its default (a bundled
+    key cannot be deleted through this call). The overlay is edited
+    in place through ruamel, so its comments survive (#3370).
+    """
+    base_settings = _base_plugin_config(name).get("settings")
+    base = base_settings if isinstance(base_settings, dict) else {}
+    delta = {key: value for key, value in settings.items() if base.get(key, _MISSING) != value}
+    user_path = _user_plugin_path(name)
+    data = _read_yaml(user_path) if user_path.exists() else {}
+    current = data.get("settings")
+    if not isinstance(current, dict):
+        data["settings"] = delta
+    else:
+        for key in [k for k in current if k not in delta]:
+            del current[key]
+        current.update(delta)
+    write_user_plugin_config(name, data)
+
+
+_MISSING = object()
 
 
 def load_plugin_config_for_edit(name: str) -> dict[str, Any]:
