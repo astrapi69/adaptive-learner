@@ -426,6 +426,10 @@ session:
   ai_thinking: Pensando…
   ai_error: O provedor de IA não conseguiu responder.
   no_api_key: "Nenhuma chave de IA definida. Adicione uma chave para o seu provedor de IA em Configurações para conversar com o tutor. Lições e revisões funcionam sem chave."
+  ai_error_no_model: "Nenhum modelo está selecionado para o seu provedor de IA. Escolha um modelo em Configurações > IA."
+  ai_error_provider_auth: "O seu provedor de IA recusou a chave. Verifique a chave em Configurações > IA."
+  ai_error_rate_limited: "O limite do seu provedor de IA foi atingido. Aguarde um momento ou verifique sua cota e envie novamente."
+  ai_error_provider_unavailable: "Não é possível contatar o seu provedor de IA agora. Verifique a conexão e envie novamente."
   welcome_empty: "Pronto para aprender! Escreva sua primeira mensagem."
   end_session: Encerrar sessão
   end_session_confirm: Tem certeza? Vamos fechar a sessão e pedir uma avaliação.
