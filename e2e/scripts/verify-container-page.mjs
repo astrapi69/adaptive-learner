@@ -154,21 +154,44 @@ try {
     await visit("/");
     await page.getByTestId("landing").waitFor({state: "visible", timeout: 20_000});
     console.log("landing visible: the app APPEARS");
-    await page.getByTestId("landing-lang-de").click({timeout: 5000}).catch(() => {});
-    await settle();
+    // #3319: the switch is part of the landing (Landing.tsx renders it
+    // unconditionally), so a missing button is a finding, not a skip.
+    await click("landing-lang-de");
 
     // 2. Onboarding fast path -> a real user, so the learner routes render
     //    their content (and load their lazy bundles) instead of redirecting.
     await visit("/onboarding");
-    await page.getByTestId("migration-start-fresh").click({timeout: 3000}).catch(() => {});
+    // #3319 (the #3226 shape): the page states its migration verdict in
+    // data-migration-offer. A bare container carries no legacy data, so the
+    // verdict must be "none" and the welcome must not render; a "shown"
+    // here means the image ships data it should not, and a missing
+    // verdict means the page never settled.
+    const onboardingRoot = page.getByTestId("onboarding");
+    await onboardingRoot
+        .waitFor({state: "visible", timeout: 20_000})
+        .catch(() => problems.push("[/onboarding] the onboarding page never rendered"));
+    const migrationOffer = await onboardingRoot
+        .getAttribute("data-migration-offer")
+        .catch(() => null);
+    if (migrationOffer !== "none") {
+        problems.push(
+            `[/onboarding] migration verdict is ${JSON.stringify(migrationOffer)}, expected "none" on a bare container`,
+        );
+    }
+    if ((await page.getByTestId("migration-start-fresh").count()) !== 0) {
+        problems.push("[/onboarding] the migration welcome rendered on a bare container");
+    }
+    console.log(`onboarding migration verdict: ${migrationOffer}`);
     await page.getByTestId("onboarding-name").fill("Chain Probe");
     await page.getByTestId("onboarding-topic").fill("Spanish");
     await click("onboarding-submit");
     await click("onboarding-invite-start-now");
     await page.getByTestId("dashboard").waitFor({state: "visible", timeout: 20_000});
+    // #3319: the three tabs are DASHBOARD_TAB_ORDER (Dashboard.tsx), always
+    // rendered; each click loads that tab's lazy content, so a tab that is
+    // gone would silently shrink the chunk coverage.
     for (const tab of ["activity", "missions", "overview"]) {
-        await page.getByTestId(`dashboard-tab-${tab}`).click({timeout: 5000}).catch(() => {});
-        await settle();
+        await click(`dashboard-tab-${tab}`);
     }
     console.log("onboarded: dashboard visible");
 
@@ -181,8 +204,10 @@ try {
     await visit("/content?tab=my"); // #2205: the analysis-to-lesson bundle
     await visit("/content?tab=browse");
     await visit("/learning-path");
-    await page.getByTestId("learning-path-view-map").click({timeout: 5000}).catch(() => {});
-    await settle();
+    // #3319: the view switch renders in every personal-path state
+    // (LearningPathPersonal passes it into each view), so the map click is
+    // loud too; it is what loads the LearningPathMap chunk.
+    await click("learning-path-view-map");
     await visit("/session");
     await visit("/progress");
     await visit("/arcade");

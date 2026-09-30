@@ -34,6 +34,46 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Result: Drei `report.warn` werden `report.fail`; die Parse-Lücke fällt geschlossen. Der bestehende RED-Test der Check-Inventur (#2077, "Check degradiert zum No-op") brauchte die zweite Hälfte des Vorfalls: kaputte Regex plus jemand, der das FAIL wieder zu WARN weicht; ein neuer Test pinnt, dass die kaputte Regex allein den Verifier selbst rot macht. 23 Tests in beiden Suiten grün, `verify_docs.py` auf dem echten Baum 0 FAIL.
 - Commit: siehe PR.
 
+## 5. #3216 Punkt 2: die Arcade-Karte bleibt mit Begründung sichtbar
+
+- Original prompt: wie oben (Empfehlung: Ausnahme aufheben, disabled-with-reason).
+- Optimized prompt: "`ArcadeCard`: bei Spielmodus an und Arcade-Schalter aus die Karte mit Titel, Hinweis `arcade.requires_arcade_switch` und Link auf `/settings?tab=learning&section=motivation` rendern (`arcade-card-disabled`); bei Spielmodus aus weiter `null`; Test 'disappears' umdrehen, Fall Spielmodus aus plus Arcade an ergänzen; TC-0211 DE+EN."
+- Goal: Die Feature-State-Policy gilt auch auf dem Dashboard: niemals versteckt, deaktiviert mit Grund.
+- Result: 33 Tests (ArcadeCard plus Dashboard) grün, tsc und eslint sauber. Visual-Baselines: kein Motiv setzt die Kombination Spielmodus an und Arcade aus, darum `visual-baselines-unaffected` mit dieser Begründung.
+- Commit: siehe PR.
+
+## 6. #3317: die Regeltexte beschreiben die Pre-Commit-Hooks, die es gibt
+
+- Original prompt: wie oben.
+- Optimized prompt: "quality-checks.md Checkliste Punkt 5 (pytest) streichen und auf `.pre-commit-config.yaml` verweisen; code-hygiene.md: erfundene Beispielkonfiguration (prettier-, pytest-Hook) durch die reale Hook-Liste ersetzen, Setup-Befehl und Zusammenfassung angleichen; Korpus-Deckel prüfen; RULE-CHANGE DECLARED im Commit."
+- Goal: Kein Leser verlässt sich auf einen Hook, der nicht läuft.
+- Result: Beide Abschnitte verweisen auf die Datei als Quelle, nennen die realen Hooks (Basics, astral ruff auf `backend/app/`, lokales eslint, fünf Repo-Guards) und sagen, wo Tests und prettier stehen. Korpus 714 Zeichen unter dem Deckel, Deckel bleibt als Spielraum. `verify-normative-changes` verlangt die Erklärung (steht im Commit); die Log-Zeile für `docs/rule-change-log.md` kommt als zweiter Commit in die PR, sobald deren Nummer feststeht.
+- Commit: siehe PR.
+
+## 7. #3319: der Container-Walker prüft die drei Schritte, die er bisher verschluckt hat
+
+- Original prompt: wie oben.
+- Optimized prompt: "`e2e/scripts/verify-container-page.mjs`: Sprachwechsel auf der Landing als lauter Klick; Migrations-Dialog nach dem #3226-Muster über `data-migration-offer` beurteilen (auf einem leeren Container muss das Urteil `none` sein, kein `migration-start-fresh`); Dashboard-Tabs als laute Klicks; Test in `test_publish_image_workflow.py`, der jede verbleibende `.catch(() => {})`-Stelle aufzählt."
+- Goal: Ein verschwundener Testid oder ein Dialog im falschen Zustand ist ein Befund, kein stiller Sprung.
+- Result: Vier Schritte umgestellt (der Kartenansicht-Schalter des Lernpfads rendert in jedem Zustand der persönlichen Ansicht, also ebenfalls laut); das Network-Idle-Wartelimit bleibt die einzige `.catch(() => {})`-Stelle, und der Pin-Test zählt genau sie auf. 16 Tests grün, `node --check` sauber. Echter Lauf des Walkers gegen das Image: nur im CI (publish-image dry run), hier nicht möglich.
+- Commit: siehe PR.
+
+## 8. #3173 Variante 3: Platz schaffen auf kurzen Seiten, solange die Tastatur offen ist
+
+- Original prompt: wie oben (Empfehlung: Variante 3 zuerst, klein und messbar).
+- Optimized prompt: "`useKeyboardPreReveal`: wenn der späte Retry bei offener Tastatur weiter geklemmt ist (applied < delta), dem Scroller `padding-bottom` in Höhe des Fehlbetrags geben und erneut enthüllen; Padding nie beim Fokus (#3015/#3017), sofort weg, wenn der Viewport zurückwächst oder der Fokus die Tastatur verlässt; Tests mit dem bestehenden Clamping-Stub, dessen Maximum das Padding mitzählt."
+- Goal: Ein Feld am Ende einer kurzen Seite liegt nicht mehr hinter der Tastatur, ohne die sichtbare Leerfläche von #3017.
+- Result: Die #3017-Kandidatin 1 umgesetzt: Headroom nur, wenn die Tastatur nachweislich offen ist (Schrumpfung gegenüber der Fokus-Höhe über der Schwelle), exakt der Fehlbetrag, Entfernung beim Zurückwachsen und beim Fokusverlust, Log-Entscheidung `prereveal-pad` für die Sonde. Vier neue Tests (219 px Fehlbetrag auf einer 961-px-Seite, kein Padding bei ausreichend Raum, Abbau beim Schliessen, Abbau beim Fokusverlust), 29 grün, tsc und eslint sauber. Gerätemessung mit der #1569-Sonde bleibt beim Owner: ohne iPhone nicht verifizierbar, darum als eigene PR mit diesem Vorbehalt.
+- Commit: siehe PR.
+
+## 9. #3163: der pt-Katalog spricht brasilianisches Portugiesisch
+
+- Original prompt: wie oben (Empfehlung: pt-BR als Variante).
+- Optimized prompt: "Erst messen: im Katalog stehen 131 você-Imperative gegen 47 tu-Imperative, 145 seu/sua gegen 36 teu/tua, 48 salvar gegen 23 guardar, 29 compartilhar gegen 54 partilhar; die Hilfeseiten (51 Dateien, rund 48.000 Wörter) sind überwiegend europäisch (utilizador in 24, ficheiro in 25, ecrã in 15 Dateien). Dann den Katalog auf BR angleichen: Wortliste (Definições, ficheiro, ecrã, separador, descarregar, partilhar, guardar, ligação, ronda, bónus, Ups, contactar) plus tu-Formen (teu/tua, Imperative am Satzanfang, Tens/chegaste/continuares), nur auf den 188 markierten Zeilen, Diff Zeile für Zeile gelesen."
+- Goal: Eine Variante für die Oberfläche, und zwar die, die der Katalog schon zu drei Vierteln spricht.
+- Result: 155 Zeilen geändert, Parität in beiden Richtungen grün. Bewusst nicht angefasst: `aprendizagem` (in BR gebräuchlich, 40-plus Stellen) und die Hilfeseiten. Für die Hilfeseiten ist ein Wort-Tausch keine Übersetzung (tu-Konjugationen, Gerundium, Wortstellung ziehen sich durch die Prosa), das ist eine eigene Übersetzungsrunde, siehe Owner-Entscheidungen.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.

@@ -198,3 +198,27 @@ def test_the_walker_ignores_only_its_own_navigation_aborts() -> None:
     assert "abortedByNavigation += 1" in walker
     assert "aborted by the walk's own navigation (ignored): ${abortedByNavigation}" in walker
     assert 'waitForLoadState("networkidle"' in walker
+
+
+def test_the_walker_asserts_the_steps_it_used_to_swallow() -> None:
+    """#3319: four steps of the walk ended in ``.catch(() => {})`` - the
+    landing language switch, the migration welcome, the dashboard tabs and
+    the learning-path map switch. A vanished testid or a dialog in the
+    wrong state passed as if clicked.
+    Each is now either a loud click (the shared ``click`` helper) or an
+    explicit verdict check that pushes a problem; no other ``.catch(() =>
+    {})`` may hide a step (the network-idle wait's catch is the documented
+    exception, it caps a wait, it does not skip a step)."""
+    if not WALKER.is_file():
+        pytest.fail(f"{WALKER} is missing - the page walk is not a passing gate")
+    walker = WALKER.read_text(encoding="utf-8")
+    assert 'await click("landing-lang-de");' in walker
+    assert 'getAttribute("data-migration-offer")' in walker
+    assert 'migrationOffer !== "none"' in walker
+    assert 'getByTestId("migration-start-fresh").count()' in walker
+    assert "await click(`dashboard-tab-${tab}`);" in walker
+    assert 'await click("learning-path-view-map");' in walker
+    swallowed = [line for line in walker.splitlines() if ".catch(() => {})" in line]
+    assert swallowed == [
+        '        page.waitForLoadState("networkidle", {timeout: 5000}).catch(() => {});'
+    ], "a swallowed step is a step that never fails: " + repr(swallowed)

@@ -1,13 +1,15 @@
 /**
  * ArcadeCard (#2887) - the dashboard entry to the game-mode arcade.
- * Self-gating: renders ONLY while the game mode AND the arcade switch
- * are on (the issue's decided exception to "never hidden" - turning
- * the arcade switch off removes the card entirely; the arcade page
- * itself keeps the visible-with-reason notice for direct visits).
+ * Absent while the game mode is off (the card belongs to the game mode,
+ * not to the dashboard). With the game mode on and the arcade switch
+ * off it stays visible as a disabled card (#3216, the feature-state
+ * policy: header stays, a notice names the switch that is off and links
+ * to the settings, no controls); the #2887 exception that removed the
+ * card entirely is lifted. Fully active only with both switches on.
  */
 
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router";
+import {Link, useNavigate} from "react-router";
 
 import {Button} from "@/components/ui/button";
 import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
@@ -19,6 +21,7 @@ import {
     readTicketState,
 } from "../../lib/arcade/ticket-store";
 import {readLearnerState} from "../../lib/learning/learnerState";
+import {readPlayfulMode} from "../../lib/learning/playful/playfulModePref";
 import {
     PLAYFUL_TICKETS_CHANGE_EVENT,
     playfulTicketsActive,
@@ -49,7 +52,34 @@ export default function ArcadeCard() {
         };
     }, [userId]);
 
-    if (!prefs.active) return null;
+    if (!prefs.active) {
+        // Game mode off: the arcade is not part of this dashboard at all.
+        if (!readPlayfulMode()) return null;
+        // Game mode on, arcade switch off: disabled with the reason (#3216).
+        return (
+            <DashboardCard data-testid="arcade-card-disabled">
+                <DashboardCardTitle>
+                    {t("arcade.title", "Arcade")}
+                </DashboardCardTitle>
+                <p
+                    className="text-sm text-[var(--fg-muted)]"
+                    data-testid="arcade-card-disabled-reason"
+                >
+                    {t(
+                        "arcade.requires_arcade_switch",
+                        "The game mode is on, but the arcade switch is off. Turn on the arcade in the game mode details in the settings.",
+                    )}
+                </p>
+                <Link
+                    to="/settings?tab=learning&section=motivation"
+                    className="text-sm underline"
+                    data-testid="arcade-card-disabled-settings"
+                >
+                    {t("arcade.open_settings", "Open settings")}
+                </Link>
+            </DashboardCard>
+        );
+    }
 
     return (
         <DashboardCard data-testid="arcade-card">
