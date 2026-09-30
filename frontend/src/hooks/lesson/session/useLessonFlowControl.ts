@@ -60,8 +60,8 @@ export interface UseLessonFlowControlResult {
  * ``LessonPage`` (#354).
  *
  * Owns the back-button exit dialog, the paused-lesson resume prompt,
- * auto-pause when the tab is hidden or the window unloads (with
- * silent auto-resume on a brief tab switch), auto-pause when the page
+ * a time-and-position flush when the tab is hidden (#3361), auto-pause
+ * when the window unloads, auto-pause when the page
  * is left by in-app navigation (#3075), the 30-second autosave
  * interval, and the pause/abandon dialog actions (toast + navigate
  * back to the Content Browser).
@@ -100,6 +100,17 @@ export function useLessonFlowControl({
     // loaded and the stored progress is in the ``paused`` state.
     // The user must choose before interacting with the step view.
     const [resumeChoiceMade, setResumeChoiceMade] = useState(false);
+    // #3361 - the choice belongs to one lesson. The summary's next-lesson
+    // button keeps this page mounted, so without a reset a paused next
+    // lesson opened without asking.
+    const lessonKey = progress
+        ? `${progress.source}#${progress.set_id}#${progress.lesson_filename}`
+        : null;
+    const [choiceLessonKey, setChoiceLessonKey] = useState(lessonKey);
+    if (lessonKey !== null && lessonKey !== choiceLessonKey) {
+        setChoiceLessonKey(lessonKey);
+        setResumeChoiceMade(false);
+    }
     const showResumePrompt =
         status === "ready" &&
         progress?.status === "paused" &&
@@ -118,30 +129,28 @@ export function useLessonFlowControl({
         goToStep(0);
     };
 
-    // Phase 63B + 63E — auto-pause on hide, auto-resume on return.
-    // ``autoSuspendedRef`` tracks whether THIS effect fired a pause
-    // so the return-visible handler can reverse it without showing
-    // the resume dialog (brief tab-switch case).
-    const autoSuspendedRef = useRef(false);
+    // #3361 - a hidden tab, a phone lock or an app switch only flushes
+    // time and position. It used to mark the run paused: that removed
+    // this very listener (``isInProgress`` turned false), so the return
+    // never resumed, the resume dialog opened mid-lesson and the row stayed
+    // ``paused`` while the learner played on. ``pagehide`` covers iOS,
+    // which never fires ``beforeunload``. Closing the tab still pauses.
     useEffect(() => {
         if (!isInProgress) return;
+        const flush = () => void autosave();
         const onVisibility = () => {
-            if (document.visibilityState === "hidden") {
-                autoSuspendedRef.current = true;
-                void markPaused();
-            } else if (autoSuspendedRef.current) {
-                autoSuspendedRef.current = false;
-                void markResumed();
-            }
+            if (document.visibilityState === "hidden") flush();
         };
         const onUnload = () => void markPaused();
         document.addEventListener("visibilitychange", onVisibility);
+        window.addEventListener("pagehide", flush);
         window.addEventListener("beforeunload", onUnload);
         return () => {
             document.removeEventListener("visibilitychange", onVisibility);
+            window.removeEventListener("pagehide", flush);
             window.removeEventListener("beforeunload", onUnload);
         };
-    }, [isInProgress, markPaused, markResumed]);
+    }, [isInProgress, autosave, markPaused]);
 
     // Phase 63E — 30-second autosave interval. Flushes accumulated
     // time to storage without changing lesson status so the

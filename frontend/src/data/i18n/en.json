@@ -1026,9 +1026,9 @@
       "desc": "After checking, 'My answers' shows your pairs as you formed them, without grading; the grading and the correct partners are under 'Corrections'. Off: the correct partner appears directly under each mistake in 'My answers'."
     },
     "paused_retention": {
-      "title": "Paused lesson retention",
-      "hint": "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age.",
-      "label": "Keep paused lessons for",
+      "title": "Paused lessons on the Dashboard",
+      "hint": "The paused-lessons card on the Dashboard only shows lessons up to this age. An older lesson just drops out of the card: nothing is abandoned, and it keeps its position and answers.",
+      "label": "Hide paused lessons older than",
       "7_days": "7 days",
       "14_days": "14 days",
       "30_days": "30 days",
@@ -2056,6 +2056,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_failed": "Your progress in this lesson could not be saved: {detail}",
+      "load_failed": "Your saved progress for this lesson could not be loaded: {detail}",
+      "create_profile": "Create a learner profile"
+    },
     "mascot_label": "Your learning companion",
     "combo_chip": "x{n}",
     "combo_aria": "Answer streak: {n} in a row",
@@ -2616,7 +2621,9 @@
       "heading": "Resume lesson?",
       "body": "You paused \"{title}\". Would you like to continue where you left off or start over?",
       "action_resume": "Continue",
-      "action_restart": "Start over"
+      "action_restart": "Start over",
+      "restart_confirm_title": "Start over from the beginning?",
+      "restart_confirm_body": "Your position and your answers in this lesson will be reset. What you already learned (mastery progress) stays."
     }
   },
   "content": {
