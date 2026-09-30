@@ -70,6 +70,17 @@ describe("ReviewReport (#3124)", () => {
     expect(screen.queryByTestId("rr-by-lesson")).toBeNull();
   });
 
+  it.each(["rr-by-lesson", "rr-by-type", "rr-weak-areas"])(
+    "resets the browser list marker and indent of %s (#3341)",
+    (testId) => {
+      // No Tailwind preflight is loaded: a bare <ul> keeps its disc bullets
+      // and the 40px indent, so every report list resets them itself.
+      renderReport({ showByLesson: true });
+      const list = screen.getByTestId(testId).querySelector("ul");
+      expect(list).toHaveClass("m-0", "list-none", "p-0");
+    },
+  );
+
   it("uses the requested heading level for its sections", () => {
     renderReport({ headingLevel: 4 });
     const heading = screen.getByTestId("rr-by-type").querySelector("h4");

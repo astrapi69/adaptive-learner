@@ -125,7 +125,7 @@ export default function ReviewReport({
           <Heading className={headingClass}>
             {t("set_summary.by_lesson", "Mistakes per lesson")}
           </Heading>
-          <ul className="mt-2 flex flex-col gap-1">
+          <ul className="m-0 mt-2 flex list-none flex-col gap-1 p-0">
             {review.byLesson.map((lesson) => (
               <li
                 key={lesson.lessonId}
@@ -144,7 +144,7 @@ export default function ReviewReport({
           <Heading className={headingClass}>
             {t("set_summary.by_type", "Mistakes per exercise type")}
           </Heading>
-          <ul className="mt-2 flex flex-wrap gap-2">
+          <ul className="m-0 mt-2 flex list-none flex-wrap gap-2 p-0">
             {review.byType.map((entry) => (
               <li
                 key={entry.type}
@@ -163,7 +163,7 @@ export default function ReviewReport({
           <Heading className={headingClass}>
             {t("set_summary.weak_areas", "Biggest weak spots")}
           </Heading>
-          <ul className="mt-2 flex flex-col gap-2">
+          <ul className="m-0 mt-2 flex list-none flex-col gap-2 p-0">
             {review.weakAreas.map((area) => (
               <li
                 key={`${area.lessonId}#${area.elementKey}`}
