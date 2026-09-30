@@ -39,10 +39,12 @@ const GENERIC_FALLBACK_TEXT =
 /**
  * Map a status code to its ``ui.errors.<code>`` key. Groups
  * ``401`` + ``403`` under ``forbidden`` because they read the
- * same to users. Server errors collapse to ``server``. Anything
+ * same to users. Status ``0`` is ``apiCall``'s "no response" (#3388).
+ * Server errors collapse to ``server``. Anything
  * unrecognised falls through to ``generic``.
  */
 function keyForStatus(status: number): string {
+    if (status === 0) return "ui.errors.network";
     if (status === 400 || status === 422) return "ui.errors.bad_request";
     if (status === 401 || status === 403) return "ui.errors.forbidden";
     if (status === 404) return "ui.errors.not_found";

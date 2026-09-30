@@ -367,3 +367,26 @@ describe("LessonPage keeps the screen on while reading (#3358)", () => {
         if (calls) expect(request).toHaveBeenCalledWith("screen");
     });
 });
+
+describe("LessonPage without a learner profile (#3364)", () => {
+    it("shows the notice that nothing is saved, and hides it with a profile", async () => {
+        listLessonsMock.mockResolvedValue({
+            set_id: SET_ID,
+            source: "astrapi69/adaptive-learner-content",
+            version: "1.0.0",
+            lessons: [FILENAME],
+        });
+        elementErrorsListMock.mockResolvedValue([]);
+        reviewQueueMock.mockResolvedValue([]);
+        readyAtSummary(1, 1);
+        clearLearnerState();
+        const {unmount} = renderPage();
+        expect(await screen.findByTestId("lesson-no-profile-notice")).toBeInTheDocument();
+        unmount();
+
+        setUserId("user-1");
+        renderPage();
+        await screen.findByTestId("lesson-page");
+        expect(screen.queryByTestId("lesson-no-profile-notice")).not.toBeInTheDocument();
+    });
+});

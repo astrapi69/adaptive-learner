@@ -21,7 +21,7 @@ import FormHint from "../../shared/forms/FormHint";
 import {isEmptyInstall, pickAdoptedIdentity} from "../../lib/backup/firstRunRestore";
 import {isMigrationOffered, markMigrationOffered} from "../../lib/backup/migrationFlag";
 import {readBackupFile} from "../../lib/backup/validateBackupFile";
-import {applyLocalStorageSnapshot} from "../../lib/backup/localStorageSnapshot";
+import {restoreLocalStorageSnapshot} from "../../lib/backup/localStorageSnapshot";
 import {SHARE_URL} from "../../lib/share/generate-share-text";
 import {
     readLearnerState,
@@ -330,7 +330,7 @@ export default function Onboarding() {
             );
             // Restore the localStorage snapshot (preferences + contributions)
             // frontend-side. Legacy backups carry none -> no-op.
-            applyLocalStorageSnapshot(payload.local_storage);
+            await restoreLocalStorageSnapshot(payload.local_storage);
             // #126 parity — surface the round-trip in the console so a
             // real restore is debuggable without a backend log.
             // eslint-disable-next-line no-console -- #126: intentional round-trip trace for backend-less debugging

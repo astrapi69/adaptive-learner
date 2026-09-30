@@ -25,7 +25,9 @@ function slugifySource(source: string): string {
     return source.replace(/\//g, "--");
 }
 
-function rowKey(
+/** The composite primary key of a ``lessonProgress`` row; the backup
+ *  restore rekeys API-origin rows onto it (#3362). */
+export function lessonProgressKey(
     userId: string,
     source: string,
     setId: string,
@@ -129,7 +131,7 @@ export async function getLessonProgressDexie(
 ): Promise<LessonProgress | null> {
     const db = getDb();
     const row = await db.lessonProgress.get(
-        rowKey(userId, source, setId, lessonFilename),
+        lessonProgressKey(userId, source, setId, lessonFilename),
     );
     return row ? rowToWire(row) : null;
 }
@@ -261,7 +263,7 @@ export async function upsertLessonProgressDexie(
     body: LessonProgressUpsertBody,
 ): Promise<LessonProgress> {
     const db = getDb();
-    const key = rowKey(userId, body.source, body.set_id, body.lesson_filename);
+    const key = lessonProgressKey(userId, body.source, body.set_id, body.lesson_filename);
     const now = new Date().toISOString();
 
     // Phase 63A/C — guard the one-hot lifecycle flag invariant.

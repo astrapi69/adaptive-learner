@@ -1028,9 +1028,9 @@
       "desc": "Tras comprobar, 'Mis respuestas' muestra tus parejas tal como las formaste, sin evaluación; la evaluación y las parejas correctas están en 'Corrección'. Desactivado: la pareja correcta aparece justo debajo de cada error en 'Mis respuestas'."
     },
     "paused_retention": {
-      "title": "Retención de lecciones pausadas",
-      "hint": "Las lecciones pausadas más antiguas que este período se abandonan automáticamente. Se conservan hasta 10 lecciones pausadas independientemente de su antigüedad.",
-      "label": "Conservar lecciones pausadas por",
+      "title": "Lecciones pausadas en el Panel",
+      "hint": "La tarjeta de lecciones pausadas del Panel solo muestra lecciones hasta esta antigüedad. Una lección más antigua solo desaparece de la tarjeta: no se abandona nada y conserva su posición y sus respuestas.",
+      "label": "Ocultar lecciones pausadas con más de",
       "7_days": "7 días",
       "14_days": "14 días",
       "30_days": "30 días",
@@ -2058,6 +2058,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_failed": "No se pudo guardar tu progreso en esta lección: {detail}",
+      "load_failed": "No se pudo cargar tu progreso guardado de esta lección: {detail}",
+      "create_profile": "Crear un perfil de aprendizaje"
+    },
     "mascot_label": "Tu compañero de aprendizaje",
     "combo_chip": "x{n}",
     "combo_aria": "Racha de respuestas: {n} seguidas",

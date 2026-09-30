@@ -986,9 +986,9 @@ settings:
     label: "교정을 별도 보기로 표시"
     desc: "확인 후 '내 답변'에는 내가 만든 짝이 채점 없이 그대로 표시되고, 채점과 올바른 짝은 '교정'에 있습니다. 끄기: 올바른 짝이 '내 답변'의 각 오답 바로 아래에 표시됩니다."
   paused_retention:
-    title: 일시 정지된 레슨 보관
-    hint: "이 기간보다 오래된 일시 정지 레슨은 자동으로 중단됩니다. 나이와 관계없이 일시 정지 레슨 최대 10개는 보관됩니다."
-    label: 일시 정지 레슨 보관 기간
+    title: "대시보드의 일시 정지 레슨"
+    hint: "대시보드의 일시 정지 레슨 카드는 이 기간 이내의 레슨만 보여 줍니다. 더 오래된 레슨은 카드에서만 사라지며, 중단되지 않고 위치와 답변도 그대로 유지됩니다."
+    label: "다음 기간보다 오래된 일시 정지 레슨 숨기기"
     7_days: "7일"
     14_days: "14일"
     30_days: "30일"
@@ -1930,6 +1930,10 @@ repo:
     description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
     enable_git: "git 영속화 활성화"
 lesson:
+  progress_io:
+    save_failed: "이 레슨의 진행 상황을 저장하지 못했습니다: {detail}"
+    load_failed: "이 레슨의 저장된 진행 상황을 불러오지 못했습니다: {detail}"
+    create_profile: "학습 프로필 만들기"
   mascot_label: "학습 친구"
   combo_chip: "x{n}"
   combo_aria: "연속 정답: {n}회 연속"
