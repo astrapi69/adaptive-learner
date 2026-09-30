@@ -22,6 +22,7 @@ vi.mock("../../../hooks/ui/useI18n", () => ({
 
 import MyLessonsSection from "./MyLessonsSection";
 import type { ContentSetEntry } from "../../../storage/types";
+import { DexieFeatureWrapper } from "../../../features/testFeatureProvider";
 
 function entry(over: Partial<ContentSetEntry> = {}): ContentSetEntry {
   return {
@@ -67,8 +68,7 @@ function renderSection(onCreateLesson = vi.fn()) {
       onToggleSelectMode={vi.fn()}
       onToggleSelect={vi.fn()}
       onOpenCombine={vi.fn()}
-    />,
-  );
+    />, { wrapper: DexieFeatureWrapper });
   return onCreateLesson;
 }
 
@@ -115,8 +115,7 @@ describe("MyLessonsSection create entry (#3007)", () => {
         onToggleSelectMode={vi.fn()}
         onToggleSelect={vi.fn()}
         onOpenCombine={vi.fn()}
-      />,
-    );
+      />, { wrapper: DexieFeatureWrapper });
     expect(screen.getByTestId("my-lessons-create")).toBeInTheDocument();
   });
 });
@@ -149,8 +148,7 @@ describe("MyLessonsSection AI check (AIV-07, #3060)", () => {
         onToggleSelectMode={vi.fn()}
         onToggleSelect={vi.fn()}
         onOpenCombine={vi.fn()}
-      />,
-    );
+      />, { wrapper: DexieFeatureWrapper });
   }
 
   it("renders the check button per own set and hands the entry to the host", () => {
