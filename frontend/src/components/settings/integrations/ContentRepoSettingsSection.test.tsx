@@ -298,6 +298,33 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     localStorage.clear();
   });
 
+  it("tells the user when removing a repo fails (#3384)", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [REPO] },
+    });
+    pluginUpdate.mockRejectedValue(new Error("disk full"));
+    render(<ContentRepoSettingsSection />);
+    fireEvent.click(await screen.findByTestId("content-repo-remove-jane-deck"));
+    fireEvent.click(await screen.findByTestId("content-repo-remove-dialog-confirm"));
+    await waitFor(() => expect(notifyError).toHaveBeenCalled());
+    expect(String(notifyError.mock.calls[0][0])).toContain("disk full");
+  });
+
+  it("tells the user when reordering repos fails (#3384)", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: {
+        user_repos: [REPO, { ...REPO, url: "https://github.com/jane/other", repo: "other" }],
+      },
+    });
+    pluginUpdate.mockRejectedValue(new Error("quota"));
+    render(<ContentRepoSettingsSection />);
+    fireEvent.click(await screen.findByTestId("content-repo-down-jane-deck"));
+    await waitFor(() => expect(notifyError).toHaveBeenCalled());
+    expect(String(notifyError.mock.calls[0][0])).toContain("quota");
+  });
+
   it("hints to set a token when none is configured", async () => {
     githubGetStatus.mockResolvedValue({ configured: false, source: "none" });
     render(<ContentRepoSettingsSection />);

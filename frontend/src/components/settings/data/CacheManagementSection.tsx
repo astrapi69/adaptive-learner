@@ -46,6 +46,14 @@ export default function CacheManagementSection() {
       toast.success(t("pwa.cache_cleared", "Offline cache cleared."));
       setConfirming(false);
       refresh();
+    } catch (err) {
+      console.error("[pwa] cache clear failed", err);
+      toast.error(
+        t(
+          "pwa.cache_clear_failed",
+          "Could not clear the offline cache: {detail}",
+        ).replace("{detail}", err instanceof Error ? err.message : String(err)),
+      );
     } finally {
       setBusy(false);
     }
