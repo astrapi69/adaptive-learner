@@ -2658,6 +2658,12 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       (z. B. Zuordnungsübung mit doppeltem linkem Wert) wird beim ersten
       Klick NICHT gepusht - die Mängelliste erscheint, der Button wechselt
       auf "Trotzdem exportieren"; erst der zweite Klick exportiert
+- [ ] TC-0914 "Als Repository teilen" (#3222): ein Set, dessen Lektion eine
+      Engine-Regel ohne eigene App-Formulierung verletzt (z. B. eine
+      Multiple-Choice-Übung mit ZWEI als richtig markierten Optionen), listet
+      den Befund mit Regel-ID (E-MC-ONE-CORRECT), JSON-Pfad und
+      Engine-Meldung; ein Hinweis (z. B. eine ungenutzte Karte,
+      W-CARD-UNUSED) erscheint gelb und blockiert das Teilen nicht
 - [ ] TC-0578 "Als Repository teilen" (#2376): bei Lektionsdateien, deren Namen
       nicht in Quellreihenfolge sortieren (kapitel-1..kapitel-10), meldet
       der Erfolgs-Screen die Umbenennung mit NN-Präfixen; das exportierte

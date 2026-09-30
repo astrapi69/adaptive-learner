@@ -17,6 +17,7 @@ import type { Lesson as EngineLesson } from "learn-content-engine";
 import { validateLessonRules } from "learn-content-engine/rules";
 
 import type { ContentLesson } from "../../../storage/types";
+import { APP_EXTENSION_REGISTRY } from "./engine-extensions";
 import { QUALITY } from "./quality-rules.generated";
 
 export interface ValidationMeta {
@@ -406,34 +407,78 @@ function checkLessonExercises(
 }
 
 /**
- * #2376 class 4 - a repeated left value is objectively unsolvable for the
- * learner (which right answer belongs to which copy?) and hard-fails the
- * content-repo gate. Since #3222 PR 2 the check IS the engine's
- * ``E-MATCH-DUP-LEFT`` (``learn-content-engine/rules``, case-insensitive
- * and whitespace-trimmed), so the author learns about it BEFORE an export
- * or share with exactly the verdict the repo gate will give; the app copy
- * it replaces compared case-sensitively and disagreed in both directions.
- * Only this rule is mapped here; reporting every engine error is #3222
- * PR 5. The ``/rules`` entry carries no schema files and no ajv, and this
- * module lives in a lazy chunk, so the entry chunk stays rule-free.
+ * Engine warnings the app already reports through a code of its own, so
+ * they are not repeated under ``engine_warning``:
+ *
+ * - ``W-DOMAIN-UNKNOWN`` is raised per LESSON ``domain``; the set's domain
+ *   is a meta choice the wizard makes once, and the app judges it there.
+ * - ``W-CARD-BACK-SCRIPT`` says a card back carries no letter of the
+ *   source script; ``checkCards`` raises the same fact as the blocking
+ *   ``back_language_mismatch`` and ``validateLanguageHeuristics`` covers
+ *   the positive-evidence case as ``source_language_heuristic``.
  */
-function checkDuplicateLeft(
+const ENGINE_WARNINGS_COVERED_BY_APP: ReadonlySet<string> = new Set([
+  "W-DOMAIN-UNKNOWN",
+  "W-CARD-BACK-SCRIPT",
+]);
+
+/** The exercise id of the step an engine issue path points into, or "". */
+function exerciseIdAt(lesson: ContentLesson, path: string): string {
+  const stepIndex = Number(/^\/steps\/(\d+)(?:\/|$)/.exec(path)?.[1]);
+  return lesson.steps[stepIndex]?.exercise?.id ?? "";
+}
+
+/**
+ * #3222 PR 5 - every semantic rule and author lint of
+ * ``learn-content-engine/rules`` judges the lesson here, with the app's
+ * extension registry (so an adopted ``ext:al-*`` type passes as declared
+ * and its payload is checked by the app's own predicate) and the set's
+ * source language (the engine's script lints read it). The author learns
+ * about a finding BEFORE an export or share with exactly the verdict the
+ * content-repo gate will give.
+ *
+ * ``E-MATCH-DUP-LEFT`` keeps its dedicated wording (#2376 class 4, PR 2):
+ * a repeated left value is objectively unsolvable for the learner. Every
+ * other error renders through the generic ``engine_rule`` key, every
+ * warning not already covered by an app code through ``engine_warning``;
+ * both carry the rule id, the JSON path and the engine's message.
+ *
+ * The ``/rules`` entry carries no schema files and no ajv, and this module
+ * lives in a lazy chunk, so the entry chunk stays rule-free.
+ */
+function checkEngineRules(
   lesson: ContentLesson,
+  meta: ValidationMeta,
   id: string,
   issues: ValidationIssue[],
+  warnings: ValidationIssue[],
 ): void {
-  const { errors } = validateLessonRules(lesson as unknown as EngineLesson);
-  for (const error of errors) {
-    if (error.id !== "E-MATCH-DUP-LEFT") continue;
-    const stepIndex = Number(/^\/steps\/(\d+)(?:\/|$)/.exec(error.path)?.[1]);
-    const exercise = lesson.steps[stepIndex]?.exercise;
+  const verdict = validateLessonRules(lesson as unknown as EngineLesson, {
+    extensions: APP_EXTENSION_REGISTRY,
+    sourceLanguage: meta.source_language,
+  });
+  for (const error of verdict.errors) {
+    if (error.id === "E-MATCH-DUP-LEFT") {
+      issues.push({
+        code: "matching_duplicate_left",
+        params: {
+          lesson: id,
+          exercise: exerciseIdAt(lesson, error.path),
+          value: String(error.params?.term ?? ""),
+        },
+      });
+      continue;
+    }
     issues.push({
-      code: "matching_duplicate_left",
-      params: {
-        lesson: id,
-        exercise: exercise?.id ?? "",
-        value: String(error.params?.term ?? ""),
-      },
+      code: "engine_rule",
+      params: { lesson: id, rule: error.id, path: error.path, message: error.message },
+    });
+  }
+  for (const warning of verdict.warnings) {
+    if (ENGINE_WARNINGS_COVERED_BY_APP.has(warning.id)) continue;
+    warnings.push({
+      code: "engine_warning",
+      params: { lesson: id, rule: warning.id, path: warning.path, message: warning.message },
     });
   }
 }
@@ -456,7 +501,7 @@ function validateLesson(
   checkExampleUrls(lesson, id, issues);
   checkCards(lesson, meta, id, issues);
   checkLessonExercises(exercises, id, issues);
-  checkDuplicateLeft(lesson, id, issues);
+  checkEngineRules(lesson, meta, id, issues, warnings);
 }
 
 /**
