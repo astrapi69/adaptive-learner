@@ -45,6 +45,7 @@ import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
 import {deriveFreeTextAttempt} from "../../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../../../lib/exercises/grading/token-diff";
+import {submitOnEnter} from "../../../../hooks/lesson/interaction/enterKeyGuards";
 import {
     isFreeTextCorrect,
     isFreeTextNearMiss,
@@ -428,10 +429,7 @@ function FreeTextExercise(
         // In code mode the input is a multi-line textarea, so Enter must
         // insert a newline, not submit. Plain free-text submits on Enter.
         if (codeMode) return;
-        if (e.key === "Enter" && !submitted && !isInputEmpty) {
-            e.preventDefault();
-            submit();
-        }
+        submitOnEnter(e, !submitted && !isInputEmpty, submit);
     };
 
     if (accept.length === 0) {
