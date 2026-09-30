@@ -1928,6 +1928,10 @@ repo:
     description: "Otomatis menghasilkan artefak Markdown (README, STATS, CHEATSHEET, ROADMAP) per proyek dari data sesi Anda. Integrasi git opsional melakukan commit setiap render sehingga Anda dapat menelusuri riwayatnya dengan klien git mana pun."
     enable_git: "Aktifkan persistensi git"
 lesson:
+  progress_io:
+    save_failed: "Kemajuan Anda dalam pelajaran ini tidak dapat disimpan: {detail}"
+    load_failed: "Kemajuan tersimpan Anda untuk pelajaran ini tidak dapat dimuat: {detail}"
+    create_profile: "Buat profil belajar"
   mascot_label: "Teman belajarmu"
   combo_chip: "x{n}"
   combo_aria: "Runtunan jawaban: {n} berturut-turut"
@@ -2435,6 +2439,8 @@ lesson:
     body: 'Anda menjeda "{title}". Apakah Anda ingin melanjutkan dari tempat Anda berhenti atau memulai dari awal?'
     action_resume: "Lanjutkan"
     action_restart: "Mulai dari awal"
+    restart_confirm_title: "Mulai lagi dari awal?"
+    restart_confirm_body: "Posisi dan jawaban Anda dalam pelajaran ini akan diatur ulang. Apa yang sudah Anda pelajari (kemajuan penguasaan) tetap tersimpan."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:

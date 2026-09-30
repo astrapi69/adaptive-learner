@@ -2056,6 +2056,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_failed": "Não foi possível salvar seu progresso nesta aula: {detail}",
+      "load_failed": "Não foi possível carregar seu progresso salvo desta aula: {detail}",
+      "create_profile": "Criar um perfil de aprendizagem"
+    },
     "mascot_label": "Seu companheiro de aprendizado",
     "combo_chip": "x{n}",
     "combo_aria": "Sequência de respostas: {n} seguidas",
@@ -2616,7 +2621,9 @@
       "heading": "Retomar aula?",
       "body": "Você pausou \"{title}\". Gostaria de continuar de onde parou ou começar novamente?",
       "action_resume": "Continuar",
-      "action_restart": "Recomeçar"
+      "action_restart": "Recomeçar",
+      "restart_confirm_title": "Recomeçar do início?",
+      "restart_confirm_body": "Sua posição e suas respostas nesta aula serão redefinidas. O que você já aprendeu (progresso de domínio) é mantido."
     }
   },
   "content": {

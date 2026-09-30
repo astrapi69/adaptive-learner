@@ -11,9 +11,9 @@ What gets wiped:
   order so the child rows go before their parents).
 - ``~/.config/adaptive_learner/identity.yaml`` (the Phase 41A
   recovery file).
-- The ``ai.*`` block inside
-  ``~/.config/adaptive_learner/secrets.yaml`` (API keys + any
-  per-provider settings).
+- The ``ai.*`` and ``github.*`` blocks inside
+  ``~/.config/adaptive_learner/secrets.yaml`` (API keys, any
+  per-provider settings, the GitHub token).
 
 What deliberately survives:
 
@@ -80,13 +80,18 @@ def reset_all(repo: ResetRepository) -> int:
     # truncation - we'd rather leave a stale config file than tell
     # the user "reset failed" when their data is already gone.
     identity_service.clear_identity()
-    _scrub_secrets_ai_block()
+    _scrub_secrets_credential_blocks()
 
     return count
 
 
-def _scrub_secrets_ai_block() -> None:
-    """Remove the ``ai`` key from ``secrets.yaml``; preserve the rest.
+#: Top-level ``secrets.yaml`` blocks that hold user credentials: the AI
+#: provider keys and the GitHub token (#3368, it survived a reset).
+_CREDENTIAL_BLOCKS: tuple[str, ...] = ("ai", "github")
+
+
+def _scrub_secrets_credential_blocks() -> None:
+    """Remove every credential block from ``secrets.yaml``; preserve the rest.
 
     Specifically preserves the top-level ``secret_key`` Fernet
     field. Deleting it would make any surviving encrypted data
@@ -95,8 +100,8 @@ def _scrub_secrets_ai_block() -> None:
     backups the user might restore later. Preserving the key
     keeps that restore path open.
 
-    If the resulting file is empty (no fields other than ``ai``
-    existed), the file is removed entirely rather than left as an
+    If the resulting file is empty (no fields other than credential
+    blocks existed), the file is removed entirely rather than left as an
     empty YAML document.
     """
     path = secrets_path()
@@ -110,11 +115,12 @@ def _scrub_secrets_ai_block() -> None:
         return
     if not isinstance(data, dict):
         return
-    if "ai" not in data:
+    if not any(block in data for block in _CREDENTIAL_BLOCKS):
         return
-    del data["ai"]
+    for block in _CREDENTIAL_BLOCKS:
+        data.pop(block, None)
     if not data:
-        # secrets.yaml had only ai.*; remove the file outright.
+        # secrets.yaml held only credentials; remove the file outright.
         try:
             path.unlink()
         except OSError as exc:

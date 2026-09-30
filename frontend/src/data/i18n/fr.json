@@ -2056,6 +2056,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_failed": "Ta progression dans cette leçon n'a pas pu être enregistrée : {detail}",
+      "load_failed": "Ta progression enregistrée pour cette leçon n'a pas pu être chargée : {detail}",
+      "create_profile": "Créer un profil d'apprentissage"
+    },
     "mascot_label": "Ton compagnon d'apprentissage",
     "combo_chip": "x{n}",
     "combo_aria": "Série de réponses : {n} d'affilée",
@@ -2616,7 +2621,9 @@
       "heading": "Reprendre la leçon ?",
       "body": "Tu as mis en pause \"{title}\". Veux-tu continuer là où tu t'es arrêté ou recommencer ?",
       "action_resume": "Continuer",
-      "action_restart": "Recommencer"
+      "action_restart": "Recommencer",
+      "restart_confirm_title": "Recommencer depuis le début ?",
+      "restart_confirm_body": "Ta position et tes réponses dans cette leçon seront réinitialisées. Ce que tu as déjà appris (progression de maîtrise) est conservé."
     }
   },
   "content": {

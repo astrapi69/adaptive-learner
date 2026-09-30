@@ -113,6 +113,30 @@ def test_reset_scrubs_ai_block_but_preserves_secret_key(_isolate_config_dir, db_
     )
 
 
+@pytest.mark.parametrize(
+    "credential_blocks",
+    [
+        {"github": {"token_encrypted": "gAAAA-github"}},
+        {"ai": {"perplexity": {"api_key": "pplx-x"}}, "github": {"token": "ghp-plain"}},
+    ],
+    ids=["github-only", "ai-and-github"],
+)
+def test_reset_scrubs_every_credential_block_but_keeps_secret_key(
+    _isolate_config_dir, db_session, credential_blocks
+):
+    """#3368: the GitHub token lives in its own ``github`` block and
+    survived a reset that promises to delete every key."""
+    path = reset_service.secrets_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        yaml.safe_dump({"secret_key": "PRESERVE-ME-FERNET", **credential_blocks}),
+        encoding="utf-8",
+    )
+    reset_service.reset_all(SqlAlchemyResetRepository(db_session))
+    survivors = yaml.safe_load(path.read_text(encoding="utf-8"))
+    assert survivors == {"secret_key": "PRESERVE-ME-FERNET"}
+
+
 def test_reset_removes_secrets_file_when_only_ai_block_present(_isolate_config_dir, db_session):
     """When secrets.yaml has only ``ai.*`` and no secret_key, the
     file is removed entirely rather than left as an empty document."""
