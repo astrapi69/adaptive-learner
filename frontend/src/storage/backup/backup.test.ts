@@ -20,6 +20,7 @@ import {
 } from "./backup";
 import {_resetDbForTests, getDb} from "../dexie/db";
 import {dexieStorage} from "../dexie-storage";
+import {AI_PROVIDERS} from "../../lib/constants";
 
 beforeEach(async () => {
     await _resetDbForTests();
@@ -587,4 +588,73 @@ describe("content set title recovery on restore (#134)", () => {
                 ?.body,
         ).toBe('{"id":"01"}');
     });
+});
+
+// ---- #3367: no API key ever travels in a Dexie backup ------------------
+
+describe("API keys never travel in a Dexie backup (#3367)", () => {
+    /** Store a live key and a rollback copy per provider through the
+     *  real producers (``setApiKey`` + ``backupApiKey``), the same writes
+     *  the Settings key flow performs after a successful key test. */
+    async function seedKeys(userId: string, prefix: string) {
+        for (const provider of AI_PROVIDERS) {
+            const key = `${prefix}-${provider}-secret`;
+            await dexieStorage.settings.setApiKey(userId, {provider, key});
+            await dexieStorage.settings.backupApiKey(userId, {provider, key});
+        }
+    }
+
+    it.each(AI_PROVIDERS)(
+        "the exported file carries no stored %s key value",
+        async (provider) => {
+            const {user} = await seedUser();
+            await seedKeys(user.id, "sk-live");
+            const payload = await createDexieBackup(user.id, "test");
+            expect(JSON.stringify(payload)).not.toContain(
+                `sk-live-${provider}-secret`,
+            );
+        },
+    );
+
+    it("exports the api_key_backups table empty, not missing", async () => {
+        const {user} = await seedUser();
+        await seedKeys(user.id, "sk-live");
+        const payload = await createDexieBackup(user.id, "test");
+        expect(payload.data.api_key_backups).toEqual([]);
+        expect(payload.stats.tables.api_key_backups).toBe(0);
+    });
+
+    it.each(AI_PROVIDERS)(
+        "a restore overwrites neither the live nor the rollback %s key",
+        async (provider) => {
+            const {user} = await seedUser();
+            await seedKeys(user.id, "sk-live");
+            const payload = await createDexieBackup(user.id, "test");
+            const future = new Date(Date.now() + 86400000).toISOString();
+            for (const row of payload.data.user_settings as Record<string, unknown>[]) {
+                row[`api_key_${provider}`] = "sk-injected";
+                row.updated_at = future;
+            }
+            // A legacy (pre-#3367) Dexie file or an API-origin file both
+            // carry rollback rows; neither may land in this install.
+            payload.data.api_key_backups = [
+                {
+                    id: `${user.id}#${provider}`,
+                    user_id: user.id,
+                    provider,
+                    key: "sk-injected",
+                    encrypted_key: "gAAAAA-ciphertext",
+                    tested_at: future,
+                    works: true,
+                    updated_at: future,
+                },
+            ];
+            await restoreDexieBackup(user.id, payload);
+            const db = getDb();
+            const live = await db.userSettings.where("user_id").equals(user.id).first();
+            expect(live![`api_key_${provider}`]).toBe(`sk-live-${provider}-secret`);
+            const rollback = await db.apiKeyBackups.get(`${user.id}#${provider}`);
+            expect(rollback?.key).toBe(`sk-live-${provider}-secret`);
+        },
+    );
 });
