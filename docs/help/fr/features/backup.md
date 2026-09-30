@@ -15,8 +15,13 @@ Une sauvegarde est un **instantané complet** : les 30 tables de
 données (projets d'apprentissage, sessions, progression des
 leçons, erreurs au niveau des éléments, gamification avec
 XP/série/badges, missions, cartes Anki, notes et plus encore)
-**plus tes ensembles de contenu téléchargés**. Rien d'important ne
-reste en arrière.
+**plus tes ensembles de contenu téléchargés**.
+
+**Pas encore inclus :** les dépôts de contenu connectés, les
+invitations utilisées et les réglages du Learning Repository. Après
+une restauration sur un nouvel appareil, les ensembles de contenu
+sont de retour, mais reconnecte leurs dépôts (et utilise à nouveau
+les invitations) pour continuer à recevoir les mises à jour.
 
 Avant l'export, l'application affiche un aperçu **« Ta sauvegarde
 contient … »** avec le nombre d'enregistrements par domaine, afin
@@ -94,4 +99,4 @@ aucun format d'archive propriétaire.
 ## Pages connexes
 
 - [Paramètres](../user-guide/settings.md) - un aperçu de toutes les actions sur les données
-- [Plusieurs dépôts de contenu](content-repos.md) - les dépôts connectés font partie de l'instantané
+- [Plusieurs dépôts de contenu](content-repos.md) - les dépôts connectés ne font pas encore partie de la sauvegarde, reconnecte-les après une restauration

@@ -88,7 +88,7 @@ export default function ContentSearchResults({
                     {entry.level}
                   </span>
                 </h3>
-                <ul className="mt-1 space-y-1 pl-4">
+                <ul className="mt-1 list-disc space-y-1 pl-4">
                   {match.matchedLessons.map((lessonRef) => (
                     <li key={lessonRef.filename}>
                       <button

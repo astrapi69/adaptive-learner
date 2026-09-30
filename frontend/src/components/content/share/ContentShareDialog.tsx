@@ -90,7 +90,7 @@ export default function ContentShareDialog({
         )
       ) : null;
     return (
-      <ul className="content-ai-issues" data-testid="content-ai-issues">
+      <ul className="content-ai-issues list-disc" data-testid="content-ai-issues">
         {aiResult.translation_issues.map((it, i) => (
           <li key={`tr-${i}`} className="content-ai-issue content-ai-issue-warn">
             <span>

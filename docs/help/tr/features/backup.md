@@ -14,8 +14,13 @@ Veriler** altında bulursun.
 Bir yedek, **eksiksiz bir snapshot'tır**: 30 veri tablosunun tümü
 (öğrenme projeleri, oturumlar, ders ilerlemesi, öğe düzeyinde
 hatalar, XP/Streak/Badge ile gamification, görevler, Anki kartları,
-notlar ve daha fazlası) **artı indirdiğin İçerik Setlerin**. Önemli
-hiçbir şey geride kalmaz.
+notlar ve daha fazlası) **artı indirdiğin İçerik Setlerin**.
+
+**Henüz dahil olmayanlar:** bağlı içerik repository'leri, kullanılan
+davetler ve Learning Repository ayarları. Yeni bir cihazda geri
+yüklemeden sonra İçerik Setleri geri gelir, ancak güncellemelerin
+gelmeye devam etmesi için repository'lerini yeniden bağla (ve
+davetleri yeniden kullan).
 
 Dışa aktarmadan önce uygulama, kaydetmeden önce neyin yedekleneceğini
 görmen için bölüm başına veri kümesi sayılarıyla bir **"Yedeğin
@@ -87,4 +92,4 @@ JSON dosyasıdır; özel bir arşiv formatı yoktur.
 ## İlgili sayfalar
 
 - [Ayarlar](../user-guide/settings.md) - tüm veri eylemlerine genel bakış
-- [Birden Çok İçerik Repository'si](content-repos.md) - bağlı repolar snapshot'ın parçasıdır
+- [Birden Çok İçerik Repository'si](content-repos.md) - bağlı repolar henüz yedeğin parçası değil, geri yüklemeden sonra yeniden bağla
