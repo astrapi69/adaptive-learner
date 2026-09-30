@@ -1,0 +1,12 @@
+{
+  "cases": [
+    {"name": "too_few_ratings", "current_method": "deductive", "recent_ratings": [{"understanding": 2, "stress": 5}, {"understanding": 2, "stress": 5}]},
+    {"name": "flat_and_stressed", "current_method": "deductive", "recent_ratings": [{"understanding": 3, "stress": 4}, {"understanding": 3, "stress": 4}, {"understanding": 3, "stress": 4}]},
+    {"name": "declining_very_stressed", "current_method": "inductive", "recent_ratings": [{"understanding": 5, "stress": 1}, {"understanding": 4, "stress": 5}, {"understanding": 3, "stress": 5}, {"understanding": 2, "stress": 5}]},
+    {"name": "improving", "current_method": "deductive", "recent_ratings": [{"understanding": 2, "stress": 5}, {"understanding": 3, "stress": 5}, {"understanding": 4, "stress": 5}]},
+    {"name": "flat_but_calm", "current_method": "deductive", "recent_ratings": [{"understanding": 2, "stress": 3}, {"understanding": 2, "stress": 3}, {"understanding": 2, "stress": 3}]},
+    {"name": "stress_exactly_four", "current_method": "dialogic", "recent_ratings": [{"understanding": 3, "stress": 4}, {"understanding": 2, "stress": 4}, {"understanding": 2, "stress": 4}]},
+    {"name": "profile_picks_heaviest_unused", "current_method": "deductive", "recent_ratings": [{"understanding": 2, "stress": 5}, {"understanding": 2, "stress": 5}, {"understanding": 2, "stress": 5}], "profile": {"deductive": 0.9, "contextual": 0.8, "dialogic": 0.6}, "recently_used_methods": ["deductive", "contextual"]},
+    {"name": "missing_stress_field", "current_method": "deductive", "recent_ratings": [{"understanding": 2, "stress": 5}, {"understanding": 2}, {"understanding": 2, "stress": 5}]}
+  ]
+}

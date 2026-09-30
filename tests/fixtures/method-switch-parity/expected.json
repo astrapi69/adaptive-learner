@@ -1,0 +1,34 @@
+{
+  "declining_very_stressed": {
+    "confidence": 1.0,
+    "from_method": "inductive",
+    "project_id": "p1",
+    "reason": "Understanding flat over the last 3 sessions ([4, 3, 2]) while mean stress is 5.0/5. Trying deductive next.",
+    "to_method": "deductive"
+  },
+  "flat_and_stressed": {
+    "confidence": 0.75,
+    "from_method": "deductive",
+    "project_id": "p1",
+    "reason": "Understanding flat over the last 3 sessions ([3, 3, 3]) while mean stress is 4.0/5. Trying inductive next.",
+    "to_method": "inductive"
+  },
+  "flat_but_calm": null,
+  "improving": null,
+  "missing_stress_field": null,
+  "profile_picks_heaviest_unused": {
+    "confidence": 1.0,
+    "from_method": "deductive",
+    "project_id": "p1",
+    "reason": "Understanding flat over the last 3 sessions ([2, 2, 2]) while mean stress is 5.0/5. Trying dialogic next.",
+    "to_method": "dialogic"
+  },
+  "stress_exactly_four": {
+    "confidence": 0.75,
+    "from_method": "dialogic",
+    "project_id": "p1",
+    "reason": "Understanding flat over the last 3 sessions ([3, 2, 2]) while mean stress is 4.0/5. Trying deductive next.",
+    "to_method": "deductive"
+  },
+  "too_few_ratings": null
+}
