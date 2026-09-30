@@ -2056,6 +2056,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_failed": "Your progress in this lesson could not be saved: {detail}",
+      "load_failed": "Your saved progress for this lesson could not be loaded: {detail}",
+      "create_profile": "Create a learner profile"
+    },
     "mascot_label": "Your learning companion",
     "combo_chip": "x{n}",
     "combo_aria": "Answer streak: {n} in a row",
