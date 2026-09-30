@@ -46,7 +46,7 @@ function directionOf(attempt: ElementAttempt): string {
  *  seventh segment (after ``direction``), keeping a card's rows in run 2
  *  distinct from its run-1 rows. Mirrors the backend UNIQUE(user, set,
  *  lesson, exercise, element_key, direction, run_id). */
-function elementRowKey(
+export function elementRowKey(
     userId: string,
     setId: string,
     lessonId: string,

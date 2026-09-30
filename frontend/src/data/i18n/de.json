@@ -797,6 +797,8 @@
     "lesson_auto_advance_description": "Nach einer richtigen Antwort automatisch zur nächsten Aufgabe. Bei einer falschen Antwort wird immer gewartet, damit du die Lösung ansehen kannst.",
     "ask_ai_visible": "'KI fragen'-Button anzeigen",
     "ask_ai_visible_description": "Zeigt den 'KI fragen'-Button unter Theorie- und Übungsblöcken. Standardmäßig sichtbar; der Button braucht weiterhin deinen eigenen KI-Schlüssel (BYOK), um zu antworten.",
+    "keep_screen_on": "Bildschirm in Lektionen anlassen",
+    "keep_screen_on_description": "Solange eine Lektion offen ist, schaltet sich der Bildschirm nicht ab, auch wenn du liest, ohne ihn zu berühren. In der Zusammenfassung darf er wieder ausgehen. Auf dem iPhone ab iOS 16.4, als App auf dem Home-Bildschirm ab iOS 18.4.",
     "button_tooltips": "Button-Tooltips anzeigen",
     "button_tooltips_description": "Zeigt beim Überfahren von Icon-Buttons einen Tooltip mit der Funktion. Screenreader-Beschriftungen bleiben unabhängig davon immer aktiv.",
     "developer_mode": "Entwicklermodus",
@@ -1027,9 +1029,9 @@
       "desc": "Nach dem Prüfen zeigt 'Meine Antworten' deine Paare so, wie du sie gebildet hast, ohne Bewertung; Bewertung und richtige Partner stehen unter 'Korrektur'. Aus: die richtigen Partner stehen direkt unter jedem Fehler in 'Meine Antworten'."
     },
     "paused_retention": {
-      "title": "Pausierte Lektionen aufbewahren",
-      "hint": "Pausierte Lektionen, die älter als dieser Zeitraum sind, werden automatisch aufgegeben. Bis zu 10 pausierte Lektionen werden unabhängig vom Alter behalten.",
-      "label": "Pausierte Lektionen behalten für",
+      "title": "Pausierte Lektionen auf dem Dashboard",
+      "hint": "Die Karte der pausierten Lektionen auf dem Dashboard zeigt nur Lektionen bis zu diesem Alter. Eine ältere Lektion verschwindet nur aus der Karte: Es wird nichts aufgegeben, Position und Antworten bleiben erhalten.",
+      "label": "Pausierte Lektionen ausblenden, wenn älter als",
       "7_days": "7 Tage",
       "14_days": "14 Tage",
       "30_days": "30 Tage",
