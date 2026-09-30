@@ -2,6 +2,8 @@ app:
   loading: "Cargando…"
   loading_slow: "Esto está tardando más de lo esperado."
   view_load_failed: "No se pudo cargar esta vista."
+  view_crashed: "Se produjo un error en esta página. Las demás páginas siguen funcionando."
+  crashed: "Algo salió mal."
   reload: "Recargar"
   name: Adaptive Learner
   tagline: Aprendizaje que se adapta a ti.
@@ -426,6 +428,10 @@ session:
   ai_thinking: Pensando...
   ai_error: El proveedor de IA no pudo responder.
   no_api_key: "No hay clave de IA configurada. Añade una clave para tu proveedor de IA en Ajustes para chatear con el tutor. Las lecciones y los repasos funcionan sin clave."
+  ai_error_no_model: "No hay ningún modelo seleccionado para tu proveedor de IA. Elige un modelo en Ajustes > IA."
+  ai_error_provider_auth: "Tu proveedor de IA rechazó la clave. Revisa la clave en Ajustes > IA."
+  ai_error_rate_limited: "Se alcanzó el límite de tu proveedor de IA. Espera un momento o revisa tu cuota y vuelve a enviar."
+  ai_error_provider_unavailable: "Ahora mismo no se puede contactar con tu proveedor de IA. Revisa la conexión y vuelve a enviar."
   welcome_empty: "¡Listo para aprender! Escribe tu primer mensaje."
   end_session: Terminar sesión
   end_session_confirm: ¿Seguro? Cerraremos la sesión y pediremos una valoración.
@@ -479,6 +485,7 @@ settings:
     heading: "Contenido desconectado"
     summary: "{lessons} lecciones y {cards} tarjetas de repaso de fuentes a las que ya no estás conectado."
     delete: "Eliminar progreso desconectado"
+    delete_failed: "No se pudo eliminar el progreso desconectado: {detail}"
     confirm_title: "Eliminar progreso desconectado"
     confirm_message: "Se eliminarán permanentemente {lessons} lecciones y {cards} tarjetas de repaso. Esto no se puede deshacer."
     deleted: "Se borraron {lessons} lecciones y {cards} tarjetas de repaso."
@@ -1207,6 +1214,7 @@ backup:
   auto_run_error: "La copia de seguridad automática falló: {{detail}}"
   auto_restored: "Copia de seguridad automática restaurada."
   auto_restore: "Restaurar"
+  auto_delete_failed: "No se pudo eliminar la copia de seguridad automática: {detail}"
   auto_restore_error: "La restauración falló: {{detail}}"
   auto_records: "{{n}} registros"
   auto_none: "Aún no hay copias automáticas. La primera se ejecuta tras 10 sesiones o 7 días."
@@ -1639,6 +1647,7 @@ notebooklm:
 feature:
   api_key_required: "Se requiere una clave de API. Configura un proveedor en los ajustes."
   desktop_only: "Solo disponible con la aplicación de escritorio."
+  browser_only: "Solo disponible en la versión de navegador de la app."
 ui:
   cancel: "Cancelar"
   hide_secret: "Ocultar valor"
@@ -2648,6 +2657,7 @@ content:
     change_failed: "No se pudo actualizar el estado."
     deleted: "Conjunto eliminado."
     delete_failed: "No se pudo eliminar el conjunto."
+    progress_not_deleted: "Eliminado, pero no se pudo borrar tu progreso de aprendizaje: {detail}"
     delete_confirm: "El conjunto descargado y sus lecciones se eliminarán de Mis contenidos. Tu progreso de aprendizaje se conserva y puedes volver a descargar el conjunto cuando quieras."
     select_all: "Seleccionar todo"
     select_set: "Seleccionar {title}"
@@ -3642,6 +3652,7 @@ pwa:
   cache_clear: "Vaciar caché"
   cache_clear_confirm: "¿Vaciar la caché sin conexión?"
   cache_clear_action: "Sí, vaciar"
+  cache_clear_failed: "No se pudo vaciar la caché sin conexión: {detail}"
   cache_cleared: "Caché sin conexión vaciada."
   update:
     message: "Hay una nueva versión disponible."
@@ -4020,6 +4031,8 @@ content_repo:
     copy_failed: "No se pudo copiar."
     hint: "Comparte este enlace para que otros puedan añadir este repositorio PÚBLICO. Para un repositorio privado, envía la URL y un token de solo lectura por separado."
     qr_alt: "Código QR del enlace para compartir"
+  remove_failed: "No se pudo quitar el repositorio: {detail}"
+  reorder_failed: "No se pudo cambiar el orden de los repositorios: {detail}"
   progress:
     syncing: "Sincronizando…"
     validating: "Validando repositorio…"

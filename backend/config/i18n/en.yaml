@@ -2,6 +2,8 @@ app:
   loading: "Loading…"
   loading_slow: "This is taking longer than expected."
   view_load_failed: "This view could not be loaded."
+  view_crashed: "Something went wrong on this page. The other pages still work."
+  crashed: "Something went wrong."
   reload: "Reload"
   name: Adaptive Learner
   tagline: Learning that adapts to you.
@@ -426,6 +428,10 @@ session:
   ai_thinking: Thinking…
   ai_error: The AI provider could not reply.
   no_api_key: "No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key."
+  ai_error_no_model: "No model is selected for your AI provider. Choose a model in Settings > AI."
+  ai_error_provider_auth: "Your AI provider rejected the key. Check the key in Settings > AI."
+  ai_error_rate_limited: "Your AI provider's limit is reached. Wait a moment or check your quota, then send again."
+  ai_error_provider_unavailable: "Your AI provider cannot be reached right now. Check your connection and send again."
   welcome_empty: "Ready to learn! Write your first message."
   end_session: End session
   end_session_confirm: Sure? We will close the session and ask for a rating.
@@ -479,6 +485,7 @@ settings:
     heading: "Disconnected content"
     summary: "{lessons} lessons and {cards} review cards from sources you are no longer connected to."
     delete: "Delete disconnected progress"
+    delete_failed: "Could not delete the disconnected progress: {detail}"
     confirm_title: "Delete disconnected progress"
     confirm_message: "{lessons} lessons and {cards} review cards will be permanently deleted. This cannot be undone."
     deleted: "Deleted {lessons} lessons and {cards} review cards."
@@ -1207,6 +1214,7 @@ backup:
   auto_run_error: 'Auto-backup failed: {{detail}}'
   auto_restored: Auto-backup restored.
   auto_restore: Restore
+  auto_delete_failed: "Could not delete the automatic backup: {detail}"
   auto_restore_error: 'Restore failed: {{detail}}'
   auto_records: '{{n}} records'
   auto_none: No auto-backups yet. The first one runs after 10 sessions or 7 days.
@@ -1639,6 +1647,7 @@ notebooklm:
 feature:
   api_key_required: "API key required. Configure a provider in Settings."
   desktop_only: "Only available with the desktop app."
+  browser_only: "Only available in the browser version of the app."
 ui:
   cancel: "Cancel"
   hide_secret: "Hide value"
@@ -2657,6 +2666,7 @@ content:
     change_failed: "Could not update the status."
     deleted: "Set removed."
     delete_failed: "Could not remove the set."
+    progress_not_deleted: "Removed, but your learning progress could not be deleted: {detail}"
     delete_confirm: "The downloaded set and its lessons will be removed from My Content. Your learning progress is kept, and you can download the set again anytime."
     select_all: "Select all"
     select_set: "Select {title}"
@@ -3650,6 +3660,7 @@ pwa:
   cache_clear: "Clear cache"
   cache_clear_confirm: "Clear the offline cache?"
   cache_clear_action: "Yes, clear"
+  cache_clear_failed: "Could not clear the offline cache: {detail}"
   cache_cleared: "Offline cache cleared."
   update:
     message: "A new version is available."
@@ -4028,6 +4039,8 @@ content_repo:
     copy_failed: "Could not copy."
     hint: "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately."
     qr_alt: "QR code for the share link"
+  remove_failed: "Could not remove the repository: {detail}"
+  reorder_failed: "Could not change the repository order: {detail}"
   progress:
     syncing: "Syncing…"
     validating: "Validating repository…"
