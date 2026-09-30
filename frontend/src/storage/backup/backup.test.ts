@@ -116,25 +116,28 @@ describe("createDexieBackup", () => {
         const {user} = await seedUser();
         const db = getDb();
         // Plant the kind of learning state that the pre-fix Dexie
-        // backup dropped on the floor.
-        await db.lessonProgress.add({
-            id: "lp-1",
-            user_id: user.id,
+        // backup dropped on the floor, through the real producers
+        // (#3362: fixtures with consumer-chosen ids pinned the id, not
+        // whether the lesson page can reach the row).
+        const source = "astrapi69/adaptive-learner-content";
+        await dexieStorage.lessonProgress.upsert(user.id, {
+            source,
             set_id: "es-a1",
             lesson_filename: "01-greetings.json",
-            status: "completed",
-            stars: 3,
-            updated_at: "2026-06-01T10:00:00.000Z",
-        } as never);
-        await db.elementErrors.add({
-            id: "ee-1",
-            user_id: user.id,
-            element_key: "hola",
-            direction: "target_to_source",
-            error_count: 2,
-            consecutive_correct: 0,
-            updated_at: "2026-06-01T10:00:00.000Z",
-        } as never);
+            current_step: 3,
+        });
+        await dexieStorage.elementErrors.recordBulk(user.id, [
+            {
+                set_id: "es-a1",
+                lesson_id: "01-greetings.json",
+                exercise_id: "ex-1",
+                element_key: "hola",
+                element_type: "vocabulary",
+                user_answer: "helo",
+                correct_answer: "hello",
+                correct: false,
+            },
+        ] as never);
 
         const payload = await createDexieBackup(user.id, "test");
         expect(payload.data.lesson_progress).toHaveLength(1);
@@ -148,26 +151,30 @@ describe("createDexieBackup", () => {
         const summary = await restoreDexieBackup(user.id, payload);
         expect(summary.tables.lesson_progress.inserted).toBe(1);
         expect(summary.tables.element_errors.inserted).toBe(1);
-        expect(await db.lessonProgress.get("lp-1")).toBeTruthy();
-        expect(await db.elementErrors.get("ee-1")).toBeTruthy();
+        const progress = await dexieStorage.lessonProgress.get(
+            user.id,
+            source,
+            "es-a1",
+            "01-greetings.json",
+        );
+        expect(progress?.current_step).toBe(3);
+        const errors = await dexieStorage.elementErrors.list(user.id, {});
+        expect(errors.map((row) => [row.element_key, row.error_count])).toEqual([["hola", 1]]);
     });
 
     it("round-trips a speech recording, audio blob included (#2818/#2824)", async () => {
         const {user} = await seedUser();
         const db = getDb();
-        await db.speechRecordings.add({
-            id: "sr-1",
-            user_id: user.id,
-            source: "astrapi69/adaptive-learner-content",
+        const source = "astrapi69/adaptive-learner-content";
+        await dexieStorage.speechRecordings.save(user.id, {
+            source,
             set_id: "es-a1",
             lesson_filename: "03-pronunciation.json",
             exercise_id: "ex-1",
             audio_base64: "UklGRhdummyBASE64AUDIODATAxyz",
             mime_type: "audio/webm",
             duration_ms: 4200,
-            recorded_at: "2026-06-01T10:00:00.000Z",
-            updated_at: "2026-06-01T10:00:00.000Z",
-        } as never);
+        });
 
         const payload = await createDexieBackup(user.id, "test");
         expect(payload.data.speech_recordings).toHaveLength(1);
@@ -180,7 +187,13 @@ describe("createDexieBackup", () => {
 
         const summary = await restoreDexieBackup(user.id, payload);
         expect(summary.tables.speech_recordings.inserted).toBe(1);
-        const restored = await db.speechRecordings.get("sr-1");
+        const restored = await dexieStorage.speechRecordings.get(
+            user.id,
+            source,
+            "es-a1",
+            "03-pronunciation.json",
+            "ex-1",
+        );
         expect(restored?.audio_base64).toBe("UklGRhdummyBASE64AUDIODATAxyz");
         expect(restored?.duration_ms).toBe(4200);
     });

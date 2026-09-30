@@ -19,6 +19,7 @@ import type {
     RestoreTableSummary,
 } from "../../types/domain";
 import {restoreDexieContentSets} from "./backup-content-sets";
+import {normalizeRestoreRecord} from "./backup-normalize";
 import {
     dropApiKeyFields,
     getTable,
@@ -70,7 +71,8 @@ async function restoreOneTable(
 ): Promise<RestoreTableSummary> {
     const summary = emptyTableSummary();
     const store = getTable(db, spec);
-    for (const record of records) {
+    for (const raw of records) {
+        const record = normalizeRestoreRecord(table, raw);
         const recordId = record.id;
         if (typeof recordId !== "string" || recordId === "") {
             summary.skipped += 1;

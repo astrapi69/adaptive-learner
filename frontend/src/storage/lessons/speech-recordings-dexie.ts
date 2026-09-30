@@ -36,7 +36,9 @@ function slugifySource(source: string): string {
     return source.replace(/\//g, "--");
 }
 
-function rowKey(
+/** The composite primary key of a ``speechRecordings`` row; the backup
+ *  restore rekeys API-origin rows onto it (#3362). */
+export function speechRecordingKey(
     userId: string,
     source: string,
     setId: string,
@@ -71,7 +73,7 @@ export async function getSpeechRecordingDexie(
 ): Promise<SpeechRecording | null> {
     const db = getDb();
     const row = await db.speechRecordings.get(
-        rowKey(userId, source, setId, lessonFilename, exerciseId),
+        speechRecordingKey(userId, source, setId, lessonFilename, exerciseId),
     );
     return row ? rowToWire(row) : null;
 }
@@ -110,7 +112,7 @@ export async function saveSpeechRecordingDexie(
     maxTotalBytesOverride?: number,
 ): Promise<SpeechRecording> {
     const db = getDb();
-    const key = rowKey(
+    const key = speechRecordingKey(
         userId,
         body.source,
         body.set_id,
@@ -151,7 +153,7 @@ export async function wasEvictedDexie(
     exerciseId: string,
 ): Promise<boolean> {
     return wasSpeechRecordingEvicted(
-        rowKey(userId, source, setId, lessonFilename, exerciseId),
+        speechRecordingKey(userId, source, setId, lessonFilename, exerciseId),
     );
 }
 
@@ -164,6 +166,6 @@ export async function deleteSpeechRecordingDexie(
 ): Promise<void> {
     const db = getDb();
     await db.speechRecordings.delete(
-        rowKey(userId, source, setId, lessonFilename, exerciseId),
+        speechRecordingKey(userId, source, setId, lessonFilename, exerciseId),
     );
 }
