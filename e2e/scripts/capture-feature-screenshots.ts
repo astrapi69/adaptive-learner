@@ -464,10 +464,24 @@ async function gotoMatchingLongWord(page: Page): Promise<boolean> {
 }
 
 /** The long-word matching exercise checked with one wrong pair, so the
- *  "Deine Antwort" / "Richtige Antwort" lines carry the long word too. */
+ *  "Deine Antwort" / "Richtige Antwort" lines carry the long word too.
+ *  Since #3186 those lines live in the "Korrektur" view (the default
+ *  "separate corrections" setting leaves "Meine Antworten" ungraded), so
+ *  the setup opens it and waits for a "Richtige Antwort" line (#3318).
+ *  The matching step is the fixture's LAST step, so entering it fires the
+ *  motivation toast; with the extra view click that toast outlived the
+ *  settle cap in 3 of 5 runs, so the setup lets it run out first, pointer
+ *  parked off the bottom-right toast (#2898). */
 async function gotoMatchingLongWordResolved(page: Page): Promise<boolean> {
     if (!(await gotoMatchingLongWord(page))) return false;
-    return resolveOpenMatching(page);
+    if (!(await resolveOpenMatching(page))) return false;
+    await page.mouse.move(0, 0);
+    await expect(page.locator(".Toastify__toast")).toHaveCount(0, {timeout: 10_000});
+    await page.getByTestId("matching-corrections").click();
+    await expect(
+        page.getByTestId(/^matching-correct-hint-\d+$/).first(),
+    ).toBeVisible({timeout: 5_000});
+    return true;
 }
 
 /**
@@ -561,12 +575,13 @@ async function gotoAboutLegal(page: Page): Promise<boolean> {
     return true;
 }
 
-/** The app entry page with the legal row under the docs link (#3113). */
+/** The app entry page with the legal row under the docs link (#3113).
+ *  The page shows its returning-user check first and the landing UI only
+ *  after it, so the setup waits for the link instead of counting it right
+ *  after the navigation (the count read 0 and skipped the shot, #3182). */
 async function gotoLandingLegal(page: Page): Promise<boolean> {
     await page.goto("/");
-    const link = page.getByTestId("landing-imprint-link");
-    if (!(await link.count())) return false;
-    await expect(link).toBeVisible({timeout: 20_000});
+    await expect(page.getByTestId("landing-imprint-link")).toBeVisible({timeout: 20_000});
     return true;
 }
 
@@ -1437,10 +1452,13 @@ const FEATURES: FeatureShot[] = [
         pinTo: "reset-set-results-confirm",
     },
     // --- Detailed lesson evaluation with the lesson review (#3124) --------
+    // #3088 pattern: the pin sits on the toggle row ABOVE the report, so
+    // the report's own heading clears the runner's sticky progress bar
+    // (pinBelowHeader measures ``.app-nav``, which the runner does not show).
     {
         path: "lesson-review/summary",
         setup: gotoDetailedLessonSummary,
-        pinTo: "lesson-summary-review",
+        pinTo: "lesson-summary-detailed-toggle",
     },
     // --- Phone header with due-reviews + XP badges (#3123) ----------------
     {
