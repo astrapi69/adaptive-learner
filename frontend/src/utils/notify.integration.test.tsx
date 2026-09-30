@@ -23,6 +23,7 @@ vi.mock("../hooks/ui/useI18n", () => ({
         lang: "en",
         setLang: vi.fn(),
     }),
+    resolveI18n: (_key: string, fallback: string) => fallback,
 }));
 
 vi.mock("./eventRecorder", () => ({
