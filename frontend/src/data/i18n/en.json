@@ -512,6 +512,7 @@
       "heading": "Disconnected content",
       "summary": "{lessons} lessons and {cards} review cards from sources you are no longer connected to.",
       "delete": "Delete disconnected progress",
+      "delete_failed": "Could not delete the disconnected progress: {detail}",
       "confirm_title": "Delete disconnected progress",
       "confirm_message": "{lessons} lessons and {cards} review cards will be permanently deleted. This cannot be undone.",
       "deleted": "Deleted {lessons} lessons and {cards} review cards."
@@ -796,6 +797,8 @@
     "lesson_auto_advance_description": "After a correct answer, go to the next exercise automatically. A wrong answer always waits so you can review the solution.",
     "ask_ai_visible": "Show 'Ask AI' button",
     "ask_ai_visible_description": "Show the 'Ask AI' button under theory and exercises. Shown by default; the button still needs your own AI key (BYOK) to answer.",
+    "keep_screen_on": "Keep the screen on in lessons",
+    "keep_screen_on_description": "While a lesson is open, the screen does not turn off, also while you read without touching it. The lesson summary lets the screen turn off again. Needs iOS 16.4 or later on an iPhone, iOS 18.4 or later in an app on the home screen.",
     "button_tooltips": "Show button tooltips",
     "button_tooltips_description": "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
     "developer_mode": "Developer Mode",
@@ -1026,9 +1029,9 @@
       "desc": "After checking, 'My answers' shows your pairs as you formed them, without grading; the grading and the correct partners are under 'Corrections'. Off: the correct partner appears directly under each mistake in 'My answers'."
     },
     "paused_retention": {
-      "title": "Paused lesson retention",
-      "hint": "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age.",
-      "label": "Keep paused lessons for",
+      "title": "Paused lessons on the Dashboard",
+      "hint": "The paused-lessons card on the Dashboard only shows lessons up to this age. An older lesson just drops out of the card: nothing is abandoned, and it keeps its position and answers.",
+      "label": "Hide paused lessons older than",
       "7_days": "7 days",
       "14_days": "14 days",
       "30_days": "30 days",
@@ -1281,6 +1284,7 @@
     "auto_run_error": "Auto-backup failed: {{detail}}",
     "auto_restored": "Auto-backup restored.",
     "auto_restore": "Restore",
+    "auto_delete_failed": "Could not delete the automatic backup: {detail}",
     "auto_restore_error": "Restore failed: {{detail}}",
     "auto_records": "{{n}} records",
     "auto_none": "No auto-backups yet. The first one runs after 10 sessions or 7 days.",
@@ -2860,6 +2864,7 @@
       "change_failed": "Could not update the status.",
       "deleted": "Set removed.",
       "delete_failed": "Could not remove the set.",
+      "progress_not_deleted": "Removed, but your learning progress could not be deleted: {detail}",
       "delete_confirm": "The downloaded set and its lessons will be removed from My Content. Your learning progress is kept, and you can download the set again anytime.",
       "select_all": "Select all",
       "select_set": "Select {title}",
@@ -3956,6 +3961,7 @@
     "cache_clear": "Clear cache",
     "cache_clear_confirm": "Clear the offline cache?",
     "cache_clear_action": "Yes, clear",
+    "cache_clear_failed": "Could not clear the offline cache: {detail}",
     "cache_cleared": "Offline cache cleared.",
     "update": {
       "message": "A new version is available.",
@@ -4356,6 +4362,8 @@
       "hint": "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately.",
       "qr_alt": "QR code for the share link"
     },
+    "remove_failed": "Could not remove the repository: {detail}",
+    "reorder_failed": "Could not change the repository order: {detail}",
     "progress": {
       "syncing": "Syncing…",
       "validating": "Validating repository…",

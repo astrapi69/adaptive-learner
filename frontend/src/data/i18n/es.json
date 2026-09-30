@@ -512,6 +512,7 @@
       "heading": "Contenido desconectado",
       "summary": "{lessons} lecciones y {cards} tarjetas de repaso de fuentes a las que ya no estás conectado.",
       "delete": "Eliminar progreso desconectado",
+      "delete_failed": "No se pudo eliminar el progreso desconectado: {detail}",
       "confirm_title": "Eliminar progreso desconectado",
       "confirm_message": "Se eliminarán permanentemente {lessons} lecciones y {cards} tarjetas de repaso. Esto no se puede deshacer.",
       "deleted": "Se borraron {lessons} lecciones y {cards} tarjetas de repaso."
@@ -796,6 +797,8 @@
     "lesson_auto_advance_description": "Tras una respuesta correcta, pasa automáticamente al siguiente ejercicio. Una respuesta incorrecta siempre espera para que puedas revisar la solución.",
     "ask_ai_visible": "Mostrar botón 'Preguntar a la IA'",
     "ask_ai_visible_description": "Muestra el botón 'Preguntar a la IA' bajo la teoría y los ejercicios. Visible de forma predeterminada; el botón sigue necesitando tu propia clave de IA (BYOK) para responder.",
+    "keep_screen_on": "Mantener la pantalla encendida en las lecciones",
+    "keep_screen_on_description": "Mientras una lección está abierta, la pantalla no se apaga, tampoco mientras lees sin tocarla. En el resumen de la lección puede volver a apagarse. En el iPhone requiere iOS 16.4 o posterior, como app en la pantalla de inicio iOS 18.4 o posterior.",
     "button_tooltips": "Mostrar descripciones de botones",
     "button_tooltips_description": "Muestra una descripción al pasar el cursor sobre los botones de iconos. Las etiquetas para lectores de pantalla siguen activas igualmente.",
     "developer_mode": "Modo Desarrollador",
@@ -1026,9 +1029,9 @@
       "desc": "Tras comprobar, 'Mis respuestas' muestra tus parejas tal como las formaste, sin evaluación; la evaluación y las parejas correctas están en 'Corrección'. Desactivado: la pareja correcta aparece justo debajo de cada error en 'Mis respuestas'."
     },
     "paused_retention": {
-      "title": "Retención de lecciones pausadas",
-      "hint": "Las lecciones pausadas más antiguas que este período se abandonan automáticamente. Se conservan hasta 10 lecciones pausadas independientemente de su antigüedad.",
-      "label": "Conservar lecciones pausadas por",
+      "title": "Lecciones pausadas en el Panel",
+      "hint": "La tarjeta de lecciones pausadas del Panel solo muestra lecciones hasta esta antigüedad. Una lección más antigua solo desaparece de la tarjeta: no se abandona nada y conserva su posición y sus respuestas.",
+      "label": "Ocultar lecciones pausadas con más de",
       "7_days": "7 días",
       "14_days": "14 días",
       "30_days": "30 días",
@@ -1281,6 +1284,7 @@
     "auto_run_error": "La copia de seguridad automática falló: {{detail}}",
     "auto_restored": "Copia de seguridad automática restaurada.",
     "auto_restore": "Restaurar",
+    "auto_delete_failed": "No se pudo eliminar la copia de seguridad automática: {detail}",
     "auto_restore_error": "La restauración falló: {{detail}}",
     "auto_records": "{{n}} registros",
     "auto_none": "Aún no hay copias automáticas. La primera se ejecuta tras 10 sesiones o 7 días.",
@@ -2860,6 +2864,7 @@
       "change_failed": "No se pudo actualizar el estado.",
       "deleted": "Conjunto eliminado.",
       "delete_failed": "No se pudo eliminar el conjunto.",
+      "progress_not_deleted": "Eliminado, pero no se pudo borrar tu progreso de aprendizaje: {detail}",
       "delete_confirm": "El conjunto descargado y sus lecciones se eliminarán de Mis contenidos. Tu progreso de aprendizaje se conserva y puedes volver a descargar el conjunto cuando quieras.",
       "select_all": "Seleccionar todo",
       "select_set": "Seleccionar {title}",
@@ -3956,6 +3961,7 @@
     "cache_clear": "Vaciar caché",
     "cache_clear_confirm": "¿Vaciar la caché sin conexión?",
     "cache_clear_action": "Sí, vaciar",
+    "cache_clear_failed": "No se pudo vaciar la caché sin conexión: {detail}",
     "cache_cleared": "Caché sin conexión vaciada.",
     "update": {
       "message": "Hay una nueva versión disponible.",
@@ -4356,6 +4362,8 @@
       "hint": "Comparte este enlace para que otros puedan añadir este repositorio PÚBLICO. Para un repositorio privado, envía la URL y un token de solo lectura por separado.",
       "qr_alt": "Código QR del enlace para compartir"
     },
+    "remove_failed": "No se pudo quitar el repositorio: {detail}",
+    "reorder_failed": "No se pudo cambiar el orden de los repositorios: {detail}",
     "progress": {
       "syncing": "Sincronizando…",
       "validating": "Validando repositorio…",

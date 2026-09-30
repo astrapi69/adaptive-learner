@@ -16,8 +16,12 @@ vi.mock("../../../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fb?: string) => fb ?? _k }),
 }));
 
+const { toastSuccess, toastError } = vi.hoisted(() => ({
+  toastSuccess: vi.fn(),
+  toastError: vi.fn(),
+}));
 vi.mock("react-toastify", () => ({
-  toast: { success: vi.fn() },
+  toast: { success: toastSuccess, error: toastError },
 }));
 
 afterEach(() => {
@@ -77,5 +81,26 @@ describe("CacheManagementSection", () => {
     });
 
     expect(clearSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("tells the user when clearing fails, and claims no success (#3384)", async () => {
+    toastSuccess.mockReset();
+    toastError.mockReset();
+    vi.spyOn(cacheInfo, "getCacheInfo").mockResolvedValue({
+      bytes: 2 * 1024 * 1024,
+      lessonCount: 3,
+    });
+    vi.spyOn(cacheInfo, "clearLessonCache").mockRejectedValue(new Error("SecurityError"));
+    render(<CacheManagementSection />);
+    await waitFor(() => expect(screen.getByTestId("cache-clear-button")).toBeEnabled());
+    act(() => {
+      screen.getByTestId("cache-clear-button").click();
+    });
+    await act(async () => {
+      screen.getByTestId("cache-clear-confirm-button").click();
+    });
+    expect(toastError).toHaveBeenCalledTimes(1);
+    expect(String(toastError.mock.calls[0][0])).toContain("SecurityError");
+    expect(toastSuccess).not.toHaveBeenCalled();
   });
 });

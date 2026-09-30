@@ -512,6 +512,7 @@
       "heading": "Konten terputus",
       "summary": "{lessons} pelajaran dan {cards} kartu ulasan dari sumber yang tidak lagi terhubung dengan Anda.",
       "delete": "Hapus progres yang terputus",
+      "delete_failed": "Kemajuan yang terputus tidak dapat dihapus: {detail}",
       "confirm_title": "Hapus progres yang terputus",
       "confirm_message": "{lessons} pelajaran dan {cards} kartu ulasan akan dihapus permanen. Ini tidak dapat dibatalkan.",
       "deleted": "{lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
@@ -804,6 +805,8 @@
     "lesson_auto_advance_description": "Setelah jawaban benar, otomatis lanjut ke latihan berikutnya. Jawaban salah selalu menunggu agar kamu bisa meninjau solusinya.",
     "ask_ai_visible": "Tampilkan tombol 'Tanya AI'",
     "ask_ai_visible_description": "Menampilkan tombol 'Tanya AI' di bawah teori dan latihan. Ditampilkan secara default; tombol ini tetap memerlukan kunci AI milikmu sendiri (BYOK) untuk menjawab.",
+    "keep_screen_on": "Biarkan layar tetap menyala saat pelajaran",
+    "keep_screen_on_description": "Selama pelajaran terbuka, layar tidak mati, juga saat Anda membaca tanpa menyentuhnya. Di ringkasan pelajaran layar boleh mati lagi. Di iPhone memerlukan iOS 16.4 atau lebih baru, sebagai aplikasi di layar utama iOS 18.4 atau lebih baru.",
     "button_tooltips": "Tampilkan tooltip tombol",
     "button_tooltips_description": "Tampilkan tooltip arahkan kursor pada tombol ikon yang menjelaskan fungsinya. Label pembaca layar tetap aktif terlepas dari ini.",
     "developer_mode": "Mode Pengembang",
@@ -1034,9 +1037,9 @@
       "desc": "Setelah diperiksa, 'Jawaban saya' menampilkan pasanganmu seperti yang kamu buat, tanpa penilaian; penilaian dan pasangan yang benar ada di 'Koreksi'. Nonaktif: pasangan yang benar muncul langsung di bawah setiap kesalahan di 'Jawaban saya'."
     },
     "paused_retention": {
-      "title": "Retensi pelajaran yang dijeda",
-      "hint": "Pelajaran yang dijeda lebih lama dari ini secara otomatis ditinggalkan. Hingga 10 pelajaran yang dijeda tetap disimpan terlepas dari usianya.",
-      "label": "Simpan pelajaran yang dijeda selama",
+      "title": "Pelajaran yang dijeda di Dasbor",
+      "hint": "Kartu pelajaran yang dijeda di Dasbor hanya menampilkan pelajaran hingga usia ini. Pelajaran yang lebih lama hanya hilang dari kartu: tidak ada yang ditinggalkan, dan posisi serta jawabannya tetap tersimpan.",
+      "label": "Sembunyikan pelajaran yang dijeda lebih lama dari",
       "7_days": "7 hari",
       "14_days": "14 hari",
       "30_days": "30 hari",
@@ -1281,6 +1284,7 @@
     "auto_run_error": "Pencadangan otomatis gagal: {{detail}}",
     "auto_restored": "Pencadangan otomatis dipulihkan.",
     "auto_restore": "Pulihkan",
+    "auto_delete_failed": "Cadangan otomatis tidak dapat dihapus: {detail}",
     "auto_restore_error": "Pemulihan gagal: {{detail}}",
     "auto_records": "{{n}} catatan",
     "auto_none": "Belum ada pencadangan otomatis. Yang pertama berjalan setelah 10 sesi atau 7 hari.",
@@ -2860,6 +2864,7 @@
       "change_failed": "Tidak dapat memperbarui status.",
       "deleted": "Set dihapus.",
       "delete_failed": "Tidak dapat menghapus set.",
+      "progress_not_deleted": "Dihapus, tetapi kemajuan belajar Anda tidak dapat dihapus: {detail}",
       "delete_confirm": "Set yang diunduh dan pelajarannya akan dihapus dari Konten Saya. Progres belajarmu tetap tersimpan, dan kamu dapat mengunduh set lagi kapan saja.",
       "select_all": "Pilih semua",
       "select_set": "Pilih {title}",
@@ -3956,6 +3961,7 @@
     "cache_clear": "Hapus cache",
     "cache_clear_confirm": "Hapus cache luring?",
     "cache_clear_action": "Ya, hapus",
+    "cache_clear_failed": "Cache offline tidak dapat dikosongkan: {detail}",
     "cache_cleared": "Cache luring dihapus.",
     "update": {
       "message": "Versi baru telah tersedia.",
@@ -4356,6 +4362,8 @@
       "hint": "Bagikan tautan ini agar orang lain dapat menambahkan repo PUBLIK ini. Untuk repo privat, kirimkan URL + token hanya-baca secara terpisah.",
       "qr_alt": "Kode QR untuk tautan berbagi"
     },
+    "remove_failed": "Repositori tidak dapat dihapus: {detail}",
+    "reorder_failed": "Urutan repositori tidak dapat diubah: {detail}",
     "progress": {
       "syncing": "Menyinkronkan…",
       "validating": "Memvalidasi repositori…",

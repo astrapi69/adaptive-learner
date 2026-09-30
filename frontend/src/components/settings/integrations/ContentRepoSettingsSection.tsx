@@ -478,6 +478,16 @@ export default function ContentRepoSettingsSection() {
         setRemoveTarget(null);
         setRemovePlan(null);
         await refresh();
+      } catch (err) {
+        // #3384 - a failed removal used to leave the dialog open with no
+        // word; say why.
+        console.error("[content-repo] remove failed", err);
+        notify.error(
+          t(
+            "content_repo.remove_failed",
+            "Could not remove the repository: {detail}",
+          ).replace("{detail}", err instanceof Error ? err.message : String(err)),
+        );
       } finally {
         setBusy(false);
       }
@@ -528,11 +538,19 @@ export default function ContentRepoSettingsSection() {
       try {
         await moveUserRepo(source, direction);
         await refresh();
+      } catch (err) {
+        console.error("[content-repo] reorder failed", err);
+        notify.error(
+          t(
+            "content_repo.reorder_failed",
+            "Could not change the repository order: {detail}",
+          ).replace("{detail}", err instanceof Error ? err.message : String(err)),
+        );
       } finally {
         setBusy(false);
       }
     },
-    [refresh],
+    [refresh, t],
   );
 
   if (!loaded) {

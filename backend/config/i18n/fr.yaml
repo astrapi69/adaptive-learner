@@ -479,6 +479,7 @@ settings:
     heading: "Contenu déconnecté"
     summary: "{lessons} leçons et {cards} cartes de révision provenant de sources auxquelles vous n'êtes plus connecté."
     delete: "Supprimer la progression déconnectée"
+    delete_failed: "Impossible de supprimer la progression déconnectée : {detail}"
     confirm_title: "Supprimer la progression déconnectée"
     confirm_message: "{lessons} leçons et {cards} cartes de révision seront définitivement supprimées. Cette action est irréversible."
     deleted: "{lessons} leçons et {cards} cartes de révision supprimées."
@@ -755,6 +756,8 @@ settings:
   lesson_auto_advance_description: "Après une bonne réponse, passe automatiquement à l'exercice suivant. Une mauvaise réponse attend toujours pour que tu puisses revoir la solution."
   ask_ai_visible: "Afficher le bouton 'Demander à l'IA'"
   ask_ai_visible_description: "Affiche le bouton 'Demander à l'IA' sous la théorie et les exercices. Affiché par défaut ; le bouton a toujours besoin de ta propre clé IA (BYOK) pour répondre."
+  keep_screen_on: "Garder l'écran allumé pendant les leçons"
+  keep_screen_on_description: "Tant qu'une leçon est ouverte, l'écran ne s'éteint pas, même quand tu lis sans le toucher. Dans le résumé de la leçon, il peut de nouveau s'éteindre. Sur iPhone à partir d'iOS 16.4, en app sur l'écran d'accueil à partir d'iOS 18.4."
   button_tooltips: "Afficher les infobulles des boutons"
   button_tooltips_description: "Affiche une infobulle au survol des boutons à icône. Les libellés pour lecteurs d’écran restent actifs quoi qu’il arrive."
   developer_mode: Mode développeur
@@ -978,9 +981,9 @@ settings:
     label: "Correction dans une vue séparée"
     desc: "Après vérification, 'Mes réponses' affiche tes paires telles que tu les as formées, sans évaluation ; l'évaluation et les bons partenaires sont sous 'Correction'. Désactivé : le bon partenaire s'affiche directement sous chaque erreur dans 'Mes réponses'."
   paused_retention:
-    title: Conservation des leçons en pause
-    hint: "Les leçons en pause plus anciennes que cette période sont automatiquement abandonnées. Jusqu'à 10 leçons en pause sont conservées quel que soit leur âge."
-    label: Conserver les leçons en pause pendant
+    title: "Leçons en pause sur le tableau de bord"
+    hint: "La carte des leçons en pause du tableau de bord n'affiche que les leçons jusqu'à cet âge. Une leçon plus ancienne disparaît seulement de la carte : rien n'est abandonné, et elle garde sa position et ses réponses."
+    label: "Masquer les leçons en pause de plus de"
     7_days: "7 jours"
     14_days: "14 jours"
     30_days: "30 jours"
@@ -1205,6 +1208,7 @@ backup:
   auto_run_error: "La sauvegarde automatique a échoué : {{detail}}"
   auto_restored: "Sauvegarde automatique restaurée."
   auto_restore: "Restaurer"
+  auto_delete_failed: "Impossible de supprimer la sauvegarde automatique : {detail}"
   auto_restore_error: "La restauration a échoué : {{detail}}"
   auto_records: "{{n}} enregistrements"
   auto_none: "Aucune sauvegarde automatique pour l’instant. La première s’exécute après 10 sessions ou 7 jours."
@@ -2646,6 +2650,7 @@ content:
     change_failed: "Impossible de mettre à jour le statut."
     deleted: "Ensemble supprimé."
     delete_failed: "Impossible de supprimer l'ensemble."
+    progress_not_deleted: "Retiré, mais ta progression d'apprentissage n'a pas pu être supprimée : {detail}"
     delete_confirm: "L'ensemble téléchargé et ses leçons seront retirés de Mes contenus. Ta progression est conservée et tu peux télécharger l'ensemble à nouveau à tout moment."
     select_all: "Tout sélectionner"
     select_set: "Sélectionner {title}"
@@ -3640,6 +3645,7 @@ pwa:
   cache_clear: "Vider le cache"
   cache_clear_confirm: "Vider le cache hors ligne ?"
   cache_clear_action: "Oui, vider"
+  cache_clear_failed: "Impossible de vider le cache hors ligne : {detail}"
   cache_cleared: "Cache hors ligne vidé."
   update:
     message: "Une nouvelle version est disponible."
@@ -4018,6 +4024,8 @@ content_repo:
     copy_failed: "Copie impossible."
     hint: "Partage ce lien pour que d'autres puissent ajouter ce dépôt PUBLIC. Pour un dépôt privé, envoie l'URL et un jeton en lecture seule séparément."
     qr_alt: "QR code du lien de partage"
+  remove_failed: "Impossible de retirer le dépôt : {detail}"
+  reorder_failed: "Impossible de modifier l'ordre des dépôts : {detail}"
   progress:
     syncing: "Synchronisation…"
     validating: "Validation du dépôt…"
