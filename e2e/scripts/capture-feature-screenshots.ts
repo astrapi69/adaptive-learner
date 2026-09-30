@@ -1088,9 +1088,18 @@ async function gotoKeyVaultSection(page: Page): Promise<boolean> {
     return true;
 }
 
-/** Open Settings -> Data scrolled to the paused-lesson retention card,
- *  which sits right before the cleanup slot since #2955 (its sibling,
- *  max lesson size, sits right after the offline cache further up). */
+/** A lesson opened without a learner profile (#3364): open the bundled
+ *  lesson as a learner, then drop the learner id and reload, so the page
+ *  shows the "nothing is saved" notice with its profile link. */
+async function gotoLessonNoProfile(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await openFirstBundledLesson(page);
+    await page.evaluate(() => localStorage.removeItem("adaptive-learner.user_id"));
+    await page.reload();
+    await expect(page.getByTestId("lesson-no-profile-notice")).toBeVisible({timeout: 20_000});
+    return true;
+}
+
 /** The resume dialog's start-over confirmation (#3361): page through two
  *  steps of the bundled lesson, pause through the exit dialog, reopen the
  *  lesson from the Dashboard's paused-lessons card and press "Neu starten"
@@ -1114,6 +1123,21 @@ async function gotoResumeRestartConfirm(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Settings > Learning > Interaction scrolled to the "keep the screen on
+ *  in lessons" toggle (#3358). */
+async function gotoKeepScreenOnToggle(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const toggle = page.getByTestId("settings-keep-screen-on-toggle");
+    await toggle.scrollIntoViewIfNeeded();
+    await expect(toggle).toBeVisible({timeout: 10_000});
+    return true;
+}
+
+/** Open Settings -> Data scrolled to the paused-lesson retention card,
+ *  which sits right before the cleanup slot since #2955 (its sibling,
+ *  max lesson size, sits right after the offline cache further up). */
 async function gotoDataHousekeeping(page: Page): Promise<boolean> {
     await seedLearner(page);
     await page.goto("/settings?tab=data");
@@ -1553,6 +1577,18 @@ async function gotoHeldBackToast(page: Page): Promise<boolean> {
 }
 
 const FEATURES: FeatureShot[] = [
+    // --- Keep the screen on in lessons, Settings > Learning (#3358) -------
+    {
+        path: "keep-screen-on/settings",
+        setup: gotoKeepScreenOnToggle,
+        pinTo: "settings-section-interaction",
+    },
+    // --- Lesson without a learner profile: notice + profile link (#3364) --
+    {
+        path: "lesson-no-profile/hinweis",
+        setup: gotoLessonNoProfile,
+        pinTo: "lesson-no-profile-notice",
+    },
     // --- Resume dialog: "Neu starten" asks first (#3361) ------------------
     {
         path: "lesson-resume/neu-starten-rueckfrage",

@@ -1,7 +1,8 @@
 /**
  * InteractionControl (#2954) - the Settings > Learning "Interaction"
  * section extracted from ``LearningPanel``: swipe gestures, lesson
- * keyboard shortcuts, auto-advance and the "Ask AI" button visibility.
+ * keyboard shortcuts, auto-advance, the "Ask AI" button visibility and
+ * keeping the screen on in lessons (#3358).
  *
  * Pins: the section root + the four toggles keep their testids, every
  * toggle persists to its own localStorage key (the same key the lesson
@@ -36,6 +37,11 @@ const TOGGLES = [
         testid: "settings-ask-ai-visible-toggle",
         key: "adaptive-learner.lesson.ask_ai_visible",
     },
+    {
+        name: "keep the screen on (#3358)",
+        testid: "settings-keep-screen-on-toggle",
+        key: "adaptive-learner.lesson.keep_screen_on",
+    },
 ] as const;
 
 const PERSISTED_CASES = TOGGLES.flatMap((toggle) =>
@@ -47,7 +53,7 @@ afterEach(() => {
 });
 
 describe("InteractionControl (#2954)", () => {
-    it("renders the Interaction section with its four toggles", () => {
+    it("renders the Interaction section with its toggles", () => {
         render(<InteractionControl />);
         expect(
             screen.getByTestId("settings-section-interaction"),
@@ -73,6 +79,10 @@ describe("InteractionControl (#2954)", () => {
         expect(shortcuts.checked).toBe(true);
         expect(autoAdvance.checked).toBe(false);
         expect(askAi.checked).toBe(true);
+        const keepScreenOn = screen.getByTestId(
+            "settings-keep-screen-on-toggle",
+        ) as HTMLInputElement;
+        expect(keepScreenOn.checked).toBe(true);
     });
 
     it.each(TOGGLES)(
