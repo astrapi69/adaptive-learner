@@ -2097,6 +2097,10 @@ each card row (`CardImageField`).
       the pause button in the footer -> the Continue/Pause/Abandon dialog
       appears (before: left the lesson silently); "Pause" -> the lesson is
       listed on the dashboard under "Paused lessons"
+- [ ] TC-0916 Without a learner profile (#3364): in a private window without
+      onboarding, open a lesson -> at the top a notice says a learner
+      profile is needed to save progress, with the link "Create a learner
+      profile" leading to onboarding; with a profile the notice is absent
 - [ ] TC-0451 Leaving through the app navigation (#3075): answer one exercise, then
       move two theory steps further, then leave through the menu
       (hamburger -> "Settings"), the logo or the browser's back button ->

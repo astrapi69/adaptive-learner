@@ -2256,6 +2256,10 @@ jeder Karten-Zeile (`CardImageField`).
       Pause-Knopf im Footer drücken -> der Dialog Weiter/Pausieren/Abbrechen
       erscheint (vorher: verliess die Lektion stumm); "Pausieren" -> die
       Lektion steht auf dem Dashboard unter "Pausierte Lektionen"
+- [ ] TC-0916 Ohne Lernprofil (#3364): in einem privaten Fenster ohne Onboarding
+      eine Lektion öffnen -> oben steht "Lege ein Lernprofil an, um deinen
+      Fortschritt zu speichern" mit dem Link "Lernprofil
+      anlegen", der zum Onboarding führt; mit Profil fehlt der Hinweis
 - [ ] TC-0451 Verlassen über die App-Navigation (#3075): eine Übung beantworten,
       dann zwei Theorieschritte weiter, dann über das Menü (Hamburger ->
       "Einstellungen"), das Logo oder den Zurück-Knopf des Browsers
