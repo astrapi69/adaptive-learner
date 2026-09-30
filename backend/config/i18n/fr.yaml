@@ -2,6 +2,8 @@ app:
   loading: "Chargement…"
   loading_slow: "Cela prend plus de temps que prévu."
   view_load_failed: "Cette vue n'a pas pu être chargée."
+  view_crashed: "Une erreur s'est produite sur cette page. Les autres pages fonctionnent toujours."
+  crashed: "Un problème est survenu."
   reload: "Recharger"
   name: Adaptive Learner
   tagline: Un apprentissage qui s'adapte a toi.
@@ -426,6 +428,10 @@ session:
   ai_thinking: Réflexion...
   ai_error: Le fournisseur IA n'a pas pu répondre.
   no_api_key: "Aucune clé IA définie. Ajoute une clé pour ton fournisseur IA dans Paramètres pour discuter avec le tuteur. Les leçons et révisions fonctionnent sans clé."
+  ai_error_no_model: "Aucun modèle n'est sélectionné pour ton fournisseur IA. Choisis un modèle dans Paramètres > IA."
+  ai_error_provider_auth: "Ton fournisseur IA a refusé la clé. Vérifie la clé dans Paramètres > IA."
+  ai_error_rate_limited: "La limite de ton fournisseur IA est atteinte. Attends un instant ou vérifie ton quota, puis renvoie."
+  ai_error_provider_unavailable: "Ton fournisseur IA est injoignable pour le moment. Vérifie la connexion et renvoie."
   welcome_empty: "Prêt à apprendre ! Écris ton premier message."
   end_session: Terminer la session
   end_session_confirm: Sûr ? Nous allons fermer la session et demander une évaluation.
@@ -479,6 +485,7 @@ settings:
     heading: "Contenu déconnecté"
     summary: "{lessons} leçons et {cards} cartes de révision provenant de sources auxquelles vous n'êtes plus connecté."
     delete: "Supprimer la progression déconnectée"
+    delete_failed: "Impossible de supprimer la progression déconnectée : {detail}"
     confirm_title: "Supprimer la progression déconnectée"
     confirm_message: "{lessons} leçons et {cards} cartes de révision seront définitivement supprimées. Cette action est irréversible."
     deleted: "{lessons} leçons et {cards} cartes de révision supprimées."
@@ -755,6 +762,8 @@ settings:
   lesson_auto_advance_description: "Après une bonne réponse, passe automatiquement à l'exercice suivant. Une mauvaise réponse attend toujours pour que tu puisses revoir la solution."
   ask_ai_visible: "Afficher le bouton 'Demander à l'IA'"
   ask_ai_visible_description: "Affiche le bouton 'Demander à l'IA' sous la théorie et les exercices. Affiché par défaut ; le bouton a toujours besoin de ta propre clé IA (BYOK) pour répondre."
+  keep_screen_on: "Garder l'écran allumé pendant les leçons"
+  keep_screen_on_description: "Tant qu'une leçon est ouverte, l'écran ne s'éteint pas, même quand tu lis sans le toucher. Dans le résumé de la leçon, il peut de nouveau s'éteindre. Sur iPhone à partir d'iOS 16.4, en app sur l'écran d'accueil à partir d'iOS 18.4."
   button_tooltips: "Afficher les infobulles des boutons"
   button_tooltips_description: "Affiche une infobulle au survol des boutons à icône. Les libellés pour lecteurs d’écran restent actifs quoi qu’il arrive."
   developer_mode: Mode développeur
@@ -1205,6 +1214,7 @@ backup:
   auto_run_error: "La sauvegarde automatique a échoué : {{detail}}"
   auto_restored: "Sauvegarde automatique restaurée."
   auto_restore: "Restaurer"
+  auto_delete_failed: "Impossible de supprimer la sauvegarde automatique : {detail}"
   auto_restore_error: "La restauration a échoué : {{detail}}"
   auto_records: "{{n}} enregistrements"
   auto_none: "Aucune sauvegarde automatique pour l’instant. La première s’exécute après 10 sessions ou 7 jours."
@@ -2647,6 +2657,7 @@ content:
     change_failed: "Impossible de mettre à jour le statut."
     deleted: "Ensemble supprimé."
     delete_failed: "Impossible de supprimer l'ensemble."
+    progress_not_deleted: "Retiré, mais ta progression d'apprentissage n'a pas pu être supprimée : {detail}"
     delete_confirm: "L'ensemble téléchargé et ses leçons seront retirés de Mes contenus. Ta progression est conservée et tu peux télécharger l'ensemble à nouveau à tout moment."
     select_all: "Tout sélectionner"
     select_set: "Sélectionner {title}"
@@ -3641,6 +3652,7 @@ pwa:
   cache_clear: "Vider le cache"
   cache_clear_confirm: "Vider le cache hors ligne ?"
   cache_clear_action: "Oui, vider"
+  cache_clear_failed: "Impossible de vider le cache hors ligne : {detail}"
   cache_cleared: "Cache hors ligne vidé."
   update:
     message: "Une nouvelle version est disponible."
@@ -4019,6 +4031,8 @@ content_repo:
     copy_failed: "Copie impossible."
     hint: "Partage ce lien pour que d'autres puissent ajouter ce dépôt PUBLIC. Pour un dépôt privé, envoie l'URL et un jeton en lecture seule séparément."
     qr_alt: "QR code du lien de partage"
+  remove_failed: "Impossible de retirer le dépôt : {detail}"
+  reorder_failed: "Impossible de modifier l'ordre des dépôts : {detail}"
   progress:
     syncing: "Synchronisation…"
     validating: "Validation du dépôt…"
