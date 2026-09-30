@@ -21,6 +21,8 @@ import {readLearnerState} from "../../../lib/learning/learnerState";
 import {getStorage} from "../../../storage";
 import {getDb} from "../../../storage/dexie/db";
 import {notify} from "../../../utils/notify";
+import {ApiError} from "../../../api/client";
+import {friendlyErrorMessage} from "../../../utils/errorMessages";
 import type {ImportedConversationDetail} from "../../../types/domain";
 
 vi.mock("../../../storage", () => ({getStorage: vi.fn()}));
@@ -187,5 +189,14 @@ describe("useConversationAnalysis.runAnalysis", () => {
         );
         expect(notify.error).not.toHaveBeenCalled();
         expect(hook.result.current.analyzing).toBe(false);
+    });
+
+    it("shows the friendly status text for a provider ApiError, not its raw detail (#3392)", async () => {
+        const failure = new ApiError(401, "anthropic: HTTP 401 invalid x-api-key");
+        vi.mocked(analyzeConversation).mockRejectedValue(failure);
+        const {hook} = mount();
+        await act(() => hook.result.current.runAnalysis());
+        expect(hook.result.current.analysisError).toBe(friendlyErrorMessage(failure));
+        expect(hook.result.current.analysisError).not.toContain("x-api-key");
     });
 });

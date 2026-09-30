@@ -29,10 +29,14 @@ Pipeline:
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any
 
+from app.exceptions import ExternalServiceError
 from app.services.extract_json import extract_json_object
+
+logger = logging.getLogger(__name__)
 
 VALID_METHODS: tuple[str, ...] = (
     "deductive",
@@ -441,10 +445,11 @@ def analyze_conversation_with_ai(
     ``ai_complete_call`` is a callable
     ``(messages: list[dict]) -> str | None`` so the engine doesn't
     care whether the caller fires the hook directly, wraps it in
-    an async-to-sync bridge, or stubs it for tests. ``None`` (or
-    any provider exception bubbled up) collapses the chunk to the
-    deterministic fallback so callers never see a half-broken
-    result.
+    an async-to-sync bridge, or stubs it for tests. A ``None`` or
+    unparseable reply collapses the chunk to the deterministic
+    fallback. A provider exception is a failed analysis (#3392): it
+    is logged and raised as ``ExternalServiceError``, so nothing
+    half-broken is persisted.
 
     ``lang`` is the user's preferred display language (ISO-639-1).
     The system prompt's free-text directive is localised to that
@@ -464,11 +469,15 @@ def analyze_conversation_with_ai(
                     {"role": "user", "content": user_content},
                 ]
             )
-        except Exception as exc:  # noqa: BLE001 — provider errors must not crash analyze
-            fb = deterministic_fallback(title)
-            fb["summary"] = f"{fb['summary']} (provider: {exc})"
-            chunk_results.append(fb)
-            continue
+        except ExternalServiceError:
+            # #3392 - a provider failure is a failed analysis, not an
+            # unparseable reply: nothing is persisted and the caller maps
+            # the error (502) to a localized message.
+            logger.error("Conversation analysis: AI provider call failed", exc_info=True)
+            raise
+        except Exception as exc:
+            logger.error("Conversation analysis: AI provider call failed", exc_info=True)
+            raise ExternalServiceError("ai", str(exc)) from exc
         parsed = parse_analysis_response(raw) if isinstance(raw, str) else None
         chunk_results.append(parsed if parsed is not None else deterministic_fallback(title))
     merged = chunk_results[0]
