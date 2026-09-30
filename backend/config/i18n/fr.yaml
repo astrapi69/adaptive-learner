@@ -400,6 +400,7 @@ review:
   empty_body: "Tout est à jour ! Aucun élément à réviser dans cet ensemble."
   not_cached_body: "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord."
   back_to_dashboard: "Retour au tableau de bord"
+  back_to_lesson: "Retour à la leçon"
   summary:
     aria_label: "Résumé de la révision"
     heading: "Révision terminée"
