@@ -986,9 +986,9 @@ settings:
     label: "Koreksi sebagai tampilan terpisah"
     desc: "Setelah diperiksa, 'Jawaban saya' menampilkan pasanganmu seperti yang kamu buat, tanpa penilaian; penilaian dan pasangan yang benar ada di 'Koreksi'. Nonaktif: pasangan yang benar muncul langsung di bawah setiap kesalahan di 'Jawaban saya'."
   paused_retention:
-    title: Retensi pelajaran yang dijeda
-    hint: "Pelajaran yang dijeda lebih lama dari ini secara otomatis ditinggalkan. Hingga 10 pelajaran yang dijeda tetap disimpan terlepas dari usianya."
-    label: Simpan pelajaran yang dijeda selama
+    title: "Pelajaran yang dijeda di Dasbor"
+    hint: "Kartu pelajaran yang dijeda di Dasbor hanya menampilkan pelajaran hingga usia ini. Pelajaran yang lebih lama hanya hilang dari kartu: tidak ada yang ditinggalkan, dan posisi serta jawabannya tetap tersimpan."
+    label: "Sembunyikan pelajaran yang dijeda lebih lama dari"
     7_days: "7 hari"
     14_days: "14 hari"
     30_days: "30 hari"

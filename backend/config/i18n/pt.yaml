@@ -980,9 +980,9 @@ settings:
     label: "Correção como visualização separada"
     desc: "Depois de verificar, 'Minhas respostas' mostra os seus pares como você os formou, sem avaliação; a avaliação e os pares corretos ficam em 'Correção'. Desativado: o par correto aparece logo abaixo de cada erro em 'Minhas respostas'."
   paused_retention:
-    title: Retenção de aulas pausadas
-    hint: "As aulas pausadas mais antigas que este período são automaticamente abandonadas. Até 10 aulas pausadas são mantidas independentemente da idade."
-    label: Manter aulas pausadas por
+    title: "Aulas pausadas no Painel"
+    hint: "O cartão de aulas pausadas do Painel só mostra aulas até esta idade. Uma aula mais antiga apenas sai do cartão: nada é abandonado, e ela mantém sua posição e suas respostas."
+    label: "Ocultar aulas pausadas com mais de"
     7_days: "7 dias"
     14_days: "14 dias"
     30_days: "30 dias"
