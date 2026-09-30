@@ -144,3 +144,81 @@ def test_collect_pytest_count_warns_instead_of_silently_returning_zero(
     warns = _warns(report)
     assert warns, "a collection failure that returns 0 must be reported, not silent"
     assert str(tmp_path) in warns[0]
+
+
+# --- #3254: arithmetic and badge mismatches FAIL, they do not warn -----------
+
+import verify_docs_test_counts as counts_module  # noqa: E402
+
+
+def _fails(report: Report) -> list[str]:
+    return [f.message for f in report.findings if f.severity == "FAIL" and not f.fixed]
+
+
+def _docs_tree(tmp_path: Path, *, line: str, badge: int | None) -> Path:
+    """A minimal repo root with the two files the check reads."""
+    (tmp_path / "CLAUDE.md").write_text(f"# X\n\nv9: {line}\n", encoding="utf-8")
+    if badge is not None:
+        (tmp_path / "README.md").write_text(
+            f"![tests](https://img.shields.io/badge/tests-{badge}%20green)\n",
+            encoding="utf-8",
+        )
+    return tmp_path
+
+
+def test_test_count_arithmetic_mismatch_fails(tmp_path: Path, monkeypatch) -> None:
+    """The parts say 1+2+3, the total says 7: since #3254 that is a FAIL,
+    not a WARN that scrolls past in a green run."""
+    monkeypatch.setattr(
+        counts_module,
+        "REPO",
+        _docs_tree(tmp_path, line="backend 1 + plugins 2 + Vitest 3 = **7 tests**", badge=None),
+    )
+    report = Report()
+    counts_module.check_test_counts(report, fix=False, run_collection=False)
+    assert any("test total is 7 but 1+2+3=6" in m for m in _fails(report))
+    assert not _warns(report)
+
+
+def test_test_count_badge_mismatch_fails(tmp_path: Path, monkeypatch) -> None:
+    """The README badge lags the CLAUDE total: FAIL, same reason."""
+    monkeypatch.setattr(
+        counts_module,
+        "REPO",
+        _docs_tree(tmp_path, line="backend 1 + plugins 2 + Vitest 3 = **6 tests**", badge=5),
+    )
+    report = Report()
+    counts_module.check_test_counts(report, fix=False, run_collection=False)
+    assert any("README.md test badge says 5, CLAUDE total is 6" in m for m in _fails(report))
+
+
+def test_test_count_unparseable_line_fails_closed(tmp_path: Path, monkeypatch) -> None:
+    """No parseable count line is a missing basis, never a clean pass."""
+    monkeypatch.setattr(counts_module, "REPO", _docs_tree(tmp_path, line="tests: many", badge=None))
+    report = Report()
+    counts_module.check_test_counts(report, fix=False, run_collection=False)
+    assert any("could not parse" in m for m in _fails(report))
+
+
+def test_test_count_consistent_tree_passes(tmp_path: Path, monkeypatch) -> None:
+    """Parts, total and badge agree: no finding at all (contract point 2)."""
+    monkeypatch.setattr(
+        counts_module,
+        "REPO",
+        _docs_tree(tmp_path, line="backend 1 + plugins 2 + Vitest 3 = **6 tests**", badge=6),
+    )
+    report = Report()
+    counts_module.check_test_counts(report, fix=False, run_collection=False)
+    assert not _fails(report)
+    assert not _warns(report)
+
+
+def test_test_count_fix_rewrites_the_total_instead_of_failing(tmp_path: Path, monkeypatch) -> None:
+    """``--fix`` keeps its repair role: the total is rewritten from the
+    parts and the finding is reported as fixed, not as a FAIL."""
+    root = _docs_tree(tmp_path, line="backend 1 + plugins 2 + Vitest 3 = **7 tests**", badge=None)
+    monkeypatch.setattr(counts_module, "REPO", root)
+    report = Report()
+    counts_module.check_test_counts(report, fix=True, run_collection=False)
+    assert not _fails(report)
+    assert "= **6 tests**" in (root / "CLAUDE.md").read_text(encoding="utf-8")

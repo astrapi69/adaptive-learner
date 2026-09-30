@@ -74,7 +74,7 @@ checks:
     probe: make_target=verify-docs | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
   - id: docs-test-count-arithmetic
-    verifies: the CLAUDE.md test-count line adds up and matches the README badge
+    verifies: the CLAUDE.md test-count line adds up and matches the README badge; a mismatch or an unparseable line FAILs (#3254)
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics
     status: active
     wired_in: scripts/verify_docs.py check_test_counts
