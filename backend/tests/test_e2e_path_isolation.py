@@ -107,3 +107,20 @@ def test_backend_starting_configs_never_reuse_a_backend_they_did_not_start() -> 
             f"{config.name}: the backend webServer entry must set reuseExistingServer: false "
             "(#3316) - a reused backend is one whose data dir this run did not choose"
         )
+
+
+def test_smoke_frontend_proxies_api_to_the_backend_this_run_started() -> None:
+    """The smoke vite server must proxy ``/api`` to its own backend.
+
+    ``frontend/vite.config.ts`` takes ``VITE_API_PROXY_TARGET`` before
+    ``ADAPTIVE_LEARNER_PORT``. Without a pin in the smoke command, a value
+    exported in the developer's shell (Docker Compose uses it) would send the
+    reset specs' ``POST /api/reset`` to that other backend (#3316).
+    """
+    text = (E2E_DIR / "playwright.config.ts").read_text(encoding="utf-8")
+    command = re.search(r"cd \.\./frontend.*?npm run dev", text, re.DOTALL)
+    assert command, "playwright.config.ts: no frontend webServer command found"
+    assert "VITE_API_PROXY_TARGET=http://localhost:${BACKEND_PORT}" in command.group(0), (
+        "the smoke frontend command must pin VITE_API_PROXY_TARGET to this run's "
+        f"backend (#3316); found: {command.group(0)!r}"
+    )

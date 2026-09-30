@@ -118,8 +118,9 @@ cd e2e && npx playwright test smoke/mobile-viewports.spec.ts
 
 Τα specs χρησιμοποιούν μόνο selectors `data-testid` - χωρίς
 εύθραυστα CSS selectors. Τα smoke specs ΔΕΝ βρίσκονται στη
-διαδρομή `make test`· χρειάζονται τρέχουσα εφαρμογή
-(`make dev-bg` πρώτα).
+διαδρομή `make test`· ξεκινούν δικούς τους servers σε δικές
+τους θύρες και δεν χρειάζονται τρέχουσα εφαρμογή. Ένα τρέχον
+`make dev` μένει ανέγγιχτο.
 
 ## Κάλυψη
 
