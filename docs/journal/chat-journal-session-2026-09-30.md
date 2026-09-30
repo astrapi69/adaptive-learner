@@ -18,6 +18,14 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Result: i18n-PR #3322 (elf Kataloge, Parität 51 + 35 grün) gemergt. Code: fünf neue Tests (E-MC-ONE-CORRECT als `engine_rule` mit Pfad und Meldung; doppelter linker Wert nur einmal, nicht zusätzlich als `engine_rule`; W-CARD-UNUSED als `engine_warning` ohne Blockade; W-DOMAIN-UNKNOWN gefiltert; `ext:al-ordering@1` passiert die Registry ohne E-EXT-UNSUPPORTED/E-EXT-UNDECLARED). Validierungs-Suite 204 grün, tsc und eslint sauber. Bundle: Entry-Chunk vorher 726674 Bytes, nachher 726674 Bytes (unverändert, der Validator liegt im lazy Chunk `AiValidationDialog`: 96.52 kB auf 96.94 kB, der geteilte `rules`-Chunk bleibt bei 28150 Bytes). Testplan TC-0914 (DE + EN).
 - Commit: siehe PR.
 
+## 3. #3225: Shuffle-, Endlos- und adaptiver Lauf überleben den i18n-Titelwechsel
+
+- Original prompt: "Gehe alle an, die aus der Ferne gemacht werden können, mit deinen Empfehlungen." (Empfehlung: Refs-Muster wie #2703.)
+- Optimized prompt: "In `useShuffleLesson`, `useEndlessLesson`, `useAdaptiveLesson` Titel und Beschreibung wie in `useReviewLesson` (#2703) über Refs lesen und aus dem Dependency-Array nehmen; Stability-Test je Hook nach der Vorlage `useReviewLesson.stability.test.ts`."
+- Goal: Der Katalogwechsel vom englischen Fallback zur Übersetzung startet keinen laufenden Lauf neu.
+- Result: RED zuerst: die vier neuen Tests in `modes.stability.test.ts` fallen auf den alten Hooks (ein Titelwechsel ruft `listSets` ein zweites Mal). Fix: `titleRef`/`descriptionRef` in Shuffle und Adaptive, Deps nur noch Daten-relevant; im Endlos-Hook wurde der Titel im Effekt nie gelesen, er fliegt aus den Deps und aus der Destrukturierung. Modes-Suite 61 grün, tsc und eslint sauber.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.
