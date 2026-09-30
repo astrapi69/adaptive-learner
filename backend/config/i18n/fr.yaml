@@ -1647,6 +1647,7 @@ notebooklm:
 feature:
   api_key_required: "Clé API requise. Configure un fournisseur dans les paramètres."
   desktop_only: "Disponible uniquement avec l'application de bureau."
+  browser_only: "Disponible uniquement dans la version navigateur de l'application."
 ui:
   cancel: "Annuler"
   hide_secret: "Masquer la valeur"

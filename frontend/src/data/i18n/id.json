@@ -1767,7 +1767,8 @@
   },
   "feature": {
     "api_key_required": "Kunci API diperlukan. Konfigurasikan penyedia di Pengaturan.",
-    "desktop_only": "Hanya tersedia dengan aplikasi desktop."
+    "desktop_only": "Hanya tersedia dengan aplikasi desktop.",
+    "browser_only": "Hanya tersedia di versi browser aplikasi."
   },
   "ui": {
     "cancel": "Batal",

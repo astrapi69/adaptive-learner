@@ -1647,6 +1647,7 @@ notebooklm:
 feature:
   api_key_required: "API anahtarı gerekli. Ayarlardan bir sağlayıcı yapılandırın."
   desktop_only: "Yalnızca masaüstü uygulamasıyla kullanılabilir."
+  browser_only: "Yalnızca uygulamanın tarayıcı sürümünde kullanılabilir."
 ui:
   cancel: "İptal"
   hide_secret: "Değeri gizle"

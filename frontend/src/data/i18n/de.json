@@ -1767,7 +1767,8 @@
   },
   "feature": {
     "api_key_required": "API-Schlüssel erforderlich. Konfiguriere einen Provider in den Einstellungen.",
-    "desktop_only": "Nur mit der Desktop-App verfügbar."
+    "desktop_only": "Nur mit der Desktop-App verfügbar.",
+    "browser_only": "Nur in der Browser-Version der App verfügbar."
   },
   "ui": {
     "cancel": "Abbrechen",
