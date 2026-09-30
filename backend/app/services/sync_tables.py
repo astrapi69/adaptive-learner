@@ -226,6 +226,9 @@ TABLES: dict[str, TableSpec] = {
             "ended_at",
             "cycle_step",
             "status",
+            # #3363 - auto-loop history, added after this spec and dropped.
+            "cycle_count",
+            "cycle_topics",
         ),
         timestamp_field="started_at",
         append_only=True,
@@ -258,7 +261,7 @@ TABLES: dict[str, TableSpec] = {
     ),
     "session_notes": TableSpec(
         model=SessionNote,
-        columns=("id", "session_id", "content", "created_at", "updated_at"),
+        columns=("id", "session_id", "content", "kind", "created_at", "updated_at"),
         # v1.8.0 / Phase 21B — promoted to mutable. Notes are
         # editable in the UI; the sync layer needs ``updated_at``
         # so push/pull conflicts can be resolved by timestamp.
@@ -340,6 +343,11 @@ TABLES: dict[str, TableSpec] = {
             "topic_tag",
             "model",
             "source_created_at",
+            # #3363 - the import-time language pair and the duplicate
+            # detector's hash were added after this spec and dropped.
+            "content_hash",
+            "source_language",
+            "target_language",
         ),
         timestamp_field="imported_at",
         append_only=True,
@@ -566,6 +574,10 @@ TABLES: dict[str, TableSpec] = {
             "started_at",
             "updated_at",
             "completed_at",
+            # #3363 - the lifecycle stamps were dropped, so a restored
+            # paused row lost its pause time and sorted first.
+            "paused_at",
+            "abandoned_at",
             # #983 — retry tracking; carried in backup/sync so the best
             # score + improvement history survive restore + multi-device.
             "attempts",

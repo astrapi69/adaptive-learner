@@ -40,7 +40,8 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../../../api/client";
 import {useDialogFocus} from "../../../hooks/ui/useDialogFocus";
 import {useI18n} from "../../../hooks/ui/useI18n";
-import {clearLearnerState, readLearnerState} from "../../../lib/learning/learnerState";
+import {clearAllAppLocalStorage, readLearnerState} from "../../../lib/learning/learnerState";
+import {clearLessonCache} from "../../../lib/pwa/cache-info";
 import {getStorage} from "../../../storage";
 import {backupFilename, saveBackupToDisk} from "../../../utils/backup-download";
 import {withLocalStorageSnapshot} from "../../../lib/backup/localStorageSnapshot";
@@ -129,10 +130,14 @@ export default function DangerZoneSection() {
             await getStorage().reset(CONFIRMATION_TOKEN);
             // Browser-key stores are the UI's responsibility (the
             // storage layer's contract covers the domain stores
-            // only). Clear them HERE so a successful reset always
-            // leaves the device looking like a fresh install,
-            // regardless of which storage mode the user is on.
-            clearLearnerState();
+            // only). Clear the whole app namespace HERE (#3368: tokens,
+            // contributions and notes survived a narrower sweep) so a
+            // successful reset leaves the device looking like a fresh
+            // install, regardless of which storage mode the user is on.
+            clearAllAppLocalStorage();
+            // The service worker's offline lesson cache is a residue
+            // surface too: it keeps serving lessons whose rows are gone.
+            await clearLessonCache();
             try {
                 sessionStorage.clear();
             } catch {
