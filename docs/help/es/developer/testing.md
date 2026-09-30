@@ -119,8 +119,9 @@ Las especificaciones de humo cubren las rutas críticas del usuario:
 
 Las especificaciones usan solo selectores `data-testid` - sin
 selectores CSS frágiles. Las especificaciones de humo NO están en
-la ruta de `make test`; necesitan una aplicación en ejecución
-(`make dev-bg` primero).
+la ruta de `make test`; arrancan sus propios servidores en sus
+propios puertos y no necesitan una aplicación en ejecución. Un
+`make dev` en marcha no se toca.
 
 ## Cobertura
 

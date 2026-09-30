@@ -82,7 +82,8 @@ export default defineConfig({
                 `rm -rf ${DOCS_DATA_DIR} && mkdir -p ${DOCS_DATA_DIR} && ` +
                 `cd ../backend && ${BACKEND_ENV} poetry run uvicorn app.main:app --port ${BACKEND_PORT}`,
             url: `http://localhost:${BACKEND_PORT}/api/health`,
-            reuseExistingServer: !process.env.CI,
+            // #3316: only a backend started here runs against DOCS_DATA_DIR.
+            reuseExistingServer: false,
             timeout: 120_000,
         },
         {

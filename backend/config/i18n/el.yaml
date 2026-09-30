@@ -2834,6 +2834,8 @@ content:
     missing_distractors: "Μάθημα '{lesson}': η άσκηση '{exercise}' χρειάζεται περισπαστικά (λάθος επιλογές)."
     non_cefr_level: Το επίπεδο '{level}' δεν είναι κλίμακα CEFR (A1-C2).
     level_too_complex: "Μάθημα '{lesson}': το κείμενο έχει κατά μέσο όρο {avg} λέξεις ανά πλευρά, πολλές για το επίπεδο {level} (αναμένονται περίπου {cap})."
+    engine_rule: "Μάθημα '{lesson}': κανόνας {rule} στο {path}: {message}"
+    engine_warning: "Μάθημα '{lesson}': προειδοποίηση {rule} στο {path}: {message}"
     source_language_heuristic: Οι πίσω όψεις περιέχουν χαρακτήρες της {found}, αλλά η γλώσσα προέλευσης είναι '{lang}'.
     target_language_heuristic: Οι μπροστινές όψεις περιέχουν χαρακτήρες της {found}, αλλά η γλώσσα-στόχος είναι '{lang}'.
     failed_share_anyway: "Ο έλεγχος ποιότητας εντόπισε προβλήματα. Μπορείτε να μοιραστείτε ούτως ή άλλως - οι κριτές θα δουν τα ευρήματα που σημειώνονται στο pull request."
