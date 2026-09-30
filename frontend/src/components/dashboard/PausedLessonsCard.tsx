@@ -14,10 +14,10 @@
  * Continue-Learning section uses is applied here, with split
  * ``-part-N`` lessons surfacing their part number.
  *
- * Phase 63F: on each load, abandoned lessons that are older
- * than the retention preference AND excess lessons beyond
- * ``MAX_PAUSED`` (oldest first) are automatically abandoned
- * so stale entries don't pile up indefinitely.
+ * Display only (#3360): paused lessons older than the retention
+ * preference are hidden from the card, never abandoned. Abandoning
+ * resets a lesson's position and answers, and a display component
+ * must not destroy learner data as a side effect of rendering.
  *
  * Hidden entirely when there are no paused lessons (common
  * case for most users most of the time).
@@ -41,10 +41,7 @@ import {
     buildContentAvailability,
     filterAvailableProgress,
 } from "../../lib/content/browse/lifecycle/content-availability";
-import {
-    MAX_PAUSED,
-    readRetentionDays,
-} from "../../lib/learning/pausedRetentionPref";
+import {readRetentionDays} from "../../lib/learning/pausedRetentionPref";
 import {getStorage} from "../../storage";
 import type {LessonProgress} from "../../storage/types";
 
@@ -143,53 +140,22 @@ export default function PausedLessonsCard({
                 );
                 const all = filterAvailableProgress(allRaw, availability);
 
-                // Phase 63F — auto-abandon stale / excess paused
-                // lessons. Fire-and-forget; failures don't block
-                // the display of the surviving entries.
+                // #3360 - display only: a paused lesson older than the
+                // retention window is hidden here, its progress stays.
                 const retentionDays = readRetentionDays();
-                const allPaused = all
-                    .filter((p) => p.status === "paused")
-                    .sort((a, b) =>
-                        (a.paused_at ?? "") < (b.paused_at ?? "") ? -1 : 1,
-                    );
                 const cutoffMs =
                     retentionDays > 0
                         ? Date.now() - retentionDays * 86_400_000
                         : null;
-                const toAbandon = new Set<string>();
-                // Oldest excess entries first.
-                allPaused
-                    .slice(0, Math.max(0, allPaused.length - MAX_PAUSED))
-                    .forEach((p) => toAbandon.add(p.id));
-                // Entries older than the retention cutoff.
-                if (cutoffMs !== null) {
-                    allPaused.forEach((p) => {
-                        if (
-                            p.paused_at &&
-                            new Date(p.paused_at).getTime() < cutoffMs
-                        ) {
-                            toAbandon.add(p.id);
-                        }
-                    });
-                }
-                if (toAbandon.size > 0) {
-                    const storage = getStorage();
-                    void Promise.allSettled(
-                        allPaused
-                            .filter((p) => toAbandon.has(p.id))
-                            .map((p) =>
-                                storage.lessonProgress.upsert(userId, {
-                                    source: p.source,
-                                    set_id: p.set_id,
-                                    lesson_filename: p.lesson_filename,
-                                    mark_abandoned: true,
-                                }),
-                            ),
-                    );
-                }
+                const isTooOld = (p: LessonProgress): boolean =>
+                    cutoffMs !== null &&
+                    p.paused_at !== null &&
+                    p.paused_at !== undefined &&
+                    new Date(p.paused_at).getTime() < cutoffMs;
+                const allPaused = all.filter((p) => p.status === "paused");
 
                 const filtered = allPaused
-                    .filter((p) => !toAbandon.has(p.id))
+                    .filter((p) => !isTooOld(p))
                     .sort((a, b) =>
                         (a.paused_at ?? "") > (b.paused_at ?? "") ? -1 : 1,
                     )
