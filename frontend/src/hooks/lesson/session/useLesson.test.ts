@@ -38,6 +38,11 @@ vi.mock("../../../storage", () => ({
     }),
 }));
 
+const {notifyErrorMock} = vi.hoisted(() => ({notifyErrorMock: vi.fn()}));
+vi.mock("../../../utils/notify", () => ({
+    notify: {error: notifyErrorMock, info: vi.fn(), success: vi.fn(), warn: vi.fn()},
+}));
+
 vi.mock("../../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({
         userId: "user-1",
@@ -84,6 +89,7 @@ beforeEach(() => {
     getLessonMock.mockReset();
     getProgressMock.mockReset();
     upsertProgressMock.mockReset();
+    notifyErrorMock.mockReset();
 });
 
 describe("useLesson: load + status transitions", () => {
@@ -453,6 +459,63 @@ describe("useLesson: position persistence on step change (#3075)", () => {
         });
         act(() => result.current.goToStep(1));
         await new Promise((resolve) => setTimeout(resolve, 20));
+        expect(upsertProgressMock).not.toHaveBeenCalled();
+    });
+});
+
+describe("useLesson: progress writes and reads never fail silently (#3364)", () => {
+    async function readyLesson() {
+        getLessonMock.mockResolvedValue(LESSON_PAYLOAD);
+        getProgressMock.mockResolvedValue(FRESH_PROGRESS);
+        const hook = renderHook(() =>
+            useLesson({source: SOURCE, setId: SET_ID, lessonFilename: LESSON}),
+        );
+        await waitFor(() => expect(hook.result.current.status).toBe("ready"));
+        return hook;
+    }
+
+    it("a failed autosave keeps its study time for the next successful write", async () => {
+        const now = vi.spyOn(performance, "now").mockReturnValue(0);
+        const {result} = await readyLesson();
+        upsertProgressMock
+            .mockRejectedValueOnce(new Error("disk full"))
+            .mockResolvedValue(FRESH_PROGRESS);
+        now.mockReturnValue(10_000);
+        await act(async () => {
+            await result.current.autosave();
+        });
+        now.mockReturnValue(15_000);
+        await act(async () => {
+            await result.current.autosave();
+        });
+        const deltas = upsertProgressMock.mock.calls.map(
+            ([, body]) => (body as {time_spent_seconds_delta?: number}).time_spent_seconds_delta,
+        );
+        expect(deltas).toEqual([10, 15]);
+        now.mockRestore();
+    });
+
+    it("failed writes raise one toast per lesson run, with the reason", async () => {
+        const {result} = await readyLesson();
+        upsertProgressMock.mockRejectedValue(new Error("QuotaExceededError"));
+        await act(async () => {
+            await result.current.recordStepResult({correct: 1, total: 1} as never);
+        });
+        await act(async () => {
+            await result.current.markPaused();
+        });
+        expect(notifyErrorMock).toHaveBeenCalledTimes(1);
+        expect(String(notifyErrorMock.mock.calls[0][0])).toContain("QuotaExceededError");
+    });
+
+    it("a failed progress read stops with an error instead of starting over", async () => {
+        getLessonMock.mockResolvedValue(LESSON_PAYLOAD);
+        getProgressMock.mockRejectedValue(new Error("IndexedDB closed"));
+        const {result} = renderHook(() =>
+            useLesson({source: SOURCE, setId: SET_ID, lessonFilename: LESSON}),
+        );
+        await waitFor(() => expect(result.current.status).toBe("error"));
+        expect(result.current.error).toContain("IndexedDB closed");
         expect(upsertProgressMock).not.toHaveBeenCalled();
     });
 });

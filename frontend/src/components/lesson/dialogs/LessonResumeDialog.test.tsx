@@ -5,7 +5,7 @@
  * - Hidden when open=false
  * - Renders title + body text when open=true
  * - "Continue" calls onResume (not onStartOver)
- * - "Start over" calls onStartOver (not onResume)
+ * - "Start over" asks for confirmation, then calls onStartOver (#3361)
  * - Action buttons are spaced apart (regression #2637)
  */
 
@@ -62,7 +62,7 @@ describe("LessonResumeDialog", () => {
         expect(onStartOver).not.toHaveBeenCalled();
     });
 
-    it("calls onStartOver and not onResume when Start over is clicked", () => {
+    it("Start over asks for confirmation first and calls onStartOver only on confirm (#3361)", () => {
         const onResume = vi.fn();
         const onStartOver = vi.fn();
         render(
@@ -74,8 +74,27 @@ describe("LessonResumeDialog", () => {
             />,
         );
         fireEvent.click(screen.getByTestId("lesson-resume-restart"));
+        expect(onStartOver).not.toHaveBeenCalled();
+        expect(screen.getByTestId("lesson-resume-confirm-restart")).toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("lesson-resume-confirm-restart-action"));
         expect(onStartOver).toHaveBeenCalledTimes(1);
         expect(onResume).not.toHaveBeenCalled();
+    });
+
+    it("backing out of the confirmation returns to the choice without restarting (#3361)", () => {
+        const onStartOver = vi.fn();
+        render(
+            <LessonResumeDialog
+                open={true}
+                lessonTitle="Greetings"
+                onResume={vi.fn()}
+                onStartOver={onStartOver}
+            />,
+        );
+        fireEvent.click(screen.getByTestId("lesson-resume-restart"));
+        fireEvent.click(screen.getByTestId("lesson-resume-confirm-back"));
+        expect(onStartOver).not.toHaveBeenCalled();
+        expect(screen.getByTestId("lesson-resume-continue")).toBeInTheDocument();
     });
 
     it("spaces the action buttons apart (regression #2637)", () => {

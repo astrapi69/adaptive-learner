@@ -96,7 +96,12 @@ function mountMockWakeLock(): {
     release: ReturnType<typeof vi.fn>;
 } {
     const release = vi.fn().mockResolvedValue(undefined);
-    const request = vi.fn().mockResolvedValue({release, released: false});
+    const request = vi.fn().mockResolvedValue({
+        release,
+        released: false,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+    });
     (navigator as unknown as {wakeLock: {request: typeof request}}).wakeLock = {
         request,
     };
@@ -217,6 +222,36 @@ describe("useReadAloud engine", () => {
             act(() => spoken[0].onend?.());
             await flush();
             expect(release).toHaveBeenCalled();
+        });
+
+        it("re-acquires the wake lock after the browser released it on an app switch (#3358)", async () => {
+            setMockSynth([makeVoice("DE", "de")]);
+            const listeners: (() => void)[] = [];
+            const sentinel = {
+                released: false,
+                addEventListener: (_type: string, listener: () => void) => listeners.push(listener),
+                removeEventListener: vi.fn(),
+                release: vi.fn(async () => {
+                    sentinel.released = true;
+                    listeners.forEach((listener) => listener());
+                }),
+            };
+            const request = vi.fn().mockResolvedValue(sentinel);
+            (navigator as unknown as {wakeLock: {request: typeof request}}).wakeLock = {request};
+            const h = await renderReady();
+            act(() => h.current().speak("read me", {lang: "de"}));
+            await flush();
+            const setVisibility = (state: "hidden" | "visible") => {
+                Object.defineProperty(document, "visibilityState", {configurable: true, get: () => state});
+                document.dispatchEvent(new Event("visibilitychange"));
+            };
+            await act(async () => {
+                setVisibility("hidden");
+                await sentinel.release();
+            });
+            await act(async () => setVisibility("visible"));
+            await flush();
+            expect(request).toHaveBeenCalledTimes(2);
         });
 
         it("does not request a wake lock when the API is unsupported", async () => {
