@@ -64,6 +64,25 @@ describe("IdentitySection", () => {
         ).toBeInTheDocument();
     });
 
+    it("stacks label and value on phones and wraps values at word boundaries (#3340)", async () => {
+        apiIdentityStatus.mockResolvedValue({
+            exists: true,
+            path: "/home/u/.config/adaptive_learner/identity.yaml",
+            last_seen: "2026-05-23T14:30:00+00:00",
+        });
+        render(<IdentitySection t={tFn} />);
+        await waitFor(() => {
+            expect(screen.getByTestId("about-identity-path")).toBeInTheDocument();
+        });
+        const list = screen.getByTestId("about-identity-section").querySelector("dl");
+        const columns = [...(list?.classList ?? [])].filter((name) => name.startsWith("grid-cols-"));
+        expect(columns).toEqual(["grid-cols-1"]);
+        for (const value of list?.querySelectorAll("dd") ?? []) {
+            expect(value.classList.contains("break-all")).toBe(false);
+            expect(value.classList.contains("break-words")).toBe(true);
+        }
+    });
+
     it("renders 'Not found' badge + path + no last-updated when file missing", async () => {
         apiIdentityStatus.mockResolvedValue({
             exists: false,
