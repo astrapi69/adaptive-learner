@@ -75,6 +75,7 @@ import { useOrientationReanchor } from "../../hooks/lesson/interaction/useOrient
 import { useStepReanchor } from "../../hooks/lesson/interaction/useStepReanchor";
 import { clearHintUsage } from "../../lib/hints/hint-usage";
 import { readLearnerState } from "../../lib/learning/learnerState";
+import { useLessonWakeLock } from "../../hooks/lesson/session/useLessonWakeLock";
 import LessonNoProfileNotice from "../../components/lesson/LessonNoProfileNotice";
 
 interface UrlParams {
@@ -310,6 +311,9 @@ export default function LessonPage() {
     status,
     lesson,
   );
+  // #3358 — keep the screen on while the lesson is open and not on its
+  // summary, also during silent reading (the setting defaults to on).
+  useLessonWakeLock(statusKind, currentStepIndex, playedLesson);
   if (statusKind) return <LessonStatusView kind={statusKind} error={error} />;
   // ``resolveLessonStatusKind`` already returns "error" when the lesson
   // is null, so this only narrows the type for the code below.

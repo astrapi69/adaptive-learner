@@ -15,7 +15,13 @@ Um backup é um **snapshot completo**: todas as 30 tabelas de dados
 (projetos de aprendizagem, sessões, progresso de lições, erros ao
 nível do elemento, gamificação com XP/Streak/Badges, missões,
 cartões Anki, notas e mais) **mais os teus conjuntos de conteúdo
-descarregados**. Nada de importante fica para trás.
+descarregados**.
+
+**Ainda não incluídos:** os repositórios de conteúdo ligados, os
+convites utilizados e as definições do Learning Repository. Depois
+de restaurar num dispositivo novo, os conjuntos de conteúdo voltam,
+mas volta a ligar os respetivos repositórios (e utiliza de novo os
+convites) para que as atualizações continuem a chegar.
 
 Antes da exportação, a aplicação mostra uma pré-visualização
 **"O teu backup contém …"** com contagens de registos por área,
@@ -92,4 +98,4 @@ arquivo proprietário.
 ## Páginas relacionadas
 
 - [Definições](../user-guide/settings.md) - todas as ações de dados num relance
-- [Múltiplos repositórios de conteúdo](content-repos.md) - os repos ligados fazem parte do snapshot
+- [Múltiplos repositórios de conteúdo](content-repos.md) - os repos ligados ainda não fazem parte do backup, volta a ligá-los depois de restaurar
