@@ -35,9 +35,11 @@ for the broader rule. The unit + integration tests in
 from __future__ import annotations
 
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
+from app.exceptions import ValidationError
 from app.paths import get_config_dir, get_data_dir
 from app.yaml_io import read_yaml_roundtrip, write_yaml_roundtrip
 
@@ -116,12 +118,30 @@ def _user_app_path() -> Path:
     return get_user_config_dir() / "app.yaml"
 
 
+# architecture.md plugin names: lowercase letters, digits, hyphens only.
+_PLUGIN_NAME_RE = re.compile(r"[a-z0-9][a-z0-9-]*")
+
+
+def _plugin_file(directory: Path, name: str) -> Path:
+    """``{directory}/{name}.yaml``, refusing a name that is not a plugin identifier.
+
+    Every plugin path is built here, so a name from a request can never
+    point outside the config directories, whatever the caller checked.
+
+    Raises:
+        ValidationError: when ``name`` is not a plugin identifier.
+    """
+    if not _PLUGIN_NAME_RE.fullmatch(name):
+        raise ValidationError(f"Plugin name {name!r} is not a valid identifier.")
+    return directory / f"{name}.yaml"
+
+
 def _project_plugin_path(name: str) -> Path:
-    return get_project_config_dir() / "plugins" / f"{name}.yaml"
+    return _plugin_file(get_project_config_dir() / "plugins", name)
 
 
 def _user_plugin_path(name: str) -> Path:
-    return get_user_plugins_dir() / f"{name}.yaml"
+    return _plugin_file(get_user_plugins_dir(), name)
 
 
 def read_app_config_merged() -> dict[str, Any]:
@@ -187,7 +207,7 @@ def _legacy_plugin_path(name: str) -> Path:
     overlay so values saved before the fix keep applying. Nothing
     writes it any more.
     """
-    return get_config_dir() / "plugins" / f"{name}.yaml"
+    return _plugin_file(get_config_dir() / "plugins", name)
 
 
 def _base_plugin_config(name: str) -> dict[str, Any]:

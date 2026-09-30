@@ -127,3 +127,26 @@ def test_values_saved_before_the_fix_are_still_read(client: TestClient) -> None:
     assert settings["user_repos"] == [USER_REPO]
     assert settings["default_sources"] == [OFFICIAL]
     assert manager.get_plugin_config("content-loader")["settings"]["user_repos"] == [USER_REPO]
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["../escape", "a/b", "..", "", "Upper", "name.yaml"],
+    ids=["parent-traversal", "subdirectory", "dotdot", "empty", "uppercase", "dotted"],
+)
+def test_plugin_path_helpers_reject_non_identifier_names(name: str) -> None:
+    """The overlay builds file paths from the plugin name itself (CodeQL
+    py/path-injection on #3474), so it validates the name where the path is
+    built instead of trusting every caller to have checked it."""
+    from app.exceptions import ValidationError
+
+    with pytest.raises(ValidationError):
+        config_overlay.read_plugin_settings_merged(name)
+    with pytest.raises(ValidationError):
+        config_overlay.write_user_plugin_settings(name, {"x": 1})
+
+
+def test_plugin_path_helpers_accept_hyphenated_names() -> None:
+    """Every shipped plugin name (lowercase, digits, hyphens) still resolves."""
+    assert config_overlay.read_plugin_settings_merged("content-loader") is not None
+    assert config_overlay.read_plugin_settings_merged("ai-anthropic") == {}
