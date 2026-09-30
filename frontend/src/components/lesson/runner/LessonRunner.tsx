@@ -45,7 +45,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { useOrientationReanchor } from "../../../hooks/lesson/interaction/useOrientationReanchor";
 import { useStepReanchor } from "../../../hooks/lesson/interaction/useStepReanchor";
-import { useScreenWakeLock } from "../../../hooks/ui/useScreenWakeLock";
+import { useScreenWakeLock } from "../../../hooks/system/useScreenWakeLock";
 import { readKeepScreenOn } from "../../../lib/lesson/prefs/keepScreenOnPref";
 import { LessonModeProvider } from "../../../hooks/lesson/modes/useLessonMode";
 import { useLessonStepState } from "../../../hooks/lesson/session/useLessonStepState";

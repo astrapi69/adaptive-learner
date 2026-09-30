@@ -38,7 +38,7 @@ import {
     writeLessonAutoRead as writeLessonAutoReadPref,
     writeLessonSpeed as writeLessonSpeedPref,
 } from "../../../lib/voice/voicePref";
-import {useScreenWakeLock} from "../../ui/useScreenWakeLock";
+import {useScreenWakeLock} from "../../system/useScreenWakeLock";
 
 /** Inline speed multipliers offered during playback (C4). */
 export const READ_ALOUD_SPEEDS = [0.5, 0.75, 1, 1.25] as const;

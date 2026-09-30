@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { readKeepScreenOn } from "../../../lib/lesson/prefs/keepScreenOnPref";
-import { useScreenWakeLock } from "../../ui/useScreenWakeLock";
+import { useScreenWakeLock } from "../../system/useScreenWakeLock";
 
 /**
  * Keep the screen on while a lesson is open and not on its summary (#3358),
