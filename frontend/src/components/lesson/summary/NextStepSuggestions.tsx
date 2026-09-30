@@ -42,7 +42,7 @@ import {useSummaryEnterKey} from "../../../hooks/lesson/interaction/useSummaryEn
 import type {ErrorTag} from "../../../lib/adaptive/error-classifier";
 import {prefersReducedMotion} from "../../../lib/feedback/feedbackPref";
 import type {NextStepSuggestions as Suggestions} from "../../../hooks/learning/useNextStepSuggestions";
-import {reviewHref} from "../../../lib/review";
+import {reviewHref} from "../../../lib/review/review-origin";
 
 /** Reuse the Dashboard FocusAreasCard tag labels so the
  *  weakness headline stays consistent across the app. */

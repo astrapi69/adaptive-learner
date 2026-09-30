@@ -24,7 +24,7 @@ import {LessonRunner, REVIEW_POLICY} from "../../components/lesson/runner";
 import ReviewSummaryPanel from "../../components/lesson/runner/summaries/ReviewSummaryPanel";
 import {useReviewSource} from "../../hooks/lesson/sources";
 import {readReviewLimit} from "../../lib/learning/reviewLimitPref";
-import {REVIEW_ORIGIN_PARAM, readReviewOrigin} from "../../lib/review";
+import {REVIEW_ORIGIN_PARAM, readReviewOrigin} from "../../lib/review/review-origin";
 
 interface UrlParams {
     setId: string;

@@ -23,7 +23,7 @@ import { useMemo } from "react";
 import { useLocation } from "react-router";
 
 import ReviewReport from "../../progress/ReviewReport";
-import { reviewHref } from "../../../lib/review";
+import { reviewHref } from "../../../lib/review/review-origin";
 import { buildLessonReview } from "../../../lib/statistics/lesson-review";
 import type {
   ContentLesson,

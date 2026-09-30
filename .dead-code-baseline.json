@@ -660,7 +660,6 @@
     "frontend/src/types/index.ts::SessionRating::type",
     "frontend/src/types/index.ts::SessionStartResult::type",
     "frontend/src/types/index.ts::SessionStatus::type",
-    "frontend/src/types/index.ts::SupportedLanguage::type",
     "frontend/src/types/index.ts::User::type",
     "frontend/src/types/index.ts::cycleStepForIndex::export",
     "frontend/src/types/index.ts::isLearningMethod::export"
