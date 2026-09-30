@@ -2430,6 +2430,8 @@ lesson:
     body: 'Έχετε παύσει το "{title}". Θέλετε να συνεχίσετε από εκεί που σταματήσατε ή να ξεκινήσετε από την αρχή;'
     action_resume: "Συνέχεια"
     action_restart: "Επανεκκίνηση"
+    restart_confirm_title: "Έναρξη από την αρχή;"
+    restart_confirm_body: "Η θέση σας και οι απαντήσεις σας σε αυτό το μάθημα θα μηδενιστούν. Ό,τι έχετε ήδη μάθει (πρόοδος εκμάθησης) διατηρείται."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:

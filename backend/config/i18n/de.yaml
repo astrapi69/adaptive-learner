@@ -2433,6 +2433,8 @@ lesson:
     body: 'Du hast "{title}" pausiert. Möchtest du dort weitermachen, wo du aufgehört hast, oder neu starten?'
     action_resume: "Weiter"
     action_restart: "Neu starten"
+    restart_confirm_title: "Von vorne beginnen?"
+    restart_confirm_body: "Deine Position und deine Antworten in dieser Lektion werden zurückgesetzt. Was du bereits gelernt hast (Lernfortschritt), bleibt erhalten."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:

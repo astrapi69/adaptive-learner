@@ -2621,7 +2621,9 @@
       "heading": "레슨을 이어갈까요?",
       "body": "\"{title}\"을(를) 일시 정지했습니다. 멈춘 곳부터 계속할까요, 처음부터 다시 시작할까요?",
       "action_resume": "계속",
-      "action_restart": "처음부터 다시"
+      "action_restart": "처음부터 다시",
+      "restart_confirm_title": "처음부터 다시 시작할까요?",
+      "restart_confirm_body": "이 레슨의 진행 위치와 답변이 초기화됩니다. 이미 익힌 내용(숙련도)은 그대로 유지됩니다."
     }
   },
   "content": {

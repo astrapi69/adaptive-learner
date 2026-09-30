@@ -27,11 +27,16 @@ from app.services.sync_service import (
 logger = logging.getLogger(__name__)
 
 
-# EXP-051 / #2125 — bumped for the Durchgang schema: element_errors gains
-# a run_id column and a new set_runs table ride the export. Older backups
-# (no run_id / no set_runs) import unchanged: run_id defaults to 1 and the
-# first read/write lazily materialises the implicit active run 1.
-BACKUP_VERSION = "1.4.0"
+# One format version for both storage modes; the frontend's
+# ``BACKUP_VERSION`` (storage/backup/backup-tables.ts) must match, pinned
+# by a parity test there. The backend said 1.4.0 and the frontend 1.5.0 for
+# the same EXP-051 change until #3363.
+# 1.6.0 - #3363: paused_at / abandoned_at, content_hash + the import
+# language pair, cycle_count / cycle_topics and the session-note kind ride
+# the export. Older backups lack them and import with the column defaults.
+# 1.5.0 (1.4.0 here) - EXP-051 / #2125: element_errors gains run_id and
+# set_runs rides the export; older backups import with run_id 1.
+BACKUP_VERSION = "1.6.0"
 BACKUP_FORMAT = "adaptive-learner-backup"
 
 # API keys are sensitive; the backup file is meant to travel
