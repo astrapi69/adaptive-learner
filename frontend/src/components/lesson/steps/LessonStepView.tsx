@@ -213,7 +213,7 @@ export default function LessonStepView({
       data-testid={`lesson-step-${step.id}`}
       data-step-type={step.type}
     >
-      {step.title && <h2>{step.title}</h2>}
+      {step.title && <h2 className="wrap-anywhere">{step.title}</h2>}
       {/* #140 — the re-read-theory link, subtle so it doesn't distract from
           practising. #2453 — matching relocates it into its own top button
           row, so the chrome omits its copy for matching steps. The link is

@@ -4,6 +4,7 @@ import {describe, expect, it, vi} from "vitest";
 import type {FoldedUserLesson} from "../../../lib/content/browse/discovery/content-tree";
 import type {ContentSetEntry} from "../../../storage/types";
 import FoldedUserLessons from "./FoldedUserLessons";
+import { DexieFeatureWrapper } from "../../../features/testFeatureProvider";
 
 function setEntry(over: Partial<ContentSetEntry>): ContentSetEntry {
     return {
@@ -62,8 +63,7 @@ function renderFolded(extra: Partial<React.ComponentProps<typeof FoldedUserLesso
             onShare={vi.fn()}
             onDelete={vi.fn()}
             {...extra}
-        />,
-    );
+        />, { wrapper: DexieFeatureWrapper });
     return {onPlayLesson, onEdit};
 }
 
@@ -80,8 +80,7 @@ describe("FoldedUserLessons", () => {
                 onExportSet={vi.fn()}
                 onShare={vi.fn()}
                 onDelete={vi.fn()}
-            />,
-        );
+            />, { wrapper: DexieFeatureWrapper });
         expect(container).toBeEmptyDOMElement();
     });
 
