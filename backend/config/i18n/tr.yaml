@@ -2424,6 +2424,8 @@ lesson:
     body: '"{title}" dersini duraklatttınız. Kaldığınız yerden devam etmek veya baştan başlamak ister misiniz?'
     action_resume: "Devam et"
     action_restart: "Baştan başla"
+    restart_confirm_title: "Baştan başlansın mı?"
+    restart_confirm_body: "Bu dersteki konumunuz ve cevaplarınız sıfırlanacak. Zaten öğrendikleriniz (ustalık ilerlemesi) korunur."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:

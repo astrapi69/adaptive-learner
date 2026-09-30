@@ -2426,6 +2426,8 @@ lesson:
     body: 'Tu as mis en pause "{title}". Veux-tu continuer là où tu t''es arrêté ou recommencer ?'
     action_resume: "Continuer"
     action_restart: "Recommencer"
+    restart_confirm_title: "Recommencer depuis le début ?"
+    restart_confirm_body: "Ta position et tes réponses dans cette leçon seront réinitialisées. Ce que tu as déjà appris (progression de maîtrise) est conservé."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:

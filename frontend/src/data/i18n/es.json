@@ -2616,7 +2616,9 @@
       "heading": "¿Reanudar lección?",
       "body": "Pausaste \"{title}\". ¿Te gustaría continuar donde lo dejaste o empezar de nuevo?",
       "action_resume": "Continuar",
-      "action_restart": "Empezar de nuevo"
+      "action_restart": "Empezar de nuevo",
+      "restart_confirm_title": "¿Empezar desde el principio?",
+      "restart_confirm_body": "Tu posición y tus respuestas en esta lección se restablecerán. Lo que ya aprendiste (progreso de dominio) se conserva."
     }
   },
   "content": {
