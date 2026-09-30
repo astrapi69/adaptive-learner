@@ -99,7 +99,7 @@ function exerciseIdOf(step: ContentLessonStep | null): string | null {
 export function useEndlessLesson(
     opts: UseEndlessLessonOptions,
 ): UseEndlessLessonResult {
-    const {setId, title} = opts;
+    const {setId} = opts;
     const [status, setStatus] = useState<EndlessLessonStatus>("loading");
     const [step, setStep] = useState<ContentLessonStep | null>(null);
     const [cards, setCards] = useState<ContentLessonCard[]>([]);
@@ -219,7 +219,7 @@ export function useEndlessLesson(
         return () => {
             cancelled = true;
         };
-    }, [setId, title, userId]);
+    }, [setId, userId]);
 
     /**
      * Draw the next card and show it. The draw happens here, once, and the

@@ -22,7 +22,7 @@
  * / longer interval), a wrong one re-increments its error count.
  */
 
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {readLearnerState} from "../../../lib/learning/learnerState";
 import {isPlayableExerciseStep} from "../../../lib/lesson/lesson-step-state";
@@ -93,6 +93,15 @@ export function useShuffleLesson(
 
     const userId = useMemo(() => readLearnerState().userId, []);
 
+    // #3225 (the #2703 class): title/description are display strings that
+    // flip once the i18n catalog lands; read through refs so the flip never
+    // reshuffles a running session. ``reload()`` still picks up the current
+    // values.
+    const titleRef = useRef(title);
+    titleRef.current = title;
+    const descriptionRef = useRef(description);
+    descriptionRef.current = description;
+
     useEffect(() => {
         if (!setId) {
             setStatus("empty");
@@ -149,8 +158,8 @@ export function useShuffleLesson(
                 }
 
                 const built = buildShuffleLesson(sources, {
-                    title,
-                    description,
+                    title: titleRef.current,
+                    description: descriptionRef.current,
                     limit,
                     rng: pinnedRandom("shuffle-order"),
                 });
@@ -170,7 +179,7 @@ export function useShuffleLesson(
         return () => {
             cancelled = true;
         };
-    }, [setId, title, description, limit, reloadKey]);
+    }, [setId, limit, reloadKey]);
 
     const reload = useCallback(() => {
         setCurrentStepIndex(0);
