@@ -561,7 +561,6 @@
     "frontend/src/shared/feedback/ShortcutHelpDialog.tsx::ShortcutHelpItem::type",
     "frontend/src/shared/forms/ChoiceButtonGroup.tsx::ChoiceOptionState::type",
     "frontend/src/shared/forms/FilterBar.tsx::FilterOption::type",
-    "frontend/src/shared/forms/FilterMenuButton.tsx::FilterMenuOption::type",
     "frontend/src/shared/gamification/WeakAreasList.tsx::WeakAreaListItem::type",
     "frontend/src/shared/hooks/useKeyboardShortcuts.ts::ShortcutModifiers::type",
     "frontend/src/shared/hooks/useKeyboardShortcuts.ts::isEditableTarget::export",

@@ -24,7 +24,8 @@
  * ``exercise_gone`` otherwise), so it must see the post-exercise-remap
  * identity to have anything to work with. The caller applies in the SAME
  * order (exercise remap written to storage first, element-key remap
- * second) - see ``useContentSetActions.ts``'s ``confirmUpdate``.
+ * second) - see ``hooks/content/set-actions/useSetDownload.ts``'s
+ * ``confirmUpdate``.
  */
 
 import {getStorage} from "../../../storage";
