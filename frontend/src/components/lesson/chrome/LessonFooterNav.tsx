@@ -17,6 +17,7 @@ import { Check, ChevronLeft, ChevronRight, Pause } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
+import { FooterStatusLine } from "../runner/footer-status";
 
 interface LessonFooterNavProps {
   isSummary: boolean;
@@ -151,6 +152,7 @@ export default function LessonFooterNav({
         </span>
       </Button>
       {pauseButton("mx-auto")}
+      {!isSummary && <FooterStatusLine testId="lesson-footer-status" />}
       {!isSummary &&
         (showCheck ? (
           <Button

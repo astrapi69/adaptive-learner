@@ -24,6 +24,10 @@ import type {ContentLessonExercise} from "../../../../storage/types";
 import {readLegacyCssSum} from "../../../../styles/legacy-css-sum";
 import {LessonModeProvider} from "../../../../hooks/lesson/modes/useLessonMode";
 import {writeMatchingSeparateCorrections} from "../../../../lib/lesson/prefs/matchingReviewViewsPref";
+import {
+    FooterStatusLine,
+    FooterStatusProvider,
+} from "../../../lesson/runner/footer-status";
 
 /** Convert ``#rrggbb`` to its HSL hue (degrees) + saturation (0-1). */
 function hexToHsl(hex: string): {hue: number; sat: number} {
@@ -1232,5 +1236,22 @@ describe("MatchingExercise: separate corrections view (#3186)", () => {
         expect(screen.queryByTestId("matching-view-toggle")).not.toBeInTheDocument();
         // Without a toggle the corrections are the only way to see the answer.
         expect(screen.getByTestId("matching-correct-hint-0")).toHaveTextContent("Hello");
+    });
+});
+
+describe("MatchingExercise: footer counter mirror (#3237)", () => {
+    it("publishes the running counter to the footer and withdraws it after Check", () => {
+        render(
+            <FooterStatusProvider>
+                <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />
+                <FooterStatusLine testId="footer-probe" />
+            </FooterStatusProvider>,
+        );
+        expect(screen.getByTestId("footer-probe")).toHaveTextContent("0 / 3 paired");
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        expect(screen.getByTestId("footer-probe")).toHaveTextContent("1 / 3 paired");
+        // The top counter keeps its live region; the footer line mirrors it.
+        expect(screen.getByTestId("matching-counter")).toHaveTextContent("1 / 3 paired");
     });
 });
