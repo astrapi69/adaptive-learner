@@ -106,6 +106,10 @@ cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier
 ```
 
+Μέχρι την εφάπαξ επαναμορφοποίηση του #3270, το
+`bun run format` ξαναγράφει σχεδόν ολόκληρο το δέντρο `src/`·
+μην το εκτελείτε ως συνηθισμένο βήμα.
+
 Τα pre-commit hooks επιβάλλουν ελέγχους ruff + μορφοποιητή σε κάθε
 commit:
 

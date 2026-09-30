@@ -77,13 +77,14 @@ cd backend && poetry run ruff format .        # format
 ```
 
 ```json
-// frontend/.prettierrc
+// frontend/.prettierrc: the Prettier defaults, stated explicitly (#3270)
 {
-  "semi": false,
-  "singleQuote": true,
+  "printWidth": 80,
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": false,
   "trailingComma": "all",
-  "printWidth": 100,
-  "tabWidth": 2
+  "bracketSpacing": true
 }
 ```
 
@@ -91,8 +92,10 @@ Commands:
 
 ```bash
 cd frontend && bunx eslint src/ --fix    # lint + auto-fix
-cd frontend && bunx prettier --write src/ # format
+cd frontend && bun run format            # Prettier, src/**/*.{ts,tsx,css}
 ```
+
+Prettier is not a pre-commit hook. `bun run format:check` runs in the CI Frontend Tests job, non-blocking (`prettier-ci-check`, off in `.claude/rules/checks.yaml`): `src/` is not formatted yet, so until the #3270 reformat, do not reformat whole files you touch.
 
 ### Setup (one-time)
 
@@ -106,7 +109,7 @@ cd frontend && bun add -d eslint @typescript-eslint/eslint-plugin @typescript-es
 
 ## Pre-commit hooks
 
-Automatic checks before every commit. Prevents unformatted or broken code from reaching the repo in the first place.
+Automatic checks before every commit. Prevents broken code and unformatted `backend/app/` Python from reaching the repo.
 
 ```yaml
 # .pre-commit-config.yaml (in the project root)
@@ -131,12 +134,6 @@ repos:
         language: system
         pass_filenames: false
         files: ^frontend/src/
-      - id: prettier
-        name: prettier check
-        entry: bash -c 'cd frontend && bunx prettier --check src/'
-        language: system
-        pass_filenames: false
-        files: ^frontend/src/
       - id: pytest-quick
         name: pytest (backend only)
         entry: bash -c 'cd backend && poetry run pytest tests/ -x -q'
@@ -157,8 +154,7 @@ After that, on every `git commit` the following happens automatically:
 1. Python code is checked for lint errors (ruff)
 2. Python formatting is checked (ruff format)
 3. TypeScript is checked for errors (ESLint)
-4. TypeScript formatting is checked (Prettier)
-5. Backend tests run (quick smoke test)
+4. Backend tests run (quick smoke test)
 
 If anything fails: the commit is rejected and the errors are shown.
 
@@ -577,10 +573,9 @@ git commit
      1. ruff check (Python lint)
      2. ruff format --check (Python format)
      3. eslint (TypeScript lint)
-     4. prettier --check (TypeScript format)
-     5. pytest -x -q (backend smoke test)
+     4. pytest -x -q (backend smoke test)
   -> all green? commit goes through.
   -> anything red? commit rejected, errors shown.
 ```
 
-No code reaches the repo that isn't formatted, linted, and tested.
+No code reaches the repo that isn't linted and tested, and no `backend/app/` Python that isn't formatted.
