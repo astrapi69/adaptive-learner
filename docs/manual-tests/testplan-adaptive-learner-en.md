@@ -778,8 +778,10 @@ preview delivery). In the regular build the mode does not exist.
       "Memory pairs" (4-12, default 8) number inputs clamp and are
       disabled while the switch is off
 - [ ] TC-0211 Game mode on: the arcade card appears on the dashboard; "To the
-      arcade" opens the game list. Arcade switch off OR game mode off:
-      the card disappears entirely; visiting /arcade directly shows a
+      arcade" opens the game list. Game mode on and arcade switch off:
+      the card stays, without the button, with a notice naming the
+      arcade switch and a link to the settings (#3216 point 2). Game
+      mode off: no arcade card at all. Visiting /arcade directly shows a
       notice naming the switch that is off (game mode off, or game mode
       on and arcade switch off), with a link to the settings (#3216)
 - [ ] TC-0212 Learn Memory (free): the set picker lists downloaded sets only
