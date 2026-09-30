@@ -228,6 +228,8 @@ describe("RunnerStep: the one decision between theory and exercise (#3224)", () 
     const article = screen.getByTestId(`adaptive-lesson-step-${THEORY_STEP.id}`);
     expect(article).toHaveAttribute("data-step-type", "theory");
     expect(screen.getByRole("heading", {level: 2, name: "Greetings"})).toBeInTheDocument();
+    // #3406 - a step title is content text: it breaks a long word instead of overflowing.
+    expect(screen.getByRole("heading", {level: 2, name: "Greetings"})).toHaveClass("wrap-anywhere");
     const body = screen.getByTestId("adaptive-lesson-theory-body");
     expect(body).toHaveTextContent("Saying hello");
     expect(body.querySelector("strong")).toHaveTextContent("Bonjour");

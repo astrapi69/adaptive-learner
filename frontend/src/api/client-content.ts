@@ -56,11 +56,12 @@ export const contentApi = {
         throw err;
       }
     },
-    /** POST /api/users/{user_id}/lesson-progress */
+    /** POST /api/users/{user_id}/lesson-progress. ``keepalive`` so the
+     *  pause on unload and the pagehide flush are not cancelled (#3364). */
     upsert: (userId: string, body: import("../storage/types").LessonProgressUpsertBody) =>
       apiCall<import("../storage/types").LessonProgress>(
         `/users/${encodeURIComponent(userId)}/lesson-progress`,
-        { method: "POST", body },
+        { method: "POST", body, keepalive: true },
       ),
   },
 

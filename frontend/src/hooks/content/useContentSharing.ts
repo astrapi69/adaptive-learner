@@ -184,7 +184,7 @@ export function useContentSharing({ sets, fetchSetLessons }: UseContentSharingDe
       setShareResult(result);
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
-      notify.error(`${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`);
+      notify.error(`${t("content.error.share_check_failed", "Could not check the set for sharing.")} ${detail}`);
       setShareTarget(null);
     } finally {
       setShareChecking(false);
