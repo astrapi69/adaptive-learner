@@ -3111,8 +3111,17 @@ screen auto-locks).
 - [ ] TC-0773 Wait past the device's normal auto-lock timeout (leave the phone
       alone): the screen stays on for as long as read-aloud is playing
 - [ ] TC-0774 Read-aloud plays uninterrupted through to the end of the text
-- [ ] TC-0775 After "Stop" or the end of read-aloud, the screen is again allowed to
-      auto-lock normally (the wake lock is released)
+- [ ] TC-0775 With the setting "Keep the screen on in lessons" off (Settings >
+      Learning > Interaction): after "Stop" or the end of read-aloud, the
+      screen is again allowed to auto-lock normally (the wake lock is
+      released)
+- [ ] TC-0916 Silent reading (#3358): setting on (the default), read a theory step
+      without touching the device and without read-aloud: the screen stays
+      on past the auto-lock timeout
+- [ ] TC-0917 On the lesson summary (#3358) the screen may auto-lock again; the same
+      with the setting off
+- [ ] TC-0918 App switch during read-aloud (#3358): switch to another app briefly,
+      come back, then leave the device alone: the screen stays on
 - [ ] TC-0776 Repeat the same flow on an Android device (Chrome)
 - [ ] TC-0777 Known platform limit, NOT a bug: manually pressing the lock/power
       button still turns the screen off immediately and stops playback -

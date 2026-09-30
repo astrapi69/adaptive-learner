@@ -75,6 +75,8 @@ import { useOrientationReanchor } from "../../hooks/lesson/interaction/useOrient
 import { useStepReanchor } from "../../hooks/lesson/interaction/useStepReanchor";
 import { clearHintUsage } from "../../lib/hints/hint-usage";
 import { readLearnerState } from "../../lib/learning/learnerState";
+import { readKeepScreenOn } from "../../lib/lesson/prefs/keepScreenOnPref";
+import { useScreenWakeLock } from "../../hooks/ui/useScreenWakeLock";
 
 interface UrlParams {
   setSlug: string;
@@ -161,6 +163,7 @@ export default function LessonPage() {
   // on mount; useLesson already reads it for the progress
   // path but doesn't expose it.
   const learnerUserId = useMemo(() => readLearnerState().userId, []);
+  const keepScreenOn = useMemo(() => readKeepScreenOn(), []);
 
   // #1013 — reverse mode flips each exercise's drill direction (matching
   // gets its columns flipped; other types stay original + show a
@@ -308,6 +311,13 @@ export default function LessonPage() {
     filename,
     status,
     lesson,
+  );
+  // #3358 — keep the screen on while the lesson is open and not on its
+  // summary, also during silent reading (the setting defaults to on).
+  useScreenWakeLock(
+    keepScreenOn &&
+      statusKind === null &&
+      currentStepIndex < (playedLesson?.steps.length ?? 0),
   );
   if (statusKind) return <LessonStatusView kind={statusKind} error={error} />;
   // ``resolveLessonStatusKind`` already returns "error" when the lesson

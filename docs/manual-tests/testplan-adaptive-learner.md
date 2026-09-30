@@ -3333,8 +3333,18 @@ Bildschirm automatisch ausgeht).
 - [ ] TC-0773 Bis kurz vor den normalen Sperr-Timeout des Geräts warten (Handy
       liegen lassen): der Bildschirm bleibt an, solange vorgelesen wird
 - [ ] TC-0774 Das Vorlesen läuft ununterbrochen bis zum Ende des Textes weiter
-- [ ] TC-0775 Nach "Stop" bzw. Ende des Vorlesens darf der Bildschirm wieder
-      normal automatisch ausgehen (Wake Lock wird freigegeben)
+- [ ] TC-0775 Mit ausgeschalteter Einstellung "Bildschirm in Lektionen
+      anlassen" (Einstellungen > Lernen > Interaktion): nach "Stop" bzw.
+      Ende des Vorlesens darf der Bildschirm wieder normal automatisch
+      ausgehen (Wake Lock wird freigegeben)
+- [ ] TC-0916 Stilles Lesen (#3358): Einstellung an (Standard), einen Theorieschritt
+      lesen, ohne das Gerät zu berühren und ohne Vorlesen: der Bildschirm
+      bleibt über den Sperr-Timeout hinaus an
+- [ ] TC-0917 In der Zusammenfassung der Lektion (#3358) darf der Bildschirm wieder
+      automatisch ausgehen; ebenso mit ausgeschalteter Einstellung
+- [ ] TC-0918 App-Wechsel während des Vorlesens (#3358): kurz in eine andere App
+      wechseln und zurückkommen, dann das Gerät liegen lassen: der
+      Bildschirm bleibt weiter an
 - [ ] TC-0776 Gleicher Ablauf auf einem Android-Gerät (Chrome)
 - [ ] TC-0777 Bekanntes Plattform-Limit, KEIN Fehler: ein manuelles Drücken des
       Sperr-/Power-Buttons schaltet den Bildschirm trotzdem sofort aus und

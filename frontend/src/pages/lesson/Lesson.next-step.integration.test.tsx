@@ -11,7 +11,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter, Route, Routes} from "react-router";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -318,5 +318,52 @@ describe("LessonPage smart next-step integration", () => {
         expect(
             screen.getByTestId("next-step-card-adaptive"),
         ).toHaveAttribute("data-primary", "true");
+    });
+});
+
+describe("LessonPage keeps the screen on while reading (#3358)", () => {
+    /** The summary fixture, moved to ``index``. ``lessonState`` reads the
+     *  mock's return value without a hook-named call. */
+    function readyAtStep(index: number) {
+        readyAtSummary(0, 0);
+        const lessonState = useLessonMock as unknown as () => Record<string, unknown>;
+        useLessonMock.mockReturnValue({...lessonState(), currentStepIndex: index});
+    }
+
+    function mountWakeLock() {
+        const request = vi.fn(async () => ({
+            released: false,
+            release: vi.fn(async () => undefined),
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+        }));
+        (navigator as unknown as {wakeLock: {request: typeof request}}).wakeLock = {request};
+        return request;
+    }
+
+    afterEach(() => {
+        delete (navigator as unknown as {wakeLock?: unknown}).wakeLock;
+    });
+
+    it.each([
+        ["a theory step, no read-aloud", 0, "true", 1],
+        ["the summary", LESSON.steps.length, "true", 0],
+        ["a theory step with the setting off", 0, "false", 0],
+    ])("%s requests the screen lock %#", async (_name, index, pref, calls) => {
+        listLessonsMock.mockResolvedValue({
+            set_id: SET_ID,
+            source: "astrapi69/adaptive-learner-content",
+            version: "1.0.0",
+            lessons: [FILENAME],
+        });
+        elementErrorsListMock.mockResolvedValue([]);
+        reviewQueueMock.mockResolvedValue([]);
+        localStorage.setItem("adaptive-learner.lesson.keep_screen_on", pref);
+        const request = mountWakeLock();
+        readyAtStep(index);
+        renderPage();
+        await screen.findByTestId("lesson-page");
+        await waitFor(() => expect(request).toHaveBeenCalledTimes(calls));
+        if (calls) expect(request).toHaveBeenCalledWith("screen");
     });
 });
