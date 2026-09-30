@@ -483,8 +483,9 @@ jobs:
         working-directory: frontend
         run: |
           if [ "${{ needs.changes.outputs.i18n_only }}" = "true" ]; then
-            echo "::notice::i18n-only changeset, running i18n-sync.test.ts only"
-            bunx vitest run src/data/i18n/i18n-sync.test.ts
+            echo "::notice::i18n-only changeset, running i18n-sync.test.ts + fallbacks.test.ts only"
+            # fallbacks.test.ts: the first-paint subset still equals the catalogs (#3378)
+            bunx vitest run src/data/i18n/i18n-sync.test.ts src/i18n/fallbacks.test.ts
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE="origin/${{ github.base_ref }}"
             git fetch --no-tags --depth=200 origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
