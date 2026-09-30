@@ -755,6 +755,8 @@ settings:
   lesson_auto_advance_description: "Nach einer richtigen Antwort automatisch zur nächsten Aufgabe. Bei einer falschen Antwort wird immer gewartet, damit du die Lösung ansehen kannst."
   ask_ai_visible: "'KI fragen'-Button anzeigen"
   ask_ai_visible_description: "Zeigt den 'KI fragen'-Button unter Theorie- und Übungsblöcken. Standardmäßig sichtbar; der Button braucht weiterhin deinen eigenen KI-Schlüssel (BYOK), um zu antworten."
+  keep_screen_on: "Bildschirm in Lektionen anlassen"
+  keep_screen_on_description: "Solange eine Lektion offen ist, schaltet sich der Bildschirm nicht ab, auch wenn du liest, ohne ihn zu berühren. In der Zusammenfassung darf er wieder ausgehen. Auf dem iPhone ab iOS 16.4, als App auf dem Home-Bildschirm ab iOS 18.4."
   button_tooltips: Button-Tooltips anzeigen
   button_tooltips_description: "Zeigt beim Überfahren von Icon-Buttons einen Tooltip mit der Funktion. Screenreader-Beschriftungen bleiben unabhängig davon immer aktiv."
   developer_mode: Entwicklermodus
