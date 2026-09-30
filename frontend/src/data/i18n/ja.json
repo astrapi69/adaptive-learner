@@ -1806,6 +1806,7 @@
       "unexpected": "問題が発生しました。"
     },
     "error_report": {
+      "report_button": "問題を報告",
       "dialog_title": "問題を報告する",
       "intro": "Adaptive Learner がエラーを検出しました。開発者向けのバグレポートを準備できます。",
       "description_label": "再現手順（任意）",

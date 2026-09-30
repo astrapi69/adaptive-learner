@@ -1681,6 +1681,7 @@ ui:
     generic: "Une erreur s'est produite. Réessaie plus tard."
     unexpected: "Une erreur s'est produite."
   error_report:
+    report_button: "Signaler un problème"
     dialog_title: "Signaler un problème"
     intro: "Adaptive Learner a détecté une erreur et peut préparer un rapport de bug pour le développeur."
     description_label: "Étapes pour reproduire (facultatif)"

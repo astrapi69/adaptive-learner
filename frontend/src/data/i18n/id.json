@@ -1806,6 +1806,7 @@
       "unexpected": "Terjadi kesalahan."
     },
     "error_report": {
+      "report_button": "Laporkan masalah",
       "dialog_title": "Laporkan masalah",
       "intro": "Adaptive Learner menangkap sebuah kesalahan dan dapat menyiapkan laporan bug untuk pengembang.",
       "description_label": "Langkah-langkah untuk mereproduksi (opsional)",

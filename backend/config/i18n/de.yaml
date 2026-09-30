@@ -1681,6 +1681,7 @@ ui:
     generic: "Etwas ist schiefgelaufen. Bitte versuche es später erneut."
     unexpected: "Etwas ist schiefgelaufen."
   error_report:
+    report_button: "Problem melden"
     dialog_title: "Fehler melden"
     intro: "Adaptive Learner hat einen Fehler erkannt und kann einen Bug-Report für den Entwickler vorbereiten."
     description_label: "Schritte zur Reproduktion (optional)"
