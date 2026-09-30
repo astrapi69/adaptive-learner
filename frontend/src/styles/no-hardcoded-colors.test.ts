@@ -3,7 +3,8 @@
  *
  * Every visual color in a component must come from a CSS variable so
  * the multi-theme system (Phase 58D) controls it. This test scans
- * every ``.tsx`` under ``src/`` (excluding tests) for color literals
+ * every ``.tsx`` under ``src/`` (excluding tests), plus every ``.ts`` that
+ * renders through ``React.createElement``, for color literals
  * (``#hex`` / ``rgb()`` / ``rgba()``) in code (comments stripped) and
  * fails on any that is not covered by the documented allowlist.
  *
@@ -57,11 +58,23 @@ function walk(dir: string, acc: string[] = []): string[] {
         const full = join(dir, entry);
         if (statSync(full).isDirectory()) {
             walk(full, acc);
-        } else if (entry.endsWith(".tsx") && !entry.includes(".test.")) {
+        } else if (entry.includes(".test.")) {
+            continue;
+        } else if (entry.endsWith(".tsx") || rendersReactFromTs(full, entry)) {
             acc.push(full);
         }
     }
     return acc;
+}
+
+/**
+ * A ``.ts`` file that renders through ``React.createElement`` carries
+ * component styles exactly like a ``.tsx`` file (#3415: the error toast in
+ * ``utils/notify.ts`` hid raw colors from this guard). Canvas code that calls
+ * ``document.createElement`` is not matched.
+ */
+function rendersReactFromTs(full: string, entry: string): boolean {
+    return entry.endsWith(".ts") && readFileSync(full, "utf-8").includes("React.createElement");
 }
 
 /** Strip line and block comments so hex/rgb in prose don't trip the scan. */

@@ -15,8 +15,13 @@ Una copia de seguridad es un **snapshot completo**: las 30 tablas
 de datos (proyectos de aprendizaje, sesiones, progreso de
 lecciones, errores a nivel de elemento, gamificación con
 XP/racha/insignias, misiones, tarjetas de Anki, notas y más)
-**más tus conjuntos de contenido descargados**. No queda nada
-importante atrás.
+**más tus conjuntos de contenido descargados**.
+
+**Todavía no incluidos:** los repositorios de contenido conectados,
+las invitaciones canjeadas y los ajustes del Learning Repository.
+Tras restaurar en un dispositivo nuevo, los conjuntos de contenido
+vuelven, pero vuelve a conectar sus repositorios (y canjea de nuevo
+las invitaciones) para que sigan llegando las actualizaciones.
 
 Antes de exportar, la app muestra una vista previa **"Tu copia de
 seguridad contiene…"** con recuentos de registros por área, para
@@ -94,4 +99,4 @@ ningún formato de archivo propietario.
 ## Páginas relacionadas
 
 - [Ajustes](../user-guide/settings.md) - todas las acciones de datos de un vistazo
-- [Varios repositorios de contenido](content-repos.md) - los repos conectados forman parte del snapshot
+- [Varios repositorios de contenido](content-repos.md) - los repos conectados todavía no forman parte de la copia, vuelve a conectarlos tras restaurar

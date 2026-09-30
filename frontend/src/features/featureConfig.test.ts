@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import {
   FEATURES,
   REASON_API_KEY_REQUIRED,
+  REASON_BROWSER_ONLY,
   REASON_DESKTOP_ONLY,
   type FeatureContext,
   featureRegistry,
@@ -71,6 +72,15 @@ describe("featureRegistry", () => {
       expect(featureRegistry.getState(id, DEXIE_KEY)).toBe("disabled");
       expect(featureRegistry.getReason(id, DEXIE_NO_KEY)).toBe(REASON_DESKTOP_ONLY);
       expect(featureRegistry.getReason(id, DEXIE_KEY)).toBe(REASON_DESKTOP_ONLY);
+    }
+  });
+
+  it("disables browser-only features in API mode (never hidden), active in Dexie mode (#3398)", () => {
+    for (const id of [FEATURES.CONTENT_REPO_SHARE, FEATURES.REGISTRY_PR]) {
+      expect(featureRegistry.getState(id, API)).toBe("disabled");
+      expect(featureRegistry.getReason(id, API)).toBe(REASON_BROWSER_ONLY);
+      expect(featureRegistry.getState(id, DEXIE_NO_KEY)).toBe("active");
+      expect(featureRegistry.getState(id, DEXIE_KEY)).toBe("active");
     }
   });
 

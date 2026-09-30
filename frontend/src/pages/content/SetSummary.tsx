@@ -83,7 +83,7 @@ export default function SetSummary() {
   return (
     <PageContainer>
       <main data-testid="set-summary">
-        <h1 className="text-xl font-semibold text-fg-primary">
+        <h1 className="wrap-anywhere text-xl font-semibold text-fg-primary">
           {t("set_summary.title", "Review: {set}").replace("{set}", setTitle)}
         </h1>
         <p className="mt-1 text-sm text-fg-muted">
