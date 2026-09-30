@@ -1,11 +1,17 @@
 import {Component, type ErrorInfo, type ReactNode} from "react";
 
 import {Button} from "@/components/ui/button";
+import {isDevMode} from "../../hooks/settings/useDevMode";
+import {resolveI18n} from "../../hooks/ui/useI18n";
+import {eventRecorder} from "../../utils/eventRecorder";
 
 interface ErrorBoundaryProps {
     children: ReactNode;
     /** Optional override for the fallback render. */
     fallback?: (error: Error) => ReactNode;
+    /** A change of this value clears a caught error (#3390): the route
+     *  boundary passes the pathname, so navigating away recovers. */
+    resetKey?: unknown;
 }
 
 interface ErrorBoundaryState {
@@ -37,7 +43,21 @@ export default class ErrorBoundary extends Component<
         return {error};
     }
 
+    componentDidUpdate(prev: ErrorBoundaryProps): void {
+        if (this.state.error && prev.resetKey !== this.props.resetKey) {
+            this.setState({error: null});
+        }
+    }
+
     componentDidCatch(error: Error, info: ErrorInfo): void {
+        // #3390 - the crash lands in the action history the Report Issue
+        // dialog attaches, not only in the console.
+        eventRecorder.add({
+            type: "uncaught_error",
+            timestamp: performance.now(),
+            message: `${error.name}: ${error.message}`.substring(0, 200),
+            source: "ErrorBoundary",
+        });
         // Log so the browser console retains a stacktrace for
         // any "Report issue" / debug session. The console.error
         // is the one place we don't go through the toast helper
@@ -61,12 +81,17 @@ export default class ErrorBoundary extends Component<
                     data-testid="error-boundary"
                     className="flex min-h-full flex-col items-center justify-center gap-4 p-8 text-center"
                 >
-                    <h1 className="m-0">Something broke.</h1>
-                    <p className="m-0 max-w-[32rem] opacity-70">
-                        {error.message}
-                    </p>
+                    {/* #3390 - outside the I18nProvider, so resolveI18n. */}
+                    <h1 className="m-0">
+                        {resolveI18n("app.crashed", "Something went wrong.")}
+                    </h1>
+                    {isDevMode() && (
+                        <p className="m-0 max-w-[32rem] opacity-70">
+                            {error.message}
+                        </p>
+                    )}
                     <Button type="button" onClick={this.handleReload}>
-                        Reload
+                        {resolveI18n("app.reload", "Reload")}
                     </Button>
                 </main>
             );
