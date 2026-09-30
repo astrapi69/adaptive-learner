@@ -416,7 +416,24 @@ async function gotoLessonMatching(page: Page): Promise<boolean> {
  */
 async function gotoLessonMatchingResolved(page: Page): Promise<boolean> {
     if (!(await gotoLessonMatching(page))) return false;
-    return resolveOpenMatching(page);
+    if (!(await resolveOpenMatching(page))) return false;
+    await openMatchingCorrections(page);
+    return true;
+}
+
+/** Open the graded "Korrektur" view of a checked matching exercise.
+ *  Since #3186 the default "separate corrections" setting leaves "Meine
+ *  Antworten" ungraded, so a resolved-matching shot has to switch views to
+ *  show the red/green grading with its "Deine Antwort" / "Richtige Antwort"
+ *  lines (#3318). A motivation toast from the step change is let run out
+ *  first, pointer parked off the bottom-right toast (#2898). */
+async function openMatchingCorrections(page: Page): Promise<void> {
+    await page.mouse.move(0, 0);
+    await expect(page.locator(".Toastify__toast")).toHaveCount(0, {timeout: 10_000});
+    await page.getByTestId("matching-corrections").click();
+    await expect(
+        page.getByTestId(/^matching-correct-hint-\d+$/).first(),
+    ).toBeVisible({timeout: 5_000});
 }
 
 /** Pair the OPEN matching exercise with the first two pairs swapped (one
@@ -475,12 +492,7 @@ async function gotoMatchingLongWord(page: Page): Promise<boolean> {
 async function gotoMatchingLongWordResolved(page: Page): Promise<boolean> {
     if (!(await gotoMatchingLongWord(page))) return false;
     if (!(await resolveOpenMatching(page))) return false;
-    await page.mouse.move(0, 0);
-    await expect(page.locator(".Toastify__toast")).toHaveCount(0, {timeout: 10_000});
-    await page.getByTestId("matching-corrections").click();
-    await expect(
-        page.getByTestId(/^matching-correct-hint-\d+$/).first(),
-    ).toBeVisible({timeout: 5_000});
+    await openMatchingCorrections(page);
     return true;
 }
 
