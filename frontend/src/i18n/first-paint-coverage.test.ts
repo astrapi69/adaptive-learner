@@ -23,9 +23,8 @@ import {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 import {describe, expect, it} from "vitest";
 
-import {FALLBACK_CATALOGS} from "./fallbacks";
 import {NAMESPACE, getI18n} from "./engine";
-import type {SupportedLanguage} from "../lib/constants";
+import {UI_LANGUAGES} from "../lib/i18n/languages";
 
 /**
  * Resolve a key against ONE language's preloaded resources through the
@@ -33,7 +32,7 @@ import type {SupportedLanguage} from "../lib/constants";
  * missing its own string surfaces as ``undefined`` instead of silently
  * reading as covered via ``i18next``'s ``fallbackLng: "en"``.
  */
-function resolveFirstPaint(lang: SupportedLanguage, key: string): unknown {
+function resolveFirstPaint(lang: string, key: string): unknown {
   return getI18n().getResource(lang, NAMESPACE, key);
 }
 
@@ -52,10 +51,20 @@ const SHELL_COMPONENTS = [
   "components/pwa/IosInstallHint.tsx",
   "components/pwa/OfflineIndicator.tsx",
   "components/pwa/DesktopUpdateHost.tsx",
+  // #3378 - the navigation renders its labels through ``nav-targets.ts``
+  // (``labelKey``) and through its always-mounted children.
+  "components/nav/nav-targets.ts",
+  "components/nav/NavGroup.tsx",
+  "components/nav/NavXpBadge.tsx",
+  "components/nav/NavReviewsBadge.tsx",
+  "components/nav/NavContentUpdatesBadge.tsx",
+  "components/nav/NavAvatar.tsx",
+  "components/nav/NavIndicators.tsx",
+  "shared/layout/MenuToggleButton.tsx",
 ] as const;
 
-/** ``t("some.key"...)`` — the call shape the shell uses. */
-const KEY_PATTERN = /t\(\s*"([a-z0-9_]+(?:\.[a-z0-9_]+)+)"/g;
+/** ``t("some.key"...)`` and ``labelKey: "some.key"`` — the shell's shapes. */
+const KEY_PATTERN = /(?:t\(\s*|labelKey:\s*)"([a-z0-9_]+(?:\.[a-z0-9_]+)+)"/g;
 
 function shellKeys(): string[] {
   const found = new Set<string>();
@@ -67,12 +76,14 @@ function shellKeys(): string[] {
 }
 
 const KEYS = shellKeys();
-const LANGS = Object.keys(FALLBACK_CATALOGS) as SupportedLanguage[];
+// #3378 - every UI language paints first from the subset, not the stale
+// 5-entry SUPPORTED_LANGUAGES list.
+const LANGS = UI_LANGUAGES.map((meta) => meta.code);
 
 describe("first-paint fallback coverage (#2796)", () => {
   it("scans a non-empty set of shell keys (fails closed, gate contract #2083)", () => {
     // Without this, a broken scan would report "0 gaps" and read as clean.
-    expect(SHELL_COMPONENTS.length).toBeGreaterThanOrEqual(7);
+    expect(SHELL_COMPONENTS.length).toBeGreaterThanOrEqual(15);
     expect(KEYS.length).toBeGreaterThanOrEqual(25);
     console.log(
       `[first-paint] scanned ${SHELL_COMPONENTS.length} shell components, ` +
@@ -90,6 +101,12 @@ describe("first-paint fallback coverage (#2796)", () => {
       expect(missing).toEqual([]);
     },
   );
+
+  it("names the navigation labels (#3378)", () => {
+    expect(KEYS).toEqual(
+      expect.arrayContaining(["nav.group.learn", "nav.learning_path", "nav.help", "nav.tab.content"]),
+    );
+  });
 
   it("resolves keys nested deeper than two levels (the #2796 root cause)", () => {
     // The hand-rolled lookup this gate used to call destructured into

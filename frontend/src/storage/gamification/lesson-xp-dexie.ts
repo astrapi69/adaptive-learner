@@ -23,9 +23,10 @@
  * existing ``userActivityDates`` reads ``learningSessions``
  * filtered to the user's projects + projects ``started_at``
  * down to YYYY-MM-DD. Same source as the Python
- * ``_activity_dates_for_user`` — sessions only, lesson
- * completions don't count toward the streak. Matches the
- * cross-language parity contract.
+ * ``_activity_dates_for_user``. A completed lesson counts because the
+ * upsert facade writes its ``content`` session first
+ * (``recordLessonCompletionSessionDexie``, #3375), exactly as API mode
+ * does before firing ``on_session_complete``.
  */
 
 import {isFirstAttempt} from "../../lib/gamification/first-attempt";
