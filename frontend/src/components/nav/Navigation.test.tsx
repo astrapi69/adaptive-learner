@@ -336,8 +336,11 @@ describe("Navigation: desktop bar keeps the badges whole (#3339)", () => {
         renderAt("/dashboard");
         expect(screen.getByTestId("nav-theme-toggle").className).toContain("shrink-0");
         const brand = screen.getByTestId("app-nav").querySelector<HTMLElement>(".nav-brand")!;
-        // The link may shrink down to the logo (+ its gap), never below.
-        expect(brand.className).toContain("md:min-w-9");
+        // The link may shrink down to the logo, never below. Not logo + gap:
+        // where the word is display:none (lesson-compact, short landscape)
+        // a gap-sized floor widened the link and moved every item after it.
+        expect(brand.className).toContain("md:min-w-7");
+        expect(brand.className).not.toContain("md:min-w-9");
         expect(brand.className).toContain("md:flex-initial");
         expect(brand.className).not.toContain("md:flex-none");
         const brandName = brand.querySelector<HTMLElement>(".nav-brand-name")!;
