@@ -108,6 +108,20 @@ describe("SummaryExplanations", () => {
         ).toBeInTheDocument();
     });
 
+    it("resets the list itself, the app loads no preflight (#3341)", () => {
+        // Without a reset the browser's 40px indent and 1em margins stay:
+        // the <li> are flex, so no disc shows, but the cards sit indented
+        // next to the section heading.
+        const errors = [
+            makeError({ user_answer: "Dias", correct_answer: "días", correct_streak: 0 }),
+        ];
+        render(<SummaryExplanations sessionErrors={errors} t={t} />);
+        const list = screen.getByTestId("lesson-summary-explanations").querySelector("ul")!;
+        expect(list.className.split(" ")).toEqual(
+            expect.arrayContaining(["m-0", "list-none", "p-0"]),
+        );
+    });
+
     it("excludes an already-correct element from a mixed list, keeping the genuinely wrong one", () => {
         const errors = [
             makeError({
