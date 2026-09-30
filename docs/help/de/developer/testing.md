@@ -337,8 +337,9 @@ Smoke-Specs decken die kritischen User-Pfade ab:
 
 Specs nutzen ausschließlich `data-testid`-Selektoren - keine
 brüchigen CSS-Selektoren. Smoke-Specs sind NICHT im
-`make test`-Pfad; sie brauchen eine laufende App
-(`make dev-bg` zuerst).
+`make test`-Pfad; sie starten eigene Server auf eigenen Ports
+und brauchen keine laufende App. Ein laufendes `make dev` bleibt
+unberührt.
 
 Neben `e2e/smoke/` enthält der `e2e/`-Baum drei weitere
 Spec-Familien:

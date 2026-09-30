@@ -328,7 +328,8 @@ Smoke specs cover the critical user paths:
 
 Specs use `data-testid` selectors only - no brittle CSS
 selectors. The smoke specs are NOT on the `make test` path;
-they need a running app (`make dev-bg` first).
+they start their own servers on their own ports and need no
+running app. A running `make dev` is left untouched.
 
 Beyond `e2e/smoke/`, the `e2e/` tree holds three more spec
 families:

@@ -119,7 +119,8 @@ Duman testleri kritik kullanıcı yollarını kapsar:
 
 Testler yalnızca `data-testid` seçicileri kullanır - kırılgan CSS
 seçicileri yok. Duman testleri `make test` yolunda değildir;
-çalışan bir uygulama gerektirir (önce `make dev-bg` çalıştırın).
+kendi portlarında kendi sunucularını başlatır ve çalışan bir
+uygulama gerektirmez. Çalışan bir `make dev` etkilenmez.
 
 ## Kapsam
 
