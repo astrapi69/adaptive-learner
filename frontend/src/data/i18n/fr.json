@@ -3029,7 +3029,9 @@
       "list_failed": "Impossible de charger les sets de contenu.",
       "download_failed": "Impossible de télécharger le set.",
       "update_all_failed": "{n} mises à jour ont échoué.",
-      "open_failed": "Impossible d'ouvrir la leçon."
+      "open_failed": "Impossible d'ouvrir la leçon.",
+      "export_failed": "Impossible d'exporter l'ensemble de leçons.",
+      "share_check_failed": "Impossible de vérifier l'ensemble pour le partage."
     },
     "tree": {
       "i_speak": "Je parle",

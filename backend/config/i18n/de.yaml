@@ -2803,6 +2803,8 @@ content:
     download_failed: "Set konnte nicht heruntergeladen werden."
     update_all_failed: "{n} Aktualisierungen sind fehlgeschlagen."
     open_failed: "Lektion konnte nicht geöffnet werden."
+    export_failed: "Lernset konnte nicht exportiert werden."
+    share_check_failed: "Das Set konnte nicht für das Teilen geprüft werden."
   tree:
     i_speak: Ich spreche
     learn: '{lang} lernen'

@@ -3029,7 +3029,9 @@
       "list_failed": "Não foi possível carregar os conjuntos de conteúdo.",
       "download_failed": "Não foi possível transferir o conjunto.",
       "update_all_failed": "{n} atualizações falharam.",
-      "open_failed": "Não foi possível abrir a lição."
+      "open_failed": "Não foi possível abrir a lição.",
+      "export_failed": "Não foi possível exportar o conjunto de lições.",
+      "share_check_failed": "Não foi possível verificar o conjunto para partilha."
     },
     "tree": {
       "i_speak": "Eu falo",

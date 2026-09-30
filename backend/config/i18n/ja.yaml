@@ -2798,6 +2798,8 @@ content:
     download_failed: "セットをダウンロードできませんでした。"
     update_all_failed: "{n} 件の更新に失敗しました。"
     open_failed: "レッスンを開けませんでした。"
+    export_failed: "レッスンセットをエクスポートできませんでした。"
+    share_check_failed: "共有用にセットを確認できませんでした。"
   tree:
     i_speak: 使用言語
     learn: '{lang}を学ぶ'
