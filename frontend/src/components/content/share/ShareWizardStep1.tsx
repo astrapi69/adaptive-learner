@@ -220,7 +220,7 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
 
       {step1Blocked && (
         <ul
-          className="content-share-issues share-wizard-step1-errors"
+          className="content-share-issues share-wizard-step1-errors list-disc"
           data-testid="share-wizard-step1-errors"
         >
           {step1Errors.map((err, i) => (

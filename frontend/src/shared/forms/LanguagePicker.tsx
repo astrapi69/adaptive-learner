@@ -319,7 +319,7 @@ export default function LanguagePicker({
                             role="listbox"
                             aria-label={ariaLabel}
                             data-testid={`${testId}-listbox`}
-                            className="max-h-72 overflow-y-auto py-1"
+                            className="m-0 max-h-72 list-none overflow-y-auto p-0 py-1"
                         >
                             {grouped
                                 ? groupOptions(filtered).map(
@@ -334,6 +334,7 @@ export default function LanguagePicker({
                                                   </p>
                                               )}
                                               <ul
+                                                  className="m-0 list-none p-0"
                                                   role="group"
                                                   aria-label={group || undefined}
                                               >
