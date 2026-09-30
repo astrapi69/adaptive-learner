@@ -2261,16 +2261,20 @@ each card row (`CardImageField`).
 
 ### TS-0066 Settings > Data: housekeeping cards (#2955)
 - [ ] TC-0499 Settings > Data: the "Maximum lesson size" card sits directly
-      below "Offline cache"; the "Paused lesson retention" card sits
+      below "Offline cache"; the "Paused lessons on the Dashboard" card sits
       directly above "Disconnected content" (with no disconnected
       content, directly above the danger zone)
 - [ ] TC-0500 Settings > Learning ends with "Reminders"; neither card is there
       any more
 - [ ] TC-0501 Set "Steps per part" to 15, reload the page: the value stays 15;
-      set "Keep paused lessons for" to "60 days", reload: the choice
-      stays "60 days"
+      set "Hide paused lessons older than" to "60 days", reload: the
+      choice stays "60 days"
 - [ ] TC-0502 Repeat both in browser mode (Settings > Data > storage mode): same
       behaviour
+- [ ] TC-0916 Set the window to "7 days": a lesson paused more than 7 days ago is
+      missing from the paused-lessons card on the Dashboard, but it is not
+      abandoned: opened, it resumes at its position with its answers
+      (#3360; backdate the pause via the device date or a backup file)
 
 ### TS-0067 In-set position + navigation (#2793)
 - [ ] TC-0503 Inside a lesson from a set, the header shows "Lesson N of M"

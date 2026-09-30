@@ -978,9 +978,9 @@ settings:
     label: "Correction dans une vue séparée"
     desc: "Après vérification, 'Mes réponses' affiche tes paires telles que tu les as formées, sans évaluation ; l'évaluation et les bons partenaires sont sous 'Correction'. Désactivé : le bon partenaire s'affiche directement sous chaque erreur dans 'Mes réponses'."
   paused_retention:
-    title: Conservation des leçons en pause
-    hint: "Les leçons en pause plus anciennes que cette période sont automatiquement abandonnées. Jusqu'à 10 leçons en pause sont conservées quel que soit leur âge."
-    label: Conserver les leçons en pause pendant
+    title: "Leçons en pause sur le tableau de bord"
+    hint: "La carte des leçons en pause du tableau de bord n'affiche que les leçons jusqu'à cet âge. Une leçon plus ancienne disparaît seulement de la carte : rien n'est abandonné, et elle garde sa position et ses réponses."
+    label: "Masquer les leçons en pause de plus de"
     7_days: "7 jours"
     14_days: "14 jours"
     30_days: "30 jours"
