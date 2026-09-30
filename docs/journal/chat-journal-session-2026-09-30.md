@@ -42,6 +42,14 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Result: 33 Tests (ArcadeCard plus Dashboard) grün, tsc und eslint sauber. Visual-Baselines: kein Motiv setzt die Kombination Spielmodus an und Arcade aus, darum `visual-baselines-unaffected` mit dieser Begründung.
 - Commit: siehe PR.
 
+## 6. #3317: die Regeltexte beschreiben die Pre-Commit-Hooks, die es gibt
+
+- Original prompt: wie oben.
+- Optimized prompt: "quality-checks.md Checkliste Punkt 5 (pytest) streichen und auf `.pre-commit-config.yaml` verweisen; code-hygiene.md: erfundene Beispielkonfiguration (prettier-, pytest-Hook) durch die reale Hook-Liste ersetzen, Setup-Befehl und Zusammenfassung angleichen; Korpus-Deckel prüfen; RULE-CHANGE DECLARED im Commit."
+- Goal: Kein Leser verlässt sich auf einen Hook, der nicht läuft.
+- Result: Beide Abschnitte verweisen auf die Datei als Quelle, nennen die realen Hooks (Basics, astral ruff auf `backend/app/`, lokales eslint, fünf Repo-Guards) und sagen, wo Tests und prettier stehen. Korpus 714 Zeichen unter dem Deckel, Deckel bleibt als Spielraum. `verify-normative-changes` verlangt die Erklärung (steht im Commit); die Log-Zeile für `docs/rule-change-log.md` kommt als zweiter Commit in die PR, sobald deren Nummer feststeht.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.
