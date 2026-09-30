@@ -73,18 +73,51 @@ def test_red_when_an_active_check_loses_its_make_target(mirror: Path) -> None:
     assert "does not exist" in result.stderr
 
 
-def test_red_when_a_check_degrades_into_a_no_op(mirror: Path) -> None:
-    """The real incident: the count regex stops matching, the check warns and returns."""
+def _break_count_regex(mirror: Path) -> Path:
+    """The real incident's trigger: the count regex stops matching the line."""
     docs = mirror / "scripts" / "verify_docs_test_counts.py"
     text = docs.read_text(encoding="utf-8")
     broken = text.replace(r"= \*{0,2}(\d+) tests\*{0,2}", r"= \*\*(\d+) tests\*\*")
     assert broken != text, "the TEST_COUNT_RE line moved - update this test with it"
     docs.write_text(broken, encoding="utf-8")
+    return docs
+
+
+def test_red_when_a_check_degrades_into_a_no_op(mirror: Path) -> None:
+    """The real incident: the count regex stops matching, the check warns and
+    returns. Since #3254 the parse miss FAILS by itself, so the incident
+    shape needs the second half too: someone softening that FAIL back into
+    the old WARN. The probe still catches exactly that."""
+    docs = _break_count_regex(mirror)
+    softened = docs.read_text(encoding="utf-8").replace(
+        'report.fail(\n            "test-counts",\n            "CLAUDE.md: could not parse',
+        'report.warn(\n            "test-counts",\n            "CLAUDE.md: could not parse',
+    )
+    assert "could not parse" in softened and softened != docs.read_text(encoding="utf-8")
+    docs.write_text(softened, encoding="utf-8")
 
     result = _run(mirror)
     assert result.returncode == 1
     assert "docs-test-count-arithmetic" in result.stderr
     assert "degraded into a no-op" in result.stderr
+
+
+def test_a_count_line_the_check_cannot_parse_fails_the_docs_verifier(mirror: Path) -> None:
+    """#3254, fail closed: with the regex broken and nothing softened, the
+    docs verifier itself goes red on the parse miss - the inventory then
+    has no no-op to report, because the check did not degrade, it failed."""
+    _break_count_regex(mirror)
+    docs = subprocess.run(
+        [sys.executable, str(mirror / "scripts" / "verify_docs.py")],
+        capture_output=True,
+        text=True,
+        cwd=mirror,
+    )
+    assert docs.returncode != 0
+    assert "[FAIL" in docs.stdout + docs.stderr
+    assert "could not parse" in docs.stdout + docs.stderr
+    result = _run(mirror)
+    assert "degraded into a no-op" not in result.stderr
 
 
 def test_red_when_the_no_warn_probe_cannot_run(mirror: Path) -> None:

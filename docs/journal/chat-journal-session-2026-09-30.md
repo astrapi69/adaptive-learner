@@ -26,6 +26,14 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Result: RED zuerst: die vier neuen Tests in `modes.stability.test.ts` fallen auf den alten Hooks (ein Titelwechsel ruft `listSets` ein zweites Mal). Fix: `titleRef`/`descriptionRef` in Shuffle und Adaptive, Deps nur noch Daten-relevant; im Endlos-Hook wurde der Titel im Effekt nie gelesen, er fliegt aus den Deps und aus der Destrukturierung. Modes-Suite 61 grün, tsc und eslint sauber.
 - Commit: siehe PR.
 
+## 4. #3254: eine Testzahl-Zeile, die nicht aufgeht, lässt den Docs-Verifier durchfallen
+
+- Original prompt: wie oben (Empfehlung: Option 1, Abweichung wird FAIL).
+- Optimized prompt: "`scripts/verify_docs_test_counts.py`: Arithmetik-Abweichung, Badge-Abweichung und nicht parsbare Zeile als FAIL statt WARN; `--fix` behält die Reparaturrolle; Eintrag `docs-test-count-arithmetic` in checks.yaml anpassen; fünf Tests mit `REPO`-Monkeypatch auf ein Minimal-Verzeichnis."
+- Goal: Eine dokumentierte Zahl, die ihren Teilen widerspricht, verschwindet nicht mehr in einem grünen Lauf.
+- Result: Drei `report.warn` werden `report.fail`; die Parse-Lücke fällt geschlossen. Der bestehende RED-Test der Check-Inventur (#2077, "Check degradiert zum No-op") brauchte die zweite Hälfte des Vorfalls: kaputte Regex plus jemand, der das FAIL wieder zu WARN weicht; ein neuer Test pinnt, dass die kaputte Regex allein den Verifier selbst rot macht. 23 Tests in beiden Suiten grün, `verify_docs.py` auf dem echten Baum 0 FAIL.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.
