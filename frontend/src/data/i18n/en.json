@@ -2616,7 +2616,9 @@
       "heading": "Resume lesson?",
       "body": "You paused \"{title}\". Would you like to continue where you left off or start over?",
       "action_resume": "Continue",
-      "action_restart": "Start over"
+      "action_restart": "Start over",
+      "restart_confirm_title": "Start over from the beginning?",
+      "restart_confirm_body": "Your position and your answers in this lesson will be reset. What you already learned (mastery progress) stays."
     }
   },
   "content": {
