@@ -85,7 +85,7 @@ describe("backup-tables parity", () => {
 
     it("keeps the wire constants", () => {
         expect(BACKUP_FORMAT).toBe("adaptive-learner-backup");
-        expect(BACKUP_VERSION).toBe("1.5.0");
+        expect(BACKUP_VERSION).toBe("1.6.0");
     });
 });
 
@@ -111,5 +111,16 @@ describe("api-key exclusion (#3367)", () => {
             (match) => match[1],
         );
         expect(backendProviders).toEqual([...AI_PROVIDERS]);
+    });
+});
+
+describe("backup format version parity (#3363)", () => {
+    it("matches the backend's BACKUP_VERSION, so one file format has one version", () => {
+        const source = readFileSync(
+            join(__dirname, "../../../../backend/app/services/backup_export.py"),
+            "utf-8",
+        );
+        const match = source.match(/^BACKUP_VERSION = "([^"]+)"$/m);
+        expect(match?.[1]).toBe(BACKUP_VERSION);
     });
 });
