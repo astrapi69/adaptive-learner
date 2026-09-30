@@ -59,7 +59,7 @@ function daysSince(iso: string | null): number | null {
 // DangerZone pre-reset backup button can produce identical files.
 import {saveBackupToDisk, backupFilename} from "../../../utils/backup-download";
 import {
-    applyLocalStorageSnapshot,
+    restoreLocalStorageSnapshot,
     withLocalStorageSnapshot,
 } from "../../../lib/backup/localStorageSnapshot";
 
@@ -643,7 +643,7 @@ export default function BackupSection() {
             // Restore the localStorage snapshot (preferences + contributions)
             // frontend-side, in both storage modes — the backend ignores the
             // payload's local_storage block. Legacy backups carry none -> no-op.
-            const localApplied = applyLocalStorageSnapshot(
+            const localApplied = await restoreLocalStorageSnapshot(
                 pendingPayload.local_storage,
             );
             // eslint-disable-next-line no-console -- round-trip trace, see below

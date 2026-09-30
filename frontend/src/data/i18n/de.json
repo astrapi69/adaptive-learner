@@ -1026,9 +1026,9 @@
       "desc": "Nach dem Prüfen zeigt 'Meine Antworten' deine Paare so, wie du sie gebildet hast, ohne Bewertung; Bewertung und richtige Partner stehen unter 'Korrektur'. Aus: die richtigen Partner stehen direkt unter jedem Fehler in 'Meine Antworten'."
     },
     "paused_retention": {
-      "title": "Pausierte Lektionen aufbewahren",
-      "hint": "Pausierte Lektionen, die älter als dieser Zeitraum sind, werden automatisch aufgegeben. Bis zu 10 pausierte Lektionen werden unabhängig vom Alter behalten.",
-      "label": "Pausierte Lektionen behalten für",
+      "title": "Pausierte Lektionen auf dem Dashboard",
+      "hint": "Die Karte der pausierten Lektionen auf dem Dashboard zeigt nur Lektionen bis zu diesem Alter. Eine ältere Lektion verschwindet nur aus der Karte: Es wird nichts aufgegeben, Position und Antworten bleiben erhalten.",
+      "label": "Pausierte Lektionen ausblenden, wenn älter als",
       "7_days": "7 Tage",
       "14_days": "14 Tage",
       "30_days": "30 Tage",
@@ -2056,6 +2056,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_failed": "Dein Fortschritt in dieser Lektion konnte nicht gespeichert werden: {detail}",
+      "load_failed": "Dein gespeicherter Fortschritt für diese Lektion konnte nicht geladen werden: {detail}",
+      "create_profile": "Lernprofil anlegen"
+    },
     "mascot_label": "Dein Lernbegleiter",
     "combo_chip": "x{n}",
     "combo_aria": "Antwortserie: {n} in Folge",

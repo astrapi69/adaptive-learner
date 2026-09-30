@@ -978,9 +978,9 @@ settings:
     label: "Corrections as a separate view"
     desc: "After checking, 'My answers' shows your pairs as you formed them, without grading; the grading and the correct partners are under 'Corrections'. Off: the correct partner appears directly under each mistake in 'My answers'."
   paused_retention:
-    title: Paused lesson retention
-    hint: "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age."
-    label: Keep paused lessons for
+    title: "Paused lessons on the Dashboard"
+    hint: "The paused-lessons card on the Dashboard only shows lessons up to this age. An older lesson just drops out of the card: nothing is abandoned, and it keeps its position and answers."
+    label: "Hide paused lessons older than"
     7_days: "7 days"
     14_days: "14 days"
     30_days: "30 days"
@@ -1928,6 +1928,10 @@ repo:
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
     enable_git: "Enable git persistence"
 lesson:
+  progress_io:
+    save_failed: "Your progress in this lesson could not be saved: {detail}"
+    load_failed: "Your saved progress for this lesson could not be loaded: {detail}"
+    create_profile: "Create a learner profile"
   mascot_label: "Your learning companion"
   combo_chip: "x{n}"
   combo_aria: "Answer streak: {n} in a row"
