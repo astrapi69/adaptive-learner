@@ -80,6 +80,8 @@ cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier
 ```
 
+#3270 の一括再フォーマットが済むまで、`bun run format` は `src/` ツリーのほぼ全体を書き換えます。日常の手順としては実行しないでください。
+
 pre-commitフックにより、すべてのコミット時にruff + フォーマッターのチェックが強制されます。
 
 ```bash
