@@ -3,6 +3,8 @@
     "loading": "Memuat…",
     "loading_slow": "Ini memakan waktu lebih lama dari yang diharapkan.",
     "view_load_failed": "Tampilan ini tidak dapat dimuat.",
+    "view_crashed": "Terjadi kesalahan di halaman ini. Halaman lain tetap berfungsi.",
+    "crashed": "Terjadi kesalahan.",
     "reload": "Muat ulang",
     "name": "Adaptive Learner",
     "tagline": "Pembelajaran adaptif berdasarkan Model Enam Metode.",
