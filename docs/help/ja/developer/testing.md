@@ -103,7 +103,7 @@ cd e2e && npx playwright test smoke/mobile-viewports.spec.ts
 - カリキュラム作成
 - モバイルビューポート（iPhone SE、iPhone 14、Pixel 7、iPad）
 
-スペックは`data-testid`セレクターのみを使用します。壊れやすいCSSセレクターは使用しません。スモークスペックは`make test`のパスには含まれていません。実行中のアプリが必要です（先に`make dev-bg`を実行）。
+スペックは`data-testid`セレクターのみを使用します。壊れやすいCSSセレクターは使用しません。スモークスペックは`make test`のパスには含まれていません。独自のポートで独自のサーバーを起動するため、実行中のアプリは不要です。実行中の`make dev`には影響しません。
 
 ## カバレッジ
 
