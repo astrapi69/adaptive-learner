@@ -806,6 +806,8 @@
     "lesson_auto_advance_description": "Setelah jawaban benar, otomatis lanjut ke latihan berikutnya. Jawaban salah selalu menunggu agar kamu bisa meninjau solusinya.",
     "ask_ai_visible": "Tampilkan tombol 'Tanya AI'",
     "ask_ai_visible_description": "Menampilkan tombol 'Tanya AI' di bawah teori dan latihan. Ditampilkan secara default; tombol ini tetap memerlukan kunci AI milikmu sendiri (BYOK) untuk menjawab.",
+    "keep_screen_on": "Biarkan layar tetap menyala saat pelajaran",
+    "keep_screen_on_description": "Selama pelajaran terbuka, layar tidak mati, juga saat Anda membaca tanpa menyentuhnya. Di ringkasan pelajaran layar boleh mati lagi. Di iPhone memerlukan iOS 16.4 atau lebih baru, sebagai aplikasi di layar utama iOS 18.4 atau lebih baru.",
     "button_tooltips": "Tampilkan tooltip tombol",
     "button_tooltips_description": "Tampilkan tooltip arahkan kursor pada tombol ikon yang menjelaskan fungsinya. Label pembaca layar tetap aktif terlepas dari ini.",
     "developer_mode": "Mode Pengembang",

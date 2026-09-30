@@ -763,6 +763,8 @@ settings:
   lesson_auto_advance_description: "정답이면 자동으로 다음 문제로 이동합니다. 오답일 때는 항상 멈춰 정답을 확인할 수 있습니다."
   ask_ai_visible: "'AI에게 질문' 버튼 표시"
   ask_ai_visible_description: "이론과 연습문제 아래에 'AI에게 질문' 버튼을 표시합니다. 기본적으로 표시되며, 답변을 받으려면 여전히 본인의 AI 키(BYOK)가 필요합니다."
+  keep_screen_on: "레슨 중에는 화면 켜 두기"
+  keep_screen_on_description: "레슨이 열려 있는 동안에는 화면을 만지지 않고 읽고 있어도 화면이 꺼지지 않습니다. 레슨 요약에서는 다시 꺼질 수 있습니다. iPhone에서는 iOS 16.4 이상, 홈 화면 앱에서는 iOS 18.4 이상이 필요합니다."
   button_tooltips: 버튼 툴팁 표시
   button_tooltips_description: "아이콘 버튼 위에 마우스를 올리면 기능을 설명하는 툴팁을 표시합니다. 화면 낭독기 레이블은 관계없이 항상 유지됩니다."
   developer_mode: 개발자 모드
