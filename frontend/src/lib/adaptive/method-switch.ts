@@ -17,8 +17,8 @@
 
 import { LEARNING_METHODS } from "../constants";
 
-export const STAGNATION_WINDOW = 3;
-export const STRESS_THRESHOLD = 3.0;
+const STAGNATION_WINDOW = 3;
+const STRESS_THRESHOLD = 3.0;
 
 export interface SwitchRatingInput {
   understanding?: number;

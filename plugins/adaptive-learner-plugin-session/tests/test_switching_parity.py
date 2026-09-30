@@ -1,7 +1,7 @@
 """Cross-language parity for the method-switch rule (#3396).
 
 ``switching.recommend`` and the TypeScript port at
-``frontend/src/lib/learning/method-switch.ts`` must give the same answer for
+``frontend/src/lib/adaptive/method-switch.ts`` must give the same answer for
 the same ratings. Both assert against
 ``tests/fixtures/method-switch-parity/expected.json``; Python regenerates it
 (``METHOD_SWITCH_PARITY_REGEN=1 pytest tests/test_switching_parity.py``).

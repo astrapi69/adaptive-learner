@@ -18,7 +18,7 @@ import { maybeRunAutoBackup, recordCompletedSession } from "../backup/auto-backu
 import { ApiError } from "../../api/client";
 import type { LearningProfileRow, LearningSessionRow, MethodSwitchRow, SessionRatingRow } from "./db";
 import { LEARNING_METHODS, type LearningMethod } from "../../lib/constants";
-import { recommendMethodSwitch } from "../../lib/learning/method-switch";
+import { recommendMethodSwitch } from "../../lib/adaptive/method-switch";
 import type { SessionMessageBody, SessionRatingBody, SessionStartBody } from "../../api/client";
 import type {
   AssessmentEvaluatePayload,
