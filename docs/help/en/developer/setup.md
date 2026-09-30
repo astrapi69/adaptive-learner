@@ -105,6 +105,10 @@ cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier
 ```
 
+Until the one-time reformat of #3270, `bun run format`
+rewrites nearly the whole `src/` tree; do not run it as a
+routine step.
+
 Pre-commit hooks enforce ruff + formatter checks on every
 commit:
 

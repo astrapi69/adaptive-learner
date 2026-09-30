@@ -106,12 +106,15 @@ cd backend && poetry run ruff format app/
 
 # Frontend TypeScript
 cd frontend && bunx eslint src/ --fix
-cd frontend && bunx prettier --write src/
+cd frontend && bun run format
 
 # Vérification de types
 cd frontend && bunx tsc --noEmit
 cd backend && poetry run mypy app/
 ```
+
+Jusqu'au reformatage unique de #3270, `bun run format` réécrit
+presque tout l'arbre `src/` ; ne le lancez pas en routine.
 
 ---
 
@@ -121,8 +124,8 @@ cd backend && poetry run mypy app/
 cd backend && poetry run pre-commit install
 ```
 
-Les hooks s'exécutent automatiquement avant chaque commit : ruff, prettier,
-ESLint, et vérifications YAML/JSON.
+Les hooks s'exécutent automatiquement avant chaque commit : ruff, ESLint, et
+vérifications YAML/JSON.
 
 ---
 
