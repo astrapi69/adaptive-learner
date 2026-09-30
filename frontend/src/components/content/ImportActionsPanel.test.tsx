@@ -70,6 +70,7 @@ vi.mock("../../utils/notify", () => ({
 
 import ImportActionsPanel from "./ImportActionsPanel";
 import { listContributions } from "../../lib/content/placement/contribution-history";
+import { DexieFeatureWrapper } from "../../features/testFeatureProvider";
 
 /** A schema-valid, quality-passing lesson for the share-flow tests. */
 function shareableLesson() {
@@ -143,8 +144,7 @@ function renderPanel() {
   return render(
     <MemoryRouter>
       <ImportActionsPanel />
-    </MemoryRouter>,
-  );
+    </MemoryRouter>, { wrapper: DexieFeatureWrapper });
 }
 
 beforeEach(() => {
