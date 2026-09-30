@@ -117,6 +117,9 @@ interface FeatureShot {
      *  scroller, and it is taller than the header, so a pin on a heading
      *  would still be clipped under it (#3260). */
     pinBelow?: string;
+    /** Runs after the screenshot, for a check that has to hold while the
+     *  shot is taken, not only while the setup drives the page (#3182). */
+    afterShot?: (page: Page) => void | Promise<void>;
 }
 
 /** Open ``/content`` on a given tab and wait for the hub shell. */
@@ -619,20 +622,82 @@ async function gotoLessonModeToggle(
 }
 
 /**
- * Open the GitHub repo-export dialog (#1009) on a downloaded set. Returns false
- * when the feature is gated off (no GitHub token in the dexie preview build) —
- * the share button is then absent, so there is nothing to capture.
+ * A GitHub token that is fake on sight (#3182): it passes the Settings
+ * format check (``ghp_`` prefix, 20+ characters) and says what it is, so
+ * a screenshot, trace or log carrying it can never pass for a credential.
+ */
+const STUB_GITHUB_TOKEN = "ghp_STUB0screenshot0token0not0a0real0credential";
+
+/** Requests to GitHub that {@link guardGitHub} stopped, per page. */
+const githubGuardHits = new WeakMap<Page, string[]>();
+
+/**
+ * Abort and record every request to ``github.com`` or one of its
+ * subdomains (``api.github.com``) for the rest of the test (#3182). The
+ * content hosts on ``*.githubusercontent.com`` are a different domain and
+ * pass. The Workbox worker has no rule for GitHub hosts, so such a request
+ * leaves from the page and ``page.route`` sees it.
+ *
+ * @example
+ * await guardGitHub(page);
+ * // ... drive the page ...
+ * assertNoGitHubRequests(page);
+ */
+async function guardGitHub(page: Page): Promise<void> {
+    const hits: string[] = [];
+    githubGuardHits.set(page, hits);
+    await page.route(
+        (url) => url.hostname === "github.com" || url.hostname.endsWith(".github.com"),
+        async (route: Route) => {
+            hits.push(`${route.request().method()} ${route.request().url()}`);
+            await route.abort("blockedbyclient");
+        },
+    );
+}
+
+/** Fail the test when {@link guardGitHub} stopped any request on this page. */
+function assertNoGitHubRequests(page: Page): void {
+    expect(githubGuardHits.get(page), "the GitHub guard was never installed").toBeDefined();
+    expect(githubGuardHits.get(page), "requests to GitHub during the shot").toEqual([]);
+}
+
+/**
+ * Save {@link STUB_GITHUB_TOKEN} through Settings > Integrations, the
+ * producer a user goes through (``github.setToken``, which in Dexie mode
+ * writes the browser-held token). Saving stores the value only; the
+ * network check sits behind the separate Test button, which stays
+ * untouched.
+ */
+async function saveStubGitHubToken(page: Page): Promise<void> {
+    await page.goto("/settings?tab=integrations");
+    const input = page.getByTestId("settings-github-token-input");
+    await expect(input).toBeVisible({timeout: 20_000});
+    await input.fill(STUB_GITHUB_TOKEN);
+    await page.getByTestId("settings-github-save").click();
+    await expect(page.getByTestId("settings-github-source")).toBeVisible({timeout: 10_000});
+}
+
+/**
+ * Open the GitHub repo-export dialog (#1009) on an own set (#3182). The
+ * "Share as repository" button renders only on a user-generated set and
+ * stays disabled until a GitHub token is configured, so the setup saves a
+ * stub token and builds one own lesson, both through the app's own
+ * producers (Settings > Integrations, the Create-Lesson wizard). A guard
+ * stops every request to GitHub: the dialog must open without one, checked
+ * here and again after the shot ({@link FeatureShot.afterShot}).
  */
 async function gotoGithubExport(page: Page): Promise<boolean> {
+    await guardGitHub(page);
     await seedLearner(page);
-    await page.goto("/content?tab=my");
-    await expect(page.getByTestId("content-hub")).toBeVisible({timeout: 20_000});
-    const share = page.getByTestId(/-share-repo$/).first();
-    if (!(await share.count())) return false;
+    await saveStubGitHubToken(page);
+    await createOwnLesson(page, OWN_LESSON_TITLE);
+    await page.getByTestId("content-tab-import").click();
+    await expect(page.getByTestId("content-my-lessons")).toBeVisible({timeout: 20_000});
+    const share = page.locator('[data-testid^="my-lesson-"][data-testid$="-share-repo"]').first();
+    await expect(share).toBeEnabled({timeout: 15_000});
     await share.click();
-    const dialog = page.getByTestId("repo-export-name");
-    if (!(await dialog.count())) return false;
-    await expect(dialog).toBeVisible({timeout: 10_000});
+    await expect(page.getByTestId("repo-export-name")).toBeVisible({timeout: 10_000});
+    assertNoGitHubRequests(page);
     return true;
 }
 
@@ -1753,7 +1818,12 @@ const FEATURES: FeatureShot[] = [
     },
 
     // --- GitHub export (desktop dialog) ---------------------------------
-    {path: "github-export/share-dialog", setup: gotoGithubExport, desktopOnly: true},
+    {
+        path: "github-export/share-dialog",
+        setup: gotoGithubExport,
+        desktopOnly: true,
+        afterShot: assertNoGitHubRequests,
+    },
 
     // --- QR-code app sharing --------------------------------------------
     {path: "qr-code/share-app", setup: gotoQrModal, desktopOnly: true},
@@ -1984,6 +2054,7 @@ for (const feature of FEATURES) {
             await expect(page).toHaveScreenshot([...segments, file], {
                 fullPage: true,
             });
+            await feature.afterShot?.(page);
         });
     }
 }
