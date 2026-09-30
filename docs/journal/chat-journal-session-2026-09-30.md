@@ -66,6 +66,14 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Result: Die #3017-Kandidatin 1 umgesetzt: Headroom nur, wenn die Tastatur nachweislich offen ist (Schrumpfung gegenüber der Fokus-Höhe über der Schwelle), exakt der Fehlbetrag, Entfernung beim Zurückwachsen und beim Fokusverlust, Log-Entscheidung `prereveal-pad` für die Sonde. Vier neue Tests (219 px Fehlbetrag auf einer 961-px-Seite, kein Padding bei ausreichend Raum, Abbau beim Schliessen, Abbau beim Fokusverlust), 29 grün, tsc und eslint sauber. Gerätemessung mit der #1569-Sonde bleibt beim Owner: ohne iPhone nicht verifizierbar, darum als eigene PR mit diesem Vorbehalt.
 - Commit: siehe PR.
 
+## 9. #3163: der pt-Katalog spricht brasilianisches Portugiesisch
+
+- Original prompt: wie oben (Empfehlung: pt-BR als Variante).
+- Optimized prompt: "Erst messen: im Katalog stehen 131 você-Imperative gegen 47 tu-Imperative, 145 seu/sua gegen 36 teu/tua, 48 salvar gegen 23 guardar, 29 compartilhar gegen 54 partilhar; die Hilfeseiten (51 Dateien, rund 48.000 Wörter) sind überwiegend europäisch (utilizador in 24, ficheiro in 25, ecrã in 15 Dateien). Dann den Katalog auf BR angleichen: Wortliste (Definições, ficheiro, ecrã, separador, descarregar, partilhar, guardar, ligação, ronda, bónus, Ups, contactar) plus tu-Formen (teu/tua, Imperative am Satzanfang, Tens/chegaste/continuares), nur auf den 188 markierten Zeilen, Diff Zeile für Zeile gelesen."
+- Goal: Eine Variante für die Oberfläche, und zwar die, die der Katalog schon zu drei Vierteln spricht.
+- Result: 155 Zeilen geändert, Parität in beiden Richtungen grün. Bewusst nicht angefasst: `aprendizagem` (in BR gebräuchlich, 40-plus Stellen) und die Hilfeseiten. Für die Hilfeseiten ist ein Wort-Tausch keine Übersetzung (tu-Konjugationen, Gerundium, Wortstellung ziehen sich durch die Prosa), das ist eine eigene Übersetzungsrunde, siehe Owner-Entscheidungen.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.
