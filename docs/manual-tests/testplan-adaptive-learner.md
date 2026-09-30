@@ -2256,7 +2256,7 @@ jeder Karten-Zeile (`CardImageField`).
       Pause-Knopf im Footer drücken -> der Dialog Weiter/Pausieren/Abbrechen
       erscheint (vorher: verliess die Lektion stumm); "Pausieren" -> die
       Lektion steht auf dem Dashboard unter "Pausierte Lektionen"
-- [ ] TC-0916 Ohne Lernprofil (#3364): in einem privaten Fenster ohne Onboarding
+- [ ] TC-0919 Ohne Lernprofil (#3364): in einem privaten Fenster ohne Onboarding
       eine Lektion öffnen -> oben steht "Lege ein Lernprofil an, um deinen
       Fortschritt zu speichern" mit dem Link "Lernprofil
       anlegen", der zum Onboarding führt; mit Profil fehlt der Hinweis
@@ -2268,6 +2268,16 @@ jeder Karten-Zeile (`CardImageField`).
       Theorieschritt, auf dem du warst (nicht auf der Übung davor); auf
       dem Handy dasselbe über die Menü-Schublade
       [E2E: `lesson-pause-position.spec.ts`]
+- [ ] TC-0917 App-Wechsel mitten in der Lektion (#3361): eine Übung beantworten,
+      das Handy sperren oder in eine andere App oder einen anderen Tab
+      wechseln und zurückkommen -> KEIN Dialog "Lektion fortsetzen?", die
+      Lektion läuft am selben Schritt weiter; auf dem Dashboard steht sie
+      danach nicht unter "Pausierte Lektionen"
+- [ ] TC-0918 "Neu starten" im Resume-Dialog (#3361): eine pausierte Lektion öffnen,
+      "Neu starten" -> die Rückfrage "Von vorne beginnen?" erscheint;
+      "Zurück zu den Optionen" führt zur Auswahl zurück, nichts ist
+      zurückgesetzt; erneut "Neu starten" und in der Rückfrage "Neu
+      starten" -> die Lektion beginnt bei Schritt 1
 - [ ] TC-0452 Auto-Weiter + "Zurück" (#1921): Einstellung "Automatisch weiter"
       (Settings -> Lernen) AN -> eine Übung richtig beantworten, die App
       springt automatisch zur nächsten Aufgabe -> dann "Zurück" klicken:
@@ -2430,16 +2440,21 @@ jeder Karten-Zeile (`CardImageField`).
 
 ### TS-0066 Einstellungen > Daten: Aufräum-Karten (#2955)
 - [ ] TC-0499 Einstellungen > Daten: die Karte "Maximale Lektionsgröße" steht
-      direkt unter "Offline-Cache"; die Karte "Pausierte Lektionen
-      aufbewahren" steht direkt über "Nicht verbundene Inhalte" (gibt es
+      direkt unter "Offline-Cache"; die Karte "Pausierte Lektionen auf
+      dem Dashboard" steht direkt über "Nicht verbundene Inhalte" (gibt es
       keine nicht verbundenen Inhalte, direkt über der Gefahrenzone)
 - [ ] TC-0500 Einstellungen > Lernen endet mit "Erinnerungen"; beide Karten sind
       dort nicht mehr
 - [ ] TC-0501 "Schritte pro Teil" auf 15 setzen, Seite neu laden: der Wert
-      bleibt 15; "Pausierte Lektionen behalten für" auf "60 Tage"
-      stellen, neu laden: die Auswahl bleibt "60 Tage"
+      bleibt 15; "Pausierte Lektionen ausblenden, wenn älter als" auf
+      "60 Tage" stellen, neu laden: die Auswahl bleibt "60 Tage"
 - [ ] TC-0502 Beides im Browser-Modus wiederholen (Einstellungen > Daten >
       Speichermodus): gleiches Verhalten
+- [ ] TC-0916 Den Zeitraum auf "7 Tage" stellen: eine vor mehr als 7 Tagen
+      pausierte Lektion fehlt auf der Dashboard-Karte der pausierten
+      Lektionen, ist aber nicht aufgegeben: geöffnet, setzt sie an ihrer
+      Position mit ihren Antworten fort (#3360; die Pause-Zeit per
+      Gerätedatum oder Backup-Datei zurückdatieren)
 
 ### TS-0067 Position + Navigation im Set (#2793)
 - [ ] TC-0503 In einer Lektion aus einem Set steht oben "Lektion N von M" mit
