@@ -236,10 +236,9 @@ Every commit MUST pass:
 1. `ruff check` (Python lint)
 2. `ruff format --check` (Python format)
 3. `eslint` (TypeScript lint)
-4. `prettier --check` (TypeScript format)
-5. `pytest -x -q` (backend smoke test)
+4. `pytest -x -q` (backend smoke test)
 
-See code-hygiene.md for the full pre-commit configuration.
+Prettier is not on this list yet: `bun run format:check` runs only as a non-blocking CI step until the #3270 reformat. See code-hygiene.md for the full pre-commit configuration.
 
 ## Makefile targets for quality checks
 

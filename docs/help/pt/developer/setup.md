@@ -111,6 +111,10 @@ cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier
 ```
 
+Até a reformatação única de #3270, `bun run format`
+reescreve quase toda a árvore `src/`; não o execute como
+passo de rotina.
+
 Os ganchos pré-commit impõem verificações de ruff + formatador em
 cada commit:
 
