@@ -14,6 +14,7 @@ config readers they share.
 from __future__ import annotations
 
 import json
+import logging
 import time
 from dataclasses import dataclass, field
 from typing import Any
@@ -25,11 +26,13 @@ from app.models import LearningProject, LearningSession, SessionMessage, User
 from app.models import StepEvaluation as StepEvaluationRow
 from app.schemas import AIProvider, LearningSessionOut, MessageRole, SessionMessageOut
 
-from . import ai_orchestration
+from . import ai_error_codes, ai_orchestration
 from .prompts import MAX_STEP, MIN_STEP
 from .route_helpers import _latest_profile, compose_system_prompt
 from .step_evaluator import EVALUATION_DEFAULT_MAX_TOKENS, StepEvaluation, evaluate_step
 from .topic_transition import TopicTransition, evaluate_topic_transition
+
+logger = logging.getLogger(__name__)
 
 
 def _read_step_evaluation_config() -> tuple[bool, float, int]:
@@ -129,6 +132,8 @@ def _read_auto_loop_config() -> tuple[bool, int, int]:
     if tt_max <= 0:
         tt_max = 256
     return enabled, max_cycles, tt_max
+
+
 class _MessageBody(BaseModel):
     role: MessageRole
     content: str = Field(min_length=1)
@@ -232,6 +237,9 @@ class _SessionMessageExchangeOut(BaseModel):
     user_message: SessionMessageOut
     assistant_message: SessionMessageOut | None = None
     ai_error: str | None = None
+    # #3376 - machine-readable class of ``ai_error`` (see ai_error_codes),
+    # so the frontend shows a localized message instead of the raw text.
+    ai_error_code: str | None = None
     session: LearningSessionOut
     step_evaluation: _StepEvaluationOut | None = None
     topic_transition: _TopicTransitionOut | None = None
@@ -241,6 +249,8 @@ class _SessionMessageExchangeOut(BaseModel):
     # The route falls back to the provider's default model and
     # surfaces this string so the frontend can toast.
     model_warning: str | None = None
+
+
 def _load_prior_messages(db: Session, session_id: str) -> list[dict[str, Any]]:
     """Return every SessionMessage for the session in chronological
     order as plain dicts. Stable column subset (role + content) so
@@ -324,7 +334,9 @@ def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | No
     except ValueError:
         return None, None, None
     # Phase 34 — env > secrets.yaml > DB resolution.
-    api_key, _source = settings_service.resolve_api_key(SqlAlchemySettingsRepository(db), user_id, provider_enum)
+    api_key, _source = settings_service.resolve_api_key(
+        SqlAlchemySettingsRepository(db), user_id, provider_enum
+    )
     override_attr = f"model_override_{provider_key}"
     override = getattr(settings, override_attr, None)
     return provider_key, api_key, override
@@ -367,6 +379,7 @@ class MessageContext:
     topic_transition_ms: int | None = None
     parallel_saved_ms: int | None = None
     model_warning: str | None = None
+    ai_error_code: str | None = None
 
 
 def persist_user_message(ctx: MessageContext) -> SessionMessage:
@@ -461,12 +474,15 @@ def resolve_ai_context(ctx: MessageContext) -> str | None:
 
     provider_key, api_key, model_override = _resolve_active_key(db, project.user_id)
     if provider_key is None:
+        ctx.ai_error_code = ai_error_codes.NO_PROVIDER
         return "No active AI provider configured."
     if not api_key:
+        ctx.ai_error_code = ai_error_codes.NO_API_KEY
         return f"No API key stored for provider {provider_key!r}."
 
     model = ai_orchestration.resolve_model(provider_key, override=model_override)
     if model is None:
+        ctx.ai_error_code = ai_error_codes.NO_MODEL
         return f"Provider {provider_key!r} has no default model registered."
 
     ctx.provider_key = provider_key
@@ -778,6 +794,7 @@ def build_exchange_response(
             SessionMessageOut.model_validate(assistant) if assistant is not None else None
         ),
         ai_error=ai_error,
+        ai_error_code=ctx.ai_error_code if ai_error is not None else None,
         session=LearningSessionOut.model_validate(ctx.session),
         step_evaluation=step_evaluation,
         topic_transition=topic_transition,
@@ -835,9 +852,16 @@ def run_learning_call(ctx: MessageContext) -> str | None:
         )
         ctx.learning_ms = int((time.monotonic() - learning_start) * 1000)
     except Exception as exc:  # noqa: BLE001
+        ctx.ai_error_code = ai_error_codes.classify_provider_exception(exc)
+        logger.error(
+            "Tutor AI call failed",
+            extra={"provider": ctx.provider_key, "code": ctx.ai_error_code},
+            exc_info=True,
+        )
         return f"AI provider error: {exc}"
 
     if not assistant_text:
+        ctx.ai_error_code = ai_error_codes.PROVIDER_ERROR
         return (
             f"No registered provider returned a reply for model {ctx.model!r}. "
             f"Is the {ctx.provider_key!r} provider plugin enabled?"
@@ -854,6 +878,8 @@ def run_learning_call(ctx: MessageContext) -> str | None:
     ctx.assistant_text = assistant_text
     ctx.assistant_msg = assistant_msg
     return None
+
+
 class _StreamExchangeResult:
     """Container for the post-stream finalisation output."""
 

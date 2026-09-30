@@ -7067,6 +7067,17 @@
             ],
             "title": "Ai Error"
           },
+          "ai_error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Error Code"
+          },
           "assistant_message": {
             "anyOf": [
               {
