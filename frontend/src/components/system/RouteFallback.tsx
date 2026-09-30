@@ -155,7 +155,7 @@ export function RouteLoadError({ error, testId = "route-load-error" }: RouteLoad
                     className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border px-4 text-sm font-medium text-fg-primary hover:bg-[var(--bg-elevated)]"
                     data-testid={`${testId}-report`}
                 >
-                    {t("error_report.dialog_title", "Report an issue")}
+                    {t("ui.error_report.dialog_title", "Report an issue")}
                 </button>
             )}
             <button
