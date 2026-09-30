@@ -2264,6 +2264,16 @@ jeder Karten-Zeile (`CardImageField`).
       Theorieschritt, auf dem du warst (nicht auf der Übung davor); auf
       dem Handy dasselbe über die Menü-Schublade
       [E2E: `lesson-pause-position.spec.ts`]
+- [ ] TC-0916 App-Wechsel mitten in der Lektion (#3361): eine Übung beantworten,
+      das Handy sperren oder in eine andere App oder einen anderen Tab
+      wechseln und zurückkommen -> KEIN Dialog "Lektion fortsetzen?", die
+      Lektion läuft am selben Schritt weiter; auf dem Dashboard steht sie
+      danach nicht unter "Pausierte Lektionen"
+- [ ] TC-0917 "Neu starten" im Resume-Dialog (#3361): eine pausierte Lektion öffnen,
+      "Neu starten" -> die Rückfrage "Von vorne beginnen?" erscheint;
+      "Zurück zu den Optionen" führt zur Auswahl zurück, nichts ist
+      zurückgesetzt; erneut "Neu starten" und in der Rückfrage "Neu
+      starten" -> die Lektion beginnt bei Schritt 1
 - [ ] TC-0452 Auto-Weiter + "Zurück" (#1921): Einstellung "Automatisch weiter"
       (Settings -> Lernen) AN -> eine Übung richtig beantworten, die App
       springt automatisch zur nächsten Aufgabe -> dann "Zurück" klicken:
