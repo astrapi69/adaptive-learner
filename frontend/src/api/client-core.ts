@@ -99,7 +99,16 @@ export async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<
     } catch {
       /* recorder not available */
     }
-    throw networkError;
+    // #3388 - every fetch failure surfaces as ApiError (coding-standards):
+    // status 0 means "no response at all", which the friendly mapper shows
+    // as the localized "No connection to the server" instead of the
+    // browser's raw "Failed to fetch".
+    throw new ApiError(
+      0,
+      networkError instanceof Error ? networkError.message : String(networkError),
+      path,
+      method,
+    );
   }
   const durationMs = Math.round(performance.now() - startTime);
   try {
