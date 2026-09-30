@@ -1797,6 +1797,7 @@
       "unexpected": "Something went wrong."
     },
     "error_report": {
+      "report_button": "Report Issue",
       "dialog_title": "Report an issue",
       "intro": "Adaptive Learner caught an error and can prepare a bug report for the developer.",
       "description_label": "Steps to reproduce (optional)",

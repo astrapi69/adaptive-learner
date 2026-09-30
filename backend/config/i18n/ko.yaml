@@ -1676,6 +1676,7 @@ ui:
     generic: "문제가 발생했습니다. 나중에 다시 시도하세요."
     unexpected: "문제가 발생했습니다."
   error_report:
+    report_button: "문제 신고"
     dialog_title: "문제 신고"
     intro: "Adaptive Learner가 오류를 감지했으며 개발자에게 보낼 버그 보고서를 준비할 수 있습니다."
     description_label: "재현 단계 (선택)"

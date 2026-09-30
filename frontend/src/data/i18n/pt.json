@@ -1797,6 +1797,7 @@
       "unexpected": "Algo deu errado."
     },
     "error_report": {
+      "report_button": "Reportar problema",
       "dialog_title": "Comunicar um problema",
       "intro": "Adaptive Learner detetou um erro e pode preparar um relatório de bug para o programador.",
       "description_label": "Passos para reproduzir (opcional)",

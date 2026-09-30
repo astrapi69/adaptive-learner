@@ -1672,6 +1672,7 @@ ui:
     generic: "Bir şeyler ters gitti. Lütfen daha sonra tekrar dene."
     unexpected: "Bir şeyler ters gitti."
   error_report:
+    report_button: "Sorun bildir"
     dialog_title: "Bir sorun bildir"
     intro: "Adaptive Learner bir hata yakaladı ve geliştirici için bir hata raporu hazırlayabilir."
     description_label: "Yeniden oluşturma adımları (isteğe bağlı)"
