@@ -16,6 +16,7 @@ import {MemoryRouter} from "react-router";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import DangerZoneSection from "./DangerZoneSection";
+import {LESSON_CACHE_NAME} from "../../../lib/pwa/cache-info";
 
 const mockNavigate = vi.fn();
 vi.mock("react-router", async () => {
@@ -190,6 +191,37 @@ describe("DangerZoneSection", () => {
         // first-visit state).
         expect(mockNavigate).toHaveBeenCalledWith("/", {replace: true});
         expect(notifySuccess).toHaveBeenCalled();
+    });
+
+    it("a successful reset clears the whole adaptive-learner.* namespace except the storage mode (#3368)", async () => {
+        storageReset.mockResolvedValue({reset: true, tables_cleared: 25});
+        const cleared = [
+            "adaptive-learner.user_id",
+            "adaptive-learner.github_token",
+            "adaptive-learner.content_repo_token::owner/repo",
+            "adaptive-learner.contributions",
+            "adaptive-learner.mentor-notes",
+        ];
+        for (const key of cleared) localStorage.setItem(key, "x");
+        localStorage.setItem("adaptive-learner.storage_mode", "dexie");
+        localStorage.setItem("another-app.setting", "keep");
+        const cacheDelete = vi.fn(async () => true);
+        vi.stubGlobal("caches", {delete: cacheDelete});
+
+        renderDangerZone();
+        fireEvent.click(screen.getByTestId("danger-zone-reset-btn"));
+        fireEvent.click(screen.getByTestId("danger-zone-continue"));
+        fireEvent.change(screen.getByTestId("danger-zone-typed-input"), {
+            target: {value: "RESET"},
+        });
+        fireEvent.click(screen.getByTestId("danger-zone-final-btn"));
+        await waitFor(() => expect(notifySuccess).toHaveBeenCalled());
+
+        for (const key of cleared) expect(localStorage.getItem(key), key).toBeNull();
+        expect(localStorage.getItem("adaptive-learner.storage_mode")).toBe("dexie");
+        expect(localStorage.getItem("another-app.setting")).toBe("keep");
+        expect(cacheDelete).toHaveBeenCalledWith(LESSON_CACHE_NAME);
+        vi.unstubAllGlobals();
     });
 
     it("reset failure shows error toast + preserves localStorage", async () => {
