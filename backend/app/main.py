@@ -328,17 +328,31 @@ async def adaptive_learner_error_handler(request: Request, exc: AdaptiveLearnerE
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    """Map any non-domain exception to a 500.
+
+    Outside DEBUG the body never carries ``str(exc)`` (#3386): for a
+    SQLAlchemy error that text holds the SQL and the bound parameter
+    values, which then reached toasts and "Report issue" bodies. A short
+    reference in the body and in the log line ties the two together.
+    """
+    import secrets
     import traceback
 
+    reference = secrets.token_hex(4)
     logger.error(
-        "Unhandled error: %s %s -> %s",
+        "Unhandled error [ref %s]: %s %s -> %s",
+        reference,
         request.method,
         request.url.path,
         str(exc),
         exc_info=True,
     )
-    detail: dict[str, Any] = {"detail": str(exc)}
+    detail: dict[str, Any] = {
+        "detail": f"Internal server error (reference {reference}).",
+        "reference": reference,
+    }
     if DEBUG:
+        detail["detail"] = str(exc)
         detail["stacktrace"] = traceback.format_exc()
         detail["endpoint"] = request.url.path
         detail["method"] = request.method

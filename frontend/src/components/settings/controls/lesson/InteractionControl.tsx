@@ -14,6 +14,8 @@
  *   (opt-in).
  * - "Ask AI" button visibility (#2693): ``AskAiPanel`` (via
  *   ``useAskAiVisible``) reads the same flag. Default ON.
+ * - Keep the screen on in lessons (#3358): the lesson page and the
+ *   runner modes hold a screen wake lock. Default ON.
  *
  * @example
  * <InteractionControl />
@@ -37,6 +39,10 @@ import {
     readAskAiVisible,
     setAskAiVisible,
 } from "../../../../lib/lesson/prefs/askAiVisibilityPref";
+import {
+    readKeepScreenOn,
+    setKeepScreenOn,
+} from "../../../../lib/lesson/prefs/keepScreenOnPref";
 
 export default function InteractionControl() {
     const {t} = useI18n();
@@ -73,6 +79,13 @@ export default function InteractionControl() {
     const handleAskAiVisibleToggle = (next: boolean) => {
         setAskAiVisibleOn(next);
         setAskAiVisible(next);
+    };
+
+    const [keepScreenOn, setKeepScreenOnState] = useState<boolean>(() => readKeepScreenOn());
+
+    const handleKeepScreenOnToggle = (next: boolean) => {
+        setKeepScreenOnState(next);
+        setKeepScreenOn(next);
     };
 
     return (
@@ -159,6 +172,26 @@ export default function InteractionControl() {
                     data-testid="settings-ask-ai-visible-toggle"
                     checked={askAiVisibleOn}
                     onChange={(e) => handleAskAiVisibleToggle(e.target.checked)}
+                />
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
+                        {t("settings.keep_screen_on", "Keep the screen on in lessons")}
+                    </span>
+                    <FormHint as="span">
+                        {t(
+                            "settings.keep_screen_on_description",
+                            "While a lesson is open, the screen does not turn off, also while you read without touching it. The lesson summary lets the screen turn off again. Needs iOS 16.4 or later on an iPhone, iOS 18.4 or later in an app on the home screen.",
+                        )}
+                    </FormHint>
+                </span>
+                <input
+                    type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
+                    data-testid="settings-keep-screen-on-toggle"
+                    checked={keepScreenOn}
+                    onChange={(e) => handleKeepScreenOnToggle(e.target.checked)}
                 />
             </label>
         </SettingsSection>
