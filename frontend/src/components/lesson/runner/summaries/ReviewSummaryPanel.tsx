@@ -24,7 +24,7 @@
  * )}
  */
 
-import { RotateCcw } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../../hooks/ui/useI18n";
@@ -41,6 +41,8 @@ export interface ReviewSummaryPanelProps {
   neutral?: boolean;
   onAnotherRound: () => void;
   onExit: () => void;
+  /** #3499: set when the review was started from a lesson; offers the way back. */
+  onBackToLesson?: () => void;
 }
 
 /** The review recap with the SRS note, the another-round offer and the repeat hint. */
@@ -51,6 +53,7 @@ export default function ReviewSummaryPanel({
   neutral = false,
   onAnotherRound,
   onExit,
+  onBackToLesson,
 }: ReviewSummaryPanelProps) {
   const { t } = useI18n();
   const correctedLabel = neutral
@@ -95,6 +98,18 @@ export default function ReviewSummaryPanel({
             {t("review.another_round", "Another round")}
           </Button>
         </div>
+      )}
+      {onBackToLesson && (
+        <Button
+          type="button"
+          variant="secondary"
+          className="mt-2 self-start"
+          onClick={onBackToLesson}
+          data-testid="review-back-to-lesson"
+        >
+          <ArrowLeft size={14} aria-hidden="true" />
+          {t("review.back_to_lesson", "Back to lesson")}
+        </Button>
       )}
       <p className="review-summary-note text-sm text-fg-muted" data-testid="review-summary-repeat">
         {t("review.summary_repeat", "Come back in about 2 days to keep these fresh.")}

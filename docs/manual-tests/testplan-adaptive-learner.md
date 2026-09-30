@@ -3592,6 +3592,12 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
       "Prüfen" mit Haken rechts), keine Pause, keine Optionen-Leiste
 - [ ] TC-0842 "Zurück" ist auf dem ersten Schritt deaktiviert; nach "Weiter" führt
       es einen Schritt zurück im selben Durchlauf (nicht zum Dashboard)
+- [ ] TC-0923 Wiederholung aus einer Lektion (#3499): eine Lektion abschließen, in der
+      Zusammenfassung "Wiederholung" (Karte "Nächster Schritt" oder "Fehler
+      üben") starten und die Runde beenden: der Endbildschirm bietet
+      "Zurück zur Lektion" neben "Zurück zum Dashboard", und der Knopf führt
+      zu genau dieser Lektion; auch nach einem Neuladen der Seite. Über das
+      Dashboard gestartet: nur "Zurück zum Dashboard"
 - [ ] TC-0843 Enter in einer Lückentext-Antwort: erster Enter prüft, zweiter Enter
       geht weiter; ohne Antwort tut Enter nichts; mit ausgeschaltetem
       Enter-Kürzel (Einstellungen > Lernen) tut Enter nichts

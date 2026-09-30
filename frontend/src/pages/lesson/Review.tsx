@@ -24,6 +24,7 @@ import {LessonRunner, REVIEW_POLICY} from "../../components/lesson/runner";
 import ReviewSummaryPanel from "../../components/lesson/runner/summaries/ReviewSummaryPanel";
 import {useReviewSource} from "../../hooks/lesson/sources";
 import {readReviewLimit} from "../../lib/learning/reviewLimitPref";
+import {REVIEW_ORIGIN_PARAM, readReviewOrigin} from "../../lib/review";
 
 interface UrlParams {
     setId: string;
@@ -42,6 +43,9 @@ export default function ReviewPage() {
     const quick = searchParams.get("quick") === "1";
     const reviewLimit = useMemo(() => (quick ? 5 : readReviewLimit()), [quick]);
 
+    // #3499 - a review started from a lesson summary names that lesson.
+    const backToLesson = readReviewOrigin(searchParams.get(REVIEW_ORIGIN_PARAM));
+
     const source = useReviewSource({setId, limit: reviewLimit});
 
     return (
@@ -56,6 +60,7 @@ export default function ReviewPage() {
                     neutral={source.neutral}
                     onAnotherRound={source.reload}
                     onExit={() => navigate("/dashboard")}
+                    onBackToLesson={backToLesson ? () => navigate(backToLesson) : undefined}
                 />
             )}
         />

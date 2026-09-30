@@ -20,8 +20,10 @@
  */
 
 import { useMemo } from "react";
+import { useLocation } from "react-router";
 
 import ReviewReport from "../../progress/ReviewReport";
+import { reviewHref } from "../../../lib/review";
 import { buildLessonReview } from "../../../lib/statistics/lesson-review";
 import type {
   ContentLesson,
@@ -56,6 +58,8 @@ export default function LessonReviewReport({
   userId,
   t,
 }: LessonReviewReportProps) {
+  // #3499 - the practice link remembers this lesson for the review's end screen.
+  const { pathname } = useLocation();
   const review = useMemo(
     () =>
       buildLessonReview({
@@ -88,7 +92,7 @@ export default function LessonReviewReport({
         headingLevel={4}
         practiceHref={
           userId && review.hasData
-            ? `/review/${encodeURIComponent(setId)}`
+            ? reviewHref(setId, pathname)
             : undefined
         }
       />
