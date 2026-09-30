@@ -18,7 +18,8 @@ import { updateStreakState } from "../gamification/streaks";
 import { maybeRunAutoBackup, recordCompletedSession } from "../backup/auto-backup";
 import { ApiError } from "../../api/client";
 import type { LearningProfileRow, LearningSessionRow, MethodSwitchRow, SessionRatingRow } from "./db";
-import type { LearningMethod } from "../../lib/constants";
+import { LEARNING_METHODS, type LearningMethod } from "../../lib/constants";
+import { recommendMethodSwitch } from "../../lib/adaptive/method-switch";
 import type { SessionMessageBody, SessionRatingBody, SessionStartBody } from "../../api/client";
 import type {
   AssessmentEvaluatePayload,
@@ -285,13 +286,27 @@ export const dexieSession: IStorageService["session"] = {
       };
     },
     async switchRecommendation(
-      _sessionId: string,
+      sessionId: string,
     ): Promise<SwitchRecommendation> {
-      // Stagnation-based method-switch recommendation is
-      // deferred. Dexie mode returns "no recommendation"
-      // until enough rating data accumulates for a
-      // server-style heuristic to fire.
-      return { recommended: false, to_method: null, reason: null };
+      // #3396 - the same rule and input as the API route: the project's
+      // latest five ratings (across its sessions), oldest first.
+      const none: SwitchRecommendation = { recommended: false, to_method: null, reason: null };
+      const db = getDb();
+      const sess = await db.learningSessions.get(sessionId);
+      if (!sess) throw new ApiError(404, `Session ${sessionId} not found`);
+      const sessionIds = (await db.learningSessions
+        .where("project_id")
+        .equals(sess.project_id)
+        .primaryKeys()) as string[];
+      const ratings = await db.sessionRatings.where("session_id").anyOf(sessionIds).toArray();
+      ratings.sort((a, b) => a.created_at.localeCompare(b.created_at));
+      const rec = recommendMethodSwitch(sess.project_id, sess.method, ratings.slice(-5));
+      if (!rec || !LEARNING_METHODS.includes(rec.to_method as LearningMethod)) return none;
+      return {
+        recommended: true,
+        to_method: rec.to_method as LearningMethod,
+        reason: rec.reason,
+      };
     },
     async acceptSwitch(
       sessionId: string,

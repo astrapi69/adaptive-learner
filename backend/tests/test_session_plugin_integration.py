@@ -1640,3 +1640,52 @@ def test_message_no_warning_when_model_in_cache(client: TestClient, monkeypatch)
     assert body["model_warning"] is None
     assert captured["model"] == "claude-opus-4-20250514"
     model_discovery.clear_cache()
+
+
+def _rate_in_time_order(client: TestClient, sess_id: str, understanding: list[int]) -> None:
+    """Post ratings, then give them strictly increasing created_at so the
+    route's recency order is deterministic."""
+    from datetime import UTC, datetime, timedelta
+
+    from app.database import SessionLocal
+    from app.models import SessionRating
+
+    for u in understanding:
+        client.post(
+            f"/api/plugins/session/{sess_id}/rate",
+            json={"understanding": u, "stress": 5, "method_fit": 2},
+        )
+    db = SessionLocal()
+    try:
+        rows = db.query(SessionRating).filter(SessionRating.session_id == sess_id).all()
+        rows.sort(key=lambda r: (r.created_at, r.id))
+        # Match rows to the posted order by understanding sequence.
+        base = datetime(2026, 9, 1, tzinfo=UTC)
+        by_value: dict[int, list] = {}
+        for r in rows:
+            by_value.setdefault(r.understanding, []).append(r)
+        for i, u in enumerate(understanding):
+            by_value[u].pop(0).created_at = base + timedelta(minutes=i)
+        db.commit()
+    finally:
+        db.close()
+
+
+@pytest.mark.parametrize(
+    ("understanding", "recommended"),
+    [([2, 2, 2, 4, 5], False), ([5, 4, 3, 3, 3], True)],
+    ids=["recovering-latest-three", "flat-latest-three"],
+)
+def test_switch_recommendation_reads_the_latest_three_ratings_oldest_first(
+    client: TestClient, understanding: list[int], recommended: bool
+):
+    """#3396 - the rule looks at the LATEST three ratings in time order. The
+    route passed the last five newest-first, so the rule read the three
+    oldest, reversed."""
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
+    _rate_in_time_order(client, sess_id, understanding)
+    body = client.get(f"/api/plugins/session/switch-recommendation/{sess_id}").json()
+    assert body["recommended"] is recommended

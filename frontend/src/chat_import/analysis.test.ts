@@ -23,6 +23,7 @@ vi.mock("../storage/ai/ai-providers", () => ({
 }));
 
 import {aiComplete} from "../storage/ai/ai-providers";
+import {ApiError} from "../api/client";
 
 const mockedAiComplete = vi.mocked(aiComplete);
 
@@ -307,16 +308,17 @@ describe("analyzeConversation", () => {
         expect(result.topic).toBe("Demo");
     });
 
-    it("falls back when the AI provider throws", async () => {
-        mockedAiComplete.mockRejectedValueOnce(new Error("auth: invalid key"));
-        const result = await analyzeConversation({
-            provider: "anthropic",
-            apiKey: "wrong-key",
-            modelOverride: null,
-            messages: [{role: "user", content: "Q"}],
-        });
-        expect(result.fallback_used).toBe(true);
-        expect(result.summary).toContain("auth: invalid key");
+    it("propagates a provider failure instead of a fallback with its raw text (#3392)", async () => {
+        const failure = new ApiError(401, "auth: invalid key");
+        mockedAiComplete.mockRejectedValueOnce(failure);
+        await expect(
+            analyzeConversation({
+                provider: "anthropic",
+                apiKey: "wrong-key",
+                modelOverride: null,
+                messages: [{role: "user", content: "Q"}],
+            }),
+        ).rejects.toBe(failure);
     });
 
     it("returns immediate fallback on empty messages", async () => {

@@ -49,5 +49,4 @@ export {
     type LearningMethod,
     type MessageRole,
     type SessionStatus,
-    type SupportedLanguage,
 } from "../lib/constants";

@@ -33,9 +33,7 @@ def test_compute_content_hash_pins_canonical_shape():
     """Regression pin: the algorithm is role-lowercase + content-strip,
     joined by '\\n', SHA-256 hex. Title is NOT in the input."""
     msgs = [_Msg("USER", "  what is induction?  "), _Msg("Assistant", "examples to rule.\n")]
-    expected = hashlib.sha256(
-        b"user:what is induction?\nassistant:examples to rule."
-    ).hexdigest()
+    expected = hashlib.sha256(b"user:what is induction?\nassistant:examples to rule.").hexdigest()
     assert compute_content_hash(msgs) == expected
 
 
@@ -584,3 +582,26 @@ def test_analyze_uses_default_language_when_user_has_de(
     assert resp.status_code == 200, resp.text
     system_msg = next(m for m in captured["calls"][0]["messages"] if m["role"] == "system")
     assert "IN German" in system_msg["content"]
+
+
+def test_analyze_provider_failure_is_502_and_persists_nothing(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+):
+    """#3392 - an invalid key or an outage used to be saved as a fallback
+    analysis ("could not be parsed" plus the raw exception)."""
+    user_id = _make_user(client)
+    _set_api_key(client, user_id)
+    created = client.post(f"/api/users/{user_id}/imports", json=_conv_body()).json()
+    from app.exceptions import ExternalServiceError
+    from app.main import manager
+
+    def failing_hook(**_kwargs):
+        raise ExternalServiceError("anthropic", "HTTP 401 invalid x-api-key")
+
+    monkeypatch.setattr(manager._pm.hook, "ai_complete", failing_hook)
+
+    resp = client.post(f"/api/imports/{created['id']}/analyze")
+    assert resp.status_code == 502
+    detail = client.get(f"/api/imports/{created['id']}").json()
+    assert detail["analyzed"] is False
+    assert detail["analysis_result"] is None
