@@ -134,15 +134,21 @@ export const singleJsonLessonAdapter: LessonSourceAdapter = (
 ) => engineSingleJsonLessonAdapter(rawText, context) as ContentLesson;
 
 /** Parse raw source data into a canonical {@link ContentLesson} via a
- *  source adapter (default: {@link singleJsonLessonAdapter}). */
+ *  source adapter (default: {@link singleJsonLessonAdapter}).
+ *
+ *  A lesson without ``cards`` gets an empty list (#3349): the schema does
+ *  not require the field (its default is ``[]``), the API backend fills it
+ *  in the same way through its Pydantic default, and ``ContentLesson``
+ *  types it as always present. */
 export function parseLesson(
   rawText: string,
   context: LessonSetContext,
   adapter?: LessonSourceAdapter,
 ): ContentLesson {
-  return engineParseLesson(
+  const parsed = engineParseLesson(
     rawText,
     context,
     adapter as EngineLessonSourceAdapter | undefined,
-  ) as ContentLesson;
+  );
+  return { ...parsed, cards: parsed.cards ?? [] } as ContentLesson;
 }
