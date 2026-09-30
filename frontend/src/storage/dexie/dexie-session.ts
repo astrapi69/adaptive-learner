@@ -10,6 +10,7 @@ import { requireRow, rowToProfile } from "./dexie-rows";
 import { calculateProfile, questionsForLang } from "../services/assessment";
 import { sendMessage, sendMessageStream, startSession } from "../ai/session-flow";
 import { aggregateProgress, buildCommitFromSession, rowToCommit } from "../services/tracking";
+import { aggregateStepEvaluations } from "../services/step-evaluation-summary";
 import { buildSpacedRecommendations, rankTools, recencyFromCommits } from "../services/tools";
 import { awardXPForSession } from "../gamification/gamification";
 import { evaluateBadgesForUser } from "../gamification/badges";
@@ -390,7 +391,18 @@ export const dexieTracking: IStorageService["tracking"] = {
         .toArray();
       commits.sort((a, b) => a.committed_at.localeCompare(b.committed_at));
       const trackingSlice = aggregateProgress(commits);
-      return { tracking: trackingSlice };
+      // #3394 - the insights slice API mode returns too, from this
+      // project's sessions only (the Python join goes the same way).
+      const sessionIds = (
+        await db.learningSessions.where("project_id").equals(projectId).primaryKeys()
+      ) as string[];
+      const evaluations = sessionIds.length
+        ? await db.stepEvaluations.where("session_id").anyOf(sessionIds).toArray()
+        : [];
+      return {
+        tracking: trackingSlice,
+        step_evaluation: aggregateStepEvaluations(evaluations),
+      };
     },
     async commits(projectId: string): Promise<ProgressCommit[]> {
       const db = getDb();
