@@ -35,7 +35,9 @@ export async function requestWakeLock(): Promise<WakeLockHandle> {
     if (!isWakeLockSupported()) return null;
     try {
         return await navigator.wakeLock.request("screen");
-    } catch {
+    } catch (err) {
+        // #3358 - record why instead of swallowing it silently.
+        console.warn("[wake-lock] screen wake lock refused", err);
         return null;
     }
 }

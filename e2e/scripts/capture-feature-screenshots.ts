@@ -1123,6 +1123,18 @@ async function gotoResumeRestartConfirm(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Settings > Learning > Interaction scrolled to the "keep the screen on
+ *  in lessons" toggle (#3358). */
+async function gotoKeepScreenOnToggle(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto("/settings?tab=learning");
+    await expect(page.getByTestId("settings")).toBeVisible({timeout: 20_000});
+    const toggle = page.getByTestId("settings-keep-screen-on-toggle");
+    await toggle.scrollIntoViewIfNeeded();
+    await expect(toggle).toBeVisible({timeout: 10_000});
+    return true;
+}
+
 /** Open Settings -> Data scrolled to the paused-lesson retention card,
  *  which sits right before the cleanup slot since #2955 (its sibling,
  *  max lesson size, sits right after the offline cache further up). */
@@ -1565,6 +1577,12 @@ async function gotoHeldBackToast(page: Page): Promise<boolean> {
 }
 
 const FEATURES: FeatureShot[] = [
+    // --- Keep the screen on in lessons, Settings > Learning (#3358) -------
+    {
+        path: "keep-screen-on/settings",
+        setup: gotoKeepScreenOnToggle,
+        pinTo: "settings-section-interaction",
+    },
     // --- Lesson without a learner profile: notice + profile link (#3364) --
     {
         path: "lesson-no-profile/hinweis",
