@@ -20,13 +20,15 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import { useFeature } from "@astrapi69/feature-strategy-react";
 import { Copy, ExternalLink, Loader2, Send, UploadCloud } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ApiError } from "../../../api/client";
 import { useI18n } from "../../../hooks/ui/useI18n";
-import { getStorage, resolveStorageMode } from "../../../storage";
+import { FEATURES } from "../../../features/featureConfig";
+import { getStorage } from "../../../storage";
 import { SettingsSection } from "../SettingsSection";
 import {
   parseGitHubRepoUrl,
@@ -297,7 +299,11 @@ export default function RegistrySubmitSection() {
     }
   }, [prepared, t]);
 
-  const canCreatePr = resolveStorageMode() === "dexie" && tokenConfigured;
+  // #3398 - browser-only (the PR is opened from the browser with its
+  // token): in the desktop app the button shows disabled with the reason
+  // instead of disappearing (#335).
+  const prFeature = useFeature(FEATURES.REGISTRY_PR);
+  const showPrButton = prFeature.isDisabled || tokenConfigured;
 
   return (
     <SettingsSection
@@ -496,12 +502,17 @@ export default function RegistrySubmitSection() {
                 {t("registry.action.propose", "Open the directory to propose")}
               </Button>
             </a>
-            {canCreatePr && (
+            {showPrButton && (
               <Button
                 type="button"
                 className="min-h-11 gap-2"
                 onClick={handleCreatePr}
-                disabled={busy}
+                disabled={busy || prFeature.isDisabled}
+                title={
+                  prFeature.isDisabled
+                    ? t(`feature.${prFeature.reason}`, "Only available in the browser version of the app.")
+                    : undefined
+                }
                 data-testid="registry-create-pr"
               >
                 {busy ? (

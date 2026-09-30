@@ -300,7 +300,7 @@ function RestoreSummaryPanel({
             data-testid="backup-summary"
         >
             <p>{t("backup.restored_summary", "Restore complete.")}</p>
-            <ul>
+            <ul className="list-disc">
                 <li>
                     {t("backup.restored_inserted", "Inserted: {{n}}").replace(
                         "{{n}}",
@@ -389,7 +389,7 @@ function RestoreSummaryPanel({
                     <p className="font-semibold text-[var(--error)]">
                         {t("backup.error_details", "Error details")}
                     </p>
-                    <ul>
+                    <ul className="list-disc">
                         {summary.errors.map((err, idx) => (
                             <li
                                 key={idx}

@@ -127,4 +127,4 @@ token διατηρείται τοπικά (localStorage) και σκόπιμα *
 
 - [Content Browser](content-browser.md) - εύρεση, φιλτράρισμα, λήψη συνόλων
 - [Δημιουργία μαθημάτων](../content-creation/overview.md) - συνεισφορά δικού σου περιεχομένου
-- [Backup και επαναφορά](backup.md) - τα συνδεδεμένα repos είναι μέρος του snapshot
+- [Backup και επαναφορά](backup.md) - τα συνδεδεμένα repos δεν είναι ακόμη μέρος του backup, σύνδεσέ τα ξανά μετά την επαναφορά
