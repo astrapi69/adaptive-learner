@@ -19,7 +19,7 @@ import { getDb, newId, nowIso } from "../dexie/db";
 import type { LearningProjectRow, LearningSessionRow } from "../dexie/db-rows";
 
 /** The method value API mode stores for a lesson completion. */
-export const CONTENT_LESSON_METHOD = "content";
+const CONTENT_LESSON_METHOD = "content";
 
 const PSEUDO_PROJECT_TOPIC = "Content Lessons";
 const PSEUDO_PROJECT_GOAL =
