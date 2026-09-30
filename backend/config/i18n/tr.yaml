@@ -755,6 +755,8 @@ settings:
   lesson_auto_advance_description: "Doğru cevaptan sonra otomatik olarak sonraki alıştırmaya geçer. Yanlış cevapta çözümü inceleyebilmen için her zaman bekler."
   ask_ai_visible: "'Yapay zekâya sor' düğmesini göster"
   ask_ai_visible_description: "Teori ve alıştırmaların altında 'Yapay zekâya sor' düğmesini gösterir. Varsayılan olarak gösterilir; düğmenin yanıt verebilmesi için hâlâ kendi yapay zekâ anahtarına (BYOK) ihtiyacı vardır."
+  keep_screen_on: "Derslerde ekranı açık tut"
+  keep_screen_on_description: "Bir ders açık olduğu sürece, ekrana dokunmadan okurken de ekran kapanmaz. Ders özetinde yeniden kapanabilir. iPhone'da iOS 16.4 veya üstü, ana ekrandaki uygulama olarak iOS 18.4 veya üstü gerekir."
   button_tooltips: Buton ipuçlarını göster
   button_tooltips_description: "Simge butonlarının üzerine gelindiğinde ne yaptıklarını açıklayan bir ipucu gösterir. Ekran okuyucu etiketleri ayardan bağımsız olarak her zaman açık kalır."
   developer_mode: Geliştirici Modu
