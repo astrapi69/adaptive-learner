@@ -1915,6 +1915,10 @@ repo:
     description: आपके सत्र डेटा से प्रति प्रोजेक्ट स्वचालित रूप से Markdown आर्टिफैक्ट (README, STATS, CHEATSHEET, ROADMAP) उत्पन्न करता है। वैकल्पिक git एकीकरण प्रत्येक रेंडर को कमिट करता है ताकि आप किसी भी git क्लाइंट के साथ इतिहास ब्राउज़ कर सकें।
     enable_git: git दृढ़ता सक्षम करें
 lesson:
+  progress_io:
+    save_failed: "इस पाठ में आपकी प्रगति सहेजी नहीं जा सकी: {detail}"
+    load_failed: "इस पाठ के लिए आपकी सहेजी गई प्रगति लोड नहीं हो सकी: {detail}"
+    create_profile: "सीखने की प्रोफ़ाइल बनाएँ"
   mascot_label: "आपका सीखने का साथी"
   combo_chip: "x{n}"
   combo_aria: "उत्तर श्रृंखला: लगातार {n}"

@@ -2058,6 +2058,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_failed": "Kemajuan Anda dalam pelajaran ini tidak dapat disimpan: {detail}",
+      "load_failed": "Kemajuan tersimpan Anda untuk pelajaran ini tidak dapat dimuat: {detail}",
+      "create_profile": "Buat profil belajar"
+    },
     "mascot_label": "Teman belajarmu",
     "combo_chip": "x{n}",
     "combo_aria": "Runtunan jawaban: {n} berturut-turut",

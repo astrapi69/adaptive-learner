@@ -1921,6 +1921,10 @@ repo:
     description: "Génère automatiquement des artefacts Markdown (README, STATS, CHEATSHEET, ROADMAP) par projet à partir de tes données de session. L'intégration git facultative valide chaque génération pour que tu puisses parcourir l'historique avec n'importe quel client git."
     enable_git: "Activer la persistance git"
 lesson:
+  progress_io:
+    save_failed: "Ta progression dans cette leçon n'a pas pu être enregistrée : {detail}"
+    load_failed: "Ta progression enregistrée pour cette leçon n'a pas pu être chargée : {detail}"
+    create_profile: "Créer un profil d'apprentissage"
   mascot_label: "Ton compagnon d'apprentissage"
   combo_chip: "x{n}"
   combo_aria: "Série de réponses : {n} d'affilée"

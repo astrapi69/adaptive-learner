@@ -2058,6 +2058,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_failed": "No se pudo guardar tu progreso en esta lección: {detail}",
+      "load_failed": "No se pudo cargar tu progreso guardado de esta lección: {detail}",
+      "create_profile": "Crear un perfil de aprendizaje"
+    },
     "mascot_label": "Tu compañero de aprendizaje",
     "combo_chip": "x{n}",
     "combo_aria": "Racha de respuestas: {n} seguidas",

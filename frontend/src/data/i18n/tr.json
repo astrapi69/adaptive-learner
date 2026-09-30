@@ -2058,6 +2058,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_failed": "Bu dersteki ilerlemeniz kaydedilemedi: {detail}",
+      "load_failed": "Bu ders için kaydedilmiş ilerlemeniz yüklenemedi: {detail}",
+      "create_profile": "Öğrenme profili oluştur"
+    },
     "mascot_label": "Öğrenme arkadaşın",
     "combo_chip": "x{n}",
     "combo_aria": "Cevap serisi: art arda {n}",
