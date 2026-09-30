@@ -200,3 +200,36 @@ def test_every_table_spec_has_columns_that_exist_on_the_model():
             f"but the model {spec.model.__name__} has columns "
             f"{sorted(actual)}."
         )
+
+
+#: Model columns deliberately NOT on the backup / sync wire, with the
+#: reason. Empty today: every column travels. A new column must either be
+#: declared in its ``TableSpec.columns`` or be listed here with a reason.
+EXCLUDED_MODEL_COLUMNS: dict[str, dict[str, str]] = {}
+
+
+def test_every_model_column_is_declared_or_excluded_with_a_reason():
+    """#3363: the reverse direction. Eight columns added after their
+    table's spec (``paused_at``, ``abandoned_at``, ``content_hash``, the
+    import language pair, ``cycle_count``, ``cycle_topics``, the note
+    ``kind``) were silently dropped by export, restore and sync, because
+    only "declared columns exist" was checked, never "model columns are
+    declared"."""
+    undeclared: dict[str, list[str]] = {}
+    for name, spec in TABLES.items():
+        excluded = set(EXCLUDED_MODEL_COLUMNS.get(name, {}))
+        missing = set(spec.model.__table__.columns.keys()) - set(spec.columns) - excluded
+        if missing:
+            undeclared[name] = sorted(missing)
+    assert undeclared == {}, (
+        "Model columns missing from the backup/sync wire; declare them in "
+        f"TableSpec.columns or exclude them with a reason: {undeclared}"
+    )
+
+
+def test_every_excluded_column_exists_and_carries_a_reason():
+    for name, columns in EXCLUDED_MODEL_COLUMNS.items():
+        actual = set(TABLES[name].model.__table__.columns.keys())
+        for column, reason in columns.items():
+            assert column in actual, f"{name}.{column} is excluded but not a model column"
+            assert reason.strip(), f"{name}.{column} is excluded without a reason"
