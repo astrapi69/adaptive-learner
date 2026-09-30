@@ -75,6 +75,8 @@ import { useOrientationReanchor } from "../../hooks/lesson/interaction/useOrient
 import { useStepReanchor } from "../../hooks/lesson/interaction/useStepReanchor";
 import { clearHintUsage } from "../../lib/hints/hint-usage";
 import { readLearnerState } from "../../lib/learning/learnerState";
+import { useLessonWakeLock } from "../../hooks/lesson/session/useLessonWakeLock";
+import LessonNoProfileNotice from "../../components/lesson/LessonNoProfileNotice";
 
 interface UrlParams {
   setSlug: string;
@@ -309,6 +311,9 @@ export default function LessonPage() {
     status,
     lesson,
   );
+  // #3358 — keep the screen on while the lesson is open and not on its
+  // summary, also during silent reading (the setting defaults to on).
+  useLessonWakeLock(statusKind, currentStepIndex, playedLesson);
   if (statusKind) return <LessonStatusView kind={statusKind} error={error} />;
   // ``resolveLessonStatusKind`` already returns "error" when the lesson
   // is null, so this only narrows the type for the code below.
@@ -360,6 +365,10 @@ export default function LessonPage() {
 
         {/* #2319 — visible while test mode is active (preview build only). */}
         <TestModeBanner />
+
+        {/* #3364 — without a learner profile nothing here is saved; say so
+            up front instead of only on the summary's disabled button. */}
+        <LessonNoProfileNotice userId={learnerUserId} />
 
         {/* #2844 — one-time playful-mode discovery hint at the lesson start;
             the component gates itself on the pref + dismissal flags. */}

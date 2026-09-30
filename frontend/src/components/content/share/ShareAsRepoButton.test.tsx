@@ -38,6 +38,7 @@ const { storageMock } = vi.hoisted(() => {
 vi.mock("../../../storage", () => ({ getStorage: () => storageMock }));
 
 import ShareAsRepoButton from "./ShareAsRepoButton";
+import { TestFeatureProvider } from "../../../features/testFeatureProvider";
 import type { ContentLesson, ContentSetEntry } from "../../../storage/types";
 
 function entry(over: Partial<ContentSetEntry> = {}): ContentSetEntry {
@@ -167,7 +168,11 @@ function seedLessons(byName: Record<string, ContentLesson>): void {
 }
 
 async function openDialogAndExport(): Promise<void> {
-  render(<ShareAsRepoButton entry={entry()} />);
+  render(
+    <TestFeatureProvider context={{ mode: "dexie" }}>
+      <ShareAsRepoButton entry={entry()} />
+    </TestFeatureProvider>,
+  );
   fireEvent.click(await screen.findByTestId("user-set-share-repo"));
   const name = await screen.findByTestId("repo-export-name");
   fireEvent.change(name, { target: { value: "coach/deck" } });
@@ -228,5 +233,18 @@ describe("ShareAsRepoButton quality gate (#2376)", () => {
         screen.queryByTestId("repo-export-renamed-note"),
       ).not.toBeInTheDocument(),
     );
+  });
+});
+
+describe("ShareAsRepoButton in the desktop app (#3398)", () => {
+  it("is disabled with the browser-only reason, never failing at the last step", async () => {
+    render(
+      <TestFeatureProvider context={{ mode: "api" }}>
+        <ShareAsRepoButton entry={entry()} />
+      </TestFeatureProvider>,
+    );
+    const button = await screen.findByTestId("user-set-share-repo");
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute("title", "Only available in the browser version of the app.");
   });
 });

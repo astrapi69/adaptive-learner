@@ -137,6 +137,7 @@ vi.mock("../../utils/notify", () => ({
 
 import ContentPage from "./Content";
 import { recordContribution } from "../../lib/content/placement/contribution-history";
+import { DexieFeatureWrapper } from "../../features/testFeatureProvider";
 
 // source_language "de" matches the i18n fallback app language
 // (the test renders without an I18nProvider, so useI18n().lang is
@@ -174,8 +175,7 @@ function renderPage() {
   return render(
     <MemoryRouter>
       <ContentPage />
-    </MemoryRouter>,
-  );
+    </MemoryRouter>, { wrapper: DexieFeatureWrapper });
 }
 
 describe("ContentPage", () => {
