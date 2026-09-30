@@ -1026,9 +1026,9 @@
       "desc": "Kontrol ettikten sonra 'Cevaplarım' eşleştirmelerini oluşturduğun gibi, değerlendirme olmadan gösterir; değerlendirme ve doğru eşler 'Düzeltme' altındadır. Kapalı: doğru eş, 'Cevaplarım' içinde her hatanın hemen altında görünür."
     },
     "paused_retention": {
-      "title": "Duraklatılmış ders saklama süresi",
-      "hint": "Bu süreden daha eski duraklatılmış dersler otomatik olarak terk edilir. Yaşa bakılmaksızın en fazla 10 duraklatılmış ders saklanır.",
-      "label": "Duraklatılmış dersleri şu süre boyunca sakla",
+      "title": "Panodaki duraklatılmış dersler",
+      "hint": "Panodaki duraklatılmış dersler kartı yalnızca bu yaşa kadar olan dersleri gösterir. Daha eski bir ders yalnızca karttan kalkar: hiçbir şey terk edilmez, konumu ve cevapları korunur.",
+      "label": "Şundan eski duraklatılmış dersleri gizle",
       "7_days": "7 gün",
       "14_days": "14 gün",
       "30_days": "30 gün",
