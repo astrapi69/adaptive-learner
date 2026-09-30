@@ -50,6 +50,7 @@ import { useLessonStepState } from "../../../hooks/lesson/session/useLessonStepS
 import { clearHintUsage } from "../../../lib/hints/hint-usage";
 import { isPlayableExerciseStep } from "../../../lib/lesson/lesson-step-state";
 import RunnerFooter from "./RunnerFooter";
+import { FooterStatusProvider } from "./footer-status";
 import RunnerHeader from "./RunnerHeader";
 import RunnerContent from "./RunnerContent";
 import RunnerProgress from "./RunnerProgress";
@@ -155,56 +156,58 @@ export default function LessonRunner({ source, policy, summary, headerExtra }: L
 
   return (
     <main id="main" className="lesson-page flex flex-col min-h-full" data-testid={`${prefix}-page`}>
-      <RunnerHeader policy={policy} source={source} headerExtra={headerExtra} />
-      <div
-        ref={stepScrollRef}
-        aria-hidden="true"
-        className="scroll-mt-4"
-        data-testid={`${prefix}-step-anchor`}
-      />
-      <RunnerProgress
-        testIdPrefix={prefix}
-        i18nNamespace={policy.i18nNamespace}
-        position={source.position}
-        isSummary={source.isSummary}
-        tallies={source.tallies}
-      />
-      <RunnerMode mode={policy.mode}>
-        <RunnerContent
-          source={source}
-          policy={policy}
-          summary={summary}
-          stepIndex={index}
-          stepProps={{
-            exerciseRef,
-            enteredReviewed,
-            reviewedRaw: stepState.reviewedRaw,
-            stored: stepId ? progress?.step_results?.[stepId] : undefined,
-            onInteraction: stepState.setAnswerable,
-            onChecked: () => stepState.setChecked(true),
-            onScored: (scoredStepId, scored) => {
-              runResults.record(scoredStepId, scored);
-              source.onStepScored?.(scoredStepId, scored);
-            },
-          }}
+      <FooterStatusProvider>
+        <RunnerHeader policy={policy} source={source} headerExtra={headerExtra} />
+        <div
+          ref={stepScrollRef}
+          aria-hidden="true"
+          className="scroll-mt-4"
+          data-testid={`${prefix}-step-anchor`}
         />
-      </RunnerMode>
-      <RunnerFooter
-        policy={policy}
-        isSummary={source.isSummary}
-        isExerciseStep={isExerciseStep}
-        checked={checked}
-        enteredReviewed={enteredReviewed}
-        answerable={answerable}
-        isLastStep={index + 1 === total}
-        currentStepIndex={index}
-        goPrev={source.goPrev}
-        goNext={source.goNext}
-        onCheck={() => exerciseRef.current?.submit()}
-        paused={source.pause?.paused}
-        onPause={source.pause?.onToggle}
-        onEnd={source.pause?.onEnd}
-      />
+        <RunnerProgress
+          testIdPrefix={prefix}
+          i18nNamespace={policy.i18nNamespace}
+          position={source.position}
+          isSummary={source.isSummary}
+          tallies={source.tallies}
+        />
+        <RunnerMode mode={policy.mode}>
+          <RunnerContent
+            source={source}
+            policy={policy}
+            summary={summary}
+            stepIndex={index}
+            stepProps={{
+              exerciseRef,
+              enteredReviewed,
+              reviewedRaw: stepState.reviewedRaw,
+              stored: stepId ? progress?.step_results?.[stepId] : undefined,
+              onInteraction: stepState.setAnswerable,
+              onChecked: () => stepState.setChecked(true),
+              onScored: (scoredStepId, scored) => {
+                runResults.record(scoredStepId, scored);
+                source.onStepScored?.(scoredStepId, scored);
+              },
+            }}
+          />
+        </RunnerMode>
+        <RunnerFooter
+          policy={policy}
+          isSummary={source.isSummary}
+          isExerciseStep={isExerciseStep}
+          checked={checked}
+          enteredReviewed={enteredReviewed}
+          answerable={answerable}
+          isLastStep={index + 1 === total}
+          currentStepIndex={index}
+          goPrev={source.goPrev}
+          goNext={source.goNext}
+          onCheck={() => exerciseRef.current?.submit()}
+          paused={source.pause?.paused}
+          onPause={source.pause?.onToggle}
+          onEnd={source.pause?.onEnd}
+        />
+      </FooterStatusProvider>
     </main>
   );
 }

@@ -49,6 +49,7 @@
  */
 
 import { useI18n } from "../../../hooks/ui/useI18n";
+import { FooterStatusLine } from "./footer-status";
 import {
   CheckButton,
   EndButton,
@@ -227,7 +228,14 @@ export default function RunnerFooter(props: RunnerFooterProps) {
         />
       )}
       {!isSummary && !paused && (
-        <FooterAction props={props} testId={testId} className={actionClass(showPause || showEnd)} />
+        <>
+          <FooterStatusLine testId={testId("footer-status")} />
+          <FooterAction
+            props={props}
+            testId={testId}
+            className={actionClass(showPause || showEnd)}
+          />
+        </>
       )}
     </nav>
   );
