@@ -16,7 +16,7 @@
  * // in a renderer
  * useFooterStatus(submitted ? null : `${matched} / ${total}`);
  * // in a footer
- * const status = useFooterStatusText();
+ * <FooterStatusLine testId="lesson-footer-status" />
  */
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
@@ -47,7 +47,7 @@ export function useFooterStatus(text: string | null): void {
 }
 
 /** The status line currently published, or ``null``. */
-export function useFooterStatusText(): string | null {
+function useFooterStatusText(): string | null {
   return useContext(FooterStatusContext).text;
 }
 
