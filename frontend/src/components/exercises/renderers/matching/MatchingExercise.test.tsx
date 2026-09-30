@@ -1255,4 +1255,3 @@ describe("MatchingExercise: footer counter mirror (#3237)", () => {
         expect(screen.getByTestId("matching-counter")).toHaveTextContent("1 / 3 paired");
     });
 });
-

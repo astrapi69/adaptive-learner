@@ -230,6 +230,20 @@ function MatchingPostCheckToggle({
     );
 }
 
+/** The footer mirror of the running counter (#3237): the count while the
+ *  learner is still pairing, nothing once submitted or without pairs. */
+function _footerCounter(
+    submitted: boolean,
+    matched: number,
+    total: number,
+    t: (key: string, fallback: string) => string,
+): string | null {
+    if (submitted || total === 0) return null;
+    return t("lesson.exercise.matching.counter", "{matched} / {total} paired")
+        .replace("{matched}", String(matched))
+        .replace("{total}", String(total));
+}
+
 function MatchingExercise(
     {
         exercise,
@@ -547,13 +561,7 @@ function MatchingExercise(
     // #3237 — mirror the running counter into the sticky footer next to
     // Check: on a phone the tile columns push the top counter out of view,
     // and the footer is where the learner looks for "am I done?".
-    useFooterStatus(
-        !submitted && pairs.length > 0
-            ? t("lesson.exercise.matching.counter", "{matched} / {total} paired")
-                  .replace("{matched}", String(matches.size))
-                  .replace("{total}", String(pairs.length))
-            : null,
-    );
+    useFooterStatus(_footerCounter(submitted, matches.size, pairs.length, t));
 
     if (pairs.length === 0) {
         return (

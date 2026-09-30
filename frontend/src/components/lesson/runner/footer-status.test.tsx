@@ -35,6 +35,7 @@ const LESSON: Pick<
 const FOOTER_PROPS = {
   isSummary: false,
   isExerciseStep: true,
+  isInProgress: false,
   checked: false,
   enteredReviewed: false,
   answerable: false,
