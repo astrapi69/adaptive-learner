@@ -43,6 +43,7 @@ import {
   setBasePath,
   singleJsonLessonAdapter as engineSingleJsonLessonAdapter,
 } from "learn-content-engine";
+import { applyLessonSchemaDefaults } from "./schema-defaults";
 import type {
   ContentSetSource as EngineContentSetSource,
   LessonSetContext,
@@ -136,10 +137,10 @@ export const singleJsonLessonAdapter: LessonSourceAdapter = (
 /** Parse raw source data into a canonical {@link ContentLesson} via a
  *  source adapter (default: {@link singleJsonLessonAdapter}).
  *
- *  A lesson without ``cards`` gets an empty list (#3349): the schema does
- *  not require the field (its default is ``[]``), the API backend fills it
- *  in the same way through its Pydantic default, and ``ContentLesson``
- *  types it as always present. */
+ *  Every non-null default of the engine's lesson schema is filled in
+ *  (#3349 ``cards``, #3372 ``card_ids`` / ``distractors`` / card ``tags`` /
+ *  ``estimated_minutes`` and the rest): the API backend fills them through
+ *  its Pydantic model, and ``ContentLesson`` types them as present. */
 export function parseLesson(
   rawText: string,
   context: LessonSetContext,
@@ -150,5 +151,5 @@ export function parseLesson(
     context,
     adapter as EngineLessonSourceAdapter | undefined,
   );
-  return { ...parsed, cards: parsed.cards ?? [] } as ContentLesson;
+  return applyLessonSchemaDefaults({ ...parsed }) as ContentLesson;
 }

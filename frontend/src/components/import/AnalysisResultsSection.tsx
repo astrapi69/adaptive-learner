@@ -82,7 +82,7 @@ function AnalysisGrid({
       )}
       {result.strengths && result.strengths.length > 0 && (
         <Card title={t("import.field_strengths", "Strengths")} tone="ok">
-          <ul className="m-0 pl-5">
+          <ul className="m-0 list-disc pl-5">
             {result.strengths.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
@@ -91,7 +91,7 @@ function AnalysisGrid({
       )}
       {result.weaknesses && result.weaknesses.length > 0 && (
         <Card title={t("import.field_weaknesses", "Weaknesses")} tone="bad">
-          <ul className="m-0 pl-5">
+          <ul className="m-0 list-disc pl-5">
             {result.weaknesses.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
@@ -100,7 +100,7 @@ function AnalysisGrid({
       )}
       {result.error_patterns && result.error_patterns.length > 0 && (
         <Card title={t("import.field_errors", "Error patterns")} tone="warn">
-          <ul className="m-0 pl-5">
+          <ul className="m-0 list-disc pl-5">
             {result.error_patterns.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
@@ -114,7 +114,7 @@ function AnalysisGrid({
       )}
       {result.suggested_curriculum && result.suggested_curriculum.length > 0 && (
         <Card title={t("import.field_curriculum", "Suggested curriculum")} tone="default" wide>
-          <ol className="m-0 pl-5">
+          <ol className="m-0 list-decimal pl-5">
             {result.suggested_curriculum.map((l, i) => (
               <li key={i} data-testid={`lesson-${i}`} className="mb-2">
                 <strong>{l.title}</strong>{" "}

@@ -363,8 +363,13 @@
 # richtigen Antwort aufsteigt). Fundament-Animation der Juice-Schicht;
 # alle uebrigen Juice-Animationen re-usen bestehende Keyframes
 # (lernfunke-hop/-pop, matching-shake) - bewusst KEIN neues CSS sonst.
-# 2026-09-30 (#3373): +2 Zeilen in 01-base.css - Base-Layer-Regel
+# 2026-09-30 (#3371): +6 Zeilen in 01-base.css - Base-Layer-Reset fuer
+# flex/grid-Listen (<ul>/<ol> ohne Preflight behielten UA-Punkt, 40 px
+# Einzug und Raender). Fundament-Reset wie der Button-Reset (#2631), mit
+# null Spezifitaet; der Guard styles/list-reset.test.ts deckt die
+# uebrigen Listen ueber Utilities an der Komponente ab, kein weiteres CSS.
+# 2026-09-30 (#3373): +3 Zeilen in 01-base.css - Base-Layer-Regel
 # svg.lucide { flex-shrink: 0 }: ein SVG als Flex-Item darf auf 0
 # schrumpfen, ein umbrechendes Label quetschte die Icons. Eine Regel
 # statt shrink-0 an 427 Icon-Stellen; Utilities gewinnen weiter.
-7501
+7508

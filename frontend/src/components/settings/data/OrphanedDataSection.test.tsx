@@ -34,8 +34,12 @@ vi.mock("../../../lib/learning/learnerState", () => ({
 }));
 
 const notifySuccess = vi.fn();
+const notifyError = vi.fn();
 vi.mock("../../../utils/notify", () => ({
-  notify: { success: (...a: unknown[]) => notifySuccess(...a) },
+  notify: {
+    success: (...a: unknown[]) => notifySuccess(...a),
+    error: (...a: unknown[]) => notifyError(...a),
+  },
 }));
 
 import OrphanedDataSection from "./OrphanedDataSection";
@@ -50,6 +54,7 @@ beforeEach(() => {
     cardsDeleted: 2,
   });
   notifySuccess.mockReset();
+  notifyError.mockReset();
 });
 
 // One orphaned repo (jane/gone), one connected (owner/keep).
@@ -110,5 +115,16 @@ describe("OrphanedDataSection", () => {
     expect(deletion.lessonProgressIds).toEqual(["p1"]); // only jane/gone
     expect(deletion.setIds).toEqual(["waehrung"]);
     expect(notifySuccess).toHaveBeenCalled();
+  });
+
+  it("tells the user when the delete fails, and claims no success (#3384)", async () => {
+    seedOrphans();
+    deleteLearningData.mockReset().mockRejectedValue(new Error("locked"));
+    render(<OrphanedDataSection />);
+    fireEvent.click(await screen.findByTestId("orphaned-delete-button"));
+    fireEvent.click(await screen.findByTestId("orphaned-confirm-dialog-confirm"));
+    await waitFor(() => expect(notifyError).toHaveBeenCalled());
+    expect(String(notifyError.mock.calls[0][0])).toContain("locked");
+    expect(notifySuccess).not.toHaveBeenCalled();
   });
 });

@@ -47,7 +47,7 @@ export function useSetExport() {
       notify.success(t("content.my_lessons.exported", "Lesson exported."));
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
-      notify.error(`${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`);
+      notify.error(`${t("content.error.export_failed", "Could not export the lesson set.")} ${detail}`);
     }
   };
 
@@ -59,7 +59,7 @@ export function useSetExport() {
       notify.success(t("content.my_lessons.exported", "Lesson exported."));
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
-      notify.error(`${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`);
+      notify.error(`${t("content.error.export_failed", "Could not export the lesson set.")} ${detail}`);
     }
   };
 

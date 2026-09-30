@@ -3,6 +3,8 @@
     "loading": "Yükleniyor…",
     "loading_slow": "Bu beklenenden uzun sürüyor.",
     "view_load_failed": "Bu görünüm yüklenemedi.",
+    "view_crashed": "Bu sayfada bir hata oluştu. Diğer sayfalar çalışmaya devam ediyor.",
+    "crashed": "Bir şeyler ters gitti.",
     "reload": "Yeniden yükle",
     "name": "Adaptive Learner",
     "tagline": "Altı Yöntemli Modele göre uyarlanabilir öğrenme.",
@@ -456,6 +458,10 @@
     "ai_thinking": "Düşünüyor…",
     "ai_error": "YZ sağlayıcısı cevap veremedi.",
     "no_api_key": "Yapay zekâ anahtarı ayarlanmadı. Eğitmenle sohbet etmek için Ayarlar'da yapay zekâ sağlayıcın için bir anahtar ekle. Dersler ve tekrarlar anahtarsız çalışır.",
+    "ai_error_no_model": "Yapay zekâ sağlayıcın için bir model seçilmedi. Ayarlar > Yapay zeka bölümünden bir model seç.",
+    "ai_error_provider_auth": "Yapay zekâ sağlayıcın anahtarı reddetti. Anahtarı Ayarlar > Yapay zeka bölümünden kontrol et.",
+    "ai_error_rate_limited": "Yapay zekâ sağlayıcının sınırına ulaşıldı. Biraz bekle ya da kotanı kontrol et, sonra tekrar gönder.",
+    "ai_error_provider_unavailable": "Yapay zekâ sağlayıcına şu anda ulaşılamıyor. Bağlantını kontrol et ve tekrar gönder.",
     "welcome_empty": "Öğrenmeye hazır! İlk mesajını yaz.",
     "end_session": "Oturumu bitir",
     "end_session_confirm": "Emin misin? Oturumu kapatıp bir değerlendirme isteyeceğiz.",
@@ -512,6 +518,7 @@
       "heading": "Bağlantısı kesilen içerik",
       "summary": "Artık bağlı olmadığınız kaynaklardan {lessons} ders ve {cards} tekrar kartı.",
       "delete": "Bağlantısı kesilen ilerlemeyi sil",
+      "delete_failed": "Bağlantısı kesilmiş ilerleme silinemedi: {detail}",
       "confirm_title": "Bağlantısı kesilen ilerlemeyi sil",
       "confirm_message": "{lessons} ders ve {cards} tekrar kartı kalıcı olarak silinecek. Bu geri alınamaz.",
       "deleted": "{lessons} ders ve {cards} tekrar kartı silindi."
@@ -796,6 +803,8 @@
     "lesson_auto_advance_description": "Doğru cevaptan sonra otomatik olarak sonraki alıştırmaya geçer. Yanlış cevapta çözümü inceleyebilmen için her zaman bekler.",
     "ask_ai_visible": "'Yapay zekâya sor' düğmesini göster",
     "ask_ai_visible_description": "Teori ve alıştırmaların altında 'Yapay zekâya sor' düğmesini gösterir. Varsayılan olarak gösterilir; düğmenin yanıt verebilmesi için hâlâ kendi yapay zekâ anahtarına (BYOK) ihtiyacı vardır.",
+    "keep_screen_on": "Derslerde ekranı açık tut",
+    "keep_screen_on_description": "Bir ders açık olduğu sürece, ekrana dokunmadan okurken de ekran kapanmaz. Ders özetinde yeniden kapanabilir. iPhone'da iOS 16.4 veya üstü, ana ekrandaki uygulama olarak iOS 18.4 veya üstü gerekir.",
     "button_tooltips": "Buton ipuçlarını göster",
     "button_tooltips_description": "Simge butonlarının üzerine gelindiğinde ne yaptıklarını açıklayan bir ipucu gösterir. Ekran okuyucu etiketleri ayardan bağımsız olarak her zaman açık kalır.",
     "developer_mode": "Geliştirici Modu",
@@ -1026,9 +1035,9 @@
       "desc": "Kontrol ettikten sonra 'Cevaplarım' eşleştirmelerini oluşturduğun gibi, değerlendirme olmadan gösterir; değerlendirme ve doğru eşler 'Düzeltme' altındadır. Kapalı: doğru eş, 'Cevaplarım' içinde her hatanın hemen altında görünür."
     },
     "paused_retention": {
-      "title": "Duraklatılmış ders saklama süresi",
-      "hint": "Bu süreden daha eski duraklatılmış dersler otomatik olarak terk edilir. Yaşa bakılmaksızın en fazla 10 duraklatılmış ders saklanır.",
-      "label": "Duraklatılmış dersleri şu süre boyunca sakla",
+      "title": "Panodaki duraklatılmış dersler",
+      "hint": "Panodaki duraklatılmış dersler kartı yalnızca bu yaşa kadar olan dersleri gösterir. Daha eski bir ders yalnızca karttan kalkar: hiçbir şey terk edilmez, konumu ve cevapları korunur.",
+      "label": "Şundan eski duraklatılmış dersleri gizle",
       "7_days": "7 gün",
       "14_days": "14 gün",
       "30_days": "30 gün",
@@ -1281,6 +1290,7 @@
     "auto_run_error": "Otomatik yedek başarısız oldu: {{detail}}",
     "auto_restored": "Otomatik yedek geri yüklendi.",
     "auto_restore": "Geri yükle",
+    "auto_delete_failed": "Otomatik yedek silinemedi: {detail}",
     "auto_restore_error": "Geri yükleme başarısız oldu: {{detail}}",
     "auto_records": "{{n}} kayıt",
     "auto_none": "Henüz otomatik yedek yok. İlki 10 oturum veya 7 gün sonra çalışır.",
@@ -1757,7 +1767,8 @@
   },
   "feature": {
     "api_key_required": "API anahtarı gerekli. Ayarlardan bir sağlayıcı yapılandırın.",
-    "desktop_only": "Yalnızca masaüstü uygulamasıyla kullanılabilir."
+    "desktop_only": "Yalnızca masaüstü uygulamasıyla kullanılabilir.",
+    "browser_only": "Yalnızca uygulamanın tarayıcı sürümünde kullanılabilir."
   },
   "ui": {
     "cancel": "İptal",
@@ -1795,6 +1806,7 @@
       "unexpected": "Bir şeyler ters gitti."
     },
     "error_report": {
+      "report_button": "Sorun bildir",
       "dialog_title": "Bir sorun bildir",
       "intro": "Adaptive Learner bir hata yakaladı ve geliştirici için bir hata raporu hazırlayabilir.",
       "description_label": "Yeniden oluşturma adımları (isteğe bağlı)",
@@ -2860,6 +2872,7 @@
       "change_failed": "Durum güncellenemedi.",
       "deleted": "Set kaldırıldı.",
       "delete_failed": "Set kaldırılamadı.",
+      "progress_not_deleted": "Kaldırıldı, ancak öğrenme ilerlemeniz silinemedi: {detail}",
       "delete_confirm": "İndirilen set ve dersleri İçeriklerim'den kaldırılacak. Öğrenme ilerlemen korunur ve seti istediğin zaman yeniden indirebilirsin.",
       "select_all": "Tümünü seç",
       "select_set": "{title} öğesini seç",
@@ -3016,7 +3029,9 @@
       "list_failed": "İçerik setleri yüklenemedi.",
       "download_failed": "Set indirilemedi.",
       "update_all_failed": "{n} güncelleme başarısız oldu.",
-      "open_failed": "Ders açılamadı."
+      "open_failed": "Ders açılamadı.",
+      "export_failed": "Ders seti dışa aktarılamadı.",
+      "share_check_failed": "Set paylaşım için kontrol edilemedi."
     },
     "tree": {
       "i_speak": "Konuştuğum dil",
@@ -3956,6 +3971,7 @@
     "cache_clear": "Önbelleği temizle",
     "cache_clear_confirm": "Çevrimdışı önbellek temizlensin mi?",
     "cache_clear_action": "Evet, temizle",
+    "cache_clear_failed": "Çevrimdışı önbellek temizlenemedi: {detail}",
     "cache_cleared": "Çevrimdışı önbellek temizlendi.",
     "update": {
       "message": "Yeni bir sürüm mevcut.",
@@ -4356,6 +4372,8 @@
       "hint": "Başkalarının bu HERKESE AÇIK depoyu ekleyebilmesi için bu bağlantıyı paylaş. Özel bir depo için URL'yi ve salt okunur bir belirteci ayrı ayrı gönder.",
       "qr_alt": "Paylaşım bağlantısı için QR kodu"
     },
+    "remove_failed": "Depo kaldırılamadı: {detail}",
+    "reorder_failed": "Depoların sırası değiştirilemedi: {detail}",
     "progress": {
       "syncing": "Eşitleniyor…",
       "validating": "Depo doğrulanıyor…",
