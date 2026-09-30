@@ -16,7 +16,11 @@ export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
 // backup lacks ``set_runs`` and its element-error rows have no ``run_id``
 // (they import as the implicit run 1, materialised lazily on first
 // read/write). 1.4.0 added the optional ``local_storage`` snapshot block.
-export const BACKUP_VERSION = "1.5.0";
+// 1.6.0 — #3363: the API export now carries paused_at / abandoned_at,
+// content_hash + the import language pair, cycle_count / cycle_topics and
+// the session-note kind. One version for both modes from here on; the
+// backend's BACKUP_VERSION must match (parity test in backup-tables.test).
+export const BACKUP_VERSION = "1.6.0";
 
 export const EXCLUDED_USER_SETTINGS_FIELDS: ReadonlySet<string> = new Set([
     "api_key_anthropic",
