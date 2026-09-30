@@ -512,6 +512,7 @@
       "heading": "Nicht verbundene Inhalte",
       "summary": "{lessons} Lektionen und {cards} Wiederholungskarten aus Quellen, mit denen du nicht mehr verbunden bist.",
       "delete": "Nicht verbundenen Fortschritt löschen",
+      "delete_failed": "Der nicht verbundene Fortschritt konnte nicht gelöscht werden: {detail}",
       "confirm_title": "Nicht verbundenen Fortschritt löschen",
       "confirm_message": "{lessons} Lektionen und {cards} Wiederholungskarten werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden.",
       "deleted": "{lessons} Lektionen und {cards} Wiederholungskarten gelöscht."
@@ -1281,6 +1282,7 @@
     "auto_run_error": "Automatische Sicherung fehlgeschlagen: {{detail}}",
     "auto_restored": "Automatische Sicherung wiederhergestellt.",
     "auto_restore": "Wiederherstellen",
+    "auto_delete_failed": "Das automatische Backup konnte nicht gelöscht werden: {detail}",
     "auto_restore_error": "Wiederherstellung fehlgeschlagen: {{detail}}",
     "auto_records": "{{n}} Datensätze",
     "auto_none": "Noch keine automatischen Sicherungen. Die erste läuft nach 10 Sitzungen oder 7 Tagen.",
@@ -2860,6 +2862,7 @@
       "change_failed": "Status konnte nicht aktualisiert werden.",
       "deleted": "Set entfernt.",
       "delete_failed": "Set konnte nicht entfernt werden.",
+      "progress_not_deleted": "Entfernt, aber dein Lernfortschritt konnte nicht gelöscht werden: {detail}",
       "delete_confirm": "Das heruntergeladene Set und seine Lektionen werden aus „Meine Inhalte“ entfernt. Dein Lernfortschritt bleibt erhalten, und du kannst das Set jederzeit erneut herunterladen.",
       "select_all": "Alle auswählen",
       "select_set": "{title} auswählen",
@@ -3956,6 +3959,7 @@
     "cache_clear": "Cache leeren",
     "cache_clear_confirm": "Offline-Cache wirklich leeren?",
     "cache_clear_action": "Ja, leeren",
+    "cache_clear_failed": "Der Offline-Cache konnte nicht geleert werden: {detail}",
     "cache_cleared": "Offline-Cache geleert.",
     "update": {
       "message": "Eine neue Version ist verfügbar.",
@@ -4356,6 +4360,8 @@
       "hint": "Teile diesen Link, damit andere dieses ÖFFENTLICHE Repository hinzufügen können. Für ein privates Repository sende die URL und ein schreibgeschütztes Token separat.",
       "qr_alt": "QR-Code für den Teilen-Link"
     },
+    "remove_failed": "Das Repository konnte nicht entfernt werden: {detail}",
+    "reorder_failed": "Die Reihenfolge der Repositories konnte nicht geändert werden: {detail}",
     "progress": {
       "syncing": "Synchronisiere…",
       "validating": "Repository wird validiert…",

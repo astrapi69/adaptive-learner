@@ -479,6 +479,7 @@ settings:
     heading: "Konten terputus"
     summary: "{lessons} pelajaran dan {cards} kartu ulasan dari sumber yang tidak lagi terhubung dengan Anda."
     delete: "Hapus progres yang terputus"
+    delete_failed: "Kemajuan yang terputus tidak dapat dihapus: {detail}"
     confirm_title: "Hapus progres yang terputus"
     confirm_message: "{lessons} pelajaran dan {cards} kartu ulasan akan dihapus permanen. Ini tidak dapat dibatalkan."
     deleted: "{lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
@@ -1205,6 +1206,7 @@ backup:
   auto_run_error: 'Pencadangan otomatis gagal: {{detail}}'
   auto_restored: Pencadangan otomatis dipulihkan.
   auto_restore: Pulihkan
+  auto_delete_failed: "Cadangan otomatis tidak dapat dihapus: {detail}"
   auto_restore_error: 'Pemulihan gagal: {{detail}}'
   auto_records: '{{n}} catatan'
   auto_none: Belum ada pencadangan otomatis. Yang pertama berjalan setelah 10 sesi atau 7 hari.
@@ -2655,6 +2657,7 @@ content:
     change_failed: "Tidak dapat memperbarui status."
     deleted: "Set dihapus."
     delete_failed: "Tidak dapat menghapus set."
+    progress_not_deleted: "Dihapus, tetapi kemajuan belajar Anda tidak dapat dihapus: {detail}"
     delete_confirm: "Set yang diunduh dan pelajarannya akan dihapus dari Konten Saya. Progres belajarmu tetap tersimpan, dan kamu dapat mengunduh set lagi kapan saja."
     select_all: "Pilih semua"
     select_set: "Pilih {title}"
@@ -3648,6 +3651,7 @@ pwa:
   cache_clear: "Hapus cache"
   cache_clear_confirm: "Hapus cache luring?"
   cache_clear_action: "Ya, hapus"
+  cache_clear_failed: "Cache offline tidak dapat dikosongkan: {detail}"
   cache_cleared: "Cache luring dihapus."
   update:
     message: "Versi baru telah tersedia."
@@ -4026,6 +4030,8 @@ content_repo:
     copy_failed: "Tidak dapat menyalin."
     hint: "Bagikan tautan ini agar orang lain dapat menambahkan repo PUBLIK ini. Untuk repo privat, kirimkan URL + token hanya-baca secara terpisah."
     qr_alt: "Kode QR untuk tautan berbagi"
+  remove_failed: "Repositori tidak dapat dihapus: {detail}"
+  reorder_failed: "Urutan repositori tidak dapat diubah: {detail}"
   progress:
     syncing: "Menyinkronkan…"
     validating: "Memvalidasi repositori…"
