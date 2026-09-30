@@ -1928,6 +1928,10 @@ repo:
     description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
     enable_git: "git 영속화 활성화"
 lesson:
+  progress_io:
+    save_failed: "이 레슨의 진행 상황을 저장하지 못했습니다: {detail}"
+    load_failed: "이 레슨의 저장된 진행 상황을 불러오지 못했습니다: {detail}"
+    create_profile: "학습 프로필 만들기"
   mascot_label: "학습 친구"
   combo_chip: "x{n}"
   combo_aria: "연속 정답: {n}회 연속"
@@ -2435,6 +2439,8 @@ lesson:
     body: '"{title}"을(를) 일시 정지했습니다. 멈춘 곳부터 계속할까요, 처음부터 다시 시작할까요?'
     action_resume: "계속"
     action_restart: "처음부터 다시"
+    restart_confirm_title: "처음부터 다시 시작할까요?"
+    restart_confirm_body: "이 레슨의 진행 위치와 답변이 초기화됩니다. 이미 익힌 내용(숙련도)은 그대로 유지됩니다."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:
