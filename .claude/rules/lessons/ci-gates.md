@@ -389,7 +389,7 @@ sofort rote Motive, und jeder brauchte eine andere Sorte Antwort:
   abwarten - hier war die Wurzel die NAVIGATION: `page.goto` feuert auf
   der Lektionsroute `beforeunload`, dessen Handler die Zeile schreibt, die
   das Dashboard gleich darauf liest. Ein Routenwechsel innerhalb der App
-  entfernt den Listener über den Effekt-Cleanup, statt ihn zu feuern. Wenn
+  feuert ihn nicht, schreibt seit #3075 aber per Unmount-Pause. Wenn
   Lesung und Schreibvorgang von DERSELBEN Aktion ausgehen, ordnet keine
   Wartezeit sie; die Aktion muss sich ändern.
 - ein Wert, den die Fläche im geöffneten Zustand weiter verfeinert

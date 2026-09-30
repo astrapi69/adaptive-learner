@@ -2097,6 +2097,10 @@ each card row (`CardImageField`).
       the pause button in the footer -> the Continue/Pause/Abandon dialog
       appears (before: left the lesson silently); "Pause" -> the lesson is
       listed on the dashboard under "Paused lessons"
+- [ ] TC-0919 Without a learner profile (#3364): in a private window without
+      onboarding, open a lesson -> at the top a notice says a learner
+      profile is needed to save progress, with the link "Create a learner
+      profile" leading to onboarding; with a profile the notice is absent
 - [ ] TC-0451 Leaving through the app navigation (#3075): answer one exercise, then
       move two theory steps further, then leave through the menu
       (hamburger -> "Settings"), the logo or the browser's back button ->
@@ -2104,6 +2108,15 @@ each card row (`CardImageField`).
       resume dialog and lands on the theory step you were on (not on the
       exercise before it); on the phone the same through the menu drawer
       [E2E: `lesson-pause-position.spec.ts`]
+- [ ] TC-0917 Switching apps mid-lesson (#3361): answer one exercise, lock the phone
+      or switch to another app or tab and come back -> NO "Resume lesson?"
+      dialog, the lesson goes on at the same step; afterwards the
+      Dashboard does not list it under "Paused lessons"
+- [ ] TC-0918 "Start over" in the resume dialog (#3361): open a paused lesson, press
+      "Start over" -> the question "Start over from the beginning?"
+      appears; "Back to options" returns to the choice and nothing is
+      reset; press "Start over" again and "Start over" in the question ->
+      the lesson begins at step 1
 - [ ] TC-0452 Auto-advance + "Back" (#1921): with "Advance automatically"
       (Settings -> Learning) ON, answer an exercise correctly so the app
       jumps to the next step by itself -> then click "Back": the previous
@@ -2261,16 +2274,20 @@ each card row (`CardImageField`).
 
 ### TS-0066 Settings > Data: housekeeping cards (#2955)
 - [ ] TC-0499 Settings > Data: the "Maximum lesson size" card sits directly
-      below "Offline cache"; the "Paused lesson retention" card sits
+      below "Offline cache"; the "Paused lessons on the Dashboard" card sits
       directly above "Disconnected content" (with no disconnected
       content, directly above the danger zone)
 - [ ] TC-0500 Settings > Learning ends with "Reminders"; neither card is there
       any more
 - [ ] TC-0501 Set "Steps per part" to 15, reload the page: the value stays 15;
-      set "Keep paused lessons for" to "60 days", reload: the choice
-      stays "60 days"
+      set "Hide paused lessons older than" to "60 days", reload: the
+      choice stays "60 days"
 - [ ] TC-0502 Repeat both in browser mode (Settings > Data > storage mode): same
       behaviour
+- [ ] TC-0916 Set the window to "7 days": a lesson paused more than 7 days ago is
+      missing from the paused-lessons card on the Dashboard, but it is not
+      abandoned: opened, it resumes at its position with its answers
+      (#3360; backdate the pause via the device date or a backup file)
 
 ### TS-0067 In-set position + navigation (#2793)
 - [ ] TC-0503 Inside a lesson from a set, the header shows "Lesson N of M"
