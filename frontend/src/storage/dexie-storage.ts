@@ -97,6 +97,7 @@ import {
   wasEvictedDexie,
 } from "./lessons/speech-recordings-dexie";
 import { awardLessonXpDexie } from "./gamification/lesson-xp-dexie";
+import { recordLessonCompletionSessionDexie } from "./gamification/lesson-session-dexie";
 import {
   archiveRetiredDexie,
   computeReviewQueueDexie,
@@ -239,6 +240,9 @@ export const dexieStorage: IStorageService = {
       const justCompleted = updated.status === "completed" && !wasCompleted;
       if (justCompleted) {
         try {
+          // #3375 - the lesson day is activity, as in API mode: write the
+          // content session first so the XP streak multiplier sees it.
+          await recordLessonCompletionSessionDexie(userId);
           await awardLessonXpDexie(userId, updated, body.combo_bonus_xp ?? 0);
           // Evaluate badges so lesson-gated badges
           // (first_lesson, lessons_10, etc.) fire after
