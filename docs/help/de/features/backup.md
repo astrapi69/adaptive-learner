@@ -17,7 +17,12 @@ element-genaue Fehler, Gamification mit XP/Streak/Badges,
 Missionen, Anki-Karten, Notizen und mehr), **deine
 heruntergeladenen Content-Sets** und ein **localStorage-Snapshot**
 (deine Beiträge, eigene Lernpfade und lokale Einstellungen).
-Nichts Wichtiges bleibt zurück.
+
+**Noch nicht enthalten:** verbundene Content-Repositories,
+eingelöste Einladungen und die Einstellungen des Learning
+Repository. Nach der Wiederherstellung auf einem neuen Gerät sind
+die Content-Sets wieder da, verbinde aber ihre Repositories neu
+(und löse Einladungen erneut ein), damit Updates weiter ankommen.
 
 Vor dem Export zeigt die App eine Vorschau **„Dein Backup
 enthält …"** mit Datensatz-Zählungen pro Bereich, damit du vor dem
@@ -97,4 +102,4 @@ reine JSON-Backups lassen sich weiterhin sauber importieren.
 ## Verwandte Seiten
 
 - [Einstellungen](../user-guide/settings.md) - alle Daten-Aktionen im Überblick
-- [Mehrere Content-Repositories](content-repos.md) - verbundene Repos sind Teil des Snapshots
+- [Mehrere Content-Repositories](content-repos.md) - verbundene Repos sind noch nicht Teil des Backups, nach der Wiederherstellung neu verbinden

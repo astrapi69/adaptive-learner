@@ -3,6 +3,8 @@
     "loading": "불러오는 중…",
     "loading_slow": "예상보다 시간이 오래 걸리고 있습니다.",
     "view_load_failed": "이 화면을 불러올 수 없습니다.",
+    "view_crashed": "이 페이지에서 오류가 발생했습니다. 다른 페이지는 계속 사용할 수 있습니다.",
+    "crashed": "문제가 발생했습니다.",
     "reload": "새로고침",
     "name": "Adaptive Learner",
     "tagline": "6단계 방법론 모델에 따른 적응형 학습.",
@@ -456,6 +458,10 @@
     "ai_thinking": "생각하는 중…",
     "ai_error": "AI가 응답할 수 없었습니다.",
     "no_api_key": "AI 키가 설정되지 않았습니다. 튜터와 대화하려면 설정에서 AI 제공자의 키를 추가하세요. 레슨과 복습은 키 없이도 작동합니다.",
+    "ai_error_no_model": "AI 제공자의 모델이 선택되지 않았습니다. 설정 > AI에서 모델을 선택하세요.",
+    "ai_error_provider_auth": "AI 제공자가 키를 거부했습니다. 설정 > AI에서 키를 확인하세요.",
+    "ai_error_rate_limited": "AI 제공자의 한도에 도달했습니다. 잠시 기다리거나 할당량을 확인한 후 다시 보내세요.",
+    "ai_error_provider_unavailable": "지금은 AI 제공자에 연결할 수 없습니다. 연결을 확인하고 다시 보내세요.",
     "welcome_empty": "학습할 준비가 되었습니다! 첫 메시지를 작성하세요.",
     "end_session": "세션 종료",
     "end_session_confirm": "정말이신가요? 세션을 종료하고 평가할 수 있습니다.",
@@ -1761,7 +1767,8 @@
   },
   "feature": {
     "api_key_required": "API 키가 필요합니다. 설정에서 제공자를 설정하세요.",
-    "desktop_only": "데스크톱 앱에서만 사용할 수 있습니다."
+    "desktop_only": "데스크톱 앱에서만 사용할 수 있습니다.",
+    "browser_only": "앱의 브라우저 버전에서만 사용할 수 있습니다."
   },
   "ui": {
     "cancel": "취소",
@@ -1799,6 +1806,7 @@
       "unexpected": "문제가 발생했습니다."
     },
     "error_report": {
+      "report_button": "문제 신고",
       "dialog_title": "문제 신고",
       "intro": "Adaptive Learner가 오류를 감지했으며 개발자에게 보낼 버그 보고서를 준비할 수 있습니다.",
       "description_label": "재현 단계 (선택)",
@@ -3021,7 +3029,9 @@
       "list_failed": "콘텐츠 세트를 불러올 수 없었습니다.",
       "download_failed": "세트를 다운로드할 수 없었습니다.",
       "update_all_failed": "업데이트 {n}개가 실패했습니다.",
-      "open_failed": "레슨을 열 수 없었습니다."
+      "open_failed": "레슨을 열 수 없었습니다.",
+      "export_failed": "레슨 세트를 내보낼 수 없었습니다.",
+      "share_check_failed": "공유를 위해 세트를 확인할 수 없었습니다."
     },
     "tree": {
       "i_speak": "내가 구사하는 언어",

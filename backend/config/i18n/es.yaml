@@ -2,6 +2,8 @@ app:
   loading: "Cargando…"
   loading_slow: "Esto está tardando más de lo esperado."
   view_load_failed: "No se pudo cargar esta vista."
+  view_crashed: "Se produjo un error en esta página. Las demás páginas siguen funcionando."
+  crashed: "Algo salió mal."
   reload: "Recargar"
   name: Adaptive Learner
   tagline: Aprendizaje que se adapta a ti.
@@ -426,6 +428,10 @@ session:
   ai_thinking: Pensando...
   ai_error: El proveedor de IA no pudo responder.
   no_api_key: "No hay clave de IA configurada. Añade una clave para tu proveedor de IA en Ajustes para chatear con el tutor. Las lecciones y los repasos funcionan sin clave."
+  ai_error_no_model: "No hay ningún modelo seleccionado para tu proveedor de IA. Elige un modelo en Ajustes > IA."
+  ai_error_provider_auth: "Tu proveedor de IA rechazó la clave. Revisa la clave en Ajustes > IA."
+  ai_error_rate_limited: "Se alcanzó el límite de tu proveedor de IA. Espera un momento o revisa tu cuota y vuelve a enviar."
+  ai_error_provider_unavailable: "Ahora mismo no se puede contactar con tu proveedor de IA. Revisa la conexión y vuelve a enviar."
   welcome_empty: "¡Listo para aprender! Escribe tu primer mensaje."
   end_session: Terminar sesión
   end_session_confirm: ¿Seguro? Cerraremos la sesión y pediremos una valoración.
@@ -1641,6 +1647,7 @@ notebooklm:
 feature:
   api_key_required: "Se requiere una clave de API. Configura un proveedor en los ajustes."
   desktop_only: "Solo disponible con la aplicación de escritorio."
+  browser_only: "Solo disponible en la versión de navegador de la app."
 ui:
   cancel: "Cancelar"
   hide_secret: "Ocultar valor"
@@ -1674,6 +1681,7 @@ ui:
     generic: "Algo salió mal. Inténtalo de nuevo más tarde."
     unexpected: "Algo salió mal."
   error_report:
+    report_button: "Informar de un problema"
     dialog_title: "Informar de un problema"
     intro: "Adaptive Learner detectó un error y puede preparar un informe de error para el desarrollador."
     description_label: "Pasos para reproducir (opcional)"
@@ -2792,6 +2800,8 @@ content:
     download_failed: "No se pudo descargar el set."
     update_all_failed: "{n} actualizaciones han fallado."
     open_failed: "No se pudo abrir la lección."
+    export_failed: "No se pudo exportar el conjunto de lecciones."
+    share_check_failed: "No se pudo comprobar el conjunto para compartirlo."
   tree:
     i_speak: Hablo
     learn: Aprender {lang}

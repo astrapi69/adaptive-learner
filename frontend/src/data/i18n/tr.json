@@ -3,6 +3,8 @@
     "loading": "Yükleniyor…",
     "loading_slow": "Bu beklenenden uzun sürüyor.",
     "view_load_failed": "Bu görünüm yüklenemedi.",
+    "view_crashed": "Bu sayfada bir hata oluştu. Diğer sayfalar çalışmaya devam ediyor.",
+    "crashed": "Bir şeyler ters gitti.",
     "reload": "Yeniden yükle",
     "name": "Adaptive Learner",
     "tagline": "Altı Yöntemli Modele göre uyarlanabilir öğrenme.",
@@ -456,6 +458,10 @@
     "ai_thinking": "Düşünüyor…",
     "ai_error": "YZ sağlayıcısı cevap veremedi.",
     "no_api_key": "Yapay zekâ anahtarı ayarlanmadı. Eğitmenle sohbet etmek için Ayarlar'da yapay zekâ sağlayıcın için bir anahtar ekle. Dersler ve tekrarlar anahtarsız çalışır.",
+    "ai_error_no_model": "Yapay zekâ sağlayıcın için bir model seçilmedi. Ayarlar > Yapay zeka bölümünden bir model seç.",
+    "ai_error_provider_auth": "Yapay zekâ sağlayıcın anahtarı reddetti. Anahtarı Ayarlar > Yapay zeka bölümünden kontrol et.",
+    "ai_error_rate_limited": "Yapay zekâ sağlayıcının sınırına ulaşıldı. Biraz bekle ya da kotanı kontrol et, sonra tekrar gönder.",
+    "ai_error_provider_unavailable": "Yapay zekâ sağlayıcına şu anda ulaşılamıyor. Bağlantını kontrol et ve tekrar gönder.",
     "welcome_empty": "Öğrenmeye hazır! İlk mesajını yaz.",
     "end_session": "Oturumu bitir",
     "end_session_confirm": "Emin misin? Oturumu kapatıp bir değerlendirme isteyeceğiz.",
@@ -1761,7 +1767,8 @@
   },
   "feature": {
     "api_key_required": "API anahtarı gerekli. Ayarlardan bir sağlayıcı yapılandırın.",
-    "desktop_only": "Yalnızca masaüstü uygulamasıyla kullanılabilir."
+    "desktop_only": "Yalnızca masaüstü uygulamasıyla kullanılabilir.",
+    "browser_only": "Yalnızca uygulamanın tarayıcı sürümünde kullanılabilir."
   },
   "ui": {
     "cancel": "İptal",
@@ -1799,6 +1806,7 @@
       "unexpected": "Bir şeyler ters gitti."
     },
     "error_report": {
+      "report_button": "Sorun bildir",
       "dialog_title": "Bir sorun bildir",
       "intro": "Adaptive Learner bir hata yakaladı ve geliştirici için bir hata raporu hazırlayabilir.",
       "description_label": "Yeniden oluşturma adımları (isteğe bağlı)",
@@ -3021,7 +3029,9 @@
       "list_failed": "İçerik setleri yüklenemedi.",
       "download_failed": "Set indirilemedi.",
       "update_all_failed": "{n} güncelleme başarısız oldu.",
-      "open_failed": "Ders açılamadı."
+      "open_failed": "Ders açılamadı.",
+      "export_failed": "Ders seti dışa aktarılamadı.",
+      "share_check_failed": "Set paylaşım için kontrol edilemedi."
     },
     "tree": {
       "i_speak": "Konuştuğum dil",

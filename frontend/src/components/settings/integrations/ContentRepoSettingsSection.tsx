@@ -30,10 +30,13 @@ import { SettingsSection } from "../SettingsSection";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage } from "../../../storage";
 import { readLearnerState } from "../../../lib/learning/learnerState";
+import { type DeletionPlan } from "../../../lib/content/browse/lifecycle/orphan-cleanup";
 import {
-  planRepoDataDeletion,
-  type DeletionPlan,
-} from "../../../lib/content/browse/lifecycle/orphan-cleanup";
+  computeRepoDeletionPlan,
+  planAtConfirm,
+  planRepoDeletionOrThrow,
+  reportRemoval,
+} from "../../../hooks/content/set-actions/deletion-plans";
 import RemoveRepoDialog from "./RemoveRepoDialog";
 import {
   OFFICIAL_SOURCE,
@@ -428,23 +431,9 @@ export default function ContentRepoSettingsSection() {
     const source = userRepoSource(repo.owner, repo.repo);
     setRemoveTarget(repo);
     setRemovePlan(null);
-    const userId = readLearnerState().userId;
-    if (!userId) return;
-    try {
-      const storage = getStorage();
-      const [progress, cards, setsRes] = await Promise.all([
-        storage.lessonProgress.list(userId),
-        storage.elementErrors.list(userId, { includeMastered: true }),
-        storage.contentLoader.listSets(),
-      ]);
-      setRemovePlan(
-        planRepoDataDeletion(source, progress, cards, setsRes.sets),
-      );
-    } catch {
-      // Counts unavailable → the dialog keeps the checkbox but shows no
-      // number (Numeric-Claims discipline: never invent a count).
-      setRemovePlan(null);
-    }
+    // Counts unavailable resolve to null: the dialog keeps the checkbox but
+    // shows no number (Numeric-Claims discipline: never invent a count).
+    setRemovePlan(await computeRepoDeletionPlan(source));
   }, []);
 
   const confirmRemove = useCallback(
@@ -454,26 +443,37 @@ export default function ContentRepoSettingsSection() {
       const source = userRepoSource(repo.owner, repo.repo);
       setBusy(true);
       try {
+        // #3382 - settle the plan before the repo goes (it reads the set
+        // list); a confirm while the dialog was counting used to skip it.
+        const learnerData = deleteProgress
+          ? await planAtConfirm(removePlan, () => planRepoDeletionOrThrow(source))
+          : null;
         await removeUserRepo(source);
         clearRepoToken(source);
         clearRepoRating(source);
-        if (deleteProgress && removePlan) {
+        if (learnerData) {
           const userId = readLearnerState().userId;
-          if (userId) {
-            const { lessonsDeleted, cardsDeleted } =
-              await getStorage().learningData.deleteLearningData(userId, {
-                lessonProgressIds: removePlan.lessonProgressIds,
-                setIds: removePlan.orphanedSetIds,
-              });
-            notify.success(
-              t(
-                "content_repo.remove.deleted",
-                "Removed. Deleted {lessons} lessons and {cards} review cards.",
-              )
-                .replace("{lessons}", String(lessonsDeleted))
-                .replace("{cards}", String(cardsDeleted)),
-            );
+          let progressError = learnerData.planError;
+          if (progressError === null && userId && learnerData.plan) {
+            try {
+              const { lessonsDeleted, cardsDeleted } =
+                await getStorage().learningData.deleteLearningData(userId, {
+                  lessonProgressIds: learnerData.plan.lessonProgressIds,
+                  setIds: learnerData.plan.orphanedSetIds,
+                });
+              notify.success(
+                t(
+                  "content_repo.remove.deleted",
+                  "Removed. Deleted {lessons} lessons and {cards} review cards.",
+                )
+                  .replace("{lessons}", String(lessonsDeleted))
+                  .replace("{cards}", String(cardsDeleted)),
+              );
+            } catch (err) {
+              progressError = err instanceof Error ? err.message : String(err);
+            }
           }
+          if (progressError !== null) reportRemoval(t, progressError, "");
         }
         setRemoveTarget(null);
         setRemovePlan(null);

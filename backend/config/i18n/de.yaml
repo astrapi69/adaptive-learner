@@ -2,6 +2,8 @@ app:
   loading: "Lädt …"
   loading_slow: "Das dauert länger als erwartet."
   view_load_failed: "Diese Ansicht ließ sich nicht laden."
+  view_crashed: "Auf dieser Seite ist ein Fehler aufgetreten. Die anderen Seiten funktionieren weiter."
+  crashed: "Etwas ist schiefgelaufen."
   reload: "Neu laden"
   name: Adaptive Learner
   tagline: Adaptives Lernen nach dem Sechs-Methoden-Modell.
@@ -426,6 +428,10 @@ session:
   ai_thinking: Denkt nach …
   ai_error: Die KI konnte nicht antworten.
   no_api_key: "Kein KI-Schlüssel gesetzt. Hinterlege in den Einstellungen einen Schlüssel für deinen KI-Anbieter, um mit dem Tutor zu chatten. Lektionen und Wiederholungen funktionieren ohne Schlüssel."
+  ai_error_no_model: "Für deinen KI-Anbieter ist kein Modell gewählt. Wähle ein Modell unter Einstellungen > KI."
+  ai_error_provider_auth: "Dein KI-Anbieter hat den Schlüssel abgelehnt. Prüfe den Schlüssel unter Einstellungen > KI."
+  ai_error_rate_limited: "Das Limit deines KI-Anbieters ist erreicht. Warte einen Moment oder prüfe dein Kontingent und sende dann erneut."
+  ai_error_provider_unavailable: "Dein KI-Anbieter ist gerade nicht erreichbar. Prüfe die Verbindung und sende erneut."
   welcome_empty: "Bereit zum Lernen! Schreibe deine erste Nachricht."
   end_session: Session beenden
   end_session_confirm: Sicher? Wir können die Session beenden und bewerten.
@@ -1641,6 +1647,7 @@ notebooklm:
 feature:
   api_key_required: "API-Schlüssel erforderlich. Konfiguriere einen Provider in den Einstellungen."
   desktop_only: "Nur mit der Desktop-App verfügbar."
+  browser_only: "Nur in der Browser-Version der App verfügbar."
 ui:
   cancel: "Abbrechen"
   hide_secret: "Wert verbergen"
@@ -1674,6 +1681,7 @@ ui:
     generic: "Etwas ist schiefgelaufen. Bitte versuche es später erneut."
     unexpected: "Etwas ist schiefgelaufen."
   error_report:
+    report_button: "Problem melden"
     dialog_title: "Fehler melden"
     intro: "Adaptive Learner hat einen Fehler erkannt und kann einen Bug-Report für den Entwickler vorbereiten."
     description_label: "Schritte zur Reproduktion (optional)"
@@ -2795,6 +2803,8 @@ content:
     download_failed: "Set konnte nicht heruntergeladen werden."
     update_all_failed: "{n} Aktualisierungen sind fehlgeschlagen."
     open_failed: "Lektion konnte nicht geöffnet werden."
+    export_failed: "Lernset konnte nicht exportiert werden."
+    share_check_failed: "Das Set konnte nicht für das Teilen geprüft werden."
   tree:
     i_speak: Ich spreche
     learn: '{lang} lernen'

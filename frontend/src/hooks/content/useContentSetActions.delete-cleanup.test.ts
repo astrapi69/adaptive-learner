@@ -48,8 +48,12 @@ vi.mock("../../lib/learning/learnerState", () => ({
   readLearnerState: () => ({ userId: "u-1" }),
 }));
 
+const { notifySuccess, notifyWarning } = vi.hoisted(() => ({
+  notifySuccess: vi.fn(),
+  notifyWarning: vi.fn(),
+}));
 vi.mock("../../utils/notify", () => ({
-  notify: { success: vi.fn(), error: vi.fn(), warning: vi.fn() },
+  notify: { success: notifySuccess, error: vi.fn(), warning: notifyWarning },
 }));
 
 vi.mock("../ui/useI18n", () => ({
@@ -394,5 +398,55 @@ describe("bulk multi-lesson delete (#2065)", () => {
     expect(deleteSetMock).not.toHaveBeenCalled();
     // The dialog stays open for a retry.
     expect(result.current.bulkDeleteLessonsTarget).not.toBeNull();
+  });
+});
+
+describe("the opt-in progress delete is never skipped silently (#3382)", () => {
+  beforeEach(() => {
+    notifySuccess.mockReset();
+    notifyWarning.mockReset();
+  });
+
+  it("a confirm while the plan is still counting computes it and deletes the progress", async () => {
+    // The dialog's count never lands; only the confirm-time read resolves.
+    listProgressMock
+      .mockReset()
+      .mockReturnValueOnce(new Promise(() => undefined))
+      .mockResolvedValue([{ id: "lp-1", source: "jane/repo", set_id: "waehrung" }]);
+    const { result } = mountHook();
+    act(() => result.current.setDeleteSetTarget(entry()));
+    expect(result.current.deleteSetPlan).toBeNull();
+    await act(async () => {
+      await result.current.handleConfirmDeleteSet(true);
+    });
+    expect(deleteLearningDataMock).toHaveBeenCalledTimes(1);
+    expect(deleteLearningDataMock.mock.calls[0][1].lessonProgressIds).toEqual(["lp-1"]);
+    expect(notifySuccess).toHaveBeenCalled();
+  });
+
+  it("a plan that cannot be read warns instead of claiming success", async () => {
+    listProgressMock.mockReset().mockRejectedValue(new Error("IndexedDB closed"));
+    const { result } = mountHook();
+    act(() => result.current.setDeleteSetTarget(entry()));
+    await act(async () => {
+      await result.current.handleConfirmDeleteSet(true);
+    });
+    expect(deleteSetMock).toHaveBeenCalled();
+    expect(deleteLearningDataMock).not.toHaveBeenCalled();
+    expect(notifySuccess).not.toHaveBeenCalled();
+    expect(notifyWarning).toHaveBeenCalledTimes(1);
+    expect(String(notifyWarning.mock.calls[0][0])).toContain("IndexedDB closed");
+  });
+
+  it("a failing progress delete warns after the set is gone", async () => {
+    deleteLearningDataMock.mockReset().mockRejectedValue(new Error("quota"));
+    const { result } = mountHook();
+    act(() => result.current.setDeleteSetTarget(entry()));
+    await waitFor(() => expect(result.current.deleteSetPlan).not.toBeNull());
+    await act(async () => {
+      await result.current.handleConfirmDeleteSet(true);
+    });
+    expect(notifySuccess).not.toHaveBeenCalled();
+    expect(String(notifyWarning.mock.calls[0][0])).toContain("quota");
   });
 });
