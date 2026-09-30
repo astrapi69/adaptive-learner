@@ -512,6 +512,7 @@
       "heading": "Contenu déconnecté",
       "summary": "{lessons} leçons et {cards} cartes de révision provenant de sources auxquelles vous n'êtes plus connecté.",
       "delete": "Supprimer la progression déconnectée",
+      "delete_failed": "Impossible de supprimer la progression déconnectée : {detail}",
       "confirm_title": "Supprimer la progression déconnectée",
       "confirm_message": "{lessons} leçons et {cards} cartes de révision seront définitivement supprimées. Cette action est irréversible.",
       "deleted": "{lessons} leçons et {cards} cartes de révision supprimées."
@@ -1283,6 +1284,7 @@
     "auto_run_error": "La sauvegarde automatique a échoué : {{detail}}",
     "auto_restored": "Sauvegarde automatique restaurée.",
     "auto_restore": "Restaurer",
+    "auto_delete_failed": "Impossible de supprimer la sauvegarde automatique : {detail}",
     "auto_restore_error": "La restauration a échoué : {{detail}}",
     "auto_records": "{{n}} enregistrements",
     "auto_none": "Aucune sauvegarde automatique pour l’instant. La première s’exécute après 10 sessions ou 7 jours.",
@@ -2862,6 +2864,7 @@
       "change_failed": "Impossible de mettre à jour le statut.",
       "deleted": "Ensemble supprimé.",
       "delete_failed": "Impossible de supprimer l'ensemble.",
+      "progress_not_deleted": "Retiré, mais ta progression d'apprentissage n'a pas pu être supprimée : {detail}",
       "delete_confirm": "L'ensemble téléchargé et ses leçons seront retirés de Mes contenus. Ta progression est conservée et tu peux télécharger l'ensemble à nouveau à tout moment.",
       "select_all": "Tout sélectionner",
       "select_set": "Sélectionner {title}",
@@ -3958,6 +3961,7 @@
     "cache_clear": "Vider le cache",
     "cache_clear_confirm": "Vider le cache hors ligne ?",
     "cache_clear_action": "Oui, vider",
+    "cache_clear_failed": "Impossible de vider le cache hors ligne : {detail}",
     "cache_cleared": "Cache hors ligne vidé.",
     "update": {
       "message": "Une nouvelle version est disponible.",
@@ -4358,6 +4362,8 @@
       "hint": "Partage ce lien pour que d'autres puissent ajouter ce dépôt PUBLIC. Pour un dépôt privé, envoie l'URL et un jeton en lecture seule séparément.",
       "qr_alt": "QR code du lien de partage"
     },
+    "remove_failed": "Impossible de retirer le dépôt : {detail}",
+    "reorder_failed": "Impossible de modifier l'ordre des dépôts : {detail}",
     "progress": {
       "syncing": "Synchronisation…",
       "validating": "Validation du dépôt…",
