@@ -16,6 +16,7 @@ Covers:
 
 from __future__ import annotations
 
+import json
 from datetime import UTC, date, datetime, timedelta
 
 import pytest
@@ -60,6 +61,8 @@ from app.models import (
 from app.repositories.backup_repo import SqlAlchemyBackupRepository
 from app.routers.backup import router as backup_router
 from app.routers.users import router as users_router
+from app.schemas import AIProvider
+from app.services import crypto
 from app.services.backup_service import (
     _RESTORE_ORDER as RESTORE_ORDER,
 )
@@ -399,6 +402,39 @@ def test_create_backup_excludes_api_keys(db_session):
     assert row["user_id"] == user.id
 
 
+_PROVIDERS = [provider.value for provider in AIProvider]
+
+
+def test_excluded_fields_cover_every_provider_and_every_key_column():
+    """#3367: one excluded field per provider, and no ``api_key_*`` column
+    of ``UserSettings`` left out (the frontend list once missed one)."""
+    assert {f"api_key_{p}" for p in _PROVIDERS} == EXCLUDED_USER_SETTINGS_FIELDS
+    key_columns = {c.name for c in UserSettings.__table__.columns if c.name.startswith("api_key_")}
+    assert key_columns == EXCLUDED_USER_SETTINGS_FIELDS
+
+
+@pytest.mark.parametrize("provider", _PROVIDERS, ids=_PROVIDERS)
+def test_create_backup_carries_no_stored_key_value(db_session, provider):
+    """#3367: neither the live key nor its rollback copy appears in the
+    exported file, in any form the backend stores it."""
+    user = _seed_user(db_session)
+    live = f"sk-live-{provider}-secret"
+    settings = db_session.query(UserSettings).filter(UserSettings.user_id == user.id).one()
+    setattr(settings, f"api_key_{provider}", live)
+    db_session.add(
+        ApiKeyBackup(
+            user_id=user.id,
+            provider=provider,
+            encrypted_key=crypto.encrypt_api_key(live),
+            tested_at=datetime.now(UTC),
+            works=True,
+        )
+    )
+    db_session.commit()
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
+    assert live not in json.dumps(payload, default=str)
+
+
 def test_create_backup_carries_storage_mode_hint(db_session):
     user = _seed_user(db_session)
     payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id, storage_mode="dexie")
@@ -543,9 +579,8 @@ def test_restore_strips_api_keys_even_if_present(db_session):
     # Inject API keys into the payload as a malicious user would.
     future = (datetime.now(UTC) + timedelta(days=1)).isoformat()
     for row in payload["data"]["user_settings"]:
-        row["api_key_anthropic"] = "sk-injected-key"
-        row["api_key_openai"] = "sk-injected-key"
-        row["api_key_gemini"] = "sk-injected-key"
+        for provider in _PROVIDERS:
+            row[f"api_key_{provider}"] = "sk-injected-key"
         row["updated_at"] = future
         row["active_provider"] = "gemini"
 
@@ -555,6 +590,7 @@ def test_restore_strips_api_keys_even_if_present(db_session):
     assert settings.api_key_anthropic == "sk-secret-anthropic"
     assert settings.api_key_openai == "sk-secret-openai"
     assert settings.api_key_gemini is None
+    assert settings.api_key_perplexity is None
     # Non-secret field updated as expected.
     assert settings.active_provider == "gemini"
 
