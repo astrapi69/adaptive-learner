@@ -539,7 +539,7 @@ export function SummaryExplanations({
       data-testid="lesson-summary-explanations"
     >
       <h3>{t("review.explain_heading", "Why you missed these")}</h3>
-      <ul className="flex flex-col gap-3">
+      <ul className="m-0 flex list-none flex-col gap-3 p-0">
         {mistakes.map((err) => {
           const expl = explainError(err);
           const question = lesson ? questionForError(lesson, err) : null;
