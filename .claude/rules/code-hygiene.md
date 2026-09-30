@@ -77,25 +77,23 @@ cd backend && poetry run ruff format .        # format
 ```
 
 ```json
-// frontend/.prettierrc: the Prettier defaults, stated explicitly (#3270)
+// frontend/.prettierrc
 {
-  "printWidth": 80,
-  "tabWidth": 2,
-  "semi": true,
-  "singleQuote": false,
+  "semi": false,
+  "singleQuote": true,
   "trailingComma": "all",
-  "bracketSpacing": true
+  "printWidth": 100,
+  "tabWidth": 2
 }
 ```
 
 Commands:
 
 ```bash
-cd frontend && bunx eslint src/ --fix    # lint + auto-fix
-cd frontend && bun run format            # Prettier, src/**/*.{ts,tsx,css}
+cd frontend && npx eslint src/ --fix     # lint + auto-fix
+cd frontend && bun run format:check      # Prettier check, src/**/*.{ts,tsx,css}
+cd frontend && bun run format            # rewrites the whole 4-space tree until the #3270 reformat
 ```
-
-Prettier is not a pre-commit hook. `bun run format:check` runs in the CI Frontend Tests job, non-blocking (`prettier-ci-check`, off in `.claude/rules/checks.yaml`): `src/` is not formatted yet, so until the #3270 reformat, do not reformat whole files you touch.
 
 ### Setup (one-time)
 
@@ -109,54 +107,26 @@ cd frontend && bun add -d eslint @typescript-eslint/eslint-plugin @typescript-es
 
 ## Pre-commit hooks
 
-Automatic checks before every commit. Prevents broken code and unformatted `backend/app/` Python from reaching the repo.
+Automatic checks before every commit, defined in `.pre-commit-config.yaml`
+(the file, not this section, is the source of truth; #3317). What runs:
 
-```yaml
-# .pre-commit-config.yaml (in the project root)
-repos:
-  - repo: local
-    hooks:
-      - id: ruff-check
-        name: ruff lint
-        entry: bash -c 'cd backend && poetry run ruff check .'
-        language: system
-        pass_filenames: false
-        files: ^backend/
-      - id: ruff-format
-        name: ruff format check
-        entry: bash -c 'cd backend && poetry run ruff format --check .'
-        language: system
-        pass_filenames: false
-        files: ^backend/
-      - id: eslint
-        name: eslint
-        entry: bash -c 'cd frontend && bunx eslint src/ --max-warnings=0'
-        language: system
-        pass_filenames: false
-        files: ^frontend/src/
-      - id: pytest-quick
-        name: pytest (backend only)
-        entry: bash -c 'cd backend && poetry run pytest tests/ -x -q'
-        language: system
-        pass_filenames: false
-        files: ^backend/
-```
+- `pre-commit-hooks`: trailing whitespace, end-of-file, YAML/JSON syntax,
+  large files, merge-conflict markers.
+- `ruff` + `ruff-format` (astral-sh/ruff-pre-commit) on `backend/app/`.
+- `eslint`: `cd frontend && npx eslint src/` on staged `frontend/src` `.ts`/`.tsx`.
+- Repo-local guards: `plugin-lock-paired-with-pyproject`,
+  `validate-bundled-content`, `i18n-script-sanity` (de/el/hi catalogs),
+  `docs-hygiene`, `doc-refs`.
 
-Setup:
+Not hooks: prettier (`frontend/.prettierrc` states the defaults, #3270;
+`bun run format:check` is a non-blocking CI step until the reformat, and
+`bun run format` rewrites the whole 4-space tree, see lessons/frontend.md)
+and pytest (run `make test` before pushing; CI runs the suites).
 
-```bash
-pip install pre-commit
-pre-commit install
-```
-
-After that, on every `git commit` the following happens automatically:
-
-1. Python code is checked for lint errors (ruff)
-2. Python formatting is checked (ruff format)
-3. TypeScript is checked for errors (ESLint)
-4. Backend tests run (quick smoke test)
-
-If anything fails: the commit is rejected and the errors are shown.
+Setup: `cd backend && poetry run pre-commit install` (or `make install-hooks`).
+A failing hook rejects the commit and prints the finding; a hook that
+rewrites files (`ruff-format`, `end-of-file-fixer`) leaves its rewrite in the
+worktree, so re-stage and commit again.
 
 ## Error handling architecture
 
@@ -567,15 +537,7 @@ def award_xp_for_session(
 
 ## Summary: what happens automatically on every commit
 
-```
-git commit
-  -> pre-commit hooks run:
-     1. ruff check (Python lint)
-     2. ruff format --check (Python format)
-     3. eslint (TypeScript lint)
-     4. pytest -x -q (backend smoke test)
-  -> all green? commit goes through.
-  -> anything red? commit rejected, errors shown.
-```
-
-No code reaches the repo that isn't linted and tested, and no `backend/app/` Python that isn't formatted.
+`git commit` runs the hooks listed under "Pre-commit hooks" (ruff, ruff
+format, eslint, the file and docs guards). All green: the commit goes
+through. Anything red: the commit is rejected with the finding shown. Tests
+run in `make test` and in CI, not in the hook.
