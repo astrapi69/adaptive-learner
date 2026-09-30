@@ -2104,6 +2104,15 @@ each card row (`CardImageField`).
       resume dialog and lands on the theory step you were on (not on the
       exercise before it); on the phone the same through the menu drawer
       [E2E: `lesson-pause-position.spec.ts`]
+- [ ] TC-0917 Switching apps mid-lesson (#3361): answer one exercise, lock the phone
+      or switch to another app or tab and come back -> NO "Resume lesson?"
+      dialog, the lesson goes on at the same step; afterwards the
+      Dashboard does not list it under "Paused lessons"
+- [ ] TC-0918 "Start over" in the resume dialog (#3361): open a paused lesson, press
+      "Start over" -> the question "Start over from the beginning?"
+      appears; "Back to options" returns to the choice and nothing is
+      reset; press "Start over" again and "Start over" in the question ->
+      the lesson begins at step 1
 - [ ] TC-0452 Auto-advance + "Back" (#1921): with "Advance automatically"
       (Settings -> Learning) ON, answer an exercise correctly so the app
       jumps to the next step by itself -> then click "Back": the previous

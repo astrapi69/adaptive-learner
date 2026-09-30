@@ -1091,6 +1091,29 @@ async function gotoKeyVaultSection(page: Page): Promise<boolean> {
 /** Open Settings -> Data scrolled to the paused-lesson retention card,
  *  which sits right before the cleanup slot since #2955 (its sibling,
  *  max lesson size, sits right after the offline cache further up). */
+/** The resume dialog's start-over confirmation (#3361): page through two
+ *  steps of the bundled lesson, pause through the exit dialog, reopen the
+ *  lesson from the Dashboard's paused-lessons card and press "Neu starten"
+ *  so the confirmation step is on screen. Same path as the dexie spec
+ *  ``lesson-pause-position.spec.ts``. */
+async function gotoResumeRestartConfirm(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await openFirstBundledLesson(page);
+    for (let i = 0; i < 2; i += 1) {
+        await page.getByTestId("lesson-next").click();
+    }
+    await page.getByTestId("lesson-pause-btn").click();
+    await page.getByTestId("lesson-exit-pause").click();
+    await page.waitForURL("**/content**");
+    await page.goto("/dashboard");
+    await expect(page.getByTestId("paused-lessons-card")).toBeVisible({timeout: 30_000});
+    await page.locator('[data-testid^="paused-lesson-resume-"]').first().click();
+    await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible({timeout: 20_000});
+    await page.getByTestId("lesson-resume-restart").click();
+    await expect(page.getByTestId("lesson-resume-confirm-restart")).toBeVisible();
+    return true;
+}
+
 async function gotoDataHousekeeping(page: Page): Promise<boolean> {
     await seedLearner(page);
     await page.goto("/settings?tab=data");
@@ -1530,6 +1553,12 @@ async function gotoHeldBackToast(page: Page): Promise<boolean> {
 }
 
 const FEATURES: FeatureShot[] = [
+    // --- Resume dialog: "Neu starten" asks first (#3361) ------------------
+    {
+        path: "lesson-resume/neu-starten-rueckfrage",
+        setup: gotoResumeRestartConfirm,
+        pinTo: "lesson-resume-confirm-restart",
+    },
     // --- Set update available in the list view + held-back toast (#3081) --
     {
         path: "content-updates/listenansicht-aktualisierung",
