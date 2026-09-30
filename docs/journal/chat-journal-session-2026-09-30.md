@@ -50,6 +50,14 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Result: Beide Abschnitte verweisen auf die Datei als Quelle, nennen die realen Hooks (Basics, astral ruff auf `backend/app/`, lokales eslint, fünf Repo-Guards) und sagen, wo Tests und prettier stehen. Korpus 714 Zeichen unter dem Deckel, Deckel bleibt als Spielraum. `verify-normative-changes` verlangt die Erklärung (steht im Commit); die Log-Zeile für `docs/rule-change-log.md` kommt als zweiter Commit in die PR, sobald deren Nummer feststeht.
 - Commit: siehe PR.
 
+## 7. #3319: der Container-Walker prüft die drei Schritte, die er bisher verschluckt hat
+
+- Original prompt: wie oben.
+- Optimized prompt: "`e2e/scripts/verify-container-page.mjs`: Sprachwechsel auf der Landing als lauter Klick; Migrations-Dialog nach dem #3226-Muster über `data-migration-offer` beurteilen (auf einem leeren Container muss das Urteil `none` sein, kein `migration-start-fresh`); Dashboard-Tabs als laute Klicks; Test in `test_publish_image_workflow.py`, der jede verbleibende `.catch(() => {})`-Stelle aufzählt."
+- Goal: Ein verschwundener Testid oder ein Dialog im falschen Zustand ist ein Befund, kein stiller Sprung.
+- Result: Vier Schritte umgestellt (der Kartenansicht-Schalter des Lernpfads rendert in jedem Zustand der persönlichen Ansicht, also ebenfalls laut); das Network-Idle-Wartelimit bleibt die einzige `.catch(() => {})`-Stelle, und der Pin-Test zählt genau sie auf. 16 Tests grün, `node --check` sauber. Echter Lauf des Walkers gegen das Image: nur im CI (publish-image dry run), hier nicht möglich.
+- Commit: siehe PR.
+
 ## Fragen und Annahmen
 
 - #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.
