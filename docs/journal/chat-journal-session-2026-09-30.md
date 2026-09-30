@@ -47,7 +47,7 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Original prompt: wie oben.
 - Optimized prompt: "quality-checks.md Checkliste Punkt 5 (pytest) streichen und auf `.pre-commit-config.yaml` verweisen; code-hygiene.md: erfundene Beispielkonfiguration (prettier-, pytest-Hook) durch die reale Hook-Liste ersetzen, Setup-Befehl und Zusammenfassung angleichen; Korpus-Deckel prüfen; RULE-CHANGE DECLARED im Commit."
 - Goal: Kein Leser verlässt sich auf einen Hook, der nicht läuft.
-- Result: Beide Abschnitte verweisen auf die Datei als Quelle, nennen die realen Hooks (Basics, astral ruff auf `backend/app/`, lokales eslint, fünf Repo-Guards) und sagen, wo Tests und prettier stehen. Korpus 714 Zeichen unter dem Deckel, Deckel bleibt als Spielraum. `verify-normative-changes` verlangt die Erklärung (steht im Commit); die Log-Zeile für `docs/rule-change-log.md` kommt als zweiter Commit in die PR, sobald deren Nummer feststeht.
+- Result: Beide Abschnitte verweisen auf die Datei als Quelle, nennen die realen Hooks (Basics, astral ruff auf `backend/app/`, lokales eslint, fünf Repo-Guards) und sagen, wo Tests und prettier stehen. Korpus nach dem Rebase über #3327 2326 Zeichen unter dem Deckel, Deckel bleibt als Spielraum; der Konflikt mit cc's #3327 (dieselben Abschnitte) wurde so gelöst: Hook-Liste und Setup-Text von hier, Prettier-Angaben von #3327. `verify-normative-changes` verlangt die Erklärung (steht im Commit); die Log-Zeile für `docs/rule-change-log.md` kam als zweiter Commit in PR #3333, geschlüsselt über die PR-Nummer.
 - Commit: siehe PR.
 
 ## 7. #3319: der Container-Walker prüft die drei Schritte, die er bisher verschluckt hat
@@ -82,7 +82,21 @@ Fortsetzung der Queue-Arbeit aus `chat-journal-session-2026-09-29.md`: die aus d
 - Result: Spiegel statt Umzug: der obere Zähler bleibt die Live-Region (`aria-live`), die Footer-Zeile ist `aria-hidden`, damit Screenreader nicht doppelt hören. Die Byte-Identität der beiden Footer für die Lektions-Policy (RunnerFooter-Test) bleibt, weil beide dieselbe Zeile mit derselben Testid rendern. 595 plus 69 Tests grün, tsc und eslint sauber. Visual: die `lesson-matching`-Motive (12 Themes plus Desktop/Mobile) zeigen den Footer mit Zähler, also Löschen-dann-Resync über das Label, sobald die PR offen ist.
 - Commit: siehe PR.
 
+## Zusammenfassung Runde 3 (2026-09-30, 06:40 bis 09:00)
+
+- Auftrag: alle aus der Ferne machbaren offenen Issues mit den freigegebenen Empfehlungen abarbeiten, plus einen Prompt für das Engine-Repository.
+- Gemergt, je ein Thema pro PR: #3320 (#3316), #3322 und #3323 (#3222 PR 5, dazu der brace-expansion-Override 5.0.12 für zwei neue Advisories), #3329 (#3225), #3330 (#3254), #3331 (#3216 Punkt 2), #3333 (#3317), #3334 (#3319), #3335 (#3151 ast-serialize), #3336 (#3173 Variante 3), #3337 (#3163 Katalog); #3338 (#3237) mit Baseline-Resync als letzte PR der Runde. Auf Bitte des Owners ausserdem cc's #3327 und #3326 abonniert und begleitet.
+- Geschlossene Issues: #3316, #3222 (Umbrella, alle fünf Slices), #3225, #3254, #3216, #3317, #3319; #3271 durch cc's #3326.
+- Doppelarbeit: #3271 war parallel bei cc (#3326, 07:15) und hier (lokal, 07:30). cc war zuerst, mein Commit wurde ohne Rest aus der Queue genommen. Lehre: vor einer Runde die offenen PRs und Branches der anderen Lane prüfen (core.md, "ein Befund gehört der Lane, die ihn zuerst festhält", auf Issues angewandt).
+- Bewegliches develop: der Owner und cc mergten während der Runde (#3324, #3325, #3328, #3327, #3326). #3323 und #3330 mussten je zweimal per Update-Branch nachgezogen werden, bevor die Pflichtprüfungen als aktuell galten; jeder fremde Merge kostet eine CI-Runde der offenen PR.
+- Nicht erledigt, mit Grund: #3163 Hilfeseiten (Übersetzungsrunde, kein Wort-Tausch; 51 Dateien, rund 48.000 Wörter), #3149/#3148 (Live-Aufrufe), #3169 (P4, gross), #3150 (Upstream), #3270 (Timing des Owners, cc hat die Vorbereitung in #3327 gemacht), #3253 (Entscheidung: kein Required-Check), Gerätemessungen (#3172, #3173-Verifikation mit der #1569-Sonde, #3182/#3318/#3227 Renders).
+- Prompt für learn-content-engine: geschrieben und im Rundenbericht eingefügt (Rule-ownership-Absatz für docs/architecture.md nach #3245, Bildunterschrift s6-book-text nach #3142).
+- Werkzeug-Lektion: parallele Shell-Aufrufe teilen das Arbeitsverzeichnis, ein `cd` in einem Aufruf verschiebt die anderen; seither nur absolute Pfade in parallelen Aufrufen.
+
 ## Fragen und Annahmen
 
 - #3316: Option 3 (Verweigerung in `/api/reset`) bewusst nicht umgesetzt, weil `DangerZoneSection` den Endpunkt als Nutzerfunktion aufruft; Ports plus kein Wiederverwenden schliessen die Klasse an der Quelle.
 - #3222 PR 5: Engine-Warnungen W-DOMAIN-UNKNOWN und W-CARD-BACK-SCRIPT werden nicht als `engine_warning` gedoppelt, weil die App den Set-Domain-Wert in den Metadaten beurteilt und Kartenrückseiten ohne Quellschrift bereits blockierend als `back_language_mismatch` meldet. Sollte sich eine der beiden App-Prüfungen später zugunsten der Engine-Regel auflösen, kommt die ID aus der Menge `ENGINE_WARNINGS_COVERED_BY_APP` heraus.
+- #3237: Spiegel statt Umzug des Zählers, weil der obere Zähler die Live-Region ist und zehn Tests seine Testid pinnen; die Footer-Zeile ist `aria-hidden`.
+- #3173: Variante 3 ohne Gerät umgesetzt, in der Form, die #3017 als Kandidatin 1 zuliess (Padding nur bei nachweislich offener Tastatur, nie beim Fokus). Der Vorbehalt steht in PR #3336; bei sichtbarer Lücke ist der Commit zu reverten.
+- #3163: nur der Katalog, nicht die Hilfeseiten; Entscheidung dazu im Rundenbericht.
