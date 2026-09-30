@@ -756,6 +756,8 @@ settings:
   lesson_auto_advance_description: "After a correct answer, go to the next exercise automatically. A wrong answer always waits so you can review the solution."
   ask_ai_visible: "Show 'Ask AI' button"
   ask_ai_visible_description: "Show the 'Ask AI' button under theory and exercises. Shown by default; the button still needs your own AI key (BYOK) to answer."
+  keep_screen_on: "Keep the screen on in lessons"
+  keep_screen_on_description: "While a lesson is open, the screen does not turn off, also while you read without touching it. The lesson summary lets the screen turn off again. Needs iOS 16.4 or later on an iPhone, iOS 18.4 or later in an app on the home screen."
   button_tooltips: Show button tooltips
   button_tooltips_description: "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless."
   developer_mode: Developer Mode
@@ -979,9 +981,9 @@ settings:
     label: "Corrections as a separate view"
     desc: "After checking, 'My answers' shows your pairs as you formed them, without grading; the grading and the correct partners are under 'Corrections'. Off: the correct partner appears directly under each mistake in 'My answers'."
   paused_retention:
-    title: Paused lesson retention
-    hint: "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age."
-    label: Keep paused lessons for
+    title: "Paused lessons on the Dashboard"
+    hint: "The paused-lessons card on the Dashboard only shows lessons up to this age. An older lesson just drops out of the card: nothing is abandoned, and it keeps its position and answers."
+    label: "Hide paused lessons older than"
     7_days: "7 days"
     14_days: "14 days"
     30_days: "30 days"

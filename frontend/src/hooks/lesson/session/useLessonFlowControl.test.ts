@@ -141,3 +141,77 @@ describe("useLessonFlowControl pauses a started run on unmount (#3075)", () => {
         expect(markPaused).not.toHaveBeenCalled();
     });
 });
+
+/** Switch the document's visibility and fire the event, as a phone lock or
+ *  an app switch does. */
+function setVisibility(state: "hidden" | "visible") {
+    Object.defineProperty(document, "visibilityState", {configurable: true, get: () => state});
+    document.dispatchEvent(new Event("visibilitychange"));
+}
+
+describe("a hidden tab or app switch only flushes, it never pauses (#3361)", () => {
+    it("hiding an in-progress run flushes time and position without a pause", () => {
+        const markPaused = vi.fn().mockResolvedValue(undefined);
+        const autosave = vi.fn().mockResolvedValue(undefined);
+        renderFlow({progress: progress("in_progress"), markPaused, autosave});
+        act(() => setVisibility("hidden"));
+        expect(autosave).toHaveBeenCalledTimes(1);
+        expect(markPaused).not.toHaveBeenCalled();
+        act(() => setVisibility("visible"));
+    });
+
+    it("coming back shows no resume dialog and writes no resume", () => {
+        const markResumed = vi.fn().mockResolvedValue(undefined);
+        const {result} = renderFlow({progress: progress("in_progress"), markResumed});
+        act(() => setVisibility("hidden"));
+        act(() => setVisibility("visible"));
+        expect(result.current.showResumePrompt).toBe(false);
+        expect(markResumed).not.toHaveBeenCalled();
+    });
+
+    it("pagehide (iOS never fires beforeunload) flushes too", () => {
+        const autosave = vi.fn().mockResolvedValue(undefined);
+        const markPaused = vi.fn().mockResolvedValue(undefined);
+        renderFlow({progress: progress("in_progress"), autosave, markPaused});
+        act(() => {
+            window.dispatchEvent(new Event("pagehide"));
+        });
+        expect(autosave).toHaveBeenCalledTimes(1);
+        expect(markPaused).not.toHaveBeenCalled();
+    });
+});
+
+describe("the resume choice belongs to one lesson (#3361)", () => {
+    function pausedLesson(file: string): LessonProgress {
+        return {
+            status: "paused",
+            source: "jane/repo",
+            set_id: "es-a1",
+            lesson_filename: file,
+        } as unknown as LessonProgress;
+    }
+
+    it("the next lesson's paused run asks again after the previous one was resumed", async () => {
+        let current = pausedLesson("01.json");
+        const {result, rerender} = renderHook(() =>
+            useLessonFlowControl({
+                status: "ready",
+                progress: current,
+                markPaused: vi.fn().mockResolvedValue(undefined),
+                markAbandoned: vi.fn().mockResolvedValue(undefined),
+                markResumed: vi.fn().mockResolvedValue(undefined),
+                markRestarted: vi.fn().mockResolvedValue(undefined),
+                autosave: vi.fn().mockResolvedValue(undefined),
+                goToStep: vi.fn(),
+            }),
+        );
+        expect(result.current.showResumePrompt).toBe(true);
+        await act(async () => {
+            await result.current.handleResume();
+        });
+        expect(result.current.showResumePrompt).toBe(false);
+        current = pausedLesson("02.json");
+        rerender();
+        expect(result.current.showResumePrompt).toBe(true);
+    });
+});
