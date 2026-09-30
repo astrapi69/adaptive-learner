@@ -3,6 +3,8 @@
     "loading": "Carregando…",
     "loading_slow": "Isto está a demorar mais do que o esperado.",
     "view_load_failed": "Não foi possível carregar esta vista.",
+    "view_crashed": "Ocorreu um erro nesta página. As outras páginas continuam funcionando.",
+    "crashed": "Algo deu errado.",
     "reload": "Recarregar",
     "name": "Adaptive Learner",
     "tagline": "Aprendizado que se adapta a você.",
@@ -456,6 +458,10 @@
     "ai_thinking": "Pensando…",
     "ai_error": "O provedor de IA não conseguiu responder.",
     "no_api_key": "Nenhuma chave de IA definida. Adicione uma chave para o seu provedor de IA em Configurações para conversar com o tutor. Lições e revisões funcionam sem chave.",
+    "ai_error_no_model": "Nenhum modelo está selecionado para o seu provedor de IA. Escolha um modelo em Configurações > IA.",
+    "ai_error_provider_auth": "O seu provedor de IA recusou a chave. Verifique a chave em Configurações > IA.",
+    "ai_error_rate_limited": "O limite do seu provedor de IA foi atingido. Aguarde um momento ou verifique sua cota e envie novamente.",
+    "ai_error_provider_unavailable": "Não é possível contatar o seu provedor de IA agora. Verifique a conexão e envie novamente.",
     "welcome_empty": "Pronto para aprender! Escreva sua primeira mensagem.",
     "end_session": "Encerrar sessão",
     "end_session_confirm": "Tem certeza? Vamos fechar a sessão e pedir uma avaliação.",
@@ -512,6 +518,7 @@
       "heading": "Conteúdo desconectado",
       "summary": "{lessons} lições e {cards} cartões de revisão de fontes às quais você não está mais conectado.",
       "delete": "Excluir progresso desconectado",
+      "delete_failed": "Não foi possível excluir o progresso desconectado: {detail}",
       "confirm_title": "Excluir progresso desconectado",
       "confirm_message": "{lessons} lições e {cards} cartões de revisão serão excluídos permanentemente. Isso não pode ser desfeito.",
       "deleted": "{lessons} lições e {cards} cartões de revisão excluídos."
@@ -1283,6 +1290,7 @@
     "auto_run_error": "Falha no backup automático: {{detail}}",
     "auto_restored": "Backup automático restaurado.",
     "auto_restore": "Restaurar",
+    "auto_delete_failed": "Não foi possível excluir o backup automático: {detail}",
     "auto_restore_error": "Falha na restauração: {{detail}}",
     "auto_records": "{{n}} registros",
     "auto_none": "Ainda não há backups automáticos. O primeiro acontece após 10 sessões ou 7 dias.",
@@ -1759,7 +1767,8 @@
   },
   "feature": {
     "api_key_required": "Chave de API necessária. Configure um provedor nas configurações.",
-    "desktop_only": "Disponível apenas com o aplicativo para desktop."
+    "desktop_only": "Disponível apenas com o aplicativo para desktop.",
+    "browser_only": "Disponível apenas na versão do app para navegador."
   },
   "ui": {
     "cancel": "Cancelar",
@@ -1797,6 +1806,7 @@
       "unexpected": "Algo deu errado."
     },
     "error_report": {
+      "report_button": "Reportar problema",
       "dialog_title": "Comunicar um problema",
       "intro": "Adaptive Learner detetou um erro e pode preparar um relatório de bug para o programador.",
       "description_label": "Passos para reproduzir (opcional)",
@@ -2862,6 +2872,7 @@
       "change_failed": "Não foi possível atualizar o status.",
       "deleted": "Conjunto removido.",
       "delete_failed": "Não foi possível remover o conjunto.",
+      "progress_not_deleted": "Removido, mas não foi possível excluir seu progresso de aprendizagem: {detail}",
       "delete_confirm": "O conjunto baixado e suas lições serão removidos de Meus conteúdos. Seu progresso de aprendizagem é mantido, e você pode baixar o conjunto novamente quando quiser.",
       "select_all": "Selecionar tudo",
       "select_set": "Selecionar {title}",
@@ -3018,7 +3029,9 @@
       "list_failed": "Não foi possível carregar os conjuntos de conteúdo.",
       "download_failed": "Não foi possível transferir o conjunto.",
       "update_all_failed": "{n} atualizações falharam.",
-      "open_failed": "Não foi possível abrir a lição."
+      "open_failed": "Não foi possível abrir a lição.",
+      "export_failed": "Não foi possível exportar o conjunto de lições.",
+      "share_check_failed": "Não foi possível verificar o conjunto para partilha."
     },
     "tree": {
       "i_speak": "Eu falo",
@@ -3958,6 +3971,7 @@
     "cache_clear": "Limpar cache",
     "cache_clear_confirm": "Limpar o cache off-line?",
     "cache_clear_action": "Sim, limpar",
+    "cache_clear_failed": "Não foi possível limpar o cache offline: {detail}",
     "cache_cleared": "Cache off-line limpo.",
     "update": {
       "message": "Há uma nova versão disponível.",
@@ -4358,6 +4372,8 @@
       "hint": "Compartilhe este link para que outros possam adicionar este repositório PÚBLICO. Para um repositório privado, envie o URL e um token apenas de leitura separadamente.",
       "qr_alt": "Código QR do link de compartilhamento"
     },
+    "remove_failed": "Não foi possível remover o repositório: {detail}",
+    "reorder_failed": "Não foi possível alterar a ordem dos repositórios: {detail}",
     "progress": {
       "syncing": "A sincronizar…",
       "validating": "A validar o repositório…",

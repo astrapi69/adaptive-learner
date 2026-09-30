@@ -13,6 +13,7 @@
  */
 
 import {useEffect, useState} from "react";
+import {useFeature} from "@astrapi69/feature-strategy-react";
 import {Upload} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
@@ -29,6 +30,7 @@ import {
     type ValidationIssue,
     type ValidationResult,
 } from "../../../lib/content/validation/content-validator";
+import {FEATURES} from "../../../features/featureConfig";
 import {getStorage} from "../../../storage";
 import {ApiError} from "../../../api/client";
 import {notify} from "../../../utils/notify";
@@ -177,7 +179,16 @@ export default function ShareAsRepoButton({
         }
     };
 
-    const disabled = hasToken === false;
+    // #3398 - browser-only: the desktop app (API mode) has no export route,
+    // so the button is disabled with the reason instead of failing at the end.
+    const shareFeature = useFeature(FEATURES.CONTENT_REPO_SHARE);
+    const disabled = shareFeature.isDisabled || hasToken === false;
+    const disabledReason = shareFeature.isDisabled
+        ? t(`feature.${shareFeature.reason}`, "Only available in the browser version of the app.")
+        : t(
+              "content.repo_export.needs_token",
+              "Add a GitHub token in Settings → Integrations to share as a repository.",
+          );
     return (
         <>
             <Button
@@ -186,14 +197,7 @@ export default function ShareAsRepoButton({
                 size="sm"
                 onClick={() => void openDialog()}
                 disabled={disabled}
-                title={
-                    disabled
-                        ? t(
-                              "content.repo_export.needs_token",
-                              "Add a GitHub token in Settings → Integrations to share as a repository.",
-                          )
-                        : undefined
-                }
+                title={disabled ? disabledReason : undefined}
                 data-testid={`${testIdPrefix}-share-repo`}
             >
                 <Upload size={16} aria-hidden="true" />

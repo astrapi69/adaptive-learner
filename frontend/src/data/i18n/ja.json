@@ -3,6 +3,8 @@
     "loading": "読み込み中…",
     "loading_slow": "読み込みに予想より時間がかかっています。",
     "view_load_failed": "このビューを読み込めませんでした。",
+    "view_crashed": "このページでエラーが発生しました。他のページは引き続き使えます。",
+    "crashed": "問題が発生しました。",
     "reload": "再読み込み",
     "name": "Adaptive Learner",
     "tagline": "6メソッドモデルに基づく適応学習。",
@@ -456,6 +458,10 @@
     "ai_thinking": "考え中…",
     "ai_error": "AI プロバイダーが返信できませんでした。",
     "no_api_key": "AIキーが設定されていません。チューターとチャットするには、設定でAIプロバイダーのキーを追加してください。レッスンと復習はキーなしで利用できます。",
+    "ai_error_no_model": "AIプロバイダーのモデルが選択されていません。設定 > AI でモデルを選択してください。",
+    "ai_error_provider_auth": "AIプロバイダーがキーを拒否しました。設定 > AI でキーを確認してください。",
+    "ai_error_rate_limited": "AIプロバイダーの利用上限に達しました。しばらく待つか割り当てを確認してから、もう一度送信してください。",
+    "ai_error_provider_unavailable": "現在AIプロバイダーに接続できません。接続を確認して、もう一度送信してください。",
     "welcome_empty": "学習を始めましょう！最初のメッセージを書いてください。",
     "end_session": "セッションを終了",
     "end_session_confirm": "よろしいですか? セッションを終了して評価をお願いします。",
@@ -512,6 +518,7 @@
       "heading": "未接続のコンテンツ",
       "summary": "接続されていないソースからの {lessons} 個のレッスンと {cards} 枚の復習カード。",
       "delete": "未接続の進捗を削除",
+      "delete_failed": "接続されていない進捗を削除できませんでした: {detail}",
       "confirm_title": "未接続の進捗を削除",
       "confirm_message": "{lessons} 個のレッスンと {cards} 枚の復習カードが完全に削除されます。この操作は元に戻せません。",
       "deleted": "{lessons} 個のレッスンと {cards} 枚の復習カードを削除しました。"
@@ -1283,6 +1290,7 @@
     "auto_run_error": "自動バックアップに失敗しました: {{detail}}",
     "auto_restored": "自動バックアップを復元しました。",
     "auto_restore": "復元",
+    "auto_delete_failed": "自動バックアップを削除できませんでした: {detail}",
     "auto_restore_error": "復元に失敗しました: {{detail}}",
     "auto_records": "{{n}} 件",
     "auto_none": "まだ自動バックアップはありません。最初のものは 10 セッション後または 7 日後に実行されます。",
@@ -1759,7 +1767,8 @@
   },
   "feature": {
     "api_key_required": "APIキーが必要です。設定でプロバイダーを設定してください。",
-    "desktop_only": "デスクトップアプリでのみ利用できます。"
+    "desktop_only": "デスクトップアプリでのみ利用できます。",
+    "browser_only": "アプリのブラウザ版でのみ利用できます。"
   },
   "ui": {
     "cancel": "キャンセル",
@@ -1797,6 +1806,7 @@
       "unexpected": "問題が発生しました。"
     },
     "error_report": {
+      "report_button": "問題を報告",
       "dialog_title": "問題を報告する",
       "intro": "Adaptive Learner がエラーを検出しました。開発者向けのバグレポートを準備できます。",
       "description_label": "再現手順（任意）",
@@ -2862,6 +2872,7 @@
       "change_failed": "ステータスを更新できませんでした。",
       "deleted": "セットを削除しました。",
       "delete_failed": "セットを削除できませんでした。",
+      "progress_not_deleted": "削除しましたが、学習の進捗は削除できませんでした: {detail}",
       "delete_confirm": "ダウンロードしたセットとそのレッスンは「マイコンテンツ」から削除されます。学習の進捗は保持され、セットはいつでも再ダウンロードできます。",
       "select_all": "すべて選択",
       "select_set": "{title} を選択",
@@ -3018,7 +3029,9 @@
       "list_failed": "コンテンツセットを読み込めませんでした。",
       "download_failed": "セットをダウンロードできませんでした。",
       "update_all_failed": "{n} 件の更新に失敗しました。",
-      "open_failed": "レッスンを開けませんでした。"
+      "open_failed": "レッスンを開けませんでした。",
+      "export_failed": "レッスンセットをエクスポートできませんでした。",
+      "share_check_failed": "共有用にセットを確認できませんでした。"
     },
     "tree": {
       "i_speak": "使用言語",
@@ -3958,6 +3971,7 @@
     "cache_clear": "キャッシュを消去",
     "cache_clear_confirm": "オフラインキャッシュを消去しますか？",
     "cache_clear_action": "はい、消去",
+    "cache_clear_failed": "オフラインキャッシュを消去できませんでした: {detail}",
     "cache_cleared": "オフラインキャッシュを消去しました。",
     "update": {
       "message": "新しいバージョンが利用可能です。",
@@ -4358,6 +4372,8 @@
       "hint": "このリンクを共有すると、他の人がこの公開リポジトリを追加できます。プライベートリポジトリの場合は、URL と読み取り専用トークンを別々に送ってください。",
       "qr_alt": "共有リンクの QR コード"
     },
+    "remove_failed": "リポジトリを削除できませんでした: {detail}",
+    "reorder_failed": "リポジトリの順序を変更できませんでした: {detail}",
     "progress": {
       "syncing": "同期中…",
       "validating": "リポジトリを検証中…",
