@@ -2,6 +2,8 @@ app:
   loading: "Lädt …"
   loading_slow: "Das dauert länger als erwartet."
   view_load_failed: "Diese Ansicht ließ sich nicht laden."
+  view_crashed: "Auf dieser Seite ist ein Fehler aufgetreten. Die anderen Seiten funktionieren weiter."
+  crashed: "Etwas ist schiefgelaufen."
   reload: "Neu laden"
   name: Adaptive Learner
   tagline: Adaptives Lernen nach dem Sechs-Methoden-Modell.

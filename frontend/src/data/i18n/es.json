@@ -3,6 +3,8 @@
     "loading": "Cargando…",
     "loading_slow": "Esto está tardando más de lo esperado.",
     "view_load_failed": "No se pudo cargar esta vista.",
+    "view_crashed": "Se produjo un error en esta página. Las demás páginas siguen funcionando.",
+    "crashed": "Algo salió mal.",
     "reload": "Recargar",
     "name": "Adaptive Learner",
     "tagline": "Aprendizaje que se adapta a ti.",

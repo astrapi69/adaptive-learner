@@ -2,6 +2,8 @@ app:
   loading: "Yükleniyor…"
   loading_slow: "Bu beklenenden uzun sürüyor."
   view_load_failed: "Bu görünüm yüklenemedi."
+  view_crashed: "Bu sayfada bir hata oluştu. Diğer sayfalar çalışmaya devam ediyor."
+  crashed: "Bir şeyler ters gitti."
   reload: "Yeniden yükle"
   name: Adaptive Learner
   tagline: Altı Yöntemli Modele göre uyarlanabilir öğrenme.
