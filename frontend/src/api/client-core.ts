@@ -62,6 +62,9 @@ interface CallOptions {
   method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
   body?: unknown;
   query?: Record<string, string | number | undefined>;
+  /** Let the request outlive the page (unload flushes, #3364). Only for
+   *  small bodies: browsers cap keepalive payloads at 64 KB. */
+  keepalive?: boolean;
 }
 
 /**
@@ -73,6 +76,7 @@ export async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<
   const method = opts.method ?? "GET";
   const url = buildUrl(path, opts.query);
   const init: RequestInit = { method };
+  if (opts.keepalive) init.keepalive = true;
   if (opts.body !== undefined && opts.body !== null) {
     init.headers = { "Content-Type": "application/json" };
     init.body = JSON.stringify(opts.body);
@@ -99,7 +103,16 @@ export async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<
     } catch {
       /* recorder not available */
     }
-    throw networkError;
+    // #3388 - every fetch failure surfaces as ApiError (coding-standards):
+    // status 0 means "no response at all", which the friendly mapper shows
+    // as the localized "No connection to the server" instead of the
+    // browser's raw "Failed to fetch".
+    throw new ApiError(
+      0,
+      networkError instanceof Error ? networkError.message : String(networkError),
+      path,
+      method,
+    );
   }
   const durationMs = Math.round(performance.now() - startTime);
   try {

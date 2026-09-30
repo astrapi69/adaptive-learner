@@ -483,6 +483,7 @@ settings:
     heading: "Conteúdo desconectado"
     summary: "{lessons} lições e {cards} cartões de revisão de fontes às quais você não está mais conectado."
     delete: "Excluir progresso desconectado"
+    delete_failed: "Não foi possível excluir o progresso desconectado: {detail}"
     confirm_title: "Excluir progresso desconectado"
     confirm_message: "{lessons} lições e {cards} cartões de revisão serão excluídos permanentemente. Isso não pode ser desfeito."
     deleted: "{lessons} lições e {cards} cartões de revisão excluídos."
@@ -759,6 +760,8 @@ settings:
   lesson_auto_advance_description: "Após uma resposta correta, avança automaticamente para o próximo exercício. Uma resposta errada sempre espera para você revisar a solução."
   ask_ai_visible: "Mostrar botão 'Perguntar à IA'"
   ask_ai_visible_description: "Mostra o botão 'Perguntar à IA' abaixo da teoria e dos exercícios. Exibido por padrão; o botão ainda precisa da sua própria chave de IA (BYOK) para responder."
+  keep_screen_on: "Manter a tela ligada nas aulas"
+  keep_screen_on_description: "Enquanto uma aula está aberta, a tela não se apaga, também quando você lê sem tocá-la. No resumo da aula ela pode apagar de novo. No iPhone requer iOS 16.4 ou posterior, como app na tela de início iOS 18.4 ou posterior."
   button_tooltips: Mostrar dicas dos botões
   button_tooltips_description: "Mostra uma dica ao passar o cursor sobre botões com ícones explicando o que fazem. As legendas para leitores de tela permanecem ativas independentemente."
   developer_mode: Modo desenvolvedor
@@ -1209,6 +1212,7 @@ backup:
   auto_run_error: 'Falha no backup automático: {{detail}}'
   auto_restored: Backup automático restaurado.
   auto_restore: Restaurar
+  auto_delete_failed: "Não foi possível excluir o backup automático: {detail}"
   auto_restore_error: 'Falha na restauração: {{detail}}'
   auto_records: '{{n}} registros'
   auto_none: Ainda não há backups automáticos. O primeiro acontece após 10 sessões ou 7 dias.
@@ -2648,6 +2652,7 @@ content:
     change_failed: "Não foi possível atualizar o status."
     deleted: "Conjunto removido."
     delete_failed: "Não foi possível remover o conjunto."
+    progress_not_deleted: "Removido, mas não foi possível excluir seu progresso de aprendizagem: {detail}"
     delete_confirm: "O conjunto baixado e suas lições serão removidos de Meus conteúdos. Seu progresso de aprendizagem é mantido, e você pode baixar o conjunto novamente quando quiser."
     select_all: "Selecionar tudo"
     select_set: "Selecionar {title}"
@@ -3642,6 +3647,7 @@ pwa:
   cache_clear: "Limpar cache"
   cache_clear_confirm: "Limpar o cache off-line?"
   cache_clear_action: "Sim, limpar"
+  cache_clear_failed: "Não foi possível limpar o cache offline: {detail}"
   cache_cleared: "Cache off-line limpo."
   update:
     message: "Há uma nova versão disponível."
@@ -4020,6 +4026,8 @@ content_repo:
     copy_failed: "Não foi possível copiar."
     hint: "Compartilhe este link para que outros possam adicionar este repositório PÚBLICO. Para um repositório privado, envie o URL e um token apenas de leitura separadamente."
     qr_alt: "Código QR do link de compartilhamento"
+  remove_failed: "Não foi possível remover o repositório: {detail}"
+  reorder_failed: "Não foi possível alterar a ordem dos repositórios: {detail}"
   progress:
     syncing: "A sincronizar…"
     validating: "A validar o repositório…"
