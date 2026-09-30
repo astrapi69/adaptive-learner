@@ -84,6 +84,34 @@ describe("Content-Engine — single-JSON lesson adapter", () => {
   });
 });
 
+// #3349 - the schema does not require ``cards`` (default []), and the API
+// backend fills the list in (Pydantic default). The Dexie read path does the
+// same here, so ContentLesson's required ``cards`` holds in both modes.
+describe("Content-Engine — a lesson without cards (#3349)", () => {
+  /** The shape alc-psychology psych-intro/vertiefung-*-fallanwendung ships. */
+  const CARDLESS = {
+    id: "vertiefung-fallanwendung",
+    title: "Fallanwendung",
+    estimated_minutes: 15,
+    steps: [{ id: "intro", type: "theory", body: "# Fall" }],
+  };
+
+  it("gets an empty card list", () => {
+    expect(parseLesson(JSON.stringify(CARDLESS), SET_CONTEXT).cards).toEqual([]);
+  });
+
+  it("gets an empty card list through a custom source adapter too", () => {
+    const adapter: LessonSourceAdapter = (text) => JSON.parse(text);
+    expect(parseLesson(JSON.stringify(CARDLESS), SET_CONTEXT, adapter).cards).toEqual([]);
+  });
+
+  it("keeps the cards a lesson carries", () => {
+    const card = { id: "c1", front: "Bonjour", back: "Guten Tag", tags: [] };
+    const lesson = parseLesson(JSON.stringify({ ...CARDLESS, cards: [card] }), SET_CONTEXT);
+    expect(lesson.cards).toEqual([card]);
+  });
+});
+
 describe("Content-Engine — manifest parse", () => {
   it("parses a manifest YAML document", () => {
     const manifest = parseManifest("name: Pilot\nsets:\n  - id: fr-a1\n    title: French A1\n");

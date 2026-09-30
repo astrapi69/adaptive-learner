@@ -210,6 +210,34 @@ describe("CreditsSection", () => {
 
 // ---- DonationSection ------------------------------------------------
 
+/**
+ * #3340 - every About card with a label/value list stacks on phones and wraps
+ * values at word boundaries, not only the license card: the label column set
+ * the width, so the value column shrank to about 60 px and ``break-all`` split
+ * every word ("Browse/r-Speicher").
+ */
+function expectPhoneStackedList(section: HTMLElement): void {
+    const list = section.querySelector("dl");
+    expect(list).not.toBeNull();
+    const columns = [...(list?.classList ?? [])].filter((name) => name.startsWith("grid-cols-"));
+    expect(columns).toEqual(["grid-cols-1"]);
+    expect(list?.classList.contains("sm:grid-cols-[minmax(0,max-content)_minmax(0,1fr)]")).toBe(true);
+    for (const value of section.querySelectorAll("dd")) {
+        expect(value.classList.contains("break-all")).toBe(false);
+        expect(value.classList.contains("break-words")).toBe(true);
+    }
+}
+
+describe("About cards share the phone layout (#3340)", () => {
+    it.each([
+        ["System", () => render(<SystemInfoSection info={apiInfo} storageMode="api" t={tFn} />), "about-system-section"],
+        ["Credits", () => render(<CreditsSection t={tFn} />), "about-credits-section"],
+    ])("%s stacks label and value on phones and wraps at word boundaries", (_name, renderCard, testId) => {
+        renderCard();
+        expectPhoneStackedList(screen.getByTestId(testId));
+    });
+});
+
 describe("DonationSection", () => {
     it("renders all three verified channels", () => {
         render(<DonationSection t={tFn} />);
@@ -286,6 +314,38 @@ describe("LicenseResourcesSection", () => {
         );
         expect(imprint.getAttribute("target")).toBe("_blank");
         expect(privacy.getAttribute("rel")).toContain("noopener");
+    });
+
+    it("stacks label and value on phones and wraps values at word boundaries (#3340)", () => {
+        render(
+            <MemoryRouter>
+                <LicenseResourcesSection info={apiInfo} t={tFn} lang="de" />
+            </MemoryRouter>,
+        );
+        const list = screen
+            .getByTestId("about-license-section")
+            .querySelector("dl");
+        expect(list).not.toBeNull();
+        const columnClasses = [...(list?.classList ?? [])].filter((name) =>
+            name.startsWith("grid-cols-"),
+        );
+        expect(columnClasses).toEqual(["grid-cols-1"]);
+        expect(list?.classList.contains(
+            "sm:grid-cols-[minmax(0,max-content)_minmax(0,1fr)]",
+        )).toBe(true);
+        for (const id of [
+            "about-license",
+            "about-repo",
+            "about-docs",
+            "about-tutorial",
+            "about-issues",
+            "about-imprint",
+            "about-privacy",
+        ]) {
+            const value = screen.getByTestId(id);
+            expect(value.classList.contains("break-all")).toBe(false);
+            expect(value.classList.contains("break-words")).toBe(true);
+        }
     });
 
     it("links to the App-Tutorial set deep link (#1572)", () => {
