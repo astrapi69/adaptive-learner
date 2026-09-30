@@ -3065,6 +3065,8 @@
       "missing_distractors": "Lección '{lesson}': el ejercicio '{exercise}' necesita distractores (opciones incorrectas).",
       "non_cefr_level": "El nivel '{level}' no es una banda CEFR (A1-C2).",
       "level_too_complex": "Lección '{lesson}': el texto promedia {avg} palabras por lado, alto para el nivel {level} (se esperan unas {cap}).",
+      "engine_rule": "Lección '{lesson}': regla {rule} en {path}: {message}",
+      "engine_warning": "Lección '{lesson}': aviso {rule} en {path}: {message}",
       "source_language_heuristic": "Los reversos contienen caracteres propios de {found}, pero el idioma de origen es '{lang}'.",
       "target_language_heuristic": "Los anversos contienen caracteres propios de {found}, pero el idioma de destino es '{lang}'.",
       "failed_share_anyway": "La comprobación de calidad encontró problemas. Puedes compartir de todos modos: los revisores verán los hallazgos anotados en el pull request."
