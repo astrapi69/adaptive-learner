@@ -407,10 +407,10 @@ jobs:
 
       # Prettier (#254). Declared OFF in .claude/rules/checks.yaml
       # (prettier-ci-check): it only lists unformatted files in the log.
-      # Most of src/ fails because .prettierrc (tabWidth 2) contradicts the
-      # 4-space style most files are written in. Making it blocking takes a
-      # separate cleanup plus a decision on the indent width; nothing here
-      # turns it on by itself.
+      # Most of src/ fails: it was never formatted and mixes 2- and 4-space.
+      # The style is decided (Prettier defaults, 2026-09-25, #3270) and
+      # .prettierrc states it; only the one-time reformat remains, and that
+      # PR makes this step blocking. Nothing here turns it on by itself.
       - name: Prettier check (non-blocking)
         if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend

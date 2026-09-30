@@ -61,7 +61,7 @@ Text-content rules (em-dash, UTF-8/umlauts, emojis) apply everywhere
 text is written, not only in code - see `text-formatting.md`.
 
 - Indentation: 4 spaces (Python), 2 spaces (TypeScript/CSS).
-- Automatic linting: ruff (Python), ESLint (TypeScript); formatting: ruff (Python). Pre-commit hooks enforce both, see code-hygiene.md.
+- Pre-commit hooks run ruff lint + format on `backend/app/` and ESLint on `frontend/src/`, see code-hygiene.md.
 - Prettier (TypeScript) is a non-blocking CI step until the #3270 reformat.
 
 ## Git
