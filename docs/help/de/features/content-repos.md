@@ -124,4 +124,4 @@ Einstellungen nicht versehentlich mitgegeben wird.
 
 - [Content Browser](content-browser.md) - Sätze finden, filtern, herunterladen
 - [Lektionen erstellen](../content-creation/overview.md) - eigene Inhalte beisteuern
-- [Backup und Wiederherstellung](backup.md) - verbundene Repos sind Teil des Snapshots
+- [Backup und Wiederherstellung](backup.md) - verbundene Repos sind noch nicht Teil des Backups, nach der Wiederherstellung neu verbinden

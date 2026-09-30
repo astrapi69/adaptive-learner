@@ -2,6 +2,8 @@ app:
   loading: "불러오는 중…"
   loading_slow: "예상보다 시간이 오래 걸리고 있습니다."
   view_load_failed: "이 화면을 불러올 수 없습니다."
+  view_crashed: "이 페이지에서 오류가 발생했습니다. 다른 페이지는 계속 사용할 수 있습니다."
+  crashed: "문제가 발생했습니다."
   reload: "새로고침"
   name: Adaptive Learner
   tagline: 6단계 방법론 모델에 따른 적응형 학습.
@@ -426,6 +428,10 @@ session:
   ai_thinking: 생각하는 중…
   ai_error: AI가 응답할 수 없었습니다.
   no_api_key: "AI 키가 설정되지 않았습니다. 튜터와 대화하려면 설정에서 AI 제공자의 키를 추가하세요. 레슨과 복습은 키 없이도 작동합니다."
+  ai_error_no_model: "AI 제공자의 모델이 선택되지 않았습니다. 설정 > AI에서 모델을 선택하세요."
+  ai_error_provider_auth: "AI 제공자가 키를 거부했습니다. 설정 > AI에서 키를 확인하세요."
+  ai_error_rate_limited: "AI 제공자의 한도에 도달했습니다. 잠시 기다리거나 할당량을 확인한 후 다시 보내세요."
+  ai_error_provider_unavailable: "지금은 AI 제공자에 연결할 수 없습니다. 연결을 확인하고 다시 보내세요."
   welcome_empty: "학습할 준비가 되었습니다! 첫 메시지를 작성하세요."
   end_session: 세션 종료
   end_session_confirm: 정말이신가요? 세션을 종료하고 평가할 수 있습니다.
@@ -479,6 +485,7 @@ settings:
     heading: "연결 해제된 콘텐츠"
     summary: "더 이상 연결되지 않은 소스의 {lessons}개 레슨과 {cards}개 복습 카드."
     delete: "연결 해제된 진행 상황 삭제"
+    delete_failed: "연결이 끊긴 진행 상황을 삭제하지 못했습니다: {detail}"
     confirm_title: "연결 해제된 진행 상황 삭제"
     confirm_message: "{lessons}개 레슨과 {cards}개 복습 카드가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
     deleted: "{lessons}개 레슨과 {cards}개 복습 카드를 삭제했습니다."
@@ -1207,6 +1214,7 @@ backup:
   auto_run_error: '자동 백업 실패: {{detail}}'
   auto_restored: 자동 백업이 복원되었습니다.
   auto_restore: 복원
+  auto_delete_failed: "자동 백업을 삭제하지 못했습니다: {detail}"
   auto_restore_error: '복원 실패: {{detail}}'
   auto_records: '레코드 {{n}}개'
   auto_none: 아직 자동 백업이 없습니다. 첫 백업은 세션 10회 또는 7일 후에 실행됩니다.
@@ -1639,6 +1647,7 @@ notebooklm:
 feature:
   api_key_required: "API 키가 필요합니다. 설정에서 제공자를 설정하세요."
   desktop_only: "데스크톱 앱에서만 사용할 수 있습니다."
+  browser_only: "앱의 브라우저 버전에서만 사용할 수 있습니다."
 ui:
   cancel: "취소"
   hide_secret: "값 숨기기"
@@ -1676,6 +1685,7 @@ ui:
     generic: "문제가 발생했습니다. 나중에 다시 시도하세요."
     unexpected: "문제가 발생했습니다."
   error_report:
+    report_button: "문제 신고"
     dialog_title: "문제 신고"
     intro: "Adaptive Learner가 오류를 감지했으며 개발자에게 보낼 버그 보고서를 준비할 수 있습니다."
     description_label: "재현 단계 (선택)"
@@ -2657,6 +2667,7 @@ content:
     change_failed: "상태를 업데이트할 수 없습니다."
     deleted: "세트가 제거되었습니다."
     delete_failed: "세트를 제거할 수 없습니다."
+    progress_not_deleted: "제거했지만 학습 진행 상황은 삭제하지 못했습니다: {detail}"
     delete_confirm: "다운로드한 세트와 해당 레슨이 내 콘텐츠에서 제거됩니다. 학습 진행 상황은 유지되며 언제든지 세트를 다시 다운로드할 수 있습니다."
     select_all: "모두 선택"
     select_set: "{title} 선택"
@@ -3652,6 +3663,7 @@ pwa:
   cache_clear: "캐시 지우기"
   cache_clear_confirm: "오프라인 캐시를 지울까요?"
   cache_clear_action: "네, 지웁니다"
+  cache_clear_failed: "오프라인 캐시를 비우지 못했습니다: {detail}"
   cache_cleared: "오프라인 캐시가 지워졌습니다."
   update:
     message: "새 버전을 사용할 수 있습니다."
@@ -4030,6 +4042,8 @@ content_repo:
     copy_failed: "복사할 수 없었습니다."
     hint: "다른 사람이 이 공개 저장소를 추가할 수 있도록 이 링크를 공유하세요. 비공개 저장소의 경우 URL과 읽기 전용 토큰을 따로 보내세요."
     qr_alt: "공유 링크용 QR 코드"
+  remove_failed: "저장소를 제거하지 못했습니다: {detail}"
+  reorder_failed: "저장소 순서를 변경하지 못했습니다: {detail}"
   progress:
     syncing: "동기화 중…"
     validating: "저장소를 검증하는 중…"
