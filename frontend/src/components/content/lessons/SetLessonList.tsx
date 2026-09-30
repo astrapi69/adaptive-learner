@@ -289,7 +289,7 @@ export default function SetLessonList({
       )}
       {open && (
         <ul
-          className="mt-1 border-t border-border pt-1"
+          className="m-0 mt-1 list-none border-t border-border p-0 pt-1"
           data-testid={`set-lessons-list-${entry.id}`}
         >
           {loading && (

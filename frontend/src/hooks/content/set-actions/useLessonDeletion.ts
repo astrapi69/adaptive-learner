@@ -31,7 +31,11 @@ import { useI18n } from "../../ui/useI18n";
 import {
   computeLessonDeletionPlan,
   computeLessonsDeletionPlan,
-  deletePlannedLearnerData,
+  deleteConfirmedLearnerData,
+  planAtConfirm,
+  planLessonDeletionOrThrow,
+  planLessonsDeletionOrThrow,
+  reportRemoval,
 } from "./deletion-plans";
 import { fetchSetLessons } from "./set-entry";
 import type { BulkLessonDeleteTarget, LessonDeleteTarget, SetSetsDispatch } from "./types";
@@ -104,6 +108,9 @@ export function useLessonDeletion({ setSets }: UseLessonDeletionDeps) {
     const { entry, filename } = target;
     setDeletingLesson(true);
     try {
+      const learnerData = deleteProgress
+        ? await planAtConfirm(deleteLessonPlan, () => planLessonDeletionOrThrow(target))
+        : null;
       const lessons = await fetchSetLessons(entry);
       const removal = removeLessonFromSet(entry, lessons, filename);
       if (!removal.found) {
@@ -127,8 +134,8 @@ export function useLessonDeletion({ setSets }: UseLessonDeletionDeps) {
       // it, regardless of the progress opt-in.
       const userId = readLearnerState().userId;
       if (userId) removeFavorite(userId, entry.id, filename);
-      if (deleteProgress) await deletePlannedLearnerData(deleteLessonPlan);
-      notify.success(t("content.lesson_delete.deleted", "Lesson deleted."));
+      const progressError = learnerData ? await deleteConfirmedLearnerData(learnerData) : null;
+      reportRemoval(t, progressError, t("content.lesson_delete.deleted", "Lesson deleted."));
       target.onDeleted?.();
       setDeleteLessonTarget(null);
     } catch (err) {
@@ -154,6 +161,9 @@ export function useLessonDeletion({ setSets }: UseLessonDeletionDeps) {
     const { entry, filenames } = target;
     setBulkDeletingLessons(true);
     try {
+      const learnerData = deleteProgress
+        ? await planAtConfirm(bulkDeleteLessonsPlan, () => planLessonsDeletionOrThrow(target))
+        : null;
       const lessons = await fetchSetLessons(entry);
       const removal = removeLessonsFromSet(entry, lessons, filenames);
       if (removal.found.length === 0) {
@@ -182,8 +192,10 @@ export function useLessonDeletion({ setSets }: UseLessonDeletionDeps) {
       if (userId) {
         for (const filename of removal.found) removeFavorite(userId, entry.id, filename);
       }
-      if (deleteProgress) await deletePlannedLearnerData(bulkDeleteLessonsPlan);
-      notify.success(
+      const progressError = learnerData ? await deleteConfirmedLearnerData(learnerData) : null;
+      reportRemoval(
+        t,
+        progressError,
         t("content.lesson_delete.bulk_deleted", "{n} lessons deleted.").replace(
           "{n}",
           String(removal.found.length),
