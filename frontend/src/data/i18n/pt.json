@@ -1757,7 +1757,8 @@
   },
   "feature": {
     "api_key_required": "Chave de API necessária. Configure um provedor nas configurações.",
-    "desktop_only": "Disponível apenas com o aplicativo para desktop."
+    "desktop_only": "Disponível apenas com o aplicativo para desktop.",
+    "browser_only": "Disponível apenas na versão do app para navegador."
   },
   "ui": {
     "cancel": "Cancelar",
