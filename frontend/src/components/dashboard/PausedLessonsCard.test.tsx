@@ -271,6 +271,38 @@ describe("PausedLessonsCard", () => {
     });
 });
 
+/**
+ * #3360 - the card is a display. It used to send ``mark_abandoned`` for every
+ * paused lesson beyond the newest ten and for every one older than the
+ * retention window, on every Dashboard visit; abandoning resets the position
+ * and the answers. It may hide such rows, never write to them.
+ */
+describe("PausedLessonsCard never abandons a paused lesson (#3360)", () => {
+    const hours = (count: number) =>
+        Array.from({length: count}, (_, index) =>
+            _progress(`${String(index + 1).padStart(2, "0")}.json`, "paused",
+                `2026-06-01T${String(index).padStart(2, "0")}:00:00Z`),
+        );
+
+    it.each([
+        ["eleven paused lessons (over the old cap of ten)", hours(11), "0", 5],
+        ["a paused lesson older than the retention window", [_progress("old.json", "paused", "2026-01-01T10:00:00Z"), _progress("new.json", "paused", new Date().toISOString())], "30", 1],
+    ])("%s: hides the extra rows and writes nothing", async (_label, rows, retentionDays, shown) => {
+        localStorage.setItem(RETENTION_PREF_KEY, retentionDays);
+        listMock.mockResolvedValue(rows);
+        render(
+            <MemoryRouter>
+                <PausedLessonsCard userId="user-1" />
+            </MemoryRouter>,
+        );
+        await waitFor(() =>
+            expect(screen.queryByTestId("paused-lessons-card")).toBeInTheDocument(),
+        );
+        await waitFor(() => expect(screen.getAllByRole("listitem")).toHaveLength(shown));
+        expect(upsertMock).not.toHaveBeenCalled();
+    });
+});
+
 describe("PausedLessonsCard re-reads on a lesson-progress write (#3075)", () => {
     it("shows a lesson paused AFTER the mount-time read once the write is announced", async () => {
         // First read: nothing paused (the pause of an in-app exit has not
