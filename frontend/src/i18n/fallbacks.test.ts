@@ -1,6 +1,8 @@
 import {describe, expect, it} from "vitest";
 
 import {FALLBACK_CATALOGS} from "./fallbacks";
+import SHELL_KEYS from "./shell-keys.json";
+import {UI_LANGUAGES} from "../lib/i18n/languages";
 
 /**
  * The first-paint fallback catalog MUST mirror the landing keys the shell
@@ -55,5 +57,59 @@ describe("first-paint fallback catalog — landing keys (#1902)", () => {
     it("de resolves landing.docs_link to German, not English", () => {
         const landing = FALLBACK_CATALOGS.de.landing as Record<string, string>;
         expect(landing.docs_link).toBe("Dokumentation lesen");
+    });
+});
+
+/**
+ * #3378 - the first-paint subset is generated from the YAML for every UI
+ * language. These pin that it covers all of them and still equals the full
+ * catalogs (a stale file means ``make sync-i18n`` was not run).
+ */
+describe("generated first-paint catalogs (#3378)", () => {
+    const catalogs = import.meta.glob<{default: Record<string, unknown>}>(
+        "../data/i18n/*.json",
+        {eager: true},
+    );
+    const full = (lang: string): Record<string, unknown> =>
+        catalogs[`../data/i18n/${lang}.json`].default;
+    const lookup = (catalog: unknown, key: string): unknown =>
+        key.split(".").reduce<unknown>(
+            (node, part) =>
+                node && typeof node === "object"
+                    ? (node as Record<string, unknown>)[part]
+                    : undefined,
+            catalog,
+        );
+
+    it("covers every UI language", () => {
+        const codes = UI_LANGUAGES.map((meta) => meta.code).sort();
+        expect(Object.keys(FALLBACK_CATALOGS).sort()).toEqual(codes);
+        expect(codes.length).toBeGreaterThanOrEqual(11);
+    });
+
+    it.each(UI_LANGUAGES.map((meta) => meta.code))(
+        "%s: every shell key equals the full catalog value",
+        (lang) => {
+            expect(SHELL_KEYS.length).toBeGreaterThan(100);
+            const drift = SHELL_KEYS.filter(
+                (key) => lookup(FALLBACK_CATALOGS[lang], key) !== lookup(full(lang), key),
+            );
+            expect(drift).toEqual([]);
+        },
+    );
+
+    it("holds exactly the listed shell keys", () => {
+        const leaves: string[] = [];
+        const walk = (node: unknown, prefix: string): void => {
+            if (typeof node === "string") {
+                leaves.push(prefix);
+                return;
+            }
+            for (const [key, child] of Object.entries(node as object)) {
+                walk(child, prefix ? `${prefix}.${key}` : key);
+            }
+        };
+        walk(FALLBACK_CATALOGS.en, "");
+        expect(leaves.sort()).toEqual([...SHELL_KEYS].sort());
     });
 });
