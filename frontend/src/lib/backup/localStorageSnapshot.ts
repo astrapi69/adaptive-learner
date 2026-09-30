@@ -19,6 +19,8 @@
  * payload itself came from the backend (API mode) or Dexie.
  */
 
+import {MANAGED_USER_DATA_KEYS, mirrorUserData} from "../../storage/dexie/dexie-user-data";
+
 /**
  * Substring patterns (case-insensitive) whose `localStorage` keys are
  * NEVER written into a backup and NEVER applied on import.
@@ -120,4 +122,30 @@ export function withLocalStorageSnapshot<
     T extends {local_storage?: Record<string, string>},
 >(payload: T): T {
     return {...payload, local_storage: captureLocalStorageSnapshot()};
+}
+
+/**
+ * Restore a backup's snapshot: {@link applyLocalStorageSnapshot}, then write
+ * every applied key that the Dexie ``userData`` store manages into that store
+ * too (#3369). In browser mode the boot reconcile lets a Dexie row win over
+ * localStorage, so without the mirror each restored managed key (set status,
+ * lesson order, mentor notes, purchases, ...) reverted at the next app start.
+ * Outside browser mode the mirror is a no-op. Returns the number of keys
+ * applied; never throws.
+ *
+ * @example
+ * await restoreLocalStorageSnapshot(payload.local_storage);
+ */
+export async function restoreLocalStorageSnapshot(
+    snapshot: Record<string, string> | undefined | null,
+): Promise<number> {
+    const applied = applyLocalStorageSnapshot(snapshot);
+    if (applied === 0 || snapshot === null || snapshot === undefined) return applied;
+    const managed = new Set<string>(MANAGED_USER_DATA_KEYS);
+    for (const [key, value] of Object.entries(snapshot)) {
+        if (!managed.has(key) || typeof value !== "string") continue;
+        if (isExcludedLocalStorageKey(key)) continue;
+        await mirrorUserData(key, value);
+    }
+    return applied;
 }
