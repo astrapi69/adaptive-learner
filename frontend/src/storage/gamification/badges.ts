@@ -8,6 +8,7 @@
  * runtime YAML dependency in the browser bundle.
  */
 
+import {LEARNING_METHODS} from "../../lib/constants";
 import {getDb, newId, nowIso} from "../dexie/db";
 import type {BadgeRow, UserBadgeRow} from "../dexie/db";
 import {computeLevel, persistXP} from "./gamification";
@@ -112,7 +113,13 @@ async function distinctMethodsUsed(userId: string): Promise<Set<string>> {
             (s) => projectIds.has(s.project_id) && s.status === "completed",
         )
         .toArray();
-    return new Set(sessions.map((s) => s.method));
+    // Only the six chat methods count: a lesson completion writes a
+    // ``content`` session (#3375) that is not a method.
+    return new Set(
+        sessions
+            .map((s) => s.method)
+            .filter((m) => (LEARNING_METHODS as readonly string[]).includes(m)),
+    );
 }
 
 async function currentStreakDaysForUser(userId: string): Promise<number> {
