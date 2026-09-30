@@ -8,8 +8,13 @@
  * neither carried a spacing utility.
  */
 
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const { notifyError } = vi.hoisted(() => ({ notifyError: vi.fn() }));
+vi.mock("../../../utils/notify", () => ({
+    notify: { error: notifyError, success: vi.fn(), info: vi.fn() },
+}));
 
 vi.mock("../../../storage/backup/auto-backup", () => ({
     checkTimeTrigger: vi.fn(async () => {}),
@@ -24,6 +29,7 @@ vi.mock("../../../storage/backup/auto-backup", () => ({
 }));
 
 import { BackupAutoBackups } from "./BackupAutoBackups";
+import * as autoBackup from "../../../storage/backup/auto-backup";
 
 describe("BackupAutoBackups spacing", () => {
     beforeEach(() => {
@@ -41,5 +47,22 @@ describe("BackupAutoBackups spacing", () => {
         const actions = await screen.findByTestId("backup-auto-run");
         const row = actions.closest(".backup-actions");
         expect(row?.className).toMatch(/\bmt-\d/);
+    });
+
+    it("tells the user when deleting an automatic backup fails (#3384)", async () => {
+        vi.mocked(autoBackup.listAutoBackups).mockResolvedValue([
+            { id: "ab-1", created_at: "2026-09-30T10:00:00Z", total_records: 3 } as never,
+        ]);
+        vi.mocked(autoBackup.deleteAutoBackup).mockRejectedValue(new Error("blocked"));
+        render(
+            <BackupAutoBackups
+                userId="u-1"
+                onRestored={() => {}}
+                onLoadIntoCompare={() => {}}
+            />,
+        );
+        fireEvent.click(await screen.findByTestId("backup-auto-delete-ab-1"));
+        await waitFor(() => expect(notifyError).toHaveBeenCalled());
+        expect(String(notifyError.mock.calls[0][0])).toContain("blocked");
     });
 });

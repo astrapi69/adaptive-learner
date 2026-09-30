@@ -3,6 +3,8 @@
     "loading": "Memuat…",
     "loading_slow": "Ini memakan waktu lebih lama dari yang diharapkan.",
     "view_load_failed": "Tampilan ini tidak dapat dimuat.",
+    "view_crashed": "Terjadi kesalahan di halaman ini. Halaman lain tetap berfungsi.",
+    "crashed": "Terjadi kesalahan.",
     "reload": "Muat ulang",
     "name": "Adaptive Learner",
     "tagline": "Pembelajaran adaptif berdasarkan Model Enam Metode.",
@@ -456,6 +458,10 @@
     "ai_thinking": "Berpikir…",
     "ai_error": "Penyedia AI tidak dapat membalas.",
     "no_api_key": "Tidak ada kunci AI yang diatur. Tambahkan kunci untuk penyedia AI Anda di Pengaturan untuk mengobrol dengan tutor. Pelajaran dan ulasan tetap berfungsi tanpa kunci.",
+    "ai_error_no_model": "Belum ada model yang dipilih untuk penyedia AI Anda. Pilih model di Pengaturan > AI.",
+    "ai_error_provider_auth": "Penyedia AI Anda menolak kunci tersebut. Periksa kunci di Pengaturan > AI.",
+    "ai_error_rate_limited": "Batas penyedia AI Anda telah tercapai. Tunggu sebentar atau periksa kuota Anda, lalu kirim lagi.",
+    "ai_error_provider_unavailable": "Penyedia AI Anda saat ini tidak dapat dijangkau. Periksa koneksi Anda dan kirim lagi.",
     "welcome_empty": "Siap belajar! Tulis pesan pertama Anda.",
     "end_session": "Akhiri sesi",
     "end_session_confirm": "Yakin? Kami akan menutup sesi dan meminta penilaian.",
@@ -512,6 +518,7 @@
       "heading": "Konten terputus",
       "summary": "{lessons} pelajaran dan {cards} kartu ulasan dari sumber yang tidak lagi terhubung dengan Anda.",
       "delete": "Hapus progres yang terputus",
+      "delete_failed": "Kemajuan yang terputus tidak dapat dihapus: {detail}",
       "confirm_title": "Hapus progres yang terputus",
       "confirm_message": "{lessons} pelajaran dan {cards} kartu ulasan akan dihapus permanen. Ini tidak dapat dibatalkan.",
       "deleted": "{lessons} pelajaran dan {cards} kartu ulasan telah dihapus."
@@ -1283,6 +1290,7 @@
     "auto_run_error": "Pencadangan otomatis gagal: {{detail}}",
     "auto_restored": "Pencadangan otomatis dipulihkan.",
     "auto_restore": "Pulihkan",
+    "auto_delete_failed": "Cadangan otomatis tidak dapat dihapus: {detail}",
     "auto_restore_error": "Pemulihan gagal: {{detail}}",
     "auto_records": "{{n}} catatan",
     "auto_none": "Belum ada pencadangan otomatis. Yang pertama berjalan setelah 10 sesi atau 7 hari.",
@@ -1759,7 +1767,8 @@
   },
   "feature": {
     "api_key_required": "Kunci API diperlukan. Konfigurasikan penyedia di Pengaturan.",
-    "desktop_only": "Hanya tersedia dengan aplikasi desktop."
+    "desktop_only": "Hanya tersedia dengan aplikasi desktop.",
+    "browser_only": "Hanya tersedia di versi browser aplikasi."
   },
   "ui": {
     "cancel": "Batal",
@@ -2863,6 +2872,7 @@
       "change_failed": "Tidak dapat memperbarui status.",
       "deleted": "Set dihapus.",
       "delete_failed": "Tidak dapat menghapus set.",
+      "progress_not_deleted": "Dihapus, tetapi kemajuan belajar Anda tidak dapat dihapus: {detail}",
       "delete_confirm": "Set yang diunduh dan pelajarannya akan dihapus dari Konten Saya. Progres belajarmu tetap tersimpan, dan kamu dapat mengunduh set lagi kapan saja.",
       "select_all": "Pilih semua",
       "select_set": "Pilih {title}",
@@ -3959,6 +3969,7 @@
     "cache_clear": "Hapus cache",
     "cache_clear_confirm": "Hapus cache luring?",
     "cache_clear_action": "Ya, hapus",
+    "cache_clear_failed": "Cache offline tidak dapat dikosongkan: {detail}",
     "cache_cleared": "Cache luring dihapus.",
     "update": {
       "message": "Versi baru telah tersedia.",
@@ -4359,6 +4370,8 @@
       "hint": "Bagikan tautan ini agar orang lain dapat menambahkan repo PUBLIK ini. Untuk repo privat, kirimkan URL + token hanya-baca secara terpisah.",
       "qr_alt": "Kode QR untuk tautan berbagi"
     },
+    "remove_failed": "Repositori tidak dapat dihapus: {detail}",
+    "reorder_failed": "Urutan repositori tidak dapat diubah: {detail}",
     "progress": {
       "syncing": "Menyinkronkan…",
       "validating": "Memvalidasi repositori…",

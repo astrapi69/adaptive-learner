@@ -254,6 +254,17 @@ export function BackupAutoBackups({
                                         setAutoBackups(
                                             await listAutoBackups(userId),
                                         );
+                                    } catch (err) {
+                                        console.error("[auto-backup] delete failed", err);
+                                        notify.error(
+                                            t(
+                                                "backup.auto_delete_failed",
+                                                "Could not delete the automatic backup: {detail}",
+                                            ).replace(
+                                                "{detail}",
+                                                err instanceof Error ? err.message : String(err),
+                                            ),
+                                        );
                                     } finally {
                                         setAutoBusy(null);
                                     }
