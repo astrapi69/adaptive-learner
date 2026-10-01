@@ -88,6 +88,7 @@ export default function ActivityTrend({entries}: ActivityTrendProps) {
                         .replace("{date}", date)
                 }
                 testId="activity-sparkline"
+                layout="row"
             />
         </div>
     );

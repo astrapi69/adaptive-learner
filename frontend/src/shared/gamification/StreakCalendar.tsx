@@ -14,6 +14,9 @@
  *   cellTitle={(d, c) => `${c} sessions on ${d}`}
  *   emptyLabel="No activity yet."
  * />
+ *
+ * ``layout="row"`` lays the days out as one row instead of weekly
+ * columns - the shape for a short strip such as the last seven days.
  */
 
 import {useRef} from "react";
@@ -41,6 +44,8 @@ export interface StreakCalendarProps {
     ariaLabel?: string;
     className?: string;
     testId?: string;
+    /** ``"weeks"`` (default): weekly columns. ``"row"``: one row of days. */
+    layout?: "weeks" | "row";
 }
 
 function defaultTier(count: number): number {
@@ -78,6 +83,7 @@ export default function StreakCalendar({
     ariaLabel,
     className,
     testId = "streak-calendar",
+    layout = "weeks",
 }: StreakCalendarProps) {
     // #3400 - open on the newest days, not the oldest ones.
     const stripRef = useRef<HTMLDivElement>(null);
@@ -90,43 +96,49 @@ export default function StreakCalendar({
         );
     }
 
-    const weeks = toWeeks(days);
+    const renderCell = (day: StreakDay) => {
+        const tier = Math.min(4, Math.max(0, tierFor(day.count)));
+        const isToday = today != null && day.date === today;
+        return (
+            <span
+                key={day.date}
+                data-testid={`${testId}-cell-${day.date}`}
+                data-tier={tier}
+                data-today={isToday ? "true" : "false"}
+                title={cellTitle(day.date, day.count)}
+                style={{
+                    width: 12,
+                    height: 12,
+                    flexShrink: 0,
+                    borderRadius: 2,
+                    background: TIER_BG[tier],
+                    outline: isToday
+                        ? "2px solid var(--accent)"
+                        : "1px solid var(--border)",
+                    outlineOffset: isToday ? 1 : 0,
+                }}
+            />
+        );
+    };
 
+    // p-[3px]: room for the 2px today outline plus its 1px offset, which
+    // the overflow box would otherwise clip (#3417).
     return (
         <div
             ref={stripRef}
-            className={`flex gap-[3px] overflow-x-auto ${className ?? ""}`}
+            className={`flex gap-[3px] overflow-x-auto p-[3px] ${className ?? ""}`}
             data-testid={testId}
+            data-layout={layout}
             role="img"
             aria-label={ariaLabel}
         >
-            {weeks.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-[3px]">
-                    {week.map((day) => {
-                        const tier = Math.min(4, Math.max(0, tierFor(day.count)));
-                        const isToday = today != null && day.date === today;
-                        return (
-                            <span
-                                key={day.date}
-                                data-testid={`${testId}-cell-${day.date}`}
-                                data-tier={tier}
-                                data-today={isToday ? "true" : "false"}
-                                title={cellTitle(day.date, day.count)}
-                                style={{
-                                    width: 12,
-                                    height: 12,
-                                    borderRadius: 2,
-                                    background: TIER_BG[tier],
-                                    outline: isToday
-                                        ? "2px solid var(--accent)"
-                                        : "1px solid var(--border)",
-                                    outlineOffset: isToday ? 1 : 0,
-                                }}
-                            />
-                        );
-                    })}
-                </div>
-            ))}
+            {layout === "row"
+                ? days.map(renderCell)
+                : toWeeks(days).map((week, wi) => (
+                      <div key={wi} className="flex flex-col gap-[3px]">
+                          {week.map(renderCell)}
+                      </div>
+                  ))}
         </div>
     );
 }
