@@ -16,6 +16,10 @@
  * />
  */
 
+import {useRef} from "react";
+
+import {useScrollToEnd} from "../hooks/useScrollToEnd";
+
 export interface StreakDay {
     /** ISO date (YYYY-MM-DD). */
     date: string;
@@ -75,6 +79,9 @@ export default function StreakCalendar({
     className,
     testId = "streak-calendar",
 }: StreakCalendarProps) {
+    // #3400 - open on the newest days, not the oldest ones.
+    const stripRef = useRef<HTMLDivElement>(null);
+    useScrollToEnd(stripRef, days);
     if (days.length === 0) {
         return (
             <p className={className} data-testid={`${testId}-empty`}>
@@ -87,6 +94,7 @@ export default function StreakCalendar({
 
     return (
         <div
+            ref={stripRef}
             className={`flex gap-[3px] overflow-x-auto ${className ?? ""}`}
             data-testid={testId}
             role="img"

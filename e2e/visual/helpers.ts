@@ -797,7 +797,7 @@ export async function answerCurrentStep(page: Page): Promise<void> {
 /**
  * Pair a matching exercise so that the first ``cycle`` pairs are WRONG and
  * the rest correct, then check, leaving the default post-check view ("My
- * answers", the pairs as formed, #3233) on screen. Returns false when the
+ * answers" before #3505; "Corrections" since) on screen. Returns false when the
  * grid is too small for the cycle.
  *
  * The wrong pairs form a rotation (left ``i`` -> right ``(i + 1) % cycle``;
@@ -834,10 +834,10 @@ async function pairMatchingWithWrongCycle(page: Page, cycle: number): Promise<bo
     // #1785 - "matching-result visible" is NOT the settled post-check
     // state; pin the view toggle, then wait for the page height to stop
     // moving (same determinism class as #1696).
-    // #3233 - the default post-check view is "My answers", which shows the
-    // pairs as formed, ungraded (no feedback rows, no red/green), so the
-    // pin is the active My-answers toggle, not a grading row.
-    await expect(page.getByTestId("matching-my-answers")).toHaveAttribute(
+    // #3505 - a check with mistakes opens on "Corrections" (the graded grid
+    // with the correct partner under each mistake), so the pin is the
+    // active Corrections toggle.
+    await expect(page.getByTestId("matching-corrections")).toHaveAttribute(
         "aria-pressed",
         "true",
         {timeout: 5_000},

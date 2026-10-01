@@ -1212,13 +1212,13 @@ areas of the Data tab in the fixed #1451 order.
       only the graded columns
 - [ ] TC-0329 matching corrections view (#3186): after a not-fully-correct check
       there are three buttons "My answers" / "Corrections" / "Solve".
-      "My answers" is active and shows your pairs exactly as you formed
+      "Corrections" is active (#3505). "My answers" shows your pairs exactly as you formed
       them (numbered, colour-coded pair badges), with NO grading: no
       green/red, no green pair colour either (#3261), no "Your answer" or
       "Correct answer" row (#3233).
       "Corrections" shows the graded grid (green/red, "Your answer") plus
       the correct answer under each mistake, "Solve" shows the solution.
-      "Try again" and a new check start in "My answers" again
+      "Try again" and a new check start in "Corrections" again
 - [ ] TC-0330 matching corrections setting (#3186): Settings > Learning > card
       "Matching exercise" > "Corrections as a separate view" is on by
       default. Off: only two buttons "My answers" / "Solve", the correct
