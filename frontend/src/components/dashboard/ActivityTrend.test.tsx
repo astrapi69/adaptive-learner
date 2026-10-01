@@ -59,4 +59,12 @@ describe("ActivityTrend", () => {
             screen.queryByTestId("activity-sparkline-cell-2026-06-01"),
         ).not.toBeInTheDocument();
     });
+
+    it("lays the 7-day sparkline out as one row, not a weekly column (#3417)", () => {
+        cleanup();
+        render(<ActivityTrend entries={series([1,1,1,1,1,1,1, 2,2,2,2,2,2,2])} />);
+        const strip = screen.getByTestId("activity-sparkline");
+        expect(strip).toHaveAttribute("data-layout", "row");
+        expect(strip.children).toHaveLength(7);
+    });
 });
