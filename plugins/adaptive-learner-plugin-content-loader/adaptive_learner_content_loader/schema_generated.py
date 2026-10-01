@@ -532,7 +532,7 @@ class Exercise(BaseModel):
     )
     accept: list[str] | None = Field(None, title='Accept')
     """
-    FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer. The first entry is the canonical answer shown after a wrong attempt. CLOZE ``multiselect`` (#1195) reuses this field with a mode-specific meaning: EVERY entry is a correct option (not just the first), rendered as a checkbox group with ``distractors`` and graded by exact-set match; the two lists must be disjoint.
+    FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer; case is not an error unless ``case_sensitive`` is true. The first entry is the canonical answer shown after a wrong attempt. CLOZE ``multiselect`` (#1195) reuses this field with a mode-specific meaning: EVERY entry is a correct option (not just the first), rendered as a checkbox group with ``distractors`` and graded by exact-set match; the two lists must be disjoint.
     """
     accept_orderings: list[list[int]] | None = Field(None, title='Accept Orderings')
     """
@@ -546,6 +546,10 @@ class Exercise(BaseModel):
     """
     Cards this exercise drills. SRS feedback after a wrong answer schedules these cards for review.
     """
+    case_sensitive: bool = Field(False, title='Case Sensitive')
+    """
+    FREE_TEXT: when true, an answer must match an ``accept`` entry in case (``I am Anna`` is right, ``i am Anna`` is wrong); when false (the default) case is not an error. Declare it only where the exercise teaches case, such as capitalisation. The rules follow it: ``accept`` and ``distractors`` are compared in case only when it is true (``E-FREETEXT-DISJOINT``). Schema 1.19, engine#242. Ignored by the other exercise types.
+    """
     cloze_mode: ClozeMode | None = Field(None, title='Cloze Mode')
     """
     CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a single-answer ``<select>`` per blank with options from ``distractors``, ``multiselect`` (#1195) renders a checkbox group of ``accept`` (all correct) + ``distractors`` for a 'select all that apply' question. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.
@@ -556,7 +560,7 @@ class Exercise(BaseModel):
     """
     distractors: list[str] = Field([], max_length=20, title='Distractors')
     """
-    Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors.
+    Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors. FREE_TEXT: no entry may also be an accepted answer (``E-FREETEXT-DISJOINT``, compared after trimming, in case only when ``case_sensitive`` is true).
     """
     examples: list[InlineExample] | None = Field(None, max_length=20, title='Examples')
     """
