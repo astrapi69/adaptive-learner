@@ -794,4 +794,3 @@ def test_set_entry_without_a_cached_version_has_no_download_time() -> None:
     entry = _set_entry(SOURCE, SET_ID, "1.0.0")
     assert entry.cached_version is None
     assert entry.downloaded_at is None
-
