@@ -5,54 +5,52 @@ language: de
 entries:
   - key: feature_method_switch
     title: Methodenwechsel
-    short: "Das System empfiehlt eine andere Methode, wenn du stagnierst — du entscheidest, ob du wechselst."
+    short: "Das System empfiehlt eine andere Methode, wenn du stagnierst - du entscheidest, ob du wechselst."
     long: |
       ## Was ist der Methodenwechsel?
 
-      Wenn deine Lernsessions in einer Methode stagnieren oder
-      hohen Stress erzeugen, schlaegt dir Adaptive Learner einen
+      Wenn dein Lernen in einer Methode stagniert und dabei
+      viel Stress erzeugt, schlägt Adaptive Learner einen
       Methodenwechsel vor. Du siehst den Vorschlag als Banner
-      ueber dem Session-Chat — du kannst ihn annehmen, ablehnen
-      oder spaeter entscheiden.
+      über dem Session-Chat und kannst ihn annehmen oder
+      ausblenden.
 
-      ## Wann der Vorschlag ausgeloest wird
+      ## Wann der Vorschlag erscheint
 
-      Drei Bedingungen muessen gleichzeitig erfuellt sein:
+      Die Regel betrachtet deine letzten drei
+      Session-Bewertungen. Beide Bedingungen müssen gelten:
 
-      - **Mindestens 3 Sessions** in der aktuellen Methode.
-      - **Durchschnittlicher Stress > 3** (auf 1-5-Skala) in
-        den letzten 3 Bewertungen.
-      - **Methodenpassung < 3** in den letzten 3 Bewertungen.
+      - **Kein Fortschritt im Verständnis**: die drei
+        Verständniswerte steigen nicht (dreimal derselbe Wert
+        zählt als Stagnation).
+      - **Durchschnittlicher Stress über 3** (Skala 1-5) in
+        denselben drei Bewertungen.
 
-      Stagnations-Erkennung allein reicht nicht: kurze
-      Schwierigkeiten in einer ansonsten passenden Methode sind
-      normal und gehen wieder vorbei. Erst die Kombination aus
-      Dauer + Stress + niedriger Passung loest den Vorschlag aus.
+      Mit weniger als drei Bewertungen gibt es keinen
+      Vorschlag. Eine schwierige Phase mit Fortschritt oder
+      Stagnation ohne Stress löst ihn nicht aus.
 
-      ## Wie das System entscheidet
+      ## Welche Methode vorgeschlagen wird
 
-      Der ``recommend_method_switch``-Hook im Session-Plugin
-      vergleicht dein Lernprofil mit deinem aktuellen Verlauf
-      und schlaegt die Methode mit der hoechsten erwarteten
-      Passung vor. Wenn die top-2 Methoden nahe beieinander
-      liegen, siehst du beide als Optionen.
+      Die Methode mit dem höchsten Gewicht in deinem
+      Lernprofil, die du zuletzt nicht genutzt hast. Ohne
+      Profil die nächste Methode in der festen Reihenfolge.
 
       ## Du entscheidest
 
-      Das System schlaegt vor; du waehlst. Wenn du den Wechsel
-      annimmst, wird der Wechsel als ``MethodSwitch``-Eintrag
-      gespeichert (Auditspur fuer dein Profil). Wenn du
-      ablehnst, passiert nichts — der Vorschlag erscheint
-      fruehestens nach 3 weiteren Sessions wieder.
+      Das System empfiehlt, du wählst. Annehmen wechselt die
+      Session und speichert einen ``MethodSwitch``-Eintrag
+      (eine Spur für dein Profil). Ausblenden versteckt den
+      Vorschlag für den Rest dieser Session; die nächste
+      Session prüft erneut.
 
       ## Warum nicht automatisch?
 
-      Methodenwechsel sind eine grosse Veraenderung im
-      Lernerlebnis. Ein automatischer Wechsel wuerde die
-      Lernkontinuitaet brechen und kann auch dann ausgeloest
-      werden, wenn du gerade in einer schwierigen aber
-      produktiven Phase bist. Du kennst deinen Kontext besser
-      als das System.
+      Ein Methodenwechsel ist ein großer Einschnitt ins
+      Lernerlebnis. Ein automatischer Wechsel würde die
+      Lernkontinuität brechen und könnte mitten in einer
+      schwierigen, aber produktiven Phase auslösen. Du kennst
+      deinen Kontext besser als das System.
 
   - key: feature_auto_loop
     title: Auto-Loop
@@ -102,57 +100,47 @@ entries:
   - key: feature_spaced_repetition
     title: Spaced Repetition
     short: "Zeitlich optimierte Wiederholungen basierend auf deinem Lernverlauf."
+    docs_slug: user-guide/lessons
     long: |
       ## Was ist Spaced Repetition?
 
-      Spaced Repetition ist die Lerntechnik, Wiederholungen in
-      immer groesseren Abstaenden anzuordnen. Das nutzt den
-      Vergessens-Kurve-Effekt: jede erfolgreich abgerufene
-      Information haelt das naechste Mal laenger.
+      Spaced Repetition legt Wiederholungen in wachsenden
+      Abständen. Sie nutzt die Vergessenskurve: jedes
+      erfolgreich abgerufene Element hält beim nächsten Mal
+      länger.
 
-      ## Das Band-System im Adaptive Learner
+      ## Die Stufen in Adaptive Learner
 
-      Sechs Faelligkeits-Baender (Bands):
+      Jedes Übungselement, das du beantwortest, wird
+      verfolgt. Der nächste Wiederholungstermin hängt davon
+      ab, wie oft du es zuletzt in Folge richtig beantwortet
+      hast:
 
-      - **Today** — neue Karten + Tages-Wiederholungen.
-      - **+1d** — gestern gelernt, heute wiederholen.
-      - **+3d** — vor drei Tagen wiederholt, heute wieder.
-      - **+7d** — eine Woche her.
-      - **+14d** — zwei Wochen her.
-      - **+30d** — ein Monat her.
+      - **0-mal richtig in Folge** (oder gerade falsch):
+        Wiederholung 1 Tag später.
+      - **1-mal richtig in Folge**: 3 Tage später.
+      - **2-mal oder öfter richtig in Folge**: 7 Tage später.
 
-      Sobald eine Karte vier Wiederholungen erfolgreich
-      bestanden hat, wird sie als "stabil" markiert und
-      verlaesst die aktive Liste — bleibt aber im System fuer
-      gelegentliche Auffrischung.
+      Bei **3 richtigen Antworten in Folge** gilt das Element
+      als gemeistert und verlässt die
+      Wiederholungsschlange. Eine spätere falsche Antwort
+      holt es zurück.
 
-      ## Wie der Verlauf eingeht
+      ## Was den Termin verschiebt
 
-      Eine "erfolgreiche Wiederholung" ist nicht nur ein Klick.
-      Das System bewertet:
-
-      - **Confidence in der Wiederholungs-Session** (vom
-        Dual-Prompt-Evaluator).
-      - **Antwortzeit** im Vergleich zu deinem Durchschnitt.
-      - **Fehleranzahl** im aktuellen Zyklus.
-
-      Bei niedriger Confidence rutscht die Karte zurueck in ein
-      frueheres Band statt einfach das naechste zu erreichen.
-
-      ## Verbindung zu Anki
-
-      Wenn das Anki-Plugin aktiv ist, kannst du Karten direkt
-      ins Anki-Format exportieren. Das System uebersetzt die
-      Bands in Anki-Schedules — du verlierst keinen Fortschritt
-      beim Umstieg.
+      - **Hinweis genutzt**: der Abstand halbiert sich, weil
+        die Antwort mit Hilfe kam.
+      - **Richtig im Prüfungsmodus**: der Abstand verdoppelt
+        sich, weil eine Antwort ohne Hilfe stärker zählt.
 
       ## Wann das System Wiederholungen empfiehlt
 
-      Im Dashboard zeigen dir die "Spaced Recommendations" die
-      heute faelligen Karten. Du kannst sie einzeln durchgehen
-      oder am Anfang einer regulaeren Session vorausschicken
-      lassen — vor dem neuen Stoff. Das System bevorzugt die
-      Karten mit dem hoechsten Vergessens-Risiko.
+      Sind Elemente fällig, erscheint auf dem Dashboard eine
+      Wiederholungskarte mit der Zahl der fälligen und
+      überfälligen Elemente und einem Button
+      **Wiederholungssitzung öffnen**. Überfällige Elemente kommen zuerst,
+      dann die mit den meisten Fehlern. Details: siehe die
+      Anleitung zu Lektionen.
 
   - key: feature_conversation_analysis
     title: Conversation Analysis / Import
@@ -216,69 +204,72 @@ entries:
 
   - key: feature_gamification
     title: Gamification (XP, Badges, Streaks)
-    short: "Fortschrittssystem mit Erfahrungspunkten, Abzeichen und Lernserien — Motivation ohne Spielerei."
+    short: "Fortschrittssystem mit Erfahrungspunkten, Abzeichen und Lernserien - Motivation ohne Spielerei."
+    docs_slug: user-guide/dashboard
     long: |
-      ## Was ist die Gamification-Schicht?
+      ## Was ist die Gamification-Ebene?
 
       Drei Mechaniken machen Lernfortschritt sichtbar und
-      belohnend:
+      lohnend:
 
-      - **XP (Erfahrungspunkte)** — fuer jede abgeschlossene
-        Session, jeden Methodenwechsel, jede Spaced-Repetition-
-        Karte. Levels steigen mit den XP.
-      - **Badges** — fuer thematische Meilensteine ("Erste
-        Session", "10 Sessions in einer Methode", "30 Tage
-        Streak", ...).
-      - **Streaks** — taegliche Lernserien. Verfallen nach
-        24 Stunden ohne Session — mit drei "Streak Freezes"
-        pro Monat als Notfall-Pause.
+      - **XP (Erfahrungspunkte)** - für abgeschlossene
+        Sessions und Lektionen, das Assessment und
+        Gesprächsimporte. Mit den XP steigt dein Level.
+      - **Badges** - für Meilensteine (erste Session,
+        Beständigkeit, Methoden ausprobieren, Tiefe, mehrere
+        Sprachen).
+      - **Streaks** - aufeinanderfolgende Tage mit
+        Lernaktivität.
 
-      ## Wie XP verdient wird
+      ## So bekommst du XP
 
-      Verschiedene Aktionen geben verschiedene XP-Werte:
+      - **Abgeschlossene Session**: 50 XP, +10 XP pro
+        abgeschlossenem Zyklus, +25 XP pro Zyklus bis Schritt 7.
+      - **Erste Session in einer neuen Methode**: +50 XP.
+      - **Abgeschlossene Lektion**: 30 XP, +10 XP pro Stern,
+        +20 XP für drei Sterne mit jedem Schritt im ersten
+        Versuch richtig.
+      - **Streak-Multiplikator**: +25 % pro Streak-Tag auf
+        Session- und Lektions-XP, bis 7 Tage (höchstens 2,75x).
+      - **Spielmodus-Combo**: bis zu 20 zusätzliche XP für eine
+        mit Combos gespielte Lektion.
+      - **Assessment abgeschlossen**: 100 XP.
+      - **Gespräch importiert und analysiert**: 75 XP.
 
-      - **Session bewertet abgeben**: 50 XP.
-      - **Schritt 7 (Integration) erreicht**: +25 XP Bonus.
-      - **Methodenwechsel angenommen**: 10 XP (du nimmst eine
-        bewusste Lernentscheidung).
-      - **Spaced-Repetition-Karte mit Confidence > 80%**: 5 XP.
-      - **Anki-Export einer Sammlung**: 20 XP.
-
-      Levels skalieren mit Wurzel-Funktion (Level n = sqrt(XP /
-      100)) — Anfangslevels gehen schnell, hoehere brauchen
-      laengeren Atem.
+      Die Level wachsen auf einer sich öffnenden Kurve: Level 2
+      bei 100 XP, Level 3 bei 300, Level 4 bei 600, Level 5
+      bei 1000 - jeder Abstand ist 100 XP größer als der davor.
 
       ## Badges sind kein Zwang
 
-      Badge-Kriterien sind nicht UI-relevant — du *musst* kein
-      einziges Badge holen, um die App produktiv zu nutzen. Sie
-      sind ein Spiegel, kein Ziel. Wenn du das Gefuehl
-      bekommst, fuer Badges statt fuer dich zu lernen,
-      deaktiviere die Anzeige in den Einstellungen.
+      Du brauchst *kein einziges* Badge, um die App produktiv
+      zu nutzen. Sie sind ein Spiegel, kein Ziel.
+      Badge-Benachrichtigungen lassen sich in den
+      Einstellungen abschalten.
 
       ## Streak-Freezes
 
-      Drei Streak-Freezes pro Monat. Wenn du einen Tag
-      verpasst, schuetzt der Freeze deine Streak automatisch.
-      Das ist explizit als "Krankheitstag" oder "Reisetag"
-      gedacht, nicht als Ausnahme-Mechanik fuer Faulheit.
+      Je 7 Streak-Tage bringen einen Streak-Freeze, bis zu 3
+      auf Vorrat. Verpasst du einen Tag, wird automatisch ein
+      Freeze verbraucht und pausiert deine Serie, statt sie
+      zurückzusetzen. Mit dem Wochenendmodus zählen Samstag
+      und Sonntag nicht als Lücke.
 
-      ## Warum das ohne Gimmicks funktioniert
+      ## Warum das ohne Spielerei funktioniert
 
-      Lernforschung zeigt: extrinsische Belohnung kann
-      intrinsische Motivation zerstoeren ("overjustification
-      effect"). Adaptive Learner setzt darauf, dass die
-      Mechaniken ein **Spiegel** des Fortschritts sind, kein
-      Anreiz-System. Keine Vergleichs-Ranglisten, keine
-      Social-Features, keine Punkte-Sharing — die Daten
-      bleiben bei dir.
+      Lernforschung zeigt: äußere Belohnung kann innere
+      Motivation zerstören ("Overjustification-Effekt").
+      Adaptive Learner setzt darauf, dass die Mechaniken ein
+      **Spiegel** des Fortschritts sind, kein Anreizsystem.
+      Keine Ranglisten, keine sozialen Funktionen, kein
+      Punkte-Teilen - die Daten bleiben bei dir.
 
-      ## Reset
+      ## Zurücksetzen
 
-      Wenn dir die Gamification-Werte nicht mehr passen
-      (z.B. neuer Anlauf nach langer Pause), kannst du sie in
-      den Einstellungen zuruecksetzen. Curriculum, Sessions
-      und Bewertungen bleiben erhalten.
+      Passen die Gamification-Werte nicht mehr zu deiner
+      Situation (z. B. Neustart nach langer Pause), kannst du
+      XP, Badges und Streak in den Einstellungen zurücksetzen.
+      Curriculum, Sessions und Bewertungen bleiben erhalten.
 
   - key: view_dashboard
     title: Dashboard
@@ -320,20 +311,22 @@ entries:
 
   - key: view_lesson
     title: Lektion
-    short: "Der Viewer, der dich Schritt fuer Schritt durch Theorie und Uebungen einer Lektion fuehrt."
+    short: "Der Viewer, der dich Schritt für Schritt durch Theorie und Übungen einer Lektion führt."
     docs_slug: user-guide/lessons
     long: |
-      ## Wie funktionieren die Uebungen?
+      ## Wie funktionieren die Übungen?
 
       Eine Lektion ist eine Folge von Theorie- und
-      Uebungsschritten. Fuenf Uebungstypen kommen vor: Zuordnen
-      (farbige Paare + Nummern-Badges), Bildauswahl, Freitext,
-      Wort-Kacheln und Lueckentext.
+      Übungsschritten. Jedes Set kann die Kern-Übungstypen
+      nutzen (Zuordnen, Bildauswahl, Freitext, Lückentext,
+      Wort-Kacheln, Multiple Choice); manche Sets bringen
+      weitere Typen mit, etwa Kategorisieren oder Diktat. Die
+      vollständige Liste steht in der Funktionsübersicht.
 
       ## Bedienung
 
-      Enter prueft eine beantwortete Uebung und geht weiter. Aus
-      einer Uebung springst du per "Theorie nochmal lesen" zur
+      Enter prüft eine beantwortete Übung und geht weiter. Aus
+      einer Übung springst du per "Theorie nochmal lesen" zur
       passenden Theorie. Am Ende siehst du dein Ergebnis mit
       Sternen und kannst es als Markdown exportieren.
 
@@ -358,19 +351,22 @@ entries:
 
   - key: feature_backup
     title: Backup und Wiederherstellung
-    short: "Ein vollstaendiger Snapshot deines Lernzustands, den du speichern und woanders wiederherstellen kannst."
+    short: "Ein vollständiger Snapshot deines Lernzustands, den du speichern und woanders wiederherstellen kannst."
     docs_slug: features/backup
     long: |
       ## Was ist ein Backup?
 
-      Ein Backup ist ein vollstaendiger Snapshot: alle Tabellen
-      (Projekte, Sessions, Lektionsfortschritt, Fehler,
-      Gamification, Missionen ...) plus deine heruntergeladenen
-      Content-Sets — als eine JSON-Datei.
+      Ein Backup ist ein vollständiger Snapshot: jede
+      Datentabelle (Projekte, Sessions, Lektionsfortschritt,
+      Fehler, Gamification, Missionen ...), deine
+      heruntergeladenen Content-Sets und deine lokalen
+      Einstellungen - gebündelt in eine ``.alb``-Datei (ein
+      ZIP-Archiv). Ältere Backups im JSON-Format lassen sich
+      weiterhin importieren.
 
       ## Cross-Identity
 
       Du kannst ein Backup in eine frische Installation oder
       unter einem anderen Profil einspielen; die
-      Wiederherstellung loest interne Verweise sauber neu auf.
+      Wiederherstellung löst interne Verweise sauber neu auf.
       Beim Import siehst du eine Zusammenfassung pro Tabelle.
