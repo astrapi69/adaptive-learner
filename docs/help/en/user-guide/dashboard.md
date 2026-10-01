@@ -1,97 +1,135 @@
 # The Dashboard
 
-The Dashboard is your home base. It pulls multiple data slices
-into one view: who you are as a learner (profile + XP + badges),
-how you're doing right now (streak heatmap + session counter),
-what you've been doing (recent sessions + method distribution),
-and what to do next (tool + spaced recommendations).
+The Dashboard is your home base. It is split into three tabs:
 
-At the top sits the **Subjects + Tags filter bar** - pick a
-subject (e.g. Languages → Spanish) or a tag to scope every
-widget below to projects with that classification. Filters are
-shareable via URL query params.
+- **Overview** - where you left off and what to do next.
+- **Activity** - your learning history and analytics.
+- **Missions** - today's missions and your badges.
 
-## Profile radar
+Overview is the default tab. The active tab is part of the
+address (`?tab=activity`, `?tab=missions`), so a bookmark or a
+reload opens the same tab again. Below the tabs sits the
+**Quick actions** area, which stays visible on every tab.
 
-The radar chart at the top shows your 6-method profile from the
-assessment. Same shape as the post-assessment chart on the
-Assessment page. The dominant method is highlighted under the
-chart with a colored badge.
+## Overview
 
-If you haven't taken the assessment yet, the radar shows an
-all-zero shape and links to the Assessment page.
+The Overview tab answers "where was I, and what now?". Cards
+that have nothing to show stay hidden, so a fresh learner sees a
+short page.
 
-## XP + Streak + Badges
+- **Continue Learning** - up to three sets you worked on
+  recently, newest first. Each row offers one action: resume a
+  lesson at the step where you stopped, open the next lesson
+  after a finished one, or open review cards that are due. A
+  fully completed set is marked as done and ranks below the
+  rows that still have something to do. With no recent activity
+  the card shows a short empty state.
+- **Unlock AI help (optional)** - an invitation to connect your
+  own AI provider. It appears only while no API key is
+  configured, and **Later** hides it for good.
+- **Due for review** - the number of elements due for review
+  and how many of them are overdue, with **Open review session**
+  and **Quick review**. Hidden when nothing is due.
+- **XP & Level** - your level, total XP and a progress bar to
+  the next level. Before your first XP it asks you to complete
+  a session.
+- **Streak** - your current streak, your longest streak and the
+  freezes you have available.
+- **Arcade** - the entry to the arcade, with your ticket
+  balance. The card belongs to the game mode: with the game mode
+  off it does not appear; with the game mode on and the arcade
+  switch off it explains which switch is off and links to the
+  settings.
+- **Continue learning** (paused lessons) - lessons you paused,
+  most recently paused first. Opening one asks whether to resume
+  or start over. Hidden when no lesson is paused.
+- **Focus areas** - an analysis of the mistakes you made in
+  lessons: your challenge areas, error counts, mastery progress
+  and **Start adaptive lesson**. Hidden when there are no errors
+  to analyze.
+- **Your favorites** - your most recently bookmarked lessons.
+  Click one to open it, or remove the bookmark with the X. With
+  no favorites yet it tells you to tap the star on a lesson.
 
-- **XP widget** - current level + total XP + a progress bar to
-  the next level. Levels follow an exponential curve
-  (`threshold(n) = 50 * n * (n - 1)`); levels 1-5 sit at
-  0 / 100 / 300 / 600 / 1000 XP. Base 50 XP per ended session,
-  plus per-cycle bonuses + first-method bonus + streak
-  multiplier (up to 2.75× at a 7-day streak).
-- **Streak heatmap** (GitHub-style) - 365 days of activity in
-  weekly columns Mon..Sun. Five tier colors via
-  `color-mix` on `var(--accent)`. Toggle weekend mode in
-  Settings to skip Sat/Sun gaps; freeze stockpile (1 per 7
-  streak days, max 3) acts as pause-not-reset on a missed
-  weekday.
-- **Badge showcase** - 24 badges across 5 categories
-  (getting_started 3, consistency 4, method_explorer 7, depth
-  7, polyglot 3). Earned ones light up colored + dated; locked
-  ones stay grey.
-- **Session counter** - tiles for sessions, minutes, current
-  streak, average understanding, average stress.
+## Activity
 
-## Progress timeline
+The Activity tab collects your history and the analytical
+charts.
 
-A two-line chart underneath the radar. Two metrics per session:
-your **understanding** rating and your **stress** rating, each
-rescaled from the 1-5 input to a 0-1 axis. Five most recent
-sessions shown by default; ordered oldest-left to newest-right.
+- **Due for review** - the same review card as on the Overview
+  tab.
+- **Streak** - a seven-day activity strip with a trend against
+  the previous week, followed by the activity heatmap: a year of
+  days in weekly columns from Monday to Sunday, colored by how
+  many sessions you had that day. The heatmap opens on the
+  current week.
+- **Learning profile** - the radar chart of your six-method
+  profile from the assessment, with a line naming your strongest
+  method. Without a finished assessment the card offers
+  **Continue learning profile** (when you abandoned one) or
+  **Create learning profile**.
+- **Sessions** - tiles for sessions, minutes, current streak,
+  average understanding and average stress.
+- **Progress** - a two-line chart of your **understanding** and
+  **stress** ratings over your most recent sessions, oldest on
+  the left.
+- **Method distribution** - one bar per method with the number
+  and share of sessions that used it, most-used method first.
+- **Tool recommendations** - external tools that suit your
+  profile, each with a short "why" in your UI language.
+- **Spaced practice** - "do this next" cards per method, driven
+  by how long ago you last practiced it (first practice,
+  refresh, review, practice, maintain). Dismissing a card hides
+  it for the rest of the day.
+- **Recent sessions** - your latest sessions with method,
+  understanding, stress and duration. Clicking a row opens the
+  Progress page.
+- **Learning Repository** - a link to the versioned snapshot of
+  this project's progress, notes and roadmap.
 
-What to look for: an upward understanding line is exactly what
-you want. A flat understanding line with rising stress is the
-exact signal the method-switch heuristic watches for; it'll
-nudge you to switch methods.
+What to look for in the progress chart: a rising understanding
+line is what you want. A flat understanding line with rising
+stress is the signal the method-switch heuristic watches for; it
+nudges you to switch methods.
 
-## Method distribution
+## Missions
 
-A horizontal bar chart showing which of the 6 methods you've
-been using. Each bar's length is the percentage of sessions
-that used that method. Bars are ordered descending by count;
-ties keep the canonical method order.
+- **Today's missions** - the daily missions with their progress
+  and XP reward. New missions arrive every day. You can turn
+  missions off and set their number and difficulty mix in
+  Settings > Learning; with missions off the card does not
+  appear.
+- **Badges** - how many badges you have earned, your most recent
+  ones and a pointer to the next badge. **View all badges** opens
+  the full gallery. Badges are grouped into the categories
+  Getting Started, Consistency, Method Explorer, Depth and
+  Polyglot; earned ones are colored, locked ones stay grey.
 
-The point of this chart isn't competition with itself; it's a
-mirror. Some learners run 80% deductive sessions and that's
-fine. Other learners discover they've never actually used the
-contextual method and want to try it.
+## XP, level and streak
 
-## Recent sessions
+- **Levels** follow a growing curve:
+  `threshold(n) = 50 * n * (n - 1)`, so levels 1 to 5 start at
+  0 / 100 / 300 / 600 / 1000 XP.
+- **Session XP** - 50 XP base per completed session, plus a
+  bonus for every completed cycle and a bonus the first time
+  you finish a session in a method. A daily streak multiplier
+  adds 25% per streak day, capped at 7 days (2.75x).
+- **Streak freezes** - you earn one freeze per 7 streak days and
+  can hold up to 3. A freeze pauses your streak on a missed day
+  instead of resetting it.
+- **Weekend mode** - with weekend mode on (Settings > Learning),
+  Saturdays and Sundays do not break your streak.
 
-The last 5 sessions as a compact list: method badge, the
-session's understanding rating (as a tiny bar), and the
-duration in minutes. Clicking a row jumps to the Progress page
-filtered to that session - useful when a particular session
-felt great or terrible and you want to see what happened.
+## Quick actions
 
-## Tool + spaced recommendations
+Below the tabs, on every tab:
 
-Two recommendation cards along the bottom edge:
-
-- **Tools** - ranked external tools tailored to your profile.
-  Anki + NotebookLM are now first-class with shipped exports
-  (no manual handoff). Each shows a one-line "why" in your UI
-  language.
-- **Spaced repetition** - short "do this next" action cards
-  driven by which methods you haven't practised recently. A
-  five-band policy (first / refresh / review / practice /
-  maintain) drives the interval suggestions.
-
-Both lists update on every Dashboard load - they're cheap to
-compute and reflect the latest session.
-
-## Start session
-
-The big primary button at the top: "Start session". Opens the
-Session page with a new session row created, the active method
-pre-picked from your profile, and the cycle at step 1.
+- **Start a new session** - opens the Session page. The button
+  shows the method from your learning profile that the session
+  starts with. Without an AI key in browser mode the button is
+  disabled.
+- **Pronunciation Practice** - only for projects with a
+  Languages subject.
+- **Create a lesson** - opens lesson creation in the content
+  area.
+- **Learning Path** - opens your learning path.
