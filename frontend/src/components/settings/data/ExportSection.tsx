@@ -126,10 +126,9 @@ export default function ExportSection() {
                 setCurricula(cs);
             } catch (err) {
                 if (cancelled) return;
-                const detail = err instanceof Error ? err.message : String(err);
                 notify.error(
-                    t("export.load_error", "Could not load export data: {{detail}}")
-                        .replace("{{detail}}", detail),
+                    t("export.load_failed", "Could not load the export data."),
+                    {error: err},
                 );
             }
         };
@@ -181,13 +180,7 @@ export default function ExportSection() {
                 );
             }
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
-            notify.error(
-                t("export.error", "Export failed: {{detail}}").replace(
-                    "{{detail}}",
-                    detail,
-                ),
-            );
+            notify.error(t("export.export_failed", "Export failed."), {error: err});
         } finally {
             setBusy(null);
         }
@@ -232,13 +225,7 @@ export default function ExportSection() {
             const markdown = renderMarkdown(payload);
             setPreview({type, markdown});
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
-            notify.error(
-                t("export.preview_error", "Preview failed: {{detail}}").replace(
-                    "{{detail}}",
-                    detail,
-                ),
-            );
+            notify.error(t("export.preview_failed", "Preview failed."), {error: err});
         } finally {
             setBusy(null);
         }

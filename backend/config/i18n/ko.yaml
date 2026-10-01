@@ -47,7 +47,7 @@ data_export:
   selective_button: "선택한 데이터 내보내기"
   selective_done: "{n}개의 레코드를 내보냈습니다."
   includes_hint: "이 카테고리와 함께 자동으로 내보내집니다"
-  failed: "내보내기 실패: {detail}"
+  export_failed: "내보내기에 실패했습니다."
   group_content: "콘텐츠"
   group_master: "기본 데이터"
   group_extra: "추가 데이터"
@@ -486,7 +486,7 @@ settings:
     heading: "연결 해제된 콘텐츠"
     summary: "더 이상 연결되지 않은 소스의 {lessons}개 레슨과 {cards}개 복습 카드."
     delete: "연결 해제된 진행 상황 삭제"
-    delete_failed: "연결이 끊긴 진행 상황을 삭제하지 못했습니다: {detail}"
+    delete_error: "연결이 끊긴 진행 상황을 삭제하지 못했습니다."
     confirm_title: "연결 해제된 진행 상황 삭제"
     confirm_message: "{lessons}개 레슨과 {cards}개 복습 카드가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
     deleted: "{lessons}개 레슨과 {cards}개 복습 카드를 삭제했습니다."
@@ -1013,7 +1013,7 @@ settings:
   danger_zone_complete_toast: "모든 데이터가 삭제되었습니다."
   danger_zone_confirm_prompt: "확인하려면 RESET을 입력하세요"
   danger_zone_continue: "계속"
-  danger_zone_failed_toast: "초기화 실패:"
+  danger_zone_failed: "초기화에 실패했습니다."
   danger_zone_final_button: "영구 삭제"
   danger_zone_heading: "위험 구역"
   danger_zone_input_placeholder: "RESET"
@@ -1177,8 +1177,9 @@ backup:
   too_large: '이 백업 파일이 너무 큽니다 (100MB 초과).'
   export_success: 백업을 다운로드했습니다 (레코드 {{count}}개).
   export_error: '백업 실패: {{detail}}'
-  import_parse_error: '백업을 읽을 수 없었습니다: {{detail}}'
-  import_error: '복원 실패: {{detail}}'
+  export_failed: "백업에 실패했습니다."
+  import_parse_failed: "백업을 읽을 수 없었습니다."
+  import_failed: "복원에 실패했습니다."
   comparison_title: 복원 확인
   comparison_help: '복원은 병합 방식입니다: 새 레코드는 삽입하고, 변경 가능한 레코드는 백업이 더 최신일 때만 업데이트하며, 기록 행은 그대로 유지합니다. 삭제되는 것은 없습니다. API 키는 무시됩니다.'
   table_header: 테이블
@@ -1212,11 +1213,11 @@ backup:
   auto_help: 세션 10회를 완료할 때마다 또는 일주일에 한 번 자동으로 백업합니다.
   auto_run: 지금 백업
   auto_run_success: 자동 백업이 생성되었습니다.
-  auto_run_error: '자동 백업 실패: {{detail}}'
+  auto_run_failed: "자동 백업에 실패했습니다."
   auto_restored: 자동 백업이 복원되었습니다.
   auto_restore: 복원
-  auto_delete_failed: "자동 백업을 삭제하지 못했습니다: {detail}"
-  auto_restore_error: '복원 실패: {{detail}}'
+  auto_delete_error: "자동 백업을 삭제하지 못했습니다."
+  auto_restore_failed: "복원에 실패했습니다."
   auto_records: '레코드 {{n}}개'
   auto_none: 아직 자동 백업이 없습니다. 첫 백업은 세션 10회 또는 7일 후에 실행됩니다.
   storage_pressure: 브라우저 저장 공간이 거의 가득 찼습니다 (할당량의 {{pct}}%). 지금 수동 백업을 내보내세요.
@@ -1248,6 +1249,7 @@ backup:
   compare_high_volume_hint: 대용량 테이블 - 레코드 단위 미리보기는 요약하여 표시됩니다.
   compare_export_md: 마크다운으로 내보내기
   compare_markdown_downloaded: 비교 결과를 내보냈습니다.
+  compare_export_failed: "비교 결과를 내보내지 못했습니다."
   confirm_with_counts: 복원 ({{added}}개 추가, {{updated}}개 업데이트)
   auto_compare_as_a: A로 비교
   auto_compare_as_b: B로 비교
@@ -1269,9 +1271,9 @@ export:
   busy: 작업 중...
   download_success: 내보내기를 다운로드했습니다.
   print_opened: 인쇄 대화상자가 열렸습니다. "PDF로 저장"을 선택하세요.
-  error: '내보내기 실패: {{detail}}'
-  preview_error: '미리보기 실패: {{detail}}'
-  load_error: '내보내기 데이터를 불러올 수 없었습니다: {{detail}}'
+  export_failed: "내보내기에 실패했습니다."
+  preview_failed: "미리보기에 실패했습니다."
+  load_failed: "내보내기 데이터를 불러올 수 없었습니다."
   pick_session: 먼저 세션을 선택하세요.
   pick_curriculum: 먼저 커리큘럼을 선택하세요.
   title_progress: 학습 진행도
@@ -1942,7 +1944,7 @@ repo:
     enable_git: "git 영속화 활성화"
 lesson:
   progress_io:
-    save_failed: "이 레슨의 진행 상황을 저장하지 못했습니다: {detail}"
+    save_error: "이 레슨의 진행 상황을 저장하지 못했습니다."
     load_failed: "이 레슨의 저장된 진행 상황을 불러오지 못했습니다: {detail}"
     create_profile: "학습 프로필 만들기"
   mascot_label: "학습 친구"
@@ -4043,8 +4045,8 @@ content_repo:
     copy_failed: "복사할 수 없었습니다."
     hint: "다른 사람이 이 공개 저장소를 추가할 수 있도록 이 링크를 공유하세요. 비공개 저장소의 경우 URL과 읽기 전용 토큰을 따로 보내세요."
     qr_alt: "공유 링크용 QR 코드"
-  remove_failed: "저장소를 제거하지 못했습니다: {detail}"
-  reorder_failed: "저장소 순서를 변경하지 못했습니다: {detail}"
+  remove_error: "저장소를 제거하지 못했습니다."
+  reorder_error: "저장소 순서를 변경하지 못했습니다."
   progress:
     syncing: "동기화 중…"
     validating: "저장소를 검증하는 중…"

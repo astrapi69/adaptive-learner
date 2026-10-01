@@ -63,6 +63,6 @@ describe("BackupAutoBackups spacing", () => {
         );
         fireEvent.click(await screen.findByTestId("backup-auto-delete-ab-1"));
         await waitFor(() => expect(notifyError).toHaveBeenCalled());
-        expect(String(notifyError.mock.calls[0][0])).toContain("blocked");
+        expect(notifyError.mock.calls[0][1]).toMatchObject({error: {message: "blocked"}});
     });
 });

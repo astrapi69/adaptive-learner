@@ -34,6 +34,8 @@ describe("useSetExport failure message (#3416)", () => {
   ] as const)("%s reports export_failed with the detail", async (_name, handler) => {
     const { result } = renderHook(() => useSetExport());
     await result.current[handler](entry);
-    expect(notifyError).toHaveBeenCalledWith("content.error.export_failed disk full");
+    expect(notifyError).toHaveBeenCalledWith("content.error.export_failed", {
+      error: expect.objectContaining({ message: "disk full" }),
+    });
   });
 });

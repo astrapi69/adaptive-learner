@@ -187,9 +187,10 @@ export function useSetDownload({ setSets, setPerSetState }: UseSetDownloadDeps) 
     } catch (err) {
       setPerSetState((prev) => ({ ...prev, [key]: "error" }));
       if (!quiet) {
-        notify.error(t("content.error.download_failed", "Could not download the set."), {
-          apiError: err instanceof Error ? undefined : undefined,
-        });
+        notify.error(
+          t("content.error.download_failed", "Could not download the set."),
+          { error: err },
+        );
       }
       return false;
     }

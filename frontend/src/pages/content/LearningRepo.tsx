@@ -73,8 +73,7 @@ export default function LearningRepoPage() {
         navigate("/dashboard");
         return;
       }
-      const message = err instanceof ApiError ? err.detail : String(err);
-      notify.error(t("repo.error.render_failed", "Could not render repository") + ": " + message);
+      notify.error(t("repo.error.render_failed", "Could not render repository"), { error: err });
     } finally {
       setLoading(false);
     }
@@ -97,8 +96,7 @@ export default function LearningRepoPage() {
       triggerDownload(blob, `${projectId}-learning-repo.zip`);
       notify.success(t("repo.toast.zip_downloaded", "ZIP downloaded"));
     } catch (err) {
-      const message = err instanceof ApiError ? err.detail : String(err);
-      notify.error(t("repo.error.zip_failed", "Could not export ZIP") + ": " + message);
+      notify.error(t("repo.error.zip_failed", "Could not export ZIP"), { error: err });
     }
   };
 
@@ -114,8 +112,7 @@ export default function LearningRepoPage() {
       );
       await loadRepo();
     } catch (err) {
-      const message = err instanceof ApiError ? err.detail : String(err);
-      notify.error(t("repo.error.persist_failed", "Could not persist to git") + ": " + message);
+      notify.error(t("repo.error.persist_failed", "Could not persist to git"), { error: err });
     } finally {
       setPersisting(false);
     }

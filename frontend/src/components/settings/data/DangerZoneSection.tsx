@@ -37,7 +37,6 @@ import {useRef, useState} from "react";
 import {useNavigate} from "react-router";
 
 import {Button} from "@/components/ui/button";
-import {ApiError} from "../../../api/client";
 import {useDialogFocus} from "../../../hooks/ui/useDialogFocus";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {clearAllAppLocalStorage, readLearnerState} from "../../../lib/learning/learnerState";
@@ -111,13 +110,7 @@ export default function DangerZoneSection() {
                     .replace("{{count}}", String(payload.stats.total_records)),
             );
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
-            notify.error(
-                t("backup.export_error", "Backup failed: {{detail}}").replace(
-                    "{{detail}}",
-                    detail,
-                ),
-            );
+            notify.error(t("backup.export_failed", "Backup failed."), {error: err});
         } finally {
             setBusy(null);
         }
@@ -158,10 +151,9 @@ export default function DangerZoneSection() {
             );
             navigate("/", {replace: true});
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : String(err);
             notify.error(
-                `${t("settings.danger_zone_failed_toast", "Reset failed:")} ${detail}`,
+                t("settings.danger_zone_failed", "Reset failed."),
+                {error: err},
             );
             // Keep the typed-confirm pane open so the user can
             // see what they typed; clear the input so they can't

@@ -483,10 +483,8 @@ export default function ContentRepoSettingsSection() {
         // word; say why.
         console.error("[content-repo] remove failed", err);
         notify.error(
-          t(
-            "content_repo.remove_failed",
-            "Could not remove the repository: {detail}",
-          ).replace("{detail}", err instanceof Error ? err.message : String(err)),
+          t("content_repo.remove_error", "Could not remove the repository."),
+          { error: err },
         );
       } finally {
         setBusy(false);
@@ -541,10 +539,8 @@ export default function ContentRepoSettingsSection() {
       } catch (err) {
         console.error("[content-repo] reorder failed", err);
         notify.error(
-          t(
-            "content_repo.reorder_failed",
-            "Could not change the repository order: {detail}",
-          ).replace("{detail}", err instanceof Error ? err.message : String(err)),
+          t("content_repo.reorder_error", "Could not change the repository order."),
+          { error: err },
         );
       } finally {
         setBusy(false);

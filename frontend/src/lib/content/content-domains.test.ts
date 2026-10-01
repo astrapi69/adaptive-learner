@@ -7,6 +7,7 @@ import {
     isKnownContentDomain,
     KNOWN_CONTENT_DOMAINS,
     LEVEL_NONE,
+    normalizeLevel,
 } from "./content-domains";
 
 // #1716 — the shared content-domain vocabulary the CreateLesson + Share
@@ -49,5 +50,18 @@ describe("content-domains (#1716)", () => {
     it("LEVEL_NONE is the non-empty Radix-safe sentinel for a level-less shape", () => {
         expect(LEVEL_NONE).toBe("__none__");
         expect(LEVEL_NONE.length).toBeGreaterThan(0);
+    });
+});
+
+describe("normalizeLevel (#3385)", () => {
+    it.each([
+        { level: "", stored: "none" },
+        { level: "  ", stored: "none" },
+        { level: undefined, stored: "none" },
+        { level: null, stored: "none" },
+        { level: "none", stored: "none" },
+        { level: "A2", stored: "A2" },
+    ])("normalizeLevel($level) is $stored", ({ level, stored }) => {
+        expect(normalizeLevel(level)).toBe(stored);
     });
 });

@@ -124,7 +124,7 @@ describe("OrphanedDataSection", () => {
     fireEvent.click(await screen.findByTestId("orphaned-delete-button"));
     fireEvent.click(await screen.findByTestId("orphaned-confirm-dialog-confirm"));
     await waitFor(() => expect(notifyError).toHaveBeenCalled());
-    expect(String(notifyError.mock.calls[0][0])).toContain("locked");
+    expect(notifyError.mock.calls[0][1]).toMatchObject({ error: { message: "locked" } });
     expect(notifySuccess).not.toHaveBeenCalled();
   });
 });

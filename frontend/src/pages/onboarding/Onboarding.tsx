@@ -349,12 +349,9 @@ export default function Onboarding() {
             // Reached only when a VALID Adaptive Learner backup failed to
             // import — a genuine, unexpected failure worth reporting, so
             // the error toast (with "Report Issue") is the right surface.
-            const detail = err instanceof Error ? err.message : String(err);
             notify.error(
-                t(
-                    "backup.import_parse_error",
-                    "Could not read backup: {{detail}}",
-                ).replace("{{detail}}", detail),
+                t("backup.import_parse_failed", "Could not read the backup."),
+                {error: err},
             );
         } finally {
             setRestoring(false);

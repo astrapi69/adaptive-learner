@@ -25,7 +25,6 @@ import { Feature } from "@astrapi69/feature-strategy-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ApiError } from "../../../api/client";
 import { FEATURES } from "../../../features/featureConfig";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage } from "../../../storage";
@@ -67,8 +66,7 @@ export default function LearningRepoSettingsSection() {
       })
       .catch((err) => {
         if (cancelled) return;
-        const message = err instanceof ApiError ? err.detail : String(err);
-        notify.error(t("repo.settings.error.load", "Could not load settings") + ": " + message);
+        notify.error(t("repo.settings.error.load", "Could not load settings"), { error: err });
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -96,8 +94,7 @@ export default function LearningRepoSettingsSection() {
       });
       notify.success(t("repo.settings.toast.saved", "Settings saved"));
     } catch (err) {
-      const message = err instanceof ApiError ? err.detail : String(err);
-      notify.error(t("repo.settings.error.save", "Could not save settings") + ": " + message);
+      notify.error(t("repo.settings.error.save", "Could not save settings"), { error: err });
     } finally {
       setSaving(false);
     }

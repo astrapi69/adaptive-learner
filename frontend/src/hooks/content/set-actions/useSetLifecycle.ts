@@ -114,9 +114,9 @@ export function useSetLifecycle({ setSets }: UseSetLifecycleDeps) {
       );
       setRestartSetTarget(null);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.set_status.restart_failed", "Could not start a new run.")} ${detail}`,
+        t("content.set_status.restart_failed", "Could not start a new run."),
+        { error: err },
       );
     } finally {
       setRestarting(false);
