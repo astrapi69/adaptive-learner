@@ -453,10 +453,8 @@ async function gotoLessonMatchingResolved(page: Page): Promise<boolean> {
 }
 
 /** Open the graded "Korrektur" view of a checked matching exercise.
- *  Since #3186 the default "separate corrections" setting leaves "Meine
- *  Antworten" ungraded, so a resolved-matching shot has to switch views to
- *  show the red/green grading with its "Deine Antwort" / "Richtige Antwort"
- *  lines (#3318). A motivation toast from the step change is let run out
+ *  Since #3505 a check with mistakes already opens there; the click stays
+ *  so the shot does not depend on the default view (#3318). A motivation toast from the step change is let run out
  *  first, pointer parked off the bottom-right toast (#2898). */
 async function openMatchingCorrections(page: Page): Promise<void> {
     await page.mouse.move(0, 0);
