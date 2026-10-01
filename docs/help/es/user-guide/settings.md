@@ -59,7 +59,7 @@ activo, más el nuevo distintivo de **atribución de origen**:
   en la BD (modo Servidor) o en texto claro en IndexedDB (modo
   Local). Puedes guardar / eliminar libremente.
 - **Clave de: secrets.yaml** - la clave está configurada en
-  `~/.config/adaptive-learner/secrets.yaml`. El botón Guardar
+  `~/.config/adaptive_learner/secrets.yaml`. El botón Guardar
   está desactivado; edita el archivo directamente para cambiarla.
   Un banner informativo debajo de la fila te recuerda la ruta.
 - **Clave de: entorno** - la clave está configurada mediante la

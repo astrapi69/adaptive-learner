@@ -12,7 +12,7 @@ IndexedDB της δικής σου συσκευής. Χωρίς backend, χωρ�
 που διαχειρίζεται το FastAPI backend. Τα API keys κρυπτογραφούνται
 κατά την αποθήκευση με Fernet χρησιμοποιώντας ένα μυστικό που ορίζεις
 μέσω της μεταβλητής περιβάλλοντος `ADAPTIVE_LEARNER_SECRET_KEY` ή μέσω
-`secret_key:` στο `~/.config/adaptive-learner/secrets.yaml`.
+`secret_key:` στο `~/.config/adaptive_learner/secrets.yaml`.
 
 Καμία λειτουργία δεν στέλνει τηλεμετρία, αναλυτικά ή τα μηνύματά σου
 σε κανένα τρίτο μέρος εκτός από τον πάροχο ΤΝ που έχεις επιλέξει -
@@ -29,7 +29,7 @@ Google Gemini. Τα όρια δωρεάν πλάνου είναι συνήθως
 
 Τρία μέρη για το κλειδί (υψηλότερη προτεραιότητα κερδίζει): μεταβλητή
 περιβάλλοντος `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`, το πεδίο
-`ai.<provider>.api_key` στο `~/.config/adaptive-learner/secrets.yaml`
+`ai.<provider>.api_key` στο `~/.config/adaptive_learner/secrets.yaml`
 ή το UI Ρυθμίσεων. Το UI δείχνει την πηγή ανά πάροχο ώστε να ξέρεις
 πάντα από πού προήλθε το κλειδί σου.
 
