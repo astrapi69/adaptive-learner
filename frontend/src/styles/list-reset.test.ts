@@ -26,8 +26,8 @@ const SRC = join(process.cwd(), "src");
 
 /** Lists covered by a descendant rule, path:line of the opening tag. */
 const ALLOWLIST: Record<string, string> = {
-  "components/settings/backup/BackupCompare.tsx:426": ".backup-compare-section ul sets list-style",
-  "components/settings/backup/BackupCompare.tsx:460": ".backup-compare-section ul sets list-style",
+  "components/settings/backup/BackupCompare.tsx:429": ".backup-compare-section ul sets list-style",
+  "components/settings/backup/BackupCompare.tsx:463": ".backup-compare-section ul sets list-style",
 };
 
 interface ListTag {
