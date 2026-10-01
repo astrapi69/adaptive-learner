@@ -433,6 +433,9 @@ session:
   ai_error_provider_auth: "Dein KI-Anbieter hat den Schlüssel abgelehnt. Prüfe den Schlüssel unter Einstellungen > KI."
   ai_error_rate_limited: "Das Limit deines KI-Anbieters ist erreicht. Warte einen Moment oder prüfe dein Kontingent und sende dann erneut."
   ai_error_provider_unavailable: "Dein KI-Anbieter ist gerade nicht erreichbar. Prüfe die Verbindung und sende erneut."
+  reply_failed: "Die Antwort konnte nicht geladen werden."
+  history_failed: "Der bisherige Verlauf konnte nicht geladen werden. Es wurde nichts gelöscht."
+  chat_retry: "Erneut versuchen"
   welcome_empty: "Bereit zum Lernen! Schreibe deine erste Nachricht."
   end_session: Session beenden
   end_session_confirm: Sicher? Wir können die Session beenden und bewerten.

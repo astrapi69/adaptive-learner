@@ -433,6 +433,9 @@ session:
   ai_error_provider_auth: "Tu proveedor de IA rechazó la clave. Revisa la clave en Ajustes > IA."
   ai_error_rate_limited: "Se alcanzó el límite de tu proveedor de IA. Espera un momento o revisa tu cuota y vuelve a enviar."
   ai_error_provider_unavailable: "Ahora mismo no se puede contactar con tu proveedor de IA. Revisa la conexión y vuelve a enviar."
+  reply_failed: "No se pudo cargar la respuesta."
+  history_failed: "No se pudo cargar la conversación anterior. No se ha borrado nada."
+  chat_retry: "Intentar de nuevo"
   welcome_empty: "¡Listo para aprender! Escribe tu primer mensaje."
   end_session: Terminar sesión
   end_session_confirm: ¿Seguro? Cerraremos la sesión y pediremos una valoración.

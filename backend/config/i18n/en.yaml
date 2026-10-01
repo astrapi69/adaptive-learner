@@ -433,6 +433,9 @@ session:
   ai_error_provider_auth: "Your AI provider rejected the key. Check the key in Settings > AI."
   ai_error_rate_limited: "Your AI provider's limit is reached. Wait a moment or check your quota, then send again."
   ai_error_provider_unavailable: "Your AI provider cannot be reached right now. Check your connection and send again."
+  reply_failed: "The reply could not be loaded."
+  history_failed: "The earlier conversation could not be loaded. Nothing was deleted."
+  chat_retry: "Try again"
   welcome_empty: "Ready to learn! Write your first message."
   end_session: End session
   end_session_confirm: Sure? We will close the session and ask for a rating.

@@ -433,6 +433,9 @@ session:
   ai_error_provider_auth: "Ton fournisseur IA a refusé la clé. Vérifie la clé dans Paramètres > IA."
   ai_error_rate_limited: "La limite de ton fournisseur IA est atteinte. Attends un instant ou vérifie ton quota, puis renvoie."
   ai_error_provider_unavailable: "Ton fournisseur IA est injoignable pour le moment. Vérifie la connexion et renvoie."
+  reply_failed: "La réponse n'a pas pu être chargée."
+  history_failed: "La conversation précédente n'a pas pu être chargée. Rien n'a été supprimé."
+  chat_retry: "Réessayer"
   welcome_empty: "Prêt à apprendre ! Écris ton premier message."
   end_session: Terminer la session
   end_session_confirm: Sûr ? Nous allons fermer la session et demander une évaluation.
