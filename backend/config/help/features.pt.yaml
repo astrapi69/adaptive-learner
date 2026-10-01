@@ -6,53 +6,51 @@ language: pt
 entries:
   - key: feature_method_switch
     title: Mudança de Método
-    short: "O sistema recomenda um método diferente quando estagna — você decide se muda."
+    short: "O sistema recomenda um método diferente quando estagna; você decide se muda."
     long: |
       ## O que é a mudança de método?
 
-      Se as suas sessões de aprendizagem estagnam num método
-      ou produzem stress elevado, o Adaptive Learner sugere
-      uma mudança de método. Vê a sugestão como um banner
-      acima do chat da sessão — pode aceitar, recusar ou
-      adiar.
+      Se a sua aprendizagem estagna num método enquanto lhe
+      causa stress elevado, o Adaptive Learner sugere uma
+      mudança de método. Vê a sugestão como um banner acima do
+      chat da sessão e pode aceitá-la ou dispensá-la.
 
       ## Quando a sugestão é ativada
 
-      Três condições devem verificar-se simultaneamente:
+      A regra analisa as suas três últimas avaliações de sessão.
+      Ambas as condições têm de se verificar:
 
-      - **Pelo menos 3 sessões** no método atual.
-      - **Stress médio > 3** (na escala de 1-5) nas últimas
-        3 avaliações.
-      - **Adequação do método < 3** nas últimas 3 avaliações.
+      - **Sem progresso na compreensão**: as três pontuações de
+        compreensão não sobem (a mesma pontuação três vezes
+        conta como estagnação).
+      - **Stress médio acima de 3** (na escala de 1-5) nessas
+        mesmas três avaliações.
 
-      A deteção de estagnação por si só não é suficiente:
-      dificuldades breves num método que de outra forma se
-      adequa são normais e passam. Apenas a combinação de
-      duração + stress + baixa adequação desencadeia a
-      sugestão.
+      Com menos de três avaliações não há sugestão. Uma fase
+      difícil que ainda mostra progresso, ou uma estagnação sem
+      stress, não a ativa.
 
-      ## Como o sistema decide
+      ## Que método é sugerido
 
-      O hook ``recommend_method_switch`` no plugin de sessão
-      compara o seu perfil de aprendizagem com a sua
-      trajetória atual e sugere o método com a melhor
-      adequação esperada. Se os 2 métodos mais bem
-      classificados estiverem próximos, vê ambos como opções.
+      O método com o maior peso no seu perfil de aprendizagem
+      que não tenha usado recentemente. Sem perfil, o método
+      seguinte na ordem fixa de métodos.
 
       ## Você decide
 
-      O sistema recomenda; você escolhe. Aceitar a mudança
-      guarda-a como uma entrada de auditoria ``MethodSwitch``
-      (um registo para o seu perfil). Recusar não faz nada —
-      a sugestão reaparece no mais cedo após 3 sessões mais.
+      O sistema recomenda; você escolhe. Aceitar muda o método
+      da sessão e regista uma entrada ``MethodSwitch`` (um
+      registo para o seu perfil). Dispensar oculta a sugestão
+      durante o resto desta sessão; a sessão seguinte verifica
+      novamente.
 
       ## Porquê não automático?
 
       As mudanças de método são uma grande alteração na
       experiência de aprendizagem. Uma mudança automática
-      quebraria a continuidade da aprendizagem e poderia
-      ocorrer durante uma fase difícil mas produtiva. Você
-      conhece o seu contexto melhor do que o sistema.
+      quebraria a continuidade da aprendizagem e poderia ocorrer
+      durante uma fase difícil mas produtiva. Você conhece o seu
+      contexto melhor do que o sistema.
 
   - key: feature_auto_loop
     title: Auto-Loop
@@ -101,6 +99,7 @@ entries:
   - key: feature_spaced_repetition
     title: Repetição Espaçada
     short: "Revisão otimizada no tempo com base no seu historial de aprendizagem."
+    docs_slug: user-guide/lessons
     long: |
       ## O que é a repetição espaçada?
 
@@ -109,49 +108,35 @@ entries:
       esquecimento: cada item recordado com sucesso dura mais
       tempo na próxima vez.
 
-      ## O sistema de bandas no Adaptive Learner
+      ## Os intervalos no Adaptive Learner
 
-      Seis bandas de vencimento:
+      Cada elemento de exercício a que responde é registado. A
+      data da próxima revisão depende de quantas vezes seguidas
+      respondeu corretamente:
 
-      - **Hoje** — cartões novos + revisões do dia.
-      - **+1d** — aprendido ontem, rever hoje.
-      - **+3d** — revisto há três dias, rever hoje.
-      - **+7d** — há uma semana.
-      - **+14d** — há duas semanas.
-      - **+30d** — há um mês.
+      - **0 respostas certas seguidas** (ou acabou de errar):
+        revisão 1 dia depois.
+      - **1 resposta certa seguida**: 3 dias depois.
+      - **2 ou mais respostas certas seguidas**: 7 dias depois.
 
-      Quando um cartão passa quatro revisões com sucesso, é
-      marcado como "estável" e sai da lista ativa — mas fica
-      no sistema para verificações ocasionais de refresco.
+      Com **3 respostas certas seguidas** o elemento conta como
+      dominado e sai da fila de revisão. Uma resposta errada
+      posterior trá-lo de volta.
 
-      ## Como o historial alimenta o sistema
+      ## O que desloca a data
 
-      Uma "revisão com sucesso" não é apenas um clique. O
-      sistema avalia:
-
-      - **Confiança durante a sessão de revisão** (do
-        avaliador de duplo prompt).
-      - **Tempo de resposta** vs a sua média.
-      - **Contagem de erros** no ciclo atual.
-
-      Com confiança baixa, o cartão recua para uma banda
-      anterior em vez de avançar.
-
-      ## Ligação ao Anki
-
-      Com o plugin Anki ativo, pode exportar cartões
-      diretamente para o formato Anki. O sistema traduz as
-      bandas em agendamentos Anki — nenhum progresso se
-      perde na transição.
+      - **Dica usada**: o intervalo é reduzido para metade,
+        porque a resposta veio com ajuda.
+      - **Certo no modo Exame**: o intervalo é duplicado, porque
+        uma resposta sem ajuda é uma prova mais forte.
 
       ## Quando o sistema recomenda revisões
 
-      O painel "Recomendações Espaçadas" do dashboard mostra
-      os cartões com vencimento hoje. Pode percorrê-los
-      individualmente ou fazer com que o sistema os coloque
-      no início da sua próxima sessão normal — antes do novo
-      conteúdo. O sistema prioriza os cartões com maior risco
-      de esquecimento.
+      Quando há elementos pendentes, aparece no Painel um cartão
+      de revisão com o número de elementos pendentes e em atraso
+      e um botão **Abrir sessão de revisão**. Os elementos em
+      atraso vêm primeiro, depois os que têm mais erros.
+      Detalhes: consulte o guia das lições.
 
   - key: feature_conversation_analysis
     title: Análise de Conversa / Importação
@@ -214,73 +199,74 @@ entries:
 
   - key: feature_gamification
     title: Gamificação (XP, Emblemas, Sequências)
-    short: "Sistema de progresso com pontos de experiência, emblemas e sequências — motivação sem artifícios."
+    short: "Sistema de progresso com pontos de experiência, emblemas e sequências: motivação sem artifícios."
+    docs_slug: user-guide/dashboard
     long: |
       ## O que é a camada de gamificação?
 
-      Três mecânicas tornam o progresso de aprendizagem
-      visível e recompensador:
+      Três mecânicas tornam o progresso de aprendizagem visível
+      e recompensador:
 
-      - **XP (pontos de experiência)** — por cada sessão
-        concluída, cada mudança de método, cada cartão de
-        repetição espaçada. Os níveis sobem com XP.
-      - **Emblemas** — para marcos temáticos ("primeira
-        sessão", "10 sessões num método", "sequência de
-        30 dias", ...).
-      - **Sequências** — séries de aprendizagem diária.
-        Expiram 24 horas sem sessão — com três "congelamentos
-        de sequência" por mês como pausas de emergência.
+      - **XP (pontos de experiência)** - por sessões e lições
+        concluídas, pela avaliação inicial e por conversas
+        importadas. Os níveis sobem com XP.
+      - **Emblemas** - para marcos (primeira sessão, constância,
+        experimentar métodos, profundidade, várias línguas).
+      - **Sequências** - dias consecutivos com atividade de
+        aprendizagem.
 
       ## Como o XP é ganho
 
-      Diferentes ações rendem diferentes valores de XP:
+      - **Sessão concluída**: 50 XP, +10 XP por ciclo concluído,
+        +25 XP por ciclo que chegou ao passo 7.
+      - **Primeira sessão num método novo**: +50 XP.
+      - **Lição concluída**: 30 XP, +10 XP por estrela, +20 XP
+        por três estrelas com todos os passos certos à primeira
+        tentativa.
+      - **Multiplicador de sequência**: +25% por dia de
+        sequência sobre o XP de sessões e lições, até 7 dias (no
+        máximo 2,75x).
+      - **Combo do modo jogo**: até 20 XP extra por uma lição
+        jogada com combos.
+      - **Avaliação inicial concluída**: 100 XP.
+      - **Conversa importada e analisada**: 75 XP.
 
-      - **Submeter uma sessão avaliada**: 50 XP.
-      - **Atingir o passo 7 (integração)**: +25 XP de bónus.
-      - **Aceitar uma mudança de método**: 10 XP (tomou uma
-        decisão de aprendizagem deliberada).
-      - **Cartão de repetição espaçada com confiança > 80%**:
-        5 XP.
-      - **Exportação Anki de um conjunto**: 20 XP.
-
-      Os níveis escalam com uma função de raiz quadrada
-      (nível n = sqrt(XP / 100)) — os primeiros níveis
-      sobem rapidamente, os níveis mais altos precisam de
-      mais fôlego.
+      Os níveis crescem numa curva cada vez mais larga: nível 2
+      com 100 XP, nível 3 com 300, nível 4 com 600, nível 5 com
+      1000; cada intervalo é 100 XP maior do que o anterior.
 
       ## Os emblemas não são coercivos
 
-      Os critérios de emblema não são determinantes para a
-      interface — *não* precisa de um único emblema para
-      usar a aplicação de forma produtiva. São um espelho,
-      não um alvo. Se começar a sentir que está a aprender
-      para ganhar emblemas em vez de para si próprio,
-      desative a exibição nas definições.
+      *Não* precisa de um único emblema para usar a aplicação de
+      forma produtiva. São um espelho, não um alvo. As
+      notificações de emblemas podem ser desativadas nas
+      configurações.
 
       ## Congelamentos de sequência
 
-      Três congelamentos de sequência por mês. Se perder um
-      dia, um congelamento protege automaticamente a sua
-      sequência. Explicitamente concebido como uma "licença
-      por doença" ou "dia de viagem", não como um mecanismo
-      de exceção para a preguiça.
+      Cada 7 dias de sequência rendem um congelamento de
+      sequência, até 3 em reserva. Se falhar um dia, um
+      congelamento é usado automaticamente e pausa a sua
+      sequência em vez de a reiniciar. Com o modo fim de semana
+      ativo, o sábado e o domingo não contam como falhas.
 
-      ## Porquê isto funciona sem artifícios
+      ## Porque é que isto funciona sem artifícios
 
-      A investigação em aprendizagem mostra: a recompensa
-      extrínseca pode destruir a motivação intrínseca
-      ("efeito de sobre-justificação"). O Adaptive Learner
-      assenta em que as mecânicas sejam um **espelho** do
-      progresso, não um sistema de incentivos. Sem
-      classificações, sem funcionalidades sociais, sem
-      partilha de pontos — os dados ficam consigo.
+      A investigação sobre aprendizagem mostra: a recompensa
+      extrínseca pode destruir a motivação intrínseca ("efeito
+      de sobrejustificação"). O Adaptive Learner aposta em que
+      as mecânicas sejam um **espelho** do progresso, não um
+      sistema de incentivos. Sem tabelas de classificação, sem
+      funcionalidades sociais, sem partilha de pontos: os dados
+      ficam consigo.
 
-      ## Reiniciar
+      ## Reposição
 
-      Se os valores de gamificação já não correspondem à sua
-      situação (ex.: recomeço após uma longa pausa), pode
-      redefini-los nas definições. O currículo, as sessões e
-      as avaliações são preservados.
+      Se os valores de gamificação já não corresponderem à sua
+      situação (por ex. um novo começo após uma longa pausa),
+      pode repor o XP, os emblemas e a sequência nas
+      configurações. O currículo, as sessões e as avaliações são
+      preservados.
 
   - key: view_dashboard
     title: Painel
@@ -322,22 +308,25 @@ entries:
 
   - key: view_lesson
     title: Lição
-    short: "O visualizador que o conduz passo a passo pela teoria e pelos exercícios de uma lição."
+    short: "O visualizador que o guia passo a passo pela teoria e pelos exercícios de uma lição."
     docs_slug: user-guide/lessons
     long: |
       ## Como funcionam os exercícios?
 
       Uma lição é uma sequência de passos de teoria e de
-      exercício. Surgem cinco tipos de exercício: correspondência
-      (pares coloridos + selos numerados), escolha de imagem,
-      texto livre, blocos de palavras e preenchimento de lacunas.
+      exercício. Cada conjunto pode usar os tipos de exercício
+      base (correspondência, escolha de imagem, texto livre,
+      cloze, peças de palavras, escolha múltipla); alguns
+      conjuntos acrescentam outros tipos, como categorização ou
+      ditado áudio. A lista completa está na visão geral das
+      funcionalidades.
 
       ## Controlos
 
-      Enter verifica um exercício respondido e avança. A partir de
-      um exercício, pode saltar para a teoria correspondente via
-      "Reler a teoria". No final, vê a sua pontuação com estrelas
-      e pode exportá-la como Markdown.
+      Enter verifica um exercício respondido e avança. A partir
+      de um exercício pode saltar para a teoria correspondente
+      através de "Reler a teoria". No final vê a sua pontuação
+      com estrelas e pode exportá-la como Markdown.
 
   - key: view_settings
     title: Definições
@@ -366,13 +355,16 @@ entries:
       ## O que é uma cópia de segurança?
 
       Uma cópia de segurança é um instantâneo completo: todas as
-      tabelas (projetos, sessões, progresso de lições, erros,
-      gamificação, missões ...) mais os seus conjuntos de
-      conteúdos descarregados — num único ficheiro JSON.
+      tabelas de dados (projetos, sessões, progresso das lições,
+      erros, gamificação, missões ...), os seus conjuntos de
+      conteúdo transferidos e as suas preferências locais,
+      reunidos num único ficheiro ``.alb`` (um arquivo ZIP). As
+      cópias antigas num único JSON continuam a poder ser
+      importadas.
 
       ## Entre identidades
 
-      Pode importar uma cópia de segurança para uma instalação
-      nova ou sob um perfil diferente; o restauro resolve
-      novamente as referências internas de forma limpa. Ao
-      importar, vê um resumo por tabela.
+      Pode importar uma cópia de segurança numa instalação nova
+      ou noutro perfil; o restauro volta a resolver as
+      referências internas de forma limpa. Na importação vê um
+      resumo por tabela.
