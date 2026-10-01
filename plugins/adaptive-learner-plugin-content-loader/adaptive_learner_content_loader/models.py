@@ -123,8 +123,14 @@ _VERSION_RE = re.compile(
 )
 
 # Slug-safe identifier: lowercase letters, digits, hyphens.
-# Used for both set_id and source identifiers.
+# Used for source identifiers.
 _SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+
+# A set id becomes one directory name in the download cache. Its shape is
+# the engine schema's call (#3391: no pattern on a set id, so Unicode
+# letters and underscores pass there and in Dexie mode); the app only
+# refuses what would not be a single, safe path segment.
+_UNSAFE_SEGMENT_RE = re.compile(r"[/\\\x00-\x1f\x7f]")
 
 # Repo-relative directory for a set's files (Phase 60 / v1.44.0).
 # Slug-safe segments joined by ``/`` (e.g. ``sets/de/fr-a1``). No
@@ -226,12 +232,11 @@ class ContentSet(ContentSetBase):
 
     @field_validator("id")
     @classmethod
-    def _slug_id(cls, value: str) -> str:
-        if not _SLUG_RE.fullmatch(value):
+    def _safe_segment_id(cls, value: str) -> str:
+        if value in ("", ".", "..") or _UNSAFE_SEGMENT_RE.search(value):
             raise ValueError(
-                "id must be slug-safe "
-                "(lowercase letters / digits / hyphens, "
-                "no leading/trailing hyphen)"
+                "id must be a single safe path segment "
+                "(not empty, '.' or '..'; no slash, backslash or control character)"
             )
         return value
 

@@ -103,15 +103,24 @@ class TestContentSetValidators:
         assert s.book.url == "https://www.amazon.de/dp/3868943234/"
         assert not hasattr(s.book, "isbn")
 
-    def test_id_must_be_slug(self) -> None:
+    # #3391 - the id's shape is the engine schema's call (no pattern on a
+    # set id); the app only keeps what makes it a safe cache-path segment.
+    @pytest.mark.parametrize(
+        "set_id",
+        ["über-uns", "fr_a1", "währung-des-geistes", "language-fr-a1"],
+        ids=["umlaut", "underscore", "umlaut-words", "ascii-slug"],
+    )
+    def test_id_accepts_what_the_engine_accepts(self, set_id: str) -> None:
+        assert _valid_set(id=set_id).id == set_id
+
+    @pytest.mark.parametrize(
+        "set_id",
+        ["", ".", "..", "../outside", "a/b", "a\\b", "nul\x00byte", "tab\there"],
+        ids=["empty", "dot", "dotdot", "traversal", "slash", "backslash", "nul", "control"],
+    )
+    def test_id_rejects_an_unsafe_path_segment(self, set_id: str) -> None:
         with pytest.raises(ValidationError):
-            _valid_set(id="French A1")
-        with pytest.raises(ValidationError):
-            _valid_set(id="UPPERCASE")
-        with pytest.raises(ValidationError):
-            _valid_set(id="-leading-hyphen")
-        with pytest.raises(ValidationError):
-            _valid_set(id="trailing-hyphen-")
+            _valid_set(id=set_id)
 
     def test_language_shape_is_the_engines_call(self) -> None:
         # #3245: the backend stores the tag as given; the engine's
