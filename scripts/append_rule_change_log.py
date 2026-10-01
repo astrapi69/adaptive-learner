@@ -47,6 +47,7 @@ import re
 import subprocess
 import sys
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
 MARKER_RE = re.compile(r"^\s*(?:[-*]\s+)?RULE-CHANGE DECLARED:\s*(.*)$")
@@ -190,6 +191,22 @@ def declarations(root: Path, rev_range: str, pr_override: str | None) -> list[De
     return list(reversed(found))
 
 
+def body_declarations(
+    root: Path, rev_range: str, body: str, pr: str, found: list[Declaration]
+) -> list[Declaration]:
+    """Declarations written only in the PR body (#3506).
+
+    A squash merge copies the PR body into the merged commit, so a body-only
+    declaration reaches the integration branch like a committed one. Keyed
+    by the PR number; a text already declared in a commit is not repeated.
+    """
+    known = {entry.key for entry in found}
+    head = git(root, "rev-parse", range_head(rev_range))
+    today = date.today().isoformat()
+    extra = [Declaration(today, head, pr, text) for text in blocks(body)]
+    return [entry for entry in extra if entry.key not in known]
+
+
 def existing_rows(log_text: str) -> list[Declaration]:
     rows: list[Declaration] = []
     for match in ROW_RE.finditer(log_text):
@@ -233,6 +250,11 @@ def main() -> int:
         default=None,
         help="PR number for declaring commits whose PR git cannot name yet (a pull_request run)",
     )
+    parser.add_argument(
+        "--pr-body",
+        default=None,
+        help="PR description; its declarations count too (they reach develop via the squash), needs --pr",
+    )
     args = parser.parse_args()
 
     root = (
@@ -242,6 +264,11 @@ def main() -> int:
     pr_override = f"#{str(args.pr).lstrip('#')}" if args.pr else None
 
     entries = declarations(root, args.range, pr_override)
+    if args.pr_body:
+        if not pr_override:
+            print("rule-change-log: --pr-body needs --pr", file=sys.stderr)
+            return 1
+        entries += body_declarations(root, args.range, args.pr_body, pr_override, entries)
     existing = log.read_text(encoding="utf-8") if log.is_file() else ""
     rows = existing_rows(existing)
     dupes = duplicate_keys(rows)
