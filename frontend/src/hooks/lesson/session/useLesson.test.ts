@@ -505,7 +505,9 @@ describe("useLesson: progress writes and reads never fail silently (#3364)", () 
             await result.current.markPaused();
         });
         expect(notifyErrorMock).toHaveBeenCalledTimes(1);
-        expect(String(notifyErrorMock.mock.calls[0][0])).toContain("QuotaExceededError");
+        expect(notifyErrorMock.mock.calls[0][1]).toMatchObject({
+            error: {message: "QuotaExceededError"},
+        });
     });
 
     it("a failed progress read stops with an error instead of starting over", async () => {

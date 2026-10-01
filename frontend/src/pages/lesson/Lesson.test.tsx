@@ -944,10 +944,11 @@ describe("LessonPage: ready state rendering", () => {
       expect(markCompleted).toHaveBeenCalled();
       expect(notifyErrorMock).toHaveBeenCalledTimes(1);
     });
-    // Specific, actionable message — never a bare generic (#1787).
-    expect(String(notifyErrorMock.mock.calls[0][0])).toMatch(
-      /IndexedDB write failed/,
-    );
+    // The reason travels with the toast (report dialog, dev mode), never
+    // in the production text (#1787, #3374).
+    expect(notifyErrorMock.mock.calls[0][1]).toMatchObject({
+      error: { message: expect.stringMatching(/IndexedDB write failed/) },
+    });
   });
 });
 

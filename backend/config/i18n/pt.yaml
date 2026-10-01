@@ -47,7 +47,7 @@ data_export:
   selective_button: "Exportar dados selecionados"
   selective_done: "{n} registros exportados."
   includes_hint: "exportado automaticamente com esta categoria"
-  failed: "Falha na exportação: {detail}"
+  export_failed: "Falha na exportação."
   group_content: "Conteúdo"
   group_master: "Dados mestres"
   group_extra: "Dados adicionais"
@@ -486,7 +486,7 @@ settings:
     heading: "Conteúdo desconectado"
     summary: "{lessons} lições e {cards} cartões de revisão de fontes às quais você não está mais conectado."
     delete: "Excluir progresso desconectado"
-    delete_failed: "Não foi possível excluir o progresso desconectado: {detail}"
+    delete_error: "Não foi possível excluir o progresso desconectado."
     confirm_title: "Excluir progresso desconectado"
     confirm_message: "{lessons} lições e {cards} cartões de revisão serão excluídos permanentemente. Isso não pode ser desfeito."
     deleted: "{lessons} lições e {cards} cartões de revisão excluídos."
@@ -1013,7 +1013,7 @@ settings:
   danger_zone_complete_toast: "Todos os dados foram excluídos."
   danger_zone_confirm_prompt: "Digite RESET para confirmar"
   danger_zone_continue: "Continuar"
-  danger_zone_failed_toast: "Falha ao redefinir:"
+  danger_zone_failed: "Falha ao redefinir."
   danger_zone_final_button: "Excluir permanentemente"
   danger_zone_heading: "Zona de perigo"
   danger_zone_input_placeholder: "RESET"
@@ -1177,8 +1177,9 @@ backup:
   too_large: 'Este arquivo de backup é muito grande (mais de 100 MB).'
   export_success: Backup baixado ({{count}} registros).
   export_error: 'Falha no backup: {{detail}}'
-  import_parse_error: 'Não foi possível ler o backup: {{detail}}'
-  import_error: 'Falha na restauração: {{detail}}'
+  export_failed: "Falha no backup."
+  import_parse_failed: "Não foi possível ler o backup."
+  import_failed: "Falha na restauração."
   comparison_title: Confirmar restauração
   comparison_help: 'A restauração fará mesclagem: novos registros são inseridos, registros mutáveis são atualizados apenas se o backup for mais recente, e o histórico é mantido como está. Nada é excluído. As chaves de API são ignoradas.'
   table_header: Tabela
@@ -1212,11 +1213,11 @@ backup:
   auto_help: Faz backup automaticamente após cada 10 sessões concluídas ou uma vez por semana.
   auto_run: Fazer backup agora
   auto_run_success: Backup automático criado.
-  auto_run_error: 'Falha no backup automático: {{detail}}'
+  auto_run_failed: "Falha no backup automático."
   auto_restored: Backup automático restaurado.
   auto_restore: Restaurar
-  auto_delete_failed: "Não foi possível excluir o backup automático: {detail}"
-  auto_restore_error: 'Falha na restauração: {{detail}}'
+  auto_delete_error: "Não foi possível excluir o backup automático."
+  auto_restore_failed: "Falha na restauração."
   auto_records: '{{n}} registros'
   auto_none: Ainda não há backups automáticos. O primeiro acontece após 10 sessões ou 7 dias.
   storage_pressure: O armazenamento do navegador está quase cheio ({{pct}}% da cota). Exporte um backup manual agora.
@@ -1248,6 +1249,7 @@ backup:
   compare_high_volume_hint: Tabela com muitos registros - prévias por registro mostradas de forma abreviada.
   compare_export_md: Exportar como Markdown
   compare_markdown_downloaded: Diferença exportada.
+  compare_export_failed: "Não foi possível exportar a comparação."
   confirm_with_counts: Restaurar ({{added}} adicionados, {{updated}} atualizados)
   auto_compare_as_a: Comparar como A
   auto_compare_as_b: Comparar como B
@@ -1269,9 +1271,9 @@ export:
   busy: Trabalhando...
   download_success: Exportação baixada.
   print_opened: Caixa de diálogo de impressão aberta. Escolha "Salvar como PDF".
-  error: 'Falha na exportação: {{detail}}'
-  preview_error: 'Falha na pré-visualização: {{detail}}'
-  load_error: 'Não foi possível carregar os dados de exportação: {{detail}}'
+  export_failed: "Falha na exportação."
+  preview_failed: "Falha na pré-visualização."
+  load_failed: "Não foi possível carregar os dados de exportação."
   pick_session: Escolha uma sessão primeiro.
   pick_curriculum: Escolha um currículo primeiro.
   title_progress: Progresso de aprendizado
@@ -1931,7 +1933,7 @@ repo:
     enable_git: "Ativar persistência git"
 lesson:
   progress_io:
-    save_failed: "Não foi possível salvar seu progresso nesta aula: {detail}"
+    save_error: "Não foi possível salvar seu progresso nesta aula."
     load_failed: "Não foi possível carregar seu progresso salvo desta aula: {detail}"
     create_profile: "Criar um perfil de aprendizagem"
   mascot_label: "Seu companheiro de aprendizado"
@@ -4033,8 +4035,8 @@ content_repo:
     copy_failed: "Não foi possível copiar."
     hint: "Compartilhe este link para que outros possam adicionar este repositório PÚBLICO. Para um repositório privado, envie o URL e um token apenas de leitura separadamente."
     qr_alt: "Código QR do link de compartilhamento"
-  remove_failed: "Não foi possível remover o repositório: {detail}"
-  reorder_failed: "Não foi possível alterar a ordem dos repositórios: {detail}"
+  remove_error: "Não foi possível remover o repositório."
+  reorder_error: "Não foi possível alterar a ordem dos repositórios."
   progress:
     syncing: "A sincronizar…"
     validating: "A validar o repositório…"

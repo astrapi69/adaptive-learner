@@ -136,9 +136,9 @@ export default function GenerateExercisesButton({
       );
       onGenerated(exercises, skipped);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.ai_exercises.failed", "Could not generate exercises. Please try again.")} ${detail}`,
+        t("content.ai_exercises.failed", "Could not generate exercises. Please try again."),
+        { error: err },
       );
     } finally {
       setBusy(false);

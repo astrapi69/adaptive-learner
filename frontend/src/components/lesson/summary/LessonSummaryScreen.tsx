@@ -88,13 +88,14 @@ export default function LessonSummaryScreen({
     } catch (err) {
       // #1787 — a failed completion write was invisible on the
       // summary (the hook's error state only renders for load
-      // failures). Surface it with the actual reason.
-      const detail = err instanceof Error ? err.message : String(err);
+      // failures). Surface it; the reason travels to the report
+      // dialog and shows in dev mode (#3374).
       notify.error(
-        `${t(
+        t(
           "lesson.summary.mark_complete_failed",
           "Saving the completion failed",
-        )}: ${detail}`,
+        ),
+        { error: err },
       );
       return;
     }

@@ -138,9 +138,9 @@ export function useContentSharing({ sets, fetchSetLessons }: UseContentSharingDe
       setAppliedFixes((prev) => new Set(prev).add(fixKey));
       notify.success(t("content.ai_validation.fix_applied", "Suggestion applied."));
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.ai_validation.fix_failed", "Could not apply the suggestion.")} ${detail}`,
+        t("content.ai_validation.fix_failed", "Could not apply the suggestion."),
+        { error: err },
       );
     }
   };
@@ -183,8 +183,10 @@ export function useContentSharing({ sets, fetchSetLessons }: UseContentSharingDe
       );
       setShareResult(result);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(`${t("content.error.share_check_failed", "Could not check the set for sharing.")} ${detail}`);
+      notify.error(
+        t("content.error.share_check_failed", "Could not check the set for sharing."),
+        { error: err },
+      );
       setShareTarget(null);
     } finally {
       setShareChecking(false);

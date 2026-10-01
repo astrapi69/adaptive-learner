@@ -49,7 +49,7 @@ data_export:
   selective_button: चयनित डेटा निर्यात करें
   selective_done: '{n} रिकॉर्ड निर्यात किए गए।'
   includes_hint: इस श्रेणी के साथ स्वचालित रूप से निर्यात किया गया
-  failed: 'निर्यात विफल रहा: {detail}'
+  export_failed: "निर्यात विफल रहा।"
   group_content: सामग्री
   group_master: मास्टर डेटा
   group_extra: अतिरिक्त डेटा
@@ -488,7 +488,7 @@ settings:
     heading: "असंबद्ध सामग्री"
     summary: "उन स्रोतों से {lessons} पाठ और {cards} पुनरावलोकन कार्ड जिनसे आप अब जुड़े नहीं हैं।"
     delete: "असंबद्ध प्रगति हटाएं"
-    delete_failed: "डिस्कनेक्ट की गई प्रगति हटाई नहीं जा सकी: {detail}"
+    delete_error: "डिस्कनेक्ट की गई प्रगति हटाई नहीं जा सकी।"
     confirm_title: "असंबद्ध प्रगति हटाएं"
     confirm_message: "{lessons} पाठ और {cards} पुनरावलोकन कार्ड स्थायी रूप से हटा दिए जाएंगे। इसे पूर्ववत नहीं किया जा सकता।"
     deleted: "{lessons} पाठ और {cards} पुनरावलोकन कार्ड हटाए गए।"
@@ -1014,7 +1014,7 @@ settings:
   danger_zone_complete_toast: सभी डेटा हटा दिया गया है।
   danger_zone_confirm_prompt: पुष्टि के लिए RESET टाइप करें
   danger_zone_continue: जारी रखें
-  danger_zone_failed_toast: 'रीसेट विफल:'
+  danger_zone_failed: "रीसेट विफल।"
   danger_zone_final_button: स्थायी रूप से हटाएँ
   danger_zone_heading: ख़तरा क्षेत्र
   danger_zone_input_placeholder: RESET
@@ -1178,8 +1178,9 @@ backup:
   too_large: 'यह बैकअप फ़ाइल बहुत बड़ी है (100 MB से अधिक)।'
   export_success: बैकअप डाउनलोड हुआ ({{count}} रिकॉर्ड)।
   export_error: 'बैकअप विफल: {{detail}}'
-  import_parse_error: 'बैकअप पढ़ा नहीं जा सका: {{detail}}'
-  import_error: 'पुनर्स्थापना विफल: {{detail}}'
+  export_failed: "बैकअप विफल।"
+  import_parse_failed: "बैकअप पढ़ा नहीं जा सका।"
+  import_failed: "पुनर्स्थापना विफल।"
   comparison_title: पुनर्स्थापना की पुष्टि करें
   comparison_help: 'पुनर्स्थापना विलय करेगी: नए रिकॉर्ड डाले जाएँगे, परिवर्तनीय रिकॉर्ड केवल तभी अपडेट होंगे जब बैकअप नया हो, इतिहास पंक्तियाँ यथावत रखी जाएँगी। कुछ भी हटाया नहीं जाता। API keys अनदेखी की जाती हैं।'
   table_header: तालिका
@@ -1213,11 +1214,11 @@ backup:
   auto_help: हर 10 पूर्ण सत्रों के बाद या सप्ताह में एक बार स्वतः बैकअप लें।
   auto_run: अभी बैकअप लें
   auto_run_success: स्वतः-बैकअप बनाया गया।
-  auto_run_error: 'स्वतः-बैकअप विफल: {{detail}}'
+  auto_run_failed: "स्वतः-बैकअप विफल।"
   auto_restored: स्वतः-बैकअप पुनर्स्थापित किया गया।
   auto_restore: पुनर्स्थापित करें
-  auto_delete_failed: "स्वचालित बैकअप हटाया नहीं जा सका: {detail}"
-  auto_restore_error: 'पुनर्स्थापना विफल: {{detail}}'
+  auto_delete_error: "स्वचालित बैकअप हटाया नहीं जा सका।"
+  auto_restore_failed: "पुनर्स्थापना विफल।"
   auto_records: '{{n}} रिकॉर्ड'
   auto_none: अभी तक कोई स्वतः-बैकअप नहीं। पहला बैकअप 10 सत्रों या 7 दिनों के बाद चलता है।
   storage_pressure: ब्राउज़र स्टोरेज लगभग भर गया है (कोटा का {{pct}}%)। अभी एक मैन्युअल बैकअप निर्यात करें।
@@ -1249,6 +1250,7 @@ backup:
   compare_high_volume_hint: उच्च-मात्रा तालिका - रिकॉर्ड-स्तरीय पूर्वावलोकन संक्षिप्त दिखाए गए हैं।
   compare_export_md: Markdown के रूप में निर्यात करें
   compare_markdown_downloaded: अंतर निर्यात किया गया।
+  compare_export_failed: "तुलना निर्यात नहीं की जा सकी।"
   confirm_with_counts: पुनर्स्थापित करें ({{added}} जोड़े गए, {{updated}} अपडेट किए गए)
   auto_compare_as_a: A के रूप में तुलना करें
   auto_compare_as_b: B के रूप में तुलना करें
@@ -1270,9 +1272,9 @@ export:
   busy: काम हो रहा है...
   download_success: निर्यात डाउनलोड हुआ।
   print_opened: प्रिंट संवाद खुल गया। "PDF के रूप में सहेजें" चुनें।
-  error: 'निर्यात विफल: {{detail}}'
-  preview_error: 'पूर्वावलोकन विफल: {{detail}}'
-  load_error: 'निर्यात डेटा लोड नहीं हो सका: {{detail}}'
+  export_failed: "निर्यात विफल।"
+  preview_failed: "पूर्वावलोकन विफल।"
+  load_failed: "निर्यात डेटा लोड नहीं हो सका।"
   pick_session: पहले एक सत्र चुनें।
   pick_curriculum: पहले एक पाठ्यक्रम चुनें।
   title_progress: सीखने की प्रगति
@@ -1927,7 +1929,7 @@ repo:
     enable_git: git दृढ़ता सक्षम करें
 lesson:
   progress_io:
-    save_failed: "इस पाठ में आपकी प्रगति सहेजी नहीं जा सकी: {detail}"
+    save_error: "इस पाठ में आपकी प्रगति सहेजी नहीं जा सकी।"
     load_failed: "इस पाठ के लिए आपकी सहेजी गई प्रगति लोड नहीं हो सकी: {detail}"
     create_profile: "सीखने की प्रोफ़ाइल बनाएँ"
   mascot_label: "आपका सीखने का साथी"
@@ -4019,8 +4021,8 @@ content_repo:
     copy_failed: "कॉपी नहीं हो सका।"
     hint: "यह लिंक साझा करें ताकि अन्य लोग इस सार्वजनिक रिपॉज़िटरी को जोड़ सकें। निजी रिपॉज़िटरी के लिए, URL और एक केवल-पढ़ने वाला टोकन अलग से भेजें।"
     qr_alt: "साझा लिंक के लिए QR कोड"
-  remove_failed: "रिपॉज़िटरी हटाई नहीं जा सकी: {detail}"
-  reorder_failed: "रिपॉज़िटरी का क्रम बदला नहीं जा सका: {detail}"
+  remove_error: "रिपॉज़िटरी हटाई नहीं जा सकी।"
+  reorder_error: "रिपॉज़िटरी का क्रम बदला नहीं जा सका।"
   progress:
     syncing: "सिंक हो रहा है…"
     validating: "रिपॉज़िटरी सत्यापित की जा रही है…"

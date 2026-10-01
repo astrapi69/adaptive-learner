@@ -166,9 +166,9 @@ export default function GenerateSetExercisesButton({
       setPending(Math.max(0, result.total - result.succeeded));
       if (!result.cancelled) onDone?.();
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.ai_exercises.batch.failed", "Batch generation failed. Please try again.")} ${detail}`,
+        t("content.ai_exercises.batch.failed", "Batch generation failed. Please try again."),
+        { error: err },
       );
     } finally {
       setBusy(false);

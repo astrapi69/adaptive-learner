@@ -37,7 +37,7 @@ vi.mock("../../storage", () => ({
 vi.mock("../../utils/notify", () => ({
     notify: {
         success: (m: string) => notifySuccess(m),
-        error: (m: string) => notifyError(m),
+        error: (m: string, opts?: unknown) => notifyError(m, opts),
         info: vi.fn(),
         warning: vi.fn(),
     },
@@ -213,7 +213,8 @@ describe("SetDetail: Alles wiederholen (#3171)", () => {
         fireEvent.click(confirm);
 
         await waitFor(() => expect(notifyError).toHaveBeenCalledTimes(1));
-        expect(notifyError.mock.calls[0][0]).toContain("boom");
+        expect(notifyError.mock.calls[0][0]).not.toContain("boom");
+        expect(notifyError.mock.calls[0][1]).toMatchObject({error: {message: "boom"}});
         expect(startRun).not.toHaveBeenCalled();
         expect(screen.queryByTestId("lesson-target")).toBeNull();
         expect(getSetStatus("src", "psych")).toBe("completed");
