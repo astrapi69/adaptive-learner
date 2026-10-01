@@ -176,3 +176,68 @@ describe("streamSse", () => {
         expect(events).toEqual([{event: "chunk", data: {delta: "abc"}}]);
     });
 });
+
+describe("streamSse error hooks (#3377)", () => {
+    class MarkedError extends Error {}
+
+    function brokenMidStream(): Response {
+        let sent = false;
+        const stream = new ReadableStream<Uint8Array>({
+            pull(controller) {
+                if (!sent) {
+                    sent = true;
+                    controller.enqueue(new TextEncoder().encode('event: chunk\ndata: {"delta":"Hi"}\n\n'));
+                } else {
+                    controller.error(new TypeError("network connection lost"));
+                }
+            },
+        });
+        return new Response(stream, {status: 200});
+    }
+
+    it("throws what toHttpError builds from a non-2xx response", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response('{"detail":"boom"}', {status: 500}),
+        );
+        const toHttpError = vi.fn(async (response: Response) =>
+            new MarkedError(`built ${response.status}`),
+        );
+        await expect(
+            streamSse({url: "/api/x", body: {}, onEvent: () => {}, toHttpError}),
+        ).rejects.toThrow(new MarkedError("built 500"));
+        expect(toHttpError).toHaveBeenCalledTimes(1);
+    });
+
+    it.each<[string, () => Promise<Response>]>([
+        ["the request fails", () => Promise.reject(new TypeError("Failed to fetch"))],
+        ["the stream breaks mid-reply", () => Promise.resolve(brokenMidStream())],
+    ])("throws what toNetworkError builds when %s", async (_name, respond) => {
+        vi.spyOn(globalThis, "fetch").mockImplementation(respond);
+        const toNetworkError = vi.fn(() => new MarkedError("offline"));
+        await expect(
+            streamSse({url: "/api/x", body: {}, onEvent: () => {}, toNetworkError}),
+        ).rejects.toThrow(new MarkedError("offline"));
+        expect(toNetworkError).toHaveBeenCalledTimes(1);
+    });
+
+    it("passes a user abort through untouched (not a failure)", async () => {
+        const abort = new DOMException("The operation was aborted.", "AbortError");
+        vi.spyOn(globalThis, "fetch").mockRejectedValue(abort);
+        const toNetworkError = vi.fn(() => new MarkedError("offline"));
+        await expect(
+            streamSse({url: "/api/x", body: {}, onEvent: () => {}, toNetworkError}),
+        ).rejects.toBe(abort);
+        expect(toNetworkError).not.toHaveBeenCalled();
+    });
+
+    it("reports the response to onResponse before reading it", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response('{"detail":"nope"}', {status: 503}),
+        );
+        const onResponse = vi.fn();
+        await expect(
+            streamSse({url: "/api/x", body: {}, onEvent: () => {}, onResponse}),
+        ).rejects.toThrow();
+        expect(onResponse).toHaveBeenCalledWith(expect.objectContaining({status: 503}));
+    });
+});

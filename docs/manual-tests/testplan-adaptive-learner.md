@@ -3259,6 +3259,15 @@ Ort: Settings → Daten → Empfohlene Repositories.
       Antwort streamt herein; die 7-Schritt-Cycle-Progress rueckt vor;
       Vorlesen + Diktat funktionieren; das Fortsetzen einer regulaeren
       Sitzung zeigt den bisherigen Gespraechsverlauf
+- [ ] TC-0927 Tutor-Chat bei Verbindungsfehler (#3377, API-Modus): während eine Antwort
+      streamt, das Backend stoppen (oder offline gehen) → unter der Antwort
+      steht „Die Antwort konnte nicht geladen werden." mit „Erneut
+      versuchen", dazu ein Fehler-Toast; Backend wieder starten, „Erneut
+      versuchen" → die Antwort kommt, der Hinweis verschwindet. Eine laufende
+      Antwort selbst abbrechen zeigt KEINEN Fehler. Eine reguläre Sitzung bei
+      gestopptem Backend fortsetzen → statt der Begrüßung steht „Der bisherige
+      Verlauf konnte nicht geladen werden. Es wurde nichts gelöscht." mit
+      „Erneut versuchen"; nach dem Start des Backends lädt der Klick den Verlauf
 - [ ] TC-0732 Importierte Sitzung: die KI beginnt von selbst mit der ersten Frage
       (kein User-Turn zuerst), der Chat startet leer
 - [ ] TC-0733 AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?

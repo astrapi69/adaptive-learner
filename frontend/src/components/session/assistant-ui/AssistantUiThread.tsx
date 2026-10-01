@@ -41,10 +41,11 @@
  * ``runConfig.custom[OPENING_RUN_FLAG]`` and sends a hidden opening trigger.
  */
 
-import {useEffect, useMemo, useRef} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
+    ActionBarPrimitive,
     AssistantRuntimeProvider,
     ComposerPrimitive,
     MessagePrimitive,
@@ -62,6 +63,7 @@ import {cn} from "@/lib/utils";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {markdownToSpeech} from "../../../lib/lesson/tts-text";
 import {getStorage} from "../../../storage";
+import {notify} from "../../../utils/notify";
 import MicButton from "../../voice/MicButton";
 import SpeechButton from "../../voice/SpeechButton";
 import type {SessionMessageExchangeResult} from "../../../types";
@@ -140,8 +142,17 @@ function AssistantMessage() {
     // assistant turn, so it needs the message's joined text and must wait until
     // the stream settles (no button on a still-running bubble). Both come from
     // the message store, not the per-part Text renderer.
+    const {t} = useI18n();
     const messageId = useAuiState((s) => s.message.id);
     const isRunning = useAuiState((s) => s.message.status?.type === "running");
+    // #3377 - a turn whose stream failed: the runtime marks it incomplete
+    // with reason "error". Say so under the (empty or truncated) bubble and
+    // offer to send the turn again; the detail goes out as a toast.
+    const failed = useAuiState(
+        (s) =>
+            s.message.status?.type === "incomplete" &&
+            s.message.status.reason === "error",
+    );
     const text = useAuiState((s) =>
         s.message.content
             .map((part) => (part.type === "text" ? part.text : ""))
@@ -151,6 +162,21 @@ function AssistantMessage() {
     return (
         <div className="chat-message is-assistant" data-testid="chat-message-assistant">
             <MessagePrimitive.Parts components={{Text: AssistantText}} />
+            {failed && (
+                <div
+                    className="flex flex-wrap items-center gap-2 text-sm text-[var(--error)]"
+                    data-testid="chat-reply-error"
+                    role="alert"
+                >
+                    <span>{t("session.reply_failed", "The reply could not be loaded.")}</span>
+                    <ActionBarPrimitive.Reload
+                        className={cn(buttonVariants({variant: "outline", size: "sm"}))}
+                        data-testid="chat-reply-retry"
+                    >
+                        {t("session.chat_retry", "Try again")}
+                    </ActionBarPrimitive.Reload>
+                </div>
+            )}
             {!isRunning && text.trim().length > 0 && (
                 <div className="chat-message-actions">
                     <SpeechButton
@@ -203,6 +229,14 @@ export default function AssistantUiThread({
         useMemo(
             () =>
                 createSessionChatAdapter(sessionId, {
+                    onError: (error) =>
+                        notify.error(
+                            tRef.current(
+                                "session.reply_failed",
+                                "The reply could not be loaded.",
+                            ),
+                            {error},
+                        ),
                     onExchange: (result) => {
                         onExchangeRef.current?.(result);
                         // #1126 Phase 4b-i — cycle-transition parity. On an
@@ -260,12 +294,11 @@ export default function AssistantUiThread({
     // clean by design, #1143); the system prompt is dropped (orchestrator
     // metadata, never a bubble). A new session (only the system row) seeds
     // nothing, so the welcome empty-state stays. Ref-guarded (once per session,
-    // StrictMode-safe); a load failure degrades to the empty thread.
-    const hydratedForSession = useRef<string | null>(null);
-    useEffect(() => {
-        if (autoOpen) return;
-        if (hydratedForSession.current === sessionId) return;
-        hydratedForSession.current = sessionId;
+    // StrictMode-safe). A failed load says so and offers a retry instead of
+    // the fresh welcome, which reads as deleted history (#3377).
+    const [historyFailed, setHistoryFailed] = useState(false);
+    const loadHistory = useCallback(() => {
+        setHistoryFailed(false);
         getStorage()
             .session.getMessages(sessionId)
             .then((history) => {
@@ -278,39 +311,67 @@ export default function AssistantUiThread({
                     }));
                 if (prior.length > 0) runtimeRef.current?.thread.reset(prior);
             })
-            .catch(() => {
-                /* non-blocking: empty thread + welcome remain */
-            });
-    }, [autoOpen, sessionId]);
+            .catch(() => setHistoryFailed(true));
+    }, [sessionId]);
+    const hydratedForSession = useRef<string | null>(null);
+    useEffect(() => {
+        if (autoOpen) return;
+        if (hydratedForSession.current === sessionId) return;
+        hydratedForSession.current = sessionId;
+        loadHistory();
+    }, [autoOpen, sessionId, loadHistory]);
 
     return (
         <AssistantRuntimeProvider runtime={runtime}>
             <ThreadPrimitive.Root className="session-chat" data-testid="session-chat">
                 <ThreadPrimitive.Viewport className="chat-messages" data-testid="chat-messages">
                     <ThreadPrimitive.Empty>
-                        <div
-                            className="chat-welcome px-4 py-6 text-center italic text-[var(--fg-muted)]"
-                            data-testid="chat-welcome"
-                        >
-                            {introTopic ? (
-                                <>
-                                    <div data-testid="chat-intro-topic">
-                                        {t("session.topic_label", "Topic")}: {introTopic}
-                                    </div>
-                                    <div className="mt-2">
-                                        {t(
-                                            "session.welcome_empty",
-                                            "Ready to learn! Write your first message.",
-                                        )}
-                                    </div>
-                                </>
-                            ) : (
-                                t(
-                                    "session.welcome_empty",
-                                    "Ready to learn! Write your first message.",
-                                )
-                            )}
-                        </div>
+                        {historyFailed ? (
+                            <div
+                                className="flex flex-col items-center gap-3 px-4 py-6 text-center text-[var(--fg-muted)]"
+                                data-testid="chat-history-error"
+                                role="alert"
+                            >
+                                <span>
+                                    {t(
+                                        "session.history_failed",
+                                        "The earlier conversation could not be loaded. Nothing was deleted.",
+                                    )}
+                                </span>
+                                <button
+                                    type="button"
+                                    className={cn(buttonVariants({variant: "outline", size: "sm"}))}
+                                    data-testid="chat-history-retry"
+                                    onClick={loadHistory}
+                                >
+                                    {t("session.chat_retry", "Try again")}
+                                </button>
+                            </div>
+                        ) : (
+                            <div
+                                className="chat-welcome px-4 py-6 text-center italic text-[var(--fg-muted)]"
+                                data-testid="chat-welcome"
+                            >
+                                {introTopic ? (
+                                    <>
+                                        <div data-testid="chat-intro-topic">
+                                            {t("session.topic_label", "Topic")}: {introTopic}
+                                        </div>
+                                        <div className="mt-2">
+                                            {t(
+                                                "session.welcome_empty",
+                                                "Ready to learn! Write your first message.",
+                                            )}
+                                        </div>
+                                    </>
+                                ) : (
+                                    t(
+                                        "session.welcome_empty",
+                                        "Ready to learn! Write your first message.",
+                                    )
+                                )}
+                            </div>
+                        )}
                     </ThreadPrimitive.Empty>
                     <ThreadPrimitive.Messages
                         components={{

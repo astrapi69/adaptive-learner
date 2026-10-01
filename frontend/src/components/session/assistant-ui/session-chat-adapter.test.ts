@@ -119,6 +119,36 @@ describe("createSessionChatAdapter (Phase 0 seam, #1126)", () => {
         ).rejects.toThrow("provider down");
     });
 
+    it("reports a streaming failure to onError with the error itself (#3377)", async () => {
+        const failure = new Error("provider down");
+        streamMessage.mockImplementation(async (...args: unknown[]) => {
+            if (args.length === 0) return;
+            throw failure;
+        });
+        const onError = vi.fn();
+        const adapter = createSessionChatAdapter("sess-1", {onError});
+        const {opts} = runOptions([userMessage("x")]);
+        await expect(
+            collect(adapter.run(opts) as AsyncIterable<RunResult>),
+        ).rejects.toBe(failure);
+        expect(onError).toHaveBeenCalledWith(failure);
+    });
+
+    it("does not report a user abort as a failure (#3377)", async () => {
+        const abort = new DOMException("The operation was aborted.", "AbortError");
+        streamMessage.mockImplementation(async (...args: unknown[]) => {
+            if (args.length === 0) return;
+            throw abort;
+        });
+        const onError = vi.fn();
+        const adapter = createSessionChatAdapter("sess-1", {onError});
+        const {opts} = runOptions([userMessage("x")]);
+        await expect(
+            collect(adapter.run(opts) as AsyncIterable<RunResult>),
+        ).rejects.toBe(abort);
+        expect(onError).not.toHaveBeenCalled();
+    });
+
     it("forwards the completed exchange result to onExchange (#1126 Phase 4a)", async () => {
         const finalResult = {session: {cycle_step: 3}, step_evaluation: null};
         streamMessage.mockImplementation(async (...args: unknown[]) => {

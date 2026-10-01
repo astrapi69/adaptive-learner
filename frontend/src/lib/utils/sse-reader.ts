@@ -44,6 +44,31 @@ export interface StreamSseOptions {
     signal?: AbortSignal;
     /** Called for every parsed SSE event. */
     onEvent: (event: SseEvent) => void;
+    /** Called once when the response headers arrive, OK or not (#3377),
+     *  so the caller can record the call the way ``apiCall`` does. */
+    onResponse?: (response: Response) => void | Promise<void>;
+    /** Build the error for a non-2xx response (#3377). Default: a plain
+     *  ``Error`` carrying the status and the raw body. */
+    toHttpError?: (response: Response) => Promise<Error>;
+    /** Build the error for a failed transport: the request never got a
+     *  response, or the stream broke mid-reply (#3377). A user abort is
+     *  never passed here; it surfaces unchanged. Default: rethrow. */
+    toNetworkError?: (cause: unknown) => Error | Promise<Error>;
+}
+
+function isAbort(cause: unknown): boolean {
+    return cause instanceof DOMException && cause.name === "AbortError";
+}
+
+/** Rethrow ``cause`` through ``toNetworkError`` unless it is an abort. */
+async function networkFailure(cause: unknown, opts: StreamSseOptions): Promise<never> {
+    if (isAbort(cause) || !opts.toNetworkError) throw cause;
+    throw await opts.toNetworkError(cause);
+}
+
+async function defaultHttpError(response: Response): Promise<Error> {
+    const text = await response.text().catch(() => "");
+    return new Error(`SSE request failed (${response.status}): ${text}`);
 }
 
 /**
@@ -52,22 +77,25 @@ export interface StreamSseOptions {
  * rejects on transport / parse / abort errors.
  */
 export async function streamSse(opts: StreamSseOptions): Promise<void> {
-    const response = await fetch(opts.url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "text/event-stream",
-            ...(opts.headers ?? {}),
-        },
-        body: JSON.stringify(opts.body),
-        signal: opts.signal,
-    });
+    let response: Response;
+    try {
+        response = await fetch(opts.url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "text/event-stream",
+                ...(opts.headers ?? {}),
+            },
+            body: JSON.stringify(opts.body),
+            signal: opts.signal,
+        });
+    } catch (cause) {
+        return networkFailure(cause, opts);
+    }
+    await opts.onResponse?.(response);
 
     if (!response.ok) {
-        // Surface the HTTP error verbatim so callers see the same
-        // detail shape as ApiError elsewhere in the app.
-        const text = await response.text().catch(() => "");
-        throw new Error(`SSE request failed (${response.status}): ${text}`);
+        throw await (opts.toHttpError ?? defaultHttpError)(response);
     }
     if (!response.body) {
         throw new Error("SSE response has no body");
@@ -79,7 +107,13 @@ export async function streamSse(opts: StreamSseOptions): Promise<void> {
 
     try {
         while (true) {
-            const {value, done} = await reader.read();
+            let chunk: ReadableStreamReadResult<Uint8Array>;
+            try {
+                chunk = await reader.read();
+            } catch (cause) {
+                return networkFailure(cause, opts);
+            }
+            const {value, done} = chunk;
             if (done) {
                 // Flush any final partial frame in the buffer.
                 if (buffer.trim().length > 0) {
