@@ -30,6 +30,7 @@ from __future__ import annotations
 import json
 import textwrap
 from collections.abc import Iterator
+from datetime import datetime
 from typing import NoReturn
 from unittest.mock import patch
 
@@ -232,6 +233,8 @@ def test_list_sets_surfaces_upstream(client: TestClient) -> None:
     assert entry["level"] == "A1"
     assert entry["cached_version"] is None
     assert entry["update_available"] is False
+    # #3418: not downloaded, so no download time.
+    assert entry["downloaded_at"] is None
 
 
 def test_list_sets_carries_visibility_flag(client: TestClient) -> None:
@@ -323,6 +326,30 @@ def test_download_then_list_lessons(client: TestClient) -> None:
     lesson = r.json()
     assert lesson["id"] == "01-greetings"
     assert lesson["title"] == "Greetings"
+
+
+def test_download_reports_and_lists_the_download_time(client: TestClient) -> None:
+    """#3418: API mode carries ``downloaded_at`` for a cached set, on the
+    download response and on the listing, so "freshly downloaded first"
+    works on the desktop app as it does in Dexie mode."""
+    transport = _make_mock_transport(
+        {
+            f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/manifest.yaml": SET_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/lessons/01-greetings.json": LESSON_JSON,
+        },
+    )
+    with _install_mock_transport(transport):
+        download = client.post(
+            f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/download",
+        )
+        listing = client.get("/api/plugins/content-loader/sets")
+    assert download.status_code == 200, download.text
+    stamp = download.json()["downloaded_at"]
+    assert isinstance(stamp, str) and stamp.endswith("Z")
+    datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    listed = [s for s in listing.json()["sets"] if s["id"] == SET_ID]
+    assert listed and listed[0]["downloaded_at"] == stamp
 
 
 def test_list_lessons_uncached_returns_404(

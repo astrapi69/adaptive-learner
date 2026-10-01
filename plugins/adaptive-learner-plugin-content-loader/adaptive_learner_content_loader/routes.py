@@ -217,6 +217,9 @@ class SetEntryResponse(BaseModel):
     # #2655 — content attribution + bounded derivation chain (engine#90 /
     # schema 1.9). ``None`` when the set carries none.
     attribution: AttributionResponse | None = None
+    # #3418 — when the cached version was downloaded (ISO-8601 UTC); drives
+    # the "freshly downloaded first" order, as Dexie mode already does.
+    downloaded_at: str | None = None
 
     @classmethod
     def from_entry(cls, entry: SetEntry) -> SetEntryResponse:
@@ -241,6 +244,7 @@ class SetEntryResponse(BaseModel):
             book=SetBookResponse.from_model(entry.set.book),
             visibility=entry.set.visibility.value,
             attribution=AttributionResponse.from_model(entry.set.attribution),
+            downloaded_at=entry.downloaded_at,
         )
 
 
