@@ -153,3 +153,33 @@ export function parseLesson(
   );
   return applyLessonSchemaDefaults({ ...parsed }) as ContentLesson;
 }
+
+/** The set context a served lesson falls back to when its set is not in
+ *  the listing: its own pair and domain, so ``from_cards`` still resolves
+ *  and nothing is invented. */
+function ownContext(lesson: ContentLesson): LessonSetContext {
+  const target = lesson.target_language ?? "";
+  return {
+    language: target,
+    target_language: target,
+    source_language: lesson.source_language ?? "",
+    domain: lesson.domain ?? "",
+  };
+}
+
+/** #3393 - the API-mode half of the lesson read boundary. The backend
+ *  serves a validated lesson OBJECT, but neither resolves ``from_cards``
+ *  nor injects the set's language pair and domain; both happen only in
+ *  {@link parseLesson}, which the Dexie read path runs on the cached file.
+ *  Running the served lesson through the same projection makes the two
+ *  modes return the same lesson.
+ *
+ *  @param served - The lesson as ``GET .../lessons/{filename}`` returns it.
+ *  @param context - The lesson's set entry; ``undefined`` when the set is
+ *      not listed, then the lesson's own pair and domain are used. */
+export function parseServedLesson(
+  served: ContentLesson,
+  context: LessonSetContext | undefined,
+): ContentLesson {
+  return parseLesson(JSON.stringify(served), context ?? ownContext(served));
+}
