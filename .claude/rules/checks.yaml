@@ -137,7 +137,7 @@ checks:
     probe: make_target=verify-theme | ci_step=.github/workflows/ci.yml::frontend-tests::Theme token gate (#3251)::verify_theme.py
 
   - id: i18n-script-sanity
-    verifies: de substitute spellings and el/hi latin transliteration in the catalogs
+    verifies: de substitute spellings (catalog + German help glossary) and el/hi latin transliteration in the catalogs
     rule: lessons/docs-i18n.md#german-content-uses-real-umlauts
     status: active
     wired_in: make verify-i18n-scripts; .pre-commit-config.yaml
