@@ -50,7 +50,6 @@ metadata:
 `;
 
 const LESSON = JSON.stringify({
-  schema_version: "1.3",
   id: "01",
   title: "Greetings",
   target_language: "fr",

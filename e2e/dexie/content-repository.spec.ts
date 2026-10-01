@@ -42,7 +42,6 @@ metadata:
 `;
 
 const LESSON = JSON.stringify({
-  schema_version: "1.3",
   id: "01",
   title: "Demo lesson",
   cards: [{ id: "c1", front: "bonjour", back: "hallo" }],

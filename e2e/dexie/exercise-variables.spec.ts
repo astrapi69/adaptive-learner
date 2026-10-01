@@ -11,8 +11,11 @@
  *  - the correct computed answer is accepted WITHIN the variable's
  *    tolerance, even when the typed text differs from the exact value.
  *
- * The sampled variables use ``min === max`` so the resolved instance is
- * deterministic (a=4, b=6, sum=10) - the RANDOM sampling itself is already
+ * The sampled variables use a ``step`` wider than their range, so ``min`` is
+ * the only value on the grid and the resolved instance is deterministic
+ * (a=4, b=6, sum=10). ``min === max`` would say the same more plainly, but
+ * the engine refuses it (E-VAR-RANGE: min must be below max), and repo
+ * validation runs the engine's rules since #3243 - the RANDOM sampling itself is already
  * pinned by ``resolve-exercise-variables.test.ts``; this spec's job is the
  * INTEGRATION (dispatch -> substitution -> render -> grade) in a real
  * browser, not re-proving randomness.
@@ -30,7 +33,8 @@ import { currentStepTestId, waitForStepAdvance } from "./_step-flow";
 const OWNER_REPO = "e2e/exercise-variables";
 const SET_ID = "addition-parametrisch-from-de";
 
-/** Deterministic instance: a=4 (min=max=4), b=6 (min=max=6), sum = a+b =
+/** Deterministic instance: a=4 (min 4, max 5, step 10), b=6 (min 6, max 7,
+ *  step 10), sum = a+b =
  *  10, tolerance 0.01. Two identical steps so a wrong AND a correct
  *  submission can each be exercised without needing "Try again" (hidden in
  *  the Lesson page's controlled two-phase flow). */
@@ -42,8 +46,8 @@ function exercise(id: string) {
     card_ids: [],
     distractors: [],
     variables: [
-      { name: "a", min: 4, max: 4 },
-      { name: "b", min: 6, max: 6 },
+      { name: "a", min: 4, max: 5, step: 10 },
+      { name: "b", min: 6, max: 7, step: 10 },
       { name: "sum", expression: "a + b", tolerance: 0.01 },
     ],
     accept: ["{{sum}}"],

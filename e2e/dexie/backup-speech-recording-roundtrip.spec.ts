@@ -27,7 +27,19 @@ import {strFromU8, unzipSync} from "fflate";
 import {createTestUser} from "../helpers/onboarding";
 
 const DEXIE_DB_NAME = "adaptive-learner";
-const RECORDING_ID = "e2e-roundtrip-sr-1";
+const SOURCE = "astrapi69/adaptive-learner-content";
+const SET_ID = "es-a1";
+const LESSON_FILENAME = "03-pronunciation.json";
+const EXERCISE_ID = "ex-1";
+
+/** The row id the app itself writes: ``speechRecordingKey`` in
+ *  storage/lessons/speech-recordings-dexie.ts (user, slugified source, set,
+ *  lesson, exercise). A made-up id is a row the app never writes, and since
+ *  #3458 a restore rekeys every recording onto this composite key, so the
+ *  seed has to follow the producer's convention to be found again. */
+function recordingKey(userId: string): string {
+    return `${userId}#${SOURCE.replace(/\//g, "--")}#${SET_ID}#${LESSON_FILENAME}#${EXERCISE_ID}`;
+}
 // Long enough to be a meaningful size signal in the exported file (a
 // real recording is tens of KB of base64), short enough to keep the
 // spec fast. The exact byte string is what gets asserted verbatim.
@@ -64,8 +76,9 @@ test.describe("Backup — speech_recordings round-trip, content-verified (Dexie)
         // app's own, already-open database. This is the real storage
         // layer, not a mock - only the microphone capture step is
         // bypassed (headless Chromium has none).
+        const RECORDING_ID = recordingKey(userId as string);
         const seed: SeedResult = await page.evaluate(
-            ({dbName, userId, recordingId, audioBase64}) => {
+            ({dbName, userId, recordingId, audioBase64, source, setId, lessonFilename, exerciseId}) => {
                 return new Promise<SeedResult>((resolve) => {
                     const openReq = indexedDB.open(dbName);
                     openReq.onerror = () =>
@@ -76,10 +89,10 @@ test.describe("Backup — speech_recordings round-trip, content-verified (Dexie)
                         tx.objectStore("speechRecordings").put({
                             id: recordingId,
                             user_id: userId,
-                            source: "astrapi69/adaptive-learner-content",
-                            set_id: "es-a1",
-                            lesson_filename: "03-pronunciation.json",
-                            exercise_id: "ex-1",
+                            source,
+                            set_id: setId,
+                            lesson_filename: lessonFilename,
+                            exercise_id: exerciseId,
                             audio_base64: audioBase64,
                             mime_type: "audio/webm",
                             duration_ms: 4200,
@@ -99,6 +112,10 @@ test.describe("Backup — speech_recordings round-trip, content-verified (Dexie)
                 dbName: DEXIE_DB_NAME,
                 userId,
                 recordingId: RECORDING_ID,
+                source: SOURCE,
+                setId: SET_ID,
+                lessonFilename: LESSON_FILENAME,
+                exerciseId: EXERCISE_ID,
                 audioBase64: AUDIO_BASE64,
             },
         );
