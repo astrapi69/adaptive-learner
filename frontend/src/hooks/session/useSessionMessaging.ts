@@ -17,6 +17,8 @@ import {useCallback, useState} from "react";
 import type {Dispatch, SetStateAction} from "react";
 
 import {CYCLE_STEPS} from "../../lib/constants";
+import {aiErrorMessage} from "../../lib/ai/ai-error-code";
+import {isDevMode} from "../settings/useDevMode";
 import {notify} from "../../utils/notify";
 import type {
     LearningSession,
@@ -96,20 +98,13 @@ export function useSessionMessaging({
                 );
             }
             if (result.ai_error) {
-                // Map known classifications (no AI key / no provider) to a
-                // friendly, localized message; others fall through to the raw
-                // detail.
-                const code = result.ai_error_code;
-                if (code === "no_api_key" || code === "no_provider") {
-                    notify.error(
-                        t(
-                            "session.no_api_key",
-                            "No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key.",
-                        ),
-                    );
-                } else {
-                    notify.error(result.ai_error);
-                }
+                // #3376 - both modes classify the failure; the learner sees
+                // the localized message, developer mode the raw detail.
+                notify.error(
+                    isDevMode()
+                        ? result.ai_error
+                        : aiErrorMessage(t, result.ai_error_code),
+                );
             }
         },
         [setSession, t],

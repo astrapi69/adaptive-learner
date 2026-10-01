@@ -37,6 +37,7 @@ import {
 import type {AdaptiveLearnerDB} from "../dexie/db";
 import {evaluateStep, type StepEvaluation} from "./step-evaluator";
 import {ApiError} from "../../api/client";
+import {aiErrorCodeForStatus, type AiErrorCode} from "../../lib/ai/ai-error-code";
 import {LEARNING_METHODS, type LearningMethod} from "../../lib/constants";
 import type {
     ConversationAnalysisResult,
@@ -468,15 +469,21 @@ export async function startSession(opts: {
     return {session: rowToSessionDto(sessionRow), system_prompt: systemPrompt};
 }
 
+/** Class of a failed direct provider call (#3376). The provider adapters
+ *  surface every transport/auth/provider failure as ``ApiError``; anything
+ *  else is unexpected and stays the generic class. */
+function providerErrorCode(err: unknown): AiErrorCode {
+    return err instanceof ApiError ? aiErrorCodeForStatus(err.status) : "provider_error";
+}
+
 interface SendMessageResult {
     user_message: SessionMessage;
     assistant_message: SessionMessage | null;
     ai_error: string | null;
-    /** Machine-readable classification of ``ai_error`` so the UI can
-     *  map known cases (no AI key configured, no provider) to a
-     *  friendly, localized message instead of surfacing the raw
-     *  English detail. ``null`` for unclassified / provider errors. */
-    ai_error_code?: "no_api_key" | "no_provider" | null;
+    /** Machine-readable classification of ``ai_error`` (#3376), the same
+     *  codes the backend emits, so the UI shows a localized message
+     *  instead of the raw English detail. ``null`` on success. */
+    ai_error_code?: AiErrorCode | null;
     session: LearningSession;
     step_evaluation: StepEvaluationVerdict | null;
     /** v1.4.0 — auto-loop not yet implemented in Dexie mode; always null. */
@@ -579,14 +586,19 @@ export async function sendMessage(opts: {
             maxTokens: 1024,
         });
     } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        return buildResponse(null, `AI provider error: ${msg}`, null);
+        return buildResponse(
+            null,
+            `AI provider error: ${err instanceof Error ? err.message : String(err)}`,
+            null,
+            providerErrorCode(err),
+        );
     }
     if (!assistantText) {
         return buildResponse(
             null,
             `No registered provider returned a reply for model '${model}'.`,
             null,
+            "provider_error",
         );
     }
     const assistantMsg: SessionMessageRow = {
@@ -772,8 +784,12 @@ export async function sendMessageStream(
             },
         });
     } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        return buildResponse(null, `AI provider error: ${msg}`, null);
+        return buildResponse(
+            null,
+            `AI provider error: ${err instanceof Error ? err.message : String(err)}`,
+            null,
+            providerErrorCode(err),
+        );
     }
     const assistantText = accumulator.join("");
     if (!assistantText) {
@@ -781,6 +797,7 @@ export async function sendMessageStream(
             null,
             `No registered provider returned a reply for model '${model}'.`,
             null,
+            "provider_error",
         );
     }
     const assistantMsg: SessionMessageRow = {
