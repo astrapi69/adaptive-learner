@@ -120,7 +120,7 @@ See [Creating lessons](../content-creation/overview.md).
 
 ## Content management
 
-- **Content hub** with Discover / My content / Import tabs, list or
+- **Content hub** with Discover / My content / Import / Create tabs, list or
   grid view, and a search/filter bar (language, level, domain, trust,
   AI-checked).
 - **Downloadable lesson sets** from public GitHub content repositories,
