@@ -20,6 +20,7 @@ import {stringify as stringifyYaml} from "yaml";
 import {
     DEFAULT_DOMAIN,
     isKnownContentDomain,
+    normalizeLevel,
 } from "./content-domains";
 import {CURRENT_MANIFEST_SCHEMA_VERSION} from "./schema-version";
 import type {ContentLesson, ContentSetEntry} from "../../storage/types";
@@ -126,7 +127,7 @@ export function buildManifestYaml(
         name: set.title,
         source_language: set.source_language,
         target_language: set.target_language,
-        level: set.level,
+        level: normalizeLevel(set.level),
         domain: exportDomain(set),
         lesson_count: lessonCount,
         version: set.version || "1.0.0",
@@ -169,7 +170,7 @@ export function buildSearchIndexJson(input: RepoExportInput): string {
                 description: set.description ?? "",
                 source_language: set.source_language,
                 target_language: set.target_language,
-                level: set.level,
+                level: normalizeLevel(set.level),
                 domain: exportDomain(set),
                 lesson_count: lessons.length,
                 card_count: totalCards(lessons),
