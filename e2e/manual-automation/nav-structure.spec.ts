@@ -11,15 +11,17 @@
  * removed the #891 desktop sidebar (a second desktop primary nav behind a
  * burger). #1512 then removed the mobile bottom tab bar, leaving the hamburger
  * drawer as the single mobile navigation:
- *   - ``> 768px``: the horizontal top bar (``nav-*``) is the primary nav; the
- *     hamburger + drawer do NOT exist in the DOM.
- *   - ``<= 768px``: the hamburger + drawer own the top-bar links (the single
- *     mobile primary nav); there is NO bottom tab bar.
+ *   - ``>= 1280px``: the horizontal top bar (``nav-*``) is the primary nav;
+ *     the hamburger + drawer do NOT exist in the DOM.
+ *   - ``< 1280px``: the hamburger + drawer own the top-bar links (the single
+ *     compact primary nav); there is NO bottom tab bar. #3527 moved this
+ *     breakpoint up from 768 px: the full bar no longer fits a laptop or
+ *     tablet once the badges are in it.
  *
  * This spec proves:
  *
  *   - the desktop top bar shows its grouped entries with NO burger/drawer,
- *   - the tablet-width top bar behaves identically,
+ *   - tablet and small-laptop widths use the hamburger drawer (#3527),
  *   - the mobile hamburger drawer carries the full primary set, with NO bottom
  *     tab bar present,
  *   - the still-reachable (un-redirected) routes render, not the 404 page.
@@ -48,7 +50,7 @@ const PRIMARY_NAV = [
 ] as const;
 
 test.describe("Navigation structure", () => {
-  test("desktop shows the top bar only — no burger, no drawer (> 768px)", async ({
+  test("desktop shows the top bar only — no burger, no drawer (>= 1280px)", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
@@ -70,7 +72,7 @@ test.describe("Navigation structure", () => {
     expect(errors.pageErrors()).toEqual([]);
   });
 
-  test("tablet-width top bar behaves like desktop (769..1024px)", async ({
+  test("tablet and small-laptop widths use the hamburger drawer (769..1279px, #3527)", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 900, height: 800 });
@@ -78,10 +80,13 @@ test.describe("Navigation structure", () => {
     const errors = installErrorCollectors(page);
     await seedLearner(page);
 
+    // #3527 - below 1280 px the compact menu is the primary nav, as on a
+    // phone; the drawer carries the full primary set.
+    await expect(page.getByTestId("nav-hamburger")).toBeVisible();
+    await page.getByTestId("nav-hamburger").click();
     for (const entry of PRIMARY_NAV) {
       await expect(page.getByTestId(`nav-${entry}`)).toBeVisible();
     }
-    await expect(page.getByTestId("nav-hamburger")).toHaveCount(0);
     await expect(page.getByTestId("desktop-sidebar")).toHaveCount(0);
     // #2786: the bar is opt-in (nav_position="bottom"); default top => absent.
     await expect(page.getByTestId("bottom-tab-bar")).toHaveCount(0);
