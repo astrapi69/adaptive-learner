@@ -59,8 +59,8 @@ export default function RecoverySetRow({
                 );
             }
             await onDone();
-        } catch {
-            notify.error(t("content.recovery.failed", "Something went wrong."));
+        } catch (err) {
+            notify.error(t("content.recovery.failed", "Something went wrong."), {error: err});
         } finally {
             setBusy(false);
         }
@@ -74,8 +74,8 @@ export default function RecoverySetRow({
                 t("content.recovery.restart_result", "Set reset. You can start it from the beginning."),
             );
             await onDone();
-        } catch {
-            notify.error(t("content.recovery.failed", "Something went wrong."));
+        } catch (err) {
+            notify.error(t("content.recovery.failed", "Something went wrong."), {error: err});
         } finally {
             setBusy(false);
             setConfirmRestart(false);

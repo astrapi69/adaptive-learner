@@ -308,7 +308,7 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     fireEvent.click(await screen.findByTestId("content-repo-remove-jane-deck"));
     fireEvent.click(await screen.findByTestId("content-repo-remove-dialog-confirm"));
     await waitFor(() => expect(notifyError).toHaveBeenCalled());
-    expect(String(notifyError.mock.calls[0][0])).toContain("disk full");
+    expect(notifyError.mock.calls[0][1]).toMatchObject({ error: { message: "disk full" } });
   });
 
   it("tells the user when reordering repos fails (#3384)", async () => {
@@ -322,7 +322,7 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     render(<ContentRepoSettingsSection />);
     fireEvent.click(await screen.findByTestId("content-repo-down-jane-deck"));
     await waitFor(() => expect(notifyError).toHaveBeenCalled());
-    expect(String(notifyError.mock.calls[0][0])).toContain("quota");
+    expect(notifyError.mock.calls[0][1]).toMatchObject({ error: { message: "quota" } });
   });
 
   it("hints to set a token when none is configured", async () => {

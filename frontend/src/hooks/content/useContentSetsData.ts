@@ -316,9 +316,7 @@ export function useContentSetsData(): ContentSetsData {
       return visibleSets;
     } catch (err) {
       if (!mountedRef.current) return null;
-      notify.error(t("content.error.list_failed", "Could not load content sets."), {
-        apiError: err instanceof Error ? undefined : undefined,
-      });
+      notify.error(t("content.error.list_failed", "Could not load content sets."), { error: err });
       return null;
     } finally {
       if (mountedRef.current) {

@@ -521,13 +521,7 @@ export default function BackupSection() {
                     .replace("{{count}}", String(total)),
             );
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
-            notify.error(
-                t("backup.export_error", "Backup failed: {{detail}}").replace(
-                    "{{detail}}",
-                    detail,
-                ),
-            );
+            notify.error(t("backup.export_failed", "Backup failed."), {error: err});
         } finally {
             setBusy(null);
         }
@@ -609,12 +603,9 @@ export default function BackupSection() {
                 .then((snap) => setCurrentSnapshot(snap))
                 .catch(() => setCurrentSnapshot(null));
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
             notify.error(
-                t("backup.import_parse_error", "Could not read backup: {{detail}}").replace(
-                    "{{detail}}",
-                    detail,
-                ),
+                t("backup.import_parse_failed", "Could not read the backup."),
+                {error: err},
             );
         } finally {
             setBusy(null);
@@ -705,13 +696,7 @@ export default function BackupSection() {
                 );
             }
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
-            notify.error(
-                t("backup.import_error", "Restore failed: {{detail}}").replace(
-                    "{{detail}}",
-                    detail,
-                ),
-            );
+            notify.error(t("backup.import_failed", "Restore failed."), {error: err});
         } finally {
             setBusy(null);
             scrollSectionToTop();

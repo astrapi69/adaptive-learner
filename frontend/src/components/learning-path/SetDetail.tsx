@@ -151,9 +151,9 @@ export default function SetDetail({set, onResultsReset}: SetDetailProps) {
             });
             setResetSummary(summary);
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
             notify.error(
-                `${t("learning_path.reset_all.failed", "The results could not be reset.")} ${detail}`,
+                t("learning_path.reset_all.failed", "The results could not be reset."),
+                {error: err},
             );
             setResetOpen(false);
         }
@@ -182,9 +182,9 @@ export default function SetDetail({set, onResultsReset}: SetDetailProps) {
                 navigate(lessonRoute(set.source, set.setId, first.filename));
             }
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
             notify.error(
-                `${t("learning_path.reset_all.failed", "The results could not be reset.")} ${detail}`,
+                t("learning_path.reset_all.failed", "The results could not be reset."),
+                {error: err},
             );
         } finally {
             setResetting(false);

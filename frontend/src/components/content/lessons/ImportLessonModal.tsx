@@ -131,9 +131,9 @@ export default function ImportLessonModal({
       }
       await saveSet(parsed);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.import_lesson.failed", "Could not import the lesson.")} ${detail}`,
+        t("content.import_lesson.failed", "Could not import the lesson."),
+        { error: err },
       );
     } finally {
       setImporting(false);
@@ -157,9 +157,9 @@ export default function ImportLessonModal({
       await saveSet(parsed);
       await carryOver();
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.import_lesson.failed", "Could not import the lesson.")} ${detail}`,
+        t("content.import_lesson.failed", "Could not import the lesson."),
+        { error: err },
       );
     } finally {
       setImporting(false);
@@ -178,9 +178,9 @@ export default function ImportLessonModal({
     try {
       await saveSet(copy);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.import_lesson.failed", "Could not import the lesson.")} ${detail}`,
+        t("content.import_lesson.failed", "Could not import the lesson."),
+        { error: err },
       );
     } finally {
       setImporting(false);

@@ -90,10 +90,7 @@ export default function SelectiveExportSection() {
         }
       }
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(
-        t("data_export.failed", "Export failed: {detail}").replace("{detail}", detail),
-      );
+      notify.error(t("data_export.export_failed", "Export failed."), { error: err });
     } finally {
       setBusy(null);
     }

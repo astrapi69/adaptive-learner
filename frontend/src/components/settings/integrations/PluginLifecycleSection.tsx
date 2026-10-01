@@ -64,9 +64,9 @@ function useInspections(t: Translate): InspectionRead {
         if (cancelled) return;
         const message = err instanceof ApiError ? err.detail : String(err);
         setRead({ rows: null, error: message, loading: false });
-        notify.error(
-          t("settings.plugins_error_load", "Could not read the plugin status") + ": " + message,
-        );
+        notify.error(t("settings.plugins_error_load", "Could not read the plugin status"), {
+          error: err,
+        });
       });
     return () => {
       cancelled = true;

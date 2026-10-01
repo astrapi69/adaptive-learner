@@ -204,8 +204,7 @@ export default function AnkiPage() {
           .replace("{filename}", result.filename),
       );
     } catch (err) {
-      const msg = err instanceof Error ? err.message : t("anki.export_failed", "Export failed.");
-      notify.error(msg);
+      notify.error(t("anki.export_failed", "Export failed."), { error: err });
     } finally {
       setExporting(false);
     }

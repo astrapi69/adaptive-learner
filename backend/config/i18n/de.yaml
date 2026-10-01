@@ -47,7 +47,7 @@ data_export:
   selective_button: "Ausgewählte Daten exportieren"
   selective_done: "{n} Datensätze exportiert."
   includes_hint: "wird automatisch mit dieser Kategorie exportiert"
-  failed: "Export fehlgeschlagen: {detail}"
+  export_failed: "Export fehlgeschlagen."
   group_content: "Inhalte"
   group_master: "Stammdaten"
   group_extra: "Zusatzdaten"
@@ -486,7 +486,7 @@ settings:
     heading: "Nicht verbundene Inhalte"
     summary: "{lessons} Lektionen und {cards} Wiederholungskarten aus Quellen, mit denen du nicht mehr verbunden bist."
     delete: "Nicht verbundenen Fortschritt löschen"
-    delete_failed: "Der nicht verbundene Fortschritt konnte nicht gelöscht werden: {detail}"
+    delete_error: "Der nicht verbundene Fortschritt konnte nicht gelöscht werden."
     confirm_title: "Nicht verbundenen Fortschritt löschen"
     confirm_message: "{lessons} Lektionen und {cards} Wiederholungskarten werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden."
     deleted: "{lessons} Lektionen und {cards} Wiederholungskarten gelöscht."
@@ -1013,7 +1013,7 @@ settings:
   danger_zone_complete_toast: "Alle Daten wurden gelöscht."
   danger_zone_confirm_prompt: "Zum Bestätigen RESET eingeben"
   danger_zone_continue: "Weiter"
-  danger_zone_failed_toast: "Zurücksetzen fehlgeschlagen:"
+  danger_zone_failed: "Zurücksetzen fehlgeschlagen."
   danger_zone_final_button: "Endgültig löschen"
   danger_zone_heading: "Gefahrenzone"
   danger_zone_input_placeholder: "RESET"
@@ -1177,8 +1177,9 @@ backup:
   too_large: 'Diese Backup-Datei ist zu groß (über 100 MB).'
   export_success: Sicherung heruntergeladen ({{count}} Datensätze).
   export_error: 'Sicherung fehlgeschlagen: {{detail}}'
-  import_parse_error: 'Sicherung konnte nicht gelesen werden: {{detail}}'
-  import_error: 'Wiederherstellung fehlgeschlagen: {{detail}}'
+  export_failed: "Sicherung fehlgeschlagen."
+  import_parse_failed: "Sicherung konnte nicht gelesen werden."
+  import_failed: "Wiederherstellung fehlgeschlagen."
   comparison_title: Wiederherstellung bestätigen
   comparison_help: Beim Zusammenführen werden neue Datensätze eingefügt, veränderbare Datensätze nur überschrieben, wenn die Sicherung neuer ist, und Historien-Zeilen bleiben unverändert. Nichts wird gelöscht. API-Schlüssel werden ignoriert.
   table_header: Tabelle
@@ -1212,11 +1213,11 @@ backup:
   auto_help: Automatisch sichern nach 10 abgeschlossenen Sitzungen oder einmal pro Woche.
   auto_run: Jetzt sichern
   auto_run_success: Automatische Sicherung erstellt.
-  auto_run_error: 'Automatische Sicherung fehlgeschlagen: {{detail}}'
+  auto_run_failed: "Automatische Sicherung fehlgeschlagen."
   auto_restored: Automatische Sicherung wiederhergestellt.
   auto_restore: Wiederherstellen
-  auto_delete_failed: "Das automatische Backup konnte nicht gelöscht werden: {detail}"
-  auto_restore_error: 'Wiederherstellung fehlgeschlagen: {{detail}}'
+  auto_delete_error: "Das automatische Backup konnte nicht gelöscht werden."
+  auto_restore_failed: "Wiederherstellung fehlgeschlagen."
   auto_records: '{{n}} Datensätze'
   auto_none: Noch keine automatischen Sicherungen. Die erste läuft nach 10 Sitzungen oder 7 Tagen.
   storage_pressure: Browser-Speicher ist fast voll ({{pct}}% des Kontingents). Exportiere jetzt eine Sicherung.
@@ -1248,6 +1249,7 @@ backup:
   compare_high_volume_hint: Tabelle mit vielen Einträgen - Vorschau auf Datensatz-Ebene gekürzt.
   compare_export_md: Als Markdown exportieren
   compare_markdown_downloaded: Vergleich exportiert.
+  compare_export_failed: "Der Vergleich konnte nicht exportiert werden."
   confirm_with_counts: Wiederherstellen ({{added}} hinzugefügt, {{updated}} aktualisiert)
   auto_compare_as_a: Als A vergleichen
   auto_compare_as_b: Als B vergleichen
@@ -1269,9 +1271,9 @@ export:
   busy: Arbeite...
   download_success: Export heruntergeladen.
   print_opened: Druckdialog geöffnet. Wähle "Als PDF speichern".
-  error: 'Export fehlgeschlagen: {{detail}}'
-  preview_error: 'Vorschau fehlgeschlagen: {{detail}}'
-  load_error: 'Daten konnten nicht geladen werden: {{detail}}'
+  export_failed: "Export fehlgeschlagen."
+  preview_failed: "Vorschau fehlgeschlagen."
+  load_failed: "Die Exportdaten konnten nicht geladen werden."
   pick_session: Wähle zuerst eine Sitzung.
   pick_curriculum: Wähle zuerst einen Lehrplan.
   title_progress: Lernfortschritt
@@ -1936,7 +1938,7 @@ repo:
     enable_git: "Git-Persistenz aktivieren"
 lesson:
   progress_io:
-    save_failed: "Dein Fortschritt in dieser Lektion konnte nicht gespeichert werden: {detail}"
+    save_error: "Dein Fortschritt in dieser Lektion konnte nicht gespeichert werden."
     load_failed: "Dein gespeicherter Fortschritt für diese Lektion konnte nicht geladen werden: {detail}"
     create_profile: "Lernprofil anlegen"
   mascot_label: "Dein Lernbegleiter"
@@ -4037,8 +4039,8 @@ content_repo:
     copy_failed: "Kopieren nicht möglich."
     hint: "Teile diesen Link, damit andere dieses ÖFFENTLICHE Repository hinzufügen können. Für ein privates Repository sende die URL und ein schreibgeschütztes Token separat."
     qr_alt: "QR-Code für den Teilen-Link"
-  remove_failed: "Das Repository konnte nicht entfernt werden: {detail}"
-  reorder_failed: "Die Reihenfolge der Repositories konnte nicht geändert werden: {detail}"
+  remove_error: "Das Repository konnte nicht entfernt werden."
+  reorder_error: "Die Reihenfolge der Repositories konnte nicht geändert werden."
   progress:
     syncing: "Synchronisiere…"
     validating: "Repository wird validiert…"

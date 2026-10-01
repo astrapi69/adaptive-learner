@@ -218,8 +218,7 @@ export default function SetDeepLink() {
       }
       await openFirstLesson(entry);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(`${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`);
+      notify.error(t("content.error.open_failed", "Could not open the lesson."), { error: err });
     } finally {
       setBusy(false);
       setProgress(null);

@@ -22,7 +22,7 @@ import {lazy, Suspense, useEffect, useRef, useState} from "react";
 import QRCode from "qrcode";
 
 import {Button} from "@/components/ui/button";
-import {api, ApiError} from "../../api/client";
+import {api} from "../../api/client";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useConfirm} from "../../contexts/ConfirmContext";
 import {readLearnerState} from "../../lib/learning/learnerState";
@@ -88,13 +88,7 @@ export default function SyncSection() {
             setPairingLink("");
             notify.success(t("sync.paired"));
         } catch (err) {
-            const detail =
-                err instanceof ApiError
-                    ? err.detail
-                    : err instanceof Error
-                      ? err.message
-                      : t("sync.pair_error");
-            notify.error(detail);
+            notify.error(t("sync.pair_error"), {error: err});
         } finally {
             setBusy("");
         }
@@ -116,13 +110,7 @@ export default function SyncSection() {
             setScannerOpen(false);
             notify.success(t("sync.paired"));
         } catch (err) {
-            const detail =
-                err instanceof ApiError
-                    ? err.detail
-                    : err instanceof Error
-                      ? err.message
-                      : t("sync.pair_error");
-            notify.error(detail);
+            notify.error(t("sync.pair_error"), {error: err});
             // Keep the modal open so the user can retry with a
             // fresh QR from the desktop (the v1.0.0 token has
             // a 5-minute TTL; expired tokens land here).
@@ -148,13 +136,7 @@ export default function SyncSection() {
             refreshFromStorage();
             notify.success(`${t("sync.synced")}: ${outcome.summary}`);
         } catch (err) {
-            const detail =
-                err instanceof ApiError
-                    ? err.detail
-                    : err instanceof Error
-                      ? err.message
-                      : t("sync.sync_error");
-            notify.error(detail);
+            notify.error(t("sync.sync_error"), {error: err});
         } finally {
             setBusy("");
         }
@@ -394,8 +376,7 @@ function DesktopUnpairedView({
             setLink(uri);
             setExpiresAt(body.expires_at);
         } catch (err) {
-            const detail = err instanceof Error ? err.message : "unknown error";
-            notify.error(`${t("sync.pair_error")} (${detail})`);
+            notify.error(t("sync.pair_error"), {error: err});
         } finally {
             setBusy(false);
         }
