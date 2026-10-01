@@ -1971,7 +1971,7 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       (no empty string in the JSON). More than 2000 characters cannot be typed
       (maxlength); a loaded exercise with a longer explanation shows "The
       explanation is too long …" and Save stays disabled until it is shortened.
-- [ ] TC-0925 **Inline editor follows the engine's rules (#3387):** In the inline editor
+- [ ] TC-0926 **Inline editor follows the engine's rules (#3387):** In the inline editor
       (step 3), reduce a matching to **one** complete pair → Save is enabled
       and the exercise is saved with that one pair. With no complete pair Save
       stays blocked with "Add at least one complete pair". Repeat a left term in

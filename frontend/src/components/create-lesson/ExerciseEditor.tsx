@@ -36,7 +36,7 @@ import {
     normalizeExerciseEdit,
     type ConversionTargetType,
 } from "../../lib/exercises";
-import {checkExerciseDraft} from "../../lib/content/lesson/exercise-draft-check";
+import {checkExerciseDraft} from "../../lib/content/lesson/edit/exercise-draft-check";
 import {
     exerciseEditErrorKey,
     exerciseTypeLabelKey,

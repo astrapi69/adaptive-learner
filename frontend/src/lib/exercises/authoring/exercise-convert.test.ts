@@ -18,7 +18,7 @@ import {
     extensionConversionTargets,
 } from "./exercise-convert";
 import {normalizeExerciseEdit} from "./exercise-edit";
-import {checkExerciseDraft} from "../../content/lesson/exercise-draft-check";
+import {checkExerciseDraft} from "../../content/lesson/edit/exercise-draft-check";
 import {validateExtensionExercise} from "./extension-edit";
 import {elementKeysOf} from "../../srs/element-keys";
 import type {ContentLessonExercise} from "../../../storage/types";

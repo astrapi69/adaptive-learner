@@ -8,8 +8,8 @@
 import {describe, expect, it} from "vitest";
 
 import {checkExerciseDraft} from "./exercise-draft-check";
-import {EXPLANATION_MAX_CHARS, createBlankExercise} from "../../exercises";
-import type {ContentLessonExercise} from "../../../storage/types";
+import {EXPLANATION_MAX_CHARS, createBlankExercise} from "../../../exercises";
+import type {ContentLessonExercise} from "../../../../storage/types";
 
 const CARD_IDS = ["card-un", "card-deux", "card-trois"];
 

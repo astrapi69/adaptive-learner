@@ -4,7 +4,7 @@
  * These pin the normalizer that trims + drops empty entries before the
  * edit is committed to the exercise record. Whether a draft is saveable is
  * ``checkExerciseDraft``'s call (#3387), pinned in
- * ``lib/content/lesson/exercise-draft-check.test.ts``. Pure functions, no
+ * ``lib/content/lesson/edit/exercise-draft-check.test.ts``. Pure functions, no
  * React.
  */
 

@@ -2119,7 +2119,7 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       2000 Zeichen sind nicht eintippbar (maxlength); eine geladene Übung mit
       längerer Erklärung zeigt "Die Erklärung ist zu lang …" und Speichern ist
       gesperrt, bis gekürzt wurde.
-- [ ] TC-0925 **Inline-Editor folgt den Regeln der Engine (#3387):** Im Inline-Editor
+- [ ] TC-0926 **Inline-Editor folgt den Regeln der Engine (#3387):** Im Inline-Editor
       (Schritt 3) eine Zuordnung auf **ein** vollständiges Paar reduzieren →
       Speichern ist aktiv und die Übung wird mit diesem einen Paar gespeichert.
       Ohne vollständiges Paar bleibt Speichern gesperrt mit „Füge mindestens ein

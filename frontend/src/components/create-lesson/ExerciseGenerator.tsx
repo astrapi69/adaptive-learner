@@ -52,7 +52,7 @@ import {
     type GeneratableType,
 } from "../../lib/exercises";
 import {exerciseTypeLabelKey} from "../../lib/content/lesson/edit-error-keys";
-import {checkExerciseDraft} from "../../lib/content/lesson/exercise-draft-check";
+import {checkExerciseDraft} from "../../lib/content/lesson/edit/exercise-draft-check";
 import type {ContentLessonExercise} from "../../storage/types";
 
 export const MIN_EXERCISES = 5;

@@ -35,10 +35,10 @@ import {
     normalizeExerciseEdit,
     type ExerciseEditCode,
     type ExerciseEditIssue,
-} from "../../exercises";
-import {APP_EXTENSION_REGISTRY} from "../validation/engine-extensions";
-import {validateLessonShape} from "../validation/lesson-schema-validator";
-import type {ContentLesson, ContentLessonExercise} from "../../../storage/types";
+} from "../../../exercises";
+import {APP_EXTENSION_REGISTRY} from "../../validation/engine-extensions";
+import {validateLessonShape} from "../../validation/lesson-schema-validator";
+import type {ContentLesson, ContentLessonExercise} from "../../../../storage/types";
 
 /** Where the draft sits inside the wrapper lesson. */
 const EXERCISE_PATH = "/steps/1/exercise";

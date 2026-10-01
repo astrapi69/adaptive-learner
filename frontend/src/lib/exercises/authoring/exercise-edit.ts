@@ -9,7 +9,7 @@
  * record (a ``multiselect`` cloze has no blanks and keeps none, #3246).
  *
  * Whether a draft is saveable is not decided here: the Lesson Creator asks
- * ``checkExerciseDraft`` (``lib/content/lesson/exercise-draft-check``), which
+ * ``checkExerciseDraft`` (``lib/content/lesson/edit/exercise-draft-check``), which
  * defers to the schema and the engine's rules (#3387). This module only
  * names the failed rule as an {@link ExerciseEditCode} the app localizes.
  *
