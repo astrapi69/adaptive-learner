@@ -433,6 +433,9 @@ session:
   ai_error_provider_auth: "Yapay zekâ sağlayıcın anahtarı reddetti. Anahtarı Ayarlar > Yapay zeka bölümünden kontrol et."
   ai_error_rate_limited: "Yapay zekâ sağlayıcının sınırına ulaşıldı. Biraz bekle ya da kotanı kontrol et, sonra tekrar gönder."
   ai_error_provider_unavailable: "Yapay zekâ sağlayıcına şu anda ulaşılamıyor. Bağlantını kontrol et ve tekrar gönder."
+  reply_failed: "Yanıt yüklenemedi."
+  history_failed: "Önceki konuşma yüklenemedi. Hiçbir şey silinmedi."
+  chat_retry: "Tekrar dene"
   welcome_empty: "Öğrenmeye hazır! İlk mesajını yaz."
   end_session: Oturumu bitir
   end_session_confirm: Emin misin? Oturumu kapatıp bir değerlendirme isteyeceğiz.
