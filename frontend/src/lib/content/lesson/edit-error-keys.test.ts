@@ -21,12 +21,19 @@ import type {
 
 const EXERCISE_CODES: ExerciseEditCode[] = [
     "prompt",
-    "matching",
+    "explanation",
+    "matching_pairs",
+    "matching_duplicate_left",
+    "matching_from_cards",
     "cloze",
+    "cloze_distractors",
+    "cloze_multiselect",
     "word_tiles",
+    "word_tiles_ordering",
     "picture_choice",
     "multiple_choice",
     "free_text",
+    "card_ref",
 ];
 
 const EXTENSION_CODES: ExtensionEditCode[] = [
@@ -59,8 +66,8 @@ function resolve(key: string): string | undefined {
 
 describe("edit-error-keys (#1862)", () => {
     it("prefixes a core exercise code with the create_lesson.exercises namespace", () => {
-        expect(exerciseEditErrorKey("matching")).toBe(
-            "create_lesson.exercises.edit.err_matching",
+        expect(exerciseEditErrorKey("matching_pairs")).toBe(
+            "create_lesson.exercises.edit.err_matching_pairs",
         );
     });
 

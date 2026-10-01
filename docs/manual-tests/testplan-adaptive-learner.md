@@ -2110,6 +2110,18 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       2000 Zeichen sind nicht eintippbar (maxlength); eine geladene Übung mit
       längerer Erklärung zeigt "Die Erklärung ist zu lang …" und Speichern ist
       gesperrt, bis gekürzt wurde.
+- [ ] TC-0925 **Inline-Editor folgt den Regeln der Engine (#3387):** Im Inline-Editor
+      (Schritt 3) eine Zuordnung auf **ein** vollständiges Paar reduzieren →
+      Speichern ist aktiv und die Übung wird mit diesem einen Paar gespeichert.
+      Ohne vollständiges Paar bleibt Speichern gesperrt mit „Füge mindestens ein
+      vollständiges Paar hinzu". Einen linken Begriff in anderer Schreibung
+      wiederholen (`un` / `UN`) → gesperrt mit dem Hinweis, dass jeder Begriff
+      nur einmal vorkommen darf. Einen Lückentext im Modus „Auswahl" ohne
+      Distraktor → gesperrt mit „Eine Auswahllücke braucht mindestens einen
+      Distraktor". Ein geforktes Set mit einer `from_cards`-Zuordnung (z. B.
+      `psych-rhetorik`, Lektion 1) öffnen und deren Übung bearbeiten →
+      Speichern ist aktiv (früher dauerhaft gesperrt). In jedem Fall gilt:
+      Was der Editor speichern lässt, lässt sich auch als Lektion speichern.
 - [ ] TC-0434 **Aufgabentyp umwandeln -> Freitext (EXP-050 Stufe 1, #2511):** Im
       Inline-Editor (Schritt 3, `ExerciseEditor`) einer **Wortkacheln**- oder
       **Multiple-Choice**-Übung steht oben ein Auswahlfeld **"Aufgabentyp"** mit

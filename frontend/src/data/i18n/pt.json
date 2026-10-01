@@ -3612,7 +3612,6 @@
         "image_add": "Adicionar imagem",
         "image_remove": "Remover imagem",
         "err_prompt": "Introduza uma pergunta ou enunciado.",
-        "err_matching": "Adicione pelo menos 2 pares completos (termo e correspondência).",
         "err_matching_pairs": "Adicione pelo menos um par completo (termo e correspondência).",
         "err_matching_duplicate_left": "Cada termo só pode aparecer uma vez (sem distinguir maiúsculas e minúsculas).",
         "err_matching_from_cards": "Uma correspondência criada a partir de cartões precisa de cartões ligados e de nenhum par adicional.",

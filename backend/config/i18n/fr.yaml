@@ -3326,7 +3326,6 @@ create_lesson:
       image_add: "Ajouter une image"
       image_remove: "Supprimer l'image"
       err_prompt: "Saisissez une question ou une consigne."
-      err_matching: "Ajoutez au moins 2 paires complètes (terme et correspondance)."
       err_matching_pairs: "Ajoutez au moins une paire complète (terme et correspondance)."
       err_matching_duplicate_left: "Chaque terme ne peut apparaître qu'une seule fois (sans tenir compte des majuscules)."
       err_matching_from_cards: "Une association créée à partir de cartes nécessite des cartes liées et aucune paire supplémentaire."

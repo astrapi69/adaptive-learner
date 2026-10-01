@@ -3334,7 +3334,6 @@ create_lesson:
       image_add: "이미지 추가"
       image_remove: "이미지 삭제"
       err_prompt: "질문이나 지시문을 입력하세요."
-      err_matching: "완전한 짝을 2개 이상 추가하세요 (용어와 대응)."
       err_matching_pairs: "완전한 짝을 하나 이상 추가하세요 (용어와 대응)."
       err_matching_duplicate_left: "각 용어는 한 번만 사용할 수 있습니다 (대소문자는 구분하지 않음)."
       err_matching_from_cards: "카드로 만든 짝 맞추기에는 연결된 카드가 필요하며 추가 짝은 쓸 수 없습니다."
