@@ -43,7 +43,8 @@ shown:
 
 Your choice is a **global content-view preference**: it applies to
 both the *My content* and *Discover* tabs and is remembered across
-visits. You can also set it from **Settings → Learning**. (If you
+visits. You can also set it from **Settings > General >
+Appearance**. (If you
 had previously picked grid, that choice is kept; only new users
 start on list.)
 

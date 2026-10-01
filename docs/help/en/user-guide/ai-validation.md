@@ -34,7 +34,7 @@ implemented.
 The AI check calls an AI provider directly from the browser. You
 need:
 
-- a **stored API key** (Settings → Integrations) for one of the
+- a **stored API key** (Settings > AI) for one of the
   providers (Anthropic, OpenAI or Gemini);
 - **browser mode** (Dexie) - the check runs browser-direct;
 - a **downloaded set** (the check works on the locally cached

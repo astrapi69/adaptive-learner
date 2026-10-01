@@ -28,7 +28,7 @@ deiner Plattform ab:
   Installations-Aufforderung aus, die die App in ein dezentes,
   schließbares **„App installieren"**-Banner umwandelt (nach dem
   Schließen erneut nach 7 Tagen angeboten). Du kannst auch
-  jederzeit über **Einstellungen → Daten → App installieren**
+  jederzeit über **Einstellungen > Allgemein > App installieren**
   installieren.
 - **iPhone / iPad (Safari):** iOS hat keine automatische
   Installations-Aufforderung, daher zeigt Adaptive Learner

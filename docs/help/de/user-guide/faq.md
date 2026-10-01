@@ -82,13 +82,13 @@ Multi-Cycle-Reise zusammen, wenn `cycle_count > 1`.
 
 Ja. Drei Export-Pfade ausgeliefert:
 
-- **Backup**: Einstellungen → Backup → Backup erstellen.
-  Lädt ein zeitgestempeltes JSON mit jeder Zeile deines
-  Accounts herunter. API-Schlüssel werden entfernt. Geht in
+- **Backup**: Einstellungen > Daten > Sichern und Exportieren >
+  Sicherung erstellen. Lädt eine `.alb`-Sicherungsdatei mit jeder
+  Zeile deines Accounts herunter. API-Schlüssel werden entfernt. Geht in
   beiden Speichermodi.
 - **Fortschritts- / Sitzungs- / Curriculum-Berichte**:
-  Einstellungen → Export. Markdown + PDF (Browser-Druck-zu-
-  PDF).
+  Einstellungen > Daten > Sichern und Exportieren > Export.
+  Markdown + PDF (Browser-Druck-zu-PDF).
 - **Anki .apkg**: KI-extrahierte Karteikarten auf der
   `/anki`-Seite prüfen, gewünschte annehmen, Export klicken.
   Die Datei funktioniert direkt in Anki-Desktop.
@@ -112,8 +112,9 @@ Drei Web-Speech-API-Integrationen:
   sprichst, und eine Judge-KI bewertet Ähnlichkeit +
   schlägt Verbesserungen vor.
 
-Stimme-Toggles in Einstellungen → Stimme. Der Abschnitt
-blendet sich in Browsern aus, die die API nicht unterstützen.
+Stimme-Toggles in Einstellungen > Lernen > Vorlesen und
+Diktieren. Der Bereich blendet sich in Browsern aus, die die API
+nicht unterstützen.
 
 ## Was ist der Chat-Verlauf-Import?
 
@@ -132,8 +133,8 @@ Extraktion + Rollengrenzen-Erhalt für dieses Format aus.
 
 ## Sync zwischen Geräten?
 
-Bidirektionaler Lokal-Netz-Sync. Einstellungen →
-Sync → „Dieses Gerät koppeln": QR-Code vom anderen
+Bidirektionaler Lokal-Netz-Sync. Öffne Einstellungen > Daten >
+Synchronisation und kopple dieses Gerät: QR-Code vom anderen
 Gerät-Bildschirm scannen (Rückkamera), oder Pairing-URL
 einfügen. Nach dem Pairing tauschen Push- + Pull-Knöpfe
 Daten aus; Konflikte gehen durch einen KI-Merge-Resolver.

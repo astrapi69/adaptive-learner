@@ -26,7 +26,7 @@ on your platform:
 - **Android & desktop (Chrome / Edge):** the browser fires an
   install prompt, which the app turns into a discreet, dismissable
   **"Install app"** banner (re-offered after 7 days if you dismiss
-  it). You can also install any time from **Settings → Data →
+  it). You can also install any time from **Settings > General >
   Install app**.
 - **iPhone / iPad (Safari):** iOS has no automatic install prompt,
   so Adaptive Learner shows a small **"Add to Home Screen"** hint
