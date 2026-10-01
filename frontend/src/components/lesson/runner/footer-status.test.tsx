@@ -65,6 +65,22 @@ describe("footer status channel (#3237)", () => {
     expect(screen.queryByTestId("probe-status")).not.toBeInTheDocument();
   });
 
+  it("gives way to the footer's buttons on a narrow phone (#3237, 320 px)", () => {
+    // The footer row is Prev + Pause + status + Check, all on one line. At
+    // 320 px the buttons alone nearly fill it; the status is a decorative
+    // mirror of the renderer's own counter, so it is the part that shrinks
+    // (and truncates) instead of pushing Check past the viewport.
+    render(
+      <FooterStatusProvider>
+        <Publisher text="2 / 5 paired" />
+        <FooterStatusLine testId="probe-status" />
+      </FooterStatusProvider>,
+    );
+    const status = screen.getByTestId("probe-status");
+    expect(status).not.toHaveClass("shrink-0");
+    expect(status).toHaveClass("min-w-0", "truncate");
+  });
+
   it("renders nothing while nothing is published", () => {
     render(
       <FooterStatusProvider>
