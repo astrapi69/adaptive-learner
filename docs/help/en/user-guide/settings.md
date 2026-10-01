@@ -72,16 +72,21 @@ Each provider has its own row: a key-entry input, a Save
 button, a Remove button, the active-provider badge, plus the
 new **source attribution** badge:
 
-- **Key from: Settings** - the key is stored Fernet-encrypted
-  in the DB (Server mode) or cleartext in IndexedDB (Local
-  mode). You can Save / Remove freely.
-- **Key from: secrets.yaml** - the key is configured in
-  `~/.config/adaptive-learner/secrets.yaml`. The Save button
-  is disabled; edit the file directly to change it. An info
-  banner under the row reminds you of the path.
+- **Key from: secrets.yaml** - the key is stored
+  Fernet-encrypted in `~/.config/adaptive_learner/secrets.yaml`.
+  This is where Server mode saves every key you enter here, so
+  after a Save the row shows this badge. Save and Remove stay
+  available; saving overwrites the stored key. An info line
+  under the row names the path.
+- **Key from: Settings** - an older key that still sits in the
+  database from before keys moved to `secrets.yaml`; it is
+  moved there on the next start. In Local mode (browser) the
+  key lives in IndexedDB and shows this badge too. Save /
+  Remove freely.
 - **Key from: environment** - the key is configured via the
   `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` environment variable.
-  Save disabled; the env var is the source of truth.
+  Save and Remove are disabled; the env var is the source of
+  truth.
 - **No key configured** - nothing's set anywhere. Type and
   hit Save to start.
 

@@ -81,7 +81,7 @@ KI-Anbieter außerhalb des Browsers sitzt.
 4. **Optional: KI-Sessions.** Möchtest du stattdessen das
    geführte Sechs-Methoden-Lerngespräch, hinterlege einen
    **API-Schlüssel** (Einstellungen oder
-   `~/.config/adaptive-learner/secrets.yaml`), mach den
+   `~/.config/adaptive_learner/secrets.yaml`), mach den
    optionalen [Lerntyp-Test](assessment.md) und starte eine
    [Lern-Session](learning-session.md).
 5. **Dein Ergebnis sichern.** Aus der Lektions-Zusammenfassung
