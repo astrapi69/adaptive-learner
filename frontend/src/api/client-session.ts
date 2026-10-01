@@ -5,7 +5,7 @@
  * composed into ``api`` by the client.ts barrel via spread.
  */
 
-import { apiCall } from "./client-core";
+import { apiCall, buildApiError, networkApiError, recordApiCall } from "./client-core";
 import { API_BASE, type LearningMethod } from "../lib/constants";
 import type {
   AssessmentEvaluatePayload,
@@ -79,11 +79,19 @@ export const sessionApi = {
         signal?: AbortSignal;
       },
     ) =>
-      import("../lib/utils/sse-reader").then(({ streamSse }) =>
-        streamSse({
-          url: `${API_BASE}/plugins/session/${encodeURIComponent(sessionId)}/message/stream`,
+      import("../lib/utils/sse-reader").then(({ streamSse }) => {
+        // #3377 - the stream fails like every other call: an ApiError with
+        // the backend's detail (status 0 without a response), and the call
+        // recorded for the report dialog.
+        const path = `/plugins/session/${encodeURIComponent(sessionId)}/message/stream`;
+        const startTime = performance.now();
+        return streamSse({
+          url: `${API_BASE}${path}`,
           body,
           signal: handlers.signal,
+          onResponse: (response) => recordApiCall(path, "POST", startTime, response.status),
+          toHttpError: (response) => buildApiError(response, path, "POST"),
+          toNetworkError: (cause) => networkApiError(cause, path, "POST", startTime),
           onEvent: (event) => {
             if (event.event === "start" && handlers.onStart) {
               handlers.onStart((event.data as { user_message: SessionMessage }).user_message);
@@ -93,8 +101,8 @@ export const sessionApi = {
               handlers.onDone(event.data as SessionMessageExchangeResult);
             }
           },
-        }),
-      ),
+        });
+      }),
     rate: (sessionId: string, body: SessionRatingBody) =>
       apiCall<SessionRating>(`/plugins/session/${encodeURIComponent(sessionId)}/rate`, {
         method: "POST",

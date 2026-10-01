@@ -3035,6 +3035,14 @@ Location: Settings → Data → Recommended repositories.
 - [ ] TC-0731 Tutor chat (assistant-ui, #1126): type → send (or Enter), the reply
       streams in; the 7-step cycle progress advances; read-aloud + dictation
       work; resuming a regular session shows the prior conversation
+- [ ] TC-0927 Tutor chat on a connection failure (#3377, API mode): stop the backend (or go
+      offline) while a reply streams → under the reply it says "The reply could
+      not be loaded." with "Try again", plus an error toast; start the backend
+      again, "Try again" → the reply arrives and the notice disappears.
+      Cancelling a running reply yourself shows NO error. Resume a regular
+      session with the backend stopped → instead of the welcome it says "The
+      earlier conversation could not be loaded. Nothing was deleted." with "Try
+      again"; once the backend runs, the click loads the history
 - [ ] TC-0732 Imported session opens with the AI asking the first question on its own
       (no user turn first), the chat starts clean
 - [ ] TC-0733 AI content validation: report sensible? provider+model shown?
