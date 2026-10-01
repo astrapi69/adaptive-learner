@@ -59,7 +59,7 @@ activo, más el nuevo distintivo de **atribución de origen**:
   en la BD (modo Servidor) o en texto claro en IndexedDB (modo
   Local). Puedes guardar / eliminar libremente.
 - **Clave de: secrets.yaml** - la clave está configurada en
-  `~/.config/adaptive-learner/secrets.yaml`. El botón Guardar
+  `~/.config/adaptive_learner/secrets.yaml`. El botón Guardar
   está desactivado; edita el archivo directamente para cambiarla.
   Un banner informativo debajo de la fila te recuerda la ruta.
 - **Clave de: entorno** - la clave está configurada mediante la
@@ -168,21 +168,22 @@ navegador.
 
 ## Apariencia
 
-El selector de **Tema** en *General > Apariencia* ofrece seis
-temas más un modo automático:
+El selector de **Tema** en *General > Apariencia* ordena los temas
+en dos pestañas:
 
-- **Claro** - el predeterminado, brillante y de alto contraste.
-- **Oscuro** - superficies atenuadas para uso con poca luz.
-- **Océano** - tonos azul profundo, calmado y agradable por la
-  noche.
-- **Bosque** - tonos cálidos de verde y ámbar terrosos.
-- **Alto contraste** - accesibilidad primero: negro, blanco y
-  colores de señal audaces, con bordes de tarjeta nítidos. Úsalo
-  si necesitas la máxima legibilidad.
-- **Sepia** - tonos cálidos de papel, cómodo para lecturas largas.
-- **Auto (Sistema)** - sigue la configuración de claro/oscuro de
-  tu sistema operativo y cambia automáticamente cuando el sistema
-  lo hace.
+- **Recomendados** - Catppuccin Latte, Supabase y Graphite (claros),
+  Catppuccin Mocha, **Soft Pop** y Amethyst Haze (oscuros). Los
+  usuarios nuevos empiezan con **Soft Pop**, y el selector se abre en
+  esta pestaña.
+- **Clásicos** - los temas originales: Claro, Oscuro, Océano, Bosque,
+  Alto contraste (negro, blanco y colores de señal intensos, con
+  bordes de tarjeta nítidos, para la máxima legibilidad) y Sepia
+  (tonos cálidos de papel para lecturas largas). Si tu tema activo es
+  uno clásico, el selector se abre en esta pestaña.
+
+Ambas pestañas ofrecen además **Automático (sistema)**, que sigue la
+configuración de claro/oscuro de tu sistema operativo y cambia
+automáticamente con él.
 
 Elige un tema desde su tarjeta de vista previa; el cambio se
 aplica al instante sin recarga, y tu elección se recuerda entre

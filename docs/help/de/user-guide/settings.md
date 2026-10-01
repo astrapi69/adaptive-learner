@@ -3,23 +3,40 @@
 Die Einstellungen-Seite sammelt alles, was du ohne Code- oder
 YAML-Eingriff anpassen kannst. Sie ist als **Tab-Seite** aufgebaut:
 Wähle einen Tab und sein Panel öffnet sich, du scrollst also nicht
-eine lange Liste von oben nach unten. Die Tab-Gruppen sind:
+eine lange Liste von oben nach unten. Auf einem breiten Bildschirm
+stehen die Tabs in einer Seitenleiste links; am Handy öffnest du sie
+über einen Menü-Knopf über dem Panel. Die Adresse nennt den offenen
+Tab (`/settings?tab=data`), sodass ein Link oder ein Neuladen auf
+demselben Tab landet; ohne Angabe öffnet die Seite **Allgemein**.
 
-- **Allgemein**: Profil (Anzeigename + Avatar), UI-Sprache,
-  Darstellung / Theme und Oberflächen-Optionen (Gesten, Tooltips,
-  Entwicklermodus).
-- **KI**: Anbieter- + Modell-Picker, API-Schlüssel pro Anbieter mit
-  Quellen-Attribution und die Anbieter-Übersicht.
-- **Lernen**: wie Lektionen ablaufen (Standardmodus,
-  Bestehensschwelle, Zeit-Schwierigkeit, Hinweise, Erinnerungen,
-  Enter-Kürzel, Übungsrichtung), die Inhalts-Ansicht und die
-  Reihenfolge der Inhalte-Tabs.
-- **Daten**: Speichermodus, Sync, Backup (Export / Import /
-  Vergleich) und der verschlüsselte Schlüssel-Export.
-- **Stimme**: TTS- / STT- / Aussprache-Toggles.
-- **Gamification**: XP- / Abzeichen-Benachrichtigungen,
-  Wochenend-Modus, Tagesziel und Fortschritt zurücksetzen.
-- **Über**: Version, Systeminfo, Credits, Spenden, Lizenz.
+Die Tabs sind in vier Gruppen sortiert:
+
+- **Allgemein**
+    - **Allgemein**: Profil (Anzeigename, Avatar, Avatar-Rahmen),
+      Darstellung (Theme, Ansicht der Inhalte, Reihenfolge der
+      Inhalte-Tabs), Anzeigesprache, Oberfläche (Button-Tooltips,
+      Menüposition am Handy), Speichermodus, Update-Einstellungen,
+      App-Installation und die Modus-Anzeige.
+- **Lernen & KI**
+    - **Lernen**: wie Lektionen sich verhalten, in fünf Bereichen vom
+      Lernprofil bis zu Motivation und Routine, samt Sprachausgabe und
+      Gamification.
+    - **KI**: Anbieter- + Modell-Picker, API-Schlüssel pro Anbieter mit
+      Quellen-Attribution und die Anbieter-Übersicht.
+    - **Plugins**: die installierten Plugins und die Einstellungen des
+      Lern-Repositorys.
+- **Daten & Integrationen**
+    - **Daten**: Inhaltsquellen, Synchronisation, Offline-Inhalte,
+      Sichern und Exportieren (samt verschlüsseltem Schlüssel-Export),
+      Aufräumen und die Gefahrenzone, mit einer Bereichsleiste oben.
+    - **Integrationen**: die GitHub-Integration (der Token, mit dem du
+      Lektionen als Pull Request teilst).
+- **Info**
+    - **Hilfe**: das durchsuchbare integrierte Glossar.
+    - **Diagnose & Support**: der Fehlerbericht, der Entwicklermodus
+      und die Tipp- und Viewport-Sonde.
+    - **Über**: Version, Systeminfo, Credits, App teilen, Spenden,
+      Lizenz.
 
 ## Profil
 
@@ -43,84 +60,62 @@ gestaltest deinen **Avatar**:
 Auswahl und gekaufte Rahmen bleiben erhalten und wandern mit ins
 [Backup](backup.md).
 
+## Darstellung
+
+Der **Farbschema**-Picker unter *Allgemein > Darstellung* ordnet die
+Themes in zwei Tabs:
+
+- **Empfohlen** - Catppuccin Latte, Supabase und Graphite (hell),
+  Catppuccin Mocha, **Soft Pop** und Amethyst Haze (dunkel). Neue
+  Nutzer starten mit **Soft Pop**, und der Picker öffnet auf diesem
+  Tab.
+- **Klassisch** - die ursprünglichen Themes: Hell, Dunkel, Ozean,
+  Wald, Hoher Kontrast (Schwarz, Weiß und kräftige Signalfarben mit
+  klaren Kartenrändern, für maximale Lesbarkeit) und Sepia (warme
+  Papiertöne für langes Lesen). Ist dein aktives Theme ein
+  klassisches, öffnet der Picker stattdessen auf diesem Tab.
+
+Beide Tabs bieten außerdem **Automatisch (System)**, das der
+Hell-/Dunkel-Einstellung deines Betriebssystems folgt und automatisch
+mitwechselt.
+
+Wähle ein Theme über seine Vorschaukarte; die Änderung greift sofort
+ohne Neuladen und deine Wahl wird über Besuche hinweg gemerkt. Jedes
+Theme erfüllt den WCAG-2.1-AA-Kontrast, sodass Text, Diagramme,
+Plaketten und Übungs-Feedback überall lesbar bleiben.
+
+Ebenfalls in dieser Karte: die **Ansicht der Inhalte** - die globale
+Einstellung *Liste / Kacheln* für den Content-Hub (Standard **Liste**).
+Es ist dieselbe Einstellung wie der Ansicht-Umschalter in den Tabs
+*Meine Inhalte* / *Entdecken*, eine Änderung an einer Stelle hält also
+beide synchron. Direkt unter der Karte legst du die **Reihenfolge der
+Inhalte-Tabs** (Entdecken / Meine Inhalte / Importieren /
+Erstellen) fest, sodass
+der Hub auf dem von dir am häufigsten genutzten Tab öffnet.
+
 ## Sprache
 
-Tauscht jeden UI-String beim nächsten Render live aus via
-`PATCH /api/settings/{user_id}`. Alle 11 Sprachen sind
+*Allgemein > Sprache* tauscht jeden UI-String beim nächsten Render
+live aus via `PATCH /api/settings/{user_id}`. Alle 11 Sprachen sind
 First-Class - DE / EL / EN / ES / FR / HI / ID / JA / KO / PT /
 TR - jede mit einem voll übersetzten Katalog. Über
 `localStorage` persistent.
 
-## KI-Anbieter + Modell-Picker
+## Oberfläche
 
-Das Anbieter-Dropdown schreibt `active_provider` in die
-UserSettings; der nächste KI-Aufruf geht durch das Plugin des
-neuen Anbieters (Server-Modus) oder den HTTP-Client des neuen
-Anbieters (Lokal-Modus).
-
-Der **Modell-Picker** ist ein durchsuchbares
-Dropdown, gruppiert in Empfohlen / Alle, gefüllt aus dem
-Live-`/v1/models`-Endpoint jedes Anbieters (1 h Cache). Jede
-Zeile zeigt den Klarnamen + die Roh-ID + ein Kontext-Fenster-
-Badge. Wenn die Liste nicht verfügbar ist (kein API-Key,
-kein Netz), fällt der Picker auf die statischen Defaults
-zurück und zeigt einen „Offline-Default"-Hinweis. Der Header
-der Sitzung liest `<Anbieter>: <Modellname>`; volle ID +
-Kontext-Fenster sitzen im Tooltip.
-
-## API-Schlüssel
-
-Jeder Anbieter hat seine eigene Zeile: ein Schlüssel-
-Eingabefeld, einen Speichern-Knopf, einen Entfernen-Knopf,
-das Aktiv-Anbieter-Badge - plus das neue **Quellen-
-Attributions**-Badge:
-
-- **Schlüssel aus: Einstellungen** - der Schlüssel ist
-  Fernet-verschlüsselt in der DB gespeichert (Server-Modus)
-  oder im Klartext in IndexedDB (Lokal-Modus). Speichern /
-  Entfernen frei nutzbar.
-- **Schlüssel aus: secrets.yaml** - der Schlüssel ist in
-  `~/.config/adaptive-learner/secrets.yaml` konfiguriert. Der
-  Speichern-Knopf ist deaktiviert; bearbeite die Datei direkt,
-  um ihn zu ändern. Ein Info-Banner unter der Zeile erinnert
-  an den Pfad.
-- **Schlüssel aus: Umgebungsvariable** - der Schlüssel ist
-  über die `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungs-
-  variable gesetzt. Speichern deaktiviert; die Env-Variable
-  ist die Quelle der Wahrheit.
-- **Kein Schlüssel konfiguriert** - nichts ist irgendwo
-  gesetzt. Tippen und auf Speichern klicken, um zu beginnen.
-
-Auflösungskette (höchste Priorität gewinnt): Umgebung >
-`secrets.yaml` > DB. Siehe
-[die Konfigurations-Doku](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md) für die
-volle Aufschlüsselung.
-
-Schlüssel-Eingaben nutzen ein maskiertes **Secret-Eingabefeld**
-(mit Anzeigen/Verbergen-Umschalter) und lösen den Passwort-Manager
-des Browsers nicht aus.
-
-API-Schlüssel sind aus dem normalen Backup (`.alb`) bewusst
-**ausgeschlossen**. Um deine Schlüssel auf ein anderes Gerät oder
-einen anderen Browser zu übertragen, nutze den dedizierten
-**verschlüsselten Schlüssel-Export (`.alk`)** - hier im KI-Tab
-findest du dazu einen **Verweis-Knopf**, der direkt zum Export im
-**Daten-Tab** springt (siehe *Verschlüsselter Schlüssel-Export*
-unter [Backup](#backup)).
-
-## Konfigurierte Anbieter
-
-Eine **Anbieter-Übersicht** listet die eingerichteten KI-Anbieter,
-jeweils mit einer **maskierten Schlüssel-Vorschau**, sodass du auf
-einen Blick siehst, welche Anbieter bereit sind. Jede Zeile hat
-einen **Test-Knopf**, der den Modell-Listen-Endpunkt des Anbieters
-aufruft und ok / ungültiger Schlüssel / Rate-Limit / Netzwerkfehler
-meldet - ein sicherer Check, der keine Generierungs-Tokens
-verbraucht.
+*Allgemein > Oberfläche* hat zwei Einstellungen: **Button-Tooltips
+anzeigen** (ein Hover-Tooltip auf Icon-Buttons;
+Screenreader-Beschriftungen bleiben unabhängig davon an) und die
+**Menüposition** auf dem Handy (oben als Menü-Button, der Standard,
+oder unten als daumennahe Tab-Leiste). Wischgesten sind eine
+Lektions-Einstellung und liegen unter *Lernen > In der Lektion >
+Interaktion*. Der Entwicklermodus liegt im Tab **Diagnose & Support**
+(siehe unten).
 
 ## Speichermodus
 
-Der Schalter zwischen **Server** und **Lokal (Browser)**:
+*Allgemein > Speicher-Modus* schaltet zwischen **Server** und
+**Lokal (Browser)** um:
 
 - **Server** - jeder Lese- und Schreibvorgang geht ans
   FastAPI-Backend. Setzt ein laufendes Backend voraus. Am
@@ -134,166 +129,22 @@ Modus-Wechsel speichert nach `localStorage` und zeigt eine
 „Neu laden nötig"-Meldung. Daten werden NICHT zwischen
 Modi synchronisiert.
 
-## Sync
+Die öffentliche Web-Version und die installierte Web-App haben kein
+Backend; dort fehlt die Karte, und die App nutzt immer Lokal (Browser).
 
-Kopple dieses Gerät mit einem anderen über dein lokales Netz
-per QR-Code-Scanner (Rückkamera) oder eingefügte Pairing-
-URL. Nach dem Pairing tauschen Push- + Pull-Knöpfe Daten
-bidirektional aus. Konflikte gehen durch einen KI-Merge-
-Resolver auf dem Backend.
+## Updates und App-Installation
 
-Eingeschränkter-Browser-Fallback: Lade einen Screenshot des
-QR-Codes vom anderen Gerät hoch (`Html5Qrcode.scanFile`).
+Der Rest des Tabs **Allgemein** betrifft, wie die App läuft:
 
-## Backup
-
-Drei Dinge in einem Abschnitt: **Export** (Download eines
-zeitgestempelten JSONs), **Import** (Wiederherstellen aus
-Datei) und **Vergleich** (Side-by-Side-Diff gegen aktuellen
-Zustand). API-Schlüssel werden aus jedem Export entfernt.
-
-Restore ist ein MERGE, kein Overwrite: neue Zeilen fügen
-ein, mutable Zeilen aktualisieren bei neuerem `updated_at`,
-History-Zeilen (Sessions / Commits / Ratings) deduplizieren
-über UUID. Die Vergleichs-Vorschau zeigt pro Tabelle
-hinzugefügt / entfernt / geändert, bevor du auf
-Wiederherstellen klickst; das Knopf-Label liest dann
-„Wiederherstellen (N hinzugefügt, M aktualisiert)".
-
-Im Lokal-Modus zeigt der Abschnitt zusätzlich den
-**Auto-Backup**-Block: ein rollender Ring aus 3 Snapshots in
-einer separaten IndexedDB-DB, läuft alle 10 Sessions ODER
-alle 7 Tage (je nachdem, was zuerst eintritt). Jeder Snapshot
-hat eigene Wiederherstellen- + Löschen- + Vergleich-als-A/B-
-Knöpfe.
-
-### Verschlüsselter Schlüssel-Export (.alk)
-
-Das normale Backup entfernt deine API-Schlüssel - sicher, aber bei
-einem Geräte- oder Browser-Wechsel müsstest du sonst jeden
-Schlüssel von Hand neu eingeben. Der **verschlüsselte
-Schlüssel-Export** schließt diese Lücke mit einer separaten,
-passphrasen-geschützten Datei:
-
-- Sie enthält **nur** die sensiblen Zugangsdaten - deine
-  **API-Schlüssel** plus die Anbieter-Einstellungen (aktiver
-  Anbieter, Modell-Overrides). NICHT den Rest deiner App-Daten (der
-  bleibt im `.alb`-Backup).
-- **Export** fragt nach einer Passphrase (plus Bestätigung) und
-  lädt eine dedizierte **`.alk`**-Datei herunter. Die Schlüssel
-  darin werden mit **AES-GCM-256** verschlüsselt, der Schlüssel
-  dazu via **PBKDF2** aus deiner Passphrase abgeleitet - die Datei
-  enthält nie einen Schlüssel im Klartext.
-- **Import** liest eine `.alk`, fragt die Passphrase, entschlüsselt
-  und schreibt die Schlüssel + Anbieter-Einstellungen in denselben
-  sicheren Speicher wie die manuelle Eingabe (vorhandene Anbieter
-  werden überschrieben, fehlende bleiben unangetastet).
-- Eine **falsche Passphrase oder eine manipulierte Datei** wird
-  sauber mit einer einzigen Meldung abgewiesen - **kein
-  Teil-Import**, nichts wird halb geschrieben.
-- Die Passphrase-Felder prüfen sich **direkt beim Tippen** - eine
-  zu kurze Passphrase oder eine nicht passende Bestätigung wird
-  gleich am Feld angezeigt (und der Absende-Knopf bleibt
-  deaktiviert) statt nach dem Klick als Fehler-Toast. Wie die
-  API-Schlüssel-Felder lösen diese Passphrase-Felder **nicht** den
-  Passwort-Manager des Browsers aus.
-
-Dieser Export lebt im **Daten-Tab**, neben dem normalen Backup; der
-**KI-Tab** trägt nur einen Verweis-Knopf, der hierher führt. Im
-**Lokal-Modus (Browser)** liegen die Schlüssel in IndexedDB, der
-Export ist also voll verfügbar (und der Hauptanwendungsfall). Im
-**Server-Modus** liegen die Schlüssel serverseitig und der Client
-sieht den Klartext nie, daher ist der Eintrag **deaktiviert mit
-einem Hinweis**. Der Export ist außerdem deaktiviert, solange kein
-exportierbarer Schlüssel konfiguriert ist.
-
-### Aufräumen
-
-Zwei Einstellungen zum Daten-Lebenszyklus liegen im Daten-Tab direkt
-neben dem Speicher, den sie betreffen:
-
-- **Maximale Lektionsgröße** (direkt unter *Offline-Cache*): Wird eine
-  lange Chat-Analyse als Offline-Lektion gespeichert, werden Lektionen
-  mit mehr als dieser Anzahl an Schritten in mehrere Teile aufgeteilt.
-  *Schritte pro Teil* nimmt 5 bis 20 an; Standard ist 10.
-- **Pausierte Lektionen aufbewahren** (direkt über der Bereinigung
-  *Nicht verbundene Inhalte*, die nur erscheint, wenn es etwas zu
-  bereinigen gibt): Pausierte Lektionen, die älter sind als dieser
-  Zeitraum, werden beim nächsten Laden des Dashboards automatisch
-  aufgegeben. Zur Wahl stehen 7, 14, 30 oder 60 Tage oder *Nie*;
-  Standard sind 30 Tage. Bis zu 10 pausierte Lektionen bleiben
-  unabhängig vom Alter erhalten.
-
-Beide Werte werden in diesem Browser gespeichert und gelten im Server-
-wie im Lokal-Modus.
-
-## Sprachausgabe
-
-Drei Toggles:
-
-- **TTS aktiviert** - fügt einen ▶-Knopf neben KI-Antworten
-  + Assessment-Ergebnissen ein, der sie laut vorliest. Wählt
-  die sprach-passende Stimme, wenn verfügbar; Rate + Pitch
-  auf [0,5; 2,0] geklemmt.
-- **Auto-Wiedergabe KI** - spricht jede KI-Antwort
-  automatisch (Standard AUS - überraschendes Audio ist
-  selten, was man will).
-- **STT aktiviert** - fügt einen 🎤-Knopf zum Sitzungs-
-  Eingabefeld hinzu, der Sprache aufnimmt und das Textarea
-  mit Zwischen-Transkripten füllt, bevor du absendest.
-- **Aussprache-Übung aktiviert** - bringt die
-  `/pronunciation`-Seite vom Dashboard-Quick-Start für
-  Sprachen-getaggte Projekte zum Vorschein.
-
-Die Karte **Sprachausgabe** liegt im **Lernen**-Tab im Bereich
-*Vorlesen und Diktieren*. Unterstützt der Browser weder die
-Web-Speech-API-Synthese noch die -Erkennung, fehlt der ganze Bereich
-samt Überschrift.
-
-## Darstellung
-
-Der **Farbschema**-Picker unter *Allgemein > Darstellung* bietet
-sechs Themes plus einen automatischen Modus:
-
-- **Hell** - der Standard, hell und kontrastreich.
-- **Dunkel** - gedämpfte Flächen für die Nutzung bei wenig Licht.
-- **Ozean** - tiefe Blautöne, ruhig und nachts augenschonend.
-- **Wald** - warme Grün- und Bernsteintöne, erdig.
-- **Hoher Kontrast** - barrierefreiheit zuerst: Schwarz, Weiß und
-  kräftige Signalfarben mit klaren Kartenrändern. Für maximale
-  Lesbarkeit.
-- **Sepia** - warme Papiertöne, angenehm beim langen Lesen.
-- **Automatisch (System)** - folgt der Hell-/Dunkel-Einstellung deines
-  Betriebssystems und wechselt automatisch mit.
-
-Wähle ein Theme über seine Vorschaukarte; die Änderung greift sofort
-ohne Neuladen und deine Wahl wird über Besuche hinweg gemerkt. Jedes
-Theme erfüllt den WCAG-2.1-AA-Kontrast, sodass Text, Diagramme,
-Plaketten und Übungs-Feedback überall lesbar bleiben.
-
-Ebenfalls in dieser Karte: die **Ansicht der Inhalte** - die globale
-Einstellung *Liste / Kacheln* für den Content-Hub (Standard **Liste**).
-Es ist dieselbe Einstellung wie der Ansicht-Umschalter in den Tabs
-*Meine Inhalte* / *Entdecken*, eine Änderung an einer Stelle hält also
-beide synchron. Direkt unter der Karte legst du die **Reihenfolge der
-Inhalte-Tabs** (Entdecken / Meine Inhalte / Importieren) fest, sodass
-der Hub auf dem von dir am häufigsten genutzten Tab öffnet.
-
-## Oberfläche
-
-Zwei Einstellungen: **Button-Tooltips anzeigen** (ein Hover-Tooltip auf
-Icon-Buttons; Screenreader-Beschriftungen bleiben unabhängig davon an)
-und die **Menüposition** auf dem Handy (oben als Menü-Button, der
-Standard, oder unten als daumennahe Tab-Leiste). Wischgesten sind eine
-Lektions-Einstellung und liegen unter *Lernen > In der Lektion >
-Interaktion*.
-
-Der **Entwicklermodus** (im Tab **Diagnose & Support**): sein Standard
-hängt vom Build-Strang ab: Er
-ist **standardmäßig EIN auf dem Latest-Strang (Vorschau)** und **AUS
-auf Haupt**, damit Vorschau-Tester volle technische Fehlerdetails
-sehen, während Produktionsnutzer freundliche Meldungen bekommen. Du
-kannst ihn jederzeit umschalten.
+- **Updates** (nur im Server-Modus): **Automatische Update-Prüfung**
+  und das **Prüfintervall** (täglich, wöchentlich, monatlich oder nie),
+  dazu der Zeitpunkt der letzten Prüfung und die aktuelle Version. Den
+  Knopf **Auf Updates prüfen** findest du im Tab **Über**.
+- **App installieren**: installiert Adaptive Learner als eigenständige
+  App (eigenes Fenster, Symbol auf dem Startbildschirm, Start auch ohne
+  Netz). Nach der Installation zeigt der Knopf **Bereits installiert**.
+- **Modus**: Der Solo-Modus ist aktiv; der Mehrspieler-Modus ist als
+  „Kommt bald" markiert.
 
 ## Lernen
 
@@ -350,14 +201,30 @@ Wie sich Übungen beim Beantworten verhalten.
 
 ### Vorlesen und Diktieren
 
-Stimmen, Tempo, Mikrofon und Ausspracheübung.
+Stimmen, Tempo, Mikrofon und Ausspracheübung. Der Bereich enthält die
+Karte **Sprachausgabe**:
 
-- **Sprachausgabe** - die oben unter *Sprachausgabe* beschriebenen
-  Schalter: Vorlesen, Auto-Wiedergabe, Spracherkennung und
-  Aussprache-Übung.
+- **Sprechschaltflächen anzeigen** - fügt neben KI-Antworten und
+  Assessment-Ergebnissen einen Lautsprecher-Knopf ein, der sie
+  vorliest.
+- **KI-Antworten automatisch vorlesen** - spricht jede KI-Antwort
+  automatisch (Standard AUS - überraschendes Audio ist selten, was man
+  will).
+- **Stimme** - die Vorlese-Stimme; der Standard wählt die beste
+  Übereinstimmung für deine Projektsprache.
+- **Tempo** und **Tonhöhe** - Schieberegler von 0,5 bis 2.
+- **Mikrofon-Schaltfläche anzeigen** - fügt dem Sitzungs-Eingabefeld
+  einen Mikrofon-Knopf hinzu, der Sprache aufnimmt und das Textfeld mit
+  Zwischen-Transkripten füllt, bevor du absendest.
+- **Diktiersprache überschreiben** - ein BCP-47-Code (zum Beispiel
+  `de-DE`); leer lassen, um die Projekt- oder UI-Sprache zu nutzen.
+- **Aussprachetraining** - zeigt einen Knopf *Aussprachetraining* auf
+  den Dashboards von Sprach-Lernprojekten.
 
-Dieser Bereich erscheint nur, wenn der Browser mindestens eine Seite der
-Web Speech API unterstützt (Synthese oder Erkennung). Sonst fehlt er
+Die Vorlese-Einstellungen (die ersten fünf) erscheinen nur, wenn der
+Browser Sprachsynthese unterstützt, die beiden Diktier-Einstellungen
+nur, wenn er Spracherkennung unterstützt. Unterstützt der Browser
+keine der beiden Seiten der Web Speech API, fehlt der ganze Bereich
 samt Überschrift, und *Nach der Lektion* folgt direkt auf *In der
 Lektion*.
 
@@ -414,7 +281,7 @@ Der Tab endet mit **Gamification** (unter einer Trennlinie, weil diese
 Karte *Fortschritt zurücksetzen* enthält). Die beiden Aufräum-Einstellungen -
 *Pausierte Lektionen aufbewahren* und *Maximale Lektionsgröße* -
 betreffen den Daten-Lebenszyklus und liegen im **Daten**-Tab (siehe
-*Aufräumen* unter Backup).
+*Offline-Inhalte* und *Aufräumen* unter Daten).
 
 Die **Ansicht der Inhalte** (Liste / Kacheln) und die **Reihenfolge der
 Inhalte-Tabs** liegen im **Allgemein**-Tab unter *Darstellung*.
@@ -429,16 +296,280 @@ Streak-Heatmap überspringen), tägliches Sessions-Ziel
 Bestätigung; löscht `user_xp` + `user_badges` +
 `user_streaks`-Zeilen).
 
+## KI-Anbieter + Modell-Picker
+
+Im Tab **KI** schreibt das Anbieter-Dropdown `active_provider` in die
+UserSettings; der nächste KI-Aufruf geht durch das Plugin des
+neuen Anbieters (Server-Modus) oder den HTTP-Client des neuen
+Anbieters (Lokal-Modus).
+
+Der **Modell-Picker** ist ein durchsuchbares
+Dropdown, gruppiert in Empfohlen / Alle, gefüllt aus dem
+Live-`/v1/models`-Endpoint jedes Anbieters (1 h Cache). Jede
+Zeile zeigt den Klarnamen + die Roh-ID + ein Kontext-Fenster-
+Badge. Wenn die Liste nicht verfügbar ist (kein API-Key,
+kein Netz), fällt der Picker auf die statischen Defaults
+zurück und zeigt einen „Offline-Default"-Hinweis. Der Header
+der Sitzung liest `<Anbieter>: <Modellname>`; volle ID +
+Kontext-Fenster sitzen im Tooltip.
+
+## API-Schlüssel
+
+Jeder Anbieter hat seine eigene Zeile: ein Schlüssel-
+Eingabefeld, einen Speichern-Knopf, einen Entfernen-Knopf,
+das Aktiv-Anbieter-Badge - plus das neue **Quellen-
+Attributions**-Badge:
+
+- **Schlüssel aus: secrets.yaml** - der Schlüssel liegt
+  Fernet-verschlüsselt in `~/.config/adaptive_learner/secrets.yaml`.
+  Dort speichert der Server-Modus jeden Schlüssel, den du hier
+  eingibst; nach dem Speichern zeigt die Zeile also dieses
+  Badge. Speichern und Entfernen bleiben verfügbar; Speichern
+  überschreibt den abgelegten Schlüssel. Eine Info-Zeile unter
+  der Zeile nennt den Pfad.
+- **Schlüssel aus: Einstellungen** - ein älterer Schlüssel, der
+  noch aus der Zeit vor dem Umzug nach `secrets.yaml` in der
+  Datenbank liegt; er wird beim nächsten Start dorthin
+  verschoben. Im Lokal-Modus (Browser) liegt der Schlüssel in
+  IndexedDB und zeigt ebenfalls dieses Badge. Speichern /
+  Entfernen frei nutzbar.
+- **Schlüssel aus: Umgebungsvariable** - der Schlüssel ist
+  über die `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungs-
+  variable gesetzt. Speichern und Entfernen sind deaktiviert;
+  die Env-Variable ist die Quelle der Wahrheit.
+- **Kein Schlüssel konfiguriert** - nichts ist irgendwo
+  gesetzt. Tippen und auf Speichern klicken, um zu beginnen.
+
+Auflösungskette (höchste Priorität gewinnt): Umgebung >
+`secrets.yaml` > DB. Siehe
+[die Konfigurations-Doku](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md) für die
+volle Aufschlüsselung.
+
+Schlüssel-Eingaben nutzen ein maskiertes **Secret-Eingabefeld**
+(mit Anzeigen/Verbergen-Umschalter) und lösen den Passwort-Manager
+des Browsers nicht aus.
+
+API-Schlüssel sind aus dem normalen Backup (`.alb`) bewusst
+**ausgeschlossen**. Um deine Schlüssel auf ein anderes Gerät oder
+einen anderen Browser zu übertragen, nutze den dedizierten
+**verschlüsselten Schlüssel-Export (`.alk`)** - hier im KI-Tab
+findest du dazu einen **Verweis-Knopf**, der direkt zum Export im
+**Daten-Tab** springt (siehe *Verschlüsselter Schlüssel-Export*
+unter *Sichern und Exportieren*).
+
+## Konfigurierte Anbieter
+
+Eine **Anbieter-Übersicht** listet die eingerichteten KI-Anbieter,
+jeweils mit einer **maskierten Schlüssel-Vorschau**, sodass du auf
+einen Blick siehst, welche Anbieter bereit sind. Jede Zeile hat
+einen **Test-Knopf**, der den Modell-Listen-Endpunkt des Anbieters
+aufruft und ok / ungültiger Schlüssel / Rate-Limit / Netzwerkfehler
+meldet - ein sicherer Check, der keine Generierungs-Tokens
+verbraucht.
+
 ## Plugins
 
-Zwei Karten. **Installierte Plugins** listet jedes Plugin, das die
-Desktop-App geladen hat: Name, Version, Quelle (Paket oder direkt
-registriert) und Aktivierungszeitpunkt. Ein Ladefehler oder ein
-Discovery-Filter steht als Markierung in der Zeile, ebenso eine
-Konfigurationsänderung nach der Aktivierung. Im Browser-Modus bleibt die
-Karte sichtbar mit dem Hinweis, dass nur die Desktop-App einen
-Plugin-Host hat. **Lern-Repository** hält die Einstellungen des
-gleichnamigen Plugins (Git-Persistenz, Repository-Verzeichnis).
+Der Tab **Plugins** hat zwei Karten. **Installierte Plugins** listet
+jedes Plugin, das die Desktop-App geladen hat: Name, Version, Quelle
+(Paket oder direkt registriert) und Aktivierungszeitpunkt. Ein
+Ladefehler oder ein Discovery-Filter steht als Markierung in der Zeile,
+ebenso eine Konfigurationsänderung nach der Aktivierung. Im
+Browser-Modus bleibt die Karte sichtbar mit dem Hinweis, dass nur die
+Desktop-App einen Plugin-Host hat. **Lern-Repository** hält die
+Einstellungen des gleichnamigen Plugins (Git-Persistenz,
+Repository-Verzeichnis).
+
+## Daten
+
+Der Tab **Daten** gruppiert seine Karten in sechs Bereiche, in fester
+Reihenfolge: woher Inhalte kommen, was mit ihnen geschieht, was daraus
+entsteht, wie du es sicherst, was du aufräumen kannst, und zuletzt, was
+sich nicht rückgängig machen lässt. Jeder Bereich hat eine kleine
+Überschrift und eine einzeilige Beschreibung.
+
+Eine **Bereichsleiste** über den Bereichen listet sie als Chips:
+*Quellen*, *Synchronisation*, *Offline-Inhalte*, *Sichern und
+Exportieren*, *Aufräumen* und *Gefahrenzone*. Sie funktioniert wie die
+im Lernen-Tab: ein Klick springt zum Bereich, am Desktop bleibt die
+Leiste unter der App-Kopfzeile sichtbar, der hervorgehobene Chip folgt
+dem Bereich im Bild, und die Adresse spiegelt ihn
+(`/settings?tab=data&section=backup`; Kennungen: `sources`, `sync`,
+`offline`, `backup`, `cleanup`, `danger`).
+
+### Quellen
+
+- **Inhalts-Repositories** - die Repositories, aus denen deine
+  Lektionen kommen; siehe
+  [Content-Repositories](../features/content-repos.md).
+- **Eigenes Repository registrieren** - schlägt dein eigenes
+  Inhalts-Repository für das gemeinsame Verzeichnis vor, das die
+  repository-übergreifende Suche nutzt.
+
+### Synchronisation
+
+Kopple dieses Gerät mit einem anderen über dein lokales Netz
+per QR-Code-Scanner (Rückkamera) oder eingefügte Pairing-
+URL. Nach dem Pairing tauschen Push- + Pull-Knöpfe Daten
+bidirektional aus. Konflikte gehen durch einen KI-Merge-
+Resolver auf dem Backend.
+
+Eingeschränkter-Browser-Fallback: Lade einen Screenshot des
+QR-Codes vom anderen Gerät hoch (`Html5Qrcode.scanFile`).
+
+Die Synchronisation braucht die Desktop-App. Im Browser-Modus bleibt
+der Bereich sichtbar, aber statt der Bedienelemente steht dort der
+Hinweis „Nur mit der Desktop-App verfügbar."
+
+### Offline-Inhalte
+
+- **Offline-Cache** - Größe und Lektionszahl des Offline-Lektionscaches,
+  mit einem Knopf, der ihn leert (mit Rückfrage).
+- **Maximale Lektionsgröße** - wird eine lange Chat-Analyse als
+  Offline-Lektion gespeichert, werden Lektionen mit mehr als dieser
+  Anzahl an Schritten in mehrere Teile aufgeteilt. *Schritte pro Teil*
+  nimmt 5 bis 20 an; Standard ist 10.
+
+### Sichern und Exportieren
+
+Die **Datensicherung** bietet drei Dinge: **Sicherung erstellen**
+(lädt eine `.alb`-Sicherungsdatei herunter), **Aus Sicherung
+wiederherstellen** (Wiederherstellen aus Datei) und **Vergleich**
+(Side-by-Side-Diff gegen aktuellen Zustand). API-Schlüssel werden aus
+jedem Export entfernt.
+
+Restore ist ein MERGE, kein Overwrite: neue Zeilen fügen
+ein, mutable Zeilen aktualisieren bei neuerem `updated_at`,
+History-Zeilen (Sessions / Commits / Ratings) deduplizieren
+über UUID. Die Vergleichs-Vorschau zeigt pro Tabelle
+hinzugefügt / entfernt / geändert, bevor du auf
+Wiederherstellen klickst; das Knopf-Label liest dann
+„Wiederherstellen (N hinzugefügt, M aktualisiert)".
+
+Im Lokal-Modus zeigt die Karte zusätzlich den
+**Auto-Backup**-Block: ein rollender Ring aus 3 Snapshots in
+einer separaten IndexedDB-DB, läuft alle 10 Sessions ODER
+alle 7 Tage (je nachdem, was zuerst eintritt). Jeder Snapshot
+hat eigene Wiederherstellen- + Löschen- + Vergleich-als-A/B-
+Knöpfe.
+
+Weitere Karten in diesem Bereich:
+
+- **Identitätsdatei** (nur im Server-Modus) - eine schreibgeschützte
+  Ansicht der Wiederherstellungsdatei, die das Backend führt, damit du
+  siehst, ob es sie gibt und wo sie liegt.
+- **Verschlüsselter Schlüssel-Export** - siehe unten.
+- **Daten-Export** - eine vollständige Sicherung mit einem Klick oder
+  ein selektiver Export, bei dem du die gewünschten Datenkategorien
+  ankreuzt; beide erzeugen dieselbe importierbare Sicherungsdatei.
+- **Export** - drei Berichte: *Lernfortschritt*, *Sitzungs-Detail* und
+  *Lehrplan*, jeweils als Markdown oder als PDF (über den
+  Druckdialog des Browsers).
+
+#### Verschlüsselter Schlüssel-Export (.alk)
+
+Das normale Backup entfernt deine API-Schlüssel - sicher, aber bei
+einem Geräte- oder Browser-Wechsel müsstest du sonst jeden
+Schlüssel von Hand neu eingeben. Der **verschlüsselte
+Schlüssel-Export** schließt diese Lücke mit einer separaten,
+passphrasen-geschützten Datei:
+
+- Sie enthält **nur** die sensiblen Zugangsdaten - deine
+  **API-Schlüssel** plus die Anbieter-Einstellungen (aktiver
+  Anbieter, Modell-Overrides). NICHT den Rest deiner App-Daten (der
+  bleibt im `.alb`-Backup).
+- **Export** fragt nach einer Passphrase (plus Bestätigung) und
+  lädt eine dedizierte **`.alk`**-Datei herunter. Die Schlüssel
+  darin werden mit **AES-GCM-256** verschlüsselt, der Schlüssel
+  dazu via **PBKDF2** aus deiner Passphrase abgeleitet - die Datei
+  enthält nie einen Schlüssel im Klartext.
+- **Import** liest eine `.alk`, fragt die Passphrase, entschlüsselt
+  und schreibt die Schlüssel + Anbieter-Einstellungen in denselben
+  sicheren Speicher wie die manuelle Eingabe (vorhandene Anbieter
+  werden überschrieben, fehlende bleiben unangetastet).
+- Eine **falsche Passphrase oder eine manipulierte Datei** wird
+  sauber mit einer einzigen Meldung abgewiesen - **kein
+  Teil-Import**, nichts wird halb geschrieben.
+- Die Passphrase-Felder prüfen sich **direkt beim Tippen** - eine
+  zu kurze Passphrase oder eine nicht passende Bestätigung wird
+  gleich am Feld angezeigt (und der Absende-Knopf bleibt
+  deaktiviert) statt nach dem Klick als Fehler-Toast. Wie die
+  API-Schlüssel-Felder lösen diese Passphrase-Felder **nicht** den
+  Passwort-Manager des Browsers aus.
+
+Dieser Export lebt im **Daten-Tab**, neben dem normalen Backup; der
+**KI-Tab** trägt nur einen Verweis-Knopf, der hierher führt. Im
+**Lokal-Modus (Browser)** liegen die Schlüssel in IndexedDB, der
+Export ist also voll verfügbar (und der Hauptanwendungsfall). Im
+**Server-Modus** liegen die Schlüssel serverseitig und der Client
+sieht den Klartext nie, daher ist der Eintrag **deaktiviert mit
+einem Hinweis**. Der Export ist außerdem deaktiviert, solange kein
+exportierbarer Schlüssel konfiguriert ist.
+
+### Aufräumen
+
+- **Pausierte Lektionen aufbewahren**: Pausierte Lektionen, die älter
+  sind als dieser Zeitraum, werden beim nächsten Laden des Dashboards
+  automatisch aufgegeben. Zur Wahl stehen 7, 14, 30 oder 60 Tage oder
+  *Nie*; Standard sind 30 Tage. Bis zu 10 pausierte Lektionen bleiben
+  unabhängig vom Alter erhalten.
+- **Nicht verbundene Inhalte** (Browser-Modus): Fortschritt, dessen
+  Inhalts-Repository nicht mehr verbunden ist, bleibt ausgeblendet, bis
+  du ihn hier löschst. Die Karte erscheint nur, wenn es etwas zu
+  bereinigen gibt.
+
+*Maximale Lektionsgröße* und *Pausierte Lektionen aufbewahren* werden
+in diesem Browser gespeichert und gelten im Server- wie im Lokal-Modus.
+
+### Gefahrenzone
+
+Der letzte Bereich, optisch abgesetzt: **Alles zurücksetzen** löscht
+alle deine Daten (im Server-Modus im Backend, im Browser-Modus in
+diesem Browser). Es bietet zuerst eine Sicherung an, fragt dann nach
+einer Bestätigung, und der letzte Knopf **Endgültig löschen** wird erst
+frei, wenn du `RESET` eintippst.
+
+## Integrationen
+
+Der Tab **Integrationen** enthält die **GitHub-Integration**: einen
+GitHub-Token (mit der Berechtigung `repo`), mit dem die App Lektionen
+als Pull Request teilen kann. Das Token-Feld prüft das Format schon beim
+Tippen, **Testen** prüft den Token und zeigt das Konto, zu dem er gehört,
+und eine Quellen-Zeile sagt dir, wo der Token liegt (secrets.yaml, eine
+Umgebungsvariable oder dieser Browser), mit **Entfernen** zum Löschen.
+Ein Token aus einer Umgebungsvariable lässt sich hier nicht bearbeiten.
+
+## Hilfe
+
+Der Tab **Hilfe** enthält das integrierte Glossar: ein Suchfeld filtert
+die Einträge nach Titel und Text, und die Einträge sind gruppiert in
+*Kernkonzepte*, *Lernmethoden*, *Zyklusschritte* und *App-Features*.
+Ein Klick auf einen Eintrag öffnet den vollständigen Artikel in der
+Hilfe-Leiste.
+
+## Diagnose & Support
+
+Der Tab **Diagnose & Support** bündelt, was der Entwicklung hilft zu
+sehen, was auf deinem Gerät passiert ist:
+
+- **Support** - **Fehlerbericht erstellen** sammelt deine letzten
+  Aktionen in einem Bericht, den du prüfst, bevor irgendetwas deinen
+  Browser verlässt.
+- **Entwicklermodus** - zeigt in Fehler-Toasts die vollen technischen
+  Details (Statuscode, Endpunkt, Stacktrace) und, solange er an ist,
+  ein „DEV"-Abzeichen in der Navigationsleiste. Sein Standard hängt vom
+  Build-Strang ab: Er ist **standardmäßig EIN auf dem Latest-Strang
+  (Vorschau)** und **AUS auf Haupt**, damit Vorschau-Tester volle
+  technische Fehlerdetails sehen, während Produktionsnutzer freundliche
+  Meldungen bekommen. Du kannst ihn jederzeit umschalten.
+- **Tipp- und Viewport-Sonde** - zeichnet, solange sie an ist,
+  Tipp-Positionen und Viewport-Änderungen in einem dauerhaften
+  Protokoll auf, um schwer reproduzierbare Darstellungsfehler
+  einzugrenzen. **Mess-Leiste anzeigen** blendet die Leiste oben ein
+  oder aus, während die Aufzeichnung weiterläuft; **Sticky-Knopf für
+  die Mess-Leiste** fügt einen schwebenden Knopf hinzu (mit wählbarer
+  Ecke), der die Leiste umschaltet. **Protokoll kopieren** und
+  **Protokoll leeren** wirken auf die aufgezeichneten Ereignisse, ein
+  Zähler zeigt, wie viele es sind.
 
 ## Über
 
@@ -458,7 +589,7 @@ DB-Pfad).
 ### Build-Strang: Haupt vs. Latest
 
 Adaptive Learner läuft auf zwei Deployment-Strängen, und der
-Über-Tab sagt dir jetzt, auf welchem du bist:
+Über-Tab sagt dir, auf welchem du bist:
 
 - **Haupt** - die stabile Production-Seite
   (`https://astrapi69.github.io/adaptive-learner/`). Als dezentes
@@ -488,12 +619,13 @@ unbemerkt auf die instabile Testversion schicken kann. Auf
 **Haupt** funktioniert das Teilen wie bisher mit QR-Code für die
 Production-URL.
 
-### Nach Updates suchen
+### Auf Updates prüfen
 
-Ein **Nach Updates suchen**-Knopf vergleicht deine Version mit dem
-neuesten GitHub-Release. Der Desktop-Build führt zusätzlich eine
-**Auto-Update-Prüfung** über die GitHub-Releases-API durch und
-meldet, wenn eine neuere Version verfügbar ist. Nach einem
+Ein Knopf **Auf Updates prüfen** im Versions-Block vergleicht deine
+Version mit dem neuesten GitHub-Release. Der Desktop-Build führt
+zusätzlich eine **Auto-Update-Prüfung** über die GitHub-Releases-API
+durch und meldet, wenn eine neuere Version verfügbar ist; ihr Intervall
+stellst du im Tab **Allgemein** unter *Updates* ein. Nach einem
 PWA-Update bleibt das „Neue Version verfügbar"-Banner verschwunden,
 sobald du es akzeptierst (es taucht nicht bei jedem Reload wieder
 auf).

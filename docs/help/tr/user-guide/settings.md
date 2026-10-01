@@ -58,7 +58,7 @@ düğmesi, Kaldır düğmesi, aktif sağlayıcı rozeti, artı yeni
   şifrelemeli (Sunucu modu) veya IndexedDB'de açık metin (Yerel
   mod) olarak saklanır. Serbestçe Kaydet / Kaldır yapabilirsiniz.
 - **Anahtar kaynağı: secrets.yaml** - anahtar
-  `~/.config/adaptive-learner/secrets.yaml` dosyasında yapılandırılmıştır.
+  `~/.config/adaptive_learner/secrets.yaml` dosyasında yapılandırılmıştır.
   Kaydet düğmesi devre dışı; değiştirmek için dosyayı doğrudan
   düzenleyin. Satırın altında bir bilgi pankartı yolu hatırlatır.
 - **Anahtar kaynağı: ortam** - anahtar
@@ -163,19 +163,21 @@ tarayıcı tarafından desteklenmediğinde kendini gizler.
 
 ## Görünüm
 
-*Genel > Görünüm* altındaki **Tema** seçici, otomatik bir mod
-artı altı tema sunar:
+*Genel > Görünüm* altındaki **Tema** seçici temaları iki sekmede
+toplar:
 
-- **Açık** - varsayılan, parlak ve yüksek kontrastlı.
-- **Koyu** - düşük ışıklı kullanım için karartılmış yüzeyler.
-- **Okyanus** - derin mavi tonlar, sakin ve geceleri göze hoş.
-- **Orman** - sıcak yeşil ve kehribar toprak tonları.
-- **Yüksek Kontrast** - önce erişilebilirlik: siyah, beyaz ve
-  kalın sinyal renkleri, keskin kart kenarlarıyla. Maksimum
-  okunabilirliğe ihtiyaç duyuyorsanız bunu kullanın.
-- **Sepya** - sıcak kağıt tonları, uzun okumalar için rahat.
-- **Otomatik (Sistem)** - işletim sisteminizin açık/koyu ayarını
-  takip eder ve sistem değiştirdiğinde otomatik olarak geçiş yapar.
+- **Önerilen** - Catppuccin Latte, Supabase ve Graphite (açık),
+  Catppuccin Mocha, **Soft Pop** ve Amethyst Haze (koyu). Yeni
+  kullanıcılar **Soft Pop** ile başlar ve seçici bu sekmede açılır.
+- **Klasik** - özgün temalar: Açık, Koyu, Okyanus, Orman, Yüksek
+  Kontrast (siyah, beyaz ve kalın sinyal renkleri, keskin kart
+  kenarlarıyla, maksimum okunabilirlik için) ve Sepya (uzun okumalar
+  için sıcak kağıt tonları). Etkin temanız klasik bir temaysa seçici
+  bu sekmede açılır.
+
+İki sekme de ayrıca **Otomatik (Sistem)** sunar: işletim sisteminizin
+açık/koyu ayarını takip eder ve sistemle birlikte otomatik olarak
+geçiş yapar.
 
 Tema, önizleme kartından seçin; değişiklik yeniden yükleme
 olmadan anında uygulanır ve tercihiniz ziyaretler arasında

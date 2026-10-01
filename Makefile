@@ -34,7 +34,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        roadmap-header-bump roadmap-header-bump-dry \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       ci ci-full rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       ci ci-full pre-push rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
@@ -911,6 +911,15 @@ ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-
 	@echo "All build-free gates passed. Two gates need a frontend build and"
 	@echo "installed deps, so they are NOT in this target: 'make check-dead-classnames'"
 	@echo "(builds the Tailwind oracle) and the visual/e2e gates. Test suites: make test."
+
+pre-push: ## `make ci` plus the TypeScript dead-code check (knip); fails when the frontend is not installed (#3507)
+	@$(MAKE) --no-print-directory ci
+	@if [ ! -d frontend/node_modules ]; then \
+		echo "pre-push: frontend/node_modules is missing, so the TypeScript dead-code check could not run." >&2; \
+		echo "pre-push: run 'cd frontend && bun install' first." >&2; \
+		exit 1; \
+	fi
+	@echo "== dead code (typescript)" && python3 scripts/check_dead_code.py --only typescript
 
 ci-full: ci ## Everything in `make ci` plus the build-dependent gates (needs bun install)
 	@echo "== dead classnames"     && $(MAKE) --no-print-directory check-dead-classnames

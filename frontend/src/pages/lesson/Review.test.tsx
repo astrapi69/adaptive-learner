@@ -42,6 +42,10 @@ function renderAtPath(path: string) {
                     path="/content"
                     element={<div data-testid="content-stub" />}
                 />
+                <Route
+                    path="/lesson/:setSlug/:setId/:filename"
+                    element={<div data-testid="lesson-stub" />}
+                />
             </Routes>
         </MemoryRouter>,
     );
@@ -237,6 +241,39 @@ describe("ReviewPage: ready state", () => {
         expect(
             screen.getByTestId("review-summary-corrected"),
         ).toHaveTextContent("1 of 1");
+    });
+
+    it("#3499: a review started from a lesson offers the way back to it", () => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON,
+            queue: QUEUE,
+            currentStepIndex: 1,
+            sessionScoreCorrect: 1,
+            sessionScoreTotal: 1,
+        });
+        renderAtPath(`${VALID_PATH}?from=${encodeURIComponent("/lesson/fr/language-fr-a1/01.json")}`);
+        fireEvent.click(screen.getByTestId("review-back-to-lesson"));
+        expect(screen.getByTestId("lesson-stub")).toBeInTheDocument();
+    });
+
+    it.each([
+        ["no origin", VALID_PATH],
+        ["an off-app origin", `${VALID_PATH}?from=${encodeURIComponent("//evil.example/lesson/x")}`],
+    ])("#3499: %s keeps only the dashboard exit", (_name, path) => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON,
+            queue: QUEUE,
+            currentStepIndex: 1,
+            sessionScoreCorrect: 1,
+            sessionScoreTotal: 1,
+        });
+        renderAtPath(path);
+        expect(screen.getByTestId("review-summary")).toBeInTheDocument();
+        expect(screen.queryByTestId("review-back-to-lesson")).toBeNull();
     });
 
     it("summary suggests coming back in 2 days (#626)", () => {

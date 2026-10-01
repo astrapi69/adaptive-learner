@@ -97,7 +97,21 @@ if not CONFIG_PATH.exists() and CONFIG_EXAMPLE_PATH.exists():
 DEBUG = os.getenv("ADAPTIVE_LEARNER_DEBUG", "false").lower() in ("true", "1", "yes")
 
 
-manager = PluginManager(
+class AdaptiveLearnerPluginManager(PluginManager):
+    """PluginManager whose plugin configs include the user overlay.
+
+    PluginForge loads a plugin's config only from ``backend/config/plugins``
+    at activation, so values saved in Settings (user overlay) were lost on
+    restart (#3370). Overriding the public ``get_plugin_config`` hands every
+    plugin the same merged config the Settings endpoint shows.
+    """
+
+    def get_plugin_config(self, plugin_name: str) -> dict[str, Any]:
+        """Bundled defaults merged with the user overlay (#3370)."""
+        return config_overlay.read_plugin_config_merged(plugin_name)
+
+
+manager = AdaptiveLearnerPluginManager(
     config_path=str(CONFIG_PATH),
     api_version="1",
     # pluginforge v0.7.0+ identity gating. Plugins declare a

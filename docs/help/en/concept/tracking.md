@@ -126,7 +126,8 @@ motivational layers ship:
   Sat/Sun gaps.
 
 The gamification is **optional**. Disabling toast
-notifications in Settings → Gamification silences the
+notifications in Settings > Learning > Motivation and routine >
+Gamification silences the
 prompts; the system still records state. Step-evaluation
 insights + Git-style commit history remain the load-bearing
 analytic.

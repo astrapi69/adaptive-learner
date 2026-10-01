@@ -89,7 +89,7 @@ export interface PersonalPathSet {
      *  when the set has no progress at all. */
     lastActivity: string | null;
     /** ISO timestamp of when the set was downloaded, or null when unknown
-     *  (API mode). Orders the untouched-downloaded sets newest-first (#1211). */
+     *  (not cached). Orders the untouched-downloaded sets newest-first (#1211). */
     downloadedAt: string | null;
     /** The lesson to act on (resume/next/start); null when complete. */
     currentLesson: PersonalPathLesson | null;

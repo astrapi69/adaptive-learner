@@ -31,8 +31,9 @@ import { compareByDownloadPriority } from "./download-priority";
  * personal Learning Path #1211). The Content browser only lists downloaded
  * sets and tracks no per-set progress here, so every set maps to the
  * untouched-downloaded tier: most-recent ``downloaded_at`` first, then a
- * stable title sort. In API mode ``downloaded_at`` is absent, so the
- * comparator falls back to title only (no crash, no regression).
+ * stable title sort. Both storage modes report ``downloaded_at`` (API mode
+ * from the content-loader listing, #3418); a set without it falls back to
+ * the title order.
  */
 function compareSetsByDownloadPriority(
   a: ContentSetEntry,

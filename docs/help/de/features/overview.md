@@ -11,8 +11,8 @@ verweisen hierher, statt eigene Kopien dieser Liste zu pflegen.
 - **Sechs Lernmethoden** (deduktiv, induktiv, fehlerbasiert, dialogisch,
   kontextuell, KI-adaptiv) mit eigenen KI-Prompts pro Methode und
   Schritt.
-- **Sieben-Schritt-Zyklus** pro Sitzung: Input, Fokus, Versuch,
-  Feedback, Verfeinerung, Transfer, Integration. Ein
+- **Sieben-Schritt-Zyklus** pro Sitzung: Eingabe, Versuch, Fehler,
+  Feedback, Anpassung, Wiederholung, Integration. Ein
   Dual-Prompt-Evaluator bewertet jeden Turn und entscheidet über
   Voranschreiten, Wiederholen, Überspringen oder Zurückgehen.
 - **Auto-Loop**: Ist ein Thema integriert, wählt die Sitzung ein neues
@@ -132,7 +132,8 @@ Siehe [Lektionen erstellen](../content-creation/overview.md).
 
 ## Content-Verwaltung
 
-- **Content-Hub** mit den Tabs Entdecken / Meine Inhalte / Import,
+- **Content-Hub** mit den Tabs Entdecken / Meine Inhalte / Import /
+  Erstellen,
   Listen- oder Kachelansicht und einer Such-/Filterleiste (Sprache,
   Niveau, Domäne, Trust, KI-geprüft).
 - **Herunterladbare Lektions-Sets** aus öffentlichen

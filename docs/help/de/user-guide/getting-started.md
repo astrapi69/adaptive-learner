@@ -28,7 +28,7 @@ deiner Plattform ab:
   Installations-Aufforderung aus, die die App in ein dezentes,
   schließbares **„App installieren"**-Banner umwandelt (nach dem
   Schließen erneut nach 7 Tagen angeboten). Du kannst auch
-  jederzeit über **Einstellungen → Daten → App installieren**
+  jederzeit über **Einstellungen > Allgemein > App installieren**
   installieren.
 - **iPhone / iPad (Safari):** iOS hat keine automatische
   Installations-Aufforderung, daher zeigt Adaptive Learner
@@ -81,7 +81,7 @@ KI-Anbieter außerhalb des Browsers sitzt.
 4. **Optional: KI-Sessions.** Möchtest du stattdessen das
    geführte Sechs-Methoden-Lerngespräch, hinterlege einen
    **API-Schlüssel** (Einstellungen oder
-   `~/.config/adaptive-learner/secrets.yaml`), mach den
+   `~/.config/adaptive_learner/secrets.yaml`), mach den
    optionalen [Lerntyp-Test](assessment.md) und starte eine
    [Lern-Session](learning-session.md).
 5. **Dein Ergebnis sichern.** Aus der Lektions-Zusammenfassung

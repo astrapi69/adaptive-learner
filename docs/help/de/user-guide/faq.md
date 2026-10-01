@@ -9,10 +9,13 @@ schon. Auf einem geteilten Gerät kann jeder mit Zugriff auf
 dieses Browser-Profil sie lesen.
 
 Im **Server-Modus** liegen die Daten in der SQLite-Datenbank,
-die das FastAPI-Backend verwaltet. API-Schlüssel werden mit
-Fernet at-rest verschlüsselt - über das Geheimnis aus der
-`ADAPTIVE_LEARNER_SECRET_KEY`-Umgebungsvariable, oder über
-`secret_key:` in `~/.config/adaptive-learner/secrets.yaml`.
+die das FastAPI-Backend verwaltet. API-Schlüssel liegen
+Fernet-verschlüsselt in `~/.config/adaptive_learner/secrets.yaml`.
+Der Verschlüsselungsschlüssel wird beim ersten Start erzeugt und
+in `~/.config/adaptive_learner/secret.key` abgelegt; du musst
+nichts einrichten. Willst du einen eigenen vorgeben, setze
+`ADAPTIVE_LEARNER_SECRET_KEY` (oder `secret_key:` in
+`secrets.yaml`) vor dem ersten Start.
 
 Kein Modus sendet Telemetrie, Analytics oder deine Nachrichten
 an Dritte - außer an den von dir gewählten KI-Anbieter, der
@@ -29,8 +32,9 @@ meistens zum Einstieg.
 Drei Stellen für den Schlüssel (höchste Priorität gewinnt):
 eine `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungsvariable,
 das `ai.<provider>.api_key`-Feld in
-`~/.config/adaptive-learner/secrets.yaml`, oder die
-Einstellungs-UI. Die UI zeigt pro Anbieter die Quelle, sodass
+`~/.config/adaptive_learner/secrets.yaml`, oder die
+Einstellungs-UI (die verschlüsselt in genau diese Datei
+speichert). Die UI zeigt pro Anbieter die Quelle, sodass
 du immer weißt, woher dein Schlüssel kommt.
 
 Du kannst das Curriculum durchstöbern, den Lerntyp-Test
@@ -82,13 +86,13 @@ Multi-Cycle-Reise zusammen, wenn `cycle_count > 1`.
 
 Ja. Drei Export-Pfade ausgeliefert:
 
-- **Backup**: Einstellungen → Backup → Backup erstellen.
-  Lädt ein zeitgestempeltes JSON mit jeder Zeile deines
-  Accounts herunter. API-Schlüssel werden entfernt. Geht in
+- **Backup**: Einstellungen > Daten > Sichern und Exportieren >
+  Sicherung erstellen. Lädt eine `.alb`-Sicherungsdatei mit jeder
+  Zeile deines Accounts herunter. API-Schlüssel werden entfernt. Geht in
   beiden Speichermodi.
 - **Fortschritts- / Sitzungs- / Curriculum-Berichte**:
-  Einstellungen → Export. Markdown + PDF (Browser-Druck-zu-
-  PDF).
+  Einstellungen > Daten > Sichern und Exportieren > Export.
+  Markdown + PDF (Browser-Druck-zu-PDF).
 - **Anki .apkg**: KI-extrahierte Karteikarten auf der
   `/anki`-Seite prüfen, gewünschte annehmen, Export klicken.
   Die Datei funktioniert direkt in Anki-Desktop.
@@ -112,8 +116,9 @@ Drei Web-Speech-API-Integrationen:
   sprichst, und eine Judge-KI bewertet Ähnlichkeit +
   schlägt Verbesserungen vor.
 
-Stimme-Toggles in Einstellungen → Stimme. Der Abschnitt
-blendet sich in Browsern aus, die die API nicht unterstützen.
+Stimme-Toggles in Einstellungen > Lernen > Vorlesen und
+Diktieren. Der Bereich blendet sich in Browsern aus, die die API
+nicht unterstützen.
 
 ## Was ist der Chat-Verlauf-Import?
 
@@ -132,8 +137,8 @@ Extraktion + Rollengrenzen-Erhalt für dieses Format aus.
 
 ## Sync zwischen Geräten?
 
-Bidirektionaler Lokal-Netz-Sync. Einstellungen →
-Sync → „Dieses Gerät koppeln": QR-Code vom anderen
+Bidirektionaler Lokal-Netz-Sync. Öffne Einstellungen > Daten >
+Synchronisation und kopple dieses Gerät: QR-Code vom anderen
 Gerät-Bildschirm scannen (Rückkamera), oder Pairing-URL
 einfügen. Nach dem Pairing tauschen Push- + Pull-Knöpfe
 Daten aus; Konflikte gehen durch einen KI-Merge-Resolver.

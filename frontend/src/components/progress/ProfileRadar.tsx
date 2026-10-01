@@ -9,9 +9,56 @@ import {
 
 import { useChartTheme } from "../../hooks/ui/useChartTheme";
 import { useI18n } from "../../hooks/ui/useI18n";
+import { useMediaQuery } from "../../hooks/ui/useMediaQuery";
 import { LEARNING_METHODS, METHOD_COLORS } from "../../lib/constants";
 import type { LearningProfile } from "../../types";
 import ChartSummary from "../charts/ChartSummary";
+import { radarLabelLines } from "./radar-label";
+
+/** Label budget per line and radius below/above the ``sm`` breakpoint (#3402). */
+const NARROW = { maxChars: 11, outerRadius: "58%", fontSize: 11 } as const;
+const WIDE = { maxChars: 16, outerRadius: "72%", fontSize: 12 } as const;
+
+interface AngleTickProps {
+  x?: number | string;
+  y?: number | string;
+  textAnchor?: "start" | "middle" | "end" | "inherit";
+  payload?: { value?: string };
+}
+
+/** One axis label, wrapped/clipped so it stays inside the SVG (#3402). */
+function AngleTick({
+  x,
+  y,
+  textAnchor,
+  payload,
+  fill,
+  maxChars,
+  fontSize,
+}: AngleTickProps & { fill: string; maxChars: number; fontSize: number }) {
+  const label = String(payload?.value ?? "");
+  const lines = radarLabelLines(label, maxChars);
+  const lineHeight = fontSize + 2;
+  const top = Number(y) - ((lines.length - 1) * lineHeight) / 2;
+  return (
+    <text
+      x={x}
+      y={top}
+      textAnchor={textAnchor}
+      fill={fill}
+      fontSize={fontSize}
+      dominantBaseline="central"
+      data-testid="profile-radar-tick"
+    >
+      <title>{label}</title>
+      {lines.map((line, i) => (
+        <tspan key={i} x={x} dy={i === 0 ? 0 : lineHeight}>
+          {line}
+        </tspan>
+      ))}
+    </text>
+  );
+}
 
 interface ProfileRadarProps {
   profile: LearningProfile;
@@ -35,6 +82,7 @@ interface ProfileRadarProps {
 export default function ProfileRadar({ profile, height = 320 }: ProfileRadarProps) {
   const { t } = useI18n();
   const chart = useChartTheme();
+  const layout = useMediaQuery("(min-width: 640px)") ? WIDE : NARROW;
   const data = LEARNING_METHODS.map((method) => ({
     method,
     label: t(`methods.${method}.label`, method),
@@ -91,9 +139,19 @@ export default function ProfileRadar({ profile, height = 320 }: ProfileRadarProp
           // over on the next frame.
           initialDimension={{ width: 100, height: 100 }}
         >
-          <RadarChart cx="50%" cy="50%" outerRadius="75%" data={data}>
+          <RadarChart cx="50%" cy="50%" outerRadius={layout.outerRadius} data={data}>
             <PolarGrid stroke={chart.grid} />
-            <PolarAngleAxis dataKey="label" tick={{ fill: chart.axis }} />
+            <PolarAngleAxis
+              dataKey="label"
+              tick={(props: AngleTickProps) => (
+                <AngleTick
+                  {...props}
+                  fill={chart.axis}
+                  maxChars={layout.maxChars}
+                  fontSize={layout.fontSize}
+                />
+              )}
+            />
             <PolarRadiusAxis
               angle={90}
               domain={[0, 1]}

@@ -195,25 +195,30 @@ frontend/src/
   styles/       design tokens + per-theme CSS
 ```
 
-## Navigation (EXP-037)
+## Navigation
 
-The primary nav is **7 grouped entries** (Dashboard, Lernpfad,
-Meine Inhalte, Entdecken, Fortschritt, Settings, Help) via a
-reusable `NavGroup`. On mobile a `BottomTabBar` shows 5 tabs
-(Lernen, Inhalte, Entdecken, Fortschritt, Mehr) plus a "Mehr"
-bottom sheet (hidden during lessons + on the funnel). Several
-pages are tabbed hubs:
+The primary nav is one typed list (`components/nav/nav-targets.ts`)
+rendered as grouped entries via a reusable `NavGroup`: **Learn**
+(Dashboard, Learning Path, Session), **Content** (`/content`),
+**Progress** (`/progress`), then Settings and Help. Desktop shows it
+as a top bar, narrow widths as a hamburger drawer - one renderer,
+two presentations. A mobile `BottomTabBar` (Learn, Content, Learning
+Path, Progress, More, with a More bottom sheet for Settings and Help)
+is opt-in via the menu-position setting (`useNavPosition`, default
+`"top"`) and hides during lessons and on the funnel. Several pages
+are tabbed hubs:
 
 - **Dashboard** - Overview / Activity / Missions tabs
   (`DashboardOverviewTab` / `DashboardActivityTab` /
   `DashboardMissionsTab`; only the active tab mounts).
-- **ProgressHub** (`/progress`) - Übersicht / Statistik /
-  Meine Pfade.
-- **DiscoverHub** (`/discover`) - adds an Import tab;
-  **ContentHub** is "Meine Inhalte" (downloaded content only).
+- **ProgressHub** (`/progress`) - Overview / Statistics / My paths.
+- **ContentHub** (`/content`) - Discover / My content / Import /
+  Create, in a user-configurable order (`contentTabOrderPref.ts`).
 
 Old links stay alive via redirects (`/statistics` →
-`/progress?tab=stats`, `/import` → `/discover?tab=import`, …).
+`/progress?tab=stats`, `/curriculum` → `/progress?tab=paths`,
+`/discover` → `/content?tab=discover`, `/import` →
+`/content?tab=import`).
 
 ## Theming
 

@@ -797,7 +797,7 @@ export async function answerCurrentStep(page: Page): Promise<void> {
 /**
  * Pair a matching exercise so that the first ``cycle`` pairs are WRONG and
  * the rest correct, then check, leaving the default post-check view ("My
- * answers", the pairs as formed, #3233) on screen. Returns false when the
+ * answers" before #3505; "Corrections" since) on screen. Returns false when the
  * grid is too small for the cycle.
  *
  * The wrong pairs form a rotation (left ``i`` -> right ``(i + 1) % cycle``;
@@ -834,10 +834,10 @@ async function pairMatchingWithWrongCycle(page: Page, cycle: number): Promise<bo
     // #1785 - "matching-result visible" is NOT the settled post-check
     // state; pin the view toggle, then wait for the page height to stop
     // moving (same determinism class as #1696).
-    // #3233 - the default post-check view is "My answers", which shows the
-    // pairs as formed, ungraded (no feedback rows, no red/green), so the
-    // pin is the active My-answers toggle, not a grading row.
-    await expect(page.getByTestId("matching-my-answers")).toHaveAttribute(
+    // #3505 - a check with mistakes opens on "Corrections" (the graded grid
+    // with the correct partner under each mistake), so the pin is the
+    // active Corrections toggle.
+    await expect(page.getByTestId("matching-corrections")).toHaveAttribute(
         "aria-pressed",
         "true",
         {timeout: 5_000},
@@ -1183,6 +1183,7 @@ export const SURFACE_NAMES = [
     "dashboard-empty",
     "dashboard-populated",
     "dashboard-badges",
+    "dashboard-activity",
     "content-browser",
     "content-discover",
     "content-import",
@@ -1498,6 +1499,32 @@ async function waitForStableText(
 async function gotoDashboardInApp(page: Page): Promise<void> {
     await page.locator("a.nav-brand").first().click();
     await page.waitForURL("**/dashboard", {timeout: 20_000});
+}
+
+/**
+ * #3504 - the dashboard Activity tab: year heatmap, learning-profile radar
+ * and the spaced-practice card list render only here, so without this
+ * motif a change to any of them synced as a 0-diff that checked nothing.
+ * Same seed as ``dashboard-populated`` (a played lesson, so the heatmap has
+ * a day and the review queue a row), reached in-app (no ``beforeunload``
+ * row, see {@link gotoDashboardInApp}), then the tab. Ready when the panel,
+ * the heatmap (not its loading stub) and the radar have rendered.
+ */
+async function gotoDashboardActivity(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await playBundledLesson(page, "summary");
+    await waitForSrsQuiescence(page, {expectRows: true});
+    await gotoDashboardInApp(page);
+    await page.getByTestId("dashboard-tab-activity").click();
+    await expect(page.getByTestId("dashboard-tab-activity-panel")).toBeVisible({
+        timeout: 20_000,
+    });
+    await expect(page.getByTestId("streak-calendar")).toBeVisible({timeout: 20_000});
+    await expect(page.getByTestId("profile-radar")).toBeVisible({timeout: 20_000});
+    await expect(page.getByTestId("review-queue-card-loading")).toHaveCount(0, {
+        timeout: 20_000,
+    });
+    return true;
 }
 
 /** Every loading placeholder the dashboard publishes (#3016). A card
@@ -1957,6 +1984,8 @@ async function reachSurface(
             return true;
         case "dashboard-badges":
             return gotoDashboardWithDueReviews(page);
+        case "dashboard-activity":
+            return gotoDashboardActivity(page);
         case "content-browser":
             await seedLearner(page);
             await page.goto("/content?tab=my");

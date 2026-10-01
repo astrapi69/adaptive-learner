@@ -10,9 +10,12 @@ can read it.
 
 In **Server mode** the data lives in the SQLite database the
 FastAPI backend manages. API keys are encrypted at rest with
-Fernet using a secret you set via the
-`ADAPTIVE_LEARNER_SECRET_KEY` environment variable, or via
-`secret_key:` in `~/.config/adaptive-learner/secrets.yaml`.
+Fernet in `~/.config/adaptive_learner/secrets.yaml`. The
+encryption key is generated on first start and kept in
+`~/.config/adaptive_learner/secret.key`; you do not have to set
+anything. To supply your own key instead, set
+`ADAPTIVE_LEARNER_SECRET_KEY` (or `secret_key:` in
+`secrets.yaml`) before the first start.
 
 Neither mode sends telemetry, analytics, or your messages to
 any third party other than the AI provider you've chosen - and
@@ -29,7 +32,8 @@ started.
 Three places to put the key (highest priority wins): an
 `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` env var, the
 `ai.<provider>.api_key` field in
-`~/.config/adaptive-learner/secrets.yaml`, or the Settings UI.
+`~/.config/adaptive_learner/secrets.yaml`, or the Settings UI
+(which saves into that same file, encrypted).
 The UI shows the per-provider source so you always know where
 your key came from.
 
@@ -78,11 +82,11 @@ summarises the multi-cycle journey when `cycle_count > 1`.
 
 Yes. Three export paths shipped:
 
-- **Backup**: Settings → Backup → Create Backup. Downloads a
-  timestamped JSON with every row from your account. API keys
-  are stripped. Works in both storage modes.
-- **Progress / Session / Curriculum reports**: Settings →
-  Export. Markdown + PDF (browser print-to-PDF).
+- **Backup**: Settings > Data > Backup and export > Create
+  Backup. Downloads an `.alb` backup file with every row from your
+  account. API keys are stripped. Works in both storage modes.
+- **Progress / Session / Curriculum reports**: Settings > Data >
+  Backup and export > Export. Markdown + PDF (browser print-to-PDF).
 - **Anki .apkg**: review AI-extracted flashcards on the
   `/anki` page, accept the ones you like, click Export. The
   file works directly in Anki desktop.
@@ -105,8 +109,9 @@ Three Web Speech API integrations:
   speak, and a judge AI scores similarity + suggests
   improvements.
 
-Voice toggles live in Settings → Voice. The section hides
-itself in browsers that don't support the API.
+Voice toggles live in Settings > Learning > Reading aloud and
+dictation. The area hides itself in browsers that don't support the
+API.
 
 ## What's the chat-history import?
 
@@ -125,8 +130,8 @@ extraction + role boundary preservation for that format.
 
 ## Sync between devices?
 
-Local-network bidirectional sync. Settings →
-Sync → "Pair this device": scan the QR code on the other
+Local-network bidirectional sync. Open Settings > Data > Sync
+and pair this device: scan the QR code on the other
 device's screen (rear camera), or paste the pairing URL.
 Once paired, push + pull buttons exchange data; conflicts
 go through an AI-merge resolver. 30 tables on the sync

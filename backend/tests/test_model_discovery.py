@@ -280,3 +280,16 @@ def test_cache_isolated_per_api_key(monkeypatch):
     assert calls["count"] == 2  # Two distinct keys, two fetches.
     model_discovery.fetch_anthropic_models("key-a")  # cached
     assert calls["count"] == 2
+
+
+def test_cache_holds_neither_the_key_nor_a_fast_hash_of_it():
+    """#3503: the cache key must not leak the API key in repr and must not be a
+    fast digest of it (CodeQL py/weak-sensitive-data-hashing)."""
+    import hashlib
+
+    secret = "sk-ant-test-secret-3503"
+    model_discovery._cache_put(AIProvider.ANTHROPIC, secret, [])
+    dumped = repr(model_discovery._cache)
+    assert secret not in dumped
+    assert hashlib.sha256(secret.encode("utf-8")).hexdigest()[:16] not in dumped
+    assert model_discovery._cache_get(AIProvider.ANTHROPIC, secret) == []

@@ -9,7 +9,8 @@ Themes** führt.
 
 ## Empfohlene Presets (Phase 63 / v1.63.0)
 
-Der Picker unter Einstellungen → Darstellung führt mit einem
+Der Picker unter Einstellungen > Allgemein > Darstellung führt mit
+einem
 **Empfohlen**-Unterreiter:
 
 - **Hell:** `catppuccin-latte`, `supabase`, `graphite`

@@ -40,7 +40,8 @@ Discover honours the same **global content-view preference** as
 *My content*: a **view toggle** switches the catalog between a
 compact **list** (the default) and a richer **grid** of cards.
 Changing it here also changes it on *My content*, and the choice is
-remembered. You can also set it from **Settings → Learning**.
+remembered. You can also set it from **Settings > General >
+Appearance**.
 
 ---
 

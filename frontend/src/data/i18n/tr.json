@@ -427,6 +427,7 @@
     "empty_body": "Hepsi tamam! Bu sette tekrar edilecek öğe yok.",
     "not_cached_body": "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç.",
     "back_to_dashboard": "Panoya dön",
+    "back_to_lesson": "Derse dön",
     "summary": {
       "aria_label": "Tekrar özeti",
       "heading": "Tekrar tamamlandı",

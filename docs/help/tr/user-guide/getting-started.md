@@ -57,7 +57,7 @@ tarayıcının dışında bulunur.
 4. **İsteğe bağlı: yapay zeka oturumları.** Bunun yerine yönlendirilmiş
    altı-yöntemli öğrenme sohbetini istiyorsan, bir **API anahtarı**
    kaydet (Ayarlar ya da
-   `~/.config/adaptive-learner/secrets.yaml`), isteğe bağlı
+   `~/.config/adaptive_learner/secrets.yaml`), isteğe bağlı
    [öğrenme türü testini](assessment.md) yap ve bir
    [öğrenme oturumu](learning-session.md) başlat.
 5. **Sonucunu yedekle.** Ders özetinden sonucu Markdown olarak

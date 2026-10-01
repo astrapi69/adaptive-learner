@@ -1,103 +1,148 @@
 # Das Dashboard
 
-Das Dashboard ist deine Startbasis. Es bündelt mehrere
-Datenscheiben in eine Ansicht: wer du als Lernender bist
-(Profil + XP + Abzeichen), wie es gerade läuft
-(Streak-Heatmap + Session-Zähler), was du zuletzt gemacht
-hast (jüngste Sessions + Methodenverteilung), und was als
-Nächstes ansteht (Werkzeug- + Spaced-Empfehlungen).
+Das Dashboard ist deine Startbasis. Es ist in drei Tabs
+aufgeteilt:
 
-Ganz oben sitzt die **Subjects + Tags Filter-Leiste** -
-wähle ein Subject (z. B. Sprachen → Spanisch) oder ein Tag,
-um jedes Widget unten auf Projekte mit dieser Klassifizierung
-zu beschränken. Filter sind über URL-Query-Params teilbar.
+- **Übersicht** - wo du aufgehört hast und was als Nächstes
+  ansteht.
+- **Aktivität** - dein Lernverlauf und deine Auswertungen.
+- **Missionen** - die heutigen Missionen und deine Abzeichen.
 
-## Profil-Radar
+Übersicht ist der Standard-Tab. Der aktive Tab steht in der
+Adresse (`?tab=activity`, `?tab=missions`), daher öffnen ein
+Lesezeichen oder ein Neuladen wieder denselben Tab. Unter den
+Tabs liegt der Bereich **Schnellaktionen**, der auf jedem Tab
+sichtbar bleibt.
 
-Der Radar-Chart oben zeigt dein 6-Methoden-Profil aus dem Test.
-Gleiche Form wie der Chart auf der Lerntyp-Test-Seite. Die
-dominante Methode wird unter dem Chart in einem farbigen Badge
-hervorgehoben.
+## Übersicht
 
-Wenn du den Test noch nicht gemacht hast, zeigt der Radar eine
-Null-Form und verlinkt zum Test.
+Der Tab Übersicht beantwortet die Frage „Wo war ich, und was
+jetzt?". Karten ohne Inhalt bleiben ausgeblendet, daher sieht,
+wer neu anfängt, eine kurze Seite.
 
-## XP + Streak + Abzeichen
+- **Weitermachen** - bis zu drei Sets, an denen du zuletzt
+  gearbeitet hast, das neueste zuerst. Jede Zeile bietet eine
+  Aktion: eine Lektion an dem Schritt fortsetzen, an dem du
+  aufgehört hast, nach einer abgeschlossenen Lektion die nächste
+  öffnen, oder fällige Wiederholungskarten öffnen. Ein vollständig
+  abgeschlossenes Set ist als erledigt markiert und steht unter
+  den Zeilen, die noch etwas zu tun haben. Ohne jüngste Aktivität
+  zeigt die Karte einen kurzen Leerzustand.
+- **KI-Hilfe freischalten (optional)** - eine Einladung, deinen
+  eigenen KI-Anbieter zu verbinden. Sie erscheint nur, solange
+  kein API-Schlüssel eingerichtet ist, und **Später** blendet sie
+  dauerhaft aus.
+- **Zur Wiederholung** - die Zahl der fälligen Elemente und wie
+  viele davon überfällig sind, mit **Wiederholungssitzung
+  öffnen** und **Schnell-Review**. Ausgeblendet, wenn nichts
+  fällig ist.
+- **XP & Level** - dein Level, deine gesamten XP und ein
+  Fortschrittsbalken zum nächsten Level. Vor deinen ersten XP
+  bittet sie dich, eine Session abzuschließen.
+- **Serie** - deine aktuelle Serie, deine längste Serie und deine
+  verfügbaren Freezes.
+- **Arcade** - der Einstieg in die Arcade mit deinem
+  Ticket-Stand. Die Karte gehört zum Spielmodus: Ist der
+  Spielmodus aus, erscheint sie nicht; ist der Spielmodus an und
+  der Arcade-Schalter aus, erklärt sie, welcher Schalter aus ist,
+  und verlinkt zu den Einstellungen.
+- **Weiterlernen** (pausierte Lektionen) - Lektionen, die du
+  pausiert hast, die zuletzt pausierte zuerst. Beim Öffnen fragt
+  die App, ob du fortsetzen oder neu beginnen willst.
+  Ausgeblendet, wenn keine Lektion pausiert ist.
+- **Übungsschwerpunkt** - eine Auswertung deiner Fehler in den
+  Lektionen: deine Herausforderungen, Fehlerzahlen,
+  Beherrschungs-Fortschritt und **Adaptive Lektion starten**.
+  Ausgeblendet, wenn es keine Fehler auszuwerten gibt.
+- **Deine Favoriten** - deine zuletzt gemerkten Lektionen. Ein
+  Klick öffnet die Lektion, das X entfernt das Lesezeichen. Ohne
+  Favoriten weist die Karte auf den Stern in einer Lektion hin.
 
-- **XP-Widget** - aktuelles Level + XP gesamt + ein
-  Fortschrittsbalken zum nächsten Level. Levels folgen
-  einer Exponentialkurve
-  (`threshold(n) = 50 * n * (n - 1)`); Level 1-5 liegen
-  bei 0 / 100 / 300 / 600 / 1000 XP. 50 XP Basis pro
-  beendeter Session, plus Pro-Zyklus-Boni + First-Method-
-  Bonus + Streak-Multiplikator (bis 2,75× bei 7-Tage-Streak).
-- **Streak-Heatmap** (GitHub-Stil) - 365 Tage Aktivität in
-  Wochenspalten Mo..So. Fünf Tier-Farben via `color-mix`
-  auf `var(--accent)`. Wochenend-Modus in den Einstellungen
-  überspringt Sa/So-Lücken; Freeze-Vorrat (1 pro 7
-  Streak-Tage, max. 3) wirkt als Pause-statt-Reset bei
-  einem verpassten Werktag.
-- **Badge-Vitrine** - 24 Abzeichen in 5 Kategorien
-  (Einstieg 3, Konsistenz 4, Methoden-Entdecker 7, Tiefe 7,
-  Polyglott 3). Verdiente sind farbig + datiert; gesperrte
-  bleiben grau.
-- **Session-Zähler** - Kacheln für Sessions, Minuten,
-  aktueller Streak, Durchschnitts-Verständnis, Durchschnitts-
-  Stress.
+## Aktivität
 
-## Fortschritts-Timeline
+Der Tab Aktivität bündelt deinen Verlauf und die
+Auswertungs-Diagramme.
 
-Ein Zwei-Linien-Chart unter dem Radar. Zwei Werte pro Session:
-dein **Verständnis**-Rating und dein **Stress**-Rating, jeweils
-von 1-5-Eingabe auf eine 0-1-Achse skaliert. Standardmäßig die
-fünf jüngsten Sessions, von alt links nach neu rechts.
+- **Zur Wiederholung** - dieselbe Wiederholungskarte wie im Tab
+  Übersicht.
+- **Serie** - ein Aktivitätsstreifen über sieben Tage mit einem
+  Trend gegenüber der Vorwoche, darunter die Aktivitäts-Heatmap:
+  ein Jahr in Wochenspalten von Montag bis Sonntag, eingefärbt
+  danach, wie viele Sessions du an dem Tag hattest. Die Heatmap
+  öffnet auf der aktuellen Woche.
+- **Lernprofil** - das Radar-Diagramm deines
+  6-Methoden-Profils aus dem Lerntyp-Test, mit einer Zeile, die
+  deine stärkste Methode nennt. Ohne abgeschlossenen Test bietet
+  die Karte **Lernprofil fortsetzen** (wenn du einen Test
+  abgebrochen hast) oder **Lernprofil erstellen** an.
+- **Sitzungen** - Kacheln für Sessions, Minuten, aktuelle Serie,
+  durchschnittliches Verständnis und durchschnittlichen Stress.
+- **Fortschritt** - ein Zwei-Linien-Diagramm deiner
+  **Verständnis**- und **Stress**-Bewertungen über deine jüngsten
+  Sessions, die älteste links.
+- **Methodenverteilung** - ein Balken pro Methode mit Anzahl und
+  Anteil der Sessions, die sie genutzt haben, die meistgenutzte
+  Methode zuerst.
+- **Werkzeug-Empfehlungen** - externe Werkzeuge, die zu deinem
+  Profil passen, jedes mit einem kurzen „Warum" in deiner
+  UI-Sprache.
+- **Geplante Übung** - „mach das als Nächstes"-Karten pro
+  Methode, abhängig davon, wie lange du sie nicht mehr geübt hast
+  (erstmals, Auffrischung, Wiederholung, Übung, Pflege). Eine
+  weggeklickte Karte bleibt für den Rest des Tages ausgeblendet.
+- **Letzte Sessions** - deine jüngsten Sessions mit Methode,
+  Verständnis, Stress und Dauer. Ein Klick auf eine Zeile öffnet
+  die Fortschritts-Seite.
+- **Lern-Repository** - ein Link zum versionierten Stand von
+  Fortschritt, Notizen und Roadmap dieses Projekts.
 
-Worauf achten: eine steigende Verständnislinie ist genau das,
-was du willst. Eine flache Verständnislinie bei steigendem
-Stress ist das Signal, das die Methodenwechsel-Heuristik
-verfolgt; sie wird dir einen Wechsel vorschlagen.
+Worauf du im Fortschritts-Diagramm achten kannst: eine steigende
+Verständnislinie ist genau das, was du willst. Eine flache
+Verständnislinie bei steigendem Stress ist das Signal, das die
+Methodenwechsel-Heuristik verfolgt; sie schlägt dir dann einen
+Methodenwechsel vor.
 
-## Methodenverteilung
+## Missionen
 
-Ein horizontales Balkendiagramm, das zeigt, welche der 6
-Methoden du genutzt hast. Die Länge jedes Balkens ist der
-Prozentanteil der Sessions, die diese Methode nutzten. Balken
-sortiert absteigend nach Anzahl; Gleichstände behalten die
-kanonische Methodenreihenfolge.
+- **Heutige Missionen** - die täglichen Missionen mit ihrem
+  Fortschritt und ihrer XP-Belohnung. Jeden Tag kommen neue
+  Missionen. Unter Einstellungen > Lernen kannst du Missionen
+  abschalten und ihre Anzahl und Schwierigkeitsmischung
+  festlegen; sind Missionen aus, erscheint die Karte nicht.
+- **Abzeichen** - wie viele Abzeichen du verdient hast, deine
+  jüngsten und ein Hinweis auf die nächste Plakette. **Alle
+  Plaketten anzeigen** öffnet die vollständige Galerie. Die
+  Abzeichen sind in die Kategorien Erste Schritte, Konsistenz,
+  Methoden-Entdecker, Tiefe und Polyglott gruppiert; verdiente
+  sind farbig, gesperrte bleiben grau.
 
-Der Sinn ist nicht Wettbewerb mit sich selbst, sondern ein
-Spiegel. Manche Lernenden fahren 80% deduktive Sessions, und
-das ist okay. Andere entdecken, dass sie die kontextuelle
-Methode nie genutzt haben, und wollen es ausprobieren.
+## XP, Level und Serie
 
-## Letzte Sessions
+- **Level** folgen einer wachsenden Kurve:
+  `threshold(n) = 50 * n * (n - 1)`, Level 1 bis 5 beginnen also
+  bei 0 / 100 / 300 / 600 / 1000 XP.
+- **Session-XP** - 50 XP Basis pro abgeschlossener Session, dazu
+  ein Bonus für jeden abgeschlossenen Zyklus und ein Bonus, wenn
+  du zum ersten Mal eine Session in einer Methode abschließt. Ein
+  täglicher Serien-Multiplikator gibt 25 % pro Serientag dazu,
+  gedeckelt bei 7 Tagen (2,75-fach).
+- **Freezes** - pro 7 Serientage verdienst du einen Freeze und
+  kannst bis zu 3 vorrätig halten. Ein Freeze pausiert deine
+  Serie an einem verpassten Tag, statt sie zurückzusetzen.
+- **Wochenend-Modus** - ist der Wochenend-Modus an
+  (Einstellungen > Lernen), unterbrechen Samstage und Sonntage
+  deine Serie nicht.
 
-Die letzten 5 Sessions als kompakte Liste: Methoden-Badge,
-Verständnis-Rating der Session (als kleiner Balken) und Dauer
-in Minuten. Klick auf eine Zeile springt zur Fortschritts-
-Seite, gefiltert auf die Session - nützlich, wenn eine
-bestimmte Session sich super oder schrecklich angefühlt hat
-und du nachsehen willst, was passierte.
+## Schnellaktionen
 
-## Werkzeug- + Spaced-Empfehlungen
+Unter den Tabs, auf jedem Tab:
 
-Zwei Empfehlungskarten am unteren Rand:
-
-- **Werkzeuge** - externe Tools nach Relevanz zu deinem
-  Profil sortiert. Anki + NotebookLM sind jetzt First-Class
-  mit ausgelieferten Exporten (kein manueller Übergang).
-  Jedes mit einem einzeiligen „Warum", in deiner UI-Sprache.
-- **Spaced Repetition** - kurze "mach das als Nächstes"-Karten,
-  getrieben davon, welche Methoden du zuletzt nicht geübt
-  hast. Eine 5-Band-Logik (erstmals / Auffrischung /
-  Wiederholung / Übung / Pflege) treibt die Intervall-
-  Vorschläge.
-
-Beide Listen aktualisieren sich bei jedem Dashboard-Aufruf -
-sie sind günstig zu berechnen und spiegeln die letzte Session.
-
-## Session starten
-
-Der große Primärbutton oben: "Session starten". Öffnet die
-Session-Seite mit einer neuen Session-Zeile, der aktiven
-Methode aus deinem Profil und dem Zyklus auf Schritt 1.
+- **Neue Session starten** - öffnet die Session-Seite. Der Button
+  zeigt die Methode aus deinem Lernprofil, mit der die Session
+  beginnt. Ohne KI-Schlüssel im Browser-Modus ist der Button
+  deaktiviert.
+- **Ausspracheübung** - nur bei Projekten mit dem Subject
+  Sprachen.
+- **Lektion erstellen** - öffnet das Erstellen von Lektionen im
+  Inhaltsbereich.
+- **Lernpfad** - öffnet deinen Lernpfad.
