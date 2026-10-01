@@ -75,6 +75,17 @@ describe("buildManifestYaml", () => {
         expect(m.schema_version).toBe(CURRENT_MANIFEST_SCHEMA_VERSION);
         expect(m.tags).toEqual(["grammar", "b2"]);
     });
+
+    // #3385 - the manifest schema rejects an empty level; a set stored
+    // without one exports the engine's "none" sentinel instead.
+    it("writes a set without a level as level none, in the manifest and the index", () => {
+        const levelless = {...SET, level: "", domain: "knowledge"};
+        expect(parseYaml(buildManifestYaml(levelless, 2)).level).toBe("none");
+        const index = JSON.parse(
+            buildSearchIndexJson({...INPUT, set: levelless}),
+        );
+        expect(index.sets[0].level).toBe("none");
+    });
 });
 
 describe("buildSearchIndexJson", () => {

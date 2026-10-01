@@ -28,6 +28,7 @@ import { stringify as stringifyYaml } from "yaml";
 
 import type { ContentLesson } from "../../../storage/types";
 import { slugify } from "../analysis/analysis-to-lesson";
+import { normalizeLevel } from "../content-domains";
 import { CURRENT_MANIFEST_SCHEMA_VERSION } from "../schema-version";
 
 /** Metadata describing a set to export (mirrors the saved set). */
@@ -79,7 +80,7 @@ export function buildManifestYaml(
         language: meta.language,
         target_language: meta.target_language ?? meta.language,
         ...(meta.source_language ? { source_language: meta.source_language } : {}),
-        level: meta.level,
+        level: normalizeLevel(meta.level),
         version: "1.0.0",
         lesson_count: lessonCount,
         domain: "user-generated",
