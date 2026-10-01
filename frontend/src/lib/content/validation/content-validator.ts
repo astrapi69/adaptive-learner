@@ -162,26 +162,6 @@ export function treePlacement(meta: ValidationMeta): {
   };
 }
 
-// Scripts we CAN tell apart from Latin. For a non-Latin source
-// language we require the card backs to actually use that script
-// (a Greek-source set whose backs are all Latin is mislabelled).
-// Latin-script source languages are skipped — we can't reliably
-// tell German from English by characters alone, so we don't guess.
-const SCRIPT_RANGES: Record<string, RegExp> = {
-  el: /[Ͱ-Ͽἀ-῿]/, // Greek
-  ja: /[぀-ヿ一-鿿]/, // Hiragana/Katakana/Kanji
-  zh: /[一-鿿]/, // Han
-  ru: /[Ѐ-ӿ]/, // Cyrillic
-  ar: /[؀-ۿ]/, // Arabic
-  ko: /[가-힯]/, // Hangul
-};
-
-function backLooksLikeSource(text: string, sourceLang: string): boolean {
-  const range = SCRIPT_RANGES[base(sourceLang)];
-  if (!range) return true; // Latin-script source — can't tell, accept.
-  return range.test(text);
-}
-
 function validateMeta(
   meta: ValidationMeta,
   issues: ValidationIssue[],
@@ -303,11 +283,11 @@ function checkExampleUrls(
   }
 }
 
-/** Issue on an empty card (blank front or back) or a back-side that does not
- *  read like the set's source language. */
+/** Issue on an empty card (blank front or back). Whether a back reads like
+ *  the source language is the engine's ``W-CARD-BACK-SCRIPT`` (#3383), see
+ *  ``checkEngineRules``. */
 function checkCards(
   lesson: ContentLesson,
-  meta: ValidationMeta,
   id: string,
   issues: ValidationIssue[],
 ): void {
@@ -316,15 +296,6 @@ function checkCards(
       issues.push({
         code: "empty_card",
         params: { lesson: id, card: card.id },
-      });
-    } else if (!backLooksLikeSource(card.back, meta.source_language)) {
-      issues.push({
-        code: "back_language_mismatch",
-        params: {
-          lesson: id,
-          card: card.id,
-          source: base(meta.source_language),
-        },
       });
     }
   }
@@ -336,15 +307,27 @@ function checkCards(
  *
  * - ``W-DOMAIN-UNKNOWN`` is raised per LESSON ``domain``; the set's domain
  *   is a meta choice the wizard makes once, and the app judges it there.
- * - ``W-CARD-BACK-SCRIPT`` says a card back carries no letter of the
- *   source script; ``checkCards`` raises the same fact as the blocking
- *   ``back_language_mismatch`` and ``validateLanguageHeuristics`` covers
- *   the positive-evidence case as ``source_language_heuristic``.
  */
 const ENGINE_WARNINGS_COVERED_BY_APP: ReadonlySet<string> = new Set([
   "W-DOMAIN-UNKNOWN",
-  "W-CARD-BACK-SCRIPT",
 ]);
+
+/**
+ * #3383 - ``W-CARD-BACK-SCRIPT`` (a card back has letters but none of the
+ * source language's script) is the engine's rule; the app only decides that
+ * it BLOCKS a share, reported per card as ``back_language_mismatch``.
+ */
+function cardBackScriptIssues(
+  warning: { params?: Record<string, unknown> },
+  id: string,
+): ValidationIssue[] {
+  const cardIds = Array.isArray(warning.params?.cardIds) ? warning.params.cardIds : [];
+  const source = base(String(warning.params?.sourceLanguage ?? ""));
+  return cardIds.map((card) => ({
+    code: "back_language_mismatch",
+    params: { lesson: id, card: String(card), source },
+  }));
+}
 
 /** The exercise id of the step an engine issue path points into, or "". */
 function exerciseIdAt(lesson: ContentLesson, path: string): string {
@@ -399,6 +382,10 @@ function checkEngineRules(
     });
   }
   for (const warning of verdict.warnings) {
+    if (warning.id === "W-CARD-BACK-SCRIPT") {
+      issues.push(...cardBackScriptIssues(warning, id));
+      continue;
+    }
     if (ENGINE_WARNINGS_COVERED_BY_APP.has(warning.id)) continue;
     warnings.push({
       code: "engine_warning",
@@ -467,7 +454,7 @@ function validateLesson(
   checkLevelComplexity(lesson, meta, id, warnings);
   checkQualityMinimums(lesson, id, issues);
   checkExampleUrls(lesson, id, issues);
-  checkCards(lesson, meta, id, issues);
+  checkCards(lesson, id, issues);
   checkEngineRules(lesson, meta, id, issues, warnings);
 }
 
