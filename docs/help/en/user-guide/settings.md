@@ -60,19 +60,21 @@ Your choice and purchased frames persist and travel with your
 
 ## Appearance
 
-The **Theme** picker under *General > Appearance* offers six
-themes plus an automatic mode:
+The **Theme** picker under *General > Appearance* sorts the themes
+into two tabs:
 
-- **Light** - the default, bright and high-contrast.
-- **Dark** - dimmed surfaces for low-light use.
-- **Ocean** - deep blue tones, calm and easy on the eyes at night.
-- **Forest** - warm green and amber earthy tones.
-- **High Contrast** - accessibility-first: black, white, and bold
-  signal colors, with crisp card edges. Use this if you need maximum
-  readability.
-- **Sepia** - warm paper tones, comfortable for long reading.
-- **Auto (System)** - follows your operating system's light/dark
-  setting and switches automatically when the system does.
+- **Recommended** - Catppuccin Latte, Supabase and Graphite (light),
+  Catppuccin Mocha, **Soft Pop** and Amethyst Haze (dark). New users
+  start on **Soft Pop**, and the picker opens on this tab.
+- **Classic** - the original themes: Light, Dark, Ocean, Forest,
+  High Contrast (black, white and bold signal colors with crisp card
+  edges, for maximum readability) and Sepia (warm paper tones for long
+  reading). If your active theme is a classic one, the picker opens
+  on this tab instead.
+
+Both tabs also offer **Auto (System)**, which follows your operating
+system's light/dark setting and switches automatically when the
+system does.
 
 Pick a theme from its preview card; the change applies instantly with
 no reload, and your choice is remembered across visits. Every theme is
@@ -84,7 +86,7 @@ preference for the Content hub (default **list**). It is the same
 preference as the in-tab view toggle on *My content* / *Discover*, so
 changing it in either place keeps both in sync. Directly below the card
 you set the **order of the Content-hub tabs** (Discover / My content /
-Import), so the hub opens on the tab you use most.
+Import / Create), so the hub opens on the tab you use most.
 
 ## Language
 
