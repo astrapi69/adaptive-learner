@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.15.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.16.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Nachtschicht](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -263,21 +263,19 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.15.0**:
-**parametrische Übungen**, deren Werte bei jedem Versuch neu gezogen
-werden, drei neue Übungstypen (**Hotspot**, **Parsons**, **Sortieren**),
-die sich unter "Lektion erstellen" anlegen lassen, und **Erklärungen**,
-die nach einer Antwort erscheinen. Wer die Abschnitte der
-Zusammenfassung nicht angepasst hat, sieht am Lektionsende jetzt eine
-**kompakte Zusammenfassung**; die **Ausführliche Auswertung** zeigt den
-vollständigen Rückblick, und deine Position in der Lektion wird ab dem
-ersten Schrittwechsel gesichert. Die **Einstellungen** sind in beschriftete
-Abschnitte mit Abschnittsleisten auf den Reitern Lernen und Daten
-gegliedert, **Aktualisieren** unter Meine Inhalte spielt alle verfügbaren
-Set-Updates auf einmal ein (außer denen, die deinen Lernfortschritt
-betreffen würden), und Impressum und Datenschutzerklärung stehen
-auf Deutsch und Englisch bereit. Vollständige Notizen:
-[`changelog/releases/v2.15.0.md`](changelog/releases/v2.15.0.md).
+Aktive Entwicklung. Das aktuelle Release ist **v2.16.0**: Fehler, die
+bisher verschwanden, **sagen jetzt, was los ist**. Eine gescheiterte
+Tutor-Antwort zeigt einen Hinweis mit „Erneut versuchen", ein Verlauf, der
+nicht geladen werden konnte, sagt das, eine abgestürzte Seite bietet einen
+Rückweg und eine Fehlermeldung an, und Aktionen in den Einstellungen,
+Exporte und der Lektionsfortschritt scheitern nicht mehr still.
+Übungseditor, Teilen-Prüfung und Repository-Prüfung folgen **einem
+Regelwerk**, dem der Content-Engine, und die Desktop-App löst Zuordnungen
+aus Karten auf. **Backups** enthalten jedes gespeicherte Feld und lassen
+sich zwischen Desktop-App und Browser-Version wiederherstellen, dazu kommen
+Telefon-Korrekturen für das kompakte Menü unter 1280 px und das Dashboard.
+Vollständige Notizen:
+[`changelog/releases/v2.16.0.md`](changelog/releases/v2.16.0.md).
 
 Frühere Releases, neueste zuerst (vollständige Details in
 [`changelog/releases/`](changelog/releases/)):
