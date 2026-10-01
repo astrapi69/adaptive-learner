@@ -9,10 +9,13 @@ schon. Auf einem geteilten Gerät kann jeder mit Zugriff auf
 dieses Browser-Profil sie lesen.
 
 Im **Server-Modus** liegen die Daten in der SQLite-Datenbank,
-die das FastAPI-Backend verwaltet. API-Schlüssel werden mit
-Fernet at-rest verschlüsselt - über das Geheimnis aus der
-`ADAPTIVE_LEARNER_SECRET_KEY`-Umgebungsvariable, oder über
-`secret_key:` in `~/.config/adaptive-learner/secrets.yaml`.
+die das FastAPI-Backend verwaltet. API-Schlüssel liegen
+Fernet-verschlüsselt in `~/.config/adaptive_learner/secrets.yaml`.
+Der Verschlüsselungsschlüssel wird beim ersten Start erzeugt und
+in `~/.config/adaptive_learner/secret.key` abgelegt; du musst
+nichts einrichten. Willst du einen eigenen vorgeben, setze
+`ADAPTIVE_LEARNER_SECRET_KEY` (oder `secret_key:` in
+`secrets.yaml`) vor dem ersten Start.
 
 Kein Modus sendet Telemetrie, Analytics oder deine Nachrichten
 an Dritte - außer an den von dir gewählten KI-Anbieter, der
@@ -29,8 +32,9 @@ meistens zum Einstieg.
 Drei Stellen für den Schlüssel (höchste Priorität gewinnt):
 eine `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungsvariable,
 das `ai.<provider>.api_key`-Feld in
-`~/.config/adaptive-learner/secrets.yaml`, oder die
-Einstellungs-UI. Die UI zeigt pro Anbieter die Quelle, sodass
+`~/.config/adaptive_learner/secrets.yaml`, oder die
+Einstellungs-UI (die verschlüsselt in genau diese Datei
+speichert). Die UI zeigt pro Anbieter die Quelle, sodass
 du immer weißt, woher dein Schlüssel kommt.
 
 Du kannst das Curriculum durchstöbern, den Lerntyp-Test

@@ -74,7 +74,7 @@ the browser.
    directly as lessons. See [App tutorial](app-tutorial.md).
 4. **Optional: AI sessions.** If you would rather have the guided
    six-method learning conversation, store an **API key**
-   (Settings or `~/.config/adaptive-learner/secrets.yaml`), take
+   (Settings or `~/.config/adaptive_learner/secrets.yaml`), take
    the optional [learning-style assessment](assessment.md) and
    start a [learning session](learning-session.md).
 5. **Save your result.** From the lesson summary you can copy the

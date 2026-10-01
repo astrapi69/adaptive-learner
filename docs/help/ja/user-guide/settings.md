@@ -45,7 +45,7 @@ DE / EN / ES / FR / EL / PT / TR / JA - それぞれ完全に翻訳されたカ�
 
 - **キーの出所：設定** - キーは DB に Fernet 暗号化されて保存（サーバーモード）
   または IndexedDB に平文（ローカルモード）。自由に保存・削除できます。
-- **キーの出所：secrets.yaml** - キーは `~/.config/adaptive-learner/secrets.yaml`
+- **キーの出所：secrets.yaml** - キーは `~/.config/adaptive_learner/secrets.yaml`
   で設定されています。保存ボタンは無効。ファイルを直接編集して変更します。
 - **キーの出所：environment** - キーは `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`
   環境変数で設定されています。保存無効。env var が情報源です。

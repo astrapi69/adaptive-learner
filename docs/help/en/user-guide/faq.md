@@ -10,9 +10,12 @@ can read it.
 
 In **Server mode** the data lives in the SQLite database the
 FastAPI backend manages. API keys are encrypted at rest with
-Fernet using a secret you set via the
-`ADAPTIVE_LEARNER_SECRET_KEY` environment variable, or via
-`secret_key:` in `~/.config/adaptive-learner/secrets.yaml`.
+Fernet in `~/.config/adaptive_learner/secrets.yaml`. The
+encryption key is generated on first start and kept in
+`~/.config/adaptive_learner/secret.key`; you do not have to set
+anything. To supply your own key instead, set
+`ADAPTIVE_LEARNER_SECRET_KEY` (or `secret_key:` in
+`secrets.yaml`) before the first start.
 
 Neither mode sends telemetry, analytics, or your messages to
 any third party other than the AI provider you've chosen - and
@@ -29,7 +32,8 @@ started.
 Three places to put the key (highest priority wins): an
 `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` env var, the
 `ai.<provider>.api_key` field in
-`~/.config/adaptive-learner/secrets.yaml`, or the Settings UI.
+`~/.config/adaptive_learner/secrets.yaml`, or the Settings UI
+(which saves into that same file, encrypted).
 The UI shows the per-provider source so you always know where
 your key came from.
 

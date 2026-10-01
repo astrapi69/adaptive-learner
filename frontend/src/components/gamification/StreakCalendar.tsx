@@ -12,7 +12,10 @@
  * passes it through here.
  */
 
+import {useRef} from "react";
+
 import {useI18n} from "../../hooks/ui/useI18n";
+import {useScrollToEnd} from "../../shared/hooks/useScrollToEnd";
 import type {HeatmapEntryOut} from "../../storage/types";
 
 function tierForCount(count: number): number {
@@ -29,6 +32,9 @@ interface StreakCalendarProps {
 
 export default function StreakCalendar({entries}: StreakCalendarProps) {
     const {t} = useI18n();
+    // #3400 - open on the current week, not the oldest one.
+    const stripRef = useRef<HTMLDivElement>(null);
+    useScrollToEnd(stripRef, entries);
     if (!entries) {
         return (
             <div
@@ -81,6 +87,7 @@ export default function StreakCalendar({entries}: StreakCalendarProps) {
     }
     return (
         <div
+            ref={stripRef}
             className="streak-calendar"
             role="img"
             aria-label={t("gamification.streak_calendar", "Activity heatmap")}

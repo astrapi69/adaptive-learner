@@ -316,19 +316,23 @@ Eingabefeld, einen Speichern-Knopf, einen Entfernen-Knopf,
 das Aktiv-Anbieter-Badge - plus das neue **Quellen-
 Attributions**-Badge:
 
-- **Schlüssel aus: Einstellungen** - der Schlüssel ist
-  Fernet-verschlüsselt in der DB gespeichert (Server-Modus)
-  oder im Klartext in IndexedDB (Lokal-Modus). Speichern /
+- **Schlüssel aus: secrets.yaml** - der Schlüssel liegt
+  Fernet-verschlüsselt in `~/.config/adaptive_learner/secrets.yaml`.
+  Dort speichert der Server-Modus jeden Schlüssel, den du hier
+  eingibst; nach dem Speichern zeigt die Zeile also dieses
+  Badge. Speichern und Entfernen bleiben verfügbar; Speichern
+  überschreibt den abgelegten Schlüssel. Eine Info-Zeile unter
+  der Zeile nennt den Pfad.
+- **Schlüssel aus: Einstellungen** - ein älterer Schlüssel, der
+  noch aus der Zeit vor dem Umzug nach `secrets.yaml` in der
+  Datenbank liegt; er wird beim nächsten Start dorthin
+  verschoben. Im Lokal-Modus (Browser) liegt der Schlüssel in
+  IndexedDB und zeigt ebenfalls dieses Badge. Speichern /
   Entfernen frei nutzbar.
-- **Schlüssel aus: secrets.yaml** - der Schlüssel ist in
-  `~/.config/adaptive-learner/secrets.yaml` konfiguriert. Der
-  Speichern-Knopf ist deaktiviert; bearbeite die Datei direkt,
-  um ihn zu ändern. Ein Info-Banner unter der Zeile erinnert
-  an den Pfad.
 - **Schlüssel aus: Umgebungsvariable** - der Schlüssel ist
   über die `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungs-
-  variable gesetzt. Speichern deaktiviert; die Env-Variable
-  ist die Quelle der Wahrheit.
+  variable gesetzt. Speichern und Entfernen sind deaktiviert;
+  die Env-Variable ist die Quelle der Wahrheit.
 - **Kein Schlüssel konfiguriert** - nichts ist irgendwo
   gesetzt. Tippen und auf Speichern klicken, um zu beginnen.
 
