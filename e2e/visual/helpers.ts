@@ -1183,6 +1183,7 @@ export const SURFACE_NAMES = [
     "dashboard-empty",
     "dashboard-populated",
     "dashboard-badges",
+    "dashboard-activity",
     "content-browser",
     "content-discover",
     "content-import",
@@ -1498,6 +1499,32 @@ async function waitForStableText(
 async function gotoDashboardInApp(page: Page): Promise<void> {
     await page.locator("a.nav-brand").first().click();
     await page.waitForURL("**/dashboard", {timeout: 20_000});
+}
+
+/**
+ * #3504 - the dashboard Activity tab: year heatmap, learning-profile radar
+ * and the spaced-practice card list render only here, so without this
+ * motif a change to any of them synced as a 0-diff that checked nothing.
+ * Same seed as ``dashboard-populated`` (a played lesson, so the heatmap has
+ * a day and the review queue a row), reached in-app (no ``beforeunload``
+ * row, see {@link gotoDashboardInApp}), then the tab. Ready when the panel,
+ * the heatmap (not its loading stub) and the radar have rendered.
+ */
+async function gotoDashboardActivity(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await playBundledLesson(page, "summary");
+    await waitForSrsQuiescence(page, {expectRows: true});
+    await gotoDashboardInApp(page);
+    await page.getByTestId("dashboard-tab-activity").click();
+    await expect(page.getByTestId("dashboard-tab-activity-panel")).toBeVisible({
+        timeout: 20_000,
+    });
+    await expect(page.getByTestId("streak-calendar")).toBeVisible({timeout: 20_000});
+    await expect(page.getByTestId("profile-radar")).toBeVisible({timeout: 20_000});
+    await expect(page.getByTestId("review-queue-card-loading")).toHaveCount(0, {
+        timeout: 20_000,
+    });
+    return true;
 }
 
 /** Every loading placeholder the dashboard publishes (#3016). A card
@@ -1957,6 +1984,8 @@ async function reachSurface(
             return true;
         case "dashboard-badges":
             return gotoDashboardWithDueReviews(page);
+        case "dashboard-activity":
+            return gotoDashboardActivity(page);
         case "content-browser":
             await seedLearner(page);
             await page.goto("/content?tab=my");
