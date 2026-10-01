@@ -3358,6 +3358,11 @@ Location: Settings > General > Profile, below the figure gallery.
       right), no pause, no options bar
 - [ ] TC-0842 "Previous" is disabled on the first step; after "Next" it goes one
       step back within the same run (not to the dashboard)
+- [ ] TC-0923 Review from a lesson (#3499): finish a lesson, start the review from its
+      summary (the "Next step" card or "Practise mistakes") and finish the
+      round: the end screen offers "Back to lesson" next to "Back to
+      Dashboard", and the button returns to exactly that lesson, also after a
+      page reload. Started from the dashboard: only "Back to Dashboard"
 - [ ] TC-0843 Enter in a cloze answer: the first Enter checks, the second Enter
       advances; without an answer Enter does nothing; with the Enter
       shortcut switched off (Settings > Learning) Enter does nothing

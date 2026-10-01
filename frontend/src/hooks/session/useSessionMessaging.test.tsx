@@ -129,4 +129,34 @@ describe("useSessionMessaging.applyExchangeOutcome", () => {
             expect.stringContaining("No AI key set."),
         );
     });
+
+    it("shows the localized message, not the raw detail, for a provider error (#3376)", () => {
+        const {result} = renderHook(useHarness);
+        act(() =>
+            result.current.messaging.applyExchangeOutcome(
+                exchangeResult({
+                    step_evaluation: null,
+                    ai_error: "AI provider error: anthropic: HTTP 401 invalid x-api-key",
+                    ai_error_code: "provider_auth",
+                }),
+            ),
+        );
+        expect(notify.error).toHaveBeenCalledWith(
+            "Your AI provider rejected the key. Check the key in Settings > AI.",
+        );
+    });
+
+    it("never shows the raw detail when the code is missing (#3376)", () => {
+        const {result} = renderHook(useHarness);
+        act(() =>
+            result.current.messaging.applyExchangeOutcome(
+                exchangeResult({
+                    step_evaluation: null,
+                    ai_error: "Traceback: something internal",
+                    ai_error_code: null,
+                }),
+            ),
+        );
+        expect(notify.error).toHaveBeenCalledWith("The AI provider could not reply.");
+    });
 });

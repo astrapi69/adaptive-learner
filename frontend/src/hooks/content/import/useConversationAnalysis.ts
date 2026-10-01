@@ -21,7 +21,9 @@ import {
   ANALYSIS_PHASE_INTERVAL_MS,
 } from "../../../lib/content/analysis/analysis-phases";
 import { readLearnerState } from "../../../lib/learning/learnerState";
+import { friendlyErrorMessage } from "../../../utils/errorMessages";
 import { notify } from "../../../utils/notify";
+import { isDevMode } from "../../settings/useDevMode";
 import type { AIProvider } from "../../../lib/constants";
 import type { ImportedConversationDetail } from "../../../types/domain";
 
@@ -260,9 +262,13 @@ export function useConversationAnalysis({
       // Friendly INLINE error (not a raw toast). The button
       // re-enables in the finally block so the user can retry.
       if (mountedRef.current) {
+        // #3392 - a provider failure reads as the status-mapped friendly
+        // text; the raw detail only in developer mode.
         setAnalysisError(
           err instanceof ApiError
-            ? err.detail
+            ? isDevMode()
+              ? err.detail
+              : friendlyErrorMessage(err)
             : t(
                 "import.analysis_failed_inline",
                 "Analysis failed. Please try again.",

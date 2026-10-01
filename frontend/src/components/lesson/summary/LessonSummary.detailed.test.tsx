@@ -368,9 +368,10 @@ describe("LessonSummary detailed view carries the lesson review (#3124)", () => 
   it("links into the set's practice session for a learner with a profile", () => {
     renderSummary();
     toggleDetailed();
+    // #3499: the link names the lesson it was started from.
     expect(screen.getByTestId("lesson-summary-review-practice")).toHaveAttribute(
       "href",
-      "/review/set1",
+      expect.stringMatching(/^\/review\/set1\?from=/),
     );
   });
 

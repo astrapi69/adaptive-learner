@@ -22,6 +22,8 @@ import {_resetStorageCacheForTests} from "../../storage";
 import * as analysisModule from "../../chat_import/analysis";
 import * as storageModule from "../../storage";
 import * as aiProvidersModule from "../../storage/ai/ai-providers";
+import {ApiError} from "../../api/client";
+import {notify} from "../../utils/notify";
 
 vi.mock("../../storage/ai/ai-providers", () => ({
     aiComplete: vi.fn().mockResolvedValue(
@@ -336,6 +338,105 @@ describe("Import page", () => {
         );
         // Backend /analyze MUST NOT be called in Dexie mode.
         expect(dexieAnalyzeSpy).not.toHaveBeenCalled();
+    });
+});
+
+/**
+ * #3392 - a provider failure is a failed analysis in both modes: nothing is
+ * saved, the friendly status-mapped error is shown with the ApiError for the
+ * report, and only a real analysis (not the unparseable-reply fallback)
+ * earns the import XP.
+ */
+describe("analysis outcome (#3392)", () => {
+    async function pasteAndAnalyze(): Promise<void> {
+        renderImport();
+        await waitFor(() => {
+            expect(screen.getByTestId("quick-paste-textarea")).toBeTruthy();
+        });
+        fireEvent.change(screen.getByTestId("quick-paste-textarea"), {
+            target: {value: "User: hi\nAssistant: hello."},
+        });
+        fireEvent.click(screen.getByTestId("quick-analyze-button"));
+    }
+
+    function apiStorage(analyze: () => Promise<unknown>, awardImport: () => Promise<unknown>) {
+        const fake = {
+            ...dexieStorage,
+            mode: "api" as const,
+            imports: {...dexieStorage.imports, analyze},
+            gamification: {...dexieStorage.gamification, awardImport},
+        };
+        vi.spyOn(storageModule, "getStorage").mockReturnValue(
+            fake as unknown as ReturnType<typeof storageModule.getStorage>,
+        );
+    }
+
+    const analyzedDetail = (result: Record<string, unknown>) => async () => ({
+        id: "c1",
+        user_id: "u1",
+        source: "manual" as const,
+        title: "t",
+        message_count: 2,
+        imported_at: new Date().toISOString(),
+        analyzed: true,
+        messages: [],
+        analysis_result: result,
+    });
+
+    it("API mode: a provider failure shows the friendly error and awards no XP", async () => {
+        await makeUserWithKey();
+        const failure = new ApiError(502, "anthropic: HTTP 401 invalid x-api-key");
+        const awardImport = vi.fn(async () => ({}));
+        apiStorage(async () => {
+            throw failure;
+        }, awardImport);
+        await pasteAndAnalyze();
+        await waitFor(() => {
+            expect(notify.error).toHaveBeenCalledWith(failure.detail, {apiError: failure});
+        });
+        expect(awardImport).not.toHaveBeenCalled();
+    });
+
+    it("API mode: the unparseable-reply fallback awards no XP", async () => {
+        await makeUserWithKey();
+        const awardImport = vi.fn(async () => ({}));
+        apiStorage(analyzedDetail({summary: "x", fallback_used: true}), awardImport);
+        await pasteAndAnalyze();
+        await waitFor(() => expect(notify.warning).toHaveBeenCalled());
+        expect(awardImport).not.toHaveBeenCalled();
+    });
+
+    it("API mode: a real analysis awards the import XP", async () => {
+        await makeUserWithKey();
+        const awardImport = vi.fn(async () => ({}));
+        apiStorage(analyzedDetail({topic: "T", summary: "ok"}), awardImport);
+        await pasteAndAnalyze();
+        await waitFor(() => expect(awardImport).toHaveBeenCalledTimes(1));
+    });
+
+    it("Dexie mode: a provider failure saves nothing and awards no XP", async () => {
+        await makeUserWithKey();
+        const failure = new ApiError(401, "invalid x-api-key");
+        vi.spyOn(analysisModule, "analyzeConversation").mockRejectedValue(failure);
+        const save = vi.spyOn(dexieStorage.imports, "saveAnalysis");
+        const award = vi.spyOn(dexieStorage.gamification, "awardImport");
+        await pasteAndAnalyze();
+        await waitFor(() => {
+            expect(notify.error).toHaveBeenCalledWith(failure.detail, {apiError: failure});
+        });
+        expect(save).not.toHaveBeenCalled();
+        expect(award).not.toHaveBeenCalled();
+    });
+
+    it("Dexie mode: a real analysis awards the import XP", async () => {
+        await makeUserWithKey();
+        vi.spyOn(analysisModule, "analyzeConversation").mockResolvedValue({
+            topic: "Learning",
+            summary: "Computed in the browser.",
+        });
+        const award = vi.spyOn(dexieStorage.gamification, "awardImport");
+        await pasteAndAnalyze();
+        await waitFor(() => expect(award).toHaveBeenCalledTimes(1));
     });
 });
 

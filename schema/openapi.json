@@ -7067,6 +7067,17 @@
             ],
             "title": "Ai Error"
           },
+          "ai_error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Error Code"
+          },
           "assistant_message": {
             "anyOf": [
               {
@@ -9232,7 +9243,7 @@
     },
     "/api/plugin-settings/{plugin_name}": {
       "get": {
-        "description": "Return the on-disk ``settings:`` block for ``plugin_name``.",
+        "description": "Return the effective ``settings:`` block for ``plugin_name``.",
         "operationId": "get_plugin_settings_api_plugin_settings__plugin_name__get",
         "parameters": [
           {
@@ -9273,7 +9284,7 @@
         ]
       },
       "patch": {
-        "description": "Replace the ``settings:`` block with ``body.settings``.\n\nValidates the plugin is registered to surface typos quickly\n(``learning-repos`` → 404). The write itself is YAML-shape-\nonly — no per-key schema enforcement at this layer; the\nplugin must tolerate the values it reads back. Per-plugin\nPydantic validation is a future enhancement.",
+        "description": "Save ``body.settings`` as the plugin's settings.\n\nThe user overlay stores only what differs from the bundled\ndefaults; a key left out of the body falls back to its default.\n\nValidates the plugin is registered to surface typos quickly\n(``learning-repos`` → 404). The write itself is YAML-shape-\nonly — no per-key schema enforcement at this layer; the\nplugin must tolerate the values it reads back. Per-plugin\nPydantic validation is a future enhancement.",
         "operationId": "update_plugin_settings_api_plugin_settings__plugin_name__patch",
         "parameters": [
           {

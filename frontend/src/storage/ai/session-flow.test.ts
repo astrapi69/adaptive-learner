@@ -772,6 +772,39 @@ describe("session.rate / end / acceptSwitch / switchRecommendation", () => {
         expect(rec.recommended).toBe(false);
     });
 
+    /** Rate through the real writer, one minute apart, oldest first. */
+    async function rateInOrder(sessionId: string, understanding: number[]): Promise<void> {
+        vi.useFakeTimers({toFake: ["Date"]});
+        try {
+            for (const [i, u] of understanding.entries()) {
+                vi.setSystemTime(new Date(Date.UTC(2026, 8, 1, 10, i)));
+                await dexieStorage.session.rate(sessionId, {
+                    understanding: u,
+                    stress: 5,
+                    method_fit: 2,
+                });
+            }
+        } finally {
+            vi.useRealTimers();
+        }
+    }
+
+    it.each([
+        ["flat latest three", true, [5, 4, 3, 3, 3]],
+        ["recovering latest three", false, [2, 2, 2, 4, 5]],
+        ["fewer than three ratings", false, [2, 2]],
+    ])("switchRecommendation: %s -> recommended %s (#3396)", async (_name, expected, understanding) => {
+        const {projectId} = await setupUserWithKey();
+        const start = await dexieStorage.session.start({project_id: projectId});
+        await rateInOrder(start.session.id, understanding);
+        const rec = await dexieStorage.session.switchRecommendation(start.session.id);
+        expect(rec.recommended).toBe(expected);
+        if (expected) {
+            expect(rec.to_method).toBe("inductive");
+            expect(rec.reason).toContain("[3, 3, 3]");
+        }
+    });
+
     it("end writes a ProgressCommit row when a rating exists", async () => {
         const {projectId} = await setupUserWithKey();
         const start = await dexieStorage.session.start({project_id: projectId});
@@ -807,6 +840,34 @@ describe("session.rate / end / acceptSwitch / switchRecommendation", () => {
         const summary = await dexieStorage.tracking.progress(projectId);
         expect(summary.tracking?.total_sessions).toBe(1);
         expect(summary.tracking?.sessions_per_method.deductive).toBe(1);
+    });
+
+    it("tracking.progress carries the step-evaluation insights of this project only (#3394)", async () => {
+        const {userId, projectId} = await setupUserWithKey();
+        const start = await dexieStorage.session.start({project_id: projectId, lang: "en"});
+        chatReplies.push("Reply one", "Reply two");
+        evalReplies.push(
+            '{"advance":true,"confidence":0.9,"reason":"ok","suggested_step":2}',
+            '{"advance":false,"confidence":0.4,"reason":"not yet","suggested_step":2}',
+        );
+        // The real writer: each learner turn stores one stepEvaluations row.
+        await dexieStorage.session.message(start.session.id, {role: "user", content: "a"});
+        await dexieStorage.session.message(start.session.id, {role: "user", content: "b"});
+        // Another project's evaluations must not leak in.
+        const other = await dexieStorage.users.projects.create(userId, {
+            topic: "Other",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 10,
+        });
+        const otherStart = await dexieStorage.session.start({project_id: other.id, lang: "en"});
+        await dexieStorage.session.message(otherStart.session.id, {role: "user", content: "c"});
+
+        const summary = await dexieStorage.tracking.progress(projectId);
+        expect(summary.step_evaluation?.total_evaluations).toBe(2);
+        expect(summary.step_evaluation?.advance_count).toBe(1);
+        expect(summary.step_evaluation?.repeat_count).toBe(1);
+        expect(summary.step_evaluation?.evaluations_per_step).toEqual({"1": 1, "2": 1});
     });
 
     it("acceptSwitch updates method and writes a MethodSwitch row", async () => {

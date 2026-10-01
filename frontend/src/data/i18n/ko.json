@@ -427,6 +427,7 @@
     "empty_body": "모두 완료했습니다! 이 세트에 복습 예정인 요소가 없습니다.",
     "not_cached_body": "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요.",
     "back_to_dashboard": "대시보드로 돌아가기",
+    "back_to_lesson": "레슨으로 돌아가기",
     "summary": {
       "aria_label": "복습 요약",
       "heading": "복습 완료",
