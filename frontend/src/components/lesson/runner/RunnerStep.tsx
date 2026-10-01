@@ -131,7 +131,7 @@ export default function RunnerStep({
       data-testid={stream ? `${testIdPrefix}-step` : `${testIdPrefix}-step-${step.id}`}
       data-step-type={step.type}
     >
-      {step.title && <h2>{step.title}</h2>}
+      {step.title && <h2 className="wrap-anywhere">{step.title}</h2>}
       {isTheoryStep(step) ? (
         <TheoryBody
           testId={`${testIdPrefix}-theory-body`}

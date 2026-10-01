@@ -9,6 +9,7 @@ import {describe, expect, it, vi} from "vitest";
 import {buildContentTree, type UserFoldInput} from "../../../lib/content/browse/discovery/content-tree";
 import type {ContentSetEntry} from "../../../storage/types";
 import ContentTree, {type FoldedLessonActions} from "./ContentTree";
+import { DexieFeatureWrapper } from "../../../features/testFeatureProvider";
 
 function entry(over: Partial<ContentSetEntry>): ContentSetEntry {
     return {
@@ -71,8 +72,7 @@ function renderTree(folded?: FoldedLessonActions) {
                 onDownload: vi.fn(),
             }}
             folded={folded}
-        />,
-    );
+        />, { wrapper: DexieFeatureWrapper });
 }
 
 describe("ContentTree folding + counts", () => {

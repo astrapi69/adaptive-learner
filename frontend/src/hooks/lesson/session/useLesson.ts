@@ -32,6 +32,8 @@ import {readLearnerState} from "../../../lib/learning/learnerState";
 import {notifyLessonProgressChanged} from "../../../lib/lesson/progress/progress-change-event";
 import {resumeStepIndex} from "../../../lib/lesson/progress/resume-step";
 import {ApiError} from "../../../api/client";
+import {notify} from "../../../utils/notify";
+import {useI18n} from "../../ui/useI18n";
 import {getStorage} from "../../../storage";
 import type {
     ContentLesson,
@@ -137,6 +139,29 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
     // older ``current_step`` land last. A rejected link never blocks the
     // chain; each caller handles its own failure.
     const upsertQueueRef = useRef<Promise<unknown>>(Promise.resolve());
+
+    // #3364 - a failed progress write was swallowed: the learner saw
+    // nothing and assumed it saved. Toast once per lesson run with the
+    // reason (the i18n ``t`` travels through a ref so it never becomes a
+    // callback dependency, see lessons/frontend.md).
+    const {t} = useI18n();
+    const tRef = useRef(t);
+    useEffect(() => {
+        tRef.current = t;
+    }, [t]);
+    const writeFailureReportedRef = useRef(false);
+    const reportWriteFailure = useCallback((err: unknown) => {
+        if (writeFailureReportedRef.current) return;
+        writeFailureReportedRef.current = true;
+        const detail = err instanceof ApiError ? err.detail : err instanceof Error ? err.message : String(err);
+        notify.error(
+            tRef.current(
+                "lesson.progress_io.save_failed",
+                "Your progress in this lesson could not be saved: {detail}",
+            ).replace("{detail}", detail),
+            err instanceof ApiError ? {apiError: err} : undefined,
+        );
+    }, []);
     const upsertSerial = useCallback(
         (body: LessonProgressUpsertBody): Promise<LessonProgress> => {
             if (!userId) {
@@ -158,6 +183,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
     const fetchInitial = useCallback(async () => {
         setStatus("loading");
         setError(null);
+        writeFailureReportedRef.current = false;
         let loadedLesson: ContentLesson | null;
         try {
             loadedLesson = await getStorage().contentLoader.getLesson(
@@ -193,9 +219,20 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                     setId,
                     lessonFilename,
                 );
-            } catch {
-                // Progress is non-fatal — start fresh.
-                loadedProgress = null;
+            } catch (err) {
+                // #3364 - starting fresh here silently threw the saved
+                // position away (the first write then overwrote it).
+                // Stop with the reason instead; "retry" reloads.
+                const detail = err instanceof Error ? err.message : String(err);
+                console.error("[lesson] progress read failed", err);
+                setError(
+                    tRef.current(
+                        "lesson.progress_io.load_failed",
+                        "Your saved progress for this lesson could not be loaded: {detail}",
+                    ).replace("{detail}", detail),
+                );
+                setStatus("error");
+                return;
             }
         }
         setProgress(loadedProgress);
@@ -244,10 +281,11 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             current_step: currentStepIndex,
         })
             .then((updated) => setProgress(updated))
-            .catch(() => {
-                // Non-fatal: the next step change (or any other write)
-                // carries the position again.
+            .catch((err: unknown) => {
+                // The next step change (or any other write) carries the
+                // position again; the learner is told once (#3364).
                 persistedStepRef.current = null;
+                reportWriteFailure(err);
             });
     }, [
         status,
@@ -259,6 +297,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         setId,
         lessonFilename,
         upsertSerial,
+        reportWriteFailure,
     ]);
 
     useEffect(() => {
@@ -304,11 +343,20 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         [lesson, goToStep],
     );
 
+    // #3364 - study time consumed by a write that then failed. The next
+    // write carries it, so a failed autosave no longer loses its time.
+    const pendingSecondsRef = useRef(0);
     const _consumeStepTime = useCallback((): number => {
         const now = performance.now();
         const elapsedMs = now - stepEntryTimeRef.current;
         stepEntryTimeRef.current = now;
-        return Math.max(0, Math.round(elapsedMs / 1000));
+        const seconds = Math.max(0, Math.round(elapsedMs / 1000)) + pendingSecondsRef.current;
+        pendingSecondsRef.current = 0;
+        return seconds;
+    }, []);
+    /** Hand the seconds of a failed write back to the next one. */
+    const _returnStepTime = useCallback((seconds: number) => {
+        pendingSecondsRef.current += seconds;
     }, []);
 
     const recordStepResult = useCallback(
@@ -327,9 +375,11 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                 });
                 setProgress(updated);
             } catch (err) {
-                // Persistence failures are non-fatal — the
-                // viewer keeps working with in-memory state;
-                // the user can retry on the next step.
+                // The viewer keeps working with in-memory state; the
+                // time goes to the next write and the learner is told
+                // once (#3364).
+                _returnStepTime(timeDelta);
+                reportWriteFailure(err);
                 setError(
                     err instanceof Error ? err.message : String(err),
                 );
@@ -342,6 +392,8 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             lessonFilename,
             lesson,
             _consumeStepTime,
+            _returnStepTime,
+            reportWriteFailure,
             upsertSerial,
         ],
     );
@@ -367,6 +419,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             });
             setProgress(updated);
         } catch (err) {
+            _returnStepTime(timeDelta);
             setError(err instanceof Error ? err.message : String(err));
             // #1787 — rethrow so the summary click handler can toast:
             // on the summary screen the hook's error state is never
@@ -381,6 +434,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         lessonFilename,
         lesson,
         _consumeStepTime,
+        _returnStepTime,
         upsertSerial,
     ]);
 
@@ -411,6 +465,8 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                 persistedStepRef.current = updated.current_step ?? null;
                 setProgress(updated);
             } catch (err) {
+                _returnStepTime(timeDelta);
+                reportWriteFailure(err);
                 setError(
                     err instanceof Error ? err.message : String(err),
                 );
@@ -423,6 +479,8 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             lessonFilename,
             lesson,
             _consumeStepTime,
+            _returnStepTime,
+            reportWriteFailure,
             upsertSerial,
         ],
     );
@@ -461,11 +519,23 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                 time_spent_seconds_delta: delta,
                 current_step: currentStepIndexRef.current,
             });
-        } catch {
-            // Non-fatal — next interval or step-result write will
-            // pick up the accumulated time.
+        } catch (err) {
+            // The next interval or step-result write carries the time
+            // (#3364: it used to be consumed and lost here).
+            _returnStepTime(delta);
+            reportWriteFailure(err);
         }
-    }, [userId, source, setId, lessonFilename, lesson, _consumeStepTime, upsertSerial]);
+    }, [
+        userId,
+        source,
+        setId,
+        lessonFilename,
+        lesson,
+        _consumeStepTime,
+        _returnStepTime,
+        reportWriteFailure,
+        upsertSerial,
+    ]);
 
     return {
         status,

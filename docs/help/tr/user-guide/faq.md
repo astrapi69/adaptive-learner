@@ -11,7 +11,7 @@ bu tarayıcı profiline erişimi olan herkes okuyabilir.
 
 **Sunucu modunda** veriler, FastAPI arka ucunun yönettiği SQLite
 veritabanında bulunur. API anahtarları, `ADAPTIVE_LEARNER_SECRET_KEY`
-ortam değişkeni aracılığıyla ya da `~/.config/adaptive-learner/secrets.yaml`
+ortam değişkeni aracılığıyla ya da `~/.config/adaptive_learner/secrets.yaml`
 içindeki `secret_key:` ile belirlediğiniz bir sır kullanılarak Fernet ile
 dinlenme sırasında şifrelenir.
 
@@ -29,7 +29,7 @@ başlamak için yeterlidir.
 
 Anahtarı koyabileceğiniz üç yer (en yüksek öncelik kazanır):
 `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` ortam değişkeni,
-`~/.config/adaptive-learner/secrets.yaml` içindeki
+`~/.config/adaptive_learner/secrets.yaml` içindeki
 `ai.<provider>.api_key` alanı ya da Ayarlar arayüzü. Arayüz her sağlayıcı
 için kaynağı gösterir, böylece anahtarınızın nereden geldiğini her zaman
 bilirsiniz.

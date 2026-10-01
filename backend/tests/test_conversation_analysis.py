@@ -10,6 +10,9 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
+from app.exceptions import ExternalServiceError
 from app.services.conversation_analysis import (
     LANGUAGE_NAMES,
     Message,
@@ -191,17 +194,24 @@ def test_analyze_conversation_happy_path_with_fake_ai():
     assert result.get("fallback_used") is None
 
 
-def test_analyze_conversation_falls_back_on_provider_exception():
-    def angry_provider(messages):
-        raise RuntimeError("provider went away")
+@pytest.mark.parametrize(
+    "error",
+    [RuntimeError("provider went away"), ExternalServiceError("anthropic", "HTTP 401")],
+    ids=["plain-exception", "external-service-error"],
+)
+def test_analyze_conversation_raises_on_provider_exception(error: Exception) -> None:
+    """#3392 - a provider failure is a failed analysis, not an unparseable
+    reply: it raises instead of returning a fallback with the raw text."""
 
-    result = analyze_conversation_with_ai(
-        [Message("user", "x"), Message("assistant", "y")],
-        ai_complete_call=angry_provider,
-        title="Boom",
-    )
-    assert result["fallback_used"] is True
-    assert "provider went away" in result["summary"]
+    def angry_provider(messages):
+        raise error
+
+    with pytest.raises(ExternalServiceError):
+        analyze_conversation_with_ai(
+            [Message("user", "x"), Message("assistant", "y")],
+            ai_complete_call=angry_provider,
+            title="Boom",
+        )
 
 
 def test_analyze_conversation_falls_back_on_unparseable_response():

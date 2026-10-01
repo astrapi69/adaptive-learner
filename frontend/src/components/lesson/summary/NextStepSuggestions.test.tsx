@@ -251,7 +251,7 @@ describe("NextStepSuggestions", () => {
         expect(card).toHaveTextContent("12 elements due");
         expect(screen.getByTestId("next-step-cta-review")).toHaveAttribute(
             "href",
-            "/review/fr-a1",
+            expect.stringMatching(/^\/review\/fr-a1\?from=%2F/),
         );
     });
 

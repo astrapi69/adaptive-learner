@@ -57,3 +57,15 @@ export function DerivedFeatureProvider({ children }: { children: ReactNode }) {
     </FeatureProvider>
   );
 }
+
+/**
+ * RTL ``wrapper`` for browser-mode component tests (#3398): the real registry
+ * in Dexie mode with a key, so browser-only features (share as repository,
+ * registry PR) are active the way the tested surfaces expect.
+ *
+ * @example
+ * render(<UserSetActions {...props} />, { wrapper: DexieFeatureWrapper });
+ */
+export function DexieFeatureWrapper({ children }: { children: ReactNode }) {
+  return <TestFeatureProvider context={{ mode: "dexie", hasAiKey: true }}>{children}</TestFeatureProvider>;
+}

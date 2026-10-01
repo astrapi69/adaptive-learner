@@ -97,7 +97,21 @@ if not CONFIG_PATH.exists() and CONFIG_EXAMPLE_PATH.exists():
 DEBUG = os.getenv("ADAPTIVE_LEARNER_DEBUG", "false").lower() in ("true", "1", "yes")
 
 
-manager = PluginManager(
+class AdaptiveLearnerPluginManager(PluginManager):
+    """PluginManager whose plugin configs include the user overlay.
+
+    PluginForge loads a plugin's config only from ``backend/config/plugins``
+    at activation, so values saved in Settings (user overlay) were lost on
+    restart (#3370). Overriding the public ``get_plugin_config`` hands every
+    plugin the same merged config the Settings endpoint shows.
+    """
+
+    def get_plugin_config(self, plugin_name: str) -> dict[str, Any]:
+        """Bundled defaults merged with the user overlay (#3370)."""
+        return config_overlay.read_plugin_config_merged(plugin_name)
+
+
+manager = AdaptiveLearnerPluginManager(
     config_path=str(CONFIG_PATH),
     api_version="1",
     # pluginforge v0.7.0+ identity gating. Plugins declare a
@@ -314,17 +328,31 @@ async def adaptive_learner_error_handler(request: Request, exc: AdaptiveLearnerE
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    """Map any non-domain exception to a 500.
+
+    Outside DEBUG the body never carries ``str(exc)`` (#3386): for a
+    SQLAlchemy error that text holds the SQL and the bound parameter
+    values, which then reached toasts and "Report issue" bodies. A short
+    reference in the body and in the log line ties the two together.
+    """
+    import secrets
     import traceback
 
+    reference = secrets.token_hex(4)
     logger.error(
-        "Unhandled error: %s %s -> %s",
+        "Unhandled error [ref %s]: %s %s -> %s",
+        reference,
         request.method,
         request.url.path,
         str(exc),
         exc_info=True,
     )
-    detail: dict[str, Any] = {"detail": str(exc)}
+    detail: dict[str, Any] = {
+        "detail": f"Internal server error (reference {reference}).",
+        "reference": reference,
+    }
     if DEBUG:
+        detail["detail"] = str(exc)
         detail["stacktrace"] = traceback.format_exc()
         detail["endpoint"] = request.url.path
         detail["method"] = request.method

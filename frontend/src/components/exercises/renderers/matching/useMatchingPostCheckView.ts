@@ -1,5 +1,5 @@
 /**
- * useMatchingPostCheckView (#824 / #977 / #3186).
+ * useMatchingPostCheckView (#824 / #977 / #3186 / #3505).
  *
  * The post-check view state of the matching exercise, extracted from
  * MatchingExercise for the complexity gate. After the answer is checked
@@ -14,6 +14,9 @@ import {useRef, useState} from "react";
 
 import {useMatchingSeparateCorrections} from "../../../../hooks/settings/useMatchingSeparateCorrections";
 import type {MatchingPostCheckView} from "./MatchingViewToggle";
+
+/** The view a check opens on (#3505; was "user-answers" since #3186). */
+const INITIAL_VIEW: MatchingPostCheckView = "corrections";
 
 export interface MatchingPostCheckViewState {
     /** The active view (never "corrections" in the two-view layout). */
@@ -30,7 +33,7 @@ export interface MatchingPostCheckViewState {
     /** Undefined in the two-view layout, so the toggle hides the button. */
     showCorrections: (() => void) | undefined;
     showSolution: () => void;
-    /** Back to the "My answers" view, animation re-armed (Try again). */
+    /** Back to the initial view, animation re-armed (Try again). */
     resetView: () => void;
 }
 
@@ -40,8 +43,12 @@ export interface MatchingPostCheckViewState {
 export function useMatchingPostCheckView(
     showAnswerToggle: boolean,
 ): MatchingPostCheckViewState {
+    // #3505: a check with mistakes opens on the corrections, the moment the
+    // learner most needs them; "My answers" and "Solve" stay one click away.
+    // In the two-view layout this resolves to "My answers" below, which then
+    // carries the corrections inline.
     const [selectedView, setView] = useState<MatchingPostCheckView>(
-        "user-answers",
+        INITIAL_VIEW,
     );
     // Settings > Learning "Corrections as a separate view" (default on).
     // Off = the #977 two-view toggle with the corrections inline.
@@ -90,7 +97,7 @@ export function useMatchingPostCheckView(
             : undefined,
         showSolution,
         resetView: () => {
-            setView("user-answers");
+            setView(INITIAL_VIEW);
             solutionShownRef.current = false;
             setAnimateSolution(false);
         },

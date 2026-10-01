@@ -111,10 +111,10 @@ export const dexieUsers: IStorageService["users"] = {
       // Pick the user's currently-active project; fall back to
       // the most-recent project when no row is marked active
       // (legacy seed data, partial imports, etc.).
-      const projects = await db.learningProjects
-        .where("user_id")
-        .equals(user.id)
-        .toArray();
+      // The content pseudo-project (#3375) is never the learner's project.
+      const projects = (
+        await db.learningProjects.where("user_id").equals(user.id).toArray()
+      ).filter((p) => (p.kind ?? "standard") === "standard");
       const active = projects.find((p) => p.active) ?? null;
       const fallback = projects
         .slice()
