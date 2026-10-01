@@ -440,6 +440,15 @@ Requires domain knowledge. Not automatable.
       graded correct (the tolerance applies to typed answers only). Review:
       the same exercise in a review session, pick the wrong option -> wrong;
       the exercise is NOT marked mastered afterwards.
+- [ ] TC-0925 Free text with case (learn-content-engine#242): only exercises that ask
+      for it grade case. In the set English A1 (for German speakers),
+      lesson 03 "Artikel und Pronomen", open the exercise "Übersetze 'Ich
+      bin Anna.' (Achte auf das große 'I'!)" and type `i am Anna` -> wrong,
+      with the "Almost!" hint and the
+      solution `I am Anna`. `I am Ana` (one typo, right capitals) ->
+      correct. `I am Anna` -> correct. Counter-check: answer another free
+      text exercise without that requirement all in lower case -> still
+      correct.
 - [ ] TC-0124 Picture Choice: tiles SAME height
 - [ ] TC-0125 Answer order shuffled (#2317): open a picture_choice exercise across
       several lessons - the correct tile is NOT always in the same slot
