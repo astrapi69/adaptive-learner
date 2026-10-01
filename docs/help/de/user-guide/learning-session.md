@@ -64,8 +64,8 @@ Beschriftung im Chat-Verlauf.
 KI-Antwort liest sie laut vor; ein Mikrofon-Knopf (🎤) am
 Eingabefeld lässt dich diktieren; Zwischen-Transkripte
 füllen das Textarea, sodass du vor dem Absenden noch
-lesen kannst. Beides Web Speech API; in den Einstellungen
-unter Stimme an/abschaltbar.
+lesen kannst. Beides Web Speech API; an- und abschaltbar unter
+Einstellungen > Lernen > Vorlesen und Diktieren.
 
 ## Zyklus-Fortschrittsanzeige
 

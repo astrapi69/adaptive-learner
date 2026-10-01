@@ -46,8 +46,8 @@ The full token reference is in
 2. Set all 44 canonical tokens (parity is mandatory).
 3. Mind **WCAG AA contrast** - `contrast.test.ts` checks all
    themes computationally.
-4. Register the theme; the picker under Settings → Appearance
-   picks it up.
+4. Register the theme; the picker under Settings > General >
+   Appearance picks it up.
 
 If a new feature needs a new color: **add a token**, not a
 literal. If it varies by theme, add it to all `theme-*.css`; if it

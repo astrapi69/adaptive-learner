@@ -69,7 +69,8 @@ pass through unchanged.
 
 ## Exports
 
-Three export types via Settings → Export, all identical in
+Three export types via Settings > Data > Backup and export >
+Export, all identical in
 shape across storage modes:
 
 - **Progress Report** - the full Progress page packaged into
