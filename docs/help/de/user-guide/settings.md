@@ -62,19 +62,22 @@ Auswahl und gekaufte Rahmen bleiben erhalten und wandern mit ins
 
 ## Darstellung
 
-Der **Farbschema**-Picker unter *Allgemein > Darstellung* bietet
-sechs Themes plus einen automatischen Modus:
+Der **Farbschema**-Picker unter *Allgemein > Darstellung* ordnet die
+Themes in zwei Tabs:
 
-- **Hell** - der Standard, hell und kontrastreich.
-- **Dunkel** - gedämpfte Flächen für die Nutzung bei wenig Licht.
-- **Ozean** - tiefe Blautöne, ruhig und nachts augenschonend.
-- **Wald** - warme Grün- und Bernsteintöne, erdig.
-- **Hoher Kontrast** - barrierefreiheit zuerst: Schwarz, Weiß und
-  kräftige Signalfarben mit klaren Kartenrändern. Für maximale
-  Lesbarkeit.
-- **Sepia** - warme Papiertöne, angenehm beim langen Lesen.
-- **Automatisch (System)** - folgt der Hell-/Dunkel-Einstellung deines
-  Betriebssystems und wechselt automatisch mit.
+- **Empfohlen** - Catppuccin Latte, Supabase und Graphite (hell),
+  Catppuccin Mocha, **Soft Pop** und Amethyst Haze (dunkel). Neue
+  Nutzer starten mit **Soft Pop**, und der Picker öffnet auf diesem
+  Tab.
+- **Klassisch** - die ursprünglichen Themes: Hell, Dunkel, Ozean,
+  Wald, Hoher Kontrast (Schwarz, Weiß und kräftige Signalfarben mit
+  klaren Kartenrändern, für maximale Lesbarkeit) und Sepia (warme
+  Papiertöne für langes Lesen). Ist dein aktives Theme ein
+  klassisches, öffnet der Picker stattdessen auf diesem Tab.
+
+Beide Tabs bieten außerdem **Automatisch (System)**, das der
+Hell-/Dunkel-Einstellung deines Betriebssystems folgt und automatisch
+mitwechselt.
 
 Wähle ein Theme über seine Vorschaukarte; die Änderung greift sofort
 ohne Neuladen und deine Wahl wird über Besuche hinweg gemerkt. Jedes

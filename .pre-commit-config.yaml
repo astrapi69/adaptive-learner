@@ -94,7 +94,7 @@ repos:
         language: python
         additional_dependencies: ["pyyaml>=6"]
         pass_filenames: false
-        files: ^backend/config/i18n/(de|el|hi)\.yaml$
+        files: ^backend/config/(i18n/(de|el|hi)|help/[a-z]+\.de)\.yaml$
         stages: [pre-commit]
 
       - id: docs-hygiene
