@@ -5151,6 +5151,17 @@
             "title": "Domain",
             "type": "string"
           },
+          "downloaded_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Downloaded At"
+          },
           "id": {
             "title": "Id",
             "type": "string"
