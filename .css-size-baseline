@@ -372,4 +372,7 @@
 # svg.lucide { flex-shrink: 0 }: ein SVG als Flex-Item darf auf 0
 # schrumpfen, ein umbrechendes Label quetschte die Icons. Eine Regel
 # statt shrink-0 an 427 Icon-Stellen; Utilities gewinnen weiter.
-7508
+# 2026-09-30 (#3404): -11 Zeilen in 24-lesson-mode-nav.css - die mobilen
+# .spaced-rec-card/-actions-Regeln geloescht, die Karten tragen ihr Layout
+# jetzt als token-backed Utilities an der Komponente. Kein neues CSS.
+7497

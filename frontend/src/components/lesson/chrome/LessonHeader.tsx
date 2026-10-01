@@ -126,7 +126,7 @@ export default function LessonHeader({
         {lesson.title}
       </h1>
       {lesson.contributed_by && (
-        <p className="lesson-credit" data-testid="lesson-credit">
+        <p className="lesson-credit m-0 text-xs text-fg-muted" data-testid="lesson-credit">
           {t("lesson.contributed_by", "Contributed by {name}").replace(
             "{name}",
             lesson.contributed_by,

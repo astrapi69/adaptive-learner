@@ -106,11 +106,12 @@ export default function SpacedRecommendations({cards}: Props) {
     };
 
     return (
-        <ul className="spaced-recs flex flex-col gap-2" data-testid="spaced-recs">
+        <ul className="spaced-recs m-0 flex list-none flex-col gap-2 p-0" data-testid="spaced-recs">
             {visible.map((card) => (
+                // #3404 - the card had only mobile overrides, no base style.
                 <li
                     key={card.id}
-                    className="spaced-rec-card"
+                    className="flex items-center justify-between gap-3 rounded-app border border-border bg-card p-3 max-md:flex-col max-md:items-stretch max-md:gap-2"
                     data-testid={`spaced-rec-${card.id}`}
                 >
                     <div className="spaced-rec-body flex flex-col gap-1">
@@ -123,7 +124,7 @@ export default function SpacedRecommendations({cards}: Props) {
                             <strong>{card.interval_days}d</strong>
                         </p>
                     </div>
-                    <div className="spaced-rec-actions">
+                    <div className="flex shrink-0 flex-row gap-2">
                         <Button
                             type="button"
                             data-testid={`spaced-rec-start-${card.id}`}
