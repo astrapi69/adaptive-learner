@@ -761,3 +761,36 @@ class TestLessonRead:
             "01-a.json",
             "02-b.json",
         ]
+
+
+# --- #3418: download time in API mode -----------------------------------
+
+
+async def test_cached_set_reports_when_its_version_was_downloaded(tmp_path: Path) -> None:
+    """#3418: API mode lists ``downloaded_at`` for a cached set, the time its
+    current version landed (the manifest is written last by ``store_set``), so
+    "freshly downloaded first" orders the same way as in Dexie mode."""
+    import os
+
+    from adaptive_learner_content_loader.cache import cache_path_for_set, store_set
+
+    store_set(
+        tmp_path,
+        SOURCE,
+        SET_ID,
+        "1.0.0",
+        manifest_yaml=REPO_MANIFEST,
+        lessons={"01-greetings.json": _make_lesson("01", "G")},
+    )
+    manifest = cache_path_for_set(tmp_path, SOURCE, SET_ID, "1.0.0") / "manifest.yaml"
+    os.utime(manifest, (1_790_000_000, 1_790_000_000))
+
+    service = ContentLoaderService(cache_root=tmp_path, sources=[])
+    entries = await service.list_sets()
+    assert entries[0].downloaded_at == "2026-09-21T14:13:20Z"
+
+
+def test_set_entry_without_a_cached_version_has_no_download_time() -> None:
+    entry = _set_entry(SOURCE, SET_ID, "1.0.0")
+    assert entry.cached_version is None
+    assert entry.downloaded_at is None

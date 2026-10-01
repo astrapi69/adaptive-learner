@@ -58,7 +58,7 @@ düğmesi, Kaldır düğmesi, aktif sağlayıcı rozeti, artı yeni
   şifrelemeli (Sunucu modu) veya IndexedDB'de açık metin (Yerel
   mod) olarak saklanır. Serbestçe Kaydet / Kaldır yapabilirsiniz.
 - **Anahtar kaynağı: secrets.yaml** - anahtar
-  `~/.config/adaptive-learner/secrets.yaml` dosyasında yapılandırılmıştır.
+  `~/.config/adaptive_learner/secrets.yaml` dosyasında yapılandırılmıştır.
   Kaydet düğmesi devre dışı; değiştirmek için dosyayı doğrudan
   düzenleyin. Satırın altında bir bilgi pankartı yolu hatırlatır.
 - **Anahtar kaynağı: ortam** - anahtar
