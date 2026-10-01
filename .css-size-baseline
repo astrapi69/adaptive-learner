@@ -375,4 +375,9 @@
 # 2026-09-30 (#3404): -11 Zeilen in 24-lesson-mode-nav.css - die mobilen
 # .spaced-rec-card/-actions-Regeln geloescht, die Karten tragen ihr Layout
 # jetzt als token-backed Utilities an der Komponente. Kein neues CSS.
-7497
+# 2026-10-01 (#3355): +3 Zeilen in 24-lesson-mode-nav.css - die
+# Drawer-Regeln (Hamburger, Ausklapp-Links) stehen jetzt in einem eigenen
+# @media (max-width: 1279px)-Block statt im 768px-Block, weil die einzeilige
+# Kopfleiste unter xl nicht passt. Oeffner, Schliesser und ein Verweis-
+# kommentar; keine neue Regel, nur der Breakpoint wandert.
+7500

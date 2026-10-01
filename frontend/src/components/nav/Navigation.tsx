@@ -27,14 +27,14 @@ import { isDarkTheme } from "../../lib/theme/themes";
 
 /**
  * The media conditions under which the top bar collapses behind the
- * hamburger drawer (#1390). Mirrors the two global.css blocks that style the
- * drawer: the mobile breakpoint (``max-width: 768px`` — the established
- * top-bar collapse boundary) and the
- * short-landscape phone case. Lesson-compact mode ORs in separately via
+ * hamburger drawer (#1390). Mirrors the two CSS blocks that style the
+ * drawer (``styles/legacy/24-lesson-mode-nav.css``): everything below ``xl``
+ * (``max-width: 1279px``; the single-row bar does not fit below about
+ * 1250 px, #3355) and the short-landscape phone case. Lesson-compact mode ORs in separately via
  * ``useIsLessonActive`` (any width). Keep in sync with global.css.
  */
 export const COMPACT_NAV_MEDIA_QUERY =
-  "(max-width: 768px), (orientation: landscape) and (max-height: 600px)";
+  "(max-width: 1279px), (orientation: landscape) and (max-height: 600px)";
 
 /**
  * Top navigation bar. Rendered on every authenticated page
@@ -190,17 +190,17 @@ export default function Navigation() {
                 the right-hand cluster), reverts to left-aligned and
                 natural width from md up. #3339: from md up it is also
                 the one item that yields when the single-row bar runs
-                out of room (`md:flex-initial` + the name's
-                `md:truncate`); the status badges beside it never
+                out of room (`xl:flex-initial` + the name's
+                `xl:truncate`); the status badges beside it never
                 shrink, so a crowded bar shortens the brand word instead
-                of squeezing a badge to a sliver. `md:min-w-7` (the
+                of squeezing a badge to a sliver. `xl:min-w-7` (the
                 28px logo) keeps the logo whole when the word is gone;
                 it is no wider than the logo so the logo-only states
                 (lesson-compact, short landscape) keep their width.
                 With room to spare nothing changes. */}
       <NavLink
         to="/dashboard"
-        className="nav-brand flex-1 justify-center md:flex-initial md:min-w-7 md:justify-start"
+        className="nav-brand flex-1 justify-center xl:flex-initial xl:min-w-7 xl:justify-start"
         // #622 — the brand word (`.nav-brand-name`) is `display:none` in
         // the lesson-compact nav, which left the brand link with only the
         // decorative (aria-hidden, empty-alt) logo and no accessible name
@@ -221,7 +221,7 @@ export default function Navigation() {
           // flex-squeezed link squeeze its image).
           className="shrink-0"
         />
-        <span className="nav-brand-name md:truncate">
+        <span className="nav-brand-name xl:truncate">
           {t("app.name", "Adaptive Learner")}
         </span>
       </NavLink>
@@ -323,7 +323,7 @@ export default function Navigation() {
           single-row layout (the children stay direct flex items of the
           nav, as before). */}
       <div
-        className="flex min-w-0 flex-wrap items-center justify-end gap-[inherit] md:contents"
+        className="flex min-w-0 flex-wrap items-center justify-end gap-[inherit] xl:contents"
         data-testid="nav-status"
       >
         <NavReviewsBadge />
