@@ -122,7 +122,7 @@ statuts HTTP.
 
 ## Thèmes
 
-Six thèmes CSS auto-contenus dans `frontend/src/styles/themes/theme-*.css`,
+Des thèmes CSS auto-contenus dans `frontend/src/styles/themes/theme-*.css`,
 plus un mode `auto` qui suit le système d'exploitation. Chaque thème définit
 le jeu complet de tokens sémantiques - aucune dépendance entre thèmes.
 
