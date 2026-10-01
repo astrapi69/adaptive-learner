@@ -498,6 +498,21 @@ describe("validateSetForSharing", () => {
     expect(codes(greek, [l])).toContain("back_language_mismatch");
   });
 
+  // #3383 - the script check is the engine's W-CARD-BACK-SCRIPT (CLDR
+  // likely-script for any language), not a hand-kept table of six.
+  it.each([
+    { name: "a Ukrainian source with Latin backs", source: "uk", back: "the house", flagged: true },
+    { name: "a Hebrew source with Latin backs", source: "he", back: "the house", flagged: true },
+    { name: "a Greek source with a back of digits only", source: "el", back: "42", flagged: false },
+    { name: "a Korean source with a Han back", source: "ko", back: "學校", flagged: false },
+    { name: "a Greek source with a Greek back", source: "el", back: "το σπίτι", flagged: false },
+  ])("$name: back_language_mismatch is $flagged", ({ source, back, flagged }) => {
+    const meta: ValidationMeta = { ...META, source_language: source };
+    const l = goodLesson();
+    for (const card of l.cards) card.back = back;
+    expect(codes(meta, [l]).includes("back_language_mismatch")).toBe(flagged);
+  });
+
   it("does not flag Latin-script source backs (de can't be told from en)", () => {
     expect(codes(META, [goodLesson()])).not.toContain("back_language_mismatch");
   });

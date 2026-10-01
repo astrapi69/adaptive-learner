@@ -2419,10 +2419,14 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0492 Passen die Abzeichen nicht mehr neben Menü-Knopf und Logo, brechen
       sie rechtsbündig in eine zweite Zeile um; nichts wird abgeschnitten,
       die Seite scrollt nicht seitlich
-- [ ] TC-0493 Tablet und Desktop: Kopfzeile einzeilig, auch bei 1280 px mit
+- [ ] TC-0493 Desktop ab 1280 px: Kopfzeile einzeilig, auch bei 1280 px mit
       fälligen Wiederholungen (#3339): beide Abzeichen-Symbole in voller
       Größe, die XP-Anzeige zweizeilig ("Stufe 2" / "100 XP"). Unter
       1536 px zeigen die Abzeichen nur die Zahl, ab 1536 px den vollen Text
+- [ ] TC-0924 Tablet und schmaler Laptop (zwischen 769 und 1279 px, z. B. 1024 px
+      oder iPad quer, #3355): oben Menü-Knopf statt Link-Leiste; das Menü
+      öffnet die Navigation als Ausklapp-Liste, nichts ragt über den
+      rechten Rand, die Seite scrollt nicht seitlich
 
 ### TS-0065 Schrittwechsel am Telefon: Anker oben, Fusszeile unten (#3126)
 - [ ] TC-0494 iPhone (Safari oder PWA): eine Lektion mit einem langen

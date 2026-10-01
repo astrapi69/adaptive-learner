@@ -144,20 +144,9 @@
 /* --- Lesson-mode mobile polish (9A/9C) ------------------------- */
 @layer legacy { /* EXP-044 (#1592), continued: utilities must win over this block */
 
-@media (max-width: 768px) {
+@media (max-width: 1279px) {
   /* ----- Navigation: hamburger-controlled drawer -------------- */
-
-  /* #759 — the right-hand indicator cluster (reviews + two-line XP
-     badge + avatar + theme toggle) plus the hamburger overflowed the
-     375px viewport by a few px once the two-line XP badge (German
-     "100 XP insgesamt") widened the row. Tighten the nav gap +
-     horizontal padding at mobile so the cluster fits without hiding
-     anything; pinned by the no-horizontal-scroll @375px gate. */
-  .app-nav {
-    gap: var(--space-3);
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
-  }
+  /* Below xl, #3355; = COMPACT_NAV_MEDIA_QUERY (Navigation.tsx). */
 
   .nav-hamburger {
     display: inline-flex;
@@ -207,6 +196,20 @@
     width: 2.75rem;
     height: 2.75rem;
     margin-left: var(--space-2);
+  }
+}
+
+@media (max-width: 768px) {
+  /* #759 — the right-hand indicator cluster (reviews + two-line XP
+     badge + avatar + theme toggle) plus the hamburger overflowed the
+     375px viewport by a few px once the two-line XP badge (German
+     "100 XP insgesamt") widened the row. Tighten the nav gap +
+     horizontal padding at mobile so the cluster fits without hiding
+     anything; pinned by the no-horizontal-scroll @375px gate. */
+  .app-nav {
+    gap: var(--space-3);
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
   }
 
   /* (The former generic mobile 44px button rule is gone: the shadcn

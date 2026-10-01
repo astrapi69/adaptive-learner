@@ -297,7 +297,7 @@ describe("Navigation: phone header keeps the menu button + logo (#3123)", () => 
     // happy-dom runs no layout, so the flex contract is pinned on the
     // classes that carry it: the hamburger and the logo never shrink, and
     // the right-hand status cluster is the wrapping, shrinkable group
-    // (display:contents from md up, so the desktop row is untouched).
+    // (display:contents from xl up, #3355, so the desktop row is untouched).
     it("marks the hamburger and the brand logo as non-shrinking flex items", () => {
         renderAt("/dashboard");
         expect(screen.getByTestId("nav-hamburger").className).toContain("shrink-0");
@@ -309,7 +309,7 @@ describe("Navigation: phone header keeps the menu button + logo (#3123)", () => 
     it("groups the badges, avatar and theme toggle in a wrapping status cluster", () => {
         renderAt("/dashboard");
         const cluster = screen.getByTestId("nav-status");
-        for (const cls of ["flex", "flex-wrap", "min-w-0", "justify-end", "md:contents"]) {
+        for (const cls of ["flex", "flex-wrap", "min-w-0", "justify-end", "xl:contents"]) {
             expect(cluster.className).toContain(cls);
         }
         // The theme toggle lives INSIDE the cluster and the cluster closes
@@ -331,19 +331,19 @@ describe("Navigation: desktop bar keeps the badges whole (#3339)", () => {
     // icons became slivers and the XP badge wrapped onto four lines. The
     // contract (layout itself is measured by the FeatureShot
     // ``nav-badges/dashboard``): the status items never shrink, and the
-    // brand word is the one item that yields (it truncates from md up).
-    it("keeps the theme toggle at full size and lets the brand word yield from md up", () => {
+    // brand word is the one item that yields (it truncates from xl up, #3355).
+    it("keeps the theme toggle at full size and lets the brand word yield from xl up", () => {
         renderAt("/dashboard");
         expect(screen.getByTestId("nav-theme-toggle").className).toContain("shrink-0");
         const brand = screen.getByTestId("app-nav").querySelector<HTMLElement>(".nav-brand")!;
         // The link may shrink down to the logo, never below. Not logo + gap:
         // where the word is display:none (lesson-compact, short landscape)
         // a gap-sized floor widened the link and moved every item after it.
-        expect(brand.className).toContain("md:min-w-7");
+        expect(brand.className).toContain("xl:min-w-7");
         expect(brand.className).not.toContain("md:min-w-9");
-        expect(brand.className).toContain("md:flex-initial");
+        expect(brand.className).toContain("xl:flex-initial");
         expect(brand.className).not.toContain("md:flex-none");
         const brandName = brand.querySelector<HTMLElement>(".nav-brand-name")!;
-        expect(brandName.className).toContain("md:truncate");
+        expect(brandName.className).toContain("xl:truncate");
     });
 });

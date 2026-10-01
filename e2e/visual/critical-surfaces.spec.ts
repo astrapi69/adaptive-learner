@@ -31,7 +31,10 @@ import {expect, test} from "@playwright/test";
 
 import {
     SURFACE_NAMES,
+    DEFAULT_VIEWPORTS,
+    LAPTOP_SURFACES,
     VIEWPORTS,
+    type SurfaceName,
     type ViewportName,
     assertSurfaceStillReady,
     expandViewportToDocument,
@@ -44,10 +47,13 @@ import {
     surfaceMasks,
 } from "./helpers";
 
-const VIEWPORT_NAMES = Object.keys(VIEWPORTS) as ViewportName[];
+/** The viewports a surface renders at: the matrix, plus laptop for a few. */
+function viewportsFor(surface: SurfaceName): readonly ViewportName[] {
+    return LAPTOP_SURFACES.has(surface) ? [...DEFAULT_VIEWPORTS, "laptop"] : DEFAULT_VIEWPORTS;
+}
 
 for (const surface of SURFACE_NAMES) {
-    for (const viewport of VIEWPORT_NAMES) {
+    for (const viewport of viewportsFor(surface)) {
         test(`${surface} renders correctly at ${viewport}`, async ({page}) => {
             await page.setViewportSize(VIEWPORTS[viewport]);
             // Determinism: freeze the clock, pin the default theme, and pin
