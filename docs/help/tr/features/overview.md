@@ -11,8 +11,8 @@ listenin kendi kopyalarını tutmak yerine buraya bağlantı verir.
 - **Altı öğrenme yöntemi** (tümdengelimsel, tümevarımsal, hataya
   dayalı, diyaloğa dayalı, bağlamsal, YZ-uyarlanır), her yöntem ve
   adım için özel yapay zeka istemleriyle.
-- **Yedi adımlı oturum döngüsü**: girdi, odak, deneme, geri bildirim,
-  iyileştirme, transfer, entegrasyon. Çift istemli bir değerlendirici
+- **Yedi adımlı oturum döngüsü**: girdi, deneme, hata, geri bildirim,
+  uyarlama, tekrar, bütünleştirme. Çift istemli bir değerlendirici
   her turu değerlendirir ve ilerleme, tekrar, ileri atlama ya da geri
   dönme kararını verir.
 - **Otomatik döngü**: bir konu entegre edildiğinde oturum yeni bir

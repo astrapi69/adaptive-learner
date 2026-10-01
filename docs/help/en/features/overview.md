@@ -10,8 +10,8 @@ of this list.
 
 - **Six learning methods** (deductive, inductive, error-based, dialogic,
   contextual, AI-adaptive) with bespoke AI prompts per method and step.
-- **Seven-step session cycle**: input, focus, attempt, feedback, refine,
-  transfer, integrate. A dual-prompt evaluator judges every turn and
+- **Seven-step session cycle**: input, attempt, error, feedback, adapt,
+  repeat, integrate. A dual-prompt evaluator judges every turn and
   decides whether to advance, repeat, skip ahead, or step back.
 - **Auto-loop**: when a topic is integrated, the session picks a new
   subtopic and starts a fresh cycle (capped per session).

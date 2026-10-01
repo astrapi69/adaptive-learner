@@ -18,7 +18,8 @@ What this means in practice depends on how you run Adaptive Learner:
   browser. They are **not** affected by a port change - the app finds
   them again automatically on the new address.
 - **Browser storage mode** (the option you can turn on in
-  *Settings > Data*, and the mode the public web version uses). Your
+  *Settings > General > Storage mode*, and the mode the public web
+  version uses). Your
   sets, progress, and self-authored exercises live **in the browser**,
   tied to the current address. After a port change the app opens on the
   new address with empty browser storage, so it looks like a fresh

@@ -6,52 +6,50 @@ language: tr
 entries:
   - key: feature_method_switch
     title: Yöntem Değişikliği
-    short: "Durduğunuzda sistem farklı bir yöntem önerir — geçiş kararı size aittir."
+    short: "Durağanlaştığınızda sistem farklı bir yöntem önerir; geçip geçmemeye siz karar verirsiniz."
     long: |
       ## Yöntem değişikliği nedir?
 
-      Öğrenme oturumlarınız bir yöntemde durağanlaşır veya
-      yüksek strese neden olursa Adaptive Learner bir yöntem
-      değişikliği önerir. Öneriyi oturum sohbetinin üzerindeki
-      bir başlık olarak görürsünüz — kabul edebilir, reddedebilir
-      veya erteleyebilirsiniz.
+      Öğrenmeniz bir yöntemde durağanlaşırken aynı zamanda
+      yüksek strese neden oluyorsa Adaptive Learner bir yöntem
+      değişikliği önerir. Öneriyi oturum sohbetinin üzerinde bir
+      başlık olarak görürsünüz ve kabul edebilir ya da
+      kapatabilirsiniz.
 
       ## Öneri ne zaman çıkar
 
-      Üç koşulun aynı anda sağlanması gerekir:
+      Kural, son üç oturum değerlendirmenize bakar. Her iki
+      koşulun da sağlanması gerekir:
 
-      - Mevcut yöntemde **en az 3 oturum**.
-      - Son 3 değerlendirmede **ortalama stres > 3** (1-5
-        ölçeğinde).
-      - Son 3 değerlendirmede **yönteme uyum < 3**.
+      - **Anlamada ilerleme yok**: üç anlama puanı yükselmiyor
+        (aynı puanın üç kez gelmesi durağanlık sayılır).
+      - **Ortalama stres 3'ün üzerinde** (1-5 ölçeğinde), aynı
+        üç değerlendirme boyunca.
 
-      Yalnızca durağanlaşma yeterli değildir: aksi takdirde
-      uygun bir yöntemdeki kısa süreli güçlükler de tetikler.
-      Yalnızca süre + stres + düşük uyumun birleşimi öneriyi
-      başlatır.
+      Üçten az değerlendirme varsa öneri çıkmaz. Hâlâ ilerleme
+      gösteren zor bir dönem ya da stres olmadan durağanlık
+      öneriyi tetiklemez.
 
-      ## Sistem nasıl karar verir
+      ## Hangi yöntem önerilir
 
-      Oturum eklentisindeki ``recommend_method_switch`` kancası
-      öğrenme profilinizi mevcut yörüngenizle karşılaştırır ve
-      en yüksek beklenen uyuma sahip yöntemi önerir. İlk iki
-      yöntem birbirine yakınsa her ikisini de seçenek olarak
-      görürsünüz.
+      Öğrenme profilinizde en yüksek ağırlığa sahip olan ve son
+      zamanlarda kullanmadığınız yöntem. Profil yoksa sabit
+      yöntem sırasındaki bir sonraki yöntem.
 
-      ## Siz karar verirsiniz
+      ## Karar sizin
 
-      Sistem önerir; siz seçersiniz. Değişikliği kabul etmek,
-      profiliniz için bir denetim kaydı olarak bir
-      ``MethodSwitch`` girişi oluşturur. Reddetmek hiçbir
-      şeyi değiştirmez — öneri en erken 3 oturum daha sonra
-      yeniden çıkar.
+      Sistem önerir; siz seçersiniz. Kabul etmek oturumun
+      yöntemini değiştirir ve bir ``MethodSwitch`` kaydı
+      oluşturur (profiliniz için bir iz). Kapatmak öneriyi bu
+      oturumun geri kalanı için gizler; bir sonraki oturum
+      yeniden kontrol eder.
 
       ## Neden otomatik değil?
 
-      Yöntem değişiklikleri, öğrenme deneyiminde büyük bir
-      değişikliktir. Otomatik bir değişiklik öğrenme sürekliliğini
-      bozabilir ve zor ama verimli bir aşamada tetiklenebilir.
-      Kendi bağlamınızı sistemden daha iyi bilirsiniz.
+      Yöntem değişiklikleri öğrenme deneyiminde büyük bir
+      değişikliktir. Otomatik bir geçiş öğrenme sürekliliğini
+      bozar ve zor ama verimli bir dönemde de tetiklenebilir.
+      Bağlamınızı sistemden daha iyi siz bilirsiniz.
 
   - key: feature_auto_loop
     title: Otomatik Döngü
@@ -97,58 +95,45 @@ entries:
 
   - key: feature_spaced_repetition
     title: Aralıklı Tekrar
-    short: "Öğrenme geçmişinize dayalı, zamanlama açısından optimize edilmiş inceleme."
+    short: "Öğrenme geçmişinize dayalı, zamanı optimize edilmiş tekrar."
+    docs_slug: user-guide/lessons
     long: |
       ## Aralıklı tekrar nedir?
 
-      Aralıklı tekrar, incelemeleri artan aralıklarla
-      programlama tekniğidir. Unutma eğrisi etkisini kullanır:
-      başarıyla hatırlanan her öğe, bir sonraki seferinde daha
-      uzun süre akılda kalır.
+      Aralıklı tekrar, tekrarları giderek artan aralıklarla
+      yerleştirme tekniğidir. Unutma eğrisi etkisinden
+      yararlanır: başarıyla hatırlanan her öğe bir sonraki sefer
+      daha uzun süre akılda kalır.
 
-      ## Adaptive Learner'daki bant sistemi
+      ## Adaptive Learner'daki aralıklar
 
-      Altı vade bandı:
+      Yanıtladığınız her alıştırma öğesi izlenir. Bir sonraki
+      tekrar tarihi, onu art arda kaç kez doğru yanıtladığınıza
+      bağlıdır:
 
-      - **Bugün** — yeni kartlar + günlük incelemeler.
-      - **+1g** — dün öğrenildi, bugün incele.
-      - **+3g** — üç gün önce incelendi, bugün incele.
-      - **+7g** — bir hafta önce.
-      - **+14g** — iki hafta önce.
-      - **+30g** — bir ay önce.
+      - **Art arda 0 doğru** (ya da az önce yanlış yanıt): 1 gün
+        sonra tekrar.
+      - **Art arda 1 doğru**: 3 gün sonra.
+      - **Art arda 2 veya daha fazla doğru**: 7 gün sonra.
 
-      Bir kart dört incelemeyi başarıyla geçtiğinde "kararlı"
-      olarak işaretlenir ve aktif listeden çıkar — ancak ara
-      sıra yenileme kontrolleri için sistemde kalır.
+      **Art arda 3 doğru yanıtta** öğe öğrenilmiş sayılır ve
+      tekrar kuyruğundan çıkar. Daha sonraki bir yanlış yanıt
+      onu geri getirir.
 
-      ## Geçmiş nasıl beslenir
+      ## Tarihi ne kaydırır
 
-      "Başarılı inceleme" yalnızca bir tıklama değildir.
-      Sistem şunları değerlendirir:
+      - **İpucu kullanıldı**: yanıt yardımla geldiği için aralık
+        yarıya iner.
+      - **Sınav modunda doğru**: yardımsız bir yanıt daha güçlü
+        bir kanıt olduğu için aralık iki katına çıkar.
 
-      - **İnceleme oturumu sırasındaki güven** (çift istem
-        değerlendiricisinden).
-      - **Yanıt süresi** kendi ortalamanıza göre.
-      - **Mevcut döngüdeki hata sayısı**.
+      ## Sistem ne zaman tekrar önerir
 
-      Düşük güvende kart ilerlemek yerine önceki bir banda
-      geri düşer.
-
-      ## Anki ile bağlantı
-
-      Anki eklentisi etkinleştirildiğinde kartları doğrudan
-      Anki formatına aktarabilirsiniz. Sistem bantları Anki
-      programlarına çevirir — geçiş sırasında hiç ilerleme
-      kaybolmaz.
-
-      ## Sistem incelemeleri ne zaman önerir
-
-      Kontrol panelinin "Aralıklı Öneriler" paneli, bugün
-      vadesi gelen kartları gösterir. Bunları tek tek
-      inceleyebilir veya sistemin bunları bir sonraki düzenli
-      oturumunuzun başına — yeni içerikten önce — yerleştirmesini
-      sağlayabilirsiniz. Sistem, en yüksek unutma riskine sahip
-      kartları önceliklendirir.
+      Vadesi gelen öğeler olduğunda Pano'da, vadesi gelen ve
+      gecikmiş öğelerin sayısını ve bir **Tekrar oturumu aç**
+      düğmesini içeren bir tekrar kartı görünür. Önce gecikmiş
+      öğeler, ardından en çok hata yapılanlar gelir. Ayrıntılar
+      için dersler kılavuzuna bakın.
 
   - key: feature_conversation_analysis
     title: Konuşma Analizi / İçe Aktarma
@@ -210,67 +195,70 @@ entries:
 
   - key: feature_gamification
     title: Oyunlaştırma (XP, Rozetler, Seriler)
-    short: "Deneyim puanları, rozetler ve serilerle ilerleme sistemi — numara olmadan motivasyon."
+    short: "Deneyim puanları, rozetler ve serilerle ilerleme sistemi: numara olmadan motivasyon."
+    docs_slug: user-guide/dashboard
     long: |
       ## Oyunlaştırma katmanı nedir?
 
       Üç mekanik, öğrenme ilerlemesini görünür ve ödüllendirici
       kılar:
 
-      - **XP (deneyim puanları)** — tamamlanan her oturum,
-        her yöntem değişikliği, her aralıklı tekrar kartı için.
+      - **XP (deneyim puanları)** - tamamlanan oturumlar ve
+        dersler, değerlendirme ve sohbet içe aktarımları için.
         Seviyeler XP ile yükselir.
-      - **Rozetler** — tematik kilometre taşları için ("ilk
-        oturum", "bir yöntemde 10 oturum", "30 günlük seri",
-        ...).
-      - **Seriler** — günlük öğrenme dizileri. Oturumsuz 24
-        saatte sona erer — ayda üç "seri dondurma" acil durum
-        molası olarak.
+      - **Rozetler** - kilometre taşları için (ilk oturum,
+        düzenli kalmak, yöntem denemek, derinlik, birden fazla
+        dil).
+      - **Seriler** - öğrenme etkinliği olan ardışık günler.
 
       ## XP nasıl kazanılır
 
-      Farklı eylemler farklı XP değerleri verir:
+      - **Tamamlanan oturum**: 50 XP, tamamlanan her döngü için
+        +10 XP, adım 7'ye ulaşan her döngü için +25 XP.
+      - **Yeni bir yöntemdeki ilk oturum**: +50 XP.
+      - **Tamamlanan ders**: 30 XP, yıldız başına +10 XP, her
+        adım ilk denemede doğru olan üç yıldız için +20 XP.
+      - **Seri çarpanı**: oturum ve ders XP'sine seri günü
+        başına +%25, en fazla 7 güne kadar (en çok 2,75x).
+      - **Oyun modu kombosu**: kombolarla oynanan bir ders için
+        en fazla 20 ek XP.
+      - **Tamamlanan değerlendirme**: 100 XP.
+      - **İçe aktarılan ve analiz edilen sohbet**: 75 XP.
 
-      - **Değerlendirmeli oturum gönderin**: 50 XP.
-      - **Adım 7'ye ulaşın (bütünleştirme)**: +25 XP bonusu.
-      - **Yöntem değişikliğini kabul edin**: 10 XP (bilinçli
-        bir öğrenme kararı aldınız).
-      - **Güveni > %80 olan aralıklı tekrar kartı**: 5 XP.
-      - **Bir set Anki dışa aktarımı**: 20 XP.
-
-      Seviyeler karekök fonksiyonuyla ölçeklenir (n seviyesi =
-      sqrt(XP / 100)) — erken seviyeler hızlı yükselir, yüksek
-      seviyeler daha uzun soluk ister.
+      Seviyeler giderek genişleyen bir eğri üzerinde büyür:
+      seviye 2 için 100 XP, seviye 3 için 300, seviye 4 için
+      600, seviye 5 için 1000; her aralık bir öncekinden 100 XP
+      daha büyüktür.
 
       ## Rozetler zorlayıcı değildir
 
-      Rozet kriterleri UI'da zorunlu değildir — uygulamayı
-      verimli kullanmak için tek bir rozete ihtiyaç *yoktur*.
-      Bunlar bir hedef değil, bir ayna. Kendiniz için değil
-      rozetler için öğrendiğinizi hissetmeye başlarsanız
-      görüntülemeyi ayarlardan devre dışı bırakın.
+      Uygulamayı verimli kullanmak için tek bir rozete bile
+      ihtiyacınız *yoktur*. Rozetler bir hedef değil, bir
+      aynadır. Rozet bildirimleri ayarlardan kapatılabilir.
 
-      ## Seri dondurma
+      ## Seri dondurmaları
 
-      Ayda üç seri dondurma. Bir gün kaçırırsanız dondurma
-      otomatik olarak serinizi korur. Açıkça "hasta günü" veya
-      "seyahat günü" payı olarak tasarlanmıştır, tembellik için
-      bir istisna mekanizması olarak değil.
+      Her 7 seri günü bir seri dondurması kazandırır, stokta en
+      fazla 3 tane. Bir günü kaçırırsanız otomatik olarak bir
+      dondurma kullanılır ve serinizi sıfırlamak yerine
+      duraklatır. Hafta sonu modu açıkken cumartesi ve pazar
+      boşluk sayılmaz.
 
-      ## Bu neden numara olmadan çalışır
+      ## Bu neden numara olmadan işe yarar
 
-      Öğrenme araştırmaları açıktır: dışsal ödül içsel motivasyonu
-      yok edebilir ("aşırı gerekçelendirme etkisi"). Adaptive
-      Learner, mekaniklerin bir teşvik sistemi değil, ilerlemenin
-      bir **aynası** olmasına dayanır. Lider tablosu yok, sosyal
-      özellik yok, puan paylaşımı yok — veriler sizde kalır.
+      Öğrenme araştırmaları gösteriyor ki dışsal ödül içsel
+      motivasyonu yok edebilir ("aşırı gerekçelendirme etkisi").
+      Adaptive Learner, mekaniklerin bir teşvik sistemi değil,
+      ilerlemenin bir **aynası** olmasına dayanır. Sıralama
+      tabloları yok, sosyal özellikler yok, puan paylaşımı yok:
+      veriler sizde kalır.
 
       ## Sıfırlama
 
-      Oyunlaştırma değerleri artık durumunuzla örtüşmüyorsa
-      (ör. uzun bir aradan sonra taze başlangıç), ayarlardan
-      sıfırlayabilirsiniz. Müfredat, oturumlar ve değerlendirmeler
-      korunur.
+      Oyunlaştırma değerleri artık durumunuza uymuyorsa (ör.
+      uzun bir aradan sonra yeni bir başlangıç), XP'yi,
+      rozetleri ve seriyi ayarlardan sıfırlayabilirsiniz.
+      Müfredat, oturumlar ve değerlendirmeler korunur.
 
   - key: view_dashboard
     title: Kontrol paneli
@@ -318,16 +306,19 @@ entries:
       ## Alıştırmalar nasıl çalışır?
 
       Bir ders, teori ve alıştırma adımlarından oluşan bir
-      dizidir. Beş alıştırma türü görünür: eşleştirme (renkli
-      çiftler + numara rozetleri), resim seçme, serbest metin,
-      kelime karoları ve boşluk doldurma.
+      dizidir. Her set temel alıştırma türlerini kullanabilir
+      (eşleştirme, resim seçme, serbest metin, boşluk doldurma,
+      kelime karoları, çoktan seçmeli); bazı setler
+      sınıflandırma veya sesli dikte gibi ek türler ekler. Tam
+      liste özelliklere genel bakışta yer alır.
 
       ## Denetimler
 
       Enter, yanıtlanmış bir alıştırmayı kontrol eder ve
-      ilerletir. Bir alıştırmadan "Teoriyi tekrar oku" ile ilgili
-      teoriye atlayabilirsiniz. Sonunda yıldızlarla puanınızı
-      görür ve bunu Markdown olarak dışa aktarabilirsiniz.
+      ilerletir. Bir alıştırmadan "Teoriyi tekrar oku" ile
+      ilgili teoriye atlayabilirsiniz. Sonunda yıldızlarla
+      puanınızı görür ve bunu Markdown olarak dışa
+      aktarabilirsiniz.
 
   - key: view_settings
     title: Ayarlar
@@ -355,14 +346,16 @@ entries:
     long: |
       ## Yedekleme nedir?
 
-      Bir yedek, eksiksiz bir anlık görüntüdür: her tablo
-      (projeler, oturumlar, ders ilerlemesi, hatalar,
-      oyunlaştırma, görevler ...) ile indirilen içerik setleriniz
-      — tek bir JSON dosyası olarak.
+      Bir yedek, eksiksiz bir anlık görüntüdür: tüm veri
+      tabloları (projeler, oturumlar, ders ilerlemesi, hatalar,
+      oyunlaştırma, görevler ...), indirdiğiniz içerik setleri
+      ve yerel tercihleriniz tek bir ``.alb`` dosyasında (bir
+      ZIP arşivi) toplanır. Eski tek JSON dosyalı yedekler hâlâ
+      içe aktarılabilir.
 
       ## Kimlikler arası
 
       Bir yedeği yeni bir kuruluma veya farklı bir profil altına
       içe aktarabilirsiniz; geri yükleme, dahili referansları
-      temiz biçimde yeniden çözer. İçe aktarımda tablo bazında bir
-      özet görürsünüz.
+      temiz biçimde yeniden çözer. İçe aktarımda tablo bazında
+      bir özet görürsünüz.
