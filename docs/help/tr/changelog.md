@@ -1,4 +1,4 @@
-# Yenilikler (v1.61 – v2.15)
+# Yenilikler (v1.61 – v2.16)
 
 v1.61.0'dan bu yana çıkan sürümlere kullanıcı odaklı bir genel bakış.
 Sürüm başına eksiksiz, teknik notlar
@@ -6,6 +6,28 @@ Sürüm başına eksiksiz, teknik notlar
 altında bulunur.
 
 ---
+
+## v2.16.0 - Ne olduğunu söyleyen hatalar, dersler için tek kural seti
+
+- **Görünür hatalar**: başarısız bir öğretmen yanıtı boş bir balon yerine
+  «Tekrar dene» içeren bir mesaj gösterir ve geçmişi yüklenemeyen bir oturum
+  silinmiş gibi görünmek yerine bunu söyler. Çöken bir sayfa geri dönüş
+  yolu ve bir bildirme düğmesi sunar; bağlantı yokken uygulama «Sunucuya
+  bağlanılamıyor» der.
+- **Tek kural seti**: alıştırma düzenleyicisi, paylaşım kontrolü ve depo
+  doğrulaması içerik motorunu izler. Bir eşleştirme için tek bir tam çift
+  yeterlidir ve serbest metin yanıtları büyük-küçük harfi yalnızca alıştırma
+  bunu istediğinde ayırt eder.
+- **Masaüstü uygulaması**: kartlardan oluşturulan eşleştirmeler çiftlerini
+  gösterir, dersler setlerinin dil çiftini devralır ve ASCII dışı harfler
+  içeren set kimlikleri kabul edilir.
+- **Yedekler** saklanan her alanı içerir ve masaüstü uygulaması ile tarayıcı
+  sürümü arasında geri yüklenebilir; tarayıcı yedekleri API anahtarınızı asla
+  içermez; «Tüm verileri sil» her şeyi boşaltır.
+- **Dersler**: ders sırasında ekran açık kalır, uygulama değiştirmek
+  konumunuzu kaydeder ve «Baştan başla» önce sorar.
+- **Telefonlar**: 1280 px'in altında kompakt menü kullanılır; pano, ilerleme
+  grafikleri ve listeler ekrana sığar.
 
 ## v2.15.0 - Daha derin alıştırmalar, kısa ders özeti
 

@@ -1,10 +1,36 @@
-# Quoi de neuf (v1.61 – v2.15)
+# Quoi de neuf (v1.61 – v2.16)
 
 Un aperçu orienté utilisateur des versions depuis la v1.61.0. Les
 notes techniques complètes par version se trouvent sous
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v2.16.0 - Des erreurs qui disent ce qui s'est passé, un seul jeu de règles pour les leçons
+
+- **Erreurs visibles** : une réponse du tuteur qui échoue affiche un
+  message avec « Réessayer » au lieu d'une bulle vide, et une session dont
+  l'historique n'a pas pu être chargé le signale au lieu de sembler
+  supprimée. Une page qui plante propose un retour et un bouton de
+  signalement ; sans connexion, l'application indique « Pas de connexion
+  au serveur ».
+- **Un seul jeu de règles** : l'éditeur d'exercices, la vérification de
+  partage et la validation des dépôts suivent le moteur de contenu. Une
+  association a besoin d'une paire complète, et les réponses libres ne
+  tiennent compte de la casse que si l'exercice le demande.
+- **Application de bureau** : les associations construites à partir de
+  cartes affichent leurs paires, les leçons héritent de la paire de
+  langues de leur set, et les identifiants de set avec des lettres non
+  ASCII sont acceptés.
+- **Sauvegardes** : elles contiennent tous les champs enregistrés et se
+  restaurent entre l'application de bureau et la version navigateur ; les
+  sauvegardes du navigateur ne contiennent jamais ta clé d'API ;
+  « Supprimer toutes les données » vide tout.
+- **Leçons** : l'écran reste allumé pendant une leçon, changer
+  d'application enregistre ta position, et « Recommencer » demande d'abord.
+- **Téléphones** : en dessous de 1280 px, le menu compact est utilisé, et
+  le tableau de bord, les graphiques de progression et les listes tiennent
+  à l'écran.
 
 ## v2.15.0 - Exercices plus riches, résumé de leçon compact
 

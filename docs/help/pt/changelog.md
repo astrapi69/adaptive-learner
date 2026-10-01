@@ -1,10 +1,33 @@
-# Novidades (v1.61 – v2.15)
+# Novidades (v1.61 – v2.16)
 
 Uma visão geral orientada ao utilizador dos lançamentos desde a
 v1.61.0. As notas técnicas completas por versão estão em
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v2.16.0 - Erros que dizem o que aconteceu, um só conjunto de regras para as lições
+
+- **Erros visíveis**: uma resposta do tutor que falha mostra uma mensagem
+  com «Tentar novamente» em vez de um balão vazio, e uma sessão cujo
+  histórico não pôde ser carregado indica-o em vez de parecer apagada. Uma
+  página que falha oferece um caminho de volta e um botão para reportar;
+  sem ligação, a aplicação diz «Sem ligação ao servidor».
+- **Um só conjunto de regras**: o editor de exercícios, a verificação de
+  partilha e a validação de repositórios seguem o motor de conteúdo. Uma
+  correspondência precisa de um par completo, e as respostas de texto livre
+  distinguem maiúsculas apenas quando o exercício o pede.
+- **Aplicação de desktop**: as correspondências criadas a partir de
+  cartões mostram os seus pares, as lições herdam o par de idiomas do seu
+  conjunto, e são aceites ids de conjunto com letras não ASCII.
+- **Cópias de segurança**: contêm todos os campos guardados e restauram-se
+  entre a aplicação de desktop e a versão do navegador; as cópias do
+  navegador nunca contêm a tua chave de API; «Apagar todos os dados»
+  esvazia tudo.
+- **Lições**: o ecrã mantém-se ligado durante uma lição, mudar de
+  aplicação guarda a tua posição, e «Recomeçar» pede confirmação.
+- **Telemóveis**: abaixo de 1280 px é usado o menu compacto, e o painel,
+  os gráficos de progresso e as listas cabem no ecrã.
 
 ## v2.15.0 - Exercícios mais profundos, resumo compacto da lição
 
