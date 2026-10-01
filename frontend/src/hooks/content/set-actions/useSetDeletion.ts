@@ -91,9 +91,9 @@ export function useSetDeletion({ setSets }: UseSetDeletionDeps) {
       reportRemoval(t, progressError, t("content.set_status.deleted", "Set removed."));
       setDeleteSetTarget(null);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.set_status.delete_failed", "Could not remove the set.")} ${detail}`,
+        t("content.set_status.delete_failed", "Could not remove the set."),
+        { error: err },
       );
     } finally {
       setDeletingSet(false);
@@ -133,9 +133,9 @@ export function useSetDeletion({ setSets }: UseSetDeletionDeps) {
       );
       setBulkDeleteTargets(null);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.set_status.delete_failed", "Could not remove the set.")} ${detail}`,
+        t("content.set_status.delete_failed", "Could not remove the set."),
+        { error: err },
       );
     } finally {
       setBulkDeleting(false);
@@ -155,9 +155,9 @@ export function useSetDeletion({ setSets }: UseSetDeletionDeps) {
       notify.success(t("content.my_lessons.deleted", "Lesson deleted."));
       setDeleteTarget(null);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.my_lessons.delete_failed", "Could not delete the lesson.")} ${detail}`,
+        t("content.my_lessons.delete_failed", "Could not delete the lesson."),
+        { error: err },
       );
     } finally {
       setDeleting(false);

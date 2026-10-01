@@ -58,9 +58,7 @@ export function useSetNavigation({ navigate }: UseSetNavigationDeps) {
         `/lesson/${encodeURIComponent(slug)}/${encodeURIComponent(entry.id)}/${encodeURIComponent(first)}${hash}`,
       );
     } catch (err) {
-      notify.error(t("content.error.open_failed", "Could not open the lesson."), {
-        apiError: err instanceof Error ? undefined : undefined,
-      });
+      notify.error(t("content.error.open_failed", "Could not open the lesson."), { error: err });
     }
   };
 

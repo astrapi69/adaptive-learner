@@ -178,6 +178,55 @@ describe("notify.error", () => {
     });
 });
 
+describe("notify.error with an error object (#3374)", () => {
+    it.each([
+        {name: "production", dev: false, display: "Could not delete the set."},
+        {
+            name: "dev mode",
+            dev: true,
+            display: "Could not delete the set.: Cannot read properties of undefined",
+        },
+    ])(
+        "a plain Error shows only the prefix in $name, the message only in dev mode",
+        ({dev, display}) => {
+            isDevModeMock.mockReturnValue(dev);
+            notify.error("Could not delete the set.", {
+                error: new TypeError("Cannot read properties of undefined"),
+            });
+            const props = getErrorContentProps();
+            expect(props.displayMessage).toBe(display);
+            expect(props.originalMessage).toBe(
+                "Could not delete the set.: Cannot read properties of undefined",
+            );
+            expect(props.apiError).toBeUndefined();
+        },
+    );
+
+    it("an ApiError passed as error takes the friendly path and reaches the report dialog", async () => {
+        const {ApiError} = await import("../api/client");
+        const apiError = new ApiError(404, "Looked at: /home/user/.cache/x", "/api/x", "GET");
+        notify.error("Could not open the set.", {error: apiError});
+        const props = getErrorContentProps();
+        expect(props.displayMessage).toBe("This page or feature was not found.");
+        expect(props.displayMessage).not.toContain("/home/user");
+        expect(props.originalMessage).toBe(
+            "Could not open the set.: Looked at: /home/user/.cache/x",
+        );
+        expect(props.apiError).toBe(apiError);
+    });
+
+    it.each([
+        {name: "a string", error: "network down", original: "Failed.: network down"},
+        {name: "null", error: null, original: "Failed."},
+        {name: "undefined", error: undefined, original: "Failed."},
+    ])("a non-Error value ($name) never reaches the production toast", ({error, original}) => {
+        notify.error("Failed.", {error});
+        const props = getErrorContentProps();
+        expect(props.displayMessage).toBe("Failed.");
+        expect(props.originalMessage).toBe(original);
+    });
+});
+
 describe("notify.warning / info / success", () => {
     it("warning forwards the message and sets autoClose to 10s", () => {
         notify.warning("warn");

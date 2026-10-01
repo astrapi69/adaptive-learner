@@ -156,7 +156,10 @@ export function BackupCompare({
             URL.revokeObjectURL(url);
             notify.success(t("backup.compare_markdown_downloaded", "Diff exported."));
         } catch (err) {
-            notify.error(err instanceof Error ? err.message : String(err));
+            notify.error(
+                t("backup.compare_export_failed", "Could not export the comparison."),
+                {error: err},
+            );
         }
     };
 

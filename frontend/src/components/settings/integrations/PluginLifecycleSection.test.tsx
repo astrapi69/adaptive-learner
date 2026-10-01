@@ -126,7 +126,9 @@ describe("PluginLifecycleSection (#3055)", () => {
       );
     });
     expect(notifyError).toHaveBeenCalledTimes(1);
-    expect(String(notifyError.mock.calls[0][0])).toContain("plugin host unavailable");
+    expect(notifyError.mock.calls[0][1]).toMatchObject({
+      error: { detail: "plugin host unavailable" },
+    });
     expect(screen.queryByTestId("settings-plugins-lifecycle-loading")).toBeNull();
   });
 

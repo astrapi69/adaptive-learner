@@ -568,11 +568,9 @@ export default function CreateLesson() {
             );
             return entry;
         } catch (err) {
-            notify.error(
-                `${t("create_lesson.save.failed", "Could not save the lesson.")} ${
-                    err instanceof Error ? err.message : ""
-                }`,
-            );
+            notify.error(t("create_lesson.save.failed", "Could not save the lesson."), {
+                error: err,
+            });
             return null;
         } finally {
             setSaving(false);
@@ -605,11 +603,9 @@ export default function CreateLesson() {
             notify.success(t("create_lesson.save.copied", "Saved as a copy!"));
             return entry;
         } catch (err) {
-            notify.error(
-                `${t("create_lesson.save.failed", "Could not save the lesson.")} ${
-                    err instanceof Error ? err.message : ""
-                }`,
-            );
+            notify.error(t("create_lesson.save.failed", "Could not save the lesson."), {
+                error: err,
+            });
             return null;
         } finally {
             setSaving(false);
