@@ -27,6 +27,7 @@ NEVER appear as cached.
 from __future__ import annotations
 
 import shutil
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
@@ -134,6 +135,28 @@ def latest_cached_version(
     """Convenience: highest cached version, or None if uncached."""
     versions = list_cached_versions(cache_root, source, set_id)
     return versions[-1] if versions else None
+
+
+def cached_downloaded_at(
+    cache_root: Path,
+    source: str,
+    set_id: str,
+    version: str,
+) -> str | None:
+    """When the cached ``version`` landed, as ISO-8601 UTC (``...Z``), or None.
+
+    ``store_set`` writes the manifest LAST, so its mtime is the moment the
+    version became readable. An update stores a new version directory, so this
+    is the time of the most recent download, the same meaning as Dexie mode's
+    ``downloaded_at`` (#3418).
+    """
+    manifest = cache_path_for_set(cache_root, source, set_id, version) / "manifest.yaml"
+    try:
+        mtime = manifest.stat().st_mtime
+    except OSError:
+        return None
+    stamp = datetime.fromtimestamp(int(mtime), tz=timezone.utc)
+    return stamp.isoformat().replace("+00:00", "Z")
 
 
 def store_set(

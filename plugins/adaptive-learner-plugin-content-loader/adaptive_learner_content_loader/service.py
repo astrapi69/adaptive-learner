@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import logging
 import shutil
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import httpx
@@ -23,6 +23,7 @@ import yaml
 
 from .cache import (
     cache_path_for_set,
+    cached_downloaded_at,
     cleanup_tmp_dirs,
     is_set_cached,
     latest_cached_version,
@@ -79,6 +80,9 @@ class SetEntry:
     set: ContentSet
     cached_version: str | None
     update_available: bool
+    # #3418: when the cached version was downloaded (ISO-8601 UTC), None
+    # when the set is not cached.
+    downloaded_at: str | None = None
 
 
 BUNDLED_SOURCE_PREFIX = "bundled:"
@@ -283,7 +287,16 @@ class ContentLoaderService:
             if key not in seen:
                 deduped.append(entry)
                 seen.add(key)
-        return deduped
+        return [self._with_download_time(entry) for entry in deduped]
+
+    def _with_download_time(self, entry: SetEntry) -> SetEntry:
+        """``entry`` with ``downloaded_at`` read from its cached version (#3418)."""
+        if entry.cached_version is None:
+            return entry
+        stamp = cached_downloaded_at(
+            self.cache_root, entry.source, entry.set.id, entry.cached_version
+        )
+        return replace(entry, downloaded_at=stamp)
 
     def _all_cached_entries(self) -> list[SetEntry]:
         """Surface every downloaded (cached) set on disk.
@@ -399,12 +412,14 @@ class ContentLoaderService:
             if not needs:
                 # Already up to date — surface a SetEntry
                 # without making any further network calls.
-                return SetEntry(
-                    source=source,
-                    branch=branch,
-                    set=target_set,
-                    cached_version=cached,
-                    update_available=False,
+                return self._with_download_time(
+                    SetEntry(
+                        source=source,
+                        branch=branch,
+                        set=target_set,
+                        cached_version=cached,
+                        update_available=False,
+                    )
                 )
 
             # Clean any leftover tmp dir from a prior crash.
@@ -492,12 +507,14 @@ class ContentLoaderService:
                 assets=assets if assets else None,
             )
             prune_old_versions(self.cache_root, source, set_id)
-            return SetEntry(
-                source=source,
-                branch=branch,
-                set=target_set,
-                cached_version=target_set.version,
-                update_available=False,
+            return self._with_download_time(
+                SetEntry(
+                    source=source,
+                    branch=branch,
+                    set=target_set,
+                    cached_version=target_set.version,
+                    update_available=False,
+                )
             )
 
     def get_lesson(
@@ -655,12 +672,14 @@ class ContentLoaderService:
             manifest_yaml=manifest_yaml,
             lessons=lesson_files,
         )
-        return SetEntry(
-            source=USER_GENERATED_SOURCE,
-            branch="",
-            set=content_set,
-            cached_version=USER_SET_VERSION,
-            update_available=False,
+        return self._with_download_time(
+            SetEntry(
+                source=USER_GENERATED_SOURCE,
+                branch="",
+                set=content_set,
+                cached_version=USER_SET_VERSION,
+                update_available=False,
+            )
         )
 
     def delete_set(self, source: str, set_id: str) -> None:
