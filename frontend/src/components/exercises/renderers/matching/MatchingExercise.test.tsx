@@ -911,10 +911,10 @@ describe("MatchingExercise: animated pair resolution (#824)", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
         pairOneWrong();
         fireEvent.click(screen.getByTestId("matching-submit"));
-        // Default view after checking is the learner's graded answers.
+        // #3505: a check with mistakes opens on the graded corrections.
         expect(screen.getByTestId("matching-left")).toBeInTheDocument();
         expect(screen.queryByTestId("matching-resolution")).not.toBeInTheDocument();
-        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+        expect(screen.getByTestId("matching-corrections")).toHaveAttribute(
             "aria-pressed",
             "true",
         );
@@ -1079,7 +1079,7 @@ describe("MatchingExercise: separate corrections view (#3186)", () => {
         fireEvent.click(screen.getByTestId("matching-submit"));
     }
 
-    it("offers three views by default: my answers, corrections, solve", () => {
+    it("offers three views and opens on 'Corrections' after a check with mistakes (#3505)", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
         pairOneWrongAndCheck();
         const toggle = screen.getByTestId("matching-view-toggle");
@@ -1089,19 +1089,21 @@ describe("MatchingExercise: separate corrections view (#3186)", () => {
             "matching-corrections",
             "matching-resolve",
         ]);
-        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+        expect(screen.getByTestId("matching-corrections")).toHaveAttribute(
             "aria-pressed",
             "true",
         );
-        expect(screen.getByTestId("matching-corrections")).toHaveAttribute(
+        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
             "aria-pressed",
             "false",
         );
+        expect(screen.getByTestId("matching-correct-hint-0")).toHaveTextContent("Hello");
     });
 
     it("shows the pairs as the learner formed them in 'My answers', ungraded (#3233)", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
         pairOneWrongAndCheck();
+        fireEvent.click(screen.getByTestId("matching-my-answers"));
         // No grading at all: no red/green tiles, no feedback rows.
         for (const idx of [0, 1, 2]) {
             expect(screen.getByTestId(`matching-left-${idx}`).className).not.toMatch(
@@ -1158,10 +1160,12 @@ describe("MatchingExercise: separate corrections view (#3186)", () => {
                 }}
             />,
         );
-        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+        // #3505: a reviewed answer with mistakes opens on the corrections too.
+        expect(screen.getByTestId("matching-corrections")).toHaveAttribute(
             "aria-pressed",
             "true",
         );
+        fireEvent.click(screen.getByTestId("matching-my-answers"));
         expect(screen.getByTestId("matching-left-0").className).not.toContain("is-wrong");
         expect(screen.getByTestId("matching-left-0")).toHaveTextContent(/^1/);
         expect(screen.getByTestId("matching-right-1")).toHaveTextContent(/^1/);
@@ -1188,17 +1192,17 @@ describe("MatchingExercise: separate corrections view (#3186)", () => {
         expect(screen.queryByTestId("matching-correct-hint-0")).not.toBeInTheDocument();
     });
 
-    it("'Try again' returns to the plain 'My answers' view on the next check", () => {
+    it("'Try again' opens the next check with mistakes on 'Corrections' again (#3505)", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
         pairOneWrongAndCheck();
-        fireEvent.click(screen.getByTestId("matching-corrections"));
+        fireEvent.click(screen.getByTestId("matching-my-answers"));
         fireEvent.click(screen.getByTestId("matching-retry"));
         pairOneWrongAndCheck();
-        expect(screen.getByTestId("matching-my-answers")).toHaveAttribute(
+        expect(screen.getByTestId("matching-corrections")).toHaveAttribute(
             "aria-pressed",
             "true",
         );
-        expect(screen.queryByTestId("matching-correct-hint-0")).not.toBeInTheDocument();
+        expect(screen.getByTestId("matching-correct-hint-0")).toHaveTextContent("Hello");
     });
 
     it("keeps the two-view layout with inline corrections when the setting is off", () => {

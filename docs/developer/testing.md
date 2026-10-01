@@ -14,6 +14,30 @@ make check-types     # mypy + tsc --noEmit
 
 `make test` must stay green after every change.
 
+### Before pushing: `make pre-push` (#3507)
+
+```bash
+make pre-push        # make ci + the TypeScript dead-code check (knip)
+```
+
+`make ci` runs the build-free gates. It leaves out the TypeScript half of
+the dead-code ratchet, which needs an installed frontend, and that half is
+the one that most often turns a pushed branch red (a new export nothing
+imports, a barrel import that makes knip count unused re-exports).
+`make pre-push` adds it. It fails when the frontend dependencies are not installed,
+because "could not check" must not print the same green as "nothing found".
+
+To run it on every branch push, opt in once per checkout (the hook comes
+from `make install-hooks`):
+
+```bash
+git config adaptive-learner.prePush true    # opt out: false
+```
+
+The hook stays opt-in on purpose: a mandatory multi-minute hook gets
+skipped with `--no-verify`. Tag pushes keep their own check (pre-commit on
+all backend files).
+
 ## End-to-end (Playwright)
 
 | Suite | Config | Command |
