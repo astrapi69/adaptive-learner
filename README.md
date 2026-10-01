@@ -15,9 +15,8 @@ inductive, error-based, dialogic, contextual, or AI-adaptive —
 walk through a seven-step cycle on every session, and let a
 dual-prompt AI decide when the learner is ready to advance.
 Auto-loop into a new cycle once the topic is integrated. Bring
-your own AI key (Anthropic / OpenAI / Gemini), or configure
-keys in `~/.config/adaptive_learner/secrets.yaml` for the
-desktop launcher.
+your own AI key (Anthropic / OpenAI / Gemini) and enter it
+under Settings > AI.
 
 [🇩🇪 Deutsch](README-de.md)
 
@@ -171,12 +170,15 @@ Download from the
 | Windows | `adaptive-learner-launcher.exe` | Double-click |
 
 Each release also ships a `.sha256` next to each binary for
-integrity verification. The launcher downloads the matching
-tagged source tree on first run, builds the Docker images,
-and starts the app on `http://localhost:8501`. On first start
-it also creates `~/.config/adaptive-learner/secrets.yaml` as a
-commented template — uncomment and fill in your provider API
-keys to skip the Settings UI dance.
+integrity verification. On first run the launcher pulls the
+published app image from `ghcr.io/astrapi69/adaptive-learner`
+(nothing is built on your machine) and starts the app on
+`http://localhost:8501`. Enter your provider API keys under
+Settings > AI; they are stored encrypted in the app's data
+volume and survive updates. A `secrets.yaml` on the host is not
+read by the launcher's container; that file applies only to a
+backend run from source (see
+[configuration](docs/configuration.md)).
 
 ### 3. Docker (self-hosted)
 

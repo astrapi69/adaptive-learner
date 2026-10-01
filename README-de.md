@@ -16,9 +16,8 @@ oder KI-adaptiv — durchlaufe in jeder Sitzung einen Sieben-Schritt-
 Zyklus, und lass eine Dual-Prompt-KI entscheiden, wann der
 Lernende bereit für den nächsten Schritt ist. Auto-Loop in einen
 neuen Zyklus, sobald das Thema integriert ist. Bring deinen
-eigenen KI-Schlüssel mit (Anthropic / OpenAI / Gemini) oder
-konfiguriere die Schlüssel in
-`~/.config/adaptive_learner/secrets.yaml` für den Desktop-Launcher.
+eigenen KI-Schlüssel mit (Anthropic / OpenAI / Gemini) und trag
+ihn unter Einstellungen > KI ein.
 
 [🇬🇧 English](README.md)
 
@@ -115,13 +114,16 @@ Download vom
 
 Jedes Release liefert auch eine `.sha256` neben jedem
 Binary zur Integritätsprüfung. Der Launcher lädt beim
-ersten Start den passenden getaggten Source-Tree
-herunter, baut die Docker-Images und startet die App
-unter `http://localhost:8501`. Beim Erststart wird
-außerdem `~/.config/adaptive-learner/secrets.yaml` als
-auskommentierte Vorlage angelegt — Zeilen einkommentieren
-und mit den eigenen Provider-Keys füllen, um das
-Einstellungs-UI zu überspringen.
+ersten Start das veröffentlichte App-Image von
+`ghcr.io/astrapi69/adaptive-learner` (auf deinem Rechner
+wird nichts gebaut) und startet die App unter
+`http://localhost:8501`. Deine Provider-API-Keys trägst du
+unter Einstellungen > KI ein; sie liegen verschlüsselt im
+Daten-Volume der App und überstehen Updates. Eine
+`secrets.yaml` auf dem Host liest der Container des
+Launchers nicht; diese Datei gilt nur für ein Backend, das
+aus dem Quellcode läuft (siehe
+[Konfiguration](docs/configuration.md)).
 
 ### 3. Docker (self-hosted)
 
