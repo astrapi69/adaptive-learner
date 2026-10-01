@@ -14,7 +14,7 @@ No **modo Servidor** os dados vivem na base de dados SQLite que
 o backend FastAPI gere. As chaves de API são encriptadas em
 repouso com Fernet usando um segredo que define via a variável
 de ambiente `ADAPTIVE_LEARNER_SECRET_KEY`, ou via `secret_key:`
-em `~/.config/adaptive-learner/secrets.yaml`.
+em `~/.config/adaptive_learner/secrets.yaml`.
 
 Nenhum dos modos envia telemetria, análises ou as suas
 mensagens para terceiros além do fornecedor de IA que escolheu -
@@ -32,7 +32,7 @@ costumam ser suficientes para começar.
 Três lugares para colocar a chave (maior prioridade ganha):
 uma variável de ambiente `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`,
 o campo `ai.<provider>.api_key` em
-`~/.config/adaptive-learner/secrets.yaml`, ou a interface de
+`~/.config/adaptive_learner/secrets.yaml`, ou a interface de
 Definições. A interface mostra a fonte por fornecedor para que
 saiba sempre de onde veio a sua chave.
 

@@ -61,7 +61,7 @@ proveedor de IA reside fuera del navegador.
 4. **Opcional: sesiones de IA.** Si en cambio prefieres la
    conversación de aprendizaje guiada de seis métodos, guarda una
    **clave de API** (Ajustes o
-   `~/.config/adaptive-learner/secrets.yaml`), haz la
+   `~/.config/adaptive_learner/secrets.yaml`), haz la
    [prueba de tipo de aprendizaje](assessment.md) opcional e
    inicia una [sesión de aprendizaje](learning-session.md).
 5. **Asegura tu resultado.** Desde el resumen de la lección puedes

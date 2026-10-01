@@ -27,11 +27,15 @@ AI provider keys are resolved via a three-layer chain
 (`services.settings.resolve_api_key`):
 
 1. `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` environment variable.
-2. `ai.<provider>.api_key` in
-   `~/.config/adaptive_learner/secrets.yaml`.
-3. Fernet-encrypted `UserSettings.api_key_<provider>` column
-   (set via the Settings UI; never returned to the frontend
-   in plaintext).
+2. `~/.config/adaptive_learner/secrets.yaml`: the
+   Fernet-encrypted `ai.<provider>.api_key_encrypted` that the
+   Settings UI writes, or a hand-edited plaintext
+   `ai.<provider>.api_key`. Never returned to the frontend in
+   plaintext.
+3. Legacy Fernet-encrypted `UserSettings.api_key_<provider>`
+   column: read-only fallback for keys saved before the move to
+   `secrets.yaml`; migrated into the file at startup and no
+   longer written.
 4. `None` - the AI call surfaces an error to the UI.
 
 `UserSettingsOut.key_source_*` (enum

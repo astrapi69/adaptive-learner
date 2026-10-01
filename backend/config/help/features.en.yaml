@@ -5,43 +5,43 @@ language: en
 entries:
   - key: feature_method_switch
     title: Method Switch
-    short: "The system recommends a different method when you stagnate — you decide whether to switch."
+    short: "The system recommends a different method when you stagnate - you decide whether to switch."
     long: |
       ## What is the method switch?
 
-      If your learning sessions stagnate in a method or
-      produce high stress, Adaptive Learner suggests a method
-      switch. You see the suggestion as a banner above the
-      session chat — you can accept, decline, or defer.
+      If your learning stagnates in a method while it causes
+      high stress, Adaptive Learner suggests a method switch.
+      You see the suggestion as a banner above the session
+      chat and can accept or dismiss it.
 
       ## When the suggestion fires
 
-      Three conditions must hold simultaneously:
+      The rule looks at your last three session ratings. Both
+      conditions must hold:
 
-      - **At least 3 sessions** in the current method.
-      - **Average stress > 3** (on the 1-5 scale) in the last
-        3 ratings.
-      - **Method fit < 3** in the last 3 ratings.
+      - **No progress in understanding**: the three
+        understanding scores do not rise (the same score three
+        times counts as stagnant).
+      - **Average stress above 3** (on the 1-5 scale) across
+        the same three ratings.
 
-      Stagnation detection alone is not enough: brief
-      difficulties in an otherwise fitting method are normal
-      and pass. Only the combination of duration + stress +
-      low fit triggers the suggestion.
+      With fewer than three ratings there is no suggestion. A
+      difficult phase that still shows progress, or stagnation
+      without stress, does not trigger it.
 
-      ## How the system decides
+      ## Which method is suggested
 
-      The ``recommend_method_switch`` hook in the session
-      plugin compares your learning profile to your current
-      trajectory and suggests the method with the highest
-      expected fit. If the top-2 methods are close, you see
-      both as options.
+      The method with the highest weight in your learning
+      profile that you have not used recently. Without a
+      profile, the next method in the fixed method order.
 
       ## You decide
 
-      The system recommends; you choose. Accepting the switch
-      saves it as a ``MethodSwitch`` audit entry (a trail for
-      your profile). Declining does nothing — the suggestion
-      reappears at the earliest after 3 more sessions.
+      The system recommends; you choose. Accepting switches
+      the session and records a ``MethodSwitch`` entry (a
+      trail for your profile). Dismissing hides the suggestion
+      for the rest of this session; the next session checks
+      again.
 
       ## Why not automatic?
 
@@ -98,6 +98,7 @@ entries:
   - key: feature_spaced_repetition
     title: Spaced Repetition
     short: "Time-optimized review based on your learning history."
+    docs_slug: user-guide/lessons
     long: |
       ## What is spaced repetition?
 
@@ -106,49 +107,35 @@ entries:
       effect: each successfully recalled item lasts longer
       next time.
 
-      ## The band system in Adaptive Learner
+      ## The bands in Adaptive Learner
 
-      Six due-date bands:
+      Every exercise element you answer is tracked. The next
+      review date depends on how often in a row you answered
+      it correctly:
 
-      - **Today** — new cards + day-of reviews.
-      - **+1d** — learned yesterday, review today.
-      - **+3d** — reviewed three days ago, review today.
-      - **+7d** — one week ago.
-      - **+14d** — two weeks ago.
-      - **+30d** — one month ago.
+      - **0 correct in a row** (or just answered wrong):
+        review 1 day later.
+      - **1 correct in a row**: 3 days later.
+      - **2 or more correct in a row**: 7 days later.
 
-      Once a card passes four reviews successfully, it is
-      marked "stable" and leaves the active list — but stays
-      in the system for occasional refresher checks.
+      At **3 correct answers in a row** the element counts as
+      mastered and leaves the review queue. A later wrong
+      answer brings it back.
 
-      ## How history feeds in
+      ## What shifts the date
 
-      A "successful review" is not just a click. The system
-      evaluates:
-
-      - **Confidence during the review session** (from the
-        dual-prompt evaluator).
-      - **Response time** vs your average.
-      - **Error count** in the current cycle.
-
-      At low confidence, the card slips back to an earlier
-      band rather than advancing.
-
-      ## Connection to Anki
-
-      With the Anki plugin active, you can export cards
-      directly to the Anki format. The system translates the
-      bands into Anki schedules — no progress is lost in the
-      transition.
+      - **Hint used**: the interval is halved, because the
+        answer came with help.
+      - **Correct in Exam mode**: the interval is doubled,
+        because an answer without help is stronger evidence.
 
       ## When the system recommends reviews
 
-      The dashboard's "Spaced Recommendations" panel shows
-      today's due cards. You can step through them
-      individually or have the system place them at the start
-      of your next regular session — before new content. The
-      system prioritizes cards with the highest forgetting
-      risk.
+      When elements are due, a review card appears on the
+      Dashboard with the number of due and overdue elements
+      and an **Open review session** button. Overdue elements come
+      first, then those with the most errors. Details: see the
+      lessons guide.
 
   - key: feature_conversation_analysis
     title: Conversation Analysis / Import
@@ -211,53 +198,53 @@ entries:
 
   - key: feature_gamification
     title: Gamification (XP, Badges, Streaks)
-    short: "Progress system with experience points, badges and streaks — motivation without gimmickry."
+    short: "Progress system with experience points, badges and streaks - motivation without gimmickry."
+    docs_slug: user-guide/dashboard
     long: |
       ## What is the gamification layer?
 
       Three mechanics make learning progress visible and
       rewarding:
 
-      - **XP (experience points)** — for every completed
-        session, every method switch, every
-        spaced-repetition card. Levels rise with XP.
-      - **Badges** — for thematic milestones ("first
-        session", "10 sessions in a method", "30-day streak",
-        ...).
-      - **Streaks** — daily learning runs. They expire 24
-        hours without a session — with three "streak freezes"
-        per month as emergency pauses.
+      - **XP (experience points)** - for completed sessions
+        and lessons, the assessment and conversation imports.
+        Levels rise with XP.
+      - **Badges** - for milestones (first session, staying
+        consistent, trying methods, depth, several languages).
+      - **Streaks** - consecutive days with learning activity.
 
       ## How XP is earned
 
-      Different actions yield different XP values:
+      - **Completed session**: 50 XP, +10 XP per completed
+        cycle, +25 XP per cycle that reached step 7.
+      - **First session in a new method**: +50 XP.
+      - **Completed lesson**: 30 XP, +10 XP per star, +20 XP
+        for three stars with every step right on the first
+        attempt.
+      - **Streak multiplier**: +25% per streak day on session
+        and lesson XP, up to 7 days (at most 2.75x).
+      - **Game mode combo**: up to 20 extra XP for a lesson
+        played with combos.
+      - **Assessment completed**: 100 XP.
+      - **Conversation imported and analysed**: 75 XP.
 
-      - **Submit a rated session**: 50 XP.
-      - **Reach step 7 (integrate)**: +25 XP bonus.
-      - **Accept a method switch**: 10 XP (you made a
-        deliberate learning decision).
-      - **Spaced-repetition card with confidence > 80%**:
-        5 XP.
-      - **Anki export of a set**: 20 XP.
-
-      Levels scale with a square-root function (level n =
-      sqrt(XP / 100)) — early levels move quickly, higher
-      levels need longer breath.
+      Levels grow on a widening curve: level 2 at 100 XP,
+      level 3 at 300, level 4 at 600, level 5 at 1000 - each
+      gap is 100 XP larger than the one before.
 
       ## Badges are not coercive
 
-      Badge criteria are not UI-load-bearing — you do *not*
-      need a single badge to use the app productively. They
-      are a mirror, not a target. If you start to feel like
-      you are learning for badges rather than for yourself,
-      disable the display in settings.
+      You do *not* need a single badge to use the app
+      productively. They are a mirror, not a target. Badge
+      notifications can be turned off in settings.
 
       ## Streak freezes
 
-      Three streak freezes per month. If you miss a day, a
-      freeze automatically protects your streak. Explicitly
-      designed as a "sick day" or "travel day" allowance, not
-      as an exception mechanism for laziness.
+      Every 7 streak days earn one streak freeze, up to 3 in
+      stock. If you miss a day, a freeze is used automatically
+      and pauses your streak instead of resetting it. With
+      weekend mode on, Saturday and Sunday do not count as
+      gaps.
 
       ## Why this works without gimmicks
 
@@ -265,15 +252,15 @@ entries:
       intrinsic motivation ("overjustification effect").
       Adaptive Learner relies on the mechanics being a
       **mirror** of progress, not an incentive system. No
-      leaderboards, no social features, no point-sharing —
+      leaderboards, no social features, no point-sharing -
       the data stays with you.
 
       ## Reset
 
       If the gamification values no longer match your
       situation (e.g. fresh start after a long break), you
-      can reset them in settings. Curriculum, sessions, and
-      ratings are preserved.
+      can reset XP, badges and streak in settings. Curriculum,
+      sessions, and ratings are preserved.
 
   - key: view_dashboard
     title: Dashboard
@@ -319,9 +306,12 @@ entries:
     long: |
       ## How do the exercises work?
 
-      A lesson is a sequence of theory and exercise steps. Five
-      exercise types appear: matching (coloured pairs + number
-      badges), picture choice, free text, word tiles, and cloze.
+      A lesson is a sequence of theory and exercise steps.
+      Every set can use the core exercise types (matching,
+      picture choice, free text, cloze, word tiles, multiple
+      choice); some sets add further types such as
+      categorization or audio dictation. The full list is in
+      the features overview.
 
       ## Controls
 
@@ -355,10 +345,12 @@ entries:
     long: |
       ## What is a backup?
 
-      A backup is a complete snapshot: every table (projects,
-      sessions, lesson progress, errors, gamification, missions
-      ...) plus your downloaded content sets - as a single JSON
-      file.
+      A backup is a complete snapshot: every data table
+      (projects, sessions, lesson progress, errors,
+      gamification, missions ...), your downloaded content
+      sets and your local preferences - bundled into one
+      ``.alb`` file (a ZIP archive). Older single-JSON backups
+      still import.
 
       ## Cross-identity
 

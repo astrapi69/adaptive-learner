@@ -56,7 +56,7 @@ AI セッションにはインターネットが必要です。
    [レッスンと復習](lessons.md)をご覧ください。
 4. **オプション：AI セッション。** 代わりに 6 メソッドの
    ガイド付き学習対話を希望する場合は、**API キー**を登録し
-   （設定または `~/.config/adaptive-learner/secrets.yaml`）、
+   （設定または `~/.config/adaptive_learner/secrets.yaml`）、
    オプションの[学習タイプ・テスト](assessment.md)を行い、
    [学習セッション](learning-session.md)を始めます。
 5. **結果を保存する。** レッスンサマリーから結果を Markdown と

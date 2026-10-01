@@ -61,7 +61,7 @@ ativo, mais o novo emblema de **atribuição de fonte**:
   encriptação Fernet na BD (modo Servidor) ou em texto simples
   no IndexedDB (modo Local). Pode Guardar / Remover livremente.
 - **Chave de: secrets.yaml** - a chave está configurada em
-  `~/.config/adaptive-learner/secrets.yaml`. O botão Guardar
+  `~/.config/adaptive_learner/secrets.yaml`. O botão Guardar
   está desativado; edite o ficheiro diretamente para alterá-la.
   Um banner informativo abaixo da linha lembra-o do caminho.
 - **Chave de: ambiente** - a chave está configurada via a
