@@ -12,8 +12,8 @@ leurs propres copies de cette liste.
 - **Six méthodes d'apprentissage** (déductive, inductive, basée sur
   l'erreur, dialogique, contextuelle, adaptative par IA) avec des
   prompts IA dédiés par méthode et par étape.
-- **Cycle de session en sept étapes** : input, focus, essai, feedback,
-  affinage, transfert, intégration. Un évaluateur à double prompt juge
+- **Cycle de session en sept étapes** : entrée, tentative, erreur, retour,
+  adapter, répéter, intégrer. Un évaluateur à double prompt juge
   chaque tour et décide d'avancer, de répéter, de sauter en avant ou
   de revenir en arrière.
 - **Auto-loop** : quand un sujet est intégré, la session choisit un

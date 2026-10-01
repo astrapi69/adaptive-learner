@@ -14,8 +14,8 @@ desta lista.
 - **Seis métodos de aprendizagem** (dedutivo, indutivo, baseado em
   erros, dialógico, contextual, adaptativo por IA) com prompts de IA
   dedicados por método e por passo.
-- **Ciclo de sessão em sete passos**: input, foco, tentativa,
-  feedback, refinamento, transferência, integração. Um avaliador de
+- **Ciclo de sessão em sete passos**: entrada, tentativa, erro,
+  feedback, adaptar, repetir, integrar. Um avaliador de
   prompt duplo julga cada interação e decide se avança, repete, salta
   à frente ou recua.
 - **Auto-loop**: quando um tema fica integrado, a sessão escolhe um
