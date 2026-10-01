@@ -1,4 +1,4 @@
-# Adaptive Learner — Hilfe-Glossar: App-Features (Deutsch).
+# Adaptive Learner - Hilfe-Glossar: App-Features (Deutsch).
 
 category: features
 language: de
@@ -58,19 +58,19 @@ entries:
     long: |
       ## Was ist der Auto-Loop?
 
-      Wenn du Schritt 7 (Integration) abschliesst, kann die
+      Wenn du Schritt 7 (Integration) abschließt, kann die
       Session automatisch einen neuen Zyklus zum nachfolgenden
-      Thema deines Curriculums starten — ohne dass du den
-      "Naechster Zyklus"-Button druecken musst.
+      Thema deines Curriculums starten - ohne dass du den
+      "Nächster Zyklus"-Button drücken musst.
 
-      ## Wie das System das naechste Thema waehlt
+      ## Wie das System das nächste Thema wählt
 
-      - **Wenn ein Curriculum existiert**: das naechste Thema
+      - **Wenn ein Curriculum existiert**: das nächste Thema
         in der hierarchischen Reihenfolge.
       - **Wenn kein Curriculum existiert**: die AI generiert
         ein passendes Folgethema basierend auf dem aktuellen
         Lernverlauf.
-      - **Wenn Spaced-Repetition-Karten faellig sind**: diese
+      - **Wenn Spaced-Repetition-Karten fällig sind**: diese
         werden vorgezogen, bevor neuer Stoff kommt.
 
       ## Cycle-Counter
@@ -78,13 +78,13 @@ entries:
       Jede Session zeigt einen Cycle-Counter ("3/5"). Wenn
       max_cycles erreicht ist (Default: 5), pausiert der
       Auto-Loop und das System fragt, ob du weitermachen
-      moechtest. Das schuetzt vor uebermaessig langen Sessions.
+      möchtest. Das schützt vor übermäßig langen Sessions.
 
       ## Wie du den Auto-Loop unterbrichst
 
       - **Bewertung abgeben**: nach jedem Zyklus bekommst du
-        die drei Regler (Verstaendnis, Stress, Methodenpassung).
-        Wenn dein Stress > 3 ist, schlaegt das System eine
+        die drei Regler (Verständnis, Stress, Methodenpassung).
+        Wenn dein Stress > 3 ist, schlägt das System eine
         Pause vor.
       - **"Session beenden"-Button**: jederzeit klickbar.
       - **Methodenwechsel annehmen**: bricht den aktuellen
@@ -94,8 +94,8 @@ entries:
 
       Bei Sprachenlernen mit kleinen Themen-Einheiten, wo der
       Overhead "neue Session starten" das Lernen ausbremst.
-      Beim Coding ist die Auto-Loop oft weniger nuetzlich, weil
-      die Themen-Wechsel groesser sind.
+      Beim Coding ist die Auto-Loop oft weniger nützlich, weil
+      die Themen-Wechsel größer sind.
 
   - key: feature_spaced_repetition
     title: Spaced Repetition
@@ -144,36 +144,36 @@ entries:
 
   - key: feature_conversation_analysis
     title: Conversation Analysis / Import
-    short: "Analysiere bestehende Chat-Verlaeufe und extrahiere daraus konkrete Lernerkenntnisse."
+    short: "Analysiere bestehende Chat-Verläufe und extrahiere daraus konkrete Lernerkenntnisse."
     long: |
       ## Was ist Conversation Analysis?
 
       Adaptive Learner kann bestehende Chats mit ChatGPT,
       Claude oder Gemini analysieren und daraus
-      Lerngegenstaende extrahieren. Du importierst den
-      Chat-Verlauf einmal — das System liest ihn, ordnet ihn
+      Lerngegenstände extrahieren. Du importierst den
+      Chat-Verlauf einmal - das System liest ihn, ordnet ihn
       ein und macht ihn zu einem nutzbaren Lernartefakt.
 
       ## Was extrahiert wird
 
-      - **Konzepte** — Begriffe und Ideen, die im Chat
+      - **Konzepte** - Begriffe und Ideen, die im Chat
         diskutiert wurden.
-      - **Wissensluecken** — Stellen, an denen du nachgefragt
+      - **Wissenslücken** - Stellen, an denen du nachgefragt
         oder Fehler gemacht hast.
-      - **Fehler** — konkrete Missverstaendnisse, die im Chat
+      - **Fehler** - konkrete Missverständnisse, die im Chat
         sichtbar wurden.
-      - **Vokabular / Terminologie** — Fachbegriffe (besonders
+      - **Vokabular / Terminologie** - Fachbegriffe (besonders
         beim Sprachenlernen oder in Spezialgebieten).
 
       ## Wie der Import funktioniert
 
       1. Du exportierst deinen Chat aus ChatGPT, Claude oder
         Gemini als Markdown oder JSON.
-      2. Du laedst die Datei in Adaptive Learner hoch
+      2. Du lädst die Datei in Adaptive Learner hoch
         (drag&drop oder Dateiauswahl).
       3. Das System erkennt das Format automatisch und
         speichert die Nachrichten.
-      4. Du startest die Analyse — die AI liest den Chat in
+      4. Du startest die Analyse - die AI liest den Chat in
         deiner Lernsprache und liefert die strukturierte
         Auswertung.
 
@@ -181,17 +181,17 @@ entries:
 
       Aus der Analyse entstehen drei Aktionen:
 
-      - **"Curriculum erstellen"** — die extrahierten Konzepte
-        werden in ein hierarchisches Curriculum ueberfuehrt.
-      - **"Session starten"** — eine Session, die direkt mit
-        den erkannten Wissensluecken startet.
-      - **"Anki-Karten generieren"** — Karteikarten aus den
+      - **"Curriculum erstellen"** - die extrahierten Konzepte
+        werden in ein hierarchisches Curriculum überführt.
+      - **"Session starten"** - eine Session, die direkt mit
+        den erkannten Wissenslücken startet.
+      - **"Anki-Karten generieren"** - Karteikarten aus den
         Konzepten + Vokabular.
 
       ## Duplikate
 
       Wenn du denselben Chat zweimal importierst, erkennt das
-      System es ueber den Inhalts-Hash und bietet dir an, zur
+      System es über den Inhalts-Hash und bietet dir an, zur
       bestehenden Analyse zu navigieren statt eine Kopie
       anzulegen.
 
@@ -200,7 +200,7 @@ entries:
       Die Chat-Inhalte gehen NUR an deinen aktiven AI-Provider
       (den, den du in den Einstellungen konfiguriert hast).
       Das System schickt nichts an einen zentralen Server.
-      Wenn du den Chat loescht, sind die Inhalte komplett weg.
+      Wenn du den Chat löscht, sind die Inhalte komplett weg.
 
   - key: feature_gamification
     title: Gamification (XP, Badges, Streaks)
@@ -273,26 +273,26 @@ entries:
 
   - key: view_dashboard
     title: Dashboard
-    short: "Deine Startseite: Fortschritt, Streak, XP, Abzeichen, faellige Wiederholungen und schnelle Aktionen."
+    short: "Deine Startseite: Fortschritt, Streak, XP, Abzeichen, fällige Wiederholungen und schnelle Aktionen."
     docs_slug: user-guide/dashboard
     long: |
       ## Was zeigt das Dashboard?
 
       Das Dashboard ist deine Kommandozentrale. Oben steht
-      "Weitermachen" mit der zuletzt beruehrten Lektion, darunter
+      "Weitermachen" mit der zuletzt berührten Lektion, darunter
       die handlungsrelevanten Karten (pausierte Lektionen,
       Missionen, Fokusbereiche, Wiederholungs-Warteschlange),
       dann die Gamification (XP, Streak, Abzeichen) und
-      schliesslich die analytischen Panels.
+      schließlich die analytischen Panels.
 
       ## Filter
 
       Ein Subject-Filter listet nur deine eigenen Fachgebiete,
-      nach haeufigster Nutzung sortiert.
+      nach häufigster Nutzung sortiert.
 
   - key: view_content_browser
     title: Content Browser
-    short: "Die Seite, auf der du Lektionssaetze findest, herunterlaedst und startest."
+    short: "Die Seite, auf der du Lektionssätze findest, herunterlädst und startest."
     docs_slug: features/content-browser
     long: |
       ## Wie finde ich Lektionen?
@@ -301,13 +301,13 @@ entries:
       Lernfluss gebaut: zuerst die Suche (sofort,
       akzent-tolerant), dann "Weitermachen", dann der Katalog.
       Dieser teilt sich in "Sprachen" (Quellsprache >
-      Zielsprache > Niveau) und "Wissen" (Nicht-Sprach-Domaenen).
+      Zielsprache > Niveau) und "Wissen" (Nicht-Sprach-Domänen).
 
-      ## Quellen und Buecher
+      ## Quellen und Bücher
 
       Quell-Badges zeigen, woher ein Satz stammt; ein
       Quell-Filter blendet einzelne Quellen aus. Zu einer
-      Domaene koennen Buchempfehlungen erscheinen.
+      Domäne können Buchempfehlungen erscheinen.
 
   - key: view_lesson
     title: Lektion
@@ -332,14 +332,14 @@ entries:
 
   - key: view_settings
     title: Einstellungen
-    short: "Alles, was du ohne Code oder YAML aendern kannst — Sprache, KI, Lernen, Daten, Darstellung."
+    short: "Alles, was du ohne Code oder YAML ändern kannst - Sprache, KI, Lernen, Daten, Darstellung."
     docs_slug: user-guide/settings
     long: |
       ## Was kann ich einstellen?
 
-      Die Einstellungen buendeln Sprache, KI-Anbieter und
-      -Schluessel, Speichermodus, Lern-Optionen (z.B.
-      Enter-Shortcut, bevorzugte Uebungsrichtung), Daten (Backup,
+      Die Einstellungen bündeln Sprache, KI-Anbieter und
+      -Schlüssel, Speichermodus, Lern-Optionen (z.B.
+      Enter-Shortcut, bevorzugte Übungsrichtung), Daten (Backup,
       Content-Repositories), Darstellung (12 Themes) und
       Gamification.
 
@@ -347,7 +347,7 @@ entries:
 
       Unter "Daten" erstellst und importierst du Backups und
       verbindest eigene Content-Repositories. Nichts davon
-      verlaesst dein Geraet ungefragt.
+      verlässt dein Gerät ungefragt.
 
   - key: feature_backup
     title: Backup und Wiederherstellung
