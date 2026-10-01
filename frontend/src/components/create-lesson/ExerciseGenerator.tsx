@@ -46,13 +46,13 @@ import {
     isExtensionType,
     newExerciseId,
     newExtensionExerciseId,
-    validateExerciseEdit,
     validateExtensionExercise,
     type ExerciseGenConfig,
     type ExtensionWizardType,
     type GeneratableType,
 } from "../../lib/exercises";
 import {exerciseTypeLabelKey} from "../../lib/content/lesson/edit-error-keys";
+import {checkExerciseDraft} from "../../lib/content/lesson/edit/exercise-draft-check";
 import type {ContentLessonExercise} from "../../storage/types";
 
 export const MIN_EXERCISES = 5;
@@ -81,11 +81,12 @@ export function clampExerciseCount(value: number): number {
  *  half-filled-exercise guard shared by every advance gate (#1970). */
 export function hasIncompleteExercise(
     exercises: ContentLessonExercise[],
+    cardIds: readonly string[],
 ): boolean {
     return exercises.some((ex) =>
         isExtensionType(ex.type)
             ? !validateExtensionExercise(ex).valid
-            : !validateExerciseEdit(ex).valid,
+            : !checkExerciseDraft(ex, cardIds).valid,
     );
 }
 
@@ -138,6 +139,9 @@ export interface ExerciseGeneratorProps {
     onUpdate: (id: string, updated: ContentLessonExercise) => void;
     /** Append a manually-created exercise (#1849). */
     onAdd: (exercise: ContentLessonExercise) => void;
+    /** The ids of the lesson's cards, for the inline editor's card
+     *  reference check (#3387). */
+    cardIds: readonly string[];
     /** #1970 — hide the generate-from-cards config, the "some selected types
      *  produced nothing" explanation, and the create-time minimum hint. Used by
      *  the cardless (book/theory-lesson) edit flow, where there are no cards to
@@ -156,6 +160,7 @@ export default function ExerciseGenerator({
     onDelete,
     onUpdate,
     onAdd,
+    cardIds,
     hideGenerator = false,
 }: ExerciseGeneratorProps) {
     const {t} = useI18n();
@@ -427,6 +432,7 @@ export default function ExerciseGenerator({
                                 exercise={ex}
                                 onDelete={onDelete}
                                 onUpdate={onUpdate}
+                                cardIds={cardIds}
                                 autoEdit={ex.id === autoEditId}
                             />
                         ))}
@@ -569,6 +575,7 @@ interface SortableExerciseRowProps {
     exercise: ContentLessonExercise;
     onDelete: (id: string) => void;
     onUpdate: (id: string, updated: ContentLessonExercise) => void;
+    cardIds: readonly string[];
     /** Open straight in the inline editor on mount (a manually-added
      *  exercise, #1849). */
     autoEdit?: boolean;
@@ -578,6 +585,7 @@ function SortableExerciseRow({
     exercise,
     onDelete,
     onUpdate,
+    cardIds,
     autoEdit = false,
 }: SortableExerciseRowProps) {
     const {t} = useI18n();
@@ -647,6 +655,7 @@ function SortableExerciseRow({
                     <ExerciseEditor
                         key={exercise.type}
                         exercise={exercise}
+                        cardIds={cardIds}
                         onSave={handleSave}
                         onCancel={handleCancel}
                     />

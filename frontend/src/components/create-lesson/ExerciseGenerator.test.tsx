@@ -61,6 +61,7 @@ function Harness({
     return (
         <ExerciseGenerator
             exercises={exercises}
+            cardIds={[]}
             config={config}
             onConfigChange={setConfig}
             onGenerate={() => onGenerateCount?.(config.count)}
@@ -87,6 +88,7 @@ function ListHarness({
     return (
         <ExerciseGenerator
             exercises={exercises}
+            cardIds={[]}
             config={DEFAULT_EXERCISE_GEN_CONFIG}
             onConfigChange={vi.fn()}
             onGenerate={vi.fn()}
@@ -172,6 +174,7 @@ function renderWith(
     render(
         <ExerciseGenerator
             exercises={exercises}
+            cardIds={[]}
             config={{...DEFAULT_EXERCISE_GEN_CONFIG, types}}
             onConfigChange={vi.fn()}
             onGenerate={vi.fn()}
@@ -363,6 +366,7 @@ describe("ExerciseGenerator — dictation core option (#1895)", () => {
             return (
                 <ExerciseGenerator
                     exercises={exercises}
+                    cardIds={[]}
                     config={DEFAULT_EXERCISE_GEN_CONFIG}
                     onConfigChange={vi.fn()}
                     onGenerate={vi.fn()}
@@ -460,6 +464,7 @@ describe("ExerciseGenerator — extension types in the picker (#2508)", () => {
             return (
                 <ExerciseGenerator
                     exercises={exercises}
+                    cardIds={[]}
                     config={DEFAULT_EXERCISE_GEN_CONFIG}
                     onConfigChange={vi.fn()}
                     onGenerate={vi.fn()}
@@ -685,7 +690,7 @@ describe("hasIncompleteExercise", () => {
             accept: ["あ", "い", "う", "え", "お"],
             distractors: ["か", "さ", "な"],
         } as ContentLessonExercise;
-        expect(hasIncompleteExercise([multiselect])).toBe(false);
+        expect(hasIncompleteExercise([multiselect], [])).toBe(false);
     });
     it("counts a multiselect cloze without correct options as incomplete", () => {
         const broken = {
@@ -698,6 +703,6 @@ describe("hasIncompleteExercise", () => {
             accept: [],
             distractors: ["x"],
         } as ContentLessonExercise;
-        expect(hasIncompleteExercise([broken])).toBe(true);
+        expect(hasIncompleteExercise([broken], [])).toBe(true);
     });
 });

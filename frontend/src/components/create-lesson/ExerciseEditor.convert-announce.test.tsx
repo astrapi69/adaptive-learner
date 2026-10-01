@@ -28,6 +28,7 @@ function Harness({exercise}: {exercise: ContentLessonExercise}) {
     return (
         <ExerciseEditor
             exercise={ex}
+            cardIds={[]}
             onSave={(u) => {
                 setEx(u);
                 setSaved(u);
