@@ -132,7 +132,8 @@ Siehe [Lektionen erstellen](../content-creation/overview.md).
 
 ## Content-Verwaltung
 
-- **Content-Hub** mit den Tabs Entdecken / Meine Inhalte / Import,
+- **Content-Hub** mit den Tabs Entdecken / Meine Inhalte / Import /
+  Erstellen,
   Listen- oder Kachelansicht und einer Such-/Filterleiste (Sprache,
   Niveau, Domäne, Trust, KI-geprüft).
 - **Herunterladbare Lektions-Sets** aus öffentlichen

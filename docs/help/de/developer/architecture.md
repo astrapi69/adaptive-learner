@@ -196,27 +196,34 @@ frontend/src/
   styles/       design tokens + per-theme CSS
 ```
 
-## Navigation (EXP-037)
+## Navigation
 
-Die primäre Navigation besteht aus **7 gruppierten Einträgen**
-(Dashboard, Lernpfad, Meine Inhalte, Entdecken, Fortschritt,
-Settings, Help) über ein wiederverwendbares `NavGroup`. Auf
-Mobilgeräten zeigt eine `BottomTabBar` 5 Tabs (Lernen, Inhalte,
-Entdecken, Fortschritt, Mehr) plus ein "Mehr"-Bottom-Sheet
-(während Lektionen und im Funnel ausgeblendet). Mehrere Seiten
-sind tab-basierte Hubs:
+Die primäre Navigation ist eine typisierte Liste
+(`components/nav/nav-targets.ts`), gerendert als gruppierte Einträge
+über ein wiederverwendbares `NavGroup`: **Lernen** (Dashboard,
+Lernpfad, Sitzung), **Inhalte** (`/content`), **Fortschritt**
+(`/progress`), danach Einstellungen und Hilfe. Desktop zeigt sie als
+obere Leiste, schmale Breiten als Hamburger-Drawer - ein Renderer,
+zwei Darstellungen. Eine mobile `BottomTabBar` (Lernen, Inhalte,
+Lernpfad, Fortschritt, Mehr, mit einem Mehr-Bottom-Sheet für
+Einstellungen und Hilfe) ist per Menüposition-Einstellung
+zuschaltbar (`useNavPosition`, Standard `"top"`) und während
+Lektionen und im Funnel ausgeblendet. Mehrere Seiten sind
+tab-basierte Hubs:
 
 - **Dashboard** - Tabs Overview / Activity / Missions
   (`DashboardOverviewTab` / `DashboardActivityTab` /
   `DashboardMissionsTab`; nur der aktive Tab wird gemountet).
 - **ProgressHub** (`/progress`) - Übersicht / Statistik /
   Meine Pfade.
-- **DiscoverHub** (`/discover`) - ergänzt einen Import-Tab;
-  **ContentHub** ist "Meine Inhalte" (nur heruntergeladene
-  Inhalte).
+- **ContentHub** (`/content`) - Entdecken / Meine Inhalte /
+  Importieren / Erstellen, in einer vom Nutzer wählbaren
+  Reihenfolge (`contentTabOrderPref.ts`).
 
 Alte Links bleiben über Redirects erhalten (`/statistics` →
-`/progress?tab=stats`, `/import` → `/discover?tab=import`, …).
+`/progress?tab=stats`, `/curriculum` → `/progress?tab=paths`,
+`/discover` → `/content?tab=discover`, `/import` →
+`/content?tab=import`).
 
 ## Theming
 
