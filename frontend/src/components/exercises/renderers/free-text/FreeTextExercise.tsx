@@ -94,10 +94,11 @@ function freeTextReviewedResult(
     accept: readonly string[],
     codeMode: boolean,
     toleranceByAcceptText: ReadonlyMap<string, number> | undefined,
+    caseSensitive: boolean,
 ): {correct: number; total: number} | null {
     if (reviewedInput == null) return null;
     return {
-        correct: isFreeTextCorrect(reviewedInput, accept, codeMode, toleranceByAcceptText)
+        correct: isFreeTextCorrect(reviewedInput, accept, codeMode, toleranceByAcceptText, caseSensitive)
             ? 1
             : 0,
         total: 1,
@@ -214,6 +215,7 @@ function FreeTextResult({
     prompt,
     ttsLang,
     codeMode,
+    caseSensitive,
     controlled,
     canCheck,
     onCheck,
@@ -230,6 +232,8 @@ function FreeTextResult({
     prompt: string;
     ttsLang: string | null;
     codeMode: boolean;
+    /** The exercise declares ``case_sensitive`` (learn-content-engine#242). */
+    caseSensitive: boolean;
     controlled: boolean;
     canCheck: boolean;
     onCheck: () => void;
@@ -241,7 +245,7 @@ function FreeTextResult({
     // #627 — a wrong-but-close answer (within 2 edits) gets encouraging
     // feedback. Computed here so the component stays under the complexity
     // gate; the ternary below only consults it on the wrong branch.
-    const nearMiss = isFreeTextNearMiss(input, accept, codeMode);
+    const nearMiss = isFreeTextNearMiss(input, accept, codeMode, caseSensitive);
     // #1005/#1011 — after a wrong answer, toggle between "My answer" (the
     // learner's text + token diff) and "Solution" (the accepted answers).
     // Gated on the mode's ``showAnswerToggle`` (hidden in exam mode).
@@ -378,6 +382,9 @@ function FreeTextExercise(
     const {t} = useI18n();
     const accept = exercise.accept ?? [];
     const canonical = accept[0] ?? "";
+    // learn-content-engine#242: case is graded only where the exercise
+    // declares it; without it, case is not an error.
+    const caseSensitive = exercise.case_sensitive === true;
     const reviewedFreeText =
         reviewed?.kind === "free_text" ? reviewed : null;
 
@@ -391,6 +398,7 @@ function FreeTextExercise(
         accept,
         codeMode,
         toleranceByAcceptText,
+        caseSensitive,
     );
 
     const {submitted, result, submit, reset} = useControlledExercise({
@@ -401,7 +409,7 @@ function FreeTextExercise(
         onComplete,
         reviewedResult,
         score: (): ExerciseScored => {
-            const isCorrect = isFreeTextCorrect(input, accept, codeMode, toleranceByAcceptText);
+            const isCorrect = isFreeTextCorrect(input, accept, codeMode, toleranceByAcceptText, caseSensitive);
             return {
                 correct: isCorrect ? 1 : 0,
                 total: 1,
@@ -489,6 +497,7 @@ function FreeTextExercise(
                 prompt={exercise.prompt ?? ""}
                 ttsLang={ttsLang}
                 codeMode={codeMode}
+                caseSensitive={caseSensitive}
                 controlled={controlled}
                 canCheck={!isInputEmpty}
                 onCheck={submit}

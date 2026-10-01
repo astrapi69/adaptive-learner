@@ -623,3 +623,41 @@ describe("FreeTextExercise: parametric-exercise tolerance grading (#3109)", () =
         );
     });
 });
+
+describe("FreeTextExercise: declared case (learn-content-engine#242)", () => {
+    const CAPITALS: ContentLessonExercise = {
+        id: "ex-free-i-capital",
+        type: "free_text",
+        prompt: "Write 'Ich bin Anna' in English.",
+        card_ids: [],
+        accept: ["I am Anna"],
+        distractors: [],
+        case_sensitive: true,
+    };
+
+    function answer(exercise: ContentLessonExercise, value: string) {
+        const onComplete = vi.fn();
+        render(<FreeTextExercise exercise={exercise} onComplete={onComplete} />);
+        fireEvent.change(screen.getByTestId("free-text-input"), {target: {value}});
+        fireEvent.click(screen.getByTestId("free-text-submit"));
+        return onComplete;
+    }
+
+    it("grades a case error wrong and calls it a near miss", () => {
+        const onComplete = answer(CAPITALS, "i am Anna");
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 0, total: 1}));
+        const result = screen.getByTestId("free-text-result");
+        expect(result).toHaveAttribute("data-result", "wrong");
+        expect(result).toHaveTextContent("Almost!");
+    });
+
+    it("grades the answer in the right case correct", () => {
+        const onComplete = answer(CAPITALS, "I am Anna");
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
+    });
+
+    it("without the declaration, case is not an error", () => {
+        const onComplete = answer({...CAPITALS, case_sensitive: undefined}, "i am anna");
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
+    });
+});
