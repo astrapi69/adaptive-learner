@@ -122,3 +122,69 @@ class TestEndToEnd:
             check=False,
         )
         assert result.returncode == 0, result.stdout + result.stderr
+
+
+class TestStage1HelpGlossary:
+    """#3413: the German help glossary (backend/config/help/*.de.yaml)
+    shipped in ASCII transliteration because Stage 1 only read de.yaml."""
+
+    @staticmethod
+    def _run(help_dir: Path) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPTS / "verify_i18n_scripts.py"),
+                "--lang",
+                "de",
+                "--help-dir",
+                str(help_dir),
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+    def test_detects_substitute_word_in_help_file(self, tmp_path: Path) -> None:
+        (tmp_path / "steps.de.yaml").write_text(
+            "category: steps\nlanguage: de\nentries:\n"
+            "  - key: practice\n"
+            '    short: "Du uebst, bis es sitzt."\n'
+            "    long: |\n      Die AI schlaegt faellige Verlaeufe vor.\n",
+            encoding="utf-8",
+        )
+        result = self._run(tmp_path)
+        assert result.returncode == 1, result.stdout + result.stderr
+        assert "FAIL help/steps.de.yaml" in result.stdout
+        for word in ("uebst", "schlaegt", "faellige", "verlaeufe"):
+            assert word in result.stderr
+
+    def test_clean_help_file_passes_and_is_reported(self, tmp_path: Path) -> None:
+        (tmp_path / "steps.de.yaml").write_text(
+            "entries:\n  - key: practice\n"
+            '    short: "Du übst, bis es sitzt. Quelle, neue Themen, dass."\n',
+            encoding="utf-8",
+        )
+        (tmp_path / "steps.en.yaml").write_text(
+            'entries:\n  - short: "fuer is ignored outside de"\n', encoding="utf-8"
+        )
+        result = self._run(tmp_path)
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert "OK   help/steps.de.yaml (0 finding(s))" in result.stdout
+        assert "steps.en.yaml" not in result.stdout
+        assert "1 help file(s) scanned" in result.stdout
+
+    def test_fails_closed_when_no_help_files_found(self, tmp_path: Path) -> None:
+        result = self._run(tmp_path)
+        assert result.returncode != 0
+        assert "no German help files" in result.stderr
+
+    def test_shipped_help_glossary_is_scanned(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(SCRIPTS / "verify_i18n_scripts.py"), "--lang", "de"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        for name in ("concepts", "features", "methods", "steps"):
+            assert f"OK   help/{name}.de.yaml" in result.stdout
