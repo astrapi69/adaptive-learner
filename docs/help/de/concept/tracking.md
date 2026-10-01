@@ -134,7 +134,8 @@ Motivationsschichten:
   Modus-Toggle überspringt Sa/So-Lücken.
 
 Die Gamification ist **optional**. Toast-Benachrichtigungen
-in Einstellungen → Gamification ausschalten unterdrückt
+in Einstellungen > Lernen > Motivation und Routine >
+Gamification ausschalten unterdrückt
 die Prompts; das System speichert den Zustand trotzdem.
 Schritt-Evaluations-Insights + Git-stil Commit-Historie
 bleiben die tragende Analytik.

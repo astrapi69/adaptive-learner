@@ -60,7 +60,7 @@ applies. Cycle-transition cards render as dashed-border
 reads it aloud; a microphone button (🎤) on the input lets you
 dictate; interim transcripts populate the textarea so you can
 review before sending. Both are Web Speech API; toggle in
-Settings → Voice.
+Settings > Learning > Reading aloud and dictation.
 
 ## Cycle-progress indicator
 

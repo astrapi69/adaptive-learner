@@ -75,7 +75,8 @@ durchgereicht.
 
 ## Exporte
 
-Drei Export-Typen über Einstellungen → Export, alle in
+Drei Export-Typen über Einstellungen > Daten > Sichern und
+Exportieren > Export, alle in
 identischer Shape über beide Speichermodi:
 
 - **Fortschrittsbericht** - die ganze Fortschritts-Seite
