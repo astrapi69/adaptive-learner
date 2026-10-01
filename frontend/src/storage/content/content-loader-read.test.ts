@@ -19,6 +19,7 @@ import "fake-indexeddb/auto";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { listLessonsDexie } from "./content-loader-dexie";
+import { getLessonDexie } from "./content-loader-read";
 import { _resetDbForTests, getDb } from "../dexie/db";
 import { fileKey } from "./content-loader-sources";
 
@@ -145,6 +146,58 @@ sets:
       "10-a.json",
       "100-c.json",
       "11-b.json",
+    ]);
+  });
+});
+
+// #3393 - the same lesson the API-mode test serves
+// (api-storage-lesson-parse.test.ts), here as the raw cached file: no own
+// language pair, one from_cards matching. Both modes must return the same
+// pairs and the same inherited context.
+const FROM_CARDS_LESSON = JSON.stringify({
+  id: "01-ethos-pathos-logos",
+  title: "Ethos, Pathos, Logos",
+  cards: [
+    { id: "card-ethos", front: "Ethos", back: "Glaubwürdigkeit" },
+    { id: "card-pathos", front: "Pathos", back: "Emotion" },
+    { id: "card-logos", front: "Logos", back: "Argument" },
+  ],
+  steps: [
+    { id: "theory-1", type: "theory", body: "Drei Überzeugungsmittel." },
+    {
+      id: "ex-match",
+      type: "exercise",
+      exercise: {
+        id: "ex-match",
+        type: "matching",
+        prompt: "Ordne zu.",
+        card_ids: ["card-ethos", "card-pathos", "card-logos"],
+        from_cards: true,
+      },
+    },
+  ],
+});
+
+describe("getLessonDexie parses like API mode (#3393)", () => {
+  it("resolves from_cards and inherits the set's pair and domain", async () => {
+    await seedCachedSet(SET_MANIFEST_WITH_ORDER, []);
+    await getDb().contentSetFiles.put({
+      id: fileKey(SET_PK, "lessons/01.json"),
+      set_pk: SET_PK,
+      filename: "lessons/01.json",
+      body: FROM_CARDS_LESSON,
+      encoding: "text",
+    });
+    const lesson = await getLessonDexie(SOURCE, SET_ID, "01.json");
+    expect(lesson.steps[1].exercise?.pairs).toEqual([
+      { left: "Ethos", right: "Glaubwürdigkeit" },
+      { left: "Pathos", right: "Emotion" },
+      { left: "Logos", right: "Argument" },
+    ]);
+    expect([lesson.target_language, lesson.source_language, lesson.domain]).toEqual([
+      "de",
+      "en",
+      "psychology",
     ]);
   });
 });

@@ -259,7 +259,13 @@ describe("ApiStorage — exhaustive delegation", () => {
       [() => apiStorage.contentLoader.listSets(), "contentLoader.listSets"],
       [() => apiStorage.contentLoader.downloadSet("src", "set"), "contentLoader.downloadSet"],
       [() => apiStorage.contentLoader.listLessons("src", "set"), "contentLoader.listLessons"],
-      [() => apiStorage.contentLoader.getLesson("src", "set", "f.json"), "contentLoader.getLesson"],
+      // The proxy's payload is not a lesson, so the #3393 parse after the
+      // delegate rejects; the projection itself is pinned in
+      // api-storage-lesson-parse.test.ts.
+      [
+        () => apiStorage.contentLoader.getLesson("src", "set", "f.json").catch(() => undefined),
+        "contentLoader.getLesson",
+      ],
       [() => apiStorage.contentLoader.getAsset("src", "set", "img/a.png"), "contentLoader.getAsset"],
       [() => apiStorage.contentLoader.saveUserSet({} as never), "contentLoader.saveUserSet"],
       [() => apiStorage.contentLoader.deleteSet("src", "set"), "contentLoader.deleteSet"],

@@ -8,7 +8,12 @@
  * runs in API and Dexie mode.
  */
 
-import { parseManifest, setBasePath } from "../../lib/content/engine";
+import {
+    asContentSetEntry,
+    parseLesson,
+    parseManifest,
+    setBasePath,
+} from "../../lib/content/engine";
 import type { ParsedManifest } from "../../lib/content/engine";
 import {
     buildIncomingIdentities,
@@ -106,6 +111,7 @@ async function peekSet(
     }
 
     const basePath = setBasePath(target);
+    const context = asContentSetEntry(src, target, null);
     const setManifest = parseManifest(
         await fetchText(src.source, src.branch, `${basePath}/manifest.yaml`, token),
     ) as ParsedManifest | null;
@@ -129,13 +135,15 @@ async function peekSet(
             `${basePath}/lessons/${filename}`,
             token,
         );
-        let raw: unknown;
+        // #3393 - parsed like the read path, so a from_cards matching
+        // carries the pairs (and so the element keys) the learner played.
+        let parsed: unknown;
         try {
-            raw = JSON.parse(text);
+            parsed = parseLesson(text, context);
         } catch {
-            raw = null;
+            parsed = null;
         }
-        lessons.push({ filename, exercises: lessonExercises(raw) });
+        lessons.push({ filename, exercises: lessonExercises(parsed) });
     }
 
     // #2188 — the manifest's declared retirements ride along so the apply
