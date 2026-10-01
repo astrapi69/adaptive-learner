@@ -88,6 +88,7 @@ One exercise step. Type-tagged via ``type``.
 | `accept_orderings` | `number[][] | null` | no | - |
 | `blanks` | `ClozeBlank[] | null` | no | - |
 | `card_ids` | `string[]` | no | maxItems=50 |
+| `case_sensitive` | `boolean` | no | - |
 | `cloze_mode` | `"type" | "select" | "multiselect" | null` | no | - |
 | `direction` | `"source_to_target" | "target_to_source" | "both" | "random"` | no | - |
 | `distractors` | `string[]` | no | maxItems=20 |

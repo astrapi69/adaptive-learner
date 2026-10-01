@@ -1424,6 +1424,11 @@
             "title": "Card Ids",
             "type": "array"
           },
+          "case_sensitive": {
+            "default": false,
+            "title": "Case Sensitive",
+            "type": "boolean"
+          },
           "cloze_mode": {
             "anyOf": [
               {
