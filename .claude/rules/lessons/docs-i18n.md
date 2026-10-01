@@ -87,14 +87,14 @@ Chat with the user is NOT an ASCII exception: the standing instruction is real U
 
 `scripts/verify_i18n_scripts.py` is the AUTOMATED gate for this class (the earlier interactive `find_umlaut_candidates.py` / `replace_umlauts.py` / `build_in_scope_list.py` / `discover_unknown_umlauts.py` workflow has been removed):
 
-- **Stage 1 (de):** flags substitute-spelling forms in `backend/config/i18n/de.yaml` via a curated whole-word list (`DE_SUBSTITUTE_WORDS`). Legitimate digraph words (Quelle, Dauer, aktuell) are not listed and can never fire; "musst" is correct post-reform German and must never be added. Extend the list when a new degraded form slips through — never loosen it into a bare digraph scan.
+- **Stage 1 (de):** flags substitute-spelling forms in `backend/config/i18n/de.yaml` and the German help glossary `backend/config/help/*.de.yaml` (#3413; fails closed when no help file is found) via a curated whole-word list (`DE_SUBSTITUTE_WORDS`). Legitimate digraph words (Quelle, Dauer, aktuell) are not listed and can never fire; "musst" is correct post-reform German and must never be added. Extend the list when a new degraded form slips through — never loosen it into a bare digraph scan.
 - **Stage 2 (el/hi):** flags latin TRANSLITERATION (the severest class — functionally a missing translation) when a value's letters are mostly latin in the Greek/Devanagari catalog, after stripping `{placeholders}` and allowlisted technical/brand tokens (`LATIN_ALLOWED_TOKENS` + `KEY_ALLOWLIST_PATTERNS` for theme names etc.). False positives go into the allowlists, not into a weaker threshold.
 
-Runs via `make verify-i18n-scripts` and the `i18n-script-sanity` pre-commit hook (scoped to the de/el/hi catalogs, so it also runs in the CI pre-commit job). Hard gate, no baseline.
+Runs via `make verify-i18n-scripts` and the `i18n-script-sanity` pre-commit hook (scoped to the de/el/hi catalogs and the German help glossary, so it also runs in the CI pre-commit job). Hard gate, no baseline.
 
 NOT covered by design: missing accents in otherwise-correct-script es/fr/pt/tr values — not machine-detectable without a dictionary; the LLM quality pass (`make i18n-quality-check`, #1296) is the tool for that.
 
-German PROSE outside the catalogs (docs/help/de, journal, README German sections) is not gated; review it manually when authoring.
+German PROSE outside the catalogs and the help glossary (docs/help/de, journal, README German sections) is not gated; review it manually when authoring.
 
 ### Why this matters
 
@@ -102,7 +102,7 @@ ASCII transliteration looks unprofessional to German readers and can confuse the
 
 ### Known regression pattern
 
-Mixed-encoding files (BOTH real umlauts AND ASCII transliterations in the same paragraph) are not tooling regressions but author-style drift: typing in an environment without a German IME, then copy-pasting UTF-8 text from elsewhere. There is no heading / code-fence / section boundary to predict it. The class recurred at scale twice (#1753: the whole #1743 i18n surface degraded in 7 of 11 catalogs incl. el/hi latin transliteration; #1758: the v1.86.0 ai_check block, found by the first #1755 lint run). Mitigation: the `i18n-script-sanity` pre-commit hook now gates the de/el/hi CATALOGS automatically (see Tooling above); German prose in docs stays a manual-review surface.
+Mixed-encoding files (BOTH real umlauts AND ASCII transliterations in the same paragraph) are not tooling regressions but author-style drift: typing in an environment without a German IME, then copy-pasting UTF-8 text from elsewhere. There is no heading / code-fence / section boundary to predict it. The class recurred at scale twice (#1753: the whole #1743 i18n surface degraded in 7 of 11 catalogs incl. el/hi latin transliteration; #1758: the v1.86.0 ai_check block, found by the first #1755 lint run). Mitigation: the `i18n-script-sanity` pre-commit hook now gates the de/el/hi CATALOGS and the German help glossary automatically (see Tooling above); German prose in docs stays a manual-review surface.
 
 ## User-facing time estimates must scale with input size or be omitted
 
