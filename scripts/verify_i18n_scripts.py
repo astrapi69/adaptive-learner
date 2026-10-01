@@ -28,8 +28,14 @@ Usage::
     python3 scripts/verify_i18n_scripts.py            # lint de + el + hi
     python3 scripts/verify_i18n_scripts.py --lang de   # one catalog
 
-Wired as the ``i18n-script-sanity`` pre-commit hook (scoped to
-``backend/config/i18n/*.yaml``) and ``make verify-i18n-scripts``.
+Stage 1 also scans the German in-app help glossary
+(``backend/config/help/*.de.yaml``, #3413): it shipped fully
+transliterated because the gate only read ``de.yaml``. Finding no help
+file there fails closed - an empty scan is not a clean one.
+
+Wired as the ``i18n-script-sanity`` pre-commit hook (scoped to the
+de/el/hi catalogs and the German help glossary) and
+``make verify-i18n-scripts``.
 """
 
 from __future__ import annotations
@@ -45,6 +51,8 @@ SCRIPTS_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 from export_i18n_review import I18N_DIR, flatten, load_catalog  # noqa: E402
+
+HELP_DIR = SCRIPTS_DIR.parent / "backend" / "config" / "help"
 
 # --- Stage 1: German substitute spelling -----------------------------------
 
@@ -155,6 +163,33 @@ DE_SUBSTITUTE_WORDS = (
     "unterstuetzen",
     "vollstaendig",
     "selbststaendig",
+    # #3413: forms the help glossary carried while no gate read it
+    "fuers",
+    "dafuer",
+    "darueber",
+    "gegenueber",
+    "naechstes",
+    "erklaert",
+    "erklaeren",
+    "loest",
+    "loesen",
+    "waehlt",
+    "haeufig",
+    "tatsaechlich",
+    "verstaendnis",
+    "gespraech",
+    "faellig",
+    "faellige",
+    "verlaeufe",
+    "schlaegt",
+    "vorschlaegt",
+    "laeuft",
+    "heisst",
+    "fuehrt",
+    "ueben",
+    "uebst",
+    "zusaetzlich",
+    "persoenlicher",
     # NOTE: "musst"/"muesste"-style entries need care - "musst" IS correct
     # post-reform German (du musst) and must never be listed.
 )
@@ -357,6 +392,32 @@ def lint_catalog(lang: str) -> list[Finding]:
     raise SystemExit(f"unsupported --lang {lang} (supported: de, el, hi)")
 
 
+class HelpFilesMissingError(RuntimeError):
+    """No German help glossary file was found where one must exist."""
+
+
+def lint_de_help(help_dir: Path = HELP_DIR) -> dict[str, list[Finding]]:
+    """Stage 1 over the German help glossary: ``{file name: findings}``.
+
+    Raises:
+        HelpFilesMissingError: when ``help_dir`` holds no ``*.de.yaml`` -
+            the gate cannot check, so it must not report green.
+    """
+    paths = sorted(help_dir.glob("*.de.yaml"))
+    if not paths:
+        raise HelpFilesMissingError(f"no German help files (*.de.yaml) in {help_dir}")
+    return {path.name: find_de_substitutions(flatten(load_catalog(path))) for path in paths}
+
+
+def _report(label: str, findings: list[Finding]) -> None:
+    """Print one scanned file's status line, findings to stderr."""
+    status = "FAIL" if findings else "OK"
+    print(f"{status:4} {label} ({len(findings)} finding(s))")
+    for finding in findings:
+        detail = f" [{', '.join(finding.words)}]" if finding.words else ""
+        print(f"     {finding.key}: {finding.reason}{detail}", file=sys.stderr)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -365,6 +426,12 @@ def main(argv: list[str] | None = None) -> int:
         action="append",
         help="lint only this catalog (repeatable; default: de + el + hi)",
     )
+    parser.add_argument(
+        "--help-dir",
+        type=Path,
+        default=HELP_DIR,
+        help="directory of the German help glossary (default: backend/config/help)",
+    )
     args = parser.parse_args(argv)
     langs = args.lang or ["de", "el", "hi"]
 
@@ -372,11 +439,17 @@ def main(argv: list[str] | None = None) -> int:
     for lang in langs:
         findings = lint_catalog(lang)
         all_findings.extend(findings)
-        status = "FAIL" if findings else "OK"
-        print(f"{status:4} {lang}.yaml ({len(findings)} finding(s))")
-        for finding in findings:
-            detail = f" [{', '.join(finding.words)}]" if finding.words else ""
-            print(f"     {finding.key}: {finding.reason}{detail}", file=sys.stderr)
+        _report(f"{lang}.yaml", findings)
+        if lang == "de":
+            try:
+                help_results = lint_de_help(args.help_dir)
+            except HelpFilesMissingError as exc:
+                print(f"\ni18n script-sanity lint cannot check: {exc}", file=sys.stderr)
+                return 2
+            for name, help_findings in help_results.items():
+                all_findings.extend(help_findings)
+                _report(f"help/{name}", help_findings)
+            print(f"     {len(help_results)} help file(s) scanned")
 
     if all_findings:
         print(
