@@ -118,9 +118,9 @@ describe("LessonSummaryScreen mark-complete flow", () => {
         await waitFor(() => {
             expect(notify.error).toHaveBeenCalledTimes(1);
         });
-        expect(String(vi.mocked(notify.error).mock.calls[0][0])).toMatch(
-            /quota exceeded/,
-        );
+        expect(vi.mocked(notify.error).mock.calls[0][1]).toMatchObject({
+            error: {message: "quota exceeded"},
+        });
         expect(celebrateProgressSince).not.toHaveBeenCalled();
     });
 });

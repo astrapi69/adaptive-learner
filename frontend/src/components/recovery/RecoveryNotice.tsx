@@ -56,8 +56,8 @@ export default function RecoveryNotice() {
                     ),
                 );
             }
-        } catch {
-            notify.error(t("content.recovery.failed", "Something went wrong."));
+        } catch (err) {
+            notify.error(t("content.recovery.failed", "Something went wrong."), {error: err});
         } finally {
             setBackingUp(false);
         }

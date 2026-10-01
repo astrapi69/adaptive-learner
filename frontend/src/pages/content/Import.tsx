@@ -357,9 +357,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
       setPasteFormat("unknown");
       go(`/content/import/${saved.id}`);
     } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : t("import.parse_error", "Could not parse the input.");
-      notify.error(msg);
+      notify.error(t("import.parse_error", "Could not parse the input."), { error: err });
     } finally {
       setBusy(false);
       setBusyAction("");
@@ -400,9 +398,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         );
       }
     } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : t("import.parse_error", "Could not parse the file.");
-      notify.error(msg);
+      notify.error(t("import.parse_error", "Could not parse the file."), { error: err });
     } finally {
       setBusy(false);
       setBusyAction("");

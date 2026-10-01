@@ -153,13 +153,12 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
     const reportWriteFailure = useCallback((err: unknown) => {
         if (writeFailureReportedRef.current) return;
         writeFailureReportedRef.current = true;
-        const detail = err instanceof ApiError ? err.detail : err instanceof Error ? err.message : String(err);
         notify.error(
             tRef.current(
-                "lesson.progress_io.save_failed",
-                "Your progress in this lesson could not be saved: {detail}",
-            ).replace("{detail}", detail),
-            err instanceof ApiError ? {apiError: err} : undefined,
+                "lesson.progress_io.save_error",
+                "Your progress in this lesson could not be saved.",
+            ),
+            {error: err},
         );
     }, []);
     const upsertSerial = useCallback(

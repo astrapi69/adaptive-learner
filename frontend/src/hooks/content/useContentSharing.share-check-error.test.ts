@@ -27,7 +27,9 @@ describe("useContentSharing share-check failure (#3416)", () => {
     await act(async () => {
       await result.current.handleShare({ id: "s1", title: "Set" } as unknown as ContentSetEntry);
     });
-    expect(notifyError).toHaveBeenCalledWith("content.error.share_check_failed offline");
+    expect(notifyError).toHaveBeenCalledWith("content.error.share_check_failed", {
+      error: expect.objectContaining({ message: "offline" }),
+    });
     expect(result.current.shareTarget).toBeNull();
   });
 });

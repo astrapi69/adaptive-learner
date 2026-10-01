@@ -46,8 +46,10 @@ export function useSetExport() {
       }
       notify.success(t("content.my_lessons.exported", "Lesson exported."));
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(`${t("content.error.export_failed", "Could not export the lesson set.")} ${detail}`);
+      notify.error(
+        t("content.error.export_failed", "Could not export the lesson set."),
+        { error: err },
+      );
     }
   };
 
@@ -58,8 +60,10 @@ export function useSetExport() {
       triggerDownload(blob, contentSetFileName(entry.title));
       notify.success(t("content.my_lessons.exported", "Lesson exported."));
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(`${t("content.error.export_failed", "Could not export the lesson set.")} ${detail}`);
+      notify.error(
+        t("content.error.export_failed", "Could not export the lesson set."),
+        { error: err },
+      );
     }
   };
 

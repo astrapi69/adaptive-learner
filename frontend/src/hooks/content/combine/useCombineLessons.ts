@@ -128,9 +128,9 @@ export function useCombineLessons({
             );
             exitSelectMode();
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
             notify.error(
-                `${t("content.combine.failed", "Could not combine the lessons.")} ${detail}`,
+                t("content.combine.failed", "Could not combine the lessons."),
+                {error: err},
             );
         } finally {
             setCombining(false);

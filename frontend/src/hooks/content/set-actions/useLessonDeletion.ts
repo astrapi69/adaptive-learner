@@ -139,9 +139,9 @@ export function useLessonDeletion({ setSets }: UseLessonDeletionDeps) {
       target.onDeleted?.();
       setDeleteLessonTarget(null);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.lesson_delete.delete_failed", "Could not delete the lesson.")} ${detail}`,
+        t("content.lesson_delete.delete_failed", "Could not delete the lesson."),
+        { error: err },
       );
     } finally {
       setDeletingLesson(false);
@@ -204,9 +204,9 @@ export function useLessonDeletion({ setSets }: UseLessonDeletionDeps) {
       target.onDeleted?.();
       setBulkDeleteLessonsTarget(null);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.lesson_delete.bulk_delete_failed", "Could not delete the lessons.")} ${detail}`,
+        t("content.lesson_delete.bulk_delete_failed", "Could not delete the lessons."),
+        { error: err },
       );
     } finally {
       setBulkDeletingLessons(false);

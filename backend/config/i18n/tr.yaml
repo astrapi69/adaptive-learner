@@ -47,7 +47,7 @@ data_export:
   selective_button: "Seçili verileri dışa aktar"
   selective_done: "{n} kayıt dışa aktarıldı."
   includes_hint: "bu kategoriyle otomatik olarak dışa aktarılır"
-  failed: "Dışa aktarma başarısız: {detail}"
+  export_failed: "Dışa aktarma başarısız."
   group_content: "İçerik"
   group_master: "Ana veriler"
   group_extra: "Ek veriler"
@@ -486,7 +486,7 @@ settings:
     heading: "Bağlantısı kesilen içerik"
     summary: "Artık bağlı olmadığınız kaynaklardan {lessons} ders ve {cards} tekrar kartı."
     delete: "Bağlantısı kesilen ilerlemeyi sil"
-    delete_failed: "Bağlantısı kesilmiş ilerleme silinemedi: {detail}"
+    delete_error: "Bağlantısı kesilmiş ilerleme silinemedi."
     confirm_title: "Bağlantısı kesilen ilerlemeyi sil"
     confirm_message: "{lessons} ders ve {cards} tekrar kartı kalıcı olarak silinecek. Bu geri alınamaz."
     deleted: "{lessons} ders ve {cards} tekrar kartı silindi."
@@ -1013,7 +1013,7 @@ settings:
   danger_zone_complete_toast: "Tüm veriler silindi."
   danger_zone_confirm_prompt: "Onaylamak için RESET yazın"
   danger_zone_continue: "Devam"
-  danger_zone_failed_toast: "Sıfırlama başarısız:"
+  danger_zone_failed: "Sıfırlama başarısız."
   danger_zone_final_button: "Kalıcı olarak sil"
   danger_zone_heading: "Tehlikeli bölge"
   danger_zone_input_placeholder: "RESET"
@@ -1177,8 +1177,9 @@ backup:
   too_large: 'Bu yedek dosyası çok büyük (100 MB''tan fazla).'
   export_success: Yedek indirildi ({{count}} kayıt).
   export_error: 'Yedekleme başarısız oldu: {{detail}}'
-  import_parse_error: 'Yedek okunamadı: {{detail}}'
-  import_error: 'Geri yükleme başarısız oldu: {{detail}}'
+  export_failed: "Yedekleme başarısız oldu."
+  import_parse_failed: "Yedek okunamadı."
+  import_failed: "Geri yükleme başarısız oldu."
   comparison_title: Geri yüklemeyi onayla
   comparison_help: 'Geri yükleme birleştirme yapar: yeni kayıtlar eklenir, değişebilir kayıtlar sadece yedek daha yeniyse güncellenir, geçmiş satırları olduğu gibi kalır. Hiçbir şey silinmez. API anahtarları yok sayılır.'
   table_header: Tablo
@@ -1212,11 +1213,11 @@ backup:
   auto_help: Her 10 tamamlanan oturumdan sonra ya da haftada bir otomatik yedek alır.
   auto_run: Şimdi yedek al
   auto_run_success: Otomatik yedek oluşturuldu.
-  auto_run_error: 'Otomatik yedek başarısız oldu: {{detail}}'
+  auto_run_failed: "Otomatik yedek başarısız oldu."
   auto_restored: Otomatik yedek geri yüklendi.
   auto_restore: Geri yükle
-  auto_delete_failed: "Otomatik yedek silinemedi: {detail}"
-  auto_restore_error: 'Geri yükleme başarısız oldu: {{detail}}'
+  auto_delete_error: "Otomatik yedek silinemedi."
+  auto_restore_failed: "Geri yükleme başarısız oldu."
   auto_records: '{{n}} kayıt'
   auto_none: Henüz otomatik yedek yok. İlki 10 oturum veya 7 gün sonra çalışır.
   storage_pressure: Tarayıcı deposu neredeyse dolu (kotanın %{{pct}}'i). Şimdi manuel yedek al.
@@ -1248,6 +1249,7 @@ backup:
   compare_high_volume_hint: Yoğun tablo - kayıt başına önizleme kısaltılmış olarak gösterilir.
   compare_export_md: Markdown olarak dışa aktar
   compare_markdown_downloaded: Fark dışa aktarıldı.
+  compare_export_failed: "Karşılaştırma dışa aktarılamadı."
   confirm_with_counts: Geri yükle ({{added}} eklenecek, {{updated}} güncellenecek)
   auto_compare_as_a: A olarak karşılaştır
   auto_compare_as_b: B olarak karşılaştır
@@ -1269,9 +1271,9 @@ export:
   busy: Çalışılıyor...
   download_success: Dışa aktarma indirildi.
   print_opened: Yazdırma penceresi açıldı. "PDF olarak kaydet"i seç.
-  error: 'Dışa aktarma başarısız oldu: {{detail}}'
-  preview_error: 'Önizleme başarısız oldu: {{detail}}'
-  load_error: 'Dışa aktarma verileri yüklenemedi: {{detail}}'
+  export_failed: "Dışa aktarma başarısız oldu."
+  preview_failed: "Önizleme başarısız oldu."
+  load_failed: "Dışa aktarma verileri yüklenemedi."
   pick_session: Önce bir oturum seç.
   pick_curriculum: Önce bir müfredat seç.
   title_progress: Öğrenme ilerlemesi
@@ -1931,7 +1933,7 @@ repo:
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
   progress_io:
-    save_failed: "Bu dersteki ilerlemeniz kaydedilemedi: {detail}"
+    save_error: "Bu dersteki ilerlemeniz kaydedilemedi."
     load_failed: "Bu ders için kaydedilmiş ilerlemeniz yüklenemedi: {detail}"
     create_profile: "Öğrenme profili oluştur"
   mascot_label: "Öğrenme arkadaşın"
@@ -4033,8 +4035,8 @@ content_repo:
     copy_failed: "Kopyalanamadı."
     hint: "Başkalarının bu HERKESE AÇIK depoyu ekleyebilmesi için bu bağlantıyı paylaş. Özel bir depo için URL'yi ve salt okunur bir belirteci ayrı ayrı gönder."
     qr_alt: "Paylaşım bağlantısı için QR kodu"
-  remove_failed: "Depo kaldırılamadı: {detail}"
-  reorder_failed: "Depoların sırası değiştirilemedi: {detail}"
+  remove_error: "Depo kaldırılamadı."
+  reorder_error: "Depoların sırası değiştirilemedi."
   progress:
     syncing: "Eşitleniyor…"
     validating: "Depo doğrulanıyor…"
