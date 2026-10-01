@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {"name": "empty", "rows": []},
+    {
+      "name": "one_session_mixed",
+      "rows": [
+        {"session_id": "s1", "from_step": 1, "to_step": 2, "applied": true, "fallback_used": false, "confidence": 0.9, "evaluated_at": "2026-09-01T10:00:00+00:00"},
+        {"session_id": "s1", "from_step": 2, "to_step": 2, "applied": false, "fallback_used": false, "confidence": 0.4, "evaluated_at": "2026-09-01T10:03:00+00:00"},
+        {"session_id": "s1", "from_step": 2, "to_step": 3, "applied": true, "fallback_used": true, "confidence": 0.5, "evaluated_at": "2026-09-01T10:05:30+00:00"},
+        {"session_id": "s1", "from_step": 3, "to_step": 2, "applied": true, "fallback_used": false, "confidence": 0.7, "evaluated_at": "2026-09-01T10:06:00+00:00"}
+      ]
+    },
+    {
+      "name": "two_sessions_out_of_order_with_long_pause",
+      "rows": [
+        {"session_id": "b", "from_step": 4, "to_step": 5, "applied": true, "fallback_used": false, "confidence": 0.8, "evaluated_at": "2026-09-02T09:10:00Z"},
+        {"session_id": "a", "from_step": 1, "to_step": 1, "applied": false, "fallback_used": false, "confidence": 0.3, "evaluated_at": "2026-09-02T08:00:00Z"},
+        {"session_id": "b", "from_step": 3, "to_step": 4, "applied": true, "fallback_used": false, "confidence": 0.85, "evaluated_at": "2026-09-02T09:00:00Z"},
+        {"session_id": "a", "from_step": 1, "to_step": 2, "applied": true, "fallback_used": false, "confidence": 0.6, "evaluated_at": "2026-09-02T11:00:01Z"},
+        {"session_id": "b", "from_step": 5, "to_step": 5, "applied": false, "fallback_used": false, "confidence": 0.1234, "evaluated_at": "2026-09-02T09:10:00Z"}
+      ]
+    },
+    {
+      "name": "missing_timestamp",
+      "rows": [
+        {"session_id": "s", "from_step": 2, "to_step": 3, "applied": true, "fallback_used": false, "confidence": 0.95, "evaluated_at": null},
+        {"session_id": "s", "from_step": 3, "to_step": 4, "applied": true, "fallback_used": false, "confidence": 0.65, "evaluated_at": "2026-09-03T12:00:00Z"},
+        {"session_id": "s", "from_step": 4, "to_step": 4, "applied": false, "fallback_used": true, "confidence": 0.2, "evaluated_at": "2026-09-03T12:01:15Z"}
+      ]
+    }
+  ]
+}

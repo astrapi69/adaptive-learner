@@ -2097,6 +2097,10 @@ each card row (`CardImageField`).
       the pause button in the footer -> the Continue/Pause/Abandon dialog
       appears (before: left the lesson silently); "Pause" -> the lesson is
       listed on the dashboard under "Paused lessons"
+- [ ] TC-0919 Without a learner profile (#3364): in a private window without
+      onboarding, open a lesson -> at the top a notice says a learner
+      profile is needed to save progress, with the link "Create a learner
+      profile" leading to onboarding; with a profile the notice is absent
 - [ ] TC-0451 Leaving through the app navigation (#3075): answer one exercise, then
       move two theory steps further, then leave through the menu
       (hamburger -> "Settings"), the logo or the browser's back button ->
@@ -2104,6 +2108,15 @@ each card row (`CardImageField`).
       resume dialog and lands on the theory step you were on (not on the
       exercise before it); on the phone the same through the menu drawer
       [E2E: `lesson-pause-position.spec.ts`]
+- [ ] TC-0917 Switching apps mid-lesson (#3361): answer one exercise, lock the phone
+      or switch to another app or tab and come back -> NO "Resume lesson?"
+      dialog, the lesson goes on at the same step; afterwards the
+      Dashboard does not list it under "Paused lessons"
+- [ ] TC-0918 "Start over" in the resume dialog (#3361): open a paused lesson, press
+      "Start over" -> the question "Start over from the beginning?"
+      appears; "Back to options" returns to the choice and nothing is
+      reset; press "Start over" again and "Start over" in the question ->
+      the lesson begins at step 1
 - [ ] TC-0452 Auto-advance + "Back" (#1921): with "Advance automatically"
       (Settings -> Learning) ON, answer an exercise correctly so the app
       jumps to the next step by itself -> then click "Back": the previous
@@ -3115,8 +3128,17 @@ screen auto-locks).
 - [ ] TC-0773 Wait past the device's normal auto-lock timeout (leave the phone
       alone): the screen stays on for as long as read-aloud is playing
 - [ ] TC-0774 Read-aloud plays uninterrupted through to the end of the text
-- [ ] TC-0775 After "Stop" or the end of read-aloud, the screen is again allowed to
-      auto-lock normally (the wake lock is released)
+- [ ] TC-0775 With the setting "Keep the screen on in lessons" off (Settings >
+      Learning > Interaction): after "Stop" or the end of read-aloud, the
+      screen is again allowed to auto-lock normally (the wake lock is
+      released)
+- [ ] TC-0920 Silent reading (#3358): setting on (the default), read a theory step
+      without touching the device and without read-aloud: the screen stays
+      on past the auto-lock timeout
+- [ ] TC-0921 On the lesson summary (#3358) the screen may auto-lock again; the same
+      with the setting off
+- [ ] TC-0922 App switch during read-aloud (#3358): switch to another app briefly,
+      come back, then leave the device alone: the screen stays on
 - [ ] TC-0776 Repeat the same flow on an Android device (Chrome)
 - [ ] TC-0777 Known platform limit, NOT a bug: manually pressing the lock/power
       button still turns the screen off immediately and stops playback -
@@ -3336,6 +3358,11 @@ Location: Settings > General > Profile, below the figure gallery.
       right), no pause, no options bar
 - [ ] TC-0842 "Previous" is disabled on the first step; after "Next" it goes one
       step back within the same run (not to the dashboard)
+- [ ] TC-0923 Review from a lesson (#3499): finish a lesson, start the review from its
+      summary (the "Next step" card or "Practise mistakes") and finish the
+      round: the end screen offers "Back to lesson" next to "Back to
+      Dashboard", and the button returns to exactly that lesson, also after a
+      page reload. Started from the dashboard: only "Back to Dashboard"
 - [ ] TC-0843 Enter in a cloze answer: the first Enter checks, the second Enter
       advances; without an answer Enter does nothing; with the Enter
       shortcut switched off (Settings > Learning) Enter does nothing

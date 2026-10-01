@@ -20,7 +20,14 @@ import { getStorage } from "../../../storage";
 import type { ContentSetEntry } from "../../../storage/types";
 import { notify } from "../../../utils/notify";
 import { useI18n } from "../../ui/useI18n";
-import { computeSetsDeletionPlan, deletePlannedLearnerData } from "./deletion-plans";
+import {
+  computeSetsDeletionPlan,
+  deleteConfirmedLearnerData,
+  planAtConfirm,
+  planSetsDeletionOrThrow,
+  reportRemoval,
+  type ConfirmedLearnerData,
+} from "./deletion-plans";
 import { setKey } from "./set-entry";
 import type { SetSetsDispatch } from "./types";
 
@@ -66,9 +73,13 @@ export function useSetDeletion({ setSets }: UseSetDeletionDeps) {
     if (!deleteSetTarget) return;
     setDeletingSet(true);
     try {
+      const target = deleteSetTarget;
+      const learnerData = deleteProgress
+        ? await planAtConfirm(deleteSetPlan, () => planSetsDeletionOrThrow([target]))
+        : null;
       await getStorage().contentLoader.deleteSet(deleteSetTarget.source, deleteSetTarget.id);
       await purgeSetFromLessonCache(deleteSetTarget.source, deleteSetTarget.id);
-      if (deleteProgress) await deletePlannedLearnerData(deleteSetPlan);
+      const progressError = learnerData ? await deleteConfirmedLearnerData(learnerData) : null;
       // #1709 — remember the explicit deletion so a Refresh (which re-reads
       // the source catalogue) does not restore the set into "Meine Inhalte".
       dismissSet(deleteSetTarget.source, deleteSetTarget.id);
@@ -77,7 +88,7 @@ export function useSetDeletion({ setSets }: UseSetDeletionDeps) {
           (row) => !(row.source === deleteSetTarget.source && row.id === deleteSetTarget.id),
         ),
       );
-      notify.success(t("content.set_status.deleted", "Set removed."));
+      reportRemoval(t, progressError, t("content.set_status.deleted", "Set removed."));
       setDeleteSetTarget(null);
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
@@ -98,18 +109,23 @@ export function useSetDeletion({ setSets }: UseSetDeletionDeps) {
     setBulkDeleting(true);
     const keys = new Set(targets.map(setKey));
     try {
+      const learnerData: ConfirmedLearnerData | null = deleteProgress
+        ? await planAtConfirm(bulkDeletePlan, () => planSetsDeletionOrThrow(targets))
+        : null;
       await getStorage().contentLoader.deleteSets(
         targets.map((e) => ({ source: e.source, setId: e.id })),
       );
       for (const entry of targets) {
         await purgeSetFromLessonCache(entry.source, entry.id);
       }
-      if (deleteProgress) await deletePlannedLearnerData(bulkDeletePlan);
+      const progressError = learnerData ? await deleteConfirmedLearnerData(learnerData) : null;
       // #1709 — remember the explicit deletions so a Refresh (which re-reads
       // the source catalogue) does not restore the sets into "Meine Inhalte".
       dismissSets(targets.map((e) => ({ source: e.source, setId: e.id })));
       setSets((prev) => prev.filter((row) => !keys.has(setKey(row))));
-      notify.success(
+      reportRemoval(
+        t,
+        progressError,
         t("content.set_status.bulk_deleted", "{n} sets removed.").replace(
           "{n}",
           String(targets.length),

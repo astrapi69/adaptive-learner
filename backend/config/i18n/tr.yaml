@@ -2,6 +2,8 @@ app:
   loading: "Yükleniyor…"
   loading_slow: "Bu beklenenden uzun sürüyor."
   view_load_failed: "Bu görünüm yüklenemedi."
+  view_crashed: "Bu sayfada bir hata oluştu. Diğer sayfalar çalışmaya devam ediyor."
+  crashed: "Bir şeyler ters gitti."
   reload: "Yeniden yükle"
   name: Adaptive Learner
   tagline: Altı Yöntemli Modele göre uyarlanabilir öğrenme.
@@ -398,6 +400,7 @@ review:
   empty_body: "Hepsi tamam! Bu sette tekrar edilecek öğe yok."
   not_cached_body: "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç."
   back_to_dashboard: "Panoya dön"
+  back_to_lesson: "Derse dön"
   summary:
     aria_label: "Tekrar özeti"
     heading: "Tekrar tamamlandı"
@@ -483,6 +486,7 @@ settings:
     heading: "Bağlantısı kesilen içerik"
     summary: "Artık bağlı olmadığınız kaynaklardan {lessons} ders ve {cards} tekrar kartı."
     delete: "Bağlantısı kesilen ilerlemeyi sil"
+    delete_failed: "Bağlantısı kesilmiş ilerleme silinemedi: {detail}"
     confirm_title: "Bağlantısı kesilen ilerlemeyi sil"
     confirm_message: "{lessons} ders ve {cards} tekrar kartı kalıcı olarak silinecek. Bu geri alınamaz."
     deleted: "{lessons} ders ve {cards} tekrar kartı silindi."
@@ -759,6 +763,8 @@ settings:
   lesson_auto_advance_description: "Doğru cevaptan sonra otomatik olarak sonraki alıştırmaya geçer. Yanlış cevapta çözümü inceleyebilmen için her zaman bekler."
   ask_ai_visible: "'Yapay zekâya sor' düğmesini göster"
   ask_ai_visible_description: "Teori ve alıştırmaların altında 'Yapay zekâya sor' düğmesini gösterir. Varsayılan olarak gösterilir; düğmenin yanıt verebilmesi için hâlâ kendi yapay zekâ anahtarına (BYOK) ihtiyacı vardır."
+  keep_screen_on: "Derslerde ekranı açık tut"
+  keep_screen_on_description: "Bir ders açık olduğu sürece, ekrana dokunmadan okurken de ekran kapanmaz. Ders özetinde yeniden kapanabilir. iPhone'da iOS 16.4 veya üstü, ana ekrandaki uygulama olarak iOS 18.4 veya üstü gerekir."
   button_tooltips: Buton ipuçlarını göster
   button_tooltips_description: "Simge butonlarının üzerine gelindiğinde ne yaptıklarını açıklayan bir ipucu gösterir. Ekran okuyucu etiketleri ayardan bağımsız olarak her zaman açık kalır."
   developer_mode: Geliştirici Modu
@@ -1209,6 +1215,7 @@ backup:
   auto_run_error: 'Otomatik yedek başarısız oldu: {{detail}}'
   auto_restored: Otomatik yedek geri yüklendi.
   auto_restore: Geri yükle
+  auto_delete_failed: "Otomatik yedek silinemedi: {detail}"
   auto_restore_error: 'Geri yükleme başarısız oldu: {{detail}}'
   auto_records: '{{n}} kayıt'
   auto_none: Henüz otomatik yedek yok. İlki 10 oturum veya 7 gün sonra çalışır.
@@ -1641,6 +1648,7 @@ notebooklm:
 feature:
   api_key_required: "API anahtarı gerekli. Ayarlardan bir sağlayıcı yapılandırın."
   desktop_only: "Yalnızca masaüstü uygulamasıyla kullanılabilir."
+  browser_only: "Yalnızca uygulamanın tarayıcı sürümünde kullanılabilir."
 ui:
   cancel: "İptal"
   hide_secret: "Değeri gizle"
@@ -1674,6 +1682,7 @@ ui:
     generic: "Bir şeyler ters gitti. Lütfen daha sonra tekrar dene."
     unexpected: "Bir şeyler ters gitti."
   error_report:
+    report_button: "Sorun bildir"
     dialog_title: "Bir sorun bildir"
     intro: "Adaptive Learner bir hata yakaladı ve geliştirici için bir hata raporu hazırlayabilir."
     description_label: "Yeniden oluşturma adımları (isteğe bağlı)"
@@ -2648,6 +2657,7 @@ content:
     change_failed: "Durum güncellenemedi."
     deleted: "Set kaldırıldı."
     delete_failed: "Set kaldırılamadı."
+    progress_not_deleted: "Kaldırıldı, ancak öğrenme ilerlemeniz silinemedi: {detail}"
     delete_confirm: "İndirilen set ve dersleri İçeriklerim'den kaldırılacak. Öğrenme ilerlemen korunur ve seti istediğin zaman yeniden indirebilirsin."
     select_all: "Tümünü seç"
     select_set: "{title} öğesini seç"
@@ -2789,6 +2799,8 @@ content:
     download_failed: "Set indirilemedi."
     update_all_failed: "{n} güncelleme başarısız oldu."
     open_failed: "Ders açılamadı."
+    export_failed: "Ders seti dışa aktarılamadı."
+    share_check_failed: "Set paylaşım için kontrol edilemedi."
   tree:
     i_speak: Konuştuğum dil
     learn: '{lang} öğren'
@@ -3642,6 +3654,7 @@ pwa:
   cache_clear: "Önbelleği temizle"
   cache_clear_confirm: "Çevrimdışı önbellek temizlensin mi?"
   cache_clear_action: "Evet, temizle"
+  cache_clear_failed: "Çevrimdışı önbellek temizlenemedi: {detail}"
   cache_cleared: "Çevrimdışı önbellek temizlendi."
   update:
     message: "Yeni bir sürüm mevcut."
@@ -4020,6 +4033,8 @@ content_repo:
     copy_failed: "Kopyalanamadı."
     hint: "Başkalarının bu HERKESE AÇIK depoyu ekleyebilmesi için bu bağlantıyı paylaş. Özel bir depo için URL'yi ve salt okunur bir belirteci ayrı ayrı gönder."
     qr_alt: "Paylaşım bağlantısı için QR kodu"
+  remove_failed: "Depo kaldırılamadı: {detail}"
+  reorder_failed: "Depoların sırası değiştirilemedi: {detail}"
   progress:
     syncing: "Eşitleniyor…"
     validating: "Depo doğrulanıyor…"

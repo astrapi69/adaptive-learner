@@ -28,7 +28,6 @@ Error semantics:
 
 from __future__ import annotations
 
-import hashlib
 import time
 from dataclasses import dataclass, field
 from typing import Any
@@ -64,13 +63,23 @@ class _CacheEntry:
     expires_at: float = field(default=0.0)
 
 
-_cache: dict[tuple[str, str], _CacheEntry] = {}
+@dataclass(frozen=True)
+class _RedactedKey:
+    """An API key used as a cache key without ever showing in ``repr``.
+
+    Equality and hashing use the key itself, so the same key finds the same
+    entry; no digest of the secret is computed (#3503, CodeQL
+    py/weak-sensitive-data-hashing).
+    """
+
+    value: str = field(repr=False)
 
 
-def _cache_key(provider: AIProvider, api_key: str) -> tuple[str, str]:
-    # Hash the key so the cache can't leak it via repr / debug.
-    digest = hashlib.sha256(api_key.encode("utf-8")).hexdigest()[:16]
-    return (provider.value, digest)
+_cache: dict[tuple[str, _RedactedKey], _CacheEntry] = {}
+
+
+def _cache_key(provider: AIProvider, api_key: str) -> tuple[str, _RedactedKey]:
+    return (provider.value, _RedactedKey(api_key))
 
 
 def _cache_get(provider: AIProvider, api_key: str) -> list[ModelInfo] | None:

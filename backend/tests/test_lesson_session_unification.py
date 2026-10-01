@@ -452,3 +452,18 @@ def test_no_pseudo_project_when_no_lesson_completed(client: TestClient):
         assert count == 0
     finally:
         db.close()
+
+
+def test_mark_completed_counts_toward_the_streak(client: TestClient):
+    """#3375 - a completed content lesson is activity: the streak reads 1.
+
+    The Dexie half is pinned in
+    ``frontend/src/storage/gamification/lesson-session-dexie.test.ts``.
+    """
+    user_id = _make_user(client, name="Streak")
+    _post_step(client, user_id, LESSON_A)
+    _post_complete(client, user_id, LESSON_A)
+
+    streak = client.get(f"/api/plugins/gamification/streak/{user_id}")
+    assert streak.status_code == 200, streak.text
+    assert streak.json()["current_streak_days"] == 1

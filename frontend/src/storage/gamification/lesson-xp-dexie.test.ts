@@ -350,8 +350,8 @@ describe("DexieStorage.lessonProgress.upsert fires the lesson-XP hook (Phase 50D
         });
         expect(updated.status).toBe("completed");
         xpRow = await getDb().userXp.where({user_id: USER}).first();
-        // base 30 + star_bonus 30 + first_attempt 20 = 80, no streak
-        expect(xpRow?.total_xp).toBe(80);
+        // base 30 + star_bonus 30 + first_attempt 20 = 80, x1.25 first-day streak: the lesson day is activity (#3375, API parity)
+        expect(xpRow?.total_xp).toBe(100);
     });
 
     it("re-upserting an already-completed lesson does NOT double-award", async () => {
@@ -369,7 +369,7 @@ describe("DexieStorage.lessonProgress.upsert fires the lesson-XP hook (Phase 50D
             mark_completed: true,
         });
         const firstXp = await getDb().userXp.where({user_id: USER}).first();
-        expect(firstXp?.total_xp).toBe(80);
+        expect(firstXp?.total_xp).toBe(100);
 
         // Re-upsert: status was already completed, hook MUST NOT
         // fire again.
@@ -380,7 +380,7 @@ describe("DexieStorage.lessonProgress.upsert fires the lesson-XP hook (Phase 50D
             mark_completed: true,
         });
         const secondXp = await getDb().userXp.where({user_id: USER}).first();
-        expect(secondXp?.total_xp).toBe(80);
+        expect(secondXp?.total_xp).toBe(100);
     });
 
     it("passes combo_bonus_xp from the upsert body into the award (#2893)", async () => {
@@ -398,8 +398,8 @@ describe("DexieStorage.lessonProgress.upsert fires the lesson-XP hook (Phase 50D
             combo_bonus_xp: 5,
         });
         const xpRow = await getDb().userXp.where({user_id: USER}).first();
-        // base 30 + star_bonus 30 + first_attempt 20 = 80, no streak, + 5
-        expect(xpRow?.total_xp).toBe(85);
+        // base 30 + star_bonus 30 + first_attempt 20 = 80, x1.25 first-day streak (#3375), + 5
+        expect(xpRow?.total_xp).toBe(105);
     });
 
     it("incremental in_progress upserts do NOT award XP", async () => {

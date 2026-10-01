@@ -137,7 +137,11 @@ export default function DangerZoneSection() {
             clearAllAppLocalStorage();
             // The service worker's offline lesson cache is a residue
             // surface too: it keeps serving lessons whose rows are gone.
-            await clearLessonCache();
+            // A cache failure must not turn a completed reset into
+            // "reset failed"; the data is already gone.
+            await clearLessonCache().catch((err: unknown) =>
+                console.warn("[reset] offline lesson cache not cleared", err),
+            );
             try {
                 sessionStorage.clear();
             } catch {
