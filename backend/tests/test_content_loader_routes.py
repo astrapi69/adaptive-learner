@@ -678,8 +678,10 @@ def test_save_user_set_without_attribution_leaves_it_null(client: TestClient) ->
 
 
 def test_save_user_set_rejects_bad_set_id(client: TestClient) -> None:
+    # #3391: the id's shape is the engine schema's call; an id that would
+    # escape the cache directory is still refused.
     body = {
-        "set_id": "Not A Slug",
+        "set_id": "../escape",
         "title": "t",
         "language": "en",
         "level": "beginner",
