@@ -267,11 +267,12 @@ async def test_list_sets_includes_user_generated(tmp_path: Path) -> None:
     assert any(e.source == USER_GENERATED_SOURCE and e.set.id == "conv-1" for e in entries)
 
 
-def test_save_rejects_non_slug_set_id(tmp_path: Path) -> None:
+def test_save_rejects_a_set_id_that_escapes_the_cache(tmp_path: Path) -> None:
+    """#3391: the id's shape is the engine's call; a path escape is not."""
     service = _service(tmp_path)
     with pytest.raises(ValidationError):
         service.save_user_set(
-            set_id="Not A Slug",
+            set_id="../escape",
             title="t",
             target_language="es",
             level="beginner",
