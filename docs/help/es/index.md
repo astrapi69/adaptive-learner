@@ -85,7 +85,7 @@ contenido a tu perfil.
 | [Internacionalización](developer/i18n.md) | Catálogos YAML, 8 idiomas, añadir uno nuevo |
 | [Pruebas](developer/testing.md) | Pirámide de pruebas, pytest, Vitest, Playwright |
 | [Versiones](developer/release.md) | SemVer, proceso de publicación, versiones de plugins |
-| [Temas](developer/themes.md) | Sistema de seis temas, tokens, añadir un tema nuevo |
+| [Temas](developer/themes.md) | Sistema de temas, tokens, añadir un tema nuevo |
 | [Creación de contenido](developer/authoring-content.md) | Esquema de lecciones, ejercicios, validación |
 | [Lecciones y SRS](developer/lessons-and-srs.md) | Seguimiento de errores por elemento, bandas de SRS |
 | [Misiones (dev)](developer/missions.md) | Arquitectura, catálogo de plantillas, flujo |
