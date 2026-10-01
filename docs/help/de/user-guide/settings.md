@@ -89,7 +89,8 @@ Einstellung *Liste / Kacheln* für den Content-Hub (Standard **Liste**).
 Es ist dieselbe Einstellung wie der Ansicht-Umschalter in den Tabs
 *Meine Inhalte* / *Entdecken*, eine Änderung an einer Stelle hält also
 beide synchron. Direkt unter der Karte legst du die **Reihenfolge der
-Inhalte-Tabs** (Entdecken / Meine Inhalte / Importieren) fest, sodass
+Inhalte-Tabs** (Entdecken / Meine Inhalte / Importieren /
+Erstellen) fest, sodass
 der Hub auf dem von dir am häufigsten genutzten Tab öffnet.
 
 ## Sprache

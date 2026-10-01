@@ -86,7 +86,7 @@ preference for the Content hub (default **list**). It is the same
 preference as the in-tab view toggle on *My content* / *Discover*, so
 changing it in either place keeps both in sync. Directly below the card
 you set the **order of the Content-hub tabs** (Discover / My content /
-Import), so the hub opens on the tab you use most.
+Import / Create), so the hub opens on the tab you use most.
 
 ## Language
 
