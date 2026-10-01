@@ -1174,9 +1174,15 @@ export const VIEWPORTS = {
     desktop: {width: 1920, height: 1080},
     tablet: {width: 768, height: 1024},
     mobile: {width: 375, height: 667},
+    // #3355 - a narrow laptop: the range (769-1279 px) where the top bar
+    // collapses into the drawer. Rendered for LAPTOP_SURFACES only.
+    laptop: {width: 1024, height: 768},
 } as const;
 
 export type ViewportName = keyof typeof VIEWPORTS;
+
+/** The full matrix every surface renders at (#1640). */
+export const DEFAULT_VIEWPORTS: readonly ViewportName[] = ["desktop", "tablet", "mobile"];
 
 /** Every critical surface in the Phase-1 (default-theme) matrix. */
 export const SURFACE_NAMES = [
@@ -1210,6 +1216,15 @@ export const SURFACE_NAMES = [
 ] as const;
 
 export type SurfaceName = (typeof SURFACE_NAMES)[number];
+
+/**
+ * Surfaces that also render at ``laptop`` (#3355). The header changes
+ * layout inside 769-1279 px and no matrix viewport sat there; one surface
+ * with the full header is enough to pin it without a fourth full matrix.
+ */
+export const LAPTOP_SURFACES: ReadonlySet<SurfaceName> = new Set<SurfaceName>([
+    "dashboard-populated",
+]);
 
 /**
  * Elements a surface's comparison masks (Playwright ``mask``: painted over
