@@ -216,3 +216,41 @@ describe("isFreeTextNearMiss (#627)", () => {
         expect(isFreeTextNearMiss("", accept)).toBe(false);
     });
 });
+
+describe("declared case (learn-content-engine#242, schema 1.19)", () => {
+    // Case is not an error unless the exercise declares ``case_sensitive``.
+    // Where it does, a case difference is an error, never a tolerated typo;
+    // real typos keep their tolerance.
+    const accept = ["I am Anna"] as const;
+    const caseSensitive = true;
+
+    it("without the declaration, case is not an error", () => {
+        expect(isFreeTextCorrect("i am anna", accept)).toBe(true);
+    });
+
+    it("with it, the exact answer is correct, surface variants included", () => {
+        expect(isFreeTextCorrect("I am Anna", accept, false, undefined, caseSensitive)).toBe(true);
+        expect(isFreeTextCorrect("  I am  Anna. ", accept, false, undefined, caseSensitive)).toBe(true);
+    });
+
+    it("with it, a case difference is wrong even inside the typo tolerance", () => {
+        expect(isFreeTextCorrect("i am Anna", accept, false, undefined, caseSensitive)).toBe(false);
+        expect(isFreeTextCorrect("es española", ["Es española."], false, undefined, caseSensitive)).toBe(false);
+    });
+
+    it("with it, a typo in the right case keeps its tolerance", () => {
+        expect(isFreeTextCorrect("I am Ana", accept, false, undefined, caseSensitive)).toBe(true);
+    });
+
+    it("with it, a typo plus a case error is wrong, also for a long answer", () => {
+        expect(isFreeTextCorrect("i am Ana", accept, false, undefined, caseSensitive)).toBe(false);
+        const sentence = ["My name is Anna Schmidt"] as const;
+        expect(isFreeTextCorrect("my name is Anna Schmit", sentence, false, undefined, caseSensitive)).toBe(false);
+        expect(isFreeTextCorrect("My name is Anna Schmit", sentence, false, undefined, caseSensitive)).toBe(true);
+    });
+
+    it("a case error is a near miss, so the learner sees 'Almost'", () => {
+        expect(isFreeTextNearMiss("i am Anna", accept, false, caseSensitive)).toBe(true);
+        expect(isFreeTextNearMiss("i am anna", accept)).toBe(false);
+    });
+});

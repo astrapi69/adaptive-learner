@@ -467,6 +467,15 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       weiterhin als richtig gewertet (Toleranz nur für getippte Antworten).
       Wiederholung: dieselbe Übung in der Wiederholungssitzung, falsche Option
       wählen -> falsch; die Übung gilt danach NICHT als gemeistert.
+- [ ] TC-0925 Freitext mit Groß-/Kleinschreibung (learn-content-engine#242): Nur
+      Übungen, die es ausdrücklich verlangen, werten Groß/Klein. Im Set
+      Englisch A1 (für Deutschsprachige) Lektion 03 "Artikel und Pronomen"
+      die Übung "Übersetze 'Ich bin Anna.' (Achte auf das große 'I'!)"
+      öffnen und `i am Anna` tippen -> falsch, mit
+      "Fast! Achte auf:"-Hinweis und der Lösung `I am Anna`. `I am Ana` (ein
+      Tippfehler, richtige Großschreibung) -> richtig. `I am Anna` ->
+      richtig. Gegenprobe: eine andere Freitext-Übung ohne diese Vorgabe
+      komplett kleingeschrieben beantworten -> weiterhin richtig.
 - [ ] TC-0124 Picture Choice: Kacheln GLEICHE Höhe
 - [ ] TC-0125 Antwort-Reihenfolge gemischt (#2317): eine Bildauswahl (picture_choice)
       mehrfach in verschiedenen Lektionen öffnen - die richtige Kachel steht
