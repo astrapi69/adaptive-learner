@@ -3612,7 +3612,6 @@
         "image_add": "Add image",
         "image_remove": "Remove image",
         "err_prompt": "Enter a question or prompt.",
-        "err_matching": "Add at least 2 complete pairs (term and match).",
         "err_matching_pairs": "Add at least one complete pair (term and match).",
         "err_matching_duplicate_left": "Each term may appear only once (capitalization does not count).",
         "err_matching_from_cards": "A matching built from cards needs linked cards and no extra pairs.",

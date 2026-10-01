@@ -3324,7 +3324,6 @@ create_lesson:
       image_add: "Görsel ekle"
       image_remove: "Görseli kaldır"
       err_prompt: "Bir soru veya yönerge girin."
-      err_matching: "En az 2 eksiksiz çift ekleyin (terim ve eşleşme)."
       err_matching_pairs: "En az bir eksiksiz çift ekleyin (terim ve eşleşme)."
       err_matching_duplicate_left: "Her terim yalnızca bir kez yer alabilir (büyük ve küçük harf ayrımı yapılmaz)."
       err_matching_from_cards: "Kartlardan oluşturulan bir eşleştirme bağlı kartlar gerektirir ve ek çift içeremez."

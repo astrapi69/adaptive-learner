@@ -3334,7 +3334,6 @@ create_lesson:
       image_add: "Tambah gambar"
       image_remove: "Hapus gambar"
       err_prompt: "Masukkan pertanyaan atau instruksi."
-      err_matching: "Tambahkan minimal 2 pasangan lengkap (istilah dan pasangan)."
       err_matching_pairs: "Tambahkan minimal satu pasangan lengkap (istilah dan pasangan)."
       err_matching_duplicate_left: "Setiap istilah hanya boleh muncul sekali (huruf besar dan kecil tidak dibedakan)."
       err_matching_from_cards: "Pencocokan dari kartu memerlukan kartu yang ditautkan dan tanpa pasangan tambahan."

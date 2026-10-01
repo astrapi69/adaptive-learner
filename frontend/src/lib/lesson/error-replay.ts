@@ -22,8 +22,12 @@ import type {
     ElementError,
     LessonProgress,
 } from "../../storage/types";
-import {MATCHING_MIN_PAIRS} from "../exercises/authoring/exercise-edit";
 import {matchesExerciseIdentity} from "../srs/exercise-identity";
+
+/** The fewest pairs a trimmed replay matching keeps, so it stays a puzzle.
+ *  A playability floor of the replay, not a content rule: authoring
+ *  follows the engine, which accepts a one-pair matching (#3387). */
+const REPLAY_MIN_MATCHING_PAIRS = 2;
 
 /** Router-state payload handed to the ErrorReplayLesson page — the
  *  exact failed exercises (+ the lesson's cards for code-mode +
@@ -143,7 +147,7 @@ const DEFAULT_REPLAY_SCOPE: ReplayScope = {errorsOnly: true};
  *
  * Mechanical fill: a matching exercise with a single wrong pair is not a
  * puzzle (nothing to choose between), so when fewer than
- * {@link MATCHING_MIN_PAIRS} wrong pairs remain, already-correct pairs are
+ * {@link REPLAY_MIN_MATCHING_PAIRS} wrong pairs remain, already-correct pairs are
  * appended as pure distractors — in authored order, deterministic — until
  * the minimum is reached. They exist only for playability.
  *
@@ -169,7 +173,7 @@ export function narrowReplayExercises(
     return exercises.map((exercise) => {
         if (exercise.type !== "matching") return exercise;
         const pairs = exercise.pairs ?? [];
-        if (pairs.length <= MATCHING_MIN_PAIRS) return exercise;
+        if (pairs.length <= REPLAY_MIN_MATCHING_PAIRS) return exercise;
 
         const wrongKeys = wrongElementKeys(exercise, sessionErrors);
         if (wrongKeys.size === 0) return exercise; // no signal → keep whole
@@ -178,7 +182,7 @@ export function narrowReplayExercises(
         // Nothing to trim (all wrong) or nothing identified → keep whole.
         if (wrong.length === 0 || wrong.length === pairs.length) return exercise;
 
-        const fillersNeeded = Math.max(0, MATCHING_MIN_PAIRS - wrong.length);
+        const fillersNeeded = Math.max(0, REPLAY_MIN_MATCHING_PAIRS - wrong.length);
         const distractors = pairs
             .filter((pair) => !wrongKeys.has(pair.left))
             .slice(0, fillersNeeded);

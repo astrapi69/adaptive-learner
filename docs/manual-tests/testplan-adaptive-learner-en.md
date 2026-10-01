@@ -1971,6 +1971,16 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       (no empty string in the JSON). More than 2000 characters cannot be typed
       (maxlength); a loaded exercise with a longer explanation shows "The
       explanation is too long …" and Save stays disabled until it is shortened.
+- [ ] TC-0926 **Inline editor follows the engine's rules (#3387):** In the inline editor
+      (step 3), reduce a matching to **one** complete pair → Save is enabled
+      and the exercise is saved with that one pair. With no complete pair Save
+      stays blocked with "Add at least one complete pair". Repeat a left term in
+      another case (`un` / `UN`) → blocked with the note that each term may
+      appear only once. A cloze in "choice" mode without a distractor →
+      blocked with "A choice gap needs at least one distractor". Open a forked
+      set with a `from_cards` matching (e.g. `psych-rhetorik`, lesson 1) and
+      edit that exercise → Save is enabled (it used to stay blocked). In every
+      case: what the editor lets you save also saves as a lesson.
 - [ ] TC-0434 **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
       inline editor (Step 3, `ExerciseEditor`) of a **Word tiles** or
       **Multiple choice** exercise, a **"Exercise type"** select at the top

@@ -370,7 +370,11 @@ export default function CreateLesson() {
             },
             {
                 minExercisesToAdvance,
-                hasIncompleteExercise: () => hasIncompleteExercise(exercises),
+                hasIncompleteExercise: () =>
+                    hasIncompleteExercise(
+                        exercises,
+                        cards.map((card) => card.id),
+                    ),
                 hasInvalidExtensionExercise: () =>
                     exercises.some((ex) => !validateExtensionExercise(ex).valid),
             },

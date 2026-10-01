@@ -231,7 +231,7 @@ describe("narrowReplayExercises (#1874)", () => {
             err("mx", {element_key: "d", correct_streak: 1}),
         ];
         const [out] = narrowReplayExercises([mx], errors);
-        expect(out.pairs).toHaveLength(2); // MATCHING_MIN_PAIRS
+        expect(out.pairs).toHaveLength(2); // REPLAY_MIN_MATCHING_PAIRS
         expect(out.pairs?.map((p) => p.left)).toContain("b"); // the wrong one
     });
 

@@ -373,7 +373,7 @@ export default function LessonSummary({
 
   // #1874 — the replay payload is scoped by the "only errors / whole set"
   // preference. Matching exercises are trimmed to their wrong pairs (with a
-  // MATCHING_MIN_PAIRS distractor fill for playability); the count/CTA above
+  // REPLAY_MIN_MATCHING_PAIRS distractor fill for playability); the count/CTA above
   // still reflects the number of failed exercises, not the trimmed pairs.
   const errorReplayErrorsOnly = useErrorReplayScope();
   const replayExercises = useMemo(

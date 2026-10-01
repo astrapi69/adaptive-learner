@@ -83,6 +83,7 @@ export default function ExerciseEditSteps({
                         onDelete={onDeleteExercise}
                         onUpdate={onUpdateExercise}
                         onAdd={onAddExercise}
+                        cardIds={cards.map((card) => card.id)}
                         // #1970 — no cards to generate from in the cardless edit
                         // flow: hide the generate-config + minimum/missing hints.
                         hideGenerator

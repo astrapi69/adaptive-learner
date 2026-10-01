@@ -3,7 +3,7 @@
  * Lesson Creator's i18n keys (#1862).
  *
  * The ``lib/exercises`` authoring validators
- * ({@link validateExerciseEdit} / {@link validateExtensionExercise}) are
+ * ({@link checkExerciseDraft} / {@link validateExtensionExercise}) are
  * app-neutral: they report WHICH rule failed as a bare machine code, not an
  * i18n key. This module is the single place that maps a code onto the
  * ``create_lesson.*`` catalog key, so the reusable kit never hardcodes an
@@ -11,7 +11,7 @@
  *
  * @example
  * ```ts
- * const issue = validateExerciseEdit(draft);
+ * const issue = checkExerciseDraft(draft, cardIds);
  * if (!issue.valid && issue.code) {
  *   showError(t(exerciseEditErrorKey(issue.code)));
  * }

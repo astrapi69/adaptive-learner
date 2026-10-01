@@ -3612,7 +3612,6 @@
         "image_add": "画像を追加",
         "image_remove": "画像を削除",
         "err_prompt": "設問または指示を入力してください。",
-        "err_matching": "完全なペアを2つ以上追加してください（用語と対応）。",
         "err_matching_pairs": "完全なペアを1つ以上追加してください（用語と対応）。",
         "err_matching_duplicate_left": "各用語は1回だけ使えます（大文字と小文字は区別しません）。",
         "err_matching_from_cards": "カードから作る組み合わせには、リンクされたカードが必要で、追加のペアは使えません。",
