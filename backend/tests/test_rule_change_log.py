@@ -262,3 +262,43 @@ def test_the_ci_step_fails_instead_of_warning() -> None:
     assert "pull_request" in step["if"]
     assert "--pr" in step["run"]
     assert "--check" in step["run"]
+
+
+def test_pull_request_check_walks_the_pr_head_not_the_shallow_merge_commit() -> None:
+    """#3506: on a pull_request run the checkout is the depth-1 synthetic merge
+    commit, so a "base..HEAD" range held only that merge commit and the check
+    never saw a declaring commit (#3480 and #3333 merged without a row). The
+    step must fetch the PR head and walk base..head, and fail closed on an
+    empty range."""
+    ci = (Path(__file__).resolve().parents[2] / ".github" / "workflows" / "ci.yml").read_text(
+        encoding="utf-8"
+    )
+    step = ci[ci.index("- name: Check the rule change log is current") :]
+    step = step[: step.index("      - name:", 10)]
+    pr_branch = "\n".join(
+        line for line in step[: step.index("else")].splitlines() if not line.strip().startswith("#")
+    )
+    assert "github.event.pull_request.head.sha" in pr_branch
+    assert "..HEAD" not in pr_branch
+    assert "rev-list --count" in pr_branch
+    assert '--pr-body "${PR_BODY:-}"' in pr_branch
+
+
+def test_a_declaration_only_in_the_pr_body_is_checked(repo: Path) -> None:
+    """#3506: a squash merge copies the PR body into the commit, so a
+    declaration written only in the body reaches develop too. The PR-time
+    check must read it (keyed by the PR number) and miss it in the log."""
+    _commit(repo, "docs(rules): reword a rule")
+    body = "Summary\n\nRULE-CHANGE DECLARED: the body-only declaration\n"
+    result = _run(repo, "--range", "HEAD~1..HEAD", "--pr", "4400", "--pr-body", body, "--check")
+    assert result.returncode == 1
+    assert "#4400" in result.stderr
+    assert "body-only declaration" in result.stderr
+
+
+def test_a_declaration_in_body_and_commit_counts_once(repo: Path) -> None:
+    """The same text in a commit and the PR body is one declaration."""
+    body = "RULE-CHANGE DECLARED: the backup round-trip is mandatory again\n"
+    assert _run(repo, "--range", "HEAD~1..HEAD", "--pr", "4242", "--pr-body", body).returncode == 0
+    log = (repo / LOG).read_text(encoding="utf-8")
+    assert log.count("mandatory again") == 1
