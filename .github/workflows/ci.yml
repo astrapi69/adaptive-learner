@@ -666,13 +666,29 @@ jobs:
       # a declaration has no row, and nothing else.
       - name: Check the rule change log is current
         if: github.event_name == 'push' || github.event_name == 'pull_request'
+        env:
+          # #3506: the squash copies the body into develop, so its
+          # declarations need a row too. Via env, never interpolated.
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           set -euo pipefail
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch --no-tags --depth=200 origin "${{ github.event.pull_request.base.ref }}" >/dev/null 2>&1 || true
+            # #3506: the checkout is the depth-1 synthetic merge commit, whose
+            # parents are absent, so "base..HEAD" listed only that merge
+            # commit and never the PR's own commits: the check printed "up to
+            # date" for every PR (#3480, #3333 merged without their row). Fetch
+            # the PR head itself and walk base..head; fail closed when that
+            # range holds none of the PR's commits.
+            git fetch --no-tags --depth=200 origin "${{ github.event.pull_request.base.ref }}" "${{ github.event.pull_request.head.sha }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+            RANGE="origin/${{ github.event.pull_request.base.ref }}..${HEAD_SHA}"
+            if [ "$(git rev-list --count "$RANGE")" -eq 0 ]; then
+              echo "::error::rule-change-log check: $RANGE holds no commits, nothing was checked"
+              exit 1
+            fi
             python3 scripts/append_rule_change_log.py \
-              --range "origin/${{ github.event.pull_request.base.ref }}..HEAD" \
-              --pr "${{ github.event.pull_request.number }}" --check
+              --range "$RANGE" \
+              --pr "${{ github.event.pull_request.number }}" --pr-body "${PR_BODY:-}" --check
           else
             git fetch --no-tags --depth=200 origin develop >/dev/null 2>&1 || true
             python3 scripts/append_rule_change_log.py --range "${{ github.event.before }}..${{ github.sha }}" --check
