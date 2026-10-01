@@ -8,7 +8,7 @@ carries **12 themes** in total.
 
 ## Recommended presets (Phase 63 / v1.63.0)
 
-The picker under Settings → Appearance leads with a
+The picker under Settings > General > Appearance leads with a
 **Recommended** sub-tab:
 
 - **Light:** `catppuccin-latte`, `supabase`, `graphite`

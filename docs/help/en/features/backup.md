@@ -52,7 +52,7 @@ most recent snapshots, so you are never left without a backup.
 
 If something goes wrong during the import, a **persistent error
 notice** (toast) appears that does not disappear on its own - so
-you never miss an error. In Developer Mode (Settings → Interface)
+you never miss an error. In Developer Mode (Settings > Diagnostics & Support)
 the message contains the technical details for a GitHub issue.
 
 ---

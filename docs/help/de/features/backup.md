@@ -54,8 +54,8 @@ den letzten Snapshots, damit du nie ganz ohne Sicherung dastehst.
 
 Geht beim Import etwas schief, erscheint ein **dauerhafter
 Fehler-Hinweis** (Toast), der nicht von selbst verschwindet - so
-übersiehst du keinen Fehler. Im Entwicklermodus (Einstellungen →
-Oberfläche) enthält die Meldung die technischen Details für einen
+übersiehst du keinen Fehler. Im Entwicklermodus (Einstellungen >
+Diagnose & Support) enthält die Meldung die technischen Details für einen
 GitHub-Issue.
 
 ---

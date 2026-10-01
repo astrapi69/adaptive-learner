@@ -14,52 +14,54 @@ and old links keep working through redirects.
 The desktop navigation is organised into labelled groups via a
 reusable `NavGroup` component:
 
-- **Learn** - Dashboard and Learning Path.
-- **Content** - the **Content hub** (`/content`), which holds your
-  *Discover* catalog, your downloaded *My content*, and *Import* as
-  tabs (in that order). **Discover is the default tab**, so opening
-  the hub lands on the catalog.
+- **Learn** - Dashboard, Learning Path and Session.
+- **Content** - the **Content hub** (`/content`) with four tabs:
+  *Discover* (the catalog), *My content* (what you downloaded),
+  *Import* and *Create* (a new lesson of your own). The hub opens on
+  the first tab of your order; by default that is Discover. You can
+  change the order under *Settings > General > Appearance*.
 - **Progress** - the **ProgressHub** (`/progress`), with Overview,
   Statistics and My paths as tabs.
 - **Settings** and **Help** round out the bar.
 
-Pages that are no longer top-level entries (Anki, Session) are
-still reachable: Anki via its `/anki` route, Session via its kept
-route.
+Anki is not an entry of its own; it is an action on the Content
+page, and its `/anki` route keeps working.
 
 ### One primary navigation per viewport
 
 On desktop widths the horizontal top bar is the **only** primary
 navigation - there is no hamburger button and no drawer. On narrow
-/ mobile widths the top-bar links move behind a **hamburger
-drawer** (same grouped entries), and the bottom tab bar below
-provides the primary tabs. Both presentations render from one
-shared list of destinations, so they always lead to the same
-pages. The active item carries `aria-current`, every target is at
-least 44px, and it works across all themes. (The Settings page has
-its own separate section sidebar for its own tabs - that one is
-unrelated to the primary navigation.)
+/ mobile widths the same grouped entries move behind a **hamburger
+drawer**. Both presentations render from one shared list of
+destinations, so they always lead to the same pages. The active
+item carries `aria-current`, every target is at least 44px, and it
+works across all themes. (The Settings page has its own separate
+section sidebar for its own tabs - that one is unrelated to the
+primary navigation.)
 
 ---
 
-## Mobile: bottom tab bar
+## Mobile: bottom tab bar (optional)
 
-On small screens a **bottom tab bar** gives five thumb-friendly
-tabs - **Learn / Content / Discover / Progress / More** - with a
-"More" bottom sheet for everything else. Targets are 44px, it
-respects all themes, and it hides on the onboarding funnel and
-during a lesson so nothing covers the content.
+On a phone the navigation sits at the top as a menu button by
+default. Under *Settings > General > Interface*, **Menu position
+(mobile)** switches it to **Bottom (tab bar)**: a bar with five
+thumb-friendly tabs - **Learn / Content / Learning Path / Progress
+/ More**. *More* opens a bottom sheet with Settings and Help. The
+hamburger drawer stays available in both positions. Targets are
+44px, the bar respects all themes, and it hides on the onboarding
+funnel and during a lesson so nothing covers the content.
 
 ---
 
 ## Hubs and redirects
 
-Two pages became **tabbed hubs**, mounting only the active tab:
+Two pages are **tabbed hubs**, mounting only the active tab:
 
 - **ProgressHub** (`/progress`) embeds Progress + Learning
   Statistics + Curriculum.
 - **Content hub** (`/content`) embeds Discover + My content +
-  Import (Discover is the default tab).
+  Import + Create.
 
 Old URLs are preserved by redirects, e.g. `/statistics` →
 `/progress?tab=stats`, `/curriculum` → `/progress?tab=paths`,

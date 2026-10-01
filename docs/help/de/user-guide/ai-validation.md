@@ -35,8 +35,8 @@ noch nicht umgesetzt.
 Die KI-Prüfung ruft einen KI-Anbieter direkt aus dem Browser auf.
 Du brauchst dafür:
 
-- einen **gespeicherten API-Schlüssel** (Einstellungen →
-  Integrationen) für einen der Anbieter (Anthropic, OpenAI oder
+- einen **gespeicherten API-Schlüssel** (Einstellungen > KI)
+  für einen der Anbieter (Anthropic, OpenAI oder
   Gemini);
 - den **Browser-Modus** (Dexie) - die Prüfung läuft
   browser-direkt;

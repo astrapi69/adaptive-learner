@@ -20,7 +20,8 @@ betreibst:
   nicht im Browser. Ein Portwechsel betrifft sie **nicht** - die App
   findet sie unter der neuen Adresse automatisch wieder.
 - **Browser-Speichermodus** (die Option, die du unter
-  *Einstellungen > Daten* aktivieren kannst, und der Modus der
+  *Einstellungen > Allgemein > Speicher-Modus* aktivieren kannst,
+  und der Modus der
   öffentlichen Web-Version). Deine Sets, dein Fortschritt und deine
   selbst erstellten Übungen liegen **im Browser**, gebunden an die
   aktuelle Adresse. Nach einem Portwechsel öffnet die App unter der
