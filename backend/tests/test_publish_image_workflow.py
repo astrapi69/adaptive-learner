@@ -214,8 +214,14 @@ def test_the_walker_asserts_the_steps_it_used_to_swallow() -> None:
     walker = WALKER.read_text(encoding="utf-8")
     assert 'await click("landing-lang-de");' in walker
     assert 'getAttribute("data-migration-offer")' in walker
-    assert 'migrationOffer !== "none"' in walker
-    assert 'getByTestId("migration-start-fresh").count()' in walker
+    # #3545: a bare container is the fresh API-mode install #1085 offers the
+    # migration welcome on, so the verdict must be "shown" (#3334 asserted
+    # "none", the opposite, and failed the v2.16.0 publish). The walk waits
+    # for the probe to settle, then dismisses the welcome with a loud click.
+    assert '[data-migration-offer="pending"]' in walker
+    assert 'migrationOffer !== "shown"' in walker
+    assert 'migrationOffer !== "none"' not in walker
+    assert 'await click("migration-start-fresh");' in walker
     assert "await click(`dashboard-tab-${tab}`);" in walker
     assert 'await click("learning-path-view-map");' in walker
     swallowed = [line for line in walker.splitlines() if ".catch(() => {})" in line]
