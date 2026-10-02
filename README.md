@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.15.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.16.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Night shift](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -341,18 +341,16 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.15.0**: **parametric
-exercises** whose values are drawn fresh for every attempt, three new
-exercise types (**Hotspot**, **Parsons**, **Ordering**) authorable in the
-lesson creator, and **explanations** shown after an answer. Unless you have
-customised the summary sections, a lesson now ends with a **compact summary**, with a **Detailed evaluation** for the full
-review, and your place is saved from the first step change. **Settings**
-were reorganised into labelled sections with section bars on the Learning
-and Data tabs, **Refresh** in My content applies every available set update
-at once, holding back those that would affect your
-progress, and a legal notice and privacy policy are available in German and
-English. Full notes:
-[`changelog/releases/v2.15.0.md`](changelog/releases/v2.15.0.md).
+Active development. The current release is **v2.16.0**: errors that used to
+vanish now **say what went wrong**. A failed tutor reply shows a message with
+a retry, a history that could not load says so, a crashed page offers a way
+back and a report button, and Settings actions, exports and lesson progress
+no longer fail silently. The exercise editor, the share check and repository
+validation follow **one set of rules**, the content engine's, and the desktop
+app resolves matchings built from cards. **Backups** carry every stored field
+and restore across the desktop app and the browser version, and a round of
+phone fixes covers the compact menu below 1280 px and the dashboard. Full
+notes: [`changelog/releases/v2.16.0.md`](changelog/releases/v2.16.0.md).
 
 Earlier releases, newest first (full details in
 [`changelog/releases/`](changelog/releases/)):

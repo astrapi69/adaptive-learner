@@ -1,10 +1,32 @@
-# What's new (v1.61 – v2.15)
+# What's new (v1.61 – v2.16)
 
 A user-oriented overview of the releases since v1.61.0. The full,
 technical notes per version are under
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v2.16.0 - Errors that say what went wrong, one set of lesson rules
+
+- **Visible errors**: a failed tutor reply shows a message with "Try
+  again" instead of an empty bubble, and a session whose history could not
+  load says so instead of looking deleted. A page that crashes offers a way
+  back and a report button; without a connection the app says "No
+  connection to the server".
+- **One set of lesson rules**: the exercise editor, the share check and
+  repository validation follow the content engine. A matching needs one
+  complete pair, and free-text answers are case-sensitive only where an
+  exercise asks for it.
+- **Desktop app**: matchings built from cards show their pairs, lessons
+  inherit their set's language pair, and set ids with umlauts are
+  accepted.
+- **Backups** carry every stored field and restore across the desktop app
+  and the browser version; browser backups never contain your API key;
+  "Delete all data" empties everything.
+- **Lessons**: the screen stays on during a lesson, switching apps saves
+  your place, and "Start over" asks first.
+- **Phones**: the compact menu is used below 1280 px, and the dashboard,
+  progress charts and lists fit the screen.
 
 ## v2.15.0 - Deeper exercises, compact lesson summary
 

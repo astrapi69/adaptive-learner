@@ -53,13 +53,16 @@ function useFooterStatusText(): string | null {
 
 /** The footer's rendering of the published status. ``null`` when nothing is
  *  published, so a footer without status keeps its markup byte-identical.
- *  Decorative: the renderer's own counter is the live region. */
+ *  Decorative: the renderer's own counter is the live region. It is the
+ *  part of the footer row that gives way: on a 320 px phone the buttons
+ *  nearly fill the row, so the line shrinks and truncates instead of
+ *  pushing Check past the viewport. */
 export function FooterStatusLine({ testId }: { testId: string }) {
   const text = useFooterStatusText();
   if (!text) return null;
   return (
     <span
-      className="shrink-0 whitespace-nowrap text-sm font-medium text-[var(--fg-muted)]"
+      className="min-w-0 truncate text-sm font-medium text-[var(--fg-muted)]"
       aria-hidden="true"
       data-testid={testId}
     >

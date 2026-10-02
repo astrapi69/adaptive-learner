@@ -1,10 +1,32 @@
-# Was ist neu (v1.61 – v2.15)
+# Was ist neu (v1.61 – v2.16)
 
 Ein nutzerorientierter Überblick über die Releases seit v1.61.0.
 Die vollständigen, technischen Notizen pro Version stehen unter
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v2.16.0 - Fehler, die sagen, was los ist; ein Regelwerk für Lektionen
+
+- **Sichtbare Fehler**: Eine gescheiterte Tutor-Antwort zeigt einen
+  Hinweis mit „Erneut versuchen" statt einer leeren Sprechblase, und eine
+  Sitzung, deren Verlauf nicht geladen werden konnte, sagt das, statt
+  gelöscht zu wirken. Eine abgestürzte Seite bietet einen Rückweg und eine
+  Fehlermeldung an; ohne Verbindung steht dort „Keine Verbindung zum Server".
+- **Ein Regelwerk für Lektionen**: Übungseditor, Teilen-Prüfung und
+  Repository-Prüfung folgen der Content-Engine. Eine Zuordnung braucht ein
+  vollständiges Paar, und Freitext unterscheidet Groß- und Kleinschreibung
+  nur, wo die Übung das verlangt.
+- **Desktop-App**: Zuordnungen aus Karten zeigen ihre Paare, Lektionen
+  erben das Sprachpaar ihres Sets, und Set-IDs mit Umlauten werden
+  akzeptiert.
+- **Backups** enthalten jedes gespeicherte Feld und lassen sich zwischen
+  Desktop-App und Browser-Version wiederherstellen; Browser-Backups
+  enthalten nie deinen API-Schlüssel; „Alle Daten löschen" leert alles.
+- **Lektionen**: Der Bildschirm bleibt während einer Lektion an, ein
+  App-Wechsel speichert deine Stelle, und „Neu starten" fragt nach.
+- **Telefone**: Unter 1280 px gibt es das kompakte Menü, und Dashboard,
+  Fortschrittsdiagramme und Listen passen auf den Bildschirm.
 
 ## v2.15.0 - Tiefere Übungen, kompakte Lektionsauswertung
 
