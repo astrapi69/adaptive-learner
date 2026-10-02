@@ -690,7 +690,12 @@ jobs:
               --range "$RANGE" \
               --pr "${{ github.event.pull_request.number }}" --pr-body "${PR_BODY:-}" --check
           else
-            git fetch --no-tags --depth=200 origin develop >/dev/null 2>&1 || true
+            # The pushed range's ends must be in the shallow clone. Fetching
+            # develop alone left "before" missing on a main push whose
+            # previous head never reached develop (the v2.16.0 release merge:
+            # v2.15.0's back-merge was lost, #3159), and git log rejected the
+            # range as invalid. Fetch both ends by sha.
+            git fetch --no-tags --depth=200 origin develop "${{ github.event.before }}" "${{ github.sha }}" >/dev/null 2>&1 || true
             python3 scripts/append_rule_change_log.py --range "${{ github.event.before }}..${{ github.sha }}" --check
           fi
       # #2079: a binding rule may not change inside an undeclared diff.
