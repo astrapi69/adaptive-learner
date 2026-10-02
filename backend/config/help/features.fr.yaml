@@ -5,53 +5,54 @@ language: fr
 entries:
   - key: feature_method_switch
     title: Changement de méthode
-    short: "Le système recommande une méthode différente quand vous stagnez — vous décidez si vous changez."
+    short: "Le système recommande une méthode différente quand vous stagnez ; c'est vous qui décidez de changer ou non."
     long: |
-      ## Qu'est-ce que le changement de méthode ?
+      ## Qu'est-ce que le changement de méthode ?
 
-      Si vos sessions d'apprentissage stagnent dans une méthode ou
-      génèrent un stress élevé, Adaptive Learner suggère un changement
-      de méthode. Vous voyez la suggestion sous forme de bannière
-      au-dessus du chat de la session — vous pouvez accepter, refuser
-      ou reporter.
+      Si votre apprentissage stagne dans une méthode tout en
+      vous causant un stress élevé, Adaptive Learner suggère un
+      changement de méthode. Vous voyez la suggestion sous forme
+      de bannière au-dessus du chat de la session et pouvez
+      l'accepter ou l'ignorer.
 
       ## Quand la suggestion se déclenche
 
-      Trois conditions doivent être réunies simultanément :
+      La règle examine vos trois dernières évaluations de
+      session. Les deux conditions doivent être réunies :
 
-      - **Au moins 3 sessions** dans la méthode actuelle.
-      - **Stress moyen > 3** (sur l'échelle de 1 à 5) dans les
-        3 dernières évaluations.
-      - **Adéquation de la méthode < 3** dans les 3 dernières
-        évaluations.
+      - **Aucun progrès de compréhension** : les trois notes de
+        compréhension n'augmentent pas (la même note trois fois
+        compte comme une stagnation).
+      - **Stress moyen supérieur à 3** (sur l'échelle de 1 à 5)
+        sur ces trois mêmes évaluations.
 
-      La détection de stagnation seule ne suffit pas : des difficultés
-      brèves dans une méthode par ailleurs adaptée sont normales et
-      passent. Seule la combinaison durée + stress + faible adéquation
-      déclenche la suggestion.
+      Avec moins de trois évaluations, il n'y a pas de
+      suggestion. Une phase difficile qui montre encore des
+      progrès, ou une stagnation sans stress, ne la déclenche
+      pas.
 
-      ## Comment le système décide
+      ## Quelle méthode est suggérée
 
-      Le hook ``recommend_method_switch`` dans le plugin de session
-      compare votre profil d'apprentissage à votre trajectoire actuelle
-      et suggère la méthode avec l'adéquation attendue la plus élevée.
-      Si les deux meilleures méthodes sont proches, vous voyez les deux
-      comme options.
+      La méthode ayant le poids le plus élevé dans votre profil
+      d'apprentissage et que vous n'avez pas utilisée récemment.
+      Sans profil, la méthode suivante dans l'ordre fixe des
+      méthodes.
 
       ## Vous décidez
 
-      Le système recommande ; vous choisissez. Accepter le changement
-      l'enregistre comme entrée d'audit ``MethodSwitch`` (une trace
-      pour votre profil). Refuser ne fait rien — la suggestion réapparaît
-      au plus tôt après 3 sessions supplémentaires.
+      Le système recommande ; vous choisissez. Accepter change
+      la méthode de la session et enregistre une entrée
+      ``MethodSwitch`` (une trace pour votre profil). Ignorer
+      masque la suggestion pour le reste de cette session ; la
+      session suivante vérifie à nouveau.
 
-      ## Pourquoi pas automatique ?
+      ## Pourquoi pas automatiquement ?
 
-      Les changements de méthode constituent un grand changement dans
-      l'expérience d'apprentissage. Un changement automatique briserait
-      la continuité de l'apprentissage et pourrait se déclencher pendant
-      une phase difficile mais productive. Vous connaissez votre contexte
-      mieux que le système.
+      Un changement de méthode est une modification importante
+      de l'expérience d'apprentissage. Un changement automatique
+      briserait la continuité de l'apprentissage et pourrait se
+      déclencher pendant une phase difficile mais productive.
+      Vous connaissez votre contexte mieux que le système.
 
   - key: feature_auto_loop
     title: Auto-boucle
@@ -99,57 +100,48 @@ entries:
   - key: feature_spaced_repetition
     title: Répétition espacée
     short: "Révisions optimisées dans le temps en fonction de votre historique d'apprentissage."
+    docs_slug: user-guide/lessons
     long: |
-      ## Qu'est-ce que la répétition espacée ?
+      ## Qu'est-ce que la répétition espacée ?
 
-      La répétition espacée est la technique consistant à planifier
-      les révisions à intervalles croissants. Elle exploite l'effet
-      de courbe d'oubli : chaque élément rappelé avec succès dure plus
-      longtemps lors de la prochaine répétition.
+      La répétition espacée est la technique qui consiste à
+      placer les révisions à des intervalles croissants. Elle
+      exploite l'effet de la courbe de l'oubli : chaque élément
+      correctement rappelé tient plus longtemps la fois
+      suivante.
 
-      ## Le système de bandes dans Adaptive Learner
+      ## Les intervalles dans Adaptive Learner
 
-      Six bandes d'échéance :
+      Chaque élément d'exercice auquel vous répondez est suivi.
+      La prochaine date de révision dépend du nombre de bonnes
+      réponses consécutives :
 
-      - **Aujourd'hui** — nouvelles cartes + révisions du jour.
-      - **+1j** — appris hier, révision aujourd'hui.
-      - **+3j** — révisé il y a trois jours, révision aujourd'hui.
-      - **+7j** — il y a une semaine.
-      - **+14j** — il y a deux semaines.
-      - **+30j** — il y a un mois.
+      - **0 bonne réponse consécutive** (ou une erreur à
+        l'instant) : révision 1 jour plus tard.
+      - **1 bonne réponse consécutive** : 3 jours plus tard.
+      - **2 bonnes réponses consécutives ou plus** : 7 jours
+        plus tard.
 
-      Une fois qu'une carte passe quatre révisions avec succès,
-      elle est marquée « stable » et quitte la liste active — mais
-      reste dans le système pour des vérifications occasionnelles.
+      À **3 bonnes réponses consécutives**, l'élément est
+      considéré comme maîtrisé et quitte la file de révision.
+      Une erreur ultérieure l'y ramène.
 
-      ## Comment l'historique est pris en compte
+      ## Ce qui décale la date
 
-      Une « révision réussie » n'est pas qu'un simple clic. Le système
-      évalue :
-
-      - **La confiance pendant la session de révision** (d'après
-        l'évaluateur à double invite).
-      - **Le temps de réponse** par rapport à votre moyenne.
-      - **Le nombre d'erreurs** dans le cycle actuel.
-
-      En cas de faible confiance, la carte revient à une bande
-      antérieure plutôt que d'avancer.
-
-      ## Lien avec Anki
-
-      Avec le plugin Anki actif, vous pouvez exporter des cartes
-      directement au format Anki. Le système traduit les bandes en
-      planifications Anki — aucun progrès n'est perdu dans la
-      transition.
+      - **Indice utilisé** : l'intervalle est divisé par deux,
+        car la réponse a été donnée avec de l'aide.
+      - **Bonne réponse en mode Examen** : l'intervalle est
+        doublé, car une réponse sans aide est une preuve plus
+        solide.
 
       ## Quand le système recommande des révisions
 
-      Le panneau « Recommandations espacées » du tableau de bord
-      affiche les cartes dues aujourd'hui. Vous pouvez les parcourir
-      individuellement ou demander au système de les placer au début
-      de votre prochaine session régulière — avant le nouveau contenu.
-      Le système priorise les cartes avec le risque d'oubli le plus
-      élevé.
+      Lorsque des éléments sont à réviser, une carte de révision
+      apparaît sur le tableau de bord avec le nombre d'éléments
+      à réviser et en retard, ainsi qu'un bouton **Ouvrir la
+      session de révision**. Les éléments en retard passent en
+      premier, puis ceux qui comptent le plus d'erreurs.
+      Détails : voir le guide des leçons.
 
   - key: feature_conversation_analysis
     title: Analyse de conversation / Import
@@ -209,68 +201,76 @@ entries:
 
   - key: feature_gamification
     title: Gamification (XP, badges, séries)
-    short: "Système de progression avec points d'expérience, badges et séries — motivation sans gadgets."
+    short: "Système de progression avec points d'expérience, badges et séries : de la motivation sans gadgets."
+    docs_slug: user-guide/dashboard
     long: |
-      ## Qu'est-ce que la couche de gamification ?
+      ## Qu'est-ce que la couche de gamification ?
 
       Trois mécaniques rendent la progression de l'apprentissage
-      visible et gratifiante :
+      visible et gratifiante :
 
-      - **XP (points d'expérience)** — pour chaque session complétée,
-        chaque changement de méthode, chaque carte de répétition
-        espacée. Le niveau augmente avec les XP.
-      - **Badges** — pour des jalons thématiques (« première session »,
-        « 10 sessions dans une méthode », « série de 30 jours », ...).
-      - **Séries** — séquences d'apprentissage quotidiennes. Elles
-        expirent après 24 heures sans session — avec trois « gels de
-        série » par mois comme pauses d'urgence.
+      - **XP (points d'expérience)** - pour les sessions et
+        leçons terminées, l'évaluation initiale et les
+        conversations importées. Le niveau augmente avec les XP.
+      - **Badges** - pour des jalons (première session,
+        régularité, essai de méthodes, approfondissement,
+        plusieurs langues).
+      - **Séries** - jours consécutifs avec une activité
+        d'apprentissage.
 
       ## Comment les XP sont gagnés
 
-      Différentes actions donnent différentes valeurs de XP :
+      - **Session terminée** : 50 XP, +10 XP par cycle terminé,
+        +25 XP par cycle ayant atteint l'étape 7.
+      - **Première session dans une nouvelle méthode** : +50 XP.
+      - **Leçon terminée** : 30 XP, +10 XP par étoile, +20 XP
+        pour trois étoiles avec chaque étape réussie du premier
+        coup.
+      - **Multiplicateur de série** : +25 % par jour de série
+        sur les XP de session et de leçon, jusqu'à 7 jours (au
+        maximum 2,75x).
+      - **Combo du mode jeu** : jusqu'à 20 XP supplémentaires
+        pour une leçon jouée avec des combos.
+      - **Évaluation initiale terminée** : 100 XP.
+      - **Conversation importée et analysée** : 75 XP.
 
-      - **Soumettre une session évaluée** : 50 XP.
-      - **Atteindre l'étape 7 (integrate)** : +25 XP de bonus.
-      - **Accepter un changement de méthode** : 10 XP (vous avez
-        pris une décision d'apprentissage délibérée).
-      - **Carte de répétition espacée avec confiance > 80 %** : 5 XP.
-      - **Export Anki d'un jeu** : 20 XP.
+      Les niveaux suivent une courbe qui s'élargit : niveau 2 à
+      100 XP, niveau 3 à 300, niveau 4 à 600, niveau 5 à 1000 ;
+      chaque écart est supérieur de 100 XP au précédent.
 
-      Les niveaux s'échelonnent avec une fonction racine carrée
-      (niveau n = sqrt(XP / 100)) — les premiers niveaux progressent
-      rapidement, les niveaux supérieurs demandent plus de souffle.
+      ## Les badges ne sont pas une contrainte
 
-      ## Les badges ne sont pas coercitifs
-
-      Les critères de badge ne sont pas liés à l'interface — vous
-      n'avez *pas* besoin d'un seul badge pour utiliser l'application
-      de manière productive. Ce sont des miroirs, pas des cibles. Si
-      vous commencez à avoir l'impression d'apprendre pour les badges
-      plutôt que pour vous-même, désactivez l'affichage dans les
-      paramètres.
+      Vous n'avez besoin d'*aucun* badge pour utiliser
+      l'application de façon productive. Ils sont un miroir, pas
+      un objectif. Les notifications de badges peuvent être
+      désactivées dans les paramètres.
 
       ## Gels de série
 
-      Trois gels de série par mois. Si vous manquez un jour, un gel
-      protège automatiquement votre série. Conçus explicitement comme
-      une journée de maladie ou de voyage, pas comme un mécanisme
-      d'exception pour la paresse.
+      Tous les 7 jours de série, vous gagnez un gel de série,
+      jusqu'à 3 en réserve. Si vous manquez un jour, un gel est
+      utilisé automatiquement et met votre série en pause au
+      lieu de la remettre à zéro. Avec le mode week-end activé,
+      le samedi et le dimanche ne comptent pas comme des
+      interruptions.
 
-      ## Pourquoi ça fonctionne sans gadgets
+      ## Pourquoi cela fonctionne sans gadgets
 
-      La recherche en apprentissage montre : la récompense extrinsèque
-      peut détruire la motivation intrinsèque (« effet de surjustification »).
-      Adaptive Learner s'appuie sur le fait que les mécaniques soient
-      un **miroir** de la progression, pas un système d'incitation.
-      Pas de classements, pas de fonctionnalités sociales, pas de
-      partage de points — les données restent avec vous.
+      La recherche sur l'apprentissage le montre : une
+      récompense extrinsèque peut détruire la motivation
+      intrinsèque (« effet de surjustification »). Adaptive
+      Learner mise sur des mécaniques qui sont un **miroir** de
+      la progression, pas un système d'incitation. Pas de
+      classements, pas de fonctions sociales, pas de partage de
+      points : les données restent chez vous.
 
       ## Réinitialisation
 
-      Si les valeurs de gamification ne correspondent plus à votre
-      situation (par ex. nouveau départ après une longue pause),
-      vous pouvez les réinitialiser dans les paramètres. Le curriculum,
-      les sessions et les évaluations sont préservés.
+      Si les valeurs de gamification ne correspondent plus à
+      votre situation (par ex. un nouveau départ après une
+      longue pause), vous pouvez réinitialiser les XP, les
+      badges et la série dans les paramètres. Le programme, les
+      sessions et les évaluations sont conservés.
 
   - key: view_dashboard
     title: Tableau de bord
@@ -316,19 +316,23 @@ entries:
     short: "Le lecteur qui vous guide pas à pas à travers la théorie et les exercices d'une leçon."
     docs_slug: user-guide/lessons
     long: |
-      ## Comment fonctionnent les exercices ?
+      ## Comment fonctionnent les exercices ?
 
-      Une leçon est une séquence d'étapes de théorie et d'exercices.
-      Cinq types d'exercices apparaissent : appariement (paires
-      colorées + badges numérotés), choix d'image, texte libre,
-      tuiles de mots et texte à trous.
+      Une leçon est une séquence d'étapes de théorie et
+      d'exercices. Chaque jeu peut utiliser les types
+      d'exercices de base (appariement, choix d'image, texte
+      libre, texte à trous, tuiles de mots, choix multiple) ;
+      certains jeux ajoutent d'autres types, comme la
+      catégorisation ou la dictée audio. La liste complète
+      figure dans la vue d'ensemble des fonctionnalités.
 
       ## Commandes
 
-      Entrée vérifie un exercice répondu et avance. Depuis un
-      exercice, vous pouvez accéder à la théorie correspondante via
-      « Relire la théorie ». À la fin, vous voyez votre score avec
-      des étoiles et pouvez l'exporter au format Markdown.
+      Entrée vérifie un exercice répondu et passe à la suite.
+      Depuis un exercice, vous pouvez accéder à la théorie
+      correspondante via « Relire la théorie ». À la fin, vous
+      voyez votre score avec des étoiles et pouvez l'exporter au
+      format Markdown.
 
   - key: view_settings
     title: Paramètres
@@ -354,16 +358,19 @@ entries:
     short: "Un instantané complet de votre état d'apprentissage que vous pouvez enregistrer et restaurer ailleurs."
     docs_slug: features/backup
     long: |
-      ## Qu'est-ce qu'une sauvegarde ?
+      ## Qu'est-ce qu'une sauvegarde ?
 
-      Une sauvegarde est un instantané complet : chaque table
-      (projets, sessions, progression des leçons, erreurs,
-      gamification, missions...) plus vos jeux de contenu
-      téléchargés — sous la forme d'un unique fichier JSON.
+      Une sauvegarde est un instantané complet : toutes les
+      tables de données (projets, sessions, progression des
+      leçons, erreurs, gamification, missions ...), vos jeux de
+      contenu téléchargés et vos préférences locales, regroupés
+      dans un seul fichier ``.alb`` (une archive ZIP). Les
+      anciennes sauvegardes en un seul fichier JSON s'importent
+      toujours.
 
       ## Inter-identité
 
       Vous pouvez importer une sauvegarde dans une nouvelle
-      installation ou sous un profil différent ; la restauration
-      réétablit proprement les références internes. À l'import, vous
-      voyez un résumé table par table.
+      installation ou sous un profil différent ; la restauration
+      réétablit proprement les références internes. À l'import,
+      vous voyez un résumé table par table.

@@ -41,9 +41,20 @@ Baseline zu committen.
 
 | Feature | Desktop | Mobile | Stand |
 |---------|---------|--------|-------|
-| Daten-Tab - Bereichsleiste über den sechs Bereichen, Deep-Link `?tab=data&section=backup`, Chip "Sichern und Exportieren" aktiv (#3122) | `data-subnav/settings.png` | `data-subnav/settings.mobile.png` | #3122 |
-| Ausführliche Lektions-Auswertung - Set-Auswertung dieser Lektion (Kennzahlen, Fehler nach Aufgabentyp, Schwachstellen, Fehler trainieren) direkt unter dem Knopf (#3124) | `lesson-review/summary.png` | `lesson-review/summary.mobile.png` | #3124 |
-| Kopfzeile mit Abzeichen - fällige Wiederholungen + XP neben Menü-Knopf und Logo; am Telefon zeigt das Abzeichen nur die Zahl, die Gruppe bricht rechtsbündig um (#3123) | `nav-badges/dashboard.png` | `nav-badges/dashboard.mobile.png` | #3123 |
+| Wiederholungssitzung auf der Runner-Hülle - Sitzungskopf (Zurück, Titel, Element-Untertitel), geteilter Fortschrittsbalken, Lektions-Fuß mit Chevron-Zurück und Haken-Prüfen (EXP-052 Scheibe 1, #3169) | `review-session/schritt.png` | `review-session/schritt.mobile.png` | #3169 |
+| Wiederholungssitzung - Zusammenfassung über den Summary-Einschub der Hülle: Auswertung, SRS-Hinweis, Wiederkomm-Zeile; der Fuß behält Zurück als gesperrten Rückblick (#3169) | `review-session/zusammenfassung.png` | `review-session/zusammenfassung.mobile.png` | #3169 |
+| Zufallsmodus auf der Runner-Hülle - Sitzungskopf mit "n Fragen aus m Lektionen gemischt", geteilter Fortschrittsbalken, Lektions-Fuß mit Zurück und Haken-Prüfen (EXP-052 Scheibe 2, #3169) | `shuffle-session/schritt.png` | `shuffle-session/schritt.mobile.png` | #3169 |
+| Endlosmodus auf der Runner-Hülle - Statuszeile (Zeit, Karten, Trefferquote) als reine Anzeige im Fortschrittsbereich, Fuß mit Pause und Beenden, ohne Zurück (EXP-052 Scheibe 2, Befund 2, #3169) | `endless-session/statuszeile.png` | `endless-session/statuszeile.mobile.png` | #3169 |
+| Adaptive Lektion - erster Bildschirm: die aus der Quell-Lektion übernommene Theorieseite mit ihrem Inhalt, darüber Transparenzblock und Fortschrittsbalken "Schritt 1 von N", Fuß mit Zurück und Weiter ohne Prüfen (#3224) | `adaptive-lesson/theorie.png` | `adaptive-lesson/theorie.mobile.png` | #3224 |
+| Adaptive Lektion auf der Runner-Hülle - Transparenzblock (Fokus und Zahl der aktiven Fehler) unter dem Titel als Kopf-Einschub, geteilter Fortschrittsbalken, Lektions-Fuß mit Zurück und Haken-Prüfen, auf der ersten Aufgabe ein Weiter nach der Theorieseite (EXP-052 Scheibe 3, #3169, #3224) | `adaptive-lesson/transparenz.png` | `adaptive-lesson/transparenz.mobile.png` | #3169 |
+| Fehler wiederholen - Zusammenfassung über den Summary-Einschub der Hülle im Zustand "noch Fehler": Punktzahl, "Nochmal?" und "Zurück zur Lektion"; der Fuß behält Zurück als gesperrten Rückblick (EXP-052 Scheibe 3, #3169) | `error-replay/zusammenfassung.png` | `error-replay/zusammenfassung.mobile.png` | #3169 |
+| Lernpfad-Set - "Alles wiederholen" mit Bestätigung: nennt Punktzahl, Sterne und Lernzeit der Lektionen, den bisherigen Schnitt, und dass die Fehler als Verlauf sowie XP und Abzeichen bleiben (#3171) | `reset-set-results/dialog.png` | `reset-set-results/dialog.mobile.png` | #3171 |
+| Daten-Tab - Bereichsleiste über den sechs Bereichen, Deep-Link `?tab=data&section=backup`, Chip "Sichern und Exportieren" aktiv; am Telefon klebt die Leiste nicht (erst ab `md`), der Shot zeigt dort den angesprungenen Bereich (#3122) | `data-subnav/settings.png` | `data-subnav/settings.mobile.png` | #3122 |
+| Lernen-Tab - Karte "Interaktion" mit dem Schalter "Bildschirm in Lektionen anlassen" (Standard an) (#3358) | `keep-screen-on/settings.png` | `keep-screen-on/settings.mobile.png` | #3358 <!-- shot-pending: new toggle in the Interaction card; render on the maintainer machine --> |
+| Lektion ohne Lernprofil - Hinweis "Lege ein Lernprofil an, um deinen Fortschritt zu speichern" mit dem Link "Lernprofil anlegen" (#3364) | `lesson-no-profile/hinweis.png` | `lesson-no-profile/hinweis.mobile.png` | #3364 <!-- shot-pending: new notice in the lesson page; render on the maintainer machine --> |
+| Lektion fortsetzen - "Neu starten" fragt zuerst nach ("Von vorne beginnen?", Zurück zu den Optionen / Neu starten) (#3361) | `lesson-resume/neu-starten-rueckfrage.png` | `lesson-resume/neu-starten-rueckfrage.mobile.png` | #3361 <!-- shot-pending: new confirmation step of the resume dialog; render on the maintainer machine --> |
+| Ausführliche Lektions-Auswertung - Set-Auswertung dieser Lektion (Kennzahlen, Fehler nach Aufgabentyp, Schwachstellen, Fehler trainieren) unter dem Umschalter der Zusammenfassung (#3124) | `lesson-review/summary.png` | `lesson-review/summary.mobile.png` | #3124 |
+| Kopfzeile mit Abzeichen - fällige Wiederholungen + XP neben Menü-Knopf und Logo; unter 1536 px zeigt das Abzeichen nur die Zahl (das Wort steht im Tooltip), am Telefon bricht die Gruppe rechtsbündig um (#3123, #3339) | `nav-badges/dashboard.png` | `nav-badges/dashboard.mobile.png` | #3123 |
 | Über-Tab - Karte "Lizenz & Ressourcen" mit den Zeilen "Impressum" und "Datenschutzerklärung", Ziel Docs-Site in der UI-Sprache (#3113) | `legal/settings-about.png` | `legal/settings-about.mobile.png` | #3113 |
 | App-Startseite - Zeile "Impressum · Datenschutzerklärung" unter dem Dokumentationslink (#3113) | `legal/landing.png` | `legal/landing.mobile.png` | #3113 |
 | Lernen-Tab - Gamification-Karte als letzte Karte im Bereich "Motivation und Routine", hinter einer Trennlinie (#2962) | `gamification-card/settings.png` | `gamification-card/settings.mobile.png` | #2962 |
@@ -54,7 +65,7 @@ Baseline zu committen.
 | KI-Prüfung - Schritt "Vorschläge übernehmen": Tabelle mit aktuellem und vorgeschlagenem Wert je Kartenfeld, abhakbar, Zähler der manuellen Hinweise (AIV-07, #3060; Anbieter per page.route gemockt) | `ai-check/vorschlaege-uebernehmen.png` | `ai-check/vorschlaege-uebernehmen.mobile.png` | #3060 |
 | Lernen-Tab - Bereichsleiste über den fünf Bereichen, Deep-Link `?tab=learning&section=review`, Chip "Nach der Lektion" aktiv (#2961) | `learning-subnav/settings.png` | `learning-subnav/settings.mobile.png` | #2961 |
 | Lernen-Tab - fünf Bereiche "Grundlagen / In der Lektion / Vorlesen und Diktieren / Nach der Lektion / Motivation und Routine", Verteilte Wiederholung in der Wiederholungs-Karte (#2956) | `learning-clusters/settings.png` | `learning-clusters/settings.mobile.png` | #2956 |
-| Daten-Tab - Aufräum-Karten "Pausierte Lektionen aufbewahren" + "Maximale Lektionsgröße" (#2955) | `data-housekeeping/settings.png` | `data-housekeeping/settings.mobile.png` | #2955 |
+| Daten-Tab - Aufräum-Karten "Pausierte Lektionen auf dem Dashboard" + "Maximale Lektionsgröße" (#2955, #3360) | `data-housekeeping/settings.png` | `data-housekeeping/settings.mobile.png` | #2955 <!-- shot-pending: the card's title, label and hint changed in #3360 (display filter, nothing abandoned); re-render on the maintainer machine --> |
 | KI-Anbieter — Perplexity in der Übersicht, "Nur Desktop" (#2512) | `ai-providers/configured-with-perplexity.png` | `ai-providers/configured-with-perplexity.mobile.png` | #2514 |
 | KI-Schlüssel-Tresor — Export + Cross-App-Import (#2512) | `ai-providers/key-vault-import.png` | `ai-providers/key-vault-import.mobile.png` | #2514 |
 | Landeseite (statisch, DE) | `landing-page/de.png` | `landing-page/de.mobile.png` | #2409 |
@@ -73,6 +84,9 @@ Baseline zu committen.
 | Progress Hub — Meine Pfade | `progress-hub/meine-pfade.png` | `progress-hub/meine-pfade.mobile.png` | v1.94.1 |
 | Matching — Paarung (+ Landscape `matching-pairing.landscape.png`, #1410) | `matching-animation/matching-pairing.png` | `matching-animation/matching-pairing.mobile.png` | v2.1.0 |
 | Matching — Auflösung | `matching-animation/matching-resolved.png` | `matching-animation/matching-resolved.mobile.png` | v2.1.0 |
+| Matching - langes Wort in der Kachel: die rechte Kachel „kleinste bedeutungsunterscheidende Lauteinheit" (alc-psychology, Sprachebenen) bleibt bei 375px zweizeilig innerhalb des Kachelrahmens; Fixture `e2e/fixtures/matching-long-word.lesson.json` (#3174) | `matching-animation/matching-long-word.png` | `matching-animation/matching-long-word.mobile.png` | v2.15.0+ |
+| Matching - langes Wort, Auflösung: dieselbe Übung nach dem Prüfen mit einem falschen Paar, Ansicht „Korrektur" (#3186, #3318); die schmaleren Kacheln und die Zeilen „Deine Antwort"/„Richtige Antwort" trennen das Wort mit Trennstrich („bedeutungsunter-scheidende") statt es abzuschneiden (#3174) | `matching-animation/matching-long-word-resolved.png` | `matching-animation/matching-long-word-resolved.mobile.png` | v2.15.0+ |
+| Sortier-Übung - Auswertung nach falscher Antwort: „Deine Antwort" zeigt die eingereichte Reihenfolge mit Haken oder Kreuz je Position (hier die ersten beiden Schritte vertauscht), darunter die „Lösung" in der richtigen Reihenfolge; Übungsmodus, also sofortiges Feedback; Fixture `e2e/fixtures/ordering-review.lesson.json` (#3260) | `ordering-review/falsche-reihenfolge.png` | `ordering-review/falsche-reihenfolge.mobile.png` | v2.15.0+ |
 | Lektions-Modi — Übung | `lesson-modes/practice.png` | `lesson-modes/practice.mobile.png` | v2.1.0 |
 | Lektions-Modi — Prüfung | `lesson-modes/exam.png` | `lesson-modes/exam.mobile.png` | v2.1.0 |
 | Lektions-Modi — Zeit | `lesson-modes/timed.png` | `lesson-modes/timed.mobile.png` | v2.1.0 |
@@ -85,6 +99,7 @@ Baseline zu committen.
 | Feedback-Karte - Lautstärkeregler immer sichtbar, Spielmodus-Hinweis bei der Intensität (#2957) | `feedback-card/settings.png` | `feedback-card/settings.mobile.png` | v2.14.0+ |
 | Spielmodus - Zusammenfassungskarte + "Details zum Spielmodus" aufgeklappt, Spielmodus an (#2959) | `playful-details/settings.png` | `playful-details/settings.mobile.png` | v2.14.0+ |
 | Spielmodus - Details aufgeklappt, Spielmodus aus: Optionen ausgegraut + Hinweis (#2959) | `playful-details/settings-off.png` | `playful-details/settings-off.mobile.png` | v2.14.0+ |
+| Spielmodus - das einmalige Ton-Angebot "Mit Sound spielen?" mit "Ja, Sounds an" und "Später" direkt nach dem Einschalten des Hauptschalters (#2875); jeder andere Spielmodus-Shot klickt es mit "Später" weg (#3227) | `playful-details/ton-angebot.png` | `playful-details/ton-angebot.mobile.png` | #3227 |
 | Fehlerbericht — Dialog (#1480) | `error-report/dialog.png` | `error-report/dialog.mobile.png` | v2.1.0 |
 | Fehlerbericht — Aktionsverlauf geöffnet (#1480) | `error-report/verlauf.png` | `error-report/verlauf.mobile.png` | v2.1.0 |
 | Fehlerbericht — Vollvorschau (#1480) | `error-report/vollvorschau.png` | `error-report/vollvorschau.mobile.png` | v2.1.0 |
@@ -98,6 +113,7 @@ Baseline zu committen.
 | Lektions-Navigation — "Lektion N von M" mit Vor/Zurück (#2793) | `lesson-navigation/position-zeile.png` | `lesson-navigation/position-zeile.mobile.png` | v2.13.0+ |
 | Erklärung nach der Antwort - Kasten „Erklärung" aufgeklappt nach falscher Antwort, gerendertes Markdown (#2991) | `exercise-explanation/falsche-antwort.png` | `exercise-explanation/falsche-antwort.mobile.png` | v2.15.0+ |
 | Erklärungen generieren - Opt-in-Kontrollkästchen unter der Aufgabentyp-Auswahl im Buchtext-Schritt (#2992) | `create-lesson/erklaerungen-opt-in.png` | `create-lesson/erklaerungen-opt-in.mobile.png` | v2.15.0+ |
+| Create-Lesson - Entwurfs-Hinweis "Entwurf gefunden" mit "Neu starten" und "Fortsetzen" über einem gespeicherten Autosave-Entwurf; jeder andere Creator-Shot wählt "Neu starten" (#3227) | `create-lesson/entwurf-hinweis.png` | `create-lesson/entwurf-hinweis.mobile.png` | #3227 |
 | Erklärung im Inline-Editor - Markdown-Feld mit eingefügter Vorlage und Zeichenzähler; der Knopf "Vorlage einfügen" erscheint nur bei leerem Feld (#2992) | `exercise-explanation/editor-feld.png` | `exercise-explanation/editor-feld.mobile.png` | v2.15.0+ |
 
 > Die PNGs werden on-demand erzeugt (`make capture-screenshots`) und auf einer
@@ -124,6 +140,16 @@ make verify-screenshots
 **Niemals** `--update-snapshots` benutzen, um einen Diff zu uebertuenchen, der
 einen echten Bug zeigt — den Bug fixen; nur nach einer beabsichtigten visuellen
 Aenderung neu erzeugen.
+
+### Katalog gegen Dateien (#3182)
+
+`make verify-docs` (Check `feature-shots`) vergleicht jede Tabellenzeile mit
+`e2e/visual/features/**.png`: eine genannte Datei, die fehlt, und eine Datei,
+die keine Zeile nennt, sind rot. Ein Motiv, dessen Aufnahme auf der
+Maintainer-Maschine noch aussteht, traegt in seiner Zeile
+`<!-- shot-pending: <Grund> -->`; der Marker gilt nur, solange mindestens eine
+Datei der Zeile fehlt (ein Marker auf einer vollstaendigen Zeile ist rot), und
+verschwindet mit den Dateien.
 
 ## Manuell erfasste Features (nicht via Playwright erreichbar)
 

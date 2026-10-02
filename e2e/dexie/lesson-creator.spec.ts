@@ -15,6 +15,8 @@
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 const CARDS = [
     {front: "Bonjour", back: "Guten Tag"},
     {front: "Merci", back: "Danke"},
@@ -68,11 +70,7 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         await expect(page.getByTestId("create-lesson-page")).toBeVisible({
             timeout: 15000,
         });
-        // A restorable draft would prompt continue-or-fresh; on a clean
-        // browser it won't, but be defensive.
-        if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-            await page.getByTestId("create-lesson-draft-fresh").click();
-        }
+        await declineDraftPrompt(page);
 
         await fillMetadata(page);
         await addCards(page);
@@ -122,9 +120,7 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         await expect(page.getByTestId("create-lesson-page")).toBeVisible({
             timeout: 15000,
         });
-        if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-            await page.getByTestId("create-lesson-draft-fresh").click();
-        }
+        await declineDraftPrompt(page);
 
         // Enter the book-text path from step 1.
         await page.getByTestId("create-lesson-title").fill("Pawlow");
@@ -164,9 +160,7 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         await expect(page.getByTestId("create-lesson-page")).toBeVisible({
             timeout: 15000,
         });
-        if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-            await page.getByTestId("create-lesson-draft-fresh").click();
-        }
+        await declineDraftPrompt(page);
         await page.getByTestId("create-lesson-title").fill("Upload-Test");
         await page.getByTestId("create-lesson-templates-toggle").click();
         await page.getByTestId("template-knowledge-from-text").click();
@@ -243,9 +237,7 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         await expect(page.getByTestId("create-lesson-page")).toBeVisible({
             timeout: 15000,
         });
-        if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-            await page.getByTestId("create-lesson-draft-fresh").click();
-        }
+        await declineDraftPrompt(page);
 
         await fillMetadata(page);
         await addCards(page);
@@ -315,9 +307,7 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         await expect(page.getByTestId("create-lesson-page")).toBeVisible({
             timeout: 15000,
         });
-        if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-            await page.getByTestId("create-lesson-draft-fresh").click();
-        }
+        await declineDraftPrompt(page);
         await expect(
             page.getByTestId("create-lesson-step-indicator"),
         ).toBeVisible();

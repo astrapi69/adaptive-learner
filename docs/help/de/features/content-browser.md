@@ -45,8 +45,8 @@ Sätze dargestellt werden:
 
 Deine Wahl ist eine **globale Ansicht-Einstellung**: Sie gilt für
 *Meine Inhalte* und *Entdecken* gleichermaßen und wird über Besuche
-hinweg gemerkt. Du kannst sie auch unter **Einstellungen → Lernen**
-setzen. (Hattest du zuvor Kacheln gewählt, bleibt diese Wahl
+hinweg gemerkt. Du kannst sie auch unter **Einstellungen >
+Allgemein > Darstellung** setzen. (Hattest du zuvor Kacheln gewählt, bleibt diese Wahl
 erhalten; nur neue Nutzer starten in der Liste.)
 
 Die heruntergeladenen Sätze sind nach **Download-Zeit** sortiert

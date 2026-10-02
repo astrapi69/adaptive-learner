@@ -26,6 +26,7 @@ import {
     freezeClock,
     gotoView,
     pinContentRegistry,
+    pinRandomStreams,
     setTheme,
     settleForScreenshot,
 } from "./helpers";
@@ -36,7 +37,9 @@ for (const theme of THEME_IDS) {
             // Determinism (follows #244): freeze the clock + pin the theme
             // before the first navigation, then seed/await the view's own
             // ready signal (gotoView), then settle fonts + kill animations.
+            // The random pin gives every shuffle its own stream (#3214).
             await freezeClock(page);
+            await pinRandomStreams(page);
             await setTheme(page, theme);
             await pinContentRegistry(page);
             const ready = await gotoView(page, view);

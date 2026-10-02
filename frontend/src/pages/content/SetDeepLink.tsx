@@ -218,8 +218,7 @@ export default function SetDeepLink() {
       }
       await openFirstLesson(entry);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
-      notify.error(`${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`);
+      notify.error(t("content.error.open_failed", "Could not open the lesson."), { error: err });
     } finally {
       setBusy(false);
       setProgress(null);
@@ -267,7 +266,7 @@ export default function SetDeepLink() {
 
         {resolution === "found" && entry && (
           <div data-testid="set-deep-link-found">
-            <h1 className="m-0 text-xl font-semibold" data-testid="set-deep-link-title">
+            <h1 className="m-0 wrap-anywhere text-xl font-semibold" data-testid="set-deep-link-title">
               {entry.title}
             </h1>
             {entry.title_native && (

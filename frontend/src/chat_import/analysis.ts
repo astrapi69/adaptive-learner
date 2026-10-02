@@ -275,16 +275,6 @@ export interface AnalysisOptions {
     onProgress?: (completed: number, total: number) => void;
 }
 
-/** True when ``err`` is a fetch/AbortController abort. */
-function isAbortError(err: unknown): boolean {
-    return (
-        (typeof DOMException !== "undefined" &&
-            err instanceof DOMException &&
-            err.name === "AbortError") ||
-        (err instanceof Error && err.name === "AbortError")
-    );
-}
-
 /**
  * Build the user-message body for one analysis call. Includes
  * the title (when present) plus the transcript in a labelled
@@ -610,36 +600,21 @@ export async function analyzeConversation(
     for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i];
         const userContent = buildAnalysisUserContent(chunk, opts.title);
-        let raw: string;
-        try {
-            raw = await aiComplete({
-                provider: opts.provider,
-                model: resolveModel(opts.provider, opts.modelOverride),
-                apiKey: opts.apiKey,
-                messages: [
-                    {role: "system", content: systemPrompt},
-                    {role: "user", content: userContent},
-                ],
-                maxTokens: 1500,
-                signal: opts.signal,
-            });
-        } catch (err) {
-            // A user-triggered cancel is NOT a parse failure — let it
-            // propagate so the caller returns to the pre-analysis
-            // state instead of saving a misleading fallback result.
-            if (isAbortError(err) || opts.signal?.aborted) {
-                throw err;
-            }
-            // Surface the provider error message as part of the
-            // fallback so the user knows what went wrong.
-            const detail =
-                err instanceof Error ? err.message : "unknown AI error";
-            const fb = deterministicFallback(opts.title);
-            fb.summary = `${fb.summary} (provider: ${detail})`;
-            chunkResults.push(fb);
-            opts.onProgress?.(i + 1, chunks.length);
-            continue;
-        }
+        // #3392 - a provider failure (invalid key, quota, network) or a user
+        // cancel propagates: it is not an unparseable reply, so the caller
+        // shows a localized error and saves nothing. Only an unparseable
+        // reply becomes the deterministic fallback below.
+        const raw = await aiComplete({
+            provider: opts.provider,
+            model: resolveModel(opts.provider, opts.modelOverride),
+            apiKey: opts.apiKey,
+            messages: [
+                {role: "system", content: systemPrompt},
+                {role: "user", content: userContent},
+            ],
+            maxTokens: 1500,
+            signal: opts.signal,
+        });
         const parsed = parseAnalysisResponse(raw);
         if (parsed) {
             chunkResults.push(parsed);

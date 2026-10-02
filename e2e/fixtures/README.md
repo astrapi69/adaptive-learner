@@ -27,3 +27,29 @@ typical mistake), one WITHOUT. Hand-written, Spanish A1 for German
 speakers. Served through a page.route-mocked content repo by
 `dexie/exercise-explanation.spec.ts` and the feature screenshot
 `exercise-explanation/falsche-antwort`.
+
+## matching-long-word.lesson.json
+
+Reference lesson for a matching tile whose word is wider than the tile
+(#3174): the "Sprachebenen zuordnen" pairs of alc-psychology lesson 32
+(`sets/de/psych-intro/lessons/32-kognition-vertieft.json`), the content the
+bug was reported from. The right tile "kleinste bedeutungsunterscheidende
+Lauteinheit" carries a 25-character word that overflows a 375px tile
+unless it hyphenates or wraps. One theory step, one matching exercise,
+domain `psychology` (German on both sides). Served through a
+page.route-mocked content repo by the feature screenshots
+`matching-animation/matching-long-word` and
+`matching-animation/matching-long-word-resolved`.
+
+## ordering-review.lesson.json
+
+Reference lesson for the ordering review after a wrong answer (#3260):
+the "Der Ablauf eines Absendens" step of alc-programming React 19 lesson 01
+(`sets/de/react-19/lessons/01-actions-useactionstate.json`), one
+`ext:al-ordering` exercise with five steps, declared in the lesson's own
+`requires_extensions` (the root and set manifests carry none, as in the real repo).
+One theory step, one ordering exercise, domain
+`programming` (German on both sides). The bundled set has no ordering
+exercise. Served through a page.route-mocked content repo by the feature
+screenshot `ordering-review/falsche-reihenfolge`, which places the first
+two steps swapped and checks in practice mode.

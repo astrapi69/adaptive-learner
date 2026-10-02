@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { parse as parseYaml } from "yaml";
+import { validateManifest } from "learn-content-engine";
 
 import { generateLessonFromAnalysis } from "../analysis/analysis-to-lesson";
 import {
@@ -86,6 +87,32 @@ describe("buildManifestYaml", () => {
     expect(parsed.sets[0].id).toBe("analysis-conv-1");
     expect(parsed.sets[0].language).toBe("es");
     expect(parsed.sets[0].lesson_count).toBe(1);
+  });
+
+  it("#3244 writes the canonical language pair next to the legacy alias", () => {
+    const parsed = parseYaml(
+      buildManifestYaml({ ...META, target_language: "es", source_language: "de" }, 1),
+    );
+    expect(parsed.sets[0].target_language).toBe("es");
+    expect(parsed.sets[0].source_language).toBe("de");
+    expect(parsed.sets[0].language).toBe("es");
+  });
+
+  it.each([
+    { name: "an empty level (stored before #3385)", level: "" },
+    { name: "the engine's none sentinel", level: "none" },
+    { name: "a CEFR level", level: "A1" },
+  ])("#3385 exports $name as a manifest the engine accepts", ({ level }) => {
+    const parsed = parseYaml(buildManifestYaml({ ...META, level }, 1));
+    expect(parsed.sets[0].level).toBe(level === "" ? "none" : level);
+    const result = validateManifest(parsed);
+    expect(result.errors).toEqual([]);
+  });
+
+  it("#3244 derives target_language from language when only the alias is known", () => {
+    const parsed = parseYaml(buildManifestYaml(META, 1));
+    expect(parsed.sets[0].target_language).toBe("es");
+    expect(parsed.sets[0].source_language).toBeUndefined();
   });
 });
 

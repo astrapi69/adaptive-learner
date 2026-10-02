@@ -2,21 +2,15 @@
  * Paused-lesson retention preference (Phase 63F / EXP-020).
  *
  * Stores the number of days after which an untouched paused
- * lesson is automatically abandoned on the next Dashboard load.
- * ``0`` means "never abandon" (keep forever).
- *
- * A hard cap (``MAX_PAUSED``) limits the total number of paused
- * lessons retained regardless of age; excess entries (oldest
- * first) are abandoned before the dashboard renders.
+ * lesson no longer shows in the Dashboard's paused-lessons card.
+ * ``0`` means "always show". Display only (#3360): nothing is
+ * abandoned, the lesson's position and answers stay.
  */
 
 export const RETENTION_PREF_KEY =
     "adaptive-learner.paused_lessons_retention_days";
 
 export const DEFAULT_RETENTION_DAYS = 30;
-
-/** Maximum paused lessons kept regardless of age. */
-export const MAX_PAUSED = 10;
 
 /** Ordered options shown in the Settings control. */
 export const RETENTION_OPTIONS: { days: number; labelKey: string; fallback: string }[] = [
@@ -27,8 +21,8 @@ export const RETENTION_OPTIONS: { days: number; labelKey: string; fallback: stri
     {days: 0,  labelKey: "settings.paused_retention.never",   fallback: "Never"},
 ];
 
-/** The configured paused-lesson retention in days (``0`` = never
- *  abandon). Falls back to the default for a missing / negative /
+/** The configured paused-lesson retention in days (``0`` = always
+ *  show). Falls back to the default for a missing / negative /
  *  non-numeric value. */
 export function readRetentionDays(): number {
     try {

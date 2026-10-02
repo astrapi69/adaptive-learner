@@ -37,7 +37,7 @@ Full reference: .claude/rules/architecture.md
 | release-workflow.md | on release | 11-step release process |
 | reusability.md | backend/plugins/frontend | Props-driven, barrel exports, implementation hierarchy |
 | tdd.md | tests | Red-Green-Refactor workflow, four-test guideline |
-| text-formatting.md | always | Text (not code): em-dash/UTF-8/emoji rules, doc prose style, commit/PR text |
+| text-formatting.md | always | Text (not code): em-dash/UTF-8/emoji rules, doc prose style, commit/PR text, GitHub artifacts in English |
 | vibe-coding.md | always | Release freeze, no-amend-on-open-PR, priority order |
 
 ## Makefile Targets
@@ -107,7 +107,7 @@ scripts/               sync_versions, sync_i18n, verify_docs, ...
 - No --amend + force-push on open PRs
 
 ## Tests
-v2.14.0: backend 1824 + plugins 1130 + Vitest 9775 = 12729 tests
+v2.15.0: backend 1858 + plugins 1137 + Vitest 10438 = 13433 tests
 E2E: cd e2e && npx playwright test (separate from make test)
 Dexie-mode gate: make test-dexie-smoke (aggregated in make release-test)
 Current counts: docs/audits/current-coverage.md (canonical, do not duplicate)

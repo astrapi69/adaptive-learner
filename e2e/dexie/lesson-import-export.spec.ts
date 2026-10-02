@@ -21,6 +21,8 @@ import {join} from "node:path";
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 const MIXED_ZIP = join(__dirname, "..", "fixtures", "mixed-set.zip");
 
 // Count ONLY the My-Lessons row roots. A ``[data-testid^="my-lesson-"]``
@@ -45,9 +47,7 @@ async function buildAndSaveLesson(page: Page, title: string): Promise<void> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill(title);
     await page.getByTestId("create-lesson-next").click();
     for (const card of CARDS) {

@@ -80,6 +80,15 @@ export default function OrphanedDataSection() {
       }
       setConfirming(false);
       await refresh();
+    } catch (err) {
+      console.error("[orphaned-data] delete failed", err);
+      notify.error(
+        t(
+          "settings.orphaned.delete_error",
+          "Could not delete the disconnected progress.",
+        ),
+        { error: err },
+      );
     } finally {
       setBusy(false);
     }

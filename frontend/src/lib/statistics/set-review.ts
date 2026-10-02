@@ -13,6 +13,15 @@
  * ``elementErrors.list`` and ``lessonProgress.list`` already return) instead of
  * fetching, so the view layer owns the loading and this layer owns the maths.
  *
+ * "Mastered" and "open" follow the ERRORS, not the SRS flag alone (#3166).
+ * ``recordBulk`` writes one row per attempt, correct ones included
+ * (``error_count`` 0), and the SRS flag flips only after several correct
+ * repeats - so a first run of 12 elements with 3 mistakes used to read
+ * "0 % mastered, 12 open" next to "3 mistakes". An element is OPEN while it
+ * has a mistake the SRS has not yet marked mastered; every other tracked
+ * element (never wrong, or cleared since) counts as mastered, which is what
+ * the learner reads under "every mistake at a glance".
+ *
  * @example
  * const review = buildSetReview({setId, errors, progress});
  * review.totalErrors;        // 17
@@ -57,8 +66,12 @@ export interface SetReview {
   totalErrors: number;
   /** Distinct elements the SRS has seen in this set. */
   elementsTracked: number;
+  /** Tracked elements that were never wrong or whose mistake the SRS has
+   *  since marked mastered: ``elementsTracked - elementsOpen``. */
   elementsMastered: number;
-  /** Mastered share in whole percent (0 when nothing is tracked). */
+  /** Tracked elements with at least one mistake and no mastery yet. */
+  elementsOpen: number;
+  /** ``elementsMastered`` in whole percent (0 when nothing is tracked). */
   masteredShare: number;
   lessonsCompleted: number;
   timeSpentSeconds: number;
@@ -105,12 +118,12 @@ export function buildSetReview(input: SetReviewInput): SetReview {
   const lessons = new Map<string, SetReviewLesson>();
   const types = new Map<string, SetReviewType>();
   let totalErrors = 0;
-  let elementsMastered = 0;
+  let elementsOpen = 0;
 
   for (const row of errors) {
     const count = row.error_count ?? 0;
     totalErrors += count;
-    if (row.mastered) elementsMastered += 1;
+    if (count > 0 && !row.mastered) elementsOpen += 1;
     tally(
       lessons,
       row.lesson_id,
@@ -125,12 +138,14 @@ export function buildSetReview(input: SetReviewInput): SetReview {
     b.errors - a.errors;
 
   const elementsTracked = errors.length;
+  const elementsMastered = elementsTracked - elementsOpen;
   return {
     setId,
     hasData: elementsTracked > 0 || progress.length > 0,
     totalErrors,
     elementsTracked,
     elementsMastered,
+    elementsOpen,
     masteredShare:
       elementsTracked === 0
         ? 0

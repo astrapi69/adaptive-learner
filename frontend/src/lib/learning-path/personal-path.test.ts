@@ -370,6 +370,96 @@ describe("buildPersonalPath — lesson detail (stars, mastery, dots)", () => {
     });
 });
 
+describe("buildPersonalPath — never-wrong rows (#3170)", () => {
+    /** A row ``recordBulk`` writes for a CORRECT first attempt. */
+    function neverWrongRow(direction: string, key: string) {
+        return errorRow("s", "01.json", {
+            id: `s-01-${direction}-${key}`,
+            element_key: key,
+            direction,
+            error_count: 0,
+            correct_streak: 1,
+            last_error_at: null,
+            mastered: false,
+        });
+    }
+
+    it("repro: a flawless lesson yields NO 'Fehler trainieren' count", () => {
+        const sets = [setInput("s", "S", ["01.json"])];
+        const key = lessonKey("s", "01.json");
+        const result = build({
+            sets,
+            progress: {[key]: progress("s", "01.json")},
+            errors: {
+                [key]: [
+                    neverWrongRow("target_to_source", "a"),
+                    neverWrongRow("target_to_source", "b"),
+                ],
+            },
+        });
+        expect(result.activeSets[0].errorCount).toBe(0);
+    });
+
+    it("counts only rows with an error, next to never-wrong ones", () => {
+        const sets = [setInput("s", "S", ["01.json"])];
+        const key = lessonKey("s", "01.json");
+        const result = build({
+            sets,
+            progress: {[key]: progress("s", "01.json")},
+            errors: {
+                [key]: [
+                    neverWrongRow("target_to_source", "a"),
+                    errorRow("s", "01.json", {id: "e1", element_key: "b"}),
+                    errorRow("s", "01.json", {id: "e2", element_key: "c", mastered: true}),
+                ],
+            },
+        });
+        expect(result.activeSets[0].errorCount).toBe(1);
+    });
+
+    it("by default a never-wrong row is settled: the lesson masters both directions and is not due", () => {
+        const sets = [setInput("s", "S", ["01.json"])];
+        const key = lessonKey("s", "01.json");
+        const result = build({
+            sets,
+            progress: {[key]: progress("s", "01.json")},
+            errors: {
+                [key]: [
+                    neverWrongRow("target_to_source", "a"),
+                    neverWrongRow("source_to_target", "a"),
+                ],
+            },
+        });
+        const lesson = result.activeSets[0].lessons[0];
+        expect(lesson.status).toBe("mastered");
+        expect(lesson.receptive).toBe("mastered");
+        expect(lesson.productive).toBe("mastered");
+        expect(lesson.srs?.status).toBe("mastered");
+        expect(lesson.srs?.due).toBe(0);
+    });
+
+    it("with the toggle ON the SRS flag rules again: the lesson stays in progress and the count stays errors-only", () => {
+        const sets = [setInput("s", "S", ["01.json"])];
+        const key = lessonKey("s", "01.json");
+        const result = build({
+            sets,
+            progress: {[key]: progress("s", "01.json")},
+            errors: {
+                [key]: [
+                    neverWrongRow("target_to_source", "a"),
+                    neverWrongRow("source_to_target", "a"),
+                ],
+            },
+            includeNeverWrong: true,
+        });
+        const lesson = result.activeSets[0].lessons[0];
+        expect(lesson.status).toBe("completed");
+        expect(lesson.receptive).toBe("in_progress");
+        expect(lesson.srs?.status).not.toBe("mastered");
+        expect(result.activeSets[0].errorCount).toBe(0);
+    });
+});
+
 describe("buildPersonalPath — next level", () => {
     it("points a completed A1 set at an available (not-downloaded) A2", () => {
         const sets = [

@@ -120,15 +120,25 @@ def review_queue(
             "'N due' count)."
         ),
     ),
+    include_never_wrong: bool = Query(
+        default=False,
+        description=(
+            "#3170 - also schedule elements that were never answered "
+            "wrong (error_count 0). Off by default: the queue holds "
+            "errors only. The Settings > Learning toggle 'Also review "
+            "error-free elements' sends true."
+        ),
+    ),
     repo: ElementErrorsRepository = Depends(get_element_errors_repo),
 ) -> list[ReviewQueueItemOut]:
-    """SRS review queue for the user (Phase 46C / P-129; #603).
+    """SRS review queue for the user (Phase 46C / P-129; #603; #3170).
 
     Returns active (non-mastered) element-error rows projected into
     review items with computed ``suggested_review_at`` + ``overdue``
     fields. Sorted by overdue → weakness tier (wrong > almost-right >
     correct) → error frequency → oldest error first, capped at
-    ``limit`` when given, so the review session stays focused.
+    ``limit`` when given, so the review session stays focused. Rows
+    that were never wrong are left out unless ``include_never_wrong``.
     """
     _require_user(repo, user_id)
     items = element_srs_service.compute_review_queue(
@@ -136,6 +146,7 @@ def review_queue(
         user_id,
         set_id=set_id,
         limit=limit,
+        include_never_wrong=include_never_wrong,
     )
     return [ReviewQueueItemOut.model_validate(item) for item in items]
 

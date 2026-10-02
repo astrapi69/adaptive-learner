@@ -17,6 +17,8 @@ import { join } from "node:path";
 
 import { expect, test, type Page } from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 const FULL_SET = "created-e2e-batch-full";
 const THEORY_SET = "imported-e2e-batch-theory-only";
 const THEORY_FIXTURE = join(__dirname, "..", "fixtures", "theory-only-batch.lesson.json");
@@ -32,9 +34,7 @@ const CARDS = [
 async function buildLessonWithExercises(page: Page, title: string): Promise<void> {
   await page.goto("/create-lesson");
   await expect(page.getByTestId("create-lesson-page")).toBeVisible({ timeout: 15000 });
-  if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-    await page.getByTestId("create-lesson-draft-fresh").click();
-  }
+  await declineDraftPrompt(page);
   await page.getByTestId("create-lesson-title").fill(title);
   await page.getByTestId("create-lesson-next").click();
   for (const card of CARDS) {

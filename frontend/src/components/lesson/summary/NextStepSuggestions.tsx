@@ -33,7 +33,7 @@
 
 import {useRef, type RefObject} from "react";
 import {ArrowRight, Play, RefreshCw, Target, Trophy} from "lucide-react";
-import {Link} from "react-router";
+import {Link, useLocation} from "react-router";
 
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../../../hooks/ui/useI18n";
@@ -42,6 +42,7 @@ import {useSummaryEnterKey} from "../../../hooks/lesson/interaction/useSummaryEn
 import type {ErrorTag} from "../../../lib/adaptive/error-classifier";
 import {prefersReducedMotion} from "../../../lib/feedback/feedbackPref";
 import type {NextStepSuggestions as Suggestions} from "../../../hooks/learning/useNextStepSuggestions";
+import {reviewHref} from "../../../lib/review/review-origin";
 
 /** Reuse the Dashboard FocusAreasCard tag labels so the
  *  weakness headline stays consistent across the app. */
@@ -227,19 +228,21 @@ function AdaptiveCard({
 
 function ReviewCard({
     data,
-    setIdEnc,
+    setId,
     primaryAction,
     animate,
     idx,
     ctaRef,
 }: {
     data: Suggestions["reviewSession"];
-    setIdEnc: string;
+    setId: string;
     primaryAction: PrimaryAction;
     animate: boolean;
     idx: number;
     ctaRef: RefObject<HTMLAnchorElement | null>;
 }) {
+    // #3499 - the review remembers this lesson so its end screen can return here.
+    const {pathname} = useLocation();
     const {t} = useI18n();
     const isPrimary = primaryAction === "review";
     return (
@@ -269,7 +272,7 @@ function ReviewCard({
             </span>
             <Button asChild variant={isPrimary ? "default" : "secondary"}>
                 <Link
-                    to={`/review/${setIdEnc}`}
+                    to={reviewHref(setId, pathname)}
                     ref={isPrimary ? ctaRef : undefined}
                     data-testid="next-step-cta-review"
                 >
@@ -440,7 +443,7 @@ export default function NextStepSuggestions({
             <ReviewCard
                 key="review"
                 data={reviewSession}
-                setIdEnc={setIdEnc}
+                setId={setId}
                 primaryAction={primaryAction}
                 animate={animate}
                 idx={cards.length}

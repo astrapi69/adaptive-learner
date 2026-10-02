@@ -20,6 +20,8 @@
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 /** A real, decodable 1x1 PNG. ``processCardImageFile`` loads it via
  *  ``new Image()`` and re-encodes it on a canvas, so the bytes must be a
  *  genuine image the browser can decode — not an arbitrary blob. */
@@ -33,11 +35,7 @@ async function openCardEditor(page: Page): Promise<void> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,
     });
-    // A restorable draft would prompt continue-or-fresh; on a clean
-    // browser it won't, but be defensive.
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill("E2E Image Cards");
     await page.getByTestId("create-lesson-next").click();
     // Step 2 — the card editor add-form carries the image field.

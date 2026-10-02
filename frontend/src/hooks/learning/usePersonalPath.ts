@@ -20,6 +20,7 @@ import {
     type PersonalSetInput,
 } from "../../lib/learning-path/personal-path";
 import {lessonKey} from "../../lib/learning-path/graph-builder";
+import {readReviewIncludeNeverWrong} from "../../lib/learning/reviewIncludeNeverWrongPref";
 import {getStorage} from "../../storage";
 import type {
     ContentSetEntry,
@@ -124,6 +125,8 @@ export function usePersonalPath(userId: string): UsePersonalPathResult {
                         progress,
                         errors,
                         notDownloaded,
+                        // #3170 — the never-wrong rule follows the toggle.
+                        includeNeverWrong: readReviewIncludeNeverWrong(),
                     }),
                 );
                 setState("ready");

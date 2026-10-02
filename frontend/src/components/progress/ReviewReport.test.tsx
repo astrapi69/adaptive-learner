@@ -15,6 +15,7 @@ function review(overrides: Partial<SetReview> = {}): SetReview {
     totalErrors: 7,
     elementsTracked: 4,
     elementsMastered: 1,
+    elementsOpen: 3,
     masteredShare: 25,
     lessonsCompleted: 2,
     timeSpentSeconds: 150,
@@ -54,6 +55,13 @@ describe("ReviewReport (#3124)", () => {
     expect(screen.getByTestId("rr-weak-areas")).toHaveTextContent("4 mistakes");
   });
 
+  it("renders Still open from the aggregate's elementsOpen instead of re-deriving it (#3166)", () => {
+    // The fixture deliberately disagrees with tracked minus mastered (4 - 1):
+    // the aggregate owns the maths, the renderer must not compute a second one.
+    renderReport({ review: review({ elementsOpen: 2 }) });
+    expect(screen.getByTestId("rr-open")).toHaveTextContent("2");
+  });
+
   it("shows the per-lesson breakdown only for the set scope", () => {
     const { unmount } = renderReport({ showByLesson: true });
     expect(screen.getByTestId("rr-by-lesson")).toHaveTextContent("01.json");
@@ -61,6 +69,17 @@ describe("ReviewReport (#3124)", () => {
     renderReport({ showByLesson: false });
     expect(screen.queryByTestId("rr-by-lesson")).toBeNull();
   });
+
+  it.each(["rr-by-lesson", "rr-by-type", "rr-weak-areas"])(
+    "resets the browser list marker and indent of %s (#3341)",
+    (testId) => {
+      // No Tailwind preflight is loaded: a bare <ul> keeps its disc bullets
+      // and the 40px indent, so every report list resets them itself.
+      renderReport({ showByLesson: true });
+      const list = screen.getByTestId(testId).querySelector("ul");
+      expect(list).toHaveClass("m-0", "list-none", "p-0");
+    },
+  );
 
   it("uses the requested heading level for its sections", () => {
     renderReport({ headingLevel: 4 });

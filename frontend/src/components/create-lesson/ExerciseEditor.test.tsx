@@ -32,6 +32,7 @@ function Harness({
     return (
         <ExerciseEditor
             exercise={ex}
+            cardIds={[]}
             onSave={(updated) => {
                 setEx(updated);
                 setSaved(updated);
@@ -77,10 +78,32 @@ describe("ExerciseEditor — matching", () => {
         expect(onSaved.mock.calls[0][0].pairs[0]).toEqual({left: "un", right: "ONE"});
     });
 
-    it("disables Save + shows an error when a pair is incomplete", () => {
+    it("disables Save + shows an error when no pair is complete", () => {
         render(<Harness exercise={ex()} />);
+        for (const index of [0, 1]) {
+            fireEvent.change(screen.getByTestId(`exercise-edit-pair-right-m1-${index}`), {
+                target: {value: "  "},
+            });
+        }
+        expect(saveButton("m1")).toBeDisabled();
+        expect(screen.getByTestId("exercise-edit-error-m1")).toBeInTheDocument();
+    });
+
+    it("saves with one complete pair, the engine's minimum (#3387)", () => {
+        const onSaved = vi.fn();
+        render(<Harness exercise={ex()} onSaved={onSaved} />);
         fireEvent.change(screen.getByTestId("exercise-edit-pair-right-m1-1"), {
             target: {value: "  "},
+        });
+        expect(saveButton("m1")).toBeEnabled();
+        fireEvent.click(saveButton("m1"));
+        expect(onSaved.mock.calls[0][0].pairs).toEqual([{left: "un", right: "one"}]);
+    });
+
+    it("blocks a left term repeated in another case (#3387, E-MATCH-DUP-LEFT)", () => {
+        render(<Harness exercise={ex()} />);
+        fireEvent.change(screen.getByTestId("exercise-edit-pair-left-m1-1"), {
+            target: {value: "UN"},
         });
         expect(saveButton("m1")).toBeDisabled();
         expect(screen.getByTestId("exercise-edit-error-m1")).toBeInTheDocument();

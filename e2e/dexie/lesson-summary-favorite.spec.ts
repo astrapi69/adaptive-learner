@@ -16,6 +16,8 @@
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 import {completeOnboarding} from "../helpers/onboarding";
 
 const CARDS = [
@@ -30,7 +32,7 @@ const CARDS = [
 async function buildSaveAndPlay(page: Page): Promise<void> {
     // The summary favorite control renders only for a signed-in learner
     // (SummaryFavorite returns null without a userId), so seed one first.
-    await completeOnboarding(page);
+    await completeOnboarding(page, {migrationOffer: "none"});
     // #3124 - the favorites row is off in the compact default; switch it on
     // the way Settings > Learning > "Lesson summary" would (a partial stored
     // config is filled in ON for every other section).
@@ -44,9 +46,7 @@ async function buildSaveAndPlay(page: Page): Promise<void> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill("E2E Favorite");
     await page.getByTestId("create-lesson-next").click();
     for (const card of CARDS) {

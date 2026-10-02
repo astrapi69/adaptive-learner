@@ -25,10 +25,12 @@ import {forwardRef, useMemo, useState} from "react";
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
 import {cn} from "@/lib/utils";
+import {LONG_WORD_WRAP} from "../../../../lib/exercises/long-word-wrap";
 import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
 import ReadAloudButton from "../../../lesson/tts/ReadAloudButton";
 import {deriveClozeMultiSelectAttempt} from "../../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
+import {normalizeClozeChoice} from "../../../../lib/exercises/grading/cloze-select-grading";
 import {seededShuffle} from "../../../../lib/exercises/grading/seeded-shuffle";
 import type {ContentLessonExercise} from "../../../../storage/types";
 import AnswerCelebration from "../../feedback/AnswerCelebration";
@@ -50,20 +52,13 @@ export interface ClozeMultiSelectProps extends ControlledExerciseProps {
     onComplete: (result: ExerciseScored) => void;
 }
 
-/** Normalise an option for set comparison (NFC + trim). Options are
- *  picked from a fixed list (no typing) so the chosen strings are
- *  byte-identical to the authored ``accept`` / ``distractors``. */
-function _norm(value: string): string {
-    return value.normalize("NFC").trim();
-}
-
 /** Exact-set verdict: the chosen set equals the correct set. */
 function _exactSetCorrect(
     selected: readonly string[],
     accept: readonly string[],
 ): boolean {
-    const want = new Set(accept.map(_norm));
-    const got = new Set(selected.map(_norm));
+    const want = new Set(accept.map(normalizeClozeChoice));
+    const got = new Set(selected.map(normalizeClozeChoice));
     if (want.size !== got.size) return false;
     for (const value of want) if (!got.has(value)) return false;
     return true;
@@ -77,7 +72,7 @@ function _verdict(
     chosen: boolean,
     acceptSet: ReadonlySet<string>,
 ): OptionVerdict {
-    const isCorrectOption = acceptSet.has(_norm(option));
+    const isCorrectOption = acceptSet.has(normalizeClozeChoice(option));
     if (chosen) return isCorrectOption ? "correct" : "wrong";
     return isCorrectOption ? "missed" : "neutral";
 }
@@ -102,7 +97,7 @@ function ClozeMultiSelect(
     const question = exercise.sentence ?? "";
     const accept = useMemo(() => exercise.accept ?? [], [exercise.accept]);
     const acceptSet = useMemo(
-        () => new Set(accept.map(_norm)),
+        () => new Set(accept.map(normalizeClozeChoice)),
         [accept],
     );
     const reviewedMulti =
@@ -237,6 +232,7 @@ function ClozeMultiSelect(
                     "Select all that apply",
                 )}
                 className="flex flex-col gap-2"
+                lang={ttsLang ?? undefined}
                 data-testid="cloze-multiselect-options"
             >
                 {options.map((option, idx) => {
@@ -271,7 +267,7 @@ function ClozeMultiSelect(
                                 aria-label={option}
                                 data-testid={`cloze-multiselect-checkbox-${idx}`}
                             />
-                            <span className="flex-1">
+                            <span className={cn("min-w-0 flex-1", LONG_WORD_WRAP)}>
                                 <InlineMarkdown>{option}</InlineMarkdown>
                             </span>
                             {submitted && verdict !== "neutral" && (

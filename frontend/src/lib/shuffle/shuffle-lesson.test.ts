@@ -160,3 +160,53 @@ describe("buildShuffleLesson (#1014)", () => {
         expect(distinctSourceLessonCount(lesson.steps)).toBe(3);
     });
 });
+
+// Owner decision on EXP-052 slice 2 (refs #3169): the shuffle pool uses
+// the shell's one definition of "playable" (isPlayableExerciseStep: the
+// dispatcher's core types AND the adopted ext:al-* extensions). The old
+// local five-type list dropped multiple_choice and every extension, so
+// real content (speak-and-record, categorization, ...) never shuffled in.
+describe("buildShuffleLesson - playable means what the dispatcher renders", () => {
+    function withTypes(lessonId: string, types: string[]): ShuffleSourceLesson {
+        const steps = types.map(
+            (type, i) =>
+                ({
+                    id: `${lessonId}-s${i}`,
+                    type: "exercise",
+                    title: null,
+                    exercise: {id: `${lessonId}-ex${i}`, type, prompt: "p", card_ids: []},
+                }) as unknown as ContentLessonStep,
+        );
+        const lesson: ContentLesson = {
+            id: lessonId,
+            title: lessonId,
+            estimated_minutes: 1,
+            cards: [],
+            steps,
+        };
+        return {lessonId, title: lessonId, lesson};
+    }
+
+    it.each([
+        ["extension: speak-and-record", "ext:al-speak-and-record"],
+        ["extension: categorization", "ext:al-categorization"],
+        ["core: multiple_choice", "multiple_choice"],
+    ])("pools a %s exercise", (_name, type) => {
+        const lesson = buildShuffleLesson([withTypes("a", [type]), withTypes("b", ["cloze"])], {
+            title: "Shuffle",
+            rng: seededRng([0.5]),
+        });
+        expect(lesson.steps.map((s) => s.exercise?.type).sort()).toEqual(["cloze", type].sort());
+    });
+
+    it.each([
+        ["an unknown extension", "ext:somebody-else"],
+        ["an unknown core type", "hologram"],
+    ])("still skips %s the dispatcher cannot render", (_name, type) => {
+        const lesson = buildShuffleLesson([withTypes("a", [type, "cloze"])], {
+            title: "Shuffle",
+            rng: seededRng([0.5]),
+        });
+        expect(lesson.steps.map((s) => s.exercise?.type)).toEqual(["cloze"]);
+    });
+});

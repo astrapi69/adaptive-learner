@@ -22,6 +22,7 @@ One lesson in a content set (Phase 43 / 2B-lesson).
 | `domain` | `string | null` | no | - |
 | `estimated_minutes` | `number` | no | min=1, max=240 |
 | `id` | `SlugId` | yes | - |
+| `purpose` | `"practice" | "bridge" | "quiz"` | no | - |
 | `requires_extensions` | `string[]` | no | - |
 | `resources` | `LessonResource[] | null` | no | - |
 | `source_language` | `string | null` | no | - |
@@ -87,6 +88,7 @@ One exercise step. Type-tagged via ``type``.
 | `accept_orderings` | `number[][] | null` | no | - |
 | `blanks` | `ClozeBlank[] | null` | no | - |
 | `card_ids` | `string[]` | no | maxItems=50 |
+| `case_sensitive` | `boolean` | no | - |
 | `cloze_mode` | `"type" | "select" | "multiselect" | null` | no | - |
 | `direction` | `"source_to_target" | "target_to_source" | "both" | "random"` | no | - |
 | `distractors` | `string[]` | no | maxItems=20 |

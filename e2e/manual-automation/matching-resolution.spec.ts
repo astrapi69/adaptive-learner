@@ -92,6 +92,20 @@ test.describe("Matching resolution (#824/#825)", () => {
     const reached = await reachCheckedMatching(content, lesson);
     test.skip(!reached, "no matching exercise reached in this lesson");
 
+    // #3505 - a check with mistakes opens on "Corrections", with the
+    // correct partner under each mistake.
+    await expect(page.getByTestId("matching-corrections")).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect(
+      page.getByTestId(/^matching-correct-hint-\d+$/).first(),
+    ).toBeVisible();
+    // #3186/#3233 - "My answers" carries no correction rows and is ungraded.
+    await page.getByTestId("matching-my-answers").click();
+    await expect(page.getByTestId(/^matching-correct-hint-\d+$/)).toHaveCount(0);
+    await expect(page.getByTestId(/^matching-your-answer-\d+$/)).toHaveCount(0);
+
     // After checking, the Solve button is offered.
     const solve = page.getByTestId("matching-resolve");
     await expect(solve).toBeVisible();

@@ -4,9 +4,10 @@ German (and any non-ASCII) authored content naturally carries umlaut
 ids and tags ('waehrung' was authored as 'währung', 'präsenz'). The
 canonical engine schema constrains Card.id / Card.tags to plain
 strings, so the app's semantic layer must not be stricter: lesson-
-INTERNAL identifiers accept lowercase unicode letters. Set-level
-identifiers (ContentSet.id / path / filenames) stay ASCII - they are
-URLs and cache keys.
+INTERNAL identifiers accept lowercase unicode letters. Since #3391 the
+set id follows the engine schema too (it puts no pattern on a set id;
+the client URL-encodes it and the cache only needs a safe path segment).
+The set ``path`` and filenames stay ASCII.
 """
 
 from __future__ import annotations
@@ -93,15 +94,18 @@ class TestSlugRejectionsStay:
             Card(id="-präsenz", front="x", back="y")
 
 
-class TestSetLevelStaysAscii:
-    def test_content_set_id_rejects_umlauts(self) -> None:
-        with pytest.raises(ValidationError):
-            ContentSet(
-                id="währung-des-geistes",
-                title="x",
-                target_language="de",
-                source_language="de",
-                level="B1",
-                version="1.0.0",
-                lessons=[],
-            )
+class TestSetIdFollowsTheEngine:
+    # The former pin here ("set ids stay ASCII") passed for the wrong
+    # reason: the constructor call lacked lesson_count and passed an
+    # unknown field, so it raised regardless of the id (#3391).
+    def test_content_set_id_accepts_umlauts(self) -> None:
+        content_set = ContentSet(
+            id="währung-des-geistes",
+            title="x",
+            target_language="de",
+            source_language="de",
+            level="B1",
+            version="1.0.0",
+            lesson_count=1,
+        )
+        assert content_set.id == "währung-des-geistes"

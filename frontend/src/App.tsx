@@ -8,14 +8,14 @@ import AppUpdateProvider from "./components/pwa/AppUpdateProvider";
 import { resolveStorageMode } from "./storage";
 import { syncLanguageAtBoot, syncUserDataAtBoot } from "./storage/dexie/dexie-user-data";
 import { lazyWithReload } from "./lib/pwa/lazy-route";
-import { Routes, Route, Navigate } from "react-router";
-import { ToastContainer } from "react-toastify";
+import { Routes, Route, Navigate, useLocation } from "react-router";
 import "react-toastify/dist/ReactToastify.css";
 import "./styles/toast-theme.css";
 
 import type { ApiError } from "./api/client";
 import ErrorBoundary from "./components/error/ErrorBoundary";
 import { RouteLoading, RouteLoadError } from "./components/system/RouteFallback";
+import AppToastContainer from "./components/feedback/AppToastContainer";
 import MilestoneHost from "./components/feedback/MilestoneHost";
 import GlobalShortcuts from "./components/a11y/GlobalShortcuts";
 import UpdatePromptHost from "./components/pwa/UpdatePromptHost";
@@ -107,6 +107,7 @@ const ErrorReportDialog = lazyWithReload(() => import("./components/error/ErrorR
  */
 export default function App() {
   useTheme();
+  const location = useLocation();
   // #1569 — reset the iOS phantom window scroll that lands taps ~2 lines
   // below their visible target (see the hook's TSDoc for the mechanism).
   useVisualViewportRealign();
@@ -195,11 +196,15 @@ export default function App() {
             <DesktopUpdateHost />
             <Navigation />
             <OfflineIndicator />
-            {/* Content-scoped boundary: a lazy route whose import REJECTS
-                throws here (readable "could not load" + reload) instead of
-                blanking the whole shell via the top-level boundary. The
-                visible Suspense fallback covers the load/stall case (#2573). */}
-            <ErrorBoundary fallback={(error) => <RouteLoadError error={error} />}>
+            {/* Content-scoped boundary: a lazy route whose import REJECTS, or a
+                page that throws while rendering, lands here instead of
+                blanking the whole shell. Keyed on the path (#3390), so
+                navigating away recovers without a reload. The visible
+                Suspense fallback covers the load/stall case (#2573). */}
+            <ErrorBoundary
+              resetKey={location.pathname}
+              fallback={(error) => <RouteLoadError error={error} />}
+            >
             <Suspense fallback={<RouteLoading />}>
               <Routes>
                 <Route path="/" element={<Landing />} />
@@ -291,16 +296,7 @@ export default function App() {
                 />
               </Suspense>
             )}
-            <ToastContainer
-              position="bottom-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop
-              closeOnClick={false}
-              draggable={false}
-              pauseOnHover
-              theme="colored"
-            />
+            <AppToastContainer />
             </AppUpdateProvider>
             </AiKeyVaultProvider>
             </ConfirmProvider>

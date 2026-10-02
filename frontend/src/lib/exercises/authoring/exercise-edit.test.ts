@@ -1,27 +1,20 @@
 /**
- * Tests for the per-type exercise-edit validator + normalizer (#1844).
+ * Tests for the exercise-edit normalizer and helpers (#1844).
  *
- * These pin the validation rules that gate the Step-3 inline editor's
- * Save button (empty prompt, too few pairs/tiles, no accepted answer,
- * cloze marker/blank mismatch, picture-choice correctness) and the
- * normalizer that trims + drops empty entries before the edit is
- * committed to the exercise record. Pure functions — no React.
+ * These pin the normalizer that trims + drops empty entries before the
+ * edit is committed to the exercise record. Whether a draft is saveable is
+ * ``checkExerciseDraft``'s call (#3387), pinned in
+ * ``lib/content/lesson/edit/exercise-draft-check.test.ts``. Pure functions, no
+ * React.
  */
 
 import {describe, expect, it} from "vitest";
 
 import {
-    EXPLANATION_MAX_CHARS,
-    FREE_TEXT_MIN_ACCEPT,
-    MATCHING_MIN_PAIRS,
-    MC_MIN_OPTIONS,
-    PICTURE_MIN_IMAGES,
-    WORD_TILES_MIN_TILES,
     countClozeMarkers,
     createBlankExercise,
     newExerciseId,
     normalizeExerciseEdit,
-    validateExerciseEdit,
 } from "./exercise-edit";
 import type {ContentLessonExercise} from "../../../storage/types";
 
@@ -44,178 +37,44 @@ describe("countClozeMarkers", () => {
     });
 });
 
-describe("validateExerciseEdit — prompt", () => {
-    it("rejects an empty/whitespace prompt on any type", () => {
-        const res = validateExerciseEdit(base({prompt: "   ", accept: ["x"]}));
-        expect(res.valid).toBe(false);
-        expect(res.code).toBe("prompt");
-    });
+// adaptive-learner-content fa435fe, sets/de/ja-a0/lessons/01-vokale.json
+const multiselect = base({
+    id: "ex-ms-vok",
+    type: "cloze",
+    cloze_mode: "multiselect",
+    prompt: "Wähle alle fünf Vokal-Zeichen.",
+    sentence: "Welche dieser Zeichen sind Vokale?",
+    accept: ["あ", "い", "う", "え", "お"],
+    distractors: ["か", "さ", "な"],
 });
 
-describe("validateExerciseEdit — free_text", () => {
-    it("accepts a prompt with at least one accepted answer", () => {
-        expect(
-            validateExerciseEdit(base({type: "free_text", accept: ["Guten Tag"]}))
-                .valid,
-        ).toBe(true);
+describe("normalizeExerciseEdit — cloze multiselect (#3246)", () => {
+    // A "select all that apply" cloze has no ___ markers and no blanks by
+    // design: its sentence IS the question, accept holds the correct
+    // options, distractors the wrong ones.
+    it("does not add blanks to a multiselect cloze", () => {
+        expect(normalizeExerciseEdit(multiselect)).not.toHaveProperty("blanks");
     });
-    it(`rejects fewer than ${FREE_TEXT_MIN_ACCEPT} accepted answers`, () => {
-        const res = validateExerciseEdit(
-            base({type: "free_text", accept: ["  "]}),
-        );
-        expect(res.valid).toBe(false);
-        expect(res.code).toBe("free_text");
+    it("drops a stray blanks array from a multiselect cloze", () => {
+        const out = normalizeExerciseEdit({...multiselect, blanks: [{accept: ["x"]}]});
+        expect(out).not.toHaveProperty("blanks");
+        expect(out.accept).toEqual(multiselect.accept);
     });
-});
-
-describe("validateExerciseEdit — matching", () => {
-    it("accepts >= min complete pairs", () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "matching",
-                prompt: "Match",
-                pairs: [
-                    {left: "un", right: "one"},
-                    {left: "deux", right: "two"},
-                ],
-            }),
-        );
-        expect(res.valid).toBe(true);
+    it("keeps cloze_mode, accept and distractors as given (trimmed, non-empty)", () => {
+        const out = normalizeExerciseEdit({
+            ...multiselect,
+            accept: [" あ", "い ", ""],
+            distractors: ["か", " "],
+        });
+        expect(out.cloze_mode).toBe("multiselect");
+        expect(out.accept).toEqual(["あ", "い"]);
+        expect(out.distractors).toEqual(["か"]);
     });
-    it(`rejects fewer than ${MATCHING_MIN_PAIRS} complete pairs`, () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "matching",
-                prompt: "Match",
-                pairs: [
-                    {left: "un", right: "one"},
-                    {left: "deux", right: "  "},
-                ],
-            }),
-        );
-        expect(res.valid).toBe(false);
-        expect(res.code).toBe("matching");
-    });
-});
-
-describe("validateExerciseEdit — cloze", () => {
-    it("accepts marker count == blanks with non-empty accepts", () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "cloze",
-                prompt: "Fill in",
-                sentence: "Je ___ un livre.",
-                blanks: [{accept: ["lis"]}],
-            }),
-        );
-        expect(res.valid).toBe(true);
-    });
-    it("rejects a sentence with no ___ marker", () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "cloze",
-                prompt: "Fill in",
-                sentence: "No blank here.",
-                blanks: [],
-            }),
-        );
-        expect(res.valid).toBe(false);
-        expect(res.code).toBe("cloze");
-    });
-    it("rejects when a blank has no accepted answer", () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "cloze",
-                prompt: "Fill in",
-                sentence: "Je ___ un livre.",
-                blanks: [{accept: ["   "]}],
-            }),
-        );
-        expect(res.valid).toBe(false);
-    });
-    it("rejects when marker count != blanks length", () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "cloze",
-                prompt: "Fill in",
-                sentence: "Je ___ un ___.",
-                blanks: [{accept: ["lis"]}],
-            }),
-        );
-        expect(res.valid).toBe(false);
-    });
-});
-
-describe("validateExerciseEdit — word_tiles", () => {
-    it("accepts >= min tiles", () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "word_tiles",
-                prompt: "Arrange",
-                tiles: ["Je", "lis"],
-            }),
-        );
-        expect(res.valid).toBe(true);
-    });
-    it(`rejects fewer than ${WORD_TILES_MIN_TILES} tiles`, () => {
-        const res = validateExerciseEdit(
-            base({type: "word_tiles", prompt: "Arrange", tiles: ["Je"]}),
-        );
-        expect(res.valid).toBe(false);
-        expect(res.code).toBe("word_tiles");
-    });
-});
-
-describe("validateExerciseEdit — picture_choice", () => {
-    it("accepts >= min images with exactly one correct + labels + src", () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "picture_choice",
-                prompt: "Pick",
-                images: [
-                    {src: "a.png", label: "cat", is_correct: "true"},
-                    {src: "b.png", label: "dog"},
-                ],
-            }),
-        );
-        expect(res.valid).toBe(true);
-    });
-    it("rejects when no image is marked correct", () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "picture_choice",
-                prompt: "Pick",
-                images: [
-                    {src: "a.png", label: "cat"},
-                    {src: "b.png", label: "dog"},
-                ],
-            }),
-        );
-        expect(res.valid).toBe(false);
-        expect(res.code).toBe("picture_choice");
-    });
-    it("rejects when an image is missing src or label", () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "picture_choice",
-                prompt: "Pick",
-                images: [
-                    {src: "a.png", label: "cat", is_correct: "true"},
-                    {src: "", label: "dog"},
-                ],
-            }),
-        );
-        expect(res.valid).toBe(false);
-    });
-    it(`rejects fewer than ${PICTURE_MIN_IMAGES} images`, () => {
-        const res = validateExerciseEdit(
-            base({
-                type: "picture_choice",
-                prompt: "Pick",
-                images: [{src: "a.png", label: "cat", is_correct: "true"}],
-            }),
-        );
-        expect(res.valid).toBe(false);
+    it.each([
+        ["padded", "  Welche sind Vokale? ", "Welche sind Vokale?"],
+        ["blank", "   ", ""],
+    ])("trims a %s question like the prompt (#3387)", (_name, sentence, expected) => {
+        expect(normalizeExerciseEdit({...multiselect, sentence}).sentence).toBe(expected);
     });
 });
 
@@ -280,77 +139,6 @@ describe("normalizeExerciseEdit", () => {
     });
 });
 
-describe("validateExerciseEdit — multiple_choice (#1850)", () => {
-    function mc(over: Partial<ContentLessonExercise>): ContentLessonExercise {
-        return base({
-            type: "multiple_choice",
-            prompt: "Pick the translation of chat",
-            multiple: false,
-            options: [
-                {text: "cat", correct: true},
-                {text: "dog", correct: false},
-            ],
-            ...over,
-        });
-    }
-
-    it("accepts >= min options with exactly one correct (single)", () => {
-        expect(validateExerciseEdit(mc({})).valid).toBe(true);
-    });
-    it(`rejects fewer than ${MC_MIN_OPTIONS} non-empty options`, () => {
-        const res = validateExerciseEdit(
-            mc({options: [{text: "cat", correct: true}, {text: "  ", correct: false}]}),
-        );
-        expect(res.valid).toBe(false);
-        expect(res.code).toBe("multiple_choice");
-    });
-    it("rejects duplicate option texts", () => {
-        const res = validateExerciseEdit(
-            mc({options: [{text: "cat", correct: true}, {text: "cat", correct: false}]}),
-        );
-        expect(res.valid).toBe(false);
-    });
-    it("rejects single-choice with no correct option", () => {
-        const res = validateExerciseEdit(
-            mc({options: [{text: "cat", correct: false}, {text: "dog", correct: false}]}),
-        );
-        expect(res.valid).toBe(false);
-    });
-    it("rejects single-choice with two correct options", () => {
-        const res = validateExerciseEdit(
-            mc({options: [{text: "cat", correct: true}, {text: "dog", correct: true}]}),
-        );
-        expect(res.valid).toBe(false);
-    });
-    it("accepts multi-choice with two correct options", () => {
-        expect(
-            validateExerciseEdit(
-                mc({
-                    multiple: true,
-                    options: [
-                        {text: "cat", correct: true},
-                        {text: "feline", correct: true},
-                        {text: "dog", correct: false},
-                    ],
-                }),
-            ).valid,
-        ).toBe(true);
-    });
-    it("rejects multi-choice with no correct option", () => {
-        expect(
-            validateExerciseEdit(
-                mc({
-                    multiple: true,
-                    options: [
-                        {text: "cat", correct: false},
-                        {text: "dog", correct: false},
-                    ],
-                }),
-            ).valid,
-        ).toBe(false);
-    });
-});
-
 describe("normalizeExerciseEdit — multiple_choice (#1850)", () => {
     it("trims option texts, drops empties, coerces booleans", () => {
         const out = normalizeExerciseEdit(
@@ -375,26 +163,6 @@ describe("normalizeExerciseEdit — multiple_choice (#1850)", () => {
 });
 
 describe("explanation on the core editor (#2992)", () => {
-    it("accepts an absent, blank or in-budget explanation", () => {
-        expect(validateExerciseEdit(base({accept: ["hello"]})).valid).toBe(true);
-        expect(
-            validateExerciseEdit(base({accept: ["hello"], explanation: "  "})).valid,
-        ).toBe(true);
-        expect(
-            validateExerciseEdit(
-                base({accept: ["hello"], explanation: "x".repeat(EXPLANATION_MAX_CHARS)}),
-            ).valid,
-        ).toBe(true);
-    });
-
-    it("rejects an explanation over the schema cap with the explanation code", () => {
-        const issue = validateExerciseEdit(
-            base({accept: ["hello"], explanation: "x".repeat(EXPLANATION_MAX_CHARS + 1)}),
-        );
-        expect(issue.valid).toBe(false);
-        expect(issue.code).toBe("explanation");
-    });
-
     it("trims the explanation on normalize", () => {
         const out = normalizeExerciseEdit(
             base({accept: ["hello"], explanation: "  **Regel:** hinten.\n\n"}),
@@ -449,13 +217,14 @@ describe("createBlankExercise + newExerciseId (#1849)", () => {
         "multiple_choice",
     ] as const;
 
-    it("builds a blank of each type that is INVALID until filled", () => {
+    it("builds a blank of each type with an empty prompt", () => {
         for (const type of TYPES) {
             const ex = createBlankExercise(type, `id-${type}`);
             expect(ex.type).toBe(type);
             expect(ex.id).toBe(`id-${type}`);
-            // Empty prompt alone makes every blank invalid to start.
-            expect(validateExerciseEdit(ex).valid).toBe(false);
+            // The empty prompt alone keeps every blank out until it is
+            // filled (pinned against checkExerciseDraft, #3387).
+            expect(ex.prompt).toBe("");
         }
     });
 

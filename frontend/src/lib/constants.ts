@@ -147,7 +147,6 @@ export type MessageRole = (typeof MESSAGE_ROLES)[number];
  * file AND a row in this list.
  */
 export const SUPPORTED_LANGUAGES = ["de", "en", "es", "fr", "el"] as const;
-export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
 // --- Re-export the API_BASE for unit tests that exercise client ---------
 

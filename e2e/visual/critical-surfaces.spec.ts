@@ -31,21 +31,29 @@ import {expect, test} from "@playwright/test";
 
 import {
     SURFACE_NAMES,
+    DEFAULT_VIEWPORTS,
+    LAPTOP_SURFACES,
     VIEWPORTS,
+    type SurfaceName,
     type ViewportName,
     assertSurfaceStillReady,
     expandViewportToDocument,
     freezeClock,
     gotoSurface,
     pinContentRegistry,
+    pinRandomStreams,
     setTheme,
     settleForScreenshot,
+    surfaceMasks,
 } from "./helpers";
 
-const VIEWPORT_NAMES = Object.keys(VIEWPORTS) as ViewportName[];
+/** The viewports a surface renders at: the matrix, plus laptop for a few. */
+function viewportsFor(surface: SurfaceName): readonly ViewportName[] {
+    return LAPTOP_SURFACES.has(surface) ? [...DEFAULT_VIEWPORTS, "laptop"] : DEFAULT_VIEWPORTS;
+}
 
 for (const surface of SURFACE_NAMES) {
-    for (const viewport of VIEWPORT_NAMES) {
+    for (const viewport of viewportsFor(surface)) {
         test(`${surface} renders correctly at ${viewport}`, async ({page}) => {
             await page.setViewportSize(VIEWPORTS[viewport]);
             // Determinism: freeze the clock, pin the default theme, and pin
@@ -53,8 +61,10 @@ for (const surface of SURFACE_NAMES) {
             // the recommended-repos list is otherwise fetched live and
             // re-stales the settings-data / content-discover baselines) before
             // the first navigation, then seed/await the surface's own ready
-            // signal (gotoSurface), then settle fonts + kill animations.
+            // signal (gotoSurface), then settle fonts + kill animations. The
+            // random pin gives every shuffle its own stream (#3214).
             await freezeClock(page);
+            await pinRandomStreams(page);
             await setTheme(page, "light");
             await pinContentRegistry(page);
             const ready = await gotoSurface(page, surface);
@@ -84,10 +94,24 @@ for (const surface of SURFACE_NAMES) {
             // applies on top of a per-shot ratio (Playwright takes the
             // minimum), so this override must raise BOTH bounds or the 0.08
             // ratio is dead letter: 0.05 of mobile 375x667 is ~12.5k pixels.
-            const shotOpts =
-                surface === "lesson-matching" && viewport === "mobile"
+            // #3215 - content that ticks between two renders of the same
+            // pinned state (the Endless clock) is masked explicitly, never
+            // left to the tolerance: the tolerance would swallow a real
+            // change of the same size just as silently (#3023).
+            // A mask whose locator matches nothing masks nothing, silently:
+            // a renamed testid would let the digits drift back into the
+            // comparison unnoticed. Fail closed instead (gate contract
+            // point 3, quality-checks.md).
+            const masks = surfaceMasks(page, surface);
+            for (const target of masks) {
+                await expect(target).toHaveCount(1);
+            }
+            const shotOpts = {
+                mask: masks,
+                ...(surface === "lesson-matching" && viewport === "mobile"
                     ? {maxDiffPixelRatio: 0.08, maxDiffPixels: 20_000}
-                    : {};
+                    : {}),
+            };
             // #2703 - fail loud if the surface's ready-state collapsed
             // between gotoSurface and here, instead of silently
             // photographing whatever it collapsed into.

@@ -108,6 +108,21 @@ describe("masteryForLesson", () => {
     it("no rows -> not mastered", () => {
         expect(masteryForLesson([])).toEqual({receptive: false, productive: false});
     });
+
+    // #3170 - a never-wrong row (error_count 0, SRS flag not yet set) is
+    // settled by default; only the toggle re-binds mastery to the SRS flag.
+    it("never-wrong rows count as mastered by default (#3170)", () => {
+        const clean = {...err("target_to_source", false), error_count: 0, correct_streak: 1};
+        expect(masteryForLesson([clean]).receptive).toBe(true);
+    });
+    it("never-wrong rows do NOT count as mastered when the toggle is on (#3170)", () => {
+        const clean = {...err("target_to_source", false), error_count: 0, correct_streak: 1};
+        expect(masteryForLesson([clean], {includeNeverWrong: true}).receptive).toBe(false);
+    });
+    it("an open error still blocks mastery next to never-wrong rows (#3170)", () => {
+        const clean = {...err("target_to_source", false), error_count: 0, correct_streak: 1};
+        expect(masteryForLesson([clean, err("target_to_source", false)]).receptive).toBe(false);
+    });
 });
 
 describe("buildLearningPathGraph", () => {

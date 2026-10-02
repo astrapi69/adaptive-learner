@@ -103,7 +103,7 @@ Seven targets compose existing tooling for the mechanical steps of `release-work
 | `make release-build` | Step 6 | Conditional backend `poetry build` (skipped iff `package-mode=false`) + frontend `bun run build` |
 | `make release-discover` | Step 4 supplement | Run the open-set version-literal discovery script with verbose output |
 | `make release-tag VERSION=X.Y.Z` | Step 7 | `verify_version_pins.sh $(VERSION)` + `git tag -a` + push main + push tag |
-| `make release-publish VERSION=X.Y.Z` | Step 8 | `gh release create v$(VERSION) --notes-file changelog/releases/v$(VERSION).md` |
+| `make release-publish VERSION=X.Y.Z` | Step 8 | `gh release create v$(VERSION) --draft --notes-file changelog/releases/v$(VERSION).md` (#3159) |
 
 **Not automated (LLM/human value-add):**
 - Step 2 SemVer classification
@@ -111,7 +111,7 @@ Seven targets compose existing tooling for the mechanical steps of `release-work
 - Step 11 CLAUDE.md + journal post-release docs
 
 **Not in scope:**
-- Playwright `--project=smoke` (needs running app; runs separately as `cd e2e && npx playwright test`)
+- Playwright `--project=smoke` (starts its own backend and frontend with a throwaway data dir, never a running `make dev`; runs separately as `make test-e2e-smoke`)
 - Backend `mypy` (no top-level target yet; would belong in `release-test` once added)
 - Launcher PyInstaller build smoke (already covered by `launcher-{linux,macos,windows}.yml` workflows)
 

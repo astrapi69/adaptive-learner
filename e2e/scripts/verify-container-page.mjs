@@ -56,7 +56,16 @@ const EXCUSED_UNLOADED = [
     // learning repo): each is covered by dexie-smoke / vitest suites.
     [/^(Lesson|AdaptiveLesson|EndlessLesson|ShuffleLesson|ErrorReplayLesson|Review|ImportDetail|SetDeepLink|LearningRepo|SetSummary)-/,
         "param route needs a real set/import row - covered by dexie-smoke + vitest"],
+    [/^set-review-/,
+        "set-completion aggregator shared by SetSummary and the lesson summary's Detailed evaluation (#3134) - both need a real set (#3155)"],
     [/^exercises-/, "exercise renderers load inside a running lesson - needs a set"],
+    // The LessonRunner shell refactors (#3169) split the runner internals
+    // into two shared chunks named after one member each: the summary's
+    // ReviewedFallbackPanel (shared by RunnerStep + LessonStepView) and
+    // hooks/lesson/sources. Both load only inside a running lesson; found
+    // by the first weekly dry run (#3159, run 36610482730).
+    [/^(ReviewedFallbackPanel|sources)-/,
+        "lesson-runner shell internals load inside a running lesson - needs a set; covered by dexie-smoke + vitest"],
     [/^(RedeemInvite|QRScannerModal|ErrorReportDialog)-/,
         "loads on user action (invite link, QR scan, error report dialog)"],
     [/^apkg-builder-/, "loads on Anki .apkg export click - needs cards"],
@@ -75,6 +84,7 @@ const EXPECTED_404 = [
 
 const problems = [];
 let expected404Hits = 0;
+let abortedByNavigation = 0;
 const loadedChunks = new Set();
 let routesVisited = 0;
 
@@ -89,11 +99,20 @@ try {
     page.on("pageerror", (err) =>
         problems.push(`[${currentRoute}] pageerror: ${String(err).slice(0, 180)}`),
     );
-    page.on("requestfailed", (req) =>
-        problems.push(
-            `[${currentRoute}] requestfailed: ${req.url().slice(0, 120)} (${req.failure()?.errorText ?? ""})`,
-        ),
-    );
+    page.on("requestfailed", (req) => {
+        const reason = req.failure()?.errorText ?? "";
+        // net::ERR_ABORTED is the browser cancelling its own request when
+        // the walk navigates on - not a failed fetch. The second weekly
+        // dry run (#3159, run 36614983886) tripped on a content-repo
+        // search-index.json still in flight when /content?tab=my was
+        // left. Every other reason (DNS, refused, reset, blocked) stays
+        // a failure; a real network problem never reports as ABORTED.
+        if (reason === "net::ERR_ABORTED") {
+            abortedByNavigation += 1;
+            return;
+        }
+        problems.push(`[${currentRoute}] requestfailed: ${req.url().slice(0, 120)} (${reason})`);
+    });
     page.on("response", (resp) => {
         const url = resp.url();
         const chunk = url.match(/\/assets\/([^/?]+\.js)$/);
@@ -107,10 +126,18 @@ try {
     });
 
     const settle = () => page.waitForTimeout(1200);
+    // Let a route's own fetches (content-repo indices, plugin manifests)
+    // finish before the walk moves on, so their responses are judged
+    // above instead of being cut off by the next navigation. Capped: a
+    // route that never goes idle is not a finding here (the abort below
+    // is then ignored, the response gate stays).
+    const quiesce = () =>
+        page.waitForLoadState("networkidle", {timeout: 5000}).catch(() => {});
     const visit = async (path) => {
         currentRoute = path;
         await page.goto(base + path, {waitUntil: "load", timeout: 30_000});
         await settle();
+        await quiesce();
         const nodes = await page.evaluate(() => document.querySelectorAll("*").length);
         if (nodes < 20) problems.push(`[${path}] barely a DOM (${nodes} nodes)`);
         routesVisited += 1;
@@ -127,21 +154,44 @@ try {
     await visit("/");
     await page.getByTestId("landing").waitFor({state: "visible", timeout: 20_000});
     console.log("landing visible: the app APPEARS");
-    await page.getByTestId("landing-lang-de").click({timeout: 5000}).catch(() => {});
-    await settle();
+    // #3319: the switch is part of the landing (Landing.tsx renders it
+    // unconditionally), so a missing button is a finding, not a skip.
+    await click("landing-lang-de");
 
     // 2. Onboarding fast path -> a real user, so the learner routes render
     //    their content (and load their lazy bundles) instead of redirecting.
     await visit("/onboarding");
-    await page.getByTestId("migration-start-fresh").click({timeout: 3000}).catch(() => {});
+    // #3319 (the #3226 shape): the page states its migration verdict in
+    // data-migration-offer. A bare container carries no legacy data, so the
+    // verdict must be "none" and the welcome must not render; a "shown"
+    // here means the image ships data it should not, and a missing
+    // verdict means the page never settled.
+    const onboardingRoot = page.getByTestId("onboarding");
+    await onboardingRoot
+        .waitFor({state: "visible", timeout: 20_000})
+        .catch(() => problems.push("[/onboarding] the onboarding page never rendered"));
+    const migrationOffer = await onboardingRoot
+        .getAttribute("data-migration-offer")
+        .catch(() => null);
+    if (migrationOffer !== "none") {
+        problems.push(
+            `[/onboarding] migration verdict is ${JSON.stringify(migrationOffer)}, expected "none" on a bare container`,
+        );
+    }
+    if ((await page.getByTestId("migration-start-fresh").count()) !== 0) {
+        problems.push("[/onboarding] the migration welcome rendered on a bare container");
+    }
+    console.log(`onboarding migration verdict: ${migrationOffer}`);
     await page.getByTestId("onboarding-name").fill("Chain Probe");
     await page.getByTestId("onboarding-topic").fill("Spanish");
     await click("onboarding-submit");
     await click("onboarding-invite-start-now");
     await page.getByTestId("dashboard").waitFor({state: "visible", timeout: 20_000});
+    // #3319: the three tabs are DASHBOARD_TAB_ORDER (Dashboard.tsx), always
+    // rendered; each click loads that tab's lazy content, so a tab that is
+    // gone would silently shrink the chunk coverage.
     for (const tab of ["activity", "missions", "overview"]) {
-        await page.getByTestId(`dashboard-tab-${tab}`).click({timeout: 5000}).catch(() => {});
-        await settle();
+        await click(`dashboard-tab-${tab}`);
     }
     console.log("onboarded: dashboard visible");
 
@@ -154,8 +204,10 @@ try {
     await visit("/content?tab=my"); // #2205: the analysis-to-lesson bundle
     await visit("/content?tab=browse");
     await visit("/learning-path");
-    await page.getByTestId("learning-path-view-map").click({timeout: 5000}).catch(() => {});
-    await settle();
+    // #3319: the view switch renders in every personal-path state
+    // (LearningPathPersonal passes it into each view), so the map click is
+    // loud too; it is what loads the LearningPathMap chunk.
+    await click("learning-path-view-map");
     await visit("/session");
     await visit("/progress");
     await visit("/arcade");
@@ -208,6 +260,7 @@ if (!chunkListFile) {
 }
 if (routesVisited === 0) problems.push("zero routes visited - nothing was proven");
 console.log(`routes visited: ${routesVisited}`);
+console.log(`requests aborted by the walk's own navigation (ignored): ${abortedByNavigation}`);
 
 // Drop exactly as many generic resource-load console errors as expected
 // 404s occurred (the browser logs those fetches itself).

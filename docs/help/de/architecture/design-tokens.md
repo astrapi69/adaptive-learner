@@ -46,8 +46,8 @@ nicht nur Konvention. Die vollständige Token-Referenz steht in
 2. Setze alle 44 kanonischen Tokens (die Parität ist Pflicht).
 3. Achte auf **WCAG-AA-Kontrast** - `contrast.test.ts` prüft alle
    Themes rechnerisch.
-4. Registriere das Theme; der Picker unter Einstellungen →
-   Darstellung übernimmt es.
+4. Registriere das Theme; der Picker unter Einstellungen >
+   Allgemein > Darstellung übernimmt es.
 
 Braucht ein neues Feature eine neue Farbe: **füge ein Token
 hinzu**, kein Literal. Variiert es pro Theme, ergänze es in allen

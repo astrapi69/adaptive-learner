@@ -12,6 +12,11 @@
  * round can never turn a run perfect after the fact; the error
  * replay and flash rounds run in their own player and never mount
  * this component.
+ *
+ * When the switches are on and no ticket comes, the banner's place
+ * says why (#3216): the rule this run missed, a lesson already
+ * completed, or a balance at the cap. Without it, "no ticket" and
+ * "arcade broken" looked the same to a learner.
  */
 
 import {useEffect, useRef, useState} from "react";
@@ -31,6 +36,9 @@ import {
     playfulTicketsActive,
     readTicketCap,
 } from "../../../lib/learning/playful/playfulTicketsPref";
+
+/** Why this summary shows no ticket although the switches are on (#3216). */
+type NoTicketReason = "rule" | "completed" | "cap";
 
 export interface SummaryTicketRewardProps {
     userId: string;
@@ -56,27 +64,55 @@ export default function SummaryTicketReward({
 }: SummaryTicketRewardProps) {
     const {t} = useI18n();
     const navigate = useNavigate();
+    const noTicketText = (reason: NoTicketReason): string => {
+        if (reason === "completed") {
+            return t(
+                "lesson.summary.ticket_none_completed",
+                "No ticket this time: you had already completed this lesson.",
+            );
+        }
+        if (reason === "cap") {
+            return t(
+                "lesson.summary.ticket_none_cap",
+                "No ticket this time: your balance is at the maximum of {n} tickets.",
+            ).replace("{n}", String(readTicketCap()));
+        }
+        return t(
+            "lesson.summary.ticket_none_rule",
+            "No ticket this time: a ticket comes with a lesson without mistakes or a run with all hearts.",
+        );
+    };
     // #3029 — the arcade switch gates the banner too: it is the button's
     // destination, and "off" means the arcade card and games are hidden
     // completely. Without this the summary offered "Play now" into a page
     // that only shows the gate notice.
     const active = playfulTicketsActive() && playfulArcadeActive() && userId !== "";
     const [granted, setGranted] = useState(0);
+    const [noTicketReason, setNoTicketReason] = useState<NoTicketReason | null>(null);
 
     // The run award fires ONCE per summary mount (the ref guards the
     // dev-mode double effect); milestones ride the streak effect below
     // and dedupe inside the store.
     const runAwarded = useRef(false);
     useEffect(() => {
-        if (!active || alreadyCompleted || runAwarded.current) return;
+        if (!active || runAwarded.current) return;
         runAwarded.current = true;
+        if (alreadyCompleted) {
+            setNoTicketReason("completed");
+            return;
+        }
         const earned = ticketsForRun({
             scoreCorrect,
             scoreTotal,
             fullHeartsRun,
         });
+        if (earned === 0) {
+            setNoTicketReason("rule");
+            return;
+        }
         const banked = awardTickets(userId, earned, readTicketCap());
         if (banked > 0) setGranted((prev) => prev + banked);
+        else setNoTicketReason("cap");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [active, alreadyCompleted]);
 
@@ -90,7 +126,18 @@ export default function SummaryTicketReward({
         if (banked > 0) setGranted((prev) => prev + banked);
     }, [active, alreadyCompleted, streakDays, userId]);
 
-    if (!active || granted === 0) return null;
+    if (!active) return null;
+    if (granted === 0) {
+        if (noTicketReason === null) return null;
+        return (
+            <p
+                className="text-sm text-[var(--fg-muted)]"
+                data-testid="summary-ticket-none"
+            >
+                {noTicketText(noTicketReason)}
+            </p>
+        );
+    }
 
     const message =
         granted === 1

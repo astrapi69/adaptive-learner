@@ -57,6 +57,12 @@ function _levenshtein(a: string, b: string): number {
  *  terminal sentence punctuation (``.!?…``) is stripped on both sides
  *  of the comparison. Inner punctuation stays significant. */
 function _normalize(s: string): string {
+    return _normalizeKeepCase(s).toLocaleLowerCase();
+}
+
+/** The same surface normalization with case kept, for an exercise that
+ *  declares ``case_sensitive`` (learn-content-engine#242, schema 1.19). */
+function _normalizeKeepCase(s: string): string {
     return s
         .normalize("NFC")
         .replace(/[‘’‚ʼ´`]/g, "'")
@@ -64,8 +70,13 @@ function _normalize(s: string): string {
         .trim()
         .replace(/\s+/g, " ")
         .replace(/[.!?…]+$/, "")
-        .trim()
-        .toLocaleLowerCase();
+        .trim();
+}
+
+/** The plain-text normalizer for a grading mode. */
+function _normalizerFor(codeMode: boolean, caseSensitive: boolean): (s: string) => string {
+    if (codeMode) return _normalizeCode;
+    return caseSensitive ? _normalizeKeepCase : _normalize;
 }
 
 /** Edit budget for the fuzzy fallback (#1580). Short answers keep the
@@ -103,12 +114,19 @@ function _normalizeCode(s: string): string {
  *  (e.g. accepted "10", typed "10.3" within tolerance 0.5). Checked before
  *  the text matcher; non-numeric input or an uncovered entry falls through
  *  to it unchanged. Omitted (or empty), grading is byte-identical to
- *  before this parameter existed. */
+ *  before this parameter existed.
+ *
+ *  ``caseSensitive`` (learn-content-engine#242, schema 1.19): the exercise
+ *  declares that case matters (``case_sensitive: true``). The normalizer
+ *  keeps case, and a case difference never passes as a tolerated typo; a
+ *  typo in the right case keeps its tolerance. Without it, case is not an
+ *  error. */
 export function isFreeTextCorrect(
     input: string,
     accept: readonly string[],
     codeMode = false,
     tolerances?: ReadonlyMap<string, number>,
+    caseSensitive = false,
 ): boolean {
     if (tolerances && tolerances.size > 0) {
         const numericInput = Number(input.trim());
@@ -122,30 +140,42 @@ export function isFreeTextCorrect(
             }
         }
     }
-    const norm = codeMode ? _normalizeCode : _normalize;
+    const norm = _normalizerFor(codeMode, caseSensitive);
     const normInput = norm(input);
     if (normInput === "") return false;
     const normCandidates = accept.map(norm);
     if (normCandidates.includes(normInput)) return true;
     for (const cand of normCandidates) {
         const tolerance = codeMode ? 1 : _editTolerance(cand);
-        if (_levenshtein(normInput, cand) <= tolerance) return true;
+        const distance = _levenshtein(normInput, cand);
+        if (distance > tolerance) continue;
+        if (caseSensitive && !codeMode && _hasCaseError(normInput, cand, distance)) continue;
+        return true;
     }
     return false;
+}
+
+/** True when ``distance`` (counted in case) exceeds the distance without
+ *  case: a declared case is never absorbed as a tolerated typo
+ *  (learn-content-engine#242). */
+function _hasCaseError(input: string, candidate: string, distance: number): boolean {
+    return distance !== _levenshtein(input.toLocaleLowerCase(), candidate.toLocaleLowerCase());
 }
 
 /** True iff a WRONG answer is a *near miss* — a small typo within 2 edits
  *  of the closest accepted answer (but not already accepted, which the ≤1
  *  matcher handles). Drives the encouraging "Almost! Watch out for:"
  *  feedback instead of a flat "Not quite." (#627). Empty input is never a
- *  near miss. */
+ *  near miss. With ``caseSensitive`` a case error counts as an edit, so
+ *  ``i am Anna`` for ``I am Anna`` is a near miss. */
 export function isFreeTextNearMiss(
     input: string,
     accept: readonly string[],
     codeMode = false,
+    caseSensitive = false,
 ): boolean {
-    if (isFreeTextCorrect(input, accept, codeMode)) return false;
-    const norm = codeMode ? _normalizeCode : _normalize;
+    if (isFreeTextCorrect(input, accept, codeMode, undefined, caseSensitive)) return false;
+    const norm = _normalizerFor(codeMode, caseSensitive);
     const normInput = norm(input);
     if (normInput === "") return false;
     return accept.some((cand) => {

@@ -27,7 +27,6 @@ import ExercisePromptRow from "../../shell/ExercisePromptRow";
 import {wordTilesPerTileCorrect} from "../word-tiles/WordTilesExercise";
 import {
     WordTilesEditor,
-    WordTilesHint,
     WordTilesResult,
     WordTilesReveal,
     useWordTilesDnd,
@@ -89,7 +88,6 @@ function AudioTilesExercise(
     const [placed, setPlaced] = useState<number[]>(
         reviewedTiles ? [...reviewedTiles.placed] : [],
     );
-    const [showHint, setShowHint] = useState(false);
     const [view, setView] = useState<AnswerView>("my-answer");
 
     const allPlaced = placed.length === tiles.length && tiles.length > 0;
@@ -176,13 +174,6 @@ function AudioTilesExercise(
                 onRemove={dnd.handleReturn}
                 onMove={dnd.reorder}
                 onKeyReorder={dnd.handleTileKeyDown}
-            />
-
-            <WordTilesHint
-                hint={exercise.hint}
-                submitted={submitted}
-                showHint={showHint}
-                onShowHint={() => setShowHint(true)}
             />
 
             <WordTilesReveal

@@ -231,15 +231,12 @@ cd frontend && bunx stryker run --mutate "src/api/**/*.ts"
 
 ## Pre-Commit Checklist
 
-Every commit MUST pass:
-
-1. `ruff check` (Python lint)
-2. `ruff format --check` (Python format)
-3. `eslint` (TypeScript lint)
-4. `prettier --check` (TypeScript format)
-5. `pytest -x -q` (backend smoke test)
-
-See code-hygiene.md for the full pre-commit configuration.
+Every commit MUST pass the hooks in `.pre-commit-config.yaml` (the file is
+the source of truth; code-hygiene.md "Pre-commit hooks" lists what they
+cover). Tests are NOT a pre-commit hook: run `make test` yourself before
+pushing, CI runs the suites on the PR. Prettier is not a hook either:
+`bun run format:check` runs only as a non-blocking CI step until the #3270
+reformat.
 
 ## Makefile targets for quality checks
 

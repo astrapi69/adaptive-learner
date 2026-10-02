@@ -170,9 +170,9 @@ export default function SaveOfflineLessonModal({
       notify.success(t("content.save_lesson.saved", "Saved to My Lessons."));
       onSaved(entry);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.save_lesson.failed", "Could not save the lesson.")} ${detail}`,
+        t("content.save_lesson.failed", "Could not save the lesson."),
+        { error: err },
       );
     } finally {
       setSaving(false);

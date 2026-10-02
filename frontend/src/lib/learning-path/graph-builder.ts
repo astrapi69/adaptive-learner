@@ -18,6 +18,7 @@ import type {Edge, Node} from "@xyflow/react";
 import type {LessonNodeData} from "../../components/learning-path/LessonNodeView";
 import type {SetGroupNodeData} from "../../components/learning-path/SetGroupNodeView";
 import {computeStars} from "../lesson/lesson-summary";
+import {isSettledElement, type SrsStatusOpts} from "../srs/status";
 import type {ElementError, LessonProgress} from "../../storage/types";
 import {makeEdge} from "./layout";
 
@@ -47,6 +48,9 @@ export interface GraphBuildInput {
     errors: Record<string, ElementError[]>;
     /** ``lessonKey`` of the adaptive next pick, or null. */
     recommendedKey?: string | null;
+    /** #3170 — the Settings > Learning toggle "Auch fehlerfreie Elemente
+     *  wiederholen". Off (default): a never-wrong row counts as mastered. */
+    includeNeverWrong?: boolean;
 }
 
 export interface BuiltGraph {
@@ -66,16 +70,21 @@ interface LessonMastery {
 }
 
 /** A direction is "mastered" for a lesson when it has at least one
- *  tracked element in that direction and every one is mastered.
- *  No tracked elements in a direction -> not (yet) mastered. */
-export function masteryForLesson(rows: ElementError[]): LessonMastery {
+ *  tracked element in that direction and every one is settled
+ *  (``isSettledElement``: the SRS flag, or - by default - never answered
+ *  wrong, #3170). No tracked elements in a direction -> not (yet)
+ *  mastered. */
+export function masteryForLesson(
+    rows: ElementError[],
+    opts: SrsStatusOpts = {},
+): LessonMastery {
     const rec = rows.filter(
         (r) => (r.direction ?? "target_to_source") === "target_to_source",
     );
     const pro = rows.filter((r) => r.direction === "source_to_target");
     return {
-        receptive: rec.length > 0 && rec.every((r) => r.mastered),
-        productive: pro.length > 0 && pro.every((r) => r.mastered),
+        receptive: rec.length > 0 && rec.every((r) => isSettledElement(r, opts)),
+        productive: pro.length > 0 && pro.every((r) => isSettledElement(r, opts)),
     };
 }
 
@@ -110,7 +119,9 @@ export function buildLearningPathGraph(input: GraphBuildInput): BuiltGraph {
         set.lessons.forEach((lesson, idx) => {
             const key = lessonKey(set.setId, lesson.filename);
             const progress = input.progress[key];
-            const mastery = masteryForLesson(input.errors[key] ?? []);
+            const mastery = masteryForLesson(input.errors[key] ?? [], {
+                includeNeverWrong: input.includeNeverWrong,
+            });
             const status = statusFor(progress, mastery);
             if (status === "completed" || status === "mastered") completed += 1;
             if (mastery.receptive) receptiveMastered += 1;

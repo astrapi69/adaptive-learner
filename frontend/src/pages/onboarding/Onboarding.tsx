@@ -21,7 +21,7 @@ import FormHint from "../../shared/forms/FormHint";
 import {isEmptyInstall, pickAdoptedIdentity} from "../../lib/backup/firstRunRestore";
 import {isMigrationOffered, markMigrationOffered} from "../../lib/backup/migrationFlag";
 import {readBackupFile} from "../../lib/backup/validateBackupFile";
-import {applyLocalStorageSnapshot} from "../../lib/backup/localStorageSnapshot";
+import {restoreLocalStorageSnapshot} from "../../lib/backup/localStorageSnapshot";
 import {SHARE_URL} from "../../lib/share/generate-share-text";
 import {
     readLearnerState,
@@ -84,6 +84,11 @@ export default function Onboarding() {
     // import (see lib/firstRunRestore.ts).
     const restoreInputRef = useRef<HTMLInputElement>(null);
     const [emptyInstall, setEmptyInstall] = useState(false);
+    // #3226 - the empty-install probe is async, so "no dialog" means either
+    // "not an empty install" or "not probed yet". The page reports which on
+    // its root (``data-migration-offer``) so a test can wait for the verdict
+    // instead of racing the probe.
+    const [probeSettled, setProbeSettled] = useState(false);
     const [restoring, setRestoring] = useState(false);
 
     // #1085 — online-to-local migration: on a fresh LOCAL (API mode) install
@@ -93,6 +98,11 @@ export default function Onboarding() {
     const [migrationOffered, setMigrationOffered] = useState(isMigrationOffered);
     const showMigration =
         storageMode === "api" && emptyInstall && !migrationOffered;
+    const migrationOffer = !probeSettled
+        ? "pending"
+        : showMigration
+          ? "shown"
+          : "none";
 
     const dismissMigration = () => {
         markMigrationOffered();
@@ -110,6 +120,9 @@ export default function Onboarding() {
             })
             .catch(() => {
                 /* leave the restore affordance hidden on failure */
+            })
+            .finally(() => {
+                if (!cancelled) setProbeSettled(true);
             });
         return () => {
             cancelled = true;
@@ -317,7 +330,7 @@ export default function Onboarding() {
             );
             // Restore the localStorage snapshot (preferences + contributions)
             // frontend-side. Legacy backups carry none -> no-op.
-            applyLocalStorageSnapshot(payload.local_storage);
+            await restoreLocalStorageSnapshot(payload.local_storage);
             // #126 parity — surface the round-trip in the console so a
             // real restore is debuggable without a backend log.
             // eslint-disable-next-line no-console -- #126: intentional round-trip trace for backend-less debugging
@@ -336,12 +349,9 @@ export default function Onboarding() {
             // Reached only when a VALID Adaptive Learner backup failed to
             // import — a genuine, unexpected failure worth reporting, so
             // the error toast (with "Report Issue") is the right surface.
-            const detail = err instanceof Error ? err.message : String(err);
             notify.error(
-                t(
-                    "backup.import_parse_error",
-                    "Could not read backup: {{detail}}",
-                ).replace("{{detail}}", detail),
+                t("backup.import_parse_failed", "Could not read the backup."),
+                {error: err},
             );
         } finally {
             setRestoring(false);
@@ -417,7 +427,12 @@ export default function Onboarding() {
     }
 
     return (
-        <main id="main" data-testid="onboarding" className="onboarding-page">
+        <main
+            id="main"
+            data-testid="onboarding"
+            data-migration-offer={migrationOffer}
+            className="onboarding-page"
+        >
             <header className="onboarding-header">
                 <h1>{t("onboarding.title", "Create a learning project")}</h1>
                 <p className="onboarding-intro">{t("onboarding.intro")}</p>

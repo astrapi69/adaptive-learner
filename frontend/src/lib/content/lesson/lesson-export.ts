@@ -28,13 +28,21 @@ import { stringify as stringifyYaml } from "yaml";
 
 import type { ContentLesson } from "../../../storage/types";
 import { slugify } from "../analysis/analysis-to-lesson";
+import { normalizeLevel } from "../content-domains";
 import { CURRENT_MANIFEST_SCHEMA_VERSION } from "../schema-version";
 
 /** Metadata describing a set to export (mirrors the saved set). */
 export interface ExportSetMeta {
   set_id: string;
   title: string;
+  /** Legacy alias of the target language, still written for importers
+   *  that predate #3244 and read only this key. */
   language: string;
+  /** The language taught; ``language`` when omitted. */
+  target_language?: string;
+  /** The language the learner already speaks. Written when known, so an
+   *  export -> import round trip keeps it (#3244). */
+  source_language?: string;
   level: string;
   description?: string | null;
 }
@@ -66,8 +74,13 @@ export function buildManifestYaml(
       {
         id: slugify(meta.set_id) || "lesson-set",
         title: meta.title,
+        // Both keys: the canonical pair for current readers (the engine and
+        // the backend let target_language win), the alias for older app
+        // versions that read only ``language``.
         language: meta.language,
-        level: meta.level,
+        target_language: meta.target_language ?? meta.language,
+        ...(meta.source_language ? { source_language: meta.source_language } : {}),
+        level: normalizeLevel(meta.level),
         version: "1.0.0",
         lesson_count: lessonCount,
         domain: "user-generated",

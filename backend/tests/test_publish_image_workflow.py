@@ -64,6 +64,50 @@ def test_dispatch_defaults_to_a_dry_run(parsed: dict) -> None:
     assert triggers["workflow_dispatch"]["inputs"]["dry_run"]["default"] is True
 
 
+def test_a_weekly_dry_run_exercises_the_tag_time_gates(parsed: dict) -> None:
+    """#3159 item 3: four tag-time publishes in a row (v2.12 to v2.15) failed
+    on the size ceiling (#3156) and the page-walker chunk coverage (#3155),
+    gates PR CI never runs. A scheduled dry run on develop must run BOTH
+    verify jobs (they used to be skipped on a dry run), build their own
+    architecture locally instead of pulling, and still run the size ceiling
+    and the page render. Nothing may be pushed on that path."""
+    triggers = parsed[True] if True in parsed else parsed["on"]
+    assert "schedule" in triggers, "no weekly dry run"
+    job = parsed["jobs"]["verify-anonymous-pull"]
+    assert "if" not in job, "the verify jobs are skipped on a dry run again"
+    steps = {step["name"]: step for step in job["steps"] if "name" in step}
+    build = next(
+        s for name, s in steps.items() if name.startswith("Build this architecture locally")
+    )
+    assert build["if"] == "needs.build-and-push.outputs.pushed != 'true'"
+    assert "--push" not in build["run"] and "docker push" not in build["run"]
+    assert "{{.Architecture}}" in build["run"], "the built arch is not asserted"
+    pull = steps["Pull without any credentials"]
+    assert pull["if"] == "needs.build-and-push.outputs.pushed == 'true'"
+    for name in (
+        "The published image must respect the size ceiling",
+        "The page must APPEAR, not merely respond (#2197)",
+    ):
+        assert "if" not in steps[name], f"{name!r} is skipped on a dry run"
+
+
+def test_the_schedule_can_never_be_a_sharp_run(parsed: dict) -> None:
+    """A scheduled run has no inputs, so `inputs.dry_run` is null, and the
+    expression engine coerces `null == false` to TRUE. Both places that
+    decide "sharp" (the green gate's condition and the pushed flag) must
+    therefore also require the dispatch event, or the weekly dry run
+    (#3159) would publish the develop head under the pyproject version."""
+    steps = {
+        step["name"]: step for step in parsed["jobs"]["build-and-push"]["steps"] if "name" in step
+    }
+    sharp = "github.event_name == 'workflow_dispatch' && inputs.dry_run == false"
+    gate = steps["Refuse to publish from a commit that was not green"]
+    assert gate["if"] == sharp
+    resolve = steps["Resolve version and push mode"]
+    assert f"pushed=${{{{ {sharp} }}}}" in resolve["run"]
+    assert "pushed=${{ inputs.dry_run == false }}" not in resolve["run"]
+
+
 def test_sets_the_package_public(workflow: str) -> None:
     """A GHCR package is private on first publish; a 401 on the first user
     pull looks exactly like a broken release."""
@@ -134,3 +178,47 @@ def test_the_page_is_executed_not_just_requested(workflow: str) -> None:
     assert "verify-container-page.mjs" in workflow
     assert '"debug":false' in workflow
     assert "default-src 'none'" in workflow
+
+
+WALKER = Path(__file__).resolve().parents[2] / "e2e" / "scripts" / "verify-container-page.mjs"
+
+
+def test_the_walker_ignores_only_its_own_navigation_aborts() -> None:
+    """#3159, second weekly dry run (36614983886): a content-repo fetch
+    still in flight when the walk left /content?tab=my reported as a
+    failed request. ``net::ERR_ABORTED`` is the browser cancelling its
+    own request on navigation, never a network fault, so the walker
+    drops exactly that reason, counts it, prints the count (contract
+    point 4), and lets a route go network-idle before moving on."""
+    if not WALKER.is_file():
+        pytest.fail(f"{WALKER} is missing - the page walk is not a passing gate")
+    walker = WALKER.read_text(encoding="utf-8")
+    assert 'reason === "net::ERR_ABORTED"' in walker
+    assert walker.count('reason === "net::ERR_') == 1, "only the navigation abort is excused"
+    assert "abortedByNavigation += 1" in walker
+    assert "aborted by the walk's own navigation (ignored): ${abortedByNavigation}" in walker
+    assert 'waitForLoadState("networkidle"' in walker
+
+
+def test_the_walker_asserts_the_steps_it_used_to_swallow() -> None:
+    """#3319: four steps of the walk ended in ``.catch(() => {})`` - the
+    landing language switch, the migration welcome, the dashboard tabs and
+    the learning-path map switch. A vanished testid or a dialog in the
+    wrong state passed as if clicked.
+    Each is now either a loud click (the shared ``click`` helper) or an
+    explicit verdict check that pushes a problem; no other ``.catch(() =>
+    {})`` may hide a step (the network-idle wait's catch is the documented
+    exception, it caps a wait, it does not skip a step)."""
+    if not WALKER.is_file():
+        pytest.fail(f"{WALKER} is missing - the page walk is not a passing gate")
+    walker = WALKER.read_text(encoding="utf-8")
+    assert 'await click("landing-lang-de");' in walker
+    assert 'getAttribute("data-migration-offer")' in walker
+    assert 'migrationOffer !== "none"' in walker
+    assert 'getByTestId("migration-start-fresh").count()' in walker
+    assert "await click(`dashboard-tab-${tab}`);" in walker
+    assert 'await click("learning-path-view-map");' in walker
+    swallowed = [line for line in walker.splitlines() if ".catch(() => {})" in line]
+    assert swallowed == [
+        '        page.waitForLoadState("networkidle", {timeout: 5000}).catch(() => {});'
+    ], "a swallowed step is a step that never fails: " + repr(swallowed)

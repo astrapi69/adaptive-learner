@@ -3,6 +3,8 @@ export * from "./AnimatedCounter";
 export {default as AnimatedCounter} from "./AnimatedCounter";
 export * from "./AnswerDiff";
 export {default as AnswerDiff} from "./AnswerDiff";
+export * from "./BlockMarkdown";
+export {default as BlockMarkdown} from "./BlockMarkdown";
 export * from "./InlineMarkdown";
 export {default as InlineMarkdown} from "./InlineMarkdown";
 export * from "./ProgressBar";

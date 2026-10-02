@@ -270,3 +270,130 @@ def test_the_measurement_paths_are_documented_as_equivalent() -> None:
     note = data.get("_measurement_paths", "")
     assert note, "no record of whether seeding and enforcement measure the same thing"
     assert "14 bytes" in note, "the note carries no measured evidence"
+
+
+# ---------------------------------------------------------------------------
+# #3189: --update-baseline used to rewrite the file down to two keys, erasing
+# measured_in, the per_arch block and every _raise_/_lower_ history entry
+# (a tool that silently deletes its own record is fail-open in its own
+# right, #2083). It now edits the numbers in place and can append a dated
+# history entry itself.
+# ---------------------------------------------------------------------------
+
+HISTORY = {
+    "note": "the ceiling",
+    "compressed_bytes": 100_000_000,
+    "measured_in": "ci/ubuntu-latest",
+    "_tightening": "manual",
+    "_raise_2575": "raised for eruda",
+    "per_arch": {"amd64": 100_000_000, "arm64": 98_000_000},
+    "_per_arch_note": "two environments",
+    "_arm64_lower_2748": "first publish measurement",
+}
+
+
+def _history_baseline(tmp_path: Path) -> Path:
+    baseline = tmp_path / "b.json"
+    baseline.write_text(json.dumps(HISTORY, indent=2), encoding="utf-8")
+    return baseline
+
+
+def test_update_baseline_keeps_the_history_and_the_other_architecture(tmp_path: Path) -> None:
+    baseline = _history_baseline(tmp_path)
+    result = _run("--size-bytes", "95000000", "--update-baseline", baseline=baseline)
+    assert result.returncode == 0, result.stderr
+    written = json.loads(baseline.read_text(encoding="utf-8"))
+    assert written["compressed_bytes"] == 95_000_000
+    assert written["per_arch"] == {"amd64": 95_000_000, "arm64": 98_000_000}
+    for key in ("note", "measured_in", "_tightening", "_raise_2575", "_per_arch_note", "_arm64_lower_2748"):
+        assert written[key] == HISTORY[key], key
+    assert list(written) == list(HISTORY), "key order is part of the record"
+
+
+def test_update_baseline_for_an_architecture_touches_only_its_number(tmp_path: Path) -> None:
+    baseline = _history_baseline(tmp_path)
+    result = _run(
+        "--size-bytes", "97000000", "--update-baseline", "--arch", "arm64", baseline=baseline
+    )
+    assert result.returncode == 0, result.stderr
+    written = json.loads(baseline.read_text(encoding="utf-8"))
+    assert written["per_arch"] == {"amd64": 100_000_000, "arm64": 97_000_000}
+    assert written["compressed_bytes"] == 100_000_000
+    assert written["_raise_2575"] == "raised for eruda"
+
+
+def test_update_baseline_appends_a_dated_history_entry_on_request(tmp_path: Path) -> None:
+    baseline = _history_baseline(tmp_path)
+    result = _run(
+        "--size-bytes", "95000000", "--update-baseline",
+        "--issue", "3189", "--note", "build-environment drift, no image input changed",
+        baseline=baseline,
+    )
+    assert result.returncode == 0, result.stderr
+    written = json.loads(baseline.read_text(encoding="utf-8"))
+    entry = written["_lower_3189"]
+    assert entry.startswith("Lowered amd64 100000000 -> 95000000 (#3189, 20")
+    assert entry.endswith("): build-environment drift, no image input changed")
+    assert "_raise_3189" not in written
+    assert list(written)[-1] == "_lower_3189"
+
+
+def test_a_raise_with_a_note_is_recorded_as_a_raise_per_architecture(tmp_path: Path) -> None:
+    baseline = _history_baseline(tmp_path)
+    result = _run(
+        "--size-bytes", "99000000", "--update-baseline", "--allow-raise", "--arch", "arm64",
+        "--issue", "3190", "--note", "the dep sweep", baseline=baseline,
+    )
+    assert result.returncode == 0, result.stderr
+    written = json.loads(baseline.read_text(encoding="utf-8"))
+    assert written["_arm64_raise_3190"].startswith("Raised arm64 98000000 -> 99000000 (#3190, 20")
+    assert written["per_arch"]["arm64"] == 99_000_000
+
+
+def test_a_note_without_an_issue_is_refused(tmp_path: Path) -> None:
+    baseline = _history_baseline(tmp_path)
+    result = _run(
+        "--size-bytes", "95000000", "--update-baseline", "--note", "why", baseline=baseline
+    )
+    assert result.returncode == 2
+    assert "--issue" in result.stderr
+    assert json.loads(baseline.read_text(encoding="utf-8")) == HISTORY
+
+
+def test_reports_the_uncompressed_size_and_the_base_image_digests(tmp_path: Path) -> None:
+    """The #3187 shrink could not be attributed with only the gzip total in
+    the log (gate contract point 4: say what was measured)."""
+    shim = tmp_path / "shim"
+    shim.mkdir()
+    (shim / "docker").write_text(
+        "#!/bin/sh\n"
+        'case "$1 $2" in\n'
+        '  "image inspect")\n'
+        '    case "$5" in\n'
+        '      "{{.Id}}") echo sha256:deadbeef ;;\n'
+        '      "{{.Size}}") echo 491000000 ;;\n'
+        '      *) echo "$3@sha256:0123456789abcdef" ;;\n'
+        "    esac ;;\n"
+        '  "save "*) printf "payload" ;;\n'
+        "esac\n",
+        encoding="utf-8",
+    )
+    (shim / "docker").chmod(0o755)
+    baseline = tmp_path / "b.json"
+    baseline.write_text(json.dumps({"compressed_bytes": 100}), encoding="utf-8")
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--image", "ghcr.io/x/y:1", "--baseline", str(baseline)],
+        capture_output=True, text=True, cwd=REPO_ROOT,
+        env={**os.environ, "PATH": str(shim)},
+    )
+    assert "uncompressed 491000000 bytes" in result.stdout, result.stdout + result.stderr
+    assert "base image python:3.12-slim: python:3.12-slim@sha256:0123456789abcdef" in result.stdout
+    assert "base image node:24-slim: node:24-slim@sha256:0123456789abcdef" in result.stdout
+
+
+def test_reports_when_the_base_image_digests_are_unavailable(tmp_path: Path) -> None:
+    result = _run("--size-bytes", "100", baseline=tmp_path / "absent.json")
+    assert result.returncode == 1
+    result = _run("--size-bytes", "100000000", baseline=_history_baseline(tmp_path))
+    assert result.returncode == 0, result.stderr
+    assert "uncompressed size and base-image digests: not read (size given)" in result.stdout

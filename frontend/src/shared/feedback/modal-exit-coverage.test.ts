@@ -72,6 +72,8 @@ const MODAL_REGISTRY: Record<string, ExitKind> = {
 
   // ConfirmDialog consumers (rendered directly or via the provider).
   "components/create-lesson/book/BookFileUpload.tsx": "confirm",
+  // #3171 — "Alles wiederholen" confirmation on the learning-path set panel.
+  "components/learning-path/ResetSetResultsDialog.tsx": "confirm",
   // #2862 — photo-replace guard around the preset gallery.
   "components/settings/controls/profile/PresetAvatarPicker.tsx": "confirm",
   "components/settings/data/OrphanedDataSection.tsx": "confirm",

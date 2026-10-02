@@ -213,37 +213,48 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
     return runAnalysisDexieMode(conversationId, userId, messages, title);
   }
 
+  /** Tell the learner how the analysis went; a real analysis (not the
+   *  unparseable-reply fallback) earns the flat 75 import XP (Phase 29A),
+   *  in both modes (#3392). */
+  async function reportAnalysis(fallbackUsed: boolean): Promise<void> {
+    if (fallbackUsed) {
+      notify.warning(
+        t(
+          "import.analysis_fallback",
+          "Analysis ran but the AI response could not be parsed cleanly.",
+        ),
+      );
+      return;
+    }
+    notify.success(t("import.analysis_ready", "Analysis ready."));
+    try {
+      const learner = readLearnerState();
+      if (learner.userId) {
+        await getStorage().gamification.awardImport(learner.userId);
+      }
+    } catch (xpErr) {
+      console.warn("XP awardImport failed", xpErr);
+    }
+  }
+
+  /** A failed analysis (e.g. the provider rejected the key): the friendly
+   *  status-mapped message, the technical detail for the report (#3392). */
+  function reportAnalysisError(err: unknown): void {
+    if (err instanceof ApiError) {
+      notify.error(err.detail, { apiError: err });
+      return;
+    }
+    notify.error(t("import.analysis_error", "Could not analyze the conversation."));
+  }
+
   async function runAnalysisApiMode(conversationId: string): Promise<boolean> {
     try {
       const detail = await getStorage().imports.analyze(conversationId);
       const result = detail.analysis_result ?? {};
-      if ((result as { fallback_used?: boolean }).fallback_used) {
-        notify.warning(
-          t(
-            "import.analysis_fallback",
-            "Analysis ran but the AI response could not be parsed cleanly.",
-          ),
-        );
-      } else {
-        notify.success(t("import.analysis_ready", "Analysis ready."));
-      }
-      // v1.16.0 / Phase 29A — flat 75 XP for a successful
-      // import + analysis. Non-fatal on error.
-      try {
-        const learner = readLearnerState();
-        if (learner.userId) {
-          await getStorage().gamification.awardImport(learner.userId);
-        }
-      } catch (xpErr) {
-        console.warn("XP awardImport failed", xpErr);
-      }
+      await reportAnalysis(Boolean((result as { fallback_used?: boolean }).fallback_used));
       return true;
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("import.analysis_error", "Could not analyze the conversation.");
-      notify.error(msg);
+      reportAnalysisError(err);
       return false;
     }
   }
@@ -288,20 +299,27 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
       return false;
     }
 
-    const result = await analyzeConversation({
-      provider: providerInfo.provider,
-      apiKey: providerInfo.apiKey,
-      modelOverride: providerInfo.modelOverride,
-      messages: messages.map((m) => ({
-        role: m.role,
-        content: m.content,
-        timestamp: m.timestamp,
-      })),
-      title,
-      // #803 — emit the analysis in the active UI display language
-      // (previously omitted, so it always defaulted to English).
-      lang: lang || readLearnerState().language || "en",
-    });
+    let result: Awaited<ReturnType<typeof analyzeConversation>>;
+    try {
+      result = await analyzeConversation({
+        provider: providerInfo.provider,
+        apiKey: providerInfo.apiKey,
+        modelOverride: providerInfo.modelOverride,
+        messages: messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+          timestamp: m.timestamp,
+        })),
+        title,
+        // #803 — emit the analysis in the active UI display language
+        // (previously omitted, so it always defaulted to English).
+        lang: lang || readLearnerState().language || "en",
+      });
+    } catch (err) {
+      // #3392 - a provider failure is a failed analysis: nothing is saved.
+      reportAnalysisError(err);
+      return false;
+    }
     try {
       await getStorage().imports.saveAnalysis(conversationId, {
         analysis_result: result,
@@ -314,16 +332,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
       notify.error(msg);
       return false;
     }
-    if (result.fallback_used) {
-      notify.warning(
-        t(
-          "import.analysis_fallback",
-          "Analysis ran but the AI response could not be parsed cleanly.",
-        ),
-      );
-    } else {
-      notify.success(t("import.analysis_ready", "Analysis ready."));
-    }
+    await reportAnalysis(Boolean(result.fallback_used));
     return true;
   }
 
@@ -348,9 +357,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
       setPasteFormat("unknown");
       go(`/content/import/${saved.id}`);
     } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : t("import.parse_error", "Could not parse the input.");
-      notify.error(msg);
+      notify.error(t("import.parse_error", "Could not parse the input."), { error: err });
     } finally {
       setBusy(false);
       setBusyAction("");
@@ -391,9 +398,7 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         );
       }
     } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : t("import.parse_error", "Could not parse the file.");
-      notify.error(msg);
+      notify.error(t("import.parse_error", "Could not parse the file."), { error: err });
     } finally {
       setBusy(false);
       setBusyAction("");

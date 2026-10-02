@@ -3,6 +3,8 @@
     "loading": "Loading…",
     "loading_slow": "This is taking longer than expected.",
     "view_load_failed": "This view could not be loaded.",
+    "view_crashed": "Something went wrong on this page. The other pages still work.",
+    "crashed": "Something went wrong.",
     "reload": "Reload",
     "name": "Adaptive Learner",
     "tagline": "Learning that adapts to you.",
@@ -50,7 +52,7 @@
     "selective_button": "Export selected data",
     "selective_done": "Exported {n} records.",
     "includes_hint": "exported automatically with this category",
-    "failed": "Export failed: {detail}",
+    "export_failed": "Export failed.",
     "group_content": "Content",
     "group_master": "Master data",
     "group_extra": "Extra data",
@@ -406,6 +408,8 @@
     "question_label": "Question:",
     "summary_corrected": "{corrected} of {total} corrected",
     "summary_trend": "Nice - your weak spots are getting stronger.",
+    "summary_reinforced": "{corrected} of {total} reinforced",
+    "summary_trend_reinforced": "Good - this is settling in.",
     "summary_next": "Mastered items drop out; the rest return for review soon.",
     "summary_remaining": "Still {n} due. Keep going?",
     "another_round": "Another round",
@@ -423,6 +427,7 @@
     "empty_body": "All caught up! No elements due for review in this set.",
     "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
     "back_to_dashboard": "Back to Dashboard",
+    "back_to_lesson": "Back to lesson",
     "summary": {
       "aria_label": "Review summary",
       "heading": "Review complete",
@@ -454,6 +459,13 @@
     "ai_thinking": "Thinking…",
     "ai_error": "The AI provider could not reply.",
     "no_api_key": "No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key.",
+    "ai_error_no_model": "No model is selected for your AI provider. Choose a model in Settings > AI.",
+    "ai_error_provider_auth": "Your AI provider rejected the key. Check the key in Settings > AI.",
+    "ai_error_rate_limited": "Your AI provider's limit is reached. Wait a moment or check your quota, then send again.",
+    "ai_error_provider_unavailable": "Your AI provider cannot be reached right now. Check your connection and send again.",
+    "reply_failed": "The reply could not be loaded.",
+    "history_failed": "The earlier conversation could not be loaded. Nothing was deleted.",
+    "chat_retry": "Try again",
     "welcome_empty": "Ready to learn! Write your first message.",
     "end_session": "End session",
     "end_session_confirm": "Sure? We will close the session and ask for a rating.",
@@ -510,6 +522,7 @@
       "heading": "Disconnected content",
       "summary": "{lessons} lessons and {cards} review cards from sources you are no longer connected to.",
       "delete": "Delete disconnected progress",
+      "delete_error": "Could not delete the disconnected progress.",
       "confirm_title": "Delete disconnected progress",
       "confirm_message": "{lessons} lessons and {cards} review cards will be permanently deleted. This cannot be undone.",
       "deleted": "Deleted {lessons} lessons and {cards} review cards."
@@ -794,6 +807,8 @@
     "lesson_auto_advance_description": "After a correct answer, go to the next exercise automatically. A wrong answer always waits so you can review the solution.",
     "ask_ai_visible": "Show 'Ask AI' button",
     "ask_ai_visible_description": "Show the 'Ask AI' button under theory and exercises. Shown by default; the button still needs your own AI key (BYOK) to answer.",
+    "keep_screen_on": "Keep the screen on in lessons",
+    "keep_screen_on_description": "While a lesson is open, the screen does not turn off, also while you read without touching it. The lesson summary lets the screen turn off again. Needs iOS 16.4 or later on an iPhone, iOS 18.4 or later in an app on the home screen.",
     "button_tooltips": "Show button tooltips",
     "button_tooltips_description": "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
     "developer_mode": "Developer Mode",
@@ -1011,18 +1026,22 @@
       "whole_set": "Replay the whole set"
     },
     "matching_resolve": {
-      "title": "Solve animation",
+      "title": "Matching exercise",
       "hint": "How the matching exercise reveals the correct pairs when you press 'Solve' after checking.",
-      "label": "Effect",
+      "label": "Solve animation",
       "slide": "Slide",
       "color": "Color",
       "connect": "Connect",
       "stack": "Stack"
     },
+    "matching_review_views": {
+      "label": "Corrections as a separate view",
+      "desc": "After checking, 'My answers' shows your pairs as you formed them, without grading; the grading and the correct partners are under 'Corrections'. Off: the correct partner appears directly under each mistake in 'My answers'."
+    },
     "paused_retention": {
-      "title": "Paused lesson retention",
-      "hint": "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age.",
-      "label": "Keep paused lessons for",
+      "title": "Paused lessons on the Dashboard",
+      "hint": "The paused-lessons card on the Dashboard only shows lessons up to this age. An older lesson just drops out of the card: nothing is abandoned, and it keeps its position and answers.",
+      "label": "Hide paused lessons older than",
       "7_days": "7 days",
       "14_days": "14 days",
       "30_days": "30 days",
@@ -1032,6 +1051,10 @@
     "review_limit": {
       "label": "Questions per review",
       "desc": "How many elements one review session presents before it ends. More due items roll over to the next round."
+    },
+    "review_include_never_wrong": {
+      "label": "Also review error-free elements",
+      "desc": "Also brings elements you never got wrong back for spaced review (after 3 and 7 days). Off: the review holds only elements with mistakes."
     },
     "max_lesson_size": {
       "title": "Maximum lesson size",
@@ -1045,7 +1068,7 @@
     "danger_zone_complete_toast": "All data has been deleted.",
     "danger_zone_confirm_prompt": "Type RESET to confirm",
     "danger_zone_continue": "Continue",
-    "danger_zone_failed_toast": "Reset failed:",
+    "danger_zone_failed": "Reset failed.",
     "danger_zone_final_button": "Delete permanently",
     "danger_zone_heading": "Danger Zone",
     "danger_zone_input_placeholder": "RESET",
@@ -1233,8 +1256,9 @@
     "too_large": "This backup file is too large (over 100 MB).",
     "export_success": "Backup downloaded ({{count}} records).",
     "export_error": "Backup failed: {{detail}}",
-    "import_parse_error": "Could not read backup: {{detail}}",
-    "import_error": "Restore failed: {{detail}}",
+    "export_failed": "Backup failed.",
+    "import_parse_failed": "Could not read the backup.",
+    "import_failed": "Restore failed.",
     "comparison_title": "Confirm restore",
     "comparison_help": "Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.",
     "table_header": "Table",
@@ -1268,10 +1292,11 @@
     "auto_help": "Automatically back up after every 10 completed sessions or once a week.",
     "auto_run": "Back up now",
     "auto_run_success": "Auto-backup created.",
-    "auto_run_error": "Auto-backup failed: {{detail}}",
+    "auto_run_failed": "Auto-backup failed.",
     "auto_restored": "Auto-backup restored.",
     "auto_restore": "Restore",
-    "auto_restore_error": "Restore failed: {{detail}}",
+    "auto_delete_error": "Could not delete the automatic backup.",
+    "auto_restore_failed": "Restore failed.",
     "auto_records": "{{n}} records",
     "auto_none": "No auto-backups yet. The first one runs after 10 sessions or 7 days.",
     "storage_pressure": "Browser storage is almost full ({{pct}}% of quota). Export a manual backup now.",
@@ -1303,6 +1328,7 @@
     "compare_high_volume_hint": "High-volume table - record-level previews shown abbreviated.",
     "compare_export_md": "Export as Markdown",
     "compare_markdown_downloaded": "Diff exported.",
+    "compare_export_failed": "Could not export the comparison.",
     "confirm_with_counts": "Restore ({{added}} added, {{updated}} updated)",
     "auto_compare_as_a": "Compare as A",
     "auto_compare_as_b": "Compare as B",
@@ -1325,9 +1351,9 @@
     "busy": "Working...",
     "download_success": "Export downloaded.",
     "print_opened": "Print dialog opened. Pick \"Save as PDF\".",
-    "error": "Export failed: {{detail}}",
-    "preview_error": "Preview failed: {{detail}}",
-    "load_error": "Could not load export data: {{detail}}",
+    "export_failed": "Export failed.",
+    "preview_failed": "Preview failed.",
+    "load_failed": "Could not load the export data.",
     "pick_session": "Pick a session first.",
     "pick_curriculum": "Pick a curriculum first.",
     "title_progress": "Learning Progress",
@@ -1607,6 +1633,8 @@
     "card_description": "Short rounds of Learn Memory and Snake - your game-mode reward.",
     "card_open": "To the arcade",
     "requires_playful": "The arcade is part of the game mode. Turn on the game mode (and the arcade switch) in the settings.",
+    "requires_game_mode": "The arcade is part of the game mode, and the game mode is off. Turn it on in the settings.",
+    "requires_arcade_switch": "The game mode is on, but the arcade switch is off. Turn on the arcade in the game mode details in the settings.",
     "open_settings": "Open settings",
     "play": "Play",
     "pause": "Pause",
@@ -1745,7 +1773,8 @@
   },
   "feature": {
     "api_key_required": "API key required. Configure a provider in Settings.",
-    "desktop_only": "Only available with the desktop app."
+    "desktop_only": "Only available with the desktop app.",
+    "browser_only": "Only available in the browser version of the app."
   },
   "ui": {
     "cancel": "Cancel",
@@ -1783,6 +1812,7 @@
       "unexpected": "Something went wrong."
     },
     "error_report": {
+      "report_button": "Report Issue",
       "dialog_title": "Report an issue",
       "intro": "Adaptive Learner caught an error and can prepare a bug report for the developer.",
       "description_label": "Steps to reproduce (optional)",
@@ -2044,6 +2074,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_error": "Your progress in this lesson could not be saved.",
+      "load_failed": "Your saved progress for this lesson could not be loaded: {detail}",
+      "create_profile": "Create a learner profile"
+    },
     "mascot_label": "Your learning companion",
     "combo_chip": "x{n}",
     "combo_aria": "Answer streak: {n} in a row",
@@ -2230,7 +2265,8 @@
         "selected_sr": "Selected: {label}",
         "resolve": "Solve",
         "resolve_announce": "Solution shown. {correct} of {total} pairs were correct.",
-        "my_answers": "My answers"
+        "my_answers": "My answers",
+        "corrections": "Corrections"
       },
       "picture": {
         "submit": "Check answer",
@@ -2260,7 +2296,6 @@
         "placeholder": "Type your answer…",
         "code_placeholder": "Type the code…",
         "input_label": "Your answer",
-        "hint_show": "Need a hint?",
         "result_correct": "Correct!",
         "result_wrong": "Not quite.",
         "result_almost": "Almost! Watch out for:",
@@ -2278,7 +2313,6 @@
         "answer_placeholder": "Tap tiles below to build your answer",
         "scrambled_label": "Available tiles",
         "scrambled_done": "All tiles placed.",
-        "hint_show": "Need a hint?",
         "result_correct": "Correct!",
         "result_wrong": "Not quite.",
         "empty": "This word-tiles exercise has no tiles."
@@ -2286,7 +2320,6 @@
       "cloze": {
         "submit": "Check answers",
         "retry": "Try again",
-        "hint_show": "Need a hint?",
         "sentence_label": "Cloze sentence",
         "blank_label": "Blank {n}",
         "select_placeholder": "Choose…",
@@ -2415,17 +2448,23 @@
       "al_ordering": {
         "empty": "This ordering exercise has no items.",
         "result_correct": "Correct!",
-        "result_wrong": "Not quite - try again.",
+        "result_wrong": "Not quite - the order is not right yet.",
         "retry": "Try again",
+        "review_heading": "Your answer",
+        "solution_heading": "Solution",
         "submit": "Check answer"
       },
       "al_parsons": {
         "empty": "This code-ordering exercise has no lines.",
         "indent_dec": "Decrease indent",
         "indent_inc": "Increase indent",
+        "line_wrong_indent": "Indent {actual}, expected {expected}",
+        "line_wrong_position": "Wrong position",
         "result_correct": "Correct!",
         "result_wrong": "Not quite - check the order and the indentation.",
         "retry": "Try again",
+        "review_heading": "Your answer",
+        "solution_heading": "Solution",
         "submit": "Check answer"
       },
       "instruction": {
@@ -2518,7 +2557,10 @@
       "encourage_3": "Perfect score!",
       "ticket_earned_one": "Reward unlocked: one game ticket!",
       "ticket_earned_many": "Reward unlocked: {n} game tickets!",
-      "ticket_play_now": "Play now"
+      "ticket_play_now": "Play now",
+      "ticket_none_rule": "No ticket this time: a ticket comes with a lesson without mistakes or a run with all hearts.",
+      "ticket_none_completed": "No ticket this time: you had already completed this lesson.",
+      "ticket_none_cap": "No ticket this time: your balance is at the maximum of {n} tickets."
     },
     "flash_round": {
       "title": "Flash round: {set}",
@@ -2597,7 +2639,9 @@
       "heading": "Resume lesson?",
       "body": "You paused \"{title}\". Would you like to continue where you left off or start over?",
       "action_resume": "Continue",
-      "action_restart": "Start over"
+      "action_restart": "Start over",
+      "restart_confirm_title": "Start over from the beginning?",
+      "restart_confirm_body": "Your position and your answers in this lesson will be reset. What you already learned (mastery progress) stays."
     }
   },
   "content": {
@@ -2834,6 +2878,7 @@
       "change_failed": "Could not update the status.",
       "deleted": "Set removed.",
       "delete_failed": "Could not remove the set.",
+      "progress_not_deleted": "Removed, but your learning progress could not be deleted: {detail}",
       "delete_confirm": "The downloaded set and its lessons will be removed from My Content. Your learning progress is kept, and you can download the set again anytime.",
       "select_all": "Select all",
       "select_set": "Select {title}",
@@ -2990,7 +3035,9 @@
       "list_failed": "Could not load content sets.",
       "download_failed": "Could not download the set.",
       "update_all_failed": "{n} updates failed.",
-      "open_failed": "Could not open the lesson."
+      "open_failed": "Could not open the lesson.",
+      "export_failed": "Could not export the lesson set.",
+      "share_check_failed": "Could not check the set for sharing."
     },
     "tree": {
       "i_speak": "I speak",
@@ -3043,9 +3090,10 @@
       "free_text_too_few_accepts": "Lesson '{lesson}': free-text exercise '{exercise}' needs at least {min} accepted answers.",
       "matching_too_few_pairs": "Lesson '{lesson}': matching exercise '{exercise}' needs at least {min} pairs.",
       "matching_duplicate_left": "Lesson '{lesson}': matching exercise '{exercise}' repeats the left value '{value}' - unsolvable for the learner.",
-      "missing_distractors": "Lesson '{lesson}': exercise '{exercise}' needs distractors (wrong options).",
       "non_cefr_level": "Level '{level}' is not a CEFR band (A1-C2).",
       "level_too_complex": "Lesson '{lesson}': text averages {avg} words per side, high for level {level} (about {cap} expected).",
+      "engine_rule": "Lesson '{lesson}': rule {rule} at {path}: {message}",
+      "engine_warning": "Lesson '{lesson}': warning {rule} at {path}: {message}",
       "source_language_heuristic": "Card backs contain {found}-specific characters but the source language is '{lang}'.",
       "target_language_heuristic": "Card fronts contain {found}-specific characters but the target language is '{lang}'.",
       "failed_share_anyway": "Quality check found issues. You can share anyway - reviewers will see the findings noted in the pull request."
@@ -3567,9 +3615,15 @@
         "image_add": "Add image",
         "image_remove": "Remove image",
         "err_prompt": "Enter a question or prompt.",
-        "err_matching": "Add at least 2 complete pairs (term and match).",
+        "err_matching_pairs": "Add at least one complete pair (term and match).",
+        "err_matching_duplicate_left": "Each term may appear only once (capitalization does not count).",
+        "err_matching_from_cards": "A matching built from cards needs linked cards and no extra pairs.",
+        "err_cloze_distractors": "A choice gap needs at least one distractor.",
+        "err_word_tiles_ordering": "Every accepted tile order must use each tile exactly once.",
+        "err_card_ref": "This exercise refers to a card that is no longer in the lesson.",
         "err_free_text": "Add at least one accepted answer.",
         "err_cloze": "Each ___ marker needs one accepted-answer blank, and every blank needs an answer.",
+        "err_cloze_multiselect": "A 'select all that apply' cloze needs a question, at least one correct option and at least one distractor; no option may be both.",
         "err_word_tiles": "Add at least 2 tiles.",
         "err_picture_choice": "Add at least 2 images, each with a label and picture, and mark exactly one correct.",
         "err_explanation": "The explanation is too long (at most 2000 characters).",
@@ -3716,7 +3770,10 @@
       "check_languagePair": "Language pair is valid",
       "check_enoughCards": "At least 4 cards",
       "check_enoughExercises": "At least 5 exercises",
+      "check_min_exercises": "At least {n} exercises",
       "check_enoughTypes": "At least 2 exercise types",
+      "check_min_types": "At least {n} exercise types",
+      "check_exercise_minimums": "Every exercise has enough answers or pairs",
       "check_schemaValid": "Valid lesson structure",
       "structure_error": "Technical detail",
       "structure_internal_error": "An internal error occurred while checking this lesson. This is a problem in the app, not in your lesson. Please reload the page and try again; if it keeps happening, report the problem below.",
@@ -3743,7 +3800,7 @@
     "templates": {
       "extensions": {
         "title": "Advanced exercise types",
-        "desc": "Author categorization and error-correction exercises. Requires an app that supports extensions."
+        "desc": "Author extension exercise types such as ordering, hotspot, dictation or graded quizzes. Requires an app that supports extensions."
       },
       "knowledge_from_text": {
         "title": "Knowledge lesson from text",
@@ -3797,6 +3854,17 @@
     "train_errors": "Train errors",
     "shuffle": "Shuffle",
     "endless": "Endless",
+    "reset_all": {
+      "button": "Repeat everything",
+      "title": "Reset all results?",
+      "message": "The results of “{title}” are reset: score, stars and study time of {lessons} lessons. A new run starts at lesson 1; the mistakes of the previous run stay as history. XP and badges are not affected.",
+      "average": "Average so far: {percent}%",
+      "no_average": "No average yet.",
+      "confirm": "Reset and start over",
+      "cancel": "Cancel",
+      "success": "Results reset. A new run starts with lesson 1.",
+      "failed": "The results could not be reset."
+    },
     "personal": {
       "title": "Your Learning Path",
       "progress": "Overall: {n}% complete",
@@ -3917,6 +3985,7 @@
     "cache_clear": "Clear cache",
     "cache_clear_confirm": "Clear the offline cache?",
     "cache_clear_action": "Yes, clear",
+    "cache_clear_failed": "Could not clear the offline cache: {detail}",
     "cache_cleared": "Offline cache cleared.",
     "update": {
       "message": "A new version is available.",
@@ -4317,6 +4386,8 @@
       "hint": "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately.",
       "qr_alt": "QR code for the share link"
     },
+    "remove_error": "Could not remove the repository.",
+    "reorder_error": "Could not change the repository order.",
     "progress": {
       "syncing": "Syncing…",
       "validating": "Validating repository…",
@@ -4666,6 +4737,14 @@
       "vocabulary": "Vocabulary",
       "grammar_rule": "Grammar rule",
       "unknown": "Unknown"
+    }
+  },
+  "runner": {
+    "back_to_dashboard": "Back to Dashboard",
+    "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
+    "error": {
+      "missing_params": "No content set selected.",
+      "invalid_data": "This content can't be opened because it contains invalid or corrupted data. Please contact the content author."
     }
   }
 }

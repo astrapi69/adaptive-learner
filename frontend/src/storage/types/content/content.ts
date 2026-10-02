@@ -86,9 +86,10 @@ export interface ContentSetEntry {
   update_available: boolean;
   /** ISO-8601 timestamp of when this set was downloaded/cached, or ``null``
    *  when not downloaded or unknown. Drives the "most recently downloaded
-   *  first" ordering of the personal Learning Path (#1211). Surfaced in
-   *  Dexie mode (from ``ContentSetRow.downloaded_at``); API mode has no
-   *  per-set download time, so it stays ``null`` there. */
+   *  first" ordering of the personal Learning Path (#1211). Dexie mode
+   *  reads it from ``ContentSetRow.downloaded_at``; API mode gets it from
+   *  the content-loader listing, the time the cached version's manifest
+   *  landed (#3418). */
   downloaded_at?: string | null;
   /** #1300 — lifecycle status in "Meine Inhalte" (active / deferred /
    *  completed). Absent on pre-#1300 cached rows and in API mode; the
@@ -233,9 +234,16 @@ export type ContentLessonCard = RequireKeys<GeneratedCard, "tags">;
 export type ContentLessonExercise = RequireKeys<GeneratedExercise, "card_ids" | "distractors">;
 
 /** One step in the lesson sequence. Re-wires ``exercise`` to the
- *  consumer-facing {@link ContentLessonExercise}. */
+ *  consumer-facing {@link ContentLessonExercise}.
+ *
+ *  ``review_element_keys`` (#3170) is an app-side annotation, not part of
+ *  the engine schema: a SYNTHESISED review step names the SRS queue
+ *  elements it covers, so the session can count elements (one matching
+ *  step may cover several due cards, #664) and mark them played. Absent on
+ *  authored content. */
 export type ContentLessonStep = Omit<GeneratedLessonStep, "exercise"> & {
   exercise?: ContentLessonExercise | null;
+  review_element_keys?: string[];
 };
 
 /** One lesson in a content set. ``estimated_minutes`` (default 10),

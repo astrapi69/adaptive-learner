@@ -25,6 +25,7 @@ import {
     buildErrorClusters,
     type ErrorCluster,
 } from "../../lib/learning-path/error-clusters";
+import {readReviewIncludeNeverWrong} from "../../lib/learning/reviewIncludeNeverWrongPref";
 import {getStorage} from "../../storage";
 import type {ElementError, LessonProgress} from "../../storage/types";
 
@@ -153,6 +154,8 @@ export function useLearningPathData(userId: string): {
                         progress,
                         errors,
                         recommendedKey,
+                        // #3170 — the never-wrong rule follows the toggle.
+                        includeNeverWrong: readReviewIncludeNeverWrong(),
                     }),
                 );
                 setClusters(buildErrorClusters(errors));

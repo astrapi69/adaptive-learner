@@ -1,15 +1,26 @@
 # GENERATED from schema/lesson.schema.json via scripts/generate_pydantic_models.py
 # (D3b, #1528). DO NOT EDIT.
 #
-# Structural layer only - the semantic cross-field validators live in
-# the hand-written subclasses (schema.py / models.py). Regenerate via
-# `make sync-schema` after an engine re-pin refreshed the mirror.
+# Structural layer only - the semantic cross-field rules are the engine's
+# (learn-content-engine/rules, #3245); schema.py / models.py add only what
+# the backend needs to store and serve. Regenerate via `make sync-schema`
+# after an engine re-pin refreshed the mirror.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from enum import Enum
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing import Annotated, Any
+
+
+class Purpose(str, Enum):
+    """
+    What the lesson is for (schema 1.17, engine#185). ``practice`` (the default when absent): a lesson that teaches and drills; every quality minimum applies. ``bridge``: an opening, a part divider, an interlude or a closing that carries theory and leads over, without an assessment intent; no minimum number of exercises or exercise types (schema 1.18). ``quiz``: a check of what was taught, often in one exercise type; no minimum number of exercise types. Read by the quality check (``validateLessonQuality``), never by ``validateLesson``: it does not change whether a lesson is valid.
+    """
+
+    PRACTICE = 'practice'
+    BRIDGE = 'bridge'
+    QUIZ = 'quiz'
 
 
 RequiresExtension = Annotated[str, StringConstraints(pattern='^ext:[a-z0-9]+-[a-z0-9-]+@\\d+$')]
@@ -53,7 +64,7 @@ class ExerciseType(str, Enum):
 
     EXP-001 + EXP-006: the four base types ship in Phase 43-45.
     Phase 52D / v1.35.0 added CLOZE (fill-in-the-blank with
-    ``___`` markers) — see the schema_version bump in
+    ``___`` markers) - see the schema_version bump in
     ``models.py``. Adding a sixth type (ordering, drag-image-
     pair, etc.) requires a minor schema_version bump and a new
     enum value plus its renderer.
@@ -114,7 +125,7 @@ class InlineExample(BaseModel):
     """
     One inline worked example on a theory step or exercise (schema v1.5).
 
-    An inline example carries REAL content the learner reads in place —
+    An inline example carries REAL content the learner reads in place -
     a sample sentence (language lessons) or a code snippet with syntax
     highlighting (programming lessons). This is DISTINCT from
     ``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an
@@ -156,7 +167,7 @@ class LessonResource(BaseModel):
     section after the lesson summary. Optional + additive, so
     pre-EXP-029 lessons load unchanged. Added to the authoritative
     schema (EXP-039) so the JSON-Schema / generated TS types cover
-    it — previously this shape lived only in the frontend
+    it - previously this shape lived only in the frontend
     ``ContentLessonResource`` interface, and a lesson carrying
     ``resources`` was rejected by ``extra="forbid"`` here.
     """
@@ -258,13 +269,13 @@ class TokenRole(str, Enum):
     Phase 52I / v1.35.0 / P-130. Annotates individual tokens
     inside a card's ``front`` so the v1.35.0+ cloze generator
     can pick a semantically-meaningful blank instead of a
-    position-based one. Optional field on Card — old content
+    position-based one. Optional field on Card - old content
     without token_roles still validates and the generator
     falls back to a positional heuristic.
 
     Closed enum to keep author input disciplined. Adding a
     role (e.g. ``pronoun``, ``conjunction``, ``auxiliary``)
-    is a minor schema_version bump — extending an open enum
+    is a minor schema_version bump - extending an open enum
     silently would let typos masquerade as valid roles and
     the generator would skip them without warning.
     """
@@ -284,7 +295,7 @@ class CardTokenRole(BaseModel):
 
     Phase 52I / v1.35.0 / P-130. The cloze generator looks up
     its target blank by matching ``token`` against the
-    ``ElementError.element_key`` — when a role is present, the
+    ``ElementError.element_key`` - when a role is present, the
     generator can pick a same-role distractor pool instead of
     a position-based heuristic.
 
@@ -320,7 +331,7 @@ class ClozeBlank(BaseModel):
     is unambiguous at render time.
 
     ``accept`` carries the per-blank canonical + acceptable
-    variants — the renderer reuses FreeText's ``isFreeTextCorrect``
+    variants - the renderer reuses FreeText's ``isFreeTextCorrect``
     matcher (NFC-normalised + Levenshtein <= 1) so authors only
     need to enumerate semantic variants (gendered article,
     capitalisation, et cetera), not typos.
@@ -424,7 +435,7 @@ class Card(BaseModel):
     Convention: ``card.id`` is unique within the lesson, not
     globally. Cross-lesson card sharing happens via a
     separate ``shared/`` directory inside the set (P-111
-    territory — not yet implemented).
+    territory - not yet implemented).
     """
 
     model_config = ConfigDict(
@@ -489,7 +500,7 @@ class Card(BaseModel):
     """
     notes: str | None = Field(None, max_length=2000, title='Notes')
     """
-    Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings — anything that helps long-term retention.
+    Optional Markdown footnote shown after the user answers. Pronunciation tips, etymology, false-friend warnings - anything that helps long-term retention.
     """
     tags: list[SlugId] = Field([], max_length=20, title='Tags', validate_default=True)
     """
@@ -521,7 +532,7 @@ class Exercise(BaseModel):
     )
     accept: list[str] | None = Field(None, title='Accept')
     """
-    FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer. The first entry is the canonical answer shown after a wrong attempt. CLOZE ``multiselect`` (#1195) reuses this field with a mode-specific meaning: EVERY entry is a correct option (not just the first), rendered as a checkbox group with ``distractors`` and graded by exact-set match; the two lists must be disjoint.
+    FREE_TEXT: list of accepted answers. Exact-match first, Levenshtein-tolerant fallback in the renderer; case is not an error unless ``case_sensitive`` is true. The first entry is the canonical answer shown after a wrong attempt. CLOZE ``multiselect`` (#1195) reuses this field with a mode-specific meaning: EVERY entry is a correct option (not just the first), rendered as a checkbox group with ``distractors`` and graded by exact-set match; the two lists must be disjoint.
     """
     accept_orderings: list[list[int]] | None = Field(None, title='Accept Orderings')
     """
@@ -535,6 +546,10 @@ class Exercise(BaseModel):
     """
     Cards this exercise drills. SRS feedback after a wrong answer schedules these cards for review.
     """
+    case_sensitive: bool = Field(False, title='Case Sensitive')
+    """
+    FREE_TEXT: when true, an answer must match an ``accept`` entry in case (``I am Anna`` is right, ``i am Anna`` is wrong); when false (the default) case is not an error. Declare it only where the exercise teaches case, such as capitalisation. The rules follow it: ``accept`` and ``distractors`` are compared in case only when it is true (``E-FREETEXT-DISJOINT``). Schema 1.19, engine#242. Ignored by the other exercise types.
+    """
     cloze_mode: ClozeMode | None = Field(None, title='Cloze Mode')
     """
     CLOZE: ``type`` renders an ``<input>`` per blank, ``select`` renders a single-answer ``<select>`` per blank with options from ``distractors``, ``multiselect`` (#1195) renders a checkbox group of ``accept`` (all correct) + ``distractors`` for a 'select all that apply' question. Defaults to ``type`` when omitted on a CLOZE exercise. Phase 52D / v1.35.0.
@@ -545,7 +560,7 @@ class Exercise(BaseModel):
     """
     distractors: list[str] = Field([], max_length=20, title='Distractors')
     """
-    Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors.
+    Content-only fallback distractors. The exercise renderer picks from this pool when no AI provider is configured (EXP-005 / P-114 dual mode). When AI is available, the AI generator may use the pool as a seed for harder distractors. FREE_TEXT: no entry may also be an accepted answer (``E-FREETEXT-DISJOINT``, compared after trimming, in case only when ``case_sensitive`` is true).
     """
     examples: list[InlineExample] | None = Field(None, max_length=20, title='Examples')
     """
@@ -653,7 +668,7 @@ class LessonStep(BaseModel):
     """
     examples: list[InlineExample] | None = Field(None, max_length=20, title='Examples')
     """
-    THEORY: optional inline worked examples rendered under the step body (schema v1.5, additive). DISTINCT from ``example_url``: that links OUT to an external illustration, ``examples`` carries the example content INLINE (a sample sentence, or a syntax-highlighted code snippet — see ``InlineExample.language``). The two may coexist on one step. Additive + optional; steps without ``examples`` validate unchanged.
+    THEORY: optional inline worked examples rendered under the step body (schema v1.5, additive). DISTINCT from ``example_url``: that links OUT to an external illustration, ``examples`` carries the example content INLINE (a sample sentence, or a syntax-highlighted code snippet - see ``InlineExample.language``). The two may coexist on one step. Additive + optional; steps without ``examples`` validate unchanged.
     """
     exercise: Exercise | None = None
     """
@@ -691,7 +706,7 @@ class Lesson(BaseModel):
     """
     One lesson in a content set (Phase 43 / 2B-lesson).
 
-    A lesson is the unit a user works through end-to-end —
+    A lesson is the unit a user works through end-to-end -
     typically 5-15 minutes of content. The viewer (Phase 44)
     walks the steps in order; SRS (Phase 46) tracks the
     cards referenced by each exercise.
@@ -740,6 +755,10 @@ class Lesson(BaseModel):
     """
     Slug id (see $defs/SlugId), unique within the parent set. The display order of a set's lessons is the LEXICOGRAPHIC sort of these ids: consumers sort the stored ``lessons/<id>.json`` filenames (the set manifest's ``metadata.lessons`` list only steers download discovery, never display order). The ``NN-slug`` prefix (e.g. ``01-greetings``) is therefore the ordering mechanism, not cosmetics - zero-pad it to one fixed width per set, or ``10-`` sorts before ``2-`` (engine#106).
     """
+    purpose: Purpose = Field(Purpose.PRACTICE, title='Lesson Purpose')
+    """
+    What the lesson is for (schema 1.17, engine#185). ``practice`` (the default when absent): a lesson that teaches and drills; every quality minimum applies. ``bridge``: an opening, a part divider, an interlude or a closing that carries theory and leads over, without an assessment intent; no minimum number of exercises or exercise types (schema 1.18). ``quiz``: a check of what was taught, often in one exercise type; no minimum number of exercise types. Read by the quality check (``validateLessonQuality``), never by ``validateLesson``: it does not change whether a lesson is valid.
+    """
     requires_extensions: list[RequiresExtension] | None = Field(
         None, title='Requires Extensions'
     )
@@ -760,7 +779,7 @@ class Lesson(BaseModel):
     """
     target_language: str | None = Field(None, title='Target Language')
     """
-    Optional BCP-47 code of the language taught (Phase 60 / v1.44.0). Mirrors the parent set's ``target_language``; lets an exported standalone lesson carry its own pair. Absent on pre-v1.2 lessons — the parent set is authoritative.
+    Optional BCP-47 code of the language taught (Phase 60 / v1.44.0). Mirrors the parent set's ``target_language``; lets an exported standalone lesson carry its own pair. Absent on pre-v1.2 lessons - the parent set is authoritative.
     """
     title: str = Field(..., max_length=200, min_length=1, title='Title')
     """

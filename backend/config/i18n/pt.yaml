@@ -2,6 +2,8 @@ app:
   loading: "Carregando…"
   loading_slow: "Isto está a demorar mais do que o esperado."
   view_load_failed: "Não foi possível carregar esta vista."
+  view_crashed: "Ocorreu um erro nesta página. As outras páginas continuam funcionando."
+  crashed: "Algo deu errado."
   reload: "Recarregar"
   name: Adaptive Learner
   tagline: Aprendizado que se adapta a você.
@@ -45,7 +47,7 @@ data_export:
   selective_button: "Exportar dados selecionados"
   selective_done: "{n} registros exportados."
   includes_hint: "exportado automaticamente com esta categoria"
-  failed: "Falha na exportação: {detail}"
+  export_failed: "Falha na exportação."
   group_content: "Conteúdo"
   group_master: "Dados mestres"
   group_extra: "Dados adicionais"
@@ -96,12 +98,12 @@ nav:
   offline: Offline
   anki: Anki
   dev_badge: DEV
-  dev_badge_tooltip: "Modo desenvolvedor ativo - as notificações de erro mostram detalhes técnicos. Desative em Definições."
+  dev_badge_tooltip: "Modo desenvolvedor ativo - as notificações de erro mostram detalhes técnicos. Desative em Configurações."
   content: "Meu conteúdo"
   mode_badge_content: Conteúdo
   mode_badge_ai: "IA+Conteúdo"
-  mode_badge_tooltip_content: "Sem chave API configurada - apenas conteúdo pré-construído. Adiciona uma chave em Definições para ativar as funcionalidades IA."
-  mode_badge_tooltip_ai: "Fornecedor de IA configurado - os exercícios usam IA para distratores e dicas. Toca para explorar os conjuntos."
+  mode_badge_tooltip_content: "Sem chave API configurada - apenas conteúdo pré-construído. Adicione uma chave em Configurações para ativar as funcionalidades IA."
+  mode_badge_tooltip_ai: "Fornecedor de IA configurado - os exercícios usam IA para distratores e dicas. Toque para explorar os conjuntos."
   mode_badge_action: "explorar conteúdo"
   sync_paired: "Sinc.: emparelhado (Configurações > Sinc.)"
   sync_unpaired: "Sinc.: não emparelhado (Configurações > Sinc.)"
@@ -329,8 +331,8 @@ dashboard:
     open: "Abrir sessão de revisão"
     quick: "Revisão rápida"
   focus_areas:
-    loading: "A analisar os teus erros…"
-    subtitle: "Os teus desafios:"
+    loading: "Analisando seus erros…"
+    subtitle: "Seus desafios:"
     errors: "erros"
     hint_answers: "{n} respostas com dica"
     mastery_progress: "Progresso de domínio"
@@ -356,20 +358,20 @@ dashboard:
 adaptive:
   page_title: "Lição adaptativa"
   session_title: "Lição adaptativa"
-  loading: "A analisar os teus erros…"
+  loading: "Analisando seus erros…"
   empty_body: "Nada para adaptar ainda - pratica uma lição para acumular dados."
-  not_cached_body: "Este conjunto ainda não foi descarregado. Abre o navegador de conteúdo para o descarregar primeiro."
-  back_to_dashboard: "Voltar ao Painel"
+  not_cached_body: "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro."
+  back_to_dashboard: "Voltar ao painel"
   transparency:
     focus_prefix: "Esta lição foca-se em:"
-    tag_none: "os teus elementos mais fracos"
+    tag_none: "seus elementos mais fracos"
     errors_line: "Com base em {n} erro(s) ativo(s)"
   summary:
     aria_label: "Resumo da lição adaptativa"
     heading: "Lição adaptativa concluída"
     score: "Pontuação"
     mastered_delta: "Melhoria: +{n} elemento(s) dominado(s) nesta sessão!"
-    note: "As pontuações dos elementos foram atualizadas. A tua próxima lição adaptativa irá focar nos elementos que ainda precisam de trabalho."
+    note: "As pontuações dos elementos foram atualizadas. Sua próxima lição adaptativa irá focar nos elementos que ainda precisam de trabalho."
   error:
     missing_params: "Nenhum conjunto de conteúdo selecionado."
     load_failed: "Não foi possível gerar a lição adaptativa."
@@ -379,6 +381,8 @@ review:
   question_label: "Pergunta:"
   summary_corrected: "{corrected} de {total} corrigidos"
   summary_trend: "Boa - os seus pontos fracos estão a melhorar."
+  summary_reinforced: "{corrected} de {total} consolidados"
+  summary_trend_reinforced: "Boa - isto está a ficar mais sólido."
   summary_next: "Os elementos dominados saem; os restantes voltam em breve para revisão."
   summary_remaining: "Ainda faltam {n}. Continuar?"
   another_round: "Outra ronda"
@@ -394,8 +398,9 @@ review:
   subtitle_capped: "{shown} de {due} elemento(s) para rever"
   loading: "A carregar sessão de revisão…"
   empty_body: "Tudo em dia! Sem elementos para rever neste conjunto."
-  not_cached_body: "Este conjunto ainda não foi descarregado. Abre o explorador de conteúdo primeiro."
+  not_cached_body: "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro."
   back_to_dashboard: "Voltar ao painel"
+  back_to_lesson: "Voltar à lição"
   summary:
     aria_label: "Resumo da revisão"
     heading: "Revisão completa"
@@ -424,7 +429,14 @@ session:
   ai_thinking: Pensando…
   ai_error: O provedor de IA não conseguiu responder.
   no_api_key: "Nenhuma chave de IA definida. Adicione uma chave para o seu provedor de IA em Configurações para conversar com o tutor. Lições e revisões funcionam sem chave."
-  welcome_empty: "Pronto para aprender! Escreve a tua primeira mensagem."
+  ai_error_no_model: "Nenhum modelo está selecionado para o seu provedor de IA. Escolha um modelo em Configurações > IA."
+  ai_error_provider_auth: "O seu provedor de IA recusou a chave. Verifique a chave em Configurações > IA."
+  ai_error_rate_limited: "O limite do seu provedor de IA foi atingido. Aguarde um momento ou verifique sua cota e envie novamente."
+  ai_error_provider_unavailable: "Não é possível contatar o seu provedor de IA agora. Verifique a conexão e envie novamente."
+  reply_failed: "Não foi possível carregar a resposta."
+  history_failed: "Não foi possível carregar a conversa anterior. Nada foi apagado."
+  chat_retry: "Tentar novamente"
+  welcome_empty: "Pronto para aprender! Escreva sua primeira mensagem."
   end_session: Encerrar sessão
   end_session_confirm: Tem certeza? Vamos fechar a sessão e pedir uma avaliação.
   switch_recommended: Troca de método recomendada
@@ -477,13 +489,14 @@ settings:
     heading: "Conteúdo desconectado"
     summary: "{lessons} lições e {cards} cartões de revisão de fontes às quais você não está mais conectado."
     delete: "Excluir progresso desconectado"
+    delete_error: "Não foi possível excluir o progresso desconectado."
     confirm_title: "Excluir progresso desconectado"
     confirm_message: "{lessons} lições e {cards} cartões de revisão serão excluídos permanentemente. Isso não pode ser desfeito."
     deleted: "{lessons} lições e {cards} cartões de revisão excluídos."
   key_export_link:
     heading: "Chaves de IA - exportação cifrada"
-    hint: "Exporte ou importe as suas chaves de IA num único ficheiro cifrado. Fica junto das outras cópias de segurança no separador Dados."
-    button: "Ir para a exportação de chaves (separador Dados)"
+    hint: "Exporte ou importe as suas chaves de IA num único arquivo cifrado. Fica junto das outras cópias de segurança na aba Dados."
+    button: "Ir para a exportação de chaves (aba Dados)"
   key_vault:
     title: "Chaves de IA - exportação criptografada"
     intro: "Leve suas chaves de IA para outro dispositivo em um único arquivo criptografado, separado do backup normal (que nunca contém chaves)."
@@ -551,7 +564,7 @@ settings:
   summary_section_export: "Exportação do resultado"
   summary_section_next_steps: "Sugestões de próximos passos"
   correction_round_enabled: "Mostrar a rodada de correção após as lições"
-  correction_round_enabled_desc: "No fim de uma lição, oferece corrigir os teus erros de imediato. Quando desligado, eles continuam disponíveis no modo de revisão / \"Praticar erros\"."
+  correction_round_enabled_desc: "No fim de uma lição, oferece corrigir seus erros de imediato. Quando desligado, eles continuam disponíveis no modo de revisão / \"Praticar erros\"."
   hints_enabled: "Mostrar dicas nos exercícios"
   hints_enabled_desc: "Oferece um botão de dica por níveis em cada exercício."
   hint_xp_cost: "Custo de XP por dica"
@@ -576,18 +589,18 @@ settings:
   tab_integrations: "Integrações"
   github:
     title: "Integração com o GitHub"
-    intro: "Necessário para partilhar lições como pull request. Cria um token com a permissão 'repo'."
+    intro: "Necessário para compartilhar lições como pull request. Crie um token com a permissão 'repo'."
     token: "Token do GitHub"
     format_invalid: "Um token do GitHub começa por 'ghp_' ou 'github_pat_'."
     test: "Testar"
     testing: "A testar..."
-    save: "Guardar"
+    save: "Salvar"
     remove: "Remover"
-    saved: "Token do GitHub guardado."
+    saved: "Token do GitHub salvo."
     removed: "Token do GitHub removido."
     test_success: "Ligado como {username}"
     test_invalid: "Token inválido."
-    test_rate_limit: "Limite do GitHub atingido. Tenta mais tarde."
+    test_rate_limit: "Limite do GitHub atingido. Tente mais tarde."
     test_network: "Não foi possível contactar o GitHub."
     test_no_token: "Não há token para testar."
     source_file: "Guardado em secrets.yaml"
@@ -608,13 +621,13 @@ settings:
   section_ui: Interface
   section_appearance: "Aparência"
   section_content_tabs: "Ordem das abas de Conteúdo"
-  content_tabs_desc: "Escolhe a ordem das abas na área de Conteúdo. A primeira aba abre por padrão."
+  content_tabs_desc: "Escolha a ordem das abas na área de Conteúdo. A primeira aba abre por padrão."
   content_view: "Visualização de conteúdo"
   content_view_description: "Como o conteúdo baixado é exibido nas abas de conteúdo. O alternador rápido na visualização de conteúdo altera a mesma configuração."
   section_profile: "Perfil"
   username_label: "Nome de exibição"
-  username_placeholder: "O teu nome"
-  username_save: "Guardar"
+  username_placeholder: "Seu nome"
+  username_save: "Salvar"
   username_empty: "O nome não pode estar vazio."
   avatar_frames_title: "Moldura do avatar"
   avatar_frames_hint: "Decore seu avatar. As molduras são desbloqueadas com níveis e emblemas, ou em troca de XP."
@@ -644,7 +657,7 @@ settings:
   unlock_buy_failed: "A compra falhou."
   avatar_presets_title: "Ou escolha uma figura"
   avatar_replace_photo_title: "Substituir sua foto?"
-  avatar_replace_photo_message: "Sua foto enviada será substituída pela figura. Ela fica guardada e você pode restaurá-la a qualquer momento."
+  avatar_replace_photo_message: "Sua foto enviada será substituída pela figura. Ela fica salva e você pode restaurá-la a qualquer momento."
   avatar_replace_photo_confirm: "Usar figura"
   avatar_restore_photo: "Restaurar foto"
   avatar_preset_spark: "Faísca"
@@ -713,11 +726,11 @@ settings:
   cluster_motivation: "Motivação e rotina"
   cluster_motivation_desc: "Modo de jogo, feedback, missões diárias e lembretes."
   cluster_data_sources: "Fontes"
-  cluster_data_sources_desc: "Repositórios de conteúdo e a tua entrada no diretório."
+  cluster_data_sources_desc: "Repositórios de conteúdo e sua entrada no diretório."
   cluster_data_sync: "Sincronização"
   cluster_data_sync_desc: "Emparelhar dispositivos e manter os dados alinhados."
   cluster_data_offline: "Conteúdo offline"
-  cluster_data_offline_desc: "A cache de lições e o tamanho das lições guardadas."
+  cluster_data_offline_desc: "A cache de lições e o tamanho das lições salvas."
   cluster_data_backup: "Cópia de segurança e exportação"
   cluster_data_backup_desc: "Cópia de segurança, identidade, chaves e exportações."
   cluster_data_cleanup: "Limpeza"
@@ -753,8 +766,10 @@ settings:
   lesson_auto_advance_description: "Após uma resposta correta, avança automaticamente para o próximo exercício. Uma resposta errada sempre espera para você revisar a solução."
   ask_ai_visible: "Mostrar botão 'Perguntar à IA'"
   ask_ai_visible_description: "Mostra o botão 'Perguntar à IA' abaixo da teoria e dos exercícios. Exibido por padrão; o botão ainda precisa da sua própria chave de IA (BYOK) para responder."
+  keep_screen_on: "Manter a tela ligada nas aulas"
+  keep_screen_on_description: "Enquanto uma aula está aberta, a tela não se apaga, também quando você lê sem tocá-la. No resumo da aula ela pode apagar de novo. No iPhone requer iOS 16.4 ou posterior, como app na tela de início iOS 18.4 ou posterior."
   button_tooltips: Mostrar dicas dos botões
-  button_tooltips_description: "Mostra uma dica ao passar o cursor sobre botões com ícones explicando o que fazem. As legendas para leitores de ecrã permanecem ativas independentemente."
+  button_tooltips_description: "Mostra uma dica ao passar o cursor sobre botões com ícones explicando o que fazem. As legendas para leitores de tela permanecem ativas independentemente."
   developer_mode: Modo desenvolvedor
   developer_mode_description: "Mostra todos os detalhes técnicos (código de estado, endpoint, rastreio) nas notificações de erro. Aparece uma etiqueta 'DEV' na barra de navegação enquanto estiver ativo. Desativado por defeito; ativar apenas para depuração."
   section_diagnostics: "Diagnóstico"
@@ -803,7 +818,7 @@ settings:
   playful_combo_xp_description: "A partir da terceira resposta da sequência, cada resposta certa seguida dá +1 XP de bónus, com limite por lição. Desligado, os XP do modo jogo ficam idênticos ao modo normal."
   playful_combo_xp_cap: "Limite de XP de bónus por lição"
   playful_arcade: "Arcade"
-  playful_arcade_description: "Minijogos curtos como recompensa do modo jogo: Memory de aprendizagem com os teus cartões de lição e clássicos desbloqueáveis por XP. Desligado esconde por completo o cartão do arcade e os jogos."
+  playful_arcade_description: "Minijogos curtos como recompensa do modo jogo: Memory de aprendizagem com seus cartões de lição e clássicos desbloqueáveis por XP. Desligado esconde por completo o cartão do arcade e os jogos."
   playful_arcade_snake_seconds: "Duração da ronda de Snake (segundos)"
   playful_arcade_memory_pairs: "Pares do Memory"
   playful_arcade_simon_target: "Comprimento alvo do Simon"
@@ -811,10 +826,10 @@ settings:
   playful_special_rounds_description: "Terminar um conjunto (cada lição com pelo menos uma estrela) desbloqueia uma ronda relâmpago com os seus cartões mais difíceis, jogada com o anel de contagem decrescente. Desligado esconde por completo o cartão da ronda relâmpago."
   playful_flash_round_cards: "Cartões da ronda relâmpago"
   playful_tickets: "Bilhetes de jogo"
-  playful_tickets_description: "Ganha bilhetes de arcade pelo teu desempenho: uma lição com pontuação perfeita, uma ronda concluída com todos os corações e os marcos de sequência (3/7/14/30 dias). Um bilhete joga uma ronda de um jogo de arcade bloqueado. Desligado, o arcade fica só com os desbloqueios por XP."
+  playful_tickets_description: "Ganhe bilhetes de arcade pelo seu desempenho: uma lição com pontuação perfeita, uma rodada concluída com todos os corações e os marcos de sequência (3/7/14/30 dias). Um bilhete joga uma rodada de um jogo de arcade bloqueado. Desligado, o arcade fica só com os desbloqueios por XP."
   playful_ticket_cap: "Bilhetes máximos"
   playful_bonus_lessons: "Lições bónus"
-  playful_bonus_lessons_description: "Os conjuntos podem conter lições bónus (ficheiros de lição que começam por \"bonus-\"). Com o modo de jogo ativo aparecem bloqueadas na lista de lições do conjunto até cada lição normal ter pelo menos uma estrela. Desligado (ou com o modo de jogo desligado) são tratadas como lições normais."
+  playful_bonus_lessons_description: "Os conjuntos podem conter lições bônus (arquivos de lição que começam por \"bonus-\"). Com o modo de jogo ativo aparecem bloqueadas na lista de lições do conjunto até cada lição normal ter pelo menos uma estrela. Desligado (ou com o modo de jogo desligado) são tratadas como lições normais."
   feedback_intensity: "Intensidade do feedback"
   feedback_intensity_description: "Com quanta efusividade o app celebra o seu progresso."
   feedback_intensity_subtle: "Discreto"
@@ -848,7 +863,7 @@ settings:
   # #810 - tabela de provedores configurados na aba IA.
   providers:
     title: Provedores de IA configurados
-    hint: "As chaves guardadas permanecem armazenadas. Apenas é mostrada uma pré-visualização mascarada, nunca a chave completa."
+    hint: "As chaves salvas permanecem armazenadas. Apenas é mostrada uma pré-visualização mascarada, nunca a chave completa."
     status_active: Ativo
     status_empty: Vazio
     status_desktop_only: Apenas computador
@@ -858,7 +873,7 @@ settings:
     add: Adicionar chave
     test: Testar
     testing: "A testar…"
-    test_connection_ok: Ligação OK
+    test_connection_ok: Conexão OK
     test_key_invalid: Chave inválida
     test_network_error: Erro de rede
     test_backend_only: Só pode ser testado com o backend
@@ -910,7 +925,7 @@ settings:
   model_override_clear: Usar padrão
   model_picker_placeholder: Selecione ou digite um ID de modelo
   model_picker_open: Abrir lista de modelos
-  model_picker_default_hint: 'Usa o padrão:'
+  model_picker_default_hint: 'Usar o padrão:'
   model_picker_loading: Carregando modelos...
   model_picker_error: Não foi possível carregar os modelos. Verifique sua chave de API.
   model_picker_retry: Tentar novamente
@@ -965,17 +980,20 @@ settings:
     errors_only: "Mostrar apenas os erros (predefinição)"
     whole_set: "Repetir o conjunto inteiro"
   matching_resolve:
-    title: "Animação de resolução"
+    title: "Exercício de correspondência"
     hint: "Como o exercício de correspondência revela os pares corretos ao tocar em 'Resolver' após verificar."
-    label: "Efeito"
+    label: "Animação de resolução"
     slide: "Deslizar"
     color: "Cor"
     connect: "Conectar"
     stack: "Empilhar"
+  matching_review_views:
+    label: "Correção como visualização separada"
+    desc: "Depois de verificar, 'Minhas respostas' mostra os seus pares como você os formou, sem avaliação; a avaliação e os pares corretos ficam em 'Correção'. Desativado: o par correto aparece logo abaixo de cada erro em 'Minhas respostas'."
   paused_retention:
-    title: Retenção de aulas pausadas
-    hint: "As aulas pausadas mais antigas que este período são automaticamente abandonadas. Até 10 aulas pausadas são mantidas independentemente da idade."
-    label: Manter aulas pausadas por
+    title: "Aulas pausadas no Painel"
+    hint: "O cartão de aulas pausadas do Painel só mostra aulas até esta idade. Uma aula mais antiga apenas sai do cartão: nada é abandonado, e ela mantém sua posição e suas respostas."
+    label: "Ocultar aulas pausadas com mais de"
     7_days: "7 dias"
     14_days: "14 dias"
     30_days: "30 dias"
@@ -984,6 +1002,9 @@ settings:
   review_limit:
     label: "Perguntas por revisão"
     desc: "Quantos elementos uma sessão de revisão apresenta antes de terminar. Os restantes passam para a ronda seguinte."
+  review_include_never_wrong:
+    label: "Rever também os elementos sem erros"
+    desc: "Traz também os elementos que nunca errou de volta à revisão espaçada (após 3 e 7 dias). Desligado: a revisão contém apenas elementos com erros."
   max_lesson_size:
     title: Tamanho máximo de aula
     hint: "Ao salvar uma longa análise de chat como aula offline, as aulas com mais etapas que este número são automaticamente divididas em várias partes."
@@ -995,7 +1016,7 @@ settings:
   danger_zone_complete_toast: "Todos os dados foram excluídos."
   danger_zone_confirm_prompt: "Digite RESET para confirmar"
   danger_zone_continue: "Continuar"
-  danger_zone_failed_toast: "Falha ao redefinir:"
+  danger_zone_failed: "Falha ao redefinir."
   danger_zone_final_button: "Excluir permanentemente"
   danger_zone_heading: "Zona de perigo"
   danger_zone_input_placeholder: "RESET"
@@ -1072,7 +1093,7 @@ install:
   dismiss: Agora não
   aria_label: Instalar o Adaptive Learner
 about:
-  up_to_date_version: "Tens a versão mais recente. (v{version})"
+  up_to_date_version: "Você tem a versão mais recente. (v{version})"
   update:
     read_more: "Ler mais"
     open_release: "Abrir página da versão"
@@ -1159,8 +1180,9 @@ backup:
   too_large: 'Este arquivo de backup é muito grande (mais de 100 MB).'
   export_success: Backup baixado ({{count}} registros).
   export_error: 'Falha no backup: {{detail}}'
-  import_parse_error: 'Não foi possível ler o backup: {{detail}}'
-  import_error: 'Falha na restauração: {{detail}}'
+  export_failed: "Falha no backup."
+  import_parse_failed: "Não foi possível ler o backup."
+  import_failed: "Falha na restauração."
   comparison_title: Confirmar restauração
   comparison_help: 'A restauração fará mesclagem: novos registros são inseridos, registros mutáveis são atualizados apenas se o backup for mais recente, e o histórico é mantido como está. Nada é excluído. As chaves de API são ignoradas.'
   table_header: Tabela
@@ -1170,7 +1192,7 @@ backup:
   restored_inserted: 'Inseridos: {{n}}'
   restored_updated: 'Atualizados: {{n}}'
   restored_skipped: 'Ignorados: {{n}}'
-  api_keys_skipped: "Não foi possível importar as chaves de API. Insira-as novamente em Definições > Integrações."
+  api_keys_skipped: "Não foi possível importar as chaves de API. Insira-as novamente em Configurações > Integrações."
   restored_errors: 'Erros: {{n}}'
   col_inserted: 'Ins.'
   col_updated: 'Atu.'
@@ -1194,10 +1216,11 @@ backup:
   auto_help: Faz backup automaticamente após cada 10 sessões concluídas ou uma vez por semana.
   auto_run: Fazer backup agora
   auto_run_success: Backup automático criado.
-  auto_run_error: 'Falha no backup automático: {{detail}}'
+  auto_run_failed: "Falha no backup automático."
   auto_restored: Backup automático restaurado.
   auto_restore: Restaurar
-  auto_restore_error: 'Falha na restauração: {{detail}}'
+  auto_delete_error: "Não foi possível excluir o backup automático."
+  auto_restore_failed: "Falha na restauração."
   auto_records: '{{n}} registros'
   auto_none: Ainda não há backups automáticos. O primeiro acontece após 10 sessões ou 7 dias.
   storage_pressure: O armazenamento do navegador está quase cheio ({{pct}}% da cota). Exporte um backup manual agora.
@@ -1229,6 +1252,7 @@ backup:
   compare_high_volume_hint: Tabela com muitos registros - prévias por registro mostradas de forma abreviada.
   compare_export_md: Exportar como Markdown
   compare_markdown_downloaded: Diferença exportada.
+  compare_export_failed: "Não foi possível exportar a comparação."
   confirm_with_counts: Restaurar ({{added}} adicionados, {{updated}} atualizados)
   auto_compare_as_a: Comparar como A
   auto_compare_as_b: Comparar como B
@@ -1250,9 +1274,9 @@ export:
   busy: Trabalhando...
   download_success: Exportação baixada.
   print_opened: Caixa de diálogo de impressão aberta. Escolha "Salvar como PDF".
-  error: 'Falha na exportação: {{detail}}'
-  preview_error: 'Falha na pré-visualização: {{detail}}'
-  load_error: 'Não foi possível carregar os dados de exportação: {{detail}}'
+  export_failed: "Falha na exportação."
+  preview_failed: "Falha na pré-visualização."
+  load_failed: "Não foi possível carregar os dados de exportação."
   pick_session: Escolha uma sessão primeiro.
   pick_curriculum: Escolha um currículo primeiro.
   title_progress: Progresso de aprendizado
@@ -1456,7 +1480,7 @@ gamification:
       description: Importe 10 conversas.
     first_lesson:
       name: Primeira Lição
-      description: Conclui a tua primeira lição de conteúdo.
+      description: Conclua sua primeira lição de conteúdo.
     lessons_10:
       name: 10 Lições Concluídas
       description: Conclui 10 lições de conteúdo.
@@ -1493,10 +1517,12 @@ gamification:
 arcade:
   title: "Arcade"
   subtitle: "Rondas curtas, de um a dois minutos: uma recompensa do modo jogo. Sem XP, só diversão."
-  card_description: "Rondas curtas de Memory de aprendizagem e Snake: a tua recompensa do modo jogo."
+  card_description: "Rodadas curtas de Memory de aprendizagem e Snake: sua recompensa do modo jogo."
   card_open: "Ir para o arcade"
-  requires_playful: "O arcade faz parte do modo jogo. Ativa o modo jogo (e o interruptor do arcade) nas definições."
-  open_settings: "Abrir definições"
+  requires_playful: "O arcade faz parte do modo jogo. Ative o modo jogo (e o interruptor do arcade) nas configurações."
+  requires_game_mode: "O arcade faz parte do modo jogo, e o modo jogo está desligado. Ative-o nas configurações."
+  requires_arcade_switch: "O modo jogo está ligado, mas o interruptor do arcade está desligado. Ative o arcade nos detalhes do modo jogo nas configurações."
+  open_settings: "Abrir configurações"
   play: "Jogar"
   pause: "Pausa"
   resume: "Continuar"
@@ -1510,11 +1536,11 @@ arcade:
   tickets_hint: "Ganha bilhetes com lições perfeitas, rondas com todos os corações e marcos de sequência."
   memory:
     name: "Memory de aprendizagem"
-    description: "Encontra os pares de termo e tradução das tuas lições."
+    description: "Encontre os pares de termo e tradução das suas lições."
     set_label: "Conjunto de lições"
     loading: "A carregar cartões ..."
-    empty: "Nenhum conjunto descarregado com cartões suficientes. Descarrega primeiro um conjunto de lições."
-    load_failed: "O carregamento dos cartões falhou. Tenta outro conjunto."
+    empty: "Nenhum conjunto baixado com cartões suficientes. Baixe primeiro um conjunto de lições."
+    load_failed: "O carregamento dos cartões falhou. Tente outro conjunto."
     progress: "Pares: {a} / {b}"
     attempts: "Tentativas: {n}"
     won: "Todos os pares encontrados em {n} tentativas!"
@@ -1527,26 +1553,26 @@ arcade:
     highscore: "Recorde: {n}"
     board_aria: "Tabuleiro de Snake: guia com as setas ou deslizando"
     won: "Ronda ganha: {n} pontos!"
-    lost: "Ronda terminada: {n} pontos. Tenta outra vez!"
+    lost: "Rodada terminada: {n} pontos. Tente outra vez!"
   tictactoe:
     name: "Jogo do galo"
     description: "Três em linha contra a app - e sim, dá para vencê-la."
-    your_turn: "É a tua vez (X)"
+    your_turn: "É sua vez (X)"
     ai_turn: "A app está a pensar ..."
     board_aria: "Tabuleiro do jogo do galo: escolhe uma casa livre"
     won: "Ganhaste: três em linha!"
-    lost: "Esta ronda foi da app. Tenta já outra vez!"
+    lost: "Esta rodada foi da app. Tente já outra vez!"
     draw: "Empate: bem defendido!"
   simon:
     name: "Simon"
-    description: "Repete a sequência de cores que vai crescendo: alcança o comprimento alvo para ganhar."
+    description: "Repita a sequência de cores que vai crescendo: alcance o comprimento alvo para ganhar."
     watch: "Observa a sequência ..."
-    your_turn: "É a tua vez: repete a sequência"
+    your_turn: "É sua vez: repita a sequência"
     round_label: "Sequência {n} de {m}"
     board_aria: "Tabuleiro do Simon: quatro campos de cor"
     pad_aria: "Campo de cor {n}"
     won: "Conseguiste: a sequência completa!"
-    lost: "Ups: chegaste ao comprimento {n}. Tenta já outra vez!"
+    lost: "Ops: você chegou ao comprimento {n}. Tente já outra vez!"
 anki:
   title: Exportação Anki
   intro: Reveja os flashcards sugeridos pela IA, aceite os que quiser e exporte como arquivo .apkg para o Anki.
@@ -1627,6 +1653,7 @@ notebooklm:
 feature:
   api_key_required: "Chave de API necessária. Configure um provedor nas configurações."
   desktop_only: "Disponível apenas com o aplicativo para desktop."
+  browser_only: "Disponível apenas na versão do app para navegador."
 ui:
   cancel: "Cancelar"
   hide_secret: "Ocultar valor"
@@ -1649,7 +1676,7 @@ ui:
     auto: "Automatico (sistema)"
   errors:
     bad_request: "Não foi possível processar o pedido."
-    forbidden: "Acesso negado. Verifica as tuas definições."
+    forbidden: "Acesso negado. Verifique suas configurações."
     not_found: "Esta página ou funcionalidade não foi encontrada."
     conflict: "Esta ação entra em conflito com o estado atual."
     rate_limited: "Demasiados pedidos. Aguarda um momento e tenta novamente."
@@ -1657,9 +1684,10 @@ ui:
     server: "Ocorreu um erro interno."
     network: "Sem ligação ao servidor."
     timeout: "O pedido demorou demasiado."
-    generic: "Algo correu mal. Tenta novamente mais tarde."
+    generic: "Algo correu mal. Tente novamente mais tarde."
     unexpected: "Algo deu errado."
   error_report:
+    report_button: "Reportar problema"
     dialog_title: "Comunicar um problema"
     intro: "Adaptive Learner detetou um erro e pode preparar um relatório de bug para o programador."
     description_label: "Passos para reproduzir (opcional)"
@@ -1707,7 +1735,7 @@ ui:
     required: "Chave de API necessária."
     required_with_feature: "Chave de API necessária {feature}."
     required_long: "Configure uma chave de provedor nas Configurações para ativar esta ação."
-    open_settings: "Abrir definições"
+    open_settings: "Abrir configurações"
     feature_analyze: "para analisar conversas"
     feature_anki: "para extrair cartões Anki"
     feature_study_guide: "para gerar um guia de estudo"
@@ -1721,7 +1749,7 @@ ui:
     skip_to_content: "Saltar para o conteúdo principal"
     chart_show_as_table: "Mostrar dados como tabela"
     chart_radar_label: "Gráfico radar do perfil de aprendizagem"
-    chart_radar_summary: "O teu método de aprendizagem mais forte: {method} ({value})"
+    chart_radar_summary: "Seu método de aprendizagem mais forte: {method} ({value})"
     chart_timeline_label: "Linha temporal das últimas {n} sessões"
     chart_timeline_summary: "{n} sessões; compreensão em tendência {trend}"
     chart_timeline_trend_up: "ascendente"
@@ -1736,7 +1764,7 @@ ui:
     delete: "Eliminar"
     edit: "Editar"
     close: "Fechar"
-    save: "Guardar"
+    save: "Salvar"
     cancel: "Cancelar"
     send: "Enviar"
     send_message: "Enviar mensagem"
@@ -1752,7 +1780,7 @@ ui:
     retry: "Tentar de novo"
     dismiss: "Descartar"
     refresh: "Atualizar"
-    settings: "Definições"
+    settings: "Configurações"
     help: "Abrir ajuda"
     menu: "Menu"
     back: "Voltar"
@@ -1868,7 +1896,7 @@ repo:
   widget_subtitle: "Instantâneo versionado do progresso, das notas e do plano deste projeto."
   settings_description: "Gera automaticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por projeto a partir dos dados das sessões. A integração git opcional cria um commit a cada geração."
   settings_enable_git: "Ativar persistência git"
-  dexie_unavailable_body: "Esta funcionalidade só está disponível no modo servidor. Mude para o modo servidor nas Definições para ativar os repositórios de aprendizagem com git."
+  dexie_unavailable_body: "Esta funcionalidade só está disponível no modo servidor. Mude para o modo servidor nas Configurações para ativar os repositórios de aprendizagem com git."
   back_to_dashboard: "Voltar ao painel"
   page:
     title: "Repositório de aprendizagem"
@@ -1896,17 +1924,21 @@ repo:
     title: "Repositório de aprendizagem"
     loading: "Carregando…"
     repos_dir: "Diretório dos repositórios"
-    save: "Salvar definições"
+    save: "Salvar configurações"
     saving: "Salvando…"
     toast:
-      saved: "Definições salvas"
+      saved: "Configurações salvas"
     error:
-      load: "Não foi possível carregar as definições"
-      save: "Não foi possível salvar as definições"
+      load: "Não foi possível carregar as configurações"
+      save: "Não foi possível salvar as configurações"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
     description: "Gera automaticamente artefatos Markdown (README, STATS, CHEATSHEET, ROADMAP) por projeto a partir dos dados das suas sessões. A integração git opcional faz commit de cada geração para que você possa navegar pelo histórico com qualquer cliente git."
     enable_git: "Ativar persistência git"
 lesson:
+  progress_io:
+    save_error: "Não foi possível salvar seu progresso nesta aula."
+    load_failed: "Não foi possível carregar seu progresso salvo desta aula: {detail}"
+    create_profile: "Criar um perfil de aprendizagem"
   mascot_label: "Seu companheiro de aprendizado"
   combo_chip: "x{n}"
   combo_aria: "Sequência de respostas: {n} seguidas"
@@ -1915,7 +1947,7 @@ lesson:
   hearts:
     aria: "Vidas: {n} de {max}"
     empty_heading: "Sem corações!"
-    empty_body: "Tudo bem: nada se perde, tudo o que foi resolvido fica guardado. Respire fundo e tente a lição de novo."
+    empty_body: "Tudo bem: nada se perde, tudo o que foi resolvido fica salvo. Respire fundo e tente a lição de novo."
     action_retry: "Tentar de novo"
     action_exit: "Sair da lição"
   countdown:
@@ -2019,7 +2051,7 @@ lesson:
   nav_next: "Próxima lição"
   nav_set_overview: "Todas as lições deste conjunto"
   loading: "A carregar a lição…"
-  not_cached_body: "Esta lição ainda não foi transferida. Abre o explorador de conteúdo e transfere primeiro o conjunto."
+  not_cached_body: "Esta lição ainda não foi baixada. Abra o explorador de conteúdo e baixe primeiro o conjunto."
   progress:
     step_of: "Passo {current} de {total}"
     summary: "Resumo"
@@ -2072,6 +2104,7 @@ lesson:
       resolve: "Resolver"
       resolve_announce: "Solução exibida. {correct} de {total} pares estavam corretos."
       my_answers: "Minhas respostas"
+      corrections: "Correção"
     picture:
       submit: "Verificar resposta"
       retry: "Tentar de novo"
@@ -2095,10 +2128,9 @@ lesson:
         error: "A solicitação à IA falhou. Tente novamente."
       submit: "Verificar resposta"
       retry: "Tentar de novo"
-      placeholder: "Escreve a tua resposta…"
+      placeholder: "Escreva sua resposta…"
       code_placeholder: "Digite o código…"
-      input_label: "A tua resposta"
-      hint_show: "Precisas de uma dica?"
+      input_label: "Sua resposta"
       result_correct: "Correto!"
       result_wrong: "Quase."
       result_almost: "Quase! Atenção a:"
@@ -2111,18 +2143,16 @@ lesson:
       move_right: "Mover para a direita"
       submit: "Verificar resposta"
       retry: "Tentar de novo"
-      answer_label: "A tua resposta"
-      answer_placeholder: "Toca nas peças abaixo para construir a tua resposta"
+      answer_label: "Sua resposta"
+      answer_placeholder: "Toque nas peças abaixo para construir sua resposta"
       scrambled_label: "Peças disponíveis"
       scrambled_done: "Todas as peças colocadas."
-      hint_show: "Precisas de uma dica?"
       result_correct: "Correto!"
       result_wrong: "Quase."
       empty: "Este exercício de peças não tem peças."
     cloze:
       submit: "Verificar respostas"
       retry: "Tentar de novo"
-      hint_show: "Precisas de uma dica?"
       sentence_label: "Frase com lacunas"
       blank_label: "Lacuna {n}"
       select_placeholder: "Escolher…"
@@ -2161,7 +2191,7 @@ lesson:
     type_cloze: "Preencher lacunas"
     al_categorization:
       empty: "Este exercício de categorização não tem categorias."
-      instructions: "Toca num item e depois na sua categoria."
+      instructions: "Toque num item e depois na categoria dela."
       my_answers: "Minhas respostas"
       pool_label: "Itens"
       resolve: "Resolver"
@@ -2172,10 +2202,10 @@ lesson:
       submit: "Verificar resposta"
     al_dictation:
       empty: "Este exercício de ditado não tem áudio."
-      input_label: "Escreve o que ouves"
-      input_placeholder: "Escreve o que ouves…"
+      input_label: "Escreva o que ouve"
+      input_placeholder: "Escreva o que ouve…"
       result_correct: "Correto!"
-      result_near_miss: "Quase! Verifica a ortografia."
+      result_near_miss: "Quase! Verifique a ortografia."
       result_wrong: "Quase."
       retry: "Tentar novamente"
       solution_label: "Solução"
@@ -2183,7 +2213,7 @@ lesson:
     al_error_correction:
       empty: "Este exercício de correção não tem frase."
       input_label: "Correção"
-      instructions: "Toca na palavra errada e depois escreve a correção."
+      instructions: "Toque na palavra errada e depois escreva a correção."
       resolve_announce: "Solução exibida. A frase corrigida é: {sentence}"
       result_correct: "Correto!"
       result_wrong: "Quase. Vê a solução abaixo."
@@ -2203,9 +2233,9 @@ lesson:
       image_alt: "Imagem a descrever — a sua descrição é a resposta a escrever abaixo"
       image_unavailable: "A imagem não está disponível aqui."
       input_label: "Descreve a imagem"
-      input_placeholder: "Escreve a tua descrição…"
+      input_placeholder: "Escreva sua descrição…"
       result_correct: "Correto!"
-      result_near_miss: "Quase! Verifica a ortografia."
+      result_near_miss: "Quase! Verifique a ortografia."
       result_wrong: "Quase."
       retry: "Tentar novamente"
       solution_label: "Solução"
@@ -2242,16 +2272,22 @@ lesson:
     al_ordering:
       empty: "Este exercício de ordenação não tem itens."
       result_correct: "Correto!"
-      result_wrong: "Não exatamente - tente novamente."
+      result_wrong: "Não exatamente - a ordem ainda não está correta."
       retry: "Tentar novamente"
+      review_heading: "Sua resposta"
+      solution_heading: "Solução"
       submit: "Verificar resposta"
     al_parsons:
       empty: "Este exercício de código não tem linhas."
       indent_dec: "Diminuir recuo"
       indent_inc: "Aumentar recuo"
+      line_wrong_indent: "Recuo {actual}, esperado {expected}"
+      line_wrong_position: "Posição errada"
       result_correct: "Correto!"
       result_wrong: "Não exatamente - verifique a ordem e o recuo."
       retry: "Tentar novamente"
+      review_heading: "Sua resposta"
+      solution_heading: "Solução"
       submit: "Verificar resposta"
     instruction:
       matching:
@@ -2279,7 +2315,7 @@ lesson:
     card_title: "Ronda relâmpago"
     card_description: "Uma ronda rápida com os cartões mais difíceis deste conjunto, com o anel de contagem decrescente."
     start: "Iniciar ronda relâmpago"
-    locked_tooltip: "Termina cada lição deste conjunto com pelo menos uma estrela para desbloquear."
+    locked_tooltip: "Termine cada lição deste conjunto com pelo menos uma estrela para desbloquear."
     perfect_tooltip: "Sem cartões de erro: este conjunto já é perfeito!"
     no_content: "Nenhum cartão de erro jogável encontrado para este conjunto."
   error_replay:
@@ -2320,10 +2356,10 @@ lesson:
     complete_heading: "Ronda de correção completa"
     improvement: "{n} elementos melhorados."
     improvement_singular: "{n} elemento melhorado."
-    mistakes_heading: "Corrige os teus erros"
+    mistakes_heading: "Corrija seus erros"
     expand: "Corrigir agora"
     replay_all: "Refazer todos os exercícios ({count})"
-    replay_only_heading: "Repete os teus erros"
+    replay_only_heading: "Repita seus erros"
     replay_only_subtitle: "Estes não podem ser praticados como exercício rápido - refaz os exercícios em vez disso."
   summary:
     heading: "Terminado"
@@ -2386,10 +2422,13 @@ lesson:
     ticket_earned_one: "Recompensa desbloqueada: um bilhete de jogo!"
     ticket_earned_many: "Recompensa desbloqueada: {n} bilhetes de jogo!"
     ticket_play_now: "Jogar agora"
+    ticket_none_rule: "Desta vez sem bilhete: o bilhete vem com uma lição sem erros ou uma ronda com todos os corações."
+    ticket_none_completed: "Desta vez sem bilhete: já tinhas concluído esta lição."
+    ticket_none_cap: "Desta vez sem bilhete: seu saldo está no máximo de {n} bilhetes."
   error:
     load_failed: "Não foi possível carregar a lição."
     invalid_data: "Esta lição não pode ser aberta porque contém dados inválidos ou corrompidos. Entre em contato com o autor do conteúdo."
-    missing_params: "Nenhuma lição selecionada. Escolhe uma no explorador de conteúdo."
+    missing_params: "Nenhuma lição selecionada. Escolha uma no explorador de conteúdo."
   exit:
     title: "Sair da aula?"
     body: "Escolha como sair: pause para voltar mais tarde, abandone para descartar a tentativa, ou fique."
@@ -2407,6 +2446,8 @@ lesson:
     body: 'Você pausou "{title}". Gostaria de continuar de onde parou ou começar novamente?'
     action_resume: "Continuar"
     action_restart: "Recomeçar"
+    restart_confirm_title: "Recomeçar do início?"
+    restart_confirm_body: "Sua posição e suas respostas nesta aula serão redefinidas. O que você já aprendeu (progresso de domínio) é mantido."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:
@@ -2463,14 +2504,14 @@ content:
     lessons: "{n} lições"
     lesson_list: "Lições"
     bonus_badge: "Bónus"
-    bonus_locked_tooltip: "Termina cada lição normal deste conjunto com pelo menos uma estrela para desbloquear esta lição bónus."
+    bonus_locked_tooltip: "Termine cada lição normal deste conjunto com pelo menos uma estrela para desbloquear esta lição bônus."
     progress_done: "{done} de {total} lições concluídas"
     current_lesson: "Continuar aqui"
     lesson_completed: "Concluído"
   repo_export:
-    button: "Partilhar como repositório"
-    title: "Partilhar como repositório"
-    needs_token: "Adiciona um token do GitHub em Definições → Integrações para partilhar como repositório."
+    button: "Compartilhar como repositório"
+    title: "Compartilhar como repositório"
+    needs_token: "Adicione um token do GitHub em Configurações → Integrações para compartilhar como repositório."
     repo_label: "Repositório (owner/name)"
     private: "Privado"
     public: "Público"
@@ -2479,11 +2520,11 @@ content:
     invalid_repo: "Indica o repositório como owner/name."
     submit: "Exportar"
     working: "A exportar…"
-    done: "O teu conjunto foi enviado para o repositório."
+    done: "Seu conjunto foi enviado para o repositório."
     failed: "Falha na exportação."
     quality_issues: "A verificação de qualidade encontrou problemas. Os portões de qualidade do repositório de conteúdo iriam rejeitá-los:"
     export_anyway: "Exportar mesmo assim"
-    renamed_note: "Os ficheiros das lições foram renomeados com prefixos de ordenação (NN-) para que a ordem de exibição corresponda à ordem das lições."
+    renamed_note: "Os arquivos das lições foram renomeados com prefixos de ordenação (NN-) para que a ordem de exibição corresponda à ordem das lições."
   anki_export:
     button: "Exportar para Anki"
   discover_more: "Descobrir mais conteúdo"
@@ -2505,14 +2546,14 @@ content:
     lesson_fallback: "Lição"
     lesson_part: "{label} · Parte {n}"
     dismiss: "Remover de Continuar a aprender"
-    dismissed: "Removido de Continuar a aprender. Volta assim que continuares a aprender."
+    dismissed: "Removido de Continuar a aprender. Volta assim que você continuar a aprender."
   import_chat:
     button: "Importar conversa"
   search:
     placeholder: "Procurar lições..."
     results: "{count} resultados"
     no_results: "Sem resultados para '{query}'"
-    hint: "Tenta outro termo de pesquisa"
+    hint: "Tente outro termo de pesquisa"
     clear: "Limpar pesquisa"
     available: "Disponível para baixar"
     your_content: "Seu conteúdo"
@@ -2532,7 +2573,7 @@ content:
     imported: "Lição importada."
     failed: "Não foi possível importar a lição."
     collision_title: "Esta lição já existe"
-    collision_body: "Um conjunto de lições guardado já usa este identificador. Substituir, importar uma cópia separada ou cancelar?"
+    collision_body: "Um conjunto de lições salvo já usa este identificador. Substituir, importar uma cópia separada ou cancelar?"
     overwrite: "Substituir"
     copy: "Importar como cópia"
     copy_suffix: "cópia"
@@ -2621,6 +2662,7 @@ content:
     change_failed: "Não foi possível atualizar o status."
     deleted: "Conjunto removido."
     delete_failed: "Não foi possível remover o conjunto."
+    progress_not_deleted: "Removido, mas não foi possível excluir seu progresso de aprendizagem: {detail}"
     delete_confirm: "O conjunto baixado e suas lições serão removidos de Meus conteúdos. Seu progresso de aprendizagem é mantido, e você pode baixar o conjunto novamente quando quiser."
     select_all: "Selecionar tudo"
     select_set: "Selecionar {title}"
@@ -2647,7 +2689,7 @@ content:
   edit_as_copy:
     action: "Editar como cópia"
     confirm_title: "Editar como sua própria cópia?"
-    confirm_message: "Abre “{title}” como sua própria cópia editável no editor de lições. O original permanece inalterado e continua disponível para download."
+    confirm_message: "Abra “{title}” como sua própria cópia editável no editor de lições. O original permanece inalterado e continua disponível para download."
     confirm: "Editar cópia"
     saved: "Salvo como sua própria cópia."
     failed: "Não foi possível criar a cópia."
@@ -2732,7 +2774,7 @@ content:
   sources: "Fontes"
   lessons: "lições"
   loading: "A carregar conjuntos de conteúdo…"
-  empty: "Ainda não há conjuntos disponíveis. Verifica a tua ligação e atualiza, ou configura uma fonte em Definições."
+  empty: "Ainda não há conjuntos disponíveis. Verifique sua conexão e atualize, ou configure uma fonte em Configurações."
   source:
     bundled: "Incluído"
     github: "GitHub"
@@ -2753,7 +2795,7 @@ content:
   toast:
     downloaded: "Conjunto transferido e pronto a usar."
     updated_all: "{n} conjuntos atualizados."
-    updates_held_named: "Retidas porque afetariam o teu progresso: {titles}. Confirma cada atualização com o botão Atualizar do conjunto."
+    updates_held_named: "Retidas porque afetariam seu progresso: {titles}. Confirme cada atualização com o botão Atualizar do conjunto."
     all_up_to_date: "Todos os conjuntos estão atualizados."
   warning:
     no_lessons_in_set: "Este conjunto ainda não tem lições."
@@ -2762,6 +2804,8 @@ content:
     download_failed: "Não foi possível transferir o conjunto."
     update_all_failed: "{n} atualizações falharam."
     open_failed: "Não foi possível abrir a lição."
+    export_failed: "Não foi possível exportar o conjunto de lições."
+    share_check_failed: "Não foi possível verificar o conjunto para partilha."
   tree:
     i_speak: Eu falo
     learn: Aprender {lang}
@@ -2790,9 +2834,9 @@ content:
   validation:
     title: Verificação de qualidade
     checking: Verificando a sua lição…
-    intro: Antes de partilhar, a sua lição é verificada quanto à integridade e a um par de idiomas válido.
-    passed: Verificação de qualidade aprovada. Pronta para partilhar com a comunidade.
-    failed: 'Corrija estes problemas antes de partilhar:'
+    intro: Antes de compartilhar, a sua lição é verificada quanto à integridade e a um par de idiomas válido.
+    passed: Verificação de qualidade aprovada. Pronta para compartilhar com a comunidade.
+    failed: 'Corrija estes problemas antes de compartilhar:'
     continue: Continuar para o GitHub
     cancel: Fechar
     no_lessons: O conjunto não tem lições.
@@ -2812,9 +2856,10 @@ content:
     free_text_too_few_accepts: "Lição '{lesson}': o exercício de texto livre '{exercise}' precisa de pelo menos {min} respostas aceites."
     matching_too_few_pairs: "Lição '{lesson}': o exercício de correspondência '{exercise}' precisa de pelo menos {min} pares."
     matching_duplicate_left: "Lição '{lesson}': o exercício de correspondência '{exercise}' repete o valor esquerdo '{value}' - impossível de resolver para o aluno."
-    missing_distractors: "Lição '{lesson}': o exercício '{exercise}' precisa de distratores (opções erradas)."
     non_cefr_level: O nível '{level}' não é uma faixa CEFR (A1-C2).
     level_too_complex: "Lição '{lesson}': o texto tem em média {avg} palavras por lado, alto para o nível {level} (cerca de {cap} esperadas)."
+    engine_rule: "Lição '{lesson}': regra {rule} em {path}: {message}"
+    engine_warning: "Lição '{lesson}': aviso {rule} em {path}: {message}"
     source_language_heuristic: Os versos contêm caracteres próprios de {found}, mas o idioma de origem é '{lang}'.
     target_language_heuristic: As frentes contêm caracteres próprios de {found}, mas o idioma de destino é '{lang}'.
     failed_share_anyway: "A verificação de qualidade encontrou problemas. Você pode compartilhar mesmo assim - os revisores verão as observações no pull request."
@@ -2827,7 +2872,7 @@ content:
     ai_passed: 'Revisão de IA: parece bem.'
     ai_review: 'Revisão de IA: sugestões abaixo.'
     score: pontuação
-    failed: Revisão de IA indisponível. Pode partilhar mesmo assim - a verificação de qualidade passou.
+    failed: Revisão de IA indisponível. Você pode compartilhar mesmo assim - a verificação de qualidade passou.
     auto_fix: Aplicar
     applied: aplicado
     fix_applied: Sugestão aplicada.
@@ -2897,10 +2942,10 @@ content:
       suggestion: "Sugestão"
   placement:
     lands_under: A sua lição será colocada em
-    duplicate: 'Já existe uma lição semelhante: {title}. Partilhar mesmo assim?'
+    duplicate: 'Já existe uma lição semelhante: {title}. Compartilhar mesmo assim?'
   wizard:
-    title: Partilhar com a comunidade
-    metadata_intro: Verifique e corrija os detalhes da lição antes de partilhar.
+    title: Compartilhar com a comunidade
+    metadata_intro: Verifique e corrija os detalhes da lição antes de compartilhar.
     edit_title: Título
     edit_source: Idioma de origem (que fala)
     edit_target: Idioma de destino (que aprende)
@@ -2916,7 +2961,7 @@ content:
     err_level: Escolha um nível CEFR (A1-C2).
     err_empty: Esta lição não tem exercícios. Por favor, recrie a lição.
     regenerate: Regenerar
-    same_language_domain_hint: Mesmo idioma de origem e destino - partilhado como conteúdo de conhecimento (não linguístico).
+    same_language_domain_hint: Mesmo idioma de origem e destino - compartilhado como conteúdo de conhecimento (não linguístico).
     step_label: Passo {n} de {total}
     lands_under: A sua lição será colocada em
     new_set: Novo conjunto! É o primeiro a contribuir aqui.
@@ -2927,16 +2972,16 @@ content:
     near_duplicate: 'Esta lição já existe: "{title}".'
     similar_found: 'Lição semelhante encontrada: "{title}".'
     overlap: '{cards} de {total} cartões em comum, {ex} exercícios correspondentes.'
-    diff_cards: 'Cartões: {m}/{t} partilhados'
-    diff_exercises: 'Exercícios: {m}/{t} partilhados'
+    diff_cards: 'Cartões: {m}/{t} compartilhados'
+    diff_exercises: 'Exercícios: {m}/{t} compartilhados'
     suggest_new_only: Sugerir apenas os novos exercícios
-    share_as_variation: Partilhar mesmo assim - como uma variação
-    share_full: Partilhar a lição completa mesmo assim
+    share_as_variation: Compartilhar mesmo assim - como uma variação
+    share_full: Compartilhar a lição completa mesmo assim
     variation_note_placeholder: Em que difere a sua versão? (opcional)
     show_differences: Mostrar diferenças
     ready_to_share: "Tudo pronto. Compartilhar sua lição como pull request?"
-    share_button: Partilhar
-    thanks: Obrigado por partilhar! A sua contribuição ajuda outros estudantes.
+    share_button: Compartilhar
+    thanks: Obrigado por compartilhar! A sua contribuição ajuda outros estudantes.
     submitted: "Um pull request foi aberto no GitHub com sua lição pré-preenchida. Revise e clique em \"Create pull request\" - a CI do repositório de conteúdo o valida automaticamente."
     view_submission: "Abrir o pull request no GitHub"
     view_upload: "Abrir a página de upload do GitHub"
@@ -2951,7 +2996,7 @@ content:
   contributions:
     title: As Minhas Contribuições
     count: Contribuiu com {n} lição(ões) para a comunidade.
-    contributor: Contribuidor da Comunidade - {n} lições partilhadas!
+    contributor: Contribuidor da Comunidade - {n} lições compartilhadas!
     view: Ver
     status_submitted: submetida
     status_accepted: aceite
@@ -3074,7 +3119,7 @@ create_lesson:
       unavailable_reason: "Imagens e áudio não podem ser gerados a partir de texto. Você pode adicionar esses tipos depois no editor."
       floor_hint: "Pelo menos um tipo de exercício deve permanecer selecionado."
     explanations_label: "Gerar explicações (mostradas após a resposta)"
-    explanations_hint: "Adiciona a cada exercício uma regra, uma glosa palavra por palavra e mais exemplos. Cerca de um terço a metade a mais de saída de IA por exercício."
+    explanations_hint: "Adicione a cada exercício uma regra, uma glosa palavra por palavra e mais exemplos. Cerca de um terço a metade a mais de saída de IA por exercício."
     generate_to_advance: "Gere a lição a partir do seu texto para continuar."
     review_theory: "{n} passo(s) de teoria"
     review_exercises: "{n} exercício(s)"
@@ -3123,7 +3168,7 @@ create_lesson:
   back: "Voltar"
   next: "Avançar"
   cancel_confirm_title: "Descartar esta lição?"
-  cancel_confirm_body: "A sua lição não guardada será perdida."
+  cancel_confirm_body: "A sua lição não salva será perdida."
   cancel_keep: "Continuar a editar"
   cancel_discard: "Descartar"
   meta:
@@ -3148,7 +3193,7 @@ create_lesson:
     notes_label: "Notas (opcional)"
     example_label: "Frase de exemplo (opcional)"
     example_placeholder: "ex.: Ela lê um livro todas as noites."
-    example_hint: "Ativa exercícios de lacuna e de peças de palavras. Na lacuna, a frase deve conter o termo (frente) para poder ser ocultado."
+    example_hint: "Ative exercícios de lacuna e de peças de palavras. Na lacuna, a frase deve conter o termo (frente) para poder ser ocultado."
     alt_answers_label: "Outras respostas aceitas (opcional)"
     alt_answers_add: "Adicionar"
     alt_answers_remove: "Remover resposta aceita"
@@ -3164,7 +3209,7 @@ create_lesson:
     image_error:
       unsupported_type: "Apenas são suportadas imagens JPEG, PNG ou WebP."
       too_large: "Essa imagem é demasiado grande. Tente uma mais pequena."
-      decode_failed: "Não foi possível ler essa imagem. Tente outro ficheiro."
+      decode_failed: "Não foi possível ler essa imagem. Tente outro arquivo."
     token_roles:
       label: "Funções das palavras (opcional)"
       hint: "Marque palavras concretas da frente com a sua função gramatical. O exercício de lacunas passa a escolher uma lacuna com sentido em vez de uma por posição."
@@ -3174,7 +3219,7 @@ create_lesson:
       role_label: "Função"
       suggest: "Sugerir funções"
       suggest_none: "Nenhuma palavra reconhecida. Introduza as funções à mão."
-      suggest_hint: "As sugestões são palpites. Verifique cada linha antes de guardar."
+      suggest_hint: "As sugestões são palpites. Verifique cada linha antes de salvar."
       count: "{n} de {max} funções"
       error:
         not_in_front: "\"{token}\" não aparece assim na frente. Escreva-o exatamente como está lá."
@@ -3201,7 +3246,7 @@ create_lesson:
     edit: "Editar cartão"
     delete: "Eliminar cartão"
     drag: "Arraste para reordenar"
-    save_edit: "Guardar"
+    save_edit: "Salvar"
   draft:
     title: "Rascunho encontrado"
     body: "Tem uma lição não terminada. Continuar de onde parou ou começar de novo?"
@@ -3258,7 +3303,7 @@ create_lesson:
       mc_mode_multiple: "Permitir várias respostas"
       err_multiple_choice: "Adicione pelo menos duas opções distintas e marque a(s) resposta(s) correta(s)."
       edit: "Editar exercício"
-      save: "Guardar"
+      save: "Salvar"
       prompt_label: "Pergunta / enunciado"
       pairs_label: "Pares"
       pair_left: "Termo"
@@ -3282,9 +3327,15 @@ create_lesson:
       image_add: "Adicionar imagem"
       image_remove: "Remover imagem"
       err_prompt: "Introduza uma pergunta ou enunciado."
-      err_matching: "Adicione pelo menos 2 pares completos (termo e correspondência)."
+      err_matching_pairs: "Adicione pelo menos um par completo (termo e correspondência)."
+      err_matching_duplicate_left: "Cada termo só pode aparecer uma vez (sem distinguir maiúsculas e minúsculas)."
+      err_matching_from_cards: "Uma correspondência criada a partir de cartões precisa de cartões ligados e de nenhum par adicional."
+      err_cloze_distractors: "Uma lacuna de escolha precisa de pelo menos um distrator."
+      err_word_tiles_ordering: "Cada ordem de peças aceite tem de usar cada peça exatamente uma vez."
+      err_card_ref: "Este exercício refere um cartão que já não está na lição."
       err_free_text: "Adicione pelo menos uma resposta aceite."
       err_cloze: "Cada marca ___ precisa de uma lacuna e cada lacuna precisa de uma resposta."
+      err_cloze_multiselect: "Um cloze de seleção múltipla precisa de uma pergunta, pelo menos uma opção correta e pelo menos um distrator; nenhuma opção pode ser as duas coisas."
       err_word_tiles: "Adicione pelo menos 2 peças."
       err_picture_choice: "Adicione pelo menos 2 imagens, cada uma com rótulo e imagem, e marque exatamente uma como correta."
       err_explanation: "A explicação é longa demais (no máximo 2000 caracteres)."
@@ -3415,7 +3466,7 @@ create_lesson:
       hotspot_zone_remove: "Remover zona"
       hotspot_zone_add: "Adicionar zona"
   review:
-    heading: "Rever e guardar"
+    heading: "Revisar e salvar"
     title: "Título"
     pair: "Idiomas"
     cards: "Cartões"
@@ -3424,16 +3475,19 @@ create_lesson:
     check_languagePair: "O par de idiomas é válido"
     check_enoughCards: "Pelo menos 4 cartões"
     check_enoughExercises: "Pelo menos 5 exercícios"
+    check_min_exercises: "Pelo menos {n} exercícios"
     check_enoughTypes: "Pelo menos 2 tipos de exercício"
+    check_min_types: "Pelo menos {n} tipos de exercício"
+    check_exercise_minimums: "Cada exercício tem respostas ou pares suficientes"
     check_schemaValid: "Estrutura de lição válida"
     structure_error: "Detalhe técnico"
     structure_internal_error: "Ocorreu um erro interno ao verificar esta lição. É um problema do aplicativo, não da sua lição. Recarregue a página e tente novamente; se continuar acontecendo, relate o problema abaixo."
     structure_report: "Relatar o problema"
   save:
-    saved: "Lição guardada!"
-    failed: "Não foi possível guardar a lição."
-    save_local: "Guardar localmente"
-    save_share: "Guardar e partilhar"
+    saved: "Lição salva!"
+    failed: "Não foi possível salvar a lição."
+    save_local: "Salvar localmente"
+    save_share: "Salvar e compartilhar"
     save_changes: "Salvar alterações"
     save_copy: "Salvar como cópia"
     copy_suffix: "(cópia)"
@@ -3442,14 +3496,14 @@ create_lesson:
     play: "Reproduzir lição"
     create_another: "Criar outra lição"
     to_browser: "Para o navegador de conteúdo"
-    save_file: "Guardar como ficheiro"
-    file_saved: "Lição guardada como ficheiro."
+    save_file: "Salvar como arquivo"
+    file_saved: "Lição salva como arquivo."
     progress_carried_over: "Foram transferidos {count} cartão(ões) de revisão para a resposta alterada."
     progress_not_carried_over: "{count} cartão(ões) de revisão não puderam ser associados com confiança à resposta alterada e serão recriados na próxima prática."
   templates:
     extensions:
       title: "Tipos de exercício avançados"
-      desc: "Crie exercícios de categorização e correção de erros. Requer um aplicativo compatível com extensões."
+      desc: "Crie tipos de exercício de extensão como ordenação, zonas, ditado ou questionários avaliados. Requer um aplicativo compatível com extensões."
     knowledge_from_text:
       title: "Lição de conhecimento a partir de texto"
       desc: "Cole uma seção de livro ou carregue um arquivo de livro; a IA escreve a teoria com as próprias palavras e gera exercícios."
@@ -3475,9 +3529,9 @@ create_lesson:
     passage: "Sugerir um texto com IA"
     passage_empty: "Nenhum texto utilizável - escreva um à mão."
     busy: "A sugerir…"
-    disclaimer: "Rascunhos de IA - reveja e edite antes de guardar."
-    no_key: "Isto precisa da sua própria chave de IA (BYOK). Adicione uma nas definições de IA."
-    open_settings: "Definições de IA"
+    disclaimer: "Rascunhos de IA - reveja e edite antes de salvar."
+    no_key: "Isto precisa da sua própria chave de IA (BYOK). Adicione uma nas configurações de IA."
+    open_settings: "Configurações de IA"
     error: "O pedido de IA falhou. Tente novamente."
 learning_path:
   continue: "Continuar"
@@ -3495,8 +3549,18 @@ learning_path:
   train_errors: "Treinar erros"
   shuffle: "Modo aleatório"
   endless: "Sem fim"
+  reset_all:
+    button: "Repetir tudo"
+    title: "Repor todos os resultados?"
+    message: "Os resultados de “{title}” são repostos: pontuação, estrelas e tempo de estudo de {lessons} lições. Uma nova rodada começa na lição 1; os erros da rodada anterior ficam como histórico. XP e emblemas não mudam."
+    average: "Média até agora: {percent} %"
+    no_average: "Ainda não há média."
+    confirm: "Repor e recomeçar"
+    cancel: "Cancelar"
+    success: "Resultados repostos. Uma nova rodada começa com a lição 1."
+    failed: "Não foi possível repor os resultados."
   personal:
-    title: "O teu percurso de aprendizagem"
+    title: "Sua jornada de aprendizado"
     progress: "No total: {n}% concluído"
     none_started: "Você ainda não começou nenhum conjunto. Mude para Todos os conjuntos para ver seus conjuntos baixados."
     empty: "Baixa um conjunto de lições para começar."
@@ -3523,7 +3587,7 @@ learning_path:
   aria_canvas: "Gráfico do percurso de aprendizagem"
   reset_layout: "Repor disposição"
   loading: "A criar o seu percurso…"
-  empty: "Descarregue primeiro um conjunto de lições para ver o seu percurso."
+  empty: "Baixe primeiro um conjunto de lições para ver sua jornada."
   empty_cta: "Explorar conteúdo"
   error: "Não foi possível carregar o seu percurso."
   to_content: "Navegador de conteúdo"
@@ -3603,6 +3667,7 @@ pwa:
   cache_clear: "Limpar cache"
   cache_clear_confirm: "Limpar o cache off-line?"
   cache_clear_action: "Sim, limpar"
+  cache_clear_failed: "Não foi possível limpar o cache offline: {detail}"
   cache_cleared: "Cache off-line limpo."
   update:
     message: "Há uma nova versão disponível."
@@ -3658,13 +3723,13 @@ share:
     preparing: "A preparar o repositório..."
     uploading: "A enviar a lição..."
     creating: "A criar o pull request..."
-    success: "Pull request criado! A tua lição foi submetida e um pull request aberto no GitHub, a CI do repositório de conteúdo valida-o automaticamente."
-    no_token: "Dica: adiciona um token do GitHub em Definições > Integrações para criar o pull request automaticamente."
-    fallback: "Partilhar manualmente através do GitHub"
-    err_auth: "O teu token do GitHub foi rejeitado. Verifica-o em Definições > Integrações."
-    err_rate: "Limite do GitHub atingido. Tenta novamente mais tarde."
+    success: "Pull request criado! Sua lição foi submetida e um pull request aberto no GitHub, a CI do repositório de conteúdo valida-o automaticamente."
+    no_token: "Dica: adicione um token do GitHub em Configurações > Integrações para criar o pull request automaticamente."
+    fallback: "Compartilhar manualmente através do GitHub"
+    err_auth: "Seu token do GitHub foi rejeitado. Verifique-o em Configurações > Integrações."
+    err_rate: "Limite do GitHub atingido. Tente novamente mais tarde."
     err_github: "O GitHub rejeitou o pedido: {detail}"
-    err_network: "Não foi possível contactar o GitHub. Verifica a tua ligação e tenta novamente."
+    err_network: "Não foi possível contatar o GitHub. Verifique sua conexão e tente novamente."
 
 taxonomy:
   filter_title: "Filtrar projetos"
@@ -3832,7 +3897,7 @@ statistics:
   activity_cell: "{count} lições em {date}"
   activity_empty: "Ainda não há atividade."
   pairs_title: "Progresso por par de idiomas"
-  pairs_empty: "Descarregue um conjunto de lições para começar a acompanhar o progresso."
+  pairs_empty: "Baixe um conjunto de lições para começar a acompanhar o progresso."
   pair_level_aria: "{level}: {percent}% concluído"
 
 shortcuts:
@@ -3841,11 +3906,11 @@ shortcuts:
   group_navigation: "Navegação"
   group_lesson: "Durante uma lição"
   show_help: "Mostrar atalhos de teclado"
-  open_settings: "Abrir definições"
+  open_settings: "Abrir configurações"
   search_content: "Pesquisar conteúdo"
   close_dialog: "Fechar caixa de diálogo"
   go_dashboard: "Ir para o painel"
-  go_settings: "Ir para as definições"
+  go_settings: "Ir para as configurações"
   go_content: "Ir para o conteúdo"
   go_statistics: "Ir para as estatísticas"
   lesson_enter: "Verificar a resposta e continuar"
@@ -3885,7 +3950,7 @@ srs:
 
 hints:
   reveal: "Mostrar uma dica"
-  disabled: "As dicas estão desativadas. Ative-as nas Definições."
+  disabled: "As dicas estão desativadas. Ative-as nas Configurações."
   cost: "−{n} XP"
   length: "A resposta tem {n} letras"
   first_letters: "Começa por «{prefix}» ({n} letras)"
@@ -3898,7 +3963,7 @@ favorites:
   add: "Adicionar aos favoritos"
   remove: "Remover dos favoritos"
   empty: "Ainda não há favoritos - toque na estrela de uma lição."
-  save_prompt: "Guardar esta lição nos seus favoritos"
+  save_prompt: "Salvar esta lição nos seus favoritos"
 content_repo:
   set_not_found: "O conjunto '{set}' não foi encontrado neste repositório."
   remove:
@@ -3922,7 +3987,7 @@ content_repo:
   last_sync: "Última sincronização: {when}"
   added: "Repositório adicionado."
   synced: "Sincronizado: {sets} conjuntos, {lessons} lições."
-  token_hint: "Os repositórios privados precisam de um token - cole um abaixo ou defina um token partilhado em Definições → Integrações."
+  token_hint: "Os repositórios privados precisam de um token - cole um abaixo ou defina um token compartilhado em Configurações → Integrações."
   trust_official: "Oficial: conteúdo curado e com qualidade garantida pela equipe do projeto."
   trust_verified: "Verificado: contribuído pela comunidade e revisado pela equipe."
   trust_validated: "Validado: tecnicamente correto; conteúdo não revisado individualmente."
@@ -3930,8 +3995,8 @@ content_repo:
     title: "Conteúdo oficial"
     counts: "{sets} conjuntos · {lessons} lições"
   user:
-    list_title: "Os teus repositórios de conteúdo"
-    empty: "Nenhum repositório ligado. Adiciona um abaixo."
+    list_title: "Seus repositórios de conteúdo"
+    empty: "Nenhum repositório conectado. Adicione um abaixo."
     counts: "{sets} conjuntos · {lessons} lições"
   recommended:
     title: "Repositórios recomendados"
@@ -3957,7 +4022,7 @@ content_repo:
     move_down: "Mover para baixo"
     move_up: "Mover para cima"
     remove: "Remover"
-    share: "Partilhar"
+    share: "Compartilhar"
     sync: "Sincronizar agora"
   badge:
     coach: "Treinador"
@@ -3971,27 +4036,29 @@ content_repo:
   status:
     never_synced: "Ainda não sincronizado"
   rating:
-    aria: "A tua avaliação"
-    label: "A tua avaliação"
+    aria: "Sua avaliação"
+    label: "Sua avaliação"
     star: "Avaliar {n} de 5"
   share:
     copied: "Link copiado."
     tab_link: "Link"
     copy: "Copiar"
     copy_failed: "Não foi possível copiar."
-    hint: "Partilha este link para que outros possam adicionar este repositório PÚBLICO. Para um repositório privado, envia o URL e um token apenas de leitura separadamente."
-    qr_alt: "Código QR do link de partilha"
+    hint: "Compartilhe este link para que outros possam adicionar este repositório PÚBLICO. Para um repositório privado, envie o URL e um token apenas de leitura separadamente."
+    qr_alt: "Código QR do link de compartilhamento"
+  remove_error: "Não foi possível remover o repositório."
+  reorder_error: "Não foi possível alterar a ordem dos repositórios."
   progress:
     syncing: "A sincronizar…"
     validating: "A validar o repositório…"
     manifest: "A carregar o manifesto…"
     sets: "A carregar os conjuntos…"
-    lessons: "A guardar lições em cache…"
+    lessons: "Salvando lições em cache…"
     validate: "A verificar o conteúdo…"
   error:
-    invalid_url: "Introduz um URL de repositório do GitHub válido (p. ex. owner/repo)."
+    invalid_url: "Insira um URL de repositório do GitHub válido (p. ex. owner/repo)."
     save_failed: "Não foi possível adicionar o repositório."
-    sync_failed: "A sincronização falhou. Tenta novamente."
+    sync_failed: "A sincronização falhou. Tente novamente."
   validation:
     failed: "A validação falhou: {reason}"
     passed: "Validação bem-sucedida: {sets} conjuntos, {lessons} lições."
@@ -4279,3 +4346,9 @@ set_summary:
     vocabulary: "Vocabulário"
     grammar_rule: "Regra gramatical"
     unknown: "Desconhecido"
+runner:
+  back_to_dashboard: "Voltar ao painel"
+  not_cached_body: "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro."
+  error:
+    missing_params: "Nenhum conjunto de conteúdo selecionado."
+    invalid_data: "Este conteúdo não pode ser aberto porque contém dados inválidos ou corrompidos. Entre em contato com o autor do conteúdo."

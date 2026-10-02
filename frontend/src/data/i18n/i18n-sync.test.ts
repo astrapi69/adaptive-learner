@@ -52,6 +52,22 @@ function flatten(obj: Record<string, unknown>, prefix = ""): Set<string> {
     return out;
 }
 
+/** Leaf string values keyed by dotted path (``lesson.error.load_failed``). */
+function flattenValues(obj: Record<string, unknown>, prefix = ""): Map<string, string> {
+    const out = new Map<string, string>();
+    for (const [k, v] of Object.entries(obj)) {
+        const key = prefix === "" ? k : `${prefix}.${k}`;
+        if (v && typeof v === "object" && !Array.isArray(v)) {
+            for (const [ck, cv] of flattenValues(v as Record<string, unknown>, key)) {
+                out.set(ck, cv);
+            }
+        } else if (typeof v === "string") {
+            out.set(key, v);
+        }
+    }
+    return out;
+}
+
 describe("i18n JSON catalogs — Dexie-mode bundled source of truth", () => {
     // #1461 — Settings heading collision: the Learning tab's voice
     // section heading (settings.section_voice) must differ from the
@@ -221,5 +237,45 @@ describe("i18n JSON catalogs — Dexie-mode bundled source of truth", () => {
                 ).toBeGreaterThan(0);
             }
         }
+    });
+    // #3203 (EXP-052) — the runner chrome has ONE home, runner.*. Any
+    // other namespace that carries the same English sentence is a copy
+    // that must read identically in every language, or it drifts (de had
+    // three wordings of one sentence across review/shuffle/endless/
+    // adaptive). The copies go away in slice 4; the pin stays so a new
+    // runner cannot re-fork the text.
+    describe("runner chrome keys are the single source (#3203)", () => {
+        const RUNNER_KEYS = [
+            "runner.back_to_dashboard",
+            "runner.not_cached_body",
+            "runner.error.missing_params",
+            "runner.error.invalid_data",
+        ];
+        const enValues = flattenValues(loadJson("en"));
+
+        it.each(LANGS)("%s ships the four runner chrome keys", (lang) => {
+            const values = flattenValues(loadJson(lang));
+            for (const key of RUNNER_KEYS) {
+                expect(values.get(key), `${lang}: ${key}`).toBeTruthy();
+            }
+        });
+
+        it.each(RUNNER_KEYS)(
+            "%s reads identically wherever another namespace copies its English text",
+            (key) => {
+                const english = enValues.get(key);
+                const copies = [...enValues]
+                    .filter(([other, text]) => other !== key && text === english)
+                    .map(([other]) => other);
+                for (const lang of LANGS) {
+                    const values = flattenValues(loadJson(lang));
+                    for (const copy of copies) {
+                        expect(values.get(copy), `${lang}: ${copy} drifted from ${key}`).toBe(
+                            values.get(key),
+                        );
+                    }
+                }
+            },
+        );
     });
 });

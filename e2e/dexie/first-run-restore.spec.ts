@@ -49,7 +49,7 @@ test.describe("#150 — first-run backup restore (Dexie)", () => {
             }
         });
 
-        await completeOnboarding(page, {topic: TOPIC}); // lands on /assessment
+        await completeOnboarding(page, {topic: TOPIC, migrationOffer: "none"}); // lands on /assessment
 
         const originalUserId = await page.evaluate(() =>
             localStorage.getItem("adaptive-learner.user_id"),
@@ -107,7 +107,7 @@ test.describe("#150 — first-run backup restore (Dexie)", () => {
     test("the restore affordance is hidden once the learner has data", async ({
         page,
     }) => {
-        await completeOnboarding(page, {topic: TOPIC}); // user + project exist
+        await completeOnboarding(page, {topic: TOPIC, migrationOffer: "none"}); // user + project exist
 
         // Returning to onboarding with data present: no restore button.
         await page.goto("/onboarding");

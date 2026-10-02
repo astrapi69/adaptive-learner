@@ -23,7 +23,7 @@ draws.
    format is the
    [learn-content-engine](https://github.com/astrapi69/learn-content-engine)
    package: add the type to its schema, its hand-written semantic layer
-   (`validate.ts`) and its
+   (`src/rules.ts`) and its
    [format reference](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md),
    then release the engine. A format change **starts in the engine** - the app's
    `schema/*.json` is a byte mirror of the pinned release with exactly one
@@ -37,13 +37,14 @@ draws.
    (`frontend/src/storage/types/content/lesson-schema.generated.ts`) and the
    format-reference doc. **Never hand-edit** a mirrored or generated
    artefact; the `make sync-schema-check` drift gate fails if you do.
-4. **Semantic layer + schema version.** Layer the app-side cross-field rules
-   as a thin subclass in
-   `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`
-   (the structural fields are generated; only the semantics are
-   hand-written), and keep `CURRENT_SCHEMA_VERSION` in `models.py` aligned
+4. **Schema version.** Keep `CURRENT_SCHEMA_VERSION` in `models.py` aligned
    with the pinned engine schema version (**minor** = additive; old content
-   keeps validating via the major-version match).
+   keeps validating via the major-version match). Do not add app-side
+   cross-field rules to
+   `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`:
+   the semantic rules are the engine's and run at authoring time and in the
+   frontend before a user set is saved (#3245); the backend only stores and
+   serves the lesson.
 5. **Register the renderer.** Add the branch + the type to
    `SUPPORTED_EXERCISE_TYPES` in
    `frontend/src/components/exercises/shell/ExerciseDispatcher.tsx`. The

@@ -57,6 +57,7 @@ vi.mock("../../../lib/content/repos/content-repos", async (orig) => ({
 }));
 
 import RegistrySubmitSection from "./RegistrySubmitSection";
+import { TestFeatureProvider } from "../../../features/testFeatureProvider";
 
 const COMMIT = "a".repeat(40);
 
@@ -93,7 +94,11 @@ beforeEach(() => {
 });
 
 async function prepare() {
-  render(<RegistrySubmitSection />);
+  render(
+    <TestFeatureProvider context={{ mode: storageMode as "api" | "dexie" }}>
+      <RegistrySubmitSection />
+    </TestFeatureProvider>,
+  );
   await screen.findByTestId("registry-submit-section");
   fireEvent.change(screen.getByTestId("registry-url"), {
     target: { value: "https://github.com/jane/content" },
@@ -173,10 +178,12 @@ describe("RegistrySubmitSection", () => {
     expect(screen.queryByTestId("registry-create-pr")).toBeNull();
   });
 
-  it("hides the programmatic PR button in API mode (browser-only flow)", async () => {
+  it("shows the PR button disabled with the reason in API mode, never hidden (#3398)", async () => {
     storageMode = "api";
     await prepare();
     await screen.findByTestId("registry-json");
-    expect(screen.queryByTestId("registry-create-pr")).toBeNull();
+    const button = screen.getByTestId("registry-create-pr");
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute("title", "Only available in the browser version of the app.");
   });
 });

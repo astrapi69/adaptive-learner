@@ -21,6 +21,7 @@ one class and is blind to the others reads identical from the outside.
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -38,32 +39,47 @@ EN_REL = Path("docs") / "manual-tests" / "testplan-adaptive-learner-en.md"
 # gate that trips on that would be unusable.
 DE_PLAN = """# Testplan
 
-### Erster Abschnitt (#1111)
-- [ ] Erster Punkt (#2222)
-- [ ] Zweiter Punkt
+### TS-0001 Erster Abschnitt (#1111)
+- [ ] TC-0001 Erster Punkt (#2222)
+- [ ] TC-0002 Zweiter Punkt
 
-### Zweiter Abschnitt
-- [ ] Dritter Punkt (#3333)
+### TS-0002 Zweiter Abschnitt
+- [ ] TC-0003 Dritter Punkt (#3333)
 """
 
 EN_PLAN = """# Test plan
 
-### Second section
-- [ ] Third item (#3333)
+### TS-0002 Second section
+- [ ] TC-0003 Third item (#3333)
 
-### First section (#1111)
-- [ ] First item (#2222)
-- [ ] Second item
+### TS-0001 First section (#1111)
+- [ ] TC-0001 First item (#2222)
+- [ ] TC-0002 Second item
 """
+
+# The #3274 / #3279 ID register the fixtures above are numbered against.
+REGISTER_REL = Path("docs") / "manual-tests" / "testplan-ids.json"
+REGISTER = json.dumps(
+    {
+        prefix: {"highest": {"TC": 3, "TS": 2}.get(prefix, 0), "retired": []}
+        for prefix in ("TC", "TS", "RTC", "RTS", "LTC", "LTS", "GTC", "GTS", "OTC", "OTS")
+        + ("DTC", "DTS", "STC", "STS")
+    }
+)
 
 
 def _fails(report: Report) -> list[str]:
     return [f.message for f in report.findings if f.severity == FAIL]
 
 
-def _tree(root: Path, de: str | None = DE_PLAN, en: str | None = EN_PLAN) -> Path:
-    """Build a throwaway repo shape holding the two plans."""
-    for rel, body in ((DE_REL, de), (EN_REL, en)):
+def _tree(
+    root: Path,
+    de: str | None = DE_PLAN,
+    en: str | None = EN_PLAN,
+    register: str | None = REGISTER,
+) -> Path:
+    """Build a throwaway repo shape holding the two plans and the ID register."""
+    for rel, body in ((DE_REL, de), (EN_REL, en), (REGISTER_REL, register)):
         if body is None:
             continue
         path = root / rel
@@ -84,7 +100,7 @@ def _run(root: Path) -> Report:
 class TestDetectsTheViolation:
     def test_checkpoint_missing_on_one_side_fails(self, tmp_path: Path) -> None:
         """The #3065 shape: a whole `- [ ]` item exists only in German."""
-        en_short = EN_PLAN.replace("- [ ] Second item\n", "")
+        en_short = EN_PLAN.replace("- [ ] TC-0002 Second item\n", "")
         report = _run(_tree(tmp_path, en=en_short))
         assert report.fail_count >= 1
         joined = " ".join(_fails(report))
@@ -93,7 +109,7 @@ class TestDetectsTheViolation:
 
     def test_issue_reference_only_on_one_side_fails(self, tmp_path: Path) -> None:
         """The second #3065 shape: a reference dropped from a heading."""
-        en_no_ref = EN_PLAN.replace("### First section (#1111)", "### First section")
+        en_no_ref = EN_PLAN.replace("First section (#1111)", "First section")
         report = _run(_tree(tmp_path, en=en_no_ref))
         assert report.fail_count >= 1
         joined = " ".join(_fails(report))
@@ -101,7 +117,7 @@ class TestDetectsTheViolation:
         assert "#1111" in joined
 
     def test_reference_cited_a_different_number_of_times_fails(self, tmp_path: Path) -> None:
-        en_extra = EN_PLAN.replace("- [ ] Second item", "- [ ] Second item (#2222)")
+        en_extra = EN_PLAN.replace("- [ ] TC-0002 Second item", "- [ ] TC-0002 Second item (#2222)")
         report = _run(_tree(tmp_path, en=en_extra))
         assert report.fail_count >= 1
         joined = " ".join(_fails(report))
@@ -113,6 +129,20 @@ class TestDetectsTheViolation:
         report = _run(_tree(tmp_path, de=de_extra))
         assert report.fail_count >= 1
         assert any("section counts differ" in m for m in _fails(report))
+
+    def test_checkpoint_without_id_fails(self, tmp_path: Path) -> None:
+        """#3274: every checkpoint carries a permanent ID."""
+        de_bare = DE_PLAN.replace("- [ ] TC-0002 Zweiter", "- [ ] Zweiter")
+        report = _run(_tree(tmp_path, de=de_bare))
+        assert any("checkbox without an ID" in m for m in _fails(report))
+
+    def test_id_only_on_one_side_fails(self, tmp_path: Path) -> None:
+        """#3274: DE and EN carry the same ID for the same case."""
+        en_other = EN_PLAN.replace("TC-0003 Third", "TC-0009 Third")
+        report = _run(_tree(tmp_path, en=en_other))
+        joined = " ".join(_fails(report))
+        assert "TC-0003 exists only in" in joined
+        assert "above the register limit" in joined
 
 
 # --- 1b. it is actually wired into the runner ------------------------------
@@ -139,6 +169,26 @@ class TestTheCheckIsRegistered:
         report = Report()
         CHECKS["testplan-parity"](report, None)
         assert any(n.startswith("testplan-parity:") for n in report.notes)
+
+
+class TestTheIdCheckIsRegistered:
+    """#3274: the single-language plans (RTC-, LTC-) run as their own check."""
+
+    def test_default_run_includes_it(self) -> None:
+        from verify_docs import CHECKS
+
+        report = Report()
+        CHECKS["testplan-ids"](report, None)
+        assert report.fail_count == 0, _fails(report)
+        assert any(n.startswith("testplan-ids RTC:") for n in report.notes)
+        assert any(n.startswith("testplan-ids LTC:") for n in report.notes)
+        for prefix in ("GTC", "GTS", "OTC", "OTS", "DTC", "DTS", "STC", "STS"):
+            assert any(n.startswith(f"testplan-ids {prefix}:") for n in report.notes), prefix
+
+    def test_the_parity_check_reports_the_tc_ids(self) -> None:
+        report = Report()
+        check_testplan_parity(report)
+        assert any(n.startswith("testplan-ids TC:") for n in report.notes)
 
 
 # --- 2. it passes on a clean tree ------------------------------------------
@@ -176,6 +226,12 @@ class TestFailsClosed:
         report = _run(_tree(tmp_path, de=None))
         assert report.fail_count == 1
         assert "not found" in _fails(report)[0]
+
+    def test_missing_id_register_fails(self, tmp_path: Path) -> None:
+        """#3274: without the register the ID half cannot run - never green."""
+        report = _run(_tree(tmp_path, register=None))
+        assert report.fail_count == 1
+        assert "no ID register" in _fails(report)[0]
 
     def test_two_empty_plans_fail_instead_of_matching_vacuously(self, tmp_path: Path) -> None:
         """Emptiness against emptiness is agreement, not verification."""

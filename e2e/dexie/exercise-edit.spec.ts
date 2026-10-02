@@ -18,6 +18,8 @@
  */
 
 import {expect, test, type Page} from "@playwright/test";
+
+import {declineDraftPrompt} from "../helpers";
 import {currentStepTestId, waitForStepAdvance} from "./_step-flow";
 
 const MARKER = "EDITEDPROMPTMARKER";
@@ -34,9 +36,7 @@ async function openCreator(page: Page): Promise<void> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
 }
 
 async function buildToExercises(page: Page): Promise<void> {

@@ -95,6 +95,80 @@ describe("generateHints", () => {
     });
 });
 
+describe("generateHints: authored exercise.hint (#3168)", () => {
+    it.each([
+        ["free_text", {accept: ["merci"]}],
+        ["cloze", {blanks: [{accept: ["der"]}]}],
+        ["word_tiles", {tiles: ["Au", "revoir"]}],
+        ["ext:al-audio-tiles", {ext_payload: {audio: "a.mp3", tiles: ["Au", "revoir"]}}],
+    ])("%s: the authored hint is the FIRST stage, generated ones follow", (type, over) => {
+        const hints = generateHints(
+            ex({type, hint: "It starts with M.", ...over} as Partial<ContentLessonExercise>),
+        );
+        expect(hints[0]).toEqual({
+            level: 1,
+            data: {kind: "authored", text: "It starts with M."},
+        });
+        expect(hints.length).toBeGreaterThanOrEqual(1);
+        expect(hints.slice(1).every((h) => h.data.kind !== "authored")).toBe(true);
+    });
+
+    it("audio-tiles (ext:al-audio-tiles): the authored hint is the only stage", () => {
+        const hints = generateHints(
+            ex({
+                type: "ext:al-audio-tiles",
+                hint: "Two short words.",
+                ext_payload: {audio: "a.mp3", tiles: ["Au", "revoir"]},
+            } as Partial<ContentLessonExercise>),
+        );
+        expect(hints).toEqual([
+            {level: 1, data: {kind: "authored", text: "Two short words."}},
+        ]);
+    });
+
+    it("free_text: generated stages keep their order after the authored one", () => {
+        const hints = generateHints(
+            ex({type: "free_text", accept: ["merci"], hint: "Politeness."}),
+        );
+        expect(hints.map((h) => h.data.kind)).toEqual([
+            "authored",
+            "length",
+            "first_letters",
+        ]);
+    });
+
+    it.each([
+        ["null", null],
+        ["undefined", undefined],
+        ["empty", ""],
+        ["whitespace", "   "],
+    ])("free_text: a %s authored hint adds no stage", (_label, hint) => {
+        const hints = generateHints(
+            ex({type: "free_text", accept: ["merci"], hint} as Partial<ContentLessonExercise>),
+        );
+        expect(hints.map((h) => h.data.kind)).toEqual(["length", "first_letters"]);
+    });
+
+    it("matching: an authored hint does NOT reintroduce a hint (#2443 stays)", () => {
+        expect(
+            generateHints(
+                ex({
+                    type: "matching",
+                    hint: "Think about gender.",
+                    pairs: [{left: "a", right: "b"}],
+                } as Partial<ContentLessonExercise>),
+            ),
+        ).toEqual([]);
+    });
+
+    it("trims the authored hint text", () => {
+        const hints = generateHints(
+            ex({type: "word_tiles", tiles: ["Au", "revoir"], hint: "  Two words.  "}),
+        );
+        expect(hints[0].data).toEqual({kind: "authored", text: "Two words."});
+    });
+});
+
 describe("formatHint", () => {
     const t = (_k: string, fallback?: string) => fallback ?? _k;
     it("formats each kind with the i18n fallback + substitutions", () => {
@@ -113,5 +187,20 @@ describe("formatHint", () => {
         expect(
             formatHint({level: 1, data: {kind: "item", label: "hola"}}, t),
         ).toContain("hola");
+    });
+
+    it("renders an authored hint verbatim, without an i18n template (#3168)", () => {
+        const calls: string[] = [];
+        const spy = (k: string, fallback?: string) => {
+            calls.push(k);
+            return fallback ?? k;
+        };
+        expect(
+            formatHint(
+                {level: 1, data: {kind: "authored", text: "Denk an className."}},
+                spy,
+            ),
+        ).toBe("Denk an className.");
+        expect(calls).toEqual([]);
     });
 });

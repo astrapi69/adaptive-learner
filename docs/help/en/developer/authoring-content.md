@@ -43,8 +43,10 @@ lesson JSON Schema shipped by the
 npm package (immutable per published release). Inside this app the
 **structural** Pydantic layer in the content-loader plugin
 (`adaptive_learner_content_loader.schema`) is **regenerated** from that
-mirror (`scripts/generate_pydantic_models.py`); only the semantic
-cross-field validators are hand-written. `make sync-schema` refreshes the
+mirror (`scripts/generate_pydantic_models.py`); the semantic
+cross-field rules are not re-implemented in the app, they are the engine's
+(`learn-content-engine/rules`), run at authoring time and in the frontend
+before a user set is saved. `make sync-schema` refreshes the
 mirror and re-emits the derived artefacts, and byte-parity gates prove
 `schema/*.json` equals the pinned engine release. The places that used to
 drift can no longer:
@@ -77,8 +79,8 @@ change to the lesson format starts in the engine, or is ratified
 there - engine PR + npm release first; then this app bumps the engine
 pin (`frontend/package.json` + `schema/engine-version.txt`) and re-runs
 `make sync-schema`, which refreshes the mirror and regenerates the
-structural Pydantic layer; only new semantic validators are written by
-hand; then the content repos re-pin `engine-version.txt`. A hand-edit to
+structural Pydantic layer (a new semantic rule ships in the engine, the
+app does not copy it); then the content repos re-pin `engine-version.txt`. A hand-edit to
 the mirror (or a stale pin) turns the byte-parity gates red; the
 forgotten step is visible, never silent drift.
 

@@ -60,7 +60,7 @@ car le fournisseur d'IA se trouve en dehors du navigateur.
    [Leçons et révisions](lessons.md).
 4. **Optionnel : sessions IA.** Si tu préfères la conversation
    d'apprentissage guidée à six méthodes, dépose une **clé d'API**
-   (Paramètres ou `~/.config/adaptive-learner/secrets.yaml`),
+   (Paramètres ou `~/.config/adaptive_learner/secrets.yaml`),
    passe le [test de style d'apprentissage](assessment.md)
    optionnel et démarre une [session d'apprentissage](learning-session.md).
 5. **Sauvegarder ton résultat.** Depuis le récapitulatif de la

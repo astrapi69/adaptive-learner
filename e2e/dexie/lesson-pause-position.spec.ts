@@ -14,7 +14,10 @@
  *      dashboard lists the lesson under paused lessons, the resume
  *      dialog reopens it at that step;
  *   4. every other in-app way out pauses at the current step too: a
- *      menu entry, the browser's back button, and the mobile drawer.
+ *      menu entry, the browser's back button, and the mobile drawer;
+ *   5. an app switch or phone lock (hidden tab) does NOT pause: no resume
+ *      dialog mid-lesson (#3361);
+ *   6. "Start over" in the resume dialog asks first (#3361).
  */
 
 import {expect, test, type Page} from "@playwright/test";
@@ -204,5 +207,48 @@ test.describe("Lesson pause position (#3075)", () => {
             status: "paused",
             current_step: 2,
         });
+    });
+
+    test("an app switch mid-lesson flushes but does not pause: no resume dialog (#3361)", async ({page}) => {
+        await nextStep(page);
+        const current = await nextStep(page);
+        await expect.poll(() => progressRow(page), {timeout: 5_000}).toMatchObject({
+            status: "in_progress",
+            current_step: 2,
+        });
+        const setVisibility = (state: "hidden" | "visible") =>
+            page.evaluate((next) => {
+                Object.defineProperty(document, "visibilityState", {configurable: true, get: () => next});
+                document.dispatchEvent(new Event("visibilitychange"));
+            }, state);
+        await setVisibility("hidden");
+        await setVisibility("visible");
+        await expect(page.getByTestId("lesson-resume-dialog")).toHaveCount(0);
+        await expect(page.locator(`[data-testid="${current}"]`)).toBeVisible();
+        expect(await progressRow(page)).toMatchObject({status: "in_progress", current_step: 2});
+    });
+
+    test("Start over in the resume dialog asks before it resets (#3361)", async ({page}) => {
+        await nextStep(page);
+        await nextStep(page);
+        await page.getByTestId("lesson-pause-btn").click();
+        await page.getByTestId("lesson-exit-pause").click();
+        await expect.poll(() => progressRow(page), {timeout: 5_000}).toMatchObject({status: "paused"});
+
+        await page.goto("/dashboard");
+        await expect(page.getByTestId("paused-lessons-card")).toBeVisible({timeout: 30_000});
+        await page.locator('[data-testid^="paused-lesson-resume-"]').first().click();
+        await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible({timeout: 20_000});
+
+        await page.getByTestId("lesson-resume-restart").click();
+        await expect(page.getByTestId("lesson-resume-confirm-restart")).toBeVisible();
+        await page.getByTestId("lesson-resume-confirm-back").click();
+        await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible();
+        expect(await progressRow(page)).toMatchObject({status: "paused", current_step: 2});
+
+        await page.getByTestId("lesson-resume-restart").click();
+        await page.getByTestId("lesson-resume-confirm-restart-action").click();
+        await expect(page.getByTestId("lesson-resume-dialog")).toHaveCount(0);
+        await expect.poll(() => progressRow(page), {timeout: 5_000}).toMatchObject({current_step: 0});
     });
 });

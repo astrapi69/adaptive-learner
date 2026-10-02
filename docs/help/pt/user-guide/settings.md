@@ -61,7 +61,7 @@ ativo, mais o novo emblema de **atribuição de fonte**:
   encriptação Fernet na BD (modo Servidor) ou em texto simples
   no IndexedDB (modo Local). Pode Guardar / Remover livremente.
 - **Chave de: secrets.yaml** - a chave está configurada em
-  `~/.config/adaptive-learner/secrets.yaml`. O botão Guardar
+  `~/.config/adaptive_learner/secrets.yaml`. O botão Guardar
   está desativado; edite o ficheiro diretamente para alterá-la.
   Um banner informativo abaixo da linha lembra-o do caminho.
 - **Chave de: ambiente** - a chave está configurada via a
@@ -167,21 +167,22 @@ A secção de Voz oculta-se quando nenhum lado da Web Speech API
 
 ## Aparência
 
-O seletor de **Tema** em *Geral > Aparência* oferece seis
-temas mais um modo automático:
+O seletor de **Tema** em *Geral > Aparência* organiza os temas em
+dois separadores:
 
-- **Claro** - o padrão, brilhante e de alto contraste.
-- **Escuro** - superfícies atenuadas para uso com pouca luz.
-- **Oceano** - tons de azul profundo, calmo e suave para os
-  olhos à noite.
-- **Floresta** - tons terrosos quentes de verde e âmbar.
-- **Alto Contraste** - acessibilidade em primeiro lugar: preto,
-  branco e cores de sinal a negrito, com arestas de cartão
-  nítidas. Use este se precisar de máxima legibilidade.
-- **Sépia** - tons de papel quentes, confortáveis para leitura
-  prolongada.
-- **Auto (Sistema)** - segue a configuração claro/escuro do seu
-  sistema operativo e muda automaticamente quando o sistema o faz.
+- **Recomendados** - Catppuccin Latte, Supabase e Graphite (claros),
+  Catppuccin Mocha, **Soft Pop** e Amethyst Haze (escuros). Os novos
+  utilizadores começam com **Soft Pop**, e o seletor abre neste
+  separador.
+- **Clássicos** - os temas originais: Claro, Escuro, Oceano,
+  Floresta, Alto contraste (preto, branco e cores de sinal fortes,
+  com arestas de cartão nítidas, para máxima legibilidade) e Sépia
+  (tons de papel quentes para leitura prolongada). Se o seu tema
+  ativo for um clássico, o seletor abre neste separador.
+
+Ambos os separadores oferecem ainda **Automático (sistema)**, que
+segue a configuração claro/escuro do seu sistema operativo e muda
+automaticamente com ele.
 
 Escolha um tema a partir do seu cartão de pré-visualização; a
 alteração aplica-se instantaneamente sem recarregamento, e a

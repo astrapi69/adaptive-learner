@@ -134,3 +134,67 @@ describe("MatchingResolution: accessibility", () => {
         expect(status).toHaveTextContent("3");
     });
 });
+
+describe("MatchingResolution #3174: long words + content language", () => {
+    const WRAP_CLASSES = ["hyphens-auto", "[overflow-wrap:anywhere]"];
+
+    it("two-column tile labels carry hyphenation + the overflow-wrap fallback", () => {
+        renderResolution("slide");
+        expect(screen.getByText("Bonjour")).toHaveClass(...WRAP_CLASSES);
+        expect(screen.getByText("Hello")).toHaveClass(...WRAP_CLASSES);
+    });
+
+    it("stack rows carry the wrap classes on both sides", () => {
+        renderResolution("stack");
+        expect(screen.getByText("Merci")).toHaveClass(...WRAP_CLASSES);
+        expect(screen.getByText("Thank you")).toHaveClass(...WRAP_CLASSES);
+    });
+
+    it("leftLang / rightLang land on the two column lists", () => {
+        render(
+            <MatchingResolution
+                pairs={PAIRS}
+                effect="slide"
+                reduceMotion
+                correctCount={2}
+                totalCount={3}
+                leftLabel="Term"
+                rightLabel="Translation"
+                leftLang="fr"
+                rightLang="en"
+            />,
+        );
+        expect(screen.getByRole("list", {name: "Term"})).toHaveAttribute(
+            "lang",
+            "fr",
+        );
+        expect(
+            screen.getByRole("list", {name: "Translation"}),
+        ).toHaveAttribute("lang", "en");
+    });
+
+    it("leftLang / rightLang land on each side of a stack row", () => {
+        render(
+            <MatchingResolution
+                pairs={PAIRS}
+                effect="stack"
+                reduceMotion
+                correctCount={2}
+                totalCount={3}
+                leftLabel="Term"
+                rightLabel="Translation"
+                leftLang="fr"
+                rightLang="en"
+            />,
+        );
+        expect(screen.getByText("Bonjour")).toHaveAttribute("lang", "fr");
+        expect(screen.getByText("Hello")).toHaveAttribute("lang", "en");
+    });
+
+    it("without languages the lists carry no lang attribute", () => {
+        renderResolution("slide");
+        expect(screen.getByRole("list", {name: "Term"})).not.toHaveAttribute(
+            "lang",
+        );
+    });
+});

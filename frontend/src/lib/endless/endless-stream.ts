@@ -20,19 +20,11 @@
  * pool.
  */
 
+import {isPlayableExerciseStep} from "../lesson/lesson-step-state";
 import type {
     ContentLesson,
     ContentLessonStep,
 } from "../../storage/types";
-
-/** The five exercise types the player can render (mirrors the dispatcher). */
-const SUPPORTED_TYPES = new Set([
-    "matching",
-    "picture_choice",
-    "free_text",
-    "word_tiles",
-    "cloze",
-]);
 
 /** One source lesson feeding the endless pool. */
 export interface EndlessSourceLesson {
@@ -70,18 +62,16 @@ export interface EndlessPlan {
 }
 
 /**
- * Collect a lesson's supported exercise steps, re-keyed for uniqueness and
+ * Collect a lesson's playable exercise steps, re-keyed for uniqueness and
  * source-tagged so the SRS recorder addresses the right lesson. The
- * exercise id is preserved (the attempt is recorded under it).
+ * exercise id is preserved (the attempt is recorded under it). "Playable"
+ * is the shell's one definition (``isPlayableExerciseStep``: core types
+ * plus the adopted ``ext:al-*`` extensions, EXP-052 slice 2).
  */
 function poolFromLesson(source: EndlessSourceLesson): ContentLessonStep[] {
     const out: ContentLessonStep[] = [];
     for (const step of source.lesson.steps) {
-        if (
-            step.type !== "exercise" ||
-            step.exercise == null ||
-            !SUPPORTED_TYPES.has(step.exercise.type)
-        ) {
+        if (!isPlayableExerciseStep(step) || step.exercise == null) {
             continue;
         }
         out.push({
@@ -150,6 +140,10 @@ export function buildEndlessPlan(input: BuildEndlessPlanInput): EndlessPlan {
  * @param index - 0-based position in the session.
  * @param lastStepId - The previously shown step id (repeat avoidance).
  * @param rng - Injectable RNG in ``[0, 1)``; defaults to ``Math.random``.
+ *     In visual runs ``useEndlessLesson`` passes one
+ *     ``pinnedRandom("endless-repeat")`` generator per plan, so the
+ *     repetitions depend on no other draw on the page (#3214); in production
+ *     that is ``undefined`` and the default applies per call.
  */
 export function endlessStepAt(
     plan: EndlessPlan,

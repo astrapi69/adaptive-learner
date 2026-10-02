@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 
-import {isParsonsCorrect} from "./parsons-correctness";
+import {diagnoseParsonsLines, isParsonsCorrect} from "./parsons-correctness";
 
 const LINES = [
     {code: "def greet(name):", indent: 0},
@@ -28,5 +28,26 @@ describe("isParsonsCorrect (#3110)", () => {
 
     it("rejects mismatched placed/indents lengths", () => {
         expect(isParsonsCorrect([0, 1, 2], [0, 1], LINES)).toBe(false);
+    });
+});
+
+describe("diagnoseParsonsLines (#3218)", () => {
+    it.each([
+        ["all correct", [0, 1, 2], [0, 1, 2], ["correct", "correct", "correct"]],
+        ["right order, flat indents", [0, 1, 2], [0, 0, 0], ["correct", "wrong_indent", "wrong_indent"]],
+        ["two lines swapped", [0, 2, 1], [0, 2, 1], ["correct", "wrong_position", "wrong_position"]],
+        ["position wins over indent", [1, 0, 2], [0, 0, 2], ["wrong_position", "wrong_position", "correct"]],
+    ])("%s", (_name, placed, indents, expected) => {
+        const diagnosis = diagnoseParsonsLines(placed, indents, LINES);
+        expect(diagnosis.map((line) => line.status)).toEqual(expected);
+    });
+
+    it("carries the code, the chosen and the expected indent per slot", () => {
+        expect(diagnoseParsonsLines([0, 1, 2], [0, 0, 2], LINES)[1]).toEqual({
+            code: "if name:",
+            indent: 0,
+            expectedIndent: 1,
+            status: "wrong_indent",
+        });
     });
 });

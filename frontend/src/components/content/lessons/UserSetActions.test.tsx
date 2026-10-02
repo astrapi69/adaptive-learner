@@ -12,6 +12,7 @@ import {describe, expect, it, vi} from "vitest";
 
 import UserSetActions from "./UserSetActions";
 import type {ContentSetEntry} from "../../../storage/types";
+import { DexieFeatureWrapper } from "../../../features/testFeatureProvider";
 
 function entry(over: Partial<ContentSetEntry> = {}): ContentSetEntry {
     return {
@@ -48,8 +49,7 @@ function renderActions(over: Partial<React.ComponentProps<typeof UserSetActions>
             onShare={vi.fn()}
             onDelete={vi.fn()}
             {...over}
-        />,
-    );
+        />, { wrapper: DexieFeatureWrapper });
 }
 
 describe("UserSetActions - set-level Edit visibility (#2210)", () => {

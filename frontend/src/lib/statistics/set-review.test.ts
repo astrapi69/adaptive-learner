@@ -60,6 +60,7 @@ describe("buildSetReview", () => {
     expect(review.totalErrors).toBe(5);
     expect(review.elementsTracked).toBe(2);
     expect(review.elementsMastered).toBe(1);
+    expect(review.elementsOpen).toBe(1);
     expect(review.masteredShare).toBe(50);
     expect(review.timeSpentSeconds).toBe(180);
     expect(review.lessonsCompleted).toBe(2);
@@ -137,5 +138,64 @@ describe("buildSetReview", () => {
     expect(review.totalErrors).toBe(0);
     expect(review.weakAreas).toEqual([]);
     expect(review.hasData).toBe(true);
+  });
+});
+
+describe("buildSetReview: mastered and open follow the errors, not the SRS flag alone (#3166)", () => {
+  /**
+   * Twelve played elements, three answered wrong once, nothing mastered yet -
+   * the rows ``recordBulk`` leaves behind after a FIRST run (one row per
+   * attempt, ``error_count`` 0 for a correct one). The old figures read this
+   * as "0 % mastered, 12 open" although the learner scored 9 of 12.
+   */
+  function firstRun(): ElementError[] {
+    return Array.from({length: 12}, (_, i) =>
+      err({id: `e${i}`, element_key: `k${i}`, error_count: i < 3 ? 1 : 0}),
+    );
+  }
+
+  it("counts an element as open only while it has an error and is not mastered", () => {
+    const review = buildSetReview({setId: "s1", errors: firstRun(), progress: []});
+    expect(review.elementsTracked).toBe(12);
+    expect(review.totalErrors).toBe(3);
+    expect(review.elementsOpen).toBe(3);
+    expect(review.elementsMastered).toBe(9);
+    expect(review.masteredShare).toBe(75);
+  });
+
+  it("closes an open element once the SRS marks it mastered", () => {
+    const rows = firstRun();
+    rows[0] = err({...rows[0], mastered: true, correct_streak: 3});
+    const review = buildSetReview({setId: "s1", errors: rows, progress: []});
+    expect(review.elementsOpen).toBe(2);
+    expect(review.elementsMastered).toBe(10);
+    expect(review.masteredShare).toBe(83);
+  });
+
+  it("reports zero open and a zero share when nothing was recorded", () => {
+    const review = buildSetReview({setId: "s1", errors: [], progress: []});
+    expect(review.elementsTracked).toBe(0);
+    expect(review.elementsOpen).toBe(0);
+    expect(review.elementsMastered).toBe(0);
+    expect(review.masteredShare).toBe(0);
+  });
+
+  it.each([
+    ["every element wrong, none mastered", {wrong: 12, masteredOfWrong: 0}, {open: 12, share: 0}],
+    ["every element right", {wrong: 0, masteredOfWrong: 0}, {open: 0, share: 100}],
+    ["every wrong element mastered since", {wrong: 3, masteredOfWrong: 3}, {open: 0, share: 100}],
+  ])("partitions the tracked elements into open + mastered with %s", (_name, shape, expected) => {
+    const rows = Array.from({length: 12}, (_, i) =>
+      err({
+        id: `e${i}`,
+        element_key: `k${i}`,
+        error_count: i < shape.wrong ? 2 : 0,
+        mastered: i < shape.masteredOfWrong,
+      }),
+    );
+    const review = buildSetReview({setId: "s1", errors: rows, progress: []});
+    expect(review.elementsOpen).toBe(expected.open);
+    expect(review.masteredShare).toBe(expected.share);
+    expect(review.elementsOpen + review.elementsMastered).toBe(review.elementsTracked);
   });
 });

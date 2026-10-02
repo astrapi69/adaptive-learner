@@ -19,14 +19,17 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {readLearnerState} from "../../../lib/learning/learnerState";
+import {isPlayableExerciseStep} from "../../../lib/lesson/lesson-step-state";
 import {
     buildEndlessPlan,
     endlessStepAt,
     type EndlessPlan,
     type EndlessSourceLesson,
 } from "../../../lib/endless/endless-stream";
+import {pinnedRandom} from "../../../lib/random";
+import {loadReviewQueue} from "../../../lib/review/review-queue";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
-import {stampHintUsage} from "../../../lib/hints/hint-usage";
+import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
 import {getStorage} from "../../../storage";
 import type {
     ContentLessonCard,
@@ -96,7 +99,7 @@ function exerciseIdOf(step: ContentLessonStep | null): string | null {
 export function useEndlessLesson(
     opts: UseEndlessLessonOptions,
 ): UseEndlessLessonResult {
-    const {setId, title} = opts;
+    const {setId} = opts;
     const [status, setStatus] = useState<EndlessLessonStatus>("loading");
     const [step, setStep] = useState<ContentLessonStep | null>(null);
     const [cards, setCards] = useState<ContentLessonCard[]>([]);
@@ -107,6 +110,10 @@ export function useEndlessLesson(
 
     // Imperative cursor state (the random phase isn't derivable in render).
     const planRef = useRef<EndlessPlan | null>(null);
+    // The repetition draws of this plan: a pinned stream in visual runs
+    // (#3214), undefined in production so endlessStepAt's Math.random default
+    // applies per call.
+    const rngRef = useRef<(() => number) | undefined>(undefined);
     const positionRef = useRef(0);
     const dueSetRef = useRef<ReadonlySet<string>>(new Set());
     const newSetRef = useRef<ReadonlySet<string>>(new Set());
@@ -124,6 +131,8 @@ export function useEndlessLesson(
         }
         let cancelled = false;
         setStatus("loading");
+        // #3196 — hint usage is per run: forget the previous run's reveals.
+        clearHintUsage();
         setError(null);
         void (async () => {
             try {
@@ -152,12 +161,9 @@ export function useEndlessLesson(
                             setId,
                             filename,
                         );
-                        if (
-                            fetched.steps.some(
-                                (s) =>
-                                    s.type === "exercise" && s.exercise != null,
-                            )
-                        ) {
+                        // EXP-052 slice 2: the shell's one "playable"
+                        // definition (core + adopted ext:al-* types).
+                        if (fetched.steps.some(isPlayableExerciseStep)) {
                             sources.push({
                                 lessonId: filename,
                                 title: fetched.title,
@@ -190,6 +196,7 @@ export function useEndlessLesson(
                 }
 
                 planRef.current = plan;
+                rngRef.current = pinnedRandom("endless-repeat");
                 positionRef.current = 0;
                 dueSetRef.current = new Set(dueExerciseIds);
                 seenSetRef.current = seenExerciseIds;
@@ -201,7 +208,7 @@ export function useEndlessLesson(
                 learnedRef.current = new Set();
                 setCards(allCards);
                 setStats(EMPTY_STATS);
-                setStep(endlessStepAt(plan, 0, null));
+                setStep(endlessStepAt(plan, 0, null, rngRef.current));
                 setStatus("ready");
             } catch (err) {
                 if (cancelled) return;
@@ -212,14 +219,28 @@ export function useEndlessLesson(
         return () => {
             cancelled = true;
         };
-    }, [setId, title, userId]);
+    }, [setId, userId]);
 
+    /**
+     * Draw the next card and show it. The draw happens here, once, and the
+     * result is handed to ``setStep`` as a value: a state updater runs twice
+     * under ``React.StrictMode`` and would consume the pinned
+     * ``"endless-repeat"`` stream twice (#3214). ``stepRef`` is advanced
+     * immediately, so two advances before a re-render still chain.
+     */
     const advance = useCallback(() => {
         const plan = planRef.current;
         if (!plan) return;
-        const next = positionRef.current + 1;
-        positionRef.current = next;
-        setStep((prev) => endlessStepAt(plan, next, prev?.id ?? null));
+        const position = positionRef.current + 1;
+        positionRef.current = position;
+        const nextStep = endlessStepAt(
+            plan,
+            position,
+            stepRef.current?.id ?? null,
+            rngRef.current,
+        );
+        stepRef.current = nextStep;
+        setStep(nextStep);
     }, []);
 
     const recordStepAttempts = useCallback(
@@ -262,7 +283,7 @@ async function loadSrsState(
     const dueExerciseIds: string[] = [];
     const dueSeen = new Set<string>();
     try {
-        const queue = await storage.elementErrors.reviewQueue(userId, {setId});
+        const queue = await loadReviewQueue(userId, {setId});
         for (const item of queue) {
             if (!dueSeen.has(item.exercise_id)) {
                 dueSeen.add(item.exercise_id);

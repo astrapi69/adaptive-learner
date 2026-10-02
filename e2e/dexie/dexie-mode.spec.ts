@@ -233,6 +233,32 @@ const ROUTES: RouteCase[] = [
         ],
     },
     {
+        name: "ShuffleLesson (#1014 on the LessonRunner shell, EXP-052 slice 2)",
+        path: "/shuffle-lesson/language-fr-a1",
+        // First-visit GH-Pages users have not downloaded the set, so the
+        // shell's not-cached screen is the expected surface; -loading
+        // covers the async listSets gap, -empty a cached set with fewer
+        // than two exercise lessons, -page a cached, playable set.
+        expectedTestIds: [
+            "shuffle-loading",
+            "shuffle-not-cached",
+            "shuffle-empty",
+            "shuffle-page",
+        ],
+    },
+    {
+        name: "EndlessLesson (#1015 on the LessonRunner shell, EXP-052 slice 2)",
+        path: "/endless-lesson/language-fr-a1",
+        // Same shapes as Shuffle: the stream needs the set cached; an
+        // uncached set shows the friendly not-cached screen, never a crash.
+        expectedTestIds: [
+            "endless-loading",
+            "endless-not-cached",
+            "endless-empty",
+            "endless-page",
+        ],
+    },
+    {
         name: "AdaptiveLesson (Phase 53G adaptive session, empty errors path)",
         path: "/adaptive-lesson/language-fr-a1",
         // First-visit GH-Pages users have no ElementError

@@ -17,7 +17,8 @@ import {
     coreConversionTargets,
     extensionConversionTargets,
 } from "./exercise-convert";
-import {normalizeExerciseEdit, validateExerciseEdit} from "./exercise-edit";
+import {normalizeExerciseEdit} from "./exercise-edit";
+import {checkExerciseDraft} from "../../content/lesson/edit/exercise-draft-check";
 import {validateExtensionExercise} from "./extension-edit";
 import {elementKeysOf} from "../../srs/element-keys";
 import type {ContentLessonExercise} from "../../../storage/types";
@@ -346,8 +347,8 @@ describe("convertExercise — free_text -> multiple_choice (Stage 3 completion)"
 
     it("leaves an incomplete draft (Save-blocked) when there are no distractors", () => {
         const out = convertExercise(freeText(), "multiple_choice");
-        // The empty second option keeps the multiple-choice validator failing.
-        expect(validateExerciseEdit(out).valid).toBe(false);
+        // The empty second option keeps the draft check failing.
+        expect(checkExerciseDraft(out, []).valid).toBe(false);
     });
 
     it("is valid once a distractor seeds a second option", () => {
@@ -355,7 +356,7 @@ describe("convertExercise — free_text -> multiple_choice (Stage 3 completion)"
             freeText({distractors: ["bitte"]}),
             "multiple_choice",
         );
-        expect(validateExerciseEdit(out).valid).toBe(true);
+        expect(checkExerciseDraft(out, []).valid).toBe(true);
     });
 
     it("preserves the element key (the one correct option = accept[0])", () => {
@@ -381,7 +382,7 @@ describe("convertExercise — free_text -> cloze (Stage 3 completion)", () => {
     it("is a valid starter cloze and preserves the element key", () => {
         const src = freeText();
         const out = convertExercise(src, "cloze");
-        expect(validateExerciseEdit(out).valid).toBe(true);
+        expect(checkExerciseDraft(out, []).valid).toBe(true);
         expect(conversionPreservesElementKeys(src, out)).toBe(true);
     });
 });

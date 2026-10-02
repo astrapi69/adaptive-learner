@@ -70,10 +70,40 @@ already applied in `helpers.ts`:
   `settleForScreenshot`, and per-view/per-surface seeding (`gotoView`,
   `gotoSurface`) that reuses the onboarding + lesson-playthrough patterns
   from the dexie smoke specs.
+- `frontend/src/test-utils/visual-pins.ts` (not in this directory) - the
+  pinned values (`FIXED_NOW_ISO`, `VISUAL_RANDOM_PIN`) and the init
+  scripts that install them, free of Playwright so the frontend Vitest
+  suite can test the real values. It lives under `frontend/` because the
+  production image builds the frontend from that directory alone
+  (#3239); `helpers.ts` imports it from there.
 - `screenshots/` — committed baseline PNGs. `*.png` is `binary` in
   `.gitattributes`.
 - `../playwright.visual.config.ts` — dexie preview build, no backend,
   `maxDiffPixelRatio: 0.01`, `threshold: 0.2`, animations disabled.
+
+### Randomness pinning (#3214)
+
+`pinRandomStreams` gives each random consumer its own seeded stream
+(Shuffle order, Endless repetitions) and derives the Matching and
+word-tiles mount salt from `FIXED_NOW_ISO` instead of the page clock, so
+no draw elsewhere on the page can move a baseline. The legacy
+`pinRandomness` (one shared `Math.random` stream on the app's own
+`mulberry32`) stays only for the three motifs captured with it:
+lesson-reading-comprehension-checked, lesson-graded-quiz-checked and
+content-my-lessons. `gotoView`, `gotoSurface`, the set runners and the
+FeatureShot loop fail closed when a page lacks the pin, so a forgotten
+`pinRandomStreams` fails the test instead of capturing random orders.
+
+### Masks for content that ticks (#3215)
+
+`SURFACE_MASKS` in `helpers.ts` lists, per surface, the testids the
+comparison paints over (Playwright `mask`), today only the Endless stat
+clock: a `setInterval` counter `freezeClock` does not stop, so its digits
+depend on the seconds between ready and capture. A mask is for content
+that moves between two renders of the same pinned state and cannot be
+pinned, and for nothing else; everything around it stays compared. Leaving
+such a change to the diff tolerance is not an option, because the same
+tolerance swallows a real change of the same size (#3023).
 
 ## Generating / updating the baseline (maintainer)
 

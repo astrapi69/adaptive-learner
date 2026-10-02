@@ -145,13 +145,9 @@ export function BackupAutoBackups({
                                 ),
                             );
                         } catch (err) {
-                            const detail =
-                                err instanceof Error ? err.message : String(err);
                             notify.error(
-                                t(
-                                    "backup.auto_run_error",
-                                    "Auto-backup failed: {{detail}}",
-                                ).replace("{{detail}}", detail),
+                                t("backup.auto_run_failed", "Auto-backup failed."),
+                                {error: err},
                             );
                         } finally {
                             setAutoBusy(null);
@@ -221,15 +217,12 @@ export function BackupAutoBackups({
                                             ),
                                         );
                                     } catch (err) {
-                                        const detail =
-                                            err instanceof Error
-                                                ? err.message
-                                                : String(err);
                                         notify.error(
                                             t(
-                                                "backup.auto_restore_error",
-                                                "Restore failed: {{detail}}",
-                                            ).replace("{{detail}}", detail),
+                                                "backup.auto_restore_failed",
+                                                "Restore failed.",
+                                            ),
+                                            {error: err},
                                         );
                                     } finally {
                                         setAutoBusy(null);
@@ -253,6 +246,15 @@ export function BackupAutoBackups({
                                         await deleteAutoBackup(entry.id);
                                         setAutoBackups(
                                             await listAutoBackups(userId),
+                                        );
+                                    } catch (err) {
+                                        console.error("[auto-backup] delete failed", err);
+                                        notify.error(
+                                            t(
+                                                "backup.auto_delete_error",
+                                                "Could not delete the automatic backup.",
+                                            ),
+                                            {error: err},
                                         );
                                     } finally {
                                         setAutoBusy(null);

@@ -7,12 +7,11 @@
  * back from MatchingExercise, so there is no cycle.
  */
 
-import {ArrowRight, Check, HelpCircle, Sparkles, X} from "lucide-react";
+import {ArrowRight, Check, HelpCircle, X} from "lucide-react";
 import type {CSSProperties, ReactNode} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import {cn} from "@/lib/utils";
-import {Button} from "@/components/ui/button";
 import ReadAloudButton from "../../../lesson/tts/ReadAloudButton";
 import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
 import {
@@ -20,6 +19,7 @@ import {
     resolveConcreteDirection,
 } from "../../../../lib/exercises/direction";
 import {isKnowledgeDomain} from "../../../../lib/exercises/knowledge-domain";
+import {LONG_WORD_WRAP} from "../../../../lib/exercises/long-word-wrap";
 import type {ContentLessonExercise} from "../../../../storage/types";
 import AnswerCelebration from "../../feedback/AnswerCelebration";
 import ExerciseFooter from "../../shell/ExerciseFooter";
@@ -205,6 +205,26 @@ export function computeMatchingLabels(
     return {direction, productive, isKnowledge, leftLabel, rightLabel, instruction};
 }
 
+/** #3174 - BCP-47 code of the CONTENT language of each tile column, for
+ *  the ``lang`` attribute that CSS hyphenation (``hyphens: auto``) reads.
+ *  ``<html lang>`` follows the UI language, which is the wrong dictionary
+ *  for a German set played in an English UI. A productive drill shows the
+ *  source language on the left, so the languages flip with the columns.
+ *  ``undefined`` (not ``null``) for an unknown side, so React omits the
+ *  attribute and the tile inherits the document language. Pure. */
+export function matchingColumnLangs(opts: {
+    productive: boolean;
+    targetLanguage: string | null;
+    sourceLanguage: string | null;
+}): {left: string | undefined; right: string | undefined} {
+    const {productive, targetLanguage, sourceLanguage} = opts;
+    const target = targetLanguage ?? undefined;
+    const source = sourceLanguage ?? undefined;
+    return productive
+        ? {left: source, right: target}
+        : {left: target, right: source};
+}
+
 interface LeftTileViewState {
     isSelected: boolean;
     isPaired: boolean;
@@ -216,6 +236,9 @@ interface LeftTileViewState {
     correctPartner: string | undefined;
     chosenPartner: string | undefined;
     pairStyle: CSSProperties | undefined;
+    /** #3186 - whether a wrong pair also spells out its correct partner
+     *  (the Corrections view). False in the plain My-answers view. */
+    showCorrection: boolean;
 }
 
 interface LeftTileContext {
@@ -225,6 +248,9 @@ interface LeftTileContext {
     slotByLeft: ReadonlyMap<number, number>;
     pairs: MatchingPairs;
     productive: boolean;
+    /** #3186 - see {@link LeftTileViewState.showCorrection}. Absent = true,
+     *  the pre-#3186 behaviour. */
+    showCorrection?: boolean;
 }
 
 /** Derived render state for one left tile (selection / pairing / grading
@@ -233,7 +259,15 @@ export function computeLeftTileState(
     tile: LeftTile,
     ctx: LeftTileContext,
 ): LeftTileViewState {
-    const {selectedLeft, matches, submitted, slotByLeft, pairs, productive} = ctx;
+    const {
+        selectedLeft,
+        matches,
+        submitted,
+        slotByLeft,
+        pairs,
+        productive,
+        showCorrection = true,
+    } = ctx;
     const isPaired = matches.has(tile.index);
     const chosenRight = matches.get(tile.index);
     // Correct by VALUE, not index — duplicate right-column values are
@@ -276,6 +310,7 @@ export function computeLeftTileState(
         correctPartner,
         chosenPartner,
         pairStyle,
+        showCorrection,
     };
 }
 
@@ -291,7 +326,8 @@ function MatchingTileFeedback({
     state: LeftTileViewState;
 }) {
     const {t} = useI18n();
-    const {isWrong, isCorrect, chosenPartner, correctPartner} = state;
+    const {isWrong, isCorrect, chosenPartner, correctPartner, showCorrection} =
+        state;
     return (
         <>
             {isWrong && (
@@ -301,7 +337,10 @@ function MatchingTileFeedback({
                 >
                     {chosenPartner && (
                         <p
-                            className="m-0 flex items-center gap-1.5 rounded-sm border-l-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] px-2 py-1 text-[0.8125rem] text-[var(--matching-error-fg)]"
+                            className={cn(
+                                "m-0 flex min-w-0 items-center gap-1.5 rounded-sm border-l-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] px-2 py-1 text-[0.8125rem] text-[var(--matching-error-fg)]",
+                                LONG_WORD_WRAP,
+                            )}
                             data-testid={`matching-your-answer-${tile.index}`}
                         >
                             <X
@@ -315,9 +354,12 @@ function MatchingTileFeedback({
                             ).replace("{label}", chosenPartner)}
                         </p>
                     )}
-                    {correctPartner && (
+                    {showCorrection && correctPartner && (
                         <p
-                            className="m-0 flex items-center gap-1.5 rounded-sm border-l-2 border-dashed border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] px-2 py-1 text-[0.8125rem] font-semibold text-[var(--matching-correct-fg)]"
+                            className={cn(
+                                "m-0 flex min-w-0 items-center gap-1.5 rounded-sm border-l-2 border-dashed border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] px-2 py-1 text-[0.8125rem] font-semibold text-[var(--matching-correct-fg)]",
+                                LONG_WORD_WRAP,
+                            )}
                             data-testid={`matching-correct-hint-${tile.index}`}
                         >
                             <Check
@@ -412,7 +454,7 @@ export function MatchingLeftTile({
                 {isPaired && slot !== undefined && (
                     <PairBadge slot={slot} tone={badgeTone} />
                 )}
-                <span className="min-w-0 flex-1">
+                <span className={cn("min-w-0 flex-1", LONG_WORD_WRAP)}>
                     <InlineMarkdown>{tile.label}</InlineMarkdown>
                 </span>
                 {isCorrect && <Check size={14} aria-hidden="true" />}
@@ -566,7 +608,7 @@ export function MatchingRightTile({
                 {isPaired && slot !== undefined && (
                     <PairBadge slot={slot} tone={badgeTone} />
                 )}
-                <span className="min-w-0 flex-1">
+                <span className={cn("min-w-0 flex-1", LONG_WORD_WRAP)}>
                     <InlineMarkdown>{tile.label}</InlineMarkdown>
                 </span>
                 {isCorrect && <Check size={14} aria-hidden="true" />}
@@ -576,65 +618,7 @@ export function MatchingRightTile({
     );
 }
 
-/** #977 — after checking, the learner toggles between their own graded
- *  answers and the revealed solution. The active view is a ``default``
- *  (filled) button carrying a Check; the inactive view is an ``outline``
- *  button. ``aria-pressed`` conveys the active state to assistive tech.
- *  Shown only after submit (the caller gates it). ``testidPrefix``
- *  (#2772) lets sibling exercise types (categorization) reuse the toggle
- *  under their own testid namespace; matching keeps its defaults. */
-export function MatchingViewToggle({
-    view,
-    onShowUserAnswers,
-    onShowSolution,
-    myAnswersLabel,
-    solveLabel,
-    testidPrefix = "matching",
-}: {
-    view: "user-answers" | "solution";
-    onShowUserAnswers: () => void;
-    onShowSolution: () => void;
-    myAnswersLabel: string;
-    solveLabel: string;
-    testidPrefix?: string;
-}) {
-    const userActive = view === "user-answers";
-    const solutionActive = view === "solution";
-    return (
-        <div
-            className="flex flex-wrap gap-2"
-            role="group"
-            data-testid={`${testidPrefix}-view-toggle`}
-        >
-            <Button
-                type="button"
-                variant={userActive ? "default" : "outline"}
-                size="sm"
-                aria-pressed={userActive}
-                onClick={onShowUserAnswers}
-                data-testid={`${testidPrefix}-my-answers`}
-            >
-                {userActive && <Check size={14} aria-hidden="true" />}
-                {myAnswersLabel}
-            </Button>
-            <Button
-                type="button"
-                variant={solutionActive ? "default" : "outline"}
-                size="sm"
-                aria-pressed={solutionActive}
-                onClick={onShowSolution}
-                data-testid={`${testidPrefix}-resolve`}
-            >
-                {solutionActive ? (
-                    <Check size={14} aria-hidden="true" />
-                ) : (
-                    <Sparkles size={14} aria-hidden="true" />
-                )}
-                {solveLabel}
-            </Button>
-        </div>
-    );
-}
+export {MatchingViewToggle, type MatchingPostCheckView} from "./MatchingViewToggle";
 
 /** The score line + celebration + the shared exercise footer (check /
  *  retry). The #977 view toggle lives in its own row above the views. */

@@ -16,7 +16,7 @@
  * app-facing shapes (the NON-language Set, the picker options) from it.
  */
 
-import { ENGINE_KNOWN_CONTENT_DOMAINS } from "./engine";
+import { ENGINE_KNOWN_CONTENT_DOMAINS, ENGINE_LEVEL_NONE } from "./engine";
 
 /** The implicit domain for a language pair — carries no ``domain`` field on
  *  the built lesson (it is the schema default). */
@@ -39,9 +39,17 @@ export const DOMAIN_OPTIONS: readonly string[] = [
 ];
 
 // Radix Select forbids a literal empty-string item value, so the explicit
-// "no level" choice uses this sentinel and maps back to "" in the handler —
-// keeping a genuinely level-less knowledge lesson expressible.
+// "no level" choice uses this sentinel and maps back to "" in the handler -
+// keeping a genuinely level-less knowledge lesson expressible. A manifest
+// writer turns that "" into the engine's "none" via normalizeLevel (#3385).
 export const LEVEL_NONE = "__none__";
+
+/** A stored level as the manifest schema expects it: a missing or empty
+ *  level (written before #3385) becomes the engine's ``"none"``. */
+export function normalizeLevel(level: string | null | undefined): string {
+  const value = (level ?? "").trim();
+  return value === "" ? ENGINE_LEVEL_NONE : value;
+}
 
 /** True when ``domain`` names a known NON-language content domain
  *  (case-insensitive). ``"language"``, empty, and unknown values are false. */

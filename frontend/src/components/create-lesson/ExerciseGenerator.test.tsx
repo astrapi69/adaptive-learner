@@ -16,6 +16,7 @@ import {describe, expect, it, vi} from "vitest";
 import ExerciseGenerator, {
     EXERCISE_COUNT_MAX,
     EXERCISE_COUNT_MIN,
+    hasIncompleteExercise,
 } from "./ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
@@ -60,6 +61,7 @@ function Harness({
     return (
         <ExerciseGenerator
             exercises={exercises}
+            cardIds={[]}
             config={config}
             onConfigChange={setConfig}
             onGenerate={() => onGenerateCount?.(config.count)}
@@ -86,6 +88,7 @@ function ListHarness({
     return (
         <ExerciseGenerator
             exercises={exercises}
+            cardIds={[]}
             config={DEFAULT_EXERCISE_GEN_CONFIG}
             onConfigChange={vi.fn()}
             onGenerate={vi.fn()}
@@ -171,6 +174,7 @@ function renderWith(
     render(
         <ExerciseGenerator
             exercises={exercises}
+            cardIds={[]}
             config={{...DEFAULT_EXERCISE_GEN_CONFIG, types}}
             onConfigChange={vi.fn()}
             onGenerate={vi.fn()}
@@ -362,6 +366,7 @@ describe("ExerciseGenerator — dictation core option (#1895)", () => {
             return (
                 <ExerciseGenerator
                     exercises={exercises}
+                    cardIds={[]}
                     config={DEFAULT_EXERCISE_GEN_CONFIG}
                     onConfigChange={vi.fn()}
                     onGenerate={vi.fn()}
@@ -459,6 +464,7 @@ describe("ExerciseGenerator — extension types in the picker (#2508)", () => {
             return (
                 <ExerciseGenerator
                     exercises={exercises}
+                    cardIds={[]}
                     config={DEFAULT_EXERCISE_GEN_CONFIG}
                     onConfigChange={vi.fn()}
                     onGenerate={vi.fn()}
@@ -666,5 +672,37 @@ describe("ExerciseGenerator — translated preview-row summaries (#3093)", () =>
         expect(rowText("z1")).toBe("Der ___ bellt.");
         expect(rowText("w1")).toBe("der Hund");
         expect(rowText("f1")).toBe("Übersetze: el coche rojo");
+    });
+});
+
+describe("hasIncompleteExercise", () => {
+    // #3246 - a forked set holding a multiselect cloze was stuck on step 3
+    // because the advance gate called the editor check, which ignored
+    // cloze_mode and demanded ___ markers.
+    it("does not count an untouched multiselect cloze as incomplete", () => {
+        const multiselect = {
+            id: "ex-ms-vok",
+            type: "cloze",
+            cloze_mode: "multiselect",
+            prompt: "Wähle alle fünf Vokal-Zeichen.",
+            sentence: "Welche dieser Zeichen sind Vokale?",
+            card_ids: [],
+            accept: ["あ", "い", "う", "え", "お"],
+            distractors: ["か", "さ", "な"],
+        } as ContentLessonExercise;
+        expect(hasIncompleteExercise([multiselect], [])).toBe(false);
+    });
+    it("counts a multiselect cloze without correct options as incomplete", () => {
+        const broken = {
+            id: "ex-ms",
+            type: "cloze",
+            cloze_mode: "multiselect",
+            prompt: "p",
+            sentence: "q?",
+            card_ids: [],
+            accept: [],
+            distractors: ["x"],
+        } as ContentLessonExercise;
+        expect(hasIncompleteExercise([broken], [])).toBe(true);
     });
 });

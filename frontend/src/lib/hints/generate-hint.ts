@@ -1,19 +1,29 @@
 /**
- * hints/generate-hint — derive staged, auto-generated hints from an
- * exercise's correct answer, with no manual authoring (#590).
+ * hints/generate-hint — derive staged hints for an exercise (#590).
  *
- * Returns up to two ordered hints per exercise: a light level-1 hint
- * (category / length) and a stronger level-2 hint (first letters / a
- * revealed pair). The hints are returned as STRUCTURED data
- * ({@link HintKind}) — i18n-free and fully unit-testable — and the UI
- * formats them with {@link formatHint}. Returns ``[]`` when no answer
- * can be derived (the HintButton then hides).
+ * Two sources, one ordered list: the author's own ``exercise.hint`` (when
+ * the content carries one) comes FIRST, then the auto-generated stages
+ * derived from the correct answer - a light level-1 hint (category /
+ * length) and a stronger level-2 hint (first letters / a revealed pair).
+ * The hints are returned as STRUCTURED data ({@link HintKind}) — i18n-free
+ * and fully unit-testable — and the UI formats them with
+ * {@link formatHint}. Returns ``[]`` when nothing can be offered (the
+ * HintButton then hides).
+ *
+ * The authored stage is the #3168 merge: the per-renderer "Need a hint?"
+ * links that used to show ``exercise.hint`` for free (bypassing the hint
+ * economy, #594) are gone, so the XP button is the only hint surface and
+ * the authored text is its first paid reveal. It is offered exactly where
+ * those links used to live (cloze, free-text, word-tiles, audio-tiles);
+ * matching stays hint-free by design (#2443).
  */
 
+import {AUDIO_TILES_EXT_TYPE} from "../exercises/payload/audio-tiles";
 import type {ContentLessonExercise} from "../../storage/types";
 
 /** A structured hint, formatted into display text by {@link formatHint}. */
 export type HintKind =
+    | {kind: "authored"; text: string}
     | {kind: "length"; n: number}
     | {kind: "first_letters"; prefix: string; n: number}
     | {kind: "not"; label: string}
@@ -74,6 +84,15 @@ function pictureChoiceHints(exercise: ContentLessonExercise): ExerciseHint[] {
     return hints;
 }
 
+/** The author's own ``exercise.hint`` as a level-1 stage; none when the
+ *  content carries no (non-blank) hint. Shown verbatim by
+ *  {@link formatHint}. */
+function authoredHint(exercise: ContentLessonExercise): ExerciseHint[] {
+    const text = exercise.hint?.trim() ?? "";
+    if (text === "") return [];
+    return [{level: 1, data: {kind: "authored", text}}];
+}
+
 /** Word-tiles hints: the first tile, then the first two. */
 function wordTilesHints(exercise: ContentLessonExercise): ExerciseHint[] {
     const tiles = (exercise.tiles ?? []).filter((tt) => tt.trim() !== "");
@@ -90,13 +109,8 @@ function wordTilesHints(exercise: ContentLessonExercise): ExerciseHint[] {
     return hints;
 }
 
-/**
- * Build the staged hints for an exercise. Up to two hints, ordered
- * light → strong. Empty when the answer can't be derived.
- */
-export function generateHints(
-    exercise: ContentLessonExercise,
-): ExerciseHint[] {
+/** Auto-generated stages only (no authored text), light → strong. */
+function generatedHints(exercise: ContentLessonExercise): ExerciseHint[] {
     switch (exercise.type) {
         case "free_text": {
             const answer = exercise.accept?.[0];
@@ -122,12 +136,35 @@ export function generateHints(
     }
 }
 
+/**
+ * Build the staged hints for an exercise: the authored ``exercise.hint``
+ * first (only for the types whose renderers offer authored hints), then
+ * the generated stages, ordered light → strong. Empty when nothing can
+ * be offered.
+ */
+export function generateHints(
+    exercise: ContentLessonExercise,
+): ExerciseHint[] {
+    const generated = generatedHints(exercise);
+    switch (exercise.type) {
+        case "free_text":
+        case "cloze":
+        case "word_tiles":
+        case AUDIO_TILES_EXT_TYPE:
+            return [...authoredHint(exercise), ...generated];
+        default:
+            return generated;
+    }
+}
+
 export type HintTranslate = (key: string, fallback?: string) => string;
 
 /** Format a structured hint into display text using the i18n resolver. */
 export function formatHint(hint: ExerciseHint, t: HintTranslate): string {
     const d = hint.data;
     switch (d.kind) {
+        case "authored":
+            return d.text;
         case "length":
             return t("hints.length", "The answer has {n} letters").replace(
                 "{n}",

@@ -4,14 +4,15 @@ name: Release — finish (merge + tag + publish)
 # AFTER `release-prepare.yml` is green and the release has been reviewed.
 #
 # It CALLS the existing Make targets — `make release-finish` (merge
-# release/<version> → main no-ff, tag, push main + tag, merge back into
-# develop, delete the release branch) and `make release-publish` (create the
-# GitHub Release from changelog/releases/v<version>.md). No release logic is
+# release/<version> → main no-ff, tag, push main + tag, open the develop
+# back-merge PR, #2182) and `make release-publish` (create the DRAFT GitHub
+# Release from changelog/releases/v<version>.md, #3159). No release logic is
 # re-implemented in YAML, so it cannot drift from the Makefile.
 #
-# Launcher binaries are NOT built here: launcher-{linux,macos,windows}.yml
-# already fire on `release: created` and attach the per-OS binaries +
-# checksums to the Release this workflow publishes.
+# The release stays a draft. release-workflow.md Step 8 dispatches
+# publish-image.yml, attaches the launcher binaries from the green main-push
+# builds (the launcher workflows have no release trigger since v2.8.0), runs
+# the completeness checkpoint, and only then publishes.
 #
 # Run this FROM the `release/<version>` branch (the same branch the prepare
 # gate validated). NOT used for v1.97.0 (finalized manually); effective from
@@ -32,12 +33,12 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-  # gh (used by `make release-publish`) authenticates via this token. Use a
-  # PAT (not GITHUB_TOKEN) so the published Release fires launcher-*.yml:
-  # GitHub deliberately does NOT fire downstream workflows from GITHUB_TOKEN
-  # events (recursion guard, #1265). Falls back to GITHUB_TOKEN when
-  # RELEASE_PAT is unset (release publishes, launcher attach then needs a
-  # manual trigger).
+  # gh (used by `make release-finish` for the back-merge PR and by `make
+  # release-publish`) authenticates via this token. Use a PAT (not
+  # GITHUB_TOKEN) so the back-merge PR runs its required checks: GitHub does
+  # NOT fire workflows from GITHUB_TOKEN events (recursion guard, #1265). The
+  # PAT needs "Pull requests: Read and write" on this repo; without it the
+  # back-merge PR fails, and release-finish now stops there (#3159).
   GH_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
   # Bound here so shell steps read it from the environment instead of
   # interpolating the dispatch input directly (avoids shell-injection).
@@ -58,9 +59,9 @@ jobs:
         # own (PAT) or need a manual trigger (GITHUB_TOKEN fallback).
         run: |
           if [ "$HAS_RELEASE_PAT" = "true" ]; then
-            echo "RELEASE_PAT is set: the main push fires deploy-gh-pages.yml and the published Release fires launcher-*.yml automatically."
+            echo "RELEASE_PAT is set: the main push fires deploy-gh-pages.yml. The release is created as a DRAFT; Step 8 of release-workflow.md publishes it."
           else
-            echo "::warning::RELEASE_PAT secret is NOT set. The release will still complete, but GitHub will not fire downstream workflows from GITHUB_TOKEN events (#1265). After this run you must MANUALLY: (1) dispatch deploy-gh-pages.yml on main, and (2) attach the launcher binaries to the Release (re-publish via PAT or upload manually)."
+            echo "::warning::RELEASE_PAT secret is NOT set. The release will still complete, but GitHub will not fire downstream workflows from GITHUB_TOKEN events (#1265). After this run you must MANUALLY: (1) dispatch deploy-gh-pages.yml on main, and (2) open the develop back-merge PR if release-finish could not."
           fi
 
       # fetch-depth 0 + a persisted PAT (not GITHUB_TOKEN) so the Make
@@ -93,13 +94,13 @@ jobs:
 
       - name: Finish release (make release-finish)
         # Merge release/<version> → main (no-ff) + tag + push main + tag +
-        # merge back into develop + delete the release branch. Verbatim target.
+        # open the develop back-merge PR. Fails if that PR does not exist
+        # afterwards (#3159), so the draft below is not created either.
         run: make release-finish VERSION="$VERSION"
 
       - name: Publish GitHub Release (make release-publish)
-        # `gh release create` from changelog/releases/v<version>.md. Creating
-        # the Release triggers the launcher-* workflows (release: created) to
-        # attach the per-OS binaries + checksums.
+        # `gh release create --draft` from changelog/releases/v<version>.md.
+        # Nothing fires on a draft; Step 8 of release-workflow.md takes over.
         run: make release-publish VERSION="$VERSION"
 
       - name: Summary
@@ -107,7 +108,7 @@ jobs:
         run: |
           echo "release-finish for v$VERSION done."
           if [ "$HAS_RELEASE_PAT" = "true" ]; then
-            echo "PAT push to main fired deploy-gh-pages.yml; the PAT-published Release fired launcher-{linux,macos,windows}.yml (binaries attach on 'release: created')."
+            echo "PAT push to main fired deploy-gh-pages.yml. The release is a DRAFT: continue with release-workflow.md Step 8 (publish-image.yml, launcher binaries, completeness checkpoint, then gh release edit --draft=false)."
           else
-            echo "::warning::Published with GITHUB_TOKEN (no RELEASE_PAT). Now MANUALLY: dispatch deploy-gh-pages.yml on main, and attach the launcher binaries to the Release."
+            echo "::warning::Ran with GITHUB_TOKEN (no RELEASE_PAT). Now MANUALLY: dispatch deploy-gh-pages.yml on main, then continue with release-workflow.md Step 8 on the DRAFT release."
           fi

@@ -12,6 +12,7 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import Arcade from "./Arcade";
 import {awardTickets, readTicketState} from "../../lib/arcade/ticket-store";
+import {setPlayfulArcade} from "../../lib/learning/playful/playfulArcadePref";
 import {setPlayfulMode} from "../../lib/learning/playful/playfulModePref";
 import {setPlayfulTickets} from "../../lib/learning/playful/playfulTicketsPref";
 
@@ -44,10 +45,26 @@ beforeEach(() => {
 });
 
 describe("Arcade gate", () => {
-    it("shows the settings notice while the game mode is off", () => {
+    it("shows the settings notice while the game mode is off, naming the game mode (#3216)", () => {
         renderArcade();
         expect(screen.getByTestId("arcade-gate-notice")).toBeInTheDocument();
         expect(screen.queryByTestId("arcade-page")).not.toBeInTheDocument();
+        expect(screen.getByTestId("arcade-gate-reason")).toHaveTextContent(
+            /game mode is off|Spielmodus ist aus/i,
+        );
+    });
+
+    it("names the arcade switch when the game mode is on but the arcade is off (#3216)", () => {
+        setPlayfulMode(true);
+        setPlayfulArcade(false);
+        renderArcade();
+        expect(screen.getByTestId("arcade-gate-notice")).toBeInTheDocument();
+        expect(screen.getByTestId("arcade-gate-reason")).toHaveTextContent(
+            /arcade switch is off|Arcade-Schalter ist aus/i,
+        );
+        expect(screen.getByTestId("arcade-gate-reason")).not.toHaveTextContent(
+            /game mode is off|Spielmodus ist aus/i,
+        );
     });
 
     // #2961 - the gate link lands on the motivation cluster of the

@@ -622,7 +622,7 @@
       },
       "Card": {
         "additionalProperties": false,
-        "description": "Semantic layer: slug-shaped ``id`` + ``tags`` (structure in the\ngenerated base).",
+        "description": "The smallest learnable unit (Phase 43 / 2B-lesson).\n\nA card carries a single term / concept / fact in a single\ndirection. SRS (Phase 46) tracks one card at a time;\nindividual exercises reference cards by id so a single\n'Bonjour = Hello' card can drive a matching exercise, a\nfree-text drill, and a summary review without\nduplication.\n\nConvention: ``card.id`` is unique within the lesson, not\nglobally. Cross-lesson card sharing happens via a\nseparate ``shared/`` directory inside the set (P-111\nterritory - not yet implemented).",
         "properties": {
           "audio": {
             "anyOf": [
@@ -799,7 +799,7 @@
       },
       "CardTokenRole": {
         "additionalProperties": false,
-        "description": "One ``token → role`` annotation on a card.\n\nPhase 52I / v1.35.0 / P-130. The cloze generator looks up\nits target blank by matching ``token`` against the\n``ElementError.element_key`` — when a role is present, the\ngenerator can pick a same-role distractor pool instead of\na position-based heuristic.\n\nThe ``token`` is a verbatim slice of the card's ``front``;\nno whitespace normalisation, so authors can annotate even\nsub-word morphemes (an accent-bearing letter, an article\ncontraction) if a future generator needs it.",
+        "description": "One ``token → role`` annotation on a card.\n\nPhase 52I / v1.35.0 / P-130. The cloze generator looks up\nits target blank by matching ``token`` against the\n``ElementError.element_key`` - when a role is present, the\ngenerator can pick a same-role distractor pool instead of\na position-based heuristic.\n\nThe ``token`` is a verbatim slice of the card's ``front``;\nno whitespace normalisation, so authors can annotate even\nsub-word morphemes (an accent-bearing letter, an article\ncontraction) if a future generator needs it.",
         "properties": {
           "role": {
             "$ref": "#/components/schemas/TokenRole"
@@ -820,7 +820,7 @@
       },
       "ClozeBlank": {
         "additionalProperties": false,
-        "description": "One blank inside a cloze exercise's ``sentence`` (Phase 52D /\nv1.35.0 / P-127).\n\nMarker-based convention: the sentence carries visible ``___``\ntokens; ``blanks[i]`` provides the metadata for the i-th\nmarker (left-to-right). The validator enforces\n``sentence.count(\"___\") == len(blanks)`` so the i↔i mapping\nis unambiguous at render time.\n\n``accept`` carries the per-blank canonical + acceptable\nvariants — the renderer reuses FreeText's ``isFreeTextCorrect``\nmatcher (NFC-normalised + Levenshtein <= 1) so authors only\nneed to enumerate semantic variants (gendered article,\ncapitalisation, et cetera), not typos.",
+        "description": "One blank inside a cloze exercise's ``sentence`` (Phase 52D /\nv1.35.0 / P-127).\n\nMarker-based convention: the sentence carries visible ``___``\ntokens; ``blanks[i]`` provides the metadata for the i-th\nmarker (left-to-right). The validator enforces\n``sentence.count(\"___\") == len(blanks)`` so the i↔i mapping\nis unambiguous at render time.\n\n``accept`` carries the per-blank canonical + acceptable\nvariants - the renderer reuses FreeText's ``isFreeTextCorrect``\nmatcher (NFC-normalised + Levenshtein <= 1) so authors only\nneed to enumerate semantic variants (gendered article,\ncapitalisation, et cetera), not typos.",
         "properties": {
           "accept": {
             "items": {
@@ -1368,7 +1368,7 @@
       },
       "Exercise": {
         "additionalProperties": false,
-        "description": "Semantic layer: slug ids + the per-type cross-field rules\n(structure in the generated base).",
+        "description": "One exercise step. Type-tagged via ``type``.\n\nThe fields are kept in a single flat shape per\n``type`` rather than per-type discriminated unions\nbecause the JSON manifests are author-edited; flat\nshapes are easier to read and to diff in PRs. The\nvalidator enforces type-specific requirements via\nmodel_validator instead.",
         "properties": {
           "accept": {
             "anyOf": [
@@ -1423,6 +1423,11 @@
             "maxItems": 50,
             "title": "Card Ids",
             "type": "array"
+          },
+          "case_sensitive": {
+            "default": false,
+            "title": "Case Sensitive",
+            "type": "boolean"
           },
           "cloze_mode": {
             "anyOf": [
@@ -1689,7 +1694,7 @@
         "type": "object"
       },
       "ExerciseType": {
-        "description": "Closed enum of exercise types the loader knows about.\n\nEXP-001 + EXP-006: the four base types ship in Phase 43-45.\nPhase 52D / v1.35.0 added CLOZE (fill-in-the-blank with\n``___`` markers) — see the schema_version bump in\n``models.py``. Adding a sixth type (ordering, drag-image-\npair, etc.) requires a minor schema_version bump and a new\nenum value plus its renderer.",
+        "description": "Closed enum of exercise types the loader knows about.\n\nEXP-001 + EXP-006: the four base types ship in Phase 43-45.\nPhase 52D / v1.35.0 added CLOZE (fill-in-the-blank with\n``___`` markers) - see the schema_version bump in\n``models.py``. Adding a sixth type (ordering, drag-image-\npair, etc.) requires a minor schema_version bump and a new\nenum value plus its renderer.",
         "enum": [
           "matching",
           "picture_choice",
@@ -2643,7 +2648,7 @@
       },
       "InlineExample": {
         "additionalProperties": false,
-        "description": "One inline worked example on a theory step or exercise (schema v1.5).\n\nAn inline example carries REAL content the learner reads in place —\na sample sentence (language lessons) or a code snippet with syntax\nhighlighting (programming lessons). This is DISTINCT from\n``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an\nexternal illustration: ``example_url`` is the LINK variant,\n``examples`` is the INLINE-CONTENT variant. The two are complementary\nand may coexist on the same theory step.\n\nWhen ``language`` is set, ``content`` is treated as source code in\nthat language and rendered as a syntax-highlighted block (the same\n``CodeBlock`` the theory Markdown + code cards use); when it is\nabsent, ``content`` is plain text. Additive + optional, so content\nwithout ``examples`` validates unchanged.",
+        "description": "One inline worked example on a theory step or exercise (schema v1.5).\n\nAn inline example carries REAL content the learner reads in place -\na sample sentence (language lessons) or a code snippet with syntax\nhighlighting (programming lessons). This is DISTINCT from\n``LessonStep.example_url`` (#139 / schema v1.4), which links OUT to an\nexternal illustration: ``example_url`` is the LINK variant,\n``examples`` is the INLINE-CONTENT variant. The two are complementary\nand may coexist on the same theory step.\n\nWhen ``language`` is set, ``content`` is treated as source code in\nthat language and rendered as a syntax-highlighted block (the same\n``CodeBlock`` the theory Markdown + code cards use); when it is\nabsent, ``content`` is plain text. Additive + optional, so content\nwithout ``examples`` validates unchanged.",
         "properties": {
           "content": {
             "maxLength": 5000,
@@ -3220,9 +3225,10 @@
       },
       "Lesson": {
         "additionalProperties": false,
-        "description": "Semantic layer: slug/BCP-47 shapes, unique card/step ids and\nreferential integrity. ``cards``/``steps`` are retargeted to the\nsemantic subclasses so nested validation runs their rules; the\nstructural constraints (steps non-empty, cards default empty) match\nthe generated base.",
+        "description": "Structure from the generated base; ``steps`` is retargeted to the\n``LessonStep`` subclass so nested validation runs its check. The\nstructural constraint (steps non-empty) matches the generated base.",
         "properties": {
           "cards": {
+            "default": [],
             "items": {
               "$ref": "#/components/schemas/Card"
             },
@@ -3289,6 +3295,11 @@
             "pattern": "^[\\p{Ll}\\p{Nd}]+(-[\\p{Ll}\\p{Nd}]+)*$",
             "title": "Id",
             "type": "string"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/Purpose",
+            "default": "practice",
+            "title": "Lesson Purpose"
           },
           "requires_extensions": {
             "anyOf": [
@@ -3744,7 +3755,7 @@
       },
       "LessonResource": {
         "additionalProperties": false,
-        "description": "One lesson-level supplementary-media entry (EXP-029 / MED-05).\n\nMirrors a ``media.yaml`` resource minus ``domain`` (inherited\nfrom the parent set). Surfaced in the \"Vertiefe das Thema\"\nsection after the lesson summary. Optional + additive, so\npre-EXP-029 lessons load unchanged. Added to the authoritative\nschema (EXP-039) so the JSON-Schema / generated TS types cover\nit — previously this shape lived only in the frontend\n``ContentLessonResource`` interface, and a lesson carrying\n``resources`` was rejected by ``extra=\"forbid\"`` here.",
+        "description": "One lesson-level supplementary-media entry (EXP-029 / MED-05).\n\nMirrors a ``media.yaml`` resource minus ``domain`` (inherited\nfrom the parent set). Surfaced in the \"Vertiefe das Thema\"\nsection after the lesson summary. Optional + additive, so\npre-EXP-029 lessons load unchanged. Added to the authoritative\nschema (EXP-039) so the JSON-Schema / generated TS types cover\nit - previously this shape lived only in the frontend\n``ContentLessonResource`` interface, and a lesson carrying\n``resources`` was rejected by ``extra=\"forbid\"`` here.",
         "properties": {
           "author": {
             "anyOf": [
@@ -3872,7 +3883,7 @@
       },
       "LessonStep": {
         "additionalProperties": false,
-        "description": "Semantic layer: theory/exercise payload rule + http(s) example_url\n+ slug id. ``exercise`` is retargeted to the semantic ``Exercise``\nsubclass so nested validation runs the cross-field rules.",
+        "description": "Structure from the generated base plus the http(s) ``example_url``\ncheck the backend keeps for rendered links (#3245).",
         "properties": {
           "body": {
             "anyOf": [
@@ -4453,6 +4464,16 @@
         ],
         "title": "PullResponse",
         "type": "object"
+      },
+      "Purpose": {
+        "description": "What the lesson is for (schema 1.17, engine#185). ``practice`` (the default when absent): a lesson that teaches and drills; every quality minimum applies. ``bridge``: an opening, a part divider, an interlude or a closing that carries theory and leads over, without an assessment intent; no minimum number of exercises or exercise types (schema 1.18). ``quiz``: a check of what was taught, often in one exercise type; no minimum number of exercise types. Read by the quality check (``validateLessonQuality``), never by ``validateLesson``: it does not change whether a lesson is valid.",
+        "enum": [
+          "practice",
+          "bridge",
+          "quiz"
+        ],
+        "title": "Purpose",
+        "type": "string"
       },
       "PushBody": {
         "properties": {
@@ -5134,6 +5155,17 @@
           "domain": {
             "title": "Domain",
             "type": "string"
+          },
+          "downloaded_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Downloaded At"
           },
           "id": {
             "title": "Id",
@@ -6128,7 +6160,7 @@
         "type": "object"
       },
       "TokenRole": {
-        "description": "Closed enum of grammatical roles a card token can carry.\n\nPhase 52I / v1.35.0 / P-130. Annotates individual tokens\ninside a card's ``front`` so the v1.35.0+ cloze generator\ncan pick a semantically-meaningful blank instead of a\nposition-based one. Optional field on Card — old content\nwithout token_roles still validates and the generator\nfalls back to a positional heuristic.\n\nClosed enum to keep author input disciplined. Adding a\nrole (e.g. ``pronoun``, ``conjunction``, ``auxiliary``)\nis a minor schema_version bump — extending an open enum\nsilently would let typos masquerade as valid roles and\nthe generator would skip them without warning.",
+        "description": "Closed enum of grammatical roles a card token can carry.\n\nPhase 52I / v1.35.0 / P-130. Annotates individual tokens\ninside a card's ``front`` so the v1.35.0+ cloze generator\ncan pick a semantically-meaningful blank instead of a\nposition-based one. Optional field on Card - old content\nwithout token_roles still validates and the generator\nfalls back to a positional heuristic.\n\nClosed enum to keep author input disciplined. Adding a\nrole (e.g. ``pronoun``, ``conjunction``, ``auxiliary``)\nis a minor schema_version bump - extending an open enum\nsilently would let typos masquerade as valid roles and\nthe generator would skip them without warning.",
         "enum": [
           "article",
           "verb",
@@ -7050,6 +7082,17 @@
               }
             ],
             "title": "Ai Error"
+          },
+          "ai_error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Error Code"
           },
           "assistant_message": {
             "anyOf": [
@@ -9216,7 +9259,7 @@
     },
     "/api/plugin-settings/{plugin_name}": {
       "get": {
-        "description": "Return the on-disk ``settings:`` block for ``plugin_name``.",
+        "description": "Return the effective ``settings:`` block for ``plugin_name``.",
         "operationId": "get_plugin_settings_api_plugin_settings__plugin_name__get",
         "parameters": [
           {
@@ -9257,7 +9300,7 @@
         ]
       },
       "patch": {
-        "description": "Replace the ``settings:`` block with ``body.settings``.\n\nValidates the plugin is registered to surface typos quickly\n(``learning-repos`` → 404). The write itself is YAML-shape-\nonly — no per-key schema enforcement at this layer; the\nplugin must tolerate the values it reads back. Per-plugin\nPydantic validation is a future enhancement.",
+        "description": "Save ``body.settings`` as the plugin's settings.\n\nThe user overlay stores only what differs from the bundled\ndefaults; a key left out of the body falls back to its default.\n\nValidates the plugin is registered to surface typos quickly\n(``learning-repos`` → 404). The write itself is YAML-shape-\nonly — no per-key schema enforcement at this layer; the\nplugin must tolerate the values it reads back. Per-plugin\nPydantic validation is a future enhancement.",
         "operationId": "update_plugin_settings_api_plugin_settings__plugin_name__patch",
         "parameters": [
           {
@@ -14506,7 +14549,7 @@
     },
     "/api/users/{user_id}/element-errors/review-queue": {
       "get": {
-        "description": "SRS review queue for the user (Phase 46C / P-129; #603).\n\nReturns active (non-mastered) element-error rows projected into\nreview items with computed ``suggested_review_at`` + ``overdue``\nfields. Sorted by overdue → weakness tier (wrong > almost-right >\ncorrect) → error frequency → oldest error first, capped at\n``limit`` when given, so the review session stays focused.",
+        "description": "SRS review queue for the user (Phase 46C / P-129; #603; #3170).\n\nReturns active (non-mastered) element-error rows projected into\nreview items with computed ``suggested_review_at`` + ``overdue``\nfields. Sorted by overdue → weakness tier (wrong > almost-right >\ncorrect) → error frequency → oldest error first, capped at\n``limit`` when given, so the review session stays focused. Rows\nthat were never wrong are left out unless ``include_never_wrong``.",
         "operationId": "review_queue_api_users__user_id__element_errors_review_queue_get",
         "parameters": [
           {
@@ -14553,6 +14596,18 @@
               ],
               "description": "#603 - cap the returned items (a review session uses MAX_REVIEW_SESSION=20). Omit for the full queue (the 'N due' count).",
               "title": "Limit"
+            }
+          },
+          {
+            "description": "#3170 - also schedule elements that were never answered wrong (error_count 0). Off by default: the queue holds errors only. The Settings > Learning toggle 'Also review error-free elements' sends true.",
+            "in": "query",
+            "name": "include_never_wrong",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "#3170 - also schedule elements that were never answered wrong (error_count 0). Off by default: the queue holds errors only. The Settings > Learning toggle 'Also review error-free elements' sends true.",
+              "title": "Include Never Wrong",
+              "type": "boolean"
             }
           }
         ],

@@ -26,7 +26,7 @@ make release-prepare VERSION=X.Y.Z     # checkout develop, create release/X.Y.Z
 
 make release-finish VERSION=X.Y.Z      # merge --no-ff to main + tag; open a PR to back-merge into develop
 
-make release-publish VERSION=X.Y.Z     # GitHub Release from the changelog file
+make release-publish VERSION=X.Y.Z     # draft GitHub Release from the changelog
 ```
 
 The Step 1-11 detail below is the per-step substance (version bump, changelog, gates, GitHub release, post-release docs) — it now runs ON the `release/*` branch, and the tag lands on `main` via the `release-finish` merge instead of a direct push to `main`. Hotfixes are the only exception: branch `hotfix/vX.Y.Z` from `main`, fix, tag, back-merge into `develop`.
@@ -126,6 +126,8 @@ Build a clean CHANGELOG entry from the commits. Do not paste raw, group and summ
 ```
 
 Also produce a separate file `changelog/releases/v0.X.0.md` containing only the new entry, for the GitHub release notes.
+
+Add a user-facing section for the release to `docs/help/<lang>/changelog.md` in all 8 help languages; `verify_docs --check help-changelog` fails while a page lags the minor version (#3161).
 
 **Commit**: `docs: changelog for v0.X.0`
 
@@ -446,6 +448,7 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
 - [ ] Version number picked per SemVer and confirmed by the user
 - [ ] CHANGELOG.md with the new entry committed
 - [ ] `changelog/releases/v0.X.0.md` created for the GitHub release
+- [ ] `docs/help/*/changelog.md` lists the release in all 8 languages (#3161)
 - [ ] Version updated in all pyproject.toml and package.json
 - [ ] Version updated in `__version__` and other Python modules
 - [ ] pluginforge and other externally-owned Adaptive Learner deps at the current version

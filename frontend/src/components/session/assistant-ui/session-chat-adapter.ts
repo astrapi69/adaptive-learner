@@ -36,6 +36,15 @@ import type {SessionMessageExchangeResult} from "../../../types";
  */
 export interface SessionChatAdapterCallbacks {
     onExchange?: (result: SessionMessageExchangeResult) => void;
+    /** #3377 - a turn that failed (transport, HTTP, storage), with the
+     *  error itself so the thread can toast it through the error-object
+     *  notify path. A user abort is not a failure and is not reported.
+     *  The error is still rethrown, so the runtime marks the message. */
+    onError?: (error: unknown) => void;
+}
+
+function isAbort(error: unknown): boolean {
+    return error instanceof DOMException && error.name === "AbortError";
 }
 
 /**
@@ -152,7 +161,10 @@ export function createSessionChatAdapter(
             }
 
             await streamed;
-            if (failure) throw failure;
+            if (failure) {
+                if (!isAbort(failure)) callbacks?.onError?.(failure);
+                throw failure;
+            }
 
             // Feed the completed turn to the session shell so it advances the
             // cycle step, surfaces the step-evaluation verdict, and fires the

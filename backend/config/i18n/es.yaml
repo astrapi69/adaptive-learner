@@ -2,6 +2,8 @@ app:
   loading: "Cargando…"
   loading_slow: "Esto está tardando más de lo esperado."
   view_load_failed: "No se pudo cargar esta vista."
+  view_crashed: "Se produjo un error en esta página. Las demás páginas siguen funcionando."
+  crashed: "Algo salió mal."
   reload: "Recargar"
   name: Adaptive Learner
   tagline: Aprendizaje que se adapta a ti.
@@ -45,7 +47,7 @@ data_export:
   selective_button: "Exportar datos seleccionados"
   selective_done: "{n} registros exportados."
   includes_hint: "se exporta automáticamente con esta categoría"
-  failed: "Error de exportación: {detail}"
+  export_failed: "Error de exportación."
   group_content: "Contenido"
   group_master: "Datos maestros"
   group_extra: "Datos adicionales"
@@ -358,8 +360,8 @@ adaptive:
   session_title: "Lección adaptativa"
   loading: "Analizando tus errores…"
   empty_body: "Aún no hay nada que adaptar - practica una lección para acumular datos."
-  not_cached_body: "Este conjunto aún no se ha descargado. Abre el navegador de contenido para descargarlo primero."
-  back_to_dashboard: "Volver al Panel"
+  not_cached_body: "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero."
+  back_to_dashboard: "Volver al panel"
   transparency:
     focus_prefix: "Esta lección se centra en:"
     tag_none: "tus elementos más débiles"
@@ -371,7 +373,7 @@ adaptive:
     mastered_delta: "¡Mejora: +{n} elemento(s) dominado(s) en esta sesión!"
     note: "Las puntuaciones de los elementos se han actualizado. Tu próxima lección adaptativa se centrará en los elementos que aún necesitan trabajo."
   error:
-    missing_params: "No se ha seleccionado ningún conjunto de contenido."
+    missing_params: "Ningún conjunto de contenido seleccionado."
     load_failed: "No se pudo generar la lección adaptativa."
 review:
   your_answer: "Tu respuesta:"
@@ -379,6 +381,8 @@ review:
   question_label: "Pregunta:"
   summary_corrected: "{corrected} de {total} corregidos"
   summary_trend: "Bien: tus puntos débiles van mejorando."
+  summary_reinforced: "{corrected} de {total} afianzados"
+  summary_trend_reinforced: "Bien: esto se va asentando."
   summary_next: "Los elementos dominados desaparecen; el resto vuelve pronto para repaso."
   summary_remaining: "Aún quedan {n}. ¿Seguimos?"
   another_round: "Otra ronda"
@@ -394,8 +398,9 @@ review:
   subtitle_capped: "{shown} de {due} elemento(s) para repasar"
   loading: "Cargando sesión de repaso…"
   empty_body: "¡Todo al día! No hay elementos para repasar en este conjunto."
-  not_cached_body: "Este conjunto aún no se ha descargado. Abre el explorador de contenido primero."
+  not_cached_body: "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero."
   back_to_dashboard: "Volver al panel"
+  back_to_lesson: "Volver a la lección"
   summary:
     aria_label: "Resumen del repaso"
     heading: "Repaso completo"
@@ -424,6 +429,13 @@ session:
   ai_thinking: Pensando...
   ai_error: El proveedor de IA no pudo responder.
   no_api_key: "No hay clave de IA configurada. Añade una clave para tu proveedor de IA en Ajustes para chatear con el tutor. Las lecciones y los repasos funcionan sin clave."
+  ai_error_no_model: "No hay ningún modelo seleccionado para tu proveedor de IA. Elige un modelo en Ajustes > IA."
+  ai_error_provider_auth: "Tu proveedor de IA rechazó la clave. Revisa la clave en Ajustes > IA."
+  ai_error_rate_limited: "Se alcanzó el límite de tu proveedor de IA. Espera un momento o revisa tu cuota y vuelve a enviar."
+  ai_error_provider_unavailable: "Ahora mismo no se puede contactar con tu proveedor de IA. Revisa la conexión y vuelve a enviar."
+  reply_failed: "No se pudo cargar la respuesta."
+  history_failed: "No se pudo cargar la conversación anterior. No se ha borrado nada."
+  chat_retry: "Intentar de nuevo"
   welcome_empty: "¡Listo para aprender! Escribe tu primer mensaje."
   end_session: Terminar sesión
   end_session_confirm: ¿Seguro? Cerraremos la sesión y pediremos una valoración.
@@ -477,6 +489,7 @@ settings:
     heading: "Contenido desconectado"
     summary: "{lessons} lecciones y {cards} tarjetas de repaso de fuentes a las que ya no estás conectado."
     delete: "Eliminar progreso desconectado"
+    delete_error: "No se pudo eliminar el progreso desconectado."
     confirm_title: "Eliminar progreso desconectado"
     confirm_message: "Se eliminarán permanentemente {lessons} lecciones y {cards} tarjetas de repaso. Esto no se puede deshacer."
     deleted: "Se borraron {lessons} lecciones y {cards} tarjetas de repaso."
@@ -753,6 +766,8 @@ settings:
   lesson_auto_advance_description: "Tras una respuesta correcta, pasa automáticamente al siguiente ejercicio. Una respuesta incorrecta siempre espera para que puedas revisar la solución."
   ask_ai_visible: "Mostrar botón 'Preguntar a la IA'"
   ask_ai_visible_description: "Muestra el botón 'Preguntar a la IA' bajo la teoría y los ejercicios. Visible de forma predeterminada; el botón sigue necesitando tu propia clave de IA (BYOK) para responder."
+  keep_screen_on: "Mantener la pantalla encendida en las lecciones"
+  keep_screen_on_description: "Mientras una lección está abierta, la pantalla no se apaga, tampoco mientras lees sin tocarla. En el resumen de la lección puede volver a apagarse. En el iPhone requiere iOS 16.4 o posterior, como app en la pantalla de inicio iOS 18.4 o posterior."
   button_tooltips: "Mostrar descripciones de botones"
   button_tooltips_description: "Muestra una descripción al pasar el cursor sobre los botones de iconos. Las etiquetas para lectores de pantalla siguen activas igualmente."
   developer_mode: Modo Desarrollador
@@ -965,17 +980,20 @@ settings:
     errors_only: "Mostrar solo los errores (predeterminado)"
     whole_set: "Repetir todo el conjunto"
   matching_resolve:
-    title: "Animación al resolver"
+    title: "Ejercicio de emparejamiento"
     hint: "Cómo el ejercicio de emparejamiento muestra los pares correctos al pulsar 'Resolver' tras comprobar."
-    label: "Efecto"
+    label: "Animación al resolver"
     slide: "Deslizar"
     color: "Color"
     connect: "Conectar"
     stack: "Apilar"
+  matching_review_views:
+    label: "Corrección como vista aparte"
+    desc: "Tras comprobar, 'Mis respuestas' muestra tus parejas tal como las formaste, sin evaluación; la evaluación y las parejas correctas están en 'Corrección'. Desactivado: la pareja correcta aparece justo debajo de cada error en 'Mis respuestas'."
   paused_retention:
-    title: Retención de lecciones pausadas
-    hint: "Las lecciones pausadas más antiguas que este período se abandonan automáticamente. Se conservan hasta 10 lecciones pausadas independientemente de su antigüedad."
-    label: Conservar lecciones pausadas por
+    title: "Lecciones pausadas en el Panel"
+    hint: "La tarjeta de lecciones pausadas del Panel solo muestra lecciones hasta esta antigüedad. Una lección más antigua solo desaparece de la tarjeta: no se abandona nada y conserva su posición y sus respuestas."
+    label: "Ocultar lecciones pausadas con más de"
     7_days: "7 días"
     14_days: "14 días"
     30_days: "30 días"
@@ -984,6 +1002,9 @@ settings:
   review_limit:
     label: "Preguntas por repaso"
     desc: "Cuántos elementos muestra una sesión de repaso antes de terminar. Los elementos pendientes pasan a la siguiente ronda."
+  review_include_never_wrong:
+    label: "Repasar también los elementos sin errores"
+    desc: "Vuelve a traer al repaso espaciado también los elementos que nunca fallaste (a los 3 y 7 días). Desactivado: el repaso solo contiene elementos con errores."
   max_lesson_size:
     title: Tamaño máximo de lección
     hint: "Al guardar un análisis de chat largo como lección sin conexión, las lecciones con más pasos que este número se dividen automáticamente en varias partes."
@@ -995,7 +1016,7 @@ settings:
   danger_zone_complete_toast: "Se han eliminado todos los datos."
   danger_zone_confirm_prompt: "Escribe RESET para confirmar"
   danger_zone_continue: "Continuar"
-  danger_zone_failed_toast: "Error al restablecer:"
+  danger_zone_failed: "Error al restablecer."
   danger_zone_final_button: "Eliminar permanentemente"
   danger_zone_heading: "Zona de peligro"
   danger_zone_input_placeholder: "RESET"
@@ -1159,8 +1180,9 @@ backup:
   too_large: 'Este archivo de copia de seguridad es demasiado grande (más de 100 MB).'
   export_success: "Copia de seguridad descargada ({{count}} registros)."
   export_error: "La copia de seguridad falló: {{detail}}"
-  import_parse_error: "No se pudo leer la copia de seguridad: {{detail}}"
-  import_error: "La restauración falló: {{detail}}"
+  export_failed: "La copia de seguridad falló."
+  import_parse_failed: "No se pudo leer la copia de seguridad."
+  import_failed: "La restauración falló."
   comparison_title: "Confirmar restauración"
   comparison_help: "La restauración combinará: los registros nuevos se insertan, los mutables se actualizan solo si la copia es más reciente, las filas de historial se conservan tal cual. No se elimina nada. Las claves de API se ignoran."
   table_header: "Tabla"
@@ -1194,10 +1216,11 @@ backup:
   auto_help: "Hacer una copia de seguridad automática tras cada 10 sesiones completadas o una vez por semana."
   auto_run: "Hacer copia ahora"
   auto_run_success: "Copia de seguridad automática creada."
-  auto_run_error: "La copia de seguridad automática falló: {{detail}}"
+  auto_run_failed: "La copia de seguridad automática falló."
   auto_restored: "Copia de seguridad automática restaurada."
   auto_restore: "Restaurar"
-  auto_restore_error: "La restauración falló: {{detail}}"
+  auto_delete_error: "No se pudo eliminar la copia de seguridad automática."
+  auto_restore_failed: "La restauración falló."
   auto_records: "{{n}} registros"
   auto_none: "Aún no hay copias automáticas. La primera se ejecuta tras 10 sesiones o 7 días."
   storage_pressure: "El almacenamiento del navegador está casi lleno ({{pct}}% de la cuota). Exporta ahora una copia de seguridad manual."
@@ -1229,6 +1252,7 @@ backup:
   compare_high_volume_hint: "Tabla de gran volumen: las vistas previas por registro se muestran abreviadas."
   compare_export_md: "Exportar como Markdown"
   compare_markdown_downloaded: "Diferencias exportadas."
+  compare_export_failed: "No se pudo exportar la comparación."
   confirm_with_counts: "Restaurar ({{added}} añadidos, {{updated}} actualizados)"
   auto_compare_as_a: "Comparar como A"
   auto_compare_as_b: "Comparar como B"
@@ -1250,9 +1274,9 @@ export:
   busy: "Trabajando..."
   download_success: "Exportación descargada."
   print_opened: "Se abrió el diálogo de impresión. Elige «Guardar como PDF»."
-  error: "La exportación falló: {{detail}}"
-  preview_error: "La vista previa falló: {{detail}}"
-  load_error: "No se pudieron cargar los datos de exportación: {{detail}}"
+  export_failed: "La exportación falló."
+  preview_failed: "La vista previa falló."
+  load_failed: "No se pudieron cargar los datos de exportación."
   pick_session: "Elige primero una sesión."
   pick_curriculum: "Elige primero un plan de estudios."
   title_progress: "Progreso de aprendizaje"
@@ -1496,6 +1520,8 @@ arcade:
   card_description: "Rondas cortas de Memory de aprendizaje y Snake: tu recompensa del modo juego."
   card_open: "Ir al arcade"
   requires_playful: "El arcade forma parte del modo juego. Activa el modo juego (y el interruptor del arcade) en los ajustes."
+  requires_game_mode: "El arcade forma parte del modo juego, y el modo juego está desactivado. Actívalo en los ajustes."
+  requires_arcade_switch: "El modo juego está activado, pero el interruptor del arcade está desactivado. Activa el arcade en los detalles del modo juego en los ajustes."
   open_settings: "Abrir ajustes"
   play: "Jugar"
   pause: "Pausa"
@@ -1627,6 +1653,7 @@ notebooklm:
 feature:
   api_key_required: "Se requiere una clave de API. Configura un proveedor en los ajustes."
   desktop_only: "Solo disponible con la aplicación de escritorio."
+  browser_only: "Solo disponible en la versión de navegador de la app."
 ui:
   cancel: "Cancelar"
   hide_secret: "Ocultar valor"
@@ -1660,6 +1687,7 @@ ui:
     generic: "Algo salió mal. Inténtalo de nuevo más tarde."
     unexpected: "Algo salió mal."
   error_report:
+    report_button: "Informar de un problema"
     dialog_title: "Informar de un problema"
     intro: "Adaptive Learner detectó un error y puede preparar un informe de error para el desarrollador."
     description_label: "Pasos para reproducir (opcional)"
@@ -1909,6 +1937,10 @@ repo:
     description: "Genera automáticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por proyecto a partir de tus datos de sesión. La integración opcional con git confirma cada generación para que puedas explorar el historial con cualquier cliente git."
     enable_git: "Activar persistencia git"
 lesson:
+  progress_io:
+    save_error: "No se pudo guardar tu progreso en esta lección."
+    load_failed: "No se pudo cargar tu progreso guardado de esta lección: {detail}"
+    create_profile: "Crear un perfil de aprendizaje"
   mascot_label: "Tu compañero de aprendizaje"
   combo_chip: "x{n}"
   combo_aria: "Racha de respuestas: {n} seguidas"
@@ -2074,6 +2106,7 @@ lesson:
       resolve: "Resolver"
       resolve_announce: "Solución mostrada. {correct} de {total} pares eran correctos."
       my_answers: "Mis respuestas"
+      corrections: "Corrección"
     picture:
       submit: "Comprobar respuesta"
       retry: "Intentar de nuevo"
@@ -2100,7 +2133,6 @@ lesson:
       placeholder: "Escribe tu respuesta…"
       code_placeholder: "Escribe el código…"
       input_label: "Tu respuesta"
-      hint_show: "¿Necesitas una pista?"
       result_correct: "¡Correcto!"
       result_wrong: "Casi."
       result_almost: "¡Casi! Fíjate en:"
@@ -2117,14 +2149,12 @@ lesson:
       answer_placeholder: "Toca las fichas de abajo para formar tu respuesta"
       scrambled_label: "Fichas disponibles"
       scrambled_done: "Todas las fichas colocadas."
-      hint_show: "¿Necesitas una pista?"
       result_correct: "¡Correcto!"
       result_wrong: "Casi."
       empty: "Este ejercicio de fichas no tiene fichas."
     cloze:
       submit: "Comprobar respuestas"
       retry: "Intentar de nuevo"
-      hint_show: "¿Necesitas una pista?"
       sentence_label: "Frase con huecos"
       blank_label: "Hueco {n}"
       select_placeholder: "Elegir…"
@@ -2244,16 +2274,22 @@ lesson:
     al_ordering:
       empty: "Este ejercicio de orden no tiene elementos."
       result_correct: "¡Correcto!"
-      result_wrong: "No del todo - inténtalo de nuevo."
+      result_wrong: "No del todo - el orden todavía no es correcto."
       retry: "Intentar de nuevo"
+      review_heading: "Tu respuesta"
+      solution_heading: "Solución"
       submit: "Comprobar respuesta"
     al_parsons:
       empty: "Este ejercicio de código no tiene líneas."
       indent_dec: "Reducir sangría"
       indent_inc: "Aumentar sangría"
+      line_wrong_indent: "Sangría {actual}, se esperaba {expected}"
+      line_wrong_position: "Posición incorrecta"
       result_correct: "¡Correcto!"
       result_wrong: "No del todo - revisa el orden y la sangría."
       retry: "Intentar de nuevo"
+      review_heading: "Tu respuesta"
+      solution_heading: "Solución"
       submit: "Comprobar respuesta"
     instruction:
       matching:
@@ -2388,6 +2424,9 @@ lesson:
     ticket_earned_one: "Recompensa desbloqueada: ¡un ticket de juego!"
     ticket_earned_many: "Recompensa desbloqueada: ¡{n} tickets de juego!"
     ticket_play_now: "Jugar ahora"
+    ticket_none_rule: "Esta vez sin ticket: el ticket llega con una lección sin errores o una ronda con todos los corazones."
+    ticket_none_completed: "Esta vez sin ticket: ya habías completado esta lección."
+    ticket_none_cap: "Esta vez sin ticket: tu saldo está en el máximo de {n} tickets."
   error:
     load_failed: "No se pudo cargar la lección."
     invalid_data: "Esta lección no se puede abrir porque contiene datos no válidos o dañados. Ponte en contacto con el autor del contenido."
@@ -2409,6 +2448,8 @@ lesson:
     body: 'Pausaste "{title}". ¿Te gustaría continuar donde lo dejaste o empezar de nuevo?'
     action_resume: "Continuar"
     action_restart: "Empezar de nuevo"
+    restart_confirm_title: "¿Empezar desde el principio?"
+    restart_confirm_body: "Tu posición y tus respuestas en esta lección se restablecerán. Lo que ya aprendiste (progreso de dominio) se conserva."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:
@@ -2623,6 +2664,7 @@ content:
     change_failed: "No se pudo actualizar el estado."
     deleted: "Conjunto eliminado."
     delete_failed: "No se pudo eliminar el conjunto."
+    progress_not_deleted: "Eliminado, pero no se pudo borrar tu progreso de aprendizaje: {detail}"
     delete_confirm: "El conjunto descargado y sus lecciones se eliminarán de Mis contenidos. Tu progreso de aprendizaje se conserva y puedes volver a descargar el conjunto cuando quieras."
     select_all: "Seleccionar todo"
     select_set: "Seleccionar {title}"
@@ -2764,6 +2806,8 @@ content:
     download_failed: "No se pudo descargar el set."
     update_all_failed: "{n} actualizaciones han fallado."
     open_failed: "No se pudo abrir la lección."
+    export_failed: "No se pudo exportar el conjunto de lecciones."
+    share_check_failed: "No se pudo comprobar el conjunto para compartirlo."
   tree:
     i_speak: Hablo
     learn: Aprender {lang}
@@ -2814,9 +2858,10 @@ content:
     free_text_too_few_accepts: "Lección '{lesson}': el ejercicio de texto libre '{exercise}' necesita al menos {min} respuestas aceptadas."
     matching_too_few_pairs: "Lección '{lesson}': el ejercicio de emparejar '{exercise}' necesita al menos {min} pares."
     matching_duplicate_left: "Lección '{lesson}': el ejercicio de emparejamiento '{exercise}' repite el valor izquierdo '{value}' - irresoluble para el estudiante."
-    missing_distractors: "Lección '{lesson}': el ejercicio '{exercise}' necesita distractores (opciones incorrectas)."
     non_cefr_level: El nivel '{level}' no es una banda CEFR (A1-C2).
     level_too_complex: "Lección '{lesson}': el texto promedia {avg} palabras por lado, alto para el nivel {level} (se esperan unas {cap})."
+    engine_rule: "Lección '{lesson}': regla {rule} en {path}: {message}"
+    engine_warning: "Lección '{lesson}': aviso {rule} en {path}: {message}"
     source_language_heuristic: Los reversos contienen caracteres propios de {found}, pero el idioma de origen es '{lang}'.
     target_language_heuristic: Los anversos contienen caracteres propios de {found}, pero el idioma de destino es '{lang}'.
     failed_share_anyway: "La comprobación de calidad encontró problemas. Puedes compartir de todos modos: los revisores verán los hallazgos anotados en el pull request."
@@ -3284,9 +3329,15 @@ create_lesson:
       image_add: "Añadir imagen"
       image_remove: "Quitar imagen"
       err_prompt: "Escribe una pregunta o enunciado."
-      err_matching: "Añade al menos 2 pares completos (término y correspondencia)."
+      err_matching_pairs: "Añade al menos un par completo (término y correspondencia)."
+      err_matching_duplicate_left: "Cada término solo puede aparecer una vez (sin distinguir mayúsculas y minúsculas)."
+      err_matching_from_cards: "Una relación creada a partir de tarjetas necesita tarjetas vinculadas y ningún par adicional."
+      err_cloze_distractors: "Un hueco de selección necesita al menos un distractor."
+      err_word_tiles_ordering: "Cada orden de fichas aceptado debe usar cada ficha exactamente una vez."
+      err_card_ref: "Este ejercicio hace referencia a una tarjeta que ya no está en la lección."
       err_free_text: "Añade al menos una respuesta aceptada."
       err_cloze: "Cada marca ___ necesita un hueco, y cada hueco necesita una respuesta."
+      err_cloze_multiselect: "Un cloze de selección múltiple necesita una pregunta, al menos una opción correcta y al menos un distractor; ninguna opción puede ser ambas cosas."
       err_word_tiles: "Añade al menos 2 fichas."
       err_picture_choice: "Añade al menos 2 imágenes, cada una con etiqueta e imagen, y marca exactamente una como correcta."
       err_explanation: "La explicación es demasiado larga (máximo 2000 caracteres)."
@@ -3426,7 +3477,10 @@ create_lesson:
     check_languagePair: "El par de idiomas es válido"
     check_enoughCards: "Al menos 4 tarjetas"
     check_enoughExercises: "Al menos 5 ejercicios"
+    check_min_exercises: "Al menos {n} ejercicios"
     check_enoughTypes: "Al menos 2 tipos de ejercicio"
+    check_min_types: "Al menos {n} tipos de ejercicio"
+    check_exercise_minimums: "Cada ejercicio tiene suficientes respuestas o pares"
     check_schemaValid: "Estructura de lección válida"
     structure_error: "Detalle técnico"
     structure_internal_error: "Se produjo un error interno al comprobar esta lección. Es un problema de la aplicación, no de tu lección. Vuelve a cargar la página e inténtalo de nuevo; si sigue ocurriendo, informa del problema abajo."
@@ -3451,7 +3505,7 @@ create_lesson:
   templates:
     extensions:
       title: "Tipos de ejercicio avanzados"
-      desc: "Crea ejercicios de categorización y corrección de errores. Requiere una app compatible con extensiones."
+      desc: "Crea tipos de ejercicio de extensión como ordenar, zonas, dictado o cuestionarios calificados. Requiere una app compatible con extensiones."
     knowledge_from_text:
       title: "Lección de conocimiento a partir de texto"
       desc: "Pega una sección de un libro o carga un archivo de libro; la IA escribe la teoría con sus propias palabras y genera ejercicios."
@@ -3497,6 +3551,16 @@ learning_path:
   train_errors: "Entrenar errores"
   shuffle: "Modo aleatorio"
   endless: "Sin fin"
+  reset_all:
+    button: "Repetir todo"
+    title: "¿Restablecer todos los resultados?"
+    message: "Se restablecen los resultados de «{title}»: puntuación, estrellas y tiempo de estudio de {lessons} lecciones. Una nueva ronda empieza en la lección 1; los errores de la ronda anterior se conservan como historial. Los XP y las insignias no cambian."
+    average: "Promedio hasta ahora: {percent} %"
+    no_average: "Todavía no hay promedio."
+    confirm: "Restablecer y empezar de nuevo"
+    cancel: "Cancelar"
+    success: "Resultados restablecidos. Una nueva ronda empieza con la lección 1."
+    failed: "No se pudieron restablecer los resultados."
   personal:
     title: "Tu ruta de aprendizaje"
     progress: "En total: {n}% completado"
@@ -3605,6 +3669,7 @@ pwa:
   cache_clear: "Vaciar caché"
   cache_clear_confirm: "¿Vaciar la caché sin conexión?"
   cache_clear_action: "Sí, vaciar"
+  cache_clear_failed: "No se pudo vaciar la caché sin conexión: {detail}"
   cache_cleared: "Caché sin conexión vaciada."
   update:
     message: "Hay una nueva versión disponible."
@@ -3983,6 +4048,8 @@ content_repo:
     copy_failed: "No se pudo copiar."
     hint: "Comparte este enlace para que otros puedan añadir este repositorio PÚBLICO. Para un repositorio privado, envía la URL y un token de solo lectura por separado."
     qr_alt: "Código QR del enlace para compartir"
+  remove_error: "No se pudo quitar el repositorio."
+  reorder_error: "No se pudo cambiar el orden de los repositorios."
   progress:
     syncing: "Sincronizando…"
     validating: "Validando repositorio…"
@@ -4146,7 +4213,7 @@ shuffle:
   subtitle: "Mezclando {n} preguntas de {lessons} lecciones"
   error:
     load_failed: "No se pudo cargar la sesión aleatoria."
-    missing_params: "Ningún conjunto seleccionado."
+    missing_params: "Ningún conjunto de contenido seleccionado."
   summary:
     heading: "¡Entrenamiento aleatorio completado!"
     score: "{correct} de {total} correctas"
@@ -4281,3 +4348,9 @@ set_summary:
     vocabulary: "Vocabulario"
     grammar_rule: "Regla gramatical"
     unknown: "Desconocido"
+runner:
+  back_to_dashboard: "Volver al panel"
+  not_cached_body: "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero."
+  error:
+    missing_params: "Ningún conjunto de contenido seleccionado."
+    invalid_data: "Este contenido no se puede abrir porque contiene datos no válidos o dañados. Ponte en contacto con el autor del contenido."

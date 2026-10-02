@@ -59,7 +59,7 @@ function daysSince(iso: string | null): number | null {
 // DangerZone pre-reset backup button can produce identical files.
 import {saveBackupToDisk, backupFilename} from "../../../utils/backup-download";
 import {
-    applyLocalStorageSnapshot,
+    restoreLocalStorageSnapshot,
     withLocalStorageSnapshot,
 } from "../../../lib/backup/localStorageSnapshot";
 
@@ -300,7 +300,7 @@ function RestoreSummaryPanel({
             data-testid="backup-summary"
         >
             <p>{t("backup.restored_summary", "Restore complete.")}</p>
-            <ul>
+            <ul className="list-disc">
                 <li>
                     {t("backup.restored_inserted", "Inserted: {{n}}").replace(
                         "{{n}}",
@@ -389,7 +389,7 @@ function RestoreSummaryPanel({
                     <p className="font-semibold text-[var(--error)]">
                         {t("backup.error_details", "Error details")}
                     </p>
-                    <ul>
+                    <ul className="list-disc">
                         {summary.errors.map((err, idx) => (
                             <li
                                 key={idx}
@@ -521,13 +521,7 @@ export default function BackupSection() {
                     .replace("{{count}}", String(total)),
             );
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
-            notify.error(
-                t("backup.export_error", "Backup failed: {{detail}}").replace(
-                    "{{detail}}",
-                    detail,
-                ),
-            );
+            notify.error(t("backup.export_failed", "Backup failed."), {error: err});
         } finally {
             setBusy(null);
         }
@@ -609,12 +603,9 @@ export default function BackupSection() {
                 .then((snap) => setCurrentSnapshot(snap))
                 .catch(() => setCurrentSnapshot(null));
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
             notify.error(
-                t("backup.import_parse_error", "Could not read backup: {{detail}}").replace(
-                    "{{detail}}",
-                    detail,
-                ),
+                t("backup.import_parse_failed", "Could not read the backup."),
+                {error: err},
             );
         } finally {
             setBusy(null);
@@ -643,7 +634,7 @@ export default function BackupSection() {
             // Restore the localStorage snapshot (preferences + contributions)
             // frontend-side, in both storage modes — the backend ignores the
             // payload's local_storage block. Legacy backups carry none -> no-op.
-            const localApplied = applyLocalStorageSnapshot(
+            const localApplied = await restoreLocalStorageSnapshot(
                 pendingPayload.local_storage,
             );
             // eslint-disable-next-line no-console -- round-trip trace, see below
@@ -705,13 +696,7 @@ export default function BackupSection() {
                 );
             }
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
-            notify.error(
-                t("backup.import_error", "Restore failed: {{detail}}").replace(
-                    "{{detail}}",
-                    detail,
-                ),
-            );
+            notify.error(t("backup.import_failed", "Restore failed."), {error: err});
         } finally {
             setBusy(null);
             scrollSectionToTop();

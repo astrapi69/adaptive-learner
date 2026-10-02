@@ -14,7 +14,6 @@ export type {
 export {WordTilesEditor, WordTilesScrambledRow} from "./word-tiles-editor";
 export type {WordTilesEditorProps} from "./word-tiles-editor";
 export {
-    WordTilesHint,
     WordTilesResult,
     WordTilesReveal,
     type Translate,

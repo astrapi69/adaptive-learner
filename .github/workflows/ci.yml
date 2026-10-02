@@ -31,6 +31,8 @@ jobs:
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
+      scripts: ${{ steps.filter.outputs.scripts }}
+      plugins: ${{ steps.filter.outputs.plugins }}
       i18n_only: ${{ steps.scope.outputs.i18n_only }}
     steps:
       - uses: actions/checkout@v7
@@ -47,10 +49,17 @@ jobs:
             backend:
               - 'backend/**'
               - 'plugins/**'
+              - 'scripts/**'
               - '**/*.py'
               - 'Makefile'
               - 'schema/**'
               - '.github/workflows/ci.yml'
+            # #3250: testmon's graph never covers these two trees, so the
+            # backend job runs the tests naming them by a fixed step.
+            scripts:
+              - 'scripts/**'
+            plugins:
+              - 'plugins/**'
             frontend:
               - 'frontend/**'
               - 'Makefile'
@@ -177,6 +186,26 @@ jobs:
             echo "::notice::Push to ${{ github.ref_name }} — FULL backend suite"
             poetry run pytest tests/ -q
           fi
+
+      # #3250: testmon's dependency graph is built from coverage of
+      # backend/app and backend/tests, so a PR changing scripts/ or plugins/
+      # selects nothing above although backend tests drive those scripts as
+      # subprocesses and load the plugins through PluginForge (CI run
+      # 36006903648: "no tests ran" on a plugins/ push). The selector names
+      # such tests by their source and this step runs them, bypassing
+      # testmon; a push runs the full suite anyway.
+      - name: Backend tests exercising changed scripts/ or plugins/ (#3250)
+        if: github.event_name == 'pull_request' && needs.changes.outputs.i18n_only != 'true' && (needs.changes.outputs.scripts == 'true' || needs.changes.outputs.plugins == 'true')
+        working-directory: backend
+        run: |
+          set -euo pipefail
+          areas=""
+          if [ "${{ needs.changes.outputs.scripts }}" = "true" ]; then areas="$areas scripts"; fi
+          if [ "${{ needs.changes.outputs.plugins }}" = "true" ]; then areas="$areas plugins"; fi
+          files="$(python3 ../scripts/select_impacted_tests.py $areas)"
+          echo "::notice::running the backend tests that name$areas/"
+          # shellcheck disable=SC2086
+          poetry run pytest -q $files
 
       # #2281: the committed schema/openapi.json must match the spec the
       # booted app serves (13/13 plugins asserted before comparing; fails
@@ -376,10 +405,12 @@ jobs:
         working-directory: frontend
         run: bun run check:circular
 
-      # Prettier (#254, step 1 — non-blocking). Reports formatting drift in
-      # the log without failing the build; the repo-wide reformat is a
-      # separate step-2 PR. Remove continue-on-error once the codebase is
-      # formatted and the format-on-touch hook has caught up.
+      # Prettier (#254). Declared OFF in .claude/rules/checks.yaml
+      # (prettier-ci-check): it only lists unformatted files in the log.
+      # Most of src/ fails: it was never formatted and mixes 2- and 4-space.
+      # The style is decided (Prettier defaults, 2026-09-25, #3270) and
+      # .prettierrc states it; only the one-time reformat remains, and that
+      # PR makes this step blocking. Nothing here turns it on by itself.
       - name: Prettier check (non-blocking)
         if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
@@ -394,6 +425,46 @@ jobs:
         if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: frontend
         run: bun run lint:css
+
+      # Build-context boundary guard (#3239), a fixed step on every frontend
+      # PR. The guard reads frontend/src, backend/Dockerfile and the alias
+      # configs through fs, not imports, so the selective run below
+      # (`vitest --changed`) never selects it unless the guard file itself
+      # changed: the "selection mechanics" sub-class of lessons/ci-gates.md
+      # "PR-CI vs nightly gates" (#1620/#1665). A PR adding an import from
+      # frontend/src into e2e/ would otherwise run green without the guard
+      # ever seeing it. Push runs the full suite, which includes it. Skipped
+      # on i18n_only PRs like the other code steps: catalog JSON carries no
+      # imports.
+      - name: Build-context boundary guard (#3239)
+        if: github.event_name == 'pull_request' && needs.changes.outputs.frontend == 'true' && needs.changes.outputs.i18n_only != 'true'
+        working-directory: frontend
+        run: bunx vitest run src/test/build-context-boundary.test.ts
+
+      # Full-tree i18n key coverage (#3249), a fixed step on every frontend
+      # PR, i18n_only ones included. The test walks frontend/src and reads
+      # the catalogs through fs, so `vitest --changed` below never selects
+      # it for a component that adds a t() key (same selection gap as the
+      # guard above), and an i18n_only PR that drops a key still in use
+      # runs only i18n-sync.test.ts. Push runs the full suite, which
+      # includes it.
+      # Theme token gate (#3251), a fixed step on every frontend change.
+      # scripts/verify_theme.py (token completeness, undefined var() refs,
+      # WCAG contrast, the .theme-baseline.json ratchet) used to run only in
+      # a backend test and in make release-test, so a CSS-only PR under
+      # frontend/src/styles never tripped it: probed with an undefined
+      # var(--probe-...) that a forced full Vitest run did not catch. Stdlib
+      # only, seconds. The four Vitest theme guards stay in the Vitest step
+      # (forceRerunTriggers covers src/styles/**/*.css for the selective run).
+      - name: Theme token gate (#3251)
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true') && needs.changes.outputs.i18n_only != 'true'
+        working-directory: .
+        run: python3 scripts/verify_theme.py --enforce
+
+      - name: i18n key coverage, full tree (#3249)
+        if: github.event_name == 'pull_request' && needs.changes.outputs.frontend == 'true'
+        working-directory: frontend
+        run: bunx vitest run src/i18n/full-tree-key-coverage.test.ts
 
       # Test Impact Analysis (#615): on a PR run only the Vitest files related
       # to files changed since the base branch (`--changed origin/<base>`).
@@ -412,8 +483,9 @@ jobs:
         working-directory: frontend
         run: |
           if [ "${{ needs.changes.outputs.i18n_only }}" = "true" ]; then
-            echo "::notice::i18n-only changeset, running i18n-sync.test.ts only"
-            bunx vitest run src/data/i18n/i18n-sync.test.ts
+            echo "::notice::i18n-only changeset, running i18n-sync.test.ts + fallbacks.test.ts only"
+            # fallbacks.test.ts: the first-paint subset still equals the catalogs (#3378)
+            bunx vitest run src/data/i18n/i18n-sync.test.ts src/i18n/fallbacks.test.ts
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE="origin/${{ github.base_ref }}"
             git fetch --no-tags --depth=200 origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
@@ -483,17 +555,13 @@ jobs:
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run hooks on all files
-        # SKIP the format-on-touch Prettier hook (#254): it --writes whatever
-        # files it's given, and --all-files passes the whole tree — which
-        # (step 1, ~90% unformatted) would reformat everything and fail. It's
-        # a per-commit incremental hook, not an all-files gate; the
-        # non-blocking `format:check` step in frontend-tests reports drift.
-        # `eslint` is skipped too (#268): the hook runs `npx eslint src/`,
-        # which needs frontend/node_modules — this job never runs `npm ci`,
-        # so it would fail with `Cannot find package '@eslint/js'`. The
-        # Frontend Tests job already runs ESLint with deps installed.
+        # SKIP `eslint` (#268): the hook runs `npx eslint src/`, which needs
+        # frontend/node_modules, and this job installs no frontend deps, so it would
+        # fail with `Cannot find package '@eslint/js'`. The Frontend Tests
+        # job already runs ESLint with deps installed. (The Prettier hook
+        # this list also named was removed in #318.)
         env:
-          SKIP: prettier-frontend,eslint
+          SKIP: eslint
         run: pre-commit run --all-files --show-diff-on-failure
 
   lint-and-type-check:
@@ -567,6 +635,11 @@ jobs:
         run: pip install pyyaml
       - name: Verify documentation for drift
         run: python3 scripts/verify_docs.py
+      # #3253: the Docker-context rules are probed with synthesized paths
+      # (a CI checkout has no node_modules to walk), so the check is worth
+      # running on every PR, not only behind the Docker path filter.
+      - name: Verify the Docker build context rules
+        run: python3 scripts/verify_docker_context.py
       - name: Verify mkdocs nav is in sync with _meta.yaml
         run: python3 scripts/generate_mkdocs_nav.py --check
       # #2075: a gate may not enforce a rule section that does not exist,
@@ -586,14 +659,40 @@ jobs:
       - name: Verify rule corpus size
         run: python3 scripts/verify_rule_corpus_size.py
       # #2087: declared rule changes must converge in docs/rule-change-log.md.
-      # On a PR this only reports; the log is appended when the change lands.
+      # #3252 step 3: this FAILS. Rows are keyed by PR number, so a declaring
+      # PR carries its own row (make rule-change-log, then commit it): on a
+      # pull_request run the number comes from the event (--pr), on the push
+      # after the merge from the squash subject or the merge commit. Red means
+      # a declaration has no row, and nothing else.
       - name: Check the rule change log is current
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        env:
+          # #3506: the squash copies the body into develop, so its
+          # declarations need a row too. Via env, never interpolated.
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          git fetch --no-tags --depth=200 origin develop >/dev/null 2>&1 || true
-          python3 scripts/append_rule_change_log.py --range "${{ github.event.before }}..${{ github.sha }}" --check || {
-            echo "::warning::declared rule changes are missing from docs/rule-change-log.md - run 'make rule-change-log'"
-          }
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # #3506: the checkout is the depth-1 synthetic merge commit, whose
+            # parents are absent, so "base..HEAD" listed only that merge
+            # commit and never the PR's own commits: the check printed "up to
+            # date" for every PR (#3480, #3333 merged without their row). Fetch
+            # the PR head itself and walk base..head; fail closed when that
+            # range holds none of the PR's commits.
+            git fetch --no-tags --depth=200 origin "${{ github.event.pull_request.base.ref }}" "${{ github.event.pull_request.head.sha }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+            RANGE="origin/${{ github.event.pull_request.base.ref }}..${HEAD_SHA}"
+            if [ "$(git rev-list --count "$RANGE")" -eq 0 ]; then
+              echo "::error::rule-change-log check: $RANGE holds no commits, nothing was checked"
+              exit 1
+            fi
+            python3 scripts/append_rule_change_log.py \
+              --range "$RANGE" \
+              --pr "${{ github.event.pull_request.number }}" --pr-body "${PR_BODY:-}" --check
+          else
+            git fetch --no-tags --depth=200 origin develop >/dev/null 2>&1 || true
+            python3 scripts/append_rule_change_log.py --range "${{ github.event.before }}..${{ github.sha }}" --check
+          fi
       # #2079: a binding rule may not change inside an undeclared diff.
       # Declare via the 'rule-change-declared' label or a
       # "RULE-CHANGE DECLARED: ..." line in the PR body.

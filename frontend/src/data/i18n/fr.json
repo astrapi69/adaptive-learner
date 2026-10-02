@@ -3,6 +3,8 @@
     "loading": "Chargement…",
     "loading_slow": "Cela prend plus de temps que prévu.",
     "view_load_failed": "Cette vue n'a pas pu être chargée.",
+    "view_crashed": "Une erreur s'est produite sur cette page. Les autres pages fonctionnent toujours.",
+    "crashed": "Un problème est survenu.",
     "reload": "Recharger",
     "name": "Adaptive Learner",
     "tagline": "Un apprentissage qui s'adapte a toi.",
@@ -50,7 +52,7 @@
     "selective_button": "Exporter les données sélectionnées",
     "selective_done": "{n} enregistrements exportés.",
     "includes_hint": "exporté automatiquement avec cette catégorie",
-    "failed": "Échec de l'export : {detail}",
+    "export_failed": "Échec de l'export.",
     "group_content": "Contenus",
     "group_master": "Données de base",
     "group_extra": "Données supplémentaires",
@@ -382,7 +384,7 @@
     "loading": "Analyse de tes erreurs…",
     "empty_body": "Rien à adapter pour l'instant - fais d'abord une leçon pour accumuler des données.",
     "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
-    "back_to_dashboard": "Retour au Tableau de bord",
+    "back_to_dashboard": "Retour au tableau de bord",
     "transparency": {
       "focus_prefix": "Cette leçon se concentre sur :",
       "tag_none": "tes éléments les plus faibles",
@@ -406,6 +408,8 @@
     "question_label": "Question :",
     "summary_corrected": "{corrected} sur {total} corrigés",
     "summary_trend": "Bien - tes points faibles se renforcent.",
+    "summary_reinforced": "{corrected} sur {total} consolidés",
+    "summary_trend_reinforced": "Bien - ça se consolide.",
     "summary_next": "Les éléments maîtrisés disparaissent ; le reste revient bientôt en révision.",
     "summary_remaining": "Encore {n} à revoir. On continue ?",
     "another_round": "Encore un tour",
@@ -421,8 +425,9 @@
     "subtitle_capped": "{shown} sur {due} élément(s) à réviser",
     "loading": "Chargement de la session de révision…",
     "empty_body": "Tout est à jour ! Aucun élément à réviser dans cet ensemble.",
-    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre l'explorateur de contenu d'abord.",
+    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
     "back_to_dashboard": "Retour au tableau de bord",
+    "back_to_lesson": "Retour à la leçon",
     "summary": {
       "aria_label": "Résumé de la révision",
       "heading": "Révision terminée",
@@ -454,6 +459,13 @@
     "ai_thinking": "Réflexion...",
     "ai_error": "Le fournisseur IA n'a pas pu répondre.",
     "no_api_key": "Aucune clé IA définie. Ajoute une clé pour ton fournisseur IA dans Paramètres pour discuter avec le tuteur. Les leçons et révisions fonctionnent sans clé.",
+    "ai_error_no_model": "Aucun modèle n'est sélectionné pour ton fournisseur IA. Choisis un modèle dans Paramètres > IA.",
+    "ai_error_provider_auth": "Ton fournisseur IA a refusé la clé. Vérifie la clé dans Paramètres > IA.",
+    "ai_error_rate_limited": "La limite de ton fournisseur IA est atteinte. Attends un instant ou vérifie ton quota, puis renvoie.",
+    "ai_error_provider_unavailable": "Ton fournisseur IA est injoignable pour le moment. Vérifie la connexion et renvoie.",
+    "reply_failed": "La réponse n'a pas pu être chargée.",
+    "history_failed": "La conversation précédente n'a pas pu être chargée. Rien n'a été supprimé.",
+    "chat_retry": "Réessayer",
     "welcome_empty": "Prêt à apprendre ! Écris ton premier message.",
     "end_session": "Terminer la session",
     "end_session_confirm": "Sûr ? Nous allons fermer la session et demander une évaluation.",
@@ -510,6 +522,7 @@
       "heading": "Contenu déconnecté",
       "summary": "{lessons} leçons et {cards} cartes de révision provenant de sources auxquelles vous n'êtes plus connecté.",
       "delete": "Supprimer la progression déconnectée",
+      "delete_error": "Impossible de supprimer la progression déconnectée.",
       "confirm_title": "Supprimer la progression déconnectée",
       "confirm_message": "{lessons} leçons et {cards} cartes de révision seront définitivement supprimées. Cette action est irréversible.",
       "deleted": "{lessons} leçons et {cards} cartes de révision supprimées."
@@ -794,6 +807,8 @@
     "lesson_auto_advance_description": "Après une bonne réponse, passe automatiquement à l'exercice suivant. Une mauvaise réponse attend toujours pour que tu puisses revoir la solution.",
     "ask_ai_visible": "Afficher le bouton 'Demander à l'IA'",
     "ask_ai_visible_description": "Affiche le bouton 'Demander à l'IA' sous la théorie et les exercices. Affiché par défaut ; le bouton a toujours besoin de ta propre clé IA (BYOK) pour répondre.",
+    "keep_screen_on": "Garder l'écran allumé pendant les leçons",
+    "keep_screen_on_description": "Tant qu'une leçon est ouverte, l'écran ne s'éteint pas, même quand tu lis sans le toucher. Dans le résumé de la leçon, il peut de nouveau s'éteindre. Sur iPhone à partir d'iOS 16.4, en app sur l'écran d'accueil à partir d'iOS 18.4.",
     "button_tooltips": "Afficher les infobulles des boutons",
     "button_tooltips_description": "Affiche une infobulle au survol des boutons à icône. Les libellés pour lecteurs d’écran restent actifs quoi qu’il arrive.",
     "developer_mode": "Mode développeur",
@@ -1011,18 +1026,22 @@
       "whole_set": "Rejouer l'ensemble complet"
     },
     "matching_resolve": {
-      "title": "Animation de résolution",
+      "title": "Exercice d'association",
       "hint": "Comment l'exercice d'association révèle les paires correctes lorsque tu appuies sur 'Résoudre' après vérification.",
-      "label": "Effet",
+      "label": "Animation de résolution",
       "slide": "Glisser",
       "color": "Couleur",
       "connect": "Relier",
       "stack": "Empiler"
     },
+    "matching_review_views": {
+      "label": "Correction dans une vue séparée",
+      "desc": "Après vérification, 'Mes réponses' affiche tes paires telles que tu les as formées, sans évaluation ; l'évaluation et les bons partenaires sont sous 'Correction'. Désactivé : le bon partenaire s'affiche directement sous chaque erreur dans 'Mes réponses'."
+    },
     "paused_retention": {
-      "title": "Conservation des leçons en pause",
-      "hint": "Les leçons en pause plus anciennes que cette période sont automatiquement abandonnées. Jusqu'à 10 leçons en pause sont conservées quel que soit leur âge.",
-      "label": "Conserver les leçons en pause pendant",
+      "title": "Leçons en pause sur le tableau de bord",
+      "hint": "La carte des leçons en pause du tableau de bord n'affiche que les leçons jusqu'à cet âge. Une leçon plus ancienne disparaît seulement de la carte : rien n'est abandonné, et elle garde sa position et ses réponses.",
+      "label": "Masquer les leçons en pause de plus de",
       "7_days": "7 jours",
       "14_days": "14 jours",
       "30_days": "30 jours",
@@ -1032,6 +1051,10 @@
     "review_limit": {
       "label": "Questions par révision",
       "desc": "Combien d'éléments une session de révision présente avant de se terminer. Les éléments restants passent au tour suivant."
+    },
+    "review_include_never_wrong": {
+      "label": "Réviser aussi les éléments sans erreur",
+      "desc": "Ramène aussi en révision espacée les éléments que tu n'as jamais ratés (après 3 et 7 jours). Désactivé : la révision ne contient que les éléments avec des erreurs."
     },
     "max_lesson_size": {
       "title": "Taille maximale de leçon",
@@ -1045,7 +1068,7 @@
     "danger_zone_complete_toast": "Toutes les données ont été supprimées.",
     "danger_zone_confirm_prompt": "Tape RESET pour confirmer",
     "danger_zone_continue": "Continuer",
-    "danger_zone_failed_toast": "Échec de la réinitialisation :",
+    "danger_zone_failed": "Échec de la réinitialisation.",
     "danger_zone_final_button": "Supprimer définitivement",
     "danger_zone_heading": "Zone de danger",
     "danger_zone_input_placeholder": "RESET",
@@ -1233,8 +1256,9 @@
     "too_large": "Ce fichier de sauvegarde est trop volumineux (plus de 100 Mo).",
     "export_success": "Sauvegarde téléchargée ({{count}} enregistrements).",
     "export_error": "La sauvegarde a échoué : {{detail}}",
-    "import_parse_error": "Impossible de lire la sauvegarde : {{detail}}",
-    "import_error": "La restauration a échoué : {{detail}}",
+    "export_failed": "La sauvegarde a échoué.",
+    "import_parse_failed": "Impossible de lire la sauvegarde.",
+    "import_failed": "La restauration a échoué.",
     "comparison_title": "Confirmer la restauration",
     "comparison_help": "La restauration fusionnera : les nouveaux enregistrements sont insérés, les enregistrements modifiables ne sont mis à jour que si la sauvegarde est plus récente, les lignes d’historique sont conservées telles quelles. Rien n’est supprimé. Les clés API sont ignorées.",
     "table_header": "Table",
@@ -1268,10 +1292,11 @@
     "auto_help": "Sauvegarde automatique après 10 sessions terminées ou une fois par semaine.",
     "auto_run": "Sauvegarder maintenant",
     "auto_run_success": "Sauvegarde automatique créée.",
-    "auto_run_error": "La sauvegarde automatique a échoué : {{detail}}",
+    "auto_run_failed": "La sauvegarde automatique a échoué.",
     "auto_restored": "Sauvegarde automatique restaurée.",
     "auto_restore": "Restaurer",
-    "auto_restore_error": "La restauration a échoué : {{detail}}",
+    "auto_delete_error": "Impossible de supprimer la sauvegarde automatique.",
+    "auto_restore_failed": "La restauration a échoué.",
     "auto_records": "{{n}} enregistrements",
     "auto_none": "Aucune sauvegarde automatique pour l’instant. La première s’exécute après 10 sessions ou 7 jours.",
     "storage_pressure": "Le stockage du navigateur est presque plein ({{pct}}% du quota). Exporte maintenant une sauvegarde manuelle.",
@@ -1303,6 +1328,7 @@
     "compare_high_volume_hint": "Table à fort volume - les aperçus par enregistrement sont abrégés.",
     "compare_export_md": "Exporter en Markdown",
     "compare_markdown_downloaded": "Différences exportées.",
+    "compare_export_failed": "Impossible d'exporter la comparaison.",
     "confirm_with_counts": "Restaurer ({{added}} ajoutés, {{updated}} mis à jour)",
     "auto_compare_as_a": "Comparer comme A",
     "auto_compare_as_b": "Comparer comme B",
@@ -1325,9 +1351,9 @@
     "busy": "Traitement...",
     "download_success": "Exportation téléchargée.",
     "print_opened": "La boîte de dialogue d’impression est ouverte. Choisis « Enregistrer au format PDF ».",
-    "error": "L’exportation a échoué : {{detail}}",
-    "preview_error": "L’aperçu a échoué : {{detail}}",
-    "load_error": "Impossible de charger les données d’exportation : {{detail}}",
+    "export_failed": "L’exportation a échoué.",
+    "preview_failed": "L’aperçu a échoué.",
+    "load_failed": "Impossible de charger les données d’exportation.",
     "pick_session": "Choisis d’abord une session.",
     "pick_curriculum": "Choisis d’abord un programme.",
     "title_progress": "Progression de l’apprentissage",
@@ -1607,6 +1633,8 @@
     "card_description": "Des manches courtes de Memory d'apprentissage et de Snake : ta récompense du mode jeu.",
     "card_open": "Vers l'arcade",
     "requires_playful": "L'arcade fait partie du mode jeu. Active le mode jeu (et l'interrupteur de l'arcade) dans les réglages.",
+    "requires_game_mode": "L'arcade fait partie du mode jeu, et le mode jeu est désactivé. Active-le dans les réglages.",
+    "requires_arcade_switch": "Le mode jeu est activé, mais l'interrupteur de l'arcade est désactivé. Active l'arcade dans les détails du mode jeu dans les réglages.",
     "open_settings": "Ouvrir les réglages",
     "play": "Jouer",
     "pause": "Pause",
@@ -1745,7 +1773,8 @@
   },
   "feature": {
     "api_key_required": "Clé API requise. Configure un fournisseur dans les paramètres.",
-    "desktop_only": "Disponible uniquement avec l'application de bureau."
+    "desktop_only": "Disponible uniquement avec l'application de bureau.",
+    "browser_only": "Disponible uniquement dans la version navigateur de l'application."
   },
   "ui": {
     "cancel": "Annuler",
@@ -1783,6 +1812,7 @@
       "unexpected": "Une erreur s'est produite."
     },
     "error_report": {
+      "report_button": "Signaler un problème",
       "dialog_title": "Signaler un problème",
       "intro": "Adaptive Learner a détecté une erreur et peut préparer un rapport de bug pour le développeur.",
       "description_label": "Étapes pour reproduire (facultatif)",
@@ -2044,6 +2074,11 @@
     }
   },
   "lesson": {
+    "progress_io": {
+      "save_error": "Ta progression dans cette leçon n'a pas pu être enregistrée.",
+      "load_failed": "Ta progression enregistrée pour cette leçon n'a pas pu être chargée : {detail}",
+      "create_profile": "Créer un profil d'apprentissage"
+    },
     "mascot_label": "Ton compagnon d'apprentissage",
     "combo_chip": "x{n}",
     "combo_aria": "Série de réponses : {n} d'affilée",
@@ -2230,7 +2265,8 @@
         "selected_sr": "Sélectionné : {label}",
         "resolve": "Résoudre",
         "resolve_announce": "Solution affichée. {correct} paires correctes sur {total}.",
-        "my_answers": "Mes réponses"
+        "my_answers": "Mes réponses",
+        "corrections": "Correction"
       },
       "picture": {
         "submit": "Vérifier la réponse",
@@ -2260,7 +2296,6 @@
         "placeholder": "Saisis ta réponse…",
         "code_placeholder": "Saisis le code…",
         "input_label": "Ta réponse",
-        "hint_show": "Besoin d'un indice ?",
         "result_correct": "Correct !",
         "result_wrong": "Pas tout à fait.",
         "result_almost": "Presque ! Attention à :",
@@ -2278,7 +2313,6 @@
         "answer_placeholder": "Touche les tuiles ci-dessous pour construire ta réponse",
         "scrambled_label": "Tuiles disponibles",
         "scrambled_done": "Toutes les tuiles sont placées.",
-        "hint_show": "Besoin d'un indice ?",
         "result_correct": "Correct !",
         "result_wrong": "Pas tout à fait.",
         "empty": "Cet exercice de tuiles n'a pas de tuiles."
@@ -2286,7 +2320,6 @@
       "cloze": {
         "submit": "Vérifier les réponses",
         "retry": "Réessayer",
-        "hint_show": "Besoin d'un indice ?",
         "sentence_label": "Phrase à trous",
         "blank_label": "Trou {n}",
         "select_placeholder": "Choisir…",
@@ -2415,17 +2448,23 @@
       "al_ordering": {
         "empty": "Cet exercice d'ordre n'a pas d'éléments.",
         "result_correct": "Correct !",
-        "result_wrong": "Pas tout à fait - réessayez.",
+        "result_wrong": "Pas tout à fait - l'ordre n'est pas encore correct.",
         "retry": "Réessayer",
+        "review_heading": "Ta réponse",
+        "solution_heading": "Solution",
         "submit": "Vérifier la réponse"
       },
       "al_parsons": {
         "empty": "Cet exercice de code n'a pas de lignes.",
         "indent_dec": "Réduire l'indentation",
         "indent_inc": "Augmenter l'indentation",
+        "line_wrong_indent": "Indentation {actual}, attendu {expected}",
+        "line_wrong_position": "Mauvaise position",
         "result_correct": "Correct !",
         "result_wrong": "Pas tout à fait - vérifiez l'ordre et l'indentation.",
         "retry": "Réessayer",
+        "review_heading": "Ta réponse",
+        "solution_heading": "Solution",
         "submit": "Vérifier la réponse"
       },
       "instruction": {
@@ -2573,7 +2612,10 @@
       "encourage_3": "Score parfait !",
       "ticket_earned_one": "Récompense débloquée : un ticket de jeu !",
       "ticket_earned_many": "Récompense débloquée : {n} tickets de jeu !",
-      "ticket_play_now": "Jouer maintenant"
+      "ticket_play_now": "Jouer maintenant",
+      "ticket_none_rule": "Pas de ticket cette fois : un ticket vient avec une leçon sans erreur ou un parcours avec tous les cœurs.",
+      "ticket_none_completed": "Pas de ticket cette fois : tu avais déjà terminé cette leçon.",
+      "ticket_none_cap": "Pas de ticket cette fois : ton solde est au maximum de {n} tickets."
     },
     "error": {
       "load_failed": "Impossible de charger la leçon.",
@@ -2597,7 +2639,9 @@
       "heading": "Reprendre la leçon ?",
       "body": "Tu as mis en pause \"{title}\". Veux-tu continuer là où tu t'es arrêté ou recommencer ?",
       "action_resume": "Continuer",
-      "action_restart": "Recommencer"
+      "action_restart": "Recommencer",
+      "restart_confirm_title": "Recommencer depuis le début ?",
+      "restart_confirm_body": "Ta position et tes réponses dans cette leçon seront réinitialisées. Ce que tu as déjà appris (progression de maîtrise) est conservé."
     }
   },
   "content": {
@@ -2834,6 +2878,7 @@
       "change_failed": "Impossible de mettre à jour le statut.",
       "deleted": "Ensemble supprimé.",
       "delete_failed": "Impossible de supprimer l'ensemble.",
+      "progress_not_deleted": "Retiré, mais ta progression d'apprentissage n'a pas pu être supprimée : {detail}",
       "delete_confirm": "L'ensemble téléchargé et ses leçons seront retirés de Mes contenus. Ta progression est conservée et tu peux télécharger l'ensemble à nouveau à tout moment.",
       "select_all": "Tout sélectionner",
       "select_set": "Sélectionner {title}",
@@ -2990,7 +3035,9 @@
       "list_failed": "Impossible de charger les sets de contenu.",
       "download_failed": "Impossible de télécharger le set.",
       "update_all_failed": "{n} mises à jour ont échoué.",
-      "open_failed": "Impossible d'ouvrir la leçon."
+      "open_failed": "Impossible d'ouvrir la leçon.",
+      "export_failed": "Impossible d'exporter l'ensemble de leçons.",
+      "share_check_failed": "Impossible de vérifier l'ensemble pour le partage."
     },
     "tree": {
       "i_speak": "Je parle",
@@ -3043,9 +3090,10 @@
       "free_text_too_few_accepts": "Leçon '{lesson}' : l'exercice de texte libre '{exercise}' nécessite au moins {min} réponses acceptées.",
       "matching_too_few_pairs": "Leçon '{lesson}' : l'exercice d'association '{exercise}' nécessite au moins {min} paires.",
       "matching_duplicate_left": "Leçon '{lesson}' : l'exercice d'association '{exercise}' répète la valeur de gauche '{value}' - insoluble pour l'apprenant.",
-      "missing_distractors": "Leçon '{lesson}' : l'exercice '{exercise}' nécessite des distracteurs (mauvaises options).",
       "non_cefr_level": "Le niveau '{level}' n'est pas une échelle CECR (A1-C2).",
       "level_too_complex": "Leçon '{lesson}' : le texte fait en moyenne {avg} mots par côté, élevé pour le niveau {level} (environ {cap} attendus).",
+      "engine_rule": "Leçon '{lesson}' : règle {rule} à {path} : {message}",
+      "engine_warning": "Leçon '{lesson}' : avertissement {rule} à {path} : {message}",
       "source_language_heuristic": "Le verso des cartes contient des caractères propres à {found}, mais la langue source est '{lang}'.",
       "target_language_heuristic": "Le recto des cartes contient des caractères propres à {found}, mais la langue cible est '{lang}'.",
       "failed_share_anyway": "Le contrôle qualité a détecté des problèmes. Tu peux quand même partager - les relecteurs verront les remarques notées dans la pull request."
@@ -3567,9 +3615,15 @@
         "image_add": "Ajouter une image",
         "image_remove": "Supprimer l'image",
         "err_prompt": "Saisissez une question ou une consigne.",
-        "err_matching": "Ajoutez au moins 2 paires complètes (terme et correspondance).",
+        "err_matching_pairs": "Ajoutez au moins une paire complète (terme et correspondance).",
+        "err_matching_duplicate_left": "Chaque terme ne peut apparaître qu'une seule fois (sans tenir compte des majuscules).",
+        "err_matching_from_cards": "Une association créée à partir de cartes nécessite des cartes liées et aucune paire supplémentaire.",
+        "err_cloze_distractors": "Un blanc à choix nécessite au moins un distracteur.",
+        "err_word_tiles_ordering": "Chaque ordre de tuiles accepté doit utiliser chaque tuile exactement une fois.",
+        "err_card_ref": "Cet exercice fait référence à une carte qui n'est plus dans la leçon.",
         "err_free_text": "Ajoutez au moins une réponse acceptée.",
         "err_cloze": "Chaque marque ___ nécessite un blanc, et chaque blanc nécessite une réponse.",
+        "err_cloze_multiselect": "Un texte à trous à sélection multiple a besoin d'une question, d'au moins une option correcte et d'au moins un distracteur ; aucune option ne peut être les deux.",
         "err_word_tiles": "Ajoutez au moins 2 tuiles.",
         "err_picture_choice": "Ajoutez au moins 2 images, chacune avec un libellé et une image, et marquez-en exactement une comme correcte.",
         "err_explanation": "L'explication est trop longue (2000 caractères maximum).",
@@ -3716,7 +3770,10 @@
       "check_languagePair": "La paire de langues est valide",
       "check_enoughCards": "Au moins 4 cartes",
       "check_enoughExercises": "Au moins 5 exercices",
+      "check_min_exercises": "Au moins {n} exercices",
       "check_enoughTypes": "Au moins 2 types d'exercices",
+      "check_min_types": "Au moins {n} types d'exercices",
+      "check_exercise_minimums": "Chaque exercice a assez de réponses ou de paires",
       "check_schemaValid": "Structure de leçon valide",
       "structure_error": "Détail technique",
       "structure_internal_error": "Une erreur interne s'est produite lors de la vérification de cette leçon. Le problème vient de l'application, pas de votre leçon. Rechargez la page et réessayez ; si cela persiste, signalez le problème ci-dessous.",
@@ -3743,7 +3800,7 @@
     "templates": {
       "extensions": {
         "title": "Types d'exercices avancés",
-        "desc": "Créez des exercices de catégorisation et de correction d'erreurs. Nécessite une application prenant en charge les extensions."
+        "desc": "Créez des types d'exercices d'extension comme la mise en ordre, le repérage, la dictée ou les quiz notés. Nécessite une application prenant en charge les extensions."
       },
       "knowledge_from_text": {
         "title": "Leçon de connaissances à partir d'un texte",
@@ -3797,6 +3854,17 @@
     "train_errors": "Entraîner les erreurs",
     "shuffle": "Mode aléatoire",
     "endless": "Sans fin",
+    "reset_all": {
+      "button": "Tout recommencer",
+      "title": "Réinitialiser tous les résultats ?",
+      "message": "Les résultats de « {title} » sont réinitialisés : score, étoiles et temps d’étude de {lessons} leçons. Un nouveau passage commence à la leçon 1 ; les erreurs du passage précédent restent dans l’historique. Les XP et les badges ne changent pas.",
+      "average": "Moyenne jusqu’ici : {percent} %",
+      "no_average": "Pas encore de moyenne.",
+      "confirm": "Réinitialiser et recommencer",
+      "cancel": "Annuler",
+      "success": "Résultats réinitialisés. Un nouveau passage commence avec la leçon 1.",
+      "failed": "Les résultats n’ont pas pu être réinitialisés."
+    },
     "personal": {
       "title": "Ton parcours d'apprentissage",
       "progress": "Au total : {n}% terminé",
@@ -3917,6 +3985,7 @@
     "cache_clear": "Vider le cache",
     "cache_clear_confirm": "Vider le cache hors ligne ?",
     "cache_clear_action": "Oui, vider",
+    "cache_clear_failed": "Impossible de vider le cache hors ligne : {detail}",
     "cache_cleared": "Cache hors ligne vidé.",
     "update": {
       "message": "Une nouvelle version est disponible.",
@@ -4317,6 +4386,8 @@
       "hint": "Partage ce lien pour que d'autres puissent ajouter ce dépôt PUBLIC. Pour un dépôt privé, envoie l'URL et un jeton en lecture seule séparément.",
       "qr_alt": "QR code du lien de partage"
     },
+    "remove_error": "Impossible de retirer le dépôt.",
+    "reorder_error": "Impossible de modifier l'ordre des dépôts.",
     "progress": {
       "syncing": "Synchronisation…",
       "validating": "Validation du dépôt…",
@@ -4504,12 +4575,12 @@
     "page_title": "Mode aléatoire",
     "loading": "Chargement de la session aléatoire…",
     "empty_body": "Ce jeu a besoin d'au moins deux leçons avec des exercices pour être mélangé.",
-    "not_cached_body": "Ce jeu n'est pas encore téléchargé. Ouvre l'explorateur de contenu pour le télécharger d'abord.",
+    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
     "back_to_dashboard": "Retour au tableau de bord",
     "subtitle": "Mélange de {n} questions issues de {lessons} leçons",
     "error": {
       "load_failed": "Impossible de charger la session aléatoire.",
-      "missing_params": "Aucun jeu de contenu sélectionné."
+      "missing_params": "Aucun ensemble de contenu sélectionné."
     },
     "summary": {
       "heading": "Entraînement aléatoire terminé !",
@@ -4666,6 +4737,14 @@
       "vocabulary": "Vocabulaire",
       "grammar_rule": "Règle de grammaire",
       "unknown": "Inconnu"
+    }
+  },
+  "runner": {
+    "back_to_dashboard": "Retour au tableau de bord",
+    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
+    "error": {
+      "missing_params": "Aucun ensemble de contenu sélectionné.",
+      "invalid_data": "Ce contenu ne peut pas être ouvert car il contient des données invalides ou corrompues. Contactez l'auteur du contenu."
     }
   }
 }

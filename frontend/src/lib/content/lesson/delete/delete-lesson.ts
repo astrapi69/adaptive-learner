@@ -9,7 +9,8 @@
  * resurrect the lesson on the next re-download (decision #5).
  *
  * These helpers are pure (no storage/React); the orchestration (learner-data
- * purge, SW-cache purge, favorite removal) lives in ``useContentSetActions``.
+ * purge, SW-cache purge, favorite removal) lives in
+ * ``hooks/content/set-actions/useLessonDeletion.ts``.
  */
 
 import { USER_GENERATED_SOURCE } from "../../../../storage/types";

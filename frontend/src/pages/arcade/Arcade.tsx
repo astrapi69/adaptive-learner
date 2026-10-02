@@ -18,6 +18,7 @@ import SimonGame from "./SimonGame";
 import SnakeGame from "./SnakeGame";
 import TicTacToeGame from "./TicTacToeGame";
 import {useArcadePrefs} from "../../hooks/settings/useArcadePrefs";
+import {readPlayfulMode} from "../../lib/learning/playful/playfulModePref";
 import {useXpPurchase} from "../../hooks/gamification/useXpPurchase";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {
@@ -120,11 +121,17 @@ export default function Arcade() {
             <div className="mx-auto w-full max-w-3xl px-4 py-6">
                 <h1>{t("arcade.title", "Arcade")}</h1>
                 <DashboardCard data-testid="arcade-gate-notice">
-                    <p className="text-sm">
-                        {t(
-                            "arcade.requires_playful",
-                            "The arcade is part of the game mode. Turn on the game mode (and the arcade switch) in the settings.",
-                        )}
+                    {/* #3216 - name the switch that is off, not both possibilities. */}
+                    <p className="text-sm" data-testid="arcade-gate-reason">
+                        {readPlayfulMode()
+                            ? t(
+                                  "arcade.requires_arcade_switch",
+                                  "The game mode is on, but the arcade switch is off. Turn on the arcade in the game mode details in the settings.",
+                              )
+                            : t(
+                                  "arcade.requires_game_mode",
+                                  "The arcade is part of the game mode, and the game mode is off. Turn it on in the settings.",
+                              )}
                     </p>
                     <Link
                         to="/settings?tab=learning&section=motivation"

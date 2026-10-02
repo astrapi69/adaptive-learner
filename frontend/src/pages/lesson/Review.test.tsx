@@ -42,6 +42,10 @@ function renderAtPath(path: string) {
                     path="/content"
                     element={<div data-testid="content-stub" />}
                 />
+                <Route
+                    path="/lesson/:setSlug/:setId/:filename"
+                    element={<div data-testid="lesson-stub" />}
+                />
             </Routes>
         </MemoryRouter>,
     );
@@ -59,6 +63,7 @@ const BASE = {
     recordStepAttempts: vi.fn(),
     sessionScoreCorrect: 0,
     sessionScoreTotal: 0,
+    remaining: 0,
     reload: vi.fn(),
 };
 
@@ -238,6 +243,39 @@ describe("ReviewPage: ready state", () => {
         ).toHaveTextContent("1 of 1");
     });
 
+    it("#3499: a review started from a lesson offers the way back to it", () => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON,
+            queue: QUEUE,
+            currentStepIndex: 1,
+            sessionScoreCorrect: 1,
+            sessionScoreTotal: 1,
+        });
+        renderAtPath(`${VALID_PATH}?from=${encodeURIComponent("/lesson/fr/language-fr-a1/01.json")}`);
+        fireEvent.click(screen.getByTestId("review-back-to-lesson"));
+        expect(screen.getByTestId("lesson-stub")).toBeInTheDocument();
+    });
+
+    it.each([
+        ["no origin", VALID_PATH],
+        ["an off-app origin", `${VALID_PATH}?from=${encodeURIComponent("//evil.example/lesson/x")}`],
+    ])("#3499: %s keeps only the dashboard exit", (_name, path) => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON,
+            queue: QUEUE,
+            currentStepIndex: 1,
+            sessionScoreCorrect: 1,
+            sessionScoreTotal: 1,
+        });
+        renderAtPath(path);
+        expect(screen.getByTestId("review-summary")).toBeInTheDocument();
+        expect(screen.queryByTestId("review-back-to-lesson")).toBeNull();
+    });
+
     it("summary suggests coming back in 2 days (#626)", () => {
         useReviewLessonMock.mockReturnValue({
             ...BASE,
@@ -263,6 +301,7 @@ describe("ReviewPage: ready state", () => {
             queue: QUEUE,
             currentStepIndex: 1, // summary
             dueCount: 98, // 98 due, 1 shown → 97 remaining
+            remaining: 97, // #3170: the hook derives it from the unplayed elements
             reload,
         });
         renderAtPath(VALID_PATH);
@@ -280,11 +319,73 @@ describe("ReviewPage: ready state", () => {
             queue: QUEUE,
             currentStepIndex: 1,
             dueCount: 1, // all due items were shown
+            remaining: 0,
         });
         renderAtPath(VALID_PATH);
         expect(
             screen.queryByTestId("review-summary-another"),
         ).not.toBeInTheDocument();
+    });
+
+    it("#3170: the summary keeps the 'corrected' wording for an errors-only session", () => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON,
+            queue: QUEUE, // error rows only
+            currentStepIndex: 1,
+            sessionScoreCorrect: 1,
+            sessionScoreTotal: 1,
+        });
+        renderAtPath(VALID_PATH);
+        expect(screen.getByTestId("review-summary-corrected")).toHaveTextContent(
+            "1 of 1 corrected",
+        );
+        expect(screen.getByTestId("review-summary-trend")).toHaveTextContent(
+            "weak spots",
+        );
+    });
+
+    it("#3170: never-wrong elements in the session switch to the neutral wording", () => {
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: LESSON,
+            queue: [
+                ...QUEUE,
+                {...QUEUE[0], id: "row-clean", element_key: "bonjour", error_count: 0, correct_streak: 1},
+            ],
+            currentStepIndex: 1,
+            sessionScoreCorrect: 2,
+            sessionScoreTotal: 2,
+        });
+        renderAtPath(VALID_PATH);
+        expect(screen.getByTestId("review-summary-corrected")).toHaveTextContent(
+            "2 of 2 reinforced",
+        );
+        const trend = screen.getByTestId("review-summary-trend");
+        expect(trend).toHaveTextContent("settling in");
+        expect(trend.textContent).not.toContain("weak spots");
+    });
+
+    it("#3170: the subtitle counts the elements the steps cover, not the steps", () => {
+        // One matching step that collapsed three due cards (#664) covers 3
+        // elements; 3 due -> the un-capped form with 3, not "1 of 3".
+        useReviewLessonMock.mockReturnValue({
+            ...BASE,
+            status: "ready",
+            lesson: {
+                ...LESSON,
+                steps: [{...LESSON.steps[0], review_element_keys: ["merci", "bonjour", "salut"]}],
+            },
+            queue: QUEUE,
+            dueCount: 3,
+            currentStepIndex: 0,
+        });
+        renderAtPath(VALID_PATH);
+        const subtitle = screen.getByTestId("review-subtitle");
+        expect(subtitle.textContent).toContain("3");
+        expect(subtitle.textContent).not.toContain(" of ");
     });
 
     it("requests the configured session length (default 10) (#718)", () => {

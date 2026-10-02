@@ -151,9 +151,8 @@ export default function DashboardFilterBar({
             } catch (err) {
                 if (cancelled) return;
                 notify.error(
-                    err instanceof Error
-                        ? err.message
-                        : t("taxonomy.filter_load_failed", "Failed to load filter data."),
+                    t("taxonomy.filter_load_failed", "Failed to load filter data."),
+                    {error: err},
                 );
             } finally {
                 if (!cancelled) setLoading(false);

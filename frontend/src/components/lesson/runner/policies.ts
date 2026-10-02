@@ -1,0 +1,168 @@
+/**
+ * The six runner policies (EXP-052 slice 0, refs #3169).
+ *
+ * The behaviour matrix the owner ratified on 2026-09-23, as data. A row
+ * per runner, a column per ``RunnerPolicy`` field; the table test in
+ * ``policies.test.ts`` pins every cell. Nothing consumes these constants
+ * yet: slices 1 to 4 wire one page each.
+ *
+ * @example
+ * <LessonRunner source={source} policy={REVIEW_POLICY} summary={renderSummary} />
+ */
+
+import type { RunnerExit, RunnerPolicy, RunnerTestIdPrefix } from "./types";
+
+/** The four session runners leave to the dashboard, as their headers do today. */
+const DASHBOARD_EXIT: RunnerExit = Object.freeze({ backTo: "/dashboard" });
+
+/** The learner's lesson: persisted progress, the learner's mode, full chrome. */
+export const LESSON_POLICY: RunnerPolicy = Object.freeze({
+  testIdPrefix: "lesson",
+  i18nNamespace: "lesson",
+  exit: "set-link",
+  prevStep: true,
+  pause: true,
+  endRun: false,
+  optionsBar: true,
+  theoryLink: true,
+  enterShortcut: true,
+  reanchor: true,
+  clearHints: true,
+  persistProgress: true,
+  mode: "inherit",
+  pageTitleKey: "lesson.page_title",
+  emptyBodyKey: null,
+  loadFailedKey: "lesson.error.load_failed",
+  notCachedBodyKey: "lesson.not_cached_body",
+  missingParamsKey: "lesson.error.missing_params",
+});
+
+/** Review session synthesised from the SRS queue. */
+export const REVIEW_POLICY: RunnerPolicy = Object.freeze({
+  testIdPrefix: "review",
+  i18nNamespace: "review",
+  exit: DASHBOARD_EXIT,
+  prevStep: true,
+  pause: false,
+  endRun: false,
+  optionsBar: false,
+  theoryLink: false,
+  enterShortcut: true,
+  reanchor: true,
+  clearHints: true,
+  persistProgress: false,
+  mode: "practice",
+  pageTitleKey: "review.page_title",
+  emptyBodyKey: "review.empty_body",
+  loadFailedKey: "review.error.load_failed",
+  notCachedBodyKey: "runner.not_cached_body",
+  missingParamsKey: "runner.error.missing_params",
+});
+
+/** Shuffle across the lessons of a set. */
+export const SHUFFLE_POLICY: RunnerPolicy = Object.freeze({
+  testIdPrefix: "shuffle",
+  i18nNamespace: "shuffle",
+  exit: DASHBOARD_EXIT,
+  prevStep: true,
+  pause: false,
+  endRun: false,
+  optionsBar: false,
+  theoryLink: false,
+  enterShortcut: true,
+  reanchor: true,
+  clearHints: true,
+  persistProgress: false,
+  mode: "practice",
+  pageTitleKey: "shuffle.page_title",
+  emptyBodyKey: "shuffle.empty_body",
+  loadFailedKey: "shuffle.error.load_failed",
+  notCachedBodyKey: "runner.not_cached_body",
+  missingParamsKey: "runner.error.missing_params",
+});
+
+/**
+ * The Endless stream. ``prevStep: false`` is structural, not a
+ * preference: the source has ``position: null`` and no ``goPrev``.
+ * Pause and End move from the stat line into the footer (EXP-052
+ * Befund 2); ``endRun`` because a stream has no last step to end on.
+ */
+export const ENDLESS_POLICY: RunnerPolicy = Object.freeze({
+  testIdPrefix: "endless",
+  i18nNamespace: "endless",
+  exit: DASHBOARD_EXIT,
+  prevStep: false,
+  pause: true,
+  endRun: true,
+  optionsBar: false,
+  theoryLink: false,
+  enterShortcut: true,
+  reanchor: true,
+  clearHints: true,
+  persistProgress: false,
+  mode: "practice",
+  pageTitleKey: "endless.page_title",
+  emptyBodyKey: "endless.empty_body",
+  loadFailedKey: "endless.error.load_failed",
+  notCachedBodyKey: "runner.not_cached_body",
+  missingParamsKey: "runner.error.missing_params",
+});
+
+/** Adaptive lesson generated from the learner's errors; the transparency
+ *  block arrives through the ``headerExtra`` render prop. */
+export const ADAPTIVE_POLICY: RunnerPolicy = Object.freeze({
+  testIdPrefix: "adaptive-lesson",
+  i18nNamespace: "adaptive",
+  exit: DASHBOARD_EXIT,
+  prevStep: true,
+  pause: false,
+  endRun: false,
+  optionsBar: false,
+  theoryLink: false,
+  enterShortcut: true,
+  reanchor: true,
+  clearHints: true,
+  persistProgress: false,
+  mode: "practice",
+  pageTitleKey: "adaptive.page_title",
+  emptyBodyKey: "adaptive.empty_body",
+  loadFailedKey: "adaptive.error.load_failed",
+  notCachedBodyKey: "runner.not_cached_body",
+  missingParamsKey: "runner.error.missing_params",
+});
+
+/** Error replay opened from a lesson summary; ``"back-button"`` returns
+ *  to that lesson (a route only the source knows, ``RunnerSource.backTo``),
+ *  the countdown ring arrives through ``headerExtra``. ``prevStep`` is a
+ *  read-only look back: the #1790 lock keeps an answered step answered.
+ *  The title is the replay's own name; its namespace has no page_title. */
+export const ERROR_REPLAY_POLICY: RunnerPolicy = Object.freeze({
+  testIdPrefix: "error-replay",
+  i18nNamespace: "lesson.error_replay",
+  exit: "back-button",
+  prevStep: true,
+  pause: false,
+  endRun: false,
+  optionsBar: false,
+  theoryLink: false,
+  enterShortcut: true,
+  reanchor: true,
+  clearHints: true,
+  persistProgress: false,
+  mode: "practice",
+  pageTitleKey: "lesson.next_step.error_replay",
+  emptyBodyKey: "lesson.error_replay.empty",
+  loadFailedKey: "lesson.error.load_failed",
+  notCachedBodyKey: "runner.not_cached_body",
+  missingParamsKey: "runner.error.missing_params",
+});
+
+/** All six, keyed by testid prefix (the table the tests iterate). */
+export const RUNNER_POLICIES: Readonly<Record<RunnerTestIdPrefix, RunnerPolicy>> = Object.freeze({
+  lesson: LESSON_POLICY,
+  review: REVIEW_POLICY,
+  shuffle: SHUFFLE_POLICY,
+  endless: ENDLESS_POLICY,
+  "adaptive-lesson": ADAPTIVE_POLICY,
+  "error-replay": ERROR_REPLAY_POLICY,
+});

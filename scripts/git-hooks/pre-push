@@ -2,7 +2,8 @@
 # AdaptiveLearner pre-push hook.
 #
 # Runs `pre-commit run --all-files` against the backend when a TAG
-# is being pushed. Skipped for branch pushes - those are CI's job.
+# is being pushed. Branch pushes run `make pre-push` only when opted in
+# with `git config adaptive-learner.prePush true` (#3507).
 # Reasoning: the v0.26.0..v0.26.6 hotfix chain (CI-PRECOMMIT-HOOK-01)
 # proved that release-workflow.md's "run before tagging" rule alone
 # is not enforcement; mechanical formatter/lint failures slipped past
@@ -22,6 +23,14 @@ while read -r local_ref local_sha remote_ref remote_sha; do
 done
 
 if [[ "$is_tag_push" -eq 0 ]]; then
+    # #3507: branch pushes run `make pre-push` (the build-free gates plus the
+    # TypeScript dead-code check) only when opted in, because a multi-minute
+    # mandatory hook gets bypassed with --no-verify:
+    #   git config adaptive-learner.prePush true
+    if [[ "$(git config --bool adaptive-learner.prePush || true)" == "true" ]]; then
+        echo "[pre-push] running make pre-push (opt-out: git config adaptive-learner.prePush false)"
+        make -C "$(git rev-parse --show-toplevel)" --no-print-directory pre-push
+    fi
     exit 0
 fi
 

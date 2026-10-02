@@ -363,4 +363,21 @@
 # richtigen Antwort aufsteigt). Fundament-Animation der Juice-Schicht;
 # alle uebrigen Juice-Animationen re-usen bestehende Keyframes
 # (lernfunke-hop/-pop, matching-shake) - bewusst KEIN neues CSS sonst.
-7499
+# 2026-09-30 (#3371): +6 Zeilen in 01-base.css - Base-Layer-Reset fuer
+# flex/grid-Listen (<ul>/<ol> ohne Preflight behielten UA-Punkt, 40 px
+# Einzug und Raender). Fundament-Reset wie der Button-Reset (#2631), mit
+# null Spezifitaet; der Guard styles/list-reset.test.ts deckt die
+# uebrigen Listen ueber Utilities an der Komponente ab, kein weiteres CSS.
+# 2026-09-30 (#3373): +3 Zeilen in 01-base.css - Base-Layer-Regel
+# svg.lucide { flex-shrink: 0 }: ein SVG als Flex-Item darf auf 0
+# schrumpfen, ein umbrechendes Label quetschte die Icons. Eine Regel
+# statt shrink-0 an 427 Icon-Stellen; Utilities gewinnen weiter.
+# 2026-09-30 (#3404): -11 Zeilen in 24-lesson-mode-nav.css - die mobilen
+# .spaced-rec-card/-actions-Regeln geloescht, die Karten tragen ihr Layout
+# jetzt als token-backed Utilities an der Komponente. Kein neues CSS.
+# 2026-10-01 (#3355): +3 Zeilen in 24-lesson-mode-nav.css - die
+# Drawer-Regeln (Hamburger, Ausklapp-Links) stehen jetzt in einem eigenen
+# @media (max-width: 1279px)-Block statt im 768px-Block, weil die einzeilige
+# Kopfleiste unter xl nicht passt. Oeffner, Schliesser und ein Verweis-
+# kommentar; keine neue Regel, nur der Breakpoint wandert.
+7500

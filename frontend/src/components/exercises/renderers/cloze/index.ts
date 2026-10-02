@@ -13,4 +13,4 @@ export {
     ClozeSelectChoices,
     ClozeSentence,
 } from "./cloze-editor";
-export {ClozeHint, ClozeResult} from "./cloze-feedback";
+export {ClozeResult} from "./cloze-feedback";

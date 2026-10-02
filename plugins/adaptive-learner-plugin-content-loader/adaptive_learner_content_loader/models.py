@@ -25,7 +25,9 @@ domain-plugin interface in a later phase; right now the
 loader treats domain as opaque metadata and does not enforce
 a closed enum.
 
-All language codes follow BCP 47 (e.g. ``fr``, ``de-AT``).
+All language codes follow BCP 47 (e.g. ``fr``, ``de-AT``); the
+engine's E-LANG-TAG rule checks the shape at authoring time, the
+backend stores the value as given (#3245).
 Level follows the CEFR convention for languages (``A1`` ..
 ``C2``) but the field is a plain string so non-language
 domains can use their own scale ('beginner', 'intermediate',
@@ -112,12 +114,6 @@ CURRENT_SCHEMA_VERSION = "1.9"
 # encounters a ``cloze`` step (closed-enum rejection by
 # Pydantic), which is the intended clean break.
 
-# BCP-47 subset: lowercase 2-3 letter primary tag plus an
-# optional ``-`` separator + region/script tag. Permissive
-# enough for ``fr``, ``de-AT``, ``zh-Hans``; strict enough to
-# reject obviously broken values like ``francais`` or ``en_US``.
-_LANGUAGE_RE = re.compile(r"^[a-z]{2,3}(-[A-Za-z0-9]{2,8})?$")
-
 # Semver-style major.minor.patch with optional ``-pre`` /
 # ``+meta`` suffix. Loose by design — content authors should
 # be able to ship `1.0.0`, `1.0`, or `1.0.0-rc1` without
@@ -127,8 +123,14 @@ _VERSION_RE = re.compile(
 )
 
 # Slug-safe identifier: lowercase letters, digits, hyphens.
-# Used for both set_id and source identifiers.
+# Used for source identifiers.
 _SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+
+# A set id becomes one directory name in the download cache. Its shape is
+# the engine schema's call (#3391: no pattern on a set id, so Unicode
+# letters and underscores pass there and in Dexie mode); the app only
+# refuses what would not be a single, safe path segment.
+_UNSAFE_SEGMENT_RE = re.compile(r"[/\\\x00-\x1f\x7f]")
 
 # Repo-relative directory for a set's files (Phase 60 / v1.44.0).
 # Slug-safe segments joined by ``/`` (e.g. ``sets/de/fr-a1``). No
@@ -200,10 +202,13 @@ class ContentSetAsset(ContentSetAssetBase):
 
 
 class ContentSet(ContentSetBase):
-    """Semantic layer: the legacy ``language`` alias, slug/BCP-47/path/
-    semver shapes and slug tags (structure in the generated base).
-    ``assets`` is retargeted to the semantic subclass so nested
-    validation runs its rules."""
+    """What the backend needs on top of the generated structure: the
+    legacy ``language`` alias, a slug ``id`` and a slug-safe ``path``
+    (both are cache directories), and a semver ``version`` (compared
+    and sorted by the loader). ``assets`` is retargeted to the semantic
+    subclass so nested validation runs its rules. Language-tag and tag
+    shapes are the engine's authoring rules, not checked here (#3245).
+    """
 
     assets: list[ContentSetAsset] = Field(default_factory=list)
 
@@ -227,22 +232,11 @@ class ContentSet(ContentSetBase):
 
     @field_validator("id")
     @classmethod
-    def _slug_id(cls, value: str) -> str:
-        if not _SLUG_RE.fullmatch(value):
+    def _safe_segment_id(cls, value: str) -> str:
+        if value in ("", ".", "..") or _UNSAFE_SEGMENT_RE.search(value):
             raise ValueError(
-                "id must be slug-safe "
-                "(lowercase letters / digits / hyphens, "
-                "no leading/trailing hyphen)"
-            )
-        return value
-
-    @field_validator("target_language", "source_language")
-    @classmethod
-    def _bcp47_language(cls, value: str) -> str:
-        if not _LANGUAGE_RE.fullmatch(value):
-            raise ValueError(
-                "language codes must be BCP-47 "
-                "(e.g. 'fr', 'de-AT', 'zh-Hans')"
+                "id must be a single safe path segment "
+                "(not empty, '.' or '..'; no slash, backslash or control character)"
             )
         return value
 
@@ -266,17 +260,6 @@ class ContentSet(ContentSetBase):
                 "version must be semver-shaped "
                 "(e.g. '1.0.0', '1.2', '2.0.0-rc1')"
             )
-        return value
-
-    @field_validator("tags")
-    @classmethod
-    def _slug_tags(cls, value: list[str]) -> list[str]:
-        for tag in value:
-            if not _SLUG_RE.fullmatch(tag):
-                raise ValueError(
-                    f"tag '{tag}' must be slug-safe "
-                    "(lowercase letters / digits / hyphens)"
-                )
         return value
 
     @property

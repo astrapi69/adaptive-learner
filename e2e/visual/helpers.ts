@@ -15,9 +15,20 @@
  * renamed there, update this list (a future enhancement could generate it).
  */
 
-import {expect, type Page} from "@playwright/test";
+import {expect, type Locator, type Page} from "@playwright/test";
 
-import {completeAssessment, completeOnboarding} from "../helpers";
+import {completeAssessment, completeOnboarding, declineDraftPrompt} from "../helpers";
+import {
+    RANDOM_PIN_GLOBAL,
+    isRandomPin,
+} from "../../frontend/src/lib/random/pinned-random";
+import {
+    FIXED_NOW_ISO,
+    VISUAL_RANDOM_PIN,
+    legacyRandomInitScript,
+    randomPinInitScript,
+    randomPinProblem,
+} from "../../frontend/src/test-utils/visual-pins";
 
 /** All 12 registered themes (6 recommended + 6 classic). */
 export const THEME_IDS = [
@@ -66,15 +77,18 @@ const OWN_LESSON_CARDS = [
 /** Title of the seeded own lesson (#3011). */
 export const OWN_LESSON_TITLE = "Mein erstes Vokabelset";
 
-/** Frozen wall-clock for every visual run (follows #244). Relative times
- *  ("vor 3 Minuten", streak dates, "Morgen neue Missionen") would otherwise
- *  drift day-to-day and make the screenshots flaky. */
-const FIXED_NOW_ISO = "2026-06-10T14:00:00Z";
-
 /**
- * Freeze ``Date`` to a fixed instant before any page script runs, so every
- * relative-time / timestamp render is deterministic. Added before the first
- * navigation (``addInitScript`` re-applies on each navigation in the context).
+ * Freeze ``Date`` to a fixed instant (``FIXED_NOW_ISO`` in
+ * ``frontend/src/test-utils/visual-pins.ts``) before any page script runs,
+ * so every relative-time / timestamp render is deterministic. Added before
+ * the first navigation (``addInitScript`` re-applies on each navigation in
+ * the context).
+ *
+ * No shuffle reads this clock any more (#3214): the matching and word-tiles
+ * mount seeds take their suffix from the pin ``pinRandomStreams`` installs.
+ * Call ``pinRandomStreams`` right after this at every visual entry point, or
+ * those seeds fall back to the page clock and the set-run builders to
+ * ``Math.random``.
  */
 export async function freezeClock(page: Page): Promise<void> {
     await page.addInitScript((iso) => {
@@ -98,32 +112,91 @@ export async function freezeClock(page: Page): Promise<void> {
 }
 
 /**
- * Pin every in-page randomness source so ID- and shuffle-derived UI is
- * identical run-to-run (#1567): ``crypto.randomUUID`` becomes a counter
- * sequence (the seeded user's id feeds the missions PRNG
- * ``userId:dateISO`` — a random UUID re-rolls the daily missions on
- * every capture run) and ``Math.random`` becomes a fixed-seed
- * mulberry32 stream (exercise/option shuffles). Deterministic, still
- * unique per call. Call ONCE before the first navigation, alongside
+ * Pin the page-wide randomness sources so ID-derived UI is identical
+ * run-to-run (#1567): ``crypto.randomUUID`` becomes a counter sequence (the
+ * seeded user's id feeds the missions PRNG ``userId:dateISO`` - a random UUID
+ * re-rolls the daily missions on every capture run) and ``Math.random``
+ * becomes ONE fixed-seed mulberry32 stream shared by every remaining
+ * ``Math.random`` consumer on the page (confetti, sound, arcade games,
+ * exercise variables, the cloze generator, custom paths). Deterministic,
+ * still unique per call. Call ONCE before the first navigation, alongside
  * ``freezeClock``.
+ *
+ * This shared stream no longer drives the option shuffles or the set-run
+ * builders (#3214). A draw from a shared stream depends on every draw before
+ * it anywhere on the page, so the Shuffle order differed between viewports
+ * under the same seed. Those consumers now draw from their OWN named streams,
+ * which ``pinRandomStreams`` installs; no other draw can move them.
+ *
+ * The generator is the app's own ``mulberry32`` (``prng.ts``), shipped as
+ * source text by ``legacyRandomInitScript`` in
+ * ``frontend/src/test-utils/visual-pins.ts``; the
+ * stream is bit-identical to the copy this helper used to carry.
  */
 export async function pinRandomness(page: Page): Promise<void> {
-    await page.addInitScript(() => {
-        let uuidCounter = 0;
-        crypto.randomUUID = () => {
-            uuidCounter += 1;
-            const tail = String(uuidCounter).padStart(12, "0");
-            return `00000000-0000-4000-8000-${tail}`;
-        };
-        let mulberryState = 0x1567 >>> 0;
-        Math.random = () => {
-            mulberryState = (mulberryState + 0x6d2b79f5) >>> 0;
-            let mixed = mulberryState;
-            mixed = Math.imul(mixed ^ (mixed >>> 15), mixed | 1);
-            mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61);
-            return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
-        };
-    });
+    await page.addInitScript({content: legacyRandomInitScript()});
+}
+
+/**
+ * Install the visual random pin (#3214) before the first navigation:
+ * ``VISUAL_RANDOM_PIN`` on ``globalThis[RANDOM_PIN_GLOBAL]``, read by
+ * ``frontend/src/lib/random/pinned-random.ts``.
+ *
+ * With it, the Shuffle builder draws from its own ``"shuffle-order"`` stream,
+ * the Endless repetitions from ``"endless-repeat"``, and the matching and
+ * word-tiles mount seeds use ``VISUAL_RANDOM_PIN.mountSalt`` instead of the
+ * page clock. Each stream is a fresh generator only its consumer advances,
+ * so a draw anywhere else on the page cannot move a baseline.
+ *
+ * The pin is a frozen, non-writable, non-configurable property
+ * (``randomPinInitScript``), so no page script can swap it mid-capture.
+ *
+ * Fails closed twice: a pin the app would reject (``isRandomPin``) throws
+ * here, and every shared visual navigation helper checks afterwards that
+ * the page carries it (``assertRandomPinInstalled``).
+ *
+ * @example
+ * await freezeClock(page);
+ * await pinRandomStreams(page);
+ */
+export async function pinRandomStreams(page: Page): Promise<void> {
+    if (!isRandomPin(VISUAL_RANDOM_PIN)) {
+        throw new Error(
+            `pinRandomStreams: VISUAL_RANDOM_PIN ${JSON.stringify(VISUAL_RANDOM_PIN)} ` +
+                "is not a valid RandomPin; the app would ignore it and draw " +
+                "unpinned randomness (#3214).",
+        );
+    }
+    await page.addInitScript({content: randomPinInitScript()});
+}
+
+/**
+ * Throw unless the current page carries the visual random pin (#3214).
+ *
+ * Without the pin a visual spec still passes: it just photographs
+ * browser-random Shuffle, Endless, Matching and word-tiles orders. So the
+ * shared navigation helpers every visual loop goes through (``gotoView``,
+ * ``gotoSurface``, the set runners, the FeatureShot loop) call this once
+ * after they have navigated; one ``evaluate`` per navigation. Only an own
+ * property counts, the same rule the app applies.
+ *
+ * @example
+ * await page.goto("/shuffle-lesson/fr-a1-from-en");
+ * await assertRandomPinInstalled(page);
+ */
+export async function assertRandomPinInstalled(page: Page): Promise<void> {
+    const installed = await page.evaluate(
+        (name) => Object.getOwnPropertyDescriptor(globalThis, name)?.value,
+        RANDOM_PIN_GLOBAL,
+    );
+    const problem = randomPinProblem(installed);
+    if (problem !== null) {
+        throw new Error(
+            `Visual random pin missing on ${page.url()}: ${problem}. Call ` +
+                "pinRandomStreams(page) before the first navigation (#3214); " +
+                "without it the shot captures browser-random orders.",
+        );
+    }
 }
 
 /**
@@ -597,7 +670,7 @@ export async function expandViewportToDocument(page: Page): Promise<number> {
  *  Exported so the per-feature capture script (#1023) reuses the single
  *  onboarding path instead of re-implementing it. */
 export async function seedLearner(page: Page): Promise<void> {
-    await completeOnboarding(page);
+    await completeOnboarding(page, {migrationOffer: "none"});
     await completeAssessment(page);
     await page.waitForURL("**/dashboard", {timeout: 30_000});
 }
@@ -606,9 +679,10 @@ export async function seedLearner(page: Page): Promise<void> {
  * Download the bundled set and play its first lesson. ``stopAt`` controls
  * where the playthrough halts:
  *   - "summary": answer every step, land on the lesson summary.
- *   - "matching-result": pair the FIRST matching exercise with one
- *     deliberate wrong pair, check it (showing correct + wrong feedback),
- *     and stop there.
+ *   - "matching-result": pair the FIRST matching exercise with a
+ *     deliberate wrong rotation of ``wrongPairs`` pairs (default 2, the
+ *     one swapped pair), check it (showing correct + wrong feedback), and
+ *     stop there.
  * Returns true if the requested state was reached, false otherwise (so the
  * caller can skip rather than commit a meaningless baseline).
  */
@@ -647,6 +721,7 @@ export async function openFirstBundledLesson(page: Page): Promise<void> {
 export async function playBundledLesson(
     page: Page,
     stopAt: "summary" | "matching-result",
+    {wrongPairs = 2}: {wrongPairs?: number} = {},
 ): Promise<boolean> {
     await openFirstBundledLesson(page);
 
@@ -655,7 +730,7 @@ export async function playBundledLesson(
 
         const isMatching = (await page.getByTestId("matching-exercise").count()) > 0;
         if (isMatching && stopAt === "matching-result") {
-            const reached = await pairMatchingWithOneWrong(page);
+            const reached = await pairMatchingWithWrongCycle(page, wrongPairs);
             if (reached) return true;
         }
 
@@ -720,27 +795,33 @@ export async function answerCurrentStep(page: Page): Promise<void> {
 }
 
 /**
- * Pair a matching exercise so that at least one pair is WRONG and one is
- * correct, then check — leaving the post-submit feedback (green + red) on
- * screen. Returns false when the grid is too small to make a mixed result.
+ * Pair a matching exercise so that the first ``cycle`` pairs are WRONG and
+ * the rest correct, then check, leaving the default post-check view ("My
+ * answers" before #3505; "Corrections" since) on screen. Returns false when the
+ * grid is too small for the cycle.
+ *
+ * The wrong pairs form a rotation (left ``i`` -> right ``(i + 1) % cycle``;
+ * the testids carry the ORIGINAL pair index, so any other right is wrong):
+ * the default ``cycle`` of 2 is the one swapped pair every lesson-matching
+ * view shows; the adaptive seed rotates 3, because the analyzer needs 3
+ * errors from one lesson before it forms a cluster, and only a cluster
+ * makes the generator borrow the source lesson's theory step (#3224).
  *
  * Inside a lesson the MatchingExercise is rendered ``controlled`` (see
  * ``Lesson.tsx``), so its internal ``matching-submit`` button is NOT
- * rendered — submission is driven by the shared external ``lesson-check``
+ * rendered: submission is driven by the shared external ``lesson-check``
  * button (``exerciseRef.submit()`` -> ``setSubmitted(true)``), which then
  * renders ``matching-result``. Issue #270.
  */
-async function pairMatchingWithOneWrong(page: Page): Promise<boolean> {
+async function pairMatchingWithWrongCycle(page: Page, cycle: number): Promise<boolean> {
     const lefts = page.getByTestId(/^matching-left-\d+$/);
     const n = await lefts.count();
-    if (n < 2) return false;
-    // First left -> a non-matching right (wrong); the rest -> their own
-    // index (correct), so the result shows both states.
-    await page.getByTestId("matching-left-0").click();
-    await page.getByTestId("matching-right-1").click();
-    await page.getByTestId("matching-left-1").click();
-    await page.getByTestId("matching-right-0").click();
-    for (let j = 2; j < n; j++) {
+    if (n < cycle) return false;
+    for (let i = 0; i < cycle; i++) {
+        await page.getByTestId(`matching-left-${i}`).click();
+        await page.getByTestId(`matching-right-${(i + 1) % cycle}`).click();
+    }
+    for (let j = cycle; j < n; j++) {
         await page.getByTestId(`matching-left-${j}`).click();
         await page.getByTestId(`matching-right-${j}`).click();
     }
@@ -750,20 +831,17 @@ async function pairMatchingWithOneWrong(page: Page): Promise<boolean> {
     await expect(page.getByTestId("matching-result")).toBeVisible({
         timeout: 5_000,
     });
-    // #1785 — "matching-result visible" is NOT the settled graded state:
-    // the per-pair result rows still expand the page height afterwards, so
-    // a fullPage shot fired here captures mid-reflow (the theme-matrix
-    // flake). Pin the LAST wrong-pair hint row (pairs 0+1 are the swapped
-    // ones) and the last correct-pair row, then wait for the page height
-    // to stop moving. Same determinism class as #1696.
-    await expect(page.getByTestId("matching-correct-hint-1")).toBeVisible({
-        timeout: 5_000,
-    });
-    if (n > 2) {
-        await expect(
-            page.getByTestId(`matching-pair-correct-${n - 1}`),
-        ).toBeVisible({timeout: 5_000});
-    }
+    // #1785 - "matching-result visible" is NOT the settled post-check
+    // state; pin the view toggle, then wait for the page height to stop
+    // moving (same determinism class as #1696).
+    // #3505 - a check with mistakes opens on "Corrections" (the graded grid
+    // with the correct partner under each mistake), so the pin is the
+    // active Corrections toggle.
+    await expect(page.getByTestId("matching-corrections")).toHaveAttribute(
+        "aria-pressed",
+        "true",
+        {timeout: 5_000},
+    );
     await waitForStableLayout(page);
     return true;
 }
@@ -826,9 +904,7 @@ async function authorExtensionLesson(page: Page): Promise<boolean> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15_000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill("Visual: Extensions geprüft");
     await page.getByTestId("create-lesson-templates-toggle").click();
     await page.getByTestId("template-extensions").click();
@@ -1011,9 +1087,20 @@ async function gotoGradedQuizChecked(page: Page): Promise<boolean> {
 /**
  * Bring ``view`` into its screenshot state (theme already pinned by the
  * caller). Returns true when ready, false when the view could not be
- * deterministically reached (caller skips).
+ * deterministically reached (caller skips). A reached view must carry the
+ * random pin, or this throws (``assertRandomPinInstalled``, #3214).
+ *
+ * @example
+ * test.skip(!(await gotoView(page, "dashboard")), "not reachable");
  */
 export async function gotoView(page: Page, view: ViewName): Promise<boolean> {
+    const ready = await reachView(page, view);
+    if (ready) await assertRandomPinInstalled(page);
+    return ready;
+}
+
+/** The per-view navigation behind {@link gotoView}. */
+async function reachView(page: Page, view: ViewName): Promise<boolean> {
     switch (view) {
         case "settings":
             await seedLearner(page);
@@ -1087,15 +1174,22 @@ export const VIEWPORTS = {
     desktop: {width: 1920, height: 1080},
     tablet: {width: 768, height: 1024},
     mobile: {width: 375, height: 667},
+    // #3355 - a narrow laptop: the range (769-1279 px) where the top bar
+    // collapses into the drawer. Rendered for LAPTOP_SURFACES only.
+    laptop: {width: 1024, height: 768},
 } as const;
 
 export type ViewportName = keyof typeof VIEWPORTS;
+
+/** The full matrix every surface renders at (#1640). */
+export const DEFAULT_VIEWPORTS: readonly ViewportName[] = ["desktop", "tablet", "mobile"];
 
 /** Every critical surface in the Phase-1 (default-theme) matrix. */
 export const SURFACE_NAMES = [
     "dashboard-empty",
     "dashboard-populated",
     "dashboard-badges",
+    "dashboard-activity",
     "content-browser",
     "content-discover",
     "content-import",
@@ -1107,6 +1201,10 @@ export const SURFACE_NAMES = [
     "lesson-matching",
     "lesson-summary",
     "review-session",
+    "shuffle-session",
+    "endless-session",
+    "adaptive-lesson",
+    "error-replay",
     "statistics",
     "settings-general",
     "settings-data",
@@ -1118,6 +1216,35 @@ export const SURFACE_NAMES = [
 ] as const;
 
 export type SurfaceName = (typeof SURFACE_NAMES)[number];
+
+/**
+ * Surfaces that also render at ``laptop`` (#3355). The header changes
+ * layout inside 769-1279 px and no matrix viewport sat there; one surface
+ * with the full header is enough to pin it without a fourth full matrix.
+ */
+export const LAPTOP_SURFACES: ReadonlySet<SurfaceName> = new Set<SurfaceName>([
+    "dashboard-populated",
+]);
+
+/**
+ * Elements a surface's comparison masks (Playwright ``mask``: painted over
+ * in both the baseline and the actual shot), keyed by surface, listed by
+ * testid. Only for content that MOVES between two renders of the same
+ * pinned state and cannot be pinned - today the Endless stat clock, a
+ * timer ``freezeClock`` does not stop (#3215). Everything around a masked
+ * element stays compared; a mask is never a way to hide a layout change.
+ * The other ``setInterval`` consumers (flash-round countdown, timed mode,
+ * arcade clocks, the import analysis phases, the Create-Lesson autosave)
+ * render on no captured surface or paint nothing, so they carry no entry.
+ */
+export const SURFACE_MASKS: Partial<Record<SurfaceName, readonly string[]>> = {
+    "endless-session": ["endless-stat-time"],
+};
+
+/** The ``mask`` locators of a surface (empty for surfaces without one). */
+export function surfaceMasks(page: Page, surface: SurfaceName): Locator[] {
+    return (SURFACE_MASKS[surface] ?? []).map((testId) => page.getByTestId(testId));
+}
 
 /**
  * Advance the open lesson runner until ``predicate`` reports the wanted
@@ -1389,6 +1516,32 @@ async function gotoDashboardInApp(page: Page): Promise<void> {
     await page.waitForURL("**/dashboard", {timeout: 20_000});
 }
 
+/**
+ * #3504 - the dashboard Activity tab: year heatmap, learning-profile radar
+ * and the spaced-practice card list render only here, so without this
+ * motif a change to any of them synced as a 0-diff that checked nothing.
+ * Same seed as ``dashboard-populated`` (a played lesson, so the heatmap has
+ * a day and the review queue a row), reached in-app (no ``beforeunload``
+ * row, see {@link gotoDashboardInApp}), then the tab. Ready when the panel,
+ * the heatmap (not its loading stub) and the radar have rendered.
+ */
+async function gotoDashboardActivity(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await playBundledLesson(page, "summary");
+    await waitForSrsQuiescence(page, {expectRows: true});
+    await gotoDashboardInApp(page);
+    await page.getByTestId("dashboard-tab-activity").click();
+    await expect(page.getByTestId("dashboard-tab-activity-panel")).toBeVisible({
+        timeout: 20_000,
+    });
+    await expect(page.getByTestId("streak-calendar")).toBeVisible({timeout: 20_000});
+    await expect(page.getByTestId("profile-radar")).toBeVisible({timeout: 20_000});
+    await expect(page.getByTestId("review-queue-card-loading")).toHaveCount(0, {
+        timeout: 20_000,
+    });
+    return true;
+}
+
 /** Every loading placeholder the dashboard publishes (#3016). A card
  *  still in its loading state means the page has not reached its final
  *  height, and the capture would freeze a transient layout. */
@@ -1464,7 +1617,7 @@ async function settleDashboard(
  * the route while the write is still in flight instead of accepting
  * whichever state renders first.
  */
-async function gotoReviewSession(page: Page): Promise<boolean> {
+export async function gotoReviewSession(page: Page): Promise<boolean> {
     await seedLearner(page);
     await playBundledLesson(page, "matching-result");
     // The wrong pair guarantees error rows; make sure they LANDED before
@@ -1486,6 +1639,198 @@ async function gotoReviewSession(page: Page): Promise<boolean> {
         }
     }
     return false;
+}
+
+/**
+ * Open a set-level runner route on the bundled set and wait for its
+ * ready anchors (EXP-052 slice 2). Opening the first bundled lesson
+ * first guarantees the set is cached: Shuffle and Endless resolve the set
+ * through ``listSets`` and render their not-cached screen otherwise. The
+ * route is re-entered while the anchors are missing (the cache write can
+ * still be landing), the same bounded retry as ``gotoReviewSession``.
+ * Fails closed without the random pin: the order on screen would be
+ * browser-random (#3214).
+ */
+async function gotoSetRunner(
+    page: Page,
+    route: string,
+    anchors: readonly string[],
+): Promise<boolean> {
+    await seedLearner(page);
+    await openFirstBundledLesson(page);
+    for (let attempt = 0; attempt < 3; attempt++) {
+        await page.goto(`${route}/${SET_ID}`);
+        try {
+            for (const anchor of anchors) {
+                await expect(page.getByTestId(anchor)).toBeVisible({timeout: 5_000});
+            }
+        } catch {
+            // Set list not materialised yet - re-enter the route.
+            continue;
+        }
+        // Outside the try: a missing pin must fail the test, not read as
+        // "not ready yet" and end in a silent skip.
+        await assertRandomPinInstalled(page);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Seed a learner and open the Shuffle session of the bundled set on its
+ * first step (EXP-052 slice 2). The Fisher-Yates order comes from the
+ * ``"shuffle-order"`` stream ``pinRandomStreams`` installs (#3214), so it is
+ * the same on every run and at every viewport, whatever else drew from
+ * ``Math.random`` first; the first question is stable.
+ */
+export async function gotoShuffleSession(page: Page): Promise<boolean> {
+    return gotoSetRunner(page, "/shuffle-lesson", [
+        "shuffle-page",
+        "shuffle-subtitle",
+        "shuffle-check",
+    ]);
+}
+
+/**
+ * Seed a learner and open the Endless stream of the bundled set on its
+ * first card (EXP-052 slice 2): header, the stat line in the progress
+ * slot, the card, and the footer with pause and End. The stream opens
+ * with new cards in lesson order, so the first card is stable (the
+ * repetitions after the queue draw from the ``"endless-repeat"`` stream
+ * ``pinRandomStreams`` installs, #3214). The stat line's clock is a
+ * ``setInterval`` counter (``useActiveSeconds``), which ``freezeClock``
+ * does not stop, so its digits depend on the seconds between ready and
+ * capture; the comparison masks them via ``SURFACE_MASKS`` (#3215) rather
+ * than leaving them to the diff tolerance, which would also swallow a real
+ * change of the same size (#3023).
+ */
+export async function gotoEndlessSession(page: Page): Promise<boolean> {
+    return gotoSetRunner(page, "/endless-lesson", [
+        "endless-page",
+        "endless-stat-line",
+        "endless-step",
+        "endless-end",
+    ]);
+}
+
+/**
+ * Seed a learner, record SRS error rows with three wrong matching pairs and
+ * open the set's adaptive lesson on its FIRST screen, the one a learner
+ * sees (EXP-052 slice 3, #3224): the session header with the F-115
+ * transparency block under the title, the shared progress bar, the theory
+ * page the generator borrows from the source lesson, and the footer with
+ * Previous and Next (no Check: a theory page has nothing to grade).
+ *
+ * Three wrong pairs, not the lesson views' one swapped pair: the analyzer
+ * forms a cluster only from 3 errors of one lesson, and only a cluster
+ * makes the generator borrow the theory step (``lesson-generator.ts``,
+ * ``_theoryStepForCluster``). With two errors the lesson had no theory
+ * page, and the capture never showed the state every real adaptive lesson
+ * opens on; the old helper additionally clicked past any leading
+ * non-exercise step, which is how "This exercise is missing its type" on
+ * that page stayed invisible (#3224).
+ *
+ * Fails closed on the first screen: a missing theory page, a Check in the
+ * footer or the missing-type placeholder throws instead of skipping. The
+ * generator draws no randomness, so the steps follow the analysis of the
+ * seeded rows. The route is re-entered while the lesson is not generated
+ * yet (the error write can still be landing), the same bounded retry as
+ * ``gotoReviewSession``. The first exercise is its own named step:
+ * {@link gotoAdaptiveExercise}.
+ */
+export async function gotoAdaptiveLesson(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    if (!(await playBundledLesson(page, "matching-result", {wrongPairs: 3}))) return false;
+    await waitForSrsQuiescence(page, {expectRows: true});
+    for (let attempt = 0; attempt < 3; attempt++) {
+        await page.goto(`/adaptive-lesson/${SET_ID}`);
+        try {
+            for (const anchor of ["adaptive-lesson-page", "adaptive-transparency", "adaptive-lesson-footer"]) {
+                await expect(page.getByTestId(anchor)).toBeVisible({timeout: 5_000});
+            }
+        } catch {
+            // Lesson not generated yet - re-enter the route.
+            continue;
+        }
+        await assertAdaptiveTheoryPage(page);
+        return true;
+    }
+    return false;
+}
+
+/** The adaptive lesson's opening theory page, asserted (never skipped past). */
+async function assertAdaptiveTheoryPage(page: Page): Promise<void> {
+    await expect(page.getByTestId("adaptive-lesson-theory-body")).toBeVisible({timeout: 5_000});
+    await expect(page.getByTestId("adaptive-lesson-next")).toBeVisible();
+    await expect(page.getByTestId("adaptive-lesson-check")).toHaveCount(0);
+    await expect(page.getByTestId("lesson-exercise-placeholder-missing")).toHaveCount(0);
+}
+
+/**
+ * The adaptive lesson's first EXERCISE, one Next after the opening theory
+ * page {@link gotoAdaptiveLesson} asserts: the runner around an exercise,
+ * with the two-phase Check in the footer. A named step of its own, so the
+ * theory page is shown or passed on purpose, never stepped around.
+ */
+export async function gotoAdaptiveExercise(page: Page): Promise<boolean> {
+    if (!(await gotoAdaptiveLesson(page))) return false;
+    await page.getByTestId("adaptive-lesson-next").click();
+    await expect(page.getByTestId("adaptive-lesson-theory-body")).toHaveCount(0);
+    await expect(page.getByTestId("adaptive-lesson-check")).toBeVisible({timeout: 5_000});
+    return true;
+}
+
+/**
+ * Answer and check every remaining step of the OPEN lesson until its
+ * summary renders (the tail of a ``playBundledLesson(page,
+ * "matching-result")`` run, which stops right after the checked matching
+ * step).
+ */
+async function playOpenLessonToSummary(page: Page): Promise<void> {
+    for (let i = 0; i < 60; i++) {
+        if (await page.getByTestId("lesson-summary").count()) return;
+        const next = page.getByTestId("lesson-next");
+        if (await next.count()) {
+            await next.click();
+            await page.waitForTimeout(80);
+            continue;
+        }
+        await answerCurrentStep(page);
+        const check = page.getByTestId("lesson-check");
+        if (await check.count()) {
+            await expect(check).toBeEnabled({timeout: 5_000});
+            await check.click();
+        }
+    }
+    await expect(page.getByTestId("lesson-summary")).toBeVisible({timeout: 20_000});
+}
+
+/**
+ * Seed a learner, play the bundled lesson with the wrong matching pair to
+ * its summary, and open "Retry errors" from its mistakes section
+ * (EXP-052 slice 3): the replay on its first failed exercise with the
+ * session header (Back to lesson, "Retry errors: <lesson>"), the shared
+ * progress bar and the lesson footer with Previous. The replay reads its
+ * exercises from router state, so it can only be reached through the
+ * summary, never by URL. The compact summary holds the mistakes section
+ * behind "Detailed evaluation" (#3153) and the section itself may land
+ * collapsed (#2496); both are opened when present.
+ */
+export async function gotoErrorReplay(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    if (!(await playBundledLesson(page, "matching-result"))) return false;
+    await playOpenLessonToSummary(page);
+    const detailed = page.getByTestId("lesson-summary-detailed-toggle");
+    if (await detailed.count()) await detailed.click();
+    await expect(page.getByTestId("lesson-correction-block")).toBeVisible({timeout: 10_000});
+    const expand = page.getByTestId("lesson-correction-block-expand");
+    if (await expand.count()) await expand.click();
+    const replay = page.getByTestId("lesson-correction-replay");
+    if (!(await replay.count())) return false;
+    await replay.click();
+    await expect(page.getByTestId("error-replay-page")).toBeVisible({timeout: 15_000});
+    await expect(page.getByTestId("error-replay-check")).toBeVisible({timeout: 10_000});
+    return true;
 }
 
 /**
@@ -1591,9 +1936,7 @@ export async function createOwnLesson(page: Page, title: string): Promise<void> 
     await expect(page.getByTestId("create-lesson-step-1")).toBeVisible({
         timeout: 20_000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
     await page.getByTestId("create-lesson-title").fill(title);
     await page.getByTestId("create-lesson-next").click();
     for (const card of OWN_LESSON_CARDS) {
@@ -1621,9 +1964,23 @@ export async function createOwnLesson(page: Page, title: string): Promise<void> 
  * Bring ``surface`` into its screenshot state in the DEFAULT theme. The
  * caller has already set the viewport + frozen the clock. Returns true
  * when ready, false when the surface can't be reached deterministically
- * (caller skips).
+ * (caller skips). A reached surface must carry the random pin, or this
+ * throws (``assertRandomPinInstalled``, #3214).
+ *
+ * @example
+ * test.skip(!(await gotoSurface(page, "shuffle-session")), "not reachable");
  */
 export async function gotoSurface(
+    page: Page,
+    surface: SurfaceName,
+): Promise<boolean> {
+    const ready = await reachSurface(page, surface);
+    if (ready) await assertRandomPinInstalled(page);
+    return ready;
+}
+
+/** The per-surface navigation behind {@link gotoSurface}. */
+async function reachSurface(
     page: Page,
     surface: SurfaceName,
 ): Promise<boolean> {
@@ -1642,6 +1999,8 @@ export async function gotoSurface(
             return true;
         case "dashboard-badges":
             return gotoDashboardWithDueReviews(page);
+        case "dashboard-activity":
+            return gotoDashboardActivity(page);
         case "content-browser":
             await seedLearner(page);
             await page.goto("/content?tab=my");
@@ -1728,6 +2087,14 @@ export async function gotoSurface(
             return playBundledLesson(page, "summary");
         case "review-session":
             return gotoReviewSession(page);
+        case "shuffle-session":
+            return gotoShuffleSession(page);
+        case "endless-session":
+            return gotoEndlessSession(page);
+        case "adaptive-lesson":
+            return gotoAdaptiveLesson(page);
+        case "error-replay":
+            return gotoErrorReplay(page);
         case "statistics":
             await seedLearner(page);
             await playBundledLesson(page, "summary");

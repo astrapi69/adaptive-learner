@@ -3,22 +3,39 @@
 The Settings page collects everything you can tweak without
 touching code or YAML. It is organized as a **tabbed page**: pick a
 tab and its panel opens, so you are not scrolling one long list top
-to bottom. The tab groups are:
+to bottom. On a wide screen the tabs sit in a sidebar on the left; on
+a phone they open from a menu button above the panel. The address
+names the open tab (`/settings?tab=data`), so a link or a reload
+lands on the same tab; without one the page opens on **General**.
 
-- **General**: profile (display name + avatar), UI language,
-  appearance / theme, and interface
-  options (gestures, tooltips, Developer Mode).
-- **AI**: provider + model picker, per-provider API keys with
-  source attribution, and the configured-providers overview.
-- **Learning**: how lessons play (default mode, exam threshold,
-  timed difficulty, hints, reminders, the Enter shortcut, exercise
-  direction), the content view, and the Content-hub tab order.
-- **Data**: storage mode, sync, backup (export / import / compare),
-  and the encrypted key export.
-- **Voice**: TTS / STT / pronunciation toggles.
-- **Gamification**: XP / badge notifications, weekend mode, daily
-  goal, and reset progress.
-- **About**: version, system info, credits, donations, license.
+The tabs are sorted into four groups:
+
+- **General**
+    - **General**: profile (display name, avatar, avatar frames),
+      appearance (theme, content view, order of the Content-hub tabs),
+      display language, interface (button tooltips, menu position on
+      the phone), storage mode, update preferences, installing the app,
+      and the mode indicator.
+- **Learning & AI**
+    - **Learning**: how lessons behave, in five areas from the learning
+      profile to motivation and routine, including the voice settings
+      and gamification.
+    - **AI**: provider and model picker, per-provider API keys with
+      source attribution, and the configured-providers overview.
+    - **Plugins**: the installed plugins and the Learning Repository
+      settings.
+- **Data & integrations**
+    - **Data**: content sources, sync, offline content, backup and
+      export (including the encrypted key export), housekeeping, and
+      the danger zone, with a section bar on top.
+    - **Integrations**: the GitHub integration (the token for sharing
+      lessons as a pull request).
+- **Info**
+    - **Help**: the searchable in-app glossary.
+    - **Diagnostics & Support**: the error report, Developer Mode and
+      the tap & viewport probe.
+    - **About**: version, system info, credits, sharing the app,
+      donations, license.
 
 ## Profile
 
@@ -41,212 +58,23 @@ your **avatar**:
 Your choice and purchased frames persist and travel with your
 [backup](backup.md).
 
-## Language
-
-Live-swaps every UI string on the next render via `PATCH
-/api/settings/{user_id}`. All 11 languages are first-class -
-DE / EL / EN / ES / FR / HI / ID / JA / KO / PT / TR - each
-with a fully translated catalog. Persisted across reloads via
-`localStorage`.
-
-## AI provider + model picker
-
-The provider dropdown writes `active_provider` to
-UserSettings; the next AI call goes through the new
-provider's plugin (Server mode) or the new provider's HTTP
-client (Local mode).
-
-The **Model picker** is a searchable
-dropdown grouped Recommended / All, populated from each
-provider's live `/v1/models` endpoint (1h cache). Each row
-shows the human name + raw id + context-window badge. When
-the discovered list is unavailable (no API key, no network),
-the picker falls back to the static defaults and surfaces a
-"using offline default" hint. The Session header reads
-`<Provider>: <Model name>`; the full id + context window
-sit in the tooltip.
-
-## API keys
-
-Each provider has its own row: a key-entry input, a Save
-button, a Remove button, the active-provider badge, plus the
-new **source attribution** badge:
-
-- **Key from: Settings** - the key is stored Fernet-encrypted
-  in the DB (Server mode) or cleartext in IndexedDB (Local
-  mode). You can Save / Remove freely.
-- **Key from: secrets.yaml** - the key is configured in
-  `~/.config/adaptive-learner/secrets.yaml`. The Save button
-  is disabled; edit the file directly to change it. An info
-  banner under the row reminds you of the path.
-- **Key from: environment** - the key is configured via the
-  `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` environment variable.
-  Save disabled; the env var is the source of truth.
-- **No key configured** - nothing's set anywhere. Type and
-  hit Save to start.
-
-Resolution chain (highest priority wins): env > secrets.yaml
-> DB. See [the Configuration doc](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md) for
-the full breakdown.
-
-Key inputs use a masked **secret input** (with a show/hide
-toggle) and do not trigger the browser's password manager.
-
-API keys are deliberately **excluded** from the normal backup
-(`.alb`). To carry your keys to another device or browser, use the
-dedicated **encrypted key export (`.alk`)** - there is a
-**reference button** here in the AI tab that jumps straight to it
-on the **Data tab** (see *Encrypted key export* under
-[Backup](#backup)).
-
-## Configured providers
-
-A **configured-providers overview** lists the AI providers you
-have set up, each with a **masked key preview** so you can see at
-a glance which providers are ready. Every row has a **Test button**
-that calls the provider's models-list endpoint and reports back
-ok / invalid key / rate-limited / network error - a safe check
-that does not spend generation tokens.
-
-## Storage mode
-
-The toggle between **Server** and **Local (Browser)** storage:
-
-- **Server** - every read and write hits the FastAPI backend.
-  Requires a running backend. Best for multi-device usage
-  with backend-side sync.
-- **Local (Browser)** - every read and write hits IndexedDB
-  in this browser. AI calls fire direct to the provider. No
-  backend required. Best for a private, device-local setup.
-
-Switching modes saves to `localStorage` and toasts a
-"reload required" notice. Data is NOT synced between modes.
-
-## Sync
-
-Pair this device with another over your local network using
-the QR-code scanner (rear camera) or paste the pairing URL.
-Once paired, push + pull buttons exchange data
-bidirectionally. Conflicts go through an AI-merge resolver
-on the backend.
-
-Restricted-browser fallback: upload a screenshot of the QR
-code from your other device (`Html5Qrcode.scanFile`).
-
-## Backup
-
-Three things in one section: **Export** (download a
-timestamped JSON), **Import** (restore from file), and
-**Compare** (side-by-side diff against current state).
-API keys are stripped from every export.
-
-Restore is a MERGE, not an overwrite: new rows insert,
-mutable rows update on newer `updated_at`, history rows
-(sessions / commits / ratings) dedupe on UUID. The compare
-preview shows per-table added / removed / changed before you
-click Restore; the Restore button label reads "Restore
-(N added, M updated)" once the diff settles.
-
-In Local mode the section also shows the **Auto-backup**
-block: rolling ring of 3 snapshots in a separate IndexedDB
-DB, runs every 10 sessions OR every 7 days (whichever
-fires first). Each snapshot has its own Restore + Delete +
-Compare-as-A/B buttons.
-
-### Encrypted key export (.alk)
-
-The normal backup strips your API keys, which is safe but means a
-device or browser switch otherwise forces you to re-enter every
-key by hand. The **encrypted key export** closes that gap with a
-separate, passphrase-protected file:
-
-- It carries **only** the sensitive credentials - your **API keys**
-  plus the provider settings (active provider, model overrides). It
-  does NOT contain the rest of your app data (that stays in the
-  `.alb` backup).
-- **Export** asks for a passphrase (plus confirmation) and
-  downloads a dedicated **`.alk`** file. The keys inside are
-  encrypted with **AES-GCM-256**, with the key derived from your
-  passphrase via **PBKDF2** - the file never contains a key in
-  plaintext.
-- **Import** reads an `.alk`, asks for the passphrase, decrypts and
-  writes the keys + provider settings back into the same secure
-  storage manual entry uses (present providers are overwritten,
-  absent ones left alone).
-- A **wrong passphrase or a tampered file** is rejected cleanly
-  with a single message and **no partial import** - nothing is
-  half-written.
-- The passphrase fields validate **inline** as you type - a
-  too-short passphrase or a mismatched confirmation is shown right at
-  the field (and the submit button stays disabled) instead of firing
-  an error toast after you click. Like the API-key inputs, these
-  passphrase fields do **not** trigger the browser's password
-  manager.
-
-This export lives on the **Data tab**, next to the normal backup;
-the **AI tab** only carries a reference button that brings you
-here. In **Local (browser) mode** the keys live in IndexedDB, so
-the export is fully available (and is the main use case). In
-**Server mode** the keys are held server-side and the client never
-sees the plaintext, so the entry is **disabled with a hint**. The
-export is also disabled when no exportable key is configured yet.
-
-### Housekeeping
-
-Two data-lifecycle settings sit on the Data tab right next to the
-storage they govern:
-
-- **Maximum lesson size** (directly below *Offline cache*): when a long
-  chat analysis is saved as an offline lesson, lessons with more than
-  this many steps are split into several parts. *Steps per part* takes
-  5 to 20; the default is 10.
-- **Paused lesson retention** (directly above the *Disconnected content*
-  cleanup, which only appears when there is something to clean up):
-  paused lessons older than this are abandoned automatically on the
-  next Dashboard load. Choose 7, 14, 30 or 60 days, or *Never*; the
-  default is 30 days. Up to 10 paused lessons are kept regardless of
-  age.
-
-Both values are stored in this browser and apply in Server and Local
-mode alike.
-
-## Voice
-
-Three toggles:
-
-- **TTS enabled** - adds a ▶ button next to AI replies +
-  Assessment results that reads them aloud. Picks the
-  language-matched voice when available; rate + pitch
-  clamped to [0.5, 2.0].
-- **Auto-play AI** - speaks every AI reply automatically
-  (default OFF - surprise audio is rarely what you want).
-- **STT enabled** - adds a 🎤 button to the Session input
-  that captures speech and populates the textarea with
-  interim transcripts before send.
-- **Pronunciation Practice enabled** - surfaces the
-  `/pronunciation` page from the Dashboard quick-start for
-  Languages-tagged projects.
-
-The **Voice** card sits on the **Learning** tab in its *Reading aloud
-and dictation* area. When the browser supports neither Web Speech API
-side (synthesis nor recognition), the whole area is absent, heading
-included.
-
 ## Appearance
 
-The **Theme** picker under *General > Appearance* offers six
-themes plus an automatic mode:
+The **Theme** picker under *General > Appearance* sorts the themes
+into two tabs:
 
-- **Light** - the default, bright and high-contrast.
-- **Dark** - dimmed surfaces for low-light use.
-- **Ocean** - deep blue tones, calm and easy on the eyes at night.
-- **Forest** - warm green and amber earthy tones.
-- **High Contrast** - accessibility-first: black, white, and bold
-  signal colors, with crisp card edges. Use this if you need maximum
-  readability.
-- **Sepia** - warm paper tones, comfortable for long reading.
-- **Auto (System)** - follows your operating system's light/dark
-  setting and switches automatically when the system does.
+- **Recommended** - Catppuccin Latte, Supabase and Graphite (light),
+  Catppuccin Mocha, **Soft Pop** and Amethyst Haze (dark). New users
+  start on **Soft Pop**, and the picker opens on this tab.
+- **Classic** - the original themes: Light, Dark, Ocean, Forest,
+  High Contrast (black, white and bold signal colors with crisp card
+  edges, for maximum readability) and Sepia (warm paper tones for long
+  reading). If your active theme is a classic one, the picker opens
+  on this tab instead.
+
+Both tabs also offer **Auto (System)**, which follows your operating
+system's light/dark setting and switches automatically when the
+system does.
 
 Pick a theme from its preview card; the change applies instantly with
 no reload, and your choice is remembered across visits. Every theme is
@@ -258,21 +86,57 @@ preference for the Content hub (default **list**). It is the same
 preference as the in-tab view toggle on *My content* / *Discover*, so
 changing it in either place keeps both in sync. Directly below the card
 you set the **order of the Content-hub tabs** (Discover / My content /
-Import), so the hub opens on the tab you use most.
+Import / Create), so the hub opens on the tab you use most.
+
+## Language
+
+*General > Language* live-swaps every UI string on the next render via
+`PATCH /api/settings/{user_id}`. All 11 languages are first-class -
+DE / EL / EN / ES / FR / HI / ID / JA / KO / PT / TR - each
+with a fully translated catalog. Persisted across reloads via
+`localStorage`.
 
 ## Interface
 
-Two controls: **Show button tooltips** (a hover tooltip on icon
-buttons; screen-reader labels stay on regardless) and the **menu
-position** on the phone (top as a menu button, the default, or bottom as
-a thumb-reach tab bar). Swipe gestures are a lesson setting and live
-under *Learning > In the lesson > Interaction*.
+*General > Interface* has two controls: **Show button tooltips** (a
+hover tooltip on icon buttons; screen-reader labels stay on regardless)
+and the **menu position** on the phone (top as a menu button, the
+default, or bottom as a thumb-reach tab bar). Swipe gestures are a
+lesson setting and live under *Learning > In the lesson > Interaction*.
+Developer Mode is on the **Diagnostics & Support** tab (see
+below).
 
-**Developer Mode** (on the **Diagnostics & Support** tab): its default
-depends on the build strand: it is **ON by
-default on the Latest (preview) strand** and **OFF on Main**, so
-preview testers see full technical error detail while production users
-get friendly messages. You can flip it either way.
+## Storage mode
+
+*General > Storage mode* toggles between **Server** and **Local
+(Browser)** storage:
+
+- **Server** - every read and write hits the FastAPI backend.
+  Requires a running backend. Best for multi-device usage
+  with backend-side sync.
+- **Local (Browser)** - every read and write hits IndexedDB
+  in this browser. AI calls fire direct to the provider. No
+  backend required. Best for a private, device-local setup.
+
+Switching modes saves to `localStorage` and toasts a
+"reload required" notice. Data is NOT synced between modes.
+
+The public web version and the installed web app have no backend, so
+there the card is absent and the app always uses Local (Browser).
+
+## Updates and installing the app
+
+The rest of the **General** tab is about how the app runs:
+
+- **Updates** (Server mode only): **Automatic update check** and the
+  **Check interval** (daily, weekly, monthly or never), plus the time
+  of the last check and the current version. The manual **Check for
+  updates** button is on the **About** tab.
+- **Install app**: installs Adaptive Learner as a standalone app
+  (own window, home-screen icon, starts without network). Once
+  installed, the button reads **Already installed**.
+- **Mode**: Solo Mode is active; Multiplayer Mode is marked as coming
+  soon.
 
 ## Learning
 
@@ -316,19 +180,38 @@ How exercises behave while you answer.
   whether the **Ask AI** button is shown.
 - **Preferred exercise direction** - which direction directional
   exercises open with.
-- **Solve animation** - the effect a solved matching exercise plays.
+- **Matching exercise** - **Corrections as a separate view** (default
+  ON): after checking, "My answers" shows only your own pairs with your
+  mistakes, the correct answers are under "Corrections", the solution
+  under "Solve". Off: the correct answer sits directly under each mistake
+  in "My answers". Plus the **Solve animation**, the effect a solved
+  matching exercise plays.
 
 ### Reading aloud and dictation
 
-Voices, speed, microphone and pronunciation practice.
+Voices, speed, microphone and pronunciation practice. The area holds
+the **Voice** card:
 
-- **Voice** - the toggles described under *Voice* above: text-to-speech,
-  auto-play, speech-to-text and pronunciation practice.
+- **Show speech buttons** - adds a speaker button next to AI replies
+  and Assessment results that reads them aloud.
+- **Auto-play AI responses** - speaks every AI reply automatically
+  (default OFF - surprise audio is rarely what you want).
+- **Voice** - the voice to read with; the default picks the closest
+  match for your project language.
+- **Rate** and **Pitch** - sliders from 0.5 to 2.
+- **Show microphone button** - adds a microphone button to the Session
+  input that captures speech and fills the textarea with interim
+  transcripts before you send.
+- **Dictation language override** - a BCP-47 code (for example
+  `en-US`); leave it empty to use the project or UI language.
+- **Pronunciation Practice** - shows a *Pronunciation Practice* button
+  on the dashboards of language-learning projects.
 
-This area appears only when the browser supports at least one side of
-the Web Speech API (synthesis or recognition). Otherwise it is absent,
-heading included, and *After the lesson* follows *In the lesson*
-directly.
+The reading-aloud controls (the first five) appear only when the
+browser supports speech synthesis, the two dictation controls only
+when it supports speech recognition. When the browser supports neither
+side of the Web Speech API, the whole area is absent, heading included,
+and *After the lesson* follows *In the lesson* directly.
 
 ### After the lesson
 
@@ -337,7 +220,10 @@ Review sessions, the lesson summary and retrying mistakes.
 - **Review** - explanations after the answer (the explanation an exercise
   author wrote, shown under the exercise once it is checked, and the
   auto-generated rule tips after a lesson) and the number of questions per
-  review session. The card ends with the read-only
+  review session. The toggle "Also review error-free elements" (off by
+  default) decides whether the review holds only elements with mistakes or
+  also brings elements you never got wrong back after 3 and 7 days. The card
+  ends with the read-only
   **Spaced repetition** block: the interval schedule (correct answers
   in a row against the days until the next review), when an item
   counts as mastered, and a link to the learning method.
@@ -375,7 +261,8 @@ lessons** is off, the options inside are greyed out.
 The tab ends with **Gamification** (below a separator, because that card
 holds *Reset progress*). The two housekeeping settings -
 *Paused lesson retention* and *Maximum lesson size* - are data-lifecycle
-settings and live on the **Data** tab (see *Housekeeping* under Backup).
+settings and live on the **Data** tab (see [Offline content](#offline-content)
+and [Housekeeping](#housekeeping)).
 
 The **content view** (list / grid) and the **order of the Content-hub
 tabs** are on the **General** tab under *Appearance*.
@@ -389,15 +276,255 @@ daily session goal (1..10), and **Reset progress** (double-
 confirm; wipes `user_xp` + `user_badges` + `user_streaks`
 rows).
 
+## AI provider + model picker
+
+On the **AI** tab, the provider dropdown writes `active_provider` to
+UserSettings; the next AI call goes through the new
+provider's plugin (Server mode) or the new provider's HTTP
+client (Local mode).
+
+The **Model picker** is a searchable
+dropdown grouped Recommended / All, populated from each
+provider's live `/v1/models` endpoint (1h cache). Each row
+shows the human name + raw id + context-window badge. When
+the discovered list is unavailable (no API key, no network),
+the picker falls back to the static defaults and surfaces a
+"using offline default" hint. The Session header reads
+`<Provider>: <Model name>`; the full id + context window
+sit in the tooltip.
+
+## API keys
+
+Each provider has its own row: a key-entry input, a Save
+button, a Remove button, the active-provider badge, plus the
+new **source attribution** badge:
+
+- **Key from: secrets.yaml** - the key is stored
+  Fernet-encrypted in `~/.config/adaptive_learner/secrets.yaml`.
+  This is where Server mode saves every key you enter here, so
+  after a Save the row shows this badge. Save and Remove stay
+  available; saving overwrites the stored key. An info line
+  under the row names the path.
+- **Key from: Settings** - an older key that still sits in the
+  database from before keys moved to `secrets.yaml`; it is
+  moved there on the next start. In Local mode (browser) the
+  key lives in IndexedDB and shows this badge too. Save /
+  Remove freely.
+- **Key from: environment** - the key is configured via the
+  `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` environment variable.
+  Save and Remove are disabled; the env var is the source of
+  truth.
+- **No key configured** - nothing's set anywhere. Type and
+  hit Save to start.
+
+Resolution chain (highest priority wins): env >
+secrets.yaml > DB. See [the Configuration doc](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md) for
+the full breakdown.
+
+Key inputs use a masked **secret input** (with a show/hide
+toggle) and do not trigger the browser's password manager.
+
+API keys are deliberately **excluded** from the normal backup
+(`.alb`). To carry your keys to another device or browser, use the
+dedicated **encrypted key export (`.alk`)** - there is a
+**reference button** here in the AI tab that jumps straight to it
+on the **Data tab** (see [Encrypted key export](#encrypted-key-export-alk)).
+
+## Configured providers
+
+A **configured-providers overview** lists the AI providers you
+have set up, each with a **masked key preview** so you can see at
+a glance which providers are ready. Every row has a **Test button**
+that calls the provider's models-list endpoint and reports back
+ok / invalid key / rate-limited / network error - a safe check
+that does not spend generation tokens.
+
 ## Plugins
 
-Two cards. **Installed plugins** lists every plugin the desktop app
-loaded: name, version, source (package or registered directly) and
-activation time. A load error or a discovery filter shows as a marker on
-the row, as does a config change after activation. In browser mode the
-card stays visible with a notice that only the desktop app has a plugin
-host. **Learning Repository** holds that plugin's settings (git
-persistence, repository directory).
+The **Plugins** tab has two cards. **Installed plugins** lists every
+plugin the desktop app loaded: name, version, source (package or
+registered directly) and activation time. A load error or a discovery
+filter shows as a marker on the row, as does a config change after
+activation. In browser mode the card stays visible with a notice that
+only the desktop app has a plugin host. **Learning Repository** holds
+that plugin's settings (git persistence, repository directory).
+
+## Data
+
+The **Data** tab groups its cards into six areas, in a fixed order:
+where content comes from, what happens with it, what results, how you
+secure it, what you can clean up, and finally what cannot be undone.
+Each area has a small heading and a one-line description.
+
+A **section bar** above the areas lists them as chips: *Sources*,
+*Sync*, *Offline content*, *Backup and export*, *Housekeeping* and
+*Danger zone*. It works like the one on the Learning tab: a click jumps
+to the area, on a desktop the bar stays visible below the app header,
+the highlighted chip follows the area on screen, and the address
+mirrors it (`/settings?tab=data&section=backup`; ids: `sources`,
+`sync`, `offline`, `backup`, `cleanup`, `danger`).
+
+### Sources
+
+- **Content repositories** - the repositories your lessons come from;
+  see [Content repositories](../features/content-repos.md).
+- **Register your repository** - proposes your own content repository
+  for the shared directory used by the cross-repository search.
+
+### Sync
+
+Pair this device with another over your local network using
+the QR-code scanner (rear camera) or paste the pairing URL.
+Once paired, push + pull buttons exchange data
+bidirectionally. Conflicts go through an AI-merge resolver
+on the backend.
+
+Restricted-browser fallback: upload a screenshot of the QR
+code from your other device (`Html5Qrcode.scanFile`).
+
+Sync needs the desktop app. In browser mode the area stays visible,
+but its controls are replaced by the notice "Only available with the
+desktop app."
+
+### Offline content
+
+- **Offline cache** - the size and lesson count of the offline lesson
+  cache, with a button to clear it (asks for confirmation).
+- **Maximum lesson size** - when a long chat analysis is saved as an
+  offline lesson, lessons with more than this many steps are split into
+  several parts. *Steps per part* takes 5 to 20; the default is 10.
+
+### Backup and export
+
+**Backup** offers three things: **Create Backup** (downloads an
+`.alb` backup file), **Restore from Backup** (restore from a file),
+and **Compare** (side-by-side diff against current state).
+API keys are stripped from every export.
+
+Restore is a MERGE, not an overwrite: new rows insert,
+mutable rows update on newer `updated_at`, history rows
+(sessions / commits / ratings) dedupe on UUID. The compare
+preview shows per-table added / removed / changed before you
+click Restore; the Restore button label reads "Restore
+(N added, M updated)" once the diff settles.
+
+In Local mode the card also shows the **Auto-backup**
+block: rolling ring of 3 snapshots in a separate IndexedDB
+DB, runs every 10 sessions OR every 7 days (whichever
+fires first). Each snapshot has its own Restore + Delete +
+Compare-as-A/B buttons.
+
+Further cards in this area:
+
+- **Identity file** (Server mode only) - a read-only view of the
+  recovery file the backend keeps, so you can see whether it exists
+  and where it lives.
+- **Encrypted key export** - see below.
+- **Data export** - a one-click full backup, or a selective export
+  where you tick the data categories to include; both produce the same
+  importable backup file.
+- **Export** - three reports: *Learning Progress*, *Session Detail*
+  and *Curriculum*, each as Markdown or as PDF (through the browser's
+  print dialog).
+
+#### Encrypted key export (.alk)
+
+The normal backup strips your API keys, which is safe but means a
+device or browser switch otherwise forces you to re-enter every
+key by hand. The **encrypted key export** closes that gap with a
+separate, passphrase-protected file:
+
+- It carries **only** the sensitive credentials - your **API keys**
+  plus the provider settings (active provider, model overrides). It
+  does NOT contain the rest of your app data (that stays in the
+  `.alb` backup).
+- **Export** asks for a passphrase (plus confirmation) and
+  downloads a dedicated **`.alk`** file. The keys inside are
+  encrypted with **AES-GCM-256**, with the key derived from your
+  passphrase via **PBKDF2** - the file never contains a key in
+  plaintext.
+- **Import** reads an `.alk`, asks for the passphrase, decrypts and
+  writes the keys + provider settings back into the same secure
+  storage manual entry uses (present providers are overwritten,
+  absent ones left alone).
+- A **wrong passphrase or a tampered file** is rejected cleanly
+  with a single message and **no partial import** - nothing is
+  half-written.
+- The passphrase fields validate **inline** as you type - a
+  too-short passphrase or a mismatched confirmation is shown right at
+  the field (and the submit button stays disabled) instead of firing
+  an error toast after you click. Like the API-key inputs, these
+  passphrase fields do **not** trigger the browser's password
+  manager.
+
+This export lives on the **Data tab**, next to the normal backup;
+the **AI tab** only carries a reference button that brings you
+here. In **Local (browser) mode** the keys live in IndexedDB, so
+the export is fully available (and is the main use case). In
+**Server mode** the keys are held server-side and the client never
+sees the plaintext, so the entry is **disabled with a hint**. The
+export is also disabled when no exportable key is configured yet.
+
+### Housekeeping
+
+- **Paused lesson retention**: paused lessons older than this are
+  abandoned automatically on the next Dashboard load. Choose 7, 14,
+  30 or 60 days, or *Never*; the default is 30 days. Up to 10 paused
+  lessons are kept regardless of age.
+- **Disconnected content** (browser mode): progress whose content
+  repository is no longer connected stays hidden until you delete it
+  here. The card only appears when there is something to clean up.
+
+*Maximum lesson size* and *Paused lesson retention* are stored in this
+browser and apply in Server and Local mode alike.
+
+### Danger zone
+
+The last area, visually separated: **Reset Everything** deletes all
+your data (in Server mode on the backend, in browser mode in this
+browser). It offers to create a backup first, then asks
+for confirmation, and the final **Delete permanently** button only
+unlocks after you type `RESET`.
+
+## Integrations
+
+The **Integrations** tab holds the **GitHub Integration**: a GitHub
+token (with the `repo` permission) that lets the app share lessons as a
+pull request. The token field checks the format as you type, **Test**
+verifies the token and shows the account it belongs to, and a source
+line tells you where the token is stored (secrets.yaml, an environment
+variable, or this browser), with **Remove** to delete it. A token that
+comes from an environment variable cannot be edited here.
+
+## Help
+
+The **Help** tab holds the in-app glossary: a search field filters
+the entries by title and text, and the entries are grouped into *Core
+concepts*, *Learning methods*, *Cycle steps* and *App features*. A
+click on an entry opens the full article in the help drawer.
+
+## Diagnostics & Support
+
+The **Diagnostics & Support** tab gathers what helps the developer see
+what happened on your device:
+
+- **Support** - **Create error report** collects your recent actions
+  into a report you review before anything leaves your browser.
+- **Developer Mode** - shows full technical detail (status code,
+  endpoint, stack trace) in error toasts, and a "DEV" badge in the
+  navigation bar while it is on. Its default depends on the build
+  strand: it is **ON by default on the Latest (preview) strand** and
+  **OFF on Main**, so preview testers see full technical error detail
+  while production users get friendly messages. You can flip it either
+  way.
+- **Tap & viewport probe** - records tap positions and viewport changes
+  into a persistent protocol while it is on, to pin down
+  hard-to-reproduce display bugs. **Show measurement bar** shows or
+  hides the bar at the top while recording continues; **Sticky button
+  for the measurement bar** adds a floating button (with a choice of
+  corner) that toggles the bar. **Copy protocol** and **Clear
+  protocol** act on the recorded events, and a counter shows how many
+  there are.
 
 ## About
 
@@ -416,7 +543,7 @@ SQLAlchemy / Pydantic / PluginForge versions, DB path).
 ### Build strand: Main vs Latest
 
 Adaptive Learner runs on two deployment strands, and the About tab
-now tells you which one you are on:
+tells you which one you are on:
 
 - **Main** - the stable production site
   (`https://astrapi69.github.io/adaptive-learner/`). Shown as a
@@ -445,9 +572,10 @@ as before with the QR code for the production URL.
 
 ### Check for updates
 
-A **Check for updates** button compares your version against the
-latest GitHub release. The desktop build additionally runs an
-**auto-update checker** via the GitHub Releases API and tells you
-when a newer version is available. After a PWA update, the
+A **Check for updates** button in the Version block compares your
+version against the latest GitHub release. The desktop build
+additionally runs an **auto-update checker** via the GitHub Releases
+API and tells you when a newer version is available; its interval is
+set on the **General** tab under *Updates*. After a PWA update, the
 "new version available" banner stays dismissed once you accept it
 (it no longer reappears on every reload).

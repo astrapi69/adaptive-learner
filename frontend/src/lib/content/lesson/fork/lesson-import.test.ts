@@ -93,6 +93,61 @@ describe("parseImportFile — ZIP", () => {
   });
 });
 
+describe("parseImportFile — ZIP language pair (#3244)", () => {
+  async function zipWithSet(setYaml: string): Promise<File> {
+    const JSZipMod = (await import("jszip")).default;
+    const zip = new JSZipMod();
+    zip.file("manifest.yaml", `schema_version: '1.7'\nname: Pair\nsets:\n${setYaml}`);
+    zip.folder("lessons")?.file("01-a.json", lessonJson(lesson()));
+    const blob = await zip.generateAsync({ type: "blob" });
+    return new File([blob], "pair-set.zip", { type: "application/zip" });
+  }
+
+  it("reads target_language and source_language from a canonical manifest", async () => {
+    const file = await zipWithSet(
+      "  - id: fr-a1\n    title: French\n    target_language: fr\n    source_language: de\n    level: A1\n",
+    );
+    const result = await parseImportFile(file);
+    expect(result.ok).toBe(true);
+    expect(result.set?.language).toBe("fr");
+    expect(result.set?.target_language).toBe("fr");
+    expect(result.set?.source_language).toBe("de");
+  });
+
+  it("still reads the legacy language alias, with the source defaulting to en", async () => {
+    const file = await zipWithSet("  - id: es-a1\n    title: Spanish\n    language: es\n    level: A1\n");
+    const result = await parseImportFile(file);
+    expect(result.set?.target_language).toBe("es");
+    expect(result.set?.source_language).toBe("en");
+  });
+
+  it("prefers target_language when a manifest carries both keys", async () => {
+    const file = await zipWithSet(
+      "  - id: it-a1\n    title: Italian\n    language: xx\n    target_language: it\n    source_language: de\n    level: A1\n",
+    );
+    const result = await parseImportFile(file);
+    expect(result.set?.target_language).toBe("it");
+    expect(result.set?.language).toBe("it");
+  });
+
+  it("falls back to en when a manifest names no language at all", async () => {
+    const file = await zipWithSet("  - id: x\n    title: X\n    level: A1\n");
+    const result = await parseImportFile(file);
+    expect(result.set?.target_language).toBe("en");
+    expect(result.set?.source_language).toBe("en");
+  });
+
+  it("keeps a German source language across export -> import", async () => {
+    const blob = await buildContentSetZip(
+      { set_id: "fr-a1", title: "French", language: "fr", target_language: "fr", source_language: "de", level: "A1" },
+      [lesson()],
+    );
+    const result = await parseImportFile(new File([blob], "fr-set.zip", { type: "application/zip" }));
+    expect(result.set?.target_language).toBe("fr");
+    expect(result.set?.source_language).toBe("de");
+  });
+});
+
 describe("parseImportFile — unsupported", () => {
   it("rejects an unsupported extension", async () => {
     const file = new File(["x"], "notes.txt");
@@ -185,6 +240,8 @@ describe("collision helpers (#1672)", () => {
       set_id: "imported-x",
       title: "Spanish travel",
       language: "es",
+      target_language: "es",
+      source_language: "de",
       level: "beginner",
       description: null,
       lessons: [lesson()],

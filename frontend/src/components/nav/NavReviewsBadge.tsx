@@ -22,6 +22,7 @@ import {
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {dedupeReviewQueueByElement} from "../../lib/review/review-lesson";
 import {subscribeCelebration} from "../../lib/praise/celebration-bus";
+import {loadReviewQueue} from "../../lib/review/review-queue";
 import {REVIEWS_CHANGED_EVENT} from "../../lib/review/reviewsChanged";
 import {getStorage} from "../../storage";
 import {splitAroundCount} from "./split-around-count";
@@ -51,7 +52,7 @@ export default function NavReviewsBadge() {
         async function refresh() {
             try {
                 const [queue, setsRes] = await Promise.all([
-                    getStorage().elementErrors.reviewQueue(userId!),
+                    loadReviewQueue(userId!),
                     getStorage().contentLoader.listSets(),
                 ]);
                 if (cancelled) return;
@@ -105,12 +106,15 @@ export default function NavReviewsBadge() {
     // #3123 - on phones the badge shows only the count (the word around
     // the number is hidden, the icon carries the meaning); the full label
     // stays in the accessible name and the tooltip. Split on the
-    // placeholder so every catalog's word order works.
+    // placeholder so every catalog's word order works. #3339 - the same
+    // holds below 2xl: with the word, the single-row 1280px desktop bar
+    // ran out of room. `shrink-0` keeps a crowded bar from squeezing the
+    // badge (the icon became a sliver).
     const [wordBefore, wordAfter] = splitAroundCount(template);
     return (
         <NavLink
             to={href}
-            className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning"
+            className="inline-flex shrink-0 items-center gap-1 rounded-full border border-warning/30 bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning"
             data-testid="nav-reviews-badge"
             title={t("srs.due_badge_tooltip", "Reviews due")}
             // WCAG 2.5.3 (#2539): compose the name from the VISIBLE label
@@ -120,9 +124,9 @@ export default function NavReviewsBadge() {
             aria-label={`${label}, ${t("srs.due_badge_action", "view reviews")}`}
         >
             <RefreshCw size={12} aria-hidden="true" />
-            <span className="max-sm:hidden">{wordBefore}</span>
+            <span className="max-2xl:hidden">{wordBefore}</span>
             <span data-testid="nav-reviews-badge-count">{state.overdue}</span>
-            <span className="max-sm:hidden">{wordAfter}</span>
+            <span className="max-2xl:hidden">{wordAfter}</span>
         </NavLink>
     );
 }

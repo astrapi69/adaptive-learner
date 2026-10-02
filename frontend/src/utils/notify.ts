@@ -29,6 +29,7 @@ import React from "react";
 import {toast} from "react-toastify";
 import {ApiError} from "../api/client";
 import {isDevMode} from "../hooks/settings/useDevMode";
+import {resolveI18n} from "../hooks/ui/useI18n";
 import {friendlyErrorMessage} from "./errorMessages";
 
 // Truncate the visible error message so the toast stays
@@ -47,6 +48,19 @@ interface ErrorOptions {
      * the HTTP endpoint / status / stacktrace.
      */
     apiError?: ApiError;
+    /**
+     * #3374 - the caught error. ``message`` is then the localized
+     * prefix the user sees; the error's own text is appended only in
+     * dev mode and always travels to the report dialog and the event
+     * recorder. An ``ApiError`` here also takes the friendly
+     * ``ui.errors.*`` path, exactly like ``apiError``.
+     *
+     * @example
+     * catch (err) {
+     *     notify.error(t("content.delete_failed", "Could not delete."), {error: err});
+     * }
+     */
+    error?: unknown;
 }
 
 interface InfoOptions {
@@ -149,15 +163,15 @@ function ErrorContent({
                     padding: "4px 10px",
                     fontSize: "0.75rem",
                     fontWeight: 600,
-                    color: "#fff",
-                    background: "rgba(255,255,255,0.15)",
-                    border: "1px solid rgba(255,255,255,0.3)",
+                    color: "currentColor",
+                    background: "color-mix(in srgb, currentColor 15%, transparent)",
+                    border: "1px solid color-mix(in srgb, currentColor 30%, transparent)",
                     borderRadius: 4,
                     cursor: "pointer",
                     alignSelf: "flex-start",
                 },
             },
-            "Report Issue",
+            resolveI18n("ui.error_report.report_button", "Report Issue"),
         ),
     );
 }
@@ -199,36 +213,62 @@ function recordToast(level: string, message: string) {
  *   friendly string (parse errors, validation messages from
  *   their own code) stay in control of the wording.
  */
-function pickDisplayMessage(message: string, opts?: ErrorOptions): string {
-    if (isDevMode()) return message;
-    if (!opts?.apiError) return message;
-    return friendlyErrorMessage(opts.apiError);
+function pickDisplayMessage(
+    message: string,
+    technical: string,
+    apiError: ApiError | undefined,
+): string {
+    if (isDevMode()) return technical;
+    if (!apiError) return message;
+    return friendlyErrorMessage(apiError);
+}
+
+/** The caught error's own text, or ``null`` when there is none. */
+function errorText(error: unknown): string | null {
+    if (error instanceof Error) return error.message || error.name;
+    if (error === null || error === undefined) return null;
+    return String(error);
+}
+
+/** ``prefix: error text`` for the recorder and the report dialog. */
+function technicalMessage(message: string, opts?: ErrorOptions): string {
+    const text = errorText(opts?.error);
+    return text ? `${message}: ${text}` : message;
+}
+
+/** The ApiError to map and report: the explicit one, else the caught one. */
+function resolveApiError(opts?: ErrorOptions): ApiError | undefined {
+    if (opts?.apiError) return opts.apiError;
+    return opts?.error instanceof ApiError ? opts.error : undefined;
 }
 
 export const notify = {
     error: (message: string, opts?: ErrorOptions) => {
-        const displayMessage = pickDisplayMessage(message, opts);
+        const technical = technicalMessage(message, opts);
+        const apiError = resolveApiError(opts);
+        const displayMessage = pickDisplayMessage(message, technical, apiError);
         // eventRecorder always captures the ORIGINAL technical
         // message — privacy-aware (no API keys / passwords leak
         // through here) and useful when the user later submits a
         // bug report. Dev/prod mode only affects what is rendered
         // in the toast, never what the recorder stores.
-        recordToast("error", message);
+        recordToast("error", technical);
         // Error toasts NEVER auto-dismiss: a failure the user did not
         // read is a failure they cannot act on. They stay until the
-        // user closes them via the X button (closeOnClick / drag would
-        // dismiss them by accident, so both are off). The ``persistent``
-        // option is kept for call-site compatibility but is now the
-        // only behaviour.
+        // user closes them (drag would dismiss them by accident, so it
+        // is off). Whether a TAP closes them is the container's call
+        // (#3235: yes during a lesson run, where the toast covers the
+        // footer; the Report Issue button stops propagation either
+        // way). The ``persistent`` option is kept for call-site
+        // compatibility but is now the only behaviour.
         return toast.error(
             React.createElement(ErrorContent, {
                 displayMessage,
-                originalMessage: message,
-                apiError: opts?.apiError,
+                originalMessage: technical,
+                apiError,
             }),
             {
                 autoClose: false,
-                closeOnClick: false,
                 draggable: false,
             },
         );

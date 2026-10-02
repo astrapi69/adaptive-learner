@@ -12,6 +12,10 @@ import {
   DEFAULT_ANALYSIS_LESSON_LABELS,
 } from "./analysis-to-lesson";
 import type { ConversationAnalysisResult } from "../../../types/domain";
+import type {
+  ContentLesson,
+  ContentLessonExercise,
+} from "../../../storage/types";
 
 const RICH: ConversationAnalysisResult = {
   topic: "Spanish travel vocabulary",
@@ -203,7 +207,7 @@ describe("validateGeneratedLesson", () => {
         cards: [],
         steps: [{ id: "theory-overview", type: "theory", body: "hi" }],
       }),
-    ).toThrow(/slug-safe|must match pattern/);
+    ).toThrow(/must match pattern/);
   });
 
   it("rejects a theory step without a body", () => {
@@ -216,7 +220,7 @@ describe("validateGeneratedLesson", () => {
         cards: [],
         steps: [{ id: "theory-overview", type: "theory", body: null }],
       }),
-    ).toThrow(/needs a body/);
+    ).toThrow(/\/steps\/0 THEORY step requires non-empty 'body'/);
   });
 
   it("rejects an exercise referencing a missing card", () => {
@@ -243,7 +247,7 @@ describe("validateGeneratedLesson", () => {
           },
         ],
       }),
-    ).toThrow(/missing card/);
+    ).toThrow(/unknown card 'missing-card'/);
   });
 });
 
@@ -334,5 +338,237 @@ describe("EXP-018 fix: language pair + CEFR + shareability helpers", () => {
         theoryOnly: true,
       }),
     ).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// #3222 PR 4 - the funnel runs the engine's semantic rules
+// (``learn-content-engine/rules``) after the shape layer; the app's copies
+// of those rules are gone. Stricter where the copy was silent, looser where
+// the copy refused what the engine accepts.
+// ---------------------------------------------------------------------------
+
+function lessonWith(
+  exercise: ContentLessonExercise,
+  extra: Partial<ContentLesson> = {},
+): ContentLesson {
+  return {
+    id: "ok",
+    title: "x",
+    description: null,
+    estimated_minutes: 1,
+    cards: [
+      { id: "card-a", front: "Haus", back: "house", notes: null, tags: [] },
+      { id: "card-b", front: "Baum", back: "tree", notes: null, tags: [] },
+    ],
+    steps: [
+      {
+        id: "step-ex-0",
+        type: "exercise",
+        title: null,
+        body: null,
+        exercise,
+      },
+    ],
+    ...extra,
+  };
+}
+
+describe("#3222 PR 4 - validateGeneratedLesson runs the engine's rules", () => {
+  it("rejects a single-mode multiple_choice with two correct options (E-MC-ONE-CORRECT)", () => {
+    expect(() =>
+      validateGeneratedLesson(
+        lessonWith({
+          id: "ex-mc-0",
+          type: "multiple_choice",
+          prompt: "Pick",
+          card_ids: ["card-a"],
+          options: [
+            { text: "house", correct: true },
+            { text: "tree", correct: true },
+          ],
+          multiple: false,
+          distractors: [],
+        }),
+      ),
+    ).toThrow(/generated lesson invalid: \/steps\/0\/exercise .*exactly one option/);
+  });
+
+  it("rejects duplicate option texts (E-MC-DUP-OPTION)", () => {
+    expect(() =>
+      validateGeneratedLesson(
+        lessonWith({
+          id: "ex-mc-0",
+          type: "multiple_choice",
+          prompt: "Pick",
+          card_ids: ["card-a"],
+          options: [
+            { text: "house", correct: true },
+            { text: "house", correct: false },
+          ],
+          multiple: false,
+          distractors: [],
+        }),
+      ),
+    ).toThrow(/generated lesson invalid: \/steps\/0\/exercise MULTIPLE_CHOICE option texts must be unique/);
+  });
+
+  it("rejects case-insensitive duplicate lefts in a matching (E-MATCH-DUP-LEFT)", () => {
+    expect(() =>
+      validateGeneratedLesson(
+        lessonWith({
+          id: "ex-match-0",
+          type: "matching",
+          prompt: "Match",
+          card_ids: ["card-a", "card-b"],
+          pairs: [
+            { left: "Haus", right: "house" },
+            { left: "haus", right: "tree" },
+          ],
+          distractors: [],
+        }),
+      ),
+    ).toThrow(/generated lesson invalid: .*[Hh]aus/);
+  });
+
+  it("accepts a from_cards matching that carries card_ids and no pairs", () => {
+    expect(() =>
+      validateGeneratedLesson(
+        lessonWith({
+          id: "ex-match-0",
+          type: "matching",
+          prompt: "Match",
+          card_ids: ["card-a", "card-b"],
+          from_cards: true,
+          distractors: [],
+        }),
+      ),
+    ).not.toThrow();
+  });
+
+  it("accepts a multiselect cloze whose question carries ___ (no blanks by design)", () => {
+    expect(() =>
+      validateGeneratedLesson(
+        lessonWith({
+          id: "ex-ms-0",
+          type: "cloze",
+          cloze_mode: "multiselect",
+          prompt: "Pick all",
+          sentence: "Welche ___ sind Vokale?",
+          card_ids: [],
+          accept: ["a", "e"],
+          distractors: ["b", "c"],
+        }),
+      ),
+    ).not.toThrow();
+  });
+
+  it("rejects a cloze whose markers and blanks disagree (E-CLOZE-MARKERS), naming both counts", () => {
+    expect(() =>
+      validateGeneratedLesson(
+        lessonWith({
+          id: "ex-cloze-0",
+          type: "cloze",
+          prompt: "Fill",
+          sentence: "Je ___ un ___.",
+          card_ids: [],
+          blanks: [{ accept: ["lis"] }],
+          distractors: [],
+        }),
+      ),
+    ).toThrow(/generated lesson invalid: .*2 '___' markers but blanks has 1/);
+  });
+
+  it("rejects an accept_orderings entry that is not a permutation (E-TILES-ORDERING)", () => {
+    expect(() =>
+      validateGeneratedLesson(
+        lessonWith({
+          id: "ex-tiles-0",
+          type: "word_tiles",
+          prompt: "Order",
+          card_ids: [],
+          tiles: ["a", "b", "c"],
+          accept_orderings: [[0, 1, 1]],
+          distractors: [],
+        }),
+      ),
+    ).toThrow(/generated lesson invalid: .*permutation/);
+  });
+
+  it("rejects duplicate card ids with the engine's wording (E-CARD-ID-DUP)", () => {
+    expect(() =>
+      validateGeneratedLesson(
+        lessonWith(
+          {
+            id: "ex-free-0",
+            type: "free_text",
+            prompt: "Translate",
+            card_ids: ["card-a"],
+            accept: ["house"],
+            distractors: [],
+          },
+          {
+            cards: [
+              { id: "card-a", front: "Haus", back: "house", notes: null, tags: [] },
+              { id: "card-a", front: "Baum", back: "tree", notes: null, tags: [] },
+            ],
+          },
+        ),
+      ),
+    ).toThrow(/generated lesson invalid: \/cards card id 'card-a' is used at positions/);
+  });
+
+  it("still refuses an adopted extension whose payload is invalid (the app registry validates it)", () => {
+    expect(() =>
+      validateGeneratedLesson(
+        lessonWith(
+          {
+            id: "ex-cat-0",
+            type: "ext:al-categorization",
+            prompt: "Sort",
+            card_ids: [],
+            distractors: [],
+            ext_payload: { categories: [{ name: "only", items: ["x"] }] },
+          },
+          { requires_extensions: ["ext:al-categorization@1"] },
+        ),
+      ),
+    ).toThrow(/generated lesson invalid: .*at least 2 categories/);
+  });
+
+  it("still refuses an extension type this app has not adopted (shape guard)", () => {
+    expect(() =>
+      validateGeneratedLesson(
+        lessonWith(
+          {
+            id: "ex-x-0",
+            type: "ext:acme-thing",
+            prompt: "?",
+            card_ids: [],
+            distractors: [],
+            ext_payload: {},
+          },
+          { requires_extensions: ["ext:acme-thing@1"] },
+        ),
+      ),
+    ).toThrow(/does not support extension 'ext:acme-thing@1'/);
+  });
+
+  it("the analysis generator survives vocabulary that differs only by case", () => {
+    const analysis: ConversationAnalysisResult = {
+      ...RICH,
+      vocabulary: [
+        { word: "Haus", translation: "house", example: "Das Haus ist alt." },
+        { word: "haus", translation: "house (lowercase)", example: "das haus" },
+        { word: "Baum", translation: "tree", example: "Der Baum ist hoch." },
+        { word: "Auto", translation: "car", example: "Das Auto ist neu." },
+      ],
+    };
+    let lesson: ContentLesson | undefined;
+    expect(() => {
+      lesson = generateLessonFromAnalysis(analysis);
+    }).not.toThrow();
+    const fronts = (lesson?.cards ?? []).map((card) => card.front.toLowerCase());
+    expect(new Set(fronts).size).toBe(fronts.length);
   });
 });

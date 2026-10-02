@@ -21,135 +21,169 @@
 #   status   - active | disabled
 #   reason   - REQUIRED when status is disabled
 #   wired_in - where it runs: make target and/or workflow file
-#   probe    - how the checker proves it is alive (see the script):
-#              make_target / script_exists / called_in / no_warn
+#   probe    - how the checker proves it is alive (see the script), several
+#              joined with " | ": an existence probe (make_target /
+#              script_exists / called_in / no_warn) plus, for every active
+#              entry, at least one RUN proof (#3241): ci_step=<workflow>::
+#              <job>::<step name>::<needle> names the workflow step that
+#              invokes the check (the report prints its triggers and skip
+#              conditions), precommit_hook=<id> a hook the CI pre-commit job
+#              does not SKIP. A guard file no step executes is a silent gate.
 
 checks:
   - id: i18n-full-tree-key-coverage
     verifies: every t() call site in frontend/src has a real, non-empty catalog entry in all 11 languages (static keys) or a plausible one (dynamic template-literal keys, prefix/suffix sanity match) - not just the 7-file first-paint subset #2798 covers (#2864, #2797 Teil A)
     rule: none (extends the #2798 gate's approach tree-wide; i18next-parser adoption rejected, see #2864)
     status: active
-    wired_in: frontend/src/i18n/full-tree-key-coverage.test.ts; make test
-    probe: script_exists=frontend/src/i18n/full-tree-key-coverage.test.ts
+    wired_in: frontend/src/i18n/full-tree-key-coverage.test.ts; make test; .github/workflows/ci.yml fixed step on every frontend PR, i18n_only included (#3249)
+    probe: script_exists=frontend/src/i18n/full-tree-key-coverage.test.ts | ci_step=.github/workflows/ci.yml::frontend-tests::i18n key coverage, full tree (#3249)::full-tree-key-coverage.test.ts
 
   - id: dead-code-ratchet
     verifies: no NEW unused Python functions/methods/classes (vulture, app+plugins one scope) or TS exports/types (knip) beyond the tracked list baseline (#2741); per side on every PR since #3047, full scope weekly
     rule: none (PR ratchet per side + weekly full report; deletion discipline lives in the #2486 lesson)
     status: active
     wired_in: make check-dead-code; scripts/check_dead_code.py; .github/workflows/dead-code.yml; .github/workflows/ci.yml
-    probe: make_target=check-dead-code
+    probe: make_target=check-dead-code | ci_step=.github/workflows/ci.yml::backend-tests::Dead-code ratchet, Python side (#3047)::check_dead_code.py | ci_step=.github/workflows/ci.yml::frontend-tests::Dead-code ratchet, TypeScript side (#3047)::check_dead_code.py
 
   - id: testplan-parity
     verifies: the DE and EN manual test plans stay in sync - equal checkpoint and section counts, and the same multiset of issue references; compares content, never order, because the two plans order their sections differently (#3069, after #3065 found two DE-only checkpoints by hand)
     rule: ai-workflow/testplan-policy.md#core-rules
     status: active
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_testplan_parity.py
-    probe: script_exists=backend/tests/test_verify_docs_testplan_parity.py
+    probe: script_exists=backend/tests/test_verify_docs_testplan_parity.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
+  - id: testplan-ids
+    verifies: every manual test-plan case (checkbox) and suite (heading holding checkboxes) carries a permanent ID from the register, unique, never reused, across the main plan (TC/TS, DE/EN share IDs), the reference and launcher plans and the docs/manual-tests checklists (#3274, #3279)
+    rule: ai-workflow/testplan-policy.md#checkpoint-ids
+    status: active
+    wired_in: make verify-docs (testplan-parity + testplan-ids); scripts/testplan_ids.py --check; .github/workflows/ci.yml; backend/tests/test_testplan_ids.py
+    probe: called_in=scripts/verify_docs.py::_report_testplan_ids | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
+  - id: feature-shots
+    verifies: the FeatureShot catalogue (e2e/visual/features/README.md) and the PNGs on disk agree - every referenced file exists, every file has a row, and a shot-pending marker is accepted only while a file of its row is missing (#3182, after #3080 and #3088 merged rows whose renders never landed)
+    rule: quality-checks.md#feature-screenshots-mandatory-on-ui-prs
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_feature_shots.py
+    probe: script_exists=backend/tests/test_verify_docs_feature_shots.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
   - id: docs-drift
     verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics
     status: active
     wired_in: make verify-docs; .github/workflows/ci.yml
-    probe: make_target=verify-docs
+    probe: make_target=verify-docs | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
   - id: docs-test-count-arithmetic
-    verifies: the CLAUDE.md test-count line adds up and matches the README badge
+    verifies: the CLAUDE.md test-count line adds up and matches the README badge; a mismatch or an unparseable line FAILs (#3254)
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics
     status: active
     wired_in: scripts/verify_docs.py check_test_counts
-    probe: no_warn=could not parse the
+    probe: no_warn=could not parse the | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
   - id: docs-basis-fail-closed
     verifies: verify_docs.py FAILs (not WARNs) on a missing basis - no theme files, no mkdocs.yml, no en.json, an unparseable catalog - so "could not check" never prints as a green pass (#2287)
     rule: quality-checks.md#gate-test-contract-five-tests-and-fail-closed-2083
     status: active
-    wired_in: backend/tests/test_verify_docs_fail_closed.py; make test
-    probe: script_exists=backend/tests/test_verify_docs_fail_closed.py
+    wired_in: backend/tests/test_verify_docs_fail_closed.py; make test; ci.yml backend pytest step (a scripts/ change runs it through the #3250 fixed step, outside testmon)
+    probe: script_exists=backend/tests/test_verify_docs_fail_closed.py | ci_step=.github/workflows/ci.yml::backend-tests::Run backend tests (selective on PR, full on push)::pytest
 
   - id: openapi-snapshot
     verifies: the committed schema/openapi.json matches the spec the booted app serves, with the full plugin set (all plugins on disk) asserted before comparing (#2281)
     rule: "-"
     status: active
     wired_in: make sync-openapi-check; .github/workflows/ci.yml; backend/tests/test_openapi_snapshot_gate.py
-    probe: make_target=sync-openapi-check
+    probe: make_target=sync-openapi-check | ci_step=.github/workflows/ci.yml::backend-tests::OpenAPI snapshot drift gate (#2281)::sync_openapi.py
 
   - id: gate-rule-links
     verifies: no gate without its rule section, no rule citing a dead gate, no unclassified workflow
     rule: quality-checks.md#gate-and-rule-stay-coupled-2075
     status: active
     wired_in: make verify-gate-rule-links; .github/workflows/ci.yml
-    probe: make_target=verify-gate-rule-links
+    probe: make_target=verify-gate-rule-links | ci_step=.github/workflows/ci.yml::docs-verification::Verify gate <-> rule links::verify_gate_rule_links.py
 
   - id: lessons-inventory
     verifies: every pitfall section survives a catalogue reorganization, byte-identical
     rule: "-"
     status: active
     wired_in: make verify-lessons-inventory; .github/workflows/ci.yml
-    probe: make_target=verify-lessons-inventory
+    probe: make_target=verify-lessons-inventory | ci_step=.github/workflows/ci.yml::docs-verification::Verify lessons inventory::verify_lessons_inventory.py
 
   - id: check-inventory
     verifies: this inventory itself - an active check may not be silently unwired
     rule: quality-checks.md#checks-are-declared-not-silently-disabled-2077
     status: active
     wired_in: make verify-check-inventory; .github/workflows/ci.yml
-    probe: make_target=verify-check-inventory
+    probe: make_target=verify-check-inventory | ci_step=.github/workflows/ci.yml::docs-verification::Verify check inventory::verify_check_inventory.py
 
   - id: complexity-gate
     verifies: new or regressed complexity offenders versus .complexity-baseline; fails closed without radon or baseline
     rule: quality-checks.md#gate-test-contract-three-tests-and-fail-closed-2083
     status: active
     wired_in: make check-complexity-gate; .github/workflows/complexity-check.yml
-    probe: make_target=check-complexity-gate
+    probe: make_target=check-complexity-gate | ci_step=.github/workflows/complexity-check.yml::complexity-gate::Complexity ratchet gate::check-complexity.sh
 
   - id: testid-reference-gate
     verifies: spec-referenced testids are not removed without touching the spec
     rule: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
     status: active
     wired_in: make check-testid-refs; .github/workflows/testid-reference-gate.yml
-    probe: make_target=check-testid-refs
+    probe: make_target=check-testid-refs | ci_step=.github/workflows/testid-reference-gate.yml::gate::Evaluate gate::testid_reference_gate.py
 
   - id: theme-token-matrix
     verifies: every theme defines the same token set and passes WCAG contrast
     rule: design-tokens.md#enforcement-frontendsrcstylesno-hardcoded-colorstestts
     status: active
-    wired_in: make verify-theme
-    probe: make_target=verify-theme
+    wired_in: make verify-theme; .github/workflows/ci.yml fixed step "Theme token gate (#3251)" on every frontend change (the Python half; the four Vitest guards run in the Vitest step); backend/tests/test_verify_theme_script.py; make release-test
+    probe: make_target=verify-theme | ci_step=.github/workflows/ci.yml::frontend-tests::Theme token gate (#3251)::verify_theme.py
 
   - id: i18n-script-sanity
-    verifies: de substitute spellings and el/hi latin transliteration in the catalogs
+    verifies: de substitute spellings (catalog + German help glossary) and el/hi latin transliteration in the catalogs
     rule: lessons/docs-i18n.md#german-content-uses-real-umlauts
     status: active
     wired_in: make verify-i18n-scripts; .pre-commit-config.yaml
-    probe: make_target=verify-i18n-scripts
+    probe: make_target=verify-i18n-scripts | precommit_hook=i18n-script-sanity
 
   - id: rule-corpus-size
     verifies: the always-injected rule corpus may shrink, not grow silently
     rule: quality-checks.md#the-rule-corpus-has-a-ceiling-2091
     status: active
     wired_in: make verify-rule-corpus-size; .github/workflows/ci.yml
-    probe: make_target=verify-rule-corpus-size
+    probe: make_target=verify-rule-corpus-size | ci_step=.github/workflows/ci.yml::docs-verification::Verify rule corpus size::verify_rule_corpus_size.py
+
+  - id: impacted-tests-outside-testmon
+    verifies: a PR that changes scripts/ or plugins/ runs the backend tests naming those trees, which pytest --testmon never selects because its graph covers backend/app and backend/tests only (#3250, CI run 36006903648 "no tests ran" on a plugins/ push); the selector fails closed when an area selects nothing
+    rule: quality-checks.md#test-impact-analysis-615
+    status: active
+    wired_in: scripts/select_impacted_tests.py; .github/workflows/ci.yml; backend/tests/test_select_impacted_tests.py
+    probe: script_exists=backend/tests/test_select_impacted_tests.py | ci_step=.github/workflows/ci.yml::backend-tests::Backend tests exercising changed scripts/ or plugins/ (#3250)::select_impacted_tests.py
 
   - id: docker-context
-    verifies: no node_modules survives the .dockerignore rules (absolute symlinks dangle in the container)
+    verifies: no node_modules survives the .dockerignore rules (absolute symlinks dangle in the container) - probed with synthesized paths under every COPY root of backend/Dockerfile, so a checkout without node_modules cannot pass it blind (#3253), and on every PR
     rule: "-"
     status: active
-    wired_in: make verify-docker-context; .github/workflows/docker-build-smoke.yml
-    probe: make_target=verify-docker-context
+    wired_in: make verify-docker-context; .github/workflows/ci.yml; .github/workflows/docker-build-smoke.yml; backend/tests/test_docker_context.py
+    probe: make_target=verify-docker-context | ci_step=.github/workflows/ci.yml::docs-verification::Verify the Docker build context rules::verify_docker_context.py | ci_step=.github/workflows/docker-build-smoke.yml::build::Verify the build context excludes dependency directories::verify_docker_context.py
+
+  - id: frontend-build-context
+    verifies: every import in frontend/src resolves inside what the frontend-build stage of backend/Dockerfile copies (read from its COPY lines), and no module alias points outside frontend/ - a test importing e2e/ broke the production image while every full-checkout build stayed green (#3239, #2559)
+    rule: "-"
+    status: active
+    wired_in: frontend/src/test/build-context-boundary.test.ts; make test; .github/workflows/ci.yml fixed PR step "Build-context boundary guard (#3239)" on every frontend PR (vitest --changed never selects an fs-reading guard); full Vitest on develop push; docker-build-smoke.yml on frontend/** builds the real image
+    probe: script_exists=frontend/src/test/build-context-boundary.test.ts | ci_step=.github/workflows/ci.yml::frontend-tests::Build-context boundary guard (#3239)::build-context-boundary.test.ts
 
   - id: image-size
     verifies: the published image's compressed size may shrink, not grow silently
     rule: "-"
     status: active
     wired_in: make verify-image-size; .github/workflows/docker-build-smoke.yml
-    probe: make_target=verify-image-size
+    probe: make_target=verify-image-size | ci_step=.github/workflows/docker-build-smoke.yml::build::Verify the image has not grown::verify_image_size.py
 
   - id: release-commit-green
     verifies: no release-driven job publishes from a commit whose checks did not pass
     rule: quality-checks.md#gate-test-contract-five-tests-and-fail-closed-2083
     status: active
-    wired_in: .github/workflows/publish-image.yml; launcher-{linux,macos,windows}.yml
-    probe: script_exists=scripts/verify_release_commit_green.py
+    wired_in: .github/workflows/publish-image.yml (the launcher builds lost the call in #2475 and carry the release-racing marker instead)
+    probe: script_exists=scripts/verify_release_commit_green.py | ci_step=.github/workflows/publish-image.yml::build-and-push::Refuse to publish from a commit that was not green::verify_release_commit_green.py
 
   - id: normative-changes
     verifies: normative-keyword and gate-status changes are declared, not buried in a diff
@@ -157,27 +191,34 @@ checks:
     also_enforces: quality-checks.md#condensation-prs-are-content-neutral-or-declared-2081
     status: active
     wired_in: make verify-normative-changes; .github/workflows/ci.yml
-    probe: make_target=verify-normative-changes
+    probe: make_target=verify-normative-changes | ci_step=.github/workflows/ci.yml::docs-verification::Verify normative + gate-status changes are declared::verify_normative_changes.py
 
   - id: rule-change-log
     verifies: declared rule changes converge in docs/rule-change-log.md
     rule: quality-checks.md#declared-rule-changes-converge-in-one-log-2087
     status: active
     wired_in: make rule-change-log-check; .github/workflows/ci.yml
-    probe: make_target=rule-change-log-check
+    probe: make_target=rule-change-log-check | ci_step=.github/workflows/ci.yml::docs-verification::Check the rule change log is current::append_rule_change_log.py
+
+  # The two scheduled gates below are armed by repo variables that live in
+  # the repository settings, outside the tree. The probe proves the workflow
+  # step exists and runs the tool; whether the schedule is armed is read with
+  # `gh api repos/astrapi69/adaptive-learner/actions/variables`.
+  - id: nightly-mutation
+    verifies: frontend mutation testing on a schedule
+    rule: quality-checks.md#mutation-testing
+    status: active
+    wired_in: .github/workflows/mutation-frontend.yml (schedule armed by the repo variable ENABLE_NIGHTLY_MUTATION="true"; workflow_dispatch always runs)
+    probe: script_exists=.github/workflows/mutation-frontend.yml | ci_step=.github/workflows/mutation-frontend.yml::stryker::Run Stryker::stryker run
+
+  - id: nightly-webkit
+    verifies: real-WebKit layout gate on a schedule
+    rule: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
+    status: active
+    wired_in: .github/workflows/webkit-gate.yml (schedule armed by the repo variable ENABLE_NIGHTLY_WEBKIT="true"; workflow_dispatch and release/** pushes always run, #1843)
+    probe: script_exists=.github/workflows/webkit-gate.yml | ci_step=.github/workflows/webkit-gate.yml::webkit-gate::WebKit layout gate::playwright test
 
   # --- declared as OFF: visible in the diff, with a reason ---
-  - id: prettier-frontend
-    verifies: Prettier formatting of frontend/src
-    rule: "-"
-    status: disabled
-    reason: >-
-      frontend/ has no prettier config, so the hook reformats 4-space files to
-      its 2-space defaults; CI skips it via SKIP=prettier-frontend,eslint in
-      ci.yml. Re-enable together with a committed .prettierrc.
-    wired_in: .pre-commit-config.yaml (skipped in ci.yml)
-    probe: none
-
   - id: eslint-precommit
     verifies: ESLint inside the pre-commit job
     rule: "-"
@@ -193,29 +234,13 @@ checks:
     rule: "-"
     status: disabled
     reason: >-
-      wired with continue-on-error until the tree is fully formatted and the
-      format-on-touch hook has caught up (ci.yml "Prettier check (non-blocking)").
+      the step runs with continue-on-error and only lists files in the log.
+      Most of src/ fails it: it was never formatted and mixes 2- and 4-space.
+      The style is decided (the Prettier defaults, owner decision 2026-09-25,
+      recorded in #3270) and .prettierrc states it; only the one-time
+      reformat remains, and that PR turns this check on. No condition here
+      turns it on by itself.
     wired_in: .github/workflows/ci.yml
-    probe: none
-
-  - id: nightly-mutation
-    verifies: frontend mutation testing on a schedule
-    rule: quality-checks.md#mutation-testing
-    status: disabled
-    reason: >-
-      the scheduled run is a no-op unless the repo variable
-      ENABLE_NIGHTLY_MUTATION is "true"; manual workflow_dispatch always runs.
-    wired_in: .github/workflows/mutation-frontend.yml
-    probe: none
-
-  - id: nightly-webkit
-    verifies: real-WebKit layout gate on a schedule
-    rule: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    status: disabled
-    reason: >-
-      the scheduled run is gated behind ENABLE_NIGHTLY_WEBKIT (off by default);
-      workflow_dispatch and release/** pushes always run (#1843).
-    wired_in: .github/workflows/webkit-gate.yml
     probe: none
 
   - id: docs-umlaut-ratchet
@@ -223,25 +248,25 @@ checks:
     rule: lessons/docs-i18n.md#german-content-uses-real-umlauts
     status: active
     wired_in: make verify-docs-hygiene; .pre-commit-config.yaml docs-hygiene
-    probe: make_target=verify-docs-hygiene
+    probe: make_target=verify-docs-hygiene | precommit_hook=docs-hygiene
 
   - id: doc-ref-existence
     verifies: nameable references in docs (make targets, repo-relative paths, constants/env vars) name things that exist
     rule: lessons/docs-i18n.md#doc-values-read-from-code-not-from-memory
     status: active
     wired_in: make verify-doc-refs; .pre-commit-config.yaml doc-refs
-    probe: make_target=verify-doc-refs
+    probe: make_target=verify-doc-refs | precommit_hook=doc-refs
 
   - id: exploration-index-orphan
     verifies: every docs/explorations/EXP-*.md has a row in EXP-INDEX.md
     rule: lessons/docs-i18n.md#doc-files-existence-is-not-discoverability
     status: active
     wired_in: make verify-docs-hygiene; .pre-commit-config.yaml docs-hygiene
-    probe: make_target=verify-docs-hygiene
+    probe: make_target=verify-docs-hygiene | precommit_hook=docs-hygiene
 
   - id: red-runs-rollup
     verifies: the latest completed schedule/push run of every active workflow is green - scheduled reds surface daily instead of sitting unseen in the Actions tab
     rule: "-"
     status: active
     wired_in: make verify-workflow-health; .github/workflows/red-runs-rollup.yml
-    probe: make_target=verify-workflow-health
+    probe: make_target=verify-workflow-health | ci_step=.github/workflows/red-runs-rollup.yml::rollup::Roll up red runs (watcher) or re-measure now (tool)::verify_workflow_health.py

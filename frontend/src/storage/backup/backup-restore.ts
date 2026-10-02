@@ -19,6 +19,7 @@ import type {
     RestoreTableSummary,
 } from "../../types/domain";
 import {restoreDexieContentSets} from "./backup-content-sets";
+import {normalizeRestoreRecord} from "./backup-normalize";
 import {
     dropApiKeyFields,
     getTable,
@@ -30,6 +31,7 @@ import {
     BACKUP_FORMAT,
     BACKUP_TABLES,
     RESTORE_ORDER,
+    SECRET_TABLES,
     type BackupTableSpec,
 } from "./backup-tables";
 
@@ -70,7 +72,8 @@ async function restoreOneTable(
 ): Promise<RestoreTableSummary> {
     const summary = emptyTableSummary();
     const store = getTable(db, spec);
-    for (const record of records) {
+    for (const raw of records) {
+        const record = normalizeRestoreRecord(table, raw);
         const recordId = record.id;
         if (typeof recordId !== "string" || recordId === "") {
             summary.skipped += 1;
@@ -158,7 +161,12 @@ export async function restoreDexieBackup(
             perTable[table] = summary;
             continue;
         }
-        const summary = await restoreOneTable(db, table, records as RowDict[], spec, userId);
+        // #3367: a key row from a file never lands (a legacy Dexie file
+        // carries cleartext, an API file carries another install's
+        // ciphertext); each one counts as skipped.
+        const summary = SECRET_TABLES.has(table)
+            ? {...emptyTableSummary(), skipped: records.length}
+            : await restoreOneTable(db, table, records as RowDict[], spec, userId);
         perTable[table] = summary;
         totalInserted += summary.inserted;
         totalUpdated += summary.updated;

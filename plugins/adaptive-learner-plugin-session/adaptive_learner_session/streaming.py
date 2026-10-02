@@ -10,6 +10,7 @@ step-evaluation + topic-transition, same setup-error handling.
 from __future__ import annotations
 
 import json
+import logging
 import time
 from typing import Any
 
@@ -20,7 +21,7 @@ from app.exceptions import ValidationError
 from app.models import LearningProject, SessionMessage
 from app.schemas import LearningSessionOut, MessageRole, SessionMessageOut
 
-from . import ai_orchestration
+from . import ai_error_codes, ai_orchestration
 from .route_helpers import _get_session
 from .session_runner import (
     _finalize_stream_exchange,
@@ -28,6 +29,8 @@ from .session_runner import (
     _resolve_active_key,
     build_outgoing_history,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def _sse_event(event: str, data: dict[str, Any]) -> bytes:
@@ -57,6 +60,7 @@ def _setup_error_stream(
     user_msg: SessionMessage,
     sess: Any,
     ai_error: str,
+    ai_error_code: str,
 ) -> StreamingResponse:
     """Build a one-shot SSE response for setup failures (no provider,
     no key, no model). The user message is already persisted; we
@@ -75,6 +79,7 @@ def _setup_error_stream(
                 "user_message": SessionMessageOut.model_validate(user_msg).model_dump(mode="json"),
                 "assistant_message": None,
                 "ai_error": ai_error,
+                "ai_error_code": ai_error_code,
                 "step_evaluation": None,
                 "topic_transition": None,
                 "timings": _empty_timings(request_start_ts),
@@ -170,7 +175,11 @@ def build_message_stream_response(
     provider_key, api_key, model_override = _resolve_active_key(db, project.user_id)
     if provider_key is None:
         return _setup_error_stream(
-            request_start_ts, user_msg, sess, "No active AI provider configured."
+            request_start_ts,
+            user_msg,
+            sess,
+            "No active AI provider configured.",
+            ai_error_codes.NO_PROVIDER,
         )
     if not api_key:
         return _setup_error_stream(
@@ -178,6 +187,7 @@ def build_message_stream_response(
             user_msg,
             sess,
             f"No API key stored for provider {provider_key!r}.",
+            ai_error_codes.NO_API_KEY,
         )
     model = ai_orchestration.resolve_model(provider_key, override=model_override)
     if model is None:
@@ -186,6 +196,7 @@ def build_message_stream_response(
             user_msg,
             sess,
             f"Provider {provider_key!r} has no default model registered.",
+            ai_error_codes.NO_MODEL,
         )
 
     # Rebuild-on-Resume for imported sessions (#1122); persisted history
@@ -206,6 +217,7 @@ def build_message_stream_response(
 
         accumulator: list[str] = []
         ai_error: str | None = None
+        ai_error_code: str | None = None
         learning_start = time.monotonic()
         try:
             iterator = await call_ai_complete_stream(
@@ -235,11 +247,18 @@ def build_message_stream_response(
                         yield _sse_event("chunk", {"delta": delta})
         except Exception as exc:  # noqa: BLE001 — surface as ai_error
             ai_error = f"AI provider error: {exc}"
+            ai_error_code = ai_error_codes.classify_provider_exception(exc)
+            logger.error(
+                "Tutor AI stream failed",
+                extra={"provider": provider_key, "code": ai_error_code},
+                exc_info=True,
+            )
 
         learning_ms_holder["value"] = int((time.monotonic() - learning_start) * 1000)
 
         assistant_text = "".join(accumulator)
         if not assistant_text and ai_error is None:
+            ai_error_code = ai_error_codes.PROVIDER_ERROR
             ai_error = (
                 f"No registered provider returned a reply for model {model!r}. "
                 f"Is the {provider_key!r} provider plugin enabled?"
@@ -275,6 +294,7 @@ def build_message_stream_response(
                     else None
                 ),
                 "ai_error": ai_error,
+                "ai_error_code": ai_error_code,
                 "step_evaluation": (
                     assistant_msg.step_evaluation.model_dump(mode="json")
                     if assistant_msg and assistant_msg.step_evaluation

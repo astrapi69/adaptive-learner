@@ -16,6 +16,8 @@
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 // created-<slug> under the user-generated source (draftSetId + USER_GENERATED_SOURCE).
 const EDIT_URL = "/create-lesson/edit/user-generated/created-e2e-legacy-en";
 
@@ -34,9 +36,7 @@ async function setLanguage(page: Page, lang: string): Promise<void> {
 }
 
 async function dismissDraftIfAny(page: Page): Promise<void> {
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
 }
 
 test.describe("Legacy prompt migration on edit (#1860)", () => {

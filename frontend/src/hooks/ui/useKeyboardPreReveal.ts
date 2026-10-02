@@ -41,10 +41,20 @@
  * channel (the #1832 mistake), and nothing about the layout changes —
  * the padding approach that did was reverted in #3017.
  *
+ * A SHORT page has no room even then (#3173): three steps, the field at
+ * the page end, the content shorter than the shrunk viewport - the late
+ * retry is still clamped and the keyboard covers the field. For exactly
+ * that remainder the scroller gets ``padding-bottom`` equal to the
+ * shortfall, applied ONLY while the keyboard is demonstrably open (the
+ * #3017 rule: the hole must always sit under the keyboard) and removed
+ * the moment the viewport grows back or focus leaves the keyboard. It
+ * is never applied at ``focusin`` (that was #3015, reverted in #3017 for
+ * the visible hole it left before the keyboard came up).
+ *
  * While the ``?vvdiag=1`` probe is enabled, each applied reveal is
  * logged to the persistent protocol (``kind: "hook"``,
- * ``decision: "prereveal"`` / ``"prereveal-late"``) so device readings
- * show the actor.
+ * ``decision: "prereveal"`` / ``"prereveal-late"`` / ``"prereveal-pad"``)
+ * so device readings show the actor.
  *
  * @example
  * export default function App() {
@@ -73,6 +83,14 @@ const TARGET_VIEWPORT_FRACTION = 1 / 3;
  * agree on when Safari owns the reveal.
  */
 const KEYBOARD_OPEN_MIN_PX = 150;
+
+/** What one reveal did: the scroller it moved, the distance it wanted and
+ *  the distance the scroller allowed; ``null`` when nothing was to do. */
+type RevealOutcome = {
+    scroller: HTMLElement;
+    delta: number;
+    applied: number;
+} | null;
 
 /** The nearest ancestor that can actually scroll vertically. */
 function findScrollableAncestor(el: Element): HTMLElement | null {
@@ -103,15 +121,15 @@ export function useKeyboardPreReveal(): void {
          * routinely clamped to a fraction of it (#3019), which is why the
          * keyboard-open retry below exists.
          */
-        const reveal = (el: Element, decision: string): void => {
+        const reveal = (el: Element, decision: string): RevealOutcome => {
             const scroller =
                 findScrollableAncestor(el) ?? document.getElementById("root");
-            if (!scroller) return;
+            if (!scroller) return null;
             const fieldTop = el.getBoundingClientRect().top;
             const safeTop = window.innerHeight * TARGET_VIEWPORT_FRACTION;
             const delta = Math.round(fieldTop - safeTop);
             // Only reveal downward-sitting fields; never yank one UP.
-            if (delta <= 0) return;
+            if (delta <= 0) return null;
             // Synchronous, instant: must be applied before Safari decides
             // whether the caret needs its own reveal scroll.
             const before = scroller.scrollTop;
@@ -128,6 +146,25 @@ export function useKeyboardPreReveal(): void {
                     rootY: Math.round(scroller.scrollTop),
                 });
             }
+            return { scroller, delta, applied };
+        };
+
+        // #3173 — the scroller that currently carries keyboard headroom.
+        let padded: HTMLElement | null = null;
+        const clearPadding = () => {
+            if (!padded) return;
+            padded.style.paddingBottom = "";
+            padded = null;
+        };
+        /** Give the scroller exactly the room the clamped retry lacked, then
+         *  reveal again. Only called while the keyboard is demonstrably open,
+         *  so the added space is covered by it, never visible (#3017). */
+        const padAndReveal = (el: Element, outcome: RevealOutcome) => {
+            if (!outcome || outcome.applied >= outcome.delta) return;
+            const shortfall = outcome.delta - outcome.applied;
+            outcome.scroller.style.paddingBottom = `${shortfall}px`;
+            padded = outcome.scroller;
+            reveal(el, "prereveal-pad");
         };
 
         // One late retry per focus episode: the room only exists once the
@@ -155,26 +192,34 @@ export function useKeyboardPreReveal(): void {
                 return;
             }
             retried = true;
+            clearPadding();
         };
 
         const viewport = window.visualViewport;
         const onViewportResize = () => {
-            if (retried || !viewport) return;
+            if (!viewport) return;
             // Only once the keyboard is demonstrably open: the visible height
             // dropped well below what it was when the field took focus.
-            if (heightAtFocus - viewport.height < KEYBOARD_OPEN_MIN_PX) {
+            const keyboardOpen =
+                heightAtFocus - viewport.height >= KEYBOARD_OPEN_MIN_PX;
+            // The keyboard went away: the headroom must go with it, at once,
+            // or the hole it filled becomes visible (#3017).
+            if (!keyboardOpen) {
+                clearPadding();
                 return;
             }
+            if (retried) return;
             const active = document.activeElement;
             if (!active || !isKeyboardSummoner(active)) return;
             retried = true;
-            reveal(active, "prereveal-late");
+            padAndReveal(active, reveal(active, "prereveal-late"));
         };
 
         window.addEventListener("focusin", onFocusIn);
         window.addEventListener("focusout", onFocusOut);
         viewport?.addEventListener("resize", onViewportResize);
         return () => {
+            clearPadding();
             window.removeEventListener("focusin", onFocusIn);
             window.removeEventListener("focusout", onFocusOut);
             viewport?.removeEventListener("resize", onViewportResize);

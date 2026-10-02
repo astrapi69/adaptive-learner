@@ -40,6 +40,7 @@ import type {Ref} from "react";
 import {useEffect, useMemo, useRef, useState} from "react";
 
 import {seededShuffle} from "../../../../lib/exercises/grading/seeded-shuffle";
+import {mountShuffleSeed} from "../../../../lib/random";
 
 /** Apply a @dnd-kit drag-end to the placed-index sequence.
  *  ``activeId`` / ``overId`` are the stringified tile indices
@@ -127,9 +128,7 @@ export function useWordTilesDnd({
 }: UseWordTilesDndOptions): UseWordTilesDndResult {
     // Stable seed per-mount so the scrambled bar doesn't
     // re-shuffle on every render.
-    const [shuffleSeed] = useState(
-        () => `${exerciseId}#${Date.now() & 0xffff}`,
-    );
+    const [shuffleSeed] = useState(() => mountShuffleSeed(exerciseId));
 
     /** Display order = shuffled permutation of [0..tiles.length-1].
      *  The scrambled bar iterates this list (and skips any

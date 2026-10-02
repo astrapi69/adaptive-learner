@@ -79,8 +79,8 @@ describe("NavReviewsBadge: reviews-changed live recompute (#629)", () => {
     });
 });
 
-describe("NavReviewsBadge: count-only on phones (#3123)", () => {
-    it("renders the count in its own span and hides only the word below sm", async () => {
+describe("NavReviewsBadge: count-only below 2xl (#3123, #3339)", () => {
+    it("renders the count in its own span and hides only the word below 2xl", async () => {
         reviewQueueMock.mockResolvedValue(overdue(718));
         render(
             <MemoryRouter>
@@ -89,14 +89,19 @@ describe("NavReviewsBadge: count-only on phones (#3123)", () => {
         );
         const badge = await screen.findByTestId("nav-reviews-badge");
         // The count is always visible; the surrounding word (" due") sits in
-        // a span that the sm breakpoint hides, so a 375px bar shows "718".
+        // a span that the 2xl breakpoint hides, so a 375px phone bar and the
+        // single-row 1280px desktop bar both show "718" (#3339: with the
+        // word the desktop row ran out of room).
         expect(screen.getByTestId("nav-reviews-badge-count")).toHaveTextContent(
             "718",
         );
         expect(screen.getByTestId("nav-reviews-badge-count").className).not.toContain(
-            "max-sm:hidden",
+            "max-2xl:hidden",
         );
-        const hidden = [...badge.querySelectorAll("span.max-sm\\:hidden")];
+        // #3339 - a crowded bar must never flex-shrink the badge (the icon
+        // became a sliver).
+        expect(badge.className).toContain("shrink-0");
+        const hidden = [...badge.querySelectorAll("span.max-2xl\\:hidden")];
         expect(hidden.map((el) => el.textContent).join("")).toBe(" due");
         // The full label survives in the accessible name and the tooltip.
         expect(badge.getAttribute("aria-label")).toContain("718 due");

@@ -12,6 +12,8 @@
 
 import {expect, test, type Page} from "@playwright/test";
 
+import {declineDraftPrompt} from "../helpers";
+
 // Distinct backs so multiple_choice can build distractor options.
 const CARDS = [
     {front: "chat", back: "Katze"},
@@ -25,9 +27,7 @@ async function openFresh(page: Page): Promise<void> {
     await expect(page.getByTestId("create-lesson-page")).toBeVisible({
         timeout: 15000,
     });
-    if (await page.getByTestId("create-lesson-draft-prompt").count()) {
-        await page.getByTestId("create-lesson-draft-fresh").click();
-    }
+    await declineDraftPrompt(page);
 }
 
 async function buildAndGenerate(page: Page): Promise<void> {

@@ -36,6 +36,7 @@ import ExerciseHint from "../../feedback/ExerciseHint";
 import ExerciseFooter from "../../shell/ExerciseFooter";
 import AnswerCelebration from "../../feedback/AnswerCelebration";
 import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
+import {OrderingReview} from "./ordering-review";
 import type {ContentLessonExercise} from "../../../../storage/types";
 import type {
     ControlledExerciseProps,
@@ -70,7 +71,7 @@ function OrderingExercise(
     ref: Ref<ExerciseHandle>,
 ) {
     const {t} = useI18n();
-    const {showAnswerToggle} = useLessonMode();
+    const {showAnswerToggle, immediateFeedback} = useLessonMode();
     const payload = useMemo(() => asOrderingPayload(exercise), [exercise]);
     const items = payload?.items ?? [];
 
@@ -158,6 +159,11 @@ function OrderingExercise(
                 onKeyReorder={dnd.handleTileKeyDown}
             />
 
+            {/* #3260: the editor unmounts on check; show WHAT was wrong. */}
+            {submitted && immediateFeedback && (
+                <OrderingReview items={items} placed={placed} isCorrect={isCorrect} t={t} />
+            )}
+
             <OrderingResult
                 submitted={submitted}
                 isCorrect={isCorrect}
@@ -209,7 +215,7 @@ function OrderingResult({
                 >
                     {isCorrect
                         ? t(`${I18N_PREFIX}.result_correct`, "Correct!")
-                        : t(`${I18N_PREFIX}.result_wrong`, "Not quite — try again.")}
+                        : t(`${I18N_PREFIX}.result_wrong`, "Not quite - the order is not right yet.")}
                 </p>
             )}
 

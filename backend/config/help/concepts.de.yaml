@@ -1,13 +1,13 @@
-# Adaptive Learner — Hilfe-Glossar: Kernkonzepte (Deutsch).
+# Adaptive Learner - Hilfe-Glossar: Kernkonzepte (Deutsch).
 #
 # Pro Eintrag:
 #   key:    stabiler ID (snake_case, an URLs gebunden)
 #   title:  Anzeige-Titel im UI
-#   short:  1-2 Saetze. Erscheint im Tooltip-Popover.
-#   long:   Markdown. 200-500 Woerter. Erscheint im Hilfe-Drawer.
+#   short:  1-2 Sätze. Erscheint im Tooltip-Popover.
+#   long:   Markdown. 200-500 Wörter. Erscheint im Hilfe-Drawer.
 #
 # DE-Inhalte verwenden echte Umlaute (ae/oe/ue/ss bleiben ASCII
-# in Identifiern). Aenderungen hier landen ueber
+# in Identifiern). Änderungen hier landen über
 # ``make sync-help`` in ``frontend/src/data/help/concepts.de.json``.
 
 category: concepts
@@ -21,45 +21,45 @@ entries:
 
       Ein Curriculum (Plural: Curricula) ist im Bildungswesen ein
       strukturierter Lehrplan oder ein systematisches Gesamtkonzept
-      fuer das Lernen und Lehren.
+      für das Lernen und Lehren.
 
       ## Vier Kernkomponenten
 
       Jedes Curriculum beantwortet vier zentrale Fragen:
 
-      - **Lernziele (Warum und wozu?)** — Welche Kompetenzen sollen
+      - **Lernziele (Warum und wozu?)** - Welche Kompetenzen sollen
         erworben werden?
-      - **Lerninhalte (Was?)** — Welche Themen werden behandelt?
-      - **Methodik und Didaktik (Wie?)** — Mit welchen Lehr- und
+      - **Lerninhalte (Was?)** - Welche Themen werden behandelt?
+      - **Methodik und Didaktik (Wie?)** - Mit welchen Lehr- und
         Lernformen wird vermittelt?
-      - **Evaluation (Wie gut?)** — Wie wird der Lernerfolg gemessen?
+      - **Evaluation (Wie gut?)** - Wie wird der Lernerfolg gemessen?
 
       ## Unterschied zum klassischen Lehrplan
 
       Ein Curriculum stellt die lernende Person und den
       Kompetenzerwerb in den Mittelpunkt (Outcome-Orientierung),
-      nicht nur eine starre Auflistung von Stoffgebieten. Waehrend
+      nicht nur eine starre Auflistung von Stoffgebieten. Während
       ein Lehrplan dokumentiert, **was** unterrichtet werden soll,
-      beschreibt ein Curriculum auch **wozu** und **wie** — und
-      misst, **was tatsaechlich gelernt wurde**.
+      beschreibt ein Curriculum auch **wozu** und **wie** - und
+      misst, **was tatsächlich gelernt wurde**.
 
       ## Vier Dimensionen
 
-      Die Curriculumforschung unterscheidet vier Auspraegungen:
+      Die Curriculumforschung unterscheidet vier Ausprägungen:
 
-      - **Intendiertes Curriculum** — das dokumentierte Soll.
-      - **Realisiertes Curriculum** — was tatsaechlich unterrichtet wird.
-      - **Erreichtes Curriculum** — was die Lernenden tatsaechlich verstehen.
-      - **Heimliches Curriculum** — implizite Lernprozesse, die
+      - **Intendiertes Curriculum** - das dokumentierte Soll.
+      - **Realisiertes Curriculum** - was tatsächlich unterrichtet wird.
+      - **Erreichtes Curriculum** - was die Lernenden tatsächlich verstehen.
+      - **Heimliches Curriculum** - implizite Lernprozesse, die
         nebenher entstehen (Lerngewohnheiten, Haltungen, soziale
         Normen).
 
       ## Im Adaptive Learner
 
-      In Adaptive Learner ist ein Curriculum dein persoenlicher
-      Lernplan fuer ein Thema. Es organisiert Lernthemen
+      In Adaptive Learner ist ein Curriculum dein persönlicher
+      Lernplan für ein Thema. Es organisiert Lernthemen
       hierarchisch und verbindet sie mit Lektionen. Du definierst
-      Ziele, Inhalte und Methoden — das System unterstuetzt dich
+      Ziele, Inhalte und Methoden - das System unterstützt dich
       bei der Evaluation durch Tracking, das Lernprofil und
       KI-Feedback nach jedem Schritt.
 
@@ -70,51 +70,51 @@ entries:
 
   - key: learning_project
     title: Lernprojekt
-    short: "Dein konkretes Lernvorhaben mit Thema, Ziel, Zeitrahmen und taeglicher Lernzeit."
+    short: "Dein konkretes Lernvorhaben mit Thema, Ziel, Zeitrahmen und täglicher Lernzeit."
     long: |
       ## Was ist ein Lernprojekt?
 
-      Ein Lernprojekt buendelt alles, was zu einem Lernvorhaben
-      gehoert: das Thema, dein Ziel, den Zeitrahmen und die
-      taegliche Lernzeit. Es ist die Klammer um deine Sessions,
+      Ein Lernprojekt bündelt alles, was zu einem Lernvorhaben
+      gehört: das Thema, dein Ziel, den Zeitrahmen und die
+      tägliche Lernzeit. Es ist die Klammer um deine Sessions,
       dein Curriculum und dein Lernprofil.
 
       ## Warum diese vier Felder?
 
-      - **Thema** — was du lernen willst (z. B. "Spanisch fuer den
+      - **Thema** - was du lernen willst (z. B. "Spanisch für den
         Urlaub", "Python-Grundlagen", "Klavier C-Dur-Tonleiter").
-        Pruefbar konkret, nicht zu breit.
-      - **Ziel** — was du am Ende koennen willst. Konkrete Ziele
+        Prüfbar konkret, nicht zu breit.
+      - **Ziel** - was du am Ende können willst. Konkrete Ziele
         ("im Restaurant bestellen") erzeugen bessere
         AI-Prompts als vage ("Spanisch lernen").
-      - **Zeitrahmen** — bis wann. Beeinflusst, wie aggressiv das
+      - **Zeitrahmen** - bis wann. Beeinflusst, wie aggressiv das
         System Wiederholungen einplant und wann der
         Methodenwechsel-Vorschlag erscheint.
-      - **Taegliche Lernzeit** — wie viele Minuten am Tag du
+      - **Tägliche Lernzeit** - wie viele Minuten am Tag du
         einsetzen kannst. Treibt die
-        Spaced-Repetition-Empfehlungen und die Session-Laenge.
+        Spaced-Repetition-Empfehlungen und die Session-Länge.
 
       ## Warum konkrete Ziele wichtig sind
 
       Lernforschung zeigt: SMART-Ziele (spezifisch, messbar,
       attraktiv, realistisch, terminiert) verdoppeln den
-      Lernerfolg gegenueber vagen Vorhaben. Der Adaptive Learner
-      uebersetzt dein Ziel in den System-Prompt der AI; je
-      konkreter du formulierst, desto praeziser sind die
-      generierten Uebungen.
+      Lernerfolg gegenüber vagen Vorhaben. Der Adaptive Learner
+      übersetzt dein Ziel in den System-Prompt der AI; je
+      konkreter du formulierst, desto präziser sind die
+      generierten Übungen.
 
       ## Im Adaptive Learner
 
       Du kannst mehrere Lernprojekte parallel haben. Jede Session
-      gehoert zu genau einem Projekt; der Fortschritt
+      gehört zu genau einem Projekt; der Fortschritt
       (XP, Badges, Streak) wird pro Projekt getrackt. Beim
-      Aendern des Zeitrahmens passt das System die
-      Wiederholungs-Rhythmen automatisch an — bei knappem
+      Ändern des Zeitrahmens passt das System die
+      Wiederholungs-Rhythmen automatisch an - bei knappem
       Zeitrahmen werden Wiederholungen dichter gestaffelt.
 
   - key: learning_profile
     title: Lernprofil
-    short: "Dein persoenliches Staerkenprofil ueber sechs Lernmethoden, ermittelt durch den Assessment-Test."
+    short: "Dein persönliches Stärkenprofil über sechs Lernmethoden, ermittelt durch den Assessment-Test."
     long: |
       ## Was ist das Lernprofil?
 
@@ -128,56 +128,56 @@ entries:
       Jede Achse ist eine Methode mit einem Gewicht zwischen
       0 und 100:
 
-      - **Deduktiv** — Regel lernen, dann anwenden.
-      - **Induktiv** — Beispiele sehen, Regel selbst ableiten.
-      - **Fehlerzentriert** — bewusst Fehler machen, dann verstehen.
-      - **Dialogisch** — Lernen durch Gespraech.
-      - **Kontextuell** — Lernen in simulierten Alltagssituationen.
-      - **KI-adaptiv** — das System waehlt automatisch.
+      - **Deduktiv** - Regel lernen, dann anwenden.
+      - **Induktiv** - Beispiele sehen, Regel selbst ableiten.
+      - **Fehlerzentriert** - bewusst Fehler machen, dann verstehen.
+      - **Dialogisch** - Lernen durch Gespräch.
+      - **Kontextuell** - Lernen in simulierten Alltagssituationen.
+      - **KI-adaptiv** - das System wählt automatisch.
 
       ## Es ist ein Profil, kein Label
 
       Kein Mensch ist "ein deduktiver Lerner". Jeder hat ein
-      gewichtetes Muster ueber alle sechs Methoden. Ein Profil
-      mit hohem Induktiv- und Dialogisch-Anteil heisst nicht,
-      dass Deduktiv fuer dich nicht funktioniert — es heisst,
+      gewichtetes Muster über alle sechs Methoden. Ein Profil
+      mit hohem Induktiv- und Dialogisch-Anteil heißt nicht,
+      dass Deduktiv für dich nicht funktioniert - es heißt,
       dass die anderen beiden bei dir typischerweise schneller
-      zu Lernerfolg fuehren.
+      zu Lernerfolg führen.
 
-      ## Aenderungen ueber Zeit
+      ## Änderungen über Zeit
 
-      Das Lernprofil ist nicht in Stein gemeisselt. Mit jedem
+      Das Lernprofil ist nicht in Stein gemeißelt. Mit jedem
       bestandenen Lernzyklus und jedem Methodenwechsel passt
       das System seine Empfehlungen an. Du kannst den
-      Assessment-Test jederzeit wiederholen — typischerweise
-      sinnvoll alle 3-6 Monate oder nach einem groesseren
+      Assessment-Test jederzeit wiederholen - typischerweise
+      sinnvoll alle 3-6 Monate oder nach einem größeren
       Themenwechsel.
 
       ## Im Adaptive Learner
 
       Das Profil wird auf dem Dashboard und in den
       Session-Empfehlungen verwendet. Wenn du eine Session
-      ohne Methodenangabe startest, waehlt das System die
-      Methode mit dem hoechsten Gewicht in deinem Profil.
+      ohne Methodenangabe startest, wählt das System die
+      Methode mit dem höchsten Gewicht in deinem Profil.
 
   - key: learning_session
     title: Lernsession
-    short: "Eine KI-gestuetzte Lerneinheit, die dem 7-Schritte-Zyklus folgt."
+    short: "Eine KI-gestützte Lerneinheit, die dem 7-Schritte-Zyklus folgt."
     long: |
       ## Was ist eine Lernsession?
 
-      Eine Lernsession ist eine zusammenhaengende Lerneinheit
+      Eine Lernsession ist eine zusammenhängende Lerneinheit
       zu einem Thema, gesteuert durch den 7-Schritte-Zyklus
       (Input, Versuch, Fehler, Feedback, Anpassung, Wiederholung,
-      Integration). Die AI uebernimmt dabei die Rolle des
-      Lehrenden; du fuehrst den Dialog.
+      Integration). Die AI übernimmt dabei die Rolle des
+      Lehrenden; du führst den Dialog.
 
       ## Was unterscheidet eine Session vom Chat?
 
-      In einer Session laeuft der **Dual-Prompt-Evaluator** mit:
+      In einer Session läuft der **Dual-Prompt-Evaluator** mit:
       Nach jeder Antwort beurteilt eine zweite KI-Instanz dein
-      Verstaendnis (0-100% Confidence) und entscheidet, ob du
-      bereit fuer den naechsten Schritt bist. Ein normaler Chat
+      Verständnis (0-100% Confidence) und entscheidet, ob du
+      bereit für den nächsten Schritt bist. Ein normaler Chat
       hat dieses Korrektiv nicht.
 
       ## Streaming
@@ -185,50 +185,50 @@ entries:
       Die Antworten der AI erscheinen wortweise (Server-Sent
       Events), damit du nicht auf die fertige Antwort warten
       musst. Du kannst jederzeit unterbrechen und
-      nachfragen — die Session laeuft solange weiter, bis du
+      nachfragen - die Session läuft solange weiter, bis du
       sie beendest oder der Zyklus abgeschlossen ist.
 
       ## Wann sollte ich eine Session beenden?
 
       - Nach Schritt 7 (Integration), wenn der Lernzyklus
         abgeschlossen ist.
-      - Wenn das System einen Methodenwechsel vorschlaegt und
+      - Wenn das System einen Methodenwechsel vorschlägt und
         du den Vorschlag annimmst.
-      - Wenn dein **stress** in den letzten Bewertungen ueber 4
-        liegt — Pause ist produktiver als Durchhalten.
+      - Wenn dein **stress** in den letzten Bewertungen über 4
+        liegt - Pause ist produktiver als Durchhalten.
 
       ## Bewertungen wirken sich aus
 
-      Jede Session endet mit drei Reglern (Verstaendnis, Stress,
+      Jede Session endet mit drei Reglern (Verständnis, Stress,
       Methodenpassung, je 1-5). Diese Werte gehen in dein
-      Lernprofil ein und beeinflussen kuenftige Empfehlungen:
-      hoher Stress + niedrige Methodenpassung ueber mehrere
-      Sessions hinweg loest den Methodenwechsel-Vorschlag aus.
+      Lernprofil ein und beeinflussen künftige Empfehlungen:
+      hoher Stress + niedrige Methodenpassung über mehrere
+      Sessions hinweg löst den Methodenwechsel-Vorschlag aus.
 
       ## Im Adaptive Learner
 
-      Eine Session gehoert zu genau einem Lernprojekt. Du kannst
+      Eine Session gehört zu genau einem Lernprojekt. Du kannst
       gleichzeitig nur eine aktive Session haben; das verhindert
-      Vermischung von Themen und schuetzt die
+      Vermischung von Themen und schützt die
       Methodenwechsel-Logik vor Rauschen.
 
   - key: content_repository
     title: Content-Repository
-    short: "Ein oeffentliches GitHub-Repo mit strukturierten Lektionssaetzen, das Adaptive Learner als Inhaltsquelle laden kann."
+    short: "Ein öffentliches GitHub-Repo mit strukturierten Lektionssätzen, das Adaptive Learner als Inhaltsquelle laden kann."
     docs_slug: features/content-repos
     long: |
       ## Was ist ein Content-Repository?
 
-      Lektionen kommen aus Content-Repositories — oeffentlichen
-      GitHub-Repos, die Lektionssaetze buendeln. Das offizielle
-      Repo ist immer geladen; zusaetzlich kannst du eigene
+      Lektionen kommen aus Content-Repositories - öffentlichen
+      GitHub-Repos, die Lektionssätze bündeln. Das offizielle
+      Repo ist immer geladen; zusätzlich kannst du eigene
       verbinden.
 
       ## Mehrere Quellen
 
       Unter Einstellungen > Daten verwaltest du beliebig viele
-      Repos (hinzufuegen, entfernen, Reihenfolge = Prioritaet).
-      Jeder Satz traegt ein Quell-Badge, damit du siehst, woher
+      Repos (hinzufügen, entfernen, Reihenfolge = Priorität).
+      Jeder Satz trägt ein Quell-Badge, damit du siehst, woher
       eine Lektion stammt.
 
   - key: trust_level
@@ -238,35 +238,35 @@ entries:
     long: |
       ## Was ist eine Trust-Stufe?
 
-      Jedes verbundene Repo durchlaeuft bei jeder
+      Jedes verbundene Repo durchläuft bei jeder
       Synchronisierung eine automatische technische Validierung.
       Daraus ergibt sich eine Trust-Stufe: 0 (nicht validiert
-      oder fehlgeschlagen), 1 (technisch gueltig: mindestens eine
-      Lektion, kein ausfuehrbarer Inhalt) und 3 (offiziell
+      oder fehlgeschlagen), 1 (technisch gültig: mindestens eine
+      Lektion, kein ausführbarer Inhalt) und 3 (offiziell
       empfohlen).
 
       ## Was sie NICHT ist
 
       Die Stufe ist rein technisch. Eine inhaltliche,
       community-basierte Bewertung (Trust 2) braucht einen
-      gemeinsamen Backend-Dienst und ist zurueckgestellt.
+      gemeinsamen Backend-Dienst und ist zurückgestellt.
 
   - key: streak
     title: Streak (Serie)
-    short: "Die Anzahl aufeinanderfolgender Tage, an denen du gelernt hast — Treibstoff fuer den XP-Multiplikator."
+    short: "Die Anzahl aufeinanderfolgender Tage, an denen du gelernt hast - Treibstoff für den XP-Multiplikator."
     docs_slug: user-guide/dashboard
     long: |
       ## Was ist eine Streak?
 
-      Eine Streak zaehlt aufeinanderfolgende Lerntage. Jede
-      abgeschlossene Session oder Lektion fuellt die Heatmap und
-      haelt die Serie am Leben.
+      Eine Streak zählt aufeinanderfolgende Lerntage. Jede
+      abgeschlossene Session oder Lektion füllt die Heatmap und
+      hält die Serie am Leben.
 
       ## Wirkung
 
       Die Streak speist einen XP-Multiplikator (+25 % pro Tag in
       Folge, bei 7 Tagen gedeckelt). Sie ist ein Spiegel deiner
-      Konstanz, kein Druckmittel — eine verpasste taegliche
+      Konstanz, kein Druckmittel - eine verpasste tägliche
       Mission kostet keine Strafe.
 
   - key: assessment
@@ -276,13 +276,13 @@ entries:
     long: |
       ## Was ist der Lerntyp-Test?
 
-      Der Lerntyp-Test (Assessment) stellt zwoelf Fragen und
-      berechnet daraus dein Lernprofil — die Gewichtung der
+      Der Lerntyp-Test (Assessment) stellt zwölf Fragen und
+      berechnet daraus dein Lernprofil - die Gewichtung der
       sechs Methoden, auf die die App setzt.
 
       ## Optional und fortsetzbar
 
-      Seit der Onboarding-Ueberarbeitung ist der Test optional
-      und nur ueber den Profil-Assistenten erreichbar. Brichst
+      Seit der Onboarding-Überarbeitung ist der Test optional
+      und nur über den Profil-Assistenten erreichbar. Brichst
       du ihn ab, merkt sich die App den Zwischenstand, sodass du
-      spaeter dort weitermachst, wo du aufgehoert hast.
+      später dort weitermachst, wo du aufgehört hast.

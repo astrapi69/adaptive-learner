@@ -337,8 +337,9 @@ Smoke-Specs decken die kritischen User-Pfade ab:
 
 Specs nutzen ausschließlich `data-testid`-Selektoren - keine
 brüchigen CSS-Selektoren. Smoke-Specs sind NICHT im
-`make test`-Pfad; sie brauchen eine laufende App
-(`make dev-bg` zuerst).
+`make test`-Pfad; sie starten eigene Server auf eigenen Ports
+und brauchen keine laufende App. Ein laufendes `make dev` bleibt
+unberührt.
 
 Neben `e2e/smoke/` enthält der `e2e/`-Baum drei weitere
 Spec-Familien:
@@ -387,9 +388,11 @@ Whitespace, End-of-File-Fixer, check-yaml, check-json,
 check-added-large-files, check-merge-conflict, Frontend-ESLint,
 eine Plugin-Lockfile/pyproject-Paarungs-Prüfung und ein
 Bundled-Content-Statistik-Validator. Im CI-Pre-Commit-Job
-werden die Hooks `prettier-frontend` und `eslint`
-übersprungen (der Frontend-Tests-Job führt ESLint stattdessen
-mit installierten Abhängigkeiten aus).
+wird der Hook `eslint` übersprungen (der Frontend-Tests-Job
+führt ESLint stattdessen mit installierten Abhängigkeiten
+aus). Prettier ist kein Hook: `bun run format:check` läuft im
+Frontend-Tests-Job, nicht blockierend bis zur einmaligen
+Neuformatierung aus #3270.
 
 ## CI
 

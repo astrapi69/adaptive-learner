@@ -7,7 +7,7 @@
  * match its type (matching pairs, free-text accepted answers, cloze
  * sentence + blanks, word tiles, picture-choice images). It mirrors the
  * inline-edit pattern of {@link CardEditor}'s ``SortableCardRow``: it holds
- * a private draft, gates Save on {@link validateExerciseEdit}, and commits
+ * a private draft, gates Save on {@link checkExerciseDraft}, and commits
  * the trimmed result via ``onSave`` (the parent merges it into the exercise
  * record — no separate save step).
  *
@@ -34,9 +34,9 @@ import {
     coreConversionTargets,
     countClozeMarkers,
     normalizeExerciseEdit,
-    validateExerciseEdit,
     type ConversionTargetType,
 } from "../../lib/exercises";
+import {checkExerciseDraft} from "../../lib/content/lesson/edit/exercise-draft-check";
 import {
     exerciseEditErrorKey,
     exerciseTypeLabelKey,
@@ -49,6 +49,9 @@ import type {
 
 export interface ExerciseEditorProps {
     exercise: ContentLessonExercise;
+    /** The ids of the lesson's cards, so a reference to a removed card is
+     *  caught here instead of at save (#3387). */
+    cardIds: readonly string[];
     onSave: (updated: ContentLessonExercise) => void;
     onCancel: () => void;
 }
@@ -57,6 +60,7 @@ type Patch = Partial<ContentLessonExercise>;
 
 export default function ExerciseEditor({
     exercise,
+    cardIds,
     onSave,
     onCancel,
 }: ExerciseEditorProps) {
@@ -94,7 +98,7 @@ export default function ExerciseEditor({
         setDraft(converted);
     }
 
-    const issue = validateExerciseEdit(draft);
+    const issue = checkExerciseDraft(draft, cardIds);
     const id = exercise.id;
 
     function save() {

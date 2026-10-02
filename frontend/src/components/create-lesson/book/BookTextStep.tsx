@@ -189,12 +189,12 @@ export default function BookTextStep({
             );
             onBatchGenerated(result.lessons);
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
             notify.error(
-                `${t(
+                t(
                     "create_lesson.book.generate_failed",
                     "Could not generate the lesson. Please try again.",
-                )} ${detail}`,
+                ),
+                {error: err},
             );
         } finally {
             setBatchBusy(false);
@@ -269,12 +269,12 @@ export default function BookTextStep({
             );
             onGenerated(theory.steps, exercises);
         } catch (err) {
-            const detail = err instanceof Error ? err.message : String(err);
             notify.error(
-                `${t(
+                t(
                     "create_lesson.book.generate_failed",
                     "Could not generate the lesson. Please try again.",
-                )} ${detail}`,
+                ),
+                {error: err},
             );
         } finally {
             setBusy(false);

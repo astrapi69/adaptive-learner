@@ -33,6 +33,9 @@ function orderingLesson() {
     id: "ordering-steps",
     title: "Hill start",
     description: "ext:al-ordering, schema v1.14+",
+    // A lesson declares the extensions it uses, as every fleet lesson does;
+    // repo validation refuses an undeclared one (#3243).
+    requires_extensions: ["ext:al-ordering@1"],
     target_language: "en",
     source_language: "en",
     domain: "knowledge",
@@ -62,6 +65,9 @@ function parsonsLesson() {
     id: "parsons-greet",
     title: "Greet function",
     description: "ext:al-parsons, schema v1.14+",
+    // A lesson declares the extensions it uses, as every fleet lesson does;
+    // repo validation refuses an undeclared one (#3243).
+    requires_extensions: ["ext:al-parsons@1"],
     target_language: "en",
     source_language: "en",
     domain: "programming",
@@ -118,6 +124,9 @@ function hotspotLesson() {
     id: "hotspot-capital",
     title: "Find the capital",
     description: "ext:al-hotspot, schema v1.14+",
+    // A lesson declares the extensions it uses, as every fleet lesson does;
+    // repo validation refuses an undeclared one (#3243).
+    requires_extensions: ["ext:al-hotspot@1"],
     target_language: "en",
     source_language: "en",
     domain: "knowledge",

@@ -275,18 +275,31 @@ export default function CreateLesson() {
     });
 
     // Phase 65B — autosave the draft every 10s while editing. Skipped
-    // while the restore prompt is open (we haven't applied a choice yet)
-    // and in edit mode (which never writes the shared draft slot, #1740).
-    const stateRef = useRef({step, meta, cards});
-    stateRef.current = {step, meta, cards};
+    // while the restore prompt is open (we haven't applied a choice yet),
+    // in edit mode (which never writes the shared draft slot, #1740) and
+    // once the lesson is saved (#3284: the interval used to outlive the
+    // save and write the saved lesson back into the slot, so the next
+    // visit offered to "continue" it). The tick re-checks the saved flag
+    // through the ref so a tick already queued when the save lands is
+    // a no-op too.
+    const saved = savedLessonId !== "";
+    const stateRef = useRef({step, meta, cards, saved});
+    stateRef.current = {step, meta, cards, saved};
     useEffect(() => {
-        if (pendingDraft || editMode) return;
+        if (pendingDraft || editMode || saved) return;
         const id = setInterval(() => {
-            const {step: s, meta: m, cards: c} = stateRef.current;
+            const {step: s, meta: m, cards: c, saved: done} = stateRef.current;
+            if (done) return;
             saveLessonDraft({schema: 1, step: s, meta: m, cards: c, updatedAt: ""});
         }, DRAFT_AUTOSAVE_MS);
         return () => clearInterval(id);
-    }, [pendingDraft, editMode]);
+    }, [pendingDraft, editMode, saved]);
+
+    // #3284 — the last tick can land between the save's clearLessonDraft()
+    // and this render; clear the slot once more after the interval is gone.
+    useEffect(() => {
+        if (saved && !editMode) clearLessonDraft();
+    }, [saved, editMode]);
 
     const titleMissing = meta.title.trim().length === 0;
     // #1715 — a same-language pair (source === target) is legitimate
@@ -357,7 +370,11 @@ export default function CreateLesson() {
             },
             {
                 minExercisesToAdvance,
-                hasIncompleteExercise: () => hasIncompleteExercise(exercises),
+                hasIncompleteExercise: () =>
+                    hasIncompleteExercise(
+                        exercises,
+                        cards.map((card) => card.id),
+                    ),
                 hasInvalidExtensionExercise: () =>
                     exercises.some((ex) => !validateExtensionExercise(ex).valid),
             },
@@ -555,11 +572,9 @@ export default function CreateLesson() {
             );
             return entry;
         } catch (err) {
-            notify.error(
-                `${t("create_lesson.save.failed", "Could not save the lesson.")} ${
-                    err instanceof Error ? err.message : ""
-                }`,
-            );
+            notify.error(t("create_lesson.save.failed", "Could not save the lesson."), {
+                error: err,
+            });
             return null;
         } finally {
             setSaving(false);
@@ -592,11 +607,9 @@ export default function CreateLesson() {
             notify.success(t("create_lesson.save.copied", "Saved as a copy!"));
             return entry;
         } catch (err) {
-            notify.error(
-                `${t("create_lesson.save.failed", "Could not save the lesson.")} ${
-                    err instanceof Error ? err.message : ""
-                }`,
-            );
+            notify.error(t("create_lesson.save.failed", "Could not save the lesson."), {
+                error: err,
+            });
             return null;
         } finally {
             setSaving(false);

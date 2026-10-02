@@ -68,19 +68,21 @@ describe("notify.error", () => {
         expect(toast.error).toHaveBeenCalledOnce();
         const [body, opts] = vi.mocked(toast.error).mock.calls[0];
         expect(React.isValidElement(body)).toBe(true);
-        // Error toasts stay until the user closes them (X button); a
-        // click or drag must not dismiss them.
+        // Error toasts stay until the user closes them; a drag must not
+        // dismiss them. Whether a tap closes them is the container's
+        // call (#3235), so the toast does not pin closeOnClick itself.
         expect(opts).toMatchObject({
             autoClose: false,
-            closeOnClick: false,
             draggable: false,
         });
+        expect(opts).not.toHaveProperty("closeOnClick");
     });
 
     it("stays non-auto-closing even with the persistent option (#126)", () => {
         notify.error("stuck", {persistent: true});
         const [, opts] = vi.mocked(toast.error).mock.calls[0];
-        expect(opts).toMatchObject({autoClose: false, closeOnClick: false});
+        expect(opts).toMatchObject({autoClose: false});
+        expect(opts).not.toHaveProperty("closeOnClick");
     });
 
     it("without apiError shows the caller's message in both modes", () => {
@@ -173,6 +175,55 @@ describe("notify.error", () => {
             const props = getErrorContentProps();
             expect(props.displayMessage, `status ${status}`).toBe(expected);
         }
+    });
+});
+
+describe("notify.error with an error object (#3374)", () => {
+    it.each([
+        {name: "production", dev: false, display: "Could not delete the set."},
+        {
+            name: "dev mode",
+            dev: true,
+            display: "Could not delete the set.: Cannot read properties of undefined",
+        },
+    ])(
+        "a plain Error shows only the prefix in $name, the message only in dev mode",
+        ({dev, display}) => {
+            isDevModeMock.mockReturnValue(dev);
+            notify.error("Could not delete the set.", {
+                error: new TypeError("Cannot read properties of undefined"),
+            });
+            const props = getErrorContentProps();
+            expect(props.displayMessage).toBe(display);
+            expect(props.originalMessage).toBe(
+                "Could not delete the set.: Cannot read properties of undefined",
+            );
+            expect(props.apiError).toBeUndefined();
+        },
+    );
+
+    it("an ApiError passed as error takes the friendly path and reaches the report dialog", async () => {
+        const {ApiError} = await import("../api/client");
+        const apiError = new ApiError(404, "Looked at: /home/user/.cache/x", "/api/x", "GET");
+        notify.error("Could not open the set.", {error: apiError});
+        const props = getErrorContentProps();
+        expect(props.displayMessage).toBe("This page or feature was not found.");
+        expect(props.displayMessage).not.toContain("/home/user");
+        expect(props.originalMessage).toBe(
+            "Could not open the set.: Looked at: /home/user/.cache/x",
+        );
+        expect(props.apiError).toBe(apiError);
+    });
+
+    it.each([
+        {name: "a string", error: "network down", original: "Failed.: network down"},
+        {name: "null", error: null, original: "Failed."},
+        {name: "undefined", error: undefined, original: "Failed."},
+    ])("a non-Error value ($name) never reaches the production toast", ({error, original}) => {
+        notify.error("Failed.", {error});
+        const props = getErrorContentProps();
+        expect(props.displayMessage).toBe("Failed.");
+        expect(props.originalMessage).toBe(original);
     });
 });
 

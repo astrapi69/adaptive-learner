@@ -146,13 +146,7 @@ export default function SyncConflictDialog({
             );
         } catch (err) {
             updateState(idx, {aiBusy: false});
-            const detail =
-                err instanceof ApiError
-                    ? err.detail
-                    : err instanceof Error
-                      ? err.message
-                      : t("sync.smart_merge_error");
-            notify.error(detail);
+            notify.error(t("sync.smart_merge_error"), {error: err});
         }
     }
 

@@ -141,6 +141,45 @@ describe("DexieStorage.reset", () => {
     });
 });
 
+describe("DexieStorage.reset clears every store (#3368)", () => {
+    /** One row per store, keyed on the store's own primary key and every
+     *  index path, so each store holds something a reset has to remove. */
+    async function seedEveryStore(): Promise<void> {
+        const db = getDb();
+        for (const table of db.tables) {
+            const row: Record<string, unknown> = {};
+            const paths = [table.schema.primKey, ...table.schema.indexes].flatMap(
+                (spec) => (Array.isArray(spec.keyPath) ? spec.keyPath : [spec.keyPath]),
+            );
+            for (const path of paths) {
+                if (typeof path === "string" && path !== "") row[path] = `seed-${table.name}`;
+            }
+            await table.add(row);
+        }
+    }
+
+    it("empties every store the database declares and counts them all", async () => {
+        await seedEveryStore();
+        const db = getDb();
+        const result = await dexieStorage.reset("RESET");
+        const leftovers: string[] = [];
+        for (const table of db.tables) {
+            if ((await table.count()) > 0) leftovers.push(table.name);
+        }
+        expect(leftovers).toEqual([]);
+        expect(result.tables_cleared).toBe(db.tables.length);
+    });
+
+    it.each(["apiKeyBackups", "userXp", "speechRecordings", "setRuns", "userMissions", "aiValidationResults", "userData"])(
+        "empties %s, a store the hand-written list missed",
+        async (name) => {
+            await seedEveryStore();
+            await dexieStorage.reset("RESET");
+            expect(await getDb().table(name).count()).toBe(0);
+        },
+    );
+});
+
 describe("DexieStorage.projects", () => {
     it("create + list + update round-trip", async () => {
         const u = await dexieStorage.users.create({name: "A"});

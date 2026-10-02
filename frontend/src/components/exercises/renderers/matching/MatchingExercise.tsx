@@ -24,7 +24,7 @@
  * ``recordStepResult`` keyed by step id.
  */
 
-import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {forwardRef, useEffect, useMemo, useState} from "react";
 import type {ReactNode, Ref} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
@@ -32,6 +32,7 @@ import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
 import {playfulDataAttr} from "../../../../lib/learning/lessonModeConfig";
 import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
 import MatchingResolution, {type ResolvedPair} from "./MatchingResolution";
+import {useMatchingPostCheckView} from "./useMatchingPostCheckView";
 import {deriveMatchingAttempts} from "../../../../lib/srs/element-attempt";
 import {prefersReducedMotion} from "../../../../lib/feedback/feedbackPref";
 import {
@@ -41,11 +42,13 @@ import {
 } from "../../../../lib/learning/matchingResolvePref";
 import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
 import {seededShuffle} from "../../../../lib/exercises/grading/seeded-shuffle";
+import {mountShuffleSeed} from "../../../../lib/random";
 import {
     useKeyboardShortcuts,
     type ShortcutDefinition,
 } from "../../../../shared/hooks/useKeyboardShortcuts";
 import type {ContentLessonExercise} from "../../../../storage/types";
+import {useFooterStatus} from "../../../lesson/runner/footer-status";
 import type {
     ControlledExerciseProps,
     ExerciseHandle,
@@ -62,7 +65,9 @@ import {
     MatchingResultFooter,
     MatchingViewToggle,
     matchingPairIsCorrect,
+    matchingColumnLangs,
     type LeftTile,
+    type MatchingPostCheckView,
     type RightTile,
     type MatchingPairs,
 } from "./matching-parts";
@@ -129,6 +134,35 @@ function _scoreMatches(
 /** Lowest non-negative slot not already assigned to a pair, so
  *  colors + labels stay compact (1, 2, 3 …) and an existing pair
  *  keeps its slot when another is added or removed. */
+/** #3233 - one pair slot per reviewed match (in answer order), so the
+ *  ungraded "My answers" view shows which tiles were paired. */
+function _seedSlots(
+    reviewedMatches: ReadonlyArray<readonly [number, number]> | undefined,
+): Map<number, number> {
+    return new Map(
+        (reviewedMatches ?? []).map(([leftIdx], slot) => [leftIdx, slot]),
+    );
+}
+
+/** Whether a checked answer got every pair right. */
+function _isAllCorrect(
+    result: {correct: number} | null,
+    total: number,
+): boolean {
+    return result !== null && result.correct === total;
+}
+
+/** #3233 - the columns render graded only where the grading belongs:
+ *  "My answers" (three-view layout) shows the pairs as the learner formed
+ *  them. A fully correct answer has no toggle, so it stays graded. */
+function _gradedColumns(
+    submitted: boolean,
+    showGrading: boolean,
+    isAllCorrect: boolean,
+): boolean {
+    return submitted && (showGrading || isAllCorrect);
+}
+
 function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
     const used = new Set(slots.values());
     let slot = 0;
@@ -145,7 +179,9 @@ function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
  *  (badge + "Continue") when the caller advances, else nothing (#3140 -
  *  there is nothing to solve, so the review / replay / endless surfaces
  *  show the graded columns alone, like the categorization sibling);
- *  otherwise the My-answers / Solve view toggle. Renders nothing pre-check
+ *  otherwise the My-answers / (Corrections, #3186) / Solve view toggle.
+ *  The Corrections button shows only when ``onShowCorrections`` is given
+ *  (the learner's "separate corrections" setting). Renders nothing pre-check
  *  or when the toggle is mode-hidden. Extracted so the main renderer
  *  stays under the complexity gate. */
 function MatchingPostCheckToggle({
@@ -156,6 +192,7 @@ function MatchingPostCheckToggle({
     advanceLabel,
     view,
     onShowUserAnswers,
+    onShowCorrections,
     onShowSolution,
 }: {
     submitted: boolean;
@@ -163,8 +200,9 @@ function MatchingPostCheckToggle({
     isAllCorrect: boolean;
     onAdvance?: () => void;
     advanceLabel?: string;
-    view: "user-answers" | "solution";
+    view: MatchingPostCheckView;
     onShowUserAnswers: () => void;
+    onShowCorrections?: () => void;
     onShowSolution: () => void;
 }) {
     const {t} = useI18n();
@@ -183,11 +221,27 @@ function MatchingPostCheckToggle({
         <MatchingViewToggle
             view={view}
             onShowUserAnswers={onShowUserAnswers}
+            onShowCorrections={onShowCorrections}
             onShowSolution={onShowSolution}
             myAnswersLabel={t("lesson.exercise.matching.my_answers", "My answers")}
+            correctionsLabel={t("lesson.exercise.matching.corrections", "Corrections")}
             solveLabel={t("lesson.exercise.matching.resolve", "Solve")}
         />
     );
+}
+
+/** The footer mirror of the running counter (#3237): the count while the
+ *  learner is still pairing, nothing once submitted or without pairs. */
+function _footerCounter(
+    submitted: boolean,
+    matched: number,
+    total: number,
+    t: (key: string, fallback: string) => string,
+): string | null {
+    if (submitted || total === 0) return null;
+    return t("lesson.exercise.matching.counter", "{matched} / {total} paired")
+        .replace("{matched}", String(matched))
+        .replace("{total}", String(total));
 }
 
 function MatchingExercise(
@@ -230,12 +284,15 @@ function MatchingExercise(
             domain,
             t,
         });
+    const columnLangs = matchingColumnLangs({
+        productive,
+        targetLanguage,
+        sourceLanguage,
+    });
 
     // Stable seed per-mount so reshuffling on every render
     // doesn't move the columns under the user.
-    const [shuffleSeed] = useState(
-        () => `${exercise.id}#${Date.now() & 0xffff}`,
-    );
+    const [shuffleSeed] = useState(() => mountShuffleSeed(exercise.id));
 
     const leftTiles: LeftTile[] = useMemo(
         () =>
@@ -282,7 +339,7 @@ function MatchingExercise(
      *  tiles of a pair share a stable color + number. Only consulted
      *  before submit (graded tiles switch to correct/wrong colors). */
     const [slotByLeft, setSlotByLeft] = useState<Map<number, number>>(
-        () => new Map(),
+        () => _seedSlots(reviewedMatching?.matches),
     );
     /** Wrong-flash trigger for visual feedback. */
     const [wrongFlash, setWrongFlash] = useState<{
@@ -296,20 +353,16 @@ function MatchingExercise(
         return () => window.clearTimeout(id);
     }, [wrongFlash]);
 
-    /** #824 / #977 — after the answer is checked, the learner toggles
-     *  between their own graded answers ("user-answers") and the revealed
-     *  solution ("solution"). Default is the graded grid, which is what
-     *  the columns already render after submit. */
-    const [view, setView] = useState<"user-answers" | "solution">(
-        "user-answers",
-    );
-    /** Whether the solution view has been shown at least once, so the
-     *  reveal animation plays only on the FIRST switch (#977). A ref (not
-     *  state) so flipping it never triggers a re-render mid-animation. */
-    const solutionShownRef = useRef(false);
-    /** The animate flag handed to MatchingResolution for the current
-     *  solution view; set once per switch in ``showSolution``. */
-    const [animateSolution, setAnimateSolution] = useState(false);
+    const {
+        view,
+        showCorrection,
+        showGrading,
+        animateSolution,
+        showUserAnswers,
+        showCorrections,
+        showSolution,
+        resetView,
+    } = useMatchingPostCheckView(showAnswerToggle);
     const [resolveEffect, setResolveEffect] = useState<MatchingResolveEffect>(
         () => readMatchingResolveEffect(),
     );
@@ -367,24 +420,10 @@ function MatchingExercise(
             setSlotByLeft(new Map());
             setSelectedLeft(null);
             setSelectedRight(null);
-            setView("user-answers");
-            solutionShownRef.current = false;
-            setAnimateSolution(false);
+            resetView();
         },
     });
 
-    /** Switch to the revealed-solution view (#977). Animates only the
-     *  first time it is shown; toggling back to it later renders the end
-     *  result immediately. No-op when already on the solution view so a
-     *  repeat click can't restart a mid-play animation. */
-    const showSolution = () => {
-        if (view === "solution") return;
-        const firstTime = !solutionShownRef.current;
-        solutionShownRef.current = true;
-        setAnimateSolution(firstTime);
-        setView("solution");
-    };
-    const showUserAnswers = () => setView("user-answers");
 
     /** The correct pairs for the resolution view (#824), in the
      *  displayed left-column order — which since #2882 IS the authored
@@ -516,6 +555,14 @@ function MatchingExercise(
         enabled: !submitted && matches.size > 0,
     });
 
+    const isAllCorrect = _isAllCorrect(result, pairs.length);
+    const gradedColumns = _gradedColumns(submitted, showGrading, isAllCorrect);
+
+    // #3237 — mirror the running counter into the sticky footer next to
+    // Check: on a phone the tile columns push the top counter out of view,
+    // and the footer is where the learner looks for "am I done?".
+    useFooterStatus(_footerCounter(submitted, matches.size, pairs.length, t));
+
     if (pairs.length === 0) {
         return (
             <div data-testid="matching-empty">
@@ -556,15 +603,16 @@ function MatchingExercise(
             <MatchingPostCheckToggle
                 submitted={submitted}
                 showAnswerToggle={showAnswerToggle}
-                isAllCorrect={result !== null && result.correct === pairs.length}
+                isAllCorrect={isAllCorrect}
                 onAdvance={onAdvance}
                 advanceLabel={advanceLabel}
                 view={view}
                 onShowUserAnswers={showUserAnswers}
+                onShowCorrections={showCorrections}
                 onShowSolution={showSolution}
             />
 
-            {view === "user-answers" && (
+            {view !== "solution" && (
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
                 <div className="flex min-w-0 flex-col gap-2">
                     <MatchingColumnHeader
@@ -577,6 +625,7 @@ function MatchingExercise(
                         className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-left"
                         aria-label={leftLabel}
+                        lang={columnLangs.left}
                     >
                         {leftTiles.map((tile) => (
                             <MatchingLeftTile
@@ -585,10 +634,11 @@ function MatchingExercise(
                                 state={computeLeftTileState(tile, {
                                     selectedLeft,
                                     matches,
-                                    submitted,
+                                    submitted: gradedColumns,
                                     slotByLeft,
                                     pairs,
                                     productive,
+                                    showCorrection,
                                 })}
                                 onClick={() => handleLeftClick(tile.index)}
                                 playful={playful}
@@ -607,6 +657,7 @@ function MatchingExercise(
                         className="m-0 grid flex-1 list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-right"
                         aria-label={rightLabel}
+                        lang={columnLangs.right}
                     >
                         {rightTiles.map((tile) => (
                             <MatchingRightTile
@@ -616,7 +667,7 @@ function MatchingExercise(
                                     pairedRightIndices,
                                     matches,
                                     slotByLeft,
-                                    submitted,
+                                    submitted: gradedColumns,
                                     wrongFlash,
                                     pairs,
                                     productive,
@@ -642,6 +693,8 @@ function MatchingExercise(
                     totalCount={pairs.length}
                     leftLabel={leftLabel}
                     rightLabel={rightLabel}
+                    leftLang={columnLangs.left}
+                    rightLang={columnLangs.right}
                 />
             )}
 

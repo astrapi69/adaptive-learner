@@ -24,11 +24,19 @@ import {
     REVIEW_LIMIT_OPTIONS,
     writeReviewLimit,
 } from "../../../../lib/learning/reviewLimitPref";
+import {
+    readReviewIncludeNeverWrong,
+    writeReviewIncludeNeverWrong,
+} from "../../../../lib/learning/reviewIncludeNeverWrongPref";
 
 export default function ReviewSettingsControl() {
     const {t} = useI18n();
     const [enabled, setEnabled] = useState(() => readExplanationsEnabled());
     const [limit, setLimit] = useState(() => readReviewLimit());
+    // #3170 — spaced repetition of never-wrong elements, off by default.
+    const [includeNeverWrong, setIncludeNeverWrong] = useState(() =>
+        readReviewIncludeNeverWrong(),
+    );
 
     const handle = (next: boolean) => {
         setEnabled(next);
@@ -38,6 +46,11 @@ export default function ReviewSettingsControl() {
     const handleLimit = (next: number) => {
         setLimit(next);
         writeReviewLimit(next);
+    };
+
+    const handleIncludeNeverWrong = (next: boolean) => {
+        setIncludeNeverWrong(next);
+        writeReviewIncludeNeverWrong(next);
     };
 
     return (
@@ -95,6 +108,29 @@ export default function ReviewSettingsControl() {
                         </option>
                     ))}
                 </select>
+            </label>
+            <label className="flex items-center justify-between gap-2">
+                <span className="flex flex-col gap-0.5">
+                    <span className="text-[0.95rem] font-medium">
+                        {t(
+                            "settings.review_include_never_wrong.label",
+                            "Also review error-free elements",
+                        )}
+                    </span>
+                    <FormHint as="span">
+                        {t(
+                            "settings.review_include_never_wrong.desc",
+                            "Also brings elements you never got wrong back for spaced review (after 3 and 7 days). Off: the review holds only elements with mistakes.",
+                        )}
+                    </FormHint>
+                </span>
+                <input
+                    type="checkbox"
+                    className="m-0 size-4 flex-none p-0"
+                    data-testid="settings-review-include-never-wrong"
+                    checked={includeNeverWrong}
+                    onChange={(e) => handleIncludeNeverWrong(e.target.checked)}
+                />
             </label>
             <SrsTransparencySection />
         </SettingsSection>

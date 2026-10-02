@@ -1,3 +1,5 @@
+import type {KeyboardEvent as ReactKeyboardEvent} from "react";
+
 /**
  * Shared Enter-key predicates for the lesson keyboard shortcuts
  * (#103 / #154 / #1943).
@@ -37,4 +39,29 @@ export function focusOwnsEnter(el: HTMLElement | null): boolean {
         el?.isContentEditable === true ||
         el?.getAttribute("role") === "button"
     );
+}
+
+/**
+ * Submit from a control that owns its own Enter-to-submit (#3357).
+ *
+ * The control claims every bare Enter (``preventDefault``), whether it can
+ * submit yet or not, so the window-level lesson shortcut
+ * (``useLessonEnterKey``) steps aside instead of acting on the same key press
+ * a second time: after a submit the step is already checked, and the shortcut
+ * would advance past the feedback. An Enter that confirms an IME composition
+ * or carries a modifier is left alone. Returns true when it submitted.
+ *
+ * @example
+ * <input onKeyDown={(event) => submitOnEnter(event, canCheck, submit)} />
+ */
+export function submitOnEnter(
+    event: ReactKeyboardEvent<HTMLElement>,
+    canSubmit: boolean,
+    submit: () => void,
+): boolean {
+    if (!isPlainEnter(event.nativeEvent)) return false;
+    event.preventDefault();
+    if (!canSubmit) return false;
+    submit();
+    return true;
 }

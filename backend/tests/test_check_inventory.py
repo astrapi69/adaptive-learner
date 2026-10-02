@@ -32,7 +32,9 @@ CHECKER = REPO_ROOT / "scripts" / "verify_check_inventory.py"
 def mirror(tmp_path: Path) -> Path:
     """A repo mirror: symlinks everywhere, real copies where a test writes
     (#3036: ``.claude/rules`` only, never the agent worktrees beside it)."""
-    return mirror_repo(tmp_path, mutable=("scripts", "Makefile")).root
+    return mirror_repo(
+        tmp_path, mutable=("scripts", "Makefile", ".github", ".pre-commit-config.yaml")
+    ).root
 
 
 def _run(root: Path) -> subprocess.CompletedProcess[str]:
@@ -71,18 +73,51 @@ def test_red_when_an_active_check_loses_its_make_target(mirror: Path) -> None:
     assert "does not exist" in result.stderr
 
 
-def test_red_when_a_check_degrades_into_a_no_op(mirror: Path) -> None:
-    """The real incident: the count regex stops matching, the check warns and returns."""
+def _break_count_regex(mirror: Path) -> Path:
+    """The real incident's trigger: the count regex stops matching the line."""
     docs = mirror / "scripts" / "verify_docs_test_counts.py"
     text = docs.read_text(encoding="utf-8")
     broken = text.replace(r"= \*{0,2}(\d+) tests\*{0,2}", r"= \*\*(\d+) tests\*\*")
     assert broken != text, "the TEST_COUNT_RE line moved - update this test with it"
     docs.write_text(broken, encoding="utf-8")
+    return docs
+
+
+def test_red_when_a_check_degrades_into_a_no_op(mirror: Path) -> None:
+    """The real incident: the count regex stops matching, the check warns and
+    returns. Since #3254 the parse miss FAILS by itself, so the incident
+    shape needs the second half too: someone softening that FAIL back into
+    the old WARN. The probe still catches exactly that."""
+    docs = _break_count_regex(mirror)
+    softened = docs.read_text(encoding="utf-8").replace(
+        'report.fail(\n            "test-counts",\n            "CLAUDE.md: could not parse',
+        'report.warn(\n            "test-counts",\n            "CLAUDE.md: could not parse',
+    )
+    assert "could not parse" in softened and softened != docs.read_text(encoding="utf-8")
+    docs.write_text(softened, encoding="utf-8")
 
     result = _run(mirror)
     assert result.returncode == 1
     assert "docs-test-count-arithmetic" in result.stderr
     assert "degraded into a no-op" in result.stderr
+
+
+def test_a_count_line_the_check_cannot_parse_fails_the_docs_verifier(mirror: Path) -> None:
+    """#3254, fail closed: with the regex broken and nothing softened, the
+    docs verifier itself goes red on the parse miss - the inventory then
+    has no no-op to report, because the check did not degrade, it failed."""
+    _break_count_regex(mirror)
+    docs = subprocess.run(
+        [sys.executable, str(mirror / "scripts" / "verify_docs.py")],
+        capture_output=True,
+        text=True,
+        cwd=mirror,
+    )
+    assert docs.returncode != 0
+    assert "[FAIL" in docs.stdout + docs.stderr
+    assert "could not parse" in docs.stdout + docs.stderr
+    result = _run(mirror)
+    assert "degraded into a no-op" not in result.stderr
 
 
 def test_red_when_the_no_warn_probe_cannot_run(mirror: Path) -> None:
@@ -121,3 +156,121 @@ def test_green_again_after_restoring(mirror: Path) -> None:
     assert _run(mirror).returncode == 1
     makefile.write_text(original, encoding="utf-8")
     assert _run(mirror).returncode == 0
+
+
+# ---------------------------------------------------------------------------
+# #3241 step 2: existence is not execution. Every active entry carries a run
+# proof - a workflow step that invokes the check, or a pre-commit hook the CI
+# job does not skip - and the probe fails when that step disappears, stops
+# running the check, or is skipped.
+# ---------------------------------------------------------------------------
+
+CI = ".github/workflows/ci.yml"
+
+
+def _swap(root: Path, relative: str, old: str, new: str) -> None:
+    path = root / relative
+    text = path.read_text(encoding="utf-8")
+    assert old in text, f"{relative} no longer contains {old!r} - update this test with it"
+    path.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+
+def test_red_when_the_executing_step_is_renamed(mirror: Path) -> None:
+    """The step that runs the theme gate goes away (renamed, deleted) while
+    the inventory still names it: the check would silently stop running."""
+    _swap(mirror, CI, "- name: Theme token gate (#3251)", "- name: Theme token gate, retired")
+    result = _run(mirror)
+    assert result.returncode == 1
+    assert "theme-token-matrix" in result.stderr
+    assert "has no step named 'Theme token gate (#3251)'" in result.stderr
+
+
+def test_red_when_the_step_stops_running_the_check(mirror: Path) -> None:
+    """The step keeps its name but its command no longer invokes the tool:
+    the #3241 shape (a guard file exists, nothing executes it)."""
+    _swap(
+        mirror,
+        CI,
+        "run: python3 scripts/verify_theme.py --enforce",
+        'run: echo "theme gate skipped"',
+    )
+    result = _run(mirror)
+    assert result.returncode == 1
+    assert "theme-token-matrix" in result.stderr
+    assert "does not run 'verify_theme.py'" in result.stderr
+
+
+def test_red_when_the_ci_job_skips_the_hook(mirror: Path) -> None:
+    """A hook the CI pre-commit job lists in SKIP runs for local commits only."""
+    _swap(mirror, CI, "SKIP: eslint", "SKIP: eslint,doc-refs")
+    result = _run(mirror)
+    assert result.returncode == 1
+    assert "doc-ref-existence" in result.stderr
+    assert "SKIPs hook 'doc-refs'" in result.stderr
+
+
+def test_red_when_an_active_check_has_only_existence_probes(mirror: Path) -> None:
+    """A file that exists is not a check that runs: an active entry without a
+    run proof is the silent gate this probe kind was built for."""
+    _swap(
+        mirror,
+        ".claude/rules/checks.yaml",
+        "probe: make_target=verify-theme | ci_step=",
+        "probe: make_target=verify-theme | old_ci_step=",
+    )
+    result = _run(mirror)
+    assert result.returncode == 1
+    assert "theme-token-matrix: active check without a run proof" in result.stderr
+
+
+def test_red_when_a_make_target_is_a_stub(mirror: Path) -> None:
+    """The docstring always claimed a stub check; now the code performs it."""
+    makefile = mirror / "Makefile"
+    text = makefile.read_text(encoding="utf-8")
+    start = text.index("verify-theme:")
+    end = text.index("\n\n", start)
+    makefile.write_text(
+        text[:start] + 'verify-theme:\n\t@echo "theme gate"' + text[end:], encoding="utf-8"
+    )
+    result = _run(mirror)
+    assert result.returncode == 1
+    assert "Makefile target 'verify-theme' is a stub" in result.stderr
+
+
+def _inventory_entries() -> list[dict[str, object]]:
+    """The entries of the committed checks.yaml, as the checker reads them."""
+    import yaml
+
+    inventory = yaml.safe_load(
+        (REPO_ROOT / ".claude" / "rules" / "checks.yaml").read_text(encoding="utf-8")
+    )
+    return list(inventory["checks"])
+
+
+def test_the_report_names_every_run_proof_with_its_conditions() -> None:
+    """Contract point 4: the report says which step runs each check, on which
+    triggers, and under which skip condition - an empty proof set cannot
+    print the same green as a full one."""
+    result = subprocess.run([sys.executable, str(CHECKER)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert (
+        "runs: theme-token-matrix: .github/workflows/ci.yml [frontend-tests] 'Theme token gate (#3251)' on push,pull_request"
+        in result.stdout
+    )
+    assert (
+        "step if: (github.event_name != 'pull_request' || needs.changes.outputs.frontend == 'true')"
+        in result.stdout
+    )
+    assert "runs: doc-ref-existence: .pre-commit-config.yaml hook 'doc-refs'" in result.stdout
+    # The counts are derived from the inventory itself, so a new entry moves
+    # the test with it, and a summary that counts fewer than the inventory
+    # declares still fails (#3182: a hard-coded 28 broke on the 29th entry).
+    active = [entry for entry in _inventory_entries() if entry.get("status") == "active"]
+    probes = " | ".join(str(entry.get("probe", "")) for entry in active)
+    steps = probes.count("ci_step=")
+    hooks = probes.count("precommit_hook=")
+    assert f"{len(active)} active checks proven wired" in result.stdout
+    assert (
+        f"{steps + hooks} run proofs ({steps} workflow steps, {hooks} pre-commit hooks)"
+        in result.stdout
+    )

@@ -9,12 +9,14 @@
  */
 
 import {cn} from "@/lib/utils";
+import {LONG_WORD_WRAP} from "../../../../lib/exercises/long-word-wrap";
 
 /** Shared tile box styling (was .word-tile / .word-tile-placed).
  *  Reused by the scrambled tile, the placed tile, and the floating
- *  DragOverlay copy so they render identically. 44px min touch target. */
-export const WORD_TILE_BASE =
-    "inline-flex min-h-11 items-center justify-center cursor-pointer rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2 text-[0.9375rem] font-medium text-[var(--fg)] transition-[background,border-color] duration-150 enabled:hover:bg-[var(--surface-2)] disabled:cursor-not-allowed";
+ *  DragOverlay copy so they render identically. 44px min touch target.
+ *  ``max-w-full`` + the #3174 wrap utilities keep one over-long tile word
+ *  inside the bar instead of pushing it wider than the screen. */
+export const WORD_TILE_BASE = `inline-flex min-h-11 max-w-full items-center justify-center cursor-pointer rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2 text-[0.9375rem] font-medium text-[var(--fg)] transition-[background,border-color] duration-150 enabled:hover:bg-[var(--surface-2)] disabled:cursor-not-allowed ${LONG_WORD_WRAP}`;
 
 /** Placed-tile accent styling (overlaid on WORD_TILE_BASE). */
 export const WORD_TILE_PLACED =
@@ -29,17 +31,21 @@ export function WordTilesAnswerView({
     correctness,
     testId,
     ariaLabel,
+    lang,
 }: {
     labels: string[];
     correctness: boolean[] | null;
     testId: string;
     ariaLabel: string;
+    /** #3174 - BCP-47 content language of the tiles, for CSS hyphenation. */
+    lang?: string;
 }) {
     return (
         <div
             className="rounded-sm border border-border bg-[var(--surface)] p-2"
             data-testid={testId}
             aria-label={ariaLabel}
+            lang={lang}
         >
             <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
                 {labels.map((label, i) => {

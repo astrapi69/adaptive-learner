@@ -44,7 +44,7 @@ Inhalte*: Ein **Ansicht-Umschalter** wechselt den Katalog zwischen
 einer kompakten **Liste** (Voreinstellung) und einem reicheren
 **Kachel-Grid**. Änderst du sie hier, ändert sich auch *Meine
 Inhalte*, und die Wahl wird gemerkt. Du kannst sie auch unter
-**Einstellungen → Lernen** setzen.
+**Einstellungen > Allgemein > Darstellung** setzen.
 
 ---
 

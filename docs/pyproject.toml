@@ -13,6 +13,7 @@ mkdocs-material = "^9.5.0"
 mkdocs-static-i18n = "^1.2.0"
 mkdocs-git-revision-date-localized-plugin = "^1.2.0"
 pyyaml = "^6.0"
+pymdown-extensions = ">=11.0.1,<12"
 
 [build-system]
 requires = ["poetry-core"]

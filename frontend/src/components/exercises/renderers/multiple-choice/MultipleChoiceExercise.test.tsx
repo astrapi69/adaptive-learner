@@ -164,3 +164,34 @@ describe("MultipleChoiceExercise: guards", () => {
         expect(screen.getByTestId("multiple-choice-empty")).toBeInTheDocument();
     });
 });
+
+describe("MultipleChoiceExercise #3174: long option words wrap", () => {
+    it("an option label carries hyphenation + the overflow-wrap fallback", () => {
+        render(<MultipleChoiceExercise exercise={SINGLE} onComplete={vi.fn()} />);
+        expect(screen.getByText("Wer von rechts kommt")).toHaveClass(
+            "hyphens-auto",
+            "[overflow-wrap:anywhere]",
+        );
+    });
+
+    it("the option group carries the content language for hyphenation", () => {
+        render(
+            <MultipleChoiceExercise
+                exercise={SINGLE}
+                onComplete={vi.fn()}
+                ttsLang="de"
+            />,
+        );
+        expect(screen.getByTestId("multiple-choice-options")).toHaveAttribute(
+            "lang",
+            "de",
+        );
+    });
+
+    it("without a content language the option group carries no lang", () => {
+        render(<MultipleChoiceExercise exercise={SINGLE} onComplete={vi.fn()} />);
+        expect(
+            screen.getByTestId("multiple-choice-options"),
+        ).not.toHaveAttribute("lang");
+    });
+});

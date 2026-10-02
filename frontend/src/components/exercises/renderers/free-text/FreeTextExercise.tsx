@@ -37,7 +37,6 @@ import {forwardRef, useEffect, useRef, useState} from "react";
 
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
-import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ExercisePromptRow from "../../shell/ExercisePromptRow";
 import ExerciseHint from "../../feedback/ExerciseHint";
@@ -46,6 +45,7 @@ import ExerciseSuccessAdvance from "../../feedback/ExerciseSuccessAdvance";
 import {deriveFreeTextAttempt} from "../../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
 import {tokenDiff} from "../../../../lib/exercises/grading/token-diff";
+import {submitOnEnter} from "../../../../hooks/lesson/interaction/enterKeyGuards";
 import {
     isFreeTextCorrect,
     isFreeTextNearMiss,
@@ -94,10 +94,11 @@ function freeTextReviewedResult(
     accept: readonly string[],
     codeMode: boolean,
     toleranceByAcceptText: ReadonlyMap<string, number> | undefined,
+    caseSensitive: boolean,
 ): {correct: number; total: number} | null {
     if (reviewedInput == null) return null;
     return {
-        correct: isFreeTextCorrect(reviewedInput, accept, codeMode, toleranceByAcceptText)
+        correct: isFreeTextCorrect(reviewedInput, accept, codeMode, toleranceByAcceptText, caseSensitive)
             ? 1
             : 0,
         total: 1,
@@ -203,45 +204,6 @@ function FreeTextInput({
     );
 }
 
-/** The "Need a hint?" disclosure; null until shown or once submitted. */
-function FreeTextHint({
-    hint,
-    submitted,
-    showHint,
-    onShowHint,
-}: {
-    hint: string | null | undefined;
-    submitted: boolean;
-    showHint: boolean;
-    onShowHint: () => void;
-}) {
-    const {t} = useI18n();
-    if (!hint || submitted) return null;
-    return (
-        <div className="flex items-center gap-2">
-            {!showHint ? (
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    type="button"
-                    className="text-[var(--accent-text)] underline underline-offset-2 hover:no-underline"
-                    onClick={onShowHint}
-                    data-testid="free-text-hint-show"
-                >
-                    {t("lesson.exercise.free_text.hint_show", "Need a hint?")}
-                </Button>
-            ) : (
-                <p
-                    className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
-                    data-testid="free-text-hint"
-                >
-                    {hint}
-                </p>
-            )}
-        </div>
-    );
-}
-
 /** Correct/wrong feedback (with a token diff on a miss) + the shared
  *  exercise footer. */
 function FreeTextResult({
@@ -253,6 +215,7 @@ function FreeTextResult({
     prompt,
     ttsLang,
     codeMode,
+    caseSensitive,
     controlled,
     canCheck,
     onCheck,
@@ -269,6 +232,8 @@ function FreeTextResult({
     prompt: string;
     ttsLang: string | null;
     codeMode: boolean;
+    /** The exercise declares ``case_sensitive`` (learn-content-engine#242). */
+    caseSensitive: boolean;
     controlled: boolean;
     canCheck: boolean;
     onCheck: () => void;
@@ -280,7 +245,7 @@ function FreeTextResult({
     // #627 — a wrong-but-close answer (within 2 edits) gets encouraging
     // feedback. Computed here so the component stays under the complexity
     // gate; the ternary below only consults it on the wrong branch.
-    const nearMiss = isFreeTextNearMiss(input, accept, codeMode);
+    const nearMiss = isFreeTextNearMiss(input, accept, codeMode, caseSensitive);
     // #1005/#1011 — after a wrong answer, toggle between "My answer" (the
     // learner's text + token diff) and "Solution" (the accepted answers).
     // Gated on the mode's ``showAnswerToggle`` (hidden in exam mode).
@@ -417,11 +382,13 @@ function FreeTextExercise(
     const {t} = useI18n();
     const accept = exercise.accept ?? [];
     const canonical = accept[0] ?? "";
+    // learn-content-engine#242: case is graded only where the exercise
+    // declares it; without it, case is not an error.
+    const caseSensitive = exercise.case_sensitive === true;
     const reviewedFreeText =
         reviewed?.kind === "free_text" ? reviewed : null;
 
     const [input, setInput] = useState(reviewedFreeText?.input ?? "");
-    const [showHint, setShowHint] = useState(false);
 
     const trimmed = input.trim();
     const isInputEmpty = trimmed === "";
@@ -431,6 +398,7 @@ function FreeTextExercise(
         accept,
         codeMode,
         toleranceByAcceptText,
+        caseSensitive,
     );
 
     const {submitted, result, submit, reset} = useControlledExercise({
@@ -441,7 +409,7 @@ function FreeTextExercise(
         onComplete,
         reviewedResult,
         score: (): ExerciseScored => {
-            const isCorrect = isFreeTextCorrect(input, accept, codeMode, toleranceByAcceptText);
+            const isCorrect = isFreeTextCorrect(input, accept, codeMode, toleranceByAcceptText, caseSensitive);
             return {
                 correct: isCorrect ? 1 : 0,
                 total: 1,
@@ -469,10 +437,7 @@ function FreeTextExercise(
         // In code mode the input is a multi-line textarea, so Enter must
         // insert a newline, not submit. Plain free-text submits on Enter.
         if (codeMode) return;
-        if (e.key === "Enter" && !submitted && !isInputEmpty) {
-            e.preventDefault();
-            submit();
-        }
+        submitOnEnter(e, !submitted && !isInputEmpty, submit);
     };
 
     if (accept.length === 0) {
@@ -523,13 +488,6 @@ function FreeTextExercise(
                 inputBase={inputBase}
             />
 
-            <FreeTextHint
-                hint={exercise.hint}
-                submitted={submitted}
-                showHint={showHint}
-                onShowHint={() => setShowHint(true)}
-            />
-
             <FreeTextResult
                 submitted={submitted}
                 isCorrect={isCorrect}
@@ -539,6 +497,7 @@ function FreeTextExercise(
                 prompt={exercise.prompt ?? ""}
                 ttsLang={ttsLang}
                 codeMode={codeMode}
+                caseSensitive={caseSensitive}
                 controlled={controlled}
                 canCheck={!isInputEmpty}
                 onCheck={submit}

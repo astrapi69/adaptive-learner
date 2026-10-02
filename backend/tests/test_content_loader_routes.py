@@ -18,6 +18,8 @@ Pins:
 
 All tests use ``httpx.MockTransport`` patched onto
 ``httpx.AsyncClient`` so zero real network calls fire. The
+autouse ``_forbid_real_network`` fixture enforces that: any request
+that reaches a real httpx transport fails the test (#3147). The
 plugin's filesystem cache lives under ``get_cache_dir()``, which
 conftest pins to a tmp dir via ``ADAPTIVE_LEARNER_CACHE_DIR``
 (#3145), so the developer's real cache is never touched.
@@ -27,6 +29,9 @@ from __future__ import annotations
 
 import json
 import textwrap
+from collections.abc import Iterator
+from datetime import datetime
+from typing import NoReturn
 from unittest.mock import patch
 
 import httpx
@@ -116,6 +121,50 @@ def _install_mock_transport(transport: httpx.MockTransport):
     return patch("httpx.AsyncClient", side_effect=_factory)
 
 
+class UnmockedNetworkCallError(RuntimeError):
+    """A test in this module reached a real httpx transport."""
+
+
+@pytest.fixture(autouse=True)
+def _forbid_real_network(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
+    """Fail loudly on any httpx request that is not served by a mock.
+
+    Replaces the real sync + async httpx transports for the duration of
+    each test, so a request that bypasses ``_install_mock_transport``
+    raises instead of reaching the network. The TestClient's own
+    transport and ``httpx.MockTransport`` are separate classes and stay
+    untouched.
+
+    The loader degrades gracefully when an upstream fetch fails, so a
+    raised error alone could be swallowed by a future catch-all and the
+    test would still pass. Every attempt is therefore also recorded and
+    re-asserted at teardown.
+    """
+    attempts: list[str] = []
+
+    def _refuse(request: httpx.Request) -> NoReturn:
+        attempts.append(f"{request.method} {request.url}")
+        raise UnmockedNetworkCallError(
+            f"Unmocked network call: {request.method} {request.url}. "
+            "Wrap the request in _install_mock_transport(...) (#3147).",
+        )
+
+    def _refuse_sync(_transport: httpx.HTTPTransport, request: httpx.Request) -> NoReturn:
+        _refuse(request)
+
+    async def _refuse_async(
+        _transport: httpx.AsyncHTTPTransport,
+        request: httpx.Request,
+    ) -> NoReturn:
+        _refuse(request)
+
+    monkeypatch.setattr(httpx.HTTPTransport, "handle_request", _refuse_sync)
+    monkeypatch.setattr(httpx.AsyncHTTPTransport, "handle_async_request", _refuse_async)
+    yield
+    if attempts:
+        pytest.fail(f"Unmocked network call(s) during this test: {attempts} (#3147)")
+
+
 @pytest.fixture(autouse=True)
 def _clean_cache():
     """Wipe the Content-Loader cache between tests.
@@ -184,6 +233,8 @@ def test_list_sets_surfaces_upstream(client: TestClient) -> None:
     assert entry["level"] == "A1"
     assert entry["cached_version"] is None
     assert entry["update_available"] is False
+    # #3418: not downloaded, so no download time.
+    assert entry["downloaded_at"] is None
 
 
 def test_list_sets_carries_visibility_flag(client: TestClient) -> None:
@@ -275,6 +326,30 @@ def test_download_then_list_lessons(client: TestClient) -> None:
     lesson = r.json()
     assert lesson["id"] == "01-greetings"
     assert lesson["title"] == "Greetings"
+
+
+def test_download_reports_and_lists_the_download_time(client: TestClient) -> None:
+    """#3418: API mode carries ``downloaded_at`` for a cached set, on the
+    download response and on the listing, so "freshly downloaded first"
+    works on the desktop app as it does in Dexie mode."""
+    transport = _make_mock_transport(
+        {
+            f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/manifest.yaml": SET_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/lessons/01-greetings.json": LESSON_JSON,
+        },
+    )
+    with _install_mock_transport(transport):
+        download = client.post(
+            f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/download",
+        )
+        listing = client.get("/api/plugins/content-loader/sets")
+    assert download.status_code == 200, download.text
+    stamp = download.json()["downloaded_at"]
+    assert isinstance(stamp, str) and stamp.endswith("Z")
+    datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    listed = [s for s in listing.json()["sets"] if s["id"] == SET_ID]
+    assert listed and listed[0]["downloaded_at"] == stamp
 
 
 def test_list_lessons_uncached_returns_404(
@@ -472,8 +547,14 @@ def test_save_user_set_then_list_play_delete(client: TestClient) -> None:
     assert entry["id"] == "conv-route"
     assert entry["domain"] == "analysis"
 
-    # Appears in /sets under the user-generated source.
-    r = client.get("/api/plugins/content-loader/sets")
+    # Appears in /sets under the user-generated source. /sets also
+    # fetches the upstream repo manifest, so serve it from the mock.
+    transport = _make_mock_transport(
+        {f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST},
+    )
+    with _install_mock_transport(transport):
+        r = client.get("/api/plugins/content-loader/sets")
+    assert r.status_code == 200, r.text
     assert any(
         s["id"] == "conv-route" and s["source"] == "user-generated" for s in r.json()["sets"]
     ), r.text
@@ -570,7 +651,13 @@ def test_save_user_set_with_attribution_block(client: TestClient) -> None:
     assert entry["attribution"]["derived_from"] == [{"author": "Even Earlier Author"}]
 
     # Round-trip through /sets listing too, not just the save response.
-    r = client.get("/api/plugins/content-loader/sets")
+    # /sets also fetches the upstream repo manifest, so serve it from the mock.
+    transport = _make_mock_transport(
+        {f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST},
+    )
+    with _install_mock_transport(transport):
+        r = client.get("/api/plugins/content-loader/sets")
+    assert r.status_code == 200, r.text
     listed = next(s for s in r.json()["sets"] if s["id"] == "conv-attrib")
     assert listed["attribution"]["author"] == "Original Author"
 
@@ -591,8 +678,10 @@ def test_save_user_set_without_attribution_leaves_it_null(client: TestClient) ->
 
 
 def test_save_user_set_rejects_bad_set_id(client: TestClient) -> None:
+    # #3391: the id's shape is the engine schema's call; an id that would
+    # escape the cache directory is still refused.
     body = {
-        "set_id": "Not A Slug",
+        "set_id": "../escape",
         "title": "t",
         "language": "en",
         "level": "beginner",

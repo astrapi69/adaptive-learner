@@ -11,15 +11,55 @@
 
 import { api, ApiError } from "../api/client";
 import { enqueueRequest } from "../lib/pwa/sync-queue";
+import { parseServedLesson } from "../lib/content/engine";
 import {
   applyStoredLessonOrderToList,
   recordSavedSetOrder,
 } from "../lib/content/browse/prefs/lesson-order-store";
 import type {
   ApiKeyTestResult,
+  ContentSetEntry,
+  ContentSetsList,
   GitHubVerifyKind,
   IStorageService,
 } from "./types";
+
+/** How long a set listing serves as lesson context before it is fetched
+ *  again (#3393). ``GET .../sets`` reads every source's manifest from
+ *  GitHub, and the lesson runners read many lessons in a row. */
+const SET_CONTEXT_TTL_MS = 60_000;
+
+let setContextCache: { at: number; sets: Promise<ContentSetEntry[]> } | null = null;
+
+/** Remember a listing as the lesson context; a failed one leaves none. */
+function rememberSetListing(listing: Promise<ContentSetsList>): void {
+  setContextCache = {
+    at: Date.now(),
+    sets: listing.then(
+      (result) => result.sets,
+      () => [],
+    ),
+  };
+}
+
+/** The set entry a lesson inherits its pair and domain from, from the
+ *  last listing while it is fresh; ``undefined`` when the set is not
+ *  listed or the listing failed (offline), so the lesson keeps its own. */
+async function setContextFor(
+  source: string,
+  setId: string,
+): Promise<ContentSetEntry | undefined> {
+  if (!setContextCache || Date.now() - setContextCache.at > SET_CONTEXT_TTL_MS) {
+    rememberSetListing(api.contentLoader.listSets());
+  }
+  const sets = await setContextCache!.sets;
+  return sets.find((set) => set.source === source && set.id === setId);
+}
+
+/** Drop the remembered listing; module state survives test boundaries. */
+export function _resetSetContextCacheForTests(): void {
+  setContextCache = null;
+}
 
 export const apiStorage: IStorageService = {
   mode: "api",
@@ -385,7 +425,11 @@ export const apiStorage: IStorageService = {
   // --- Content-Loader (Phase 43 / EXP-002) -----------------------------
 
   contentLoader: {
-    listSets: () => api.contentLoader.listSets(),
+    listSets: () => {
+      const listing = api.contentLoader.listSets();
+      rememberSetListing(listing);
+      return listing;
+    },
     downloadSet: (source, setId) =>
       api.contentLoader.downloadSet(source, setId),
     // #2212 — order by the user's chosen display order so open/next-lesson
@@ -394,8 +438,16 @@ export const apiStorage: IStorageService = {
       applyStoredLessonOrderToList(
         await api.contentLoader.listLessons(source, setId),
       ),
-    getLesson: (source, setId, filename) =>
-      api.contentLoader.getLesson(source, setId, filename),
+    // #3393 - the served lesson goes through the engine's parse with its
+    // set's context, as the Dexie read does: from_cards resolves into
+    // pairs and a lesson without its own pair inherits the set's.
+    getLesson: async (source, setId, filename) => {
+      const [served, entry] = await Promise.all([
+        api.contentLoader.getLesson(source, setId, filename),
+        setContextFor(source, setId),
+      ]);
+      return parseServedLesson(served, entry);
+    },
     /** Phase 54 / v1.37.0 — fetch one cached asset.
      *  Delegates to ``api.contentLoader.getAsset`` which
      *  hits the backend proxy endpoint (54F). Returns null

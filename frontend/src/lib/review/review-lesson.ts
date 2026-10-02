@@ -120,15 +120,70 @@ function _stepQuestionSignature(step: ContentLessonStep): string {
 export function dedupeReviewSteps(
     steps: readonly ContentLessonStep[],
 ): ContentLessonStep[] {
-    const seen = new Set<string>();
+    const keptBySignature = new Map<string, number>();
     const unique: ContentLessonStep[] = [];
     for (const step of steps) {
         const sig = _stepQuestionSignature(step);
-        if (seen.has(sig)) continue;
-        seen.add(sig);
+        const keptIndex = keptBySignature.get(sig);
+        if (keptIndex !== undefined) {
+            // #3170 — the dropped duplicate's elements are still covered by
+            // the surviving question, so the kept step inherits their keys
+            // (a fresh object: the input steps are never mutated).
+            const kept = unique[keptIndex];
+            const merged = _mergeElementKeys(
+                kept.review_element_keys,
+                step.review_element_keys,
+            );
+            if (merged !== kept.review_element_keys) {
+                unique[keptIndex] = {...kept, review_element_keys: merged};
+            }
+            continue;
+        }
+        keptBySignature.set(sig, unique.length);
         unique.push(step);
     }
     return unique;
+}
+
+function _mergeElementKeys(
+    kept: readonly string[] | undefined,
+    dropped: readonly string[] | undefined,
+): string[] | undefined {
+    if (!dropped || dropped.length === 0) return kept as string[] | undefined;
+    const merged = [...(kept ?? [])];
+    for (const key of dropped) {
+        if (!merged.includes(key)) merged.push(key);
+    }
+    return merged;
+}
+
+/** #3170 — the distinct queue elements the given steps cover, in step
+ *  order. A step without ``review_element_keys`` (authored content, a
+ *  pre-#3170 fixture) counts as one element, keyed by its id. */
+export function coveredElementKeys(
+    steps: readonly ContentLessonStep[],
+): string[] {
+    const keys: string[] = [];
+    for (const step of steps) {
+        const own = step.review_element_keys;
+        if (!own || own.length === 0) {
+            if (!keys.includes(step.id)) keys.push(step.id);
+            continue;
+        }
+        for (const key of own) {
+            if (!keys.includes(key)) keys.push(key);
+        }
+    }
+    return keys;
+}
+
+/** #3170 — how many distinct elements the given steps cover. The review
+ *  page's subtitle and the hook's tallies count THIS, not the step count,
+ *  so a collapsed matching question (#664) is not reported as "8 of 10". */
+export function countCoveredElements(
+    steps: readonly ContentLessonStep[],
+): number {
+    return coveredElementKeys(steps).length;
 }
 
 export interface SynthesizeOpts {
@@ -258,6 +313,9 @@ export function _buildReviewStep(
                 // recorder addresses the right SRS row (the step id is NOT
                 // parseable back into lesson_id when ids contain hyphens).
                 review_lesson_id: item.lesson_id,
+                // #3170 — the queue element this step covers; the question
+                // dedup merges collapsed duplicates into the kept step.
+                review_element_keys: [item.element_key],
                 exercise: {...generated, direction: dir},
             };
         }
@@ -270,6 +328,8 @@ export function _buildReviewStep(
         title: null,
         // #673 — see above; explicit lesson_id beats parsing the step id.
         review_lesson_id: item.lesson_id,
+        // #3170 — see above.
+        review_element_keys: [item.element_key],
         exercise: {...exercise, direction: dir},
     };
 }

@@ -62,6 +62,9 @@ interface CallOptions {
   method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
   body?: unknown;
   query?: Record<string, string | number | undefined>;
+  /** Let the request outlive the page (unload flushes, #3364). Only for
+   *  small bodies: browsers cap keepalive payloads at 64 KB. */
+  keepalive?: boolean;
 }
 
 /**
@@ -73,6 +76,7 @@ export async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<
   const method = opts.method ?? "GET";
   const url = buildUrl(path, opts.query);
   const init: RequestInit = { method };
+  if (opts.keepalive) init.keepalive = true;
   if (opts.body !== undefined && opts.body !== null) {
     init.headers = { "Content-Type": "application/json" };
     init.body = JSON.stringify(opts.body);
@@ -87,34 +91,9 @@ export async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<
   try {
     response = await fetch(url, init);
   } catch (networkError) {
-    try {
-      const { eventRecorder } = await import("../utils/eventRecorder");
-      eventRecorder.add({
-        type: "api_error",
-        timestamp: startTime,
-        method,
-        endpoint: path,
-        message: String(networkError).substring(0, 200),
-      });
-    } catch {
-      /* recorder not available */
-    }
-    throw networkError;
+    throw await networkApiError(networkError, path, method, startTime);
   }
-  const durationMs = Math.round(performance.now() - startTime);
-  try {
-    const { eventRecorder } = await import("../utils/eventRecorder");
-    eventRecorder.add({
-      type: "api_call",
-      timestamp: startTime,
-      method,
-      endpoint: path,
-      status: response.status,
-      durationMs,
-    });
-  } catch {
-    /* recorder not available */
-  }
+  await recordApiCall(path, method, startTime, response.status);
   if (!response.ok) {
     throw await buildApiError(response, path, method);
   }
@@ -125,13 +104,68 @@ export async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<
 }
 
 /**
+ * Record a call that got a response into the in-memory ring buffer the
+ * report dialog reads (Phase 37). Shared by ``apiCall`` and the session
+ * stream (#3377). The recorder sanitizes the endpoint and never sees
+ * the body; a missing recorder is not an error.
+ */
+export async function recordApiCall(
+  path: string,
+  method: string,
+  startTime: number,
+  status: number,
+): Promise<void> {
+  try {
+    const { eventRecorder } = await import("../utils/eventRecorder");
+    eventRecorder.add({
+      type: "api_call",
+      timestamp: startTime,
+      method,
+      endpoint: path,
+      status,
+      durationMs: Math.round(performance.now() - startTime),
+    });
+  } catch {
+    /* recorder not available */
+  }
+}
+
+/**
+ * The ``ApiError`` for a call that got no response at all (#3388):
+ * status 0, which the friendly mapper shows as the localized "No
+ * connection to the server" instead of the browser's raw "Failed to
+ * fetch". Records the failure first. Shared with the session stream
+ * (#3377).
+ */
+export async function networkApiError(
+  cause: unknown,
+  path: string,
+  method: string,
+  startTime: number,
+): Promise<ApiError> {
+  try {
+    const { eventRecorder } = await import("../utils/eventRecorder");
+    eventRecorder.add({
+      type: "api_error",
+      timestamp: startTime,
+      method,
+      endpoint: path,
+      message: String(cause).substring(0, 200),
+    });
+  } catch {
+    /* recorder not available */
+  }
+  return new ApiError(0, cause instanceof Error ? cause.message : String(cause), path, method);
+}
+
+/**
  * Build an ApiError from a failed response: flattens Pydantic
  * validation lists into a legible detail string, pulls the optional
  * stacktrace, and carries any extra backend fields
  * (``AdaptiveLearnerError.extra``) minus the keys handled above. A
  * non-JSON error body falls back to a generic ``HTTP {status}`` detail.
  */
-async function buildApiError(
+export async function buildApiError(
   response: Response,
   path: string,
   method: string,

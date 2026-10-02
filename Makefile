@@ -34,7 +34,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        roadmap-header-bump roadmap-header-bump-dry \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       ci ci-full rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       ci ci-full pre-push rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
@@ -495,13 +495,23 @@ roadmap-header-bump-dry: ## Same as roadmap-header-bump but writes nothing (prev
 
 # --- Git Hooks ---
 
-install-hooks: ## Install scripts/git-hooks/* into .git/hooks
+# blame.ignoreRevsFile (#3270): git fails every `git blame` in a checkout that
+# lacks the file (main until the next release, older tags). Git 2.52+ reads a
+# `:(optional)` prefix as "skip when missing"; the probe falls back to the
+# plain path on older git.
+install-hooks: ## Install scripts/git-hooks/* into .git/hooks and point git blame at .git-blame-ignore-revs
 	@mkdir -p .git/hooks
 	@for hook in scripts/git-hooks/*; do \
 		name=$$(basename $$hook); \
 		ln -sf ../../$$hook .git/hooks/$$name; \
 		echo "linked .git/hooks/$$name -> $$hook"; \
 	done
+	@if git -c 'blame.ignoreRevsFile=:(optional).no-such-file' blame -L 1,1 -- Makefile >/dev/null 2>&1; then \
+		git config blame.ignoreRevsFile ':(optional).git-blame-ignore-revs'; \
+	else \
+		git config blame.ignoreRevsFile .git-blame-ignore-revs; \
+	fi
+	@echo "set blame.ignoreRevsFile = $$(git config blame.ignoreRevsFile)"
 
 # --- Type Checking ---
 
@@ -902,6 +912,15 @@ ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-
 	@echo "installed deps, so they are NOT in this target: 'make check-dead-classnames'"
 	@echo "(builds the Tailwind oracle) and the visual/e2e gates. Test suites: make test."
 
+pre-push: ## `make ci` plus the TypeScript dead-code check (knip); fails when the frontend is not installed (#3507)
+	@$(MAKE) --no-print-directory ci
+	@if [ ! -d frontend/node_modules ]; then \
+		echo "pre-push: frontend/node_modules is missing, so the TypeScript dead-code check could not run." >&2; \
+		echo "pre-push: run 'cd frontend && bun install' first." >&2; \
+		exit 1; \
+	fi
+	@echo "== dead code (typescript)" && python3 scripts/check_dead_code.py --only typescript
+
 ci-full: ci ## Everything in `make ci` plus the build-dependent gates (needs bun install)
 	@echo "== dead classnames"     && $(MAKE) --no-print-directory check-dead-classnames
 
@@ -1140,7 +1159,7 @@ endif
 	@echo ""
 	@echo "Tag pushed. Next: make release-publish VERSION=$(VERSION)"
 
-release-publish: ## Create GitHub Release from changelog/releases/vX.Y.Z.md. Usage: make release-publish VERSION=X.Y.Z
+release-publish: ## Create the DRAFT GitHub Release from changelog/releases/vX.Y.Z.md. Usage: make release-publish VERSION=X.Y.Z
 ifndef VERSION
 	$(error VERSION is required, e.g. make release-publish VERSION=1.25.0)
 endif
@@ -1149,10 +1168,18 @@ endif
 		echo "Draft the per-release notes file first (release-workflow.md Step 3)."; \
 		exit 1; \
 	fi
-	@echo "=== Creating GitHub Release v$(VERSION) ==="
-	gh release create v$(VERSION) \
+# Draft, never visible (#3159): release-workflow.md Step 8 publishes only after
+# the image, the launcher binaries + .sha256 files and image-digest.txt are
+# attached and the completeness checkpoint passed. A visible release without
+# assets is what v2.15.0 shipped for two hours.
+	@echo "=== Creating DRAFT GitHub Release v$(VERSION) ==="
+	gh release create v$(VERSION) --draft \
 		--title "Adaptive Learner v$(VERSION)" \
 		--notes-file changelog/releases/v$(VERSION).md
+	@echo ""
+	@echo "Draft created. Continue with release-workflow.md Step 8: publish-image.yml,"
+	@echo "attach the launcher binaries, the completeness checkpoint, and only then"
+	@echo "gh release edit v$(VERSION) --draft=false"
 
 # --- Gitflow release branch flow (#334) ---
 
@@ -1196,11 +1223,27 @@ endif
 # with a PAT (RELEASE_PAT) for its checks to fire; a GITHUB_TOKEN-opened PR does not
 # trigger the pull_request workflows (#1265). main is unchanged - it is still merged +
 # tagged + pushed above; only the develop back-merge is routed through a PR.
+#
+# The PR must EXIST when this target ends (#3159). v2.15.0 lost its back-merge PR
+# because the token lacked the pull-request permission and `|| echo` read the
+# error as "already exists". An existing open PR is reused; anything else fails
+# the target, and main is already tagged at that point, so the message says what
+# is left to do.
 	git push origin release/$(VERSION)
-	gh pr create --base develop --head release/$(VERSION) \
-		--title "Merge release/$(VERSION) back into develop" \
-		--body "Automated back-merge of v$(VERSION) into develop (#2182). Merges once the required checks pass; if a ratchet gate blocks, raise its baseline in this branch. Delete release/$(VERSION) after this merges." \
-		|| echo "gh pr create failed or the PR already exists - check: gh pr list --head release/$(VERSION) --base develop"
+	@existing=$$(gh pr list --state open --base develop --head release/$(VERSION) --json number --jq length) || { \
+		echo "ERROR: cannot query PRs (gh pr list failed). main is tagged; open the develop back-merge PR by hand."; exit 1; }; \
+	if [ "$$existing" = "0" ]; then \
+		gh pr create --base develop --head release/$(VERSION) \
+			--title "Merge release/$(VERSION) back into develop" \
+			--body "Automated back-merge of v$(VERSION) into develop (#2182). Merges once the required checks pass; if a ratchet gate blocks, raise its baseline in this branch. Delete release/$(VERSION) after this merges." \
+		|| { echo "ERROR: gh pr create failed (token permission?). main is tagged + pushed; open the PR release/$(VERSION) -> develop by hand, then run make release-publish VERSION=$(VERSION)."; exit 1; }; \
+	else \
+		echo "Back-merge PR release/$(VERSION) -> develop already open - reusing it."; \
+	fi; \
+	count=$$(gh pr list --state open --base develop --head release/$(VERSION) --json number --jq length); \
+	if [ "$$count" != "1" ]; then \
+		echo "ERROR: expected exactly 1 open back-merge PR release/$(VERSION) -> develop, found '$$count'."; exit 1; \
+	fi
 	@echo ""
 	@echo "main is tagged + pushed. The develop back-merge is now a PR - merge it once"
 	@echo "green, THEN delete release/$(VERSION) (local: git branch -D release/$(VERSION);"

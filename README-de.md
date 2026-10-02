@@ -1,10 +1,10 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.15.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.16.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Nachtschicht](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
-[![Tests](https://img.shields.io/badge/tests-12729%20grün-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/tests-13433%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
 
@@ -16,9 +16,8 @@ oder KI-adaptiv — durchlaufe in jeder Sitzung einen Sieben-Schritt-
 Zyklus, und lass eine Dual-Prompt-KI entscheiden, wann der
 Lernende bereit für den nächsten Schritt ist. Auto-Loop in einen
 neuen Zyklus, sobald das Thema integriert ist. Bring deinen
-eigenen KI-Schlüssel mit (Anthropic / OpenAI / Gemini) oder
-konfiguriere die Schlüssel in
-`~/.config/adaptive_learner/secrets.yaml` für den Desktop-Launcher.
+eigenen KI-Schlüssel mit (Anthropic / OpenAI / Gemini) und trag
+ihn unter Einstellungen > KI ein.
 
 [🇬🇧 English](README.md)
 
@@ -115,13 +114,16 @@ Download vom
 
 Jedes Release liefert auch eine `.sha256` neben jedem
 Binary zur Integritätsprüfung. Der Launcher lädt beim
-ersten Start den passenden getaggten Source-Tree
-herunter, baut die Docker-Images und startet die App
-unter `http://localhost:8501`. Beim Erststart wird
-außerdem `~/.config/adaptive-learner/secrets.yaml` als
-auskommentierte Vorlage angelegt — Zeilen einkommentieren
-und mit den eigenen Provider-Keys füllen, um das
-Einstellungs-UI zu überspringen.
+ersten Start das veröffentlichte App-Image von
+`ghcr.io/astrapi69/adaptive-learner` (auf deinem Rechner
+wird nichts gebaut) und startet die App unter
+`http://localhost:8501`. Deine Provider-API-Keys trägst du
+unter Einstellungen > KI ein; sie liegen verschlüsselt im
+Daten-Volume der App und überstehen Updates. Eine
+`secrets.yaml` auf dem Host liest der Container des
+Launchers nicht; diese Datei gilt nur für ein Backend, das
+aus dem Quellcode läuft (siehe
+[Konfiguration](docs/configuration.md)).
 
 ### 3. Docker (self-hosted)
 
@@ -226,14 +228,14 @@ Tests. Wie viel die Suite tatsächlich fängt, prüft das Mutationstesten
 dessen Berichte sind CI-Artefakte je Shard, keine einzelne Rate -
 darum trägt die Mutationsrate kein Abzeichen (#2257).
 
-Verifiziert am 2026-09-05 (v2.14.0):
+Verifiziert am 2026-09-17 (v2.15.0):
 
 | Suite | Anzahl |
 |---|---|
-| Backend (pytest) | 1824 |
-| Plugins (14 × pytest) | 1130 |
-| Frontend (Vitest) | 9775 |
-| **Gesamt** | **12729** |
+| Backend (pytest) | 1858 |
+| Plugins (14 × pytest) | 1137 |
+| Frontend (Vitest) | 10438 |
+| **Gesamt** | **13433** |
 
 Plus 17 Playwright-Smoke-Spec-Dateien, die abdecken: Landing,
 Onboarding+Assessment, Sitzung (3-Chunk-SSE), Curriculum,
@@ -261,21 +263,19 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.15.0**:
-**parametrische Übungen**, deren Werte bei jedem Versuch neu gezogen
-werden, drei neue Übungstypen (**Hotspot**, **Parsons**, **Sortieren**),
-die sich unter "Lektion erstellen" anlegen lassen, und **Erklärungen**,
-die nach einer Antwort erscheinen. Wer die Abschnitte der
-Zusammenfassung nicht angepasst hat, sieht am Lektionsende jetzt eine
-**kompakte Zusammenfassung**; die **Ausführliche Auswertung** zeigt den
-vollständigen Rückblick, und deine Position in der Lektion wird ab dem
-ersten Schrittwechsel gesichert. Die **Einstellungen** sind in beschriftete
-Abschnitte mit Abschnittsleisten auf den Reitern Lernen und Daten
-gegliedert, **Aktualisieren** unter Meine Inhalte spielt alle verfügbaren
-Set-Updates auf einmal ein (außer denen, die deinen Lernfortschritt
-betreffen würden), und Impressum und Datenschutzerklärung stehen
-auf Deutsch und Englisch bereit. Vollständige Notizen:
-[`changelog/releases/v2.15.0.md`](changelog/releases/v2.15.0.md).
+Aktive Entwicklung. Das aktuelle Release ist **v2.16.0**: Fehler, die
+bisher verschwanden, **sagen jetzt, was los ist**. Eine gescheiterte
+Tutor-Antwort zeigt einen Hinweis mit „Erneut versuchen", ein Verlauf, der
+nicht geladen werden konnte, sagt das, eine abgestürzte Seite bietet einen
+Rückweg und eine Fehlermeldung an, und Aktionen in den Einstellungen,
+Exporte und der Lektionsfortschritt scheitern nicht mehr still.
+Übungseditor, Teilen-Prüfung und Repository-Prüfung folgen **einem
+Regelwerk**, dem der Content-Engine, und die Desktop-App löst Zuordnungen
+aus Karten auf. **Backups** enthalten jedes gespeicherte Feld und lassen
+sich zwischen Desktop-App und Browser-Version wiederherstellen, dazu kommen
+Telefon-Korrekturen für das kompakte Menü unter 1280 px und das Dashboard.
+Vollständige Notizen:
+[`changelog/releases/v2.16.0.md`](changelog/releases/v2.16.0.md).
 
 Frühere Releases, neueste zuerst (vollständige Details in
 [`changelog/releases/`](changelog/releases/)):

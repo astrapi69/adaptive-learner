@@ -9,7 +9,8 @@
  *     ``undefined``) for everything else, so the descriptor default governs.
  *   - There is no always-active set and no active fallback in the strategy:
  *     a feature's gating class is defined in exactly one place (its presence
- *     in {@link NEEDS_AI_KEY} / {@link DESKTOP_ONLY}, or absence from both).
+ *     in {@link NEEDS_AI_KEY} / {@link DESKTOP_ONLY} / {@link BROWSER_ONLY},
+ *     or absence from all three).
  *
  * State policy (#335): product features are never ``hidden`` — everything
  * the user owns is visible, either active or disabled with a reason the UI
@@ -84,6 +85,7 @@ export const FEATURES = {
   GIT_PERSIST: "git-persist",
   LEARNING_REPO_GIT: "learning-repo-git",
   PLUGIN_LIFECYCLE: "plugin-lifecycle",
+  REGISTRY_PR: "registry-pr",
 } as const;
 
 /** Union of all registered feature ids. */
@@ -100,6 +102,13 @@ export const REASON_API_KEY_REQUIRED = "api_key_required";
  * mode. Components localize it via ``feature.${reason}`` (``feature.desktop_only``).
  */
 export const REASON_DESKTOP_ONLY = "desktop_only";
+
+/**
+ * Reason code reported for a browser-only feature that is disabled in API
+ * mode (#3398). Components localize it via ``feature.${reason}``
+ * (``feature.browser_only``).
+ */
+export const REASON_BROWSER_ONLY = "browser_only";
 
 /**
  * Features that ship ``disabled`` by default in EVERY context, independent of
@@ -143,6 +152,16 @@ const DESKTOP_ONLY: readonly FeatureId[] = [
   FEATURES.PLUGIN_LIFECYCLE,
 ];
 
+/**
+ * Browser-only features (#3398): they call GitHub from the browser with the
+ * browser-held token and have no backend route, so they are disabled in API
+ * mode (the desktop app) - disabled with a reason, never hidden (#335).
+ */
+const BROWSER_ONLY: readonly FeatureId[] = [
+  FEATURES.CONTENT_REPO_SHARE,
+  FEATURES.REGISTRY_PR,
+];
+
 function needsAiKeyRule(): FeatureCondition<FeatureContext> {
   return {
     evaluate: (context): FeatureState | undefined => {
@@ -163,6 +182,16 @@ function desktopOnlyRule(): FeatureCondition<FeatureContext> {
   };
 }
 
+function browserOnlyRule(): FeatureCondition<FeatureContext> {
+  return {
+    evaluate: (context): FeatureState | undefined => {
+      if (context === undefined) return undefined;
+      return context.mode === "api" ? "disabled" : "active";
+    },
+    reason: REASON_BROWSER_ONLY,
+  };
+}
+
 function buildRegistry(): FeatureRegistry<FeatureContext> {
   const descriptors: FeatureDescriptor[] = Object.values(FEATURES).map((id) => ({
     id,
@@ -172,6 +201,7 @@ function buildRegistry(): FeatureRegistry<FeatureContext> {
   const rules: Record<string, FeatureCondition<FeatureContext>> = Object.fromEntries([
     ...NEEDS_AI_KEY.map((id) => [id, needsAiKeyRule()] as const),
     ...DESKTOP_ONLY.map((id) => [id, desktopOnlyRule()] as const),
+    ...BROWSER_ONLY.map((id) => [id, browserOnlyRule()] as const),
   ]);
 
   return new FeatureRegistry<FeatureContext>()

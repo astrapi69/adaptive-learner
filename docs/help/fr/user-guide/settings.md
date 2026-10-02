@@ -9,17 +9,18 @@ section.
 
 ### Apparence
 
-Choisissez parmi six thèmes :
+Le sélecteur de thème range les thèmes dans deux onglets :
 
-| Thème | Style |
-|-------|-------|
-| `light` | Clair - blanc et tons clairs |
-| `dark` | Sombre - fond foncé |
-| `ocean` | Bleus et teintes océan |
-| `forest` | Verts forestiers |
-| `high-contrast` | Contraste élevé WCAG AA |
-| `sepia` | Tons chauds sépia |
-| `auto` | Suit le thème du système d'exploitation |
+- **Recommandés** - Catppuccin Latte, Supabase et Graphite (clairs),
+  Catppuccin Mocha, **Soft Pop** et Amethyst Haze (sombres). Les
+  nouveaux utilisateurs commencent avec **Soft Pop**, et le sélecteur
+  s'ouvre sur cet onglet.
+- **Classiques** - les thèmes d'origine : Clair, Sombre, Océan,
+  Forêt, Contraste élevé et Sépia. Si votre thème actif est un thème
+  classique, le sélecteur s'ouvre sur cet onglet.
+
+Les deux onglets proposent aussi **Auto (système)**, qui suit le
+réglage clair/sombre de votre système d'exploitation.
 
 Le changement de thème est instantané - aucun rechargement nécessaire.
 

@@ -5,7 +5,12 @@
 
 import {describe, expect, it} from "vitest";
 
-import {detectCategory, generatePlaceholderSvg} from "./placeholder-svg";
+import {mulberry32} from "../../random";
+import {
+    detectCategory,
+    generatePlaceholderSvg,
+    labelHashIndex,
+} from "./placeholder-svg";
 
 function decode(dataUri: string): string {
     const prefix = "data:image/svg+xml;utf8,";
@@ -160,5 +165,65 @@ describe("generatePlaceholderSvg — output integrity", () => {
         const forced = decode(generatePlaceholderSvg("red", "default"));
         expect(auto).toContain("<rect");
         expect(forced).toContain("<circle");
+    });
+});
+
+/**
+ * The avatar palette index before #3214, copied verbatim from
+ * ``placeholder-svg.ts``. The running hash stays a plain JS number: signed
+ * int32 once a character is folded in (``Math.imul``), the unsigned offset
+ * basis for the empty string.
+ */
+function legacyHashIndex(s: string, mod: number): number {
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+    }
+    return Math.abs(h) % mod;
+}
+
+/** Deterministic labels: lengths 0..32, half the characters from a
+ *  label-like alphabet (umlauts, Greek, CJK), half any UTF-16 code unit. */
+function generatedLabels(count: number): string[] {
+    const alphabet = "abcdefghijklmnopqrstuvwxyzäöüßABCZ 0123456789-'éñαβγ語日本";
+    const next = mulberry32(0x3214);
+    return Array.from({length: count}, () => {
+        const length = Math.floor(next() * 33);
+        let label = "";
+        for (let i = 0; i < length; i++) {
+            label +=
+                next() < 0.5
+                    ? alphabet[Math.floor(next() * alphabet.length)]
+                    : String.fromCharCode(Math.floor(next() * 0x10000));
+        }
+        return label;
+    });
+}
+
+describe("labelHashIndex keeps the pre-#3214 palette index (#3214)", () => {
+    const EDGE_LABELS = ["", " ", "a", "?", "ä", "\u0000", "￿", "bonjour", "x".repeat(500)];
+    const MODS = [1, 2, 3, 7, 12, 16, 17, 97, 256, 1000, 0x7fffffff];
+    const GENERATED = 10_000;
+
+    it("matches the legacy index for generated and edge labels at every mod", () => {
+        const labels = [...EDGE_LABELS, ...generatedLabels(GENERATED)];
+        expect(labels.filter((label) => label.length === 0).length).toBeGreaterThan(1);
+        const mismatches: string[] = [];
+        let compared = 0;
+        for (const label of labels) {
+            for (const mod of MODS) {
+                compared += 1;
+                if (labelHashIndex(label, mod) !== legacyHashIndex(label, mod)) {
+                    mismatches.push(`${JSON.stringify(label)} % ${mod}`);
+                }
+            }
+        }
+        expect(compared).toBe((GENERATED + EDGE_LABELS.length) * MODS.length);
+        expect(mismatches.slice(0, 5), `${mismatches.length} of ${compared} differ`).toEqual([]);
+    });
+
+    it("the empty label keeps its avatar colour index (1 of the 12 hues)", () => {
+        expect(labelHashIndex("", 12)).toBe(1);
     });
 });

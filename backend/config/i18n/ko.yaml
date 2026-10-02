@@ -2,6 +2,8 @@ app:
   loading: "불러오는 중…"
   loading_slow: "예상보다 시간이 오래 걸리고 있습니다."
   view_load_failed: "이 화면을 불러올 수 없습니다."
+  view_crashed: "이 페이지에서 오류가 발생했습니다. 다른 페이지는 계속 사용할 수 있습니다."
+  crashed: "문제가 발생했습니다."
   reload: "새로고침"
   name: Adaptive Learner
   tagline: 6단계 방법론 모델에 따른 적응형 학습.
@@ -45,7 +47,7 @@ data_export:
   selective_button: "선택한 데이터 내보내기"
   selective_done: "{n}개의 레코드를 내보냈습니다."
   includes_hint: "이 카테고리와 함께 자동으로 내보내집니다"
-  failed: "내보내기 실패: {detail}"
+  export_failed: "내보내기에 실패했습니다."
   group_content: "콘텐츠"
   group_master: "기본 데이터"
   group_extra: "추가 데이터"
@@ -381,6 +383,8 @@ review:
   question_label: "질문:"
   summary_corrected: "{total}개 중 {corrected}개 교정됨"
   summary_trend: "좋아요 - 약한 부분이 점점 강해지고 있어요."
+  summary_reinforced: "{total}개 중 {corrected}개 다져짐"
+  summary_trend_reinforced: "좋아요 - 점점 더 단단해지고 있어요."
   summary_next: "숙달한 항목은 제외되고, 나머지는 곧 복습으로 돌아옵니다."
   summary_repeat: "약 2일 후에 다시 와서 이 항목들을 신선하게 유지하세요."
   explain_heading: "이 문제들을 틀린 이유"
@@ -396,6 +400,7 @@ review:
   empty_body: "모두 완료했습니다! 이 세트에 복습 예정인 요소가 없습니다."
   not_cached_body: "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요."
   back_to_dashboard: "대시보드로 돌아가기"
+  back_to_lesson: "레슨으로 돌아가기"
   summary:
     aria_label: "복습 요약"
     heading: "복습 완료"
@@ -424,6 +429,13 @@ session:
   ai_thinking: 생각하는 중…
   ai_error: AI가 응답할 수 없었습니다.
   no_api_key: "AI 키가 설정되지 않았습니다. 튜터와 대화하려면 설정에서 AI 제공자의 키를 추가하세요. 레슨과 복습은 키 없이도 작동합니다."
+  ai_error_no_model: "AI 제공자의 모델이 선택되지 않았습니다. 설정 > AI에서 모델을 선택하세요."
+  ai_error_provider_auth: "AI 제공자가 키를 거부했습니다. 설정 > AI에서 키를 확인하세요."
+  ai_error_rate_limited: "AI 제공자의 한도에 도달했습니다. 잠시 기다리거나 할당량을 확인한 후 다시 보내세요."
+  ai_error_provider_unavailable: "지금은 AI 제공자에 연결할 수 없습니다. 연결을 확인하고 다시 보내세요."
+  reply_failed: "답변을 불러올 수 없습니다."
+  history_failed: "이전 대화를 불러올 수 없습니다. 삭제된 것은 없습니다."
+  chat_retry: "다시 시도"
   welcome_empty: "학습할 준비가 되었습니다! 첫 메시지를 작성하세요."
   end_session: 세션 종료
   end_session_confirm: 정말이신가요? 세션을 종료하고 평가할 수 있습니다.
@@ -477,6 +489,7 @@ settings:
     heading: "연결 해제된 콘텐츠"
     summary: "더 이상 연결되지 않은 소스의 {lessons}개 레슨과 {cards}개 복습 카드."
     delete: "연결 해제된 진행 상황 삭제"
+    delete_error: "연결이 끊긴 진행 상황을 삭제하지 못했습니다."
     confirm_title: "연결 해제된 진행 상황 삭제"
     confirm_message: "{lessons}개 레슨과 {cards}개 복습 카드가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
     deleted: "{lessons}개 레슨과 {cards}개 복습 카드를 삭제했습니다."
@@ -532,6 +545,9 @@ settings:
   review_limit:
     label: "복습당 문제 수"
     desc: "복습 세션이 끝나기 전에 제시하는 요소 수입니다. 남은 항목은 다음 회차로 넘어갑니다."
+  review_include_never_wrong:
+    label: "틀리지 않은 요소도 복습"
+    desc: "한 번도 틀리지 않은 요소도 간격 복습으로 다시 가져옵니다(3일과 7일 후). 끔: 복습에는 틀린 요소만 포함됩니다."
   install:
     heading: "앱 설치"
     description: "Adaptive Learner를 독립 실행형 앱으로 설치하세요: 전용 창, 홈 화면 아이콘, 네트워크 없이도 시작됩니다. 학습 콘텐츠에는 영향이 없습니다."
@@ -756,6 +772,8 @@ settings:
   lesson_auto_advance_description: "정답이면 자동으로 다음 문제로 이동합니다. 오답일 때는 항상 멈춰 정답을 확인할 수 있습니다."
   ask_ai_visible: "'AI에게 질문' 버튼 표시"
   ask_ai_visible_description: "이론과 연습문제 아래에 'AI에게 질문' 버튼을 표시합니다. 기본적으로 표시되며, 답변을 받으려면 여전히 본인의 AI 키(BYOK)가 필요합니다."
+  keep_screen_on: "레슨 중에는 화면 켜 두기"
+  keep_screen_on_description: "레슨이 열려 있는 동안에는 화면을 만지지 않고 읽고 있어도 화면이 꺼지지 않습니다. 레슨 요약에서는 다시 꺼질 수 있습니다. iPhone에서는 iOS 16.4 이상, 홈 화면 앱에서는 iOS 18.4 이상이 필요합니다."
   button_tooltips: 버튼 툴팁 표시
   button_tooltips_description: "아이콘 버튼 위에 마우스를 올리면 기능을 설명하는 툴팁을 표시합니다. 화면 낭독기 레이블은 관계없이 항상 유지됩니다."
   developer_mode: 개발자 모드
@@ -968,17 +986,20 @@ settings:
     errors_only: "오답만 표시(기본값)"
     whole_set: "전체 세트 다시 풀기"
   matching_resolve:
-    title: "정답 애니메이션"
+    title: "짝맞추기 연습"
     hint: "확인 후 '정답 보기'를 누르면 짝맞추기 연습이 올바른 짝을 어떻게 표시하는지."
-    label: "효과"
+    label: "정답 애니메이션"
     slide: "슬라이드"
     color: "색상"
     connect: "연결"
     stack: "쌓기"
+  matching_review_views:
+    label: "교정을 별도 보기로 표시"
+    desc: "확인 후 '내 답변'에는 내가 만든 짝이 채점 없이 그대로 표시되고, 채점과 올바른 짝은 '교정'에 있습니다. 끄기: 올바른 짝이 '내 답변'의 각 오답 바로 아래에 표시됩니다."
   paused_retention:
-    title: 일시 정지된 레슨 보관
-    hint: "이 기간보다 오래된 일시 정지 레슨은 자동으로 중단됩니다. 나이와 관계없이 일시 정지 레슨 최대 10개는 보관됩니다."
-    label: 일시 정지 레슨 보관 기간
+    title: "대시보드의 일시 정지 레슨"
+    hint: "대시보드의 일시 정지 레슨 카드는 이 기간 이내의 레슨만 보여 줍니다. 더 오래된 레슨은 카드에서만 사라지며, 중단되지 않고 위치와 답변도 그대로 유지됩니다."
+    label: "다음 기간보다 오래된 일시 정지 레슨 숨기기"
     7_days: "7일"
     14_days: "14일"
     30_days: "30일"
@@ -995,7 +1016,7 @@ settings:
   danger_zone_complete_toast: "모든 데이터가 삭제되었습니다."
   danger_zone_confirm_prompt: "확인하려면 RESET을 입력하세요"
   danger_zone_continue: "계속"
-  danger_zone_failed_toast: "초기화 실패:"
+  danger_zone_failed: "초기화에 실패했습니다."
   danger_zone_final_button: "영구 삭제"
   danger_zone_heading: "위험 구역"
   danger_zone_input_placeholder: "RESET"
@@ -1159,8 +1180,9 @@ backup:
   too_large: '이 백업 파일이 너무 큽니다 (100MB 초과).'
   export_success: 백업을 다운로드했습니다 (레코드 {{count}}개).
   export_error: '백업 실패: {{detail}}'
-  import_parse_error: '백업을 읽을 수 없었습니다: {{detail}}'
-  import_error: '복원 실패: {{detail}}'
+  export_failed: "백업에 실패했습니다."
+  import_parse_failed: "백업을 읽을 수 없었습니다."
+  import_failed: "복원에 실패했습니다."
   comparison_title: 복원 확인
   comparison_help: '복원은 병합 방식입니다: 새 레코드는 삽입하고, 변경 가능한 레코드는 백업이 더 최신일 때만 업데이트하며, 기록 행은 그대로 유지합니다. 삭제되는 것은 없습니다. API 키는 무시됩니다.'
   table_header: 테이블
@@ -1194,10 +1216,11 @@ backup:
   auto_help: 세션 10회를 완료할 때마다 또는 일주일에 한 번 자동으로 백업합니다.
   auto_run: 지금 백업
   auto_run_success: 자동 백업이 생성되었습니다.
-  auto_run_error: '자동 백업 실패: {{detail}}'
+  auto_run_failed: "자동 백업에 실패했습니다."
   auto_restored: 자동 백업이 복원되었습니다.
   auto_restore: 복원
-  auto_restore_error: '복원 실패: {{detail}}'
+  auto_delete_error: "자동 백업을 삭제하지 못했습니다."
+  auto_restore_failed: "복원에 실패했습니다."
   auto_records: '레코드 {{n}}개'
   auto_none: 아직 자동 백업이 없습니다. 첫 백업은 세션 10회 또는 7일 후에 실행됩니다.
   storage_pressure: 브라우저 저장 공간이 거의 가득 찼습니다 (할당량의 {{pct}}%). 지금 수동 백업을 내보내세요.
@@ -1229,6 +1252,7 @@ backup:
   compare_high_volume_hint: 대용량 테이블 - 레코드 단위 미리보기는 요약하여 표시됩니다.
   compare_export_md: 마크다운으로 내보내기
   compare_markdown_downloaded: 비교 결과를 내보냈습니다.
+  compare_export_failed: "비교 결과를 내보내지 못했습니다."
   confirm_with_counts: 복원 ({{added}}개 추가, {{updated}}개 업데이트)
   auto_compare_as_a: A로 비교
   auto_compare_as_b: B로 비교
@@ -1250,9 +1274,9 @@ export:
   busy: 작업 중...
   download_success: 내보내기를 다운로드했습니다.
   print_opened: 인쇄 대화상자가 열렸습니다. "PDF로 저장"을 선택하세요.
-  error: '내보내기 실패: {{detail}}'
-  preview_error: '미리보기 실패: {{detail}}'
-  load_error: '내보내기 데이터를 불러올 수 없었습니다: {{detail}}'
+  export_failed: "내보내기에 실패했습니다."
+  preview_failed: "미리보기에 실패했습니다."
+  load_failed: "내보내기 데이터를 불러올 수 없었습니다."
   pick_session: 먼저 세션을 선택하세요.
   pick_curriculum: 먼저 커리큘럼을 선택하세요.
   title_progress: 학습 진행도
@@ -1496,6 +1520,8 @@ arcade:
   card_description: "학습 메모리와 스네이크의 짧은 라운드: 게임 모드 보상입니다."
   card_open: "아케이드로 가기"
   requires_playful: "아케이드는 게임 모드의 일부입니다. 설정에서 게임 모드(및 아케이드 스위치)를 켜세요."
+  requires_game_mode: "아케이드는 게임 모드의 일부인데, 게임 모드가 꺼져 있습니다. 설정에서 켜세요."
+  requires_arcade_switch: "게임 모드는 켜져 있지만 아케이드 스위치가 꺼져 있습니다. 설정의 게임 모드 세부 정보에서 아케이드를 켜세요."
   open_settings: "설정 열기"
   play: "플레이"
   pause: "일시정지"
@@ -1627,6 +1653,7 @@ notebooklm:
 feature:
   api_key_required: "API 키가 필요합니다. 설정에서 제공자를 설정하세요."
   desktop_only: "데스크톱 앱에서만 사용할 수 있습니다."
+  browser_only: "앱의 브라우저 버전에서만 사용할 수 있습니다."
 ui:
   cancel: "취소"
   hide_secret: "값 숨기기"
@@ -1664,6 +1691,7 @@ ui:
     generic: "문제가 발생했습니다. 나중에 다시 시도하세요."
     unexpected: "문제가 발생했습니다."
   error_report:
+    report_button: "문제 신고"
     dialog_title: "문제 신고"
     intro: "Adaptive Learner가 오류를 감지했으며 개발자에게 보낼 버그 보고서를 준비할 수 있습니다."
     description_label: "재현 단계 (선택)"
@@ -1918,6 +1946,10 @@ repo:
     description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
     enable_git: "git 영속화 활성화"
 lesson:
+  progress_io:
+    save_error: "이 레슨의 진행 상황을 저장하지 못했습니다."
+    load_failed: "이 레슨의 저장된 진행 상황을 불러오지 못했습니다: {detail}"
+    create_profile: "학습 프로필 만들기"
   mascot_label: "학습 친구"
   combo_chip: "x{n}"
   combo_aria: "연속 정답: {n}회 연속"
@@ -2083,6 +2115,7 @@ lesson:
       resolve: "정답 보기"
       resolve_announce: "정답을 표시했습니다. {total}쌍 중 {correct}쌍이 정확했습니다."
       my_answers: "내 답변"
+      corrections: "교정"
     picture:
       submit: "답 확인"
       retry: "다시 시도"
@@ -2109,7 +2142,6 @@ lesson:
       placeholder: "답을 입력하세요…"
       code_placeholder: "코드를 입력하세요…"
       input_label: "당신의 답변"
-      hint_show: "힌트가 필요한가요?"
       result_correct: "정답입니다!"
       result_wrong: "아쉬워요."
       result_almost: "거의 맞았어요! 다음에 유의하세요:"
@@ -2126,14 +2158,12 @@ lesson:
       answer_placeholder: "아래 타일을 탭하여 답을 만드세요"
       scrambled_label: "사용 가능한 타일"
       scrambled_done: "모든 타일이 배치되었습니다."
-      hint_show: "힌트가 필요한가요?"
       result_correct: "정답입니다!"
       result_wrong: "아쉬워요."
       empty: "이 단어 타일 연습에는 타일이 없습니다."
     cloze:
       submit: "답 확인"
       retry: "다시 시도"
-      hint_show: "힌트가 필요한가요?"
       sentence_label: "빈칸 채우기 문장"
       blank_label: "빈칸 {n}"
       select_placeholder: "선택하세요…"
@@ -2253,16 +2283,22 @@ lesson:
     al_ordering:
       empty: "이 순서 배열 연습에는 항목이 없습니다."
       result_correct: "정답!"
-      result_wrong: "아쉬워요 - 다시 시도하세요."
+      result_wrong: "아쉬워요 - 순서가 아직 맞지 않아요."
       retry: "다시 시도"
+      review_heading: "내 답"
+      solution_heading: "정답"
       submit: "답 확인"
     al_parsons:
       empty: "이 코드 순서 연습에는 줄이 없습니다."
       indent_dec: "들여쓰기 줄이기"
       indent_inc: "들여쓰기 늘리기"
+      line_wrong_indent: "들여쓰기 {actual}, 정답 {expected}"
+      line_wrong_position: "잘못된 위치"
       result_correct: "정답!"
       result_wrong: "아쉬워요 - 순서와 들여쓰기를 확인하세요."
       retry: "다시 시도"
+      review_heading: "내 답"
+      solution_heading: "정답"
       submit: "답 확인"
     instruction:
       matching:
@@ -2346,6 +2382,9 @@ lesson:
     ticket_earned_one: "보상 잠금 해제: 게임 티켓 1장!"
     ticket_earned_many: "보상 잠금 해제: 게임 티켓 {n}장!"
     ticket_play_now: "지금 플레이"
+    ticket_none_rule: "이번에는 티켓이 없습니다. 티켓은 실수 없는 수업이나 하트를 모두 지킨 라운드에 주어집니다."
+    ticket_none_completed: "이번에는 티켓이 없습니다. 이 수업은 이미 완료한 수업입니다."
+    ticket_none_cap: "이번에는 티켓이 없습니다. 보유 티켓이 최대 {n}장에 도달했습니다."
   flash_round:
     title: "플래시 라운드: {set}"
     card_title: "플래시 라운드"
@@ -2418,6 +2457,8 @@ lesson:
     body: '"{title}"을(를) 일시 정지했습니다. 멈춘 곳부터 계속할까요, 처음부터 다시 시작할까요?'
     action_resume: "계속"
     action_restart: "처음부터 다시"
+    restart_confirm_title: "처음부터 다시 시작할까요?"
+    restart_confirm_body: "이 레슨의 진행 위치와 답변이 초기화됩니다. 이미 익힌 내용(숙련도)은 그대로 유지됩니다."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:
@@ -2632,6 +2673,7 @@ content:
     change_failed: "상태를 업데이트할 수 없습니다."
     deleted: "세트가 제거되었습니다."
     delete_failed: "세트를 제거할 수 없습니다."
+    progress_not_deleted: "제거했지만 학습 진행 상황은 삭제하지 못했습니다: {detail}"
     delete_confirm: "다운로드한 세트와 해당 레슨이 내 콘텐츠에서 제거됩니다. 학습 진행 상황은 유지되며 언제든지 세트를 다시 다운로드할 수 있습니다."
     select_all: "모두 선택"
     select_set: "{title} 선택"
@@ -2773,6 +2815,8 @@ content:
     download_failed: "세트를 다운로드할 수 없었습니다."
     update_all_failed: "업데이트 {n}개가 실패했습니다."
     open_failed: "레슨을 열 수 없었습니다."
+    export_failed: "레슨 세트를 내보낼 수 없었습니다."
+    share_check_failed: "공유를 위해 세트를 확인할 수 없었습니다."
   tree:
     i_speak: 내가 구사하는 언어
     learn: "{lang} 학습"
@@ -2823,9 +2867,10 @@ content:
     free_text_too_few_accepts: "레슨 '{lesson}': 자유 입력 연습 '{exercise}'에 허용된 답이 최소 {min}개 필요합니다."
     matching_too_few_pairs: "레슨 '{lesson}': 연결 연습 '{exercise}'에 짝이 최소 {min}개 필요합니다."
     matching_duplicate_left: "레슨 '{lesson}': 매칭 연습 '{exercise}'에서 왼쪽 값 '{value}'이(가) 중복됩니다. 학습자가 풀 수 없습니다."
-    missing_distractors: "레슨 '{lesson}': 연습 '{exercise}'에 오답 보기(틀린 선택지)가 필요합니다."
     non_cefr_level: 레벨 '{level}'은(는) CEFR 등급(A1-C2)이 아닙니다.
     level_too_complex: "레슨 '{lesson}': 텍스트가 한쪽당 평균 {avg}단어로, 레벨 {level}에 비해 높습니다 (약 {cap}개 예상)."
+    engine_rule: "레슨 '{lesson}': 규칙 {rule} ({path}): {message}"
+    engine_warning: "레슨 '{lesson}': 경고 {rule} ({path}): {message}"
     source_language_heuristic: 카드 뒷면에 {found} 고유 문자가 포함되어 있지만 출처 언어는 '{lang}'입니다.
     target_language_heuristic: 카드 앞면에 {found} 고유 문자가 포함되어 있지만 목표어는 '{lang}'입니다.
     failed_share_anyway: "품질 검사에서 문제가 발견되었습니다. 그래도 공유할 수 있습니다 - 검토자가 풀 리퀘스트에 기록된 결과를 보게 됩니다."
@@ -3292,9 +3337,15 @@ create_lesson:
       image_add: "이미지 추가"
       image_remove: "이미지 삭제"
       err_prompt: "질문이나 지시문을 입력하세요."
-      err_matching: "완전한 짝을 2개 이상 추가하세요 (용어와 대응)."
+      err_matching_pairs: "완전한 짝을 하나 이상 추가하세요 (용어와 대응)."
+      err_matching_duplicate_left: "각 용어는 한 번만 사용할 수 있습니다 (대소문자는 구분하지 않음)."
+      err_matching_from_cards: "카드로 만든 짝 맞추기에는 연결된 카드가 필요하며 추가 짝은 쓸 수 없습니다."
+      err_cloze_distractors: "선택형 빈칸에는 오답 선택지가 하나 이상 필요합니다."
+      err_word_tiles_ordering: "허용되는 타일 순서는 각 타일을 정확히 한 번씩 사용해야 합니다."
+      err_card_ref: "이 연습은 더 이상 레슨에 없는 카드를 참조합니다."
       err_free_text: "허용되는 답을 하나 이상 추가하세요."
       err_cloze: "각 ___ 표시에는 빈칸이 하나 필요하고, 각 빈칸에는 답이 필요합니다."
+      err_cloze_multiselect: "다중 선택 빈칸 문제에는 질문, 정답 선택지 1개 이상, 오답 선택지 1개 이상이 필요하며, 같은 선택지가 양쪽에 있을 수 없습니다."
       err_word_tiles: "타일을 2개 이상 추가하세요."
       err_picture_choice: "라벨과 이미지가 있는 이미지를 2개 이상 추가하고 정확히 하나를 정답으로 표시하세요."
       err_explanation: "해설이 너무 깁니다 (최대 2000자)."
@@ -3434,7 +3485,10 @@ create_lesson:
     check_languagePair: "언어 쌍이 유효함"
     check_enoughCards: "카드 4개 이상"
     check_enoughExercises: "연습 5개 이상"
+    check_min_exercises: "연습 {n}개 이상"
     check_enoughTypes: "연습 유형 2개 이상"
+    check_min_types: "연습 유형 {n}개 이상"
+    check_exercise_minimums: "모든 연습에 충분한 정답 또는 쌍이 있음"
     check_schemaValid: "유효한 레슨 구조"
     structure_error: "기술적 세부 정보"
     structure_internal_error: "이 레슨을 확인하는 중 내부 오류가 발생했습니다. 이는 레슨이 아니라 앱의 문제입니다. 페이지를 새로고침한 후 다시 시도하세요. 계속 발생하면 아래에서 문제를 신고해 주세요."
@@ -3459,7 +3513,7 @@ create_lesson:
   templates:
     extensions:
       title: "고급 연습 유형"
-      desc: "분류 및 오류 수정 연습을 만듭니다. 확장을 지원하는 앱이 필요합니다."
+      desc: "순서 배열, 핫스팟, 받아쓰기, 채점 퀴즈 같은 확장 연습 유형을 만듭니다. 확장을 지원하는 앱이 필요합니다."
     knowledge_from_text:
       title: "텍스트 기반 지식 레슨"
       desc: "교과서 섹션을 붙여넣거나 책 파일을 불러오면 AI가 이론을 자신의 말로 작성하고 연습문제를 생성합니다."
@@ -3505,6 +3559,16 @@ learning_path:
   train_errors: "오답 연습"
   shuffle: "셔플"
   endless: "무한"
+  reset_all:
+    button: "전체 다시 하기"
+    title: "모든 결과를 초기화할까요?"
+    message: "“{title}”의 결과가 초기화됩니다: {lessons}개 레슨의 점수, 별, 학습 시간. 새 회차가 레슨 1부터 시작되며, 이전 회차의 오답은 기록으로 남습니다. XP와 배지는 변하지 않습니다."
+    average: "지금까지의 평균: {percent} %"
+    no_average: "아직 평균이 없습니다."
+    confirm: "초기화하고 다시 시작"
+    cancel: "취소"
+    success: "결과가 초기화되었습니다. 새 회차가 레슨 1부터 시작됩니다."
+    failed: "결과를 초기화할 수 없습니다."
   personal:
     title: "당신의 학습 경로"
     progress: "전체: {n}% 완료"
@@ -3613,6 +3677,7 @@ pwa:
   cache_clear: "캐시 지우기"
   cache_clear_confirm: "오프라인 캐시를 지울까요?"
   cache_clear_action: "네, 지웁니다"
+  cache_clear_failed: "오프라인 캐시를 비우지 못했습니다: {detail}"
   cache_cleared: "오프라인 캐시가 지워졌습니다."
   update:
     message: "새 버전을 사용할 수 있습니다."
@@ -3991,6 +4056,8 @@ content_repo:
     copy_failed: "복사할 수 없었습니다."
     hint: "다른 사람이 이 공개 저장소를 추가할 수 있도록 이 링크를 공유하세요. 비공개 저장소의 경우 URL과 읽기 전용 토큰을 따로 보내세요."
     qr_alt: "공유 링크용 QR 코드"
+  remove_error: "저장소를 제거하지 못했습니다."
+  reorder_error: "저장소 순서를 변경하지 못했습니다."
   progress:
     syncing: "동기화 중…"
     validating: "저장소를 검증하는 중…"
@@ -4123,7 +4190,7 @@ endless:
   back_to_dashboard: "대시보드로 돌아가기"
   loading: "연습 세션을 불러오는 중…"
   empty_body: "이 세트에는 아직 연습할 문제가 없습니다."
-  not_cached_body: "이 세트는 아직 다운로드되지 않았습니다. 먼저 콘텐츠 브라우저를 열어 다운로드하세요."
+  not_cached_body: "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요."
   paused: "일시정지 - 잠시 쉬어가세요."
   resume: "계속"
   pause: "일시정지"
@@ -4289,3 +4356,9 @@ set_summary:
     vocabulary: "어휘"
     grammar_rule: "문법 규칙"
     unknown: "알 수 없음"
+runner:
+  back_to_dashboard: "대시보드로 돌아가기"
+  not_cached_body: "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요."
+  error:
+    missing_params: "선택된 콘텐츠 세트가 없습니다."
+    invalid_data: "이 콘텐츠에 유효하지 않거나 손상된 데이터가 있어 열 수 없습니다. 콘텐츠 작성자에게 문의하세요."

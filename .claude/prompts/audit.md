@@ -99,10 +99,13 @@ If the convention itself is stale, flag it as Outdated under section 4.
   `docker-compose.prod.yml`. Verify base-image consistency (Python 3.12-slim,
   Node 24-slim), build-context paths (root-relative for plugin glob), no version
   drift between dev compose and prod compose.
-- Git: branch model is solo-dev on `main`; verify Conventional Commits prefixes
+- Git: branch model is gitflow (`develop` is active, `main` holds releases only, #334); verify Conventional Commits prefixes
   (feat/fix/refactor/docs/test/chore), no force-pushes, pre-commit hooks active
-  (`.pre-commit-config.yaml`: ruff lint + format, eslint, prettier, pytest
-  smoke).
+  (`.pre-commit-config.yaml`: the pre-commit-hooks file checks, ruff lint +
+  format on `backend/app/`, eslint on `frontend/src/`,
+  plugin-lock-paired-with-pyproject, validate-bundled-content,
+  i18n-script-sanity, docs-hygiene, doc-refs). No Prettier or pytest hook:
+  Prettier runs as a non-blocking CI step until the #3270 reformat.
 - `.gitignore` consistency: `.env`, `*.db`, `backend/uploads/`, `__pycache__/`,
   `mutants/`, `coverage.xml`, `htmlcov/`, encrypted credential blobs.
 - Secrets: three-layer chain per `docs/configuration.md`. Project YAML

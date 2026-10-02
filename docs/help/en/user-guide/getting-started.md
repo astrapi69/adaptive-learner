@@ -26,7 +26,7 @@ on your platform:
 - **Android & desktop (Chrome / Edge):** the browser fires an
   install prompt, which the app turns into a discreet, dismissable
   **"Install app"** banner (re-offered after 7 days if you dismiss
-  it). You can also install any time from **Settings → Data →
+  it). You can also install any time from **Settings > General >
   Install app**.
 - **iPhone / iPad (Safari):** iOS has no automatic install prompt,
   so Adaptive Learner shows a small **"Add to Home Screen"** hint
@@ -74,7 +74,7 @@ the browser.
    directly as lessons. See [App tutorial](app-tutorial.md).
 4. **Optional: AI sessions.** If you would rather have the guided
    six-method learning conversation, store an **API key**
-   (Settings or `~/.config/adaptive-learner/secrets.yaml`), take
+   (Settings or `~/.config/adaptive_learner/secrets.yaml`), take
    the optional [learning-style assessment](assessment.md) and
    start a [learning session](learning-session.md).
 5. **Save your result.** From the lesson summary you can copy the

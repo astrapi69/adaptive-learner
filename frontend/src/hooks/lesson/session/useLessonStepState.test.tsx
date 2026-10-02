@@ -98,4 +98,85 @@ describe("useLessonStepState", () => {
         expect(result.current.checked).toBe(true);
         expect(result.current.enteredReviewed).toBe(false);
     });
+
+    describe("optional progress (EXP-052 slice 0: the ephemeral runners pass none)", () => {
+        function mountWithoutProgress(initialStep: number) {
+            return renderHook(
+                ({stepIndex}) =>
+                    useLessonStepState({lesson: LESSON, currentStepIndex: stepIndex}),
+                {initialProps: {stepIndex: initialStep}},
+            );
+        }
+
+        it("treats an omitted progress like null: no step is ever entered locked", () => {
+            const {result} = mountWithoutProgress(1);
+            expect(result.current.enteredReviewed).toBe(false);
+            expect(result.current.reviewedRaw).toBeNull();
+        });
+
+        it("still resets the two-phase state on a step change without progress", () => {
+            const {result, rerender} = mountWithoutProgress(0);
+            act(() => {
+                result.current.setAnswerable(true);
+                result.current.setChecked(true);
+            });
+            rerender({stepIndex: 1});
+            expect(result.current.answerable).toBe(false);
+            expect(result.current.checked).toBe(false);
+            expect(result.current.enteredReviewed).toBe(false);
+        });
+    });
+
+    describe("run-local results by step id (EXP-052 slice 1: the ephemeral runners' #1790 lock)", () => {
+        const RUN_RESULTS = {
+            step_results: {
+                s1: {correct: 1, total: 1, attempts: 1, completed_at: "t", raw_answer: STORED_RAW},
+            },
+        };
+
+        function mountById(stepIndex: number, stepId: string | null) {
+            return renderHook(
+                ({index, id}) =>
+                    useLessonStepState({currentStepIndex: index, stepId: id, progress: RUN_RESULTS}),
+                {initialProps: {index: stepIndex, id: stepId}},
+            );
+        }
+
+        it("locks the step whose id carries a run-local result, without a lesson", () => {
+            const {result} = mountById(1, "s1");
+            expect(result.current.enteredReviewed).toBe(true);
+            expect(result.current.reviewedRaw).toEqual(STORED_RAW);
+        });
+
+        it("re-entering the answered step through Previous locks it (the review double count)", () => {
+            const {result, rerender} = mountById(2, null);
+            expect(result.current.enteredReviewed).toBe(false);
+            rerender({index: 1, id: "s1"});
+            expect(result.current.enteredReviewed).toBe(true);
+            expect(result.current.reviewedRaw).toEqual(STORED_RAW);
+        });
+
+        it("edge: a step id without a result stays open", () => {
+            const {result} = mountById(0, "s0");
+            expect(result.current.enteredReviewed).toBe(false);
+            expect(result.current.reviewedRaw).toBeNull();
+        });
+
+        it("boundary: a null step id (the summary) is never locked", () => {
+            const {result} = mountById(2, null);
+            expect(result.current.enteredReviewed).toBe(false);
+        });
+
+        it("the step id wins over the lesson + index lookup when both are given", () => {
+            const {result} = renderHook(() =>
+                useLessonStepState({
+                    lesson: LESSON,
+                    currentStepIndex: 0,
+                    stepId: "s1",
+                    progress: RUN_RESULTS,
+                }),
+            );
+            expect(result.current.enteredReviewed).toBe(true);
+        });
+    });
 });

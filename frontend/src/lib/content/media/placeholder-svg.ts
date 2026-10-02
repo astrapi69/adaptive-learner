@@ -31,6 +31,8 @@
  * byte-identical SVG bytes.
  */
 
+import {fnv1a32} from "../../random";
+
 export type PlaceholderCategory = "color" | "number" | "default";
 
 /** Multilingual color → hex map. Keyed by lowercase label
@@ -110,16 +112,28 @@ const AVATAR_PALETTE = [
     "#64748b", // slate
 ];
 
-function _hashIndex(s: string, mod: number): number {
-    // FNV-1a 32-bit. Tiny + deterministic + good distribution
-    // for short strings (the avatar palette only needs 4
-    // bits of entropy).
-    let h = 2166136261;
-    for (let i = 0; i < s.length; i++) {
-        h ^= s.charCodeAt(i);
-        h = Math.imul(h, 16777619);
-    }
-    return Math.abs(h) % mod;
+/**
+ * A deterministic index in ``0..mod-1`` for a label, from FNV-1a
+ * (``fnv1a32``); the avatar palette uses it, so the same label always gets
+ * the same hue.
+ *
+ * Kept bit-identical to the loop it replaced (#3214), so no existing avatar
+ * changes colour: that loop left the hash signed (``Math.imul`` returns an
+ * int32) once a character was folded in, but the unsigned offset basis for
+ * the empty label. ``fnv1a32`` is always unsigned, so a non-empty hash is
+ * turned signed before ``Math.abs``, and the empty label keeps the unsigned
+ * basis.
+ *
+ * @param label - Any string, the empty one included.
+ * @param mod - The number of buckets (a positive integer).
+ * @returns An integer in ``0..mod-1``.
+ *
+ * @example
+ * const hue = AVATAR_PALETTE[labelHashIndex("bonjour", AVATAR_PALETTE.length)];
+ */
+export function labelHashIndex(label: string, mod: number): number {
+    const hash = fnv1a32(label);
+    return Math.abs(label.length === 0 ? hash : hash | 0) % mod;
 }
 
 /** Auto-detect the category for a label. Color match takes
@@ -166,7 +180,7 @@ function _renderAvatar(label: string): string {
     // since detectCategory short-circuits, but defensive).
     const first = label.trim().charAt(0);
     const letter = (first || "?").toUpperCase();
-    const fill = AVATAR_PALETTE[_hashIndex(label.toLowerCase(), AVATAR_PALETTE.length)];
+    const fill = AVATAR_PALETTE[labelHashIndex(label.toLowerCase(), AVATAR_PALETTE.length)];
     return [
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">',
         `<circle cx="50" cy="50" r="46" fill="${fill}"/>`,

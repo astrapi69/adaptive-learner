@@ -17,7 +17,7 @@ test.describe("Skip-to-content — focused state (#1723)", () => {
   test("focused link is on-screen, compact, and its label color differs from the background", async ({
     page,
   }) => {
-    await completeOnboarding(page);
+    await completeOnboarding(page, {migrationOffer: "none"});
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-hub")).toBeVisible({
       timeout: 15000,

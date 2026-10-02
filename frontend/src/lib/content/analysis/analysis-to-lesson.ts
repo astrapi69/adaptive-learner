@@ -46,7 +46,6 @@
 import type {
   ContentLesson,
   ContentLessonCard,
-  ContentLessonExercise,
   ContentLessonStep,
 } from "../../../storage/types";
 import type {
@@ -61,21 +60,11 @@ import {
   selectExercises,
   type GeneratorCard,
 } from "../../exercises/authoring/exercise-builder";
-import { categorizationPayloadErrors } from "../../exercises/payload/categorization";
-import { errorCorrectionPayloadErrors } from "../../exercises/payload/error-correction";
-import { readingComprehensionPayloadErrors } from "../../exercises/payload/reading-comprehension";
-import { gradedQuizPayloadErrors } from "../../exercises/payload/graded-quiz";
-import { dictationPayloadErrors } from "../../exercises/payload/dictation";
-import { imageDescriptionPayloadErrors } from "../../exercises/payload/image-description";
-import { orderingPayloadErrors } from "../../exercises/payload/ordering";
-import { parsonsPayloadErrors } from "../../exercises/payload/parsons";
-import { hotspotPayloadErrors } from "../../exercises/payload/hotspot";
-import { validateLessonShape } from "../validation/lesson-schema-validator";
+import type { Lesson as EngineLesson } from "learn-content-engine";
+import { validateLessonRules } from "learn-content-engine/rules";
 
-/** Lowercase unicode slug (#1808): lesson-internal ids/tags accept
- *  non-ASCII lowercase letters ('währung', 'präsenz'), matching the
- *  canonical engine schema. Set-level ids/paths stay ASCII elsewhere. */
-const SLUG_RE = /^[\p{Ll}\p{Nd}]+(-[\p{Ll}\p{Nd}]+)*$/u;
+import { APP_EXTENSION_REGISTRY } from "../validation/engine-extensions";
+import { validateLessonShape } from "../validation/lesson-schema-validator";
 
 /** Localised strings. ``{word}`` in a prompt template is replaced
  *  with the vocabulary word. */
@@ -288,6 +277,20 @@ function uniq<T>(items: T[]): T[] {
   return [...new Set(items)];
 }
 
+/** Keep the first entry per word, compared trimmed and case-insensitively:
+ *  two entries that differ only by case become one matching pair each and
+ *  trip the engine's ``E-MATCH-DUP-LEFT`` (#3222 PR 4); the first mention
+ *  wins, as it does for the analysis text itself. */
+function uniqueByWord(entries: VocabularyEntry[]): VocabularyEntry[] {
+  const seen = new Set<string>();
+  return entries.filter((entry) => {
+    const key = entry.word.trim().toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Cards
 // ---------------------------------------------------------------------------
@@ -436,8 +439,10 @@ export function generateLessonFromAnalysis(
 ): ContentLesson {
   const labels = opts.labels ?? DEFAULT_ANALYSIS_LESSON_LABELS;
   const config = resolveConfig(opts.config);
-  const vocabulary = (analysis.vocabulary ?? []).filter(
-    (entry) => entry.word?.trim() && entry.translation?.trim(),
+  const vocabulary = uniqueByWord(
+    (analysis.vocabulary ?? []).filter(
+      (entry) => entry.word?.trim() && entry.translation?.trim(),
+    ),
   );
   const title = clampLen(
     (analysis.topic ?? labels.fallbackTitle).trim() || labels.fallbackTitle,
@@ -529,204 +534,34 @@ export function summarizeGeneratedLesson(
 }
 
 // ---------------------------------------------------------------------------
-// Validation (#1205 / EXP-039)
-//
-// Two layers: ajv validates the STRUCTURAL shape against the generated
-// ``schema/lesson.schema.json`` (the SoT mirror) — fields, types, closed
-// enums, length/range bounds, ``additionalProperties: false`` — so the shape
-// can no longer drift from the Pydantic models. The imperative checks below
-// cover only the cross-field / semantic rules JSON-Schema cannot express:
-// slug-safety + uniqueness, referential integrity, cloze marker/blank parity,
-// picture-choice single-correct, and ``accept_orderings`` permutations.
+// Validation: the schema's shape (ajv) plus the engine's semantic rules
+// (``learn-content-engine/rules``, #3222 PR 4). The app's copies of those
+// rules are gone; only the shape layer's extension load guard and the
+// adopted extensions' payload validators (as the engine registry) are the
+// app's own, where it is allowed to be stricter.
 // ---------------------------------------------------------------------------
 
+/** The prefix every INTENTIONAL validation failure carries; consumers
+ *  (``draft-to-lesson``) use it to tell a content error from an app bug. */
+const INVALID_PREFIX = "generated lesson invalid: ";
+
 /** Throws an Error on the first violation. Structural shape comes from ajv
- *  against the App-authoritative schema (Dexie path); the imperative checks
- *  guard the semantics JSON-Schema cannot express. */
+ *  against the App-authoritative schema (Dexie path), slug-safety of ids
+ *  and tags and the extension load guard included; the engine's semantic
+ *  rules (card references, unique ids, per-type cross-field rules, the
+ *  adopted extensions' payloads through ``APP_EXTENSION_REGISTRY``) run on
+ *  the shape-valid lesson. The message names the path and the engine's
+ *  reason, e.g. ``/steps/2/exercise exercise references unknown card 'x'``. */
 export function validateGeneratedLesson(lesson: ContentLesson): void {
-  const fail = (msg: string): never => {
-    throw new Error(`generated lesson invalid: ${msg}`);
-  };
   const shape = validateLessonShape(lesson);
-  if (!shape.ok) fail(shape.errors[0] ?? "shape does not match the schema");
-
-  if (!SLUG_RE.test(lesson.id)) fail(`lesson id '${lesson.id}' not slug-safe`);
-  const cardIds = validateCards(lesson.cards, fail);
-  validateSteps(lesson.steps, cardIds, fail);
-}
-
-/** Validate every card (slug-safe + unique id, front + back present,
- *  slug-safe tags) and return the set of card ids for cross-reference
- *  checks in the step validation. */
-function validateCards(
-  cards: ContentLesson["cards"],
-  fail: (msg: string) => never,
-): Set<string> {
-  const cardIds = new Set<string>();
-  for (const card of cards) {
-    if (!SLUG_RE.test(card.id)) fail(`card id '${card.id}' not slug-safe`);
-    if (cardIds.has(card.id)) fail(`duplicate card id '${card.id}'`);
-    cardIds.add(card.id);
-    // front/back presence + length is enforced by the ajv shape layer.
-    for (const tag of card.tags) {
-      if (!SLUG_RE.test(tag))
-        fail(`card '${card.id}' tag '${tag}' not slug-safe`);
-    }
-  }
-  return cardIds;
-}
-
-/** Validate every step: slug-safe + unique id, theory steps carry a
- *  body and no exercise, exercise steps carry an exercise (validated
- *  against ``cardIds``) and no body. */
-function validateSteps(
-  steps: ContentLesson["steps"],
-  cardIds: Set<string>,
-  fail: (msg: string) => never,
-): void {
-  const stepIds = new Set<string>();
-  for (const step of steps) {
-    if (!SLUG_RE.test(step.id)) fail(`step id '${step.id}' not slug-safe`);
-    if (stepIds.has(step.id)) fail(`duplicate step id '${step.id}'`);
-    stepIds.add(step.id);
-    if (step.type === "theory") {
-      if (!step.body) fail(`theory step '${step.id}' needs a body`);
-      if (step.exercise)
-        fail(`theory step '${step.id}' must not carry an exercise`);
-    } else {
-      const exercise = step.exercise;
-      if (!exercise) {
-        throw new Error(
-          `generated lesson invalid: exercise step '${step.id}' needs an exercise`,
-        );
-      }
-      if (step.body) fail(`exercise step '${step.id}' must not carry a body`);
-      validateExercise(exercise, cardIds, fail);
-    }
-  }
-}
-
-type ExerciseCheck = (
-  exercise: ContentLessonExercise,
-  fail: (msg: string) => never,
-) => void;
-
-/** Per-type imperative checks (the semantics ajv/JSON-Schema can't express).
- *  Dispatched by ``exercise.type`` so ``validateExercise`` stays flat. */
-const EXERCISE_TYPE_CHECKS: Record<string, ExerciseCheck> = {
-  matching: (exercise, fail) => {
-    if (!exercise.pairs || exercise.pairs.length === 0)
-      fail(`matching '${exercise.id}' needs pairs`);
-  },
-  free_text: (exercise, fail) => {
-    if (!exercise.accept || exercise.accept.length === 0)
-      fail(`free_text '${exercise.id}' needs accept[]`);
-  },
-  word_tiles: (exercise, fail) => {
-    if (!exercise.tiles || exercise.tiles.length < 2)
-      fail(`word_tiles '${exercise.id}' needs >= 2 tiles`);
-    validateAcceptOrderings(exercise, fail);
-  },
-  picture_choice: (exercise, fail) => {
-    const correct = (exercise.images ?? []).filter(
-      (image) => image.is_correct === "true",
-    ).length;
-    if (correct !== 1)
-      fail(
-        `picture_choice '${exercise.id}' needs exactly one correct image (has ${correct})`,
-      );
-  },
-  cloze: validateCloze,
-  // #1579 - first adopted extension type: the ext_payload is opaque to the
-  // ajv layer, so the bucket rules live in the shared categorization core.
-  "ext:al-categorization": (exercise, fail) => {
-    const payloadErrors = categorizationPayloadErrors(exercise);
-    if (payloadErrors.length > 0) fail(payloadErrors[0]);
-  },
-  "ext:al-error-correction": (exercise, fail) => {
-    const payloadErrors = errorCorrectionPayloadErrors(exercise);
-    if (payloadErrors.length > 0) fail(payloadErrors[0]);
-  },
-  "ext:al-reading-comprehension": (exercise, fail) => {
-    const payloadErrors = readingComprehensionPayloadErrors(exercise);
-    if (payloadErrors.length > 0) fail(payloadErrors[0]);
-  },
-  "ext:al-graded-quiz": (exercise, fail) => {
-    const payloadErrors = gradedQuizPayloadErrors(exercise);
-    if (payloadErrors.length > 0) fail(payloadErrors[0]);
-  },
-  "ext:al-dictation": (exercise, fail) => {
-    const payloadErrors = dictationPayloadErrors(exercise);
-    if (payloadErrors.length > 0) fail(payloadErrors[0]);
-  },
-  "ext:al-image-description": (exercise, fail) => {
-    const payloadErrors = imageDescriptionPayloadErrors(exercise);
-    if (payloadErrors.length > 0) fail(payloadErrors[0]);
-  },
-  "ext:al-ordering": (exercise, fail) => {
-    const payloadErrors = orderingPayloadErrors(exercise);
-    if (payloadErrors.length > 0) fail(payloadErrors[0]);
-  },
-  "ext:al-parsons": (exercise, fail) => {
-    const payloadErrors = parsonsPayloadErrors(exercise);
-    if (payloadErrors.length > 0) fail(payloadErrors[0]);
-  },
-  "ext:al-hotspot": (exercise, fail) => {
-    const payloadErrors = hotspotPayloadErrors(exercise);
-    if (payloadErrors.length > 0) fail(payloadErrors[0]);
-  },
-};
-
-function validateExercise(
-  exercise: ContentLessonExercise,
-  cardIds: Set<string>,
-  fail: (msg: string) => never,
-): void {
-  if (!SLUG_RE.test(exercise.id))
-    fail(`exercise id '${exercise.id}' not slug-safe`);
-  if (!exercise.prompt) fail(`exercise '${exercise.id}' needs a prompt`);
-  for (const cid of exercise.card_ids) {
-    if (!cardIds.has(cid))
-      fail(`exercise '${exercise.id}' references missing card '${cid}'`);
-  }
-  EXERCISE_TYPE_CHECKS[exercise.type]?.(exercise, fail);
-}
-
-/** CLOZE: ``___`` marker count must equal ``blanks`` length. In ``multiselect``
- *  mode (#1195) the sentence is a stem with no markers and no blanks, so the
- *  0 === 0 check passes by construction. */
-function validateCloze(
-  exercise: ContentLessonExercise,
-  fail: (msg: string) => never,
-): void {
-  if (!exercise.sentence) fail(`cloze '${exercise.id}' needs a sentence`);
-  const markers = (exercise.sentence?.match(/___/g) ?? []).length;
-  const blanks = exercise.blanks?.length ?? 0;
-  if (markers !== blanks)
-    fail(
-      `cloze '${exercise.id}' marker/blank mismatch (${markers} vs ${blanks})`,
+  if (!shape.ok) {
+    throw new Error(
+      `${INVALID_PREFIX}${shape.errors[0] ?? "shape does not match the schema"}`,
     );
-}
-
-/** WORD_TILES: every entry in ``accept_orderings`` must be a true permutation
- *  of ``[0..tiles.length-1]`` (correct length, no gaps, no duplicates). */
-function validateAcceptOrderings(
-  exercise: ContentLessonExercise,
-  fail: (msg: string) => never,
-): void {
-  const orderings = exercise.accept_orderings;
-  if (!orderings) return;
-  const tileCount = exercise.tiles?.length ?? 0;
-  for (const ordering of orderings) {
-    const isPermutation =
-      ordering.length === tileCount &&
-      new Set(ordering).size === tileCount &&
-      ordering.every(
-        (index) => Number.isInteger(index) && index >= 0 && index < tileCount,
-      );
-    if (!isPermutation)
-      fail(
-        `word_tiles '${exercise.id}' accept_orderings entry is not a permutation of [0..${tileCount - 1}]`,
-      );
   }
+  const { errors } = validateLessonRules(lesson as unknown as EngineLesson, {
+    extensions: APP_EXTENSION_REGISTRY,
+  });
+  const first = errors[0];
+  if (first) throw new Error(`${INVALID_PREFIX}${first.path} ${first.message}`);
 }

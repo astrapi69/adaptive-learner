@@ -18,11 +18,19 @@ import { parse as parseYaml } from "yaml";
 
 import type { ContentLesson } from "../../../../storage/types";
 import { slugify, validateGeneratedLesson } from "../../analysis/analysis-to-lesson";
+import { resolveLanguagePair } from "../../engine";
 
 export interface ImportedSet {
   set_id: string;
   title: string;
+  /** Legacy mirror of ``target_language`` (kept for callers that read it). */
   language: string;
+  /** The language taught (#3244: read from the manifest's canonical key,
+   *  the legacy ``language`` alias only as a fallback). */
+  target_language: string;
+  /** The language the learner already speaks; ``"en"`` when the manifest
+   *  names none. */
+  source_language: string;
   level: string;
   description: string | null;
   lessons: ContentLesson[];
@@ -123,6 +131,8 @@ async function parseJsonLesson(file: File): Promise<ImportParseResult> {
         set_id: importSetId(lesson.title || lesson.id),
         title: lesson.title,
         language: "en",
+        target_language: "en",
+        source_language: "en",
         level: "imported",
         description: lesson.description ?? null,
         lessons: [lesson],
@@ -153,6 +163,8 @@ async function parseZipSet(file: File): Promise<ImportParseResult> {
       id?: string;
       title?: string;
       language?: string;
+      target_language?: string;
+      source_language?: string;
       level?: string;
       description?: string;
     }>;
@@ -200,12 +212,18 @@ async function parseZipSet(file: File): Promise<ImportParseResult> {
   }
 
   const title = setMeta.title || manifest.name || "Imported set";
+  // #3244: the canonical pair first, the pre-v1.2 ``language`` alias as a
+  // fallback - the same resolution the engine applies to every manifest.
+  const pair = resolveLanguagePair(setMeta);
+  const targetLanguage = pair.target || "en";
   return {
     ok: true,
     set: {
       set_id: importSetId(setMeta.id || title),
       title,
-      language: setMeta.language || "en",
+      language: targetLanguage,
+      target_language: targetLanguage,
+      source_language: pair.source,
       level: setMeta.level || "imported",
       description: setMeta.description ?? manifest.description ?? null,
       lessons,

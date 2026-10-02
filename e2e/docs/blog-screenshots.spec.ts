@@ -232,6 +232,13 @@ test("captures the book-text path", async ({page}) => {
     );
     await page.getByTestId("book-author").fill("R. Atkinson");
     await expect(page.getByTestId("book-rights-hint")).toBeVisible();
+    // #3142 - the step outgrew the 1280x1000 viewport (type selection and
+    // the explanations option, #2357/#2509/#2997), and the fill above leaves
+    // the app scroller mid-form, so the shot lost the generate button the
+    // article points at. Bring it into the frame and assert that it is
+    // there before capturing.
+    await page.getByTestId("book-generate").scrollIntoViewIfNeeded();
+    await expect(page.getByTestId("book-generate")).toBeInViewport();
     await shot(page, "s6-book-text");
 
     // #1927/#1953 — the second way into the same step: upload a book file and

@@ -31,6 +31,7 @@ import {forwardRef, useMemo, useState} from "react";
 import {useI18n} from "../../../../hooks/ui/useI18n";
 import {useLessonMode} from "../../../../hooks/lesson/modes/useLessonMode";
 import {cn} from "@/lib/utils";
+import BlockMarkdown from "../../../../shared/data-display/BlockMarkdown";
 import InlineMarkdown from "../../../../shared/data-display/InlineMarkdown";
 import {deriveReadingComprehensionAttempts} from "../../../../lib/srs/element-attempt";
 import {useControlledExercise} from "../../../../lib/exercises/useControlledExercise";
@@ -197,11 +198,14 @@ function ReadingComprehensionExercise(
                 </p>
             )}
 
+            {/* #3217: the passage is a multi-line stimulus (prose or code), so
+                it renders as BLOCK Markdown - InlineMarkdown flattened code
+                blocks and paragraphs into one line. */}
             <div
-                className="rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] p-3 text-base"
+                className="min-w-0 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] p-3 text-base"
                 data-testid="reading-comprehension-passage"
             >
-                <InlineMarkdown>{payload.passage}</InlineMarkdown>
+                <BlockMarkdown>{payload.passage}</BlockMarkdown>
             </div>
 
             <ExerciseHint

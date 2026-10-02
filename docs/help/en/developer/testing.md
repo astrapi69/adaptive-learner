@@ -328,7 +328,8 @@ Smoke specs cover the critical user paths:
 
 Specs use `data-testid` selectors only - no brittle CSS
 selectors. The smoke specs are NOT on the `make test` path;
-they need a running app (`make dev-bg` first).
+they start their own servers on their own ports and need no
+running app. A running `make dev` is left untouched.
 
 Beyond `e2e/smoke/`, the `e2e/` tree holds three more spec
 families:
@@ -377,8 +378,10 @@ whitespace, end-of-file fixer, check-yaml, check-json,
 check-added-large-files, check-merge-conflict, frontend
 ESLint, a plugin lockfile/pyproject pairing guard, and a
 bundled-content stats validator. In the CI pre-commit job the
-`prettier-frontend` and `eslint` hooks are skipped (the
-Frontend Tests job runs ESLint with deps installed instead).
+`eslint` hook is skipped (the Frontend Tests job runs ESLint
+with deps installed instead). Prettier is not a hook:
+`bun run format:check` runs in the Frontend Tests job,
+non-blocking until the one-time reformat of #3270.
 
 ## CI
 

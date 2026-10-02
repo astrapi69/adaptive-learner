@@ -25,10 +25,15 @@ Override-wins semantics: a value in `secrets.yaml` replaces the
 encrypted DB column; an env-var replaces both. Lists are
 **replaced**, not merged.
 
-Phase 34 (v1.20.0) — the secrets.yaml layer was introduced for
-the desktop launcher use case, alongside the existing UI-driven
-Settings flow. Web / Docker deployments can still rely entirely
-on env vars + the Settings UI.
+`secrets.yaml` is read from the config directory of the process
+that runs the backend. For a backend started from source
+(`make dev`) that is `~/.config/adaptive_learner/` on your
+machine. The desktop launcher and Docker run the backend in a
+container with `HOME=/app/data`, so there the file lives inside
+the data volume (`/app/data/.config/adaptive_learner/`) and a
+host-side file is not seen; keys entered under Settings > AI are
+written there. Container deployments can also rely entirely on
+env vars + the Settings UI.
 
 ---
 
@@ -82,9 +87,13 @@ at startup recommending `chmod 0600`.
 When the AI orchestrator needs an API key for `<provider>`:
 
 1. `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` env var.
-2. `ai.<provider>.api_key` in `secrets.yaml`.
-3. Fernet-decrypted `api_key_<provider>` column on the user's
-   `UserSettings` row (set via the Settings UI).
+2. `secrets.yaml`: the Fernet-encrypted
+   `ai.<provider>.api_key_encrypted` the Settings UI writes, or a
+   hand-edited plaintext `ai.<provider>.api_key`.
+3. Legacy Fernet-encrypted `api_key_<provider>` column on the
+   user's `UserSettings` row: a read-only fallback for keys saved
+   before the move to `secrets.yaml`, migrated into the file at
+   startup and no longer written.
 4. `None` — the AI call returns an error asking the user to
    configure a key.
 
@@ -96,9 +105,9 @@ via per-provider badges:
 - "Key from: Settings"
 - "No key configured"
 
-When the source is `environment` or `secrets.yaml`, the Save +
-Remove buttons in Settings are disabled and an info banner tells
-the user where to edit the key.
+Only an `environment` key disables the Save + Remove buttons.
+A `secrets.yaml` key stays editable: the info line names the file,
+and saving in the UI overwrites the stored key.
 
 Same chain for `default_model` (per-provider model override) —
 the only difference is that the third layer is

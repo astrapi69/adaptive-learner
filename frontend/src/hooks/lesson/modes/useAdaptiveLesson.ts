@@ -38,9 +38,9 @@
  * (no backend roundtrip). The 53H smoke gate pins this.
  */
 
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
-import {stampHintUsage} from "../../../lib/hints/hint-usage";
+import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
 import {analyzeErrors} from "../../../lib/adaptive/error-analyzer";
 import {buildExercisePool} from "../../../lib/adaptive/exercise-pool";
 import {focusAreaTags} from "../../../lib/adaptive/error-classifier";
@@ -135,6 +135,15 @@ export function useAdaptiveLesson(
 
     const userId = useMemo(() => readLearnerState().userId, []);
 
+    // #3225 (the #2703 class): title/description are DISPLAY strings that flip
+    // from the caller's English fallback to the translated text once the i18n
+    // catalog lands. Read through refs so that flip never restarts the
+    // synthesis; a reload picks up whatever is current at that moment.
+    const titleRef = useRef(title);
+    titleRef.current = title;
+    const descriptionRef = useRef(description);
+    descriptionRef.current = description;
+
     useEffect(() => {
         if (!setId || !userId) {
             setStatus("empty");
@@ -142,6 +151,8 @@ export function useAdaptiveLesson(
         }
         let cancelled = false;
         setStatus("loading");
+        // #3196 — hint usage is per run: forget the previous run's reveals.
+        clearHintUsage();
         setError(null);
         void (async () => {
             try {
@@ -215,8 +226,8 @@ export function useAdaptiveLesson(
                 );
                 const generated = generateAdaptiveLesson(result, pool, {
                     lessons: lessonMap,
-                    title,
-                    description: description ?? undefined,
+                    title: titleRef.current,
+                    description: descriptionRef.current ?? undefined,
                     set_id: setId,
                     now: new Date().toISOString(),
                     errorsByElementKey,
@@ -259,7 +270,7 @@ export function useAdaptiveLesson(
         return () => {
             cancelled = true;
         };
-    }, [setId, userId, title, description, limit, lessonId]);
+    }, [setId, userId, limit, lessonId]);
 
     const totalSteps = lesson?.steps.length ?? 0;
 

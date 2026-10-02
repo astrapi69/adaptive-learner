@@ -141,3 +141,43 @@ describe("endlessStepAt", () => {
         expect(endlessStepAt(empty, 0, null)).toBeNull();
     });
 });
+
+// Owner decision on EXP-052 slice 2 (refs #3169): the endless pool uses
+// the shell's one definition of "playable" (isPlayableExerciseStep), so
+// adopted ext:al-* extensions and multiple_choice join the stream.
+describe("buildEndlessPlan - playable means what the dispatcher renders", () => {
+    function typed(lessonId: string, types: string[]): EndlessSourceLesson {
+        const base = lesson(
+            lessonId,
+            types.map((_, i) => `${lessonId}-x${i}`),
+        );
+        base.steps = base.steps.map((step, i) => ({
+            ...step,
+            exercise: {...step.exercise!, type: types[i]} as ContentLessonExercise,
+        }));
+        return {lessonId, title: lessonId, lesson: base};
+    }
+
+    it.each([
+        ["extension: speak-and-record", "ext:al-speak-and-record"],
+        ["extension: graded quiz", "ext:al-graded-quiz"],
+        ["core: multiple_choice", "multiple_choice"],
+    ])("pools a %s exercise", (_name, type) => {
+        const plan = buildEndlessPlan({
+            sources: [typed("l1", [type, "cloze"])],
+            dueExerciseIds: [],
+            seenExerciseIds: new Set(),
+        });
+        expect(plan.pool.map((s) => s.exercise?.type).sort()).toEqual(["cloze", type].sort());
+    });
+
+    it("boundary: a set whose only exercises are unknown types has no content", () => {
+        const plan = buildEndlessPlan({
+            sources: [typed("l1", ["ext:somebody-else", "hologram"])],
+            dueExerciseIds: [],
+            seenExerciseIds: new Set(),
+        });
+        expect(plan.pool).toHaveLength(0);
+        expect(endlessStepAt(plan, 0, null)).toBeNull();
+    });
+});

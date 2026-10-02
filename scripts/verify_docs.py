@@ -156,6 +156,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 # The i18n coverage check lives in its own module (#2287/#2362) so this
 # verifier stays under the cohesion file-size gate; re-exported here so the
 # CHECKS registry and the tests keep importing it from ``verify_docs``.
+from testplan_ids import check as testplan_id_check  # noqa: E402
+from verify_docs_feature_shots import check_feature_shots  # noqa: E402,F401
+from verify_docs_help_changelog import check_help_changelog as _check_help_changelog  # noqa: E402
 from verify_docs_i18n import check_i18n  # noqa: E402,F401
 from verify_docs_test_counts import check_test_counts  # noqa: E402,F401
 from version_display_sites import VERSION_DISPLAY_SITES  # noqa: E402
@@ -480,6 +483,18 @@ def check_help_index_versions(report: Report, help_dir: Path | None = None) -> N
                 )
 
 
+def check_help_changelog(
+    report: Report, help_dir: Path | None = None, canonical: str | None = None
+) -> None:
+    """FAIL when a docs/help/<locale>/changelog.md lags the canonical minor version (#3161)."""
+    _check_help_changelog(
+        report,
+        help_dir=help_dir if help_dir is not None else REPO / "docs" / "help",
+        canonical=canonical if canonical is not None else canonical_version(),
+        read=read,
+    )
+
+
 # End-user help prose must be VERSIONLESS (#1767): the help tree carried
 # ~1000 "since vX.Y" feature-provenance markers across 8 locales that
 # drift per-locale and read as noise to an end user ("since v1.35.0" on a
@@ -800,10 +815,40 @@ def check_testplan_parity(report: Report, plan_dir: Path | None = None) -> None:
             f"{len(differing)} issue reference(s) cited a different number of times: {detail}",
         )
 
+    # #3274: DE and EN carry the same permanent ID for the same case.
+    _report_testplan_ids(report, "testplan-parity", base, ("TC",))
+
+
+def _report_testplan_ids(
+    report: Report, check_name: str, base: Path, prefixes: tuple[str, ...]
+) -> None:
+    """Run the checkpoint-ID gate (#3274) and fold its result into ``report``.
+
+    Every finding is a FAIL: a missing register or plan is a missing basis
+    (#2287), and an unnumbered, duplicated or cross-linked ID is exactly the
+    drift the IDs exist to prevent.
+    """
+    result = testplan_id_check(base, prefixes)
+    for note in result.notes:
+        report.note(note)
+    for finding in result.findings:
+        report.fail(check_name, finding)
+
+
+def check_testplan_ids(report: Report, plan_dir: Path | None = None) -> None:
+    """Case and suite IDs of the single-language plans and checklists (#3274, #3279).
+
+    The DE/EN main plan (TC-) is checked inside ``check_testplan_parity``,
+    because its IDs are part of the de/en contract.
+    """
+    base = plan_dir if plan_dir is not None else REPO
+    _report_testplan_ids(report, "testplan-ids", base, ("RTC", "LTC", "GTC", "OTC", "DTC", "STC"))
+
 
 # ---------------------------------------------------------------------------
 # Registry + runner
 # ---------------------------------------------------------------------------
+
 
 CHECKS = {
     "version": lambda r, o: check_version(r, o.fix),
@@ -815,8 +860,11 @@ CHECKS = {
     "mkdocs": lambda r, o: check_mkdocs(r),
     "help-index-versions": lambda r, o: check_help_index_versions(r),
     "help-prose-versions": lambda r, o: check_help_prose_versions(r),
+    "help-changelog": lambda r, o: check_help_changelog(r),
     "help-coverage": lambda r, o: check_help_coverage(r),
     "testplan-parity": lambda r, o: check_testplan_parity(r),
+    "testplan-ids": lambda r, o: check_testplan_ids(r),
+    "feature-shots": lambda r, o: check_feature_shots(r),
     "i18n": lambda r, o: check_i18n(r, o.fix),
 }
 

@@ -43,6 +43,7 @@ import {
   setBasePath,
   singleJsonLessonAdapter as engineSingleJsonLessonAdapter,
 } from "learn-content-engine";
+import { applyLessonSchemaDefaults } from "./schema-defaults";
 import type {
   ContentSetSource as EngineContentSetSource,
   LessonSetContext,
@@ -134,15 +135,51 @@ export const singleJsonLessonAdapter: LessonSourceAdapter = (
 ) => engineSingleJsonLessonAdapter(rawText, context) as ContentLesson;
 
 /** Parse raw source data into a canonical {@link ContentLesson} via a
- *  source adapter (default: {@link singleJsonLessonAdapter}). */
+ *  source adapter (default: {@link singleJsonLessonAdapter}).
+ *
+ *  Every non-null default of the engine's lesson schema is filled in
+ *  (#3349 ``cards``, #3372 ``card_ids`` / ``distractors`` / card ``tags`` /
+ *  ``estimated_minutes`` and the rest): the API backend fills them through
+ *  its Pydantic model, and ``ContentLesson`` types them as present. */
 export function parseLesson(
   rawText: string,
   context: LessonSetContext,
   adapter?: LessonSourceAdapter,
 ): ContentLesson {
-  return engineParseLesson(
+  const parsed = engineParseLesson(
     rawText,
     context,
     adapter as EngineLessonSourceAdapter | undefined,
-  ) as ContentLesson;
+  );
+  return applyLessonSchemaDefaults({ ...parsed }) as ContentLesson;
+}
+
+/** The set context a served lesson falls back to when its set is not in
+ *  the listing: its own pair and domain, so ``from_cards`` still resolves
+ *  and nothing is invented. */
+function ownContext(lesson: ContentLesson): LessonSetContext {
+  const target = lesson.target_language ?? "";
+  return {
+    language: target,
+    target_language: target,
+    source_language: lesson.source_language ?? "",
+    domain: lesson.domain ?? "",
+  };
+}
+
+/** #3393 - the API-mode half of the lesson read boundary. The backend
+ *  serves a validated lesson OBJECT, but neither resolves ``from_cards``
+ *  nor injects the set's language pair and domain; both happen only in
+ *  {@link parseLesson}, which the Dexie read path runs on the cached file.
+ *  Running the served lesson through the same projection makes the two
+ *  modes return the same lesson.
+ *
+ *  @param served - The lesson as ``GET .../lessons/{filename}`` returns it.
+ *  @param context - The lesson's set entry; ``undefined`` when the set is
+ *      not listed, then the lesson's own pair and domain are used. */
+export function parseServedLesson(
+  served: ContentLesson,
+  context: LessonSetContext | undefined,
+): ContentLesson {
+  return parseLesson(JSON.stringify(served), context ?? ownContext(served));
 }

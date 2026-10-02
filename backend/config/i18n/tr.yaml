@@ -2,6 +2,8 @@ app:
   loading: "Yükleniyor…"
   loading_slow: "Bu beklenenden uzun sürüyor."
   view_load_failed: "Bu görünüm yüklenemedi."
+  view_crashed: "Bu sayfada bir hata oluştu. Diğer sayfalar çalışmaya devam ediyor."
+  crashed: "Bir şeyler ters gitti."
   reload: "Yeniden yükle"
   name: Adaptive Learner
   tagline: Altı Yöntemli Modele göre uyarlanabilir öğrenme.
@@ -45,7 +47,7 @@ data_export:
   selective_button: "Seçili verileri dışa aktar"
   selective_done: "{n} kayıt dışa aktarıldı."
   includes_hint: "bu kategoriyle otomatik olarak dışa aktarılır"
-  failed: "Dışa aktarma başarısız: {detail}"
+  export_failed: "Dışa aktarma başarısız."
   group_content: "İçerik"
   group_master: "Ana veriler"
   group_extra: "Ek veriler"
@@ -359,7 +361,7 @@ adaptive:
   loading: "Hataların inceleniyor…"
   empty_body: "Henüz uyarlanacak bir şey yok - veri biriktirmek için önce bir derse çalış."
   not_cached_body: "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç."
-  back_to_dashboard: "Panele Dön"
+  back_to_dashboard: "Panoya dön"
   transparency:
     focus_prefix: "Bu ders şuna odaklanıyor:"
     tag_none: "en zayıf öğelerin"
@@ -371,7 +373,7 @@ adaptive:
     mastered_delta: "İlerleme: bu oturumda +{n} öğe ustalaşıldı!"
     note: "Öğe puanları güncellendi. Bir sonraki uyarlanabilir dersin hâlâ çalışılması gereken öğelere odaklanacak."
   error:
-    missing_params: "Hiçbir içerik seti seçilmedi."
+    missing_params: "İçerik seti seçilmedi."
     load_failed: "Uyarlanabilir ders oluşturulamadı."
 review:
   your_answer: "Cevabın:"
@@ -379,6 +381,8 @@ review:
   question_label: "Soru:"
   summary_corrected: "{total} işlemden {corrected} tanesi düzeltildi"
   summary_trend: "Güzel - zayıf noktaların güçleniyor."
+  summary_reinforced: "{total} öğeden {corrected} tanesi pekiştirildi"
+  summary_trend_reinforced: "Güzel - bu artık daha sağlam oturuyor."
   summary_next: "Pekiştirilen ögeler çıkar; geri kalanlar kısa süre içinde tekrara döner."
   summary_remaining: "{n} tane daha var. Devam?"
   another_round: "Bir tur daha"
@@ -394,8 +398,9 @@ review:
   subtitle_capped: "Tekrar için {due} öğeden {shown} tanesi"
   loading: "Tekrar oturumu yükleniyor…"
   empty_body: "Hepsi tamam! Bu sette tekrar edilecek öğe yok."
-  not_cached_body: "Bu set henüz indirilmedi. Önce içerik tarayıcısını aç."
-  back_to_dashboard: "Panele dön"
+  not_cached_body: "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç."
+  back_to_dashboard: "Panoya dön"
+  back_to_lesson: "Derse dön"
   summary:
     aria_label: "Tekrar özeti"
     heading: "Tekrar tamamlandı"
@@ -424,6 +429,13 @@ session:
   ai_thinking: Düşünüyor…
   ai_error: YZ sağlayıcısı cevap veremedi.
   no_api_key: "Yapay zekâ anahtarı ayarlanmadı. Eğitmenle sohbet etmek için Ayarlar'da yapay zekâ sağlayıcın için bir anahtar ekle. Dersler ve tekrarlar anahtarsız çalışır."
+  ai_error_no_model: "Yapay zekâ sağlayıcın için bir model seçilmedi. Ayarlar > Yapay zeka bölümünden bir model seç."
+  ai_error_provider_auth: "Yapay zekâ sağlayıcın anahtarı reddetti. Anahtarı Ayarlar > Yapay zeka bölümünden kontrol et."
+  ai_error_rate_limited: "Yapay zekâ sağlayıcının sınırına ulaşıldı. Biraz bekle ya da kotanı kontrol et, sonra tekrar gönder."
+  ai_error_provider_unavailable: "Yapay zekâ sağlayıcına şu anda ulaşılamıyor. Bağlantını kontrol et ve tekrar gönder."
+  reply_failed: "Yanıt yüklenemedi."
+  history_failed: "Önceki konuşma yüklenemedi. Hiçbir şey silinmedi."
+  chat_retry: "Tekrar dene"
   welcome_empty: "Öğrenmeye hazır! İlk mesajını yaz."
   end_session: Oturumu bitir
   end_session_confirm: Emin misin? Oturumu kapatıp bir değerlendirme isteyeceğiz.
@@ -477,6 +489,7 @@ settings:
     heading: "Bağlantısı kesilen içerik"
     summary: "Artık bağlı olmadığınız kaynaklardan {lessons} ders ve {cards} tekrar kartı."
     delete: "Bağlantısı kesilen ilerlemeyi sil"
+    delete_error: "Bağlantısı kesilmiş ilerleme silinemedi."
     confirm_title: "Bağlantısı kesilen ilerlemeyi sil"
     confirm_message: "{lessons} ders ve {cards} tekrar kartı kalıcı olarak silinecek. Bu geri alınamaz."
     deleted: "{lessons} ders ve {cards} tekrar kartı silindi."
@@ -753,6 +766,8 @@ settings:
   lesson_auto_advance_description: "Doğru cevaptan sonra otomatik olarak sonraki alıştırmaya geçer. Yanlış cevapta çözümü inceleyebilmen için her zaman bekler."
   ask_ai_visible: "'Yapay zekâya sor' düğmesini göster"
   ask_ai_visible_description: "Teori ve alıştırmaların altında 'Yapay zekâya sor' düğmesini gösterir. Varsayılan olarak gösterilir; düğmenin yanıt verebilmesi için hâlâ kendi yapay zekâ anahtarına (BYOK) ihtiyacı vardır."
+  keep_screen_on: "Derslerde ekranı açık tut"
+  keep_screen_on_description: "Bir ders açık olduğu sürece, ekrana dokunmadan okurken de ekran kapanmaz. Ders özetinde yeniden kapanabilir. iPhone'da iOS 16.4 veya üstü, ana ekrandaki uygulama olarak iOS 18.4 veya üstü gerekir."
   button_tooltips: Buton ipuçlarını göster
   button_tooltips_description: "Simge butonlarının üzerine gelindiğinde ne yaptıklarını açıklayan bir ipucu gösterir. Ekran okuyucu etiketleri ayardan bağımsız olarak her zaman açık kalır."
   developer_mode: Geliştirici Modu
@@ -965,17 +980,20 @@ settings:
     errors_only: "Yalnızca hataları göster (varsayılan)"
     whole_set: "Tüm seti tekrar et"
   matching_resolve:
-    title: "Çözme animasyonu"
+    title: "Eşleştirme alıştırması"
     hint: "Eşleştirme alıştırması, kontrolden sonra 'Çöz'e bastığınızda doğru çiftleri nasıl gösterir."
-    label: "Efekt"
+    label: "Çözme animasyonu"
     slide: "Kaydır"
     color: "Renk"
     connect: "Bağla"
     stack: "Yığ"
+  matching_review_views:
+    label: "Düzeltmeyi ayrı görünümde göster"
+    desc: "Kontrol ettikten sonra 'Cevaplarım' eşleştirmelerini oluşturduğun gibi, değerlendirme olmadan gösterir; değerlendirme ve doğru eşler 'Düzeltme' altındadır. Kapalı: doğru eş, 'Cevaplarım' içinde her hatanın hemen altında görünür."
   paused_retention:
-    title: Duraklatılmış ders saklama süresi
-    hint: "Bu süreden daha eski duraklatılmış dersler otomatik olarak terk edilir. Yaşa bakılmaksızın en fazla 10 duraklatılmış ders saklanır."
-    label: Duraklatılmış dersleri şu süre boyunca sakla
+    title: "Panodaki duraklatılmış dersler"
+    hint: "Panodaki duraklatılmış dersler kartı yalnızca bu yaşa kadar olan dersleri gösterir. Daha eski bir ders yalnızca karttan kalkar: hiçbir şey terk edilmez, konumu ve cevapları korunur."
+    label: "Şundan eski duraklatılmış dersleri gizle"
     7_days: "7 gün"
     14_days: "14 gün"
     30_days: "30 gün"
@@ -984,6 +1002,9 @@ settings:
   review_limit:
     label: "Tekrar başına soru"
     desc: "Bir tekrar oturumunun bitmeden önce kaç öğe gösterdiği. Kalan öğeler sonraki tura aktarılır."
+  review_include_never_wrong:
+    label: "Hatasız öğeleri de tekrar et"
+    desc: "Hiç yanlış yapmadığın öğeleri de aralıklı tekrara geri getirir (3 ve 7 gün sonra). Kapalı: tekrar yalnızca hatalı öğeleri içerir."
   max_lesson_size:
     title: Maksimum ders boyutu
     hint: "Uzun bir sohbet analizini çevrimdışı ders olarak kaydederken, bu sayıdan fazla adıma sahip dersler otomatik olarak birden fazla parçaya bölünür."
@@ -995,7 +1016,7 @@ settings:
   danger_zone_complete_toast: "Tüm veriler silindi."
   danger_zone_confirm_prompt: "Onaylamak için RESET yazın"
   danger_zone_continue: "Devam"
-  danger_zone_failed_toast: "Sıfırlama başarısız:"
+  danger_zone_failed: "Sıfırlama başarısız."
   danger_zone_final_button: "Kalıcı olarak sil"
   danger_zone_heading: "Tehlikeli bölge"
   danger_zone_input_placeholder: "RESET"
@@ -1159,8 +1180,9 @@ backup:
   too_large: 'Bu yedek dosyası çok büyük (100 MB''tan fazla).'
   export_success: Yedek indirildi ({{count}} kayıt).
   export_error: 'Yedekleme başarısız oldu: {{detail}}'
-  import_parse_error: 'Yedek okunamadı: {{detail}}'
-  import_error: 'Geri yükleme başarısız oldu: {{detail}}'
+  export_failed: "Yedekleme başarısız oldu."
+  import_parse_failed: "Yedek okunamadı."
+  import_failed: "Geri yükleme başarısız oldu."
   comparison_title: Geri yüklemeyi onayla
   comparison_help: 'Geri yükleme birleştirme yapar: yeni kayıtlar eklenir, değişebilir kayıtlar sadece yedek daha yeniyse güncellenir, geçmiş satırları olduğu gibi kalır. Hiçbir şey silinmez. API anahtarları yok sayılır.'
   table_header: Tablo
@@ -1194,10 +1216,11 @@ backup:
   auto_help: Her 10 tamamlanan oturumdan sonra ya da haftada bir otomatik yedek alır.
   auto_run: Şimdi yedek al
   auto_run_success: Otomatik yedek oluşturuldu.
-  auto_run_error: 'Otomatik yedek başarısız oldu: {{detail}}'
+  auto_run_failed: "Otomatik yedek başarısız oldu."
   auto_restored: Otomatik yedek geri yüklendi.
   auto_restore: Geri yükle
-  auto_restore_error: 'Geri yükleme başarısız oldu: {{detail}}'
+  auto_delete_error: "Otomatik yedek silinemedi."
+  auto_restore_failed: "Geri yükleme başarısız oldu."
   auto_records: '{{n}} kayıt'
   auto_none: Henüz otomatik yedek yok. İlki 10 oturum veya 7 gün sonra çalışır.
   storage_pressure: Tarayıcı deposu neredeyse dolu (kotanın %{{pct}}'i). Şimdi manuel yedek al.
@@ -1229,6 +1252,7 @@ backup:
   compare_high_volume_hint: Yoğun tablo - kayıt başına önizleme kısaltılmış olarak gösterilir.
   compare_export_md: Markdown olarak dışa aktar
   compare_markdown_downloaded: Fark dışa aktarıldı.
+  compare_export_failed: "Karşılaştırma dışa aktarılamadı."
   confirm_with_counts: Geri yükle ({{added}} eklenecek, {{updated}} güncellenecek)
   auto_compare_as_a: A olarak karşılaştır
   auto_compare_as_b: B olarak karşılaştır
@@ -1250,9 +1274,9 @@ export:
   busy: Çalışılıyor...
   download_success: Dışa aktarma indirildi.
   print_opened: Yazdırma penceresi açıldı. "PDF olarak kaydet"i seç.
-  error: 'Dışa aktarma başarısız oldu: {{detail}}'
-  preview_error: 'Önizleme başarısız oldu: {{detail}}'
-  load_error: 'Dışa aktarma verileri yüklenemedi: {{detail}}'
+  export_failed: "Dışa aktarma başarısız oldu."
+  preview_failed: "Önizleme başarısız oldu."
+  load_failed: "Dışa aktarma verileri yüklenemedi."
   pick_session: Önce bir oturum seç.
   pick_curriculum: Önce bir müfredat seç.
   title_progress: Öğrenme ilerlemesi
@@ -1496,6 +1520,8 @@ arcade:
   card_description: "Kısa turlarla Öğrenme Hafıza Oyunu ve Snake: oyun modu ödülün."
   card_open: "Arcade'e git"
   requires_playful: "Arcade oyun modunun bir parçasıdır. Ayarlardan oyun modunu (ve arcade anahtarını) aç."
+  requires_game_mode: "Arcade oyun modunun bir parçasıdır ve oyun modu kapalı. Ayarlardan aç."
+  requires_arcade_switch: "Oyun modu açık ama arcade anahtarı kapalı. Ayarlardaki oyun modu ayrıntılarından arcade'i aç."
   open_settings: "Ayarları aç"
   play: "Oyna"
   pause: "Duraklat"
@@ -1627,6 +1653,7 @@ notebooklm:
 feature:
   api_key_required: "API anahtarı gerekli. Ayarlardan bir sağlayıcı yapılandırın."
   desktop_only: "Yalnızca masaüstü uygulamasıyla kullanılabilir."
+  browser_only: "Yalnızca uygulamanın tarayıcı sürümünde kullanılabilir."
 ui:
   cancel: "İptal"
   hide_secret: "Değeri gizle"
@@ -1660,6 +1687,7 @@ ui:
     generic: "Bir şeyler ters gitti. Lütfen daha sonra tekrar dene."
     unexpected: "Bir şeyler ters gitti."
   error_report:
+    report_button: "Sorun bildir"
     dialog_title: "Bir sorun bildir"
     intro: "Adaptive Learner bir hata yakaladı ve geliştirici için bir hata raporu hazırlayabilir."
     description_label: "Yeniden oluşturma adımları (isteğe bağlı)"
@@ -1869,7 +1897,7 @@ repo:
   settings_description: "Oturum verilerinizden proje başına Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmada commit atar."
   settings_enable_git: "Git kalıcılığını etkinleştir"
   dexie_unavailable_body: "Bu özellik yalnızca sunucu modunda kullanılabilir. Git tabanlı öğrenme depolarını etkinleştirmek için Ayarlar'dan sunucu moduna geçin."
-  back_to_dashboard: "Panele dön"
+  back_to_dashboard: "Panoya dön"
   page:
     title: "Öğrenme deposu"
     rendered_at: "Oluşturulma"
@@ -1907,6 +1935,10 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
+  progress_io:
+    save_error: "Bu dersteki ilerlemeniz kaydedilemedi."
+    load_failed: "Bu ders için kaydedilmiş ilerlemeniz yüklenemedi: {detail}"
+    create_profile: "Öğrenme profili oluştur"
   mascot_label: "Öğrenme arkadaşın"
   combo_chip: "x{n}"
   combo_aria: "Cevap serisi: art arda {n}"
@@ -2072,6 +2104,7 @@ lesson:
       resolve: "Çöz"
       resolve_announce: "Çözüm gösterildi. {total} çiftten {correct} tanesi doğruydu."
       my_answers: "Cevaplarım"
+      corrections: "Düzeltme"
     picture:
       submit: "Cevabı kontrol et"
       retry: "Tekrar dene"
@@ -2098,7 +2131,6 @@ lesson:
       placeholder: "Cevabını yaz…"
       code_placeholder: "Kodu yaz…"
       input_label: "Senin cevabın"
-      hint_show: "İpucu ister misin?"
       result_correct: "Doğru!"
       result_wrong: "Pek değil."
       result_almost: "Neredeyse! Şuna dikkat et:"
@@ -2115,14 +2147,12 @@ lesson:
       answer_placeholder: "Cevabını oluşturmak için aşağıdaki kutucuklara dokun"
       scrambled_label: "Kullanılabilir kutucuklar"
       scrambled_done: "Tüm kutucuklar yerleştirildi."
-      hint_show: "İpucu ister misin?"
       result_correct: "Doğru!"
       result_wrong: "Pek değil."
       empty: "Bu kelime kutucukları alıştırmasında kutucuk yok."
     cloze:
       submit: "Cevapları kontrol et"
       retry: "Tekrar dene"
-      hint_show: "İpucu ister misin?"
       sentence_label: "Boşluk doldurma cümlesi"
       blank_label: "Boşluk {n}"
       select_placeholder: "Seç…"
@@ -2242,16 +2272,22 @@ lesson:
     al_ordering:
       empty: "Bu sıralama alıştırmasının öğesi yok."
       result_correct: "Doğru!"
-      result_wrong: "Tam değil - tekrar dene."
+      result_wrong: "Tam değil - sıralama henüz doğru değil."
       retry: "Tekrar dene"
+      review_heading: "Cevabın"
+      solution_heading: "Çözüm"
       submit: "Cevabı kontrol et"
     al_parsons:
       empty: "Bu kod sıralama alıştırmasının satırı yok."
       indent_dec: "Girintiyi azalt"
       indent_inc: "Girintiyi artır"
+      line_wrong_indent: "Girinti {actual}, beklenen {expected}"
+      line_wrong_position: "Yanlış konum"
       result_correct: "Doğru!"
       result_wrong: "Tam değil - sırayı ve girintiyi kontrol et."
       retry: "Tekrar dene"
+      review_heading: "Cevabın"
+      solution_heading: "Çözüm"
       submit: "Cevabı kontrol et"
     instruction:
       matching:
@@ -2386,6 +2422,9 @@ lesson:
     ticket_earned_one: "Ödül açıldı: bir oyun bileti!"
     ticket_earned_many: "Ödül açıldı: {n} oyun bileti!"
     ticket_play_now: "Şimdi oyna"
+    ticket_none_rule: "Bu sefer bilet yok: bilet, hatasız bir ders veya tüm kalplerle tamamlanan bir turla kazanılır."
+    ticket_none_completed: "Bu sefer bilet yok: bu dersi zaten tamamlamıştın."
+    ticket_none_cap: "Bu sefer bilet yok: bakiyen en fazla {n} bilet sınırında."
   error:
     load_failed: "Ders yüklenemedi."
     invalid_data: "Bu ders geçersiz veya bozuk veriler içerdiği için açılamıyor. Lütfen içerik yazarıyla iletişime geçin."
@@ -2407,6 +2446,8 @@ lesson:
     body: '"{title}" dersini duraklatttınız. Kaldığınız yerden devam etmek veya baştan başlamak ister misiniz?'
     action_resume: "Devam et"
     action_restart: "Baştan başla"
+    restart_confirm_title: "Baştan başlansın mı?"
+    restart_confirm_body: "Bu dersteki konumunuz ve cevaplarınız sıfırlanacak. Zaten öğrendikleriniz (ustalık ilerlemesi) korunur."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   update_guard:
@@ -2621,6 +2662,7 @@ content:
     change_failed: "Durum güncellenemedi."
     deleted: "Set kaldırıldı."
     delete_failed: "Set kaldırılamadı."
+    progress_not_deleted: "Kaldırıldı, ancak öğrenme ilerlemeniz silinemedi: {detail}"
     delete_confirm: "İndirilen set ve dersleri İçeriklerim'den kaldırılacak. Öğrenme ilerlemen korunur ve seti istediğin zaman yeniden indirebilirsin."
     select_all: "Tümünü seç"
     select_set: "{title} öğesini seç"
@@ -2762,6 +2804,8 @@ content:
     download_failed: "Set indirilemedi."
     update_all_failed: "{n} güncelleme başarısız oldu."
     open_failed: "Ders açılamadı."
+    export_failed: "Ders seti dışa aktarılamadı."
+    share_check_failed: "Set paylaşım için kontrol edilemedi."
   tree:
     i_speak: Konuştuğum dil
     learn: '{lang} öğren'
@@ -2812,9 +2856,10 @@ content:
     free_text_too_few_accepts: "'{lesson}' dersi: serbest metin alıştırması '{exercise}' en az {min} kabul edilen yanıt gerektirir."
     matching_too_few_pairs: "'{lesson}' dersi: eşleştirme alıştırması '{exercise}' en az {min} çift gerektirir."
     matching_duplicate_left: "'{lesson}' dersi: '{exercise}' eşleştirme alıştırması sol değeri '{value}' tekrarlıyor - öğrenci için çözülemez."
-    missing_distractors: "'{lesson}' dersi: '{exercise}' alıştırması çeldirici (yanlış seçenek) gerektirir."
     non_cefr_level: "'{level}' seviyesi bir CEFR bandı değil (A1-C2)."
     level_too_complex: "'{lesson}' dersi: metin sayfa başına ortalama {avg} kelime, {level} seviyesi için yüksek (yaklaşık {cap} beklenir)."
+    engine_rule: "Ders '{lesson}': {path} konumunda {rule} kuralı: {message}"
+    engine_warning: "Ders '{lesson}': {path} konumunda {rule} uyarısı: {message}"
     source_language_heuristic: Kart arka yüzleri {found} diline özgü karakterler içeriyor, ancak kaynak dil '{lang}'.
     target_language_heuristic: Kart ön yüzleri {found} diline özgü karakterler içeriyor, ancak hedef dil '{lang}'.
     failed_share_anyway: "Kalite kontrolü sorunlar buldu. Yine de paylaşabilirsiniz - incelemeciler bulguları pull request'te görecek."
@@ -3282,9 +3327,15 @@ create_lesson:
       image_add: "Görsel ekle"
       image_remove: "Görseli kaldır"
       err_prompt: "Bir soru veya yönerge girin."
-      err_matching: "En az 2 eksiksiz çift ekleyin (terim ve eşleşme)."
+      err_matching_pairs: "En az bir eksiksiz çift ekleyin (terim ve eşleşme)."
+      err_matching_duplicate_left: "Her terim yalnızca bir kez yer alabilir (büyük ve küçük harf ayrımı yapılmaz)."
+      err_matching_from_cards: "Kartlardan oluşturulan bir eşleştirme bağlı kartlar gerektirir ve ek çift içeremez."
+      err_cloze_distractors: "Seçmeli bir boşluk en az bir çeldirici gerektirir."
+      err_word_tiles_ordering: "Kabul edilen her kart sırası her kartı tam olarak bir kez kullanmalıdır."
+      err_card_ref: "Bu alıştırma artık derste olmayan bir karta başvuruyor."
       err_free_text: "En az bir kabul edilen yanıt ekleyin."
       err_cloze: "Her ___ işareti bir boşluk gerektirir ve her boşluk bir yanıt gerektirir."
+      err_cloze_multiselect: "Çoklu seçimli boşluk doldurma için bir soru, en az bir doğru seçenek ve en az bir çeldirici gerekir; hiçbir seçenek ikisi birden olamaz."
       err_word_tiles: "En az 2 kart ekleyin."
       err_picture_choice: "Her biri etiket ve görsel içeren en az 2 görsel ekleyin ve tam olarak birini doğru olarak işaretleyin."
       err_explanation: "Açıklama çok uzun (en fazla 2000 karakter)."
@@ -3424,7 +3475,10 @@ create_lesson:
     check_languagePair: "Dil çifti geçerli"
     check_enoughCards: "En az 4 kart"
     check_enoughExercises: "En az 5 alıştırma"
+    check_min_exercises: "En az {n} alıştırma"
     check_enoughTypes: "En az 2 alıştırma türü"
+    check_min_types: "En az {n} alıştırma türü"
+    check_exercise_minimums: "Her alıştırmada yeterli cevap veya çift var"
     check_schemaValid: "Geçerli ders yapısı"
     structure_error: "Teknik ayrıntı"
     structure_internal_error: "Bu ders denetlenirken bir iç hata oluştu. Bu, dersinizle değil uygulamayla ilgili bir sorundur. Lütfen sayfayı yeniden yükleyip tekrar deneyin; sorun devam ederse aşağıdan bildirin."
@@ -3449,7 +3503,7 @@ create_lesson:
   templates:
     extensions:
       title: "Gelişmiş alıştırma türleri"
-      desc: "Kategorilendirme ve hata düzeltme alıştırmaları oluşturun. Uzantıları destekleyen bir uygulama gerektirir."
+      desc: "Sıralama, hotspot, dikte veya notlu test gibi uzantı alıştırma türleri oluşturun. Uzantıları destekleyen bir uygulama gerektirir."
     knowledge_from_text:
       title: "Metinden bilgi dersi"
       desc: "Bir ders kitabı bölümü yapıştırın veya bir kitap dosyası yükleyin; yapay zeka teoriyi kendi kelimeleriyle yazar ve alıştırmalar üretir."
@@ -3495,6 +3549,16 @@ learning_path:
   train_errors: "Hataları çalış"
   shuffle: "Karışık mod"
   endless: "Sonsuz"
+  reset_all:
+    button: "Hepsini tekrarla"
+    title: "Tüm sonuçlar sıfırlansın mı?"
+    message: "“{title}” sonuçları sıfırlanır: {lessons} dersin puanı, yıldızları ve çalışma süresi. Yeni bir tur 1. dersten başlar; önceki turun hataları geçmiş olarak kalır. XP ve rozetler değişmez."
+    average: "Şimdiye kadarki ortalama: %{percent}"
+    no_average: "Henüz ortalama yok."
+    confirm: "Sıfırla ve yeniden başla"
+    cancel: "İptal"
+    success: "Sonuçlar sıfırlandı. Yeni bir tur 1. dersle başlıyor."
+    failed: "Sonuçlar sıfırlanamadı."
   personal:
     title: "Öğrenme yolun"
     progress: "Genel: %{n} tamamlandı"
@@ -3603,6 +3667,7 @@ pwa:
   cache_clear: "Önbelleği temizle"
   cache_clear_confirm: "Çevrimdışı önbellek temizlensin mi?"
   cache_clear_action: "Evet, temizle"
+  cache_clear_failed: "Çevrimdışı önbellek temizlenemedi: {detail}"
   cache_cleared: "Çevrimdışı önbellek temizlendi."
   update:
     message: "Yeni bir sürüm mevcut."
@@ -3981,6 +4046,8 @@ content_repo:
     copy_failed: "Kopyalanamadı."
     hint: "Başkalarının bu HERKESE AÇIK depoyu ekleyebilmesi için bu bağlantıyı paylaş. Özel bir depo için URL'yi ve salt okunur bir belirteci ayrı ayrı gönder."
     qr_alt: "Paylaşım bağlantısı için QR kodu"
+  remove_error: "Depo kaldırılamadı."
+  reorder_error: "Depoların sırası değiştirilemedi."
   progress:
     syncing: "Eşitleniyor…"
     validating: "Depo doğrulanıyor…"
@@ -4279,3 +4346,9 @@ set_summary:
     vocabulary: "Kelime bilgisi"
     grammar_rule: "Dil bilgisi kuralı"
     unknown: "Bilinmeyen"
+runner:
+  back_to_dashboard: "Panoya dön"
+  not_cached_body: "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç."
+  error:
+    missing_params: "İçerik seti seçilmedi."
+    invalid_data: "Bu içerik geçersiz veya bozuk veriler içerdiği için açılamıyor. Lütfen içerik yazarıyla iletişime geçin."

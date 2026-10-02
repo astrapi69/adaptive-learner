@@ -90,9 +90,9 @@ export function useEditAsCopy({ fetchSetLessons, onForked }: UseEditAsCopyDeps) 
       notify.success(t("content.edit_as_copy.saved", "Saved as your own copy."));
       onForked(entry);
     } catch (err) {
-      const detail = err instanceof Error ? err.message : String(err);
       notify.error(
-        `${t("content.edit_as_copy.failed", "Could not create the copy.")} ${detail}`,
+        t("content.edit_as_copy.failed", "Could not create the copy."),
+        { error: err },
       );
     } finally {
       setEditingAsCopy(false);

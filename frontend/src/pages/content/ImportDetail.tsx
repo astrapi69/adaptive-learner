@@ -213,7 +213,7 @@ export default function ImportDetail({
         >
           ← {t("import.back_to_list", "Back to imports")}
         </Button>
-        <h1 className="m-0" data-testid="import-detail-title">
+        <h1 className="m-0 wrap-anywhere" data-testid="import-detail-title">
           {importHeadingTitle(detail.title, analysis?.topic)}
         </h1>
         <p className="mt-2 mb-0 text-sm text-fg-muted">

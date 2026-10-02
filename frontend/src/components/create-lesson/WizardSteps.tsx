@@ -127,6 +127,7 @@ export default function WizardSteps({
                         onDelete={onDeleteExercise}
                         onUpdate={onUpdateExercise}
                         onAdd={onAddExercise}
+                        cardIds={cards.map((card) => card.id)}
                     />
                     {exerciseError && (
                         <FormHint

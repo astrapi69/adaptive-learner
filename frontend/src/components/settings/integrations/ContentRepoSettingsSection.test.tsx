@@ -12,25 +12,39 @@ const pluginUpdate = vi.fn();
 const listSets = vi.fn();
 const downloadSet = vi.fn();
 const githubGetStatus = vi.fn();
+const deleteLearningData = vi.fn();
 
 vi.mock("../../../storage", () => ({
   getStorage: () => ({
     pluginSettings: { get: pluginGet, update: pluginUpdate },
     contentLoader: { listSets, downloadSet },
     github: { getStatus: githubGetStatus },
+    learningData: { deleteLearningData },
   }),
   resolveStorageMode: () => "api",
 }));
 
-const { notifyError, notifySuccess, validateUserRepo, listRepoManifestSets } =
-  vi.hoisted(() => ({
+const {
+  notifyError,
+  notifySuccess,
+  notifyWarning,
+  validateUserRepo,
+  listRepoManifestSets,
+  computeRepoDeletionPlan,
+} = vi.hoisted(() => ({
     notifyError: vi.fn(),
     notifySuccess: vi.fn(),
+    notifyWarning: vi.fn(),
+    computeRepoDeletionPlan: vi.fn(),
     validateUserRepo: vi.fn(),
     listRepoManifestSets: vi.fn(),
   }));
 vi.mock("../../../utils/notify", () => ({
-  notify: { error: notifyError, success: notifySuccess },
+  notify: { error: notifyError, success: notifySuccess, warning: notifyWarning },
+}));
+vi.mock("../../../hooks/content/set-actions/deletion-plans", async (orig) => ({
+  ...(await orig<typeof import("../../../hooks/content/set-actions/deletion-plans")>()),
+  computeRepoDeletionPlan,
 }));
 vi.mock("../../../lib/content/repos/content-repo-validate", () => ({
   validateUserRepo,
@@ -76,6 +90,10 @@ beforeEach(() => {
   githubGetStatus.mockReset();
   notifyError.mockReset();
   notifySuccess.mockReset();
+  notifyWarning.mockReset();
+  deleteLearningData.mockReset();
+  computeRepoDeletionPlan.mockReset();
+  computeRepoDeletionPlan.mockResolvedValue(null);
   validateUserRepo.mockReset();
   decodeQrImage.mockReset();
   fetchRecommendedRepos.mockReset();
@@ -251,6 +269,60 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     await waitFor(() => expect(pluginUpdate).toHaveBeenCalled());
     const [, body] = pluginUpdate.mock.calls[0];
     expect(body.settings.user_repos).toEqual([]);
+  });
+
+  it("warns instead of claiming success when the opted-in progress delete fails (#3382)", async () => {
+    localStorage.setItem("adaptive-learner.user_id", "u1");
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [REPO] },
+    });
+    computeRepoDeletionPlan.mockResolvedValue({
+      lessonProgressIds: ["p1"],
+      orphanedSetIds: [],
+      lessonCount: 1,
+      cardCount: 0,
+    });
+    deleteLearningData.mockRejectedValue(new Error("quota exceeded"));
+    render(<ContentRepoSettingsSection />);
+    fireEvent.click(await screen.findByTestId("content-repo-remove-jane-deck"));
+    fireEvent.click(await screen.findByTestId("content-repo-remove-delete-progress"));
+    fireEvent.click(await screen.findByTestId("content-repo-remove-dialog-confirm"));
+    await waitFor(() => expect(notifyWarning).toHaveBeenCalled());
+    expect(String(notifyWarning.mock.calls[0][0])).toContain("quota exceeded");
+    expect(notifySuccess).not.toHaveBeenCalled();
+    expect(deleteLearningData).toHaveBeenCalledWith("u1", {
+      lessonProgressIds: ["p1"],
+      setIds: [],
+    });
+    localStorage.clear();
+  });
+
+  it("tells the user when removing a repo fails (#3384)", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [REPO] },
+    });
+    pluginUpdate.mockRejectedValue(new Error("disk full"));
+    render(<ContentRepoSettingsSection />);
+    fireEvent.click(await screen.findByTestId("content-repo-remove-jane-deck"));
+    fireEvent.click(await screen.findByTestId("content-repo-remove-dialog-confirm"));
+    await waitFor(() => expect(notifyError).toHaveBeenCalled());
+    expect(notifyError.mock.calls[0][1]).toMatchObject({ error: { message: "disk full" } });
+  });
+
+  it("tells the user when reordering repos fails (#3384)", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: {
+        user_repos: [REPO, { ...REPO, url: "https://github.com/jane/other", repo: "other" }],
+      },
+    });
+    pluginUpdate.mockRejectedValue(new Error("quota"));
+    render(<ContentRepoSettingsSection />);
+    fireEvent.click(await screen.findByTestId("content-repo-down-jane-deck"));
+    await waitFor(() => expect(notifyError).toHaveBeenCalled());
+    expect(notifyError.mock.calls[0][1]).toMatchObject({ error: { message: "quota" } });
   });
 
   it("hints to set a token when none is configured", async () => {

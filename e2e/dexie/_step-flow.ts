@@ -5,11 +5,20 @@ import { expect, type Page } from "@playwright/test";
  * page mounts exactly ONE step container at a time, under its own prefix:
  *   - the main lesson viewer (Lesson.tsx)      -> ``lesson-step-<id>``
  *   - the Error Replay lesson (ErrorReplayLesson) -> ``error-replay-step-<id>``
- *   - the Adaptive lesson (AdaptiveLesson)      -> ``adaptive-step-<id>``
+ *   - the Adaptive lesson (AdaptiveLesson)      -> ``adaptive-lesson-step-<id>``
  * The prefixes are disjoint, so a union selector auto-detects the active one.
+ *
+ * The runner shell (EXP-052, #3169) renders the Adaptive and Error Replay
+ * steps under the page's testid prefix (the adaptive step moved from
+ * ``adaptive-step-`` onto ``adaptive-lesson-step-`` with slice 3) and puts a
+ * scroll anchor ``<prefix>-step-anchor`` BEFORE the step. The anchor shares
+ * the prefix but never unmounts, so it is excluded: picked first, it would
+ * turn every ``waitForStepAdvance`` into a 5s timeout.
  */
-const STEP_CONTAINER_SELECTOR =
-  '[data-testid^="lesson-step-"], [data-testid^="error-replay-step-"], [data-testid^="adaptive-step-"]';
+const NOT_ANCHOR = ':not([data-testid$="-step-anchor"])';
+const STEP_CONTAINER_SELECTOR = ["lesson-step-", "error-replay-step-", "adaptive-lesson-step-"]
+  .map((prefix) => `[data-testid^="${prefix}"]${NOT_ANCHOR}`)
+  .join(", ");
 
 /**
  * Read the currently-mounted lesson step container's testid, or null when no

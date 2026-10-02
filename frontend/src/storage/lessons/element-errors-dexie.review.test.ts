@@ -173,7 +173,9 @@ describe("#673 review completion lowers the due count", () => {
         // Original row still overdue (the symptom); the phantom row inflated
         // the non-overdue tail. Net: the user-visible due count did NOT drop.
         expect(await overdueCount()).toBe(1);
-        const all = await computeReviewQueueDexie(USER);
+        // #3170: the phantom is a never-wrong row, so it is only listed when
+        // never-wrong rows are opted in; the symptom above holds regardless.
+        const all = await computeReviewQueueDexie(USER, {includeNeverWrong: true});
         expect(all.length).toBe(2); // original (overdue) + phantom (fresh)
     });
 

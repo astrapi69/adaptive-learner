@@ -60,14 +60,11 @@ export async function getCacheInfo(): Promise<CacheInfo> {
   return { bytes, lessonCount };
 }
 
-/** Delete the entire offline lesson cache. No-op when unsupported. */
+/** Delete the entire offline lesson cache. No-op when unsupported; a
+ *  failure rejects, so the caller can tell the user (#3384). */
 export async function clearLessonCache(): Promise<void> {
   if (typeof caches === "undefined") return;
-  try {
-    await caches.delete(LESSON_CACHE_NAME);
-  } catch {
-    // Nothing actionable.
-  }
+  await caches.delete(LESSON_CACHE_NAME);
 }
 
 /** Format a byte count as a 1-decimal MB string (e.g. ``1.4``). */
