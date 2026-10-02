@@ -162,26 +162,40 @@ try {
     //    their content (and load their lazy bundles) instead of redirecting.
     await visit("/onboarding");
     // #3319 (the #3226 shape): the page states its migration verdict in
-    // data-migration-offer. A bare container carries no legacy data, so the
-    // verdict must be "none" and the welcome must not render; a "shown"
-    // here means the image ships data it should not, and a missing
-    // verdict means the page never settled.
+    // data-migration-offer ("pending" until its empty-install probe
+    // settled). A bare container IS the case #1085 exists for: a fresh
+    // local (API-mode) install with no data, so the page offers to bring
+    // data over from the online version. The verdict must be "shown" and
+    // the welcome must render (#3545: #3334 asserted the opposite). A
+    // "none" means the offer is gone from the one place it belongs, a
+    // missing verdict that the page never settled. The walk then dismisses
+    // the welcome the way a learner without online data does.
     const onboardingRoot = page.getByTestId("onboarding");
     await onboardingRoot
         .waitFor({state: "visible", timeout: 20_000})
         .catch(() => problems.push("[/onboarding] the onboarding page never rendered"));
+    await page
+        .locator('[data-testid="onboarding"]:not([data-migration-offer="pending"])')
+        .waitFor({state: "attached", timeout: 20_000})
+        .catch(() => problems.push("[/onboarding] the migration verdict never settled"));
     const migrationOffer = await onboardingRoot
         .getAttribute("data-migration-offer")
         .catch(() => null);
-    if (migrationOffer !== "none") {
+    console.log(`onboarding migration verdict: ${migrationOffer}`);
+    if (migrationOffer !== "shown") {
         problems.push(
-            `[/onboarding] migration verdict is ${JSON.stringify(migrationOffer)}, expected "none" on a bare container`,
+            `[/onboarding] migration verdict is ${JSON.stringify(migrationOffer)}, expected "shown" on a bare container (#1085)`,
         );
     }
-    if ((await page.getByTestId("migration-start-fresh").count()) !== 0) {
-        problems.push("[/onboarding] the migration welcome rendered on a bare container");
+    const startFresh = page.getByTestId("migration-start-fresh");
+    if ((await startFresh.count()) !== 1) {
+        problems.push("[/onboarding] the migration welcome did not render on a bare container (#1085)");
+    } else {
+        await click("migration-start-fresh");
+        if ((await startFresh.count()) !== 0) {
+            problems.push("[/onboarding] the migration welcome stayed open after 'start fresh'");
+        }
     }
-    console.log(`onboarding migration verdict: ${migrationOffer}`);
     await page.getByTestId("onboarding-name").fill("Chain Probe");
     await page.getByTestId("onboarding-topic").fill("Spanish");
     await click("onboarding-submit");
