@@ -2547,6 +2547,13 @@ switch the section on in Settings first or press "Detailed evaluation"
       into the source order (kapitel-1..kapitel-10), the success screen
       reports the NN-prefix renaming; the exported repo lists the
       lessons in source order
+- [ ] TC-0929 **"Share as repository" yields a loadable repo (#3403):** after the
+      export, the GitHub repo holds a `manifest.yaml` with a `sets` list
+      (an entry with `path: sets/<set-id>`), a `manifest.yaml` of its own
+      under `sets/<set-id>/` with `metadata.lessons`, and the lessons in
+      `sets/<set-id>/lessons/`. Add this repo under Settings > Data >
+      Sources: the set appears in the content browser, downloads, and
+      every lesson opens
 
 ### TS-0080 Discover Stage 1: facets, marks, empty state (EXP-048, #2320-#2324)
 

@@ -15,8 +15,8 @@
  * 100% compatible with the loader that parses these same files on import.
  */
 
-import {lessonIdOrderingIssues} from "learn-content-engine";
-import {stringify as stringifyYaml} from "yaml";
+import {lessonIdOrderingIssues, validateManifest} from "learn-content-engine";
+import {parse as parseYaml, stringify as stringifyYaml} from "yaml";
 
 import {
     DEFAULT_DOMAIN,
@@ -116,28 +116,71 @@ function lessonForExport(
     return {...lesson, domain} as ContentLesson;
 }
 
-/** Build the set-level ``manifest.yaml`` body. */
+/** Repo-relative directory of the exported set (#3403). ``sets/{id}`` is
+ *  also where readers look when a manifest names no ``path``. */
+function exportSetPath(set: ContentSetEntry): string {
+    return `sets/${set.id}`;
+}
+
+/** The set's entry in a manifest's ``sets`` list. Only fields the
+ *  manifest schema knows; empties are omitted so the file stays clean. */
+function manifestSetEntry(set: ContentSetEntry, lessonCount: number): Record<string, unknown> {
+    const entry: Record<string, unknown> = {
+        id: set.id,
+        title: set.title,
+        target_language: set.target_language,
+        source_language: set.source_language,
+        level: normalizeLevel(set.level),
+        domain: exportDomain(set),
+        version: set.version || "1.0.0",
+        lesson_count: lessonCount,
+        path: exportSetPath(set),
+    };
+    if (set.title_native) entry.title_native = set.title_native;
+    if (set.description) entry.description = set.description;
+    if (set.tags && set.tags.length > 0) entry.tags = set.tags;
+    if (set.book) entry.book = set.book;
+    return entry;
+}
+
+/** Build the repo-root ``manifest.yaml``: the repo name plus the one
+ *  exported set and its ``path`` (#3403 - the canonical ``sets`` shape;
+ *  flat root keys failed the engine's ``validateManifest``). */
 export function buildManifestYaml(
     set: ContentSetEntry,
     lessonCount: number,
 ): string {
-    // Only emit fields the loader reads; omit empties so the file stays
-    // clean. ``name`` is the source-language title (the loader's title key).
     const manifest: Record<string, unknown> = {
         schema_version: CURRENT_MANIFEST_SCHEMA_VERSION,
         name: set.title,
-        source_language: set.source_language,
-        target_language: set.target_language,
-        level: normalizeLevel(set.level),
-        domain: exportDomain(set),
-        lesson_count: lessonCount,
-        version: set.version || "1.0.0",
+        ...(set.description ? {description: set.description} : {}),
+        sets: [manifestSetEntry(set, lessonCount)],
     };
-    if (set.title_native) manifest.title_native = set.title_native;
-    if (set.description) manifest.description = set.description;
-    if (set.tags && set.tags.length > 0) manifest.tags = set.tags;
-    if (set.book) manifest.book = set.book;
     return stringifyYaml(manifest);
+}
+
+/** Build the set-level ``manifest.yaml`` under {@link exportSetPath}: the
+ *  same set entry plus ``metadata.lessons``, the files readers download. */
+function buildSetManifestYaml(
+    set: ContentSetEntry,
+    lessonFilenames: readonly string[],
+): string {
+    const manifest: Record<string, unknown> = {
+        schema_version: CURRENT_MANIFEST_SCHEMA_VERSION,
+        name: set.title,
+        sets: [manifestSetEntry(set, lessonFilenames.length)],
+        metadata: {lessons: [...lessonFilenames]},
+    };
+    return stringifyYaml(manifest);
+}
+
+/** Refuse to export a manifest the engine rejects: a repo nobody can load
+ *  is worse than an export that stops with the engine's reasons. */
+function assertValidManifest(path: string, content: string): void {
+    const verdict = validateManifest(parseYaml(content));
+    if (verdict.valid) return;
+    const reasons = verdict.errors.map((e) => `${e.path || "/"} ${e.message}`).join("; ");
+    throw new Error(`${path} is not a valid content manifest: ${reasons}`);
 }
 
 /** Build the repo-root ``search-index.json`` (one entry for this set).
@@ -287,16 +330,22 @@ export function planLessonFilenames(
 export function buildRepoExportFiles(
     input: RepoExportInput,
 ): RepoExportFile[] {
+    const plan = planLessonFilenames(input.lessons);
+    const setPath = exportSetPath(input.set);
     const files: RepoExportFile[] = [
         {
             path: "manifest.yaml",
             content: buildManifestYaml(input.set, input.lessons.length),
         },
+        {
+            path: `${setPath}/manifest.yaml`,
+            content: buildSetManifestYaml(input.set, plan.filenames),
+        },
     ];
-    const plan = planLessonFilenames(input.lessons);
+    for (const manifest of files) assertValidManifest(manifest.path, manifest.content);
     input.lessons.forEach((l, i) => {
         files.push({
-            path: `lessons/${plan.filenames[i]}`,
+            path: `${setPath}/lessons/${plan.filenames[i]}`,
             content: JSON.stringify(lessonForExport(l.lesson, input.set), null, 2) + "\n",
         });
     });

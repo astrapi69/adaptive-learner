@@ -5,6 +5,7 @@
  * back with the SAME parsers the import path uses (yaml + parseSearchIndex).
  */
 
+import {validateManifest} from "learn-content-engine";
 import {describe, expect, it} from "vitest";
 import {parse as parseYaml} from "yaml";
 
@@ -67,20 +68,21 @@ describe("buildManifestYaml", () => {
     it("round-trips through the yaml parser with loader fields", () => {
         const m = parseYaml(buildManifestYaml(SET, 2));
         expect(m.name).toBe("Deutsch B2 Kurs");
-        expect(m.source_language).toBe("en");
-        expect(m.target_language).toBe("de");
-        expect(m.level).toBe("B2");
-        expect(m.domain).toBe("language");
-        expect(m.lesson_count).toBe(2);
+        const entry = m.sets[0];
+        expect(entry.source_language).toBe("en");
+        expect(entry.target_language).toBe("de");
+        expect(entry.level).toBe("B2");
+        expect(entry.domain).toBe("language");
+        expect(entry.lesson_count).toBe(2);
         expect(m.schema_version).toBe(CURRENT_MANIFEST_SCHEMA_VERSION);
-        expect(m.tags).toEqual(["grammar", "b2"]);
+        expect(entry.tags).toEqual(["grammar", "b2"]);
     });
 
     // #3385 - the manifest schema rejects an empty level; a set stored
     // without one exports the engine's "none" sentinel instead.
     it("writes a set without a level as level none, in the manifest and the index", () => {
         const levelless = {...SET, level: "", domain: "knowledge"};
-        expect(parseYaml(buildManifestYaml(levelless, 2)).level).toBe("none");
+        expect(parseYaml(buildManifestYaml(levelless, 2)).sets[0].level).toBe("none");
         const index = JSON.parse(
             buildSearchIndexJson({...INPUT, set: levelless}),
         );
@@ -190,7 +192,7 @@ describe("exportDomain", () => {
                 lesson: {...l.lesson, domain: "imported"} as ContentLesson,
             })),
         };
-        expect(parseYaml(buildManifestYaml(importedSet, 2)).domain).toBe(
+        expect(parseYaml(buildManifestYaml(importedSet, 2)).sets[0].domain).toBe(
             "language",
         );
         expect(JSON.parse(buildSearchIndexJson(input)).sets[0].domain).toBe(
@@ -198,7 +200,7 @@ describe("exportDomain", () => {
         );
         expect(buildReadme(input)).toContain("Domain: language");
         const lessonFiles = buildRepoExportFiles(input).filter((f) =>
-            f.path.startsWith("lessons/"),
+            f.path.startsWith("sets/de-b2/lessons/"),
         );
         expect(lessonFiles).toHaveLength(2);
         for (const file of lessonFiles) {
@@ -255,7 +257,9 @@ describe("exportLessonDomain (#3242)", () => {
 
     it("writes no domain key into a lesson file whose lesson had none", () => {
         const files = buildRepoExportFiles({...INPUT, set: languagePair});
-        const first = JSON.parse(files[1].content);
+        const first = JSON.parse(
+            files.find((f) => f.path.includes("/lessons/"))?.content ?? "{}",
+        );
         expect(first).not.toHaveProperty("domain");
     });
 });
@@ -322,8 +326,51 @@ describe("planLessonFilenames", () => {
             ],
         };
         const paths = buildRepoExportFiles(input).map((f) => f.path);
-        expect(paths).toContain("lessons/01-kapitel-2.json");
-        expect(paths).toContain("lessons/02-kapitel-10.json");
+        expect(paths).toContain("sets/de-b2/lessons/01-kapitel-2.json");
+        expect(paths).toContain("sets/de-b2/lessons/02-kapitel-10.json");
+    });
+});
+
+// #3403 - an exported repo has the layout every reader loads: a root
+// manifest listing the set with its path, a set manifest that names the
+// lessons, and the lessons under that path. Both manifests pass the
+// engine's validateManifest.
+describe("exported repo layout (#3403)", () => {
+    const files = buildRepoExportFiles(INPUT);
+    const byPath = new Map(files.map((f) => [f.path, f.content]));
+
+    it.each([
+        ["root", "manifest.yaml"],
+        ["set", "sets/de-b2/manifest.yaml"],
+    ])("writes a %s manifest the engine accepts", (_kind, path) => {
+        const verdict = validateManifest(parseYaml(byPath.get(path) ?? ""));
+        expect(verdict.errors.map((e) => `${e.id} ${e.message}`)).toEqual([]);
+    });
+
+    it("lists the set with its path in the root manifest", () => {
+        const root = parseYaml(byPath.get("manifest.yaml") ?? "");
+        expect(root.sets.map((s: {id: string; path: string}) => [s.id, s.path])).toEqual([
+            ["de-b2", "sets/de-b2"],
+        ]);
+    });
+
+    it("refuses to export a manifest the engine rejects, with its reasons", () => {
+        const badLanguage = {...SET, target_language: "not a language"} as ContentSetEntry;
+        expect(() => buildRepoExportFiles({...INPUT, set: badLanguage})).toThrow(
+            /manifest\.yaml is not a valid content manifest: .*target_language/,
+        );
+    });
+
+    it("names the lessons in the set manifest and stores them under the set path", () => {
+        const setManifest = parseYaml(byPath.get("sets/de-b2/manifest.yaml") ?? "");
+        expect(setManifest.metadata.lessons).toEqual([
+            "01-grundkonzepte.json",
+            "02-aufbau.json",
+        ]);
+        expect([...byPath.keys()].filter((p) => p.endsWith(".json") && p.includes("lessons/"))).toEqual([
+            "sets/de-b2/lessons/01-grundkonzepte.json",
+            "sets/de-b2/lessons/02-aufbau.json",
+        ]);
     });
 });
 
@@ -333,13 +380,14 @@ describe("buildRepoExportFiles", () => {
         const paths = files.map((f) => f.path);
         expect(paths).toEqual([
             "manifest.yaml",
-            "lessons/01-grundkonzepte.json",
-            "lessons/02-aufbau.json",
+            "sets/de-b2/manifest.yaml",
+            "sets/de-b2/lessons/01-grundkonzepte.json",
+            "sets/de-b2/lessons/02-aufbau.json",
             "search-index.json",
             "README.md",
         ]);
         // Each lesson file is valid JSON of the lesson.
-        const l1 = JSON.parse(files[1].content);
+        const l1 = JSON.parse(files[2].content);
         expect(l1.title).toBe("Grundkonzepte");
     });
 });
