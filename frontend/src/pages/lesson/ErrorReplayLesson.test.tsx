@@ -101,12 +101,14 @@ describe("ErrorReplayLesson", () => {
             cards: [],
             lessonTitle: "Arbeits- und Organisationspsychologie",
         });
-        // ``wrap-anywhere`` (overflow-wrap: anywhere) lets the 24-char word
-        // break; without it the h1 widens the page horizontally and iOS
-        // WebKit clips the sticky footer's "Weiter" button (#1834 class).
-        expect(screen.getByRole("heading", {level: 1})).toHaveClass(
-            "wrap-anywhere",
-        );
+        // #3406: the base ``:where(h1)`` rule (heading-wrap.test.ts) breaks
+        // the 24-char word - hyphenated, anywhere as fallback - so the h1 no
+        // longer widens the page and iOS WebKit no longer clips the sticky
+        // footer's "Weiter" button (#1834 class). The title renders as an
+        // unclassed h1 so the rule, not a per-source class, applies.
+        const heading = screen.getByRole("heading", {level: 1});
+        expect(heading).toHaveTextContent("Organisationspsychologie");
+        expect(heading).not.toHaveAttribute("class");
     });
 
     it("all correct after replay → celebration + score", async () => {

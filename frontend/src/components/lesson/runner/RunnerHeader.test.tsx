@@ -59,20 +59,15 @@ describe("RunnerHeader: session variant", () => {
     expect(screen.getByTestId("dashboard-stub")).toBeInTheDocument();
   });
 
-  // #2761 moved into the shell (slice 3): a title that carries content text
-  // (the replay's lesson name) must break a long unbreakable word instead of
-  // widening the page, or iOS WebKit clips the sticky footer's Next button
-  // (#1834 class).
-  it("a content title wraps a long unbreakable word instead of overflowing sideways (#2761)", () => {
-    mount(<RunnerHeader policy={REVIEW_POLICY} source={{...SOURCE, wrapTitle: true}} />);
-    expect(screen.getByRole("heading", {level: 1})).toHaveClass("wrap-anywhere");
-  });
-
-  // Byte for byte for the session runners: at 375px "Wiederholungssitzung"
-  // broke as "Wiederholungssitzun / g" with the wrap on every title. A
-  // header change for every runner belongs to the compact header (#3173).
-  it("edge: a fixed title keeps the unclassed h1 the session runners render today", () => {
-    mount(<RunnerHeader policy={REVIEW_POLICY} source={SOURCE} />);
+  // #2761 / #3406: no title widens the page, and no title needs a class for
+  // it - the base ``:where(h1)`` rule (heading-wrap.test.ts) hyphenates a long
+  // word and falls back to breaking it anywhere, for fixed and content titles
+  // alike. The h1 stays unclassed so the rule, not a per-source flag, decides.
+  it.each([
+    ["a fixed title", SOURCE],
+    ["a content title", {...SOURCE, title: "Fehler wiederholen: Organisationspsychologie"}],
+  ])("%s renders an unclassed h1 the base wrap rule applies to (#3406)", (_label, source) => {
+    mount(<RunnerHeader policy={REVIEW_POLICY} source={source} />);
     expect(screen.getByRole("heading", {level: 1})).not.toHaveAttribute("class");
   });
 
