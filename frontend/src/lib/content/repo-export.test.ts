@@ -301,6 +301,18 @@ describe("planLessonFilenames", () => {
         expect(plan.filenames).toEqual(["01-foo.json", "02-bar.json"]);
     });
 
+    // #3401 - readers sort by code unit (``.sort()``, Python ``sorted``),
+    // and the engine's ordering lint decides what a fragile shape is; a
+    // locale-aware comparison kept names that readers display differently.
+    it.each([
+        ["a non-ASCII name sorting after z by code unit", ["über.json", "zebra.json"]],
+        ["a mix of NN- prefixed and unprefixed ids", ["01-intro.json", "zusatz.json"]],
+    ])("renumbers %s", (_name, names) => {
+        const plan = planLessonFilenames(named(names));
+        expect(plan.reordered).toBe(true);
+        expect([...plan.filenames].sort()).toEqual(plan.filenames);
+    });
+
     it("feeds buildRepoExportFiles so the archive carries ordered names", () => {
         const input: RepoExportInput = {
             ...INPUT,
