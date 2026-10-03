@@ -56,6 +56,21 @@ Session der ccw-Lane, begonnen am 2026-10-01: Queue-Abarbeitung mit Owner-Pausen
   - Launcher-Builds für den Tag-Commit per workflow_dispatch angestoßen (der Pfadfilter hatte sie für den zweiten main-Merge übersprungen).
 - Commit: e9d380f9, ed387461, 5657dbd2, e59eba63, 68389d39, bfab5695, f92d3610; main a896887e; #3541.
 
+## 7. Release-Checkliste v2.16.0 (Veröffentlichung)
+
+- Original prompt: Übergabe der lokalen Sitzung, Abschnitt 1 "v2.16.0 fertig veröffentlichen".
+- Optimized prompt: "Re-Verify-Lauf und Draft-Assets prüfen, bei Grün veröffentlichen, Pages-Deploy prüfen, die Checkliste mit Run-IDs ins Journal."
+- Goal: v2.16.0 öffentlich, Checkliste belegt.
+- Result:
+  - Tag `v2.16.0` (annotiert) zeigt auf `a896887e`, vom Owner gepusht. Release Gate grün (Run 37020745641).
+  - Smoke: 45 passed / 0 silenced; ein Flake, eigenes Issue #3544.
+  - Launcher-Builds des Tag-Commits: Runs 36988770047, 36988773445, 36988776618, alle grün.
+  - Publish-Image: Run 37024516951 rot (#3545: Rundgang erwartete auf einem leeren Container keinen Migrationsdialog, arm64 3,6 MB über der Grenze), behoben in #3546. Re-Verify Run 37030147226 grün: Digest stimmt mit dem aus Run 1, anonymer Pull, Version, Größe und Seitenrundgang auf amd64 und arm64.
+  - Draft-Assets genau die erwarteten 7: drei Launcher, drei `.sha256`, `image-digest.txt`.
+  - Pages-Deploy: Run 36987738992 auf `a896887e` grün (`deploy-gh-pages.yml`; `docs.yml` ist seit Mai stillgelegt). Die Seite selbst war aus der Session nicht abrufbar (Proxy).
+  - Veröffentlichen (`draft=false`) aus dieser Session abgelehnt: "Creating, editing, or deleting releases is not permitted for this session type." Bleibt beim Owner.
+- Commit: (dieser PR).
+
 ## Lektionen dieser Runde
 
 - Eine nur nächtlich laufende Suite (Dexie-Smoke, Testplan-Automatisierung) sah zwei Tage lang rot aus, ohne dass ein PR es zeigte. Beim Ändern eines Breakpoints oder einer Validierung die E2E-Specs mit grepen, auch wenn der PR-Lauf grün ist.
