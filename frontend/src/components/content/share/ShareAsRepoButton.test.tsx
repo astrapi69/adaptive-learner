@@ -217,8 +217,13 @@ describe("ShareAsRepoButton quality gate (#2376)", () => {
     await screen.findByTestId("repo-export-renamed-note");
     const call = storageMock.github.exportSetToRepo.mock.calls[0]?.[0];
     const paths = call!.files.map((f) => f.path);
-    expect(paths).toContain("lessons/01-kapitel-2.json");
-    expect(paths).toContain("lessons/02-kapitel-10.json");
+    // #3403 - lessons live under the set's path, next to its manifest.
+    const lessonPaths = paths.filter((p: string) => p.includes("/lessons/"));
+    expect(lessonPaths.map((p: string) => p.slice(p.lastIndexOf("/") + 1))).toEqual([
+      "01-kapitel-2.json",
+      "02-kapitel-10.json",
+    ]);
+    expect(lessonPaths.every((p: string) => p.startsWith("sets/"))).toBe(true);
   });
 
   it("skips the renamed note when the filenames already sort in order", async () => {
