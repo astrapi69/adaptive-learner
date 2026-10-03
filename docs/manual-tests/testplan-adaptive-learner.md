@@ -1862,9 +1862,10 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       die Lektion trägt die gewählte Domain (`domain: psychology` …); eine
       Sprachlektion trägt KEIN `domain`-Feld. Bearbeiten einer gespeicherten
       Wissenslektion öffnet wieder mit der richtigen Domain + Inhaltssprache
-- [ ] TC-0417 **Sprachpaar-Pruefpunkt (#1929):** Review zeigt SECHS Checklisten-
-      Punkte (Titel, "Sprachpaar ist gültig", ≥4 Karten, ≥5 Übungen,
-      ≥2 Typen, gültige Struktur). "Sprachpaar ist gültig" ist grün,
+- [ ] TC-0417 **Sprachpaar-Pruefpunkt (#1929):** Review zeigt VIER Checklisten-
+      Punkte fürs lokale Speichern (Titel, "Sprachpaar ist gültig", ≥4 Karten,
+      gültige Struktur; die Übungs- und Typen-Minima stehen seit #3389 unter
+      "Nötig zum Teilen"). "Sprachpaar ist gültig" ist grün,
       sobald Quell- UND Zielsprache unterstuetzte Codes sind — ein
       Gleiche-Sprache-Paar (de → de) ist GUELTIG (kein "Quelle != Ziel"-
       Gate)
@@ -2131,6 +2132,19 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       `psych-rhetorik`, Lektion 1) öffnen und deren Übung bearbeiten →
       Speichern ist aktiv (früher dauerhaft gesperrt). In jedem Fall gilt:
       Was der Editor speichern lässt, lässt sich auch als Lektion speichern.
+- [ ] TC-0928 **Lokal speichern prüft Gültigkeit, Teilen die Minima der Engine (#3389):**
+      Neue Lektion mit 5 Karten, in Schritt 3 nur **eine** Zuordnung erzeugen
+      oder behalten → der Hinweis lautet „Zum Teilen sind mindestens 5 Übungen
+      nötig", und „Weiter" ist aktiv. Mit null Übungen blockiert „Weiter" mit
+      „Erstelle mindestens eine Übung, um fortzufahren." In Schritt 4 stehen
+      unter „Nötig zum Teilen" drei Zeilen (mindestens 5 Übungen, mindestens 2
+      Übungstypen, jede Übung hat genug Antworten oder Paare). „Lokal speichern"
+      ist aktiv, „Speichern und teilen" gesperrt. Mit dem Generator (Zuordnung +
+      Freitext, 10 Übungen) ist die dritte Zeile rot, solange eine Freitext-Übung
+      nur eine akzeptierte Antwort hat; nach einer zweiten Antwort für jede wird
+      sie grün und „Speichern und teilen" aktiv. Der Teilen-Assistent meldet
+      danach keinen Mindestwert-Fehler. Beim Bearbeiten einer gespeicherten
+      Lektion gibt es keine Teilen-Zeilen.
 - [ ] TC-0434 **Aufgabentyp umwandeln -> Freitext (EXP-050 Stufe 1, #2511):** Im
       Inline-Editor (Schritt 3, `ExerciseEditor`) einer **Wortkacheln**- oder
       **Multiple-Choice**-Übung steht oben ein Auswahlfeld **"Aufgabentyp"** mit
