@@ -2313,6 +2313,12 @@ jeder Karten-Zeile (`CardImageField`).
       "Zurück zu den Optionen" führt zur Auswahl zurück, nichts ist
       zurückgesetzt; erneut "Neu starten" und in der Rückfrage "Neu
       starten" -> die Lektion beginnt bei Schritt 1
+- [ ] TC-0930 Zurückblättern hinter eine Übung (#3365): eine Lektion bis hinter die
+      zweite Übung spielen, dann mit "Zurück" auf einen Theorieschritt davor
+      gehen und die Lektion über das Logo verlassen -> auf dem Dashboard in
+      der Karte "Weiterlernen" auf "Fortsetzen", im Dialog "Fortsetzen" ->
+      die Lektion öffnet genau diesen Theorieschritt (vorher: den Schritt
+      nach der letzten Übung)
 - [ ] TC-0452 Auto-Weiter + "Zurück" (#1921): Einstellung "Automatisch weiter"
       (Settings -> Lernen) AN -> eine Übung richtig beantworten, die App
       springt automatisch zur nächsten Aufgabe -> dann "Zurück" klicken:

@@ -16,7 +16,7 @@ import type {RowDict} from "./backup-scope";
 
 /** Backend ``Text`` columns holding JSON that Dexie stores parsed. */
 const JSON_TEXT_COLUMNS: Readonly<Record<string, readonly string[]>> = {
-    lesson_progress: ["step_results", "attempt_history"],
+    lesson_progress: ["step_results", "attempt_history", "recent_steps"],
     element_errors: ["attempt_history"],
     imported_conversations: ["analysis_result"],
     badges: ["tier_thresholds"],
