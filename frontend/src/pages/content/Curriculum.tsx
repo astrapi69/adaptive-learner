@@ -60,9 +60,7 @@ export default function Curriculum() {
             const fresh = await getStorage().curricula.listTopics(curriculumId);
             setTopics(fresh);
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : "Failed to load topics.";
-            notify.error(detail);
+            notify.error("Failed to load topics.", {error: err});
         }
     }, []);
 
@@ -71,9 +69,7 @@ export default function Curriculum() {
             const fresh = await getStorage().curricula.listLessons(curriculumId);
             setLessons(fresh);
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : "Failed to load lessons.";
-            notify.error(detail);
+            notify.error("Failed to load lessons.", {error: err});
         }
     }, []);
 
@@ -85,8 +81,7 @@ export default function Curriculum() {
             await reloadLessons(selectedId);
             notify.success(t("curriculum.lesson_created", "Lesson created."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -104,8 +99,7 @@ export default function Curriculum() {
             await reloadLessons(selectedId);
             notify.success(t("curriculum.lesson_saved", "Lesson saved."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -125,8 +119,7 @@ export default function Curriculum() {
             await reloadLessons(selectedId);
             notify.success(t("curriculum.lesson_deleted", "Lesson deleted."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -189,8 +182,7 @@ export default function Curriculum() {
             setNewCurriculumTitle("");
             notify.success(t("curriculum.created", "Curriculum created."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setCreatingCurriculum(false);
         }
@@ -217,8 +209,7 @@ export default function Curriculum() {
             setDialog({kind: "closed"});
             notify.success(t("curriculum.saved", "Saved."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -237,9 +228,7 @@ export default function Curriculum() {
                 t("curriculum.description_saved", "Description saved."),
             );
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
             throw err;
         }
     };
@@ -261,8 +250,7 @@ export default function Curriculum() {
             await reloadTopics(selectedId);
             notify.success(t("curriculum.deleted", "Topic deleted."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }

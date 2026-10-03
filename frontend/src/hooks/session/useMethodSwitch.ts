@@ -10,7 +10,6 @@
 import {useCallback, useEffect, useState} from "react";
 import type {Dispatch, SetStateAction} from "react";
 
-import {ApiError} from "../../api/client";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
 import type {LearningMethod} from "../../lib/constants";
@@ -76,9 +75,7 @@ export function useMethodSwitch({
             setSwitchRec({recommended: false});
             notify.success(t("toast.method_switched", "Method switched."));
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setAccepting(false);
         }

@@ -175,7 +175,7 @@ export default function ShareAsRepoButton({
                     ? err.detail
                     : t("content.repo_export.failed", "Export failed.");
             setError(message);
-            notify.error(message);
+            notify.error(t("content.repo_export.failed", "Export failed."), {error: err});
         }
     };
 

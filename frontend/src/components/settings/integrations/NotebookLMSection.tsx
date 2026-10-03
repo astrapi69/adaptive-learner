@@ -18,7 +18,6 @@ import { useCallback, useEffect, useState } from "react";
 import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 
-import { ApiError } from "../../../api/client";
 import ApiKeyRequiredNotice from "../ai/ApiKeyRequiredNotice";
 import { Button } from "@/components/ui/button";
 import { FEATURES } from "../../../features/featureConfig";
@@ -57,11 +56,10 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
       });
       setQuestions(rows);
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("notebooklm.questions_load_failed", "Could not load study questions.");
-      notify.error(msg);
+      notify.error(
+        t("notebooklm.questions_load_failed", "Could not load study questions."),
+        { error: err },
+      );
       setQuestions([]);
     }
   }, [userId, projectId, filterDifficulty, t]);
@@ -91,11 +89,10 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
         void refresh();
       }
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("notebooklm.generate_failed", "Could not generate study questions.");
-      notify.error(msg);
+      notify.error(
+        t("notebooklm.generate_failed", "Could not generate study questions."),
+        { error: err },
+      );
     } finally {
       setGenerating(false);
     }
@@ -114,8 +111,7 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
       await getStorage().notebooklm.deleteQuestion(q.id);
       setQuestions((prev) => (prev ? prev.filter((x) => x.id !== q.id) : prev));
     } catch (err) {
-      const msg = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(msg);
+      notify.error(t("common.error"), { error: err });
     }
   };
 
@@ -138,9 +134,10 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
           .replace("{filename}", result.filename),
       );
     } catch (err) {
-      const msg =
-        err instanceof ApiError ? err.detail : t("notebooklm.zip_failed", "ZIP export failed.");
-      notify.error(msg);
+      notify.error(
+        t("notebooklm.zip_failed", "ZIP export failed."),
+        { error: err },
+      );
     } finally {
       setExportingZip(false);
     }
@@ -161,11 +158,10 @@ export default function NotebookLMSection({ projectId }: NotebookLMSectionProps)
       URL.revokeObjectURL(url);
       notify.success(t("notebooklm.guide_ready", "Study guide downloaded."));
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("notebooklm.guide_failed", "Could not generate the study guide.");
-      notify.error(msg);
+      notify.error(
+        t("notebooklm.guide_failed", "Could not generate the study guide."),
+        { error: err },
+      );
     } finally {
       setGeneratingGuide(false);
     }

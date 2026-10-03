@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 
 import { useFeature } from "@astrapi69/feature-strategy-react";
 
-import { ApiError } from "../../api/client";
 import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
@@ -58,9 +57,10 @@ export default function AnkiPage() {
       });
       setCards(data);
     } catch (err) {
-      const msg =
-        err instanceof ApiError ? err.detail : t("anki.load_failed", "Could not load cards.");
-      notify.error(msg);
+      notify.error(
+        t("anki.load_failed", "Could not load cards."),
+        { error: err },
+      );
     } finally {
       setLoading(false);
     }
@@ -100,8 +100,7 @@ export default function AnkiPage() {
       });
       setCards((prev) => prev.map((c) => (c.id === card.id ? next : c)));
     } catch (err) {
-      const msg = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(msg);
+      notify.error(t("common.error"), { error: err });
     }
   };
 
@@ -110,8 +109,7 @@ export default function AnkiPage() {
       await getStorage().anki.update(card.id, { rejected: true });
       setCards((prev) => prev.filter((c) => c.id !== card.id));
     } catch (err) {
-      const msg = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(msg);
+      notify.error(t("common.error"), { error: err });
     }
   };
 
@@ -128,8 +126,7 @@ export default function AnkiPage() {
       await getStorage().anki.remove(card.id);
       setCards((prev) => prev.filter((c) => c.id !== card.id));
     } catch (err) {
-      const msg = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(msg);
+      notify.error(t("common.error"), { error: err });
     }
   };
 
@@ -154,8 +151,7 @@ export default function AnkiPage() {
       setEditingCardId(null);
       setEditDraft(null);
     } catch (err) {
-      const msg = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(msg);
+      notify.error(t("common.error"), { error: err });
     }
   };
 
