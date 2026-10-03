@@ -523,6 +523,9 @@ export default function CreateLesson() {
                             editContext.originalSteps,
                             meta,
                         ),
+                        // #3543 - purpose, resources, the variation pair
+                        // and any later schema field survive the edit.
+                        carryFrom: editContext.lessons[editContext.editIndex],
                     },
                 );
                 // #1971 — for a multi-lesson set, replace only the edited

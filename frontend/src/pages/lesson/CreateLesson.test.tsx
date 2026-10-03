@@ -619,6 +619,19 @@ describe("CreateLesson — edit mode (#1740)", () => {
         expect(input.lessons[0].id).toBe(fixtureLesson().id);
     });
 
+    // #3543 - through the real page: the edited lesson's purpose survives
+    // the in-place save (it used to come back as a practice lesson).
+    it("save keeps the edited lesson's purpose (#3543)", async () => {
+        getLessonMock.mockResolvedValue({...fixtureLesson(), purpose: "bridge"});
+        await toReview();
+        fireEvent.click(screen.getByTestId("create-lesson-save-local"));
+        await waitFor(() => expect(saveUserSetMock).toHaveBeenCalled());
+        const input = saveUserSetMock.mock.calls[0][0] as unknown as {
+            lessons: {purpose?: string}[];
+        };
+        expect(input.lessons[0].purpose).toBe("bridge");
+    });
+
     it("offers Save-as-copy (not Save-and-share) in edit mode", async () => {
         await toReview();
         expect(
