@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 
-import { ApiError } from "../../api/client";
+import { isDevMode } from "../../hooks/settings/useDevMode";
+import { inlineErrorText } from "../../utils/errorMessages";
 import { AiSettingsPanel } from "@astrapi69/ai-key-vault-react";
 import SettingsSidebar from "../../components/settings/SettingsSidebar";
 import SettingsMobileMenu from "../../components/settings/SettingsMobileMenu";
@@ -198,9 +199,7 @@ export default function Settings() {
         })
         .catch((err) => {
           if (cancelled) return;
-          const detail =
-            err instanceof ApiError ? err.detail : t("common.error");
-          setLoadError(detail);
+          setLoadError(inlineErrorText(err, t("common.error"), isDevMode()));
         });
     };
     loadSettings();
