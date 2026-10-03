@@ -9,7 +9,8 @@ import HelpTooltip from "../../components/help/HelpTooltip";
 import LessonList from "../../components/dashboard/LessonList";
 import TopicTree from "../../components/topic/TopicTree";
 import {Button} from "@/components/ui/button";
-import {ApiError} from "../../api/client";
+import {isDevMode} from "../../hooks/settings/useDevMode";
+import {inlineErrorText} from "../../utils/errorMessages";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useConfirm} from "../../contexts/ConfirmContext";
 import {readLearnerState} from "../../lib/learning/learnerState";
@@ -145,9 +146,7 @@ export default function Curriculum() {
             })
             .catch((err) => {
                 if (cancelled) return;
-                const detail =
-                    err instanceof ApiError ? err.detail : t("common.error");
-                setError(detail);
+                setError(inlineErrorText(err, t("common.error"), isDevMode()));
                 setLoading(false);
             });
         return () => {

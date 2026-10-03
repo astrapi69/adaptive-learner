@@ -241,11 +241,11 @@ describe("Curriculum page", () => {
         expect(apiRemoveTopic).not.toHaveBeenCalled();
     });
 
-    it("renders an error state when /curricula list fails", async () => {
+    it("renders a friendly error state, not the backend detail, when /curricula list fails (#3374)", async () => {
         const {ApiError} = await import("../../api/client");
         apiList.mockRejectedValue(new ApiError(500, "DB down"));
         renderCurriculum();
-        await screen.findByTestId("curriculum-error");
-        expect(screen.getByTestId("curriculum-error").textContent).toContain("DB down");
+        const panel = await screen.findByTestId("curriculum-error");
+        expect([panel.textContent?.includes("An internal error occurred."), panel.textContent?.includes("DB down")]).toEqual([true, false]);
     });
 });
