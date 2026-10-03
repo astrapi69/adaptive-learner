@@ -297,6 +297,48 @@ class TestReadCache:
                 "../../../etc/passwd",
             )
 
+    def test_read_lesson_rejects_a_sibling_dir_sharing_the_prefix(
+        self, tmp_path: Path,
+    ) -> None:
+        """#3428 - ``lessons-x`` starts with ``lessons``, so a string prefix
+        check read a lesson from the sibling directory."""
+        store_set(
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            VERSION,
+            manifest_yaml=VALID_MANIFEST,
+            lessons={"01-greetings.json": VALID_LESSON},
+        )
+        sibling = cache_path_for_set(tmp_path, SOURCE, SET_ID, VERSION) / "lessons-x"
+        sibling.mkdir()
+        (sibling / "evil.json").write_text(VALID_LESSON, encoding="utf-8")
+        with pytest.raises(ContentNotFoundError, match="escapes"):
+            read_lesson(
+                tmp_path, SOURCE, SET_ID, VERSION, "../lessons-x/evil.json",
+            )
+
+    def test_read_asset_rejects_a_sibling_dir_sharing_the_prefix(
+        self, tmp_path: Path,
+    ) -> None:
+        """#3428 - ``assets-x`` starts with ``assets``; same hole as above."""
+        store_set(
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            VERSION,
+            manifest_yaml=VALID_MANIFEST,
+            lessons={"01-greetings.json": VALID_LESSON},
+            assets={"img/cover.png": b"SAFE"},
+        )
+        sibling = cache_path_for_set(tmp_path, SOURCE, SET_ID, VERSION) / "assets-x"
+        sibling.mkdir()
+        (sibling / "secret.bin").write_bytes(b"SECRET")
+        with pytest.raises(ContentNotFoundError, match="escapes"):
+            read_asset(
+                tmp_path, SOURCE, SET_ID, VERSION, "../assets-x/secret.bin",
+            )
+
     def test_read_lesson_missing(self, tmp_path: Path) -> None:
         store_set(
             tmp_path,

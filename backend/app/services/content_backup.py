@@ -234,8 +234,10 @@ def _write_set(root: Path, entry: dict[str, Any]) -> None:
         relative = file_entry["filename"]
         target = (tmp_dir / relative).resolve()
         # Path-traversal guard: a crafted ``..`` filename must not escape
-        # the set's tmp dir (same invariant as cache.read_asset).
-        if not str(target).startswith(str(tmp_root)):
+        # the set's tmp dir (same invariant as cache.read_asset). A path
+        # comparison, not a string prefix: ``v1.0.0.tmp-x`` starts with the
+        # tmp dir's name but is a sibling (#3428).
+        if not target.is_relative_to(tmp_root):
             raise ValueError(f"file path escapes the set directory: {relative!r}")
         target.parent.mkdir(parents=True, exist_ok=True)
         if file_entry.get("encoding") == "base64":
