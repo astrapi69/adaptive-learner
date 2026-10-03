@@ -82,7 +82,7 @@ export interface BuildLessonOptions {
  *  edited lesson is carried over as it was. A field the wizard writes only
  *  conditionally (``requires_extensions``, ``domain``) is owned too, so a
  *  stale value can never survive from the original. */
-export const WIZARD_OWNED_LESSON_FIELDS = [
+const WIZARD_OWNED_LESSON_FIELDS = [
     "id",
     "title",
     "description",
@@ -103,7 +103,7 @@ export const WIZARD_OWNED_LESSON_FIELDS = [
  *  @example
  *  carriedLessonFields({...lesson, purpose: "bridge"}) // -> {purpose: "bridge"}
  */
-export function carriedLessonFields(lesson: ContentLesson): Partial<ContentLesson> {
+function carriedLessonFields(lesson: ContentLesson): Partial<ContentLesson> {
     const carried: Record<string, unknown> = {...lesson};
     for (const field of WIZARD_OWNED_LESSON_FIELDS) delete carried[field];
     return carried as Partial<ContentLesson>;
