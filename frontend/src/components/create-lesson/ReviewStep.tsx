@@ -10,6 +10,8 @@ import {Copy, Download, Save, Share2} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import FormHint from "../../shared/forms/FormHint";
 import type {DraftValidationChecks} from "../../lib/content/lesson/draft-to-lesson";
+import type {DraftShareChecks} from "../../lib/content/lesson/edit/draft-share-check";
+import {QUALITY} from "../../lib/content/validation/quality-rules.generated";
 import type {LessonCardDraft, LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import type {ContentLessonExercise} from "../../storage/types";
 
@@ -47,17 +49,20 @@ const CHECK_ROWS: Array<
     // ``source !== target`` gate.
     ["languagePair", "Language pair is valid"],
     ["enoughCards", "At least 4 cards"],
-    ["enoughExercises", "At least 5 exercises"],
-    ["enoughTypes", "At least 2 exercise types"],
     ["schemaValid", "Valid lesson structure"],
 ];
 
-/** The create-time count minimums — relaxed when editing an existing lesson
- *  (#1970), which is already-valid at whatever size it was saved. */
-const COUNT_CHECK_KEYS: ReadonlyArray<keyof DraftValidationChecks> = [
-    "enoughCards",
-    "enoughExercises",
-    "enoughTypes",
+/** #3389 - the engine's quality minimums, shown as their own list. They
+ *  gate "Save and share" only; local save stays on the rows above. */
+const SHARE_ROWS: Array<[keyof DraftShareChecks, string, string, number | null]> = [
+    ["minExercises", "check_min_exercises", "At least {n} exercises", QUALITY.minExercisesPerLesson],
+    ["minTypes", "check_min_types", "At least {n} exercise types", QUALITY.minExerciseTypes],
+    [
+        "exerciseMinimums",
+        "check_exercise_minimums",
+        "Every exercise has enough answers or pairs",
+        null,
+    ],
 ];
 
 interface ReviewStepProps {
@@ -65,6 +70,9 @@ interface ReviewStepProps {
     cards: LessonCardDraft[];
     exercises: ContentLessonExercise[];
     draftChecks: DraftValidationChecks;
+    /** #3389 - the share rows; they gate "Save and share" only. Absent in
+     *  edit mode, which offers no share action. */
+    shareChecks?: DraftShareChecks;
     saving: boolean;
     /** #1740 — editing an existing lesson: the primary action overwrites
      *  it and a "Save as a copy" action appears instead of "Save and
@@ -88,6 +96,7 @@ export default function ReviewStep({
     cards,
     exercises,
     draftChecks,
+    shareChecks,
     saving,
     editMode = false,
     cardless = false,
@@ -96,17 +105,19 @@ export default function ReviewStep({
     onSaveCopy,
     t,
 }: ReviewStepProps) {
-    // The create-time count minimums (#1967 cards; #1970 exercises + types)
-    // are guidance for a NEW lesson, not requirements for re-saving an existing
-    // one. Editing drops all three; a cardless CREATE drops only the card row.
+    // The card minimum (#1967) is guidance for a NEW card lesson, not a
+    // requirement for re-saving an existing one or for a cardless lesson.
     // Title / language pair / schema validity always apply.
     const rows = CHECK_ROWS.filter(([key]) => {
-        if (editMode && COUNT_CHECK_KEYS.includes(key)) return false;
-        if (cardless && key === "enoughCards") return false;
+        if ((editMode || cardless) && key === "enoughCards") return false;
         return true;
     });
     const canSave =
         rows.every(([key]) => draftChecks[key]) && !saving;
+    const canShare =
+        canSave &&
+        shareChecks !== undefined &&
+        SHARE_ROWS.every(([key]) => shareChecks[key]);
     return (
         <section
             className="create-lesson-step flex flex-col gap-6"
@@ -220,6 +231,34 @@ export default function ReviewStep({
                     );
                 })}
             </ul>
+            {!editMode && shareChecks && (
+                <div className="flex flex-col gap-1" data-testid="create-lesson-share-checklist">
+                    <h3 className="text-sm font-semibold text-fg-primary">
+                        {t("create_lesson.review.share_checks_heading", "Needed for sharing")}
+                    </h3>
+                    <ul className="flex list-none flex-col gap-1 p-0">
+                        {SHARE_ROWS.map(([key, labelKey, fallback, n]) => {
+                            const pass = shareChecks[key];
+                            const label = t(`create_lesson.review.${labelKey}`, fallback);
+                            return (
+                                <li
+                                    key={key}
+                                    data-testid={`check-${key}`}
+                                    data-pass={pass ? "true" : "false"}
+                                    className={
+                                        pass
+                                            ? "check-pass text-[var(--success)]"
+                                            : "check-fail text-[var(--error)]"
+                                    }
+                                >
+                                    {pass ? "✓" : "✗"}{" "}
+                                    {n === null ? label : label.replace("{n}", String(n))}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            )}
             {editMode && (
                 <FormHint data-testid="create-lesson-edit-note">
                     {t(
@@ -270,7 +309,7 @@ export default function ReviewStep({
                         type="button"
                         variant="secondary"
                         data-testid="create-lesson-save-share"
-                        disabled={!canSave}
+                        disabled={!canShare}
                         onClick={onSaveShare}
                     >
                         <Share2 className="h-5 w-5" aria-hidden="true" />

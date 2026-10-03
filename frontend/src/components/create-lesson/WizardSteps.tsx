@@ -10,13 +10,14 @@
  */
 
 import CardEditor, {MIN_CARDS} from "./CardEditor";
-import ExerciseGenerator, {MIN_EXERCISES} from "./ExerciseGenerator";
+import ExerciseGenerator, {MIN_EXERCISES_TO_ADVANCE} from "./ExerciseGenerator";
 import ReviewStep from "./ReviewStep";
 import FormHint from "../../shared/forms/FormHint";
 import type {ExerciseGenConfig} from "../../lib/exercises";
 import type {
     DraftValidationChecks,
 } from "../../lib/content/lesson/draft-to-lesson";
+import type {DraftShareChecks} from "../../lib/content/lesson/edit/draft-share-check";
 import type {LessonCardDraft, LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import type {ContentLessonExercise} from "../../storage/types";
 
@@ -32,6 +33,8 @@ interface WizardStepsProps {
     cardError: boolean;
     exerciseError: boolean;
     draftChecks: DraftValidationChecks;
+    /** #3389 - the engine's quality minimums; gate "Save and share" only. */
+    shareChecks: DraftShareChecks;
     saving: boolean;
     editMode: boolean;
     onAddCard: (c: {
@@ -69,6 +72,7 @@ export default function WizardSteps({
     cardError,
     exerciseError,
     draftChecks,
+    shareChecks,
     saving,
     editMode,
     onAddCard,
@@ -135,11 +139,11 @@ export default function WizardSteps({
                             data-testid="create-lesson-exercise-error"
                             role="alert"
                         >
-                            {exercises.length < MIN_EXERCISES
+                            {exercises.length < MIN_EXERCISES_TO_ADVANCE
                                 ? t(
-                                      "create_lesson.exercises.min_to_advance",
-                                      "Generate at least {n} exercises to continue.",
-                                  ).replace("{n}", String(MIN_EXERCISES))
+                                      "create_lesson.exercises.one_to_advance",
+                                      "Generate at least one exercise to continue.",
+                                  )
                                 : t(
                                       "create_lesson.exercises.incomplete_to_advance",
                                       "Complete or remove the incomplete exercises to continue.",
@@ -155,6 +159,7 @@ export default function WizardSteps({
                     cards={cards}
                     exercises={exercises}
                     draftChecks={draftChecks}
+                    shareChecks={shareChecks}
                     saving={saving}
                     editMode={editMode}
                     onSaveLocal={onSaveLocal}

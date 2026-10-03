@@ -85,6 +85,10 @@ import {
     withPreservedSetBook,
 } from "../../lib/content/lesson/edit/edit-session";
 import {carryOverReviewProgress} from "../../lib/content/lesson/edit/edit-remap";
+import {
+    checkDraftForSharing,
+    type DraftShareChecks,
+} from "../../lib/content/lesson/edit/draft-share-check";
 import {useEditLessonSession} from "../../hooks/content/edit/useEditLessonSession";
 import {
     buildBookLessons,
@@ -464,6 +468,10 @@ export default function CreateLesson() {
     // --- Step 4: save + share ---
     const draftChecks = useMemo<DraftValidationChecks>(
         () => checkDraft({meta, cards, exercises}),
+        [meta, cards, exercises],
+    );
+    const shareChecks = useMemo<DraftShareChecks>(
+        () => checkDraftForSharing({meta, cards, exercises}),
         [meta, cards, exercises],
     );
 
@@ -875,6 +883,7 @@ export default function CreateLesson() {
                     cardError={cardError}
                     exerciseError={exerciseError}
                     draftChecks={draftChecks}
+                    shareChecks={shareChecks}
                     saving={saving}
                     editMode={editMode}
                     onAddCard={addCard}
