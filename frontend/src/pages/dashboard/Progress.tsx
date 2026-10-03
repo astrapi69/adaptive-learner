@@ -9,7 +9,8 @@ import ProgressTimeline from "../../components/progress/ProgressTimeline";
 import StepEvaluationInsights from "../../components/session/StepEvaluationInsights";
 import RichTextEditor from "../../components/editor/RichTextEditor";
 import {parseEditorContent} from "../../components/editor/content-utils";
-import {ApiError} from "../../api/client";
+import {isDevMode} from "../../hooks/settings/useDevMode";
+import {inlineErrorText} from "../../utils/errorMessages";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
@@ -67,9 +68,7 @@ export default function Progress() {
             })
             .catch((err) => {
                 if (cancelled) return;
-                const detail =
-                    err instanceof ApiError ? err.detail : t("common.error");
-                setLoadError(detail);
+                setLoadError(inlineErrorText(err, t("common.error"), isDevMode()));
                 setLoading(false);
             });
         return () => {

@@ -61,8 +61,15 @@ export default function Curriculum() {
             const fresh = await getStorage().curricula.listTopics(curriculumId);
             setTopics(fresh);
         } catch (err) {
-            notify.error("Failed to load topics.", {error: err});
+            notify.error(
+                t("curriculum.topics_load_failed", "Could not load the topics."),
+                {error: err},
+            );
         }
+        // ``t`` omitted on purpose: the load effect depends on this
+        // callback, and an unstable ``t`` (test i18n mocks) would re-fire
+        // it on every render (lessons/frontend.md, useEffect + i18n mocks).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const reloadLessons = useCallback(async (curriculumId: string) => {
@@ -70,8 +77,13 @@ export default function Curriculum() {
             const fresh = await getStorage().curricula.listLessons(curriculumId);
             setLessons(fresh);
         } catch (err) {
-            notify.error("Failed to load lessons.", {error: err});
+            notify.error(
+                t("curriculum.lessons_load_failed", "Could not load the lessons."),
+                {error: err},
+            );
         }
+        // ``t`` omitted on purpose, as in ``reloadTopics``.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleCreateLesson = async (title: string) => {

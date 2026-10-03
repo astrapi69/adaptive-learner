@@ -241,6 +241,18 @@ describe("Curriculum page", () => {
         expect(apiRemoveTopic).not.toHaveBeenCalled();
     });
 
+    it.each([
+        ["topics", () => apiListTopics, "Could not load the topics."],
+        ["lessons", () => apiListLessons, "Could not load the lessons."],
+    ])("toasts the localized message when the %s fail to load (#3374)", async (_name, failing, expected) => {
+        apiList.mockResolvedValue([CURRICULUM]);
+        apiListTopics.mockResolvedValue([ROOT_TOPIC]);
+        apiListLessons.mockResolvedValue([]);
+        failing().mockRejectedValue(new Error("network down"));
+        renderCurriculum();
+        await waitFor(() => expect(toastError).toHaveBeenCalledWith(expected));
+    });
+
     it("renders a friendly error state, not the backend detail, when /curricula list fails (#3374)", async () => {
         const {ApiError} = await import("../../api/client");
         apiList.mockRejectedValue(new ApiError(500, "DB down"));

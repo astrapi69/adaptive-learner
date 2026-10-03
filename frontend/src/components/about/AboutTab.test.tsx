@@ -424,7 +424,8 @@ describe("AboutTab", () => {
         await waitFor(() => {
             expect(screen.getByTestId("about-error")).toBeTruthy();
         });
-        expect(screen.getByTestId("about-error").textContent).toContain(
+        // #3374 - the raw error text shows only in Developer Mode.
+        expect(screen.getByTestId("about-error").textContent).not.toContain(
             "backend unreachable",
         );
     });
