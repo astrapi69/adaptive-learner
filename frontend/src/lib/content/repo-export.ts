@@ -15,6 +15,7 @@
  * 100% compatible with the loader that parses these same files on import.
  */
 
+import {lessonIdOrderingIssues} from "learn-content-engine";
 import {stringify as stringifyYaml} from "yaml";
 
 import {
@@ -252,6 +253,11 @@ export interface LessonFilenamePlan {
  * are kept ONLY when their sort order already reproduces the source order;
  * otherwise every lesson gets a fresh ``NN-`` prefix (replacing any stale
  * numeric prefix, never stacking a second one).
+ *
+ * #3401 - "sort order" is the code-unit order every reader uses
+ * (``.sort()``, Python ``sorted``), not a locale-aware one, and a set the
+ * engine's ``lessonIdOrderingIssues`` flags (mixed prefixes, mixed prefix
+ * widths, numbers that read differently than they sort) is renumbered too.
  */
 export function planLessonFilenames(
     lessons: readonly RepoExportLesson[],
@@ -259,10 +265,11 @@ export function planLessonFilenames(
     const chosen = lessons.map((l, i) =>
         lessonFilename(l.lesson, l.filename, i),
     );
-    const inOrder = chosen.every(
-        (name, i) => i === 0 || chosen[i - 1].localeCompare(name, "en") < 0,
-    );
-    if (inOrder) return {filenames: chosen, reordered: false};
+    const inOrder = chosen.every((name, i) => i === 0 || chosen[i - 1] < name);
+    const ids = chosen.map((name) => name.replace(/\.json$/, ""));
+    if (inOrder && lessonIdOrderingIssues(ids).length === 0) {
+        return {filenames: chosen, reordered: false};
+    }
     const width = Math.max(2, String(lessons.length).length);
     const filenames = chosen.map((name, i) => {
         const base = name.replace(/^\d+-/, "");
