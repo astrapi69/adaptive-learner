@@ -79,6 +79,8 @@ describe("useLessonFlowControl pauses a started run on unmount (#3075)", () => {
         expect(markPaused).not.toHaveBeenCalled();
         unmount();
         expect(markPaused).toHaveBeenCalledTimes(1);
+        // #3365 - leaving by navigation is logged as an exit, not a pause.
+        expect(markPaused).toHaveBeenCalledWith("exit");
     });
 
     it("unmount of a lesson with no started run writes nothing", () => {
@@ -121,6 +123,8 @@ describe("useLessonFlowControl pauses a started run on unmount (#3075)", () => {
             await result.current.handlePauseFromDialog();
         });
         expect(markPaused).toHaveBeenCalledTimes(1);
+        // #3365 - the pause the learner chose carries no exit reason.
+        expect(markPaused).toHaveBeenCalledWith();
         unmount();
         expect(markPaused).toHaveBeenCalledTimes(1);
     });
@@ -178,6 +182,15 @@ describe("a hidden tab or app switch only flushes, it never pauses (#3361)", () 
         });
         expect(autosave).toHaveBeenCalledTimes(1);
         expect(markPaused).not.toHaveBeenCalled();
+    });
+
+    it("closing the tab pauses, logged as an exit (#3365)", () => {
+        const markPaused = vi.fn().mockResolvedValue(undefined);
+        renderFlow({progress: progress("in_progress"), markPaused});
+        act(() => {
+            window.dispatchEvent(new Event("beforeunload"));
+        });
+        expect(markPaused).toHaveBeenCalledWith("exit");
     });
 });
 
