@@ -22,7 +22,7 @@ a conquista, mais proeminente o feedback.
 
 ## Intensidade do feedback
 
-**Definições > Interface > Intensidade do Feedback** permite-lhe
+**Definições > Aprendizagem > Intensidade do feedback** permite-lhe
 escolher o quão vistosas são as celebrações:
 
 - **Subtil** - apenas a cor de correto/errado. Sem frases, sem
@@ -39,7 +39,7 @@ independentemente desta definição.
 ## Sons
 
 Os sons estão **desligados por padrão** - nunca será surpreendido
-por áudio. Ligue-os em **Definições > Interface > Sons**, depois use
+por áudio. Ligue-os em **Definições > Aprendizagem > Sons**, depois use
 o controlo de volume e o botão **Testar** para pré-visualizar. Os
 sons são curtos bipes sintetizados e são sempre complementares:
 cada sinal que emitem também é mostrado no ecrã.

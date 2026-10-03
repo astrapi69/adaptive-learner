@@ -8,7 +8,7 @@ de forma que o seletor passou a ter no total **12 temas**.
 
 ## Presets recomendados (Fase 63 / v1.63.0)
 
-O seletor em Definições → Aparência começa com um sub-separador
+O seletor em Definições > Geral > Aparência começa com um sub-separador
 **Recomendado**:
 
 - **Claro:** `catppuccin-latte`, `supabase`, `graphite`

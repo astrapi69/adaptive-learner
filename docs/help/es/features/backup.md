@@ -54,8 +54,8 @@ quedes sin respaldo.
 
 Si algo sale mal durante la importación, aparece un **aviso de
 error persistente** (toast) que no desaparece por sí solo, de modo
-que no se te pase ningún error. En modo desarrollador (Ajustes →
-Interfaz), el mensaje incluye los detalles técnicos para abrir un
+que no se te pase ningún error. En modo desarrollador (Ajustes >
+Diagnóstico y soporte), el mensaje incluye los detalles técnicos para abrir un
 issue en GitHub.
 
 ---
@@ -86,8 +86,12 @@ inmediato a tu flujo de aprendizaje.
 
 La copia de seguridad y la restauración funcionan en **ambos**
 modos de almacenamiento: servidor (API) y navegador puro
-(Dexie/IndexedDB). El formato es un único archivo JSON; no existe
-ningún formato de archivo propietario.
+(Dexie/IndexedDB). La copia de seguridad es un **archivo `.alb`**: un
+archivo ZIP que reúne las tablas de datos, la instantánea de
+localStorage y los conjuntos de contenido. Los archivos `.alb` se
+aceptan en todos los puntos de importación de copias de seguridad
+(Ajustes > Datos y la Zona de peligro). Las copias antiguas en un
+único archivo JSON se siguen importando sin problemas.
 
 !!! note "Privacidad"
     La copia de seguridad queda por completo en tus manos. Solo se

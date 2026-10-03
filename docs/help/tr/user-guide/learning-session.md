@@ -57,7 +57,8 @@ gösterilir. Döngü geçiş kartları, sohbet geçmişinde kesik kenarlı
 düğmesi (▶) onu yüksek sesle okur; giriş alanındaki bir mikrofon
 düğmesi (🎤) dikte etmenizi sağlar; geçici transkriptler göndermeden
 önce inceleyebilmeniz için metin alanını doldurur. Her ikisi de
-Web Speech API'dir; Ayarlar → Ses bölümünden açılıp kapatılabilir.
+Web Speech API'dir; Ayarlar > Öğrenme > Sesli okuma ve dikte bölümünden açılıp
+kapatılabilir.
 
 ## Döngü ilerleme göstergesi
 

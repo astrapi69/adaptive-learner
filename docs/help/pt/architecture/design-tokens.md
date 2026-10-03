@@ -47,7 +47,8 @@ não toca em nenhum componente. Esta regra é imposta por testes, não
 2. Define todos os 44 tokens canónicos (a paridade é obrigatória).
 3. Atenta ao **contraste WCAG AA** - `contrast.test.ts` verifica
    todos os temas computacionalmente.
-4. Regista o tema; o seletor em Definições → Aparência adota-o.
+4. Regista o tema; o seletor em Definições > Geral > Aparência
+   adota-o.
 
 Se uma nova funcionalidade precisar de uma nova cor: **adiciona um
 token**, não um literal. Se variar por tema, acrescenta-o em todos

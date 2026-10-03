@@ -56,7 +56,8 @@ tarjetas «Ciclo N» con borde discontinuo en el historial del chat.
 respuesta de la IA la lee en voz alta; un botón de micrófono (🎤)
 en la entrada te permite dictar; las transcripciones provisionales
 rellenan el área de texto para que puedas revisar antes de enviar.
-Ambas son de la Web Speech API; actívalas en Ajustes → Voz.
+Ambas son de la Web Speech API; actívalas en Ajustes > Aprendizaje >
+Lectura en voz alta y dictado.
 
 ## Indicador de progreso del ciclo
 

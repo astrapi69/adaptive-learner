@@ -58,7 +58,7 @@ gestaltest deinen **Avatar**:
   Gesperrte Rahmen zeigen ihre Bedingung an.
 
 Auswahl und gekaufte Rahmen bleiben erhalten und wandern mit ins
-[Backup](backup.md).
+[Backup](../features/backup.md).
 
 ## Darstellung
 
@@ -279,7 +279,7 @@ ausgegraut.
 
 Der Tab endet mit **Gamification** (unter einer Trennlinie, weil diese
 Karte *Fortschritt zurücksetzen* enthält). Die beiden Aufräum-Einstellungen -
-*Pausierte Lektionen aufbewahren* und *Maximale Lektionsgröße* -
+*Pausierte Lektionen auf dem Dashboard* und *Maximale Lektionsgröße* -
 betreffen den Daten-Lebenszyklus und liegen im **Daten**-Tab (siehe
 *Offline-Inhalte* und *Aufräumen* unter Daten).
 
@@ -507,17 +507,19 @@ exportierbarer Schlüssel konfiguriert ist.
 
 ### Aufräumen
 
-- **Pausierte Lektionen aufbewahren**: Pausierte Lektionen, die älter
-  sind als dieser Zeitraum, werden beim nächsten Laden des Dashboards
-  automatisch aufgegeben. Zur Wahl stehen 7, 14, 30 oder 60 Tage oder
-  *Nie*; Standard sind 30 Tage. Bis zu 10 pausierte Lektionen bleiben
-  unabhängig vom Alter erhalten.
+- **Pausierte Lektionen auf dem Dashboard**: Die Karte der pausierten
+  Lektionen auf dem Dashboard zeigt nur Lektionen, die innerhalb dieses
+  Zeitraums pausiert wurden (*Pausierte Lektionen ausblenden, wenn älter
+  als* 7, 14, 30 oder 60 Tage oder *Nie*; Standard sind 30 Tage). Eine
+  ältere Lektion verschwindet nur aus der Karte: Es wird nichts
+  aufgegeben, Position und Antworten bleiben erhalten. Die Karte zeigt
+  die fünf zuletzt pausierten Lektionen.
 - **Nicht verbundene Inhalte** (Browser-Modus): Fortschritt, dessen
   Inhalts-Repository nicht mehr verbunden ist, bleibt ausgeblendet, bis
   du ihn hier löschst. Die Karte erscheint nur, wenn es etwas zu
   bereinigen gibt.
 
-*Maximale Lektionsgröße* und *Pausierte Lektionen aufbewahren* werden
+*Maximale Lektionsgröße* und *Pausierte Lektionen auf dem Dashboard* werden
 in diesem Browser gespeichert und gelten im Server- wie im Lokal-Modus.
 
 ### Gefahrenzone

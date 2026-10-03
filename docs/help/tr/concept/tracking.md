@@ -119,7 +119,8 @@ ProgressCommit-as-Git altyapısının üzerine üç motivasyonel katman gelir:
   Dondurma: her 7 seri günü için 1, en fazla 3 stoklanmış, duraklatma-değil-sıfırlama
   semantiği. Hafta sonu modu değişkeni Cmt/Paz boşluklarını atlar.
 
-Oyunlaştırma **isteğe bağlıdır**. Ayarlar → Oyunlaştırma'da bildirim
+Oyunlaştırma **isteğe bağlıdır**. Ayarlar > Öğrenme > Motivasyon ve rutin >
+Oyunlaştırma bölümünde bildirim
 toast'larını devre dışı bırakmak istemleri susturur; sistem yine de
 durumu kaydeder. Adım değerlendirme içgörüleri + Git tarzı commit
 geçmişi yükü taşıyan analitiği olmaya devam eder.
