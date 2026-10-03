@@ -210,7 +210,11 @@ export default function Onboarding() {
             setProjectId(project.id);
             await assignSubjects(project.id);
             setCreatedProject(project);
-            notify.success(t("toast.project_created", "Project created."));
+            // #3544 - click-through: at 375-390 px the toast lies over the
+            // assessment's Next button for its whole display time.
+            notify.success(t("toast.project_created", "Project created."), {
+                passThrough: true,
+            });
             setPhase("invite");
         } catch (err) {
             notify.error(t("common.error", "Something went wrong."), {error: err});

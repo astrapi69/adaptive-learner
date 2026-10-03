@@ -114,6 +114,12 @@ export default defineConfig({
     ],
     projects: [
         {name: "chromium", testDir: "./tests", use: {browserName: "chromium"}},
-        {name: "smoke", testDir: "./smoke", use: {browserName: "chromium"}},
+        // #3544 - a screenshot on failure shows what rendered when a page
+        // root is missing after navigation (the intermittent 390 px miss).
+        {
+            name: "smoke",
+            testDir: "./smoke",
+            use: {browserName: "chromium", screenshot: "only-on-failure"},
+        },
     ],
 });
