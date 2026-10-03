@@ -105,6 +105,22 @@ def _build_service() -> ContentLoaderService:
     )
 
 
+def _not_found(err: ContentNotFoundError) -> NotFoundError:
+    """404 whose detail names what was asked for, not where it was looked for.
+
+    A cache miss carries the absolute cache path in ``err.detail``
+    ("Looked at: ..."). That detail reaches the user (dev mode, the
+    report dialog), so it goes to the server log and the response keeps
+    the summary, which names the source, set and file (#3374).
+    """
+    if err.detail != err.message:
+        logger.warning(
+            "Content-loader cache miss",
+            extra={"summary": err.message, "looked_at": err.detail},
+        )
+    return NotFoundError(err.message)
+
+
 def _wrap_loader_error(err: ContentLoaderError) -> Exception:
     """Map a plugin-typed error onto the backend hierarchy.
 
@@ -114,7 +130,7 @@ def _wrap_loader_error(err: ContentLoaderError) -> Exception:
     the failure originated on the upstream, not the user.
     """
     if isinstance(err, ContentNotFoundError):
-        return NotFoundError(err.detail)
+        return _not_found(err)
     if isinstance(err, (ContentAuthError, ContentNetworkError)):
         return ExternalServiceError("github", err.detail)
     if isinstance(err, ContentSchemaError):
@@ -435,7 +451,7 @@ async def get_asset(
         # exception handler returns HTTP 404 with the right
         # detail shape (instead of leaking the plugin-typed
         # error).
-        raise NotFoundError(err.detail) from err
+        raise _not_found(err) from err
     return Response(
         content=payload,
         media_type=_mime_for_asset(asset_path),

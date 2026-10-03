@@ -23,7 +23,6 @@ import { useEffect, useState } from "react";
 import { FlaskConical, Save, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { ApiError } from "../../../api/client";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import FormHint from "../../../shared/forms/FormHint";
 import { SecretInput } from "../../../shared/forms/SecretInput";
@@ -89,12 +88,9 @@ export default function GitHubIntegrationSection() {
       setTest({ kind: "idle" });
       notify.success(t("settings.github.saved", "GitHub token saved."));
     } catch (error) {
-      notify.error(
-        error instanceof ApiError
-          ? error.detail
-          : t("ui.errors.unexpected", "Something went wrong."),
-        error instanceof ApiError ? { apiError: error } : undefined,
-      );
+      notify.error(t("ui.errors.unexpected", "Something went wrong."), {
+        error,
+      });
     } finally {
       setSaving(false);
     }
@@ -126,12 +122,9 @@ export default function GitHubIntegrationSection() {
       setTest({ kind: "idle" });
       notify.success(t("settings.github.removed", "GitHub token removed."));
     } catch (error) {
-      notify.error(
-        error instanceof ApiError
-          ? error.detail
-          : t("ui.errors.unexpected", "Something went wrong."),
-        error instanceof ApiError ? { apiError: error } : undefined,
-      );
+      notify.error(t("ui.errors.unexpected", "Something went wrong."), {
+        error,
+      });
     } finally {
       setSaving(false);
     }

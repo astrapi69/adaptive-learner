@@ -58,7 +58,7 @@ const toastError = vi.fn();
 const toastSuccess = vi.fn();
 vi.mock("../../utils/notify", () => ({
     notify: {
-        error: (msg: string) => toastError(msg),
+        error: (msg: string, opts?: unknown) => toastError(msg, opts),
         success: (msg: string) => toastSuccess(msg),
         warning: vi.fn(),
         info: vi.fn(),
@@ -260,11 +260,10 @@ describe("Onboarding page", () => {
         expect(body.timeframe.length).toBeGreaterThan(0);
     });
 
-    it("surfaces an ApiError detail to the user", async () => {
+    it("reports an ApiError via notify's error path, not as raw toast text (#3374)", async () => {
         const {ApiError} = await import("../../api/client");
-        apiUserCreate.mockRejectedValue(
-            new ApiError(409, "User with email already exists.", "/users", "POST"),
-        );
+        const failure = new ApiError(409, "User with email already exists.", "/users", "POST");
+        apiUserCreate.mockRejectedValue(failure);
 
         renderOnboarding();
         fillForm();
@@ -274,10 +273,10 @@ describe("Onboarding page", () => {
         });
 
         await waitFor(() => {
-            expect(toastError).toHaveBeenCalledWith(
-                "User with email already exists.",
-            );
+            expect(toastError).toHaveBeenCalledWith(expect.any(String), {error: failure});
         });
+        const [prefix] = toastError.mock.calls[0] as [string];
+        expect(prefix).not.toContain("User with email already exists.");
         expect(mockNavigate).not.toHaveBeenCalledWith("/assessment");
     });
 

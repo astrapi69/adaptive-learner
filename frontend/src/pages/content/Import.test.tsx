@@ -343,8 +343,9 @@ describe("Import page", () => {
 
 /**
  * #3392 - a provider failure is a failed analysis in both modes: nothing is
- * saved, the friendly status-mapped error is shown with the ApiError for the
- * report, and only a real analysis (not the unparseable-reply fallback)
+ * saved, the localized prefix is shown with the ApiError passed as ``error``
+ * (notify maps it to the friendly status message and carries it to the
+ * report, #3374), and only a real analysis (not the unparseable-reply fallback)
  * earns the import XP.
  */
 describe("analysis outcome (#3392)", () => {
@@ -392,8 +393,9 @@ describe("analysis outcome (#3392)", () => {
         }, awardImport);
         await pasteAndAnalyze();
         await waitFor(() => {
-            expect(notify.error).toHaveBeenCalledWith(failure.detail, {apiError: failure});
+            expect(notify.error).toHaveBeenCalledWith(expect.any(String), {error: failure});
         });
+        expect(vi.mocked(notify.error).mock.calls[0][0]).not.toContain(failure.detail);
         expect(awardImport).not.toHaveBeenCalled();
     });
 
@@ -422,8 +424,9 @@ describe("analysis outcome (#3392)", () => {
         const award = vi.spyOn(dexieStorage.gamification, "awardImport");
         await pasteAndAnalyze();
         await waitFor(() => {
-            expect(notify.error).toHaveBeenCalledWith(failure.detail, {apiError: failure});
+            expect(notify.error).toHaveBeenCalledWith(expect.any(String), {error: failure});
         });
+        expect(vi.mocked(notify.error).mock.calls[0][0]).not.toContain(failure.detail);
         expect(save).not.toHaveBeenCalled();
         expect(award).not.toHaveBeenCalled();
     });
