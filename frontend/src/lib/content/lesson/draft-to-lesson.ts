@@ -14,7 +14,7 @@ import {
     requiredExtensionsFor,
     type GeneratorCard,
 } from "../../exercises";
-import {contentDomainToStamp, isKnownContentDomain} from "../content-domains";
+import {contentDomainToStamp, isKnowledgeDomain} from "../content-domains";
 import {LANGUAGE_OPTIONS} from "../language/language-options";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
@@ -277,7 +277,7 @@ export function lessonToDraftInput(
         // single-content-language / level-less shape). An unknown or absent
         // domain normalises to the default ``"language"``.
         domain:
-            lesson.domain && isKnownContentDomain(lesson.domain)
+            lesson.domain && isKnowledgeDomain(lesson.domain)
                 ? lesson.domain
                 : "language",
     };

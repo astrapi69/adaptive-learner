@@ -16,7 +16,11 @@
  * app-facing shapes (the NON-language Set, the picker options) from it.
  */
 
-import { ENGINE_KNOWN_CONTENT_DOMAINS, ENGINE_LEVEL_NONE } from "./engine";
+import {
+  ENGINE_KNOWN_CONTENT_DOMAINS,
+  ENGINE_LEVEL_NONE,
+  engineIsKnownContentDomain,
+} from "./engine";
 
 /** The implicit domain for a language pair — carries no ``domain`` field on
  *  the built lesson (it is the schema default). */
@@ -52,11 +56,17 @@ export function normalizeLevel(level: string | null | undefined): string {
 }
 
 /** True when ``domain`` names a known NON-language content domain
- *  (case-insensitive). ``"language"``, empty, and unknown values are false. */
-export function isKnownContentDomain(
+ *  (case-insensitive). ``"language"``, empty, and unknown values are false.
+ *
+ *  #3397 - this is the app's own question ("knowledge content?"), not the
+ *  engine's ``isKnownContentDomain`` ("a known domain?", which counts
+ *  ``language`` and empty as known). It is built on the engine's answer and
+ *  named for its own, so the two can no longer be mistaken. */
+export function isKnowledgeDomain(
   domain: string | null | undefined,
 ): boolean {
-  return KNOWN_CONTENT_DOMAINS.has((domain || "").toLowerCase());
+  const value = (domain || "").trim().toLowerCase();
+  return value !== "" && value !== DEFAULT_DOMAIN && engineIsKnownContentDomain(value);
 }
 
 /** The content domain to STAMP on a built lesson for a chosen authoring

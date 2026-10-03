@@ -15,12 +15,15 @@
  * 100% compatible with the loader that parses these same files on import.
  */
 
-import {lessonIdOrderingIssues, validateManifest} from "learn-content-engine";
+import {
+    isKnownContentDomain as engineIsKnownContentDomain,
+    lessonIdOrderingIssues,
+    validateManifest,
+} from "learn-content-engine";
 import {parse as parseYaml, stringify as stringifyYaml} from "yaml";
 
 import {
     DEFAULT_DOMAIN,
-    isKnownContentDomain,
     normalizeLevel,
 } from "./content-domains";
 import {CURRENT_MANIFEST_SCHEMA_VERSION} from "./schema-version";
@@ -65,14 +68,16 @@ function totalCards(lessons: readonly RepoExportLesson[]): number {
  * ``set.domain`` can carry app-internal origin values ("imported" from
  * "My lessons") that are not content domains - ``KNOWN_CONTENT_DOMAINS``
  * does not know them, and the Discover filter would receive a domain that
- * does not exist. Only the default language domain and known non-language
- * domains pass through; anything else falls back to ``knowledge`` when
+ * does not exist. Only domains the engine knows (the language default
+ * included) pass through; anything else falls back to ``knowledge`` when
  * source == target (a same-language set, e.g. a book, would fail the
  * language-pair validation as ``language``) and ``language`` otherwise.
  */
 export function exportDomain(set: ContentSetEntry): string {
     const value = (set.domain || "").trim().toLowerCase();
-    if (value === DEFAULT_DOMAIN || isKnownContentDomain(value)) return value;
+    // #3397 - the engine's own answer; it counts the language default as
+    // known, and an empty value is not a domain to write.
+    if (value && engineIsKnownContentDomain(value)) return value;
     const source = (set.source_language || "").split("-")[0].toLowerCase();
     const target = (set.target_language || "").split("-")[0].toLowerCase();
     if (source && target && source === target) return "knowledge";
@@ -100,7 +105,7 @@ export function exportLessonDomain(
     const raw = (lesson as {domain?: unknown}).domain;
     if (raw === undefined || raw === null) return undefined;
     const value = String(raw).trim().toLowerCase();
-    if (value === DEFAULT_DOMAIN || isKnownContentDomain(value)) return value;
+    if (value && engineIsKnownContentDomain(value)) return value;
     return exportDomain(set);
 }
 

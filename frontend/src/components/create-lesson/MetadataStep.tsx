@@ -22,7 +22,7 @@ import {
 import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../lib/content/language/language-options";
 import {
     DOMAIN_OPTIONS,
-    isKnownContentDomain,
+    isKnowledgeDomain,
     LEVEL_NONE,
 } from "../../lib/content/content-domains";
 import {
@@ -103,7 +103,7 @@ export default function MetadataStep({
     const [templatesOpen, setTemplatesOpen] = useState(false);
     // #1716 — a knowledge (non-language) domain collapses the source/target
     // pair to a single content language and offers a level-less shape.
-    const knowledgeDomain = isKnownContentDomain(meta.domain);
+    const knowledgeDomain = isKnowledgeDomain(meta.domain);
     return (
         <section
             className="create-lesson-step flex flex-col gap-6"
