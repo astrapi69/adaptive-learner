@@ -505,6 +505,47 @@ def test_get_asset_unknown_path_returns_404(
     assert r.status_code == 404
 
 
+@pytest.mark.parametrize(
+    ("kind", "path", "named"),
+    [
+        ("lesson", "lessons/missing.json", "missing.json"),
+        ("asset", "assets/img/missing.png", "img/missing.png"),
+    ],
+    ids=["lesson", "asset"],
+)
+def test_cache_miss_404_keeps_server_paths_out_of_detail(
+    client: TestClient,
+    kind: str,
+    path: str,
+    named: str,
+) -> None:
+    """#3374 - a cache miss on a cached set answers 404 with a detail
+    that names what was asked for, never where the server looked: the
+    detail reaches the user (dev mode, the report dialog) and an
+    absolute cache path exposes the home directory."""
+    from app.paths import get_cache_dir
+
+    transport = _make_mock_transport(
+        {
+            f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/manifest.yaml": SET_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/lessons/01-greetings.json": LESSON_JSON,
+        },
+    )
+    with _install_mock_transport(transport):
+        client.post(
+            f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/download",
+        )
+    r = client.get(f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/{path}")
+    detail = r.json()["detail"]
+    assert (r.status_code, "Looked at" in detail, str(get_cache_dir()) in detail) == (
+        404,
+        False,
+        False,
+    ), f"{kind}: {detail}"
+    assert named in detail
+
+
 # --- Phase 59B/C / v1.42.0 — user-generated sets (My Lessons) --------------
 
 
