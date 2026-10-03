@@ -20,11 +20,11 @@
  *   makes byte-identical to ``chrome/LessonHeader.tsx`` (position row,
  *   set link, compact title, credit). Until then only the title renders.
  *
- * A title that carries content text (``source.wrapTitle``, Error Replay)
- * gets ``wrap-anywhere`` (#2761, moved into the shell in slice 3): a long
- * unbreakable word ("Organisationspsychologie") breaks instead of widening
- * the page, which iOS WebKit answers by clipping the sticky footer's Next
- * button (#1834 class). The fixed titles keep the unclassed ``<h1>``.
+ * Every title, fixed or content text, breaks a long word instead of
+ * widening the page (#2761, #3406): the base ``:where(h1)`` rule in
+ * ``legacy/01-base.css`` hyphenates at a syllable and falls back to
+ * ``overflow-wrap: anywhere``, so iOS WebKit no longer clips the sticky
+ * footer's Next button (#1834 class). The ``<h1>`` itself stays unclassed.
  *
  * @example
  * <RunnerHeader policy={REVIEW_POLICY} source={source} headerExtra={headerExtra} />
@@ -92,7 +92,7 @@ export default function RunnerHeader({ policy, source, headerExtra }: RunnerHead
           {back.label}
         </button>
       )}
-      <h1 className={source.wrapTitle ? "wrap-anywhere" : undefined}>{source.title}</h1>
+      <h1>{source.title}</h1>
       {source.subtitle && (
         <p className="lesson-description" data-testid={testId("subtitle")}>
           {source.subtitle}

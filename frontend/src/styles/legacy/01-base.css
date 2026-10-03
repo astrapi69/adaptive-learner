@@ -325,6 +325,10 @@ button {
   :where(ul, ol):where(.flex, .inline-flex, .grid) { list-style: none; margin: 0; padding: 0; }
 }
 
+@layer base { /* #3406 - a long h1 word widened the page; hyphenate, else break anywhere. */
+  :where(h1) { overflow-wrap: anywhere; hyphens: auto; }
+}
+
 button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
