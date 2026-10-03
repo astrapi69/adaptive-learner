@@ -14,7 +14,10 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
+from app.database import SessionLocal
 from app.main import app
+from app.repositories.backup_repo import SqlAlchemyBackupRepository
+from app.services.backup_service import create_backup, restore_backup
 
 SOURCE = "astrapi69/adaptive-learner-content"
 SET_ID = "language-fr-a1"
@@ -122,6 +125,26 @@ def test_upsert_without_event_leaves_recent_steps_unchanged(client: TestClient) 
 def test_fresh_row_reports_an_empty_list(client: TestClient) -> None:
     user_id = _make_user(client)
     assert _upsert(client, user_id, current_step=0)["recent_steps"] == []
+
+
+def test_browser_mode_backup_restores_the_list_into_the_server(client: TestClient) -> None:
+    """A Dexie-origin backup carries ``recent_steps`` as a parsed list,
+    where an API backup carries the JSON text; both must restore."""
+    user_id = _make_user(client)
+    _upsert(client, user_id, step_event=_step(1))
+    entries = [{"at": "2026-10-03T10:00:00+00:00", "kind": "step", "step_index": 2, "step_id": "s2"}]
+    db = SessionLocal()
+    try:
+        backup = create_backup(SqlAlchemyBackupRepository(db), user_id)
+        record = backup["data"]["lesson_progress"][0]
+        record["recent_steps"] = entries
+        record["updated_at"] = "2099-01-01T00:00:00+00:00"
+        result = restore_backup(SqlAlchemyBackupRepository(db), backup)
+        assert result["errors"] == []
+    finally:
+        db.close()
+    rows = client.get(f"/api/users/{user_id}/lesson-progress").json()
+    assert rows[0]["recent_steps"] == entries
 
 
 @pytest.mark.parametrize(
