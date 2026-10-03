@@ -77,7 +77,8 @@ passam inalteradas.
 
 ## Exportações
 
-Três tipos de exportação via Definições → Exportar, todos
+Três tipos de exportação via Definições > Dados > Cópia de
+segurança e exportação > Exportar, todos
 idênticos em forma nos modos de armazenamento:
 
 - **Relatório de Progresso** - a página de Progresso completa

@@ -127,7 +127,8 @@ motivacionales:
   fin de semana que omite los huecos de sáb./dom.
 
 La gamificación es **opcional**. Desactivar las notificaciones de
-toast en Ajustes → Gamificación silencia los prompts; el sistema
+toast en Ajustes > Aprendizaje > Motivación y rutina >
+Gamificación silencia los prompts; el sistema
 sigue registrando el estado. Las perspectivas de evaluación de
 pasos + el historial de commits al estilo Git siguen siendo el
 análisis de carga.

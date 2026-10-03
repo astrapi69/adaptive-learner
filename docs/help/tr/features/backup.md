@@ -2,10 +2,10 @@
 
 Adaptive Learner, tüm öğrenme durumunu tek bir dosyaya yedekleyebilir
 ve başka bir cihazda, yeni bir kurulumda ya da bir tarayıcı
-değişikliğinden sonra geri yükleyebilir. Her şeyi **Ayarlar →
-Veriler** altında bulursun.
+değişikliğinden sonra geri yükleyebilir. Her şeyi **Ayarlar >
+Veri** altında bulursun.
 
-<!-- TODO: Ekran görüntüsü - Ayarlar → Veriler, "Yedek oluştur" ve "Geri yükle" düğmeleriyle -->
+<!-- TODO: Ekran görüntüsü - Ayarlar > Veri, "Yedek oluştur" ve "Geri yükle" düğmeleriyle -->
 
 ---
 
@@ -30,7 +30,7 @@ görmen için bölüm başına veri kümesi sayılarıyla bir **"Yedeğin
 
 ## Yedek oluşturma
 
-1. **Ayarlar → Veriler**'i aç.
+1. **Ayarlar > Veri**'yi aç.
 2. **Yedek oluştur**'a bas.
 3. Yalnızca tarayıcı modunda, File System Access API üzerinden
    doğrudan bir kayıt konumu seçebilirsin ("Diske kaydet"); tarayıcı
@@ -44,7 +44,7 @@ tutar.
 
 ## Geri yükleme
 
-1. **Ayarlar → Veriler → Geri yükle**.
+1. **Ayarlar > Veri > Geri yükle**.
 2. Yedek dosyasını seç.
 3. Uygulama her tabloyu içe aktarır ve neyin yüklendiğini tam olarak
    görmen için **tablo başına bir özete** (eklendi / güncellendi /
@@ -52,7 +52,7 @@ tutar.
 
 İçe aktarmada bir şey ters giderse, kendiliğinden kaybolmayan
 **kalıcı bir hata uyarısı** (Toast) görünür - böylece hiçbir hatayı
-gözden kaçırmazsın. Geliştirici modunda (Ayarlar → Arayüz), mesaj bir
+gözden kaçırmazsın. Geliştirici modunda (Ayarlar > Tanılama ve destek), mesaj bir
 GitHub Issue için teknik ayrıntıları içerir.
 
 ---
@@ -80,8 +80,12 @@ değişikliğinden sonra öğrenme akışına hemen geri dönersin.
 ## Her iki depolama modu
 
 Yedekleme ve geri yükleme **her iki** depolama modunda da çalışır -
-sunucu (API) ve yalnızca tarayıcı (Dexie/IndexedDB). Format tek bir
-JSON dosyasıdır; özel bir arşiv formatı yoktur.
+sunucu (API) ve yalnızca tarayıcı (Dexie/IndexedDB). Yedek bir
+**`.alb` dosyasıdır** - veri tablolarını, localStorage anlık
+görüntüsünü ve içerik setlerini bir araya getiren bir ZIP arşivi.
+`.alb` dosyaları tüm yedek içe aktarma noktalarında kabul edilir
+(Ayarlar > Veri ve Tehlike bölgesi). Tek bir JSON dosyasından oluşan
+eski yedekler de sorunsuz içe aktarılır.
 
 !!! note "Gizlilik"
     Yedek tamamen senin elinde kalır. Yalnızca koyduğun yere

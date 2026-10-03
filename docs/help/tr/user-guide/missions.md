@@ -28,7 +28,7 @@ olmadan da tamamen aynı şekilde çalışır ve bir günü kaçırmak için
 
 ## Görevleri yapılandırma
 
-**Ayarlar > Öğrenme > Günlük Görevler** şunları yapmanıza olanak tanır:
+**Ayarlar > Öğrenme > Günlük görevler** şunları yapmanıza olanak tanır:
 
 - günlük görevleri **açma veya kapatma** (varsayılan olarak açık),
 - günde **kaç tane** olacağını seçme (1-3),

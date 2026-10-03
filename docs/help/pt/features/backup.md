@@ -54,8 +54,8 @@ salvaguarda.
 
 Se algo correr mal durante a importação, aparece um **aviso de erro
 permanente** (toast) que não desaparece por si - assim não passas
-nenhum erro despercebido. No modo programador (Definições →
-Interface), a mensagem contém os detalhes técnicos para um issue no
+nenhum erro despercebido. No modo programador (Definições >
+Diagnóstico e suporte), a mensagem contém os detalhes técnicos para um issue no
 GitHub.
 
 ---
@@ -86,8 +86,12 @@ mudança de dispositivo ou browser.
 
 O backup e o restauro funcionam em **ambos** os modos de
 armazenamento - servidor (API) e apenas browser (Dexie/IndexedDB).
-O formato é um único ficheiro JSON; não existe nenhum formato de
-arquivo proprietário.
+O backup é um **ficheiro `.alb`** - um arquivo ZIP que reúne as
+tabelas de dados, o instantâneo do localStorage e os conjuntos de
+conteúdo. Os ficheiros `.alb` são aceites em todos os pontos de
+importação de backup (Definições > Dados e a Zona de perigo). Os
+backups antigos num único ficheiro JSON continuam a ser importados
+sem problemas.
 
 !!! note "Privacidade"
     O backup fica inteiramente nas tuas mãos. É guardado apenas

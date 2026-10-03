@@ -77,10 +77,12 @@ yolculuğu özetler.
 
 Evet. Üç dışa aktarma yolu geldi:
 
-- **Yedek**: Ayarlar → Yedek → Yedek Oluştur. Hesabınızdaki her
-  satırla zaman damgalı bir JSON indirir. API anahtarları çıkarılır.
+- **Yedek**: Ayarlar > Veri > Yedekleme ve dışa aktarma > Yedek
+  oluştur. Hesabınızdaki her satırla bir `.alb` yedek dosyası indirir.
+  API anahtarları çıkarılır.
   Her iki depolama modunda da çalışır.
-- **İlerleme / Oturum / Müfredat raporları**: Ayarlar → Dışa Aktar.
+- **İlerleme / Oturum / Müfredat raporları**: Ayarlar > Veri >
+  Yedekleme ve dışa aktarma > Dışa aktar.
   Markdown + PDF (tarayıcı yazdırma-PDF).
 - **Anki .apkg**: `/anki` sayfasında yapay zeka tarafından çıkarılan
   flash kartları inceleyin, beğendiklerinizi kabul edin, Dışa Aktar'a
@@ -103,8 +105,8 @@ Evet. Üç dışa aktarma yolu geldi:
   ziyaret edin, yapay zeka bir hedef cümle oluşturur, siz konuşun ve
   yargıç yapay zeka benzerliği puanlar + geliştirmeler önerir.
 
-Ses geçişleri Ayarlar → Ses bölümünde bulunur. API'yi desteklemeyen
-tarayıcılarda bölüm kendini gizler.
+Ses geçişleri Ayarlar > Öğrenme > Sesli okuma ve dikte bölümünde
+bulunur. API'yi desteklemeyen tarayıcılarda bu alan kendini gizler.
 
 ## Sohbet geçmişi içe aktarma nedir?
 
@@ -118,8 +120,8 @@ hedefli bir oturum başlatılır.
 
 ## Cihazlar arasında senkronizasyon?
 
-Yerel ağ çift yönlü senkronizasyonu. Ayarlar → Senkronizasyon →
-"Bu cihazı eşleştir": diğer cihazın ekranındaki QR kodunu tarayın (arka
+Yerel ağ çift yönlü senkronizasyonu. Ayarlar > Veri > Eşitleme'yi açın
+ve bu cihazı eşleştirin: diğer cihazın ekranındaki QR kodunu tarayın (arka
 kamera) ya da eşleştirme URL'sini yapıştırın. Eşleştirildikten sonra
 iter + çeker düğmeleri veri alışverişi yapar; çakışmalar yapay zeka
 birleştirme çözücüden geçer. Senkronizasyon

@@ -84,12 +84,13 @@ de fim de sessão resume a jornada de múltiplos ciclos quando
 
 Sim. Três caminhos de exportação incluídos:
 
-- **Backup**: Definições → Backup → Criar Backup. Descarrega
-  um JSON com timestamp com todas as linhas da sua conta. As
-  chaves de API são removidas. Funciona em ambos os modos de
-  armazenamento.
-- **Relatórios de Progresso / Sessão / Currículo**: Definições
-  → Exportar. Markdown + PDF (impressão para PDF do navegador).
+- **Backup**: Definições > Dados > Cópia de segurança e
+  exportação > Criar backup. Descarrega um ficheiro de cópia de
+  segurança `.alb` com todas as linhas da sua conta. As chaves de
+  API são removidas. Funciona em ambos os modos de armazenamento.
+- **Relatórios de Progresso / Sessão / Currículo**: Definições >
+  Dados > Cópia de segurança e exportação > Exportar. Markdown +
+  PDF (impressão para PDF do navegador).
 - **Anki .apkg**: reveja os flashcards extraídos pela IA na
   página `/anki`, aceite os que gosta, clique em Exportar.
   O ficheiro funciona diretamente no Anki desktop.
@@ -112,8 +113,9 @@ Três integrações da Web Speech API:
   `/pronunciation`, a IA gera uma frase alvo, você fala, e
   uma IA juiz pontua a semelhança + sugere melhorias.
 
-As alternâncias de voz ficam em Definições → Voz. A secção
-oculta-se nos navegadores que não suportam a API.
+As alternâncias de voz ficam em Definições > Aprendizagem >
+Leitura em voz alta e ditado. A área oculta-se nos navegadores que
+não suportam a API.
 
 ## O que é a importação de historial de chat?
 
@@ -132,8 +134,8 @@ timestamps + preservação de limite de papel para esse formato.
 
 ## Sincronização entre dispositivos?
 
-Sincronização bidirecional em rede local.
-Definições → Sincronização → "Emparelhar este dispositivo":
+Sincronização bidirecional em rede local. Abra
+Definições > Dados > Sincronização e emparelhe este dispositivo:
 digitalize o código QR no ecrã do outro dispositivo (câmara
 traseira), ou cole o URL de emparelhamento. Uma vez emparelhado,
 os botões de envio + receção trocam dados; os conflitos passam

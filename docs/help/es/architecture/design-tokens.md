@@ -49,8 +49,8 @@ tokens está en
 2. Define los 44 tokens canónicos (la paridad es obligatoria).
 3. Cuida el **contraste WCAG AA** - `contrast.test.ts` comprueba
    todos los temas de forma computacional.
-4. Registra el tema; el selector en Ajustes → Apariencia lo
-   adopta.
+4. Registra el tema; el selector en Ajustes > General >
+   Apariencia lo adopta.
 
 Si una nueva función necesita un color nuevo: **añade un token**,
 no un literal. Si varía según el tema, agrégalo en todos los

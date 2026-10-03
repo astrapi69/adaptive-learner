@@ -61,8 +61,8 @@ tarayıcının dışında bulunur.
    [öğrenme türü testini](assessment.md) yap ve bir
    [öğrenme oturumu](learning-session.md) başlat.
 5. **Sonucunu yedekle.** Ders özetinden sonucu Markdown olarak
-   kopyalayabilir ya da dosya olarak kaydedebilir ve **Ayarlar →
-   Veriler** altında bir [yedek](../features/backup.md)
+   kopyalayabilir ya da dosya olarak kaydedebilir ve **Ayarlar >
+   Veri** altında bir [yedek](../features/backup.md)
    oluşturabilirsin.
 
 ## Nasıl devam edilir

@@ -29,7 +29,7 @@ conjunto de missões.
 
 ## Configurar missões
 
-**Definições > Aprendizagem > Missões Diárias** permite-lhe:
+**Definições > Aprendizagem > Missões diárias** permite-lhe:
 
 - ativar ou desativar as missões diárias (ativas por padrão),
 - escolher **quantas** por dia (1 a 3),
