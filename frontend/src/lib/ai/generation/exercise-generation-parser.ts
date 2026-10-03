@@ -23,6 +23,7 @@ import {
   type GeneratedExerciseType,
 } from "./exercise-generation-prompt";
 import { asBool, cleanString, cleanStringArray } from "./card-fields";
+import { QUALITY } from "../../content/validation/quality-rules.generated";
 import {
   buildExtensionCard,
   isTextExtensionType,
@@ -116,7 +117,9 @@ export interface ExerciseGenerationParseResult {
   errors: string[];
 }
 
-const MIN_MATCHING_PAIRS = 3;
+/** #3405 - the engine's minimum via the app's pinned mirror (see the
+ *  quality gate for why not the engine import). */
+const MIN_MATCHING_PAIRS = QUALITY.minMatchingPairs;
 /** The schema's hard cap on ``Exercise.explanation`` (engine schema 1.13). */
 export const EXPLANATION_MAX_CHARS = 2000;
 const MIN_CHOICE_OPTIONS = 3;
