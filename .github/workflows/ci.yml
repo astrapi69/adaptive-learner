@@ -526,9 +526,16 @@ jobs:
           # and a failed audit would read as success.
           set -o pipefail
           log="$RUNNER_TEMP/bun-audit.log"
+          # #3549: advisories with no patched release that only reach a
+          # dev-only chain are exempted by ID in audit-ignore.txt, each with
+          # its reason (the pip-audit convention below: document the ID,
+          # never drop the gate). A missing file fails the step here.
+          ignores=$(grep -vE '^[[:space:]]*(#|$)' audit-ignore.txt | sed 's/^/--ignore=/' | tr '\n' ' ')
+          echo "exempted advisories: ${ignores:-none}"
           for attempt in 1 2 3; do
             echo "::group::bun audit --audit-level=high (attempt $attempt/3)"
-            if bun audit --audit-level=high 2>&1 | tee "$log"; then
+            # shellcheck disable=SC2086 # word-split on purpose: one flag per ID
+            if bun audit --audit-level=high $ignores 2>&1 | tee "$log"; then
               echo "::endgroup::"
               exit 0
             fi

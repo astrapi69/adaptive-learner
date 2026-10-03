@@ -1027,7 +1027,7 @@ check-security: ## Blocking dependency gate: pip-audit + bun audit fail on HIGH/
 	@echo "=== check-security: pip-audit (backend, fails on any known vuln) ==="
 	@cd backend && poetry run pip-audit --skip-editable --progress-spinner=off
 	@echo "=== check-security: bun audit --audit-level=high (frontend) ==="
-	@cd frontend && bun audit --audit-level=high
+	@cd frontend && bun audit --audit-level=high $$(grep -vE '^[[:space:]]*(#|$$)' audit-ignore.txt | sed 's/^/--ignore=/')
 	@echo "check-security passed: no high/critical dependency vulnerabilities."
 
 circular-deps: ## Circular-dependency check over frontend/src (madge via the existing check:circular script)

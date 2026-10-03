@@ -1,0 +1,16 @@
+# Advisories the BLOCKING `bun audit --audit-level=high` skips (#3549).
+# Read by ci.yml (Frontend Tests) and `make check-security`; the nightly
+# security scan stays unfiltered and keeps reporting them as warnings.
+#
+# One advisory ID per line, with a comment directly above that names the ID,
+# says why it cannot be fixed and when the entry goes. An advisory with a
+# patched release is fixed (bump or override), never listed here.
+# Pinned by backend/tests/test_frontend_audit_ignore.py.
+
+# GHSA-vfj7-8cjw-p6xm (braces <=3.0.3, high, stack-exhaustion DoS through
+# deeply nested patterns). No patched release exists: 3.0.3 is the newest,
+# and the advisory lists none. braces only reaches the dev-only lint chain
+# stylelint > globby > fast-glob > micromatch > braces, never the app bundle
+# or the image. Remove when a braces release after 3.0.3 exists or stylelint
+# stops pulling the chain.
+GHSA-vfj7-8cjw-p6xm
