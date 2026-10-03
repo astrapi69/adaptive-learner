@@ -69,6 +69,7 @@ Session der ccw-Lane, begonnen am 2026-10-01: Queue-Abarbeitung mit Owner-Pausen
   - Draft-Assets genau die erwarteten 7: drei Launcher, drei `.sha256`, `image-digest.txt`.
   - Pages-Deploy: Run 36987738992 auf `a896887e` grün (`deploy-gh-pages.yml`; `docs.yml` ist seit Mai stillgelegt). Die Seite selbst war aus der Session nicht abrufbar (Proxy).
   - Veröffentlichen (`draft=false`) aus dieser Session abgelehnt: "Creating, editing, or deleting releases is not permitted for this session type." Bleibt beim Owner.
+  - Nachtrag 2026-10-03: Die lokale Sitzung hat den Release um 06:32 UTC veröffentlicht (`draft=false`), nach erneuter Prüfung von Run 37030147226, den 7 Assets und dem Tag auf `a896887e`. v2.16.0 ist seitdem GitHubs "latest"; die Pages-Seite zeigt 2.16.0. Die Release-Sperre ist damit beendet.
 - Commit: (dieser PR).
 
 ## Lektionen dieser Runde
@@ -79,4 +80,4 @@ Session der ccw-Lane, begonnen am 2026-10-01: Queue-Abarbeitung mit Owner-Pausen
 
 ## Zusammenfassung
 
-PRs gemergt: #3531, #3533, #3534, #3535, #3536, #3537, #3538, #3541. Issues geschlossen: #3391, #3387, #3393, #3377. Offen für den Owner: #3389 (Entscheidung), Issue für den `purpose`-Verlust beim Bearbeiten (OK nötig), Tag-Push und Veröffentlichung von v2.16.0, die arm64-Obergrenze im Publish-Lauf.
+PRs gemergt: #3531, #3533, #3534, #3535, #3536, #3537, #3538, #3541. Issues geschlossen: #3391, #3387, #3393, #3377. Offen für den Owner waren: #3389 (entschieden: Option 2), das Issue für den `purpose`-Verlust beim Bearbeiten (angelegt als #3543), Tag-Push und Veröffentlichung von v2.16.0 (beides erledigt, siehe Abschnitt 7) und die arm64-Obergrenze im Publish-Lauf (angehoben in #3546).
