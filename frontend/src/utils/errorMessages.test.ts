@@ -23,7 +23,9 @@ import {
     friendlyErrorMessage,
     friendlyNetworkErrorMessage,
     friendlyTimeoutMessage,
+    inlineErrorText,
 } from "./errorMessages";
+import {ApiError} from "../api/client";
 
 describe("friendlyErrorMessage", () => {
     const cases: Array<[number, string]> = [
@@ -92,5 +94,21 @@ describe("friendlyNetworkErrorMessage / friendlyTimeoutMessage", () => {
 
     it("timeout has its own friendly text", () => {
         expect(friendlyTimeoutMessage()).toBe("The request took too long.");
+    });
+});
+
+describe("inlineErrorText (#3374)", () => {
+    const FALLBACK = "Could not load the questions.";
+    const apiError = new ApiError(404, "Looked at: /home/user/.cache/x", "/api/x", "GET");
+
+    it.each([
+        ["an ApiError in production", apiError, false, "This page or feature was not found."],
+        ["an ApiError in dev mode", apiError, true, "Looked at: /home/user/.cache/x"],
+        ["a plain Error in production", new TypeError("x is undefined"), false, FALLBACK],
+        ["a plain Error in dev mode", new TypeError("x is undefined"), true, "x is undefined"],
+        ["a non-error value in production", "boom", false, FALLBACK],
+        ["an empty error in dev mode", new Error(""), true, FALLBACK],
+    ])("shows %s as the right text", (_name, error, devMode, expected) => {
+        expect(inlineErrorText(error, FALLBACK, devMode)).toBe(expected);
     });
 });

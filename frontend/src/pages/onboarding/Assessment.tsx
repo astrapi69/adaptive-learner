@@ -8,7 +8,8 @@ import ProfileRadar from "../../components/progress/ProfileRadar";
 import QuestionCard from "../../components/assessment/QuestionCard";
 import MethodBadge from "../../components/session/MethodBadge";
 import SpeechButton from "../../components/voice/SpeechButton";
-import {ApiError} from "../../api/client";
+import {isDevMode} from "../../hooks/settings/useDevMode";
+import {inlineErrorText} from "../../utils/errorMessages";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {hapticSwipe, useSwipe} from "../../hooks/ui/useSwipe";
 import {
@@ -98,9 +99,7 @@ export default function Assessment() {
             })
             .catch((err) => {
                 if (cancelled) return;
-                const detail =
-                    err instanceof ApiError ? err.detail : t("common.error");
-                setLoadError(detail);
+                setLoadError(inlineErrorText(err, t("common.error"), isDevMode()));
             });
         return () => {
             cancelled = true;

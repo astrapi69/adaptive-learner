@@ -114,3 +114,32 @@ export function friendlyNetworkErrorMessage(): string {
 export function friendlyTimeoutMessage(): string {
     return lookupFriendly("ui.errors.timeout");
 }
+
+/**
+ * The text an inline error (a form message, a load-failed panel) shows
+ * for a caught error (#3374).
+ *
+ * The same posture as ``notify.error(prefix, {error})`` and the runner's
+ * load-failed view (#1824): production users read the friendly
+ * ``ui.errors.*`` text for an ``ApiError`` and the caller's localized
+ * ``fallback`` for anything else; the raw backend detail or error message
+ * shows only in Developer Mode.
+ *
+ * @param error - The caught value.
+ * @param fallback - Localized text for a non-API error.
+ * @param devMode - Developer Mode at the time the error is caught
+ *     (``isDevMode()``); the text is stored, so a later toggle does not
+ *     re-render it.
+ *
+ * @example
+ * ```ts
+ * setError(inlineErrorText(err, t("x.load_failed", "Could not load."), isDevMode()));
+ * ```
+ */
+export function inlineErrorText(error: unknown, fallback: string, devMode: boolean): string {
+    if (devMode) {
+        const raw = error instanceof ApiError ? error.detail : error instanceof Error ? error.message : "";
+        return raw || fallback;
+    }
+    return error instanceof ApiError ? friendlyErrorMessage(error) : fallback;
+}
