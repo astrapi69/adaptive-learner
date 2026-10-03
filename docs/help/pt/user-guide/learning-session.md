@@ -59,7 +59,8 @@ historial do chat.
 resposta da IA lê-a em voz alta; um botão de microfone (🎤)
 na entrada permite-lhe ditar; as transcrições provisórias
 preenchem a área de texto para que possa rever antes de enviar.
-Ambos são Web Speech API; alterne em Definições → Voz.
+Ambos são Web Speech API; alterne em
+Definições > Aprendizagem > Leitura em voz alta e ditado.
 
 ## Indicador de progresso do ciclo
 

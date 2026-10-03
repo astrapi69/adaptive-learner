@@ -82,12 +82,12 @@ ciclos cuando `cycle_count > 1`.
 
 Sí. Se han implementado tres rutas de exportación:
 
-- **Copia de seguridad**: Ajustes → Copia de seguridad → Crear
-  copia. Descarga un JSON con marca de tiempo con todas las filas
-  de tu cuenta. Las claves API se eliminan. Funciona en ambos
+- **Copia de seguridad**: Ajustes > Datos > Copia de seguridad y
+  exportación > Crear copia de seguridad. Descarga un archivo de copia
+  de seguridad `.alb` con todas las filas de tu cuenta. Las claves API se eliminan. Funciona en ambos
   modos de almacenamiento.
-- **Informes de Progreso / Sesión / Plan de estudios**: Ajustes →
-  Exportar. Markdown + PDF (impresión a PDF del navegador).
+- **Informes de Progreso / Sesión / Plan de estudios**: Ajustes >
+  Datos > Copia de seguridad y exportación > Exportar. Markdown + PDF (impresión a PDF del navegador).
 - **Anki .apkg**: revisa las tarjetas de memoria extraídas por la
   IA en la página `/anki`, acepta las que te gusten y haz clic en
   Exportar. El archivo funciona directamente en Anki de escritorio.
@@ -110,8 +110,9 @@ Tres integraciones con la Web Speech API:
   `/pronunciation`, la IA genera una frase objetivo, tú hablas y
   una IA evaluadora puntúa la similitud y sugiere mejoras.
 
-Los alternadores de voz se encuentran en Ajustes → Voz. La
-sección se oculta en navegadores que no admiten la API.
+Los alternadores de voz se encuentran en Ajustes > Aprendizaje >
+Lectura en voz alta y dictado. El área se oculta en navegadores que
+no admiten la API.
 
 ## ¿Qué es la importación del historial de chat?
 
@@ -131,8 +132,8 @@ para ese formato.
 
 ## ¿Sincronización entre dispositivos?
 
-Sincronización bidireccional en la red local.
-Ajustes → Sincronización → «Emparejar este dispositivo»: escanea
+Sincronización bidireccional en la red local. Abre Ajustes > Datos >
+Sincronización y empareja este dispositivo: escanea
 el código QR en la pantalla del otro dispositivo (cámara trasera)
 o pega la URL de emparejamiento. Una vez emparejados, los botones
 de enviar y recibir intercambian datos; los conflictos pasan por

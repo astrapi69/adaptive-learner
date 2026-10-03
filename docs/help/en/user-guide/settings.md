@@ -56,7 +56,7 @@ your **avatar**:
   show their condition.
 
 Your choice and purchased frames persist and travel with your
-[backup](backup.md).
+[backup](../features/backup.md).
 
 ## Appearance
 
@@ -260,7 +260,7 @@ lessons** is off, the options inside are greyed out.
 
 The tab ends with **Gamification** (below a separator, because that card
 holds *Reset progress*). The two housekeeping settings -
-*Paused lesson retention* and *Maximum lesson size* - are data-lifecycle
+*Paused lessons on the Dashboard* and *Maximum lesson size* - are data-lifecycle
 settings and live on the **Data** tab (see [Offline content](#offline-content)
 and [Housekeeping](#housekeeping)).
 
@@ -467,15 +467,17 @@ export is also disabled when no exportable key is configured yet.
 
 ### Housekeeping
 
-- **Paused lesson retention**: paused lessons older than this are
-  abandoned automatically on the next Dashboard load. Choose 7, 14,
-  30 or 60 days, or *Never*; the default is 30 days. Up to 10 paused
-  lessons are kept regardless of age.
+- **Paused lessons on the Dashboard**: the Dashboard's paused-lessons
+  card only shows lessons paused within this time (*Hide paused lessons
+  older than* 7, 14, 30 or 60 days, or *Never*; the default is 30 days).
+  An older lesson just drops out of the card: nothing is abandoned, and
+  it keeps its position and answers. The card shows the five most
+  recently paused lessons.
 - **Disconnected content** (browser mode): progress whose content
   repository is no longer connected stays hidden until you delete it
   here. The card only appears when there is something to clean up.
 
-*Maximum lesson size* and *Paused lesson retention* are stored in this
+*Maximum lesson size* and *Paused lessons on the Dashboard* are stored in this
 browser and apply in Server and Local mode alike.
 
 ### Danger zone

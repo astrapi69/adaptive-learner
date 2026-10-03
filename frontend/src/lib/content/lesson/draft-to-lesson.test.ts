@@ -153,8 +153,6 @@ describe("draft-to-lesson", () => {
         i.cards[0] = {...i.cards[0], back: ""};
         const checks = checkDraft(i);
         expect(checks.enoughCards).toBe(true);
-        expect(checks.enoughExercises).toBe(true);
-        expect(checks.enoughTypes).toBe(true);
         expect(checks.schemaValid).toBe(false);
         expect(allChecksPass(checks)).toBe(false);
         // The precise ajv reason is carried, not discarded.

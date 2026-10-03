@@ -45,7 +45,7 @@ célébration « toutes les missions accomplies » avec confettis et son.
 
 ## Configuration
 
-Dans **Paramètres → Apprentissage → Missions**, vous pouvez :
+Dans **Paramètres > Apprentissage > Missions quotidiennes**, vous pouvez :
 
 - **Activer/désactiver** les missions
 - **Nombre de missions** par jour (1-3)
@@ -72,5 +72,5 @@ des gels disponibles ce mois-ci).
 
 Les missions sont des **objectifs quotidiens**, pas des jalons à long terme.
 Pour la progression à long terme, consultez la galerie des badges
-(**Paramètres → Gamification → Galerie des badges**) qui affiche tous les
+(**Paramètres > Apprentissage > Ludification > Voir tous les badges**) qui affiche tous les
 badges et leurs critères.

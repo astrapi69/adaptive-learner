@@ -365,8 +365,6 @@ export interface DraftValidationChecks {
      *  an empty or unknown code fails. */
     languagePair: boolean;
     enoughCards: boolean;
-    enoughExercises: boolean;
-    enoughTypes: boolean;
     schemaValid: boolean;
     /** The structural validator's reason when ``schemaValid`` is false
      *  (#1722 — e.g. ``/cards/0/back must NOT have fewer than 1
@@ -396,8 +394,6 @@ const BOOLEAN_CHECK_KEYS = [
     "hasTitle",
     "languagePair",
     "enoughCards",
-    "enoughExercises",
-    "enoughTypes",
     "schemaValid",
 ] as const;
 
@@ -409,18 +405,19 @@ const BOOLEAN_CHECK_KEYS = [
 const VALIDATION_ERROR_PREFIX = "generated lesson invalid: ";
 
 export const MIN_CARDS_FOR_SAVE = 4;
-export const MIN_EXERCISES_FOR_SAVE = 5;
-export const MIN_TYPES_FOR_SAVE = 2;
 
 /** The engine schema's ``Card.front``/``Card.back`` ``maxLength`` (#1722).
  *  The card inputs cap at this so a hand-typed side can never fail the
  *  ajv structure check on length. */
 export const CARD_SIDE_MAX_LENGTH = 500;
 
-/** Run the save-readiness checks for the Step-4 checklist. */
+/** Run the local save-readiness checks for the Step-4 checklist.
+ *
+ *  Validity only (#3389, option 2): the exercise and type counts are the
+ *  engine's quality minimums and gate sharing, see
+ *  ``edit/draft-share-check.ts``. */
 export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
     const {meta, cards, exercises} = input;
-    const types = new Set(exercises.map((e) => e.type));
     let schemaValid: boolean;
     let schemaError: string | null = null;
     let schemaErrorIsInternal = false;
@@ -467,8 +464,6 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
             meta.targetLanguage,
         ),
         enoughCards: cards.length >= MIN_CARDS_FOR_SAVE,
-        enoughExercises: exercises.length >= MIN_EXERCISES_FOR_SAVE,
-        enoughTypes: types.size >= MIN_TYPES_FOR_SAVE,
         schemaValid,
         schemaError,
         schemaErrorIsInternal,

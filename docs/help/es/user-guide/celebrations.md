@@ -22,7 +22,7 @@ prominente es la retroalimentación.
 
 ## Intensidad de la retroalimentación
 
-**Ajustes > Interfaz > Intensidad de retroalimentación** te
+**Ajustes > Aprendizaje > Intensidad del feedback** te
 permite elegir qué tan vistosas son las celebraciones:
 
 - **Sutil** - solo el color de correcto/incorrecto. Sin frases,
@@ -39,7 +39,7 @@ independientemente de este ajuste.
 ## Sonidos
 
 Los sonidos están **desactivados por defecto** - nunca te sorprende
-el audio. Actívalos en **Ajustes > Interfaz > Sonidos**, luego usa
+el audio. Actívalos en **Ajustes > Aprendizaje > Sonidos**, luego usa
 el control de volumen y el botón **Probar** para preescucharlos.
 Los sonidos son campanillas sintéticas breves y siempre son
 complementarios: cada señal que emiten también se muestra en

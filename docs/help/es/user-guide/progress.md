@@ -76,7 +76,8 @@ pasan sin cambios.
 
 ## Exportaciones
 
-Tres tipos de exportación mediante Ajustes → Exportar, todos
+Tres tipos de exportación mediante Ajustes > Datos > Copia de
+seguridad y exportación > Exportar, todos
 idénticos en forma en todos los modos de almacenamiento:
 
 - **Informe de progreso** - la página completa de Progreso

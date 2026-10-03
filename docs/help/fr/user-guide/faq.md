@@ -74,7 +74,8 @@ Non. L'auto-boucle s'arrête lorsque l'un de ces critères est atteint :
 
 Plusieurs options :
 
-- **Paramètres → Données → Sauvegarde** - export JSON complet de toutes
+- **Paramètres > Données > Sauvegarde et export > Créer une
+  sauvegarde** - télécharge un fichier de sauvegarde `.alb` avec toutes
   les données
 - **Plugin Learning Repository** - exporte vers un dépôt Git local avec
   commits sémantiques

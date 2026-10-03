@@ -8,7 +8,7 @@ toplam **12 tema** taşır.
 
 ## Önerilen ön ayarlar (Faz 63 / v1.63.0)
 
-Ayarlar → Görünüm altındaki seçici, bir **Önerilen** alt sekmesiyle
+Ayarlar > Genel > Görünüm altındaki seçici, bir **Önerilen** alt sekmesiyle
 başlar:
 
 - **Açık:** `catppuccin-latte`, `supabase`, `graphite`

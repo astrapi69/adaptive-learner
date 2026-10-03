@@ -6,7 +6,7 @@ katalogla sınırlı değilsin: Adaptive Learner aynı anda birden çok
 Repository yükleyebilir, kendi Repository'lerini bağlayabilir ve
 küratörlü olanları önerebilir (EXP-023).
 
-<!-- TODO: Ekran görüntüsü - Ayarlar → Veriler → İçerik Repository'leri bölümü; resmî repo + bir kendi repo -->
+<!-- TODO: Ekran görüntüsü - Ayarlar > Veri > İçerik Repository'leri bölümü; resmî repo + bir kendi repo -->
 
 ---
 
@@ -29,7 +29,7 @@ tercih edilir.
 
 ## Kendi Repository'ni bağlama
 
-**Ayarlar → Veriler → İçerik Repository'leri** altında bir GitHub
+**Ayarlar > Veri > İçerik Repository'leri** altında bir GitHub
 repo URL'si eklersin. Uygulama repoyu otomatik denetler (aşağıdaki
 *Trust seviyeleri*'ne bakın), ders kataloğunu senkronize eder ve
 resmî içerikle aynı önbelleğe yerel olarak depolar (sunucu modunda
@@ -46,7 +46,7 @@ dosya sistemi, yalnızca tarayıcı modunda IndexedDB).
 
 ## Birden çok Repository'yi yönetme
 
-İstediğin kadar repo bağlayabilirsin. **Ayarlar → Veriler** altındaki
+İstediğin kadar repo bağlayabilirsin. **Ayarlar > Veri** altındaki
 listede onları şöyle yapabilirsin:
 
 - Repo URL'si üzerinden **ekleme**,
@@ -91,7 +91,7 @@ gerektirir ve şu anda ertelenmiştir.
 ## Önerilen Repository'ler
 
 Resmî repo küratörlü bir liste (`recommended-repos.json`) tutar.
-**Ayarlar → Veriler** altında buradan, önerilen Repository'leri **tek
+**Ayarlar > Veri** altında buradan, önerilen Repository'leri **tek
 tıkla** eklediğin bir keşfetme bölümü bulunur. Bunlar **Resmî olarak
 önerilen** (Trust 3) rozetiyle görünür.
 

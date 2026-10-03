@@ -48,7 +48,8 @@ içinde bulunur.
 2. 44 kanonik Token'ın tümünü ayarla (eşlik zorunludur).
 3. **WCAG-AA kontrastına** dikkat et - `contrast.test.ts` tüm
    temaları hesaplamalı olarak denetler.
-4. Temayı kaydet; Ayarlar → Görünüm altındaki seçici onu devralır.
+4. Temayı kaydet; Ayarlar > Genel > Görünüm altındaki seçici onu
+   devralır.
 
 Yeni bir özellik yeni bir renk gerektiriyorsa: bir **Token ekle**,
 değişmez değil. Tema başına değişiyorsa tüm `theme-*.css`

@@ -55,7 +55,7 @@ retrouves jamais totalement sans sauvegarde.
 Si quelque chose se passe mal pendant l'import, un **avis d'erreur
 permanent** (toast) apparaît, qui ne disparaît pas de lui-même -
 ainsi tu ne manques aucune erreur. En mode développeur
-(Paramètres → Interface), le message contient les détails
+(Paramètres > Diagnostic et assistance), le message contient les détails
 techniques pour un ticket GitHub.
 
 ---
@@ -86,8 +86,12 @@ tu retrouves immédiatement ton flux d'apprentissage.
 
 La sauvegarde et la restauration fonctionnent dans les **deux**
 modes de stockage - serveur (API) et purement navigateur
-(Dexie/IndexedDB). Le format est un unique fichier JSON ; il n'y a
-aucun format d'archive propriétaire.
+(Dexie/IndexedDB). La sauvegarde est un **fichier `.alb`** : une
+archive ZIP qui regroupe les tables de données, l'instantané du
+localStorage et les ensembles de contenu. Les fichiers `.alb` sont
+acceptés partout où l'on importe une sauvegarde (Paramètres > Données
+et la Zone de danger). Les anciennes sauvegardes en un seul fichier
+JSON s'importent toujours sans problème.
 
 !!! note "Protection des données"
     La sauvegarde reste entièrement entre tes mains. Elle n'est

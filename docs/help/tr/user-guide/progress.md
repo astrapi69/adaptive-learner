@@ -74,7 +74,8 @@ notlar değiştirilmeden aktarılır.
 
 ## Dışa aktarmalar
 
-Ayarlar → Dışa Aktar üzerinden üç dışa aktarma türü; depolama
+Ayarlar > Veri > Yedekleme ve dışa aktarma > Dışa aktar üzerinden
+üç dışa aktarma türü; depolama
 modları arasında tümü aynı biçimde:
 
 - **İlerleme Raporu** - tam İlerleme sayfası Markdown veya PDF
