@@ -213,9 +213,7 @@ export default function Assessment() {
                 console.warn("XP awardAssessment failed", xpErr);
             }
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }

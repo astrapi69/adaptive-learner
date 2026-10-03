@@ -9,7 +9,6 @@ import {
 import {useNavigate} from "react-router";
 
 import {Button} from "@/components/ui/button";
-import {ApiError} from "../../api/client";
 import HelpLink from "../../components/help/HelpLink";
 import HelpTooltip from "../../components/help/HelpTooltip";
 import OnboardingWizard, {
@@ -214,9 +213,7 @@ export default function Onboarding() {
             notify.success(t("toast.project_created", "Project created."));
             setPhase("invite");
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : t("common.error", "Something went wrong.");
-            notify.error(detail);
+            notify.error(t("common.error", "Something went wrong."), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -258,9 +255,7 @@ export default function Onboarding() {
                 navigate("/dashboard", {replace: true});
             }
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : t("common.error", "Something went wrong.");
-            notify.error(detail);
+            notify.error(t("common.error", "Something went wrong."), {error: err});
         } finally {
             setSubmitting(false);
         }
