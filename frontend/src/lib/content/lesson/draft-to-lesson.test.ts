@@ -349,6 +349,67 @@ describe("draft-to-lesson editing (#1740)", () => {
 // parses via the engine adapter, which omits the key, so it reproduces only in
 // API mode.) Reconstruction must drop ext_payload from core exercises and keep
 // it for real extension exercises.
+// #3543 - the wizard edits only some lesson fields. Every other field the
+// original lesson carries (purpose, resources, the variation pair, any field a
+// later schema adds) must pass through an edit-save untouched; before, the
+// rebuild dropped them, so a bridge or quiz lesson silently became practice.
+describe("draft-to-lesson edit keeps the fields the wizard does not own (#3543)", () => {
+    type Lesson = ReturnType<typeof buildLessonFromDraft>;
+
+    function original(extra: Record<string, unknown>): Lesson {
+        return {...buildLessonFromDraft(input(), {id: "colors"}), ...extra} as Lesson;
+    }
+
+    function editSave(lesson: Lesson, metaOverride: Partial<LessonMeta> = {}): Lesson {
+        const back = lessonToDraftInput(lesson, {level: "A1"});
+        const meta = {...back.meta, ...metaOverride};
+        return buildLessonFromDraft(
+            {...back, meta},
+            {
+                id: lesson.id,
+                theorySteps: preservedTheorySteps(lesson.steps, meta),
+                carryFrom: lesson,
+            },
+        );
+    }
+
+    const RESOURCES = [
+        {type: "video", title: "Clip", url: "https://example.com/v", language: "fr"},
+    ];
+
+    it.each([
+        ["purpose bridge", {purpose: "bridge"}],
+        ["purpose quiz", {purpose: "quiz"}],
+        ["resources", {resources: RESOURCES}],
+        ["variation pair", {variation_of: "01-original", variation_note: "Shorter cards"}],
+    ])("keeps %s through an edit-save", (_label, extra) => {
+        const saved = editSave(original(extra));
+        expect(saved).toMatchObject(extra);
+    });
+
+    it("adds none of them to a lesson that had none", () => {
+        const plain = original({});
+        const saved = editSave(plain);
+        for (const key of ["purpose", "resources", "variation_of", "variation_note"]) {
+            expect(saved).not.toHaveProperty(key);
+        }
+    });
+
+    it("still takes the fields it owns from the draft, not from the original", () => {
+        const saved = editSave(original({purpose: "quiz", title: "Old title"}), {
+            title: "New title",
+        });
+        expect(saved.title).toBe("New title");
+        expect(saved.purpose).toBe("quiz");
+    });
+
+    it("drops a stale requires_extensions the draft no longer needs", () => {
+        const withExt = original({requires_extensions: ["ext:al-dictation@1"]});
+        const saved = editSave(withExt);
+        expect(saved.requires_extensions ?? []).toEqual([]);
+    });
+});
+
 describe("draft-to-lesson edit-mode ext_payload reconstruction (#1919)", () => {
     /** A saved lesson as it comes back from the API-mode GET: the Pydantic
      *  ``exclude_none=False`` serialization has materialized ``ext_payload:

@@ -70,6 +70,43 @@ export interface BuildLessonOptions {
     /** Theory steps to use INSTEAD of the auto-generated ``theory-intro``.
      *  When absent the intro is generated from title/description. */
     theorySteps?: ContentLessonStep[];
+    /** The lesson being edited (#3543). Every field of it the wizard does
+     *  not own ({@link WIZARD_OWNED_LESSON_FIELDS}) passes through the save
+     *  untouched: ``purpose``, ``resources``, the variation pair, and any
+     *  field a later schema adds. Absent for a new lesson. */
+    carryFrom?: ContentLesson;
+}
+
+/** The lesson fields the wizard edits or derives from the draft (#3543).
+ *  An edit-save writes these from the draft; every other field of the
+ *  edited lesson is carried over as it was. A field the wizard writes only
+ *  conditionally (``requires_extensions``, ``domain``) is owned too, so a
+ *  stale value can never survive from the original. */
+export const WIZARD_OWNED_LESSON_FIELDS = [
+    "id",
+    "title",
+    "description",
+    "target_language",
+    "source_language",
+    "estimated_minutes",
+    "cards",
+    "steps",
+    "requires_extensions",
+    "domain",
+    "contributed_by",
+    "contributed_at",
+] as const;
+
+/** The fields of ``lesson`` an edit-save carries over unchanged: everything
+ *  except {@link WIZARD_OWNED_LESSON_FIELDS} (#3543).
+ *
+ *  @example
+ *  carriedLessonFields({...lesson, purpose: "bridge"}) // -> {purpose: "bridge"}
+ */
+export function carriedLessonFields(lesson: ContentLesson): Partial<ContentLesson> {
+    const carried: Record<string, unknown> = {...lesson};
+    for (const field of WIZARD_OWNED_LESSON_FIELDS) delete carried[field];
+    return carried as Partial<ContentLesson>;
 }
 
 function estimateMinutes(theory: number, exercises: number): number {
@@ -167,6 +204,7 @@ export function buildLessonFromDraft(
     // field (the schema default), so no spurious ``domain: "language"``.
     const contentDomain = contentDomainToStamp(meta.domain);
     const lesson: ContentLesson = {
+        ...(opts.carryFrom ? carriedLessonFields(opts.carryFrom) : {}),
         id: opts.id ?? (slugify(meta.title) || "lesson"),
         title: meta.title.trim(),
         description: meta.description.trim() || null,

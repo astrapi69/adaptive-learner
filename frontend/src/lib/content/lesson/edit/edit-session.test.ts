@@ -149,6 +149,33 @@ describe("buildSaveCopyInput (#1740 / #2655)", () => {
         expect(input.origin).toBe("imported");
     });
 
+    // #3543 - the copy keeps what the lesson is (purpose, resources), and
+    // its variation pair describes the COPY: variation_of points at the
+    // original, the original's own variation_note does not travel along.
+    it("carries purpose and resources onto the copy, but not the original's variation note", () => {
+        const source = {
+            ...lesson("01-colours", "Colours"),
+            purpose: "bridge",
+            resources: [{type: "video", title: "Clip", url: "https://example.com/v"}],
+            variation_of: "00-parent",
+            variation_note: "Shorter cards than the parent",
+        } as unknown as ContentLesson;
+        const {lesson: copiedLesson} = buildSaveCopyInput(
+            copyInput(),
+            {
+                lessonId: "01-colours",
+                originalSteps: [{id: "th", type: "theory", title: "T", body: "Body"}],
+                lessons: [source],
+                entry: entry(),
+            },
+            "created-copy",
+        );
+        expect(copiedLesson.purpose).toBe("bridge");
+        expect(copiedLesson.resources).toEqual(source.resources);
+        expect(copiedLesson.variation_of).toBe("01-colours");
+        expect(copiedLesson).not.toHaveProperty("variation_note");
+    });
+
     it("carries the source entry's attribution forward onto the copy", () => {
         const source = entry();
         source.attribution = {author: "Original Author"};
