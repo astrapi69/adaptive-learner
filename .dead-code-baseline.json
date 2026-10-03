@@ -446,8 +446,6 @@
     "frontend/src/lib/content/lesson/card-image.ts::CARD_IMAGE_MAX_DIMENSION::export",
     "frontend/src/lib/content/lesson/card-image.ts::isAcceptedCardImageType::export",
     "frontend/src/lib/content/lesson/draft-to-lesson.ts::MIN_CARDS_FOR_SAVE::export",
-    "frontend/src/lib/content/lesson/draft-to-lesson.ts::MIN_EXERCISES_FOR_SAVE::export",
-    "frontend/src/lib/content/lesson/draft-to-lesson.ts::MIN_TYPES_FOR_SAVE::export",
     "frontend/src/lib/content/lesson/draft-to-lesson.ts::isValidLanguagePair::export",
     "frontend/src/lib/content/lesson/lesson-draft.ts::LESSON_DRAFT_KEY::export",
     "frontend/src/lib/content/lesson/lesson-splitter.ts::PartTitleContext::type",

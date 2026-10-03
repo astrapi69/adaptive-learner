@@ -1738,9 +1738,10 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       (`domain: psychology` …); a language lesson carries NO `domain` field.
       Editing a saved knowledge lesson reopens with the right domain +
       content language
-- [ ] TC-0417 **Language-pair check row (#1929):** Review shows SIX checklist rows
-      (title, "Language pair is valid", ≥4 cards, ≥5 exercises, ≥2 types,
-      valid structure). "Language pair is valid" is green once BOTH source
+- [ ] TC-0417 **Language-pair check row (#1929):** Review shows FOUR checklist rows
+      for local save (title, "Language pair is valid", ≥4 cards, valid
+      structure; the exercise and type minimums sit under "Needed for sharing"
+      since #3389). "Language pair is valid" is green once BOTH source
       and target are supported codes — a same-language pair (de → de) is
       VALID (no "source != target" gate)
 - [ ] TC-0418 **Structure-check reason (#1724):** a failing "Valid lesson
@@ -1981,6 +1982,18 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       set with a `from_cards` matching (e.g. `psych-rhetorik`, lesson 1) and
       edit that exercise → Save is enabled (it used to stay blocked). In every
       case: what the editor lets you save also saves as a lesson.
+- [ ] TC-0928 **Local save checks validity, sharing the engine's minimums (#3389):**
+      New lesson with 5 cards; in step 3 generate or keep only **one**
+      matching → the hint reads "Sharing needs at least 5 exercises" and
+      "Next" is enabled. With zero exercises "Next" blocks with "Generate at
+      least one exercise to continue." Step 4 lists three rows under "Needed
+      for sharing" (at least 5 exercises, at least 2 exercise types, every
+      exercise has enough answers or pairs). "Save locally" is enabled, "Save
+      and share" disabled. With the generator (matching + free text, 10
+      exercises) the third row is red while a free-text exercise has only one
+      accepted answer; after a second answer on each it turns green and "Save
+      and share" is enabled. The share wizard then reports no minimum. Editing
+      a saved lesson shows no share rows.
 - [ ] TC-0434 **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
       inline editor (Step 3, `ExerciseEditor`) of a **Word tiles** or
       **Multiple choice** exercise, a **"Exercise type"** select at the top

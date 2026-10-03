@@ -53,9 +53,14 @@ import {
 } from "../../lib/exercises";
 import {exerciseTypeLabelKey} from "../../lib/content/lesson/edit-error-keys";
 import {checkExerciseDraft} from "../../lib/content/lesson/edit/exercise-draft-check";
+import {QUALITY} from "../../lib/content/validation/quality-rules.generated";
 import type {ContentLessonExercise} from "../../storage/types";
 
-export const MIN_EXERCISES = 5;
+/** #3389 - the exercise count below which "Next" is blocked. A lesson
+ *  needs one exercise to be worth saving; the engine's minimum of
+ *  ``QUALITY.minExercisesPerLesson`` gates sharing only (owner decision,
+ *  option 2), shown as a hint here and as a share row on the review step. */
+export const MIN_EXERCISES_TO_ADVANCE = 1;
 export const EXERCISE_COUNT_MIN = 5;
 export const EXERCISE_COUNT_MAX = 20;
 
@@ -90,13 +95,10 @@ export function hasIncompleteExercise(
     );
 }
 
-/** #1970 — the exercise count below which "Next" is blocked. Editing an
- *  existing, previously-valid lesson relaxes the create-time ``MIN_EXERCISES``
- *  to 1: the book generator legitimately produces < 5 exercises (types it
- *  cannot render are skipped), so such a lesson must stay editable + saveable.
- *  Creating a new lesson keeps the full minimum. */
-export function minExercisesToAdvance(editMode: boolean): number {
-    return editMode ? 1 : MIN_EXERCISES;
+/** The exercise count below which "Next" is blocked, the same in create
+ *  and edit mode since #3389 (#1970 had relaxed only edit mode to 1). */
+export function minExercisesToAdvance(_editMode: boolean): number {
+    return MIN_EXERCISES_TO_ADVANCE;
 }
 
 const ALL_TYPES: GeneratableType[] = [
@@ -368,16 +370,12 @@ export default function ExerciseGenerator({
                 </span>
                 {!hideGenerator &&
                     exercises.length > 0 &&
-                    exercises.length < MIN_EXERCISES && (
-                        <FormHint
-                            as="span"
-                            variant="warning"
-                            data-testid="exercise-min-hint"
-                        >
+                    exercises.length < QUALITY.minExercisesPerLesson && (
+                        <FormHint as="span" data-testid="exercise-min-hint">
                             {t(
-                                "create_lesson.exercises.min_hint",
-                                "{n} exercises needed",
-                            ).replace("{n}", String(MIN_EXERCISES))}
+                                "create_lesson.exercises.share_min_hint",
+                                "Sharing needs at least {n} exercises",
+                            ).replace("{n}", String(QUALITY.minExercisesPerLesson))}
                         </FormHint>
                     )}
             </div>
