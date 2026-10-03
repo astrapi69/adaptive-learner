@@ -207,6 +207,8 @@
     "create": "Müfredat oluştur",
     "created": "Müfredat oluşturuldu.",
     "saved": "Kaydedildi.",
+    "topics_load_failed": "Konular yüklenemedi.",
+    "lessons_load_failed": "Dersler yüklenemedi.",
     "deleted": "Konu silindi.",
     "add_topic": "Konu ekle",
     "add_root_topic": "Kök konu ekle",

@@ -207,6 +207,8 @@
     "create": "Criar currículo",
     "created": "Currículo criado.",
     "saved": "Salvo.",
+    "topics_load_failed": "Não foi possível carregar os temas.",
+    "lessons_load_failed": "Não foi possível carregar as aulas.",
     "deleted": "Tópico excluído.",
     "add_topic": "Adicionar tópico",
     "add_root_topic": "Adicionar tópico raiz",

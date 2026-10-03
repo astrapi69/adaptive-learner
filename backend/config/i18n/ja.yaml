@@ -194,6 +194,8 @@ curriculum:
   create: カリキュラムを作成
   created: カリキュラムが作成されました。
   saved: 保存しました。
+  topics_load_failed: "トピックを読み込めませんでした。"
+  lessons_load_failed: "レッスンを読み込めませんでした。"
   deleted: トピックを削除しました。
   add_topic: トピックを追加
   add_root_topic: ルートトピックを追加

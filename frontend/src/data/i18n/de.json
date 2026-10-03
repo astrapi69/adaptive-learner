@@ -207,6 +207,8 @@
     "create": "Curriculum anlegen",
     "created": "Curriculum angelegt.",
     "saved": "Gespeichert.",
+    "topics_load_failed": "Die Themen konnten nicht geladen werden.",
+    "lessons_load_failed": "Die Lektionen konnten nicht geladen werden.",
     "deleted": "Thema gelöscht.",
     "add_topic": "Thema hinzufügen",
     "add_root_topic": "Hauptthema hinzufügen",
