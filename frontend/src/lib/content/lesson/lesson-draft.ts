@@ -7,7 +7,7 @@
  */
 
 import type {ContentLessonCardTokenRole} from "../../../storage/types";
-import {isKnownContentDomain} from "../content-domains";
+import {isKnowledgeDomain} from "../content-domains";
 
 export const LESSON_DRAFT_KEY = "adaptive-learner.lesson-draft";
 
@@ -88,7 +88,7 @@ export function updateMetaField(
     value: string,
 ): LessonMeta {
     const next: LessonMeta = {...meta, [key]: value};
-    const knowledge = isKnownContentDomain(next.domain);
+    const knowledge = isKnowledgeDomain(next.domain);
     if (key === "domain") {
         if (knowledge) {
             next.sourceLanguage = next.targetLanguage;

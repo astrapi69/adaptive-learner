@@ -194,6 +194,8 @@ curriculum:
   create: Crear currículo
   created: Currículo creado.
   saved: Guardado.
+  topics_load_failed: "No se pudieron cargar los temas."
+  lessons_load_failed: "No se pudieron cargar las lecciones."
   deleted: Tema eliminado.
   add_topic: Añadir tema
   add_root_topic: Añadir tema raíz

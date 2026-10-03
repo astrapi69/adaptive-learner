@@ -194,6 +194,8 @@ curriculum:
   create: Buat kurikulum
   created: Kurikulum dibuat.
   saved: Disimpan.
+  topics_load_failed: "Topik tidak dapat dimuat."
+  lessons_load_failed: "Pelajaran tidak dapat dimuat."
   deleted: Topik dihapus.
   add_topic: Tambah topik
   add_root_topic: Tambah topik utama

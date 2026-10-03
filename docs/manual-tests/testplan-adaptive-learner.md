@@ -2738,6 +2738,14 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       nicht in Quellreihenfolge sortieren (kapitel-1..kapitel-10), meldet
       der Erfolgs-Screen die Umbenennung mit NN-Präfixen; das exportierte
       Repo listet die Lektionen in Quellreihenfolge
+- [ ] TC-0929 **"Als Repository teilen" ergibt ein ladbares Repo (#3403):** Nach dem
+      Export enthält das GitHub-Repo eine `manifest.yaml` mit einer
+      `sets`-Liste (Eintrag mit `path: sets/<set-id>`), unter
+      `sets/<set-id>/` eine eigene `manifest.yaml` mit `metadata.lessons` und
+      die Lektionen in `sets/<set-id>/lessons/`. Dieses Repo unter
+      Einstellungen > Daten > Quellen als Repository hinzufügen: das Set
+      erscheint im Content-Browser, lässt sich herunterladen, und alle
+      Lektionen öffnen sich
 
 ### TS-0080 Discover Stufe 1: Facetten, Marken, Leerzustand (EXP-048, #2320-#2324)
 

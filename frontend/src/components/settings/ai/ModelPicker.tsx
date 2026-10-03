@@ -29,7 +29,8 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/button";
-import {ApiError} from "../../../api/client";
+import {isDevMode} from "../../../hooks/settings/useDevMode";
+import {inlineErrorText} from "../../../utils/errorMessages";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import type {AIProvider} from "../../../lib/constants";
 import {partitionModels} from "@astrapi69/ai-key-vault";
@@ -83,7 +84,9 @@ export function ModelPicker({
             );
             setFetchState({kind: "loaded", models});
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : String(err);
+            // #3374 - the heading above already says what failed; the
+            // detail line is the friendly status text (raw only in dev mode).
+            const detail = inlineErrorText(err, "", isDevMode());
             setFetchState({kind: "error", detail});
         }
     }, [hasApiKey, provider, userId]);

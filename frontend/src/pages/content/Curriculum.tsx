@@ -9,7 +9,8 @@ import HelpTooltip from "../../components/help/HelpTooltip";
 import LessonList from "../../components/dashboard/LessonList";
 import TopicTree from "../../components/topic/TopicTree";
 import {Button} from "@/components/ui/button";
-import {ApiError} from "../../api/client";
+import {isDevMode} from "../../hooks/settings/useDevMode";
+import {inlineErrorText} from "../../utils/errorMessages";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useConfirm} from "../../contexts/ConfirmContext";
 import {readLearnerState} from "../../lib/learning/learnerState";
@@ -60,8 +61,15 @@ export default function Curriculum() {
             const fresh = await getStorage().curricula.listTopics(curriculumId);
             setTopics(fresh);
         } catch (err) {
-            notify.error("Failed to load topics.", {error: err});
+            notify.error(
+                t("curriculum.topics_load_failed", "Could not load the topics."),
+                {error: err},
+            );
         }
+        // ``t`` omitted on purpose: the load effect depends on this
+        // callback, and an unstable ``t`` (test i18n mocks) would re-fire
+        // it on every render (lessons/frontend.md, useEffect + i18n mocks).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const reloadLessons = useCallback(async (curriculumId: string) => {
@@ -69,8 +77,13 @@ export default function Curriculum() {
             const fresh = await getStorage().curricula.listLessons(curriculumId);
             setLessons(fresh);
         } catch (err) {
-            notify.error("Failed to load lessons.", {error: err});
+            notify.error(
+                t("curriculum.lessons_load_failed", "Could not load the lessons."),
+                {error: err},
+            );
         }
+        // ``t`` omitted on purpose, as in ``reloadTopics``.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleCreateLesson = async (title: string) => {
@@ -145,9 +158,7 @@ export default function Curriculum() {
             })
             .catch((err) => {
                 if (cancelled) return;
-                const detail =
-                    err instanceof ApiError ? err.detail : t("common.error");
-                setError(detail);
+                setError(inlineErrorText(err, t("common.error"), isDevMode()));
                 setLoading(false);
             });
         return () => {

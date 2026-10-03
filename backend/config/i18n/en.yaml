@@ -194,6 +194,8 @@ curriculum:
   create: Create curriculum
   created: Curriculum created.
   saved: Saved.
+  topics_load_failed: "Could not load the topics."
+  lessons_load_failed: "Could not load the lessons."
   deleted: Topic deleted.
   add_topic: Add topic
   add_root_topic: Add root topic

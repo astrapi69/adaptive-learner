@@ -194,6 +194,8 @@ curriculum:
   create: 커리큘럼 만들기
   created: 커리큘럼이 생성되었습니다.
   saved: 저장되었습니다.
+  topics_load_failed: "주제를 불러올 수 없습니다."
+  lessons_load_failed: "레슨을 불러올 수 없습니다."
   deleted: 주제가 삭제되었습니다.
   add_topic: 주제 추가
   add_root_topic: 최상위 주제 추가

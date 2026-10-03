@@ -241,11 +241,23 @@ describe("Curriculum page", () => {
         expect(apiRemoveTopic).not.toHaveBeenCalled();
     });
 
-    it("renders an error state when /curricula list fails", async () => {
+    it.each([
+        ["topics", () => apiListTopics, "Could not load the topics."],
+        ["lessons", () => apiListLessons, "Could not load the lessons."],
+    ])("toasts the localized message when the %s fail to load (#3374)", async (_name, failing, expected) => {
+        apiList.mockResolvedValue([CURRICULUM]);
+        apiListTopics.mockResolvedValue([ROOT_TOPIC]);
+        apiListLessons.mockResolvedValue([]);
+        failing().mockRejectedValue(new Error("network down"));
+        renderCurriculum();
+        await waitFor(() => expect(toastError).toHaveBeenCalledWith(expected));
+    });
+
+    it("renders a friendly error state, not the backend detail, when /curricula list fails (#3374)", async () => {
         const {ApiError} = await import("../../api/client");
         apiList.mockRejectedValue(new ApiError(500, "DB down"));
         renderCurriculum();
-        await screen.findByTestId("curriculum-error");
-        expect(screen.getByTestId("curriculum-error").textContent).toContain("DB down");
+        const panel = await screen.findByTestId("curriculum-error");
+        expect([panel.textContent?.includes("An internal error occurred."), panel.textContent?.includes("DB down")]).toEqual([true, false]);
     });
 });

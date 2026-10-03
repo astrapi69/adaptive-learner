@@ -288,8 +288,9 @@ describe("Session page", () => {
         const {ApiError} = await import("../../api/client");
         apiStart.mockRejectedValue(new ApiError(500, "DB down"));
         renderSession();
-        await screen.findByTestId("session-error");
-        expect(screen.getByTestId("session-error").textContent).toContain("DB down");
+        const panel = await screen.findByTestId("session-error");
+        // #3374 - friendly status text, never the backend detail.
+        expect([panel.textContent?.includes("An internal error occurred."), panel.textContent?.includes("DB down")]).toEqual([true, false]);
     });
 
     // --- v0.2.0: MethodSwitchBanner integration ----------------------

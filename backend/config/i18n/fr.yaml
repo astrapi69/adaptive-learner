@@ -194,6 +194,8 @@ curriculum:
   create: Créer le programme
   created: Programme créé.
   saved: Enregistré.
+  topics_load_failed: "Impossible de charger les thèmes."
+  lessons_load_failed: "Impossible de charger les leçons."
   deleted: Sujet supprimé.
   add_topic: Ajouter un sujet
   add_root_topic: Ajouter un sujet racine

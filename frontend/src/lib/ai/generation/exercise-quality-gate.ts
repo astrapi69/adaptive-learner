@@ -21,7 +21,8 @@
  *   - all distractors identical
  *   - a cloze with fewer than two distractors
  *   - every exercise is the same type (recommend more variety)
- *   - >= 5 exercises but fewer than two types
+ *   - at least the lesson minimum of exercises but fewer than the
+ *     minimum of types (``QUALITY``, #3405)
  *   - question and answer appear to be in different scripts
  *
  * Library-grade: pure functions, no app-state / network imports.
@@ -29,6 +30,7 @@
 
 import type { GeneratedCard, ValidCard } from "./exercise-generation-parser";
 import { extensionPayloadErrors, isExtensionCard } from "./extension-cards";
+import { QUALITY } from "../../content/validation/quality-rules.generated";
 
 /** A parsed, structurally-valid CORE AI card (AIX-01 output). The core
  *  distribution keys off this union, so it stays CORE-only; extension cards
@@ -63,7 +65,11 @@ export interface QualityResult {
 }
 
 const MIN_ANSWER_LENGTH = 2;
-const MIN_MATCHING_PAIRS = 3;
+/** #3405 - the engine's numbers via the app's mirror ``QUALITY``, which a
+ *  test pins equal to ``QUALITY_MINIMUMS``. The mirror, not the engine
+ *  import, keeps ``learn-content-engine/rules`` out of the shared chunks
+ *  (#3222 convention). */
+const MIN_MATCHING_PAIRS = QUALITY.minMatchingPairs;
 
 function norm(value: string): string {
   return value.trim().toLowerCase();
@@ -293,10 +299,13 @@ export function validateExerciseQuality(cards: GeneratedCard[]): QualityResult {
       code: "single_type",
       message: "all exercises are the same type; more variety is recommended",
     });
-  } else if (passed.length >= 5 && distinctTypes.size < 2) {
+  } else if (
+    passed.length >= QUALITY.minExercisesPerLesson &&
+    distinctTypes.size < QUALITY.minExerciseTypes
+  ) {
     warnings.push({
       code: "low_type_variety",
-      message: "five or more exercises but fewer than two types",
+      message: `${QUALITY.minExercisesPerLesson} or more exercises but fewer than ${QUALITY.minExerciseTypes} types`,
     });
   }
 
