@@ -282,3 +282,20 @@ def _isolate_content_cache() -> None:
     _clear()
     yield
     _clear()
+
+
+@pytest.fixture(autouse=True)
+def _reset_model_discovery_cache() -> None:
+    """Empty the model-discovery cache before and after every test (#3437).
+
+    ``model_discovery._cache`` is module-level, so it lives for the whole
+    pytest process. Tests that seed it cleared it inline after their
+    assertions; a failing assertion skipped the clear and the cached model
+    list changed the behaviour of later ``/message`` tests. A yield
+    fixture runs its teardown even when the test fails.
+    """
+    from app.services import model_discovery
+
+    model_discovery.clear_cache()
+    yield
+    model_discovery.clear_cache()

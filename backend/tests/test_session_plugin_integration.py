@@ -1510,10 +1510,11 @@ def test_evaluator_max_tokens_caps_at_256_by_default(client: TestClient, monkeyp
 def test_message_no_warning_when_cache_empty(client: TestClient, monkeypatch):
     """If model_discovery has no cached list for the (provider, key)
     pair, the route must NOT warn — it just proceeds with the
-    requested model. Validation is opt-in."""
+    requested model. Validation is opt-in. The autouse conftest fixture
+    empties the cache before every test (#3437)."""
     from app.services import model_discovery
 
-    model_discovery.clear_cache()
+    assert model_discovery._cache == {}
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id, provider="anthropic")
     client.patch(
@@ -1556,7 +1557,6 @@ def test_message_warns_and_falls_back_when_model_not_in_cache(client: TestClient
     )
 
     # Seed the cache so validation has something to compare against.
-    model_discovery.clear_cache()
     valid_models = [
         model_discovery.ModelInfo(
             id="claude-opus-4-20250514",
@@ -1597,7 +1597,6 @@ def test_message_warns_and_falls_back_when_model_not_in_cache(client: TestClient
     assert "claude-renamed-old-model" in body["model_warning"]
     # Fell back to the default model.
     assert captured["model"] == ai_orchestration.DEFAULT_MODELS["anthropic"]
-    model_discovery.clear_cache()
 
 
 def test_message_no_warning_when_model_in_cache(client: TestClient, monkeypatch):
@@ -1613,7 +1612,6 @@ def test_message_no_warning_when_model_in_cache(client: TestClient, monkeypatch)
         json={"model_override_anthropic": "claude-opus-4-20250514"},
     )
 
-    model_discovery.clear_cache()
     model_discovery._cache_put(
         AIProvider.ANTHROPIC,
         "sk-fake-test-key",
@@ -1639,7 +1637,6 @@ def test_message_no_warning_when_model_in_cache(client: TestClient, monkeypatch)
     body = resp.json()
     assert body["model_warning"] is None
     assert captured["model"] == "claude-opus-4-20250514"
-    model_discovery.clear_cache()
 
 
 def _rate_in_time_order(client: TestClient, sess_id: str, understanding: list[int]) -> None:
