@@ -126,6 +126,8 @@ describe("createDexieBackup", () => {
             set_id: "es-a1",
             lesson_filename: "01-greetings.json",
             current_step: 3,
+            // #3365 - the action log the resume reads.
+            step_event: {kind: "step", step_index: 3, step_id: "s3"},
         });
         await dexieStorage.elementErrors.recordBulk(user.id, [
             {
@@ -159,6 +161,9 @@ describe("createDexieBackup", () => {
             "01-greetings.json",
         );
         expect(progress?.current_step).toBe(3);
+        expect(progress?.recent_steps).toEqual([
+            expect.objectContaining({kind: "step", step_index: 3, step_id: "s3"}),
+        ]);
         const errors = await dexieStorage.elementErrors.list(user.id, {});
         expect(errors.map((row) => [row.element_key, row.error_count])).toEqual([["hola", 1]]);
     });

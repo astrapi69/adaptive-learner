@@ -584,6 +584,8 @@ TABLES: dict[str, TableSpec] = {
             "best_score_correct",
             "best_score_total",
             "attempt_history",
+            # #3365 - the last ten learner actions; the resume reads them.
+            "recent_steps",
         ),
         timestamp_field="updated_at",
         append_only=False,

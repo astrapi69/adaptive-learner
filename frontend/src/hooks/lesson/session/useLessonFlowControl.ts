@@ -17,7 +17,9 @@ export interface UseLessonFlowControlOptions {
     status: LessonLoadStatus;
     /** Stored progress row, ``null`` until the first upsert lands. */
     progress: LessonProgress | null;
-    markPaused: () => Promise<void>;
+    /** ``"exit"`` marks the pause as leaving the lesson (navigation, tab
+     *  close) rather than a pause the learner chose (#3365). */
+    markPaused: (reason?: "exit") => Promise<void>;
     markAbandoned: () => Promise<void>;
     markResumed: () => Promise<void>;
     /** Reset progress for a fresh run (resume dialog "start over"). */
@@ -141,7 +143,7 @@ export function useLessonFlowControl({
         const onVisibility = () => {
             if (document.visibilityState === "hidden") flush();
         };
-        const onUnload = () => void markPaused();
+        const onUnload = () => void markPaused("exit");
         document.addEventListener("visibilitychange", onVisibility);
         window.addEventListener("pagehide", flush);
         window.addEventListener("beforeunload", onUnload);
@@ -192,7 +194,7 @@ export function useLessonFlowControl({
                 !leftViaDialogRef.current &&
                 !atSummaryRef.current
             ) {
-                void markPausedRef.current();
+                void markPausedRef.current("exit");
             }
         },
         [],
