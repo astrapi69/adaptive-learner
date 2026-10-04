@@ -56,6 +56,8 @@ def _seed(client: TestClient) -> str:
             "lesson_filename": "01.json",
             "current_step": 4,
             "mark_paused": True,
+            # #3365 - the action log rides the backup like any column.
+            "step_event": {"kind": "pause", "step_index": 4, "step_id": "s4"},
         },
     )
     assert paused.status_code == 200, paused.text
@@ -126,6 +128,8 @@ def _snapshot(user_id: str) -> dict[str, object]:
             "lesson_progress.abandoned_at": abandoned_at.replace(tzinfo=UTC)
             if abandoned_at
             else None,
+            "lesson_progress.recent_steps": json.loads(progress["01.json"].recent_steps)
+            or None,
             "learning_sessions.cycle_count": session.cycle_count,
             "learning_sessions.cycle_topics": json.loads(session.cycle_topics or "null"),
             "session_notes.kind": note.kind,

@@ -39,6 +39,7 @@ import type {
     ContentLesson,
     LessonProgress,
     LessonProgressUpsertBody,
+    LessonStepEvent,
     LessonStepResult,
 } from "../../../storage/types";
 
@@ -78,8 +79,10 @@ export interface UseLessonResult {
     /** Flip status to completed (lesson-summary screen). */
     markCompleted: () => Promise<void>;
     /** Phase 63A — pause the attempt; step_results stay intact
-     *  for the resume. Toast + navigate are the caller's job. */
-    markPaused: () => Promise<void>;
+     *  for the resume. Toast + navigate are the caller's job.
+     *  ``"exit"`` logs the write as leaving the lesson instead of a
+     *  pause the learner chose (#3365). */
+    markPaused: (reason?: "exit") => Promise<void>;
     /** Phase 63A — abandon the attempt; step_results are
      *  cleared. ElementErrors stay (what was learned stays
      *  learned). */
@@ -278,6 +281,13 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             lesson_filename: lessonFilename,
             lesson_mode: lessonModeRef.current,
             current_step: currentStepIndex,
+            // #3365 - arriving on a step is an action; this effect runs
+            // once per real step change, never on a re-render or reload.
+            step_event: {
+                kind: "step",
+                step_index: currentStepIndex,
+                step_id: lesson.steps[currentStepIndex].id,
+            },
         })
             .then((updated) => setProgress(updated))
             .catch((err: unknown) => {
@@ -358,6 +368,20 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         pendingSecondsRef.current += seconds;
     }, []);
 
+    /** #3365 - the action log entry for the step the learner is on;
+     *  ``step_id`` is null on the summary. */
+    const _stepEvent = useCallback(
+        (kind: LessonStepEvent["kind"]): LessonStepEvent => {
+            const stepIndex = currentStepIndexRef.current;
+            return {
+                kind,
+                step_index: stepIndex,
+                step_id: lesson?.steps[stepIndex]?.id ?? null,
+            };
+        },
+        [lesson],
+    );
+
     const recordStepResult = useCallback(
         async (result: LessonStepResult) => {
             if (!userId || lesson === null) return;
@@ -371,6 +395,12 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                     step_result: result,
                     time_spent_seconds_delta: timeDelta,
                     current_step: currentStepIndexRef.current,
+                    step_event: {
+                        kind: "answer",
+                        step_index: currentStepIndexRef.current,
+                        step_id: result.step_id,
+                        correct: result.total > 0 && result.correct === result.total,
+                    },
                 });
                 setProgress(updated);
             } catch (err) {
@@ -411,6 +441,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                 lesson_mode: lessonModeRef.current,
                 time_spent_seconds_delta: timeDelta,
                 mark_completed: true,
+                step_event: _stepEvent("complete"),
                 combo_bonus_xp: Math.max(
                     0,
                     Math.min(20, Math.trunc(options?.comboBonusXp ?? 0)),
@@ -434,6 +465,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         lesson,
         _consumeStepTime,
         _returnStepTime,
+        _stepEvent,
         upsertSerial,
     ]);
 
@@ -448,6 +480,9 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                 | "mark_abandoned"
                 | "mark_resumed"
                 | "mark_restarted",
+            // #3365 - the action this transition logs; resume and abandon
+            // are not actions in the log.
+            eventKind?: "pause" | "exit" | "restart",
         ) => {
             if (!userId || lesson === null) return;
             const timeDelta = _consumeStepTime();
@@ -459,6 +494,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                     lesson_mode: lessonModeRef.current,
                     time_spent_seconds_delta: timeDelta,
                     current_step: currentStepIndexRef.current,
+                    ...(eventKind ? {step_event: _stepEvent(eventKind)} : {}),
                     [flag]: true,
                 });
                 persistedStepRef.current = updated.current_step ?? null;
@@ -479,13 +515,15 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
             lesson,
             _consumeStepTime,
             _returnStepTime,
+            _stepEvent,
             reportWriteFailure,
             upsertSerial,
         ],
     );
 
     const markPaused = useCallback(
-        () => _markLifecycle("mark_paused"),
+        (reason?: "exit") =>
+            _markLifecycle("mark_paused", reason === "exit" ? "exit" : "pause"),
         [_markLifecycle],
     );
     const markAbandoned = useCallback(
@@ -497,7 +535,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         [_markLifecycle],
     );
     const markRestarted = useCallback(
-        () => _markLifecycle("mark_restarted"),
+        () => _markLifecycle("mark_restarted", "restart"),
         [_markLifecycle],
     );
 

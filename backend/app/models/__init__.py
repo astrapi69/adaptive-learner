@@ -1483,6 +1483,15 @@ class LessonProgress(Base):
         default="[]",
         server_default="[]",
     )
+    # #3365 - JSON list of the last ten learner actions, oldest first:
+    # [{"at", "kind", "step_index", "step_id", "correct"?}, ...]. A
+    # resume lands on the last "step" entry's step_id.
+    recent_steps: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+        default="[]",
+        server_default="[]",
+    )
 
     def __repr__(self) -> str:
         return (

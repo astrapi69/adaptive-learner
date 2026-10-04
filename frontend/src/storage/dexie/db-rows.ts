@@ -514,6 +514,9 @@ export interface LessonProgressRow {
     best_score_correct?: number;
     best_score_total?: number;
     attempt_history?: {at: string; correct: number; total: number}[];
+    /** #3365 - the last ten learner actions. Non-indexed, so no Dexie
+     *  version bump; pre-feature rows read back as undefined (``?? []``). */
+    recent_steps?: import("../types").LessonStepEventStored[];
 }
 
 /**
