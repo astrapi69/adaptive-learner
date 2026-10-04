@@ -271,8 +271,9 @@ def read_lesson(
     # converter must not escape the set's ``lessons/`` directory.
     # Defense-in-depth — the JSON-parse gate downstream would also
     # reject non-lesson files, but the read path is the canonical
-    # place to enforce the cache-isolation invariant.
-    if not str(lesson_path).startswith(str(lessons_root.resolve())):
+    # place to enforce the cache-isolation invariant. A path comparison,
+    # not a string prefix: ``lessons-x`` is a sibling (#3428).
+    if not lesson_path.is_relative_to(lessons_root.resolve()):
         raise ContentNotFoundError(
             f"Lesson path escapes the cache root: {lesson_filename!r}",
         )
@@ -318,8 +319,9 @@ def read_asset(
     # the read path stays the canonical place to also
     # enforce the invariant — Python file IO has bitten this
     # project once before (see ``.claude/rules/architecture.md``
-    # plugin-ZIP path-traversal note).
-    if not str(target).startswith(str(asset_root.resolve())):
+    # plugin-ZIP path-traversal note). A path comparison, not a
+    # string prefix: ``assets-x`` is a sibling (#3428).
+    if not target.is_relative_to(asset_root.resolve()):
         raise ContentNotFoundError(
             f"Asset path escapes the cache root: {asset_path!r}",
         )

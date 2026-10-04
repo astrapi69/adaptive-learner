@@ -17,6 +17,8 @@
 import type {
     LessonProgress,
     LessonProgressUpsertBody,
+    LessonStepEvent,
+    LessonStepEventStored,
 } from "../types";
 import {getDb} from "../dexie/db";
 import type {LessonProgressRow} from "../dexie/db";
@@ -68,7 +70,41 @@ function rowToWire(row: LessonProgressRow): LessonProgress {
         best_score_correct: row.best_score_correct ?? 0,
         best_score_total: row.best_score_total ?? 0,
         attempt_history: row.attempt_history ?? [],
+        recent_steps: row.recent_steps ?? [],
     };
+}
+
+/** #3365 - how many learner actions a row keeps (backend
+ *  ``_RECENT_STEPS_CAP``). */
+const RECENT_STEPS_CAP = 10;
+
+/** #3365 - log one learner action in ``recent_steps`` (mirrors the backend
+ *  ``_append_step_event``): keep the newest ten, and let a ``step`` entry
+ *  identical to the one before it replace that one, so a retried position
+ *  write does not push real actions out. */
+function appendStepEvent(
+    row: LessonProgressRow,
+    event: LessonStepEvent,
+    nowIso: string,
+): void {
+    const entry: LessonStepEventStored = {
+        at: nowIso,
+        kind: event.kind,
+        step_index: event.step_index,
+        step_id: event.step_id ?? null,
+    };
+    if (event.correct != null) entry.correct = event.correct;
+    const entries = [...(row.recent_steps ?? [])];
+    const previous = entries.at(-1);
+    const sameStep =
+        previous !== undefined &&
+        entry.kind === "step" &&
+        previous.kind === "step" &&
+        previous.step_index === entry.step_index &&
+        (previous.step_id ?? null) === entry.step_id;
+    if (sameStep) entries[entries.length - 1] = entry;
+    else entries.push(entry);
+    row.recent_steps = entries.slice(-RECENT_STEPS_CAP);
 }
 
 /** #983 — account one completed attempt onto the row (mirrors the
@@ -165,6 +201,7 @@ function buildFreshRow(
         best_score_correct: 0,
         best_score_total: 0,
         attempt_history: [],
+        recent_steps: [],
     };
 }
 
@@ -319,6 +356,10 @@ export async function upsertLessonProgressDexie(
         }
 
         applyLifecycle(row, body, now);
+
+        if (body.step_event) {
+            appendStepEvent(row, body.step_event, now);
+        }
 
         row.updated_at = now;
         await db.lessonProgress.put(row);

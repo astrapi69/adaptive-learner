@@ -109,6 +109,24 @@ def test_restore_rejects_path_traversal_filename():
     assert "escapes" in summary["errors"][0]
 
 
+def test_restore_rejects_a_sibling_dir_sharing_the_tmp_prefix():
+    """#3428 - ``v1.0.0.tmp-x`` starts with the tmp dir's name, so a string
+    prefix check let ``../v1.0.0.tmp-x/...`` write next to the set."""
+    payload = [
+        {
+            "source": "user-generated",
+            "set_id": "evil",
+            "version": "1.0.0",
+            "files": [{"filename": "../v1.0.0.tmp-x/escape.txt", "body": "x", "encoding": "text"}],
+        }
+    ]
+    summary = restore_content_sets(payload)
+    assert summary["restored"] == 0
+    assert len(summary["errors"]) == 1
+    assert "escapes" in summary["errors"][0]
+    assert not (_cache_root() / "user-generated" / "evil" / "v1.0.0.tmp-x").exists()
+
+
 def test_restore_tolerates_non_list():
     assert restore_content_sets(None) == {"restored": 0, "skipped": 0, "errors": []}
 
