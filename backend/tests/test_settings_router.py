@@ -543,8 +543,6 @@ def test_available_models_decrypts_key_and_returns_list(client, monkeypatch):
 
     from app.services import model_discovery
 
-    model_discovery.clear_cache()
-
     user_id = _make_user(client)
     client.post(
         f"/api/settings/{user_id}/api-key",
@@ -576,7 +574,6 @@ def test_available_models_decrypts_key_and_returns_list(client, monkeypatch):
     assert body[0]["id"] == "claude-opus-4-20250514"
     assert body[0]["name"] == "Claude Opus 4"
     assert body[0]["context_window"] == 200000
-    model_discovery.clear_cache()
 
 
 def test_available_models_provider_required_422(client: TestClient):

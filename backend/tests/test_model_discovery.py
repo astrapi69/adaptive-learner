@@ -15,15 +15,6 @@ from app.schemas import AIProvider
 from app.services import model_discovery
 
 
-@pytest.fixture(autouse=True)
-def _clear_cache():
-    # Cache survives between tests inside the same pytest process.
-    # See lessons-learned: "Module-level caches survive test boundaries".
-    model_discovery.clear_cache()
-    yield
-    model_discovery.clear_cache()
-
-
 def _mock_transport(handler):
     """Wrap a callable into the httpx MockTransport contract."""
     return httpx.MockTransport(handler)
