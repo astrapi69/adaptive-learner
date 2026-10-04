@@ -53,17 +53,58 @@ def _decode_results(row: LessonProgress) -> dict[str, Any]:
 #: heavily-retried lesson can't grow the JSON column without bound.
 _ATTEMPT_HISTORY_CAP = 50
 
+#: #3365 - how many learner actions a row keeps in ``recent_steps``.
+_RECENT_STEPS_CAP = 10
 
-def _decode_history(row: LessonProgress) -> list[dict[str, Any]]:
-    """Parse the stored attempt-history JSON list. Malformed / empty
-    returns ``[]`` so one broken row never breaks the page."""
-    if not row.attempt_history:
+
+def _decode_json_list(raw: str | None) -> list[dict[str, Any]]:
+    """Parse a stored JSON list column. Malformed / empty returns ``[]``
+    so one broken row never breaks the page."""
+    if not raw:
         return []
     try:
-        parsed = json.loads(row.attempt_history)
+        parsed = json.loads(raw)
     except json.JSONDecodeError:
         return []
     return parsed if isinstance(parsed, list) else []
+
+
+def _decode_history(row: LessonProgress) -> list[dict[str, Any]]:
+    """Parse the stored attempt-history JSON list."""
+    return _decode_json_list(row.attempt_history)
+
+
+def _append_step_event(row: LessonProgress, event: dict[str, Any], now: datetime) -> None:
+    """Log one learner action in ``recent_steps`` (#3365).
+
+    Keeps the newest :data:`_RECENT_STEPS_CAP` entries. A ``step`` entry
+    identical to the one before it replaces that one instead of being
+    appended, so a retried position write does not push real actions out.
+    """
+    entry: dict[str, Any] = {
+        "at": now.isoformat(),
+        "kind": event["kind"],
+        "step_index": event["step_index"],
+        "step_id": event.get("step_id"),
+    }
+    if event.get("correct") is not None:
+        entry["correct"] = bool(event["correct"])
+    entries = _decode_json_list(row.recent_steps)
+    if entries and _is_same_step(entries[-1], entry):
+        entries[-1] = entry
+    else:
+        entries.append(entry)
+    row.recent_steps = json.dumps(entries[-_RECENT_STEPS_CAP:])
+
+
+def _is_same_step(previous: dict[str, Any], entry: dict[str, Any]) -> bool:
+    """True when two entries are the same ``step`` arrival."""
+    return (
+        entry["kind"] == "step"
+        and previous.get("kind") == "step"
+        and previous.get("step_index") == entry["step_index"]
+        and previous.get("step_id") == entry["step_id"]
+    )
 
 
 def _record_completed_attempt(row: LessonProgress, now: datetime) -> None:
@@ -174,6 +215,9 @@ class ProgressUpdate:
     step_result: dict[str, Any] | None = None
     time_spent_seconds_delta: int = 0
     current_step: int | None = None
+    # #3365 - the learner action this write records (``StepEventIn``
+    # dumped); None records nothing.
+    step_event: dict[str, Any] | None = None
     # #2893 - transient game-mode combo bonus (already user-capped by
     # the client, schema-clamped to the hard ceiling 20). Consumed by
     # the completion unification, never stored on the row.
@@ -236,6 +280,9 @@ def upsert_progress(
 
     just_completed = _apply_lifecycle_flags(row, update, now)
 
+    if update.step_event is not None:
+        _append_step_event(row, update.step_event, now)
+
     row.updated_at = now
     repo.commit()
     repo.refresh(row)
@@ -294,6 +341,7 @@ def _get_or_create_row(
         best_score_correct=0,
         best_score_total=0,
         attempt_history="[]",
+        recent_steps="[]",
         started_at=now,
         updated_at=now,
     )
@@ -441,4 +489,5 @@ def _row_to_wire(row: LessonProgress) -> dict[str, Any]:
         "best_score_correct": row.best_score_correct,
         "best_score_total": row.best_score_total,
         "attempt_history": _decode_history(row),
+        "recent_steps": _decode_json_list(row.recent_steps),
     }

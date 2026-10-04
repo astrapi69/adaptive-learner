@@ -3582,6 +3582,14 @@
             ],
             "title": "Paused At"
           },
+          "recent_steps": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Recent Steps",
+            "type": "array"
+          },
           "score_correct": {
             "title": "Score Correct",
             "type": "integer"
@@ -3727,6 +3735,17 @@
             "minLength": 1,
             "title": "Source",
             "type": "string"
+          },
+          "step_event": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StepEventIn"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "#3365 - the learner action this write records. Appended to ``recent_steps`` (the last ten are kept). Omitted records nothing."
           },
           "step_result": {
             "anyOf": [
@@ -5603,6 +5622,58 @@
           "server_time"
         ],
         "title": "StatusResponse",
+        "type": "object"
+      },
+      "StepEventIn": {
+        "description": "One learner action on a lesson, logged in ``recent_steps`` (#3365).\n\n``step`` is arriving on a step (forward or back), ``answer`` a graded\ncheck, ``pause`` the pause dialog or button, ``exit`` leaving the\nlesson by navigation, ``restart`` a confirmed start-over, ``complete``\nreaching the summary. Autosave, timers, app switches, mode switches,\nhints and read-aloud are not actions. The server stamps the time.",
+        "properties": {
+          "correct": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correct"
+          },
+          "kind": {
+            "enum": [
+              "step",
+              "answer",
+              "pause",
+              "exit",
+              "restart",
+              "complete"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "step_id": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step Id"
+          },
+          "step_index": {
+            "minimum": 0.0,
+            "title": "Step Index",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "step_index"
+        ],
+        "title": "StepEventIn",
         "type": "object"
       },
       "StepResultIn": {

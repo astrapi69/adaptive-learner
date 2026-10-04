@@ -2149,6 +2149,11 @@ each card row (`CardImageField`).
       appears; "Back to options" returns to the choice and nothing is
       reset; press "Start over" again and "Start over" in the question ->
       the lesson begins at step 1
+- [ ] TC-0930 Going back behind an exercise (#3365): play a lesson past its second
+      exercise, press "Back" to a theory step before it and leave the lesson
+      through the logo -> on the dashboard, in the "Continue learning" card,
+      press "Resume", then "Resume" in the dialog -> the lesson opens exactly
+      that theory step (before: the step after the last exercise)
 - [ ] TC-0452 Auto-advance + "Back" (#1921): with "Advance automatically"
       (Settings -> Learning) ON, answer an exercise correctly so the app
       jumps to the next step by itself -> then click "Back": the previous
