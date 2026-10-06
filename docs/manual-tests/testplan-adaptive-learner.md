@@ -2656,7 +2656,9 @@ jeder Karten-Zeile (`CardImageField`).
       abgeschlossen markieren", "Nächste Lektion", "Nochmal üben" und
       "Zurück"; kein Favoriten-Hinweis, kein Teilen, keine
       Antworten-Übersicht, kein Export, kein "Warum du diese verpasst
-      hast", keine Korrekturrunde, keine Nächste-Schritte-Karten
+      hast", keine Korrekturrunde, keine Nächste-Schritte-Karten (hatte der
+      Lauf Fehler, steht zusätzlich nur der Knopf "Fehler korrigieren (N)"
+      darüber, #3575)
 - [ ] TC-0554 Am Telefon (Hochformat): alles bis zu den Weiter-Knöpfen ohne
       Wischen sichtbar
 - [ ] TC-0555 "Ausführliche Auswertung": die Auswertung wie am Set-Ende und alle
@@ -2676,6 +2678,16 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0558 "Warum du diese verpasst hast" angehakt, aber "Erklärungen nach der
       Antwort" (Wiederholung) aus: der Block fehlt in der kompakten Fassung
       und erscheint erst in der ausführlichen Auswertung
+- [ ] TC-0931 **Fehler korrigieren aus der kompakten Fassung (#3575):** Kompakte
+      Voreinstellung, eine Lektion mit zwei falsch beantworteten Übungen
+      beenden: über den Weiter-Knöpfen steht "Fehler korrigieren (2)", ohne
+      dass ein Abschnitt in den Einstellungen angehakt ist. Antippen: die
+      Korrekturrunde öffnet sich direkt mit der ersten Übung (kein zweiter
+      Klick auf "Jetzt ausbessern"), der Knopf verschwindet. Eine Übung
+      richtig lösen, Seite neu laden oder die Lektion erneut abschließen:
+      "1 von 2 korrigiert" und "Fehler korrigieren (1)". Alle korrigiert:
+      nur noch "2 von 2 korrigiert", kein Knopf. Lektion ohne Fehler: weder
+      Knopf noch Zeile. Am Telefon (375 px) ohne seitliches Scrollen
 
 Hinweis zu allen Schritten dieses Plans, die Export, Teilen, Favorit, Alle
 Antworten, "Warum du diese verpasst hast", Fehler ausbessern oder die
