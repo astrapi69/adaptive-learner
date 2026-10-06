@@ -24,12 +24,16 @@
  * re-entering the original lesson is unaffected. Dexie-friendly.
  */
 
+import {useMemo} from "react";
 import {useLocation, useNavigate, useParams} from "react-router";
 
 import {ERROR_REPLAY_POLICY, LessonRunner} from "../../components/lesson/runner";
 import FlashRoundCountdown from "../../components/lesson/runner/header-extras/FlashRoundCountdown";
 import ErrorReplaySummary from "../../components/lesson/runner/summaries/ErrorReplaySummary";
 import {useErrorReplaySource, type ReplayState} from "../../hooks/lesson/sources";
+import {useLessonSessionErrors} from "../../hooks/learning/useLessonSessionErrors";
+import {readLearnerState} from "../../lib/learning/learnerState";
+import {buildCorrectionSummary} from "../../lib/lesson/correction/correction-summary";
 
 interface UrlParams {
     setSlug?: string;
@@ -43,12 +47,26 @@ export default function ErrorReplayLesson() {
     const location = useLocation();
     const navigate = useNavigate();
 
+    const state = location.state as ReplayState | null;
     const source = useErrorReplaySource({
-        state: location.state as ReplayState | null,
+        state,
         setSlug: params.setSlug ?? "",
         setId: params.setId ?? "",
         filename: params.filename ?? "",
     });
+    // #3575 - the source run's corrections, for the recap: the first pass
+    // rides the router state, the live SRS rows decide "corrected".
+    const userId = useMemo(() => readLearnerState().userId ?? "", []);
+    const sessionErrors = useLessonSessionErrors(
+        userId,
+        params.setId ?? "",
+        params.filename ?? "",
+    );
+    const firstPass = state?.firstPass ?? null;
+    const correctionSummary = useMemo(
+        () => (firstPass ? buildCorrectionSummary(firstPass, sessionErrors) : null),
+        [firstPass, sessionErrors],
+    );
 
     return (
         <LessonRunner
@@ -71,6 +89,7 @@ export default function ErrorReplayLesson() {
                     stillWrong={source.stillWrong}
                     onRetry={source.retryStillWrong}
                     onDone={() => navigate(source.backTo)}
+                    correctionSummary={correctionSummary}
                 />
             )}
         />

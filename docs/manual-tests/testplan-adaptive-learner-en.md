@@ -2497,6 +2497,17 @@ each card row (`CardImageField`).
       "Fix mistakes (1)". All corrected: only "2 of 2 corrected", no
       button. A lesson without mistakes: neither button nor line. On a
       phone (375 px) without horizontal scrolling
+- [ ] TC-0932 **Correction summary after correcting (#3575):** finish a lesson with two
+      mistakes (one a free-text exercise with its own explanation), tap
+      "Fix mistakes" and finish the correction round, one right and one
+      wrong: below the round, "Your corrections" appears with "First try:
+      x of y correct", "1 of 2 corrected" and both mistakes; the corrected
+      one carries "Corrected", the open one "Still open" with your own
+      wrong answer, the correct answer and the exercise's explanation.
+      Then "Redo all exercises" to the end: below "Back to lesson" the
+      same summary shows the new state. A set's flash round ends with the
+      score only. Both in API and browser mode, on a phone (375 px)
+      without horizontal scrolling
 
 Note for every step of this plan that uses export, share, favorite, all
 answers, "Why you missed these", fix mistakes or the next-step cards:

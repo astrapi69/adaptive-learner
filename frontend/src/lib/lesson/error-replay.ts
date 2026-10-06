@@ -23,6 +23,7 @@ import type {
     LessonProgress,
 } from "../../storage/types";
 import {matchesExerciseIdentity} from "../srs/exercise-identity";
+import type {RunMistakes} from "./correction/correction-summary.types";
 
 /** The fewest pairs a trimmed replay matching keeps, so it stays a puzzle.
  *  A playability floor of the replay, not a content rule: authoring
@@ -38,6 +39,10 @@ export interface ErrorReplayPayload {
     exercises: ContentLessonExercise[];
     cards: ContentLessonCard[];
     lessonTitle: string;
+    /** #3575 - the source run's first pass, so the replay's end can show
+     *  the same correction summary as the lesson summary. Absent for a
+     *  set flash round (no single source run). */
+    firstPass?: RunMistakes;
 }
 
 /** The failed exercises of a lesson run, in lesson order. Empty when
