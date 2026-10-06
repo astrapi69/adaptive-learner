@@ -2363,6 +2363,11 @@ lesson:
     replay_all: "Refazer todos os exercícios ({count})"
     replay_only_heading: "Repita seus erros"
     replay_only_subtitle: "Estes não podem ser praticados como exercício rápido - refaz os exercícios em vez disso."
+    fix_mistakes: "Corrigir erros ({count})"
+    summary_heading: "As tuas correções"
+    first_try: "Primeira tentativa: {correct} de {total} certas"
+    status_corrected: "Corrigido"
+    status_open: "Ainda por corrigir"
   summary:
     heading: "Terminado"
     aria_label: "Resumo da lição"

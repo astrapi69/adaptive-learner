@@ -2617,7 +2617,12 @@
       "expand": "Perbaiki sekarang",
       "replay_all": "Ulangi semua latihan ({count})",
       "replay_only_heading": "Ulangi kesalahanmu",
-      "replay_only_subtitle": "Ini tidak dapat dilatih sebagai latihan cepat - ulangi latihan sebagai gantinya."
+      "replay_only_subtitle": "Ini tidak dapat dilatih sebagai latihan cepat - ulangi latihan sebagai gantinya.",
+      "fix_mistakes": "Perbaiki kesalahan ({count})",
+      "summary_heading": "Koreksi kamu",
+      "first_try": "Percobaan pertama: {correct} dari {total} benar",
+      "status_corrected": "Sudah diperbaiki",
+      "status_open": "Belum diperbaiki"
     },
     "error": {
       "load_failed": "Tidak dapat memuat pelajaran.",

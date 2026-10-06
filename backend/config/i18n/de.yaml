@@ -2368,6 +2368,11 @@ lesson:
     replay_all: "Alle Übungen erneut ({count})"
     replay_only_heading: "Wiederhole deine Fehler"
     replay_only_subtitle: "Das lässt sich nicht als Schnellübung anzeigen - wiederhole stattdessen die Übungen."
+    fix_mistakes: "Fehler korrigieren ({count})"
+    summary_heading: "Deine Korrekturen"
+    first_try: "Erster Versuch: {correct} von {total} richtig"
+    status_corrected: "Korrigiert"
+    status_open: "Noch offen"
   summary:
     heading: "Geschafft"
     aria_label: "Lektions-Zusammenfassung"
