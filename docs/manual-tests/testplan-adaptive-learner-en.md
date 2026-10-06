@@ -2469,7 +2469,9 @@ each card row (`CardImageField`).
       the summary shows stars, score, time, "+N XP" and directly below
       "Mark as complete", "Next lesson", "Practice again" and "Back"; no
       favorites hint, no sharing, no answers overview, no export, no "Why
-      you missed these", no correction round, no next-step cards
+      you missed these", no correction round, no next-step cards (if the run
+      had mistakes, only the "Fix mistakes (N)" button sits above them,
+      #3575)
 - [ ] TC-0554 On a phone (portrait): everything down to the continue buttons is
       visible without scrolling
 - [ ] TC-0555 "Detailed evaluation": the set-style review and every switched-off
@@ -2486,6 +2488,15 @@ each card row (`CardImageField`).
 - [ ] TC-0558 "Why you missed these" ticked but "Explanations after the answer"
       (Review) off: the block is missing from the compact view and only
       appears in the detailed evaluation
+- [ ] TC-0931 **Fix mistakes from the compact view (#3575):** compact default, finish
+      a lesson with two exercises answered wrong: "Fix mistakes (2)" sits
+      above the continue buttons without any section ticked in Settings.
+      Tap it: the correction round opens directly on the first exercise
+      (no second click on "Fix now"), the button disappears. Solve one
+      correctly, reload or finish the lesson again: "1 of 2 corrected" and
+      "Fix mistakes (1)". All corrected: only "2 of 2 corrected", no
+      button. A lesson without mistakes: neither button nor line. On a
+      phone (375 px) without horizontal scrolling
 
 Note for every step of this plan that uses export, share, favorite, all
 answers, "Why you missed these", fix mistakes or the next-step cards:
