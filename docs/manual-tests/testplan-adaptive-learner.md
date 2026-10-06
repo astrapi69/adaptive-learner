@@ -2700,6 +2700,16 @@ jeder Karten-Zeile (`CardImageField`).
       neuen Stand. Eine Blitzrunde eines Sets zeigt am Ende nur die
       Punktzahl. Beides in API- und Browser-Modus, am Telefon (375 px) ohne
       seitliches Scrollen
+- [ ] TC-0933 **Markierungen in der ausführlichen Auswertung (#3575):** Lektion mit zwei
+      Fehlern beenden, einen davon korrigieren (Korrekturrunde oder "Fehler
+      wiederholen"), dann "Ausführliche Auswertung" öffnen: in der
+      Antwortübersicht trägt jede falsch beantwortete Übung "Korrigiert" oder
+      "Noch offen", richtig beantwortete Übungen tragen keine Markierung. In
+      "Warum du diese verpasst hast" steht der offene Fehler mit "Noch offen",
+      der korrigierte bleibt in der Liste mit Frage, erster Antwort, richtiger
+      Antwort und "Korrigiert". Die kompakte Ansicht zeigt keine dieser
+      Markierungen. Beides in API- und Browser-Modus, am Telefon (375 px)
+      ohne seitliches Scrollen
 
 Hinweis zu allen Schritten dieses Plans, die Export, Teilen, Favorit, Alle
 Antworten, "Warum du diese verpasst hast", Fehler ausbessern oder die

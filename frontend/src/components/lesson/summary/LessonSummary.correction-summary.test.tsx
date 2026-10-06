@@ -222,4 +222,31 @@ describe("lesson summary: correction summary (#3575)", () => {
       "2",
     );
   });
+
+  it("marks each mistake corrected or open in the detailed view", () => {
+    sessionErrorsMock.mockReturnValue([row("ex-s1", true), row("ex-s2", false)]);
+    renderSummary();
+    fireEvent.click(screen.getByTestId("lesson-summary-detailed-toggle"));
+    expect(screen.getByTestId("lesson-summary-breakdown-correction-s1")).toHaveAttribute(
+      "data-corrected",
+      "true",
+    );
+    expect(screen.getByTestId("lesson-summary-breakdown-correction-s2")).toHaveAttribute(
+      "data-corrected",
+      "false",
+    );
+    expect(screen.queryByTestId("lesson-summary-breakdown-correction-s3")).toBeNull();
+    expect(screen.getByTestId("lesson-summary-explain-corrected-s1")).toBeInTheDocument();
+    expect(screen.getByTestId("lesson-summary-explain-status-ex-s2")).toHaveAttribute(
+      "data-corrected",
+      "false",
+    );
+  });
+
+  it("marks nothing in the compact view", () => {
+    sessionErrorsMock.mockReturnValue([row("ex-s1", true), row("ex-s2", false)]);
+    renderSummary();
+    expect(screen.queryByTestId("lesson-summary-breakdown-correction-s1")).toBeNull();
+    expect(screen.queryByTestId("lesson-summary-explain-corrected-s1")).toBeNull();
+  });
 });

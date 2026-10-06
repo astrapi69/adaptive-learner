@@ -209,6 +209,22 @@ function offersFixMistakes(args: {
 }
 
 /**
+ * The correction data the detailed view marks its answers overview and
+ * "Why you missed these" with (#3575): the verdict per failed step and the
+ * summary itself. The compact view marks nothing, so it gets neither.
+ */
+function detailedCorrectionMarks(
+  detailed: boolean,
+  summary: CorrectionSummary,
+): { byStep?: ReadonlyMap<string, boolean>; summary?: CorrectionSummary } {
+  if (!detailed || summary.total === 0) return {};
+  return {
+    byStep: new Map(summary.entries.map((entry) => [entry.stepId, entry.corrected])),
+    summary,
+  };
+}
+
+/**
  * The correction section with the record of what was corrected under the
  * round (#3575): once the round is finished in this view, or as soon as
  * anything of this run is corrected. Without a correction section, or
@@ -452,6 +468,10 @@ export default function LessonSummary({
     () => buildCorrectionSummary(correctionRun, sessionErrors),
     [correctionRun, sessionErrors],
   );
+  const correctionMarks = useMemo(
+    () => detailedCorrectionMarks(detailed, correctionSummary),
+    [detailed, correctionSummary],
+  );
 
   const suggestions = useNextStepSuggestions({
     source,
@@ -654,7 +674,12 @@ export default function LessonSummary({
     ),
     // #1007 Phase 2 — the collected-answers "View all answers" detail.
     answers: (
-      <LessonAnswersDetail enabled open={detailed} breakdown={breakdown} />
+      <LessonAnswersDetail
+        enabled
+        open={detailed}
+        breakdown={breakdown}
+        correction={correctionMarks.byStep}
+      />
     ),
     // #138 — export the result for AI-assisted practice.
     export: (
@@ -678,6 +703,7 @@ export default function LessonSummary({
         sessionErrors={sessionErrors}
         lesson={lesson}
         detailed={detailed}
+        correction={correctionMarks.summary}
         t={t}
       />
     ),
