@@ -14,7 +14,7 @@ vi.mock("../../hooks/learning/useLessonSessionErrors", () => ({
 }));
 
 import ErrorReplayLesson from "./ErrorReplayLesson";
-import type { RunMistakes } from "../../lib/lesson/correction-summary";
+import type { RunMistakes } from "../../lib/lesson/correction/correction-summary";
 import type { ContentLessonExercise, ElementError } from "../../storage/types";
 
 const FREE = (id: string, accept: string): ContentLessonExercise =>

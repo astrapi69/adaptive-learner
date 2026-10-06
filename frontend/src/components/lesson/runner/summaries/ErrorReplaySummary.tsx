@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import Confetti from "../../../feedback/Confetti";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import { prefersReducedMotion } from "../../../../lib/feedback/feedbackPref";
-import type { CorrectionSummary } from "../../../../lib/lesson/correction-summary";
+import type { CorrectionSummary } from "../../../../lib/lesson/correction/correction-summary";
 import CorrectionSummaryPanel from "../../summary/CorrectionSummaryPanel";
 
 export interface ErrorReplaySummaryProps {

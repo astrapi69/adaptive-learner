@@ -9,7 +9,7 @@
  */
 import { describe, expect, it } from "vitest";
 
-import type { ContentLesson, ElementError, LessonProgress } from "../../storage/types";
+import type { ContentLesson, ElementError, LessonProgress } from "../../../storage/types";
 import { buildCorrectionSummary, collectRunMistakes } from "./correction-summary";
 
 function step(id: string, accept: string, explanation?: string) {

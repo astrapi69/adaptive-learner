@@ -22,7 +22,7 @@ import AnswerDiff from "../../../shared/data-display/AnswerDiff";
 import type {
   CorrectionSummary,
   CorrectionSummaryEntry,
-} from "../../../lib/lesson/correction-summary";
+} from "../../../lib/lesson/correction/correction-summary";
 
 type TFn = (key: string, fallback?: string) => string;
 

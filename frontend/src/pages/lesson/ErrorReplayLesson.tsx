@@ -33,7 +33,7 @@ import ErrorReplaySummary from "../../components/lesson/runner/summaries/ErrorRe
 import {useErrorReplaySource, type ReplayState} from "../../hooks/lesson/sources";
 import {useLessonSessionErrors} from "../../hooks/learning/useLessonSessionErrors";
 import {readLearnerState} from "../../lib/learning/learnerState";
-import {buildCorrectionSummary} from "../../lib/lesson/correction-summary";
+import {buildCorrectionSummary} from "../../lib/lesson/correction/correction-summary";
 
 interface UrlParams {
     setSlug?: string;

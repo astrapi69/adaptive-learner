@@ -83,7 +83,7 @@ import {
   buildCorrectionSummary,
   collectRunMistakes,
   type CorrectionSummary,
-} from "../../../lib/lesson/correction-summary";
+} from "../../../lib/lesson/correction/correction-summary";
 import type { LessonResultLabels } from "../../../lib/lesson/export/result-export";
 import {
   buildLessonJsonExport,

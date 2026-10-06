@@ -6,7 +6,7 @@ import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import type { CorrectionSummary } from "../../../../lib/lesson/correction-summary";
+import type { CorrectionSummary } from "../../../../lib/lesson/correction/correction-summary";
 import type { ContentLessonExercise } from "../../../../storage/types";
 import ErrorReplaySummary from "./ErrorReplaySummary";
 

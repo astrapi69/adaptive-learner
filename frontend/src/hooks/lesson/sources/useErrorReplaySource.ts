@@ -45,7 +45,7 @@ import type {
     ElementAttempt,
 } from "../../../storage/types";
 import {useI18n} from "../../ui/useI18n";
-import type {RunMistakes} from "../../../lib/lesson/correction-summary.types";
+import type {RunMistakes} from "../../../lib/lesson/correction/correction-summary.types";
 
 /** #2888 - a set flash round: seconds per exercise and where it leaves to. */
 interface FlashRound {

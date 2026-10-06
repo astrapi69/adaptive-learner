@@ -23,7 +23,7 @@ import type {
     LessonProgress,
 } from "../../storage/types";
 import {matchesExerciseIdentity} from "../srs/exercise-identity";
-import type {RunMistakes} from "./correction-summary.types";
+import type {RunMistakes} from "./correction/correction-summary.types";
 
 /** The fewest pairs a trimmed replay matching keeps, so it stays a puzzle.
  *  A playability floor of the replay, not a content rule: authoring

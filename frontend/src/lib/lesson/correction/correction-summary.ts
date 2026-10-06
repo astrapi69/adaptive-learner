@@ -29,12 +29,12 @@ import type {
   ContentLesson,
   ElementError,
   LessonProgress,
-} from "../../storage/types";
+} from "../../../storage/types";
 import type { FirstTryTally, RunMistake, RunMistakes } from "./correction-summary.types";
-import { collectFailedExercises, openFailedExercises } from "./error-replay";
+import { collectFailedExercises, openFailedExercises } from "../error-replay";
 
 export type { RunMistakes } from "./correction-summary.types";
-import { buildExerciseBreakdown } from "./lesson-summary";
+import { buildExerciseBreakdown } from "../lesson-summary";
 
 /** A mistake with its live verdict. */
 export interface CorrectionSummaryEntry extends RunMistake {

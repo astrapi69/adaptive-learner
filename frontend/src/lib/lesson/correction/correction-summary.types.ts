@@ -4,7 +4,7 @@
  * (``error-replay.ts``) can name it without an import cycle.
  */
 
-import type { ContentLessonExercise } from "../../storage/types";
+import type { ContentLessonExercise } from "../../../storage/types";
 
 /** One exercise the run got wrong, as it stood after the first pass. */
 export interface RunMistake {
