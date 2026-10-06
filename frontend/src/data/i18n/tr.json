@@ -2551,7 +2551,12 @@
       "expand": "Şimdi düzelt",
       "replay_all": "Tüm alıştırmaları tekrarla ({count})",
       "replay_only_heading": "Hatalarını tekrarla",
-      "replay_only_subtitle": "Bunlar hızlı alıştırma olarak çalışılamaz - bunun yerine alıştırmaları tekrar yap."
+      "replay_only_subtitle": "Bunlar hızlı alıştırma olarak çalışılamaz - bunun yerine alıştırmaları tekrar yap.",
+      "fix_mistakes": "Hataları düzelt ({count})",
+      "summary_heading": "Düzeltmelerin",
+      "first_try": "İlk deneme: {total} sorudan {correct} doğru",
+      "status_corrected": "Düzeltildi",
+      "status_open": "Henüz düzeltilmedi"
     },
     "summary": {
       "heading": "Tamamladın",

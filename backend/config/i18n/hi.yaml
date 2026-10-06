@@ -2423,6 +2423,11 @@ lesson:
     replay_all: 'सभी अभ्यास फिर से करें ({count})'
     replay_only_heading: 'अपनी गलतियाँ दोहराएँ'
     replay_only_subtitle: 'इन्हें त्वरित अभ्यास के रूप में अभ्यास नहीं किया जा सकता - इसके बजाय अभ्यास फिर से करें।'
+    fix_mistakes: "गलतियाँ सुधारें ({count})"
+    summary_heading: "आपके सुधार"
+    first_try: "पहला प्रयास: {total} में से {correct} सही"
+    status_corrected: "सुधारा गया"
+    status_open: "अभी बाकी"
   error:
     load_failed: पाठ लोड नहीं हो सका।
     invalid_data: "इस पाठ में अमान्य या दूषित डेटा होने के कारण इसे नहीं खोला जा सकता। कृपया सामग्री के लेखक से संपर्क करें।"

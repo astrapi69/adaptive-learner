@@ -2551,7 +2551,12 @@
       "expand": "Corriger maintenant",
       "replay_all": "Refaire tous les exercices ({count})",
       "replay_only_heading": "Refaire vos erreurs",
-      "replay_only_subtitle": "Cela ne peut pas être pratiqué comme exercice rapide - refaites plutôt les exercices."
+      "replay_only_subtitle": "Cela ne peut pas être pratiqué comme exercice rapide - refaites plutôt les exercices.",
+      "fix_mistakes": "Corriger les erreurs ({count})",
+      "summary_heading": "Tes corrections",
+      "first_try": "Premier essai : {correct} sur {total} justes",
+      "status_corrected": "Corrigé",
+      "status_open": "Encore à corriger"
     },
     "summary": {
       "heading": "Terminé",

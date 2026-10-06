@@ -2551,7 +2551,12 @@
       "expand": "今すぐ直す",
       "replay_all": "すべての問題をやり直す（{count}）",
       "replay_only_heading": "間違いをやり直す",
-      "replay_only_subtitle": "これらはクイックドリルとして練習できません。代わりに問題をやり直してください。"
+      "replay_only_subtitle": "これらはクイックドリルとして練習できません。代わりに問題をやり直してください。",
+      "fix_mistakes": "間違いを直す ({count})",
+      "summary_heading": "あなたの修正",
+      "first_try": "1回目: {total}問中{correct}問正解",
+      "status_corrected": "修正済み",
+      "status_open": "未修正"
     },
     "summary": {
       "heading": "完了",

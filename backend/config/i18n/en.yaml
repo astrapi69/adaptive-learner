@@ -2438,6 +2438,11 @@ lesson:
     replay_all: "Redo all exercises ({count})"
     replay_only_heading: "Repeat your mistakes"
     replay_only_subtitle: "These can't be practiced as a quick drill - redo the exercises instead."
+    fix_mistakes: "Fix mistakes ({count})"
+    summary_heading: "Your corrections"
+    first_try: "First try: {correct} of {total} correct"
+    status_corrected: "Corrected"
+    status_open: "Still open"
   error:
     load_failed: "Could not load lesson."
     invalid_data: "This lesson can't be opened because it contains invalid or corrupted data. Please contact the content author."
