@@ -16,9 +16,8 @@
  *   t={t} />
  */
 
-import { CheckCircle2, CircleDashed } from "lucide-react";
-
 import AnswerDiff from "../../../shared/data-display/AnswerDiff";
+import CorrectionMark from "./CorrectionMark";
 import type {
   CorrectionSummary,
   CorrectionSummaryEntry,
@@ -63,7 +62,6 @@ export default function CorrectionSummaryPanel({ summary, t }: CorrectionSummary
 }
 
 function CorrectionEntry({ entry, t }: { entry: CorrectionSummaryEntry; t: TFn }) {
-  const Icon = entry.corrected ? CheckCircle2 : CircleDashed;
   return (
     <li
       className="flex flex-col gap-1 rounded-lg border border-border bg-card p-3"
@@ -74,17 +72,7 @@ function CorrectionEntry({ entry, t }: { entry: CorrectionSummaryEntry; t: TFn }
         <span className="font-medium text-fg-primary wrap-anywhere">
           {entry.question ?? entry.title}
         </span>
-        <span
-          className={
-            "inline-flex items-center gap-1 text-sm " +
-            (entry.corrected ? "text-[var(--success)]" : "text-[var(--error)]")
-          }
-        >
-          <Icon size={16} aria-hidden="true" />
-          {entry.corrected
-            ? t("lesson.correction.status_corrected", "Corrected")
-            : t("lesson.correction.status_open", "Still open")}
-        </span>
+        <CorrectionMark corrected={entry.corrected} t={t} />
       </div>
       {entry.firstAnswer ? (
         <AnswerDiff

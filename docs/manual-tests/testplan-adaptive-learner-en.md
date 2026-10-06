@@ -2508,6 +2508,15 @@ each card row (`CardImageField`).
       same summary shows the new state. A set's flash round ends with the
       score only. Both in API and browser mode, on a phone (375 px)
       without horizontal scrolling
+- [ ] TC-0933 **Marks in the detailed evaluation (#3575):** finish a lesson with two
+      mistakes, correct one of them (correction round or Retry errors), then
+      open "Detailed evaluation": in the answers overview every wrongly
+      answered exercise carries "Corrected" or "Still open", exercises
+      answered right carry no mark. In "Why you missed these" the open
+      mistake shows "Still open", the corrected one stays in the list with
+      its question, first answer, correct answer and "Corrected". The compact
+      view shows none of these marks. Both in API and browser mode, on a
+      phone (375 px) without horizontal scrolling
 
 Note for every step of this plan that uses export, share, favorite, all
 answers, "Why you missed these", fix mistakes or the next-step cards:
