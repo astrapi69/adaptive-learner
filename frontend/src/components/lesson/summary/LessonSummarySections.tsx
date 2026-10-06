@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
 import AnswerDiff from "../../../shared/data-display/AnswerDiff";
+import CorrectionMark from "./CorrectionMark";
 import Confetti from "../../feedback/Confetti";
 import LessonExamResult from "./LessonExamResult";
 import LessonFavoriteToggle from "../chrome/LessonFavoriteToggle";
@@ -42,6 +43,7 @@ import { questionForError } from "../../../lib/review/error-question";
 import { readExplanationsEnabled } from "../../../lib/review/reviewPref";
 import type { LessonMode } from "../../../lib/learning/lessonModePref";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
+import type { CorrectionSummary } from "../../../lib/lesson/correction/correction-summary";
 import type { StarRating } from "../../../lib/lesson/lesson-summary";
 import type { ContentLesson, ElementError } from "../../../storage/types";
 
@@ -501,6 +503,7 @@ export function SummaryExplanations({
   sessionErrors,
   lesson,
   detailed = false,
+  correction,
   t,
 }: {
   sessionErrors: ElementError[];
@@ -514,6 +517,10 @@ export function SummaryExplanations({
    *  of its own Settings toggle and without the compact 5-entry cap. The
    *  stored preference is never written; it only stops deciding this render. */
   detailed?: boolean;
+  /** #3575 - the detailed view's correction summary. With it, every entry
+   *  carries a "Still open" mark and the run's corrected exercises stay in
+   *  the list, marked "Corrected", instead of dropping out silently. */
+  correction?: CorrectionSummary;
   t: TFn;
 }) {
   if (!detailed && !readExplanationsEnabled()) return null;
@@ -532,7 +539,8 @@ export function SummaryExplanations({
   // #3031 — the cap exists to keep the compact summary compact. The detailed
   // view is the place where every mistake of the run belongs.
   const mistakes = detailed ? wrong : wrong.slice(0, 5);
-  if (mistakes.length === 0) return null;
+  const corrected = correction?.entries.filter((entry) => entry.corrected) ?? [];
+  if (mistakes.length === 0 && corrected.length === 0) return null;
   return (
     <section
       className="lesson-summary-explanations flex flex-col gap-3 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
@@ -571,11 +579,61 @@ export function SummaryExplanations({
                   {t(expl.key, expl.fallback)}
                 </p>
               )}
+              {correction && (
+                <CorrectionMark
+                  corrected={false}
+                  testId={`lesson-summary-explain-status-${err.id}`}
+                  t={t}
+                />
+              )}
             </li>
           );
         })}
+        {corrected.map((entry) => (
+          <CorrectedExplanation key={entry.stepId} entry={entry} t={t} />
+        ))}
       </ul>
     </section>
+  );
+}
+
+/** #3575 - a corrected mistake in "Why you missed these": its question,
+ *  the first answer against the correct one, and the "Corrected" mark. */
+function CorrectedExplanation({
+  entry,
+  t,
+}: {
+  entry: CorrectionSummary["entries"][number];
+  t: TFn;
+}) {
+  return (
+    <li
+      className="flex flex-col gap-1"
+      data-testid={`lesson-summary-explain-corrected-${entry.stepId}`}
+    >
+      <p className="text-sm">
+        <span className="text-fg-muted">
+          {t("review.question_label", "Question:")}{" "}
+        </span>
+        <span className="font-medium">{entry.question ?? entry.title}</span>
+      </p>
+      {entry.firstAnswer ? (
+        <AnswerDiff
+          userAnswer={entry.firstAnswer}
+          correctAnswer={entry.correctAnswer}
+          yourLabel={t("review.your_answer", "Your answer:")}
+          correctLabel={t("review.correct_answer", "Correct:")}
+        />
+      ) : (
+        <p className="text-sm text-fg-muted">
+          {t(
+            "lesson.summary.breakdown_correct_answer",
+            "Correct answer: {answer}",
+          ).replace("{answer}", entry.correctAnswer)}
+        </p>
+      )}
+      <CorrectionMark corrected t={t} />
+    </li>
   );
 }
 

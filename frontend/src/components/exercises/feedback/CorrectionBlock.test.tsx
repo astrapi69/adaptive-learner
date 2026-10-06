@@ -337,6 +337,36 @@ describe("CorrectionBlock: render + skip + record", () => {
         ).toHaveAttribute("data-cloze-total", "1");
     });
 
+    it("opens straight into the drill when asked to (#3575)", async () => {
+        // The compact summary's "Fix mistakes" button is the explicit
+        // opt-in, so the collapsed card would be a second click.
+        listMock.mockResolvedValue([
+            _error({
+                exercise_id: "ex-1",
+                correct_answer: "un",
+                element_key: "un",
+                user_answer: "le",
+            }),
+        ]);
+        render(
+            <CorrectionBlock
+                lesson={_lesson()}
+                progress={_progress()}
+                userId="user-1"
+                setId="fr-a1"
+                lessonFilename="03-articles.json"
+                onComplete={vi.fn()}
+                onSkip={vi.fn()}
+                initiallyExpanded
+            />,
+        );
+        expect(await screen.findByTestId("cloze-exercise")).toBeInTheDocument();
+        expect(screen.getByTestId("lesson-correction-block")).toHaveAttribute(
+            "data-expanded",
+            "true",
+        );
+    });
+
     it("skip triggers onSkip + transitions to complete-with-0", async () => {
         const onSkip = vi.fn();
         listMock.mockResolvedValue([

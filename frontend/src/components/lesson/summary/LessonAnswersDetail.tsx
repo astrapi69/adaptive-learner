@@ -15,6 +15,7 @@
  */
 
 import {DiffHighlight} from "../../exercises";
+import CorrectionMark from "./CorrectionMark";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {tokenDiff} from "../../../lib/exercises/grading/token-diff";
 import type {ExerciseBreakdownEntry} from "../../../lib/lesson/lesson-summary";
@@ -29,6 +30,10 @@ export interface LessonAnswersDetailProps {
     open?: boolean;
     /** One entry per exercise step of the run (from ``buildExerciseBreakdown``). */
     breakdown: ExerciseBreakdownEntry[];
+    /** #3575 - the detailed view's correction verdict per failed step
+     *  (``stepId`` -> corrected). Each listed row carries a "Corrected" /
+     *  "Still open" mark; without it (the compact view) nothing is marked. */
+    correction?: ReadonlyMap<string, boolean>;
 }
 
 type Translate = (key: string, fallback?: string) => string;
@@ -48,9 +53,12 @@ function rowStatusOf(entry: ExerciseBreakdownEntry): string {
  *  same "answers without context" gap #2757 fixed on the sibling surface. */
 function AnswerRow({
     entry,
+    corrected,
     t,
 }: {
     entry: ExerciseBreakdownEntry;
+    /** #3575 - this mistake's correction verdict, undefined when unmarked. */
+    corrected?: boolean;
     t: Translate;
 }) {
     const status = rowStatusOf(entry);
@@ -76,6 +84,15 @@ function AnswerRow({
 
     const body = (
         <>
+            {corrected !== undefined && (
+                <span className="block pt-0.5">
+                    <CorrectionMark
+                        corrected={corrected}
+                        testId={`lesson-summary-breakdown-correction-${entry.stepId}`}
+                        t={t}
+                    />
+                </span>
+            )}
             {entry.question && (
                 <span
                     className="block pt-0.5 text-[0.8125rem] text-fg-secondary"
@@ -128,7 +145,11 @@ function AnswerRow({
         </>
     );
 
-    const hasBody = Boolean(entry.question) || showAnswer || Boolean(entry.userAnswer);
+    const hasBody =
+        Boolean(entry.question) ||
+        showAnswer ||
+        Boolean(entry.userAnswer) ||
+        corrected !== undefined;
     return (
         <li
             className={`lesson-summary-breakdown-row is-${status}`}
@@ -161,6 +182,7 @@ export default function LessonAnswersDetail({
     enabled = true,
     open = false,
     breakdown,
+    correction,
 }: LessonAnswersDetailProps) {
     const {t} = useI18n();
     if (!enabled || breakdown.length === 0) return null;
@@ -181,7 +203,12 @@ export default function LessonAnswersDetail({
             </summary>
             <ul className="lesson-summary-breakdown-list">
                 {breakdown.map((entry) => (
-                    <AnswerRow key={entry.stepId} entry={entry} t={t} />
+                    <AnswerRow
+                        key={entry.stepId}
+                        entry={entry}
+                        corrected={correction?.get(entry.stepId)}
+                        t={t}
+                    />
                 ))}
             </ul>
         </details>
