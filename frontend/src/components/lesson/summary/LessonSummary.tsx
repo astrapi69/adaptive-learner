@@ -43,6 +43,7 @@ import {CorrectionBlock} from "../../exercises";
 import LessonAnswersDetail from "./LessonAnswersDetail";
 import LessonReviewReport from "./LessonReviewReport";
 import MentorNotesSummary from "./MentorNotesSummary";
+import SummaryFixMistakes from "./SummaryFixMistakes";
 import SummaryTicketReward from "./SummaryTicketReward";
 import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";
@@ -177,6 +178,28 @@ function deriveSummaryStats(progress: LessonProgress | null): {
     bestCorrect: progress?.best_score_correct ?? 0,
     bestTotal: progress?.best_score_total ?? 0,
   };
+}
+
+/** #3031 / #3575 - whether a configurable section is on screen: switched on,
+ *  the detailed view, or the correction round opened by "Fix mistakes". */
+function isSectionShown(
+  id: string,
+  enabled: boolean,
+  detailed: boolean,
+  fixOpen: boolean,
+): boolean {
+  return enabled || detailed || (id === "correction" && fixOpen);
+}
+
+/** #3575 - the compact view's "Fix mistakes" row: only for a persisted run
+ *  and only while the correction section itself is not on screen. */
+function offersFixMistakes(args: {
+  hasRun: boolean;
+  correctionEnabled: boolean;
+  detailed: boolean;
+  fixOpen: boolean;
+}): boolean {
+  return args.hasRun && !(args.correctionEnabled || args.detailed || args.fixOpen);
 }
 
 export default function LessonSummary({
@@ -346,6 +369,10 @@ export default function LessonSummary({
   // completion navigation below is never gated and stays pinned at the bottom.
   const sections = useSummarySections();
   const nextStepsEnabled = isSummarySectionEnabled(sections, "next_steps");
+  const correctionEnabled = isSummarySectionEnabled(sections, "correction");
+  // #3575 - the compact view's "Fix mistakes" button opens the correction
+  // round for this view without touching the stored section flags.
+  const [fixOpen, setFixOpen] = useState(false);
 
   // #3031 — the detailed-evaluation view. The compact summary holds three
   // things back: sections switched off in Settings, the collapsed answers
@@ -654,6 +681,7 @@ export default function LessonSummary({
           errorCount={suggestions.errorReplay.errorCount}
           correctedCount={suggestions.errorReplay.correctedCount}
           allCorrected={suggestions.errorReplay.allCorrected}
+          initiallyExpanded={fixOpen}
           onComplete={() => {
             // Best-effort improvement counter is rendered inside
             // CorrectionBlock's "complete" surface; nothing further needed.
@@ -732,9 +760,23 @@ export default function LessonSummary({
         // #3031 — the detailed view renders every section, including the ones
         // the learner switched off; their stored flags are untouched and take
         // effect again the moment the view returns to compact.
-        if (!enabled && !detailed) return null;
+        if (!isSectionShown(id, enabled, detailed, fixOpen)) return null;
         return <Fragment key={id}>{sectionNodes[id]}</Fragment>;
       })}
+
+      {/* #3575 - the compact view's way into the correction round. Rendered
+          only while the correction section itself is not on screen; it is
+          navigation, so it ignores the section toggles like the actions
+          below. */}
+      {offersFixMistakes({ hasRun: Boolean(progress && userId), correctionEnabled, detailed, fixOpen }) && (
+        <SummaryFixMistakes
+          openCount={openFailed.length}
+          correctedCount={failedExercises.length - openFailed.length}
+          totalCount={failedExercises.length}
+          onFix={() => setFixOpen(true)}
+          t={t}
+        />
+      )}
 
       {/* #2768 — mentor-mode punch list: the author's per-step notes from
           this run, with the editor deep link. Self-gated (own set + notes
