@@ -44,6 +44,7 @@ import LessonAnswersDetail from "./LessonAnswersDetail";
 import LessonReviewReport from "./LessonReviewReport";
 import MentorNotesSummary from "./MentorNotesSummary";
 import SummaryFixMistakes from "./SummaryFixMistakes";
+import CorrectionSummaryPanel from "./CorrectionSummaryPanel";
 import SummaryTicketReward from "./SummaryTicketReward";
 import NextStepSuggestions from "./NextStepSuggestions";
 import RetryResultComparison from "./RetryResultComparison";
@@ -78,6 +79,11 @@ import { useErrorReplayScope } from "../../../hooks/lesson/interaction/useErrorR
 import { useLessonSessionErrors } from "../../../hooks/learning/useLessonSessionErrors";
 import { buildExerciseBreakdown } from "../../../lib/lesson/lesson-summary";
 import { resolveSummaryScoreDisplay } from "../../../lib/lesson/correction-adjusted-score";
+import {
+  buildCorrectionSummary,
+  collectRunMistakes,
+  type CorrectionSummary,
+} from "../../../lib/lesson/correction-summary";
 import type { LessonResultLabels } from "../../../lib/lesson/export/result-export";
 import {
   buildLessonJsonExport,
@@ -200,6 +206,28 @@ function offersFixMistakes(args: {
   fixOpen: boolean;
 }): boolean {
   return args.hasRun && !(args.correctionEnabled || args.detailed || args.fixOpen);
+}
+
+/**
+ * The correction section with the record of what was corrected under the
+ * round (#3575): once the round is finished in this view, or as soon as
+ * anything of this run is corrected. Without a correction section, or
+ * before either holds, the section is returned unchanged.
+ */
+function withCorrectionSummary(
+  section: ReactNode,
+  summary: CorrectionSummary,
+  roundDone: boolean,
+  t: (key: string, fallback?: string) => string,
+): ReactNode {
+  if (!section) return section;
+  if (!roundDone && summary.correctedCount === 0) return section;
+  return (
+    <>
+      {section}
+      <CorrectionSummaryPanel summary={summary} t={t} />
+    </>
+  );
 }
 
 export default function LessonSummary({
@@ -373,6 +401,8 @@ export default function LessonSummary({
   // #3575 - the compact view's "Fix mistakes" button opens the correction
   // round for this view without touching the stored section flags.
   const [fixOpen, setFixOpen] = useState(false);
+  // #3575 - the correction round reported it is finished in this view.
+  const [correctionDone, setCorrectionDone] = useState(false);
 
   // #3031 — the detailed-evaluation view. The compact summary holds three
   // things back: sections switched off in Settings, the collapsed answers
@@ -409,6 +439,18 @@ export default function LessonSummary({
         errorsOnly: errorReplayErrorsOnly,
       }),
     [openFailed, sessionErrors, errorReplayErrorsOnly],
+  );
+
+  // #3575 - the run's first pass (frozen) and its live correction verdict;
+  // the first pass also rides the Retry-errors payload so that page can
+  // show the same summary at its end.
+  const correctionRun = useMemo(
+    () => collectRunMistakes(lesson, progress),
+    [lesson, progress],
+  );
+  const correctionSummary = useMemo(
+    () => buildCorrectionSummary(correctionRun, sessionErrors),
+    [correctionRun, sessionErrors],
   );
 
   const suggestions = useNextStepSuggestions({
@@ -675,6 +717,7 @@ export default function LessonSummary({
                   exercises: replayExercises,
                   cards: lesson.cards,
                   lessonTitle: lesson.title,
+                  firstPass: correctionRun,
                 }
               : null
           }
@@ -682,10 +725,7 @@ export default function LessonSummary({
           correctedCount={suggestions.errorReplay.correctedCount}
           allCorrected={suggestions.errorReplay.allCorrected}
           initiallyExpanded={fixOpen}
-          onComplete={() => {
-            // Best-effort improvement counter is rendered inside
-            // CorrectionBlock's "complete" surface; nothing further needed.
-          }}
+          onComplete={() => setCorrectionDone(true)}
           onSkip={() => {
             // Skip is purely a UI dismissal — the pinned action row is always
             // visible below.
@@ -693,6 +733,12 @@ export default function LessonSummary({
         />
       ) : null,
   };
+  sectionNodes.correction = withCorrectionSummary(
+    sectionNodes.correction,
+    correctionSummary,
+    correctionDone,
+    t,
+  );
 
   return (
     <section

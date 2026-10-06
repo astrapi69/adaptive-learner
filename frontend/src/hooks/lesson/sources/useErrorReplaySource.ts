@@ -45,6 +45,7 @@ import type {
     ElementAttempt,
 } from "../../../storage/types";
 import {useI18n} from "../../ui/useI18n";
+import type {RunMistakes} from "../../../lib/lesson/correction-summary.types";
 
 /** #2888 - a set flash round: seconds per exercise and where it leaves to. */
 interface FlashRound {
@@ -59,6 +60,8 @@ export interface ReplayState {
     lessonTitle: string;
     /** Present when this round is a set flash round (no source lesson file). */
     flashRound?: FlashRound;
+    /** #3575 - the source run's first pass, for the correction summary. */
+    firstPass?: RunMistakes;
 }
 
 interface UseErrorReplaySourceOptions {

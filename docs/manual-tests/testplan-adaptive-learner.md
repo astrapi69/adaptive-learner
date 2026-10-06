@@ -2688,6 +2688,18 @@ jeder Karten-Zeile (`CardImageField`).
       "1 von 2 korrigiert" und "Fehler korrigieren (1)". Alle korrigiert:
       nur noch "2 von 2 korrigiert", kein Knopf. Lektion ohne Fehler: weder
       Knopf noch Zeile. Am Telefon (375 px) ohne seitliches Scrollen
+- [ ] TC-0932 **Korrektur-Zusammenfassung nach der Korrektur (#3575):** Lektion mit zwei
+      Fehlern (eine Freitext-Übung mit eigener Erklärung) beenden, "Fehler
+      korrigieren" antippen und die Korrekturrunde abschließen, eine Übung
+      richtig, eine falsch: unter der Runde erscheint "Deine Korrekturen"
+      mit "Erster Versuch: x von y richtig", "1 von 2 korrigiert" und beiden
+      Fehlern; der korrigierte trägt "Korrigiert", der offene "Noch offen"
+      mit der eigenen falschen Antwort, der richtigen Antwort und der
+      Erklärung der Übung. Danach "Alle Übungen erneut" bis zum Ende:
+      unter "Zurück zur Lektion" steht dieselbe Zusammenfassung mit dem
+      neuen Stand. Eine Blitzrunde eines Sets zeigt am Ende nur die
+      Punktzahl. Beides in API- und Browser-Modus, am Telefon (375 px) ohne
+      seitliches Scrollen
 
 Hinweis zu allen Schritten dieses Plans, die Export, Teilen, Favorit, Alle
 Antworten, "Warum du diese verpasst hast", Fehler ausbessern oder die
