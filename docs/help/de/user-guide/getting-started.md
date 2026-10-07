@@ -52,9 +52,9 @@ KI-Anbieter außerhalb des Browsers sitzt.
 - **Einen modernen Browser** (Chrome 100+, Firefox 100+, Safari
   17+, Edge 100+). Die App nutzt IndexedDB, Service-Worker und
   modernes JavaScript.
-- **Einen KI-API-Schlüssel** für mindestens einen der drei
-  unterstützten Anbieter (Anthropic, OpenAI oder Google Gemini).
-  Die kostenlosen Kontingente reichen meist zum Einstieg; siehe
+- **Einen KI-API-Schlüssel** für mindestens einen Anbieter:
+  Anthropic, OpenAI oder Google Gemini in der Browser-Version; die
+  Desktop-App bietet zusätzlich Perplexity. Die kostenlosen Kontingente reichen meist zum Einstieg; siehe
   [Einstellungen](settings.md) für die Schlüssel-Einrichtung.
 
 ## Die ersten fünf Minuten

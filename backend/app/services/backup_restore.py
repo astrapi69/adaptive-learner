@@ -152,7 +152,7 @@ def _normalize_api_key_backups(
         if isinstance(cleartext, str) and cleartext:
             try:
                 ciphertext = crypto.encrypt_api_key(cleartext)
-            except Exception as exc:  # pragma: no cover - defensive
+            except Exception as exc:  # noqa: BLE001 - pragma: no cover, defensive
                 logger.warning(
                     "api_key_backups: could not encrypt an imported key, dropping row: %s",
                     exc,

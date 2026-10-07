@@ -37,7 +37,9 @@ Ver [Sessões de aprendizagem](../user-guide/learning-session.md) e
 - **Voz**: ditado por microfone para o chat, leitura em voz alta das
   respostas e um modo dedicado de prática de pronúncia.
 - **Traga a sua própria chave**: Anthropic Claude, OpenAI GPT e
-  Google Gemini como plugins de fornecedor separados; descoberta de
+  Google Gemini como plugins de fornecedor separados, mais Perplexity
+  no modo servidor (a aplicação de ambiente de trabalho; o navegador não
+  consegue chamar o Perplexity diretamente); descoberta de
   modelos em tempo real com um seletor recomendados/todos; teste de
   chave por fornecedor e um cofre de chaves com rollback.
 - **As conversas importadas continuam como sessões de tutor**,
@@ -96,6 +98,12 @@ aprendente.
 - Classificação de 0 a 3 estrelas, favoritos, sugestões de próximo
   passo, divisão automática de lições demasiado grandes e links de
   regresso à teoria a partir dos exercícios.
+- **Revisão de conclusão de set**: depois da última lição de um set,
+  todos os erros do set numa só vista: totais, por lição, por tipo de
+  exercício e os elementos que continuam a falhar, com a última
+  resposta errada ao lado da correta.
+
+Ver [Revisão de conclusão de set](set-summary.md).
 
 ## Criação de lições (Create-Lesson)
 
@@ -121,6 +129,10 @@ aprendente.
   conjunto com várias lições através de um seletor de lições,
   combinar lições próprias num conjunto e escolher um domínio de
   conteúdo (idiomas mais domínios de conhecimento).
+- **Modo mentor**: ao jogar uma lição própria, anota-se o que está mal
+  no sítio onde acontece; as notas tornam-se uma lista de pendentes no
+  resumo e resolvem-se no editor, sem mexer no progresso de
+  aprendizagem.
 
 Ver [Criar lições](../content-creation/overview.md).
 
@@ -168,6 +180,20 @@ Ver [Navegador de conteúdo](content-browser.md),
 - **Celebrações**: elogios merecidos e com intensidade configurável,
   overlays de marcos, sons opcionais, tudo seguro para movimento
   reduzido.
+- **Modo jogo**: lições lúdicas com uma sequência de respostas
+  visível, sons próprios, corações e contagem decrescente opcionais, XP
+  bónus de sequência e a mascote Lernfunke com variantes de cor
+  desbloqueadas por nível, distintivos ou XP.
+- **Arcade**: quatro minijogos curtos a partir de um cartão do painel:
+  Learn Memory com pares das próprias lições (gratuito), mais
+  Tic-Tac-Toe, Snake e Simon, desbloqueados com XP. Os jogos em si não
+  dão XP.
+- **Avatar**: carregar uma imagem ou escolher uma de oito figuras
+  predefinidas, com molduras decorativas desbloqueadas por nível,
+  sequência ou XP.
+
+Ver [Elogios e celebrações](../user-guide/celebrations.md) e
+[Arcade](arcade.md).
 
 ## Exportações e backup
 

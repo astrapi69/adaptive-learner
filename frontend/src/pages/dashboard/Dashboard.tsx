@@ -255,7 +255,7 @@ export default function Dashboard() {
       {/* #931 — secondary "Quick actions" footer: the learner content (tabs)
           comes first; starting a session + power-user shortcuts live here. */}
       <section className="dashboard-quick-actions mt-6 border-t border-border pt-4">
-        <h2 className="mb-2 text-sm font-semibold text-fg-muted">
+        <h2 className="mt-0 mb-2 text-sm font-semibold text-fg-muted">
           {t("dashboard.quick_actions", "Quick actions")}
         </h2>
         <QuickStartButton

@@ -16,7 +16,6 @@ from unittest.mock import patch
 
 import httpx
 import pytest
-
 from adaptive_learner_content_loader.cache import (
     is_set_cached,
     list_cached_versions,
@@ -33,7 +32,6 @@ from adaptive_learner_content_loader.sources import (
     user_source_from_settings,
     user_sources_from_settings,
 )
-
 
 SOURCE = "astrapi69/adaptive-learner-content"
 BRANCH = "main"

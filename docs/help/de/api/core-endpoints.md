@@ -1,7 +1,9 @@
 # Core-Endpoints
 
-Endpunkte, die nicht von einem Plugin registriert werden:
-Users, Projects, Settings, i18n, Health.
+Ausgearbeitete Beispiele für Endpunkte, die nicht von einem
+Plugin registriert werden: Users, Projects, Settings, i18n,
+Health. Jeden Endpoint, Core und Plugin, listet
+[Alle Endpoints](endpoints.md).
 
 ## Health
 

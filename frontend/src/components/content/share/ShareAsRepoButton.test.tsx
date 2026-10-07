@@ -253,3 +253,19 @@ describe("ShareAsRepoButton in the desktop app (#3398)", () => {
     expect(button).toHaveAttribute("title", "Only available in the browser version of the app.");
   });
 });
+
+describe("ShareAsRepoButton lesson note (#3347)", () => {
+  it.each([
+    ["one lesson takes the singular", 1, "The set's one lesson will be included."],
+    ["two lessons take the plural", 2, "All 2 lessons of this set will be included."],
+    ["no lesson keeps the plural", 0, "All 0 lessons of this set will be included."],
+  ])("%s", async (_name, count, text) => {
+    render(
+      <TestFeatureProvider context={{ mode: "dexie" }}>
+        <ShareAsRepoButton entry={entry({ lesson_count: count })} />
+      </TestFeatureProvider>,
+    );
+    fireEvent.click(await screen.findByTestId("user-set-share-repo"));
+    expect((await screen.findByTestId("repo-export-lessons-note")).textContent).toBe(text);
+  });
+});
