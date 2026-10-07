@@ -13,7 +13,7 @@ import ModalShell from "./ModalShell";
 
 function renderShell(onClose = vi.fn()) {
   render(
-    <ModalShell open title="My dialog" onClose={onClose} testId="m">
+    <ModalShell open title="My dialog" closeLabel="Close" onClose={onClose} testId="m">
       <p>body content</p>
       <button type="button" data-testid="inner-btn">
         inner
@@ -26,7 +26,7 @@ function renderShell(onClose = vi.fn()) {
 describe("ModalShell", () => {
   it("renders nothing when closed", () => {
     render(
-      <ModalShell open={false} title="x" onClose={vi.fn()} testId="m">
+      <ModalShell open={false} title="x" closeLabel="Close" onClose={vi.fn()} testId="m">
         <p>hidden</p>
       </ModalShell>,
     );
@@ -87,6 +87,7 @@ describe("ModalShell", () => {
           <ModalShell
             open={open}
             title="t"
+            closeLabel="Close"
             onClose={() => {
               onClose();
               setOpen(false);

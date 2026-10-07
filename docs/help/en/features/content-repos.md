@@ -96,6 +96,35 @@ discovery section based on it, where you add recommended
 repositories with **one click**. They appear with the
 **Officially recommended** badge (Trust 3).
 
+
+---
+
+## Registering your own repository
+
+Under **Settings → Data → Sources**, **Register your repository**
+proposes your own content repository for the official directory
+(`recommended-repos.json`) that the cross-repository search reads.
+
+1. Pick one of your connected repositories, or enter its GitHub URL
+   and branch, then give it a title and, if you like, a one-line
+   description.
+2. **Prepare submission**: the app looks up the repository's current
+   commit, runs the same technical check as connecting a repository,
+   reads the language pairs from the repository's `search-index.json`
+   and shows the finished directory entry. A status tells you whether
+   the entry is *Validated locally* or *Pending - CI will validate*.
+3. Send it in, one of two ways:
+    - **Copy entry** and **Open the directory to propose**: GitHub opens
+      the directory file for editing; paste the entry into the array and
+      choose "Propose changes". GitHub creates the fork for you. No
+      token is needed.
+    - **Create pull request**: with a GitHub token (Settings →
+      Integrations) the app opens the pull request itself and shows you
+      its link. This is only available in the browser version of the
+      app; in the desktop app the button stays visible but disabled.
+
+A maintainer reviews the pull request and merges it once the
+directory's CI has validated the pinned commit.
 ---
 
 ## Local ratings

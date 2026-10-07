@@ -2646,6 +2646,7 @@ content:
     public: "공개"
     branch: "브랜치"
     lessons_note: "이 세트의 모든 {n}개 레슨이 포함됩니다."
+    lessons_note_one: "이 세트의 레슨 1개가 포함됩니다."
     invalid_repo: "저장소를 owner/name 형식으로 입력하세요."
     submit: "내보내기"
     working: "내보내는 중…"
