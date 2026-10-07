@@ -28,6 +28,8 @@ export default defineConfig({
   reporter: [
     ["list"],
     ["junit", { outputFile: "test-results/manual-automation-junit.xml" }],
+    // #3427 - feeds the runtime skip budget (scripts/check_e2e_skip_budget.py).
+    ["json", { outputFile: "test-results/manual-automation.json" }],
     ["html", { outputFolder: "playwright-report-manual", open: "never" }],
   ],
   use: {
