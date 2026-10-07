@@ -26,6 +26,8 @@ const PREVIEW_PORT =
     Number(process.env.ADAPTIVE_LEARNER_VISUAL_PREVIEW_PORT) || 4178;
 
 export default defineConfig({
+    // #3439 - a committed test.only would run one test and report green.
+    forbidOnly: !!process.env.CI,
     testDir: "./visual",
     // One retry absorbs the rare nondeterministic CAPTURE (a late layout
     // phase shifted lesson-matching mobile by ~4px, #1540). It cannot
