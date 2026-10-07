@@ -59,6 +59,8 @@ const BACKEND_ENV = [
 export const DOCS_LANG = process.env.DOCS_LANG === "de" ? "de" : "en";
 
 export default defineConfig({
+    // #3439 - a committed test.only would run one test and report green.
+    forbidOnly: !!process.env.CI,
     testDir: "./docs",
     fullyParallel: false,
     workers: 1,

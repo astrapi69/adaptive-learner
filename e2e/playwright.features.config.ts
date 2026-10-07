@@ -31,6 +31,8 @@ const PREVIEW_PORT =
     Number(process.env.ADAPTIVE_LEARNER_VISUAL_PREVIEW_PORT) || 4179;
 
 export default defineConfig({
+    // #3439 - a committed test.only would run one test and report green.
+    forbidOnly: !!process.env.CI,
     testDir: ".",
     // Only the capture script — not the smoke / dexie / visual suites that
     // also live under e2e/.
