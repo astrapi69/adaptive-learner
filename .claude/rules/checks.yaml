@@ -31,6 +31,13 @@
 #              does not SKIP. A guard file no step executes is a silent gate.
 
 checks:
+  - id: e2e-guard-tests
+    verifies: the e2e harness never reuses a backend it did not start, keeps its own ports and data dir (#3316), and carries no committed test.only (#3439); run as a fixed step on every PR touching e2e TypeScript because the tests read their subject through read_text (#3342)
+    rule: none (selection-gap class of lessons/ci-gates.md "PR-CI vs nightly gates", #1620/#1665)
+    status: active
+    wired_in: backend/tests/test_e2e_path_isolation.py; backend/tests/test_e2e_no_focused_tests.py; make test; .github/workflows/ci.yml fixed step on e2e changes (#3342)
+    probe: script_exists=backend/tests/test_e2e_path_isolation.py | script_exists=backend/tests/test_e2e_no_focused_tests.py | ci_step=.github/workflows/ci.yml::backend-tests::E2E guard tests on e2e changes (#3342)::test_e2e_path_isolation.py
+
   - id: i18n-full-tree-key-coverage
     verifies: every t() call site in frontend/src has a real, non-empty catalog entry in all 11 languages (static keys) or a plausible one (dynamic template-literal keys, prefix/suffix sanity match) - not just the 7-file first-paint subset #2798 covers (#2864, #2797 Teil A)
     rule: none (extends the #2798 gate's approach tree-wide; i18next-parser adoption rejected, see #2864)

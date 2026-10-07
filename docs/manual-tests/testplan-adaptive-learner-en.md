@@ -2245,6 +2245,15 @@ each card row (`CardImageField`).
 - [ ] TC-0474 Browser mode (GitHub Pages / Dexie): the card stays visible with
       the notice "Only available with the desktop app."; DevTools >
       Network shows no request to /api/plugins/health
+- [ ] TC-0936 "Learning Repository" card, fresh install: the "Repositories directory"
+      field is empty, below it reads "Leave empty for the default: repos
+      in the data directory (see About)", no fixed Linux path; at 375 px
+      the hint wraps instead of being cut off (#3451)
+- [ ] TC-0937 Desktop app, git persistence on, field left empty, saved, then "Persist
+      to git" on the Learning Repository page: toast "Persisted to git:
+      <commit>"; on disk the folder "repos/<project id>/" with README.md
+      sits below the data directory that Settings > About shows; a custom
+      path entered in the field still wins
 
 ### TS-0061 Diagnostics probe: mis-tap mark + actions (#3043)
 - [ ] TC-0475 Probe ON, measurement bar visible: next to "Werte kopieren" and
@@ -3660,13 +3669,13 @@ Documented here only to show what is covered.
 
 ### TS-0129 Page title in the browser tab (#3431)
 
-- [ ] TC-0936 Click through Dashboard, Learning Path, Content, Settings and a
+- [ ] TC-0938 Click through Dashboard, Learning Path, Content, Settings and a
       lesson: the tab title reads "<page name> - Adaptive Learner" each
       time (e.g. "Settings - Adaptive Learner", "Lesson - Adaptive
       Learner"); the landing page shows only "Adaptive Learner"
-- [ ] TC-0937 Settings > General, UI language to German: the tab title switches to
+- [ ] TC-0939 Settings > General, UI language to German: the tab title switches to
       "Einstellungen - Adaptive Learner" without a reload
-- [ ] TC-0938 Browser history (long-press the back button): the entries carry
+- [ ] TC-0940 Browser history (long-press the back button): the entries carry
       different page names instead of one identical title
 
 ## Automated: Unit + Component Tests (Vitest, 7200+;

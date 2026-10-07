@@ -229,6 +229,29 @@ def test_list_unknown_user_returns_404(client: TestClient) -> None:
 # --- AI extraction (mocked) ----------------------------------------------
 
 
+def test_extraction_limit_follows_the_saved_plugin_setting(client: TestClient) -> None:
+    """#3435: the extraction routes read ``settings.extraction_limit``
+    (bundled YAML plus user overlay). It used to have no reader, so
+    every prompt asked for 8 cards whatever the YAML said."""
+    from adaptive_learner_anki import routes as anki_routes
+
+    from app import config_overlay
+
+    overlay = config_overlay.get_user_plugins_dir() / "anki.yaml"
+    overlay.unlink(missing_ok=True)
+    plugin = manager.get_plugin("anki")
+    assert plugin is not None
+    saved = dict(plugin.config.get("settings", {}))
+    try:
+        assert anki_routes._extraction_limit() == 8
+        r = client.patch("/api/plugin-settings/anki", json={"settings": {"extraction_limit": 3}})
+        assert r.status_code == 200, r.text
+        assert anki_routes._extraction_limit() == 3
+    finally:
+        overlay.unlink(missing_ok=True)
+        plugin.config["settings"] = saved
+
+
 def test_extract_session_unknown_returns_404(client: TestClient) -> None:
     r = client.post("/api/plugins/anki/cards/extract/session/nope")
     assert r.status_code == 404
