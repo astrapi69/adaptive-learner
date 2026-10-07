@@ -6,11 +6,16 @@
  * predicates and the wizard-flow types without duplicating them.
  */
 
-import { CEFR_LEVELS } from "../../../lib/content/language/language-options";
+import {
+  CEFR_LEVELS,
+  LANGUAGE_OPTIONS,
+} from "../../../lib/content/language/language-options";
 import {
   KNOWN_CONTENT_DOMAINS,
   LEVEL_NONE,
+  normalizeLevel,
 } from "../../../lib/content/content-domains";
+import { engineIsKnownLevel } from "../../../lib/content/engine";
 
 // Re-exported from the shared content-domain module (#1716) so the Share
 // wizard and the Create-Lesson wizard mirror ONE distinction. Existing
@@ -31,10 +36,29 @@ export function baseLang(code: string | null | undefined): string {
   return (code || "").split("-")[0].toLowerCase();
 }
 
-/** A plain ISO 639-1 base subtag (exactly two letters) — what the
- *  community tree requires. */
-export function isIsoLang(code: string | null | undefined): boolean {
-  return /^[a-z]{2}$/.test(baseLang(code));
+const OFFERED_LANGUAGES: ReadonlySet<string> = new Set(
+  LANGUAGE_OPTIONS.map((option) => option.code),
+);
+
+/** Whether the wizard's language dropdowns offer ``code`` (by base
+ *  subtag). This is the wizard's vocabulary, not a validity rule: whether a
+ *  language TAG is valid is the engine's ``E-LANG-TAG``, run by the share
+ *  check (#3356). */
+export function isOfferedLanguage(code: string | null | undefined): boolean {
+  return OFFERED_LANGUAGES.has(baseLang(code));
+}
+
+/** Whether ``level`` can be shared for a set of ``domain``: the engine's
+ *  ``isKnownLevel`` on the stored form, where the wizard's empty "no
+ *  level" is the engine's ``none`` (``normalizeLevel``). A language set
+ *  needs a CEFR band; any other set may also have no level (#3356).
+ *
+ * @example
+ * isShareableLevel("knowledge", "") // true
+ * isShareableLevel("language", "") // false
+ */
+export function isShareableLevel(domain: string, level: string): boolean {
+  return engineIsKnownLevel(domain, normalizeLevel(level));
 }
 
 const CEFR_SET: ReadonlySet<string> = new Set(CEFR_LEVELS as readonly string[]);

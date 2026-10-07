@@ -1514,6 +1514,20 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
 - [ ] TC-0380 Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the hint + removal button must work in BOTH modes
 
+### TS-0128 Share wizard - level for sets that do not teach a language (#3356)
+
+Where: Share wizard step 1, the "Level" select. A knowledge set is one
+with the same source and target language or with a knowledge domain
+(such as `knowledge`, `psychology`).
+
+- [ ] TC-0934 Share a knowledge set whose stored level is "none" -> the select
+      shows "No level (not a language course)", no error, "Continue" is
+      enabled (before: an estimated CEFR level)
+- [ ] TC-0935 For a knowledge set, choose "No level (not a language course)" ->
+      no error, "Continue" stays enabled; for a language set the same
+      entry still reads "Select a level…" and blocks "Continue" with
+      "Choose a CEFR level (A1-C2)."
+
 ### TS-0054 Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
 - [ ] TC-0392 **Step-1 order + template disclosure (#2755):** In step 1 the
