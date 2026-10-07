@@ -35,6 +35,24 @@ from .topic_transition import TopicTransition, evaluate_topic_transition
 logger = logging.getLogger(__name__)
 
 
+def _session_config() -> dict[str, Any]:
+    """The merged session plugin config, ``{}`` when it cannot be read.
+
+    A config glitch must never block /message, but it leaves a warning
+    with the traceback (#3423) instead of silently using the defaults.
+    """
+    # Lazy import: keep app.* out of the module load path so this
+    # file stays importable from the standalone plugin test dir.
+    from app.config_overlay import read_plugin_config_merged
+
+    try:
+        cfg = read_plugin_config_merged("session")
+    except Exception:  # noqa: BLE001
+        logger.warning("Session plugin config unreadable; using defaults", exc_info=True)
+        return {}
+    return cfg if isinstance(cfg, dict) else {}
+
+
 def _read_step_evaluation_config() -> tuple[bool, float, int]:
     """Return ``(enabled, confidence_threshold, max_tokens)`` for the
     Phase-8 step-evaluator from ``config/plugins/session.yaml`` with
@@ -51,15 +69,7 @@ def _read_step_evaluation_config() -> tuple[bool, float, int]:
     module-level lru_cache test-isolation pitfall called out in
     lessons-learned.md.
     """
-    # Lazy import: keep app.* out of the module load path so this
-    # file stays importable from the standalone plugin test dir.
-    from app.config_overlay import read_plugin_config_merged
-
-    try:
-        cfg = read_plugin_config_merged("session")
-    except Exception:  # noqa: BLE001 — config glitch must never block /message
-        cfg = {}
-    block = cfg.get("step_evaluation") if isinstance(cfg, dict) else None
+    block = _session_config().get("step_evaluation")
     if not isinstance(block, dict):
         block = {}
     enabled = bool(block.get("enabled", True))
@@ -88,15 +98,7 @@ def _read_async_evaluation_enabled() -> bool:
     ``asyncio.gather`` instead of sequentially. Set to ``False``
     to fall back to the v1.4.0 sequential behaviour.
     """
-    from app.config_overlay import read_plugin_config_merged
-
-    try:
-        cfg = read_plugin_config_merged("session")
-    except Exception:  # noqa: BLE001
-        cfg = {}
-    if not isinstance(cfg, dict):
-        return True
-    raw = cfg.get("async_evaluation")
+    raw = _session_config().get("async_evaluation")
     if raw is None:
         return True
     return bool(raw)
@@ -109,13 +111,7 @@ def _read_auto_loop_config() -> tuple[bool, int, int]:
     Defaults match the spec: enabled, max_cycles=5,
     transition_max_tokens=256. A missing block yields the defaults.
     """
-    from app.config_overlay import read_plugin_config_merged
-
-    try:
-        cfg = read_plugin_config_merged("session")
-    except Exception:  # noqa: BLE001 — never block /message
-        cfg = {}
-    block = cfg.get("auto_loop") if isinstance(cfg, dict) else None
+    block = _session_config().get("auto_loop")
     if not isinstance(block, dict):
         block = {}
     enabled = bool(block.get("enabled", True))
@@ -560,6 +556,7 @@ def _maybe_parallel_precompute(
     try:
         precomputed_eval, precomputed_transition = asyncio.run(_run_both())
     except Exception:  # noqa: BLE001 — fall back to sequential
+        logger.warning("Parallel evaluation failed; running sequentially", exc_info=True)
         return None
     # Both calls ran concurrently inside that ms budget; attribute the
     # elapsed time symmetrically for the parallel_saved_ms display.
