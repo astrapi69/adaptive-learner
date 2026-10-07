@@ -1928,6 +1928,7 @@ repo:
     title: "Repositorio de aprendizaje"
     loading: "Cargando…"
     repos_dir: "Directorio de repositorios"
+    repos_dir_hint: "Déjalo vacío para usar el predeterminado: repos en el directorio de datos (ver Acerca de)"
     save: "Guardar ajustes"
     saving: "Guardando…"
     toast:
