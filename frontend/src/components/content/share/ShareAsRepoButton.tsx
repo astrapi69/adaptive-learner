@@ -290,11 +290,19 @@ export default function ShareAsRepoButton({
                                 data-testid="repo-export-branch"
                             />
                         </label>
-                        <p className="m-0 text-sm text-[var(--fg-muted)]">
-                            {t(
-                                "content.repo_export.lessons_note",
-                                "All {n} lessons of this set will be included.",
-                            ).replace("{n}", String(entry.lesson_count))}
+                        <p
+                            className="m-0 text-sm text-[var(--fg-muted)]"
+                            data-testid="repo-export-lessons-note"
+                        >
+                            {entry.lesson_count === 1
+                                ? t(
+                                      "content.repo_export.lessons_note_one",
+                                      "The set's one lesson will be included.",
+                                  )
+                                : t(
+                                      "content.repo_export.lessons_note",
+                                      "All {n} lessons of this set will be included.",
+                                  ).replace("{n}", String(entry.lesson_count))}
                         </p>
                         {validation && validation.issues.length > 0 && (
                             <div
