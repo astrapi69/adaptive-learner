@@ -3937,6 +3937,22 @@ Hier nur zur Dokumentation was abgedeckt ist.
 - [ ] TC-0940 UI-Sprache Deutsch: die Schritt-Namen im Bericht entsprechen denen
       in der App (z. B. "Eingabe" statt "Input")
 
+### TS-0130 Übersetzte Bedientexte und Vorlesetexte (#3425)
+
+- [ ] TC-0941 Lektion mit Freitext-Aufgabe, absichtlich falsch tippen (ein Wort
+      vergessen, eines vertauschen), Bildschirmleser an (VoiceOver /
+      NVDA / TalkBack): der Antwortvergleich liest "Fehlt: <Wort>" und
+      "Geschrieben: <Wort>, erwartet: <Wort>" auf Deutsch, nicht
+      "missing" / "wrote"; sichtbar sieht der Vergleich unverändert aus
+- [ ] TC-0942 Lektion erstellen > Karten: die leeren Felder zeigen "Wort oder
+      Ausdruck" und "Bedeutung" statt "Bonjour" / "Guten Tag"
+- [ ] TC-0943 Anki-Seite, Karte bearbeiten: die Typ-Auswahl bietet "Einfach" und
+      "Lückentext"
+- [ ] TC-0944 Lernpfad und Dashboard-Karte "Weitermachen": der Bildschirmleser
+      liest die Sterne als "2 von 3 Sternen" statt "2/3"
+- [ ] TC-0945 Teilen-Assistent und "Als Repository teilen": der X-Knopf heißt für
+      den Bildschirmleser "Schließen"
+
 ## Automatisiert: Unit + Component Tests (Vitest, 7200+;
 ## aktuelle Zahl siehe docs/audits/current-coverage.md)
 
