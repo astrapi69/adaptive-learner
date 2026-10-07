@@ -70,7 +70,8 @@ freigeschaltet hat.
    Ziel, Zeitrahmen).
 3. **12-Fragen-Test machen** (~2 Minuten).
 4. **KI-API-Schlüssel hinzufügen** (Anthropic, OpenAI oder
-   Gemini - kostenlose Tiers reichen).
+   Gemini - kostenlose Tiers reichen; die Desktop-App bietet
+   zusätzlich Perplexity).
 5. **Erste Session starten** vom Dashboard aus.
 
 [Voller Erste-Schritte-Guide →](user-guide/getting-started.md)

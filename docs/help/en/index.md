@@ -67,7 +67,7 @@ time, what method-switch unlocked progress.
    (topic, goal, timeframe).
 3. **Take the 12-question assessment** (~2 minutes).
 4. **Add your AI API key** (Anthropic, OpenAI, or Gemini -
-   free tiers work).
+   free tiers work; the desktop app also offers Perplexity).
 5. **Start your first session** from the Dashboard.
 
 [Full getting-started guide →](user-guide/getting-started.md)
