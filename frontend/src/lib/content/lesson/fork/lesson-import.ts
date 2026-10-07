@@ -14,11 +14,10 @@
  * exact schema the viewer expects.
  */
 
-import { parse as parseYaml } from "yaml";
 
 import type { ContentLesson } from "../../../../storage/types";
 import { slugify, validateGeneratedLesson } from "../../analysis/analysis-to-lesson";
-import { resolveLanguagePair } from "../../engine";
+import { parseManifest, resolveLanguagePair, type ParsedManifest } from "../../engine";
 
 export interface ImportedSet {
   set_id: string;
@@ -156,21 +155,11 @@ async function parseZipSet(file: File): Promise<ImportParseResult> {
   if (!manifestFile) {
     return { ok: false, error: "ZIP is missing manifest.yaml" };
   }
-  let manifest: {
-    name?: string;
-    description?: string;
-    sets?: Array<{
-      id?: string;
-      title?: string;
-      language?: string;
-      target_language?: string;
-      source_language?: string;
-      level?: string;
-      description?: string;
-    }>;
-  };
+  // #3395 - the engine's manifest parser, not a second YAML read with its
+  // own shape: one deserialiser for every manifest the app reads.
+  let manifest: ParsedManifest;
   try {
-    manifest = parseYaml(await manifestFile.async("string")) ?? {};
+    manifest = parseManifest(await manifestFile.async("string")) ?? {};
   } catch (err) {
     return {
       ok: false,
