@@ -37,15 +37,21 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
-interface DialogContentProps
-    extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
-    showCloseButton?: boolean;
-}
+/**
+ * The X button needs a label in the UI language whenever it is shown
+ * (#3425); a dialog without the button takes none.
+ */
+type CloseButtonProps =
+    | {showCloseButton?: true; closeLabel: string}
+    | {showCloseButton: false; closeLabel?: undefined};
+
+type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> &
+    CloseButtonProps;
 
 const DialogContent = React.forwardRef<
     React.ElementRef<typeof DialogPrimitive.Content>,
     DialogContentProps
->(({className, children, showCloseButton = true, ...props}, ref) => (
+>(({className, children, showCloseButton = true, closeLabel, ...props}, ref) => (
     <DialogPortal>
         <DialogOverlay />
         <DialogPrimitive.Content
@@ -62,7 +68,7 @@ const DialogContent = React.forwardRef<
             {showCloseButton && (
                 <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none">
                     <X className="size-4" />
-                    <span className="sr-only">Close</span>
+                    <span className="sr-only">{closeLabel}</span>
                 </DialogPrimitive.Close>
             )}
         </DialogPrimitive.Content>

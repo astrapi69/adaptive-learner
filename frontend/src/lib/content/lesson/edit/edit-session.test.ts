@@ -284,10 +284,11 @@ describe("buildEditPrefill (#1971)", () => {
 });
 
 describe("lessonPickerLabel", () => {
-    it("uses the title, falling back to a 1-based index for a blank title", () => {
-        expect(lessonPickerLabel(lesson("l0", "Real Title"), 0)).toBe(
-            "Real Title",
-        );
-        expect(lessonPickerLabel(lesson("l1", "   "), 2)).toBe("Lesson 3");
+    it.each([
+        ["a title", "Real Title", "Real Title"],
+        ["a blank title", "   ", "Lektion"],
+        ["no title", "", "Lektion"],
+    ])("uses %s, else the caller's localized fallback (#3425)", (_label, title, expected) => {
+        expect(lessonPickerLabel(lesson("l0", title), "Lektion")).toBe(expected);
     });
 });
