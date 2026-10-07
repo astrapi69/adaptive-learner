@@ -129,7 +129,7 @@ import:
   analysis_title: Análisis
   analysis_ready: Análisis listo.
   analysis_fallback: El análisis se ejecutó, pero la respuesta de la IA no se pudo analizar correctamente.
-  analysis_fallback_long: La respuesta de la IA no se pudo parsear como JSON estructurado. El resumen a continuación es un fallback.
+  analysis_fallback_long: "La respuesta de la IA no se pudo leer como un análisis estructurado. Vuelve a ejecutar el análisis o elige otro proveedor de IA."
   analysis_error: No se pudo analizar la conversación.
   analysis_phase_reading: "Paso 1/3: Leyendo el chat…"
   analysis_phase_analyzing: "Paso 2/3: Analizando el contenido…"
@@ -4189,6 +4189,19 @@ content_repo:
     save_failed: "No se pudo añadir el repositorio."
     sync_failed: "La sincronización falló. Inténtalo de nuevo."
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "No se encontró el repositorio o manifest.yaml."
+      access_denied: "Acceso denegado: comprueba el repositorio y tu token de GitHub."
+      unreachable: "No se puede acceder al repositorio."
+      unsupported_schema: "Versión de esquema no compatible: {version}."
+      no_sets: "manifest.yaml no contiene ningún conjunto."
+      no_lessons: "No se encontraron lecciones en ningún conjunto."
+      executable_content: "El contenido de la lección contiene código ejecutable no permitido."
+      lessons_unreadable: "No se pudieron leer las lecciones del primer conjunto."
+      lesson_invalid_json: "La primera lección del primer conjunto no es un JSON válido."
+      validator_unavailable: "No se pudo cargar el validador de lecciones."
+      lesson_invalid: "La primera lección del primer conjunto no supera la validación: {detail}"
     failed: "La validación falló: {reason}"
     passed: "Validación correcta: {sets} conjuntos, {lessons} lecciones."
 resource:

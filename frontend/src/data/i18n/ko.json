@@ -141,7 +141,7 @@
     "analysis_title": "분석",
     "analysis_ready": "분석이 준비되었습니다.",
     "analysis_fallback": "분석은 실행되었지만 AI 응답을 깔끔하게 파싱할 수 없었습니다.",
-    "analysis_fallback_long": "AI 응답을 구조화된 JSON으로 파싱할 수 없었습니다. 아래 요약은 대체 결과입니다.",
+    "analysis_fallback_long": "AI 응답을 구조화된 분석으로 읽을 수 없었습니다. 분석을 다시 실행하거나 다른 AI 제공자를 선택하세요.",
     "analysis_error": "대화를 분석할 수 없었습니다.",
     "analysis_phase_reading": "1/3단계: 채팅 읽는 중…",
     "analysis_phase_analyzing": "2/3단계: 내용 분석 중…",
@@ -4528,6 +4528,19 @@
       "sync_failed": "동기화에 실패했습니다. 다시 시도하세요."
     },
     "validation": {
+      "reason": {
+        "not_found": "저장소 또는 manifest.yaml을 찾을 수 없습니다.",
+        "access_denied": "접근이 거부되었습니다. 저장소와 GitHub 토큰을 확인하세요.",
+        "unreachable": "저장소에 연결할 수 없습니다.",
+        "unsupported_schema": "지원하지 않는 스키마 버전 {version}입니다.",
+        "no_sets": "manifest.yaml에 세트가 없습니다.",
+        "no_lessons": "어느 세트에서도 레슨을 찾을 수 없습니다.",
+        "executable_content": "레슨 내용에 허용되지 않는 실행 코드가 있습니다.",
+        "lessons_unreadable": "첫 번째 세트의 레슨을 읽을 수 없습니다.",
+        "lesson_invalid_json": "첫 번째 세트의 첫 레슨이 올바른 JSON이 아닙니다.",
+        "validator_unavailable": "레슨 검증기를 불러올 수 없습니다.",
+        "lesson_invalid": "첫 번째 세트의 첫 레슨이 검증을 통과하지 못했습니다: {detail}"
+      },
       "failed": "검증 실패: {reason}",
       "passed": "검증 통과: 세트 {sets}개, 레슨 {lessons}개."
     }
