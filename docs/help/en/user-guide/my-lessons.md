@@ -82,20 +82,41 @@ generator changes in a later version.
 
 ## Export and share
 
-Each My Lesson can be shared, with no account and no server:
+Each My Lesson can be shared. Exporting and the community pull request
+work without an account; a GitHub token speeds up the pull request and is
+needed for sharing a whole set as your own repository:
 
 - **Export** - download the lesson as a single `.json` file.
 - **Export as set** - download a content-set `.zip` (manifest +
   lessons).
-- **Share with Community** - opens a pre-filled **pull request** on
-  the official content repository. The lesson JSON lands at the
-  correct path in the content tree and the repository's validation
-  runs automatically; a maintainer reviews and merges it so everyone
-  can download it. Small lessons open straight in GitHub's create-file
-  editor (the PR title and description are pre-filled); larger lessons
-  download the file first and open GitHub's upload page so you drag it
-  in. No account token is needed - GitHub creates the fork and the
-  pull request for you.
+- **Share with Community** - opens a **pull request** on the official
+  content repository. The lesson JSON lands at the correct path in the
+  content tree and the repository's validation runs automatically; a
+  maintainer reviews and merges it so everyone can download it. There
+  are two ways the pull request is made:
+    - **Without a token** - small lessons open straight in GitHub's
+      create-file editor (the PR title and description are pre-filled);
+      larger lessons download the file first and open GitHub's upload
+      page so you drag it in. GitHub creates the fork and the pull
+      request for you once you confirm there.
+    - **With a GitHub token** (Settings > Integrations, see
+      [Settings](settings.md#integrations)) - a single lesson is shared
+      without leaving the app: the app forks the repository, commits the
+      lesson and opens the pull request, then shows you its link. A set
+      with several lessons still takes the way without a token. If
+      GitHub rejects the token, the message points you to Settings >
+      Integrations.
+- **Share as repository** - pushes the whole set, in the content-repo
+  format, to a GitHub repository of yours (created if it does not exist
+  yet) in one commit. You choose the repository (`owner/name`), private
+  or public, and the branch. A quality check runs first: if it finds
+  problems that a content repository's checks would reject, it lists
+  them and the button turns into **Export anyway**. The pushed
+  repository can then be connected as a content source (see
+  [Content repositories](../features/content-repos.md)). This needs a
+  GitHub token and is only available in the browser version of the app;
+  otherwise the button stays visible but disabled, with the reason as
+  its tooltip.
 
 Exported files contain only the lesson content - no progress, no
 error history, nothing personal.

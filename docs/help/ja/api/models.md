@@ -2,9 +2,9 @@
 
 # データモデル
 
-`backend/app/models/__init__.py`内の**25個のSQLAlchemyモデル**と、それらのワイヤーシェイプのPydanticスキーマ。同期サーフェスには28個のテーブルが含まれます（25モデル + 3つの関連テーブル: `project_subjects`、`project_tags`、`user_badges`）。
+`backend/app/models/__init__.py`内の**SQLAlchemyモデル**と、それらのワイヤーシェイプのPydanticスキーマ。同期サーフェスには`sync_service.ALL_SYNC_TABLES`のすべてのテーブルが含まれます。
 
-v0.7.0の元の14モデルは以下で詳しく説明します。それ以降に追加された11モデル（Phase 12+のインポート、Phase 22のサブジェクト/タグ、Phase 29-30のゲーミフィケーション + anki、Phase 32のnotebooklm）は下部に名前 + テーブルで一覧表示されています。すべてのモデルのすべてのフィールドについては`/openapi.json`のOpenAPIスペックを参照してください。
+v0.7.0の元の14モデルは以下で詳しく説明します。それ以降に追加されたモデルは下部に名前 + テーブルで一覧表示されています。すべてのモデルのすべてのフィールドについては`/openapi.json`のOpenAPIスペックを参照してください。
 
 ## User
 
@@ -202,6 +202,7 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    PERPLEXITY = "perplexity"
 
 # v1.20.0 / Phase 34以降
 class ApiKeySource(str, Enum):
@@ -237,3 +238,9 @@ class ImportedConversationSource(str, Enum):
 | UserStreak | user_streaks | v1.16.0 | ストリーク状態 + フリーズ + 週末モード |
 | AnkiCardSuggestion | anki_card_suggestions | v1.17.0 | AI抽出フラッシュカード候補 |
 | StudyQuestion | study_questions | v1.19.0 | AI生成アクティブリコール問題 |
+| ApiKeyBackup | api_key_backups | v1.49.0 | 置き換えられたAIキーのロールバックキャッシュ |
+| LessonProgress | lesson_progress | v1.28.0 | レッスンごとのステップ状態（in_progress / paused / completed） |
+| ElementError | element_errors | v1.30.0 | 要素ごとのSRSエラー + 習熟度の追跡 |
+| SetRun | set_runs | v2.12.0 | コンテンツセットの1回の周回。開いている行が現在の周回 |
+| UserMission | user_missions | v1.39.0 | デイリーミッションの割り当て + 進捗 |
+| SpeechRecording | speech_recordings | v2.14.0 | 「話して録音」演習の学習者の現在の録音 |

@@ -11,7 +11,7 @@ under **Settings → Data**.
 
 ## What the backup contains
 
-A backup is a **complete snapshot**: all 30 data tables (learning
+A backup is a **complete snapshot**: all data tables (learning
 projects, sessions, lesson progress, element-level errors,
 gamification with XP/streak/badges, missions, Anki cards, notes
 and more), **your downloaded content sets**, and a **localStorage

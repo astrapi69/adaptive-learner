@@ -25,9 +25,10 @@ prompt + your text + the AI's prior responses in the session).
 ## Do I need an API key?
 
 Yes for AI sessions. The app uses **bring-your-own-key** for
-all three supported providers: Anthropic Claude, OpenAI GPT,
-Google Gemini. Free-tier limits are usually enough to get
-started.
+every supported provider: Anthropic Claude, OpenAI GPT and
+Google Gemini, plus Perplexity in server mode (the desktop app;
+the browser version cannot call Perplexity directly). Free-tier
+limits are usually enough to get started.
 
 Three places to put the key (highest priority wins): an
 `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` env var, the
@@ -134,9 +135,9 @@ Local-network bidirectional sync. Open Settings > Data > Sync
 and pair this device: scan the QR code on the other
 device's screen (rear camera), or paste the pairing URL.
 Once paired, push + pull buttons exchange data; conflicts
-go through an AI-merge resolver. 30 tables on the sync
-surface (incl. lesson progress, element errors, and
-missions).
+go through an AI-merge resolver. The sync covers all your
+data, including lesson progress, element errors, and
+missions.
 
 ## How is this different from ChatGPT?
 
@@ -154,7 +155,8 @@ under the hood but adds:
 5. **Long-term tracking** - ProgressCommits, streak heatmap,
    XP, badges, time-per-step charts. ChatGPT forgets when
    you close the tab.
-6. **Provider freedom** - Anthropic, OpenAI, or Gemini.
+6. **Provider freedom** - Anthropic, OpenAI, or Gemini, plus
+   Perplexity in server mode.
 7. **Local-first option** - everything in your browser,
    nothing sent to a server (except your AI calls).
 

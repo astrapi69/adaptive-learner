@@ -1139,7 +1139,10 @@ app**:
 3. Click **Share with Community** to open a pre-filled **pull
    request** in the content repository - the lesson JSON is
    committed at the correct path in the tree, no `.zip` attachment
-   needed.
+   needed. With a GitHub token under Settings > Integrations, a
+   single lesson's pull request is opened by the app itself;
+   without one, GitHub's editor or upload page takes you through it
+   (see [My Lessons](../user-guide/my-lessons.md#export-and-share)).
 4. The repo's CI validates the PR automatically; a maintainer
    reviews the lesson, brings the manifest (id, title, language,
    level, tags) in line with the conventions above and merges it

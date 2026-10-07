@@ -34,8 +34,9 @@ AI セッションにはインターネットが必要です。
 - **最新のブラウザ**（Chrome 100+、Firefox 100+、Safari 17+、
   Edge 100+）。アプリは IndexedDB、Service Worker、モダンな
   JavaScript を使います。
-- サポートされる 3 つのプロバイダー（Anthropic、OpenAI、Google
-  Gemini）のうち少なくとも 1 つの **AI API キー**。無料の枠で
+- 少なくとも 1 つのプロバイダーの **AI API キー**。ブラウザ版では
+  Anthropic、OpenAI、Google Gemini、デスクトップアプリではさらに
+  Perplexity も使えます。無料の枠で
   たいてい始められます。キーの設定については
   [設定](settings.md)をご覧ください。
 

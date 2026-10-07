@@ -105,7 +105,7 @@ export default function ShortcutHelpDialog({
                 <div className="flex flex-col gap-5">
                     {groups.map((group) => (
                         <section key={group.label}>
-                            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-fg-muted">
+                            <h3 className="mt-0 mb-2 text-sm font-semibold uppercase tracking-wide text-fg-muted">
                                 {group.label}
                             </h3>
                             <ul className="flex flex-col gap-2">
