@@ -108,6 +108,7 @@ plugins:
             Design-Tokens: Design tokens
             API-Referenz: API reference
             Übersicht: Overview
+            Alle Endpoints: All endpoints
             Core-Endpoints: Core endpoints
             Plugin-Endpoints: Plugin endpoints
             Modelle: Models
@@ -179,6 +180,7 @@ plugins:
             Sync: Sincronización
             API-Referenz: Referencia de la API
             Übersicht: Visión general
+            Alle Endpoints: Todos los endpoints
             Core-Endpoints: Endpoints principales
             Plugin-Endpoints: Endpoints de plugins
             Modelle: Modelos
@@ -245,6 +247,7 @@ plugins:
             Sync: Synchronisation
             API-Referenz: Référence de l'API
             Übersicht: Vue d'ensemble
+            Alle Endpoints: Tous les endpoints
             Core-Endpoints: Endpoints principaux
             Plugin-Endpoints: Endpoints des plugins
             Modelle: Modèles
@@ -316,6 +319,7 @@ plugins:
             Sync: Συγχρονισμός
             API-Referenz: Αναφορά API
             Übersicht: Επισκόπηση
+            Alle Endpoints: Όλα τα endpoints
             Core-Endpoints: Βασικά endpoints
             Plugin-Endpoints: Endpoints προσθέτων
             Modelle: Μοντέλα
@@ -387,6 +391,7 @@ plugins:
             Sync: Sincronização
             API-Referenz: Referência da API
             Übersicht: Visão geral
+            Alle Endpoints: Todos os endpoints
             Core-Endpoints: Endpoints principais
             Plugin-Endpoints: Endpoints de plugins
             Modelle: Modelos
@@ -458,6 +463,7 @@ plugins:
             Sync: Senkronizasyon
             API-Referenz: API başvurusu
             Übersicht: Genel bakış
+            Alle Endpoints: Tüm endpoint'ler
             Core-Endpoints: Temel endpoint'ler
             Plugin-Endpoints: Eklenti endpoint'leri
             Modelle: Modeller
@@ -530,6 +536,7 @@ plugins:
             Sync: 同期
             API-Referenz: APIリファレンス
             Übersicht: 概要
+            Alle Endpoints: 全エンドポイント
             Core-Endpoints: コアエンドポイント
             Plugin-Endpoints: プラグインエンドポイント
             Modelle: モデル
@@ -626,6 +633,7 @@ nav:
   - Sync: de/architecture/sync.md
 - API-Referenz:
   - Übersicht: de/api/overview.md
+  - Alle Endpoints: de/api/endpoints.md
   - Core-Endpoints: de/api/core-endpoints.md
   - Plugin-Endpoints: de/api/plugin-endpoints.md
   - Modelle: de/api/models.md

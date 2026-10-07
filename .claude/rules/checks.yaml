@@ -73,6 +73,13 @@ checks:
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_feature_shots.py
     probe: script_exists=backend/tests/test_verify_docs_feature_shots.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
+  - id: api-reference
+    verifies: the help API reference pages docs/help/{en,de}/api/endpoints.md match the committed OpenAPI snapshot, so the reference names every core router and plugin route; a missing or empty snapshot FAILs (#3454)
+    rule: ai-workflow/documentation-protocol.md#when-to-update-docsapimd
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_generate_api_reference.py; make sync-openapi regenerates the pages
+    probe: script_exists=backend/tests/test_generate_api_reference.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
   - id: e2e-runtime-skip-budget
     verifies: the nightly e2e suites (dexie-smoke, manual-automation, visual-regression) skip no more tests than e2e/.runtime-skip-budget.json allows, counted from Playwright's JSON report; a spec that cannot reach its surface skips at runtime, so without the budget a broken path reads as a green night (#3427)
     rule: none (reachability class of #2704; budget pattern of the smoke skip budget #2170)
