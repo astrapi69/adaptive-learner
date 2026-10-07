@@ -302,41 +302,6 @@ jobs:
         if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         run: make test-plugins
 
-  # Plugin matrix job: skeleton ships zero plugins, so this job is
-  # disabled. When the user adds their first plugin, re-enable by
-  # populating the `matrix.plugin` list with the plugin directory
-  # name(s) under plugins/, and remove the `if: false` gate.
-  #
-  # plugin-tests:
-  #   name: Plugin Tests
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 15
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       plugin:
-  #         - adaptive-learner-plugin-<your-plugin-name>
-  #   steps:
-  #     - uses: actions/checkout@v7
-  #     - uses: actions/setup-python@v7
-  #       with:
-  #         python-version: "3.12"
-  #     - name: Cache Poetry virtualenv (${{ matrix.plugin }})
-  #       uses: actions/cache@v6
-  #       with:
-  #         path: ~/.cache/pypoetry/virtualenvs
-  #         key: poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-${{ hashFiles(format('plugins/{0}/poetry.lock', matrix.plugin)) }}
-  #         restore-keys: |
-  #           poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-
-  #     - name: Install Poetry
-  #       run: pip install poetry
-  #     - name: Install plugin dependencies
-  #       working-directory: plugins/${{ matrix.plugin }}
-  #       run: poetry install --no-interaction --no-ansi
-  #     - name: Run plugin tests
-  #       working-directory: plugins/${{ matrix.plugin }}
-  #       run: poetry run pytest tests/ -v
-
   frontend-tests:
     name: Frontend Tests
     # #1658 - symmetric to the #1617 backend gate: on a pure-backend PR the

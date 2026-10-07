@@ -192,20 +192,25 @@ def test_evaluate_returns_topic_transition_dataclass():
     assert result.continue_recommended is True
 
 
-def test_evaluate_falls_back_on_provider_exception():
+def test_evaluate_falls_back_on_provider_exception(caplog):
     pm = _fake_pm(RuntimeError)
-    result = evaluate_topic_transition(
-        pm=pm,
-        goal="x",
-        topic="y",
-        method="deductive",
-        history=[],
-        model="m",
-        api_key="k",
-    )
+    with caplog.at_level("WARNING", logger="adaptive_learner_session.topic_transition"):
+        result = evaluate_topic_transition(
+            pm=pm,
+            goal="x",
+            topic="y",
+            method="deductive",
+            history=[],
+            model="m",
+            api_key="k",
+        )
     assert result.fallback_used is True
     assert result.cycle_complete is False
     assert result.continue_recommended is False
+    # #3423: the provider failure leaves a warning with the traceback.
+    [record] = [r for r in caplog.records if r.name.endswith("topic_transition")]
+    assert record.exc_info is not None
+    assert getattr(record, "model", None) == "m"
 
 
 def test_evaluate_falls_back_on_unparseable_response():
