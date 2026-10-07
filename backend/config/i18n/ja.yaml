@@ -1576,6 +1576,10 @@ arcade:
     won: "やりました! 全部の順番をクリア!"
     lost: "残念! 長さ {n} まで届きました。すぐ再挑戦!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "基本"
+    cloze: "穴埋め"
   title: Ankiエクスポート
   intro: AIが提案したフラッシュカードを確認し、好きなものを承認してから.apkgファイルとしてAnkiに出力します。
   filter_project: プロジェクト
@@ -3203,6 +3207,9 @@ create_lesson:
     description_label: "トピック / 説明"
     author_label: "著者名"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "単語または表現"
+    back_placeholder: "意味"
     heading: "単語カードを追加"
     front_label: "表（学習対象）"
     back_label: "裏（あなたの言語）"

@@ -1576,6 +1576,10 @@ arcade:
     won: "Başardın: dizinin tamamı!"
     lost: "Eyvah: {n} uzunluğa kadar geldin. Hemen tekrar dene!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Temel"
+    cloze: "Boşluk doldurma"
   title: Anki Dışa Aktarma
   intro: YZ'nin önerdiği kartları gözden geçir, istediklerini kabul et ve Anki için .apkg dosyası olarak dışa aktar.
   filter_project: Proje
@@ -3203,6 +3207,9 @@ create_lesson:
     description_label: "Konu / açıklama"
     author_label: "Yazar adı"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Kelime veya ifade"
+    back_placeholder: "Anlam"
     heading: "Kelime kartları ekle"
     front_label: "Ön yüz (öğrenilen)"
     back_label: "Arka yüz (sizin diliniz)"

@@ -1577,6 +1577,10 @@ arcade:
     won: "कर दिखाया: पूरी शृंखला!"
     lost: "उफ़: आप लंबाई {n} तक पहुँचे। तुरंत फिर कोशिश करें!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "बेसिक"
+    cloze: "रिक्त स्थान भरें"
   title: Anki निर्यात
   intro: एआई द्वारा सुझाए गए फ़्लैशकार्ड की समीक्षा करें, अपनी पसंद के कार्ड स्वीकार करें, फिर Anki के लिए .apkg फ़ाइल के रूप में निर्यात करें।
   filter_project: प्रोजेक्ट
@@ -3196,6 +3200,9 @@ create_lesson:
     description_label: विषय / विवरण
     author_label: लेखक का नाम
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "शब्द या वाक्यांश"
+    back_placeholder: "अर्थ"
     heading: शब्दावली कार्ड जोड़ें
     front_label: आगे (सीखी गई)
     back_label: पीछे (आपकी भाषा)

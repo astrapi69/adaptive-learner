@@ -1694,6 +1694,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "Einfach",
+      "cloze": "Lückentext"
+    },
     "title": "Anki-Export",
     "intro": "Überprüfe KI-vorgeschlagene Karteikarten, akzeptiere die gewünschten und exportiere sie als .apkg-Datei für Anki.",
     "filter_project": "Projekt",
@@ -3482,6 +3486,8 @@
       "author_label": "Autorenname"
     },
     "cards": {
+      "front_placeholder": "Wort oder Ausdruck",
+      "back_placeholder": "Bedeutung",
       "heading": "Vokabelkarten hinzufügen",
       "front_label": "Vorderseite (gelernt)",
       "back_label": "Rückseite (deine Sprache)",

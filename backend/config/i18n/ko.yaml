@@ -1576,6 +1576,10 @@ arcade:
     won: "해냈어요: 순서 전체 완성!"
     lost: "이런: 길이 {n}까지 도달했어요. 바로 다시 도전!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "기본"
+    cloze: "빈칸 채우기"
   title: Anki 내보내기
   intro: AI가 제안한 플래시카드를 검토하고, 원하는 카드를 수락한 다음, Anki용 .apkg 파일로 내보내세요.
   filter_project: 프로젝트
@@ -3213,6 +3217,9 @@ create_lesson:
     description_label: "주제 / 설명"
     author_label: "작성자 이름"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "단어 또는 표현"
+    back_placeholder: "의미"
     heading: "어휘 카드 추가"
     front_label: "앞면 (학습하는 언어)"
     back_label: "뒷면 (당신의 언어)"

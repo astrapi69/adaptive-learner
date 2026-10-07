@@ -1694,6 +1694,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "Basique",
+      "cloze": "Texte à trous"
+    },
     "title": "Exportation Anki",
     "intro": "Examine les cartes suggérées par l'IA, accepte celles que tu veux, puis exporte-les en fichier .apkg pour Anki.",
     "filter_project": "Projet",
@@ -3482,6 +3486,8 @@
       "author_label": "Nom de l'auteur"
     },
     "cards": {
+      "front_placeholder": "Mot ou expression",
+      "back_placeholder": "Signification",
       "heading": "Ajouter des cartes de vocabulaire",
       "front_label": "Recto (appris)",
       "back_label": "Verso (ta langue)",

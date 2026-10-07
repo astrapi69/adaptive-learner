@@ -1576,6 +1576,10 @@ arcade:
     won: "You did it - the whole sequence!"
     lost: "Oops - you reached length {n}. Try again!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Basic"
+    cloze: "Cloze"
   title: Anki Export
   intro: Review AI-suggested flashcards, accept the ones you want, then export as an .apkg file for Anki.
   filter_project: Project
@@ -3213,6 +3217,9 @@ create_lesson:
     description_label: "Topic / description"
     author_label: "Author name"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Word or phrase"
+    back_placeholder: "Meaning"
     heading: "Add vocabulary cards"
     front_label: "Front (learned)"
     back_label: "Back (your language)"

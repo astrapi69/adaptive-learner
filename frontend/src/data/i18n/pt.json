@@ -1694,6 +1694,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "Básico",
+      "cloze": "Preencher lacunas"
+    },
     "title": "Exportação Anki",
     "intro": "Reveja os flashcards sugeridos pela IA, aceite os que quiser e exporte como arquivo .apkg para o Anki.",
     "filter_project": "Projeto",
@@ -3482,6 +3486,8 @@
       "author_label": "Nome do autor"
     },
     "cards": {
+      "front_placeholder": "Palavra ou expressão",
+      "back_placeholder": "Significado",
       "heading": "Adicionar cartões de vocabulário",
       "front_label": "Frente (aprendido)",
       "back_label": "Verso (o seu idioma)",

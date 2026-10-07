@@ -1694,6 +1694,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "기본",
+      "cloze": "빈칸 채우기"
+    },
     "title": "Anki 내보내기",
     "intro": "AI가 제안한 플래시카드를 검토하고, 원하는 카드를 수락한 다음, Anki용 .apkg 파일로 내보내세요.",
     "filter_project": "프로젝트",
@@ -3482,6 +3486,8 @@
       "author_label": "작성자 이름"
     },
     "cards": {
+      "front_placeholder": "단어 또는 표현",
+      "back_placeholder": "의미",
       "heading": "어휘 카드 추가",
       "front_label": "앞면 (학습하는 언어)",
       "back_label": "뒷면 (당신의 언어)",

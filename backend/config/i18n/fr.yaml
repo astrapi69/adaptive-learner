@@ -1576,6 +1576,10 @@ arcade:
     won: "Bravo : toute la séquence !"
     lost: "Oups : tu es arrivé à la longueur {n}. Réessaie tout de suite !"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Basique"
+    cloze: "Texte à trous"
   title: Exportation Anki
   intro: Examine les cartes suggérées par l'IA, accepte celles que tu veux, puis exporte-les en fichier .apkg pour Anki.
   filter_project: Projet
@@ -3205,6 +3209,9 @@ create_lesson:
     description_label: "Thème / description"
     author_label: "Nom de l'auteur"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Mot ou expression"
+    back_placeholder: "Signification"
     heading: "Ajouter des cartes de vocabulaire"
     front_label: "Recto (appris)"
     back_label: "Verso (ta langue)"

@@ -1576,6 +1576,10 @@ arcade:
     won: "Geschafft - die ganze Folge!"
     lost: "Ups - du kamst bis Länge {n}. Versuch es gleich nochmal!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Einfach"
+    cloze: "Lückentext"
   title: Anki-Export
   intro: Überprüfe KI-vorgeschlagene Karteikarten, akzeptiere die gewünschten und exportiere sie als .apkg-Datei für Anki.
   filter_project: Projekt
@@ -3207,6 +3211,9 @@ create_lesson:
     description_label: "Thema / Beschreibung"
     author_label: "Autorenname"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Wort oder Ausdruck"
+    back_placeholder: "Bedeutung"
     heading: "Vokabelkarten hinzufügen"
     front_label: "Vorderseite (gelernt)"
     back_label: "Rückseite (deine Sprache)"
