@@ -143,6 +143,19 @@ def _radon_version() -> str:
     return f"radon {reported} (unpinned - a version change can move a function across cc 20)"
 
 
+def _eslint_reading() -> str:
+    """How many files eslint linted for this reading (#3438).
+
+    The shell wrapper fails closed when eslint cannot measure, so a gate run
+    only gets here with a count, or with "skipped" under the explicit
+    COMPLEXITY_GATE_ALLOW_PARTIAL opt-in.
+    """
+    linted = os.environ.get("ESLINT_LINTED", "").strip()
+    if not linted or linted == "skipped":
+        return "eslint skipped (partial run)"
+    return f"eslint, {linted} file(s) linted"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--radon-json", required=True)
@@ -181,11 +194,11 @@ def main() -> int:
 
     print("\n=== Complexity ratchet gate ===")
     # Gate test contract point 5 (#2135): the verdict depends on the analyzer
-    # version - radon is resolved from PATH or .radon-venv and is NOT pinned,
-    # so a version change can move a function across the cc-20 line without a
-    # code change. Print which one produced this reading, so a local/CI
-    # disagreement is attributable instead of mysterious.
+    # version, so print which radon produced this reading (pinned since
+    # #2138) and how many files eslint linted (#3438), so a local/CI
+    # disagreement is attributable and an empty scan cannot pass as clean.
     print(f"Analyzer         : {_radon_version()}")
+    print(f"TS analyzer      : {_eslint_reading()}")
     print(f"Baseline files   : {len(baseline)}")
     print(f"Current offenders: {len(current)}  (tolerated: {tolerated})")
     if improvable:
