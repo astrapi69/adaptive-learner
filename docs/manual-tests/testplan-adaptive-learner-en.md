@@ -3667,15 +3667,42 @@ Documented here only to show what is covered.
 
 ---
 
-### TS-0129 Page title in the browser tab (#3431)
+### TS-0129 Progress report as Markdown/PDF in the UI language (#3426)
 
-- [ ] TC-0938 Click through Dashboard, Learning Path, Content, Settings and a
+- [ ] TC-0938 UI language French (or Japanese), Settings > Data > Export,
+      download the progress report as Markdown: title, sections and
+      table headers are in French (e.g. "Progression", "Projets"), not
+      English
+- [ ] TC-0939 Same with the session detail and PDF (print dialog): roles, rating
+      and step evaluations in the UI language
+- [ ] TC-0940 UI language German: the step names in the report match the app's
+      (e.g. "Eingabe" instead of "Input")
+
+### TS-0130 Translated control and screen-reader texts (#3425)
+
+- [ ] TC-0941 Lesson with a free-text exercise, type a wrong answer on purpose
+      (leave out one word, swap another), screen reader on (VoiceOver /
+      NVDA / TalkBack): the answer diff reads "Missing: <word>" and "You
+      wrote <word>, expected <word>" in the UI language (German: "Fehlt:",
+      "Geschrieben: ..., erwartet: ..."); visually the diff looks unchanged
+- [ ] TC-0942 Create lesson > Cards: the empty fields show "Word or phrase" and
+      "Meaning" instead of "Bonjour" / "Guten Tag"
+- [ ] TC-0943 Anki page, edit a card: the type select offers "Basic" and "Cloze"
+      (German: "Einfach", "Lückentext")
+- [ ] TC-0944 Learning path and the dashboard "Continue" card: the screen reader
+      reads the stars as "2 of 3 stars" instead of "2/3"
+- [ ] TC-0945 Share wizard and "Share as repository": the screen reader names the
+      X button "Close" in the UI language (German: "Schließen")
+
+### TS-0131 Page title in the browser tab (#3431)
+
+- [ ] TC-0946 Click through Dashboard, Learning Path, Content, Settings and a
       lesson: the tab title reads "<page name> - Adaptive Learner" each
       time (e.g. "Settings - Adaptive Learner", "Lesson - Adaptive
       Learner"); the landing page shows only "Adaptive Learner"
-- [ ] TC-0939 Settings > General, UI language to German: the tab title switches to
+- [ ] TC-0947 Settings > General, UI language to German: the tab title switches to
       "Einstellungen - Adaptive Learner" without a reload
-- [ ] TC-0940 Browser history (long-press the back button): the entries carry
+- [ ] TC-0948 Browser history (long-press the back button): the entries carry
       different page names instead of one identical title
 
 ## Automated: Unit + Component Tests (Vitest, 7200+;

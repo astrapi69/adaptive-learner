@@ -3926,15 +3926,42 @@ Hier nur zur Dokumentation was abgedeckt ist.
 
 ---
 
-### TS-0129 Seitentitel im Browser-Tab (#3431)
+### TS-0129 Fortschrittsbericht als Markdown/PDF in der UI-Sprache (#3426)
 
-- [ ] TC-0938 Durch Dashboard, Lernpfad, Inhalte, Einstellungen und eine Lektion
+- [ ] TC-0938 UI-Sprache Französisch (oder Japanisch), Einstellungen > Daten >
+      Export, Fortschrittsbericht als Markdown herunterladen: Titel,
+      Abschnitte und Tabellenköpfe sind französisch (z. B.
+      "Progression", "Projets"), nicht englisch
+- [ ] TC-0939 Dasselbe mit Sitzungs-Detail und PDF (Druckdialog): Rollen,
+      Bewertung und Schritt-Auswertung in der UI-Sprache
+- [ ] TC-0940 UI-Sprache Deutsch: die Schritt-Namen im Bericht entsprechen denen
+      in der App (z. B. "Eingabe" statt "Input")
+
+### TS-0130 Übersetzte Bedientexte und Vorlesetexte (#3425)
+
+- [ ] TC-0941 Lektion mit Freitext-Aufgabe, absichtlich falsch tippen (ein Wort
+      vergessen, eines vertauschen), Bildschirmleser an (VoiceOver /
+      NVDA / TalkBack): der Antwortvergleich liest "Fehlt: <Wort>" und
+      "Geschrieben: <Wort>, erwartet: <Wort>" auf Deutsch, nicht
+      "missing" / "wrote"; sichtbar sieht der Vergleich unverändert aus
+- [ ] TC-0942 Lektion erstellen > Karten: die leeren Felder zeigen "Wort oder
+      Ausdruck" und "Bedeutung" statt "Bonjour" / "Guten Tag"
+- [ ] TC-0943 Anki-Seite, Karte bearbeiten: die Typ-Auswahl bietet "Einfach" und
+      "Lückentext"
+- [ ] TC-0944 Lernpfad und Dashboard-Karte "Weitermachen": der Bildschirmleser
+      liest die Sterne als "2 von 3 Sternen" statt "2/3"
+- [ ] TC-0945 Teilen-Assistent und "Als Repository teilen": der X-Knopf heißt für
+      den Bildschirmleser "Schließen"
+
+### TS-0131 Seitentitel im Browser-Tab (#3431)
+
+- [ ] TC-0946 Durch Dashboard, Lernpfad, Inhalte, Einstellungen und eine Lektion
       klicken: der Tab-Titel lautet jeweils "<Seitenname> - Adaptive
       Learner" (z. B. "Einstellungen - Adaptive Learner", "Lektion -
       Adaptive Learner"); die Startseite zeigt nur "Adaptive Learner"
-- [ ] TC-0939 Einstellungen > Allgemein, UI-Sprache auf Englisch: der Tab-Titel
+- [ ] TC-0947 Einstellungen > Allgemein, UI-Sprache auf Englisch: der Tab-Titel
       wechselt ohne Neuladen auf "Settings - Adaptive Learner"
-- [ ] TC-0940 Browser-Verlauf (Zurück-Knopf lange drücken): die Einträge tragen
+- [ ] TC-0948 Browser-Verlauf (Zurück-Knopf lange drücken): die Einträge tragen
       unterschiedliche Seitennamen statt eines gleichen Titels
 
 ## Automatisiert: Unit + Component Tests (Vitest, 7200+;

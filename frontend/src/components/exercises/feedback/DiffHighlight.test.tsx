@@ -1,17 +1,37 @@
 /**
  * Tests for the DiffHighlight visual diff renderer (Phase 52B / F-112).
  *
- * Asserts the accessibility contract: every non-equal token carries an
- * aria-label and an aria-hidden icon in addition to its colour class, so
- * the surface stays usable for colourblind + screen-reader users.
+ * Asserts the accessibility contract: every non-equal token carries a
+ * visually hidden sentence (no aria-label on the role-less span, #3425) and
+ * aria-hidden visible parts in addition to its colour class, so the surface
+ * stays usable for colourblind + screen-reader users.
  */
 
 import "@testing-library/jest-dom/vitest";
-import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import "fake-indexeddb/auto";
+import { render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
+
+import { I18nProvider } from "../../../hooks/ui/useI18n";
+import { _resetStorageCacheForTests } from "../../../storage";
 
 import DiffHighlight from "./DiffHighlight";
 import { type DiffToken, tokenDiff } from "../../../lib/exercises/grading/token-diff";
+
+/** The text a screen reader reaches: everything not inside aria-hidden. */
+function spokenText(element: Element): string {
+    const parts: string[] = [];
+    const walk = (node: Node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+            parts.push(node.textContent ?? "");
+            return;
+        }
+        if (node instanceof Element && node.getAttribute("aria-hidden") === "true") return;
+        node.childNodes.forEach(walk);
+    };
+    walk(element);
+    return parts.join("").trim();
+}
 
 describe("DiffHighlight: renders each op type", () => {
     it("renders an equal token as plain text with no a11y decoration", () => {
@@ -24,22 +44,24 @@ describe("DiffHighlight: renders each op type", () => {
         expect(span).not.toHaveAttribute("aria-label");
     });
 
-    it("renders an insert token with + icon, aria-label, and green class", () => {
+    it("renders an insert token with + icon, hidden sentence, and green class", () => {
         const tokens: DiffToken[] = [{ text: "world", type: "insert" }];
         render(<DiffHighlight tokens={tokens} />);
         const span = screen.getByTestId("diff-token-insert");
-        expect(span).toHaveAttribute("aria-label", "missing: world");
+        expect(span).not.toHaveAttribute("aria-label");
+        expect(spokenText(span)).toBe("Missing: world");
         expect(span).toHaveClass("diff-token-insert");
         const icon = within(span).getByText("+");
         expect(icon).toHaveAttribute("aria-hidden", "true");
         expect(span).toHaveTextContent("+world");
     });
 
-    it("renders a delete token with × icon, aria-label, and red class", () => {
+    it("renders a delete token with × icon, hidden sentence, and red class", () => {
         const tokens: DiffToken[] = [{ text: "wrong", type: "delete" }];
         render(<DiffHighlight tokens={tokens} />);
         const span = screen.getByTestId("diff-token-delete");
-        expect(span).toHaveAttribute("aria-label", "extra: wrong");
+        expect(span).not.toHaveAttribute("aria-label");
+        expect(spokenText(span)).toBe("Extra: wrong");
         expect(span).toHaveClass("diff-token-delete");
         const icon = within(span).getByText("×");
         expect(icon).toHaveAttribute("aria-hidden", "true");
@@ -51,7 +73,8 @@ describe("DiffHighlight: renders each op type", () => {
         ];
         render(<DiffHighlight tokens={tokens} />);
         const span = screen.getByTestId("diff-token-replace");
-        expect(span).toHaveAttribute("aria-label", "wrote cafe, expected café");
+        expect(span).not.toHaveAttribute("aria-label");
+        expect(spokenText(span)).toBe("You wrote cafe, expected café");
         expect(span).toHaveClass("diff-token-replace");
         expect(within(span).getByText("cafe")).toHaveClass("diff-token-user-word");
         expect(within(span).getByText("café")).toHaveClass("diff-token-expected-word");
@@ -122,7 +145,7 @@ describe("DiffHighlight: integration with tokenDiff", () => {
         // 4 tokens: equal(Je), equal(vois), replace(le→un), equal(chat)
         expect(within(wrapper).getAllByTestId("diff-token-equal")).toHaveLength(3);
         const replace = within(wrapper).getByTestId("diff-token-replace");
-        expect(replace).toHaveAttribute("aria-label", "wrote le, expected un");
+        expect(spokenText(replace)).toBe("You wrote le, expected un");
     });
 
     it("paints a delete-only diff (no replace pairing without anchor)", () => {
@@ -147,5 +170,35 @@ describe("DiffHighlight: outer wrapper", () => {
         const wrapper = screen.getByTestId("diff-highlight");
         expect(wrapper).toHaveClass("diff-highlight");
         expect(wrapper).toHaveClass("lesson-summary-diff");
+    });
+});
+
+describe("DiffHighlight: screen-reader text follows the UI language (#3425)", () => {
+    afterEach(() => {
+        localStorage.clear();
+        _resetStorageCacheForTests();
+    });
+
+    it("reads the German sentence when the UI language is German", async () => {
+        // Catalogs load through the storage layer; Dexie mode reads the
+        // bundled JSON. The persisted choice makes German the start language.
+        localStorage.setItem("adaptive-learner.storage_mode", "dexie");
+        localStorage.setItem("adaptive-learner.language", "de");
+        _resetStorageCacheForTests();
+        const tokens: DiffToken[] = [
+            { text: "world", type: "insert" },
+            { text: "cafe", type: "replace", expected: "café" },
+        ];
+        render(
+            <I18nProvider>
+                <DiffHighlight tokens={tokens} />
+            </I18nProvider>,
+        );
+        await waitFor(() =>
+            expect(spokenText(screen.getByTestId("diff-token-insert"))).toBe("Fehlt: world"),
+        );
+        expect(spokenText(screen.getByTestId("diff-token-replace"))).toBe(
+            "Geschrieben: cafe, erwartet: café",
+        );
     });
 });

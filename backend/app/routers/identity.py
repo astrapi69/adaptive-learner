@@ -15,7 +15,7 @@ docstring.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, Response, status
 
 from app.schemas import IdentityOut, IdentityStatusOut
 from app.services import identity_service
@@ -31,13 +31,7 @@ def get_identity() -> IdentityOut:
     storage mode is API: a hit means "browser was wiped, recover
     from disk"; a 404 means "genuine first visit, show onboarding".
     """
-    data = identity_service.load_identity()
-    if data is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No persisted identity found.",
-        )
-    return IdentityOut.model_validate(data)
+    return IdentityOut.model_validate(identity_service.require_identity())
 
 
 @router.get("/status", response_model=IdentityStatusOut)
