@@ -2,6 +2,7 @@
   "note": "Help pages that exist in EN/DE but not yet in a translated locale (#3453). scripts/verify_docs_locale_coverage.py FAILs on a missing page this list does not name and on a listed page that now exists, so a translation removes its entry in the same commit and the list only shrinks by a visible edit (#2140). Seeded 2026-10-07: the same 15 pages in all six locales.",
   "gaps": {
     "el": [
+      "api/endpoints",
       "content-creation/content-repos",
       "content-creation/mentor-mode",
       "developer/adding-exercise-type",
@@ -19,6 +20,7 @@
       "user-guide/navigation"
     ],
     "es": [
+      "api/endpoints",
       "content-creation/content-repos",
       "content-creation/mentor-mode",
       "developer/adding-exercise-type",
@@ -36,6 +38,7 @@
       "user-guide/navigation"
     ],
     "fr": [
+      "api/endpoints",
       "content-creation/content-repos",
       "content-creation/mentor-mode",
       "developer/adding-exercise-type",
@@ -53,6 +56,7 @@
       "user-guide/navigation"
     ],
     "ja": [
+      "api/endpoints",
       "content-creation/content-repos",
       "content-creation/mentor-mode",
       "developer/adding-exercise-type",
@@ -70,6 +74,7 @@
       "user-guide/navigation"
     ],
     "pt": [
+      "api/endpoints",
       "content-creation/content-repos",
       "content-creation/mentor-mode",
       "developer/adding-exercise-type",
@@ -87,6 +92,7 @@
       "user-guide/navigation"
     ],
     "tr": [
+      "api/endpoints",
       "content-creation/content-repos",
       "content-creation/mentor-mode",
       "developer/adding-exercise-type",
