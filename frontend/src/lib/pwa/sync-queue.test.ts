@@ -112,3 +112,23 @@ describe("replaySyncQueue", () => {
     expect(syncQueueSize()).toBe(1);
   });
 });
+
+describe("initSyncQueueReplay (#3429)", () => {
+  it.each([
+    { mode: "dexie" as const, calls: 0 },
+    { mode: "api" as const, calls: 1 },
+  ])("replays a queued write at startup only in API mode ($mode)", async ({ mode, calls }) => {
+    // A queue restored from an API-mode backup onto a browser-mode device
+    // must not be posted to a backend that is not there (or to a different
+    // one): only the API mode that queued the writes replays them.
+    vi.resetModules();
+    const fresh = await import("./sync-queue");
+    fresh.clearSyncQueue();
+    fresh.enqueueRequest("/users/u/lesson-progress", "POST", { a: 1 });
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(ok());
+    fresh.initSyncQueueReplay(mode);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(fetchSpy).toHaveBeenCalledTimes(calls);
+    fresh.clearSyncQueue();
+  });
+});

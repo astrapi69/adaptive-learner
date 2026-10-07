@@ -21,6 +21,7 @@
  */
 
 import { API_BASE } from "../constants";
+import type { StorageMode } from "../../storage/types/core/service";
 
 const STORAGE_KEY = "adaptive-learner.sync-queue";
 /** Cap the queue so a long offline session can't grow it unbounded. */
@@ -153,8 +154,17 @@ let initialized = false;
  * Wire the window-side replay triggers. Idempotent. Call once at app
  * startup. Replays on the ``online`` event and once immediately if the
  * app starts online with a non-empty queue.
+ *
+ * Only API mode replays (#3429): the queue holds writes for the backend
+ * that queued them. In browser mode there is no backend to post to, and a
+ * queue that reached this device some other way must not be sent.
+ *
+ * @param mode - The resolved storage mode (``resolveStorageMode()``),
+ *   passed in so this module does not import the storage layer, which
+ *   imports it.
  */
-export function initSyncQueueReplay(): void {
+export function initSyncQueueReplay(mode: StorageMode): void {
+  if (mode !== "api") return;
   if (initialized || typeof window === "undefined") return;
   initialized = true;
   window.addEventListener("online", () => {
