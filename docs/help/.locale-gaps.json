@@ -3,55 +3,37 @@
   "gaps": {
     "el": [
       "api/endpoints",
-      "developer/adding-exercise-type",
-      "developer/gates-and-ratchets",
       "developer/lesson-format-reference",
-      "developer/onboarding",
       "legal/imprint",
       "legal/privacy"
     ],
     "es": [
       "api/endpoints",
-      "developer/adding-exercise-type",
-      "developer/gates-and-ratchets",
       "developer/lesson-format-reference",
-      "developer/onboarding",
       "legal/imprint",
       "legal/privacy"
     ],
     "fr": [
       "api/endpoints",
-      "developer/adding-exercise-type",
-      "developer/gates-and-ratchets",
       "developer/lesson-format-reference",
-      "developer/onboarding",
       "legal/imprint",
       "legal/privacy"
     ],
     "ja": [
       "api/endpoints",
-      "developer/adding-exercise-type",
-      "developer/gates-and-ratchets",
       "developer/lesson-format-reference",
-      "developer/onboarding",
       "legal/imprint",
       "legal/privacy"
     ],
     "pt": [
       "api/endpoints",
-      "developer/adding-exercise-type",
-      "developer/gates-and-ratchets",
       "developer/lesson-format-reference",
-      "developer/onboarding",
       "legal/imprint",
       "legal/privacy"
     ],
     "tr": [
       "api/endpoints",
-      "developer/adding-exercise-type",
-      "developer/gates-and-ratchets",
       "developer/lesson-format-reference",
-      "developer/onboarding",
       "legal/imprint",
       "legal/privacy"
     ]

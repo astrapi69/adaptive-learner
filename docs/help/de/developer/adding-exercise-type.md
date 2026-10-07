@@ -35,8 +35,9 @@ korrekt/falsch-Ergebnis pro Element) - das ist die Grenze, die die
    es frischt den Spiegel `schema/*.json` aus dem installierten Paket auf und
    regeneriert jedes abgeleitete Artefakt - die strukturelle Pydantic-Schicht
    (`plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema_generated.py`
-   via `scripts/generate_pydantic_models.py`), die TS-Lektionstypen
-   (`frontend/src/storage/types/content/lesson-schema.generated.ts`) und die
+   via `scripts/generate_pydantic_models.py`), den ajv-Schemaspiegel
+   im Browser (`frontend/src/lib/content/validation/lesson.schema.generated.json`)
+   samt Standalone-Validator, und die
    Format-Referenz-Doku. Ein gespiegeltes oder generiertes Artefakt **nie von
    Hand editieren**; das Drift-Gate `make sync-schema-check` schlägt sonst
    fehl.
