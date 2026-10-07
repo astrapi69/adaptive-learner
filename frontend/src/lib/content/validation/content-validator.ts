@@ -14,7 +14,11 @@
  */
 
 import type { Lesson as EngineLesson } from "learn-content-engine";
-import { validateLessonQuality, validateLessonRules } from "learn-content-engine/rules";
+import {
+  validateLessonQuality,
+  validateLessonRules,
+  validateManifestRules,
+} from "learn-content-engine/rules";
 
 import type { ContentLesson } from "../../../storage/types";
 import { APP_EXTENSION_REGISTRY } from "./engine-extensions";
@@ -31,12 +35,6 @@ export interface ValidationMeta {
    *  they teach, so source == target is allowed. Mirrors the content
    *  repo's ``validate_content.py`` ``set_domain`` relaxation. */
   domain?: string | null;
-}
-
-/** Normalised content domain; "language" when unset. Mirrors
- *  ``set_domain`` in the content repo's validate_content.py. */
-function setDomain(meta: ValidationMeta): string {
-  return (meta.domain || "language").trim().toLowerCase();
 }
 
 export interface ValidationIssue {
@@ -66,11 +64,6 @@ export interface ValidationResult {
  *  mirrored to ``schema/quality-rules.json``); re-exported here so existing
  *  importers keep working. */
 export { QUALITY };
-
-// ISO 639-1 base subtag: exactly two lowercase letters. The
-// schema is more permissive (BCP-47), but community language sets
-// must use a plain 2-letter code so the tree groups cleanly.
-const ISO_639_1 = /^[a-z]{2}$/;
 
 /** CEFR levels a community language set is expected to declare. */
 export const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
@@ -162,36 +155,85 @@ export function treePlacement(meta: ValidationMeta): {
   };
 }
 
+/**
+ * Engine manifest warnings the share check treats as BLOCKING (#3356).
+ * The rule logic is the engine's (``validateManifestRules``); which of its
+ * warnings stop a share is the app's policy. These two blocked as app
+ * errors before the switch, so they keep blocking; the content repos'
+ * version of this list is adaptive-learner-content-template#83.
+ */
+const BLOCKING_MANIFEST_WARNINGS: ReadonlySet<string> = new Set([
+  "W-LANG-PAIR-SAME",
+  "W-SET-TITLE-NATIVE",
+]);
+
+type EngineFinding = ReturnType<typeof validateManifestRules>["errors"][number];
+
+/** An engine set-level finding as the share check's ``{code, params}``:
+ *  mapped by rule id and ``params``, never by message text; a rule without
+ *  an app code keeps its id, path and message. */
+function manifestFindingIssue(finding: EngineFinding): ValidationIssue {
+  const param = (key: string) => String(finding.params?.[key] ?? "");
+  switch (finding.id) {
+    case "E-LANG-TAG":
+      return {
+        code:
+          param("field") === "source_language"
+            ? "invalid_source_language"
+            : "invalid_target_language",
+        params: { code: param("tag") },
+      };
+    case "W-LANG-PAIR-SAME":
+      return { code: "same_source_target", params: { code: param("language") } };
+    case "W-SET-TITLE-NATIVE":
+      return { code: "missing_title_native" };
+    case "W-LEVEL-UNKNOWN":
+      return { code: "non_cefr_level", params: { level: param("level") } };
+    default:
+      return {
+        code: finding.severity === "error" ? "engine_set_rule" : "engine_set_warning",
+        params: { rule: finding.id, path: finding.path, message: finding.message },
+      };
+  }
+}
+
+/**
+ * Set metadata: presence of the fields the share form asks for is the
+ * app's check; the language and level RULES are the engine's
+ * ``validateManifestRules`` (#3356), run on the set as a one-set manifest.
+ * A missing source is left out of the engine call, so its default ("en")
+ * cannot raise a pair finding next to ``missing_source_language``.
+ */
 function validateMeta(
   meta: ValidationMeta,
   issues: ValidationIssue[],
   warnings: ValidationIssue[],
 ): void {
-  const target = base(meta.target_language);
-  const source = base(meta.source_language);
-
+  const target = (meta.target_language || "").trim();
+  const source = (meta.source_language || "").trim();
   if (!target) issues.push({ code: "missing_target_language" });
-  else if (!ISO_639_1.test(target))
-    issues.push({ code: "invalid_target_language", params: { code: target } });
-
   if (!source) issues.push({ code: "missing_source_language" });
-  else if (!ISO_639_1.test(source))
-    issues.push({ code: "invalid_source_language", params: { code: source } });
-
-  // Non-language sets are explained in (and written in) the same
-  // language they teach, so source == target is expected and allowed.
-  if (target && source && target === source && setDomain(meta) === "language")
-    issues.push({ code: "same_source_target", params: { code: target } });
-
   if (!meta.title || !meta.title.trim()) issues.push({ code: "missing_title" });
-  if (!meta.title_native || !meta.title_native.trim())
-    issues.push({ code: "missing_title_native" });
 
-  // CEFR level: a warning (not a hard block — non-language domains
-  // legitimately use other scales like "beginner").
-  const level = (meta.level || "").trim().toUpperCase();
-  if (!(CEFR_LEVELS as readonly string[]).includes(level))
-    warnings.push({ code: "non_cefr_level", params: { level: meta.level } });
+  const verdict = validateManifestRules({
+    sets: [
+      {
+        title: meta.title,
+        ...(meta.title_native ? { title_native: meta.title_native } : {}),
+        ...(target ? { target_language: target } : {}),
+        ...(source ? { source_language: source } : {}),
+        ...(meta.level ? { level: meta.level } : {}),
+        ...(meta.domain ? { domain: meta.domain } : {}),
+      },
+    ],
+  });
+  for (const error of verdict.errors) issues.push(manifestFindingIssue(error));
+  for (const warning of verdict.warnings) {
+    if (!source && warning.id === "W-LANG-PAIR-SAME") continue;
+    const issue = manifestFindingIssue(warning);
+    if (BLOCKING_MANIFEST_WARNINGS.has(warning.id)) issues.push(issue);
+    else warnings.push(issue);
+  }
 }
 
 /**
