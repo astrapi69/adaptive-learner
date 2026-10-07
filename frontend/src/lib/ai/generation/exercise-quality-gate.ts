@@ -30,7 +30,7 @@
 
 import type { GeneratedCard, ValidCard } from "./exercise-generation-parser";
 import { extensionPayloadErrors, isExtensionCard } from "./extension-cards";
-import { QUALITY } from "../../content/validation/quality-rules.generated";
+import { QUALITY_MINIMUMS as QUALITY } from "learn-content-engine/rules";
 
 /** A parsed, structurally-valid CORE AI card (AIX-01 output). The core
  *  distribution keys off this union, so it stays CORE-only; extension cards

@@ -23,7 +23,7 @@ import {
   type GeneratedExerciseType,
 } from "./exercise-generation-prompt";
 import { asBool, cleanString, cleanStringArray } from "./card-fields";
-import { QUALITY } from "../../content/validation/quality-rules.generated";
+import { QUALITY_MINIMUMS as QUALITY } from "learn-content-engine/rules";
 import {
   buildExtensionCard,
   isTextExtensionType,

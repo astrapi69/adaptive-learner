@@ -24,27 +24,16 @@
  * manifest text.
  */
 
-import { asContentSetBook, parseManifest, type ParsedSet } from "../../engine";
-import type { SetReviewStatus, SetVisibility } from "../../../../storage/types";
+import { asContentSetEntry, parseManifest, type ParsedSet } from "../../engine";
 import type { SearchableSet } from "./searchable-set";
-
-const REVIEW_STATUS_VALUES: readonly SetReviewStatus[] = [
-  "authored",
-  "generated",
-  "reviewed",
-];
-
-/** Same absent/unknown-means-``authored`` normalisation as the engine and
- *  the ``search-index.json`` reader — both ends of the chain must read a
- *  missing/invalid value the same way. */
-function asReviewStatus(value: unknown): SetReviewStatus {
-  return REVIEW_STATUS_VALUES.includes(value as SetReviewStatus)
-    ? (value as SetReviewStatus)
-    : "authored";
-}
 
 /**
  * Project one raw ``manifest.yaml`` set entry into a {@link SearchableSet}.
+ *
+ * The set is read through the engine's ``asContentSetEntry`` (#3395), the
+ * same projection "Meine Inhalte" uses: language pair (``language`` alias,
+ * source ``en`` when absent), domain, book, visibility and review status
+ * all come out of one place.
  *
  * Returns ``null`` for an entry missing its required ``id``, or one marked
  * ``visibility: "hidden"`` — same drop rule ``search-index-loader.ts``
@@ -59,28 +48,27 @@ export function deriveSearchableSet(
 ): SearchableSet | null {
   const id = set.id?.trim();
   if (!id) return null;
-  const visibility: SetVisibility =
-    set.visibility === "hidden" ? "hidden" : "visible";
-  if (visibility === "hidden") return null;
+  const entry = asContentSetEntry({ source: repoSource, branch: "" }, { ...set, id }, null);
+  if (entry.visibility === "hidden") return null;
   return {
     id,
-    name: set.title || id,
-    description: set.description ?? "",
-    source_language: set.source_language ?? "",
-    target_language: set.target_language ?? set.language ?? "",
-    level: set.level ?? "",
-    domain: set.domain || "language",
-    lesson_count: set.lesson_count ?? 0,
+    name: entry.title || id,
+    description: entry.description ?? "",
+    source_language: entry.source_language,
+    target_language: entry.target_language,
+    level: entry.level ?? "",
+    domain: entry.domain,
+    lesson_count: entry.lesson_count ?? 0,
     card_count: 0,
-    tags: set.tags ?? [],
+    tags: entry.tags,
     ai_validated: false,
     trust_level: trustFloor,
-    book: asContentSetBook(set.book),
+    book: entry.book ?? null,
     updated_at: null,
     repo_url: repoSource,
     repo_name: repoName,
-    visibility,
-    review_status: asReviewStatus(set.review_status),
+    visibility: "visible",
+    review_status: entry.review_status ?? "authored",
   };
 }
 
