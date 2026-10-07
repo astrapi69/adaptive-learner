@@ -102,14 +102,44 @@ PACKAGE_CONSUMER_FILES = [
 
 
 def package_consumer_files() -> list[Path]:
-    """The subset of PACKAGE_CONSUMER_FILES actually present.
+    """The package dists the consumer scan reads (all of PACKAGE_CONSUMER_FILES).
 
-    node_modules is gitignored - absent before ``bun install``. Missing
-    files are silently skipped rather than an error: a fresh clone
-    without deps installed should still let ``--list``/``--unstyled``
-    (both src-only, no package layer) run.
+    Callers check :func:`missing_package_files` first: a verdict that names
+    "src + package dist" may not be built from src alone (#3422). Only
+    ``--unstyled`` (src-only, no package layer) runs without them.
     """
-    return [p for p in PACKAGE_CONSUMER_FILES if p.is_file()]
+    return list(PACKAGE_CONSUMER_FILES)
+
+
+def missing_package_files() -> list[Path]:
+    """PACKAGE_CONSUMER_FILES entries that are not on disk.
+
+    node_modules is gitignored, so a fresh clone or worktree has none until
+    ``bun install``; a package that renames its dist entry also lands here.
+    Skipping them in silence rebuilt the #2477 blind spot inside its own
+    mitigation (#3422).
+    """
+    return [p for p in PACKAGE_CONSUMER_FILES if not p.is_file()]
+
+
+def report_missing_package_files(missing: list[Path]) -> None:
+    """Explain on stderr why the package layer could not be read."""
+    print(
+        "FEHLER: Paket-Dateien fehlen, das Urteil waere nur aus src gebaut (#3422):",
+        file=sys.stderr,
+    )
+    for path in missing:
+        print(f"  - {path}", file=sys.stderr)
+    print(
+        "Erst `cd frontend && bun install`; hat ein Paket seine dist-Datei\n"
+        "umbenannt, PACKAGE_CONSUMER_FILES in scripts/check-dead-classnames.py\n"
+        "und docs/development/package-classname-consumers.md nachziehen.",
+        file=sys.stderr,
+    )
+
+
+class PackageDistMissingError(Exception):
+    """A package dist the consumer scan needs is not on disk (#3422)."""
 
 # A token that could be a CSS class in this codebase: lowercase-kebab plus
 # Tailwind's variant/arbitrary-value punctuation (``hover:``, ``max-h-[85vh]``,
@@ -572,7 +602,18 @@ def run_unstyled(regen: bool) -> int:
 
 
 def compute_dead() -> tuple[set[str], set[str], int]:
-    """Return (used, dead, unchecked). Requires the build CSS to exist."""
+    """Return (used, dead, unchecked).
+
+    Requires every package dist and the build CSS to exist.
+
+    Raises:
+        PackageDistMissingError: when a PACKAGE_CONSUMER_FILES entry is
+            missing (#3422).
+        FileNotFoundError: when the build CSS is missing.
+    """
+    missing = missing_package_files()
+    if missing:
+        raise PackageDistMissingError(missing)
     build_css_files = sorted(DIST_DIR.glob("assets/*.css"))
     if not build_css_files:
         raise FileNotFoundError("frontend/dist/assets/*.css")
@@ -618,14 +659,26 @@ def main() -> int:
             print("FEHLER: --consumers braucht einen Klassennamen.", file=sys.stderr)
             return 1
         target = args[idx + 1]
+        missing = missing_package_files()
+        if missing:
+            report_missing_package_files(missing)
+            return 1
+        sources = source_files()
+        packages = package_consumer_files()
         hits: list[str] = []
-        for path in [*source_files(), *package_consumer_files()]:
+        unchecked = 0
+        for path in [*sources, *packages]:
             text = strip_comments(path.read_text(encoding="utf-8", errors="replace"))
-            file_used, _ = extract_used_classes(text)
+            file_used, file_unchecked = extract_used_classes(text)
+            unchecked += file_unchecked
             if target in file_used:
                 hits.append(str(path))
         if not hits:
-            print(f"0 Konsumenten fuer '{target}' (src + package dist) - vermutlich wirklich tot.")
+            print(
+                f"0 Konsumenten fuer '{target}' in {len(sources)} src-Datei(en) + "
+                f"{len(packages)} Paket-Datei(en) - vermutlich wirklich tot."
+            )
+            print(f"Nicht pruefbar (dynamische className-Ausdruecke): {unchecked}")
             return 0
         print(f"{len(hits)} Konsument(en) fuer '{target}':")
         for h in sorted(hits):
@@ -638,6 +691,9 @@ def main() -> int:
     if "--list" in sys.argv[1:]:
         try:
             _, dead, _ = compute_dead()
+        except PackageDistMissingError as missing:
+            report_missing_package_files(list(missing.args[0]))
+            return 1
         except FileNotFoundError:
             print(
                 "FEHLER: keine Build-CSS unter frontend/dist/assets/*.css.",
@@ -650,6 +706,9 @@ def main() -> int:
 
     try:
         used, dead, unchecked = compute_dead()
+    except PackageDistMissingError as missing:
+        report_missing_package_files(list(missing.args[0]))
+        return 1
     except FileNotFoundError:
         print(
             "FEHLER: keine Build-CSS unter frontend/dist/assets/*.css.\n"
