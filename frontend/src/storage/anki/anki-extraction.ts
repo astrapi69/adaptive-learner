@@ -12,6 +12,7 @@
 import type { AIProvider } from "../../lib/constants";
 import { aiComplete, resolveModel } from "../ai/ai-providers";
 import { getDb } from "../dexie/db";
+import { dexiePluginSettings } from "../dexie/dexie-plugin-settings";
 
 /** One parsed flashcard candidate. Shape matches the vocabulary-derived
  *  cards so persistence is uniform. */
@@ -48,9 +49,31 @@ Rules:
 Material:
 {content}`;
 
+/** Card limit when ``settings.extraction_limit`` is missing or invalid. */
+export const DEFAULT_EXTRACTION_LIMIT = 8;
+
+/**
+ * The card limit from the anki plugin's ``extraction_limit`` setting
+ * (#3435), mirroring the backend's ``resolve_extraction_limit``: a
+ * positive integer is used as given, anything else falls back to
+ * {@link DEFAULT_EXTRACTION_LIMIT}.
+ *
+ * @example
+ * resolveExtractionLimit(12); // 12
+ * resolveExtractionLimit("x"); // 8
+ */
+export function resolveExtractionLimit(value: unknown): number {
+  if (typeof value === "boolean") return DEFAULT_EXTRACTION_LIMIT;
+  const limit = typeof value === "number" ? value : Number(String(value ?? "").trim());
+  return Number.isInteger(limit) && limit > 0 ? limit : DEFAULT_EXTRACTION_LIMIT;
+}
+
 /** Render the extraction prompt with the material clipped to ~8000 chars
  *  (≈ 2000 tokens, fits any modern context with room for the response). */
-export function buildExtractionPrompt(content: string, limit = 8): string {
+export function buildExtractionPrompt(
+  content: string,
+  limit = DEFAULT_EXTRACTION_LIMIT,
+): string {
   return EXTRACTION_PROMPT.replace("{limit}", String(limit)).replace(
     "{content}",
     content.slice(0, 8000),
@@ -119,11 +142,13 @@ export async function aiExtractCards(
   config: DexieAiConfig,
   content: string,
 ): Promise<ExtractedCard[]> {
+  const { settings } = await dexiePluginSettings.get("anki");
+  const limit = resolveExtractionLimit(settings.extraction_limit);
   const raw = await aiComplete({
     provider: config.provider,
     model: config.model,
     apiKey: config.apiKey,
-    messages: [{ role: "user", content: buildExtractionPrompt(content) }],
+    messages: [{ role: "user", content: buildExtractionPrompt(content, limit) }],
     maxTokens: 1500,
   });
   return parseExtractedCards(raw);
