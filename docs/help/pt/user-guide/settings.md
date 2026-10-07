@@ -81,7 +81,7 @@ dois separadores:
   (tons de papel quentes para leitura prolongada). Se o seu tema
   ativo for um clássico, o seletor abre neste separador.
 
-Ambos os separadores oferecem ainda **Automatico (sistema)**, que
+Ambos os separadores oferecem ainda **Automático (sistema)**, que
 segue a configuração claro/escuro do seu sistema operativo e muda
 automaticamente com ele.
 
