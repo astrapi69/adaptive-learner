@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 
-import { USER_GENERATED_SOURCE } from "../../storage/types";
-import type { ContentSetEntry } from "../../storage/types";
+import { USER_GENERATED_SOURCE } from "../../../storage/types";
+import type { ContentSetEntry } from "../../../storage/types";
 
 /**
  * Open the share flow named by ``?share=<setId>`` once the sets are loaded

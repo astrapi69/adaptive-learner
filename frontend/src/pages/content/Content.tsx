@@ -48,7 +48,7 @@ import BulkDeleteSetsModal from "../../components/content/browser/delete/BulkDel
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentFilters } from "../../hooks/content/browse";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
-import { useShareDeepLink } from "../../hooks/content/useShareDeepLink";
+import { useShareDeepLink } from "../../hooks/content/share";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useContentSetsData } from "../../hooks/content/useContentSetsData";
 import { useContentSetActions } from "../../hooks/content/useContentSetActions";

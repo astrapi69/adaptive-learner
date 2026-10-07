@@ -9,7 +9,7 @@ import { MemoryRouter, useLocation } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 
 import { useShareDeepLink } from "./useShareDeepLink";
-import { USER_GENERATED_SOURCE, type ContentSetEntry } from "../../storage/types";
+import { USER_GENERATED_SOURCE, type ContentSetEntry } from "../../../storage/types";
 
 const OWN = { id: "set-1", source: USER_GENERATED_SOURCE } as ContentSetEntry;
 const DOWNLOADED = { id: "set-1", source: "repo" } as ContentSetEntry;
