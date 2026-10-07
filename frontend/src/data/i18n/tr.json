@@ -1694,6 +1694,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "Temel",
+      "cloze": "Boşluk doldurma"
+    },
     "title": "Anki Dışa Aktarma",
     "intro": "YZ'nin önerdiği kartları gözden geçir, istediklerini kabul et ve Anki için .apkg dosyası olarak dışa aktar.",
     "filter_project": "Proje",
@@ -2077,6 +2081,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Eksik: {word}",
+      "extra": "Fazla: {word}",
+      "replaced": "Yazdığın: {wrote}, beklenen: {expected}"
+    },
     "progress_io": {
       "save_error": "Bu dersteki ilerlemeniz kaydedilemedi.",
       "load_failed": "Bu ders için kaydedilmiş ilerlemeniz yüklenemedi: {detail}",
@@ -3477,6 +3486,8 @@
       "author_label": "Yazar adı"
     },
     "cards": {
+      "front_placeholder": "Kelime veya ifade",
+      "back_placeholder": "Anlam",
       "heading": "Kelime kartları ekle",
       "front_label": "Ön yüz (öğrenilen)",
       "back_label": "Arka yüz (sizin diliniz)",

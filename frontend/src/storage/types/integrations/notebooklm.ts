@@ -64,10 +64,10 @@ export interface INotebookLMNamespace {
  * ancestor.
  *
  * ``phrase`` + ``judge`` require an active AI provider with a
- * stored API key; the API-mode path is the backend's
- * ``/plugins/session/pronunciation/*`` routes, and the
- * Dexie-mode path throws ``ApiError(501)`` for v1.18.0 (browser-
- * direct AI for pronunciation deferred to a polish patch). The
- * Pronunciation page surfaces a clear "switch to API mode"
- * hint when the throw fires.
+ * stored API key. API mode calls the backend's
+ * ``/plugins/session/pronunciation/*`` routes; Dexie mode calls the
+ * provider browser-direct with the user's own key
+ * (``storage/ai/pronunciation-dexie.ts``, #903). Both reject with
+ * ``ApiError(400)`` when no key is configured. An unusable provider
+ * reply is a 400 in API mode and a 502 in Dexie mode.
  */

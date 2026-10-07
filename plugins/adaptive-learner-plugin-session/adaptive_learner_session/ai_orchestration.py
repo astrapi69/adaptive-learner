@@ -19,33 +19,11 @@ The orchestration is intentionally a separate module so:
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
 logger = logging.getLogger(__name__)
-
-# Provider-key -> default model. Single source of truth for the
-# v0.2.0 ai_complete dispatch. Each provider plugin's ai_complete
-# hookimpl picks up its prefix (``claude-`` / ``gpt-`` /
-# ``gemini-``) and other prefixes fall through. New providers add
-# a row here AND a hookimpl in their plugin.
-#
-# Models are picked for the cheap-and-fast tier — chat sessions
-# don't need GPT-4-Turbo-level reasoning; the learner can swap
-# this via the plugin config once the session-plugin config file
-# lands. For now: hard-coded so the orchestration is
-# self-contained.
-DEFAULT_MODELS: dict[str, str] = {
-    # Bumped 2026-05-20 from ``claude-3-5-haiku-latest`` to the
-    # Haiku 4.5 dated alias after v0.9.0 conversation-analysis
-    # surfaced 3-5-haiku's unreliability at structured JSON
-    # output. Haiku 4.5 follows system-prompt instructions much
-    # more tightly while staying in the same cost tier.
-    "anthropic": "claude-haiku-4-5-20251001",
-    "openai": "gpt-4o-mini",
-    "gemini": "gemini-2.0-flash",
-    "perplexity": "sonar-pro",
-}
 
 
 @dataclass
@@ -62,10 +40,19 @@ class AiOrchestrationResult:
     ai_error: str | None
 
 
-def resolve_model(active_provider: str, override: str | None = None) -> str | None:
+def resolve_model(
+    active_provider: str,
+    defaults: Mapping[str, str],
+    override: str | None = None,
+) -> str | None:
     """Pick the model string for the active provider.
 
-    v0.4.0: a non-empty ``override`` wins over ``DEFAULT_MODELS``
+    ``defaults`` is the provider-default table; callers pass
+    ``app.services.ai_caller.DEFAULT_MODELS``, the only one (#3420).
+    This module takes it as a parameter so it stays importable
+    without the backend (the standalone plugin tests rely on that).
+
+    v0.4.0: a non-empty ``override`` wins over the default
     for that provider — the Settings page lets users pick a model
     per provider (e.g. ``claude-sonnet-4-20250514`` instead of the
     cheap ``claude-3-5-haiku-latest`` default). Whitespace-only
@@ -78,7 +65,7 @@ def resolve_model(active_provider: str, override: str | None = None) -> str | No
     """
     if isinstance(override, str) and override.strip():
         return override.strip()
-    return DEFAULT_MODELS.get(active_provider)
+    return defaults.get(active_provider)
 
 
 def build_messages_history(

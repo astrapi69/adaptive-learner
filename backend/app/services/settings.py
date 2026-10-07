@@ -368,8 +368,8 @@ def resolve_default_model(
       2. ``~/.config/adaptive_learner/secrets.yaml`` —
          ``ai.<provider>.default_model``.
       3. ``UserSettings.model_override_<provider>`` (Settings UI).
-      4. ``None`` — caller falls back to the plugin's
-         ``DEFAULT_MODELS[provider]`` constant.
+      4. ``None`` — caller falls back to
+         ``app.services.ai_caller.DEFAULT_MODELS[provider]``.
 
     Returns the resolved model id string, or ``None`` when nothing
     is configured anywhere. Per the v1.20.0 design, secrets.yaml
