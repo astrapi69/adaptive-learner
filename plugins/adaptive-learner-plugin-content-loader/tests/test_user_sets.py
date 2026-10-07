@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
-from adaptive_learner_content_loader.analysis_to_lesson import (
-    generate_lesson_from_analysis,
-)
+from adaptive_learner_content_loader.schema import Lesson
 from adaptive_learner_content_loader.service import (
     USER_GENERATED_SOURCE,
     USER_SET_VERSION,
@@ -15,25 +14,22 @@ from adaptive_learner_content_loader.service import (
 )
 from pydantic import ValidationError
 
-ANALYSIS = {
-    "topic": "Spanish travel vocabulary",
-    "summary": "Ordering food and asking directions.",
-    "vocabulary": [
-        {"word": "la cuenta", "translation": "the bill", "example": "La cuenta, por favor."},
-        {"word": "el agua", "translation": "the water", "example": "Quiero el agua."},
-        {"word": "la calle", "translation": "the street", "example": "La calle esta cerca."},
-        {"word": "izquierda", "translation": "left", "example": "Gira a la izquierda."},
-        {"word": "gracias", "translation": "thank you"},
-    ],
-}
+# A schema-valid lesson, generated once from a Spanish travel analysis by
+# the former Python port of analysis-to-lesson (#3446 removed it; the
+# TypeScript generator is the only production one).
+LESSON_FIXTURE = (
+    Path(__file__).resolve().parents[3] / "tests" / "fixtures" / "user-set-lesson" / "lesson.json"
+)
+
 
 
 def _service(tmp_path: Path) -> ContentLoaderService:
     return ContentLoaderService(cache_root=tmp_path, sources=[])
 
 
-def _lesson(set_id: str = "conv-1"):
-    return generate_lesson_from_analysis(ANALYSIS, lesson_id=set_id)
+def _lesson(set_id: str = "conv-1") -> Lesson:
+    lesson = json.loads(LESSON_FIXTURE.read_text(encoding="utf-8"))
+    return Lesson.model_validate({**lesson, "id": set_id})
 
 
 def test_save_user_set_returns_entry(tmp_path: Path) -> None:
