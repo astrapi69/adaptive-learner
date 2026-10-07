@@ -36,8 +36,9 @@ car le fournisseur d'IA se trouve en dehors du navigateur.
 - **Un navigateur moderne** (Chrome 100+, Firefox 100+, Safari
   17+, Edge 100+). L'application utilise IndexedDB, les service
   workers et du JavaScript moderne.
-- **Une clé d'API IA** pour au moins l'un des trois fournisseurs
-  pris en charge (Anthropic, OpenAI ou Google Gemini). Les quotas
+- **Une clé d'API IA** pour au moins un fournisseur : Anthropic,
+  OpenAI ou Google Gemini dans la version navigateur ; l'application
+  de bureau propose aussi Perplexity. Les quotas
   gratuits suffisent généralement pour débuter ; voir
   [Paramètres](settings.md) pour la configuration de la clé.
 

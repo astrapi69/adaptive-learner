@@ -25,9 +25,10 @@ Text + bisherige KI-Antworten der Sitzung).
 ## Brauche ich einen API-Schlüssel?
 
 Ja für KI-Sitzungen. Die App nutzt **Bring-Your-Own-Key** für
-alle drei unterstützten Anbieter: Anthropic Claude, OpenAI
-GPT, Google Gemini. Die kostenlosen Kontingente reichen
-meistens zum Einstieg.
+jeden unterstützten Anbieter: Anthropic Claude, OpenAI GPT und
+Google Gemini, dazu Perplexity im Server-Modus (die Desktop-App;
+die Browser-Version kann Perplexity nicht direkt aufrufen). Die
+kostenlosen Kontingente reichen meistens zum Einstieg.
 
 Drei Stellen für den Schlüssel (höchste Priorität gewinnt):
 eine `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungsvariable,
@@ -142,8 +143,8 @@ Synchronisation und kopple dieses Gerät: QR-Code vom anderen
 Gerät-Bildschirm scannen (Rückkamera), oder Pairing-URL
 einfügen. Nach dem Pairing tauschen Push- + Pull-Knöpfe
 Daten aus; Konflikte gehen durch einen KI-Merge-Resolver.
-30 Tabellen auf der Sync-Oberfläche (inkl. Lektions-
-Fortschritt, Element-Fehler und Missionen).
+Die Synchronisation umfasst alle deine Daten, inkl.
+Lektionsfortschritt, Element-Fehler und Missionen.
 
 ## Wie ist das anders als ChatGPT?
 
@@ -163,7 +164,8 @@ unter der Haube eine KI nutzt, aber zusätzlich bringt:
 5. **Langfristiges Tracking** - ProgressCommits, Streak-
    Heatmap, XP, Abzeichen, Zeit-pro-Schritt-Charts. ChatGPT
    vergisst, wenn du den Tab schließt.
-6. **Anbieter-Freiheit** - Anthropic, OpenAI oder Gemini.
+6. **Anbieter-Freiheit** - Anthropic, OpenAI oder Gemini, dazu
+   Perplexity im Server-Modus.
 7. **Local-First-Option** - alles in deinem Browser, nichts
    wird an einen Server gesendet (außer deine KI-Aufrufe).
 

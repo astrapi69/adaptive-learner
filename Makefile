@@ -257,8 +257,8 @@ test: test-backend test-plugins test-frontend ## Run ALL tests, no coverage (eve
 # Needs no running backend -- pytest uses the in-memory TestClient.
 test-fast: ## Fast PR-mirror gate: backend ruff+mypy+pytest, frontend tsc+vitest (no coverage, no plugins) (#1174)
 	@echo ""
-	@echo "=== test-fast: backend ruff check app/ ==="
-	cd backend && poetry run ruff check app/
+	@echo "=== test-fast: ruff check app/ + plugins/ ==="
+	cd backend && poetry run ruff check app/ ../plugins/
 	@echo ""
 	@echo "=== test-fast: backend mypy app/ ==="
 	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run mypy app/
@@ -640,6 +640,7 @@ test-dexie-smoke: ## Dexie-mode release gate (build + Playwright preview-mode sm
 	@echo ""
 	@echo "=== Running Dexie-mode Playwright smoke ==="
 	cd e2e && npx playwright test --config=playwright.dexie.config.ts
+	python3 scripts/check_e2e_skip_budget.py --suite dexie-smoke --report e2e/test-results/dexie-smoke.json
 
 # WebKit engine gate (#1834). Catches iOS/Safari CSS-ENGINE layout bugs
 # that the Chromium gates structurally cannot — e.g. the lesson-footer
@@ -663,6 +664,7 @@ test-manual-automation: ## Automated manual-test-plan suite (#616; build dexie +
 	@echo ""
 	@echo "=== Running manual-test-plan automation (#616) ==="
 	cd e2e && npx playwright test --config=playwright.manual.config.ts
+	python3 scripts/check_e2e_skip_budget.py --suite manual-automation --report e2e/test-results/manual-automation.json
 
 test-visual: ## Visual regression (build dexie + Playwright screenshot matrix)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="

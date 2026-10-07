@@ -80,12 +80,17 @@ test.describe("Lesson Creator — build + save a lesson", () => {
         await expect(page.getByTestId("create-lesson-step-4")).toBeVisible({
             timeout: 10000,
         });
-        // #1929 — the quality checklist renders SIX rows again, including the
-        // restored "Sprachpaar ist gueltig" row, which is green for the
-        // supported de -> fr pair fillMetadata sets.
+        // #3389 — the local checklist gates "Save locally" and holds the four
+        // validity rows (title, language pair, cards, structure); the engine's
+        // quality minimums moved to the separate share checklist, which gates
+        // "Save and share" only. The language-pair row (#1929) is green for
+        // the supported de -> fr pair fillMetadata sets.
         await expect(
             page.getByTestId("create-lesson-checklist").locator("li"),
-        ).toHaveCount(6);
+        ).toHaveCount(4);
+        await expect(
+            page.getByTestId("create-lesson-share-checklist").locator("li"),
+        ).toHaveCount(3);
         await expect(page.getByTestId("check-languagePair")).toHaveAttribute(
             "data-pass",
             "true",

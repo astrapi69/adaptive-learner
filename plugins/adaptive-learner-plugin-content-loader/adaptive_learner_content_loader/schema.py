@@ -38,15 +38,19 @@ from .schema_generated import (
     ExerciseType,
     ExerciseVariable,
     InlineExample,
-    Lesson as LessonBase,
     LessonResource,
-    LessonStep as LessonStepBase,
     MediaType,
     MultipleChoiceOption,
     Pair,
     PictureImage,
     StepType,
     TokenRole,
+)
+from .schema_generated import (
+    Lesson as LessonBase,
+)
+from .schema_generated import (
+    LessonStep as LessonStepBase,
 )
 
 __all__ = [

@@ -48,8 +48,9 @@ the browser.
 - **A modern browser** (Chrome 100+, Firefox 100+, Safari 17+,
   Edge 100+). The app uses IndexedDB, service workers and modern
   JavaScript.
-- **An AI API key** for at least one of the three supported
-  providers (Anthropic, OpenAI or Google Gemini). The free tiers
+- **An AI API key** for at least one provider: Anthropic, OpenAI
+  or Google Gemini in the browser version; the desktop app also
+  offers Perplexity. The free tiers
   are usually enough to get started; see [Settings](settings.md)
   for key setup.
 

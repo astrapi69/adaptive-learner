@@ -219,7 +219,7 @@ export default function QrCodeModal({
 
                 <h2
                     id={`${testId}-title`}
-                    className="mb-4 pr-8 text-lg font-semibold text-fg-primary"
+                    className="mt-0 mb-4 pr-8 text-lg font-semibold text-fg-primary"
                 >
                     {title}
                 </h2>

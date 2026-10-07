@@ -9,8 +9,9 @@
 from __future__ import annotations
 
 from enum import Enum
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing import Annotated, Any
+
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 
 class Purpose(str, Enum):

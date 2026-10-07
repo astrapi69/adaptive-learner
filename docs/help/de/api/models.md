@@ -1,15 +1,13 @@
 # Datenmodelle
 
-Die **30 SQLAlchemy-Models** in
+Die **SQLAlchemy-Models** in
 `backend/app/models/__init__.py`, mit ihren Wire-Shape-
-Pydantic-Schemas. Die Sync-Oberfläche umfasst 30 Tabellen
-(`sync_service.ALL_SYNC_TABLES`).
+Pydantic-Schemas. Die Sync-Oberfläche umfasst jede Tabelle in
+`sync_service.ALL_SYNC_TABLES`.
 
 Die ursprünglichen 14 Models von v0.7.0 sind unten im Detail
-dokumentiert; die 11 seitdem hinzugekommenen (Phase 12+
-Imports, Phase 22 Subjects / Tags, Phase 29–30 Gamification
-+ Anki, Phase 32 NotebookLM) werden am Ende nach Name +
-Tabelle gelistet. Die OpenAPI-Spec unter
+dokumentiert; die seitdem hinzugekommenen werden am Ende nach
+Name + Tabelle gelistet. Die OpenAPI-Spec unter
 `/openapi.json` ist die kanonische Referenz für jedes
 Feld jedes Models.
 
@@ -215,7 +213,46 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    PERPLEXITY = "perplexity"
+
+# Seit v1.20.0 / Phase 34
+class ApiKeySource(str, Enum):
+    ENV = "env"
+    SECRETS_YAML = "secrets_yaml"
+    SETTINGS = "settings"
+    NONE = "none"
+
+# Seit v0.9.0 / Phase 12
+class ImportedConversationSource(str, Enum):
+    CHATGPT = "chatgpt"
+    CLAUDE = "claude"
+    GEMINI = "gemini"
+    MANUAL = "manual"
+    UNKNOWN = "unknown"
 ```
 
 Die Wire-Form ist der lowercase-String-Value (z.B.
 `"deductive"`, nicht `"DEDUCTIVE"`).
+
+## Seit der v0.7.0-Basis hinzugekommene Models
+
+| Model | Tabelle | Seit | Zweck |
+|---|---|---|---|
+| ImportedConversation | imported_conversations | v0.9.0 | Ein importierter Chat (Quelle, Titel, analysis_result-JSON) |
+| ImportedMessage | imported_messages | v0.9.0 | Ein Beitrag in einem importierten Chat |
+| Subject | subjects | v1.9.0 | Globaler hierarchischer Taxonomie-Knoten |
+| Tag | tags | v1.9.0 | Freitext-Label pro Nutzer |
+| ProjectSubject | project_subjects | v1.9.0 | M:N (LearningProject, Subject) |
+| ProjectTag | project_tags | v1.9.0 | M:N (LearningProject, Tag) |
+| UserXP | user_xp | v1.16.0 | XP + Level, ein Datensatz pro Nutzer |
+| Badge | badges | v1.16.0 | Badge-Katalog (aus YAML befüllt) |
+| UserBadge | user_badges | v1.16.0 | Verdientes Badge (nur anhängend) |
+| UserStreak | user_streaks | v1.16.0 | Serienstand + Freezes + Wochenend-Modus |
+| AnkiCardSuggestion | anki_card_suggestions | v1.17.0 | Von der KI extrahierter Karteikarten-Vorschlag |
+| StudyQuestion | study_questions | v1.19.0 | KI-erzeugte Active-Recall-Frage |
+| ApiKeyBackup | api_key_backups | v1.49.0 | Rollback-Speicher für ersetzte KI-Schlüssel |
+| LessonProgress | lesson_progress | v1.28.0 | Schrittstand pro Lektion (in_progress / paused / completed) |
+| ElementError | element_errors | v1.30.0 | SRS-Fehler + Beherrschung pro Element |
+| SetRun | set_runs | v2.12.0 | Ein Durchgang eines Content-Sets; die offene Zeile ist der aktive Durchgang |
+| UserMission | user_missions | v1.39.0 | Tägliche Mission: Zuteilung + Fortschritt |
+| SpeechRecording | speech_recordings | v2.14.0 | Die aktuelle Aufnahme des Lernenden für eine Sprechen-und-Aufnehmen-Übung |

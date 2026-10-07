@@ -23,9 +23,11 @@ de la IA en la sesión).
 ## ¿Necesito una clave API?
 
 Sí, para las sesiones de IA. La aplicación usa el modelo
-**bring-your-own-key** para los tres proveedores compatibles:
-Anthropic Claude, OpenAI GPT, Google Gemini. Los límites del
-nivel gratuito suelen ser suficientes para empezar.
+**bring-your-own-key** para cada proveedor compatible: Anthropic
+Claude, OpenAI GPT y Google Gemini, más Perplexity en modo servidor
+(la app de escritorio; la versión de navegador no puede llamar a
+Perplexity directamente). Los límites del nivel gratuito suelen ser
+suficientes para empezar.
 
 Hay tres lugares donde poner la clave (la prioridad más alta
 gana): una variable de entorno `ADAPTIVE_LEARNER_<PROVEEDOR>_API_KEY`,
@@ -137,9 +139,9 @@ Sincronización y empareja este dispositivo: escanea
 el código QR en la pantalla del otro dispositivo (cámara trasera)
 o pega la URL de emparejamiento. Una vez emparejados, los botones
 de enviar y recibir intercambian datos; los conflictos pasan por
-un resolvedor de fusión de IA. 28 tablas en la superficie de
-sincronización (asignaturas, etiquetas y preguntas
-de estudio incluidas).
+un resolvedor de fusión de IA. La sincronización abarca todos tus
+datos, incluidos el progreso de las lecciones, los errores por
+elemento y las misiones.
 
 ## ¿En qué se diferencia esto de ChatGPT?
 
@@ -158,7 +160,8 @@ IA internamente pero añade:
 5. **Seguimiento a largo plazo** - ProgressCommits, mapa de calor
    de racha, XP, insignias, gráficos de tiempo por paso. ChatGPT
    olvida cuando cierras la pestaña.
-6. **Libertad de proveedor** - Anthropic, OpenAI o Gemini.
+6. **Libertad de proveedor** - Anthropic, OpenAI o Gemini, más
+   Perplexity en modo servidor.
 7. **Opción local primero** - todo en tu navegador, nada enviado
    a un servidor (excepto tus llamadas a la IA).
 

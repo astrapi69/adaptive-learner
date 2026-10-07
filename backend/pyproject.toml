@@ -72,6 +72,7 @@ select = [
     "I",    # isort
     "B",    # flake8-bugbear
     "UP",   # pyupgrade
+    "BLE",  # flake8-blind-except: a broad except must log with the traceback or carry a reasoned noqa (#3423)
 ]
 ignore = [
     "E501",   # line length - handled by formatter, too noisy to fix blind
@@ -90,7 +91,7 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
 check_untyped_defs = true
-plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
+plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = "pluginforge.*"

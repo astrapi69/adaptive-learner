@@ -20,17 +20,10 @@
     "error": "문제가 발생했습니다.",
     "back": "뒤로",
     "next": "다음",
-    "start": "시작",
     "submit": "제출",
-    "continue": "계속",
-    "done": "완료",
     "delete": "삭제",
     "edit": "편집",
     "confirm": "확인",
-    "yes": "네",
-    "no": "아니요",
-    "optional": "선택",
-    "required": "필수",
     "minutes": "분",
     "close": "닫기"
   },
@@ -87,24 +80,15 @@
       "more": "더보기"
     },
     "primary": "기본 탐색",
-    "discover": "콘텐츠 둘러보기",
-    "offline_long": "오프라인 - 지난 세션은 계속 읽을 수 있습니다",
-    "sync_pending": "동기화 대기 중인 변경 사항 {n}건",
-    "statistics": "통계",
     "profile": "내 프로필",
     "learning_path": "학습 경로",
     "dashboard": "대시보드",
     "session": "세션",
-    "curriculum": "커리큘럼",
     "progress": "진행도",
-    "import": "가져오기",
     "settings": "설정",
     "help": "도움말",
     "home": "홈",
     "menu": "메뉴",
-    "online": "온라인",
-    "offline": "오프라인",
-    "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "개발자 모드가 켜져 있습니다 - 오류 알림에 전체 기술 정보가 표시됩니다. 설정에서 전환하세요.",
     "content": "내 콘텐츠",
@@ -112,9 +96,7 @@
     "mode_badge_ai": "AI+콘텐츠",
     "mode_badge_tooltip_content": "API 키가 설정되지 않았습니다 - 사전 제작된 콘텐츠만 사용합니다. AI 기능을 사용하려면 설정에서 키를 추가하세요.",
     "mode_badge_tooltip_ai": "AI 제공자가 설정되었습니다 - 연습 문제에 AI를 활용해 오답 보기와 힌트를 생성합니다. 콘텐츠 세트를 둘러보려면 누르세요.",
-    "mode_badge_action": "콘텐츠 둘러보기",
-    "sync_paired": "동기화: 페어링됨 (설정 > 동기화)",
-    "sync_unpaired": "동기화: 페어링 안 됨 (설정 > 동기화)"
+    "mode_badge_action": "콘텐츠 둘러보기"
   },
   "import": {
     "title": "대화 가져오기",
@@ -385,7 +367,6 @@
     "session_title": "적응형 레슨",
     "loading": "오류를 분석하는 중…",
     "empty_body": "아직 적응할 데이터가 없습니다 - 레슨을 연습하여 데이터를 쌓으세요.",
-    "not_cached_body": "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요.",
     "back_to_dashboard": "대시보드로 돌아가기",
     "transparency": {
       "focus_prefix": "이 레슨은 다음에 집중합니다:",
@@ -400,7 +381,6 @@
       "note": "요소 점수가 업데이트되었습니다. 다음 적응형 레슨은 아직 연습이 필요한 요소를 다룹니다."
     },
     "error": {
-      "missing_params": "선택된 콘텐츠 세트가 없습니다.",
       "load_failed": "적응형 레슨을 생성할 수 없었습니다."
     }
   },
@@ -427,7 +407,6 @@
     "subtitle_capped": "SRS 복습 예정인 {due}개 중 {shown}개를 복습합니다",
     "loading": "복습 세션을 불러오는 중…",
     "empty_body": "모두 완료했습니다! 이 세트에 복습 예정인 요소가 없습니다.",
-    "not_cached_body": "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요.",
     "back_to_dashboard": "대시보드로 돌아가기",
     "back_to_lesson": "레슨으로 돌아가기",
     "summary": {
@@ -437,7 +416,6 @@
       "note": "요소 점수가 업데이트되었습니다. 숙달한 요소는 다음 세션에 나타나지 않습니다."
     },
     "error": {
-      "missing_params": "선택된 콘텐츠 세트가 없습니다.",
       "load_failed": "복습 세션을 불러올 수 없었습니다."
     },
     "spaced_empty": "지금 복습할 항목이 없습니다. 훌륭한 리듬이에요!",
@@ -747,10 +725,6 @@
     "tab_plugins": "플러그인",
     "plugins_installed_title": "설치된 플러그인",
     "plugins_installed_desc": "데스크톱 앱이 불러온 모든 플러그인을 버전, 출처, 활성화 시각과 함께 표시합니다 (PluginForge 수명 주기).",
-    "plugins_col_name": "플러그인",
-    "plugins_col_version": "버전",
-    "plugins_col_source": "출처",
-    "plugins_col_activated": "활성화됨",
     "plugins_source_entry_point": "패키지",
     "plugins_source_direct": "직접 등록",
     "plugins_marker_load_error": "로드 오류",
@@ -945,7 +919,6 @@
       "rollback_warning": "새 키가 작동하지 않습니다. 이전 키를 유지할까요?",
       "rollback_keep_old": "이전 키 유지",
       "rollback_save_anyway": "그래도 저장",
-      "rollback_cancel": "취소",
       "rollback_restore": "마지막으로 작동한 키 복원",
       "format_hint": {
         "anthropic": "sk-ant-로 시작합니다",
@@ -1556,10 +1529,6 @@
     },
     "level_detail_title": "레벨 진행도",
     "level_up": "레벨 업!",
-    "reason_session_complete": "세션 완료",
-    "reason_assessment_complete": "평가 완료",
-    "reason_conversation_imported": "대화 가져옴",
-    "reason_flat": "XP 획득",
     "card_badges": "배지",
     "badges_earned": "획득",
     "badges_empty": "아직 사용 가능한 배지가 없습니다.",
@@ -1715,20 +1684,7 @@
     "weekend_mode_help": "주말은 연속 기록 끊김에 포함되지 않습니다.",
     "reset_done": "진행도 초기화: XP {xp}, 배지 {badges}개, 연속 기록 {streak}개.",
     "reset_failed": "진행도를 초기화할 수 없었습니다.",
-    "weekend_mode_save_failed": "주말 모드 설정을 저장할 수 없었습니다.",
-    "danger_zone_heading": "위험 구역",
-    "danger_zone_intro": "이 기기의 모든 학습 데이터를 영구히 삭제합니다.",
-    "danger_zone_reset_button": "전체 초기화",
-    "danger_zone_warning": "이 작업은 모든 학습 데이터(세션, 진행도, 프로필, 커리큘럼, 가져오기, Anki 카드, 설정, API 키)를 영구히 삭제합니다. 이 작업은 되돌릴 수 없습니다.",
-    "danger_zone_confirm_prompt": "확인하려면 RESET을 입력하세요",
-    "danger_zone_input_placeholder": "RESET",
-    "danger_zone_final_button": "영구 삭제",
-    "danger_zone_backup_offer": "먼저 백업을 만들까요?",
-    "danger_zone_backup_button": "백업 만들기",
-    "danger_zone_complete_toast": "모든 데이터가 삭제되었습니다.",
-    "danger_zone_cancel": "취소",
-    "danger_zone_continue": "계속",
-    "danger_zone_failed_toast": "초기화 실패:"
+    "weekend_mode_save_failed": "주말 모드 설정을 저장할 수 없었습니다."
   },
   "arcade": {
     "title": "아케이드",
@@ -2145,8 +2101,7 @@
       "rerender": "다시 렌더링",
       "download_zip": "ZIP 다운로드",
       "persist": "git에 영속화",
-      "persisting": "영속화 중…",
-      "persist_dexie_tooltip": "git 버전 관리는 서버 모드에서만 사용할 수 있습니다."
+      "persisting": "영속화 중…"
     },
     "toast": {
       "zip_downloaded": "ZIP을 다운로드했습니다",
@@ -2837,6 +2792,7 @@
       "public": "공개",
       "branch": "브랜치",
       "lessons_note": "이 세트의 모든 {n}개 레슨이 포함됩니다.",
+      "lessons_note_one": "이 세트의 레슨 1개가 포함됩니다.",
       "invalid_repo": "저장소를 owner/name 형식으로 입력하세요.",
       "submit": "내보내기",
       "working": "내보내는 중…",
@@ -4442,9 +4398,6 @@
     "added": "저장소가 추가되었습니다.",
     "synced": "동기화됨: 세트 {sets}개, 레슨 {lessons}개.",
     "token_hint": "비공개 저장소에는 토큰이 필요합니다 - 아래에 붙여넣거나, 설정 → 연동에서 공유 토큰을 설정하세요.",
-    "trust_official": "공식: 프로젝트 팀이 큐레이션하고 품질을 보증합니다.",
-    "trust_verified": "검증됨: 커뮤니티가 기여하고 팀이 검토했습니다.",
-    "trust_validated": "유효성 확인됨: 기술적으로 정확하며, 내용은 개별적으로 검토되지 않았습니다.",
     "official": {
       "title": "공식 콘텐츠",
       "counts": "세트 {sets}개 · 레슨 {lessons}개"
@@ -4714,12 +4667,10 @@
     "page_title": "셔플",
     "loading": "셔플 세션 로드 중…",
     "empty_body": "셔플하려면 연습이 있는 레슨이 두 개 이상 필요합니다.",
-    "not_cached_body": "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요.",
     "back_to_dashboard": "대시보드로 돌아가기",
     "subtitle": "{lessons}개 레슨에서 {n}개 문제 섞기",
     "error": {
-      "load_failed": "셔플 세션을 불러올 수 없습니다.",
-      "missing_params": "선택된 콘텐츠 세트가 없습니다."
+      "load_failed": "셔플 세션을 불러올 수 없습니다."
     },
     "summary": {
       "heading": "셔플 연습 완료!",
