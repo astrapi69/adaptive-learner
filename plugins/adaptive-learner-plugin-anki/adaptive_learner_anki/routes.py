@@ -19,6 +19,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.config_overlay import read_plugin_settings_merged
 from app.database import get_db
 from app.exceptions import NotFoundError, ValidationError
 from app.models import AnkiCardSuggestion, User
@@ -191,6 +192,15 @@ def delete_card(
 # ---------------------------------------------------------------------------
 
 
+def _extraction_limit() -> int:
+    """The effective ``settings.extraction_limit`` (bundled YAML plus
+    the user overlay), read per request so a YAML edit applies
+    without a restart (#3435)."""
+    return card_extraction.resolve_extraction_limit(
+        read_plugin_settings_merged("anki").get("extraction_limit")
+    )
+
+
 @router.post(
     "/cards/extract/session/{session_id}",
     response_model=list[AnkiCardSuggestionOut],
@@ -215,7 +225,9 @@ def extract_session_cards(
         # No messages → nothing to extract; non-error path.
         return []
     ai_call = build_ai_caller(db, user_id, max_tokens=512)
-    rows = card_extraction.extract_from_session(db, session_id, ai_call)
+    rows = card_extraction.extract_from_session(
+        db, session_id, ai_call, limit=_extraction_limit()
+    )
     return [_to_out(r) for r in rows]
 
 
@@ -254,7 +266,7 @@ def extract_conversation_cards(
         return caller(messages)
 
     rows = card_extraction.extract_from_conversation(
-        db, conversation_id, _ai
+        db, conversation_id, _ai, limit=_extraction_limit()
     )
     return [_to_out(r) for r in rows]
 
