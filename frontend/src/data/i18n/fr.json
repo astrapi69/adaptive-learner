@@ -4416,6 +4416,19 @@
       "sync_failed": "La synchronisation a échoué. Réessaie."
     },
     "validation": {
+      "reason": {
+        "not_found": "Dépôt ou manifest.yaml introuvable.",
+        "access_denied": "Accès refusé : vérifie le dépôt et ton jeton GitHub.",
+        "unreachable": "Dépôt inaccessible.",
+        "unsupported_schema": "Version de schéma non prise en charge : {version}.",
+        "no_sets": "manifest.yaml ne contient aucun ensemble.",
+        "no_lessons": "Aucune leçon trouvée dans les ensembles.",
+        "executable_content": "Le contenu de la leçon contient du code exécutable non autorisé.",
+        "lessons_unreadable": "Impossible de lire les leçons du premier ensemble.",
+        "lesson_invalid_json": "La première leçon du premier ensemble n'est pas un JSON valide.",
+        "validator_unavailable": "Impossible de charger le validateur de leçons.",
+        "lesson_invalid": "La première leçon du premier ensemble échoue à la validation : {detail}"
+      },
       "failed": "La validation a échoué : {reason}",
       "passed": "Validation réussie : {sets} ensembles, {lessons} leçons."
     }

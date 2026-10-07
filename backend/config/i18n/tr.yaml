@@ -4074,6 +4074,19 @@ content_repo:
     save_failed: "Depo eklenemedi."
     sync_failed: "Eşitleme başarısız oldu. Yeniden dene."
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "Depo veya manifest.yaml bulunamadı."
+      access_denied: "Erişim reddedildi - depoyu ve GitHub token'ını kontrol et."
+      unreachable: "Depoya ulaşılamıyor."
+      unsupported_schema: "Desteklenmeyen şema sürümü {version}."
+      no_sets: "manifest.yaml hiçbir set listelemiyor."
+      no_lessons: "Hiçbir sette ders bulunamadı."
+      executable_content: "Ders içeriği izin verilmeyen çalıştırılabilir kod içeriyor."
+      lessons_unreadable: "İlk setin dersleri okunamadı."
+      lesson_invalid_json: "İlk setin ilk dersi geçerli bir JSON değil."
+      validator_unavailable: "Ders doğrulayıcısı yüklenemedi."
+      lesson_invalid: "İlk setin ilk dersi doğrulamadan geçemedi: {detail}"
     failed: "Doğrulama başarısız oldu: {reason}"
     passed: "Doğrulama başarılı: {sets} set, {lessons} ders."
 resource:

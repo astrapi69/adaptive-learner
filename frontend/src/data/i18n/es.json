@@ -4416,6 +4416,19 @@
       "sync_failed": "La sincronización falló. Inténtalo de nuevo."
     },
     "validation": {
+      "reason": {
+        "not_found": "No se encontró el repositorio o manifest.yaml.",
+        "access_denied": "Acceso denegado: comprueba el repositorio y tu token de GitHub.",
+        "unreachable": "No se puede acceder al repositorio.",
+        "unsupported_schema": "Versión de esquema no compatible: {version}.",
+        "no_sets": "manifest.yaml no contiene ningún conjunto.",
+        "no_lessons": "No se encontraron lecciones en ningún conjunto.",
+        "executable_content": "El contenido de la lección contiene código ejecutable no permitido.",
+        "lessons_unreadable": "No se pudieron leer las lecciones del primer conjunto.",
+        "lesson_invalid_json": "La primera lección del primer conjunto no es un JSON válido.",
+        "validator_unavailable": "No se pudo cargar el validador de lecciones.",
+        "lesson_invalid": "La primera lección del primer conjunto no supera la validación: {detail}"
+      },
       "failed": "La validación falló: {reason}",
       "passed": "Validación correcta: {sets} conjuntos, {lessons} lecciones."
     }

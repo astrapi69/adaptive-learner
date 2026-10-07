@@ -4416,6 +4416,19 @@
       "sync_failed": "Sinkronisasi gagal. Coba lagi."
     },
     "validation": {
+      "reason": {
+        "not_found": "Repositori atau manifest.yaml tidak ditemukan.",
+        "access_denied": "Akses ditolak - periksa repositori dan token GitHub kamu.",
+        "unreachable": "Repositori tidak dapat dijangkau.",
+        "unsupported_schema": "Versi skema {version} tidak didukung.",
+        "no_sets": "manifest.yaml tidak mencantumkan set apa pun.",
+        "no_lessons": "Tidak ada pelajaran di set mana pun.",
+        "executable_content": "Isi pelajaran memuat kode yang dapat dieksekusi dan tidak diizinkan.",
+        "lessons_unreadable": "Pelajaran dari set pertama tidak dapat dibaca.",
+        "lesson_invalid_json": "Pelajaran pertama dari set pertama bukan JSON yang valid.",
+        "validator_unavailable": "Validator pelajaran tidak dapat dimuat.",
+        "lesson_invalid": "Pelajaran pertama dari set pertama gagal validasi: {detail}"
+      },
       "failed": "Validasi gagal: {reason}",
       "passed": "Validasi lulus: {sets} set, {lessons} pelajaran."
     }
