@@ -18,6 +18,18 @@ import type {
   LearningSession,
 } from "../../../types/domain";
 
+/**
+ * Where a curriculum opens: the paths tab of the progress hub, which selects
+ * the one named by ``curriculum`` (#3659). ``/curriculum`` is only a legacy
+ * redirect that drops the query.
+ *
+ * @example
+ * go(curriculumPath("c1")); // "/progress?tab=paths&curriculum=c1"
+ */
+function curriculumPath(curriculumId: string): string {
+  return `/progress?tab=paths&curriculum=${encodeURIComponent(curriculumId)}`;
+}
+
 /** i18n translate signature (key + fallback). */
 type Translate = (key: string, fallback: string) => string;
 
@@ -103,7 +115,7 @@ export function useImportActions({
     // user might double-click before the state observed the
     // initial load.
     if (existingCurriculum) {
-      go(`/curriculum?id=${encodeURIComponent(existingCurriculum.id)}`);
+      go(curriculumPath(existingCurriculum.id));
       return;
     }
     const { userId } = readLearnerState();
@@ -147,7 +159,7 @@ export function useImportActions({
       notify.success(
         t("import.curriculum_created", "Curriculum created from the analysis."),
       );
-      go(`/curriculum?id=${encodeURIComponent(curriculum.id)}`);
+      go(curriculumPath(curriculum.id));
     } catch (err) {
       notify.error(
         t("import.curriculum_error", "Could not create the curriculum."),
