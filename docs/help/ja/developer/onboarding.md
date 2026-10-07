@@ -29,8 +29,8 @@ make test
 make dev
 ```
 
-フロントエンドの開発サーバーは**http://localhost:15174**で、
-バックエンドは**http://localhost:18001**で動作します。どちらのポートも
+フロントエンドの開発サーバーは **http://localhost:15174** で、
+バックエンドは **http://localhost:18001** で動作します。どちらのポートも
 `ADAPTIVE_LEARNER_FRONTEND_PORT` / `ADAPTIVE_LEARNER_PORT`で
 上書きできます。Ctrl-Cを1回押すと両方が停止します。
 
@@ -176,7 +176,7 @@ gh pr create --base develop \
 - ..."
 ```
 
-常に**`develop`**を対象にし、`main`は決して対象にしないでください
+常に **`develop`** を対象にし、`main`は決して対象にしないでください
 （`main`はリリースブランチです）。アンブレラ/エピックのサブissueの場合は、
 *サブissue*を`Closes #<sub-issue>`で引用し、追跡のために
 `Refs #<umbrella>`も加えてください。
