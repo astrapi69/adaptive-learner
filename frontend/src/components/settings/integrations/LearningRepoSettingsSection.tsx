@@ -7,8 +7,9 @@
  *     persistence with git commits + tags).
  *   - ``repos_dir`` text input. Empty means the server default
  *     (``repos/`` in the app data directory, resolved by the
- *     backend at call time, #3451); the placeholder names that
- *     rule, the About tab shows the actual data directory.
+ *     backend at call time, #3451); the helper text under the
+ *     field names that rule, the About tab shows the actual data
+ *     directory.
  *   - "Save settings" button — POSTs to the new
  *     ``/api/plugins/settings/learning-repo`` endpoint (lands in
  *     this commit). The plugin re-reads its config on the next
@@ -160,13 +161,20 @@ export default function LearningRepoSettingsSection() {
         <Input
           type="text"
           value={settings.repos_dir}
-          placeholder={t(
-            "repo.settings.repos_dir_placeholder",
-            "Default: repos in the data directory (see About)",
-          )}
+          aria-describedby="learning-repo-settings-repos-dir-hint"
           onChange={(e) => setSettings({ ...settings, repos_dir: e.target.value })}
           data-testid="learning-repo-settings-repos-dir"
         />
+        <span
+          id="learning-repo-settings-repos-dir-hint"
+          className="text-sm text-fg-muted"
+          data-testid="learning-repo-settings-repos-dir-hint"
+        >
+          {t(
+            "repo.settings.repos_dir_hint",
+            "Leave empty for the default: repos in the data directory (see About)",
+          )}
+        </span>
       </label>
 
       <div className="mt-2">

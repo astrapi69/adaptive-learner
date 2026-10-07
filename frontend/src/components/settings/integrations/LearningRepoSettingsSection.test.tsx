@@ -87,10 +87,12 @@ describe("LearningRepoSettingsSection — Dexie mode", () => {
     });
     const reposDir = screen.getByTestId("learning-repo-settings-repos-dir") as HTMLInputElement;
     // #3451: the bundled default is empty (the server resolves its data
-    // directory); the placeholder names the rule, never a fixed path.
+    // directory); the helper text names the rule, never a fixed path.
     expect(reposDir.value).toBe("");
-    expect(reposDir.placeholder).not.toMatch(/\.local\/share/);
-    expect(reposDir.placeholder).not.toBe("");
+    const hint = screen.getByTestId("learning-repo-settings-repos-dir-hint");
+    expect(reposDir.getAttribute("aria-describedby")).toBe(hint.id);
+    expect(hint.textContent).not.toMatch(/\.local\/share/);
+    expect(hint.textContent).not.toBe("");
 
     await act(async () => {
       fireEvent.change(reposDir, { target: { value: "/my/custom/dir" } });

@@ -2246,8 +2246,9 @@ each card row (`CardImageField`).
       the notice "Only available with the desktop app."; DevTools >
       Network shows no request to /api/plugins/health
 - [ ] TC-0936 "Learning Repository" card, fresh install: the "Repositories directory"
-      field is empty and shows the placeholder "Default: repos in the data
-      directory (see About)", not a fixed Linux path (#3451)
+      field is empty, below it reads "Leave empty for the default: repos
+      in the data directory (see About)", no fixed Linux path; at 375 px
+      the hint wraps instead of being cut off (#3451)
 - [ ] TC-0937 Desktop app, git persistence on, field left empty, saved, then "Persist
       to git" on the Learning Repository page: toast "Persisted to git:
       <commit>"; on disk the folder "repos/<project id>/" with README.md

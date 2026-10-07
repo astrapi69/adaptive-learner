@@ -2416,9 +2416,10 @@ jeder Karten-Zeile (`CardImageField`).
       dem Hinweis "Nur mit der Desktop-App verfügbar."; DevTools >
       Netzwerk zeigt keinen Aufruf von /api/plugins/health
 - [ ] TC-0936 Karte "Lern-Repository", frische Installation: das Feld
-      "Repository-Verzeichnis" ist leer und zeigt den Platzhalter
-      "Standard: repos im Datenverzeichnis (siehe Über)", keinen festen
-      Linux-Pfad (#3451)
+      "Repository-Verzeichnis" ist leer, darunter steht "Leer lassen für
+      den Standard: repos im Datenverzeichnis (siehe Über)", kein fester
+      Linux-Pfad; bei 375 px bricht der Hinweis um statt abgeschnitten
+      zu werden (#3451)
 - [ ] TC-0937 Desktop-App, Git-Persistenz an, Feld leer lassen, speichern, auf der
       Lern-Repository-Seite "In Git speichern": Toast "In Git gespeichert:
       <Commit>"; auf der Platte liegt der Ordner "repos/<Projekt-ID>/" mit
