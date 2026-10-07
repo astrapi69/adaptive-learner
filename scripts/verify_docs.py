@@ -158,6 +158,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 # CHECKS registry and the tests keep importing it from ``verify_docs``.
 from generate_api_reference import check_api_reference  # noqa: E402
 from testplan_ids import check as testplan_id_check  # noqa: E402
+from verify_docs_feature_completeness import changelog_versions  # noqa: E402
+from verify_docs_feature_completeness import (  # noqa: E402
+    check_feature_completeness as _check_feature_completeness,
+)
 from verify_docs_feature_shots import check_feature_shots  # noqa: E402,F401
 from verify_docs_help_changelog import check_help_changelog as _check_help_changelog  # noqa: E402
 from verify_docs_i18n import check_i18n  # noqa: E402,F401
@@ -248,114 +252,13 @@ def check_plugins(report: Report, fix: bool) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Check: feature completeness  (WARN, heuristic)
+# Check: feature completeness  (WARN, heuristic; scripts/verify_docs_feature_completeness.py)
 # ---------------------------------------------------------------------------
-
-_STOPWORDS = {
-    "the",
-    "and",
-    "for",
-    "with",
-    "from",
-    "into",
-    "via",
-    "per",
-    "new",
-    "all",
-    "now",
-    "add",
-    "added",
-    "fix",
-    "fixed",
-    "more",
-    "also",
-    "plus",
-    "system",
-    "support",
-    "mode",
-    "page",
-    "phase",
-    "release",
-    "this",
-    "that",
-    "across",
-}
-
-# Generic changelog section headings -- not feature names, skip them.
-_SECTION_HEADINGS = {
-    "added",
-    "changed",
-    "fixed",
-    "removed",
-    "deprecated",
-    "security",
-    "notes",
-    "quality",
-    "under the hood",
-    "also in this release",
-    "dependencies",
-    "decisions confirmed in this release",
-    "what's new",
-    "breaking changes",
-    "migration",
-    "tests",
-    "documentation",
-}
-
-
-def _changelog_versions() -> list[tuple[tuple[int, int, int], Path]]:
-    out = []
-    for path in (REPO / "changelog" / "releases").glob("v*.md"):
-        m = re.match(r"v(\d+)\.(\d+)\.(\d+)\.md$", path.name)
-        if m:
-            out.append(((int(m[1]), int(m[2]), int(m[3])), path))
-    return sorted(out)
 
 
 def check_feature_completeness(report: Report) -> None:
-    readme = REPO / "README.md"
-    if not readme.exists():
-        return
-    readme_text = read(readme).lower()
-
-    # README badge version marks "what the README was last refreshed to".
-    bmatch = re.search(r"badge/version-v(\d+)\.(\d+)\.(\d+)-blue", read(readme))
-    since = (int(bmatch[1]), int(bmatch[2]), int(bmatch[3])) if bmatch else (0, 0, 0)
-
-    missing: list[str] = []
-    for version, path in _changelog_versions():
-        if version <= since:
-            continue
-        for heading in re.findall(r"(?m)^###\s+(.+?)\s*$", read(path)):
-            # Drop generic section labels (e.g. "Changed", "Fixed") and
-            # anything that reads as a bug-line rather than a feature.
-            clean = re.sub(r"\s*[—–-]\s*.*$", "", heading).strip().lower()
-            if clean in _SECTION_HEADINGS or heading.strip().lower() in _SECTION_HEADINGS:
-                continue
-            if re.match(r"(?i)^bug\b", heading.strip()):
-                continue
-            tokens = [
-                t
-                for t in re.findall(r"[A-Za-z][A-Za-z0-9+-]{2,}", heading.lower())
-                if t not in _STOPWORDS
-            ]
-            if not tokens:
-                continue
-            # If NONE of the heading's key tokens appear in the README,
-            # the feature is likely unmentioned.
-            if not any(t in readme_text for t in tokens):
-                vstr = ".".join(str(p) for p in version)
-                missing.append(f'v{vstr}: "{heading}"')
-
-    if missing:
-        shown = missing[:12]
-        more = f" (+{len(missing) - len(shown)} more)" if len(missing) > len(shown) else ""
-        report.warn(
-            "feature-completeness",
-            "README.md may not mention features shipped since its version badge: "
-            + "; ".join(shown)
-            + more,
-        )
+    """WARN when README.md seems not to mention a recently shipped feature."""
+    _check_feature_completeness(report, repo=REPO, read=read)
 
 
 # ---------------------------------------------------------------------------
@@ -369,7 +272,7 @@ STALE_SCAN = ["README.md", "README-de.md", "CLAUDE.md", "docs/ROADMAP.md", "docs
 
 
 def _latest_release_month() -> tuple[int, int]:
-    versions = _changelog_versions()
+    versions = changelog_versions(REPO)
     if not versions:
         return (2026, 5)
     _, path = versions[-1]
