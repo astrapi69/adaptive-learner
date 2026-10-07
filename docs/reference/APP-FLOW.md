@@ -189,8 +189,9 @@ summary.
 ## Journey: content import, creation and sharing
 
 - **Import** (`/content?tab=import`): paste or upload an AI chat export,
-  then on the conversation page analyze it, create a curriculum, start an
-  AI session or extract flashcards (`/anki`). The tab also redeems
+  then on the conversation page analyze it, create a curriculum (it opens
+  under My paths, `/progress?tab=paths&curriculum=<id>`), start an AI
+  session or extract flashcards (`/anki`). The tab also redeems
   invitation codes (`/invite`) and lists own lessons with play, edit,
   export, share and delete.
 - **Create** (`/content?tab=create`): a four-step wizard (metadata,
@@ -260,9 +261,6 @@ that a mode cannot offer is shown disabled with its reason
 Found while mapping the flows; recorded here so they are not lost, and
 proposed separately rather than changed by this document.
 
-- Creating or opening a curriculum from an imported conversation goes to
-  `/curriculum?id=...`, but that alias redirects to `/progress?tab=paths`
-  and drops the id (`frontend/src/hooks/content/import/useImportActions.ts`).
 - "Save & share" in the lesson creator navigates to `/content?share=<id>`;
   nothing reads the `share` parameter, so the learner lands on the
   default content tab (`frontend/src/pages/lesson/CreateLesson.tsx`).
