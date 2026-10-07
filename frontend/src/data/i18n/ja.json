@@ -2792,6 +2792,7 @@
       "public": "パブリック",
       "branch": "ブランチ",
       "lessons_note": "このセットの全 {n} レッスンが含まれます。",
+      "lessons_note_one": "このセットの1つのレッスンが含まれます。",
       "invalid_repo": "リポジトリを owner/name の形式で入力してください。",
       "submit": "エクスポート",
       "working": "エクスポート中…",

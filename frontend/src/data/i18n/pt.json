@@ -2792,6 +2792,7 @@
       "public": "Público",
       "branch": "Ramo",
       "lessons_note": "Todas as {n} lições deste conjunto serão incluídas.",
+      "lessons_note_one": "A única lição deste conjunto será incluída.",
       "invalid_repo": "Indica o repositório como owner/name.",
       "submit": "Exportar",
       "working": "A exportar…",

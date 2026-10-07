@@ -98,6 +98,37 @@ es daraus einen Entdecken-Bereich, in dem du empfohlene
 Repositories mit **einem Klick** hinzufügst. Sie erscheinen mit
 dem Badge **Offiziell empfohlen** (Trust 3).
 
+
+---
+
+## Eigenes Repository registrieren
+
+Unter **Einstellungen → Daten → Quellen** schlägt **Eigenes Repository
+registrieren** dein eigenes Content-Repository für das offizielle
+Verzeichnis (`recommended-repos.json`) vor, das die repository-übergreifende
+Suche liest.
+
+1. Wähle eines deiner verbundenen Repositories oder gib seine
+   GitHub-URL und den Branch ein, dann einen Titel und, wenn du magst,
+   eine einzeilige Beschreibung.
+2. **Einreichung vorbereiten**: die App ermittelt den aktuellen Commit
+   des Repositorys, führt dieselbe technische Prüfung aus wie beim
+   Verbinden eines Repositorys, liest die Sprachpaare aus der
+   `search-index.json` des Repositorys und zeigt den fertigen
+   Verzeichnis-Eintrag. Ein Status sagt dir, ob der Eintrag *Lokal
+   validiert* oder *Ausstehend - CI validiert* ist.
+3. Reiche ihn auf einem von zwei Wegen ein:
+    - **Eintrag kopieren** und **Verzeichnis öffnen und vorschlagen**:
+      GitHub öffnet die Verzeichnisdatei zum Bearbeiten; füge den
+      Eintrag in das Array ein und wähle "Propose changes". GitHub
+      erstellt den Fork für dich. Ein Token ist nicht nötig.
+    - **Pull Request erstellen**: mit einem GitHub-Token (Einstellungen →
+      Integrationen) öffnet die App den Pull Request selbst und zeigt
+      dir den Link. Das gibt es nur in der Browser-Version der App; in
+      der Desktop-App bleibt der Knopf sichtbar, aber deaktiviert.
+
+Ein Maintainer prüft den Pull Request und führt ihn zusammen, sobald die
+CI des Verzeichnisses den festgehaltenen Commit validiert hat.
 ---
 
 ## Lokale Bewertungen

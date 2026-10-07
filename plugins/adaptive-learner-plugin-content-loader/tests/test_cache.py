@@ -5,12 +5,10 @@
 from __future__ import annotations
 
 import json
-import shutil
 import textwrap
 from pathlib import Path
 
 import pytest
-
 from adaptive_learner_content_loader.cache import (
     cache_path_for_set,
     cleanup_tmp_dirs,
@@ -31,7 +29,6 @@ from adaptive_learner_content_loader.exceptions import (
     ContentNotFoundError,
     ContentSchemaError,
 )
-
 
 SOURCE = "astrapi69/adaptive-learner-content"
 SET_ID = "language-fr-a1"

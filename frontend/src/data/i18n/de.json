@@ -2792,6 +2792,7 @@
       "public": "Öffentlich",
       "branch": "Branch",
       "lessons_note": "Alle {n} Lektionen dieses Sets werden einbezogen.",
+      "lessons_note_one": "Die eine Lektion dieses Sets wird einbezogen.",
       "invalid_repo": "Gib das Repository als owner/name an.",
       "submit": "Exportieren",
       "working": "Exportiere…",

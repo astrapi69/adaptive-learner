@@ -2792,6 +2792,7 @@
       "public": "Public",
       "branch": "Branche",
       "lessons_note": "Les {n} leçons de cet ensemble seront incluses.",
+      "lessons_note_one": "L'unique leçon de cet ensemble sera incluse.",
       "invalid_repo": "Saisis le dépôt sous la forme owner/name.",
       "submit": "Exporter",
       "working": "Exportation…",

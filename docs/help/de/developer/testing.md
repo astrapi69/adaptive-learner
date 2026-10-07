@@ -245,7 +245,7 @@ Isolation ist hart - `ADAPTIVE_LEARNER_TEST=1` wird vor jedem
 Jedes Plugin hat sein eigenes `tests/`-Verzeichnis:
 
 ```bash
-make test-plugins              # alle 13
+make test-plugins              # jedes Plugin
 make test-plugin-session       # nur eines
 cd plugins/adaptive-learner-plugin-session && poetry run pytest
 ```
@@ -404,7 +404,7 @@ nur-warnenden Suiten laufen zur Nachtschicht und beim Release.
 `main` und bei jedem PR (Python 3.12):
 
 1. Backend-Tests (pytest)
-2. Plugin-Tests (`make test-plugins`, alle 13 über die
+2. Plugin-Tests (`make test-plugins`, jedes Plugin über die
    Backend-venv)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`),
    Circular-Dependency-Prüfung, Stylelint, Vitest,

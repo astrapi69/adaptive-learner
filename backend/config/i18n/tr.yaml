@@ -2590,6 +2590,7 @@ content:
     public: "Herkese açık"
     branch: "Dal"
     lessons_note: "Bu setteki {n} dersin tümü dahil edilecek."
+    lessons_note_one: "Bu setteki tek ders dahil edilecek."
     invalid_repo: "Depoyu owner/name olarak girin."
     submit: "Dışa aktar"
     working: "Dışa aktarılıyor…"

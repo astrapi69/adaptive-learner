@@ -2592,6 +2592,7 @@ content:
     public: "Δημόσιο"
     branch: "Κλάδος"
     lessons_note: "Θα συμπεριληφθούν και τα {n} μαθήματα αυτού του σετ."
+    lessons_note_one: "Θα συμπεριληφθεί το μοναδικό μάθημα αυτού του σετ."
     invalid_repo: "Δώσε το αποθετήριο ως owner/name."
     submit: "Εξαγωγή"
     working: "Εξαγωγή…"

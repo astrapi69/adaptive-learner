@@ -37,11 +37,11 @@ Implementierungen erfüllen einen Vertrag:
 - **`apiStorage`** (Standard): dünner Wrapper um
   `api/client.ts`, der mit dem FastAPI-Backend spricht.
 - **`dexieStorage`** (local-first): vollständiger
-  IndexedDB-Stack, der alle 30 SQLAlchemy-Modelle spiegelt.
+  IndexedDB-Stack, der die SQLAlchemy-Modelle spiegelt.
   KI-Aufrufe gehen direkt aus dem Browser über den
   `storage/ai/`-Namespace.
 
-`IStorageService` (`storage/types/core/service.ts`) stellt 29
+`IStorageService` (`storage/types/core/service.ts`) stellt seine
 Namespaces bereit (users, projects, settings, assessment,
 session mit Streaming, tracking, tools, curricula, topics,
 lessons, plugins, imports, system, backup, export, subjects,
@@ -161,7 +161,7 @@ auf HTTP-Statuscodes. Das vollständige Muster steht in
 
 - Backend: SQLAlchemy + SQLite. Alembic-Migrationen in
   `backend/migrations/versions/`.
-- Sync-Surface: 30 Tabellen (`sync_service.ALL_SYNC_TABLES`).
+- Sync-Surface: jede Tabelle in `sync_service.ALL_SYNC_TABLES`.
   Append-only-History-Zeilen (Sessions, Messages, Ratings,
   Progress-Commits, Step-Evaluations, Method-Switches,
   importierte Conversations, importierte Messages, Anki-Cards,

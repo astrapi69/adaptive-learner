@@ -2601,6 +2601,7 @@ content:
     public: "Public"
     branch: "Branch"
     lessons_note: "All {n} lessons of this set will be included."
+    lessons_note_one: "The set's one lesson will be included."
     invalid_repo: "Enter the repository as owner/name."
     submit: "Export"
     working: "Exporting…"
