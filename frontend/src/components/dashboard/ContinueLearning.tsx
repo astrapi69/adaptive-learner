@@ -364,7 +364,7 @@ export default function ContinueLearning({
                 className="rounded-app border border-border bg-card p-4"
                 data-testid="continue-learning"
             >
-                <h2 className="mb-2 text-lg font-semibold text-foreground">
+                <h2 className="mt-0 mb-2 text-lg font-semibold text-foreground">
                     {t("content.continue_learning.title", "Continue Learning")}
                 </h2>
                 <p className="text-sm text-muted-foreground">
@@ -388,7 +388,7 @@ export default function ContinueLearning({
             className="rounded-app border border-border bg-card p-4"
             data-testid="continue-learning"
         >
-            <h2 className="mb-3 text-lg font-semibold text-foreground">
+            <h2 className="mt-0 mb-3 text-lg font-semibold text-foreground">
                 {t("content.continue_learning.title", "Continue Learning")}
             </h2>
             <ul className="flex flex-col gap-2" data-testid="continue-learning-list">
