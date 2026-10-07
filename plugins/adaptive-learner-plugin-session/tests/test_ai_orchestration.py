@@ -14,66 +14,64 @@ from types import SimpleNamespace
 from adaptive_learner_session import ai_orchestration
 
 
-def test_default_models_covers_the_three_providers():
-    assert "anthropic" in ai_orchestration.DEFAULT_MODELS
-    assert "openai" in ai_orchestration.DEFAULT_MODELS
-    assert "gemini" in ai_orchestration.DEFAULT_MODELS
+# A stand-in table: the real one (``app.services.ai_caller.DEFAULT_MODELS``)
+# is not importable here, and resolve_model takes its table as a parameter
+# (#3420). The real table's coverage is pinned in backend/tests.
+DEFAULTS = {
+    "anthropic": "claude-default",
+    "openai": "gpt-default",
+    "gemini": "gemini-default",
+}
 
 
 def test_resolve_model_known_providers():
-    assert ai_orchestration.resolve_model("anthropic").startswith("claude-")
-    assert ai_orchestration.resolve_model("openai").startswith("gpt-")
-    assert ai_orchestration.resolve_model("gemini").startswith("gemini-")
+    assert ai_orchestration.resolve_model("anthropic", DEFAULTS) == "claude-default"
+    assert ai_orchestration.resolve_model("openai", DEFAULTS) == "gpt-default"
+    assert ai_orchestration.resolve_model("gemini", DEFAULTS) == "gemini-default"
 
 
 def test_resolve_model_unknown_provider_returns_none():
-    assert ai_orchestration.resolve_model("nonsense") is None
-    assert ai_orchestration.resolve_model("") is None
+    assert ai_orchestration.resolve_model("nonsense", DEFAULTS) is None
+    assert ai_orchestration.resolve_model("", DEFAULTS) is None
 
 
 def test_resolve_model_override_wins_over_default():
     """v0.4.0: a non-empty override replaces the default for that
     provider; the default is NOT consulted at all."""
     assert (
-        ai_orchestration.resolve_model("anthropic", override="claude-sonnet-4-20250514")
+        ai_orchestration.resolve_model("anthropic", DEFAULTS, override="claude-sonnet-4-20250514")
         == "claude-sonnet-4-20250514"
     )
-    assert (
-        ai_orchestration.resolve_model("openai", override="gpt-4o")
-        == "gpt-4o"
-    )
+    assert ai_orchestration.resolve_model("openai", DEFAULTS, override="gpt-4o") == "gpt-4o"
 
 
 def test_resolve_model_blank_override_falls_back_to_default():
     """``None``, ``""`` and whitespace-only overrides all behave
     the same as "no override"."""
-    assert ai_orchestration.resolve_model("anthropic", override=None) == (
-        ai_orchestration.DEFAULT_MODELS["anthropic"]
-    )
-    assert ai_orchestration.resolve_model("anthropic", override="") == (
-        ai_orchestration.DEFAULT_MODELS["anthropic"]
-    )
-    assert ai_orchestration.resolve_model("anthropic", override="   ") == (
-        ai_orchestration.DEFAULT_MODELS["anthropic"]
-    )
+    for blank in (None, "", "   "):
+        assert ai_orchestration.resolve_model("anthropic", DEFAULTS, override=blank) == (
+            "claude-default"
+        )
 
 
 def test_resolve_model_override_strips_whitespace():
     """A leading/trailing-space override is stripped before use —
     a copy-paste accident shouldn't produce an invalid model name."""
     assert (
-        ai_orchestration.resolve_model("anthropic", override="  claude-sonnet-4-20250514\n")
+        ai_orchestration.resolve_model(
+            "anthropic", DEFAULTS, override="  claude-sonnet-4-20250514\n"
+        )
         == "claude-sonnet-4-20250514"
     )
 
 
 def test_resolve_model_override_works_for_unknown_provider():
     """An override lets a not-yet-shipped provider resolve to a
-    model even though DEFAULT_MODELS doesn't know it — useful
+    model even though the default table doesn't know it — useful
     for users opting into a new provider before AdaptiveLearner ships
-    its DEFAULT_MODELS row."""
+    its default row."""
     assert (
-        ai_orchestration.resolve_model("future-provider", override="future-model-v1")
+        ai_orchestration.resolve_model("future-provider", DEFAULTS, override="future-model-v1")
         == "future-model-v1"
     )
 

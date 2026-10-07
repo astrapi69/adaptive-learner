@@ -41,7 +41,7 @@ env vars + the Settings UI.
 
 | Layer | Examples | Lives in |
 |---|---|---|
-| Project `app.yaml` | non-secret defaults: `app.name`, `app.default_language`, `plugins.enabled`, server.port. **Never** API keys. | committed to git |
+| Project `app.yaml` | non-secret defaults: `app.default_language`, `server.cors_origins`, `plugins.enabled` / `plugins.disabled`. The backend port is `ADAPTIVE_LEARNER_PORT`, not a key here. **Never** API keys. | gitignored; created on first start from the committed `app.yaml.example` |
 | User `secrets.yaml` | `ai.<provider>.api_key`, `ai.<provider>.default_model`, `secret_key` (Fernet) | `~/.config/adaptive_learner/secrets.yaml` (Linux/macOS), `%APPDATA%/adaptive_learner/secrets.yaml` (Windows) |
 | Settings UI (DB) | per-user `api_key_<provider>`, `model_override_<provider>`, `language`, `active_provider` | SQLite, Fernet-encrypted for the api_key_* columns |
 | Env-var | CI / Docker / shell overrides of any of the above | environment |

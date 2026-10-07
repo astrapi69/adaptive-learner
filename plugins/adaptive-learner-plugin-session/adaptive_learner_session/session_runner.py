@@ -25,6 +25,7 @@ from sqlalchemy.orm import Session
 from app.models import LearningProject, LearningSession, SessionMessage, User
 from app.models import StepEvaluation as StepEvaluationRow
 from app.schemas import AIProvider, LearningSessionOut, MessageRole, SessionMessageOut
+from app.services.ai_caller import DEFAULT_MODELS
 
 from . import ai_error_codes, ai_orchestration
 from .prompts import MAX_STEP, MIN_STEP
@@ -321,7 +322,7 @@ def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | No
       - api_key is None when the user hasn't entered one for the
         active provider yet.
       - model_override (v0.4.0) is None when the user hasn't
-        overridden ai_orchestration.DEFAULT_MODELS for the active
+        overridden ai_caller.DEFAULT_MODELS for the active
         provider.
     """
     from app.repositories.settings_repo import SqlAlchemySettingsRepository
@@ -429,7 +430,7 @@ def _validate_model_against_cache(ctx: MessageContext) -> None:
         provider_enum = _AIProvider(ctx.provider_key)
         cached = _model_discovery.get_cached_models(provider_enum, ctx.api_key)
         if cached is not None and not any(m.id == ctx.model for m in cached):
-            default_model = ai_orchestration.DEFAULT_MODELS.get(ctx.provider_key)
+            default_model = DEFAULT_MODELS.get(ctx.provider_key)
             if default_model and default_model != ctx.model:
                 ctx.model_warning = (
                     f"Model {ctx.model!r} is not in the available models for "
@@ -480,7 +481,7 @@ def resolve_ai_context(ctx: MessageContext) -> str | None:
         ctx.ai_error_code = ai_error_codes.NO_API_KEY
         return f"No API key stored for provider {provider_key!r}."
 
-    model = ai_orchestration.resolve_model(provider_key, override=model_override)
+    model = ai_orchestration.resolve_model(provider_key, DEFAULT_MODELS, override=model_override)
     if model is None:
         ctx.ai_error_code = ai_error_codes.NO_MODEL
         return f"Provider {provider_key!r} has no default model registered."
