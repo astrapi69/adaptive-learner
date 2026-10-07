@@ -4,7 +4,6 @@ export * from "./useChartTheme";
 export * from "./useCountUp";
 export * from "./useDeferredScroll";
 export * from "./useDialogFocus";
-export * from "./useDocumentTitle";
 export * from "./useI18n";
 export * from "./useScrollDirection";
 export * from "./useScrollSpy";
