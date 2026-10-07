@@ -1928,6 +1928,7 @@ repo:
     title: "Repositorio de aprendizaje"
     loading: "Cargando…"
     repos_dir: "Directorio de repositorios"
+    repos_dir_hint: "Déjalo vacío para usar el predeterminado: repos en el directorio de datos (ver Acerca de)"
     save: "Guardar ajustes"
     saving: "Guardando…"
     toast:
@@ -2922,7 +2923,7 @@ content:
     privacy: "Tus tarjetas se enviarán a tu proveedor de IA configurado para su revisión. No se transmiten datos personales."
     confirm: "Revisar"
     progress: "Revisando lote {current} de {total}..."
-    rate_limited: "Espera un momento antes de ejecutar otra revision."
+    rate_limited: "Espera un momento antes de ejecutar otra revisión."
     failed: "Revisión con IA no disponible."
     unavailable_mode: "Solo disponible en modo de almacenamiento del navegador."
     report:

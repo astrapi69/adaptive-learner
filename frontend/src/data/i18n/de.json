@@ -2062,6 +2062,7 @@
       "title": "Lern-Repository",
       "loading": "Laden…",
       "repos_dir": "Repository-Verzeichnis",
+      "repos_dir_hint": "Leer lassen für den Standard: repos im Datenverzeichnis (siehe Über)",
       "save": "Einstellungen speichern",
       "saving": "Speichern…",
       "toast": {

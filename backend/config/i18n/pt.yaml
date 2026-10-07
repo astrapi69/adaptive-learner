@@ -1675,7 +1675,7 @@ ui:
     forest: "Floresta"
     high-contrast: "Alto contraste"
     sepia: "Sépia"
-    auto: "Automatico (sistema)"
+    auto: "Automático (sistema)"
   errors:
     bad_request: "Não foi possível processar o pedido."
     forbidden: "Acesso negado. Verifique suas configurações."
@@ -1926,6 +1926,7 @@ repo:
     title: "Repositório de aprendizagem"
     loading: "Carregando…"
     repos_dir: "Diretório dos repositórios"
+    repos_dir_hint: "Deixe vazio para usar o padrão: repos no diretório de dados (ver Sobre)"
     save: "Salvar configurações"
     saving: "Salvando…"
     toast:
