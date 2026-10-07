@@ -87,6 +87,13 @@ checks:
     wired_in: scripts/generate_pydantic_models.py --check; .github/workflows/ci.yml backend-tests step; backend/tests/test_pydantic_layer_single_writer.py; make sync-schema-check
     probe: script_exists=backend/tests/test_pydantic_layer_single_writer.py | ci_step=.github/workflows/ci.yml::backend-tests::Generated Pydantic layer drift gate (#3650)::generate_pydantic_models.py
 
+  - id: help-strong-emphasis
+    verifies: no help page has bold that the in-app help renders as literal asterisks; the CommonMark flanking and pairing rule for ** runs, plus GFM autolinks, applied per inline context and matched against mdast-util-from-markdown on every help page; no help page FAILs (#3655)
+    rule: none (rendering-correctness class; text-formatting.md documents the prose rules it protects)
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_strong_emphasis.py
+    probe: script_exists=backend/tests/test_verify_docs_strong_emphasis.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
   - id: api-reference
     verifies: the help API reference pages docs/help/{en,de}/api/endpoints.md match the committed OpenAPI snapshot, so the reference names every core router and plugin route; a missing or empty snapshot FAILs (#3454)
     rule: ai-workflow/documentation-protocol.md#when-to-update-docsapimd

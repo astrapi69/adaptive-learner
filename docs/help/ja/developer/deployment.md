@@ -47,11 +47,11 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-`docker-compose.prod.yml`は**単一のサービス`app`**を含みます（#2058
+`docker-compose.prod.yml`は単一のサービス **`app`** を含みます（#2058
 以降は1コンテナ構成 - nginxも独立したフロントエンドコンテナも
 ありません）。
 
-- **FastAPI（Python 3.12イメージ）**がビルド済みフロントエンドの
+- **FastAPI**（Python 3.12イメージ）がビルド済みフロントエンドの
   staticsと`/api/*`の両方を、内部ポート
   `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}`で提供します。
 - ホストに公開されるのは
