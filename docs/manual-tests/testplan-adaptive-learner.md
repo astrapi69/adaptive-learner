@@ -2415,6 +2415,15 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0474 Browser-Modus (GitHub Pages / Dexie): die Karte bleibt sichtbar mit
       dem Hinweis "Nur mit der Desktop-App verfügbar."; DevTools >
       Netzwerk zeigt keinen Aufruf von /api/plugins/health
+- [ ] TC-0936 Karte "Lern-Repository", frische Installation: das Feld
+      "Repository-Verzeichnis" ist leer und zeigt den Platzhalter
+      "Standard: repos im Datenverzeichnis (siehe Über)", keinen festen
+      Linux-Pfad (#3451)
+- [ ] TC-0937 Desktop-App, Git-Persistenz an, Feld leer lassen, speichern, auf der
+      Lern-Repository-Seite "In Git speichern": Toast "In Git gespeichert:
+      <Commit>"; auf der Platte liegt der Ordner "repos/<Projekt-ID>/" mit
+      README.md unterhalb des Datenverzeichnisses, das Einstellungen > Über
+      zeigt; ein eingetragener eigener Pfad gewinnt weiterhin
 
 ### TS-0061 Diagnose-Sonde: Fehltipp-Markierung + Aktionen (#3043)
 - [ ] TC-0475 Sonde AN, Mess-Leiste sichtbar: die Leiste zeigt neben "Werte

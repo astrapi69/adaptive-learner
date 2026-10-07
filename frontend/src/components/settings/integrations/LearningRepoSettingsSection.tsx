@@ -5,8 +5,10 @@
  * Three controls:
  *   - ``enable_git`` toggle (off by default; opt-in for on-disk
  *     persistence with git commits + tags).
- *   - ``repos_dir`` text input with the platform default as
- *     placeholder.
+ *   - ``repos_dir`` text input. Empty means the server default
+ *     (``repos/`` in the app data directory, resolved by the
+ *     backend at call time, #3451); the placeholder names that
+ *     rule, the About tab shows the actual data directory.
  *   - "Save settings" button — POSTs to the new
  *     ``/api/plugins/settings/learning-repo`` endpoint (lands in
  *     this commit). The plugin re-reads its config on the next
@@ -30,8 +32,6 @@ import { useI18n } from "../../../hooks/ui/useI18n";
 import { getStorage } from "../../../storage";
 import { notify } from "../../../utils/notify";
 import { SettingsSection } from "../SettingsSection";
-
-const DEFAULT_REPOS_DIR = "~/.local/share/adaptive_learner/repos";
 
 interface LearningRepoSettings {
   enable_git: boolean;
@@ -58,10 +58,7 @@ export default function LearningRepoSettingsSection() {
         if (cancelled) return;
         setSettings({
           enable_git: Boolean(data.settings?.enable_git ?? false),
-          repos_dir:
-            typeof data.settings?.repos_dir === "string"
-              ? data.settings.repos_dir
-              : DEFAULT_REPOS_DIR,
+          repos_dir: typeof data.settings?.repos_dir === "string" ? data.settings.repos_dir : "",
         });
       })
       .catch((err) => {
@@ -89,7 +86,7 @@ export default function LearningRepoSettingsSection() {
       await getStorage().pluginSettings.update("learning-repo", {
         settings: {
           enable_git: settings.enable_git,
-          repos_dir: settings.repos_dir || DEFAULT_REPOS_DIR,
+          repos_dir: settings.repos_dir.trim(),
         },
       });
       notify.success(t("repo.settings.toast.saved", "Settings saved"));
@@ -163,7 +160,10 @@ export default function LearningRepoSettingsSection() {
         <Input
           type="text"
           value={settings.repos_dir}
-          placeholder={DEFAULT_REPOS_DIR}
+          placeholder={t(
+            "repo.settings.repos_dir_placeholder",
+            "Default: repos in the data directory (see About)",
+          )}
           onChange={(e) => setSettings({ ...settings, repos_dir: e.target.value })}
           data-testid="learning-repo-settings-repos-dir"
         />
