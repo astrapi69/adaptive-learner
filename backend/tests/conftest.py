@@ -166,6 +166,16 @@ from app.paths import (  # noqa: E402
 )
 
 
+def looks_like_test_database(database: str) -> bool:
+    """Whether an engine URL's database part is a throwaway test DB.
+
+    Reads the parsed ``url.database``, never the URL's text rendering:
+    SQLAlchemy 2.1 percent-encodes ``:memory:`` in ``str(engine.url)``
+    (``sqlite:///%3Amemory%3A``), which a text match rejects (#3550).
+    """
+    return database == ":memory:" or database.startswith("/tmp/") or database.endswith("test.db")
+
+
 @pytest.fixture(autouse=True, scope="session")
 def _verify_test_isolation() -> None:
     """Refuse to run the suite if it would touch production data.
@@ -180,13 +190,14 @@ def _verify_test_isolation() -> None:
     Hard fail here is the last line of defence against re-living the
     April 2026 data-loss incident.
     """
-    url = str(engine.url)
-    assert "adaptive_learner.db" not in url, (
-        f"FATAL: tests refuse to run against production DB: {url}. "
+    url = engine.url
+    database = url.database or ""
+    assert "adaptive_learner.db" not in database, (
+        f"FATAL: tests refuse to run against production DB: {url!r}. "
         f"Fix: ensure ADAPTIVE_LEARNER_TEST=1 is set before any app import."
     )
-    assert ":memory:" in url or "/tmp/" in url or url.endswith("test.db"), (
-        f"FATAL: engine URL {url} does not look like a test DB. "
+    assert looks_like_test_database(database), (
+        f"FATAL: engine URL {url!r} does not look like a test DB. "
         f"Allow it explicitly in tests/conftest.py if intentional."
     )
 
