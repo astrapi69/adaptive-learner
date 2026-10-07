@@ -2979,6 +2979,8 @@ content:
     err_target: Pilih bahasa target.
     err_same_language: Bahasa sumber dan target harus berbeda.
     err_level: Pilih sebuah tingkat CEFR (A1-C2).
+    err_level_or_none: Pilih tingkat CEFR (A1-C2) atau 'Tanpa tingkat'.
+    level_none: Tanpa tingkat (bukan kursus bahasa)
     err_empty: Pelajaran ini tidak memiliki latihan. Mohon buat ulang pelajaran.
     regenerate: Buat ulang
     same_language_domain_hint: Bahasa sumber dan target sama - ini akan dibagikan sebagai konten pengetahuan (bukan bahasa).
