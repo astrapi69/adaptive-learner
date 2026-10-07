@@ -14,7 +14,8 @@
  *
  * A view that can't be reached deterministically (e.g. the bundled set has
  * no matching exercise) is skipped with a clear message rather than
- * committing a meaningless baseline.
+ * committing a meaningless baseline - but only while it has no baseline.
+ * Once a baseline is committed, not reaching the view fails (#3427).
  */
 
 import {expect, test} from "@playwright/test";
@@ -29,6 +30,7 @@ import {
     pinRandomStreams,
     setTheme,
     settleForScreenshot,
+    skipUnlessBaselined,
 } from "./helpers";
 
 for (const theme of THEME_IDS) {
@@ -43,7 +45,7 @@ for (const theme of THEME_IDS) {
             await setTheme(page, theme);
             await pinContentRegistry(page);
             const ready = await gotoView(page, view);
-            test.skip(!ready, `Could not reach ${view} deterministically`);
+            skipUnlessBaselined(ready, `${view}-${theme}.png`, view);
             await settleForScreenshot(page);
             // #2696 - viewport expansion replaces ``fullPage: true``, which
             // never painted below the viewport on this app's nested-scroll
