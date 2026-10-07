@@ -25,6 +25,7 @@ from sqlalchemy.orm import Session
 from app.models import LearningProject, LearningSession, SessionMessage, User
 from app.models import StepEvaluation as StepEvaluationRow
 from app.schemas import AIProvider, LearningSessionOut, MessageRole, SessionMessageOut
+from app.services.ai_caller import DEFAULT_MODELS
 
 from . import ai_error_codes, ai_orchestration
 from .prompts import MAX_STEP, MIN_STEP
@@ -33,6 +34,24 @@ from .step_evaluator import EVALUATION_DEFAULT_MAX_TOKENS, StepEvaluation, evalu
 from .topic_transition import TopicTransition, evaluate_topic_transition
 
 logger = logging.getLogger(__name__)
+
+
+def _session_config() -> dict[str, Any]:
+    """The merged session plugin config, ``{}`` when it cannot be read.
+
+    A config glitch must never block /message, but it leaves a warning
+    with the traceback (#3423) instead of silently using the defaults.
+    """
+    # Lazy import: keep app.* out of the module load path so this
+    # file stays importable from the standalone plugin test dir.
+    from app.config_overlay import read_plugin_config_merged
+
+    try:
+        cfg = read_plugin_config_merged("session")
+    except Exception:  # noqa: BLE001
+        logger.warning("Session plugin config unreadable; using defaults", exc_info=True)
+        return {}
+    return cfg if isinstance(cfg, dict) else {}
 
 
 def _read_step_evaluation_config() -> tuple[bool, float, int]:
@@ -51,15 +70,7 @@ def _read_step_evaluation_config() -> tuple[bool, float, int]:
     module-level lru_cache test-isolation pitfall called out in
     lessons-learned.md.
     """
-    # Lazy import: keep app.* out of the module load path so this
-    # file stays importable from the standalone plugin test dir.
-    from app.config_overlay import read_plugin_config_merged
-
-    try:
-        cfg = read_plugin_config_merged("session")
-    except Exception:  # noqa: BLE001 — config glitch must never block /message
-        cfg = {}
-    block = cfg.get("step_evaluation") if isinstance(cfg, dict) else None
+    block = _session_config().get("step_evaluation")
     if not isinstance(block, dict):
         block = {}
     enabled = bool(block.get("enabled", True))
@@ -88,15 +99,7 @@ def _read_async_evaluation_enabled() -> bool:
     ``asyncio.gather`` instead of sequentially. Set to ``False``
     to fall back to the v1.4.0 sequential behaviour.
     """
-    from app.config_overlay import read_plugin_config_merged
-
-    try:
-        cfg = read_plugin_config_merged("session")
-    except Exception:  # noqa: BLE001
-        cfg = {}
-    if not isinstance(cfg, dict):
-        return True
-    raw = cfg.get("async_evaluation")
+    raw = _session_config().get("async_evaluation")
     if raw is None:
         return True
     return bool(raw)
@@ -109,13 +112,7 @@ def _read_auto_loop_config() -> tuple[bool, int, int]:
     Defaults match the spec: enabled, max_cycles=5,
     transition_max_tokens=256. A missing block yields the defaults.
     """
-    from app.config_overlay import read_plugin_config_merged
-
-    try:
-        cfg = read_plugin_config_merged("session")
-    except Exception:  # noqa: BLE001 — never block /message
-        cfg = {}
-    block = cfg.get("auto_loop") if isinstance(cfg, dict) else None
+    block = _session_config().get("auto_loop")
     if not isinstance(block, dict):
         block = {}
     enabled = bool(block.get("enabled", True))
@@ -321,7 +318,7 @@ def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | No
       - api_key is None when the user hasn't entered one for the
         active provider yet.
       - model_override (v0.4.0) is None when the user hasn't
-        overridden ai_orchestration.DEFAULT_MODELS for the active
+        overridden ai_caller.DEFAULT_MODELS for the active
         provider.
     """
     from app.repositories.settings_repo import SqlAlchemySettingsRepository
@@ -429,7 +426,7 @@ def _validate_model_against_cache(ctx: MessageContext) -> None:
         provider_enum = _AIProvider(ctx.provider_key)
         cached = _model_discovery.get_cached_models(provider_enum, ctx.api_key)
         if cached is not None and not any(m.id == ctx.model for m in cached):
-            default_model = ai_orchestration.DEFAULT_MODELS.get(ctx.provider_key)
+            default_model = DEFAULT_MODELS.get(ctx.provider_key)
             if default_model and default_model != ctx.model:
                 ctx.model_warning = (
                     f"Model {ctx.model!r} is not in the available models for "
@@ -480,7 +477,7 @@ def resolve_ai_context(ctx: MessageContext) -> str | None:
         ctx.ai_error_code = ai_error_codes.NO_API_KEY
         return f"No API key stored for provider {provider_key!r}."
 
-    model = ai_orchestration.resolve_model(provider_key, override=model_override)
+    model = ai_orchestration.resolve_model(provider_key, DEFAULT_MODELS, override=model_override)
     if model is None:
         ctx.ai_error_code = ai_error_codes.NO_MODEL
         return f"Provider {provider_key!r} has no default model registered."
@@ -560,6 +557,7 @@ def _maybe_parallel_precompute(
     try:
         precomputed_eval, precomputed_transition = asyncio.run(_run_both())
     except Exception:  # noqa: BLE001 — fall back to sequential
+        logger.warning("Parallel evaluation failed; running sequentially", exc_info=True)
         return None
     # Both calls ran concurrently inside that ms budget; attribute the
     # elapsed time symmetrically for the parallel_saved_ms display.
