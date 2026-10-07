@@ -30,7 +30,7 @@ Commands (from `backend/`, so the plugins use the same config):
 ```bash
 poetry run ruff check app/ ../plugins/          # lint (CI + make test-fast)
 poetry run ruff check --fix app/ ../plugins/    # auto-fix
-poetry run ruff format app/                     # format (plugins: not yet)
+poetry run ruff format app/ ../plugins/         # format (CI: --check)
 ```
 
 ### TypeScript (Frontend)
@@ -88,7 +88,8 @@ Automatic checks before every commit, defined in `.pre-commit-config.yaml`
 
 - `pre-commit-hooks`: trailing whitespace, end-of-file, YAML/JSON syntax,
   large files, merge-conflict markers.
-- `ruff` + `ruff-format` (astral-sh/ruff-pre-commit) on `backend/app/`.
+- `ruff-check` + `ruff-format` (astral-sh/ruff-pre-commit) on `backend/app/`
+  and `plugins/` (with `--config=backend/pyproject.toml`, #3658).
 - `eslint`: `cd frontend && npx eslint src/` on staged `frontend/src` `.ts`/`.tsx`.
 - Repo-local guards: `plugin-lock-paired-with-pyproject`,
   `validate-bundled-content`, `i18n-script-sanity` (de/el/hi catalogs),

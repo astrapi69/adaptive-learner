@@ -80,6 +80,12 @@ ignore = [
     "UP042",  # replace-str-enum - `(str, Enum)` base class ships in migrations too; deferred
 ]
 
+[tool.ruff.lint.isort]
+# The backend package, named so the import order does not depend on where
+# ruff runs: pre-commit lints plugins/ from the repo root with this file as
+# --config, CI from backend/ (#3658).
+known-first-party = ["app"]
+
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["B"]                       # bugbear too strict for test fixtures
 "migrations/versions/*" = ["UP"]        # Alembic templates predate py312 syntax
