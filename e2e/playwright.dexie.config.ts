@@ -20,6 +20,8 @@ const PREVIEW_PORT =
     Number(process.env.ADAPTIVE_LEARNER_DEXIE_PREVIEW_PORT) || 4173;
 
 export default defineConfig({
+    // #3439 - a committed test.only would run one test and report green.
+    forbidOnly: !!process.env.CI,
     testDir: "./dexie",
     fullyParallel: false,
     workers: 1,
