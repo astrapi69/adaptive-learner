@@ -39,6 +39,7 @@ from pathlib import Path
 
 import yaml
 
+from app.exceptions import ValidationError
 from app.paths import get_config_dir
 from app.repositories.reset_repo import ResetRepository
 from app.services import identity_service
@@ -63,6 +64,17 @@ def secrets_path() -> Path:
     overrides via ``ADAPTIVE_LEARNER_CONFIG_DIR`` take effect.
     """
     return get_config_dir() / _SECRETS_FILENAME
+
+
+def require_confirmation(confirmation: str) -> None:
+    """The typed-confirmation gate of ``POST /api/reset`` (#3423).
+
+    Raises:
+        ValidationError: When ``confirmation`` is not exactly
+            :data:`CONFIRMATION_TOKEN` (the global handler maps it to 400).
+    """
+    if confirmation != CONFIRMATION_TOKEN:
+        raise ValidationError("Confirmation token mismatch.")
 
 
 def reset_all(repo: ResetRepository) -> int:
@@ -138,6 +150,7 @@ def _scrub_secrets_credential_blocks() -> None:
 
 __all__: list[str] = [
     "CONFIRMATION_TOKEN",
+    "require_confirmation",
     "reset_all",
     "secrets_path",
 ]

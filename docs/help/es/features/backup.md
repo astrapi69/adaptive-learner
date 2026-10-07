@@ -11,7 +11,7 @@ instalación nueva o tras cambiar de navegador. Encuentras todo en
 
 ## Qué contiene la copia de seguridad
 
-Una copia de seguridad es un **snapshot completo**: las 30 tablas
+Una copia de seguridad es un **snapshot completo**: todas las tablas
 de datos (proyectos de aprendizaje, sesiones, progreso de
 lecciones, errores a nivel de elemento, gamificación con
 XP/racha/insignias, misiones, tarjetas de Anki, notas y más)

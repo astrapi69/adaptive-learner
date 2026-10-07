@@ -61,46 +61,77 @@ jobs:
             backend/coverage.xml
           retention-days: 14
 
-  # Plugin coverage matrix job: skeleton ships zero plugins.
-  # When the user adds their first plugin, re-enable by populating
-  # the matrix include list with {plugin: <dir>, package: <module>}
-  # entries and un-comment the job below.
-  #
-  # plugin-coverage:
-  #   name: Plugin Coverage (${{ matrix.plugin }})
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       include:
-  #         - plugin: adaptive-learner-plugin-<name>
-  #           package: adaptive_learner_<name>
-  #   steps:
-  #     - uses: actions/checkout@v7
-  #     - uses: actions/setup-python@v7
-  #       with:
-  #         python-version: "3.12"
-  #     - name: Install Poetry
-  #       run: pip install poetry
-  #     - name: Install plugin dependencies
-  #       working-directory: plugins/${{ matrix.plugin }}
-  #       run: poetry install --no-interaction --no-ansi
-  #     - name: Run plugin coverage
-  #       working-directory: plugins/${{ matrix.plugin }}
-  #       run: |
-  #         poetry run pytest tests/ \
-  #           --cov=${{ matrix.package }} \
-  #           --cov-report=xml \
-  #           --cov-report=html \
-  #           --cov-report=term
-  #     - name: Upload plugin coverage artifact
-  #       uses: actions/upload-artifact@v7
-  #       with:
-  #         name: ${{ matrix.plugin }}-coverage
-  #         path: |
-  #           plugins/${{ matrix.plugin }}/htmlcov/
-  #           plugins/${{ matrix.plugin }}/coverage.xml
-  #         retention-days: 14
+  # Plugin coverage (#3447): one job per plugin directory, listed at run
+  # time so a new plugin is covered without editing this file. Each runs the
+  # plugin's own tests through the backend venv (the backend path-installs
+  # every plugin, the same env make test-plugins uses, #434) and uploads
+  # <plugin-dir>-coverage, the artifact name test-coverage-audits.md cites.
+  plugin-list:
+    name: List plugins
+    runs-on: ubuntu-latest
+    outputs:
+      plugins: ${{ steps.list.outputs.plugins }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: list
+        run: |
+          set -euo pipefail
+          plugins=$(find plugins -maxdepth 1 -type d -name 'adaptive-learner-plugin-*' -printf '%f\n' | sort | jq -R . | jq -cs .)
+          echo "::notice::plugins=$plugins"
+          test "$(echo "$plugins" | jq length)" -gt 0
+          echo "plugins=$plugins" >> "$GITHUB_OUTPUT"
+
+  plugin-coverage:
+    name: Plugin Coverage (${{ matrix.plugin }})
+    needs: plugin-list
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        plugin: ${{ fromJSON(needs.plugin-list.outputs.plugins) }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Cache Poetry virtualenv (backend)
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}
+          restore-keys: |
+            poetry-backend-${{ runner.os }}-py3.12-
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install backend dependencies (path-installs every plugin)
+        working-directory: backend
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Run plugin coverage
+        working-directory: plugins/${{ matrix.plugin }}
+        run: |
+          set -euo pipefail
+          python_bin="$(cd ../../backend && poetry env info -p)/bin/python"
+          package=$(find . -maxdepth 1 -type d -name 'adaptive_learner_*' -printf '%f\n' | head -1)
+          test -n "$package"
+          "$python_bin" -m pytest tests/ -q \
+            --cov="$package" \
+            --cov-report=xml \
+            --cov-report=html \
+            --cov-report=term
+
+      - name: Upload plugin coverage artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.plugin }}-coverage
+          path: |
+            plugins/${{ matrix.plugin }}/htmlcov/
+            plugins/${{ matrix.plugin }}/coverage.xml
+          retention-days: 14
 
   frontend-coverage:
     name: Frontend Coverage

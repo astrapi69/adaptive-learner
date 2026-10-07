@@ -55,12 +55,50 @@ export interface RepoRef {
   branch: string;
 }
 
+/** Why a repository validation failed (#3424). */
+type RepoValidationReasonCode =
+  | "not_found"
+  | "access_denied"
+  | "unreachable"
+  | "unsupported_schema"
+  | "no_sets"
+  | "no_lessons"
+  | "executable_content"
+  | "lessons_unreadable"
+  | "lesson_invalid_json"
+  | "validator_unavailable"
+  | "lesson_invalid";
+
+/**
+ * English text per reason code: the fallback of
+ * ``content_repo.validation.reason.<code>`` and the diagnostic ``reason``.
+ * ``{name}`` placeholders take the result's ``reasonParams``.
+ */
+const REPO_VALIDATION_REASON_TEXT: Record<RepoValidationReasonCode, string> = {
+  not_found: "Repository or manifest.yaml not found.",
+  access_denied: "Access denied - check the repository and your GitHub token.",
+  unreachable: "Repository unreachable.",
+  unsupported_schema: "Unsupported schema version {version}.",
+  no_sets: "manifest.yaml lists no sets.",
+  no_lessons: "No lessons found in any set.",
+  executable_content: "Lesson content contains disallowed executable code.",
+  lessons_unreadable: "Could not read the first set's lessons.",
+  lesson_invalid_json: "The first set's first lesson is not valid JSON.",
+  validator_unavailable: "Could not load the lesson validator.",
+  lesson_invalid: "The first set's first lesson fails validation: {detail}",
+};
+
 export interface RepoValidationResult {
   ok: boolean;
   setCount: number;
   lessonCount: number;
-  /** Present when ``ok`` is false: a human-readable failure reason. */
+  /** Present when ``ok`` is false: the failure in English, for logs and
+   *  diagnostics. The UI renders ``reasonCode`` instead (#3424). */
   reason?: string;
+  /** Present when ``ok`` is false: why it failed. */
+  reasonCode?: RepoValidationReasonCode;
+  /** Values for the placeholders of the ``reasonCode`` text. */
+  reasonParams?: Record<string, string>;
   /**
    * ``true`` when the failure was an I/O one — the manifest / sample lesson
    * could not be FETCHED (network, unreachable, rate-limit, 4xx/5xx) — rather
@@ -71,6 +109,49 @@ export interface RepoValidationResult {
    * structural failure and on success.
    */
   transient?: boolean;
+}
+
+function fillPlaceholders(template: string, params: Record<string, string> = {}): string {
+  return Object.entries(params).reduce(
+    (text, [name, value]) => text.replace(`{${name}}`, value),
+    template,
+  );
+}
+
+/** A failed result for ``code``, with the English ``reason`` filled in. */
+function failure(
+  code: RepoValidationReasonCode,
+  counts: { setCount: number; lessonCount: number },
+  options: { params?: Record<string, string>; transient?: boolean } = {},
+): RepoValidationResult {
+  return {
+    ok: false,
+    ...counts,
+    reason: fillPlaceholders(REPO_VALIDATION_REASON_TEXT[code], options.params),
+    reasonCode: code,
+    ...(options.params ? { reasonParams: options.params } : {}),
+    ...(options.transient ? { transient: true } : {}),
+  };
+}
+
+/**
+ * The failure reason of a validation result in the UI language (#3424).
+ * Falls back to the English ``reason`` for a result without a code.
+ *
+ * @example
+ * t("content_repo.validation.failed", "Validation failed: {reason}")
+ *   .replace("{reason}", repoValidationReasonText(validation, t));
+ */
+export function repoValidationReasonText(
+  result: Pick<RepoValidationResult, "reason" | "reasonCode" | "reasonParams">,
+  t: (key: string, fallback?: string) => string,
+): string {
+  if (!result.reasonCode) return result.reason ?? "";
+  const template = t(
+    `content_repo.validation.reason.${result.reasonCode}`,
+    REPO_VALIDATION_REASON_TEXT[result.reasonCode],
+  );
+  return fillPlaceholders(template, result.reasonParams);
 }
 
 /** The GitHub ``"{owner}/{repo}"`` source identifier for a repo ref. */
@@ -170,46 +251,35 @@ export async function validateUserRepo(
     manifest = parseManifest(text) ?? {};
   } catch (error) {
     const status = (error as { status?: number }).status;
-    const reason =
+    const code: RepoValidationReasonCode =
       status === 404
-        ? "Repository or manifest.yaml not found."
+        ? "not_found"
         : status === 401 || status === 403
-          ? "Access denied - check the repository and your GitHub token."
-          : "Repository unreachable.";
+          ? "access_denied"
+          : "unreachable";
     // Could not FETCH the manifest → transient I/O, not a content verdict.
-    return { ok: false, setCount: 0, lessonCount: 0, reason, transient: true };
+    return failure(code, { setCount: 0, lessonCount: 0 }, { transient: true });
   }
 
   if (manifest.schema_version) {
     const major = Number.parseInt(manifest.schema_version.split(".")[0], 10);
     if (Number.isFinite(major) && major !== SUPPORTED_SCHEMA_MAJOR) {
-      return {
-        ok: false,
-        setCount: 0,
-        lessonCount: 0,
-        reason: `Unsupported schema version ${manifest.schema_version}.`,
-      };
+      return failure(
+        "unsupported_schema",
+        { setCount: 0, lessonCount: 0 },
+        { params: { version: manifest.schema_version } },
+      );
     }
   }
 
   const sets = manifest.sets;
   if (!Array.isArray(sets) || sets.length === 0) {
-    return {
-      ok: false,
-      setCount: 0,
-      lessonCount: 0,
-      reason: "manifest.yaml lists no sets.",
-    };
+    return failure("no_sets", { setCount: 0, lessonCount: 0 });
   }
 
   const lessonCount = sets.reduce((sum, s) => sum + (s.lesson_count ?? 0), 0);
   if (lessonCount < 1) {
-    return {
-      ok: false,
-      setCount: sets.length,
-      lessonCount: 0,
-      reason: "No lessons found in any set.",
-    };
+    return failure("no_lessons", { setCount: sets.length, lessonCount: 0 });
   }
 
   // Sample the first set's first lesson: no executable content, and a
@@ -230,12 +300,7 @@ export async function validateUserRepo(
       token,
     );
     if (hasSuspiciousContent(lessonText)) {
-      return {
-        ok: false,
-        setCount: sets.length,
-        lessonCount,
-        reason: "Lesson content contains disallowed executable code.",
-      };
+      return failure("executable_content", { setCount: sets.length, lessonCount });
     }
     lesson = JSON.parse(lessonText) ?? {};
   } catch (error) {
@@ -244,15 +309,11 @@ export async function validateUserRepo(
     // WAS read but is malformed content (structural). Only the former must
     // preserve a good repo's trust (#1441).
     const transient = typeof (error as { status?: number }).status === "number";
-    return {
-      ok: false,
-      setCount: sets.length,
-      lessonCount,
-      reason: transient
-        ? "Could not read the first set's lessons."
-        : "The first set's first lesson is not valid JSON.",
-      transient,
-    };
+    return failure(
+      transient ? "lessons_unreadable" : "lesson_invalid_json",
+      { setCount: sets.length, lessonCount },
+      { transient },
+    );
   }
 
   let verdict: string | null;
@@ -261,21 +322,18 @@ export async function validateUserRepo(
   } catch {
     // The validator chunk could not be loaded (offline, a stale deploy):
     // the lesson was not judged, so a good repo keeps its trust (#1441).
-    return {
-      ok: false,
-      setCount: sets.length,
-      lessonCount,
-      reason: "Could not load the lesson validator.",
-      transient: true,
-    };
+    return failure(
+      "validator_unavailable",
+      { setCount: sets.length, lessonCount },
+      { transient: true },
+    );
   }
   if (verdict !== null) {
-    return {
-      ok: false,
-      setCount: sets.length,
-      lessonCount,
-      reason: `The first set's first lesson fails validation: ${verdict}`,
-    };
+    return failure(
+      "lesson_invalid",
+      { setCount: sets.length, lessonCount },
+      { params: { detail: verdict } },
+    );
   }
 
   return { ok: true, setCount: sets.length, lessonCount };
