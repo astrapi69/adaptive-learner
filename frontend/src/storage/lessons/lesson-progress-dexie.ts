@@ -22,6 +22,7 @@ import type {
 } from "../types";
 import {getDb} from "../dexie/db";
 import type {LessonProgressRow} from "../dexie/db";
+import {ApiError} from "../../api/client";
 
 function slugifySource(source: string): string {
     return source.replace(/\//g, "--");
@@ -313,7 +314,8 @@ export async function upsertLessonProgressDexie(
         (body.mark_resumed ? 1 : 0) +
         (body.mark_restarted ? 1 : 0);
     if (lifecycleCount > 1) {
-        throw new Error(
+        throw new ApiError(
+            400,
             "At most one of mark_completed / mark_paused / " +
                 "mark_abandoned / mark_resumed / mark_restarted " +
                 "may be true per call.",
@@ -366,7 +368,8 @@ export async function upsertLessonProgressDexie(
         wire = rowToWire(row);
     });
     if (wire === null) {
-        throw new Error(
+        throw new ApiError(
+            500,
             `lessonProgress upsert produced no row for ${key}`,
         );
     }

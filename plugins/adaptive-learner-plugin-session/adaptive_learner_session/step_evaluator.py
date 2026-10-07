@@ -46,11 +46,14 @@ layer (8B) does the DB work.
 from __future__ import annotations
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from typing import Any
 
 from .ai_orchestration import call_ai_complete, call_ai_complete_async
+
+logger = logging.getLogger(__name__)
 
 # --- The seven cycle steps -------------------------------------------------
 #
@@ -355,7 +358,12 @@ def evaluate_step(
             api_key=api_key,
             max_tokens=max_tokens,
         )
-    except Exception:  # noqa: BLE001 — defensive: never crash the route
+    except Exception:  # noqa: BLE001 - never crash the route; logged below (#3423)
+        logger.warning(
+            "Step evaluation call failed; advancing with the deterministic fallback",
+            extra={"model": model},
+            exc_info=True,
+        )
         return _deterministic_fallback(current_step, None)
     return parse_evaluation_response(raw, current_step=current_step)
 
@@ -393,6 +401,11 @@ async def evaluate_step_async(
             api_key=api_key,
             max_tokens=max_tokens,
         )
-    except Exception:  # noqa: BLE001 — defensive
+    except Exception:  # noqa: BLE001 - never crash the route; logged below (#3423)
+        logger.warning(
+            "Step evaluation call failed; advancing with the deterministic fallback",
+            extra={"model": model},
+            exc_info=True,
+        )
         return _deterministic_fallback(current_step, None)
     return parse_evaluation_response(raw, current_step=current_step)
