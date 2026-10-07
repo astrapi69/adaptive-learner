@@ -3,37 +3,31 @@
   "gaps": {
     "el": [
       "api/endpoints",
-      "developer/lesson-format-reference",
       "legal/imprint",
       "legal/privacy"
     ],
     "es": [
       "api/endpoints",
-      "developer/lesson-format-reference",
       "legal/imprint",
       "legal/privacy"
     ],
     "fr": [
       "api/endpoints",
-      "developer/lesson-format-reference",
       "legal/imprint",
       "legal/privacy"
     ],
     "ja": [
       "api/endpoints",
-      "developer/lesson-format-reference",
       "legal/imprint",
       "legal/privacy"
     ],
     "pt": [
       "api/endpoints",
-      "developer/lesson-format-reference",
       "legal/imprint",
       "legal/privacy"
     ],
     "tr": [
       "api/endpoints",
-      "developer/lesson-format-reference",
       "legal/imprint",
       "legal/privacy"
     ]
