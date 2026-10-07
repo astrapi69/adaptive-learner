@@ -20,17 +20,10 @@
     "error": "Etwas ist schiefgegangen.",
     "back": "Zurück",
     "next": "Weiter",
-    "start": "Starten",
     "submit": "Absenden",
-    "continue": "Fortfahren",
-    "done": "Fertig",
     "delete": "Löschen",
     "edit": "Bearbeiten",
     "confirm": "Bestätigen",
-    "yes": "Ja",
-    "no": "Nein",
-    "optional": "optional",
-    "required": "Pflichtfeld",
     "minutes": "Minuten",
     "close": "Schließen"
   },
@@ -87,24 +80,15 @@
       "more": "Mehr"
     },
     "primary": "Hauptnavigation",
-    "discover": "Inhalte entdecken",
-    "offline_long": "Offline - frühere Sitzungen bleiben lesbar",
-    "sync_pending": "{n} Änderung(en) warten auf Sync",
-    "statistics": "Statistik",
     "profile": "Dein Profil",
     "learning_path": "Lernpfad",
     "dashboard": "Dashboard",
     "session": "Sitzung",
-    "curriculum": "Lehrplan",
     "progress": "Fortschritt",
-    "import": "Import",
     "settings": "Einstellungen",
     "help": "Hilfe",
     "home": "Start",
     "menu": "Menü",
-    "online": "Online",
-    "offline": "Offline",
-    "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Entwicklermodus aktiv - Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar.",
     "content": "Meine Inhalte",
@@ -112,9 +96,7 @@
     "mode_badge_ai": "KI+Inhalte",
     "mode_badge_tooltip_content": "Kein API-Schlüssel konfiguriert - nur vorgefertigte Inhalte. Schlüssel in den Einstellungen hinterlegen, um KI-Funktionen zu aktivieren.",
     "mode_badge_tooltip_ai": "KI-Anbieter konfiguriert - Übungen nutzen KI für Distraktoren und Hinweise. Tippen, um Inhalte zu durchstöbern.",
-    "mode_badge_action": "Inhalte durchsuchen",
-    "sync_paired": "Sync: gekoppelt (Einstellungen > Sync)",
-    "sync_unpaired": "Sync: nicht gekoppelt (Einstellungen > Sync)"
+    "mode_badge_action": "Inhalte durchsuchen"
   },
   "import": {
     "title": "Konversation importieren",
@@ -385,7 +367,6 @@
     "session_title": "Adaptive Lektion",
     "loading": "Deine Fehler werden analysiert…",
     "empty_body": "Noch nichts zum Anpassen - übe zuerst eine Lektion, um Daten aufzubauen.",
-    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen.",
     "back_to_dashboard": "Zurück zum Dashboard",
     "transparency": {
       "focus_prefix": "Diese Lektion konzentriert sich auf:",
@@ -400,7 +381,6 @@
       "note": "Element-Bewertungen wurden aktualisiert. Deine nächste adaptive Lektion wird die Elemente fokussieren, die noch Übung brauchen."
     },
     "error": {
-      "missing_params": "Kein Inhalts-Set ausgewählt.",
       "load_failed": "Adaptive Lektion konnte nicht erstellt werden."
     }
   },
@@ -427,7 +407,6 @@
     "subtitle_capped": "{shown} von {due} Element(en) zur Wiederholung",
     "loading": "Wiederholungssitzung wird geladen…",
     "empty_body": "Alles erledigt! Keine Elemente für dieses Set zu wiederholen.",
-    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen.",
     "back_to_dashboard": "Zurück zum Dashboard",
     "back_to_lesson": "Zurück zur Lektion",
     "summary": {
@@ -437,7 +416,6 @@
       "note": "Element-Werte wurden aktualisiert. Gemeisterte Elemente erscheinen in der nächsten Sitzung nicht mehr."
     },
     "error": {
-      "missing_params": "Kein Inhalts-Set ausgewählt.",
       "load_failed": "Wiederholungssitzung konnte nicht geladen werden."
     },
     "spaced_empty": "Nichts zu wiederholen - guter Rhythmus!",
@@ -739,10 +717,6 @@
     "tab_plugins": "Plugins",
     "plugins_installed_title": "Installierte Plugins",
     "plugins_installed_desc": "Jedes Plugin, das die Desktop-App geladen hat, mit Version, Quelle und Aktivierungszeitpunkt (PluginForge-Lebenszyklus).",
-    "plugins_col_name": "Plugin",
-    "plugins_col_version": "Version",
-    "plugins_col_source": "Quelle",
-    "plugins_col_activated": "Aktiviert",
     "plugins_source_entry_point": "Paket",
     "plugins_source_direct": "Direkt registriert",
     "plugins_marker_load_error": "Ladefehler",
@@ -937,7 +911,6 @@
       "rollback_warning": "Der neue Schlüssel funktioniert nicht. Alten Schlüssel behalten?",
       "rollback_keep_old": "Alten behalten",
       "rollback_save_anyway": "Trotzdem speichern",
-      "rollback_cancel": "Abbrechen",
       "rollback_restore": "Letzten funktionierenden Schlüssel wiederherstellen",
       "format_hint": {
         "anthropic": "Beginnt mit sk-ant-",
@@ -1556,10 +1529,6 @@
     },
     "level_detail_title": "Level-Fortschritt",
     "level_up": "Level aufgestiegen!",
-    "reason_session_complete": "Sitzung abgeschlossen",
-    "reason_assessment_complete": "Selbsteinschätzung abgeschlossen",
-    "reason_conversation_imported": "Konversation importiert",
-    "reason_flat": "XP gutgeschrieben",
     "card_badges": "Abzeichen",
     "badges_earned": "verdient",
     "badges_empty": "Noch keine Abzeichen verfügbar.",
@@ -1715,20 +1684,7 @@
     "weekend_mode_help": "Wochenenden zählen nicht als Lücke in deiner Serie.",
     "reset_done": "Fortschritt zurückgesetzt: {xp} XP, {badges} Abzeichen, {streak} Serien.",
     "reset_failed": "Fortschritt konnte nicht zurückgesetzt werden.",
-    "weekend_mode_save_failed": "Wochenend-Modus konnte nicht gespeichert werden.",
-    "danger_zone_heading": "Gefahrenzone",
-    "danger_zone_intro": "Lösche alle Lerndaten auf diesem Gerät unwiderruflich.",
-    "danger_zone_reset_button": "Alles zurücksetzen",
-    "danger_zone_warning": "Das löscht ALLE deine Lerndaten unwiderruflich - Sessions, Fortschritt, Profile, Curricula, Imports, Anki-Karten, Einstellungen und API-Schlüssel. Dieser Vorgang kann NICHT rückgängig gemacht werden.",
-    "danger_zone_confirm_prompt": "Tippe RESET um zu bestätigen",
-    "danger_zone_input_placeholder": "RESET",
-    "danger_zone_final_button": "Endgültig löschen",
-    "danger_zone_backup_offer": "Möchtest du vorher ein Backup erstellen?",
-    "danger_zone_backup_button": "Backup erstellen",
-    "danger_zone_complete_toast": "Alle Daten wurden gelöscht.",
-    "danger_zone_cancel": "Abbrechen",
-    "danger_zone_continue": "Weiter",
-    "danger_zone_failed_toast": "Zurücksetzen fehlgeschlagen:"
+    "weekend_mode_save_failed": "Wochenend-Modus konnte nicht gespeichert werden."
   },
   "arcade": {
     "title": "Arcade",
@@ -2145,8 +2101,7 @@
       "rerender": "Neu generieren",
       "download_zip": "ZIP herunterladen",
       "persist": "In Git speichern",
-      "persisting": "Speichern…",
-      "persist_dexie_tooltip": "Git-Versionierung ist nur im Servermodus verfügbar."
+      "persisting": "Speichern…"
     },
     "toast": {
       "zip_downloaded": "ZIP heruntergeladen",
@@ -4442,9 +4397,6 @@
     },
     "synced": "Synchronisiert: {sets} Sets, {lessons} Lektionen.",
     "token_hint": "Private Repositories benötigen ein Token - füge unten eines ein oder hinterlege ein gemeinsames Token unter Einstellungen → Integrationen.",
-    "trust_official": "Offiziell: Vom Projektteam kuratierter, qualitätsgesicherter Inhalt.",
-    "trust_verified": "Verifiziert: Von der Community beigetragen und vom Team geprüft.",
-    "trust_validated": "Validiert: Technisch korrekt, Inhalt nicht einzeln geprüft.",
     "official": {
       "title": "Offizielle Inhalte",
       "counts": "{sets} Sets · {lessons} Lektionen"
@@ -4714,12 +4666,10 @@
     "page_title": "Zufallsmodus",
     "loading": "Zufallssitzung wird geladen…",
     "empty_body": "Dieses Set braucht mindestens zwei Lektionen mit Übungen zum Mischen.",
-    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen.",
     "back_to_dashboard": "Zurück zum Dashboard",
     "subtitle": "{n} Fragen aus {lessons} Lektionen gemischt",
     "error": {
-      "load_failed": "Zufallssitzung konnte nicht geladen werden.",
-      "missing_params": "Kein Inhalts-Set ausgewählt."
+      "load_failed": "Zufallssitzung konnte nicht geladen werden."
     },
     "summary": {
       "heading": "Zufallstraining abgeschlossen!",

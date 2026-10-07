@@ -18,17 +18,10 @@ common:
   error: Terjadi kesalahan.
   back: Kembali
   next: Berikutnya
-  start: Mulai
   submit: Kirim
-  continue: Lanjutkan
-  done: Selesai
   delete: Hapus
   edit: Edit
   confirm: Konfirmasi
-  'yes': "Ya"
-  'no': "Tidak"
-  optional: opsional
-  required: wajib
   minutes: menit
   close: "Tutup"
 avatar:
@@ -79,24 +72,15 @@ nav:
     progress: "Progres"
     more: "Lainnya"
   primary: "Navigasi utama"
-  discover: "Jelajahi konten"
-  offline_long: "Luring - sesi sebelumnya tetap dapat dibaca"
-  sync_pending: "{n} perubahan menunggu untuk disinkronkan"
-  statistics: "Statistik"
   profile: "Profil Anda"
   learning_path: "Jalur Pembelajaran"
   dashboard: Dasbor
   session: Sesi
-  curriculum: Kurikulum
   progress: Kemajuan
-  import: Impor
   settings: Pengaturan
   help: Bantuan
   home: Beranda
   menu: Menu
-  online: Daring
-  offline: Luring
-  anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Mode Pengembang aktif - pesan kesalahan menampilkan detail teknis lengkap. Ubah di Pengaturan."
   content: "Konten saya"
@@ -105,8 +89,6 @@ nav:
   mode_badge_tooltip_content: "Tidak ada kunci API yang dikonfigurasi - hanya menggunakan konten siap pakai. Tambahkan kunci di Pengaturan untuk mengaktifkan fitur AI."
   mode_badge_tooltip_ai: "Penyedia AI dikonfigurasi - latihan menggunakan AI untuk pengecoh + petunjuk. Ketuk untuk menjelajahi set konten."
   mode_badge_action: "jelajahi konten"
-  sync_paired: "Sinkron: terpasang (Pengaturan > Sinkron)"
-  sync_unpaired: "Sinkron: tidak terpasang (Pengaturan > Sinkron)"
 import:
   title: Impor percakapan
   subtitle: Tempel atau unggah percakapan dengan ChatGPT, Claude, atau Gemini dan dapatkan wawasan pembelajaran secara instan.
@@ -362,7 +344,6 @@ adaptive:
   session_title: "Pelajaran adaptif"
   loading: "Menganalisis kesalahan Anda…"
   empty_body: "Belum ada yang bisa diadaptasi - kerjakan pelajaran untuk mengumpulkan data."
-  not_cached_body: "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu."
   back_to_dashboard: "Kembali ke Dasbor"
   transparency:
     focus_prefix: "Pelajaran ini berfokus pada:"
@@ -375,7 +356,6 @@ adaptive:
     mastered_delta: "Peningkatan: +{n} elemen dikuasai di sesi ini!"
     note: "Skor elemen telah diperbarui. Pelajaran adaptif Anda berikutnya akan menargetkan elemen yang masih perlu dikerjakan."
   error:
-    missing_params: "Tidak ada set konten yang dipilih."
     load_failed: "Tidak dapat menghasilkan pelajaran adaptif."
 review:
   summary_remaining: "Masih ada {n} yang jatuh tempo. Lanjutkan?"
@@ -400,7 +380,6 @@ review:
   subtitle_capped: "{shown} dari {due} elemen untuk ditinjau"
   loading: "Memuat sesi ulasan…"
   empty_body: "Semua sudah selesai! Tidak ada elemen yang perlu ditinjau di set ini."
-  not_cached_body: "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu."
   back_to_dashboard: "Kembali ke Dasbor"
   back_to_lesson: "Kembali ke pelajaran"
   summary:
@@ -409,7 +388,6 @@ review:
     score: "Skor"
     note: "Skor elemen telah diperbarui. Elemen yang dikuasai tidak akan muncul di sesi berikutnya."
   error:
-    missing_params: "Tidak ada set konten yang dipilih."
     load_failed: "Tidak dapat memuat sesi ulasan."
   spaced_empty: Tidak ada yang perlu disegarkan saat ini. Ritme yang bagus!
   spaced_interval_label: Tinjau dalam
@@ -704,10 +682,6 @@ settings:
   tab_plugins: "Plugin"
   plugins_installed_title: "Plugin terpasang"
   plugins_installed_desc: "Setiap plugin yang dimuat aplikasi desktop, dengan versi, sumber, dan waktu aktivasi (siklus hidup PluginForge)."
-  plugins_col_name: "Plugin"
-  plugins_col_version: "Versi"
-  plugins_col_source: "Sumber"
-  plugins_col_activated: "Diaktifkan"
   plugins_source_entry_point: "Paket"
   plugins_source_direct: "Didaftarkan langsung"
   plugins_marker_load_error: "Kesalahan pemuatan"
@@ -902,7 +876,6 @@ settings:
     rollback_warning: "Kunci baru tidak berfungsi. Pertahankan kunci lama?"
     rollback_keep_old: "Pertahankan kunci lama"
     rollback_save_anyway: "Simpan saja"
-    rollback_cancel: "Batal"
     rollback_restore: "Pulihkan kunci terakhir yang berfungsi"
     format_hint:
       anthropic: "Diawali dengan sk-ant-"
@@ -1476,10 +1449,6 @@ gamification:
     how: "Level naik mengikuti kurva XP yang bertambah: 0, 100, 300, 600, 1000 XP - setiap langkah butuh 100 XP lebih banyak dari sebelumnya."
   level_detail_title: "Kemajuan level"
   level_up: Naik level!
-  reason_session_complete: Sesi selesai
-  reason_assessment_complete: Asesmen selesai
-  reason_conversation_imported: Percakapan diimpor
-  reason_flat: XP diberikan
   card_badges: Lencana
   badges_earned: diperoleh
   badges_empty: Belum ada lencana yang tersedia.
@@ -1604,19 +1573,6 @@ gamification:
   reset_done: 'Kemajuan diatur ulang: {xp} XP, {badges} lencana, {streak} rentetan.'
   reset_failed: Tidak dapat mengatur ulang kemajuan.
   weekend_mode_save_failed: Tidak dapat menyimpan pengaturan mode akhir pekan.
-  danger_zone_heading: Zona Bahaya
-  danger_zone_intro: Hapus secara permanen semua data pembelajaran di perangkat ini.
-  danger_zone_reset_button: Atur Ulang Semuanya
-  danger_zone_warning: Ini menghapus SEMUA data belajar Anda secara permanen - sesi, kemajuan, profil, kurikulum, impor, kartu Anki, pengaturan, dan kunci API. Tindakan ini TIDAK DAPAT dibatalkan.
-  danger_zone_confirm_prompt: 'Ketik RESET untuk mengonfirmasi'
-  danger_zone_input_placeholder: RESET
-  danger_zone_final_button: Hapus permanen
-  danger_zone_backup_offer: Buat cadangan terlebih dahulu?
-  danger_zone_backup_button: Buat cadangan
-  danger_zone_complete_toast: Semua data telah dihapus.
-  danger_zone_cancel: Batal
-  danger_zone_continue: Lanjutkan
-  danger_zone_failed_toast: 'Pengaturan ulang gagal:'
 arcade:
   title: "Arcade"
   subtitle: "Ronde singkat, satu sampai dua menit: hadiah mode permainan. Tanpa XP, hanya keseruan."
@@ -2025,7 +1981,6 @@ repo:
     download_zip: "Unduh ZIP"
     persist: "Persistensi ke git"
     persisting: "Mempersistensi…"
-    persist_dexie_tooltip: "Pemversian git hanya tersedia dalam mode server."
   toast:
     zip_downloaded: "ZIP terunduh"
     persisted: "Dipersistensi ke git"
@@ -4125,9 +4080,6 @@ content_repo:
   added: "Repositori ditambahkan."
   synced: "Tersinkronkan: {sets} set, {lessons} pelajaran."
   token_hint: "Repositori privat memerlukan token - tempel satu di bawah, atau atur token bersama di Pengaturan → Integrasi."
-  trust_official: "Resmi: Dikurasi dan dijamin kualitasnya oleh tim proyek."
-  trust_verified: "Terverifikasi: Disumbangkan oleh komunitas dan ditinjau oleh tim."
-  trust_validated: "Tervalidasi: Secara teknis benar; konten tidak ditinjau satu per satu."
   official:
     title: "Konten resmi"
     counts: "{sets} set · {lessons} pelajaran"
@@ -4356,12 +4308,10 @@ shuffle:
   page_title: "Acak"
   loading: "Memuat sesi acak…"
   empty_body: "Set ini perlu setidaknya dua pelajaran dengan latihan untuk diacak."
-  not_cached_body: "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu."
   back_to_dashboard: "Kembali ke Dasbor"
   subtitle: "Mencampur {n} pertanyaan dari {lessons} pelajaran"
   error:
     load_failed: "Tidak dapat memuat sesi acak."
-    missing_params: "Tidak ada set konten yang dipilih."
   summary:
     heading: "Latihan acak selesai!"
     score: "{correct} dari {total} benar"

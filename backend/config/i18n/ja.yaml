@@ -18,17 +18,10 @@ common:
   error: 何かがうまくいきませんでした。
   back: 戻る
   next: 次へ
-  start: 開始
   submit: 送信
-  continue: 続ける
-  done: 完了
   delete: 削除
   edit: 編集
   confirm: 確認
-  'yes': はい
-  'no': いいえ
-  optional: 任意
-  required: 必須
   minutes: 分
   close: "閉じる"
 avatar:
@@ -79,24 +72,15 @@ nav:
     progress: "進捗"
     more: "その他"
   primary: "メインナビゲーション"
-  discover: "コンテンツを見つける"
-  offline_long: "オフライン - 過去のセッションは引き続き閲覧できます"
-  sync_pending: "{n} 件の変更が同期待ちです"
-  statistics: "統計"
   profile: "あなたのプロフィール"
   learning_path: "学習パス"
   dashboard: ダッシュボード
   session: セッション
-  curriculum: カリキュラム
   progress: 進捗
-  import: インポート
   settings: 設定
   help: ヘルプ
   home: ホーム
   menu: メニュー
-  online: オンライン
-  offline: オフライン
-  anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "開発者モードがオンです - エラー通知に技術的な詳細が表示されます。設定で切り替えてください。"
   content: "マイコンテンツ"
@@ -105,8 +89,6 @@ nav:
   mode_badge_tooltip_content: "API キーが設定されていません - 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。"
   mode_badge_tooltip_ai: "AI プロバイダー設定済み - 演習で AI による誤答候補とヒントを使用します。タップしてコンテンツを閲覧。"
   mode_badge_action: "コンテンツを見る"
-  sync_paired: "同期：ペアリング済み（設定 > 同期）"
-  sync_unpaired: "同期：未ペアリング（設定 > 同期）"
 import:
   title: 会話をインポート
   subtitle: ChatGPT、Claude、Gemini との会話を貼り付けるかアップロードすると、 学習のインサイトをすぐに得られます。
@@ -362,7 +344,6 @@ adaptive:
   session_title: "アダプティブレッスン"
   loading: "ミスを分析中…"
   empty_body: "まだ適応するものがありません - レッスンを練習してデータを蓄積してください。"
-  not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。"
   back_to_dashboard: "ダッシュボードに戻る"
   transparency:
     focus_prefix: "このレッスンの焦点:"
@@ -375,7 +356,6 @@ adaptive:
     mastered_delta: "改善: このセッションで+{n}個の要素を習得しました！"
     note: "要素スコアが更新されました。次のアダプティブレッスンは、まだ練習が必要な要素を対象にします。"
   error:
-    missing_params: "コンテンツセットが選択されていません。"
     load_failed: "アダプティブレッスンを生成できませんでした。"
 review:
   your_answer: "あなたの回答:"
@@ -400,7 +380,6 @@ review:
   subtitle_capped: "復習する要素: {due} 件中 {shown} 件"
   loading: "復習セッションを読み込み中…"
   empty_body: "すべて完了！このセットに復習する要素はありません。"
-  not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。"
   back_to_dashboard: "ダッシュボードに戻る"
   back_to_lesson: "レッスンに戻る"
   summary:
@@ -409,7 +388,6 @@ review:
     score: "スコア"
     note: "要素のスコアが更新されました。マスターした要素は次回のセッションには表示されません。"
   error:
-    missing_params: "コンテンツセットが選択されていません。"
     load_failed: "復習セッションを読み込めませんでした。"
   spaced_empty: 今、復習するものはありません。良いリズムです!
   spaced_interval_label: 次の復習
@@ -698,10 +676,6 @@ settings:
   tab_plugins: "プラグイン"
   plugins_installed_title: "インストール済みプラグイン"
   plugins_installed_desc: "デスクトップアプリが読み込んだすべてのプラグインを、バージョン・ソース・有効化時刻とともに表示します（PluginForge ライフサイクル）。"
-  plugins_col_name: "プラグイン"
-  plugins_col_version: "バージョン"
-  plugins_col_source: "ソース"
-  plugins_col_activated: "有効化"
   plugins_source_entry_point: "パッケージ"
   plugins_source_direct: "直接登録"
   plugins_marker_load_error: "読み込みエラー"
@@ -896,7 +870,6 @@ settings:
     rollback_warning: "新しいキーが機能しません。古いキーを保持しますか？"
     rollback_keep_old: "古いキーを保持"
     rollback_save_anyway: "それでも保存"
-    rollback_cancel: "キャンセル"
     rollback_restore: "最後に動作したキーを復元"
     format_hint:
       anthropic: "sk-ant- で始まります"
@@ -1476,10 +1449,6 @@ gamification:
     how: "レベルは増加するXPカーブで上がります：0、100、300、600、1000 XP - 各段階は前より100 XP多く必要です。"
   level_detail_title: "レベルの進捗"
   level_up: レベルアップ！
-  reason_session_complete: セッション完了
-  reason_assessment_complete: アセスメント完了
-  reason_conversation_imported: 会話をインポートしました
-  reason_flat: XPを獲得
   card_badges: バッジ
   badges_earned: 獲得済み
   badges_empty: まだ利用可能なバッジはありません。
@@ -1604,19 +1573,6 @@ gamification:
   reset_done: '進捗をリセット: {xp} XP、{badges} バッジ、{streak} ストリーク。'
   reset_failed: 進捗をリセットできませんでした。
   weekend_mode_save_failed: 週末モードを保存できませんでした。
-  danger_zone_heading: 危険ゾーン
-  danger_zone_intro: このデバイス上のすべての学習データを完全に削除します。
-  danger_zone_reset_button: すべてをリセット
-  danger_zone_warning: すべての学習データを完全に削除します - セッション、進捗、プロフィール、カリキュラム、インポート、Anki カード、設定、API キー。この操作は元に戻せません。
-  danger_zone_confirm_prompt: '確認のため RESET と入力してください'
-  danger_zone_input_placeholder: RESET
-  danger_zone_final_button: 完全に削除
-  danger_zone_backup_offer: 先にバックアップを作成しますか？
-  danger_zone_backup_button: バックアップを作成
-  danger_zone_complete_toast: すべてのデータが削除されました。
-  danger_zone_cancel: キャンセル
-  danger_zone_continue: 続行
-  danger_zone_failed_toast: 'リセットに失敗:'
 arcade:
   title: "アーケード"
   subtitle: "1〜2分の短いラウンド。ゲームモードのごほうびです。XPはなく、楽しむだけ。"
@@ -2014,7 +1970,6 @@ repo:
     download_zip: "ZIP をダウンロード"
     persist: "Git に保存"
     persisting: "保存中…"
-    persist_dexie_tooltip: "Git バージョン管理はサーバーモードでのみ利用できます。"
   toast:
     zip_downloaded: "ZIP をダウンロードしました"
     persisted: "Git に保存しました"
@@ -4115,9 +4070,6 @@ content_repo:
   added: "リポジトリを追加しました。"
   synced: "同期しました: {sets} セット、{lessons} レッスン。"
   token_hint: "プライベートリポジトリにはトークンが必要です。下に貼り付けるか、設定 → 連携で共有トークンを設定してください。"
-  trust_official: "公式: プロジェクトチームが厳選し、品質を保証したコンテンツ。"
-  trust_verified: "検証済み: コミュニティから提供され、チームが確認したコンテンツ。"
-  trust_validated: "検証通過: 技術的に正しい。内容は個別には確認されていません。"
   official:
     title: "公式コンテンツ"
     counts: "{sets} セット · {lessons} レッスン"
@@ -4346,12 +4298,10 @@ shuffle:
   page_title: "シャッフル"
   loading: "シャッフルセッションを読み込み中…"
   empty_body: "シャッフルには演習のあるレッスンが2つ以上必要です。"
-  not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。"
   back_to_dashboard: "ダッシュボードに戻る"
   subtitle: "{lessons}個のレッスンから{n}問をミックス"
   error:
     load_failed: "シャッフルセッションを読み込めませんでした。"
-    missing_params: "コンテンツセットが選択されていません。"
   summary:
     heading: "シャッフル練習が完了しました！"
     score: "{total}問中{correct}問正解"

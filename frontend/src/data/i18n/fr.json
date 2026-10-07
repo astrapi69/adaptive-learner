@@ -20,17 +20,10 @@
     "error": "Une erreur est survenue.",
     "back": "Retour",
     "next": "Suivant",
-    "start": "Commencer",
     "submit": "Envoyer",
-    "continue": "Continuer",
-    "done": "Terminé",
     "delete": "Supprimer",
     "edit": "Modifier",
     "confirm": "Confirmer",
-    "yes": "Oui",
-    "no": "Non",
-    "optional": "optionnel",
-    "required": "obligatoire",
     "minutes": "minutes",
     "close": "Fermer"
   },
@@ -87,24 +80,15 @@
       "more": "Plus"
     },
     "primary": "Navigation principale",
-    "discover": "Découvrir du contenu",
-    "offline_long": "Hors ligne - les sessions passées restent lisibles",
-    "sync_pending": "{n} modification(s) en attente de synchronisation",
-    "statistics": "Statistiques",
     "profile": "Ton profil",
     "learning_path": "Parcours d'apprentissage",
     "dashboard": "Tableau de bord",
     "session": "Session",
-    "curriculum": "Programme",
     "progress": "Progrès",
-    "import": "Importer",
     "settings": "Paramètres",
     "help": "Aide",
     "home": "Accueil",
     "menu": "Menu",
-    "online": "En ligne",
-    "offline": "Hors ligne",
-    "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode développeur actif - les notifications d'erreur affichent les détails techniques. Désactive-le dans les Paramètres.",
     "content": "Mon contenu",
@@ -112,9 +96,7 @@
     "mode_badge_ai": "IA+Contenu",
     "mode_badge_tooltip_content": "Aucune clé API configurée - uniquement le contenu pré-construit. Ajoute une clé dans les Paramètres pour activer les fonctions IA.",
     "mode_badge_tooltip_ai": "Fournisseur IA configuré - les exercices utilisent l'IA pour les distracteurs et les indices. Touche pour parcourir les sets.",
-    "mode_badge_action": "parcourir le contenu",
-    "sync_paired": "Sync : appairé (Paramètres > Sync)",
-    "sync_unpaired": "Sync : non appairé (Paramètres > Sync)"
+    "mode_badge_action": "parcourir le contenu"
   },
   "import": {
     "title": "Importer une conversation",
@@ -385,7 +367,6 @@
     "session_title": "Leçon adaptative",
     "loading": "Analyse de tes erreurs…",
     "empty_body": "Rien à adapter pour l'instant - fais d'abord une leçon pour accumuler des données.",
-    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
     "back_to_dashboard": "Retour au tableau de bord",
     "transparency": {
       "focus_prefix": "Cette leçon se concentre sur :",
@@ -400,7 +381,6 @@
       "note": "Les scores d'éléments ont été mis à jour. Ta prochaine leçon adaptative ciblera les éléments qui nécessitent encore du travail."
     },
     "error": {
-      "missing_params": "Aucun ensemble de contenu sélectionné.",
       "load_failed": "Impossible de générer la leçon adaptative."
     }
   },
@@ -427,7 +407,6 @@
     "subtitle_capped": "{shown} sur {due} élément(s) à réviser",
     "loading": "Chargement de la session de révision…",
     "empty_body": "Tout est à jour ! Aucun élément à réviser dans cet ensemble.",
-    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
     "back_to_dashboard": "Retour au tableau de bord",
     "back_to_lesson": "Retour à la leçon",
     "summary": {
@@ -437,7 +416,6 @@
       "note": "Les scores des éléments ont été mis à jour. Les éléments maîtrisés n'apparaîtront plus dans la prochaine session."
     },
     "error": {
-      "missing_params": "Aucun ensemble de contenu sélectionné.",
       "load_failed": "Impossible de charger la session de révision."
     },
     "spaced_empty": "Rien à réviser pour l'instant. Bon rythme !",
@@ -739,10 +717,6 @@
     "tab_plugins": "Extensions",
     "plugins_installed_title": "Extensions installées",
     "plugins_installed_desc": "Chaque extension chargée par l'application de bureau, avec version, source et heure d'activation (cycle de vie PluginForge).",
-    "plugins_col_name": "Extension",
-    "plugins_col_version": "Version",
-    "plugins_col_source": "Source",
-    "plugins_col_activated": "Activée",
     "plugins_source_entry_point": "Paquet",
     "plugins_source_direct": "Enregistrée directement",
     "plugins_marker_load_error": "Erreur de chargement",
@@ -937,7 +911,6 @@
       "rollback_warning": "La nouvelle clé ne fonctionne pas. Garder l'ancienne ?",
       "rollback_keep_old": "Garder l'ancienne",
       "rollback_save_anyway": "Enregistrer quand même",
-      "rollback_cancel": "Annuler",
       "rollback_restore": "Restaurer la dernière clé fonctionnelle",
       "format_hint": {
         "anthropic": "Commence par sk-ant-",
@@ -1556,10 +1529,6 @@
     },
     "level_detail_title": "Progression du niveau",
     "level_up": "Niveau supérieur !",
-    "reason_session_complete": "Session terminée",
-    "reason_assessment_complete": "Évaluation terminée",
-    "reason_conversation_imported": "Conversation importée",
-    "reason_flat": "XP attribué",
     "card_badges": "Badges",
     "badges_earned": "gagnés",
     "badges_empty": "Aucun badge disponible pour le moment.",
@@ -1715,20 +1684,7 @@
     "weekend_mode_help": "Les week-ends ne brisent pas ta série.",
     "reset_done": "Progression réinitialisée : {xp} XP, {badges} badges, {streak} séries.",
     "reset_failed": "Impossible de réinitialiser la progression.",
-    "weekend_mode_save_failed": "Impossible d'enregistrer le mode week-end.",
-    "danger_zone_heading": "Zone de danger",
-    "danger_zone_intro": "Supprime définitivement tout l’état d’apprenant sur cet appareil.",
-    "danger_zone_reset_button": "Tout réinitialiser",
-    "danger_zone_warning": "Ceci supprime définitivement TOUTES tes données d’apprentissage - sessions, progression, profils, programmes, imports, cartes Anki, paramètres et clés API. Cette action est IRRÉVERSIBLE.",
-    "danger_zone_confirm_prompt": "Tape RESET pour confirmer",
-    "danger_zone_input_placeholder": "RESET",
-    "danger_zone_final_button": "Supprimer définitivement",
-    "danger_zone_backup_offer": "Créer d’abord une sauvegarde ?",
-    "danger_zone_backup_button": "Créer une sauvegarde",
-    "danger_zone_complete_toast": "Toutes les données ont été supprimées.",
-    "danger_zone_cancel": "Annuler",
-    "danger_zone_continue": "Continuer",
-    "danger_zone_failed_toast": "La réinitialisation a échoué :"
+    "weekend_mode_save_failed": "Impossible d'enregistrer le mode week-end."
   },
   "arcade": {
     "title": "Arcade",
@@ -2145,8 +2101,7 @@
       "rerender": "Régénérer",
       "download_zip": "Télécharger le ZIP",
       "persist": "Enregistrer dans git",
-      "persisting": "Enregistrement…",
-      "persist_dexie_tooltip": "La gestion de versions Git n'est disponible qu'en mode serveur."
+      "persisting": "Enregistrement…"
     },
     "toast": {
       "zip_downloaded": "ZIP téléchargé",
@@ -4442,9 +4397,6 @@
     "added": "Dépôt ajouté.",
     "synced": "Synchronisé : {sets} ensembles, {lessons} leçons.",
     "token_hint": "Les dépôts privés nécessitent un jeton - colles-en un ci-dessous ou définis un jeton partagé dans Réglages → Intégrations.",
-    "trust_official": "Officiel : contenu sélectionné et dont la qualité est garantie par l'équipe du projet.",
-    "trust_verified": "Vérifié : proposé par la communauté et relu par l'équipe.",
-    "trust_validated": "Validé : techniquement correct ; contenu non vérifié individuellement.",
     "official": {
       "title": "Contenu officiel",
       "counts": "{sets} ensembles · {lessons} leçons"
@@ -4714,12 +4666,10 @@
     "page_title": "Mode aléatoire",
     "loading": "Chargement de la session aléatoire…",
     "empty_body": "Ce jeu a besoin d'au moins deux leçons avec des exercices pour être mélangé.",
-    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
     "back_to_dashboard": "Retour au tableau de bord",
     "subtitle": "Mélange de {n} questions issues de {lessons} leçons",
     "error": {
-      "load_failed": "Impossible de charger la session aléatoire.",
-      "missing_params": "Aucun ensemble de contenu sélectionné."
+      "load_failed": "Impossible de charger la session aléatoire."
     },
     "summary": {
       "heading": "Entraînement aléatoire terminé !",

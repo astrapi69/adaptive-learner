@@ -18,17 +18,10 @@ common:
   error: Something went wrong.
   back: Back
   next: Next
-  start: Start
   submit: Submit
-  continue: Continue
-  done: Done
   delete: Delete
   edit: Edit
   confirm: Confirm
-  'yes': "Yes"
-  'no': "No"
-  optional: optional
-  required: required
   minutes: minutes
   close: "Close"
 avatar:
@@ -79,24 +72,15 @@ nav:
     progress: "Progress"
     more: "More"
   primary: "Primary navigation"
-  discover: "Discover content"
-  offline_long: "Offline - past sessions stay readable"
-  sync_pending: "{n} change(s) waiting to sync"
-  statistics: "Statistics"
   profile: "Your profile"
   learning_path: "Learning Path"
   dashboard: Dashboard
   session: Session
-  curriculum: Curriculum
   progress: Progress
-  import: Import
   settings: Settings
   help: Help
   home: Home
   menu: Menu
-  online: Online
-  offline: Offline
-  anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Developer Mode is on - error toasts show full technical detail. Toggle in Settings."
   content: "My content"
@@ -105,8 +89,6 @@ nav:
   mode_badge_tooltip_content: "No API key configured - using pre-built content only. Add a key in Settings to enable AI features."
   mode_badge_tooltip_ai: "AI provider configured - exercises use AI for distractors + hints. Tap to browse content sets."
   mode_badge_action: "browse content"
-  sync_paired: "Sync: paired (Settings > Sync)"
-  sync_unpaired: "Sync: not paired (Settings > Sync)"
 import:
   title: Import a conversation
   subtitle: Paste or upload a conversation with ChatGPT, Claude, or Gemini and get instant learning insights.
@@ -362,7 +344,6 @@ adaptive:
   session_title: "Adaptive lesson"
   loading: "Analyzing your errors…"
   empty_body: "Nothing to adapt yet - practice a lesson to build up data."
-  not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
   back_to_dashboard: "Back to Dashboard"
   transparency:
     focus_prefix: "This lesson focuses on:"
@@ -375,7 +356,6 @@ adaptive:
     mastered_delta: "Improvement: +{n} element(s) mastered this session!"
     note: "Element scores have been updated. Your next adaptive lesson will target the elements that still need work."
   error:
-    missing_params: "No content set selected."
     load_failed: "Could not generate adaptive lesson."
 review:
   your_answer: "Your answer:"
@@ -400,7 +380,6 @@ review:
   subtitle_capped: "Reviewing {shown} of {due} elements due for SRS"
   loading: "Loading review session…"
   empty_body: "All caught up! No elements due for review in this set."
-  not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
   back_to_dashboard: "Back to Dashboard"
   back_to_lesson: "Back to lesson"
   summary:
@@ -409,7 +388,6 @@ review:
     score: "Score"
     note: "Element scores have been updated. Mastered elements will not appear in the next session."
   error:
-    missing_params: "No content set selected."
     load_failed: "Could not load review session."
   spaced_empty: Nothing to refresh right now. Great rhythm!
   spaced_interval_label: Review in
@@ -698,10 +676,6 @@ settings:
   tab_plugins: "Plugins"
   plugins_installed_title: "Installed plugins"
   plugins_installed_desc: "Every plugin the desktop app loaded, with version, source and activation time (PluginForge lifecycle)."
-  plugins_col_name: "Plugin"
-  plugins_col_version: "Version"
-  plugins_col_source: "Source"
-  plugins_col_activated: "Activated"
   plugins_source_entry_point: "Package"
   plugins_source_direct: "Registered directly"
   plugins_marker_load_error: "Load error"
@@ -896,7 +870,6 @@ settings:
     rollback_warning: "The new key doesn't work. Keep the old key?"
     rollback_keep_old: "Keep old key"
     rollback_save_anyway: "Save anyway"
-    rollback_cancel: "Cancel"
     rollback_restore: "Restore last working key"
     format_hint:
       anthropic: "Starts with sk-ant-"
@@ -1476,10 +1449,6 @@ gamification:
     how: "Levels rise on a growing XP curve: 0, 100, 300, 600, 1000 XP - each step needs 100 XP more than the last."
   level_detail_title: "Level progress"
   level_up: Level up!
-  reason_session_complete: Session completed
-  reason_assessment_complete: Assessment completed
-  reason_conversation_imported: Conversation imported
-  reason_flat: XP awarded
   card_badges: Badges
   badges_earned: earned
   badges_empty: No badges available yet.
@@ -1604,19 +1573,6 @@ gamification:
   reset_done: 'Progress reset: {xp} XP, {badges} badges, {streak} streaks.'
   reset_failed: Could not reset progress.
   weekend_mode_save_failed: Could not save the weekend-mode setting.
-  danger_zone_heading: Danger Zone
-  danger_zone_intro: Permanently delete every piece of learner state on this device.
-  danger_zone_reset_button: Reset Everything
-  danger_zone_warning: This deletes ALL your learning data permanently - sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.
-  danger_zone_confirm_prompt: 'Type RESET to confirm'
-  danger_zone_input_placeholder: RESET
-  danger_zone_final_button: Delete permanently
-  danger_zone_backup_offer: Create a backup first?
-  danger_zone_backup_button: Create backup
-  danger_zone_complete_toast: All data has been deleted.
-  danger_zone_cancel: Cancel
-  danger_zone_continue: Continue
-  danger_zone_failed_toast: 'Reset failed:'
 arcade:
   title: "Arcade"
   subtitle: "Short rounds, one to two minutes - a game-mode reward. No XP, just fun."
@@ -2025,7 +1981,6 @@ repo:
     download_zip: "Download ZIP"
     persist: "Persist to git"
     persisting: "Persisting…"
-    persist_dexie_tooltip: "Git versioning is only available in server mode."
   toast:
     zip_downloaded: "ZIP downloaded"
     persisted: "Persisted to git"
@@ -4125,9 +4080,6 @@ content_repo:
     filled: "Repository details filled from the QR code."
   synced: "Synced: {sets} sets, {lessons} lessons."
   token_hint: "Private repositories need a token - paste one below, or set a shared token in Settings → Integrations."
-  trust_official: "Official: Curated and quality-assured by the project team."
-  trust_verified: "Verified: Contributed by the community and reviewed by the team."
-  trust_validated: "Validated: Technically correct; content not individually reviewed."
   official:
     title: "Official content"
     counts: "{sets} sets · {lessons} lessons"
@@ -4356,12 +4308,10 @@ shuffle:
   page_title: "Shuffle"
   loading: "Loading shuffle session…"
   empty_body: "This set needs at least two lessons with exercises to shuffle."
-  not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
   back_to_dashboard: "Back to Dashboard"
   subtitle: "Mixing {n} questions from {lessons} lessons"
   error:
     load_failed: "Could not load shuffle session."
-    missing_params: "No content set selected."
   summary:
     heading: "Shuffle training complete!"
     score: "{correct} of {total} correct"
