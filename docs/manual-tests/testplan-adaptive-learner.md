@@ -1581,6 +1581,20 @@ gesetzt ist, bevor der Assistent geöffnet wird.
       (Dexie-Modus) - Hinweis + Entfernen-Knopf müssen in BEIDEN Modi
       funktionieren
 
+### TS-0128 Teilen-Assistent - Niveau für Sets, die keine Sprache lehren (#3356)
+
+Ort: Teilen-Assistent Schritt 1, Auswahl "Niveau". Ein Wissens-Set ist
+eines mit gleicher Ausgangs- und Zielsprache oder mit einer
+Wissensdomain (etwa `knowledge`, `psychology`).
+
+- [ ] TC-0934 Ein Wissens-Set mit gespeichertem Niveau "none" teilen -> die
+      Auswahl zeigt "Kein Niveau (kein Sprachkurs)", kein Fehler,
+      "Weiter" ist aktiv (vorher: ein geschätztes CEFR-Niveau)
+- [ ] TC-0935 Bei einem Wissens-Set "Kein Niveau (kein Sprachkurs)" wählen ->
+      kein Fehler, "Weiter" bleibt aktiv; bei einem Sprach-Set heißt
+      derselbe Eintrag weiter "Niveau wählen…" und blockiert "Weiter"
+      mit "Bitte ein CEFR-Niveau wählen (A1-C2)."
+
 ### TS-0053 Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
 
 Ort: Meine Inhalte (`/content?tab=my`) → "Lektion importieren"-Modal +
