@@ -1086,7 +1086,7 @@ def test_message_uses_model_override_when_set(client: TestClient, monkeypatch):
     """When UserSettings.model_override_anthropic is set, the
     /message handler must pass THAT model string to the
     ai_complete hook — not the default from
-    ai_orchestration.DEFAULT_MODELS."""
+    app.services.ai_caller.DEFAULT_MODELS."""
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id, provider="anthropic")
     resp = client.patch(
@@ -1111,8 +1111,8 @@ def test_message_uses_model_override_when_set(client: TestClient, monkeypatch):
 
 def test_message_falls_back_to_default_when_no_override(client: TestClient, monkeypatch):
     """Without any override, the model passed to ai_complete is
-    the default from ai_orchestration.DEFAULT_MODELS."""
-    from adaptive_learner_session import ai_orchestration
+    the default from app.services.ai_caller.DEFAULT_MODELS."""
+    from app.services.ai_caller import DEFAULT_MODELS
 
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id, provider="anthropic")
@@ -1127,7 +1127,7 @@ def test_message_falls_back_to_default_when_no_override(client: TestClient, monk
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "ping"},
     )
-    assert captured["model"] == ai_orchestration.DEFAULT_MODELS["anthropic"]
+    assert captured["model"] == DEFAULT_MODELS["anthropic"]
 
 
 def test_message_override_for_inactive_provider_is_ignored(client: TestClient, monkeypatch):
@@ -1135,7 +1135,7 @@ def test_message_override_for_inactive_provider_is_ignored(client: TestClient, m
     only the override for the CURRENTLY ACTIVE provider is
     consulted at /message time. Pin: an openai override does
     not bleed into an anthropic conversation."""
-    from adaptive_learner_session import ai_orchestration
+    from app.services.ai_caller import DEFAULT_MODELS
 
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id, provider="anthropic")
@@ -1157,7 +1157,7 @@ def test_message_override_for_inactive_provider_is_ignored(client: TestClient, m
     )
     # The default for anthropic is still used because anthropic
     # has no override set — only openai does.
-    assert captured["model"] == ai_orchestration.DEFAULT_MODELS["anthropic"]
+    assert captured["model"] == DEFAULT_MODELS["anthropic"]
 
 
 # --- v0.5.0: dual-prompt step evaluation (Phase 8B) -----------------------
@@ -1542,12 +1542,11 @@ def test_message_no_warning_when_cache_empty(client: TestClient, monkeypatch):
 
 def test_message_warns_and_falls_back_when_model_not_in_cache(client: TestClient, monkeypatch):
     """When a list IS cached AND the requested override is NOT in it,
-    the route falls back to ai_orchestration.DEFAULT_MODELS and
+    the route falls back to app.services.ai_caller.DEFAULT_MODELS and
     sets model_warning."""
-    from adaptive_learner_session import ai_orchestration
-
     from app.schemas import AIProvider
     from app.services import model_discovery
+    from app.services.ai_caller import DEFAULT_MODELS
 
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id, provider="anthropic")
@@ -1569,7 +1568,7 @@ def test_message_warns_and_falls_back_when_model_not_in_cache(client: TestClient
             context_window=200000,
         ),
         model_discovery.ModelInfo(
-            id=ai_orchestration.DEFAULT_MODELS["anthropic"],
+            id=DEFAULT_MODELS["anthropic"],
             name="Claude Haiku 4.5",
             context_window=200000,
         ),
@@ -1596,7 +1595,7 @@ def test_message_warns_and_falls_back_when_model_not_in_cache(client: TestClient
     assert body["model_warning"] is not None
     assert "claude-renamed-old-model" in body["model_warning"]
     # Fell back to the default model.
-    assert captured["model"] == ai_orchestration.DEFAULT_MODELS["anthropic"]
+    assert captured["model"] == DEFAULT_MODELS["anthropic"]
 
 
 def test_message_no_warning_when_model_in_cache(client: TestClient, monkeypatch):

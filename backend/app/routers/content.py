@@ -21,23 +21,11 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from app.deps import get_settings_repo
-from app.exceptions import ExternalServiceError, ValidationError
 from app.repositories.settings_repo import SettingsRepository
-from app.schemas import AIProvider
 from app.services import content_validation
-from app.services import settings as settings_service
+from app.services.ai_caller import caller_for, resolve_ai_target
 
 router = APIRouter(prefix="/content", tags=["content"])
-
-# Duplicated from the session plugin's DEFAULT_MODELS to avoid
-# importing a plugin from the backend core. Keep in sync when
-# bumping provider defaults (same note as routers/imports.py).
-_DEFAULT_MODELS = {
-    "anthropic": "claude-haiku-4-5-20251001",
-    "openai": "gpt-4o-mini",
-    "gemini": "gemini-2.0-flash",
-    "perplexity": "sonar-pro",
-}
 
 
 class ValidateLessonRequest(BaseModel):
@@ -60,55 +48,19 @@ class ValidationResultResponse(BaseModel):
     quality_score: float
 
 
-def _resolve_model(provider_key: str, settings: Any) -> str:
-    override = getattr(settings, f"model_override_{provider_key}", None)
-    if isinstance(override, str) and override.strip():
-        return override.strip()
-    model = _DEFAULT_MODELS.get(provider_key)
-    if not model:
-        raise ValidationError(f"Provider {provider_key!r} has no default model.")
-    return model
-
-
 @router.post("/validate-lesson", response_model=ValidationResultResponse)
 def validate_lesson(
     body: ValidateLessonRequest,
     repo: SettingsRepository = Depends(get_settings_repo),
 ) -> ValidationResultResponse:
     """Run the opt-in AI content review for a lesson and return the structured validation result."""
-    settings = settings_service.get_or_create_settings(repo, body.user_id)
-    provider_key = settings.active_provider
-    try:
-        provider_enum = AIProvider(provider_key)
-    except ValueError as exc:
-        raise ValidationError(f"User {body.user_id!r} has no valid active AI provider.") from exc
-
-    api_key, _source = settings_service.resolve_api_key(repo, body.user_id, provider_enum)
-    if not api_key:
-        raise ValidationError(
-            f"User {body.user_id!r} has no API key for provider {provider_key!r}."
-        )
-
-    model = _resolve_model(provider_key, settings)
-    messages = content_validation.build_validation_messages(
+    target = resolve_ai_target(repo, body.user_id)
+    review = content_validation.review_lesson(
+        caller_for(target, max_tokens=1500),
+        target.provider_key,
         target_language=body.target_language,
         source_language=body.source_language,
         level=body.level,
         lessons=body.lessons,
     )
-
-    from app.main import manager  # lazy: cycle-avoidance + test isolation
-
-    raw = manager._pm.hook.ai_complete(
-        messages=messages,
-        model=model,
-        api_key=api_key,
-        max_tokens=1500,
-    )
-    if not isinstance(raw, str) or not raw.strip():
-        raise ExternalServiceError(provider_key, "no response from AI provider")
-
-    parsed = content_validation.parse_validation_result(raw)
-    if parsed is None:
-        raise ExternalServiceError(provider_key, "AI response was not valid JSON")
-    return ValidationResultResponse(**parsed)
+    return ValidationResultResponse(**review)
