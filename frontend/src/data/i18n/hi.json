@@ -146,7 +146,7 @@
     "analysis_phase_reading": "चरण 1/3: चैट पढ़ी जा रही है…",
     "analysis_phase_analyzing": "चरण 2/3: सामग्री का विश्लेषण किया जा रहा है…",
     "analysis_phase_preparing": "चरण 3/3: परिणाम तैयार किए जा रहे हैं…",
-    "analysis_estimate": "विश्लेषण में लगभग 15-30 सेकंड लगते हैं…",
+    "analysis_estimate": "लंबी चैट का विश्लेषण करने में अधिक समय लगता है।",
     "analysis_done": "हो गया!",
     "analysis_cancel": "रद्द करें",
     "analysis_failed_inline": "विश्लेषण विफल रहा। कृपया पुनः प्रयास करें।",
