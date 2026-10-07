@@ -2,34 +2,22 @@
   "note": "Help pages that exist in EN/DE but not yet in a translated locale (#3453). scripts/verify_docs_locale_coverage.py FAILs on a missing page this list does not name and on a listed page that now exists, so a translation removes its entry in the same commit and the list only shrinks by a visible edit (#2140). Seeded 2026-10-07: the same 15 pages in all six locales.",
   "gaps": {
     "el": [
-      "api/endpoints",
-      "legal/imprint",
-      "legal/privacy"
+      "api/endpoints"
     ],
     "es": [
-      "api/endpoints",
-      "legal/imprint",
-      "legal/privacy"
+      "api/endpoints"
     ],
     "fr": [
-      "api/endpoints",
-      "legal/imprint",
-      "legal/privacy"
+      "api/endpoints"
     ],
     "ja": [
-      "api/endpoints",
-      "legal/imprint",
-      "legal/privacy"
+      "api/endpoints"
     ],
     "pt": [
-      "api/endpoints",
-      "legal/imprint",
-      "legal/privacy"
+      "api/endpoints"
     ],
     "tr": [
-      "api/endpoints",
-      "legal/imprint",
-      "legal/privacy"
+      "api/endpoints"
     ]
   }
 }

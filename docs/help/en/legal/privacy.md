@@ -1,5 +1,8 @@
 # Privacy policy
 
+> This page is a translation of the German original and is provided for
+> information only. Only the German version is legally binding.
+
 Last updated: 15 September 2026
 
 This policy covers the public web version of Adaptive Learner at
