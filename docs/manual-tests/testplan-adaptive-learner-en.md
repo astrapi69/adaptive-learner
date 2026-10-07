@@ -2245,6 +2245,15 @@ each card row (`CardImageField`).
 - [ ] TC-0474 Browser mode (GitHub Pages / Dexie): the card stays visible with
       the notice "Only available with the desktop app."; DevTools >
       Network shows no request to /api/plugins/health
+- [ ] TC-0936 "Learning Repository" card, fresh install: the "Repositories directory"
+      field is empty, below it reads "Leave empty for the default: repos
+      in the data directory (see About)", no fixed Linux path; at 375 px
+      the hint wraps instead of being cut off (#3451)
+- [ ] TC-0937 Desktop app, git persistence on, field left empty, saved, then "Persist
+      to git" on the Learning Repository page: toast "Persisted to git:
+      <commit>"; on disk the folder "repos/<project id>/" with README.md
+      sits below the data directory that Settings > About shows; a custom
+      path entered in the field still wins
 
 ### TS-0061 Diagnostics probe: mis-tap mark + actions (#3043)
 - [ ] TC-0475 Probe ON, measurement bar visible: next to "Werte kopieren" and
