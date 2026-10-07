@@ -32,6 +32,7 @@ Usage (via ``make sync-schema`` / ``make sync-schema-check``):
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -232,22 +233,17 @@ def _alias_constrained_str_wrappers(source: str) -> str:
     return rewritten
 
 
-def _lint_clean(source: str, target: Path) -> str:
-    """Return ``source`` as ``ruff check --fix`` would leave it at ``target``.
-
-    The generator is the only writer of its modules (#2265). Once ruff
-    checked the plugins (#3625), ``ruff --fix`` re-sorted their imports and
-    became a second writer, so the committed files stopped matching the
-    generator (#3650). Running the fix here, with ``target`` as the stdin
-    filename so ruff resolves the same configuration CI applies, makes the
-    output lint-clean by construction.
+def _ruff(args: list[str], source: str, target: Path) -> str:
+    """Run one ruff pass over ``source`` as if it were the file ``target``.
 
     Raises:
-        RuntimeError: when ruff produced no output (not installed, crashed);
-            the generator never writes an unchecked module.
+        RuntimeError: when ruff produced no output (not installed, crashed).
     """
+    # Relative to backend/: with an absolute --stdin-filename ruff resolves
+    # its built-in defaults for plugin files, not the backend config (#3658).
+    stdin_name = os.path.relpath(target, REPO_ROOT / "backend")
     result = subprocess.run(
-        ["ruff", "check", "--fix", "--quiet", "--stdin-filename", str(target), "-"],
+        ["ruff", *args, "--quiet", "--stdin-filename", stdin_name, "-"],
         input=source,
         capture_output=True,
         text=True,
@@ -257,6 +253,25 @@ def _lint_clean(source: str, target: Path) -> str:
     if not result.stdout:
         raise RuntimeError(f"ruff produced no output for {target.name}: {result.stderr.strip()}")
     return result.stdout
+
+
+def _lint_clean(source: str, target: Path) -> str:
+    """Return ``source`` as ``ruff check --fix`` and ``ruff format`` leave it.
+
+    The generator is the only writer of its modules (#2265). Once ruff
+    checked the plugins (#3625), ``ruff --fix`` re-sorted their imports and
+    became a second writer, so the committed files stopped matching the
+    generator (#3650); ``ruff format`` on the plugins (#3658) did the same
+    with quotes and wrapping. Running both here, with ``target`` as the stdin
+    filename so ruff resolves the same configuration CI applies, makes the
+    output lint- and format-clean by construction.
+
+    Raises:
+        RuntimeError: when ruff produced no output (not installed, crashed);
+            the generator never writes an unchecked module.
+    """
+    fixed = _ruff(["check", "--fix"], source, target)
+    return _ruff(["format"], fixed, target)
 
 
 def generate(schema_path: Path, class_name: str, module_name: str) -> str:

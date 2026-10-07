@@ -13,6 +13,7 @@ becomes a second writer of a generated path (#2265).
 from __future__ import annotations
 
 import importlib.util
+import os
 import shutil
 import subprocess
 import sys
@@ -58,19 +59,21 @@ def test_generator_output_matches_committed_module(target: tuple[Path, str, str]
     )
 
 
+@pytest.mark.parametrize("command", [["check", "--fix"], ["format"]], ids=["check-fix", "format"])
 @pytest.mark.parametrize("target", _targets(), ids=lambda t: t[1])
-def test_generator_output_is_already_lint_clean(target: tuple[Path, str, str]) -> None:
-    """ruff --fix has nothing to change, so it can never rewrite the file."""
+def test_generator_output_is_already_lint_clean(
+    target: tuple[Path, str, str], command: list[str]
+) -> None:
+    """Neither ruff --fix nor ruff format has anything to change (#3650, #3658)."""
     generator = _load_generator()
     schema_path, module_name, class_name = target
     source = generator.generate(schema_path, class_name, module_name)
     result = subprocess.run(
         [
             "ruff",
-            "check",
-            "--fix",
+            *command,
             "--stdin-filename",
-            str(generator.PACKAGE_DIR / module_name),
+            os.path.relpath(generator.PACKAGE_DIR / module_name, REPO_ROOT / "backend"),
             "-",
         ],
         input=source,
@@ -79,7 +82,7 @@ def test_generator_output_is_already_lint_clean(target: tuple[Path, str, str]) -
         cwd=REPO_ROOT / "backend",
         check=False,
     )
-    assert result.stdout == source, f"ruff --fix would rewrite {module_name}"
+    assert result.stdout == source, f"ruff {command[0]} would rewrite {module_name}"
 
 
 def test_generator_fails_closed_without_ruff_output(monkeypatch: pytest.MonkeyPatch) -> None:
