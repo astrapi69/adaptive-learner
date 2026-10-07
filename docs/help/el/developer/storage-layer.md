@@ -58,7 +58,7 @@ export interface IStorageService {
 
 Το `storage/dexie-storage.ts` αποθηκεύει τα πάντα στο IndexedDB
 μέσω Dexie 4.4.2. Το σχήμα στο `storage/db.ts` αντικατοπτρίζει
-και τα 25 μοντέλα SQLAlchemy 1:1, συν τους 4 πίνακες σύνδεσης
+τα μοντέλα SQLAlchemy 1:1, συν τους πίνακες σύνδεσης
 (project_subjects / project_tags / κ.λπ.).
 
 Υπο-modules στο `storage/` φέρουν τη μεταφερμένη λογική:

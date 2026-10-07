@@ -95,7 +95,7 @@ def _compare_versions(a: str, b: str) -> int:
     length = max(len(parts_a), len(parts_b))
     parts_a += [0] * (length - len(parts_a))
     parts_b += [0] * (length - len(parts_b))
-    for left, right in zip(parts_a, parts_b):
+    for left, right in zip(parts_a, parts_b, strict=False):
         if left != right:
             return 1 if left > right else -1
     return 0
