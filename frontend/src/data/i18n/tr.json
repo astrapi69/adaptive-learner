@@ -2062,6 +2062,7 @@
       "title": "Öğrenme deposu",
       "loading": "Yükleniyor…",
       "repos_dir": "Depo dizini",
+      "repos_dir_placeholder": "Varsayılan: veri dizinindeki repos (bkz. Hakkında)",
       "save": "Ayarları kaydet",
       "saving": "Kaydediliyor…",
       "toast": {

@@ -1937,6 +1937,7 @@ repo:
     title: "Repositori Pembelajaran"
     loading: "Memuat…"
     repos_dir: "Direktori repositori"
+    repos_dir_placeholder: "Bawaan: repos di direktori data (lihat Tentang)"
     save: "Simpan pengaturan"
     saving: "Menyimpan…"
     toast:

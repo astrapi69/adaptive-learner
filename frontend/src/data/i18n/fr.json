@@ -2062,6 +2062,7 @@
       "title": "Dépôt d'apprentissage",
       "loading": "Chargement…",
       "repos_dir": "Répertoire des dépôts",
+      "repos_dir_placeholder": "Par défaut : repos dans le répertoire de données (voir À propos)",
       "save": "Enregistrer les paramètres",
       "saving": "Enregistrement…",
       "toast": {

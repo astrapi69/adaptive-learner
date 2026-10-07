@@ -2062,6 +2062,7 @@
       "title": "Learning Repository",
       "loading": "Loading…",
       "repos_dir": "Repositories directory",
+      "repos_dir_placeholder": "Default: repos in the data directory (see About)",
       "save": "Save settings",
       "saving": "Saving…",
       "toast": {
