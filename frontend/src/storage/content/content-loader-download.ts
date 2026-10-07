@@ -31,6 +31,7 @@ import {
 } from "./content-loader-sources";
 import { latestCachedRow } from "./content-loader-listing";
 import { storeImportLessonOrder } from "../../lib/content/browse/prefs/lesson-order-store";
+import { ApiError } from "../../api/client";
 
 export async function downloadSetDexie(
   source: string,
@@ -54,11 +55,7 @@ export async function downloadSetDexie(
   const repoManifest = parseManifest(repoText) as ParsedManifest;
   const target = (repoManifest.sets ?? []).find((s) => s.id === setId);
   if (!target) {
-    const err: Error & { status?: number } = new Error(
-      `Set ${setId} not advertised by ${source}`,
-    );
-    err.status = 404;
-    throw err;
+    throw new ApiError(404, `Set ${setId} not advertised by ${source}`);
   }
 
   // Reconcile: idempotent re-download.
