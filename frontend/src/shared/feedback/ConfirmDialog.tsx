@@ -134,7 +134,7 @@ export default function ConfirmDialog({
             >
                 <h2
                     id={`${testId}-title`}
-                    className="mb-2 text-lg font-semibold text-fg-primary"
+                    className="mt-0 mb-2 text-lg font-semibold text-fg-primary"
                 >
                     {title}
                 </h2>

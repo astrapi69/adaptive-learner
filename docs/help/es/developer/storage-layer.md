@@ -58,8 +58,8 @@ es idéntico al de v0.6.0.
 ## DexieStorage
 
 `storage/dexie-storage.ts` persiste todo en IndexedDB mediante
-Dexie 4.4.2. El esquema en `storage/db.ts` refleja los 25 modelos
-SQLAlchemy en una correspondencia 1:1, más las 4 tablas de
+Dexie 4.4.2. El esquema en `storage/db.ts` refleja los modelos
+SQLAlchemy en una correspondencia 1:1, más las tablas de
 asociación (project_subjects / project_tags / etc.).
 
 Los submódulos bajo `storage/` llevan la lógica portada:

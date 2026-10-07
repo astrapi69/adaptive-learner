@@ -46,7 +46,7 @@ export default function ShareAppSection({ t }: Props) {
         className="rounded-md border border-border p-3"
         data-testid="about-share-haupt"
       >
-        <h4 className="mb-1 text-sm font-semibold text-fg-primary">
+        <h4 className="mt-0 mb-1 text-sm font-semibold text-fg-primary">
           {t("share.app.haupt_label", "Main version (stable)")}
         </h4>
         <p className="muted mt-0 mb-3">
@@ -83,7 +83,7 @@ export default function ShareAppSection({ t }: Props) {
         className="mt-3 rounded-md border border-[var(--warning)] bg-[var(--warning-bg)] p-3"
         data-testid="about-share-latest"
       >
-        <h4 className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-warning">
+        <h4 className="mt-0 mb-1 flex items-center gap-1.5 text-sm font-semibold text-warning">
           <AlertTriangle size={16} aria-hidden="true" />
           {t("share.app.latest_label", "Latest version (test)")}
         </h4>
