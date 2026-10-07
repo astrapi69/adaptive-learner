@@ -478,7 +478,6 @@
     "frontend/src/lib/exercises/payload/hotspot.ts::HotspotRectZone::type",
     "frontend/src/lib/exercises/payload/reading-comprehension.ts::RcQuestionOption::type",
     "frontend/src/lib/exercises/useControlledExercise.ts::ExerciseResult::type",
-    "frontend/src/lib/export/i18n.ts::ExportLang::type",
     "frontend/src/lib/feedback/feedbackPref.ts::DEFAULT_SOUND_ENABLED::export",
     "frontend/src/lib/feedback/feedbackPref.ts::DEFAULT_SOUND_VOLUME::export",
     "frontend/src/lib/feedback/milestones.ts::MASTERY_THRESHOLDS::export",

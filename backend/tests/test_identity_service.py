@@ -263,3 +263,18 @@ def test_get_identity_status_when_missing(client, _isolate_config_dir):
     assert body["exists"] is False
     assert body["path"].endswith("/identity.yaml")
     assert body["last_seen"] is None
+
+
+# --- #3423: the missing-identity 404 lives in the service -------------------
+
+
+def test_require_identity_raises_not_found_without_a_file() -> None:
+    from app.exceptions import NotFoundError
+
+    with pytest.raises(NotFoundError, match="No persisted identity"):
+        identity_service.require_identity()
+
+
+def test_require_identity_returns_the_persisted_identity() -> None:
+    identity_service.update_identity(user_id="u-3423")
+    assert identity_service.require_identity()["user_id"] == "u-3423"

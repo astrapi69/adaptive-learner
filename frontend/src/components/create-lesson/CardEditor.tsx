@@ -171,7 +171,7 @@ export default function CardEditor({
                             data-testid="card-front-input"
                             value={front}
                             maxLength={CARD_SIDE_MAX_LENGTH}
-                            placeholder="Bonjour"
+                            placeholder={t("create_lesson.cards.front_placeholder", "Word or phrase")}
                             onChange={(e) => setFront(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" && canAdd) handleAdd();
@@ -187,7 +187,7 @@ export default function CardEditor({
                             data-testid="card-back-input"
                             value={back}
                             maxLength={CARD_SIDE_MAX_LENGTH}
-                            placeholder="Guten Tag"
+                            placeholder={t("create_lesson.cards.back_placeholder", "Meaning")}
                             onChange={(e) => setBack(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" && canAdd) handleAdd();
