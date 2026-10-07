@@ -3953,6 +3953,17 @@ Hier nur zur Dokumentation was abgedeckt ist.
 - [ ] TC-0945 Teilen-Assistent und "Als Repository teilen": der X-Knopf heißt für
       den Bildschirmleser "Schließen"
 
+### TS-0131 Seitentitel im Browser-Tab (#3431)
+
+- [ ] TC-0946 Durch Dashboard, Lernpfad, Inhalte, Einstellungen und eine Lektion
+      klicken: der Tab-Titel lautet jeweils "<Seitenname> - Adaptive
+      Learner" (z. B. "Einstellungen - Adaptive Learner", "Lektion -
+      Adaptive Learner"); die Startseite zeigt nur "Adaptive Learner"
+- [ ] TC-0947 Einstellungen > Allgemein, UI-Sprache auf Englisch: der Tab-Titel
+      wechselt ohne Neuladen auf "Settings - Adaptive Learner"
+- [ ] TC-0948 Browser-Verlauf (Zurück-Knopf lange drücken): die Einträge tragen
+      unterschiedliche Seitennamen statt eines gleichen Titels
+
 ## Automatisiert: Unit + Component Tests (Vitest, 7200+;
 ## aktuelle Zahl siehe docs/audits/current-coverage.md)
 
