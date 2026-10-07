@@ -349,8 +349,12 @@ export default function AnkiPage() {
                           })
                         }
                       >
-                        <option value="basic">Basic</option>
-                        <option value="cloze">Cloze</option>
+                        <option value="basic">
+                          {t("anki.card_type_option.basic", "Basic")}
+                        </option>
+                        <option value="cloze">
+                          {t("anki.card_type_option.cloze", "Cloze")}
+                        </option>
                       </select>
                     </label>
                     <div className="anki-card__actions">
