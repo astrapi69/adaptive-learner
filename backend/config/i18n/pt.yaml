@@ -1675,7 +1675,7 @@ ui:
     forest: "Floresta"
     high-contrast: "Alto contraste"
     sepia: "Sépia"
-    auto: "Automatico (sistema)"
+    auto: "Automático (sistema)"
   errors:
     bad_request: "Não foi possível processar o pedido."
     forbidden: "Acesso negado. Verifique suas configurações."

@@ -457,7 +457,7 @@
     "topic_label": "Sujet",
     "in_progress": "Session en cours",
     "send_message": "Envoyer le message",
-    "message_placeholder": "Ecris ta réponse...",
+    "message_placeholder": "Écris ta réponse...",
     "ai_thinking": "Réflexion...",
     "ai_error": "Le fournisseur IA n'a pas pu répondre.",
     "no_api_key": "Aucune clé IA définie. Ajoute une clé pour ton fournisseur IA dans Paramètres pour discuter avec le tuteur. Les leçons et révisions fonctionnent sans clé.",
@@ -1094,7 +1094,7 @@
     },
     "dialogic": {
       "label": "Dialogique",
-      "summary": "Penser en conversation - reduire le stress, batir la motivation."
+      "summary": "Penser en conversation - réduire le stress, bâtir la motivation."
     },
     "contextual": {
       "label": "Contextuel",
