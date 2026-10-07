@@ -1,0 +1,218 @@
+# Αναφορά μορφής μαθήματος
+
+> **Παράγεται** από τον κανονικό καθρέφτη σχήματος του `learn-content-engine` (`schema/lesson.schema.json`, καθρέφτης byte του καρφιτσωμένου release του engine) μέσω `make sync-schema` (EXP-039). Το δομικό στρώμα Pydantic της εφαρμογής αναγεννάται από αυτόν τον καθρέφτη· μόνο οι σημασιολογικοί validators γράφονται στο χέρι. Μην το επεξεργάζεσαι με το χέρι· μια αλλαγή μορφής ξεκινά στο engine, μετά ανεβαίνει το pin και ο generator τρέχει ξανά.
+
+Έκδοση σχήματος: **1.9** (JSON Schema 2020-12). Το μηχανικά αναγνώσιμο σχήμα βρίσκεται στο `schema/lesson.schema.json`· αναφέρσου σε αυτό από ένα `.json` μαθήματος μέσω `"$schema"` για αυτόματη συμπλήρωση IDE + επικύρωση.
+
+Οι περιγραφές πεδίων παρακάτω προέρχονται αυτούσιες από τους ορισμούς των μοντέλων (στα αγγλικά).
+
+
+## Μοντέλα
+
+### `Lesson`
+
+One lesson in a content set (Phase 43 / 2B-lesson).
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `cards` | `Card[]` | no | - |
+| `contributed_at` | `string | null` | no | - |
+| `contributed_by` | `string | null` | no | - |
+| `description` | `string | null` | no | - |
+| `domain` | `string | null` | no | - |
+| `estimated_minutes` | `number` | no | min=1, max=240 |
+| `id` | `SlugId` | yes | - |
+| `purpose` | `"practice" | "bridge" | "quiz"` | no | - |
+| `requires_extensions` | `string[]` | no | - |
+| `resources` | `LessonResource[] | null` | no | - |
+| `source_language` | `string | null` | no | - |
+| `steps` | `LessonStep[]` | yes | minItems=1 |
+| `target_language` | `string | null` | no | - |
+| `title` | `string` | yes | minLen=1, maxLen=200 |
+| `variation_note` | `string | null` | no | - |
+| `variation_of` | `string | null` | no | - |
+
+
+### `Card`
+
+The smallest learnable unit (Phase 43 / 2B-lesson).
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `audio` | `string | null` | no | - |
+| `back` | `string` | yes | minLen=1, maxLen=500 |
+| `code_language` | `string | null` | no | - |
+| `code_snippet` | `string | null` | no | - |
+| `difficulty` | `number | null` | no | - |
+| `expected_output` | `string | null` | no | - |
+| `front` | `string` | yes | minLen=1, maxLen=500 |
+| `hint` | `string | null` | no | - |
+| `id` | `SlugId` | yes | - |
+| `image` | `string | null` | no | - |
+| `media_type` | `"text" | "code" | "formula" | "diagram" | null` | no | - |
+| `notes` | `string | null` | no | - |
+| `stable_id` | `string | null` | no | - |
+| `tags` | `SlugId[]` | no | maxItems=20 |
+| `token_roles` | `CardTokenRole[] | null` | no | - |
+
+
+### `CardTokenRole`
+
+One ``token → role`` annotation on a card.
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `role` | `TokenRole` | yes | - |
+| `token` | `string` | yes | minLen=1, maxLen=120 |
+
+
+### `ClozeBlank`
+
+One blank inside a cloze exercise's ``sentence`` (Phase 52D / v1.35.0 / P-127).
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `accept` | `string[]` | yes | minItems=1 |
+| `hint` | `string | null` | no | - |
+| `placeholder` | `string | null` | no | - |
+| `stable_id` | `SlugId | null` | no | - |
+
+
+### `Exercise`
+
+One exercise step. Type-tagged via ``type``.
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `accept` | `string[] | null` | no | - |
+| `accept_orderings` | `number[][] | null` | no | - |
+| `blanks` | `ClozeBlank[] | null` | no | - |
+| `card_ids` | `string[]` | no | maxItems=50 |
+| `case_sensitive` | `boolean` | no | - |
+| `cloze_mode` | `"type" | "select" | "multiselect" | null` | no | - |
+| `direction` | `"source_to_target" | "target_to_source" | "both" | "random"` | no | - |
+| `distractors` | `string[]` | no | maxItems=20 |
+| `examples` | `InlineExample[] | null` | no | - |
+| `explanation` | `string | null` | no | - |
+| `ext_payload` | `object` | no | - |
+| `from_cards` | `boolean` | no | - |
+| `hint` | `string | null` | no | - |
+| `id` | `SlugId` | yes | - |
+| `images` | `PictureImage[] | null` | no | - |
+| `multiple` | `boolean` | no | - |
+| `options` | `MultipleChoiceOption[] | null` | no | - |
+| `pairs` | `Pair[] | null` | no | - |
+| `prompt` | `string` | yes | minLen=1, maxLen=1000 |
+| `sentence` | `string | null` | no | - |
+| `stable_id` | `string | null` | no | - |
+| `tiles` | `string[] | null` | no | - |
+| `type` | `ExerciseType | ExtExerciseType` | yes | - |
+| `variables` | `ExerciseVariable[] | null` | no | - |
+
+
+### `ExerciseType` (enum)
+
+`matching` · `picture_choice` · `free_text` · `word_tiles` · `cloze` · `multiple_choice`
+
+### `ExerciseVariable`
+
+One variable of a parametric exercise (schema v1.14, engine#151). SAMPLED when it carries ``min`` and ``max`` (optional ``step``; integers when ``step`` is absent, else multiples of ``step`` from ``min``): the consumer draws a value per attempt. COMPUTED when it carries ``expression`` (arithmetic over variables declared EARLIER in the same ``variables`` list: decimal numbers, names, ``+ - * /``, parentheses, unary minus): the consumer evaluates it after sampling. Exactly one of the two shapes (semantic rule E-VAR-KIND). ``tolerance`` is the absolute tolerance a consumer applies when this variable's value is an accepted answer. Any string field of the exercise may reference a variable as ``{{name}}``; the consumer substitutes every occurrence before rendering and grading. The engine validates the contract and never samples or evaluates.
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `expression` | `string` | no | minLen=1, maxLen=200 |
+| `max` | `number` | no | - |
+| `min` | `number` | no | - |
+| `name` | `string` | yes | maxLen=32 |
+| `step` | `number` | no | - |
+| `tolerance` | `number` | no | min=0 |
+
+
+### `InlineExample`
+
+One inline worked example on a theory step or exercise (schema v1.5).
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `content` | `string` | yes | minLen=1, maxLen=5000 |
+| `language` | `string | null` | no | - |
+| `title` | `string | null` | no | - |
+
+
+### `LessonResource`
+
+One lesson-level supplementary-media entry (EXP-029 / MED-05).
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `author` | `string | null` | no | - |
+| `description` | `string | null` | no | - |
+| `duration` | `string | null` | no | - |
+| `free` | `boolean | null` | no | - |
+| `language` | `string | null` | no | - |
+| `level` | `string | null` | no | - |
+| `partnership` | `boolean | null` | no | - |
+| `tags` | `string[] | null` | no | - |
+| `title` | `string` | yes | minLen=1, maxLen=300 |
+| `type` | `string` | yes | minLen=1, maxLen=40 |
+| `url` | `string` | yes | minLen=1, maxLen=2000 |
+
+
+### `LessonStep`
+
+One step in the lesson sequence.
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `body` | `string | null` | no | - |
+| `example_label` | `string | null` | no | - |
+| `example_url` | `string | null` | no | - |
+| `examples` | `InlineExample[] | null` | no | - |
+| `exercise` | `Exercise | null` | no | - |
+| `id` | `SlugId` | yes | - |
+| `review_lesson_id` | `string | null` | no | - |
+| `theory_ref` | `string | null` | no | - |
+| `title` | `string | null` | no | - |
+| `type` | `StepType` | yes | - |
+
+
+### `MultipleChoiceOption`
+
+One answer option in a MULTIPLE_CHOICE exercise (schema v1.6).
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `correct` | `boolean` | no | - |
+| `stable_id` | `SlugId | null` | no | - |
+| `text` | `string` | yes | minLen=1, maxLen=500 |
+
+
+### `Pair`
+
+One left↔right pair in a MATCHING exercise.
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `left` | `string` | yes | minLen=1, maxLen=500 |
+| `right` | `string` | yes | minLen=1, maxLen=500 |
+| `stable_id` | `SlugId | null` | no | - |
+
+
+### `PictureImage`
+
+One image option in a PICTURE_CHOICE exercise.
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `is_correct` | `string | null` | no | - |
+| `label` | `string` | yes | minLen=1, maxLen=500 |
+| `src` | `string | string` | yes | - |
+
+
+### `StepType` (enum)
+
+`theory` · `exercise`
+
+### `TokenRole` (enum)
+
+`article` · `verb` · `noun` · `adjective` · `preposition` · `gender_marker` · `tense_marker`
