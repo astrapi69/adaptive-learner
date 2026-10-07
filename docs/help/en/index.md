@@ -98,12 +98,14 @@ the full history is in
   release-gate suite
 - **11 UI languages, all fully translated** (DE / EL / EN /
   ES / FR / HI / ID / JA / KO / PT / TR)
-- **13 plugins** (assessment / 3 AI providers / session /
-  tracking / tools / gamification / anki / notebooklm /
-  learning-repo / content-loader / missions)
+- **Plugins** for assessment, session, tracking, tools,
+  gamification, anki, notebooklm, learning-repo, content-loader and
+  missions, plus one per AI provider (Anthropic, OpenAI, Gemini,
+  Perplexity)
 - **Bundled content sets** across multiple content languages
   and domains - the set browser in the app shows the current inventory
-- **30 SQLAlchemy models**, sync surface 30 tables
+- **One SQLAlchemy domain model** (`backend/app/models/__init__.py`),
+  synced table by table (`sync_service.ALL_SYNC_TABLES`)
 - **2 storage modes** (Local IndexedDB / FastAPI backend),
   plus the desktop launcher's `secrets.yaml` overlay
 - **MIT licensed**

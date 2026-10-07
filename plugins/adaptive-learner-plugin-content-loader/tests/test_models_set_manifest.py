@@ -353,7 +353,7 @@ class TestCheckSetAssetsSize:
     def test_warns_on_excessive_asset_count(self) -> None:
         # Each asset is 1 KiB → well under any size limit.
         # The asset-count check is independent.
-        paths = [("img/a-{}.png".format(i), 1) for i in range(101)]
+        paths = [(f"img/a-{i}.png", 1) for i in range(101)]
         s = self._set_with_assets(paths)
         warnings = check_set_assets_size(s)
         assert any("101 assets" in w for w in warnings)

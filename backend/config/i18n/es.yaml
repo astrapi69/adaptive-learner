@@ -18,17 +18,10 @@ common:
   error: Algo ha ido mal.
   back: Atrás
   next: Siguiente
-  start: Empezar
   submit: Enviar
-  continue: Continuar
-  done: Hecho
   delete: Eliminar
   edit: Editar
   confirm: Confirmar
-  'yes': "Sí"
-  'no': 'No'
-  optional: opcional
-  required: obligatorio
   minutes: minutos
   close: "Cerrar"
 avatar:
@@ -79,24 +72,15 @@ nav:
     progress: "Progreso"
     more: "Más"
   primary: "Navegación principal"
-  discover: "Descubrir contenido"
-  offline_long: "Sin conexión - las sesiones anteriores siguen disponibles"
-  sync_pending: "{n} cambio(s) pendientes de sincronizar"
-  statistics: "Estadísticas"
   profile: "Tu perfil"
   learning_path: "Ruta de aprendizaje"
   dashboard: Panel
   session: Sesión
-  curriculum: Currículo
   progress: Progreso
-  import: Importar
   settings: Ajustes
   help: Ayuda
   home: Inicio
   menu: "Menú"
-  online: En línea
-  offline: Sin conexión
-  anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Modo Desarrollador activo - los avisos de error muestran detalles técnicos. Cámbialo en Ajustes."
   content: "Mi contenido"
@@ -105,8 +89,6 @@ nav:
   mode_badge_tooltip_content: "Sin clave API configurada - solo contenido predefinido. Añade una clave en Ajustes para activar funciones de IA."
   mode_badge_tooltip_ai: "Proveedor de IA configurado - los ejercicios usan IA para distractores y pistas. Pulsa para explorar los sets."
   mode_badge_action: "explorar contenido"
-  sync_paired: "Sinc.: emparejado (Ajustes > Sinc.)"
-  sync_unpaired: "Sinc.: sin emparejar (Ajustes > Sinc.)"
 import:
   title: Importar una conversación
   subtitle: Pega o sube una conversación con ChatGPT, Claude o Gemini y obtén al instante ideas de aprendizaje.
@@ -362,7 +344,6 @@ adaptive:
   session_title: "Lección adaptativa"
   loading: "Analizando tus errores…"
   empty_body: "Aún no hay nada que adaptar - practica una lección para acumular datos."
-  not_cached_body: "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero."
   back_to_dashboard: "Volver al panel"
   transparency:
     focus_prefix: "Esta lección se centra en:"
@@ -375,7 +356,6 @@ adaptive:
     mastered_delta: "¡Mejora: +{n} elemento(s) dominado(s) en esta sesión!"
     note: "Las puntuaciones de los elementos se han actualizado. Tu próxima lección adaptativa se centrará en los elementos que aún necesitan trabajo."
   error:
-    missing_params: "Ningún conjunto de contenido seleccionado."
     load_failed: "No se pudo generar la lección adaptativa."
 review:
   your_answer: "Tu respuesta:"
@@ -400,7 +380,6 @@ review:
   subtitle_capped: "{shown} de {due} elemento(s) para repasar"
   loading: "Cargando sesión de repaso…"
   empty_body: "¡Todo al día! No hay elementos para repasar en este conjunto."
-  not_cached_body: "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero."
   back_to_dashboard: "Volver al panel"
   back_to_lesson: "Volver a la lección"
   summary:
@@ -409,7 +388,6 @@ review:
     score: "Puntuación"
     note: "Las puntuaciones de los elementos se han actualizado. Los elementos dominados no aparecerán en la próxima sesión."
   error:
-    missing_params: "Ningún conjunto de contenido seleccionado."
     load_failed: "No se pudo cargar la sesión de repaso."
   spaced_empty: Nada que repasar ahora mismo. ¡Buen ritmo!
   spaced_interval_label: Revisar en
@@ -698,10 +676,6 @@ settings:
   tab_plugins: "Complementos"
   plugins_installed_title: "Complementos instalados"
   plugins_installed_desc: "Cada complemento que cargó la aplicación de escritorio, con versión, origen y hora de activación (ciclo de vida de PluginForge)."
-  plugins_col_name: "Complemento"
-  plugins_col_version: "Versión"
-  plugins_col_source: "Origen"
-  plugins_col_activated: "Activado"
   plugins_source_entry_point: "Paquete"
   plugins_source_direct: "Registrado directamente"
   plugins_marker_load_error: "Error de carga"
@@ -896,7 +870,6 @@ settings:
     rollback_warning: "La nueva clave no funciona. ¿Mantener la anterior?"
     rollback_keep_old: "Mantener la anterior"
     rollback_save_anyway: "Guardar de todos modos"
-    rollback_cancel: "Cancelar"
     rollback_restore: "Restaurar la última clave que funcionó"
     format_hint:
       anthropic: "Empieza con sk-ant-"
@@ -1476,10 +1449,6 @@ gamification:
     how: "Los niveles suben en una curva de XP creciente: 0, 100, 300, 600, 1000 XP; cada paso necesita 100 XP más que el anterior."
   level_detail_title: "Progreso de nivel"
   level_up: ¡Subiste de nivel!
-  reason_session_complete: Sesión completada
-  reason_assessment_complete: Evaluación completada
-  reason_conversation_imported: Conversación importada
-  reason_flat: XP otorgado
   card_badges: Insignias
   badges_earned: ganadas
   badges_empty: No hay insignias disponibles aún.
@@ -1604,19 +1573,6 @@ gamification:
   reset_done: 'Progreso reiniciado: {xp} XP, {badges} insignias, {streak} rachas.'
   reset_failed: No se pudo reiniciar el progreso.
   weekend_mode_save_failed: No se pudo guardar el modo fin de semana.
-  danger_zone_heading: "Zona de peligro"
-  danger_zone_intro: "Elimina permanentemente todo el estado del aprendiz en este dispositivo."
-  danger_zone_reset_button: "Restablecer todo"
-  danger_zone_warning: "Esto elimina TODOS tus datos de aprendizaje permanentemente: sesiones, progreso, perfiles, planes de estudio, importaciones, tarjetas de Anki, configuración y claves de API. Esta acción NO se puede deshacer."
-  danger_zone_confirm_prompt: "Escribe RESET para confirmar"
-  danger_zone_input_placeholder: RESET
-  danger_zone_final_button: "Eliminar permanentemente"
-  danger_zone_backup_offer: "¿Crear primero una copia de seguridad?"
-  danger_zone_backup_button: "Crear copia de seguridad"
-  danger_zone_complete_toast: "Se han eliminado todos los datos."
-  danger_zone_cancel: "Cancelar"
-  danger_zone_continue: "Continuar"
-  danger_zone_failed_toast: "El restablecimiento falló:"
 arcade:
   title: "Arcade"
   subtitle: "Rondas cortas, de uno a dos minutos: una recompensa del modo juego. Sin XP, solo diversión."
@@ -2016,7 +1972,6 @@ repo:
     download_zip: "Descargar ZIP"
     persist: "Guardar en git"
     persisting: "Guardando…"
-    persist_dexie_tooltip: "El control de versiones con Git solo está disponible en modo servidor."
   toast:
     zip_downloaded: "ZIP descargado"
     persisted: "Guardado en git"
@@ -2637,6 +2592,7 @@ content:
     public: "Público"
     branch: "Rama"
     lessons_note: "Se incluirán las {n} lecciones de este conjunto."
+    lessons_note_one: "Se incluirá la única lección de este conjunto."
     invalid_repo: "Introduce el repositorio como owner/name."
     submit: "Exportar"
     working: "Exportando…"
@@ -4117,9 +4073,6 @@ content_repo:
   added: "Repositorio añadido."
   synced: "Sincronizado: {sets} conjuntos, {lessons} lecciones."
   token_hint: "Los repositorios privados necesitan un token: pega uno abajo o configura un token compartido en Ajustes → Integraciones."
-  trust_official: "Oficial: Contenido curado y con calidad garantizada por el equipo del proyecto."
-  trust_verified: "Verificado: Aportado por la comunidad y revisado por el equipo."
-  trust_validated: "Validado: Técnicamente correcto; contenido no revisado individualmente."
   official:
     title: "Contenido oficial"
     counts: "{sets} conjuntos · {lessons} lecciones"
@@ -4348,12 +4301,10 @@ shuffle:
   page_title: "Modo aleatorio"
   loading: "Cargando sesión aleatoria…"
   empty_body: "Este conjunto necesita al menos dos lecciones con ejercicios para mezclar."
-  not_cached_body: "Este conjunto aún no está descargado. Abre el explorador de contenido para descargarlo primero."
   back_to_dashboard: "Volver al panel"
   subtitle: "Mezclando {n} preguntas de {lessons} lecciones"
   error:
     load_failed: "No se pudo cargar la sesión aleatoria."
-    missing_params: "Ningún conjunto de contenido seleccionado."
   summary:
     heading: "¡Entrenamiento aleatorio completado!"
     score: "{correct} de {total} correctas"

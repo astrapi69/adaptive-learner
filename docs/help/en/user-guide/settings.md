@@ -498,6 +498,19 @@ line tells you where the token is stored (secrets.yaml, an environment
 variable, or this browser), with **Remove** to delete it. A token that
 comes from an environment variable cannot be edited here.
 
+The token is used in three places:
+
+- **Share with Community** in My Lessons opens the pull request for a
+  single lesson directly, without the detour through GitHub's editor
+  (see [My Lessons](my-lessons.md#export-and-share)).
+- **Share as repository** pushes a whole set to a repository of yours;
+  it stays disabled until a token is saved.
+- **Register your repository** (Data > Sources) can open its pull
+  request directly instead of you pasting the entry on GitHub.
+
+The last two are only available in the browser version of the app.
+Without a token every other feature works as before.
+
 ## Help
 
 The **Help** tab holds the in-app glossary: a search field filters
