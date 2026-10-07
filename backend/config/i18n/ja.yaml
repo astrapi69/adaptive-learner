@@ -129,7 +129,7 @@ import:
   analysis_title: 分析
   analysis_ready: 分析の準備ができました。
   analysis_fallback: 分析は実行されましたが、AI の応答をきれいに解析できませんでした。
-  analysis_fallback_long: AI の応答は構造化された JSON として解析できませんでした。下の要約は フォールバックです。
+  analysis_fallback_long: "AI の応答を構造化された分析として読み取れませんでした。分析をもう一度実行するか、別の AI プロバイダーを選んでください。"
   analysis_error: 会話を分析できませんでした。
   analysis_phase_reading: "ステップ1/3: チャットを読み込み中…"
   analysis_phase_analyzing: "ステップ2/3: 内容を分析中…"
@@ -1261,6 +1261,107 @@ backup:
   compare_auto_label: 自動バックアップ {{date}}
   auto_compare_missing: 自動バックアップは利用できなくなりました - ローテーションで削除されました。
 export:
+  # #3426 - the Markdown/PDF report strings (were a private DE/EN table).
+  report:
+    progress_report_title: "学習の進捗"
+    session_detail_title: "セッションの詳細"
+    curriculum_overview_title: "カリキュラムの概要"
+    generated_at: "作成日時"
+    app_version: "アプリのバージョン"
+    learner: "学習者"
+    language: "言語"
+    method_profile: "学習法プロフィール"
+    dominant_method: "主な学習法"
+    assessed_at: "最終評価"
+    no_profile: "まだ評価がありません。プロフィールを見るには最初の評価を完了してください。"
+    projects: "プロジェクト"
+    no_projects: "学習プロジェクトはまだありません。"
+    topic: "テーマ"
+    goal: "目標"
+    timeframe: "期間"
+    daily_minutes: "1日の分数"
+    current_problem: "現在の課題"
+    status: "状態"
+    active: "有効"
+    archived: "アーカイブ済み"
+    session_count: "セッション"
+    total_minutes: "合計時間（分）"
+    mean_understanding: "平均理解度"
+    mean_stress: "平均ストレス"
+    method_distribution: "学習法の内訳"
+    method_switches: "学習法の切り替え"
+    no_switches: "このプロジェクトでは学習法の切り替えはありません。"
+    switched_from_to: "切り替え"
+    reason: "理由"
+    recent_sessions: "最近のセッション"
+    no_sessions: "完了したセッションはまだありません。"
+    method: "学習法"
+    duration: "所要時間"
+    understanding: "理解度"
+    stress: "ストレス"
+    method_fit: "学習法の適合度"
+    notes: "メモ"
+    step_evaluation_insights: "ステップ評価"
+    no_step_insights: "ステップ評価はまだありません。"
+    step: "ステップ"
+    evaluations_count: "評価数"
+    advance_rate: "進行率"
+    mean_confidence: "平均確信度"
+    deferred: "保留"
+    repeated: "繰り返し"
+    advanced: "進行"
+    extractions: "分析済みの会話"
+    no_extractions: "分析済みの会話はまだありません。"
+    imported_at: "インポート日時"
+    messages: "メッセージ"
+    source: "ソース"
+    analysis: "分析"
+    no_session: "セッションが見つかりません。"
+    session: "セッション"
+    started_at: "開始日時"
+    ended_at: "終了日時"
+    cycle_step: "現在のサイクルステップ"
+    transcript: "会話記録"
+    no_messages: "このセッションにはメッセージがありません。"
+    role_user: "学習者"
+    role_assistant: "AI"
+    role_system: "システム"
+    rating: "評価"
+    no_rating: "このセッションは評価されていません。"
+    step_evaluations: "ステップ評価"
+    from_step: "元のステップ"
+    to_step: "次のステップ"
+    confidence: "確信度"
+    applied: "適用済み"
+    not_applied: "未適用"
+    fallback: "代替手段を使用"
+    evaluated_at: "評価日時"
+    curriculum: "カリキュラム"
+    description: "説明"
+    topics: "テーマ"
+    no_topics: "このカリキュラムにはテーマがありません。"
+    lessons: "レッスン"
+    no_lessons: "このカリキュラムにはレッスンがありません。"
+    out_of: "/"
+    minutes_short: "分"
+    scale_5: "1〜5 の尺度で"
+    analysis_topic: "検出されたテーマ"
+    analysis_subtopics: "サブテーマ"
+    analysis_user_level: "レベル"
+    analysis_strengths: "強み"
+    analysis_weaknesses: "弱み"
+    analysis_error_patterns: "誤りのパターン"
+    analysis_recommended_method: "推奨される学習法"
+    analysis_recommended_focus: "推奨される重点"
+    analysis_suggested_curriculum: "推奨カリキュラム"
+    analysis_summary: "要約"
+    analysis_priority: "優先度"
+    level_beginner: "初級"
+    level_intermediate: "中級"
+    level_advanced: "上級"
+    linked_project: "関連プロジェクト"
+    status_completed: "完了"
+    status_abandoned: "中止"
   title: エクスポート
   intro: 学習の旅を Markdown または PDF としてダウンロードします。Markdown は 編集と共有ができるプレーンテキストです。PDF はブラウザの印刷 ダイアログを開くので、コピーを保存できます。
   progress_label: 進捗レポート (完全な旅)
@@ -1576,6 +1677,10 @@ arcade:
     won: "やりました! 全部の順番をクリア!"
     lost: "残念! 長さ {n} まで届きました。すぐ再挑戦!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "基本"
+    cloze: "穴埋め"
   title: Ankiエクスポート
   intro: AIが提案したフラッシュカードを確認し、好きなものを承認してから.apkgファイルとしてAnkiに出力します。
   filter_project: プロジェクト
@@ -1938,6 +2043,11 @@ repo:
     description: "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。"
     enable_git: "git 永続化を有効にする"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "不足: {word}"
+    extra: "余分: {word}"
+    replaced: "入力: {wrote}、正解: {expected}"
   progress_io:
     save_error: "このレッスンの進捗を保存できませんでした。"
     load_failed: "このレッスンの保存済みの進捗を読み込めませんでした: {detail}"
@@ -3198,6 +3308,9 @@ create_lesson:
     description_label: "トピック / 説明"
     author_label: "著者名"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "単語または表現"
+    back_placeholder: "意味"
     heading: "単語カードを追加"
     front_label: "表（学習対象）"
     back_label: "裏（あなたの言語）"

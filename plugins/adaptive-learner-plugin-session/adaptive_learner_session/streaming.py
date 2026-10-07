@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session
 from app.exceptions import ValidationError
 from app.models import LearningProject, SessionMessage
 from app.schemas import LearningSessionOut, MessageRole, SessionMessageOut
+from app.services.ai_caller import DEFAULT_MODELS
 
 from . import ai_error_codes, ai_orchestration
 from .route_helpers import _get_session
@@ -189,7 +190,7 @@ def build_message_stream_response(
             f"No API key stored for provider {provider_key!r}.",
             ai_error_codes.NO_API_KEY,
         )
-    model = ai_orchestration.resolve_model(provider_key, override=model_override)
+    model = ai_orchestration.resolve_model(provider_key, DEFAULT_MODELS, override=model_override)
     if model is None:
         return _setup_error_stream(
             request_start_ts,
