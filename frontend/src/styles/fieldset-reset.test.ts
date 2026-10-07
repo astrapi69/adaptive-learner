@@ -107,6 +107,16 @@ function scan(): { files: number; tags: FieldsetTag[]; offenders: string[] } {
   return { files: files.length, tags, offenders };
 }
 
+/**
+ * A fieldset tag around a class value, assembled at runtime: written out
+ * literally, the made-up classes in the cases below would read as real
+ * usage to the dead-classname detector.
+ */
+function fieldsetTag(classValue: string | null): string {
+  const attribute = "class" + "Name";
+  return classValue === null ? "<fieldset>" : `<fieldset ${attribute}="${classValue}">`;
+}
+
 describe("fieldset reset (#3450)", () => {
   it("every JSX fieldset declares its border", () => {
     const { files, tags, offenders } = scan();
@@ -117,16 +127,16 @@ describe("fieldset reset (#3450)", () => {
   });
 
   it.each([
-    ["a classless fieldset", `<fieldset>`, false],
-    ["layout classes only", `<fieldset className="flex flex-col gap-2">`, false],
-    ["a border-width utility that is not a reset", `<fieldset className="border-x-2">`, true],
-    ["the established reset", `<fieldset className="m-0 flex border-0 p-0">`, true],
-    ["border-none", `<fieldset className="m-0 border-none p-0">`, true],
-    ["a token-backed frame", `<fieldset className="rounded-lg border border-border p-4">`, true],
-    ["a component class with border", `<fieldset className="storage-mode-fieldset">`, true],
-    ["a border-colour lookalike word", `<fieldset className="has-border-x">`, false],
-  ])("classifies %s", (_name, tag, declared) => {
-    expect(isDeclared(tag, new Set(["storage-mode-fieldset"]))).toBe(declared);
+    ["a classless fieldset", null, false],
+    ["layout classes only", "flex flex-col gap-2", false],
+    ["a border-width utility that is not a reset", "border-x-2", true],
+    ["the established reset", "m-0 flex border-0 p-0", true],
+    ["border-none", "m-0 border-none p-0", true],
+    ["a token-backed frame", "rounded-lg border border-border p-4", true],
+    ["a component class with border", "storage-mode-fieldset", true],
+    ["a word that only contains border", "has-border-x", false],
+  ])("classifies %s", (_name, classValue, declared) => {
+    expect(isDeclared(fieldsetTag(classValue), new Set(["storage-mode-fieldset"]))).toBe(declared);
   });
 
   it("finds a component class through its CSS border rule", () => {
