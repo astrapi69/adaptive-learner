@@ -53,7 +53,7 @@ import {
 } from "../../lib/exercises";
 import {exerciseTypeLabelKey} from "../../lib/content/lesson/edit-error-keys";
 import {checkExerciseDraft} from "../../lib/content/lesson/edit/exercise-draft-check";
-import {QUALITY} from "../../lib/content/validation/quality-rules.generated";
+import {QUALITY_MINIMUMS as QUALITY} from "learn-content-engine/rules";
 import type {ContentLessonExercise} from "../../storage/types";
 
 /** #3389 - the exercise count below which "Next" is blocked. A lesson

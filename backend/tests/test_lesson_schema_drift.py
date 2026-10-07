@@ -44,7 +44,6 @@ def _load_generator():
         # producers instead of the mirror.
         "schema/content-set.schema.json",
         "schema/card.schema.json",
-        "frontend/src/lib/content/validation/quality-rules.generated.ts",
         "docs/help/en/developer/lesson-format-reference.md",
         "docs/help/de/developer/lesson-format-reference.md",
     ],
