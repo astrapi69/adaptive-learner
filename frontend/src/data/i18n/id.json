@@ -146,7 +146,7 @@
     "analysis_phase_reading": "Langkah 1/3: Membaca obrolan…",
     "analysis_phase_analyzing": "Langkah 2/3: Menganalisis konten…",
     "analysis_phase_preparing": "Langkah 3/3: Menyiapkan hasil…",
-    "analysis_estimate": "Analisis memakan waktu sekitar 15-30 detik…",
+    "analysis_estimate": "Obrolan yang lebih panjang membutuhkan waktu analisis lebih lama.",
     "analysis_done": "Selesai!",
     "analysis_cancel": "Batal",
     "analysis_failed_inline": "Analisis gagal. Silakan coba lagi.",

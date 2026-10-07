@@ -146,7 +146,7 @@
     "analysis_phase_reading": "Adım 1/3: Sohbet okunuyor…",
     "analysis_phase_analyzing": "Adım 2/3: İçerik analiz ediliyor…",
     "analysis_phase_preparing": "Adım 3/3: Sonuçlar hazırlanıyor…",
-    "analysis_estimate": "Analiz yaklaşık 15-30 saniye sürer…",
+    "analysis_estimate": "Daha uzun sohbetlerin analizi daha uzun sürer.",
     "analysis_done": "Tamam!",
     "analysis_cancel": "İptal",
     "analysis_failed_inline": "Analiz başarısız oldu. Lütfen tekrar deneyin.",
