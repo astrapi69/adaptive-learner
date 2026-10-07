@@ -129,7 +129,7 @@ import:
   analysis_title: Analysis
   analysis_ready: Analysis ready.
   analysis_fallback: Analysis ran but the AI response could not be parsed cleanly.
-  analysis_fallback_long: The AI response was not parseable as structured JSON. The summary below is a fallback.
+  analysis_fallback_long: "The AI response could not be read as a structured analysis. Run the analysis again or pick a different AI provider."
   analysis_error: Could not analyze the conversation.
   analysis_phase_reading: "Step 1/3: Reading chat…"
   analysis_phase_analyzing: "Step 2/3: Analyzing content…"

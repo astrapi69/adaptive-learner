@@ -141,7 +141,7 @@
     "analysis_title": "분석",
     "analysis_ready": "분석이 준비되었습니다.",
     "analysis_fallback": "분석은 실행되었지만 AI 응답을 깔끔하게 파싱할 수 없었습니다.",
-    "analysis_fallback_long": "AI 응답을 구조화된 JSON으로 파싱할 수 없었습니다. 아래 요약은 대체 결과입니다.",
+    "analysis_fallback_long": "AI 응답을 구조화된 분석으로 읽을 수 없었습니다. 분석을 다시 실행하거나 다른 AI 제공자를 선택하세요.",
     "analysis_error": "대화를 분석할 수 없었습니다.",
     "analysis_phase_reading": "1/3단계: 채팅 읽는 중…",
     "analysis_phase_analyzing": "2/3단계: 내용 분석 중…",

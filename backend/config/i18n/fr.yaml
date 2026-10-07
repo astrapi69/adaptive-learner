@@ -129,7 +129,7 @@ import:
   analysis_title: Analyse
   analysis_ready: Analyse prête.
   analysis_fallback: L'analyse s'est exécutée mais la réponse de l'IA n'a pas pu être analysée proprement.
-  analysis_fallback_long: La réponse de l'IA n'a pas pu être parsée comme JSON structuré. Le résumé ci-dessous est un fallback.
+  analysis_fallback_long: "La réponse de l'IA n'a pas pu être lue comme une analyse structurée. Relance l'analyse ou choisis un autre fournisseur d'IA."
   analysis_error: Impossible d'analyser la conversation.
   analysis_phase_reading: "Étape 1/3 : Lecture du chat…"
   analysis_phase_analyzing: "Étape 2/3 : Analyse du contenu…"

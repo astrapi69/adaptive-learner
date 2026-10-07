@@ -141,7 +141,7 @@
     "analysis_title": "Analyse",
     "analysis_ready": "Analyse bereit.",
     "analysis_fallback": "Analyse ist gelaufen, aber die KI-Antwort konnte nicht sauber geparst werden.",
-    "analysis_fallback_long": "Die KI-Antwort konnte nicht als strukturiertes JSON geparst werden. Die folgende Zusammenfassung ist ein Fallback.",
+    "analysis_fallback_long": "Die KI-Antwort ließ sich nicht als strukturierte Analyse lesen. Starte die Analyse erneut oder wähle einen anderen KI-Anbieter.",
     "analysis_error": "Konversation konnte nicht analysiert werden.",
     "analysis_phase_reading": "Schritt 1/3: Chat wird gelesen…",
     "analysis_phase_analyzing": "Schritt 2/3: Inhalte werden analysiert…",

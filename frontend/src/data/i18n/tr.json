@@ -141,7 +141,7 @@
     "analysis_title": "Analiz",
     "analysis_ready": "Analiz hazır.",
     "analysis_fallback": "Analiz çalıştı ama yapay zekânın cevabı temiz şekilde ayrıştırılamadı.",
-    "analysis_fallback_long": "Yapay zekânın cevabı yapılandırılmış JSON olarak ayrıştırılamadı. Aşağıdaki özet bir yedek çözümdür.",
+    "analysis_fallback_long": "Yapay zekânın cevabı yapılandırılmış bir analiz olarak okunamadı. Analizi yeniden çalıştır veya başka bir yapay zekâ sağlayıcısı seç.",
     "analysis_error": "Konuşma analiz edilemedi.",
     "analysis_phase_reading": "Adım 1/3: Sohbet okunuyor…",
     "analysis_phase_analyzing": "Adım 2/3: İçerik analiz ediliyor…",
