@@ -21,10 +21,9 @@ Adaptive Learner, 4 katmanlı, eklenti güdümlü bir uygulamadır.
 └─────────────────────────────────────────────────────────────┘
                             ↑↓ entry_points
 ┌─────────────────────────────────────────────────────────────┐
-│ Plugins            10 packages under plugins/               │
-│                    (ai-{anthropic,openai,gemini}, assessment,│
-│                    session, tracking, tools, gamification,  │
-│                    anki, notebooklm)                        │
+│ Plugins            plugins/ altında eklenti başına bir      │
+│                    Poetry paketi; katalog ve katmanlar      │
+│                    CLAUDE.md içinde                         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -41,10 +40,10 @@ karşılar:
 - **`apiStorage`** (varsayılan): FastAPI arka ucuyla konuşan
   `api/client.ts` etrafında ince bir sarmalayıcı.
 - **`dexieStorage`** (yerel-öncelikli): `storage/ai-providers.ts`
-  aracılığıyla tarayıcıdan doğrudan AI çağrıları yaparak tüm 25
-  SQLAlchemy modelini yansıtan tam IndexedDB yığını.
+  aracılığıyla tarayıcıdan doğrudan AI çağrıları yaparak
+  SQLAlchemy modellerini yansıtan tam IndexedDB yığını.
 
-`IStorageService`, 22 ad alanını açığa çıkarır (users, projects,
+`IStorageService`, ad alanlarını açığa çıkarır (users, projects,
 settings, assessment, session with streaming, tracking, tools,
 curricula, topics, lessons, plugins, system, backup, export,
 subjects, tags, projectTaxonomy, imports, gamification, anki,
@@ -154,7 +153,7 @@ hatalarını HTTP durum kodlarına eşler. Tam desen için
 
 - Arka uç: SQLAlchemy + SQLite. `backend/migrations/versions/`
   içinde Alembic migrasyonları.
-- Senkronizasyon yüzeyi: 28 tablo (v1.19.0 temeli). Yalnızca ekleme
+- Senkronizasyon yüzeyi: `sync_service.ALL_SYNC_TABLES` içindeki her tablo. Yalnızca ekleme
   geçmişi satırları (oturumlar, mesajlar, derecelendirmeler, ilerleme
   commitler'i, adım değerlendirmeleri, yöntem geçişleri, içe aktarılan
   konuşmalar, içe aktarılan mesajlar, anki kartları, çalışma soruları)

@@ -11,7 +11,7 @@ navigateur. Tu trouves tout cela sous **Paramètres → Données**.
 
 ## Ce que contient la sauvegarde
 
-Une sauvegarde est un **instantané complet** : les 30 tables de
+Une sauvegarde est un **instantané complet** : toutes les tables de
 données (projets d'apprentissage, sessions, progression des
 leçons, erreurs au niveau des éléments, gamification avec
 XP/série/badges, missions, cartes Anki, notes et plus encore)

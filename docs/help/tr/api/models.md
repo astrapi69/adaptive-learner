@@ -2,15 +2,13 @@
 
 # Veri modelleri
 
-`backend/app/models/__init__.py` içindeki **25 SQLAlchemy modeli**,
+`backend/app/models/__init__.py` içindeki **SQLAlchemy modelleri**,
 Pydantic şemalarıyla tel şekilleriyle birlikte. Eşitleme yüzeyi
-28 tablo içerir (25 model + 3 ilişki tablosu: `project_subjects`,
-`project_tags`, `user_badges`).
+`sync_service.ALL_SYNC_TABLES` içindeki her tabloyu içerir.
 
 v0.7.0'dan itibaren olan ilk 14 model aşağıda ayrıntılı olarak
-belgelenmiştir; o tarihten bu yana eklenen 11 tanesi (Aşama 12+
-içe aktarmalar, Aşama 22 konular/etiketler, Aşama 29-30 oyunlaştırma
-+ anki, Aşama 32 notebooklm) en altta ad + tablo olarak listelenmiştir.
+belgelenmiştir; o tarihten bu yana eklenenler en altta ad + tablo
+olarak listelenmiştir.
 Her modelin tam alanı için `/openapi.json` adresindeki OpenAPI
 spesifikasyonuna bakın.
 
@@ -219,6 +217,7 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    PERPLEXITY = "perplexity"
 
 # v1.20.0 / Aşama 34'ten itibaren
 class ApiKeySource(str, Enum):
@@ -255,3 +254,9 @@ Tel formu, küçük harf dize değeridir (örn. `"deductive"`,
 | UserStreak | user_streaks | v1.16.0 | Seri durumu + dondurma + hafta sonu modu |
 | AnkiCardSuggestion | anki_card_suggestions | v1.17.0 | AI tarafından çıkarılan kart adayı |
 | StudyQuestion | study_questions | v1.19.0 | AI tarafından oluşturulan etkin hatırlama sorusu |
+| ApiKeyBackup | api_key_backups | v1.49.0 | Değiştirilen AI anahtarları için geri alma önbelleği |
+| LessonProgress | lesson_progress | v1.28.0 | Ders başına adım durumu (in_progress / paused / completed) |
+| ElementError | element_errors | v1.30.0 | Öğe başına SRS hatası + ustalık takibi |
+| SetRun | set_runs | v2.12.0 | Bir içerik setinin bir turu; açık satır etkin turdur |
+| UserMission | user_missions | v1.39.0 | Günlük görev ataması + ilerleme |
+| SpeechRecording | speech_recordings | v2.14.0 | Konuş ve kaydet alıştırması için öğrencinin güncel ses kaydı |

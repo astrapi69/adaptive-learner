@@ -7,22 +7,26 @@ cima.
 
 ## Recuentos de pruebas
 
-| Capa | Recuento | Herramienta |
-|---|---|---|
-| Backend unit + integración | 786 | pytest ^9 |
-| Pruebas de plugins (10 plugins) | 615 | pytest ^9 |
-| Frontend unit + integración | 1233 | Vitest 4 |
-| Humo E2E | 16 archivos de especificación | Playwright |
-| **Total (`make test`)** | **2634** | |
+| Capa | Herramienta |
+|---|---|
+| Backend unit + integración | pytest ^9 |
+| Pruebas de plugins (todos los plugins) | pytest ^9 |
+| Frontend unit + integración | Vitest 4 |
+| Humo E2E | Playwright |
+| Puerta de publicación en modo Dexie | Playwright |
 
-Desglose de plugins: assessment 110 + ai-anthropic 34 +
-ai-openai 31 + ai-gemini 33 + session 215 + tracking 64 +
-tools 58 + gamification 23 + anki 20 + notebooklm 27.
+Los recuentos crecen con cada versión. Para evitar números
+duplicados que se desincronizan, esta página NO fija ningún total.
+`docs/audits/current-coverage.md` es la única fuente canónica y
+siempre actual de recuentos de pruebas y cobertura. Los plugins son
+assessment, los proveedores de IA (anthropic / openai / gemini /
+perplexity), session, tracking, tools, gamification, anki,
+notebooklm, learning-repo, content-loader y missions.
 
 ## pytest del backend
 
 ```bash
-make test-backend      # 786 pruebas, ~35s
+make test-backend      # todas las pruebas del backend
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb
 ```
@@ -50,7 +54,7 @@ al probar la activación de hooks.
 ## Vitest del frontend
 
 ```bash
-make test-frontend                # 387 pruebas, ~2s
+make test-frontend                # ejecuta Vitest desde frontend/
 cd frontend && bunx vitest         # modo vigilancia
 cd frontend && bunx vitest run src/storage/  # un directorio
 ```
@@ -168,7 +172,7 @@ release.
 `main` y en cada PR (Python 3.12):
 
 1. Pruebas del backend (pytest)
-2. Pruebas de plugins (`make test-plugins`, los 13 mediante el venv
+2. Pruebas de plugins (`make test-plugins`, todos mediante el venv
    del backend)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`),
    comprobación de dependencias circulares, Stylelint, Vitest,
