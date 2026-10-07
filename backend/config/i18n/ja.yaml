@@ -2968,7 +2968,6 @@ content:
     err_target: ターゲット言語を選択してください。
     err_same_language: ソース言語とターゲット言語は異なる必要があります。
     err_level: CEFRレベルを選択してください（A1-C2）。
-    err_level_or_none: CEFRレベル（A1-C2）または「レベルなし」を選択してください。
     level_none: レベルなし（語学コースではない）
     err_empty: このレッスンには練習問題がありません。レッスンを作り直してください。
     regenerate: 再生成

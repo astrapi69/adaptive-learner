@@ -3215,7 +3215,6 @@
       "err_target": "Choisis la langue cible.",
       "err_same_language": "La langue source et la langue cible doivent être différentes.",
       "err_level": "Choisis un niveau CECR (A1-C2).",
-      "err_level_or_none": "Choisis un niveau CECR (A1-C2) ou 'Sans niveau'.",
       "level_none": "Sans niveau (pas un cours de langue)",
       "err_empty": "Cette leçon n'a aucun exercice. Recrée la leçon.",
       "regenerate": "Régénérer",

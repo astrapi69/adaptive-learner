@@ -3215,7 +3215,6 @@
       "err_target": "Escolha o idioma de destino.",
       "err_same_language": "O idioma de origem e o de destino devem ser diferentes.",
       "err_level": "Escolha um nível CEFR (A1-C2).",
-      "err_level_or_none": "Escolha um nível CEFR (A1-C2) ou 'Sem nível'.",
       "level_none": "Sem nível (não é um curso de idiomas)",
       "err_empty": "Esta lição não tem exercícios. Por favor, recrie a lição.",
       "regenerate": "Regenerar",

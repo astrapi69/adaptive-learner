@@ -2979,7 +2979,6 @@ content:
     err_target: Choose the target language.
     err_same_language: Source and target language must differ.
     err_level: Choose a CEFR level (A1-C2).
-    err_level_or_none: Choose a CEFR level (A1-C2) or 'No level'.
     level_none: No level (not a language course)
     err_empty: This lesson has no exercises. Please recreate the lesson.
     regenerate: Regenerate

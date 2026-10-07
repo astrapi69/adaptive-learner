@@ -3215,7 +3215,6 @@
       "err_target": "Hedef dili seçin.",
       "err_same_language": "Kaynak ve hedef dil farklı olmalıdır.",
       "err_level": "Bir CEFR seviyesi seçin (A1-C2).",
-      "err_level_or_none": "Bir CEFR seviyesi (A1-C2) ya da 'Seviye yok' seçin.",
       "level_none": "Seviye yok (dil kursu değil)",
       "err_empty": "Bu dersin alıştırması yok. Lütfen dersi yeniden oluşturun.",
       "regenerate": "Yeniden oluştur",
