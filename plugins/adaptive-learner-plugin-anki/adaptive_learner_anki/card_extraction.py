@@ -57,7 +57,27 @@ class ExtractedCard:
     tags: list[str]
 
 
-def build_prompt(content: str, *, limit: int = 8) -> str:
+DEFAULT_EXTRACTION_LIMIT = 8
+
+
+def resolve_extraction_limit(value: object) -> int:
+    """The card limit from ``settings.extraction_limit`` (#3435).
+
+    A positive integer is used as given; anything else (missing,
+    zero, negative, a bool, text) falls back to
+    :data:`DEFAULT_EXTRACTION_LIMIT`, so a typo in the YAML cannot
+    switch extraction off or crash the route.
+    """
+    if isinstance(value, bool):
+        return DEFAULT_EXTRACTION_LIMIT
+    try:
+        limit = int(str(value).strip())
+    except (TypeError, ValueError):
+        return DEFAULT_EXTRACTION_LIMIT
+    return limit if limit > 0 else DEFAULT_EXTRACTION_LIMIT
+
+
+def build_prompt(content: str, *, limit: int = DEFAULT_EXTRACTION_LIMIT) -> str:
     """Render the extraction prompt with the material clipped to
     a sane length (8000 chars ≈ ~2000 tokens, fits in any modern
     LLM's context with room for the response)."""
@@ -237,16 +257,21 @@ def _conversation_transcript(
 
 
 def extract_from_session(
-    db: Session, session_id: str, ai_call: AICallable
+    db: Session,
+    session_id: str,
+    ai_call: AICallable,
+    *,
+    limit: int = DEFAULT_EXTRACTION_LIMIT,
 ) -> list[Any]:
     """Pull the session transcript, call the injected AI helper,
-    parse, persist. Returns the inserted rows (empty on failure)."""
+    parse, persist. Returns the inserted rows (empty on failure).
+    ``limit`` caps the cards the prompt asks for."""
     transcript, user_id, project_id = _session_transcript(db, session_id)
     if not user_id or not transcript.strip():
         return []
     try:
         raw = ai_call(
-            [{"role": "user", "content": build_prompt(transcript)}]
+            [{"role": "user", "content": build_prompt(transcript, limit=limit)}]
         )
     except Exception:  # noqa: BLE001
         logger.exception(
@@ -265,7 +290,11 @@ def extract_from_session(
 
 
 def extract_from_conversation(
-    db: Session, conversation_id: str, ai_call: AICallable
+    db: Session,
+    conversation_id: str,
+    ai_call: AICallable,
+    *,
+    limit: int = DEFAULT_EXTRACTION_LIMIT,
 ) -> list[Any]:
     """Build cards from a conversation.
 
@@ -294,7 +323,7 @@ def extract_from_conversation(
     if not cards and transcript.strip():
         try:
             raw = ai_call(
-                [{"role": "user", "content": build_prompt(transcript)}]
+                [{"role": "user", "content": build_prompt(transcript, limit=limit)}]
             )
         except Exception:  # noqa: BLE001
             logger.exception(
