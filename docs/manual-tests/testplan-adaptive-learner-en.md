@@ -3658,6 +3658,17 @@ Documented here only to show what is covered.
 
 ---
 
+### TS-0129 Page title in the browser tab (#3431)
+
+- [ ] TC-0936 Click through Dashboard, Learning Path, Content, Settings and a
+      lesson: the tab title reads "<page name> - Adaptive Learner" each
+      time (e.g. "Settings - Adaptive Learner", "Lesson - Adaptive
+      Learner"); the landing page shows only "Adaptive Learner"
+- [ ] TC-0937 Settings > General, UI language to German: the tab title switches to
+      "Einstellungen - Adaptive Learner" without a reload
+- [ ] TC-0938 Browser history (long-press the back button): the entries carry
+      different page names instead of one identical title
+
 ## Automated: Unit + Component Tests (Vitest, 7200+;
 ## current number see docs/audits/current-coverage.md)
 
