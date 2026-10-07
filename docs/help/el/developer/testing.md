@@ -6,22 +6,26 @@
 
 ## Αριθμός δοκιμών
 
-| Επίπεδο | Αριθμός | Εργαλείο |
-|---|---|---|
-| Backend unit + integration | 786 | pytest ^9 |
-| Plugin tests (10 plugins) | 615 | pytest ^9 |
-| Frontend unit + integration | 1233 | Vitest 4 |
-| E2E smoke | 16 spec files | Playwright |
-| **Σύνολο (`make test`)** | **2634** | |
+| Επίπεδο | Εργαλείο |
+|---|---|
+| Backend unit + integration | pytest ^9 |
+| Plugin tests (όλα τα plugins) | pytest ^9 |
+| Frontend unit + integration | Vitest 4 |
+| E2E smoke | Playwright |
+| Πύλη έκδοσης σε λειτουργία Dexie | Playwright |
 
-Ανάλυση plugin: assessment 110 + ai-anthropic 34 + ai-openai 31
-+ ai-gemini 33 + session 215 + tracking 64 + tools 58 +
-gamification 23 + anki 20 + notebooklm 27.
+Οι αριθμοί αυξάνονται σε κάθε έκδοση. Για να μην υπάρχουν διπλοί
+αριθμοί που αποσυγχρονίζονται, αυτή η σελίδα ΔΕΝ γράφει σύνολο.
+Το `docs/audits/current-coverage.md` είναι η μοναδική κανονική και
+πάντα επίκαιρη πηγή για αριθμούς δοκιμών και κάλυψη. Τα plugins
+είναι assessment, οι πάροχοι ΤΝ (anthropic / openai / gemini /
+perplexity), session, tracking, tools, gamification, anki,
+notebooklm, learning-repo, content-loader και missions.
 
 ## Backend pytest
 
 ```bash
-make test-backend      # 786 tests, ~35s
+make test-backend      # όλα τα tests του backend
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb
 ```
@@ -49,7 +53,7 @@ modules του plugin σε απομόνωση. Χρησιμοποίησε mock �
 ## Frontend Vitest
 
 ```bash
-make test-frontend                # 387 tests, ~2s
+make test-frontend                # τρέχει το Vitest από το frontend/
 cd frontend && bunx vitest         # watch mode
 cd frontend && bunx vitest run src/storage/  # ένας κατάλογος
 ```
@@ -166,7 +170,7 @@ PR (πρέπει να περάσουν για να γίνει merge), ενώ ο�
 και σε κάθε PR (Python 3.12):
 
 1. Backend tests (pytest)
-2. Plugin tests (`make test-plugins`, και τα 13 μέσω του backend venv)
+2. Plugin tests (`make test-plugins`, όλα μέσω του backend venv)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`), έλεγχος
    κυκλικών εξαρτήσεων, Stylelint, Vitest, `vite build`, `npm audit`
 4. Pre-commit hooks σε όλα τα αρχεία

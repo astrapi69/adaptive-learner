@@ -142,8 +142,8 @@ Synchronisation und kopple dieses Gerät: QR-Code vom anderen
 Gerät-Bildschirm scannen (Rückkamera), oder Pairing-URL
 einfügen. Nach dem Pairing tauschen Push- + Pull-Knöpfe
 Daten aus; Konflikte gehen durch einen KI-Merge-Resolver.
-30 Tabellen auf der Sync-Oberfläche (inkl. Lektions-
-Fortschritt, Element-Fehler und Missionen).
+Die Synchronisation umfasst alle deine Daten, inkl.
+Lektionsfortschritt, Element-Fehler und Missionen.
 
 ## Wie ist das anders als ChatGPT?
 

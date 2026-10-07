@@ -540,6 +540,19 @@ und eine Quellen-Zeile sagt dir, wo der Token liegt (secrets.yaml, eine
 Umgebungsvariable oder dieser Browser), mit **Entfernen** zum Löschen.
 Ein Token aus einer Umgebungsvariable lässt sich hier nicht bearbeiten.
 
+Der Token wird an drei Stellen genutzt:
+
+- **Für die Community bereitstellen** unter Meine Lektionen öffnet den
+  Pull Request für eine einzelne Lektion direkt, ohne den Umweg über den
+  Editor von GitHub (siehe [Meine Lektionen](my-lessons.md#exportieren-und-teilen)).
+- **Als Repository teilen** überträgt ein ganzes Set in ein Repository
+  von dir; der Knopf bleibt deaktiviert, bis ein Token gespeichert ist.
+- **Eigenes Repository registrieren** (Daten > Quellen) kann seinen Pull
+  Request direkt öffnen, statt dass du den Eintrag auf GitHub einfügst.
+
+Die letzten beiden gibt es nur in der Browser-Version der App. Ohne Token
+funktioniert alles andere wie gewohnt.
+
 ## Hilfe
 
 Der Tab **Hilfe** enthält das integrierte Glossar: ein Suchfeld filtert
