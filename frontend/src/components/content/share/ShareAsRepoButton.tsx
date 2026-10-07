@@ -210,6 +210,7 @@ export default function ShareAsRepoButton({
             <ModalShell
                 open={open}
                 title={t("content.repo_export.title", "Share as repository")}
+                closeLabel={t("common.close", "Close")}
                 onClose={() => setOpen(false)}
             >
                 {phase === "done" ? (

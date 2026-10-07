@@ -2,14 +2,18 @@
  * Visual diff renderer for ``DiffToken[]``.
  *
  * Paints each token inline with theme-aware colour + a non-colour signal
- * (icon + decoration + aria-label) so the surface stays usable for
+ * (icon + decoration + screen-reader text) so the surface stays usable for
  * colourblind learners and screen-reader users. WCAG 2.1 SC 1.4.1 (use of
- * colour): every op type carries an icon AND a text decoration AND an
- * aria-label in addition to its colour.
+ * colour): every op type carries an icon AND a text decoration AND a
+ * visually hidden sentence in the UI language in addition to its colour.
+ * The sentence is real text, not an ``aria-label``: ARIA 1.2 does not let a
+ * role-less span be named, so screen readers could skip the label, and the
+ * visible parts are ``aria-hidden`` so nothing is read twice (#3425).
  *
  * Phase 52B / v1.35.0 / F-112.
  */
 
+import { useI18n } from "../../../hooks/ui/useI18n";
 import { type DiffToken } from "../../../lib/exercises/grading/token-diff";
 
 export interface DiffHighlightProps {
@@ -30,6 +34,7 @@ export default function DiffHighlight({ tokens, className }: DiffHighlightProps)
 }
 
 function DiffTokenSpan({ token }: { token: DiffToken }) {
+    const { t } = useI18n();
     if (token.type === "equal") {
         // #1940 — emit the trailing space as an EXTERNAL text node (like
         // insert/delete/replace), not inside the span. `.diff-token` is
@@ -60,12 +65,16 @@ function DiffTokenSpan({ token }: { token: DiffToken }) {
                     className="diff-token diff-token-insert"
                     data-testid="diff-token-insert"
                     data-type="insert"
-                    aria-label={`missing: ${word}`}
                 >
+                    <span className="sr-only">
+                        {t("lesson.diff.missing", "Missing: {word}").replace("{word}", word)}
+                    </span>
                     <span className="diff-token-icon" aria-hidden="true">
                         +
                     </span>
-                    <span className="diff-token-text">{word}</span>
+                    <span className="diff-token-text" aria-hidden="true">
+                        {word}
+                    </span>
                 </span>
                 {trailing ? " " : ""}
             </>
@@ -80,12 +89,16 @@ function DiffTokenSpan({ token }: { token: DiffToken }) {
                     className="diff-token diff-token-delete"
                     data-testid="diff-token-delete"
                     data-type="delete"
-                    aria-label={`extra: ${word}`}
                 >
+                    <span className="sr-only">
+                        {t("lesson.diff.extra", "Extra: {word}").replace("{word}", word)}
+                    </span>
                     <span className="diff-token-icon" aria-hidden="true">
                         ×
                     </span>
-                    <span className="diff-token-text">{word}</span>
+                    <span className="diff-token-text" aria-hidden="true">
+                        {word}
+                    </span>
                 </span>
                 {trailing ? " " : ""}
             </>
@@ -101,13 +114,21 @@ function DiffTokenSpan({ token }: { token: DiffToken }) {
                 className="diff-token diff-token-replace"
                 data-testid="diff-token-replace"
                 data-type="replace"
-                aria-label={`wrote ${userWord}, expected ${expectedWord}`}
             >
-                <span className="diff-token-user-word">{userWord}</span>
+                <span className="sr-only">
+                    {t("lesson.diff.replaced", "You wrote {wrote}, expected {expected}")
+                        .replace("{wrote}", userWord)
+                        .replace("{expected}", expectedWord)}
+                </span>
+                <span className="diff-token-user-word" aria-hidden="true">
+                    {userWord}
+                </span>
                 <span className="diff-token-arrow" aria-hidden="true">
                     →
                 </span>
-                <span className="diff-token-expected-word">{expectedWord}</span>
+                <span className="diff-token-expected-word" aria-hidden="true">
+                    {expectedWord}
+                </span>
             </span>
             {trailing ? " " : ""}
         </>

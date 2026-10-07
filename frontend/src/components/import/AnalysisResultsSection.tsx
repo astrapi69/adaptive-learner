@@ -39,7 +39,7 @@ export default function AnalysisResultsSection({
         >
           {t(
             "import.analysis_fallback_long",
-            "The AI response was not parseable as structured JSON. The summary below is a fallback.",
+            "The AI response could not be read as a structured analysis. Run the analysis again or pick a different AI provider.",
           )}
         </p>
       )}
