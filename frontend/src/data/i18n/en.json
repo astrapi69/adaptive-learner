@@ -1694,6 +1694,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "Basic",
+      "cloze": "Cloze"
+    },
     "title": "Anki Export",
     "intro": "Review AI-suggested flashcards, accept the ones you want, then export as an .apkg file for Anki.",
     "filter_project": "Project",
@@ -2077,6 +2081,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Missing: {word}",
+      "extra": "Extra: {word}",
+      "replaced": "You wrote {wrote}, expected {expected}"
+    },
     "progress_io": {
       "save_error": "Your progress in this lesson could not be saved.",
       "load_failed": "Your saved progress for this lesson could not be loaded: {detail}",
@@ -3477,6 +3486,8 @@
       "author_label": "Author name"
     },
     "cards": {
+      "front_placeholder": "Word or phrase",
+      "back_placeholder": "Meaning",
       "heading": "Add vocabulary cards",
       "front_label": "Front (learned)",
       "back_label": "Back (your language)",

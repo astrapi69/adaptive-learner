@@ -1694,6 +1694,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "基本",
+      "cloze": "穴埋め"
+    },
     "title": "Ankiエクスポート",
     "intro": "AIが提案したフラッシュカードを確認し、好きなものを承認してから.apkgファイルとしてAnkiに出力します。",
     "filter_project": "プロジェクト",
@@ -2077,6 +2081,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "不足: {word}",
+      "extra": "余分: {word}",
+      "replaced": "入力: {wrote}、正解: {expected}"
+    },
     "progress_io": {
       "save_error": "このレッスンの進捗を保存できませんでした。",
       "load_failed": "このレッスンの保存済みの進捗を読み込めませんでした: {detail}",
@@ -3477,6 +3486,8 @@
       "author_label": "著者名"
     },
     "cards": {
+      "front_placeholder": "単語または表現",
+      "back_placeholder": "意味",
       "heading": "単語カードを追加",
       "front_label": "表（学習対象）",
       "back_label": "裏（あなたの言語）",

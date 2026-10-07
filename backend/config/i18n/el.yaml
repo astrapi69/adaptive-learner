@@ -1576,6 +1576,10 @@ arcade:
     won: "Τα κατάφερες: ολόκληρη η ακολουθία!"
     lost: "Ωχ: έφτασες μέχρι μήκος {n}. Δοκίμασε ξανά!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Βασική"
+    cloze: "Συμπλήρωση κενών"
   title: Εξαγωγή Anki
   intro: Έλεγξε τις κάρτες που πρότεινε η ΤΝ, αποδέξου όσες θέλεις και εξήγαγέ τες ως αρχείο .apkg για το Anki.
   filter_project: Έργο
@@ -1940,6 +1944,11 @@ repo:
     description: "Δημιουργεί αυτόματα αρχεία Markdown (README, STATS, CHEATSHEET, ROADMAP) ανά έργο από τα δεδομένα των συνεδριών σας. Η προαιρετική ενσωμάτωση git κάνει commit κάθε δημιουργία ώστε να μπορείτε να περιηγηθείτε στο ιστορικό με οποιονδήποτε client git."
     enable_git: "Ενεργοποίηση διατήρησης Git"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Λείπει: {word}"
+    extra: "Περιττό: {word}"
+    replaced: "Έγραψες {wrote}, αναμενόταν {expected}"
   progress_io:
     save_error: "Η πρόοδός σας σε αυτό το μάθημα δεν μπόρεσε να αποθηκευτεί."
     load_failed: "Η αποθηκευμένη πρόοδός σας για αυτό το μάθημα δεν μπόρεσε να φορτωθεί: {detail}"
@@ -3200,6 +3209,9 @@ create_lesson:
     description_label: "Θέμα / Περιγραφή"
     author_label: "Όνομα συγγραφέα"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Λέξη ή φράση"
+    back_placeholder: "Σημασία"
     heading: "Προσθήκη καρτών λεξιλογίου"
     front_label: "Μπροστά (μαθαίνεται)"
     back_label: "Πίσω (η γλώσσα σας)"

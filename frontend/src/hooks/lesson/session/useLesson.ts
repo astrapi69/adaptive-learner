@@ -194,14 +194,9 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                 lessonFilename,
             );
         } catch (err) {
+            // Both storage modes reject a missing set or lesson with an
+            // ApiError 404 (#3443), so no message matching is needed.
             if (err instanceof ApiError && err.status === 404) {
-                setStatus("not-cached");
-                return;
-            }
-            if (
-                err instanceof Error &&
-                /not found|not cached/i.test(err.message)
-            ) {
                 setStatus("not-cached");
                 return;
             }

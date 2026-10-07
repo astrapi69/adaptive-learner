@@ -22,6 +22,7 @@ import { listLessonsDexie } from "./content-loader-dexie";
 import { getLessonDexie } from "./content-loader-read";
 import { _resetDbForTests, getDb } from "../dexie/db";
 import { fileKey } from "./content-loader-sources";
+import { ApiError } from "../../api/client";
 
 const SOURCE = "astrapi69/adaptive-learner-content";
 const SET_ID = "psych-intro";
@@ -199,5 +200,29 @@ describe("getLessonDexie parses like API mode (#3393)", () => {
       "en",
       "psychology",
     ]);
+  });
+});
+
+describe("Dexie read paths reject with ApiError 404, like ApiStorage (#3443)", () => {
+  it.each([
+    ["listLessons on an uncached set", () => listLessonsDexie(SOURCE, SET_ID)],
+    ["getLesson on an uncached set", () => getLessonDexie(SOURCE, SET_ID, "10-a.json")],
+  ])("%s", async (_label, call) => {
+    const rejection = await call().then(
+      () => null,
+      (err: unknown) => err,
+    );
+    expect(rejection).toBeInstanceOf(ApiError);
+    expect((rejection as ApiError).status).toBe(404);
+  });
+
+  it("getLesson on a cached set without the file", async () => {
+    await seedCachedSet(SET_MANIFEST_WITH_ORDER, ["10-a.json"]);
+    const rejection = await getLessonDexie(SOURCE, SET_ID, "99-missing.json").then(
+      () => null,
+      (err: unknown) => err,
+    );
+    expect(rejection).toBeInstanceOf(ApiError);
+    expect((rejection as ApiError).status).toBe(404);
   });
 });

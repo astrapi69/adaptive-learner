@@ -1576,6 +1576,10 @@ arcade:
     won: "Geschafft - die ganze Folge!"
     lost: "Ups - du kamst bis Länge {n}. Versuch es gleich nochmal!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Einfach"
+    cloze: "Lückentext"
   title: Anki-Export
   intro: Überprüfe KI-vorgeschlagene Karteikarten, akzeptiere die gewünschten und exportiere sie als .apkg-Datei für Anki.
   filter_project: Projekt
@@ -1943,6 +1947,11 @@ repo:
     description: "Erzeugt automatisch Markdown-Artefakte (README, STATS, CHEATSHEET, ROADMAP) pro Projekt aus deinen Sitzungsdaten. Die optionale Git-Integration committet jede Erzeugung, sodass du den Verlauf mit jedem Git-Client durchsehen kannst."
     enable_git: "Git-Persistenz aktivieren"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Fehlt: {word}"
+    extra: "Zu viel: {word}"
+    replaced: "Geschrieben: {wrote}, erwartet: {expected}"
   progress_io:
     save_error: "Dein Fortschritt in dieser Lektion konnte nicht gespeichert werden."
     load_failed: "Dein gespeicherter Fortschritt für diese Lektion konnte nicht geladen werden: {detail}"
@@ -3202,6 +3211,9 @@ create_lesson:
     description_label: "Thema / Beschreibung"
     author_label: "Autorenname"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Wort oder Ausdruck"
+    back_placeholder: "Bedeutung"
     heading: "Vokabelkarten hinzufügen"
     front_label: "Vorderseite (gelernt)"
     back_label: "Rückseite (deine Sprache)"

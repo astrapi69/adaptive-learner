@@ -9,6 +9,8 @@ reachable ``ValidationError`` paths (no valid provider, no stored key).
 
 from __future__ import annotations
 
+import re
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -21,7 +23,7 @@ from app.models import UserSettings
 from app.repositories.settings_repo import SqlAlchemySettingsRepository
 from app.schemas import AIProvider, ApiKeySetBody
 from app.services import settings as settings_service
-from app.services.ai_caller import DEFAULT_MODELS, build_ai_caller
+from app.services.ai_caller import DEFAULT_MODELS, build_ai_caller, resolve_ai_target
 
 
 @pytest.fixture()
@@ -133,3 +135,59 @@ def test_missing_api_key_raises(client: TestClient) -> None:
         db.close()
     with pytest.raises(ValidationError, match="no stored API key"):
         _build(user_id)
+
+
+# --- #3420: one provider-default table -------------------------------------
+
+
+_DEFAULT_TABLE_LITERAL = re.compile(r"""["']anthropic["']\s*:\s*["']claude-""")
+
+
+def _production_python_files() -> list[Path]:
+    root = Path(__file__).resolve().parents[2]
+    files = list((root / "backend" / "app").rglob("*.py"))
+    for package in (root / "plugins").glob("adaptive-learner-plugin-*/adaptive_learner_*"):
+        files.extend(package.rglob("*.py"))
+    return files
+
+
+def test_default_models_has_no_second_copy() -> None:
+    """#3420: the imports and content routers and the session plugin each
+    carried their own provider-default table, so a model bump could miss
+    one. ``app.services.ai_caller.DEFAULT_MODELS`` is the only table."""
+    files = _production_python_files()
+    # #2083 point 4: report the set size, never pass on an empty scan.
+    assert len(files) > 150, f"only {len(files)} production files scanned"
+    copies = [
+        str(path)
+        for path in files
+        if path.name != "ai_caller.py"
+        and _DEFAULT_TABLE_LITERAL.search(path.read_text(encoding="utf-8"))
+    ]
+    assert copies == []
+
+
+def test_session_plugin_reads_the_core_table() -> None:
+    from adaptive_learner_session import session_runner, streaming
+
+    assert session_runner.DEFAULT_MODELS is DEFAULT_MODELS
+    assert streaming.DEFAULT_MODELS is DEFAULT_MODELS
+
+
+@pytest.mark.parametrize("provider", list(AIProvider), ids=lambda p: p.value)
+def test_default_models_covers_every_provider(provider: AIProvider) -> None:
+    """Moved from the session plugin's tests with the table (#3420)."""
+    assert DEFAULT_MODELS.get(provider.value)
+
+
+def test_resolve_ai_target_returns_provider_model_and_key(client: TestClient) -> None:
+    user_id = _make_user(client)
+    _seed_anthropic_key(user_id)
+    db = SessionLocal()
+    try:
+        target = resolve_ai_target(SqlAlchemySettingsRepository(db), user_id)
+    finally:
+        db.close()
+    assert target.provider_key == "anthropic"
+    assert target.model == DEFAULT_MODELS["anthropic"]
+    assert target.api_key == "test-key-1234567890"

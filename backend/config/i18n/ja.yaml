@@ -1576,6 +1576,10 @@ arcade:
     won: "やりました! 全部の順番をクリア!"
     lost: "残念! 長さ {n} まで届きました。すぐ再挑戦!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "基本"
+    cloze: "穴埋め"
   title: Ankiエクスポート
   intro: AIが提案したフラッシュカードを確認し、好きなものを承認してから.apkgファイルとしてAnkiに出力します。
   filter_project: プロジェクト
@@ -1938,6 +1942,11 @@ repo:
     description: "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。"
     enable_git: "git 永続化を有効にする"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "不足: {word}"
+    extra: "余分: {word}"
+    replaced: "入力: {wrote}、正解: {expected}"
   progress_io:
     save_error: "このレッスンの進捗を保存できませんでした。"
     load_failed: "このレッスンの保存済みの進捗を読み込めませんでした: {detail}"
@@ -3198,6 +3207,9 @@ create_lesson:
     description_label: "トピック / 説明"
     author_label: "著者名"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "単語または表現"
+    back_placeholder: "意味"
     heading: "単語カードを追加"
     front_label: "表（学習対象）"
     back_label: "裏（あなたの言語）"

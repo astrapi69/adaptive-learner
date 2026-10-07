@@ -1576,6 +1576,10 @@ arcade:
     won: "Başardın: dizinin tamamı!"
     lost: "Eyvah: {n} uzunluğa kadar geldin. Hemen tekrar dene!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Temel"
+    cloze: "Boşluk doldurma"
   title: Anki Dışa Aktarma
   intro: YZ'nin önerdiği kartları gözden geçir, istediklerini kabul et ve Anki için .apkg dosyası olarak dışa aktar.
   filter_project: Proje
@@ -1938,6 +1942,11 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Eksik: {word}"
+    extra: "Fazla: {word}"
+    replaced: "Yazdığın: {wrote}, beklenen: {expected}"
   progress_io:
     save_error: "Bu dersteki ilerlemeniz kaydedilemedi."
     load_failed: "Bu ders için kaydedilmiş ilerlemeniz yüklenemedi: {detail}"
@@ -3198,6 +3207,9 @@ create_lesson:
     description_label: "Konu / açıklama"
     author_label: "Yazar adı"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Kelime veya ifade"
+    back_placeholder: "Anlam"
     heading: "Kelime kartları ekle"
     front_label: "Ön yüz (öğrenilen)"
     back_label: "Arka yüz (sizin diliniz)"

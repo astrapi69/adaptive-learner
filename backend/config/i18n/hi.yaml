@@ -1577,6 +1577,10 @@ arcade:
     won: "कर दिखाया: पूरी शृंखला!"
     lost: "उफ़: आप लंबाई {n} तक पहुँचे। तुरंत फिर कोशिश करें!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "बेसिक"
+    cloze: "रिक्त स्थान भरें"
   title: Anki निर्यात
   intro: एआई द्वारा सुझाए गए फ़्लैशकार्ड की समीक्षा करें, अपनी पसंद के कार्ड स्वीकार करें, फिर Anki के लिए .apkg फ़ाइल के रूप में निर्यात करें।
   filter_project: प्रोजेक्ट
@@ -1934,6 +1938,11 @@ repo:
     description: आपके सत्र डेटा से प्रति प्रोजेक्ट स्वचालित रूप से Markdown आर्टिफैक्ट (README, STATS, CHEATSHEET, ROADMAP) उत्पन्न करता है। वैकल्पिक git एकीकरण प्रत्येक रेंडर को कमिट करता है ताकि आप किसी भी git क्लाइंट के साथ इतिहास ब्राउज़ कर सकें।
     enable_git: git दृढ़ता सक्षम करें
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "छूटा हुआ: {word}"
+    extra: "अतिरिक्त: {word}"
+    replaced: "आपने {wrote} लिखा, अपेक्षित: {expected}"
   progress_io:
     save_error: "इस पाठ में आपकी प्रगति सहेजी नहीं जा सकी।"
     load_failed: "इस पाठ के लिए आपकी सहेजी गई प्रगति लोड नहीं हो सकी: {detail}"
@@ -3191,6 +3200,9 @@ create_lesson:
     description_label: विषय / विवरण
     author_label: लेखक का नाम
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "शब्द या वाक्यांश"
+    back_placeholder: "अर्थ"
     heading: शब्दावली कार्ड जोड़ें
     front_label: आगे (सीखी गई)
     back_label: पीछे (आपकी भाषा)
