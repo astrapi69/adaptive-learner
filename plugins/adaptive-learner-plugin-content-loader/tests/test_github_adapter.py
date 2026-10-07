@@ -23,7 +23,6 @@ import json
 
 import httpx
 import pytest
-
 from adaptive_learner_content_loader.exceptions import (
     ContentAuthError,
     ContentFetchError,
@@ -34,7 +33,6 @@ from adaptive_learner_content_loader.github_adapter import (
     GitHubRawAdapter,
     build_raw_url,
 )
-
 
 SOURCE = "astrapi69/adaptive-learner-content"
 BRANCH = "main"

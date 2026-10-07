@@ -3694,6 +3694,17 @@ Documented here only to show what is covered.
 - [ ] TC-0945 Share wizard and "Share as repository": the screen reader names the
       X button "Close" in the UI language (German: "Schließen")
 
+### TS-0131 Page title in the browser tab (#3431)
+
+- [ ] TC-0946 Click through Dashboard, Learning Path, Content, Settings and a
+      lesson: the tab title reads "<page name> - Adaptive Learner" each
+      time (e.g. "Settings - Adaptive Learner", "Lesson - Adaptive
+      Learner"); the landing page shows only "Adaptive Learner"
+- [ ] TC-0947 Settings > General, UI language to German: the tab title switches to
+      "Einstellungen - Adaptive Learner" without a reload
+- [ ] TC-0948 Browser history (long-press the back button): the entries carry
+      different page names instead of one identical title
+
 ## Automated: Unit + Component Tests (Vitest, 7200+;
 ## current number see docs/audits/current-coverage.md)
 

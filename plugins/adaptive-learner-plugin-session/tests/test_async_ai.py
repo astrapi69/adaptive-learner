@@ -21,7 +21,6 @@ import time
 from types import SimpleNamespace
 
 import pytest
-
 from adaptive_learner_session.ai_orchestration import call_ai_complete_async
 from adaptive_learner_session.step_evaluator import evaluate_step_async
 from adaptive_learner_session.topic_transition import (

@@ -6,7 +6,7 @@
 Couche 1 : Frontend        React 19 + TypeScript 6 (strict) + Vite 8
 Couche 2 : Backend         FastAPI + SQLAlchemy 2.0 + SQLite + Pydantic v2
 Couche 3 : PluginForge     Framework de plugins externe (pluginforge ^0.10.0)
-Couche 4 : Plugins         13 packages autonomes enregistrés via entry points
+Couche 4 : Plugins         packages autonomes enregistrés via entry points
 ```
 
 Chaque couche ne communique qu'avec les couches adjacentes. Le frontend
@@ -34,7 +34,7 @@ dans les paramètres :
 - Données uniquement dans le navigateur
 - Certaines fonctionnalités désactivées (git persist dans Learning Repository)
 
-L'interface **`IStorageService`** (22 espaces de noms) est la seule façon
+L'interface **`IStorageService`** (ses espaces de noms) est la seule façon
 dont les composants frontend accèdent aux données. `getStorage()` retourne
 l'une ou l'autre implémentation selon la configuration.
 
@@ -69,9 +69,9 @@ plugins/adaptive-learner-plugin-{nom}/
   pyproject.toml       # Entry point : [project.entry-points."adaptive_learner.plugins"]
 ```
 
-Les 13 plugins expédiés : assessment, session, tracking, tools,
+Les plugins livrés : assessment, session, tracking, tools,
 gamification, anki, notebooklm, learning-repo, content-loader,
-missions, ai-anthropic, ai-openai, ai-gemini.
+missions, ai-anthropic, ai-openai, ai-gemini, ai-perplexity.
 
 ---
 

@@ -2,18 +2,15 @@
 
 # Modelos de dados
 
-Os **25 modelos SQLAlchemy** em
+Os **modelos SQLAlchemy** em
 `backend/app/models/__init__.py`, com os seus esquemas
 Pydantic na forma de transferência. A superfície de
-sincronização inclui 28 tabelas (os 25 modelos + 3 tabelas
-de associação: `project_subjects`, `project_tags`,
-`user_badges`).
+sincronização inclui cada tabela de
+`sync_service.ALL_SYNC_TABLES`.
 
 Os 14 modelos originais do v0.7.0 estão documentados em
-detalhe abaixo; os 11 adicionados desde então (importações
-Phase 12+, assuntos/etiquetas Phase 22, gamificação + anki
-Phase 29-30, notebooklm Phase 32) são listados no final por
-nome + tabela. Consulte a especificação OpenAPI em
+detalhe abaixo; os adicionados desde então são listados no
+final por nome + tabela. Consulte a especificação OpenAPI em
 `/openapi.json` para todos os campos de todos os
 modelos.
 
@@ -225,6 +222,7 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    PERPLEXITY = "perplexity"
 
 # Desde v1.20.0 / Phase 34
 class ApiKeySource(str, Enum):
@@ -261,3 +259,9 @@ A forma de transferência é o valor de string em minúsculas
 | UserStreak | user_streaks | v1.16.0 | Estado de sequência + congelamentos + modo fim de semana |
 | AnkiCardSuggestion | anki_card_suggestions | v1.17.0 | Candidato a cartão de flashcard extraído por IA |
 | StudyQuestion | study_questions | v1.19.0 | Pergunta de recordação ativa gerada por IA |
+| ApiKeyBackup | api_key_backups | v1.49.0 | Cache de reversão para chaves de IA substituídas |
+| LessonProgress | lesson_progress | v1.28.0 | Estado dos passos por lição (in_progress / paused / completed) |
+| ElementError | element_errors | v1.30.0 | Erro SRS + domínio por elemento |
+| SetRun | set_runs | v2.12.0 | Uma passagem de um conjunto de conteúdo; a linha aberta é a passagem ativa |
+| UserMission | user_missions | v1.39.0 | Atribuição + progresso das missões diárias |
+| SpeechRecording | speech_recordings | v2.14.0 | A gravação atual do aluno para um exercício de falar e gravar |

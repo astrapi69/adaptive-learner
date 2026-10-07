@@ -139,9 +139,9 @@ Definições > Dados > Sincronização e emparelhe este dispositivo:
 digitalize o código QR no ecrã do outro dispositivo (câmara
 traseira), ou cole o URL de emparelhamento. Uma vez emparelhado,
 os botões de envio + receção trocam dados; os conflitos passam
-por um resolvedor de fusão de IA. 28 tabelas na superfície de
-sincronização (assuntos + etiquetas +
-questões de estudo incluídas).
+por um resolvedor de fusão de IA. A sincronização abrange todos os
+teus dados, incluindo o progresso das lições, os erros por
+elemento e as missões.
 
 ## Como é diferente do ChatGPT?
 

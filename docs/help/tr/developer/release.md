@@ -115,8 +115,8 @@ sürüm başına notlarla eşleşmesini sağlar.
 ## Eklenti sürümleri
 
 Eklentiler, kanonik uygulama sürümüyle kilit adımı takip eder.
-Tüm 10 eklenti `pyproject.toml` dosyasında ve üç eklenti
-`__init__.py` `__version__` değişmezinde aynı sayı.
+Her eklentinin `pyproject.toml` dosyasında ve eklentilerin
+`__init__.py` `__version__` değişmezlerinde aynı sayı.
 
 ## Hotfix akışı
 
