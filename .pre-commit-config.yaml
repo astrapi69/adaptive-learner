@@ -44,9 +44,9 @@ repos:
       - id: check-merge-conflict
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.11
+    rev: v0.16.9
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: [--fix]
         files: ^backend/app/
       - id: ruff-format
