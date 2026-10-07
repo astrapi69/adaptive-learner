@@ -17,6 +17,8 @@ const PREVIEW_PORT =
   Number(process.env.ADAPTIVE_LEARNER_MANUAL_PREVIEW_PORT) || 4183;
 
 export default defineConfig({
+  // #3439 - a committed test.only would run one test and report green.
+  forbidOnly: !!process.env.CI,
   testDir: "./manual-automation",
   fullyParallel: false,
   workers: 1,

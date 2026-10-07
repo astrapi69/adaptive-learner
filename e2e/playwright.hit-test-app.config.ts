@@ -19,6 +19,8 @@ const EXECUTABLE = process.env.PW_CHROMIUM_EXECUTABLE;
 const LAUNCH = EXECUTABLE ? { executablePath: EXECUTABLE } : undefined;
 
 export default defineConfig({
+  // #3439 - a committed test.only would run one test and report green.
+  forbidOnly: !!process.env.CI,
   testDir: "./hit-test",
   testMatch: /hit-test-app\.spec\.ts$/,
   fullyParallel: false,
