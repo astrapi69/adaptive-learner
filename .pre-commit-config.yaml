@@ -67,12 +67,17 @@ repos:
         pass_filenames: false
         stages: [pre-commit]
 
+      # #3657: checks the lock against the pyproject (poetry check --lock)
+      # instead of the staging, so it also checks in CI (--all-files, nothing
+      # staged). Its own environment brings the poetry that wrote the locks.
       - id: plugin-lock-paired-with-pyproject
-        name: plugin pyproject.toml must be staged with its poetry.lock
-        entry: python3 scripts/check_plugin_lock_paired.py
-        language: system
-        files: ^plugins/adaptive-learner-plugin-[^/]+/pyproject\.toml$
+        name: each plugin poetry.lock matches its pyproject.toml
+        entry: python scripts/check_plugin_lock_paired.py
+        language: python
+        additional_dependencies: ["poetry==2.4.1"]
+        files: ^plugins/adaptive-learner-plugin-[^/]+/(pyproject\.toml|poetry\.lock)$
         pass_filenames: true
+        require_serial: true
         stages: [pre-commit]
 
       # Issue #47 — keep the README CONTENT-STATS block in lock-step
