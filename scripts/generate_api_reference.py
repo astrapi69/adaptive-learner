@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Generate the complete endpoint list of the help API reference (#3454).
 
-Single writer for ``docs/help/{en,de}/api/endpoints.md``. The list is
+Single writer for ``docs/help/<locale>/api/endpoints.md`` in every help
+locale (#3652). The list is
 rendered from the committed OpenAPI snapshot (``schema/openapi.json``,
 written by ``scripts/sync_openapi.py``), so it names every core router and
 every plugin route and cannot fall behind them the way the hand-written
@@ -65,12 +66,110 @@ TEXT = {
         "header": "| Methode | Pfad | Zusammenfassung |",
         "deprecated": "(veraltet)",
     },
+    "es": {
+        "title": "Todos los endpoints",
+        "intro": (
+            "Todos los endpoints del backend y de sus plugins, agrupados por área.\n"
+            "Esta página se genera a partir del snapshot de OpenAPI\n"
+            "`schema/openapi.json` con `scripts/generate_api_reference.py`;\n"
+            "no la edites a mano. Los resúmenes de los endpoints proceden del\n"
+            "snapshot y están en inglés. Los esquemas de petición y respuesta de\n"
+            "cada endpoint están en ese snapshot o en `/openapi.json` de un backend\n"
+            "en ejecución. Ejemplos desarrollados: [Endpoints del núcleo](core-endpoints.md)\n"
+            "y [Endpoints de plugins](plugin-endpoints.md)."
+        ),
+        "header": "| Método | Ruta | Resumen |",
+        "deprecated": "(obsoleto)",
+    },
+    "fr": {
+        "title": "Tous les endpoints",
+        "intro": (
+            "Tous les endpoints du backend et de ses plugins, regroupés par domaine.\n"
+            "Cette page est générée à partir de l'instantané OpenAPI\n"
+            "`schema/openapi.json` par `scripts/generate_api_reference.py` ;\n"
+            "ne la modifiez pas à la main. Les résumés des endpoints proviennent\n"
+            "de l'instantané et restent en anglais. Les schémas de requête et de\n"
+            "réponse de chaque endpoint figurent dans cet instantané ou sous\n"
+            "`/openapi.json` d'un backend en cours d'exécution. Exemples détaillés :\n"
+            "[Endpoints du cœur](core-endpoints.md) et\n"
+            "[Endpoints des plugins](plugin-endpoints.md)."
+        ),
+        "header": "| Méthode | Chemin | Résumé |",
+        "deprecated": "(obsolète)",
+    },
+    "el": {
+        "title": "Όλα τα endpoints",
+        "intro": (
+            "Όλα τα endpoints του backend και των plugins του, ομαδοποιημένα ανά\n"
+            "περιοχή. Η σελίδα αυτή παράγεται από το στιγμιότυπο OpenAPI\n"
+            "`schema/openapi.json` μέσω `scripts/generate_api_reference.py`· μην\n"
+            "την επεξεργάζεσαι με το χέρι. Οι περιλήψεις των endpoints προέρχονται\n"
+            "από το στιγμιότυπο και είναι στα αγγλικά. Τα σχήματα αιτήματος και\n"
+            "απόκρισης κάθε endpoint βρίσκονται σε αυτό το στιγμιότυπο ή στο\n"
+            "`/openapi.json` ενός backend που εκτελείται. Αναλυτικά παραδείγματα:\n"
+            "[Endpoints πυρήνα](core-endpoints.md) και\n"
+            "[Endpoints plugins](plugin-endpoints.md)."
+        ),
+        "header": "| Μέθοδος | Διαδρομή | Περίληψη |",
+        "deprecated": "(καταργημένο)",
+    },
+    "pt": {
+        "title": "Todos os endpoints",
+        "intro": (
+            "Todos os endpoints do backend e dos seus plugins, agrupados por área.\n"
+            "Esta página é gerada a partir do snapshot OpenAPI\n"
+            "`schema/openapi.json` por `scripts/generate_api_reference.py`;\n"
+            "não a edites à mão. Os resumos dos endpoints vêm do snapshot e\n"
+            "estão em inglês. Os esquemas de pedido e de resposta de cada endpoint\n"
+            "estão nesse snapshot ou em `/openapi.json` de um backend em execução.\n"
+            "Exemplos detalhados: [Endpoints do núcleo](core-endpoints.md) e\n"
+            "[Endpoints dos plugins](plugin-endpoints.md)."
+        ),
+        "header": "| Método | Caminho | Resumo |",
+        "deprecated": "(obsoleto)",
+    },
+    "tr": {
+        "title": "Tüm endpoint'ler",
+        "intro": (
+            "Backend'in ve eklentilerinin tüm endpoint'leri, alana göre\n"
+            "gruplanmış. Bu sayfa `scripts/generate_api_reference.py` tarafından\n"
+            "OpenAPI anlık görüntüsü `schema/openapi.json` dosyasından üretilir;\n"
+            "elle düzenleme. Endpoint özetleri anlık görüntüden gelir ve\n"
+            "İngilizcedir. Her endpoint'in istek ve yanıt şemaları bu anlık\n"
+            "görüntüde veya çalışan bir backend'in `/openapi.json` adresinde\n"
+            "bulunur. Ayrıntılı örnekler: [Çekirdek endpoint'leri](core-endpoints.md)\n"
+            "ve [Eklenti endpoint'leri](plugin-endpoints.md)."
+        ),
+        "header": "| Yöntem | Yol | Özet |",
+        "deprecated": "(kullanımdan kaldırıldı)",
+    },
+    "ja": {
+        "title": "すべてのエンドポイント",
+        "intro": (
+            "バックエンドとそのプラグインのすべてのエンドポイントを領域ごとに\n"
+            "まとめています。このページは `scripts/generate_api_reference.py` が\n"
+            "OpenAPI スナップショット `schema/openapi.json` から生成します。手動で\n"
+            "編集しないでください。エンドポイントの概要はスナップショットに由来し、\n"
+            "英語のままです。各エンドポイントのリクエストとレスポンスのスキーマは、\n"
+            "このスナップショットか、実行中のバックエンドの `/openapi.json` にあります。\n"
+            "詳しい例: [コアのエンドポイント](core-endpoints.md) と\n"
+            "[プラグインのエンドポイント](plugin-endpoints.md)。"
+        ),
+        "header": "| メソッド | パス | 概要 |",
+        "deprecated": "（非推奨）",
+    },
 }
 
 GENERATED_MARKER = (
     "<!-- Generated by scripts/generate_api_reference.py from schema/openapi.json; "
     "do not edit by hand (#3454). -->"
 )
+
+
+# The help pages of these locales are machine translations awaiting native
+# review and open with this marker; the generated page follows suit (#3652).
+TRANSLATION_MARKER = "<!-- Translation: AI-generated, pending native review -->"
+MARKED_LOCALES = frozenset({"pt", "tr", "ja"})
 
 
 def operations(spec: dict) -> list[tuple[str, str, str, dict]]:
@@ -105,13 +204,15 @@ def render(spec: dict, lang: str) -> str:
 
     Args:
         spec: The parsed OpenAPI document.
-        lang: A key of ``TEXT`` (``"en"`` or ``"de"``).
+        lang: A help locale, a key of ``TEXT``.
 
     Returns:
         The complete Markdown page, ending in a newline.
     """
     text = TEXT[lang]
     lines = [GENERATED_MARKER, "", f"# {text['title']}", "", text["intro"]]
+    if lang in MARKED_LOCALES:
+        lines = [TRANSLATION_MARKER, "", *lines]
     current = None
     for tag, method, path, operation in operations(spec):
         if tag != current:
