@@ -1694,6 +1694,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "Básica",
+      "cloze": "Texto con huecos"
+    },
     "title": "Exportación a Anki",
     "intro": "Revisa las tarjetas sugeridas por la IA, acepta las que quieras y expórtalas como archivo .apkg para Anki.",
     "filter_project": "Proyecto",
@@ -2077,6 +2081,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Falta: {word}",
+      "extra": "Sobra: {word}",
+      "replaced": "Escribiste {wrote}, se esperaba {expected}"
+    },
     "progress_io": {
       "save_error": "No se pudo guardar tu progreso en esta lección.",
       "load_failed": "No se pudo cargar tu progreso guardado de esta lección: {detail}",
@@ -3477,6 +3486,8 @@
       "author_label": "Nombre del autor"
     },
     "cards": {
+      "front_placeholder": "Palabra o frase",
+      "back_placeholder": "Significado",
       "heading": "Añadir tarjetas de vocabulario",
       "front_label": "Anverso (aprendido)",
       "back_label": "Reverso (tu idioma)",

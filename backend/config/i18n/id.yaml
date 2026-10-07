@@ -1576,6 +1576,10 @@ arcade:
     won: "Berhasil: seluruh urutan!"
     lost: "Ups: kamu mencapai panjang {n}. Coba lagi!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Dasar"
+    cloze: "Isian rumpang"
   title: Ekspor Anki
   intro: Tinjau kartu yang disarankan AI, terima yang Anda inginkan, lalu ekspor sebagai file .apkg untuk Anki.
   filter_project: Proyek
@@ -1949,6 +1953,11 @@ repo:
     description: "Otomatis menghasilkan artefak Markdown (README, STATS, CHEATSHEET, ROADMAP) per proyek dari data sesi Anda. Integrasi git opsional melakukan commit setiap render sehingga Anda dapat menelusuri riwayatnya dengan klien git mana pun."
     enable_git: "Aktifkan persistensi git"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Kurang: {word}"
+    extra: "Berlebih: {word}"
+    replaced: "Kamu menulis {wrote}, seharusnya {expected}"
   progress_io:
     save_error: "Kemajuan Anda dalam pelajaran ini tidak dapat disimpan."
     load_failed: "Kemajuan tersimpan Anda untuk pelajaran ini tidak dapat dimuat: {detail}"
@@ -3208,6 +3217,9 @@ create_lesson:
     description_label: "Topik / deskripsi"
     author_label: "Nama penulis"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Kata atau frasa"
+    back_placeholder: "Arti"
     heading: "Tambah kartu kosakata"
     front_label: "Depan (yang dipelajari)"
     back_label: "Belakang (bahasamu)"
