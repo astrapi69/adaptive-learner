@@ -134,7 +134,7 @@ import:
   analysis_phase_reading: "Paso 1/3: Leyendo el chat…"
   analysis_phase_analyzing: "Paso 2/3: Analizando el contenido…"
   analysis_phase_preparing: "Paso 3/3: Preparando los resultados…"
-  analysis_estimate: "El análisis tarda aproximadamente 15-30 segundos…"
+  analysis_estimate: "Los chats más largos tardan más en analizarse."
   analysis_done: "¡Listo!"
   analysis_cancel: "Cancelar"
   analysis_failed_inline: "El análisis falló. Inténtalo de nuevo."
