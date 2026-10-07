@@ -1,8 +1,8 @@
 {
-  "note": "Budget for SKIPPED tests per nightly e2e suite, counted from Playwright's JSON report by scripts/check_e2e_skip_budget.py (#3427). A spec that cannot reach its surface skips at runtime, so without a budget a broken path reads as a green night. Growth fails the step until the number is raised in the same commit with a reason; a drop is offered by the script and entered by a human (#2140).",
+  "note": "Budget for SKIPPED tests per nightly e2e suite, counted from Playwright's JSON report by scripts/check_e2e_skip_budget.py (#3427). A spec that cannot reach its surface skips at runtime, so without a budget a broken path reads as a green night. Growth fails the step until the number is raised in the same commit with a reason; a drop is offered by the script and entered by a human (#2140). Seeded 2026-10-07 from dispatched runs of this branch: dexie-smoke run 37629874286 (175 tests, 0 skipped), manual-automation run 37629879439 (79 tests, 2 skipped: the read-aloud layout check without a TTS voice in headless Chromium, and the book-companion card without a books.yaml domain match offline), visual-regression run 37629883452 (166 tests, 0 skipped).",
   "budgets": {
-    "dexie-smoke": null,
-    "manual-automation": null,
-    "visual-regression": null
+    "dexie-smoke": 0,
+    "manual-automation": 2,
+    "visual-regression": 0
   }
 }
