@@ -39,6 +39,7 @@ import { useViewportFixExperiment } from "./components/dev/useViewportFixExperim
 import { useContentRepoAutoSync } from "./hooks/content/useContentRepoAutoSync";
 import Landing from "./pages/onboarding/Landing";
 import SkipToContent from "./components/a11y/SkipToContent";
+import { DocumentTitle } from "./components/a11y/DocumentTitle";
 
 // Route-level code-splitting. Landing stays in the main bundle as
 // the entry route; everything else loads on first navigation. See
@@ -185,6 +186,8 @@ export default function App() {
             <AiKeyVaultProvider>
             <AppUpdateProvider>
             <SkipToContent />
+            {/* #3431 - document.title follows the route and the UI language. */}
+            <DocumentTitle />
             {/* #1569 — opt-in on-device tap-offset probe (?vvdiag=1). Self-gates
                 to nothing for normal users; pointer-events:none so it never
                 perturbs the hit-testing it measures. */}

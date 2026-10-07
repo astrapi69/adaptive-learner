@@ -126,8 +126,8 @@ Yerel ağ çift yönlü senkronizasyonu. Ayarlar > Veri > Eşitleme'yi açın
 ve bu cihazı eşleştirin: diğer cihazın ekranındaki QR kodunu tarayın (arka
 kamera) ya da eşleştirme URL'sini yapıştırın. Eşleştirildikten sonra
 iter + çeker düğmeleri veri alışverişi yapar; çakışmalar yapay zeka
-birleştirme çözücüden geçer. Senkronizasyon
-yüzeyinde 28 tablo (konular + etiketler + çalışma soruları dahil).
+birleştirme çözücüden geçer. Senkronizasyon, ders ilerlemesi,
+öğe bazlı hatalar ve görevler dahil tüm verilerini kapsar.
 
 ## Bu ChatGPT'den nasıl farklı?
 

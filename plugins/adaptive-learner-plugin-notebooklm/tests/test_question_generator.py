@@ -10,7 +10,6 @@ from adaptive_learner_notebooklm.question_generator import (
     parse_response,
 )
 
-
 # --- Prompt builder ----------------------------------------------------
 
 def test_build_prompt_includes_content_and_limit() -> None:

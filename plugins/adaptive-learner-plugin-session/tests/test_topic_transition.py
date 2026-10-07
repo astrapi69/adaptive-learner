@@ -10,7 +10,6 @@ from __future__ import annotations
 import json
 from types import SimpleNamespace
 
-import pytest
 from adaptive_learner_session.topic_transition import (
     DIFFICULTY_VALUES,
     TRANSITION_DEFAULT_MAX_TOKENS,

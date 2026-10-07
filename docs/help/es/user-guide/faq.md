@@ -139,9 +139,9 @@ Sincronización y empareja este dispositivo: escanea
 el código QR en la pantalla del otro dispositivo (cámara trasera)
 o pega la URL de emparejamiento. Una vez emparejados, los botones
 de enviar y recibir intercambian datos; los conflictos pasan por
-un resolvedor de fusión de IA. 28 tablas en la superficie de
-sincronización (asignaturas, etiquetas y preguntas
-de estudio incluidas).
+un resolvedor de fusión de IA. La sincronización abarca todos tus
+datos, incluidos el progreso de las lecciones, los errores por
+elemento y las misiones.
 
 ## ¿En qué se diferencia esto de ChatGPT?
 

@@ -70,7 +70,8 @@ freigeschaltet hat.
    Ziel, Zeitrahmen).
 3. **12-Fragen-Test machen** (~2 Minuten).
 4. **KI-API-Schlüssel hinzufügen** (Anthropic, OpenAI oder
-   Gemini - kostenlose Tiers reichen).
+   Gemini - kostenlose Tiers reichen; die Desktop-App bietet
+   zusätzlich Perplexity).
 5. **Erste Session starten** vom Dashboard aus.
 
 [Voller Erste-Schritte-Guide →](user-guide/getting-started.md)
@@ -101,12 +102,14 @@ die vollständige Historie liegt in
   Dexie-Modus-Release-Gate-Suite
 - **11 UI-Sprachen, alle voll übersetzt** (DE / EL / EN / ES /
   FR / HI / ID / JA / KO / PT / TR)
-- **13 Plugins** (Assessment / 3 KI-Anbieter / Session /
-  Tracking / Tools / Gamification / Anki / NotebookLM /
-  Learning-Repo / Content-Loader / Missions)
+- **Plugins** für Assessment, Session, Tracking, Tools,
+  Gamification, Anki, NotebookLM, Learning-Repo, Content-Loader und
+  Missions, dazu eines pro KI-Anbieter (Anthropic, OpenAI, Gemini,
+  Perplexity)
 - **Gebündelte Content-Sets** über mehrere Content-Sprachen
   und Domänen - den aktuellen Bestand zeigt der Set-Browser in der App
-- **30 SQLAlchemy-Modelle**, Sync-Oberfläche 30 Tabellen
+- **Ein SQLAlchemy-Domänenmodell** (`backend/app/models/__init__.py`),
+  Tabelle für Tabelle synchronisiert (`sync_service.ALL_SYNC_TABLES`)
 - **2 Speichermodi** (Lokal IndexedDB / FastAPI-Backend),
   plus dem `secrets.yaml`-Overlay des Desktop-Launchers
 - **MIT-lizenziert**
