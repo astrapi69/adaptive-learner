@@ -427,7 +427,7 @@ session:
   topic_label: "Sujet"
   in_progress: Session en cours
   send_message: Envoyer le message
-  message_placeholder: Ecris ta réponse...
+  message_placeholder: Écris ta réponse...
   ai_thinking: Réflexion...
   ai_error: Le fournisseur IA n'a pas pu répondre.
   no_api_key: "Aucune clé IA définie. Ajoute une clé pour ton fournisseur IA dans Paramètres pour discuter avec le tuteur. Les leçons et révisions fonctionnent sans clé."
@@ -1038,7 +1038,7 @@ methods:
     summary: Apprendre des erreurs - correction avec explication.
   dialogic:
     label: Dialogique
-    summary: Penser en conversation - reduire le stress, batir la motivation.
+    summary: Penser en conversation - réduire le stress, bâtir la motivation.
   contextual:
     label: Contextuel
     summary: Appliquer en contexte réel - pratiquer le transfert.
@@ -1576,6 +1576,10 @@ arcade:
     won: "Bravo : toute la séquence !"
     lost: "Oups : tu es arrivé à la longueur {n}. Réessaie tout de suite !"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Basique"
+    cloze: "Texte à trous"
   title: Exportation Anki
   intro: Examine les cartes suggérées par l'IA, accepte celles que tu veux, puis exporte-les en fichier .apkg pour Anki.
   filter_project: Projet
@@ -1940,6 +1944,11 @@ repo:
     description: "Génère automatiquement des artefacts Markdown (README, STATS, CHEATSHEET, ROADMAP) par projet à partir de tes données de session. L'intégration git facultative valide chaque génération pour que tu puisses parcourir l'historique avec n'importe quel client git."
     enable_git: "Activer la persistance git"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Manquant : {word}"
+    extra: "En trop : {word}"
+    replaced: "Tu as écrit {wrote}, attendu : {expected}"
   progress_io:
     save_error: "Ta progression dans cette leçon n'a pas pu être enregistrée."
     load_failed: "Ta progression enregistrée pour cette leçon n'a pas pu être chargée : {detail}"
@@ -3200,6 +3209,9 @@ create_lesson:
     description_label: "Thème / description"
     author_label: "Nom de l'auteur"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Mot ou expression"
+    back_placeholder: "Signification"
     heading: "Ajouter des cartes de vocabulaire"
     front_label: "Recto (appris)"
     back_label: "Verso (ta langue)"

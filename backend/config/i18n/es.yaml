@@ -1576,6 +1576,10 @@ arcade:
     won: "¡Lo lograste: la secuencia completa!"
     lost: "Ups: llegaste hasta la longitud {n}. ¡Inténtalo de nuevo!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Básica"
+    cloze: "Texto con huecos"
   title: Exportación a Anki
   intro: Revisa las tarjetas sugeridas por la IA, acepta las que quieras y expórtalas como archivo .apkg para Anki.
   filter_project: Proyecto
@@ -1940,6 +1944,11 @@ repo:
     description: "Genera automáticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por proyecto a partir de tus datos de sesión. La integración opcional con git confirma cada generación para que puedas explorar el historial con cualquier cliente git."
     enable_git: "Activar persistencia git"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Falta: {word}"
+    extra: "Sobra: {word}"
+    replaced: "Escribiste {wrote}, se esperaba {expected}"
   progress_io:
     save_error: "No se pudo guardar tu progreso en esta lección."
     load_failed: "No se pudo cargar tu progreso guardado de esta lección: {detail}"
@@ -2923,7 +2932,7 @@ content:
     privacy: "Tus tarjetas se enviarán a tu proveedor de IA configurado para su revisión. No se transmiten datos personales."
     confirm: "Revisar"
     progress: "Revisando lote {current} de {total}..."
-    rate_limited: "Espera un momento antes de ejecutar otra revision."
+    rate_limited: "Espera un momento antes de ejecutar otra revisión."
     failed: "Revisión con IA no disponible."
     unavailable_mode: "Solo disponible en modo de almacenamiento del navegador."
     report:
@@ -3200,6 +3209,9 @@ create_lesson:
     description_label: "Tema / descripción"
     author_label: "Nombre del autor"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Palabra o frase"
+    back_placeholder: "Significado"
     heading: "Añadir tarjetas de vocabulario"
     front_label: "Anverso (aprendido)"
     back_label: "Reverso (tu idioma)"

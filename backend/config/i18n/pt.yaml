@@ -1576,6 +1576,10 @@ arcade:
     won: "Conseguiste: a sequência completa!"
     lost: "Ops: você chegou ao comprimento {n}. Tente já outra vez!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Básico"
+    cloze: "Preencher lacunas"
   title: Exportação Anki
   intro: Reveja os flashcards sugeridos pela IA, aceite os que quiser e exporte como arquivo .apkg para o Anki.
   filter_project: Projeto
@@ -1675,7 +1679,7 @@ ui:
     forest: "Floresta"
     high-contrast: "Alto contraste"
     sepia: "Sépia"
-    auto: "Automatico (sistema)"
+    auto: "Automático (sistema)"
   errors:
     bad_request: "Não foi possível processar o pedido."
     forbidden: "Acesso negado. Verifique suas configurações."
@@ -1938,6 +1942,11 @@ repo:
     description: "Gera automaticamente artefatos Markdown (README, STATS, CHEATSHEET, ROADMAP) por projeto a partir dos dados das suas sessões. A integração git opcional faz commit de cada geração para que você possa navegar pelo histórico com qualquer cliente git."
     enable_git: "Ativar persistência git"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Falta: {word}"
+    extra: "A mais: {word}"
+    replaced: "Escrito: {wrote}, esperado: {expected}"
   progress_io:
     save_error: "Não foi possível salvar seu progresso nesta aula."
     load_failed: "Não foi possível carregar seu progresso salvo desta aula: {detail}"
@@ -3198,6 +3207,9 @@ create_lesson:
     description_label: "Tema / descrição"
     author_label: "Nome do autor"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Palavra ou expressão"
+    back_placeholder: "Significado"
     heading: "Adicionar cartões de vocabulário"
     front_label: "Frente (aprendido)"
     back_label: "Verso (o seu idioma)"

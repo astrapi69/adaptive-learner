@@ -457,7 +457,7 @@
     "topic_label": "Sujet",
     "in_progress": "Session en cours",
     "send_message": "Envoyer le message",
-    "message_placeholder": "Ecris ta réponse...",
+    "message_placeholder": "Écris ta réponse...",
     "ai_thinking": "Réflexion...",
     "ai_error": "Le fournisseur IA n'a pas pu répondre.",
     "no_api_key": "Aucune clé IA définie. Ajoute une clé pour ton fournisseur IA dans Paramètres pour discuter avec le tuteur. Les leçons et révisions fonctionnent sans clé.",
@@ -1094,7 +1094,7 @@
     },
     "dialogic": {
       "label": "Dialogique",
-      "summary": "Penser en conversation - reduire le stress, batir la motivation."
+      "summary": "Penser en conversation - réduire le stress, bâtir la motivation."
     },
     "contextual": {
       "label": "Contextuel",
@@ -1694,6 +1694,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "Basique",
+      "cloze": "Texte à trous"
+    },
     "title": "Exportation Anki",
     "intro": "Examine les cartes suggérées par l'IA, accepte celles que tu veux, puis exporte-les en fichier .apkg pour Anki.",
     "filter_project": "Projet",
@@ -2077,6 +2081,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Manquant : {word}",
+      "extra": "En trop : {word}",
+      "replaced": "Tu as écrit {wrote}, attendu : {expected}"
+    },
     "progress_io": {
       "save_error": "Ta progression dans cette leçon n'a pas pu être enregistrée.",
       "load_failed": "Ta progression enregistrée pour cette leçon n'a pas pu être chargée : {detail}",
@@ -3477,6 +3486,8 @@
       "author_label": "Nom de l'auteur"
     },
     "cards": {
+      "front_placeholder": "Mot ou expression",
+      "back_placeholder": "Signification",
       "heading": "Ajouter des cartes de vocabulaire",
       "front_label": "Recto (appris)",
       "back_label": "Verso (ta langue)",

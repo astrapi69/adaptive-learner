@@ -29,6 +29,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.exceptions import NotFoundError, ValidationError
 from app.models import LearningProject, User
+from app.paths import get_data_dir
 
 from .git_writer import persist_to_disk_and_commit
 from .renderer import load_context, render_from_context
@@ -36,9 +37,6 @@ from .zip_builder import build_zip, slugify_for_filename
 
 router = APIRouter(prefix="/plugins/learning-repo", tags=["learning-repo"])
 logger = logging.getLogger(__name__)
-
-_DEFAULT_REPOS_DIR = "~/.local/share/adaptive_learner/repos"
-
 
 # --- Response shape ---------------------------------------------------------
 
@@ -95,9 +93,18 @@ def _plugin_settings() -> dict[str, object]:
 
 
 def _resolved_repos_dir() -> Path:
-    settings = _plugin_settings()
-    raw = settings.get("repos_dir") or _DEFAULT_REPOS_DIR
-    return Path(str(raw)).expanduser()
+    """Where the per-project git repositories live.
+
+    An explicit ``repos_dir`` setting wins (with ``~`` expansion). An
+    empty or missing one resolves to ``get_data_dir() / "repos"`` at
+    call time, so it follows ``ADAPTIVE_LEARNER_DATA_DIR`` and the
+    platform data directory instead of a fixed Linux path (#3451).
+    """
+
+    raw = str(_plugin_settings().get("repos_dir") or "").strip()
+    if not raw:
+        return get_data_dir() / "repos"
+    return Path(raw).expanduser()
 
 
 def _git_enabled() -> bool:
