@@ -4090,6 +4090,19 @@ content_repo:
     save_failed: "Repository konnte nicht hinzugefügt werden."
     sync_failed: "Synchronisierung fehlgeschlagen. Bitte erneut versuchen."
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "Repository oder manifest.yaml nicht gefunden."
+      access_denied: "Zugriff verweigert - prüfe das Repository und deinen GitHub-Token."
+      unreachable: "Repository nicht erreichbar."
+      unsupported_schema: "Nicht unterstützte Schema-Version {version}."
+      no_sets: "manifest.yaml enthält keine Sets."
+      no_lessons: "In keinem Set wurden Lektionen gefunden."
+      executable_content: "Der Lektionsinhalt enthält unzulässigen ausführbaren Code."
+      lessons_unreadable: "Die Lektionen des ersten Sets konnten nicht gelesen werden."
+      lesson_invalid_json: "Die erste Lektion des ersten Sets ist kein gültiges JSON."
+      validator_unavailable: "Die Lektionsprüfung konnte nicht geladen werden."
+      lesson_invalid: "Die erste Lektion des ersten Sets besteht die Prüfung nicht: {detail}"
     failed: "Validierung fehlgeschlagen: {reason}"
     passed: "Validierung erfolgreich: {sets} Sets, {lessons} Lektionen."
 resource:

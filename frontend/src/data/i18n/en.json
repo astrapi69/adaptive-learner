@@ -4427,6 +4427,19 @@
       "sync_failed": "Sync failed. Try again."
     },
     "validation": {
+      "reason": {
+        "not_found": "Repository or manifest.yaml not found.",
+        "access_denied": "Access denied - check the repository and your GitHub token.",
+        "unreachable": "Repository unreachable.",
+        "unsupported_schema": "Unsupported schema version {version}.",
+        "no_sets": "manifest.yaml lists no sets.",
+        "no_lessons": "No lessons found in any set.",
+        "executable_content": "Lesson content contains disallowed executable code.",
+        "lessons_unreadable": "Could not read the first set's lessons.",
+        "lesson_invalid_json": "The first set's first lesson is not valid JSON.",
+        "validator_unavailable": "Could not load the lesson validator.",
+        "lesson_invalid": "The first set's first lesson fails validation: {detail}"
+      },
       "failed": "Validation failed: {reason}",
       "passed": "Validation passed: {sets} sets, {lessons} lessons."
     }

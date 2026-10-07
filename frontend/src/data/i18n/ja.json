@@ -4427,6 +4427,19 @@
       "sync_failed": "同期に失敗しました。もう一度お試しください。"
     },
     "validation": {
+      "reason": {
+        "not_found": "リポジトリまたは manifest.yaml が見つかりません。",
+        "access_denied": "アクセスが拒否されました。リポジトリと GitHub トークンを確認してください。",
+        "unreachable": "リポジトリに接続できません。",
+        "unsupported_schema": "サポートされていないスキーマバージョン {version} です。",
+        "no_sets": "manifest.yaml にセットがありません。",
+        "no_lessons": "どのセットにもレッスンが見つかりません。",
+        "executable_content": "レッスン内容に許可されていない実行可能コードが含まれています。",
+        "lessons_unreadable": "最初のセットのレッスンを読み込めませんでした。",
+        "lesson_invalid_json": "最初のセットの最初のレッスンが有効な JSON ではありません。",
+        "validator_unavailable": "レッスン検証ツールを読み込めませんでした。",
+        "lesson_invalid": "最初のセットの最初のレッスンが検証に失敗しました: {detail}"
+      },
       "failed": "検証に失敗しました: {reason}",
       "passed": "検証に成功しました: {sets} セット、{lessons} レッスン。"
     }
