@@ -51,6 +51,7 @@ vi.mock("../../../lib/learning/learnerState", () => ({
     }),
 }));
 
+import {ApiError} from "../../../api/client";
 import {useLesson} from "./useLesson";
 
 const SOURCE = "astrapi69/adaptive-learner-content";
@@ -112,8 +113,9 @@ describe("useLesson: load + status transitions", () => {
     });
 
     it("surfaces status=not-cached when the lesson isn't downloaded", async () => {
+        // #3443: both storage modes reject a missing lesson with ApiError 404.
         getLessonMock.mockRejectedValue(
-            new Error("Set astrapi69/adaptive-learner-content/language-fr-a1 is not cached"),
+            new ApiError(404, "Set astrapi69/adaptive-learner-content/language-fr-a1 is not cached."),
         );
         const {result} = renderHook(() =>
             useLesson({
