@@ -37,10 +37,10 @@ satisfy one contract:
 - **`apiStorage`** (default): thin wrapper around
   `api/client.ts` that talks to the FastAPI backend.
 - **`dexieStorage`** (local-first): full IndexedDB stack
-  mirroring all 30 SQLAlchemy models. AI calls fire direct
+  mirroring the SQLAlchemy models. AI calls fire direct
   from the browser via the `storage/ai/` namespace.
 
-`IStorageService` (`storage/types/core/service.ts`) exposes 29
+`IStorageService` (`storage/types/core/service.ts`) exposes its
 namespaces (users, projects, settings, assessment, session
 with streaming, tracking, tools, curricula, topics, lessons,
 plugins, imports, system, backup, export, subjects, tags,
@@ -160,7 +160,7 @@ domain errors to HTTP status codes. See
 
 - Backend: SQLAlchemy + SQLite. Alembic migrations in
   `backend/migrations/versions/`.
-- Sync surface: 30 tables (`sync_service.ALL_SYNC_TABLES`).
+- Sync surface: every table in `sync_service.ALL_SYNC_TABLES`.
   Append-only
   history rows (sessions, messages, ratings, progress
   commits, step evaluations, method switches, imported

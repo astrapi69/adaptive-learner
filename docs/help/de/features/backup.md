@@ -11,7 +11,7 @@ findest alles unter **Einstellungen → Daten**.
 
 ## Was im Backup steckt
 
-Ein Backup ist ein **vollständiger Snapshot**: alle 30
+Ein Backup ist ein **vollständiger Snapshot**: alle
 Datentabellen (Lernprojekte, Sessions, Lektionsfortschritt,
 element-genaue Fehler, Gamification mit XP/Streak/Badges,
 Missionen, Anki-Karten, Notizen und mehr), **deine

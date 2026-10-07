@@ -27,16 +27,15 @@ NEVER appear as cached.
 from __future__ import annotations
 
 import shutil
-from datetime import datetime, timezone
+from collections.abc import Iterable
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterable
 
-from .exceptions import ContentNotFoundError
 from .content_engine import parse_lesson, parse_manifest
+from .exceptions import ContentNotFoundError
 from .models import ContentManifest
 from .schema import Lesson
 from .version import needs_update
-
 
 CONTENT_LOADER_DIR = "content-loader"
 
@@ -155,7 +154,7 @@ def cached_downloaded_at(
         mtime = manifest.stat().st_mtime
     except OSError:
         return None
-    stamp = datetime.fromtimestamp(int(mtime), tz=timezone.utc)
+    stamp = datetime.fromtimestamp(int(mtime), tz=UTC)
     return stamp.isoformat().replace("+00:00", "Z")
 
 

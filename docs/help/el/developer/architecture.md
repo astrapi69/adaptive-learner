@@ -19,10 +19,9 @@
 └─────────────────────────────────────────────────────────────┘
                             ↑↓ entry_points
 ┌─────────────────────────────────────────────────────────────┐
-│ Plugins            10 πακέτα στο plugins/                   │
-│                    (ai-{anthropic,openai,gemini}, assessment,│
-│                    session, tracking, tools, gamification,  │
-│                    anki, notebooklm)                        │
+│ Plugins            ένα πακέτο Poetry ανά plugin στο         │
+│                    plugins/· ο κατάλογος και τα tiers είναι │
+│                    στο CLAUDE.md                            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -39,11 +38,11 @@ lessons / backup / sync / system / import).
 - **`apiStorage`** (προεπιλογή): λεπτό περιτύλιγμα γύρω από
   το `api/client.ts` που επικοινωνεί με το FastAPI backend.
 - **`dexieStorage`** (local-first): πλήρης στοίβα IndexedDB
-  που αντικατοπτρίζει τα 25 μοντέλα SQLAlchemy. Οι κλήσεις ΤΝ
+  που αντικατοπτρίζει τα μοντέλα SQLAlchemy. Οι κλήσεις ΤΝ
   εκτελούνται απευθείας από τον browser μέσω
   `storage/ai-providers.ts`.
 
-Το `IStorageService` εκθέτει 22 namespaces (users, projects,
+Το `IStorageService` εκθέτει τα namespaces του (users, projects,
 settings, assessment, session με streaming, tracking, tools,
 curricula, topics, lessons, plugins, system, backup, export,
 subjects, tags, projectTaxonomy, imports, gamification, anki,
@@ -154,7 +153,7 @@ External       ExternalServiceError(service, message) για provider SDKs
 
 - Backend: SQLAlchemy + SQLite. Μεταναστεύσεις Alembic στο
   `backend/migrations/versions/`.
-- Επιφάνεια συγχρονισμού: 28 πίνακες (baseline v1.19.0). Γραμμές
+- Επιφάνεια συγχρονισμού: κάθε πίνακας στο `sync_service.ALL_SYNC_TABLES`. Γραμμές
   ιστορικού μόνο-προσάρτησης (sessions, messages, ratings, progress
   commits, step evaluations, method switches, imported conversations,
   imported messages, anki cards, study questions) συν μεταβλητές

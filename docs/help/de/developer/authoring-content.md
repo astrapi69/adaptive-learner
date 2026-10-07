@@ -1187,7 +1187,11 @@ zu erstellen und zu teilen**:
 3. Klicke auf **Für die Community bereitstellen**, um einen
    vorausgefüllten **Pull Request** im Inhalts-Repository zu öffnen
    - die Lektions-JSON wird am richtigen Pfad im Baum committet,
-   kein `.zip`-Anhang nötig.
+   kein `.zip`-Anhang nötig. Mit einem GitHub-Token unter
+   Einstellungen > Integrationen öffnet die App den Pull Request für
+   eine einzelne Lektion selbst; ohne Token führen dich der Editor
+   oder die Upload-Seite von GitHub hindurch (siehe
+   [Meine Lektionen](../user-guide/my-lessons.md#exportieren-und-teilen)).
 4. Die CI des Repos validiert den PR automatisch; ein Maintainer
    prüft die Lektion, bringt das Manifest (id, title, language,
    level, tags) in Einklang mit den obigen Konventionen und führt

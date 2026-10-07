@@ -20,10 +20,9 @@ plugins.
 └─────────────────────────────────────────────────────────────┘
                             ↑↓ entry_points
 ┌─────────────────────────────────────────────────────────────┐
-│ Plugins            10 paquetes en plugins/                  │
-│                    (ai-{anthropic,openai,gemini}, assessment,│
-│                    session, tracking, tools, gamification,  │
-│                    anki, notebooklm)                        │
+│ Plugins            un paquete Poetry por plugin en plugins/;│
+│                    el catálogo y los niveles están en       │
+│                    CLAUDE.md                                │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -41,11 +40,11 @@ implementaciones satisfacen un mismo contrato:
 - **`apiStorage`** (por defecto): envoltorio ligero sobre
   `api/client.ts` que habla con el backend FastAPI.
 - **`dexieStorage`** (local primero): pila completa de IndexedDB
-  que refleja los 25 modelos SQLAlchemy. Las llamadas a la IA se
+  que refleja los modelos SQLAlchemy. Las llamadas a la IA se
   disparan directamente desde el navegador mediante
   `storage/ai-providers.ts`.
 
-`IStorageService` expone 22 espacios de nombres (users, projects,
+`IStorageService` expone sus espacios de nombres (users, projects,
 settings, assessment, session con streaming, tracking, tools,
 curricula, topics, lessons, plugins, system, backup, export,
 subjects, tags, projectTaxonomy, imports, gamification, anki,
@@ -156,7 +155,7 @@ mapea los errores de dominio a códigos de estado HTTP. Consulta
 
 - Backend: SQLAlchemy + SQLite. Migraciones Alembic en
   `backend/migrations/versions/`.
-- Superficie de sincronización: 28 tablas (línea base v1.19.0).
+- Superficie de sincronización: cada tabla de `sync_service.ALL_SYNC_TABLES`.
   Filas de historial de solo-adición (sesiones, mensajes,
   calificaciones, commits de progreso, evaluaciones de pasos,
   cambios de método, conversaciones importadas, mensajes

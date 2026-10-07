@@ -13,7 +13,6 @@ from types import SimpleNamespace
 
 from adaptive_learner_session import ai_orchestration
 
-
 # A stand-in table: the real one (``app.services.ai_caller.DEFAULT_MODELS``)
 # is not importable here, and resolve_model takes its table as a parameter
 # (#3420). The real table's coverage is pinned in backend/tests.

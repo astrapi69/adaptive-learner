@@ -212,6 +212,45 @@ test.describe("No horizontal scroll — authenticated pages (onboard first)", ()
   }
 });
 
+/**
+ * A page title with one unbreakable word wraps instead of widening the page
+ * (#3569). The #3406 rule (``:where(h1)`` in ``legacy/01-base.css``) fixed
+ * "Wiederholungssitzung", but the CI font sets that word narrower and it fits
+ * at 360 px, so no motif and no route above could turn red when the rule goes.
+ * This title is long enough for any font: the test first measures the word on
+ * one line and fails closed when it would fit, because then it proves nothing.
+ */
+const TITLE_WORD = "Donaudampfschifffahrtsgesellschaftskapitänsmützenabzeichen";
+
+test.describe("No horizontal scroll — a page title with one long word", () => {
+  test("the h1 wraps at 360px in any font", async ({ page }) => {
+    const VW = 360;
+    await page.setViewportSize({ width: VW, height: 720 });
+    await page.goto("/this-route-does-not-exist");
+    const title = page.locator("h1").first();
+    await title.waitFor({ timeout: 12000 });
+    await title.evaluate((h1, word) => {
+      h1.textContent = word;
+    }, TITLE_WORD);
+    await settleLayout(page);
+
+    const unbroken = await title.evaluate((h1) => {
+      const probe = document.createElement("span");
+      probe.textContent = h1.textContent;
+      probe.style.whiteSpace = "nowrap";
+      probe.style.position = "absolute";
+      probe.style.visibility = "hidden";
+      h1.appendChild(probe);
+      const width = probe.getBoundingClientRect().width;
+      probe.remove();
+      return width;
+    });
+    expect(unbroken, "the title word fits on one line here, so this test checks nothing").toBeGreaterThan(VW);
+
+    await assertNoOverflow(page, "NotFound with a long title", VW);
+  });
+});
+
 test.describe("No horizontal scroll — real lesson content", () => {
   test("es-a1 lesson at 320px (theory tables + every exercise renderer)", async ({ page }) => {
     test.setTimeout(150_000);

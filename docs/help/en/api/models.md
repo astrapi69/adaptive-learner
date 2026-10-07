@@ -1,14 +1,13 @@
 # Data models
 
-The **30 SQLAlchemy models** in
+The **SQLAlchemy models** in
 `backend/app/models/__init__.py`, with their wire-shape
-Pydantic schemas. The sync surface covers 30 tables
-(`sync_service.ALL_SYNC_TABLES`).
+Pydantic schemas. The sync surface covers every table in
+`sync_service.ALL_SYNC_TABLES`.
 
 The original 14 models from v0.7.0 are documented in detail
-below; the 11 added since (Phase 12+ imports, Phase 22
-subjects/tags, Phase 29-30 gamification + anki, Phase 32
-notebooklm) are listed at the bottom by name + table. See
+below; the ones added since are listed at the bottom by
+name + table. See
 the OpenAPI spec at `/openapi.json` for every field of
 every model.
 
@@ -218,6 +217,7 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    PERPLEXITY = "perplexity"
 
 # Since v1.20.0 / Phase 34
 class ApiKeySource(str, Enum):
@@ -257,4 +257,6 @@ The wire form is the lowercase string value (e.g.
 | ApiKeyBackup | api_key_backups | v1.49.0 | Rollback cache for replaced AI keys |
 | LessonProgress | lesson_progress | v1.28.0 | Per-lesson step state (in_progress / paused / completed) |
 | ElementError | element_errors | v1.30.0 | Per-element SRS error + mastery tracking |
+| SetRun | set_runs | v2.12.0 | One run (pass) of a content set; the open row is the active run |
 | UserMission | user_missions | v1.39.0 | Daily-mission assignment + progress |
+| SpeechRecording | speech_recordings | v2.14.0 | The learner's current audio clip for a speak-and-record exercise |

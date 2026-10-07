@@ -1,15 +1,14 @@
 # Modèles de données
 
-Les **25 modèles SQLAlchemy** dans
+Les **modèles SQLAlchemy** dans
 `backend/app/models/__init__.py`, avec leurs schémas Pydantic
 correspondants pour la communication réseau. La surface de
-synchronisation comprend 28 tables (les 25 modèles + 3 tables
-d'association : `project_subjects`, `project_tags`, `user_badges`).
+synchronisation comprend chaque table de
+`sync_service.ALL_SYNC_TABLES`.
 
 Les 14 modèles d'origine issus de v0.7.0 sont documentés en
-détail ci-dessous ; les 11 ajoutés depuis (imports Phase 12,
-sujets/tags Phase 22, gamification + anki Phases 29-30,
-notebooklm Phase 32) sont listés à la fin par nom + table. Voir
+détail ci-dessous ; ceux ajoutés depuis sont listés à la fin par
+nom + table. Voir
 la spec OpenAPI sur `/openapi.json` pour chaque champ de
 chaque modèle.
 
@@ -219,6 +218,7 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    PERPLEXITY = "perplexity"
 
 # Depuis v1.20.0 / Phase 34
 class ApiKeySource(str, Enum):
@@ -255,3 +255,9 @@ La forme réseau est la valeur string en minuscules (ex.
 | UserStreak | user_streaks | v1.16.0 | État de série + gels + mode week-end |
 | AnkiCardSuggestion | anki_card_suggestions | v1.17.0 | Candidat de flashcard extrait par IA |
 | StudyQuestion | study_questions | v1.19.0 | Question de rappel actif générée par IA |
+| ApiKeyBackup | api_key_backups | v1.49.0 | Cache de restauration pour les clés d'IA remplacées |
+| LessonProgress | lesson_progress | v1.28.0 | État des étapes par leçon (in_progress / paused / completed) |
+| ElementError | element_errors | v1.30.0 | Erreur SRS + maîtrise par élément |
+| SetRun | set_runs | v2.12.0 | Un passage d'un ensemble de contenu ; la ligne ouverte est le passage actif |
+| UserMission | user_missions | v1.39.0 | Attribution + progression des missions quotidiennes |
+| SpeechRecording | speech_recordings | v2.14.0 | L'enregistrement actuel de l'apprenant pour un exercice « parler et enregistrer » |
