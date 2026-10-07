@@ -19,16 +19,16 @@ class Visibility(str, Enum):
     #83 - consumer-display hint. ``hidden`` asks a consumer app NOT to surface the set to learners (e.g. a conformance/reference fixture that must stay on disk for engine validation but is not learner content). Additive and optional; absent means ``visible``. DISPLAY hint only: the engine and ``scripts/conformance-real.mjs`` still validate hidden sets and never exclude them from engine validation; only consumer apps filter on it.
     """
 
-    VISIBLE = "visible"
-    HIDDEN = "hidden"
+    VISIBLE = 'visible'
+    HIDDEN = 'hidden'
 
 
 class DerivedFromItem(BaseModel):
     model_config = ConfigDict(
-        extra="forbid",
+        extra='forbid',
         frozen=True,
     )
-    author: str = Field(..., max_length=120, min_length=1, title="Author")
+    author: str = Field(..., max_length=120, min_length=1, title='Author')
 
 
 class Attribution(BaseModel):
@@ -37,14 +37,16 @@ class Attribution(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra="forbid",
+        extra='forbid',
         frozen=True,
     )
-    author: str = Field(..., max_length=120, min_length=1, title="Author")
+    author: str = Field(..., max_length=120, min_length=1, title='Author')
     """
     Display name of the person this set's content is attributed to. Attribution, NOT authorization: without accounts or a server the name is unverifiable, and the field claims nothing more.
     """
-    derived_from: list[DerivedFromItem] | None = Field(None, max_length=8, title="Derived From")
+    derived_from: list[DerivedFromItem] | None = Field(
+        None, max_length=8, title='Derived From'
+    )
     """
     Bounded derivation chain, OLDEST first. Whoever edits and re-shares a foreign set moves the previous author to the END of this list and sets themselves as author; when the list is full, the FIRST entry (the origin) stays and the oldest middle entry is dropped (editor/author rule; the schema enforces only the bound).
     """
@@ -55,9 +57,9 @@ class ReviewStatus(str, Enum):
     engine#94 - schema 1.9 (additive). Three-state review standing derived from ORIGIN, because origin is what makes a set review-worthy: 'authored' = hand-written by a speaker/domain expert, no review required; 'generated' = machine-generated (AI/book/analysis), native-speaker or expert review PENDING; 'reviewed' = machine-generated and reviewed. Absent means 'authored' (legacy hand-written content). Consumers derive 'advertisable as reviewed' as status != 'generated'. Distinct from 'visibility' (display hint, never a quality statement) and from 'ai_validation' (AI check provenance).
     """
 
-    AUTHORED = "authored"
-    GENERATED = "generated"
-    REVIEWED = "reviewed"
+    AUTHORED = 'authored'
+    GENERATED = 'generated'
+    REVIEWED = 'reviewed'
 
 
 class ContentSetAsset(BaseModel):
@@ -79,14 +81,14 @@ class ContentSetAsset(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra="forbid",
+        extra='forbid',
         frozen=True,
     )
-    path: str = Field(..., max_length=300, min_length=1, title="Path")
+    path: str = Field(..., max_length=300, min_length=1, title='Path')
     """
     Relative path inside the set's ``assets/`` directory. Example: ``img/sunrise.png`` resolves to ``{cache_root}/.../assets/img/sunrise.png``. No leading slash, no ``..`` segments - the path is appended to a Path() and any upward navigation would escape the cache isolation.
     """
-    size_kb: int = Field(..., ge=1, le=500, title="Size Kb")
+    size_kb: int = Field(..., ge=1, le=500, title='Size Kb')
     """
     Declared file size in KiB (used by the validator + the downloader's progress reporting). The downloader rejects assets whose actual byte length exceeds ``size_kb * 1024`` by more than 10 percent - keeps content authors honest.
     """
@@ -104,10 +106,10 @@ class ContentSetBook(BaseModel):
     model_config = ConfigDict(
         frozen=True,
     )
-    asin: str | None = Field(None, max_length=20, title="Asin")
-    author: str | None = Field(None, max_length=300, title="Author")
-    title: str = Field(..., max_length=300, min_length=1, title="Title")
-    url: str | None = Field(None, max_length=2000, title="Url")
+    asin: str | None = Field(None, max_length=20, title='Asin')
+    author: str | None = Field(None, max_length=300, title='Author')
+    title: str = Field(..., max_length=300, min_length=1, title='Title')
+    url: str | None = Field(None, max_length=2000, title='Url')
 
 
 class Scheme(Enum):
@@ -115,9 +117,9 @@ class Scheme(Enum):
     How the run is scored: ``percent`` (a percentage, the default), ``pass_fail`` (a threshold, needs ``pass_percent``) or ``grades`` (a table, needs ``grades``).
     """
 
-    PERCENT = "percent"
-    PASS_FAIL = "pass_fail"
-    GRADES = "grades"
+    PERCENT = 'percent'
+    PASS_FAIL = 'pass_fail'
+    GRADES = 'grades'
 
 
 class Basis(Enum):
@@ -125,7 +127,7 @@ class Basis(Enum):
     What the percentage counts. ``elements`` is one answered exercise element, the unit the reference consumer's spaced repetition already counts. A one-value enum on purpose, so a later basis is an additive change.
     """
 
-    ELEMENTS = "elements"
+    ELEMENTS = 'elements'
 
 
 class Report(Enum):
@@ -133,8 +135,8 @@ class Report(Enum):
     How much the run summary shows: ``compact`` (the result) or ``detailed`` (the result plus the per-element breakdown). A display depth only; it never steers a consumer's correction round.
     """
 
-    COMPACT = "compact"
-    DETAILED = "detailed"
+    COMPACT = 'compact'
+    DETAILED = 'detailed'
 
 
 class ContentSetGrade(BaseModel):
@@ -143,18 +145,18 @@ class ContentSetGrade(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra="forbid",
+        extra='forbid',
         frozen=True,
     )
-    min_percent: int = Field(..., ge=0, le=100, title="Min Percent")
+    min_percent: int = Field(..., ge=0, le=100, title='Min Percent')
     """
     Lowest percentage (0-100, inclusive) that still earns this label.
     """
-    label: str = Field(..., min_length=1, title="Label")
+    label: str = Field(..., min_length=1, title='Label')
     """
     The grade as the learner reads it (``A``, ``Bestanden``, ``5``).
     """
-    label_native: str | None = Field(None, min_length=1, title="Label Native")
+    label_native: str | None = Field(None, min_length=1, title='Label Native')
     """
     Optional longer or localized wording for the same grade (``Sehr gut``).
     """
@@ -166,30 +168,30 @@ class ContentSetEvaluation(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra="forbid",
+        extra='forbid',
         frozen=True,
     )
-    scheme: Scheme = Field(Scheme.PERCENT, title="Scheme")
+    scheme: Scheme = Field(Scheme.PERCENT, title='Scheme')
     """
     How the run is scored: ``percent`` (a percentage, the default), ``pass_fail`` (a threshold, needs ``pass_percent``) or ``grades`` (a table, needs ``grades``).
     """
-    pass_percent: int | None = Field(None, ge=0, le=100, title="Pass Percent")
+    pass_percent: int | None = Field(None, ge=0, le=100, title='Pass Percent')
     """
     The percentage (0-100, inclusive) a run must reach to pass. Required for ``pass_fail``; a ``percent`` run may carry it as an advisory mark.
     """
-    basis: Basis = Field(Basis.ELEMENTS, title="Basis")
+    basis: Basis = Field(Basis.ELEMENTS, title='Basis')
     """
     What the percentage counts. ``elements`` is one answered exercise element, the unit the reference consumer's spaced repetition already counts. A one-value enum on purpose, so a later basis is an additive change.
     """
-    grades: list[ContentSetGrade] | None = Field(None, min_length=2, title="Grades")
+    grades: list[ContentSetGrade] | None = Field(None, min_length=2, title='Grades')
     """
     Grade table, at least two rows. Required for the ``grades`` scheme; ignored by the other schemes.
     """
-    report: Report = Field(Report.COMPACT, title="Report")
+    report: Report = Field(Report.COMPACT, title='Report')
     """
     How much the run summary shows: ``compact`` (the result) or ``detailed`` (the result plus the per-element breakdown). A display depth only; it never steers a consumer's correction round.
     """
-    title: str | None = Field(None, min_length=1, title="Title")
+    title: str | None = Field(None, min_length=1, title='Title')
     """
     Optional name for the evaluation as the learner reads it (``Theorieprüfung``), shown by a consumer instead of its generic wording.
     """
@@ -205,10 +207,12 @@ class ContentSet(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra="forbid",
+        extra='forbid',
         frozen=True,
     )
-    assets: list[ContentSetAsset] = Field([], max_length=500, title="Assets", validate_default=True)
+    assets: list[ContentSetAsset] = Field(
+        [], max_length=500, title='Assets', validate_default=True
+    )
     """
     Phase 54 / v1.37.0 - optional list of binary assets (images, audio) the set bundles. Each entry declares a relative path inside ``assets/`` and the expected size in KiB. The downloader fetches every declared asset alongside the lesson JSON; the cache stores them under ``{cache_root}/.../v{version}/assets/{path}``. The manifest validator rejects assets exceeding the per-file size limit (default 500 KiB).
     """
@@ -216,75 +220,75 @@ class ContentSet(BaseModel):
     """
     #769 - optional set-level book block (title/author/url/asin). When present, the lesson's 'Vertiefe das Thema' section auto-inserts it as the first media item.
     """
-    cover_image: str | None = Field(None, title="Cover Image")
+    cover_image: str | None = Field(None, title='Cover Image')
     """
     Optional relative path inside the set ('assets/cover.png'). Resolved against the set's base URL by the GitHub adapter.
     """
-    description: str | None = Field(None, max_length=2000, title="Description")
+    description: str | None = Field(None, max_length=2000, title='Description')
     """
     Optional long-form description.
     """
-    domain: str = Field("language", max_length=60, min_length=1, title="Domain")
+    domain: str = Field('language', max_length=60, min_length=1, title='Domain')
     """
     Domain tag under the known-values-plus-other contract (engine#127): the canonical grouping vocabulary is KNOWN_CONTENT_DOMAINS (exported by the engine; 'language', 'knowledge', 'programming', 'software', 'psychology', 'math', 'ai', 'technology', 'philosophy', 'dog-training', 'traffic-knowledge'). Any other value stays VALID but draws the W-DOMAIN-UNKNOWN author lint, because consumers cannot group it with existing subjects. Reserved for the EXP-005 domain-plugin interface; the loader treats it as opaque metadata.
     """
-    domain_label: str | None = Field(None, max_length=120, title="Domain Label")
+    domain_label: str | None = Field(None, max_length=120, title='Domain Label')
     """
     Optional human-readable label for the domain shown in the Set Browser (e.g. 'Psychologie' for domain='psychology'). Additive, authored in the content repo; the loader treats it as opaque display metadata.
     """
-    id: str = Field(..., max_length=120, min_length=1, title="Id")
+    id: str = Field(..., max_length=120, min_length=1, title='Id')
     """
     Slug-safe identifier, unique within the manifest. Convention (Phase 60 / v1.44.0): ``{target}-{level}-from-{source}`` for language sets (e.g. ``fr-a1-from-de``). Pre-v1.2 ids like ``language-fr-a1`` still load - the loader does NOT parse this, it's free-form per the EXP-005 domain-agnostic stance.
     """
-    lesson_count: int = Field(..., ge=0, le=10000, title="Lesson Count")
+    lesson_count: int = Field(..., ge=0, le=10000, title='Lesson Count')
     """
     Number of lessons the set ships.
     """
-    level: str = Field(..., max_length=20, min_length=1, title="Level")
+    level: str = Field(..., max_length=20, min_length=1, title='Level')
     """
     Difficulty / proficiency marker. CEFR (A1..C2, case-insensitive) for language sets; non-language sets declare a CEFR band or the explicit no-level sentinel 'none' (engine#127). Other values stay VALID but draw the W-LEVEL-UNKNOWN author lint, so a consumer's level facet does not offer free-text junk as a category.
     """
-    path: str | None = Field(None, max_length=300, title="Path")
+    path: str | None = Field(None, max_length=300, title='Path')
     """
     Phase 60 / v1.44.0 - repo-relative directory where the set's own ``manifest.yaml`` + ``lessons/`` + ``assets/`` live. Enables the source-language tree (e.g. ``sets/de/fr-a1`` for a French-for-German set while the id stays the flat slug ``fr-a1-from-de``). When omitted the loader falls back to the legacy ``sets/{id}`` convention. No leading/trailing slash, no ``..`` segments.
     """
-    source_language: str = Field("en", title="Source Language")
+    source_language: str = Field('en', title='Source Language')
     """
     BCP-47 code of the language the learner ALREADY SPEAKS - the language the card ``back`` fields, notes and theory text are written in. A 'French A1 for German speakers' set has ``target_language: fr`` + ``source_language: de``. Defaults to ``en`` for pre-v1.2 content (the pilot sets were authored with English explanations).
     """
-    tags: list[str] = Field([], max_length=20, title="Tags")
+    tags: list[str] = Field([], max_length=20, title='Tags')
     """
     Free-form tags ('beginner', 'travel', 'business'). Surfaced in the Set Browser as filter chips.
     """
-    target_language: str = Field(..., title="Target Language")
+    target_language: str = Field(..., title='Target Language')
     """
     BCP-47 code of the language the learner is LEARNING (the set's CONTENT language). Renamed from ``language`` in v1.2; the old key is still accepted as a read alias. The UI language stays under user control via the existing i18n system.
     """
-    title: str = Field(..., max_length=200, min_length=1, title="Title")
+    title: str = Field(..., max_length=200, min_length=1, title='Title')
     """
     Human-readable title shown in the Set Browser, in the learner's SOURCE language (e.g. 'Französisch A1 für Deutschsprachige' for a fr-from-de set).
     """
-    title_native: str | None = Field(None, max_length=200, title="Title Native")
+    title_native: str | None = Field(None, max_length=200, title='Title Native')
     """
     Phase 60 / v1.44.0 - optional title in the TARGET language (e.g. 'Français A1' for a French set). Shown as a secondary native-script label alongside ``title``. The community-share validator requires it for shareable sets; bundled/legacy sets may omit it.
     """
-    version: str = Field(..., title="Version")
+    version: str = Field(..., title='Version')
     """
     Semver-style version. Bumped whenever ANY lesson or asset inside the set changes; drives cache invalidation.
     """
-    visibility: Visibility = Field(Visibility.VISIBLE, title="Visibility")
+    visibility: Visibility = Field(Visibility.VISIBLE, title='Visibility')
     """
     #83 - consumer-display hint. ``hidden`` asks a consumer app NOT to surface the set to learners (e.g. a conformance/reference fixture that must stay on disk for engine validation but is not learner content). Additive and optional; absent means ``visible``. DISPLAY hint only: the engine and ``scripts/conformance-real.mjs`` still validate hidden sets and never exclude them from engine validation; only consumer apps filter on it.
     """
-    attribution: Attribution | None = Field(None, title="Attribution")
+    attribution: Attribution | None = Field(None, title='Attribution')
     """
     engine#90 - schema 1.9 (additive). Content attribution for the set: who wrote it, and the bounded chain it was derived through. PERSONAL DATA: the name travels with the set when it is shared; a consumer app must point that out before it becomes visible (the contributed_by opt-in pattern). Distinct from and never merged with: 'book' (source material), 'ai_validation' (review provenance in free-form metadata), repo-level 'metadata.author' (repo operator) and the lesson-level 'contributed_by' (per-lesson credit).
     """
-    review_status: ReviewStatus | None = Field(None, title="Review Status")
+    review_status: ReviewStatus | None = Field(None, title='Review Status')
     """
     engine#94 - schema 1.9 (additive). Three-state review standing derived from ORIGIN, because origin is what makes a set review-worthy: 'authored' = hand-written by a speaker/domain expert, no review required; 'generated' = machine-generated (AI/book/analysis), native-speaker or expert review PENDING; 'reviewed' = machine-generated and reviewed. Absent means 'authored' (legacy hand-written content). Consumers derive 'advertisable as reviewed' as status != 'generated'. Distinct from 'visibility' (display hint, never a quality statement) and from 'ai_validation' (AI check provenance).
     """
-    evaluation: ContentSetEvaluation | None = Field(None, title="Evaluation")
+    evaluation: ContentSetEvaluation | None = Field(None, title='Evaluation')
     """
     Optional evaluation declaration for one lesson run in this set (schema v1.15, engine#171). Absent keeps the consumer's own default.
     """
@@ -309,26 +313,26 @@ class ContentManifest(BaseModel):
     """
 
     model_config = ConfigDict(
-        extra="forbid",
+        extra='forbid',
         frozen=True,
     )
-    description: str | None = Field(None, max_length=2000, title="Description")
+    description: str | None = Field(None, max_length=2000, title='Description')
     """
     Optional long-form repo description.
     """
-    metadata: dict[str, Any] = Field({}, title="Metadata")
+    metadata: dict[str, Any] = Field({}, title='Metadata')
     """
     Free-form metadata (license, author, homepage URL, contact), surfaced as-is in the Set Browser's 'About this source' panel. One key IS interpreted: on a SET-level manifest, ``metadata.lessons`` (a list of lesson filenames) steers which files the reference consumer downloads. It does NOT control display order - consumers sort lesson ids lexicographically (engine#106).
     """
-    name: str = Field(..., max_length=200, min_length=1, title="Name")
+    name: str = Field(..., max_length=200, min_length=1, title='Name')
     """
     Human-readable repo name shown in the Set Browser.
     """
-    schema_version: str = Field("1.7", title="Schema Version")
+    schema_version: str = Field('1.7', title='Schema Version')
     """
     Manifest schema version. The Content-Loader currently understands '1.0'; later versions will be rejected with a friendly upgrade hint.
     """
-    sets: list[ContentSet] = Field([], title="Sets", validate_default=True)
+    sets: list[ContentSet] = Field([], title='Sets', validate_default=True)
     """
     Every downloadable set this repo publishes.
     """
