@@ -24,7 +24,8 @@
  *
  * A surface that can't be reached deterministically (e.g. the bundled set
  * has no cloze exercise) is skipped with a clear message rather than
- * committing a meaningless baseline.
+ * committing a meaningless baseline - but only while it has no baseline.
+ * Once a baseline is committed, not reaching the surface fails (#3427).
  */
 
 import {expect, test} from "@playwright/test";
@@ -44,6 +45,7 @@ import {
     pinRandomStreams,
     setTheme,
     settleForScreenshot,
+    skipUnlessBaselined,
     surfaceMasks,
 } from "./helpers";
 
@@ -68,7 +70,7 @@ for (const surface of SURFACE_NAMES) {
             await setTheme(page, "light");
             await pinContentRegistry(page);
             const ready = await gotoSurface(page, surface);
-            test.skip(!ready, `Could not reach ${surface} deterministically`);
+            skipUnlessBaselined(ready, `${surface}-${viewport}.png`, surface);
             await settleForScreenshot(page);
             // #2696 - grow the viewport to the full page height and take a
             // plain shot instead of ``fullPage: true``: captureBeyondViewport
