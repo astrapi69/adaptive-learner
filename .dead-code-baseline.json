@@ -1,7 +1,6 @@
 {
   "note": "Tracked dead-code findings (#2741) - the UNVERIFIED tail. An entry here is a detector claim, not a verdict: deletion requires individual verification against every caller surface (#2486). New findings fail scripts/check_dead_code.py; resolved entries are banked manually via --update-baseline.",
   "python": [
-    "backend/app/config.py::resolve_backend_port::function",
     "backend/app/config_overlay.py::delete_user_plugin_config::function",
     "backend/app/config_overlay.py::has_user_plugin_config::function",
     "backend/app/config_overlay.py::list_merged_plugin_names::function",

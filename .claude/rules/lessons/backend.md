@@ -77,7 +77,7 @@ Generalises to: any library that ships an env.py-style hook calling `fileConfig`
 
 ## Plugin settings YAML lives in `backend/config/plugins/`, not in the plugin's own directory
 
-PluginForge reads each plugin's settings from the backend-wide `config_dir`, configured in `app.yaml` as `plugins.config_dir: config/plugins`. So the canonical path for a plugin's settings file is:
+PluginForge reads each plugin's settings from `plugins/` next to `app.yaml` (its `config_dir` is the parent of the `app.yaml` path; an `app.yaml` key for it had no reader, #3435). So the canonical path for a plugin's settings file is:
 
 ```
 backend/config/plugins/{plugin_slug}.yaml

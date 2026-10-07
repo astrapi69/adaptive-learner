@@ -42,7 +42,7 @@
   "One-mode fix: a storage change is proven in BOTH modes or it is not proven (#2053)": "74bc59fbb3ababbb",
   "Operational gaps masquerade as wired infrastructure": "40aa925fc59be0b2",
   "PR-CI vs nightly gates: different test surfaces (green PR -> red nightly/push)": "63d68207e79c4e2e",
-  "Plugin settings YAML lives in `backend/config/plugins/`, not in the plugin's own directory": "aab9e64d094ad329",
+  "Plugin settings YAML lives in `backend/config/plugins/`, not in the plugin's own directory": "d468c8416cdc0c19",
   "PluginForge v0.9.0: filtered plugins are NOT load errors": "ad85b2908ecb861e",
   "Prefix testid selectors match every nested testid that shares the prefix": "7c064a932eea0f00",
   "Prettier: the config states the defaults, `src/` does not follow it yet (#3270)": "e95b29f4338bf373",
