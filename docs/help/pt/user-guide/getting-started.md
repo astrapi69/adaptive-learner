@@ -35,8 +35,9 @@ fornecedor de IA fica fora do browser.
 - **Um browser moderno** (Chrome 100+, Firefox 100+, Safari 17+,
   Edge 100+). A aplicação usa IndexedDB, service workers e
   JavaScript moderno.
-- **Uma chave de API de IA** para pelo menos um dos três
-  fornecedores suportados (Anthropic, OpenAI ou Google Gemini).
+- **Uma chave de API de IA** para pelo menos um fornecedor:
+  Anthropic, OpenAI ou Google Gemini na versão de navegador; a
+  aplicação de ambiente de trabalho oferece também Perplexity.
   Os planos gratuitos costumam chegar para começar; vê
   [Definições](settings.md) para a configuração da chave.
 

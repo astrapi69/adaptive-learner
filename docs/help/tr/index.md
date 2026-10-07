@@ -71,7 +71,8 @@ ilerlemeyi açığa çıkardığı.
    (konu, hedef, zaman çerçevesi).
 3. **12 soruluk değerlendirmeyi yapın** (~2 dakika).
 4. **Yapay zeka API anahtarınızı ekleyin** (Anthropic, OpenAI
-   veya Gemini - ücretsiz katmanlar çalışır).
+   veya Gemini - ücretsiz katmanlar çalışır; masaüstü uygulaması
+   ayrıca Perplexity sunar).
 5. **Kontrol Panelinden ilk oturumunuzu başlatın**.
 
 [Tam başlangıç kılavuzu →](user-guide/getting-started.md)
