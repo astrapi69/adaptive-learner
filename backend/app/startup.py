@@ -80,7 +80,8 @@ def _discovered_entry_points() -> list[str]:
         from importlib.metadata import entry_points
 
         return sorted(ep.name for ep in entry_points(group="adaptive_learner.plugins"))
-    except Exception:  # noqa: BLE001
+    except Exception:  # noqa: BLE001 - diagnostics only, never block startup
+        logger.warning("Plugin entry-point discovery failed", exc_info=True)
         return []
 
 

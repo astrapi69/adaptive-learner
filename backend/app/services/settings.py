@@ -15,6 +15,7 @@ booleans to the schema layer.
 
 from __future__ import annotations
 
+import logging
 import os
 from typing import Any
 
@@ -23,6 +24,8 @@ from app.models import ApiKeyBackup, User, UserSettings
 from app.repositories.settings_repo import SettingsRepository
 from app.schemas import AIProvider, ApiKeySetBody, ApiKeySource, SettingsPatchBody
 from app.services import crypto, secrets_service
+
+logger = logging.getLogger(__name__)
 
 # Column name lookup so the router doesn't have to switch on the
 # provider enum. Keeping the map here (vs deriving from f-strings)
@@ -236,7 +239,8 @@ def _read_secrets_yaml_block(provider: AIProvider) -> dict[str, Any]:
 
     try:
         data = _load_override_file(_get_user_override_path())
-    except Exception:  # noqa: BLE001 — loader already logs warnings
+    except Exception:  # noqa: BLE001 — never raises (contract above)
+        logger.warning("secrets.yaml override unreadable; ignoring it", exc_info=True)
         return {}
     ai_block = data.get("ai") if isinstance(data, dict) else None
     if not isinstance(ai_block, dict):

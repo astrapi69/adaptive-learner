@@ -225,6 +225,11 @@ async def call_ai_complete_stream(
             max_tokens=max_tokens,
         )
     except Exception:  # noqa: BLE001 — fallback to async hook in the caller
+        logger.warning(
+            "Streaming AI hook failed; the caller falls back to the non-streaming call",
+            extra={"model": model},
+            exc_info=True,
+        )
         return None
     if result is None:
         return None
