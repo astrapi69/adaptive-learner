@@ -19,6 +19,10 @@ import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { syncPhaseI18n } from "../../lib/content/repos/content-repos";
 import {
+  repoValidationReasonText,
+  type RepoValidationResult,
+} from "../../lib/content/repos/content-repo-validate";
+import {
   buildInviteLink,
   redeemStatusI18n,
 } from "../../lib/content/invites/invite-codes";
@@ -51,7 +55,11 @@ export default function RedeemInvite() {
   const [input, setInput] = useState(seeded);
 
   /** Map a redeem failure to a localized, actionable message. */
-  const failMessage = (reason: RedeemFailReason, detail?: string): string => {
+  const failMessage = (
+    reason: RedeemFailReason,
+    detail?: string,
+    validation?: RepoValidationResult,
+  ): string => {
     switch (reason) {
       case "no_code":
         return t("invitation_code.redeem.enter", "Enter an invitation code or link.");
@@ -72,7 +80,7 @@ export default function RedeemInvite() {
         return t(
           "invitation_code.error.repo_failed",
           "Could not add the repository: {reason}",
-        ).replace("{reason}", detail ?? "");
+        ).replace("{reason}", validation ? repoValidationReasonText(validation, t) : (detail ?? ""));
       default:
         return t("invitation_code.error.generic", "Could not redeem the code. Try again.");
     }
@@ -102,7 +110,7 @@ export default function RedeemInvite() {
       navigate("/content?tab=my");
       return;
     }
-    setError(failMessage(outcome.reason, outcome.detail));
+    setError(failMessage(outcome.reason, outcome.detail, outcome.validation));
   };
 
   return (

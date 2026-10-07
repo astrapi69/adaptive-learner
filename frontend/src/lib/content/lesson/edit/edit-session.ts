@@ -135,11 +135,15 @@ export function resolveEditLessonIndex(
     return index === -1 ? 0 : index;
 }
 
-/** A short, human label for a lesson in the picker — its title, or a
- *  1-based fallback when a lesson carries no title. */
-export function lessonPickerLabel(lesson: ContentLesson, index: number): string {
+/** A short, human label for a lesson in the picker: its title, or the
+ *  caller's localized ``fallback`` when a lesson carries no title (#3425;
+ *  the picker already prefixes the 1-based position).
+ *
+ *  @example
+ *  lessonPickerLabel(lesson, t("lesson.page_title", "Lesson")); */
+export function lessonPickerLabel(lesson: ContentLesson, fallback: string): string {
     const title = lesson.title?.trim();
-    return title ? title : `Lesson ${index + 1}`;
+    return title ? title : fallback;
 }
 
 /** Merge the edited lesson back into the set's ``SaveUserSetInput``.
