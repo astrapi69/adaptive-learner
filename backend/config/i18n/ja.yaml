@@ -2849,8 +2849,8 @@ content:
     no_lessons: セットにレッスンがありません。
     missing_target_language: 対象言語（学習する言語）がありません。
     missing_source_language: 出発言語（説明の言語）がありません。
-    invalid_target_language: 対象言語 '{code}' は2文字のISOコードではありません。
-    invalid_source_language: 出発言語 '{code}' は2文字のISOコードではありません。
+    invalid_target_language: "対象言語 '{code}' は有効な言語コードではありません(例: 'de'、'pt-BR')。"
+    invalid_source_language: "出発言語 '{code}' は有効な言語コードではありません(例: 'de'、'pt-BR')。"
     same_source_target: 出発言語と対象言語が同じです（'{code}'）。
     missing_title: タイトルがありません。
     missing_title_native: 対象言語のタイトルがありません。
@@ -2867,6 +2867,8 @@ content:
     level_too_complex: "レッスン '{lesson}': 片面あたり平均 {avg} 語で、レベル {level} には多めです（目安は約 {cap} 語）。"
     engine_rule: "レッスン「{lesson}」: ルール {rule}({path}): {message}"
     engine_warning: "レッスン「{lesson}」: 警告 {rule}({path}): {message}"
+    engine_set_rule: "セット: ルール {rule}({path}): {message}"
+    engine_set_warning: "セット: 警告 {rule}({path}): {message}"
     source_language_heuristic: カードの裏面に {found} 特有の文字が含まれていますが、出発言語は '{lang}' です。
     target_language_heuristic: カードの表面に {found} 特有の文字が含まれていますが、対象言語は '{lang}' です。
     failed_share_anyway: "品質チェックで問題が見つかりました。それでも共有できます。レビュアーはプルリクエストに記載された指摘を確認できます。"
@@ -2966,6 +2968,7 @@ content:
     err_target: ターゲット言語を選択してください。
     err_same_language: ソース言語とターゲット言語は異なる必要があります。
     err_level: CEFRレベルを選択してください（A1-C2）。
+    level_none: レベルなし（語学コースではない）
     err_empty: このレッスンには練習問題がありません。レッスンを作り直してください。
     regenerate: 再生成
     same_language_domain_hint: ソース言語とターゲット言語が同じです - 知識（非言語）コンテンツとして共有されます。
