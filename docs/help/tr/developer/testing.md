@@ -8,22 +8,26 @@ testleri, ortada entegrasyon, üstte E2E duman testleri.
 
 ## Test sayıları
 
-| Katman | Sayı | Araç |
-|---|---|---|
-| Arka uç birim + entegrasyon | 786 | pytest ^9 |
-| Eklenti testleri (10 eklenti) | 615 | pytest ^9 |
-| Frontend birim + entegrasyon | 1233 | Vitest 4 |
-| E2E duman | 16 dosya | Playwright |
-| **Toplam (`make test`)** | **2634** | |
+| Katman | Araç |
+|---|---|
+| Arka uç birim + entegrasyon | pytest ^9 |
+| Eklenti testleri (tüm eklentiler) | pytest ^9 |
+| Frontend birim + entegrasyon | Vitest 4 |
+| E2E duman | Playwright |
+| Dexie modu sürüm kapısı | Playwright |
 
-Eklenti dağılımı: assessment 110 + ai-anthropic 34 +
-ai-openai 31 + ai-gemini 33 + session 215 + tracking 64 +
-tools 58 + gamification 23 + anki 20 + notebooklm 27.
+Sayılar her sürümde artar. Senkronu bozulan yinelenen sayılardan
+kaçınmak için bu sayfa toplam YAZMAZ. Test sayıları ve kapsam için
+tek kanonik ve her zaman güncel kaynak
+`docs/audits/current-coverage.md` dosyasıdır. Eklentiler:
+assessment, yapay zeka sağlayıcıları (anthropic / openai / gemini /
+perplexity), session, tracking, tools, gamification, anki,
+notebooklm, learning-repo, content-loader ve missions.
 
 ## Arka uç pytest
 
 ```bash
-make test-backend      # 786 test, ~35s
+make test-backend      # tüm arka uç testleri
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb
 ```
@@ -51,7 +55,7 @@ modüllerini izole olarak test eder. Hook tetiklemeyi test ederken
 ## Frontend Vitest
 
 ```bash
-make test-frontend                # 387 test, ~2s
+make test-frontend                # Vitest'i frontend/ içinden çalıştırır
 cd frontend && bunx vitest         # izleme modu
 cd frontend && bunx vitest run src/storage/  # tek dizin
 ```
@@ -166,7 +170,7 @@ her PR'de çalışır (Python 3.12):
 
 1. Arka uç testleri (pytest)
 2. Eklenti testleri (`make test-plugins`, arka uç venv'i üzerinden
-   13'ünün tümü)
+   tümü)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`), döngüsel
    bağımlılık denetimi, Stylelint, Vitest, `vite build`,
    `npm audit`

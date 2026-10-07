@@ -239,7 +239,7 @@ import.
 Each plugin has its own `tests/` directory:
 
 ```bash
-make test-plugins              # all 13
+make test-plugins              # every plugin
 make test-plugin-session       # just one
 cd plugins/adaptive-learner-plugin-session && poetry run pytest
 ```
@@ -393,7 +393,7 @@ suites run on the night shift and at release time.
 and on every PR (Python 3.12):
 
 1. Backend tests (pytest)
-2. Plugin tests (`make test-plugins`, all 13 via the backend venv)
+2. Plugin tests (`make test-plugins`, every plugin via the backend venv)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`),
    circular-dependency check, Stylelint, Vitest, `vite build`,
    `npm audit`

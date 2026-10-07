@@ -27,6 +27,12 @@ export default defineConfig({
     workers: 1,
     retries: process.env.CI ? 1 : 0,
     timeout: 30_000,
+    // #3427 - the JSON report feeds the runtime skip budget
+    // (scripts/check_e2e_skip_budget.py); the first entry keeps the default.
+    reporter: [
+        [process.env.CI ? "dot" : "list"],
+        ["json", {outputFile: "test-results/dexie-smoke.json"}],
+    ],
     use: {
         baseURL: `http://localhost:${PREVIEW_PORT}`,
         actionTimeout: 10_000,

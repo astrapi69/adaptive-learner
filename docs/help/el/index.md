@@ -70,7 +70,8 @@ browser, κλήσεις ΤΝ απευθείας στο Anthropic / OpenAI / Gemi
    (θέμα, στόχος, χρονοδιάγραμμα).
 3. **Κάνε την αξιολόγηση 12 ερωτήσεων** (~2 λεπτά).
 4. **Πρόσθεσε το API key ΤΝ σου** (Anthropic, OpenAI ή Gemini -
-   τα δωρεάν πλάνα λειτουργούν).
+   τα δωρεάν πλάνα λειτουργούν· η εφαρμογή επιφάνειας εργασίας
+   προσφέρει επιπλέον Perplexity).
 5. **Ξεκίνα την πρώτη σου συνεδρία** από το Ταμπλό.
 
 [Πλήρης οδηγός εκκίνησης →](user-guide/getting-started.md)
@@ -93,13 +94,17 @@ browser, κλήσεις ΤΝ απευθείας στο Anthropic / OpenAI / Gemi
 Ενεργή ανάπτυξη. Η τρέχουσα έκδοση και τα σημαντικότερα
 νέα της βρίσκονται στη [σελίδα GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
-- **2634 δοκιμές** (786 backend + 615 plugins + 1233 frontend
-  Vitest + 16 αρχεία smoke spec Playwright)
-- **8 γλώσσες, όλες πλήρως μεταφρασμένες** (DE / EN / ES / FR /
-  EL / PT / TR / JA)
-- **10 plugins** (αξιολόγηση / 3 πάροχοι ΤΝ / συνεδρία /
-  παρακολούθηση / εργαλεία / gamification / anki / notebooklm)
-- **25 μοντέλα SQLAlchemy**, επιφάνεια συγχρονισμού 28 πίνακες
+- **Χιλιάδες αυτοματοποιημένες δοκιμές** σε backend, plugins και
+  frontend (Vitest), καθώς και μια σουίτα Playwright smoke και πύλης
+  έκδοσης σε λειτουργία Dexie
+- **11 γλώσσες διεπαφής, όλες πλήρως μεταφρασμένες** (DE / EL / EN /
+  ES / FR / HI / ID / JA / KO / PT / TR)
+- **Plugins** για αξιολόγηση, συνεδρία, παρακολούθηση, εργαλεία,
+  gamification, anki, notebooklm, learning-repo, content-loader και
+  αποστολές, καθώς και ένα ανά πάροχο ΤΝ (Anthropic, OpenAI, Gemini,
+  Perplexity)
+- **Ένα μοντέλο τομέα SQLAlchemy** (`backend/app/models/__init__.py`),
+  συγχρονισμένο πίνακα προς πίνακα (`sync_service.ALL_SYNC_TABLES`)
 - **2 λειτουργίες αποθήκευσης** (Τοπικό IndexedDB / FastAPI backend),
   καθώς και το overlay `secrets.yaml` του desktop launcher
 - **Άδεια MIT**
