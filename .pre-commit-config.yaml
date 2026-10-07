@@ -51,6 +51,19 @@ repos:
         files: ^backend/app/
       - id: ruff-format
         files: ^backend/app/
+      # #3658: the plugins carry no ruff config of their own, so from the
+      # repo root ruff would fall back to its defaults (line length 88).
+      # --config points them at the backend's, which CI applies by running
+      # from backend/; isort's known-first-party there keeps both import
+      # orders equal.
+      - id: ruff-check
+        name: ruff check (plugins)
+        args: [--fix, --config=backend/pyproject.toml]
+        files: ^plugins/
+      - id: ruff-format
+        name: ruff format (plugins)
+        args: [--config=backend/pyproject.toml]
+        files: ^plugins/
 
   - repo: local
     hooks:

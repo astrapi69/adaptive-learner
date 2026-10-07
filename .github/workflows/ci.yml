@@ -595,12 +595,15 @@ jobs:
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
       # #3423: the plugins are linted too, with the backend config (run from
-      # backend/ so ruff falls back to its pyproject). Formatting stays out:
-      # 47 plugin files predate ruff format, a separate reformat decision.
+      # backend/ so ruff falls back to its pyproject). #3658: and formatted.
       - name: ruff check
         if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: poetry run ruff check app/ ../plugins/
+      - name: ruff format
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
+        working-directory: backend
+        run: poetry run ruff format --check app/ ../plugins/
       - name: mypy
         if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend

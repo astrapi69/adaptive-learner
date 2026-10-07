@@ -87,6 +87,13 @@ checks:
     wired_in: scripts/generate_pydantic_models.py --check; .github/workflows/ci.yml backend-tests step; backend/tests/test_pydantic_layer_single_writer.py; make sync-schema-check
     probe: script_exists=backend/tests/test_pydantic_layer_single_writer.py | ci_step=.github/workflows/ci.yml::backend-tests::Generated Pydantic layer drift gate (#3650)::generate_pydantic_models.py
 
+  - id: ruff-format-plugins
+    verifies: backend/app and every plugin module are ruff-formatted with the backend config; pre-commit (repo root, --config=backend/pyproject.toml) and CI (backend/ cwd) judge plugin code identically, including the import order (#3658)
+    rule: code-hygiene.md "Formatting and linting (automatic)"
+    status: active
+    wired_in: .pre-commit-config.yaml ruff hooks on plugins/; .github/workflows/ci.yml lint-and-type-check step; backend/tests/test_ruff_plugin_config.py
+    probe: script_exists=backend/tests/test_ruff_plugin_config.py | ci_step=.github/workflows/ci.yml::lint-and-type-check::ruff format::ruff format --check
+
   - id: help-strong-emphasis
     verifies: no help page has bold that the in-app help renders as literal asterisks; the CommonMark flanking and pairing rule for ** runs, plus GFM autolinks, applied per inline context and matched against mdast-util-from-markdown on every help page; no help page FAILs (#3655)
     rule: none (rendering-correctness class; text-formatting.md documents the prose rules it protects)
