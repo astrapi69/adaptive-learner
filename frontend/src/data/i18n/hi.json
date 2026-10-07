@@ -4528,6 +4528,19 @@
       "sync_failed": "समन्वयन विफल रहा। फिर से प्रयास करें।"
     },
     "validation": {
+      "reason": {
+        "not_found": "रिपॉज़िटरी या manifest.yaml नहीं मिला।",
+        "access_denied": "पहुँच अस्वीकृत - रिपॉज़िटरी और अपना GitHub टोकन जाँचें।",
+        "unreachable": "रिपॉज़िटरी तक नहीं पहुँचा जा सका।",
+        "unsupported_schema": "असमर्थित स्कीमा संस्करण {version}।",
+        "no_sets": "manifest.yaml में कोई सेट नहीं है।",
+        "no_lessons": "किसी भी सेट में पाठ नहीं मिले।",
+        "executable_content": "पाठ की सामग्री में अनुमति-रहित निष्पादन योग्य कोड है।",
+        "lessons_unreadable": "पहले सेट के पाठ पढ़े नहीं जा सके।",
+        "lesson_invalid_json": "पहले सेट का पहला पाठ मान्य JSON नहीं है।",
+        "validator_unavailable": "पाठ सत्यापक लोड नहीं हो सका।",
+        "lesson_invalid": "पहले सेट का पहला पाठ सत्यापन में विफल: {detail}"
+      },
       "failed": "सत्यापन विफल रहा: {reason}",
       "passed": "सत्यापन सफल: {sets} सेट, {lessons} पाठ।"
     }

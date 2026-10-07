@@ -4187,6 +4187,19 @@ content_repo:
     save_failed: "Não foi possível adicionar o repositório."
     sync_failed: "A sincronização falhou. Tente novamente."
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "Repositório ou manifest.yaml não encontrado."
+      access_denied: "Acesso negado: verifique o repositório e o seu token do GitHub."
+      unreachable: "Repositório inacessível."
+      unsupported_schema: "Versão de esquema não suportada: {version}."
+      no_sets: "O manifest.yaml não lista nenhum conjunto."
+      no_lessons: "Nenhuma lição encontrada nos conjuntos."
+      executable_content: "O conteúdo da lição contém código executável não permitido."
+      lessons_unreadable: "Não foi possível ler as lições do primeiro conjunto."
+      lesson_invalid_json: "A primeira lição do primeiro conjunto não é um JSON válido."
+      validator_unavailable: "Não foi possível carregar o validador de lições."
+      lesson_invalid: "A primeira lição do primeiro conjunto não passa na validação: {detail}"
     failed: "A validação falhou: {reason}"
     passed: "Validação bem-sucedida: {sets} conjuntos, {lessons} lições."
 resource:

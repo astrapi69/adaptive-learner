@@ -4189,6 +4189,19 @@ content_repo:
     save_failed: "Δεν ήταν δυνατή η προσθήκη του αποθετηρίου."
     sync_failed: "Ο συγχρονισμός απέτυχε. Δοκίμασε ξανά."
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "Δεν βρέθηκε το αποθετήριο ή το manifest.yaml."
+      access_denied: "Άρνηση πρόσβασης - έλεγξε το αποθετήριο και το token του GitHub."
+      unreachable: "Το αποθετήριο δεν είναι προσβάσιμο."
+      unsupported_schema: "Μη υποστηριζόμενη έκδοση σχήματος {version}."
+      no_sets: "Το manifest.yaml δεν περιέχει σύνολα."
+      no_lessons: "Δεν βρέθηκαν μαθήματα σε κανένα σύνολο."
+      executable_content: "Το περιεχόμενο του μαθήματος περιέχει μη επιτρεπτό εκτελέσιμο κώδικα."
+      lessons_unreadable: "Δεν ήταν δυνατή η ανάγνωση των μαθημάτων του πρώτου συνόλου."
+      lesson_invalid_json: "Το πρώτο μάθημα του πρώτου συνόλου δεν είναι έγκυρο JSON."
+      validator_unavailable: "Δεν ήταν δυνατή η φόρτωση του ελεγκτή μαθημάτων."
+      lesson_invalid: "Το πρώτο μάθημα του πρώτου συνόλου αποτυγχάνει στον έλεγχο: {detail}"
     failed: "Η επικύρωση απέτυχε: {reason}"
     passed: "Η επικύρωση πέτυχε: {sets} σύνολα, {lessons} μαθήματα."
 resource:
