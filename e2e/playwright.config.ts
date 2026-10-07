@@ -64,6 +64,8 @@ const BACKEND_ENV = [
 ].join(" ");
 
 export default defineConfig({
+    // #3439 - a committed test.only would run one test and report green.
+    forbidOnly: !!process.env.CI,
     testDir: "./tests",
     fullyParallel: false,
     workers: 1,
