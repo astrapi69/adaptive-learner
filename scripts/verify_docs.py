@@ -160,6 +160,7 @@ from testplan_ids import check as testplan_id_check  # noqa: E402
 from verify_docs_feature_shots import check_feature_shots  # noqa: E402,F401
 from verify_docs_help_changelog import check_help_changelog as _check_help_changelog  # noqa: E402
 from verify_docs_i18n import check_i18n  # noqa: E402,F401
+from verify_docs_locale_coverage import check_locale_coverage  # noqa: E402
 from verify_docs_test_counts import check_test_counts  # noqa: E402,F401
 from version_display_sites import VERSION_DISPLAY_SITES  # noqa: E402
 
@@ -862,6 +863,7 @@ CHECKS = {
     "help-prose-versions": lambda r, o: check_help_prose_versions(r),
     "help-changelog": lambda r, o: check_help_changelog(r),
     "help-coverage": lambda r, o: check_help_coverage(r),
+    "locale-coverage": lambda r, o: check_locale_coverage(r, REPO / "docs" / "help"),
     "testplan-parity": lambda r, o: check_testplan_parity(r),
     "testplan-ids": lambda r, o: check_testplan_ids(r),
     "feature-shots": lambda r, o: check_feature_shots(r),
