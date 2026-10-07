@@ -3667,6 +3667,22 @@ Documented here only to show what is covered.
 
 ---
 
+### TS-0129 Translated control and screen-reader texts (#3425)
+
+- [ ] TC-0938 Lesson with a free-text exercise, type a wrong answer on purpose
+      (leave out one word, swap another), screen reader on (VoiceOver /
+      NVDA / TalkBack): the answer diff reads "Missing: <word>" and "You
+      wrote <word>, expected <word>" in the UI language (German: "Fehlt:",
+      "Geschrieben: ..., erwartet: ..."); visually the diff looks unchanged
+- [ ] TC-0939 Create lesson > Cards: the empty fields show "Word or phrase" and
+      "Meaning" instead of "Bonjour" / "Guten Tag"
+- [ ] TC-0940 Anki page, edit a card: the type select offers "Basic" and "Cloze"
+      (German: "Einfach", "Lückentext")
+- [ ] TC-0941 Learning path and the dashboard "Continue" card: the screen reader
+      reads the stars as "2 of 3 stars" instead of "2/3"
+- [ ] TC-0942 Share wizard and "Share as repository": the screen reader names the
+      X button "Close" in the UI language (German: "Schließen")
+
 ## Automated: Unit + Component Tests (Vitest, 7200+;
 ## current number see docs/audits/current-coverage.md)
 
