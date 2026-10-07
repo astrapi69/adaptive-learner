@@ -1926,7 +1926,7 @@ repo:
     title: "Repositório de aprendizagem"
     loading: "Carregando…"
     repos_dir: "Diretório dos repositórios"
-    repos_dir_placeholder: "Padrão: repos no diretório de dados (ver Sobre)"
+    repos_dir_hint: "Deixe vazio para usar o padrão: repos no diretório de dados (ver Sobre)"
     save: "Salvar configurações"
     saving: "Salvando…"
     toast:
