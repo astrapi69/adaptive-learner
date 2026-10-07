@@ -257,8 +257,8 @@ test: test-backend test-plugins test-frontend ## Run ALL tests, no coverage (eve
 # Needs no running backend -- pytest uses the in-memory TestClient.
 test-fast: ## Fast PR-mirror gate: backend ruff+mypy+pytest, frontend tsc+vitest (no coverage, no plugins) (#1174)
 	@echo ""
-	@echo "=== test-fast: backend ruff check app/ ==="
-	cd backend && poetry run ruff check app/
+	@echo "=== test-fast: ruff check app/ + plugins/ ==="
+	cd backend && poetry run ruff check app/ ../plugins/
 	@echo ""
 	@echo "=== test-fast: backend mypy app/ ==="
 	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run mypy app/

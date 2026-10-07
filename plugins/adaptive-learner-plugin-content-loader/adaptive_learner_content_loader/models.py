@@ -43,9 +43,15 @@ from pydantic import Field, field_validator, model_validator
 
 from .manifest_generated import (
     ContentManifest as ContentManifestBase,
+)
+from .manifest_generated import (
     ContentSet as ContentSetBase,
+)
+from .manifest_generated import (
     ContentSetAsset as ContentSetAssetBase,
-    ContentSetBook,
+)
+from .manifest_generated import (
+    ContentSetBook as ContentSetBook,
 )
 
 CURRENT_SCHEMA_VERSION = "1.9"
