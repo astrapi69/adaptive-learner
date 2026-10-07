@@ -116,7 +116,7 @@ checks:
     probe: make_target=verify-check-inventory | ci_step=.github/workflows/ci.yml::docs-verification::Verify check inventory::verify_check_inventory.py
 
   - id: complexity-gate
-    verifies: new or regressed complexity offenders versus .complexity-baseline; fails closed without radon or baseline
+    verifies: new or regressed complexity offenders versus .complexity-baseline; fails closed without radon, baseline or a measuring eslint
     rule: quality-checks.md#gate-test-contract-three-tests-and-fail-closed-2083
     status: active
     wired_in: make check-complexity-gate; .github/workflows/complexity-check.yml
