@@ -15,7 +15,9 @@
  * renamed there, update this list (a future enhancement could generate it).
  */
 
-import {expect, type Locator, type Page} from "@playwright/test";
+import {existsSync} from "node:fs";
+
+import {expect, test, type Locator, type Page} from "@playwright/test";
 
 import {completeAssessment, completeOnboarding, declineDraftPrompt} from "../helpers";
 import {
@@ -29,6 +31,29 @@ import {
     randomPinInitScript,
     randomPinProblem,
 } from "../../frontend/src/test-utils/visual-pins";
+
+/**
+ * Skip a shot whose surface could not be reached, unless the shot already
+ * has a committed baseline (#3427, the #2704 rule): then the surface WAS
+ * reachable, so failing to reach it now is a regression, and a skip would
+ * silently drop it from the gate. A surface without a baseline yet (new,
+ * or deleted for a re-render, #3023) may still skip.
+ *
+ * @example
+ * const ready = await gotoSurface(page, surface);
+ * skipUnlessBaselined(ready, `${surface}-${viewport}.png`, surface);
+ */
+export function skipUnlessBaselined(ready: boolean, shotName: string, what: string): void {
+    if (ready) return;
+    const baseline = test.info().snapshotPath(shotName);
+    if (existsSync(baseline)) {
+        throw new Error(
+            `Could not reach ${what}, but ${shotName} has a committed baseline - ` +
+                "a baselined surface must fail, not skip (#3427)",
+        );
+    }
+    test.skip(true, `Could not reach ${what} deterministically (no baseline yet)`);
+}
 
 /** All 12 registered themes (6 recommended + 6 classic). */
 export const THEME_IDS = [
