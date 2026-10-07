@@ -1576,6 +1576,10 @@ arcade:
     won: "You did it - the whole sequence!"
     lost: "Oops - you reached length {n}. Try again!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Basic"
+    cloze: "Cloze"
   title: Anki Export
   intro: Review AI-suggested flashcards, accept the ones you want, then export as an .apkg file for Anki.
   filter_project: Project
@@ -1949,6 +1953,11 @@ repo:
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
     enable_git: "Enable git persistence"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Missing: {word}"
+    extra: "Extra: {word}"
+    replaced: "You wrote {wrote}, expected {expected}"
   progress_io:
     save_error: "Your progress in this lesson could not be saved."
     load_failed: "Your saved progress for this lesson could not be loaded: {detail}"
@@ -3208,6 +3217,9 @@ create_lesson:
     description_label: "Topic / description"
     author_label: "Author name"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Word or phrase"
+    back_placeholder: "Meaning"
     heading: "Add vocabulary cards"
     front_label: "Front (learned)"
     back_label: "Back (your language)"
