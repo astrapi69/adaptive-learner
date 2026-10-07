@@ -906,6 +906,7 @@ ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-
 	@echo "== normative changes"   && $(MAKE) --no-print-directory verify-normative-changes
 	@echo "== rule corpus size"    && $(MAKE) --no-print-directory verify-rule-corpus-size
 	@echo "== complexity ratchet"  && $(MAKE) --no-print-directory check-complexity-gate
+	@echo "== folder sizes"        && $(MAKE) --no-print-directory check-folder-size
 	@echo "== testid references"   && $(MAKE) --no-print-directory check-testid-refs
 	@echo "== docker context"      && $(MAKE) --no-print-directory verify-docker-context
 	@echo "== file sizes"          && $(MAKE) --no-print-directory check-file-sizes
