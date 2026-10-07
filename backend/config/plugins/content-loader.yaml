@@ -22,9 +22,3 @@ settings:
   default_sources:
     - source: "astrapi69/adaptive-learner-content"
       branch: "main"
-  # Cache TTL in hours. The Content-Loader still consults
-  # the version field on every download attempt; this TTL
-  # only governs how often the manifest itself gets
-  # refreshed (so a new set added upstream becomes visible
-  # without forcing a full re-download of existing sets).
-  manifest_refresh_hours: 24

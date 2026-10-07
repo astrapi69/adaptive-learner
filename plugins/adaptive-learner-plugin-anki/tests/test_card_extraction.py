@@ -5,13 +5,16 @@ from __future__ import annotations
 
 import json
 
+import pytest
+from adaptive_learner_anki import card_extraction
 from adaptive_learner_anki.card_extraction import (
+    DEFAULT_EXTRACTION_LIMIT,
     ExtractedCard,
     _cards_from_vocabulary,
     build_prompt,
     parse_response,
+    resolve_extraction_limit,
 )
-
 
 # --- build_prompt --------------------------------------------------------
 
@@ -20,6 +23,41 @@ def test_build_prompt_includes_content() -> None:
     p = build_prompt("USER: Hello\nASSISTANT: Hi", limit=4)
     assert "Hello" in p
     assert "Hi" in p
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (12, 12),
+        ("12", 12),
+        (0, DEFAULT_EXTRACTION_LIMIT),
+        (-3, DEFAULT_EXTRACTION_LIMIT),
+        (True, DEFAULT_EXTRACTION_LIMIT),
+        (None, DEFAULT_EXTRACTION_LIMIT),
+        ("many", DEFAULT_EXTRACTION_LIMIT),
+        (2.5, DEFAULT_EXTRACTION_LIMIT),
+    ],
+    ids=["int", "numeric-text", "zero", "negative", "bool", "missing", "text", "fraction"],
+)
+def test_resolve_extraction_limit_reads_the_setting(value: object, expected: int) -> None:
+    """#3435: a positive integer is used; anything else falls back."""
+    assert resolve_extraction_limit(value) == expected
+
+
+def test_extract_from_session_asks_for_the_given_limit(monkeypatch: pytest.MonkeyPatch) -> None:
+    """#3435: the limit reaches the prompt instead of the fixed 8."""
+    monkeypatch.setattr(
+        card_extraction, "_session_transcript", lambda _db, _sid: ("USER: hi", "u1", "p1")
+    )
+    monkeypatch.setattr(card_extraction, "_persist_cards", lambda _db, **_kw: [])
+    prompts: list[str] = []
+
+    def _ai(messages: list[dict[str, str]]) -> str:
+        prompts.append(messages[0]["content"])
+        return "[]"
+
+    card_extraction.extract_from_session(None, "s1", _ai, limit=3)  # type: ignore[arg-type]
+    assert "extract up to 3 high-value flashcards" in prompts[0]
 
 
 def test_build_prompt_clips_long_content() -> None:
