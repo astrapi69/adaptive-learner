@@ -2646,6 +2646,7 @@ content:
     public: "Publik"
     branch: "Branch"
     lessons_note: "Semua {n} pelajaran set ini akan disertakan."
+    lessons_note_one: "Satu-satunya pelajaran set ini akan disertakan."
     invalid_repo: "Masukkan repositori sebagai owner/name."
     submit: "Ekspor"
     working: "Mengekspor…"

@@ -18,7 +18,7 @@ jour, pour les compteurs de tests et la couverture.
 
 ```bash
 make test-backend                # pytest backend uniquement
-make test-plugins                # toutes les suites des 13 plugins
+make test-plugins                # les suites de tous les plugins
 make test-plugin-gamification    # plugin spécifique
 make test-plugin-content-loader  # plugin spécifique
 ```
@@ -138,7 +138,7 @@ release.
 et sur chaque PR (Python 3.12) :
 
 1. Tests backend (pytest)
-2. Tests des plugins (`make test-plugins`, les 13 via le venv backend)
+2. Tests des plugins (`make test-plugins`, tous via le venv backend)
 3. Frontend : `tsc --noEmit`, ESLint (`--max-warnings 0`),
    vérification des dépendances circulaires, Stylelint, Vitest,
    `vite build`, `npm audit`

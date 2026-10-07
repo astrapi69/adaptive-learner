@@ -9,17 +9,17 @@ AdaptiveLearnerのテスト規律は、すべての変更に対して`make test`
 | レイヤー | ツール |
 |---|---|
 | バックエンドユニット + 統合 | pytest ^9 |
-| プラグインテスト（13プラグイン） | pytest ^9 |
+| プラグインテスト（全プラグイン） | pytest ^9 |
 | フロントエンドユニット + 統合 | Vitest 4 |
 | E2Eスモーク | Playwright |
 | Dexieモードのリリースゲート | Playwright |
 
-テスト数はリリースごとに増えていきます。同期がずれてしまう数値の重複を避けるため、このページには合計をハードコードしません。テスト数とカバレッジの唯一の正準かつ常に最新のソースは`docs/audits/current-coverage.md`です。13のプラグインは、assessment、3つのAIプロバイダー（anthropic / openai / gemini）、session、tracking、tools、gamification、anki、notebooklm、learning-repo、content-loader、missionsです。
+テスト数はリリースごとに増えていきます。同期がずれてしまう数値の重複を避けるため、このページには合計をハードコードしません。テスト数とカバレッジの唯一の正準かつ常に最新のソースは`docs/audits/current-coverage.md`です。プラグインは、assessment、AIプロバイダー（anthropic / openai / gemini / perplexity）、session、tracking、tools、gamification、anki、notebooklm、learning-repo、content-loader、missionsです。
 
 ## バックエンドpytest
 
 ```bash
-make test-backend      # 786テスト、約35秒
+make test-backend      # バックエンドの全テスト
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb
 ```
@@ -41,7 +41,7 @@ cd plugins/adaptive-learner-plugin-session && poetry run pytest
 ## フロントエンドVitest
 
 ```bash
-make test-frontend                # 387テスト、約2秒
+make test-frontend                # frontend/ から Vitest を実行
 cd frontend && bunx vitest         # watchモード
 cd frontend && bunx vitest run src/storage/  # 1つのディレクトリ
 ```
