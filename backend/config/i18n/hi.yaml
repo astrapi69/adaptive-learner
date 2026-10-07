@@ -2844,8 +2844,8 @@ content:
     no_lessons: सेट में कोई पाठ नहीं है।
     missing_target_language: लक्ष्य भाषा गायब है (जो भाषा सिखाई जा रही है)।
     missing_source_language: स्रोत भाषा गायब है (व्याख्याओं की भाषा)।
-    invalid_target_language: लक्ष्य भाषा '{code}' एक 2-अक्षर का ISO कोड नहीं है।
-    invalid_source_language: स्रोत भाषा '{code}' एक 2-अक्षर का ISO कोड नहीं है।
+    invalid_target_language: लक्ष्य भाषा '{code}' एक मान्य भाषा कोड नहीं है (जैसे 'de' या 'pt-BR')।
+    invalid_source_language: स्रोत भाषा '{code}' एक मान्य भाषा कोड नहीं है (जैसे 'de' या 'pt-BR')।
     same_source_target: स्रोत और लक्ष्य भाषा एक समान हैं ('{code}')।
     missing_title: शीर्षक गायब है।
     missing_title_native: मूल शीर्षक गायब है (लक्ष्य भाषा में शीर्षक)।
@@ -2862,6 +2862,8 @@ content:
     level_too_complex: 'पाठ ''{lesson}'': पाठ्य प्रति पक्ष औसतन {avg} शब्द है, जो स्तर {level} के लिए अधिक है (लगभग {cap} अपेक्षित)।'
     engine_rule: "पाठ '{lesson}': नियम {rule}, {path} पर: {message}"
     engine_warning: "पाठ '{lesson}': चेतावनी {rule}, {path} पर: {message}"
+    engine_set_rule: "सेट: नियम {rule}, {path} पर: {message}"
+    engine_set_warning: "सेट: चेतावनी {rule}, {path} पर: {message}"
     source_language_heuristic: कार्ड के पिछले भागों में {found}-विशिष्ट अक्षर हैं लेकिन स्रोत भाषा '{lang}' है।
     target_language_heuristic: कार्ड के अगले भागों में {found}-विशिष्ट अक्षर हैं लेकिन लक्ष्य भाषा '{lang}' है।
     failed_share_anyway: गुणवत्ता जाँच में समस्याएँ मिलीं। आप फिर भी साझा कर सकते हैं - समीक्षक pull request में दर्ज निष्कर्ष देखेंगे।
@@ -2961,6 +2963,7 @@ content:
     err_target: लक्ष्य भाषा चुनें।
     err_same_language: स्रोत और लक्ष्य भाषा भिन्न होनी चाहिए।
     err_level: एक CEFR स्तर चुनें (A1-C2)।
+    level_none: कोई स्तर नहीं (भाषा पाठ्यक्रम नहीं)
     err_empty: इस पाठ में कोई अभ्यास नहीं है। कृपया पाठ को फिर से बनाएँ।
     regenerate: फिर से बनाएँ
     same_language_domain_hint: स्रोत और लक्ष्य भाषा समान है - इसे ज्ञान (गैर-भाषा) सामग्री के रूप में साझा किया जाएगा।
