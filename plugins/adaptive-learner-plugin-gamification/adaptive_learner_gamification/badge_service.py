@@ -421,9 +421,7 @@ def badge_progress_map(db: Session, user_id: str) -> dict[str, dict[str, int]]:
         out[key] = {"current": min(current, required), "required": required}
     for key, metric_fn in _TIER_METRICS.items():
         badge = db.query(Badge).filter(Badge.key == key).first()
-        thresholds = (
-            json.loads(badge.tier_thresholds) if badge and badge.tier_thresholds else None
-        )
+        thresholds = json.loads(badge.tier_thresholds) if badge and badge.tier_thresholds else None
         value = int(metric_fn(db, user_id))
         required = _next_tier_threshold(value, thresholds)
         out[key] = {"current": min(value, required), "required": required}

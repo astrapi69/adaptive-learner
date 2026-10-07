@@ -12,6 +12,7 @@ from adaptive_learner_notebooklm.question_generator import (
 
 # --- Prompt builder ----------------------------------------------------
 
+
 def test_build_prompt_includes_content_and_limit() -> None:
     p = build_prompt("USER: Hi\nASSISTANT: Hello", limit=5)
     assert "Hi" in p
@@ -26,6 +27,7 @@ def test_build_prompt_clips_long_content() -> None:
 
 
 # --- parse_response ----------------------------------------------------
+
 
 def test_parse_valid_array() -> None:
     raw = json.dumps(
@@ -131,9 +133,7 @@ def test_parse_defaults_missing_expected_answer_to_empty() -> None:
 
 
 def test_parse_truncates_topic_to_200_chars() -> None:
-    raw = json.dumps(
-        [{"question": "Q", "topic": "x" * 500}]
-    )
+    raw = json.dumps([{"question": "Q", "topic": "x" * 500}])
     out = parse_response(raw)
     assert len(out[0].topic) == 200
 

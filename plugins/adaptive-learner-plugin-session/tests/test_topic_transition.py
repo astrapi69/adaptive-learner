@@ -90,9 +90,7 @@ def test_messages_have_system_and_user_role():
 
 
 def test_messages_truncate_long_history():
-    history = [
-        {"role": "user", "content": f"msg {i}"} for i in range(20)
-    ]
+    history = [{"role": "user", "content": f"msg {i}"} for i in range(20)]
     messages = build_transition_messages(
         goal="x",
         topic="y",

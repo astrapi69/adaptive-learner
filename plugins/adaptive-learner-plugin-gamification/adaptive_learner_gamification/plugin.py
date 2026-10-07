@@ -34,9 +34,7 @@ class GamificationPlugin(BasePlugin):
     author = "Asterios Raptis"
 
     @hookimpl
-    def on_session_complete(
-        self, session: dict[str, Any], rating: dict[str, Any]
-    ) -> None:
+    def on_session_complete(self, session: dict[str, Any], rating: dict[str, Any]) -> None:
         """Award XP and evaluate badges for the completed session.
 
         Errors here MUST NOT roll back the session close — pluggy's
@@ -67,9 +65,7 @@ class GamificationPlugin(BasePlugin):
             if session.get("method") == "content":
                 xp_service.award_xp_for_lesson_session(db, session=session)
             else:
-                xp_service.award_xp_for_session(
-                    db, session=session, rating=rating
-                )
+                xp_service.award_xp_for_session(db, session=session, rating=rating)
             user_id = xp_service._resolve_user_id_from_session(db, session)
             if user_id:
                 from . import streak_service

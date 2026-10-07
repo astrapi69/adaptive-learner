@@ -56,9 +56,7 @@ def xp_history(db: Session, user_id: str, *, days: int = XP_HISTORY_DAYS) -> lis
     while cursor <= today:
         earned = per_day.get(cursor, 0)
         running += earned
-        out.append(
-            {"date": cursor.isoformat(), "xp_earned": earned, "total_xp": running}
-        )
+        out.append({"date": cursor.isoformat(), "xp_earned": earned, "total_xp": running})
         cursor += timedelta(days=1)
     return out
 

@@ -83,18 +83,14 @@ def _async_pm(reply: str):
 @pytest.mark.asyncio
 async def test_call_async_falls_back_to_sync_in_thread():
     pm = _sync_pm("hello")
-    result = await call_ai_complete_async(
-        pm=pm, messages=[], model="m", api_key="k"
-    )
+    result = await call_ai_complete_async(pm=pm, messages=[], model="m", api_key="k")
     assert result == "hello"
 
 
 @pytest.mark.asyncio
 async def test_call_async_prefers_async_hook_when_available():
     pm = _async_pm("hello async")
-    result = await call_ai_complete_async(
-        pm=pm, messages=[], model="m", api_key="k"
-    )
+    result = await call_ai_complete_async(pm=pm, messages=[], model="m", api_key="k")
     assert result == "hello async"
 
 

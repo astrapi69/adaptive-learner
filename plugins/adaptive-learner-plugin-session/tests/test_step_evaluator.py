@@ -143,9 +143,7 @@ def test_build_messages_renders_recent_transcript():
 
 
 def test_build_messages_truncates_long_history_to_last_eight():
-    history = [
-        {"role": "user", "content": f"turn-{i}"} for i in range(20)
-    ]
+    history = [{"role": "user", "content": f"turn-{i}"} for i in range(20)]
     msgs = build_evaluation_messages(
         method="deductive", current_step=2, history=history, output_language="en"
     )
@@ -295,18 +293,14 @@ def test_parse_invalid_json_returns_deterministic_fallback():
 
 
 def test_parse_missing_advance_field_falls_back():
-    raw = json.dumps(
-        {"confidence": 0.8, "reason": "ok"}
-    )  # no advance, no suggested_step
+    raw = json.dumps({"confidence": 0.8, "reason": "ok"})  # no advance, no suggested_step
     out = parse_evaluation_response(raw, current_step=2)
     assert out.fallback_used is True
     assert out.suggested_step == 3  # current + 1
 
 
 def test_parse_missing_suggested_step_falls_back():
-    raw = json.dumps(
-        {"advance": True, "confidence": 0.8, "reason": "ok"}
-    )
+    raw = json.dumps({"advance": True, "confidence": 0.8, "reason": "ok"})
     out = parse_evaluation_response(raw, current_step=2)
     assert out.fallback_used is True
     assert out.suggested_step == 3

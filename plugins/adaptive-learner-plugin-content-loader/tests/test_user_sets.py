@@ -22,7 +22,6 @@ LESSON_FIXTURE = (
 )
 
 
-
 def _service(tmp_path: Path) -> ContentLoaderService:
     return ContentLoaderService(cache_root=tmp_path, sources=[])
 
@@ -70,9 +69,7 @@ def test_save_user_set_persists_source_language(tmp_path: Path) -> None:
     # (proves the pair fields are written to the cached manifest).
     from adaptive_learner_content_loader.cache import read_manifest
 
-    manifest = read_manifest(
-        service.cache_root, USER_GENERATED_SOURCE, "conv-de", USER_SET_VERSION
-    )
+    manifest = read_manifest(service.cache_root, USER_GENERATED_SOURCE, "conv-de", USER_SET_VERSION)
     assert manifest.sets[0].target_language == "fr"
     assert manifest.sets[0].source_language == "de"
 
@@ -127,9 +124,7 @@ def test_save_user_set_persists_book_block(tmp_path: Path) -> None:
     assert entry.set.book.title == "KI fuer Einsteiger"
 
     # Round-trip: re-read the cached manifest from disk.
-    manifest = read_manifest(
-        tmp_path, USER_GENERATED_SOURCE, "conv-1", USER_SET_VERSION
-    )
+    manifest = read_manifest(tmp_path, USER_GENERATED_SOURCE, "conv-1", USER_SET_VERSION)
     assert manifest.sets[0].book is not None
     assert manifest.sets[0].book.title == "KI fuer Einsteiger"
     assert manifest.sets[0].book.asin == "B0F43H6T2M"
@@ -180,9 +175,7 @@ def test_save_user_set_persists_attribution_block(tmp_path: Path) -> None:
     assert entry.set.attribution.derived_from[0].author == "Even Earlier Author"
 
     # Round-trip: re-read the cached manifest from disk.
-    manifest = read_manifest(
-        tmp_path, USER_GENERATED_SOURCE, "conv-1", USER_SET_VERSION
-    )
+    manifest = read_manifest(tmp_path, USER_GENERATED_SOURCE, "conv-1", USER_SET_VERSION)
     assert manifest.sets[0].attribution is not None
     assert manifest.sets[0].attribution.author == "Original Author"
 

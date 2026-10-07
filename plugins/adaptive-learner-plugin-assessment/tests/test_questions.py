@@ -210,7 +210,5 @@ def test_remaining_questions_default_to_single():
     """The 5 that aren't marked ``multi`` must remain single — a
     missing ``type`` field falls back to "single" in the lang
     output, which is fine."""
-    single_ids = {
-        q["id"] for q in QUESTIONS if q.get("type", "single") == "single"
-    }
+    single_ids = {q["id"] for q in QUESTIONS if q.get("type", "single") == "single"}
     assert single_ids == {"q03", "q07", "q09", "q10", "q11"}
