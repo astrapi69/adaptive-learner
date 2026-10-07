@@ -146,7 +146,7 @@
     "analysis_phase_reading": "1/3단계: 채팅 읽는 중…",
     "analysis_phase_analyzing": "2/3단계: 내용 분석 중…",
     "analysis_phase_preparing": "3/3단계: 결과 준비 중…",
-    "analysis_estimate": "분석에는 약 15-30초가 걸립니다…",
+    "analysis_estimate": "대화가 길수록 분석에 더 오래 걸립니다.",
     "analysis_done": "완료!",
     "analysis_cancel": "취소",
     "analysis_failed_inline": "분석에 실패했습니다. 다시 시도해 주세요.",
