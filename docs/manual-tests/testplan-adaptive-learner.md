@@ -3926,6 +3926,17 @@ Hier nur zur Dokumentation was abgedeckt ist.
 
 ---
 
+### TS-0129 Fortschrittsbericht als Markdown/PDF in der UI-Sprache (#3426)
+
+- [ ] TC-0938 UI-Sprache Französisch (oder Japanisch), Einstellungen > Daten >
+      Export, Fortschrittsbericht als Markdown herunterladen: Titel,
+      Abschnitte und Tabellenköpfe sind französisch (z. B.
+      "Progression", "Projets"), nicht englisch
+- [ ] TC-0939 Dasselbe mit Sitzungs-Detail und PDF (Druckdialog): Rollen,
+      Bewertung und Schritt-Auswertung in der UI-Sprache
+- [ ] TC-0940 UI-Sprache Deutsch: die Schritt-Namen im Bericht entsprechen denen
+      in der App (z. B. "Eingabe" statt "Input")
+
 ## Automatisiert: Unit + Component Tests (Vitest, 7200+;
 ## aktuelle Zahl siehe docs/audits/current-coverage.md)
 

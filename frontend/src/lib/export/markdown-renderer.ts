@@ -9,8 +9,9 @@
  *
  *   - Readable standalone: someone opening the .md without
  *     context should understand the learning journey.
- *   - Language-aware: DE / EN labels via ``lib/export/i18n``;
- *     other languages fall back to EN.
+ *   - Language-aware: every label comes from the catalogs through the
+ *     caller's ``t`` (``lib/export/i18n``, #3426), so the report is in
+ *     the UI language.
  *   - Star ratings for 1-5 scales: "★★★★☆ (4/5)".
  *   - Percentages where applicable.
  *   - Special characters escaped where needed (table cells,
@@ -26,19 +27,21 @@ import type {
     SessionDetail,
 } from "../../storage/backup/export-builder";
 import {renderStoredContent} from "../utils/tiptap-to-markdown";
-import {methodLabel, statusLabel, stepLabel, t} from "./i18n";
+import {methodLabel, reportText, statusLabel, stepLabel, t} from "./i18n";
+import type {ReportText, Translate} from "./i18n";
 
 export type ExportPayload = ProgressReport | SessionDetail | CurriculumOverview;
 
 /** Dispatch the right renderer by payload type. */
-export function renderMarkdown(payload: ExportPayload): string {
+export function renderMarkdown(payload: ExportPayload, translate: Translate): string {
+    const text = reportText(translate);
     switch (payload.type) {
         case "progress_report":
-            return renderProgressReport(payload);
+            return renderProgressReport(payload, text);
         case "session_detail":
-            return renderSessionDetail(payload);
+            return renderSessionDetail(payload, text);
         case "curriculum_overview":
-            return renderCurriculumOverview(payload);
+            return renderCurriculumOverview(payload, text);
     }
 }
 
@@ -64,8 +67,8 @@ function fraction01ToPercent(value: number): number {
     return Math.round(Math.max(0, Math.min(1, value)) * 100);
 }
 
-function ratingLine(label: string, value: number, lang: string): string {
-    return `- **${label}:** ${stars(value)} (${value}/${MAX_STARS} ${t(lang, "scale_5")})`;
+function ratingLine(label: string, value: number, text: ReportText): string {
+    return `- **${label}:** ${stars(value)} (${value}/${MAX_STARS} ${t(text, "scale_5")})`;
 }
 
 function formatDateTime(iso: string | null): string {
@@ -86,49 +89,48 @@ function escapePipe(s: string): string {
     return s.replace(/\|/g, "\\|");
 }
 
-function envelopeFooter(payload: ExportPayload): string {
+function envelopeFooter(payload: ExportPayload, text: ReportText): string {
     const generated = formatDateTime(payload.generated_at);
     return (
         "---\n\n" +
-        `_${t(payload.lang, "generated_at")}: ${generated} - ` +
-        `${t(payload.lang, "app_version")}: ${payload.app_version}_\n`
+        `_${t(text, "generated_at")}: ${generated} - ` +
+        `${t(text, "app_version")}: ${payload.app_version}_\n`
     );
 }
 
 // ---- Progress Report -----------------------------------------------------
 
-function renderProgressReport(payload: ProgressReport): string {
+function renderProgressReport(payload: ProgressReport, text: ReportText): string {
     const sections: string[] = [
-        `# ${t(payload.lang, "progress_report_title")}`,
+        `# ${t(text, "progress_report_title")}`,
         "",
-        `**${t(payload.lang, "learner")}:** ${payload.user.name}  ` +
-            `\n**${t(payload.lang, "language")}:** ${payload.user.language}`,
+        `**${t(text, "learner")}:** ${payload.user.name}  ` +
+            `\n**${t(text, "language")}:** ${payload.user.language}`,
         "",
-        renderProfileSection(payload),
-        renderProjectsSection(payload),
-        renderRecentSessionsSection(payload),
-        renderStepInsightsSection(payload),
-        renderExtractionsSection(payload),
-        envelopeFooter(payload),
+        renderProfileSection(payload, text),
+        renderProjectsSection(payload, text),
+        renderRecentSessionsSection(payload, text),
+        renderStepInsightsSection(payload, text),
+        renderExtractionsSection(payload, text),
+        envelopeFooter(payload, text),
     ];
     return sections.filter(Boolean).join("\n");
 }
 
-function renderProfileSection(payload: ProgressReport): string {
-    const lang = payload.lang;
-    const lines: string[] = [`## ${t(lang, "method_profile")}`, ""];
+function renderProfileSection(payload: ProgressReport, text: ReportText): string {
+    const lines: string[] = [`## ${t(text, "method_profile")}`, ""];
     if (!payload.profile) {
-        lines.push(t(lang, "no_profile"));
+        lines.push(t(text, "no_profile"));
         lines.push("");
         return lines.join("\n");
     }
     const p = payload.profile;
     lines.push(
-        `**${t(lang, "dominant_method")}:** ${methodLabel(lang, p.dominant_method)}  ` +
-            `\n**${t(lang, "assessed_at")}:** ${formatDate(p.assessed_at)}`,
+        `**${t(text, "dominant_method")}:** ${methodLabel(text, p.dominant_method)}  ` +
+            `\n**${t(text, "assessed_at")}:** ${formatDate(p.assessed_at)}`,
     );
     lines.push("");
-    lines.push(`| ${t(lang, "method")} | ${t(lang, "advance_rate")} |`);
+    lines.push(`| ${t(text, "method")} | ${t(text, "advance_rate")} |`);
     lines.push("|---|---|");
     const methods: (keyof typeof p)[] = [
         "deductive",
@@ -142,78 +144,77 @@ function renderProfileSection(payload: ProgressReport): string {
         const v = p[m] as number;
         const bar = "█".repeat(Math.round(v * 10)).padEnd(10, "░");
         lines.push(
-            `| ${methodLabel(lang, m as string)} | ${bar} ${fraction01ToPercent(v)}% |`,
+            `| ${methodLabel(text, m as string)} | ${bar} ${fraction01ToPercent(v)}% |`,
         );
     }
     lines.push("");
     return lines.join("\n");
 }
 
-function renderProjectsSection(payload: ProgressReport): string {
-    const lang = payload.lang;
-    const lines: string[] = [`## ${t(lang, "projects")}`, ""];
+function renderProjectsSection(payload: ProgressReport, text: ReportText): string {
+    const lines: string[] = [`## ${t(text, "projects")}`, ""];
     if (payload.projects.length === 0) {
-        lines.push(t(lang, "no_projects"));
+        lines.push(t(text, "no_projects"));
         lines.push("");
         return lines.join("\n");
     }
     for (const project of payload.projects) {
-        lines.push(...renderProject(project, lang));
+        lines.push(...renderProject(project, text));
     }
     return lines.join("\n");
 }
 
-function renderProject(project: ProgressProject, lang: string): string[] {
+function renderProject(project: ProgressProject, text: ReportText): string[] {
     const lines: string[] = [];
     const statusKey = project.active ? "active" : "archived";
     lines.push(`### ${project.topic}`);
     lines.push("");
-    lines.push(`- **${t(lang, "goal")}:** ${project.goal}`);
-    lines.push(`- **${t(lang, "timeframe")}:** ${project.timeframe}`);
+    lines.push(`- **${t(text, "goal")}:** ${project.goal}`);
+    lines.push(`- **${t(text, "timeframe")}:** ${project.timeframe}`);
     lines.push(
-        `- **${t(lang, "daily_minutes")}:** ${project.daily_minutes} ${t(lang, "minutes_short")}`,
+        `- **${t(text, "daily_minutes")}:** ${project.daily_minutes} ${t(text, "minutes_short")}`,
     );
     if (project.current_problem) {
-        lines.push(`- **${t(lang, "current_problem")}:** ${project.current_problem}`);
+        lines.push(`- **${t(text, "current_problem")}:** ${project.current_problem}`);
     }
-    lines.push(`- **${t(lang, "status")}:** ${t(lang, statusKey)}`);
-    lines.push(`- **${t(lang, "session_count")}:** ${project.session_count}`);
+    lines.push(`- **${t(text, "status")}:** ${t(text, statusKey)}`);
+    lines.push(`- **${t(text, "session_count")}:** ${project.session_count}`);
     lines.push(
-        `- **${t(lang, "total_minutes")}:** ${project.total_minutes} ${t(lang, "minutes_short")}`,
+        `- **${t(text, "total_minutes")}:** ${project.total_minutes} ${t(text, "minutes_short")}`,
     );
     if (project.session_count > 0) {
         lines.push(
-            `- **${t(lang, "mean_understanding")}:** ${fraction01ToPercent(project.mean_understanding)}%`,
+            `- **${t(text, "mean_understanding")}:** ${fraction01ToPercent(project.mean_understanding)}%`,
         );
         lines.push(
-            `- **${t(lang, "mean_stress")}:** ${fraction01ToPercent(project.mean_stress)}%`,
+            `- **${t(text, "mean_stress")}:** ${fraction01ToPercent(project.mean_stress)}%`,
         );
     }
     lines.push("");
 
     if (project.session_count > 0) {
-        lines.push(`#### ${t(lang, "method_distribution")}`);
+        lines.push(`#### ${t(text, "method_distribution")}`);
         lines.push("");
-        lines.push(`| ${t(lang, "method")} | ${t(lang, "session_count")} | % |`);
+        lines.push(`| ${t(text, "method")} | ${t(text, "session_count")} | % |`);
         lines.push("|---|---|---|");
         for (const entry of project.method_distribution) {
             lines.push(
-                `| ${methodLabel(lang, entry.method)} | ${entry.count} | ${entry.percentage}% |`,
+                `| ${methodLabel(text, entry.method)} | ${entry.count} | ${entry.percentage}% |`,
             );
         }
         lines.push("");
     }
 
-    lines.push(`#### ${t(lang, "method_switches")}`);
+    lines.push(`#### ${t(text, "method_switches")}`);
     lines.push("");
     if (project.method_switches.length === 0) {
-        lines.push(t(lang, "no_switches"));
+        lines.push(t(text, "no_switches"));
     } else {
         for (const sw of project.method_switches) {
-            const arrow = `${methodLabel(lang, sw.from_method)} -> ${methodLabel(lang, sw.to_method)}`;
+            const arrow = `${methodLabel(text, sw.from_method)} -> ${methodLabel(text, sw.to_method)}`;
             lines.push(
                 `- ${formatDate(sw.switched_at)} - ${arrow} ` +
-                    `_(${t(lang, "reason")}: ${sw.reason})_`,
+                    `_(${t(text, "reason")}: ${sw.reason})_`,
             );
         }
     }
@@ -221,51 +222,49 @@ function renderProject(project: ProgressProject, lang: string): string[] {
     return lines;
 }
 
-function renderRecentSessionsSection(payload: ProgressReport): string {
-    const lang = payload.lang;
-    const lines: string[] = [`## ${t(lang, "recent_sessions")}`, ""];
+function renderRecentSessionsSection(payload: ProgressReport, text: ReportText): string {
+    const lines: string[] = [`## ${t(text, "recent_sessions")}`, ""];
     if (payload.recent_sessions.length === 0) {
-        lines.push(t(lang, "no_sessions"));
+        lines.push(t(text, "no_sessions"));
         lines.push("");
         return lines.join("\n");
     }
     lines.push(
-        `| ${t(lang, "started_at")} | ${t(lang, "topic")} | ` +
-            `${t(lang, "method")} | ${t(lang, "duration")} | ` +
-            `${t(lang, "understanding")} | ${t(lang, "status")} |`,
+        `| ${t(text, "started_at")} | ${t(text, "topic")} | ` +
+            `${t(text, "method")} | ${t(text, "duration")} | ` +
+            `${t(text, "understanding")} | ${t(text, "status")} |`,
     );
     lines.push("|---|---|---|---|---|---|");
     for (const s of payload.recent_sessions) {
         const understanding = s.rating ? `${s.rating.understanding}/5` : "-";
         lines.push(
             `| ${formatDate(s.started_at)} | ` +
-                `${escapePipe(s.project_topic)} | ${methodLabel(lang, s.method)} | ` +
-                `${s.duration_minutes} ${t(lang, "minutes_short")} | ` +
-                `${understanding} | ${statusLabel(lang, s.status)} |`,
+                `${escapePipe(s.project_topic)} | ${methodLabel(text, s.method)} | ` +
+                `${s.duration_minutes} ${t(text, "minutes_short")} | ` +
+                `${understanding} | ${statusLabel(text, s.status)} |`,
         );
     }
     lines.push("");
     return lines.join("\n");
 }
 
-function renderStepInsightsSection(payload: ProgressReport): string {
-    const lang = payload.lang;
-    const lines: string[] = [`## ${t(lang, "step_evaluation_insights")}`, ""];
+function renderStepInsightsSection(payload: ProgressReport, text: ReportText): string {
+    const lines: string[] = [`## ${t(text, "step_evaluation_insights")}`, ""];
     if (!payload.step_evaluation_insights) {
-        lines.push(t(lang, "no_step_insights"));
+        lines.push(t(text, "no_step_insights"));
         lines.push("");
         return lines.join("\n");
     }
     lines.push(
-        `| ${t(lang, "step")} | ${t(lang, "evaluations_count")} | ` +
-            `${t(lang, "advanced")} | ${t(lang, "repeated")} | ` +
-            `${t(lang, "deferred")} | ${t(lang, "advance_rate")} | ` +
-            `${t(lang, "mean_confidence")} |`,
+        `| ${t(text, "step")} | ${t(text, "evaluations_count")} | ` +
+            `${t(text, "advanced")} | ${t(text, "repeated")} | ` +
+            `${t(text, "deferred")} | ${t(text, "advance_rate")} | ` +
+            `${t(text, "mean_confidence")} |`,
     );
     lines.push("|---|---|---|---|---|---|---|");
     for (const insight of payload.step_evaluation_insights) {
         lines.push(
-            `| ${insight.step}. ${stepLabel(lang, insight.step)} | ` +
+            `| ${insight.step}. ${stepLabel(text, insight.step)} | ` +
                 `${insight.count} | ${insight.advance_count} | ` +
                 `${insight.repeat_count} | ${insight.deferred_count} | ` +
                 `${fraction01ToPercent(insight.advance_rate)}% | ` +
@@ -276,33 +275,32 @@ function renderStepInsightsSection(payload: ProgressReport): string {
     return lines.join("\n");
 }
 
-function renderExtractionsSection(payload: ProgressReport): string {
-    const lang = payload.lang;
-    const lines: string[] = [`## ${t(lang, "extractions")}`, ""];
+function renderExtractionsSection(payload: ProgressReport, text: ReportText): string {
+    const lines: string[] = [`## ${t(text, "extractions")}`, ""];
     if (payload.extractions.length === 0) {
-        lines.push(t(lang, "no_extractions"));
+        lines.push(t(text, "no_extractions"));
         lines.push("");
         return lines.join("\n");
     }
     for (const e of payload.extractions) {
         lines.push(`### ${e.title}`);
         lines.push("");
-        lines.push(`- **${t(lang, "source")}:** ${e.source}`);
+        lines.push(`- **${t(text, "source")}:** ${e.source}`);
         lines.push(
-            `- **${t(lang, "messages")}:** ${e.message_count}`,
+            `- **${t(text, "messages")}:** ${e.message_count}`,
         );
         lines.push(
-            `- **${t(lang, "imported_at")}:** ${formatDate(e.imported_at)}`,
+            `- **${t(text, "imported_at")}:** ${formatDate(e.imported_at)}`,
         );
         if (e.topic_tag) {
-            lines.push(`- **${t(lang, "topic")}:** ${e.topic_tag}`);
+            lines.push(`- **${t(text, "topic")}:** ${e.topic_tag}`);
         }
         if (e.project_id) {
-            lines.push(`- **${t(lang, "linked_project")}:** ${e.project_id}`);
+            lines.push(`- **${t(text, "linked_project")}:** ${e.project_id}`);
         }
         if (e.analysis && Object.keys(e.analysis).length > 0) {
             lines.push("");
-            lines.push(...renderAnalysis(e.analysis, lang));
+            lines.push(...renderAnalysis(e.analysis, text));
         }
         lines.push("");
     }
@@ -317,7 +315,7 @@ function renderExtractionsSection(payload: ProgressReport): string {
  */
 function renderAnalysis(
     analysis: Record<string, unknown>,
-    lang: string,
+    text: ReportText,
 ): string[] {
     const lines: string[] = [];
     const consumed = new Set<string>();
@@ -331,7 +329,7 @@ function renderAnalysis(
 
     writeField("topic", () => {
         lines.push(
-            `**${t(lang, "analysis_topic")}:** ${String(analysis["topic"])}`,
+            `**${t(text, "analysis_topic")}:** ${String(analysis["topic"])}`,
         );
         lines.push("");
     });
@@ -346,7 +344,7 @@ function renderAnalysis(
                   : "level_advanced"
         ) as Parameters<typeof t>[1];
         lines.push(
-            `**${t(lang, "analysis_user_level")}:** ${t(lang, levelKey)}`,
+            `**${t(text, "analysis_user_level")}:** ${t(text, levelKey)}`,
         );
         lines.push("");
     });
@@ -354,7 +352,7 @@ function renderAnalysis(
     writeField("subtopics", () => {
         const arr = analysis["subtopics"];
         if (!Array.isArray(arr)) return;
-        lines.push(`**${t(lang, "analysis_subtopics")}:**`);
+        lines.push(`**${t(text, "analysis_subtopics")}:**`);
         for (const s of arr) lines.push(`- ${String(s)}`);
         lines.push("");
     });
@@ -362,7 +360,7 @@ function renderAnalysis(
     writeField("strengths", () => {
         const arr = analysis["strengths"];
         if (!Array.isArray(arr)) return;
-        lines.push(`**${t(lang, "analysis_strengths")}:**`);
+        lines.push(`**${t(text, "analysis_strengths")}:**`);
         for (const s of arr) lines.push(`- ${String(s)}`);
         lines.push("");
     });
@@ -370,7 +368,7 @@ function renderAnalysis(
     writeField("weaknesses", () => {
         const arr = analysis["weaknesses"];
         if (!Array.isArray(arr)) return;
-        lines.push(`**${t(lang, "analysis_weaknesses")}:**`);
+        lines.push(`**${t(text, "analysis_weaknesses")}:**`);
         for (const s of arr) lines.push(`- ${String(s)}`);
         lines.push("");
     });
@@ -378,27 +376,27 @@ function renderAnalysis(
     writeField("error_patterns", () => {
         const arr = analysis["error_patterns"];
         if (!Array.isArray(arr)) return;
-        lines.push(`**${t(lang, "analysis_error_patterns")}:**`);
+        lines.push(`**${t(text, "analysis_error_patterns")}:**`);
         for (const s of arr) lines.push(`- ${String(s)}`);
         lines.push("");
     });
 
     writeField("recommended_method", () => {
         lines.push(
-            `**${t(lang, "analysis_recommended_method")}:** ${methodLabel(lang, String(analysis["recommended_method"]))}`,
+            `**${t(text, "analysis_recommended_method")}:** ${methodLabel(text, String(analysis["recommended_method"]))}`,
         );
         lines.push("");
     });
 
     writeField("recommended_focus", () => {
         lines.push(
-            `**${t(lang, "analysis_recommended_focus")}:** ${String(analysis["recommended_focus"])}`,
+            `**${t(text, "analysis_recommended_focus")}:** ${String(analysis["recommended_focus"])}`,
         );
         lines.push("");
     });
 
     writeField("summary", () => {
-        lines.push(`**${t(lang, "analysis_summary")}:**`);
+        lines.push(`**${t(text, "analysis_summary")}:**`);
         lines.push("");
         for (const para of String(analysis["summary"]).split("\n")) {
             lines.push(`> ${para}`);
@@ -409,7 +407,7 @@ function renderAnalysis(
     writeField("suggested_curriculum", () => {
         const arr = analysis["suggested_curriculum"];
         if (!Array.isArray(arr)) return;
-        lines.push(`**${t(lang, "analysis_suggested_curriculum")}:**`);
+        lines.push(`**${t(text, "analysis_suggested_curriculum")}:**`);
         lines.push("");
         for (const item of arr) {
             if (!item || typeof item !== "object") continue;
@@ -417,7 +415,7 @@ function renderAnalysis(
             const title = String(lesson.title ?? "-");
             const priority =
                 typeof lesson.priority === "number"
-                    ? ` _(${t(lang, "analysis_priority")}: ${lesson.priority})_`
+                    ? ` _(${t(text, "analysis_priority")}: ${lesson.priority})_`
                     : "";
             lines.push(`- **${title}**${priority}`);
             if (lesson.description) {
@@ -436,7 +434,7 @@ function renderAnalysis(
         }
     }
     if (Object.keys(leftovers).length > 0) {
-        lines.push(`**${t(lang, "analysis")}:**`);
+        lines.push(`**${t(text, "analysis")}:**`);
         lines.push("");
         lines.push("```json");
         lines.push(JSON.stringify(leftovers, null, 2));
@@ -449,47 +447,44 @@ function renderAnalysis(
 
 // ---- Session Detail ------------------------------------------------------
 
-function renderSessionDetail(payload: SessionDetail): string {
-    const lang = payload.lang;
+function renderSessionDetail(payload: SessionDetail, text: ReportText): string {
     const sections: string[] = [
-        `# ${t(lang, "session_detail_title")}`,
+        `# ${t(text, "session_detail_title")}`,
         "",
-        renderSessionMeta(payload),
-        renderTranscript(payload),
-        renderSessionRating(payload),
-        renderSessionStepEvaluations(payload),
-        envelopeFooter(payload),
+        renderSessionMeta(payload, text),
+        renderTranscript(payload, text),
+        renderSessionRating(payload, text),
+        renderSessionStepEvaluations(payload, text),
+        envelopeFooter(payload, text),
     ];
     return sections.filter(Boolean).join("\n");
 }
 
-function renderSessionMeta(payload: SessionDetail): string {
-    const lang = payload.lang;
+function renderSessionMeta(payload: SessionDetail, text: ReportText): string {
     const s = payload.session;
-    const lines: string[] = [`## ${t(lang, "session")}`, ""];
+    const lines: string[] = [`## ${t(text, "session")}`, ""];
     if (payload.project) {
-        lines.push(`**${t(lang, "topic")}:** ${payload.project.topic}  `);
-        lines.push(`**${t(lang, "goal")}:** ${payload.project.goal}  `);
+        lines.push(`**${t(text, "topic")}:** ${payload.project.topic}  `);
+        lines.push(`**${t(text, "goal")}:** ${payload.project.goal}  `);
     }
-    lines.push(`**${t(lang, "method")}:** ${methodLabel(lang, s.method)}  `);
-    lines.push(`**${t(lang, "started_at")}:** ${formatDateTime(s.started_at)}  `);
-    lines.push(`**${t(lang, "ended_at")}:** ${formatDateTime(s.ended_at)}  `);
+    lines.push(`**${t(text, "method")}:** ${methodLabel(text, s.method)}  `);
+    lines.push(`**${t(text, "started_at")}:** ${formatDateTime(s.started_at)}  `);
+    lines.push(`**${t(text, "ended_at")}:** ${formatDateTime(s.ended_at)}  `);
     lines.push(
-        `**${t(lang, "duration")}:** ${s.duration_minutes} ${t(lang, "minutes_short")}  `,
+        `**${t(text, "duration")}:** ${s.duration_minutes} ${t(text, "minutes_short")}  `,
     );
     lines.push(
-        `**${t(lang, "cycle_step")}:** ${s.cycle_step}. ${stepLabel(lang, s.cycle_step)}  `,
+        `**${t(text, "cycle_step")}:** ${s.cycle_step}. ${stepLabel(text, s.cycle_step)}  `,
     );
-    lines.push(`**${t(lang, "status")}:** ${statusLabel(lang, s.status)}`);
+    lines.push(`**${t(text, "status")}:** ${statusLabel(text, s.status)}`);
     lines.push("");
     return lines.join("\n");
 }
 
-function renderTranscript(payload: SessionDetail): string {
-    const lang = payload.lang;
-    const lines: string[] = [`## ${t(lang, "transcript")}`, ""];
+function renderTranscript(payload: SessionDetail, text: ReportText): string {
+    const lines: string[] = [`## ${t(text, "transcript")}`, ""];
     if (payload.messages.length === 0) {
-        lines.push(t(lang, "no_messages"));
+        lines.push(t(text, "no_messages"));
         lines.push("");
         return lines.join("\n");
     }
@@ -500,7 +495,7 @@ function renderTranscript(payload: SessionDetail): string {
                 : m.role === "assistant"
                   ? "role_assistant"
                   : "role_system";
-        lines.push(`### ${t(lang, roleLabelKey)} - _${formatDateTime(m.created_at)}_`);
+        lines.push(`### ${t(text, roleLabelKey)} - _${formatDateTime(m.created_at)}_`);
         lines.push("");
         // Use a blockquote per line so the role is visually attached
         // to the message body, surviving multi-paragraph content.
@@ -513,21 +508,20 @@ function renderTranscript(payload: SessionDetail): string {
     return lines.join("\n");
 }
 
-function renderSessionRating(payload: SessionDetail): string {
-    const lang = payload.lang;
-    const lines: string[] = [`## ${t(lang, "rating")}`, ""];
+function renderSessionRating(payload: SessionDetail, text: ReportText): string {
+    const lines: string[] = [`## ${t(text, "rating")}`, ""];
     if (!payload.rating) {
-        lines.push(t(lang, "no_rating"));
+        lines.push(t(text, "no_rating"));
         lines.push("");
         return lines.join("\n");
     }
     const r = payload.rating;
-    lines.push(ratingLine(t(lang, "understanding"), r.understanding, lang));
-    lines.push(ratingLine(t(lang, "stress"), r.stress, lang));
-    lines.push(ratingLine(t(lang, "method_fit"), r.method_fit, lang));
+    lines.push(ratingLine(t(text, "understanding"), r.understanding, text));
+    lines.push(ratingLine(t(text, "stress"), r.stress, text));
+    lines.push(ratingLine(t(text, "method_fit"), r.method_fit, text));
     if (r.notes) {
         lines.push("");
-        lines.push(`**${t(lang, "notes")}:**`);
+        lines.push(`**${t(text, "notes")}:**`);
         lines.push("");
         // v1.14.0 / Phase 27E — notes may carry serialised
         // TipTap JSON; renderStoredContent emits Markdown and
@@ -543,30 +537,29 @@ function renderSessionRating(payload: SessionDetail): string {
     return lines.join("\n");
 }
 
-function renderSessionStepEvaluations(payload: SessionDetail): string {
-    const lang = payload.lang;
-    const lines: string[] = [`## ${t(lang, "step_evaluations")}`, ""];
+function renderSessionStepEvaluations(payload: SessionDetail, text: ReportText): string {
+    const lines: string[] = [`## ${t(text, "step_evaluations")}`, ""];
     if (payload.step_evaluations.length === 0) {
-        lines.push(t(lang, "no_step_insights"));
+        lines.push(t(text, "no_step_insights"));
         lines.push("");
         return lines.join("\n");
     }
     lines.push(
-        `| ${t(lang, "evaluated_at")} | ${t(lang, "from_step")} | ` +
-            `${t(lang, "to_step")} | ${t(lang, "confidence")} | ` +
-            `${t(lang, "status")} | ${t(lang, "reason")} |`,
+        `| ${t(text, "evaluated_at")} | ${t(text, "from_step")} | ` +
+            `${t(text, "to_step")} | ${t(text, "confidence")} | ` +
+            `${t(text, "status")} | ${t(text, "reason")} |`,
     );
     lines.push("|---|---|---|---|---|---|");
     for (const e of payload.step_evaluations) {
         const status = e.fallback_used
-            ? t(lang, "fallback")
+            ? t(text, "fallback")
             : e.applied
-              ? t(lang, "applied")
-              : t(lang, "not_applied");
+              ? t(text, "applied")
+              : t(text, "not_applied");
         lines.push(
             `| ${formatDateTime(e.evaluated_at)} | ` +
-                `${e.from_step}. ${stepLabel(lang, e.from_step)} | ` +
-                `${e.to_step}. ${stepLabel(lang, e.to_step)} | ` +
+                `${e.from_step}. ${stepLabel(text, e.from_step)} | ` +
+                `${e.to_step}. ${stepLabel(text, e.to_step)} | ` +
                 `${fraction01ToPercent(e.confidence)}% | ${status} | ` +
                 `${escapePipe(e.reason)} |`,
         );
@@ -577,36 +570,34 @@ function renderSessionStepEvaluations(payload: SessionDetail): string {
 
 // ---- Curriculum Overview -------------------------------------------------
 
-function renderCurriculumOverview(payload: CurriculumOverview): string {
-    const lang = payload.lang;
+function renderCurriculumOverview(payload: CurriculumOverview, text: ReportText): string {
     const c = payload.curriculum;
     const sections: string[] = [
-        `# ${t(lang, "curriculum_overview_title")}: ${c.title}`,
+        `# ${t(text, "curriculum_overview_title")}: ${c.title}`,
         "",
     ];
     if (c.description) {
         const descMd = renderStoredContent(c.description);
         if (descMd.length > 0) {
-            sections.push(`**${t(lang, "description")}:**`);
+            sections.push(`**${t(text, "description")}:**`);
             sections.push("");
             sections.push(descMd);
             sections.push("");
         }
     }
-    sections.push(`**${t(lang, "language")}:** ${c.language}  `);
-    sections.push(`**${t(lang, "generated_at")}:** ${formatDate(c.created_at)}`);
+    sections.push(`**${t(text, "language")}:** ${c.language}  `);
+    sections.push(`**${t(text, "generated_at")}:** ${formatDate(c.created_at)}`);
     sections.push("");
-    sections.push(renderTopicTree(payload));
-    sections.push(renderLessons(payload));
-    sections.push(envelopeFooter(payload));
+    sections.push(renderTopicTree(payload, text));
+    sections.push(renderLessons(payload, text));
+    sections.push(envelopeFooter(payload, text));
     return sections.filter(Boolean).join("\n");
 }
 
-function renderTopicTree(payload: CurriculumOverview): string {
-    const lang = payload.lang;
-    const lines: string[] = [`## ${t(lang, "topics")}`, ""];
+function renderTopicTree(payload: CurriculumOverview, text: ReportText): string {
+    const lines: string[] = [`## ${t(text, "topics")}`, ""];
     if (payload.topics.length === 0) {
-        lines.push(t(lang, "no_topics"));
+        lines.push(t(text, "no_topics"));
         lines.push("");
         return lines.join("\n");
     }
@@ -631,11 +622,10 @@ function renderTopicTree(payload: CurriculumOverview): string {
     return lines.join("\n");
 }
 
-function renderLessons(payload: CurriculumOverview): string {
-    const lang = payload.lang;
-    const lines: string[] = [`## ${t(lang, "lessons")}`, ""];
+function renderLessons(payload: CurriculumOverview, text: ReportText): string {
+    const lines: string[] = [`## ${t(text, "lessons")}`, ""];
     if (payload.lessons.length === 0) {
-        lines.push(t(lang, "no_lessons"));
+        lines.push(t(text, "no_lessons"));
         lines.push("");
         return lines.join("\n");
     }

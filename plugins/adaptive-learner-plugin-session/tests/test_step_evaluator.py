@@ -423,20 +423,27 @@ def test_evaluate_step_returns_fallback_when_hook_returns_garbage():
     assert out.suggested_step == 6
 
 
-def test_evaluate_step_returns_fallback_when_hook_raises():
-    """Provider exception must NEVER bubble up to the route layer."""
+def test_evaluate_step_returns_fallback_when_hook_raises(caplog):
+    """Provider exception must NEVER bubble up to the route layer, and
+    it leaves a warning with the traceback (#3423): an invalid key or a
+    rate limit used to degrade the step silently to +1."""
     pm = _fake_pm(RuntimeError)
-    out = evaluate_step(
-        pm=pm,
-        method="error_based",
-        current_step=2,
-        history=[],
-        model="x",
-        api_key="x",
-        output_language="en",
-    )
+    with caplog.at_level("WARNING", logger="adaptive_learner_session.step_evaluator"):
+        out = evaluate_step(
+            pm=pm,
+            method="error_based",
+            current_step=2,
+            history=[],
+            model="x",
+            api_key="x",
+            output_language="en",
+        )
     assert out.fallback_used is True
     assert out.suggested_step == 3
+    [record] = [r for r in caplog.records if r.name.endswith("step_evaluator")]
+    assert record.levelname == "WARNING"
+    assert record.exc_info is not None
+    assert getattr(record, "model", None) == "x"
 
 
 def test_evaluate_step_passes_recent_history_to_the_hook():
