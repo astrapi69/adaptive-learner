@@ -2077,6 +2077,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Eksik: {word}",
+      "extra": "Fazla: {word}",
+      "replaced": "Yazdığın: {wrote}, beklenen: {expected}"
+    },
     "progress_io": {
       "save_error": "Bu dersteki ilerlemeniz kaydedilemedi.",
       "load_failed": "Bu ders için kaydedilmiş ilerlemeniz yüklenemedi: {detail}",

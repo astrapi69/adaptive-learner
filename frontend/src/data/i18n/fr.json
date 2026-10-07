@@ -2077,6 +2077,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Manquant : {word}",
+      "extra": "En trop : {word}",
+      "replaced": "Tu as écrit {wrote}, attendu : {expected}"
+    },
     "progress_io": {
       "save_error": "Ta progression dans cette leçon n'a pas pu être enregistrée.",
       "load_failed": "Ta progression enregistrée pour cette leçon n'a pas pu être chargée : {detail}",

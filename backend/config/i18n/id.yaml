@@ -1949,6 +1949,11 @@ repo:
     description: "Otomatis menghasilkan artefak Markdown (README, STATS, CHEATSHEET, ROADMAP) per proyek dari data sesi Anda. Integrasi git opsional melakukan commit setiap render sehingga Anda dapat menelusuri riwayatnya dengan klien git mana pun."
     enable_git: "Aktifkan persistensi git"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Kurang: {word}"
+    extra: "Berlebih: {word}"
+    replaced: "Kamu menulis {wrote}, seharusnya {expected}"
   progress_io:
     save_error: "Kemajuan Anda dalam pelajaran ini tidak dapat disimpan."
     load_failed: "Kemajuan tersimpan Anda untuk pelajaran ini tidak dapat dimuat: {detail}"

@@ -1938,6 +1938,11 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Eksik: {word}"
+    extra: "Fazla: {word}"
+    replaced: "Yazdığın: {wrote}, beklenen: {expected}"
   progress_io:
     save_error: "Bu dersteki ilerlemeniz kaydedilemedi."
     load_failed: "Bu ders için kaydedilmiş ilerlemeniz yüklenemedi: {detail}"

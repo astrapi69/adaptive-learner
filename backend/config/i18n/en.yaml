@@ -1949,6 +1949,11 @@ repo:
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
     enable_git: "Enable git persistence"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Missing: {word}"
+    extra: "Extra: {word}"
+    replaced: "You wrote {wrote}, expected {expected}"
   progress_io:
     save_error: "Your progress in this lesson could not be saved."
     load_failed: "Your saved progress for this lesson could not be loaded: {detail}"

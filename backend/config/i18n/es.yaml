@@ -1940,6 +1940,11 @@ repo:
     description: "Genera automáticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por proyecto a partir de tus datos de sesión. La integración opcional con git confirma cada generación para que puedas explorar el historial con cualquier cliente git."
     enable_git: "Activar persistencia git"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Falta: {word}"
+    extra: "Sobra: {word}"
+    replaced: "Escribiste {wrote}, se esperaba {expected}"
   progress_io:
     save_error: "No se pudo guardar tu progreso en esta lección."
     load_failed: "No se pudo cargar tu progreso guardado de esta lección: {detail}"

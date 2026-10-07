@@ -2077,6 +2077,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Kurang: {word}",
+      "extra": "Berlebih: {word}",
+      "replaced": "Kamu menulis {wrote}, seharusnya {expected}"
+    },
     "progress_io": {
       "save_error": "Kemajuan Anda dalam pelajaran ini tidak dapat disimpan.",
       "load_failed": "Kemajuan tersimpan Anda untuk pelajaran ini tidak dapat dimuat: {detail}",

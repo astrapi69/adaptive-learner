@@ -2077,6 +2077,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Falta: {word}",
+      "extra": "A mais: {word}",
+      "replaced": "Escrito: {wrote}, esperado: {expected}"
+    },
     "progress_io": {
       "save_error": "Não foi possível salvar seu progresso nesta aula.",
       "load_failed": "Não foi possível carregar seu progresso salvo desta aula: {detail}",

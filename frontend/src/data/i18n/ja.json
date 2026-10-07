@@ -2077,6 +2077,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "不足: {word}",
+      "extra": "余分: {word}",
+      "replaced": "入力: {wrote}、正解: {expected}"
+    },
     "progress_io": {
       "save_error": "このレッスンの進捗を保存できませんでした。",
       "load_failed": "このレッスンの保存済みの進捗を読み込めませんでした: {detail}",

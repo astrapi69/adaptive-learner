@@ -1940,6 +1940,11 @@ repo:
     description: "Δημιουργεί αυτόματα αρχεία Markdown (README, STATS, CHEATSHEET, ROADMAP) ανά έργο από τα δεδομένα των συνεδριών σας. Η προαιρετική ενσωμάτωση git κάνει commit κάθε δημιουργία ώστε να μπορείτε να περιηγηθείτε στο ιστορικό με οποιονδήποτε client git."
     enable_git: "Ενεργοποίηση διατήρησης Git"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Λείπει: {word}"
+    extra: "Περιττό: {word}"
+    replaced: "Έγραψες {wrote}, αναμενόταν {expected}"
   progress_io:
     save_error: "Η πρόοδός σας σε αυτό το μάθημα δεν μπόρεσε να αποθηκευτεί."
     load_failed: "Η αποθηκευμένη πρόοδός σας για αυτό το μάθημα δεν μπόρεσε να φορτωθεί: {detail}"
