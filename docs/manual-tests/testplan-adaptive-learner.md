@@ -2156,8 +2156,9 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       ist aktiv, „Speichern und teilen" gesperrt. Mit dem Generator (Zuordnung +
       Freitext, 10 Übungen) ist die dritte Zeile rot, solange eine Freitext-Übung
       nur eine akzeptierte Antwort hat; nach einer zweiten Antwort für jede wird
-      sie grün und „Speichern und teilen" aktiv. Der Teilen-Assistent meldet
-      danach keinen Mindestwert-Fehler. Beim Bearbeiten einer gespeicherten
+      sie grün und „Speichern und teilen" aktiv. Ein Klick darauf öffnet
+      „Meine Inhalte" mit dem Teilen-Assistenten für genau diese Lektion
+      (#3660); er meldet keinen Mindestwert-Fehler. Beim Bearbeiten einer gespeicherten
       Lektion gibt es keine Teilen-Zeilen.
 - [ ] TC-0434 **Aufgabentyp umwandeln -> Freitext (EXP-050 Stufe 1, #2511):** Im
       Inline-Editor (Schritt 3, `ExerciseEditor`) einer **Wortkacheln**- oder
