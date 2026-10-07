@@ -25,8 +25,10 @@ IA na sessão).
 ## Preciso de uma chave de API?
 
 Sim para sessões de IA. A aplicação usa **traga a sua própria
-chave** para todos os três fornecedores suportados: Anthropic
-Claude, OpenAI GPT, Google Gemini. Os limites do tier gratuito
+chave** para cada fornecedor suportado: Anthropic Claude, OpenAI
+GPT e Google Gemini, mais Perplexity no modo servidor (a aplicação de
+ambiente de trabalho; a versão de navegador não consegue chamar o
+Perplexity diretamente). Os limites do tier gratuito
 costumam ser suficientes para começar.
 
 Três lugares para colocar a chave (maior prioridade ganha):
@@ -159,7 +161,8 @@ que usa uma IA internamente mas adiciona:
 5. **Rastreamento a longo prazo** - ProgressCommits, mapa de
    calor de sequência, XP, emblemas, gráficos de tempo por
    passo. O ChatGPT esquece quando fecha o separador.
-6. **Liberdade de fornecedor** - Anthropic, OpenAI ou Gemini.
+6. **Liberdade de fornecedor** - Anthropic, OpenAI ou Gemini, mais
+   Perplexity no modo servidor.
 7. **Opção local primeiro** - tudo no seu navegador, nada
    enviado para um servidor (exceto as suas chamadas de IA).
 

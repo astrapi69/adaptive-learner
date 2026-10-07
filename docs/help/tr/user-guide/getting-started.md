@@ -34,8 +34,9 @@ tarayıcının dışında bulunur.
 - **Modern bir tarayıcı** (Chrome 100+, Firefox 100+, Safari 17+,
   Edge 100+). Uygulama IndexedDB, Service Worker ve modern JavaScript
   kullanır.
-- Desteklenen üç sağlayıcıdan en az biri için bir **yapay zeka API
-  anahtarı** (Anthropic, OpenAI ya da Google Gemini). Ücretsiz
+- En az bir sağlayıcı için bir **yapay zeka API anahtarı**: tarayıcı
+  sürümünde Anthropic, OpenAI ya da Google Gemini; masaüstü uygulaması
+  ayrıca Perplexity sunar. Ücretsiz
   kontenjanlar genellikle başlamak için yeterlidir; anahtar
   ayarlaması için [Ayarlar](settings.md)'a bak.
 

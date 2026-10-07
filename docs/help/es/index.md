@@ -108,6 +108,6 @@ contenido a tu perfil.
 ```
 Almacenamiento : SQLite (ApiStorage) · IndexedDB (DexieStorage)
 Idiomas UI     : DE · EN · ES · FR · EL · PT · TR · JA
-Proveedores IA : Anthropic · OpenAI · Gemini (clave propia)
+Proveedores IA : Anthropic · OpenAI · Gemini · Perplexity (escritorio) (clave propia)
 Licencia       : MIT
 ```
