@@ -49,6 +49,12 @@ export default defineConfig({
     fullyParallel: !!process.env.CI,
     workers: process.env.CI ? 4 : 1,
     retries: 1,
+    // #3427 - the JSON report feeds the runtime skip budget
+    // (scripts/check_e2e_skip_budget.py); the first entry keeps the default.
+    reporter: [
+        [process.env.CI ? "dot" : "list"],
+        ["json", {outputFile: "test-results/visual-regression.json"}],
+    ],
     // Seeding a learner (onboarding + a lesson playthrough) before the
     // shot takes longer than a smoke nav.
     timeout: 120_000,

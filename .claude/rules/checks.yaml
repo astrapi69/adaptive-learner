@@ -73,6 +73,13 @@ checks:
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_feature_shots.py
     probe: script_exists=backend/tests/test_verify_docs_feature_shots.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
+  - id: e2e-runtime-skip-budget
+    verifies: the nightly e2e suites (dexie-smoke, manual-automation, visual-regression) skip no more tests than e2e/.runtime-skip-budget.json allows, counted from Playwright's JSON report; a spec that cannot reach its surface skips at runtime, so without the budget a broken path reads as a green night (#3427)
+    rule: none (reachability class of #2704; budget pattern of the smoke skip budget #2170)
+    status: active
+    wired_in: scripts/check_e2e_skip_budget.py; .github/workflows/dexie-smoke.yml; .github/workflows/manual-automation.yml; .github/workflows/visual-regression.yml; make test-dexie-smoke; make test-manual-automation; backend/tests/test_e2e_skip_budget.py
+    probe: script_exists=backend/tests/test_e2e_skip_budget.py | ci_step=.github/workflows/dexie-smoke.yml::dexie-smoke::Runtime skip budget (#3427)::check_e2e_skip_budget.py | ci_step=.github/workflows/manual-automation.yml::manual-automation::Runtime skip budget (#3427)::check_e2e_skip_budget.py | ci_step=.github/workflows/visual-regression.yml::visual::Runtime skip budget (#3427)::check_e2e_skip_budget.py
+
   - id: docs-drift
     verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics

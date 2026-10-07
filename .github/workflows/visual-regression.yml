@@ -92,6 +92,13 @@ jobs:
           npx playwright test --config=playwright.visual.config.ts
           ${{ inputs.update_baselines == true && '--update-snapshots' || '' }}
 
+      # #3427 - a surface without a baseline that cannot be reached skips at
+      # runtime; the budget keeps a broken path from turning into a green
+      # night. A baseline refresh run is not a gate run.
+      - name: Runtime skip budget (#3427)
+        if: (success() || failure()) && inputs.update_baselines != true
+        run: python3 scripts/check_e2e_skip_budget.py --suite visual-regression --report e2e/test-results/visual-regression.json
+
       - name: Upload report + diffs
         if: always()
         uses: actions/upload-artifact@v7
