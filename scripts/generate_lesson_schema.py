@@ -25,8 +25,9 @@ The three MIRROR-owned files (``lesson.schema.json``,
 ``content-manifest.schema.json``, ``quality-rules.json``) are NOT written
 here. The engine ships them and ``sync_schema_mirror_from_engine`` copies
 their bytes; a second writer would make the byte-parity gates compare two
-producers instead of the mirror (#2265). The quality numbers are still READ
-from the mirror for the frontend artefact.
+producers instead of the mirror (#2265). The frontend reads the quality
+minimums from the engine package itself (``QUALITY_MINIMUMS``, #3399), so no
+frontend quality artefact is generated any more.
 
 The JSON is emitted with ``sort_keys=True`` so re-generation is byte-stable;
 ``--check`` re-generates into memory and diffs against the committed files,
@@ -68,24 +69,9 @@ DOC_REL = {
     "en": "docs/help/en/developer/lesson-format-reference.md",
     "de": "docs/help/de/developer/lesson-format-reference.md",
 }
-FRONTEND_QUALITY_REL = "frontend/src/lib/content/validation/quality-rules.generated.ts"
 
 DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
 SCHEMA_ID_BASE = "https://astrapi69.github.io/learn-content-engine/schema"
-
-
-# The shared quality minimums. The engine ships ``schema/quality-rules.json``
-# (the mirror), so the ENGINE is canonical here too: read the numbers from
-# the mirror rather than hard-coding a second copy. The frontend quality
-# gate (content-validator.ts) and the content repo's validate_content.py
-# both consume the same emitted quality-rules.json, so the numbers cannot
-# drift across the places they used to be hard-coded.
-def _load_quality_rules() -> dict[str, int]:
-    data = json.loads((SCHEMA_DIR / "quality-rules.json").read_text(encoding="utf-8"))
-    return data["rules"]
-
-
-QUALITY_RULES: dict[str, int] = _load_quality_rules()
 
 
 def _decorate(schema: dict[str, Any], slug: str) -> dict[str, Any]:
@@ -215,18 +201,6 @@ def build_doc(lang: str) -> str:
     return "\n".join(sections).rstrip() + "\n"
 
 
-def build_frontend_quality_rules() -> str:
-    body = ",\n".join(f"  {k}: {v}" for k, v in sorted(QUALITY_RULES.items()))
-    return (
-        "// GENERATED from scripts/generate_lesson_schema.py (EXP-039). DO NOT EDIT.\n"
-        "// Shared content quality minimums. The numbers come from the engine\n"
-        "// mirror schema/quality-rules.json, re-emitted here for the frontend and\n"
-        "// carried by the content repo too. Refresh via `make sync-schema`.\n\n"
-        "/** Quality minimums. Below any of these = cannot share. */\n"
-        f"export const QUALITY = {{\n{body},\n}} as const;\n"
-    )
-
-
 def build_artefacts() -> dict[str, str]:
     """Return ``{repo-relative path: text}`` for every generated artefact."""
     # NOT emitted here: lesson.schema.json, content-manifest.schema.json and
@@ -246,7 +220,6 @@ def build_artefacts() -> dict[str, str]:
     artefacts: dict[str, str] = {
         f"{SCHEMA_REL}/{name}": _json(schema) for name, schema in schemas.items()
     }
-    artefacts[FRONTEND_QUALITY_REL] = build_frontend_quality_rules()
     for lang, rel in DOC_REL.items():
         artefacts[rel] = build_doc(lang)
     return artefacts

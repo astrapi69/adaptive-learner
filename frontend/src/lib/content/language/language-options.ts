@@ -8,6 +8,8 @@
  * on the content set.
  */
 
+import {ENGINE_CEFR_LEVELS} from "../engine";
+
 export interface LanguageOption {
     code: string;
     name: string;
@@ -29,6 +31,6 @@ export const LANGUAGE_OPTIONS: ReadonlyArray<LanguageOption> = [
     {code: "ar", name: "Arabic"},
 ];
 
-export const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
-
-export type CefrLevel = (typeof CEFR_LEVELS)[number];
+/** The CEFR bands a language set can declare: the engine's list (#3399),
+ *  re-exported under the name the level selects import. */
+export const CEFR_LEVELS: readonly string[] = ENGINE_CEFR_LEVELS;

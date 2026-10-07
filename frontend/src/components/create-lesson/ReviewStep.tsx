@@ -11,7 +11,7 @@ import {Button} from "@/components/ui/button";
 import FormHint from "../../shared/forms/FormHint";
 import type {DraftValidationChecks} from "../../lib/content/lesson/draft-to-lesson";
 import type {DraftShareChecks} from "../../lib/content/lesson/edit/draft-share-check";
-import {QUALITY} from "../../lib/content/validation/quality-rules.generated";
+import {QUALITY_MINIMUMS as QUALITY} from "learn-content-engine/rules";
 import type {LessonCardDraft, LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import type {ContentLessonExercise} from "../../storage/types";
 
