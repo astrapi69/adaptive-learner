@@ -7,6 +7,7 @@
 import type { AiValidationResult } from "../../../lib/content/validation/content-validation-types";
 import type {
   Card as GeneratedCard,
+  ContentSetEntry as EngineContentSetEntry,
   CardTokenRole as GeneratedCardTokenRole,
   ClozeBlank as GeneratedClozeBlank,
   Direction as GeneratedDirection,
@@ -106,6 +107,13 @@ export interface ContentSetEntry {
   /** #2655 — content attribution + bounded derivation chain (engine#90 /
    *  schema 1.9). ``null``/absent when the set carries none. */
   attribution?: SetAttribution | null;
+  /** #3395 - the set's review standing as the engine projects it (absent in
+   *  the manifest means ``"authored"``). Optional so rows and responses
+   *  written before it type-check. */
+  review_status?: SetReviewStatus;
+  /** #3395 - the set's evaluation declaration (engine#171), ``null`` when it
+   *  declares none. */
+  evaluation?: EngineContentSetEntry["evaluation"];
 }
 
 /** A set's manifest-level book block surfaced to the lesson media section

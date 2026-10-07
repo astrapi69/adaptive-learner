@@ -272,6 +272,45 @@ def test_list_sets_carries_visibility_flag(client: TestClient) -> None:
     assert by_id["graded-quiz-demo-from-de"]["visibility"] == "hidden"
 
 
+def test_list_sets_carries_review_status_and_evaluation(client: TestClient) -> None:
+    # #3395 - the response dropped both fields, although the set model reads
+    # them; Dexie mode serves them through the engine projection. A set
+    # without them reads as ``authored`` with no evaluation, as there.
+    manifest = textwrap.dedent(
+        """
+        schema_version: '1.0'
+        name: Review Test
+        sets:
+          - id: plain-set
+            title: Plain
+            language: fr
+            level: A1
+            version: '1.0.0'
+            lesson_count: 1
+          - id: generated-set
+            title: Generated
+            language: fr
+            level: A1
+            version: '1.0.0'
+            lesson_count: 1
+            review_status: generated
+            evaluation:
+              pass_percent: 80
+        """
+    ).strip()
+    transport = _make_mock_transport(
+        {f"/{SOURCE}/main/manifest.yaml": manifest},
+    )
+    with _install_mock_transport(transport):
+        r = client.get("/api/plugins/content-loader/sets")
+    assert r.status_code == 200, r.text
+    by_id = {s["id"]: s for s in r.json()["sets"]}
+    assert by_id["plain-set"]["review_status"] == "authored"
+    assert by_id["plain-set"]["evaluation"] is None
+    assert by_id["generated-set"]["review_status"] == "generated"
+    assert by_id["generated-set"]["evaluation"]["pass_percent"] == 80
+
+
 def test_list_sets_degrades_when_upstream_404(
     client: TestClient,
 ) -> None:

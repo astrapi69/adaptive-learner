@@ -447,6 +447,14 @@ export interface ContentSetRow {
      *  (structured-cloned, not indexed, so no schema bump). Older rows
      *  read as ``undefined`` -> treated as "no attribution". */
     attribution?: SetAttribution | null;
+    /** #3395 - the manifest entry's ``visibility``, ``review_status`` and
+     *  ``evaluation``, so a cached-only set (source removed or offline)
+     *  still honours ``hidden`` and keeps its review standing. Not indexed,
+     *  so no schema bump; older rows read as ``undefined`` and the engine
+     *  projection fills the defaults. */
+    visibility?: import("../types").ContentSetEntry["visibility"];
+    review_status?: import("../types").ContentSetEntry["review_status"];
+    evaluation?: import("../types").ContentSetEntry["evaluation"];
 }
 
 /**

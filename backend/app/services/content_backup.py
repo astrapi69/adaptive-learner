@@ -174,6 +174,14 @@ def _synthesize_manifest_yaml(entry: dict[str, Any]) -> str | None:
         description=meta.get("description"),
         tags=tags,
         assets=[],
+        # #3395 - a Dexie row carries the manifest entry's display and
+        # review fields; a synthesised manifest keeps them instead of
+        # resetting a hidden set to visible and a generated one to authored.
+        **{
+            field: meta[field]
+            for field in ("visibility", "review_status", "evaluation")
+            if meta.get(field) is not None
+        },
     )
     manifest = ContentManifest(
         schema_version=CURRENT_SCHEMA_VERSION,

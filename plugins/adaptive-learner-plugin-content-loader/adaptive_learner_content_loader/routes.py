@@ -236,6 +236,11 @@ class SetEntryResponse(BaseModel):
     # #3418 — when the cached version was downloaded (ISO-8601 UTC); drives
     # the "freshly downloaded first" order, as Dexie mode already does.
     downloaded_at: str | None = None
+    # #3395 - the set's review standing and evaluation declaration, as the
+    # engine's ``asContentSetEntry`` projects them in browser mode. A set
+    # without them reads ``authored`` with no evaluation, as there.
+    review_status: str = "authored"
+    evaluation: dict[str, object] | None = None
 
     @classmethod
     def from_entry(cls, entry: SetEntry) -> SetEntryResponse:
@@ -261,6 +266,14 @@ class SetEntryResponse(BaseModel):
             visibility=entry.set.visibility.value,
             attribution=AttributionResponse.from_model(entry.set.attribution),
             downloaded_at=entry.downloaded_at,
+            review_status=(
+                entry.set.review_status.value if entry.set.review_status else "authored"
+            ),
+            evaluation=(
+                entry.set.evaluation.model_dump(mode="json", exclude_none=True)
+                if entry.set.evaluation
+                else None
+            ),
         )
 
 
