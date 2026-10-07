@@ -587,6 +587,36 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
     expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
   });
 
+  describe("level for a non-language set (#3356, engine isKnownLevel)", () => {
+    function renderKnowledge(level: string) {
+      i18nMock.lang = "de";
+      const knowledgeLesson: ContentLesson = {
+        ...lesson("mine", ["wort0", "wort1", "wort2"]),
+        domain: "knowledge",
+      };
+      renderWizard({
+        entry: entry({ source_language: "de", target_language: "de", level }),
+        lessons: [knowledgeLesson],
+      });
+    }
+
+    it("keeps a stored 'none' level as no level and lets the set continue", () => {
+      renderKnowledge("none");
+      expect(screen.getByTestId("share-wizard-edit-level")).toHaveTextContent("No level");
+      expect(screen.queryByTestId("share-wizard-step1-errors")).toBeNull();
+      expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
+    });
+
+    it("lets the author clear the level of a knowledge set and continue", async () => {
+      const user = userEvent.setup();
+      renderKnowledge("B1");
+      await user.click(screen.getByTestId("share-wizard-edit-level"));
+      await user.click(await screen.findByRole("option", { name: /No level/i }));
+      expect(screen.queryByTestId("share-wizard-step1-errors")).toBeNull();
+      expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
+    });
+  });
+
   it("inherits the same-language domain pair when lessons load AFTER mount", async () => {
     // Regression (Dexie release gate): the share page mounts the wizard
     // with an EMPTY lessons array and fetches the lessons asynchronously

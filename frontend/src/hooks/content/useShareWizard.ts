@@ -15,6 +15,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ApiError } from "../../api/client";
 import { useI18n } from "../ui/useI18n";
 import { useOnlineStatus } from "../system/useOnlineStatus";
+import { normalizeLevel } from "../../lib/content/content-domains";
+import { ENGINE_LEVEL_NONE } from "../../lib/content/engine";
 import {
   readContributorName,
   writeContributorName,
@@ -54,7 +56,8 @@ import {
   baseLang,
   defaultOpen,
   isCefr,
-  isIsoLang,
+  isOfferedLanguage,
+  isShareableLevel,
   KNOWN_CONTENT_DOMAINS,
   TOTAL_STEPS,
   type ShareMethod,
@@ -97,14 +100,16 @@ export interface ShareWizardProps {
 }
 
 /** Step-1 metadata gate: collect the localized blocking reasons (no
- *  title, missing source/target language, no CEFR level, empty lesson).
- *  source == target is intentionally allowed (knowledge content). */
+ *  title, missing source/target language, a level the set's domain cannot
+ *  share, empty lesson). source == target is intentionally allowed
+ *  (knowledge content); a non-language set may have no level (#3356). */
 function computeStep1Errors(
   fields: {
     editTitle: string;
     editSource: string;
     editTarget: string;
     editLevel: string;
+    domain: string;
     isEmptyLesson: boolean;
   },
   t: (key: string, fallback?: string) => string,
@@ -112,11 +117,11 @@ function computeStep1Errors(
   const errors: string[] = [];
   if (!fields.editTitle.trim())
     errors.push(t("content.wizard.err_title", "Add a title."));
-  if (!isIsoLang(fields.editSource))
+  if (!isOfferedLanguage(fields.editSource))
     errors.push(t("content.wizard.err_source", "Choose the source language."));
-  if (!isIsoLang(fields.editTarget))
+  if (!isOfferedLanguage(fields.editTarget))
     errors.push(t("content.wizard.err_target", "Choose the target language."));
-  if (!isCefr(fields.editLevel))
+  if (!isShareableLevel(fields.domain, fields.editLevel))
     errors.push(t("content.wizard.err_level", "Choose a CEFR level (A1-C2)."));
   if (fields.isEmptyLesson)
     errors.push(
@@ -234,7 +239,7 @@ export function useShareWizard({
   // The dropdown stays editable for the remaining edge cases.
   // (Supersedes the v1.53.2 "always app language" stopgap.)
   const initialSource =
-    isIsoLang(entry.source_language) &&
+    isOfferedLanguage(entry.source_language) &&
     (isDomainContent ||
       baseLang(entry.source_language) !== baseLang(entry.target_language))
       ? baseLang(entry.source_language)
@@ -246,7 +251,7 @@ export function useShareWizard({
   // empty so the user picks it.
   const [editTarget, setEditTarget] = useState(() => {
     if (
-      isIsoLang(entry.target_language) &&
+      isOfferedLanguage(entry.target_language) &&
       (isDomainContent || baseLang(entry.target_language) !== initialSource)
     )
       return baseLang(entry.target_language);
@@ -256,11 +261,13 @@ export function useShareWizard({
     );
     return detected && detected !== initialSource ? detected : "";
   });
-  const [editLevel, setEditLevel] = useState(() =>
-    isCefr(entry.level)
-      ? entry.level.trim().toUpperCase()
-      : estimateLevel(primary?.cards ?? []),
-  );
+  // A stored "none" is a deliberately level-less set (#3356): keep it as
+  // the wizard's empty "no level" instead of guessing a CEFR band.
+  const [editLevel, setEditLevel] = useState(() => {
+    if (isCefr(entry.level)) return entry.level.trim().toUpperCase();
+    if (normalizeLevel(entry.level) === ENGINE_LEVEL_NONE) return "";
+    return estimateLevel(primary?.cards ?? []);
+  });
 
   // The pair useState initializers run ONCE at mount — but the share page
   // loads the lessons asynchronously (Content.handleShare mounts the
@@ -273,9 +280,9 @@ export function useShareWizard({
   useEffect(() => {
     if (!isDomainContent || domainPairAppliedRef.current) return;
     domainPairAppliedRef.current = true;
-    if (isIsoLang(entry.source_language))
+    if (isOfferedLanguage(entry.source_language))
       setEditSource(baseLang(entry.source_language));
-    if (isIsoLang(entry.target_language))
+    if (isOfferedLanguage(entry.target_language))
       setEditTarget(baseLang(entry.target_language));
   }, [isDomainContent, entry.source_language, entry.target_language]);
 
@@ -293,8 +300,8 @@ export function useShareWizard({
   // content domain (lesson or set); otherwise infer from the language
   // pair (equal pair -> knowledge, differing pair -> language).
   const sameLanguage =
-    isIsoLang(editSource) &&
-    isIsoLang(editTarget) &&
+    isOfferedLanguage(editSource) &&
+    isOfferedLanguage(editTarget) &&
     baseLang(editSource) === baseLang(editTarget);
   const resolvedDomain =
     explicitDomain ?? (sameLanguage ? "knowledge" : "language");
@@ -341,7 +348,7 @@ export function useShareWizard({
   // domain content; see resolvedDomain — so there is no same-language
   // block.)
   const step1Errors = computeStep1Errors(
-    { editTitle, editSource, editTarget, editLevel, isEmptyLesson },
+    { editTitle, editSource, editTarget, editLevel, domain: resolvedDomain, isEmptyLesson },
     t,
   );
   const step1Blocked = step1Errors.length > 0;
@@ -668,6 +675,7 @@ export function useShareWizard({
     cardCount,
     minutes,
     sameLanguage,
+    resolvedDomain,
     placement,
     isEmptyLesson,
     step1Errors,
