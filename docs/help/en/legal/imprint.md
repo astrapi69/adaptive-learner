@@ -1,5 +1,8 @@
 # Legal notice
 
+> This page is a translation of the German original and is provided for
+> information only. Only the German version is legally binding.
+
 Information pursuant to Section 5 of the German Digital Services Act (DDG).
 
 **Asterios Raptis**
