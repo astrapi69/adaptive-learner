@@ -565,10 +565,18 @@ function RowDetail({item}: {item: DisplayItem}) {
     );
 }
 
-/** Compact filled/empty star row (0-3). */
+/** Compact filled/empty star row (0-3), one image with a localized label. */
 function StarRow({stars}: {stars: number}) {
+    const {t} = useI18n();
     return (
-        <span className="inline-flex" aria-label={`${stars}/3`}>
+        <span
+            className="inline-flex"
+            role="img"
+            aria-label={t("lesson.summary.stars_aria", "{n} of 3 stars").replace(
+                "{n}",
+                String(stars),
+            )}
+        >
             {[1, 2, 3].map((n) => (
                 <Star
                     key={n}

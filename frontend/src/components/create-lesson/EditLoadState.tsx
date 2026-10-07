@@ -115,7 +115,7 @@ export function LessonPicker({
             >
                 {lessons.map((lesson, i) => (
                     <option key={`${lesson.id}-${i}`} value={i}>
-                        {i + 1}. {lessonPickerLabel(lesson, i)}
+                        {i + 1}. {lessonPickerLabel(lesson, t("lesson.page_title", "Lesson"))}
                     </option>
                 ))}
             </select>

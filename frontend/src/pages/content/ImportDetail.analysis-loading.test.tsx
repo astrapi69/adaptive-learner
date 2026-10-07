@@ -66,7 +66,8 @@ const h = vi.hoisted(() => {
   };
 });
 
-vi.mock("../../chat_import/analysis", () => ({
+vi.mock("../../chat_import/analysis", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../chat_import/analysis")>()),
   analyzeConversation: (opts: unknown) => h.analyzeConversationMock(opts),
 }));
 
