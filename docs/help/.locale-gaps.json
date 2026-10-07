@@ -13,11 +13,7 @@
       "features/discover",
       "install/changing-the-port",
       "legal/imprint",
-      "legal/privacy",
-      "user-guide/ai-validation",
-      "user-guide/app-tutorial",
-      "user-guide/learning-path",
-      "user-guide/navigation"
+      "legal/privacy"
     ],
     "es": [
       "api/endpoints",
@@ -31,11 +27,7 @@
       "features/discover",
       "install/changing-the-port",
       "legal/imprint",
-      "legal/privacy",
-      "user-guide/ai-validation",
-      "user-guide/app-tutorial",
-      "user-guide/learning-path",
-      "user-guide/navigation"
+      "legal/privacy"
     ],
     "fr": [
       "api/endpoints",
@@ -49,11 +41,7 @@
       "features/discover",
       "install/changing-the-port",
       "legal/imprint",
-      "legal/privacy",
-      "user-guide/ai-validation",
-      "user-guide/app-tutorial",
-      "user-guide/learning-path",
-      "user-guide/navigation"
+      "legal/privacy"
     ],
     "ja": [
       "api/endpoints",
@@ -67,11 +55,7 @@
       "features/discover",
       "install/changing-the-port",
       "legal/imprint",
-      "legal/privacy",
-      "user-guide/ai-validation",
-      "user-guide/app-tutorial",
-      "user-guide/learning-path",
-      "user-guide/navigation"
+      "legal/privacy"
     ],
     "pt": [
       "api/endpoints",
@@ -85,11 +69,7 @@
       "features/discover",
       "install/changing-the-port",
       "legal/imprint",
-      "legal/privacy",
-      "user-guide/ai-validation",
-      "user-guide/app-tutorial",
-      "user-guide/learning-path",
-      "user-guide/navigation"
+      "legal/privacy"
     ],
     "tr": [
       "api/endpoints",
@@ -103,11 +83,7 @@
       "features/discover",
       "install/changing-the-port",
       "legal/imprint",
-      "legal/privacy",
-      "user-guide/ai-validation",
-      "user-guide/app-tutorial",
-      "user-guide/learning-path",
-      "user-guide/navigation"
+      "legal/privacy"
     ]
   }
 }
