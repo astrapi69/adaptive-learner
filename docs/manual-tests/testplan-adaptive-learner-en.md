@@ -3667,6 +3667,17 @@ Documented here only to show what is covered.
 
 ---
 
+### TS-0129 Progress report as Markdown/PDF in the UI language (#3426)
+
+- [ ] TC-0938 UI language French (or Japanese), Settings > Data > Export,
+      download the progress report as Markdown: title, sections and
+      table headers are in French (e.g. "Progression", "Projets"), not
+      English
+- [ ] TC-0939 Same with the session detail and PDF (print dialog): roles, rating
+      and step evaluations in the UI language
+- [ ] TC-0940 UI language German: the step names in the report match the app's
+      (e.g. "Eingabe" instead of "Input")
+
 ## Automated: Unit + Component Tests (Vitest, 7200+;
 ## current number see docs/audits/current-coverage.md)
 

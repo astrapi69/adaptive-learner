@@ -163,7 +163,7 @@ export default function ExportSection() {
         setBusy(busyKey);
         try {
             const payload = await buildPayload(type);
-            const markdown = renderMarkdown(payload);
+            const markdown = renderMarkdown(payload, t);
             const title = previewTitle(type, payload);
             if (format === "md") {
                 downloadMarkdown(markdown, exportFilename(payload, "md"));
@@ -222,7 +222,7 @@ export default function ExportSection() {
         setBusy(`${type}-preview`);
         try {
             const payload = await buildPayload(type);
-            const markdown = renderMarkdown(payload);
+            const markdown = renderMarkdown(payload, t);
             setPreview({type, markdown});
         } catch (err) {
             notify.error(t("export.preview_failed", "Preview failed."), {error: err});
