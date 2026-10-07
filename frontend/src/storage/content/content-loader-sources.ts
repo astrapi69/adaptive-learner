@@ -16,6 +16,7 @@ import {
   fetchGitHubFileText,
   fetchWithRetry,
 } from "../../lib/content/repos/github-fetch";
+import { ApiError } from "../../api/client";
 
 const RAW_BASE = "https://raw.githubusercontent.com";
 const BUNDLED_PREFIX = "bundled:";
@@ -166,11 +167,7 @@ export async function fetchText(
   if (source.startsWith(BUNDLED_PREFIX)) {
     const response = await fetchWithRetry(rawUrl(source, branch, path));
     if (!response.ok) {
-      const err: Error & { status?: number } = new Error(
-        `Upstream HTTP ${response.status} for ${path}`,
-      );
-      err.status = response.status;
-      throw err;
+      throw new ApiError(response.status, `Upstream HTTP ${response.status} for ${path}`);
     }
     return response.text();
   }
@@ -190,11 +187,7 @@ export async function fetchBytesOptional(
     const response = await fetchWithRetry(rawUrl(source, branch, path));
     if (response.status === 404) return null;
     if (!response.ok) {
-      const err: Error & { status?: number } = new Error(
-        `Upstream HTTP ${response.status} for ${path}`,
-      );
-      err.status = response.status;
-      throw err;
+      throw new ApiError(response.status, `Upstream HTTP ${response.status} for ${path}`);
     }
     return response.arrayBuffer();
   }

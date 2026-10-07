@@ -27,11 +27,14 @@ deterministic fallback, never raises.
 from __future__ import annotations
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from typing import Any
 
 from .ai_orchestration import call_ai_complete, call_ai_complete_async
+
+logger = logging.getLogger(__name__)
 
 
 DIFFICULTY_VALUES = ("same", "easier", "harder")
@@ -269,7 +272,12 @@ def evaluate_topic_transition(
             api_key=api_key,
             max_tokens=max_tokens,
         )
-    except Exception:  # noqa: BLE001 — defensive
+    except Exception:  # noqa: BLE001 - never crash the route; logged below (#3423)
+        logger.warning(
+            "Topic transition call failed; using the deterministic fallback",
+            extra={"model": model},
+            exc_info=True,
+        )
         return _deterministic_fallback(None)
     return parse_transition_response(raw)
 
@@ -306,6 +314,11 @@ async def evaluate_topic_transition_async(
             api_key=api_key,
             max_tokens=max_tokens,
         )
-    except Exception:  # noqa: BLE001 — defensive
+    except Exception:  # noqa: BLE001 - never crash the route; logged below (#3423)
+        logger.warning(
+            "Topic transition call failed; using the deterministic fallback",
+            extra={"model": model},
+            exc_info=True,
+        )
         return _deterministic_fallback(None)
     return parse_transition_response(raw)
