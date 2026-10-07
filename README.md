@@ -36,6 +36,10 @@ Full documentation (German default at `/docs/`, English at
   — all endpoints and models
 - [Configuration](docs/configuration.md) — three-layer config
   chain (env > `secrets.yaml` > DB)
+- [App Flow](docs/reference/APP-FLOW.md): every screen, how it is
+  reached, and the main journeys through the app
+- [Design Brief](docs/reference/DESIGN-BRIEF.md): audience, design
+  principles, visual system and open design questions
 
 ## What you get
 
