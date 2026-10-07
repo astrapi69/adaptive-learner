@@ -195,8 +195,9 @@ summary.
   invitation codes (`/invite`) and lists own lessons with play, edit,
   export, share and delete.
 - **Create** (`/content?tab=create`): a four-step wizard (metadata,
-  cards, exercise generator, save and share). Own sets are edited at
-  `/create-lesson/edit/:source/:setId`.
+  cards, exercise generator, save and share; "Save & share" opens My
+  content with the share wizard, `/content?share=<id>`). Own sets are
+  edited at `/create-lesson/edit/:source/:setId`.
 - **Content repositories** (Settings > Data > Sources): the official
   repository plus user repositories with sync, removal, order, invite
   codes and a QR scan that fills the add form. A share link or QR code
@@ -261,9 +262,6 @@ that a mode cannot offer is shown disabled with its reason
 Found while mapping the flows; recorded here so they are not lost, and
 proposed separately rather than changed by this document.
 
-- "Save & share" in the lesson creator navigates to `/content?share=<id>`;
-  nothing reads the `share` parameter, so the learner lands on the
-  default content tab (`frontend/src/pages/lesson/CreateLesson.tsx`).
 - "Retry errors" means the error-replay round on the lesson summary but
   opens the review session in the learning path's set detail.
 - The onboarding form's button says it starts the assessment; it opens

@@ -2006,7 +2006,8 @@ with the same source and target language or with a knowledge domain
       and share" disabled. With the generator (matching + free text, 10
       exercises) the third row is red while a free-text exercise has only one
       accepted answer; after a second answer on each it turns green and "Save
-      and share" is enabled. The share wizard then reports no minimum. Editing
+      and share" is enabled. Clicking it opens My content with the share
+      wizard for exactly this lesson (#3660), which reports no minimum. Editing
       a saved lesson shows no share rows.
 - [ ] TC-0434 **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
       inline editor (Step 3, `ExerciseEditor`) of a **Word tiles** or
