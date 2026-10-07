@@ -73,6 +73,13 @@ checks:
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_feature_shots.py
     probe: script_exists=backend/tests/test_verify_docs_feature_shots.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
+  - id: locale-coverage
+    verifies: every translated help locale (es, fr, el, pt, tr, ja) has every EN help page or declares the gap in docs/help/.locale-gaps.json; a new undeclared gap and a listed gap whose page now exists both FAIL, so the list only shrinks by a visible edit (#3453)
+    rule: none (locale twin of the help-coverage EN/DE parity; ratchet pattern of #2140)
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_locale_coverage.py
+    probe: script_exists=backend/tests/test_verify_docs_locale_coverage.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
   - id: api-reference
     verifies: the help API reference pages docs/help/{en,de}/api/endpoints.md match the committed OpenAPI snapshot, so the reference names every core router and plugin route; a missing or empty snapshot FAILs (#3454)
     rule: ai-workflow/documentation-protocol.md#when-to-update-docsapimd
