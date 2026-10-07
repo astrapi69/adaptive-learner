@@ -68,12 +68,7 @@ def cache_path_for_set(
     Does NOT create the directory. ``is_set_cached`` is the
     presence check; ``store_set`` is the writer.
     """
-    return (
-        cache_root
-        / slugify_source(source)
-        / set_id
-        / f"v{version}"
-    )
+    return cache_root / slugify_source(source) / set_id / f"v{version}"
 
 
 def is_set_cached(
@@ -89,8 +84,7 @@ def is_set_cached(
     (after every lesson + asset) so a present manifest means
     every file in the set is present too.
     """
-    return (cache_path_for_set(cache_root, source, set_id, version)
-            / "manifest.yaml").exists()
+    return (cache_path_for_set(cache_root, source, set_id, version) / "manifest.yaml").exists()
 
 
 def list_cached_versions(
@@ -232,10 +226,7 @@ def read_manifest(
 
     Raises ``ContentNotFoundError`` if the set is not cached.
     """
-    manifest_path = (
-        cache_path_for_set(cache_root, source, set_id, version)
-        / "manifest.yaml"
-    )
+    manifest_path = cache_path_for_set(cache_root, source, set_id, version) / "manifest.yaml"
     if not manifest_path.is_file():
         raise ContentNotFoundError(
             f"No cached manifest for {source}/{set_id}@v{version}",
@@ -278,10 +269,7 @@ def read_lesson(
         )
     if not lesson_path.is_file():
         raise ContentNotFoundError(
-            (
-                f"No cached lesson "
-                f"{lesson_filename} in {source}/{set_id}@v{version}"
-            ),
+            (f"No cached lesson {lesson_filename} in {source}/{set_id}@v{version}"),
             detail=f"Looked at: {lesson_path}",
         )
     return parse_lesson(lesson_path.read_text(encoding="utf-8"))
@@ -326,10 +314,7 @@ def read_asset(
         )
     if not target.is_file():
         raise ContentNotFoundError(
-            (
-                f"No cached asset "
-                f"{asset_path} in {source}/{set_id}@v{version}"
-            ),
+            (f"No cached asset {asset_path} in {source}/{set_id}@v{version}"),
             detail=f"Looked at: {target}",
         )
     return target.read_bytes()

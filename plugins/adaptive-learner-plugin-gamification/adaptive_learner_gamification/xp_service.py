@@ -280,8 +280,7 @@ def count_corrected_elements(rows: Iterable[Any], wrong_in_run: int) -> int:
     resolved = 0
     for row in rows:
         if (getattr(row, "error_count", 0) or 0) > 0 and (
-            getattr(row, "mastered", False)
-            or (getattr(row, "correct_streak", 0) or 0) > 0
+            getattr(row, "mastered", False) or (getattr(row, "correct_streak", 0) or 0) > 0
         ):
             resolved += 1
     return min(resolved, cap)
@@ -395,9 +394,7 @@ def calculate_lesson_session_xp(
     if clamped_bonus > 0:
         breakdown["combo_bonus"] = clamped_bonus
     if streak_days > 0:
-        breakdown["streak_multiplier_pct"] = int(
-            round((streak_multiplier - 1.0) * 100)
-        )
+        breakdown["streak_multiplier_pct"] = int(round((streak_multiplier - 1.0) * 100))
     if xp_multiplier != 1.0:
         breakdown["mode_multiplier_pct"] = int(round((xp_multiplier - 1.0) * 100))
 

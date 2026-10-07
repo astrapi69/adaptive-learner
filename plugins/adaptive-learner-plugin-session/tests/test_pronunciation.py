@@ -167,9 +167,7 @@ def test_parse_judge_strips_markdown_fence() -> None:
 
 
 def test_judge_verdict_to_dict() -> None:
-    v = JudgeVerdict(
-        matches=True, score=0.9, feedback="ok", missed_sounds=["x"]
-    )
+    v = JudgeVerdict(matches=True, score=0.9, feedback="ok", missed_sounds=["x"])
     d = v.to_dict()
     assert d["matches"] is True
     assert d["score"] == 0.9

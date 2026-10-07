@@ -332,10 +332,7 @@ def test_conversation_context_empty_returns_blank():
 def test_conversation_context_truncates_oldest_keeping_recent():
     # A long transcript: each turn ~1000 chars; a small budget keeps only the
     # most recent turns and flags the omission.
-    turns = [
-        ConversationTurn(role="user", content=f"msg{i} " + "x" * 1000)
-        for i in range(10)
-    ]
+    turns = [ConversationTurn(role="user", content=f"msg{i} " + "x" * 1000) for i in range(10)]
     out = build_conversation_context(turns, "en", char_budget=2500)
     assert "earlier messages omitted" in out
     # The most recent turns survive; the oldest are dropped.

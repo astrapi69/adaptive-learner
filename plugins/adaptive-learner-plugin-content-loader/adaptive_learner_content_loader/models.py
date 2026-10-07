@@ -124,9 +124,7 @@ CURRENT_SCHEMA_VERSION = "1.9"
 # ``+meta`` suffix. Loose by design — content authors should
 # be able to ship `1.0.0`, `1.0`, or `1.0.0-rc1` without
 # wrestling the validator.
-_VERSION_RE = re.compile(
-    r"^\d+(\.\d+){1,2}([\-+][A-Za-z0-9.\-]+)?$"
-)
+_VERSION_RE = re.compile(r"^\d+(\.\d+){1,2}([\-+][A-Za-z0-9.\-]+)?$")
 
 # Slug-safe identifier: lowercase letters, digits, hyphens.
 # Used for source identifiers.
@@ -177,8 +175,6 @@ MAX_ASSET_SIZE_KB = 500
 SET_ASSETS_SOFT_LIMIT_KB = 10 * 1024  # 10 MiB
 
 
-
-
 class ContentSetAsset(ContentSetAssetBase):
     """Semantic layer: safe asset path + image extension + size limit
     (structure in the generated base)."""
@@ -199,12 +195,9 @@ class ContentSetAsset(ContentSetAssetBase):
         suffix = value.rsplit(".", 1)[-1].lower()
         if "." not in value or f".{suffix}" not in _IMAGE_EXTENSIONS:
             raise ValueError(
-                f"asset path must end in one of "
-                f"{sorted(_IMAGE_EXTENSIONS)}",
+                f"asset path must end in one of {sorted(_IMAGE_EXTENSIONS)}",
             )
         return value
-
-
 
 
 class ContentSet(ContentSetBase):
@@ -262,10 +255,7 @@ class ContentSet(ContentSetBase):
     @classmethod
     def _semver_version(cls, value: str) -> str:
         if not _VERSION_RE.fullmatch(value):
-            raise ValueError(
-                "version must be semver-shaped "
-                "(e.g. '1.0.0', '1.2', '2.0.0-rc1')"
-            )
+            raise ValueError("version must be semver-shaped (e.g. '1.0.0', '1.2', '2.0.0-rc1')")
         return value
 
     @property
@@ -297,8 +287,6 @@ class ContentSet(ContentSetBase):
         asset (Phase 54G / v1.37.0). Used by the set-level
         soft-limit warning + the content-authoring docs."""
         return sum(asset.size_kb for asset in self.assets)
-
-
 
 
 def check_set_assets_size(
@@ -348,8 +336,6 @@ def check_set_assets_size(
     return warnings
 
 
-
-
 class ContentManifest(ContentManifestBase):
     """Semantic layer: semver-shaped ``schema_version`` + unique set ids
     (structure in the generated base). ``sets`` is retargeted to the
@@ -361,9 +347,7 @@ class ContentManifest(ContentManifestBase):
     @classmethod
     def _semver_schema(cls, value: str) -> str:
         if not _VERSION_RE.fullmatch(value):
-            raise ValueError(
-                "schema_version must be semver-shaped"
-            )
+            raise ValueError("schema_version must be semver-shaped")
         return value
 
     @field_validator("sets")
@@ -372,13 +356,9 @@ class ContentManifest(ContentManifestBase):
         seen: set[str] = set()
         for s in value:
             if s.id in seen:
-                raise ValueError(
-                    f"duplicate set id '{s.id}' in manifest"
-                )
+                raise ValueError(f"duplicate set id '{s.id}' in manifest")
             seen.add(s.id)
         return value
-
-
 
 
 def is_supported_schema_version(version: str) -> bool:

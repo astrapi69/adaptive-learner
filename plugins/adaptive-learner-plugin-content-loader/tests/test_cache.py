@@ -91,10 +91,7 @@ class TestPathHelpers:
     def test_cache_path_shape(self, tmp_path: Path) -> None:
         path = cache_path_for_set(tmp_path, SOURCE, SET_ID, VERSION)
         assert path == (
-            tmp_path
-            / "astrapi69--adaptive-learner-content"
-            / "language-fr-a1"
-            / "v1.0.0"
+            tmp_path / "astrapi69--adaptive-learner-content" / "language-fr-a1" / "v1.0.0"
         )
 
     def test_is_set_cached_false_when_empty(self, tmp_path: Path) -> None:
@@ -154,9 +151,7 @@ class TestStoreSet:
         # Simulate a previous failed download leaving a tmp
         # dir behind. The next store_set call must clean it
         # up before writing.
-        tmp_dir = (
-            cache_path_for_set(tmp_path, SOURCE, SET_ID, VERSION)
-        ).with_name("v1.0.0.tmp")
+        tmp_dir = (cache_path_for_set(tmp_path, SOURCE, SET_ID, VERSION)).with_name("v1.0.0.tmp")
         tmp_dir.mkdir(parents=True)
         (tmp_dir / "garbage").write_text("leftover")
 
@@ -218,7 +213,11 @@ class TestReadCache:
             assets={"img/cover.png": png_bytes},
         )
         out = read_asset(
-            tmp_path, SOURCE, SET_ID, VERSION, "img/cover.png",
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            VERSION,
+            "img/cover.png",
         )
         assert out == png_bytes
 
@@ -233,11 +232,16 @@ class TestReadCache:
         )
         with pytest.raises(ContentNotFoundError):
             read_asset(
-                tmp_path, SOURCE, SET_ID, VERSION, "img/missing.png",
+                tmp_path,
+                SOURCE,
+                SET_ID,
+                VERSION,
+                "img/missing.png",
             )
 
     def test_read_asset_path_traversal_blocked(
-        self, tmp_path: Path,
+        self,
+        tmp_path: Path,
     ) -> None:
         """``..`` segments in an asset path are rejected at read
         time, even if a future bug ever let one past the manifest
@@ -270,7 +274,11 @@ class TestReadCache:
             lessons={"01-greetings.json": VALID_LESSON},
         )
         lesson = read_lesson(
-            tmp_path, SOURCE, SET_ID, VERSION, "01-greetings.json",
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            VERSION,
+            "01-greetings.json",
         )
         assert lesson.id == "01-greetings"
 
@@ -295,7 +303,8 @@ class TestReadCache:
             )
 
     def test_read_lesson_rejects_a_sibling_dir_sharing_the_prefix(
-        self, tmp_path: Path,
+        self,
+        tmp_path: Path,
     ) -> None:
         """#3428 - ``lessons-x`` starts with ``lessons``, so a string prefix
         check read a lesson from the sibling directory."""
@@ -312,11 +321,16 @@ class TestReadCache:
         (sibling / "evil.json").write_text(VALID_LESSON, encoding="utf-8")
         with pytest.raises(ContentNotFoundError, match="escapes"):
             read_lesson(
-                tmp_path, SOURCE, SET_ID, VERSION, "../lessons-x/evil.json",
+                tmp_path,
+                SOURCE,
+                SET_ID,
+                VERSION,
+                "../lessons-x/evil.json",
             )
 
     def test_read_asset_rejects_a_sibling_dir_sharing_the_prefix(
-        self, tmp_path: Path,
+        self,
+        tmp_path: Path,
     ) -> None:
         """#3428 - ``assets-x`` starts with ``assets``; same hole as above."""
         store_set(
@@ -333,7 +347,11 @@ class TestReadCache:
         (sibling / "secret.bin").write_bytes(b"SECRET")
         with pytest.raises(ContentNotFoundError, match="escapes"):
             read_asset(
-                tmp_path, SOURCE, SET_ID, VERSION, "../assets-x/secret.bin",
+                tmp_path,
+                SOURCE,
+                SET_ID,
+                VERSION,
+                "../assets-x/secret.bin",
             )
 
     def test_read_lesson_missing(self, tmp_path: Path) -> None:
@@ -347,7 +365,11 @@ class TestReadCache:
         )
         with pytest.raises(ContentNotFoundError):
             read_lesson(
-                tmp_path, SOURCE, SET_ID, VERSION, "00-not-there.json",
+                tmp_path,
+                SOURCE,
+                SET_ID,
+                VERSION,
+                "00-not-there.json",
             )
 
     def test_read_corrupted_lesson(self, tmp_path: Path) -> None:
@@ -361,7 +383,11 @@ class TestReadCache:
         )
         with pytest.raises(ContentSchemaError):
             read_lesson(
-                tmp_path, SOURCE, SET_ID, VERSION, "01-broken.json",
+                tmp_path,
+                SOURCE,
+                SET_ID,
+                VERSION,
+                "01-broken.json",
             )
 
 
@@ -398,7 +424,10 @@ class TestVersionListing:
         )
         # Simulate a half-written download
         tmp_dir = cache_path_for_set(
-            tmp_path, SOURCE, SET_ID, "1.0.0",
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            "1.0.0",
         ).with_name("v2.0.0.tmp")
         tmp_dir.mkdir(parents=True)
         assert list_cached_versions(tmp_path, SOURCE, SET_ID) == ["1.0.0"]
@@ -418,7 +447,10 @@ class TestVersionListing:
 class TestReconcileSetVersion:
     def test_uncached_means_download(self, tmp_path: Path) -> None:
         needs, cached = reconcile_set_version(
-            tmp_path, SOURCE, SET_ID, "1.0.0",
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            "1.0.0",
         )
         assert needs is True
         assert cached is None
@@ -433,7 +465,10 @@ class TestReconcileSetVersion:
             lessons={"01-greetings.json": VALID_LESSON},
         )
         needs, cached = reconcile_set_version(
-            tmp_path, SOURCE, SET_ID, "1.0.0",
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            "1.0.0",
         )
         assert needs is False
         assert cached == "1.0.0"
@@ -448,7 +483,10 @@ class TestReconcileSetVersion:
             lessons={"01-greetings.json": VALID_LESSON},
         )
         needs, cached = reconcile_set_version(
-            tmp_path, SOURCE, SET_ID, "1.0.1",
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            "1.0.1",
         )
         assert needs is True
         assert cached == "1.0.0"
@@ -478,7 +516,10 @@ class TestPrune:
     def test_keep_latest_zero_rejected(self, tmp_path: Path) -> None:
         with pytest.raises(ValueError):
             prune_old_versions(
-                tmp_path, SOURCE, SET_ID, keep_latest=0,
+                tmp_path,
+                SOURCE,
+                SET_ID,
+                keep_latest=0,
             )
 
     def test_prune_noop_when_below_threshold(
@@ -496,7 +537,10 @@ class TestPrune:
         # keep_latest=2 with only 1 cached version → nothing
         # to drop.
         dropped = prune_old_versions(
-            tmp_path, SOURCE, SET_ID, keep_latest=2,
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            keep_latest=2,
         )
         assert dropped == []
         assert list_cached_versions(tmp_path, SOURCE, SET_ID) == ["1.0.0"]
@@ -514,7 +558,10 @@ class TestCleanupTmpDirs:
             lessons={"01-greetings.json": VALID_LESSON},
         )
         tmp_dir = cache_path_for_set(
-            tmp_path, SOURCE, SET_ID, "1.0.0",
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            "1.0.0",
         ).with_name("v2.0.0.tmp")
         tmp_dir.mkdir(parents=True)
         (tmp_dir / "garbage").write_text("x")

@@ -125,9 +125,7 @@ def build_transition_messages(
         content = msg.get("content")
         if not isinstance(role, str) or not isinstance(content, str):
             continue
-        label = {"user": "Learner", "assistant": "AI", "system": "(prompt)"}.get(
-            role, role
-        )
+        label = {"user": "Learner", "assistant": "AI", "system": "(prompt)"}.get(role, role)
         turns.append(f"{label}: {content}")
     transcript = "\n".join(turns) if turns else "(no exchanges yet)"
 
@@ -208,9 +206,7 @@ def parse_transition_response(raw: str | None) -> TopicTransition:
     continue_recommended = bool(data.get("continue_recommended"))
     summary_raw = data.get("summary", "")
     summary = (
-        summary_raw.strip()[:500]
-        if isinstance(summary_raw, str) and summary_raw.strip()
-        else ""
+        summary_raw.strip()[:500] if isinstance(summary_raw, str) and summary_raw.strip() else ""
     )
     next_topic_raw = data.get("next_topic")
     next_topic = (

@@ -87,7 +87,7 @@ def test_parse_valid_json_array() -> None:
 def test_parse_strips_markdown_fence() -> None:
     # Models occasionally wrap JSON in ```json ... ``` despite
     # the prompt asking them not to. The parser tolerates it.
-    raw = "```json\n[{\"type\":\"basic\",\"front\":\"Q\",\"back\":\"A\"}]\n```"
+    raw = '```json\n[{"type":"basic","front":"Q","back":"A"}]\n```'
     cards = parse_response(raw)
     assert len(cards) == 1
     assert cards[0].front == "Q"
@@ -258,9 +258,7 @@ def test_vocabulary_cloze_is_case_insensitive() -> None:
 
 
 def test_extracted_card_dataclass_roundtrip() -> None:
-    c = ExtractedCard(
-        card_type="basic", front="a", back="b", tags=["t"]
-    )
+    c = ExtractedCard(card_type="basic", front="a", back="b", tags=["t"])
     assert c.card_type == "basic"
     assert c.front == "a"
     assert c.back == "b"

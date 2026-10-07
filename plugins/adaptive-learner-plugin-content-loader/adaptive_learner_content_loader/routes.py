@@ -155,9 +155,7 @@ class SetBookResponse(BaseModel):
     asin: str | None
 
     @classmethod
-    def from_model(
-        cls, book: ContentSetBook | None
-    ) -> SetBookResponse | None:
+    def from_model(cls, book: ContentSetBook | None) -> SetBookResponse | None:
         if book is None:
             return None
         return cls(

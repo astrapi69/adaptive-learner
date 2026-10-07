@@ -187,9 +187,7 @@ def build_evaluation_messages(
             continue
         # Map system messages to "(prompt)" so they don't confuse the
         # evaluator into judging the system prompt's own content.
-        label = {"user": "Learner", "assistant": "AI", "system": "(prompt)"}.get(
-            role, role
-        )
+        label = {"user": "Learner", "assistant": "AI", "system": "(prompt)"}.get(role, role)
         turns.append(f"{label}: {content}")
     transcript = "\n".join(turns) if turns else "(no exchanges yet)"
 
@@ -269,9 +267,7 @@ def _clamp_confidence(value: Any) -> float:
     return f
 
 
-def parse_evaluation_response(
-    raw: str | None, *, current_step: int
-) -> StepEvaluation:
+def parse_evaluation_response(raw: str | None, *, current_step: int) -> StepEvaluation:
     """Robustly parse the AI's JSON response into a StepEvaluation.
 
     Strips common markdown fences. On any parse failure or missing
