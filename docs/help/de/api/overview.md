@@ -5,6 +5,9 @@ API. Im Server-Modus spricht das Frontend mit ihr; im Lokal-
 (Dexie-)Modus ist die API nicht erreichbar - die gleichen
 Operationen laufen im Browser.
 
+Jeden Endpoint listet [Alle Endpoints](endpoints.md), erzeugt
+aus dem eingecheckten OpenAPI-Snapshot.
+
 ## Basis-URL
 
 - **Lokal-Dev**: `http://localhost:18001/api`

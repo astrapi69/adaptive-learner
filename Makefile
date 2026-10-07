@@ -749,8 +749,9 @@ sync-schema-check: ## Exit non-zero if the schema mirror, generated artefacts or
 	@cd backend && poetry run python ../scripts/generate_pydantic_models.py --check
 	@cd frontend && node scripts/sync-schema-mirror.mjs --check
 
-sync-openapi: ## Regenerate the committed OpenAPI snapshot schema/openapi.json from the booted app (#2281; single writer)
+sync-openapi: ## Regenerate the committed OpenAPI snapshot schema/openapi.json from the booted app (#2281; single writer), then the endpoint pages of the help API reference (#3454)
 	@cd backend && poetry run python ../scripts/sync_openapi.py
+	@python3 scripts/generate_api_reference.py
 
 sync-openapi-check: ## Exit non-zero if the app's OpenAPI spec drifts from the committed snapshot (#2281; fails closed, asserts the full plugin set)
 	@cd backend && poetry run python ../scripts/sync_openapi.py --check

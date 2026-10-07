@@ -156,6 +156,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 # The i18n coverage check lives in its own module (#2287/#2362) so this
 # verifier stays under the cohesion file-size gate; re-exported here so the
 # CHECKS registry and the tests keep importing it from ``verify_docs``.
+from generate_api_reference import check_api_reference  # noqa: E402
 from testplan_ids import check as testplan_id_check  # noqa: E402
 from verify_docs_feature_shots import check_feature_shots  # noqa: E402,F401
 from verify_docs_help_changelog import check_help_changelog as _check_help_changelog  # noqa: E402
@@ -865,6 +866,7 @@ CHECKS = {
     "testplan-parity": lambda r, o: check_testplan_parity(r),
     "testplan-ids": lambda r, o: check_testplan_ids(r),
     "feature-shots": lambda r, o: check_feature_shots(r),
+    "api-reference": lambda r, o: check_api_reference(r, REPO),
     "i18n": lambda r, o: check_i18n(r, o.fix),
 }
 
