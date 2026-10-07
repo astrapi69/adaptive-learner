@@ -444,10 +444,11 @@ class TestManifestEvaluationBlock:
     engine#171) that the engine 0.29.0 re-pin (#3238) brought into the
     generated layer ``manifest_generated.py``.
 
-    No PR gate proves that layer is regenerated on a re-pin
-    (``generate_pydantic_models.py --check`` runs only in
-    ``make sync-schema-check``; ``test_lesson_schema_drift.py`` covers
-    content-set and card). ``ContentSet`` is ``extra="forbid"``, so on a
+    Since #3650 a PR gate proves that layer is regenerated on a re-pin
+    (``generate_pydantic_models.py --check`` as a backend CI step;
+    ``test_lesson_schema_drift.py`` covers content-set and card); these
+    tests pin the behaviour the layer carries. ``ContentSet`` is
+    ``extra="forbid"``, so on a
     stale layer a manifest declaring the block is rejected WHOLE, every
     set in it with it.
 

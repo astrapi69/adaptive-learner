@@ -80,6 +80,13 @@ checks:
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_locale_coverage.py
     probe: script_exists=backend/tests/test_verify_docs_locale_coverage.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
+  - id: pydantic-layer-single-writer
+    verifies: the content-loader's generated Pydantic modules equal the generator output, which is itself lint-clean under the CI ruff configuration, so ruff --fix can never become a second writer of a generated path; runs on every backend PR instead of only at release (#3650)
+    rule: none (single-writer class of lessons/ci-gates.md, #2265; cadence class of "PR-CI vs nightly gates")
+    status: active
+    wired_in: scripts/generate_pydantic_models.py --check; .github/workflows/ci.yml backend-tests step; backend/tests/test_pydantic_layer_single_writer.py; make sync-schema-check
+    probe: script_exists=backend/tests/test_pydantic_layer_single_writer.py | ci_step=.github/workflows/ci.yml::backend-tests::Generated Pydantic layer drift gate (#3650)::generate_pydantic_models.py
+
   - id: api-reference
     verifies: the help API reference pages docs/help/{en,de}/api/endpoints.md match the committed OpenAPI snapshot, so the reference names every core router and plugin route; a missing or empty snapshot FAILs (#3454)
     rule: ai-workflow/documentation-protocol.md#when-to-update-docsapimd

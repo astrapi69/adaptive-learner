@@ -232,8 +232,35 @@ def _alias_constrained_str_wrappers(source: str) -> str:
     return rewritten
 
 
-def generate(schema_path: Path, class_name: str) -> str:
-    """Run datamodel-codegen for one schema, return the module source."""
+def _lint_clean(source: str, target: Path) -> str:
+    """Return ``source`` as ``ruff check --fix`` would leave it at ``target``.
+
+    The generator is the only writer of its modules (#2265). Once ruff
+    checked the plugins (#3625), ``ruff --fix`` re-sorted their imports and
+    became a second writer, so the committed files stopped matching the
+    generator (#3650). Running the fix here, with ``target`` as the stdin
+    filename so ruff resolves the same configuration CI applies, makes the
+    output lint-clean by construction.
+
+    Raises:
+        RuntimeError: when ruff produced no output (not installed, crashed);
+            the generator never writes an unchecked module.
+    """
+    result = subprocess.run(
+        ["ruff", "check", "--fix", "--quiet", "--stdin-filename", str(target), "-"],
+        input=source,
+        capture_output=True,
+        text=True,
+        cwd=REPO_ROOT / "backend",
+        check=False,
+    )
+    if not result.stdout:
+        raise RuntimeError(f"ruff produced no output for {target.name}: {result.stderr.strip()}")
+    return result.stdout
+
+
+def generate(schema_path: Path, class_name: str, module_name: str) -> str:
+    """Run datamodel-codegen for one schema, return the lint-clean module source."""
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     _collapse_nullable(schema)
     with tempfile.TemporaryDirectory() as tmp:
@@ -258,14 +285,15 @@ def generate(schema_path: Path, class_name: str) -> str:
             check=True,
             capture_output=True,
         )
-        return _alias_constrained_str_wrappers(_fix_nullable_lists(out.read_text(encoding="utf-8")))
+        source = _alias_constrained_str_wrappers(_fix_nullable_lists(out.read_text(encoding="utf-8")))
+    return _lint_clean(source, PACKAGE_DIR / module_name)
 
 
 def main() -> int:
     check = "--check" in sys.argv
     drift = False
     for schema_path, module_name, class_name in TARGETS:
-        generated = generate(schema_path, class_name)
+        generated = generate(schema_path, class_name, module_name)
         target = PACKAGE_DIR / module_name
         current = target.read_text(encoding="utf-8") if target.exists() else ""
         if check:

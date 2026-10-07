@@ -236,6 +236,16 @@ jobs:
         working-directory: backend
         run: poetry run python ../scripts/sync_openapi.py --check
 
+      # Generated Pydantic layer drift gate (#3650): the content-loader's
+      # schema_generated.py / manifest_generated.py have exactly one writer,
+      # the generator. This ran only inside make release-test, so a ruff
+      # --fix that re-sorted their imports (#3625) sat red until a release.
+      # Explicit step, like the OpenAPI gate, so test selection never skips it.
+      - name: Generated Pydantic layer drift gate (#3650)
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
+        working-directory: backend
+        run: poetry run python ../scripts/generate_pydantic_models.py --check
+
       # Dead-code ratchet, Python side (#3047): vulture over backend/app plus
       # every plugin package against the list baseline. The weekly
       # dead-code.yml stays the full-scope report; running the side a PR can
