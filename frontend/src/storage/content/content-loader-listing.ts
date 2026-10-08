@@ -121,7 +121,7 @@ function rowAsParsedSet(row: ContentSetRow, tags: string[]): ParsedSet {
 
 /** A cached row as a listing entry, through the engine's
  *  ``asContentSetEntry`` like every other set (#3395). */
-export async function rowToCachedEntry(
+async function rowToCachedEntry(
   row: ContentSetRow,
 ): Promise<ContentSetEntry> {
   let tags: string[] = [];
