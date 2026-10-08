@@ -62,6 +62,25 @@ describe("user-generated sets (Dexie / My Lessons)", () => {
     await _resetDbForTests();
   });
 
+  it.each([
+    ["the legacy language alias as the target", {}, { target_language: "es", source_language: "en" }],
+    ["an explicit pair", { target_language: "fr", source_language: "de" }, { target_language: "fr", source_language: "de" }],
+  ])("stores the row the engine projects: %s (#3395)", async (_label, overrides, pair) => {
+    const entry = await saveUserSetDexie(saveInput(overrides), "2026-05-29T00:00:00Z");
+    expect(entry).toMatchObject({ ...pair, language: pair.target_language, visibility: "visible", review_status: "authored" });
+    const { getDb } = await import("../dexie/db");
+    const rows = await getDb().contentSets.where("set_id").equals("conv-1").toArray();
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      ...pair,
+      language: pair.target_language,
+      domain: "analysis",
+      visibility: "visible",
+      review_status: "authored",
+      evaluation: null,
+    });
+  });
+
   it("saves, lists, and plays a user-generated lesson", async () => {
     const entry = await saveUserSetDexie(saveInput(), "2026-05-29T00:00:00Z");
     expect(entry.source).toBe(USER_GENERATED_SOURCE);
