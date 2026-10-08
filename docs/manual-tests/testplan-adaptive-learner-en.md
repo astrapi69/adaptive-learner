@@ -532,6 +532,12 @@ Requires domain knowledge. Not automatable.
       "2 / 5 paired" directly left of "Check" and counts along with every
       pair; it is absent on theory steps, after "Check" and on the summary,
       and the same in the review / shuffle / endless runners
+- [ ] TC-0949 Matching, re-pairing instead of undoing (#3237): tapping a paired tile
+      only selects it (selection ring), the counter stays; then tap a tile
+      in the other column: if it is free, the pair moves there; if it is
+      paired, the two pairs swap partners. The counter never drops, and a
+      full board stays full. The same when starting in the right column;
+      Ctrl/Cmd+Z still undoes the last pair
 
 - [ ] TC-0132 Matching: long words wrap inside the tile (#3174): open a matching
       exercise whose word is wider than the tile on a NARROW device (iPhone,
@@ -960,7 +966,8 @@ preview delivery). In the regular build the mode does not exist.
       hop with the new word
 - [ ] TC-0258 Matching exercise: a freshly formed pair "snaps" together with a
       pop on both tiles; after checking, correct pairs hop briefly;
-      tapping a pair still undoes it
+      tapping a pair selects it for re-pairing (#3237), as in the
+      classic mode
 - [ ] TC-0259 Behaviour unchanged: selection, checking, score and resolution
       are identical to normal mode in all three exercise types
 - [ ] TC-0260 Game mode off: classic lists/chips/tiles without the game look;
