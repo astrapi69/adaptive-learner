@@ -3683,13 +3683,13 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
 - [ ] TC-0831 Backup-Round-trip: Rahmen wählen + einen kaufen, Export (`.alb`),
       Daten löschen, Import → Auswahl und Kauf sind wieder da
 - [ ] TC-0832 Beide Speicher-Modi verhalten sich identisch (XP-Abzug inklusive)
-- [ ] TC-0949 Besitz folgt dem Kauf, nicht dem Browser (#3445, API-Modus): Rahmen
+- [ ] TC-0951 Besitz folgt dem Kauf, nicht dem Browser (#3445, API-Modus): Rahmen
       Stern kaufen, dann denselben Nutzer in einem zweiten Browser (oder
       nach dem Löschen der Website-Daten) öffnen und Einstellungen >
       Allgemein > Profil aufrufen: Stern ist freigeschaltet und wählbar,
       die XP sind nur einmal abgezogen. Dasselbe für die
       Maskottchen-Variante Gold und ein Arcade-Spiel
-- [ ] TC-0950 Käufe von vor #3445: ein vor dem Update gekaufter Rahmen bleibt nach
+- [ ] TC-0952 Käufe von vor #3445: ein vor dem Update gekaufter Rahmen bleibt nach
       dem Update freigeschaltet, die XP ändern sich beim ersten Öffnen der
       Galerie nicht, und danach ist er auch in einem zweiten Browser
       freigeschaltet
