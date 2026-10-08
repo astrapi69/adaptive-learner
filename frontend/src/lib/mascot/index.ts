@@ -11,6 +11,7 @@ export {
 export type {MascotVariant} from "./mascot-variants";
 export {
     MASCOT_VARIANT_CHANGE_EVENT,
+    MASCOT_VARIANT_PURCHASES,
     addPurchasedMascotVariant,
     readMascotVariantState,
     setSelectedMascotVariant,

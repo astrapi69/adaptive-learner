@@ -74,6 +74,15 @@ export const engagementApi = {
         `/plugins/gamification/xp/${encodeURIComponent(userId)}/spend`,
         { method: "POST", body: { amount, reason } },
       ),
+    purchaseItem: (userId: string, input: import("../storage/types").XpPurchaseInput) =>
+      apiCall<import("../storage/types").XpPurchaseResult>(
+        `/plugins/gamification/xp/${encodeURIComponent(userId)}/purchases`,
+        { method: "POST", body: input },
+      ),
+    listPurchases: (userId: string) =>
+      apiCall<import("../storage/types").XpPurchaseRecord[]>(
+        `/plugins/gamification/xp/${encodeURIComponent(userId)}/purchases`,
+      ),
     listBadges: (userId: string) =>
       apiCall<import("../storage/types").BadgeWithProgress[]>(
         `/plugins/gamification/badges/${encodeURIComponent(userId)}`,

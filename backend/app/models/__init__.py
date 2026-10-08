@@ -1046,6 +1046,40 @@ class UserXP(Base):
         return f"<UserXP user={self.user_id!r} xp={self.total_xp} level={self.level}>"
 
 
+class XpPurchase(Base):
+    """One XP purchase: an avatar frame, a mascot variant or an arcade game (#3445).
+
+    Written in the same transaction as the ``UserXP`` deduction, so the
+    spend and the acquisition are one event; ownership is derived from this
+    table. Append-only (a purchase is never undone). The id is a uuid5 of
+    ``(user_id, item_kind, item_id)`` (``adaptive_learner_gamification.
+    purchases.purchase_id``), so the same purchase is the same row on every
+    device: sync skips it and a repeated migration adds nothing.
+    """
+
+    __tablename__ = "xp_purchases"
+    __table_args__ = (
+        UniqueConstraint("user_id", "item_kind", "item_id", name="uq_xp_purchases_item"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    item_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    item_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    cost: Mapped[int] = mapped_column(Integer, nullable=False)
+    purchased_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+
+    def __repr__(self) -> str:
+        return f"<XpPurchase user={self.user_id!r} {self.item_kind}={self.item_id!r}>"
+
+
 class Badge(Base):
     """Catalog of available badges (Phase 29B).
 

@@ -254,6 +254,7 @@ A forma de transferência é o valor de string em minúsculas
 | ProjectSubject | project_subjects | v1.9.0 | M:N (LearningProject, Subject) |
 | ProjectTag | project_tags | v1.9.0 | M:N (LearningProject, Tag) |
 | UserXP | user_xp | v1.16.0 | XP + nível singleton por utilizador |
+| XpPurchase | xp_purchases | v2.17.0 | Uma compra com XP (moldura de avatar, variante de mascote, jogo de arcada); a posse deriva dela |
 | Badge | badges | v1.16.0 | Catálogo de emblemas (semeado a partir de YAML) |
 | UserBadge | user_badges | v1.16.0 | Registo de emblema obtido (apenas anexar) |
 | UserStreak | user_streaks | v1.16.0 | Estado de sequência + congelamentos + modo fim de semana |

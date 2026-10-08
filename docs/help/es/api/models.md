@@ -248,6 +248,7 @@ La forma wire es el valor de cadena en minúsculas (p. ej.
 | ProjectSubject | project_subjects | v1.9.0 | M:N (LearningProject, Subject) |
 | ProjectTag | project_tags | v1.9.0 | M:N (LearningProject, Tag) |
 | UserXP | user_xp | v1.16.0 | XP + nivel singleton por usuario |
+| XpPurchase | xp_purchases | v2.17.0 | Una compra con XP (marco de avatar, variante de mascota, juego arcade); la propiedad se deriva de ella |
 | Badge | badges | v1.16.0 | Catálogo de insignias (sembrado desde YAML) |
 | UserBadge | user_badges | v1.16.0 | Registro de insignia ganada (solo acumulación) |
 | UserStreak | user_streaks | v1.16.0 | Estado de racha + pausas + modo fin de semana |

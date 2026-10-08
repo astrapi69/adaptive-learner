@@ -94,6 +94,8 @@ réponse de chaque endpoint figurent dans cet instantané ou sous
 | `POST` | `/api/plugins/gamification/xp/{user_id}/award` | Manual Award |
 | `POST` | `/api/plugins/gamification/xp/{user_id}/award-assessment` | Award Assessment |
 | `POST` | `/api/plugins/gamification/xp/{user_id}/award-import` | Award Import |
+| `GET` | `/api/plugins/gamification/xp/{user_id}/purchases` | List Purchases |
+| `POST` | `/api/plugins/gamification/xp/{user_id}/purchases` | Purchase Item |
 | `POST` | `/api/plugins/gamification/xp/{user_id}/spend` | Spend Xp |
 | `POST` | `/api/plugins/missions/regenerate/{user_id}` | Regenerate |
 | `GET` | `/api/plugins/missions/templates` | Get Templates |

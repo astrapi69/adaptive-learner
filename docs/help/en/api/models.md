@@ -249,6 +249,7 @@ The wire form is the lowercase string value (e.g.
 | ProjectSubject | project_subjects | v1.9.0 | M:N (LearningProject, Subject) |
 | ProjectTag | project_tags | v1.9.0 | M:N (LearningProject, Tag) |
 | UserXP | user_xp | v1.16.0 | XP + level singleton per user |
+| XpPurchase | xp_purchases | v2.17.0 | One XP purchase (avatar frame, mascot variant, arcade game); ownership derives from it |
 | Badge | badges | v1.16.0 | Badge catalog (seeded from YAML) |
 | UserBadge | user_badges | v1.16.0 | Earned-badge record (append-only) |
 | UserStreak | user_streaks | v1.16.0 | Streak state + freezes + weekend mode |

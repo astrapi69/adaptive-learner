@@ -6,7 +6,10 @@
  * rides the ``.alb`` backup's localStorage snapshot.
  */
 
+import {xpCostOf} from "../gamification/purchase-ledger";
+import type {PurchaseSurface} from "../gamification/purchase-ledger";
 import {createSelectionStore} from "../gamification/selection-store";
+import {MASCOT_VARIANTS} from "./mascot-variants";
 
 const store = createSelectionStore("adaptive-learner.mascot.variants", "funke");
 
@@ -21,3 +24,10 @@ export const setSelectedMascotVariant = store.setSelected;
 
 /** Record an XP purchase for ``userId`` (idempotent). */
 export const addPurchasedMascotVariant = store.addPurchased;
+
+/** The variant purchases in the XP ledger (#3445), for ``reconcilePurchases``. */
+export const MASCOT_VARIANT_PURCHASES: PurchaseSurface = {
+    kind: "mascot_variant",
+    store,
+    costOf: xpCostOf(MASCOT_VARIANTS),
+};

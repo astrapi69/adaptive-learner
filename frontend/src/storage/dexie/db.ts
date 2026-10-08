@@ -43,6 +43,7 @@ import type {
     ProjectSubjectRow,
     ProjectTagRow,
     UserXPRow,
+    XpPurchaseRow,
     BadgeRow,
     UserBadgeRow,
     StudyQuestionRow,
@@ -91,6 +92,9 @@ export class AdaptiveLearnerDB extends Dexie {
     projectSubjects!: EntityTable<ProjectSubjectRow, "id">;
     projectTags!: EntityTable<ProjectTagRow, "id">;
     userXp!: EntityTable<UserXPRow, "id">;
+    // #3445 — XP purchase ledger; ownership of bought cosmetics derives
+    // from these rows instead of a localStorage-only list.
+    xpPurchases!: EntityTable<XpPurchaseRow, "id">;
     badges!: EntityTable<BadgeRow, "id">;
     userBadges!: EntityTable<UserBadgeRow, "id">;
     userStreaks!: EntityTable<UserStreakRow, "id">;
@@ -665,6 +669,15 @@ export class AdaptiveLearnerDB extends Dexie {
         // needed, existing rows already carry the field.
         this.version(33).stores({
             speechRecordings: "id, user_id, set_id, lesson_filename, recorded_at",
+        });
+
+        // #3445 — XP purchase ledger. Additive new store; the id is the
+        // uuid5 of (user, kind, item), and the compound unique index is
+        // the DB-level backstop against a second row for one purchase.
+        // Existing local ownership migrates lazily (purchase-ledger.ts),
+        // not here: the price lives in the frontend catalogs.
+        this.version(34).stores({
+            xpPurchases: "id, user_id, &[user_id+item_kind+item_id]",
         });
     }
 }
