@@ -434,6 +434,7 @@
     "pronunciation_quick_start": "Práctica de Pronunciación"
   },
   "session": {
+    "auto_loop_unavailable": "En la aplicación de escritorio, después del paso 7 empieza automáticamente un nuevo ciclo con el siguiente tema. La versión del navegador todavía no lo hace: termina la sesión y empieza una nueva para seguir aprendiendo.",
     "title": "Sesión de aprendizaje",
     "topic_label": "Tema",
     "in_progress": "Sesión en curso",

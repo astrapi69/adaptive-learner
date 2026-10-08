@@ -404,6 +404,7 @@ review:
   no_data: Henüz oturum yok - eğilimleri görmek için ilkini başlat.
   pronunciation_quick_start: Telaffuz Alıştırması
 session:
+  auto_loop_unavailable: "Masaüstü uygulamasında 7. adımdan sonra sıradaki konuyla yeni bir döngü otomatik olarak başlar. Tarayıcı sürümü bunu henüz yapamıyor: öğrenmeye devam etmek için oturumu bitir ve yeni bir oturum başlat."
   title: Öğrenme oturumu
   topic_label: "Konu"
   in_progress: Oturum devam ediyor

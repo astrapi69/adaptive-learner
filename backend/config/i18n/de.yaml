@@ -404,6 +404,7 @@ review:
   no_data: Noch keine Sitzungen - starte deine erste, um Trends zu sehen.
   pronunciation_quick_start: Aussprachetraining
 session:
+  auto_loop_unavailable: "In der Desktop-App beginnt nach Schritt 7 automatisch ein neuer Zyklus mit dem nächsten Thema. Die Browser-Version kann das noch nicht: Beende die Sitzung und starte eine neue, um weiterzulernen."
   title: Lernsitzung
   topic_label: "Thema"
   in_progress: Sitzung läuft

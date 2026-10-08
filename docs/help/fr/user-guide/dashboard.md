@@ -25,7 +25,8 @@ restent jusqu'au prochain niveau.
 
 **Série active**
 Le nombre de jours consécutifs avec au moins une session ou une leçon
-complétée. Les gels de série disponibles ce mois-ci sont affichés.
+complétée. Les gels de série disponibles sont affichés : un par
+tranche de 7 jours de série, 3 au maximum.
 
 **Badges récents**
 Les 3 derniers badges débloqués avec leurs niveaux (bronze/argent/or).
