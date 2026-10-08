@@ -20,17 +20,10 @@
     "error": "Bir şeyler ters gitti.",
     "back": "Geri",
     "next": "İleri",
-    "start": "Başla",
     "submit": "Gönder",
-    "continue": "Devam et",
-    "done": "Bitti",
     "delete": "Sil",
     "edit": "Düzenle",
     "confirm": "Onayla",
-    "yes": "Evet",
-    "no": "Hayır",
-    "optional": "isteğe bağlı",
-    "required": "zorunlu",
     "minutes": "dakika",
     "close": "Kapat"
   },
@@ -87,9 +80,6 @@
       "more": "Daha fazla"
     },
     "primary": "Ana gezinme",
-    "discover": "İçerik keşfet",
-    "offline_long": "Çevrimdışı - önceki oturumlar okunabilir kalır",
-    "sync_pending": "{n} değişiklik eşitlenmeyi bekliyor",
     "statistics": "İstatistikler",
     "profile": "Profilin",
     "learning_path": "Öğrenme yolu",
@@ -102,9 +92,6 @@
     "help": "Yardım",
     "home": "Ana sayfa",
     "menu": "Menü",
-    "online": "Çevrimiçi",
-    "offline": "Çevrimdışı",
-    "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Geliştirici Modu açık - hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın.",
     "content": "İçeriğim",
@@ -112,9 +99,7 @@
     "mode_badge_ai": "Yapay Zeka+İçerik",
     "mode_badge_tooltip_content": "Yapılandırılmış API anahtarı yok - yalnızca hazır içerik kullanılıyor. Yapay zeka özelliklerini etkinleştirmek için Ayarlar'dan anahtar ekleyin.",
     "mode_badge_tooltip_ai": "Yapay zeka sağlayıcısı yapılandırıldı - alıştırmalar dikkat dağıtıcılar ve ipuçları için yapay zeka kullanır. İçerik setlerine göz atmak için dokunun.",
-    "mode_badge_action": "içeriğe göz at",
-    "sync_paired": "Eşitleme: eşleşti (Ayarlar > Eşitleme)",
-    "sync_unpaired": "Eşitleme: eşleşmedi (Ayarlar > Eşitleme)"
+    "mode_badge_action": "içeriğe göz at"
   },
   "import": {
     "title": "Bir konuşmayı içe aktar",
@@ -141,7 +126,7 @@
     "analysis_title": "Analiz",
     "analysis_ready": "Analiz hazır.",
     "analysis_fallback": "Analiz çalıştı ama yapay zekânın cevabı temiz şekilde ayrıştırılamadı.",
-    "analysis_fallback_long": "Yapay zekânın cevabı yapılandırılmış JSON olarak ayrıştırılamadı. Aşağıdaki özet bir yedek çözümdür.",
+    "analysis_fallback_long": "Yapay zekânın cevabı yapılandırılmış bir analiz olarak okunamadı. Analizi yeniden çalıştır veya başka bir yapay zekâ sağlayıcısı seç.",
     "analysis_error": "Konuşma analiz edilemedi.",
     "analysis_phase_reading": "Adım 1/3: Sohbet okunuyor…",
     "analysis_phase_analyzing": "Adım 2/3: İçerik analiz ediliyor…",
@@ -385,7 +370,6 @@
     "session_title": "Uyarlanabilir ders",
     "loading": "Hataların inceleniyor…",
     "empty_body": "Henüz uyarlanacak bir şey yok - veri biriktirmek için önce bir derse çalış.",
-    "not_cached_body": "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç.",
     "back_to_dashboard": "Panoya dön",
     "transparency": {
       "focus_prefix": "Bu ders şuna odaklanıyor:",
@@ -400,7 +384,6 @@
       "note": "Öğe puanları güncellendi. Bir sonraki uyarlanabilir dersin hâlâ çalışılması gereken öğelere odaklanacak."
     },
     "error": {
-      "missing_params": "İçerik seti seçilmedi.",
       "load_failed": "Uyarlanabilir ders oluşturulamadı."
     }
   },
@@ -427,7 +410,6 @@
     "subtitle_capped": "Tekrar için {due} öğeden {shown} tanesi",
     "loading": "Tekrar oturumu yükleniyor…",
     "empty_body": "Hepsi tamam! Bu sette tekrar edilecek öğe yok.",
-    "not_cached_body": "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç.",
     "back_to_dashboard": "Panoya dön",
     "back_to_lesson": "Derse dön",
     "summary": {
@@ -437,7 +419,6 @@
       "note": "Öğe puanları güncellendi. Ustalaştığın öğeler bir sonraki oturumda görünmeyecek."
     },
     "error": {
-      "missing_params": "İçerik seti seçilmedi.",
       "load_failed": "Tekrar oturumu yüklenemedi."
     },
     "spaced_empty": "Şu an tazelenecek bir şey yok. Harika bir ritim!",
@@ -453,6 +434,7 @@
     "pronunciation_quick_start": "Telaffuz Alıştırması"
   },
   "session": {
+    "auto_loop_unavailable": "Masaüstü uygulamasında 7. adımdan sonra sıradaki konuyla yeni bir döngü otomatik olarak başlar. Tarayıcı sürümü bunu henüz yapamıyor: öğrenmeye devam etmek için oturumu bitir ve yeni bir oturum başlat.",
     "title": "Öğrenme oturumu",
     "topic_label": "Konu",
     "in_progress": "Oturum devam ediyor",
@@ -739,10 +721,6 @@
     "tab_plugins": "Eklentiler",
     "plugins_installed_title": "Yüklü eklentiler",
     "plugins_installed_desc": "Masaüstü uygulamasının yüklediği her eklenti; sürüm, kaynak ve etkinleştirme zamanıyla (PluginForge yaşam döngüsü).",
-    "plugins_col_name": "Eklenti",
-    "plugins_col_version": "Sürüm",
-    "plugins_col_source": "Kaynak",
-    "plugins_col_activated": "Etkinleştirildi",
     "plugins_source_entry_point": "Paket",
     "plugins_source_direct": "Doğrudan kaydedildi",
     "plugins_marker_load_error": "Yükleme hatası",
@@ -937,7 +915,6 @@
       "rollback_warning": "Yeni anahtar çalışmıyor. Eski anahtar korunsun mu?",
       "rollback_keep_old": "Eskiyi koru",
       "rollback_save_anyway": "Yine de kaydet",
-      "rollback_cancel": "İptal",
       "rollback_restore": "Son çalışan anahtarı geri yükle",
       "format_hint": {
         "anthropic": "sk-ant- ile başlar",
@@ -1338,6 +1315,107 @@
     "auto_compare_missing": "Otomatik yedek artık mevcut değil - döngüden çıkarıldı."
   },
   "export": {
+    "report": {
+      "progress_report_title": "Öğrenme ilerlemesi",
+      "session_detail_title": "Oturum ayrıntısı",
+      "curriculum_overview_title": "Müfredat özeti",
+      "generated_at": "Oluşturulma",
+      "app_version": "Uygulama sürümü",
+      "learner": "Öğrenen",
+      "language": "Dil",
+      "method_profile": "Yöntem profili",
+      "dominant_method": "Baskın yöntem",
+      "assessed_at": "Son değerlendirme",
+      "no_profile": "Henüz değerlendirme yok. Profilini görmek için giriş değerlendirmesini tamamla.",
+      "projects": "Projeler",
+      "no_projects": "Henüz öğrenme projesi yok.",
+      "topic": "Konu",
+      "goal": "Hedef",
+      "timeframe": "Süre",
+      "daily_minutes": "Günlük dakika",
+      "current_problem": "Mevcut engel",
+      "status": "Durum",
+      "active": "etkin",
+      "archived": "arşivlendi",
+      "session_count": "Oturumlar",
+      "total_minutes": "Toplam dakika",
+      "mean_understanding": "Ortalama anlama",
+      "mean_stress": "Ortalama stres",
+      "method_distribution": "Yöntem dağılımı",
+      "method_switches": "Yöntem değişiklikleri",
+      "no_switches": "Bu projede yöntem değişikliği yok.",
+      "switched_from_to": "Değişiklik",
+      "reason": "Gerekçe",
+      "recent_sessions": "Son oturumlar",
+      "no_sessions": "Henüz tamamlanan oturum yok.",
+      "method": "Yöntem",
+      "duration": "Süre",
+      "understanding": "Anlama",
+      "stress": "Stres",
+      "method_fit": "Yöntem uyumu",
+      "notes": "Notlar",
+      "step_evaluation_insights": "Adım değerlendirmeleri",
+      "no_step_insights": "Henüz adım değerlendirmesi yok.",
+      "step": "Adım",
+      "evaluations_count": "Değerlendirmeler",
+      "advance_rate": "İlerleme oranı",
+      "mean_confidence": "Ortalama güven",
+      "deferred": "ertelendi",
+      "repeated": "tekrarlandı",
+      "advanced": "ilerledi",
+      "extractions": "Analiz edilen sohbetler",
+      "no_extractions": "Henüz analiz edilen sohbet yok.",
+      "imported_at": "İçe aktarılma",
+      "messages": "Mesajlar",
+      "source": "Kaynak",
+      "analysis": "Analiz",
+      "no_session": "Oturum bulunamadı.",
+      "session": "Oturum",
+      "started_at": "Başlangıç",
+      "ended_at": "Bitiş",
+      "cycle_step": "Mevcut döngü adımı",
+      "transcript": "Konuşma dökümü",
+      "no_messages": "Bu oturumda mesaj yok.",
+      "role_user": "Öğrenen",
+      "role_assistant": "Yapay zekâ",
+      "role_system": "Sistem",
+      "rating": "Değerlendirme",
+      "no_rating": "Oturum değerlendirilmedi.",
+      "step_evaluations": "Adım değerlendirmeleri",
+      "from_step": "Önceki adım",
+      "to_step": "Sonraki adım",
+      "confidence": "Güven",
+      "applied": "Uygulandı",
+      "not_applied": "Uygulanmadı",
+      "fallback": "Yedek kullanıldı",
+      "evaluated_at": "Değerlendirme",
+      "curriculum": "Müfredat",
+      "description": "Açıklama",
+      "topics": "Konular",
+      "no_topics": "Bu müfredatta konu yok.",
+      "lessons": "Dersler",
+      "no_lessons": "Bu müfredatta ders yok.",
+      "out_of": "/",
+      "minutes_short": "dk",
+      "scale_5": "1 ile 5 arasında bir ölçekte",
+      "analysis_topic": "Algılanan konu",
+      "analysis_subtopics": "Alt konular",
+      "analysis_user_level": "Seviye",
+      "analysis_strengths": "Güçlü yönler",
+      "analysis_weaknesses": "Zayıf yönler",
+      "analysis_error_patterns": "Hata kalıpları",
+      "analysis_recommended_method": "Önerilen yöntem",
+      "analysis_recommended_focus": "Önerilen odak",
+      "analysis_suggested_curriculum": "Önerilen müfredat",
+      "analysis_summary": "Özet",
+      "analysis_priority": "Öncelik",
+      "level_beginner": "Başlangıç",
+      "level_intermediate": "Orta",
+      "level_advanced": "İleri",
+      "linked_project": "Bağlı proje",
+      "status_completed": "tamamlandı",
+      "status_abandoned": "yarıda bırakıldı"
+    },
     "title": "Dışa aktar",
     "intro": "Öğrenme yolculuğunu Markdown veya PDF olarak indir. Markdown düzenleyip paylaşabileceğin düz metindir; PDF tarayıcının yazdırma penceresini açar ve bir kopya kaydedebilirsin.",
     "progress_label": "İlerleme raporu (tüm yolculuk)",
@@ -1455,10 +1533,6 @@
     },
     "level_detail_title": "Seviye ilerlemesi",
     "level_up": "Seviye atladın!",
-    "reason_session_complete": "Oturum tamamlandı",
-    "reason_assessment_complete": "Değerlendirme tamamlandı",
-    "reason_conversation_imported": "Konuşma içe aktarıldı",
-    "reason_flat": "XP kazanıldı",
     "card_badges": "Rozetler",
     "badges_earned": "kazanıldı",
     "badges_empty": "Henüz uygun rozet yok.",
@@ -1614,20 +1688,7 @@
     "weekend_mode_help": "Hafta sonları serini bozmaz.",
     "reset_done": "İlerleme sıfırlandı: {xp} XP, {badges} rozet, {streak} seri.",
     "reset_failed": "İlerleme sıfırlanamadı.",
-    "weekend_mode_save_failed": "Hafta sonu modu kaydedilemedi.",
-    "danger_zone_heading": "Tehlikeli Bölge",
-    "danger_zone_intro": "Bu cihazdaki tüm öğrenme verilerini kalıcı olarak sil.",
-    "danger_zone_reset_button": "Her şeyi sıfırla",
-    "danger_zone_warning": "Bu, TÜM öğrenme verilerinizi kalıcı olarak siler - oturumlar, ilerleme, profiller, müfredatlar, içe aktarmalar, Anki kartları, ayarlar ve API anahtarları. Bu işlem GERİ ALINAMAZ.",
-    "danger_zone_confirm_prompt": "Onaylamak için RESET yazın",
-    "danger_zone_input_placeholder": "RESET",
-    "danger_zone_final_button": "Kalıcı olarak sil",
-    "danger_zone_backup_offer": "Önce bir yedek oluşturmak ister misin?",
-    "danger_zone_backup_button": "Yedek oluştur",
-    "danger_zone_complete_toast": "Tüm veriler silindi.",
-    "danger_zone_cancel": "Vazgeç",
-    "danger_zone_continue": "Devam et",
-    "danger_zone_failed_toast": "Sıfırlama başarısız:"
+    "weekend_mode_save_failed": "Hafta sonu modu kaydedilemedi."
   },
   "arcade": {
     "title": "Arcade",
@@ -1694,6 +1755,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "Temel",
+      "cloze": "Boşluk doldurma"
+    },
     "title": "Anki Dışa Aktarma",
     "intro": "YZ'nin önerdiği kartları gözden geçir, istediklerini kabul et ve Anki için .apkg dosyası olarak dışa aktar.",
     "filter_project": "Proje",
@@ -2040,8 +2105,7 @@
       "rerender": "Yeniden oluştur",
       "download_zip": "ZIP indir",
       "persist": "Git'e kaydet",
-      "persisting": "Kaydediliyor…",
-      "persist_dexie_tooltip": "Git sürümleme yalnızca sunucu modunda kullanılabilir."
+      "persisting": "Kaydediliyor…"
     },
     "toast": {
       "zip_downloaded": "ZIP indirildi",
@@ -2062,6 +2126,7 @@
       "title": "Öğrenme deposu",
       "loading": "Yükleniyor…",
       "repos_dir": "Depo dizini",
+      "repos_dir_hint": "Varsayılan için boş bırakın: veri dizinindeki repos (bkz. Hakkında)",
       "save": "Ayarları kaydet",
       "saving": "Kaydediliyor…",
       "toast": {
@@ -2076,6 +2141,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Eksik: {word}",
+      "extra": "Fazla: {word}",
+      "replaced": "Yazdığın: {wrote}, beklenen: {expected}"
+    },
     "progress_io": {
       "save_error": "Bu dersteki ilerlemeniz kaydedilemedi.",
       "load_failed": "Bu ders için kaydedilmiş ilerlemeniz yüklenemedi: {detail}",
@@ -2726,6 +2796,7 @@
       "public": "Herkese açık",
       "branch": "Dal",
       "lessons_note": "Bu setteki {n} dersin tümü dahil edilecek.",
+      "lessons_note_one": "Bu setteki tek ders dahil edilecek.",
       "invalid_repo": "Depoyu owner/name olarak girin.",
       "submit": "Dışa aktar",
       "working": "Dışa aktarılıyor…",
@@ -3476,6 +3547,8 @@
       "author_label": "Yazar adı"
     },
     "cards": {
+      "front_placeholder": "Kelime veya ifade",
+      "back_placeholder": "Anlam",
       "heading": "Kelime kartları ekle",
       "front_label": "Ön yüz (öğrenilen)",
       "back_label": "Arka yüz (sizin diliniz)",
@@ -4329,9 +4402,6 @@
     "added": "Depo eklendi.",
     "synced": "Eşitlendi: {sets} set, {lessons} ders.",
     "token_hint": "Özel depolar bir belirteç gerektirir - aşağıya birini yapıştır ya da Ayarlar → Entegrasyonlar bölümünde paylaşılan bir belirteç tanımla.",
-    "trust_official": "Resmî: proje ekibi tarafından derlenen ve kalitesi güvence altına alınan içerik.",
-    "trust_verified": "Doğrulanmış: topluluk tarafından katkıda bulunulan ve ekip tarafından incelenen içerik.",
-    "trust_validated": "Geçerli: teknik olarak doğru; içerik tek tek incelenmedi.",
     "official": {
       "title": "Resmî içerik",
       "counts": "{sets} set · {lessons} ders"
@@ -4415,6 +4485,19 @@
       "sync_failed": "Eşitleme başarısız oldu. Yeniden dene."
     },
     "validation": {
+      "reason": {
+        "not_found": "Depo veya manifest.yaml bulunamadı.",
+        "access_denied": "Erişim reddedildi - depoyu ve GitHub token'ını kontrol et.",
+        "unreachable": "Depoya ulaşılamıyor.",
+        "unsupported_schema": "Desteklenmeyen şema sürümü {version}.",
+        "no_sets": "manifest.yaml hiçbir set listelemiyor.",
+        "no_lessons": "Hiçbir sette ders bulunamadı.",
+        "executable_content": "Ders içeriği izin verilmeyen çalıştırılabilir kod içeriyor.",
+        "lessons_unreadable": "İlk setin dersleri okunamadı.",
+        "lesson_invalid_json": "İlk setin ilk dersi geçerli bir JSON değil.",
+        "validator_unavailable": "Ders doğrulayıcısı yüklenemedi.",
+        "lesson_invalid": "İlk setin ilk dersi doğrulamadan geçemedi: {detail}"
+      },
       "failed": "Doğrulama başarısız oldu: {reason}",
       "passed": "Doğrulama başarılı: {sets} set, {lessons} ders."
     }
@@ -4588,12 +4671,10 @@
     "page_title": "Karışık mod",
     "loading": "Karışık oturum yükleniyor…",
     "empty_body": "Bu set karıştırmak için alıştırma içeren en az iki ders gerektirir.",
-    "not_cached_body": "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç.",
     "back_to_dashboard": "Panoya dön",
     "subtitle": "{lessons} dersten {n} soru karıştırılıyor",
     "error": {
-      "load_failed": "Karışık oturum yüklenemedi.",
-      "missing_params": "İçerik seti seçilmedi."
+      "load_failed": "Karışık oturum yüklenemedi."
     },
     "summary": {
       "heading": "Karışık çalışma tamamlandı!",

@@ -1,59 +1,19 @@
-"""Phase 1C-A.5 tests for the port + CORS resolvers in app.config."""
+"""Phase 1C-A.5 tests for the CORS resolver in app.config."""
 
 from __future__ import annotations
 
-import pytest
-
 from app.config import (
-    DEFAULT_BACKEND_PORT,
     DEFAULT_FRONTEND_PORT,
     _load_app_config,
-    resolve_backend_port,
     resolve_cors_origins,
 )
 
 # --- defaults ---------------------------------------------------------------
 
 
-def test_default_backend_port_is_non_standard():
-    """Locked at 18001 so Adaptive Learner coexists with anything
-    already bound to :8000 on the workstation."""
-    assert DEFAULT_BACKEND_PORT == 18001
-
-
 def test_default_frontend_port_is_non_standard():
     """Locked at 15174 so vite coexists with anything on :5173."""
     assert DEFAULT_FRONTEND_PORT == 15174
-
-
-# --- resolve_backend_port ---------------------------------------------------
-
-
-def test_resolve_backend_port_env_wins(monkeypatch):
-    monkeypatch.setenv("ADAPTIVE_LEARNER_PORT", "22222")
-    assert resolve_backend_port({}) == 22222
-
-
-def test_resolve_backend_port_config_when_no_env(monkeypatch):
-    monkeypatch.delenv("ADAPTIVE_LEARNER_PORT", raising=False)
-    assert resolve_backend_port({"server": {"port": 19001}}) == 19001
-
-
-def test_resolve_backend_port_default_when_nothing(monkeypatch):
-    monkeypatch.delenv("ADAPTIVE_LEARNER_PORT", raising=False)
-    assert resolve_backend_port({}) == DEFAULT_BACKEND_PORT
-
-
-def test_resolve_backend_port_ignores_malformed_env(monkeypatch):
-    monkeypatch.setenv("ADAPTIVE_LEARNER_PORT", "not-a-number")
-    assert resolve_backend_port({"server": {"port": 19001}}) == 19001
-
-
-@pytest.mark.parametrize("bad_port", [0, -1, 70000, "0", "70000"])
-def test_resolve_backend_port_rejects_out_of_range(monkeypatch, bad_port):
-    monkeypatch.setenv("ADAPTIVE_LEARNER_PORT", str(bad_port))
-    # Out-of-range env value is dropped; falls through to config / default.
-    assert resolve_backend_port({}) == DEFAULT_BACKEND_PORT
 
 
 # --- resolve_cors_origins ---------------------------------------------------
@@ -123,21 +83,6 @@ def test_app_yaml_cors_contains_default_frontend_port():
     assert f"http://localhost:{DEFAULT_FRONTEND_PORT}" in origins, (
         f"backend/config/app.yaml server.cors_origins is missing "
         f"http://localhost:{DEFAULT_FRONTEND_PORT}; got {origins!r}."
-    )
-
-
-def test_app_yaml_server_port_matches_default():
-    """Same rule for the documented backend port."""
-    from pathlib import Path
-
-    import yaml
-
-    cfg_path = Path(__file__).resolve().parent.parent / "config" / "app.yaml"
-    with cfg_path.open(encoding="utf-8") as f:
-        cfg = yaml.safe_load(f) or {}
-    port = (cfg.get("server") or {}).get("port")
-    assert port == DEFAULT_BACKEND_PORT, (
-        f"backend/config/app.yaml server.port should be {DEFAULT_BACKEND_PORT}, got {port!r}."
     )
 
 

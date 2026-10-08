@@ -170,6 +170,35 @@ function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
     return slot;
 }
 
+/** #3237 - commit ``leftIdx`` -> ``rightOriginal`` as one move that never
+ *  lowers the pair count. A left that was paired moves to the new right
+ *  (its old right is freed). A right that was paired with another left is
+ *  swapped: that left takes the freed right, or is freed itself when the
+ *  tapped left had none. Slots stay with their left; a newly paired left
+ *  takes the lowest free slot. */
+function _repair(
+    matches: ReadonlyMap<number, number>,
+    slots: ReadonlyMap<number, number>,
+    leftIdx: number,
+    rightOriginal: number,
+): {matches: Map<number, number>; slots: Map<number, number>} {
+    const nextMatches = new Map(matches);
+    const nextSlots = new Map(slots);
+    const freedRight = matches.get(leftIdx);
+    const otherLeft = [...matches.entries()].find(
+        ([left, right]) => right === rightOriginal && left !== leftIdx,
+    )?.[0];
+    nextMatches.set(leftIdx, rightOriginal);
+    if (otherLeft !== undefined && freedRight !== undefined) {
+        nextMatches.set(otherLeft, freedRight);
+    } else if (otherLeft !== undefined) {
+        nextMatches.delete(otherLeft);
+        nextSlots.delete(otherLeft);
+    }
+    if (!nextSlots.has(leftIdx)) nextSlots.set(leftIdx, _nextFreeSlot(nextSlots));
+    return {matches: nextMatches, slots: nextSlots};
+}
+
 
 
 
@@ -465,32 +494,22 @@ function MatchingExercise(
     };
 
     /** Commit a left↔right pair (regardless of which side was tapped
-     *  first), assign it a color slot, and clear both selections. */
+     *  first) through {@link _repair}, so re-pairing a tile overwrites
+     *  and a collision swaps (#3237), and clear both selections. */
     const formPair = (leftIdx: number, rightOriginal: number) => {
-        const next = new Map(matches);
-        next.set(leftIdx, rightOriginal);
-        setMatches(next);
-        setSlotByLeft((prev) => {
-            const nextSlots = new Map(prev);
-            nextSlots.set(leftIdx, _nextFreeSlot(prev));
-            return nextSlots;
-        });
+        const next = _repair(matches, slotByLeft, leftIdx, rightOriginal);
+        setMatches(next.matches);
+        setSlotByLeft(next.slots);
         setSelectedLeft(null);
         setSelectedRight(null);
     };
 
+    /** A tap on any tile, paired or not, selects it (#3237): a paired tile
+     *  is re-paired by tapping its new partner, never dissolved by a tap,
+     *  so checking a pair by tapping it cannot lower the count. Ctrl/Cmd+Z
+     *  still undoes the last pair. */
     const handleLeftClick = (idx: number) => {
         if (submitted) return;
-        // Tapping a paired left undoes the pair.
-        if (matches.has(idx)) {
-            const next = new Map(matches);
-            next.delete(idx);
-            setMatches(next);
-            releaseSlot(idx);
-            setSelectedLeft(null);
-            setSelectedRight(null);
-            return;
-        }
         // A right tile is already selected → complete the pair (B → A).
         if (selectedRight !== null) {
             formPair(idx, selectedRight);
@@ -501,19 +520,6 @@ function MatchingExercise(
 
     const handleRightClick = (originalIndex: number) => {
         if (submitted) return;
-        // Tapping a paired right undoes the pair.
-        const pairedLeft = [...matches.entries()].find(
-            ([, ri]) => ri === originalIndex,
-        );
-        if (pairedLeft) {
-            const next = new Map(matches);
-            next.delete(pairedLeft[0]);
-            setMatches(next);
-            releaseSlot(pairedLeft[0]);
-            setSelectedLeft(null);
-            setSelectedRight(null);
-            return;
-        }
         // A left tile is already selected → complete the pair (A → B).
         if (selectedLeft !== null) {
             formPair(selectedLeft, originalIndex);

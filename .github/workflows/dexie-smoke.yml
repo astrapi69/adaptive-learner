@@ -93,6 +93,12 @@ jobs:
         working-directory: e2e
         run: npx playwright test --config=playwright.dexie.config.ts
 
+      # #3427 - a spec that cannot reach its surface skips at runtime; the
+      # budget keeps a broken path from turning into a green night.
+      - name: Runtime skip budget (#3427)
+        if: success() || failure()
+        run: python3 scripts/check_e2e_skip_budget.py --suite dexie-smoke --report e2e/test-results/dexie-smoke.json
+
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v7

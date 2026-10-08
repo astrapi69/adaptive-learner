@@ -44,13 +44,26 @@ repos:
       - id: check-merge-conflict
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.11
+    rev: v0.16.9
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: [--fix]
         files: ^backend/app/
       - id: ruff-format
         files: ^backend/app/
+      # #3658: the plugins carry no ruff config of their own, so from the
+      # repo root ruff would fall back to its defaults (line length 88).
+      # --config points them at the backend's, which CI applies by running
+      # from backend/; isort's known-first-party there keeps both import
+      # orders equal.
+      - id: ruff-check
+        name: ruff check (plugins)
+        args: [--fix, --config=backend/pyproject.toml]
+        files: ^plugins/
+      - id: ruff-format
+        name: ruff format (plugins)
+        args: [--config=backend/pyproject.toml]
+        files: ^plugins/
 
   - repo: local
     hooks:
@@ -67,12 +80,17 @@ repos:
         pass_filenames: false
         stages: [pre-commit]
 
+      # #3657: checks the lock against the pyproject (poetry check --lock)
+      # instead of the staging, so it also checks in CI (--all-files, nothing
+      # staged). Its own environment brings the poetry that wrote the locks.
       - id: plugin-lock-paired-with-pyproject
-        name: plugin pyproject.toml must be staged with its poetry.lock
-        entry: python3 scripts/check_plugin_lock_paired.py
-        language: system
-        files: ^plugins/adaptive-learner-plugin-[^/]+/pyproject\.toml$
+        name: each plugin poetry.lock matches its pyproject.toml
+        entry: python scripts/check_plugin_lock_paired.py
+        language: python
+        additional_dependencies: ["poetry==2.4.1"]
+        files: ^plugins/adaptive-learner-plugin-[^/]+/(pyproject\.toml|poetry\.lock)$
         pass_filenames: true
+        require_serial: true
         stages: [pre-commit]
 
       # Issue #47 — keep the README CONTENT-STATS block in lock-step

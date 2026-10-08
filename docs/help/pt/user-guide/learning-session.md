@@ -42,12 +42,13 @@ Cada mensagem que envia desencadeia até três chamadas de IA:
 2. **O avaliador de passo** - uma segunda chamada de IA lê a
    troca e decide se está pronto para avançar. Emite `advance`,
    `confidence`, `reason`, `suggested_step`. A aplicação aplica
-   a sugestão quando a confiança ≥ 0.6.
+   a sugestão quando a confiança ≥ 0.7.
 3. **O avaliador de transição de tópico** (apenas no passo 7)
    - uma terceira chamada de IA decide se o tópico foi
    integrado. Se sim E `continue_recommended`, um novo ciclo
    começa automaticamente com um novo subtópico (auto-loop,
    máx. 5 ciclos por sessão).
+   Só na aplicação de desktop: na versão do navegador a sessão fica no passo 7.
 
 O veredicto é mostrado discretamente acima do chat como uma
 notificação "Passo moveu de X para Y porque…" quando é

@@ -225,6 +225,7 @@ def test_no_errors_excludes_review_and_mastery():
 
 # --- Schema validators (Phase 61 coverage sweep) -------------------------
 
+
 def _tmpl(**over):
     base = dict(
         id="x-mission",
@@ -294,6 +295,7 @@ def test_template_keys_required():
 
 
 # --- Catalog (Phase 61 coverage sweep) -----------------------------------
+
 
 def test_get_template_unknown_returns_none():
     assert get_template("does-not-exist") is None

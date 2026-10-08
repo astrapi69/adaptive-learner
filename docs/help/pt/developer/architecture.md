@@ -21,10 +21,8 @@ O Adaptive Learner é uma aplicação orientada a plugins com 4 camadas.
 └─────────────────────────────────────────────────────────────┘
                             ↑↓ entry_points
 ┌─────────────────────────────────────────────────────────────┐
-│ Plugins            10 pacotes em plugins/                   │
-│                    (ai-{anthropic,openai,gemini}, assessment,│
-│                    session, tracking, tools, gamification,  │
-│                    anki, notebooklm)                        │
+│ Plugins            um pacote Poetry por plugin em plugins/; │
+│                    o catálogo e os níveis estão no CLAUDE.md│
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -42,10 +40,10 @@ contrato:
 - **`apiStorage`** (padrão): invólucro fino em torno de
   `api/client.ts` que comunica com o backend FastAPI.
 - **`dexieStorage`** (local primeiro): pilha IndexedDB completa
-  espelhando todos os 25 modelos SQLAlchemy. As chamadas de IA
+  espelhando os modelos SQLAlchemy. As chamadas de IA
   disparam diretamente do navegador via `storage/ai-providers.ts`.
 
-`IStorageService` expõe 22 espaços de nomes (users, projects,
+`IStorageService` expõe os seus espaços de nomes (users, projects,
 settings, assessment, session com streaming, tracking, tools,
 curricula, topics, lessons, plugins, system, backup, export,
 subjects, tags, projectTaxonomy, imports, gamification, anki,
@@ -156,7 +154,7 @@ domínio para códigos de estado HTTP. Consulte
 
 - Backend: SQLAlchemy + SQLite. Migrações Alembic em
   `backend/migrations/versions/`.
-- Superfície de sincronização: 28 tabelas (linha de base v1.19.0).
+- Superfície de sincronização: cada tabela de `sync_service.ALL_SYNC_TABLES`.
   Linhas de histórico somente-adição (sessões, mensagens,
   classificações, commits de progresso, avaliações de passo,
   mudanças de método, conversas importadas, mensagens importadas,

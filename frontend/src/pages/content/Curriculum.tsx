@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState, type FormEvent} from "react";
-import {useNavigate} from "react-router";
+import {useNavigate, useSearchParams} from "react-router";
 import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 
 import AddTopicDialog from "../../components/topic/AddTopicDialog";
@@ -26,8 +26,9 @@ import type {Curriculum, LearningTopic, Lesson} from "../../types";
  *
  *   1. Mount: read user_id from localStorage; redirect to
  *      /onboarding if missing. List the user's curricula via
- *      GET /api/users/{user_id}/curricula; auto-select the
- *      first one (or expose the create dialog if zero exist).
+ *      GET /api/users/{user_id}/curricula; select the one named by
+ *      ``?curriculum=<id>``, else the first (or expose the create
+ *      dialog if zero exist).
  *   2. For the selected curriculum, load topics via
  *      GET /api/curricula/{id}/topics and render the forest
  *      with TopicTree (uses TypedTreeNode + buildTreeFromFlat).
@@ -45,6 +46,10 @@ export default function Curriculum() {
     const confirm = useConfirm();
     const navigate = useNavigate();
 
+    // ``?curriculum=<id>`` (#3659): the import page links a curriculum it
+    // just created; an unknown id falls back to the first one.
+    const [searchParams] = useSearchParams();
+    const requestedId = searchParams.get("curriculum");
     const [curricula, setCurricula] = useState<Curriculum[]>([]);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [topics, setTopics] = useState<LearningTopic[]>([]);
@@ -152,7 +157,8 @@ export default function Curriculum() {
                 if (cancelled) return;
                 setCurricula(list);
                 if (list.length > 0) {
-                    setSelectedId(list[0].id);
+                    const requested = list.find((c) => c.id === requestedId);
+                    setSelectedId((requested ?? list[0]).id);
                 }
                 setLoading(false);
             })
@@ -165,7 +171,7 @@ export default function Curriculum() {
             cancelled = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [navigate]);
+    }, [navigate, requestedId]);
 
     // Load topics + lessons whenever the selected curriculum
     // changes.

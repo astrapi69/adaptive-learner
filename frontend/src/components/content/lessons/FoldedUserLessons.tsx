@@ -55,7 +55,7 @@ export default function FoldedUserLessons({
       className="mt-2 border-t border-border pt-2"
       data-testid="content-folded-lessons"
     >
-      <h4 className="mb-1 text-sm font-semibold text-muted-foreground">
+      <h4 className="mt-0 mb-1 text-sm font-semibold text-muted-foreground">
         {t("content.tree.your_lessons", "Your lessons")}
       </h4>
       <ul className="content-set-list">

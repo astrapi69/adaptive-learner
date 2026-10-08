@@ -18,17 +18,10 @@ common:
   error: Something went wrong.
   back: Back
   next: Next
-  start: Start
   submit: Submit
-  continue: Continue
-  done: Done
   delete: Delete
   edit: Edit
   confirm: Confirm
-  'yes': "Yes"
-  'no': "No"
-  optional: optional
-  required: required
   minutes: minutes
   close: "Close"
 avatar:
@@ -79,9 +72,6 @@ nav:
     progress: "Progress"
     more: "More"
   primary: "Primary navigation"
-  discover: "Discover content"
-  offline_long: "Offline - past sessions stay readable"
-  sync_pending: "{n} change(s) waiting to sync"
   statistics: "Statistics"
   profile: "Your profile"
   learning_path: "Learning Path"
@@ -94,9 +84,6 @@ nav:
   help: Help
   home: Home
   menu: Menu
-  online: Online
-  offline: Offline
-  anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Developer Mode is on - error toasts show full technical detail. Toggle in Settings."
   content: "My content"
@@ -105,8 +92,6 @@ nav:
   mode_badge_tooltip_content: "No API key configured - using pre-built content only. Add a key in Settings to enable AI features."
   mode_badge_tooltip_ai: "AI provider configured - exercises use AI for distractors + hints. Tap to browse content sets."
   mode_badge_action: "browse content"
-  sync_paired: "Sync: paired (Settings > Sync)"
-  sync_unpaired: "Sync: not paired (Settings > Sync)"
 import:
   title: Import a conversation
   subtitle: Paste or upload a conversation with ChatGPT, Claude, or Gemini and get instant learning insights.
@@ -129,7 +114,7 @@ import:
   analysis_title: Analysis
   analysis_ready: Analysis ready.
   analysis_fallback: Analysis ran but the AI response could not be parsed cleanly.
-  analysis_fallback_long: The AI response was not parseable as structured JSON. The summary below is a fallback.
+  analysis_fallback_long: "The AI response could not be read as a structured analysis. Run the analysis again or pick a different AI provider."
   analysis_error: Could not analyze the conversation.
   analysis_phase_reading: "Step 1/3: Reading chat…"
   analysis_phase_analyzing: "Step 2/3: Analyzing content…"
@@ -362,7 +347,6 @@ adaptive:
   session_title: "Adaptive lesson"
   loading: "Analyzing your errors…"
   empty_body: "Nothing to adapt yet - practice a lesson to build up data."
-  not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
   back_to_dashboard: "Back to Dashboard"
   transparency:
     focus_prefix: "This lesson focuses on:"
@@ -375,7 +359,6 @@ adaptive:
     mastered_delta: "Improvement: +{n} element(s) mastered this session!"
     note: "Element scores have been updated. Your next adaptive lesson will target the elements that still need work."
   error:
-    missing_params: "No content set selected."
     load_failed: "Could not generate adaptive lesson."
 review:
   your_answer: "Your answer:"
@@ -400,7 +383,6 @@ review:
   subtitle_capped: "Reviewing {shown} of {due} elements due for SRS"
   loading: "Loading review session…"
   empty_body: "All caught up! No elements due for review in this set."
-  not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
   back_to_dashboard: "Back to Dashboard"
   back_to_lesson: "Back to lesson"
   summary:
@@ -409,7 +391,6 @@ review:
     score: "Score"
     note: "Element scores have been updated. Mastered elements will not appear in the next session."
   error:
-    missing_params: "No content set selected."
     load_failed: "Could not load review session."
   spaced_empty: Nothing to refresh right now. Great rhythm!
   spaced_interval_label: Review in
@@ -423,6 +404,7 @@ review:
   no_data: No sessions yet - start your first one to see trends.
   pronunciation_quick_start: Pronunciation Practice
 session:
+  auto_loop_unavailable: "In the desktop app a new cycle with the next topic starts automatically after step 7. The browser version cannot do that yet: end the session and start a new one to keep learning."
   title: Learning session
   topic_label: "Topic"
   in_progress: Session in progress
@@ -698,10 +680,6 @@ settings:
   tab_plugins: "Plugins"
   plugins_installed_title: "Installed plugins"
   plugins_installed_desc: "Every plugin the desktop app loaded, with version, source and activation time (PluginForge lifecycle)."
-  plugins_col_name: "Plugin"
-  plugins_col_version: "Version"
-  plugins_col_source: "Source"
-  plugins_col_activated: "Activated"
   plugins_source_entry_point: "Package"
   plugins_source_direct: "Registered directly"
   plugins_marker_load_error: "Load error"
@@ -896,7 +874,6 @@ settings:
     rollback_warning: "The new key doesn't work. Keep the old key?"
     rollback_keep_old: "Keep old key"
     rollback_save_anyway: "Save anyway"
-    rollback_cancel: "Cancel"
     rollback_restore: "Restore last working key"
     format_hint:
       anthropic: "Starts with sk-ant-"
@@ -1261,6 +1238,107 @@ backup:
   compare_auto_label: Auto-backup {{date}}
   auto_compare_missing: Auto-backup is no longer available - it was rotated out.
 export:
+  # #3426 - the Markdown/PDF report strings (were a private DE/EN table).
+  report:
+    progress_report_title: "Learning Progress"
+    session_detail_title: "Session Detail"
+    curriculum_overview_title: "Curriculum Overview"
+    generated_at: "Generated at"
+    app_version: "App version"
+    learner: "Learner"
+    language: "Language"
+    method_profile: "Method profile"
+    dominant_method: "Dominant method"
+    assessed_at: "Last assessed"
+    no_profile: "No assessment yet. Complete the entry assessment to see your profile."
+    projects: "Projects"
+    no_projects: "No learning projects yet."
+    topic: "Topic"
+    goal: "Goal"
+    timeframe: "Timeframe"
+    daily_minutes: "Daily minutes"
+    current_problem: "Current obstacle"
+    status: "Status"
+    active: "active"
+    archived: "archived"
+    session_count: "Sessions"
+    total_minutes: "Total minutes"
+    mean_understanding: "Average understanding"
+    mean_stress: "Average stress"
+    method_distribution: "Method distribution"
+    method_switches: "Method switches"
+    no_switches: "No method switches in this project."
+    switched_from_to: "Switch"
+    reason: "Reason"
+    recent_sessions: "Recent sessions"
+    no_sessions: "No sessions completed yet."
+    method: "Method"
+    duration: "Duration"
+    understanding: "Understanding"
+    stress: "Stress"
+    method_fit: "Method fit"
+    notes: "Notes"
+    step_evaluation_insights: "Step evaluations"
+    no_step_insights: "No step evaluations available yet."
+    step: "Step"
+    evaluations_count: "Evaluations"
+    advance_rate: "Advance rate"
+    mean_confidence: "Average confidence"
+    deferred: "deferred"
+    repeated: "repeated"
+    advanced: "advanced"
+    extractions: "Analyzed conversations"
+    no_extractions: "No analyzed conversations yet."
+    imported_at: "Imported at"
+    messages: "Messages"
+    source: "Source"
+    analysis: "Analysis"
+    no_session: "Session not found."
+    session: "Session"
+    started_at: "Started at"
+    ended_at: "Ended at"
+    cycle_step: "Current cycle step"
+    transcript: "Transcript"
+    no_messages: "No messages in this session."
+    role_user: "Learner"
+    role_assistant: "AI"
+    role_system: "System"
+    rating: "Rating"
+    no_rating: "Session was not rated."
+    step_evaluations: "Step evaluations"
+    from_step: "From step"
+    to_step: "To step"
+    confidence: "Confidence"
+    applied: "Applied"
+    not_applied: "Not applied"
+    fallback: "Fallback used"
+    evaluated_at: "Evaluated at"
+    curriculum: "Curriculum"
+    description: "Description"
+    topics: "Topics"
+    no_topics: "No topics in this curriculum."
+    lessons: "Lessons"
+    no_lessons: "No lessons in this curriculum."
+    out_of: "out of"
+    minutes_short: "min"
+    scale_5: "on a scale from 1 to 5"
+    analysis_topic: "Detected topic"
+    analysis_subtopics: "Subtopics"
+    analysis_user_level: "Level"
+    analysis_strengths: "Strengths"
+    analysis_weaknesses: "Weaknesses"
+    analysis_error_patterns: "Error patterns"
+    analysis_recommended_method: "Recommended method"
+    analysis_recommended_focus: "Recommended focus"
+    analysis_suggested_curriculum: "Suggested curriculum"
+    analysis_summary: "Summary"
+    analysis_priority: "Priority"
+    level_beginner: "Beginner"
+    level_intermediate: "Intermediate"
+    level_advanced: "Advanced"
+    linked_project: "Linked project"
+    status_completed: "completed"
+    status_abandoned: "abandoned"
   title: Export
   intro: Download your learning journey as Markdown or PDF. Markdown is plain text you can edit and share; PDF opens your browser's print dialog so you can save a copy.
   progress_label: Progress Report (full journey)
@@ -1375,10 +1453,6 @@ gamification:
     how: "Levels rise on a growing XP curve: 0, 100, 300, 600, 1000 XP - each step needs 100 XP more than the last."
   level_detail_title: "Level progress"
   level_up: Level up!
-  reason_session_complete: Session completed
-  reason_assessment_complete: Assessment completed
-  reason_conversation_imported: Conversation imported
-  reason_flat: XP awarded
   card_badges: Badges
   badges_earned: earned
   badges_empty: No badges available yet.
@@ -1503,19 +1577,6 @@ gamification:
   reset_done: 'Progress reset: {xp} XP, {badges} badges, {streak} streaks.'
   reset_failed: Could not reset progress.
   weekend_mode_save_failed: Could not save the weekend-mode setting.
-  danger_zone_heading: Danger Zone
-  danger_zone_intro: Permanently delete every piece of learner state on this device.
-  danger_zone_reset_button: Reset Everything
-  danger_zone_warning: This deletes ALL your learning data permanently - sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.
-  danger_zone_confirm_prompt: 'Type RESET to confirm'
-  danger_zone_input_placeholder: RESET
-  danger_zone_final_button: Delete permanently
-  danger_zone_backup_offer: Create a backup first?
-  danger_zone_backup_button: Create backup
-  danger_zone_complete_toast: All data has been deleted.
-  danger_zone_cancel: Cancel
-  danger_zone_continue: Continue
-  danger_zone_failed_toast: 'Reset failed:'
 arcade:
   title: "Arcade"
   subtitle: "Short rounds, one to two minutes - a game-mode reward. No XP, just fun."
@@ -1576,6 +1637,10 @@ arcade:
     won: "You did it - the whole sequence!"
     lost: "Oops - you reached length {n}. Try again!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Basic"
+    cloze: "Cloze"
   title: Anki Export
   intro: Review AI-suggested flashcards, accept the ones you want, then export as an .apkg file for Anki.
   filter_project: Project
@@ -1920,7 +1985,6 @@ repo:
     download_zip: "Download ZIP"
     persist: "Persist to git"
     persisting: "Persisting…"
-    persist_dexie_tooltip: "Git versioning is only available in server mode."
   toast:
     zip_downloaded: "ZIP downloaded"
     persisted: "Persisted to git"
@@ -1937,6 +2001,7 @@ repo:
     title: "Learning Repository"
     loading: "Loading…"
     repos_dir: "Repositories directory"
+    repos_dir_hint: "Leave empty for the default: repos in the data directory (see About)"
     save: "Save settings"
     saving: "Saving…"
     toast:
@@ -1948,6 +2013,11 @@ repo:
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
     enable_git: "Enable git persistence"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Missing: {word}"
+    extra: "Extra: {word}"
+    replaced: "You wrote {wrote}, expected {expected}"
   progress_io:
     save_error: "Your progress in this lesson could not be saved."
     load_failed: "Your saved progress for this lesson could not be loaded: {detail}"
@@ -2535,6 +2605,7 @@ content:
     public: "Public"
     branch: "Branch"
     lessons_note: "All {n} lessons of this set will be included."
+    lessons_note_one: "The set's one lesson will be included."
     invalid_repo: "Enter the repository as owner/name."
     submit: "Export"
     working: "Exporting…"
@@ -3207,6 +3278,9 @@ create_lesson:
     description_label: "Topic / description"
     author_label: "Author name"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Word or phrase"
+    back_placeholder: "Meaning"
     heading: "Add vocabulary cards"
     front_label: "Front (learned)"
     back_label: "Back (your language)"
@@ -4011,9 +4085,6 @@ content_repo:
     filled: "Repository details filled from the QR code."
   synced: "Synced: {sets} sets, {lessons} lessons."
   token_hint: "Private repositories need a token - paste one below, or set a shared token in Settings → Integrations."
-  trust_official: "Official: Curated and quality-assured by the project team."
-  trust_verified: "Verified: Contributed by the community and reviewed by the team."
-  trust_validated: "Validated: Technically correct; content not individually reviewed."
   official:
     title: "Official content"
     counts: "{sets} sets · {lessons} lessons"
@@ -4083,6 +4154,19 @@ content_repo:
     save_failed: "Could not add the repository."
     sync_failed: "Sync failed. Try again."
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "Repository or manifest.yaml not found."
+      access_denied: "Access denied - check the repository and your GitHub token."
+      unreachable: "Repository unreachable."
+      unsupported_schema: "Unsupported schema version {version}."
+      no_sets: "manifest.yaml lists no sets."
+      no_lessons: "No lessons found in any set."
+      executable_content: "Lesson content contains disallowed executable code."
+      lessons_unreadable: "Could not read the first set's lessons."
+      lesson_invalid_json: "The first set's first lesson is not valid JSON."
+      validator_unavailable: "Could not load the lesson validator."
+      lesson_invalid: "The first set's first lesson fails validation: {detail}"
     failed: "Validation failed: {reason}"
     passed: "Validation passed: {sets} sets, {lessons} lessons."
 resource:
@@ -4229,12 +4313,10 @@ shuffle:
   page_title: "Shuffle"
   loading: "Loading shuffle session…"
   empty_body: "This set needs at least two lessons with exercises to shuffle."
-  not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
   back_to_dashboard: "Back to Dashboard"
   subtitle: "Mixing {n} questions from {lessons} lessons"
   error:
     load_failed: "Could not load shuffle session."
-    missing_params: "No content set selected."
   summary:
     heading: "Shuffle training complete!"
     score: "{correct} of {total} correct"

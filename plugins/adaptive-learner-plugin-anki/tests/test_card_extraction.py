@@ -5,13 +5,16 @@ from __future__ import annotations
 
 import json
 
+import pytest
+from adaptive_learner_anki import card_extraction
 from adaptive_learner_anki.card_extraction import (
+    DEFAULT_EXTRACTION_LIMIT,
     ExtractedCard,
     _cards_from_vocabulary,
     build_prompt,
     parse_response,
+    resolve_extraction_limit,
 )
-
 
 # --- build_prompt --------------------------------------------------------
 
@@ -20,6 +23,41 @@ def test_build_prompt_includes_content() -> None:
     p = build_prompt("USER: Hello\nASSISTANT: Hi", limit=4)
     assert "Hello" in p
     assert "Hi" in p
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (12, 12),
+        ("12", 12),
+        (0, DEFAULT_EXTRACTION_LIMIT),
+        (-3, DEFAULT_EXTRACTION_LIMIT),
+        (True, DEFAULT_EXTRACTION_LIMIT),
+        (None, DEFAULT_EXTRACTION_LIMIT),
+        ("many", DEFAULT_EXTRACTION_LIMIT),
+        (2.5, DEFAULT_EXTRACTION_LIMIT),
+    ],
+    ids=["int", "numeric-text", "zero", "negative", "bool", "missing", "text", "fraction"],
+)
+def test_resolve_extraction_limit_reads_the_setting(value: object, expected: int) -> None:
+    """#3435: a positive integer is used; anything else falls back."""
+    assert resolve_extraction_limit(value) == expected
+
+
+def test_extract_from_session_asks_for_the_given_limit(monkeypatch: pytest.MonkeyPatch) -> None:
+    """#3435: the limit reaches the prompt instead of the fixed 8."""
+    monkeypatch.setattr(
+        card_extraction, "_session_transcript", lambda _db, _sid: ("USER: hi", "u1", "p1")
+    )
+    monkeypatch.setattr(card_extraction, "_persist_cards", lambda _db, **_kw: [])
+    prompts: list[str] = []
+
+    def _ai(messages: list[dict[str, str]]) -> str:
+        prompts.append(messages[0]["content"])
+        return "[]"
+
+    card_extraction.extract_from_session(None, "s1", _ai, limit=3)  # type: ignore[arg-type]
+    assert "extract up to 3 high-value flashcards" in prompts[0]
 
 
 def test_build_prompt_clips_long_content() -> None:
@@ -49,7 +87,7 @@ def test_parse_valid_json_array() -> None:
 def test_parse_strips_markdown_fence() -> None:
     # Models occasionally wrap JSON in ```json ... ``` despite
     # the prompt asking them not to. The parser tolerates it.
-    raw = "```json\n[{\"type\":\"basic\",\"front\":\"Q\",\"back\":\"A\"}]\n```"
+    raw = '```json\n[{"type":"basic","front":"Q","back":"A"}]\n```'
     cards = parse_response(raw)
     assert len(cards) == 1
     assert cards[0].front == "Q"
@@ -220,9 +258,7 @@ def test_vocabulary_cloze_is_case_insensitive() -> None:
 
 
 def test_extracted_card_dataclass_roundtrip() -> None:
-    c = ExtractedCard(
-        card_type="basic", front="a", back="b", tags=["t"]
-    )
+    c = ExtractedCard(card_type="basic", front="a", back="b", tags=["t"])
     assert c.card_type == "basic"
     assert c.front == "a"
     assert c.back == "b"

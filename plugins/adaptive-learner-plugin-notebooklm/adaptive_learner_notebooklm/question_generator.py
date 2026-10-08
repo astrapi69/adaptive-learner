@@ -16,8 +16,9 @@ from __future__ import annotations
 import json
 import logging
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -159,15 +160,11 @@ def session_transcript(db, session_id: str) -> tuple[str, str | None, str | None
         .order_by(SessionMessage.created_at.asc())
         .all()
     )
-    transcript = "\n".join(
-        f"{m.role.upper()}: {m.content}" for m in messages if m.content
-    )
+    transcript = "\n".join(f"{m.role.upper()}: {m.content}" for m in messages if m.content)
     return transcript, project.user_id, project.id
 
 
-def project_transcript(
-    db, project_id: str, *, max_sessions: int = 5
-) -> tuple[str, str | None]:
+def project_transcript(db, project_id: str, *, max_sessions: int = 5) -> tuple[str, str | None]:
     """Combined transcript across the project's N most recent
     completed sessions. Truncates oldest first if the joined
     text overruns the 8000-char prompt budget. Returns
@@ -195,9 +192,7 @@ def project_transcript(
             .order_by(SessionMessage.created_at.asc())
             .all()
         )
-        body = "\n".join(
-            f"{m.role.upper()}: {m.content}" for m in rows if m.content
-        )
+        body = "\n".join(f"{m.role.upper()}: {m.content}" for m in rows if m.content)
         if not body:
             continue
         sections.append(
@@ -246,22 +241,16 @@ def _persist(
     return inserted
 
 
-def generate_from_session(
-    db, session_id: str, ai_call: AICallable, *, limit: int = 8
-) -> list[Any]:
+def generate_from_session(db, session_id: str, ai_call: AICallable, *, limit: int = 8) -> list[Any]:
     """Generate study questions from a session's transcript.
     Returns the inserted rows; empty on AI / parse failure."""
     transcript, user_id, project_id = session_transcript(db, session_id)
     if user_id is None or project_id is None or not transcript.strip():
         return []
     try:
-        raw = ai_call(
-            [{"role": "user", "content": build_prompt(transcript, limit=limit)}]
-        )
+        raw = ai_call([{"role": "user", "content": build_prompt(transcript, limit=limit)}])
     except Exception:  # noqa: BLE001
-        logger.exception(
-            "Study question generation failed for session %r.", session_id
-        )
+        logger.exception("Study question generation failed for session %r.", session_id)
         return []
     cards = parse_response(raw or "")
     return _persist(
@@ -283,13 +272,9 @@ def generate_from_project(
     if user_id is None or not transcript.strip():
         return []
     try:
-        raw = ai_call(
-            [{"role": "user", "content": build_prompt(transcript, limit=limit)}]
-        )
+        raw = ai_call([{"role": "user", "content": build_prompt(transcript, limit=limit)}])
     except Exception:  # noqa: BLE001
-        logger.exception(
-            "Study question generation failed for project %r.", project_id
-        )
+        logger.exception("Study question generation failed for project %r.", project_id)
         return []
     cards = parse_response(raw or "")
     return _persist(

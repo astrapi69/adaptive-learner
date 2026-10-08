@@ -16,7 +16,7 @@ nimmt sinnvolle **Vorgaben** an, die du jederzeit ändern kannst.
 Nach dem Absenden bietet dir die App zwei Wege:
 
 - **Direkt loslegen** - du landest sofort auf dem Dashboard und
-  kannst eine Lektion oder Session starten.
+  kannst eine Lektion oder Sitzung starten.
 - **Profil einrichten** - öffnet den **Onboarding-Assistenten**:
   eine Frage pro Bildschirm (Ziel → Zeitrahmen → Minuten pro Tag
   → aktuelles Problem → optionaler Lerntyp-Test), jede mit
@@ -42,7 +42,7 @@ Zwischenstand verworfen.
 
 Im Schritt „aktuelles Problem" kannst du eine offene Frage gleich
 ins Projekt einbringen. Wenn du es ausfüllst, startet die erste
-KI-Session mit diesem konkreten Hindernis statt mit einem offenen
+KI-Sitzung mit diesem konkreten Hindernis statt mit einem offenen
 „woran willst du arbeiten?"-Prompt.
 
 ## Subjects und Tags

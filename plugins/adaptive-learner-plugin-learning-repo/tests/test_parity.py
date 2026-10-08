@@ -50,16 +50,11 @@ def test_python_renderer_matches_golden_files():
         )
         actual = golden.read_text(encoding="utf-8")
         assert content == actual, (
-            f"Drift in {path}.\n"
-            f"Expected (golden):\n{actual!r}\n"
-            f"Got (Python render):\n{content!r}"
+            f"Drift in {path}.\nExpected (golden):\n{actual!r}\nGot (Python render):\n{content!r}"
         )
     if not regen:
         rendered_paths = set(tree.keys())
-        golden_paths = {
-            str(p.relative_to(EXPECTED_DIR))
-            for p in EXPECTED_DIR.rglob("*.md")
-        }
+        golden_paths = {str(p.relative_to(EXPECTED_DIR)) for p in EXPECTED_DIR.rglob("*.md")}
         assert golden_paths == rendered_paths, (
             f"Golden file set mismatch:\n"
             f"  only in goldens: {sorted(golden_paths - rendered_paths)}\n"

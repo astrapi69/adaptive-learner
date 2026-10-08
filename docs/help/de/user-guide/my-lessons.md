@@ -90,22 +90,44 @@ sich der adaptive Generator in einer späteren Version ändert.
 
 ## Exportieren und teilen
 
-Jede eigene Lektion lässt sich teilen - ohne Konto und ohne Server:
+Jede eigene Lektion lässt sich teilen. Exportieren und der Pull Request
+für die Community gehen ohne Konto; ein GitHub-Token beschleunigt den Pull
+Request und ist nötig, um ein ganzes Set als eigenes Repository zu teilen:
 
 - **Exportieren** - die Lektion als einzelne `.json`-Datei
   herunterladen.
 - **Als Content-Set exportieren** - ein Content-Set als `.zip`
   herunterladen (Manifest + Lektionen).
-- **Für die Community bereitstellen** - öffnet einen vorausgefüllten
-  **Pull Request** im offiziellen Inhalts-Repository. Die Lektions-JSON
-  landet am richtigen Pfad im Inhaltsbaum und die Validierung des
-  Repositorys läuft automatisch; ein Maintainer prüft den PR und führt
-  ihn zusammen, sodass alle die Lektion herunterladen können. Kleine
-  Lektionen öffnen direkt den Datei-Editor von GitHub (PR-Titel und
-  -Beschreibung sind vorausgefüllt); größere Lektionen werden zuerst
-  heruntergeladen und öffnen die Upload-Seite von GitHub, auf die du
-  die Datei ziehst. Es ist kein Token nötig - GitHub erstellt den Fork
-  und den Pull Request für dich.
+- **Für die Community bereitstellen** - öffnet einen **Pull Request**
+  im offiziellen Inhalts-Repository. Die Lektions-JSON landet am
+  richtigen Pfad im Inhaltsbaum und die Validierung des Repositorys
+  läuft automatisch; ein Maintainer prüft den PR und führt ihn
+  zusammen, sodass alle die Lektion herunterladen können. Der Pull
+  Request entsteht auf einem von zwei Wegen:
+    - **Ohne Token** - kleine Lektionen öffnen direkt den Datei-Editor
+      von GitHub (PR-Titel und -Beschreibung sind vorausgefüllt);
+      größere Lektionen werden zuerst heruntergeladen und öffnen die
+      Upload-Seite von GitHub, auf die du die Datei ziehst. GitHub
+      erstellt den Fork und den Pull Request, sobald du dort bestätigst.
+    - **Mit GitHub-Token** (Einstellungen > Integrationen, siehe
+      [Einstellungen](settings.md#integrationen)) - eine einzelne
+      Lektion teilst du, ohne die App zu verlassen: die App forkt das
+      Repository, committet die Lektion, öffnet den Pull Request und
+      zeigt dir dann den Link. Ein Set mit mehreren Lektionen nimmt
+      weiterhin den Weg ohne Token. Lehnt GitHub den Token ab, verweist
+      die Meldung auf Einstellungen > Integrationen.
+- **Als Repository teilen** - überträgt das ganze Set im
+  Content-Repo-Format in einem Commit in ein GitHub-Repository von dir
+  (das angelegt wird, falls es noch nicht existiert). Du wählst das
+  Repository (`owner/name`), privat oder öffentlich, und den Branch.
+  Vorher läuft eine Qualitätsprüfung: findet sie Probleme, die die
+  Prüfungen eines Content-Repositorys ablehnen würden, listet sie sie
+  auf, und der Knopf wird zu **Trotzdem exportieren**. Das übertragene
+  Repository kannst du danach als Inhaltsquelle verbinden (siehe
+  [Content-Repositories](../features/content-repos.md)). Das braucht
+  einen GitHub-Token und geht nur in der Browser-Version der App;
+  sonst bleibt der Knopf sichtbar, aber deaktiviert, mit dem Grund als
+  Tooltip.
 
 Exportierte Dateien enthalten nur den Lektionsinhalt - keinen
 Fortschritt, keine Fehlerhistorie, nichts Persönliches.

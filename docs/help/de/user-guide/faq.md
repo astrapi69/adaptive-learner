@@ -25,9 +25,10 @@ Text + bisherige KI-Antworten der Sitzung).
 ## Brauche ich einen API-Schlüssel?
 
 Ja für KI-Sitzungen. Die App nutzt **Bring-Your-Own-Key** für
-alle drei unterstützten Anbieter: Anthropic Claude, OpenAI
-GPT, Google Gemini. Die kostenlosen Kontingente reichen
-meistens zum Einstieg.
+jeden unterstützten Anbieter: Anthropic Claude, OpenAI GPT und
+Google Gemini, dazu Perplexity im Server-Modus (die Desktop-App;
+die Browser-Version kann Perplexity nicht direkt aufrufen). Die
+kostenlosen Kontingente reichen meistens zum Einstieg.
 
 Drei Stellen für den Schlüssel (höchste Priorität gewinnt):
 eine `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungsvariable,
@@ -47,7 +48,7 @@ sind die, die einen Key brauchen.
 
 Teilweise. Der PWA-Service-Worker cached die statischen
 Assets (HTML, JS, CSS, Icons), sodass die App ohne Internet
-startet. Vergangene Sessions und Dashboard-Daten laden auch
+startet. Vergangene Sitzungen und Dashboard-Daten laden auch
 aus dem lokalen Speicher, sodass das Lesen alter Materialien
 funktioniert.
 
@@ -60,7 +61,7 @@ statt still zu scheitern.
 
 Wenn drei Sitzungen in Folge dein Verständnis stagnieren und
 deinen Stress hoch zeigen, blendet die App ein Banner ein:
-„Willst du für die nächste Session [andere Methode]
+„Willst du für die nächste Sitzung [andere Methode]
 ausprobieren?". Die Empfehlung bevorzugt deine zweitstärkste
 Methode aus dem Test, die du nicht kürzlich genutzt hast.
 
@@ -129,7 +130,7 @@ Export), Gemini und beliebigem Markdown. Der Analyzer
 extrahiert dein Thema, Schwächen, Fehlermuster, empfohlene
 Methode, Vokabular (für Sprachgespräche) und einen Lehrplan-
 Vorschlag. Ein Klick sät ein Curriculum + startet eine
-gezielte Session aus der Analyse.
+gezielte Sitzung aus der Analyse.
 
 Der Claude.ai-Single-Conversation-Markdown-Export ist ein
 geprüfter Import-Fall - der Parser liefert volle Zeitstempel-
@@ -142,8 +143,8 @@ Synchronisation und kopple dieses Gerät: QR-Code vom anderen
 Gerät-Bildschirm scannen (Rückkamera), oder Pairing-URL
 einfügen. Nach dem Pairing tauschen Push- + Pull-Knöpfe
 Daten aus; Konflikte gehen durch einen KI-Merge-Resolver.
-30 Tabellen auf der Sync-Oberfläche (inkl. Lektions-
-Fortschritt, Element-Fehler und Missionen).
+Die Synchronisation umfasst alle deine Daten, inkl.
+Lektionsfortschritt, Element-Fehler und Missionen.
 
 ## Wie ist das anders als ChatGPT?
 
@@ -160,10 +161,11 @@ unter der Haube eine KI nutzt, aber zusätzlich bringt:
    ist.
 4. **Ein Profil** deiner Lernpräferenzen aus dem 12-Fragen-
    Test.
-5. **Langfristiges Tracking** - ProgressCommits, Streak-
+5. **Langfristiges Tracking** - ProgressCommits, Serien-
    Heatmap, XP, Abzeichen, Zeit-pro-Schritt-Charts. ChatGPT
    vergisst, wenn du den Tab schließt.
-6. **Anbieter-Freiheit** - Anthropic, OpenAI oder Gemini.
+6. **Anbieter-Freiheit** - Anthropic, OpenAI oder Gemini, dazu
+   Perplexity im Server-Modus.
 7. **Local-First-Option** - alles in deinem Browser, nichts
    wird an einen Server gesendet (außer deine KI-Aufrufe).
 

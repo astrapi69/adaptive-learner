@@ -10,7 +10,7 @@ package-mode = false
 python = "~3.12"
 fastapi = "^0.141.0"
 uvicorn = { extras = ["standard"], version = ">=0.48,<0.55" }
-sqlalchemy = "^2.0.49"
+sqlalchemy = {version = "^2.0.49", extras = ["asyncio"]}
 pydantic = {version = "^2.13.0", extras = ["email"]}
 platformdirs = "^4.2.0"
 pluginforge = "^0.10.0"
@@ -72,12 +72,19 @@ select = [
     "I",    # isort
     "B",    # flake8-bugbear
     "UP",   # pyupgrade
+    "BLE",  # flake8-blind-except: a broad except must log with the traceback or carry a reasoned noqa (#3423)
 ]
 ignore = [
     "E501",   # line length - handled by formatter, too noisy to fix blind
     "B008",   # function-call-in-default-argument - FastAPI `Depends(...)` idiom is intentional
     "UP042",  # replace-str-enum - `(str, Enum)` base class ships in migrations too; deferred
 ]
+
+[tool.ruff.lint.isort]
+# The backend package, named so the import order does not depend on where
+# ruff runs: pre-commit lints plugins/ from the repo root with this file as
+# --config, CI from backend/ (#3658).
+known-first-party = ["app"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["B"]                       # bugbear too strict for test fixtures
@@ -90,7 +97,7 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
 check_untyped_defs = true
-plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
+plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = "pluginforge.*"

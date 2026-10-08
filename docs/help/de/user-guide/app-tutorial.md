@@ -69,5 +69,5 @@ oben. Alternativ über den Content Browser:
 - [Lektionen und Wiederholungen](lessons.md) - der Lektionsablauf im Detail
 - [Content Browser](../features/content-browser.md) - Lektionen finden und filtern
 - [Navigation](navigation.md) - sich in der App zurechtfinden
-- [Dein Dashboard verstehen](dashboard.md) - Fortschritt, Streak, XP, Badges
+- [Dein Dashboard verstehen](dashboard.md) - Fortschritt, Serie, XP, Badges
 - [Erste Schritte](getting-started.md) - der Gesamtüberblick zum Einstieg

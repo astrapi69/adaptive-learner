@@ -12,13 +12,13 @@ entries:
       Wenn dein Lernen in einer Methode stagniert und dabei
       viel Stress erzeugt, schlägt Adaptive Learner einen
       Methodenwechsel vor. Du siehst den Vorschlag als Banner
-      über dem Session-Chat und kannst ihn annehmen oder
+      über dem Sitzungs-Chat und kannst ihn annehmen oder
       ausblenden.
 
       ## Wann der Vorschlag erscheint
 
       Die Regel betrachtet deine letzten drei
-      Session-Bewertungen. Beide Bedingungen müssen gelten:
+      Sitzungsbewertungen. Beide Bedingungen müssen gelten:
 
       - **Kein Fortschritt im Verständnis**: die drei
         Verständniswerte steigen nicht (dreimal derselbe Wert
@@ -39,10 +39,10 @@ entries:
       ## Du entscheidest
 
       Das System empfiehlt, du wählst. Annehmen wechselt die
-      Session und speichert einen ``MethodSwitch``-Eintrag
+      Sitzung und speichert einen ``MethodSwitch``-Eintrag
       (eine Spur für dein Profil). Ausblenden versteckt den
-      Vorschlag für den Rest dieser Session; die nächste
-      Session prüft erneut.
+      Vorschlag für den Rest dieser Sitzung; die nächste
+      Sitzung prüft erneut.
 
       ## Warum nicht automatisch?
 
@@ -59,7 +59,7 @@ entries:
       ## Was ist der Auto-Loop?
 
       Wenn du Schritt 7 (Integration) abschließt, kann die
-      Session automatisch einen neuen Zyklus zum nachfolgenden
+      Sitzung automatisch einen neuen Zyklus zum nachfolgenden
       Thema deines Curriculums starten - ohne dass du den
       "Nächster Zyklus"-Button drücken musst.
 
@@ -75,10 +75,10 @@ entries:
 
       ## Cycle-Counter
 
-      Jede Session zeigt einen Cycle-Counter ("3/5"). Wenn
+      Jede Sitzung zeigt einen Cycle-Counter ("3/5"). Wenn
       max_cycles erreicht ist (Default: 5), pausiert der
       Auto-Loop und das System fragt, ob du weitermachen
-      möchtest. Das schützt vor übermäßig langen Sessions.
+      möchtest. Das schützt vor übermäßig langen Sitzungen.
 
       ## Wie du den Auto-Loop unterbrichst
 
@@ -86,14 +86,14 @@ entries:
         die drei Regler (Verständnis, Stress, Methodenpassung).
         Wenn dein Stress > 3 ist, schlägt das System eine
         Pause vor.
-      - **"Session beenden"-Button**: jederzeit klickbar.
+      - **"Sitzung beenden"-Button**: jederzeit klickbar.
       - **Methodenwechsel annehmen**: bricht den aktuellen
         Loop und startet einen neuen mit der neuen Methode.
 
       ## Wann der Auto-Loop besonders wertvoll ist
 
       Bei Sprachenlernen mit kleinen Themen-Einheiten, wo der
-      Overhead "neue Session starten" das Lernen ausbremst.
+      Overhead "neue Sitzung starten" das Lernen ausbremst.
       Beim Coding ist die Auto-Loop oft weniger nützlich, weil
       die Themen-Wechsel größer sind.
 
@@ -183,7 +183,7 @@ entries:
 
       - **"Curriculum erstellen"** - die extrahierten Konzepte
         werden in ein hierarchisches Curriculum überführt.
-      - **"Session starten"** - eine Session, die direkt mit
+      - **"Sitzung starten"** - eine Sitzung, die direkt mit
         den erkannten Wissenslücken startet.
       - **"Anki-Karten generieren"** - Karteikarten aus den
         Konzepten + Vokabular.
@@ -203,7 +203,7 @@ entries:
       Wenn du den Chat löscht, sind die Inhalte komplett weg.
 
   - key: feature_gamification
-    title: Gamification (XP, Badges, Streaks)
+    title: Gamification (XP, Badges, Serien)
     short: "Fortschrittssystem mit Erfahrungspunkten, Abzeichen und Lernserien - Motivation ohne Spielerei."
     docs_slug: user-guide/dashboard
     long: |
@@ -213,24 +213,24 @@ entries:
       lohnend:
 
       - **XP (Erfahrungspunkte)** - für abgeschlossene
-        Sessions und Lektionen, das Assessment und
+        Sitzungen und Lektionen, das Assessment und
         Gesprächsimporte. Mit den XP steigt dein Level.
-      - **Badges** - für Meilensteine (erste Session,
+      - **Badges** - für Meilensteine (erste Sitzung,
         Beständigkeit, Methoden ausprobieren, Tiefe, mehrere
         Sprachen).
-      - **Streaks** - aufeinanderfolgende Tage mit
+      - **Serien** - aufeinanderfolgende Tage mit
         Lernaktivität.
 
       ## So bekommst du XP
 
-      - **Abgeschlossene Session**: 50 XP, +10 XP pro
+      - **Abgeschlossene Sitzung**: 50 XP, +10 XP pro
         abgeschlossenem Zyklus, +25 XP pro Zyklus bis Schritt 7.
-      - **Erste Session in einer neuen Methode**: +50 XP.
+      - **Erste Sitzung in einer neuen Methode**: +50 XP.
       - **Abgeschlossene Lektion**: 30 XP, +10 XP pro Stern,
         +20 XP für drei Sterne mit jedem Schritt im ersten
         Versuch richtig.
-      - **Streak-Multiplikator**: +25 % pro Streak-Tag auf
-        Session- und Lektions-XP, bis 7 Tage (höchstens 2,75x).
+      - **Serien-Multiplikator**: +25 % pro Serientag auf
+        Sitzungs- und Lektions-XP, bis 7 Tage (höchstens 2,75x).
       - **Spielmodus-Combo**: bis zu 20 zusätzliche XP für eine
         mit Combos gespielte Lektion.
       - **Assessment abgeschlossen**: 100 XP.
@@ -247,9 +247,9 @@ entries:
       Badge-Benachrichtigungen lassen sich in den
       Einstellungen abschalten.
 
-      ## Streak-Freezes
+      ## Freezes
 
-      Je 7 Streak-Tage bringen einen Streak-Freeze, bis zu 3
+      Je 7 Serientage bringen einen Freeze, bis zu 3
       auf Vorrat. Verpasst du einen Tag, wird automatisch ein
       Freeze verbraucht und pausiert deine Serie, statt sie
       zurückzusetzen. Mit dem Wochenendmodus zählen Samstag
@@ -268,12 +268,12 @@ entries:
 
       Passen die Gamification-Werte nicht mehr zu deiner
       Situation (z. B. Neustart nach langer Pause), kannst du
-      XP, Badges und Streak in den Einstellungen zurücksetzen.
-      Curriculum, Sessions und Bewertungen bleiben erhalten.
+      XP, Badges und Serie in den Einstellungen zurücksetzen.
+      Curriculum, Sitzungen und Bewertungen bleiben erhalten.
 
   - key: view_dashboard
     title: Dashboard
-    short: "Deine Startseite: Fortschritt, Streak, XP, Abzeichen, fällige Wiederholungen und schnelle Aktionen."
+    short: "Deine Startseite: Fortschritt, Serie, XP, Abzeichen, fällige Wiederholungen und schnelle Aktionen."
     docs_slug: user-guide/dashboard
     long: |
       ## Was zeigt das Dashboard?
@@ -282,7 +282,7 @@ entries:
       "Weitermachen" mit der zuletzt berührten Lektion, darunter
       die handlungsrelevanten Karten (pausierte Lektionen,
       Missionen, Fokusbereiche, Wiederholungs-Warteschlange),
-      dann die Gamification (XP, Streak, Abzeichen) und
+      dann die Gamification (XP, Serie, Abzeichen) und
       schließlich die analytischen Panels.
 
       ## Filter
@@ -357,7 +357,7 @@ entries:
       ## Was ist ein Backup?
 
       Ein Backup ist ein vollständiger Snapshot: jede
-      Datentabelle (Projekte, Sessions, Lektionsfortschritt,
+      Datentabelle (Projekte, Sitzungen, Lektionsfortschritt,
       Fehler, Gamification, Missionen ...), deine
       heruntergeladenen Content-Sets und deine lokalen
       Einstellungen - gebündelt in eine ``.alb``-Datei (ein

@@ -31,6 +31,7 @@ import json
 import textwrap
 from collections.abc import Iterator
 from datetime import datetime
+from pathlib import Path
 from typing import NoReturn
 from unittest.mock import patch
 
@@ -589,25 +590,10 @@ def test_cache_miss_404_keeps_server_paths_out_of_detail(
 
 
 def _user_lesson_payload(set_id: str = "conv-route") -> dict:
-    """Build a schema-valid lesson dict via the generator."""
-    from adaptive_learner_content_loader.analysis_to_lesson import (
-        generate_lesson_from_analysis,
-    )
-
-    lesson = generate_lesson_from_analysis(
-        {
-            "topic": "Route test",
-            "summary": "x",
-            "vocabulary": [
-                {"word": "a", "translation": "b", "example": "a c"},
-                {"word": "d", "translation": "e", "example": "d f"},
-                {"word": "g", "translation": "h"},
-                {"word": "i", "translation": "j"},
-            ],
-        },
-        lesson_id=set_id,
-    )
-    return lesson.model_dump(mode="json")
+    """A schema-valid lesson dict from the shared fixture (#3446)."""
+    fixture = Path(__file__).resolve().parents[2] / "tests" / "fixtures" / "user-set-lesson"
+    lesson = json.loads((fixture / "lesson.json").read_text(encoding="utf-8"))
+    return {**lesson, "id": set_id}
 
 
 def test_save_user_set_then_list_play_delete(client: TestClient) -> None:

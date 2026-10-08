@@ -53,15 +53,7 @@ def bootstrap_secrets_template() -> None:
 
 
 def _load_installed_plugins() -> None:
-    """Add bundled and ZIP-installed plugin dirs to ``sys.path``."""
-    installed_dir = BASE_DIR / "plugins" / "installed"
-    if installed_dir.exists():
-        for plugin_dir in installed_dir.iterdir():
-            if plugin_dir.is_dir() and (plugin_dir / "plugin.yaml").exists():
-                path_str = str(plugin_dir)
-                if path_str not in sys.path:
-                    sys.path.insert(0, path_str)
-
+    """Add the bundled plugin dirs to ``sys.path``."""
     bundled_dir = BASE_DIR.parent / "plugins"
     if bundled_dir.exists():
         for plugin_dir in bundled_dir.iterdir():
@@ -80,7 +72,8 @@ def _discovered_entry_points() -> list[str]:
         from importlib.metadata import entry_points
 
         return sorted(ep.name for ep in entry_points(group="adaptive_learner.plugins"))
-    except Exception:  # noqa: BLE001
+    except Exception:  # noqa: BLE001 - diagnostics only, never block startup
+        logger.warning("Plugin entry-point discovery failed", exc_info=True)
         return []
 
 

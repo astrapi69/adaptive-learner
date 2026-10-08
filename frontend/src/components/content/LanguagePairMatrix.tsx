@@ -142,7 +142,7 @@ export default function LanguagePairMatrix({
           {groups.map((group) => (
             <div key={group.source}>
               <h3
-                className="mb-1 text-xs font-medium uppercase tracking-wide text-fg-muted"
+                className="mt-0 mb-1 text-xs font-medium uppercase tracking-wide text-fg-muted"
                 data-testid={`${testId}-group-${group.source}`}
               >
                 {groupLabel(group.source)}

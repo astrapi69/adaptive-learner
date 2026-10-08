@@ -122,7 +122,7 @@ class UserSettings(Base):
     api_key_gemini: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_perplexity: Mapped[str | None] = mapped_column(Text, nullable=True)
     # v0.4.0: per-provider model override. NULL means the
-    # session plugin's ai_orchestration.DEFAULT_MODELS pick wins;
+    # app.services.ai_caller.DEFAULT_MODELS pick wins;
     # a non-NULL value replaces it for THAT provider only. Plain
     # text — the model name isn't a secret. String(200) leaves
     # room for fully-qualified upstream model IDs (e.g.

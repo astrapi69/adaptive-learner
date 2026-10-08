@@ -11,7 +11,7 @@ Veri** altında bulursun.
 
 ## Yedekte ne var
 
-Bir yedek, **eksiksiz bir snapshot'tır**: 30 veri tablosunun tümü
+Bir yedek, **eksiksiz bir snapshot'tır**: tüm veri tabloları
 (öğrenme projeleri, oturumlar, ders ilerlemesi, öğe düzeyinde
 hatalar, XP/Streak/Badge ile gamification, görevler, Anki kartları,
 notlar ve daha fazlası) **artı indirdiğin İçerik Setlerin**.

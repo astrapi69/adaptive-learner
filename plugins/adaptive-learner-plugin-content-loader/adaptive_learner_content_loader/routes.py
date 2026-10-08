@@ -155,9 +155,7 @@ class SetBookResponse(BaseModel):
     asin: str | None
 
     @classmethod
-    def from_model(
-        cls, book: ContentSetBook | None
-    ) -> SetBookResponse | None:
+    def from_model(cls, book: ContentSetBook | None) -> SetBookResponse | None:
         if book is None:
             return None
         return cls(
@@ -378,7 +376,12 @@ async def list_set_lessons(
             source,
             set_id,
         )
-    except Exception:  # pragma: no cover - defensive
+    except Exception:  # noqa: BLE001 - the version is optional in the response
+        logger.warning(
+            "Could not read the cached version of a content set",
+            extra={"source": source, "set_id": set_id},
+            exc_info=True,
+        )
         version_field = None
     return LessonListResponse(
         set_id=set_id,

@@ -18,17 +18,10 @@ common:
   error: Κάτι πήγε στραβά.
   back: Πίσω
   next: Επόμενο
-  start: Έναρξη
   submit: Υποβολή
-  continue: Συνέχεια
-  done: Έτοιμο
   delete: Διαγραφή
   edit: Επεξεργασία
   confirm: Επιβεβαίωση
-  'yes': Ναι
-  'no': Όχι
-  optional: προαιρετικό
-  required: υποχρεωτικό
   minutes: λεπτά
   close: "Κλείσιμο"
 avatar:
@@ -79,9 +72,6 @@ nav:
     progress: "Πρόοδος"
     more: "Περισσότερα"
   primary: "Κύρια πλοήγηση"
-  discover: "Ανακάλυψη περιεχομένου"
-  offline_long: "Εκτός σύνδεσης - οι προηγούμενες συνεδρίες παραμένουν διαθέσιμες"
-  sync_pending: "{n} αλλαγή(ές) σε αναμονή συγχρονισμού"
   statistics: "Στατιστικά"
   profile: "Το προφίλ σου"
   learning_path: "Διαδρομή μάθησης"
@@ -94,9 +84,6 @@ nav:
   help: Βοήθεια
   home: Αρχή
   menu: Μενού
-  online: Σε σύνδεση
-  offline: Εκτός σύνδεσης
-  anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Λειτουργία προγραμματιστή ενεργή - τα μηνύματα σφάλματος εμφανίζουν τεχνικές λεπτομέρειες. Αλλάξτε στις Ρυθμίσεις."
   content: "Το περιεχόμενό μου"
@@ -105,8 +92,6 @@ nav:
   mode_badge_tooltip_content: "Δεν έχει ρυθμιστεί κλειδί API - χρησιμοποιείται μόνο προκαθορισμένο περιεχόμενο. Προσθέστε κλειδί στις Ρυθμίσεις για να ενεργοποιήσετε τις λειτουργίες AI."
   mode_badge_tooltip_ai: "Πάροχος AI ρυθμισμένος - οι ασκήσεις χρησιμοποιούν AI για αποπροσανατολιστές και υποδείξεις. Πατήστε για περιήγηση."
   mode_badge_action: "περιήγηση στο περιεχόμενο"
-  sync_paired: "Συγχρ.: συζευγμένο (Ρυθμίσεις > Συγχρ.)"
-  sync_unpaired: "Συγχρ.: μη συζευγμένο (Ρυθμίσεις > Συγχρ.)"
 import:
   title: Εισαγωγή συνομιλίας
   subtitle: Επικόλλησε ή ανέβασε μια συνομιλία με ChatGPT, Claude ή Gemini και πάρε άμεσα μαθησιακές ιδέες.
@@ -129,7 +114,7 @@ import:
   analysis_title: Ανάλυση
   analysis_ready: Η ανάλυση είναι έτοιμη.
   analysis_fallback: Η ανάλυση ολοκληρώθηκε αλλά η απάντηση του AI δεν μπόρεσε να αναλυθεί καθαρά.
-  analysis_fallback_long: Η απάντηση του AI δεν μπόρεσε να αναλυθεί ως δομημένο JSON. Η παρακάτω σύνοψη είναι εφεδρική.
+  analysis_fallback_long: "Η απάντηση του AI δεν ήταν δυνατό να διαβαστεί ως δομημένη ανάλυση. Εκτέλεσε ξανά την ανάλυση ή διάλεξε άλλον πάροχο AI."
   analysis_error: Δεν ήταν δυνατή η ανάλυση της συνομιλίας.
   analysis_phase_reading: "Βήμα 1/3: Ανάγνωση συνομιλίας…"
   analysis_phase_analyzing: "Βήμα 2/3: Ανάλυση περιεχομένου…"
@@ -362,7 +347,6 @@ adaptive:
   session_title: "Προσαρμοστικό μάθημα"
   loading: "Ανάλυση των λαθών σου…"
   empty_body: "Τίποτα προς προσαρμογή ακόμα - εξάσκησε ένα μάθημα για να συγκεντρώσεις δεδομένα."
-  not_cached_body: "Αυτό το σετ δεν έχει ληφθεί ακόμη. Άνοιξε τον περιηγητή περιεχομένου για να το κατεβάσεις πρώτα."
   back_to_dashboard: "Πίσω στον πίνακα"
   transparency:
     focus_prefix: "Αυτό το μάθημα εστιάζει σε:"
@@ -375,7 +359,6 @@ adaptive:
     mastered_delta: "Βελτίωση: +{n} στοιχείο(α) κατακτήθηκαν σε αυτή τη συνεδρία!"
     note: "Οι βαθμολογίες των στοιχείων ενημερώθηκαν. Το επόμενο προσαρμοστικό μάθημα θα στοχεύσει στα στοιχεία που χρειάζονται ακόμη δουλειά."
   error:
-    missing_params: "Δεν επιλέχθηκε σετ περιεχομένου."
     load_failed: "Δεν ήταν δυνατή η δημιουργία του προσαρμοστικού μαθήματος."
 review:
   your_answer: "Η απάντησή σου:"
@@ -400,7 +383,6 @@ review:
   subtitle_capped: "{shown} από {due} στοιχείο(α) προς επανάληψη"
   loading: "Φόρτωση συνεδρίας επανάληψης…"
   empty_body: "Όλα έτοιμα! Δεν υπάρχουν στοιχεία προς επανάληψη σε αυτό το σύνολο."
-  not_cached_body: "Αυτό το σετ δεν έχει ληφθεί ακόμη. Άνοιξε τον περιηγητή περιεχομένου για να το κατεβάσεις πρώτα."
   back_to_dashboard: "Πίσω στον πίνακα"
   back_to_lesson: "Πίσω στο μάθημα"
   summary:
@@ -409,7 +391,6 @@ review:
     score: "Βαθμολογία"
     note: "Οι βαθμολογίες στοιχείων ενημερώθηκαν. Τα στοιχεία που έχεις κατακτήσει δεν θα εμφανίζονται στην επόμενη συνεδρία."
   error:
-    missing_params: "Δεν επιλέχθηκε σετ περιεχομένου."
     load_failed: "Η συνεδρία επανάληψης δεν φορτώθηκε."
   spaced_empty: Τίποτα για επανάληψη τώρα. Καλός ρυθμός!
   spaced_interval_label: Επανάληψη σε
@@ -423,6 +404,7 @@ review:
   no_data: Δεν υπάρχουν συνεδρίες ακόμα - ξεκίνα την πρώτη για να δεις τις τάσεις.
   pronunciation_quick_start: Εξάσκηση Προφοράς
 session:
+  auto_loop_unavailable: "Στην εφαρμογή για υπολογιστή, μετά το βήμα 7 ξεκινά αυτόματα ένας νέος κύκλος με το επόμενο θέμα. Η έκδοση για πρόγραμμα περιήγησης δεν το κάνει ακόμη: τερμάτισε τη συνεδρία και ξεκίνα μια νέα για να συνεχίσεις."
   title: Συνεδρία μάθησης
   topic_label: "Θέμα"
   in_progress: Συνεδρία σε εξέλιξη
@@ -698,10 +680,6 @@ settings:
   tab_plugins: "Πρόσθετα"
   plugins_installed_title: "Εγκατεστημένα πρόσθετα"
   plugins_installed_desc: "Κάθε πρόσθετο που φόρτωσε η εφαρμογή για υπολογιστή, με έκδοση, προέλευση και ώρα ενεργοποίησης (κύκλος ζωής PluginForge)."
-  plugins_col_name: "Πρόσθετο"
-  plugins_col_version: "Έκδοση"
-  plugins_col_source: "Προέλευση"
-  plugins_col_activated: "Ενεργοποιήθηκε"
   plugins_source_entry_point: "Πακέτο"
   plugins_source_direct: "Άμεση καταχώριση"
   plugins_marker_load_error: "Σφάλμα φόρτωσης"
@@ -896,7 +874,6 @@ settings:
     rollback_warning: "Το νέο κλειδί δεν λειτουργεί. Διατήρηση του παλιού;"
     rollback_keep_old: "Διατήρηση παλιού"
     rollback_save_anyway: "Αποθήκευση ούτως ή άλλως"
-    rollback_cancel: "Άκυρο"
     rollback_restore: "Επαναφορά τελευταίου λειτουργικού κλειδιού"
     format_hint:
       anthropic: "Ξεκινά με sk-ant-"
@@ -1261,6 +1238,107 @@ backup:
   compare_auto_label: "Αυτόματο αντίγραφο {{date}}"
   auto_compare_missing: "Το αυτόματο αντίγραφο ασφαλείας δεν είναι πλέον διαθέσιμο - αντικαταστάθηκε."
 export:
+  # #3426 - the Markdown/PDF report strings (were a private DE/EN table).
+  report:
+    progress_report_title: "Πρόοδος μάθησης"
+    session_detail_title: "Λεπτομέρειες συνεδρίας"
+    curriculum_overview_title: "Επισκόπηση προγράμματος σπουδών"
+    generated_at: "Δημιουργήθηκε στις"
+    app_version: "Έκδοση εφαρμογής"
+    learner: "Εκπαιδευόμενος/η"
+    language: "Γλώσσα"
+    method_profile: "Προφίλ μεθόδων"
+    dominant_method: "Κυρίαρχη μέθοδος"
+    assessed_at: "Τελευταία αξιολόγηση"
+    no_profile: "Δεν υπάρχει ακόμη αξιολόγηση. Ολοκλήρωσε την αρχική αξιολόγηση για να δεις το προφίλ σου."
+    projects: "Έργα"
+    no_projects: "Δεν υπάρχουν ακόμη έργα μάθησης."
+    topic: "Θέμα"
+    goal: "Στόχος"
+    timeframe: "Χρονικό πλαίσιο"
+    daily_minutes: "Ημερήσια λεπτά"
+    current_problem: "Τρέχον εμπόδιο"
+    status: "Κατάσταση"
+    active: "ενεργό"
+    archived: "αρχειοθετημένο"
+    session_count: "Συνεδρίες"
+    total_minutes: "Συνολικά λεπτά"
+    mean_understanding: "Μέση κατανόηση"
+    mean_stress: "Μέσο άγχος"
+    method_distribution: "Κατανομή μεθόδων"
+    method_switches: "Αλλαγές μεθόδου"
+    no_switches: "Δεν υπάρχουν αλλαγές μεθόδου σε αυτό το έργο."
+    switched_from_to: "Αλλαγή"
+    reason: "Αιτιολογία"
+    recent_sessions: "Πρόσφατες συνεδρίες"
+    no_sessions: "Δεν έχουν ολοκληρωθεί ακόμη συνεδρίες."
+    method: "Μέθοδος"
+    duration: "Διάρκεια"
+    understanding: "Κατανόηση"
+    stress: "Άγχος"
+    method_fit: "Καταλληλότητα μεθόδου"
+    notes: "Σημειώσεις"
+    step_evaluation_insights: "Αξιολογήσεις βημάτων"
+    no_step_insights: "Δεν υπάρχουν ακόμη αξιολογήσεις βημάτων."
+    step: "Βήμα"
+    evaluations_count: "Αξιολογήσεις"
+    advance_rate: "Ποσοστό προόδου"
+    mean_confidence: "Μέση βεβαιότητα"
+    deferred: "αναβλήθηκε"
+    repeated: "επαναλήφθηκε"
+    advanced: "προχώρησε"
+    extractions: "Αναλυμένες συνομιλίες"
+    no_extractions: "Δεν υπάρχουν ακόμη αναλυμένες συνομιλίες."
+    imported_at: "Εισήχθη στις"
+    messages: "Μηνύματα"
+    source: "Πηγή"
+    analysis: "Ανάλυση"
+    no_session: "Η συνεδρία δεν βρέθηκε."
+    session: "Συνεδρία"
+    started_at: "Ξεκίνησε στις"
+    ended_at: "Τελείωσε στις"
+    cycle_step: "Τρέχον βήμα κύκλου"
+    transcript: "Απομαγνητοφώνηση"
+    no_messages: "Δεν υπάρχουν μηνύματα σε αυτή τη συνεδρία."
+    role_user: "Εκπαιδευόμενος/η"
+    role_assistant: "ΤΝ"
+    role_system: "Σύστημα"
+    rating: "Αξιολόγηση"
+    no_rating: "Η συνεδρία δεν αξιολογήθηκε."
+    step_evaluations: "Αξιολογήσεις βημάτων"
+    from_step: "Από βήμα"
+    to_step: "Σε βήμα"
+    confidence: "Βεβαιότητα"
+    applied: "Εφαρμόστηκε"
+    not_applied: "Δεν εφαρμόστηκε"
+    fallback: "Χρησιμοποιήθηκε εναλλακτική"
+    evaluated_at: "Αξιολογήθηκε στις"
+    curriculum: "Πρόγραμμα σπουδών"
+    description: "Περιγραφή"
+    topics: "Θέματα"
+    no_topics: "Δεν υπάρχουν θέματα σε αυτό το πρόγραμμα σπουδών."
+    lessons: "Μαθήματα"
+    no_lessons: "Δεν υπάρχουν μαθήματα σε αυτό το πρόγραμμα σπουδών."
+    out_of: "από"
+    minutes_short: "λεπ."
+    scale_5: "σε κλίμακα από 1 έως 5"
+    analysis_topic: "Θέμα που εντοπίστηκε"
+    analysis_subtopics: "Υποθέματα"
+    analysis_user_level: "Επίπεδο"
+    analysis_strengths: "Δυνατά σημεία"
+    analysis_weaknesses: "Αδύναμα σημεία"
+    analysis_error_patterns: "Μοτίβα λαθών"
+    analysis_recommended_method: "Προτεινόμενη μέθοδος"
+    analysis_recommended_focus: "Προτεινόμενη εστίαση"
+    analysis_suggested_curriculum: "Προτεινόμενο πρόγραμμα σπουδών"
+    analysis_summary: "Σύνοψη"
+    analysis_priority: "Προτεραιότητα"
+    level_beginner: "Αρχάριος"
+    level_intermediate: "Μεσαίο επίπεδο"
+    level_advanced: "Προχωρημένος"
+    linked_project: "Συνδεδεμένο έργο"
+    status_completed: "ολοκληρώθηκε"
+    status_abandoned: "εγκαταλείφθηκε"
   title: "Εξαγωγή"
   intro: "Κατεβάστε το ταξίδι μάθησής σας ως Markdown ή PDF. Το Markdown είναι απλό κείμενο που μπορείτε να επεξεργαστείτε και να μοιραστείτε· το PDF ανοίγει το παράθυρο εκτύπωσης του προγράμματος περιήγησης ώστε να αποθηκεύσετε ένα αντίγραφο."
   progress_label: "Αναφορά προόδου (πλήρες ταξίδι)"
@@ -1375,10 +1453,6 @@ gamification:
     how: "Τα επίπεδα ανεβαίνουν σε αυξανόμενη καμπύλη XP: 0, 100, 300, 600, 1000 XP - κάθε βήμα χρειάζεται 100 XP περισσότερα από το προηγούμενο."
   level_detail_title: "Πρόοδος επιπέδου"
   level_up: Ανέβηκες επίπεδο!
-  reason_session_complete: Η συνεδρία ολοκληρώθηκε
-  reason_assessment_complete: Η αξιολόγηση ολοκληρώθηκε
-  reason_conversation_imported: Εισήχθη συζήτηση
-  reason_flat: Δόθηκαν XP
   card_badges: Σήματα
   badges_earned: κερδίστηκαν
   badges_empty: Δεν υπάρχουν διαθέσιμα σήματα ακόμη.
@@ -1503,19 +1577,6 @@ gamification:
   reset_done: 'Πρόοδος μηδενίστηκε: {xp} XP, {badges} σήματα, {streak} σερί.'
   reset_failed: Δεν ήταν δυνατή η επαναφορά της προόδου.
   weekend_mode_save_failed: Δεν αποθηκεύτηκε η λειτουργία Σαββατοκύριακου.
-  danger_zone_heading: "Ζώνη κινδύνου"
-  danger_zone_intro: "Διαγράψτε οριστικά κάθε κατάσταση μαθητή σε αυτή τη συσκευή."
-  danger_zone_reset_button: "Επαναφορά όλων"
-  danger_zone_warning: "Αυτό διαγράφει ΟΛΑ τα δεδομένα μάθησής σας οριστικά - συνεδρίες, πρόοδο, προφίλ, προγράμματα σπουδών, εισαγωγές, κάρτες Anki, ρυθμίσεις και κλειδιά API. Αυτή η ενέργεια ΔΕΝ μπορεί να αναιρεθεί."
-  danger_zone_confirm_prompt: "Πληκτρολογήστε RESET για επιβεβαίωση"
-  danger_zone_input_placeholder: RESET
-  danger_zone_final_button: "Οριστική διαγραφή"
-  danger_zone_backup_offer: "Δημιουργία αντιγράφου ασφαλείας πρώτα;"
-  danger_zone_backup_button: "Δημιουργία αντιγράφου ασφαλείας"
-  danger_zone_complete_toast: "Όλα τα δεδομένα διαγράφηκαν."
-  danger_zone_cancel: "Άκυρο"
-  danger_zone_continue: "Συνέχεια"
-  danger_zone_failed_toast: "Η επαναφορά απέτυχε:"
 arcade:
   title: "Αρκέιντ"
   subtitle: "Σύντομοι γύροι, ένα με δύο λεπτά: μια ανταμοιβή της λειτουργίας παιχνιδιού. Χωρίς XP, μόνο διασκέδαση."
@@ -1576,6 +1637,10 @@ arcade:
     won: "Τα κατάφερες: ολόκληρη η ακολουθία!"
     lost: "Ωχ: έφτασες μέχρι μήκος {n}. Δοκίμασε ξανά!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Βασική"
+    cloze: "Συμπλήρωση κενών"
   title: Εξαγωγή Anki
   intro: Έλεγξε τις κάρτες που πρότεινε η ΤΝ, αποδέξου όσες θέλεις και εξήγαγέ τες ως αρχείο .apkg για το Anki.
   filter_project: Έργο
@@ -1911,7 +1976,6 @@ repo:
     download_zip: "Λήψη ZIP"
     persist: "Αποθήκευση σε git"
     persisting: "Αποθήκευση…"
-    persist_dexie_tooltip: "Η έκδοση με Git είναι διαθέσιμη μόνο σε λειτουργία διακομιστή."
   toast:
     zip_downloaded: "Λήφθηκε ZIP"
     persisted: "Αποθηκεύτηκε σε git"
@@ -1928,6 +1992,7 @@ repo:
     title: "Αποθετήριο μάθησης"
     loading: "Φόρτωση…"
     repos_dir: "Κατάλογος αποθετηρίων"
+    repos_dir_hint: "Αφήστε το κενό για την προεπιλογή: repos στον κατάλογο δεδομένων (βλ. Σχετικά)"
     save: "Αποθήκευση ρυθμίσεων"
     saving: "Αποθήκευση…"
     toast:
@@ -1939,6 +2004,11 @@ repo:
     description: "Δημιουργεί αυτόματα αρχεία Markdown (README, STATS, CHEATSHEET, ROADMAP) ανά έργο από τα δεδομένα των συνεδριών σας. Η προαιρετική ενσωμάτωση git κάνει commit κάθε δημιουργία ώστε να μπορείτε να περιηγηθείτε στο ιστορικό με οποιονδήποτε client git."
     enable_git: "Ενεργοποίηση διατήρησης Git"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Λείπει: {word}"
+    extra: "Περιττό: {word}"
+    replaced: "Έγραψες {wrote}, αναμενόταν {expected}"
   progress_io:
     save_error: "Η πρόοδός σας σε αυτό το μάθημα δεν μπόρεσε να αποθηκευτεί."
     load_failed: "Η αποθηκευμένη πρόοδός σας για αυτό το μάθημα δεν μπόρεσε να φορτωθεί: {detail}"
@@ -2526,6 +2596,7 @@ content:
     public: "Δημόσιο"
     branch: "Κλάδος"
     lessons_note: "Θα συμπεριληφθούν και τα {n} μαθήματα αυτού του σετ."
+    lessons_note_one: "Θα συμπεριληφθεί το μοναδικό μάθημα αυτού του σετ."
     invalid_repo: "Δώσε το αποθετήριο ως owner/name."
     submit: "Εξαγωγή"
     working: "Εξαγωγή…"
@@ -3199,6 +3270,9 @@ create_lesson:
     description_label: "Θέμα / Περιγραφή"
     author_label: "Όνομα συγγραφέα"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Λέξη ή φράση"
+    back_placeholder: "Σημασία"
     heading: "Προσθήκη καρτών λεξιλογίου"
     front_label: "Μπροστά (μαθαίνεται)"
     back_label: "Πίσω (η γλώσσα σας)"
@@ -4003,9 +4077,6 @@ content_repo:
   added: "Το αποθετήριο προστέθηκε."
   synced: "Συγχρονίστηκε: {sets} σύνολα, {lessons} μαθήματα."
   token_hint: "Τα ιδιωτικά αποθετήρια χρειάζονται διακριτικό - επικόλλησε ένα παρακάτω ή όρισε ένα κοινό διακριτικό στις Ρυθμίσεις → Ενσωματώσεις."
-  trust_official: "Επίσημο: περιεχόμενο επιμελημένο και ποιοτικά ελεγμένο από την ομάδα του έργου."
-  trust_verified: "Επαληθευμένο: συνεισφορά της κοινότητας, ελεγμένο από την ομάδα."
-  trust_validated: "Επικυρωμένο: τεχνικά σωστό· το περιεχόμενο δεν έχει ελεγχθεί μεμονωμένα."
   official:
     title: "Επίσημο περιεχόμενο"
     counts: "{sets} σύνολα · {lessons} μαθήματα"
@@ -4075,6 +4146,19 @@ content_repo:
     save_failed: "Δεν ήταν δυνατή η προσθήκη του αποθετηρίου."
     sync_failed: "Ο συγχρονισμός απέτυχε. Δοκίμασε ξανά."
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "Δεν βρέθηκε το αποθετήριο ή το manifest.yaml."
+      access_denied: "Άρνηση πρόσβασης - έλεγξε το αποθετήριο και το token του GitHub."
+      unreachable: "Το αποθετήριο δεν είναι προσβάσιμο."
+      unsupported_schema: "Μη υποστηριζόμενη έκδοση σχήματος {version}."
+      no_sets: "Το manifest.yaml δεν περιέχει σύνολα."
+      no_lessons: "Δεν βρέθηκαν μαθήματα σε κανένα σύνολο."
+      executable_content: "Το περιεχόμενο του μαθήματος περιέχει μη επιτρεπτό εκτελέσιμο κώδικα."
+      lessons_unreadable: "Δεν ήταν δυνατή η ανάγνωση των μαθημάτων του πρώτου συνόλου."
+      lesson_invalid_json: "Το πρώτο μάθημα του πρώτου συνόλου δεν είναι έγκυρο JSON."
+      validator_unavailable: "Δεν ήταν δυνατή η φόρτωση του ελεγκτή μαθημάτων."
+      lesson_invalid: "Το πρώτο μάθημα του πρώτου συνόλου αποτυγχάνει στον έλεγχο: {detail}"
     failed: "Η επικύρωση απέτυχε: {reason}"
     passed: "Η επικύρωση πέτυχε: {sets} σύνολα, {lessons} μαθήματα."
 resource:
@@ -4221,12 +4305,10 @@ shuffle:
   page_title: "Τυχαία σειρά"
   loading: "Φόρτωση τυχαίας συνεδρίας…"
   empty_body: "Αυτό το σετ χρειάζεται τουλάχιστον δύο μαθήματα με ασκήσεις για ανακάτεμα."
-  not_cached_body: "Αυτό το σετ δεν έχει ληφθεί ακόμη. Άνοιξε τον περιηγητή περιεχομένου για να το κατεβάσεις πρώτα."
   back_to_dashboard: "Πίσω στον πίνακα"
   subtitle: "Ανάμειξη {n} ερωτήσεων από {lessons} μαθήματα"
   error:
     load_failed: "Δεν ήταν δυνατή η φόρτωση της τυχαίας συνεδρίας."
-    missing_params: "Δεν επιλέχθηκε σετ περιεχομένου."
   summary:
     heading: "Η τυχαία εξάσκηση ολοκληρώθηκε!"
     score: "{correct} από {total} σωστές"

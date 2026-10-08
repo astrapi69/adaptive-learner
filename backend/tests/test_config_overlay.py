@@ -33,6 +33,7 @@ def layered(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Path]:
 
 # --- deep_merge ----------------------------------------------------------
 
+
 def test_deep_merge_recurses_and_override_wins():
     base = {"a": 1, "nested": {"x": 1, "y": 2}, "keep": "p"}
     override = {"a": 2, "nested": {"y": 9, "z": 3}}
@@ -47,6 +48,7 @@ def test_deep_merge_override_replaces_non_dict():
 
 
 # --- _read_yaml defensive paths -----------------------------------------
+
 
 def test_read_yaml_missing_returns_empty(tmp_path: Path):
     assert co._read_yaml(tmp_path / "nope.yaml") == {}
@@ -64,7 +66,8 @@ def test_read_yaml_non_dict_returns_empty(tmp_path: Path):
     assert co._read_yaml(f) == {}
 
 
-# --- app config: merge + precedence + edit + write ----------------------
+# --- app config: merge + precedence ------------------------------------
+
 
 def test_app_config_merged_user_overrides_project(layered):
     (layered["project"] / "app.yaml").write_text(
@@ -78,23 +81,10 @@ def test_app_config_merged_user_overrides_project(layered):
     assert merged["app"]["debug"] is False  # project value preserved
 
 
-def test_load_app_config_for_edit_prefers_user_then_project(layered):
-    (layered["project"] / "app.yaml").write_text("app:\n  x: 1\n", encoding="utf-8")
-    # No user file yet -> project is returned for edit.
-    assert co.load_app_config_for_edit() == {"app": {"x": 1}}
-    co.write_user_app_config({"app": {"x": 2}})
-    assert co.user_app_config_exists() is True
-    assert co.load_app_config_for_edit() == {"app": {"x": 2}}  # user wins
+# --- plugin config: merge + write ---------------------------------------
 
 
-def test_load_app_config_for_edit_empty_when_nothing(layered):
-    assert co.load_app_config_for_edit() == {}
-    assert co.user_app_config_exists() is False
-
-
-# --- plugin config: merge + edit + write + delete -----------------------
-
-def test_plugin_config_merged_and_edit(layered):
+def test_plugin_config_merged_user_overrides_project(layered):
     (layered["project"] / "plugins" / "missions.yaml").write_text(
         "settings:\n  count: 3\n  mix: balanced\n", encoding="utf-8"
     )
@@ -104,24 +94,11 @@ def test_plugin_config_merged_and_edit(layered):
     merged = co.read_plugin_config_merged("missions")
     assert merged["settings"]["count"] == 1  # user wins
     assert merged["settings"]["mix"] == "balanced"  # project preserved
-    # for-edit returns the user overlay when present.
-    assert co.load_plugin_config_for_edit("missions") == {"settings": {"count": 1}}
 
 
-def test_plugin_config_for_edit_falls_back_to_project(layered):
-    (layered["project"] / "plugins" / "anki.yaml").write_text(
-        "settings:\n  deck: Default\n", encoding="utf-8"
-    )
-    assert co.load_plugin_config_for_edit("anki") == {"settings": {"deck": "Default"}}
-
-
-def test_plugin_config_for_edit_empty_when_nothing(layered):
-    assert co.load_plugin_config_for_edit("ghost") == {}
-
-
-def test_write_then_delete_user_plugin_config(layered):
+def test_write_user_plugin_config_lands_in_the_overlay_only(layered):
+    project_file = layered["project"] / "plugins" / "missions.yaml"
+    project_file.write_text("settings:\n  count: 3\n", encoding="utf-8")
     co.write_user_plugin_config("missions", {"settings": {"count": 2}})
-    assert co.load_plugin_config_for_edit("missions") == {"settings": {"count": 2}}
-    # delete returns True the first time, False when already gone.
-    assert co.delete_user_plugin_config("missions") is True
-    assert co.delete_user_plugin_config("missions") is False
+    assert co.read_plugin_config_merged("missions") == {"settings": {"count": 2}}
+    assert project_file.read_text(encoding="utf-8") == "settings:\n  count: 3\n"

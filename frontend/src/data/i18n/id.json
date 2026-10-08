@@ -20,17 +20,10 @@
     "error": "Terjadi kesalahan.",
     "back": "Kembali",
     "next": "Berikutnya",
-    "start": "Mulai",
     "submit": "Kirim",
-    "continue": "Lanjutkan",
-    "done": "Selesai",
     "delete": "Hapus",
     "edit": "Edit",
     "confirm": "Konfirmasi",
-    "yes": "Ya",
-    "no": "Tidak",
-    "optional": "opsional",
-    "required": "wajib",
     "minutes": "menit",
     "close": "Tutup"
   },
@@ -87,9 +80,6 @@
       "more": "Lainnya"
     },
     "primary": "Navigasi utama",
-    "discover": "Jelajahi konten",
-    "offline_long": "Luring - sesi sebelumnya tetap dapat dibaca",
-    "sync_pending": "{n} perubahan menunggu untuk disinkronkan",
     "statistics": "Statistik",
     "profile": "Profil Anda",
     "learning_path": "Jalur Pembelajaran",
@@ -102,9 +92,6 @@
     "help": "Bantuan",
     "home": "Beranda",
     "menu": "Menu",
-    "online": "Daring",
-    "offline": "Luring",
-    "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Mode Pengembang aktif - pesan kesalahan menampilkan detail teknis lengkap. Ubah di Pengaturan.",
     "content": "Konten saya",
@@ -112,9 +99,7 @@
     "mode_badge_ai": "AI+Konten",
     "mode_badge_tooltip_content": "Tidak ada kunci API yang dikonfigurasi - hanya menggunakan konten siap pakai. Tambahkan kunci di Pengaturan untuk mengaktifkan fitur AI.",
     "mode_badge_tooltip_ai": "Penyedia AI dikonfigurasi - latihan menggunakan AI untuk pengecoh + petunjuk. Ketuk untuk menjelajahi set konten.",
-    "mode_badge_action": "jelajahi konten",
-    "sync_paired": "Sinkron: terpasang (Pengaturan > Sinkron)",
-    "sync_unpaired": "Sinkron: tidak terpasang (Pengaturan > Sinkron)"
+    "mode_badge_action": "jelajahi konten"
   },
   "import": {
     "title": "Impor percakapan",
@@ -141,7 +126,7 @@
     "analysis_title": "Analisis",
     "analysis_ready": "Analisis siap.",
     "analysis_fallback": "Analisis berjalan tetapi respons AI tidak dapat diuraikan dengan rapi.",
-    "analysis_fallback_long": "Respons AI tidak dapat diuraikan sebagai JSON terstruktur. Ringkasan di bawah ini adalah cadangan.",
+    "analysis_fallback_long": "Respons AI tidak dapat dibaca sebagai analisis terstruktur. Jalankan analisis lagi atau pilih penyedia AI lain.",
     "analysis_error": "Tidak dapat menganalisis percakapan.",
     "analysis_phase_reading": "Langkah 1/3: Membaca obrolan…",
     "analysis_phase_analyzing": "Langkah 2/3: Menganalisis konten…",
@@ -385,7 +370,6 @@
     "session_title": "Pelajaran adaptif",
     "loading": "Menganalisis kesalahan Anda…",
     "empty_body": "Belum ada yang bisa diadaptasi - kerjakan pelajaran untuk mengumpulkan data.",
-    "not_cached_body": "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu.",
     "back_to_dashboard": "Kembali ke Dasbor",
     "transparency": {
       "focus_prefix": "Pelajaran ini berfokus pada:",
@@ -400,7 +384,6 @@
       "note": "Skor elemen telah diperbarui. Pelajaran adaptif Anda berikutnya akan menargetkan elemen yang masih perlu dikerjakan."
     },
     "error": {
-      "missing_params": "Tidak ada set konten yang dipilih.",
       "load_failed": "Tidak dapat menghasilkan pelajaran adaptif."
     }
   },
@@ -427,7 +410,6 @@
     "subtitle_capped": "{shown} dari {due} elemen untuk ditinjau",
     "loading": "Memuat sesi ulasan…",
     "empty_body": "Semua sudah selesai! Tidak ada elemen yang perlu ditinjau di set ini.",
-    "not_cached_body": "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu.",
     "back_to_dashboard": "Kembali ke Dasbor",
     "back_to_lesson": "Kembali ke pelajaran",
     "summary": {
@@ -437,7 +419,6 @@
       "note": "Skor elemen telah diperbarui. Elemen yang dikuasai tidak akan muncul di sesi berikutnya."
     },
     "error": {
-      "missing_params": "Tidak ada set konten yang dipilih.",
       "load_failed": "Tidak dapat memuat sesi ulasan."
     },
     "spaced_empty": "Tidak ada yang perlu disegarkan saat ini. Ritme yang bagus!",
@@ -453,6 +434,7 @@
     "pronunciation_quick_start": "Latihan Pelafalan"
   },
   "session": {
+    "auto_loop_unavailable": "Di aplikasi desktop, siklus baru dengan topik berikutnya dimulai otomatis setelah langkah 7. Versi browser belum bisa melakukannya: akhiri sesi dan mulai sesi baru untuk melanjutkan belajar.",
     "title": "Sesi belajar",
     "topic_label": "Topik",
     "in_progress": "Sesi sedang berlangsung",
@@ -747,10 +729,6 @@
     "tab_plugins": "Plugin",
     "plugins_installed_title": "Plugin terpasang",
     "plugins_installed_desc": "Setiap plugin yang dimuat aplikasi desktop, dengan versi, sumber, dan waktu aktivasi (siklus hidup PluginForge).",
-    "plugins_col_name": "Plugin",
-    "plugins_col_version": "Versi",
-    "plugins_col_source": "Sumber",
-    "plugins_col_activated": "Diaktifkan",
     "plugins_source_entry_point": "Paket",
     "plugins_source_direct": "Didaftarkan langsung",
     "plugins_marker_load_error": "Kesalahan pemuatan",
@@ -945,7 +923,6 @@
       "rollback_warning": "Kunci baru tidak berfungsi. Pertahankan kunci lama?",
       "rollback_keep_old": "Pertahankan kunci lama",
       "rollback_save_anyway": "Simpan saja",
-      "rollback_cancel": "Batal",
       "rollback_restore": "Pulihkan kunci terakhir yang berfungsi",
       "format_hint": {
         "anthropic": "Diawali dengan sk-ant-",
@@ -1338,6 +1315,107 @@
     "auto_compare_missing": "Pencadangan otomatis tidak lagi tersedia - sudah dirotasi keluar."
   },
   "export": {
+    "report": {
+      "progress_report_title": "Kemajuan belajar",
+      "session_detail_title": "Detail sesi",
+      "curriculum_overview_title": "Ikhtisar kurikulum",
+      "generated_at": "Dibuat pada",
+      "app_version": "Versi aplikasi",
+      "learner": "Pelajar",
+      "language": "Bahasa",
+      "method_profile": "Profil metode",
+      "dominant_method": "Metode dominan",
+      "assessed_at": "Penilaian terakhir",
+      "no_profile": "Belum ada penilaian. Selesaikan penilaian awal untuk melihat profilmu.",
+      "projects": "Proyek",
+      "no_projects": "Belum ada proyek belajar.",
+      "topic": "Topik",
+      "goal": "Tujuan",
+      "timeframe": "Jangka waktu",
+      "daily_minutes": "Menit per hari",
+      "current_problem": "Hambatan saat ini",
+      "status": "Status",
+      "active": "aktif",
+      "archived": "diarsipkan",
+      "session_count": "Sesi",
+      "total_minutes": "Total menit",
+      "mean_understanding": "Rata-rata pemahaman",
+      "mean_stress": "Rata-rata stres",
+      "method_distribution": "Sebaran metode",
+      "method_switches": "Pergantian metode",
+      "no_switches": "Tidak ada pergantian metode di proyek ini.",
+      "switched_from_to": "Pergantian",
+      "reason": "Alasan",
+      "recent_sessions": "Sesi terbaru",
+      "no_sessions": "Belum ada sesi yang selesai.",
+      "method": "Metode",
+      "duration": "Durasi",
+      "understanding": "Pemahaman",
+      "stress": "Stres",
+      "method_fit": "Kecocokan metode",
+      "notes": "Catatan",
+      "step_evaluation_insights": "Evaluasi langkah",
+      "no_step_insights": "Belum ada evaluasi langkah.",
+      "step": "Langkah",
+      "evaluations_count": "Evaluasi",
+      "advance_rate": "Tingkat kemajuan",
+      "mean_confidence": "Rata-rata keyakinan",
+      "deferred": "ditunda",
+      "repeated": "diulang",
+      "advanced": "maju",
+      "extractions": "Percakapan yang dianalisis",
+      "no_extractions": "Belum ada percakapan yang dianalisis.",
+      "imported_at": "Diimpor pada",
+      "messages": "Pesan",
+      "source": "Sumber",
+      "analysis": "Analisis",
+      "no_session": "Sesi tidak ditemukan.",
+      "session": "Sesi",
+      "started_at": "Dimulai pada",
+      "ended_at": "Selesai pada",
+      "cycle_step": "Langkah siklus saat ini",
+      "transcript": "Transkrip",
+      "no_messages": "Tidak ada pesan di sesi ini.",
+      "role_user": "Pelajar",
+      "role_assistant": "AI",
+      "role_system": "Sistem",
+      "rating": "Penilaian",
+      "no_rating": "Sesi ini belum dinilai.",
+      "step_evaluations": "Evaluasi langkah",
+      "from_step": "Dari langkah",
+      "to_step": "Ke langkah",
+      "confidence": "Keyakinan",
+      "applied": "Diterapkan",
+      "not_applied": "Tidak diterapkan",
+      "fallback": "Cadangan digunakan",
+      "evaluated_at": "Dievaluasi pada",
+      "curriculum": "Kurikulum",
+      "description": "Deskripsi",
+      "topics": "Topik",
+      "no_topics": "Tidak ada topik di kurikulum ini.",
+      "lessons": "Pelajaran",
+      "no_lessons": "Tidak ada pelajaran di kurikulum ini.",
+      "out_of": "dari",
+      "minutes_short": "mnt",
+      "scale_5": "pada skala 1 sampai 5",
+      "analysis_topic": "Topik yang terdeteksi",
+      "analysis_subtopics": "Subtopik",
+      "analysis_user_level": "Tingkat",
+      "analysis_strengths": "Kekuatan",
+      "analysis_weaknesses": "Kelemahan",
+      "analysis_error_patterns": "Pola kesalahan",
+      "analysis_recommended_method": "Metode yang disarankan",
+      "analysis_recommended_focus": "Fokus yang disarankan",
+      "analysis_suggested_curriculum": "Kurikulum yang disarankan",
+      "analysis_summary": "Ringkasan",
+      "analysis_priority": "Prioritas",
+      "level_beginner": "Pemula",
+      "level_intermediate": "Menengah",
+      "level_advanced": "Mahir",
+      "linked_project": "Proyek terkait",
+      "status_completed": "selesai",
+      "status_abandoned": "dibatalkan"
+    },
     "title": "Ekspor",
     "intro": "Unduh perjalanan belajar Anda sebagai Markdown atau PDF. Markdown adalah teks biasa yang dapat Anda edit dan bagikan; PDF membuka dialog cetak peramban Anda sehingga Anda dapat menyimpan salinan.",
     "progress_label": "Laporan Kemajuan (perjalanan lengkap)",
@@ -1455,10 +1533,6 @@
     },
     "level_detail_title": "Kemajuan level",
     "level_up": "Naik level!",
-    "reason_session_complete": "Sesi selesai",
-    "reason_assessment_complete": "Asesmen selesai",
-    "reason_conversation_imported": "Percakapan diimpor",
-    "reason_flat": "XP diberikan",
     "card_badges": "Lencana",
     "badges_earned": "diperoleh",
     "badges_empty": "Belum ada lencana yang tersedia.",
@@ -1614,20 +1688,7 @@
     "weekend_mode_help": "Akhir pekan tidak dihitung sebagai jeda rentetan.",
     "reset_done": "Kemajuan diatur ulang: {xp} XP, {badges} lencana, {streak} rentetan.",
     "reset_failed": "Tidak dapat mengatur ulang kemajuan.",
-    "weekend_mode_save_failed": "Tidak dapat menyimpan pengaturan mode akhir pekan.",
-    "danger_zone_heading": "Zona Bahaya",
-    "danger_zone_intro": "Hapus secara permanen semua data pembelajaran di perangkat ini.",
-    "danger_zone_reset_button": "Atur Ulang Semuanya",
-    "danger_zone_warning": "Ini menghapus SEMUA data belajar Anda secara permanen - sesi, kemajuan, profil, kurikulum, impor, kartu Anki, pengaturan, dan kunci API. Tindakan ini TIDAK DAPAT dibatalkan.",
-    "danger_zone_confirm_prompt": "Ketik RESET untuk mengonfirmasi",
-    "danger_zone_input_placeholder": "RESET",
-    "danger_zone_final_button": "Hapus permanen",
-    "danger_zone_backup_offer": "Buat cadangan terlebih dahulu?",
-    "danger_zone_backup_button": "Buat cadangan",
-    "danger_zone_complete_toast": "Semua data telah dihapus.",
-    "danger_zone_cancel": "Batal",
-    "danger_zone_continue": "Lanjutkan",
-    "danger_zone_failed_toast": "Pengaturan ulang gagal:"
+    "weekend_mode_save_failed": "Tidak dapat menyimpan pengaturan mode akhir pekan."
   },
   "arcade": {
     "title": "Arcade",
@@ -1694,6 +1755,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "Dasar",
+      "cloze": "Isian rumpang"
+    },
     "title": "Ekspor Anki",
     "intro": "Tinjau kartu yang disarankan AI, terima yang Anda inginkan, lalu ekspor sebagai file .apkg untuk Anki.",
     "filter_project": "Proyek",
@@ -2040,8 +2105,7 @@
       "rerender": "Render ulang",
       "download_zip": "Unduh ZIP",
       "persist": "Persistensi ke git",
-      "persisting": "Mempersistensi…",
-      "persist_dexie_tooltip": "Pemversian git hanya tersedia dalam mode server."
+      "persisting": "Mempersistensi…"
     },
     "toast": {
       "zip_downloaded": "ZIP terunduh",
@@ -2062,6 +2126,7 @@
       "title": "Repositori Pembelajaran",
       "loading": "Memuat…",
       "repos_dir": "Direktori repositori",
+      "repos_dir_hint": "Biarkan kosong untuk bawaan: repos di direktori data (lihat Tentang)",
       "save": "Simpan pengaturan",
       "saving": "Menyimpan…",
       "toast": {
@@ -2076,6 +2141,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Kurang: {word}",
+      "extra": "Berlebih: {word}",
+      "replaced": "Kamu menulis {wrote}, seharusnya {expected}"
+    },
     "progress_io": {
       "save_error": "Kemajuan Anda dalam pelajaran ini tidak dapat disimpan.",
       "load_failed": "Kemajuan tersimpan Anda untuk pelajaran ini tidak dapat dimuat: {detail}",
@@ -2726,6 +2796,7 @@
       "public": "Publik",
       "branch": "Branch",
       "lessons_note": "Semua {n} pelajaran set ini akan disertakan.",
+      "lessons_note_one": "Satu-satunya pelajaran set ini akan disertakan.",
       "invalid_repo": "Masukkan repositori sebagai owner/name.",
       "submit": "Ekspor",
       "working": "Mengekspor…",
@@ -3476,6 +3547,8 @@
       "author_label": "Nama penulis"
     },
     "cards": {
+      "front_placeholder": "Kata atau frasa",
+      "back_placeholder": "Arti",
       "heading": "Tambah kartu kosakata",
       "front_label": "Depan (yang dipelajari)",
       "back_label": "Belakang (bahasamu)",
@@ -4329,9 +4402,6 @@
     "added": "Repositori ditambahkan.",
     "synced": "Tersinkronkan: {sets} set, {lessons} pelajaran.",
     "token_hint": "Repositori privat memerlukan token - tempel satu di bawah, atau atur token bersama di Pengaturan → Integrasi.",
-    "trust_official": "Resmi: Dikurasi dan dijamin kualitasnya oleh tim proyek.",
-    "trust_verified": "Terverifikasi: Disumbangkan oleh komunitas dan ditinjau oleh tim.",
-    "trust_validated": "Tervalidasi: Secara teknis benar; konten tidak ditinjau satu per satu.",
     "official": {
       "title": "Konten resmi",
       "counts": "{sets} set · {lessons} pelajaran"
@@ -4415,6 +4485,19 @@
       "sync_failed": "Sinkronisasi gagal. Coba lagi."
     },
     "validation": {
+      "reason": {
+        "not_found": "Repositori atau manifest.yaml tidak ditemukan.",
+        "access_denied": "Akses ditolak - periksa repositori dan token GitHub kamu.",
+        "unreachable": "Repositori tidak dapat dijangkau.",
+        "unsupported_schema": "Versi skema {version} tidak didukung.",
+        "no_sets": "manifest.yaml tidak mencantumkan set apa pun.",
+        "no_lessons": "Tidak ada pelajaran di set mana pun.",
+        "executable_content": "Isi pelajaran memuat kode yang dapat dieksekusi dan tidak diizinkan.",
+        "lessons_unreadable": "Pelajaran dari set pertama tidak dapat dibaca.",
+        "lesson_invalid_json": "Pelajaran pertama dari set pertama bukan JSON yang valid.",
+        "validator_unavailable": "Validator pelajaran tidak dapat dimuat.",
+        "lesson_invalid": "Pelajaran pertama dari set pertama gagal validasi: {detail}"
+      },
       "failed": "Validasi gagal: {reason}",
       "passed": "Validasi lulus: {sets} set, {lessons} pelajaran."
     }
@@ -4588,12 +4671,10 @@
     "page_title": "Acak",
     "loading": "Memuat sesi acak…",
     "empty_body": "Set ini perlu setidaknya dua pelajaran dengan latihan untuk diacak.",
-    "not_cached_body": "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu.",
     "back_to_dashboard": "Kembali ke Dasbor",
     "subtitle": "Mencampur {n} pertanyaan dari {lessons} pelajaran",
     "error": {
-      "load_failed": "Tidak dapat memuat sesi acak.",
-      "missing_params": "Tidak ada set konten yang dipilih."
+      "load_failed": "Tidak dapat memuat sesi acak."
     },
     "summary": {
       "heading": "Latihan acak selesai!",

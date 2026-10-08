@@ -571,6 +571,13 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       „Prüfen" und zählt bei jedem Paar mit; auf Theorie-Schritten, nach
       „Prüfen" und auf der Zusammenfassung fehlt er; dasselbe in den Läufen
       Wiederholung / Zufall / Endlos
+- [ ] TC-0949 Zuordnung, Neupaaren statt Lösen (#3237): ein Antippen einer gepaarten
+      Kachel wählt sie nur aus (Auswahlrahmen), der Zähler bleibt gleich;
+      danach eine Kachel der anderen Spalte antippen: ist sie frei, wandert
+      das Paar dorthin; ist sie gepaart, tauschen die beiden Paare ihre
+      Partner. Der Zähler fällt dabei nie, ein volles Brett bleibt voll.
+      Dasselbe, wenn man in der rechten Spalte beginnt; Strg/Cmd+Z macht
+      weiterhin das letzte Paar rückgängig
 
 - [ ] TC-0132 Zuordnung: lange Wörter brechen in der Kachel um (#3174): eine
       Zuordnungsübung mit einem Wort, das breiter als die Kachel ist, auf
@@ -1024,7 +1031,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       wiederholt den Hüpfer mit dem neuen Wort
 - [ ] TC-0258 Zuordnungsübung: ein frisch gebildetes Paar "schnappt" mit einem
       Pop auf beiden Kacheln zusammen; nach dem Prüfen hüpfen die
-      richtigen Paare kurz; das Antippen eines Paars löst es weiterhin
+      richtigen Paare kurz; das Antippen eines Paars wählt es zum
+      Neupaaren aus (#3237), genau wie im normalen Modus
 - [ ] TC-0259 Verhalten unverändert: Auswahl, Prüfen, Punktzahl und Auflösung
       sind in allen drei Übungstypen identisch zum normalen Modus
 - [ ] TC-0260 Spielmodus aus: klassische Listen/Chips/Kacheln ohne die
@@ -2156,8 +2164,9 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       ist aktiv, „Speichern und teilen" gesperrt. Mit dem Generator (Zuordnung +
       Freitext, 10 Übungen) ist die dritte Zeile rot, solange eine Freitext-Übung
       nur eine akzeptierte Antwort hat; nach einer zweiten Antwort für jede wird
-      sie grün und „Speichern und teilen" aktiv. Der Teilen-Assistent meldet
-      danach keinen Mindestwert-Fehler. Beim Bearbeiten einer gespeicherten
+      sie grün und „Speichern und teilen" aktiv. Ein Klick darauf öffnet
+      „Meine Inhalte" mit dem Teilen-Assistenten für genau diese Lektion
+      (#3660); er meldet keinen Mindestwert-Fehler. Beim Bearbeiten einer gespeicherten
       Lektion gibt es keine Teilen-Zeilen.
 - [ ] TC-0434 **Aufgabentyp umwandeln -> Freitext (EXP-050 Stufe 1, #2511):** Im
       Inline-Editor (Schritt 3, `ExerciseEditor`) einer **Wortkacheln**- oder
@@ -2415,6 +2424,16 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0474 Browser-Modus (GitHub Pages / Dexie): die Karte bleibt sichtbar mit
       dem Hinweis "Nur mit der Desktop-App verfügbar."; DevTools >
       Netzwerk zeigt keinen Aufruf von /api/plugins/health
+- [ ] TC-0936 Karte "Lern-Repository", frische Installation: das Feld
+      "Repository-Verzeichnis" ist leer, darunter steht "Leer lassen für
+      den Standard: repos im Datenverzeichnis (siehe Über)", kein fester
+      Linux-Pfad; bei 375 px bricht der Hinweis um statt abgeschnitten
+      zu werden (#3451)
+- [ ] TC-0937 Desktop-App, Git-Persistenz an, Feld leer lassen, speichern, auf der
+      Lern-Repository-Seite "In Git speichern": Toast "In Git gespeichert:
+      <Commit>"; auf der Platte liegt der Ordner "repos/<Projekt-ID>/" mit
+      README.md unterhalb des Datenverzeichnisses, das Einstellungen > Über
+      zeigt; ein eingetragener eigener Pfad gewinnt weiterhin
 
 ### TS-0061 Diagnose-Sonde: Fehltipp-Markierung + Aktionen (#3043)
 - [ ] TC-0475 Sonde AN, Mess-Leiste sichtbar: die Leiste zeigt neben "Werte
@@ -3346,6 +3365,12 @@ Ort: Settings → Daten → Empfohlene Repositories.
       „Erneut versuchen"; nach dem Start des Backends lädt der Klick den Verlauf
 - [ ] TC-0732 Importierte Sitzung: die KI beginnt von selbst mit der ersten Frage
       (kein User-Turn zuerst), der Chat startet leer
+- [ ] TC-0950 Auto-Loop in der Browser-Version (#3436): im Pages-Build (Dexie) eine
+      Sitzung bis Schritt 7 führen; unter dem Chat erscheint ein Hinweis mit
+      Monitor-Symbol: in der Desktop-App beginnt danach automatisch ein neuer
+      Zyklus, die Browser-Version kann das noch nicht. Vor Schritt 7 kein
+      Hinweis; in der Desktop-App bei Schritt 7 kein Hinweis, dort startet
+      der neue Zyklus
 - [ ] TC-0733 AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] TC-0734 Kein Button ohne Key führt zu Error-Toast (disabled + Tooltip)
 
@@ -3915,6 +3940,44 @@ Diese Tests laufen in CI oder via `make test`.
 Hier nur zur Dokumentation was abgedeckt ist.
 
 ---
+
+### TS-0129 Fortschrittsbericht als Markdown/PDF in der UI-Sprache (#3426)
+
+- [ ] TC-0938 UI-Sprache Französisch (oder Japanisch), Einstellungen > Daten >
+      Export, Fortschrittsbericht als Markdown herunterladen: Titel,
+      Abschnitte und Tabellenköpfe sind französisch (z. B.
+      "Progression", "Projets"), nicht englisch
+- [ ] TC-0939 Dasselbe mit Sitzungs-Detail und PDF (Druckdialog): Rollen,
+      Bewertung und Schritt-Auswertung in der UI-Sprache
+- [ ] TC-0940 UI-Sprache Deutsch: die Schritt-Namen im Bericht entsprechen denen
+      in der App (z. B. "Eingabe" statt "Input")
+
+### TS-0130 Übersetzte Bedientexte und Vorlesetexte (#3425)
+
+- [ ] TC-0941 Lektion mit Freitext-Aufgabe, absichtlich falsch tippen (ein Wort
+      vergessen, eines vertauschen), Bildschirmleser an (VoiceOver /
+      NVDA / TalkBack): der Antwortvergleich liest "Fehlt: <Wort>" und
+      "Geschrieben: <Wort>, erwartet: <Wort>" auf Deutsch, nicht
+      "missing" / "wrote"; sichtbar sieht der Vergleich unverändert aus
+- [ ] TC-0942 Lektion erstellen > Karten: die leeren Felder zeigen "Wort oder
+      Ausdruck" und "Bedeutung" statt "Bonjour" / "Guten Tag"
+- [ ] TC-0943 Anki-Seite, Karte bearbeiten: die Typ-Auswahl bietet "Einfach" und
+      "Lückentext"
+- [ ] TC-0944 Lernpfad und Dashboard-Karte "Weitermachen": der Bildschirmleser
+      liest die Sterne als "2 von 3 Sternen" statt "2/3"
+- [ ] TC-0945 Teilen-Assistent und "Als Repository teilen": der X-Knopf heißt für
+      den Bildschirmleser "Schließen"
+
+### TS-0131 Seitentitel im Browser-Tab (#3431)
+
+- [ ] TC-0946 Durch Dashboard, Lernpfad, Inhalte, Einstellungen und eine Lektion
+      klicken: der Tab-Titel lautet jeweils "<Seitenname> - Adaptive
+      Learner" (z. B. "Einstellungen - Adaptive Learner", "Lektion -
+      Adaptive Learner"); die Startseite zeigt nur "Adaptive Learner"
+- [ ] TC-0947 Einstellungen > Allgemein, UI-Sprache auf Englisch: der Tab-Titel
+      wechselt ohne Neuladen auf "Settings - Adaptive Learner"
+- [ ] TC-0948 Browser-Verlauf (Zurück-Knopf lange drücken): die Einträge tragen
+      unterschiedliche Seitennamen statt eines gleichen Titels
 
 ## Automatisiert: Unit + Component Tests (Vitest, 7200+;
 ## aktuelle Zahl siehe docs/audits/current-coverage.md)

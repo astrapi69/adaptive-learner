@@ -94,8 +94,8 @@ The suggested_step can be:
   and needs to re-attempt.
 
 The route applies the suggestion only when
-`confidence >= 0.6` (the default `step_evaluation.confidence_threshold`
-in app.yaml). Fallback verdicts always apply the +1 advance.
+`confidence >= 0.7` (the default `step_evaluation.confidence_threshold`
+in session.yaml). Fallback verdicts always apply the +1 advance.
 
 ## Why dual-prompt instead of single
 
@@ -132,6 +132,8 @@ previous / next cycle step.
 
 ## Auto-loop + topic transitions
 
+> In the browser version the session stays at step 7: the auto-loop runs only in the desktop app. The session page says so when you reach step 7.
+
 Step 7 is no longer a dead end. Once the step-evaluator
 moves you to step 7 with `advance=true`, a third AI call -
 the topic-transition evaluator - judges whether the topic
@@ -165,7 +167,7 @@ summarises the multi-cycle journey when `cycle_count > 1`.
 
 At the step 6 → 7 transition both the step-evaluator and
 the topic-transition evaluator fire concurrently via
-`asyncio.gather` (`async_evaluation: true` in `app.yaml`).
+`asyncio.gather` (`async_evaluation: true` in `session.yaml`).
 This saves ~T₂ of latency at the cycle boundary.
 
 The message response carries a `timings` block with

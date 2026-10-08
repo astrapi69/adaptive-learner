@@ -467,12 +467,35 @@ export function parseAnalysisResponse(
 export function deterministicFallback(
     title?: string,
 ): ConversationAnalysisResult {
+    // #3424: no English placeholder is persisted. The UI renders its
+    // localized fallback notice from ``fallback_used``, and a missing topic
+    // lets consumers use their own localized default title.
+    const topic = title?.trim();
+    return topic ? {topic, fallback_used: true} : {fallback_used: true};
+}
+
+/** The placeholder texts fallbacks persisted before #3424. */
+const LEGACY_FALLBACK_TOPIC = "Unrecognised topic";
+const LEGACY_FALLBACK_SUMMARY_START = "The AI response could not be parsed";
+
+/**
+ * Drop the English placeholder topic and summary an analysis fallback
+ * persisted before #3424, so stored rows render like new ones (the
+ * localized notice, the consumer's localized default title). A result
+ * without ``fallback_used`` is returned unchanged.
+ *
+ * @example
+ * setDetail({...detail, analysis_result: withoutLegacyFallbackText(detail.analysis_result)});
+ */
+export function withoutLegacyFallbackText(
+    result: ConversationAnalysisResult | null,
+): ConversationAnalysisResult | null {
+    if (!result?.fallback_used) return result;
+    const {topic, summary, ...rest} = result;
     return {
-        topic: title?.trim() || "Unrecognised topic",
-        summary:
-            "The AI response could not be parsed into structured analysis. " +
-            "You can re-run the analysis, or pick a different AI provider.",
-        fallback_used: true,
+        ...rest,
+        ...(topic && topic !== LEGACY_FALLBACK_TOPIC ? {topic} : {}),
+        ...(summary && !summary.startsWith(LEGACY_FALLBACK_SUMMARY_START) ? {summary} : {}),
     };
 }
 

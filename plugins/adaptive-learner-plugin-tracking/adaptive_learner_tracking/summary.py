@@ -191,9 +191,7 @@ def aggregate(
         for c in commits
         if isinstance(c.get("understanding"), (int, float))
     ]
-    stress_all = [
-        float(c["stress"]) for c in commits if isinstance(c.get("stress"), (int, float))
-    ]
+    stress_all = [float(c["stress"]) for c in commits if isinstance(c.get("stress"), (int, float))]
 
     total_minutes = sum(
         int(c["duration_minutes"])
@@ -401,8 +399,9 @@ def _time_seconds_per_step(by_session: dict[str, list[dict[str, Any]]]) -> dict[
     for session_rows in by_session.values():
         ordered = sorted(
             session_rows,
-            key=lambda r: _parse_iso_datetime(r.get("evaluated_at"))
-            or datetime.min.replace(tzinfo=UTC),
+            key=lambda r: (
+                _parse_iso_datetime(r.get("evaluated_at")) or datetime.min.replace(tzinfo=UTC)
+            ),
         )
         for i in range(1, len(ordered)):
             prev = ordered[i - 1]

@@ -71,7 +71,8 @@ ilerlemeyi açığa çıkardığı.
    (konu, hedef, zaman çerçevesi).
 3. **12 soruluk değerlendirmeyi yapın** (~2 dakika).
 4. **Yapay zeka API anahtarınızı ekleyin** (Anthropic, OpenAI
-   veya Gemini - ücretsiz katmanlar çalışır).
+   veya Gemini - ücretsiz katmanlar çalışır; masaüstü uygulaması
+   ayrıca Perplexity sunar).
 5. **Kontrol Panelinden ilk oturumunuzu başlatın**.
 
 [Tam başlangıç kılavuzu →](user-guide/getting-started.md)
@@ -94,13 +95,17 @@ ilerlemeyi açığa çıkardığı.
 Aktif geliştirme. Güncel sürüm ve öne çıkan yenilikler için
 [GitHub Releases sayfasına](https://github.com/astrapi69/adaptive-learner/releases) bakın.
 
-- **2634 test** (786 arka uç + 615 eklenti + 1233 ön uç Vitest
-  + 16 Playwright duman testi spec dosyası)
-- **8 dil, tamamı çevrilmiş** (DE / EN / ES / FR / EL / PT /
-  TR / JA)
-- **10 eklenti** (değerlendirme / 3 yapay zeka sağlayıcısı /
-  oturum / izleme / araçlar / oyunlaştırma / anki / notebooklm)
-- **25 SQLAlchemy modeli**, senkronizasyon yüzeyi 28 tablo
+- **Binlerce otomatik test**: arka uç, eklentiler ve ön uç
+  (Vitest), ayrıca Playwright duman testi ve Dexie modu sürüm kapısı
+  paketi
+- **11 arayüz dili, tamamı çevrilmiş** (DE / EL / EN / ES / FR /
+  HI / ID / JA / KO / PT / TR)
+- **Eklentiler**: değerlendirme, oturum, izleme, araçlar,
+  oyunlaştırma, anki, notebooklm, learning-repo, content-loader ve
+  görevler, ayrıca her yapay zeka sağlayıcısı için bir tane
+  (Anthropic, OpenAI, Gemini, Perplexity)
+- **Tek bir SQLAlchemy alan modeli** (`backend/app/models/__init__.py`),
+  tablo tablo senkronize edilir (`sync_service.ALL_SYNC_TABLES`)
 - **2 depolama modu** (Yerel IndexedDB / FastAPI arka ucu),
   ayrıca masaüstü başlatıcının `secrets.yaml` katmanı
 - **MIT lisanslı**

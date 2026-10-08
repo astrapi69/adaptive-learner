@@ -1,7 +1,7 @@
 # Die sechs Lernmethoden
 
 Jede Methode hat eine Haltung, eine Stärke, eine Schwäche und
-einen charakteristischen Stil, den die KI in Sessions
+einen charakteristischen Stil, den die KI in Sitzungen
 einnimmt. Die 42-Zellen-Prompt-Matrix (6 Methoden × 7
 Schritte) implementiert diese Haltungen pro Zyklus-Schritt.
 
@@ -117,12 +117,12 @@ konkreten Handlung. Zeigt Konsequenzen im Szenario.
 ## KI-adaptiv
 
 **Haltung**: die KI wählt pro Zug. Liest das Profil und die
-Session-Historie; wählt diejenige der anderen fünf Methoden,
+Sitzungshistorie; wählt diejenige der anderen fünf Methoden,
 die zu *diesem Austausch* passt. Begründet die Wahl in einem
 Satz.
 
 **Stark wenn**: der Lerner ein ausgewogenes Profil hat (keine
-dominante Methode) oder in einer Session ist, wo mehrere
+dominante Methode) oder in einer Sitzung ist, wo mehrere
 Methoden funktionieren könnten. Auch stark für fortgeschrittene
 Lerner, die artikulieren können, wann eine Methode nicht
 greift.
@@ -155,15 +155,15 @@ Server- und Lokal-Modus.
 ## Wie auswählen
 
 Dein Test liefert dir ein 6-Methoden-Profil. Die dominante
-Methode ist, womit neue Sessions starten. Aber:
+Methode ist, womit neue Sitzungen starten. Aber:
 
-- Der **Session-Bewerter** kann pro Zyklus-Schritt
+- Der **Sitzungsbewerter** kann pro Zyklus-Schritt
   vorschlagen, zu bleiben, vorzurücken oder - selten -
   zurückzugehen.
 - Die **Methodenwechsel-Heuristik** erkennt Stagnation (drei
-  Sessions flaches Verständnis + hoher Stress) und blendet
+  Sitzungen flaches Verständnis + hoher Stress) und blendet
   ein "willst du [andere Methode] probieren?"-Banner ein.
-- Du kannst auf der Session-Seite über den Start-Button
+- Du kannst auf der Sitzungsseite über den Start-Button
   **manuell** eine Methode wählen. Sinnvoll, wenn du weißt,
   dass das Thema eine bestimmte Methode verlangt.
 

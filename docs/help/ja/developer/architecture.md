@@ -21,10 +21,9 @@ Adaptive Learnerは4層のプラグイン駆動型アプリケーションです
 └─────────────────────────────────────────────────────────────┘
                             ↑↓ entry_points
 ┌─────────────────────────────────────────────────────────────┐
-│ プラグイン         plugins/配下の10パッケージ               │
-│                    (ai-{anthropic,openai,gemini}, assessment,│
-│                    session, tracking, tools, gamification,  │
-│                    anki, notebooklm)                        │
+│ プラグイン         plugins/配下にプラグインごとの           │
+│                    Poetryパッケージ。                       │
+│                    一覧とティアはCLAUDE.mdにあります        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -35,9 +34,9 @@ Adaptive Learnerは4層のプラグイン駆動型アプリケーションです
 フロントエンドには、バッキングストアを選択する単一の接合点があります: `getStorage(): IStorageService`。2つの実装が1つのコントラクトを満たします。
 
 - **`apiStorage`**（デフォルト）: FastAPIバックエンドと通信する`api/client.ts`の薄いラッパー。
-- **`dexieStorage`**（ローカルファースト）: 25のSQLAlchemyモデルをすべてミラーリングする完全なIndexedDBスタック。AI呼び出しは`storage/ai-providers.ts`経由でブラウザから直接実行されます。
+- **`dexieStorage`**（ローカルファースト）: SQLAlchemyモデルをミラーリングする完全なIndexedDBスタック。AI呼び出しは`storage/ai-providers.ts`経由でブラウザから直接実行されます。
 
-`IStorageService`は22個の名前空間を公開します（users、projects、settings、assessment、ストリーミング付きsession、tracking、tools、curricula、topics、lessons、plugins、system、backup、export、subjects、tags、projectTaxonomy、imports、gamification、anki、pronunciation、notebooklm）。両方のバッキングがすべてのメソッドを実装しています。
+`IStorageService`は名前空間を公開します（users、projects、settings、assessment、ストリーミング付きsession、tracking、tools、curricula、topics、lessons、plugins、system、backup、export、subjects、tags、projectTaxonomy、imports、gamification、anki、pronunciation、notebooklm）。両方のバッキングがすべてのメソッドを実装しています。
 
 ファクトリーは`localStorage["adaptive-learner.storage_mode"]`、次に`VITE_STORAGE_MODE`（GH PagesビルドによってセットされるもM）、最後にデフォルトの`api`の順で読み取ります。モードの切り替えはライブスワップではありません: Settingsページが選択を保存し、再読み込みが必要である旨のトーストを表示します。
 
@@ -124,7 +123,7 @@ APIクライアント      HTTPエラー → ApiErrorに変換
 ## 永続化
 
 - バックエンド: SQLAlchemy + SQLite。Alembicマイグレーションは`backend/migrations/versions/`。
-- 同期サーフェス: 28テーブル（v1.19.0ベースライン）。追記専用の履歴行（sessions、messages、ratings、progress commits、step evaluations、method switches、imported conversations、imported messages、anki cards、study questions）とミュータブルな設定+カリキュラム行。
+- 同期サーフェス: `sync_service.ALL_SYNC_TABLES`のすべてのテーブル。追記専用の履歴行（sessions、messages、ratings、progress commits、step evaluations、method switches、imported conversations、imported messages、anki cards、study questions）とミュータブルな設定+カリキュラム行。
 - バックアップ形式: JSON; APIキーはエクスポート時に除去; リストアはマージ。
 - テスト分離: 本番データディレクトリには`.adaptive-learner-production`マーカーがあり、テストがそれを検出した場合、`pytest.exit(returncode=2)`で実行が中断されます。
 

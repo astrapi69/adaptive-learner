@@ -295,16 +295,18 @@ Regeln:
   kein Freibrief. Vor dem Label `visual-baselines-unaffected` prüfen, ob
   die Änderung überhaupt über der Toleranz liegt - das Label behauptet
   "keine visuelle Wirkung", nicht "unter dem Budget".
-- Kleine gewollte Änderungen erzwingen die Neuaufnahme über
-  Löschen-dann-Resync (#2719): betroffene PNGs löschen, committen, Sync
-  erneut anstossen. Eine gelöschte Baseline wird gerendert statt
-  verglichen.
-- Nur die Motive löschen, auf denen die Änderung erscheint (#2682). Ein
-  neu aufgenommenes Bild trägt ausserdem jede seither unter der Toleranz
-  gebliebene Fremd-Drift, deshalb gehört der Alt-gegen-neu-Vergleich
+- Seit #3215 schreiben beide CI-Neuaufnahmen jede Baseline, die in
+  mindestens einem Pixel über dem Rauschboden abweicht (Mengen-Toleranz
+  0, `threshold` 0.05, `e2e/visual/refresh-mode.ts`); Rasterrauschen
+  (gemessen höchstens 2 pro Kanal) bleibt darunter. Jede
+  gewollte Änderung landet, auch unter der Vergleichs-Toleranz.
+  Löschen-dann-Resync (#2719) braucht es nur noch für lokal gerenderte
+  FeatureShots.
+- Der Sync-Commit trägt dafür jede seither gebliebene Fremd-Drift mit.
+  Nicht Zurechenbares zurücksetzen (#2682), und der Alt-gegen-neu-Vergleich
   (Cluster-Analyse der geänderten Pixel, nicht nur der Blick aufs neue
-  Bild) in die Review - sonst wandert unbemerkte Drift als "geprüft"
-  in die Referenz.
+  Bild) gehört in die Review - sonst wandert unbemerkte Drift als
+  "geprüft" in die Referenz.
 
 Passt zu "Ein Bildvergleich prüft nur, was die Referenz unterscheidbar
 macht" (#2696): dort war es die leere Fläche, hier die Toleranz.

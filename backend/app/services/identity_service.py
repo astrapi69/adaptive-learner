@@ -40,6 +40,7 @@ from typing import Any
 
 import yaml
 
+from app.exceptions import NotFoundError
 from app.paths import get_config_dir
 
 logger = logging.getLogger(__name__)
@@ -150,10 +151,24 @@ def _write_identity(data: dict[str, Any]) -> None:
         logger.warning("chmod 0600 failed for %s: %s", path, exc)
 
 
+def require_identity() -> dict[str, Any]:
+    """The persisted identity, for ``GET /api/identity`` (#3423).
+
+    Raises:
+        NotFoundError: When no readable identity file exists (a genuine
+            first visit); the global handler maps it to 404.
+    """
+    data = load_identity()
+    if data is None:
+        raise NotFoundError("No persisted identity found.")
+    return data
+
+
 __all__ = [
     "IDENTITY_FILENAME",
     "clear_identity",
     "get_identity_path",
     "load_identity",
+    "require_identity",
     "update_identity",
 ]

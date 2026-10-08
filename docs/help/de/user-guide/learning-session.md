@@ -1,13 +1,13 @@
-# Eine Lern-Session
+# Eine Lernsitzung
 
-Eine Session ist ein fokussiertes Gespräch mit der KI durch
-den 7-Schritt-Zyklus. Sessions sind kurz - 15-45 Minuten sind
-typisch. Der "Session starten"-Button im Dashboard legt eine
+Eine Sitzung ist ein fokussiertes Gespräch mit der KI durch
+den 7-Schritt-Zyklus. Sitzungen sind kurz - 15-45 Minuten sind
+typisch. Der "Sitzung starten"-Button im Dashboard legt eine
 neue an; die App wählt die Lernmethode (deine dominante aus
 dem Test) und den Startschritt (meist 1 = Input).
 
-Eine *Session* ist nicht dasselbe wie eine *Lesson*: Eine
-Session ist dieses KI-Gespräch durch den 7-Schritt-Zyklus,
+Eine *Sitzung* ist nicht dasselbe wie eine *Lesson*: Eine
+Sitzung ist dieses KI-Gespräch durch den 7-Schritt-Zyklus,
 während eine Lesson eine Reihe von 8-12 Übungen aus einem
 heruntergeladenen Content-Set ist, gespielt in ihrem eigenen
 Viewer ohne KI-Chat. Siehe
@@ -48,12 +48,13 @@ Jede Nachricht löst bis zu drei KI-Aufrufe aus:
    den Austausch und entscheidet, ob du für den nächsten
    Schritt bereit bist. Er liefert `advance`, `confidence`,
    `reason`, `suggested_step`. Die App wendet den Vorschlag
-   bei Konfidenz ≥ 0.6 an.
+   bei Konfidenz ≥ 0.7 an.
 3. **Der Topic-Transition-Bewerter** (nur bei Schritt 7) -
    ein dritter KI-Aufruf entscheidet, ob das Thema
    integriert ist. Wenn ja UND `continue_recommended`,
    startet automatisch ein neuer Zyklus mit einem frischen
-   Unterthema (Auto-Loop, max. 5 Zyklen pro Session).
+   Unterthema (Auto-Loop, max. 5 Zyklen pro Sitzung).
+   Nur in der Desktop-App: In der Browser-Version bleibt die Sitzung bei Schritt 7.
 
 Das Urteil erscheint dezent über dem Chat als „Schritt von
 X nach Y verschoben, weil…", wenn es greift. Zyklus-Übergänge
@@ -69,7 +70,7 @@ Einstellungen > Lernen > Vorlesen und Diktieren.
 
 ## Zyklus-Fortschrittsanzeige
 
-Am oberen Rand der Session-Seite sitzt ein Streifen aus 7
+Am oberen Rand der Sitzungsseite sitzt ein Streifen aus 7
 Kreisen. Der aktuelle Schritt ist in der Akzentfarbe gefüllt;
 absolvierte Schritte sind blasser; kommende Schritte sind
 leer. Wenn der Bewerter dich vorwärts (oder rückwärts!) setzt,
@@ -81,11 +82,11 @@ horizontalen Reihe kleiner Kreise, um Vertikalplatz zu sparen.
 ## Methodenwechsel-Empfehlungen
 
 Manchmal greift die aktive Methode einfach nicht. Nach drei
-Sessions, in denen dein "Verständnis"-Rating nicht wächst und
+Sitzungen, in denen dein "Verständnis"-Rating nicht wächst und
 dein "Stress"-Rating hoch bleibt, blendet die App ein
-**MethodSwitchBanner** ein: "Willst du für die nächste Session
+**MethodSwitchBanner** ein: "Willst du für die nächste Sitzung
 [andere Methode] probieren?". Annehmen - und die nächste
-Session startet mit der neuen Methode.
+Sitzung startet mit der neuen Methode.
 
 Die Empfehlung liest dein Profil und bevorzugt deine
 zweitstärkste Methode, die du zuletzt nicht genutzt hast.
@@ -95,9 +96,9 @@ Stagnationsmuster weiterläuft.
 Beide Speichermodi (Server + Lokal) unterstützen
 Methodenwechsel-Empfehlungen.
 
-## Bewerten + Session beenden
+## Bewerten + Sitzung beenden
 
-Die Session-Seite hat einen „Session beenden"-Button. Vor
+Die Sitzungsseite hat einen „Sitzung beenden"-Button. Vor
 dem Schließen füllst du eine kurze Bewertung aus:
 Verständnis, Stress, Methoden-Passung auf einer 1-5-Skala
 plus eine optionale **Rich-Text-Notiz** (TipTap: fett,
@@ -106,9 +107,9 @@ Die Notiz gehört dir - die KI liest sie nicht.
 
 Aus den Bewertungen plus der Multi-Cycle-Zusammenfassung
 wird ein `ProgressCommit` - der Git-artige Schnappschuss
-einer Session. Eine abgeschlossene Session bringt XP
-(50 Basis × Streak-Multiplikator, plus Pro-Zyklus-Boni),
-prüft auf neu verdiente Abzeichen und aktualisiert deinen
-Streak. Siehe [Fortschritt](progress.md),
+einer Sitzung. Eine abgeschlossene Sitzung bringt XP
+(50 Basis × Serien-Multiplikator, plus Pro-Zyklus-Boni),
+prüft auf neu verdiente Abzeichen und aktualisiert deine
+Serie. Siehe [Fortschritt](progress.md),
 [Dashboard](dashboard.md) und das
 [Tracking-Konzept](../concept/tracking.md).

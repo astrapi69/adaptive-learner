@@ -86,8 +86,8 @@ döndürürse deterministik +1 yedek devreye girer (7. adımda sınırlanır).
 - Geri adım (ör. 4 → 2) - öğrenci kafası karışmış ve yeniden
   denemesi gerekiyor.
 
-Rota öneriyi yalnızca `confidence >= 0.6` olduğunda uygular
-(app.yaml'daki varsayılan `step_evaluation.confidence_threshold`).
+Rota öneriyi yalnızca `confidence >= 0.7` olduğunda uygular
+(session.yaml'daki varsayılan `step_evaluation.confidence_threshold`).
 Yedek kararlar her zaman +1 ilerlemesi uygular.
 
 ## Neden tek istem yerine çift istem
@@ -124,6 +124,8 @@ gösterir.
 
 ## Otomatik döngü + konu geçişleri
 
+> Tarayıcı sürümünde oturum 7. adımda kalır: otomatik döngü yalnızca masaüstü uygulamasında çalışır. 7. adıma ulaştığınızda oturum sayfası bunu belirtir.
+
 7. adım artık bir çıkmaz sokak değildir. Adım değerlendirici sizi
 `advance=true` ile 7. adıma taşıdıktan sonra, üçüncü bir yapay zeka
 çağrısı - konu-geçiş değerlendirici - konunun bütünleştirilip
@@ -157,7 +159,7 @@ olduğunda çok döngülü yolculuğu özetler.
 ## Paralel döngü sınırı değerlendirmesi
 
 6. → 7. adım geçişinde hem adım değerlendirici hem de konu-geçiş
-değerlendirici `asyncio.gather` (`app.yaml`'da `async_evaluation: true`)
+değerlendirici `asyncio.gather` (`session.yaml`'da `async_evaluation: true`)
 aracılığıyla eş zamanlı olarak tetiklenir. Bu, döngü sınırında ~T₂
 gecikmesini ortadan kaldırır.
 

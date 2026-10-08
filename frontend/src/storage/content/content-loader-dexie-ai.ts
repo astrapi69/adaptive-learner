@@ -17,6 +17,7 @@ import type {
   AiValidationCacheRecord,
 } from "../types";
 import { getDb } from "../dexie/db";
+import { ApiError } from "../../api/client";
 import { aiComplete, aiCompleteWithMeta, resolveModel } from "../ai/ai-providers";
 import type { AIProvider } from "../../lib/constants";
 import {
@@ -39,12 +40,12 @@ export async function aiValidateDexie(
     .where("user_id")
     .equals(input.user_id)
     .first();
-  if (!settings) throw new Error("No settings for user");
+  if (!settings) throw new ApiError(400, "No settings for user");
   const bag = settings as unknown as Record<string, unknown>;
   const provider = bag.active_provider as AIProvider | undefined;
-  if (!provider) throw new Error("No active AI provider");
+  if (!provider) throw new ApiError(400, "No active AI provider");
   const apiKey = bag[`api_key_${provider}`] as string | null;
-  if (!apiKey) throw new Error(`No API key for ${provider}`);
+  if (!apiKey) throw new ApiError(400, `No API key for ${provider}`);
   const override = bag[`model_override_${provider}`] as string | null;
   const model = resolveModel(provider, override);
 
@@ -66,7 +67,7 @@ export async function aiValidateDexie(
     maxTokens: 1500,
   });
   const parsed = parseAiValidationResult(raw);
-  if (!parsed) throw new Error("AI validation response was not valid JSON");
+  if (!parsed) throw new ApiError(502, "AI validation response was not valid JSON");
   return parsed;
 }
 
@@ -78,12 +79,12 @@ async function resolveDexieAiConfig(
 ): Promise<{ provider: AIProvider; model: string; apiKey: string }> {
   const db = getDb();
   const settings = await db.userSettings.where("user_id").equals(userId).first();
-  if (!settings) throw new Error("No settings for user");
+  if (!settings) throw new ApiError(400, "No settings for user");
   const bag = settings as unknown as Record<string, unknown>;
   const provider = bag.active_provider as AIProvider | undefined;
-  if (!provider) throw new Error("No active AI provider");
+  if (!provider) throw new ApiError(400, "No active AI provider");
   const apiKey = bag[`api_key_${provider}`] as string | null;
-  if (!apiKey) throw new Error(`No API key for ${provider}`);
+  if (!apiKey) throw new ApiError(400, `No API key for ${provider}`);
   const override = bag[`model_override_${provider}`] as string | null;
   return { provider, model: resolveModel(provider, override), apiKey };
 }
