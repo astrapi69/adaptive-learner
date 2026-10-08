@@ -189,14 +189,16 @@ jobs:
 
       # Same config + environment as visual-regression.yml, so the
       # rendered PNGs match what the nightly diff compares against.
-      # #3215 - =all rewrites every baseline instead of only the failed
-      # compares (=changed, the bare flag): an intended change under
-      # maxDiffPixels lands in this commit instead of staying unwritten.
-      # Unchanged surfaces re-render byte-identical in this container
-      # (measured), so the commit below holds only the images that changed.
+      # #3215 - VISUAL_BASELINE_REFRESH=1 drops the count budget to 0
+      # (e2e/visual/refresh-mode.ts), so every baseline with a pixel past
+      # the colour threshold is rewritten, not only those past 2,500 px.
+      # Raster noise stays under the threshold (0 px in two full renders),
+      # so the commit below holds exactly the images that changed.
       - name: Regenerate baselines
         working-directory: e2e
-        run: npx playwright test --config=playwright.visual.config.ts --update-snapshots=all
+        env:
+          VISUAL_BASELINE_REFRESH: "1"
+        run: npx playwright test --config=playwright.visual.config.ts --update-snapshots=changed
 
       - name: Commit + push refreshed baselines
         id: push
@@ -207,9 +209,10 @@ jobs:
           # #2719 - `git status --porcelain`, NOT `git diff`: a baseline
           # DELETED on the PR branch and freshly re-rendered is an
           # UNTRACKED file, invisible to git diff. Since #3215 the render
-          # above rewrites every baseline (=all), so delete-then-resync is no
-          # longer needed to force a wrong-but-within-tolerance baseline; a
-          # new motif still arrives as an untracked file.
+          # above writes every baseline that differs at all (count budget
+          # 0), so delete-then-resync is no longer needed to force a
+          # wrong-but-within-tolerance baseline; a new motif still arrives as
+          # an untracked file.
           if [ -z "$(git status --porcelain -- e2e/visual/screenshots)" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "::notice::Baselines already current - nothing to push."

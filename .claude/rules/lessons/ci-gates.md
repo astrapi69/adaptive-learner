@@ -295,11 +295,12 @@ Regeln:
   kein Freibrief. Vor dem Label `visual-baselines-unaffected` prüfen, ob
   die Änderung überhaupt über der Toleranz liegt - das Label behauptet
   "keine visuelle Wirkung", nicht "unter dem Budget".
-- Seit #3215 schreiben beide CI-Neuaufnahmen jede Baseline neu
-  (`--update-snapshots=all`); unveränderte Flächen rendern dort
-  bytegleich, also landet jede gewollte Änderung, auch unter der
-  Toleranz. Löschen-dann-Resync (#2719) braucht es nur noch für lokal
-  gerenderte FeatureShots.
+- Seit #3215 schreiben beide CI-Neuaufnahmen jede Baseline, die in
+  mindestens einem Pixel über `threshold` abweicht (Mengen-Toleranz 0,
+  `e2e/visual/refresh-mode.ts`); Rasterrauschen bleibt darunter. Jede
+  gewollte Änderung landet, auch unter der Vergleichs-Toleranz.
+  Löschen-dann-Resync (#2719) braucht es nur noch für lokal gerenderte
+  FeatureShots.
 - Der Sync-Commit trägt dafür jede seither gebliebene Fremd-Drift mit.
   Nicht Zurechenbares zurücksetzen (#2682), und der Alt-gegen-neu-Vergleich
   (Cluster-Analyse der geänderten Pixel, nicht nur der Blick aufs neue
