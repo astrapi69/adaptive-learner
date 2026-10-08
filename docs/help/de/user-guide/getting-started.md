@@ -3,7 +3,7 @@
 Adaptive Learner ist ein Lernbegleiter, der auf einem
 forschungsgestützten Sechs-Methoden-Modell beruht. Du machst
 einen kurzen Test, der herausfindet, welche Methoden zu dir
-passen, und führst dann KI-gestützte Lern-Sessions durch einen
+passen, und führst dann KI-gestützte Lernsitzungen durch einen
 Sieben-Schritt-Zyklus. Die App lernt mit dir und passt an, wie
 sie unterrichtet.
 
@@ -44,7 +44,7 @@ sie bereits als installierte App, erscheint keiner der
 Installations-Hinweise.)
 
 Die App funktioniert offline für Dashboard und vergangene
-Sessions. Neue KI-Sessions brauchen Internet, weil der
+Sitzungen. Neue KI-Sitzungen brauchen Internet, weil der
 KI-Anbieter außerhalb des Browsers sitzt.
 
 ## Was du brauchst
@@ -78,12 +78,12 @@ KI-Anbieter außerhalb des Browsers sitzt.
    **„Adaptive Learner - App-Tutorial"** an - er bringt dir die
    App direkt als Lektionen bei. Siehe
    [App-Tutorial](app-tutorial.md).
-4. **Optional: KI-Sessions.** Möchtest du stattdessen das
+4. **Optional: KI-Sitzungen.** Möchtest du stattdessen das
    geführte Sechs-Methoden-Lerngespräch, hinterlege einen
    **API-Schlüssel** (Einstellungen oder
    `~/.config/adaptive_learner/secrets.yaml`), mach den
    optionalen [Lerntyp-Test](assessment.md) und starte eine
-   [Lern-Session](learning-session.md).
+   [Lernsitzung](learning-session.md).
 5. **Dein Ergebnis sichern.** Aus der Lektions-Zusammenfassung
    kannst du das Ergebnis als Markdown kopieren oder als Datei
    speichern, und unter **Einstellungen → Daten** ein
@@ -95,7 +95,7 @@ Adaptive Learner ist **Bring-your-own-Key (BYOK)**. Ist kein
 Schlüssel gesetzt, zeigt das Dashboard eine einzelne einladende
 **„KI-Schlüssel hinzufügen"**-Karte, die zu den KI-Einstellungen
 führt. Hinterlege einen Schlüssel für Claude, OpenAI oder Gemini, um
-die KI-Funktionen freizuschalten (Tutor-Session, Chat-Analyse,
+die KI-Funktionen freizuschalten (Tutorsitzung, Chat-Analyse,
 Übungsgenerierung). Deine Schlüssel werden **lokal** auf deinem
 Gerät gespeichert.
 
@@ -106,6 +106,6 @@ Gerät gespeichert.
 - [Content Browser](../features/content-browser.md) - Lektionen finden und filtern
 - [Mehrere Content-Repositories](../features/content-repos.md) - eigene Inhaltsquellen verbinden
 - [Backup und Wiederherstellung](../features/backup.md)
-- [Dein Dashboard verstehen](dashboard.md) - Fortschritt, Streak, XP, Badges
+- [Dein Dashboard verstehen](dashboard.md) - Fortschritt, Serie, XP, Badges
 - [FAQ - häufige Fragen](faq.md)
 - [Die pädagogische Idee hinter der App](../concept/philosophy.md)

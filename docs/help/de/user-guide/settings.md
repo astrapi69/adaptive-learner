@@ -186,7 +186,7 @@ Wie sich Übungen beim Beantworten verhalten.
 - **Tipps** - ob bei jeder Übung ein gestufter Tipp-Button erscheint,
   und die **XP-Kosten pro Tipp** (0 = kostenlos).
 - **Interaktion** - **Wischgesten** (Wischen zum Navigieren in
-  Assessment, Session und Curriculum; Standard EIN auf touch-fähigen
+  Assessment, Sitzung und Curriculum; Standard EIN auf touch-fähigen
   Geräten), **Tastenkürzel in Lektionen** (Eingabetaste prüft die
   Antwort, erneut drücken geht weiter), **bei richtiger Antwort
   automatisch weiter** und ob der Button **KI fragen** angezeigt wird.
@@ -267,7 +267,7 @@ Spielmodus, Feedback, tägliche Missionen und Erinnerungen.
   Schwierigkeits-Mischung und das Neumischen der heutigen Missionen.
 - **Erinnerungen** - die Erinnerungszeit und die Tage, an denen sie gilt.
 - **Gamification** - XP- und Abzeichen-Toasts, Wochenend-Modus, das
-  tägliche Sessions-Ziel und *Fortschritt zurücksetzen*; die letzte
+  tägliche Sitzungsziel und *Fortschritt zurücksetzen*; die letzte
   Karte, siehe unten.
 
 Die Spielmodus-Karte zeigt den Hauptschalter, die Spielmodus-Sounds und
@@ -291,7 +291,7 @@ Inhalte-Tabs** liegen im **Allgemein**-Tab unter *Darstellung*.
 Toggles für XP- / Badge- / Level-Up-Benachrichtigungen
 (Aus stoppt Toasts, das System speichert den Zustand
 trotzdem), **Wochenend-Modus** (Sa/So-Lücken in der
-Streak-Heatmap überspringen), tägliches Sessions-Ziel
+Serien-Heatmap überspringen), tägliches Sitzungsziel
 (1..10) und **Fortschritt zurücksetzen** (doppelte
 Bestätigung; löscht `user_xp` + `user_badges` +
 `user_streaks`-Zeilen).
@@ -439,7 +439,7 @@ jedem Export entfernt.
 
 Restore ist ein MERGE, kein Overwrite: neue Zeilen fügen
 ein, mutable Zeilen aktualisieren bei neuerem `updated_at`,
-History-Zeilen (Sessions / Commits / Ratings) deduplizieren
+History-Zeilen (Sitzungen / Commits / Ratings) deduplizieren
 über UUID. Die Vergleichs-Vorschau zeigt pro Tabelle
 hinzugefügt / entfernt / geändert, bevor du auf
 Wiederherstellen klickst; das Knopf-Label liest dann
@@ -447,7 +447,7 @@ Wiederherstellen klickst; das Knopf-Label liest dann
 
 Im Lokal-Modus zeigt die Karte zusätzlich den
 **Auto-Backup**-Block: ein rollender Ring aus 3 Snapshots in
-einer separaten IndexedDB-DB, läuft alle 10 Sessions ODER
+einer separaten IndexedDB-DB, läuft alle 10 Sitzungen ODER
 alle 7 Tage (je nachdem, was zuerst eintritt). Jeder Snapshot
 hat eigene Wiederherstellen- + Löschen- + Vergleich-als-A/B-
 Knöpfe.

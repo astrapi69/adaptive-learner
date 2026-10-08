@@ -1,0 +1,16 @@
+{
+  "de": [
+    {"preferred": "Sitzung", "rejected": "\\bSessions?\\b|Session-|-Session", "flags": "", "issue": "#3433"},
+    {"preferred": "Serie", "rejected": "\\bStreaks?\\b|Streak-|-Streak", "flags": "", "issue": "#3433"},
+    {"preferred": "Serie", "rejected": "[Ss]trähne", "flags": "", "issue": "#3433"}
+  ],
+  "fr": [
+    {"preferred": "session", "rejected": "\\bséances?\\b", "flags": "i", "issue": "#3433"}
+  ],
+  "ja": [
+    {"preferred": "連続記録 / 連続", "rejected": "ストリーク", "flags": "", "issue": "#3433"}
+  ],
+  "ko": [
+    {"preferred": "연속", "rejected": "스트릭", "flags": "", "issue": "#3433"}
+  ]
+}

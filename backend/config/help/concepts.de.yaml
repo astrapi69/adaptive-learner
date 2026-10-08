@@ -76,7 +76,7 @@ entries:
 
       Ein Lernprojekt bündelt alles, was zu einem Lernvorhaben
       gehört: das Thema, dein Ziel, den Zeitrahmen und die
-      tägliche Lernzeit. Es ist die Klammer um deine Sessions,
+      tägliche Lernzeit. Es ist die Klammer um deine Sitzungen,
       dein Curriculum und dein Lernprofil.
 
       ## Warum diese vier Felder?
@@ -92,7 +92,7 @@ entries:
         Methodenwechsel-Vorschlag erscheint.
       - **Tägliche Lernzeit** - wie viele Minuten am Tag du
         einsetzen kannst. Treibt die
-        Spaced-Repetition-Empfehlungen und die Session-Länge.
+        Spaced-Repetition-Empfehlungen und die Sitzungslänge.
 
       ## Warum konkrete Ziele wichtig sind
 
@@ -105,9 +105,9 @@ entries:
 
       ## Im Adaptive Learner
 
-      Du kannst mehrere Lernprojekte parallel haben. Jede Session
+      Du kannst mehrere Lernprojekte parallel haben. Jede Sitzung
       gehört zu genau einem Projekt; der Fortschritt
-      (XP, Badges, Streak) wird pro Projekt getrackt. Beim
+      (XP, Badges, Serie) wird pro Projekt getrackt. Beim
       Ändern des Zeitrahmens passt das System die
       Wiederholungs-Rhythmen automatisch an - bei knappem
       Zeitrahmen werden Wiederholungen dichter gestaffelt.
@@ -156,25 +156,25 @@ entries:
       ## Im Adaptive Learner
 
       Das Profil wird auf dem Dashboard und in den
-      Session-Empfehlungen verwendet. Wenn du eine Session
+      Sitzungsempfehlungen verwendet. Wenn du eine Sitzung
       ohne Methodenangabe startest, wählt das System die
       Methode mit dem höchsten Gewicht in deinem Profil.
 
   - key: learning_session
-    title: Lernsession
+    title: Lernsitzung
     short: "Eine KI-gestützte Lerneinheit, die dem 7-Schritte-Zyklus folgt."
     long: |
-      ## Was ist eine Lernsession?
+      ## Was ist eine Lernsitzung?
 
-      Eine Lernsession ist eine zusammenhängende Lerneinheit
+      Eine Lernsitzung ist eine zusammenhängende Lerneinheit
       zu einem Thema, gesteuert durch den 7-Schritte-Zyklus
       (Input, Versuch, Fehler, Feedback, Anpassung, Wiederholung,
       Integration). Die AI übernimmt dabei die Rolle des
       Lehrenden; du führst den Dialog.
 
-      ## Was unterscheidet eine Session vom Chat?
+      ## Was unterscheidet eine Sitzung vom Chat?
 
-      In einer Session läuft der **Dual-Prompt-Evaluator** mit:
+      In einer Sitzung läuft der **Dual-Prompt-Evaluator** mit:
       Nach jeder Antwort beurteilt eine zweite KI-Instanz dein
       Verständnis (0-100% Confidence) und entscheidet, ob du
       bereit für den nächsten Schritt bist. Ein normaler Chat
@@ -185,10 +185,10 @@ entries:
       Die Antworten der AI erscheinen wortweise (Server-Sent
       Events), damit du nicht auf die fertige Antwort warten
       musst. Du kannst jederzeit unterbrechen und
-      nachfragen - die Session läuft solange weiter, bis du
+      nachfragen - die Sitzung läuft solange weiter, bis du
       sie beendest oder der Zyklus abgeschlossen ist.
 
-      ## Wann sollte ich eine Session beenden?
+      ## Wann sollte ich eine Sitzung beenden?
 
       - Nach Schritt 7 (Integration), wenn der Lernzyklus
         abgeschlossen ist.
@@ -199,16 +199,16 @@ entries:
 
       ## Bewertungen wirken sich aus
 
-      Jede Session endet mit drei Reglern (Verständnis, Stress,
+      Jede Sitzung endet mit drei Reglern (Verständnis, Stress,
       Methodenpassung, je 1-5). Diese Werte gehen in dein
       Lernprofil ein und beeinflussen künftige Empfehlungen:
       hoher Stress + niedrige Methodenpassung über mehrere
-      Sessions hinweg löst den Methodenwechsel-Vorschlag aus.
+      Sitzungen hinweg löst den Methodenwechsel-Vorschlag aus.
 
       ## Im Adaptive Learner
 
-      Eine Session gehört zu genau einem Lernprojekt. Du kannst
-      gleichzeitig nur eine aktive Session haben; das verhindert
+      Eine Sitzung gehört zu genau einem Lernprojekt. Du kannst
+      gleichzeitig nur eine aktive Sitzung haben; das verhindert
       Vermischung von Themen und schützt die
       Methodenwechsel-Logik vor Rauschen.
 
@@ -252,19 +252,19 @@ entries:
       gemeinsamen Backend-Dienst und ist zurückgestellt.
 
   - key: streak
-    title: Streak (Serie)
+    title: Serie
     short: "Die Anzahl aufeinanderfolgender Tage, an denen du gelernt hast - Treibstoff für den XP-Multiplikator."
     docs_slug: user-guide/dashboard
     long: |
-      ## Was ist eine Streak?
+      ## Was ist eine Serie?
 
-      Eine Streak zählt aufeinanderfolgende Lerntage. Jede
-      abgeschlossene Session oder Lektion füllt die Heatmap und
+      Eine Serie zählt aufeinanderfolgende Lerntage. Jede
+      abgeschlossene Sitzung oder Lektion füllt die Heatmap und
       hält die Serie am Leben.
 
       ## Wirkung
 
-      Die Streak speist einen XP-Multiplikator (+25 % pro Tag in
+      Die Serie speist einen XP-Multiplikator (+25 % pro Tag in
       Folge, bei 7 Tagen gedeckelt). Sie ist ein Spiegel deiner
       Konstanz, kein Druckmittel - eine verpasste tägliche
       Mission kostet keine Strafe.

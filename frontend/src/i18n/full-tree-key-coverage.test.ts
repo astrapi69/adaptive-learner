@@ -27,6 +27,7 @@ import {
     anyKeyMatchesPattern,
     countBareIdentifierCalls,
     extractDynamicKeyPatterns,
+    extractDataHeldKeys,
     extractStaticKeys,
     flattenCatalog,
     splitDynamicTemplate,
@@ -59,6 +60,27 @@ describe("extractStaticKeys", () => {
 
     it("returns an empty array for source with no t() calls", () => {
         expect(extractStaticKeys("const x = 1;")).toEqual([]);
+    });
+});
+
+describe("extractDataHeldKeys (#3676)", () => {
+    it.each([
+        ["a plain key property", '{segment: "import", key: "nav.import"}', ["nav.import"]],
+        ["a labelKey property", 'labelKey: "data_export.cat_settings",', ["data_export.cat_settings"]],
+        ["a snake_case _key property", 'name_key: "badges.first_session.name"', ["badges.first_session.name"]],
+        ["a JSX prop", '<Card titleKey="dashboard.title" />', ["dashboard.title"]],
+        ["a single-quoted value", "pageTitleKey: 'nav.settings'", ["nav.settings"]],
+    ])("extracts %s", (_label, source, expected) => {
+        expect(extractDataHeldKeys(source)).toEqual(expected);
+    });
+
+    it.each([
+        ["a storage key with a hyphen", 'storageKey: "adaptive-learner.avatar.frames"'],
+        ["a single-segment value", 'badgeKey: "streak_3_days"'],
+        ["a property not named like a key", 'path: "nav.import"'],
+        ["an expression, not a literal", "key: entry.key"],
+    ])("ignores %s", (_label, source) => {
+        expect(extractDataHeldKeys(source)).toEqual([]);
     });
 });
 
@@ -242,12 +264,17 @@ function loadCatalog(lang: string): Map<string, unknown> {
 describe("full-tree i18n key coverage (#2864)", () => {
     const files = collectSourceFiles(SRC);
     const staticKeys = new Set<string>();
+    // #3676 - keys held as data (``key: "nav.import"`` in a table that a
+    // later ``t(entry.key)`` reads). They were invisible here, so #3636
+    // removed three of them from every catalog with this gate green.
+    const dataHeldKeys = new Set<string>();
     const dynamicPatterns = new Map<string, ReturnType<typeof extractDynamicKeyPatterns>[number]>();
     let bareCallCount = 0;
 
     for (const file of files) {
         const source = stripComments(readFileSync(file, "utf-8"));
         for (const key of extractStaticKeys(source)) staticKeys.add(key);
+        for (const key of extractDataHeldKeys(source)) dataHeldKeys.add(key);
         for (const pattern of extractDynamicKeyPatterns(source)) {
             dynamicPatterns.set(`${pattern.prefix} ${pattern.suffix}`, pattern);
         }
@@ -261,9 +288,11 @@ describe("full-tree i18n key coverage (#2864)", () => {
         // "0 issues" and read as clean instead of as "nothing was checked".
         expect(files.length).toBeGreaterThan(500);
         expect(staticKeys.size).toBeGreaterThan(1000);
+        expect(dataHeldKeys.size).toBeGreaterThan(200);
         console.log(
             `[i18n-full-tree] scanned ${files.length} files: ` +
-                `${staticKeys.size} static keys, ${dynamicPatterns.size} dynamic ` +
+                `${staticKeys.size} static keys, ${dataHeldKeys.size} data-held keys, ` +
+                `${dynamicPatterns.size} dynamic ` +
                 `key patterns, ${bareCallCount} unverifiable bare-identifier calls ` +
                 "(not checked by this gate - no static tool can resolve them)",
         );
@@ -274,6 +303,18 @@ describe("full-tree i18n key coverage (#2864)", () => {
         (lang) => {
             const catalog = catalogs.get(lang)!;
             const missing = [...staticKeys].filter((key) => {
+                const value = catalog.get(key);
+                return typeof value !== "string" || value.trim() === "";
+            });
+            expect(missing).toEqual([]);
+        },
+    );
+
+    it.each(LANGS)(
+        "%s: every key held as data in code resolves to a non-empty catalog value (#3676)",
+        (lang) => {
+            const catalog = catalogs.get(lang)!;
+            const missing = [...dataHeldKeys].filter((key) => {
                 const value = catalog.get(key);
                 return typeof value !== "string" || value.trim() === "";
             });

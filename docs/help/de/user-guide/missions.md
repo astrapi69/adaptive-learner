@@ -34,10 +34,10 @@ Unter **Einstellungen > Lernen > Tägliche Missionen** kannst du:
   Einfach oder Anspruchsvoll,
 - die heutigen Missionen **zurücksetzen**.
 
-## Streak-Joker
+## Serien-Joker
 
 Wenn du eine Missions-Serie hältst und dann einen einzelnen Tag
-verpasst, kann ein (mit der Zeit verdienter) Streak-Joker diese
+verpasst, kann ein (mit der Zeit verdienter) Serien-Joker diese
 eine Lücke überbrücken, sodass deine Serie überlebt. Ein zweiter
 verpasster Tag beendet sie - aber auch hier gibt es nie eine
 Strafe, nur einen Neuanfang.

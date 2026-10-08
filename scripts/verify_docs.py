@@ -164,6 +164,7 @@ from verify_docs_feature_completeness import (  # noqa: E402
 )
 from verify_docs_feature_shots import check_feature_shots  # noqa: E402,F401
 from verify_docs_help_changelog import check_help_changelog as _check_help_changelog  # noqa: E402
+from verify_docs_help_terms import check_help_terms  # noqa: E402
 from verify_docs_i18n import check_i18n  # noqa: E402,F401
 from verify_docs_locale_coverage import check_locale_coverage  # noqa: E402
 from verify_docs_strong_emphasis import check_strong_emphasis  # noqa: E402
@@ -770,6 +771,7 @@ CHECKS = {
     "help-coverage": lambda r, o: check_help_coverage(r),
     "locale-coverage": lambda r, o: check_locale_coverage(r, REPO / "docs" / "help"),
     "help-strong-emphasis": lambda r, o: check_strong_emphasis(r, REPO / "docs" / "help"),
+    "help-terms": lambda r, o: check_help_terms(r, REPO),
     "testplan-parity": lambda r, o: check_testplan_parity(r),
     "testplan-ids": lambda r, o: check_testplan_ids(r),
     "feature-shots": lambda r, o: check_feature_shots(r),

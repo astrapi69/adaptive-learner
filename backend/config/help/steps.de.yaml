@@ -26,7 +26,7 @@ entries:
       ## Was du tust
 
       Aufmerksam lesen. Fragen stellen, wenn etwas unklar ist -
-      die Session ist ein Dialog, nicht eine Vorlesung. Wenn
+      die Sitzung ist ein Dialog, nicht eine Vorlesung. Wenn
       du die Confidence der AI zu hoch findest, dranbleiben:
       manchmal wirkt eine Erklärung erst beim zweiten Lesen.
 
@@ -283,7 +283,7 @@ entries:
 
       Der Zyklus ist abgeschlossen. Drei Optionen:
 
-      - **Session beenden** und Bewertung abgeben
+      - **Sitzung beenden** und Bewertung abgeben
         (Verständnis / Stress / Methodenpassung).
       - **Auto-Loop**: ein neuer Zyklus mit neuem Thema
         startet automatisch.

@@ -21,7 +21,7 @@ tree is not writable by the container user. Production Docker
 (``USER adaptive_learner`` + ``chown -R adaptive_learner:adaptive_learner /app``)
 makes the project tree writable, but the divergence between
 environments was a footgun — the v0.31.0 Phase 2 sweep
-fixed ``backup_history.json`` and ``plugins/installed/`` the same
+fixed ``backup_history.json`` the same
 way; this module is where the Settings writes land.
 
 See ``.claude/rules/lessons-learned.md`` "Filesystem isolation"

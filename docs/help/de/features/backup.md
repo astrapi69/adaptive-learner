@@ -12,8 +12,8 @@ findest alles unter **Einstellungen → Daten**.
 ## Was im Backup steckt
 
 Ein Backup ist ein **vollständiger Snapshot**: alle
-Datentabellen (Lernprojekte, Sessions, Lektionsfortschritt,
-element-genaue Fehler, Gamification mit XP/Streak/Badges,
+Datentabellen (Lernprojekte, Sitzungen, Lektionsfortschritt,
+element-genaue Fehler, Gamification mit XP/Serie/Badges,
 Missionen, Anki-Karten, Notizen und mehr), **deine
 heruntergeladenen Content-Sets** und ein **localStorage-Snapshot**
 (deine Beiträge, eigene Lernpfade und lokale Einstellungen).
@@ -67,7 +67,7 @@ Backup lässt sich in eine **frische Installation** oder unter
 einem **anderen Nutzerprofil** importieren. Die Wiederherstellung
 ordnet die Daten dem aktiven Profil zu und löst dabei interne
 Verweise (Fremdschlüssel) sauber neu auf, sodass dein Fortschritt
-zusammenhängend bleibt - Lektions-Schrittfortschritt, Streak und
+zusammenhängend bleibt - Lektions-Schrittfortschritt, Serie und
 Badges inklusive.
 
 ---
