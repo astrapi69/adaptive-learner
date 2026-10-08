@@ -40,7 +40,7 @@ Cada mensaje que envías activa hasta tres llamadas a la IA:
 2. **El evaluador de pasos** - una segunda llamada a la IA lee el
    intercambio y decide si estás listo para avanzar. Emite
    `advance`, `confidence`, `reason`, `suggested_step`. La
-   aplicación aplica la sugerencia cuando la confianza ≥ 0,6.
+   aplicación aplica la sugerencia cuando la confianza ≥ 0,7.
 3. **El evaluador de transición de tema** (solo en el paso 7) -
    una tercera llamada a la IA decide si el tema ha sido integrado.
    Si es así Y `continue_recommended`, un nuevo ciclo comienza
