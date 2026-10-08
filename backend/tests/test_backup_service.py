@@ -57,6 +57,7 @@ from app.models import (
     UserSettings,
     UserStreak,
     UserXP,
+    XpPurchase,
 )
 from app.repositories.backup_repo import SqlAlchemyBackupRepository
 from app.routers.backup import router as backup_router
@@ -323,6 +324,17 @@ def _seed_all_tables(db) -> User:
             audio_base64="UklGRiQAAABXQVZFZm10IBAAAAABAAEA",
             mime_type="audio/webm",
             duration_ms=2500,
+        )
+    )
+
+    # #3445 - an XP purchase (the ledger row ownership is derived from).
+    db.add(
+        XpPurchase(
+            id="00000000-0000-5000-8000-000000003445",
+            user_id=user.id,
+            item_kind="avatar_frame",
+            item_id="star",
+            cost=150,
         )
     )
 

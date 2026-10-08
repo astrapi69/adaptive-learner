@@ -198,6 +198,15 @@ export const SYNC_TABLES: SyncTable[] = [
         appendOnly: false,
     },
     {
+        // #3445 — XP purchase ledger. APPEND-ONLY: one row per purchase,
+        // never edited. The uuid5 id of (user, kind, item) is the same on
+        // every device, so the receiving side skips a purchase it already has.
+        name: "xp_purchases",
+        dexieTable: "xpPurchases",
+        timestampField: "purchased_at",
+        appendOnly: true,
+    },
+    {
         // v1.17.0 / Phase 30B — Anki flashcard suggestions.
         // MUTABLE: the user accepts / rejects / edits in-place.
         name: "anki_card_suggestions",

@@ -7088,6 +7088,40 @@
         "title": "_PronunciationPhraseOut",
         "type": "object"
       },
+      "_PurchaseBody": {
+        "properties": {
+          "already_paid": {
+            "default": false,
+            "title": "Already Paid",
+            "type": "boolean"
+          },
+          "cost": {
+            "maximum": 100000.0,
+            "minimum": 0.0,
+            "title": "Cost",
+            "type": "integer"
+          },
+          "item_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Item Id",
+            "type": "string"
+          },
+          "item_kind": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Item Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_kind",
+          "item_id",
+          "cost"
+        ],
+        "title": "_PurchaseBody",
+        "type": "object"
+      },
       "_RatingBody": {
         "properties": {
           "method_fit": {
@@ -10795,6 +10829,107 @@
           }
         },
         "summary": "Award Import",
+        "tags": [
+          "Gamification"
+        ]
+      }
+    },
+    "/api/plugins/gamification/xp/{user_id}/purchases": {
+      "get": {
+        "description": "#3445 - the purchase ledger; ownership is derived from it.",
+        "operationId": "list_purchases_api_plugins_gamification_xp__user_id__purchases_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response List Purchases Api Plugins Gamification Xp  User Id  Purchases Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Purchases",
+        "tags": [
+          "Gamification"
+        ]
+      },
+      "post": {
+        "description": "#3445 - buy an item: the deduction and the ledger row are one event.",
+        "operationId": "purchase_item_api_plugins_gamification_xp__user_id__purchases_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/_PurchaseBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Purchase Item Api Plugins Gamification Xp  User Id  Purchases Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Purchase Item",
         "tags": [
           "Gamification"
         ]

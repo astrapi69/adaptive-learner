@@ -249,6 +249,7 @@ class ImportedConversationSource(str, Enum):
 | ProjectSubject | project_subjects | v1.9.0 | M:N (LearningProject, Subject) |
 | ProjectTag | project_tags | v1.9.0 | M:N (LearningProject, Tag) |
 | UserXP | user_xp | v1.16.0 | XP + singleton επιπέδου ανά χρήστη |
+| XpPurchase | xp_purchases | v2.17.0 | Μία αγορά με XP (πλαίσιο άβαταρ, παραλλαγή μασκότ, παιχνίδι arcade)· η κατοχή προκύπτει από αυτήν |
 | Badge | badges | v1.16.0 | Κατάλογος badge (σπαρμένος από YAML) |
 | UserBadge | user_badges | v1.16.0 | Εγγραφή κερδισμένου badge (μόνο προσθήκη) |
 | UserStreak | user_streaks | v1.16.0 | Κατάσταση streak + παγώματα + λειτουργία Σαββατοκύριακου |

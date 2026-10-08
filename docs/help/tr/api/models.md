@@ -249,6 +249,7 @@ Tel formu, küçük harf dize değeridir (örn. `"deductive"`,
 | ProjectSubject | project_subjects | v1.9.0 | M:N (LearningProject, Subject) |
 | ProjectTag | project_tags | v1.9.0 | M:N (LearningProject, Tag) |
 | UserXP | user_xp | v1.16.0 | Kullanıcı başına XP + seviye tekil |
+| XpPurchase | xp_purchases | v2.17.0 | XP ile tek bir satın alma (avatar çerçevesi, maskot varyantı, arcade oyunu); sahiplik buradan türetilir |
 | Badge | badges | v1.16.0 | Rozet kataloğu (YAML'dan tohumlanmış) |
 | UserBadge | user_badges | v1.16.0 | Kazanılmış rozet kaydı (yalnızca ekleme) |
 | UserStreak | user_streaks | v1.16.0 | Seri durumu + dondurma + hafta sonu modu |

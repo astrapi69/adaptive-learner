@@ -12,6 +12,7 @@
 import { evaluateBadgesForUser, listBadgesWithProgress } from "./badges";
 import { getDb } from "../dexie/db";
 import { awardXPFlat, getXPState, spendXP } from "./gamification";
+import { listPurchasesDexie, purchaseItemDexie } from "./purchases-dexie";
 import {
   calendarHeatmap,
   getStreakState,
@@ -22,6 +23,8 @@ import type { IStorageService } from "../types";
 export const dexieGamification: IStorageService["gamification"] = {
   getState: (userId) => getXPState(userId),
   spendXp: (userId, amount) => spendXP(userId, amount),
+  purchaseItem: (userId, input) => purchaseItemDexie(userId, input),
+  listPurchases: (userId) => listPurchasesDexie(userId),
   awardAssessment: async (userId) => {
     const award = await awardXPFlat(userId, 100, "assessment_complete");
     try {

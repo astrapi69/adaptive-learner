@@ -21,7 +21,10 @@ export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
 // content_hash + the import language pair, cycle_count / cycle_topics and
 // the session-note kind. One version for both modes from here on; the
 // backend's BACKUP_VERSION must match (parity test in backup-tables.test).
-export const BACKUP_VERSION = "1.6.0";
+// 1.7.0 — #3445: the ``xp_purchases`` ledger rides the backup. A pre-1.7.0
+// backup has none; ownership then migrates from its local_storage snapshot
+// the first time a gallery loads (lib/gamification/purchase-ledger.ts).
+export const BACKUP_VERSION = "1.7.0";
 
 /**
  * The ``user_settings`` fields that never travel in a backup and that a
@@ -235,6 +238,15 @@ export const BACKUP_TABLES: Record<string, BackupTableSpec> = {
         appendOnly: false,
         scope: "user",
     },
+    // #3445 — XP purchase ledger. Append-only: a purchase is recorded once
+    // and never edited; the uuid5 id is the same in both modes, so a
+    // restore or a sync skips a known row instead of duplicating it.
+    xp_purchases: {
+        store: "xpPurchases",
+        timestampField: "purchased_at",
+        appendOnly: true,
+        scope: "user",
+    },
     lesson_progress: {
         store: "lessonProgress",
         timestampField: "updated_at",
@@ -322,6 +334,7 @@ export const RESTORE_ORDER: readonly string[] = [
     // (which references a badge id); the rest are direct user-scope
     // rows with no cross-table FK inside the backup set.
     "user_xp",
+    "xp_purchases",
     "badges",
     "user_badges",
     "anki_card_suggestions",

@@ -8,8 +8,11 @@
  * and rides the ``.alb`` backup's localStorage snapshot.
  */
 
+import {xpCostOf} from "../gamification/purchase-ledger";
+import type {PurchaseSurface} from "../gamification/purchase-ledger";
 import {createSelectionStore} from "../gamification/selection-store";
 import type {SelectionState} from "../gamification/selection-store";
+import {AVATAR_FRAMES} from "./avatar-frames";
 
 const store = createSelectionStore("adaptive-learner.avatar.frames", "none");
 
@@ -26,3 +29,10 @@ export const setSelectedAvatarFrame = store.setSelected;
 
 /** Record an XP purchase for ``userId`` (idempotent). */
 export const addPurchasedAvatarFrame = store.addPurchased;
+
+/** The frame purchases in the XP ledger (#3445), for ``reconcilePurchases``. */
+export const AVATAR_FRAME_PURCHASES: PurchaseSurface = {
+    kind: "avatar_frame",
+    store,
+    costOf: xpCostOf(AVATAR_FRAMES),
+};
