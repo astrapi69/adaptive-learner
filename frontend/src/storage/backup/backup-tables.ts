@@ -24,7 +24,10 @@ export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
 // 1.7.0 — #3445: the ``xp_purchases`` ledger rides the backup. A pre-1.7.0
 // backup has none; ownership then migrates from its local_storage snapshot
 // the first time a gallery loads (lib/gamification/purchase-ledger.ts).
-export const BACKUP_VERSION = "1.7.0";
+// 1.8.0 — #3412: an optional ``plugin_settings`` block (connected repos,
+// redeemed invites, the Learning Repository switch), added and applied
+// frontend-side in both modes (lib/backup/pluginSettingsSnapshot.ts).
+export const BACKUP_VERSION = "1.8.0";
 
 /**
  * The ``user_settings`` fields that never travel in a backup and that a
