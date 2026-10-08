@@ -24,7 +24,6 @@ import {restoreDexieContentSets} from "./backup-content-sets";
 import {normalizeRestoreRecord} from "./backup-normalize";
 import {
     findByUniqueIndex,
-    isPristineDefault,
     redirectFks,
     rememberRemap,
     type IdRemap,
@@ -89,8 +88,11 @@ function backupIsNewer(record: RowDict, existing: RowDict, spec: BackupTableSpec
 /**
  * Restore one record. A record unknown by id is looked up by the store's
  * unique index too (#3694): a catalog row or a singleton the device already
- * holds under another id is merged into that row, its id is remembered for
- * the child tables, and an untouched local default loses to the backup.
+ * holds under another id is merged into that row and its id is remembered
+ * for the child tables. Such a row is a local placeholder in the unique
+ * slot, so the backup overwrites it regardless of timestamp, exactly as the
+ * backend restore does (#115); a row with the backup's own id keeps the
+ * newer-wins rule.
  */
 async function restoreRecord(
     store: ReturnType<typeof getTable>,
@@ -116,8 +118,8 @@ async function restoreRecord(
         return "skipped";
     }
     if (spec.appendOnly) return "skipped";
-    const replacesDefault = localId !== recordId && isPristineDefault(table, existing);
-    if (!replacesDefault && !backupIsNewer(record, existing, spec)) return "skipped";
+    const matchedByUniqueKey = localId !== recordId;
+    if (!matchedByUniqueKey && !backupIsNewer(record, existing, spec)) return "skipped";
     // Keep the local PK; the spread keeps local-only fields.
     await store.put({...existing, ...writableRow(table, record), id: localId} as never);
     return "updated";

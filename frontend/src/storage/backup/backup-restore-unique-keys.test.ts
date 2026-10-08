@@ -127,7 +127,10 @@ describe("restore into a device with its own catalog and singletons (#3694)", ()
         });
     });
 
-    it("keeps newer local streak activity over an older backup", async () => {
+    it("lets the backup win over a row matched only by its unique key, even a newer one", async () => {
+        // Same rule as the backend restore (#115): a row that holds the
+        // unique slot under another id is a local placeholder, and the backup
+        // is the source of truth for it. Both modes decide alike (#2053).
         const db = getDb();
         await db.userStreaks.add(streak("local-s", {longest_streak_days: 5, updated_at: NOW}) as never);
 
@@ -136,7 +139,19 @@ describe("restore into a device with its own catalog and singletons (#3694)", ()
             payloadWith({user_streaks: [streak("remote-s", {longest_streak_days: 12, updated_at: OLD})]}),
         );
 
-        expect((await db.userStreaks.get("local-s"))?.longest_streak_days).toBe(5);
+        expect((await db.userStreaks.get("local-s"))?.longest_streak_days).toBe(12);
+    });
+
+    it("keeps newer local data when the backup row has the same id", async () => {
+        const db = getDb();
+        await db.userStreaks.add(streak("same-s", {longest_streak_days: 5, updated_at: NOW}) as never);
+
+        await restoreDexieBackup(
+            USER,
+            payloadWith({user_streaks: [streak("same-s", {longest_streak_days: 12, updated_at: OLD})]}),
+        );
+
+        expect((await db.userStreaks.get("same-s"))?.longest_streak_days).toBe(5);
     });
 
     it("lets the backup's XP replace a default XP row under another id", async () => {

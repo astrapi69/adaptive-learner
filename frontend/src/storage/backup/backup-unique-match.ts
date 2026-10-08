@@ -14,9 +14,9 @@
  * A restore that looked rows up by id only hit the unique key on ``add`` and
  * skipped the backup's row. These helpers find the local row by its unique
  * index, record the backup-id to local-id mapping, redirect child foreign
- * keys through it (the backend does the same with ``id_remap``, #49/#115),
- * and let a backup row replace a local row that is still the app's untouched
- * default.
+ * keys through it, and the restore lets the backup overwrite that row: the
+ * backend does the same with ``id_remap`` and its unique-key fallback
+ * (#49/#115).
  *
  * @example
  * const existing = (await store.get(id)) ?? (await findByUniqueIndex(store, record));
@@ -37,23 +37,6 @@ export type IdRemap = Map<string, Map<string, string>>;
  */
 const FK_PARENTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
     user_badges: {badge_id: "badges"},
-};
-
-/**
- * Local rows that are still the app's default and carry no user data, by
- * table. They mirror the default factories (``getOrCreateRow`` in
- * storage/gamification/streaks.ts, ``getOrCreateUserXP`` in
- * storage/gamification/gamification.ts).
- */
-const PRISTINE_DEFAULTS: Readonly<Record<string, (row: RowDict) => boolean>> = {
-    user_streaks: (row) =>
-        !row.freezes_available &&
-        !row.current_streak_days &&
-        !row.longest_streak_days &&
-        !row.weekend_mode &&
-        row.last_freeze_earned_on == null &&
-        row.last_freeze_used_on == null,
-    user_xp: (row) => !row.total_xp && (row.level ?? 1) === 1,
 };
 
 /**
@@ -103,9 +86,4 @@ export function redirectFks(table: string, record: RowDict, idRemap: IdRemap): R
         if (mapped) out[column] = mapped;
     }
     return out;
-}
-
-/** Whether ``row`` is still the app's untouched default for ``table``. */
-export function isPristineDefault(table: string, row: RowDict): boolean {
-    return PRISTINE_DEFAULTS[table]?.(row) ?? false;
 }
