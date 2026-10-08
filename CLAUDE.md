@@ -60,7 +60,7 @@ User, UserSettings, ApiKeyBackup, LearningProject, LearningProfile,
 Curriculum, LearningTopic, Lesson, LearningSession, SessionMessage,
 SessionRating, SessionNote, ProgressCommit, StepEvaluation, MethodSwitch,
 ImportedConversation, ImportedMessage, Subject, Tag, ProjectSubject,
-ProjectTag, UserXP, Badge, UserBadge, UserStreak, AnkiCardSuggestion,
+ProjectTag, UserXP, XpPurchase, Badge, UserBadge, UserStreak, AnkiCardSuggestion,
 StudyQuestion, LessonProgress, ElementError, SetRun, UserMission,
 SpeechRecording
 Full spec: docs/adaptive-learner-project-reference.md
