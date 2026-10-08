@@ -1,5 +1,7 @@
 # FAQ
 
+Probe: eine Session.
+
 ## Sind meine Daten sicher?
 
 Im **Lokal-Modus** liegen alle deine Daten in IndexedDB auf
