@@ -78,6 +78,34 @@ export interface HeatmapEntryOut {
   count: number;
 }
 
+/** The kinds of item that can be bought with XP (#3445). */
+export type XpPurchaseKind = "avatar_frame" | "mascot_variant" | "arcade_game";
+
+/** One recorded XP purchase. ``id`` is the deterministic uuid5 of
+ *  (user, kind, item), identical in both storage modes. */
+export interface XpPurchaseRecord {
+  id: string;
+  user_id: string;
+  item_kind: XpPurchaseKind;
+  item_id: string;
+  cost: number;
+  purchased_at: string;
+}
+
+export interface XpPurchaseInput {
+  item_kind: XpPurchaseKind;
+  item_id: string;
+  cost: number;
+  /** Record without deducting: the one-time migration of an item bought
+   *  before the ledger existed, whose XP was already taken. */
+  already_paid?: boolean;
+}
+
+export interface XpPurchaseResult {
+  xp: XPState;
+  purchase: XpPurchaseRecord;
+}
+
 export interface IGamificationNamespace {
   getState(userId: string): Promise<XPState>;
   awardAssessment(userId: string): Promise<XPAwardResult>;
@@ -86,6 +114,12 @@ export interface IGamificationNamespace {
    *  spent hint. The total never goes below zero. Returns the new XP
    *  state so the caller can surface the updated total. */
   spendXp(userId: string, amount: number, reason: string): Promise<XPState>;
+  /** #3445 — buy an item: the deduction and the purchase record land in
+   *  one transaction. A recorded purchase charges nothing again. Rejects
+   *  with ``ApiError(400)`` when the balance is below ``cost``. */
+  purchaseItem(userId: string, input: XpPurchaseInput): Promise<XpPurchaseResult>;
+  /** #3445 — every recorded purchase of ``userId``, the ownership source. */
+  listPurchases(userId: string): Promise<XpPurchaseRecord[]>;
   listBadges(userId: string): Promise<BadgeWithProgress[]>;
   evaluateBadges(userId: string): Promise<BadgeEvaluationResult>;
   getStreak(userId: string): Promise<StreakStateOut>;

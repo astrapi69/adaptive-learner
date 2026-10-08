@@ -99,6 +99,9 @@ EXPECTED_APPEND_ONLY: frozenset[str] = frozenset(
         # v1.9.0 / Phase 22A: M:N taxonomy associations.
         "project_subjects",
         "project_tags",
+        # #3445: XP purchases - a purchase is never undone; the uuid5 id
+        # makes the same purchase from a second device a known id.
+        "xp_purchases",
     }
 )
 
