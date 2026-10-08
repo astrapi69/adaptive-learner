@@ -86,11 +86,28 @@ jobs:
       # NO `playwright install` step: the browsers are baked into the
       # container image (#2715; the #317 CDN-hang class).
 
+      # #3215 - a refresh writes every baseline that differs in at least one
+      # pixel past a noise floor: VISUAL_BASELINE_REFRESH=1 drops the count
+      # budget (maxDiffPixels) to 0 and the colour threshold to 0.05
+      # (e2e/visual/refresh-mode.ts). With the budget, a change under
+      # 2,500 px was never written (five cases, the last 30 images in #3689).
+      # Measured on 166 baselines rendered twice: raster noise is at most 2
+      # per channel, the faintest real change up to 52. The compare run keeps
+      # its budget and its threshold.
       - name: Run visual regression
         working-directory: e2e
+        env:
+          VISUAL_BASELINE_REFRESH: ${{ inputs.update_baselines == true && '1' || '0' }}
         run: >-
           npx playwright test --config=playwright.visual.config.ts
-          ${{ inputs.update_baselines == true && '--update-snapshots' || '' }}
+          ${{ inputs.update_baselines == true && '--update-snapshots=changed' || '' }}
+
+      # #3427 - a surface without a baseline that cannot be reached skips at
+      # runtime; the budget keeps a broken path from turning into a green
+      # night. A baseline refresh run is not a gate run.
+      - name: Runtime skip budget (#3427)
+        if: (success() || failure()) && inputs.update_baselines != true
+        run: python3 scripts/check_e2e_skip_budget.py --suite visual-regression --report e2e/test-results/visual-regression.json
 
       - name: Upload report + diffs
         if: always()

@@ -54,6 +54,8 @@ déterminent le rythme de la session.
 
 ## Auto-boucle
 
+> Dans la version navigateur, la session reste à l'étape 7 : l'auto-boucle ne fonctionne que dans l'application de bureau. La page de la session l'indique lorsque vous atteignez l'étape 7.
+
 Après l'étape 7, une **nouvelle boucle** peut démarrer automatiquement
 avec le sujet suivant de votre curriculum. L'auto-boucle continue jusqu'à
 ce que vous l'arrêtiez ou que le nombre maximum de cycles soit atteint

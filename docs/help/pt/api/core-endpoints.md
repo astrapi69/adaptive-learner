@@ -128,8 +128,8 @@ atualizada.
 GET /api/settings/{user_id}
 ```
 
-Retorna UserSettings com os campos de chave de API **como booleanos
-+ enums de fonte** (o backend nunca envia chaves em texto simples
+Retorna UserSettings com os campos de chave de API **como booleanos + enums
+de fonte** (o backend nunca envia chaves em texto simples
 de volta):
 
 ```json

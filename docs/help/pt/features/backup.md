@@ -11,7 +11,7 @@ instalação nova ou após uma mudança de browser. Encontras tudo em
 
 ## O que está no backup
 
-Um backup é um **snapshot completo**: todas as 30 tabelas de dados
+Um backup é um **snapshot completo**: todas as tabelas de dados
 (projetos de aprendizagem, sessões, progresso de lições, erros ao
 nível do elemento, gamificação com XP/Streak/Badges, missões,
 cartões Anki, notas e mais) **mais os teus conjuntos de conteúdo

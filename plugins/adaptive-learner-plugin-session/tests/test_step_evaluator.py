@@ -143,9 +143,7 @@ def test_build_messages_renders_recent_transcript():
 
 
 def test_build_messages_truncates_long_history_to_last_eight():
-    history = [
-        {"role": "user", "content": f"turn-{i}"} for i in range(20)
-    ]
+    history = [{"role": "user", "content": f"turn-{i}"} for i in range(20)]
     msgs = build_evaluation_messages(
         method="deductive", current_step=2, history=history, output_language="en"
     )
@@ -295,18 +293,14 @@ def test_parse_invalid_json_returns_deterministic_fallback():
 
 
 def test_parse_missing_advance_field_falls_back():
-    raw = json.dumps(
-        {"confidence": 0.8, "reason": "ok"}
-    )  # no advance, no suggested_step
+    raw = json.dumps({"confidence": 0.8, "reason": "ok"})  # no advance, no suggested_step
     out = parse_evaluation_response(raw, current_step=2)
     assert out.fallback_used is True
     assert out.suggested_step == 3  # current + 1
 
 
 def test_parse_missing_suggested_step_falls_back():
-    raw = json.dumps(
-        {"advance": True, "confidence": 0.8, "reason": "ok"}
-    )
+    raw = json.dumps({"advance": True, "confidence": 0.8, "reason": "ok"})
     out = parse_evaluation_response(raw, current_step=2)
     assert out.fallback_used is True
     assert out.suggested_step == 3
@@ -423,20 +417,27 @@ def test_evaluate_step_returns_fallback_when_hook_returns_garbage():
     assert out.suggested_step == 6
 
 
-def test_evaluate_step_returns_fallback_when_hook_raises():
-    """Provider exception must NEVER bubble up to the route layer."""
+def test_evaluate_step_returns_fallback_when_hook_raises(caplog):
+    """Provider exception must NEVER bubble up to the route layer, and
+    it leaves a warning with the traceback (#3423): an invalid key or a
+    rate limit used to degrade the step silently to +1."""
     pm = _fake_pm(RuntimeError)
-    out = evaluate_step(
-        pm=pm,
-        method="error_based",
-        current_step=2,
-        history=[],
-        model="x",
-        api_key="x",
-        output_language="en",
-    )
+    with caplog.at_level("WARNING", logger="adaptive_learner_session.step_evaluator"):
+        out = evaluate_step(
+            pm=pm,
+            method="error_based",
+            current_step=2,
+            history=[],
+            model="x",
+            api_key="x",
+            output_language="en",
+        )
     assert out.fallback_used is True
     assert out.suggested_step == 3
+    [record] = [r for r in caplog.records if r.name.endswith("step_evaluator")]
+    assert record.levelname == "WARNING"
+    assert record.exc_info is not None
+    assert getattr(record, "model", None) == "x"
 
 
 def test_evaluate_step_passes_recent_history_to_the_hook():

@@ -21,6 +21,7 @@
  */
 
 import {defineConfig, devices} from "@playwright/test";
+import {BASELINE_REFRESH} from "./visual/refresh-mode";
 
 const PREVIEW_PORT =
     Number(process.env.ADAPTIVE_LEARNER_VISUAL_PREVIEW_PORT) || 4178;
@@ -49,6 +50,12 @@ export default defineConfig({
     fullyParallel: !!process.env.CI,
     workers: process.env.CI ? 4 : 1,
     retries: 1,
+    // #3427 - the JSON report feeds the runtime skip budget
+    // (scripts/check_e2e_skip_budget.py); the first entry keeps the default.
+    reporter: [
+        [process.env.CI ? "dot" : "list"],
+        ["json", {outputFile: "test-results/visual-regression.json"}],
+    ],
     // Seeding a learner (onboarding + a lesson playthrough) before the
     // shot takes longer than a smoke nav.
     timeout: 120_000,
@@ -68,13 +75,21 @@ export default defineConfig({
             // tablet/desktop tighten to it. A per-shot override that
             // loosens the ratio must loosen maxDiffPixels too (see the
             // lesson-matching@mobile override in critical-surfaces.spec.ts).
-            maxDiffPixels: 2_500,
-            maxDiffPixelRatio: 0.01,
+            // #3215 - a baseline refresh run drops the count budget to 0, so
+            // every image with a pixel past ``threshold`` is written; the
+            // budget only filters what a COMPARE reports (refresh-mode.ts).
+            maxDiffPixels: BASELINE_REFRESH ? 0 : 2_500,
+            maxDiffPixelRatio: BASELINE_REFRESH ? 0 : 0.01,
             // Per-pixel colour-distance tolerance for anti-aliasing (#705).
             // Deliberately NOT lowered for #2712: pastel-fill sensitivity
             // would surface anti-aliasing churn across all ~150 baselines;
             // the absolute cap already catches state swaps via their text.
-            threshold: 0.2,
+            // #3215 - a refresh run calibrates the noise floor to the
+            // measured raster noise (max channel delta 2 between two renders)
+            // instead of the compare's anti-aliasing tolerance: 0.2 is a grey
+            // delta of ~53, and text dimmed behind an overlay changed by at
+            // most 52 (shortcut-help), so it was never written. 0.05 is ~13.
+            threshold: BASELINE_REFRESH ? 0.05 : 0.2,
             animations: "disabled",
         },
     },

@@ -18,17 +18,10 @@ common:
   error: Algo deu errado.
   back: Voltar
   next: Próximo
-  start: Começar
   submit: Enviar
-  continue: Continuar
-  done: Pronto
   delete: Excluir
   edit: Editar
   confirm: Confirmar
-  'yes': Sim
-  'no': Não
-  optional: opcional
-  required: obrigatório
   minutes: minutos
   close: "Fechar"
 avatar:
@@ -79,9 +72,6 @@ nav:
     progress: "Progresso"
     more: "Mais"
   primary: "Navegação principal"
-  discover: "Descobrir conteúdo"
-  offline_long: "Offline - as sessões anteriores continuam acessíveis"
-  sync_pending: "{n} alteração(ões) aguardando sincronização"
   statistics: "Estatísticas"
   profile: "Seu perfil"
   learning_path: "Percurso de aprendizagem"
@@ -94,9 +84,6 @@ nav:
   help: Ajuda
   home: Início
   menu: Menu
-  online: Online
-  offline: Offline
-  anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Modo desenvolvedor ativo - as notificações de erro mostram detalhes técnicos. Desative em Configurações."
   content: "Meu conteúdo"
@@ -105,8 +92,6 @@ nav:
   mode_badge_tooltip_content: "Sem chave API configurada - apenas conteúdo pré-construído. Adicione uma chave em Configurações para ativar as funcionalidades IA."
   mode_badge_tooltip_ai: "Fornecedor de IA configurado - os exercícios usam IA para distratores e dicas. Toque para explorar os conjuntos."
   mode_badge_action: "explorar conteúdo"
-  sync_paired: "Sinc.: emparelhado (Configurações > Sinc.)"
-  sync_unpaired: "Sinc.: não emparelhado (Configurações > Sinc.)"
 import:
   title: Importar uma conversa
   subtitle: Cole ou envie uma conversa com o ChatGPT, Claude ou Gemini e obtenha insights de aprendizado na hora.
@@ -129,7 +114,7 @@ import:
   analysis_title: Análise
   analysis_ready: Análise pronta.
   analysis_fallback: A análise foi executada, mas a resposta da IA não pôde ser interpretada corretamente.
-  analysis_fallback_long: A resposta da IA não pôde ser interpretada como JSON estruturado. O resumo abaixo é uma alternativa.
+  analysis_fallback_long: "A resposta da IA não pôde ser lida como uma análise estruturada. Execute a análise de novo ou escolha outro fornecedor de IA."
   analysis_error: Não foi possível analisar a conversa.
   analysis_phase_reading: "Passo 1/3: Lendo o chat…"
   analysis_phase_analyzing: "Passo 2/3: Analisando o conteúdo…"
@@ -362,7 +347,6 @@ adaptive:
   session_title: "Lição adaptativa"
   loading: "Analisando seus erros…"
   empty_body: "Nada para adaptar ainda - pratica uma lição para acumular dados."
-  not_cached_body: "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro."
   back_to_dashboard: "Voltar ao painel"
   transparency:
     focus_prefix: "Esta lição foca-se em:"
@@ -375,7 +359,6 @@ adaptive:
     mastered_delta: "Melhoria: +{n} elemento(s) dominado(s) nesta sessão!"
     note: "As pontuações dos elementos foram atualizadas. Sua próxima lição adaptativa irá focar nos elementos que ainda precisam de trabalho."
   error:
-    missing_params: "Nenhum conjunto de conteúdo selecionado."
     load_failed: "Não foi possível gerar a lição adaptativa."
 review:
   your_answer: "A sua resposta:"
@@ -400,7 +383,6 @@ review:
   subtitle_capped: "{shown} de {due} elemento(s) para rever"
   loading: "A carregar sessão de revisão…"
   empty_body: "Tudo em dia! Sem elementos para rever neste conjunto."
-  not_cached_body: "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro."
   back_to_dashboard: "Voltar ao painel"
   back_to_lesson: "Voltar à lição"
   summary:
@@ -409,7 +391,6 @@ review:
     score: "Pontuação"
     note: "As pontuações dos elementos foram atualizadas. Elementos dominados não aparecerão na próxima sessão."
   error:
-    missing_params: "Nenhum conjunto de conteúdo selecionado."
     load_failed: "Não foi possível carregar a sessão de revisão."
   spaced_empty: Nada para revisar agora. Ótimo ritmo!
   spaced_interval_label: Revisar em
@@ -423,6 +404,7 @@ review:
   no_data: Nenhuma sessão ainda - comece a primeira para ver tendências.
   pronunciation_quick_start: Prática de Pronúncia
 session:
+  auto_loop_unavailable: "No aplicativo para desktop, um novo ciclo com o próximo tema começa automaticamente após o passo 7. A versão do navegador ainda não faz isso: encerre a sessão e inicie uma nova para continuar aprendendo."
   title: Sessão de aprendizado
   topic_label: "Tópico"
   in_progress: Sessão em andamento
@@ -698,10 +680,6 @@ settings:
   tab_plugins: "Plugins"
   plugins_installed_title: "Plugins instalados"
   plugins_installed_desc: "Cada plugin carregado pelo aplicativo para desktop, com versão, origem e hora de ativação (ciclo de vida do PluginForge)."
-  plugins_col_name: "Plugin"
-  plugins_col_version: "Versão"
-  plugins_col_source: "Origem"
-  plugins_col_activated: "Ativado"
   plugins_source_entry_point: "Pacote"
   plugins_source_direct: "Registrado diretamente"
   plugins_marker_load_error: "Erro de carregamento"
@@ -896,7 +874,6 @@ settings:
     rollback_warning: "A nova chave não funciona. Manter a antiga?"
     rollback_keep_old: "Manter a antiga"
     rollback_save_anyway: "Salvar mesmo assim"
-    rollback_cancel: "Cancelar"
     rollback_restore: "Restaurar a última chave que funcionou"
     format_hint:
       anthropic: "Começa com sk-ant-"
@@ -1261,6 +1238,107 @@ backup:
   compare_auto_label: Backup automático {{date}}
   auto_compare_missing: O backup automático não está mais disponível - foi rotacionado.
 export:
+  # #3426 - the Markdown/PDF report strings (were a private DE/EN table).
+  report:
+    progress_report_title: "Progresso de aprendizagem"
+    session_detail_title: "Detalhe da sessão"
+    curriculum_overview_title: "Visão geral do plano de estudos"
+    generated_at: "Gerado em"
+    app_version: "Versão da app"
+    learner: "Aluno(a)"
+    language: "Idioma"
+    method_profile: "Perfil de métodos"
+    dominant_method: "Método dominante"
+    assessed_at: "Última avaliação"
+    no_profile: "Ainda não há avaliação. Conclua a avaliação inicial para ver o seu perfil."
+    projects: "Projetos"
+    no_projects: "Ainda não há projetos de aprendizagem."
+    topic: "Tema"
+    goal: "Objetivo"
+    timeframe: "Prazo"
+    daily_minutes: "Minutos diários"
+    current_problem: "Obstáculo atual"
+    status: "Estado"
+    active: "ativo"
+    archived: "arquivado"
+    session_count: "Sessões"
+    total_minutes: "Minutos totais"
+    mean_understanding: "Compreensão média"
+    mean_stress: "Stress médio"
+    method_distribution: "Distribuição dos métodos"
+    method_switches: "Mudanças de método"
+    no_switches: "Não há mudanças de método neste projeto."
+    switched_from_to: "Mudança"
+    reason: "Motivo"
+    recent_sessions: "Sessões recentes"
+    no_sessions: "Ainda não há sessões concluídas."
+    method: "Método"
+    duration: "Duração"
+    understanding: "Compreensão"
+    stress: "Stress"
+    method_fit: "Adequação do método"
+    notes: "Notas"
+    step_evaluation_insights: "Avaliações de passos"
+    no_step_insights: "Ainda não há avaliações de passos."
+    step: "Passo"
+    evaluations_count: "Avaliações"
+    advance_rate: "Taxa de avanço"
+    mean_confidence: "Confiança média"
+    deferred: "adiado"
+    repeated: "repetido"
+    advanced: "avançado"
+    extractions: "Conversas analisadas"
+    no_extractions: "Ainda não há conversas analisadas."
+    imported_at: "Importado em"
+    messages: "Mensagens"
+    source: "Origem"
+    analysis: "Análise"
+    no_session: "Sessão não encontrada."
+    session: "Sessão"
+    started_at: "Iniciada em"
+    ended_at: "Terminada em"
+    cycle_step: "Passo atual do ciclo"
+    transcript: "Transcrição"
+    no_messages: "Não há mensagens nesta sessão."
+    role_user: "Aluno(a)"
+    role_assistant: "IA"
+    role_system: "Sistema"
+    rating: "Avaliação"
+    no_rating: "A sessão não foi avaliada."
+    step_evaluations: "Avaliações de passos"
+    from_step: "Do passo"
+    to_step: "Para o passo"
+    confidence: "Confiança"
+    applied: "Aplicado"
+    not_applied: "Não aplicado"
+    fallback: "Alternativa usada"
+    evaluated_at: "Avaliado em"
+    curriculum: "Plano de estudos"
+    description: "Descrição"
+    topics: "Temas"
+    no_topics: "Não há temas neste plano de estudos."
+    lessons: "Lições"
+    no_lessons: "Não há lições neste plano de estudos."
+    out_of: "de"
+    minutes_short: "min"
+    scale_5: "numa escala de 1 a 5"
+    analysis_topic: "Tema detetado"
+    analysis_subtopics: "Subtemas"
+    analysis_user_level: "Nível"
+    analysis_strengths: "Pontos fortes"
+    analysis_weaknesses: "Pontos fracos"
+    analysis_error_patterns: "Padrões de erro"
+    analysis_recommended_method: "Método recomendado"
+    analysis_recommended_focus: "Foco recomendado"
+    analysis_suggested_curriculum: "Plano de estudos sugerido"
+    analysis_summary: "Resumo"
+    analysis_priority: "Prioridade"
+    level_beginner: "Iniciante"
+    level_intermediate: "Intermédio"
+    level_advanced: "Avançado"
+    linked_project: "Projeto associado"
+    status_completed: "concluído"
+    status_abandoned: "abandonado"
   title: Exportar
   intro: Baixe sua jornada de aprendizado como Markdown ou PDF. O Markdown é texto puro que você pode editar e compartilhar; o PDF abre a caixa de diálogo de impressão do navegador para você salvar uma cópia.
   progress_label: Relatório de progresso (jornada completa)
@@ -1375,10 +1453,6 @@ gamification:
     how: "Os níveis sobem numa curva de XP crescente: 0, 100, 300, 600, 1000 XP - cada passo precisa de mais 100 XP do que o anterior."
   level_detail_title: "Progresso de nível"
   level_up: Subiu de nível!
-  reason_session_complete: Sessão concluída
-  reason_assessment_complete: Avaliação concluída
-  reason_conversation_imported: Conversa importada
-  reason_flat: XP recebido
   card_badges: Emblemas
   badges_earned: conquistados
   badges_empty: Nenhum emblema disponível ainda.
@@ -1503,19 +1577,6 @@ gamification:
   reset_done: 'Progresso redefinido: {xp} XP, {badges} emblemas, {streak} sequências.'
   reset_failed: Não foi possível redefinir o progresso.
   weekend_mode_save_failed: Não foi possível salvar o modo fim de semana.
-  danger_zone_heading: Zona de Perigo
-  danger_zone_intro: Apague permanentemente todos os dados de aprendizado neste dispositivo.
-  danger_zone_reset_button: Redefinir tudo
-  danger_zone_warning: Isso apaga TODOS os seus dados de aprendizado permanentemente - sessões, progresso, perfis, currículos, importações, cartões Anki, configurações e chaves de API. Esta ação NÃO pode ser desfeita.
-  danger_zone_confirm_prompt: 'Digite RESET para confirmar'
-  danger_zone_input_placeholder: RESET
-  danger_zone_final_button: Apagar permanentemente
-  danger_zone_backup_offer: Criar um backup antes?
-  danger_zone_backup_button: Criar backup
-  danger_zone_complete_toast: Todos os dados foram apagados.
-  danger_zone_cancel: Cancelar
-  danger_zone_continue: Continuar
-  danger_zone_failed_toast: 'Falha na redefinição:'
 arcade:
   title: "Arcade"
   subtitle: "Rondas curtas, de um a dois minutos: uma recompensa do modo jogo. Sem XP, só diversão."
@@ -1576,6 +1637,10 @@ arcade:
     won: "Conseguiste: a sequência completa!"
     lost: "Ops: você chegou ao comprimento {n}. Tente já outra vez!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Básico"
+    cloze: "Preencher lacunas"
   title: Exportação Anki
   intro: Reveja os flashcards sugeridos pela IA, aceite os que quiser e exporte como arquivo .apkg para o Anki.
   filter_project: Projeto
@@ -1675,7 +1740,7 @@ ui:
     forest: "Floresta"
     high-contrast: "Alto contraste"
     sepia: "Sépia"
-    auto: "Automatico (sistema)"
+    auto: "Automático (sistema)"
   errors:
     bad_request: "Não foi possível processar o pedido."
     forbidden: "Acesso negado. Verifique suas configurações."
@@ -1909,7 +1974,6 @@ repo:
     download_zip: "Baixar ZIP"
     persist: "Salvar no git"
     persisting: "Salvando…"
-    persist_dexie_tooltip: "O versionamento Git só está disponível no modo servidor."
   toast:
     zip_downloaded: "ZIP baixado"
     persisted: "Salvo no git"
@@ -1926,6 +1990,7 @@ repo:
     title: "Repositório de aprendizagem"
     loading: "Carregando…"
     repos_dir: "Diretório dos repositórios"
+    repos_dir_hint: "Deixe vazio para usar o padrão: repos no diretório de dados (ver Sobre)"
     save: "Salvar configurações"
     saving: "Salvando…"
     toast:
@@ -1937,6 +2002,11 @@ repo:
     description: "Gera automaticamente artefatos Markdown (README, STATS, CHEATSHEET, ROADMAP) por projeto a partir dos dados das suas sessões. A integração git opcional faz commit de cada geração para que você possa navegar pelo histórico com qualquer cliente git."
     enable_git: "Ativar persistência git"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Falta: {word}"
+    extra: "A mais: {word}"
+    replaced: "Escrito: {wrote}, esperado: {expected}"
   progress_io:
     save_error: "Não foi possível salvar seu progresso nesta aula."
     load_failed: "Não foi possível carregar seu progresso salvo desta aula: {detail}"
@@ -2524,6 +2594,7 @@ content:
     public: "Público"
     branch: "Ramo"
     lessons_note: "Todas as {n} lições deste conjunto serão incluídas."
+    lessons_note_one: "A única lição deste conjunto será incluída."
     invalid_repo: "Indica o repositório como owner/name."
     submit: "Exportar"
     working: "A exportar…"
@@ -3197,6 +3268,9 @@ create_lesson:
     description_label: "Tema / descrição"
     author_label: "Nome do autor"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Palavra ou expressão"
+    back_placeholder: "Significado"
     heading: "Adicionar cartões de vocabulário"
     front_label: "Frente (aprendido)"
     back_label: "Verso (o seu idioma)"
@@ -4001,9 +4075,6 @@ content_repo:
   added: "Repositório adicionado."
   synced: "Sincronizado: {sets} conjuntos, {lessons} lições."
   token_hint: "Os repositórios privados precisam de um token - cole um abaixo ou defina um token compartilhado em Configurações → Integrações."
-  trust_official: "Oficial: conteúdo curado e com qualidade garantida pela equipe do projeto."
-  trust_verified: "Verificado: contribuído pela comunidade e revisado pela equipe."
-  trust_validated: "Validado: tecnicamente correto; conteúdo não revisado individualmente."
   official:
     title: "Conteúdo oficial"
     counts: "{sets} conjuntos · {lessons} lições"
@@ -4073,6 +4144,19 @@ content_repo:
     save_failed: "Não foi possível adicionar o repositório."
     sync_failed: "A sincronização falhou. Tente novamente."
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "Repositório ou manifest.yaml não encontrado."
+      access_denied: "Acesso negado: verifique o repositório e o seu token do GitHub."
+      unreachable: "Repositório inacessível."
+      unsupported_schema: "Versão de esquema não suportada: {version}."
+      no_sets: "O manifest.yaml não lista nenhum conjunto."
+      no_lessons: "Nenhuma lição encontrada nos conjuntos."
+      executable_content: "O conteúdo da lição contém código executável não permitido."
+      lessons_unreadable: "Não foi possível ler as lições do primeiro conjunto."
+      lesson_invalid_json: "A primeira lição do primeiro conjunto não é um JSON válido."
+      validator_unavailable: "Não foi possível carregar o validador de lições."
+      lesson_invalid: "A primeira lição do primeiro conjunto não passa na validação: {detail}"
     failed: "A validação falhou: {reason}"
     passed: "Validação bem-sucedida: {sets} conjuntos, {lessons} lições."
 resource:
@@ -4219,12 +4303,10 @@ shuffle:
   page_title: "Modo aleatório"
   loading: "Carregando sessão aleatória…"
   empty_body: "Este conjunto precisa de pelo menos duas lições com exercícios para embaralhar."
-  not_cached_body: "Este conjunto ainda não foi baixado. Abra o navegador de conteúdo para baixá-lo primeiro."
   back_to_dashboard: "Voltar ao painel"
   subtitle: "Misturando {n} perguntas de {lessons} lições"
   error:
     load_failed: "Não foi possível carregar a sessão aleatória."
-    missing_params: "Nenhum conjunto de conteúdo selecionado."
   summary:
     heading: "Treino aleatório concluído!"
     score: "{correct} de {total} corretas"

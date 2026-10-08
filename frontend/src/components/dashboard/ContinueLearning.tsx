@@ -364,7 +364,7 @@ export default function ContinueLearning({
                 className="rounded-app border border-border bg-card p-4"
                 data-testid="continue-learning"
             >
-                <h2 className="mb-2 text-lg font-semibold text-foreground">
+                <h2 className="mt-0 mb-2 text-lg font-semibold text-foreground">
                     {t("content.continue_learning.title", "Continue Learning")}
                 </h2>
                 <p className="text-sm text-muted-foreground">
@@ -388,7 +388,7 @@ export default function ContinueLearning({
             className="rounded-app border border-border bg-card p-4"
             data-testid="continue-learning"
         >
-            <h2 className="mb-3 text-lg font-semibold text-foreground">
+            <h2 className="mt-0 mb-3 text-lg font-semibold text-foreground">
                 {t("content.continue_learning.title", "Continue Learning")}
             </h2>
             <ul className="flex flex-col gap-2" data-testid="continue-learning-list">
@@ -565,10 +565,18 @@ function RowDetail({item}: {item: DisplayItem}) {
     );
 }
 
-/** Compact filled/empty star row (0-3). */
+/** Compact filled/empty star row (0-3), one image with a localized label. */
 function StarRow({stars}: {stars: number}) {
+    const {t} = useI18n();
     return (
-        <span className="inline-flex" aria-label={`${stars}/3`}>
+        <span
+            className="inline-flex"
+            role="img"
+            aria-label={t("lesson.summary.stars_aria", "{n} of 3 stars").replace(
+                "{n}",
+                String(stars),
+            )}
+        >
             {[1, 2, 3].map((n) => (
                 <Star
                     key={n}

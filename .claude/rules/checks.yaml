@@ -31,8 +31,15 @@
 #              does not SKIP. A guard file no step executes is a silent gate.
 
 checks:
+  - id: e2e-guard-tests
+    verifies: the e2e harness never reuses a backend it did not start, keeps its own ports and data dir (#3316), and carries no committed test.only (#3439); run as a fixed step on every PR touching e2e TypeScript because the tests read their subject through read_text (#3342)
+    rule: none (selection-gap class of lessons/ci-gates.md "PR-CI vs nightly gates", #1620/#1665)
+    status: active
+    wired_in: backend/tests/test_e2e_path_isolation.py; backend/tests/test_e2e_no_focused_tests.py; make test; .github/workflows/ci.yml fixed step on e2e changes (#3342)
+    probe: script_exists=backend/tests/test_e2e_path_isolation.py | script_exists=backend/tests/test_e2e_no_focused_tests.py | ci_step=.github/workflows/ci.yml::backend-tests::E2E guard tests on e2e changes (#3342)::test_e2e_path_isolation.py
+
   - id: i18n-full-tree-key-coverage
-    verifies: every t() call site in frontend/src has a real, non-empty catalog entry in all 11 languages (static keys) or a plausible one (dynamic template-literal keys, prefix/suffix sanity match) - not just the 7-file first-paint subset #2798 covers (#2864, #2797 Teil A)
+    verifies: every t() call site in frontend/src has a real, non-empty catalog entry in all 11 languages (static keys) or a plausible one (dynamic template-literal keys, prefix/suffix sanity match) - not just the 7-file first-paint subset #2798 covers (#2864, #2797 Teil A); keys held as data in a *key / *Key property or prop are checked like static keys (#3676)
     rule: none (extends the #2798 gate's approach tree-wide; i18next-parser adoption rejected, see #2864)
     status: active
     wired_in: frontend/src/i18n/full-tree-key-coverage.test.ts; make test; .github/workflows/ci.yml fixed step on every frontend PR, i18n_only included (#3249)
@@ -65,6 +72,62 @@ checks:
     status: active
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_feature_shots.py
     probe: script_exists=backend/tests/test_verify_docs_feature_shots.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
+  - id: locale-coverage
+    verifies: every translated help locale (es, fr, el, pt, tr, ja) has every EN help page or declares the gap in docs/help/.locale-gaps.json; a new undeclared gap and a listed gap whose page now exists both FAIL, so the list only shrinks by a visible edit (#3453)
+    rule: none (locale twin of the help-coverage EN/DE parity; ratchet pattern of #2140)
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_locale_coverage.py
+    probe: script_exists=backend/tests/test_verify_docs_locale_coverage.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
+  - id: pydantic-layer-single-writer
+    verifies: the content-loader's generated Pydantic modules equal the generator output, which is itself lint-clean under the CI ruff configuration, so ruff --fix can never become a second writer of a generated path; runs on every backend PR instead of only at release (#3650)
+    rule: none (single-writer class of lessons/ci-gates.md, #2265; cadence class of "PR-CI vs nightly gates")
+    status: active
+    wired_in: scripts/generate_pydantic_models.py --check; .github/workflows/ci.yml backend-tests step; backend/tests/test_pydantic_layer_single_writer.py; make sync-schema-check
+    probe: script_exists=backend/tests/test_pydantic_layer_single_writer.py | ci_step=.github/workflows/ci.yml::backend-tests::Generated Pydantic layer drift gate (#3650)::generate_pydantic_models.py
+
+  - id: ruff-format-plugins
+    verifies: backend/app and every plugin module are ruff-formatted with the backend config; pre-commit (repo root, --config=backend/pyproject.toml) and CI (backend/ cwd) judge plugin code identically, including the import order (#3658)
+    rule: code-hygiene.md "Formatting and linting (automatic)"
+    status: active
+    wired_in: .pre-commit-config.yaml ruff hooks on plugins/; .github/workflows/ci.yml lint-and-type-check step; backend/tests/test_ruff_plugin_config.py
+    probe: script_exists=backend/tests/test_ruff_plugin_config.py | ci_step=.github/workflows/ci.yml::lint-and-type-check::ruff format::ruff format --check
+
+  - id: help-strong-emphasis
+    verifies: no help page has bold that the in-app help renders as literal asterisks; the CommonMark flanking and pairing rule for ** runs, plus GFM autolinks, applied per inline context and matched against mdast-util-from-markdown on every help page; no help page FAILs (#3655)
+    rule: none (rendering-correctness class; text-formatting.md documents the prose rules it protects)
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_strong_emphasis.py
+    probe: script_exists=backend/tests/test_verify_docs_strong_emphasis.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
+  - id: api-reference
+    verifies: the help API reference pages docs/help/{en,de}/api/endpoints.md match the committed OpenAPI snapshot, so the reference names every core router and plugin route; a missing or empty snapshot FAILs (#3454)
+    rule: ai-workflow/documentation-protocol.md#when-to-update-docsapimd
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_generate_api_reference.py; make sync-openapi regenerates the pages
+    probe: script_exists=backend/tests/test_generate_api_reference.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
+  - id: e2e-runtime-skip-budget
+    verifies: the nightly e2e suites (dexie-smoke, manual-automation, visual-regression) skip no more tests than e2e/.runtime-skip-budget.json allows, counted from Playwright's JSON report; a spec that cannot reach its surface skips at runtime, so without the budget a broken path reads as a green night (#3427)
+    rule: none (reachability class of #2704; budget pattern of the smoke skip budget #2170)
+    status: active
+    wired_in: scripts/check_e2e_skip_budget.py; .github/workflows/dexie-smoke.yml; .github/workflows/manual-automation.yml; .github/workflows/visual-regression.yml; make test-dexie-smoke; make test-manual-automation; backend/tests/test_e2e_skip_budget.py
+    probe: script_exists=backend/tests/test_e2e_skip_budget.py | ci_step=.github/workflows/dexie-smoke.yml::dexie-smoke::Runtime skip budget (#3427)::check_e2e_skip_budget.py | ci_step=.github/workflows/manual-automation.yml::manual-automation::Runtime skip budget (#3427)::check_e2e_skip_budget.py | ci_step=.github/workflows/visual-regression.yml::visual::Runtime skip budget (#3427)::check_e2e_skip_budget.py
+
+  - id: help-terms
+    verifies: no help page (docs/help/<lang>/, excl. developer/, api/, changelog.md) and no help glossary (backend/config/help/*.<lang>.yaml) uses a term rejected in frontend/src/data/i18n-terms.json, outside code and comments; a missing table or a help tree with no scanned file FAILs (#3433)
+    rule: none (term decision of #3433; the catalog side is i18n-one-term-per-concept)
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_help_terms.py
+    probe: script_exists=backend/tests/test_verify_docs_help_terms.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
+  - id: i18n-one-term-per-concept
+    verifies: no catalog value uses a term rejected for its concept (de Session/Streak/Strähne, fr séance, ja ストリーク, ko 스트릭); frontend/src/data/i18n-terms.json is where the term decisions live, read by this test and by help-terms (#3433)
+    rule: none (term decision of #3433)
+    status: active
+    wired_in: frontend/src/data/i18n/terms.test.ts; .github/workflows/ci.yml fixed step on every frontend PR; full Vitest on push
+    probe: script_exists=frontend/src/data/i18n/terms.test.ts | ci_step=.github/workflows/ci.yml::frontend-tests::i18n one term per concept (#3433)::terms.test.ts
 
   - id: docs-drift
     verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans

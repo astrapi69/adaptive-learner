@@ -52,7 +52,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 Το `ai_complete_async` χρησιμοποιείται από το session route στο
 όριο κύκλου βήμα 6→7, ώστε η αξιολόγηση βήματος και η μετάβαση
 θέματος να εκτελεστούν ταυτόχρονα μέσω `asyncio.gather`
-(`async_evaluation: true` στο `app.yaml`).
+(`async_evaluation: true` στο `session.yaml`).
 
 Το `ai_complete_stream` τροφοδοτεί το streaming SSE endpoint
 `POST /api/plugins/session/{id}/message/stream` που εκπέμπει
@@ -93,7 +93,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
    την ανταλλαγή και να εκπέμψει ετυμηγορία JSON
    (`advance`, `confidence`, `reason`, `suggested_step`).
    `max_tokens=256`. Η ετυμηγορία καθορίζει την προώθηση
-   `cycle_step` (με πύλη `confidence ≥ 0.6`).
+   `cycle_step` (με πύλη `confidence ≥ 0.7`).
 3. **Μετάβαση θέματος** - μόνο στο βήμα 7. Μια τρίτη κλήση ΤΝ
    κρίνει αν το θέμα ενσωματώθηκε και αν να ξεκινήσει νέος κύκλος
    σε νέο υποθέμα. Όριο `max_cycles=5` ανά συνεδρία.
@@ -157,14 +157,14 @@ hint: …") προσαρτάται κατά τη σύνθεση.
 
 ## Κατώφλι εμπιστοσύνης
 
-Το `session.step_evaluation.confidence_threshold` (προεπιλογή 0.6)
-του `backend/config/app.yaml` καθορίζει αν μια πραγματική (μη
+Το `step_evaluation.confidence_threshold` (προεπιλογή 0.7)
+του `backend/config/plugins/session.yaml` καθορίζει αν μια πραγματική (μη
 εναλλακτική) ετυμηγορία αξιολογητή μετακινεί πραγματικά το
 cycle_step. Ορίσου υψηλότερα για πιο συντηρητική συμπεριφορά,
 χαμηλότερα για πιο επιθετική. Οι ετυμηγορίες εναλλακτικής
 (αποτυχίες ανάλυσης) εφαρμόζουν πάντα την προώθηση +1.
 
-Η θύρα Dexie αντικατοπτρίζει αυτό με σταθερό 0.6 στο
+Η θύρα Dexie αντικατοπτρίζει αυτό με σταθερό 0.7 στο
 `storage/session-flow.ts`. Μια μελλοντική φάση θα εκθέσει αυτό
 στο UI Ρυθμίσεων.
 

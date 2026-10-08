@@ -21,7 +21,7 @@ entries:
       - **Präferenz für Klarheit**: du möchtest erst wissen,
         was richtig ist, bevor du etwas ausprobierst.
 
-      ## Wie eine Session abläuft
+      ## Wie eine Sitzung abläuft
 
       1. AI erklärt die Regel mit kurzem Beispiel.
       2. Du bekommst eine Übungsaufgabe.
@@ -37,7 +37,7 @@ entries:
 
       ## Wann das System wegschalten kann
 
-      Wenn der **Stress-Wert** über mehrere Sessions steigt und
+      Wenn der **Stress-Wert** über mehrere Sitzungen steigt und
       du das Gefühl bekommst, "Regeln zu lernen ohne sie zu
       verstehen", empfiehlt das System einen Wechsel zu einer
       praxisnäheren Methode (Induktiv, Kontextuell oder
@@ -62,7 +62,7 @@ entries:
       - **Beispiele sind reichlich verfügbar** - die AI hat
         Material, das die Regel deutlich zeigt.
 
-      ## Wie eine Session abläuft
+      ## Wie eine Sitzung abläuft
 
       1. AI zeigt 3-5 Beispiele eines Phänomens.
       2. Frage: "Welches Muster siehst du?"
@@ -124,7 +124,7 @@ entries:
 
       ## Vorsicht bei hohem Stress
 
-      Wenn Stress > 3 in der Session-Bewertung steigt, wechselt
+      Wenn Stress > 3 in der Sitzungsbewertung steigt, wechselt
       das System auf Dialogisch oder Deduktiv - die Methode
       braucht mentale Ruhe, um produktiv zu sein.
 
@@ -147,7 +147,7 @@ entries:
       - **Komplexe Themen**, in denen du explorieren willst,
         bevor du dich auf eine Lösungsstruktur festlegst.
 
-      ## Wie eine Session abläuft
+      ## Wie eine Sitzung abläuft
 
       Keine fixen Schritte. Du steigst mit einer Frage, einer
       Vermutung oder einem Konzept ein. Die AI führt das
@@ -242,8 +242,8 @@ entries:
 
       - **Lernprofil**: die im Assessment ermittelten Gewichte.
         Methoden mit hoher Gewichtung werden bevorzugt.
-      - **Verlauf der letzten Sessions**: welche Methoden
-        haben in deinen letzten 5-10 Sessions zu schnellem
+      - **Verlauf der letzten Sitzungen**: welche Methoden
+        haben in deinen letzten 5-10 Sitzungen zu schnellem
         Fortschritt geführt?
       - **Aktueller Stress-Wert**: bei hohem Stress wird auf
         weniger fordernde Methoden (Dialogisch, Kontextuell)
@@ -269,6 +269,6 @@ entries:
 
       Wenn das System einen Wechsel vorschlägt, kannst du
       ablehnen. Wenn dir eine vorgeschlagene Methode nicht
-      passt, beendest du die Session und startest mit einer
+      passt, beendest du die Sitzung und startest mit einer
       anderen. Die AI-adaptive Methode ist ein Vorschlag-System,
       kein Zwang.

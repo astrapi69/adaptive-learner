@@ -66,9 +66,7 @@ def test_build_prompt_includes_vocabulary_when_present() -> None:
 
 
 def test_build_prompt_caps_vocabulary_at_50_entries() -> None:
-    vocab = [
-        {"word": f"w{i}", "translation": f"t{i}"} for i in range(200)
-    ]
+    vocab = [{"word": f"w{i}", "translation": f"t{i}"} for i in range(200)]
     p = build_prompt(project={"topic": "x", "goal": "y", "vocabulary": vocab})
     # Entry 49 should be present, entry 50+ should not.
     assert "w49" in p
@@ -82,15 +80,13 @@ def test_build_prompt_truncates_sessions_when_over_budget() -> None:
     for i in range(10):
         sessions.append(
             {
-                "started_at": f"2026-05-{i+1:02d}T10:00:00Z",
+                "started_at": f"2026-05-{i + 1:02d}T10:00:00Z",
                 "method": "deductive",
                 # ~5000 chars each — 10 of them = ~50K > 30K cap.
                 "messages": "USER: " + ("x" * 5000),
             }
         )
-    p = build_prompt(
-        project={"topic": "x", "goal": "y", "sessions": sessions}
-    )
+    p = build_prompt(project={"topic": "x", "goal": "y", "sessions": sessions})
     # Some truncation marker must appear because we ran past the
     # budget on at least one block.
     assert "[...truncated...]" in p or len(p) <= 50_000

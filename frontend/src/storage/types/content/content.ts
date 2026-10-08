@@ -7,6 +7,7 @@
 import type { AiValidationResult } from "../../../lib/content/validation/content-validation-types";
 import type {
   Card as GeneratedCard,
+  ContentSetEntry as EngineContentSetEntry,
   CardTokenRole as GeneratedCardTokenRole,
   ClozeBlank as GeneratedClozeBlank,
   Direction as GeneratedDirection,
@@ -23,9 +24,11 @@ import type {
  * Lifecycle status of a downloaded set in "Meine Inhalte" (#1300).
  * ``active`` is the default (clean working list); ``deferred`` parks a
  * set for later; ``completed`` marks it done. A destructive delete is a
- * separate action, not a status. Stored per-set in Dexie (see
- * ``ContentSetRow.status``); in API mode it is not persisted and every
- * set reads back as ``active``.
+ * separate action, not a status. A per-device UI decision, persisted
+ * the same way in both modes by ``lib/content/browse/lifecycle/
+ * set-status-store`` (localStorage + Dexie ``userData`` mirror, #2050)
+ * and overlaid on the listing; a set with no stored status reads as
+ * ``active``.
  */
 export type SetStatus = "active" | "deferred" | "completed";
 
@@ -92,8 +95,9 @@ export interface ContentSetEntry {
    *  landed (#3418). */
   downloaded_at?: string | null;
   /** #1300 — lifecycle status in "Meine Inhalte" (active / deferred /
-   *  completed). Absent on pre-#1300 cached rows and in API mode; the
-   *  storage layer + UI treat a missing value as ``"active"``. */
+   *  completed), overlaid from the mode-agnostic set-status store (#2050).
+   *  Absent when no status was stored; the UI treats a missing value as
+   *  ``"active"``. */
   status?: SetStatus;
   /** Optional set-level book (#769). When present, the lesson's "Vertiefe
    *  das Thema" section auto-inserts it as the first media item. */
@@ -106,6 +110,13 @@ export interface ContentSetEntry {
   /** #2655 — content attribution + bounded derivation chain (engine#90 /
    *  schema 1.9). ``null``/absent when the set carries none. */
   attribution?: SetAttribution | null;
+  /** #3395 - the set's review standing as the engine projects it (absent in
+   *  the manifest means ``"authored"``). Optional so rows and responses
+   *  written before it type-check. */
+  review_status?: SetReviewStatus;
+  /** #3395 - the set's evaluation declaration (engine#171), ``null`` when it
+   *  declares none. */
+  evaluation?: EngineContentSetEntry["evaluation"];
 }
 
 /** A set's manifest-level book block surfaced to the lesson media section
@@ -312,7 +323,7 @@ export interface IContentLoaderNamespace {
    *
    *  Lifecycle status (active / deferred / completed) is NOT a storage
    *  concern: it is a per-device UI decision persisted in the
-   *  mode-agnostic ``lib/content/browse/set-status-store`` (localStorage
+   *  mode-agnostic ``lib/content/browse/lifecycle/set-status-store`` (localStorage
    *  + Dexie userData mirror), identical in both modes. The prior
    *  storage-layer ``setSetStatus``/``setSetsStatus`` were removed because
    *  the Dexie-row-only persistence left API mode a no-op — the status

@@ -1,8 +1,8 @@
 # Curriculum
 
 Die Curriculum-Seite ist dein strukturiertes Lernmaterial -
-das "Buch", gegen das deine Sessions laufen. Eine optionale,
-aber starke Schicht über den freien KI-Sessions.
+das "Buch", gegen das deine Sitzungen laufen. Eine optionale,
+aber starke Schicht über den freien KI-Sitzungen.
 
 ## Was ein Curriculum ist
 
@@ -68,16 +68,16 @@ gehen durch `renderStoredContent`, das den TipTap-Doc-Baum
 durchläuft und GFM-Markdown erzeugt; ältere Plain-Text-Inhalte
 werden unverändert durchgereicht.
 
-## Wie Curricula zu Sessions passen
+## Wie Curricula zu Sitzungen passen
 
-Sessions lassen sich aus einem Chat-Verlauf-Import oder von
+Sitzungen lassen sich aus einem Chat-Verlauf-Import oder von
 Grund auf starten. Der Konversations-Analyzer
 (`/api/imports`) extrahiert ein `suggested_curriculum`-Feld;
 ein Klick im analysierten Import sät ein Curriculum mit
 Topics + Lektionen aus den Lücken, die die KI identifiziert
 hat.
 
-Die Session-KI zieht (noch) keine einzelnen Lektions-Inhalte
+Die Sitzungs-KI zieht (noch) keine einzelnen Lektions-Inhalte
 in den System-Prompt - das ist ein bewusster Halt, bis sich
 die Curriculum-KI-Integrations-Form gesetzt hat.
 

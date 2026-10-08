@@ -699,6 +699,16 @@ navigation:
           ja: 概要
         slug: api/overview
       - title:
+          de: Alle Endpoints
+          en: All endpoints
+          es: Todos los endpoints
+          fr: Tous les endpoints
+          el: Όλα τα endpoints
+          pt: Todos os endpoints
+          tr: Tüm endpoint'ler
+          ja: 全エンドポイント
+        slug: api/endpoints
+      - title:
           de: Core-Endpoints
           en: Core endpoints
           es: Endpoints principales

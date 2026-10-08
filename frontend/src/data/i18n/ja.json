@@ -20,17 +20,10 @@
     "error": "何かがうまくいきませんでした。",
     "back": "戻る",
     "next": "次へ",
-    "start": "開始",
     "submit": "送信",
-    "continue": "続ける",
-    "done": "完了",
     "delete": "削除",
     "edit": "編集",
     "confirm": "確認",
-    "yes": "はい",
-    "no": "いいえ",
-    "optional": "任意",
-    "required": "必須",
     "minutes": "分",
     "close": "閉じる"
   },
@@ -87,9 +80,6 @@
       "more": "その他"
     },
     "primary": "メインナビゲーション",
-    "discover": "コンテンツを見つける",
-    "offline_long": "オフライン - 過去のセッションは引き続き閲覧できます",
-    "sync_pending": "{n} 件の変更が同期待ちです",
     "statistics": "統計",
     "profile": "あなたのプロフィール",
     "learning_path": "学習パス",
@@ -102,9 +92,6 @@
     "help": "ヘルプ",
     "home": "ホーム",
     "menu": "メニュー",
-    "online": "オンライン",
-    "offline": "オフライン",
-    "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "開発者モードがオンです - エラー通知に技術的な詳細が表示されます。設定で切り替えてください。",
     "content": "マイコンテンツ",
@@ -112,9 +99,7 @@
     "mode_badge_ai": "AI+コンテンツ",
     "mode_badge_tooltip_content": "API キーが設定されていません - 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。",
     "mode_badge_tooltip_ai": "AI プロバイダー設定済み - 演習で AI による誤答候補とヒントを使用します。タップしてコンテンツを閲覧。",
-    "mode_badge_action": "コンテンツを見る",
-    "sync_paired": "同期：ペアリング済み（設定 > 同期）",
-    "sync_unpaired": "同期：未ペアリング（設定 > 同期）"
+    "mode_badge_action": "コンテンツを見る"
   },
   "import": {
     "title": "会話をインポート",
@@ -141,7 +126,7 @@
     "analysis_title": "分析",
     "analysis_ready": "分析の準備ができました。",
     "analysis_fallback": "分析は実行されましたが、AI の応答をきれいに解析できませんでした。",
-    "analysis_fallback_long": "AI の応答は構造化された JSON として解析できませんでした。下の要約は フォールバックです。",
+    "analysis_fallback_long": "AI の応答を構造化された分析として読み取れませんでした。分析をもう一度実行するか、別の AI プロバイダーを選んでください。",
     "analysis_error": "会話を分析できませんでした。",
     "analysis_phase_reading": "ステップ1/3: チャットを読み込み中…",
     "analysis_phase_analyzing": "ステップ2/3: 内容を分析中…",
@@ -385,7 +370,6 @@
     "session_title": "アダプティブレッスン",
     "loading": "ミスを分析中…",
     "empty_body": "まだ適応するものがありません - レッスンを練習してデータを蓄積してください。",
-    "not_cached_body": "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。",
     "back_to_dashboard": "ダッシュボードに戻る",
     "transparency": {
       "focus_prefix": "このレッスンの焦点:",
@@ -400,7 +384,6 @@
       "note": "要素スコアが更新されました。次のアダプティブレッスンは、まだ練習が必要な要素を対象にします。"
     },
     "error": {
-      "missing_params": "コンテンツセットが選択されていません。",
       "load_failed": "アダプティブレッスンを生成できませんでした。"
     }
   },
@@ -427,7 +410,6 @@
     "subtitle_capped": "復習する要素: {due} 件中 {shown} 件",
     "loading": "復習セッションを読み込み中…",
     "empty_body": "すべて完了！このセットに復習する要素はありません。",
-    "not_cached_body": "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。",
     "back_to_dashboard": "ダッシュボードに戻る",
     "back_to_lesson": "レッスンに戻る",
     "summary": {
@@ -437,7 +419,6 @@
       "note": "要素のスコアが更新されました。マスターした要素は次回のセッションには表示されません。"
     },
     "error": {
-      "missing_params": "コンテンツセットが選択されていません。",
       "load_failed": "復習セッションを読み込めませんでした。"
     },
     "spaced_empty": "今、復習するものはありません。良いリズムです!",
@@ -453,6 +434,7 @@
     "pronunciation_quick_start": "発音練習"
   },
   "session": {
+    "auto_loop_unavailable": "デスクトップアプリでは、ステップ 7 の後に次のトピックで新しいサイクルが自動的に始まります。ブラウザ版ではまだできません。学習を続けるには、セッションを終了して新しいセッションを始めてください。",
     "title": "学習セッション",
     "topic_label": "トピック",
     "in_progress": "セッション進行中",
@@ -739,10 +721,6 @@
     "tab_plugins": "プラグイン",
     "plugins_installed_title": "インストール済みプラグイン",
     "plugins_installed_desc": "デスクトップアプリが読み込んだすべてのプラグインを、バージョン・ソース・有効化時刻とともに表示します（PluginForge ライフサイクル）。",
-    "plugins_col_name": "プラグイン",
-    "plugins_col_version": "バージョン",
-    "plugins_col_source": "ソース",
-    "plugins_col_activated": "有効化",
     "plugins_source_entry_point": "パッケージ",
     "plugins_source_direct": "直接登録",
     "plugins_marker_load_error": "読み込みエラー",
@@ -937,7 +915,6 @@
       "rollback_warning": "新しいキーが機能しません。古いキーを保持しますか？",
       "rollback_keep_old": "古いキーを保持",
       "rollback_save_anyway": "それでも保存",
-      "rollback_cancel": "キャンセル",
       "rollback_restore": "最後に動作したキーを復元",
       "format_hint": {
         "anthropic": "sk-ant- で始まります",
@@ -985,7 +962,7 @@
     "daily_session_goal": "1日のセッション目標",
     "daily_session_goal_help": "進捗の目安として1日あたりのセッション数。",
     "reset_progress": "進捗をリセット",
-    "reset_progress_help": "XP、バッジ、ストリークを完全に削除。元に戻せません。",
+    "reset_progress_help": "XP、バッジ、連続記録を完全に削除。元に戻せません。",
     "reset_confirm_first": "確認のためもう一度クリック",
     "reset_confirm_second": "完全削除するにはもう一度クリック",
     "section_voice": "音声",
@@ -1338,6 +1315,107 @@
     "auto_compare_missing": "自動バックアップは利用できなくなりました - ローテーションで削除されました。"
   },
   "export": {
+    "report": {
+      "progress_report_title": "学習の進捗",
+      "session_detail_title": "セッションの詳細",
+      "curriculum_overview_title": "カリキュラムの概要",
+      "generated_at": "作成日時",
+      "app_version": "アプリのバージョン",
+      "learner": "学習者",
+      "language": "言語",
+      "method_profile": "学習法プロフィール",
+      "dominant_method": "主な学習法",
+      "assessed_at": "最終評価",
+      "no_profile": "まだ評価がありません。プロフィールを見るには最初の評価を完了してください。",
+      "projects": "プロジェクト",
+      "no_projects": "学習プロジェクトはまだありません。",
+      "topic": "テーマ",
+      "goal": "目標",
+      "timeframe": "期間",
+      "daily_minutes": "1日の分数",
+      "current_problem": "現在の課題",
+      "status": "状態",
+      "active": "有効",
+      "archived": "アーカイブ済み",
+      "session_count": "セッション",
+      "total_minutes": "合計時間（分）",
+      "mean_understanding": "平均理解度",
+      "mean_stress": "平均ストレス",
+      "method_distribution": "学習法の内訳",
+      "method_switches": "学習法の切り替え",
+      "no_switches": "このプロジェクトでは学習法の切り替えはありません。",
+      "switched_from_to": "切り替え",
+      "reason": "理由",
+      "recent_sessions": "最近のセッション",
+      "no_sessions": "完了したセッションはまだありません。",
+      "method": "学習法",
+      "duration": "所要時間",
+      "understanding": "理解度",
+      "stress": "ストレス",
+      "method_fit": "学習法の適合度",
+      "notes": "メモ",
+      "step_evaluation_insights": "ステップ評価",
+      "no_step_insights": "ステップ評価はまだありません。",
+      "step": "ステップ",
+      "evaluations_count": "評価数",
+      "advance_rate": "進行率",
+      "mean_confidence": "平均確信度",
+      "deferred": "保留",
+      "repeated": "繰り返し",
+      "advanced": "進行",
+      "extractions": "分析済みの会話",
+      "no_extractions": "分析済みの会話はまだありません。",
+      "imported_at": "インポート日時",
+      "messages": "メッセージ",
+      "source": "ソース",
+      "analysis": "分析",
+      "no_session": "セッションが見つかりません。",
+      "session": "セッション",
+      "started_at": "開始日時",
+      "ended_at": "終了日時",
+      "cycle_step": "現在のサイクルステップ",
+      "transcript": "会話記録",
+      "no_messages": "このセッションにはメッセージがありません。",
+      "role_user": "学習者",
+      "role_assistant": "AI",
+      "role_system": "システム",
+      "rating": "評価",
+      "no_rating": "このセッションは評価されていません。",
+      "step_evaluations": "ステップ評価",
+      "from_step": "元のステップ",
+      "to_step": "次のステップ",
+      "confidence": "確信度",
+      "applied": "適用済み",
+      "not_applied": "未適用",
+      "fallback": "代替手段を使用",
+      "evaluated_at": "評価日時",
+      "curriculum": "カリキュラム",
+      "description": "説明",
+      "topics": "テーマ",
+      "no_topics": "このカリキュラムにはテーマがありません。",
+      "lessons": "レッスン",
+      "no_lessons": "このカリキュラムにはレッスンがありません。",
+      "out_of": "/",
+      "minutes_short": "分",
+      "scale_5": "1〜5 の尺度で",
+      "analysis_topic": "検出されたテーマ",
+      "analysis_subtopics": "サブテーマ",
+      "analysis_user_level": "レベル",
+      "analysis_strengths": "強み",
+      "analysis_weaknesses": "弱み",
+      "analysis_error_patterns": "誤りのパターン",
+      "analysis_recommended_method": "推奨される学習法",
+      "analysis_recommended_focus": "推奨される重点",
+      "analysis_suggested_curriculum": "推奨カリキュラム",
+      "analysis_summary": "要約",
+      "analysis_priority": "優先度",
+      "level_beginner": "初級",
+      "level_intermediate": "中級",
+      "level_advanced": "上級",
+      "linked_project": "関連プロジェクト",
+      "status_completed": "完了",
+      "status_abandoned": "中止"
+    },
     "title": "エクスポート",
     "intro": "学習の旅を Markdown または PDF としてダウンロードします。Markdown は 編集と共有ができるプレーンテキストです。PDF はブラウザの印刷 ダイアログを開くので、コピーを保存できます。",
     "progress_label": "進捗レポート (完全な旅)",
@@ -1455,10 +1533,6 @@
     },
     "level_detail_title": "レベルの進捗",
     "level_up": "レベルアップ！",
-    "reason_session_complete": "セッション完了",
-    "reason_assessment_complete": "アセスメント完了",
-    "reason_conversation_imported": "会話をインポートしました",
-    "reason_flat": "XPを獲得",
     "card_badges": "バッジ",
     "badges_earned": "獲得済み",
     "badges_empty": "まだ利用可能なバッジはありません。",
@@ -1604,30 +1678,17 @@
         "description": "分散学習で50要素を習得する。"
       }
     },
-    "card_streak": "ストリーク",
-    "current_streak": "現在のストリーク",
-    "longest_streak": "最長ストリーク",
+    "card_streak": "連続記録",
+    "current_streak": "現在の連続記録",
+    "longest_streak": "最長連続記録",
     "freezes_available": "利用可能なフリーズ",
-    "streak_no_data": "セッションを開始してストリークを始めましょう。",
+    "streak_no_data": "セッションを開始して連続記録を始めましょう。",
     "streak_calendar": "アクティビティ・ヒートマップ",
     "weekend_mode": "週末モード",
-    "weekend_mode_help": "週末はストリークの中断にカウントされません。",
-    "reset_done": "進捗をリセット: {xp} XP、{badges} バッジ、{streak} ストリーク。",
+    "weekend_mode_help": "週末は連続記録の中断にカウントされません。",
+    "reset_done": "進捗をリセット: {xp} XP、{badges} バッジ、{streak} 連続記録。",
     "reset_failed": "進捗をリセットできませんでした。",
-    "weekend_mode_save_failed": "週末モードを保存できませんでした。",
-    "danger_zone_heading": "危険ゾーン",
-    "danger_zone_intro": "このデバイス上のすべての学習データを完全に削除します。",
-    "danger_zone_reset_button": "すべてをリセット",
-    "danger_zone_warning": "すべての学習データを完全に削除します - セッション、進捗、プロフィール、カリキュラム、インポート、Anki カード、設定、API キー。この操作は元に戻せません。",
-    "danger_zone_confirm_prompt": "確認のため RESET と入力してください",
-    "danger_zone_input_placeholder": "RESET",
-    "danger_zone_final_button": "完全に削除",
-    "danger_zone_backup_offer": "先にバックアップを作成しますか？",
-    "danger_zone_backup_button": "バックアップを作成",
-    "danger_zone_complete_toast": "すべてのデータが削除されました。",
-    "danger_zone_cancel": "キャンセル",
-    "danger_zone_continue": "続行",
-    "danger_zone_failed_toast": "リセットに失敗:"
+    "weekend_mode_save_failed": "週末モードを保存できませんでした。"
   },
   "arcade": {
     "title": "アーケード",
@@ -1694,6 +1755,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "基本",
+      "cloze": "穴埋め"
+    },
     "title": "Ankiエクスポート",
     "intro": "AIが提案したフラッシュカードを確認し、好きなものを承認してから.apkgファイルとしてAnkiに出力します。",
     "filter_project": "プロジェクト",
@@ -2040,8 +2105,7 @@
       "rerender": "再生成",
       "download_zip": "ZIP をダウンロード",
       "persist": "Git に保存",
-      "persisting": "保存中…",
-      "persist_dexie_tooltip": "Git バージョン管理はサーバーモードでのみ利用できます。"
+      "persisting": "保存中…"
     },
     "toast": {
       "zip_downloaded": "ZIP をダウンロードしました",
@@ -2062,6 +2126,7 @@
       "title": "学習リポジトリ",
       "loading": "読み込み中…",
       "repos_dir": "リポジトリディレクトリ",
+      "repos_dir_hint": "空欄のままにすると既定値: データディレクトリ内の repos（「情報」を参照）",
       "save": "設定を保存",
       "saving": "保存中…",
       "toast": {
@@ -2076,6 +2141,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "不足: {word}",
+      "extra": "余分: {word}",
+      "replaced": "入力: {wrote}、正解: {expected}"
+    },
     "progress_io": {
       "save_error": "このレッスンの進捗を保存できませんでした。",
       "load_failed": "このレッスンの保存済みの進捗を読み込めませんでした: {detail}",
@@ -2726,6 +2796,7 @@
       "public": "パブリック",
       "branch": "ブランチ",
       "lessons_note": "このセットの全 {n} レッスンが含まれます。",
+      "lessons_note_one": "このセットの1つのレッスンが含まれます。",
       "invalid_repo": "リポジトリを owner/name の形式で入力してください。",
       "submit": "エクスポート",
       "working": "エクスポート中…",
@@ -3476,6 +3547,8 @@
       "author_label": "著者名"
     },
     "cards": {
+      "front_placeholder": "単語または表現",
+      "back_placeholder": "意味",
       "heading": "単語カードを追加",
       "front_label": "表（学習対象）",
       "back_label": "裏（あなたの言語）",
@@ -4050,7 +4123,7 @@
       "title": "進捗を共有",
       "copied": "クリップボードにコピーしました",
       "lesson_complete": "Adaptive Learner でレッスンを完璧にこなしました！",
-      "streak": "Adaptive Learner で{days}日連続の学習ストリーク中です！",
+      "streak": "Adaptive Learner で{days}日連続で学習中です！",
       "level": "Adaptive Learner でレベル{level}に到達しました！",
       "badge": "Adaptive Learner で「{badge}」バッジを獲得しました！",
       "progress": "Adaptive Learner で学習中です。レベル{level}、{days}日連続。",
@@ -4329,9 +4402,6 @@
     "added": "リポジトリを追加しました。",
     "synced": "同期しました: {sets} セット、{lessons} レッスン。",
     "token_hint": "プライベートリポジトリにはトークンが必要です。下に貼り付けるか、設定 → 連携で共有トークンを設定してください。",
-    "trust_official": "公式: プロジェクトチームが厳選し、品質を保証したコンテンツ。",
-    "trust_verified": "検証済み: コミュニティから提供され、チームが確認したコンテンツ。",
-    "trust_validated": "検証通過: 技術的に正しい。内容は個別には確認されていません。",
     "official": {
       "title": "公式コンテンツ",
       "counts": "{sets} セット · {lessons} レッスン"
@@ -4415,6 +4485,19 @@
       "sync_failed": "同期に失敗しました。もう一度お試しください。"
     },
     "validation": {
+      "reason": {
+        "not_found": "リポジトリまたは manifest.yaml が見つかりません。",
+        "access_denied": "アクセスが拒否されました。リポジトリと GitHub トークンを確認してください。",
+        "unreachable": "リポジトリに接続できません。",
+        "unsupported_schema": "サポートされていないスキーマバージョン {version} です。",
+        "no_sets": "manifest.yaml にセットがありません。",
+        "no_lessons": "どのセットにもレッスンが見つかりません。",
+        "executable_content": "レッスン内容に許可されていない実行可能コードが含まれています。",
+        "lessons_unreadable": "最初のセットのレッスンを読み込めませんでした。",
+        "lesson_invalid_json": "最初のセットの最初のレッスンが有効な JSON ではありません。",
+        "validator_unavailable": "レッスン検証ツールを読み込めませんでした。",
+        "lesson_invalid": "最初のセットの最初のレッスンが検証に失敗しました: {detail}"
+      },
       "failed": "検証に失敗しました: {reason}",
       "passed": "検証に成功しました: {sets} セット、{lessons} レッスン。"
     }
@@ -4588,12 +4671,10 @@
     "page_title": "シャッフル",
     "loading": "シャッフルセッションを読み込み中…",
     "empty_body": "シャッフルには演習のあるレッスンが2つ以上必要です。",
-    "not_cached_body": "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。",
     "back_to_dashboard": "ダッシュボードに戻る",
     "subtitle": "{lessons}個のレッスンから{n}問をミックス",
     "error": {
-      "load_failed": "シャッフルセッションを読み込めませんでした。",
-      "missing_params": "コンテンツセットが選択されていません。"
+      "load_failed": "シャッフルセッションを読み込めませんでした。"
     },
     "summary": {
       "heading": "シャッフル練習が完了しました！",

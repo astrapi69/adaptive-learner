@@ -22,9 +22,11 @@ metniniz + oturumdaki yapay zekanın önceki yanıtları).
 
 ## API anahtarına ihtiyacım var mı?
 
-Yapay zeka oturumları için evet. Uygulama desteklenen üç sağlayıcının
-tümü için **kendi anahtarınızı getirin** modelini kullanır: Anthropic
-Claude, OpenAI GPT, Google Gemini. Ücretsiz katman sınırları genellikle
+Yapay zeka oturumları için evet. Uygulama desteklenen her sağlayıcı
+için **kendi anahtarınızı getirin** modelini kullanır: Anthropic
+Claude, OpenAI GPT ve Google Gemini, ayrıca sunucu modunda Perplexity
+(masaüstü uygulaması; tarayıcı sürümü Perplexity'yi doğrudan
+çağıramaz). Ücretsiz katman sınırları genellikle
 başlamak için yeterlidir.
 
 Anahtarı koyabileceğiniz üç yer (en yüksek öncelik kazanır):
@@ -124,8 +126,8 @@ Yerel ağ çift yönlü senkronizasyonu. Ayarlar > Veri > Eşitleme'yi açın
 ve bu cihazı eşleştirin: diğer cihazın ekranındaki QR kodunu tarayın (arka
 kamera) ya da eşleştirme URL'sini yapıştırın. Eşleştirildikten sonra
 iter + çeker düğmeleri veri alışverişi yapar; çakışmalar yapay zeka
-birleştirme çözücüden geçer. Senkronizasyon
-yüzeyinde 28 tablo (konular + etiketler + çalışma soruları dahil).
+birleştirme çözücüden geçer. Senkronizasyon, ders ilerlemesi,
+öğe bazlı hatalar ve görevler dahil tüm verilerini kapsar.
 
 ## Bu ChatGPT'den nasıl farklı?
 
@@ -141,7 +143,8 @@ sistemidir*:
 5. **Uzun vadeli takip** - ProgressCommits, seri ısı haritası, XP,
    rozetler, adım başına süre grafikleri. ChatGPT sekmeyi kapattığınızda
    unutur.
-6. **Sağlayıcı özgürlüğü** - Anthropic, OpenAI ya da Gemini.
+6. **Sağlayıcı özgürlüğü** - Anthropic, OpenAI ya da Gemini, ayrıca
+   sunucu modunda Perplexity.
 7. **Yerel öncelikli seçenek** - her şey tarayıcınızda, hiçbir şey
    bir sunucuya gönderilmez (yapay zeka çağrılarınız hariç).
 

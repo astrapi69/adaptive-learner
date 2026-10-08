@@ -8,22 +8,26 @@ na base, integração no meio, smoke E2E no topo.
 
 ## Contagens de testes
 
-| Camada | Contagem | Ferramenta |
-|---|---|---|
-| Backend unidade + integração | 786 | pytest ^9 |
-| Testes de plugins (10 plugins) | 615 | pytest ^9 |
-| Frontend unidade + integração | 1233 | Vitest 4 |
-| Smoke E2E | 16 ficheiros de especificação | Playwright |
-| **Total (`make test`)** | **2634** | |
+| Camada | Ferramenta |
+|---|---|
+| Backend unidade + integração | pytest ^9 |
+| Testes de plugins (todos os plugins) | pytest ^9 |
+| Frontend unidade + integração | Vitest 4 |
+| Smoke E2E | Playwright |
+| Porta de publicação em modo Dexie | Playwright |
 
-Distribuição por plugins: assessment 110 + ai-anthropic 34 +
-ai-openai 31 + ai-gemini 33 + session 215 + tracking 64 +
-tools 58 + gamification 23 + anki 20 + notebooklm 27.
+As contagens crescem a cada versão. Para evitar números duplicados
+que se dessincronizam, esta página NÃO fixa nenhum total.
+`docs/audits/current-coverage.md` é a única fonte canónica e sempre
+atual de contagens de testes e cobertura. Os plugins são
+assessment, os fornecedores de IA (anthropic / openai / gemini /
+perplexity), session, tracking, tools, gamification, anki,
+notebooklm, learning-repo, content-loader e missions.
 
 ## Backend pytest
 
 ```bash
-make test-backend      # 786 testes, ~35s
+make test-backend      # todos os testes do backend
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb
 ```
@@ -51,7 +55,7 @@ ao testar o disparo de hooks.
 ## Frontend Vitest
 
 ```bash
-make test-frontend                # 387 testes, ~2s
+make test-frontend                # corre o Vitest a partir de frontend/
 cd frontend && bunx vitest         # modo de observação
 cd frontend && bunx vitest run src/storage/  # um diretório
 ```
@@ -167,7 +171,7 @@ aviso correm no turno noturno e na altura do release.
 em cada PR (Python 3.12):
 
 1. Testes de backend (pytest)
-2. Testes de plugins (`make test-plugins`, todos os 13 através do
+2. Testes de plugins (`make test-plugins`, todos através do
    venv do backend)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`),
    verificação de dependências circulares, Stylelint, Vitest,

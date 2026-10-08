@@ -4,7 +4,8 @@ Auto-emits per-project Markdown artefacts (``README.md``,
 ``LEARNING_STATS.md``, ``CHEATSHEET.md``, ``ROADMAP.md`` +
 numbered phase folders per topic) from existing DB state, with
 an optional ``git init`` + commit-on-render + tag-on-phase-exit
-flow under ``~/.local/share/adaptive_learner/repos/{project_id}/``.
+flow under ``{repos_dir}/{project_id}/`` (default: ``repos/`` in the
+app data directory).
 
 Implements the Article-3 "learning repository" pattern from the
 *Von Theorie zur Praxis* Medium series (Asterios Raptis):

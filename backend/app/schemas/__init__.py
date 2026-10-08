@@ -186,7 +186,7 @@ class UserSettingsOut(BaseModel):
     has_gemini_key: bool = False
     has_perplexity_key: bool = False
     # v0.4.0 — nullable override per provider. ``None`` means
-    # "use the session plugin's DEFAULT_MODELS for that provider";
+    # "use app.services.ai_caller.DEFAULT_MODELS for that provider";
     # a non-null string replaces the default at /message time.
     model_override_anthropic: str | None = None
     model_override_openai: str | None = None

@@ -1,16 +1,13 @@
 # Modelos de datos
 
-Los **25 modelos SQLAlchemy** en
+Los **modelos SQLAlchemy** en
 `backend/app/models/__init__.py`, con sus esquemas Pydantic en formato
-wire. La superficie de sincronización incluye 28 tablas (los 25
-modelos + 3 tablas de asociación: `project_subjects`,
-`project_tags`, `user_badges`).
+wire. La superficie de sincronización incluye cada tabla de
+`sync_service.ALL_SYNC_TABLES`.
 
 Los 14 modelos originales de v0.7.0 se documentan en detalle a
-continuación; los 11 añadidos desde entonces (imports de la Fase 12+,
-materias/etiquetas de la Fase 22, gamificación + anki de las Fases
-29-30, notebooklm de la Fase 32) se listan al final por nombre +
-tabla. Consulta la especificación OpenAPI en `/openapi.json` para
+continuación; los añadidos desde entonces se listan al final por
+nombre + tabla. Consulta la especificación OpenAPI en `/openapi.json` para
 todos los campos de cada modelo.
 
 ## User
@@ -219,6 +216,7 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    PERPLEXITY = "perplexity"
 
 # Desde v1.20.0 / Fase 34
 class ApiKeySource(str, Enum):
@@ -255,3 +253,9 @@ La forma wire es el valor de cadena en minúsculas (p. ej.
 | UserStreak | user_streaks | v1.16.0 | Estado de racha + pausas + modo fin de semana |
 | AnkiCardSuggestion | anki_card_suggestions | v1.17.0 | Candidato a tarjeta extraída con IA |
 | StudyQuestion | study_questions | v1.19.0 | Pregunta de recuerdo activo generada con IA |
+| ApiKeyBackup | api_key_backups | v1.49.0 | Caché de reversión para claves de IA reemplazadas |
+| LessonProgress | lesson_progress | v1.28.0 | Estado de pasos por lección (in_progress / paused / completed) |
+| ElementError | element_errors | v1.30.0 | Error SRS + dominio por elemento |
+| SetRun | set_runs | v2.12.0 | Una pasada de un conjunto de contenido; la fila abierta es la pasada activa |
+| UserMission | user_missions | v1.39.0 | Asignación + progreso de misiones diarias |
+| SpeechRecording | speech_recordings | v2.14.0 | La grabación actual del alumno para un ejercicio de hablar y grabar |

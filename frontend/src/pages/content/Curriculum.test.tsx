@@ -89,9 +89,11 @@ const ROOT_TOPIC: LearningTopic = {
     updated_at: "2026-05-18T00:00:00Z",
 };
 
-function renderCurriculum() {
+const SECOND: CurriculumT = {...CURRICULUM, id: "c2", title: "Algebra"};
+
+function renderCurriculum(entry = "/progress?tab=paths") {
     return render(
-        <MemoryRouter>
+        <MemoryRouter initialEntries={[entry]}>
             <Curriculum />
         </MemoryRouter>,
     );
@@ -164,6 +166,19 @@ describe("Curriculum page", () => {
         await screen.findByTestId("curriculum");
         await screen.findByTestId("topic-tree");
         expect(screen.getByTestId("topic-node-t1")).toBeInTheDocument();
+    });
+
+    it.each([
+        ["the requested curriculum", "/progress?tab=paths&curriculum=c2", "c2"],
+        ["the first one for an unknown id", "/progress?tab=paths&curriculum=gone", "c1"],
+        ["the first one without a request", "/progress?tab=paths", "c1"],
+    ])("selects %s (#3659)", async (_label, entry, expected) => {
+        apiList.mockResolvedValue([CURRICULUM, SECOND]);
+        apiListTopics.mockResolvedValue([]);
+        renderCurriculum(entry);
+        const select = (await screen.findByTestId("curriculum-select")) as HTMLSelectElement;
+        expect(select.value).toBe(expected);
+        await waitFor(() => expect(apiListTopics).toHaveBeenCalledWith(expected));
     });
 
     it("Add root topic opens the dialog and creates with parent_id=null", async () => {

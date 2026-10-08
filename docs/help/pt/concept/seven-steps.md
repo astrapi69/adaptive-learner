@@ -94,8 +94,8 @@ O suggested_step pode ser:
   precisa de tentar novamente.
 
 A rota aplica a sugestão apenas quando
-`confidence >= 0.6` (o `step_evaluation.confidence_threshold`
-padrão em app.yaml). Os veredictos de fallback aplicam sempre
+`confidence >= 0.7` (o `step_evaluation.confidence_threshold`
+padrão em session.yaml). Os veredictos de fallback aplicam sempre
 o avanço de +1.
 
 ## Porquê duplo prompt em vez de único
@@ -133,6 +133,8 @@ descrevendo o passo do ciclo anterior/seguinte.
 
 ## Auto-loop + transições de tópico
 
+> Na versão do navegador, a sessão fica no passo 7: o auto-loop só funciona na aplicação de desktop. A página da sessão avisa quando chega ao passo 7.
+
 O passo 7 já não é um beco sem saída. Assim que o avaliador de
 passo o move para o passo 7 com `advance=true`, uma terceira
 chamada de IA - o avaliador de transição de tópico - julga se
@@ -167,7 +169,7 @@ avaliação resume a jornada de múltiplos ciclos quando
 
 Na transição do passo 6 → 7, tanto o avaliador de passo como o
 avaliador de transição de tópico disparam concorrentemente via
-`asyncio.gather` (`async_evaluation: true` em `app.yaml`).
+`asyncio.gather` (`async_evaluation: true` em `session.yaml`).
 Isto poupa ~T₂ de latência no limite do ciclo.
 
 A resposta da mensagem carrega um bloco `timings` com

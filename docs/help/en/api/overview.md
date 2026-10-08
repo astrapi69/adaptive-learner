@@ -5,6 +5,9 @@ Server mode the frontend talks to it; in Local (Dexie) mode
 the API isn't reachable - the same operations run in the
 browser.
 
+Every endpoint is listed in [All endpoints](endpoints.md),
+generated from the committed OpenAPI snapshot.
+
 ## Base URL
 
 - **Local dev**: `http://localhost:18001/api`

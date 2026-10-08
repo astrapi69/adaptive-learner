@@ -11,8 +11,10 @@ fires the ``ai_complete`` hook with these messages.
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from typing import Any
 
+from app.exceptions import ExternalServiceError
 from app.services.extract_json import extract_json_object
 
 
@@ -139,3 +141,45 @@ def parse_validation_result(raw: str) -> dict[str, Any] | None:
         "cultural_flags": cultural,
         "quality_score": score,
     }
+
+
+def review_lesson(
+    ai_call: Callable[[list[dict[str, str]]], str | None],
+    provider_key: str,
+    *,
+    target_language: str,
+    source_language: str,
+    level: str,
+    lessons: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Run the AI content review for a lesson set (API mode, C5b).
+
+    Args:
+        ai_call: A ``messages -> str | None`` caller, usually
+            ``app.services.ai_caller.caller_for``.
+        provider_key: The provider behind ``ai_call``, named in errors.
+        target_language: Language the learner learns.
+        source_language: Language the learner speaks.
+        level: The set's level.
+        lessons: The lessons to review.
+
+    Returns:
+        The normalised review from :func:`parse_validation_result`.
+
+    Raises:
+        ExternalServiceError: When the provider returns nothing, or a
+            response that is not the expected JSON.
+    """
+    messages = build_validation_messages(
+        target_language=target_language,
+        source_language=source_language,
+        level=level,
+        lessons=lessons,
+    )
+    raw = ai_call(messages)
+    if not isinstance(raw, str) or not raw.strip():
+        raise ExternalServiceError(provider_key, "no response from AI provider")
+    parsed = parse_validation_result(raw)
+    if parsed is None:
+        raise ExternalServiceError(provider_key, "AI response was not valid JSON")
+    return parsed

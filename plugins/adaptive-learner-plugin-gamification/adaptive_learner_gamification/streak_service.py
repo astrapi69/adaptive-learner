@@ -141,10 +141,7 @@ def update_streak_state(db: Session, user_id: str) -> dict[str, int | bool]:
     if streak > 0 and streak % _FREEZE_GRANT_INTERVAL_DAYS == 0:
         last_grant = row.last_freeze_earned_on
         # Don't double-grant within a 7-day window.
-        if (
-            last_grant is None
-            or (datetime.now(UTC) - last_grant) >= timedelta(days=6)
-        ):
+        if last_grant is None or (datetime.now(UTC) - last_grant) >= timedelta(days=6):
             if row.freezes_available < _FREEZE_STOCK_CAP:
                 row.freezes_available = row.freezes_available + 1
                 row.last_freeze_earned_on = datetime.now(UTC)
@@ -190,9 +187,7 @@ def set_weekend_mode(db: Session, user_id: str, enabled: bool) -> dict:
     return get_streak_state(db, user_id)
 
 
-def calendar_heatmap(
-    db: Session, user_id: str, *, days: int = 365
-) -> list[dict[str, int | str]]:
+def calendar_heatmap(db: Session, user_id: str, *, days: int = 365) -> list[dict[str, int | str]]:
     """Return ``[{date, count}]`` for the last ``days`` calendar days.
 
     ``count`` is the number of sessions started on that day (NOT

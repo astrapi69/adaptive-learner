@@ -41,12 +41,13 @@ Gönderdiğiniz her mesaj en fazla üç yapay zeka çağrısı tetikler:
 2. **Adım değerlendiricisi** - ikinci bir yapay zeka çağrısı
    alışverişi okur ve ilerlemeye hazır olup olmadığınıza karar
    verir. `advance`, `confidence`, `reason`, `suggested_step`
-   yayar. Güven ≥ 0,6 olduğunda uygulama öneriyi uygular.
+   yayar. Güven ≥ 0,7 olduğunda uygulama öneriyi uygular.
 3. **Konu geçiş değerlendiricisi** (yalnızca adım 7'de) -
    üçüncü bir yapay zeka çağrısı konunun bütünleşip
    bütünleşmediğine karar verir. Evet VE `continue_recommended`
    ise yeni bir döngü, yeni bir alt konuyla otomatik olarak başlar
    (otomatik döngü, oturum başına en fazla 5 döngü).
+   Yalnızca masaüstü uygulamasında: tarayıcı sürümünde oturum 7. adımda kalır.
 
 Karar, gerçekten geçerli olduğunda sohbetin üzerinde ayrık
 biçimde "Adım X'ten Y'ye taşındı çünkü…" bildirimi olarak

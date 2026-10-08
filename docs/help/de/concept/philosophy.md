@@ -4,7 +4,7 @@
 
 Das ist die These im Kern von AdaptiveLearner. Die meisten
 "Lern-Apps" wählen einen Ansatz - Karteikarten, Videolektion,
-gamifizierte Streaks - und unterstellen, dass alle gleich
+gamifizierte Serien - und unterstellen, dass alle gleich
 lernen. Das tun sie nicht.
 
 ## Warum eine Methode nicht reicht
@@ -17,8 +17,8 @@ verlangt verschiedene Methoden:
   Polieren deiner Aussprache.
 - Du wiederholst für eine wichtige Prüfung nicht so wie du
   ein Thema aus Neugier erforschst.
-- Du fängst dich nach einem Rückschlag nicht so wie du einen
-  Streak aufrechterhältst.
+- Du fängst dich nach einem Rückschlag nicht so wie du eine
+  Serie aufrechterhältst.
 
 Ein Lerner, der fließend zwischen Methoden wechseln kann,
 lernt schneller, behält länger und brennt seltener aus. Der
@@ -49,7 +49,7 @@ wählen, basierend darauf, was der Lerner gerade getan hat.
 
 ## Der Sieben-Schritt-Zyklus
 
-Jede Session durchläuft einen 7-Schritt-Zyklus: Input,
+Jede Sitzung durchläuft einen 7-Schritt-Zyklus: Input,
 Versuch, Fehler, Feedback, Anpassen, Wiederholen,
 Integrieren. Das meiste Lernen passiert zwischen Fehler und
 Feedback (Schritte 3-4) - dort lebt die eigentliche
@@ -67,11 +67,11 @@ Roundtrip.
 
 Wir leihen Gits mentales Modell fürs Tracking:
 
-- **Commit** = der Schnappschuss einer Session (Methode,
+- **Commit** = der Schnappschuss einer Sitzung (Methode,
   Bewertungen, Dauer).
-- **Diff** = die Veränderung zur letzten Session im selben
+- **Diff** = die Veränderung zur letzten Sitzung im selben
   Thema.
-- **Branch** = ein Methodenwechsel (du bist bei Session 7
+- **Branch** = ein Methodenwechsel (du bist bei Sitzung 7
   von deduktiv zu dialogisch gewechselt).
 - **Verlauf** = deine vollständige Lernspur, abfragbar +
   visualisierbar.
@@ -80,7 +80,7 @@ Wir nutzen Git nicht wörtlich; wir nutzen seine Disziplin von
 versioniertem, wiederherstellbarem, vergleichbarem Zustand.
 ChatGPT vergisst deine Konversation beim Schließen des Tabs.
 AdaptiveLearner hält einen strukturierten Schnappschuss jeder
-Session, sodass Trends über Wochen und Monate sichtbar
+Sitzung, sodass Trends über Wochen und Monate sichtbar
 werden.
 
 [Tracking](tracking.md)
@@ -88,7 +88,7 @@ werden.
 ## Die drei Säulen
 
 Drei externe Werkzeug-Kategorien stehen neben AdaptiveLearner-
-Sessions - wir versuchen nicht, sie neu zu erfinden:
+Sitzungen - wir versuchen nicht, sie neu zu erfinden:
 
 1. **Spaced Repetition** (Anki) - für langfristiges
    Behalten von Regeln + Fehlerkorrekturen.

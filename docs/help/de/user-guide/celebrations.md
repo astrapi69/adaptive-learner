@@ -105,7 +105,7 @@ Mit aktivem Spielmodus:
   Spielmodus-Einstellungen ein.
 - **Spiel-Tickets** (Standard an, abschaltbar): Leistung verdient
   Arcade-Tickets - eine Lektion mit voller Punktzahl, ein Durchlauf
-  mit allen Herzen und Streak-Meilensteine (3/7/14/30 Tage) bringen
+  mit allen Herzen und Serien-Meilensteine (3/7/14/30 Tage) bringen
   je ein Ticket. Die Zusammenfassung bietet nach dem Verdienst den
   Sprung in die Arcade an; ein Ticket spielt eine Runde eines noch
   gesperrten Spiels, ohne den XP-Kauf. Die maximale Anzahl

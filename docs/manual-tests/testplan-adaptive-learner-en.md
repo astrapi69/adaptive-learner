@@ -532,6 +532,12 @@ Requires domain knowledge. Not automatable.
       "2 / 5 paired" directly left of "Check" and counts along with every
       pair; it is absent on theory steps, after "Check" and on the summary,
       and the same in the review / shuffle / endless runners
+- [ ] TC-0949 Matching, re-pairing instead of undoing (#3237): tapping a paired tile
+      only selects it (selection ring), the counter stays; then tap a tile
+      in the other column: if it is free, the pair moves there; if it is
+      paired, the two pairs swap partners. The counter never drops, and a
+      full board stays full. The same when starting in the right column;
+      Ctrl/Cmd+Z still undoes the last pair
 
 - [ ] TC-0132 Matching: long words wrap inside the tile (#3174): open a matching
       exercise whose word is wider than the tile on a NARROW device (iPhone,
@@ -960,7 +966,8 @@ preview delivery). In the regular build the mode does not exist.
       hop with the new word
 - [ ] TC-0258 Matching exercise: a freshly formed pair "snaps" together with a
       pop on both tiles; after checking, correct pairs hop briefly;
-      tapping a pair still undoes it
+      tapping a pair selects it for re-pairing (#3237), as in the
+      classic mode
 - [ ] TC-0259 Behaviour unchanged: selection, checking, score and resolution
       are identical to normal mode in all three exercise types
 - [ ] TC-0260 Game mode off: classic lists/chips/tiles without the game look;
@@ -2006,7 +2013,8 @@ with the same source and target language or with a knowledge domain
       and share" disabled. With the generator (matching + free text, 10
       exercises) the third row is red while a free-text exercise has only one
       accepted answer; after a second answer on each it turns green and "Save
-      and share" is enabled. The share wizard then reports no minimum. Editing
+      and share" is enabled. Clicking it opens My content with the share
+      wizard for exactly this lesson (#3660), which reports no minimum. Editing
       a saved lesson shows no share rows.
 - [ ] TC-0434 **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
       inline editor (Step 3, `ExerciseEditor`) of a **Word tiles** or
@@ -2245,6 +2253,15 @@ each card row (`CardImageField`).
 - [ ] TC-0474 Browser mode (GitHub Pages / Dexie): the card stays visible with
       the notice "Only available with the desktop app."; DevTools >
       Network shows no request to /api/plugins/health
+- [ ] TC-0936 "Learning Repository" card, fresh install: the "Repositories directory"
+      field is empty, below it reads "Leave empty for the default: repos
+      in the data directory (see About)", no fixed Linux path; at 375 px
+      the hint wraps instead of being cut off (#3451)
+- [ ] TC-0937 Desktop app, git persistence on, field left empty, saved, then "Persist
+      to git" on the Learning Repository page: toast "Persisted to git:
+      <commit>"; on disk the folder "repos/<project id>/" with README.md
+      sits below the data directory that Settings > About shows; a custom
+      path entered in the field still wins
 
 ### TS-0061 Diagnostics probe: mis-tap mark + actions (#3043)
 - [ ] TC-0475 Probe ON, measurement bar visible: next to "Werte kopieren" and
@@ -3115,6 +3132,11 @@ Location: Settings → Data → Recommended repositories.
       again"; once the backend runs, the click loads the history
 - [ ] TC-0732 Imported session opens with the AI asking the first question on its own
       (no user turn first), the chat starts clean
+- [ ] TC-0950 Auto-loop in the browser version (#3436): in the Pages build (Dexie)
+      take a session to step 7; below the chat a notice with a monitor icon
+      appears: in the desktop app a new cycle starts automatically after
+      that, the browser version cannot do it yet. No notice before step 7;
+      in the desktop app no notice at step 7, the new cycle starts there
 - [ ] TC-0733 AI content validation: report sensible? provider+model shown?
 - [ ] TC-0734 No button without a key leads to an error toast (disabled + tooltip)
 
@@ -3657,6 +3679,44 @@ These tests run in CI or via `make test`.
 Documented here only to show what is covered.
 
 ---
+
+### TS-0129 Progress report as Markdown/PDF in the UI language (#3426)
+
+- [ ] TC-0938 UI language French (or Japanese), Settings > Data > Export,
+      download the progress report as Markdown: title, sections and
+      table headers are in French (e.g. "Progression", "Projets"), not
+      English
+- [ ] TC-0939 Same with the session detail and PDF (print dialog): roles, rating
+      and step evaluations in the UI language
+- [ ] TC-0940 UI language German: the step names in the report match the app's
+      (e.g. "Eingabe" instead of "Input")
+
+### TS-0130 Translated control and screen-reader texts (#3425)
+
+- [ ] TC-0941 Lesson with a free-text exercise, type a wrong answer on purpose
+      (leave out one word, swap another), screen reader on (VoiceOver /
+      NVDA / TalkBack): the answer diff reads "Missing: <word>" and "You
+      wrote <word>, expected <word>" in the UI language (German: "Fehlt:",
+      "Geschrieben: ..., erwartet: ..."); visually the diff looks unchanged
+- [ ] TC-0942 Create lesson > Cards: the empty fields show "Word or phrase" and
+      "Meaning" instead of "Bonjour" / "Guten Tag"
+- [ ] TC-0943 Anki page, edit a card: the type select offers "Basic" and "Cloze"
+      (German: "Einfach", "Lückentext")
+- [ ] TC-0944 Learning path and the dashboard "Continue" card: the screen reader
+      reads the stars as "2 of 3 stars" instead of "2/3"
+- [ ] TC-0945 Share wizard and "Share as repository": the screen reader names the
+      X button "Close" in the UI language (German: "Schließen")
+
+### TS-0131 Page title in the browser tab (#3431)
+
+- [ ] TC-0946 Click through Dashboard, Learning Path, Content, Settings and a
+      lesson: the tab title reads "<page name> - Adaptive Learner" each
+      time (e.g. "Settings - Adaptive Learner", "Lesson - Adaptive
+      Learner"); the landing page shows only "Adaptive Learner"
+- [ ] TC-0947 Settings > General, UI language to German: the tab title switches to
+      "Einstellungen - Adaptive Learner" without a reload
+- [ ] TC-0948 Browser history (long-press the back button): the entries carry
+      different page names instead of one identical title
 
 ## Automated: Unit + Component Tests (Vitest, 7200+;
 ## current number see docs/audits/current-coverage.md)

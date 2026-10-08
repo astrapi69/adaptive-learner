@@ -25,8 +25,9 @@ The three MIRROR-owned files (``lesson.schema.json``,
 ``content-manifest.schema.json``, ``quality-rules.json``) are NOT written
 here. The engine ships them and ``sync_schema_mirror_from_engine`` copies
 their bytes; a second writer would make the byte-parity gates compare two
-producers instead of the mirror (#2265). The quality numbers are still READ
-from the mirror for the frontend artefact.
+producers instead of the mirror (#2265). The frontend reads the quality
+minimums from the engine package itself (``QUALITY_MINIMUMS``, #3399), so no
+frontend quality artefact is generated any more.
 
 The JSON is emitted with ``sort_keys=True`` so re-generation is byte-stable;
 ``--check`` re-generates into memory and diffs against the committed files,
@@ -64,28 +65,15 @@ from adaptive_learner_content_loader.schema_export import (
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_DIR = REPO_ROOT / "schema"
 SCHEMA_REL = "schema"
-DOC_REL = {
-    "en": "docs/help/en/developer/lesson-format-reference.md",
-    "de": "docs/help/de/developer/lesson-format-reference.md",
-}
-FRONTEND_QUALITY_REL = "frontend/src/lib/content/validation/quality-rules.generated.ts"
+DOC_LOCALES = ("en", "de", "es", "fr", "el", "pt", "tr", "ja")
+DOC_REL = {lang: f"docs/help/{lang}/developer/lesson-format-reference.md" for lang in DOC_LOCALES}
+# The help pages of these locales are machine translations awaiting native
+# review; their pages open with this marker, and the generated one follows suit.
+TRANSLATION_MARKER = "<!-- Translation: AI-generated, pending native review -->"
+MARKED_LOCALES = frozenset({"pt", "tr", "ja"})
 
 DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
 SCHEMA_ID_BASE = "https://astrapi69.github.io/learn-content-engine/schema"
-
-
-# The shared quality minimums. The engine ships ``schema/quality-rules.json``
-# (the mirror), so the ENGINE is canonical here too: read the numbers from
-# the mirror rather than hard-coding a second copy. The frontend quality
-# gate (content-validator.ts) and the content repo's validate_content.py
-# both consume the same emitted quality-rules.json, so the numbers cannot
-# drift across the places they used to be hard-coded.
-def _load_quality_rules() -> dict[str, int]:
-    data = json.loads((SCHEMA_DIR / "quality-rules.json").read_text(encoding="utf-8"))
-    return data["rules"]
-
-
-QUALITY_RULES: dict[str, int] = _load_quality_rules()
 
 
 def _decorate(schema: dict[str, Any], slug: str) -> dict[str, Any]:
@@ -166,44 +154,163 @@ def _model_section(name: str, node: dict[str, Any], required: list[str]) -> str:
     return "\n".join(lines) + "\n"
 
 
+# Per-locale intro (#3647). Only the intro and the models heading are
+# translated; the model descriptions and field tables below come verbatim
+# from the schema and stay English in every locale. ``{version}`` is filled
+# with ``CURRENT_SCHEMA_VERSION``.
+_INTROS = {
+    "en": (
+        "# Lesson format reference\n\n"
+        "> **Generated** from the canonical `learn-content-engine` schema "
+        "mirror (`schema/lesson.schema.json`, a byte mirror of the pinned "
+        "engine release) via `make sync-schema` (EXP-039). The app's "
+        "structural Pydantic layer is regenerated from that mirror; only "
+        "the semantic validators are hand-written. Do not edit by hand; a "
+        "format change starts in the engine, then the pin is bumped and the "
+        "generator re-runs.\n\n"
+        "Schema version: **{version}** "
+        "(JSON Schema 2020-12). The machine-readable schema lives at "
+        "`schema/lesson.schema.json`; reference it from a lesson `.json` via "
+        '`"$schema"` for IDE autocomplete + validation.\n\n'
+        "Field descriptions below come verbatim from the model definitions.\n"
+    ),
+    "de": (
+        "# Lektionsformat-Referenz\n\n"
+        "> **Generiert** aus dem kanonischen `learn-content-engine`-"
+        "Schemaspiegel (`schema/lesson.schema.json`, ein Byte-Spiegel des "
+        "gepinnten Engine-Release) via `make sync-schema` (EXP-039). Die "
+        "strukturelle Pydantic-Schicht der App wird aus diesem Spiegel "
+        "regeneriert; nur die semantischen Validatoren sind handgeschrieben. "
+        "Nicht von Hand editieren; eine Formatänderung beginnt in der "
+        "Engine, dann wird der Pin erhöht und der Generator läuft erneut.\n\n"
+        "Schema-Version: **{version}** "
+        "(JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter "
+        "`schema/lesson.schema.json`; referenziere es aus einer Lektions-"
+        '`.json` via `"$schema"` für IDE-Autocomplete + Validierung.\n\n'
+        "Die Feldbeschreibungen stammen wörtlich aus den Modelldefinitionen "
+        "(englisch).\n"
+    ),
+    "es": (
+        "# Referencia del formato de lección\n\n"
+        "> **Generado** a partir del espejo canónico del esquema de "
+        "`learn-content-engine` (`schema/lesson.schema.json`, un espejo de bytes "
+        "de la release fijada del engine) mediante `make sync-schema` (EXP-039). "
+        "La capa Pydantic estructural de la app se regenera a partir de ese "
+        "espejo; solo los validadores semánticos se escriben a mano. No editar "
+        "a mano; un cambio de formato empieza en el engine, después se sube el "
+        "pin y el generador se vuelve a ejecutar.\n\n"
+        "Versión del esquema: **{version}** (JSON Schema 2020-12). El esquema "
+        "legible por máquina está en `schema/lesson.schema.json`; referéncialo "
+        'desde un `.json` de lección mediante `"$schema"` para tener '
+        "autocompletado + validación en el IDE.\n\n"
+        "Las descripciones de campos de abajo proceden literalmente de las "
+        "definiciones de los modelos (en inglés).\n"
+    ),
+    "fr": (
+        "# Référence du format de leçon\n\n"
+        "> **Généré** à partir du miroir canonique du schéma "
+        "`learn-content-engine` (`schema/lesson.schema.json`, un miroir octet "
+        "par octet de la version épinglée du moteur) via `make sync-schema` "
+        "(EXP-039). La couche structurelle Pydantic de l'application est "
+        "régénérée depuis ce miroir ; seuls les validateurs sémantiques sont "
+        "écrits à la main. Ne pas modifier à la main ; un changement de format "
+        "commence dans le moteur, puis l'épinglage est relevé et le générateur "
+        "est relancé.\n\n"
+        "Version du schéma : **{version}** (JSON Schema 2020-12). Le schéma "
+        "lisible par machine se trouve dans `schema/lesson.schema.json` ; "
+        'référencez-le depuis un `.json` de leçon via `"$schema"` pour '
+        "l'autocomplétion et la validation dans l'IDE.\n\n"
+        "Les descriptions de champs ci-dessous proviennent mot pour mot des "
+        "définitions des modèles (en anglais).\n"
+    ),
+    "el": (
+        "# Αναφορά μορφής μαθήματος\n\n"
+        "> **Παράγεται** από τον κανονικό καθρέφτη σχήματος του "
+        "`learn-content-engine` (`schema/lesson.schema.json`, καθρέφτης byte του "
+        "καρφιτσωμένου release του engine) μέσω `make sync-schema` (EXP-039). "
+        "Το δομικό στρώμα Pydantic της εφαρμογής αναγεννάται από αυτόν τον "
+        "καθρέφτη· μόνο οι σημασιολογικοί validators γράφονται στο χέρι. Μην το "
+        "επεξεργάζεσαι με το χέρι· μια αλλαγή μορφής ξεκινά στο engine, μετά "
+        "ανεβαίνει το pin και ο generator τρέχει ξανά.\n\n"
+        "Έκδοση σχήματος: **{version}** (JSON Schema 2020-12). Το μηχανικά "
+        "αναγνώσιμο σχήμα βρίσκεται στο `schema/lesson.schema.json`· αναφέρσου "
+        'σε αυτό από ένα `.json` μαθήματος μέσω `"$schema"` για αυτόματη '
+        "συμπλήρωση IDE + επικύρωση.\n\n"
+        "Οι περιγραφές πεδίων παρακάτω προέρχονται αυτούσιες από τους "
+        "ορισμούς των μοντέλων (στα αγγλικά).\n"
+    ),
+    "pt": (
+        "# Referência do formato de lição\n\n"
+        "> **Gerado** a partir do espelho canónico do esquema "
+        "`learn-content-engine` (`schema/lesson.schema.json`, um espelho byte a "
+        "byte da release fixada do motor) através de `make sync-schema` "
+        "(EXP-039). A camada Pydantic estrutural da app é regenerada a partir "
+        "desse espelho; apenas os validadores semânticos são escritos à mão. "
+        "Não editar à mão; uma alteração de formato começa no motor, depois a "
+        "fixação é subida e o gerador volta a correr.\n\n"
+        "Versão do esquema: **{version}** (JSON Schema 2020-12). O esquema "
+        "legível por máquina está em `schema/lesson.schema.json`; referencie-o "
+        'a partir de um `.json` de lição através de `"$schema"` para '
+        "autocompletar + validação no IDE.\n\n"
+        "As descrições de campos abaixo vêm literalmente das definições dos "
+        "modelos (em inglês).\n"
+    ),
+    "tr": (
+        "# Ders formatı referansı\n\n"
+        "> Kanonik `learn-content-engine` şema aynasından "
+        "(`schema/lesson.schema.json`, sabitlenmiş engine release'inin byte "
+        "aynası) `make sync-schema` üzerinden **üretilmiştir** (EXP-039). "
+        "Uygulamanın yapısal Pydantic katmanı bu aynadan yeniden üretilir; "
+        "yalnızca anlamsal doğrulayıcılar elle yazılır. Elle düzenleme; bir "
+        "format değişikliği engine'de başlar, ardından pin yükseltilir ve "
+        "üreteç yeniden çalışır.\n\n"
+        "Şema sürümü: **{version}** (JSON Schema 2020-12). Makine tarafından "
+        "okunabilir şema `schema/lesson.schema.json` konumundadır; IDE otomatik "
+        'tamamlama + doğrulama için bir ders `.json`\'ından `"$schema"` '
+        "üzerinden ona referans ver.\n\n"
+        "Aşağıdaki alan açıklamaları, model tanımlarından olduğu gibi "
+        "(İngilizce) alınmıştır.\n"
+    ),
+    "ja": (
+        "# レッスン形式リファレンス\n\n"
+        "> 正準の`learn-content-engine`スキーマミラー（`schema/lesson.schema.json`、"
+        "固定されたエンジンリリースのバイトミラー）から`make sync-schema`"
+        "（EXP-039）によって**生成**されています。アプリの構造的なPydantic"
+        "レイヤーはこのミラーから再生成され、手書きなのはセマンティック"
+        "バリデーターのみです。手動で編集しないでください。形式の変更は"
+        "エンジンから始まり、その後ピンが引き上げられ、ジェネレーターが"
+        "再実行されます。\n\n"
+        "スキーマバージョン: **{version}**（JSON Schema 2020-12）。機械可読な"
+        "スキーマは`schema/lesson.schema.json`にあります。IDEの自動補完と検証の"
+        'ために、レッスンの`.json`から`"$schema"`で参照してください。\n\n'
+        "以下のフィールド説明は、モデル定義から原文（英語）のまま引用しています。\n"
+    ),
+}
+_MODELS_HEADING = {
+    "en": "## Models",
+    "de": "## Modelle",
+    "es": "## Modelos",
+    "fr": "## Modèles",
+    "el": "## Μοντέλα",
+    "pt": "## Modelos",
+    "tr": "## Modeller",
+    "ja": "## モデル",
+}
+
+
 def build_doc(lang: str) -> str:
-    """Render the human-readable lesson-format reference from the lesson schema."""
+    """Render the human-readable lesson-format reference for one help locale.
+
+    Args:
+        lang: A help locale in ``DOC_LOCALES``.
+
+    Returns:
+        The page text; locales in ``MARKED_LOCALES`` open with the
+        translation marker their other help pages carry.
+    """
     schema = _decorate(lesson_schema(), "lesson.schema.json")
-    intro = {
-        "en": (
-            "# Lesson format reference\n\n"
-            "> **Generated** from the canonical `learn-content-engine` schema "
-            "mirror (`schema/lesson.schema.json`, a byte mirror of the pinned "
-            "engine release) via `make sync-schema` (EXP-039). The app's "
-            "structural Pydantic layer is regenerated from that mirror; only "
-            "the semantic validators are hand-written. Do not edit by hand; a "
-            "format change starts in the engine, then the pin is bumped and the "
-            "generator re-runs.\n\n"
-            f"Schema version: **{CURRENT_SCHEMA_VERSION}** "
-            "(JSON Schema 2020-12). The machine-readable schema lives at "
-            "`schema/lesson.schema.json`; reference it from a lesson `.json` via "
-            '`"$schema"` for IDE autocomplete + validation.\n\n'
-            "Field descriptions below come verbatim from the model definitions.\n"
-        ),
-        "de": (
-            "# Lektionsformat-Referenz\n\n"
-            "> **Generiert** aus dem kanonischen `learn-content-engine`-"
-            "Schemaspiegel (`schema/lesson.schema.json`, ein Byte-Spiegel des "
-            "gepinnten Engine-Release) via `make sync-schema` (EXP-039). Die "
-            "strukturelle Pydantic-Schicht der App wird aus diesem Spiegel "
-            "regeneriert; nur die semantischen Validatoren sind handgeschrieben. "
-            "Nicht von Hand editieren; eine Formatänderung beginnt in der "
-            "Engine, dann wird der Pin erhöht und der Generator läuft erneut.\n\n"
-            f"Schema-Version: **{CURRENT_SCHEMA_VERSION}** "
-            "(JSON Schema 2020-12). Das maschinenlesbare Schema liegt unter "
-            "`schema/lesson.schema.json`; referenziere es aus einer Lektions-"
-            '`.json` via `"$schema"` für IDE-Autocomplete + Validierung.\n\n'
-            "Die Feldbeschreibungen stammen wörtlich aus den Modelldefinitionen "
-            "(englisch).\n"
-        ),
-    }[lang]
-    heading = {"en": "## Models", "de": "## Modelle"}[lang]
-    sections = [intro, "", heading, ""]
+    intro = _INTROS[lang].replace("{version}", str(CURRENT_SCHEMA_VERSION))
+    sections = [intro, "", _MODELS_HEADING[lang], ""]
     sections.append(_model_section("Lesson", schema, schema.get("required", [])))
     for def_name in sorted(schema.get("$defs", {})):
         node = schema["$defs"][def_name]
@@ -212,19 +319,8 @@ def build_doc(lang: str) -> str:
         elif "enum" in node:
             values = " · ".join(f"`{v}`" for v in node["enum"])
             sections.append(f"### `{def_name}` (enum)\n\n{values}\n")
-    return "\n".join(sections).rstrip() + "\n"
-
-
-def build_frontend_quality_rules() -> str:
-    body = ",\n".join(f"  {k}: {v}" for k, v in sorted(QUALITY_RULES.items()))
-    return (
-        "// GENERATED from scripts/generate_lesson_schema.py (EXP-039). DO NOT EDIT.\n"
-        "// Shared content quality minimums. The numbers come from the engine\n"
-        "// mirror schema/quality-rules.json, re-emitted here for the frontend and\n"
-        "// carried by the content repo too. Refresh via `make sync-schema`.\n\n"
-        "/** Quality minimums. Below any of these = cannot share. */\n"
-        f"export const QUALITY = {{\n{body},\n}} as const;\n"
-    )
+    page = "\n".join(sections).rstrip() + "\n"
+    return f"{TRANSLATION_MARKER}\n\n{page}" if lang in MARKED_LOCALES else page
 
 
 def build_artefacts() -> dict[str, str]:
@@ -246,7 +342,6 @@ def build_artefacts() -> dict[str, str]:
     artefacts: dict[str, str] = {
         f"{SCHEMA_REL}/{name}": _json(schema) for name, schema in schemas.items()
     }
-    artefacts[FRONTEND_QUALITY_REL] = build_frontend_quality_rules()
     for lang, rel in DOC_REL.items():
         artefacts[rel] = build_doc(lang)
     return artefacts

@@ -15,11 +15,10 @@ Verifies:
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from types import SimpleNamespace
-from typing import AsyncIterator
 
 import pytest
-
 from adaptive_learner_session.ai_orchestration import call_ai_complete_stream
 
 

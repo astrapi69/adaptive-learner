@@ -54,7 +54,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 `ai_complete_async`, adım değerlendirmesi + konu geçişinin
 `asyncio.gather` aracılığıyla eş zamanlı olarak başlatılması
 için oturum rotası tarafından adım 6→7 döngü sınırında kullanılır
-(`app.yaml`'da `async_evaluation: true`).
+(`session.yaml`'da `async_evaluation: true`).
 
 `ai_complete_stream`, `start` / `chunk` / `done` olayları yayan
 akışa alınan SSE uç noktası `POST /api/plugins/session/{id}/message/stream`'i
@@ -94,7 +94,7 @@ en fazla üç yapay zeka çağrısı yapar:
    bir JSON kararı (`advance`, `confidence`, `reason`,
    `suggested_step`) yaymasını isteyen ayrı bir sistem istemi
    (`EVALUATION_SYSTEM_PROMPT`). `max_tokens=256`. Değerlendiricinin
-   kararı `cycle_step` ilerlemesini yönetir (`confidence ≥ 0,6`
+   kararı `cycle_step` ilerlemesini yönetir (`confidence ≥ 0,7`
    ile geçit).
 3. **Konu geçişi** - yalnızca 7. adımda. Üçüncü bir yapay zeka
    çağrısı, konunun bütünleştirilip bütünleştirilmediğini ve yeni
@@ -157,15 +157,15 @@ değerlendiricinin JSON'ını arka ucun yaptığıyla aynı şekilde ayrıştır
 
 ## Güven eşiği
 
-`backend/config/app.yaml`'ın
-`session.step_evaluation.confidence_threshold`'u (varsayılan 0,6),
+`backend/config/plugins/session.yaml`'ın
+`step_evaluation.confidence_threshold`'u (varsayılan 0,7),
 gerçek (geri dönüş olmayan) bir değerlendirici kararının gerçekten
 döngü adımını hareket ettirip ettirmeyeceğine ilişkin geçit işlevi
 görür. Daha muhafazakar olmak için daha yükseğe, daha hevesli
 olmak için daha aşağıya ayarlayın. Geri dönüş kararları (ayrıştırma
 hataları) her zaman +1 ilerlemeyi uygular.
 
-Dexie portu bunu `storage/session-flow.ts`'de sabit kodlanmış 0,6
+Dexie portu bunu `storage/session-flow.ts`'de sabit kodlanmış 0,7
 ile yansıtır. Gelecekteki bir aşama bunu Ayarlar arayüzünde
 gösterecektir.
 

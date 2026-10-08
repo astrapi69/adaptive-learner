@@ -40,7 +40,8 @@ vi.mock("../../../storage", () => ({
 vi.mock("../../../utils/notify", () => ({
   notify: { error: notifyError, success: notifySuccess },
 }));
-vi.mock("../../../lib/content/repos/content-repo-validate", () => ({
+vi.mock("../../../lib/content/repos/content-repo-validate", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../../lib/content/repos/content-repo-validate")>()),
   validateUserRepo,
 }));
 vi.mock("../../../lib/content/repos/github-fetch", () => ({
