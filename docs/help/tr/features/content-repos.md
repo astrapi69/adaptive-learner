@@ -120,4 +120,4 @@ verilmemesi için bilinçli olarak dışa aktarılabilir yapılandırmanın
 
 - [İçerik Tarayıcısı](content-browser.md) - set bulma, filtreleme, indirme
 - [Ders oluşturma](../content-creation/overview.md) - kendi içeriklerini katkıla
-- [Yedekleme ve geri yükleme](backup.md) - bağlı repolar henüz yedeğin parçası değil, geri yüklemeden sonra yeniden bağla
+- [Yedekleme ve geri yükleme](backup.md) - bağlı repolar ve kullanılan davetler yedekle birlikte taşınır

@@ -55,6 +55,12 @@ A real round-trip, not a simulation:
       #2050 path!), completed set correct, own exercise present, settings
       plausible.
 - [ ] TC-0007 Then continue one lesson normally - no follow-on error.
+- [ ] TC-0953 Connected repos and invites (#3412): before the export, connect a
+      content repository of your own, redeem an invite and switch the
+      Learning Repository on. After wipe and import, the repository and the
+      invite are back in Settings > Content, updates load again, and the
+      Learning Repository is switched on. A private repo asks for its token,
+      and the Learning Repository folder is this device's default folder
 
 Document the result (partial failures individually too). On ANY deviation:
 screenshot + which step, which becomes an issue with forensics.

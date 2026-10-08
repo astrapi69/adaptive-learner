@@ -127,4 +127,4 @@ accidentalmente al compartir los ajustes.
 
 - [Explorador de contenido](content-browser.md) - encontrar, filtrar y descargar conjuntos
 - [Crear lecciones](../content-creation/overview.md) - aportar contenido propio
-- [Copia de seguridad y restauración](backup.md) - los repos conectados todavía no forman parte de la copia, vuelve a conectarlos tras restaurar
+- [Copia de seguridad y restauración](backup.md) - los repos conectados y las invitaciones canjeadas viajan con la copia

@@ -150,4 +150,4 @@ you share your settings.
 
 - [Content Browser](content-browser.md) - find, filter, download sets
 - [Creating lessons](../content-creation/overview.md) - contribute your own content
-- [Backup and restore](backup.md) - connected repos are not part of the backup yet, reconnect them after a restore
+- [Backup and restore](backup.md) - connected repos and redeemed invites travel with the backup

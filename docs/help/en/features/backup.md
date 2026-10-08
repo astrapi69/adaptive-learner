@@ -18,10 +18,11 @@ and more), **your downloaded content sets**, and a **localStorage
 snapshot** (your contributions, custom learning paths and local
 preferences).
 
-**Not included yet:** connected content repositories, redeemed
-invites and the Learning Repository settings. After restoring on a
-new device, the content sets are back, but reconnect their
-repositories (and redeem invites again) so updates keep arriving.
+**Also included:** connected content repositories, redeemed invites
+and whether the Learning Repository is switched on.
+**Not included:** the access token of a private repository (enter it
+again after the restore) and the Learning Repository folder, which
+belongs to the device.
 
 Before the export, the app shows a **"Your backup contains …"**
 preview with record counts per area, so you can see what will be
@@ -96,4 +97,4 @@ Danger Zone). Older single-JSON backups still import cleanly.
 ## Related pages
 
 - [Settings](../user-guide/settings.md) - an overview of all data actions
-- [Multiple content repositories](content-repos.md) - connected repos are not part of the backup yet, reconnect them after a restore
+- [Multiple content repositories](content-repos.md) - connected repos and redeemed invites travel with the backup

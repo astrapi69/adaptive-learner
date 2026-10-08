@@ -30,8 +30,8 @@ const EXCLUDED_FROM_BACKUP_TABLES: Record<string, string> = {
     "Dexie mirror of managed localStorage keys; the backup carries them in its " +
     "local_storage snapshot and the restore re-mirrors them (localStorageSnapshot.ts)",
   pluginSettings:
-    "GAP, tracked in #3412: connected repos, invites and Learning Repository " +
-    "settings are not in the backup yet",
+    "carried as the payload's plugin_settings block, only the learner's keys " +
+    "(lib/backup/pluginSettingsSnapshot.ts, #3412), not as table rows",
   aiValidationResults:
     "GAP, tracked in #3412: cached AI content-check reports are not in the backup yet",
 };

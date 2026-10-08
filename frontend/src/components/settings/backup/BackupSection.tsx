@@ -59,9 +59,9 @@ function daysSince(iso: string | null): number | null {
 // DangerZone pre-reset backup button can produce identical files.
 import {saveBackupToDisk, backupFilename} from "../../../utils/backup-download";
 import {
-    restoreLocalStorageSnapshot,
-    withLocalStorageSnapshot,
-} from "../../../lib/backup/localStorageSnapshot";
+    exportPortableBackup,
+    restoreClientSnapshots,
+} from "../../../lib/backup/portableBackup";
 
 interface ComparisonRow {
     table: string;
@@ -490,12 +490,11 @@ export default function BackupSection() {
         }
         setBusy("export");
         try {
-            // Attach a localStorage snapshot (preferences + contributions
-            // that don't live in the DB tables) so the backup is portable
-            // across a browser reset / device migration (P1 offline parity).
-            const payload = withLocalStorageSnapshot(
-                await storage.backup.export(userId),
-            );
+            // The storage export plus the localStorage snapshot (preferences,
+            // contributions) and the plugin settings (connected repos,
+            // invites; #3412), so the backup is portable across a browser
+            // reset / device migration (P1 offline parity).
+            const payload = await exportPortableBackup(userId);
             const filename = backupFilename(userId);
             const outcome = await saveBackupToDisk(payload, filename);
             if (outcome.method === "cancelled") {
@@ -631,14 +630,12 @@ export default function BackupSection() {
         setBusy("import");
         try {
             const summary = await storage.backup.import(userId, pendingPayload);
-            // Restore the localStorage snapshot (preferences + contributions)
-            // frontend-side, in both storage modes — the backend ignores the
-            // payload's local_storage block. Legacy backups carry none -> no-op.
-            const localApplied = await restoreLocalStorageSnapshot(
-                pendingPayload.local_storage,
-            );
+            // Restore the localStorage snapshot and the plugin settings
+            // (#3412) frontend-side, in both storage modes — the backend
+            // ignores both blocks. Legacy backups carry none -> no-op.
+            const clientApplied = await restoreClientSnapshots(pendingPayload);
             // eslint-disable-next-line no-console -- round-trip trace, see below
-            console.log("[Backup] localStorage keys applied:", localApplied);
+            console.log("[Backup] client snapshots applied:", clientApplied);
             // #126 — surface the full result in the browser console so a
             // real Export -> Import round-trip is debuggable without a
             // backend log. Errors are logged separately as a list.
