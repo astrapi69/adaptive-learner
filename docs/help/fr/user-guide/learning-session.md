@@ -1,6 +1,6 @@
 # Session d'apprentissage
 
-Une session d'apprentissage est une séance guidée par l'IA suivant le
+Une session d'apprentissage est une session guidée par l'IA suivant le
 [cycle en sept étapes](../concept/seven-steps.md). Elle dure généralement
 entre 20 et 45 minutes.
 

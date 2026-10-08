@@ -66,5 +66,5 @@ Adaptive Learner を理解する最も早い方法は、**アプリ自身のレ�
 - [レッスンと復習](lessons.md) - レッスンの流れの詳細
 - [コンテンツブラウザ](../features/content-browser.md) - レッスンの検索とフィルタ
 - [ナビゲーション](navigation.md) - アプリ内での移動
-- [ダッシュボードを理解する](dashboard.md) - 進捗、ストリーク、XP、バッジ
+- [ダッシュボードを理解する](dashboard.md) - 進捗、連続記録、XP、バッジ
 - [はじめに](getting-started.md) - オンボーディング全体の概要

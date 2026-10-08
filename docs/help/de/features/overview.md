@@ -172,7 +172,7 @@ Siehe [Content-Browser](content-browser.md),
 - **XP und Level** mit sichtbarem XP-Badge und Belohnung pro Lektion.
 - **Gestufter Badge-Katalog** (Bronze/Silber/Gold; gesperrte Badges
   bleiben sichtbar mit Freischalt-Hinweis).
-- **Streaks** mit Heatmap und **tägliche Missionen** (bis zu drei
+- **Serien** mit Heatmap und **tägliche Missionen** (bis zu drei
   adaptive Ziele pro Tag).
 - **Celebrations**: verdientes, in der Intensität einstellbares Lob,
   Meilenstein-Overlays, optionale Sounds, alles
@@ -187,7 +187,7 @@ Siehe [Content-Browser](content-browser.md),
   bringen keine XP.
 - **Avatar**: ein eigenes Bild hochladen oder eine von acht
   vorgefertigten Figuren wählen, mit Zierrahmen, die sich mit Level,
-  Streak oder XP freischalten.
+  Serie oder XP freischalten.
 
 Siehe [Lob und Belohnungen](../user-guide/celebrations.md) und
 [Arcade](arcade.md).

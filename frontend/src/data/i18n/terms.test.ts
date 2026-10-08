@@ -6,13 +6,16 @@
  * showed the same streak number as 現在の連続記録 on one page and 現在のストリーク
  * on the next. Two words for one concept is the same failure as two
  * implementations of one rule: the majority tips per screen. This table is
- * the one place the decision lives; a catalog value that uses a rejected
- * term fails here, so the next translation PR cannot bring it back.
+ * one place the decision lives (``data/i18n-terms.json``); a catalog value
+ * that uses a rejected term fails here, so the next translation PR cannot
+ * bring it back. The help pages and the help glossary read the same table
+ * in ``scripts/verify_docs_help_terms.py`` (verify_docs ``help-terms``),
+ * which runs on every PR, help-only ones included.
  *
- * Scope: the bundled JSON catalogs (generated from backend/config/i18n by
- * make sync-i18n; i18n-sync.test.ts pins the two in sync). Placeholders like
- * ``{streak}`` are stripped first, so a key name inside a template never
- * counts. A new decision is a new row with its issue.
+ * Scope here: the bundled JSON catalogs (generated from backend/config/i18n
+ * by make sync-i18n; i18n-sync.test.ts pins the two in sync). Placeholders
+ * like ``{streak}`` are stripped first, so a key name inside a template
+ * never counts. A new decision is a new row with its issue.
  */
 
 import {readFileSync} from "node:fs";
@@ -29,16 +32,27 @@ interface TermRule {
     issue: string;
 }
 
-const TERMS: Record<string, TermRule[]> = {
-    de: [
-        {preferred: "Sitzung", rejected: /\bSessions?\b|Session-|-Session/, issue: "#3433"},
-        {preferred: "Serie", rejected: /\bStreaks?\b|Streak-|-Streak/, issue: "#3433"},
-        {preferred: "Serie", rejected: /[Ss]trähne/, issue: "#3433"},
-    ],
-    fr: [{preferred: "session", rejected: /\bséances?\b/i, issue: "#3433"}],
-    ja: [{preferred: "連続記録 / 連続", rejected: /ストリーク/, issue: "#3433"}],
-    ko: [{preferred: "연속", rejected: /스트릭/, issue: "#3433"}],
-};
+interface TermRow {
+    preferred: string;
+    rejected: string;
+    flags: string;
+    issue: string;
+}
+
+const TERM_TABLE = join(__dirname, "..", "i18n-terms.json");
+
+const TERMS: Record<string, TermRule[]> = Object.fromEntries(
+    Object.entries(
+        JSON.parse(readFileSync(TERM_TABLE, "utf-8")) as Record<string, TermRow[]>,
+    ).map(([lang, rows]) => [
+        lang,
+        rows.map((row) => ({
+            preferred: row.preferred,
+            rejected: new RegExp(row.rejected, row.flags),
+            issue: row.issue,
+        })),
+    ]),
+);
 
 const PLACEHOLDER = /\{[^}]*\}/g;
 
@@ -72,6 +86,12 @@ function load(lang: string): unknown {
 }
 
 describe("one term per concept (#3433)", () => {
+    it("reads the term table", () => {
+        // #2083 point 4: a missing or empty table would read as clean.
+        expect(Object.keys(TERMS).length).toBeGreaterThanOrEqual(4);
+        expect(TERMS.de.length).toBeGreaterThanOrEqual(3);
+    });
+
     it.each(Object.keys(TERMS))("the %s catalog uses no rejected term", (lang) => {
         const catalog = load(lang);
         // #2083 point 4: an empty catalog would read as clean.

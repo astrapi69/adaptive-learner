@@ -38,7 +38,7 @@ wer neu anfängt, eine kurze Seite.
   fällig ist.
 - **XP & Level** - dein Level, deine gesamten XP und ein
   Fortschrittsbalken zum nächsten Level. Vor deinen ersten XP
-  bittet sie dich, eine Session abzuschließen.
+  bittet sie dich, eine Sitzung abzuschließen.
 - **Serie** - deine aktuelle Serie, deine längste Serie und deine
   verfügbaren Freezes.
 - **Arcade** - der Einstieg in die Arcade mit deinem
@@ -68,20 +68,20 @@ Auswertungs-Diagramme.
 - **Serie** - ein Aktivitätsstreifen über sieben Tage mit einem
   Trend gegenüber der Vorwoche, darunter die Aktivitäts-Heatmap:
   ein Jahr in Wochenspalten von Montag bis Sonntag, eingefärbt
-  danach, wie viele Sessions du an dem Tag hattest. Die Heatmap
+  danach, wie viele Sitzungen du an dem Tag hattest. Die Heatmap
   öffnet auf der aktuellen Woche.
 - **Lernprofil** - das Radar-Diagramm deines
   6-Methoden-Profils aus dem Lerntyp-Test, mit einer Zeile, die
   deine stärkste Methode nennt. Ohne abgeschlossenen Test bietet
   die Karte **Lernprofil fortsetzen** (wenn du einen Test
   abgebrochen hast) oder **Lernprofil erstellen** an.
-- **Sitzungen** - Kacheln für Sessions, Minuten, aktuelle Serie,
+- **Sitzungen** - Kacheln für Sitzungen, Minuten, aktuelle Serie,
   durchschnittliches Verständnis und durchschnittlichen Stress.
 - **Fortschritt** - ein Zwei-Linien-Diagramm deiner
   **Verständnis**- und **Stress**-Bewertungen über deine jüngsten
-  Sessions, die älteste links.
+  Sitzungen, die älteste links.
 - **Methodenverteilung** - ein Balken pro Methode mit Anzahl und
-  Anteil der Sessions, die sie genutzt haben, die meistgenutzte
+  Anteil der Sitzungen, die sie genutzt haben, die meistgenutzte
   Methode zuerst.
 - **Werkzeug-Empfehlungen** - externe Werkzeuge, die zu deinem
   Profil passen, jedes mit einem kurzen „Warum" in deiner
@@ -90,7 +90,7 @@ Auswertungs-Diagramme.
   Methode, abhängig davon, wie lange du sie nicht mehr geübt hast
   (erstmals, Auffrischung, Wiederholung, Übung, Pflege). Eine
   weggeklickte Karte bleibt für den Rest des Tages ausgeblendet.
-- **Letzte Sessions** - deine jüngsten Sessions mit Methode,
+- **Letzte Sitzungen** - deine jüngsten Sitzungen mit Methode,
   Verständnis, Stress und Dauer. Ein Klick auf eine Zeile öffnet
   die Fortschritts-Seite.
 - **Lern-Repository** - ein Link zum versionierten Stand von
@@ -121,9 +121,9 @@ Methodenwechsel vor.
 - **Level** folgen einer wachsenden Kurve:
   `threshold(n) = 50 * n * (n - 1)`, Level 1 bis 5 beginnen also
   bei 0 / 100 / 300 / 600 / 1000 XP.
-- **Session-XP** - 50 XP Basis pro abgeschlossener Session, dazu
+- **Sitzungs-XP** - 50 XP Basis pro abgeschlossener Sitzung, dazu
   ein Bonus für jeden abgeschlossenen Zyklus und ein Bonus, wenn
-  du zum ersten Mal eine Session in einer Methode abschließt. Ein
+  du zum ersten Mal eine Sitzung in einer Methode abschließt. Ein
   täglicher Serien-Multiplikator gibt 25 % pro Serientag dazu,
   gedeckelt bei 7 Tagen (2,75-fach).
 - **Freezes** - pro 7 Serientage verdienst du einen Freeze und
@@ -137,8 +137,8 @@ Methodenwechsel vor.
 
 Unter den Tabs, auf jedem Tab:
 
-- **Neue Session starten** - öffnet die Session-Seite. Der Button
-  zeigt die Methode aus deinem Lernprofil, mit der die Session
+- **Neue Sitzung starten** - öffnet die Sitzungsseite. Der Button
+  zeigt die Methode aus deinem Lernprofil, mit der die Sitzung
   beginnt. Ohne KI-Schlüssel im Browser-Modus ist der Button
   deaktiviert.
 - **Ausspracheübung** - nur bei Projekten mit dem Subject

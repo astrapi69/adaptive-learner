@@ -71,6 +71,6 @@ AI セッションにはインターネットが必要です。
 - [コンテンツブラウザ](../features/content-browser.md) - レッスンの検索とフィルタ
 - [複数のコンテンツリポジトリ](../features/content-repos.md) - 自分のコンテンツソースを接続する
 - [バックアップと復元](../features/backup.md)
-- [ダッシュボードを理解する](dashboard.md) - 進捗、ストリーク、XP、バッジ
+- [ダッシュボードを理解する](dashboard.md) - 進捗、連続記録、XP、バッジ
 - [FAQ - よくある質問](faq.md)
 - [アプリの背後にある教育的な考え方](../concept/philosophy.md)

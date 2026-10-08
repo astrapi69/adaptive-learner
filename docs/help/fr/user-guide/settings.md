@@ -243,12 +243,12 @@ leçon* suit directement *Pendant la leçon*.
 
 ### Après la leçon
 
-Séances de révision, résumé de la leçon et reprise des erreurs.
+Sessions de révision, résumé de la leçon et reprise des erreurs.
 
 - **Révision** - les explications après la réponse (l'explication
   rédigée par l'auteur d'un exercice, affichée sous l'exercice une fois
   vérifié, et les conseils de règle générés automatiquement après une
-  leçon) et le nombre de questions par séance de révision. Le
+  leçon) et le nombre de questions par session de révision. Le
   commutateur « Réviser aussi les éléments sans erreur » (désactivé par
   défaut) décide si la révision ne contient que les éléments avec des
   erreurs ou ramène aussi, après 3 et 7 jours, des éléments que vous

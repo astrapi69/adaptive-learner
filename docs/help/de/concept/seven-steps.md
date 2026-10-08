@@ -1,6 +1,6 @@
 # Der Sieben-Schritt-Zyklus
 
-Jede Session läuft durch einen 7-Schritt-Lernzyklus. Die
+Jede Sitzung läuft durch einen 7-Schritt-Lernzyklus. Die
 Schritte kommen aus der Artikel-Serie *Von Theorie zur
 Praxis* und spiegeln den tatsächlichen kognitiven Bogen
 beim Erwerb einer neuen Fertigkeit.
@@ -27,7 +27,7 @@ vorherigen ab:
   probier's später." Diese Verzögerung erodiert den
   Abruf. Schritt 2 erzwingt sofortige Anwendung.
 - **Versuch → Fehler** ist die produktive Reibung. Der
-  Fehler ist *Information*. Eine Lern-Session, die Fehler
+  Fehler ist *Information*. Eine Lernsitzung, die Fehler
   durch nur einfache Fragen vermeidet, sagt dir nichts
   über dein Verständnis.
 - **Fehler → Feedback** ist, wo das tiefste Lernen
@@ -60,7 +60,7 @@ Jeder übersprungene Schritt kostet dich:
   den die KI diagnostizieren kann. Lernen versickert.
 - **Feedback überspringen**: du hattest einen Fehler, hast
   aber die Erklärung nicht verarbeitet. Bei der nächsten
-  Session machst du denselben Fehler.
+  Sitzung machst du denselben Fehler.
 - **Anpassen überspringen**: du hast zum Feedback genickt,
   aber dein mentales Modell nicht wirklich geändert. Der
   nächste Versuch deckt es auf.
@@ -128,7 +128,7 @@ gemini-flash) ein Bruchteil eines Cents pro Austausch.
 
 ## Zyklus-Fortschrittsanzeige
 
-Die Session-Seite rendert oben einen 7-Kreise-Streifen.
+Die Sitzungsseite rendert oben einen 7-Kreise-Streifen.
 Gefüllt = erledigt; der aktuelle Schritt-Kreis ist in der
 Akzentfarbe des Projekts und pulsiert leicht während die KI
 nachdenkt. Bei Schritt-Übergängen (vor oder zurück)
@@ -152,7 +152,7 @@ und ob ein neuer Zyklus starten soll.
 Bei `integrated=true ∧ continue_recommended=true`:
 `cycle_step` springt auf 1, `cycle_count` erhöht sich um 1,
 ein neues Unterthema wird gewählt. Hartcap `max_cycles=5`
-pro Session verhindert Endlosschleifen. Ein deterministischer
+pro Sitzung verhindert Endlosschleifen. Ein deterministischer
 Fallback erhält das Cap-bei-7-Verhalten bei jedem
 KI- / Parse-Fehler.
 
