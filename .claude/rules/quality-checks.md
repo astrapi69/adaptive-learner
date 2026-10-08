@@ -166,8 +166,11 @@ A PR that changes a visually critical path MUST carry the affected
 `e2e/visual/screenshots/` baselines IN THE SAME PR - never hope for the next
 nightly run. Enforced by `.github/workflows/visual-baseline-gate.yml`, whose
 filter is deliberately coarse: all of `frontend/src/pages/**`,
-`frontend/src/components/**`, `frontend/src/shared/**`, and
-`frontend/src/styles/**`. A curated per-directory list (lesson/exercises/CSS
+`frontend/src/components/**`, `frontend/src/shared/**`,
+`frontend/src/styles/**`, and the UI catalogs (`frontend/src/data/i18n/**`,
+`backend/config/i18n/**`; #3687: a text change is a rendering change, and a
+word swap under the diff tolerance leaves baselines that show old words with
+every compare green). A curated per-directory list (lesson/exercises/CSS
 only) missed `components/settings/**` (#2546) after already causing
 #1628/#1638/#1635 in the same shape - view names in `e2e/visual/helpers.ts`
 don't map 1:1 onto source directories (statistics lives under
