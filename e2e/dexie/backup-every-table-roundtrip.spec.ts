@@ -68,15 +68,22 @@ function readRegistry(): {tables: TableInfo[]; secret: Set<string>} {
 }
 
 const {tables: TABLES, secret: SECRET_TABLES} = readRegistry();
-/** Tables whose round trip is broken by a known, filed defect. They are
- *  asserted to STILL differ, so a fix fails this spec until the entry goes.
- *  #3694: the restore matches by id only, so a device that already holds its
- *  own badge catalog (random ids) or a default streak row (written on the
- *  read path) keeps those and loses the backup's. */
-const KNOWN_BROKEN = new Map([
-    ["badges", "#3694"],
-    ["user_streaks", "#3694"],
-]);
+/** Tables whose round trip is broken by a known, filed defect, by issue.
+ *  They are asserted to STILL differ, so a fix fails this spec until the
+ *  entry goes. Empty since #3694 (badges, user_streaks) was fixed. */
+const KNOWN_BROKEN = new Map<string, string>();
+
+/**
+ * Rows whose id is local to the device, so a correct restore keeps the local
+ * id and the two exports differ in it (#3694). They are compared by identity
+ * instead:
+ * - the badge catalog is seeded per device with random ids: by ``key``;
+ * - an earned badge points at the catalog by id: by the badge's ``key``;
+ * - a per-user singleton (``&user_id``) the app may already have written:
+ *   without its ``id``.
+ */
+const DEVICE_LOCAL_ID = new Set(["badges", "user_streaks", "user_xp", "user_settings"]);
+const BY_BADGE_KEY = new Set(["user_badges"]);
 
 /** The learner the import runs into; every other backup store is wiped. */
 const KEPT = new Set(["users", "user_settings"]);
@@ -101,11 +108,28 @@ async function exportBackup(page: Page): Promise<{bytes: Buffer; name: string; d
     return {bytes, name: download.suggestedFilename(), data: parsed.data};
 }
 
-/** Rows of one table in a stable order, so two exports compare by content. */
-function sorted(rows: Record<string, unknown>[] | undefined): string {
-    return JSON.stringify(
-        [...(rows ?? [])].sort((a, b) => String(a.id).localeCompare(String(b.id))),
-    );
+/** Rows of one table in a stable order, so two exports compare by content.
+ *  Device-local ids are replaced by their identity (see DEVICE_LOCAL_ID). */
+function comparable(name: string, data: Rows): string {
+    const badgeKey = new Map((data.badges ?? []).map((b) => [String(b.id), String(b.key)]));
+    const rows = (data[name] ?? []).map((row) => {
+        const out: Record<string, unknown> = {...row};
+        if (name === "badges") {
+            delete out.id;
+            delete out.created_at;
+            delete out.updated_at;
+        } else if (DEVICE_LOCAL_ID.has(name)) {
+            delete out.id;
+        }
+        // The streak read path rewrites updated_at on every read
+        // (storage/gamification/streaks.ts), before and after the restore.
+        if (name === "user_streaks") delete out.updated_at;
+        if (BY_BADGE_KEY.has(name)) out.badge_id = badgeKey.get(String(row.badge_id)) ?? row.badge_id;
+        // A merged row puts the local fields first; key order is not content.
+        return Object.fromEntries(Object.entries(out).sort(([a], [b]) => a.localeCompare(b)));
+    });
+    const order = (r: Record<string, unknown>) => String(r.id ?? r.key ?? r.user_id ?? JSON.stringify(r));
+    return JSON.stringify(rows.sort((a, b) => order(a).localeCompare(order(b))));
 }
 
 test.describe("Backup — every BACKUP_TABLES table round-trips (Dexie)", () => {
@@ -201,6 +225,17 @@ test.describe("Backup — every BACKUP_TABLES table round-trips (Dexie)", () => 
                             element_key: "hola",
                             direction: "target_to_source",
                             run_id: 1,
+                        },
+                        // The full shape the streak producer writes: a
+                        // field the backup lacks would come from the local
+                        // row on merge and read as a difference.
+                        user_streaks: {
+                            current_streak_days: 2,
+                            longest_streak_days: 7,
+                            freezes_available: 1,
+                            weekend_mode: true,
+                            last_freeze_earned_on: null,
+                            last_freeze_used_on: null,
                         },
                         user_badges: {badge_id: "e2e-badge"},
                         badges: {key: "e2e-badge"},
@@ -306,7 +341,7 @@ test.describe("Backup — every BACKUP_TABLES table round-trips (Dexie)", () => 
         // --- Second export: every table equals the first ------------------
         const second = await exportBackup(page);
         const differing = TABLES.filter(
-            (t) => sorted(first.data[t.name]) !== sorted(second.data[t.name]),
+            (t) => comparable(t.name, first.data) !== comparable(t.name, second.data),
         ).map(
             (t) =>
                 `${t.name} (${first.data[t.name]?.length ?? 0} -> ${second.data[t.name]?.length ?? 0} rows)`,
