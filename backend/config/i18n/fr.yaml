@@ -72,11 +72,14 @@ nav:
     progress: "Progrès"
     more: "Plus"
   primary: "Navigation principale"
+  statistics: "Statistiques"
   profile: "Ton profil"
   learning_path: "Parcours d'apprentissage"
   dashboard: Tableau de bord
   session: Session
+  curriculum: Programme
   progress: Progrès
+  import: "Importer"
   settings: Paramètres
   help: Aide
   home: Accueil

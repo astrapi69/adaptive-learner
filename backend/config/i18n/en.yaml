@@ -72,11 +72,14 @@ nav:
     progress: "Progress"
     more: "More"
   primary: "Primary navigation"
+  statistics: "Statistics"
   profile: "Your profile"
   learning_path: "Learning Path"
   dashboard: Dashboard
   session: Session
+  curriculum: Curriculum
   progress: Progress
+  import: Import
   settings: Settings
   help: Help
   home: Home
