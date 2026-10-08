@@ -404,6 +404,7 @@ review:
   no_data: Belum ada sesi - mulai sesi pertama Anda untuk melihat tren.
   pronunciation_quick_start: Latihan Pelafalan
 session:
+  auto_loop_unavailable: "Di aplikasi desktop, siklus baru dengan topik berikutnya dimulai otomatis setelah langkah 7. Versi browser belum bisa melakukannya: akhiri sesi dan mulai sesi baru untuk melanjutkan belajar."
   title: Sesi belajar
   topic_label: "Topik"
   in_progress: Sesi sedang berlangsung
