@@ -124,6 +124,8 @@ gösterir.
 
 ## Otomatik döngü + konu geçişleri
 
+> Tarayıcı sürümünde oturum 7. adımda kalır: otomatik döngü yalnızca masaüstü uygulamasında çalışır. 7. adıma ulaştığınızda oturum sayfası bunu belirtir.
+
 7. adım artık bir çıkmaz sokak değildir. Adım değerlendirici sizi
 `advance=true` ile 7. adıma taşıdıktan sonra, üçüncü bir yapay zeka
 çağrısı - konu-geçiş değerlendirici - konunun bütünleştirilip

@@ -47,6 +47,7 @@ Gönderdiğiniz her mesaj en fazla üç yapay zeka çağrısı tetikler:
    bütünleşmediğine karar verir. Evet VE `continue_recommended`
    ise yeni bir döngü, yeni bir alt konuyla otomatik olarak başlar
    (otomatik döngü, oturum başına en fazla 5 döngü).
+   Yalnızca masaüstü uygulamasında: tarayıcı sürümünde oturum 7. adımda kalır.
 
 Karar, gerçekten geçerli olduğunda sohbetin üzerinde ayrık
 biçimde "Adım X'ten Y'ye taşındı çünkü…" bildirimi olarak

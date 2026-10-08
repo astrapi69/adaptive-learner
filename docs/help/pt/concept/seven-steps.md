@@ -133,6 +133,8 @@ descrevendo o passo do ciclo anterior/seguinte.
 
 ## Auto-loop + transições de tópico
 
+> Na versão do navegador, a sessão fica no passo 7: o auto-loop só funciona na aplicação de desktop. A página da sessão avisa quando chega ao passo 7.
+
 O passo 7 já não é um beco sem saída. Assim que o avaliador de
 passo o move para o passo 7 com `advance=true`, uma terceira
 chamada de IA - o avaliador de transição de tópico - julga se

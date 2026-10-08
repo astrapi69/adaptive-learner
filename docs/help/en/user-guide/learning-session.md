@@ -50,6 +50,7 @@ Every message you send triggers up to three AI calls:
    integrated. If yes AND `continue_recommended`, a new cycle
    starts automatically with a fresh subtopic (auto-loop,
    max 5 cycles per session).
+   Desktop app only: in the browser version the session stays at step 7.
 
 The verdict is shown discreetly above the chat as a "Step
 moved from X to Y because…" notification when it actually

@@ -1,4 +1,5 @@
 import {lazy, Suspense} from "react";
+import {Monitor} from "lucide-react";
 import {useNavigate, useSearchParams} from "react-router";
 
 // assistant-ui adoption (#1126): the session chat surface. Lazy so its
@@ -14,6 +15,7 @@ import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNot
 import {Button} from "@/components/ui/button";
 import {FEATURES} from "../../features/featureConfig";
 import {useFeatureAvailable} from "../../features/useFeatureAvailable";
+import {CYCLE_STEPS} from "../../lib/constants";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useOnlineStatus} from "../../hooks/system/useOnlineStatus";
 import {
@@ -59,6 +61,9 @@ export default function Session() {
     // entry buttons). API mode stays permissive — the key may be resolved
     // server-side — so this only fires in Dexie mode without a key.
     const sessionGate = useFeatureAvailable(FEATURES.SESSION_START);
+    // #3436 - the browser build has no auto-loop; at step 7 the page says
+    // so instead of silently staying there (feature-state policy #335).
+    const autoLoop = useFeatureAvailable(FEATURES.SESSION_AUTO_LOOP);
 
     const {
         session,
@@ -180,6 +185,22 @@ export default function Session() {
                     onExchange={applyExchangeOutcome}
                 />
             </Suspense>
+
+            {!autoLoop.available && session.cycle_step >= CYCLE_STEPS.length && (
+                <p
+                    role="status"
+                    data-testid="session-auto-loop-unavailable"
+                    className="mt-4 flex items-start gap-2 rounded-app border border-border bg-card px-3 py-2 text-sm text-fg-secondary"
+                >
+                    <Monitor size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
+                    <span>
+                        {t(
+                            "session.auto_loop_unavailable",
+                            "In the desktop app a new cycle with the next topic starts automatically after step 7. The browser version cannot do that yet: end the session and start a new one to keep learning.",
+                        )}
+                    </span>
+                </p>
+            )}
 
             <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">
                 <Button
