@@ -35,6 +35,15 @@ import {MANAGED_USER_DATA_KEYS, mirrorUserData} from "../../storage/dexie/dexie-
  *    writes. Snapshotting it makes a backup non-deterministic (a second
  *    export in the same session differs from the first by this timestamp)
  *    and it carries no learning data — exclude it (#792 regression).
+ *  - #3429, state that belongs to THIS device, not to the learner:
+ *    `sync-queue` (API-mode writes queued while offline; restored on
+ *    another device they would be posted again, stale), the
+ *    `search_index::` and `media-resources` caches (refetched anyway),
+ *    the auto-backup bookkeeping (`auto_backup_session_counter`,
+ *    `auto_backup_last_at`; the `auto_backup_enabled` preference still
+ *    travels) and the LAN-sync cursor `sync.last_sync_at` (restored
+ *    elsewhere it could make that device skip changes). The diagnostics
+ *    keys stay carried on purpose (#2785).
  */
 export const BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS: readonly string[] = [
     "github_token",
@@ -45,6 +54,12 @@ export const BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS: readonly string[] = [
     "password",
     "storage_mode",
     "last_backup_at",
+    "sync-queue",
+    "search_index::",
+    "media-resources",
+    "auto_backup_session_counter",
+    "auto_backup_last_at",
+    "sync.last_sync_at",
 ];
 
 /** App namespace — only our own keys are snapshotted, never third-party. */

@@ -140,6 +140,23 @@ describe("captureLocalStorageSnapshot", () => {
         expect(snap["adaptive-learner.nav_position"]).toBe("bottom");
     });
 
+    it.each([
+        "adaptive-learner.sync-queue",
+        "adaptive-learner.search_index::astrapi69/adaptive-learner-content",
+        "adaptive-learner.media-resources",
+        "adaptive-learner.auto_backup_session_counter",
+        "adaptive-learner.auto_backup_last_at",
+        "adaptive-learner.sync.last_sync_at",
+    ])("excludes the device-local %s (#3429)", (key) => {
+        localStorage.setItem(key, "x");
+        expect(captureLocalStorageSnapshot()).not.toHaveProperty([key]);
+    });
+
+    it("carries the auto-backup preference itself (#3429: only its bookkeeping stays home)", () => {
+        localStorage.setItem("adaptive-learner.auto_backup_enabled", "true");
+        expect(captureLocalStorageSnapshot()["adaptive-learner.auto_backup_enabled"]).toBe("true");
+    });
+
     it("excludes the device-local storage_mode key", () => {
         localStorage.setItem("adaptive-learner.storage_mode", "dexie");
         expect(captureLocalStorageSnapshot()).not.toHaveProperty(
@@ -183,6 +200,16 @@ describe("applyLocalStorageSnapshot", () => {
         expect(applied).toBe(1);
         expect(localStorage.getItem("adaptive-learner.github_token")).toBeNull();
         expect(localStorage.getItem("adaptive-learner.theme")).toBe("sepia");
+    });
+
+    it("does not write back the offline queue an older backup carried (#3429)", () => {
+        const applied = applyLocalStorageSnapshot({
+            "adaptive-learner.sync-queue": '[{"id":"1","path":"/p","method":"POST","body":{}}]',
+            "adaptive-learner.hint_mode": "off",
+        });
+        expect(applied).toBe(1);
+        expect(localStorage.getItem("adaptive-learner.sync-queue")).toBeNull();
+        expect(localStorage.getItem("adaptive-learner.hint_mode")).toBe("off");
     });
 
     it("is a no-op for a legacy backup with no snapshot", () => {
