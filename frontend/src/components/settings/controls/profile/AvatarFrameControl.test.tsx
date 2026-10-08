@@ -2,7 +2,9 @@
  * Tests for AvatarFrameControl (#2850): the seven options render with
  * their lock states, selecting an unlocked frame persists and fires
  * the profile signal, and the XP purchase is a guarded two-step
- * (affordability check first - spendXp never rejects on its own).
+ * (affordability check first). Since #3445 the purchase is one ledger
+ * event (``purchaseItem``), and ownership follows the ledger: a frame
+ * bought in another browser shows as owned here.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -11,9 +13,12 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const getState = vi.fn();
 const listBadges = vi.fn();
-const spendXp = vi.fn();
+const purchaseItem = vi.fn();
+const listPurchases = vi.fn();
 vi.mock("../../../../storage", () => ({
-    getStorage: () => ({gamification: {getState, listBadges, spendXp}}),
+    getStorage: () => ({
+        gamification: {getState, listBadges, purchaseItem, listPurchases},
+    }),
 }));
 
 const notifySuccess = vi.fn();
@@ -45,7 +50,8 @@ beforeEach(() => {
         {key: "streak_3_days", earned: false},
         {key: "first_session", earned: true},
     ]);
-    spendXp.mockReset().mockResolvedValue(xpState(50, 3));
+    purchaseItem.mockReset().mockResolvedValue({xp: xpState(50, 3)});
+    listPurchases.mockReset().mockResolvedValue([]);
     notifySuccess.mockClear();
     notifyError.mockClear();
 });
@@ -92,23 +98,27 @@ describe("AvatarFrameControl", () => {
         // star costs 150, total_xp 200 -> affordable.
         const buy = screen.getByTestId("settings-avatar-frame-buy-star");
         fireEvent.click(buy);
-        expect(spendXp).not.toHaveBeenCalled();
+        expect(purchaseItem).not.toHaveBeenCalled();
         await act(async () => {
             fireEvent.click(buy);
         });
-        expect(spendXp).toHaveBeenCalledWith("u1", 150, "avatar_frame");
+        expect(purchaseItem).toHaveBeenCalledWith("u1", {
+            item_kind: "avatar_frame",
+            item_id: "star",
+            cost: 150,
+        });
         expect(readAvatarFrameState("u1").purchased).toContain("star");
         expect(readAvatarFrameState("u1").selected).toBe("star");
     });
 
-    it("an unaffordable XP frame cannot be bought (spendXp clamps, so we must guard)", async () => {
+    it("an unaffordable XP frame cannot be bought", async () => {
         getState.mockResolvedValue(xpState(100, 3));
         await renderControl();
         // accent costs 300, total_xp 100 -> button disabled.
         expect(
             screen.getByTestId("settings-avatar-frame-buy-accent"),
         ).toBeDisabled();
-        expect(spendXp).not.toHaveBeenCalled();
+        expect(purchaseItem).not.toHaveBeenCalled();
     });
 
     it("a purchased XP frame renders as selectable, not buyable", async () => {
@@ -124,5 +134,28 @@ describe("AvatarFrameControl", () => {
         expect(
             screen.getByTestId("settings-avatar-frame-star"),
         ).not.toBeDisabled();
+    });
+
+    it("a frame bought in another browser shows as owned (#3445)", async () => {
+        listPurchases.mockResolvedValue([
+            {
+                id: "p1",
+                user_id: "u1",
+                item_kind: "avatar_frame",
+                item_id: "accent",
+                cost: 300,
+                purchased_at: "2026-10-01T00:00:00Z",
+            },
+        ]);
+        await renderControl();
+        await waitFor(() =>
+            expect(
+                screen.queryByTestId("settings-avatar-frame-buy-accent"),
+            ).not.toBeInTheDocument(),
+        );
+        expect(
+            screen.getByTestId("settings-avatar-frame-accent"),
+        ).not.toBeDisabled();
+        expect(purchaseItem).not.toHaveBeenCalled();
     });
 });

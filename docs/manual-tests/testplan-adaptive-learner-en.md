@@ -3440,6 +3440,14 @@ Location: Settings > General > Profile, below the figure gallery.
 - [ ] TC-0831 Backup round-trip: pick a frame + buy one, export (`.alb`), wipe
       data, import - selection and purchase are back
 - [ ] TC-0832 Both storage modes behave identically (XP deduction included)
+- [ ] TC-0951 Ownership follows the purchase, not the browser (#3445, API mode):
+      buy the Star frame, then open the same user in a second browser (or
+      after clearing site data) and go to Settings > General > Profile:
+      Star is unlocked and selectable, the XP was deducted only once. The
+      same for the Gold mascot variant and an arcade game
+- [ ] TC-0952 Purchases from before #3445: a frame bought before the update stays
+      unlocked after it, the XP does not change when the gallery first
+      opens, and afterwards the frame is unlocked in a second browser too
 
 ### TS-0120 Review: errors only, no endless round (#3170)
 

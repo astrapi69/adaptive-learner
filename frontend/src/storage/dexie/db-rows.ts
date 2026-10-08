@@ -314,6 +314,21 @@ export interface UserXPRow {
     updated_at: string;
 }
 
+/**
+ * One XP purchase (#3445). Mirrors the backend ``xp_purchases`` table
+ * (Alembic 0040). ``id`` is the uuid5 of (user, kind, item) in both
+ * storage modes, so the same purchase is the same row on every device;
+ * the ``&[user_id+item_kind+item_id]`` index is the DB-level backstop.
+ */
+export interface XpPurchaseRow {
+    id: string;
+    user_id: string;
+    item_kind: "avatar_frame" | "mascot_variant" | "arcade_game";
+    item_id: string;
+    cost: number;
+    purchased_at: string;
+}
+
 /** Badge catalog row (Phase 29B). */
 export interface BadgeRow {
     id: string;
