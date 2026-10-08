@@ -3132,7 +3132,7 @@ Location: Settings → Data → Recommended repositories.
       again"; once the backend runs, the click loads the history
 - [ ] TC-0732 Imported session opens with the AI asking the first question on its own
       (no user turn first), the chat starts clean
-- [ ] TC-0949 Auto-loop in the browser version (#3436): in the Pages build (Dexie)
+- [ ] TC-0950 Auto-loop in the browser version (#3436): in the Pages build (Dexie)
       take a session to step 7; below the chat a notice with a monitor icon
       appears: in the desktop app a new cycle starts automatically after
       that, the browser version cannot do it yet. No notice before step 7;
