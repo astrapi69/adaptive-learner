@@ -513,6 +513,28 @@ describe("content sets in backup (#130)", () => {
         expect(lesson?.body).toBe('{"id":"01"}');
     });
 
+    it("#3395 - keeps visibility, review status, evaluation, book, attribution and status", async () => {
+        const {user} = await seedUser();
+        const setPk = await seedContentSet();
+        const db = getDb();
+        const carried = {
+            visibility: "hidden" as const,
+            review_status: "generated" as const,
+            evaluation: {pass_percent: 80},
+            book: {title: "Le Petit Prince", author: "Saint-Exupéry"},
+            attribution: {author: "Original Author"},
+            status: "deferred" as const,
+        };
+        await db.contentSets.update(setPk, carried);
+        const payload = await createDexieBackup(user.id, "test");
+        await db.contentSets.clear();
+        await db.contentSetFiles.clear();
+
+        await restoreDexieBackup(user.id, payload);
+        const row = await db.contentSets.get(setPk);
+        expect(row).toMatchObject(carried);
+    });
+
     it("skips a content set that is already cached", async () => {
         const {user} = await seedUser();
         await seedContentSet();

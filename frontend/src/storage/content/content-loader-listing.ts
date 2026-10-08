@@ -9,7 +9,7 @@
  */
 
 import { asContentSetEntry, parseManifest } from "../../lib/content/engine";
-import type { ParsedManifest } from "../../lib/content/engine";
+import type { ParsedManifest, ParsedSet } from "../../lib/content/engine";
 
 import type {
   ContentSetEntry,
@@ -93,6 +93,34 @@ export function dedupeContentEntries(
   return [...winners.values()];
 }
 
+/** The manifest set entry a cached row was written from (#3395), so the
+ *  engine projection rebuilds the listing entry: same defaults as a fresh
+ *  listing, and ``visibility`` / ``review_status`` / ``evaluation`` carried
+ *  instead of dropped. */
+function rowAsParsedSet(row: ContentSetRow, tags: string[]): ParsedSet {
+  return {
+    id: row.set_id,
+    title: row.title,
+    ...(row.title_native ? { title_native: row.title_native } : {}),
+    target_language: row.target_language ?? row.language,
+    ...(row.source_language ? { source_language: row.source_language } : {}),
+    level: row.level,
+    version: row.version,
+    lesson_count: row.lesson_count,
+    domain: row.domain,
+    description: row.description,
+    tags,
+    cover_image: row.cover_image,
+    ...(row.book ? { book: row.book } : {}),
+    ...(row.visibility ? { visibility: row.visibility } : {}),
+    ...(row.review_status ? { review_status: row.review_status } : {}),
+    attribution: row.attribution ?? null,
+    evaluation: row.evaluation ?? null,
+  };
+}
+
+/** A cached row as a listing entry, through the engine's
+ *  ``asContentSetEntry`` like every other set (#3395). */
 export async function rowToCachedEntry(
   row: ContentSetRow,
 ): Promise<ContentSetEntry> {
@@ -105,30 +133,48 @@ export async function rowToCachedEntry(
   } catch {
     /* malformed JSON in the tags column — fall through */
   }
-  const target = row.target_language ?? row.language;
-  const source = row.source_language ?? "en";
+  return asContentSetEntry(
+    { source: row.source, branch: row.branch },
+    rowAsParsedSet(row, tags),
+    row.version,
+    row.downloaded_at ?? null,
+    row.status ?? "active",
+  );
+}
+
+/** The row a listing entry is cached as: the inverse of
+ *  {@link rowToCachedEntry}, so download and read share one field list
+ *  (#3395). */
+export function entryToRow(
+  entry: ContentSetEntry,
+  id: string,
+  manifestYaml: string,
+): ContentSetRow {
   return {
-    source: row.source,
-    branch: row.branch,
-    id: row.set_id,
-    title: row.title,
-    title_native: row.title_native ?? null,
-    language: target,
-    target_language: target,
-    source_language: source,
-    level: row.level,
-    domain: row.domain,
-    version: row.version,
-    lesson_count: row.lesson_count,
-    description: row.description,
-    tags,
-    cover_image: row.cover_image,
-    cached_version: row.version,
-    update_available: false,
-    downloaded_at: row.downloaded_at ?? null,
-    status: row.status ?? "active",
-    book: row.book ?? null,
-    attribution: row.attribution ?? null,
+    id,
+    source: entry.source,
+    branch: entry.branch,
+    set_id: entry.id,
+    version: entry.version,
+    title: entry.title,
+    title_native: entry.title_native ?? null,
+    language: entry.target_language,
+    target_language: entry.target_language,
+    source_language: entry.source_language,
+    level: entry.level,
+    domain: entry.domain,
+    lesson_count: entry.lesson_count,
+    description: entry.description,
+    tags: JSON.stringify(entry.tags),
+    cover_image: entry.cover_image,
+    downloaded_at: entry.downloaded_at ?? new Date().toISOString(),
+    status: entry.status ?? "active",
+    manifest_yaml: manifestYaml,
+    book: entry.book ?? null,
+    attribution: entry.attribution ?? null,
+    visibility: entry.visibility,
+    review_status: entry.review_status,
+    evaluation: entry.evaluation ?? null,
   };
 }
 

@@ -403,6 +403,51 @@ sets:
     });
   });
 
+  it("#3395 - a cached-only set keeps visibility, review status and evaluation", async () => {
+    // The repo-level entry carries the three fields the engine projects.
+    const flaggedRepoManifest = `
+schema_version: '1.0'
+name: Adaptive Learner Pilot
+sets:
+  - id: language-fr-a1
+    title: French A1
+    language: fr
+    level: A1
+    version: '1.0.0'
+    lesson_count: 1
+    domain: language
+    visibility: hidden
+    review_status: generated
+    evaluation:
+      pass_percent: 80
+`.trim();
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: flaggedRepoManifest,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
+    });
+    const entry = await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(entry).toMatchObject({
+      visibility: "hidden",
+      review_status: "generated",
+      evaluation: { pass_percent: 80 },
+    });
+
+    // Upstream unreachable: the list is built from the cached row alone.
+    installFetchMock({ [`/${SOURCE}/${BRANCH}/manifest.yaml`]: null });
+    const list = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
+    const cached = list.sets.find((s) => s.source === SOURCE && s.id === SET_ID);
+    expect(cached).toMatchObject({
+      cached_version: "1.0.0",
+      visibility: "hidden",
+      review_status: "generated",
+      evaluation: { pass_percent: 80 },
+    });
+  });
+
   it("reports per-lesson download progress (DIS-06)", async () => {
     installFetchMock({
       [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,

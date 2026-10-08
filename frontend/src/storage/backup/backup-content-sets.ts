@@ -86,6 +86,11 @@ interface ManifestSetMeta {
     lesson_count?: number;
     tags?: string[];
     cover_image?: string | null;
+    book?: ContentSetRow["book"];
+    attribution?: ContentSetRow["attribution"];
+    visibility?: ContentSetRow["visibility"];
+    review_status?: ContentSetRow["review_status"];
+    evaluation?: ContentSetRow["evaluation"];
 }
 
 /** Extract a set's metadata from a ``manifest.yaml`` body (#134).
@@ -177,6 +182,30 @@ function resolveContentSetText(
     };
 }
 
+/** The fields a cached row carries beyond the listing basics (#3395):
+ *  the carried Dexie ``meta`` first, else the manifest set entry. A field
+ *  neither has stays absent, so the engine projection fills its default on
+ *  read (``visible``, ``authored``, no evaluation). The lifecycle
+ *  ``status`` is the learner's, so it comes from ``meta`` only. */
+function resolveCarriedSetFields(
+    meta: Partial<ContentSetRow>,
+    fromManifest: ManifestSetMeta,
+): Partial<ContentSetRow> {
+    const carried: Partial<ContentSetRow> = {};
+    if (meta.status) carried.status = meta.status;
+    const book = meta.book ?? fromManifest.book;
+    if (book) carried.book = book;
+    const attribution = meta.attribution ?? fromManifest.attribution;
+    if (attribution) carried.attribution = attribution;
+    const visibility = meta.visibility ?? fromManifest.visibility;
+    if (visibility) carried.visibility = visibility;
+    const reviewStatus = meta.review_status ?? fromManifest.review_status;
+    if (reviewStatus) carried.review_status = reviewStatus;
+    const evaluation = meta.evaluation ?? fromManifest.evaluation;
+    if (evaluation) carried.evaluation = evaluation;
+    return carried;
+}
+
 /** Build a ``ContentSetRow`` for restore: prefer the carried Dexie
  *  ``meta``, else recover the metadata from the manifest, else fall
  *  back to minimal defaults (lessons still open since the viewer reads
@@ -203,5 +232,6 @@ function buildContentSetRow(setPk: string, entry: ContentSetBackupEntry): Conten
         tags: meta.tags ?? manifestTags ?? "[]",
         downloaded_at: meta.downloaded_at ?? nowIso(),
         manifest_yaml: meta.manifest_yaml ?? manifest?.body ?? "",
+        ...resolveCarriedSetFields(meta, fromManifest),
     };
 }
