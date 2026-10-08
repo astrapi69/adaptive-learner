@@ -510,9 +510,16 @@ export async function settleForScreenshot(
     page: Page,
     options: SettleOptions = {},
 ): Promise<void> {
+    // #3688 - the toast timer bar is spared. react-toastify closes a toast
+    // on that bar's ``animationend``; cutting an animation that is already
+    // running to 0s did not fire it in Chromium (diagnosed: focus and
+    // visibility fine, play state running, duration 0s), so a toast that
+    // appeared just before this tag never closed. Its own autoClose then
+    // ends it inside the cap below.
     await page.addStyleTag({
         content:
-            "*, *::before, *::after { animation-duration: 0s !important;" +
+            "*:not(.Toastify__progress-bar), *::before, *::after {" +
+            " animation-duration: 0s !important;" +
             " animation-delay: 0s !important; transition-duration: 0s !important;" +
             " transition-delay: 0s !important; caret-color: transparent !important; }",
     });
@@ -580,10 +587,11 @@ export async function settleForScreenshot(
 /**
  * Why a toast is still on screen (#3688): its text, whether it is an
  * auto-closing toast at all (an error toast has no timer bar), and the timer
- * bar's play state, next to the page's focus and visibility. react-toastify
- * closes a toast on the bar's ``animationend`` and pauses the bar on hover
- * and, with ``pauseOnFocusLoss``, while the document has no focus; a toast
- * that outlives its autoClose had a paused bar, and this names the cause.
+ * bar's play state and duration, next to the page's focus and visibility.
+ * react-toastify closes a toast on the bar's ``animationend``; it pauses the
+ * bar on hover and, with ``pauseOnFocusLoss``, while the document has no
+ * focus, and a bar whose running animation was cut to 0s never ends (the
+ * #3688 cause). This names which one held the toast.
  */
 async function describeStuckToasts(page: Page): Promise<string> {
     try {
