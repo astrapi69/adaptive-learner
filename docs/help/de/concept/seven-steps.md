@@ -101,8 +101,8 @@ nicht parsbaren Text liefert, springt ein deterministisches
   verwirrt und muss erneut versuchen.
 
 Die Route wendet den Vorschlag nur an, wenn
-`confidence >= 0.6` (Standard von
-`step_evaluation.confidence_threshold` in app.yaml).
+`confidence >= 0.7` (Standard von
+`step_evaluation.confidence_threshold` in session.yaml).
 Fallback-Urteile wenden den +1-Advance immer an.
 
 ## Warum Dual-Prompt statt Single
@@ -165,7 +165,7 @@ Bewertungsdialog fasst die Multi-Cycle-Reise zusammen, wenn
 
 Beim Schritt-6→7-Übergang feuern Schritt-Bewerter und
 Thema-Übergangs-Bewerter parallel via `asyncio.gather`
-(`async_evaluation: true` in `app.yaml`). Das spart ~T₂ an
+(`async_evaluation: true` in `session.yaml`). Das spart ~T₂ an
 Latenz an der Zyklus-Grenze.
 
 Die Message-Response trägt einen `timings`-Block mit

@@ -51,12 +51,13 @@ const MIN_STEP = 1;
 const MAX_STEP = 7;
 
 /**
- * Confidence threshold above which a real (non-fallback) AI
- * evaluation actually moves ``cycle_step``. Mirrors the backend
- * ``app.yaml`` ``session.step_evaluation.confidence_threshold``
- * default of 0.6.
+ * Confidence at or above which a real (non-fallback) AI evaluation
+ * moves ``cycle_step``. Mirrors ``step_evaluation.confidence_threshold``
+ * in ``backend/config/plugins/session.yaml`` (0.7), so the browser
+ * build advances exactly where the desktop does; ``session-flow.test.ts``
+ * reads that file and fails when the two drift apart (#3436).
  */
-const STEP_EVAL_CONFIDENCE_THRESHOLD = 0.6;
+const STEP_EVAL_CONFIDENCE_THRESHOLD = 0.7;
 
 function dominantFromProfile(profile: LearningProfileRow | undefined): LearningMethod | null {
     if (!profile) return null;

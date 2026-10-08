@@ -44,7 +44,7 @@ Every message you send triggers up to three AI calls:
 2. **The step evaluator** - a second AI call reads the
    exchange and decides whether you're ready to advance. It
    emits `advance`, `confidence`, `reason`, `suggested_step`.
-   The app applies the suggestion when confidence ≥ 0.6.
+   The app applies the suggestion when confidence ≥ 0.7.
 3. **The topic-transition evaluator** (only at step 7) -
    a third AI call decides whether the topic has been
    integrated. If yes AND `continue_recommended`, a new cycle

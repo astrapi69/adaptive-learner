@@ -94,8 +94,8 @@ O suggested_step pode ser:
   precisa de tentar novamente.
 
 A rota aplica a sugestão apenas quando
-`confidence >= 0.6` (o `step_evaluation.confidence_threshold`
-padrão em app.yaml). Os veredictos de fallback aplicam sempre
+`confidence >= 0.7` (o `step_evaluation.confidence_threshold`
+padrão em session.yaml). Os veredictos de fallback aplicam sempre
 o avanço de +1.
 
 ## Porquê duplo prompt em vez de único
@@ -167,7 +167,7 @@ avaliação resume a jornada de múltiplos ciclos quando
 
 Na transição do passo 6 → 7, tanto o avaliador de passo como o
 avaliador de transição de tópico disparam concorrentemente via
-`asyncio.gather` (`async_evaluation: true` em `app.yaml`).
+`asyncio.gather` (`async_evaluation: true` em `session.yaml`).
 Isto poupa ~T₂ de latência no limite do ciclo.
 
 A resposta da mensagem carrega um bloco `timings` com
