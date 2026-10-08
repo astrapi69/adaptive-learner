@@ -132,6 +132,8 @@ previous / next cycle step.
 
 ## Auto-loop + topic transitions
 
+> In the browser version the session stays at step 7: the auto-loop runs only in the desktop app. The session page says so when you reach step 7.
+
 Step 7 is no longer a dead end. Once the step-evaluator
 moves you to step 7 with `advance=true`, a third AI call -
 the topic-transition evaluator - judges whether the topic

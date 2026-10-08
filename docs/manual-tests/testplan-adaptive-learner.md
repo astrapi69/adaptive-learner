@@ -3365,6 +3365,12 @@ Ort: Settings → Daten → Empfohlene Repositories.
       „Erneut versuchen"; nach dem Start des Backends lädt der Klick den Verlauf
 - [ ] TC-0732 Importierte Sitzung: die KI beginnt von selbst mit der ersten Frage
       (kein User-Turn zuerst), der Chat startet leer
+- [ ] TC-0950 Auto-Loop in der Browser-Version (#3436): im Pages-Build (Dexie) eine
+      Sitzung bis Schritt 7 führen; unter dem Chat erscheint ein Hinweis mit
+      Monitor-Symbol: in der Desktop-App beginnt danach automatisch ein neuer
+      Zyklus, die Browser-Version kann das noch nicht. Vor Schritt 7 kein
+      Hinweis; in der Desktop-App bei Schritt 7 kein Hinweis, dort startet
+      der neue Zyklus
 - [ ] TC-0733 AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] TC-0734 Kein Button ohne Key führt zu Error-Toast (disabled + Tooltip)
 

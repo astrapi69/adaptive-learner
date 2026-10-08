@@ -143,6 +143,8 @@ Zyklus-Schritt beschreibt.
 
 ## Auto-Loop + Thema-Übergänge
 
+> In der Browser-Version bleibt die Sitzung bei Schritt 7 stehen: Der Auto-Loop läuft nur in der Desktop-App. Die Sitzungsseite weist bei Schritt 7 darauf hin.
+
 Schritt 7 ist keine Sackgasse mehr. Sobald der Schritt-
 Bewerter dich mit `advance=true` auf Schritt 7 bringt,
 feuert ein dritter KI-Aufruf - der Thema-Übergangs-

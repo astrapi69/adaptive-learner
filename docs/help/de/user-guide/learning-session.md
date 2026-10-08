@@ -54,6 +54,7 @@ Jede Nachricht löst bis zu drei KI-Aufrufe aus:
    integriert ist. Wenn ja UND `continue_recommended`,
    startet automatisch ein neuer Zyklus mit einem frischen
    Unterthema (Auto-Loop, max. 5 Zyklen pro Sitzung).
+   Nur in der Desktop-App: In der Browser-Version bleibt die Sitzung bei Schritt 7.
 
 Das Urteil erscheint dezent über dem Chat als „Schritt von
 X nach Y verschoben, weil…", wenn es greift. Zyklus-Übergänge
