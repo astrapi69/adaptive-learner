@@ -94,6 +94,13 @@ checks:
     wired_in: .pre-commit-config.yaml ruff hooks on plugins/; .github/workflows/ci.yml lint-and-type-check step; backend/tests/test_ruff_plugin_config.py
     probe: script_exists=backend/tests/test_ruff_plugin_config.py | ci_step=.github/workflows/ci.yml::lint-and-type-check::ruff format::ruff format --check
 
+  - id: backup-round-trip-e2e
+    verifies: every e2e/dexie/backup-*.spec.ts passes on a PR that touches a backup path; the generic every-table spec exports, wipes, imports and re-exports through the real UI and compares every BACKUP_TABLES table, known-broken tables pinned to their issue (#3693, #3694)
+    rule: quality-checks.md BACKUP-AKZEPTANZTEST, accepted alternative evidence
+    status: active
+    wired_in: .github/workflows/backup-e2e.yml; nightly via dexie-smoke.yml
+    probe: script_exists=e2e/dexie/backup-every-table-roundtrip.spec.ts | ci_step=.github/workflows/backup-e2e.yml::backup-e2e::Backup specs::playwright.dexie.config.ts
+
   - id: help-strong-emphasis
     verifies: no help page has bold that the in-app help renders as literal asterisks; the CommonMark flanking and pairing rule for ** runs, plus GFM autolinks, applied per inline context and matched against mdast-util-from-markdown on every help page; no help page FAILs (#3655)
     rule: none (rendering-correctness class; text-formatting.md documents the prose rules it protects)
