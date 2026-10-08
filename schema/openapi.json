@@ -5186,6 +5186,18 @@
             ],
             "title": "Downloaded At"
           },
+          "evaluation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluation"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -5200,6 +5212,11 @@
           },
           "level": {
             "title": "Level",
+            "type": "string"
+          },
+          "review_status": {
+            "default": "authored",
+            "title": "Review Status",
             "type": "string"
           },
           "source": {

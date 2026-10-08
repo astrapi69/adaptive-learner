@@ -182,6 +182,48 @@ def test_restore_synthesizes_manifest_for_dexie_user_set():
     assert (version_dir / "lessons" / f"{set_id}.json").is_file()
 
 
+def test_restore_synthesized_manifest_keeps_visibility_review_and_evaluation():
+    """#3395 - a Dexie row now carries the manifest entry's visibility,
+    review_status and evaluation. A synthesised manifest dropped them, so a
+    restored hidden set reappeared and a generated set read as authored."""
+    from adaptive_learner_content_loader.cache import read_manifest
+
+    set_id = "ja-a1-from-de"
+    payload = [
+        {
+            "source": "astrapi69/adaptive-learner-content",
+            "set_id": set_id,
+            "version": "1.0.0",
+            "meta": {
+                "title": "Japanisch A1",
+                "target_language": "ja",
+                "source_language": "de",
+                "level": "A1",
+                "lesson_count": 1,
+                "tags": "[]",
+                "manifest_yaml": "",
+                "visibility": "hidden",
+                "review_status": "generated",
+                "evaluation": {"pass_percent": 80},
+            },
+            "files": [
+                {"filename": "lessons/01.json", "body": _LESSON, "encoding": "text"},
+            ],
+        }
+    ]
+
+    summary = restore_content_sets(payload)
+    assert summary["errors"] == []
+    restored = read_manifest(
+        _cache_root(), "astrapi69/adaptive-learner-content", set_id, "1.0.0"
+    ).sets[0]
+    assert restored.visibility.value == "hidden"
+    assert restored.review_status is not None
+    assert restored.review_status.value == "generated"
+    assert restored.evaluation is not None
+    assert restored.evaluation.pass_percent == 80
+
+
 def test_restore_replaces_incomplete_manifestless_version_dir():
     """A prior restore that landed manifest-less (the #134 bug) must be
     replaced, not nested into, when re-importing a backup with meta."""

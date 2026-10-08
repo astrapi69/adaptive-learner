@@ -9,10 +9,8 @@
  */
 
 import {
-  asContentSetBook,
   asContentSetEntry,
   parseManifest,
-  resolveLanguagePair,
   setBasePath,
 } from "../../lib/content/engine";
 import type { ParsedManifest } from "../../lib/content/engine";
@@ -29,7 +27,7 @@ import {
   fileKey,
   tokenForSource,
 } from "./content-loader-sources";
-import { latestCachedRow } from "./content-loader-listing";
+import { entryToRow, latestCachedRow } from "./content-loader-listing";
 import { storeImportLessonOrder } from "../../lib/content/browse/prefs/lesson-order-store";
 import { ApiError } from "../../api/client";
 
@@ -135,8 +133,8 @@ export async function downloadSetDexie(
   // Persist atomically — Dexie transaction over both tables.
   const db = getDb();
   const setPk = cacheKey(source, setId, target.version);
-  const pair = resolveLanguagePair(target);
   const downloadedAt = new Date().toISOString();
+  let entry: ContentSetEntry | null = null;
   await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
     // #1300 — preserve the user's lifecycle status across a re-download /
     // version update; a fresh set defaults to "active".
@@ -145,31 +143,16 @@ export async function downloadSetDexie(
       .equals(setId)
       .filter((r) => r.source === source)
       .first();
-    const row: ContentSetRow = {
-      id: setPk,
-      source,
-      branch: src.branch,
-      set_id: setId,
-      version: target.version,
-      title: target.title,
-      title_native: target.title_native ?? null,
-      language: pair.target,
-      target_language: pair.target,
-      source_language: pair.source,
-      level: target.level,
-      domain: target.domain ?? "language",
-      lesson_count: target.lesson_count,
-      description: target.description ?? null,
-      tags: JSON.stringify(target.tags ?? []),
-      cover_image: target.cover_image ?? null,
-      downloaded_at: downloadedAt,
-      status: prior?.status ?? "active",
-      manifest_yaml: setManifestText,
-      book: asContentSetBook(target.book),
-      // #2655 — mirror the manifest's own attribution/derivation chain
-      // (engine#90 / schema 1.9), if the source set already carries one.
-      attribution: target.attribution ?? null,
-    };
+    // #3395 - one projection: the row is the engine's entry, so a
+    // cached-only listing reads back exactly what a fresh one shows.
+    entry = asContentSetEntry(
+      src,
+      target,
+      target.version,
+      downloadedAt,
+      prior?.status ?? "active",
+    );
+    const row: ContentSetRow = entryToRow(entry, setPk, setManifestText);
     await db.contentSets.put(row);
 
     const files: ContentSetFileRow[] = [];
@@ -228,5 +211,8 @@ export async function downloadSetDexie(
   // filename order, which breaks mixed 2-/3-digit prefixes.
   storeImportLessonOrder(source, setId, lessonFilenames);
 
-  return asContentSetEntry(src, target, target.version, downloadedAt);
+  if (entry === null) {
+    throw new Error(`content set ${source}/${setId} was not stored`);
+  }
+  return entry;
 }
