@@ -250,6 +250,7 @@ La forme réseau est la valeur string en minuscules (ex.
 | ProjectSubject | project_subjects | v1.9.0 | M:N (LearningProject, Subject) |
 | ProjectTag | project_tags | v1.9.0 | M:N (LearningProject, Tag) |
 | UserXP | user_xp | v1.16.0 | Singleton XP + niveau par utilisateur |
+| XpPurchase | xp_purchases | v2.17.0 | Un achat en XP (cadre d'avatar, variante de mascotte, jeu d'arcade) ; la possession en découle |
 | Badge | badges | v1.16.0 | Catalogue de badges (initialisé depuis YAML) |
 | UserBadge | user_badges | v1.16.0 | Enregistrement de badge obtenu (append-only) |
 | UserStreak | user_streaks | v1.16.0 | État de série + gels + mode week-end |

@@ -4,6 +4,7 @@ import {BrowserRouter} from "react-router";
 import App from "./App";
 import {loadDebugConsole, shouldLoadDebugConsole} from "./components/dev/debug-console";
 import {initSyncQueueReplay} from "./lib/pwa/sync-queue";
+import {resolveStorageMode} from "./storage";
 // Tailwind first: it declares the @layer order (theme, base, components,
 // utilities) and emits only LAYERED CSS, so every unlayered rule in the
 // theme sheets + global.css below always wins. This keeps existing pages
@@ -82,7 +83,7 @@ if (shouldLoadDebugConsole(window.location.search)) {
 
 // S3 (PWA hardening) — replay any lesson-progress upserts that were
 // queued while offline, on reconnect + once at startup if online.
-initSyncQueueReplay();
+initSyncQueueReplay(resolveStorageMode());
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

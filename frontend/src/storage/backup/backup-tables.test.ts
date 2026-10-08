@@ -80,12 +80,14 @@ describe("backup-tables parity", () => {
             "session_messages",
             "session_ratings",
             "step_evaluations",
+            // #3445 — a purchase is recorded once and never edited.
+            "xp_purchases",
         ]);
     });
 
     it("keeps the wire constants", () => {
         expect(BACKUP_FORMAT).toBe("adaptive-learner-backup");
-        expect(BACKUP_VERSION).toBe("1.6.0");
+        expect(BACKUP_VERSION).toBe("1.7.0");
     });
 });
 

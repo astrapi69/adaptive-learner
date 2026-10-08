@@ -233,6 +233,7 @@ class ImportedConversationSource(str, Enum):
 | ProjectSubject | project_subjects | v1.9.0 | M:N（LearningProject、Subject） |
 | ProjectTag | project_tags | v1.9.0 | M:N（LearningProject、Tag） |
 | UserXP | user_xp | v1.16.0 | ユーザーごとのXP + レベルシングルトン |
+| XpPurchase | xp_purchases | v2.17.0 | XPでの購入1件（アバター枠、マスコットのバリエーション、アーケードゲーム）。所有はここから導かれる |
 | Badge | badges | v1.16.0 | バッジカタログ（YAMLからシード） |
 | UserBadge | user_badges | v1.16.0 | 獲得バッジレコード（追加のみ） |
 | UserStreak | user_streaks | v1.16.0 | ストリーク状態 + フリーズ + 週末モード |

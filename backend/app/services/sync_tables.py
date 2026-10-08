@@ -48,6 +48,7 @@ from app.models import (
     UserSettings,
     UserStreak,
     UserXP,
+    XpPurchase,
 )
 
 # ---------------------------------------------------------------------------
@@ -714,6 +715,18 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="updated_at",
         append_only=False,
         order=34,
+        scope="direct",
+    ),
+    # #3445 - XP purchases (avatar frames, mascot variants, arcade games).
+    # Append-only: a purchase is never undone. The id is a uuid5 of
+    # (user, kind, item), so the same purchase pushed from a second device
+    # is a known id and skipped, never a unique-key collision.
+    "xp_purchases": TableSpec(
+        model=XpPurchase,
+        columns=("id", "user_id", "item_kind", "item_id", "cost", "purchased_at"),
+        timestamp_field="purchased_at",
+        append_only=True,
+        order=35,
         scope="direct",
     ),
 }

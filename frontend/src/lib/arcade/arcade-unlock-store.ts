@@ -7,7 +7,10 @@
  * backup's localStorage snapshot.
  */
 
+import {xpCostOf} from "../gamification/purchase-ledger";
+import type {PurchaseSurface} from "../gamification/purchase-ledger";
 import {createSelectionStore} from "../gamification/selection-store";
+import {ARCADE_GAMES} from "./arcade-games";
 
 const store = createSelectionStore("adaptive-learner.arcade.unlocks", "memory");
 
@@ -19,3 +22,10 @@ export const readArcadeUnlockState = store.read;
 
 /** Record an XP purchase for ``userId`` (idempotent). */
 export const addPurchasedArcadeGame = store.addPurchased;
+
+/** The arcade game purchases in the XP ledger (#3445), for ``reconcilePurchases``. */
+export const ARCADE_GAME_PURCHASES: PurchaseSurface = {
+    kind: "arcade_game",
+    store,
+    costOf: xpCostOf(ARCADE_GAMES),
+};

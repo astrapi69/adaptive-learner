@@ -245,6 +245,7 @@ Die Wire-Form ist der lowercase-String-Value (z.B.
 | ProjectSubject | project_subjects | v1.9.0 | M:N (LearningProject, Subject) |
 | ProjectTag | project_tags | v1.9.0 | M:N (LearningProject, Tag) |
 | UserXP | user_xp | v1.16.0 | XP + Level, ein Datensatz pro Nutzer |
+| XpPurchase | xp_purchases | v2.17.0 | Ein Kauf mit XP (Avatar-Rahmen, Maskottchen-Variante, Arcade-Spiel); der Besitz ergibt sich daraus |
 | Badge | badges | v1.16.0 | Badge-Katalog (aus YAML befüllt) |
 | UserBadge | user_badges | v1.16.0 | Verdientes Badge (nur anhängend) |
 | UserStreak | user_streaks | v1.16.0 | Serienstand + Freezes + Wochenend-Modus |

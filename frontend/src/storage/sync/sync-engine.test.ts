@@ -892,6 +892,9 @@ describe("SYNC_TABLES — surface audit", () => {
                 // v1.40.0 / Phase 57 promoted it to MUTABLE (a dynamic
                 // badge's tier climbs in place, high-water mark), so it
                 // is no longer in this list.
+                // #3445 — XP purchase ledger: one row per purchase, never
+                // edited; the uuid5 id lets a second device skip it.
+                "xp_purchases",
             ].sort(),
         );
     });

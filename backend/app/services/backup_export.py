@@ -31,12 +31,15 @@ logger = logging.getLogger(__name__)
 # ``BACKUP_VERSION`` (storage/backup/backup-tables.ts) must match, pinned
 # by a parity test there. The backend said 1.4.0 and the frontend 1.5.0 for
 # the same EXP-051 change until #3363.
+# 1.7.0 - #3445: xp_purchases rides the export. Older backups have no
+# ledger; ownership then migrates from the local_storage snapshot the first
+# time a gallery loads (frontend purchase-ledger.ts).
 # 1.6.0 - #3363: paused_at / abandoned_at, content_hash + the import
 # language pair, cycle_count / cycle_topics and the session-note kind ride
 # the export. Older backups lack them and import with the column defaults.
 # 1.5.0 (1.4.0 here) - EXP-051 / #2125: element_errors gains run_id and
 # set_runs rides the export; older backups import with run_id 1.
-BACKUP_VERSION = "1.6.0"
+BACKUP_VERSION = "1.7.0"
 BACKUP_FORMAT = "adaptive-learner-backup"
 
 # API keys are sensitive; the backup file is meant to travel

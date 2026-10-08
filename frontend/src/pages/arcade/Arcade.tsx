@@ -26,6 +26,7 @@ import {
     type ArcadeGameId,
 } from "../../lib/arcade/arcade-games";
 import {
+    ARCADE_GAME_PURCHASES,
     ARCADE_UNLOCK_CHANGE_EVENT,
     addPurchasedArcadeGame,
     readArcadeUnlockState,
@@ -39,6 +40,7 @@ import {
     PLAYFUL_TICKETS_CHANGE_EVENT,
     playfulTicketsActive,
 } from "../../lib/learning/playful/playfulTicketsPref";
+import {reconcilePurchases} from "../../lib/gamification/purchase-ledger";
 import {isUnlocked} from "../../lib/gamification/unlockables";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
@@ -89,6 +91,14 @@ export default function Arcade() {
             } catch {
                 /* the buy button self-disables at 0 XP */
             }
+            // #3445 - ownership follows the XP ledger (another browser,
+            // cleared data, a LAN sync); never throws.
+            await reconcilePurchases(
+                userId,
+                ARCADE_GAME_PURCHASES,
+                getStorage().gamification,
+            );
+            if (!cancelled) setPurchased(readArcadeUnlockState(userId).purchased);
         })();
         const refresh = () =>
             setPurchased(readArcadeUnlockState(userId).purchased);
@@ -102,7 +112,7 @@ export default function Arcade() {
     const purchase = useXpPurchase({
         userId,
         totalXp,
-        reason: "arcade_game",
+        kind: "arcade_game",
         failedText: t("settings.unlock_buy_failed", "Purchase failed."),
         onPurchased: (id, next) => {
             addPurchasedArcadeGame(userId, id);
