@@ -9,8 +9,7 @@
  * one endpoint, one local-storage snapshot wrap, one save helper.
  */
 
-import {withLocalStorageSnapshot} from "./localStorageSnapshot";
-import {getStorage} from "../../storage";
+import {exportPortableBackup} from "./portableBackup";
 import {backupFilename, saveBackupToDisk} from "../../utils/backup-download";
 
 export type ExportBackupResult =
@@ -26,7 +25,7 @@ export type ExportBackupResult =
  *   failure so the caller can surface it.
  */
 export async function exportBackupNow(userId: string): Promise<ExportBackupResult> {
-    const payload = withLocalStorageSnapshot(await getStorage().backup.export(userId));
+    const payload = await exportPortableBackup(userId);
     const outcome = await saveBackupToDisk(payload, backupFilename(userId));
     if (outcome.method === "cancelled") return {status: "cancelled"};
     return {

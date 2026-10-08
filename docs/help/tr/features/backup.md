@@ -16,11 +16,11 @@ Bir yedek, **eksiksiz bir snapshot'tır**: tüm veri tabloları
 hatalar, XP/Streak/Badge ile gamification, görevler, Anki kartları,
 notlar ve daha fazlası) **artı indirdiğin İçerik Setlerin**.
 
-**Henüz dahil olmayanlar:** bağlı içerik repository'leri, kullanılan
-davetler ve Learning Repository ayarları. Yeni bir cihazda geri
-yüklemeden sonra İçerik Setleri geri gelir, ancak güncellemelerin
-gelmeye devam etmesi için repository'lerini yeniden bağla (ve
-davetleri yeniden kullan).
+**Bunlar da dahil:** bağlı içerik repository'leri, kullanılan
+davetler ve Learning Repository'nin açık olup olmadığı.
+**Dahil olmayanlar:** özel bir repository'nin erişim token'ı (geri
+yüklemeden sonra yeniden gir) ve cihaza ait olan Learning Repository
+klasörü.
 
 Dışa aktarmadan önce uygulama, kaydetmeden önce neyin yedekleneceğini
 görmen için bölüm başına veri kümesi sayılarıyla bir **"Yedeğin
@@ -96,4 +96,4 @@ eski yedekler de sorunsuz içe aktarılır.
 ## İlgili sayfalar
 
 - [Ayarlar](../user-guide/settings.md) - tüm veri eylemlerine genel bakış
-- [Birden Çok İçerik Repository'si](content-repos.md) - bağlı repolar henüz yedeğin parçası değil, geri yüklemeden sonra yeniden bağla
+- [Birden Çok İçerik Repository'si](content-repos.md) - bağlı repolar ve kullanılan davetler yedekle birlikte taşınır

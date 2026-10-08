@@ -129,4 +129,4 @@ paramètres.
 
 - [Navigateur de contenu](content-browser.md) - trouver, filtrer, télécharger des ensembles
 - [Créer des leçons](../content-creation/overview.md) - contribuer ses propres contenus
-- [Sauvegarde et restauration](backup.md) - les dépôts connectés ne font pas encore partie de la sauvegarde, reconnecte-les après une restauration
+- [Sauvegarde et restauration](backup.md) - les dépôts connectés et les invitations utilisées voyagent avec la sauvegarde

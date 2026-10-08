@@ -55,6 +55,13 @@ Echter Round-Trip, keine Simulation:
       #2050-Pfad!), abgeschlossenes Set korrekt, eigene Übung vorhanden,
       Einstellungen plausibel.
 - [ ] TC-0007 Danach eine Lektion normal weiterlernen - kein Folgefehler.
+- [ ] TC-0953 Verbundene Repos und Einladungen (#3412): vor dem Export ein eigenes
+      Content-Repository verbunden und eine Einladung eingelöst, Learning
+      Repository eingeschaltet. Nach Wipe und Import stehen Repository und
+      Einladung wieder in Einstellungen > Inhalte, Updates laden wieder,
+      und das Learning Repository ist eingeschaltet. Ein privates Repo
+      fragt nach seinem Token, der Learning-Repository-Ordner ist der
+      Standardordner dieses Geräts
 
 Ergebnis dokumentieren (auch Teilfehler einzeln). Bei JEDEM Abweichen:
 Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.

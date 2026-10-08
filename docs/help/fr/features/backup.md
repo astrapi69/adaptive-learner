@@ -17,11 +17,11 @@ leçons, erreurs au niveau des éléments, gamification avec
 XP/série/badges, missions, cartes Anki, notes et plus encore)
 **plus tes ensembles de contenu téléchargés**.
 
-**Pas encore inclus :** les dépôts de contenu connectés, les
-invitations utilisées et les réglages du Learning Repository. Après
-une restauration sur un nouvel appareil, les ensembles de contenu
-sont de retour, mais reconnecte leurs dépôts (et utilise à nouveau
-les invitations) pour continuer à recevoir les mises à jour.
+**Également inclus :** les dépôts de contenu connectés, les
+invitations utilisées et l'activation du Learning Repository.
+**Non inclus :** le jeton d'accès d'un dépôt privé (saisis-le à
+nouveau après la restauration) et le dossier du Learning Repository,
+qui appartient à l'appareil.
 
 Avant l'export, l'application affiche un aperçu **« Ta sauvegarde
 contient … »** avec le nombre d'enregistrements par domaine, afin
@@ -103,4 +103,4 @@ JSON s'importent toujours sans problème.
 ## Pages connexes
 
 - [Paramètres](../user-guide/settings.md) - un aperçu de toutes les actions sur les données
-- [Plusieurs dépôts de contenu](content-repos.md) - les dépôts connectés ne font pas encore partie de la sauvegarde, reconnecte-les après une restauration
+- [Plusieurs dépôts de contenu](content-repos.md) - les dépôts connectés et les invitations utilisées voyagent avec la sauvegarde

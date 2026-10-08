@@ -769,6 +769,10 @@ export interface BackupPayload {
      *  in the DB tables. Absent in pre-1.4.0 backups; secrets excluded.
      *  Applied frontend-side on import in both storage modes. */
     local_storage?: Record<string, string>;
+    /** Plugin settings that belong to the learner (#3412): connected repos,
+     *  redeemed invites, the Learning Repository switch. Applied
+     *  frontend-side on import in both modes; absent in pre-1.8.0 backups. */
+    plugin_settings?: Record<string, Record<string, unknown>>;
     stats: BackupStats;
 }
 

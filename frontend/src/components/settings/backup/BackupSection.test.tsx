@@ -172,6 +172,11 @@ describe("BackupSection", () => {
         const exportSpy = vi
             .spyOn(getStorage().backup, "export")
             .mockResolvedValue(samplePayload);
+        // #3412: the export reads plugin settings for its plugin_settings
+        // block; no network in a unit test.
+        const pluginSpy = vi
+            .spyOn(getStorage().pluginSettings, "get")
+            .mockImplementation(async (name: string) => ({plugin: name, settings: {}}));
 
         const clickSpy = vi.fn();
         const originalCreate = document.createElement.bind(document);
@@ -207,6 +212,7 @@ describe("BackupSection", () => {
         expect(localStorage.getItem("adaptive-learner.last_backup_at")).not.toBe(null);
 
         createSpy.mockRestore();
+        pluginSpy.mockRestore();
     });
 
     it("shows a 'Your backup contains' preview from the row counts", async () => {
