@@ -404,6 +404,7 @@ review:
   no_data: 아직 세션이 없습니다 - 첫 세션을 시작하여 추이를 확인하세요.
   pronunciation_quick_start: 발음 연습
 session:
+  auto_loop_unavailable: "데스크톱 앱에서는 7단계가 끝나면 다음 주제로 새 주기가 자동으로 시작됩니다. 브라우저 버전에서는 아직 지원되지 않습니다. 계속 학습하려면 세션을 종료하고 새 세션을 시작하세요."
   title: 학습 세션
   topic_label: "주제"
   in_progress: 세션 진행 중

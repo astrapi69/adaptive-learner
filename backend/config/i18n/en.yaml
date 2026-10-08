@@ -404,6 +404,7 @@ review:
   no_data: No sessions yet - start your first one to see trends.
   pronunciation_quick_start: Pronunciation Practice
 session:
+  auto_loop_unavailable: "In the desktop app a new cycle with the next topic starts automatically after step 7. The browser version cannot do that yet: end the session and start a new one to keep learning."
   title: Learning session
   topic_label: "Topic"
   in_progress: Session in progress
