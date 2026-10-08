@@ -189,11 +189,11 @@ jobs:
 
       # Same config + environment as visual-regression.yml, so the
       # rendered PNGs match what the nightly diff compares against.
-      # #3215 - VISUAL_BASELINE_REFRESH=1 drops the count budget to 0
-      # (e2e/visual/refresh-mode.ts), so every baseline with a pixel past
-      # the colour threshold is rewritten, not only those past 2,500 px.
-      # Raster noise stays under the threshold (0 px in two full renders),
-      # so the commit below holds exactly the images that changed.
+      # #3215 - VISUAL_BASELINE_REFRESH=1 drops the count budget to 0 and
+      # the colour threshold to 0.05 (e2e/visual/refresh-mode.ts), so every
+      # baseline with a pixel past that noise floor is rewritten, not only
+      # those past 2,500 px. Raster noise stays under it (max delta 2 in two
+      # full renders), so the commit below holds exactly the changed images.
       - name: Regenerate baselines
         working-directory: e2e
         env:

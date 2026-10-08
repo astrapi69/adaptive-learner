@@ -87,12 +87,13 @@ jobs:
       # container image (#2715; the #317 CDN-hang class).
 
       # #3215 - a refresh writes every baseline that differs in at least one
-      # pixel past the colour threshold: VISUAL_BASELINE_REFRESH=1 drops the
-      # count budget (maxDiffPixels) to 0 (e2e/visual/refresh-mode.ts). With
-      # the budget, a change under 2,500 px was never written (five cases,
-      # the last 30 images in #3689). Measured on 166 baselines rendered
-      # twice: raster noise between runs is 0 px past the threshold, the
-      # smallest real change 249 px. The compare run keeps its budget.
+      # pixel past a noise floor: VISUAL_BASELINE_REFRESH=1 drops the count
+      # budget (maxDiffPixels) to 0 and the colour threshold to 0.05
+      # (e2e/visual/refresh-mode.ts). With the budget, a change under
+      # 2,500 px was never written (five cases, the last 30 images in #3689).
+      # Measured on 166 baselines rendered twice: raster noise is at most 2
+      # per channel, the faintest real change up to 52. The compare run keeps
+      # its budget and its threshold.
       - name: Run visual regression
         working-directory: e2e
         env:

@@ -296,8 +296,9 @@ Regeln:
   die Änderung überhaupt über der Toleranz liegt - das Label behauptet
   "keine visuelle Wirkung", nicht "unter dem Budget".
 - Seit #3215 schreiben beide CI-Neuaufnahmen jede Baseline, die in
-  mindestens einem Pixel über `threshold` abweicht (Mengen-Toleranz 0,
-  `e2e/visual/refresh-mode.ts`); Rasterrauschen bleibt darunter. Jede
+  mindestens einem Pixel über dem Rauschboden abweicht (Mengen-Toleranz
+  0, `threshold` 0.05, `e2e/visual/refresh-mode.ts`); Rasterrauschen
+  (gemessen höchstens 2 pro Kanal) bleibt darunter. Jede
   gewollte Änderung landet, auch unter der Vergleichs-Toleranz.
   Löschen-dann-Resync (#2719) braucht es nur noch für lokal gerenderte
   FeatureShots.

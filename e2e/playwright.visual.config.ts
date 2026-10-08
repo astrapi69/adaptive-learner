@@ -84,7 +84,12 @@ export default defineConfig({
             // Deliberately NOT lowered for #2712: pastel-fill sensitivity
             // would surface anti-aliasing churn across all ~150 baselines;
             // the absolute cap already catches state swaps via their text.
-            threshold: 0.2,
+            // #3215 - a refresh run calibrates the noise floor to the
+            // measured raster noise (max channel delta 2 between two renders)
+            // instead of the compare's anti-aliasing tolerance: 0.2 is a grey
+            // delta of ~53, and text dimmed behind an overlay changed by at
+            // most 52 (shortcut-help), so it was never written. 0.05 is ~13.
+            threshold: BASELINE_REFRESH ? 0.05 : 0.2,
             animations: "disabled",
         },
     },
