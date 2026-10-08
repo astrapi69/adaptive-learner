@@ -189,9 +189,16 @@ jobs:
 
       # Same config + environment as visual-regression.yml, so the
       # rendered PNGs match what the nightly diff compares against.
+      # #3215 - VISUAL_BASELINE_REFRESH=1 drops the count budget to 0 and
+      # the colour threshold to 0.05 (e2e/visual/refresh-mode.ts), so every
+      # baseline with a pixel past that noise floor is rewritten, not only
+      # those past 2,500 px. Raster noise stays under it (max delta 2 in two
+      # full renders), so the commit below holds exactly the changed images.
       - name: Regenerate baselines
         working-directory: e2e
-        run: npx playwright test --config=playwright.visual.config.ts --update-snapshots
+        env:
+          VISUAL_BASELINE_REFRESH: "1"
+        run: npx playwright test --config=playwright.visual.config.ts --update-snapshots=changed
 
       - name: Commit + push refreshed baselines
         id: push
@@ -200,12 +207,12 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           # #2719 - `git status --porcelain`, NOT `git diff`: a baseline
-          # DELETED on the PR branch and freshly re-rendered by
-          # --update-snapshots is an UNTRACKED file, invisible to git diff.
-          # Delete-then-resync is the only way to force a rewrite of a
-          # wrong-but-within-tolerance baseline (update mode rewrites only
-          # on a FAILED comparison, #2712), so the old check silently
-          # discarded exactly the renders that path exists to produce.
+          # DELETED on the PR branch and freshly re-rendered is an
+          # UNTRACKED file, invisible to git diff. Since #3215 the render
+          # above writes every baseline that differs at all (count budget
+          # 0), so delete-then-resync is no longer needed to force a
+          # wrong-but-within-tolerance baseline; a new motif still arrives as
+          # an untracked file.
           if [ -z "$(git status --porcelain -- e2e/visual/screenshots)" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "::notice::Baselines already current - nothing to push."

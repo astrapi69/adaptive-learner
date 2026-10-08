@@ -48,6 +48,7 @@ import {
     skipUnlessBaselined,
     surfaceMasks,
 } from "./helpers";
+import {BASELINE_REFRESH} from "./refresh-mode";
 
 /** The viewports a surface renders at: the matrix, plus laptop for a few. */
 function viewportsFor(surface: SurfaceName): readonly ViewportName[] {
@@ -110,7 +111,7 @@ for (const surface of SURFACE_NAMES) {
             }
             const shotOpts = {
                 mask: masks,
-                ...(surface === "lesson-matching" && viewport === "mobile"
+                ...(surface === "lesson-matching" && viewport === "mobile" && !BASELINE_REFRESH
                     ? {maxDiffPixelRatio: 0.08, maxDiffPixels: 20_000}
                     : {}),
             };
