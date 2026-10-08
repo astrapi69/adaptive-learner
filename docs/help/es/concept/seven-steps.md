@@ -95,8 +95,8 @@ El `suggested_step` puede ser:
   confundido y necesita volver a intentarlo.
 
 La ruta aplica la sugerencia solo cuando
-`confidence >= 0.6` (el `step_evaluation.confidence_threshold`
-predeterminado en `app.yaml`). Los veredictos de reserva siempre
+`confidence >= 0.7` (el `step_evaluation.confidence_threshold`
+predeterminado en `session.yaml`). Los veredictos de reserva siempre
 aplican el avance de +1.
 
 ## Por qué doble prompt en lugar de uno solo
@@ -169,7 +169,7 @@ diálogo de calificación resume el viaje de varios ciclos cuando
 
 En la transición del paso 6 → 7, tanto el evaluador de pasos como
 el evaluador de transición de tema se disparan concurrentemente
-mediante `asyncio.gather` (`async_evaluation: true` en `app.yaml`).
+mediante `asyncio.gather` (`async_evaluation: true` en `session.yaml`).
 Esto ahorra ~T₂ de latencia en el límite del ciclo.
 
 La respuesta del mensaje incluye un bloque `timings` con

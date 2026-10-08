@@ -10,6 +10,9 @@
 
 import "fake-indexeddb/auto";
 
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {_resetDbForTests, getDb} from "../dexie/db";
@@ -534,6 +537,45 @@ describe("session.message", () => {
         });
         expect(result.session.cycle_step).toBe(1);
         expect(result.step_evaluation?.applied).toBe(false);
+    });
+
+    /**
+     * #3436 - the browser build advances at the same confidence as the
+     * desktop backend, whose threshold is ``step_evaluation.
+     * confidence_threshold`` in ``backend/config/plugins/session.yaml``.
+     * Read from that file, so a change there that the browser does not
+     * follow turns this red instead of drifting silently.
+     */
+    const DESKTOP_THRESHOLD = Number(
+        /confidence_threshold:\s*([0-9.]+)/.exec(
+            readFileSync(
+                join(process.cwd(), "..", "backend", "config", "plugins", "session.yaml"),
+                "utf-8",
+            ),
+        )?.[1],
+    );
+
+    it.each([
+        ["just below the desktop threshold stays", -0.01, 1, false],
+        ["at the desktop threshold advances", 0, 2, true],
+    ])("confidence %s", async (_name, offset, step, applied) => {
+        expect(DESKTOP_THRESHOLD).toBeGreaterThan(0);
+        const {projectId} = await setupUserWithKey();
+        const start = await dexieStorage.session.start({
+            project_id: projectId,
+            lang: "en",
+        });
+        chatReplies.push("Reply");
+        const confidence = Math.round((DESKTOP_THRESHOLD + offset) * 100) / 100;
+        evalReplies.push(
+            `{"advance":true,"confidence":${confidence},"reason":"x","suggested_step":2}`,
+        );
+        const result = await dexieStorage.session.message(start.session.id, {
+            role: "user",
+            content: "x",
+        });
+        expect(result.session.cycle_step).toBe(step);
+        expect(result.step_evaluation?.applied).toBe(applied);
     });
 
     it("fallback advance applies on unparseable eval JSON", async () => {
