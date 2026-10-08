@@ -808,7 +808,7 @@ settings:
   playful_special_rounds_description: "세트를 완료하면(모든 수업 별 1개 이상) 가장 어려운 카드로 만든 플래시 라운드가 잠금 해제되며 카운트다운 링과 함께 플레이합니다. 끄면 플래시 라운드 카드가 완전히 숨겨집니다."
   playful_flash_round_cards: "플래시 라운드 카드 수"
   playful_tickets: "게임 티켓"
-  playful_tickets_description: "성과로 아케이드 티켓을 얻습니다. 만점 수업, 하트를 모두 지킨 라운드, 스트릭 이정표(3/7/14/30일). 티켓 1장으로 잠긴 아케이드 게임을 한 라운드 플레이할 수 있습니다. 끄면 아케이드는 XP 잠금 해제만 남습니다."
+  playful_tickets_description: "성과로 아케이드 티켓을 얻습니다. 만점 수업, 하트를 모두 지킨 라운드, 연속 기록 이정표(3/7/14/30일). 티켓 1장으로 잠긴 아케이드 게임을 한 라운드 플레이할 수 있습니다. 끄면 아케이드는 XP 잠금 해제만 남습니다."
   playful_ticket_cap: "최대 티켓"
   playful_bonus_lessons: "보너스 수업"
   playful_bonus_lessons_description: "세트에는 보너스 수업(\"bonus-\"로 시작하는 수업 파일)이 있을 수 있습니다. 게임 모드가 켜져 있는 동안에는 모든 일반 수업이 별 1개 이상이 될 때까지 세트의 수업 목록에서 잠긴 상태로 표시됩니다. 끄면(또는 게임 모드가 꺼져 있으면) 일반 수업처럼 동작합니다."
@@ -1592,7 +1592,7 @@ arcade:
   unlock_not_enough_xp: "아직 XP가 부족해요. 계속 학습하세요!"
   tickets_label: "티켓: {n}"
   ticket_play: "티켓으로 한 라운드 플레이"
-  tickets_hint: "퍼펙트 수업, 하트를 모두 지킨 라운드, 스트릭 이정표로 티켓을 얻으세요."
+  tickets_hint: "퍼펙트 수업, 하트를 모두 지킨 라운드, 연속 기록 이정표로 티켓을 얻으세요."
   memory:
     name: "학습 메모리"
     description: "수업의 단어와 번역 짝을 찾아보세요."

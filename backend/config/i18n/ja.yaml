@@ -916,7 +916,7 @@ settings:
   daily_session_goal: 1日のセッション目標
   daily_session_goal_help: 進捗の目安として1日あたりのセッション数。
   reset_progress: 進捗をリセット
-  reset_progress_help: XP、バッジ、ストリークを完全に削除。元に戻せません。
+  reset_progress_help: XP、バッジ、連続記録を完全に削除。元に戻せません。
   reset_confirm_first: 確認のためもう一度クリック
   reset_confirm_second: 完全削除するにはもう一度クリック
   section_voice: 音声
@@ -1562,15 +1562,15 @@ gamification:
     review_master:
       name: 復習マスター
       description: 分散学習で50要素を習得する。
-  card_streak: ストリーク
-  current_streak: 現在のストリーク
-  longest_streak: 最長ストリーク
+  card_streak: 連続記録
+  current_streak: 現在の連続記録
+  longest_streak: 最長連続記録
   freezes_available: 利用可能なフリーズ
-  streak_no_data: セッションを開始してストリークを始めましょう。
+  streak_no_data: セッションを開始して連続記録を始めましょう。
   streak_calendar: アクティビティ・ヒートマップ
   weekend_mode: 週末モード
-  weekend_mode_help: 週末はストリークの中断にカウントされません。
-  reset_done: '進捗をリセット: {xp} XP、{badges} バッジ、{streak} ストリーク。'
+  weekend_mode_help: 週末は連続記録の中断にカウントされません。
+  reset_done: '進捗をリセット: {xp} XP、{badges} バッジ、{streak} 連続記録。'
   reset_failed: 進捗をリセットできませんでした。
   weekend_mode_save_failed: 週末モードを保存できませんでした。
 arcade:
@@ -3797,7 +3797,7 @@ share:
     title: 進捗を共有
     copied: クリップボードにコピーしました
     lesson_complete: Adaptive Learner でレッスンを完璧にこなしました！
-    streak: Adaptive Learner で{days}日連続の学習ストリーク中です！
+    streak: Adaptive Learner で{days}日連続で学習中です！
     level: Adaptive Learner でレベル{level}に到達しました！
     badge: Adaptive Learner で「{badge}」バッジを獲得しました！
     progress: Adaptive Learner で学習中です。レベル{level}、{days}日連続。
