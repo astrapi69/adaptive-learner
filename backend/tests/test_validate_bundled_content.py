@@ -248,3 +248,54 @@ def test_fails_when_the_named_content_dir_cannot_be_read(
     assert result.returncode == 1, result.stderr
     assert "FAIL" in result.stderr
     assert str(named) in result.stderr
+
+
+def _load_script():  # type: ignore[no-untyped-def]
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("validate_bundled_content", SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.mark.parametrize(
+    ("root", "nested", "expected"),
+    [
+        ("reviewed", None, "reviewed"),
+        ("generated", None, "generated"),
+        ("draft", None, "authored"),
+        ("Generated", None, "authored"),
+        ("draft", "generated", "generated"),
+        (None, "bogus", "authored"),
+        (None, None, "authored"),
+    ],
+    ids=[
+        "known-root",
+        "generated-root",
+        "unknown-root",
+        "wrong-case-root",
+        "unknown-root-falls-back-to-nested",
+        "unknown-nested",
+        "absent",
+    ],
+)
+def test_review_status_reads_like_the_engine(
+    tmp_path: Path, root: str | None, nested: str | None, expected: str
+) -> None:
+    """Only the engine's values count; anything else reads as absent (#3395).
+
+    The engine's ``asContentSetEntry`` keeps ``generated`` and ``reviewed``
+    and reads every other value as ``authored``, so gate and app agree on a
+    manifest with a typo or an unknown value.
+    """
+    script = _load_script()
+    nested_entry: dict[str, object] = {"id": "x"}
+    if nested is not None:
+        nested_entry["review_status"] = nested
+    (tmp_path / "manifest.yaml").write_text(
+        yaml.safe_dump({"sets": [nested_entry]}), "utf-8"
+    )
+    entry: dict[str, object] = {} if root is None else {"review_status": root}
+    assert script.set_review_status(entry, tmp_path) == expected

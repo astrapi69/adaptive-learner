@@ -82,20 +82,24 @@ def resolve_content_dir() -> Path | None:
     return None
 
 
+REVIEW_STATUSES = frozenset({"authored", "generated", "reviewed"})
+
+
 def set_review_status(entry: dict, set_dir: Path) -> str:
     """The set's ``review_status`` (#2273).
 
     Primary source is the ROOT manifest's set entry (where the content
     repo stamps it); fallback is the per-set manifest's own ``sets[0]``
-    entry (the nested shape the per-set files carry). Absent, empty or
-    unreadable normalizes to ``"authored"`` - advertisable - mirroring
-    the content repos' index-generator normalization. Only
-    ``"generated"`` marks a set as not yet advertisable (AI-generated,
-    pending native-speaker review).
+    entry (the nested shape the per-set files carry). Absent, empty,
+    unknown or unreadable normalizes to ``"authored"`` - advertisable -
+    as the engine's ``asContentSetEntry`` reads it, so this gate and the
+    app agree on the same manifest (#3395). Only ``"generated"`` marks a
+    set as not yet advertisable (AI-generated, pending native-speaker
+    review).
     """
     value = entry.get("review_status")
-    if isinstance(value, str) and value:
-        return value
+    if value in REVIEW_STATUSES:
+        return str(value)
     try:
         parsed = yaml.safe_load((set_dir / "manifest.yaml").read_text("utf-8"))
     except (OSError, yaml.YAMLError):
@@ -103,8 +107,8 @@ def set_review_status(entry: dict, set_dir: Path) -> str:
     nested = (parsed or {}).get("sets")
     if isinstance(nested, list) and nested and isinstance(nested[0], dict):
         value = nested[0].get("review_status")
-        if isinstance(value, str) and value:
-            return value
+        if value in REVIEW_STATUSES:
+            return str(value)
     return "authored"
 
 
