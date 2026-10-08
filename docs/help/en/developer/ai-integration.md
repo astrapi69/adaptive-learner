@@ -54,7 +54,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 `ai_complete_async` is used by the session route at the
 step 6→7 cycle boundary so step-evaluation +
 topic-transition fire concurrently via `asyncio.gather`
-(`async_evaluation: true` in `app.yaml`).
+(`async_evaluation: true` in `session.yaml`).
 
 `ai_complete_stream` powers the streaming SSE endpoint
 `POST /api/plugins/session/{id}/message/stream` that emits
@@ -97,7 +97,7 @@ role makes up to three AI calls:
    exchange and emit a JSON verdict
    (`advance`, `confidence`, `reason`, `suggested_step`).
    `max_tokens=256`. The evaluator's verdict drives the
-   `cycle_step` advance (gated by `confidence ≥ 0.6`).
+   `cycle_step` advance (gated by `confidence ≥ 0.7`).
 3. **Topic transition** - only at step 7. A third AI call
    judges whether the topic was integrated and whether to
    start a new cycle on a new subtopic. Cap of
@@ -184,14 +184,14 @@ backend.
 
 ## Confidence threshold
 
-`backend/config/app.yaml`'s
-`session.step_evaluation.confidence_threshold` (default 0.6)
+`backend/config/plugins/session.yaml`'s
+`step_evaluation.confidence_threshold` (default 0.7)
 gates whether a real (non-fallback) evaluator verdict actually
 moves the cycle step. Set higher to be more conservative,
 lower to be more eager. Fallback verdicts (parse failures)
 always apply the +1 advance regardless.
 
-The Dexie port mirrors this with a hardcoded 0.6 in
+The Dexie port mirrors this with a hardcoded 0.7 in
 `storage/ai/session-flow.ts`. A future phase will expose this in
 the Settings UI.
 
