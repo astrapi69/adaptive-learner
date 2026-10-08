@@ -48,7 +48,7 @@ Jede Nachricht löst bis zu drei KI-Aufrufe aus:
    den Austausch und entscheidet, ob du für den nächsten
    Schritt bereit bist. Er liefert `advance`, `confidence`,
    `reason`, `suggested_step`. Die App wendet den Vorschlag
-   bei Konfidenz ≥ 0.6 an.
+   bei Konfidenz ≥ 0.7 an.
 3. **Der Topic-Transition-Bewerter** (nur bei Schritt 7) -
    ein dritter KI-Aufruf entscheidet, ob das Thema
    integriert ist. Wenn ja UND `continue_recommended`,
