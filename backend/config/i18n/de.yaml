@@ -55,7 +55,7 @@ data_export:
   cat_imports: "Chat-Importe (mit Nachrichten)"
   cat_anki: "Anki-Karten"
   cat_questions: "Lernfragen"
-  cat_gamification: "XP, Abzeichen, Streak, Missionen"
+  cat_gamification: "XP, Abzeichen, Serie, Missionen"
   cat_settings: "Einstellungen"
   cat_ai_config: "KI-Schlüssel-Sicherung"
   cat_speech_recordings: "Sprachaufnahmen (aus Sprechübungen)"
@@ -213,7 +213,7 @@ landing:
   privacy_link: "Datenschutzerklärung"
   checking_session: Willkommen zurück …
   recovered_toast: Willkommen zurück! Deine Lerndaten sind noch da.
-  intro: Adaptive Learner findet die für dich passende Methode aus sechs wissenschaftlich fundierten Lernweisen und begleitet dich mit einem 7-Schritte-Zyklus pro Session.
+  intro: Adaptive Learner findet die für dich passende Methode aus sechs wissenschaftlich fundierten Lernweisen und begleitet dich mit einem 7-Schritte-Zyklus pro Sitzung.
   port_change_hint: "Hast du Adaptive Learner schon einmal unter einem anderen Port verwendet? Deine Lerndaten bleiben an der vorherigen Web-Adresse. Wechsle zurück zum vorherigen Port, exportiere ein Backup und importiere es hier."
   port_change_link: "So nimmst du deine Daten mit"
 onboarding:
@@ -293,7 +293,7 @@ dashboard:
   no_data: "Noch keine Daten vorhanden."
   title: Dashboard
   welcome: Willkommen zurück
-  quick_start: Neue Session starten
+  quick_start: Neue Sitzung starten
   quick_start_subtitle: Methode kommt aus deinem Profil.
   card_profile: Lernprofil
   profile_incomplete: "Lernprofil unvollständig."
@@ -303,7 +303,7 @@ dashboard:
   card_distribution: Methodenverteilung
   card_counter: "Sitzungen"
   card_tools: Werkzeug-Empfehlungen
-  card_recent_sessions: Letzte Sessions
+  card_recent_sessions: Letzte Sitzungen
   card_spaced: Geplante Übung
   card_review_queue: Zur Wiederholung
   card_focus_areas: Übungsschwerpunkt
@@ -393,17 +393,17 @@ review:
   spaced_interval_label: Wiederholung in
   spaced_start: Starten
   spaced_dismiss: Ausblenden
-  metric_total_sessions: Sessions insgesamt
+  metric_total_sessions: Sitzungen insgesamt
   metric_total_minutes: Minuten insgesamt
   metric_mean_understanding: Mittleres Verstehen
   metric_mean_stress: Mittlerer Stress
   metric_streak: Tagesserie
-  no_data: Noch keine Sessions - starte deine erste, um Trends zu sehen.
+  no_data: Noch keine Sitzungen - starte deine erste, um Trends zu sehen.
   pronunciation_quick_start: Aussprachetraining
 session:
-  title: Lern-Session
+  title: Lernsitzung
   topic_label: "Thema"
-  in_progress: Session läuft
+  in_progress: Sitzung läuft
   send_message: Nachricht senden
   message_placeholder: Schreibe deine Antwort …
   ai_thinking: Denkt nach …
@@ -417,13 +417,13 @@ session:
   history_failed: "Der bisherige Verlauf konnte nicht geladen werden. Es wurde nichts gelöscht."
   chat_retry: "Erneut versuchen"
   welcome_empty: "Bereit zum Lernen! Schreibe deine erste Nachricht."
-  end_session: Session beenden
-  end_session_confirm: Sicher? Wir können die Session beenden und bewerten.
+  end_session: Sitzung beenden
+  end_session_confirm: Sicher? Wir können die Sitzung beenden und bewerten.
   switch_recommended: Methodenwechsel empfohlen
   switch_recommended_subtitle: Deine letzten Werte weisen darauf hin, dass eine andere Methode besser passen könnte.
   switch_accept: Methode wechseln
   switch_dismiss: Aktuelle Methode behalten
-  rating_title: Wie war die Session?
+  rating_title: Wie war die Sitzung?
   rating_understanding: Wie gut hast du es verstanden?
   rating_stress: Wie hoch war dein Stress?
   rating_method_fit: Wie gut hat die Methode gepasst?
@@ -436,7 +436,7 @@ session:
   cycle_advanced: Zyklus {n} gestartet
   cycles_completed: Abgeschlossene Zyklen
   next_topic: 'Nächstes Thema:'
-  offline_start_blocked: Du bist offline. Neue Sessions brauchen eine Netzverbindung - bisherige Sessions bleiben über das Dashboard lesbar.
+  offline_start_blocked: Du bist offline. Neue Sitzungen brauchen eine Netzverbindung - bisherige Sitzungen bleiben über das Dashboard lesbar.
   peek_step_prefix: "Schritt"
   rating_notes_aria: "Sitzungsnotizen"
   rating_notes_placeholder: "Was hat funktioniert, was nicht, was beim nächsten Mal versuchen…"
@@ -448,15 +448,15 @@ progress:
   title: Fortschritt
   chart_timeline: Verstehen und Stress über Zeit
   chart_methods: Methodenverteilung
-  commit_history: Session-Historie
+  commit_history: Sitzungshistorie
   commit_method: Methode
   commit_understanding: Verstehen
   commit_stress: Stress
   commit_duration: Dauer
   commit_date: Datum
-  no_commits: Noch keine abgeschlossenen Sessions.
+  no_commits: Noch keine abgeschlossenen Sitzungen.
   step_eval_title: KI-Schritt-Bewertung
-  step_eval_empty: Noch keine KI-Bewertungsdaten - starte eine Session, um Einblicke zu sehen.
+  step_eval_empty: Noch keine KI-Bewertungsdaten - starte eine Sitzung, um Einblicke zu sehen.
   step_eval_avg_confidence: Ø KI-Konfidenz
   step_eval_repeats: Mal sagte die KI 'noch nicht bereit'
   step_eval_advances: Schritt-Vorwärts
@@ -728,7 +728,7 @@ settings:
   missions_reset_done: "Heutige Missionen neu gemischt."
   missions_reset_failed: "Missionen konnten nicht zurückgesetzt werden."
   gestures: Wischgesten
-  gestures_description: Wischen zum Navigieren in Assessment, Session und Curriculum.
+  gestures_description: Wischen zum Navigieren in Assessment, Sitzung und Curriculum.
   profile_title: "Lernprofil"
   profile_resume: "Lernprofil fortsetzen"
   profile_redo: "Lernprofil erneut machen"
@@ -802,7 +802,7 @@ settings:
   playful_special_rounds_description: "Der Abschluss eines Sets (jede Lektion mit mindestens einem Stern) schaltet eine Blitzrunde aus seinen kniffligsten Karten frei, gespielt mit dem Countdown-Ring. Aus blendet die Blitzrunden-Karte komplett aus."
   playful_flash_round_cards: "Blitzrunden-Karten"
   playful_tickets: "Spiel-Tickets"
-  playful_tickets_description: "Verdiene Arcade-Tickets durch Leistung: eine Lektion mit voller Punktzahl, ein Durchlauf mit allen Herzen und Streak-Meilensteine (3/7/14/30 Tage). Ein Ticket spielt eine Runde eines gesperrten Arcade-Spiels. Aus lässt der Arcade nur die XP-Freischaltungen."
+  playful_tickets_description: "Verdiene Arcade-Tickets durch Leistung: eine Lektion mit voller Punktzahl, ein Durchlauf mit allen Herzen und Serien-Meilensteine (3/7/14/30 Tage). Ein Ticket spielt eine Runde eines gesperrten Arcade-Spiels. Aus lässt der Arcade nur die XP-Freischaltungen."
   playful_ticket_cap: "Maximale Tickets"
   playful_bonus_lessons: "Bonus-Lektionen"
   playful_bonus_lessons_description: "Sets können Bonus-Lektionen enthalten (Lektionsdateien, die mit \"bonus-\" beginnen). Bei aktivem Spielmodus erscheinen sie in der Lektionsliste des Sets gesperrt, bis jede reguläre Lektion mindestens einen Stern hat. Aus (oder Spielmodus aus) behandelt sie wie normale Lektionen."
@@ -1049,8 +1049,8 @@ errors:
 toast:
   project_created: Projekt angelegt.
   assessment_saved: Profil gespeichert.
-  session_started: Session gestartet.
-  session_ended: Session beendet.
+  session_started: Sitzung gestartet.
+  session_ended: Sitzung beendet.
   rating_saved: Bewertung gespeichert.
   api_key_saved: API-Key gespeichert.
   api_key_restored: "Letzter funktionierender Schlüssel wiederhergestellt."
@@ -1592,7 +1592,7 @@ arcade:
   unlock_not_enough_xp: "Noch nicht genug XP - weiter lernen!"
   tickets_label: "Tickets: {n}"
   ticket_play: "Eine Runde mit Ticket spielen"
-  tickets_hint: "Verdiene Tickets mit perfekten Lektionen, Durchläufen mit allen Herzen und Streak-Meilensteinen."
+  tickets_hint: "Verdiene Tickets mit perfekten Lektionen, Durchläufen mit allen Herzen und Serien-Meilensteinen."
   memory:
     name: "Lern-Memory"
     description: "Finde die passenden Begriff-Übersetzungs-Paare aus deinen Lektionen."
@@ -1819,15 +1819,15 @@ ui:
     chart_show_as_table: "Daten als Tabelle anzeigen"
     chart_radar_label: "Lernprofil-Radardiagramm"
     chart_radar_summary: "Deine stärkste Lernmethode: {method} ({value})"
-    chart_timeline_label: "Fortschrittsverlauf der letzten {n} Sessions"
-    chart_timeline_summary: "{n} Sessions; Verständnis-Trend {trend}"
+    chart_timeline_label: "Fortschrittsverlauf der letzten {n} Sitzungen"
+    chart_timeline_summary: "{n} Sitzungen; Verständnis-Trend {trend}"
     chart_timeline_trend_up: "steigend"
     chart_timeline_trend_down: "fallend"
     chart_timeline_trend_flat: "gleichbleibend"
     chart_distribution_label: "Methoden-Verteilung als Balkendiagramm"
-    chart_distribution_summary: "Meistgenutzte Methode: {method} ({count} Sessions, {pct}%)"
-    streak_cell_label: "{count} Sessions am {date}"
-    streak_cell_label_zero: "Keine Sessions am {date}"
+    chart_distribution_summary: "Meistgenutzte Methode: {method} ({count} Sitzungen, {pct}%)"
+    streak_cell_label: "{count} Sitzungen am {date}"
+    streak_cell_label_zero: "Keine Sitzungen am {date}"
     chart_radar_value: "Wert"
   tooltips:
     delete: "Löschen"
@@ -3129,7 +3129,7 @@ missions:
       description: "Wiederhole heute 10 Elemente."
     complete-review-session:
       title: "Wiederholung abschließen"
-      description: "Schließe eine Wiederholungs-Session ab."
+      description: "Schließe eine Wiederholungssitzung ab."
     review-overdue:
       title: "Überfällige aufholen"
       description: "Wiederhole alle überfälligen Elemente."
@@ -3801,10 +3801,10 @@ share:
     title: Fortschritt teilen
     copied: In die Zwischenablage kopiert
     lesson_complete: Ich habe gerade eine Lektion bei Adaptive Learner gemeistert!
-    streak: Ich habe eine {days}-Tage-Lernsträhne bei Adaptive Learner!
+    streak: Ich habe eine {days}-Tage-Lernserie bei Adaptive Learner!
     level: Ich habe gerade Level {level} bei Adaptive Learner erreicht!
     badge: Ich habe das Abzeichen „{badge}“ bei Adaptive Learner verdient!
-    progress: Ich lerne mit Adaptive Learner, Level {level}, {days}-Tage-Strähne.
+    progress: Ich lerne mit Adaptive Learner, Level {level}, {days}-Tage-Serie.
     hashtag: '#AdaptiveLearner'
   pr:
     preparing: "Repository wird vorbereitet..."
