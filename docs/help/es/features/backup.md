@@ -17,11 +17,11 @@ lecciones, errores a nivel de elemento, gamificación con
 XP/racha/insignias, misiones, tarjetas de Anki, notas y más)
 **más tus conjuntos de contenido descargados**.
 
-**Todavía no incluidos:** los repositorios de contenido conectados,
-las invitaciones canjeadas y los ajustes del Learning Repository.
-Tras restaurar en un dispositivo nuevo, los conjuntos de contenido
-vuelven, pero vuelve a conectar sus repositorios (y canjea de nuevo
-las invitaciones) para que sigan llegando las actualizaciones.
+**También incluidos:** los repositorios de contenido conectados, las
+invitaciones canjeadas y si el Learning Repository está activado.
+**No incluidos:** el token de acceso de un repositorio privado
+(vuelve a introducirlo tras restaurar) y la carpeta del Learning
+Repository, que pertenece al dispositivo.
 
 Antes de exportar, la app muestra una vista previa **"Tu copia de
 seguridad contiene…"** con recuentos de registros por área, para
@@ -103,4 +103,4 @@ aceptan en todos los puntos de importación de copias de seguridad
 ## Páginas relacionadas
 
 - [Ajustes](../user-guide/settings.md) - todas las acciones de datos de un vistazo
-- [Varios repositorios de contenido](content-repos.md) - los repos conectados todavía no forman parte de la copia, vuelve a conectarlos tras restaurar
+- [Varios repositorios de contenido](content-repos.md) - los repos conectados y las invitaciones canjeadas viajan con la copia

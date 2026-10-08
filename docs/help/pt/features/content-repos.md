@@ -125,4 +125,4 @@ partilhar as definições.
 
 - [Navegador de Conteúdo](content-browser.md) - encontrar, filtrar, descarregar conjuntos
 - [Criar lições](../content-creation/overview.md) - contribuir com conteúdos próprios
-- [Backup e restauro](backup.md) - os repos ligados ainda não fazem parte do backup, volta a ligá-los depois de restaurar
+- [Backup e restauro](backup.md) - os repos ligados e os convites utilizados viajam com o backup
