@@ -72,11 +72,14 @@ nav:
     progress: "進捗"
     more: "その他"
   primary: "メインナビゲーション"
+  statistics: "統計"
   profile: "あなたのプロフィール"
   learning_path: "学習パス"
   dashboard: ダッシュボード
   session: セッション
+  curriculum: カリキュラム
   progress: 進捗
+  import: インポート
   settings: 設定
   help: ヘルプ
   home: ホーム
