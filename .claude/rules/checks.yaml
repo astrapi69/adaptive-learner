@@ -115,6 +115,13 @@ checks:
     wired_in: scripts/check_e2e_skip_budget.py; .github/workflows/dexie-smoke.yml; .github/workflows/manual-automation.yml; .github/workflows/visual-regression.yml; make test-dexie-smoke; make test-manual-automation; backend/tests/test_e2e_skip_budget.py
     probe: script_exists=backend/tests/test_e2e_skip_budget.py | ci_step=.github/workflows/dexie-smoke.yml::dexie-smoke::Runtime skip budget (#3427)::check_e2e_skip_budget.py | ci_step=.github/workflows/manual-automation.yml::manual-automation::Runtime skip budget (#3427)::check_e2e_skip_budget.py | ci_step=.github/workflows/visual-regression.yml::visual::Runtime skip budget (#3427)::check_e2e_skip_budget.py
 
+  - id: i18n-one-term-per-concept
+    verifies: no catalog value uses a term rejected for its concept (de Session/Streak/Strähne, fr séance, ja ストリーク, ko 스트릭); the table in frontend/src/data/i18n/terms.test.ts is where the term decisions live (#3433)
+    rule: none (term decision of #3433)
+    status: active
+    wired_in: frontend/src/data/i18n/terms.test.ts; .github/workflows/ci.yml fixed step on every frontend PR; full Vitest on push
+    probe: script_exists=frontend/src/data/i18n/terms.test.ts | ci_step=.github/workflows/ci.yml::frontend-tests::i18n one term per concept (#3433)::terms.test.ts
+
   - id: docs-drift
     verifies: version badges, plugin counts, theme parity, help parity, mkdocs orphans
     rule: ai-workflow/documentation-protocol.md#single-source-of-truth-for-volatile-statistics
