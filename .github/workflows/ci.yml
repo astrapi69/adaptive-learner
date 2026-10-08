@@ -459,6 +459,16 @@ jobs:
         working-directory: frontend
         run: bunx vitest run src/i18n/full-tree-key-coverage.test.ts
 
+      # #3433: one term per concept in every catalog. The test reads the
+      # catalogs through fs, so `vitest --changed` never selects it, and an
+      # i18n_only PR (exactly where a rejected term comes back) runs only
+      # the parity pins below. A fixed step on every frontend PR, like the
+      # key coverage above; push runs the full suite, which includes it.
+      - name: i18n one term per concept (#3433)
+        if: github.event_name == 'pull_request' && needs.changes.outputs.frontend == 'true'
+        working-directory: frontend
+        run: bunx vitest run src/data/i18n/terms.test.ts
+
       # Test Impact Analysis (#615): on a PR run only the Vitest files related
       # to files changed since the base branch (`--changed origin/<base>`).
       # Real test failures propagate (no masking). The ONLY fallback to the
