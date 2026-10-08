@@ -72,11 +72,14 @@ nav:
     progress: "Πρόοδος"
     more: "Περισσότερα"
   primary: "Κύρια πλοήγηση"
+  statistics: "Στατιστικά"
   profile: "Το προφίλ σου"
   learning_path: "Διαδρομή μάθησης"
   dashboard: Πίνακας
   session: Συνεδρία
+  curriculum: Πρόγραμμα
   progress: Πρόοδος
+  import: Εισαγωγή
   settings: Ρυθμίσεις
   help: Βοήθεια
   home: Αρχή

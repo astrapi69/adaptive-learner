@@ -72,11 +72,14 @@ nav:
     progress: "Progres"
     more: "Lainnya"
   primary: "Navigasi utama"
+  statistics: "Statistik"
   profile: "Profil Anda"
   learning_path: "Jalur Pembelajaran"
   dashboard: Dasbor
   session: Sesi
+  curriculum: Kurikulum
   progress: Kemajuan
+  import: Impor
   settings: Pengaturan
   help: Bantuan
   home: Beranda
