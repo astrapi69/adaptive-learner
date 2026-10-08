@@ -9,15 +9,15 @@ Tabellen zum Tiefer-Bohren.
 Vier Abschnitte, von oben nach unten:
 
 1. **Trend-Insights** - mittleres Verständnis, mittlerer
-   Stress, Gesamt-Minuten, Streak-Tage. Zahlen, die das
+   Stress, Gesamt-Minuten, Serientage. Zahlen, die das
    Dashboard kompakt anzeigt, werden hier zu beschrifteten
    Zeilen.
 2. **Methodenverteilung** - dasselbe horizontale
    Balkendiagramm wie im Dashboard, mit Hover-Tooltips für
    die exakte Anzahl pro Methode.
 3. **Schritt-Auswertungs-Insights** - liest die
-   StepEvaluation-Zeilen, die der Session-Route
-   produziert.
+   StepEvaluation-Zeilen, die während einer Sitzung
+   entstehen.
 4. **Commit-Historie** - jede ProgressCommit-Zeile
    chronologisch, neueste oben.
 
@@ -50,7 +50,7 @@ einen Blick wert sind:
 Ein Balkendiagramm mit der Gesamtzeit (Sekunden) pro
 Zyklusschritt für das Projekt. Der Aggregator schneidet
 Lücken über 2 Stunden ab (du warst weg vom Bildschirm - keine
-echte Lernzeit), damit einzelne Übernacht-Sessions die
+echte Lernzeit), damit einzelne Übernacht-Sitzungen die
 Durchschnitte nicht dominieren.
 
 Wo du am meisten Zeit verbringst, sagt viel. Viel Zeit auf
@@ -81,7 +81,7 @@ identischer Shape über beide Speichermodi:
 
 - **Fortschrittsbericht** - die ganze Fortschritts-Seite
   als Markdown- oder PDF-Dokument verpackt.
-- **Sitzungsdetail** - Transkript einer einzelnen Session
+- **Sitzungsdetail** - Transkript einer einzelnen Sitzung
   + Bewertung + Schritt-Evaluationen.
 - **Curriculum-Übersicht** - der Themenbaum + Lektions-
   Zusammenfassungen eines einzelnen Curriculums.

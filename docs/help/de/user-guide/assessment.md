@@ -45,7 +45,7 @@ Die Form sagt viel:
   Die App stützt sich darauf standardmäßig.
 - **Eine runde Form** = ausgeglichener Lerntyp. Die App
   startet mit der "deduktiv"-Vorgabe, ist aber zwischen
-  Sessions wechselwilliger.
+  Sitzungen wechselwilliger.
 - **Eine flache Form** bei niedrigen Werten = du hast keine
   starken Präferenzen gepickt. Auch in Ordnung; die
   KI-adaptive Methode greift hier besonders gut.
@@ -71,11 +71,11 @@ Lerntyp-Test-Seite ist immer über den "Test wiederholen"-Link
 im Dashboard erreichbar. Eine Neuauswertung erhöht das
 `version`-Feld deines Profils und überschreibt die alten
 Gewichte; das KI-Verhalten ändert sich ab der nächsten
-Session.
+Sitzung.
 
 ## Test überspringen
 
 Wenn du den Test überspringst, nutzt die App **deduktiv** als
-Standardmethode und die Sessions sind trotzdem nützlich. Mach
+Standardmethode und die Sitzungen sind trotzdem nützlich. Mach
 den Test, wenn du soweit bist - es gibt keine Strafe für ein
 spätes Nachholen.

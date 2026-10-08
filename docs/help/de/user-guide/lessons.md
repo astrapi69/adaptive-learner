@@ -3,7 +3,7 @@
 Eine **Inhaltslektion** ist eine kleine, handgefertigte
 Lerneinheit (meist 5–10 Minuten), die aus einem öffentlichen
 Lektionssatz heruntergeladen wird. Sie läuft in einem
-eigenen Viewer, nicht in der KI-Chat-Session. Nach der
+eigenen Viewer, nicht in der KI-Chat-Sitzung. Nach der
 Lektion merkt sich die App genau, welche Wörter, Paare oder
 Phrasen du falsch beantwortet hast, und plant sie für eine
 gezielte Wiederholungssitzung später ein.
@@ -229,7 +229,7 @@ auf dem Dashboard. Sie zeigt:
 - Wie viele **überfällig** sind (nach dem geplanten
   Wiederholungsdatum)
 - Eine Schaltfläche **Jetzt wiederholen**, die eine
-  fokussierte Mini-Session unter `/review/:setId` öffnet
+  fokussierte Mini-Sitzung unter `/review/:setId` öffnet
 
 Die Planung verwendet drei Stufen, basierend darauf, wie
 oft du das Element hintereinander richtig beantwortet hast:
@@ -308,7 +308,7 @@ verfehlten Artikel anvisiert.
 - **Jeder abgeschlossene Lückentext zählt zur
   Beherrschung.** Die Korrektur-Runde schreibt dieselben
   Element-Verfolgungs-Datensätze wie die Hauptlektion;
-  dein Streak auf diesen Elementen rückt Richtung
+  deine Serie auf diesen Elementen rückt Richtung
   3-richtig-Beherrschungsschwelle.
 
 Am Ende erscheint eine kurze "{n} Elemente verbessert"-
@@ -349,7 +349,7 @@ Sterne-Formel:
   erreichst (jeder Schritt mit Versuche = 1, keine
   Wiederholungen)
 - Derselbe **tägliche Serien-Multiplikator** wie bei
-  Chat-Sessions (+25 % pro Tag in Folge, bei 7 Tagen
+  Chat-Sitzungen (+25 % pro Tag in Folge, bei 7 Tagen
   gedeckelt)
 
 Vier neue Abzeichen schalten sich rund um Lektionen frei:
@@ -365,7 +365,7 @@ Vier neue Abzeichen schalten sich rund um Lektionen frei:
 
 Lektionsabschlüsse zählen auch für deine **tägliche Serie**,
 sodass das Lernen mit Inhaltslektionen die Heatmap auf
-dieselbe Weise füllt wie Chat-Sessions.
+dieselbe Weise füllt wie Chat-Sitzungen.
 
 ---
 
@@ -382,7 +382,7 @@ bekommen.
 Auch die Gamification ist angeglichen: Im
 reinen Browser-Modus verdienst du für abgeschlossene
 Lektionen **dieselben XP und Lektions-Abzeichen** wie im
-Server-Modus - die Stern-, Streak- und Abzeichen-Logik ist
+Server-Modus - die Stern-, Serien- und Abzeichen-Logik ist
 in TypeScript portiert und gegen identische Goldwerte
 abgesichert. Es gibt keinen Funktionsunterschied mehr
 zwischen den Modi beim Lektionsabschluss.

@@ -23,7 +23,7 @@ kopieren Ankis Intervalle.
 
 **Wofür**: alles, was langfristig erinnert werden muss.
 Vokabular, Formeln, Eigennamen, Fehlerkorrektur-Rezepte.
-AdaptiveLearner-Sessions sind großartig fürs Verstehen; Anki
+AdaptiveLearner-Sitzungen sind großartig fürs Verstehen; Anki
 ist großartig fürs Nicht-Vergessen.
 
 Das AdaptiveLearner-Profil gewichtet "deductive" und
@@ -72,7 +72,7 @@ deren Web-UIs für weniger strukturierte Exploration sprechen.
 **Wofür**: offene Fragen, Brainstorming, "erkläre diesen
 Absatz", "gib mir drei verschiedene Rahmungen dieses
 Problems". Der unstrukturierte Chat glänzt bei divergentem
-Denken; AdaptiveLearner-Sessions glänzen bei fokussiertem
+Denken; AdaptiveLearner-Sitzungen glänzen bei fokussiertem
 konvergentem Üben.
 
 ## Wie AdaptiveLearner Werkzeuge rankt
@@ -105,7 +105,7 @@ Profil ändert (Test-Neuauswertung).
 Eine zweite Tracking-Oberfläche im Dashboard: die
 **Spaced**-Karte. Das sind KEINE Werkzeug-Empfehlungen; es
 sind Aktions-Empfehlungen. Das System trackt, wie lange du
-seit der letzten Session pro Methode keine mehr hattest, und
+seit der letzten Sitzung pro Methode keine mehr hattest, und
 schlägt dann vor:
 
 | Zeit seit letztem Commit | Karten-Typ | Intervall |
@@ -143,7 +143,7 @@ als externe Empfehlung:
   formatiert für den NotebookLM-Source-Upload.
 - **Sprache (TTS + STT + Aussprache-Übung)** -
   Web-Speech-API-Integrationen direkt in
-  Session + Assessment + eine eigene
+  Sitzung + Assessment + eine eigene
   `/pronunciation`-Seite für Sprachprojekte. Kein externes
   Werkzeug nötig.
 
@@ -153,7 +153,7 @@ Bewusst ausgelassen:
 
 - **Duolingo / Babbel / ähnliche gamifizierte Apps** - sie
   widersprechen der Philosophie. Adaptive Learner liefert
-  zwar XP + Abzeichen + Streaks, aber als
+  zwar XP + Abzeichen + Serien, aber als
   Motivationsschicht über un-gamifiziertem Inhalt, nicht
   als primäre Schleife.
 - **Khan Academy / Coursera** - sie sind kurs-
