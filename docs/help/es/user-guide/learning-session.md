@@ -46,6 +46,7 @@ Cada mensaje que envías activa hasta tres llamadas a la IA:
    Si es así Y `continue_recommended`, un nuevo ciclo comienza
    automáticamente con un subtema nuevo (auto-bucle, máximo 5
    ciclos por sesión).
+   Solo en la aplicación de escritorio: en la versión del navegador la sesión se queda en el paso 7.
 
 El veredicto se muestra discretamente sobre el chat como una
 notificación «Paso movido de X a Y porque…» cuando realmente se

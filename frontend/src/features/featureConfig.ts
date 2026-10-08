@@ -85,6 +85,7 @@ export const FEATURES = {
   GIT_PERSIST: "git-persist",
   LEARNING_REPO_GIT: "learning-repo-git",
   PLUGIN_LIFECYCLE: "plugin-lifecycle",
+  SESSION_AUTO_LOOP: "session-auto-loop",
   REGISTRY_PR: "registry-pr",
 } as const;
 
@@ -144,12 +145,17 @@ const NEEDS_AI_KEY: readonly FeatureId[] = [
 /**
  * Desktop-only features: disabled in Dexie mode (no backend / git binary).
  * Disabled, not hidden, so the UI can tell the user the desktop app exists.
+ *
+ * ``SESSION_AUTO_LOOP`` (#3436): the next cycle after step 7 runs only in the
+ * backend session plugin (``run_auto_loop``); the browser build was never
+ * ported, so it is disabled there and the session page says so.
  */
 const DESKTOP_ONLY: readonly FeatureId[] = [
   FEATURES.SYNC,
   FEATURES.GIT_PERSIST,
   FEATURES.LEARNING_REPO_GIT,
   FEATURES.PLUGIN_LIFECYCLE,
+  FEATURES.SESSION_AUTO_LOOP,
 ];
 
 /**
