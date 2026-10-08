@@ -1617,7 +1617,8 @@ per-Karte "Exportieren" / "Als Set exportieren"; akzeptiert `.json` (eine
 Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
 
 - [ ] TC-0381 Import einer `.json`-Lektion: Vorschau zeigt Titel · Sprache · N
-      Lektionen · M Übungen VOR dem Bestätigen
+      Lektionen · M Übungen VOR dem Bestätigen. Die Sprache ist die der
+      Lektion (eine es/de-Lektion zeigt ES), nicht pauschal EN (#3395).
 - [ ] TC-0382 Import eines `.zip`-Sets: Vorschau + korrekte Lektionszahl
 - [ ] TC-0383 Namenskollision: Drei-Wege-Dialog erscheint (Überschreiben /
       Als Kopie importieren / Abbrechen), KEIN stilles Überschreiben;

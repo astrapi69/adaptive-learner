@@ -1393,7 +1393,8 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 + `.zip` (a whole set = `manifest.yaml` + `lessons/`).
 
 - [ ] TC-0381 Import a `.json` lesson: preview shows title · language · N
-      lessons · M exercises BEFORE confirming
+      lessons · M exercises BEFORE confirming. The language is the lesson's
+      own (an es/de lesson shows ES), not EN across the board (#3395).
 - [ ] TC-0382 Import a `.zip` set: preview + correct lesson count
 - [ ] TC-0383 Name collision: three-way dialog appears (Overwrite /
       Import as copy / Cancel), NO silent overwrite;
