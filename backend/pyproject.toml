@@ -10,7 +10,7 @@ package-mode = false
 python = "~3.12"
 fastapi = "^0.141.0"
 uvicorn = { extras = ["standard"], version = ">=0.48,<0.55" }
-sqlalchemy = "^2.0.49"
+sqlalchemy = {version = "^2.0.49", extras = ["asyncio"]}
 pydantic = {version = "^2.13.0", extras = ["email"]}
 platformdirs = "^4.2.0"
 pluginforge = "^0.10.0"
