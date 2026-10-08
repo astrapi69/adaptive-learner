@@ -124,14 +124,22 @@ async function parseJsonLesson(file: File): Promise<ImportParseResult> {
   }
   try {
     const lesson = asValidLesson(parsed);
+    // #3395: the lesson's own pair, resolved like a manifest's; a lesson
+    // that names none keeps the en/en the ZIP path also falls back to.
+    // The lesson schema allows ``null`` here, the engine reads absent.
+    const pair = resolveLanguagePair({
+      target_language: lesson.target_language ?? undefined,
+      source_language: lesson.source_language ?? undefined,
+    });
+    const targetLanguage = pair.target || "en";
     return {
       ok: true,
       set: {
         set_id: importSetId(lesson.title || lesson.id),
         title: lesson.title,
-        language: "en",
-        target_language: "en",
-        source_language: "en",
+        language: targetLanguage,
+        target_language: targetLanguage,
+        source_language: pair.source,
         level: "imported",
         description: lesson.description ?? null,
         lessons: [lesson],
