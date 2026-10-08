@@ -134,6 +134,8 @@ describe el paso anterior / siguiente del ciclo.
 
 ## Auto-bucle + transiciones de tema
 
+> En la versión del navegador la sesión se queda en el paso 7: el auto-bucle solo funciona en la aplicación de escritorio. La página de la sesión lo indica al llegar al paso 7.
+
 El paso 7 ya no es un callejón sin salida. Una vez que el
 evaluador de pasos te mueve al paso 7 con `advance=true`, una
 tercera llamada a la IA - el evaluador de transición de tema -

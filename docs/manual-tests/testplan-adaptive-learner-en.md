@@ -532,6 +532,12 @@ Requires domain knowledge. Not automatable.
       "2 / 5 paired" directly left of "Check" and counts along with every
       pair; it is absent on theory steps, after "Check" and on the summary,
       and the same in the review / shuffle / endless runners
+- [ ] TC-0949 Matching, re-pairing instead of undoing (#3237): tapping a paired tile
+      only selects it (selection ring), the counter stays; then tap a tile
+      in the other column: if it is free, the pair moves there; if it is
+      paired, the two pairs swap partners. The counter never drops, and a
+      full board stays full. The same when starting in the right column;
+      Ctrl/Cmd+Z still undoes the last pair
 
 - [ ] TC-0132 Matching: long words wrap inside the tile (#3174): open a matching
       exercise whose word is wider than the tile on a NARROW device (iPhone,
@@ -960,7 +966,8 @@ preview delivery). In the regular build the mode does not exist.
       hop with the new word
 - [ ] TC-0258 Matching exercise: a freshly formed pair "snaps" together with a
       pop on both tiles; after checking, correct pairs hop briefly;
-      tapping a pair still undoes it
+      tapping a pair selects it for re-pairing (#3237), as in the
+      classic mode
 - [ ] TC-0259 Behaviour unchanged: selection, checking, score and resolution
       are identical to normal mode in all three exercise types
 - [ ] TC-0260 Game mode off: classic lists/chips/tiles without the game look;
@@ -3125,6 +3132,11 @@ Location: Settings → Data → Recommended repositories.
       again"; once the backend runs, the click loads the history
 - [ ] TC-0732 Imported session opens with the AI asking the first question on its own
       (no user turn first), the chat starts clean
+- [ ] TC-0950 Auto-loop in the browser version (#3436): in the Pages build (Dexie)
+      take a session to step 7; below the chat a notice with a monitor icon
+      appears: in the desktop app a new cycle starts automatically after
+      that, the browser version cannot do it yet. No notice before step 7;
+      in the desktop app no notice at step 7, the new cycle starts there
 - [ ] TC-0733 AI content validation: report sensible? provider+model shown?
 - [ ] TC-0734 No button without a key leads to an error toast (disabled + tooltip)
 

@@ -57,8 +57,9 @@ enregistrés comme badges. Les badges ont trois niveaux : bronze, argent, or.
 
 **Séries**
 Un apprentissage quotidien sans interruption incrémente votre série. Les
-séries expirent après 24 heures sans activité - avec trois gels de série
-par mois pour les jours de déplacement ou de maladie.
+séries expirent après 24 heures sans activité. Chaque tranche de 7 jours
+de série rapporte un gel de série (3 au maximum), utilisé automatiquement
+un jour sans activité (déplacement, maladie).
 
 ---
 

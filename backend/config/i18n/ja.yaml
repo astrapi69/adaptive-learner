@@ -404,6 +404,7 @@ review:
   no_data: まだセッションがありません - 最初のセッションを始めて傾向を確認しましょう。
   pronunciation_quick_start: 発音練習
 session:
+  auto_loop_unavailable: "デスクトップアプリでは、ステップ 7 の後に次のトピックで新しいサイクルが自動的に始まります。ブラウザ版ではまだできません。学習を続けるには、セッションを終了して新しいセッションを始めてください。"
   title: 学習セッション
   topic_label: "トピック"
   in_progress: セッション進行中

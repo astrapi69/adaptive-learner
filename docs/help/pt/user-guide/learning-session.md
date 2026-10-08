@@ -48,6 +48,7 @@ Cada mensagem que envia desencadeia até três chamadas de IA:
    integrado. Se sim E `continue_recommended`, um novo ciclo
    começa automaticamente com um novo subtópico (auto-loop,
    máx. 5 ciclos por sessão).
+   Só na aplicação de desktop: na versão do navegador a sessão fica no passo 7.
 
 O veredicto é mostrado discretamente acima do chat como uma
 notificação "Passo moveu de X para Y porque…" quando é
