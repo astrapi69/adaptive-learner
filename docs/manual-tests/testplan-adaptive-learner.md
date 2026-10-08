@@ -571,6 +571,13 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       „Prüfen" und zählt bei jedem Paar mit; auf Theorie-Schritten, nach
       „Prüfen" und auf der Zusammenfassung fehlt er; dasselbe in den Läufen
       Wiederholung / Zufall / Endlos
+- [ ] TC-0949 Zuordnung, Neupaaren statt Lösen (#3237): ein Antippen einer gepaarten
+      Kachel wählt sie nur aus (Auswahlrahmen), der Zähler bleibt gleich;
+      danach eine Kachel der anderen Spalte antippen: ist sie frei, wandert
+      das Paar dorthin; ist sie gepaart, tauschen die beiden Paare ihre
+      Partner. Der Zähler fällt dabei nie, ein volles Brett bleibt voll.
+      Dasselbe, wenn man in der rechten Spalte beginnt; Strg/Cmd+Z macht
+      weiterhin das letzte Paar rückgängig
 
 - [ ] TC-0132 Zuordnung: lange Wörter brechen in der Kachel um (#3174): eine
       Zuordnungsübung mit einem Wort, das breiter als die Kachel ist, auf
@@ -1024,7 +1031,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       wiederholt den Hüpfer mit dem neuen Wort
 - [ ] TC-0258 Zuordnungsübung: ein frisch gebildetes Paar "schnappt" mit einem
       Pop auf beiden Kacheln zusammen; nach dem Prüfen hüpfen die
-      richtigen Paare kurz; das Antippen eines Paars löst es weiterhin
+      richtigen Paare kurz; das Antippen eines Paars wählt es zum
+      Neupaaren aus (#3237), genau wie im normalen Modus
 - [ ] TC-0259 Verhalten unverändert: Auswahl, Prüfen, Punktzahl und Auflösung
       sind in allen drei Übungstypen identisch zum normalen Modus
 - [ ] TC-0260 Spielmodus aus: klassische Listen/Chips/Kacheln ohne die

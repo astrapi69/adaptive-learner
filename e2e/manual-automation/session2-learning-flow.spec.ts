@@ -105,16 +105,18 @@ test.describe("Session 2 — Learning flow", () => {
     // A → B: left then right forms a pair (number badge appears).
     await page.getByTestId("matching-left-0").click();
     await page.getByTestId("matching-right-0").click();
-    await expect(page.getByTestId("matching-pair-badge-1").first()).toBeVisible();
-
-    // Undo by tapping the paired left again.
-    await page.getByTestId("matching-left-0").click();
-    await expect(page.getByTestId("matching-pair-badge-1")).toHaveCount(0);
+    await expect(page.getByTestId("matching-pair-badge-1")).toHaveCount(2);
 
     // B → A: right FIRST, then left — the #509 reverse-direction path.
-    await page.getByTestId("matching-right-0").click();
+    await page.getByTestId("matching-right-1").click();
+    await page.getByTestId("matching-left-1").click();
+    await expect(page.getByTestId("matching-pair-badge-2")).toHaveCount(2);
+
+    // #3237: tapping a paired tile selects it instead of undoing; the
+    // pair count stays.
     await page.getByTestId("matching-left-0").click();
-    await expect(page.getByTestId("matching-pair-badge-1").first()).toBeVisible();
+    await expect(page.getByTestId("matching-left-0")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByTestId("matching-pair-badge-1")).toHaveCount(2);
   });
 
   test("free-text: input + check shows feedback", async ({ page }) => {
