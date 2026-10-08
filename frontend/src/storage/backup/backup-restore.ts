@@ -3,7 +3,9 @@
  *
  * Merge semantics, never overwrite-all:
  *
- *   - Unknown id: insert from the backup.
+ *   - Unknown id: insert from the backup, unless a unique index (a badge
+ *     key, a per-user singleton) finds the local row; then that row is the
+ *     known row, keeps its id, and children follow it (#3694).
  *   - Known id, append-only row: skip (history is immutable).
  *   - Known id, mutable row: keep the newer side
  *     (compare ``updated_at`` / ``assessed_at``).
@@ -20,6 +22,12 @@ import type {
 } from "../../types/domain";
 import {restoreDexieContentSets} from "./backup-content-sets";
 import {normalizeRestoreRecord} from "./backup-normalize";
+import {
+    findByUniqueIndex,
+    redirectFks,
+    rememberRemap,
+    type IdRemap,
+} from "./backup-unique-match";
 import {
     dropApiKeyFields,
     getTable,
@@ -63,17 +71,72 @@ export function validateBackupPayload(payload: unknown): asserts payload is Back
     }
 }
 
+type RowOutcome = "inserted" | "updated" | "skipped";
+
+/** The row a backup record writes, with the never-restored fields dropped. */
+function writableRow(table: string, record: RowDict): RowDict {
+    return table === "user_settings" ? dropApiKeyFields(record) : {...record};
+}
+
+/** Whether the backup side of a mutable row is newer than the local one. */
+function backupIsNewer(record: RowDict, existing: RowDict, spec: BackupTableSpec): boolean {
+    const remoteTs = parseTimestamp(record[spec.timestampField]);
+    const localTs = parseTimestamp(existing[spec.timestampField]);
+    return remoteTs === null || localTs === null || remoteTs > localTs;
+}
+
+/**
+ * Restore one record. A record unknown by id is looked up by the store's
+ * unique index too (#3694): a catalog row or a singleton the device already
+ * holds under another id is merged into that row and its id is remembered
+ * for the child tables. Such a row is a local placeholder in the unique
+ * slot, so the backup overwrites it regardless of timestamp, exactly as the
+ * backend restore does (#115); a row with the backup's own id keeps the
+ * newer-wins rule.
+ */
+async function restoreRecord(
+    store: ReturnType<typeof getTable>,
+    table: string,
+    spec: BackupTableSpec,
+    record: RowDict,
+    recordId: string,
+    userId: string,
+    idRemap: IdRemap,
+): Promise<RowOutcome> {
+    const existing =
+        ((await store.get(recordId)) as RowDict | undefined) ??
+        (await findByUniqueIndex(store, record));
+    if (existing == null) {
+        if (!recordBelongsToUser(spec, record, userId)) return "skipped";
+        await store.add(writableRow(table, record) as never);
+        return "inserted";
+    }
+    const localId = String(existing.id);
+    if (localId !== recordId) rememberRemap(idRemap, table, recordId, localId);
+    // Existing row. Defensive scope check.
+    if (spec.scope !== "self" && existing.user_id != null && existing.user_id !== userId) {
+        return "skipped";
+    }
+    if (spec.appendOnly) return "skipped";
+    const matchedByUniqueKey = localId !== recordId;
+    if (!matchedByUniqueKey && !backupIsNewer(record, existing, spec)) return "skipped";
+    // Keep the local PK; the spread keeps local-only fields.
+    await store.put({...existing, ...writableRow(table, record), id: localId} as never);
+    return "updated";
+}
+
 async function restoreOneTable(
     db: AdaptiveLearnerDB,
     table: string,
     records: RowDict[],
     spec: BackupTableSpec,
     userId: string,
+    idRemap: IdRemap,
 ): Promise<RestoreTableSummary> {
     const summary = emptyTableSummary();
     const store = getTable(db, spec);
     for (const raw of records) {
-        const record = normalizeRestoreRecord(table, raw);
+        const record = redirectFks(table, normalizeRestoreRecord(table, raw), idRemap);
         const recordId = record.id;
         if (typeof recordId !== "string" || recordId === "") {
             summary.skipped += 1;
@@ -81,45 +144,7 @@ async function restoreOneTable(
             continue;
         }
         try {
-            const existing = (await store.get(recordId)) as RowDict | undefined;
-            if (existing == null) {
-                if (!recordBelongsToUser(spec, record, userId)) {
-                    summary.skipped += 1;
-                    continue;
-                }
-                const insertRow =
-                    table === "user_settings" ? dropApiKeyFields(record) : {...record};
-                await store.add(insertRow as never);
-                summary.inserted += 1;
-                continue;
-            }
-            // Existing row. Defensive scope check.
-            if (
-                spec.scope !== "self" &&
-                "user_id" in existing &&
-                existing.user_id != null &&
-                existing.user_id !== userId
-            ) {
-                summary.skipped += 1;
-                continue;
-            }
-            if (spec.appendOnly) {
-                summary.skipped += 1;
-                continue;
-            }
-            const remoteTs = parseTimestamp(record[spec.timestampField]);
-            const localTs = parseTimestamp(existing[spec.timestampField]);
-            if (remoteTs === null || localTs === null || remoteTs > localTs) {
-                const updateRow =
-                    table === "user_settings" ? dropApiKeyFields(record) : {...record};
-                // Preserve the existing PK; .put would overwrite the
-                // whole row including any local-only fields, which
-                // is the intended behaviour here.
-                await store.put({...existing, ...updateRow, id: recordId} as never);
-                summary.updated += 1;
-            } else {
-                summary.skipped += 1;
-            }
+            summary[await restoreRecord(store, table, spec, record, recordId, userId, idRemap)] += 1;
         } catch (err) {
             const message = err instanceof Error ? err.message : String(err);
             summary.errors.push(`${table}/${recordId}: ${message}`);
@@ -146,6 +171,9 @@ export async function restoreDexieBackup(
     let totalUpdated = 0;
     let totalSkipped = 0;
     const allErrors: string[] = [];
+    // #3694 - backup ids matched to local rows under another id; badges are
+    // restored before user_badges, so the earned badges redirect in time.
+    const idRemap: IdRemap = new Map();
     for (const table of RESTORE_ORDER) {
         const spec = BACKUP_TABLES[table];
         if (spec == null) {
@@ -166,7 +194,7 @@ export async function restoreDexieBackup(
         // ciphertext); each one counts as skipped.
         const summary = SECRET_TABLES.has(table)
             ? {...emptyTableSummary(), skipped: records.length}
-            : await restoreOneTable(db, table, records as RowDict[], spec, userId);
+            : await restoreOneTable(db, table, records as RowDict[], spec, userId, idRemap);
         perTable[table] = summary;
         totalInserted += summary.inserted;
         totalUpdated += summary.updated;
