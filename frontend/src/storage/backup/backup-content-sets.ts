@@ -10,7 +10,7 @@
  * instead of collapsing to the raw ``set_id``.
  */
 
-import {parse as parseYaml} from "yaml";
+import {parseManifest, resolveLanguagePair} from "../../lib/content/engine";
 
 import {nowIso, type AdaptiveLearnerDB} from "../dexie/db";
 import type {ContentSetRow, ContentSetFileRow} from "../dexie/db";
@@ -111,7 +111,9 @@ function parseManifestSetMeta(
 ): ManifestSetMeta | null {
     if (!body) return null;
     try {
-        const doc = parseYaml(body) as {
+        // The engine's manifest parse (#3395); ``title`` at the root is a
+        // restore-synthesised shape the engine type does not name.
+        const doc = parseManifest(body) as {
             name?: string;
             title?: string;
             sets?: ManifestSetMeta[];
@@ -134,29 +136,22 @@ function parseManifestSetMeta(
     }
 }
 
-/** Language fields for a restored ``ContentSetRow``, resolved from the
- *  carried Dexie ``meta`` first, then the parsed manifest, then a
- *  minimal default. ``language`` and ``target_language`` cross-fill so
- *  a row missing one but carrying the other stays usable. */
+/** Language fields for a restored ``ContentSetRow``: the carried Dexie
+ *  ``meta`` first, else the manifest's pair as the engine resolves it
+ *  (``resolveLanguagePair``: the legacy ``language`` alias, target ``""``
+ *  and source ``"en"`` when absent; #3395). ``language`` and
+ *  ``target_language`` cross-fill so a row missing one but carrying the
+ *  other stays usable. */
 function resolveContentSetLanguages(
     meta: Partial<ContentSetRow>,
     fromManifest: ManifestSetMeta,
 ): Pick<ContentSetRow, "language" | "target_language" | "source_language"> {
+    const manifestPair = resolveLanguagePair(fromManifest);
     return {
-        language:
-            meta.language ??
-            meta.target_language ??
-            fromManifest.target_language ??
-            fromManifest.language ??
-            "",
+        language: meta.language ?? meta.target_language ?? manifestPair.target,
         target_language:
-            meta.target_language ??
-            meta.language ??
-            fromManifest.target_language ??
-            fromManifest.language ??
-            "",
-        source_language:
-            meta.source_language ?? fromManifest.source_language ?? "en",
+            meta.target_language ?? meta.language ?? manifestPair.target,
+        source_language: meta.source_language ?? manifestPair.source,
     };
 }
 
