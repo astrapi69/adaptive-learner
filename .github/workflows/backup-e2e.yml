@@ -73,6 +73,8 @@ jobs:
       # here without an edit. Fails closed when none is found (#2083).
       - name: Backup specs
         working-directory: e2e
+        # The container's default shell is sh (dash), which has no pipefail.
+        shell: bash
         run: |
           set -o pipefail
           count=$(ls dexie/backup-*.spec.ts | wc -l)
