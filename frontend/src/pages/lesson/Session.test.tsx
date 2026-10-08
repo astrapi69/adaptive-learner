@@ -219,6 +219,31 @@ describe("Session page", () => {
         expect(apiStart).toHaveBeenCalled();
     });
 
+    // #3436 variant a: the browser build has no auto-loop, so a session that
+    // reaches step 7 says what the desktop app would do instead of silently
+    // staying there (feature-state policy #335: disabled, never hidden).
+    it.each([
+        ["browser build at step 7", {mode: "dexie", hasAiKey: true}, 7, true],
+        ["browser build before step 7", {mode: "dexie", hasAiKey: true}, 6, false],
+        ["desktop app at step 7", {mode: "api", hasAiKey: true}, 7, false],
+    ] as const)(
+        "auto-loop notice (#3436): %s",
+        async (_label, context, step, shown) => {
+            apiStart.mockResolvedValue({
+                session: {...SESSION, cycle_step: step},
+                system_prompt: "Du bist ein Lerncoach.",
+            });
+            renderSession(context);
+            await screen.findByTestId("session");
+            const notice = screen.queryByTestId("session-auto-loop-unavailable");
+            if (shown) {
+                expect(notice).toHaveTextContent(/after step 7/);
+            } else {
+                expect(notice).not.toBeInTheDocument();
+            }
+        },
+    );
+
     it("starts a new session and shows the welcome empty-state, never a system bubble", async () => {
         // The system prompt is metadata for the AI orchestrator, never a chat
         // bubble. A new session has no prior turns, so the assistant-ui thread
