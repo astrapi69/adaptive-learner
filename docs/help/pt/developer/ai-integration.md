@@ -55,7 +55,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 `ai_complete_async` é usado pela rota de sessão no limite de ciclo
 passo 6→7 para que a avaliação de passo + transição de tópico
 disparem concorrentemente via `asyncio.gather`
-(`async_evaluation: true` em `app.yaml`).
+(`async_evaluation: true` em `session.yaml`).
 
 `ai_complete_stream` alimenta o endpoint SSE de streaming
 `POST /api/plugins/session/{id}/message/stream` que emite eventos
@@ -96,7 +96,7 @@ Cada `POST /api/plugins/session/{id}/message` para um papel
    emitir um veredicto JSON (`advance`, `confidence`, `reason`,
    `suggested_step`). `max_tokens=256`. O veredicto do avaliador
    dirige o avanço de `cycle_step` (com condição de
-   `confidence ≥ 0.6`).
+   `confidence ≥ 0.7`).
 3. **Transição de tópico** - apenas no passo 7. Uma terceira
    chamada de IA julga se o tópico foi integrado e se deve iniciar
    um novo ciclo num novo subtópico. Limite de `max_cycles=5` por
@@ -161,14 +161,14 @@ o JSON do avaliador da mesma forma que o backend.
 
 ## Limiar de confiança
 
-`session.step_evaluation.confidence_threshold` do
-`backend/config/app.yaml` (padrão 0.6) condiciona se um veredicto
+`step_evaluation.confidence_threshold` do
+`backend/config/plugins/session.yaml` (padrão 0.7) condiciona se um veredicto
 real do avaliador (não fallback) realmente move o passo do ciclo.
 Defina mais alto para ser mais conservador, mais baixo para ser
 mais ágil. Os veredictos de fallback (falhas de análise) aplicam
 sempre o avanço +1 independentemente.
 
-A porta Dexie espelha isso com um 0.6 fixo em
+A porta Dexie espelha isso com um 0.7 fixo em
 `storage/session-flow.ts`. Uma fase futura irá expor isto na
 interface de Definições.
 

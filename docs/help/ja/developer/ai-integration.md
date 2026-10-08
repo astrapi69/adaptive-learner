@@ -44,7 +44,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
     """テキストデルタの非同期イテレータを返します。v1.6.0以降。"""
 ```
 
-`ai_complete_async`は、ステップ6→7のサイクル境界でセッションルートが使用し、ステップ評価とトピック遷移を`asyncio.gather`で同時並行に実行します（`app.yaml`の`async_evaluation: true`）。
+`ai_complete_async`は、ステップ6→7のサイクル境界でセッションルートが使用し、ステップ評価とトピック遷移を`asyncio.gather`で同時並行に実行します（`session.yaml`の`async_evaluation: true`）。
 
 `ai_complete_stream`は、`start` / `chunk` / `done`イベントを送出するストリーミングSSEエンドポイント`POST /api/plugins/session/{id}/message/stream`を動作させます。
 
@@ -66,7 +66,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 `user`ロールの`POST /api/plugins/session/{id}/message`は、最大3回のAI呼び出しを行います。
 
 1. **学習返答** - `ai_complete_stream`経由でストリーミング。システムプロンプトは42セルマトリックスの`build_prompt(project, profile, method, cycle_step, lang)`で構成されます。`max_tokens=1024`。SSEが`start` / `chunk` / `done`イベントを送出します。
-2. **ステップ評価器** - 別のシステムプロンプト（`EVALUATION_SYSTEM_PROMPT`）で、AIに交換内容を読み、JSON判定（`advance`、`confidence`、`reason`、`suggested_step`）を出力するよう指示します。`max_tokens=256`。評価器の判定が`cycle_step`の進行を制御します（`confidence ≥ 0.6`が条件）。
+2. **ステップ評価器** - 別のシステムプロンプト（`EVALUATION_SYSTEM_PROMPT`）で、AIに交換内容を読み、JSON判定（`advance`、`confidence`、`reason`、`suggested_step`）を出力するよう指示します。`max_tokens=256`。評価器の判定が`cycle_step`の進行を制御します（`confidence ≥ 0.7`が条件）。
 3. **トピック遷移** - ステップ7のみ。3回目のAI呼び出しがトピックが統合されたかどうかを判断し、新しいサブトピックで新しいサイクルを開始するかを決定します。セッションごとに最大`max_cycles=5`。
 
 評価器がパースできないJSONを返した場合、決定論的な+1フォールバックが実行され（7を上限）、`fallback_used=True`が記録されます。
@@ -98,9 +98,9 @@ Dexieモードでは、AI呼び出しはプラグインシステムを通じま�
 
 ## 信頼度のしきい値
 
-`backend/config/app.yaml`の`session.step_evaluation.confidence_threshold`（デフォルト0.6）は、実際の（フォールバックでない）評価器の判定がサイクルステップを実際に進めるかどうかを制御します。より保守的にするには高く設定し、より積極的にするには低く設定します。フォールバック判定（解析失敗）は、しきい値に関わらず常に+1の進行を適用します。
+`backend/config/plugins/session.yaml`の`step_evaluation.confidence_threshold`（デフォルト0.7）は、実際の（フォールバックでない）評価器の判定がサイクルステップを実際に進めるかどうかを制御します。より保守的にするには高く設定し、より積極的にするには低く設定します。フォールバック判定（解析失敗）は、しきい値に関わらず常に+1の進行を適用します。
 
-Dexieポートは`storage/session-flow.ts`にハードコードされた0.6でこれを反映しています。将来のフェーズでSettings UIに公開される予定です。
+Dexieポートは`storage/session-flow.ts`にハードコードされた0.7でこれを反映しています。将来のフェーズでSettings UIに公開される予定です。
 
 ## その他のAI機能（読み取り専用の概要）
 
