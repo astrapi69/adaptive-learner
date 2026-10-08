@@ -571,8 +571,40 @@ export async function settleForScreenshot(
         throw new Error(
             "settleForScreenshot: a toast is still visible after 8s - " +
                 "either a persistent toast leaked into this surface or an " +
-                "autoClose grew past the cap (#2721).",
+                "autoClose grew past the cap (#2721). " +
+                (await describeStuckToasts(page)),
         );
+    }
+}
+
+/**
+ * Why a toast is still on screen (#3688): its text, whether it is an
+ * auto-closing toast at all (an error toast has no timer bar), and the timer
+ * bar's play state, next to the page's focus and visibility. react-toastify
+ * closes a toast on the bar's ``animationend`` and pauses the bar on hover
+ * and, with ``pauseOnFocusLoss``, while the document has no focus; a toast
+ * that outlives its autoClose had a paused bar, and this names the cause.
+ */
+async function describeStuckToasts(page: Page): Promise<string> {
+    try {
+        const state = await page.evaluate(() => ({
+            hasFocus: document.hasFocus(),
+            visibility: document.visibilityState,
+            toasts: [...document.querySelectorAll(".Toastify__toast")].map((toast) => {
+                const bar = toast.querySelector<HTMLElement>(".Toastify__progress-bar");
+                const style = bar ? getComputedStyle(bar) : null;
+                return {
+                    text: (toast.textContent ?? "").trim().slice(0, 80),
+                    timer: bar !== null,
+                    playState: style?.animationPlayState ?? null,
+                    inlinePlayState: bar?.style.animationPlayState ?? null,
+                    duration: style?.animationDuration ?? null,
+                };
+            }),
+        }));
+        return `State: ${JSON.stringify(state)}`;
+    } catch (err) {
+        return `State unreadable: ${String(err)}`;
     }
 }
 
