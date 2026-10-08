@@ -24,6 +24,11 @@ gates:
     body_sha: 0884e60bace9aa5d
     note: hosts the verify-gate-rule-links + verify-lessons-inventory steps
 
+  - workflow: backup-e2e.yml
+    enforces: quality-checks.md#backup-akzeptanztest-acceptance-gate-mandatory
+    body_sha: 3a7e984635fb7660
+    note: runs every e2e/dexie/backup-*.spec.ts on PRs touching backup paths; the generic every-table spec is the round-trip evidence (#3693)
+
   - workflow: visual-baseline-gate.yml
     enforces: quality-checks.md#visual-baseline-duty-for-visually-critical-prs-1640
     body_sha: 6d1ecd4261bdd7c4

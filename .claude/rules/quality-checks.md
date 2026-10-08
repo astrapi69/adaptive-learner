@@ -106,6 +106,10 @@ This is accepted evidence for a PR when EITHER:
   (their call, stated in the PR or the tracking issue), with the automated
   spec as interim evidence and the manual pass still expected before the
   next release ships that data path.
+- the PR's `backup-e2e.yml` run is green (#3693): its generic spec
+  `e2e/dexie/backup-every-table-roundtrip.spec.ts` drives this round trip
+  for every `BACKUP_TABLES` table, a new one included, on the PR itself. A
+  table the spec lists as known broken has no automated proof.
 
 It does NOT cover what only a real device shows: storage eviction under
 pressure and standalone (home-screen) mode - see
