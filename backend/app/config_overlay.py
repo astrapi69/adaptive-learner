@@ -10,8 +10,7 @@ AdaptiveLearner ships configuration in two layers:
    - ``backend/config/plugins/*.yaml`` — bundled plugin defaults.
 
 2. **User overlay** (writable, under ``get_data_dir() / "config"``):
-   runtime writes from the Settings UI and plugin
-   install / uninstall.
+   runtime writes from the Settings UI.
 
 Read merges project + user (user wins; dicts deep-merge; lists
 replace). Write targets ONLY the user overlay; the project tree
@@ -23,8 +22,7 @@ tree is not writable by the container user. Production Docker
 makes the project tree writable, but the divergence between
 environments was a footgun — the v0.31.0 Phase 2 sweep
 fixed ``backup_history.json`` and ``plugins/installed/`` the same
-way; this module closes the remaining 10+ write sites in
-``settings.py`` and ``plugin_install.py``.
+way; this module is where the Settings writes land.
 
 See ``.claude/rules/lessons-learned.md`` "Filesystem isolation"
 for the broader rule. The unit + integration tests in
@@ -163,48 +161,6 @@ def read_app_config_merged() -> dict[str, Any]:
     return deep_merge(project, user)
 
 
-def load_app_config_for_edit() -> dict[str, Any]:
-    """Load app.yaml as a ruamel ``CommentedMap`` for round-trip writes.
-
-    Prefers the user-overlay file (which already represents the
-    user's current state with their own comments) and falls back
-    to the project file only on first edit, so the bundled
-    comments seed the user-overlay copy. Returns an empty dict
-    when neither file exists.
-
-    Use this for any code path that loads, mutates, then writes
-    back — the merge-based reader strips comments.
-
-    ``CommentedMap`` is dict-compatible at the type-check level,
-    so the declared ``dict[str, Any]`` return type is honoured.
-    """
-    user_path = _user_app_path()
-    if user_path.exists():
-        loaded = read_yaml_roundtrip(user_path)
-        return loaded if isinstance(loaded, dict) else {}
-    project_path = _project_app_path()
-    if project_path.exists():
-        loaded = read_yaml_roundtrip(project_path)
-        return loaded if isinstance(loaded, dict) else {}
-    return {}
-
-
-def write_user_app_config(data: dict[str, Any]) -> None:
-    """Write app config to the user overlay ONLY.
-
-    Creates the user config dir if missing. Never touches the
-    project tree's app.yaml.
-    """
-    path = _user_app_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    write_yaml_roundtrip(path, data)
-
-
-def user_app_config_exists() -> bool:
-    """True iff the user-overlay app.yaml exists."""
-    return _user_app_path().exists()
-
-
 def _legacy_plugin_path(name: str) -> Path:
     """Where the Settings endpoint wrote plugin settings before #3370.
 
@@ -233,10 +189,9 @@ def read_plugin_config_merged(name: str) -> dict[str, Any]:
     plugin config: the Settings endpoint, PluginForge activation and
     the plugins all read it (#3370).
 
-    Comments are stripped (deep-merge constructs a plain dict).
-    Callers that intend to write the result back MUST use
-    ``load_plugin_config_for_edit`` to keep ``# INTERNAL`` markers
-    intact.
+    Comments are stripped (deep-merge constructs a plain dict), so
+    never write the result back; ``write_user_plugin_settings`` edits
+    the overlay in place and keeps its comments.
     """
     return deep_merge(_base_plugin_config(name), _read_yaml(_user_plugin_path(name)))
 
@@ -274,24 +229,6 @@ def write_user_plugin_settings(name: str, settings: dict[str, Any]) -> None:
 _MISSING = object()
 
 
-def load_plugin_config_for_edit(name: str) -> dict[str, Any]:
-    """Load plugin config as a ruamel ``CommentedMap`` for editing.
-
-    Prefers the user-overlay file, falls back to the bundled file
-    on first edit so its comments seed the user-overlay copy.
-    Returns an empty dict when neither exists.
-    """
-    user_path = _user_plugin_path(name)
-    if user_path.exists():
-        loaded = read_yaml_roundtrip(user_path)
-        return loaded if isinstance(loaded, dict) else {}
-    project_path = _project_plugin_path(name)
-    if project_path.exists():
-        loaded = read_yaml_roundtrip(project_path)
-        return loaded if isinstance(loaded, dict) else {}
-    return {}
-
-
 def write_user_plugin_config(name: str, data: dict[str, Any]) -> None:
     """Write plugin config to the user overlay ONLY.
 
@@ -300,41 +237,3 @@ def write_user_plugin_config(name: str, data: dict[str, Any]) -> None:
     path = _user_plugin_path(name)
     path.parent.mkdir(parents=True, exist_ok=True)
     write_yaml_roundtrip(path, data)
-
-
-def delete_user_plugin_config(name: str) -> bool:
-    """Remove the user-overlay file for a plugin if it exists.
-
-    Returns True if a file was deleted, False if nothing was there.
-    Never touches the bundled (project) file.
-    """
-    path = _user_plugin_path(name)
-    if path.exists():
-        path.unlink()
-        return True
-    return False
-
-
-def plugin_config_exists(name: str) -> bool:
-    """True iff either the bundled OR the user-overlay file exists."""
-    return _project_plugin_path(name).exists() or _user_plugin_path(name).exists()
-
-
-def has_user_plugin_config(name: str) -> bool:
-    """True iff the user-overlay file exists for this plugin."""
-    return _user_plugin_path(name).exists()
-
-
-def list_merged_plugin_names() -> list[str]:
-    """Return all plugin names known via either project or user layer.
-
-    Sorted, deduplicated. Excludes filenames that aren't ``.yaml``.
-    """
-    names: set[str] = set()
-    project_plugins = get_project_config_dir() / "plugins"
-    if project_plugins.exists():
-        names.update(p.stem for p in project_plugins.glob("*.yaml"))
-    user_plugins = get_user_plugins_dir()
-    if user_plugins.exists():
-        names.update(p.stem for p in user_plugins.glob("*.yaml"))
-    return sorted(names)
