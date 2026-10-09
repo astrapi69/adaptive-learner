@@ -10,6 +10,7 @@ import {
     AGE_DAYS,
     ReportBasisError,
     agedUnusedKeys,
+    extractKeyTemplates,
     findUnusedKeys,
     renderReport,
     type ConsumerScan,
@@ -61,6 +62,38 @@ describe("findUnusedKeys (#3444)", () => {
         const first = findUnusedKeys(keys, scan());
         expect(findUnusedKeys([...keys].reverse(), scan())).toEqual(first);
         expect(first).toEqual(["a.one", "b.two", "c.three"]);
+    });
+});
+
+describe("extractKeyTemplates (#3709)", () => {
+    it("finds a key built in a template outside t() (edit-error-keys.ts)", () => {
+        const source = "export function k(code) { return `create_lesson.exercises.edit.err_${code}`; }";
+        const patterns = extractKeyTemplates(source);
+        expect(patterns).toEqual([{prefix: "create_lesson.exercises.edit.err_", suffix: ""}]);
+        expect(
+            findUnusedKeys(["create_lesson.exercises.edit.err_prompt"], scan({dynamicPatterns: patterns})),
+        ).toEqual([]);
+    });
+
+    it("matches a key built with two interpolations (direction.ts)", () => {
+        const source = "return `lesson.exercise.instruction.${exerciseType}.${mode}`;";
+        const patterns = extractKeyTemplates(source);
+        const keys = ["lesson.exercise.instruction.matching.productive", "lesson.other.key"];
+        expect(findUnusedKeys(keys, scan({dynamicPatterns: patterns}))).toEqual(["lesson.other.key"]);
+    });
+
+    it("matches a t() pattern with two interpolations as well", () => {
+        const pattern = {prefix: "lesson.exercise.instruction.", suffix: ".${mode}"};
+        const keys = ["lesson.exercise.instruction.word_tiles.receptive"];
+        expect(findUnusedKeys(keys, scan({dynamicPatterns: [pattern]}))).toEqual([]);
+    });
+
+    it.each([
+        ["a template without a key-path prefix", "const url = `${base}/api/${id}`;"],
+        ["a template whose prefix has no dot", "const label = `item_${n}`;"],
+        ["a plain string", "const k = 'nav.home';"],
+    ])("ignores %s", (_label, source) => {
+        expect(extractKeyTemplates(source)).toEqual([]);
     });
 });
 
