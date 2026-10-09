@@ -7,7 +7,6 @@ app:
   reload: "Yeniden yükle"
   name: Adaptive Learner
   tagline: Altı Yöntemli Modele göre uyarlanabilir öğrenme.
-  skeleton_notice: İskelet aşaması. Alan modelleri, eklentiler ve sayfalar sonraki aşamalarda geliyor - bkz. docs/adaptive-learner-project-reference.md.
 common:
   ok: "Tamam"
   remove: "Kaldır"
@@ -21,7 +20,6 @@ common:
   submit: Gönder
   delete: Sil
   edit: Düzenle
-  confirm: Onayla
   minutes: dakika
   close: "Kapat"
 avatar:
@@ -232,12 +230,7 @@ onboarding:
   field_name: Adın
   field_topic: Konu
   field_topic_hint: ör. İspanyolca B1, lineer cebir.
-  field_goal: Öğrenme hedefi
   field_goal_hint: Ne yapabilmek istiyorsun?
-  field_timeframe: Zaman dilimi
-  field_timeframe_hint: ör. 4 hafta, bir dönem.
-  field_daily_minutes: Günlük dakika
-  field_current_problem: Şu anki problem
   field_current_problem_hint: isteğe bağlı - şu an seni neyin engelliyor?
   submit: Projeyi oluştur ve değerlendirmeye başla
   creating: Proje oluşturuluyor…
@@ -295,7 +288,6 @@ dashboard:
     missions: "Görevler"
   no_data: "Henüz veri yok."
   title: Pano
-  welcome: Tekrar hoş geldin
   quick_start: Yeni bir oturum başlat
   quick_start_subtitle: Yöntem profilinden seçildi.
   card_profile: Öğrenme profili
@@ -386,31 +378,16 @@ review:
   back_to_dashboard: "Panoya dön"
   back_to_lesson: "Derse dön"
   summary:
-    aria_label: "Tekrar özeti"
     heading: "Tekrar tamamlandı"
-    score: "Puan"
     note: "Öğe puanları güncellendi. Ustalaştığın öğeler bir sonraki oturumda görünmeyecek."
   error:
     load_failed: "Tekrar oturumu yüklenemedi."
-  spaced_empty: Şu an tazelenecek bir şey yok. Harika bir ritim!
-  spaced_interval_label: Tekrar süresi
-  spaced_start: Başla
-  spaced_dismiss: Kapat
-  metric_total_sessions: Toplam oturum
-  metric_total_minutes: Toplam dakika
-  metric_mean_understanding: Ortalama anlayış
-  metric_mean_stress: Ortalama stres
-  metric_streak: Günlük seri
-  no_data: Henüz oturum yok - eğilimleri görmek için ilkini başlat.
-  pronunciation_quick_start: Telaffuz Alıştırması
 session:
   auto_loop_unavailable: "Masaüstü uygulamasında 7. adımdan sonra sıradaki konuyla yeni bir döngü otomatik olarak başlar. Tarayıcı sürümü bunu henüz yapamıyor: öğrenmeye devam etmek için oturumu bitir ve yeni bir oturum başlat."
   title: Öğrenme oturumu
   topic_label: "Konu"
-  in_progress: Oturum devam ediyor
   send_message: Mesaj gönder
   message_placeholder: Cevabını yaz…
-  ai_thinking: Düşünüyor…
   ai_error: YZ sağlayıcısı cevap veremedi.
   no_api_key: "Yapay zekâ anahtarı ayarlanmadı. Eğitmenle sohbet etmek için Ayarlar'da yapay zekâ sağlayıcın için bir anahtar ekle. Dersler ve tekrarlar anahtarsız çalışır."
   ai_error_no_model: "Yapay zekâ sağlayıcın için bir model seçilmedi. Ayarlar > Yapay zeka bölümünden bir model seç."
@@ -422,7 +399,6 @@ session:
   chat_retry: "Tekrar dene"
   welcome_empty: "Öğrenmeye hazır! İlk mesajını yaz."
   end_session: Oturumu bitir
-  end_session_confirm: Emin misin? Oturumu kapatıp bir değerlendirme isteyeceğiz.
   switch_recommended: Yöntem değişikliği öneriliyor
   switch_recommended_subtitle: Son değerlendirmelerin sana farklı bir yöntemin daha uygun olabileceğini gösteriyor.
   switch_accept: Yöntemi değiştir
@@ -548,7 +524,6 @@ settings:
   summary_section_export: "Sonucu dışa aktarma"
   summary_section_next_steps: "Sonraki adım önerileri"
   correction_round_enabled: "Derslerden sonra düzeltme turunu göster"
-  correction_round_enabled_desc: "Bir dersin sonunda, hatalarını hemen düzeltmeni önerir. Kapalıyken, tekrar / \"Hataları çalış\" modunda erişilebilir kalırlar."
   hints_enabled: "Alıştırmalarda ipucu göster"
   hints_enabled_desc: "Her alıştırmada kademeli bir ipucu düğmesi sunar."
   hint_xp_cost: "İpucu başına XP maliyeti"
@@ -601,7 +576,6 @@ settings:
   mode_coming_soon: "Yakında"
   section_provider: YZ sağlayıcısı
   section_api_keys: API anahtarları
-  section_danger: Hesap
   section_ui: Arayüz
   section_appearance: "Görünüm"
   section_content_tabs: "İçerik sekmeleri sırası"
@@ -692,7 +666,6 @@ settings:
   tab_help: "Yardım"
   tab_diagnostics: "Tanılama ve destek"
   tab_about: "Hakkında"
-  tabs_aria: "Ayar bölümleri"
   section_feedback: "Geri bildirim"
   section_interaction: "Etkileşim"
   cluster_basics: "Temeller"
@@ -871,9 +844,6 @@ settings:
     test_rate_limit: "Hız sınırına ulaşıldı. Daha sonra dene."
     test_no_key: "Test edilecek anahtar yok."
     format_invalid: "Geçersiz biçim."
-    rollback_warning: "Yeni anahtar çalışmıyor. Eski anahtar korunsun mu?"
-    rollback_keep_old: "Eskiyi koru"
-    rollback_save_anyway: "Yine de kaydet"
     rollback_restore: "Son çalışan anahtarı geri yükle"
     format_hint:
       anthropic: "sk-ant- ile başlar"
@@ -885,7 +855,6 @@ settings:
   api_key_delete: Anahtarı kaldır
   api_key_confirm_delete: Bu API anahtarı gerçekten kaldırılsın mı?
   saved: Kaydedildi.
-  save_failed: Kaydetme başarısız oldu.
   provider_active: Aktif
   active_provider_missing_key: Bu senin aktif sağlayıcın ama saklı bir API anahtarı yok. Bir anahtar kaydedilene kadar YZ cevapları atlanacak.
   # Phase 34 (v1.20.0) - per-provider key-source badges.
@@ -897,7 +866,6 @@ settings:
   api_key_external_hint_env: Bu anahtar ADAPTIVE_LEARNER_{PROVIDER}_API_KEY ortam değişkeniyle yapılandırılmıştır.
   section_model_overrides: Model geçersiz kılmaları
   model_overrides_hint: Her sağlayıcı için varsayılan modeli kullanmak istiyorsan boş bırak. Boş olmayan bir değer sohbet sırasında varsayılanın yerine geçer.
-  model_override_placeholder: Model tanımlayıcısı (ör. claude-3-5-haiku-latest)
   model_override_set: Geçersiz kılma aktif
   model_override_default: Varsayılan model
   model_override_save: Modeli kaydet
@@ -1006,22 +974,16 @@ settings:
 methods:
   deductive:
     label: Tümdengelimsel
-    summary: Genelden özele - önce kurallar, sonra örnekler.
   inductive:
     label: Tümevarımsal
-    summary: Özelden genele - önce örnekler, sonra kuralı çıkar.
   error_based:
     label: Hataya dayalı
-    summary: Hatalardan öğren - düzeltme ve açıklama birlikte.
   dialogic:
     label: Diyaloğa dayalı
-    summary: Sohbet içinde düşün - daha az stres, daha çok motivasyon.
   contextual:
     label: Bağlamsal
-    summary: Gerçek bir bağlamda uygula - aktarımı pratik et.
   ai_adaptive:
     label: YZ-uyarlanır
-    summary: YZ sana en uygun yöntemi seçer.
 cycle_steps:
   input:
     label: Girdi
@@ -1047,15 +1009,11 @@ cycle_steps:
 errors:
   network: Sunucuya ulaşılamadı.
   not_found: Bulunamadı.
-  validation: Geçersiz giriş.
-  conflict: Kayıt zaten var.
   server: Sunucu hatası - lütfen daha sonra tekrar dene.
 toast:
   project_created: Proje oluşturuldu.
   assessment_saved: Profil kaydedildi.
-  session_started: Oturum başladı.
   session_ended: Oturum bitti.
-  rating_saved: Değerlendirme kaydedildi.
   api_key_saved: API anahtarı kaydedildi.
   api_key_restored: "Son çalışan anahtar geri yüklendi."
   api_key_deleted: API anahtarı kaldırıldı.
@@ -1100,7 +1058,6 @@ about:
   check_failed: "Denetleme başarısız. Çevrimiçi misiniz?"
   last_checked: "Son denetleme: {when}"
   never_checked: "Hiç denetlenmedi"
-  update_now: "Şimdi güncelle"
   system_heading: Sistem
   storage_label: Depolama
   storage_api: Sunucu (FastAPI + SQLite)
@@ -1111,7 +1068,6 @@ about:
   dep_unknown: bilinmiyor
   identity_heading: Kimlik dosyası
   identity_loading: Kimlik durumu yükleniyor…
-  identity_error: 'Kimlik durumu yüklenemedi:'
   identity_path_label: Yol
   identity_status_label: Durum
   identity_status_active: Etkin
@@ -1157,7 +1113,6 @@ backup:
   not_a_backup_file: 'Bu dosya geçerli bir yedek dosyası değil. Lütfen ''Yedek oluştur'' ile dışa aktarılmış bir dosya seçin.'
   version_mismatch: "Bu yedek {{from}} sürümünden; bu uygulama {{to}}. Aşağıdaki değişiklikleri inceleyip içe aktarmayı onaylayın."
   too_large: 'Bu yedek dosyası çok büyük (100 MB''tan fazla).'
-  export_success: Yedek indirildi ({{count}} kayıt).
   export_error: 'Yedekleme başarısız oldu: {{detail}}'
   export_failed: "Yedekleme başarısız oldu."
   import_parse_failed: "Yedek okunamadı."
@@ -1178,7 +1133,6 @@ backup:
   col_skipped: 'Atlandı'
   col_errors: 'Hata'
   error_details: 'Hata ayrıntıları'
-  restored_with_errors: '{{n}} kayıt geri yüklenemedi.'
   last_backup: 'Son yedek: {{when}}'
   reminder_overdue: Son yedeğinden bu yana {{days}} günden fazla zaman geçti.
   saved_as: 'Yedek kaydedildi: {{filename}}'
@@ -1456,7 +1410,6 @@ gamification:
   card_badges: Rozetler
   badges_earned: kazanıldı
   badges_empty: Henüz uygun rozet yok.
-  badge_earned_toast: 'Rozet kazandın: {name}'
   badge_category:
     getting_started: İlk Adımlar
     consistency: Süreklilik
@@ -1582,7 +1535,6 @@ arcade:
   subtitle: "Kısa turlar, bir-iki dakika: oyun modunun bir ödülü. XP yok, sadece eğlence."
   card_description: "Kısa turlarla Öğrenme Hafıza Oyunu ve Snake: oyun modu ödülün."
   card_open: "Arcade'e git"
-  requires_playful: "Arcade oyun modunun bir parçasıdır. Ayarlardan oyun modunu (ve arcade anahtarını) aç."
   requires_game_mode: "Arcade oyun modunun bir parçasıdır ve oyun modu kapalı. Ayarlardan aç."
   requires_arcade_switch: "Oyun modu açık ama arcade anahtarı kapalı. Ayarlardaki oyun modu ayrıntılarından arcade'i aç."
   open_settings: "Ayarları aç"
@@ -1805,7 +1757,6 @@ ui:
     open_settings: "Ayarları aç"
     feature_analyze: "konuşmaları analiz etmek için"
     feature_anki: "Anki kartları çıkarmak için"
-    feature_study_guide: "bir çalışma kılavuzu oluşturmak için"
     feature_study_questions: "çalışma soruları oluşturmak için"
     feature_pronunciation: "telaffuz alıştırması için"
   common:
@@ -1960,11 +1911,6 @@ repo:
   topic_readme_parent_link: "← [Proje kökü](../README.md)"
   topic_readme_no_sessions: "_Bu konuyla ilgili oturum bulunmuyor._"
   loading: "Depo oluşturuluyor…"
-  widget_subtitle: "Bu projenin ilerlemesinin, notlarının ve yol haritasının sürümlenmiş anlık görüntüsü."
-  settings_description: "Oturum verilerinizden proje başına Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmada commit atar."
-  settings_enable_git: "Git kalıcılığını etkinleştir"
-  dexie_unavailable_body: "Bu özellik yalnızca sunucu modunda kullanılabilir. Git tabanlı öğrenme depolarını etkinleştirmek için Ayarlar'dan sunucu moduna geçin."
-  back_to_dashboard: "Panoya dön"
   page:
     title: "Öğrenme deposu"
     rendered_at: "Oluşturulma"
@@ -2132,9 +2078,7 @@ lesson:
     aria_label: "Adım gezintisi"
   action:
     prev: "Önceki"
-    next: "Sonraki"
     finish: "Dersi bitir"
-    back_to_browser: "İçerik tarayıcısına dön"
     pause: "Dersi duraklat"
     open_browser: "İçerik tarayıcısını aç"
     back_to_lesson: "Derse dön"
@@ -2407,7 +2351,6 @@ lesson:
     adaptive_focus: "Odak: {topic}"
     adaptive_errors: "Bu derste {count} hata"
     error_replay: "Hataları tekrar et"
-    error_replay_detail: "{count} alıştırma tekrar"
     error_replay_corrected: "{total} hatadan {corrected} tanesi düzeltildi"
     all_corrected: "Tüm hatalar düzeltildi!"
     all_corrected_detail: "Harika - açık hata kalmadı."
@@ -2421,10 +2364,8 @@ lesson:
     view_set: "Seti görüntüle"
     focus_vocabulary: "Kelime bilgisi"
   correction:
-    title: "Düzeltme turu"
     subtitle: "Yanlış yaptığın kelimeler için birkaç hızlı alıştırma."
     skip: "Geç"
-    next: "İleri"
     complete_heading: "Düzeltme turu tamamlandı"
     improvement: "{n} öğe geliştirildi."
     improvement_singular: "{n} öğe geliştirildi."
@@ -2450,7 +2391,6 @@ lesson:
     time: "Süre"
     minutes: "{n} dk"
     hints_used: "Kullanılan ipuçları"
-    breakdown_heading: "Alıştırma dökümü"
     breakdown_correct_answer: "Doğru cevap: {answer}"
     breakdown_unattempted: "Denenmedi"
     detailed_hide: "Kısa değerlendirme"
@@ -2479,7 +2419,6 @@ lesson:
     mark_complete_needs_profile: "İlerlemeni kaydetmek için bir öğrenme profili oluştur"
     mark_complete_failed: "Tamamlama kaydedilemedi"
     next_lesson: "Sonraki ders"
-    repeat: "Dersi tekrarla"
     retry: "Tekrar pratik yap"
     retry_heading: "Gelişimin"
     retry_attempt: "Deneme {n}: %{pct}"
@@ -2490,7 +2429,6 @@ lesson:
     retry_best: "En iyi sonuç"
     retry_best_value: "%{pct} (deneme {n})"
     retry_new_record: "Yeni rekor!"
-    restart: "Baştan başla"
     back_to_browser: "İçerik tarayıcısına dön"
     encourage_0: "Pratik mükemmelleştirir!"
     encourage_1: "İyi başlangıç - devam et!"
@@ -2633,10 +2571,7 @@ content:
     no_results: "'{query}' için sonuç yok"
     hint: "Farklı bir arama terimi dene"
     clear: "Aramayı temizle"
-    available: "İndirilebilir"
     your_content: "Senin içeriğin"
-    download_prompt_title: "Bu set indirilsin mi?"
-    download_prompt_body: "Bu set henüz indirilmedi. Şimdi indirilsin mi?"
   save_adaptive:
     button: "Bu dersi kaydet?"
   create_lesson:
@@ -2734,10 +2669,8 @@ content:
     active: "Etkin"
     deferred: "Ertelendi"
     completed: "Tamamlandı"
-    filter_aria: "Duruma göre filtrele"
     menu_aria: "Set eylemleri"
     changed: "Durum güncellendi."
-    change_failed: "Durum güncellenemedi."
     deleted: "Set kaldırıldı."
     delete_failed: "Set kaldırılamadı."
     progress_not_deleted: "Kaldırıldı, ancak öğrenme ilerlemeniz silinemedi: {detail}"
@@ -2800,7 +2733,6 @@ content:
     button: "Alıştırma oluştur"
     generating: "Alıştırmalar oluşturuluyor…"
     regenerate: "Yeniden oluştur"
-    regenerate_confirm: "Oluşturulan alıştırmalar yeni bir setle değiştirilsin mi?"
     generated: "{n} alıştırma oluşturuldu."
     generated_with_rejected: "{n} alıştırma oluşturuldu, {r} kalite nedeniyle reddedildi."
     none: "Yapay zeka kullanılabilir alıştırma döndürmedi. Lütfen tekrar deneyin."
@@ -2818,7 +2750,6 @@ content:
     modal_title: "Çevrimdışı ders olarak kaydet"
     title_label: "Ders başlığı"
     summary: "{exercises} alıştırma · {theory} teori adımı · ~{minutes} dk"
-    theory_only: "Alıştırmalar için yeterli kelime yok. Daha fazla alıştırma malzemesi için daha uzun bir sohbet içe aktarın."
     save: "Kaydet"
     saved: "Derslerim'e kaydedildi."
     failed: "Ders kaydedilemedi."
@@ -2827,7 +2758,6 @@ content:
     source_lang_label: Sizin diliniz
     level_label: Seviye
     not_enough_data: Az alıştırma - tam bir dil dersi için en az {min} önerilir. Yine de kaydedebilirsiniz (örneğin yalnızca teori dersi olarak).
-    same_language: Öğrenilen dil ile sizin diliniz farklı olmalıdır.
     same_language_hint: "Öğrenilen dil ve diliniz aynı - dilbilgisi veya anadil dersi için uygundur. Paylaşıldığında içerik ağacının aynı dil dalına yerleşir."
     split_notice: "Bu dersin {steps} adımı var ve {parts} parça olarak kaydedilecektir (bölüm başına en fazla {max} adım)."
     part_title: "{title} - Bölüm {n}"
@@ -3020,9 +2950,6 @@ content:
       all_ok: "Sorun bulunamadı - aksanlar, artikeller ve yinelemeler temiz."
       problem: "Sorun"
       suggestion: "Öneri"
-  placement:
-    lands_under: Dersiniz şuraya yerleşecek
-    duplicate: 'Benzer bir ders zaten var: {title}. Yine de paylaşılsın mı?'
   wizard:
     title: Toplulukla paylaş
     metadata_intro: Paylaşmadan önce ders ayrıntılarını kontrol edip düzeltin.
@@ -3037,7 +2964,6 @@ content:
     err_title: Bir başlık ekleyin.
     err_source: Kaynak dili seçin.
     err_target: Hedef dili seçin.
-    err_same_language: Kaynak ve hedef dil farklı olmalıdır.
     err_level: Bir CEFR seviyesi seçin (A1-C2).
     level_none: Seviye yok (dil kursu değil)
     err_empty: Bu dersin alıştırması yok. Lütfen dersi yeniden oluşturun.
@@ -3047,7 +2973,6 @@ content:
     lands_under: Dersiniz şuraya yerleşecek
     new_set: Yeni set! Buraya katkıda bulunan ilk kişi sizsiniz.
     next_to_existing: Bu sette mevcut {count} dersin yanına.
-    summary_counts: '{lessons} ders, {exercises} alıştırma, {cards} kart, ~{minutes} dk'
     checking: Benzer dersler kontrol ediliyor…
     no_duplicates: Tekrar bulunamadı. Dersiniz benzersiz!
     near_duplicate: 'Bu ders zaten var: "{title}".'
@@ -3243,7 +3168,6 @@ create_lesson:
     switch_discard: "Vazgeç ve değiştir"
   prompts_migrated: "{n} alıştırma yönergesi otomatik olarak dilinize çevrildi."
   prompts_migrated_dismiss: "Kapat"
-  step_pending: "Bu adım bir sonraki güncellemede geliyor."
   nav_label: "Sihirbaz gezinmesi"
   cancel: "İptal"
   back: "Geri"
@@ -3264,7 +3188,6 @@ create_lesson:
     content_lang_label: "İçerik dili"
     level_none: "Seviye yok"
     domain_hint: "Bilgi içeriği tek bir içerik dili kullanır ve CEFR seviyesini atlayabilir."
-    same_language: "Öğrenilen dil, sizin dilinizden farklı olmalıdır."
     description_label: "Konu / açıklama"
     author_label: "Yazar adı"
   cards:
@@ -3352,8 +3275,6 @@ create_lesson:
     generate: "Alıştırmaları otomatik oluştur"
     regenerate: "Yeniden oluştur"
     count: "{n} alıştırma"
-    min_hint: "{n} alıştırma gerekli"
-    min_to_advance: "Devam etmek için en az {n} alıştırma oluşturun."
     one_to_advance: "Devam etmek için en az bir alıştırma oluşturun."
     share_min_hint: "Paylaşmak için en az {n} alıştırma gerekli"
     min_one_to_advance: "Devam etmek için en az bir alıştırma ekleyin."
@@ -3631,7 +3552,6 @@ learning_path:
   filter_mine: "Sadece benimkiler"
   filter_all: "Tüm setler"
   filter_label: "Setleri filtrele"
-  adaptive: "Uyarlanabilir dersi başlat"
   error_replay: "Hataları tekrarla"
   train_errors: "Hataları çalış"
   shuffle: "Karışık mod"
@@ -3668,7 +3588,6 @@ learning_path:
   mastery:
     receptive: "alımlayıcı"
     productive: "üretici"
-    mastered: "ustalaşıldı"
   title: "Öğrenme yolu"
   subtitle: "Neredesiniz ve sırada ne var."
   aria_canvas: "Öğrenme yolu grafiği"
@@ -3776,7 +3695,6 @@ share:
   app:
     heading: "Uygulamayı paylaş"
     download: "İndir"
-    qr_intro: "Başkalarının doğrudan açabilmesi için uygulamayı QR koduyla paylaş."
     show_qr: "QR kodunu göster"
     download_qr: "QR kodunu indir"
     copy_url: "URL'yi kopyala"
@@ -4101,7 +4019,6 @@ content_repo:
     sync_all: "Tümünü eşitle"
     add: "Depo ekle"
     cancel: "İptal"
-    confirm_remove: "Kaldırmayı onayla"
     connect: "Depoyu bağla"
     move_down: "Aşağı taşı"
     move_up: "Yukarı taşı"
@@ -4109,12 +4026,10 @@ content_repo:
     share: "Paylaş"
     sync: "Şimdi eşitle"
   badge:
-    coach: "Koç"
     private: "Özel"
     official: "Resmî"
   trust:
     dropped: "Eşitlendi, ancak doğrulama başarısız oldu - bu depo artık doğrulanmamış olarak işaretlendi."
-    recommended: "Resmî olarak önerilen"
     unknown: "Doğrulanmamış"
     validated: "Doğrulandı"
   status:
@@ -4205,7 +4120,6 @@ discover:
     domain: "Alan"
     trust: "Güven"
     source: "Kaynak"
-    ai_checked: "Yapay zeka kontrollü"
     review: "İnceleme"
   trust:
     official: "Resmi olarak önerilen"
@@ -4277,7 +4191,6 @@ endless:
   back_to_dashboard: "Panoya dön"
   loading: "Alıştırma oturumu yükleniyor…"
   empty_body: "Bu sette henüz alıştırılacak alıştırma yok."
-  not_cached_body: "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç."
   paused: "Duraklatıldı - biraz nefes al."
   resume: "Devam et"
   pause: "Duraklat"
@@ -4287,7 +4200,6 @@ endless:
     cards: "{n} kart"
     correct: "{n} doğru"
   error:
-    missing_params: "İçerik seti seçilmedi."
     load_failed: "Alıştırma oturumu yüklenemedi."
   summary:
     heading: "Alıştırma oturumu tamamlandı!"
@@ -4408,7 +4320,6 @@ registry:
     pending: Beklemede; CI doğrulayacak
   pr:
     created: Çekme isteği açıldı.
-    failed: Çekme isteği açılamadı.
     view: Çekme isteğinizi görüntüleyin
 
 exercise:

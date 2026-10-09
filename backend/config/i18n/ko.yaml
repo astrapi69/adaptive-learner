@@ -7,7 +7,6 @@ app:
   reload: "새로고침"
   name: Adaptive Learner
   tagline: 6단계 방법론 모델에 따른 적응형 학습.
-  skeleton_notice: 스켈레톤 상태입니다. 도메인 모델, 플러그인, 페이지는 다음 단계에서 추가됩니다 - docs/adaptive-learner-project-reference.md를 참고하세요.
 common:
   ok: "확인"
   remove: "제거"
@@ -21,7 +20,6 @@ common:
   submit: 제출
   delete: 삭제
   edit: 편집
-  confirm: 확인
   minutes: 분
   close: "닫기"
 avatar:
@@ -232,12 +230,7 @@ onboarding:
   field_name: 이름
   field_topic: 주제
   field_topic_hint: "예: 스페인어 B1, 선형대수학."
-  field_goal: 목표
   field_goal_hint: 무엇을 할 수 있게 되고 싶으신가요?
-  field_timeframe: 기간
-  field_timeframe_hint: "예: 4주, 한 학기."
-  field_daily_minutes: 하루 학습 시간(분)
-  field_current_problem: 현재 문제
   field_current_problem_hint: 선택 - 지금 무엇이 가로막고 있나요?
   submit: 프로젝트를 만들고 평가 시작
   creating: 프로젝트 생성 중…
@@ -295,7 +288,6 @@ dashboard:
     missions: "미션"
   no_data: "아직 데이터가 없습니다."
   title: 대시보드
-  welcome: 다시 오신 것을 환영합니다
   quick_start: 새 세션 시작
   quick_start_subtitle: 프로필에 따라 학습법이 선택됩니다.
   card_profile: 학습 프로필
@@ -386,31 +378,16 @@ review:
   back_to_dashboard: "대시보드로 돌아가기"
   back_to_lesson: "레슨으로 돌아가기"
   summary:
-    aria_label: "복습 요약"
     heading: "복습 완료"
-    score: "점수"
     note: "요소 점수가 업데이트되었습니다. 숙달한 요소는 다음 세션에 나타나지 않습니다."
   error:
     load_failed: "복습 세션을 불러올 수 없었습니다."
-  spaced_empty: 지금 복습할 항목이 없습니다. 훌륭한 리듬이에요!
-  spaced_interval_label: 복습 예정
-  spaced_start: 시작
-  spaced_dismiss: 닫기
-  metric_total_sessions: 총 세션 수
-  metric_total_minutes: 총 학습 시간(분)
-  metric_mean_understanding: 평균 이해도
-  metric_mean_stress: 평균 스트레스
-  metric_streak: 연속 학습일
-  no_data: 아직 세션이 없습니다 - 첫 세션을 시작하여 추이를 확인하세요.
-  pronunciation_quick_start: 발음 연습
 session:
   auto_loop_unavailable: "데스크톱 앱에서는 7단계가 끝나면 다음 주제로 새 주기가 자동으로 시작됩니다. 브라우저 버전에서는 아직 지원되지 않습니다. 계속 학습하려면 세션을 종료하고 새 세션을 시작하세요."
   title: 학습 세션
   topic_label: "주제"
-  in_progress: 세션 진행 중
   send_message: 메시지 보내기
   message_placeholder: 답변을 작성하세요…
-  ai_thinking: 생각하는 중…
   ai_error: AI가 응답할 수 없었습니다.
   no_api_key: "AI 키가 설정되지 않았습니다. 튜터와 대화하려면 설정에서 AI 제공자의 키를 추가하세요. 레슨과 복습은 키 없이도 작동합니다."
   ai_error_no_model: "AI 제공자의 모델이 선택되지 않았습니다. 설정 > AI에서 모델을 선택하세요."
@@ -422,7 +399,6 @@ session:
   chat_retry: "다시 시도"
   welcome_empty: "학습할 준비가 되었습니다! 첫 메시지를 작성하세요."
   end_session: 세션 종료
-  end_session_confirm: 정말이신가요? 세션을 종료하고 평가할 수 있습니다.
   switch_recommended: 학습법 전환 추천
   switch_recommended_subtitle: 최근 평가를 보면 다른 학습법이 더 잘 맞을 수 있습니다.
   switch_accept: 학습법 전환
@@ -554,7 +530,6 @@ settings:
   summary_section_export: "결과 내보내기"
   summary_section_next_steps: "다음 단계 제안"
   correction_round_enabled: "레슨 후 교정 라운드 표시"
-  correction_round_enabled_desc: "레슨이 끝나면 실수를 바로 수정할 수 있도록 제안합니다. 끄면 복습 / \"오답 연습\" 모드에서 계속 이용할 수 있습니다."
   hints_enabled: "연습 중 힌트 표시"
   hints_enabled_desc: "각 연습 문제에 단계별 힌트 버튼을 제공합니다."
   hint_xp_cost: "힌트당 XP 비용"
@@ -607,7 +582,6 @@ settings:
   mode_coming_soon: "출시 예정"
   section_provider: AI 제공자
   section_api_keys: API 키
-  section_danger: 계정
   section_ui: 인터페이스
   section_appearance: "외관"
   section_content_tabs: "콘텐츠 탭 순서"
@@ -698,7 +672,6 @@ settings:
   tab_help: "도움말"
   tab_diagnostics: "진단 및 지원"
   tab_about: "정보"
-  tabs_aria: "설정 섹션"
   section_feedback: "피드백"
   section_interaction: "상호작용"
   cluster_basics: "기본"
@@ -877,9 +850,6 @@ settings:
     test_rate_limit: "요청 한도에 도달했습니다. 나중에 다시 시도하세요."
     test_no_key: "테스트할 키가 없습니다."
     format_invalid: "형식이 유효하지 않습니다."
-    rollback_warning: "새 키가 작동하지 않습니다. 이전 키를 유지할까요?"
-    rollback_keep_old: "이전 키 유지"
-    rollback_save_anyway: "그래도 저장"
     rollback_restore: "마지막으로 작동한 키 복원"
     format_hint:
       anthropic: "sk-ant-로 시작합니다"
@@ -891,7 +861,6 @@ settings:
   api_key_delete: 키 제거
   api_key_confirm_delete: 정말 이 API 키를 제거하시겠습니까?
   saved: 저장되었습니다.
-  save_failed: 저장에 실패했습니다.
   provider_active: 활성
   active_provider_missing_key: 활성 제공자이지만 저장된 API 키가 없습니다. 키가 저장될 때까지 AI 응답은 건너뜁니다.
   # Phase 34 (v1.20.0) - per-provider key-source badges.
@@ -903,7 +872,6 @@ settings:
   api_key_external_hint_env: 이 키는 ADAPTIVE_LEARNER_{PROVIDER}_API_KEY 환경 변수로 설정되어 있습니다.
   section_model_overrides: 모델 재정의
   model_overrides_hint: 각 제공자의 기본 모델을 사용하려면 비워 두세요. 비어 있지 않은 값은 대화 시 기본값을 대체합니다.
-  model_override_placeholder: "모델 식별자 (예: claude-3-5-haiku-latest)"
   model_override_set: 재정의 활성
   model_override_default: 기본 모델
   model_override_save: 모델 저장
@@ -1006,22 +974,16 @@ settings:
 methods:
   deductive:
     label: 연역적
-    summary: 일반에서 구체로 - 규칙을 먼저, 예시는 나중에.
   inductive:
     label: 귀납적
-    summary: 구체에서 일반으로 - 예시를 먼저, 규칙을 도출.
   error_based:
     label: 오류 기반
-    summary: 실수에서 배우기 - 교정과 설명.
   dialogic:
     label: 대화적
-    summary: 대화 속에서 생각하기 - 스트레스를 낮추고 동기를 키웁니다.
   contextual:
     label: 맥락적
-    summary: 실제 맥락에서 적용하기 - 전이를 연습합니다.
   ai_adaptive:
     label: AI 적응형
-    summary: AI가 당신에게 가장 잘 맞는 학습법을 선택합니다.
 cycle_steps:
   input:
     label: 입력
@@ -1047,15 +1009,11 @@ cycle_steps:
 errors:
   network: 서버에 연결할 수 없었습니다.
   not_found: 찾을 수 없습니다.
-  validation: 잘못된 입력입니다.
-  conflict: 항목이 이미 존재합니다.
   server: 서버 오류 - 나중에 다시 시도하세요.
 toast:
   project_created: 프로젝트가 생성되었습니다.
   assessment_saved: 프로필이 저장되었습니다.
-  session_started: 세션이 시작되었습니다.
   session_ended: 세션이 종료되었습니다.
-  rating_saved: 평가가 저장되었습니다.
   api_key_saved: API 키가 저장되었습니다.
   api_key_restored: "마지막으로 작동한 키가 복원되었습니다."
   api_key_deleted: API 키가 제거되었습니다.
@@ -1100,7 +1058,6 @@ about:
   check_failed: "확인에 실패했습니다. 온라인 상태인가요?"
   last_checked: "마지막 확인: {when}"
   never_checked: "확인한 적 없음"
-  update_now: "지금 업데이트"
   system_heading: 시스템
   storage_label: 저장소
   storage_api: 서버 (FastAPI + SQLite)
@@ -1111,7 +1068,6 @@ about:
   dep_unknown: 알 수 없음
   identity_heading: 신원 파일
   identity_loading: 신원 상태를 불러오는 중…
-  identity_error: '신원 상태를 불러올 수 없었습니다:'
   identity_path_label: 경로
   identity_status_label: 상태
   identity_status_active: 활성
@@ -1157,7 +1113,6 @@ backup:
   not_a_backup_file: '이 파일은 유효한 백업 파일이 아닙니다. ''백업 만들기''로 내보낸 파일을 선택하세요.'
   version_mismatch: "이 백업은 버전 {{from}}에서 만들어졌으며, 이 앱은 {{to}}입니다. 아래 변경 사항을 검토하고 가져오기를 확인하세요."
   too_large: '이 백업 파일이 너무 큽니다 (100MB 초과).'
-  export_success: 백업을 다운로드했습니다 (레코드 {{count}}개).
   export_error: '백업 실패: {{detail}}'
   export_failed: "백업에 실패했습니다."
   import_parse_failed: "백업을 읽을 수 없었습니다."
@@ -1178,7 +1133,6 @@ backup:
   col_skipped: '건너뜀'
   col_errors: '오류'
   error_details: '오류 상세'
-  restored_with_errors: '레코드 {{n}}개를 복원할 수 없었습니다.'
   last_backup: '마지막 백업: {{when}}'
   reminder_overdue: 마지막 백업으로부터 {{days}}일이 넘게 지났습니다.
   saved_as: '백업 저장됨: {{filename}}'
@@ -1456,7 +1410,6 @@ gamification:
   card_badges: 배지
   badges_earned: 획득
   badges_empty: 아직 사용 가능한 배지가 없습니다.
-  badge_earned_toast: '배지 획득: {name}'
   badge_category:
     getting_started: 시작하기
     consistency: 꾸준함
@@ -1582,7 +1535,6 @@ arcade:
   subtitle: "1~2분의 짧은 라운드. 게임 모드의 보상입니다. XP 없이 재미만!"
   card_description: "학습 메모리와 스네이크의 짧은 라운드: 게임 모드 보상입니다."
   card_open: "아케이드로 가기"
-  requires_playful: "아케이드는 게임 모드의 일부입니다. 설정에서 게임 모드(및 아케이드 스위치)를 켜세요."
   requires_game_mode: "아케이드는 게임 모드의 일부인데, 게임 모드가 꺼져 있습니다. 설정에서 켜세요."
   requires_arcade_switch: "게임 모드는 켜져 있지만 아케이드 스위치가 꺼져 있습니다. 설정의 게임 모드 세부 정보에서 아케이드를 켜세요."
   open_settings: "설정 열기"
@@ -1809,7 +1761,6 @@ ui:
     open_settings: "설정 열기"
     feature_analyze: "대화를 분석하려면"
     feature_anki: "Anki 카드를 추출하려면"
-    feature_study_guide: "학습 가이드를 생성하려면"
     feature_study_questions: "학습 질문을 생성하려면"
     feature_pronunciation: "발음 연습을 하려면"
   common:
@@ -1971,11 +1922,6 @@ repo:
   topic_readme_parent_link: "← [프로젝트 루트](../README.md)"
   topic_readme_no_sessions: "_이 주제를 다룬 세션이 없습니다._"
   loading: "저장소를 렌더링하는 중…"
-  widget_subtitle: "이 프로젝트의 진행도, 메모, 로드맵의 버전 관리된 스냅샷입니다."
-  settings_description: "세션 데이터로부터 프로젝트별 마크다운 산출물(README, STATS, CHEATSHEET, ROADMAP)을 자동으로 생성합니다. 선택적 git 연동은 각 렌더링을 커밋하여 어떤 git 클라이언트로도 기록을 살펴볼 수 있게 합니다."
-  settings_enable_git: "git 영속화 활성화"
-  dexie_unavailable_body: "이 기능은 서버 모드에서만 사용할 수 있습니다. git 기반 학습 저장소를 사용하려면 설정에서 서버 모드로 전환하세요."
-  back_to_dashboard: "대시보드로 돌아가기"
   page:
     title: "학습 저장소"
     rendered_at: "렌더링 시각"
@@ -2143,9 +2089,7 @@ lesson:
     aria_label: "단계 탐색"
   action:
     prev: "이전"
-    next: "다음"
     finish: "레슨 끝내기"
-    back_to_browser: "콘텐츠 브라우저로 돌아가기"
     pause: "레슨 일시 정지"
     open_browser: "콘텐츠 브라우저 열기"
     back_to_lesson: "레슨으로 돌아가기"
@@ -2405,7 +2349,6 @@ lesson:
     time: "시간"
     minutes: "{n}분"
     hints_used: "사용한 힌트"
-    breakdown_heading: "연습 상세"
     breakdown_correct_answer: "정답: {answer}"
     breakdown_unattempted: "시도 안 함"
     detailed_hide: "간단한 평가"
@@ -2434,7 +2377,6 @@ lesson:
     mark_complete_needs_profile: "진행 상황을 저장하려면 학습 프로필을 만드세요"
     mark_complete_failed: "완료 저장에 실패했습니다"
     next_lesson: "다음 레슨"
-    repeat: "레슨 반복"
     retry: "다시 연습하기"
     retry_heading: "나의 향상"
     retry_attempt: "{n}번째 시도: {pct}%"
@@ -2445,7 +2387,6 @@ lesson:
     retry_best: "최고 기록"
     retry_best_value: "{pct}% ({n}번째 시도)"
     retry_new_record: "신기록!"
-    restart: "처음부터 다시"
     back_to_browser: "콘텐츠 브라우저로 돌아가기"
     encourage_0: "연습이 완벽을 만듭니다!"
     encourage_1: "좋은 출발이에요 - 계속 가세요!"
@@ -2482,7 +2423,6 @@ lesson:
     adaptive_focus: "집중: {topic}"
     adaptive_errors: "이 레슨의 오류 {count}개"
     error_replay: "오답 다시 풀기"
-    error_replay_detail: "연습 {count}개 다시"
     error_replay_corrected: "{total}개 중 {corrected}개 수정됨"
     all_corrected: "모든 오류를 수정했습니다!"
     all_corrected_detail: "훌륭해요, 남은 오류가 없습니다."
@@ -2496,10 +2436,8 @@ lesson:
     view_set: "세트 보기"
     focus_vocabulary: "어휘"
   correction:
-    title: "교정 라운드"
     subtitle: "틀린 단어에 대한 빠른 드릴 몇 가지."
     skip: "건너뛰기"
-    next: "다음"
     complete_heading: "교정 라운드 완료"
     improvement: "요소 {n}개가 향상되었습니다."
     improvement_singular: "요소 {n}개가 향상되었습니다."
@@ -2644,10 +2582,7 @@ content:
     no_results: "'{query}'에 대한 결과가 없습니다"
     hint: "다른 검색어를 시도해 보세요"
     clear: "검색 지우기"
-    available: "다운로드 가능"
     your_content: "내 콘텐츠"
-    download_prompt_title: "이 세트를 다운로드할까요?"
-    download_prompt_body: "이 세트는 아직 다운로드되지 않았습니다. 지금 다운로드할까요?"
   save_adaptive:
     button: "이 레슨을 저장할까요?"
   create_lesson:
@@ -2745,10 +2680,8 @@ content:
     active: "활성"
     deferred: "보류"
     completed: "완료"
-    filter_aria: "상태별 필터"
     menu_aria: "세트 작업"
     changed: "상태가 업데이트되었습니다."
-    change_failed: "상태를 업데이트할 수 없습니다."
     deleted: "세트가 제거되었습니다."
     delete_failed: "세트를 제거할 수 없습니다."
     progress_not_deleted: "제거했지만 학습 진행 상황은 삭제하지 못했습니다: {detail}"
@@ -2811,7 +2744,6 @@ content:
     button: "연습문제 생성"
     generating: "연습문제 생성 중…"
     regenerate: "다시 생성"
-    regenerate_confirm: "생성된 연습문제를 새 세트로 교체할까요?"
     generated: "연습문제 {n}개를 생성했습니다."
     generated_with_rejected: "연습문제 {n}개를 생성했습니다. {r}개는 품질 문제로 제외되었습니다."
     none: "AI가 사용 가능한 연습문제를 반환하지 않았습니다. 다시 시도해 주세요."
@@ -2829,7 +2761,6 @@ content:
     modal_title: "오프라인 레슨으로 저장"
     title_label: "레슨 제목"
     summary: "연습 {exercises}개 · 이론 단계 {theory}개 · 약 {minutes}분"
-    theory_only: "연습을 만들기에 어휘가 부족합니다. 더 많은 연습 자료를 위해 더 긴 채팅을 가져오세요."
     save: "저장"
     saved: "내 레슨에 저장되었습니다."
     failed: "레슨을 저장할 수 없었습니다."
@@ -2838,7 +2769,6 @@ content:
     source_lang_label: 당신의 언어
     level_label: 레벨
     not_enough_data: "연습이 적습니다 - 완전한 언어 레슨에는 최소 {min}개를 권장합니다. 그래도 저장할 수 있습니다 (예: 이론 전용 레슨으로)."
-    same_language: 학습하는 언어와 당신의 언어는 서로 달라야 합니다.
     same_language_hint: "학습하는 언어와 당신의 언어가 같습니다 - 문법이나 모국어 레슨에는 괜찮습니다. 공유하면 콘텐츠 트리의 동일 언어 분기에 배치됩니다."
     split_notice: "이 레슨은 {steps}단계로, {parts}개 부분으로 저장됩니다 (부분당 최대 {max}단계)."
     part_title: "{title} - 파트 {n}"
@@ -3031,9 +2961,6 @@ content:
       all_ok: "발견된 문제가 없습니다 - 강세, 관사, 중복 모두 깨끗합니다."
       problem: "문제"
       suggestion: "제안"
-  placement:
-    lands_under: 당신의 레슨은 다음 아래에 배치됩니다
-    duplicate: '비슷한 레슨이 이미 존재합니다: {title}. 그래도 공유할까요?'
   wizard:
     title: 커뮤니티에 공유
     metadata_intro: 공유하기 전에 레슨 정보를 확인하고 수정하세요.
@@ -3048,7 +2975,6 @@ content:
     err_title: 제목을 추가하세요.
     err_source: 출처 언어를 선택하세요.
     err_target: 목표 언어를 선택하세요.
-    err_same_language: 출처 언어와 목표 언어는 달라야 합니다.
     err_level: CEFR 레벨(A1-C2)을 선택하세요.
     level_none: 레벨 없음 (언어 과정 아님)
     err_empty: 이 레슨에 연습이 없습니다. 레슨을 다시 만드세요.
@@ -3058,7 +2984,6 @@ content:
     lands_under: 당신의 레슨은 다음 아래에 배치됩니다
     new_set: 새 세트입니다! 이곳에 처음으로 기여하는 분이에요.
     next_to_existing: 이 세트의 기존 레슨 {count}개 옆에.
-    summary_counts: '레슨 {lessons}개, 연습 {exercises}개, 카드 {cards}개, 약 {minutes}분'
     checking: 비슷한 레슨을 확인하는 중…
     no_duplicates: 중복이 발견되지 않았습니다. 당신의 레슨은 고유합니다!
     near_duplicate: '이 레슨은 이미 존재합니다: "{title}".'
@@ -3253,7 +3178,6 @@ create_lesson:
     switch_discard: "취소하고 전환"
   prompts_migrated: "{n}개의 연습 지시문이 자동으로 사용자의 언어로 번역되었습니다."
   prompts_migrated_dismiss: "닫기"
-  step_pending: "이 단계는 다음 업데이트에서 제공됩니다."
   nav_label: "마법사 탐색"
   cancel: "취소"
   back: "뒤로"
@@ -3274,7 +3198,6 @@ create_lesson:
     content_lang_label: "콘텐츠 언어"
     level_none: "레벨 없음"
     domain_hint: "지식 콘텐츠는 단일 콘텐츠 언어를 사용하며 CEFR 레벨을 생략할 수 있습니다."
-    same_language: "학습하는 언어는 당신의 언어와 달라야 합니다."
     description_label: "주제 / 설명"
     author_label: "작성자 이름"
   cards:
@@ -3362,8 +3285,6 @@ create_lesson:
     generate: "연습 자동 생성"
     regenerate: "다시 생성"
     count: "연습 {n}개"
-    min_hint: "연습 {n}개가 필요합니다"
-    min_to_advance: "계속하려면 연습을 최소 {n}개 생성하세요."
     one_to_advance: "계속하려면 연습을 최소 1개 생성하세요."
     share_min_hint: "공유하려면 연습이 최소 {n}개 필요합니다"
     min_one_to_advance: "계속하려면 연습문제를 최소 한 개 추가하세요."
@@ -3641,7 +3562,6 @@ learning_path:
   filter_mine: "내 것만"
   filter_all: "모든 세트"
   filter_label: "세트 필터"
-  adaptive: "적응형 레슨 시작"
   error_replay: "오답 다시 풀기"
   train_errors: "오답 연습"
   shuffle: "셔플"
@@ -3678,7 +3598,6 @@ learning_path:
   mastery:
     receptive: "수용"
     productive: "산출"
-    mastered: "숙달됨"
   title: "학습 경로"
   subtitle: "당신이 어디에 있고 다음은 무엇인지."
   aria_canvas: "학습 경로 그래프"
@@ -3786,7 +3705,6 @@ share:
   app:
     heading: "앱 공유"
     download: "다운로드"
-    qr_intro: "QR 코드로 앱을 공유해 다른 사람이 바로 열 수 있게 하세요."
     show_qr: "QR 코드 표시"
     download_qr: "QR 코드 다운로드"
     copy_url: "URL 복사"
@@ -4111,7 +4029,6 @@ content_repo:
     sync_all: "모두 동기화"
     add: "저장소 추가"
     cancel: "취소"
-    confirm_remove: "제거 확인"
     connect: "저장소 연결"
     move_down: "아래로 이동"
     move_up: "위로 이동"
@@ -4119,12 +4036,10 @@ content_repo:
     share: "공유"
     sync: "지금 동기화"
   badge:
-    coach: "코치"
     private: "비공개"
     official: "공식"
   trust:
     dropped: "동기화되었지만 검증에 실패했습니다 - 이 저장소는 이제 미검증으로 표시됩니다."
-    recommended: "공식 추천"
     unknown: "미검증"
     validated: "유효성 확인됨"
   status:
@@ -4215,7 +4130,6 @@ discover:
     domain: "분야"
     trust: "신뢰도"
     source: "출처"
-    ai_checked: "AI 검증됨"
     review: "검토"
   trust:
     official: "공식 추천"
@@ -4287,7 +4201,6 @@ endless:
   back_to_dashboard: "대시보드로 돌아가기"
   loading: "연습 세션을 불러오는 중…"
   empty_body: "이 세트에는 아직 연습할 문제가 없습니다."
-  not_cached_body: "이 세트는 아직 다운로드되지 않았습니다. 콘텐츠 브라우저를 열어 먼저 다운로드하세요."
   paused: "일시정지 - 잠시 쉬어가세요."
   resume: "계속"
   pause: "일시정지"
@@ -4297,7 +4210,6 @@ endless:
     cards: "{n}장"
     correct: "{n}개 정답"
   error:
-    missing_params: "선택된 콘텐츠 세트가 없습니다."
     load_failed: "연습 세션을 불러올 수 없습니다."
   summary:
     heading: "연습 세션 완료!"
@@ -4418,7 +4330,6 @@ registry:
     pending: 대기 중 - CI가 검증합니다
   pr:
     created: 풀 리퀘스트를 열었습니다.
-    failed: 풀 리퀘스트를 열 수 없습니다.
     view: 풀 리퀘스트 보기
 
 exercise:

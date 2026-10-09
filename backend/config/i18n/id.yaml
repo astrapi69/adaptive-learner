@@ -7,7 +7,6 @@ app:
   reload: "Muat ulang"
   name: Adaptive Learner
   tagline: Pembelajaran adaptif berdasarkan Model Enam Metode.
-  skeleton_notice: Status kerangka. Model domain, plugin, dan halaman akan hadir pada fase mendatang - lihat docs/adaptive-learner-project-reference.md.
 common:
   ok: "OK"
   remove: "Hapus"
@@ -21,7 +20,6 @@ common:
   submit: Kirim
   delete: Hapus
   edit: Edit
-  confirm: Konfirmasi
   minutes: menit
   close: "Tutup"
 avatar:
@@ -232,12 +230,7 @@ onboarding:
   field_name: Nama Anda
   field_topic: Topik
   field_topic_hint: mis. Spanyol B1, aljabar linear.
-  field_goal: Tujuan
   field_goal_hint: Apa yang ingin Anda kuasai?
-  field_timeframe: Jangka waktu
-  field_timeframe_hint: mis. 4 minggu, satu semester.
-  field_daily_minutes: Menit per hari
-  field_current_problem: Masalah saat ini
   field_current_problem_hint: opsional - apa yang menghambat Anda saat ini?
   submit: Buat proyek dan mulai penilaian
   creating: Membuat proyek…
@@ -295,7 +288,6 @@ dashboard:
     missions: "Misi"
   no_data: "Belum ada data."
   title: Dasbor
-  welcome: Selamat datang kembali
   quick_start: Mulai sesi baru
   quick_start_subtitle: Metode dipilih dari profil Anda.
   card_profile: Profil belajar
@@ -386,31 +378,16 @@ review:
   back_to_dashboard: "Kembali ke Dasbor"
   back_to_lesson: "Kembali ke pelajaran"
   summary:
-    aria_label: "Ringkasan ulasan"
     heading: "Ulasan selesai"
-    score: "Skor"
     note: "Skor elemen telah diperbarui. Elemen yang dikuasai tidak akan muncul di sesi berikutnya."
   error:
     load_failed: "Tidak dapat memuat sesi ulasan."
-  spaced_empty: Tidak ada yang perlu disegarkan saat ini. Ritme yang bagus!
-  spaced_interval_label: Tinjau dalam
-  spaced_start: Mulai
-  spaced_dismiss: Tutup
-  metric_total_sessions: Total sesi
-  metric_total_minutes: Total menit
-  metric_mean_understanding: Rata-rata pemahaman
-  metric_mean_stress: Rata-rata stres
-  metric_streak: Rentetan hari
-  no_data: Belum ada sesi - mulai sesi pertama Anda untuk melihat tren.
-  pronunciation_quick_start: Latihan Pelafalan
 session:
   auto_loop_unavailable: "Di aplikasi desktop, siklus baru dengan topik berikutnya dimulai otomatis setelah langkah 7. Versi browser belum bisa melakukannya: akhiri sesi dan mulai sesi baru untuk melanjutkan belajar."
   title: Sesi belajar
   topic_label: "Topik"
-  in_progress: Sesi sedang berlangsung
   send_message: Kirim pesan
   message_placeholder: Tulis balasan Anda…
-  ai_thinking: Berpikir…
   ai_error: Penyedia AI tidak dapat membalas.
   no_api_key: "Tidak ada kunci AI yang diatur. Tambahkan kunci untuk penyedia AI Anda di Pengaturan untuk mengobrol dengan tutor. Pelajaran dan ulasan tetap berfungsi tanpa kunci."
   ai_error_no_model: "Belum ada model yang dipilih untuk penyedia AI Anda. Pilih model di Pengaturan > AI."
@@ -422,7 +399,6 @@ session:
   chat_retry: "Coba lagi"
   welcome_empty: "Siap belajar! Tulis pesan pertama Anda."
   end_session: Akhiri sesi
-  end_session_confirm: Yakin? Kami akan menutup sesi dan meminta penilaian.
   switch_recommended: Pergantian metode direkomendasikan
   switch_recommended_subtitle: Penilaian terbaru Anda menunjukkan metode lain mungkin lebih cocok untuk Anda.
   switch_accept: Ganti metode
@@ -554,7 +530,6 @@ settings:
   summary_section_export: "Ekspor hasil"
   summary_section_next_steps: "Saran langkah berikutnya"
   correction_round_enabled: "Tampilkan ronde koreksi setelah pelajaran"
-  correction_round_enabled_desc: "Di akhir pelajaran, tawarkan untuk memperbaiki kesalahanmu langsung. Jika mati, kesalahan tetap tersedia di mode ulasan / \"Latih kesalahan\"."
   hints_enabled: "Tampilkan petunjuk selama latihan"
   hints_enabled_desc: "Tawarkan tombol petunjuk bertahap pada setiap latihan."
   hint_xp_cost: "Biaya XP per petunjuk"
@@ -607,7 +582,6 @@ settings:
   mode_coming_soon: "Segera Hadir"
   section_provider: Penyedia AI
   section_api_keys: Kunci API
-  section_danger: Akun
   section_ui: Antarmuka
   section_appearance: "Tampilan"
   section_content_tabs: "Urutan tab Konten"
@@ -698,7 +672,6 @@ settings:
   tab_help: "Bantuan"
   tab_diagnostics: "Diagnostik & Dukungan"
   tab_about: "Tentang"
-  tabs_aria: "Bagian pengaturan"
   section_feedback: "Umpan balik"
   section_interaction: "Interaksi"
   cluster_basics: "Dasar"
@@ -877,9 +850,6 @@ settings:
     test_rate_limit: "Batas laju tercapai. Coba lagi nanti."
     test_no_key: "Tidak ada kunci untuk diuji."
     format_invalid: "Format tidak valid."
-    rollback_warning: "Kunci baru tidak berfungsi. Pertahankan kunci lama?"
-    rollback_keep_old: "Pertahankan kunci lama"
-    rollback_save_anyway: "Simpan saja"
     rollback_restore: "Pulihkan kunci terakhir yang berfungsi"
     format_hint:
       anthropic: "Diawali dengan sk-ant-"
@@ -891,7 +861,6 @@ settings:
   api_key_delete: Hapus kunci
   api_key_confirm_delete: Yakin ingin menghapus kunci API ini?
   saved: Tersimpan.
-  save_failed: Gagal menyimpan.
   provider_active: Aktif
   active_provider_missing_key: Ini adalah penyedia aktif Anda tetapi tidak ada kunci API yang tersimpan. Balasan AI akan dilewati hingga kunci disimpan.
   # Phase 34 (v1.20.0) - per-provider key-source badges.
@@ -903,7 +872,6 @@ settings:
   api_key_external_hint_env: Kunci ini dikonfigurasi melalui variabel lingkungan ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.
   section_model_overrides: Penggantian model
   model_overrides_hint: Biarkan kosong untuk menggunakan model bawaan setiap penyedia. Nilai yang tidak kosong menggantikan bawaan saat obrolan.
-  model_override_placeholder: Pengidentifikasi model (mis. claude-3-5-haiku-latest)
   model_override_set: Penggantian aktif
   model_override_default: Model bawaan
   model_override_save: Simpan model
@@ -1006,22 +974,16 @@ settings:
 methods:
   deductive:
     label: Deduktif
-    summary: Umum ke khusus - aturan dulu, contoh kemudian.
   inductive:
     label: Induktif
-    summary: Khusus ke umum - contoh dulu, turunkan aturannya.
   error_based:
     label: Berbasis kesalahan
-    summary: Belajar dari kesalahan - koreksi ditambah penjelasan.
   dialogic:
     label: Dialogis
-    summary: Berpikir dalam percakapan - kurangi stres, bangun motivasi.
   contextual:
     label: Kontekstual
-    summary: Terapkan dalam konteks nyata - latih transfer.
   ai_adaptive:
     label: Adaptif-AI
-    summary: AI memilih metode yang paling cocok untuk Anda.
 cycle_steps:
   input:
     label: Masukan
@@ -1047,15 +1009,11 @@ cycle_steps:
 errors:
   network: Tidak dapat menjangkau server.
   not_found: Tidak ditemukan.
-  validation: Masukan tidak valid.
-  conflict: Entri sudah ada.
   server: Kesalahan server - silakan coba lagi nanti.
 toast:
   project_created: Proyek dibuat.
   assessment_saved: Profil disimpan.
-  session_started: Sesi dimulai.
   session_ended: Sesi diakhiri.
-  rating_saved: Penilaian disimpan.
   api_key_saved: Kunci API disimpan.
   api_key_restored: "Kunci terakhir yang berfungsi dipulihkan."
   api_key_deleted: Kunci API dihapus.
@@ -1100,7 +1058,6 @@ about:
   check_failed: "Pemeriksaan gagal. Apakah Anda online?"
   last_checked: "Terakhir diperiksa: {when}"
   never_checked: "Belum pernah diperiksa"
-  update_now: "Perbarui sekarang"
   system_heading: Sistem
   storage_label: Penyimpanan
   storage_api: Server (FastAPI + SQLite)
@@ -1111,7 +1068,6 @@ about:
   dep_unknown: tidak diketahui
   identity_heading: File identitas
   identity_loading: Memuat status identitas…
-  identity_error: 'Tidak dapat memuat status identitas:'
   identity_path_label: Jalur
   identity_status_label: Status
   identity_status_active: Aktif
@@ -1157,7 +1113,6 @@ backup:
   not_a_backup_file: 'File ini bukan file cadangan yang valid. Silakan pilih file yang diekspor dengan ''Buat cadangan''.'
   version_mismatch: "Cadangan ini berasal dari versi {{from}}; aplikasi ini adalah {{to}}. Tinjau perubahan di bawah ini dan konfirmasi untuk mengimpor."
   too_large: 'File cadangan ini terlalu besar (lebih dari 100 MB).'
-  export_success: Cadangan diunduh ({{count}} catatan).
   export_error: 'Pencadangan gagal: {{detail}}'
   export_failed: "Pencadangan gagal."
   import_parse_failed: "Tidak dapat membaca cadangan."
@@ -1178,7 +1133,6 @@ backup:
   col_skipped: 'Lewat'
   col_errors: 'Salah'
   error_details: 'Detail kesalahan'
-  restored_with_errors: '{{n}} catatan tidak dapat dipulihkan.'
   last_backup: 'Cadangan terakhir: {{when}}'
   reminder_overdue: Sudah lebih dari {{days}} hari sejak cadangan terakhir Anda.
   saved_as: 'Cadangan disimpan: {{filename}}'
@@ -1456,7 +1410,6 @@ gamification:
   card_badges: Lencana
   badges_earned: diperoleh
   badges_empty: Belum ada lencana yang tersedia.
-  badge_earned_toast: 'Lencana diperoleh: {name}'
   badge_category:
     getting_started: Memulai
     consistency: Konsistensi
@@ -1582,7 +1535,6 @@ arcade:
   subtitle: "Ronde singkat, satu sampai dua menit: hadiah mode permainan. Tanpa XP, hanya keseruan."
   card_description: "Ronde singkat Memory Belajar dan Snake: hadiah mode permainanmu."
   card_open: "Ke arcade"
-  requires_playful: "Arcade adalah bagian dari mode permainan. Nyalakan mode permainan (dan sakelar arcade) di pengaturan."
   requires_game_mode: "Arcade adalah bagian dari mode permainan, dan mode permainan sedang mati. Nyalakan di pengaturan."
   requires_arcade_switch: "Mode permainan menyala, tetapi sakelar arcade mati. Nyalakan arcade di detail mode permainan di pengaturan."
   open_settings: "Buka pengaturan"
@@ -1809,7 +1761,6 @@ ui:
     open_settings: "Buka Pengaturan"
     feature_analyze: "untuk menganalisis percakapan"
     feature_anki: "untuk mengekstrak kartu Anki"
-    feature_study_guide: "untuk menghasilkan panduan belajar"
     feature_study_questions: "untuk menghasilkan pertanyaan belajar"
     feature_pronunciation: "untuk latihan pelafalan"
   common:
@@ -1971,11 +1922,6 @@ repo:
   topic_readme_parent_link: "← [Akar proyek](../README.md)"
   topic_readme_no_sessions: "_Tidak ada sesi yang menelusuri topik ini._"
   loading: "Merender repositori…"
-  widget_subtitle: "Snapshot berversi dari kemajuan, catatan, dan peta jalan proyek ini."
-  settings_description: "Otomatis menghasilkan artefak Markdown (README, STATS, CHEATSHEET, ROADMAP) per proyek dari data sesi Anda. Integrasi git opsional melakukan commit setiap render sehingga Anda dapat menelusuri riwayatnya dengan klien git mana pun."
-  settings_enable_git: "Aktifkan persistensi git"
-  dexie_unavailable_body: "Fitur ini hanya tersedia dalam mode server. Beralih ke mode server di Pengaturan untuk mengaktifkan repositori pembelajaran yang didukung git."
-  back_to_dashboard: "Kembali ke Dasbor"
   page:
     title: "Repositori Pembelajaran"
     rendered_at: "Dirender pada"
@@ -2143,9 +2089,7 @@ lesson:
     aria_label: "Navigasi langkah"
   action:
     prev: "Sebelumnya"
-    next: "Berikutnya"
     finish: "Selesaikan pelajaran"
-    back_to_browser: "Kembali ke penjelajah konten"
     pause: "Jeda pelajaran"
     open_browser: "Buka penjelajah konten"
     back_to_lesson: "Kembali ke pelajaran"
@@ -2405,7 +2349,6 @@ lesson:
     time: "Waktu"
     minutes: "{n} mnt"
     hints_used: "Petunjuk yang digunakan"
-    breakdown_heading: "Rincian latihan"
     breakdown_correct_answer: "Jawaban yang benar: {answer}"
     breakdown_unattempted: "Tidak dicoba"
     detailed_hide: "Evaluasi ringkas"
@@ -2434,7 +2377,6 @@ lesson:
     mark_complete_needs_profile: "Buat profil belajar untuk menyimpan kemajuanmu"
     mark_complete_failed: "Gagal menyimpan penyelesaian"
     next_lesson: "Pelajaran berikutnya"
-    repeat: "Ulangi pelajaran"
     retry: "Latihan lagi"
     retry_heading: "Peningkatanmu"
     retry_attempt: "Percobaan {n}: {pct}%"
@@ -2445,7 +2387,6 @@ lesson:
     retry_best: "Hasil terbaik"
     retry_best_value: "{pct}% (percobaan {n})"
     retry_new_record: "Rekor baru!"
-    restart: "Mulai dari awal"
     back_to_browser: "Kembali ke penjelajah konten"
     encourage_0: "Latihan membuat sempurna!"
     encourage_1: "Awal yang baik - terus lanjutkan!"
@@ -2482,7 +2423,6 @@ lesson:
     adaptive_focus: "Fokus pada: {topic}"
     adaptive_errors: "{count} kesalahan dalam pelajaran ini"
     error_replay: "Ulangi Kesalahan"
-    error_replay_detail: "{count} latihan lagi"
     error_replay_corrected: "{corrected} dari {total} diperbaiki"
     all_corrected: "Semua kesalahan diperbaiki!"
     all_corrected_detail: "Bagus, tidak ada kesalahan tersisa."
@@ -2496,10 +2436,8 @@ lesson:
     view_set: "Lihat Set"
     focus_vocabulary: "Kosakata"
   correction:
-    title: "Babak koreksi"
     subtitle: "Beberapa latihan cepat pada kata-kata yang kamu tertukar."
     skip: "Lewati"
-    next: "Berikutnya"
     complete_heading: "Babak koreksi selesai"
     improvement: "{n} elemen meningkat."
     improvement_singular: "{n} elemen meningkat."
@@ -2644,10 +2582,7 @@ content:
     no_results: "Tidak ada hasil untuk '{query}'"
     hint: "Coba kata kunci pencarian lain"
     clear: "Hapus pencarian"
-    available: "Tersedia untuk diunduh"
     your_content: "Konten kamu"
-    download_prompt_title: "Unduh set ini?"
-    download_prompt_body: "Set ini belum diunduh. Unduh sekarang?"
   save_adaptive:
     button: "Simpan pelajaran ini?"
   create_lesson:
@@ -2745,10 +2680,8 @@ content:
     active: "Aktif"
     deferred: "Ditunda"
     completed: "Selesai"
-    filter_aria: "Filter menurut status"
     menu_aria: "Tindakan set"
     changed: "Status diperbarui."
-    change_failed: "Tidak dapat memperbarui status."
     deleted: "Set dihapus."
     delete_failed: "Tidak dapat menghapus set."
     progress_not_deleted: "Dihapus, tetapi kemajuan belajar Anda tidak dapat dihapus: {detail}"
@@ -2811,7 +2744,6 @@ content:
     button: "Buat latihan"
     generating: "Membuat latihan…"
     regenerate: "Buat ulang"
-    regenerate_confirm: "Ganti latihan yang dibuat dengan set baru?"
     generated: "{n} latihan dibuat."
     generated_with_rejected: "{n} latihan dibuat, {r} ditolak karena kualitas."
     none: "AI tidak mengembalikan latihan yang dapat digunakan. Silakan coba lagi."
@@ -2829,7 +2761,6 @@ content:
     modal_title: "Simpan sebagai pelajaran luring"
     title_label: "Judul pelajaran"
     summary: "{exercises} latihan · {theory} langkah teori · ~{minutes} mnt"
-    theory_only: "Kosakata tidak cukup untuk latihan. Impor obrolan yang lebih panjang untuk materi latihan tambahan."
     save: "Simpan"
     saved: "Disimpan ke Pelajaran Saya."
     failed: "Tidak dapat menyimpan pelajaran."
@@ -2838,7 +2769,6 @@ content:
     source_lang_label: Bahasamu
     level_label: Tingkat
     not_enough_data: Sedikit latihan - minimal {min} disarankan untuk pelajaran bahasa lengkap. Kamu tetap bisa menyimpannya (misalnya sebagai pelajaran teori saja).
-    same_language: Bahasa yang dipelajari dan bahasamu harus berbeda.
     same_language_hint: "Bahasa yang dipelajari dan bahasamu sama - tidak masalah untuk pelajaran tata bahasa atau bahasa ibu. Saat dibagikan, pelajaran ini akan masuk ke cabang bahasa-sama pada pohon konten."
     split_notice: "Pelajaran ini memiliki {steps} langkah dan akan disimpan sebagai {parts} bagian (maksimal {max} langkah per bagian)."
     part_title: "{title} - Bagian {n}"
@@ -3031,9 +2961,6 @@ content:
       all_ok: "Tidak ada masalah ditemukan - aksen, artikel, dan duplikat semuanya bersih."
       problem: "Masalah"
       suggestion: "Saran"
-  placement:
-    lands_under: Pelajaranmu akan masuk ke
-    duplicate: 'Pelajaran serupa sudah ada: {title}. Tetap bagikan?'
   wizard:
     title: Bagikan ke komunitas
     metadata_intro: Periksa dan perbaiki detail pelajaran sebelum membagikan.
@@ -3048,7 +2975,6 @@ content:
     err_title: Tambahkan sebuah judul.
     err_source: Pilih bahasa sumber.
     err_target: Pilih bahasa target.
-    err_same_language: Bahasa sumber dan target harus berbeda.
     err_level: Pilih sebuah tingkat CEFR (A1-C2).
     level_none: Tanpa tingkat (bukan kursus bahasa)
     err_empty: Pelajaran ini tidak memiliki latihan. Mohon buat ulang pelajaran.
@@ -3058,7 +2984,6 @@ content:
     lands_under: Pelajaranmu akan masuk ke
     new_set: Set baru! Kamu yang pertama berkontribusi di sini.
     next_to_existing: Di samping {count} pelajaran yang sudah ada di set ini.
-    summary_counts: '{lessons} pelajaran, {exercises} latihan, {cards} kartu, ~{minutes} mnt'
     checking: Memeriksa pelajaran serupa…
     no_duplicates: Tidak ada duplikat ditemukan. Pelajaranmu unik!
     near_duplicate: 'Pelajaran ini sudah ada: "{title}".'
@@ -3253,7 +3178,6 @@ create_lesson:
     switch_discard: "Buang dan ganti"
   prompts_migrated: "{n} instruksi latihan otomatis diterjemahkan ke bahasa Anda."
   prompts_migrated_dismiss: "Tutup"
-  step_pending: "Langkah ini akan hadir pada pembaruan berikutnya."
   nav_label: "Navigasi wizard"
   cancel: "Batal"
   back: "Kembali"
@@ -3274,7 +3198,6 @@ create_lesson:
     content_lang_label: "Bahasa konten"
     level_none: "Tanpa level"
     domain_hint: "Konten pengetahuan menggunakan satu bahasa konten dan dapat melewati level CEFR."
-    same_language: "Bahasa yang dipelajari harus berbeda dari bahasamu."
     description_label: "Topik / deskripsi"
     author_label: "Nama penulis"
   cards:
@@ -3362,8 +3285,6 @@ create_lesson:
     generate: "Buat latihan otomatis"
     regenerate: "Buat ulang"
     count: "{n} latihan"
-    min_hint: "{n} latihan diperlukan"
-    min_to_advance: "Buat setidaknya {n} latihan untuk melanjutkan."
     one_to_advance: "Buat setidaknya satu latihan untuk melanjutkan."
     share_min_hint: "Berbagi memerlukan setidaknya {n} latihan"
     min_one_to_advance: "Tambahkan setidaknya satu latihan untuk melanjutkan."
@@ -3641,7 +3562,6 @@ learning_path:
   filter_mine: "Hanya milikku"
   filter_all: "Semua set"
   filter_label: "Saring set"
-  adaptive: "Mulai pelajaran adaptif"
   error_replay: "Ulangi kesalahan"
   train_errors: "Latih kesalahan"
   shuffle: "Acak"
@@ -3678,7 +3598,6 @@ learning_path:
   mastery:
     receptive: "reseptif"
     productive: "produktif"
-    mastered: "dikuasai"
   title: "Jalur Pembelajaran"
   subtitle: "Posisimu saat ini dan apa yang berikutnya."
   aria_canvas: "Grafik jalur pembelajaran"
@@ -3786,7 +3705,6 @@ share:
   app:
     heading: "Bagikan aplikasi"
     download: "Unduh"
-    qr_intro: "Bagikan aplikasi lewat kode QR agar orang lain bisa membukanya langsung."
     show_qr: "Tampilkan kode QR"
     download_qr: "Unduh kode QR"
     copy_url: "Salin URL"
@@ -4111,7 +4029,6 @@ content_repo:
     sync_all: "Sinkronkan semua"
     add: "Tambah repositori"
     cancel: "Batal"
-    confirm_remove: "Konfirmasi hapus"
     connect: "Hubungkan repositori"
     move_down: "Pindah ke bawah"
     move_up: "Pindah ke atas"
@@ -4119,12 +4036,10 @@ content_repo:
     share: "Bagikan"
     sync: "Sinkronkan sekarang"
   badge:
-    coach: "Pelatih"
     private: "Pribadi"
     official: "Resmi"
   trust:
     dropped: "Tersinkronkan, tetapi validasi gagal - repositori ini sekarang ditandai Belum diverifikasi."
-    recommended: "Direkomendasikan secara resmi"
     unknown: "Belum diverifikasi"
     validated: "Tervalidasi"
   status:
@@ -4215,7 +4130,6 @@ discover:
     domain: "Bidang"
     trust: "Kepercayaan"
     source: "Sumber"
-    ai_checked: "Diperiksa AI"
     review: "Tinjauan"
   trust:
     official: "Direkomendasikan secara resmi"
@@ -4287,7 +4201,6 @@ endless:
   back_to_dashboard: "Kembali ke Dasbor"
   loading: "Memuat sesi latihan…"
   empty_body: "Set ini belum memiliki latihan untuk dikerjakan."
-  not_cached_body: "Set ini belum diunduh. Buka penjelajah konten untuk mengunduhnya terlebih dahulu."
   paused: "Dijeda - istirahat sejenak."
   resume: "Lanjutkan"
   pause: "Jeda"
@@ -4297,7 +4210,6 @@ endless:
     cards: "{n} kartu"
     correct: "{n} benar"
   error:
-    missing_params: "Tidak ada set konten yang dipilih."
     load_failed: "Tidak dapat memuat sesi latihan."
   summary:
     heading: "Sesi latihan selesai!"
@@ -4418,7 +4330,6 @@ registry:
     pending: Menunggu - CI akan memvalidasi
   pr:
     created: Permintaan tarik dibuka.
-    failed: Tidak dapat membuka permintaan tarik.
     view: Lihat permintaan tarik Anda
 
 exercise:

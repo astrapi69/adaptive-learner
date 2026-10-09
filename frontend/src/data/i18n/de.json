@@ -7,8 +7,7 @@
     "crashed": "Etwas ist schiefgelaufen.",
     "reload": "Neu laden",
     "name": "Adaptive Learner",
-    "tagline": "Adaptives Lernen nach dem Sechs-Methoden-Modell.",
-    "skeleton_notice": "Skeleton-Stand. Domain-Modelle, Plugins und Seiten folgen in den nächsten Phasen - siehe docs/adaptive-learner-project-reference.md."
+    "tagline": "Adaptives Lernen nach dem Sechs-Methoden-Modell."
   },
   "common": {
     "ok": "OK",
@@ -23,7 +22,6 @@
     "submit": "Absenden",
     "delete": "Löschen",
     "edit": "Bearbeiten",
-    "confirm": "Bestätigen",
     "minutes": "Minuten",
     "close": "Schließen"
   },
@@ -247,12 +245,7 @@
     "field_name": "Dein Name",
     "field_topic": "Thema",
     "field_topic_hint": "z. B. Spanisch B1 oder lineare Algebra.",
-    "field_goal": "Lernziel",
     "field_goal_hint": "Was willst du am Ende können?",
-    "field_timeframe": "Zeitrahmen",
-    "field_timeframe_hint": "z. B. 4 Wochen, 1 Semester.",
-    "field_daily_minutes": "Minuten pro Tag",
-    "field_current_problem": "Aktuelles Problem",
     "field_current_problem_hint": "optional - was bremst dich gerade?",
     "submit": "Projekt anlegen und Assessment starten",
     "creating": "Projekt wird angelegt …",
@@ -314,7 +307,6 @@
     },
     "no_data": "Noch keine Daten vorhanden.",
     "title": "Dashboard",
-    "welcome": "Willkommen zurück",
     "quick_start": "Neue Sitzung starten",
     "quick_start_subtitle": "Methode kommt aus deinem Profil.",
     "card_profile": "Lernprofil",
@@ -413,34 +405,19 @@
     "back_to_dashboard": "Zurück zum Dashboard",
     "back_to_lesson": "Zurück zur Lektion",
     "summary": {
-      "aria_label": "Wiederholungs-Zusammenfassung",
       "heading": "Wiederholung abgeschlossen",
-      "score": "Punktzahl",
       "note": "Element-Werte wurden aktualisiert. Gemeisterte Elemente erscheinen in der nächsten Sitzung nicht mehr."
     },
     "error": {
       "load_failed": "Wiederholungssitzung konnte nicht geladen werden."
-    },
-    "spaced_empty": "Nichts zu wiederholen - guter Rhythmus!",
-    "spaced_interval_label": "Wiederholung in",
-    "spaced_start": "Starten",
-    "spaced_dismiss": "Ausblenden",
-    "metric_total_sessions": "Sitzungen insgesamt",
-    "metric_total_minutes": "Minuten insgesamt",
-    "metric_mean_understanding": "Mittleres Verstehen",
-    "metric_mean_stress": "Mittlerer Stress",
-    "metric_streak": "Tagesserie",
-    "no_data": "Noch keine Sitzungen - starte deine erste, um Trends zu sehen.",
-    "pronunciation_quick_start": "Aussprachetraining"
+    }
   },
   "session": {
     "auto_loop_unavailable": "In der Desktop-App beginnt nach Schritt 7 automatisch ein neuer Zyklus mit dem nächsten Thema. Die Browser-Version kann das noch nicht: Beende die Sitzung und starte eine neue, um weiterzulernen.",
     "title": "Lernsitzung",
     "topic_label": "Thema",
-    "in_progress": "Sitzung läuft",
     "send_message": "Nachricht senden",
     "message_placeholder": "Schreibe deine Antwort …",
-    "ai_thinking": "Denkt nach …",
     "ai_error": "Die KI konnte nicht antworten.",
     "no_api_key": "Kein KI-Schlüssel gesetzt. Hinterlege in den Einstellungen einen Schlüssel für deinen KI-Anbieter, um mit dem Tutor zu chatten. Lektionen und Wiederholungen funktionieren ohne Schlüssel.",
     "ai_error_no_model": "Für deinen KI-Anbieter ist kein Modell gewählt. Wähle ein Modell unter Einstellungen > KI.",
@@ -452,7 +429,6 @@
     "chat_retry": "Erneut versuchen",
     "welcome_empty": "Bereit zum Lernen! Schreibe deine erste Nachricht.",
     "end_session": "Sitzung beenden",
-    "end_session_confirm": "Sicher? Wir können die Sitzung beenden und bewerten.",
     "switch_recommended": "Methodenwechsel empfohlen",
     "switch_recommended_subtitle": "Deine letzten Werte weisen darauf hin, dass eine andere Methode besser passen könnte.",
     "switch_accept": "Methode wechseln",
@@ -587,7 +563,6 @@
     "summary_section_export": "Ergebnis-Export",
     "summary_section_next_steps": "Nächste-Schritte-Vorschläge",
     "correction_round_enabled": "Korrektur-Runde nach Lektionen anzeigen",
-    "correction_round_enabled_desc": "Am Ende einer Lektion direkt anbieten, deine Fehler zu korrigieren. Wenn aus, bleiben sie im Wiederholungs-/\"Fehler trainieren\"-Modus verfügbar.",
     "hints_enabled": "Tipps in Übungen anzeigen",
     "hints_enabled_desc": "Bietet bei jeder Übung einen gestuften Tipp-Button.",
     "hint_xp_cost": "XP-Kosten pro Tipp",
@@ -642,7 +617,6 @@
     "mode_coming_soon": "Kommt bald",
     "section_provider": "KI-Anbieter",
     "section_api_keys": "API-Keys",
-    "section_danger": "Konto",
     "section_ui": "Oberfläche",
     "section_appearance": "Darstellung",
     "section_content_tabs": "Reihenfolge der Inhalte-Tabs",
@@ -733,7 +707,6 @@
     "tab_help": "Hilfe",
     "tab_diagnostics": "Diagnose & Support",
     "tab_about": "Über",
-    "tabs_aria": "Einstellungsbereiche",
     "section_feedback": "Feedback",
     "section_interaction": "Interaktion",
     "cluster_basics": "Grundlagen",
@@ -912,9 +885,6 @@
       "test_rate_limit": "Rate-Limit erreicht. Versuche es später.",
       "test_no_key": "Kein Schlüssel zum Testen.",
       "format_invalid": "Ungültiges Format.",
-      "rollback_warning": "Der neue Schlüssel funktioniert nicht. Alten Schlüssel behalten?",
-      "rollback_keep_old": "Alten behalten",
-      "rollback_save_anyway": "Trotzdem speichern",
       "rollback_restore": "Letzten funktionierenden Schlüssel wiederherstellen",
       "format_hint": {
         "anthropic": "Beginnt mit sk-ant-",
@@ -928,7 +898,6 @@
     "api_key_delete": "Key entfernen",
     "api_key_confirm_delete": "Diesen API-Key wirklich entfernen?",
     "saved": "Gespeichert.",
-    "save_failed": "Speichern fehlgeschlagen.",
     "provider_active": "Aktiv",
     "active_provider_missing_key": "Dies ist dein aktiver Anbieter, aber kein API-Key ist gespeichert. KI-Antworten werden übersprungen, bis ein Key hinterlegt ist.",
     "api_key_source_file": "Schlüssel aus: secrets.yaml",
@@ -939,7 +908,6 @@
     "api_key_external_hint_env": "Dieser Schlüssel wird über die Umgebungsvariable ADAPTIVE_LEARNER_{PROVIDER}_API_KEY konfiguriert.",
     "section_model_overrides": "Modellüberschreibungen",
     "model_overrides_hint": "Leer lassen, um das Standardmodell pro Anbieter zu nutzen. Ein nicht-leerer Wert ersetzt das Standardmodell beim Chat.",
-    "model_override_placeholder": "Modellbezeichner (z. B. claude-3-5-haiku-latest)",
     "model_override_set": "Überschreibung aktiv",
     "model_override_default": "Standardmodell",
     "model_override_save": "Modell speichern",
@@ -1058,28 +1026,22 @@
   },
   "methods": {
     "deductive": {
-      "label": "Deduktiv",
-      "summary": "Vom Allgemeinen zum Besonderen - Regeln zuerst, Beispiele danach."
+      "label": "Deduktiv"
     },
     "inductive": {
-      "label": "Induktiv",
-      "summary": "Vom Besonderen zum Allgemeinen - Beispiele zuerst, Regeln ableiten."
+      "label": "Induktiv"
     },
     "error_based": {
-      "label": "Fehlerzentriert",
-      "summary": "Aus Fehlern lernen - Korrektur mit Erklärung."
+      "label": "Fehlerzentriert"
     },
     "dialogic": {
-      "label": "Dialogisch",
-      "summary": "Im Gespräch denken - Stress senken, Motivation aufbauen."
+      "label": "Dialogisch"
     },
     "contextual": {
-      "label": "Kontextuell",
-      "summary": "Im echten Kontext anwenden - Transfer üben."
+      "label": "Kontextuell"
     },
     "ai_adaptive": {
-      "label": "KI-adaptiv",
-      "summary": "Die KI wählt für dich die jeweils beste Methode."
+      "label": "KI-adaptiv"
     }
   },
   "cycle_steps": {
@@ -1115,16 +1077,12 @@
   "errors": {
     "network": "Verbindung zum Server fehlgeschlagen.",
     "not_found": "Eintrag nicht gefunden.",
-    "validation": "Eingabe ungültig.",
-    "conflict": "Eintrag existiert bereits.",
     "server": "Serverfehler - bitte später erneut versuchen."
   },
   "toast": {
     "project_created": "Projekt angelegt.",
     "assessment_saved": "Profil gespeichert.",
-    "session_started": "Sitzung gestartet.",
     "session_ended": "Sitzung beendet.",
-    "rating_saved": "Bewertung gespeichert.",
     "api_key_saved": "API-Key gespeichert.",
     "api_key_restored": "Letzter funktionierender Schlüssel wiederhergestellt.",
     "api_key_deleted": "API-Key entfernt.",
@@ -1174,7 +1132,6 @@
     "check_failed": "Prüfung fehlgeschlagen. Bist du online?",
     "last_checked": "Letzte Prüfung: {when}",
     "never_checked": "Noch nie geprüft",
-    "update_now": "Jetzt aktualisieren",
     "system_heading": "System",
     "storage_label": "Speicher",
     "storage_api": "Server (FastAPI + SQLite)",
@@ -1185,7 +1142,6 @@
     "dep_unknown": "unbekannt",
     "identity_heading": "Identitätsdatei",
     "identity_loading": "Identitätsstatus wird geladen …",
-    "identity_error": "Identitätsstatus konnte nicht geladen werden:",
     "identity_path_label": "Pfad",
     "identity_status_label": "Status",
     "identity_status_active": "Aktiv",
@@ -1233,7 +1189,6 @@
     "not_a_backup_file": "Diese Datei ist keine gültige Backup-Datei. Bitte wähle eine Datei, die mit „Sicherung erstellen“ exportiert wurde.",
     "version_mismatch": "Dieses Backup stammt aus Version {{from}}; diese App ist {{to}}. Prüfe die Änderungen unten und bestätige den Import.",
     "too_large": "Diese Backup-Datei ist zu groß (über 100 MB).",
-    "export_success": "Sicherung heruntergeladen ({{count}} Datensätze).",
     "export_error": "Sicherung fehlgeschlagen: {{detail}}",
     "export_failed": "Sicherung fehlgeschlagen.",
     "import_parse_failed": "Sicherung konnte nicht gelesen werden.",
@@ -1254,7 +1209,6 @@
     "col_skipped": "Übersp.",
     "col_errors": "Fehler",
     "error_details": "Fehlerdetails",
-    "restored_with_errors": "{{n}} Datensätze konnten nicht wiederhergestellt werden.",
     "last_backup": "Letzte Sicherung: {{when}}",
     "reminder_overdue": "Deine letzte Sicherung ist mehr als {{days}} Tage her.",
     "saved_as": "Sicherung gespeichert: {{filename}}",
@@ -1536,7 +1490,6 @@
     "card_badges": "Abzeichen",
     "badges_earned": "verdient",
     "badges_empty": "Noch keine Abzeichen verfügbar.",
-    "badge_earned_toast": "Abzeichen erhalten: {name}",
     "badge_category": {
       "getting_started": "Erste Schritte",
       "consistency": "Konsistenz",
@@ -1695,7 +1648,6 @@
     "subtitle": "Kurze Runden, ein bis zwei Minuten - eine Belohnung des Spielmodus. Keine XP, nur Spaß.",
     "card_description": "Kurze Runden Lern-Memory und Snake - deine Spielmodus-Belohnung.",
     "card_open": "Zur Arcade",
-    "requires_playful": "Die Arcade gehört zum Spielmodus. Schalte den Spielmodus (und den Arcade-Schalter) in den Einstellungen ein.",
     "requires_game_mode": "Die Arcade gehört zum Spielmodus, und der Spielmodus ist aus. Schalte ihn in den Einstellungen ein.",
     "requires_arcade_switch": "Der Spielmodus ist an, aber der Arcade-Schalter ist aus. Schalte die Arcade in den Spielmodus-Details in den Einstellungen ein.",
     "open_settings": "Einstellungen öffnen",
@@ -1934,7 +1886,6 @@
       "open_settings": "Einstellungen öffnen",
       "feature_analyze": "um Konversationen zu analysieren",
       "feature_anki": "um Anki-Karten zu extrahieren",
-      "feature_study_guide": "um einen Lernleitfaden zu generieren",
       "feature_study_questions": "um Lernfragen zu generieren",
       "feature_pronunciation": "für die Aussprache-Übung"
     },
@@ -2091,11 +2042,6 @@
     "topic_readme_parent_link": "← [Projektstamm](../README.md)",
     "topic_readme_no_sessions": "_Keine Sitzungen zu diesem Thema._",
     "loading": "Repository wird generiert…",
-    "widget_subtitle": "Versionierter Schnappschuss von Fortschritt, Notizen und Fahrplan dieses Projekts.",
-    "settings_description": "Generiert pro Projekt automatisch Markdown-Artefakte (README, STATS, CHEATSHEET, ROADMAP) aus deinen Sitzungsdaten. Optionale Git-Integration sichert jeden Renderlauf als Commit.",
-    "settings_enable_git": "Git-Persistenz aktivieren",
-    "dexie_unavailable_body": "Diese Funktion ist nur im Server-Modus verfügbar. Wechsle in den Einstellungen zum Server-Modus, um git-basierte Lern-Repositories zu nutzen.",
-    "back_to_dashboard": "Zurück zum Dashboard",
     "page": {
       "title": "Lern-Repository",
       "rendered_at": "Generiert am",
@@ -2289,9 +2235,7 @@
     },
     "action": {
       "prev": "Zurück",
-      "next": "Weiter",
       "finish": "Lektion abschließen",
-      "back_to_browser": "Zurück zur Inhaltsübersicht",
       "pause": "Lektion pausieren",
       "open_browser": "Inhalts-Browser öffnen",
       "back_to_lesson": "Zurück zur Lektion"
@@ -2595,7 +2539,6 @@
       "adaptive_focus": "Fokus auf: {topic}",
       "adaptive_errors": "{count} Fehler in dieser Lektion",
       "error_replay": "Fehler wiederholen",
-      "error_replay_detail": "{count} Aufgaben nochmal",
       "error_replay_corrected": "{corrected} von {total} korrigiert",
       "all_corrected": "Alle Fehler korrigiert!",
       "all_corrected_detail": "Stark - keine offenen Fehler mehr.",
@@ -2610,10 +2553,8 @@
       "focus_vocabulary": "Vokabeln"
     },
     "correction": {
-      "title": "Korrektur-Runde",
       "subtitle": "Ein paar schnelle Übungen zu den Wörtern, die du verwechselt hast.",
       "skip": "Überspringen",
-      "next": "Weiter",
       "complete_heading": "Korrektur-Runde abgeschlossen",
       "improvement": "{n} Elemente verbessert.",
       "improvement_singular": "{n} Element verbessert.",
@@ -2640,7 +2581,6 @@
       "time": "Zeit",
       "minutes": "{n} Min",
       "hints_used": "Tipps verwendet",
-      "breakdown_heading": "Übungs-Übersicht",
       "breakdown_correct_answer": "Richtige Antwort: {answer}",
       "breakdown_unattempted": "Nicht versucht",
       "detailed_hide": "Kompakte Auswertung",
@@ -2670,7 +2610,6 @@
       "mark_complete_needs_profile": "Lege ein Lernprofil an, um deinen Fortschritt zu speichern",
       "mark_complete_failed": "Abschluss konnte nicht gespeichert werden",
       "next_lesson": "Nächste Lektion",
-      "repeat": "Lektion wiederholen",
       "retry": "Erneut üben",
       "retry_heading": "Deine Verbesserung",
       "retry_attempt": "Versuch {n}: {pct}%",
@@ -2681,7 +2620,6 @@
       "retry_best": "Bestes Ergebnis",
       "retry_best_value": "{pct}% (Versuch {n})",
       "retry_new_record": "Neuer Rekord!",
-      "restart": "Neu beginnen",
       "back_to_browser": "Zurück zur Inhaltsübersicht",
       "encourage_0": "Übung macht den Meister!",
       "encourage_1": "Guter Anfang - bleib dran!",
@@ -2841,10 +2779,7 @@
       "no_results": "Keine Ergebnisse für '{query}'",
       "hint": "Versuche einen anderen Suchbegriff",
       "clear": "Suche löschen",
-      "available": "Zum Herunterladen verfügbar",
-      "your_content": "Deine Inhalte",
-      "download_prompt_title": "Dieses Set herunterladen?",
-      "download_prompt_body": "Dieses Set ist noch nicht heruntergeladen. Jetzt herunterladen?"
+      "your_content": "Deine Inhalte"
     },
     "save_adaptive": {
       "button": "Diese Lektion speichern?"
@@ -2950,10 +2885,8 @@
       "active": "Aktiv",
       "deferred": "Zurückgestellt",
       "completed": "Abgeschlossen",
-      "filter_aria": "Nach Status filtern",
       "menu_aria": "Aktionen für dieses Set",
       "changed": "Status aktualisiert.",
-      "change_failed": "Status konnte nicht aktualisiert werden.",
       "deleted": "Set entfernt.",
       "delete_failed": "Set konnte nicht entfernt werden.",
       "progress_not_deleted": "Entfernt, aber dein Lernfortschritt konnte nicht gelöscht werden: {detail}",
@@ -3023,7 +2956,6 @@
       "button": "Übungen generieren",
       "generating": "Übungen werden generiert…",
       "regenerate": "Neu generieren",
-      "regenerate_confirm": "Die generierten Übungen durch einen neuen Satz ersetzen?",
       "generated": "{n} Übungen generiert.",
       "generated_with_rejected": "{n} Übungen generiert, {r} wegen Qualität verworfen.",
       "none": "Die KI hat keine brauchbaren Übungen geliefert. Bitte erneut versuchen.",
@@ -3042,7 +2974,6 @@
       "modal_title": "Als Offline-Lektion speichern",
       "title_label": "Titel der Lektion",
       "summary": "{exercises} Übungen · {theory} Theorie-Schritte · ~{minutes} Min.",
-      "theory_only": "Nicht genug Vokabeln für Übungen. Importiere einen längeren Chat für mehr Übungsmaterial.",
       "save": "Speichern",
       "saved": "In „Meine Lektionen“ gespeichert.",
       "failed": "Die Lektion konnte nicht gespeichert werden.",
@@ -3051,7 +2982,6 @@
       "source_lang_label": "Deine Sprache",
       "level_label": "Niveau",
       "not_enough_data": "Wenige Übungen - für eine vollständige Sprachlektion werden mindestens {min} empfohlen. Du kannst die Lektion trotzdem speichern (z. B. als reine Theorie-Lektion).",
-      "same_language": "Die gelernte Sprache und deine Sprache müssen unterschiedlich sein.",
       "same_language_hint": "Die Lernsprache und deine Sprache sind identisch - das ist in Ordnung für eine Grammatik- oder Muttersprachen-Lektion. Beim Teilen landet sie im gleichsprachigen Zweig des Inhaltsbaums.",
       "split_notice": "Diese Lektion hat {steps} Schritte und wird als {parts} Teile gespeichert (max. {max} Schritte pro Teil).",
       "part_title": "{title} - Teil {n}"
@@ -3266,10 +3196,6 @@
         "suggestion": "Vorschlag"
       }
     },
-    "placement": {
-      "lands_under": "Deine Lektion wird eingeordnet unter",
-      "duplicate": "Eine ähnliche Lektion existiert bereits: {title}. Trotzdem teilen?"
-    },
     "wizard": {
       "title": "Mit der Community teilen",
       "metadata_intro": "Prüfe und korrigiere die Lektionsdetails vor dem Teilen.",
@@ -3284,7 +3210,6 @@
       "err_title": "Bitte einen Titel angeben.",
       "err_source": "Bitte die Ausgangssprache wählen.",
       "err_target": "Bitte die Zielsprache wählen.",
-      "err_same_language": "Ausgangs- und Zielsprache müssen sich unterscheiden.",
       "err_level": "Bitte ein CEFR-Niveau wählen (A1-C2).",
       "level_none": "Kein Niveau (kein Sprachkurs)",
       "err_empty": "Diese Lektion hat keine Übungen. Bitte erstelle die Lektion neu.",
@@ -3294,7 +3219,6 @@
       "lands_under": "Deine Lektion wird eingeordnet unter",
       "new_set": "Neues Set! Du bist der Erste, der hier beiträgt.",
       "next_to_existing": "Neben {count} bestehenden Lektionen in diesem Set.",
-      "summary_counts": "{lessons} Lektion(en), {exercises} Übungen, {cards} Karten, ~{minutes} Min",
       "checking": "Prüfe auf ähnliche Lektionen…",
       "no_duplicates": "Keine Duplikate gefunden. Deine Lektion ist einzigartig!",
       "near_duplicate": "Diese Lektion existiert bereits: \"{title}\".",
@@ -3521,7 +3445,6 @@
     },
     "prompts_migrated": "{n} Übungsanweisung(en) wurden automatisch in deine Sprache übertragen.",
     "prompts_migrated_dismiss": "Schließen",
-    "step_pending": "Dieser Schritt kommt im nächsten Update.",
     "nav_label": "Assistent-Navigation",
     "cancel": "Abbrechen",
     "back": "Zurück",
@@ -3542,7 +3465,6 @@
       "content_lang_label": "Inhaltssprache",
       "level_none": "Kein Niveau",
       "domain_hint": "Wissensinhalte nutzen eine einzige Inhaltssprache und benötigen kein GER-Niveau.",
-      "same_language": "Die gelernte Sprache muss sich von deiner Sprache unterscheiden.",
       "description_label": "Thema / Beschreibung",
       "author_label": "Autorenname"
     },
@@ -3637,8 +3559,6 @@
       "generate": "Übungen automatisch erstellen",
       "regenerate": "Neu generieren",
       "count": "{n} Übungen",
-      "min_hint": "{n} Übungen nötig",
-      "min_to_advance": "Erstelle mindestens {n} Übungen, um fortzufahren.",
       "one_to_advance": "Erstelle mindestens eine Übung, um fortzufahren.",
       "share_min_hint": "Zum Teilen sind mindestens {n} Übungen nötig",
       "min_one_to_advance": "Füge mindestens eine Übung hinzu, um fortzufahren.",
@@ -3935,7 +3855,6 @@
     "filter_mine": "Nur meine",
     "filter_all": "Alle Sets",
     "filter_label": "Sets filtern",
-    "adaptive": "Adaptive Lektion starten",
     "error_replay": "Fehler wiederholen",
     "train_errors": "Fehler trainieren",
     "shuffle": "Zufallsmodus",
@@ -3975,8 +3894,7 @@
     },
     "mastery": {
       "receptive": "rezeptiv",
-      "productive": "produktiv",
-      "mastered": "gemeistert"
+      "productive": "produktiv"
     },
     "title": "Lernpfad",
     "subtitle": "Wo du stehst und was als Nächstes kommt.",
@@ -4096,7 +4014,6 @@
     "app": {
       "heading": "Die App teilen",
       "download": "Herunterladen",
-      "qr_intro": "Teile die App per QR-Code, damit andere sie direkt öffnen können.",
       "show_qr": "QR-Code anzeigen",
       "download_qr": "QR-Code herunterladen",
       "copy_url": "URL kopieren",
@@ -4434,7 +4351,6 @@
       "sync_all": "Alle synchronisieren",
       "add": "Repository hinzufügen",
       "cancel": "Abbrechen",
-      "confirm_remove": "Entfernen bestätigen",
       "connect": "Repository verbinden",
       "move_down": "Nach unten",
       "move_up": "Nach oben",
@@ -4443,13 +4359,11 @@
       "sync": "Jetzt synchronisieren"
     },
     "badge": {
-      "coach": "Coach",
       "private": "Privat",
       "official": "Offiziell"
     },
     "trust": {
       "dropped": "Synchronisiert, aber die Validierung schlug fehl - dieses Repository ist jetzt als nicht verifiziert markiert.",
-      "recommended": "Offiziell empfohlen",
       "unknown": "Nicht verifiziert",
       "validated": "Validiert"
     },
@@ -4555,7 +4469,6 @@
       "domain": "Bereich",
       "trust": "Vertrauen",
       "source": "Quelle",
-      "ai_checked": "KI-geprüft",
       "review": "Durchsicht"
     },
     "trust": {
@@ -4641,7 +4554,6 @@
     "back_to_dashboard": "Zurück zum Dashboard",
     "loading": "Übungssitzung wird geladen…",
     "empty_body": "Dieses Set hat noch keine Übungen zum Üben.",
-    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen.",
     "paused": "Pausiert - mach eine kurze Pause.",
     "resume": "Fortsetzen",
     "pause": "Pause",
@@ -4652,7 +4564,6 @@
       "correct": "{n} richtig"
     },
     "error": {
-      "missing_params": "Kein Inhalts-Set ausgewählt.",
       "load_failed": "Übungssitzung konnte nicht geladen werden."
     },
     "summary": {
@@ -4794,7 +4705,6 @@
     },
     "pr": {
       "created": "Pull Request geöffnet.",
-      "failed": "Pull Request konnte nicht geöffnet werden.",
       "view": "Deinen Pull Request ansehen"
     }
   },
