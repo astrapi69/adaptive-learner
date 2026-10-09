@@ -33,7 +33,8 @@ const EXCLUDED_FROM_BACKUP_TABLES: Record<string, string> = {
     "carried as the payload's plugin_settings block, only the learner's keys " +
     "(lib/backup/pluginSettingsSnapshot.ts, #3412), not as table rows",
   aiValidationResults:
-    "GAP, tracked in #3412: cached AI content-check reports are not in the backup yet",
+    "carried as the payload's ai_validation_results block (lib/backup/aiValidationSnapshot.ts, " +
+    "#3412), not as table rows: no backup table outside the sync surface",
 };
 
 function schemaStores(): string[] {

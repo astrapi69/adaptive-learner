@@ -19,6 +19,8 @@ XP/série/badges, missions, cartes Anki, notes et plus encore)
 
 **Également inclus :** les dépôts de contenu connectés, les
 invitations utilisées et l'activation du Learning Repository.
+En mode navigateur, les résultats de tes vérifications de contenu par
+IA sont aussi inclus, le badge « Vérifié par IA » est donc conservé.
 **Non inclus :** le jeton d'accès d'un dépôt privé (saisis-le à
 nouveau après la restauration) et le dossier du Learning Repository,
 qui appartient à l'appareil.

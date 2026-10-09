@@ -31,6 +31,9 @@ logger = logging.getLogger(__name__)
 # ``BACKUP_VERSION`` (storage/backup/backup-tables.ts) must match, pinned
 # by a parity test there. The backend said 1.4.0 and the frontend 1.5.0 for
 # the same EXP-051 change until #3363.
+# 1.9.0 - #3412: an optional ai_validation_results block (cached AI
+# content-check reports), captured and applied frontend-side; an API-mode
+# export carries it empty and this import ignores it.
 # 1.8.0 - #3412: an optional plugin_settings block (connected repos, invites,
 # the Learning Repository switch), added and applied frontend-side in both
 # modes like local_storage; this import ignores it.
@@ -42,7 +45,7 @@ logger = logging.getLogger(__name__)
 # the export. Older backups lack them and import with the column defaults.
 # 1.5.0 (1.4.0 here) - EXP-051 / #2125: element_errors gains run_id and
 # set_runs rides the export; older backups import with run_id 1.
-BACKUP_VERSION = "1.8.0"
+BACKUP_VERSION = "1.9.0"
 BACKUP_FORMAT = "adaptive-learner-backup"
 
 # API keys are sensitive; the backup file is meant to travel

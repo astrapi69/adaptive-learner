@@ -18,6 +18,8 @@ notlar ve daha fazlası) **artı indirdiğin İçerik Setlerin**.
 
 **Bunlar da dahil:** bağlı içerik repository'leri, kullanılan
 davetler ve Learning Repository'nin açık olup olmadığı.
+Tarayıcı modunda yapay zekâ içerik denetimlerinin sonuçları da yedeğe
+girer, böylece "Yapay zekâ denetimli" rozeti korunur.
 **Dahil olmayanlar:** özel bir repository'nin erişim token'ı (geri
 yüklemeden sonra yeniden gir) ve cihaza ait olan Learning Repository
 klasörü.

@@ -17,6 +17,7 @@ import type {
   AiValidationCacheRecord,
 } from "../types";
 import { getDb } from "../dexie/db";
+import type { AiValidationResultRow } from "../dexie/db-rows";
 import { ApiError } from "../../api/client";
 import { aiComplete, aiCompleteWithMeta, resolveModel } from "../ai/ai-providers";
 import type { AIProvider } from "../../lib/constants";
@@ -148,7 +149,16 @@ export async function getAiValidationCacheDexie(
 ): Promise<AiValidationCacheRecord | null> {
   const db = getDb();
   const row = await db.aiValidationResults.get(aiCacheId(source, setId));
-  if (!row) return null;
+  return row ? rowToAiValidationRecord(row) : null;
+}
+
+/** #3412: every cached report, for the backup's ai_validation_results block. */
+export async function listAiValidationCacheDexie(): Promise<AiValidationCacheRecord[]> {
+  const rows = await getDb().aiValidationResults.toArray();
+  return rows.map(rowToAiValidationRecord);
+}
+
+function rowToAiValidationRecord(row: AiValidationResultRow): AiValidationCacheRecord {
   return {
     source: row.source,
     set_id: row.set_id,
