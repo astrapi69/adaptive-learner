@@ -1,0 +1,144 @@
+# Mobile-viewport smoke, nightly (#3544) - night shift (#575), NOT a merge gate.
+#
+# Runs e2e/smoke/mobile-viewports.spec.ts once a night against the real
+# backend and the Vite dev server (the smoke project's own webServer config),
+# to catch the intermittent miss where a page root was absent after
+# navigation at 390 px. Only this spec (12 tests, about 83 s measured
+# 2026-10-09), not the whole smoke project: widening it is considered only
+# once this run has produced real findings over several weeks.
+#
+# What it cannot see: it checks function at narrow widths, not appearance.
+# Per viewport it proves that each route mounts, that the page does not
+# scroll sideways and that the hamburger menu is there and closed. Elements
+# overlapping, a toast covering a button, spacing or contrast stay invisible
+# to it; a green night is no layout check.
+#
+# The result is filed, not logged: a night with a finding (a failed test, or
+# one that failed and passed on its retry) updates ONE issue, found by its
+# marker, and adds a comment. A night that could not measure (no report, a
+# server that never started, no test that ran) fails red and leaves the issue
+# alone (gate contract point 3, #2083).
+
+name: Mobile-viewport smoke (nightly)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Nightly 04:53 UTC - inside the night-shift window (#575).
+    - cron: "53 4 * * *"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  smoke:
+    name: Mobile-viewport smoke against backend + dev server
+    runs-on: ubuntu-latest
+    # Official Playwright image so Chromium is pre-baked (no CDN download,
+    # #317). Pin the tag to the @playwright/test version in e2e/bun.lock
+    # (1.61.1); bump both together.
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
+      options: --user 1001
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      # The npm distribution of Bun: setup-bun needs `unzip`, which the image
+      # lacks, and --user 1001 cannot apt-get it (#1530).
+      - name: Install Bun 1.3.14 (npm; image lacks unzip for setup-bun)
+        run: |
+          npm install --global --prefix "$HOME/.bun-npm" bun@1.3.14
+          echo "$HOME/.bun-npm/bin" >> "$GITHUB_PATH"
+
+      # The smoke config starts the backend through `poetry run uvicorn`.
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry and the backend
+        working-directory: backend
+        run: |
+          pip install poetry
+          poetry install --no-interaction --no-ansi
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: bun install --frozen-lockfile
+
+      - name: Install e2e deps
+        working-directory: e2e
+        run: bun install --frozen-lockfile
+
+      # A failing test is a finding, not the end of the job: the report step
+      # below decides, from the JSON report, whether the night measured.
+      - name: Mobile-viewport smoke
+        working-directory: e2e
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/smoke-nightly"
+          PLAYWRIGHT_JSON_OUTPUT_FILE="$GITHUB_WORKSPACE/smoke-nightly/report.json" \
+            npx playwright test --project=smoke smoke/mobile-viewports.spec.ts --reporter=list,json \
+            || echo "playwright exited $? (the report step decides)"
+
+      - name: Runtime skip budget (#3427)
+        run: python3 scripts/check_e2e_skip_budget.py --suite mobile-viewports-nightly --report smoke-nightly/report.json
+
+      - name: Read the night
+        id: night
+        run: |
+          python3 scripts/smoke_nightly_report.py --report smoke-nightly/report.json \
+            --summary smoke-nightly/summary.json --body smoke-nightly/body.md \
+            --comment smoke-nightly/comment.md \
+            --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          cat smoke-nightly/comment.md >> "$GITHUB_STEP_SUMMARY"
+          echo "findings=$(python3 -c "import json; print(json.load(open('smoke-nightly/summary.json'))['findings'])")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload screenshots, traces and the report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: smoke-nightly-report
+          path: |
+            e2e/test-results
+            smoke-nightly
+          retention-days: 14
+    outputs:
+      findings: ${{ steps.night.outputs.findings }}
+
+  # A separate job: the Playwright image ships no gh. It only runs when the
+  # night measured (the smoke job is green) and found something.
+  file:
+    name: File a finding in one issue (develop only)
+    needs: smoke
+    if: github.ref == 'refs/heads/develop' && needs.smoke.outputs.findings != '0'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: smoke-nightly-report
+
+      - name: Update the issue and add the night's comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          marker='<!-- smoke-nightly-report (#3544) -->'
+          number=$(gh api "repos/$REPO/issues?state=open&labels=testing&per_page=100" \
+            --jq "[.[] | select(.body != null and (.body | contains(\"$marker\")))][0].number // empty")
+          if [ -n "$number" ]; then
+            gh api -X PATCH "repos/$REPO/issues/$number" -F body=@smoke-nightly/body.md --silent
+          else
+            number=$(gh api -X POST "repos/$REPO/issues" \
+              -f title="Mobile-viewport smoke: nightly findings (#3544)" \
+              -F body=@smoke-nightly/body.md -f "labels[]=testing" -f "labels[]=P3" --jq '.number')
+          fi
+          gh api -X POST "repos/$REPO/issues/$number/comments" -F body=@smoke-nightly/comment.md --silent
+          echo "filed in #$number"
