@@ -68,6 +68,7 @@ import {
   aiValidateCardsDexie,
   deleteAiValidationCacheDexie,
   getAiValidationCacheDexie,
+  listAiValidationCacheDexie,
   saveAiValidationCacheDexie,
 } from "./content/content-loader-dexie-ai";
 import {
@@ -343,6 +344,7 @@ export const dexieStorage: IStorageService = {
     getAiValidationCache: (source, setId) =>
       getAiValidationCacheDexie(source, setId),
     saveAiValidationCache: (record) => saveAiValidationCacheDexie(record),
+    listAiValidationCache: () => listAiValidationCacheDexie(),
     deleteAiValidationCache: (source, setId) =>
       deleteAiValidationCacheDexie(source, setId),
   },

@@ -360,6 +360,10 @@ export interface IContentLoaderNamespace {
   /** EXP-033 / AIV-04 — persist a report so it can be re-shown without a
    *  new API call. Dexie writes IndexedDB; API mode is a no-op. */
   saveAiValidationCache(record: AiValidationCacheRecord): Promise<void>;
+  /** #3412 - every cached report, for the backup's
+   *  ``ai_validation_results`` block. Dexie lists IndexedDB; API mode has
+   *  no cache and returns an empty list. */
+  listAiValidationCache(): Promise<AiValidationCacheRecord[]>;
   /** AIV-07 (#3060) - forget a cached report after the set's cards changed
    *  (the cache is keyed by ``cached_version``, which a user set never
    *  bumps). Dexie deletes the row; API mode is a no-op (no cache there). */
