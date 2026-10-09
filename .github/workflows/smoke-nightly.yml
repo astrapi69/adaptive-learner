@@ -64,10 +64,17 @@ jobs:
         with:
           python-version: "3.12"
 
+      # setup-python puts the HOST path of the tool cache on PATH
+      # (/opt/hostedtoolcache/...); inside the container the same tree is
+      # mounted at /__t, so neither python nor pip resolves. $pythonLocation
+      # carries the container path (first dispatch 37966123906: "pip: not found").
+      - name: Put the container path of Python on PATH
+        run: echo "$pythonLocation/bin" >> "$GITHUB_PATH"
+
       - name: Install Poetry and the backend
         working-directory: backend
         run: |
-          pip install poetry
+          python -m pip install poetry
           poetry install --no-interaction --no-ansi
 
       - name: Install frontend deps
