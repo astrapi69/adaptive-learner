@@ -26,6 +26,7 @@ import {
     AGE_DAYS,
     ReportBasisError,
     agedUnusedKeys,
+    extractKeyTemplates,
     findUnusedKeys,
     renderReport,
 } from "../src/i18n/unused-catalog-keys";
@@ -105,7 +106,7 @@ function main(): number {
         const source = stripComments(readFileSync(file, "utf-8"));
         extractStaticKeys(source).forEach((key) => namedKeys.add(key));
         extractDataHeldKeys(source).forEach((key) => namedKeys.add(key));
-        dynamicPatterns.push(...extractDynamicKeyPatterns(source));
+        dynamicPatterns.push(...extractDynamicKeyPatterns(source), ...extractKeyTemplates(source));
         texts.push(source);
     }
     for (const file of files.other) texts.push(readFileSync(file, "utf-8"));

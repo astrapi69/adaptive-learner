@@ -14,7 +14,10 @@
  *     package that receives the app's ``t`` (the key vault renders
  *     ``settings.key_vault.*`` itself);
  *   - a key held as data (``key: "a.b"``, :func:`extractDataHeldKeys`);
- *   - a dynamic ``t(`a.${x}.b`)`` pattern the key fits;
+ *   - a dynamic ``t(`a.${x}.b`)`` pattern the key fits, or the same shape
+ *     built outside ``t()`` and handed to it later (``edit-error-keys.ts``
+ *     returns ``create_lesson.exercises.edit.err_${code}``, #3709,
+ *     :func:`extractKeyTemplates`);
  *   - the key as a literal anywhere in a non-catalog text file (Python,
  *     YAML templates, key lists such as ``i18n/shell-keys.json``);
  *   - a block consumer: a file that reads a whole top-level block
@@ -26,7 +29,7 @@
  * const report = agedUnusedKeys(unused, catalogKeysAgeDaysAgo);
  */
 
-import {anyKeyMatchesPattern, type DynamicKeyPattern} from "./full-tree-key-coverage";
+import {anyKeyMatchesPattern, splitDynamicTemplate, type DynamicKeyPattern} from "./full-tree-key-coverage";
 
 /** Days a key may sit in the catalogs without a consumer (pre-staging window). */
 export const AGE_DAYS = 14;
@@ -41,6 +44,38 @@ export interface ConsumerScan {
      *  a YAML comment or docstring is rare, and keeping it only errs towards
      *  "used", the safe side for a deletion report). */
     texts: readonly string[];
+}
+
+/** A template literal that opens with a dotted key path and interpolates. */
+const KEY_TEMPLATE = /`([a-z0-9_]+\.[a-z0-9_.]*\$\{[^`]*)`/g;
+
+/**
+ * Key shapes built in a template literal outside ``t()``, as dynamic patterns.
+ *
+ * A helper such as ``exerciseEditErrorKey`` returns
+ * ``create_lesson.exercises.edit.err_${code}`` and the caller passes the
+ * result to ``t()``; the ``t()``-only extraction never sees it (#3709). Only
+ * templates whose literal prefix is a dotted key path count, so URLs and
+ * plain labels stay out.
+ */
+export function extractKeyTemplates(source: string): DynamicKeyPattern[] {
+    const seen = new Map<string, DynamicKeyPattern>();
+    for (const match of source.matchAll(KEY_TEMPLATE)) {
+        const split = splitDynamicTemplate(match[1]);
+        if (split) seen.set(`${split.prefix} ${split.suffix}`, split);
+    }
+    return [...seen.values()];
+}
+
+/**
+ * ``splitDynamicTemplate`` keeps a second interpolation as literal text in
+ * the suffix (``lesson.exercise.instruction.${type}.${mode}`` gives suffix
+ * ``.${mode}``), which no catalog key ends with. For this report only the
+ * text after the LAST interpolation is a fixed suffix (#3709).
+ */
+function widenSuffix(pattern: DynamicKeyPattern): DynamicKeyPattern {
+    const last = pattern.suffix.lastIndexOf("}");
+    return pattern.suffix.includes("${") ? {...pattern, suffix: pattern.suffix.slice(last + 1)} : pattern;
 }
 
 /** Thrown when the report's basis is missing; it must never read as clean. */
@@ -97,11 +132,12 @@ export function findUnusedKeys(catalogKeys: readonly string[], scan: ConsumerSca
     if (scan.texts.length === 0) throw new ReportBasisError("no source files scanned");
     const blocks = new Set(catalogKeys.map((key) => key.split(".")[0]));
     const consumers = blockConsumers(scan.texts, blocks);
+    const patterns = scan.dynamicPatterns.map(widenSuffix);
     return catalogKeys
         .filter(
             (key) =>
                 !scan.namedKeys.has(key) &&
-                !scan.dynamicPatterns.some((pattern) => anyKeyMatchesPattern([key], pattern)) &&
+                !patterns.some((pattern) => anyKeyMatchesPattern([key], pattern)) &&
                 !namedLiterally(key, scan.texts) &&
                 !readByBlockConsumer(key, consumers),
         )
