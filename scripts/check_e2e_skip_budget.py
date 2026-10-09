@@ -44,7 +44,7 @@ class Outcome:
     skipped: list[str]
 
 
-def _walk(suite: dict, trail: tuple[str, ...]) -> list[tuple[str, dict]]:
+def walk_tests(suite: dict, trail: tuple[str, ...]) -> list[tuple[str, dict]]:
     """Every test of ``suite`` and its nested suites, with a readable title."""
     found = []
     here = trail + ((suite["title"],) if suite.get("title") else ())
@@ -52,7 +52,7 @@ def _walk(suite: dict, trail: tuple[str, ...]) -> list[tuple[str, dict]]:
         for test in spec.get("tests", []):
             found.append((" > ".join(here + (spec.get("title", "?"),)), test))
     for child in suite.get("suites", []):
-        found.extend(_walk(child, here))
+        found.extend(walk_tests(child, here))
     return found
 
 
@@ -76,7 +76,7 @@ def read_outcome(report: dict) -> Outcome:
     Returns:
         The total and the skipped tests as ``"<title> (<reason>)"``.
     """
-    tests = [item for suite in report.get("suites", []) for item in _walk(suite, ())]
+    tests = [item for suite in report.get("suites", []) for item in walk_tests(suite, ())]
     skipped = [
         f"{title} ({_reason(test)})"
         for title, test in tests
