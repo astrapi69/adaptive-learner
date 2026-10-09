@@ -776,7 +776,7 @@ export interface BackupPayload {
     /** Cached AI content-check reports (#3412), the AIV-09 signatures behind
      *  the "AI-checked" badge. Applied frontend-side on import; empty from an
      *  API-mode export, absent in pre-1.9.0 backups. */
-    ai_validation_results?: import("../storage/types").AiValidationCacheRecord[];
+    ai_validation_results?: import("../storage/types/content/content").AiValidationCacheRecord[];
     stats: BackupStats;
 }
 
