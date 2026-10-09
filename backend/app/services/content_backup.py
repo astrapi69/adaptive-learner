@@ -165,7 +165,9 @@ def _synthesize_manifest_yaml(entry: dict[str, Any]) -> str | None:
         id=entry["set_id"],
         title=title,
         title_native=meta.get("title_native"),
-        target_language=meta.get("target_language") or meta.get("language") or "en",
+        # #3395 - like the engine's resolveLanguagePair: a missing target is
+        # "" (no language was chosen), a missing source is "en".
+        target_language=meta.get("target_language") or meta.get("language") or "",
         source_language=meta.get("source_language") or "en",
         level=meta.get("level") or "A1",
         version=entry["version"],
