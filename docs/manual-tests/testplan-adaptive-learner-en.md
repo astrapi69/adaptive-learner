@@ -61,6 +61,10 @@ A real round-trip, not a simulation:
       invite are back in Settings > Content, updates load again, and the
       Learning Repository is switched on. A private repo asks for its token,
       and the Learning Repository folder is this device's default folder
+- [ ] TC-0954 AI check reports (#3412, browser mode): before the export, run the
+      AI content check on a set; the set shows the "AI-checked" badge. After
+      wipe and import it shows the badge again, without a new check and
+      without an API call
 
 Document the result (partial failures individually too). On ANY deviation:
 screenshot + which step, which becomes an issue with forensics.

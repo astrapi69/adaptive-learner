@@ -19,6 +19,9 @@ XP/racha/insignias, misiones, tarjetas de Anki, notas y más)
 
 **También incluidos:** los repositorios de contenido conectados, las
 invitaciones canjeadas y si el Learning Repository está activado.
+En el modo navegador también se incluyen los resultados de tus
+revisiones de contenido con IA, así que la insignia "Revisado por IA"
+se conserva.
 **No incluidos:** el token de acceso de un repositorio privado
 (vuelve a introducirlo tras restaurar) y la carpeta del Learning
 Repository, que pertenece al dispositivo.

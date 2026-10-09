@@ -20,6 +20,8 @@ preferences).
 
 **Also included:** connected content repositories, redeemed invites
 and whether the Learning Repository is switched on.
+In browser mode the results of your AI content checks come along
+too, so the "AI-checked" badge stays.
 **Not included:** the access token of a private repository (enter it
 again after the restore) and the Learning Repository folder, which
 belongs to the device.

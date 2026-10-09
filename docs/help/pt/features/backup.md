@@ -19,6 +19,8 @@ descarregados**.
 
 **Também incluídos:** os repositórios de conteúdo ligados, os
 convites utilizados e se o Learning Repository está ativo.
+No modo de navegador, os resultados das tuas verificações de conteúdo
+por IA também são incluídos, por isso o selo "Verificado por IA" mantém-se.
 **Não incluídos:** o token de acesso de um repositório privado
 (introduz-o de novo depois de restaurar) e a pasta do Learning
 Repository, que pertence ao dispositivo.
