@@ -16,6 +16,7 @@
 import type { Lesson as EngineLesson } from "learn-content-engine";
 import {
   QUALITY_MINIMUMS,
+  currentRuleId,
   validateLessonQuality,
   validateLessonRules,
   validateManifestRules,
@@ -23,6 +24,7 @@ import {
 
 import type { ContentLesson } from "../../../storage/types";
 import { APP_EXTENSION_REGISTRY } from "./engine-extensions";
+import { currentRuleIdSet, keyedByCurrentRuleId } from "./rule-keys";
 
 export interface ValidationMeta {
   title: string;
@@ -344,7 +346,10 @@ function checkCards(
  * - ``W-DOMAIN-UNKNOWN`` is raised per LESSON ``domain``; the set's domain
  *   is a meta choice the wizard makes once, and the app judges it there.
  */
-const ENGINE_WARNINGS_COVERED_BY_APP: ReadonlySet<string> = new Set([
+/** The card-back script rule, under its current id (engine 0.39.0). */
+const CARD_BACK_SCRIPT_RULE = currentRuleId("W-CARD-BACK-SCRIPT");
+
+const ENGINE_WARNINGS_COVERED_BY_APP: ReadonlySet<string> = currentRuleIdSet([
   "W-DOMAIN-UNKNOWN",
 ]);
 
@@ -418,7 +423,7 @@ function checkEngineRules(
     });
   }
   for (const warning of verdict.warnings) {
-    if (warning.id === "W-CARD-BACK-SCRIPT") {
+    if (warning.id === CARD_BACK_SCRIPT_RULE) {
       issues.push(...cardBackScriptIssues(warning, id));
       continue;
     }
@@ -431,13 +436,13 @@ function checkEngineRules(
 }
 
 /** Engine quality rule id -> the app's ``content.validation.{code}`` key. */
-const QUALITY_CODE_BY_RULE: Readonly<Record<string, string>> = {
+const QUALITY_CODE_BY_RULE: Readonly<Record<string, string>> = keyedByCurrentRuleId({
   "E-QUALITY-EXERCISES": "lesson_too_few_exercises",
   "E-QUALITY-TYPES": "lesson_too_few_types",
   "E-QUALITY-THEORY": "lesson_no_theory",
   "E-QUALITY-FREETEXT-ACCEPTS": "free_text_too_few_accepts",
   "E-QUALITY-MATCHING-PAIRS": "matching_too_few_pairs",
-};
+});
 
 /**
  * #3345 - the quality minimums are the engine's ``validateLessonQuality``,
