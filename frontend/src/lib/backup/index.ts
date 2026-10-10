@@ -9,6 +9,8 @@ export type { AdoptedIdentity } from "./firstRunRestore";
 export { BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS, applyLocalStorageSnapshot, captureLocalStorageSnapshot, isExcludedLocalStorageKey, restoreLocalStorageSnapshot, withLocalStorageSnapshot } from "./localStorageSnapshot";
 export { PLUGIN_SETTINGS_BACKUP_KEYS, capturePluginSettingsSnapshot, restorePluginSettingsSnapshot, withPluginSettingsSnapshot } from "./pluginSettingsSnapshot";
 export type { PluginSettingsSnapshot, PluginSettingsStore } from "./pluginSettingsSnapshot";
+export { captureAiValidationSnapshot, restoreAiValidationSnapshot, withAiValidationSnapshot } from "./aiValidationSnapshot";
+export type { AiValidationStore } from "./aiValidationSnapshot";
 export { exportPortableBackup, restoreClientSnapshots } from "./portableBackup";
 export type { ClientSnapshotsApplied } from "./portableBackup";
 export { ALWAYS_INCLUDED_TABLES, EXPORT_GROUPS, allCategoryIds, categoryById, filterBackupPayload, resolveSelectedTables, selectiveExportFilename } from "./selective-export";

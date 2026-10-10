@@ -7,7 +7,6 @@ app:
   reload: "Recharger"
   name: Adaptive Learner
   tagline: Un apprentissage qui s'adapte a toi.
-  skeleton_notice: État squelette. Les modèles de domaine, plugins et pages arrivent dans les phases suivantes - voir docs/adaptive-learner-project-reference.md.
 common:
   ok: "OK"
   remove: "Supprimer"
@@ -21,7 +20,6 @@ common:
   submit: Envoyer
   delete: Supprimer
   edit: Modifier
-  confirm: Confirmer
   minutes: minutes
   close: "Fermer"
 avatar:
@@ -232,12 +230,7 @@ onboarding:
   field_name: Ton nom
   field_topic: Sujet
   field_topic_hint: ex. Espagnol B1, algèbre linéaire.
-  field_goal: Objectif
   field_goal_hint: Que veux-tu pouvoir faire ?
-  field_timeframe: Échéance
-  field_timeframe_hint: ex. 4 semaines, un semestre.
-  field_daily_minutes: Minutes par jour
-  field_current_problem: Problème actuel
   field_current_problem_hint: optionnel - qu'est-ce qui te bloque ?
   submit: Créer le projet et lancer l'évaluation
   creating: Création du projet...
@@ -295,7 +288,6 @@ dashboard:
     missions: "Missions"
   no_data: "Pas encore de données."
   title: Tableau de bord
-  welcome: Bon retour
   quick_start: Démarrer une nouvelle session
   quick_start_subtitle: Méthode choisie depuis ton profil.
   card_profile: Profil d'apprentissage
@@ -386,31 +378,16 @@ review:
   back_to_dashboard: "Retour au tableau de bord"
   back_to_lesson: "Retour à la leçon"
   summary:
-    aria_label: "Résumé de la révision"
     heading: "Révision terminée"
-    score: "Score"
     note: "Les scores des éléments ont été mis à jour. Les éléments maîtrisés n'apparaîtront plus dans la prochaine session."
   error:
     load_failed: "Impossible de charger la session de révision."
-  spaced_empty: Rien à réviser pour l'instant. Bon rythme !
-  spaced_interval_label: Revoir dans
-  spaced_start: Démarrer
-  spaced_dismiss: Ignorer
-  metric_total_sessions: Sessions totales
-  metric_total_minutes: "Minutes totales"
-  metric_mean_understanding: Compréhension moyenne
-  metric_mean_stress: Stress moyen
-  metric_streak: Série de jours
-  no_data: Aucune session pour l'instant - lance ta première pour voir les tendances.
-  pronunciation_quick_start: Pratique de Prononciation
 session:
   auto_loop_unavailable: "Dans l'application de bureau, un nouveau cycle avec le sujet suivant démarre automatiquement après l'étape 7. La version navigateur ne le fait pas encore : termine la session et démarre-en une nouvelle pour continuer."
   title: Session d'apprentissage
   topic_label: "Sujet"
-  in_progress: Session en cours
   send_message: Envoyer le message
   message_placeholder: Écris ta réponse...
-  ai_thinking: Réflexion...
   ai_error: Le fournisseur IA n'a pas pu répondre.
   no_api_key: "Aucune clé IA définie. Ajoute une clé pour ton fournisseur IA dans Paramètres pour discuter avec le tuteur. Les leçons et révisions fonctionnent sans clé."
   ai_error_no_model: "Aucun modèle n'est sélectionné pour ton fournisseur IA. Choisis un modèle dans Paramètres > IA."
@@ -422,7 +399,6 @@ session:
   chat_retry: "Réessayer"
   welcome_empty: "Prêt à apprendre ! Écris ton premier message."
   end_session: Terminer la session
-  end_session_confirm: Sûr ? Nous allons fermer la session et demander une évaluation.
   switch_recommended: Changement de méthode recommandé
   switch_recommended_subtitle: Tes dernières évaluations suggèrent qu'une autre méthode pourrait mieux te convenir.
   switch_accept: Changer de méthode
@@ -548,7 +524,6 @@ settings:
   summary_section_export: "Export du résultat"
   summary_section_next_steps: "Suggestions d'étapes suivantes"
   correction_round_enabled: "Afficher le tour de correction après les leçons"
-  correction_round_enabled_desc: "À la fin d'une leçon, propose de corriger tes erreurs immédiatement. Désactivé, elles restent accessibles en mode révision / « S'exercer sur les erreurs »."
   hints_enabled: "Afficher des indices pendant les exercices"
   hints_enabled_desc: "Propose un bouton d'indice par paliers sur chaque exercice."
   hint_xp_cost: "Coût en XP par indice"
@@ -601,7 +576,6 @@ settings:
   mode_coming_soon: "Bientôt"
   section_provider: Fournisseur IA
   section_api_keys: Clés API
-  section_danger: Compte
   section_ui: Interface
   section_appearance: "Apparence"
   section_content_tabs: "Ordre des onglets Contenu"
@@ -692,7 +666,6 @@ settings:
   tab_help: "Aide"
   tab_diagnostics: "Diagnostic et assistance"
   tab_about: "À propos"
-  tabs_aria: "Sections des paramètres"
   section_feedback: "Retour"
   section_interaction: "Interaction"
   cluster_basics: "Bases"
@@ -871,9 +844,6 @@ settings:
     test_rate_limit: "Limite de débit atteinte. Réessaie plus tard."
     test_no_key: "Aucune clé à tester."
     format_invalid: "Format invalide."
-    rollback_warning: "La nouvelle clé ne fonctionne pas. Garder l'ancienne ?"
-    rollback_keep_old: "Garder l'ancienne"
-    rollback_save_anyway: "Enregistrer quand même"
     rollback_restore: "Restaurer la dernière clé fonctionnelle"
     format_hint:
       anthropic: "Commence par sk-ant-"
@@ -885,7 +855,6 @@ settings:
   api_key_delete: Supprimer la clé
   api_key_confirm_delete: Vraiment supprimer cette clé API ?
   saved: Enregistré.
-  save_failed: Échec de l'enregistrement.
   provider_active: Actif
   active_provider_missing_key: C'est ton fournisseur actif mais aucune clé API n'est enregistrée. Les réponses IA seront ignorées jusqu'à ce qu'une clé soit enregistrée.
   # Phase 34 (v1.20.0) - per-provider key-source badges.
@@ -897,7 +866,6 @@ settings:
   api_key_external_hint_env: Cette clé est configurée via la variable d'environnement ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.
   section_model_overrides: Surcharges de modèle
   model_overrides_hint: Laisse vide pour utiliser le modèle par défaut de chaque fournisseur. Une valeur non vide remplace la valeur par défaut lors du chat.
-  model_override_placeholder: Identifiant du modèle (p. ex. claude-3-5-haiku-latest)
   model_override_set: Surcharge active
   model_override_default: Modèle par défaut
   model_override_save: Enregistrer le modèle
@@ -1006,22 +974,16 @@ settings:
 methods:
   deductive:
     label: Déductif
-    summary: Du général au particulier - d'abord les règles, puis les exemples.
   inductive:
     label: Inductif
-    summary: Du particulier au général - d'abord les exemples, puis la règle.
   error_based:
     label: Centré sur l'erreur
-    summary: Apprendre des erreurs - correction avec explication.
   dialogic:
     label: Dialogique
-    summary: Penser en conversation - réduire le stress, bâtir la motivation.
   contextual:
     label: Contextuel
-    summary: Appliquer en contexte réel - pratiquer le transfert.
   ai_adaptive:
     label: IA adaptative
-    summary: L'IA choisit la méthode qui te convient le mieux.
 cycle_steps:
   input:
     label: Entrée
@@ -1047,15 +1009,11 @@ cycle_steps:
 errors:
   network: Impossible de joindre le serveur.
   not_found: Non trouve.
-  validation: Entrée invalide.
-  conflict: L'élément existe déjà.
   server: Erreur serveur - réessaie plus tard.
 toast:
   project_created: Projet créé.
   assessment_saved: Profil enregistré.
-  session_started: Session démarrée.
   session_ended: Session terminée.
-  rating_saved: Évaluation enregistrée.
   api_key_saved: Clé API enregistrée.
   api_key_restored: "La dernière clé fonctionnelle a été restaurée."
   api_key_deleted: Clé API supprimée.
@@ -1100,7 +1058,6 @@ about:
   check_failed: "Échec de la vérification. Es-tu en ligne ?"
   last_checked: "Dernière vérification : {when}"
   never_checked: "Jamais vérifié"
-  update_now: "Mettre à jour maintenant"
   system_heading: Système
   storage_label: Stockage
   storage_api: Serveur (FastAPI + SQLite)
@@ -1111,7 +1068,6 @@ about:
   dep_unknown: inconnu
   identity_heading: Fichier d'identité
   identity_loading: Chargement du statut d'identité…
-  identity_error: "Impossible de charger le statut d'identité :"
   identity_path_label: Chemin
   identity_status_label: Statut
   identity_status_active: Actif
@@ -1157,7 +1113,6 @@ backup:
   not_a_backup_file: 'Ce fichier n''est pas une sauvegarde valide. Choisis un fichier exporté avec « Créer une sauvegarde ».'
   version_mismatch: "Cette sauvegarde provient de la version {{from}} ; cette appli est en {{to}}. Vérifie les changements ci-dessous et confirme l'import."
   too_large: 'Ce fichier de sauvegarde est trop volumineux (plus de 100 Mo).'
-  export_success: "Sauvegarde téléchargée ({{count}} enregistrements)."
   export_error: "La sauvegarde a échoué : {{detail}}"
   export_failed: "La sauvegarde a échoué."
   import_parse_failed: "Impossible de lire la sauvegarde."
@@ -1178,7 +1133,6 @@ backup:
   col_skipped: 'Ign.'
   col_errors: 'Err.'
   error_details: 'Détails des erreurs'
-  restored_with_errors: "{{n}} enregistrements n’ont pas pu être restaurés."
   last_backup: "Dernière sauvegarde : {{when}}"
   reminder_overdue: "Cela fait plus de {{days}} jours depuis ta dernière sauvegarde."
   saved_as: 'Sauvegarde enregistrée : {{filename}}'
@@ -1456,7 +1410,6 @@ gamification:
   card_badges: Badges
   badges_earned: gagnés
   badges_empty: Aucun badge disponible pour le moment.
-  badge_earned_toast: 'Badge gagné : {name}'
   badge_category:
     getting_started: Premiers Pas
     consistency: Régularité
@@ -1582,7 +1535,6 @@ arcade:
   subtitle: "Des manches courtes, une à deux minutes : une récompense du mode jeu. Pas d'XP, juste du plaisir."
   card_description: "Des manches courtes de Memory d'apprentissage et de Snake : ta récompense du mode jeu."
   card_open: "Vers l'arcade"
-  requires_playful: "L'arcade fait partie du mode jeu. Active le mode jeu (et l'interrupteur de l'arcade) dans les réglages."
   requires_game_mode: "L'arcade fait partie du mode jeu, et le mode jeu est désactivé. Active-le dans les réglages."
   requires_arcade_switch: "Le mode jeu est activé, mais l'interrupteur de l'arcade est désactivé. Active l'arcade dans les détails du mode jeu dans les réglages."
   open_settings: "Ouvrir les réglages"
@@ -1805,7 +1757,6 @@ ui:
     open_settings: "Ouvrir les paramètres"
     feature_analyze: "pour analyser les conversations"
     feature_anki: "pour extraire des cartes Anki"
-    feature_study_guide: "pour générer un guide d’étude"
     feature_study_questions: "pour générer des questions d’étude"
     feature_pronunciation: "pour s’entraîner à la prononciation"
   common:
@@ -1962,11 +1913,6 @@ repo:
   topic_readme_parent_link: "← [Racine du projet](../README.md)"
   topic_readme_no_sessions: "_Aucune session n'a abordé ce sujet._"
   loading: "Génération du dépôt…"
-  widget_subtitle: "Instantané versionné de la progression, des notes et de la feuille de route du projet."
-  settings_description: "Génère automatiquement des artefacts Markdown (README, STATS, CHEATSHEET, ROADMAP) par projet à partir de tes données de session. L'intégration git optionnelle crée un commit à chaque génération."
-  settings_enable_git: "Activer la persistance git"
-  dexie_unavailable_body: "Cette fonctionnalité n'est disponible qu'en mode serveur. Passe en mode serveur dans les Paramètres pour activer les dépôts d'apprentissage avec git."
-  back_to_dashboard: "Retour au tableau de bord"
   page:
     title: "Dépôt d'apprentissage"
     rendered_at: "Généré le"
@@ -2134,9 +2080,7 @@ lesson:
     aria_label: "Navigation entre les étapes"
   action:
     prev: "Précédent"
-    next: "Suivant"
     finish: "Terminer la leçon"
-    back_to_browser: "Retour à l'explorateur de contenu"
     pause: "Mettre la leçon en pause"
     open_browser: "Ouvrir l'explorateur de contenu"
     back_to_lesson: "Retour à la leçon"
@@ -2409,7 +2353,6 @@ lesson:
     adaptive_focus: "Focus sur : {topic}"
     adaptive_errors: "{count} erreurs dans cette leçon"
     error_replay: "Refaire les erreurs"
-    error_replay_detail: "{count} exercices à refaire"
     error_replay_corrected: "{corrected} sur {total} corrigés"
     all_corrected: "Toutes les erreurs corrigées !"
     all_corrected_detail: "Bravo - plus aucune erreur en attente."
@@ -2423,10 +2366,8 @@ lesson:
     view_set: "Voir l'ensemble"
     focus_vocabulary: "Vocabulaire"
   correction:
-    title: "Tour de correction"
     subtitle: "Quelques exercices rapides sur les mots que tu as ratés."
     skip: "Passer"
-    next: "Suivant"
     complete_heading: "Tour de correction terminé"
     improvement: "{n} éléments améliorés."
     improvement_singular: "{n} élément amélioré."
@@ -2452,7 +2393,6 @@ lesson:
     time: "Temps"
     minutes: "{n} min"
     hints_used: "Indices utilisés"
-    breakdown_heading: "Détail des exercices"
     breakdown_correct_answer: "Bonne réponse : {answer}"
     breakdown_unattempted: "Non tentée"
     detailed_hide: "Évaluation compacte"
@@ -2481,7 +2421,6 @@ lesson:
     mark_complete_needs_profile: "Crée un profil d'apprentissage pour enregistrer ta progression"
     mark_complete_failed: "L'enregistrement de la fin de leçon a échoué"
     next_lesson: "Leçon suivante"
-    repeat: "Recommencer la leçon"
     retry: "S'entraîner à nouveau"
     retry_heading: "Ta progression"
     retry_attempt: "Tentative {n} : {pct}%"
@@ -2492,7 +2431,6 @@ lesson:
     retry_best: "Meilleur résultat"
     retry_best_value: "{pct}% (tentative {n})"
     retry_new_record: "Nouveau record !"
-    restart: "Recommencer"
     back_to_browser: "Retour à l'explorateur de contenu"
     encourage_0: "C'est en forgeant qu'on devient forgeron !"
     encourage_1: "Bon début, continue !"
@@ -2635,10 +2573,7 @@ content:
     no_results: "Aucun résultat pour '{query}'"
     hint: "Essaie un autre terme de recherche"
     clear: "Effacer la recherche"
-    available: "Disponible au téléchargement"
     your_content: "Tes contenus"
-    download_prompt_title: "Télécharger ce set ?"
-    download_prompt_body: "Ce set n'est pas encore téléchargé. Le télécharger maintenant ?"
   save_adaptive:
     button: "Enregistrer cette leçon ?"
   create_lesson:
@@ -2736,10 +2671,8 @@ content:
     active: "Actif"
     deferred: "Reporté"
     completed: "Terminé"
-    filter_aria: "Filtrer par statut"
     menu_aria: "Actions de l'ensemble"
     changed: "Statut mis à jour."
-    change_failed: "Impossible de mettre à jour le statut."
     deleted: "Ensemble supprimé."
     delete_failed: "Impossible de supprimer l'ensemble."
     progress_not_deleted: "Retiré, mais ta progression d'apprentissage n'a pas pu être supprimée : {detail}"
@@ -2802,7 +2735,6 @@ content:
     button: "Générer des exercices"
     generating: "Génération des exercices…"
     regenerate: "Régénérer"
-    regenerate_confirm: "Remplacer les exercices générés par une nouvelle série ?"
     generated: "{n} exercices générés."
     generated_with_rejected: "{n} exercices générés, {r} rejetés pour la qualité."
     none: "L'IA n'a renvoyé aucun exercice utilisable. Réessaie."
@@ -2820,7 +2752,6 @@ content:
     modal_title: "Enregistrer comme leçon hors ligne"
     title_label: "Titre de la leçon"
     summary: "{exercises} exercices · {theory} étapes de théorie · ~{minutes} min"
-    theory_only: "Pas assez de vocabulaire pour des exercices. Importe une conversation plus longue pour plus de matériel."
     save: "Enregistrer"
     saved: "Enregistré dans Mes leçons."
     failed: "Impossible d'enregistrer la leçon."
@@ -2829,7 +2760,6 @@ content:
     source_lang_label: Ta langue
     level_label: Niveau
     not_enough_data: Peu d'exercices - au moins {min} sont recommandés pour une leçon de langue complète. Tu peux quand même l'enregistrer (par exemple comme leçon de théorie uniquement).
-    same_language: La langue apprise et ta langue doivent être différentes.
     same_language_hint: "La langue apprise et ta langue sont identiques - parfait pour une leçon de grammaire ou en langue maternelle. Lors du partage, elle apparaît dans la branche de même langue de l'arbre de contenu."
     split_notice: "Cette leçon contient {steps} étapes et sera enregistrée en {parts} parties (max. {max} étapes chacune)."
     part_title: "{title} - Partie {n}"
@@ -3022,9 +2952,6 @@ content:
       all_ok: "Aucun problème trouvé : accents, articles et doublons corrects."
       problem: "Problème"
       suggestion: "Suggestion"
-  placement:
-    lands_under: Ta leçon sera classée sous
-    duplicate: 'Une leçon similaire existe déjà : {title}. Partager quand même ?'
   wizard:
     title: Partager avec la communauté
     metadata_intro: Vérifie et corrige les détails de la leçon avant de partager.
@@ -3039,7 +2966,6 @@ content:
     err_title: Ajoute un titre.
     err_source: Choisis la langue source.
     err_target: Choisis la langue cible.
-    err_same_language: La langue source et la langue cible doivent être différentes.
     err_level: Choisis un niveau CECR (A1-C2).
     level_none: Sans niveau (pas un cours de langue)
     err_empty: Cette leçon n'a aucun exercice. Recrée la leçon.
@@ -3049,7 +2975,6 @@ content:
     lands_under: Ta leçon sera classée sous
     new_set: Nouvel ensemble ! Tu es le premier à contribuer ici.
     next_to_existing: À côté de {count} leçon(s) existante(s) dans cet ensemble.
-    summary_counts: '{lessons} leçon(s), {exercises} exercices, {cards} cartes, ~{minutes} min'
     checking: Recherche de leçons similaires…
     no_duplicates: Aucun doublon trouvé. Ta leçon est unique !
     near_duplicate: 'Cette leçon existe déjà : « {title} ».'
@@ -3245,7 +3170,6 @@ create_lesson:
     switch_discard: "Abandonner et changer"
   prompts_migrated: "{n} consigne(s) d'exercice ont été traduites automatiquement dans votre langue."
   prompts_migrated_dismiss: "Fermer"
-  step_pending: "Cette étape arrive dans la prochaine mise à jour."
   nav_label: "Navigation de l'assistant"
   cancel: "Annuler"
   back: "Retour"
@@ -3266,7 +3190,6 @@ create_lesson:
     content_lang_label: "Langue du contenu"
     level_none: "Aucun niveau"
     domain_hint: "Le contenu de connaissances utilise une seule langue de contenu et peut se passer du niveau CECR."
-    same_language: "La langue apprise doit être différente de ta langue."
     description_label: "Thème / description"
     author_label: "Nom de l'auteur"
   cards:
@@ -3354,8 +3277,6 @@ create_lesson:
     generate: "Générer les exercices automatiquement"
     regenerate: "Régénérer"
     count: "{n} exercices"
-    min_hint: "{n} exercices nécessaires"
-    min_to_advance: "Génère au moins {n} exercices pour continuer."
     one_to_advance: "Génère au moins un exercice pour continuer."
     share_min_hint: "Le partage nécessite au moins {n} exercices"
     min_one_to_advance: "Ajoutez au moins un exercice pour continuer."
@@ -3633,7 +3554,6 @@ learning_path:
   filter_mine: "Seulement les miens"
   filter_all: "Tous les ensembles"
   filter_label: "Filtrer les ensembles"
-  adaptive: "Démarrer une leçon adaptative"
   error_replay: "Réviser les erreurs"
   train_errors: "Entraîner les erreurs"
   shuffle: "Mode aléatoire"
@@ -3670,7 +3590,6 @@ learning_path:
   mastery:
     receptive: "réceptif"
     productive: "productif"
-    mastered: "maîtrisé"
   title: "Parcours d'apprentissage"
   subtitle: "Où tu en es et ce qui suit."
   aria_canvas: "Graphe du parcours d'apprentissage"
@@ -3778,7 +3697,6 @@ share:
   app:
     heading: "Partager l'application"
     download: "Télécharger"
-    qr_intro: "Partage l'application par code QR pour que d'autres puissent l'ouvrir."
     show_qr: "Afficher le code QR"
     download_qr: "Télécharger le code QR"
     copy_url: "Copier l'URL"
@@ -4103,7 +4021,6 @@ content_repo:
     sync_all: "Tout synchroniser"
     add: "Ajouter le dépôt"
     cancel: "Annuler"
-    confirm_remove: "Confirmer la suppression"
     connect: "Connecter le dépôt"
     move_down: "Descendre"
     move_up: "Monter"
@@ -4111,12 +4028,10 @@ content_repo:
     share: "Partager"
     sync: "Synchroniser maintenant"
   badge:
-    coach: "Coach"
     private: "Privé"
     official: "Officiel"
   trust:
     dropped: "Synchronisé, mais la validation a échoué - ce dépôt est désormais marqué comme non vérifié."
-    recommended: "Recommandé officiellement"
     unknown: "Non vérifié"
     validated: "Validé"
   status:
@@ -4207,7 +4122,6 @@ discover:
     domain: "Domaine"
     trust: "Confiance"
     source: "Source"
-    ai_checked: "Vérifié par IA"
     review: "Relecture"
   trust:
     official: "Officiellement recommandé"
@@ -4279,7 +4193,6 @@ endless:
   back_to_dashboard: "Retour au tableau de bord"
   loading: "Chargement de la session d'entraînement…"
   empty_body: "Cet ensemble n'a pas encore d'exercices à pratiquer."
-  not_cached_body: "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord."
   paused: "En pause - faites une petite pause."
   resume: "Reprendre"
   pause: "Pause"
@@ -4289,7 +4202,6 @@ endless:
     cards: "{n} cartes"
     correct: "{n} correctes"
   error:
-    missing_params: "Aucun ensemble de contenu sélectionné."
     load_failed: "Impossible de charger la session d'entraînement."
   summary:
     heading: "Session d'entraînement terminée !"
@@ -4410,7 +4322,6 @@ registry:
     pending: En attente ; la CI validera
   pr:
     created: Demande de fusion ouverte.
-    failed: Impossible d'ouvrir la demande de fusion.
     view: Voir votre demande de fusion
 
 exercise:

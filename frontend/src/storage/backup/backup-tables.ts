@@ -27,7 +27,10 @@ export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
 // 1.8.0 — #3412: an optional ``plugin_settings`` block (connected repos,
 // redeemed invites, the Learning Repository switch), added and applied
 // frontend-side in both modes (lib/backup/pluginSettingsSnapshot.ts).
-export const BACKUP_VERSION = "1.8.0";
+// 1.9.0 — #3412: an optional ``ai_validation_results`` block (cached AI
+// content-check reports with their AIV-09 signatures), captured and applied
+// frontend-side; empty from an API-mode export (lib/backup/aiValidationSnapshot.ts).
+export const BACKUP_VERSION = "1.9.0";
 
 /**
  * The ``user_settings`` fields that never travel in a backup and that a

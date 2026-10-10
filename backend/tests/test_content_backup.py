@@ -269,3 +269,33 @@ def _clean_cache():
     shutil.rmtree(_cache_root(), ignore_errors=True)
     yield
     shutil.rmtree(_cache_root(), ignore_errors=True)
+
+
+def test_restore_synthesized_manifest_leaves_a_missing_target_language_empty():
+    """#3395 - meta without a target language yields an empty manifest target.
+
+    ``"en"`` claimed a language nobody chose; the engine's
+    ``resolveLanguagePair`` reads a missing target as ``""``, and the schema
+    allows it (no minLength). The source keeps ``"en"``, the engine's
+    default there too.
+    """
+    from adaptive_learner_content_loader.cache import read_manifest
+
+    set_id = "no-pair"
+    payload = [
+        {
+            "source": "user-generated",
+            "set_id": set_id,
+            "version": "1.0.0",
+            "meta": {"title": "Without a pair", "lesson_count": 1, "tags": "[]"},
+            "files": [
+                {"filename": "lessons/01.json", "body": _LESSON, "encoding": "text"},
+            ],
+        }
+    ]
+
+    summary = restore_content_sets(payload)
+    assert summary["errors"] == []
+    restored = read_manifest(_cache_root(), "user-generated", set_id, "1.0.0").sets[0]
+    assert restored.target_language == ""
+    assert restored.source_language == "en"

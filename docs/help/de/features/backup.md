@@ -20,6 +20,8 @@ heruntergeladenen Content-Sets** und ein **localStorage-Snapshot**
 
 **Auch enthalten:** verbundene Content-Repositories, eingelöste
 Einladungen und ob das Learning Repository eingeschaltet ist.
+Im Browser-Modus kommen auch die Ergebnisse deiner KI-Inhaltsprüfungen
+mit, die Plakette „KI-geprüft" bleibt also erhalten.
 **Nicht enthalten:** das Zugriffstoken eines privaten Repositories
 (gib es nach der Wiederherstellung erneut ein) und der Ordner des
 Learning Repository, der zum Gerät gehört.

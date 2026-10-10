@@ -62,6 +62,10 @@ Echter Round-Trip, keine Simulation:
       und das Learning Repository ist eingeschaltet. Ein privates Repo
       fragt nach seinem Token, der Learning-Repository-Ordner ist der
       Standardordner dieses Geräts
+- [ ] TC-0954 KI-Prüfberichte (#3412, Browser-Modus): vor dem Export für ein Set die
+      KI-Inhaltsprüfung laufen lassen, das Set trägt die Plakette
+      „KI-geprüft". Nach Wipe und Import trägt es die Plakette wieder, ohne
+      neue Prüfung und ohne API-Aufruf
 
 Ergebnis dokumentieren (auch Teilfehler einzeln). Bei JEDEM Abweichen:
 Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.

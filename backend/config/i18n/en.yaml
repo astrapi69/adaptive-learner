@@ -7,7 +7,6 @@ app:
   reload: "Reload"
   name: Adaptive Learner
   tagline: Learning that adapts to you.
-  skeleton_notice: Skeleton state. Domain models, plugins and pages land in upcoming phases - see docs/adaptive-learner-project-reference.md.
 common:
   ok: "OK"
   remove: "Remove"
@@ -21,7 +20,6 @@ common:
   submit: Submit
   delete: Delete
   edit: Edit
-  confirm: Confirm
   minutes: minutes
   close: "Close"
 avatar:
@@ -232,12 +230,7 @@ onboarding:
   field_name: Your name
   field_topic: Topic
   field_topic_hint: e.g. Spanish B1, linear algebra.
-  field_goal: Goal
   field_goal_hint: What do you want to be able to do?
-  field_timeframe: Time frame
-  field_timeframe_hint: e.g. 4 weeks, one semester.
-  field_daily_minutes: Minutes per day
-  field_current_problem: Current problem
   field_current_problem_hint: optional - what is blocking you right now?
   submit: Create project and start assessment
   creating: Creating project…
@@ -295,7 +288,6 @@ dashboard:
     missions: "Missions"
   no_data: "No data yet."
   title: Dashboard
-  welcome: Welcome back
   quick_start: Start a new session
   quick_start_subtitle: Method picked from your profile.
   card_profile: Learning profile
@@ -386,31 +378,16 @@ review:
   back_to_dashboard: "Back to Dashboard"
   back_to_lesson: "Back to lesson"
   summary:
-    aria_label: "Review summary"
     heading: "Review complete"
-    score: "Score"
     note: "Element scores have been updated. Mastered elements will not appear in the next session."
   error:
     load_failed: "Could not load review session."
-  spaced_empty: Nothing to refresh right now. Great rhythm!
-  spaced_interval_label: Review in
-  spaced_start: Start
-  spaced_dismiss: Dismiss
-  metric_total_sessions: Total sessions
-  metric_total_minutes: Total minutes
-  metric_mean_understanding: Mean understanding
-  metric_mean_stress: Mean stress
-  metric_streak: Day streak
-  no_data: No sessions yet - start your first one to see trends.
-  pronunciation_quick_start: Pronunciation Practice
 session:
   auto_loop_unavailable: "In the desktop app a new cycle with the next topic starts automatically after step 7. The browser version cannot do that yet: end the session and start a new one to keep learning."
   title: Learning session
   topic_label: "Topic"
-  in_progress: Session in progress
   send_message: Send message
   message_placeholder: Write your reply…
-  ai_thinking: Thinking…
   ai_error: The AI provider could not reply.
   no_api_key: "No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key."
   ai_error_no_model: "No model is selected for your AI provider. Choose a model in Settings > AI."
@@ -422,7 +399,6 @@ session:
   chat_retry: "Try again"
   welcome_empty: "Ready to learn! Write your first message."
   end_session: End session
-  end_session_confirm: Sure? We will close the session and ask for a rating.
   switch_recommended: Method switch recommended
   switch_recommended_subtitle: Your recent ratings suggest a different method might fit you better.
   switch_accept: Switch method
@@ -548,7 +524,6 @@ settings:
   summary_section_export: "Result export"
   summary_section_next_steps: "Next-step suggestions"
   correction_round_enabled: "Show the correction round after lessons"
-  correction_round_enabled_desc: "At the end of a lesson, offer to fix your mistakes right away. When off, they stay available in the review / \"Practice errors\" mode."
   hints_enabled: "Show hints during exercises"
   hints_enabled_desc: "Offer a staged hint button on each exercise."
   hint_xp_cost: "XP cost per hint"
@@ -601,7 +576,6 @@ settings:
   mode_coming_soon: "Coming Soon"
   section_provider: AI provider
   section_api_keys: API keys
-  section_danger: Account
   section_ui: Interface
   section_appearance: "Appearance"
   section_content_tabs: "Content tabs order"
@@ -692,7 +666,6 @@ settings:
   tab_help: "Help"
   tab_diagnostics: "Diagnostics & Support"
   tab_about: "About"
-  tabs_aria: "Settings sections"
   section_feedback: "Feedback"
   section_interaction: "Interaction"
   cluster_basics: "Basics"
@@ -871,9 +844,6 @@ settings:
     test_rate_limit: "Rate limit hit. Try later."
     test_no_key: "No key to test."
     format_invalid: "Invalid format."
-    rollback_warning: "The new key doesn't work. Keep the old key?"
-    rollback_keep_old: "Keep old key"
-    rollback_save_anyway: "Save anyway"
     rollback_restore: "Restore last working key"
     format_hint:
       anthropic: "Starts with sk-ant-"
@@ -885,7 +855,6 @@ settings:
   api_key_delete: Remove key
   api_key_confirm_delete: Really remove this API key?
   saved: Saved.
-  save_failed: Save failed.
   provider_active: Active
   active_provider_missing_key: This is your active provider but no API key is stored. AI replies will be skipped until a key is saved.
   # Phase 34 (v1.20.0) - per-provider key-source badges.
@@ -897,7 +866,6 @@ settings:
   api_key_external_hint_env: This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.
   section_model_overrides: Model overrides
   model_overrides_hint: Leave blank to use the default model for each provider. A non-empty value replaces the default at chat time.
-  model_override_placeholder: Model identifier (e.g. claude-3-5-haiku-latest)
   model_override_set: Override active
   model_override_default: Default model
   model_override_save: Save model
@@ -1006,22 +974,16 @@ settings:
 methods:
   deductive:
     label: Deductive
-    summary: General to specific - rules first, examples after.
   inductive:
     label: Inductive
-    summary: Specific to general - examples first, derive the rule.
   error_based:
     label: Error-based
-    summary: Learn from mistakes - correction plus explanation.
   dialogic:
     label: Dialogic
-    summary: Think in conversation - lower stress, build motivation.
   contextual:
     label: Contextual
-    summary: Apply in a real context - practice transfer.
   ai_adaptive:
     label: AI-adaptive
-    summary: The AI picks the method that fits you best.
 cycle_steps:
   input:
     label: Input
@@ -1047,15 +1009,11 @@ cycle_steps:
 errors:
   network: Could not reach the server.
   not_found: Not found.
-  validation: Invalid input.
-  conflict: Entry already exists.
   server: Server error - please try again later.
 toast:
   project_created: Project created.
   assessment_saved: Profile saved.
-  session_started: Session started.
   session_ended: Session ended.
-  rating_saved: Rating saved.
   api_key_saved: API key saved.
   api_key_restored: "Last working key restored."
   api_key_deleted: API key removed.
@@ -1100,7 +1058,6 @@ about:
   check_failed: "Check failed. Are you online?"
   last_checked: "Last checked: {when}"
   never_checked: "Never checked"
-  update_now: "Update now"
   system_heading: System
   storage_label: Storage
   storage_api: Server (FastAPI + SQLite)
@@ -1111,7 +1068,6 @@ about:
   dep_unknown: unknown
   identity_heading: Identity file
   identity_loading: Loading identity status…
-  identity_error: 'Could not load identity status:'
   identity_path_label: Path
   identity_status_label: Status
   identity_status_active: Active
@@ -1157,7 +1113,6 @@ backup:
   not_a_backup_file: 'This file is not a valid backup file. Please choose a file exported with ''Create backup''.'
   version_mismatch: "This backup is from version {{from}}; this app is {{to}}. Review the changes below and confirm to import."
   too_large: 'This backup file is too large (over 100 MB).'
-  export_success: Backup downloaded ({{count}} records).
   export_error: 'Backup failed: {{detail}}'
   export_failed: "Backup failed."
   import_parse_failed: "Could not read the backup."
@@ -1178,7 +1133,6 @@ backup:
   col_skipped: 'Skip'
   col_errors: 'Err.'
   error_details: 'Error details'
-  restored_with_errors: '{{n}} records could not be restored.'
   last_backup: 'Last backup: {{when}}'
   reminder_overdue: It has been more than {{days}} days since your last backup.
   saved_as: 'Backup saved: {{filename}}'
@@ -1456,7 +1410,6 @@ gamification:
   card_badges: Badges
   badges_earned: earned
   badges_empty: No badges available yet.
-  badge_earned_toast: 'Badge earned: {name}'
   badge_category:
     getting_started: Getting Started
     consistency: Consistency
@@ -1582,7 +1535,6 @@ arcade:
   subtitle: "Short rounds, one to two minutes - a game-mode reward. No XP, just fun."
   card_description: "Short rounds of Learn Memory and Snake - your game-mode reward."
   card_open: "To the arcade"
-  requires_playful: "The arcade is part of the game mode. Turn on the game mode (and the arcade switch) in the settings."
   requires_game_mode: "The arcade is part of the game mode, and the game mode is off. Turn it on in the settings."
   requires_arcade_switch: "The game mode is on, but the arcade switch is off. Turn on the arcade in the game mode details in the settings."
   open_settings: "Open settings"
@@ -1809,7 +1761,6 @@ ui:
     open_settings: "Open Settings"
     feature_analyze: "to analyze conversations"
     feature_anki: "to extract Anki cards"
-    feature_study_guide: "to generate a study guide"
     feature_study_questions: "to generate study questions"
     feature_pronunciation: "for pronunciation practice"
   common:
@@ -1971,11 +1922,6 @@ repo:
   topic_readme_parent_link: "← [Project root](../README.md)"
   topic_readme_no_sessions: "_No sessions traversed this topic._"
   loading: "Rendering repository…"
-  widget_subtitle: "Versioned snapshot of this project's progress, notes, and roadmap."
-  settings_description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
-  settings_enable_git: "Enable git persistence"
-  dexie_unavailable_body: "This feature is only available in server mode. Switch to server mode in Settings to enable git-backed learning repositories."
-  back_to_dashboard: "Back to Dashboard"
   page:
     title: "Learning Repository"
     rendered_at: "Rendered at"
@@ -2143,9 +2089,7 @@ lesson:
     aria_label: "Step navigation"
   action:
     prev: "Previous"
-    next: "Next"
     finish: "Finish lesson"
-    back_to_browser: "Back to content browser"
     pause: "Pause lesson"
     open_browser: "Open content browser"
     back_to_lesson: "Back to lesson"
@@ -2405,7 +2349,6 @@ lesson:
     time: "Time"
     minutes: "{n} min"
     hints_used: "Hints used"
-    breakdown_heading: "Exercise breakdown"
     breakdown_correct_answer: "Correct answer: {answer}"
     breakdown_unattempted: "Not attempted"
     detailed_hide: "Compact evaluation"
@@ -2434,7 +2377,6 @@ lesson:
     mark_complete_needs_profile: "Create a learner profile to save your progress"
     mark_complete_failed: "Saving the completion failed"
     next_lesson: "Next lesson"
-    repeat: "Repeat lesson"
     retry: "Practice again"
     retry_heading: "Your improvement"
     retry_attempt: "Attempt {n}: {pct}%"
@@ -2445,7 +2387,6 @@ lesson:
     retry_best: "Best result"
     retry_best_value: "{pct}% (attempt {n})"
     retry_new_record: "New record!"
-    restart: "Start over"
     back_to_browser: "Back to content browser"
     encourage_0: "Practice makes perfect!"
     encourage_1: "Good start - keep going!"
@@ -2482,7 +2423,6 @@ lesson:
     adaptive_focus: "Focus on: {topic}"
     adaptive_errors: "{count} errors in this lesson"
     error_replay: "Retry Errors"
-    error_replay_detail: "{count} exercises again"
     error_replay_corrected: "{corrected} of {total} corrected"
     all_corrected: "All errors corrected!"
     all_corrected_detail: "Nice - no open errors left."
@@ -2496,10 +2436,8 @@ lesson:
     view_set: "View Set"
     focus_vocabulary: "Vocabulary"
   correction:
-    title: "Correction round"
     subtitle: "A few quick drills on the words you missed."
     skip: "Skip"
-    next: "Next"
     complete_heading: "Correction round complete"
     improvement: "{n} elements improved."
     improvement_singular: "{n} element improved."
@@ -2644,10 +2582,7 @@ content:
     no_results: "No results for '{query}'"
     hint: "Try a different search term"
     clear: "Clear search"
-    available: "Available to download"
     your_content: "Your content"
-    download_prompt_title: "Download this set?"
-    download_prompt_body: "This set isn't downloaded yet. Download it now?"
   save_adaptive:
     button: "Save this lesson?"
   create_lesson:
@@ -2745,10 +2680,8 @@ content:
     active: "Active"
     deferred: "Deferred"
     completed: "Completed"
-    filter_aria: "Filter by status"
     menu_aria: "Set actions"
     changed: "Status updated."
-    change_failed: "Could not update the status."
     deleted: "Set removed."
     delete_failed: "Could not remove the set."
     progress_not_deleted: "Removed, but your learning progress could not be deleted: {detail}"
@@ -2811,7 +2744,6 @@ content:
     button: "Generate exercises"
     generating: "Generating exercises…"
     regenerate: "Regenerate"
-    regenerate_confirm: "Replace the generated exercises with a fresh set?"
     generated: "{n} exercises generated."
     generated_with_rejected: "{n} exercises generated, {r} rejected for quality."
     none: "The AI returned no usable exercises. Please try again."
@@ -2829,7 +2761,6 @@ content:
     modal_title: "Save as offline lesson"
     title_label: "Lesson title"
     summary: "{exercises} exercises · {theory} theory steps · ~{minutes} min"
-    theory_only: "Not enough vocabulary for exercises. Import a longer chat for more practice material."
     save: "Save"
     saved: "Saved to My Lessons."
     failed: "Could not save the lesson."
@@ -2838,7 +2769,6 @@ content:
     source_lang_label: Your language
     level_label: Level
     not_enough_data: Few exercises - at least {min} are recommended for a full language lesson. You can still save it (for example as a theory-only lesson).
-    same_language: The language learned and your language must be different.
     same_language_hint: "Learned and your language are the same - fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree."
     split_notice: "This lesson has {steps} steps and will be saved as {parts} parts (max {max} steps each)."
     part_title: "{title} - Part {n}"
@@ -3031,9 +2961,6 @@ content:
       all_ok: "No issues found - accents, articles, and duplicates all clean."
       problem: "Problem"
       suggestion: "Suggestion"
-  placement:
-    lands_under: Your lesson lands under
-    duplicate: 'A similar lesson already exists: {title}. Share anyway?'
   wizard:
     title: Share with the community
     metadata_intro: Check and correct the lesson details before sharing.
@@ -3048,7 +2975,6 @@ content:
     err_title: Add a title.
     err_source: Choose the source language.
     err_target: Choose the target language.
-    err_same_language: Source and target language must differ.
     err_level: Choose a CEFR level (A1-C2).
     level_none: No level (not a language course)
     err_empty: This lesson has no exercises. Please recreate the lesson.
@@ -3058,7 +2984,6 @@ content:
     lands_under: Your lesson lands under
     new_set: New set! You're the first to contribute here.
     next_to_existing: Next to {count} existing lesson(s) in this set.
-    summary_counts: '{lessons} lesson(s), {exercises} exercises, {cards} cards, ~{minutes} min'
     checking: Checking for similar lessons…
     no_duplicates: No duplicates found. Your lesson is unique!
     near_duplicate: 'This lesson already exists: "{title}".'
@@ -3253,7 +3178,6 @@ create_lesson:
     switch_discard: "Discard and switch"
   prompts_migrated: "{n} exercise instruction(s) were automatically translated to your language."
   prompts_migrated_dismiss: "Dismiss"
-  step_pending: "This step is coming in the next update."
   nav_label: "Wizard navigation"
   cancel: "Cancel"
   back: "Back"
@@ -3274,7 +3198,6 @@ create_lesson:
     content_lang_label: "Content language"
     level_none: "No level"
     domain_hint: "Knowledge content uses a single content language and can skip the CEFR level."
-    same_language: "The language learned must differ from your language."
     description_label: "Topic / description"
     author_label: "Author name"
   cards:
@@ -3362,8 +3285,6 @@ create_lesson:
     generate: "Auto-generate exercises"
     regenerate: "Regenerate"
     count: "{n} exercises"
-    min_hint: "{n} exercises needed"
-    min_to_advance: "Generate at least {n} exercises to continue."
     one_to_advance: "Generate at least one exercise to continue."
     share_min_hint: "Sharing needs at least {n} exercises"
     min_one_to_advance: "Add at least one exercise to continue."
@@ -3641,7 +3562,6 @@ learning_path:
   filter_mine: "Only mine"
   filter_all: "All sets"
   filter_label: "Filter sets"
-  adaptive: "Start adaptive lesson"
   error_replay: "Retry errors"
   train_errors: "Train errors"
   shuffle: "Shuffle"
@@ -3678,7 +3598,6 @@ learning_path:
   mastery:
     receptive: "receptive"
     productive: "productive"
-    mastered: "mastered"
   title: "Learning Path"
   subtitle: "Where you are and what comes next."
   aria_canvas: "Learning path graph"
@@ -3786,7 +3705,6 @@ share:
   app:
     heading: "Share the app"
     download: "Download"
-    qr_intro: "Share the app via QR code so others can open it."
     show_qr: "Show QR code"
     download_qr: "Download QR code"
     copy_url: "Copy URL"
@@ -4111,7 +4029,6 @@ content_repo:
     sync_all: "Sync all"
     add: "Add repository"
     cancel: "Cancel"
-    confirm_remove: "Confirm remove"
     connect: "Connect repository"
     move_down: "Move down"
     move_up: "Move up"
@@ -4119,12 +4036,10 @@ content_repo:
     share: "Share"
     sync: "Sync now"
   badge:
-    coach: "Coach"
     private: "Private"
     official: "Official"
   trust:
     dropped: "Synced, but validation failed - this repository is now marked Unverified."
-    recommended: "Officially recommended"
     unknown: "Unverified"
     validated: "Validated"
   status:
@@ -4215,7 +4130,6 @@ discover:
     domain: "Domain"
     trust: "Trust"
     source: "Source"
-    ai_checked: "AI-checked"
     review: "Review"
   trust:
     official: "Officially recommended"
@@ -4287,7 +4201,6 @@ endless:
   back_to_dashboard: "Back to Dashboard"
   loading: "Loading practice session…"
   empty_body: "This set has no exercises to practise yet."
-  not_cached_body: "This set isn't downloaded yet. Open the content browser to download it first."
   paused: "Paused - take a breather."
   resume: "Resume"
   pause: "Pause"
@@ -4297,7 +4210,6 @@ endless:
     cards: "{n} cards"
     correct: "{n} correct"
   error:
-    missing_params: "No content set selected."
     load_failed: "Could not load the practice session."
   summary:
     heading: "Practice session complete!"
@@ -4418,7 +4330,6 @@ registry:
     pending: "Pending - CI will validate"
   pr:
     created: "Pull request opened."
-    failed: "Could not open the pull request."
     view: "View your pull request"
 
 exercise:

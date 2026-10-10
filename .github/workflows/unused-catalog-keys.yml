@@ -1,0 +1,85 @@
+# Unused catalog keys (#3444) - night shift (#575), NOT a merge gate.
+#
+# Lists catalog keys no consumer reads that are older than 14 days
+# (frontend/src/i18n/unused-catalog-keys.ts). A merge gate would break the
+# #2578 order: translations ship first, so a fresh key without a consumer is
+# expected until its code PR lands. The 14-day snapshot is the pre-staging
+# window.
+#
+# The result is filed, not logged: on develop the run opens or updates ONE
+# issue (found by its marker) and closes it once nothing is left. A run that
+# cannot measure (no history, no catalog, no sources) fails red and leaves
+# the issue alone (gate contract point 3, #2083). Dispatch with
+# fetch_depth=1 runs exactly that path on purpose.
+
+name: Unused catalog keys
+
+on:
+  workflow_dispatch:
+    inputs:
+      fetch_depth:
+        description: "Checkout depth; 0 = full history. 1 makes the run fail closed (no 14-day-old catalog)."
+        required: false
+        default: "0"
+  schedule:
+    # Nightly 04:43 UTC - inside the night-shift window (#575).
+    - cron: "43 4 * * *"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  report:
+    name: Catalog keys without a consumer, older than 14 days
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: ${{ github.event.inputs.fetch_depth || '0' }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Install frontend deps (the @astrapi69 packages are a consumer channel)
+        working-directory: frontend
+        run: bun install --frozen-lockfile
+
+      - name: Measure
+        working-directory: frontend
+        run: |
+          bun scripts/unused-catalog-keys.ts --out "$RUNNER_TEMP/report.md" --summary "$RUNNER_TEMP/summary.json"
+          cat "$RUNNER_TEMP/report.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: File the result in one issue (develop only)
+        if: github.ref == 'refs/heads/develop'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          marker='<!-- unused-catalog-keys-report (#3444) -->'
+          aged=$(jq '.aged | length' "$RUNNER_TEMP/summary.json")
+          number=$(gh api "repos/$REPO/issues?state=open&labels=i18n&per_page=100" \
+            --jq "[.[] | select(.body != null and (.body | contains(\"$marker\")))][0].number // empty")
+          body="$(cat "$RUNNER_TEMP/report.md")"$'\n\n'"$marker"
+          if [ "$aged" -gt 0 ]; then
+            if [ -n "$number" ]; then
+              gh api -X PATCH "repos/$REPO/issues/$number" -f body="$body" --silent
+              echo "updated #$number ($aged keys)"
+            else
+              gh api -X POST "repos/$REPO/issues" \
+                -f title="Catalog keys without a consumer, older than 14 days (nightly report)" \
+                -f body="$body" -f "labels[]=i18n" -f "labels[]=tech-debt" -f "labels[]=P3" --jq '.html_url'
+            fi
+          elif [ -n "$number" ]; then
+            gh api -X POST "repos/$REPO/issues/$number/comments" \
+              -f body="The nightly report found no catalog key without a consumer older than 14 days. Closing." --silent
+            gh api -X PATCH "repos/$REPO/issues/$number" -f state=closed -f state_reason=completed --silent
+            echo "closed #$number"
+          else
+            echo "nothing to file"
+          fi

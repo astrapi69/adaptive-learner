@@ -494,6 +494,7 @@ export const apiStorage: IStorageService = {
      *  API mode has no cached reports (the check never runs there). */
     getAiValidationCache: () => Promise.resolve(null),
     saveAiValidationCache: () => Promise.resolve(),
+    listAiValidationCache: () => Promise.resolve([]),
     deleteAiValidationCache: () => Promise.resolve(),
   },
 

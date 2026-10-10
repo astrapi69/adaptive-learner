@@ -52,6 +52,20 @@ checks:
     wired_in: make check-dead-code; scripts/check_dead_code.py; .github/workflows/dead-code.yml; .github/workflows/ci.yml
     probe: make_target=check-dead-code | ci_step=.github/workflows/ci.yml::backend-tests::Dead-code ratchet, Python side (#3047)::check_dead_code.py | ci_step=.github/workflows/ci.yml::frontend-tests::Dead-code ratchet, TypeScript side (#3047)::check_dead_code.py
 
+  - id: unused-catalog-keys
+    verifies: catalog keys no consumer reads (static and data-held t() keys, dynamic patterns, literals in Python/YAML/JSON, @astrapi69 package dists, whole-block readers) that already existed 14 days ago; nightly on develop, filed in one issue, fails closed without catalog, sources or history (#3444)
+    rule: none (night-shift report; the #2578 order forbids a merge gate on this direction)
+    status: active
+    wired_in: .github/workflows/unused-catalog-keys.yml; frontend/scripts/unused-catalog-keys.ts; frontend/src/i18n/unused-catalog-keys.ts; frontend/src/i18n/unused-catalog-keys.test.ts
+    probe: script_exists=frontend/src/i18n/unused-catalog-keys.test.ts | ci_step=.github/workflows/unused-catalog-keys.yml::report::Measure::unused-catalog-keys.ts
+
+  - id: smoke-nightly
+    verifies: e2e/smoke/mobile-viewports.spec.ts runs nightly against the real backend and Vite dev server; a failed test, or one that only passed on its retry, is filed in one issue; fails closed without a report, on a run-level error or when no test ran (#3544)
+    rule: none (night-shift report, not a merge gate)
+    status: active
+    wired_in: .github/workflows/smoke-nightly.yml; scripts/smoke_nightly_report.py; backend/tests/test_smoke_nightly_report.py
+    probe: script_exists=scripts/smoke_nightly_report.py | ci_step=.github/workflows/smoke-nightly.yml::smoke::Read the night::smoke_nightly_report.py
+
   - id: testplan-parity
     verifies: the DE and EN manual test plans stay in sync - equal checkpoint and section counts, and the same multiset of issue references; compares content, never order, because the two plans order their sections differently (#3069, after #3065 found two DE-only checkpoints by hand)
     rule: ai-workflow/testplan-policy.md#core-rules
