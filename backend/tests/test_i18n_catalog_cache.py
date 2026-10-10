@@ -72,7 +72,7 @@ def test_an_invalid_code_is_rejected_before_any_stat(
     config_dir: Path, lang: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     stats: list[str] = []
-    monkeypatch.setattr(i18n_catalog, "_mtime_ns", lambda path: stats.append(str(path)))
+    monkeypatch.setattr(i18n_catalog, "_mtime_ns", lambda folder, code: stats.append(code))
     with pytest.raises(Exception, match="Invalid") as rejected:
         i18n_catalog.load_catalog(config_dir, lang)
     with pytest.raises(type(rejected.value)):

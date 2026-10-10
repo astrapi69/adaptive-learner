@@ -6,10 +6,13 @@ This module caches the parsed result in process, keyed by language and the
 file's ``st_mtime_ns``, so an edited catalog (``make sync-i18n``, a hand edit
 in development) is read again on the next request without a restart.
 
-The language code is validated before a path is built, as ``load_i18n`` does:
-the modification-time lookup must never ``stat()`` a path made from
-unchecked input. Everything else is ``load_i18n`` unchanged: the same answer,
-``{}`` for a missing file, the same error for an invalid code.
+The language code is validated first, as ``load_i18n`` does, and the
+modification-time lookup never builds a path from it at all: it picks the
+catalog file out of the directory listing by name, so no ``stat()`` sees a
+path made from request input (CodeQL ``py/path-injection`` does not count
+``validate_plugin_name`` as a sanitizer). Everything else is ``load_i18n``
+unchanged: the same answer, ``{}`` for a missing file, the same error for an
+invalid code.
 """
 
 from __future__ import annotations
@@ -22,10 +25,16 @@ from pluginforge.config import load_i18n
 from pluginforge.security import validate_plugin_name
 
 
-def _mtime_ns(path: Path) -> int | None:
-    """The file's modification time, or ``None`` when it does not exist."""
+def _mtime_ns(i18n_dir: Path, lang: str) -> int | None:
+    """Modification time of ``<lang>.yaml`` in ``i18n_dir``, ``None`` when absent.
+
+    The file is taken from the directory listing, never built from ``lang``.
+    """
     try:
-        return path.stat().st_mtime_ns
+        catalog = next(
+            (entry for entry in i18n_dir.iterdir() if entry.name == f"{lang}.yaml"), None
+        )
+        return catalog.stat().st_mtime_ns if catalog is not None else None
     except OSError:
         return None
 
@@ -54,7 +63,7 @@ def load_catalog(config_dir: Path, lang: str) -> dict[str, Any]:
         >>> load_catalog(BASE_DIR / "config", "de")["nav"]  # doctest: +SKIP
     """
     validate_plugin_name(lang)
-    mtime_ns = _mtime_ns(config_dir / "i18n" / f"{lang}.yaml")
+    mtime_ns = _mtime_ns(config_dir / "i18n", lang)
     return dict(_parsed(str(config_dir), lang, mtime_ns))
 
 
