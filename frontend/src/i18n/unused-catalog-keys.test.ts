@@ -108,6 +108,16 @@ describe("agedUnusedKeys (#3444)", () => {
 });
 
 describe("renderReport (#3444)", () => {
+    it("says that the keys are candidates and why each one is checked before removal", () => {
+        const body = renderReport(["nav.gone"], {keysChecked: 1, filesScanned: 1, unused: 1, aged: 1}, "abc1234");
+        expect(body).toContain("Every key below is a candidate, not a finding.");
+        expect(body).toContain("keys composed at run time");
+        expect(body).toContain("error codes the backend returns");
+        expect(body).toContain("a consumer shape the detector does not read reports a used key as unused");
+        expect(body).toContain("#3714 found 27 such keys before anything was removed");
+    });
+
+
     it("states what it checked and groups the keys by block", () => {
         const body = renderReport(
             ["nav.gone", "app.old", "nav.away"],

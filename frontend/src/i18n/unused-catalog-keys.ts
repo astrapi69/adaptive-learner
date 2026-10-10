@@ -176,8 +176,12 @@ export function renderReport(aged: readonly string[], counts: ReportCounts, meas
         `Checked ${counts.keysChecked} keys of the English catalog against ${counts.filesScanned} source files: ` +
             `${counts.unused} without a consumer, ${counts.aged} of them older than ${AGE_DAYS} days.`,
         "",
-        "Each entry is a detector claim. Before removing a key, check every consumer surface by hand " +
-            "(packages, Python, YAML, keys held as data or read as a whole block; #3636, #3676, #2486).",
+        "**Every key below is a candidate, not a finding.** Remove a key only after checking that one key " +
+            "by hand: keys composed at run time (a helper that builds the key, a template with several " +
+            "interpolations), error codes the backend returns, packages, Python, YAML, keys held as data or " +
+            "read as a whole block (#3636, #3676, #2486). The reason is the dangerous direction: a consumer " +
+            "shape the detector does not read reports a used key as unused; #3714 found 27 such keys before " +
+            "anything was removed.",
         "",
     ];
     for (const block of [...byBlock.keys()].sort()) {
