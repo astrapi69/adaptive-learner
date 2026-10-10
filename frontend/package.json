@@ -152,6 +152,7 @@
     "postcss": "^8.5.19",
     "browserslist": "^4.28.8",
     "prosemirror-view": "^1.42.6",
+    "prosemirror-model": "^1.25.12",
     "source-map-js": "^1.2.2"
   }
 }
