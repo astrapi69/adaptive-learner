@@ -28,6 +28,7 @@
 import {validateLessonQuality} from "learn-content-engine/rules";
 import type {Lesson as EngineLesson} from "learn-content-engine";
 
+import {keyedByCurrentRuleId} from "../../validation/rule-keys";
 import {buildLessonFromDraft, type DraftLessonInput} from "../draft-to-lesson";
 
 /** One flag per share row of the review checklist. */
@@ -43,12 +44,12 @@ export interface DraftShareChecks {
 type ShareRow = keyof DraftShareChecks;
 
 /** Engine rule id -> the row it fails. Unlisted ids fail ``exerciseMinimums``. */
-const ROW_BY_RULE: Readonly<Record<string, ShareRow>> = {
+const ROW_BY_RULE: Readonly<Record<string, ShareRow>> = keyedByCurrentRuleId({
     "E-QUALITY-EXERCISES": "minExercises",
     "E-QUALITY-TYPES": "minTypes",
     "E-QUALITY-FREETEXT-ACCEPTS": "exerciseMinimums",
     "E-QUALITY-MATCHING-PAIRS": "exerciseMinimums",
-};
+});
 
 const ALL_FAILED: DraftShareChecks = {
     minExercises: false,
