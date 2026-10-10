@@ -37,6 +37,7 @@ import {
     type ExerciseEditIssue,
 } from "../../../exercises";
 import {APP_EXTENSION_REGISTRY} from "../../validation/engine-extensions";
+import {keyedByCurrentRuleId} from "../../validation/rule-keys";
 import {validateLessonShape} from "../../validation/lesson-schema-validator";
 import type {ContentLesson, ContentLessonExercise} from "../../../../storage/types";
 
@@ -45,7 +46,7 @@ const EXERCISE_PATH = "/steps/1/exercise";
 
 /** Engine rule id -> the code whose message names that rule. A rule not
  *  listed here falls back to the exercise type's code (fail closed). */
-const CODE_BY_RULE: Readonly<Record<string, ExerciseEditCode>> = {
+const CODE_BY_RULE: Readonly<Record<string, ExerciseEditCode>> = keyedByCurrentRuleId({
     "E-MATCH-PAIRS": "matching_pairs",
     "E-MATCH-DUP-LEFT": "matching_duplicate_left",
     "E-MATCH-FROMCARDS-CARDS": "matching_from_cards",
@@ -53,7 +54,7 @@ const CODE_BY_RULE: Readonly<Record<string, ExerciseEditCode>> = {
     "E-CLOZE-SELECT-DISTRACTORS": "cloze_distractors",
     "E-TILES-ORDERING": "word_tiles_ordering",
     "E-CARD-REF": "card_ref",
-};
+});
 
 const TYPE_CODES: Readonly<Record<string, ExerciseEditCode>> = {
     matching: "matching_pairs",
