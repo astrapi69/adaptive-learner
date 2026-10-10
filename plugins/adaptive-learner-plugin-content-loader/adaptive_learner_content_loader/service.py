@@ -52,6 +52,7 @@ from .models import (
     check_set_assets_size,
 )
 from .schema import Lesson
+from .set_entry_resolution import resolve_cached_manifest
 from .sources import SourceRef
 
 logger = logging.getLogger(__name__)
@@ -436,6 +437,12 @@ class ContentLoaderService:
                 branch,
                 f"{base_path}/manifest.yaml",
                 client=client,
+            )
+            # #3722: cache the set entry resolved against the root entry, so
+            # the offline listing keeps the fields the root owns.
+            set_manifest_text = resolve_cached_manifest(
+                set_manifest_text,
+                target_set.model_dump(mode="json", exclude_unset=True),
             )
             set_manifest = parse_manifest(set_manifest_text)
             lesson_filenames = _lesson_filenames_for_set(
