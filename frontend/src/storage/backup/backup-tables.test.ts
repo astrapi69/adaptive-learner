@@ -87,7 +87,7 @@ describe("backup-tables parity", () => {
 
     it("keeps the wire constants", () => {
         expect(BACKUP_FORMAT).toBe("adaptive-learner-backup");
-        expect(BACKUP_VERSION).toBe("1.8.0");
+        expect(BACKUP_VERSION).toBe("1.9.0");
     });
 });
 

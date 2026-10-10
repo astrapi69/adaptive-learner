@@ -10,6 +10,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   deleteAiValidationCacheDexie,
   getAiValidationCacheDexie,
+  listAiValidationCacheDexie,
   saveAiValidationCacheDexie,
 } from "./content-loader-dexie-ai";
 import { _resetDbForTests, getDb } from "../dexie/db";
@@ -92,5 +93,24 @@ describe("Dexie AI-validation cache", () => {
     expect(await getAiValidationCacheDexie(SOURCE, SET_ID)).toBeNull();
     expect(await getAiValidationCacheDexie(SOURCE, "fr-a1")).not.toBeNull();
     await deleteAiValidationCacheDexie(SOURCE, SET_ID);
+  });
+});
+
+describe("listAiValidationCacheDexie (#3412)", () => {
+  it("returns an empty list when nothing is cached", async () => {
+    expect(await listAiValidationCacheDexie()).toEqual([]);
+  });
+
+  it("returns every cached report, as get returns it", async () => {
+    await saveAiValidationCacheDexie(record());
+    await saveAiValidationCacheDexie(record({ set_id: "fr-a1", source: "other/repo" }));
+    const listed = await listAiValidationCacheDexie();
+    expect(listed.map((r) => `${r.source}#${r.set_id}`).sort()).toEqual([
+      `${SOURCE}#${SET_ID}`,
+      "other/repo#fr-a1",
+    ]);
+    expect(listed.find((r) => r.set_id === SET_ID)).toEqual(
+      await getAiValidationCacheDexie(SOURCE, SET_ID),
+    );
   });
 });
