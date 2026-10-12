@@ -445,3 +445,30 @@ def test_no_annotation_outside_actions(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, result.stderr
     assert _notices(result.stdout) == []
+
+
+SIZE_RUNNER = "ubuntu-24.04"
+
+
+def _workflow(name: str) -> dict:
+    yaml = pytest.importorskip("yaml")
+    return yaml.safe_load((REPO_ROOT / ".github" / "workflows" / name).read_text(encoding="utf-8"))
+
+
+def test_the_amd64_size_is_measured_on_a_pinned_runner() -> None:
+    """#3732: ubuntu-latest moves to 26.04 on 2026-10-19, and the runner's
+    image store alone moves the reading by 12.8 MB for identical content
+    (#2134). The amd64 ceiling is measured on a pinned runner, and the
+    baseline names it, so a runner-image change never reads as image growth.
+    The arm64 runner (ubuntu-24.04-arm) was pinned from the start."""
+    smoke = _workflow("docker-build-smoke.yml")["jobs"]["build"]
+    assert smoke["runs-on"] == SIZE_RUNNER
+    include = _workflow("publish-image.yml")["jobs"]["verify-anonymous-pull"]["strategy"][
+        "matrix"
+    ]["include"]
+    assert {entry["arch"]: entry["runner"] for entry in include} == {
+        "amd64": SIZE_RUNNER,
+        "arm64": "ubuntu-24.04-arm",
+    }
+    measured_in = json.loads(BASELINE.read_text(encoding="utf-8"))["measured_in"]
+    assert measured_in == f"ci/{SIZE_RUNNER}"

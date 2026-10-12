@@ -91,7 +91,7 @@ concurrency:
 jobs:
   build:
     name: Prod compose images build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -103,7 +103,7 @@ jobs:
       - name: Verify the build context excludes dependency directories
         run: python3 scripts/verify_docker_context.py
 
-      # ubuntu-latest ships Docker + Compose v2. Build only - the images are
+      # ubuntu-24.04 (pinned for the size ceiling, #3732) ships Docker + Compose v2. Build only - the images are
       # never started, so no secrets / env / ports are needed (build args:
       # none). A failure here is a broken prod/self-hosted/desktop build path.
       - name: Build prod compose images

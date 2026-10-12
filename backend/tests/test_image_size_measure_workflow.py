@@ -116,7 +116,7 @@ def _evaluate_runner_expression(expression: str, arch: str) -> object:
 
 
 def test_each_arch_reaches_its_native_runner(parsed: dict) -> None:
-    """arm64 must land on the arm runner, amd64 on ubuntu-latest (#2163).
+    """arm64 must land on the arm runner, amd64 on ubuntu-24.04 (#2163, #3732).
 
     Run 30531619694 proved the broken form fails closed but measures
     nothing: the assert step refused an amd64 runner for an arm64 request,
@@ -124,4 +124,4 @@ def test_each_arch_reaches_its_native_runner(parsed: dict) -> None:
     """
     expression = parsed["jobs"]["measure"]["runs-on"]
     assert _evaluate_runner_expression(expression, "arm64") == "ubuntu-24.04-arm"
-    assert _evaluate_runner_expression(expression, "amd64") == "ubuntu-latest"
+    assert _evaluate_runner_expression(expression, "amd64") == "ubuntu-24.04"
