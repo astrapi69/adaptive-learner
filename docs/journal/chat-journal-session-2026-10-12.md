@@ -28,5 +28,5 @@
   - Pin 0.40.0 -> 0.40.1; `make sync-schema` ändert keine Datei. `sync-schema-check`, `engine-parity-check` und `sync-openapi-check` sauber.
   - Entry-Chunk `index-*.js`: roh 830836 -> 830836 Bytes, gzip 257452 -> 257454 (unverändert). Die Engine-Validatoren liegen nicht im Entry-Chunk.
   - Die Ersparnis liegt im lazy geladenen Chunk `AiValidationDialog`, der die Engine-Validatoren trägt: gzip 66162 -> 39843 Bytes (-26319), roh 231567 -> 249277 (+17710; vorkompilierter Code ist länger, komprimiert aber deutlich besser). Alle JS-Chunks zusammen: gzip 2595767 -> 2569285 (-26482).
-  - Suiten: siehe PR.
+  - Suiten: Frontend tsc und ESLint sauber, Vitest 12089 bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden (über das Backend-venv, wie `make test`); `make ci` grün.
 - Commit: (dieser PR).
