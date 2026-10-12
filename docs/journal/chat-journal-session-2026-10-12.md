@@ -19,3 +19,14 @@
   - Messung Hub vorab: 733 Cloze-Übungen, 754 Lücken, 0 Lücken mit eigenem `stable_id`; die Schlüssel laufen also über den Antworttext.
   - Tests (6): gleiche Antwort -> nicht breaking (select -> MC, type -> free_text); geänderte Antwort -> breaking; eine Lücke mit eigenem `stable_id` bleibt nur dann nicht breaking, wenn die richtige MC-Option dasselbe `stable_id` trägt, bei free_text wird sie breaking. update-impact 36/36 bestanden.
 - Commit: (eigener PR, Closes #3725).
+
+## 3. Engine-Re-Pin auf learn-content-engine 0.40.1
+- Original prompt: Re-pin adaptive-learner to learn-content-engine 0.40.1 (develop). Patch release, no API and no behaviour change: the engine's structural validators are precompiled (engine#261). Report the change in the frontend entry chunk size.
+- Optimized prompt: Pin 0.40.1 in `frontend/package.json` und `schema/engine-version.txt`, `make sync-schema` (keine Änderung erwartet), die drei Check-Targets, alle Suiten; Frontend vor und nach dem Pin bauen und die Chunk-Größen (roh und gzip -9) pro Chunk vergleichen.
+- Goal: Die App steht auf 0.40.1; die Bundle-Wirkung ist gemessen, nicht geschätzt.
+- Result:
+  - Pin 0.40.0 -> 0.40.1; `make sync-schema` ändert keine Datei. `sync-schema-check`, `engine-parity-check` und `sync-openapi-check` sauber.
+  - Entry-Chunk `index-*.js`: roh 830836 -> 830836 Bytes, gzip 257452 -> 257454 (unverändert). Die Engine-Validatoren liegen nicht im Entry-Chunk.
+  - Die Ersparnis liegt im lazy geladenen Chunk `AiValidationDialog`, der die Engine-Validatoren trägt: gzip 66162 -> 39843 Bytes (-26319), roh 231567 -> 249277 (+17710; vorkompilierter Code ist länger, komprimiert aber deutlich besser). Alle JS-Chunks zusammen: gzip 2595767 -> 2569285 (-26482).
+  - Suiten: siehe PR.
+- Commit: (dieser PR).
