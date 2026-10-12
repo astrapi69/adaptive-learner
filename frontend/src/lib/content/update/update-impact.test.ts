@@ -16,6 +16,7 @@ import {
     computeUpdateImpact,
     exerciseElementKeys,
     type IncomingSetIdentities,
+    type PeekExercise,
     type SrsIdentity,
 } from "./update-impact";
 
@@ -442,5 +443,95 @@ describe("computeUpdateImpact with retired_ids (#2188)", () => {
         );
         expect(impact.retiredCards).toEqual([]);
         expect(impact.breaking).toBe(true);
+    });
+});
+
+/**
+ * #3725 - learn-content-engine 0.40.0 (engine#254) lets a set declare a type
+ * change under a kept stable_id (``metadata.type_migrations``: cloze ->
+ * multiple_choice, cloze -> free_text). The engine relies on the app keying
+ * SRS rows on the exercise identity plus an answer-derived element key, which
+ * the migrated shape keeps. Built from real exercise shapes through the
+ * shared key rule, so a drift in any of the three types' rules shows here.
+ */
+describe("a declared cloze type migration (#3725, engine#254)", () => {
+    const LESSON = "07-erotiseis.json";
+
+    function rowsFor(exercise: PeekExercise): SrsIdentity[] {
+        return [...(exerciseElementKeys(exercise) ?? [])].map((element_key) => ({
+            lesson_id: LESSON,
+            exercise_id: exercise.stable_id as string,
+            element_key,
+        }));
+    }
+
+    function impactOf(before: PeekExercise, after: PeekExercise) {
+        return computeUpdateImpact(
+            [LESSON],
+            rowsFor(before),
+            buildIncomingIdentities([{filename: LESSON, exercises: [after]}]),
+        );
+    }
+
+    const selectCloze: PeekExercise = {
+        type: "cloze",
+        stable_id: "ex-hello",
+        cloze_mode: "select",
+        blanks: [{accept: ["bonjour"]}],
+        distractors: ["merci"],
+    } as PeekExercise;
+    const typedCloze: PeekExercise = {
+        type: "cloze",
+        stable_id: "ex-hello",
+        cloze_mode: "type",
+        blanks: [{accept: ["bonjour"]}],
+    } as PeekExercise;
+    const multipleChoice = (correct: string): PeekExercise =>
+        ({
+            type: "multiple_choice",
+            stable_id: "ex-hello",
+            options: [
+                {text: correct, correct: true},
+                {text: "merci", correct: false},
+            ],
+        }) as PeekExercise;
+    const freeText = (answer: string): PeekExercise =>
+        ({type: "free_text", stable_id: "ex-hello", accept: [answer]}) as PeekExercise;
+
+    it.each([
+        ["select cloze -> multiple_choice", selectCloze, multipleChoice("bonjour")],
+        ["typed cloze -> free_text", typedCloze, freeText("bonjour")],
+    ])("%s with the same answer is not breaking", (_label, before, after) => {
+        const impact = impactOf(before, after);
+        expect(rowsFor(before)).toHaveLength(1);
+        expect(impact.lostCards).toEqual([]);
+        expect(impact.breaking).toBe(false);
+    });
+
+    it.each([
+        ["select cloze -> multiple_choice", selectCloze, multipleChoice("salut")],
+        ["typed cloze -> free_text", typedCloze, freeText("salut")],
+    ])("%s with a changed answer is breaking", (_label, before, after) => {
+        expect(impactOf(before, after).breaking).toBe(true);
+    });
+
+    it("keeps a blank's own stable_id only where the new type can carry it", () => {
+        // A minted blank keys its row on its own id. multiple_choice carries it
+        // on the correct option; free_text has no carrier, so the row is lost.
+        // The hub's 754 cloze blanks carry no own stable_id (2026-10-12), so
+        // the 105 declared migrations take the answer-text path above.
+        const minted = {
+            ...typedCloze,
+            blanks: [{accept: ["bonjour"], stable_id: "blank-hello"}],
+        } as PeekExercise;
+        const carried = {
+            ...multipleChoice("bonjour"),
+            options: [
+                {text: "bonjour", correct: true, stable_id: "blank-hello"},
+                {text: "merci", correct: false},
+            ],
+        } as PeekExercise;
+        expect(impactOf(minted, carried).breaking).toBe(false);
+        expect(impactOf(minted, freeText("bonjour")).breaking).toBe(true);
     });
 });
