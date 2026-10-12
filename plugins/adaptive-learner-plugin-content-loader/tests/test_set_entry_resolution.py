@@ -138,3 +138,75 @@ async def test_a_set_listed_offline_keeps_what_its_root_entry_owns(tmp_path: Pat
     assert entry.set.visibility.value == "hidden"
     assert entry.set.review_status is not None and entry.set.review_status.value == "generated"
     assert service.list_cached_lesson_filenames(SOURCE, "fr-a1") == ["01-hallo.json"]
+
+
+async def test_a_set_manifest_with_type_migrations_downloads_and_lists(tmp_path: Path) -> None:
+    """engine#254 (0.40.0): ``metadata.type_migrations`` rides along unchanged."""
+    from adaptive_learner_content_loader.cache import read_manifest
+
+    root_manifest = textwrap.dedent(
+        """
+        schema_version: '1.19'
+        name: Content
+        sets:
+          - id: fr-a1
+            title: Γαλλικά A1
+            description: Der Katalogtext.
+            target_language: fr
+            source_language: el
+            level: A1
+            path: sets/el/fr-a1
+            version: '1.1.0'
+            lesson_count: 1
+        """
+    ).strip()
+    set_manifest = textwrap.dedent(
+        """
+        schema_version: '1.19'
+        name: Γαλλικά A1
+        sets:
+          - id: fr-a1
+            title: Γαλλικά A1
+            target_language: fr
+            source_language: el
+            level: A1
+            path: sets/el/fr-a1
+            version: '1.1.0'
+            lesson_count: 1
+        metadata:
+          lessons:
+            - 07-erotiseis.json
+          type_migrations:
+            - stable_id: ex-erotiseis-8
+              from: cloze
+              to: multiple_choice
+            - stable_id: ex-erotiseis-9
+              from: cloze
+              to: free_text
+        """
+    ).strip()
+    online = _make_mock_transport(
+        {
+            f"/{SOURCE}/{BRANCH}/manifest.yaml": root_manifest,
+            f"/{SOURCE}/{BRANCH}/sets/el/fr-a1/manifest.yaml": set_manifest,
+            f"/{SOURCE}/{BRANCH}/sets/el/fr-a1/lessons/07-erotiseis.json": _make_lesson(
+                "07-erotiseis", "Ερωτήσεις"
+            ),
+        }
+    )
+    service = ContentLoaderService(
+        cache_root=tmp_path, sources=[SourceRef(source=SOURCE, branch=BRANCH)]
+    )
+    with _install_mock(online):
+        await service.download_set(SOURCE, BRANCH, "fr-a1")
+
+    cached = read_manifest(tmp_path, SOURCE, "fr-a1", "1.1.0")
+    assert cached.metadata["type_migrations"] == [
+        {"stable_id": "ex-erotiseis-8", "from": "cloze", "to": "multiple_choice"},
+        {"stable_id": "ex-erotiseis-9", "from": "cloze", "to": "free_text"},
+    ]
+    assert service.list_cached_lesson_filenames(SOURCE, "fr-a1") == ["07-erotiseis.json"]
+    offline = _make_mock_transport({f"/{SOURCE}/{BRANCH}/manifest.yaml": None})
+    with _install_mock(offline):
+        [entry] = await service.list_sets()
+    assert entry.set.description == "Der Katalogtext."
