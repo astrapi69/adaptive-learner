@@ -14,6 +14,7 @@ file is not a passing workflow.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -228,3 +229,32 @@ def test_the_walker_asserts_the_steps_it_used_to_swallow() -> None:
     assert swallowed == [
         '        page.waitForLoadState("networkidle", {timeout: 5000}).catch(() => {});'
     ], "a swallowed step is a step that never fails: " + repr(swallowed)
+
+
+def _excused_patterns(walker: str) -> list[re.Pattern[str]]:
+    """The regexes of the walker's ``EXCUSED_UNLOADED`` list, as Python patterns."""
+    block = walker.split("const EXCUSED_UNLOADED = [", 1)[1].split("\n];", 1)[0]
+    sources = re.findall(r"\[/(.+?)/,", block)
+    assert sources, "no excuse patterns found: the check would prove nothing"
+    return [re.compile(source) for source in sources]
+
+
+@pytest.mark.parametrize(
+    ("chunk", "excused"),
+    [
+        ("correction-summary-Ccr1s549.js", True),
+        ("Dashboard-DsgT6tb4.js", False),
+        ("CorrectionSummaryPanel-Ccr1s549.js", False),
+    ],
+    ids=["lesson-only-correction-summary", "walked-route", "unrelated-prefix"],
+)
+def test_the_walker_excuses_the_lesson_only_correction_summary(chunk: str, excused: bool) -> None:
+    """#3728: the correction summary (#3575) is a shared chunk imported only
+    by the Lesson and ErrorReplayLesson chunks, both excused because a bare
+    container has no set. No walked route can load it, so it is excused
+    like set-review- (#3155) and the runner-shell chunks (#3159); the
+    pattern stays narrow enough that a walked route's chunk is not hidden."""
+    if not WALKER.is_file():
+        pytest.fail(f"{WALKER} is missing - the page walk is not a passing gate")
+    patterns = _excused_patterns(WALKER.read_text(encoding="utf-8"))
+    assert any(p.search(chunk) for p in patterns) is excused

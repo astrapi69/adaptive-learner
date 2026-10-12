@@ -66,6 +66,11 @@ const EXCUSED_UNLOADED = [
     // by the first weekly dry run (#3159, run 36610482730).
     [/^(ReviewedFallbackPanel|sources)-/,
         "lesson-runner shell internals load inside a running lesson - needs a set; covered by dexie-smoke + vitest"],
+    // The correction summary (#3575) is a shared chunk imported only by
+    // the Lesson and ErrorReplayLesson chunks; it renders after a run's
+    // mistakes were fixed. Found by the weekly run 38248071878 (#3728).
+    [/^correction-summary-/,
+        "lesson summary internals shared by Lesson + ErrorReplayLesson - needs a set; covered by vitest"],
     [/^(RedeemInvite|QRScannerModal|ErrorReportDialog)-/,
         "loads on user action (invite link, QR scan, error report dialog)"],
     [/^apkg-builder-/, "loads on Anki .apkg export click - needs cards"],
