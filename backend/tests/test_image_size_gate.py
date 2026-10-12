@@ -19,6 +19,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = REPO_ROOT / "scripts" / "verify_image_size.py"
 BASELINE = REPO_ROOT / ".image-size-baseline.json"
@@ -397,3 +399,49 @@ def test_reports_when_the_base_image_digests_are_unavailable(tmp_path: Path) -> 
     result = _run("--size-bytes", "100000000", baseline=_history_baseline(tmp_path))
     assert result.returncode == 0, result.stderr
     assert "uncompressed size and base-image digests: not read (size given)" in result.stdout
+
+
+def _run_in_actions(*extra: str, baseline: Path) -> subprocess.CompletedProcess[str]:
+    env = {**os.environ, "GITHUB_ACTIONS": "true"}
+    args = [sys.executable, str(SCRIPT), *extra, "--baseline", str(baseline)]
+    return subprocess.run(args, capture_output=True, text=True, cwd=REPO_ROOT, env=env)
+
+
+def _notices(output: str) -> list[str]:
+    return [line for line in output.splitlines() if line.startswith("::notice")]
+
+
+@pytest.mark.parametrize(
+    ("measured", "code"),
+    [(130_000_000, 0), (128_000_000, 1), (131_000_000, 1)],
+    ids=["within", "shrink-finding", "growth"],
+)
+def test_the_reading_is_an_annotation_in_actions(tmp_path: Path, measured: int, code: int) -> None:
+    """#3730: every reseed needed someone to read a job log; annotations are
+    readable over the API. The measured bytes and the ceiling are one
+    notice per run, on green and on both red directions."""
+    baseline = tmp_path / "b.json"
+    baseline.write_text(
+        json.dumps({"compressed_bytes": 1, "per_arch": {"arm64": 130_000_000}}), encoding="utf-8"
+    )
+    result = _run_in_actions("--size-bytes", str(measured), "--arch", "arm64", baseline=baseline)
+    assert result.returncode == code, result.stderr
+    assert _notices(result.stdout) == [
+        f"::notice title=Image size [arm64]::measured {measured} bytes gzipped, "
+        f"ceiling 130000000, delta {measured - 130_000_000:+d} bytes"
+    ]
+
+
+def test_no_annotation_outside_actions(tmp_path: Path) -> None:
+    baseline = tmp_path / "b.json"
+    baseline.write_text(json.dumps({"compressed_bytes": 100_000_000}), encoding="utf-8")
+    env = {k: v for k, v in os.environ.items() if k != "GITHUB_ACTIONS"}
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--size-bytes", "100000000", "--baseline", str(baseline)],
+        capture_output=True,
+        text=True,
+        cwd=REPO_ROOT,
+        env=env,
+    )
+    assert result.returncode == 0, result.stderr
+    assert _notices(result.stdout) == []
