@@ -294,6 +294,7 @@ export default function LessonPage() {
     setTitle,
     setDomain,
     setBook,
+    setEvaluation,
   } = useLessonSetContext({source, setId, filename});
   // #2793 — the header's backward/forward links; the same route builder the
   // rest of the app uses, so a neighbour opens exactly like any other lesson.
@@ -525,6 +526,7 @@ export default function LessonPage() {
             lessonFilename={filename}
             setDomain={setDomain}
             setBook={setBook}
+            setEvaluation={setEvaluation}
             comboBonusXp={comboBonusXp}
             fullHeartsRun={tension.fullHeartsRun}
             markCompleted={markCompleted}

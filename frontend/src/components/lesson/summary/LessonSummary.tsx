@@ -78,6 +78,12 @@ import {
 import { useErrorReplayScope } from "../../../hooks/lesson/interaction/useErrorReplayScope";
 import { useLessonSessionErrors } from "../../../hooks/learning/useLessonSessionErrors";
 import { buildExerciseBreakdown } from "../../../lib/lesson/lesson-summary";
+import {
+  deriveSummaryStats,
+  detailedCorrectionMarks,
+  isSectionShown,
+  offersFixMistakes,
+} from "../../../lib/lesson/summary/summary-view";
 import { resolveSummaryScoreDisplay } from "../../../lib/lesson/correction-adjusted-score";
 import {
   buildCorrectionSummary,
@@ -94,18 +100,18 @@ import { isFirstAttempt } from "../../../lib/gamification/first-attempt";
 import { calculateLessonSessionXp } from "../../../lib/gamification/lesson-xp";
 import { configForMode } from "../../../lib/learning/lessonModeConfig";
 import {
-  examPassed,
   readExamPassThreshold,
   type LessonMode,
 } from "../../../lib/learning/lessonModePref";
+import {
+  resolveDetailedView,
+  resolveExamVerdict,
+  type SetEvaluation,
+} from "../../../lib/lesson/summary/author-evaluation";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
 import { useSummaryCelebration } from "../../../hooks/lesson/useSummaryCelebration";
 import { getStorage } from "../../../storage";
-import type {
-  ContentLesson,
-  LessonAttempt,
-  LessonProgress,
-} from "../../../storage/types";
+import type { ContentLesson, LessonProgress } from "../../../storage/types";
 import { notify } from "../../../utils/notify";
 
 interface LessonSummaryProps {
@@ -133,6 +139,10 @@ interface LessonSummaryProps {
    *  (#1648 — carried through so removing the duplicate top-right star
    *  doesn't drop the favorite's set-name metadata). */
   setTitle: string;
+  /** #3736 - the set's evaluation block. In ``exam`` mode it replaces the
+   *  learner's own pass threshold; other modes ignore it. ``null`` (the
+   *  default) keeps today's summary. */
+  setEvaluation?: SetEvaluation | null;
   /** Resolved set source path (slug with ``--`` → ``/``). */
   source: string;
   /** Raw route slug (``--``-encoded), for the next-lesson href. */
@@ -150,78 +160,6 @@ interface LessonSummaryProps {
   onNextLesson: () => void;
   onRepeat: () => void;
   onExit: () => void;
-}
-
-/** Derive the display stats from the (possibly absent) progress row:
- *  the score, the rounded minutes (floored at 1), the completed flag and
- *  the score percentage. Missing values default to 0 so the summary
- *  still renders for an in-progress / unscored run. */
-function deriveSummaryStats(progress: LessonProgress | null): {
-  correct: number;
-  total: number;
-  minutes: number;
-  isCompleted: boolean;
-  scorePct: number;
-  attempts: number;
-  attemptHistory: LessonAttempt[];
-  bestCorrect: number;
-  bestTotal: number;
-} {
-  const correct = progress?.score_correct ?? 0;
-  const total = progress?.score_total ?? 0;
-  const seconds = progress?.time_spent_seconds ?? 0;
-  const minutes = Math.max(1, Math.round(seconds / 60));
-  const isCompleted = progress?.status === "completed";
-  const scorePct = total > 0 ? Math.round((correct / total) * 100) : 0;
-  return {
-    correct,
-    total,
-    minutes,
-    isCompleted,
-    scorePct,
-    attempts: progress?.attempts ?? 0,
-    attemptHistory: progress?.attempt_history ?? [],
-    bestCorrect: progress?.best_score_correct ?? 0,
-    bestTotal: progress?.best_score_total ?? 0,
-  };
-}
-
-/** #3031 / #3575 - whether a configurable section is on screen: switched on,
- *  the detailed view, or the correction round opened by "Fix mistakes". */
-function isSectionShown(
-  id: string,
-  enabled: boolean,
-  detailed: boolean,
-  fixOpen: boolean,
-): boolean {
-  return enabled || detailed || (id === "correction" && fixOpen);
-}
-
-/** #3575 - the compact view's "Fix mistakes" row: only for a persisted run
- *  and only while the correction section itself is not on screen. */
-function offersFixMistakes(args: {
-  hasRun: boolean;
-  correctionEnabled: boolean;
-  detailed: boolean;
-  fixOpen: boolean;
-}): boolean {
-  return args.hasRun && !(args.correctionEnabled || args.detailed || args.fixOpen);
-}
-
-/**
- * The correction data the detailed view marks its answers overview and
- * "Why you missed these" with (#3575): the verdict per failed step and the
- * summary itself. The compact view marks nothing, so it gets neither.
- */
-function detailedCorrectionMarks(
-  detailed: boolean,
-  summary: CorrectionSummary,
-): { byStep?: ReadonlyMap<string, boolean>; summary?: CorrectionSummary } {
-  if (!detailed || summary.total === 0) return {};
-  return {
-    byStep: new Map(summary.entries.map((entry) => [entry.stepId, entry.corrected])),
-    summary,
-  };
 }
 
 /**
@@ -255,6 +193,7 @@ export default function LessonSummary({
   userId,
   setId,
   setTitle,
+  setEvaluation,
   source,
   setSlug,
   lessonFilename,
@@ -284,8 +223,20 @@ export default function LessonSummary({
   // afterwards), so it stays on the immediate score — see the
   // correction-adjustment display resolver below.
   const examThreshold = useMemo(() => readExamPassThreshold(), []);
-  const examPass =
-    lessonMode === "exam" && examPassed(correct, total, examThreshold);
+  // #3736 - a set's evaluation block wins over the learner's threshold in
+  // exam mode, on the same first-pass score. Derived on render, like the
+  // learner verdict; nothing new is persisted.
+  const { authorEvaluation, examPass } = useMemo(
+    () =>
+      resolveExamVerdict({
+        lessonMode,
+        evaluation: setEvaluation,
+        correct,
+        total,
+        learnerThreshold: examThreshold,
+      }),
+    [lessonMode, setEvaluation, correct, total, examThreshold],
+  );
 
   // #594 Hint Economy — how many steps this run was answered with a hint
   // revealed. Read from the persisted step results.
@@ -426,7 +377,10 @@ export default function LessonSummary({
   // button lifts all three at once, for THIS view only: every stored
   // preference is left exactly as it is, and the detailed view is derived
   // from the run's data on each render, so there is nothing to persist.
-  const [detailed, setDetailed] = useState(false);
+  // #3736 - an author's ``report: detailed`` opens it by default; the
+  // learner's toggle still wins once used.
+  const [detailedChoice, setDetailedChoice] = useState<boolean | null>(null);
+  const detailed = resolveDetailedView(detailedChoice, authorEvaluation);
 
   // The exact exercises failed in THIS run — drives the
   // "Retry Errors" card + the ErrorReplay page (via router state).
@@ -619,6 +573,7 @@ export default function LessonSummary({
           total={total}
           examPass={examPass}
           examThreshold={examThreshold}
+          authorEvaluation={authorEvaluation}
           correct={correct}
           scorePct={scorePct}
           minutes={minutes}
@@ -790,7 +745,7 @@ export default function LessonSummary({
           learner's finger when the view expands. */}
       <SummaryDetailedToggle
         detailed={detailed}
-        onToggle={() => setDetailed((shown) => !shown)}
+        onToggle={() => setDetailedChoice(!detailed)}
         t={t}
       />
 
