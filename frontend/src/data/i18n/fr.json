@@ -2173,6 +2173,12 @@
       "suggest_empty": "Rien d’utilisable n’est revenu. Réessayez ou ajustez l’étape à la main."
     },
     "exam": {
+      "author_source": "Évalué selon les règles de ce set, et non selon ton propre seuil de réussite",
+      "grade": "Note : {grade}",
+      "no_grade": "Aucune note atteinte",
+      "percent_result": "{pct} % de bonnes réponses",
+      "advisory_reached": "Seuil recommandé de {pct} % atteint",
+      "advisory_missed": "Seuil recommandé de {pct} % non atteint",
       "passed": "Réussi",
       "not_passed": "Échoué",
       "threshold_hint": "(réussite ≥ {pct} %)",

@@ -2024,6 +2024,12 @@ lesson:
     suggest_label: "Sugestão de IA"
     suggest_empty: "Nada utilizável retornou. Tente novamente ou ajuste o passo manualmente."
   exam:
+    author_source: "Avaliado pelas regras deste set, não pelo seu próprio limite de aprovação"
+    grade: "Nota: {grade}"
+    no_grade: "Nenhuma nota alcançada"
+    percent_result: "{pct}% de acertos"
+    advisory_reached: "Marca recomendada de {pct}% alcançada"
+    advisory_missed: "Marca recomendada de {pct}% não alcançada"
     passed: "Aprovado"
     not_passed: "Não aprovado"
     threshold_hint: "(aprovado ≥ {pct}%)"
