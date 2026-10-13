@@ -32,6 +32,7 @@ export default defineConfig({
     reporter: [
         [process.env.CI ? "dot" : "list"],
         ["json", {outputFile: "test-results/dexie-smoke.json"}],
+        ["github"],
     ],
     use: {
         baseURL: `http://localhost:${PREVIEW_PORT}`,
