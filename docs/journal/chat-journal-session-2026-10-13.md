@@ -38,3 +38,19 @@
   - TC-0955 (DE+EN): Überschrift "Hauptstadt-Prüfung", keine Sterne beim Pilot, Sterne wie bisher bei der Kontrolle.
   - Suiten: ESLint sauber, Vitest 1091 Dateien / 12132 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden (Backend-venv); `make ci` grün.
 - Commit: (dieser PR, Closes #3740).
+
+## 4. Keine Prüfung aus einer Übungsrunde (#3742)
+- Original prompt: #3742 umsetzen (bug, P1): Eine angefangene Runde, die in einem anderen Modus begonnen wurde, darf nicht als Prüfung fortgesetzt werden (und eine Prüfung nicht als Übung).
+- Optimized prompt: Beim Öffnen einer Lektion den gespeicherten Modus der Runde mit dem aktuellen vergleichen; weichen sie ab und ist einer `exam`, zeigt der Fortsetzen-Dialog eine Erklärung und nur "Neu starten". Dazu ein Hinweis beim Prüfungsstart, ein Hinweis unter der Bestehens-Grenze, i18n vorab als eigener PR, e2e-Spec für den Ablauf.
+- Goal: Eine Prüfung wertet nur Antworten unter Prüfungsbedingungen.
+- Result:
+  - i18n vorab (#3743): drei Keys in allen 11 Katalogen, Label `visual-baselines-unaffected` (noch kein Konsument).
+  - Neu `lib/lesson/progress/resume-mode.ts`: `resumeModeConflict(progress, mode)`; Konflikt nur bei laufender oder pausierter Runde mit mindestens einer Antwort, abweichendem Modus und `exam` auf einer Seite; Zeilen ohne gespeicherten Modus gelten als Übung.
+  - Befund über das Issue hinaus: der Dialog kam nur bei `paused`. Eine Runde im Zustand `in_progress` (App-Wechsel, gesperrtes Handy) lief bei einem Moduswechsel ohne jeden Dialog weiter. `useLessonFlowControl` zeigt den Dialog jetzt auch dann, und die Entscheidung wird beim Laden eingefroren: der 30-s-Autosave stempelt die Zeile sonst mit dem aktuellen Modus, und der Konflikt verschwände unter dem offenen Dialog.
+  - `LessonResumeDialog`: im Konfliktfall Erklärung statt Pausen-Text, kein "Weiter", "Neu starten" mit der bestehenden Rückfrage.
+  - `LessonExamNotice` (neben `LessonNoProfileNotice`, weil `chrome/` schon 15 Dateien hat) zeigt im Prüfungsmodus bis zur ersten Antwort den Hinweis; `LessonModeControl` den Satz unter der Bestehens-Grenze.
+  - Grenzen: `LessonPage` bleibt bei Komplexität 20 (keine neue Verzweigung, die Komponenten entscheiden selbst), `LessonSummary` 19, Ordner-Guard und Komplexitäts-Gate grün.
+  - Tests (RED zuerst): `resume-mode.test.ts` (11), `useLessonFlowControl.test.ts` (+8, auch der Autosave-Fall), `LessonResumeDialog.test.tsx` (+3), `LessonExamNotice.test.tsx` (6), `LessonModeControl.test.tsx` (1). Neue e2e-Spec `e2e/dexie/lesson-resume-mode.spec.ts`. Lokal nicht lauffähig: der Browser im Container lehnt das Proxy-Zertifikat ab (Zertifikatsfehler der CA), auch die bestehende `lesson-pause-position.spec.ts` scheitert dort; Nachweis per Dispatch von `dexie-smoke.yml` auf dem Branch. Der erste Lauf war rot ohne lesbaren Grund; ein einmaliger `github`-Reporter (eigener Commit, danach zurückgenommen) zeigte: nur die neue Spec, weil der zweite Weg durch den Inhaltsbaum die schon aufgeklappte Set-Liste zuklappt. Die Spec öffnet die Lektion beim zweiten Mal über ihre URL.
+  - TC-0955 (DE+EN) um den Fortsetzen-Fall ergänzt.
+  - Suiten: Frontend tsc und ESLint sauber, Vitest 1094 Dateien / 12164 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden (Backend-venv); `make ci`, Ordner-Guard und Komplexitäts-Gate grün. Dexie-Smoke-Dispatch (Lauf 38438767822) grün: 180 bestanden inklusive der neuen Spec, 1 flaky (`lesson-header-autohide`, unabhängig, im Retry grün).
+- Commit: (dieser PR, Closes #3742).

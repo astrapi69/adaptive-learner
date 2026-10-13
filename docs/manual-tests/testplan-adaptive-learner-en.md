@@ -631,7 +631,15 @@ preview delivery). In the regular build the mode does not exist.
       the score bar stays. Control lesson (`evaluation-pilot-control-from-de`)
       with 7 of 10: **Not passed** against your own 80%, no note, stars and
       message as before. The same pilot lesson in practice mode: no exam
-      card, stars and summary as before
+      card, stars and summary as before. Resume case (#3742): start the pilot
+      lesson in practice mode (a few answers), leave it, set the default mode
+      to Exam, open the lesson again: the dialog says "This run was started
+      in another mode ...", **no "Continue"**, only "Start over"; after
+      starting over the first question shows "Exam: you only see at the end
+      whether an answer was right ...", and 7 of 10 correct gives
+      **Passed**. The reverse (exam started, opened in practice mode) offers
+      no "Continue" either. Under the pass threshold in Settings it says
+      "Sets with their own pass mark use that mark instead."
 - [ ] TC-0151 Timed mode: countdown bar visible, color transition
 - [ ] TC-0152 Error mode: only error cards (after at least 1 error)
 - [ ] TC-0153 Reverse: matching columns swapped

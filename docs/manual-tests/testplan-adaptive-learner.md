@@ -678,7 +678,16 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       Kontroll-Lektion (`evaluation-pilot-control-from-de`) mit 7 von 10:
       **Nicht bestanden** gegen die eigenen 80 %, kein Hinweis, Sterne und
       Lobtext wie bisher. Dieselbe Pilot-Lektion im Übungsmodus: keine
-      Prüfungskarte, Sterne und Zusammenfassung wie bisher
+      Prüfungskarte, Sterne und Zusammenfassung wie bisher. Fortsetzen-Fall
+      (#3742): Pilot-Lektion im Übungsmodus anfangen (einige Antworten),
+      verlassen, Standard-Modus Prüfung, Lektion wieder öffnen: der Dialog
+      sagt "Diese Runde wurde in einem anderen Modus begonnen ...", **kein
+      "Weiter"**, nur "Neu starten"; nach Neu starten steht über der ersten
+      Frage "Prüfung: Ob eine Antwort richtig war, siehst du erst am Ende
+      ...", und 7 von 10 richtig ergibt **Bestanden**. Umgekehrt (Prüfung
+      angefangen, im Übungsmodus geöffnet) ebenfalls kein "Weiter". In den
+      Einstellungen steht unter der Bestehens-Grenze "Sets mit eigener
+      Bestehensgrenze verwenden stattdessen diese."
 - [ ] TC-0151 Zeitmodus: Countdown-Balken sichtbar, Farb-Uebergang
 - [ ] TC-0152 Fehler-Modus: nur Fehlerkarten (nach min. 1 Fehler)
 - [ ] TC-0153 Rueckwaerts: Matching-Spalten getauscht
