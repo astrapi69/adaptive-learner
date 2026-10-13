@@ -38,6 +38,7 @@ type SummaryPassThroughProps = Pick<
   | "userId"
   | "setId"
   | "setTitle"
+  | "setEvaluation"
   | "source"
   | "setSlug"
   | "lessonFilename"

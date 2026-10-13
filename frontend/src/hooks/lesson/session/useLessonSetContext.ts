@@ -5,7 +5,8 @@
  * the lesson's POSITION in the set (#2793 — index, total and both
  * neighbours, which drives "Lesson N of M" plus the backward /
  * forward controls) and the parent set's display title / domain /
- * manifest book (header context + the "Vertiefe das Thema" section).
+ * manifest book (header context + the "Vertiefe das Thema" section),
+ * and its evaluation block, which the exam summary applies (#3736).
  * Every read degrades silently — the consuming UI simply omits the
  * matching element.
  */
@@ -15,6 +16,7 @@ import {useEffect, useState} from "react";
 import {getStorage} from "../../../storage";
 import {resolveSetPosition, type SetPosition} from "../../../lib/lesson/set-position";
 import type {ContentSetBook} from "../../../storage/types";
+import type {SetEvaluation} from "../../../lib/lesson/author-evaluation";
 
 /**
  * Resolve next-lesson + set metadata for the lesson viewer.
@@ -84,11 +86,13 @@ export function useLessonSetContext({
     // #769 — the set's manifest book, surfaced as the first "Vertiefe das
     // Thema" media item.
     const [setBook, setSetBook] = useState<ContentSetBook | null>(null);
+    const [setEvaluation, setSetEvaluation] = useState<SetEvaluation | null>(null);
     useEffect(() => {
         if (!setId) {
             setSetTitle(null);
             setSetDomain(null);
             setSetBook(null);
+            setSetEvaluation(null);
             return;
         }
         let cancelled = false;
@@ -100,11 +104,13 @@ export function useLessonSetContext({
                 setSetTitle(match?.title ?? null);
                 setSetDomain(match?.domain ?? null);
                 setSetBook(match?.book ?? null);
+                setSetEvaluation(match?.evaluation ?? null);
             } catch {
                 if (!cancelled) {
                     setSetTitle(null);
                     setSetDomain(null);
                     setSetBook(null);
+                    setSetEvaluation(null);
                 }
             }
         })();
@@ -120,5 +126,6 @@ export function useLessonSetContext({
         setTitle,
         setDomain,
         setBook,
+        setEvaluation,
     };
 }

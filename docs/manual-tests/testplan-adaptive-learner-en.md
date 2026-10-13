@@ -622,6 +622,14 @@ preview delivery). In the regular build the mode does not exist.
       beside it on the right; mobile: tightly packed or a clean wrap,
       no overlap) (#1942)
 - [ ] TC-0150 Exam mode: no hints, result at the end, 1.5x XP
+- [ ] TC-0955 Exam mode with the set's evaluation block (#3736): connect the repo
+      `astrapi69/adaptive-learner-content-test`, default mode Exam, own pass
+      threshold 80%. Pilot lesson (`evaluation-pilot-from-de`) with 7 of 10
+      correct: **Passed**, heading "Pilotprüfung", note "Evaluated by this
+      set's own rules, not your own pass threshold", mark "(pass ≥ 60%)".
+      Control lesson (`evaluation-pilot-control-from-de`) with 7 of 10:
+      **Not passed** against your own 80%, no note. The same pilot lesson in
+      practice mode: no exam card, summary as before
 - [ ] TC-0151 Timed mode: countdown bar visible, color transition
 - [ ] TC-0152 Error mode: only error cards (after at least 1 error)
 - [ ] TC-0153 Reverse: matching columns swapped

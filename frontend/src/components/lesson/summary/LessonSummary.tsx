@@ -98,6 +98,10 @@ import {
   readExamPassThreshold,
   type LessonMode,
 } from "../../../lib/learning/lessonModePref";
+import {
+  resolveAuthorEvaluation,
+  type SetEvaluation,
+} from "../../../lib/lesson/author-evaluation";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
 import { useSummaryCelebration } from "../../../hooks/lesson/useSummaryCelebration";
 import { getStorage } from "../../../storage";
@@ -133,6 +137,10 @@ interface LessonSummaryProps {
    *  (#1648 — carried through so removing the duplicate top-right star
    *  doesn't drop the favorite's set-name metadata). */
   setTitle: string;
+  /** #3736 - the set's evaluation block. In ``exam`` mode it replaces the
+   *  learner's own pass threshold; other modes ignore it. ``null`` (the
+   *  default) keeps today's summary. */
+  setEvaluation?: SetEvaluation | null;
   /** Resolved set source path (slug with ``--`` → ``/``). */
   source: string;
   /** Raw route slug (``--``-encoded), for the next-lesson href. */
@@ -255,6 +263,7 @@ export default function LessonSummary({
   userId,
   setId,
   setTitle,
+  setEvaluation = null,
   source,
   setSlug,
   lessonFilename,
@@ -284,8 +293,19 @@ export default function LessonSummary({
   // afterwards), so it stays on the immediate score — see the
   // correction-adjustment display resolver below.
   const examThreshold = useMemo(() => readExamPassThreshold(), []);
-  const examPass =
-    lessonMode === "exam" && examPassed(correct, total, examThreshold);
+  // #3736 - a set's evaluation block wins over the learner's threshold in
+  // exam mode, on the same first-pass score. Derived on render, like the
+  // learner verdict; nothing new is persisted.
+  const authorEvaluation = useMemo(
+    () =>
+      lessonMode === "exam"
+        ? resolveAuthorEvaluation(setEvaluation, correct, total)
+        : null,
+    [lessonMode, setEvaluation, correct, total],
+  );
+  const examPass = authorEvaluation
+    ? authorEvaluation.outcome.passed === true
+    : lessonMode === "exam" && examPassed(correct, total, examThreshold);
 
   // #594 Hint Economy — how many steps this run was answered with a hint
   // revealed. Read from the persisted step results.
@@ -426,7 +446,10 @@ export default function LessonSummary({
   // button lifts all three at once, for THIS view only: every stored
   // preference is left exactly as it is, and the detailed view is derived
   // from the run's data on each render, so there is nothing to persist.
-  const [detailed, setDetailed] = useState(false);
+  // #3736 - an author's ``report: detailed`` opens it by default; the
+  // learner's toggle still wins once used.
+  const [detailedChoice, setDetailedChoice] = useState<boolean | null>(null);
+  const detailed = detailedChoice ?? authorEvaluation?.report === "detailed";
 
   // The exact exercises failed in THIS run — drives the
   // "Retry Errors" card + the ErrorReplay page (via router state).
@@ -619,6 +642,7 @@ export default function LessonSummary({
           total={total}
           examPass={examPass}
           examThreshold={examThreshold}
+          authorEvaluation={authorEvaluation}
           correct={correct}
           scorePct={scorePct}
           minutes={minutes}
@@ -790,7 +814,7 @@ export default function LessonSummary({
           learner's finger when the view expands. */}
       <SummaryDetailedToggle
         detailed={detailed}
-        onToggle={() => setDetailed((shown) => !shown)}
+        onToggle={() => setDetailedChoice(!detailed)}
         t={t}
       />
 

@@ -6,12 +6,13 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter} from "react-router";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
 import LessonSummary from "./LessonSummary";
 import type {ContentLesson, LessonProgress} from "../../../storage/types";
+import type {SetEvaluation} from "../../../lib/lesson/author-evaluation";
 
 const LESSON: ContentLesson = {
     id: "l1",
@@ -41,7 +42,12 @@ function makeProgress(correct: number, total: number): LessonProgress {
     } as unknown as LessonProgress;
 }
 
-function renderSummary(mode: "practice" | "exam", correct: number, total: number) {
+function renderSummary(
+    mode: "practice" | "exam",
+    correct: number,
+    total: number,
+    setEvaluation: SetEvaluation | null = null,
+) {
     return render(
         <MemoryRouter>
             <LessonSummary
@@ -52,6 +58,7 @@ function renderSummary(mode: "practice" | "exam", correct: number, total: number
                 userId=""
                 setId="set1"
                 setTitle="Set One"
+                setEvaluation={setEvaluation}
                 source="bundled:x"
                 setSlug="x"
                 lessonFilename="01.json"
@@ -88,5 +95,51 @@ describe("LessonSummary exam result", () => {
             "data-passed",
             "false",
         );
+    });
+});
+
+describe("LessonSummary with the set's evaluation block (#3736)", () => {
+    const PILOT: SetEvaluation = {scheme: "pass_fail", pass_percent: 60, title: "Pilotprüfung"};
+
+    function learnerThreshold(pct: number) {
+        localStorage.setItem("adaptive-learner.lesson.exam_pass_threshold", String(pct));
+    }
+
+    it("pilot: 7 of 10 passes on the author's 60% although the learner asks 80%", () => {
+        learnerThreshold(80);
+        renderSummary("exam", 7, 10, PILOT);
+        const panel = screen.getByTestId("lesson-exam-result");
+        expect(panel).toHaveAttribute("data-passed", "true");
+        expect(panel).toHaveAttribute("data-evaluation-source", "author");
+        expect(panel).toHaveTextContent("Pilotprüfung");
+        expect(screen.getByTestId("lesson-exam-result-source")).toBeInTheDocument();
+    });
+
+    it("control: 7 of 10 without a block fails the learner's 80% as today", () => {
+        learnerThreshold(80);
+        renderSummary("exam", 7, 10, null);
+        const panel = screen.getByTestId("lesson-exam-result");
+        expect(panel).toHaveAttribute("data-passed", "false");
+        expect(panel).toHaveAttribute("data-evaluation-source", "learner");
+        expect(screen.queryByTestId("lesson-exam-result-source")).toBeNull();
+    });
+
+    it("practice mode ignores the block: no exam panel, compact view", () => {
+        renderSummary("practice", 7, 10, {...PILOT, report: "detailed"});
+        expect(screen.queryByTestId("lesson-exam-result")).toBeNull();
+        expect(screen.getByTestId("lesson-summary")).toHaveAttribute("data-detailed", "false");
+    });
+
+    it("report: detailed opens the detailed evaluation in exam mode, and the toggle still closes it", () => {
+        renderSummary("exam", 7, 10, {...PILOT, report: "detailed"});
+        const root = screen.getByTestId("lesson-summary");
+        expect(root).toHaveAttribute("data-detailed", "true");
+        fireEvent.click(screen.getByTestId("lesson-summary-detailed-toggle"));
+        expect(root).toHaveAttribute("data-detailed", "false");
+    });
+
+    it("report: compact keeps today's compact default", () => {
+        renderSummary("exam", 7, 10, {...PILOT, report: "compact"});
+        expect(screen.getByTestId("lesson-summary")).toHaveAttribute("data-detailed", "false");
     });
 });
