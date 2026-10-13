@@ -36,5 +36,5 @@
   - Tests (RED zuerst): Pilot im Prüfungsmodus ohne Sterne und Nachricht, Karte unverändert; `grades` und `percent` ebenso; Prüfung ohne Block und Übung mit Block mit Sternen wie bisher; Punktebalken bleibt. `showsStarScale` mit drei Fällen.
   - Grenzen lokal geprüft: Komplexität `LessonSummary` bleibt 19, `LessonSummary.tsx` 902 Zeilen, Ordner-Guard und Komplexitäts-Gate grün.
   - TC-0955 (DE+EN): Überschrift "Hauptstadt-Prüfung", keine Sterne beim Pilot, Sterne wie bisher bei der Kontrolle.
-  - Suiten: siehe PR.
+  - Suiten: ESLint sauber, Vitest 1091 Dateien / 12132 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden (Backend-venv); `make ci` grün.
 - Commit: (dieser PR, Closes #3740).
