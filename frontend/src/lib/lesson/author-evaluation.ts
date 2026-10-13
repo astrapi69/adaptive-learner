@@ -18,6 +18,11 @@
 import { gradeFor, type EvaluationOutcome } from "learn-content-engine/rules";
 
 import type { ContentSetEntry } from "../../storage/types";
+import {
+    examPassed,
+    type ExamPassThreshold,
+    type LessonMode,
+} from "../learning/lessonModePref";
 
 /** A set's evaluation block as the content listing carries it. */
 export type SetEvaluation = NonNullable<ContentSetEntry["evaluation"]>;
@@ -64,4 +69,59 @@ export function resolveAuthorEvaluation(
         title: evaluation.title ?? null,
         report: evaluation.report ?? "compact",
     };
+}
+
+/** The exam verdict of one run, and whether the author's block decided it. */
+export interface ExamVerdict {
+    /** The author's evaluation when it applies (exam mode with a block). */
+    authorEvaluation: AuthorEvaluationResult | null;
+    /** Whether the run passed: the author's mark when the block decided,
+     *  else the learner's threshold; always ``false`` outside exam mode. */
+    examPass: boolean;
+}
+
+/**
+ * The exam verdict of a run (#3736): in exam mode a set's evaluation block
+ * replaces the learner's own threshold, on the same first-pass score.
+ * Other modes have no verdict and ignore the block.
+ *
+ * @example
+ * resolveExamVerdict({lessonMode: "exam", evaluation: {scheme: "pass_fail",
+ *     pass_percent: 60}, correct: 7, total: 10, learnerThreshold: 80});
+ * // {authorEvaluation: {...}, examPass: true}
+ */
+export function resolveExamVerdict({
+    lessonMode,
+    evaluation,
+    correct,
+    total,
+    learnerThreshold,
+}: {
+    lessonMode: LessonMode;
+    evaluation: SetEvaluation | null | undefined;
+    correct: number;
+    total: number;
+    learnerThreshold: ExamPassThreshold;
+}): ExamVerdict {
+    if (lessonMode !== "exam") return { authorEvaluation: null, examPass: false };
+    const authorEvaluation = resolveAuthorEvaluation(evaluation, correct, total);
+    if (authorEvaluation) {
+        return { authorEvaluation, examPass: authorEvaluation.outcome.passed === true };
+    }
+    return { authorEvaluation: null, examPass: examPassed(correct, total, learnerThreshold) };
+}
+
+/**
+ * Whether the summary shows the detailed evaluation: the learner's toggle
+ * once used, else open when the author's block asks for a detailed report.
+ *
+ * @example
+ * resolveDetailedView(null, authorEvaluation); // true for report "detailed"
+ */
+export function resolveDetailedView(
+    learnerChoice: boolean | null,
+    authorEvaluation: AuthorEvaluationResult | null,
+): boolean {
+    if (learnerChoice !== null) return learnerChoice;
+    return authorEvaluation?.report === "detailed";
 }

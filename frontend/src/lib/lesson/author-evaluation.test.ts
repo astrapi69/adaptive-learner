@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveAuthorEvaluation } from "./author-evaluation";
+import { resolveAuthorEvaluation, resolveDetailedView, resolveExamVerdict } from "./author-evaluation";
 
 const GRADES = {
     scheme: "grades" as const,
@@ -69,5 +69,39 @@ describe("resolveAuthorEvaluation (#3736)", () => {
         const result = resolveAuthorEvaluation({ scheme: "percent" }, 7, 10);
         expect(result?.passPercent).toBeNull();
         expect(result?.outcome.passed).toBeUndefined();
+    });
+});
+
+describe("resolveExamVerdict (#3736)", () => {
+    const PILOT = { scheme: "pass_fail" as const, pass_percent: 60 };
+
+    it.each([
+        ["exam with a block: the author's mark decides", "exam", PILOT, 7, true, "author"],
+        ["exam without a block: the learner's threshold decides", "exam", null, 7, false, "learner"],
+        ["practice ignores the block and has no verdict", "practice", PILOT, 7, false, "learner"],
+        ["exam with a block below the author's mark", "exam", PILOT, 5, false, "author"],
+    ] as const)("%s", (_name, lessonMode, evaluation, correct, examPass, source) => {
+        const verdict = resolveExamVerdict({
+            lessonMode,
+            evaluation,
+            correct,
+            total: 10,
+            learnerThreshold: 80,
+        });
+        expect(verdict.examPass).toBe(examPass);
+        expect(verdict.authorEvaluation ? "author" : "learner").toBe(source);
+    });
+});
+
+describe("resolveDetailedView (#3736)", () => {
+    const detailedReport = resolveAuthorEvaluation({ report: "detailed" }, 7, 10);
+
+    it.each([
+        ["no choice, no block: compact", null, null, false],
+        ["no choice, detailed report: open", null, detailedReport, true],
+        ["the learner's choice wins over the report", false, detailedReport, false],
+        ["the learner opened it without a block", true, null, true],
+    ] as const)("%s", (_name, choice, author, open) => {
+        expect(resolveDetailedView(choice, author)).toBe(open);
     });
 });
