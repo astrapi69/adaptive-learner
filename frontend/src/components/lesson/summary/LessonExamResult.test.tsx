@@ -87,13 +87,13 @@ describe("LessonExamResult with the set's evaluation block (#3736)", () => {
         correct={7}
         scorePct={70}
         examPass={true}
-        authorEvaluation={author({ scheme: "pass_fail", pass_percent: 60, title: "Pilotprüfung" }, 7)}
+        authorEvaluation={author({ scheme: "pass_fail", pass_percent: 60, title: "Hauptstadt-Prüfung" }, 7)}
       />,
     );
     const panel = screen.getByTestId("lesson-exam-result");
     expect(panel).toHaveAttribute("data-evaluation-source", "author");
     expect(panel).toHaveAttribute("data-passed", "true");
-    expect(screen.getByRole("heading")).toHaveTextContent("Pilotprüfung");
+    expect(screen.getByRole("heading")).toHaveTextContent("Hauptstadt-Prüfung");
     const verdict = screen.getByTestId("lesson-exam-result-verdict");
     expect(verdict).toHaveTextContent("Passed");
     expect(verdict).toHaveTextContent("(pass ≥ 60%)");

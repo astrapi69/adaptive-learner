@@ -667,16 +667,18 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       Button rechts daneben; Mobile: eng gepackt bzw. sauberer Umbruch,
       kein Ueberlappen) (#1942)
 - [ ] TC-0150 Pruefungsmodus: keine Hilfen, Ergebnis am Ende, 1.5x XP
-- [ ] TC-0955 Prüfungsmodus mit Bewertungsblock des Sets (#3736): Repo
+- [ ] TC-0955 Prüfungsmodus mit Bewertungsblock des Sets (#3736, #3740): Repo
       `astrapi69/adaptive-learner-content-test` verbinden, Standard-Modus
       Prüfung, eigene Bestehensgrenze 80 %. Pilot-Lektion
       (`evaluation-pilot-from-de`) mit 7 von 10 richtig: **Bestanden**,
-      Überschrift "Pilotprüfung", Hinweis "Bewertet nach den Vorgaben dieses
-      Sets, nicht nach deiner eigenen Bestehensgrenze", Schwelle "(bestanden
-      ab 60%)". Kontroll-Lektion (`evaluation-pilot-control-from-de`) mit 7
-      von 10: **Nicht bestanden** gegen die eigenen 80 %, kein Hinweis.
-      Dieselbe Pilot-Lektion im Übungsmodus: keine Prüfungskarte,
-      Zusammenfassung wie bisher
+      Überschrift "Hauptstadt-Prüfung", Hinweis "Bewertet nach den Vorgaben
+      dieses Sets, nicht nach deiner eigenen Bestehensgrenze", Schwelle
+      "(bestanden ab 60%)"; **keine Sterne** und kein Sterne-Lobtext (etwa
+      "Guter Anfang - bleib dran!"), der Punktebalken bleibt.
+      Kontroll-Lektion (`evaluation-pilot-control-from-de`) mit 7 von 10:
+      **Nicht bestanden** gegen die eigenen 80 %, kein Hinweis, Sterne und
+      Lobtext wie bisher. Dieselbe Pilot-Lektion im Übungsmodus: keine
+      Prüfungskarte, Sterne und Zusammenfassung wie bisher
 - [ ] TC-0151 Zeitmodus: Countdown-Balken sichtbar, Farb-Uebergang
 - [ ] TC-0152 Fehler-Modus: nur Fehlerkarten (nach min. 1 Fehler)
 - [ ] TC-0153 Rueckwaerts: Matching-Spalten getauscht

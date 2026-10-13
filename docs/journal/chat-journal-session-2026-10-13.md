@@ -25,3 +25,16 @@
   - Bundle: Entry-Chunk `index-*.js` gzip 256994 -> 256994, `AiValidationDialog-*.js` gzip 39847 -> 39847, alle JS-Chunks 2567951 -> 2567951, je +0; auch roh und in der Chunk-Anzahl (241) keine Änderung. Die neue Regel liegt in `validateManifestPair`, das die App nicht importiert, darum fällt sie aus dem Bundle.
   - Suiten: Frontend tsc und ESLint sauber, Vitest 1091 Dateien / 12123 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden (Backend-venv); `make ci` und Ordner-Guard grün.
 - Commit: (dieser PR).
+
+## 3. Keine Sternskala neben der Autorenwertung (#3740)
+- Original prompt: #3740 umsetzen (bug, UX, P2): Im Prüfungsmodus mit Set-Bewertung zeigt die Lektions-Zusammenfassung keine Sternskala und keinen Sterne-Lobtext mehr.
+- Optimized prompt: Wenn `resolveExamVerdict` eine `authorEvaluation` liefert, `lesson-summary-stars` und die `encourage_0..3`-Nachricht weglassen; Punktebalken, XP, Konfetti und Persistenz unverändert; andere Modi und Prüfung ohne Block unverändert. Pilot-Titel "Hauptstadt-Prüfung" in TC-0955 und den Fixtures nachziehen.
+- Goal: Ein Lauf hat genau eine Bewertung; sobald das Set eine erklärt, ist es die des Autors.
+- Result:
+  - Neu `showsStarScale(verdict)` in `lib/lesson/summary/author-evaluation.ts` (reiner Helfer); `SummaryScoreboard` bekommt `showStarScale`, die Sternzeile und die Nachricht stecken jetzt in einer eigenen `StarScale`-Komponente. Der Punktebalken bleibt.
+  - Keine eigene Zuspruchzeile nach dem Urteil: das Issue nennt sie optional, die Prüfungskarte trägt das Urteil schon, und eine neue Zeile hätte einen eigenen i18n-PR gebraucht.
+  - Tests (RED zuerst): Pilot im Prüfungsmodus ohne Sterne und Nachricht, Karte unverändert; `grades` und `percent` ebenso; Prüfung ohne Block und Übung mit Block mit Sternen wie bisher; Punktebalken bleibt. `showsStarScale` mit drei Fällen.
+  - Grenzen lokal geprüft: Komplexität `LessonSummary` bleibt 19, `LessonSummary.tsx` 902 Zeilen, Ordner-Guard und Komplexitäts-Gate grün.
+  - TC-0955 (DE+EN): Überschrift "Hauptstadt-Prüfung", keine Sterne beim Pilot, Sterne wie bisher bei der Kontrolle.
+  - Suiten: ESLint sauber, Vitest 1091 Dateien / 12132 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden (Backend-venv); `make ci` grün.
+- Commit: (dieser PR, Closes #3740).

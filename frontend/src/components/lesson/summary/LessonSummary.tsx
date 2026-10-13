@@ -106,6 +106,7 @@ import {
 import {
   resolveDetailedView,
   resolveExamVerdict,
+  showsStarScale,
   type SetEvaluation,
 } from "../../../lib/lesson/summary/author-evaluation";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
@@ -226,7 +227,7 @@ export default function LessonSummary({
   // #3736 - a set's evaluation block wins over the learner's threshold in
   // exam mode, on the same first-pass score. Derived on render, like the
   // learner verdict; nothing new is persisted.
-  const { authorEvaluation, examPass } = useMemo(
+  const examVerdict = useMemo(
     () =>
       resolveExamVerdict({
         lessonMode,
@@ -237,6 +238,7 @@ export default function LessonSummary({
       }),
     [lessonMode, setEvaluation, correct, total, examThreshold],
   );
+  const { authorEvaluation, examPass } = examVerdict;
 
   // #594 Hint Economy — how many steps this run was answered with a hint
   // revealed. Read from the persisted step results.
@@ -556,6 +558,7 @@ export default function LessonSummary({
           enabled
           stars={stars}
           message={celebrateMessage}
+          showStarScale={showsStarScale(examVerdict)}
           animatedPct={animatedPct}
           scorePct={displayScorePct}
           correct={displayCorrect}
