@@ -26,6 +26,11 @@ const SET_ID = "fr-a1-from-en";
 const LESSON = "01-greetings.json";
 const MODE_KEY = "adaptive-learner.lesson.default_mode";
 
+/** The lesson's URL, captured on the first open; reopening uses it like a
+ *  bookmark (the content tree keeps its expanded state, so a second walk
+ *  through it would collapse the set list instead). */
+let lessonUrl = "";
+
 async function openFirstLesson(page: Page): Promise<void> {
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 20_000});
@@ -34,6 +39,12 @@ async function openFirstLesson(page: Page): Promise<void> {
     const openBtn = page.getByTestId(`content-set-${SET_ID}-open`);
     await expect(openBtn).toBeVisible({timeout: 25_000});
     await openBtn.click();
+    await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 20_000});
+}
+
+/** Open the lesson again by its URL. */
+async function reopenLesson(page: Page): Promise<void> {
+    await page.goto(lessonUrl);
     await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 20_000});
 }
 
@@ -126,6 +137,7 @@ test.describe("A run from another mode does not continue as an exam (#3742)", ()
         await createTestUser(page);
         await page.evaluate((key) => localStorage.setItem(key, "practice"), MODE_KEY);
         await openFirstLesson(page);
+        lessonUrl = page.url();
         await answerFirstExercise(page);
         await expect.poll(() => storedRun(page), {timeout: 5_000}).toMatchObject({
             lesson_mode: "practice",
@@ -136,7 +148,7 @@ test.describe("A run from another mode does not continue as an exam (#3742)", ()
 
     test("practice run opened in exam: no continue, start over begins a fresh exam", async ({page}) => {
         await page.evaluate((key) => localStorage.setItem(key, "exam"), MODE_KEY);
-        await openFirstLesson(page);
+        await reopenLesson(page);
 
         await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible({timeout: 20_000});
         await expect(page.getByTestId("lesson-resume-mode-conflict")).toBeVisible();
@@ -158,7 +170,7 @@ test.describe("A run from another mode does not continue as an exam (#3742)", ()
     });
 
     test("practice run opened in practice: continue as before", async ({page}) => {
-        await openFirstLesson(page);
+        await reopenLesson(page);
         await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible({timeout: 20_000});
         await expect(page.getByTestId("lesson-resume-mode-conflict")).toHaveCount(0);
         await page.getByTestId("lesson-resume-continue").click();
