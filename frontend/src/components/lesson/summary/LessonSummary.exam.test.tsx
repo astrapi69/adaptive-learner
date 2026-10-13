@@ -99,7 +99,7 @@ describe("LessonSummary exam result", () => {
 });
 
 describe("LessonSummary with the set's evaluation block (#3736)", () => {
-    const PILOT: SetEvaluation = {scheme: "pass_fail", pass_percent: 60, title: "Pilotprüfung"};
+    const PILOT: SetEvaluation = {scheme: "pass_fail", pass_percent: 60, title: "Hauptstadt-Prüfung"};
 
     function learnerThreshold(pct: number) {
         localStorage.setItem("adaptive-learner.lesson.exam_pass_threshold", String(pct));
@@ -111,7 +111,7 @@ describe("LessonSummary with the set's evaluation block (#3736)", () => {
         const panel = screen.getByTestId("lesson-exam-result");
         expect(panel).toHaveAttribute("data-passed", "true");
         expect(panel).toHaveAttribute("data-evaluation-source", "author");
-        expect(panel).toHaveTextContent("Pilotprüfung");
+        expect(panel).toHaveTextContent("Hauptstadt-Prüfung");
         expect(screen.getByTestId("lesson-exam-result-source")).toBeInTheDocument();
     });
 
@@ -141,5 +141,59 @@ describe("LessonSummary with the set's evaluation block (#3736)", () => {
     it("report: compact keeps today's compact default", () => {
         renderSummary("exam", 7, 10, {...PILOT, report: "compact"});
         expect(screen.getByTestId("lesson-summary")).toHaveAttribute("data-detailed", "false");
+    });
+});
+
+describe("LessonSummary star scale under the author's evaluation (#3740)", () => {
+    const PILOT: SetEvaluation = {scheme: "pass_fail", pass_percent: 60, title: "Hauptstadt-Prüfung"};
+    const GRADES: SetEvaluation = {
+        scheme: "grades",
+        grades: [
+            {min_percent: 0, label: "F"},
+            {min_percent: 60, label: "C"},
+        ],
+    };
+
+    function expectStarScale(shown: boolean) {
+        if (shown) {
+            expect(screen.getByTestId("lesson-summary-stars")).toBeInTheDocument();
+            expect(screen.getByTestId("lesson-summary-message")).toBeInTheDocument();
+        } else {
+            expect(screen.queryByTestId("lesson-summary-stars")).toBeNull();
+            expect(screen.queryByTestId("lesson-summary-message")).toBeNull();
+        }
+    }
+
+    it("pilot in exam mode: no star row, no star message, the exam card unchanged", () => {
+        localStorage.setItem("adaptive-learner.lesson.exam_pass_threshold", "80");
+        renderSummary("exam", 7, 10, PILOT);
+        expectStarScale(false);
+        const panel = screen.getByTestId("lesson-exam-result");
+        expect(panel).toHaveAttribute("data-passed", "true");
+        expect(panel).toHaveTextContent("Hauptstadt-Prüfung");
+        expect(screen.getByTestId("lesson-exam-result-source")).toBeInTheDocument();
+    });
+
+    it.each([
+        ["grades", GRADES],
+        ["percent", {scheme: "percent", pass_percent: 70} as SetEvaluation],
+    ])("%s scheme in exam mode: no star scale either", (_name, block) => {
+        renderSummary("exam", 7, 10, block);
+        expectStarScale(false);
+    });
+
+    it("exam mode without a block keeps the stars and the message", () => {
+        renderSummary("exam", 7, 10, null);
+        expectStarScale(true);
+    });
+
+    it("practice mode with a block keeps the stars and the message", () => {
+        renderSummary("practice", 7, 10, PILOT);
+        expectStarScale(true);
+    });
+
+    it("keeps the score bar under the author's evaluation", () => {
+        renderSummary("exam", 7, 10, PILOT);
+        expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "70");
     });
 });

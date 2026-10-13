@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveAuthorEvaluation, resolveDetailedView, resolveExamVerdict } from "./author-evaluation";
+import {
+    resolveAuthorEvaluation,
+    resolveDetailedView,
+    resolveExamVerdict,
+    showsStarScale,
+} from "./author-evaluation";
 
 const GRADES = {
     scheme: "grades" as const,
@@ -49,11 +54,11 @@ describe("resolveAuthorEvaluation (#3736)", () => {
 
     it("carries title, report and the unrounded percent", () => {
         const result = resolveAuthorEvaluation(
-            { scheme: "pass_fail", pass_percent: 60, title: "Pilotprüfung", report: "detailed" },
+            { scheme: "pass_fail", pass_percent: 60, title: "Hauptstadt-Prüfung", report: "detailed" },
             2,
             3,
         );
-        expect(result?.title).toBe("Pilotprüfung");
+        expect(result?.title).toBe("Hauptstadt-Prüfung");
         expect(result?.report).toBe("detailed");
         expect(result?.percent).toBeCloseTo(66.6667, 3);
     });
@@ -103,5 +108,19 @@ describe("resolveDetailedView (#3736)", () => {
         ["the learner opened it without a block", true, null, true],
     ] as const)("%s", (_name, choice, author, open) => {
         expect(resolveDetailedView(choice, author)).toBe(open);
+    });
+});
+
+describe("showsStarScale (#3740)", () => {
+    const PILOT = { scheme: "pass_fail" as const, pass_percent: 60 };
+    const verdict = (lessonMode: "exam" | "practice", evaluation: typeof PILOT | null) =>
+        resolveExamVerdict({ lessonMode, evaluation, correct: 7, total: 10, learnerThreshold: 80 });
+
+    it.each([
+        ["exam with a block: the author owns the judgement", "exam", PILOT, false],
+        ["exam without a block: stars as today", "exam", null, true],
+        ["practice with a block: stars as today", "practice", PILOT, true],
+    ] as const)("%s", (_name, mode, evaluation, shown) => {
+        expect(showsStarScale(verdict(mode, evaluation))).toBe(shown);
     });
 });

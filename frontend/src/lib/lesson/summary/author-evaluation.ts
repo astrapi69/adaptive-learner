@@ -125,3 +125,16 @@ export function resolveDetailedView(
     if (learnerChoice !== null) return learnerChoice;
     return authorEvaluation?.report === "detailed";
 }
+
+/**
+ * Whether the summary shows the fixed star scale and its message (#3740).
+ * Once a set's evaluation applies, the author owns the judgement: a second
+ * scale beside it contradicts the verdict, so the stars give way. Without
+ * an applied block (other modes, or exam mode without one) they stay.
+ *
+ * @example
+ * showsStarScale(resolveExamVerdict({...})); // false under the author's block
+ */
+export function showsStarScale(verdict: ExamVerdict): boolean {
+    return verdict.authorEvaluation === null;
+}
