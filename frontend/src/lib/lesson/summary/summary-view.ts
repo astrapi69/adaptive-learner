@@ -5,8 +5,8 @@
  * view's "Fix mistakes" row and the detailed view's correction marks.
  */
 
-import type { CorrectionSummary } from "./correction/correction-summary";
-import type { LessonAttempt, LessonProgress } from "../../storage/types";
+import type { CorrectionSummary } from "../correction/correction-summary";
+import type { LessonAttempt, LessonProgress } from "../../../storage/types";
 
 /** Derive the display stats from the (possibly absent) progress row:
  *  the score, the rounded minutes (floored at 1), the completed flag and

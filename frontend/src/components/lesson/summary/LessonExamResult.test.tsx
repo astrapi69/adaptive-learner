@@ -8,7 +8,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import LessonExamResult from "./LessonExamResult";
-import { resolveAuthorEvaluation } from "../../../lib/lesson/author-evaluation";
+import { resolveAuthorEvaluation } from "../../../lib/lesson/summary/author-evaluation";
 
 const BASE = {
   examPass: true,

@@ -83,7 +83,7 @@ import {
   detailedCorrectionMarks,
   isSectionShown,
   offersFixMistakes,
-} from "../../../lib/lesson/summary-view";
+} from "../../../lib/lesson/summary/summary-view";
 import { resolveSummaryScoreDisplay } from "../../../lib/lesson/correction-adjusted-score";
 import {
   buildCorrectionSummary,
@@ -107,7 +107,7 @@ import {
   resolveDetailedView,
   resolveExamVerdict,
   type SetEvaluation,
-} from "../../../lib/lesson/author-evaluation";
+} from "../../../lib/lesson/summary/author-evaluation";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
 import { useSummaryCelebration } from "../../../hooks/lesson/useSummaryCelebration";
 import { getStorage } from "../../../storage";

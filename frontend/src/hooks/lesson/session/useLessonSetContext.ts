@@ -16,7 +16,7 @@ import {useEffect, useState} from "react";
 import {getStorage} from "../../../storage";
 import {resolveSetPosition, type SetPosition} from "../../../lib/lesson/set-position";
 import type {ContentSetBook} from "../../../storage/types";
-import type {SetEvaluation} from "../../../lib/lesson/author-evaluation";
+import type {SetEvaluation} from "../../../lib/lesson/summary/author-evaluation";
 
 /**
  * Resolve next-lesson + set metadata for the lesson viewer.

@@ -17,12 +17,12 @@
 
 import { gradeFor, type EvaluationOutcome } from "learn-content-engine/rules";
 
-import type { ContentSetEntry } from "../../storage/types";
+import type { ContentSetEntry } from "../../../storage/types";
 import {
     examPassed,
     type ExamPassThreshold,
     type LessonMode,
-} from "../learning/lessonModePref";
+} from "../../learning/lessonModePref";
 
 /** A set's evaluation block as the content listing carries it. */
 export type SetEvaluation = NonNullable<ContentSetEntry["evaluation"]>;

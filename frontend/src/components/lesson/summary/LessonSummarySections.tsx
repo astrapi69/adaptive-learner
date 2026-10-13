@@ -45,7 +45,7 @@ import type { LessonMode } from "../../../lib/learning/lessonModePref";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
 import type { CorrectionSummary } from "../../../lib/lesson/correction/correction-summary";
 import type { StarRating } from "../../../lib/lesson/lesson-summary";
-import type { AuthorEvaluationResult } from "../../../lib/lesson/author-evaluation";
+import type { AuthorEvaluationResult } from "../../../lib/lesson/summary/author-evaluation";
 import type { ContentLesson, ElementError } from "../../../storage/types";
 
 /** The i18n lookup signature the parent passes down. */

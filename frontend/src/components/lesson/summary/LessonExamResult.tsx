@@ -24,7 +24,7 @@ import { Check, RotateCcw, X, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useI18n } from "../../../hooks/ui/useI18n";
-import type { AuthorEvaluationResult } from "../../../lib/lesson/author-evaluation";
+import type { AuthorEvaluationResult } from "../../../lib/lesson/summary/author-evaluation";
 
 type TFn = ReturnType<typeof useI18n>["t"];
 

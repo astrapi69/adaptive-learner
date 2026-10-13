@@ -12,7 +12,7 @@ import {afterEach, describe, expect, it, vi} from "vitest";
 
 import LessonSummary from "./LessonSummary";
 import type {ContentLesson, LessonProgress} from "../../../storage/types";
-import type {SetEvaluation} from "../../../lib/lesson/author-evaluation";
+import type {SetEvaluation} from "../../../lib/lesson/summary/author-evaluation";
 
 const LESSON: ContentLesson = {
     id: "l1",
