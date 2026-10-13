@@ -483,6 +483,7 @@ settings:
     error_decrypt: "Phrase secrète incorrecte ou fichier endommagé."
     error_import: "Impossible d'importer le fichier de clés."
   lesson_mode:
+    threshold_set_hint: "Les sets qui ont leur propre seuil de réussite utilisent ce seuil."
     title: "Mode de leçon"
     hint: "Le mode entraînement garde toutes les aides. Le mode examen masque les indices, le rappel de théorie, la lecture automatique et la solution pour réviser dans des conditions réalistes."
     default_label: "Mode par défaut"
@@ -2026,6 +2027,7 @@ lesson:
     suggest_label: "Suggestion IA"
     suggest_empty: "Rien d’utilisable n’est revenu. Réessayez ou ajustez l’étape à la main."
   exam:
+    start_notice: "Examen : tu ne vois qu'à la fin si une réponse était juste, et tu ne peux pas revenir en arrière."
     author_source: "Évalué selon les règles de ce set, et non selon ton propre seuil de réussite"
     grade: "Note : {grade}"
     no_grade: "Aucune note atteinte"
@@ -2465,6 +2467,7 @@ lesson:
     paused_toast: "Leçon mise en pause. Tu peux reprendre à tout moment."
     abandoned_toast: "Leçon abandonnée."
   resume:
+    mode_conflict: "Cette session a été commencée dans un autre mode. Les réponses d'examen et d'entraînement ne se mélangent pas, la leçon recommence donc."
     heading: "Reprendre la leçon ?"
     body: 'Tu as mis en pause "{title}". Veux-tu continuer là où tu t''es arrêté ou recommencer ?'
     action_resume: "Continuer"

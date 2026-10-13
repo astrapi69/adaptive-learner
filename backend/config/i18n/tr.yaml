@@ -483,6 +483,7 @@ settings:
     error_decrypt: "Parola ifadesi yanlış veya dosya bozuk."
     error_import: "Anahtar dosyası içe aktarılamadı."
   lesson_mode:
+    threshold_set_hint: "Kendi geçme eşiği olan setler o eşiği kullanır."
     title: "Ders modu"
     hint: "Alıştırma modu tüm yardımları açık tutar. Sınav modu ipuçlarını, teori tekrarını, otomatik okumayı ve çözümü gizler; böylece gerçekçi koşullarda hatırlarsın."
     default_label: "Varsayılan mod"
@@ -2024,6 +2025,7 @@ lesson:
     suggest_label: "Yapay zeka önerisi"
     suggest_empty: "Kullanılabilir bir öneri gelmedi. Tekrar dene veya adımı elle düzenle."
   exam:
+    start_notice: "Sınav: Bir cevabın doğru olup olmadığını ancak sonda görürsünüz ve geri dönemezsiniz."
     author_source: "Kendi geçme eşiğine göre değil, bu setin kurallarına göre değerlendirildi"
     grade: "Not: {grade}"
     no_grade: "Hiçbir not seviyesine ulaşılamadı"
@@ -2463,6 +2465,7 @@ lesson:
     paused_toast: "Ders duraklatıldı. İstediğiniz zaman devam edebilirsiniz."
     abandoned_toast: "Ders terk edildi."
   resume:
+    mode_conflict: "Bu tur başka bir modda başlatıldı. Sınav ve alıştırma cevapları karıştırılamaz, bu yüzden ders baştan başlar."
     heading: "Ders devam ettirilsin mi?"
     body: '"{title}" dersini duraklatttınız. Kaldığınız yerden devam etmek veya baştan başlamak ister misiniz?'
     action_resume: "Devam et"

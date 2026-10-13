@@ -483,6 +483,7 @@ settings:
     error_decrypt: "Passphrase falsch oder Datei beschädigt."
     error_import: "Schlüsseldatei konnte nicht importiert werden."
   lesson_mode:
+    threshold_set_hint: "Sets mit eigener Bestehensgrenze verwenden stattdessen diese."
     title: "Lektionsmodus"
     hint: "Im Übungsmodus bleiben alle Hilfen an. Im Prüfungsmodus werden Tipps, Theorie-Wiederholung, Vorlesen und die Auflösung ausgeblendet, damit du unter realistischen Bedingungen abrufst."
     default_label: "Standardmodus"
@@ -2029,6 +2030,7 @@ lesson:
     suggest_label: "KI-Vorschlag"
     suggest_empty: "Kein brauchbarer Vorschlag. Versuche es erneut oder passe den Schritt manuell an."
   exam:
+    start_notice: "Prüfung: Ob eine Antwort richtig war, siehst du erst am Ende, und zurückblättern geht nicht."
     author_source: "Bewertet nach den Vorgaben dieses Sets, nicht nach deiner eigenen Bestehensgrenze"
     grade: "Note: {grade}"
     no_grade: "Keine Notenstufe erreicht"
@@ -2468,6 +2470,7 @@ lesson:
     paused_toast: "Lektion pausiert. Du kannst jederzeit weitermachen."
     abandoned_toast: "Lektion aufgegeben."
   resume:
+    mode_conflict: "Diese Runde wurde in einem anderen Modus begonnen. Prüfungs- und Übungsantworten lassen sich nicht mischen, darum beginnt die Lektion neu."
     heading: "Lektion fortsetzen?"
     body: 'Du hast "{title}" pausiert. Möchtest du dort weitermachen, wo du aufgehört hast, oder neu starten?'
     action_resume: "Weiter"
