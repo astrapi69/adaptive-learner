@@ -14,3 +14,14 @@
   - Testplan TC-0955 (DE+EN): Pilot- und Kontroll-Lektion aus `adaptive-learner-content-test`.
   - Zwei Gates schlugen lokal an (`make ci`): Komplexität von `LessonSummary` 20 -> 24 und Dateigröße 944 -> 969 Zeilen (Grenze 950). Statt Baseline oder Whitelist: `resolveExamVerdict` und `resolveDetailedView` als reine, getestete Helfer (Komplexität jetzt 19) und die vier reinen View-Helfer unverändert nach `lib/lesson/summary/summary-view.ts` (899 Zeilen); beide neuen Module liegen in `lib/lesson/summary/`, weil `lib/lesson` sonst 16 Dateien hätte (Ordner-Guard, max. 15, erst im CI-Job des Komplexitäts-Gates aufgefallen).
 - Commit: (dieser PR, Closes #3736).
+
+## 2. Engine-Re-Pin auf learn-content-engine 0.42.0
+- Original prompt: Re-Pin von learn-content-engine 0.41.0 auf 0.42.0. Was 0.42.0 bringt: nur die neue Autoren-Warnung W-MANIFEST-DESCRIPTION-COPY in validateManifestPair (learn-content-engine#268). Erwartung: keine Verhaltensänderung, keine messbare Bundle-Änderung.
+- Optimized prompt: Pin 0.42.0 in `schema/engine-version.txt`, `frontend/package.json` und `frontend/bun.lock`; `make sync-schema` (keine Änderung), die drei Check-Targets, alle Suiten; Frontend vor und nach dem Pin bauen und Entry-Chunk, `AiValidationDialog` und die Summe aller JS-Chunks mit gzip -9 vergleichen.
+- Goal: Die App steht auf 0.42.0; die Bundle-Neutralität ist gemessen.
+- Result:
+  - `validateManifestPair` ruft die App nirgends auf (grep über `frontend/src`).
+  - Pin 0.41.0 -> 0.42.0; `make sync-schema` ändert keine Datei. `sync-schema-check`, `engine-parity-check` und `sync-openapi-check` sauber.
+  - Bundle: Entry-Chunk `index-*.js` gzip 256994 -> 256994, `AiValidationDialog-*.js` gzip 39847 -> 39847, alle JS-Chunks 2567951 -> 2567951, je +0; auch roh und in der Chunk-Anzahl (241) keine Änderung. Die neue Regel liegt in `validateManifestPair`, das die App nicht importiert, darum fällt sie aus dem Bundle.
+  - Suiten: Frontend tsc und ESLint sauber, Vitest 1091 Dateien / 12123 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden (Backend-venv); `make ci` und Ordner-Guard grün.
+- Commit: (dieser PR).
