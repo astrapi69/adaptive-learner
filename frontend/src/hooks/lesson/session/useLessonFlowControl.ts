@@ -5,6 +5,8 @@ import {useI18n} from "../../ui/useI18n";
 import {notify} from "../../../utils/notify";
 import type {LessonLoadStatus} from "./useLesson";
 import type {LessonProgress} from "../../../storage/types";
+import type {LessonMode} from "../../../lib/learning/lessonModePref";
+import {resumeModeConflict} from "../../../lib/lesson/progress/resume-mode";
 
 /**
  * Inputs for {@link useLessonFlowControl} — the lifecycle slice of
@@ -35,6 +37,9 @@ export interface UseLessonFlowControlOptions {
      * status (listed under "continue learning", not as paused).
      */
     atSummary?: boolean;
+    /** #3742 - the mode the lesson is open in; a stored run from another
+     *  mode with ``exam`` on either side does not continue. */
+    lessonMode?: LessonMode;
 }
 
 /**
@@ -51,6 +56,9 @@ export interface UseLessonFlowControlResult {
     /** True when the paused-lesson resume prompt must overlay the
      *  step view (Phase 63C). */
     showResumePrompt: boolean;
+    /** #3742 - the stored run was started in another mode and must start
+     *  over: the prompt offers no "continue". */
+    modeConflict: boolean;
     handleResume: () => Promise<void>;
     handleStartOver: () => Promise<void>;
     handlePauseFromDialog: () => Promise<void>;
@@ -78,6 +86,7 @@ export function useLessonFlowControl({
     autosave,
     goToStep,
     atSummary = false,
+    lessonMode = "practice",
 }: UseLessonFlowControlOptions): UseLessonFlowControlResult {
     const navigate = useNavigate();
     const {t} = useI18n();
@@ -113,9 +122,23 @@ export function useLessonFlowControl({
         setChoiceLessonKey(lessonKey);
         setResumeChoiceMade(false);
     }
+    // #3742 - decided once per lesson, on the row as loaded: an autosave
+    // restamps the row with the current mode while the prompt is up, so a
+    // live check would let the conflict vanish under the learner.
+    const [conflictAtLoad, setConflictAtLoad] = useState<{key: string | null; conflict: boolean}>({
+        key: null,
+        conflict: false,
+    });
+    if (status === "ready" && lessonKey !== null && conflictAtLoad.key !== lessonKey) {
+        setConflictAtLoad({key: lessonKey, conflict: resumeModeConflict(progress, lessonMode)});
+    }
+    const modeConflict =
+        conflictAtLoad.key === lessonKey
+            ? conflictAtLoad.conflict
+            : resumeModeConflict(progress, lessonMode);
     const showResumePrompt =
         status === "ready" &&
-        progress?.status === "paused" &&
+        (progress?.status === "paused" || modeConflict) &&
         !resumeChoiceMade;
 
     const handleResume = async () => {
@@ -226,6 +249,7 @@ export function useLessonFlowControl({
         setExitOpen,
         isInProgress,
         showResumePrompt,
+        modeConflict,
         handleResume,
         handleStartOver,
         handlePauseFromDialog,

@@ -10,6 +10,11 @@
  *   wipe position and answers), then markRestarted() and goToStep(0) so
  *   the learner begins fresh with an empty progress row.
  *
+ * #3742 - when the run was started in another mode with ``exam`` on
+ * either side (``modeConflict``), the dialog offers no "continue": a line
+ * explains why, and "start over" is the only path, so practice answers
+ * never count as exam answers and the reverse.
+ *
  * The dialog is NOT closable without making a choice — the back
  * button should not silently keep the lesson in "paused" and
  * advance to the step view.
@@ -27,6 +32,8 @@ import {useI18n} from "../../../hooks/ui/useI18n";
 export interface LessonResumeDialogProps {
     open: boolean;
     lessonTitle: string;
+    /** #3742 - the stored run is from another mode and must start over. */
+    modeConflict?: boolean;
     onResume: () => void;
     onStartOver: () => void;
 }
@@ -34,6 +41,7 @@ export interface LessonResumeDialogProps {
 export default function LessonResumeDialog({
     open,
     lessonTitle,
+    modeConflict = false,
     onResume,
     onStartOver,
 }: LessonResumeDialogProps) {
@@ -114,27 +122,39 @@ export default function LessonResumeDialog({
                 <ModalTitle id="lesson-resume-title">
                     {t("lesson.resume.heading", "Resume lesson?")}
                 </ModalTitle>
-                <p>
-                    {t(
-                        "lesson.resume.body",
-                        'You paused "{title}". Would you like to continue where you left off or start over?',
-                    ).replace("{title}", lessonTitle)}
-                </p>
+                {modeConflict ? (
+                    <p data-testid="lesson-resume-mode-conflict">
+                        {t(
+                            "lesson.resume.mode_conflict",
+                            "This run was started in another mode. Exam and practice answers cannot be mixed, so the lesson starts over.",
+                        )}
+                    </p>
+                ) : (
+                    <p>
+                        {t(
+                            "lesson.resume.body",
+                            'You paused "{title}". Would you like to continue where you left off or start over?',
+                        ).replace("{title}", lessonTitle)}
+                    </p>
+                )}
                 <div className="flex flex-wrap gap-3">
+                    {!modeConflict && (
+                        <Button
+                            type="button"
+                            onClick={onResume}
+                            data-testid="lesson-resume-continue"
+                            data-autofocus
+                        >
+                            <PlayCircle size={16} aria-hidden="true" />
+                            {t("lesson.resume.action_resume", "Continue")}
+                        </Button>
+                    )}
                     <Button
                         type="button"
-                        onClick={onResume}
-                        data-testid="lesson-resume-continue"
-                        data-autofocus
-                    >
-                        <PlayCircle size={16} aria-hidden="true" />
-                        {t("lesson.resume.action_resume", "Continue")}
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="outline"
+                        variant={modeConflict ? "default" : "outline"}
                         onClick={() => setConfirmingRestart(true)}
                         data-testid="lesson-resume-restart"
+                        data-autofocus={modeConflict || undefined}
                     >
                         <RotateCcw size={16} aria-hidden="true" />
                         {t("lesson.resume.action_restart", "Start over")}
