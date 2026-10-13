@@ -2173,6 +2173,12 @@
       "suggest_empty": "Kein brauchbarer Vorschlag. Versuche es erneut oder passe den Schritt manuell an."
     },
     "exam": {
+      "author_source": "Bewertet nach den Vorgaben dieses Sets, nicht nach deiner eigenen Bestehensgrenze",
+      "grade": "Note: {grade}",
+      "no_grade": "Keine Notenstufe erreicht",
+      "percent_result": "{pct}% richtig",
+      "advisory_reached": "Empfohlene Marke von {pct}% erreicht",
+      "advisory_missed": "Empfohlene Marke von {pct}% nicht erreicht",
       "passed": "Bestanden",
       "not_passed": "Nicht bestanden",
       "threshold_hint": "(bestanden ab {pct}%)",

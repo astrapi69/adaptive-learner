@@ -2035,6 +2035,12 @@ lesson:
     suggest_label: "Saran AI"
     suggest_empty: "Tidak ada saran yang berguna. Coba lagi atau sesuaikan langkah secara manual."
   exam:
+    author_source: "Dinilai dengan aturan set ini, bukan dengan batas lulusmu sendiri"
+    grade: "Nilai: {grade}"
+    no_grade: "Tidak ada nilai yang tercapai"
+    percent_result: "{pct}% benar"
+    advisory_reached: "Batas anjuran {pct}% tercapai"
+    advisory_missed: "Batas anjuran {pct}% tidak tercapai"
     passed: "Lulus"
     not_passed: "Tidak lulus"
     threshold_hint: "(lulus ≥ {pct}%)"

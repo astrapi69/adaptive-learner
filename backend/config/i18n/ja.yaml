@@ -2024,6 +2024,12 @@ lesson:
     suggest_label: "AI提案"
     suggest_empty: "使える提案が得られませんでした。もう一度試すか、手動でステップを調整してください。"
   exam:
+    author_source: "自分の合格ラインではなく、このセットの基準で評価されました"
+    grade: "評価: {grade}"
+    no_grade: "評価段階に達しませんでした"
+    percent_result: "正答率 {pct}%"
+    advisory_reached: "推奨ライン {pct}% に到達しました"
+    advisory_missed: "推奨ライン {pct}% に届きませんでした"
     passed: "合格"
     not_passed: "不合格"
     threshold_hint: "(合格 ≥ {pct}%)"

@@ -2024,6 +2024,12 @@ lesson:
     suggest_label: "Yapay zeka önerisi"
     suggest_empty: "Kullanılabilir bir öneri gelmedi. Tekrar dene veya adımı elle düzenle."
   exam:
+    author_source: "Kendi geçme eşiğine göre değil, bu setin kurallarına göre değerlendirildi"
+    grade: "Not: {grade}"
+    no_grade: "Hiçbir not seviyesine ulaşılamadı"
+    percent_result: "%{pct} doğru"
+    advisory_reached: "Önerilen %{pct} eşiğine ulaşıldı"
+    advisory_missed: "Önerilen %{pct} eşiğine ulaşılamadı"
     passed: "Geçti"
     not_passed: "Geçmedi"
     threshold_hint: "(geçme ≥ %{pct})"

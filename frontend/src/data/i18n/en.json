@@ -2173,6 +2173,12 @@
       "suggest_empty": "Nothing usable came back. Try again or adjust the step by hand."
     },
     "exam": {
+      "author_source": "Evaluated by this set's own rules, not your own pass threshold",
+      "grade": "Grade: {grade}",
+      "no_grade": "No grade reached",
+      "percent_result": "{pct}% correct",
+      "advisory_reached": "Recommended mark of {pct}% reached",
+      "advisory_missed": "Recommended mark of {pct}% not reached",
       "passed": "Passed",
       "not_passed": "Not passed",
       "threshold_hint": "(pass ≥ {pct}%)",

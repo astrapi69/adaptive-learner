@@ -2173,6 +2173,12 @@
       "suggest_empty": "쓸 만한 제안이 없었습니다. 다시 시도하거나 단계를 직접 수정하세요."
     },
     "exam": {
+      "author_source": "내 합격 기준이 아니라 이 세트의 기준으로 평가했습니다",
+      "grade": "등급: {grade}",
+      "no_grade": "도달한 등급이 없습니다",
+      "percent_result": "정답률 {pct}%",
+      "advisory_reached": "권장 기준 {pct}%에 도달했습니다",
+      "advisory_missed": "권장 기준 {pct}%에 도달하지 못했습니다",
       "passed": "합격",
       "not_passed": "불합격",
       "threshold_hint": "(합격 ≥ {pct}%)",
