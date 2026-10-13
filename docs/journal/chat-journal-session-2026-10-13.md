@@ -23,5 +23,5 @@
   - `validateManifestPair` ruft die App nirgends auf (grep über `frontend/src`).
   - Pin 0.41.0 -> 0.42.0; `make sync-schema` ändert keine Datei. `sync-schema-check`, `engine-parity-check` und `sync-openapi-check` sauber.
   - Bundle: Entry-Chunk `index-*.js` gzip 256994 -> 256994, `AiValidationDialog-*.js` gzip 39847 -> 39847, alle JS-Chunks 2567951 -> 2567951, je +0; auch roh und in der Chunk-Anzahl (241) keine Änderung. Die neue Regel liegt in `validateManifestPair`, das die App nicht importiert, darum fällt sie aus dem Bundle.
-  - Suiten: siehe PR.
+  - Suiten: Frontend tsc und ESLint sauber, Vitest 1091 Dateien / 12123 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden (Backend-venv); `make ci` und Ordner-Guard grün.
 - Commit: (dieser PR).
