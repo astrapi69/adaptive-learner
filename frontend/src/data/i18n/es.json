@@ -519,6 +519,7 @@
       "error_import": "No se pudo importar el archivo de claves."
     },
     "lesson_mode": {
+      "threshold_set_hint": "Los sets con su propio umbral de aprobado usan ese umbral.",
       "title": "Modo de lección",
       "hint": "El modo práctica mantiene todas las ayudas. El modo examen oculta las pistas, el repaso de teoría, la lectura automática y la solución para que recuperes en condiciones realistas.",
       "default_label": "Modo predeterminado",
@@ -2173,6 +2174,7 @@
       "suggest_empty": "No llegó nada utilizable. Inténtalo de nuevo o ajusta el paso a mano."
     },
     "exam": {
+      "start_notice": "Examen: solo al final ves si una respuesta era correcta, y no puedes volver atrás.",
       "author_source": "Evaluado según las reglas de este set, no según tu propio umbral de aprobado",
       "grade": "Nota: {grade}",
       "no_grade": "No se alcanzó ninguna nota",
@@ -2657,6 +2659,7 @@
       "abandoned_toast": "Lección abandonada."
     },
     "resume": {
+      "mode_conflict": "Esta ronda se empezó en otro modo. Las respuestas de examen y de práctica no se pueden mezclar, así que la lección empieza de nuevo.",
       "heading": "¿Reanudar lección?",
       "body": "Pausaste \"{title}\". ¿Te gustaría continuar donde lo dejaste o empezar de nuevo?",
       "action_resume": "Continuar",

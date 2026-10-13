@@ -483,6 +483,7 @@ settings:
     error_decrypt: "Frase-senha incorreta ou arquivo corrompido."
     error_import: "Não foi possível importar o arquivo de chaves."
   lesson_mode:
+    threshold_set_hint: "Sets com limite de aprovação próprio usam esse limite."
     title: "Modo de lição"
     hint: "O modo prática mantém todas as ajudas. O modo exame oculta dicas, revisão de teoria, leitura automática e a solução para que você recupere em condições realistas."
     default_label: "Modo padrão"
@@ -2024,6 +2025,7 @@ lesson:
     suggest_label: "Sugestão de IA"
     suggest_empty: "Nada utilizável retornou. Tente novamente ou ajuste o passo manualmente."
   exam:
+    start_notice: "Exame: você só vê no final se uma resposta estava certa, e não pode voltar."
     author_source: "Avaliado pelas regras deste set, não pelo seu próprio limite de aprovação"
     grade: "Nota: {grade}"
     no_grade: "Nenhuma nota alcançada"
@@ -2463,6 +2465,7 @@ lesson:
     paused_toast: "Aula pausada. Você pode retomar a qualquer momento."
     abandoned_toast: "Aula abandonada."
   resume:
+    mode_conflict: "Esta rodada foi iniciada em outro modo. Respostas de exame e de prática não se misturam, por isso a lição recomeça."
     heading: "Retomar aula?"
     body: 'Você pausou "{title}". Gostaria de continuar de onde parou ou começar novamente?'
     action_resume: "Continuar"

@@ -483,6 +483,7 @@ settings:
     error_decrypt: "Passphrase incorrect or file corrupted."
     error_import: "Could not import the key file."
   lesson_mode:
+    threshold_set_hint: "Sets with their own pass mark use that mark instead."
     title: "Lesson mode"
     hint: "Practice keeps every learning aid on. Exam hides hints, theory recap, auto-read and the solution reveal so you retrieve under realistic conditions."
     default_label: "Default mode"
@@ -2035,6 +2036,7 @@ lesson:
     suggest_label: "AI suggestion"
     suggest_empty: "Nothing usable came back. Try again or adjust the step by hand."
   exam:
+    start_notice: "Exam: you only see at the end whether an answer was right, and you cannot go back."
     author_source: "Evaluated by this set's own rules, not your own pass threshold"
     grade: "Grade: {grade}"
     no_grade: "No grade reached"
@@ -2474,6 +2476,7 @@ lesson:
     paused_toast: "Lesson paused. You can resume anytime."
     abandoned_toast: "Lesson abandoned."
   resume:
+    mode_conflict: "This run was started in another mode. Exam and practice answers cannot be mixed, so the lesson starts over."
     heading: "Resume lesson?"
     body: 'You paused "{title}". Would you like to continue where you left off or start over?'
     action_resume: "Continue"
