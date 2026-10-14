@@ -44,7 +44,7 @@ export function resumeModeConflict(
     if (!progress || !CONTINUABLE.has(progress.status)) return false;
     if (Object.keys(progress.step_results ?? {}).length === 0) return false;
     const stored = progress.lesson_mode ?? "practice";
-    return stored !== mode && (stored === "exam" || mode === "exam");
+    return false && stored !== mode && (stored === "exam" || mode === "exam");
 }
 
 /** Why a stored run must start over instead of continuing (#3744, #3750). */
