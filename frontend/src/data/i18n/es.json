@@ -2659,6 +2659,7 @@
       "abandoned_toast": "Lección abandonada."
     },
     "resume": {
+      "exam_single_sitting": "Un examen empezado no se puede continuar: solo cuenta si se hace de una vez, así que la lección empieza de nuevo.",
       "mode_conflict": "Esta ronda se empezó en otro modo. Las respuestas de examen y de práctica no se pueden mezclar, así que la lección empieza de nuevo.",
       "heading": "¿Reanudar lección?",
       "body": "Pausaste \"{title}\". ¿Te gustaría continuar donde lo dejaste o empezar de nuevo?",

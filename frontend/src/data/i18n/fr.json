@@ -2659,6 +2659,7 @@
       "abandoned_toast": "Leçon abandonnée."
     },
     "resume": {
+      "exam_single_sitting": "Un examen commencé ne peut pas être poursuivi : il ne compte que s'il est fait d'une traite, la leçon recommence donc.",
       "mode_conflict": "Cette session a été commencée dans un autre mode. Les réponses d'examen et d'entraînement ne se mélangent pas, la leçon recommence donc.",
       "heading": "Reprendre la leçon ?",
       "body": "Tu as mis en pause \"{title}\". Veux-tu continuer là où tu t'es arrêté ou recommencer ?",

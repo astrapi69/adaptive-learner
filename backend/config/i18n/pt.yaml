@@ -2465,6 +2465,7 @@ lesson:
     paused_toast: "Aula pausada. Você pode retomar a qualquer momento."
     abandoned_toast: "Aula abandonada."
   resume:
+    exam_single_sitting: "Um exame iniciado não pode ser continuado: ele só conta quando é feito de uma vez, por isso a lição recomeça."
     mode_conflict: "Esta rodada foi iniciada em outro modo. Respostas de exame e de prática não se misturam, por isso a lição recomeça."
     heading: "Retomar aula?"
     body: 'Você pausou "{title}". Gostaria de continuar de onde parou ou começar novamente?'

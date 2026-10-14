@@ -2659,6 +2659,7 @@
       "abandoned_toast": "Lektion aufgegeben."
     },
     "resume": {
+      "exam_single_sitting": "Eine angefangene Prüfung lässt sich nicht fortsetzen: Sie zählt nur, wenn du sie in einem Zug machst. Darum beginnt die Lektion neu.",
       "mode_conflict": "Diese Runde wurde in einem anderen Modus begonnen. Prüfungs- und Übungsantworten lassen sich nicht mischen, darum beginnt die Lektion neu.",
       "heading": "Lektion fortsetzen?",
       "body": "Du hast \"{title}\" pausiert. Möchtest du dort weitermachen, wo du aufgehört hast, oder neu starten?",
