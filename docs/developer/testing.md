@@ -47,6 +47,13 @@ all backend files).
 | Visual regression | `e2e/playwright.visual.config.ts` | `make test-visual` |
 | **Per-feature screenshots** | `e2e/playwright.features.config.ts` | `make verify-screenshots` |
 
+In CI the Dexie-mode gate (`dexie-smoke.yml`) runs nightly, on `release/**`
+pushes, on dispatch, and on every pull request that changes a file the Dexie
+build or its specs read: `frontend/` except unit tests, plus `schema/`,
+`e2e/dexie/`, the shared e2e helpers and fixtures (#3748,
+`scripts/dexie_smoke_affected.py`). A pull request it does not concern gets
+"not affected" from the `Dexie smoke (required)` job without the run.
+
 The smoke specs call `POST /api/reset`, which wipes every learner row. So
 the smoke config starts its own backend and frontend on ports of their own
 with a throwaway data dir, never reuses a server it did not start, and

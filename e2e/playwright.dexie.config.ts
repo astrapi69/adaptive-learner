@@ -29,8 +29,12 @@ export default defineConfig({
     timeout: 30_000,
     // #3427 - the JSON report feeds the runtime skip budget
     // (scripts/check_e2e_skip_budget.py); the first entry keeps the default.
+    // #3748 - in CI the github reporter turns each failing test into an
+    // annotation on the PR, so a red smoke names its spec and assertion
+    // without the downloaded report.
     reporter: [
         [process.env.CI ? "dot" : "list"],
+        ...(process.env.CI ? [["github"] as ["github"]] : []),
         ["json", {outputFile: "test-results/dexie-smoke.json"}],
     ],
     use: {

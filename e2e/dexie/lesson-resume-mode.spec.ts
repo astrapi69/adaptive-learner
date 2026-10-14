@@ -151,7 +151,13 @@ test.describe("A run from another mode does not continue as an exam (#3742)", ()
         await reopenLesson(page);
 
         await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible({timeout: 20_000});
-        await expect(page.getByTestId("lesson-resume-blocked")).toBeVisible();
+        // The reason, not only the block: without the mode conflict the exam
+        // single-sitting rule (#3750) would block this run too, and a broken
+        // conflict check would pass unseen (#3748 proof run).
+        await expect(page.getByTestId("lesson-resume-blocked")).toHaveAttribute(
+            "data-reason",
+            "mode_conflict",
+        );
         await expect(page.getByTestId("lesson-resume-continue")).toHaveCount(0);
 
         await page.getByTestId("lesson-resume-restart").click();

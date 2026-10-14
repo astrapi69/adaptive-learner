@@ -36,37 +36,37 @@ gates:
 
   - workflow: testid-reference-gate.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
-    body_sha: 63d68207e79c4e2e
+    body_sha: 05e8e053efe0e13c
     note: spec-referenced testids may not be removed without touching the spec (escape label testid-refs-unaffected)
 
   - workflow: docker-build-smoke.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
-    body_sha: 63d68207e79c4e2e
+    body_sha: 05e8e053efe0e13c
     note: builds the prod compose path no other gate builds (the #1771 no-cadence class)
 
   - workflow: complexity-check.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
+    body_sha: 2a821a5172a15885
     note: baseline ratchet on PRs, full warn-only report on the night shift
 
   - workflow: dexie-smoke.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
-    note: nightly + release only, never on PRs (expensive, rarely PR-relevant)
+    body_sha: 2a821a5172a15885
+    note: nightly + release; on PRs only when they change what the Dexie build or its specs read (#3748)
 
   - workflow: coverage.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
+    body_sha: 2a821a5172a15885
     note: a report, not a merge gate - night shift by design
 
   - workflow: security-scan.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
+    body_sha: 2a821a5172a15885
     note: warn-only, weekly + release branches
 
   - workflow: webkit-gate.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
+    body_sha: 2a821a5172a15885
     note: real-WebKit layout gate the Chromium gates are blind to
 
   - workflow: engine-schema-parity.yml
@@ -76,7 +76,7 @@ gates:
 
   - workflow: content-stats.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
+    body_sha: 2a821a5172a15885
     note: driven by the separate content repo, so a PR cannot predict it - night shift
 
 # Workflows that deliberately enforce no documented rule.
