@@ -16,6 +16,9 @@
  * ``fixtures/evaluation-pilot-control.lesson.json`` and served through a
  * page.route-mocked content repo (no network).
  *
+ * On the way it pins #3749: the iOS install hint shows on the content page
+ * and is absent on the lesson, without being dismissed.
+ *
  * Asserted per tapped option: it is the checked radio right after the tap,
  * and after "check" it is graded correct with no option marked wrong; the
  * stored ``raw_answer`` of the run matches the tapped value.
@@ -34,6 +37,7 @@ const SET_ID = "evaluation-pilot-control-from-de";
 const SET_PATH = "sets/de/evaluation-pilot-control";
 const LESSON_FILE = "01-hauptstadt-quiz-kontrolle.json";
 const MODE_KEY = "adaptive-learner.lesson.default_mode";
+const DISMISSED_KEY = "adaptive-learner.ios_install_dismissed";
 
 const LESSON = readFileSync(
     join(__dirname, "..", "fixtures", "evaluation-pilot-control.lesson.json"),
@@ -116,17 +120,17 @@ async function openLesson(page: Page, mode: "practice" | "exam"): Promise<void> 
     ).toContainText(/passed|erfolgreich/i);
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
+    // Outside a lesson the iPhone profile shows the install hint (#3749).
+    await expect(page.getByTestId("ios-install-hint")).toBeVisible();
     const open = page.getByTestId(`content-set-${SET_ID}-open`);
     await expect(open).toBeVisible({timeout: 15_000});
     await open.click();
     await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 15_000});
     await page.setViewportSize({width: 390, height: 844});
-    // The iPhone profile shows the add-to-home-screen hint over the footer
-    // (#3749); dismiss it the way the learner does.
-    const dismiss = page.getByTestId("ios-install-hint-dismiss");
-    await dismiss.waitFor({state: "visible", timeout: 5_000}).catch(() => undefined);
-    if (await dismiss.isVisible()) await dismiss.tap();
+    // #3749 - the add-to-home-screen hint stays off the lesson, so it cannot
+    // cover the footer; it is hidden there, not dismissed.
     await expect(page.getByTestId("ios-install-hint")).toHaveCount(0);
+    expect(await page.evaluate((key) => localStorage.getItem(key), DISMISSED_KEY)).toBeNull();
 }
 
 // The mocked repo is served by page.route, which does not see requests a

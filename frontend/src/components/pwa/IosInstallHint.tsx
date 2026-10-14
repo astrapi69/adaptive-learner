@@ -7,13 +7,18 @@
  * is installed (FUNKTION-NICHT-VERFUEGBAR: never shown where it cannot apply).
  *
  * Dezent + bottom-anchored, dismissable once (persisted). Client-only and
- * storage-mode-agnostic — it reads nothing but the platform + a localStorage
- * flag.
+ * storage-mode-agnostic — it reads nothing but the platform, a localStorage
+ * flag and the route.
+ *
+ * Never over a lesson (#3749): fixed at the bottom, it covered the runner
+ * footer, so "Weiter" could not be tapped until the hint was closed. On the
+ * runner routes it is hidden, not dismissed, and shows again afterwards.
  */
 
 import { Share, X } from "lucide-react";
 import { useState } from "react";
 
+import { useIsLessonActive } from "../../hooks/lesson/session/useIsLessonActive";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { isStandalone } from "../../lib/pwa/install";
 import { shouldShowIosInstallHint } from "../../lib/pwa/ios-install";
@@ -52,8 +57,9 @@ function computeInitialVisible(): boolean {
 export default function IosInstallHint() {
     const { t } = useI18n();
     const [visible, setVisible] = useState<boolean>(computeInitialVisible);
+    const lessonActive = useIsLessonActive();
 
-    if (!visible) return null;
+    if (!visible || lessonActive) return null;
 
     const dismiss = () => {
         writeDismissed();
