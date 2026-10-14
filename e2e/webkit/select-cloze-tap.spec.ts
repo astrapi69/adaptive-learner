@@ -100,13 +100,20 @@ async function mockRepo(page: Page): Promise<void> {
 async function openLesson(page: Page, mode: "practice" | "exam"): Promise<void> {
     await page.setViewportSize({width: 1024, height: 1200});
     await mockRepo(page);
+    const githubRequests: string[] = [];
+    page.on("request", (request) => {
+        if (/github/.test(request.url())) githubRequests.push(request.url());
+    });
     await createTestUser(page);
     await page.evaluate(([key, value]) => localStorage.setItem(key, value), [MODE_KEY, mode]);
     await page.goto("/settings?tab=data");
     await expect(page.getByTestId("content-repo-section")).toBeVisible({timeout: 15_000});
     await page.getByTestId("content-repo-url").fill(`https://github.com/${OWNER_REPO}`);
     await page.getByTestId("content-repo-connect").click();
-    await expect(page.getByTestId("content-repo-result")).toContainText(/passed|erfolgreich/i);
+    await expect(
+        page.getByTestId("content-repo-result"),
+        `GitHub requests: ${githubRequests.join(", ")}`,
+    ).toContainText(/passed|erfolgreich/i);
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
     const open = page.getByTestId(`content-set-${SET_ID}-open`);
@@ -121,6 +128,11 @@ async function openLesson(page: Page, mode: "practice" | "exam"): Promise<void> 
     if (await dismiss.isVisible()) await dismiss.tap();
     await expect(page.getByTestId("ios-install-hint")).toHaveCount(0);
 }
+
+// The mocked repo is served by page.route, which does not see requests a
+// service worker makes outside Chromium; the app's worker must not take
+// them over.
+test.use({serviceWorkers: "block"});
 
 const RUN_DONE = '[data-testid="lesson-summary"], [data-testid="error-replay-summary"]';
 
