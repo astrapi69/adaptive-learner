@@ -34,3 +34,42 @@
   - TC-0955 (DE+EN) ergänzt.
   - Suiten: ESLint sauber, Vitest 1094 Dateien / 12187 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden; `make ci`, Ordner-Guard und Komplexitäts-Gate grün. Dexie-Smoke-Dispatch (Lauf 38616824612) grün.
 - Commit: (dieser PR, Closes #3746).
+
+## 4. Tipp-Fehler in WebKit nicht nachstellbar (#3752)
+- Original prompt: (weiter nach Prio)
+- Optimized prompt: Die Kontroll-Lektion unter Playwrights WebKit mit iPhone-Profil und Touch spielen, im Examen und in der Fehler-Wiederholung, und die gespeicherten Antworten prüfen; reproduziert es nicht, Gerätedaten anfordern.
+- Goal: Den iPhone-Befund auf der Engine prüfen, von der er kommt.
+- Result:
+  - Neuer Spec `e2e/webkit/select-cloze-tap.spec.ts` mit der echten Kontroll-Lektion als Fixture (`e2e/fixtures/evaluation-pilot-control.lesson.json`) über ein gemocktes Repo, jede Option per `locator.tap()`.
+  - Zwei rote Läufe waren Spec-Fehler: unter WebKit holte der Service Worker das gemockte Repo an `page.route` vorbei. Service Worker im Spec gesperrt; die Ursache stand erst nach einem temporären `github`-Reporter lesbar in den Annotations (danach zurückgenommen).
+  - WebKit-Lauf 38624500932 grün: Examen 10 von 10, Fehler-Wiederholung wertet Stockholm und Oslo richtig. Nicht reproduziert; Playwrights WebKit ist kein iOS Safari. Gerätedaten im Issue angefragt, bleibt P2.
+- Commit: 30dea91bb (#3755).
+
+## 5. Paritätstest der Set-Projektion (#3711)
+- Original prompt: (weiter nach Prio)
+- Optimized prompt: Eine Falldatei, die TS-Engine (`asContentSetEntry`) und Python (`SetEntryResponse.from_entry`) beide durchlaufen, mit strikter Gleichheit; Abweichungen in der Datei deklarieren statt verstecken.
+- Goal: Die beiden handgeschriebenen Projektionen können nicht mehr unbemerkt auseinanderlaufen.
+- Result:
+  - `tests/fixtures/set-entry-parity/cases.json` (15 Fälle, von Hand aus dem Manifest-Vertrag), Vitest- und pytest-Seite vergleichen die ganze Ausgabe.
+  - Deklariert, nicht angeglichen: ohne `target_language` sowie `visibility`/`review_status` außerhalb der Werte lehnt der API-Loader ab, die Engine setzt `""`/`visible`/`authored`; `evaluation` kommt im API-Modus mit Schema-Defaults. Ob angeglichen wird, ist eine Owner-Entscheidung.
+  - Gegenprobe: eine zusätzliche Erwartung und eine entfernte Deklaration machen die Tests rot.
+- Commit: 670b60a21 (#3756).
+
+## 6. iOS-Installationshinweis nicht über der Lektion (#3749)
+- Original prompt: (weiter nach Prio)
+- Optimized prompt: Den Hinweis auf allen Lern-Routen ausblenden, nicht als geschlossen speichern; RED zuerst, WebKit-Spec als Wächter.
+- Goal: "Weiter" ist in der ersten Lektion eines neuen iPhone-Nutzers sofort tippbar.
+- Result: `IosInstallHint` nutzt `useIsLessonActive` und rendert auf Lektion, Fehler-Wiederholung, Review, Adaptiv, Shuffle und Endless nichts. Sieben neue Unit-Fälle (vorher rot); der WebKit-Spec aus #3755 prüft jetzt: Hinweis auf der Inhaltsseite sichtbar, in der Lektion fehlt er, kein Schließen gespeichert. WebKit-Lauf 38627203698 grün; Vitest 1095 Dateien / 12210 Tests.
+- Commit: b81a388bf (#3757).
+
+## 7. Dexie-Smoke auf den PRs, die ihn betreffen (#3748)
+- Original prompt: (weiter nach Prio)
+- Optimized prompt: Den PR-Trigger aus gemessener Coverage ableiten, einen immer meldenden Gate-Job als Required Check bauen, Fang- und Durchlass-Nachweis führen.
+- Goal: Lesson-Flow-Änderungen kommen nicht mehr ohne Dexie-Lauf auf develop.
+- Result:
+  - Messung: V8-Block-Coverage über die Dexie-Specs (177 Tests lokal, GitHub per curl), über Source Maps auf `frontend/src` abgebildet: 1002 von 1342 Modulen (75 %) ausgeführt, der Rest dünn verstreut. Trigger daher `frontend/` ohne Unit-Tests plus `schema/` und die Spec-Eingaben (`scripts/dexie_smoke_affected.py`, fail closed).
+  - `dexie-smoke.yml`: Scope-Job, Smoke-Job, Gate-Job "Dexie smoke (required)"; in CI benennt der `github`-Reporter die rote Spec als Annotation.
+  - Fangnachweis: Abschalten von `resumeModeConflict` blieb zuerst grün, weil die Ein-Sitzungs-Regel (#3750) den Dialog mit anderem Grund blockierte und die Spec den Grund nicht prüfte. Nach der Assertion auf `data-reason="mode_conflict"` rot auf genau diesem Test (Lauf 38634411560), nach dem Revert grün (38636604490).
+  - Nebenbefund: das Rule-Change-Log schlüsselt einen Commit nach der letzten `(#N)` im Betreff; endet der Branch-Commit auf `(#Issue)`, sieht der Push-Check nach dem Squash die PR-Nummer. Hier per Squash-Titel ohne PR-Nummer umgangen, Issue als Vorschlag beim Owner.
+  - Required Check auf develop setzen: Owner.
+- Commit: c8613cb90 (#3758).
