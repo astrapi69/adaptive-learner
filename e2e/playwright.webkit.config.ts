@@ -33,7 +33,6 @@ export default defineConfig({
     testDir: "./webkit",
     fullyParallel: false,
     workers: 1,
-    reporter: [["github"], ["list"]],
     retries: process.env.CI ? 1 : 0,
     timeout: 45_000,
     use: {
