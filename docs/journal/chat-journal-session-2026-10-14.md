@@ -32,5 +32,5 @@
   - `runHasAnswer` jetzt in `lib/lesson/progress/resume-mode.ts`, geteilt von Modus-Sperre und `LessonExamNotice` (vorher lokale Kopie). `useLessonFlowControl` gibt `modeLocked` zurück; `LessonPage` reicht es durch, ohne neue Verzweigung.
   - Tests (RED zuerst): `resume-mode.test.ts` (+7), `useLessonFlowControl.test.ts` (+4); e2e-Fall #3742 prüft nach dem Neustart und nach einem Theorieschritt, dass der Modus wählbar bleibt.
   - TC-0955 (DE+EN) ergänzt.
-  - Suiten: siehe PR.
+  - Suiten: ESLint sauber, Vitest 1094 Dateien / 12187 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden; `make ci`, Ordner-Guard und Komplexitäts-Gate grün. Dexie-Smoke-Dispatch (Lauf 38616824612) grün.
 - Commit: (dieser PR, Closes #3746).
