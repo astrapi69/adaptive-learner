@@ -42,6 +42,8 @@ from dexie_smoke_affected import decide, is_relevant, main  # noqa: E402
         "e2e/helpers/onboarding.ts",
         "e2e/fixtures/mixed-set.zip",
         "e2e/visual/helpers.ts",
+        # Imported by e2e/visual/helpers.ts, so a Dexie spec input.
+        "frontend/src/test-utils/visual-pins.ts",
         "e2e/package.json",
         "e2e/bun.lock",
         "e2e/playwright.dexie.config.ts",

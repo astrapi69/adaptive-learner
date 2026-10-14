@@ -60,7 +60,8 @@ RELEVANT_FILES: frozenset[str] = frozenset(
     }
 )
 
-# Inside frontend/: what never reaches the built app.
+# Inside frontend/: what never reaches the built app. Not src/test-utils/:
+# e2e/visual/helpers.ts imports its visual pins, and two Dexie specs use it.
 NEVER_SHIPPED: tuple[str, ...] = (
     "frontend/*.test.ts",
     "frontend/*.test.tsx",
