@@ -6,7 +6,7 @@ import {notify} from "../../../utils/notify";
 import type {LessonLoadStatus} from "./useLesson";
 import type {LessonProgress} from "../../../storage/types";
 import type {LessonMode} from "../../../lib/learning/lessonModePref";
-import {resumeBlock, type ResumeBlock} from "../../../lib/lesson/progress/resume-mode";
+import {resumeBlock, runHasAnswer, type ResumeBlock} from "../../../lib/lesson/progress/resume-mode";
 
 /**
  * Inputs for {@link useLessonFlowControl} — the lifecycle slice of
@@ -54,6 +54,10 @@ export interface UseLessonFlowControlResult {
     setExitOpen: (open: boolean) => void;
     /** True while the lesson run can still be paused/abandoned. */
     isInProgress: boolean;
+    /** #3746 - the mode toggle is locked once the run has its first answer,
+     *  not merely ``in_progress``: a restart, or reading the theory, leaves
+     *  a run ``in_progress`` without one, and the mode must stay free. */
+    modeLocked: boolean;
     /** True when the paused-lesson resume prompt must overlay the
      *  step view (Phase 63C). */
     showResumePrompt: boolean;
@@ -249,6 +253,7 @@ export function useLessonFlowControl({
         exitOpen,
         setExitOpen,
         isInProgress,
+        modeLocked: runHasAnswer(progress),
         showResumePrompt,
         resumeBlocked,
         handleResume,

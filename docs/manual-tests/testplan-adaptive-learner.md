@@ -690,7 +690,9 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       beantworten, verlassen, im Prüfungsmodus wieder öffnen: der Dialog
       sagt "Eine angefangene Prüfung lässt sich nicht fortsetzen ...", kein
       "Weiter"; nach Neu starten zählen nur die Antworten dieser Sitzung
-      (alle richtig ergibt 10 von 10). In den
+      (alle richtig ergibt 10 von 10). Nach "Neu starten" oder "Prüfung
+      wiederholen" lässt sich der Modus wieder wählen, bis die erste Frage
+      beantwortet ist (#3746). In den
       Einstellungen steht unter der Bestehens-Grenze "Sets mit eigener
       Bestehensgrenze verwenden stattdessen diese."
 - [ ] TC-0151 Zeitmodus: Countdown-Balken sichtbar, Farb-Uebergang

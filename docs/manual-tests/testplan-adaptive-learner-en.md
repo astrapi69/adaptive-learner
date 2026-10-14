@@ -642,6 +642,8 @@ preview delivery). In the regular build the mode does not exist.
       answer one question, leave, open it again in exam mode: the dialog says
       "A started exam cannot be continued ...", no "Continue"; after starting
       over only this sitting's answers count (all correct gives 10 of 10).
+      After "Start over" or "Retry exam" the mode can be chosen again until
+      the first question is answered (#3746).
       Under the pass threshold in Settings it says
       "Sets with their own pass mark use that mark instead."
 - [ ] TC-0151 Timed mode: countdown bar visible, color transition

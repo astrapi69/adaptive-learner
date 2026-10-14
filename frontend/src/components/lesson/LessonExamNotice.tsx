@@ -19,17 +19,12 @@ import {GraduationCap} from "lucide-react";
 import {useI18n} from "../../hooks/ui/useI18n";
 import type {LessonMode} from "../../lib/learning/lessonModePref";
 import type {LessonProgress} from "../../storage/types";
+import {runHasAnswer} from "../../lib/lesson/progress/resume-mode";
 
 export interface LessonExamNoticeProps {
     lessonMode: LessonMode;
     /** The stored run; a completed one is a finished run, not this one. */
     progress: LessonProgress | null;
-}
-
-/** Whether the current run has an answer yet. */
-function runHasAnswer(progress: LessonProgress | null): boolean {
-    if (!progress || progress.status === "completed") return false;
-    return Object.keys(progress.step_results ?? {}).length > 0;
 }
 
 export default function LessonExamNotice({lessonMode, progress}: LessonExamNoticeProps) {

@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 
-import {resumeBlock, resumeModeConflict} from "./resume-mode";
+import {resumeBlock, resumeModeConflict, runHasAnswer} from "./resume-mode";
 
 /** A stored run: answers given in ``mode``, in the given lifecycle state. */
 function run(mode: string | undefined, status: string, answered = 3) {
@@ -57,5 +57,22 @@ describe("resumeBlock (#3750): an exam is one sitting", () => {
 
     it("no stored run, no block", () => {
         expect(resumeBlock(null, "exam", false)).toBeNull();
+    });
+});
+
+describe("runHasAnswer (#3746): a run is under way from its first answer", () => {
+    it.each([
+        ["restarted run (in progress, no answers)", run("practice", "in_progress", 0), false],
+        ["position-only row (theory read)", run("practice", "in_progress", 0), false],
+        ["paused run without answers", run("exam", "paused", 0), false],
+        ["run with one answer", run("practice", "in_progress", 1), true],
+        ["paused run with answers", run("exam", "paused", 2), true],
+        ["completed run (a finished run, not this one)", run("exam", "completed", 3), false],
+    ] as const)("%s", (_name, progress, underWay) => {
+        expect(runHasAnswer(progress)).toBe(underWay);
+    });
+
+    it("no row, no run", () => {
+        expect(runHasAnswer(null)).toBe(false);
     });
 });

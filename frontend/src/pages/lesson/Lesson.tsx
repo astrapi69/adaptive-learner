@@ -141,6 +141,7 @@ export default function LessonPage() {
     exitOpen,
     setExitOpen,
     isInProgress,
+    modeLocked,
     showResumePrompt,
     resumeBlocked,
     handleResume,
@@ -491,7 +492,7 @@ export default function LessonPage() {
             setTitle={setTitle ?? ""}
             lessonMode={lessonMode}
             onModeChange={setLessonMode}
-            modeLocked={isInProgress}
+            modeLocked={modeLocked}
             showReadAloud={modeConfig.showReadAloud}
             lesson={lesson}
             tts={tts}
