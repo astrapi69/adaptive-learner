@@ -46,3 +46,35 @@ export function resumeModeConflict(
     const stored = progress.lesson_mode ?? "practice";
     return stored !== mode && (stored === "exam" || mode === "exam");
 }
+
+/** Why a stored run must start over instead of continuing (#3744, #3750). */
+export type ResumeBlock = "mode_conflict" | "exam_single_sitting";
+
+/**
+ * Whether, and why, the stored run must start over when the lesson opens
+ * in ``mode``.
+ *
+ * - ``mode_conflict`` (#3744): the run was started in another mode with
+ *   ``exam`` on either side.
+ * - ``exam_single_sitting`` (#3750): a started exam reopened as an exam.
+ *   An exam counts only when taken in one sitting; continuing it carried
+ *   answers from an earlier session into the result, which the forward-only
+ *   exam never shows again.
+ *
+ * An exam whose run already stands on its summary (``atSummary``, all
+ * steps done) is not blocked: reopening it shows its result.
+ *
+ * @example
+ * resumeBlock({status: "paused", step_results: {a: {}}, lesson_mode: "exam"}, "exam", false);
+ * // "exam_single_sitting"
+ */
+export function resumeBlock(
+    progress: ResumeModeRow | null,
+    mode: LessonMode,
+    atSummary: boolean,
+): ResumeBlock | null {
+    if (resumeModeConflict(progress, mode)) return "mode_conflict";
+    if (!progress || !CONTINUABLE.has(progress.status) || atSummary) return null;
+    if (Object.keys(progress.step_results ?? {}).length === 0) return null;
+    return mode === "exam" ? "exam_single_sitting" : null;
+}

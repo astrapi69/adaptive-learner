@@ -142,7 +142,7 @@ export default function LessonPage() {
     setExitOpen,
     isInProgress,
     showResumePrompt,
-    modeConflict,
+    resumeBlocked,
     handleResume,
     handleStartOver,
     handlePauseFromDialog,
@@ -158,7 +158,8 @@ export default function LessonPage() {
     goToStep,
     // #3075 - the summary is the end of the run, not a place to pause.
     atSummary: isAtSummary(lesson, currentStepIndex),
-    // #3742 - a run from another mode (exam on either side) starts over.
+    // #3742 / #3750 - a run from another mode (exam on either side), or a
+    // started exam reopened as an exam, starts over.
     lessonMode,
   });
 
@@ -401,7 +402,7 @@ export default function LessonPage() {
         <LessonResumeDialog
           open={showResumePrompt}
           lessonTitle={lesson.title}
-          modeConflict={modeConflict}
+          blockReason={resumeBlocked}
           onResume={() => void handleResume()}
           onStartOver={() => void handleStartOver()}
         />

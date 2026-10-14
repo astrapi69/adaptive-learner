@@ -638,7 +638,11 @@ preview delivery). In the regular build the mode does not exist.
       starting over the first question shows "Exam: you only see at the end
       whether an answer was right ...", and 7 of 10 correct gives
       **Passed**. The reverse (exam started, opened in practice mode) offers
-      no "Continue" either. Under the pass threshold in Settings it says
+      no "Continue" either. An exam is one sitting (#3750): start an exam,
+      answer one question, leave, open it again in exam mode: the dialog says
+      "A started exam cannot be continued ...", no "Continue"; after starting
+      over only this sitting's answers count (all correct gives 10 of 10).
+      Under the pass threshold in Settings it says
       "Sets with their own pass mark use that mark instead."
 - [ ] TC-0151 Timed mode: countdown bar visible, color transition
 - [ ] TC-0152 Error mode: only error cards (after at least 1 error)

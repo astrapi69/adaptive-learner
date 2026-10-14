@@ -685,7 +685,12 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       "Weiter"**, nur "Neu starten"; nach Neu starten steht über der ersten
       Frage "Prüfung: Ob eine Antwort richtig war, siehst du erst am Ende
       ...", und 7 von 10 richtig ergibt **Bestanden**. Umgekehrt (Prüfung
-      angefangen, im Übungsmodus geöffnet) ebenfalls kein "Weiter". In den
+      angefangen, im Übungsmodus geöffnet) ebenfalls kein "Weiter". Eine
+      Prüfung ist eine Sitzung (#3750): Prüfung anfangen, eine Frage
+      beantworten, verlassen, im Prüfungsmodus wieder öffnen: der Dialog
+      sagt "Eine angefangene Prüfung lässt sich nicht fortsetzen ...", kein
+      "Weiter"; nach Neu starten zählen nur die Antworten dieser Sitzung
+      (alle richtig ergibt 10 von 10). In den
       Einstellungen steht unter der Bestehens-Grenze "Sets mit eigener
       Bestehensgrenze verwenden stattdessen diese."
 - [ ] TC-0151 Zeitmodus: Countdown-Balken sichtbar, Farb-Uebergang

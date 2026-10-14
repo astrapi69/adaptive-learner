@@ -251,27 +251,26 @@ describe("a run from another mode does not continue as an exam (#3742)", () => {
     ] as const)("%s: prompt shows the conflict", (_name, status, stored, mode) => {
         const {result} = renderFlow({progress: run(status, stored), lessonMode: mode});
         expect(result.current.showResumePrompt).toBe(true);
-        expect(result.current.modeConflict).toBe(true);
+        expect(result.current.resumeBlocked).toBe("mode_conflict");
     });
 
     it.each([
-        ["exam run opened in exam", "exam", "exam"],
         ["practice run opened in practice", "practice", "practice"],
     ] as const)("%s: resumes as today", (_name, stored, mode) => {
         const {result} = renderFlow({progress: run("paused", stored), lessonMode: mode});
         expect(result.current.showResumePrompt).toBe(true);
-        expect(result.current.modeConflict).toBe(false);
+        expect(result.current.resumeBlocked).toBeNull();
     });
 
-    it("an in-progress run in the same mode opens without a prompt, as today", () => {
-        const {result} = renderFlow({progress: run("in_progress", "exam"), lessonMode: "exam"});
+    it("an in-progress practice run in practice opens without a prompt, as today", () => {
+        const {result} = renderFlow({progress: run("in_progress", "practice"), lessonMode: "practice"});
         expect(result.current.showResumePrompt).toBe(false);
     });
 
     it("a completed practice run opened in exam starts fresh: no prompt", () => {
         const {result} = renderFlow({progress: run("completed", "practice"), lessonMode: "exam"});
         expect(result.current.showResumePrompt).toBe(false);
-        expect(result.current.modeConflict).toBe(false);
+        expect(result.current.resumeBlocked).toBeNull();
     });
 
     it("the conflict holds while an autosave restamps the row with the current mode", () => {
@@ -291,11 +290,11 @@ describe("a run from another mode does not continue as an exam (#3742)", () => {
                 }),
             {initialProps: {progress: current}},
         );
-        expect(result.current.modeConflict).toBe(true);
+        expect(result.current.resumeBlocked).toBe("mode_conflict");
         current = run("in_progress", "exam");
         rerender({progress: current});
         expect(result.current.showResumePrompt).toBe(true);
-        expect(result.current.modeConflict).toBe(true);
+        expect(result.current.resumeBlocked).toBe("mode_conflict");
     });
 
     it("starting over clears the prompt", async () => {
@@ -310,5 +309,37 @@ describe("a run from another mode does not continue as an exam (#3742)", () => {
         });
         expect(markRestarted).toHaveBeenCalledTimes(1);
         expect(result.current.showResumePrompt).toBe(false);
+    });
+});
+
+describe("an exam is one sitting (#3750)", () => {
+    function examRun(status: LessonProgress["status"]): LessonProgress {
+        return {
+            status,
+            lesson_mode: "exam",
+            step_results: {"ex-1": {correct: 0, total: 1}},
+            source: "s",
+            set_id: "set",
+            lesson_filename: "01.json",
+        } as unknown as LessonProgress;
+    }
+
+    it.each([["paused"], ["in_progress"]] as const)(
+        "a %s exam reopened in exam does not continue",
+        (status) => {
+            const {result} = renderFlow({progress: examRun(status), lessonMode: "exam"});
+            expect(result.current.showResumePrompt).toBe(true);
+            expect(result.current.resumeBlocked).toBe("exam_single_sitting");
+        },
+    );
+
+    it("an exam that stands on its summary shows its result, no prompt", () => {
+        const {result} = renderFlow({
+            progress: examRun("in_progress"),
+            lessonMode: "exam",
+            atSummary: true,
+        });
+        expect(result.current.showResumePrompt).toBe(false);
+        expect(result.current.resumeBlocked).toBeNull();
     });
 });
