@@ -1,0 +1,375 @@
+{
+  "id": "01-hauptstadt-quiz-kontrolle",
+  "title": "Hauptstädte Europas (Kontrolle)",
+  "description": "Dieselben zehn Aufgaben wie im Bewertungs-Pilot, in einem Set ohne Bewertungs-Block: hier gilt die eigene Exam-Schwelle der App.",
+  "target_language": "de",
+  "source_language": "de",
+  "domain": "knowledge",
+  "estimated_minutes": 5,
+  "cards": [
+    {
+      "id": "c-frankreich",
+      "stable_id": "card-mv5hqypi01dpv",
+      "front": "Hauptstadt von Frankreich",
+      "back": "Paris"
+    },
+    {
+      "id": "c-spanien",
+      "stable_id": "card-mv5hqypi01ei7",
+      "front": "Hauptstadt von Spanien",
+      "back": "Madrid"
+    },
+    {
+      "id": "c-italien",
+      "stable_id": "card-mv5hqypi01f0i",
+      "front": "Hauptstadt von Italien",
+      "back": "Rom"
+    },
+    {
+      "id": "c-portugal",
+      "stable_id": "card-mv5hqypi01gpv",
+      "front": "Hauptstadt von Portugal",
+      "back": "Lissabon"
+    },
+    {
+      "id": "c-polen",
+      "stable_id": "card-mv5hqypi01h4y",
+      "front": "Hauptstadt von Polen",
+      "back": "Warschau"
+    },
+    {
+      "id": "c-oesterreich",
+      "stable_id": "card-mv5hqypi01if4",
+      "front": "Hauptstadt von Österreich",
+      "back": "Wien"
+    },
+    {
+      "id": "c-schweden",
+      "stable_id": "card-mv5hqypi01jqc",
+      "front": "Hauptstadt von Schweden",
+      "back": "Stockholm"
+    },
+    {
+      "id": "c-norwegen",
+      "stable_id": "card-mv5hqypi01kj6",
+      "front": "Hauptstadt von Norwegen",
+      "back": "Oslo"
+    },
+    {
+      "id": "c-griechenland",
+      "stable_id": "card-mv5hqypi01lcp",
+      "front": "Hauptstadt von Griechenland",
+      "back": "Athen"
+    },
+    {
+      "id": "c-irland",
+      "stable_id": "card-mv5hqypi01mqs",
+      "front": "Hauptstadt von Irland",
+      "back": "Dublin"
+    }
+  ],
+  "steps": [
+    {
+      "id": "t1",
+      "type": "theory",
+      "title": "Zehn Hauptstädte",
+      "body": "# Hauptstädte Europas\n\nZehn Länder und ihre Hauptstädte:\n\n- **Frankreich**: Paris\n- **Spanien**: Madrid\n- **Italien**: Rom\n- **Portugal**: Lissabon\n- **Polen**: Warschau\n- **Österreich**: Wien\n- **Schweden**: Stockholm\n- **Norwegen**: Oslo\n- **Griechenland**: Athen\n- **Irland**: Dublin\n\nJede der zehn Aufgaben zählt gleich viel."
+    },
+    {
+      "id": "e1",
+      "type": "exercise",
+      "theory_ref": "t1",
+      "title": "Frankreich",
+      "exercise": {
+        "id": "e1",
+        "stable_id": "ex-mv5hqypi01ns1",
+        "type": "multiple_choice",
+        "prompt": "Welche Stadt ist die Hauptstadt von Frankreich?",
+        "card_ids": [
+          "c-frankreich"
+        ],
+        "options": [
+          {
+            "text": "Paris",
+            "correct": true, "stable_id": "opt-mv5hqypi01o04"
+          },
+          {
+            "text": "Lyon", "stable_id": "opt-mv5hqypi01pw8"
+          },
+          {
+            "text": "Marseille", "stable_id": "opt-mv5hqypi01qsd"
+          },
+          {
+            "text": "Brüssel", "stable_id": "opt-mv5hqypi01rmd"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e2",
+      "type": "exercise",
+      "theory_ref": "t1",
+      "title": "Spanien",
+      "exercise": {
+        "id": "e2",
+        "stable_id": "ex-mv5hqypi01s7o",
+        "type": "multiple_choice",
+        "prompt": "Welche Stadt ist die Hauptstadt von Spanien?",
+        "card_ids": [
+          "c-spanien"
+        ],
+        "options": [
+          {
+            "text": "Madrid",
+            "correct": true, "stable_id": "opt-mv5hqypi01t0s"
+          },
+          {
+            "text": "Barcelona", "stable_id": "opt-mv5hqypi01uoe"
+          },
+          {
+            "text": "Sevilla", "stable_id": "opt-mv5hqypi01vjk"
+          },
+          {
+            "text": "Lissabon", "stable_id": "opt-mv5hqypi01wqg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e3",
+      "type": "exercise",
+      "theory_ref": "t1",
+      "title": "Italien",
+      "exercise": {
+        "id": "e3",
+        "stable_id": "ex-mv5hqypi01xiv",
+        "type": "multiple_choice",
+        "prompt": "Welche Stadt ist die Hauptstadt von Italien?",
+        "card_ids": [
+          "c-italien"
+        ],
+        "options": [
+          {
+            "text": "Rom",
+            "correct": true, "stable_id": "opt-mv5hqypi01yk8"
+          },
+          {
+            "text": "Mailand", "stable_id": "opt-mv5hqypi01zem"
+          },
+          {
+            "text": "Neapel", "stable_id": "opt-mv5hqypi0208p"
+          },
+          {
+            "text": "Florenz", "stable_id": "opt-mv5hqypi021ca"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e4",
+      "type": "exercise",
+      "theory_ref": "t1",
+      "title": "Portugal",
+      "exercise": {
+        "id": "e4",
+        "stable_id": "ex-mv5hqypi022o8",
+        "type": "multiple_choice",
+        "prompt": "Welche Stadt ist die Hauptstadt von Portugal?",
+        "card_ids": [
+          "c-portugal"
+        ],
+        "options": [
+          {
+            "text": "Lissabon",
+            "correct": true, "stable_id": "opt-mv5hqypi023d2"
+          },
+          {
+            "text": "Porto", "stable_id": "opt-mv5hqypi024xy"
+          },
+          {
+            "text": "Madrid", "stable_id": "opt-mv5hqypi025lu"
+          },
+          {
+            "text": "Faro", "stable_id": "opt-mv5hqypi026qe"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e5",
+      "type": "exercise",
+      "theory_ref": "t1",
+      "title": "Polen",
+      "exercise": {
+        "id": "e5",
+        "stable_id": "ex-mv5hqypi0274p",
+        "type": "multiple_choice",
+        "prompt": "Welche Stadt ist die Hauptstadt von Polen?",
+        "card_ids": [
+          "c-polen"
+        ],
+        "options": [
+          {
+            "text": "Warschau",
+            "correct": true, "stable_id": "opt-mv5hqypi028uv"
+          },
+          {
+            "text": "Krakau", "stable_id": "opt-mv5hqypi029bp"
+          },
+          {
+            "text": "Danzig", "stable_id": "opt-mv5hqypi02a50"
+          },
+          {
+            "text": "Prag", "stable_id": "opt-mv5hqypi02br9"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e6",
+      "type": "exercise",
+      "theory_ref": "t1",
+      "title": "Österreich",
+      "exercise": {
+        "id": "e6",
+        "stable_id": "ex-mv5hqypi02cd7",
+        "type": "multiple_choice",
+        "prompt": "Welche Stadt ist die Hauptstadt von Österreich?",
+        "card_ids": [
+          "c-oesterreich"
+        ],
+        "options": [
+          {
+            "text": "Wien",
+            "correct": true, "stable_id": "opt-mv5hqypi02ddo"
+          },
+          {
+            "text": "Salzburg", "stable_id": "opt-mv5hqypi02evp"
+          },
+          {
+            "text": "Graz", "stable_id": "opt-mv5hqypi02fxc"
+          },
+          {
+            "text": "Bern", "stable_id": "opt-mv5hqypi02gab"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e7",
+      "type": "exercise",
+      "theory_ref": "t1",
+      "title": "Schweden",
+      "exercise": {
+        "id": "e7",
+        "stable_id": "ex-mv5hqypi02hk9",
+        "type": "cloze",
+        "prompt": "Wähle die Hauptstadt.",
+        "card_ids": [
+          "c-schweden"
+        ],
+        "sentence": "Die Hauptstadt von Schweden ist ___.",
+        "blanks": [
+          {
+            "accept": [
+              "Stockholm"
+            ], "stable_id": "blank-mv5hqypi02i3r"
+          }
+        ],
+        "cloze_mode": "select",
+        "distractors": [
+          "Göteborg",
+          "Oslo",
+          "Malmö"
+        ]
+      }
+    },
+    {
+      "id": "e8",
+      "type": "exercise",
+      "theory_ref": "t1",
+      "title": "Norwegen",
+      "exercise": {
+        "id": "e8",
+        "stable_id": "ex-mv5hqypi02j03",
+        "type": "cloze",
+        "prompt": "Wähle die Hauptstadt.",
+        "card_ids": [
+          "c-norwegen"
+        ],
+        "sentence": "Die Hauptstadt von Norwegen ist ___.",
+        "blanks": [
+          {
+            "accept": [
+              "Oslo"
+            ], "stable_id": "blank-mv5hqypi02ko7"
+          }
+        ],
+        "cloze_mode": "select",
+        "distractors": [
+          "Bergen",
+          "Kopenhagen",
+          "Stockholm"
+        ]
+      }
+    },
+    {
+      "id": "e9",
+      "type": "exercise",
+      "theory_ref": "t1",
+      "title": "Griechenland",
+      "exercise": {
+        "id": "e9",
+        "stable_id": "ex-mv5hqypi02ljd",
+        "type": "cloze",
+        "prompt": "Wähle die Hauptstadt.",
+        "card_ids": [
+          "c-griechenland"
+        ],
+        "sentence": "Die Hauptstadt von Griechenland ist ___.",
+        "blanks": [
+          {
+            "accept": [
+              "Athen"
+            ], "stable_id": "blank-mv5hqypi02m8y"
+          }
+        ],
+        "cloze_mode": "select",
+        "distractors": [
+          "Thessaloniki",
+          "Patras",
+          "Sofia"
+        ]
+      }
+    },
+    {
+      "id": "e10",
+      "type": "exercise",
+      "theory_ref": "t1",
+      "title": "Irland",
+      "exercise": {
+        "id": "e10",
+        "stable_id": "ex-mv5hqypi02ntk",
+        "type": "cloze",
+        "prompt": "Wähle die Hauptstadt.",
+        "card_ids": [
+          "c-irland"
+        ],
+        "sentence": "Die Hauptstadt von Irland ist ___.",
+        "blanks": [
+          {
+            "accept": [
+              "Dublin"
+            ], "stable_id": "blank-mv5hqypi02ow3"
+          }
+        ],
+        "cloze_mode": "select",
+        "distractors": [
+          "Cork",
+          "Belfast",
+          "Galway"
+        ]
+      }
+    }
+  ]
+}

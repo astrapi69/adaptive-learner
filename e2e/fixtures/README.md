@@ -53,3 +53,12 @@ One theory step, one ordering exercise, domain
 exercise. Served through a page.route-mocked content repo by the feature
 screenshot `ordering-review/falsche-reihenfolge`, which places the first
 two steps swapped and checks in practice mode.
+
+## evaluation-pilot-control.lesson.json
+
+The control lesson of the evaluation pilot, byte-identical to
+`sets/de/evaluation-pilot-control/lessons/01-hauptstadt-quiz-kontrolle.json`
+in `adaptive-learner-content-test`: ten capitals, six multiple_choice and
+four select clozes. e7 (Sweden) and e8 (Norway) carry each other's answer
+as a distractor, the case of #3752. Served through a page.route-mocked
+content repo by `webkit/select-cloze-tap.spec.ts`.
