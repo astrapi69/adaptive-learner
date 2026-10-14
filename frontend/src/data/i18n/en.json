@@ -2659,6 +2659,7 @@
       "abandoned_toast": "Lesson abandoned."
     },
     "resume": {
+      "exam_single_sitting": "A started exam cannot be continued: it only counts when taken in one sitting, so the lesson starts over.",
       "mode_conflict": "This run was started in another mode. Exam and practice answers cannot be mixed, so the lesson starts over.",
       "heading": "Resume lesson?",
       "body": "You paused \"{title}\". Would you like to continue where you left off or start over?",

@@ -2659,6 +2659,7 @@
       "abandoned_toast": "Ders terk edildi."
     },
     "resume": {
+      "exam_single_sitting": "Başlanmış bir sınava devam edilemez: Sınav yalnızca tek seferde yapıldığında geçerlidir, bu yüzden ders baştan başlar.",
       "mode_conflict": "Bu tur başka bir modda başlatıldı. Sınav ve alıştırma cevapları karıştırılamaz, bu yüzden ders baştan başlar.",
       "heading": "Ders devam ettirilsin mi?",
       "body": "\"{title}\" dersini duraklatttınız. Kaldığınız yerden devam etmek veya baştan başlamak ister misiniz?",
