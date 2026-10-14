@@ -10,10 +10,11 @@
  *   wipe position and answers), then markRestarted() and goToStep(0) so
  *   the learner begins fresh with an empty progress row.
  *
- * #3742 - when the run was started in another mode with ``exam`` on
- * either side (``modeConflict``), the dialog offers no "continue": a line
- * explains why, and "start over" is the only path, so practice answers
- * never count as exam answers and the reverse.
+ * #3742 / #3750 - when the stored run must start over (``blockReason``:
+ * started in another mode with ``exam`` on either side, or a started exam
+ * reopened as an exam), the dialog offers no "continue": a line explains
+ * why, and "start over" is the only path, so practice answers never count
+ * as exam answers and an exam is always one sitting.
  *
  * The dialog is NOT closable without making a choice — the back
  * button should not silently keep the lesson in "paused" and
@@ -28,12 +29,26 @@ import {Button} from "@/components/ui/button";
 import {ModalCard, ModalOverlay, ModalTitle} from "@/shared/modal";
 import {useDialogFocus} from "../../../hooks/ui/useDialogFocus";
 import {useI18n} from "../../../hooks/ui/useI18n";
+import type {ResumeBlock} from "../../../lib/lesson/progress/resume-mode";
+
+/** The explanation per block reason (key, English fallback). */
+const BLOCK_TEXT: Record<ResumeBlock, [string, string]> = {
+    mode_conflict: [
+        "lesson.resume.mode_conflict",
+        "This run was started in another mode. Exam and practice answers cannot be mixed, so the lesson starts over.",
+    ],
+    exam_single_sitting: [
+        "lesson.resume.exam_single_sitting",
+        "A started exam cannot be continued: it only counts when taken in one sitting, so the lesson starts over.",
+    ],
+};
 
 export interface LessonResumeDialogProps {
     open: boolean;
     lessonTitle: string;
-    /** #3742 - the stored run is from another mode and must start over. */
-    modeConflict?: boolean;
+    /** #3742 / #3750 - why the stored run must start over; ``null`` lets
+     *  it continue. */
+    blockReason?: ResumeBlock | null;
     onResume: () => void;
     onStartOver: () => void;
 }
@@ -41,7 +56,7 @@ export interface LessonResumeDialogProps {
 export default function LessonResumeDialog({
     open,
     lessonTitle,
-    modeConflict = false,
+    blockReason = null,
     onResume,
     onStartOver,
 }: LessonResumeDialogProps) {
@@ -122,12 +137,9 @@ export default function LessonResumeDialog({
                 <ModalTitle id="lesson-resume-title">
                     {t("lesson.resume.heading", "Resume lesson?")}
                 </ModalTitle>
-                {modeConflict ? (
-                    <p data-testid="lesson-resume-mode-conflict">
-                        {t(
-                            "lesson.resume.mode_conflict",
-                            "This run was started in another mode. Exam and practice answers cannot be mixed, so the lesson starts over.",
-                        )}
+                {blockReason ? (
+                    <p data-testid="lesson-resume-blocked" data-reason={blockReason}>
+                        {t(...BLOCK_TEXT[blockReason])}
                     </p>
                 ) : (
                     <p>
@@ -138,7 +150,7 @@ export default function LessonResumeDialog({
                     </p>
                 )}
                 <div className="flex flex-wrap gap-3">
-                    {!modeConflict && (
+                    {!blockReason && (
                         <Button
                             type="button"
                             onClick={onResume}
@@ -151,10 +163,10 @@ export default function LessonResumeDialog({
                     )}
                     <Button
                         type="button"
-                        variant={modeConflict ? "default" : "outline"}
+                        variant={blockReason ? "default" : "outline"}
                         onClick={() => setConfirmingRestart(true)}
                         data-testid="lesson-resume-restart"
-                        data-autofocus={modeConflict || undefined}
+                        data-autofocus={blockReason ? true : undefined}
                     >
                         <RotateCcw size={16} aria-hidden="true" />
                         {t("lesson.resume.action_restart", "Start over")}

@@ -151,7 +151,7 @@ test.describe("A run from another mode does not continue as an exam (#3742)", ()
         await reopenLesson(page);
 
         await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible({timeout: 20_000});
-        await expect(page.getByTestId("lesson-resume-mode-conflict")).toBeVisible();
+        await expect(page.getByTestId("lesson-resume-blocked")).toBeVisible();
         await expect(page.getByTestId("lesson-resume-continue")).toHaveCount(0);
 
         await page.getByTestId("lesson-resume-restart").click();
@@ -172,11 +172,59 @@ test.describe("A run from another mode does not continue as an exam (#3742)", ()
     test("practice run opened in practice: continue as before", async ({page}) => {
         await reopenLesson(page);
         await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible({timeout: 20_000});
-        await expect(page.getByTestId("lesson-resume-mode-conflict")).toHaveCount(0);
+        await expect(page.getByTestId("lesson-resume-blocked")).toHaveCount(0);
         await page.getByTestId("lesson-resume-continue").click();
         await expect.poll(() => storedRun(page), {timeout: 5_000}).toMatchObject({
             lesson_mode: "practice",
             answers: 1,
         });
+    });
+});
+
+test.describe("A started exam is one sitting (#3750)", () => {
+    test.describe.configure({timeout: 120_000});
+
+    test("an exam left after one answer and reopened as an exam starts over", async ({page}) => {
+        await page.addInitScript(() => {
+            localStorage.setItem("adaptive-learner.content_view_mode", "grid");
+        });
+        await page.route("**/recommended-repos.json", (route) =>
+            route.fulfill({status: 200, body: '{"repos":[]}'}),
+        );
+        await page.route("**/books.yaml", (route) =>
+            route.fulfill({status: 200, body: "domains: {}\n"}),
+        );
+        await createTestUser(page);
+        await page.evaluate((key) => localStorage.setItem(key, "exam"), MODE_KEY);
+        await openFirstLesson(page);
+        lessonUrl = page.url();
+
+        // First sitting: one answer, given under exam rules (submit + advance).
+        await nextStep(page);
+        await nextStep(page);
+        await expect(page.getByTestId("matching-exercise")).toBeVisible({timeout: 10_000});
+        const n = await page.getByTestId(/^matching-left-\d+$/).count();
+        for (let i = 0; i < n; i++) {
+            await page.getByTestId(`matching-left-${i}`).click();
+            await page.getByTestId(`matching-right-${i}`).click();
+        }
+        await page.getByTestId("lesson-next").click();
+        await expect.poll(() => storedRun(page), {timeout: 5_000}).toMatchObject({
+            lesson_mode: "exam",
+            answers: 1,
+        });
+        await leaveLesson(page);
+
+        // Second sitting: no continue; start over drops the first sitting's answer.
+        await reopenLesson(page);
+        await expect(page.getByTestId("lesson-resume-dialog")).toBeVisible({timeout: 20_000});
+        await expect(page.getByTestId("lesson-resume-blocked")).toHaveAttribute(
+            "data-reason",
+            "exam_single_sitting",
+        );
+        await expect(page.getByTestId("lesson-resume-continue")).toHaveCount(0);
+        await page.getByTestId("lesson-resume-restart").click();
+        await page.getByTestId("lesson-resume-confirm-restart-action").click();
+        await expect.poll(() => storedRun(page), {timeout: 5_000}).toMatchObject({answers: 0});
     });
 });
