@@ -13,5 +13,12 @@
   - `useLessonFlowControl` gibt `resumeBlocked` statt `modeConflict` zurück (beim Laden eingefroren wie bisher); `LessonResumeDialog` zeigt per `blockReason` die passende Zeile (`lesson-resume-blocked`, `data-reason`). Die e2e-Spec zieht die umbenannte testid mit.
   - Tests (RED zuerst): `resume-mode.test.ts` (+9), `useLessonFlowControl.test.ts` (+3, zwei #3744-Fälle an die neue Regel angepasst: Prüfung -> Prüfung setzt jetzt nicht mehr fort), `LessonResumeDialog.test.tsx` (+1), e2e-Fall Prüfung -> Prüfung.
   - TC-0955 (DE+EN) um den Fall ergänzt.
-  - Suiten: siehe PR.
+  - Suiten: Frontend tsc und ESLint sauber, Vitest 1094 Dateien / 12176 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden (Backend-venv); `make ci`, Ordner-Guard und Komplexitäts-Gate grün. Dexie-Smoke-Dispatch (Lauf 38611602863) grün inklusive des neuen Falls.
 - Commit: (dieser PR, Closes #3750).
+
+## 2. Tipp auf "Oslo" als "Stockholm" gespeichert (#3752)
+- Original prompt: (Screenshot "Fehler wiederholen", Norwegen, Stockholm als Antwort) Das ist falsch. ... Ja okay (Oslo angetippt, Stockholm gespeichert).
+- Optimized prompt: Fehler-Wiederholung der Kontroll-Lektion mit genau diesen zwei Fehlern nachstellen, Desktop und Touch, gespeicherte Antworten prüfen.
+- Goal: Klären, ob ein Tipp auf dem iPhone eine andere Antwort speichert.
+- Result: In Chromium (Klick und Touch bei 390 x 844) speichert jeder Tipp die getippte Option, die Fehler-Wiederholung stellt beide Fragen frisch. WebKit fehlt im Container. Issue #3752 angelegt (P2 bis zur Reproduktion): Oslo und Stockholm tauschen zwischen den beiden Schritten die Position; nächster Schritt ist eine WebKit-Spec mit Touch.
+- Commit: keiner (nur Issue).
