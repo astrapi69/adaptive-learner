@@ -22,3 +22,15 @@
 - Goal: Klären, ob ein Tipp auf dem iPhone eine andere Antwort speichert.
 - Result: In Chromium (Klick und Touch bei 390 x 844) speichert jeder Tipp die getippte Option, die Fehler-Wiederholung stellt beide Fragen frisch. WebKit fehlt im Container. Issue #3752 angelegt (P2 bis zur Reproduktion): Oslo und Stockholm tauschen zwischen den beiden Schritten die Position; nächster Schritt ist eine WebKit-Spec mit Touch.
 - Commit: keiner (nur Issue).
+
+## 3. Modus bleibt nach Neustart wählbar (#3746)
+- Original prompt: wenn ich den Pilot Test ... starten will und Optionen wähle sind die ausgegraut ... wenn ich das neu neu starte, geht nur üben. (Weiter nach Prio.)
+- Optimized prompt: Die Modus-Sperre an "Runde hat eine Antwort" statt an `status === "in_progress"` binden; Lebenszyklus-Logik (Auto-Pause, Autosave) bleibt beim Status.
+- Goal: Nach "Neu starten" oder "Prüfung wiederholen" kann man wieder Prüfung wählen.
+- Result:
+  - Ursache: `markRestarted` setzt `in_progress` ohne Antworten, und die Positions-Schreibvorgänge (#3075) legen beim Lesen der Theorie ebenfalls eine `in_progress`-Zeile an; die Sperre hing an diesem Status.
+  - `runHasAnswer` jetzt in `lib/lesson/progress/resume-mode.ts`, geteilt von Modus-Sperre und `LessonExamNotice` (vorher lokale Kopie). `useLessonFlowControl` gibt `modeLocked` zurück; `LessonPage` reicht es durch, ohne neue Verzweigung.
+  - Tests (RED zuerst): `resume-mode.test.ts` (+7), `useLessonFlowControl.test.ts` (+4); e2e-Fall #3742 prüft nach dem Neustart und nach einem Theorieschritt, dass der Modus wählbar bleibt.
+  - TC-0955 (DE+EN) ergänzt.
+  - Suiten: ESLint sauber, Vitest 1094 Dateien / 12187 Tests bestanden; Backend 2286 bestanden, 1 übersprungen; Content-Loader 327 bestanden; `make ci`, Ordner-Guard und Komplexitäts-Gate grün. Dexie-Smoke-Dispatch (Lauf 38616824612) grün.
+- Commit: (dieser PR, Closes #3746).

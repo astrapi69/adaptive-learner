@@ -78,3 +78,18 @@ export function resumeBlock(
     if (Object.keys(progress.step_results ?? {}).length === 0) return null;
     return mode === "exam" ? "exam_single_sitting" : null;
 }
+
+/**
+ * Whether the stored run is under way: it has at least one answer and is
+ * not a finished run (#3746). A restarted run, or a row created only by
+ * position writes while the theory is read, is ``in_progress`` without an
+ * answer and is not under way yet: its mode may still change. Shared by
+ * the mode lock, the exam notice and {@link resumeModeConflict}.
+ *
+ * @example
+ * runHasAnswer({status: "in_progress", step_results: {}}); // false
+ */
+export function runHasAnswer(progress: ResumeModeRow | null): boolean {
+    if (!progress || progress.status === "completed") return false;
+    return Object.keys(progress.step_results ?? {}).length > 0;
+}

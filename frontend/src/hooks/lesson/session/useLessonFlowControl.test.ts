@@ -343,3 +343,33 @@ describe("an exam is one sitting (#3750)", () => {
         expect(result.current.resumeBlocked).toBeNull();
     });
 });
+
+describe("the mode stays switchable until the run's first answer (#3746)", () => {
+    function row(status: LessonProgress["status"], answered: number): LessonProgress {
+        const step_results: Record<string, unknown> = {};
+        for (let i = 0; i < answered; i++) step_results[`ex-${i}`] = {correct: 1, total: 1};
+        return {
+            status,
+            lesson_mode: "practice",
+            step_results,
+            source: "s",
+            set_id: "set",
+            lesson_filename: "01.json",
+        } as unknown as LessonProgress;
+    }
+
+    it.each([
+        ["fresh lesson, no row", null, false],
+        ["restarted run (in progress, no answers)", row("in_progress", 0), false],
+        ["after the first answer", row("in_progress", 1), true],
+    ] as const)("%s", (_name, progress, locked) => {
+        const {result} = renderFlow({progress, lessonMode: "practice"});
+        expect(result.current.modeLocked).toBe(locked);
+    });
+
+    it("a restarted run keeps the lifecycle meaning of isInProgress", () => {
+        const {result} = renderFlow({progress: row("in_progress", 0), lessonMode: "practice"});
+        expect(result.current.isInProgress).toBe(true);
+        expect(result.current.modeLocked).toBe(false);
+    });
+});

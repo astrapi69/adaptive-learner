@@ -162,7 +162,10 @@ test.describe("A run from another mode does not continue as an exam (#3742)", ()
         await expect.poll(() => storedRun(page), {timeout: 5_000}).toMatchObject({answers: 0});
         await expect(page.getByTestId("lesson-mode-exam")).toHaveAttribute("aria-pressed", "true");
         await expect(page.getByTestId("lesson-exam-notice")).toBeVisible();
+        // #3746 - a restarted run has no answer yet: the mode stays switchable.
+        await expect(page.getByTestId("lesson-mode-practice")).toBeEnabled();
         await nextStep(page);
+        await expect(page.getByTestId("lesson-mode-practice")).toBeEnabled();
         await expect.poll(() => storedRun(page), {timeout: 5_000}).toMatchObject({
             lesson_mode: "exam",
             answers: 0,
