@@ -446,8 +446,8 @@ Informational, warn-only or externally driven checks run on the night shift
 |---|---|
 | `ci.yml`: backend / plugin / frontend tests, ruff + mypy, pre-commit, docs-drift verifier, dead-code ratchet (#3047) | Security scan (pip-audit / npm audit / bandit), weekly + `push: release/**` |
 | `complexity-check.yml` (baseline ratchet, hard fail) | Coverage (`coverage.yml`) - a report, not a gate |
-| `cohesion-check.yml`, `visual-baseline-gate.yml`, `testid-reference-gate.yml` | Content-stats drift, complexity report, dexie-smoke (#552), mutation testing |
-| `docker-build-smoke.yml` (path-filtered, #1990) | WebKit gate (#1843, `ENABLE_NIGHTLY_WEBKIT`) |
+| `cohesion-check.yml`, `visual-baseline-gate.yml`, `testid-reference-gate.yml` | Content-stats drift, complexity report, full dexie-smoke, mutation testing |
+| `docker-build-smoke.yml` (path-filtered, #1990), `dexie-smoke.yml` (frontend PRs, #3748) | WebKit gate (#1843, `ENABLE_NIGHTLY_WEBKIT`) |
 
 Rule of thumb: if a job's failure should NOT block a merge, it belongs on the
 night shift, not on the `pull_request` trigger.
