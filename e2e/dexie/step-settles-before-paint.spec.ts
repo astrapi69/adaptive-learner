@@ -30,6 +30,7 @@ import {
 test.use({serviceWorkers: "block", hasTouch: true});
 
 function expectAtRest(motion: StepMotion, label: string): void {
+    expect(motion.to, `${label}: a new step was painted`).not.toBeNull();
     expect(motion.to, `${label}: the step changed`).not.toBe(motion.from);
     expect(motion.tops.length, `${label}: frames sampled`).toBeGreaterThanOrEqual(5);
     const spread = Math.max(...motion.tops) - Math.min(...motion.tops);

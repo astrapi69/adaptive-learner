@@ -234,6 +234,9 @@ export interface StepMotion {
  * slow engine still covers the whole settling time.
  */
 export async function sampleNextStepMotion(page: Page, durationMs = 400): Promise<StepMotion> {
+    // The press below is a DOM click: it is ignored while Next is still
+    // disabled (an exam step enables it once the answer is set).
+    await expect(page.getByTestId(/^(lesson|error-replay)-next$/)).toBeEnabled({timeout: 10_000});
     return page.evaluate(async (duration) => {
         const STEP =
             '[data-testid^="lesson-step-"]:not([data-testid$="-anchor"]), ' +
