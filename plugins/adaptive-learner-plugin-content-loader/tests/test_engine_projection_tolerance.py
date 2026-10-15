@@ -12,7 +12,6 @@ from __future__ import annotations
 import logging
 
 import pytest
-
 from adaptive_learner_content_loader.manifest_parser import parse_manifest_yaml
 
 MANIFEST = """

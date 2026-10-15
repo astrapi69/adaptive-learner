@@ -101,6 +101,7 @@
     "plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/github_adapter.py::fetch_yaml::method",
     "plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/github_adapter.py::has_token::property",
     "plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/models.py::_accept_language_alias::method",
+    "plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/models.py::_project_like_the_engine::method",
     "plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/models.py::_safe_path::method",
     "plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/models.py::_safe_segment_id::method",
     "plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/models.py::_semver_schema::method",
