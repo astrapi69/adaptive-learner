@@ -1,10 +1,10 @@
 /**
  * useLessonAutoRead: ending read-aloud from the mini player (#3760).
  *
- * The player's stop used to end the current utterance only; with auto-read
- * on, the next step was read again and the player came straight back.
- * ``endReadAloud`` stops the stream AND turns auto-read off, persisted like
- * the options toggle.
+ * The player's X ends read-aloud for the CURRENT LESSON: it stops the
+ * stream and keeps auto-read quiet for the rest of this lesson. The
+ * persisted preference is not touched (owner review: an X means "end
+ * this", not "switch the feature off"), so the next lesson reads again.
  */
 
 import { act, renderHook } from "@testing-library/react";
@@ -35,16 +35,22 @@ vi.mock("./useReadAloud", () => ({
   writeLessonAutoRead: engine.writeLessonAutoRead,
 }));
 
+import type { ContentLesson } from "../../../storage/types";
 import { useLessonAutoRead } from "./useLessonAutoRead";
 
-function renderAutoRead() {
-  return renderHook(() =>
-    useLessonAutoRead({
-      lesson: null,
-      currentStepIndex: 0,
-      showResumePrompt: false,
-      goToStep: vi.fn(),
-    }),
+const LESSON_A = { id: "a", steps: [] } as unknown as ContentLesson;
+const LESSON_B = { id: "b", steps: [] } as unknown as ContentLesson;
+
+function renderAutoRead(lesson: ContentLesson | null = LESSON_A) {
+  return renderHook(
+    ({ current }: { current: ContentLesson | null }) =>
+      useLessonAutoRead({
+        lesson: current,
+        currentStepIndex: 0,
+        showResumePrompt: false,
+        goToStep: vi.fn(),
+      }),
+    { initialProps: { current: lesson } },
   );
 }
 
@@ -56,7 +62,7 @@ beforeEach(() => {
 });
 
 describe("useLessonAutoRead endReadAloud (#3760)", () => {
-  it("stops the stream and turns auto-read off, persisted", () => {
+  it("stops the stream and keeps this lesson quiet without touching the setting", () => {
     const { result } = renderAutoRead();
     expect(result.current.autoRead).toBe(true);
 
@@ -64,10 +70,20 @@ describe("useLessonAutoRead endReadAloud (#3760)", () => {
 
     expect(engine.stop).toHaveBeenCalledTimes(1);
     expect(result.current.autoRead).toBe(false);
-    expect(engine.writeLessonAutoRead).toHaveBeenCalledWith(false);
+    expect(engine.writeLessonAutoRead).not.toHaveBeenCalled();
   });
 
-  it("with auto-read already off, still stops the stream and keeps it off", () => {
+  it("reads aloud again in the next lesson", () => {
+    const { result, rerender } = renderAutoRead();
+    act(() => result.current.endReadAloud());
+    expect(result.current.autoRead).toBe(false);
+
+    rerender({ current: LESSON_B });
+
+    expect(result.current.autoRead).toBe(true);
+  });
+
+  it("with auto-read off, only stops the stream", () => {
     engine.autoReadStored = false;
     const { result } = renderAutoRead();
 
@@ -75,15 +91,23 @@ describe("useLessonAutoRead endReadAloud (#3760)", () => {
 
     expect(engine.stop).toHaveBeenCalledTimes(1);
     expect(result.current.autoRead).toBe(false);
-    expect(engine.writeLessonAutoRead).toHaveBeenCalledWith(false);
+    expect(engine.writeLessonAutoRead).not.toHaveBeenCalled();
   });
 
-  it("can be turned on again with the options toggle afterwards", () => {
+  it("the options toggle turns it back on in the same lesson", () => {
     const { result } = renderAutoRead();
     act(() => result.current.endReadAloud());
     act(() => result.current.toggleAutoRead());
 
     expect(result.current.autoRead).toBe(true);
     expect(engine.writeLessonAutoRead).toHaveBeenLastCalledWith(true);
+  });
+
+  it("the options toggle still switches auto-read off for good", () => {
+    const { result } = renderAutoRead();
+    act(() => result.current.toggleAutoRead());
+
+    expect(result.current.autoRead).toBe(false);
+    expect(engine.writeLessonAutoRead).toHaveBeenLastCalledWith(false);
   });
 });

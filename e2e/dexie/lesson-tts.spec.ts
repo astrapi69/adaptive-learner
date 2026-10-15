@@ -9,8 +9,9 @@
  *     floating mini-player;
  *   - the mini-player's X ends playback;
  *   - pressing "R" toggles read-aloud from the keyboard;
- *   - auto-read speaks each step on display, and the X ends it for good
- *     (auto-read off, the next step stays silent, #3760).
+ *   - auto-read speaks each step on display, and the X ends it for the
+ *     current lesson only (the next step stays silent, a fresh load reads
+ *     again, #3760).
  *
  * speechSynthesis is INJECTED before the app loads so the run does not
  * depend on voices being installed in headless chromium.
@@ -267,8 +268,8 @@ test.describe("Lesson read-aloud (TTS)", () => {
             )
             .toBeGreaterThan(before);
 
-        // #3760 - the player's X ends read-aloud completely: playback stops,
-        // auto-read is off, and the next step is not read again.
+        // #3760 - the player's X ends read-aloud for THIS lesson: playback
+        // stops, auto-read is off here, and the next step is not read again.
         await expect(page.getByTestId("lesson-tts-player")).toBeVisible();
         await page.getByTestId("lesson-tts-player-end").click();
         await expect(page.getByTestId("lesson-tts-player")).toHaveCount(0);
@@ -286,6 +287,16 @@ test.describe("Lesson read-aloud (TTS)", () => {
                 () => (window as unknown as {__ttsSpoken: string[]}).__ttsSpoken.length,
             ),
         ).toBe(afterEnd);
+
+        // The saved setting is untouched: a fresh load of the lesson has
+        // auto-read on again.
+        await page.goto(lessonUrl);
+        await expect(page.getByTestId("lesson-page")).toBeVisible();
+        await openLessonOptions(page);
+        await expect(page.getByTestId("lesson-tts-autoread")).toHaveAttribute(
+            "aria-pressed",
+            "true",
+        );
 
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });

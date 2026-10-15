@@ -1,7 +1,9 @@
 {
   "TC": {
-    "highest": 960,
-    "retired": []
+    "highest": 962,
+    "retired": [
+      959
+    ]
   },
   "TS": {
     "highest": 132,
