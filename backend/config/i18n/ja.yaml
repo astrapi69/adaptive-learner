@@ -2069,6 +2069,7 @@ lesson:
     prev_step: "前のステップ"
     next_step: "次のステップ"
     step_position: "理論ステップ {total} 中 {current}"
+    end: "読み上げを終了"
   contributed_by: '{name}さんによる貢献'
   page_title: "レッスン"
   set_label: "セット"

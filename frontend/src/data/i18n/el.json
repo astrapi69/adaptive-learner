@@ -2222,7 +2222,8 @@
       "pause": "Παύση",
       "prev_step": "Προηγούμενο βήμα",
       "next_step": "Επόμενο βήμα",
-      "step_position": "Βήμα {current} από {total} βήματα θεωρίας"
+      "step_position": "Βήμα {current} από {total} βήματα θεωρίας",
+      "end": "Τέλος ανάγνωσης"
     },
     "contributed_by": "Συνεισφορά από {name}",
     "page_title": "Μάθημα",

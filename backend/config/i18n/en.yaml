@@ -2080,6 +2080,7 @@ lesson:
     prev_step: "Previous step"
     next_step: "Next step"
     step_position: "Step {current} of {total} theory steps"
+    end: "End read-aloud"
   contributed_by: Contributed by {name}
   page_title: "Lesson"
   set_label: "Set"

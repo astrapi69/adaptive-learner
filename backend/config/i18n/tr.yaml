@@ -2069,6 +2069,7 @@ lesson:
     prev_step: "Önceki adım"
     next_step: "Sonraki adım"
     step_position: "{total} teori adımından {current}. adım"
+    end: "Sesli okumayı bitir"
   contributed_by: '{name} tarafından katkıda bulunuldu'
   page_title: "Ders"
   set_label: "Set"

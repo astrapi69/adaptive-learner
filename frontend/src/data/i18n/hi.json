@@ -2222,7 +2222,8 @@
       "pause": "रोकें",
       "prev_step": "पिछला चरण",
       "next_step": "अगला चरण",
-      "step_position": "{total} सिद्धांत चरणों में से चरण {current}"
+      "step_position": "{total} सिद्धांत चरणों में से चरण {current}",
+      "end": "पढ़कर सुनाना बंद करें"
     },
     "contributed_by": "{name} द्वारा योगदान",
     "page_title": "पाठ",
