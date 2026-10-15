@@ -2080,6 +2080,7 @@ lesson:
     prev_step: "Langkah sebelumnya"
     next_step: "Langkah berikutnya"
     step_position: "Langkah {current} dari {total} langkah teori"
+    end: "Akhiri pembacaan"
   contributed_by: Dikontribusikan oleh {name}
   page_title: "Pelajaran"
   set_label: "Set"

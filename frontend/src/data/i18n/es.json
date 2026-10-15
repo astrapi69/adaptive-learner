@@ -2222,7 +2222,8 @@
       "pause": "Pausar",
       "prev_step": "Paso anterior",
       "next_step": "Paso siguiente",
-      "step_position": "Paso {current} de {total} pasos de teoría"
+      "step_position": "Paso {current} de {total} pasos de teoría",
+      "end": "Terminar la lectura"
     },
     "contributed_by": "Contribuido por {name}",
     "page_title": "Lección",

@@ -2222,7 +2222,8 @@
       "pause": "일시정지",
       "prev_step": "이전 단계",
       "next_step": "다음 단계",
-      "step_position": "이론 단계 {total}개 중 {current}단계"
+      "step_position": "이론 단계 {total}개 중 {current}단계",
+      "end": "읽기 종료"
     },
     "contributed_by": "기여자 {name}",
     "page_title": "레슨",
