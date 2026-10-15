@@ -3590,6 +3590,11 @@
             "title": "Recent Steps",
             "type": "array"
           },
+          "run_time_seconds": {
+            "default": 0,
+            "title": "Run Time Seconds",
+            "type": "integer"
+          },
           "score_correct": {
             "title": "Score Correct",
             "type": "integer"

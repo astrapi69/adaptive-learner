@@ -25,7 +25,8 @@ export function deriveSummaryStats(progress: LessonProgress | null): {
 } {
   const correct = progress?.score_correct ?? 0;
   const total = progress?.score_total ?? 0;
-  const seconds = progress?.time_spent_seconds ?? 0;
+  // #3747 - the run just finished, not the lifetime total across restarts.
+  const seconds = progress?.run_time_seconds ?? 0;
   const minutes = Math.max(1, Math.round(seconds / 60));
   const isCompleted = progress?.status === "completed";
   const scorePct = total > 0 ? Math.round((correct / total) * 100) : 0;

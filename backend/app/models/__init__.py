@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, date, datetime
+from typing import Any
 
 from sqlalchemy import (
     Boolean,
@@ -1346,6 +1347,12 @@ class UserBadge(Base):
         )
 
 
+def _run_time_default(context: Any) -> int:
+    """Run time of a row inserted without one (#3747): the lifetime total."""
+    params = context.get_current_parameters() if context is not None else {}
+    return int(params.get("time_spent_seconds") or 0)
+
+
 class LessonProgress(Base):
     """User progress on a single content-set lesson
     (Phase 44 / EXP-002 / P-109).
@@ -1441,6 +1448,16 @@ class LessonProgress(Base):
         Integer,
         nullable=False,
         default=0,
+    )
+    # #3747 - seconds of the CURRENT run only: grows with the same deltas
+    # as ``time_spent_seconds`` and starts over on a restart or an abandon.
+    # The summary shows it; statistics and missions keep the lifetime
+    # total. A row inserted without it (a backup from before #3747) takes
+    # the lifetime total, the value the summary showed until then.
+    run_time_seconds: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=_run_time_default,
     )
     # BUG #41 — the step index the user is currently on, persisted
     # so a paused lesson resumes at the exact step (theory steps

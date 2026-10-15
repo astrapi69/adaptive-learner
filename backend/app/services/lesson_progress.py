@@ -265,6 +265,7 @@ def upsert_progress(
 
     if update.time_spent_seconds_delta > 0:
         row.time_spent_seconds = row.time_spent_seconds + update.time_spent_seconds_delta
+        row.run_time_seconds = (row.run_time_seconds or 0) + update.time_spent_seconds_delta
 
     # Track the live navigation position so a paused lesson resumes where the
     # user left off. Persisted on every autosave / step / pause; clamped to >= 0.
@@ -337,6 +338,7 @@ def _get_or_create_row(
         score_correct=0,
         score_total=0,
         time_spent_seconds=0,
+        run_time_seconds=0,
         attempts=0,
         best_score_correct=0,
         best_score_total=0,
@@ -408,6 +410,7 @@ def _apply_lifecycle_flags(row: LessonProgress, update: ProgressUpdate, now: dat
         row.score_correct = 0
         row.score_total = 0
         row.current_step = 0
+        row.run_time_seconds = 0
     elif update.mark_resumed and row.status == "paused":
         row.status = "in_progress"
         row.paused_at = None
@@ -419,6 +422,7 @@ def _apply_lifecycle_flags(row: LessonProgress, update: ProgressUpdate, now: dat
         row.score_correct = 0
         row.score_total = 0
         row.current_step = 0
+        row.run_time_seconds = 0
         row.paused_at = None
         row.abandoned_at = None
     return just_completed
@@ -478,6 +482,8 @@ def _row_to_wire(row: LessonProgress) -> dict[str, Any]:
         "score_correct": row.score_correct,
         "score_total": row.score_total,
         "time_spent_seconds": row.time_spent_seconds,
+        # #3747 - the current run's time; the summary shows it.
+        "run_time_seconds": row.run_time_seconds,
         "current_step": row.current_step,
         "started_at": row.started_at,
         "updated_at": row.updated_at,

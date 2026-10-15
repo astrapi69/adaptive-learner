@@ -28,6 +28,13 @@ function slugifySource(source: string): string {
     return source.replace(/\//g, "--");
 }
 
+/** #3747 - seconds of the current run. A row from before the field has
+ *  none; it reads the lifetime total, the value the summary showed until
+ *  then (the backend backfills the same way). */
+function runTimeOf(row: LessonProgressRow): number {
+    return row.run_time_seconds ?? row.time_spent_seconds ?? 0;
+}
+
 /** The composite primary key of a ``lessonProgress`` row; the backup
  *  restore rekeys API-origin rows onto it (#3362). */
 export function lessonProgressKey(
@@ -52,6 +59,7 @@ function rowToWire(row: LessonProgressRow): LessonProgress {
         score_correct: row.score_correct,
         score_total: row.score_total,
         time_spent_seconds: row.time_spent_seconds,
+        run_time_seconds: runTimeOf(row),
         // BUG #41 — coalesce undefined → 0 so pre-feature rows
         // resume at the start (the old behaviour).
         current_step: row.current_step ?? 0,
@@ -192,6 +200,7 @@ function buildFreshRow(
         score_correct: 0,
         score_total: 0,
         time_spent_seconds: 0,
+        run_time_seconds: 0,
         current_step: 0,
         started_at: now,
         updated_at: now,
@@ -280,6 +289,7 @@ function applyLifecycle(
         row.score_correct = 0;
         row.score_total = 0;
         row.current_step = 0;
+        row.run_time_seconds = 0;
     } else if (body.mark_resumed && row.status === "paused") {
         row.status = "in_progress";
         row.paused_at = null;
@@ -291,6 +301,7 @@ function applyLifecycle(
         row.score_correct = 0;
         row.score_total = 0;
         row.current_step = 0;
+        row.run_time_seconds = 0;
         row.paused_at = null;
         row.abandoned_at = null;
     }
@@ -342,6 +353,9 @@ export async function upsertLessonProgressDexie(
             body.time_spent_seconds_delta &&
             body.time_spent_seconds_delta > 0
         ) {
+            // Run time first: a pre-#3747 row reads it from the lifetime
+            // total, which must not include this delta yet.
+            row.run_time_seconds = runTimeOf(row) + body.time_spent_seconds_delta;
             row.time_spent_seconds += body.time_spent_seconds_delta;
         }
 
