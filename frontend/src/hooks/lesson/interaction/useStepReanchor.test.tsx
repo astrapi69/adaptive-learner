@@ -1,11 +1,13 @@
 /**
- * Tests for useStepReanchor (#3126): after a step change the scroll offset
- * is hard-reset FIRST (so a shrunken scroll height can never leave a stale
- * offset behind, the iOS class of #1422) and only then, once the new layout
- * is committed, the step anchor is scrolled into view.
+ * Tests for useStepReanchor (#3126, #3752): after a step change the scroll
+ * offset is hard-reset FIRST (so a shrunken scroll height can never leave a
+ * stale offset behind, the iOS class of #1422) and then the step anchor is
+ * scrolled into view, both before the first paint and without animation:
+ * the first painted frame of a step is its final position, so a tap on what
+ * the learner sees lands on that control (#3752).
  */
 import { act, render } from "@testing-library/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useStepReanchor } from "./useStepReanchor";
@@ -40,13 +42,9 @@ beforeEach(() => {
     },
   });
   vi.stubGlobal("scrollTo", vi.fn(() => calls.push("window.scrollTo")));
-  vi.stubGlobal(
-    "requestAnimationFrame",
-    (cb: FrameRequestCallback): number => {
-      cb(0);
-      return 0;
-    },
-  );
+  // #3752: the move must not wait for a frame. A frame that never comes
+  // keeps a deferred scroll from ever running.
+  vi.stubGlobal("requestAnimationFrame", (): number => 0);
   vi.stubGlobal(
     "matchMedia",
     vi.fn(() => ({ matches: false, addEventListener() {}, removeEventListener() {} })),
@@ -68,9 +66,9 @@ describe("useStepReanchor (#3126)", () => {
     expect(calls).toEqual([
       "root.scrollTop=0",
       "window.scrollTo",
-      "scrollIntoView:smooth",
+      "scrollIntoView:auto",
     ]);
-    expect(scrollSpy).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
+    expect(scrollSpy).toHaveBeenCalledWith({ behavior: "auto", block: "start" });
   });
 
   it("re-anchors on every step change, reset first each time", () => {
@@ -80,10 +78,28 @@ describe("useStepReanchor (#3126)", () => {
     expect(calls).toEqual([
       "root.scrollTop=0",
       "window.scrollTo",
-      "scrollIntoView:smooth",
+      "scrollIntoView:auto",
     ]);
     act(() => setStep(2));
     expect(scrollSpy).toHaveBeenCalledTimes(3);
+  });
+
+  it("anchors in the commit, before any effect of the same render runs (#3752)", () => {
+    function Probe() {
+      const ref = useRef<HTMLDivElement>(null);
+      useStepReanchor(ref, 0, true);
+      useEffect(() => {
+        calls.push("passive effect");
+      });
+      return <div ref={ref} />;
+    }
+    render(<Probe />);
+    expect(calls).toEqual([
+      "root.scrollTop=0",
+      "window.scrollTo",
+      "scrollIntoView:auto",
+      "passive effect",
+    ]);
   });
 
   it("scrolls without animation under prefers-reduced-motion", () => {
