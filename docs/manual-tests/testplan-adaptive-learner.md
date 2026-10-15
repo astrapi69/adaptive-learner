@@ -3544,6 +3544,22 @@ Bildschirm automatisch ausgeht).
       Sperr-/Power-Buttons schaltet den Bildschirm trotzdem sofort aus und
       stoppt die Wiedergabe - das kann keine Web-API verhindern
 
+#### TS-0132 Vorlesen ganz beenden (#3760)
+
+Das X im Vorlese-Player beendet die Wiedergabe UND schaltet "Automatisch
+vorlesen" aus (gespeichert wie der Schalter in den Lektionsoptionen).
+
+- [ ] TC-0956 Lektion öffnen, in den Lektionsoptionen "Automatisch vorlesen"
+      einschalten: der Player erscheint unten, rechts steht ein X
+      ("Vorlesen beenden"), kein separater Stopp-Knopf
+- [ ] TC-0957 X antippen: die Wiedergabe endet, der Player verschwindet, der
+      Schalter "Automatisch vorlesen" steht auf aus
+- [ ] TC-0958 "Weiter" zum nächsten Schritt: es wird nichts vorgelesen, der Player
+      bleibt weg
+- [ ] TC-0959 Eine andere Lektion öffnen: "Automatisch vorlesen" ist weiterhin aus
+- [ ] TC-0960 Den Schalter wieder einschalten: der aktuelle Schritt wird vorgelesen,
+      der Player erscheint wieder
+
 #### TS-0109 App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
 
 Der einzige Pfad, den kein Test abdeckt: auf iOS/WKWebView aktiviert

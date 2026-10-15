@@ -20,7 +20,7 @@ function renderPlayer(
         onPrev: vi.fn(),
         onPlayPause: vi.fn(),
         onNext: vi.fn(),
-        onStop: vi.fn(),
+        onEnd: vi.fn(),
         ...overrides,
     };
     render(
@@ -49,16 +49,27 @@ describe("LessonTtsMiniPlayer", () => {
         );
     });
 
-    it("wires prev / next / play-pause / stop callbacks", () => {
+    it("wires prev / next / play-pause / end callbacks", () => {
         const props = renderPlayer();
         fireEvent.click(screen.getByTestId("lesson-tts-player-prev"));
         fireEvent.click(screen.getByTestId("lesson-tts-player-next"));
         fireEvent.click(screen.getByTestId("lesson-tts-player-playpause"));
-        fireEvent.click(screen.getByTestId("lesson-tts-player-stop"));
+        fireEvent.click(screen.getByTestId("lesson-tts-player-end"));
         expect(props.onPrev).toHaveBeenCalledTimes(1);
         expect(props.onNext).toHaveBeenCalledTimes(1);
         expect(props.onPlayPause).toHaveBeenCalledTimes(1);
-        expect(props.onStop).toHaveBeenCalledTimes(1);
+        expect(props.onEnd).toHaveBeenCalledTimes(1);
+    });
+
+    // #3760 - one control ends read-aloud completely; the old step-only stop
+    // button is gone, so there are not two near-identical buttons.
+    it("offers a single end control labelled for ending read-aloud", () => {
+        renderPlayer();
+        expect(screen.getByTestId("lesson-tts-player-end")).toHaveAttribute(
+            "aria-label",
+            "End read-aloud",
+        );
+        expect(screen.queryByTestId("lesson-tts-player-stop")).toBeNull();
     });
 
     it("disables prev/next at the block edges", () => {
