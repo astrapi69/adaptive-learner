@@ -250,7 +250,7 @@
   white-space: nowrap;
   padding: 0 4px;
 }
-.lesson-tts-player-stop {
+.lesson-tts-player-end {
   color: var(--text-muted);
 }
 } /* @layer legacy */

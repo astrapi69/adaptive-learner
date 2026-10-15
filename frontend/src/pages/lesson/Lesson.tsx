@@ -264,6 +264,7 @@ export default function LessonPage() {
     tts,
     autoRead,
     toggleAutoRead,
+    endReadAloud,
     startContinuous,
     isContinuous,
     theoryBlock,
@@ -627,12 +628,13 @@ export default function LessonPage() {
 
         {/* Floating read-aloud mini-player (C8) — visible while the
                   engine is active; step-based skip through the theory
-                  block + play/pause + stop. */}
+                  block + play/pause + end (#3760). */}
         <LessonTtsMiniPlayerSlot
           tts={tts}
           theoryBlock={theoryBlock}
           currentStepIndex={currentStepIndex}
           onReadStepAt={readTheoryStepAt}
+          onEnd={endReadAloud}
         />
       </FooterStatusProvider>
     </main>

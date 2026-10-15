@@ -16,6 +16,8 @@ interface LessonTtsMiniPlayerSlotProps {
   theoryBlock: TheoryBlock | null;
   currentStepIndex: number;
   onReadStepAt: (index: number) => void;
+  /** Ends read-aloud completely, auto-read included (#3760). */
+  onEnd: () => void;
 }
 
 /** The floating mini-player (C8); null unless the engine is active. */
@@ -24,6 +26,7 @@ export default function LessonTtsMiniPlayerSlot({
   theoryBlock,
   currentStepIndex,
   onReadStepAt,
+  onEnd,
 }: LessonTtsMiniPlayerSlotProps) {
   if (!tts.speaking) return null;
 
@@ -37,7 +40,7 @@ export default function LessonTtsMiniPlayerSlot({
       onPrev={() => onReadStepAt(currentStepIndex - 1)}
       onPlayPause={() => (tts.paused ? tts.resume() : tts.pause())}
       onNext={() => onReadStepAt(currentStepIndex + 1)}
-      onStop={() => tts.stop()}
+      onEnd={onEnd}
     />
   );
 }

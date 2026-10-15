@@ -4,14 +4,15 @@
  *
  * Step-based controls (the recommended-first approach; time-based
  * seek deferred): previous theory step (re-read) / play-pause / next
- * theory step, plus a "Step X of N theory steps" readout and a stop
- * (close) button. Web Speech can't seek, but step skip is both
- * simpler and more useful for learning than an arbitrary 10s jump.
+ * theory step, plus a "Step X of N theory steps" readout and an X that
+ * ends read-aloud completely (#3760: playback and auto-read). Web Speech
+ * can't seek, but step skip is both simpler and more useful for learning
+ * than an arbitrary 10s jump.
  *
  * Pure presentational: all behaviour is passed in by the Lesson page.
  */
 
-import {Pause, Play, SkipBack, SkipForward, Square} from "lucide-react";
+import {Pause, Play, SkipBack, SkipForward, X} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 
@@ -27,7 +28,8 @@ interface LessonTtsMiniPlayerProps {
     onPrev: () => void;
     onPlayPause: () => void;
     onNext: () => void;
-    onStop: () => void;
+    /** Ends read-aloud: stops playback and turns auto-read off (#3760). */
+    onEnd: () => void;
 }
 
 export default function LessonTtsMiniPlayer({
@@ -39,7 +41,7 @@ export default function LessonTtsMiniPlayer({
     onPrev,
     onPlayPause,
     onNext,
-    onStop,
+    onEnd,
 }: LessonTtsMiniPlayerProps) {
     const {t} = useI18n();
     const playPauseLabel = paused
@@ -109,12 +111,12 @@ export default function LessonTtsMiniPlayer({
                 variant="ghost"
                 size="icon"
                 type="button"
-                className="lesson-tts-player-btn lesson-tts-player-stop"
-                data-testid="lesson-tts-player-stop"
-                aria-label={t("lesson.tts.stop", "Stop")}
-                onClick={onStop}
+                className="lesson-tts-player-btn lesson-tts-player-end"
+                data-testid="lesson-tts-player-end"
+                aria-label={t("lesson.tts.end", "End read-aloud")}
+                onClick={onEnd}
             >
-                <Square size={14} aria-hidden="true" />
+                <X size={16} aria-hidden="true" />
             </Button>
         </div>
     );

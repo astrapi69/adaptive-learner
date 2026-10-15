@@ -7,9 +7,10 @@
  *   - the auto-read toggle + the theory "Read aloud" control render;
  *   - clicking the theory control speaks the body and surfaces the
  *     floating mini-player;
- *   - the mini-player's Stop ends playback;
+ *   - the mini-player's X ends playback;
  *   - pressing "R" toggles read-aloud from the keyboard;
- *   - auto-read speaks each step on display.
+ *   - auto-read speaks each step on display, and the X ends it for good
+ *     (auto-read off, the next step stays silent, #3760).
  *
  * speechSynthesis is INJECTED before the app loads so the run does not
  * depend on voices being installed in headless chromium.
@@ -174,8 +175,9 @@ test.describe("Lesson read-aloud (TTS)", () => {
         expect(spoken.length).toBeGreaterThan(0);
         expect(spoken[0].length).toBeGreaterThan(0);
 
-        // Stop from the mini-player: the player disappears + speaking ends.
-        await page.getByTestId("lesson-tts-player-stop").click();
+        // End from the mini-player's X (#3760): the player disappears +
+        // speaking ends.
+        await page.getByTestId("lesson-tts-player-end").click();
         await expect(page.getByTestId("lesson-tts-player")).toHaveCount(0);
         await expect(theoryBtn).toHaveAttribute("data-speaking", "false");
 
@@ -264,6 +266,26 @@ test.describe("Lesson read-aloud (TTS)", () => {
                 ),
             )
             .toBeGreaterThan(before);
+
+        // #3760 - the player's X ends read-aloud completely: playback stops,
+        // auto-read is off, and the next step is not read again.
+        await expect(page.getByTestId("lesson-tts-player")).toBeVisible();
+        await page.getByTestId("lesson-tts-player-end").click();
+        await expect(page.getByTestId("lesson-tts-player")).toHaveCount(0);
+        await expect(page.getByTestId("lesson-tts-autoread")).toHaveAttribute(
+            "aria-pressed",
+            "false",
+        );
+        const afterEnd = await page.evaluate(
+            () => (window as unknown as {__ttsSpoken: string[]}).__ttsSpoken.length,
+        );
+        await page.getByTestId("lesson-next").click();
+        await expect(page.getByTestId("lesson-tts-player")).toHaveCount(0);
+        expect(
+            await page.evaluate(
+                () => (window as unknown as {__ttsSpoken: string[]}).__ttsSpoken.length,
+            ),
+        ).toBe(afterEnd);
 
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });

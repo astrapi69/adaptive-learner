@@ -3302,6 +3302,21 @@ screen auto-locks).
       button still turns the screen off immediately and stops playback -
       no web API can prevent that
 
+#### TS-0132 End read-aloud completely (#3760)
+
+The X in the read-aloud player ends playback AND turns "Auto read-aloud"
+off (persisted like the toggle in the lesson options).
+
+- [ ] TC-0956 Open a lesson, turn on "Auto read-aloud" in the lesson options: the
+      player appears at the bottom with an X on the right ("End
+      read-aloud"), no separate stop button
+- [ ] TC-0957 Tap the X: playback ends, the player disappears, the "Auto
+      read-aloud" toggle is off
+- [ ] TC-0958 "Next" to the following step: nothing is read, the player stays away
+- [ ] TC-0959 Open another lesson: "Auto read-aloud" is still off
+- [ ] TC-0960 Turn the toggle on again: the current step is read and the player
+      reappears
+
 #### TS-0109 App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
 
 The one path no automated test covers: on iOS/WKWebView a new service

@@ -61,6 +61,14 @@ export function useLessonAutoRead({
     });
   }, [tts]);
 
+  // #3760 - the mini player's X: stop the stream and turn auto-read off,
+  // persisted like the toggle, so the next step does not start it again.
+  const endReadAloud = useCallback(() => {
+    tts.stop();
+    writeLessonAutoRead(false);
+    setAutoRead(false);
+  }, [tts]);
+
   // The speech payload (text + utterance id + lang) for the current
   // step, or null when there's nothing to read (summary, code
   // exercise, empty). Shared by auto-read + the keyboard shortcut.
@@ -224,6 +232,7 @@ export function useLessonAutoRead({
     tts,
     autoRead,
     toggleAutoRead,
+    endReadAloud,
     startContinuous,
     isContinuous,
     theoryBlock,
