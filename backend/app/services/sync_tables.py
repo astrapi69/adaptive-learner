@@ -571,6 +571,8 @@ TABLES: dict[str, TableSpec] = {
             "score_correct",
             "score_total",
             "time_spent_seconds",
+            # #3747 - the current run's time, apart from the lifetime total.
+            "run_time_seconds",
             "current_step",
             "started_at",
             "updated_at",

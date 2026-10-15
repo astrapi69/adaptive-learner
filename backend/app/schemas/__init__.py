@@ -1629,6 +1629,9 @@ class LessonProgressOut(BaseModel):
     score_correct: int
     score_total: int
     time_spent_seconds: int
+    # #3747 - seconds of the current run; ``time_spent_seconds`` is the
+    # lifetime total across restarts.
+    run_time_seconds: int = 0
     current_step: int = 0
     started_at: datetime
     updated_at: datetime

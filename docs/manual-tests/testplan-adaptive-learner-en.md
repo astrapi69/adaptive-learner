@@ -660,6 +660,10 @@ preview delivery). In the regular build the mode does not exist.
       Enter (without a click) triggers the PRIMARY card "Next Lesson ->
       Start" - not a secondary card (e.g. "Review"); clicking the buttons
       still works (#1943)
+- [ ] TC-0963 Time in the summary (#3747): play a lesson for a few minutes, leave,
+      reopen it, choose "Start over" and finish quickly: the summary shows only
+      the minutes of this run, not the sum of all visits. Statistics still
+      count the whole study time
 - [ ] TC-0159 Last lesson of a set (no "Next Lesson"): on the summary, Enter does
       nothing wrong - no error, no navigation to a non-existent lesson
       (#1943)

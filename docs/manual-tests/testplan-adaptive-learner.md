@@ -710,6 +710,10 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       "Nächste Lektion -> Starten" aus - nicht eine sekundäre Karte
       (z. B. "Wiederholung"); Klick auf die Buttons funktioniert weiterhin
       (#1943)
+- [ ] TC-0963 Zeit in der Zusammenfassung (#3747): eine Lektion einige Minuten spielen,
+      verlassen, wieder öffnen, "Neu starten" wählen und zügig zu Ende spielen:
+      die Zusammenfassung nennt nur die Minuten dieser Runde, nicht die Summe
+      aller Besuche. Die Statistik zählt weiter die gesamte Lernzeit
 - [ ] TC-0159 Letzte Lektion eines Sets (keine "Nächste Lektion"): auf der
       Zusammenfassung passiert bei Enter nichts Falsches - kein Fehler,
       keine Navigation zu einer nicht vorhandenen Lektion (#1943)

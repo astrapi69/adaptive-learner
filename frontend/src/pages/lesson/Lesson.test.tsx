@@ -96,6 +96,7 @@ const PROGRESS = {
   score_correct: 0,
   score_total: 0,
   time_spent_seconds: 0,
+  run_time_seconds: 0,
   started_at: "2026-05-26T00:00:00Z",
   updated_at: "2026-05-26T00:00:00Z",
   completed_at: null,
@@ -600,6 +601,8 @@ describe("LessonPage: ready state rendering", () => {
       score_correct: 3,
       score_total: 4,
       time_spent_seconds: 180,
+      // #3747 - the summary shows the run's time; both stores emit it.
+      run_time_seconds: 180,
     });
     renderAtPath(VALID_PATH);
     expect(screen.getByTestId("lesson-summary")).toBeInTheDocument();

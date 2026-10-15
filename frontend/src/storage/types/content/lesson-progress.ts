@@ -212,7 +212,13 @@ export interface LessonProgress {
   step_results: Record<string, LessonStepResultStored>;
   score_correct: number;
   score_total: number;
+  /** Lifetime seconds across every run; statistics and missions sum it. */
   time_spent_seconds: number;
+  /** #3747 - seconds of the current run; starts over on a restart or an
+   *  abandon. The summary shows it. Always emitted by both storage
+   *  backends; optional on the wire type so hand-built fixtures that omit
+   *  it still type-check. Read with `?? 0`. */
+  run_time_seconds?: number;
   /** BUG #41 — the step index the user is currently on; drives
    *  resume-at-paused-step. Always emitted by both storage backends
    *  (defaults to 0); optional on the wire type so pre-feature
