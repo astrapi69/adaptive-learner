@@ -268,7 +268,9 @@ class SetEntryResponse(BaseModel):
                 entry.set.review_status.value if entry.set.review_status else "authored"
             ),
             evaluation=(
-                entry.set.evaluation.model_dump(mode="json", exclude_none=True)
+                # #3711: what the author declared, as the engine passes it
+                # on; the consumer (gradeFor) applies the schema defaults.
+                entry.set.evaluation.model_dump(mode="json", exclude_unset=True)
                 if entry.set.evaluation
                 else None
             ),
