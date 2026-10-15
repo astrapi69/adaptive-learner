@@ -36,6 +36,7 @@ or '01'..'10' for math).
 
 from __future__ import annotations
 
+import logging
 import re
 from typing import Any
 
@@ -53,6 +54,13 @@ from .manifest_generated import (
 from .manifest_generated import (
     ContentSetBook as ContentSetBook,
 )
+
+logger = logging.getLogger(__name__)
+
+# #3711 - the values the engine's projection (``asContentSetEntry``) keeps;
+# anything else falls back the way it does there.
+_KNOWN_VISIBILITY = frozenset({"visible", "hidden"})
+_KNOWN_REVIEW_STATUS = frozenset({"authored", "generated", "reviewed"})
 
 CURRENT_SCHEMA_VERSION = "1.9"
 # v1.8 -> v1.9 (stable identity + attribution + review status,
@@ -227,6 +235,40 @@ class ContentSet(ContentSetBase):
             data = dict(data)
             legacy = data.pop("language")
             data.setdefault("target_language", legacy)
+        return data
+
+    @model_validator(mode="before")
+    @classmethod
+    def _project_like_the_engine(cls, data: Any) -> Any:
+        """Read a set entry the way the engine's projection does (#3711).
+
+        Browser mode projects every entry through ``asContentSetEntry``;
+        this loader used to reject the whole manifest where the engine
+        falls back, so the two modes listed different sets for one repo:
+        a set without a target language (engine: ``""``), and a
+        ``visibility`` or ``review_status`` value this version does not
+        know (engine: ``visible`` / ``authored``). The last two are the
+        forward-compatibility case: a newer engine adds a value and this
+        loader must not lose the repo over it. Each fallback is logged.
+        """
+        if not isinstance(data, dict):
+            return data
+        data = dict(data)
+        set_id = data.get("id")
+        # Independent of validator order: the legacy alias counts as declared.
+        if "target_language" not in data and "language" not in data:
+            logger.warning("set %r declares no target_language; projected as ''", set_id)
+            data["target_language"] = ""
+        visibility = data.get("visibility")
+        if visibility is not None and visibility not in _KNOWN_VISIBILITY:
+            logger.warning("set %r: unknown visibility %r read as 'visible'", set_id, visibility)
+            data["visibility"] = "visible"
+        review_status = data.get("review_status")
+        if review_status is not None and review_status not in _KNOWN_REVIEW_STATUS:
+            logger.warning(
+                "set %r: unknown review_status %r read as 'authored'", set_id, review_status
+            )
+            data["review_status"] = None
         return data
 
     @field_validator("id")

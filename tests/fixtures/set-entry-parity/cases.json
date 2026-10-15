@@ -1,5 +1,5 @@
 {
-  "_doc": "Shared cases for the set-entry projection (#3711). A case is a manifest set entry plus the entry both projections must give: asContentSetEntry from learn-content-engine (Dexie mode, frontend/src/lib/content/engine/set-entry.parity.test.ts) and SetEntryResponse.from_entry over the content-loader's ContentSet (API mode, backend/tests/test_set_entry_parity.py). Each test compares its whole output, field by field, value and absence. A case with a python block declares where the API side differs, with the reason; 'rejected' means the entry does not validate. Fields in only_in exist on one side only and are dropped from the other side's expectation.",
+  "_doc": "Shared cases for the set-entry projection (#3711). A case is a manifest set entry plus the entry both projections must give: asContentSetEntry from learn-content-engine (Dexie mode, frontend/src/lib/content/engine/set-entry.parity.test.ts) and SetEntryResponse.from_entry over the content-loader's ContentSet (API mode, backend/tests/test_set_entry_parity.py). Each test compares its whole output, field by field, value and absence. A case with a python or ts block declares where that side differs, with the reason; 'rejected' means the entry does not validate. Since #3711 the four former divergences are aligned to the engine's projection, so no case declares one. Fields in only_in exist on one side only and are dropped from the other side's expectation.",
   "context": {
     "source": "owner/repo",
     "branch": "main",
@@ -156,11 +156,7 @@
         "review_status": "authored",
         "attribution": null,
         "evaluation": null
-      },
-      "python": {
-        "outcome": "rejected"
-      },
-      "divergence": "The generated ContentSet makes target_language required, so the API loader rejects the entry; the engine projects an empty target. The app's only synthesized entry (content_backup, #3707) writes an empty string so it validates. Declared, not aligned (#3711)."
+      }
     },
     {
       "name": "source_language_declared",
@@ -360,11 +356,7 @@
         "review_status": "authored",
         "attribution": null,
         "evaluation": null
-      },
-      "python": {
-        "outcome": "rejected"
-      },
-      "divergence": "The API loader validates visibility against its enum and rejects the entry; the engine falls back to visible."
+      }
     },
     {
       "name": "review_status_authored",
@@ -516,11 +508,7 @@
         "review_status": "authored",
         "attribution": null,
         "evaluation": null
-      },
-      "python": {
-        "outcome": "rejected"
-      },
-      "divergence": "The API loader validates review_status against its enum and rejects the entry; the engine falls back to authored."
+      }
     },
     {
       "name": "evaluation_fully_declared",
@@ -610,19 +598,7 @@
         "evaluation": {
           "pass_percent": 70
         }
-      },
-      "python": {
-        "outcome": "projected",
-        "overrides": {
-          "evaluation": {
-            "scheme": "percent",
-            "pass_percent": 70,
-            "basis": "elements",
-            "report": "compact"
-          }
-        }
-      },
-      "divergence": "The API loader dumps the validated evaluation model, so scheme, basis and report arrive with their schema defaults; the engine passes the declared block through. Same meaning, different shape."
+      }
     }
   ]
 }
