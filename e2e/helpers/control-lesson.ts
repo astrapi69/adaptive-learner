@@ -229,7 +229,9 @@ export interface StepMotion {
  * task, so the first sample belongs to the first frame the new step is
  * painted in. Playwright's own click or tap would wait for a resting target
  * and hide exactly the motion this measures. A step whose first frame is
- * its final position yields one value repeated.
+ * its final position yields one value repeated. Sampling runs for at least
+ * ``durationMs`` and at least eight frames (three seconds at most), so a
+ * slow engine still covers the whole settling time.
  */
 export async function sampleNextStepMotion(page: Page, durationMs = 400): Promise<StepMotion> {
     return page.evaluate(async (duration) => {
@@ -257,8 +259,12 @@ export async function sampleNextStepMotion(page: Page, durationMs = 400): Promis
                         ?.querySelector<HTMLElement>(CONTROL);
                     if (control) tops.push(Math.round(control.getBoundingClientRect().top));
                 }
-                if (performance.now() - started < duration) requestAnimationFrame(frame);
-                else resolve();
+                // At least the duration AND enough frames: a slow headless
+                // engine paints few frames per 400 ms (4 under WebKit in CI).
+                const elapsed = performance.now() - started;
+                const done = (elapsed >= duration && tops.length >= 8) || elapsed > 3000;
+                if (done) resolve();
+                else requestAnimationFrame(frame);
             };
             requestAnimationFrame(frame);
         });
