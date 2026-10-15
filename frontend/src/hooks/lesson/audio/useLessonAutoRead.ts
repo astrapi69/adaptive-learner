@@ -51,23 +51,27 @@ export function useLessonAutoRead({
   // each new step aloud on display (theory body / exercise prompt);
   // code/formula exercises are skipped. Off by default; remembered.
   const tts = useReadAloud();
-  const [autoRead, setAutoRead] = useState(() => readLessonAutoRead());
-  const toggleAutoRead = useCallback(() => {
-    setAutoRead((on) => {
-      const next = !on;
-      writeLessonAutoRead(next);
-      if (!next) tts.stop();
-      return next;
-    });
-  }, [tts]);
+  // ``storedAutoRead`` is the persisted preference (the options toggle).
+  // ``silencedLesson`` is the lesson the player's X ended read-aloud for
+  // (#3760): quiet for the rest of THAT lesson, the preference untouched,
+  // so the next lesson reads again. An X means "end this", not "switch the
+  // feature off".
+  const [storedAutoRead, setStoredAutoRead] = useState(() => readLessonAutoRead());
+  const [silencedLesson, setSilencedLesson] = useState<ContentLesson | null>(null);
+  const autoRead = storedAutoRead && (lesson === null || silencedLesson !== lesson);
 
-  // #3760 - the mini player's X: stop the stream and turn auto-read off,
-  // persisted like the toggle, so the next step does not start it again.
+  const toggleAutoRead = useCallback(() => {
+    const next = !autoRead;
+    writeLessonAutoRead(next);
+    setStoredAutoRead(next);
+    setSilencedLesson(null);
+    if (!next) tts.stop();
+  }, [autoRead, tts]);
+
   const endReadAloud = useCallback(() => {
     tts.stop();
-    writeLessonAutoRead(false);
-    setAutoRead(false);
-  }, [tts]);
+    setSilencedLesson(lesson);
+  }, [lesson, tts]);
 
   // The speech payload (text + utterance id + lang) for the current
   // step, or null when there's nothing to read (summary, code

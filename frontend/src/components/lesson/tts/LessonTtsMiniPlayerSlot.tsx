@@ -16,7 +16,7 @@ interface LessonTtsMiniPlayerSlotProps {
   theoryBlock: TheoryBlock | null;
   currentStepIndex: number;
   onReadStepAt: (index: number) => void;
-  /** Ends read-aloud completely, auto-read included (#3760). */
+  /** Ends read-aloud for the current lesson (#3760). */
   onEnd: () => void;
 }
 

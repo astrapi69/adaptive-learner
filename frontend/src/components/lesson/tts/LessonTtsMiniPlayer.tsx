@@ -5,7 +5,7 @@
  * Step-based controls (the recommended-first approach; time-based
  * seek deferred): previous theory step (re-read) / play-pause / next
  * theory step, plus a "Step X of N theory steps" readout and an X that
- * ends read-aloud completely (#3760: playback and auto-read). Web Speech
+ * ends read-aloud for the current lesson (#3760). Web Speech
  * can't seek, but step skip is both simpler and more useful for learning
  * than an arbitrary 10s jump.
  *
@@ -28,7 +28,7 @@ interface LessonTtsMiniPlayerProps {
     onPrev: () => void;
     onPlayPause: () => void;
     onNext: () => void;
-    /** Ends read-aloud: stops playback and turns auto-read off (#3760). */
+    /** Ends read-aloud for the current lesson (#3760). */
     onEnd: () => void;
 }
 
