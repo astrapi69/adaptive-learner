@@ -33,6 +33,9 @@ export default defineConfig({
     testDir: "./webkit",
     fullyParallel: false,
     workers: 1,
+    // #3752 - in CI each failing test becomes an annotation naming spec and
+    // assertion (the Dexie config does the same since #3748).
+    reporter: process.env.CI ? [["list"], ["github"]] : "list",
     retries: process.env.CI ? 1 : 0,
     timeout: 45_000,
     use: {
