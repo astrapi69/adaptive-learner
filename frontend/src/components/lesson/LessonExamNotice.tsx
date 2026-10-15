@@ -8,10 +8,15 @@
  *
  * Renders nothing outside exam mode or once the run has an answer, so the
  * lesson page passes its state instead of branching itself (keeps
- * LessonPage under the complexity gate).
+ * LessonPage under the complexity gate). The first answer is saved
+ * asynchronously, so the notice also goes as soon as the learner is past
+ * the first exercise: waiting for the save left it on the next step for a
+ * frame, and its removal moved that step's options after they were painted
+ * (#3752).
  *
  * @example
- * <LessonExamNotice lessonMode={lessonMode} progress={progress} />
+ * <LessonExamNotice lessonMode={lessonMode} progress={progress}
+ *     steps={lesson.steps} currentStepIndex={currentStepIndex} />
  */
 
 import {GraduationCap} from "lucide-react";
@@ -25,11 +30,27 @@ export interface LessonExamNoticeProps {
     lessonMode: LessonMode;
     /** The stored run; a completed one is a finished run, not this one. */
     progress: LessonProgress | null;
+    /** The lesson's steps; with ``currentStepIndex`` it tells whether the
+     *  learner is past the first exercise. */
+    steps?: readonly {type: string}[];
+    currentStepIndex?: number;
 }
 
-export default function LessonExamNotice({lessonMode, progress}: LessonExamNoticeProps) {
+/** Whether the learner is past the run's first exercise step. */
+function pastFirstExercise(steps: readonly {type: string}[], currentStepIndex: number): boolean {
+    const first = steps.findIndex((step) => step.type === "exercise");
+    return first >= 0 && currentStepIndex > first;
+}
+
+export default function LessonExamNotice({
+    lessonMode,
+    progress,
+    steps = [],
+    currentStepIndex = 0,
+}: LessonExamNoticeProps) {
     const {t} = useI18n();
     if (lessonMode !== "exam" || runHasAnswer(progress)) return null;
+    if (pastFirstExercise(steps, currentStepIndex)) return null;
     return (
         <p
             role="note"

@@ -546,7 +546,12 @@ export default function LessonPage() {
           <>
           {/* #3742 - exam mode says up front: no feedback until the end,
               no way back. Self-gating (exam mode, no answer yet). */}
-          <LessonExamNotice lessonMode={lessonMode} progress={progress} />
+          <LessonExamNotice
+            lessonMode={lessonMode}
+            progress={progress}
+            steps={played.steps}
+            currentStepIndex={currentStepIndex}
+          />
           {/* #1013 — reverse mode can't gradeably reverse non-matching
               exercise types, so they play in their original format with this
               note (the issue's documented fallback). */}

@@ -36,4 +36,24 @@ describe("LessonExamNotice (#3742)", () => {
             expect(notice).toBeNull();
         }
     });
+
+    // #3752 - the first answer is saved asynchronously; waiting for it left
+    // the notice on the next step for a frame, and its removal moved that
+    // step's options up 60 px after they were painted.
+    const STEPS = [{type: "theory"}, {type: "exercise"}, {type: "exercise"}];
+    it.each([
+        ["on the theory step", 0, true],
+        ["on the first exercise", 1, true],
+        ["past the first exercise, answer not stored yet", 2, false],
+    ] as const)("exam, %s", (_name, currentStepIndex, shown) => {
+        render(
+            <LessonExamNotice
+                lessonMode="exam"
+                progress={null}
+                steps={STEPS}
+                currentStepIndex={currentStepIndex}
+            />,
+        );
+        expect(screen.queryByTestId("lesson-exam-notice") !== null).toBe(shown);
+    });
 });

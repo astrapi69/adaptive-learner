@@ -12,12 +12,17 @@
  * empty lower half.
  *
  * One hook, two ordered moves: first the hard reset (``scrollTop = 0`` on
- * the scroll container plus ``window.scrollTo``, never smooth), which
- * clamps whatever offset the old layout left behind, then, behind a
- * double ``requestAnimationFrame`` so the new step's layout is committed,
- * the anchor is scrolled into view (smooth unless the learner prefers
- * reduced motion). Sibling of {@link useOrientationReanchor}, which does
- * the same for a device rotation.
+ * the scroll container plus ``window.scrollTo``), which clamps whatever
+ * offset the old layout left behind, then the anchor is scrolled into view.
+ *
+ * Both run in a layout effect, instantly, before the browser paints the new
+ * step (#3752). They used to wait two frames and then scroll smoothly, so
+ * the first frame showed the step at the top of the page and the options
+ * slid about 165 px over some 250 ms after it: a tap on what the learner
+ * saw first landed on the neighbouring option (Oslo tapped, Stockholm
+ * recorded). A layout effect reads the committed layout of the new step,
+ * which is all the double frame waited for. Sibling of
+ * {@link useOrientationReanchor}, which does the same for a device rotation.
  *
  * @example
  * const stepScrollRef = useRef<HTMLDivElement>(null);
@@ -27,7 +32,7 @@
  * @param stepIndex - The active step; every change triggers the re-anchor.
  * @param enabled - Gate, e.g. off while the resume overlay owns the screen.
  */
-import { useEffect, type RefObject } from "react";
+import { useLayoutEffect, type RefObject } from "react";
 
 /** The single scroll container of the app shell (`#root`, see 01-base.css). */
 function scrollContainer(): HTMLElement | null {
@@ -52,27 +57,9 @@ export function useStepReanchor(
   stepIndex: number,
   enabled: boolean = true,
 ): void {
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!enabled || typeof window === "undefined") return;
     resetScroll();
-    const reduceMotion =
-      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-    let cancelled = false;
-    const raf =
-      typeof requestAnimationFrame === "function"
-        ? requestAnimationFrame
-        : (cb: FrameRequestCallback) => window.setTimeout(() => cb(0), 0);
-    raf(() => {
-      raf(() => {
-        if (cancelled) return;
-        anchorRef.current?.scrollIntoView?.({
-          behavior: reduceMotion ? "auto" : "smooth",
-          block: "start",
-        });
-      });
-    });
-    return () => {
-      cancelled = true;
-    };
+    anchorRef.current?.scrollIntoView?.({ behavior: "auto", block: "start" });
   }, [anchorRef, stepIndex, enabled]);
 }
