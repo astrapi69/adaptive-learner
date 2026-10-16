@@ -38,7 +38,7 @@ services:
       - ADAPTIVE_LEARNER_PORT=${ADAPTIVE_LEARNER_PORT:-18001}
       - ADAPTIVE_LEARNER_FRONTEND_PORT=${ADAPTIVE_LEARNER_FRONTEND_PORT:-15174}
     # bun is the package manager (#1492); same bun pin as frontend/Dockerfile + CI.
-    command: sh -c "npm install --global bun@1.3.14 && bun install && bun run dev -- --host 0.0.0.0"
+    command: sh -c "npm install --global bun@1.4.2 && bun install && bun run dev -- --host 0.0.0.0"
     depends_on:
       - backend
 

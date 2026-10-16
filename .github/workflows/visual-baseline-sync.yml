@@ -160,9 +160,9 @@ jobs:
       # --user 1001 (no apt). The npm distribution of Bun carries the binary
       # as a plain npm tarball (no unzip), installed to a user-writable
       # prefix (#1530, same pattern as dexie-smoke.yml).
-      - name: Install Bun 1.3.14 (npm; image lacks unzip for setup-bun)
+      - name: Install Bun 1.4.2 (npm; image lacks unzip for setup-bun)
         run: |
-          npm install --global --prefix "$HOME/.bun-npm" bun@1.3.14
+          npm install --global --prefix "$HOME/.bun-npm" bun@1.4.2
           echo "$HOME/.bun-npm/bin" >> "$GITHUB_PATH"
 
       - name: Cache bun install

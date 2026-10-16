@@ -54,9 +54,9 @@ jobs:
 
       # The npm distribution of Bun: setup-bun needs `unzip`, which the image
       # lacks, and --user 1001 cannot apt-get it (#1530).
-      - name: Install Bun 1.3.14 (npm; image lacks unzip for setup-bun)
+      - name: Install Bun 1.4.2 (npm; image lacks unzip for setup-bun)
         run: |
-          npm install --global --prefix "$HOME/.bun-npm" bun@1.3.14
+          npm install --global --prefix "$HOME/.bun-npm" bun@1.4.2
           echo "$HOME/.bun-npm/bin" >> "$GITHUB_PATH"
 
       # The smoke config starts the backend through `poetry run uvicorn`.

@@ -2,7 +2,7 @@
 # Mirrors the retired frontend/Dockerfile build stage (same bun pin as CI).
 FROM node:24-slim AS frontend-build
 
-RUN npm install --global bun@1.3.14
+RUN npm install --global bun@1.4.2
 
 # #2559 — the engine schema mirror lives at the repo root, not under
 # frontend/. schema-version.test.ts imports it via a relative

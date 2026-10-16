@@ -159,7 +159,7 @@ cd ~/adaptive-learner
 ### 4. Entwickler-Setup (Source-Build)
 
 Manuelles Poetry-+-Bun-Setup für Mitwirkende.
-Voraussetzungen: Python 3.11+, Node ≥24, Poetry, Bun 1.3+, Make.
+Voraussetzungen: Python 3.11+, Node ≥24, Poetry, Bun 1.4+, Make.
 
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
