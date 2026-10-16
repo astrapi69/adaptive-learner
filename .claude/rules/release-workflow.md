@@ -226,13 +226,21 @@ The `make sync-versions` step covers all AdaptiveLearner-internal versions. The 
 
 ## Step 4b: Dependency currency check
 
-Before running the test suite, check for outdated dependencies:
+Before running the test suite, check every dependency surface:
 
 ```bash
-cd backend && poetry show --outdated
-cd launcher && poetry show --outdated
-cd frontend && bun outdated
+make release-outdated
 ```
+
+`scripts/release_outdated.py` finds the package surfaces itself (every
+directory with a `pyproject.toml` or `package.json`: backend, launcher, docs,
+each plugin with its own `poetry.lock`, frontend, e2e) and runs
+`poetry show --outdated` / `bun outdated` in each. It also reports the
+pre-commit hook revs and the GitHub Actions refs against their newest tags, the
+Docker `FROM` images, and the pinned Bun against npm. It is a report and always
+exits 0; a surface it cannot check says so. Until #3778 the step listed three
+surfaces by hand while the repository had twenty, and the plugins, docs, e2e,
+pre-commit revs and base images were reported by nothing.
 
 Apply routine bumps (patch + minor within the same major) as part of the release. Major bumps with breaking changes get their own dedicated session, not bundled into a release.
 

@@ -1063,17 +1063,8 @@ release-state: ## Print state-capture report (release-workflow.md Step 1)
 	@echo "=== Current canonical version ==="
 	@grep "^version" backend/pyproject.toml
 
-release-outdated: ## Dependency currency check across all surfaces (release-workflow.md Step 4b)
-	@echo "=== Backend (poetry show --outdated) ==="
-	@cd backend && COLUMNS=200 poetry show --outdated --no-ansi 2>&1 | grep -v "^adaptive-learner-plugin-" || true
-	@echo ""
-	@echo "=== Launcher (poetry show --outdated) ==="
-	@cd launcher && COLUMNS=200 poetry show --outdated --no-ansi 2>&1 || true
-	@echo ""
-	@echo "=== Frontend (bun outdated) ==="
-	@cd frontend && bun outdated 2>&1 || true
-	@echo ""
-	@echo "Reminder: apply routine bumps (patch+minor within same major) via 'poetry update <allowlist>' (never bare)."
+release-outdated: ## Dependency currency report for every surface (release-workflow.md Step 4b, #3778)
+	@python3 scripts/release_outdated.py
 
 release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@$(MAKE) test
