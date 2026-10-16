@@ -22,6 +22,7 @@
 
 import {devices, expect, test, type Locator, type Page} from "@playwright/test";
 
+import {SET_ID, connectMockRepo, mockRepo} from "../helpers/control-lesson";
 import {
     completeAssessment,
     completeOnboarding,
@@ -110,15 +111,20 @@ test("dashboard: learning path and create lesson, with the hint on screen", asyn
     await expectTappable(page.getByTestId("dashboard-create-lesson"), "Lektion erstellen");
 });
 
-test("content: the last download button", async ({page}) => {
+test("content: the controls of the last set row", async ({page}) => {
     await dismissHintForSetup(page);
     await completeOnboarding(page);
     await completeAssessment(page);
-    await page.goto("/content");
+    // A set to download without network: the mocked control repo.
+    await mockRepo(page);
+    await connectMockRepo(page);
+    await page.goto("/content?tab=my");
     await showHintAgain(page);
-    const actions = page.locator('[data-testid^="content-set-"][data-testid$="-action"]');
-    await expect(actions.first()).toBeVisible({timeout: 30_000});
-    await expectTappable(actions.last(), "letztes Herunterladen");
+    // Connecting installs the set, so its download button is disabled; the
+    // row's other controls sit at the same place at the bottom of the list.
+    await expect(page.getByTestId(`content-set-${SET_ID}-open`)).toBeAttached({timeout: 30_000});
+    await expectTappable(page.getByTestId(`content-set-${SET_ID}-open`), "Öffnen (letzte Set-Zeile)");
+    await expectTappable(page.getByTestId(`set-actions-${SET_ID}`), "Aktionen (letzte Set-Zeile)");
 });
 
 test("settings, learning: reset progress", async ({page}) => {

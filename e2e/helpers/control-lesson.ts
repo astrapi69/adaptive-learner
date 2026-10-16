@@ -16,7 +16,7 @@ import {createTestUser} from "./onboarding";
 import {currentStepTestId, waitForStepAdvance} from "../dexie/_step-flow";
 
 const OWNER_REPO = "e2e/select-cloze-tap";
-const SET_ID = "evaluation-pilot-control-from-de";
+export const SET_ID = "evaluation-pilot-control-from-de";
 const SET_PATH = "sets/de/evaluation-pilot-control";
 const LESSON_FILE = "01-hauptstadt-quiz-kontrolle.json";
 const MODE_KEY = "adaptive-learner.lesson.default_mode";
@@ -80,6 +80,18 @@ export async function mockRepo(page: Page): Promise<void> {
     });
 }
 
+/** Connect the mocked repo in Settings > Data; ``mockRepo`` must be routed. */
+export async function connectMockRepo(page: Page, githubRequests: string[] = []): Promise<void> {
+    await page.goto("/settings?tab=data");
+    await expect(page.getByTestId("content-repo-section")).toBeVisible({timeout: 15_000});
+    await page.getByTestId("content-repo-url").fill(`https://github.com/${OWNER_REPO}`);
+    await page.getByTestId("content-repo-connect").click();
+    await expect(
+        page.getByTestId("content-repo-result"),
+        `GitHub requests: ${githubRequests.join(", ")}`,
+    ).toContainText(/passed|erfolgreich/i);
+}
+
 /** Create the user, connect the mocked repo and open the lesson. The setup
  *  runs at a wide viewport (onboarding and the content tree are width
  *  gated); the lesson itself is played at phone size, where the device's
@@ -93,14 +105,7 @@ export async function openLesson(page: Page, mode: "practice" | "exam"): Promise
     });
     await createTestUser(page);
     await page.evaluate(([key, value]) => localStorage.setItem(key, value), [MODE_KEY, mode]);
-    await page.goto("/settings?tab=data");
-    await expect(page.getByTestId("content-repo-section")).toBeVisible({timeout: 15_000});
-    await page.getByTestId("content-repo-url").fill(`https://github.com/${OWNER_REPO}`);
-    await page.getByTestId("content-repo-connect").click();
-    await expect(
-        page.getByTestId("content-repo-result"),
-        `GitHub requests: ${githubRequests.join(", ")}`,
-    ).toContainText(/passed|erfolgreich/i);
+    await connectMockRepo(page, githubRequests);
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
     const iPhone = await page.evaluate(() => /iPhone/.test(navigator.userAgent));
