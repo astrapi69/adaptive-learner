@@ -222,7 +222,7 @@ cd ~/adaptive-learner
 ### 4. Developer setup (source build)
 
 Manual Poetry + Bun setup for contributors. Prerequisites:
-Python 3.11+, Node ≥24, Poetry, Bun 1.3+, Make.
+Python 3.11+, Node ≥24, Poetry, Bun 1.4+, Make.
 
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
