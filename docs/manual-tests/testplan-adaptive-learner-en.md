@@ -3325,6 +3325,23 @@ is done with the toggle in the lesson options only.
 - [ ] TC-0962 Switch the toggle in the lesson options off and open another lesson:
       "Auto read-aloud" stays off
 
+#### TS-0133 "Install as an app" hint as a card on the dashboard (#3765)
+
+On an iPhone in Safari (not opened from the home screen) the hint appears as
+a dismissable card at the top of the dashboard, no longer as a bar fixed at
+the bottom of the screen.
+
+- [ ] TC-0964 Fresh profile on the iPhone in Safari: the start page, onboarding and
+      assessment show no install hint; "Next question" and "Continue later"
+      can be tapped directly
+- [ ] TC-0965 On the dashboard the "Install as an app" card sits at the top in the
+      page flow and scrolls with it; "Learning Path" and "Create a lesson"
+      stay tappable
+- [ ] TC-0966 Content (the last "Download") and Settings > Learning ("Reset
+      progress") can be tapped down to the end of the page
+- [ ] TC-0967 Dismiss the card: it does not come back after a reload; the
+      instructions in Settings stay available
+
 #### TS-0109 App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
 
 The one path no automated test covers: on iOS/WKWebView a new service

@@ -16,8 +16,8 @@
  * ``fixtures/evaluation-pilot-control.lesson.json`` and served through a
  * page.route-mocked content repo (no network).
  *
- * On the way it pins #3749: the iOS install hint shows on the content page
- * and is absent on the lesson, without being dismissed.
+ * On the way it pins #3749 / #3765: the iOS install hint is absent on the
+ * lesson (it lives on the dashboard now), without being dismissed.
  *
  * Asserted per tapped option: it is the checked radio right after the tap,
  * and after "check" it is graded correct with no option marked wrong; the

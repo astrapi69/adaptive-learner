@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router";
 
 import DashboardFilterBar from "../../components/dashboard/DashboardFilterBar";
 import QuickStartButton from "../../components/dashboard/QuickStartButton";
+import IosInstallHint from "../../components/pwa/IosInstallHint";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 import { ApiError } from "../../api/client";
@@ -197,6 +198,10 @@ export default function Dashboard() {
           </p>
         )}
       </header>
+
+      {/* #3765 - the iOS install hint as a card in the flow, never laid over
+          a page. */}
+      <IosInstallHint />
 
       {/* #1417 — the two stacked API-key messages (blue skip banner + yellow
           ApiKeyRequiredNotice) were consolidated into the single inviting

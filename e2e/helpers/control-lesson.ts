@@ -103,16 +103,14 @@ export async function openLesson(page: Page, mode: "practice" | "exam"): Promise
     ).toContainText(/passed|erfolgreich/i);
     await page.goto("/content?tab=my");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15_000});
-    // Outside a lesson an iPhone profile shows the install hint (#3749).
     const iPhone = await page.evaluate(() => /iPhone/.test(navigator.userAgent));
-    if (iPhone) await expect(page.getByTestId("ios-install-hint")).toBeVisible();
     const open = page.getByTestId(`content-set-${SET_ID}-open`);
     await expect(open).toBeVisible({timeout: 15_000});
     await open.click();
     await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 15_000});
     await page.setViewportSize({width: 390, height: 844});
-    // #3749 - the add-to-home-screen hint stays off the lesson, so it cannot
-    // cover the footer; it is hidden there, not dismissed.
+    // #3765 - the add-to-home-screen hint is a card on the dashboard only, so
+    // it cannot cover the lesson footer; it is not dismissed by this.
     await expect(page.getByTestId("ios-install-hint")).toHaveCount(0);
     if (iPhone) {
         expect(await page.evaluate((key) => localStorage.getItem(key), DISMISSED_KEY)).toBeNull();
