@@ -220,6 +220,25 @@ describe("Dashboard page", () => {
     }
   });
 
+  it("shows the install banner as a card in the dashboard once the browser offers it (#3782)", async () => {
+    apiProfile.mockResolvedValue(PROFILE);
+    apiProgress.mockResolvedValue(SUMMARY);
+    apiTools.mockResolvedValue(TOOLS);
+    const offer = Object.assign(new Event("beforeinstallprompt", { cancelable: true }), {
+      prompt: async () => {},
+      userChoice: Promise.resolve({ outcome: "dismissed" as const }),
+    });
+    window.dispatchEvent(offer);
+    try {
+      renderDashboard();
+      await screen.findByTestId("dashboard", undefined, { timeout: 5000 });
+      const banner = await screen.findByTestId("install-prompt");
+      expect(screen.getByTestId("dashboard")).toContainElement(banner);
+    } finally {
+      window.dispatchEvent(new Event("appinstalled"));
+    }
+  });
+
   it("renders every panel with successful data", async () => {
     apiProfile.mockResolvedValue(PROFILE);
     apiProgress.mockResolvedValue(SUMMARY);

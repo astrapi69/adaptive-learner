@@ -21,6 +21,10 @@
  * ("... intercepts pointer events"). It checks that the input arrives, not
  * that a rectangle looks free.
  *
+ * Before the fix (24d41ef55) the banner was asserted visible on every
+ * surface; the fix (#3782) moved it onto the dashboard, where it is still
+ * asserted visible, and every other surface asserts it absent.
+ *
  * Setup runs with the banner dismissed (should Chromium fire a real
  * ``beforeinstallprompt``), then the dismissal is cleared, the page
  * reloaded and the event dispatched, so each page measures its own controls.
@@ -44,8 +48,12 @@ const PROFILES = [
     {name: "Desktop 1440x900", use: {viewport: {width: 1440, height: 900}}, phone: false},
 ] as const;
 
-/** Show the banner: a synthetic ``beforeinstallprompt`` after mount. */
-async function showBanner(page: Page): Promise<void> {
+/**
+ * Offer the install: a synthetic ``beforeinstallprompt`` after mount. Since
+ * the fix the banner is a card on the dashboard only, so it is asserted
+ * visible there and absent everywhere else (it cannot cover those pages).
+ */
+async function showBanner(page: Page, onThisPage = false): Promise<void> {
     await page.evaluate(() => {
         const event = new Event("beforeinstallprompt", {cancelable: true});
         Object.assign(event, {
@@ -54,7 +62,9 @@ async function showBanner(page: Page): Promise<void> {
         });
         window.dispatchEvent(event);
     });
-    await expect(page.getByTestId("install-prompt"), "the banner is shown").toBeVisible();
+    const banner = page.getByTestId("install-prompt");
+    if (onThisPage) await expect(banner, "the banner is shown").toBeVisible();
+    else await expect(banner, "the banner lives on the dashboard only").toHaveCount(0);
     expect(await page.evaluate((key) => localStorage.getItem(key), DISMISSED_KEY)).toBeNull();
 }
 
@@ -65,14 +75,14 @@ async function dismissBannerForSetup(page: Page): Promise<void> {
     }, DISMISSED_KEY);
 }
 
-async function reloadWithBanner(page: Page, ready: Locator): Promise<void> {
+async function reloadWithBanner(page: Page, ready: Locator, onThisPage = false): Promise<void> {
     await page.evaluate((key) => {
         sessionStorage.setItem("probe-phase", "1");
         localStorage.removeItem(key);
     }, DISMISSED_KEY);
     await page.reload();
     await expect(ready).toBeAttached({timeout: 30_000});
-    await showBanner(page);
+    await showBanner(page, onThisPage);
 }
 
 for (const profile of PROFILES) {
@@ -111,7 +121,7 @@ for (const profile of PROFILES) {
             await expectReachable(page.getByTestId("onboarding-submit"), "Projekt anlegen");
             await page.getByTestId("onboarding-submit").dispatchEvent("click");
             await expect(page.getByTestId("onboarding-invite")).toBeVisible({timeout: 15_000});
-            await expect(page.getByTestId("install-prompt")).toBeVisible();
+            await expect(page.getByTestId("install-prompt")).toHaveCount(0);
             await expectReachable(page.getByTestId("onboarding-invite-setup-profile"), "Profil einrichten");
             await expectReachable(page.getByTestId("onboarding-invite-start-now"), "Direkt loslegen");
         });
@@ -129,7 +139,7 @@ for (const profile of PROFILES) {
             await dismissBannerForSetup(page);
             await completeOnboarding(page);
             await completeAssessment(page);
-            await reloadWithBanner(page, page.getByTestId("dashboard"));
+            await reloadWithBanner(page, page.getByTestId("dashboard"), true);
             await expectReachable(page.getByTestId("dashboard-learning-path"), "Lernpfad");
             await expectReachable(page.getByTestId("dashboard-create-lesson"), "Lektion erstellen");
         });

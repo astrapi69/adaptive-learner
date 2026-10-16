@@ -3585,6 +3585,22 @@ am unteren Bildschirmrand.
 - [ ] TC-0967 Karte schliessen: sie kommt auch nach einem Neuladen nicht wieder; die
       Anleitung in Einstellungen bleibt erreichbar
 
+#### TS-0134 Banner "Zum Startbildschirm hinzufügen" als Karte im Dashboard (#3782)
+
+In Chrome auf Android oder am Desktop (nicht installiert) erscheint der Banner
+als Karte oben im Dashboard, nicht mehr als feste Leiste unten auf jeder Seite.
+
+- [ ] TC-0968 Neues Profil in Chrome auf Android: Startseite, Onboarding und Assessment
+      zeigen keinen Banner; "Nächste Frage" und "Später fortsetzen" sind ohne
+      Umweg antippbar
+- [ ] TC-0969 Im Dashboard steht die Karte "Zum Startbildschirm hinzufügen" oben im
+      Seitenfluss, auch wenn die App erst später dorthin gewechselt ist;
+      "Lernpfad" und "Lektion erstellen" bleiben antippbar
+- [ ] TC-0970 Einstellungen > Lernen ("Fortschritt zurücksetzen") ist bis zum
+      Seitenende antippbar, am Telefon und am Desktop
+- [ ] TC-0971 "Nicht jetzt": die Karte kommt nach einem Neuladen nicht wieder (erst nach
+      7 Tagen); "Installieren" öffnet den Installationsdialog des Browsers
+
 #### TS-0109 App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
 
 Der einzige Pfad, den kein Test abdeckt: auf iOS/WKWebView aktiviert

@@ -3342,6 +3342,23 @@ the bottom of the screen.
 - [ ] TC-0967 Dismiss the card: it does not come back after a reload; the
       instructions in Settings stay available
 
+#### TS-0134 "Add to home screen" banner as a card on the dashboard (#3782)
+
+In Chrome on Android or on the desktop (not installed) the banner appears as
+a card at the top of the dashboard, no longer as a bar fixed at the bottom of
+every page.
+
+- [ ] TC-0968 Fresh profile in Chrome on Android: the start page, onboarding and
+      assessment show no banner; "Next question" and "Continue later" can be
+      tapped directly
+- [ ] TC-0969 On the dashboard the "Add to home screen" card sits at the top in the
+      page flow, also when the app only got there later; "Learning Path" and
+      "Create a lesson" stay tappable
+- [ ] TC-0970 Settings > Learning ("Reset progress") can be tapped down to the end of
+      the page, on the phone and on the desktop
+- [ ] TC-0971 "Not now": the card does not come back after a reload (only after
+      7 days); "Install" opens the browser's install dialog
+
 #### TS-0109 App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
 
 The one path no automated test covers: on iOS/WKWebView a new service

@@ -24,6 +24,9 @@ function fireBeforeInstallPrompt(
 describe("InstallPrompt", () => {
     beforeEach(() => {
         localStorage.clear();
+        // The install event is captured app-wide (lib/pwa/install); start
+        // every test without a captured one.
+        window.dispatchEvent(new Event("appinstalled"));
     });
     afterEach(() => {
         vi.restoreAllMocks();
@@ -32,6 +35,24 @@ describe("InstallPrompt", () => {
     it("renders nothing before the beforeinstallprompt event fires", () => {
         render(<InstallPrompt />);
         expect(screen.queryByTestId("install-prompt")).not.toBeInTheDocument();
+    });
+
+    it("shows when the event fired before it mounted (#3782)", async () => {
+        // The banner lives on the dashboard; the browser fires the event
+        // once, usually before the user reaches it.
+        fireBeforeInstallPrompt();
+        render(<InstallPrompt />);
+        expect(await screen.findByTestId("install-prompt")).toBeInTheDocument();
+    });
+
+    it("is a card in the page flow, never laid over the page (#3782)", async () => {
+        render(<InstallPrompt />);
+        await act(async () => {
+            fireBeforeInstallPrompt();
+        });
+        const card = await screen.findByTestId("install-prompt");
+        const classes = card.className.split(/\s+/);
+        expect(classes.filter((c) => /^(fixed|absolute|sticky|z-|install-prompt$)/.test(c))).toEqual([]);
     });
 
     it("renders the banner after beforeinstallprompt fires", async () => {
