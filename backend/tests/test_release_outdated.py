@@ -92,6 +92,26 @@ def test_from_lines_are_listed() -> None:
     ]
 
 
+def test_poetry_notices_and_backend_plugin_lines_are_dropped() -> None:
+    # A fresh surface makes poetry print "Creating virtualenv ..." on stderr;
+    # that line is no outdated package and must not hide "(nothing outdated)".
+    out = (
+        "Creating virtualenv adaptive-learner-docs-aVD5 in /home/u/.cache/pypoetry/virtualenvs\n"
+        "mkdocs 1.6.0 1.6.1 Project documentation\n"
+        "adaptive-learner-plugin-anki 0.1.0 0.1.0 path dependency\n"
+    )
+    assert release_outdated.outdated_lines(out, drop_plugins=False) == (
+        "mkdocs 1.6.0 1.6.1 Project documentation\n"
+        "adaptive-learner-plugin-anki 0.1.0 0.1.0 path dependency"
+    )
+    assert release_outdated.outdated_lines(out, drop_plugins=True) == (
+        "mkdocs 1.6.0 1.6.1 Project documentation"
+    )
+    assert release_outdated.outdated_lines(out.splitlines()[0], drop_plugins=False) == (
+        "(nothing outdated)"
+    )
+
+
 def test_a_major_ref_is_behind_only_on_a_newer_major() -> None:
     # Actions pin the major (``@v5``); a v5.x patch is not news, a v6 is.
     assert release_outdated.is_behind("v5", "v5.0.1") is False

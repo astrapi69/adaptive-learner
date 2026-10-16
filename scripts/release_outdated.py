@@ -36,6 +36,7 @@ SKIPPED_PARTS = {
     "site",
 }
 PLUGIN_PREFIX = "adaptive-learner-plugin-"
+POETRY_NOTICES = ("Creating virtualenv ", "Skipping virtualenv creation")
 VERSION_TAG = re.compile(r"^v?(\d+(?:\.\d+)*)$")
 
 
@@ -99,13 +100,28 @@ def from_lines(text: str) -> list[str]:
     ]
 
 
+def outdated_lines(out: str, drop_plugins: bool) -> str:
+    """``poetry show --outdated`` output without poetry's own notices (a fresh
+    surface prints "Creating virtualenv ..."), and without the plugin path
+    dependencies when ``drop_plugins`` (the backend pulls them; their own
+    surfaces report them). ``(nothing outdated)`` when no package line is left."""
+    lines = [
+        line
+        for line in out.splitlines()
+        if not line.startswith(POETRY_NOTICES)
+        and not (drop_plugins and line.startswith(PLUGIN_PREFIX))
+    ]
+    return "\n".join(lines) or "(nothing outdated)"
+
+
 def _run(cmd: list[str], cwd: Path) -> str:
     try:
         result = subprocess.run(
             cmd, cwd=cwd, capture_output=True, text=True, timeout=300, check=False
         )
-    except FileNotFoundError:
-        return f"(could not check: {cmd[0]} is not installed)"
+    except FileNotFoundError as error:
+        # A missing tool and a missing directory raise the same error.
+        return f"(could not check: {error})"
     except subprocess.TimeoutExpired:
         return "(could not check: timed out)"
     out = (result.stdout + result.stderr).strip()
@@ -134,11 +150,7 @@ def _report_packages(root: Path) -> None:
     for path in surfaces["poetry"]:
         _section(f"{path.relative_to(root)} (poetry show --outdated)")
         out = _run(["poetry", "show", "--outdated", "--no-ansi"], path)
-        if path.name == "backend":
-            # The backend pulls the plugins as path dependencies; their own
-            # surfaces report them.
-            out = "\n".join(line for line in out.splitlines() if not line.startswith(PLUGIN_PREFIX))
-        print(out)
+        print(outdated_lines(out, drop_plugins=path.name == "backend"))
     for path in surfaces["bun"]:
         _section(f"{path.relative_to(root)} (bun outdated)")
         print(_run(["bun", "outdated"], path))
