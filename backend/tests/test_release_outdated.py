@@ -112,6 +112,17 @@ def test_poetry_notices_and_backend_plugin_lines_are_dropped() -> None:
     )
 
 
+def test_a_failing_check_is_marked_as_not_checked(tmp_path: Path) -> None:
+    # A local Bun 1.3 cannot read the v3 frontend lock; printed unmarked, its
+    # error read as an empty report (found on the first full run, #3778).
+    out = release_outdated._run(
+        [sys.executable, "-c", "import sys; print('error: UnknownLockfileVersion'); sys.exit(1)"],
+        tmp_path,
+    )
+    assert out.startswith("(could not check: exit 1)")
+    assert "UnknownLockfileVersion" in out
+
+
 def test_a_major_ref_is_behind_only_on_a_newer_major() -> None:
     # Actions pin the major (``@v5``); a v5.x patch is not news, a v6 is.
     assert release_outdated.is_behind("v5", "v5.0.1") is False

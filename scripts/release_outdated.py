@@ -125,6 +125,10 @@ def _run(cmd: list[str], cwd: Path) -> str:
     except subprocess.TimeoutExpired:
         return "(could not check: timed out)"
     out = (result.stdout + result.stderr).strip()
+    if result.returncode != 0:
+        # Both tools exit 0 when they list outdated packages; anything else is
+        # a check that did not happen (e.g. a local Bun too old for the lock).
+        return f"(could not check: exit {result.returncode})\n{out}"
     return out or "(nothing outdated)"
 
 
@@ -204,8 +208,11 @@ def main(root: Path = REPO_ROOT) -> int:
             )
         )
     )
+    # The local Bun runs the bun surfaces above; one older than the pin may
+    # not read the lockfile.
     print(
-        f"pinned: {', '.join(pins) or '?'}; npm latest: {_run(['npm', 'view', 'bun', 'version'], root)}"
+        f"pinned: {', '.join(pins) or '?'}; local: {_run(['bun', '--version'], root)};"
+        f" npm latest: {_run(['npm', 'view', 'bun', 'version'], root)}"
     )
     print(
         "\nApply routine bumps (patch + minor within a major) with 'poetry update <allowlist>' / bun, never bare;"
