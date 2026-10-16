@@ -3569,6 +3569,22 @@ abschalten geht nur über den Schalter in den Lektionsoptionen.
 - [ ] TC-0962 Den Schalter in den Lektionsoptionen ausschalten und eine andere Lektion
       öffnen: "Automatisch vorlesen" bleibt aus
 
+#### TS-0133 Hinweis "Als App installieren" als Karte im Dashboard (#3765)
+
+Auf dem iPhone in Safari (nicht vom Home-Bildschirm geöffnet) erscheint der
+Hinweis als schliessbare Karte oben im Dashboard, nicht mehr als feste Leiste
+am unteren Bildschirmrand.
+
+- [ ] TC-0964 Neues Profil auf dem iPhone in Safari: Startseite, Onboarding und
+      Assessment zeigen keinen Installationshinweis; "Nächste Frage" und
+      "Später fortsetzen" sind ohne Umweg antippbar
+- [ ] TC-0965 Im Dashboard steht die Karte "Als App installieren" oben im Seitenfluss
+      und scrollt mit; "Lernpfad" und "Lektion erstellen" bleiben antippbar
+- [ ] TC-0966 Inhalte (letztes "Herunterladen") und Einstellungen > Lernen
+      ("Fortschritt zurücksetzen") sind bis zum Seitenende antippbar
+- [ ] TC-0967 Karte schliessen: sie kommt auch nach einem Neuladen nicht wieder; die
+      Anleitung in Einstellungen bleibt erreichbar
+
 #### TS-0109 App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
 
 Der einzige Pfad, den kein Test abdeckt: auf iOS/WKWebView aktiviert

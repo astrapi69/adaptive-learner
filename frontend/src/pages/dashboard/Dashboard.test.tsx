@@ -195,6 +195,31 @@ describe("Dashboard page", () => {
     });
   });
 
+  // #3765 - the iOS install hint is a card at the top of the dashboard, in
+  // the page's flow, instead of a bar fixed over the bottom of every page.
+  it("shows the iOS install hint as a card in the dashboard on an iPhone", async () => {
+    const spies = [
+      vi
+        .spyOn(navigator, "userAgent", "get")
+        .mockReturnValue(
+          "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Version/17.0 Mobile/15E148 Safari/604.1",
+        ),
+      vi.spyOn(navigator, "platform", "get").mockReturnValue("iPhone"),
+      vi.spyOn(navigator, "maxTouchPoints", "get").mockReturnValue(5),
+    ];
+    apiProfile.mockResolvedValue(PROFILE);
+    apiProgress.mockResolvedValue(SUMMARY);
+    apiTools.mockResolvedValue(TOOLS);
+    try {
+      renderDashboard();
+      await screen.findByTestId("dashboard", undefined, { timeout: 5000 });
+      const hint = screen.getByTestId("ios-install-hint");
+      expect(screen.getByTestId("dashboard")).toContainElement(hint);
+    } finally {
+      for (const spy of spies) spy.mockRestore();
+    }
+  });
+
   it("renders every panel with successful data", async () => {
     apiProfile.mockResolvedValue(PROFILE);
     apiProgress.mockResolvedValue(SUMMARY);
