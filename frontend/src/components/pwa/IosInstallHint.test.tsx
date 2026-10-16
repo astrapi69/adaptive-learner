@@ -1,13 +1,11 @@
 /**
  * Tests for IosInstallHint — the iOS-only "Add to Home Screen" guidance.
  * Pins: shown on iOS Safari (not installed / not dismissed), hidden when
- * standalone, on non-iOS, or after dismissal; never over a lesson (#3749).
+ * standalone, on non-iOS, or after dismissal; a card in the flow (#3765).
  */
 
 import "@testing-library/jest-dom/vitest";
-import { fireEvent, render as rtlRender, screen } from "@testing-library/react";
-import type { ReactElement } from "react";
-import { MemoryRouter, Route, Routes, useNavigate } from "react-router";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import IosInstallHint from "./IosInstallHint";
@@ -26,11 +24,6 @@ const IPHONE_SAFARI =
     "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Version/17.0 Mobile/15E148 Safari/604.1";
 const ANDROID_CHROME =
     "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36";
-
-/** Render at a route; the hint reads the location (#3749). */
-function render(ui: ReactElement, path = "/dashboard") {
-    return rtlRender(<MemoryRouter initialEntries={[path]}>{ui}</MemoryRouter>);
-}
 
 function stubNavigator(userAgent: string, platform: string, maxTouchPoints = 5) {
     vi.stubGlobal("navigator", { userAgent, platform, maxTouchPoints });
@@ -82,42 +75,17 @@ describe("IosInstallHint", () => {
         ).toBe("1");
     });
 
-    // #3749 - fixed at the bottom, the hint covered the runner footer, so
-    // "Weiter" could not be tapped until it was dismissed.
-    it.each([
-        ["lesson", "/lesson/owner--repo/set-a/01-intro.json"],
-        ["error replay", "/error-replay/owner--repo/set-a/01-intro.json"],
-        ["review", "/review/set-a"],
-        ["adaptive lesson", "/adaptive-lesson/set-a"],
-        ["shuffle lesson", "/shuffle-lesson/set-a"],
-        ["endless lesson", "/endless-lesson/set-a"],
-    ])("is not shown on a %s route", (_name, path) => {
+    // #3765 - fixed at the bottom of every page, the hint covered whatever
+    // ended up there (the assessment's "Nächste Frage" for a new iPhone
+    // user). It is a card in the page's flow now, which cannot cover
+    // anything; no page has to know about it.
+    it("is a card in the page flow, never laid over the page", () => {
         stubNavigator(IPHONE_SAFARI, "iPhone");
-        render(<IosInstallHint />, path);
-        expect(screen.queryByTestId("ios-install-hint")).not.toBeInTheDocument();
-    });
-
-    it("comes back after the lesson, since leaving a lesson is not a dismissal", () => {
-        stubNavigator(IPHONE_SAFARI, "iPhone");
-        function LeaveLesson() {
-            const navigate = useNavigate();
-            return (
-                <button type="button" onClick={() => navigate("/dashboard")}>
-                    leave
-                </button>
-            );
+        render(<IosInstallHint />);
+        const classes = screen.getByTestId("ios-install-hint").className.split(/\s+/);
+        for (const overlay of ["fixed", "absolute", "sticky"]) {
+            expect(classes).not.toContain(overlay);
         }
-        rtlRender(
-            <MemoryRouter initialEntries={["/lesson/owner--repo/set-a/01-intro.json"]}>
-                <IosInstallHint />
-                <Routes>
-                    <Route path="*" element={<LeaveLesson />} />
-                </Routes>
-            </MemoryRouter>,
-        );
-        expect(screen.queryByTestId("ios-install-hint")).not.toBeInTheDocument();
-        fireEvent.click(screen.getByText("leave"));
-        expect(screen.getByTestId("ios-install-hint")).toBeInTheDocument();
-        expect(localStorage.getItem("adaptive-learner.ios_install_dismissed")).toBeNull();
+        expect(classes.some((name) => name.startsWith("z-"))).toBe(false);
     });
 });
