@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router";
 
 import DashboardFilterBar from "../../components/dashboard/DashboardFilterBar";
 import QuickStartButton from "../../components/dashboard/QuickStartButton";
+import InstallPrompt from "../../components/pwa/InstallPrompt";
 import IosInstallHint from "../../components/pwa/IosInstallHint";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
@@ -199,9 +200,11 @@ export default function Dashboard() {
         )}
       </header>
 
-      {/* #3765 - the iOS install hint as a card in the flow, never laid over
-          a page. */}
+      {/* #3765 / #3782 - both install hints are cards in the flow, never
+          laid over a page. Chromium offers the banner, iOS the hint; never
+          both on one device. */}
       <IosInstallHint />
+      <InstallPrompt />
 
       {/* #1417 — the two stacked API-key messages (blue skip banner + yellow
           ApiKeyRequiredNotice) were consolidated into the single inviting
