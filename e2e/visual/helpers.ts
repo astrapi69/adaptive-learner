@@ -827,10 +827,47 @@ export async function playBundledLesson(
         await expect(page.getByTestId("lesson-summary")).toBeVisible({
             timeout: 20_000,
         });
+        await settleLessonCompletion(page);
         return true;
     }
     // Requested a matching result but never hit a matching step.
     return false;
+}
+
+/**
+ * #3792 - reaching the summary completes the lesson, and the completion flow
+ * runs asynchronously: the write, then the milestone celebration (the "first
+ * lesson" badge, a level-up), which the app-root MilestoneHost shows for 3s
+ * plus a 0.5s gap per queued milestone, also on whatever page a motif moves
+ * on to. Waiting for the overlay's absence at shot time is not enough: it can
+ * fly in right after the check. So wait until the completion is written (the
+ * heading's check mark) and then until no overlay has been on screen for a
+ * quiet window longer than the gap between two milestones. A run without a
+ * learner never completes and skips the wait.
+ */
+async function settleLessonCompletion(page: Page): Promise<void> {
+    try {
+        await page
+            .getByTestId("lesson-summary-completed")
+            .waitFor({state: "visible", timeout: 10_000});
+    } catch {
+        return;
+    }
+    const quietMs = 2_000;
+    const deadline = Date.now() + 20_000;
+    let quietSince = Date.now();
+    for (;;) {
+        const busy = (await page.getByTestId("milestone-overlay").count()) > 0;
+        const now = Date.now();
+        if (busy) quietSince = now;
+        else if (now - quietSince >= quietMs) return;
+        if (now > deadline) {
+            throw new Error(
+                "playBundledLesson: a milestone overlay is still cycling 20s after the completion (#3792)",
+            );
+        }
+        await page.waitForTimeout(100);
+    }
 }
 
 /** Answer whatever exercise the current step renders (any valid answer).
