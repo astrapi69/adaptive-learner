@@ -158,7 +158,6 @@ function renderSummary() {
         source="bundled:x"
         setSlug="x"
         lessonFilename="01-greetings.json"
-        onMarkComplete={vi.fn()}
         onNextLesson={vi.fn()}
         onRepeat={vi.fn()}
         onExit={vi.fn()}
@@ -223,7 +222,6 @@ describe("compact summary: fix mistakes (#3575)", () => {
           source="bundled:x"
           setSlug="x"
           lessonFilename="01-greetings.json"
-          onMarkComplete={vi.fn()}
           onNextLesson={vi.fn()}
           onRepeat={vi.fn()}
           onExit={vi.fn()}

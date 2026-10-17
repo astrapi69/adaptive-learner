@@ -11,7 +11,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -110,7 +110,7 @@ function makeProgress(userId: string): LessonProgress | null {
   } as unknown as LessonProgress;
 }
 
-function renderSummary(userId: string, onMarkComplete = vi.fn()) {
+function renderSummary(userId: string) {
   render(
     <MemoryRouter>
       <LessonSummary
@@ -123,14 +123,12 @@ function renderSummary(userId: string, onMarkComplete = vi.fn()) {
         source="bundled:x"
         setSlug="x"
         lessonFilename="01-greetings.json"
-        onMarkComplete={onMarkComplete}
         onNextLesson={vi.fn()}
         onRepeat={vi.fn()}
         onExit={vi.fn()}
       />
     </MemoryRouter>,
   );
-  return onMarkComplete;
 }
 
 afterEach(() => {
@@ -138,26 +136,24 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe("LessonSummary: mark-complete needs a learner profile (#1787)", () => {
-  it("anonymous run — button disabled, reason hint visible, click no-ops", () => {
-    const onMarkComplete = renderSummary("");
-    const button = screen.getByTestId("lesson-summary-mark-complete");
-    expect(button).toBeDisabled();
+describe("LessonSummary: completion needs no button (#3792), an anonymous run says why (#1787)", () => {
+  it("anonymous run: the reason hint is visible and there is no completion button", () => {
+    renderSummary("");
     expect(
       screen.getByTestId("lesson-summary-mark-complete-hint"),
     ).toBeInTheDocument();
-    fireEvent.click(button);
-    expect(onMarkComplete).not.toHaveBeenCalled();
+    expect(
+      screen.queryByTestId("lesson-summary-mark-complete"),
+    ).not.toBeInTheDocument();
   });
 
-  it("learner present — button enabled, no hint, click fires", () => {
-    const onMarkComplete = renderSummary("u1");
-    const button = screen.getByTestId("lesson-summary-mark-complete");
-    expect(button).toBeEnabled();
+  it("learner present: neither a completion button nor the hint", () => {
+    renderSummary("u1");
+    expect(
+      screen.queryByTestId("lesson-summary-mark-complete"),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByTestId("lesson-summary-mark-complete-hint"),
     ).not.toBeInTheDocument();
-    fireEvent.click(button);
-    expect(onMarkComplete).toHaveBeenCalledTimes(1);
   });
 });
