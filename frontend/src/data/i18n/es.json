@@ -1196,6 +1196,7 @@
     "import_failed": "La restauración falló.",
     "comparison_title": "Confirmar restauración",
     "comparison_help": "La restauración combinará: los registros nuevos se insertan, los mutables se actualizan solo si la copia es más reciente, las filas de historial se conservan tal cual. No se elimina nada. Las claves de API se ignoran.",
+    "foreign_owner_notice": "Esta copia pertenece a otro perfil de aprendizaje. Su progreso se asigna al perfil activo y se combina con él: se añaden lecciones, errores e historial, y los XP, la racha y la configuración se toman de la copia. El perfil activo sigue activo.",
     "table_header": "Tabla",
     "current_header": "Actual",
     "incoming_header": "Copia",

@@ -344,6 +344,13 @@ Never run yet. Do it NOW.
 - [ ] TC-0076 API keys NOT in the backup (security check)
 - [ ] TC-0077 After restore: the provider overview (Settings → AI) shows the
       restored settings WITHOUT a reload (settings-refresh-bus, #1769)
+- [ ] TC-0972 Device switch via Settings (#3785): on device B play a lesson and
+      export a backup; on device A create an OWN profile, start and pause a
+      different lesson, then import B's backup via Settings → Data. The
+      confirmation dialog says beforehand that the backup belongs to another
+      profile. Afterwards: profile A stays active, B's lesson shows its
+      progress on the learning path, A's paused lesson is still under
+      "Continue", no error message.
 
 ---
 

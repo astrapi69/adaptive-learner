@@ -1120,6 +1120,7 @@ backup:
   import_failed: "Falha na restauração."
   comparison_title: Confirmar restauração
   comparison_help: 'A restauração fará mesclagem: novos registros são inseridos, registros mutáveis são atualizados apenas se o backup for mais recente, e o histórico é mantido como está. Nada é excluído. As chaves de API são ignoradas.'
+  foreign_owner_notice: "Este backup pertence a outro perfil de aprendizagem. O progresso dele é atribuído ao perfil ativo e mesclado com ele: lições, erros e histórico são adicionados, XP, sequência e configurações vêm do backup. O perfil ativo continua ativo."
   table_header: Tabela
   current_header: Atual
   incoming_header: Backup

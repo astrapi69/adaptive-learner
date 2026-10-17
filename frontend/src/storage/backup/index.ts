@@ -3,3 +3,4 @@ export * from "./backup";
 export * from "./auto-backup";
 export * from "./export-builder";
 export * from "./export-types";
+export * from "./backup-rehome";

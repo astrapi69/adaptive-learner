@@ -22,6 +22,7 @@ import type {
 } from "../../types/domain";
 import {restoreDexieContentSets} from "./backup-content-sets";
 import {normalizeRestoreRecord} from "./backup-normalize";
+import {backupOwnerId, rehomeBackupData} from "./backup-rehome";
 import {
     findByUniqueIndex,
     redirectFks,
@@ -165,7 +166,8 @@ export async function restoreDexieBackup(
 ): Promise<RestoreSummary> {
     validateBackupPayload(payload);
     const db = getDb();
-    const data = payload.data;
+    // #3785 - another learner's backup lands under the local learner.
+    const data = rehomeBackupData(payload.data, backupOwnerId(payload), userId);
     const perTable: Record<string, RestoreTableSummary> = {};
     let totalInserted = 0;
     let totalUpdated = 0;

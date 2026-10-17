@@ -1120,6 +1120,7 @@ backup:
   import_failed: "La restauration a échoué."
   comparison_title: "Confirmer la restauration"
   comparison_help: "La restauration fusionnera : les nouveaux enregistrements sont insérés, les enregistrements modifiables ne sont mis à jour que si la sauvegarde est plus récente, les lignes d’historique sont conservées telles quelles. Rien n’est supprimé. Les clés API sont ignorées."
+  foreign_owner_notice: "Cette sauvegarde appartient à un autre profil d’apprentissage. Sa progression est attribuée au profil actif et fusionnée avec lui : les leçons, les erreurs et l’historique s’ajoutent, les XP, la série et les réglages sont repris de la sauvegarde. Le profil actif reste actif."
   table_header: Table
   current_header: "Actuel"
   incoming_header: "Sauvegarde"

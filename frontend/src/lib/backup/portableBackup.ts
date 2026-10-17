@@ -18,7 +18,12 @@
 
 import {getStorage} from "../../storage";
 import type {BackupPayload} from "../../types/domain";
-import {restoreLocalStorageSnapshot, withLocalStorageSnapshot} from "./localStorageSnapshot";
+import {backupOwnerId} from "../../storage/backup";
+import {
+    rehomeLocalStorageSnapshot,
+    restoreLocalStorageSnapshot,
+    withLocalStorageSnapshot,
+} from "./localStorageSnapshot";
 import {restorePluginSettingsSnapshot, withPluginSettingsSnapshot} from "./pluginSettingsSnapshot";
 import {restoreAiValidationSnapshot, withAiValidationSnapshot} from "./aiValidationSnapshot";
 
@@ -42,9 +47,23 @@ export interface ClientSnapshotsApplied {
 /**
  * Apply the payload's client-side blocks after the storage import. A legacy
  * backup without them is a no-op.
+ *
+ * @param payload - The imported backup.
+ * @param localUserId - The learner the storage import restored under. When
+ *   the backup belongs to another learner, the values keyed by its user id
+ *   move to this one, the same way the rows did (#3785). Omitted, the
+ *   snapshot applies as it is (the first-run restore adopts the backup's
+ *   own identity).
  */
-export async function restoreClientSnapshots(payload: BackupPayload): Promise<ClientSnapshotsApplied> {
-    const localStorageKeys = await restoreLocalStorageSnapshot(payload.local_storage);
+export async function restoreClientSnapshots(
+    payload: BackupPayload,
+    localUserId?: string,
+): Promise<ClientSnapshotsApplied> {
+    const snapshot =
+        localUserId === undefined
+            ? payload.local_storage
+            : rehomeLocalStorageSnapshot(payload.local_storage, backupOwnerId(payload), localUserId);
+    const localStorageKeys = await restoreLocalStorageSnapshot(snapshot);
     const pluginSettings = await restorePluginSettingsSnapshot(payload.plugin_settings);
     const aiValidationResults = await restoreAiValidationSnapshot(payload.ai_validation_results);
     return {localStorageKeys, pluginSettings, aiValidationResults};

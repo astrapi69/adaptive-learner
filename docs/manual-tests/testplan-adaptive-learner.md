@@ -369,6 +369,13 @@ Noch nie durchgefuehrt. JETZT machen.
 - [ ] TC-0076 API-Keys NICHT im Backup (Sicherheits-Check)
 - [ ] TC-0077 Nach Restore: Provider-Übersicht (Settings → KI) zeigt wieder-
       hergestellte Einstellungen OHNE Reload (settings-refresh-bus, #1769)
+- [ ] TC-0972 Geräte-Wechsel über Einstellungen (#3785): auf Gerät B eine Lektion
+      spielen und ein Backup exportieren; auf Gerät A ein EIGENES Profil
+      anlegen, eine andere Lektion anfangen und pausieren, dann B's Backup
+      über Einstellungen → Daten importieren. Der Bestätigungsdialog sagt
+      vorher, dass das Backup zu einem anderen Profil gehört. Danach: Profil
+      A bleibt aktiv, B's Lektion zeigt ihren Fortschritt im Lernpfad, A's
+      pausierte Lektion steht weiter unter "Weitermachen", keine Fehlermeldung.
 
 ---
 

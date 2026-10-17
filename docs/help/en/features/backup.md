@@ -62,12 +62,19 @@ the message contains the technical details for a GitHub issue.
 
 ## Cross-identity import
 
-You do **not** have to be the same user on the same device. A
-backup can be imported into a **fresh installation** or under a
-**different user profile**. The restore assigns the data to the
-active profile and cleanly re-resolves internal references
-(foreign keys) in the process, so your progress stays coherent -
-including lesson step progress, streak and badges.
+You do **not** have to be the same user on the same device.
+
+- **On an empty device**, import the backup right at the start (see
+  "Backup at first login"). The app then takes over the profile from the
+  backup.
+- **On a device where you already created a profile**, you can import the
+  backup via Settings > Data. If it belongs to another profile, the
+  confirmation dialog tells you so before the import. The progress from the
+  backup is then assigned to your **active profile** and merged with yours:
+  lesson progress, mistakes, runs, recordings, projects and history are
+  added, and your own progress stays. XP, streak and settings are taken
+  from the backup. Your active profile stays active; no second profile is
+  created.
 
 ---
 

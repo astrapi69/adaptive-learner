@@ -1196,6 +1196,7 @@
     "import_failed": "Pemulihan gagal.",
     "comparison_title": "Konfirmasi pemulihan",
     "comparison_help": "Pemulihan akan menggabungkan: catatan baru disisipkan, catatan yang dapat diubah hanya diperbarui jika cadangan lebih baru, baris riwayat tetap apa adanya. Tidak ada yang dihapus. Kunci API diabaikan.",
+    "foreign_owner_notice": "Cadangan ini milik profil belajar lain. Kemajuannya dialihkan ke profil aktif dan digabungkan dengannya: pelajaran, kesalahan, dan riwayat ditambahkan, sedangkan XP, streak, dan pengaturan diambil dari cadangan. Profil aktif tetap aktif.",
     "table_header": "Tabel",
     "current_header": "Saat ini",
     "incoming_header": "Cadangan",

@@ -1120,6 +1120,7 @@ backup:
   import_failed: "Wiederherstellung fehlgeschlagen."
   comparison_title: Wiederherstellung bestätigen
   comparison_help: Beim Zusammenführen werden neue Datensätze eingefügt, veränderbare Datensätze nur überschrieben, wenn die Sicherung neuer ist, und Historien-Zeilen bleiben unverändert. Nichts wird gelöscht. API-Schlüssel werden ignoriert.
+  foreign_owner_notice: "Diese Sicherung gehört zu einem anderen Lernprofil. Ihr Lernstand wird dem aktiven Profil zugeordnet und mit ihm zusammengeführt: Lektionen, Fehler und Verlauf kommen hinzu, XP, Serie und Einstellungen werden aus der Sicherung übernommen. Das aktive Profil bleibt aktiv."
   table_header: Tabelle
   current_header: Aktuell
   incoming_header: Sicherung
