@@ -883,8 +883,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0205 Spielmodus an, Lektion mit einer Serie von mindestens 3 richtigen
       Antworten in Folge spielen: in der Zusammenfassung steht neben
       "Beste Serie: N" ein grünes "+N XP"; die angezeigten Lektions-XP
-      enthalten den Bonus, und "Als erledigt markieren" schreibt exakt
-      denselben Wert gut (Dashboard-XP steigen um die angezeigte Summe)
+      enthalten den Bonus, und das Erreichen der Zusammenfassung schreibt
+      exakt denselben Wert gut (Dashboard-XP steigen um die angezeigte Summe)
 - [ ] TC-0206 Der Bonus zählt ab der DRITTEN Serienantwort (+1 pro weiterer
       richtiger Antwort in Folge); eine falsche Antwort stoppt das
       Wachstum, eine neue Serie ab 3 zählt weiter
@@ -2736,9 +2736,8 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0553 Frische Installation (oder in Einstellungen > Lernen >
       "Zusammenfassung nach Lektionen" nur "Ergebnis und Statistik" und
       "XP-Belohnung" angehakt): Lektion beenden - die Zusammenfassung zeigt
-      Sterne, Punktzahl, Zeit, "+N XP" und direkt darunter "Als
-      abgeschlossen markieren", "Nächste Lektion", "Nochmal üben" und
-      "Zurück"; kein Favoriten-Hinweis, kein Teilen, keine
+      Sterne, Punktzahl, Zeit, "+N XP" und direkt darunter "Nächste
+      Lektion", "Nochmal üben" und "Zurück"; kein Favoriten-Hinweis, kein Teilen, keine
       Antworten-Übersicht, kein Export, kein "Warum du diese verpasst
       hast", keine Korrekturrunde, keine Nächste-Schritte-Karten (hatte der
       Lauf Fehler, steht zusätzlich nur der Knopf "Fehler korrigieren (N)"
@@ -3094,8 +3093,26 @@ einem anderen Schritt.
 - [ ] TC-0640 Dashboard: die Zeile zeigt "Fortsetzen · Schritt 4/8" (nicht "1/8")
 - [ ] TC-0641 Klick auf "Fortsetzen" → Resume-Dialog → "Fortsetzen" landet auf genau
       dem Schritt, den die Zeile nennt
-- [ ] TC-0642 Bis zur Zusammenfassung spielen, ohne "Als abgeschlossen markieren",
-      über das Logo weggehen → die Zeile zeigt "Schritt 8/8", nie "9/8"
+
+### TS-0135 Lektion abschließen ohne Knopf (#3792)
+
+Ort: Lektion, Zusammenfassung; danach Set-Ansicht und Dashboard. Vorher schloss
+nur der Knopf "Als abgeschlossen markieren" eine Lektion ab; wer mit "Nächste
+Lektion" weiterging, behielt sie als offen, ohne Lektions-XP.
+
+- [ ] TC-0973 Eine Lektion bis zur Zusammenfassung spielen: es gibt keinen Knopf "Als
+      abgeschlossen markieren", neben der Überschrift erscheint der Haken
+- [ ] TC-0974 Mit "Nächste Lektion" weitergehen, dann die Set-Ansicht öffnen: die
+      gespielte Lektion ist als erledigt markiert
+- [ ] TC-0975 Dashboard: die XP sind um die in der Zusammenfassung angezeigten
+      Lektions-XP gestiegen
+- [ ] TC-0976 Bis zur Zusammenfassung spielen und über das Logo weggehen: die Lektion
+      steht nicht unter "Weitermachen" und nicht unter den pausierten
+      Lektionen, sie ist abgeschlossen
+- [ ] TC-0977 Eine abgeschlossene Lektion erneut öffnen: die XP steigen nicht ein
+      zweites Mal
+- [ ] TC-0978 Ohne Lernprofil (z. B. über einen Teilen-Link) bis zur Zusammenfassung
+      spielen: der Hinweis sagt, dass ohne Lernprofil nichts gespeichert wird
 
 ### TS-0089 Update-Schutz: kein stiller Fortschrittsverlust beim Set-Update (#2128)
 
