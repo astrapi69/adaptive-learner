@@ -23,6 +23,7 @@ import type {
 import {getDb} from "../dexie/db";
 import type {LessonProgressRow} from "../dexie/db";
 import {ApiError} from "../../api/client";
+import {recordCompletedAttempt} from "./lesson-attempt";
 
 function slugifySource(source: string): string {
     return source.replace(/\//g, "--");
@@ -114,32 +115,6 @@ function appendStepEvent(
     if (sameStep) entries[entries.length - 1] = entry;
     else entries.push(entry);
     row.recent_steps = entries.slice(-RECENT_STEPS_CAP);
-}
-
-/** #983 — account one completed attempt onto the row (mirrors the
- *  backend ``_record_completed_attempt``): bump ``attempts``, append to
- *  ``attempt_history``, and lift ``best_score_*`` only when this attempt
- *  beat the previous best by percentage (ties keep the earlier best). */
-const ATTEMPT_HISTORY_CAP = 50;
-function recordCompletedAttempt(row: LessonProgressRow, nowIso: string): void {
-    row.attempts = (row.attempts ?? 0) + 1;
-    const history = [...(row.attempt_history ?? [])];
-    history.push({
-        at: nowIso,
-        correct: row.score_correct,
-        total: row.score_total,
-    });
-    row.attempt_history = history.slice(-ATTEMPT_HISTORY_CAP);
-
-    const currentPct = row.score_total
-        ? row.score_correct / row.score_total
-        : 0;
-    const bestTotal = row.best_score_total ?? 0;
-    const bestPct = bestTotal ? (row.best_score_correct ?? 0) / bestTotal : -1;
-    if (bestTotal === 0 || currentPct > bestPct) {
-        row.best_score_correct = row.score_correct;
-        row.best_score_total = row.score_total;
-    }
 }
 
 function recomputeScore(
