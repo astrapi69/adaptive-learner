@@ -568,17 +568,26 @@ export async function settleForScreenshot(
     // the timeout below.
     await page.mouse.move(0, 0);
     if (options.allowPersistentToast) return;
+    // #3792 - the milestone overlay (MilestoneHost: a badge, a level-up, a
+    // streak) is a second transient surface outside react-toastify. Reaching
+    // the lesson summary completes the lesson now, so the first completion's
+    // "first lesson" badge flies in at the top and leaves after DISMISS_MS
+    // (3s) plus GAP_MS (0.5s) per queued milestone. Captured mid-life it
+    // flaps exactly like #2721 did; wait it out the same way. The cap covers
+    // a few queued milestones (badge + level-up) with margin.
     try {
         await page.waitForFunction(
-            () => document.querySelectorAll(".Toastify__toast").length === 0,
+            () =>
+                document.querySelectorAll(".Toastify__toast").length === 0 &&
+                document.querySelector('[data-testid="milestone-overlay"]') === null,
             undefined,
-            {timeout: 8_000},
+            {timeout: 15_000},
         );
     } catch {
         throw new Error(
-            "settleForScreenshot: a toast is still visible after 8s - " +
+            "settleForScreenshot: a toast or milestone overlay is still visible after 15s - " +
                 "either a persistent toast leaked into this surface or an " +
-                "autoClose grew past the cap (#2721). " +
+                "autoClose grew past the cap (#2721, #3792). " +
                 (await describeStuckToasts(page)),
         );
     }
