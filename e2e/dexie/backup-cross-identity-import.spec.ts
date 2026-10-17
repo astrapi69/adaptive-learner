@@ -11,7 +11,8 @@
  *     of the same set, then imports B's file via Settings > Data.
  *
  * The spec MEASURES what device A holds and shows afterwards and prints it
- * (the #3785 evidence table), then asserts the contract: the active user id
+ * (the #3785 evidence table), then asserts the contract: the import dialog
+ * says beforehand that the backup is another learner's, the active user id
  * stays A, B's progress is visible to the learner on A, A's own progress
  * stays visible, and no console error is raised.
  */
@@ -356,6 +357,16 @@ test.describe("Settings import of another learner's backup (#3785)", () => {
             buffer: albBytes,
         });
         await expect(pageA.getByTestId("backup-comparison")).toBeVisible({timeout: 10_000});
+        // The dialog says before the import that the backup is another learner's.
+        const notice = pageA.getByTestId("backup-foreign-owner");
+        const noticeShown = (await notice.count()) > 0;
+        if (noticeShown) {
+            await notice.scrollIntoViewIfNeeded();
+            await testInfo.attach("foreign-owner-notice.png", {
+                body: await pageA.getByTestId("backup-comparison").screenshot(),
+                contentType: "image/png",
+            });
+        }
         await pageA.getByTestId("backup-confirm").click();
         await expect(pageA.getByTestId("backup-summary")).toBeVisible({timeout: 15_000});
         const errorsBeforeReload = [...errorsA];
@@ -366,6 +377,7 @@ test.describe("Settings import of another learner's backup (#3785)", () => {
         // --- The evidence table, printed before any assertion ----------
         const table = {
             ids: {A: userA, B: userB},
+            dialog_foreign_owner_notice: noticeShown,
             backup_b_dexie: {
                 lessonProgress: relabel(dexieB.lessonProgress, userA, userB),
                 elementErrors: relabel(dexieB.elementErrors, userA, userB),
@@ -399,6 +411,7 @@ test.describe("Settings import of another learner's backup (#3785)", () => {
 
         // --- The contract ----------------------------------------------
         const firstLesson = Object.keys(after.ui.lessonRows)[0];
+        expect.soft(noticeShown, "the dialog names the other learner's backup").toBe(true);
         expect.soft(after.userId, "the active learner stays A").toBe(userA);
         expect.soft(after.dexie.users, "no second learner row").toEqual([userA]);
         expect

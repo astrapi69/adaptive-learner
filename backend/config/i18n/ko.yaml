@@ -1120,6 +1120,7 @@ backup:
   import_failed: "복원에 실패했습니다."
   comparison_title: 복원 확인
   comparison_help: '복원은 병합 방식입니다: 새 레코드는 삽입하고, 변경 가능한 레코드는 백업이 더 최신일 때만 업데이트하며, 기록 행은 그대로 유지합니다. 삭제되는 것은 없습니다. API 키는 무시됩니다.'
+  foreign_owner_notice: "이 백업은 다른 학습 프로필의 것입니다. 진행 상황은 활성 프로필에 할당되어 병합됩니다. 레슨, 오답, 기록은 추가되고 XP, 연속 기록, 설정은 백업에서 가져옵니다. 활성 프로필은 그대로 유지됩니다."
   table_header: 테이블
   current_header: 현재
   incoming_header: 백업

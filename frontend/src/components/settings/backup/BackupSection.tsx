@@ -28,6 +28,7 @@ import {SHARE_URL} from "../../../lib/share/generate-share-text";
 import {notify} from "../../../utils/notify";
 import {readBackupFile} from "../../../lib/backup/validateBackupFile";
 import {SettingsSection} from "../SettingsSection";
+import {backupOwnerId} from "../../../storage/backup";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../../../types/domain";
 import {BackupAutoBackups} from "./BackupAutoBackups";
 import {BackupCompareSection} from "./BackupCompareSection";
@@ -170,6 +171,12 @@ function BackupActionToolbar({
 /** The pre-restore confirmation panel: the current-vs-backup row-count
  *  table, the optional per-table diff preview, and the Confirm / Cancel
  *  actions. */
+/** Whether ``payload`` was made by another learner than ``userId`` (#3785). */
+function isForeignBackup(payload: BackupPayload, userId: string): boolean {
+    const owner = backupOwnerId(payload);
+    return owner !== null && owner !== userId;
+}
+
 function RestoreConfirmPanel({
     comparison,
     currentSnapshot,
@@ -179,6 +186,7 @@ function RestoreConfirmPanel({
     onConfirm,
     onCancel,
     onCounts,
+    foreignOwner,
     t,
 }: {
     comparison: ComparisonRow[];
@@ -189,6 +197,8 @@ function RestoreConfirmPanel({
     onConfirm: () => void;
     onCancel: () => void;
     onCounts: (counts: RestoreDiffCounts) => void;
+    /** #3785 - the backup was made by another learner than the active one. */
+    foreignOwner: boolean;
     t: Translate;
 }) {
     return (
@@ -203,6 +213,18 @@ function RestoreConfirmPanel({
                     "Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.",
                 )}
             </p>
+            {foreignOwner && (
+                <p
+                    role="note"
+                    className="rounded-app border border-warning bg-[var(--warning-bg)] px-3 py-2 text-sm text-warning"
+                    data-testid="backup-foreign-owner"
+                >
+                    {t(
+                        "backup.foreign_owner_notice",
+                        "This backup belongs to another learner profile. Its progress is added to the active profile and merged with it: lessons, mistakes and history are added, XP, streak and settings are taken from the backup. The active profile stays active.",
+                    )}
+                </p>
+            )}
             <table className="backup-comparison-table w-full text-sm">
                 <thead>
                     <tr>
@@ -633,7 +655,7 @@ export default function BackupSection() {
             // Restore the localStorage snapshot and the plugin settings
             // (#3412) frontend-side, in both storage modes — the backend
             // ignores both blocks. Legacy backups carry none -> no-op.
-            const clientApplied = await restoreClientSnapshots(pendingPayload);
+            const clientApplied = await restoreClientSnapshots(pendingPayload, userId);
             // eslint-disable-next-line no-console -- round-trip trace, see below
             console.log("[Backup] client snapshots applied:", clientApplied);
             // #126 — surface the full result in the browser console so a
@@ -834,6 +856,7 @@ export default function BackupSection() {
                     onConfirm={handleConfirmRestore}
                     onCancel={handleCancelRestore}
                     onCounts={setRestoreDiffCounts}
+                    foreignOwner={isForeignBackup(pendingPayload, userId)}
                     t={t}
                 />
             )}

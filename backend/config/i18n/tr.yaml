@@ -1120,6 +1120,7 @@ backup:
   import_failed: "Geri yükleme başarısız oldu."
   comparison_title: Geri yüklemeyi onayla
   comparison_help: 'Geri yükleme birleştirme yapar: yeni kayıtlar eklenir, değişebilir kayıtlar sadece yedek daha yeniyse güncellenir, geçmiş satırları olduğu gibi kalır. Hiçbir şey silinmez. API anahtarları yok sayılır.'
+  foreign_owner_notice: "Bu yedek başka bir öğrenme profiline ait. İlerlemesi etkin profile atanır ve onunla birleştirilir: dersler, hatalar ve geçmiş eklenir, XP, seri ve ayarlar yedekten alınır. Etkin profil etkin kalır."
   table_header: Tablo
   current_header: Mevcut
   incoming_header: Yedek

@@ -14,7 +14,8 @@ import {getDb} from "../dexie/db";
 import type {SetRunRow} from "../dexie/db";
 import type {SetRun} from "../types";
 
-function runKey(userId: string, setId: string, runId: number): string {
+/** The id the store writes for run ``runId`` of ``(user, set)``. */
+export function setRunKey(userId: string, setId: string, runId: number): string {
     return `${userId}#${setId}#${runId}`;
 }
 
@@ -62,7 +63,7 @@ export async function ensureActiveRunDexie(
     const maxRun = rows.reduce((m, r) => Math.max(m, r.run_id), 0);
     const runId = maxRun === 0 ? 1 : maxRun + 1;
     await db.setRuns.put({
-        id: runKey(userId, setId, runId),
+        id: setRunKey(userId, setId, runId),
         user_id: userId,
         set_id: setId,
         run_id: runId,
@@ -102,7 +103,7 @@ export async function startRunDexie(
             // then open run 2. Its start time predates the feature and is
             // not recoverable, so it is stamped at close time (best effort).
             await db.setRuns.put({
-                id: runKey(userId, setId, 1),
+                id: setRunKey(userId, setId, 1),
                 user_id: userId,
                 set_id: setId,
                 run_id: 1,
@@ -119,7 +120,7 @@ export async function startRunDexie(
             nextRunId = maxRun + 1;
         }
         const newRow: SetRunRow = {
-            id: runKey(userId, setId, nextRunId),
+            id: setRunKey(userId, setId, nextRunId),
             user_id: userId,
             set_id: setId,
             run_id: nextRunId,

@@ -1196,6 +1196,7 @@
     "import_failed": "Restore failed.",
     "comparison_title": "Confirm restore",
     "comparison_help": "Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.",
+    "foreign_owner_notice": "This backup belongs to another learner profile. Its progress is added to the active profile and merged with it: lessons, mistakes and history are added, XP, streak and settings are taken from the backup. The active profile stays active.",
     "table_header": "Table",
     "current_header": "Current",
     "incoming_header": "Backup",

@@ -64,13 +64,20 @@ GitHub-Issue.
 
 ## Cross-Identity-Import
 
-Du musst **nicht** derselbe Nutzer auf demselben Gerät sein. Ein
-Backup lässt sich in eine **frische Installation** oder unter
-einem **anderen Nutzerprofil** importieren. Die Wiederherstellung
-ordnet die Daten dem aktiven Profil zu und löst dabei interne
-Verweise (Fremdschlüssel) sauber neu auf, sodass dein Fortschritt
-zusammenhängend bleibt - Lektions-Schrittfortschritt, Serie und
-Badges inklusive.
+Du musst **nicht** derselbe Nutzer auf demselben Gerät sein.
+
+- **Auf einem leeren Gerät** spielst du das Backup am besten gleich beim
+  Start ein (siehe "Backup beim ersten Login"). Die App übernimmt dann das
+  Profil aus dem Backup.
+- **Auf einem Gerät, auf dem du schon ein Profil angelegt hast**, kannst du
+  das Backup über Einstellungen > Daten importieren. Gehört es zu einem
+  anderen Profil, sagt dir der Bestätigungsdialog das vor dem Import. Der
+  Lernstand aus dem Backup wird dann deinem **aktiven Profil** zugeordnet
+  und mit deinem zusammengeführt: Lektionsfortschritt, Fehler,
+  Durchgänge, Aufnahmen, Projekte und Verlauf kommen hinzu, dein eigener
+  Fortschritt bleibt erhalten. XP, Serie und Einstellungen übernimmt der
+  Import aus dem Backup. Dein aktives Profil bleibt aktiv, es wird kein
+  zweites Profil angelegt.
 
 ---
 
