@@ -1914,6 +1914,10 @@ async function playOpenLessonToSummary(page: Page): Promise<void> {
         }
     }
     await expect(page.getByTestId("lesson-summary")).toBeVisible({timeout: 20_000});
+    // #3792 - the error-replay motif leaves the summary right away; let the
+    // completion's milestone overlay come and go first (see
+    // settleLessonCompletion).
+    await settleLessonCompletion(page);
 }
 
 /**
