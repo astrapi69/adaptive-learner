@@ -19,6 +19,7 @@ import {
     dedupeBadgesByKey,
     dedupeSingletonByUser,
     dedupeUserBadgesByPair,
+    completeRowsThatReachedSummary,
 } from "./db-migrations";
 
 import type {
@@ -679,6 +680,32 @@ export class AdaptiveLearnerDB extends Dexie {
         this.version(34).stores({
             xpPurchases: "id, user_id, &[user_id+item_kind+item_id]",
         });
+
+        // #3792 — complete the progress rows that reached the summary while
+        // only a "Mark as complete" button wrote ``completed``. Runs once per
+        // browser with this upgrade; no schema change. The counts go to the
+        // console and to ``adaptive-learner.repair.lesson_completion`` so a
+        // device can tell afterwards what was changed. No dynamic import
+        // (the v21 DatabaseClosedError trap).
+        this.version(35)
+            .stores({})
+            .upgrade(async (tx) => {
+                const counts = await completeRowsThatReachedSummary(
+                    tx.table("lessonProgress"),
+                    tx.table("contentSets"),
+                    tx.table("contentSetFiles"),
+                );
+                // eslint-disable-next-line no-console -- the one-time repair reports what it changed (#3792)
+                console.info("[#3792] lesson completion repair:", counts);
+                try {
+                    localStorage.setItem(
+                        "adaptive-learner.repair.lesson_completion",
+                        JSON.stringify({...counts, at: new Date().toISOString()}),
+                    );
+                } catch {
+                    /* the record is diagnostic only */
+                }
+            });
     }
 }
 
