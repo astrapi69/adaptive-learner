@@ -69,7 +69,7 @@ export const BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS: readonly string[] = [
  * the database did not hold. The first-run restore sets both itself before
  * it imports.
  */
-export const BACKUP_IDENTITY_LOCALSTORAGE_KEYS: readonly string[] = [
+const BACKUP_IDENTITY_LOCALSTORAGE_KEYS: readonly string[] = [
     "adaptive-learner.user_id",
     "adaptive-learner.project_id",
 ];
