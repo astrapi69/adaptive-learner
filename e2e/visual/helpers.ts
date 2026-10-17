@@ -523,6 +523,15 @@ export async function settleForScreenshot(
             " animation-delay: 0s !important; transition-duration: 0s !important;" +
             " transition-delay: 0s !important; caret-color: transparent !important; }",
     });
+    // #3792 - the milestone overlay (MilestoneHost: a badge, a level-up) is
+    // hidden, not waited for. Reaching the summary completes the lesson, and
+    // the celebration that follows can fly in after any absence check, even
+    // between the retried shots of toHaveScreenshot: three refreshes caught
+    // the "first lesson" badge on error replay. It is fixed-position, so
+    // hiding it changes no layout, and no motif covers the overlay itself.
+    await page.addStyleTag({
+        content: '[data-testid="milestone-overlay"] { display: none !important; }',
+    });
     await page.evaluate(() => document.fonts.ready);
     // 250ms (was 100ms): the post-font reflow on the mobile lesson surface
     // occasionally landed AFTER the shot, shifting the page ~4px (#1540).
@@ -818,10 +827,48 @@ export async function playBundledLesson(
         await expect(page.getByTestId("lesson-summary")).toBeVisible({
             timeout: 20_000,
         });
+        await settleLessonCompletion(page);
         return true;
     }
     // Requested a matching result but never hit a matching step.
     return false;
+}
+
+/**
+ * #3792 - reaching the summary completes the lesson, and the completion flow
+ * runs asynchronously: the write, then the milestone celebration (the "first
+ * lesson" badge, a level-up), which the app-root MilestoneHost shows for 3s
+ * plus a 0.5s gap per queued milestone, also on whatever page a motif moves
+ * on to. settleForScreenshot hides the overlay; this wait keeps what follows
+ * deterministic instead: the completion is written (the heading's check
+ * mark) and its follow-ups (XP, celebration, missions refresh) have run, by
+ * waiting until no overlay has been in the DOM for a quiet window longer than
+ * the gap between two milestones. A run without a learner never completes and
+ * skips the wait.
+ */
+async function settleLessonCompletion(page: Page): Promise<void> {
+    try {
+        await page
+            .getByTestId("lesson-summary-completed")
+            .waitFor({state: "visible", timeout: 10_000});
+    } catch {
+        return;
+    }
+    const quietMs = 2_000;
+    const deadline = Date.now() + 20_000;
+    let quietSince = Date.now();
+    for (;;) {
+        const busy = (await page.getByTestId("milestone-overlay").count()) > 0;
+        const now = Date.now();
+        if (busy) quietSince = now;
+        else if (now - quietSince >= quietMs) return;
+        if (now > deadline) {
+            throw new Error(
+                "playBundledLesson: a milestone overlay is still cycling 20s after the completion (#3792)",
+            );
+        }
+        await page.waitForTimeout(100);
+    }
 }
 
 /** Answer whatever exercise the current step renders (any valid answer).
@@ -1868,6 +1915,10 @@ async function playOpenLessonToSummary(page: Page): Promise<void> {
         }
     }
     await expect(page.getByTestId("lesson-summary")).toBeVisible({timeout: 20_000});
+    // #3792 - the error-replay motif leaves the summary right away; let the
+    // completion's milestone overlay come and go first (see
+    // settleLessonCompletion).
+    await settleLessonCompletion(page);
 }
 
 /**

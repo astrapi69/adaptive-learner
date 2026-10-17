@@ -225,13 +225,11 @@ test.describe("Session 2 — Learning flow", () => {
     ]);
     expect(download.suggestedFilename()).toMatch(/\.md$/);
 
-    // Mark complete → the XP award persists asynchronously. Wait for the
-    // button to disappear (completion finished) before navigating, so the
-    // award is committed to IndexedDB before the Dashboard re-reads it.
-    await page.getByTestId("lesson-summary-mark-complete").click();
-    await expect(page.getByTestId("lesson-summary-mark-complete")).toHaveCount(
-      0,
-    );
+    // #3792 - reaching the summary completes the lesson; the XP award
+    // persists asynchronously. Wait for the completed mark before
+    // navigating, so the award is committed to IndexedDB before the
+    // Dashboard re-reads it.
+    await expect(page.getByTestId("lesson-summary-completed")).toBeVisible();
     // Check on the Dashboard, where the header isn't auto-hidden (the
     // lesson route slides it away on scroll).
     await page.goto("/dashboard");
@@ -239,7 +237,7 @@ test.describe("Session 2 — Learning flow", () => {
     await expect(nav.xpTotal.first()).not.toHaveText("0 XP");
   });
 
-  test("anonymous visitor: mark-complete is disabled with a reason (#1787)", async ({
+  test("anonymous visitor: no completion is saved, and the summary says why (#1787, #3792)", async ({
     page,
   }) => {
     // NO seedLearner — lessons are fully reachable without a profile
@@ -251,9 +249,9 @@ test.describe("Session 2 — Learning flow", () => {
     await content.goto();
     await content.openBundledLesson();
     await lesson.playToSummary();
-    await expect(
-      page.getByTestId("lesson-summary-mark-complete"),
-    ).toBeDisabled();
+    // #3792 - there is no completion button any more; an anonymous run
+    // still says why nothing is saved.
+    await expect(page.getByTestId("lesson-summary-mark-complete")).toHaveCount(0);
     await expect(
       page.getByTestId("lesson-summary-mark-complete-hint"),
     ).toBeVisible();

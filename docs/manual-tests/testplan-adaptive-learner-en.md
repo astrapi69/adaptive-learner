@@ -825,7 +825,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0205 Game mode on, play a lesson with a streak of at least 3 correct
       answers in a row: the summary shows a green "+N XP" next to
       "Best streak: N"; the displayed lesson XP include the bonus, and
-      "Mark as complete" credits exactly the same value (dashboard XP
+      reaching the summary credits exactly the same value (dashboard XP
       rise by the displayed sum)
 - [ ] TC-0206 The bonus counts from the THIRD streak answer (+1 per further
       correct answer in a row); a wrong answer stops the growth, a new
@@ -2544,7 +2544,7 @@ each card row (`CardImageField`).
 - [ ] TC-0553 Fresh install (or Settings > Learning > "Lesson summary" with only
       "Result and statistics" and "XP reward" ticked): finish a lesson -
       the summary shows stars, score, time, "+N XP" and directly below
-      "Mark as complete", "Next lesson", "Practice again" and "Back"; no
+      "Next lesson", "Practice again" and "Back"; no
       favorites hint, no sharing, no answers overview, no export, no "Why
       you missed these", no correction round, no next-step cards (if the run
       had mistakes, only the "Fix mistakes (N)" button sits above them,
@@ -2876,8 +2876,23 @@ step.
 - [ ] TC-0640 Dashboard: the row reads "Resume · Step 4/8" (not "1/8")
 - [ ] TC-0641 Click "Resume" → resume dialog → "Continue" lands on exactly the step
       the row names
-- [ ] TC-0642 Play to the summary without "Mark complete", leave through the logo →
-      the row reads "Step 8/8", never "9/8"
+
+### TS-0135 Completing a lesson without a button (#3792)
+
+Where: lesson summary; then the set view and the dashboard. Before, only the
+"Mark as complete" button completed a lesson; going on with "Next lesson" left
+it open, without lesson XP.
+
+- [ ] TC-0973 Play a lesson to the summary: there is no "Mark as complete" button, the
+      check mark appears next to the heading
+- [ ] TC-0974 Go on with "Next lesson", then open the set view: the played lesson is
+      marked done
+- [ ] TC-0975 Dashboard: the XP rose by the lesson XP the summary showed
+- [ ] TC-0976 Play to the summary and leave through the logo: the lesson is neither
+      under "Continue Learning" nor among the paused lessons, it is completed
+- [ ] TC-0977 Open a completed lesson again: the XP do not rise a second time
+- [ ] TC-0978 Without a learner profile (e.g. through a share link) play to the
+      summary: the hint says that nothing is saved without a learner profile
 
 ### TS-0089 Update guard: no silent progress loss on a set update (#2128)
 

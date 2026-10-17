@@ -157,7 +157,6 @@ interface LessonSummaryProps {
    *  full-hearts ticket condition. Default false keeps existing
    *  callers unaffected. */
   fullHeartsRun?: boolean;
-  onMarkComplete: () => Promise<void> | void;
   onNextLesson: () => void;
   onRepeat: () => void;
   onExit: () => void;
@@ -200,7 +199,6 @@ export default function LessonSummary({
   lessonFilename,
   comboBonusXp = 0,
   fullHeartsRun = false,
-  onMarkComplete,
   onNextLesson,
   onRepeat,
   onExit,
@@ -738,7 +736,13 @@ export default function LessonSummary({
           item's min-content width so a long unbreakable title word wraps
           instead of overflowing the viewport on mobile. */}
       <h2 className="wrap-anywhere">
-        {isCompleted && <CheckCircle2 size={20} aria-hidden="true" />}
+        {isCompleted && (
+          <CheckCircle2
+            size={20}
+            aria-hidden="true"
+            data-testid="lesson-summary-completed"
+          />
+        )}
         {t("lesson.summary.heading", "You finished")}: {lesson.title}
       </h2>
 
@@ -820,39 +824,18 @@ export default function LessonSummary({
       {/* Essential completion navigation — never toggleable, never in the
           reorder list, always pinned at the bottom so the panel can never
           become a dead end (#1426, "Weitermachen-Aktionen bleiben fix"). */}
-      {!isCompleted && (
+      {/* #3792 - reaching the summary completes the lesson
+          (LessonSummaryScreen), so there is no completion button. #1787 -
+          an anonymous run (no learner profile) has nowhere to persist the
+          completion, so it says why instead of staying silent. */}
+      {!isCompleted && !userId && (
         <div className="lesson-summary-actions">
-          {/* #1787 — an anonymous run (no learner profile) has nowhere to
-              persist a completion (``useLesson.markCompleted`` no-ops
-              without a user), so the button is disabled with a visible
-              reason instead of dying silently (feature-state policy
-              #335: visible-but-disabled, never a dead control). */}
-          <Button
-            type="button"
-            disabled={!userId}
-            title={
-              !userId
-                ? t(
-                    "lesson.summary.mark_complete_needs_profile",
-                    "Create a learner profile to save your progress",
-                  )
-                : undefined
-            }
-            onClick={() => {
-              void onMarkComplete();
-            }}
-            data-testid="lesson-summary-mark-complete"
-          >
-            {t("lesson.summary.mark_complete", "Mark as complete")}
-          </Button>
-          {!userId && (
-            <FormHint data-testid="lesson-summary-mark-complete-hint">
-              {t(
-                "lesson.summary.mark_complete_needs_profile",
-                "Create a learner profile to save your progress",
-              )}
-            </FormHint>
-          )}
+          <FormHint data-testid="lesson-summary-mark-complete-hint">
+            {t(
+              "lesson.summary.mark_complete_needs_profile",
+              "Create a learner profile to save your progress",
+            )}
+          </FormHint>
         </div>
       )}
 

@@ -62,7 +62,6 @@ function renderSummary(
                 source="bundled:x"
                 setSlug="x"
                 lessonFilename="01.json"
-                onMarkComplete={vi.fn()}
                 onNextLesson={vi.fn()}
                 onRepeat={vi.fn()}
                 onExit={vi.fn()}
