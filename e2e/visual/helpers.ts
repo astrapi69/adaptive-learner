@@ -523,6 +523,15 @@ export async function settleForScreenshot(
             " animation-delay: 0s !important; transition-duration: 0s !important;" +
             " transition-delay: 0s !important; caret-color: transparent !important; }",
     });
+    // #3792 - the milestone overlay (MilestoneHost: a badge, a level-up) is
+    // hidden, not waited for. Reaching the summary completes the lesson, and
+    // the celebration that follows can fly in after any absence check, even
+    // between the retried shots of toHaveScreenshot: three refreshes caught
+    // the "first lesson" badge on error replay. It is fixed-position, so
+    // hiding it changes no layout, and no motif covers the overlay itself.
+    await page.addStyleTag({
+        content: '[data-testid="milestone-overlay"] { display: none !important; }',
+    });
     await page.evaluate(() => document.fonts.ready);
     // 250ms (was 100ms): the post-font reflow on the mobile lesson surface
     // occasionally landed AFTER the shot, shifting the page ~4px (#1540).
@@ -568,26 +577,17 @@ export async function settleForScreenshot(
     // the timeout below.
     await page.mouse.move(0, 0);
     if (options.allowPersistentToast) return;
-    // #3792 - the milestone overlay (MilestoneHost: a badge, a level-up, a
-    // streak) is a second transient surface outside react-toastify. Reaching
-    // the lesson summary completes the lesson now, so the first completion's
-    // "first lesson" badge flies in at the top and leaves after DISMISS_MS
-    // (3s) plus GAP_MS (0.5s) per queued milestone. Captured mid-life it
-    // flaps exactly like #2721 did; wait it out the same way. The cap covers
-    // a few queued milestones (badge + level-up) with margin.
     try {
         await page.waitForFunction(
-            () =>
-                document.querySelectorAll(".Toastify__toast").length === 0 &&
-                document.querySelector('[data-testid="milestone-overlay"]') === null,
+            () => document.querySelectorAll(".Toastify__toast").length === 0,
             undefined,
-            {timeout: 15_000},
+            {timeout: 8_000},
         );
     } catch {
         throw new Error(
-            "settleForScreenshot: a toast or milestone overlay is still visible after 15s - " +
+            "settleForScreenshot: a toast is still visible after 8s - " +
                 "either a persistent toast leaked into this surface or an " +
-                "autoClose grew past the cap (#2721, #3792). " +
+                "autoClose grew past the cap (#2721). " +
                 (await describeStuckToasts(page)),
         );
     }
@@ -839,11 +839,12 @@ export async function playBundledLesson(
  * runs asynchronously: the write, then the milestone celebration (the "first
  * lesson" badge, a level-up), which the app-root MilestoneHost shows for 3s
  * plus a 0.5s gap per queued milestone, also on whatever page a motif moves
- * on to. Waiting for the overlay's absence at shot time is not enough: it can
- * fly in right after the check. So wait until the completion is written (the
- * heading's check mark) and then until no overlay has been on screen for a
- * quiet window longer than the gap between two milestones. A run without a
- * learner never completes and skips the wait.
+ * on to. settleForScreenshot hides the overlay; this wait keeps what follows
+ * deterministic instead: the completion is written (the heading's check
+ * mark) and its follow-ups (XP, celebration, missions refresh) have run, by
+ * waiting until no overlay has been in the DOM for a quiet window longer than
+ * the gap between two milestones. A run without a learner never completes and
+ * skips the wait.
  */
 async function settleLessonCompletion(page: Page): Promise<void> {
     try {
