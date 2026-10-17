@@ -9,7 +9,7 @@
 import type {LessonProgressRow} from "../dexie/db-rows";
 
 /** How many completed attempts ``attempt_history`` keeps. */
-export const ATTEMPT_HISTORY_CAP = 50;
+const ATTEMPT_HISTORY_CAP = 50;
 
 /** #983 — account one completed attempt onto the row (mirrors the
  *  backend ``_record_completed_attempt``): bump ``attempts``, append to
