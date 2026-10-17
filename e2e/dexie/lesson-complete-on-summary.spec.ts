@@ -134,6 +134,28 @@ async function readState(page: Page): Promise<{row: ProgressSnapshot | null; tot
     ) as Promise<{row: ProgressSnapshot | null; totalXp: number}>;
 }
 
+/**
+ * Read the state until the XP has not moved for 2s (polled every 500ms,
+ * at most 20s), and return the XP timeline with it, so a late follow-up and
+ * a second grant can be told apart in the log.
+ */
+async function settledState(
+    page: Page,
+): Promise<{state: {row: ProgressSnapshot | null; totalXp: number}; xpTimeline: number[]}> {
+    const timeline: number[] = [];
+    let state = await readState(page);
+    timeline.push(state.totalXp);
+    let stableFor = 0;
+    for (let i = 0; i < 40 && stableFor < 2_000; i++) {
+        await page.waitForTimeout(500);
+        const next = await readState(page);
+        timeline.push(next.totalXp);
+        stableFor = next.totalXp === state.totalXp ? stableFor + 500 : 0;
+        state = next;
+    }
+    return {state, xpTimeline: timeline};
+}
+
 test.describe("Reaching the summary completes the lesson (#3792)", () => {
     // Onboarding + assessment + set download + one full lesson.
     test.describe.configure({timeout: 180_000});
@@ -188,16 +210,18 @@ test.describe("Reaching the summary completes the lesson (#3792)", () => {
         await playToSummary(page);
         await page.getByTestId("lesson-summary-next").click();
         await expect(page).not.toHaveURL(new RegExp(`${LESSON.replace(".", "\\.")}$`), {timeout: 15_000});
-        const first = await readState(page);
+        // The first completion's follow-ups (mission bonuses after the
+        // missions refresh) land asynchronously; compare against the settled
+        // XP, not the first read, or a late bonus reads as a second grant.
+        const first = await settledState(page);
 
         await page.goBack();
         await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 20_000});
-        await page.waitForTimeout(1_500);
-        const revisited = await readState(page);
+        const revisited = await settledState(page);
 
         console.log("[#3792] revisit:", JSON.stringify({first, revisited}));
-        expect(revisited.row?.status).toBe("completed");
-        expect(revisited.row?.attempts, "no second attempt is recorded").toBe(first.row?.attempts);
-        expect(revisited.totalXp, "no second XP grant").toBe(first.totalXp);
+        expect(revisited.state.row?.status).toBe("completed");
+        expect(revisited.state.row?.attempts, "no second attempt is recorded").toBe(first.state.row?.attempts);
+        expect(revisited.state.totalXp, "no second XP grant").toBe(first.state.totalXp);
     });
 });
