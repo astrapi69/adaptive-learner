@@ -168,9 +168,9 @@ describe("pickVoice", () => {
 });
 
 // #3805: a network voice sends the text being read to its provider (Chrome:
-// GET www.google.com/speech-api/v2/synthesize?text=...). The shape below is
-// the one measured in Google Chrome 155 on Linux with speech-dispatcher:
-// "Google Deutsch" (de-DE, network) next to "German espeak-ng" (de, local).
+// GET www.google.com/speech-api/v2/synthesize?text=..., measured in the
+// privacy audit of 2026-10-20). Below, Chrome's network voice "Google Deutsch"
+// (de-DE) sits next to espeak-ng's local "German espeak-ng" (de).
 describe("pickVoice prefers local voices (#3805)", () => {
     const googleDeutsch = makeNetworkVoice("Google Deutsch", "de-DE");
     const espeakGerman = makeVoice("German espeak-ng", "de");
@@ -246,10 +246,9 @@ describe("resolveVoice: an explicit choice wins (#3805)", () => {
 
 // --- currentVoices ---------------------------------------------------
 
-// Chrome hands out its voices in batches: on Linux with speech-dispatcher
-// the 19 network voices are listed at once, the local voices about a second
-// later. A list loaded once at mount then lacks the local voices (#3805,
-// measured).
+// The browser can add voices after the page loaded its list, for example
+// local voices listed after the network ones. A list loaded once at mount
+// then lacks them (#3805).
 describe("currentVoices", () => {
     it("returns what the browser offers now, not the list loaded earlier", () => {
         const loadedAtMount = [makeNetworkVoice("Google Deutsch", "de-DE")];
@@ -274,10 +273,9 @@ describe("currentVoices", () => {
 
 // --- whenDeviceVoicesKnown --------------------------------------------
 
-// Measured on a cold start of Chrome 155 on Linux with speech-dispatcher
-// (#3805): the network voices came at ~30 ms, auto-read spoke at ~450 ms,
-// the device voices came in one batch at ~550 ms. Auto-read therefore read
-// its first step with "Google Deutsch" although the device had a German voice.
+// On a cold start the device's voices may be listed only after auto-read
+// spoke its first step, which then went to "Google Deutsch" although the
+// device had a German voice (#3805).
 describe("whenDeviceVoicesKnown (#3805)", () => {
     const googleDeutsch = makeNetworkVoice("Google Deutsch", "de-DE");
     const espeakGerman = makeVoice("German espeak-ng", "de");

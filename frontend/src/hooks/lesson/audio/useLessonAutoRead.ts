@@ -108,9 +108,9 @@ export function useLessonAutoRead({
   // renders (the tts controller object is recreated each render)
   // without re-speaking the same step. No tap starts this read, so it
   // waits until the device's voices are listed (#3805): on a cold start
-  // Chrome lists its network voices first and the device voices shortly
-  // after. A run cleaned up before it read clears the guard so the next
-  // run reads.
+  // the browser may not list them yet when the step mounts, and the
+  // local-first pick cannot choose a voice it does not see. A run
+  // cleaned up before it read clears the guard so the next run reads.
   const autoReadStepRef = useRef(-1);
   useEffect(() => {
     if (!autoRead || !tts.enabled || !lesson) return;

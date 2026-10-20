@@ -133,8 +133,8 @@ describe("SpeechButton click", () => {
     });
 });
 
-// #3805: a network voice sends the text read aloud to its provider. The
-// voices have the shape measured in Google Chrome 155 on Linux.
+// #3805: a network voice sends the text read aloud to its provider. Chrome's
+// network voice "Google Deutsch" next to a local espeak-ng voice.
 describe("SpeechButton voice choice (#3805)", () => {
     const googleDeutsch = {
         name: "Google Deutsch",

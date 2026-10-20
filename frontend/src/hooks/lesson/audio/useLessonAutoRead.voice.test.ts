@@ -3,9 +3,9 @@
  *
  * The "R" shortcut, "Read all" and auto-read speak through the real
  * useReadAloud engine here; only the browser's speech API is mocked. The voice
- * list has the shape measured in Google Chrome 155 on Linux with
- * speech-dispatcher: the network voice "Google Deutsch" arrives first, the
- * local espeak-ng voice later, after the lesson has already loaded its list.
+ * list holds Chrome's network voice "Google Deutsch" (the privacy audit of
+ * 2026-10-20 measured it on Linux) and a local espeak-ng voice that the
+ * browser lists later, after the lesson has already loaded its list.
  * Auto-read speaks the step on display at once, before the engine has loaded
  * any list of its own. A network voice sends the text read aloud to its
  * provider, so a local voice must win whenever the browser offers one.
@@ -103,7 +103,7 @@ async function flushVoiceLoading(): Promise<void> {
 }
 
 /** Render the lesson read-aloud with the network voice loaded at mount, then
- *  let the local voice arrive, as measured. */
+ *  let the local voice arrive. */
 async function renderWithLateLocalVoice() {
   mountSynth([googleDeutsch]);
   const hook = renderLesson();
@@ -162,7 +162,7 @@ describe("lesson read-aloud voice (#3805)", () => {
 });
 
 /** Add ``voice`` to the browser's list and fire ``voiceschanged``, the way
- *  Chrome announces the local voices once speech-dispatcher answers. */
+ *  a browser announces voices it lists late. */
 function deliver(voice: SpeechSynthesisVoice): void {
   offered.push(voice);
   voicesChangedListeners.forEach((listener) => listener());
@@ -176,10 +176,10 @@ function enableAutoRead(prefs: Record<string, unknown> = {}): void {
   );
 }
 
-// Measured on a cold start of Chrome 155 on Linux with speech-dispatcher: the
-// network voices came at ~30 ms, auto-read spoke at ~450 ms with "Google
-// Deutsch", the local voices came at ~550 ms. Auto-read is the one path no
-// tap starts, so it can wait for them; a tap must speak in its own handler.
+// On a cold start the browser may list the device's voices only after the
+// step mounted; read at once, the step would go to "Google Deutsch". Auto-read
+// is the one path no tap starts, so it can wait for them; a tap must speak in
+// its own handler.
 describe("auto-read on a cold start (#3805)", () => {
   beforeEach(() => {
     vi.useFakeTimers();

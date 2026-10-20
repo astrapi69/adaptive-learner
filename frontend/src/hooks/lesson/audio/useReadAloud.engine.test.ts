@@ -281,10 +281,9 @@ function offerVoices(initial: SpeechSynthesisVoice[]): SpeechSynthesisVoice[] {
     return offered;
 }
 
-// #3805: the read-aloud text reaches a network voice's provider. Measured
-// in Google Chrome 155 on Linux with speech-dispatcher: "Google Deutsch"
-// (de-DE, network) and "German espeak-ng" (de, local); the network voices
-// arrive first.
+// #3805: the read-aloud text reaches a network voice's provider (privacy
+// audit of 2026-10-20). Chrome's "Google Deutsch" (de-DE, network) next to
+// espeak-ng's "German espeak-ng" (de, local), the network voice listed first.
 describe("useReadAloud voice choice (#3805)", () => {
     const googleDeutsch = makeNetworkVoice("Google Deutsch", "de-DE");
     const espeakGerman = makeVoice("German espeak-ng", "de");

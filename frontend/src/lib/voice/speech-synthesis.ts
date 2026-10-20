@@ -17,16 +17,17 @@
  *   wins while the browser still offers it. Otherwise local voices
  *   (``localService``) come first: a network voice sends the text
  *   being read to its provider (Chrome's "Google ..." voices send it
- *   to Google), so it is used only when no local voice matches the
- *   language (#3805). Within each group: exact ``lang`` first
- *   ("en-US" for an "en-US" learner), then by lang prefix ("en"
- *   matches any "en-*"), then the bare code. Returns ``null`` when
- *   no voice matches; the browser then uses its own default.
- * - **Voices arrive in batches.** Chrome on Linux with speech-dispatcher
- *   lists its network voices at once and adds the local voices about a
- *   second later, so the voice is resolved from the list the browser
- *   offers when speaking (``currentVoices``), not only from the list
- *   loaded at mount.
+ *   to Google, measured in the 2026-10-20 privacy audit), so it is
+ *   used only when no local voice matches the language (#3805).
+ *   Within each group: exact ``lang`` first ("en-US" for an "en-US"
+ *   learner), then by lang prefix ("en" matches any "en-*"), then
+ *   the bare code. Returns ``null`` when no voice matches; the
+ *   browser then uses its own default.
+ * - **The list can grow after mount.** The browser may add voices
+ *   after the page loaded its list (another ``voiceschanged``), so
+ *   the voice is resolved from the list the browser offers when
+ *   speaking (``currentVoices``), not only from the list loaded at
+ *   mount.
  *
  * All functions are safe to call when the browser has no
  * SpeechSynthesis support: they short-circuit. Callers should
@@ -76,11 +77,9 @@ export async function loadVoices(): Promise<SpeechSynthesisVoice[]> {
 /**
  * The voices the browser offers right now, or ``loaded`` while that list
  * is still empty (Chrome answers ``[]`` until its first ``voiceschanged``).
- * Resolve the voice from this when speaking: Chrome adds voices in
- * batches, so a list loaded once at mount can lack the local voices that
- * arrived later (#3805, measured in Chrome 155 on Linux with
- * speech-dispatcher: the network voices at once, the local ones about a
- * second later).
+ * Resolve the voice from this when speaking: a list loaded once at mount
+ * lacks any voice the browser added later, such as local voices listed
+ * after the network ones (#3805).
  *
  * @example
  * const voice = resolveVoice(currentVoices(voicesLoadedAtMount), "de", "");
@@ -95,10 +94,9 @@ export function currentVoices(
 
 /**
  * How long a read no tap starts (auto-read) waits for the device's voices
- * before it reads with a network voice. Measured on a cold start of Chrome
- * 155 on Linux with speech-dispatcher (#3805): the device voices came in one
- * batch about half a second after the network voices, at most 1.4 s after
- * the first ``getVoices()``.
+ * before it reads with a network voice (#3805). A browser that never lists
+ * a device voice (Chrome on Linux by default offers only its "Google ..."
+ * voices) pays this once per page, see ``settledEngines``.
  */
 export const DEVICE_VOICE_WAIT_MS = 1500;
 
@@ -109,8 +107,8 @@ const settledEngines = new WeakSet<SpeechSynthesis>();
 /**
  * Call ``onReady`` once the voice choice can no longer change: at once when
  * the browser lists the chosen voice (``preferredName``, "" for none) or any
- * device voice (they arrive in one batch, so the list is complete),
- * otherwise when such voices arrive (``voiceschanged``) or after
+ * device voice (a platform lists its device voices together, so one listed
+ * device voice is taken as the complete list), otherwise when such voices arrive (``voiceschanged``) or after
  * ``maxWaitMs``, whichever comes first. Returns a function that cancels a
  * pending call.
  *
