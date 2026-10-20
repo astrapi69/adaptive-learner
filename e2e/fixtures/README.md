@@ -54,6 +54,16 @@ exercise. Served through a page.route-mocked content repo by the feature
 screenshot `ordering-review/falsche-reihenfolge`, which places the first
 two steps swapped and checks in practice mode.
 
+## remote-media.lesson.json
+
+Reference lesson for content from another server (#3803): one theory step
+with a Markdown image from `example.com`, one multiple_choice exercise, and
+`resources` with a YouTube video and an article. The app loads none of it:
+the image renders as a link, the video card shows a local placeholder.
+Hand-written, German knowledge content. Served through a page.route-mocked
+content repo by the feature screenshots `content-privacy/bild-als-link` and
+`content-privacy/video-karte`.
+
 ## evaluation-pilot-control.lesson.json
 
 The control lesson of the evaluation pilot, byte-identical to
