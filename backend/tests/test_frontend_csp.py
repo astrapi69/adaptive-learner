@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import base64
 import hashlib
-import importlib
 from pathlib import Path
 
 import pytest
@@ -77,6 +76,37 @@ def test_spa_images_come_only_from_the_app_and_its_content_host(spa_app) -> None
     csp = client.get("/").headers["content-security-policy"]
     assert "img-src 'self' data: blob: https://raw.githubusercontent.com;" in csp
     assert "img.youtube.com" not in csp
+
+
+def _directives(policy: str) -> dict[str, set[str]]:
+    """A CSP string as directive name -> set of sources."""
+    parsed: dict[str, set[str]] = {}
+    for part in policy.split(";"):
+        name, *sources = part.split()
+        parsed[name] = set(sources)
+    return parsed
+
+
+def test_pages_build_allows_the_same_image_and_media_sources_as_api_mode() -> None:
+    """GitHub Pages sends no headers, so the Pages build carries img-src and
+    media-src as a meta tag in frontend/index.html (#3803). Both builds must
+    allow the same sources: a host added to one only would load in one
+    mode and be refused in the other."""
+    import re
+
+    from app.frontend_static import spa_csp_for
+
+    index_html = (Path(__file__).resolve().parents[2] / "frontend" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    match = re.search(
+        r'<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]*)"', index_html
+    )
+    assert match, "frontend/index.html carries no Content-Security-Policy meta tag"
+    pages = _directives(match.group(1))
+    api = _directives(spa_csp_for(index_html))
+    for name in ("img-src", "media-src"):
+        assert pages[name] == api[name], f"{name} differs between the Pages build and API mode"
 
 
 def test_inline_scripts_are_hash_allowed_not_unsafe_inline(spa_app) -> None:
