@@ -10,13 +10,15 @@
  * changes, unlike a readFileSync scan (#1620). The glob takes ``.tsx`` only:
  * rendering Markdown needs JSX, and globbing the ``.ts`` barrels as well
  * made knip see them as imported and report 703 of their exports to the
- * dead-code ratchet (measured).
+ * dead-code ratchet (measured). The patterns are relative to this file:
+ * the build-context guard (#3239) reads a root-absolute pattern as a path
+ * outside the image's build stage.
  */
 
 import { describe, expect, it } from "vitest";
 
 const SOURCES = import.meta.glob<string>(
-  ["/src/**/*.tsx", "!/src/**/*.test.tsx"],
+  ["../../**/*.tsx", "!../../**/*.test.tsx"],
   { query: "?raw", import: "default", eager: true },
 );
 
@@ -26,11 +28,11 @@ const USES_IMAGE_RENDERER = /\bimg:\s*MarkdownImage\b/;
 
 /** The surfaces #3803 named; the scan must see them, or it sees nothing. */
 const KNOWN_SURFACES = [
-  "/src/components/lesson/steps/TheoryBody.tsx",
-  "/src/shared/data-display/BlockMarkdown.tsx",
-  "/src/components/exercises/feedback/ExerciseExplanation.tsx",
-  "/src/components/session/assistant-ui/AssistantUiThread.tsx",
-  "/src/pages/content/LearningRepo.tsx",
+  "../../components/lesson/steps/TheoryBody.tsx",
+  "./BlockMarkdown.tsx",
+  "../../components/exercises/feedback/ExerciseExplanation.tsx",
+  "../../components/session/assistant-ui/AssistantUiThread.tsx",
+  "../../pages/content/LearningRepo.tsx",
 ];
 
 const surfaces = Object.keys(SOURCES)
