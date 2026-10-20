@@ -22,6 +22,9 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 GENERATOR = REPO_ROOT / "scripts" / "generate_lesson_schema.py"
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+from verify_docs_locale_coverage import help_locales  # noqa: E402
 
 
 def _load_generator():
@@ -73,19 +76,13 @@ MARKER = "<!-- Translation: AI-generated, pending native review -->"
 REFERENCE = "developer/lesson-format-reference.md"
 
 
-def _help_locales() -> list[str]:
-    return sorted(
-        p.name for p in HELP_ROOT.iterdir() if p.is_dir() and not p.name.startswith(("_", "."))
-    )
-
-
 def test_help_locales_found() -> None:
     """Guard the guard: an empty locale scan would make the checks below vacuous."""
-    assert {"en", "de"} < set(_help_locales())
-    assert len(_help_locales()) >= 3
+    assert {"en", "de"} < set(help_locales(HELP_ROOT))
+    assert len(help_locales(HELP_ROOT)) >= 3
 
 
-@pytest.mark.parametrize("locale", _help_locales())
+@pytest.mark.parametrize("locale", help_locales(HELP_ROOT))
 def test_every_help_locale_gets_a_generated_reference(locale: str) -> None:
     rel = f"docs/help/{locale}/{REFERENCE}"
     artefacts = _load_generator().build_artefacts()
@@ -95,7 +92,7 @@ def test_every_help_locale_gets_a_generated_reference(locale: str) -> None:
     )
 
 
-@pytest.mark.parametrize("locale", _help_locales())
+@pytest.mark.parametrize("locale", help_locales(HELP_ROOT))
 def test_reference_carries_the_locale_marker_convention(locale: str) -> None:
     """The page follows its locale: marked where the locale's index page is marked."""
     index_marked = (HELP_ROOT / locale / "index.md").read_text(encoding="utf-8").startswith(MARKER)
@@ -103,7 +100,7 @@ def test_reference_carries_the_locale_marker_convention(locale: str) -> None:
     assert page.startswith(MARKER) == index_marked
 
 
-@pytest.mark.parametrize("locale", _help_locales())
+@pytest.mark.parametrize("locale", help_locales(HELP_ROOT))
 def test_reference_model_sections_match_english(locale: str) -> None:
     """Only the intro and the models heading are translated; the tables are the schema's."""
     generator = _load_generator()

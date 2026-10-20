@@ -29,6 +29,7 @@ from generate_api_reference import (  # noqa: E402
     render,
     stale_pages,
 )
+from verify_docs_locale_coverage import help_locales  # noqa: E402
 
 
 def _spec(paths: dict) -> dict:
@@ -165,23 +166,17 @@ HELP_ROOT = REPO / "docs" / "help"
 TRANSLATION_MARKER = "<!-- Translation: AI-generated, pending native review -->"
 
 
-def _help_locales() -> list[str]:
-    return sorted(
-        p.name for p in HELP_ROOT.iterdir() if p.is_dir() and not p.name.startswith(("_", "."))
-    )
-
-
 def test_help_locales_found() -> None:
     """Guard the guard: an empty locale scan would make the checks below vacuous."""
-    assert {"en", "de"} < set(_help_locales())
+    assert {"en", "de"} < set(help_locales(HELP_ROOT))
 
 
-@pytest.mark.parametrize("locale", _help_locales())
+@pytest.mark.parametrize("locale", help_locales(HELP_ROOT))
 def test_every_help_locale_has_a_generated_page(locale: str) -> None:
     assert locale in TEXT, f"generate_api_reference.py renders no endpoint page for {locale}"
 
 
-@pytest.mark.parametrize("locale", _help_locales())
+@pytest.mark.parametrize("locale", help_locales(HELP_ROOT))
 def test_page_follows_the_locale_marker_convention(locale: str) -> None:
     """Marked where the locale's index page is marked; the generator note follows."""
     index_marked = (
@@ -195,7 +190,7 @@ def test_page_follows_the_locale_marker_convention(locale: str) -> None:
     )
 
 
-@pytest.mark.parametrize("locale", _help_locales())
+@pytest.mark.parametrize("locale", help_locales(HELP_ROOT))
 def test_page_rows_match_english(locale: str) -> None:
     """Only the prose is translated; the endpoint rows come from the snapshot."""
     en_rows = [r.replace(TEXT["en"]["deprecated"], "") for r in _rows(render(SAMPLE, "en"))]
