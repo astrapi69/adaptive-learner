@@ -38,6 +38,7 @@ correct state).
 | `stale-dates` | WARN | dates >2 months older than the latest release in current-state docs | no |
 | `themes` | FAIL | every `theme-*.css` must define the same canonical token set | no |
 | `mkdocs` | FAIL | help pages on disk with no nav entry (orphans) + nav entries pointing at missing files (dead links) | no |
+| `docs-third-party` | FAIL | `mkdocs.yml` must keep `theme.font: false` and `theme.custom_dir: docs/help-overrides`, whose `partials/source.html` links `repo_url` without `data-md-component="source"` and whose `main.html` defines a `ResizeObserver` stand-in in the `libs` block: otherwise pages load Google Fonts, call api.github.com or load a polyfill from unpkg.com (#3802) | no |
 | `help-index-versions` | FAIL | any `vX.Y[.Z]` literal on a `docs/help/*/index.md` front page -- they are versionless (#1766) | no |
 | `help-prose-versions` | FAIL | any `vX.Y[.Z]` literal in end-user help prose under `docs/help/*/**` (#1767); skips the `developer/` + `api/` reference trees, `changelog.md`, `index.md`, and `<!-- version-exempt: reason -->` lines | no |
 | `help-coverage` | FAIL/WARN | en<->de help-page parity (FAIL); App.tsx routes with no help page (WARN, heuristic: the route's last static segment must appear in some help slug); a route whose page lives under an underivable slug is mapped explicitly in `_ROUTE_HELP_SLUG` (#2944), and a mapping to a page missing in en or de is a FAIL (stale claim) | no |
@@ -91,9 +92,14 @@ automatically after pushing the tag.
 - **`make release-test`** runs `verify-docs-discipline` as a gate
   alongside the version/lockfile/dexie gates. A stale README or
   CLAUDE.md blocks the tag.
-- **`.github/workflows/ci.yml`** has a lightweight `docs-verification`
-  job (push + PR) running `verify_docs.py` + `generate_mkdocs_nav.py
-  --check`. Stdlib + PyYAML, no Poetry.
+- **`.github/workflows/ci.yml`** has a `docs-verification` job (push +
+  PR) running `verify_docs.py` + `generate_mkdocs_nav.py --check` with
+  stdlib + PyYAML. Since #3802 the same job also installs the docs
+  environment (`docs/poetry.lock`), builds the site and scans it with
+  `scripts/check_external_hosts.py` for anything a page would fetch from
+  a third-party host; locally `make docs-build`, then
+  `make verify-docs-external-hosts`. `deploy-gh-pages.yml` repeats the
+  scan on the built site before it uploads it.
 - **`.github/workflows/release-gate.yml`** runs the same two checks on
   every `v*` tag push.
 
