@@ -3469,7 +3469,7 @@ no numbers that could go stale, on purpose.
 
 Legal notice and privacy policy live as help pages on the docs site
 (`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; other languages under
-`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, locales without their own version fall back to German).
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`; UI languages without their own docs version (hi, id, ko) land on the English one).
 
 - [ ] TC-0805 App start page `/` (no signed-in learner): below "Read the
       documentation" the row "Legal notice · Privacy policy"
@@ -3479,10 +3479,24 @@ Legal notice and privacy policy live as help pages on the docs site
 - [ ] TC-0806 Settings → About → card "License & resources": two new rows "Legal
       notice" and "Privacy policy" (`about-imprint-link`,
       `about-privacy-link`), same targets, new tab.
-- [ ] TC-0807 Help panel and docs site: section "Legal" with both pages in the
-      navigation (DE + EN); the legal notice names name, address, email; the
-      privacy policy carries a date and names GitHub Pages, YouTube preview
-      images and the AI providers used with the learner's own key.
+- [ ] TC-0807 Docs site (#3807, #3139): section "Legal" with both pages in the
+      navigation of every language; the legal notice names name, address and
+      the email asterios.raptis@web.de, the privacy policy the same address and
+      its date at the top. Scope: the app, the public preview
+      `astrapi69.github.io/adaptive-learner-content-test` and the docs pages,
+      plus one sentence on self-installed copies (update check at
+      `api.github.com`).
+      "The short version" lists when data leaves the device; one section each
+      for hosting, loading lesson content (with the automatic checks), GitHub
+      features with your own access token, error reports, AI features with your
+      own key (`api.anthropic.com`, `api.openai.com`,
+      `generativelanguage.googleapis.com`, each with recipient and address),
+      voice input, read-aloud, share
+      buttons (Facebook, LinkedIn, X, WhatsApp), external links, storage on the
+      device (with sessionStorage, Cache Storage and the docs colour scheme),
+      contact by email and rights; no statement about YouTube preview images
+      any more. Every language version has the same sections in the same
+      order.
 - [ ] TC-0808 Share preview (e.g. in a messenger): title, description and image
       appear (the landing page's Open Graph data, not the app's).
 

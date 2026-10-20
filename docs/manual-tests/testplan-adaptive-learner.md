@@ -3714,7 +3714,7 @@ bewusst keine Zahlen, die veralten könnten.
 
 Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 (`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; andere Sprachen unter
-`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, Locales ohne eigene Fassung fallen auf Deutsch zurück).
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`; UI-Sprachen ohne eigene Docs-Fassung (hi, id, ko) landen auf der englischen).
 
 - [ ] TC-0805 App-Startseite `/` (ohne angemeldeten Lernenden): unter "Dokumentation
       lesen" stehen "Impressum · Datenschutzerklärung"
@@ -3724,10 +3724,24 @@ Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 - [ ] TC-0806 Einstellungen → Über → Karte "Lizenz & Ressourcen": zwei neue Zeilen
       "Impressum" und "Datenschutzerklärung" (`about-imprint-link`,
       `about-privacy-link`), gleiche Ziele, neuer Tab.
-- [ ] TC-0807 Hilfepanel und Docs-Site: Abschnitt "Rechtliches" mit beiden Seiten in
-      der Navigation (DE + EN); das Impressum nennt Name, Anschrift, E-Mail;
-      die Datenschutzerklärung trägt ein Datum und nennt GitHub Pages,
-      YouTube-Vorschaubilder und die KI-Anbieter mit eigenem Schlüssel.
+- [ ] TC-0807 Docs-Site (#3807, #3139): Abschnitt "Rechtliches" mit beiden Seiten in
+      der Navigation jeder Sprache; das Impressum nennt Name, Anschrift und die
+      E-Mail asterios.raptis@web.de, die Datenschutzerklärung dieselbe Adresse
+      und oben ihr Datum. Geltungsbereich: App, öffentliche Vorschau
+      `astrapi69.github.io/adaptive-learner-content-test` und Docs-Seiten,
+      dazu ein Satz zu selbst installierten Kopien (Update-Prüfung bei
+      `api.github.com`).
+      "Das Wichtigste in Kürze" listet, wann Daten das Gerät verlassen; je ein
+      Abschnitt für Hosting, Laden von Lerninhalten (mit den automatischen
+      Prüfungen), GitHub-Funktionen mit eigenem Zugangstoken, Fehlerberichte,
+      KI-Funktionen mit eigenem Schlüssel (`api.anthropic.com`,
+      `api.openai.com`, `generativelanguage.googleapis.com`, je mit
+      Empfänger und Anschrift), Spracheingabe,
+      Vorlesen, Teilen-Schaltflächen (Facebook, LinkedIn, X, WhatsApp),
+      externe Links, Speicherung auf dem Gerät (mit sessionStorage, Cache
+      Storage und dem Farbschema der Docs), E-Mail-Kontakt und Rechte; keine
+      Aussage mehr zu YouTube-Vorschaubildern. Jede Sprachfassung hat dieselben
+      Abschnitte in derselben Reihenfolge.
 - [ ] TC-0808 Teilen-Vorschau (z. B. in einem Messenger): Titel, Beschreibung und
       Bild erscheinen (Open-Graph-Daten der Landeseite, nicht der App).
 
