@@ -14,6 +14,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { DEVICE_VOICE_WAIT_MS } from "../../../lib/voice/speech-synthesis";
 import type { ContentLesson } from "../../../storage/types";
 import { useLessonAutoRead } from "./useLessonAutoRead";
 
@@ -25,6 +26,7 @@ interface RecordedUtterance {
 
 let spoken: RecordedUtterance[];
 let offered: SpeechSynthesisVoice[];
+let voicesChangedListeners: Array<() => void>;
 
 function voice(name: string, lang: string, localService: boolean): SpeechSynthesisVoice {
   return { name, lang, localService, default: false, voiceURI: name } as SpeechSynthesisVoice;
@@ -38,6 +40,7 @@ const espeakGerman = voice("German espeak-ng", "de", true);
 function mountSynth(initial: SpeechSynthesisVoice[]): void {
   spoken = [];
   offered = [...initial];
+  voicesChangedListeners = [];
   (window as unknown as { speechSynthesis: SpeechSynthesis }).speechSynthesis = {
     getVoices: () => [...offered],
     speak: (u: RecordedUtterance) => spoken.push(u),
@@ -46,8 +49,12 @@ function mountSynth(initial: SpeechSynthesisVoice[]): void {
     resume: vi.fn(),
     speaking: false,
     pending: false,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
+    addEventListener: (event: string, listener: () => void) => {
+      if (event === "voiceschanged") voicesChangedListeners.push(listener);
+    },
+    removeEventListener: (event: string, listener: () => void) => {
+      voicesChangedListeners = voicesChangedListeners.filter((l) => l !== listener);
+    },
   } as unknown as SpeechSynthesis;
   class FakeUtterance {
     text: string;
@@ -151,5 +158,71 @@ describe("lesson read-aloud voice (#3805)", () => {
       window.dispatchEvent(new KeyboardEvent("keydown", { key: "r" }));
     });
     expect(spoken[0].voice).toBe(googleDeutsch);
+  });
+});
+
+/** Add ``voice`` to the browser's list and fire ``voiceschanged``, the way
+ *  Chrome announces the local voices once speech-dispatcher answers. */
+function deliver(voice: SpeechSynthesisVoice): void {
+  offered.push(voice);
+  voicesChangedListeners.forEach((listener) => listener());
+}
+
+/** Turn auto-read on (plus any other saved voice preference). */
+function enableAutoRead(prefs: Record<string, unknown> = {}): void {
+  localStorage.setItem(
+    "adaptive-learner.voice.prefs",
+    JSON.stringify({ lessonAutoRead: true, ...prefs }),
+  );
+}
+
+// Measured on a cold start of Chrome 155 on Linux with speech-dispatcher: the
+// network voices came at ~30 ms, auto-read spoke at ~450 ms with "Google
+// Deutsch", the local voices came at ~550 ms. Auto-read is the one path no
+// tap starts, so it can wait for them; a tap must speak in its own handler.
+describe("auto-read on a cold start (#3805)", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    return () => vi.useRealTimers();
+  });
+
+  it("waits for the local voice that arrives after the network voices", () => {
+    enableAutoRead();
+    mountSynth([googleDeutsch]);
+    renderLesson();
+    expect(spoken).toHaveLength(0);
+    act(() => deliver(espeakGerman));
+    expect(spoken).toHaveLength(1);
+    expect(spoken[0].text).toContain("Erster Absatz");
+    expect(spoken[0].voice).toBe(espeakGerman);
+  });
+
+  it("reads with the network voice when no local voice has come by the end of the wait", () => {
+    enableAutoRead();
+    mountSynth([googleDeutsch]);
+    renderLesson();
+    act(() => vi.advanceTimersByTime(DEVICE_VOICE_WAIT_MS - 1));
+    expect(spoken).toHaveLength(0);
+    act(() => vi.advanceTimersByTime(1));
+    expect(spoken).toHaveLength(1);
+    expect(spoken[0].voice).toBe(googleDeutsch);
+  });
+
+  it("reads at once with the network voice the learner chose", () => {
+    enableAutoRead({ ttsVoiceName: "Google Deutsch" });
+    mountSynth([googleDeutsch]);
+    renderLesson();
+    expect(spoken).toHaveLength(1);
+    expect(spoken[0].voice).toBe(googleDeutsch);
+  });
+
+  it("reads nothing when auto-read is switched off during the wait", () => {
+    enableAutoRead();
+    mountSynth([googleDeutsch]);
+    const { result } = renderLesson();
+    act(() => result.current.toggleAutoRead());
+    act(() => deliver(espeakGerman));
+    act(() => vi.advanceTimersByTime(DEVICE_VOICE_WAIT_MS));
+    expect(spoken).toHaveLength(0);
   });
 });

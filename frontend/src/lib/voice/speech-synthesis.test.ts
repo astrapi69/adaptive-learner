@@ -11,6 +11,7 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import {
     currentVoices,
+    DEVICE_VOICE_WAIT_MS,
     isSpeaking,
     isSpeechSynthesisSupported,
     loadVoices,
@@ -20,6 +21,7 @@ import {
     resume,
     speak,
     stop,
+    whenDeviceVoicesKnown,
 } from "./speech-synthesis";
 
 function makeVoice(
@@ -267,6 +269,97 @@ describe("currentVoices", () => {
     it("returns the loaded list when speech synthesis is unavailable", () => {
         const loaded = [makeVoice("German espeak-ng", "de")];
         expect(currentVoices(loaded)).toBe(loaded);
+    });
+});
+
+// --- whenDeviceVoicesKnown --------------------------------------------
+
+// Measured on a cold start of Chrome 155 on Linux with speech-dispatcher
+// (#3805): the network voices came at ~30 ms, auto-read spoke at ~450 ms,
+// the device voices came in one batch at ~550 ms. Auto-read therefore read
+// its first step with "Google Deutsch" although the device had a German voice.
+describe("whenDeviceVoicesKnown (#3805)", () => {
+    const googleDeutsch = makeNetworkVoice("Google Deutsch", "de-DE");
+    const espeakGerman = makeVoice("German espeak-ng", "de");
+
+    /** Add ``voices`` to the browser's list and fire ``voiceschanged``. */
+    function deliver(synth: MockSynth, ...voices: SpeechSynthesisVoice[]): void {
+        synth.voices = [...synth.voices, ...voices];
+        (synth.listeners.get("voiceschanged") ?? []).forEach((cb) => cb());
+    }
+
+    beforeEach(() => {
+        vi.useFakeTimers();
+        return () => vi.useRealTimers();
+    });
+
+    it("calls back at once when the browser lists a device voice", () => {
+        mountMockSynth([googleDeutsch, espeakGerman]);
+        const onReady = vi.fn();
+        whenDeviceVoicesKnown("", onReady);
+        expect(onReady).toHaveBeenCalledTimes(1);
+    });
+
+    it("calls back at once when the chosen voice is listed, even a network voice", () => {
+        mountMockSynth([googleDeutsch]);
+        const onReady = vi.fn();
+        whenDeviceVoicesKnown("Google Deutsch", onReady);
+        expect(onReady).toHaveBeenCalledTimes(1);
+    });
+
+    it.each([
+        {listed: "no voice yet", initial: []},
+        {listed: "only network voices", initial: [googleDeutsch]},
+    ])("waits while the browser lists $listed and calls back when the device voices arrive", ({initial}) => {
+        const synth = mountMockSynth([...initial]);
+        const onReady = vi.fn();
+        whenDeviceVoicesKnown("", onReady);
+        deliver(synth, googleDeutsch);
+        vi.advanceTimersByTime(100);
+        expect(onReady).not.toHaveBeenCalled();
+        deliver(synth, espeakGerman);
+        expect(onReady).toHaveBeenCalledTimes(1);
+        vi.advanceTimersByTime(DEVICE_VOICE_WAIT_MS);
+        expect(onReady).toHaveBeenCalledTimes(1);
+        expect(synth.listeners.get("voiceschanged")).toEqual([]);
+    });
+
+    it("calls back when device voices arrive, also when none of them speaks the lesson language", () => {
+        const synth = mountMockSynth([googleDeutsch]);
+        const onReady = vi.fn();
+        whenDeviceVoicesKnown("", onReady);
+        deliver(synth, makeVoice("English espeak-ng", "en-US"));
+        expect(onReady).toHaveBeenCalledTimes(1);
+    });
+
+    it("calls back after the wait when no device voice comes, and does not wait again on that page", () => {
+        mountMockSynth([googleDeutsch]);
+        const first = vi.fn();
+        whenDeviceVoicesKnown("", first);
+        vi.advanceTimersByTime(DEVICE_VOICE_WAIT_MS - 1);
+        expect(first).not.toHaveBeenCalled();
+        vi.advanceTimersByTime(1);
+        expect(first).toHaveBeenCalledTimes(1);
+        const second = vi.fn();
+        whenDeviceVoicesKnown("", second);
+        expect(second).toHaveBeenCalledTimes(1);
+    });
+
+    it("never calls back once cancelled", () => {
+        const synth = mountMockSynth([googleDeutsch]);
+        const onReady = vi.fn();
+        const cancel = whenDeviceVoicesKnown("", onReady);
+        cancel();
+        deliver(synth, espeakGerman);
+        vi.advanceTimersByTime(DEVICE_VOICE_WAIT_MS);
+        expect(onReady).not.toHaveBeenCalled();
+        expect(synth.listeners.get("voiceschanged")).toEqual([]);
+    });
+
+    it("calls back at once when speech synthesis is unavailable", () => {
+        const onReady = vi.fn();
+        whenDeviceVoicesKnown("", onReady);
+        expect(onReady).toHaveBeenCalledTimes(1);
     });
 });
 

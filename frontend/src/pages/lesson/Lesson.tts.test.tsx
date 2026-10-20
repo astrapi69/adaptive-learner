@@ -54,14 +54,24 @@ class FakeUtterance {
     }
 }
 
+/** A French voice on the device. Auto-read waits until the browser lists
+ *  the device's voices (#3805), so the mock lists one from the start. */
+const FRENCH_DEVICE_VOICE = {
+    name: "French (France)",
+    lang: "fr-FR",
+    localService: true,
+    default: true,
+    voiceURI: "French (France)",
+} as SpeechSynthesisVoice;
+
 function setMockSynth(): void {
     speakCalls = [];
-    // Augment the existing happy-dom window (do NOT replace it — the
+    // Augment the existing happy-dom window (do NOT replace it - the
     // Lesson page relies on window.addEventListener for its pause-on-
     // unload handler).
     (window as unknown as {speechSynthesis: SpeechSynthesis}).speechSynthesis =
         {
-            getVoices: () => [],
+            getVoices: () => [FRENCH_DEVICE_VOICE],
             speak: (u: SpeechSynthesisUtterance) => speakCalls.push(u),
             cancel: vi.fn(),
             pause: vi.fn(),

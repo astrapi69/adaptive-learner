@@ -94,6 +94,68 @@ export function currentVoices(
 }
 
 /**
+ * How long a read no tap starts (auto-read) waits for the device's voices
+ * before it reads with a network voice. Measured on a cold start of Chrome
+ * 155 on Linux with speech-dispatcher (#3805): the device voices came in one
+ * batch about half a second after the network voices, at most 1.4 s after
+ * the first ``getVoices()``.
+ */
+export const DEVICE_VOICE_WAIT_MS = 1500;
+
+/** Speech engines whose wait already ran out once: the page has had its
+ *  chance to list a device voice, so later reads do not wait again. */
+const settledEngines = new WeakSet<SpeechSynthesis>();
+
+/**
+ * Call ``onReady`` once the voice choice can no longer change: at once when
+ * the browser lists the chosen voice (``preferredName``, "" for none) or any
+ * device voice (they arrive in one batch, so the list is complete),
+ * otherwise when such voices arrive (``voiceschanged``) or after
+ * ``maxWaitMs``, whichever comes first. Returns a function that cancels a
+ * pending call.
+ *
+ * Only for reads no tap starts: a tap must speak inside its own handler,
+ * or iOS Safari refuses the utterance.
+ *
+ * @example
+ * const cancel = whenDeviceVoicesKnown(prefs.ttsVoiceName, () => read());
+ */
+export function whenDeviceVoicesKnown(
+    preferredName: string,
+    onReady: () => void,
+    maxWaitMs = DEVICE_VOICE_WAIT_MS,
+): () => void {
+    const synth = isSpeechSynthesisSupported() ? window.speechSynthesis : null;
+    if (!synth || settledEngines.has(synth) || voicesKnown(synth, preferredName)) {
+        onReady();
+        return () => {};
+    }
+    const stopWaiting = () => {
+        clearTimeout(timer);
+        synth.removeEventListener("voiceschanged", onVoicesChanged);
+    };
+    const onVoicesChanged = () => {
+        if (!voicesKnown(synth, preferredName)) return;
+        stopWaiting();
+        onReady();
+    };
+    const timer = setTimeout(() => {
+        settledEngines.add(synth);
+        stopWaiting();
+        onReady();
+    }, maxWaitMs);
+    synth.addEventListener("voiceschanged", onVoicesChanged);
+    return stopWaiting;
+}
+
+/** True when ``synth`` lists the chosen voice or any voice on the device. */
+function voicesKnown(synth: SpeechSynthesis, preferredName: string): boolean {
+    const voices = synth.getVoices();
+    if (preferredName && voices.some((v) => v.name === preferredName)) return true;
+    return voices.some((v) => v.localService === true);
+}
+
+/**
  * The voice to read with: the one the learner chose in Settings
  * (``preferredName``, "" for none) while the browser offers it, even a
  * network voice, because the learner picked it on purpose. Otherwise

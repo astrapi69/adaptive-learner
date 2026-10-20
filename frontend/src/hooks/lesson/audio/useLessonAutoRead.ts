@@ -32,6 +32,8 @@ import {
   theoryBlockAround,
   type TheoryRun,
 } from "../../../lib/lesson/tts-text";
+import { whenDeviceVoicesKnown } from "../../../lib/voice/speech-synthesis";
+import { readVoicePrefs } from "../../../lib/voice/voicePref";
 import type { ContentLesson } from "../../../storage/types";
 
 interface UseLessonAutoReadDeps {
@@ -104,7 +106,11 @@ export function useLessonAutoRead({
   // Speak the current step when auto-read is on and the step changes.
   // The ref guard means the effect can safely re-run on unrelated
   // renders (the tts controller object is recreated each render)
-  // without re-speaking the same step.
+  // without re-speaking the same step. No tap starts this read, so it
+  // waits until the device's voices are listed (#3805): on a cold start
+  // Chrome lists its network voices first and the device voices shortly
+  // after. A run cleaned up before it read clears the guard so the next
+  // run reads.
   const autoReadStepRef = useRef(-1);
   useEffect(() => {
     if (!autoRead || !tts.enabled || !lesson) return;
@@ -112,9 +118,16 @@ export function useLessonAutoRead({
     if (autoReadStepRef.current === currentStepIndex) return;
     autoReadStepRef.current = currentStepIndex;
     const payload = currentStepSpeech();
-    if (payload) {
+    if (!payload) return;
+    let started = false;
+    const cancel = whenDeviceVoicesKnown(readVoicePrefs().ttsVoiceName, () => {
+      started = true;
       tts.speak(payload.text, { lang: payload.lang, id: payload.id });
-    }
+    });
+    return () => {
+      cancel();
+      if (!started) autoReadStepRef.current = -1;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     autoRead,
