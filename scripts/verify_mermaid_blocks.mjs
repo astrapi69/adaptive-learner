@@ -46,6 +46,11 @@ const SELF_TEST = {
     noDescr: "flowchart TD\n  accTitle: Sample\n  A --> B",
 };
 
+/** ``text`` as a literal inside a regular expression. */
+function escapeRegExp(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function argValue(name) {
     const index = process.argv.indexOf(name);
     return index >= 0 ? process.argv[index + 1] : undefined;
@@ -142,7 +147,7 @@ function checkVendoredFile() {
     }
     const mkdocs = readFileSync(join(ROOT, "mkdocs.yml"), "utf-8");
     const fence = /custom_fences:\s*\n\s*-\s*name:\s*mermaid/.test(mkdocs);
-    const script = new RegExp(`^extra_javascript:\\s*\\n(\\s*-\\s*.*\\n)*?\\s*-\\s*${MERMAID_FILE.replace(/[.]/g, "\\.")}\\s*$`, "m").test(mkdocs);
+    const script = new RegExp(`^extra_javascript:\\s*\\n(\\s*-\\s*.*\\n)*?\\s*-\\s*${escapeRegExp(MERMAID_FILE)}\\s*$`, "m").test(mkdocs);
     if (!fence) findings.push("mkdocs.yml has no mermaid custom fence in pymdownx.superfences");
     if (!script) findings.push(`mkdocs.yml does not load ${MERMAID_FILE} through extra_javascript (Material would fall back to its CDN)`);
     return findings;
