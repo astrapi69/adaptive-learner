@@ -91,13 +91,14 @@ Además, la app comprueba por sí misma, sin que usted haga clic en nada, si sus
 conjuntos tienen versiones nuevas y qué repasos están pendientes. Para ello lee
 los archivos de manifiesto del catálogo oficial y de sus repositorios
 conectados: al iniciarse, al cambiar de página y cuando la ventana vuelve a
-primer plano; sincroniza los repositorios conectados al iniciarse como máximo
-una vez al día. Su navegador suele responder a las solicitudes repetidas en
-poco tiempo desde su caché. La comprobación se ejecuta en todas las páginas de
-la app excepto la página de inicio, la creación de su primer proyecto de
-aprendizaje y la evaluación del tipo de aprendizaje, es decir, también ya en
-una primera visita a través de un enlace compartido o directo y en la página de
-error de una dirección mal escrita, incluso bajo /docs/.
+primer plano; sincroniza los repositorios conectados al iniciarse cuando la
+última sincronización tiene más de un día. Su navegador suele responder a las
+solicitudes repetidas en poco tiempo desde su caché. La comprobación se ejecuta
+en todas las páginas de la app excepto la página de inicio, la creación de su
+primer proyecto de aprendizaje y la evaluación del tipo de aprendizaje, es
+decir, también ya en una primera visita a través de un enlace compartido o
+directo y en la página de error de una dirección mal escrita, incluso bajo
+/docs/.
 
 GitHub recibe su dirección IP, los datos habituales del navegador (tipo y
 versión del navegador, sistema operativo, idioma), por lo general el origen de
@@ -160,14 +161,14 @@ GitHub, Inc. (véase arriba).
 
 Usted prepara un informe de error con el botón de un mensaje de error o de una
 vista que no se pudo cargar («Informar de un problema») o con «Crear informe de
-error» en Ajustes, en «Diagnóstico y soporte». Primero ve el informe. Solo cuando hace clic
-en «Abrir en GitHub», la app abre en una pestaña nueva un formulario
-prerrellenado para una nueva incidencia (issue) en el repositorio
-`astrapi69/adaptive-learner` en `github.com`. El informe figura en la
-dirección de esa página, por lo que GitHub lo recibe en cuanto se abre la
-pestaña, antes de que usted envíe nada allí. Ante un error interno al crear
-una lección, «Informar del problema» abre directamente un formulario de este
-tipo, solo con ese mensaje de error.
+error» en Ajustes, en «Diagnóstico y soporte». Primero ve el informe. Solo
+cuando hace clic en «Abrir en GitHub», la app abre en una pestaña nueva un
+formulario prerrellenado para una nueva incidencia (issue) en el repositorio
+`astrapi69/adaptive-learner` en `github.com`. El informe figura en la dirección
+de esa página, por lo que GitHub lo recibe en cuanto se abre la pestaña, antes
+de que usted envíe nada allí. Ante un error interno al crear una lección,
+«Informar del problema» abre directamente un formulario de este tipo, solo con
+ese mensaje de error.
 
 El informe contiene el mensaje de error con datos técnicos (por ejemplo,
 código de estado, endpoint, hora o traza de la pila) y su propia descripción.
@@ -223,9 +224,9 @@ además:
 Cada solicitud incluye su clave, su dirección IP y los datos habituales del
 navegador, también el origen de la solicitud (`astrapi69.github.io`). La
 consulta de modelos y la solicitud de prueba son una misma consulta de la lista
-de modelos y no contienen nada más; para una misma clave, la app la envía como
-máximo una vez por hora y pestaña. Las demás solicitudes contienen, según la
-función:
+de modelos y no contienen nada más; tras una consulta correcta, la app no
+vuelve a enviarla para la misma clave en la misma pestaña durante una hora. Las
+demás solicitudes contienen, según la función:
 
 - sus mensajes, preguntas y respuestas y el historial de la sesión hasta el
   momento,
@@ -306,11 +307,12 @@ b), del RGPD).
 ## Botones para compartir
 
 Aparece un botón para compartir en el Panel, en las filas de «Continuar
-aprendiendo», en cuanto usted completa una lección con resultado, y al final
-de una lección si lo activa en Ajustes, en Aprendizaje, en «Resumen tras las
-lecciones». Si su dispositivo ofrece su propio diálogo para compartir, la app
-lo abre y usted elige allí dónde compartir. Si no, muestra enlaces a Facebook,
-LinkedIn, X y WhatsApp y una opción para copiar.
+aprendiendo», en cuanto usted completa una lección con resultado, y al final de
+una lección si está activado en Ajustes, en Aprendizaje, en «Resumen tras las
+lecciones» (de forma predeterminada está desactivado). Si su dispositivo ofrece
+su propio diálogo para compartir, la app lo abre y usted elige allí dónde
+compartir. Si no, muestra enlaces a Facebook, LinkedIn, X y WhatsApp y una
+opción para copiar.
 
 Solo cuando usted hace clic en uno de estos enlaces, su navegador abre la
 página de la red; la red recibe entonces su dirección IP, los datos habituales
@@ -352,8 +354,8 @@ utiliza además:
 - el Cache Storage para los archivos de la app y las lecciones descargadas,
   para que funcione también sin conexión.
 
-Estas páginas de documentación solo guardan el esquema de colores elegido en
-el localStorage. La vista previa pública está en el mismo dominio
+Estas páginas de documentación solo guardan el esquema de colores (claro u
+oscuro) en el localStorage. La vista previa pública está en el mismo dominio
 (`astrapi69.github.io`) que la app, por lo que ambas comparten el
 almacenamiento de su navegador.
 

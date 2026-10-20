@@ -82,14 +82,14 @@ GitHub, Inc. (see above). The app loads:
 
 In addition, the app checks on its own, without you clicking anything, whether
 your sets have new versions and which reviews are due. To do so it reads the
-manifest files of the official catalogue and of your connected repositories:
-on start, when you move between pages and when the window comes back to the
-foreground; it syncs connected repositories on start at most once a day. Your
-browser usually answers repeated requests in quick succession from its cache.
-The check runs on every page of the app except the start page, creating your
-first learning project and the learning-type assessment, so also on a first
-visit through a shared or direct link and on the error page for a mistyped
-address, including addresses under /docs/.
+manifest files of the official catalogue and of your connected repositories: on
+start, when you move between pages and when the window comes back to the
+foreground; it syncs connected repositories on start when the last sync is more
+than a day old. Your browser usually answers repeated requests in quick
+succession from its cache. The check runs on every page of the app except the
+start page, creating your first learning project and the learning-type
+assessment, so also on a first visit through a shared or direct link and on the
+error page for a mistyped address, including addresses under /docs/.
 
 GitHub receives your IP address, the usual browser data (browser type and
 version, operating system, language setting), usually the origin of the
@@ -205,9 +205,9 @@ generation of content. Without you typing anything, the app also sends:
 Every request carries your key, your IP address and the usual browser data,
 including the origin of the request (`astrapi69.github.io`). The model query
 and the test request are the same query for the model list and contain nothing
-else; for the same key the app sends it at most once per hour and tab. The
-other requests contain,
-depending on the feature:
+else; after a successful query the app does not send it again for the same key
+in the same tab for an hour. The other requests contain, depending on the
+feature:
 
 - your messages, questions and answers and the session's history so far,
 - the learning content concerned (lessons, exercises, cards),
@@ -281,11 +281,11 @@ is your request (Art. 6 (1) (b) GDPR).
 ## Share buttons
 
 A share button appears on the Dashboard in the "Continue Learning" rows once
-you have completed a lesson with a result, and at the end of a lesson if you
-switch it on in Settings under Learning in "Lesson summary". If your device
-offers its own share dialog, the app opens it, and you choose there where to
-share. Otherwise it shows links to Facebook, LinkedIn, X and WhatsApp and an
-option to copy.
+you have completed a lesson with a result, and at the end of a lesson if it is
+switched on in Settings under Learning in "Lesson summary" (it is off by
+default). If your device offers its own share dialog, the app opens it, and you
+choose there where to share. Otherwise it shows links to Facebook, LinkedIn, X
+and WhatsApp and an option to copy.
 
 Only when you click one of these links does your browser open the network's
 page; the network then receives your IP address, the usual browser data and
@@ -323,7 +323,7 @@ token, plus cached catalogues. The app also uses:
 - Cache Storage for the app's files and downloaded lessons, so that it also
   works offline.
 
-These documentation pages store only the chosen colour scheme in
+These documentation pages store only the colour scheme (light or dark) in
 localStorage. The public preview lives on the same domain
 (`astrapi69.github.io`) as the app, so both share your browser's storage.
 

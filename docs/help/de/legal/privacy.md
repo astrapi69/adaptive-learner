@@ -85,16 +85,16 @@ oben). Die App lädt:
   Repository öffnest, die dafür nötigen Dateien.
 
 Außerdem prüft die App von selbst, ohne dass du etwas anklickst, ob deine Sets
-neue Versionen haben und welche Wiederholungen fällig sind. Dafür liest sie
-die Manifest-Dateien des offiziellen Katalogs und deiner verbundenen
-Repositorys, beim Start, beim Wechsel zwischen Seiten und wenn das Fenster
-wieder in den Vordergrund kommt; verbundene Repositorys gleicht sie beim Start
-höchstens einmal am Tag ab. Wiederholte Abrufe kurz hintereinander beantwortet
-dein Browser in der Regel aus seinem Zwischenspeicher. Die Prüfung läuft auf
-jeder Seite der App außer der Startseite, dem Anlegen des ersten Lernprojekts
-und dem Lerntyp-Assessment, also auch schon beim ersten Besuch über einen
-geteilten oder direkten Link und auf der Fehlerseite für eine falsch
-geschriebene Adresse, auch unter /docs/.
+neue Versionen haben und welche Wiederholungen fällig sind. Dafür liest sie die
+Manifest-Dateien des offiziellen Katalogs und deiner verbundenen Repositorys,
+beim Start, beim Wechsel zwischen Seiten und wenn das Fenster wieder in den
+Vordergrund kommt; verbundene Repositorys gleicht sie beim Start ab, wenn der
+letzte Abgleich mehr als einen Tag zurückliegt. Wiederholte Abrufe kurz
+hintereinander beantwortet dein Browser in der Regel aus seinem
+Zwischenspeicher. Die Prüfung läuft auf jeder Seite der App außer der
+Startseite, dem Anlegen des ersten Lernprojekts und dem Lerntyp-Assessment,
+also auch schon beim ersten Besuch über einen geteilten oder direkten Link und
+auf der Fehlerseite für eine falsch geschriebene Adresse, auch unter /docs/.
 
 GitHub erhält dabei deine IP-Adresse, übliche Browserdaten (Browsertyp und
 -version, Betriebssystem, Spracheinstellung), in der Regel die Herkunft der
@@ -159,14 +159,14 @@ GitHub, Inc. (siehe oben).
 
 Einen Fehlerbericht bereitest du über die Schaltfläche einer Fehlermeldung
 ("Problem melden"), über "Fehler melden", wenn sich eine Ansicht nicht laden
-ließ, oder mit "Fehlerbericht erstellen" in den Einstellungen unter
-"Diagnose & Support" vor. Du siehst den Bericht vorher. Erst wenn du auf
-"Auf GitHub öffnen" klickst, öffnet die App in einem neuen Tab ein vorausgefülltes Formular für ein neues Issue im
-Repository `astrapi69/adaptive-learner` auf `github.com`. Der Bericht steht in
-der Adresse dieser Seite, deshalb erhält GitHub ihn schon beim Öffnen des
-Tabs, bevor du dort etwas abschickst. Bei einer internen Fehlermeldung beim
-Erstellen einer Lektion öffnet "Problem melden" ein solches Formular direkt,
-nur mit dieser Fehlermeldung.
+ließ, oder mit "Fehlerbericht erstellen" in den Einstellungen unter "Diagnose &
+Support" vor. Du siehst den Bericht vorher. Erst wenn du auf "Auf GitHub
+öffnen" klickst, öffnet die App in einem neuen Tab ein vorausgefülltes Formular
+für ein neues Issue im Repository `astrapi69/adaptive-learner` auf
+`github.com`. Der Bericht steht in der Adresse dieser Seite, deshalb erhält
+GitHub ihn schon beim Öffnen des Tabs, bevor du dort etwas abschickst. Bei
+einer internen Fehlermeldung beim Erstellen einer Lektion öffnet "Problem
+melden" ein solches Formular direkt, nur mit dieser Fehlermeldung.
 
 Der Bericht enthält die Fehlermeldung mit technischen Angaben (etwa
 Statuscode, Endpunkt, Zeitpunkt oder Stacktrace) und deine eigene
@@ -221,8 +221,9 @@ du etwas eintippst, schickt die App außerdem:
 Mit jeder Anfrage gehen dein Schlüssel, deine IP-Adresse und übliche
 Browserdaten mit, auch die Herkunft der Anfrage (`astrapi69.github.io`).
 Modellabfrage und Testanfrage sind dieselbe Abfrage der Modellliste und
-enthalten sonst nichts; für denselben Schlüssel schickt die App sie höchstens
-einmal pro Stunde und Tab. Die übrigen Anfragen enthalten je nach Funktion:
+enthalten sonst nichts; nach einer erfolgreichen Abfrage schickt die App sie
+für denselben Schlüssel im selben Tab eine Stunde lang nicht erneut. Die
+übrigen Anfragen enthalten je nach Funktion:
 
 - deine Nachrichten, Fragen und Antworten und den bisherigen Verlauf der
   Sitzung,
@@ -302,11 +303,11 @@ DSGVO).
 
 Eine Teilen-Schaltfläche steht auf dem Dashboard in den Zeilen von
 "Weitermachen", sobald du eine Lektion mit Ergebnis abgeschlossen hast, und am
-Ende einer Lektion, wenn du sie in den Einstellungen unter Lernen bei
-"Zusammenfassung nach Lektionen" einschaltest. Bietet dein Gerät einen eigenen
-Teilen-Dialog, öffnet die App diesen, und du wählst dort, womit du teilst.
-Sonst zeigt sie Links zu Facebook, LinkedIn, X und WhatsApp und eine
-Möglichkeit zum Kopieren.
+Ende einer Lektion, wenn sie in den Einstellungen unter Lernen bei
+"Zusammenfassung nach Lektionen" eingeschaltet ist (standardmäßig ist sie aus).
+Bietet dein Gerät einen eigenen Teilen-Dialog, öffnet die App diesen, und du
+wählst dort, womit du teilst. Sonst zeigt sie Links zu Facebook, LinkedIn, X
+und WhatsApp und eine Möglichkeit zum Kopieren.
 
 Erst wenn du einen dieser Links anklickst, öffnet dein Browser die Seite des
 Netzwerks; das Netzwerk erhält dann deine IP-Adresse, übliche Browserdaten und
@@ -347,8 +348,8 @@ Außerdem nutzt die App:
 - den Cache Storage für die Dateien der App und heruntergeladene Lektionen,
   damit sie auch offline läuft.
 
-Diese Dokumentationsseiten speichern nur die gewählte Farbdarstellung im
-localStorage. Die öffentliche Vorschau liegt auf derselben Domain
+Diese Dokumentationsseiten speichern nur die Farbdarstellung (hell oder dunkel)
+im localStorage. Die öffentliche Vorschau liegt auf derselben Domain
 (`astrapi69.github.io`) wie die App, deshalb teilen sich beide den Speicher
 deines Browsers.
 

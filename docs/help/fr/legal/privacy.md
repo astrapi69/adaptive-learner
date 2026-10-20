@@ -95,13 +95,13 @@ que ce soit, si vos ensembles ont de nouvelles versions et quelles révisions
 sont dues. Pour cela, elle lit les fichiers manifestes du catalogue officiel et
 de vos dépôts connectés : au démarrage, lorsque vous passez d'une page à
 l'autre et lorsque la fenêtre revient au premier plan ; elle synchronise les
-dépôts connectés au démarrage au plus une fois par jour. Votre navigateur
-répond généralement aux requêtes répétées à brefs intervalles depuis son
-cache. La vérification s'exécute sur toutes les pages de l'application, sauf
-la page d'accueil, la création de votre premier projet d'apprentissage et
-l'évaluation du type d'apprentissage, donc aussi dès une première visite via un
-lien partagé ou direct et sur la page d'erreur d'une adresse mal saisie, y
-compris sous /docs/.
+dépôts connectés au démarrage lorsque la dernière synchronisation date de plus
+d'un jour. Votre navigateur répond généralement aux requêtes répétées à brefs
+intervalles depuis son cache. La vérification s'exécute sur toutes les pages de
+l'application, sauf la page d'accueil, la création de votre premier projet
+d'apprentissage et l'évaluation du type d'apprentissage, donc aussi dès une
+première visite via un lien partagé ou direct et sur la page d'erreur d'une
+adresse mal saisie, y compris sous /docs/.
 
 GitHub reçoit votre adresse IP, les données habituelles du navigateur (type et
 version du navigateur, système d'exploitation, langue), en général l'origine
@@ -168,13 +168,14 @@ le dépôt existe. Pour les autres fonctions, la base juridique est votre demand
 Vous préparez un rapport d'erreur avec le bouton d'un message d'erreur ou d'une
 vue qui n'a pas pu être chargée (« Signaler un problème ») ou avec « Créer un
 rapport d'erreur » dans les Paramètres sous « Diagnostic et assistance ». Vous
-voyez d'abord le rapport. Ce n'est que lorsque vous cliquez sur « Ouvrir sur GitHub » que
-l'application ouvre, dans un nouvel onglet, un formulaire prérempli pour un
-nouveau ticket (issue) dans le dépôt `astrapi69/adaptive-learner` sur
-`github.com`. Le rapport figure dans l'adresse de cette page ; GitHub le reçoit
-donc dès l'ouverture de l'onglet, avant que vous y envoyiez quoi que ce soit.
-En cas d'erreur interne lors de la création d'une leçon, « Signaler le
-problème » ouvre directement un tel formulaire, avec ce seul message d'erreur.
+voyez d'abord le rapport. Ce n'est que lorsque vous cliquez sur « Ouvrir sur
+GitHub » que l'application ouvre, dans un nouvel onglet, un formulaire
+prérempli pour un nouveau ticket (issue) dans le dépôt
+`astrapi69/adaptive-learner` sur `github.com`. Le rapport figure dans l'adresse
+de cette page ; GitHub le reçoit donc dès l'ouverture de l'onglet, avant que
+vous y envoyiez quoi que ce soit. En cas d'erreur interne lors de la création
+d'une leçon, « Signaler le problème » ouvre directement un tel formulaire, avec
+ce seul message d'erreur.
 
 Le rapport contient le message d'erreur avec des détails techniques (par
 exemple code d'état, point de terminaison, heure ou trace de pile) et votre
@@ -231,9 +232,9 @@ tapiez quoi que ce soit, l'application envoie en outre :
 Chaque requête transmet votre clé, votre adresse IP et les données habituelles
 du navigateur, y compris l'origine de la requête (`astrapi69.github.io`). La
 demande de liste des modèles et la requête de test sont une seule et même
-demande et ne contiennent rien d'autre ; pour une même clé,
-l'application l'envoie au plus une fois par heure et par onglet. Les autres
-requêtes contiennent, selon la fonction :
+demande et ne contiennent rien d'autre ; après une demande réussie,
+l'application ne la renvoie pas pour la même clé dans le même onglet pendant
+une heure. Les autres requêtes contiennent, selon la fonction :
 
 - vos messages, questions et réponses et l'historique de la session,
 - les contenus d'apprentissage concernés (leçons, exercices, cartes),
@@ -317,11 +318,11 @@ paragraphe 1, point b), du RGPD).
 
 Un bouton de partage apparaît sur le Tableau de bord dans les lignes de
 « Continuer l'apprentissage » dès que vous avez terminé une leçon avec un
-résultat, et à la fin d'une leçon si vous l'activez dans les Paramètres sous
-Apprentissage, dans « Résumé après les leçons ». Si votre appareil propose sa
-propre boîte de dialogue de partage, l'application l'ouvre, et vous y
-choisissez où partager. Sinon, elle affiche des liens vers Facebook, LinkedIn,
-X et WhatsApp et une option de copie.
+résultat, et à la fin d'une leçon s'il est activé dans les Paramètres sous
+Apprentissage, dans « Résumé après les leçons » (il est désactivé par défaut).
+Si votre appareil propose sa propre boîte de dialogue de partage, l'application
+l'ouvre, et vous y choisissez où partager. Sinon, elle affiche des liens vers
+Facebook, LinkedIn, X et WhatsApp et une option de copie.
 
 Ce n'est que lorsque vous cliquez sur l'un de ces liens que votre navigateur
 ouvre la page du réseau ; le réseau reçoit alors votre adresse IP, les données
@@ -365,8 +366,8 @@ ainsi que des catalogues mis en cache. L'application utilise en outre :
   téléchargées, afin qu'elle fonctionne aussi hors ligne.
 
 Les présentes pages de documentation n'enregistrent que le jeu de couleurs
-choisi dans le localStorage. L'aperçu public se trouve sur le même domaine
-(`astrapi69.github.io`) que l'application ; tous deux partagent donc le
+(clair ou sombre) dans le localStorage. L'aperçu public se trouve sur le même
+domaine (`astrapi69.github.io`) que l'application ; tous deux partagent donc le
 stockage de votre navigateur.
 
 Ce stockage est strictement nécessaire aux fonctions que vous utilisez et

@@ -96,13 +96,13 @@ Além disso, a aplicação verifica por iniciativa própria, sem que clique em
 nada, se os seus conjuntos têm novas versões e que revisões estão pendentes.
 Para isso, lê os ficheiros de manifesto do catálogo oficial e dos seus
 repositórios ligados: no arranque, ao mudar de página e quando a janela volta
-ao primeiro plano; sincroniza os repositórios ligados no arranque no máximo
-uma vez por dia. O seu browser responde normalmente aos pedidos repetidos em
-pouco tempo a partir da sua cache. A verificação é executada em todas as
-páginas da aplicação, exceto a página inicial, a criação do seu primeiro
-projeto de aprendizagem e a avaliação do tipo de aprendizagem, ou seja,
-também logo numa primeira visita através de uma ligação partilhada ou direta e
-na página de erro de um endereço mal escrito, incluindo em /docs/.
+ao primeiro plano; sincroniza os repositórios ligados no arranque quando a
+última sincronização tem mais de um dia. O seu browser responde normalmente aos
+pedidos repetidos em pouco tempo a partir da sua cache. A verificação é
+executada em todas as páginas da aplicação, exceto a página inicial, a criação
+do seu primeiro projeto de aprendizagem e a avaliação do tipo de aprendizagem,
+ou seja, também logo numa primeira visita através de uma ligação partilhada ou
+direta e na página de erro de um endereço mal escrito, incluindo em /docs/.
 
 O GitHub recebe o seu endereço IP, os habituais dados do browser (tipo e
 versão do browser, sistema operativo, idioma), em regra a origem do pedido
@@ -166,13 +166,13 @@ destinatário é a GitHub, Inc. (ver acima).
 Prepara um relatório de erro com o botão de uma mensagem de erro ("Reportar
 problema"), com "Comunicar um problema" quando não foi possível carregar uma
 vista, ou com "Criar relatório de erro" nas "Configurações", em "Diagnóstico e
-suporte". Vê primeiro o relatório. Só quando clica em "Abrir no GitHub" é que a aplicação abre,
-num novo separador, um formulário pré-preenchido para um novo issue no
-repositório `astrapi69/adaptive-learner` em `github.com`. O relatório consta
-do endereço dessa página, pelo que o GitHub o recebe logo que o separador se
-abre, antes de enviar lá o que quer que seja. Perante um erro interno ao criar
-uma lição, "Relatar o problema" abre diretamente um formulário desse tipo,
-apenas com essa mensagem de erro.
+suporte". Vê primeiro o relatório. Só quando clica em "Abrir no GitHub" é que a
+aplicação abre, num novo separador, um formulário pré-preenchido para um novo
+issue no repositório `astrapi69/adaptive-learner` em `github.com`. O relatório
+consta do endereço dessa página, pelo que o GitHub o recebe logo que o
+separador se abre, antes de enviar lá o que quer que seja. Perante um erro
+interno ao criar uma lição, "Relatar o problema" abre diretamente um formulário
+desse tipo, apenas com essa mensagem de erro.
 
 O relatório contém a mensagem de erro com dados técnicos (por exemplo, código
 de estado, endpoint, hora ou stack trace) e a sua própria descrição. A
@@ -227,9 +227,9 @@ conteúdos pela IA. Sem que escreva nada, a aplicação envia ainda:
 Cada pedido inclui a sua chave, o seu endereço IP e os habituais dados do
 browser, incluindo a origem do pedido (`astrapi69.github.io`). A consulta de
 modelos e o pedido de teste são uma mesma consulta da lista de modelos e não
-contêm mais nada; para a mesma chave, a aplicação envia-a no máximo uma vez
-por hora e por separador. Os restantes pedidos contêm, consoante a
-funcionalidade:
+contêm mais nada; depois de uma consulta bem-sucedida, a aplicação não volta a
+enviá-la para a mesma chave no mesmo separador durante uma hora. Os restantes
+pedidos contêm, consoante a funcionalidade:
 
 - as suas mensagens, perguntas e respostas e o histórico da sessão até ao
   momento,
@@ -309,13 +309,13 @@ O fundamento jurídico é o seu pedido (artigo 6.º, n.º 1, alínea b), do RGPD
 
 ## Botões de partilha
 
-Aparece um botão de partilha no "Painel", nas linhas de "Continuar a
-aprender", assim que conclui uma lição com resultado, e no final de uma lição,
-se o ativar nas "Configurações", em "Aprendizagem", em "Resumo após as
-lições". Se o seu dispositivo oferecer uma caixa de diálogo de partilha
-própria, a aplicação abre-a, e escolhe aí onde partilhar. Caso contrário,
-mostra ligações para o Facebook, o LinkedIn, o X e o WhatsApp e uma opção para
-copiar.
+Aparece um botão de partilha no "Painel", nas linhas de "Continuar a aprender",
+assim que conclui uma lição com resultado, e no final de uma lição, se estiver
+ativado nas "Configurações", em "Aprendizagem", em "Resumo após as lições" (por
+predefinição, está desativado). Se o seu dispositivo oferecer uma caixa de
+diálogo de partilha própria, a aplicação abre-a, e escolhe aí onde partilhar.
+Caso contrário, mostra ligações para o Facebook, o LinkedIn, o X e o WhatsApp e
+uma opção para copiar.
 
 Só quando clica numa destas ligações é que o seu browser abre a página da
 rede; a rede recebe então o seu endereço IP, os habituais dados do browser e
@@ -357,9 +357,9 @@ cache. A aplicação utiliza ainda:
 - o Cache Storage para os ficheiros da aplicação e as lições transferidas,
   para que funcione também offline.
 
-Estas páginas de documentação guardam apenas o esquema de cores escolhido no
-localStorage. A pré-visualização pública encontra-se no mesmo domínio
-(`astrapi69.github.io`) que a aplicação, pelo que ambas partilham o
+Estas páginas de documentação guardam apenas o esquema de cores (claro ou
+escuro) no localStorage. A pré-visualização pública encontra-se no mesmo
+domínio (`astrapi69.github.io`) que a aplicação, pelo que ambas partilham o
 armazenamento do seu browser.
 
 Este armazenamento é estritamente necessário para as funcionalidades que

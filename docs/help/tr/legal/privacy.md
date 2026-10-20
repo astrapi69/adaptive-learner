@@ -6,14 +6,14 @@
 
 Son güncelleme: 20 Ekim 2026
 
-Bu politika, Adaptive Learner'ın
-`astrapi69.github.io/adaptive-learner` adresindeki herkese açık web sürümünü,
-bir sonraki sürümün `astrapi69.github.io/adaptive-learner-content-test`
-adresindeki herkese açık önizlemesini ve bu dokümantasyon sayfalarını kapsar.
-Adaptive Learner'ı kendiniz kurarsanız (masaüstü başlatıcı veya Docker),
-uygulama kendi cihazınızda çalışır ve bu sayfaların işletmecisi o zaman
-yalnızca sizin ona kendiniz gönderdiklerinizi, örneğin paylaşılan bir dersi
-veya bir hata raporunu alır. Bu durumda da uygulama ve başlatıcı yeni sürümleri `api.github.com`
+Bu politika, Adaptive Learner'ın `astrapi69.github.io/adaptive-learner`
+adresindeki herkese açık web sürümünü, bir sonraki sürümün
+`astrapi69.github.io/adaptive-learner-content-test` adresindeki herkese açık
+önizlemesini ve bu dokümantasyon sayfalarını kapsar. Adaptive Learner'ı
+kendiniz kurarsanız (masaüstü başlatıcı veya Docker), uygulama kendi
+cihazınızda çalışır ve bu sayfaların işletmecisi o zaman yalnızca sizin ona
+kendiniz gönderdiklerinizi, örneğin paylaşılan bir dersi veya bir hata raporunu
+alır. Bu durumda da uygulama ve başlatıcı yeni sürümleri `api.github.com`
 üzerinden sorgular, öğrenme içerikleri GitHub'dan gelir ve yapay zekâ
 isteklerini kendi sunucunuz seçtiğiniz sağlayıcıya gönderir.
 
@@ -92,13 +92,13 @@ Ayrıca uygulama, siz hiçbir şeye tıklamadan, setlerinizin yeni sürümleri o
 olmadığını ve hangi tekrarların zamanının geldiğini kendiliğinden denetler.
 Bunun için resmi kataloğun ve bağlı repository'lerinizin manifest dosyalarını
 okur: başlangıçta, sayfalar arasında geçiş yaptığınızda ve pencere yeniden ön
-plana geldiğinde; bağlı repository'leri başlangıçta en fazla günde bir kez
-eşitler. Kısa aralıklarla tekrarlanan istekleri tarayıcınız genellikle kendi
-önbelleğinden yanıtlar. Denetim, başlangıç sayfası, ilk öğrenme projenizin
-oluşturulması ve öğrenme tipi değerlendirmesi dışında uygulamanın her
-sayfasında çalışır; yani paylaşılmış veya doğrudan bir bağlantıyla yapılan ilk
-ziyarette ve yanlış yazılmış bir adresin hata sayfasında da, /docs/ altında
-bile.
+plana geldiğinde; bağlı repository'leri, son eşitlemenin üzerinden bir günden
+fazla geçmişse başlangıçta eşitler. Kısa aralıklarla tekrarlanan istekleri
+tarayıcınız genellikle kendi önbelleğinden yanıtlar. Denetim, başlangıç
+sayfası, ilk öğrenme projenizin oluşturulması ve öğrenme tipi değerlendirmesi
+dışında uygulamanın her sayfasında çalışır; yani paylaşılmış veya doğrudan bir
+bağlantıyla yapılan ilk ziyarette ve yanlış yazılmış bir adresin hata
+sayfasında da, /docs/ altında bile.
 
 GitHub; IP adresinizi, olağan tarayıcı verilerini (tarayıcı türü ve sürümü,
 işletim sistemi, dil ayarı), genellikle isteğin kaynağını
@@ -215,10 +215,11 @@ kılavuzu, telaffuz alıştırması ile içeriklerin yapay zekâ ile denetlenmes
   isteklerini bir kez; bunlar yapıştırılan sohbeti içerir.
 
 Her istek, isteğin kaynağı (`astrapi69.github.io`) dahil olmak üzere
-anahtarınızı, IP adresinizi ve olağan tarayıcı verilerini taşır. Model
-sorgusu ve test isteği, model listesi için aynı sorgudur ve başka bir şey
-içermez; uygulama bu sorguyu aynı anahtar için saatte ve sekme başına en fazla
-bir kez gönderir. Diğer istekler, özelliğe göre şunları içerir:
+anahtarınızı, IP adresinizi ve olağan tarayıcı verilerini taşır. Model sorgusu
+ve test isteği, model listesi için aynı sorgudur ve başka bir şey içermez;
+başarılı bir sorgudan sonra uygulama aynı anahtar için aynı sekmede bir saat
+boyunca bu sorguyu yeniden göndermez. Diğer istekler, özelliğe göre şunları
+içerir:
 
 - mesajlarınız, sorularınız ve cevaplarınız ile oturumun o ana kadarki
   geçmişi,
@@ -292,10 +293,10 @@ giriş). Hukuki dayanak talebinizdir (GDPR md. 6/1-b).
 
 Pano'da "Öğrenmeye devam et" satırlarında, bir dersi sonuçla tamamladığınız
 anda bir paylaşım düğmesi görünür; Ayarlar'da "Öğrenme" altında "Ders sonrası
-özet" içinde açarsanız bir dersin sonunda da görünür. Cihazınız kendi paylaşım
-iletişim kutusunu sunuyorsa uygulama onu açar ve nerede paylaşacağınızı orada
-seçersiniz. Aksi halde Facebook, LinkedIn, X ve WhatsApp bağlantılarını ve bir
-kopyalama seçeneğini gösterir.
+özet" içinde açıksa bir dersin sonunda da görünür (varsayılan olarak
+kapalıdır). Cihazınız kendi paylaşım iletişim kutusunu sunuyorsa uygulama onu
+açar ve nerede paylaşacağınızı orada seçersiniz. Aksi halde Facebook, LinkedIn,
+X ve WhatsApp bağlantılarını ve bir kopyalama seçeneğini gösterir.
 
 Tarayıcınız ağın sayfasını ancak bu bağlantılardan birine tıkladığınızda açar;
 ağ bu durumda IP adresinizi, olağan tarayıcı verilerini ve cihazınızda
@@ -335,8 +336,8 @@ Uygulama bunlara ek olarak şunları kullanır:
 - uygulama çevrimdışı da çalışsın diye uygulamanın dosyaları ve indirilen
   dersler için Cache Storage'ı.
 
-Bu dokümantasyon sayfaları localStorage'da yalnızca seçilen renk düzenini
-saklar. Herkese açık önizleme, uygulamayla aynı alan adında
+Bu dokümantasyon sayfaları localStorage'da yalnızca renk düzenini (açık veya
+koyu) saklar. Herkese açık önizleme, uygulamayla aynı alan adında
 (`astrapi69.github.io`) bulunur; bu nedenle ikisi tarayıcınızın depolama
 alanını paylaşır.
 
