@@ -10,7 +10,7 @@ Informações nos termos do § 5 da DDG (Lei alemã dos Serviços Digitais).
 
 Seestraße 68, 71638 Ludwigsburg, Alemanha
 
-E-mail: asteri.raptis@gmail.com
+E-mail: asterios.raptis@web.de
 
 ## Responsável pelo conteúdo nos termos do § 18, n.º 2, do MStV (Tratado Interestatal alemão sobre os Meios de Comunicação)
 

@@ -10,7 +10,7 @@ DDG (Alman Dijital Hizmetler Kanunu) § 5 uyarınca bilgiler.
 
 Seestraße 68, 71638 Ludwigsburg, Almanya
 
-E-posta: asteri.raptis@gmail.com
+E-posta: asterios.raptis@web.de
 
 ## MStV (Alman Eyaletlerarası Medya Antlaşması) § 18 fıkra 2 uyarınca içerikten sorumlu kişi
 
