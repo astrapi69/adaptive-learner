@@ -25,9 +25,10 @@ import {useButtonTooltips} from "../../../hooks/settings/useButtonTooltips";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {readLessonSpeed} from "../../../hooks/lesson/audio/useReadAloud";
 import {
+    currentVoices,
     isSpeechSynthesisSupported,
     loadVoices,
-    pickVoice,
+    resolveVoice,
     speak,
     stop,
 } from "../../../lib/voice/speech-synthesis";
@@ -96,10 +97,11 @@ export default function ReadAloudButton({
             return;
         }
         const prefs = readVoicePrefs();
-        const voice =
-            prefs.ttsVoiceName.length > 0
-                ? (voiceList.find((v) => v.name === prefs.ttsVoiceName) ?? null)
-                : pickVoice(voiceList, effectiveLang);
+        const voice = resolveVoice(
+            currentVoices(voiceList),
+            effectiveLang,
+            prefs.ttsVoiceName,
+        );
         setSpeaking(true);
         speak(text, {
             lang: effectiveLang,

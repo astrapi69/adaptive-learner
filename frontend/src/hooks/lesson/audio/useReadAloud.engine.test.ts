@@ -263,3 +263,63 @@ describe("useReadAloud engine", () => {
         });
     });
 });
+
+/** A voice whose synthesis runs at a remote service: the text read aloud
+ *  leaves the device (Chrome's "Google ..." voices). */
+function makeNetworkVoice(name: string, lang: string): SpeechSynthesisVoice {
+    return {...makeVoice(name, lang), localService: false} as SpeechSynthesisVoice;
+}
+
+/** Like a real browser, ``getVoices()`` returns a fresh array of whatever
+ *  ``offered`` holds at call time, so voices added after the hook loaded its
+ *  list stay out of that list. */
+function offerVoices(initial: SpeechSynthesisVoice[]): SpeechSynthesisVoice[] {
+    const offered = [...initial];
+    setMockSynth(initial);
+    (window.speechSynthesis as unknown as {getVoices: () => SpeechSynthesisVoice[]}).getVoices =
+        () => [...offered];
+    return offered;
+}
+
+// #3805: the read-aloud text reaches a network voice's provider. Measured
+// in Google Chrome 155 on Linux with speech-dispatcher: "Google Deutsch"
+// (de-DE, network) and "German espeak-ng" (de, local); the network voices
+// arrive first.
+describe("useReadAloud voice choice (#3805)", () => {
+    const googleDeutsch = makeNetworkVoice("Google Deutsch", "de-DE");
+    const espeakGerman = makeVoice("German espeak-ng", "de");
+
+    it("reads with a local voice when a network voice for the same language is listed first", async () => {
+        offerVoices([googleDeutsch, espeakGerman]);
+        const h = await renderReady();
+        act(() => h.current().speak("Hallo Welt", {lang: "de-DE"}));
+        expect(spoken[0].voice).toBe(espeakGerman);
+    });
+
+    it("uses the voices the browser offers when speaking, not only those loaded at mount", async () => {
+        const offered = offerVoices([googleDeutsch]);
+        const h = await renderReady();
+        offered.push(espeakGerman);
+        act(() => h.current().speak("Hallo Welt", {lang: "de"}));
+        expect(spoken[0].voice).toBe(espeakGerman);
+    });
+
+    it("falls back to the network voice when the browser offers no local voice for the language", async () => {
+        offerVoices([googleDeutsch, makeVoice("English espeak-ng", "en-US")]);
+        const h = await renderReady();
+        act(() => h.current().speak("Hallo Welt", {lang: "de"}));
+        expect(spoken[0].voice).toBe(googleDeutsch);
+        expect(h.current().voiceAvailable).toBe(true);
+    });
+
+    it("keeps the learner's explicit voice choice, even a network voice", async () => {
+        localStorage.setItem(
+            "adaptive-learner.voice.prefs",
+            JSON.stringify({ttsVoiceName: "Google Deutsch"}),
+        );
+        offerVoices([googleDeutsch, espeakGerman]);
+        const h = await renderReady();
+        act(() => h.current().speak("Hallo Welt", {lang: "de"}));
+        expect(spoken[0].voice).toBe(googleDeutsch);
+    });
+});

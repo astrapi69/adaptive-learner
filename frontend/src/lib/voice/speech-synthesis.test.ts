@@ -10,11 +10,13 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import {
+    currentVoices,
     isSpeaking,
     isSpeechSynthesisSupported,
     loadVoices,
     pause,
     pickVoice,
+    resolveVoice,
     resume,
     speak,
     stop,
@@ -32,6 +34,12 @@ function makeVoice(
         localService: true,
         voiceURI: name,
     } as SpeechSynthesisVoice;
+}
+
+/** A voice the browser synthesises through a remote service: the text
+ *  being read leaves the device (Chrome's "Google ..." voices). */
+function makeNetworkVoice(name: string, lang: string): SpeechSynthesisVoice {
+    return {...makeVoice(name, lang), localService: false} as SpeechSynthesisVoice;
 }
 
 interface MockSynth {
@@ -154,6 +162,111 @@ describe("pickVoice", () => {
 
     it("returns null when no language family matches", () => {
         expect(pickVoice(voices, "fr-FR")).toBeNull();
+    });
+});
+
+// #3805: a network voice sends the text being read to its provider (Chrome:
+// GET www.google.com/speech-api/v2/synthesize?text=...). The shape below is
+// the one measured in Google Chrome 155 on Linux with speech-dispatcher:
+// "Google Deutsch" (de-DE, network) next to "German espeak-ng" (de, local).
+describe("pickVoice prefers local voices (#3805)", () => {
+    const googleDeutsch = makeNetworkVoice("Google Deutsch", "de-DE");
+    const espeakGerman = makeVoice("German espeak-ng", "de");
+
+    it("picks the local voice for the language although a network voice matches exactly and is listed first", () => {
+        expect(pickVoice([googleDeutsch, espeakGerman], "de-DE")).toBe(
+            espeakGerman,
+        );
+    });
+
+    it.each([
+        {match: "exact", local: makeVoice("Local de-DE", "de-DE")},
+        {match: "prefix", local: makeVoice("Local de-AT", "de-AT")},
+        {match: "bare", local: makeVoice("Local de", "de")},
+    ])("a local $match match beats an exact network match", ({local}) => {
+        expect(pickVoice([googleDeutsch, local], "de-DE")).toBe(local);
+    });
+
+    it("keeps exact before prefix before bare among the local voices", () => {
+        const prefix = makeVoice("Local de-AT", "de-AT");
+        const bare = makeVoice("Local de", "de");
+        const exact = makeVoice("Local de-DE", "de-DE");
+        expect(pickVoice([prefix, bare, exact], "de-DE")).toBe(exact);
+        expect(pickVoice([bare, prefix], "de-DE")).toBe(prefix);
+    });
+
+    it("falls back to a network voice when no local voice matches the language", () => {
+        const espeakEnglish = makeVoice("English espeak-ng", "en-US");
+        expect(pickVoice([espeakEnglish, googleDeutsch], "de")).toBe(
+            googleDeutsch,
+        );
+    });
+
+    it("uses the network voice when the browser offers nothing else (Chrome on Linux by default)", () => {
+        expect(pickVoice([googleDeutsch], "de")).toBe(googleDeutsch);
+    });
+
+    it("counts a voice as local only when localService is true", () => {
+        const unknown = {
+            ...makeVoice("Unknown de", "de"),
+            localService: undefined,
+        } as unknown as SpeechSynthesisVoice;
+        expect(pickVoice([unknown, espeakGerman], "de")).toBe(espeakGerman);
+        expect(pickVoice([unknown], "de")).toBe(unknown);
+    });
+});
+
+describe("resolveVoice: an explicit choice wins (#3805)", () => {
+    const googleDeutsch = makeNetworkVoice("Google Deutsch", "de-DE");
+    const espeakGerman = makeVoice("German espeak-ng", "de");
+    const offered = [googleDeutsch, espeakGerman];
+
+    it("uses the voice the learner chose in Settings, even a network voice", () => {
+        expect(resolveVoice(offered, "de", "Google Deutsch")).toBe(
+            googleDeutsch,
+        );
+    });
+
+    it("without a stored choice, takes the local-first pick", () => {
+        expect(resolveVoice(offered, "de", "")).toBe(espeakGerman);
+    });
+
+    it("a stored choice the browser no longer offers falls back to the local-first pick", () => {
+        expect(resolveVoice(offered, "de", "Microsoft Hedda")).toBe(
+            espeakGerman,
+        );
+    });
+
+    it("returns null when nothing matches and nothing was chosen", () => {
+        expect(resolveVoice(offered, "fr", "")).toBeNull();
+    });
+});
+
+// --- currentVoices ---------------------------------------------------
+
+// Chrome hands out its voices in batches: on Linux with speech-dispatcher
+// the 19 network voices are listed at once, the local voices about a second
+// later. A list loaded once at mount then lacks the local voices (#3805,
+// measured).
+describe("currentVoices", () => {
+    it("returns what the browser offers now, not the list loaded earlier", () => {
+        const loadedAtMount = [makeNetworkVoice("Google Deutsch", "de-DE")];
+        const synth = mountMockSynth([
+            ...loadedAtMount,
+            makeVoice("German espeak-ng", "de"),
+        ]);
+        expect(currentVoices(loadedAtMount)).toEqual(synth.voices);
+    });
+
+    it("keeps the loaded list while the browser's list is still empty", () => {
+        mountMockSynth([]);
+        const loaded = [makeVoice("German espeak-ng", "de")];
+        expect(currentVoices(loaded)).toBe(loaded);
+    });
+
+    it("returns the loaded list when speech synthesis is unavailable", () => {
+        const loaded = [makeVoice("German espeak-ng", "de")];
+        expect(currentVoices(loaded)).toBe(loaded);
     });
 });
 

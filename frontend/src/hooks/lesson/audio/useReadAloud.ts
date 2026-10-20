@@ -1,13 +1,16 @@
 /**
- * useReadAloud — the lesson read-aloud engine (TTS feature C1).
+ * useReadAloud - the lesson read-aloud engine (TTS feature C1).
  *
  * A thin React layer over the existing voice lib
  * (``lib/voice/speech-synthesis`` + ``voicePref``) that the
  * Lesson viewer uses to read theory / prompts / answers aloud:
  *
- *   - resolves the voice from the user's saved preference name or,
- *     failing that, the closest match for the requested ``lang``
- *     (so a Spanish lesson speaks with a Spanish voice);
+ *   - resolves the voice when speaking, from the voices the browser
+ *     offers at that moment (``resolveVoice``): the voice the user
+ *     chose in Settings while the browser offers it, otherwise a voice
+ *     on the device for the requested ``lang`` and a network voice
+ *     only when the device has none (#3805), so a Spanish lesson
+ *     speaks with a Spanish voice;
  *   - applies the user's saved rate/pitch PLUS an inline speed
  *     multiplier (0.5/0.75/1/1.25x) that is remembered across
  *     sessions;
@@ -25,10 +28,11 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 
 import {
+    currentVoices,
     isSpeechSynthesisSupported,
     loadVoices,
     pause as pauseRaw,
-    pickVoice,
+    resolveVoice,
     resume as resumeRaw,
     speak as speakRaw,
     stop as stopRaw,
@@ -164,17 +168,12 @@ export function useReadAloud(): ReadAloudController {
             if (!supported || !enabledRef.current || !text.trim()) return;
             const prefs = readVoicePrefs();
             const lang = request?.lang || "en";
-            const named =
-                prefs.ttsVoiceName.length > 0
-                    ? (voices.find((v) => v.name === prefs.ttsVoiceName) ?? null)
-                    : null;
-            const matched = named ?? pickVoice(voices, lang);
-            // "Unavailable" only when we have a voice list loaded yet
-            // nothing matched the requested language (and the user
-            // didn't pin a named voice).
-            setVoiceAvailable(
-                named !== null || voices.length === 0 || matched !== null,
-            );
+            const offered = currentVoices(voices);
+            const matched = resolveVoice(offered, lang, prefs.ttsVoiceName);
+            // "Unavailable" only when the browser offers voices yet none
+            // matched the requested language (and the voice the user
+            // pinned is not among them).
+            setVoiceAvailable(offered.length === 0 || matched !== null);
             lastRef.current = {text, request};
             speakingRef.current = true;
             setSpeaking(true);

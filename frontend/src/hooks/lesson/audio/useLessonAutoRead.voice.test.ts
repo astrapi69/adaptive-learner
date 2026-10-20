@@ -1,0 +1,155 @@
+/**
+ * useLessonAutoRead: the voice the lesson read-aloud paths speak with (#3805).
+ *
+ * The "R" shortcut, "Read all" and auto-read speak through the real
+ * useReadAloud engine here; only the browser's speech API is mocked. The voice
+ * list has the shape measured in Google Chrome 155 on Linux with
+ * speech-dispatcher: the network voice "Google Deutsch" arrives first, the
+ * local espeak-ng voice later, after the lesson has already loaded its list.
+ * Auto-read speaks the step on display at once, before the engine has loaded
+ * any list of its own. A network voice sends the text read aloud to its
+ * provider, so a local voice must win whenever the browser offers one.
+ */
+
+import { act, renderHook } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import type { ContentLesson } from "../../../storage/types";
+import { useLessonAutoRead } from "./useLessonAutoRead";
+
+interface RecordedUtterance {
+  text: string;
+  lang: string;
+  voice: SpeechSynthesisVoice | null;
+}
+
+let spoken: RecordedUtterance[];
+let offered: SpeechSynthesisVoice[];
+
+function voice(name: string, lang: string, localService: boolean): SpeechSynthesisVoice {
+  return { name, lang, localService, default: false, voiceURI: name } as SpeechSynthesisVoice;
+}
+
+const googleDeutsch = voice("Google Deutsch", "de-DE", false);
+const espeakGerman = voice("German espeak-ng", "de", true);
+
+/** Mock synth: like a real browser, ``getVoices()`` returns a fresh copy of
+ *  whatever ``offered`` holds when it is called. */
+function mountSynth(initial: SpeechSynthesisVoice[]): void {
+  spoken = [];
+  offered = [...initial];
+  (window as unknown as { speechSynthesis: SpeechSynthesis }).speechSynthesis = {
+    getVoices: () => [...offered],
+    speak: (u: RecordedUtterance) => spoken.push(u),
+    cancel: vi.fn(),
+    pause: vi.fn(),
+    resume: vi.fn(),
+    speaking: false,
+    pending: false,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  } as unknown as SpeechSynthesis;
+  class FakeUtterance {
+    text: string;
+    lang = "";
+    rate = 1;
+    pitch = 1;
+    voice: SpeechSynthesisVoice | null = null;
+    constructor(text: string) {
+      this.text = text;
+    }
+  }
+  (globalThis as unknown as { SpeechSynthesisUtterance: unknown }).SpeechSynthesisUtterance =
+    FakeUtterance;
+  (window as unknown as { SpeechSynthesisUtterance: unknown }).SpeechSynthesisUtterance =
+    FakeUtterance;
+}
+
+const LESSON = {
+  id: "voice-probe",
+  title: "Vorlese-Probe",
+  target_language: "de",
+  cards: [],
+  steps: [
+    { id: "t1", type: "theory", body: "Erster Absatz." },
+    { id: "t2", type: "theory", body: "Zweiter Absatz." },
+  ],
+} as unknown as ContentLesson;
+
+/** Render the lesson read-aloud on the first step of {@link LESSON}. */
+function renderLesson() {
+  return renderHook(() =>
+    useLessonAutoRead({
+      lesson: LESSON,
+      currentStepIndex: 0,
+      showResumePrompt: false,
+      goToStep: vi.fn(),
+    }),
+  );
+}
+
+/** Let the engine's mount-time ``loadVoices()`` settle. */
+async function flushVoiceLoading(): Promise<void> {
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+}
+
+/** Render the lesson read-aloud with the network voice loaded at mount, then
+ *  let the local voice arrive, as measured. */
+async function renderWithLateLocalVoice() {
+  mountSynth([googleDeutsch]);
+  const hook = renderLesson();
+  await flushVoiceLoading();
+  offered.push(espeakGerman);
+  return hook;
+}
+
+beforeEach(() => {
+  localStorage.clear();
+});
+
+describe("lesson read-aloud voice (#3805)", () => {
+  it("the R shortcut reads with the local voice the browser offers by then", async () => {
+    await renderWithLateLocalVoice();
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "r" }));
+    });
+    expect(spoken).toHaveLength(1);
+    expect(spoken[0].text).toContain("Erster Absatz");
+    expect(spoken[0].voice).toBe(espeakGerman);
+  });
+
+  it('"Read all" reads with the local voice the browser offers by then', async () => {
+    const { result } = await renderWithLateLocalVoice();
+    act(() => result.current.startContinuous());
+    expect(spoken).toHaveLength(1);
+    expect(spoken[0].text).toContain("Zweiter Absatz");
+    expect(spoken[0].voice).toBe(espeakGerman);
+  });
+
+  it("auto-read reads the step on display with the local voice, before the engine has loaded its own list", async () => {
+    localStorage.setItem(
+      "adaptive-learner.voice.prefs",
+      JSON.stringify({ lessonAutoRead: true }),
+    );
+    mountSynth([googleDeutsch, espeakGerman]);
+    renderLesson();
+    expect(spoken).toHaveLength(1);
+    expect(spoken[0].text).toContain("Erster Absatz");
+    expect(spoken[0].voice).toBe(espeakGerman);
+    await flushVoiceLoading();
+  });
+
+  it("the R shortcut keeps the learner's explicit choice of a network voice", async () => {
+    localStorage.setItem(
+      "adaptive-learner.voice.prefs",
+      JSON.stringify({ ttsVoiceName: "Google Deutsch" }),
+    );
+    await renderWithLateLocalVoice();
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "r" }));
+    });
+    expect(spoken[0].voice).toBe(googleDeutsch);
+  });
+});

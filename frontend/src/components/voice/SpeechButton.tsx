@@ -19,9 +19,10 @@ import {useButtonTooltips} from "../../hooks/settings/useButtonTooltips";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {readVoicePrefs} from "../../lib/voice/voicePref";
 import {
+    currentVoices,
     isSpeechSynthesisSupported,
     loadVoices,
-    pickVoice,
+    resolveVoice,
     speak,
     stop,
 } from "../../lib/voice/speech-synthesis";
@@ -81,11 +82,6 @@ export default function SpeechButton({
     }
 
     const effectiveLang = lang || docLang || "en";
-    const prefs = readVoicePrefs();
-    const preferredVoice =
-        prefs.ttsVoiceName.length > 0
-            ? voiceList.find((v) => v.name === prefs.ttsVoiceName) ?? null
-            : pickVoice(voiceList, effectiveLang);
 
     const onClick = () => {
         if (speaking) {
@@ -93,10 +89,15 @@ export default function SpeechButton({
             setSpeaking(false);
             return;
         }
+        const prefs = readVoicePrefs();
         setSpeaking(true);
         speak(text, {
             lang: effectiveLang,
-            voice: preferredVoice,
+            voice: resolveVoice(
+                currentVoices(voiceList),
+                effectiveLang,
+                prefs.ttsVoiceName,
+            ),
             rate: prefs.ttsRate,
             pitch: prefs.ttsPitch,
             onEnd: () => setSpeaking(false),

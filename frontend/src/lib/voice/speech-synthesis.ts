@@ -1,5 +1,5 @@
 /**
- * Web Speech API — TTS wrapper (Phase 31A / v1.18.0).
+ * Web Speech API - TTS wrapper (Phase 31A / v1.18.0).
  *
  * Thin abstraction over ``window.speechSynthesis`` so the
  * SpeechButton component doesn't have to know about the
@@ -13,13 +13,23 @@
  *   there; the button falls back to stop + re-speak from the
  *   beginning. We detect this at call time, not feature-check
  *   time, because Safari lies about supporting pause.
- * - **Voice selection.** Match by exact ``lang`` first ("en-US"
- *   for an "en-US" learner), then by lang prefix ("en" matches
- *   any "en-*"), then default voice. Returns ``null`` if the
- *   browser has no voices at all.
+ * - **Voice selection.** A voice the learner chose in Settings
+ *   wins while the browser still offers it. Otherwise local voices
+ *   (``localService``) come first: a network voice sends the text
+ *   being read to its provider (Chrome's "Google ..." voices send it
+ *   to Google), so it is used only when no local voice matches the
+ *   language (#3805). Within each group: exact ``lang`` first
+ *   ("en-US" for an "en-US" learner), then by lang prefix ("en"
+ *   matches any "en-*"), then the bare code. Returns ``null`` when
+ *   no voice matches; the browser then uses its own default.
+ * - **Voices arrive in batches.** Chrome on Linux with speech-dispatcher
+ *   lists its network voices at once and adds the local voices about a
+ *   second later, so the voice is resolved from the list the browser
+ *   offers when speaking (``currentVoices``), not only from the list
+ *   loaded at mount.
  *
  * All functions are safe to call when the browser has no
- * SpeechSynthesis support — they short-circuit. Callers should
+ * SpeechSynthesis support: they short-circuit. Callers should
  * still gate the UI on ``isSpeechSynthesisSupported()`` so the
  * button doesn't render at all.
  */
@@ -64,16 +74,69 @@ export async function loadVoices(): Promise<SpeechSynthesisVoice[]> {
 }
 
 /**
+ * The voices the browser offers right now, or ``loaded`` while that list
+ * is still empty (Chrome answers ``[]`` until its first ``voiceschanged``).
+ * Resolve the voice from this when speaking: Chrome adds voices in
+ * batches, so a list loaded once at mount can lack the local voices that
+ * arrived later (#3805, measured in Chrome 155 on Linux with
+ * speech-dispatcher: the network voices at once, the local ones about a
+ * second later).
+ *
+ * @example
+ * const voice = resolveVoice(currentVoices(voicesLoadedAtMount), "de", "");
+ */
+export function currentVoices(
+    loaded: SpeechSynthesisVoice[],
+): SpeechSynthesisVoice[] {
+    if (!isSpeechSynthesisSupported()) return loaded;
+    const offered = window.speechSynthesis.getVoices();
+    return offered.length > 0 ? offered : loaded;
+}
+
+/**
+ * The voice to read with: the one the learner chose in Settings
+ * (``preferredName``, "" for none) while the browser offers it, even a
+ * network voice, because the learner picked it on purpose. Otherwise
+ * {@link pickVoice}'s local-first pick for ``lang``. Returns ``null`` when
+ * nothing matches.
+ *
+ * @example
+ * resolveVoice(voices, "de", readVoicePrefs().ttsVoiceName);
+ */
+export function resolveVoice(
+    voices: SpeechSynthesisVoice[],
+    lang: string,
+    preferredName: string,
+): SpeechSynthesisVoice | null {
+    const chosen = preferredName
+        ? voices.find((v) => v.name === preferredName)
+        : undefined;
+    return chosen ?? pickVoice(voices, lang);
+}
+
+/**
  * Pick the best available voice for the given BCP-47 language
- * code. Returns ``null`` if no voice matches (caller should
- * fall back to the browser default by passing ``null`` to
- * ``speak``'s utterance).
+ * code, local voices first: a network voice (``localService`` not
+ * ``true``) sends the text being read to its provider, so it is
+ * picked only when no local voice matches the language (#3805).
+ * Returns ``null`` if no voice matches (caller should fall back to
+ * the browser default by passing ``null`` to ``speak``'s utterance).
  */
 export function pickVoice(
     voices: SpeechSynthesisVoice[],
     lang: string,
 ): SpeechSynthesisVoice | null {
-    if (voices.length === 0) return null;
+    const local = voices.filter((v) => v.localService === true);
+    const network = voices.filter((v) => v.localService !== true);
+    return matchLanguage(local, lang) ?? matchLanguage(network, lang);
+}
+
+/** The first voice matching ``lang``: exact code, then same language with
+ *  any region, then the bare language code. ``null`` when none matches. */
+function matchLanguage(
+    voices: SpeechSynthesisVoice[],
+    lang: string,
+): SpeechSynthesisVoice | null {
     // Exact match (e.g. "en-US" === "en-US").
     const exact = voices.find(
         (v) => v.lang.toLowerCase() === lang.toLowerCase(),
@@ -86,9 +149,7 @@ export function pickVoice(
     );
     if (partial) return partial;
     // Same prefix without a region suffix ("en" voice).
-    const bare = voices.find((v) => v.lang.toLowerCase() === prefix);
-    if (bare) return bare;
-    return null;
+    return voices.find((v) => v.lang.toLowerCase() === prefix) ?? null;
 }
 
 /** The part of a boundary event this module reports to callers. */
