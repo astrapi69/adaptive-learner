@@ -129,9 +129,10 @@ If the convention itself is stale, flag it as Outdated under section 4.
   "Recently closed" entries cite landing commit hash.
 - API docs: FastAPI `/docs` + `/openapi.json` are the source of truth.
   `docs/API.md` is high-level overview only.
-- Help system single-source-of-truth: `docs/help/_meta.yaml` drives MkDocs nav
-  AND in-app help panel. Pages in `docs/help/{de,en}/` must be listed in
-  `_meta.yaml` to be discoverable (post-2026-04 incident with `ai.md` and
+- Help system: `docs/help/_meta.yaml` drives the MkDocs nav (the docs site
+  only; the in-app help drawer shows the glossary from `backend/config/help`,
+  #3798). Pages in `docs/help/{lang}/` must be listed in `_meta.yaml` to be
+  discoverable (post-2026-04 incident with `ai.md` and
   `developers/plugins.md`).
 - Single source of truth: numbers (test counts, model counts, supported
   languages, plugin count) live in ONE canonical location. Documentation
