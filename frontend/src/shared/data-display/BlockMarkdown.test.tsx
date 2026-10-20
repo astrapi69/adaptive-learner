@@ -44,6 +44,14 @@ describe("BlockMarkdown", () => {
     expect(paragraph?.className).toContain("whitespace-pre-line");
   });
 
+  it("offers an image from another host as a link, never loads it (#3803)", () => {
+    const { container, getByTestId } = render(
+      <BlockMarkdown>{"![Karte](https://probe-image.example/k.png)"}</BlockMarkdown>,
+    );
+    expect(container.querySelector("img")).toBeNull();
+    expect(getByTestId("markdown-remote-image")).toHaveTextContent("Karte");
+  });
+
   it("escapes raw HTML instead of rendering it", () => {
     const { container } = render(
       <BlockMarkdown>{"<script>alert(1)</script>"}</BlockMarkdown>,

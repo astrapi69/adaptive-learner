@@ -143,6 +143,20 @@ describe("LearningRepo — see-also links switch the file (#2619)", () => {
   });
 });
 
+describe("LearningRepo — images from another host (#3803)", () => {
+  it("offers a remote image as a link and never loads it", async () => {
+    renderMock.mockResolvedValue({
+      rendered_at: "2026-10-20T10:00:00Z",
+      language: "de",
+      files: { "README.md": "![Mitschrift](https://probe-image.example/m.png)" },
+    });
+    renderAt("/projects/p1/learning-repo");
+    const link = await screen.findByTestId("markdown-remote-image");
+    expect(link).toHaveTextContent("Mitschrift");
+    expect(screen.getByTestId("repo-content").querySelector("img")).toBeNull();
+  });
+});
+
 describe("LearningRepo — file buttons carry styling (#2618)", () => {
   beforeEach(() => {
     renderMock.mockImplementation(async () => ({

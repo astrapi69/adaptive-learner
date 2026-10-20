@@ -29,10 +29,9 @@
  * buttons hide themselves when the browser lacks Web Speech or the user has the
  * feature off in Settings, so this never renders a broken control.
  *
- * Still mounted only behind the opt-in ``?ui=assistant`` flag; the default
- * Session path renders the unchanged ``SessionChat``. Domain panels (step-eval,
- * method-switch, XP) are rendered AROUND this thread by ``Session.tsx`` and are
- * shared with the legacy surface.
+ * Since the cutover (#2012) this thread is the Session page's only chat; the
+ * legacy ``SessionChat`` is gone. Domain panels (step-eval, method-switch, XP)
+ * are rendered AROUND this thread by ``Session.tsx``.
  *
  * Phase 3b part 2 (#1126): imported-session AI opening. When ``autoOpen`` is set,
  * the thread fires one ``thread.startRun({parentId: null})`` on init so the AI
@@ -62,6 +61,7 @@ import {cn} from "@/lib/utils";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {markdownToSpeech} from "../../../lib/lesson/tts-text";
+import MarkdownImage from "../../../shared/data-display/MarkdownImage";
 import {getStorage} from "../../../storage";
 import {notify} from "../../../utils/notify";
 import MicButton from "../../voice/MicButton";
@@ -97,9 +97,11 @@ interface AssistantUiThreadProps {
 }
 
 /**
- * Assistant text part renderer. Mirrors ``SessionChat``'s assistant bubble:
- * react-markdown + remark-gfm with the shared ``chat-message-content-markdown``
- * typography, so an AI reply reads the same as the help system.
+ * Assistant text part renderer: react-markdown + remark-gfm with the shared
+ * ``chat-message-content-markdown`` typography, so an AI reply reads the same
+ * as the help system. An image in a reply is offered as a link when it lives
+ * on another host (#3803): a stored reply re-renders on every resume, and the
+ * model, not the learner, chose that host.
  */
 const AssistantText: TextMessagePartComponent = ({text}) => (
     <div
@@ -114,6 +116,7 @@ const AssistantText: TextMessagePartComponent = ({text}) => (
                         <table {...tableProps} />
                     </div>
                 ),
+                img: MarkdownImage,
             }}
         >
             {text}

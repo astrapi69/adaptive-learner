@@ -21,6 +21,7 @@
  */
 
 import type {ContentLessonExercise} from "../../../storage/types";
+import {isRemoteImageUrl} from "../../media/remote-image";
 
 /** The adopted extension type; declared as ``ext:al-image-description@<major>``. */
 export const IMAGE_DESCRIPTION_EXT_TYPE = "ext:al-image-description";
@@ -33,12 +34,6 @@ export interface ImageDescriptionPayload {
     /** Accepted answers (tolerant free-text match; ``accept[0]`` is the
      *  canonical answer surfaced after a wrong attempt). */
     accept: string[];
-}
-
-/** Whether an image reference is a remote URL. Remote media breaks the
- *  offline-first guarantee, so it is not a supported image form. */
-export function isRemoteImageUrl(value: string): boolean {
-    return /^https?:\/\//i.test(value.trim());
 }
 
 /** Read the payload, or null when it is not shaped right (``image`` string +
