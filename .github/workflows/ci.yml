@@ -651,6 +651,19 @@ jobs:
         run: pip install pyyaml
       - name: Verify documentation for drift
         run: python3 scripts/verify_docs.py
+      # #3800 - every ```mermaid block in docs/help parses with the Mermaid the
+      # docs site serves (vendored, pinned by hash) and carries accTitle +
+      # accDescr. Mermaid needs a DOM, so happy-dom is installed at the
+      # version frontend/bun.lock pins; the script self-tests on every run.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Verify Mermaid diagrams in the help pages (#3800)
+        run: |
+          set -euo pipefail
+          version=$(grep -m1 -o '"happy-dom@[0-9.]*"' frontend/bun.lock | tr -d '"' | cut -d@ -f2)
+          npm install --no-save --silent --prefix "$RUNNER_TEMP/mermaid-gate" "happy-dom@${version}"
+          node scripts/verify_mermaid_blocks.mjs --happy-dom "$RUNNER_TEMP/mermaid-gate/node_modules/happy-dom"
       # #3253: the Docker-context rules are probed with synthesized paths
       # (a CI checkout has no node_modules to walk), so the check is worth
       # running on every PR, not only behind the Docker path filter.

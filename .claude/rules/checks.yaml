@@ -31,6 +31,13 @@
 #              does not SKIP. A guard file no step executes is a silent gate.
 
 checks:
+  - id: mermaid-diagrams
+    verifies: every ```mermaid block in docs/help parses with the Mermaid the docs site serves and carries accTitle + accDescr, and that vendored file is the pinned mermaid@11.17.2 release referenced by mkdocs.yml, so the site never falls back to a CDN (#3800); self-tests on every run so zero diagrams is not a pass for nothing
+    rule: none (mechanism; CONTRIBUTING.md "Diagrams in help pages")
+    status: active
+    wired_in: scripts/verify_mermaid_blocks.mjs; make verify-mermaid; .github/workflows/ci.yml docs-verification step (#3800)
+    probe: script_exists=scripts/verify_mermaid_blocks.mjs | make_target=verify-mermaid | ci_step=.github/workflows/ci.yml::docs-verification::Verify Mermaid diagrams in the help pages (#3800)::verify_mermaid_blocks.mjs
+
   - id: e2e-guard-tests
     verifies: the e2e harness never reuses a backend it did not start, keeps its own ports and data dir (#3316), and carries no committed test.only (#3439); run as a fixed step on every PR touching e2e TypeScript because the tests read their subject through read_text (#3342)
     rule: none (selection-gap class of lessons/ci-gates.md "PR-CI vs nightly gates", #1620/#1665)

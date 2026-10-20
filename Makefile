@@ -34,7 +34,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        roadmap-header-bump roadmap-header-bump-dry \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       ci ci-full pre-push rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       ci ci-full pre-push rule-change-log rule-change-log-check verify-docs verify-mermaid verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
@@ -883,6 +883,9 @@ fix-docs-umlauts: ## Trockenlauf: welche ASCII-Ersatzschreibungen der Doku sind 
 
 fix-docs-umlauts-apply: ## Korrektur schreiben - nur wenn der Trockenlauf keine gemischte Zeile meldet (#2311)
 	@cd backend && poetry run python ../scripts/fix_docs_umlauts.py --apply
+
+verify-mermaid: ## Mermaid diagrams in docs/help parse with the vendored script and carry accTitle/accDescr (#3800; needs frontend deps)
+	@node scripts/verify_mermaid_blocks.mjs
 
 verify-doc-refs: ## Doc refs (#2254): make targets, repo paths and constants named in docs must exist
 	@python3 scripts/verify_doc_refs.py
