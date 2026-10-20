@@ -64,13 +64,20 @@ techniques pour un ticket GitHub.
 
 ## Import inter-identités
 
-Tu n'as **pas** besoin d'être le même utilisateur sur le même
-appareil. Une sauvegarde peut être importée dans une
-**installation neuve** ou sous un **autre profil utilisateur**. La
-restauration rattache les données au profil actif et résout
-proprement au passage les références internes (clés étrangères),
-de sorte que ta progression reste cohérente - y compris la
-progression par étape des leçons, la série et les badges.
+Tu n'as **pas** besoin d'être le même utilisateur sur le même appareil.
+
+- **Sur un appareil vide**, le mieux est d'importer la sauvegarde dès le
+  départ (voir "Sauvegarde lors de la première connexion"). L'app reprend
+  alors le profil de la sauvegarde.
+- **Sur un appareil où tu as déjà créé un profil**, tu peux importer la
+  sauvegarde via Paramètres > Données. Si elle appartient à un autre
+  profil, la fenêtre de confirmation te le signale avant l'import. La
+  progression de la sauvegarde est alors rattachée à ton **profil actif**
+  et fusionnée avec la tienne : la progression des leçons, les erreurs, les
+  passages, les enregistrements, les projets et l'historique s'ajoutent, et
+  ta propre progression est conservée. Les XP, la série et les paramètres
+  sont repris de la sauvegarde. Ton profil actif reste actif ; aucun
+  deuxième profil n'est créé.
 
 ---
 

@@ -66,12 +66,18 @@ issue en GitHub.
 ## Importación entre identidades
 
 **No** tienes que ser el mismo usuario en el mismo dispositivo.
-Una copia de seguridad se puede importar en una **instalación
-nueva** o bajo un **perfil de usuario distinto**. La restauración
-asigna los datos al perfil activo y, al hacerlo, vuelve a resolver
-limpiamente las referencias internas (claves foráneas), de modo
-que tu progreso se mantenga coherente, incluidos el progreso por
-pasos de las lecciones, la racha y las insignias.
+
+- **En un dispositivo vacío**, lo mejor es importar la copia de seguridad
+  justo al empezar (ver "Copia de seguridad al primer inicio de sesión").
+  La app adopta entonces el perfil de la copia de seguridad.
+- **En un dispositivo en el que ya creaste un perfil**, puedes importar la
+  copia de seguridad en Ajustes > Datos. Si pertenece a otro perfil, el
+  diálogo de confirmación te lo dice antes de importar. El progreso de la
+  copia de seguridad se asigna entonces a tu **perfil activo** y se combina
+  con el tuyo: se añaden el progreso de las lecciones, los errores, las
+  rondas, las grabaciones, los proyectos y el historial, y tu propio
+  progreso se mantiene. La XP, la racha y los ajustes se toman de la copia
+  de seguridad. Tu perfil activo sigue activo; no se crea un segundo perfil.
 
 ---
 

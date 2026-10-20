@@ -61,12 +61,17 @@ GitHub Issue için teknik ayrıntıları içerir.
 
 ## Cross-Identity içe aktarma
 
-Aynı cihazda aynı kullanıcı olmana **gerek yoktur**. Bir yedek, bir
-**yeni kuruluma** ya da **başka bir kullanıcı profili** altına içe
-aktarılabilir. Geri yükleme, verileri aktif profile atar ve bu
-sırada dahili referansları (yabancı anahtarları) temiz biçimde
-yeniden çözer, böylece ilerlemen bütünlüğünü korur - ders adım
-ilerlemesi, Streak ve Badge'ler dahil.
+Aynı cihazda aynı kullanıcı olmana **gerek yoktur**.
+
+- **Boş bir cihazda** yedeği en iyisi hemen başlangıçta içe aktarırsın
+  (bkz. "İlk girişte yedek"). Uygulama o zaman yedekteki profili devralır.
+- **Daha önce profil oluşturduğun bir cihazda** yedeği Ayarlar > Veri
+  üzerinden içe aktarabilirsin. Yedek başka bir profile aitse, onay
+  penceresi bunu içe aktarmadan önce söyler. Yedekteki ilerleme o zaman
+  **aktif profiline** atanır ve seninkiyle birleştirilir: ders ilerlemesi,
+  hatalar, turlar, ses kayıtları, projeler ve geçmiş eklenir, kendi
+  ilerlemen korunur. XP, Streak ve ayarlar yedekten alınır. Aktif profilin
+  aktif kalır; ikinci bir profil oluşturulmaz.
 
 ---
 
