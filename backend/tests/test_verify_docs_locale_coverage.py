@@ -95,3 +95,17 @@ def test_the_repo_matches_its_declared_gaps() -> None:
     report = _Report()
     check_locale_coverage(report, REPO / "docs" / "help")
     assert report.fails == []
+
+
+def test_an_asset_directory_is_not_a_locale(tmp_path: Path) -> None:
+    # #3800 - the docs site serves its Mermaid script from docs/help/assets/;
+    # a directory that is not a language code holds no translated pages.
+    root = _tree(tmp_path, {"en": EN, "de": EN, "fr": EN}, {})
+    (root / "assets" / "javascripts").mkdir(parents=True)
+    (root / "assets" / "javascripts" / "mermaid-11.17.2.min.js").write_text("//", encoding="utf-8")
+    report = _Report()
+    check_locale_coverage(report, root)
+    assert report.fails == []
+    assert report.notes == [
+        "locale-coverage: 3 EN pages against 1 locales (fr); 0 missing page(s) in total"
+    ]
