@@ -3431,8 +3431,16 @@ Ort: Settings → Daten → Empfohlene Repositories.
       gestopptem Backend fortsetzen → statt der Begrüßung steht „Der bisherige
       Verlauf konnte nicht geladen werden. Es wurde nichts gelöscht." mit
       „Erneut versuchen"; nach dem Start des Backends lädt der Klick den Verlauf
-- [ ] TC-0732 Importierte Sitzung: die KI beginnt von selbst mit der ersten Frage
-      (kein User-Turn zuerst), der Chat startet leer
+- [ ] TC-0732 Importierte Sitzung, erstes Öffnen: die KI beginnt von selbst mit der
+      ersten Frage (kein User-Turn zuerst), der Chat startet leer
+- [ ] TC-0979 Importierte Sitzung neu laden, über „Sitzung fortsetzen" wieder öffnen und
+      die Sitzungs-URL in einem zweiten Tab öffnen (#3806): jedes Mal steht der
+      gespeicherte Verlauf da (die erste Frage der KI, davor keine Nutzer-Blase),
+      und die KI fragt nicht erneut. Die Entwicklertools (Netzwerk) zeigen keine
+      neue Chat-Anfrage: in der Browser-Version kein POST an den KI-Anbieter
+      (z. B. api.anthropic.com/v1/messages), in der Desktop-App kein POST
+      .../message/stream. Ein neuer Tab darf die Modellliste per GET laden; das
+      ist keine Chat-Anfrage
 - [ ] TC-0950 Auto-Loop in der Browser-Version (#3436): im Pages-Build (Dexie) eine
       Sitzung bis Schritt 7 führen; unter dem Chat erscheint ein Hinweis mit
       Monitor-Symbol: in der Desktop-App beginnt danach automatisch ein neuer
