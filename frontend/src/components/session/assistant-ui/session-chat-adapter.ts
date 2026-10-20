@@ -1,10 +1,10 @@
 /**
- * assistant-ui adoption — session-chat adapter (#1126).
+ * assistant-ui adoption: session-chat adapter (#1126).
  *
  * Bridges assistant-ui's ``ChatModelAdapter`` to the app's existing storage
  * abstraction: each run streams a reply through
- * ``getStorage().session.streamMessage(...)`` — the SAME path the current
- * SessionChat uses — so both storage modes (Dexie browser-direct / API) and
+ * ``getStorage().session.streamMessage(...)``, the SAME path the current
+ * SessionChat uses, so both storage modes (Dexie browser-direct / API) and
  * the #1122 imported-context rebuild are inherited for free.
  *
  * The adapter is the load-bearing seam of the migration: assistant-ui owns the
@@ -13,11 +13,12 @@
  *
  * Phase 3b part 2 (#1126): the adapter also serves an AI OPENING turn. When the
  * thread starts a run carrying ``runConfig.custom[OPENING_RUN_FLAG]`` (fired by
- * ``AssistantUiThread`` on an imported-session init via
- * ``thread.startRun({parentId: null})``), there is no user message — the adapter
- * sends a hidden opening trigger so the AI produces the first lesson question.
- * ``startRun`` appends NO user message, so this NEVER shows a user bubble; the
- * trigger reaches only the backend (which has the imported context via #1122).
+ * ``AssistantUiThread`` via ``thread.startRun({parentId: null})`` when an
+ * imported session's stored conversation holds no turn yet, #3806), there is
+ * no user message; the adapter sends a hidden opening trigger so the AI
+ * produces the first lesson question. ``startRun`` appends NO user message, so
+ * this NEVER shows a user bubble; the trigger reaches only the backend (which
+ * has the imported context via #1122).
  */
 
 import type {ChatModelAdapter, ChatModelRunOptions, ThreadMessage} from "@assistant-ui/react";
@@ -29,7 +30,7 @@ import type {SessionMessageExchangeResult} from "../../../types";
  * Domain-side callbacks the thread wires into the adapter (#1126 Phase 4a).
  * ``onExchange`` receives the full ``SessionMessageExchangeResult`` from each
  * completed turn so the session shell can advance the cycle step, surface the
- * step-evaluation verdict, and fire the auto-loop / step-advance toasts — the
+ * step-evaluation verdict, and fire the auto-loop / step-advance toasts, the
  * same domain handling the legacy SessionChat path does via
  * ``useSessionMessaging.handleSend``. Without it, the assistant thread would
  * stream text but silently drop the learning mechanics.
@@ -56,11 +57,16 @@ export const OPENING_RUN_FLAG = "sessionOpening";
 /**
  * Hidden backend trigger for the opening turn. It is sent to ``streamMessage``
  * as the user turn but is NEVER rendered (``startRun`` adds no user message), so
- * it is a backend directive, not UI chrome — hence not an i18n catalog string.
+ * it is a backend directive, not UI chrome, hence not an i18n catalog string.
  * The AI's visible reply language is governed server-side (the #1122 context +
  * the reply-language directive), independent of this instruction's wording.
+ *
+ * #3806: both storage modes persist it as a user turn before the provider
+ * call, so it is also the session's record that the opening went out;
+ * ``session-history`` reads it by this exact text. Rewording it leaves stored
+ * sessions with the old text, which a resumed thread would then show.
  */
-const OPENING_TRIGGER =
+export const OPENING_TRIGGER =
     "Begin this learning session now: ask the learner your first question " +
     "based on the lesson and imported-chat context. Do not summarize; open " +
     "with the next question.";
@@ -168,7 +174,7 @@ export function createSessionChatAdapter(
 
             // Feed the completed turn to the session shell so it advances the
             // cycle step, surfaces the step-evaluation verdict, and fires the
-            // auto-loop / step-advance toasts — parity with the legacy path.
+            // auto-loop / step-advance toasts, parity with the legacy path.
             if (exchange) callbacks?.onExchange?.(exchange);
         },
     };
