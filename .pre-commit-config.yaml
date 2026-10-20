@@ -13,6 +13,13 @@
 # gone with their scripts; re-introduce alongside the artifacts they
 # guard once the new domain has them.
 
+# #3800 - the vendored Mermaid release the docs site serves
+# (docs/help/assets/javascripts/mermaid-<version>.min.js, ~3.6 MB, minified
+# third-party code) is excluded from every hook: whitespace and end-of-file
+# fixers would rewrite it, and scripts/verify_mermaid_blocks.mjs pins it by
+# hash to the npm release.
+exclude: ^docs/help/assets/javascripts/mermaid-[0-9.]+\.min\.js$
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0

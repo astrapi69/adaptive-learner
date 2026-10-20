@@ -546,6 +546,13 @@ plugins:
             Datenschutzerklärung: プライバシーポリシー
             Changelog: 変更履歴
         # AUTO-GENERATED-LANGUAGES-END
+# #3800 - Mermaid is served from this site, a pinned copy of the npm release
+# (mermaid@11.17.2, dist/mermaid.min.js, checked by
+# scripts/verify_mermaid_blocks.mjs). With it loaded, Material never falls
+# back to its CDN, so the docs site gains no foreign host.
+extra_javascript:
+  - assets/javascripts/mermaid-11.17.2.min.js
+
 markdown_extensions:
   - admonition
   - attr_list
@@ -555,7 +562,13 @@ markdown_extensions:
   - toc:
       permalink: true
   - pymdownx.details
-  - pymdownx.superfences
+  # #3800 - ```mermaid blocks become <pre class="mermaid">, which Material
+  # renders with the Mermaid loaded through extra_javascript below.
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite

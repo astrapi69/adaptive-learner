@@ -46,3 +46,9 @@ plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/s
 # Datenmodell zerstreuen, nicht die Kohaesion verbessern. (Pfad seit dem
 # #868 storage-Split unter dexie/; #1801 korrigierte den stale Eintrag.)
 frontend/src/storage/dexie/db-rows.ts
+
+# #3800 - die Mermaid-Bibliothek der Doku-Seite, unverändert aus dem npm-Release
+# mermaid@11.17.2 (dist/mermaid.min.js), selbst ausgeliefert statt vom CDN.
+# Fremder Code, minifiziert; nichts daran wird hier gepflegt oder gesplittet.
+# scripts/verify_mermaid_blocks.mjs prüft, dass sie byte-gleich bleibt.
+docs/help/assets/javascripts/mermaid-11.17.2.min.js

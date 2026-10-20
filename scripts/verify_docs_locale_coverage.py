@@ -19,12 +19,14 @@ A missing EN tree, no locale directories, or an unreadable list is a FAIL
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Protocol
 
 CHECK = "locale-coverage"
 AUTHORED = ("en", "de")
 GAPS_FILE = ".locale-gaps.json"
+LOCALE_DIR = re.compile(r"[a-z]{2}(-[a-z]{2,4})?")
 
 
 class _Report(Protocol):
@@ -37,13 +39,22 @@ def _slugs(tree: Path) -> set[str]:
     return {p.relative_to(tree).with_suffix("").as_posix() for p in tree.rglob("*.md")}
 
 
+def help_locales(help_root: Path) -> list[str]:
+    """Every language directory under ``docs/help``, EN and DE included.
+
+    A language directory is named by a language code (``fr``, ``pt-br``);
+    anything else under ``docs/help`` is site material, such as the vendored
+    Mermaid script in ``assets/`` (#3800), and holds no pages. Every check
+    that walks the help tree per locale reads the locales here.
+    """
+    return sorted(
+        p.name for p in help_root.iterdir() if p.is_dir() and LOCALE_DIR.fullmatch(p.name)
+    )
+
+
 def locales(help_root: Path) -> list[str]:
     """The translated help trees: every language directory except EN and DE."""
-    return sorted(
-        p.name
-        for p in help_root.iterdir()
-        if p.is_dir() and not p.name.startswith(("_", ".")) and p.name not in AUTHORED
-    )
+    return [name for name in help_locales(help_root) if name not in AUTHORED]
 
 
 def check_locale_coverage(report: _Report, help_root: Path) -> None:

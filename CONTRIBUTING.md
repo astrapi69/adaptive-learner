@@ -270,6 +270,24 @@ automated gate (run via `make verify-i18n-scripts` and the
 `i18n-script-sanity` pre-commit hook); the docs-umlaut ratchet
 (`make verify-docs-hygiene`) guards German prose in `docs/`.
 
+## Diagrams in help pages
+
+The help pages under `docs/help/` are published on the MkDocs site only (the app's help drawer shows the glossary from `backend/config/help`). They may carry [Mermaid](https://mermaid.js.org/) diagrams in a fenced block:
+
+````markdown
+```mermaid
+flowchart LR
+  accTitle: Restoring a backup
+  accDescr: The backup's progress flows into the active profile.
+  B[Backup] --> P[Active profile]
+```
+````
+
+- Every diagram needs `accTitle` and `accDescr`: they are what a screen reader reads and what a learner gets when the diagram does not render.
+- Write the labels in the page's language; each language version carries its own diagram.
+- The site serves Mermaid itself (`docs/help/assets/javascripts/mermaid-<version>.min.js`, loaded through `extra_javascript` in `mkdocs.yml`), never from a CDN. Upgrading means replacing that file with the new release's `dist/mermaid.min.js` and updating the version and hash in `scripts/verify_mermaid_blocks.mjs` and the file name in `mkdocs.yml`.
+- `make verify-mermaid` (and the Docs drift verifier in CI) parses every block with exactly that file and fails on a broken diagram or a missing `accTitle`/`accDescr`.
+
 ## Commit Conventions
 
 Adaptive Learner uses
