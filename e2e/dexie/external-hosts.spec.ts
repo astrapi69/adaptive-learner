@@ -17,7 +17,13 @@
  * second test adds a mocked AI reply with a Markdown image. The probe host
  * and img.youtube.com are answered locally, so a regression shows up here
  * without reaching a third party. All GitHub content is answered locally
- * too: the spec needs no network.
+ * too: the spec needs no network. No third-party request may carry a
+ * Referer (the page's referrer policy).
+ *
+ * The lesson also renders an image the set ships as an asset (a picture
+ * choice): it must keep loading under the page's policy. A third test
+ * probes that policy directly: another host's image and media are refused
+ * before any request, the content host, data: and blob: images load.
  *
  * Modelled on bibliogon's e2e/static-smoke/external-hosts.spec.ts.
  */
@@ -51,6 +57,7 @@ const OWNER_REPO = "probe-owner/privacy-probe";
 const SET_ID = "privacy-probe";
 const SET_PATH = "sets/de/privacy-probe";
 const LESSON_FILE = "01-probe.json";
+const ASSET_FILE = "img/probe.png";
 const FAKE_KEY = "sk-ant-" + "a".repeat(95);
 
 const ROOT_MANIFEST = `
@@ -65,6 +72,9 @@ sets:
     version: "1.0.0"
     lesson_count: 1
     path: ${SET_PATH}
+    assets:
+      - path: ${ASSET_FILE}
+        size_kb: 1
 `;
 
 const SET_MANIFEST = `
@@ -104,6 +114,20 @@ const LESSON = JSON.stringify({
                 card_ids: ["c1"],
                 options: [{text: "one", correct: true}, {text: "two"}],
                 explanation: `Erklärung.\n\n![Erklärbild](https://${PROBE_HOST}/pixel.png?from=explanation)`,
+            },
+        },
+        {
+            id: "p1",
+            type: "exercise",
+            exercise: {
+                id: "p1",
+                type: "picture_choice",
+                prompt: "Welches Bild zeigt eins?",
+                card_ids: ["c1"],
+                images: [
+                    {src: `assets/${ASSET_FILE}`, label: "eins", is_correct: "true"},
+                    {src: `assets/${ASSET_FILE}`, label: "zwei"},
+                ],
             },
         },
     ],
@@ -166,18 +190,33 @@ interface Capture {
     csp: string[];
     /** Same-origin scripts or stylesheets that 404 (the preview is broken). */
     broken: string[];
+    /** Third-party requests that carried a Referer header. */
+    referers: string[];
+    /** Requests the page's policy refused: recorded as a request by the
+     *  browser, failed with "csp", never sent (measured: never routed). */
+    refusedByPolicy: string[];
 }
 
 /** Record every request of the context against ``allowed``. */
 function capture(context: BrowserContext, allowed: Record<string, string>): Capture {
-    const result: Capture = {byHost: new Map(), external: [], csp: [], broken: []};
+    const result: Capture = {
+        byHost: new Map(),
+        external: [],
+        csp: [],
+        broken: [],
+        referers: [],
+        refusedByPolicy: [],
+    };
     context.on("request", (request) => {
         const url = new URL(request.url());
         if (url.protocol === "data:" || url.protocol === "blob:") return;
         const urls = result.byHost.get(url.hostname) ?? [];
         urls.push(url.href);
         result.byHost.set(url.hostname, urls);
-        if (LOCAL_HOSTS.has(url.hostname) || url.hostname in allowed) return;
+        if (LOCAL_HOSTS.has(url.hostname)) return;
+        const referer = request.headers()["referer"];
+        if (referer) result.referers.push(`${url.origin}${url.pathname} <- ${referer}`);
+        if (url.hostname in allowed) return;
         result.external.push(`${request.resourceType()} ${url.origin}${url.pathname}${url.search}`);
     });
     context.on("response", (response) => {
@@ -186,6 +225,9 @@ function capture(context: BrowserContext, allowed: Record<string, string>): Capt
         if (LOCAL_HOSTS.has(url.hostname) && response.status() === 404 && (kind === "script" || kind === "stylesheet")) {
             result.broken.push(`${response.status()} ${url.pathname}`);
         }
+    });
+    context.on("requestfailed", (request) => {
+        if (request.failure()?.errorText === "csp") result.refusedByPolicy.push(request.url());
     });
     context.on("page", (page) => watchCsp(page, result));
     return result;
@@ -238,6 +280,9 @@ function fulfillProbeRepo(route: Route, url: string) {
     if (url.endsWith(`/${SET_PATH}/manifest.yaml`)) return route.fulfill({status: 200, body: SET_MANIFEST});
     if (url.endsWith(`/${LESSON_FILE}`)) {
         return route.fulfill({status: 200, contentType: "application/json", body: LESSON});
+    }
+    if (url.endsWith(`/${SET_PATH}/assets/${ASSET_FILE}`)) {
+        return route.fulfill({status: 200, contentType: "image/png", body: PNG});
     }
     return route.fulfill({status: 404, body: ""});
 }
@@ -323,7 +368,19 @@ async function advance(page: Page): Promise<void> {
     await waitForStepAdvance(page, before);
 }
 
-/** Theory, a wrong answer that opens the explanation, the summary. */
+/** The set's own image asset renders under the page's policy: useAsset
+ *  hands it out as an object URL, and it loads. */
+async function expectAssetImage(page: Page): Promise<void> {
+    const image = page.getByTestId("picture-grid").locator("img").first();
+    await expect(image).toHaveAttribute("src", /^blob:/, {timeout: 15_000});
+    await image.scrollIntoViewIfNeeded();
+    await expect
+        .poll(() => image.evaluate((img: HTMLImageElement) => (img.complete ? img.naturalWidth : 0)))
+        .toBeGreaterThan(0);
+}
+
+/** Theory, a wrong answer that opens the explanation, a picture choice
+ *  with the set's asset, the summary. */
 async function playProbeLesson(page: Page): Promise<void> {
     await expectImageAsLink(page, "lesson-theory-body", "Probebild", "theory");
     await advance(page);
@@ -331,6 +388,10 @@ async function playProbeLesson(page: Page): Promise<void> {
     await page.getByTestId("lesson-check").click();
     await expect(page.getByTestId("exercise-explanation")).toHaveAttribute("data-state", "open");
     await expectImageAsLink(page, "exercise-explanation-body", "Erklärbild", "explanation");
+    await advance(page);
+    await expectAssetImage(page);
+    await page.locator('[data-testid^="picture-choice-"][data-correct="true"]').first().click();
+    await page.getByTestId("lesson-check").click();
     await advance(page);
     await expect(page.getByTestId("lesson-summary")).toBeVisible({timeout: 15_000});
     // Two lesson resources plus the domain video from media.yaml.
@@ -365,6 +426,53 @@ function expectOnlyAllowedHosts(captured: Capture, ownRequests: {host: string; c
         "third-party requests: self-host the resource, or allowlist the host with a reason",
     ).toEqual([]);
     expect(captured.csp, "Content-Security-Policy violations").toEqual([]);
+    expect(captured.referers, "third-party requests carrying a Referer").toEqual([]);
+}
+
+/** What the page's policy did with one image or media source. */
+interface PolicyProbe {
+    foreignImage: boolean;
+    contentImage: boolean;
+    dataImage: boolean;
+    blobImage: boolean;
+    violations: string[];
+}
+
+/** Load test sources inside the page and collect its policy's verdicts. */
+async function probePolicy(page: Page, contentImageUrl: string): Promise<PolicyProbe> {
+    return page.evaluate(
+        async ({foreign, content, pngBase64}) => {
+            const violations: string[] = [];
+            document.addEventListener("securitypolicyviolation", (event) => {
+                violations.push(`${event.effectiveDirective} ${event.blockedURI}`);
+            });
+            const loads = (src: string) =>
+                new Promise<boolean>((resolve) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img.naturalWidth > 0);
+                    img.onerror = () => resolve(false);
+                    img.src = src;
+                });
+            const bytes = Uint8Array.from(atob(pngBase64), (char) => char.charCodeAt(0));
+            const blobUrl = URL.createObjectURL(new Blob([bytes], {type: "image/png"}));
+            const result = {
+                foreignImage: await loads(`${foreign}/policy.png`),
+                contentImage: await loads(content),
+                dataImage: await loads(`data:image/png;base64,${pngBase64}`),
+                blobImage: await loads(blobUrl),
+                violations,
+            };
+            const audio = new Audio();
+            await new Promise<void>((resolve) => {
+                audio.onerror = () => resolve();
+                setTimeout(resolve, 2_000);
+                audio.src = `${foreign}/policy.mp3`;
+            });
+            await new Promise((resolve) => setTimeout(resolve, 200));
+            return result;
+        },
+        {foreign: `https://${PROBE_HOST}`, content: contentImageUrl, pngBase64: PNG.toString("base64")},
+    );
 }
 
 test.describe("#3803 - the static build contacts no unlisted host", () => {
@@ -411,6 +519,33 @@ test.describe("#3803 - the static build contacts no unlisted host", () => {
         await page.waitForLoadState("networkidle", {timeout: 10_000}).catch(() => undefined);
 
         expectOnlyAllowedHosts(captured, [{host: "api.anthropic.com", contains: "/v1/messages"}]);
+    });
+
+    test("the page's own policy refuses another host's image and media", async ({page, context}) => {
+        const captured = capture(context, ALLOWED_HOSTS);
+        await mockContent(context);
+        const contentImage = `https://raw.githubusercontent.com/${OWNER_REPO}/main/cover.png`;
+        await context.route(contentImage, (route) =>
+            route.fulfill({status: 200, contentType: "image/png", body: PNG}),
+        );
+
+        await visit(page, "/");
+        const probe = await probePolicy(page, contentImage);
+
+        expect(probe.foreignImage, "another host's image loaded").toBe(false);
+        expect(probe.contentImage, "the content host's image was refused").toBe(true);
+        expect(probe.dataImage, "an embedded image was refused").toBe(true);
+        expect(probe.blobImage, "an object URL (a downloaded asset) was refused").toBe(true);
+        expect(probe.violations.sort()).toEqual([
+            `img-src https://${PROBE_HOST}/policy.png`,
+            `media-src https://${PROBE_HOST}/policy.mp3`,
+        ]);
+        const sent = (captured.byHost.get(PROBE_HOST) ?? []).filter(
+            (url) => !captured.refusedByPolicy.includes(url),
+        );
+        expect(sent, "another host was contacted despite the policy").toEqual([]);
+        expect(captured.referers, "third-party requests carrying a Referer").toEqual([]);
+        expect(captured.byHost.get("raw.githubusercontent.com") ?? []).toContain(contentImage);
     });
 
     test("every allowlisted host carries a written reason", () => {
