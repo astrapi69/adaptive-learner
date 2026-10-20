@@ -64,13 +64,18 @@ GitHub.
 
 ## Importação entre identidades
 
-**Não** tens de ser o mesmo utilizador no mesmo dispositivo. Um
-backup pode ser importado numa **instalação nova** ou sob um
-**perfil de utilizador diferente**. O restauro atribui os dados ao
-perfil ativo e, ao fazê-lo, resolve corretamente de novo as
-referências internas (chaves estrangeiras), para que o teu progresso
-permaneça coerente - incluindo o progresso de passos das lições,
-Streak e Badges.
+**Não** tens de ser o mesmo utilizador no mesmo dispositivo.
+
+- **Num dispositivo vazio**, o melhor é importar o backup logo no início
+  (ver "Backup no primeiro login"). A app assume então o perfil do backup.
+- **Num dispositivo onde já criaste um perfil**, podes importar o backup em
+  Definições > Dados. Se pertencer a outro perfil, o diálogo de confirmação
+  diz-to antes da importação. O progresso do backup é então atribuído ao
+  teu **perfil ativo** e combinado com o teu: o progresso das lições, os
+  erros, as rodadas, as gravações, os projetos e o histórico são
+  acrescentados, e o teu próprio progresso mantém-se. O XP, o Streak e as
+  definições são retirados do backup. O teu perfil ativo continua ativo;
+  não é criado um segundo perfil.
 
 ---
 
