@@ -41,8 +41,10 @@ MAIN = "main.html"
 
 _THEME_KEY = re.compile(r"theme:\s*(?:#.*)?")
 _SETTING = re.compile(r"([A-Za-z_][\w-]*):\s*(.*?)\s*(?:#.*)?")
-# PyYAML, which MkDocs uses, reads YAML 1.1: each of these is False.
-_YAML_FALSE = re.compile(r"false|no|off", re.IGNORECASE)
+# PyYAML, which MkDocs uses, reads YAML 1.1: each of these is False, and no
+# other spelling is. Its resolver lists them case by case, so a mixed-case
+# "fAlSe" stays a string, and with a string Material loads Google Fonts.
+_YAML_FALSE = re.compile(r"false|False|FALSE|no|No|NO|off|Off|OFF")
 _WIDGET = re.compile(r"""data-md-component\s*=\s*["']?source\b""")
 _REPO_LINK = re.compile(r"""href=["']\{\{\s*config\.repo_url\s*\}\}["']""")
 _EXTENDS_BASE = re.compile(r"""\{%-?\s*extends\s+["']base\.html["']\s*-?%\}""")
