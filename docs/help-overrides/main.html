@@ -1,0 +1,25 @@
+{#-
+  #3802: Material for MkDocs' bundle loads a ResizeObserver polyfill from
+  https://unpkg.com/resize-observer-polyfill when the browser has no
+  ResizeObserver (Safari before 13.1, Chrome before 64, Firefox before 69).
+  That request would hand the visitor's IP address to a third party. The
+  libs block renders in the head, before the bundle, and gives such a
+  browser a stand-in that observes nothing: the theme then reads each
+  element's size when it sets the element up and does not follow later
+  size changes, and nothing is fetched. Written in ES5, so the stand-in
+  itself runs in those browsers. Pinned by the docs-third-party check of
+  scripts/verify_docs.py.
+-#}
+{% extends "base.html" %}
+{% block libs %}
+  {{ super() }}
+  <script>
+    if (typeof window.ResizeObserver === "undefined") {
+      var ResizeObserverStandIn = function () {};
+      ResizeObserverStandIn.prototype.observe = function () {};
+      ResizeObserverStandIn.prototype.unobserve = function () {};
+      ResizeObserverStandIn.prototype.disconnect = function () {};
+      window.ResizeObserver = ResizeObserverStandIn;
+    }
+  </script>
+{% endblock %}

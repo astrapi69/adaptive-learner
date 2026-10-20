@@ -31,6 +31,13 @@
 #              does not SKIP. A guard file no step executes is a silent gate.
 
 checks:
+  - id: docs-third-party
+    verifies: the docs site settings that keep every page free of third-party requests stay in place - mkdocs.yml theme.font false (no Google Fonts), theme.custom_dir docs/help-overrides, its partials/source.html without data-md-component="source" (no api.github.com widget fetch, the repository link stays) and its main.html libs block with a complete ResizeObserver stand-in (no unpkg.com polyfill); the scan of the built site cannot see that polyfill loader, it is JavaScript in Material's bundle (#3802)
+    rule: none (owner decision of 2026-10-20 in #3802, nothing on the docs site contacts a third party)
+    status: active
+    wired_in: scripts/verify_docs_third_party.py; make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_third_party.py
+    probe: script_exists=backend/tests/test_verify_docs_third_party.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
   - id: mermaid-diagrams
     verifies: every ```mermaid block in docs/help parses with the Mermaid the docs site serves and carries accTitle + accDescr, and that vendored file is the pinned mermaid@11.17.2 release referenced by mkdocs.yml, so the site never falls back to a CDN (#3800); self-tests on every run so zero diagrams is not a pass for nothing
     rule: none (mechanism; CONTRIBUTING.md "Diagrams in help pages")

@@ -1,0 +1,18 @@
+{#-
+  Material for MkDocs 9.7.7's partials/source.html without the
+  data-md-component="source" attribute (#3802). With that attribute the
+  theme's script mounts the repository widget, which asks api.github.com
+  for the latest release, stars and forks on page load. Without it this is
+  a plain link to repo_url, in the header and in the navigation drawer; the
+  edit buttons, which read repo_url and edit_uri, stay as they are.
+  Pinned by the docs-third-party check of scripts/verify_docs.py.
+-#}
+<a href="{{ config.repo_url }}" title="{{ lang.t('source') }}" class="md-source">
+  <div class="md-source__icon md-icon">
+    {% set icon = config.theme.icon.repo or "fontawesome/brands/git-alt" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </div>
+  <div class="md-source__repository">
+    {{ config.repo_name }}
+  </div>
+</a>

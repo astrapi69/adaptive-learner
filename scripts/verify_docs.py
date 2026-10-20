@@ -169,6 +169,7 @@ from verify_docs_i18n import check_i18n  # noqa: E402,F401
 from verify_docs_locale_coverage import check_locale_coverage  # noqa: E402
 from verify_docs_strong_emphasis import check_strong_emphasis  # noqa: E402
 from verify_docs_test_counts import check_test_counts  # noqa: E402,F401
+from verify_docs_third_party import check_docs_third_party  # noqa: E402
 from version_display_sites import VERSION_DISPLAY_SITES  # noqa: E402
 
 VERSION_TARGETS = [(rel, pattern, label, True) for rel, pattern, label in VERSION_DISPLAY_SITES] + [
@@ -765,6 +766,7 @@ CHECKS = {
     "stale-dates": lambda r, o: check_stale_dates(r),
     "themes": lambda r, o: check_themes(r),
     "mkdocs": lambda r, o: check_mkdocs(r),
+    "docs-third-party": lambda r, o: check_docs_third_party(r, REPO),
     "help-index-versions": lambda r, o: check_help_index_versions(r),
     "help-prose-versions": lambda r, o: check_help_prose_versions(r),
     "help-changelog": lambda r, o: check_help_changelog(r),
