@@ -3607,9 +3607,10 @@ Stimme gilt immer.
       vorlesen lassen: es liest eine Systemstimme (zum Vergleich in der
       Liste kurz "Google Deutsch" wählen: die beiden klingen hörbar
       verschieden)
-- [ ] TC-0980 Browser ganz schließen, neu öffnen, die Lektion direkt vom Dashboard
-      aus öffnen, ohne vorher die Einstellungen zu besuchen, und R drücken:
-      auch dann liest die Systemstimme, nicht "Google Deutsch"
+- [ ] TC-0980 "Automatisch vorlesen" eingeschaltet: Browser ganz schließen, neu
+      öffnen, die Lektion direkt vom Dashboard aus öffnen, ohne vorher die
+      Einstellungen zu besuchen: schon den ersten Schritt liest die
+      Systemstimme, nicht "Google Deutsch", und R liest danach ebenso mit ihr
 - [ ] TC-0981 In der Liste "Google Deutsch" wählen: Knopf, Taste R und "Alle
       vorlesen" lesen mit "Google Deutsch" (die eigene Wahl gilt, auch für
       eine Online-Stimme)

@@ -3360,9 +3360,10 @@ always applies.
       key, with "Read all" and with "Auto read-aloud" on: a system voice
       reads (to compare, briefly pick "Google Deutsch" in the list: the two
       sound clearly different)
-- [ ] TC-0980 Close the browser completely, reopen it, open the lesson straight
-      from the dashboard, without visiting Settings first, and press R: a
-      system voice reads then too, not "Google Deutsch"
+- [ ] TC-0980 "Auto read-aloud" on: close the browser completely, reopen it, open
+      the lesson straight from the dashboard, without visiting Settings
+      first: the very first step is read by a system voice, not "Google
+      Deutsch", and R then reads with it as well
 - [ ] TC-0981 Pick "Google Deutsch" in the list: button, R key and "Read all" read
       with "Google Deutsch" (your own choice applies, also for an online
       voice)
