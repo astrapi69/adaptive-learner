@@ -17,7 +17,11 @@ import pytest
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts"))
 
-from verify_docs_locale_coverage import GAPS_FILE, check_locale_coverage  # noqa: E402
+from verify_docs_locale_coverage import (  # noqa: E402
+    GAPS_FILE,
+    check_locale_coverage,
+    help_locales,
+)
 
 
 class _Report:
@@ -109,3 +113,12 @@ def test_an_asset_directory_is_not_a_locale(tmp_path: Path) -> None:
     assert report.notes == [
         "locale-coverage: 3 EN pages against 1 locales (fr); 0 missing page(s) in total"
     ]
+
+
+def test_help_locales_are_the_language_directories(tmp_path: Path) -> None:
+    # #3800 - every check that walks docs/help per locale reads the locales
+    # here, so a site directory such as assets/ never becomes a locale.
+    root = _tree(tmp_path, {"en": EN, "de": EN, "pt-br": EN}, {})
+    (root / "assets" / "javascripts").mkdir(parents=True)
+    (root / "_partials").mkdir()
+    assert help_locales(root) == ["de", "en", "pt-br"]
