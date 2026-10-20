@@ -65,7 +65,18 @@ def test_spa_page_is_allowed_to_load_itself(spa_app) -> None:
     assert "worker-src 'self'" in csp
     # The app's own browser-side calls, each verified in source (#2197):
     assert "connect-src 'self' https://api.github.com https://raw.githubusercontent.com" in csp
-    assert "https://img.youtube.com" in csp
+
+
+def test_spa_images_come_only_from_the_app_and_its_content_host(spa_app) -> None:
+    """No third-party image host (#3803): a YouTube resource card shows a
+    local placeholder since #3803, so img.youtube.com left the policy. What
+    stays is the app itself, embedded and object URLs (downloaded set assets
+    render as blob: URLs) and the content repositories' raw host (book
+    covers)."""
+    client = TestClient(spa_app)
+    csp = client.get("/").headers["content-security-policy"]
+    assert "img-src 'self' data: blob: https://raw.githubusercontent.com;" in csp
+    assert "img.youtube.com" not in csp
 
 
 def test_inline_scripts_are_hash_allowed_not_unsafe_inline(spa_app) -> None:
