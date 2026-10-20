@@ -218,8 +218,12 @@ cartão **Voz**:
 - **Reproduzir respostas da IA automaticamente** - fala cada resposta da
   IA automaticamente (padrão DESLIGADO - áudio surpresa raramente é o
   que quer).
-- **Voz** - a voz de leitura; o padrão escolhe a correspondência mais
-  próxima para o idioma do seu projeto.
+- **Voz** - a voz de leitura. O padrão usa, para o idioma do seu
+  projeto, uma voz que funciona no seu dispositivo, e uma voz online só
+  quando o dispositivo não tem nenhuma para esse idioma: uma voz online
+  envia o texto lido ao seu fornecedor (as vozes Google do Chrome, à
+  Google). Uma voz que escolha aqui é sempre usada enquanto o seu
+  navegador a oferecer, mesmo uma voz online.
 - **Velocidade** e **Tom** - controlos deslizantes de 0,5 a 2.
 - **Mostrar botão do microfone** - adiciona um botão de microfone à
   entrada da Sessão que capta a fala e preenche a área de texto com

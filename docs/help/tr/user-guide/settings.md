@@ -205,8 +205,12 @@ içerir:
 - **YZ yanıtlarını otomatik oynat** - her yapay zeka yanıtını
   otomatik olarak seslendirir (varsayılan KAPALI - sürpriz ses nadiren
   istenen şeydir).
-- **Konuşma sesi** - okumada kullanılan ses; varsayılan, proje dilin
-  için en yakın eşleşmeyi seçer.
+- **Konuşma sesi** - okumada kullanılan ses. Varsayılan, proje dilin
+  için cihazında çalışan bir ses seçer; çevrimiçi bir sesi yalnızca
+  cihazında bu dil için hiç ses yoksa kullanır: çevrimiçi bir ses,
+  okunan metni sağlayıcısına gönderir (Chrome'daki Google sesleri
+  Google'a). Burada kendin seçtiğin bir ses, tarayıcın onu sunduğu
+  sürece, çevrimiçi bir ses olsa bile her zaman kullanılır.
 - **Hız** ve **Perde** - 0,5 ile 2 arasında kaydırıcılar.
 - **Mikrofon düğmesini göster** - Oturum giriş alanına konuşmayı
   yakalayan ve sen göndermeden önce metin alanını ara dökümlerle

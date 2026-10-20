@@ -196,8 +196,12 @@ the **Voice** card:
   and Assessment results that reads them aloud.
 - **Auto-play AI responses** - speaks every AI reply automatically
   (default OFF - surprise audio is rarely what you want).
-- **Voice** - the voice to read with; the default picks the closest
-  match for your project language.
+- **Voice** - the voice to read with. The default takes a voice that
+  runs on your device for your project language, and an online voice
+  only when your device has none for that language: an online voice
+  sends the text being read to its provider (Chrome's Google voices
+  send it to Google). A voice you choose here is always used while
+  your browser offers it, online voices included.
 - **Rate** and **Pitch** - sliders from 0.5 to 2.
 - **Show microphone button** - adds a microphone button to the Session
   input that captures speech and fills the textarea with interim
