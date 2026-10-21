@@ -143,6 +143,21 @@ describe("AiValidationDialog", () => {
     expect(call.source_language).toBe("de");
   });
 
+  it("says what the check sends and links the privacy policy before the run (#3812)", async () => {
+    render(
+      <AiValidationDialog entry={ENTRY} activeProvider="openai" onClose={() => {}} />,
+    );
+    await screen.findByTestId("ai-validation-estimate");
+    const note = screen.getByTestId("ai-validation-privacy");
+    expect(note).toHaveTextContent("Only your cards are sent");
+    expect(note).toHaveTextContent("IP address");
+    expect(note).not.toHaveTextContent(/no personal data/i);
+    expect(screen.getByTestId("ai-validation-privacy-link").getAttribute("href")).toBe(
+      "https://astrapi69.github.io/adaptive-learner/docs/en/legal/privacy/",
+    );
+    expect(aiValidateCardsMock).not.toHaveBeenCalled();
+  });
+
   it("persists the report to the cache after a run", async () => {
     aiValidateCardsMock.mockResolvedValue({
       results: [{ card_id: "c1", ok: true, issues: [] }],

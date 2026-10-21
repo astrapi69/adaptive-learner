@@ -46,7 +46,7 @@ checks:
     probe: script_exists=backend/tests/test_external_hosts_guard.py | make_target=verify-docs-external-hosts | ci_step=.github/workflows/ci.yml::docs-verification::Docs site fetches nothing from a third-party host (#3802)::verify-docs-external-hosts | ci_step=.github/workflows/deploy-gh-pages.yml::build::Docs site fetches nothing from a third-party host (#3802)::check_external_hosts.py
 
   - id: mermaid-diagrams
-    verifies: every ```mermaid block in docs/help parses with the Mermaid the docs site serves and carries accTitle + accDescr, and that vendored file is the pinned mermaid@11.17.2 release referenced by mkdocs.yml, so the site never falls back to a CDN (#3800); self-tests on every run so zero diagrams is not a pass for nothing
+    verifies: every ```mermaid block in docs/help parses with the Mermaid the docs site serves and carries accTitle + accDescr, and that vendored file is the pinned mermaid@11.17.2 release referenced by mkdocs.yml, so the site never falls back to a CDN (#3800), with its pinned notices file carrying the licences of the 75 packages the bundle contains (#3813); self-tests on every run so zero diagrams is not a pass for nothing
     rule: none (mechanism; CONTRIBUTING.md "Diagrams in help pages")
     status: active
     wired_in: scripts/verify_mermaid_blocks.mjs; make verify-mermaid; .github/workflows/ci.yml docs-verification step (#3800)
@@ -163,6 +163,13 @@ checks:
     status: active
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_help_terms.py
     probe: script_exists=backend/tests/test_verify_docs_help_terms.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
+  - id: privacy-promises
+    verifies: no catalog value (backend YAML, generated frontend JSON), help glossary, help page, other current doc, root Markdown file or UI t() fallback promises that no personal data is sent, in any of the 11 catalog languages; a seeded probe per language must be found and a legitimate sentence per language must pass; historical records (docs/explorations/, docs/review/, docs/journal/, docs/roadmap-archive/, help changelog.md) are exempt; a required group with no file FAILs (#3812)
+    rule: none (owner decision 2026-10-20 in #3812 - the app states what leaves the device instead of promising what does not)
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_privacy_promises.py
+    probe: script_exists=backend/tests/test_verify_docs_privacy_promises.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
   - id: i18n-one-term-per-concept
     verifies: no catalog value uses a term rejected for its concept (de Session/Streak/Strähne, fr séance, ja ストリーク, ko 스트릭); frontend/src/data/i18n-terms.json is where the term decisions live, read by this test and by help-terms (#3433)

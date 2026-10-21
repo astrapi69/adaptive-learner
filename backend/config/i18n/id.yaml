@@ -2896,9 +2896,13 @@ content:
     source_language_heuristic: Sisi belakang kartu mengandung karakter khas {found} tetapi bahasa sumbernya '{lang}'.
     target_language_heuristic: Sisi depan kartu mengandung karakter khas {found} tetapi bahasa targetnya '{lang}'.
     failed_share_anyway: "Pemeriksaan kualitas menemukan masalah. Kamu tetap dapat membagikannya - peninjau akan melihat temuan yang dicatat dalam pull request."
+  ai_privacy_link: "Kebijakan privasi"
   ai_validation:
     intro: AI juga dapat memeriksa keakuratan terjemahan, tata bahasa, dan kesesuaian tingkat.
-    privacy: Konten pelajaranmu akan dikirim ke {provider}. Tidak ada data pribadi yang dikirimkan.
+    privacy: "Hanya konten pelajaranmu yang dikirim (kartu, teks, latihan), tanpa profil dan kemajuan belajarmu. Seperti pada setiap permintaan, {provider} juga menerima alamat IP-mu dan kunci API-mu."
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "penyedia AI-mu"
     consent: Jalankan validasi AI
     run: Periksa dengan AI
     running: AI sedang meninjau pelajaranmu…
@@ -2941,7 +2945,7 @@ content:
     title: "Pemeriksaan konten AI"
     loading: "Menyiapkan kartu..."
     cost_estimate: "~{cards} kartu, ~{tokens} token, ~{usd}."
-    privacy: "Kartu pelajaranmu akan dikirim ke penyedia AI yang kamu konfigurasikan untuk ditinjau. Tidak ada data pribadi yang dikirimkan."
+    privacy: "Hanya kartu pelajaranmu yang dikirim (depan, belakang, catatan), tanpa profil dan kemajuan belajarmu. Seperti pada setiap permintaan, penyedia AI-mu juga menerima alamat IP-mu dan kunci API-mu."
     confirm: "Periksa"
     progress: "Memeriksa batch {current} dari {total}..."
     rate_limited: "Mohon tunggu sejenak sebelum menjalankan pemeriksaan lagi."

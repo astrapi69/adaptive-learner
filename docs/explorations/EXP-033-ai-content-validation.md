@@ -210,6 +210,14 @@ Provider-Auswahl hinzu, es nutzt die bestehende.
 - Lernkarten sind **Lerninhalt, keine personenbezogenen Daten** — keine
   PII. Die Zustimmung deckt nur den Lerninhalt ab.
 
+> Nachtrag 2026-10-21 (#3807, #3812): Diese Annahme ist überholt. Jede
+> Anfrage an den Anbieter trägt die IP-Adresse und den API-Schlüssel des
+> Lernenden, und was jemand selbst in Karten oder Notizen schreibt, kann
+> personenbezogen sein. Seit #3812 nennen die beiden Dialoge, was gesendet
+> wird, statt ein Versprechen über persönliche Daten abzugeben; die
+> Datenschutzerklärung (#3807) führt jede KI-Anfrage auf. Der Text oben
+> bleibt als Aufzeichnung der damaligen Entscheidung stehen.
+
 ---
 
 ## 4. Abgrenzung zu EXP-032

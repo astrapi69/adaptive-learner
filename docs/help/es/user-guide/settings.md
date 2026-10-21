@@ -566,9 +566,13 @@ completo en el panel de ayuda.
 La pestaña **Diagnóstico y soporte** reúne lo que ayuda al desarrollador
 a ver qué ocurrió en tu dispositivo:
 
-- **Soporte** - **Crear informe de error** recopila tus acciones
-  recientes en un informe que revisas antes de que nada salga de tu
-  navegador.
+- **Soporte** - **Crear informe de error** prepara un informe para el
+  desarrollador. La información del entorno y el historial de acciones
+  (tus acciones recientes en la app) solo se incluyen si los marcas;
+  al principio ambos están desmarcados. Nada sale de tu navegador hasta
+  que pulsas **Abrir en GitHub**: eso abre el formulario de incidencias
+  de GitHub con el informe ya rellenado, así que GitHub lo recibe desde
+  ese momento, antes de que envíes la incidencia allí.
 - **Modo Desarrollador** - muestra el detalle técnico completo (código
   de estado, endpoint, traza de pila) en los toasts de error, y una
   insignia «DEV» en la barra de navegación mientras está activado. Su

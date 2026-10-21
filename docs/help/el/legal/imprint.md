@@ -9,7 +9,7 @@
 
 Seestraße 68, 71638 Ludwigsburg, Γερμανία
 
-Email: asteri.raptis@gmail.com
+Email: asterios.raptis@web.de
 
 ## Υπεύθυνος για το περιεχόμενο κατά την § 18 παρ. 2 της γερμανικής MStV (Medienstaatsvertrag, Διακρατική Συνθήκη για τα Μέσα Ενημέρωσης)
 

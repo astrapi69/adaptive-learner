@@ -2887,9 +2887,13 @@ content:
     source_language_heuristic: Los reversos contienen caracteres propios de {found}, pero el idioma de origen es '{lang}'.
     target_language_heuristic: Los anversos contienen caracteres propios de {found}, pero el idioma de destino es '{lang}'.
     failed_share_anyway: "La comprobación de calidad encontró problemas. Puedes compartir de todos modos: los revisores verán los hallazgos anotados en el pull request."
+  ai_privacy_link: "Política de privacidad"
   ai_validation:
     intro: Una IA puede comprobar además la precisión de la traducción, la gramática y el nivel.
-    privacy: El contenido de tu lección se enviará a {provider}. No se transmiten datos personales.
+    privacy: "Solo se envía el contenido de tu lección (tarjetas, textos, ejercicios), sin tu perfil ni tu progreso de aprendizaje. Como en cada solicitud, {provider} recibe además tu dirección IP y tu clave API."
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "tu proveedor de IA"
     consent: Ejecutar validación con IA
     run: Comprobar con IA
     running: La IA está revisando tu lección…
@@ -2932,7 +2936,7 @@ content:
     title: "Revisión de contenido con IA"
     loading: "Preparando tarjetas..."
     cost_estimate: "~{cards} tarjetas, ~{tokens} tokens, ~{usd}."
-    privacy: "Tus tarjetas se enviarán a tu proveedor de IA configurado para su revisión. No se transmiten datos personales."
+    privacy: "Solo se envían tus tarjetas (anverso, reverso, notas), sin tu perfil ni tu progreso de aprendizaje. Como en cada solicitud, tu proveedor de IA recibe además tu dirección IP y tu clave API."
     confirm: "Revisar"
     progress: "Revisando lote {current} de {total}..."
     rate_limited: "Espera un momento antes de ejecutar otra revisión."

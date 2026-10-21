@@ -16,9 +16,30 @@ variable de entorno `ADAPTIVE_LEARNER_SECRET_KEY` o mediante
 
 Ninguno de los dos modos envía telemetría, analíticas ni tus
 mensajes a ningún tercero aparte del proveedor de IA que hayas
-elegido - y ese solo ve el contenido del mensaje que cabría
-esperar (prompt del sistema + tu texto + las respuestas previas
-de la IA en la sesión).
+elegido. En una sesión de aprendizaje ese proveedor recibe:
+
+- la instrucción del sistema, con el tema y el objetivo de tu
+  proyecto de aprendizaje, una indicación de perfil (tu método de
+  aprendizaje preferido y su peso), tus lecciones completadas con
+  sus resultados, la lección y el paso en los que estás
+  trabajando, tus errores recientes (cada uno con tu respuesta, la
+  correcta y cuántas veces) y el idioma en el que debe responder
+  la IA; una sesión iniciada desde una conversación importada
+  lleva el análisis y la transcripción de esa conversación en
+  lugar de tu progreso;
+- tus mensajes y las respuestas anteriores de la IA en la sesión;
+- como en cada solicitud, tu dirección IP y tu clave API.
+
+Tus XP e insignias no se envían. La
+[revisión de contenido con IA](ai-validation.md) envía solo las
+tarjetas del set que revisa (anverso, reverso, notas). La revisión
+con IA antes de compartir envía solo las lecciones que compartes:
+sus tarjetas, los textos de sus pasos y los ejercicios (enunciado
+y opciones de respuesta incorrectas). Ambas envían además los
+idiomas y el nivel del set. Lo que tú mismo escribes en este
+contenido se envía con él y puede ser personal en sí mismo. La
+[política de privacidad](../legal/privacy.md) enumera cada
+solicitud a la IA.
 
 ## ¿Necesito una clave API?
 

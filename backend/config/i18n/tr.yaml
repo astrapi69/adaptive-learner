@@ -2885,9 +2885,13 @@ content:
     source_language_heuristic: Kart arka yüzleri {found} diline özgü karakterler içeriyor, ancak kaynak dil '{lang}'.
     target_language_heuristic: Kart ön yüzleri {found} diline özgü karakterler içeriyor, ancak hedef dil '{lang}'.
     failed_share_anyway: "Kalite kontrolü sorunlar buldu. Yine de paylaşabilirsiniz - incelemeciler bulguları pull request'te görecek."
+  ai_privacy_link: "Gizlilik politikası"
   ai_validation:
     intro: Bir yapay zekâ ayrıca çeviri doğruluğunu, dil bilgisini ve seviye uygunluğunu kontrol edebilir.
-    privacy: Dersinizin içeriği {provider} sağlayıcısına gönderilecek. Hiçbir kişisel veri iletilmez.
+    privacy: "Yalnızca dersinizin içeriği gönderilir (kartlar, metinler, alıştırmalar), profiliniz ve ilerlemeniz gönderilmez. Her istekte olduğu gibi {provider} sağlayıcısı IP adresinizi ve API anahtarınızı da alır."
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "yapay zekâ"
     consent: Yapay zekâ doğrulamasını çalıştır
     run: Yapay zekâ ile kontrol et
     running: Yapay zekâ dersinizi inceliyor…
@@ -2930,7 +2934,7 @@ content:
     title: "Yapay zekâ içerik denetimi"
     loading: "Kartlar hazırlanıyor..."
     cost_estimate: "~{cards} kart, ~{tokens} token, ~{usd}."
-    privacy: "Kartlarınız denetim için yapılandırılmış yapay zeka sağlayıcınıza gönderilir. Kişisel veri aktarılmaz."
+    privacy: "Yalnızca kartlarınız gönderilir (ön yüz, arka yüz, notlar), profiliniz ve ilerlemeniz gönderilmez. Her istekte olduğu gibi yapay zekâ sağlayıcınız IP adresinizi ve API anahtarınızı da alır."
     confirm: "Denetle"
     progress: "{total} gruptan {current}. grup denetleniyor..."
     rate_limited: "Yeni bir denetim çalıştırmadan önce lütfen biraz bekleyin."

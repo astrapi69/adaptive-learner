@@ -13,7 +13,7 @@ vi.mock("../../../storage", () => ({
     getStorage: () => ({session: {streamMessage}}),
 }));
 
-import {OPENING_RUN_FLAG, createSessionChatAdapter} from "./session-chat-adapter";
+import {OPENING_RUN_FLAG, OPENING_TRIGGER, createSessionChatAdapter} from "./session-chat-adapter";
 
 type RunResult = {content: {type: string; text: string}[]};
 
@@ -88,15 +88,15 @@ describe("createSessionChatAdapter (Phase 0 seam, #1126)", () => {
         const results = await collect(adapter.run(opts) as AsyncIterable<RunResult>);
 
         expect(results.map((r) => r.content[0].text)).toEqual(["Frage 1?"]);
-        // The trigger reaches the backend as a user turn (hidden from the UI),
-        // so streamMessage is called with non-empty user content.
+        // The trigger reaches the backend as a user turn (hidden from the UI).
+        // It is exactly OPENING_TRIGGER: the storage layer persists it, and a
+        // resumed thread recognises the sent opening by that text (#3806).
         const [sid, body] = streamMessage.mock.calls[0] as [
             string,
             {role: string; content: string},
         ];
         expect(sid).toBe("sess-1");
-        expect(body.role).toBe("user");
-        expect(body.content.length).toBeGreaterThan(0);
+        expect(body).toEqual({role: "user", content: OPENING_TRIGGER});
     });
 
     it("does NOT open for an empty run that is not flagged", async () => {

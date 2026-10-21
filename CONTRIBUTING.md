@@ -285,7 +285,10 @@ flowchart LR
 
 - Every diagram needs `accTitle` and `accDescr`: they are what a screen reader reads and what a learner gets when the diagram does not render.
 - Write the labels in the page's language; each language version carries its own diagram.
-- The site serves Mermaid itself (`docs/help/assets/javascripts/mermaid-<version>.min.js`, loaded through `extra_javascript` in `mkdocs.yml`), never from a CDN. Upgrading means replacing that file with the new release's `dist/mermaid.min.js` and updating the version and hash in `scripts/verify_mermaid_blocks.mjs` and the file name in `mkdocs.yml`.
+- The site serves Mermaid itself (`docs/help/assets/javascripts/mermaid-<version>.min.js`, loaded through `extra_javascript` in `mkdocs.yml`), never from a CDN. Next to it ships `mermaid-<version>.min.js.LICENSE.txt`: the licence and notice texts of every package the bundle contains (75 for 11.17.2, among them chevrotain under Apache-2.0), because the site redistributes their code (#3813). Upgrading means:
+  1. Replace the bundle with the new release's `dist/mermaid.min.js`.
+  2. Regenerate the notices with learn-content-engine's `scripts/write-mermaid-notices.mjs`. It reads what the bundle contains from its source maps; in a scratch project run `npm install --ignore-scripts mermaid@<version>`, then `node <engine>/scripts/write-mermaid-notices.mjs --mermaid-dir <scratch>/node_modules/mermaid --bundle assets/javascripts/mermaid-<version>.min.js --out docs/help/assets/javascripts/mermaid-<version>.min.js.LICENSE.txt --fetch-missing`.
+  3. Update the version and both hashes in `scripts/verify_mermaid_blocks.mjs`, and the file name in `mkdocs.yml`.
 - `make verify-mermaid` (and the Docs drift verifier in CI) parses every block with exactly that file and fails on a broken diagram or a missing `accTitle`/`accDescr`.
 
 ## The docs site loads nothing from a third party

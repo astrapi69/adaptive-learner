@@ -4,15 +4,39 @@
 
 ## Mes données sont-elles en sécurité ?
 
-**Oui.** Toutes les données restent sur votre propre appareil.
+Vos données sont stockées sur votre propre appareil :
 
 - **Mode API** : base SQLite dans `~/.local/share/adaptive_learner/`
   (Linux/macOS) ou `%LOCALAPPDATA%\adaptive_learner\` (Windows).
 - **Mode Dexie** : IndexedDB dans votre navigateur.
 
 Rien - pas vos sessions, pas vos erreurs, pas votre progression - n'est
-envoyé à un serveur Adaptive Learner. Seuls les appels à votre fournisseur
-IA configuré quittent votre appareil.
+envoyé à un serveur Adaptive Learner. Aucun mode n'envoie de télémétrie,
+de mesure d'audience ni vos messages à des tiers, sauf au fournisseur
+d'IA que vous avez choisi. Dans une session d'apprentissage, ce
+fournisseur reçoit :
+
+- l'instruction système, avec le sujet et l'objectif de votre projet
+  d'apprentissage, une indication de profil (votre méthode
+  d'apprentissage préférée et sa pondération), vos leçons terminées avec
+  leurs résultats, la leçon et l'étape en cours, vos erreurs récentes
+  (chacune avec votre réponse, la bonne réponse et sa fréquence) et la
+  langue dans laquelle l'IA doit répondre ; une session lancée depuis une
+  conversation importée contient l'analyse et l'historique de cette
+  conversation au lieu de votre progression ;
+- vos messages et les réponses précédentes de l'IA dans la session ;
+- comme pour chaque requête, votre adresse IP et votre clé API.
+
+Vos XP et vos badges ne sont pas envoyés. La
+[vérification du contenu par l'IA](ai-validation.md) n'envoie que les
+cartes du set vérifié (recto, verso, notes). La revue IA avant le
+partage n'envoie que les leçons que vous partagez : leurs cartes, les
+textes de leurs étapes et les exercices (consigne et mauvaises
+réponses proposées). Les deux envoient aussi les langues et le niveau
+du set. Ce que vous écrivez vous-même dans ce contenu est envoyé avec
+lui et peut lui-même être personnel. La
+[politique de confidentialité](../legal/privacy.md) énumère chaque
+requête à l'IA.
 
 ---
 

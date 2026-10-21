@@ -14,6 +14,8 @@ export {
     settleMigrationWelcome,
 } from "./onboarding";
 
+export {saveAnthropicKey} from "./ai-key";
+
 export {declineDraftPrompt} from "./create-lesson";
 
 export {
