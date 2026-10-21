@@ -167,7 +167,7 @@ export default function ContentShareDialog({
                 <p className="content-ai-privacy">
                   {t(
                     "content.ai_validation.privacy",
-                    "Your lesson content will be sent to {provider}. No personal data is transmitted.",
+                    "Only your lesson's content is sent (cards, texts, exercises), no profile and no learning progress. As with every request, {provider} also receives your IP address and your API key.",
                   ).replace("{provider}", activeProvider ?? "the AI provider")}
                 </p>
                 <label className="flex items-center justify-between gap-2">

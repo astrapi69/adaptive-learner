@@ -164,7 +164,7 @@ export default function AiValidationDialog({
             <p className="text-xs text-fg-muted">
               {t(
                 "content.ai_check.privacy",
-                "Your lesson cards will be sent to your configured AI provider for review. No personal data is transmitted.",
+                "Only your cards are sent (front, back, notes), no profile and no learning progress. As with every request, your AI provider also receives your IP address and your API key.",
               )}
             </p>
             {rateLimited && (

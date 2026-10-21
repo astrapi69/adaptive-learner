@@ -2887,7 +2887,7 @@ content:
     failed_share_anyway: "Kalite kontrolü sorunlar buldu. Yine de paylaşabilirsiniz - incelemeciler bulguları pull request'te görecek."
   ai_validation:
     intro: Bir yapay zekâ ayrıca çeviri doğruluğunu, dil bilgisini ve seviye uygunluğunu kontrol edebilir.
-    privacy: Dersinizin içeriği {provider} sağlayıcısına gönderilecek. Hiçbir kişisel veri iletilmez.
+    privacy: "Yalnızca dersinizin içeriği gönderilir (kartlar, metinler, alıştırmalar), profiliniz ve ilerlemeniz gönderilmez. Her istekte olduğu gibi {provider} sağlayıcısı IP adresinizi ve API anahtarınızı da alır."
     consent: Yapay zekâ doğrulamasını çalıştır
     run: Yapay zekâ ile kontrol et
     running: Yapay zekâ dersinizi inceliyor…
@@ -2930,7 +2930,7 @@ content:
     title: "Yapay zekâ içerik denetimi"
     loading: "Kartlar hazırlanıyor..."
     cost_estimate: "~{cards} kart, ~{tokens} token, ~{usd}."
-    privacy: "Kartlarınız denetim için yapılandırılmış yapay zeka sağlayıcınıza gönderilir. Kişisel veri aktarılmaz."
+    privacy: "Yalnızca kartlarınız gönderilir (ön yüz, arka yüz, notlar), profiliniz ve ilerlemeniz gönderilmez. Her istekte olduğu gibi yapay zeka sağlayıcınız IP adresinizi ve API anahtarınızı da alır."
     confirm: "Denetle"
     progress: "{total} gruptan {current}. grup denetleniyor..."
     rate_limited: "Yeni bir denetim çalıştırmadan önce lütfen biraz bekleyin."
