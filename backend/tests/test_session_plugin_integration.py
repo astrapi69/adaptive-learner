@@ -306,6 +306,30 @@ def test_stream_emits_setup_error_when_no_provider_configured(client: TestClient
     assert "API key" in done["ai_error"]
 
 
+def test_stream_keeps_the_sent_turn_on_record_when_no_provider_answers(client: TestClient):
+    """#3806: the session page sends an imported chat's AI opening only while
+    ``GET /messages`` lists no turn besides the system prompt, so the sent
+    opening is the record that keeps a reload from sending it again. It must
+    be on record even when no provider ever answers: the stream route stores
+    the user turn before it resolves a key or calls a provider."""
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
+    opening = "hidden opening trigger"
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message/stream",
+        json={"role": "user", "content": opening},
+    )
+    assert resp.status_code == 200, resp.text
+    assert _parse_sse(resp.text)[-1]["data"]["assistant_message"] is None
+
+    listed = client.get(f"/api/plugins/session/{sess_id}/messages").json()
+    assert [(m["role"], m["content"]) for m in listed if m["role"] != "system"] == [
+        ("user", opening)
+    ]
+
+
 def test_stream_rejects_non_user_role_400(client: TestClient):
     """role=assistant writes only work on POST /message, not the
     stream variant (streaming AI input is the whole point)."""

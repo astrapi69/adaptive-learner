@@ -102,9 +102,9 @@ Baseline zu committen.
 | Spielmodus - Zusammenfassungskarte + "Details zum Spielmodus" aufgeklappt, Spielmodus an (#2959) | `playful-details/settings.png` | `playful-details/settings.mobile.png` | v2.14.0+ |
 | Spielmodus - Details aufgeklappt, Spielmodus aus: Optionen ausgegraut + Hinweis (#2959) | `playful-details/settings-off.png` | `playful-details/settings-off.mobile.png` | v2.14.0+ |
 | Spielmodus - das einmalige Ton-Angebot "Mit Sound spielen?" mit "Ja, Sounds an" und "Später" direkt nach dem Einschalten des Hauptschalters (#2875); jeder andere Spielmodus-Shot klickt es mit "Später" weg (#3227) | `playful-details/ton-angebot.png` | `playful-details/ton-angebot.mobile.png` | #3227 |
-| Fehlerbericht — Dialog (#1480) | `error-report/dialog.png` | `error-report/dialog.mobile.png` | v2.1.0 |
-| Fehlerbericht — Aktionsverlauf geöffnet (#1480) | `error-report/verlauf.png` | `error-report/verlauf.mobile.png` | v2.1.0 |
-| Fehlerbericht — Vollvorschau (#1480) | `error-report/vollvorschau.png` | `error-report/vollvorschau.mobile.png` | v2.1.0 |
+| Fehlerbericht - Dialog wie geöffnet: "Umgebungsinformationen" und "Aktionsverlauf" nicht angekreuzt, nur die Fehlermeldung ist gesetzt (#1480, #3804) | `error-report/dialog.png` | `error-report/dialog.mobile.png` | #3804 |
+| Fehlerbericht - Aktionsverlauf über "Ansehen" geöffnet; das Kästchen bleibt leer, Ansehen ist kein Teilen (#1480, #3804) | `error-report/verlauf.png` | `error-report/verlauf.mobile.png` | #3804 |
+| Fehlerbericht - Vollvorschau ohne Häkchen: nur Fehlerbeschreibung und Reproduktion, weder Umgebung noch Aktionsverlauf (#1480, #3804) | `error-report/vollvorschau.png` | `error-report/vollvorschau.mobile.png` | #3804 |
 | Sync — Desktop-only-Hinweis, Dexie-Modus (#335/#1480) | `sync/desktop-only-hinweis.png` | `sync/desktop-only-hinweis.mobile.png` | v2.1.0 |
 | Create-Lesson — Buchtext-Datei-Upload mit Kapitel-Picker (#1927) | `create-lesson/buch-upload-picker.png` | `create-lesson/buch-upload-picker.mobile.png` | v2.5.0+ |
 | Create-Lesson — Token-Rollen auf einer Karte, nach "Rollen vorschlagen" (#3072) | `create-lesson/token-rollen.png` | `create-lesson/token-rollen.mobile.png` | v2.15.0+ |

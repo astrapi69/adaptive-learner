@@ -2833,6 +2833,23 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       Entwicklermodus-Schalter und keine Diagnose-Sektion mehr
 - [ ] TC-0571 Direkter Link `?tab=diagnostics` öffnet den Tab unmittelbar
 
+### TS-0136 Fehlerbericht: Umgebung und Aktionsverlauf nur auf Wunsch (#3804)
+- [ ] TC-0979 Einstellungen > Diagnose & Support > "Fehlerbericht erstellen":
+      "Fehlermeldung und Stacktrace" ist angekreuzt und gesperrt,
+      "Umgebungsinformationen" und "Aktionsverlauf" sind NICHT angekreuzt;
+      ebenso nach "Problem melden" in einem Fehler-Toast
+- [ ] TC-0980 Ohne etwas anzukreuzen: "Vorschau anzeigen" zeigt weder
+      "## Environment" noch "## Action history", und das Issue-Formular,
+      das "Auf GitHub öffnen" öffnet, enthält keinen der beiden Abschnitte
+- [ ] TC-0981 "Ansehen" neben dem Aktionsverlauf zeigt die aufgezeichneten
+      Aktionen, ohne das Kästchen anzukreuzen; der Bericht bleibt ohne
+      Aktionsverlauf
+- [ ] TC-0982 "Aktionsverlauf" angekreuzt: Vorschau und GitHub-Formular enthalten
+      "## Action history"; "Umgebungsinformationen" angekreuzt: beide
+      enthalten "## Environment" (Version, Browser, Betriebssystem, Route)
+- [ ] TC-0983 "JSON herunterladen" ohne Häkchen beim Aktionsverlauf: die Datei
+      enthält keine Ereignisse (`"events": []`); mit Häkchen enthält sie sie
+
 ### TS-0079 Discover + Registry (seit v2.2.0)
 - [ ] TC-0572 Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert
@@ -3431,8 +3448,16 @@ Ort: Settings → Daten → Empfohlene Repositories.
       gestopptem Backend fortsetzen → statt der Begrüßung steht „Der bisherige
       Verlauf konnte nicht geladen werden. Es wurde nichts gelöscht." mit
       „Erneut versuchen"; nach dem Start des Backends lädt der Klick den Verlauf
-- [ ] TC-0732 Importierte Sitzung: die KI beginnt von selbst mit der ersten Frage
-      (kein User-Turn zuerst), der Chat startet leer
+- [ ] TC-0732 Importierte Sitzung, erstes Öffnen: die KI beginnt von selbst mit der
+      ersten Frage (kein User-Turn zuerst), der Chat startet leer
+- [ ] TC-0984 Importierte Sitzung neu laden, über „Sitzung fortsetzen" wieder öffnen und
+      die Sitzungs-URL in einem zweiten Tab öffnen (#3806): jedes Mal steht der
+      gespeicherte Verlauf da (die erste Frage der KI, davor keine Nutzer-Blase),
+      und die KI fragt nicht erneut. Die Entwicklertools (Netzwerk) zeigen keine
+      neue Chat-Anfrage: in der Browser-Version kein POST an den KI-Anbieter
+      (z. B. api.anthropic.com/v1/messages), in der Desktop-App kein POST
+      .../message/stream. Ein neuer Tab darf die Modellliste per GET laden; das
+      ist keine Chat-Anfrage
 - [ ] TC-0950 Auto-Loop in der Browser-Version (#3436): im Pages-Build (Dexie) eine
       Sitzung bis Schritt 7 führen; unter dem Chat erscheint ein Hinweis mit
       Monitor-Symbol: in der Desktop-App beginnt danach automatisch ein neuer
@@ -3441,7 +3466,7 @@ Ort: Settings → Daten → Empfohlene Repositories.
       der neue Zyklus
 - [ ] TC-0733 AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] TC-0734 Kein Button ohne Key führt zu Error-Toast (disabled + Tooltip)
-- [ ] TC-0979 Datenschutz-Hinweis vor dem Senden (#3812): der Hinweis unter der
+- [ ] TC-0985 Datenschutz-Hinweis vor dem Senden (#3812): der Hinweis unter der
       Kostenschätzung der KI-Inhaltsprüfung (`ai-validation-privacy`) und der
       im Qualitätsschritt beim Teilen (`content-ai-privacy`) nennen, was
       gesendet wird (nur die Karten bzw. die Inhalte der Lektion, kein Profil,
@@ -3725,7 +3750,7 @@ bewusst keine Zahlen, die veralten könnten.
 
 Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 (`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; andere Sprachen unter
-`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, Locales ohne eigene Fassung fallen auf Deutsch zurück).
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`; UI-Sprachen ohne eigene Docs-Fassung (hi, id, ko) landen auf der englischen).
 
 - [ ] TC-0805 App-Startseite `/` (ohne angemeldeten Lernenden): unter "Dokumentation
       lesen" stehen "Impressum · Datenschutzerklärung"
@@ -3735,10 +3760,28 @@ Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 - [ ] TC-0806 Einstellungen → Über → Karte "Lizenz & Ressourcen": zwei neue Zeilen
       "Impressum" und "Datenschutzerklärung" (`about-imprint-link`,
       `about-privacy-link`), gleiche Ziele, neuer Tab.
-- [ ] TC-0807 Hilfepanel und Docs-Site: Abschnitt "Rechtliches" mit beiden Seiten in
-      der Navigation (DE + EN); das Impressum nennt Name, Anschrift, E-Mail;
-      die Datenschutzerklärung trägt ein Datum und nennt GitHub Pages,
-      YouTube-Vorschaubilder und die KI-Anbieter mit eigenem Schlüssel.
+- [ ] TC-0807 Docs-Site (#3807, #3139): Abschnitt "Rechtliches" mit beiden Seiten in
+      der Navigation jeder Sprache; das Impressum nennt Name, Anschrift und die
+      E-Mail asterios.raptis@web.de, die Datenschutzerklärung dieselbe Adresse
+      und oben ihr Datum; sie redet in jeder Sprache förmlich an, und jede
+      Fassung außer der englischen sagt unter dem Datum, dass sie als
+      Rechtstext förmlich anredet; de, es, el und ja fügen hinzu, dass App und
+      übrige Hilfe duzen (fr, pt und tr nicht, dort mischen sie die Anrede).
+      Geltungsbereich: App, öffentliche Vorschau
+      `astrapi69.github.io/adaptive-learner-content-test` und Docs-Seiten,
+      dazu ein Satz zu selbst installierten Kopien (Update-Prüfung bei
+      `api.github.com`).
+      "Das Wichtigste in Kürze" listet, wann Daten das Gerät verlassen; je ein
+      Abschnitt für Hosting, Laden von Lerninhalten (mit den automatischen
+      Prüfungen), GitHub-Funktionen mit eigenem Zugangstoken, Fehlerberichte,
+      KI-Funktionen mit eigenem Schlüssel (`api.anthropic.com`,
+      `api.openai.com`, `generativelanguage.googleapis.com`, je mit
+      Empfänger und Anschrift), Spracheingabe,
+      Vorlesen, Teilen-Schaltflächen (Facebook, LinkedIn, X, WhatsApp),
+      externe Links, Speicherung auf dem Gerät (mit sessionStorage, Cache
+      Storage und dem Farbschema der Docs), E-Mail-Kontakt und Rechte; keine
+      Aussage mehr zu YouTube-Vorschaubildern. Jede Sprachfassung hat dieselben
+      Abschnitte in derselben Reihenfolge.
 - [ ] TC-0808 Teilen-Vorschau (z. B. in einem Messenger): Titel, Beschreibung und
       Bild erscheinen (Open-Graph-Daten der Landeseite, nicht der App).
 
