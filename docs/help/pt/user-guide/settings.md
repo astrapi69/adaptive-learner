@@ -552,9 +552,13 @@ completo na gaveta de ajuda.
 O separador **Diagnóstico e suporte** reúne o que ajuda o programador a
 ver o que aconteceu no seu dispositivo:
 
-- **Suporte** - **Criar relatório de erro** reúne as suas ações
-  recentes num relatório que revê antes de qualquer coisa sair do seu
-  navegador.
+- **Suporte** - **Criar relatório de erro** prepara um relatório para o
+  programador. As informações do ambiente e o histórico de ações (as
+  suas ações recentes na app) só entram nele se os marcar; ao início,
+  ambos estão desmarcados. Nada sai do seu navegador antes de clicar em
+  **Abrir no GitHub**: isso abre o formulário de issues do GitHub com o
+  relatório preenchido, por isso o GitHub recebe-o a partir desse
+  momento, antes mesmo de submeter a issue lá.
 - **Modo desenvolvedor** - mostra o detalhe técnico completo (código de
   estado, endpoint, stack trace) nas notificações de erro, e um emblema
   "DEV" na barra de navegação enquanto está ativo. O seu padrão depende

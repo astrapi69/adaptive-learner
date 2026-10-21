@@ -2833,6 +2833,23 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       Entwicklermodus-Schalter und keine Diagnose-Sektion mehr
 - [ ] TC-0571 Direkter Link `?tab=diagnostics` öffnet den Tab unmittelbar
 
+### TS-0136 Fehlerbericht: Umgebung und Aktionsverlauf nur auf Wunsch (#3804)
+- [ ] TC-0979 Einstellungen > Diagnose & Support > "Fehlerbericht erstellen":
+      "Fehlermeldung und Stacktrace" ist angekreuzt und gesperrt,
+      "Umgebungsinformationen" und "Aktionsverlauf" sind NICHT angekreuzt;
+      ebenso nach "Problem melden" in einem Fehler-Toast
+- [ ] TC-0980 Ohne etwas anzukreuzen: "Vorschau anzeigen" zeigt weder
+      "## Environment" noch "## Action history", und das Issue-Formular,
+      das "Auf GitHub öffnen" öffnet, enthält keinen der beiden Abschnitte
+- [ ] TC-0981 "Ansehen" neben dem Aktionsverlauf zeigt die aufgezeichneten
+      Aktionen, ohne das Kästchen anzukreuzen; der Bericht bleibt ohne
+      Aktionsverlauf
+- [ ] TC-0982 "Aktionsverlauf" angekreuzt: Vorschau und GitHub-Formular enthalten
+      "## Action history"; "Umgebungsinformationen" angekreuzt: beide
+      enthalten "## Environment" (Version, Browser, Betriebssystem, Route)
+- [ ] TC-0983 "JSON herunterladen" ohne Häkchen beim Aktionsverlauf: die Datei
+      enthält keine Ereignisse (`"events": []`); mit Häkchen enthält sie sie
+
 ### TS-0079 Discover + Registry (seit v2.2.0)
 - [ ] TC-0572 Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert
@@ -3431,8 +3448,16 @@ Ort: Settings → Daten → Empfohlene Repositories.
       gestopptem Backend fortsetzen → statt der Begrüßung steht „Der bisherige
       Verlauf konnte nicht geladen werden. Es wurde nichts gelöscht." mit
       „Erneut versuchen"; nach dem Start des Backends lädt der Klick den Verlauf
-- [ ] TC-0732 Importierte Sitzung: die KI beginnt von selbst mit der ersten Frage
-      (kein User-Turn zuerst), der Chat startet leer
+- [ ] TC-0732 Importierte Sitzung, erstes Öffnen: die KI beginnt von selbst mit der
+      ersten Frage (kein User-Turn zuerst), der Chat startet leer
+- [ ] TC-0984 Importierte Sitzung neu laden, über „Sitzung fortsetzen" wieder öffnen und
+      die Sitzungs-URL in einem zweiten Tab öffnen (#3806): jedes Mal steht der
+      gespeicherte Verlauf da (die erste Frage der KI, davor keine Nutzer-Blase),
+      und die KI fragt nicht erneut. Die Entwicklertools (Netzwerk) zeigen keine
+      neue Chat-Anfrage: in der Browser-Version kein POST an den KI-Anbieter
+      (z. B. api.anthropic.com/v1/messages), in der Desktop-App kein POST
+      .../message/stream. Ein neuer Tab darf die Modellliste per GET laden; das
+      ist keine Chat-Anfrage
 - [ ] TC-0950 Auto-Loop in der Browser-Version (#3436): im Pages-Build (Dexie) eine
       Sitzung bis Schritt 7 führen; unter dem Chat erscheint ein Hinweis mit
       Monitor-Symbol: in der Desktop-App beginnt danach automatisch ein neuer
@@ -3714,7 +3739,7 @@ bewusst keine Zahlen, die veralten könnten.
 
 Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 (`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; andere Sprachen unter
-`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, Locales ohne eigene Fassung fallen auf Deutsch zurück).
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`; UI-Sprachen ohne eigene Docs-Fassung (hi, id, ko) landen auf der englischen).
 
 - [ ] TC-0805 App-Startseite `/` (ohne angemeldeten Lernenden): unter "Dokumentation
       lesen" stehen "Impressum · Datenschutzerklärung"
@@ -3724,10 +3749,28 @@ Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 - [ ] TC-0806 Einstellungen → Über → Karte "Lizenz & Ressourcen": zwei neue Zeilen
       "Impressum" und "Datenschutzerklärung" (`about-imprint-link`,
       `about-privacy-link`), gleiche Ziele, neuer Tab.
-- [ ] TC-0807 Hilfepanel und Docs-Site: Abschnitt "Rechtliches" mit beiden Seiten in
-      der Navigation (DE + EN); das Impressum nennt Name, Anschrift, E-Mail;
-      die Datenschutzerklärung trägt ein Datum und nennt GitHub Pages,
-      YouTube-Vorschaubilder und die KI-Anbieter mit eigenem Schlüssel.
+- [ ] TC-0807 Docs-Site (#3807, #3139): Abschnitt "Rechtliches" mit beiden Seiten in
+      der Navigation jeder Sprache; das Impressum nennt Name, Anschrift und die
+      E-Mail asterios.raptis@web.de, die Datenschutzerklärung dieselbe Adresse
+      und oben ihr Datum; sie redet in jeder Sprache förmlich an, und jede
+      Fassung außer der englischen sagt unter dem Datum, dass sie als
+      Rechtstext förmlich anredet; de, es, el und ja fügen hinzu, dass App und
+      übrige Hilfe duzen (fr, pt und tr nicht, dort mischen sie die Anrede).
+      Geltungsbereich: App, öffentliche Vorschau
+      `astrapi69.github.io/adaptive-learner-content-test` und Docs-Seiten,
+      dazu ein Satz zu selbst installierten Kopien (Update-Prüfung bei
+      `api.github.com`).
+      "Das Wichtigste in Kürze" listet, wann Daten das Gerät verlassen; je ein
+      Abschnitt für Hosting, Laden von Lerninhalten (mit den automatischen
+      Prüfungen), GitHub-Funktionen mit eigenem Zugangstoken, Fehlerberichte,
+      KI-Funktionen mit eigenem Schlüssel (`api.anthropic.com`,
+      `api.openai.com`, `generativelanguage.googleapis.com`, je mit
+      Empfänger und Anschrift), Spracheingabe,
+      Vorlesen, Teilen-Schaltflächen (Facebook, LinkedIn, X, WhatsApp),
+      externe Links, Speicherung auf dem Gerät (mit sessionStorage, Cache
+      Storage und dem Farbschema der Docs), E-Mail-Kontakt und Rechte; keine
+      Aussage mehr zu YouTube-Vorschaubildern. Jede Sprachfassung hat dieselben
+      Abschnitte in derselben Reihenfolge.
 - [ ] TC-0808 Teilen-Vorschau (z. B. in einem Messenger): Titel, Beschreibung und
       Bild erscheinen (Open-Graph-Daten der Landeseite, nicht der App).
 
@@ -4110,7 +4153,7 @@ Hier nur zur Dokumentation was abgedeckt ist.
 - [ ] TC-0948 Browser-Verlauf (Zurück-Knopf lange drücken): die Einträge tragen
       unterschiedliche Seitennamen statt eines gleichen Titels
 
-### TS-0136 Inhalte laden nichts von fremden Servern (#3803)
+### TS-0137 Inhalte laden nichts von fremden Servern (#3803)
 
 Vorbereitung: eine Lektion als `.json` über Meine Inhalte → "Lektion
 importieren" einspielen, deren `resources` einen Eintrag vom Typ `youtube`
@@ -4118,21 +4161,21 @@ mit einer `youtube.com/watch?v=`-Adresse tragen und deren Theorie-Schritt
 ein Bild `![Skizze](https://example.com/skizze.png)` enthält. In den
 Entwicklerwerkzeugen den Netzwerk-Reiter offen lassen.
 
-- [ ] TC-0979 Lektion bis zur Zusammenfassung spielen: die Video-Karte unter "Vertiefe
+- [ ] TC-0985 Lektion bis zur Zusammenfassung spielen: die Video-Karte unter "Vertiefe
       das Thema" zeigt ein Video-Symbol statt eines Vorschaubilds, und das
       Netzwerk zeigt keine Anfrage an `img.youtube.com`. Ein Klick auf die
       Karte öffnet das Video auf YouTube in einem neuen Tab
-- [ ] TC-0980 Theorie-Schritt: das Bild erscheint als Link mit Bild-Symbol und dem Text
+- [ ] TC-0986 Theorie-Schritt: das Bild erscheint als Link mit Bild-Symbol und dem Text
       "Skizze", nicht als Bild; das Netzwerk zeigt keine Anfrage an
       `example.com`, bis der Link angeklickt wird (neuer Tab). Dasselbe gilt
       für ein Bild in einer Erklärung nach einer Übung und in einer
       KI-Antwort im Sitzungs-Chat
-- [ ] TC-0981 Im Texteditor (z. B. Sitzung bewerten → Notiz) ein Bild von einer Webseite
+- [ ] TC-0987 Im Texteditor (z. B. Sitzung bewerten → Notiz) ein Bild von einer Webseite
       hineinkopieren: es wird nicht geladen, das Netzwerk zeigt keine Anfrage
       an den fremden Server
-- [ ] TC-0982 Ein Set mit eigenen Bildern (Bildauswahl-Übung mit Bildern aus `assets/`)
+- [ ] TC-0988 Ein Set mit eigenen Bildern (Bildauswahl-Übung mit Bildern aus `assets/`)
       zeigt seine Bilder wie bisher
-- [ ] TC-0983 GitHub-Pages-Version im normalen Gebrauch: die Konsole zeigt keine
+- [ ] TC-0989 GitHub-Pages-Version im normalen Gebrauch: die Konsole zeigt keine
       Content-Security-Policy-Meldung, Inhalte laden aus den Repositories,
       KI-Antworten mit eigenem Schlüssel kommen an, und nach einem Neuladen
       ohne Netz startet die App weiterhin (Service Worker)

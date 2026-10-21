@@ -1,10 +1,13 @@
 /**
- * assistant-ui Phase 4b-i-b (#1126): resume-history hydration. A resumed REGULAR
+ * assistant-ui Phase 4b-i-b (#1126): resume-history hydration. A resumed
  * session must show its prior conversation (the legacy SessionChat rendered the
  * full history on resume; the assistant thread otherwise starts empty). This
  * pins: prior user+assistant turns are seeded and shown, the system prompt is
- * hidden, a new session (system-only) keeps the welcome, and an imported session
- * (autoOpen) does NOT hydrate (clean open, #1143).
+ * hidden, and a new session (system-only) keeps the welcome.
+ *
+ * #3806: an imported session resumes the same way. It used to open clean and
+ * ask the AI again on every reload; now its stored conversation comes back,
+ * with the hidden opening trigger left out.
  */
 
 import {render, screen} from "@testing-library/react";
@@ -19,6 +22,7 @@ vi.mock("../../../storage", () => ({
 }));
 
 import AssistantUiThread from "./AssistantUiThread";
+import {OPENING_TRIGGER} from "./session-chat-adapter";
 
 describe("AssistantUiThread resume hydration (Phase 4b-i-b, #1126)", () => {
     beforeEach(() => {
@@ -63,10 +67,39 @@ describe("AssistantUiThread resume hydration (Phase 4b-i-b, #1126)", () => {
         expect(await screen.findByTestId("chat-welcome")).toBeInTheDocument();
     });
 
-    it("does NOT hydrate an imported session (autoOpen opens it clean)", async () => {
-        streamMessage.mockImplementation(async () => {});
+    it("resumes an imported session with its stored turns, the opening trigger left out (#3806)", async () => {
+        getMessages.mockResolvedValue([
+            {id: "s", role: "system", content: "You are a tutor."},
+            {id: "t", role: "user", content: OPENING_TRIGGER},
+            {id: "a1", role: "assistant", content: "Was braucht eine Pflanze?"},
+            {id: "u1", role: "user", content: "Licht und Wasser."},
+            {id: "a2", role: "assistant", content: "Richtig. Was entsteht dabei?"},
+        ]);
+
         render(<AssistantUiThread sessionId="sess-3" autoOpen />);
-        // Clean open: history is never loaded for imported sessions.
-        expect(getMessages).not.toHaveBeenCalled();
+
+        expect(await screen.findByText(/Richtig\. Was entsteht dabei\?/)).toBeInTheDocument();
+        expect(screen.getByText(/Was braucht eine Pflanze\?/)).toBeInTheDocument();
+        // Only the learner's own turn is a user bubble.
+        expect(screen.getAllByTestId("chat-message-user")).toHaveLength(1);
+        expect(screen.getByTestId("chat-message-user")).toHaveTextContent("Licht und Wasser.");
+        expect(streamMessage).not.toHaveBeenCalled();
+    });
+
+    it("leaves out every re-sent opening of a session stored before #3806", async () => {
+        // Before the fix each reload stored one more trigger + reply pair.
+        getMessages.mockResolvedValue([
+            {id: "s", role: "system", content: "You are a tutor."},
+            {id: "t1", role: "user", content: OPENING_TRIGGER},
+            {id: "a1", role: "assistant", content: "Erste Eröffnung?"},
+            {id: "t2", role: "user", content: OPENING_TRIGGER},
+            {id: "a2", role: "assistant", content: "Zweite Eröffnung?"},
+        ]);
+
+        render(<AssistantUiThread sessionId="sess-4" autoOpen />);
+
+        expect(await screen.findByText(/Zweite Eröffnung\?/)).toBeInTheDocument();
+        expect(screen.getByText(/Erste Eröffnung\?/)).toBeInTheDocument();
+        expect(screen.queryByTestId("chat-message-user")).not.toBeInTheDocument();
     });
 });
