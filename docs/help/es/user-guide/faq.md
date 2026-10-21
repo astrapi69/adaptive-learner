@@ -21,22 +21,22 @@ elegido. En una sesión de aprendizaje ese proveedor recibe:
 - la instrucción del sistema, con el tema y el objetivo de tu
   proyecto de aprendizaje, una indicación de perfil (tu método de
   aprendizaje preferido y su peso), tus lecciones completadas con
-  sus resultados, la lección y el paso en los que estás, tus
-  errores recientes (cada uno con tu respuesta, la correcta y
-  cuántas veces) y el idioma en el que debe responder la IA; una
-  sesión iniciada desde una conversación importada lleva el
-  análisis y la transcripción de esa conversación en lugar de tu
-  progreso;
+  sus resultados, la lección y el paso en los que estás
+  trabajando, tus errores recientes (cada uno con tu respuesta, la
+  correcta y cuántas veces) y el idioma en el que debe responder
+  la IA; una sesión iniciada desde una conversación importada
+  lleva el análisis y la transcripción de esa conversación en
+  lugar de tu progreso;
 - tus mensajes y las respuestas anteriores de la IA en la sesión;
 - como en cada solicitud, tu dirección IP y tu clave API.
 
 Tus XP e insignias no se envían. La
 [revisión de contenido con IA](ai-validation.md) y la revisión
 con IA antes de compartir envían solo el contenido de la lección
-(tarjetas, textos, ejercicios). Lo que escribes en tus propias
-tarjetas o notas va con él y puede ser personal en sí mismo. La
-[política de privacidad](../legal/privacy.md) enumera cada
-solicitud a la IA.
+(tarjetas, textos, ejercicios). Lo que tú mismo escribes en
+tarjetas o notas se envía con él y puede ser personal en sí
+mismo. La [política de privacidad](../legal/privacy.md) enumera
+cada solicitud a la IA.
 
 ## ¿Necesito una clave API?
 

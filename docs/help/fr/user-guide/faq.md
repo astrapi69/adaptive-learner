@@ -11,27 +11,28 @@ Vos données sont stockées sur votre propre appareil :
 - **Mode Dexie** : IndexedDB dans votre navigateur.
 
 Rien - pas vos sessions, pas vos erreurs, pas votre progression - n'est
-envoyé à un serveur Adaptive Learner. Quand vous utilisez une fonction
-d'IA, votre fournisseur d'IA configuré reçoit des données. Dans une
-session d'apprentissage, il reçoit :
+envoyé à un serveur Adaptive Learner. Aucun mode n'envoie de télémétrie,
+de mesure d'audience ni vos messages à des tiers, sauf au fournisseur
+d'IA que vous avez choisi. Dans une session d'apprentissage, ce
+fournisseur reçoit :
 
 - l'instruction système, avec le sujet et l'objectif de votre projet
   d'apprentissage, une indication de profil (votre méthode
-  d'apprentissage préférée et son poids), vos leçons terminées avec
+  d'apprentissage préférée et sa pondération), vos leçons terminées avec
   leurs résultats, la leçon et l'étape en cours, vos erreurs récentes
   (chacune avec votre réponse, la bonne réponse et sa fréquence) et la
-  langue dans laquelle l'IA doit répondre ; une session lancée depuis un
-  chat importé contient l'analyse et la transcription de ce chat au lieu
-  de votre progression ;
+  langue dans laquelle l'IA doit répondre ; une session lancée depuis une
+  conversation importée contient l'analyse et l'historique de cette
+  conversation au lieu de votre progression ;
 - vos messages et les réponses précédentes de l'IA dans la session ;
 - comme pour chaque requête, votre adresse IP et votre clé API.
 
 Vos XP et vos badges ne sont pas envoyés. La
-[vérification du contenu par l'IA](ai-validation.md) et la vérification
-par l'IA avant le partage n'envoient que le contenu de la leçon (cartes,
-textes, exercices). Ce que vous écrivez dans vos propres cartes ou notes
-part avec et peut lui-même être personnel. La
-[politique de confidentialité](../legal/privacy.md) détaille chaque
+[vérification du contenu par l'IA](ai-validation.md) et la revue IA
+avant le partage n'envoient que le contenu de la leçon (cartes, textes,
+exercices). Ce que vous écrivez vous-même dans des cartes ou des notes est
+envoyé avec ce contenu et peut lui-même être personnel. La
+[politique de confidentialité](../legal/privacy.md) énumère chaque
 requête à l'IA.
 
 ---

@@ -23,18 +23,18 @@ Her iki mod da seçtiğiniz yapay zeka sağlayıcısı dışında herhangi bir
   ipucu (tercih ettiğiniz öğrenme yöntemi ve ağırlığı), tamamladığınız
   dersler ve sonuçları, üzerinde çalıştığınız ders ve adım, son
   hatalarınız (her biri cevabınız, doğru cevap ve kaç kez olduğuyla
-  birlikte) ve yapay zekanın yanıt vereceği dil; içe aktarılan bir
+  birlikte) ve yapay zekânın yanıt vereceği dil; içe aktarılan bir
   sohbetten başlatılan oturumda öğrenme ilerlemeniz yerine o sohbetin
   analizi ve dökümü yer alır;
-- mesajlarınız ve yapay zekanın oturumdaki önceki yanıtları;
+- mesajlarınız ve yapay zekânın oturumdaki önceki yanıtları;
 - her istekte olduğu gibi IP adresiniz ve API anahtarınız.
 
 XP'niz ve rozetleriniz gönderilmez.
 [Yapay zekâ içerik denetimi](ai-validation.md) ve paylaşmadan önceki
-yapay zeka denetimi yalnızca dersin içeriğini (kartlar, metinler,
-alıştırmalar) gönderir. Kendi kartlarınıza veya notlarınıza
+yapay zekâ denetimi yalnızca dersin içeriğini (kartlar, metinler,
+alıştırmalar) gönderir. Kartlara veya notlara kendiniz
 yazdıklarınız da birlikte gider ve kendi başına kişisel olabilir.
-[Gizlilik politikası](../legal/privacy.md) yapay zekaya giden her
+[Gizlilik politikası](../legal/privacy.md) yapay zekâya giden her
 isteği listeler.
 
 ## API anahtarına ihtiyacım var mı?

@@ -23,19 +23,19 @@ learning session that provider receives:
 
 - the system instruction, with your learning project's topic and
   goal, a profile hint (your preferred learning method and its
-  weight), your completed lessons with their scores, the lesson
+  weight), your completed lessons with their results, the lesson
   and step you are on, your recent mistakes (each with your
-  answer, the correct one and how often) and the language the AI
-  should reply in; a session started from an imported chat
-  carries that chat's analysis and transcript instead of your
-  lesson progress;
+  answer, the correct one and how often you made it) and the
+  language the AI should reply in; a session started from an
+  imported chat carries that chat's analysis and transcript
+  instead of your learning progress;
 - your messages and the AI's earlier replies in the session;
 - as with every request, your IP address and your API key.
 
 Your XP and badges are not sent. The
 [AI content check](ai-validation.md) and the AI review before
 sharing send only the lesson content (cards, texts, exercises).
-Whatever you write into your own cards or notes goes along and
+Whatever you write yourself into cards or notes goes along and
 can itself be personal. The [privacy policy](../legal/privacy.md)
 lists every AI request.
 
