@@ -3,7 +3,9 @@
  *
  * Covers: rendering with error message, checkbox toggles, preview
  * toggle, issue body construction, URL truncation, submit opens
- * window, copy preview to clipboard, close button calls onClose.
+ * window, copy preview to clipboard, close button calls onClose, and
+ * the opt-in defaults: environment and action history reach the
+ * GitHub URL and the JSON download only once ticked (#3804).
  *
  * The Radix Dialog portal is exercised end-to-end (rendered into a
  * happy-dom-supplied body). Toggle interactions use real
@@ -51,6 +53,12 @@ vi.mock("../../utils/eventRecorder", async (importOriginal) => {
     };
 });
 
+const {downloadBlobMock} = vi.hoisted(() => ({downloadBlobMock: vi.fn()}));
+
+vi.mock("../../lib/lesson/export/result-download", () => ({
+    downloadBlob: downloadBlobMock,
+}));
+
 import ErrorReportDialog from "./ErrorReportDialog";
 
 beforeEach(() => {
@@ -67,6 +75,7 @@ function renderDialog(
         errorMessage: string;
         apiError: ApiError;
         onClose: () => void;
+        proactive: boolean;
     }> = {},
 ) {
     const onClose = overrides.onClose ?? vi.fn();
@@ -78,6 +87,7 @@ function renderDialog(
                 overrides.errorMessage ?? "Session failed: 500 from /api/foo"
             }
             apiError={overrides.apiError}
+            proactive={overrides.proactive}
         />,
     );
     return {onClose};
@@ -106,27 +116,29 @@ describe("ErrorReportDialog rendering", () => {
         // Error+stacktrace is always on and disabled.
         expect(checkboxes[0]).toBeChecked();
         expect(checkboxes[0]).toBeDisabled();
-        // Env + history default-on.
-        expect(checkboxes[1]).toBeChecked();
-        expect(checkboxes[2]).toBeChecked();
+        // Env + history are opt-in: unticked until the learner ticks them (#3804).
+        expect(checkboxes[1]).not.toBeChecked();
+        expect(checkboxes[2]).not.toBeChecked();
     });
 
-    it("env checkbox toggles off and on", () => {
+    it("env checkbox toggles on and off", () => {
         renderDialog();
         const env = screen.getByTestId(
             "error-report-include-env",
         ) as HTMLInputElement;
         fireEvent.click(env);
-        expect(env.checked).toBe(false);
-        fireEvent.click(env);
         expect(env.checked).toBe(true);
+        fireEvent.click(env);
+        expect(env.checked).toBe(false);
     });
 
-    it("history checkbox toggles off and on", () => {
+    it("history checkbox toggles on and off", () => {
         renderDialog();
         const history = screen.getByTestId(
             "error-report-include-history",
         ) as HTMLInputElement;
+        fireEvent.click(history);
+        expect(history.checked).toBe(true);
         fireEvent.click(history);
         expect(history.checked).toBe(false);
     });
@@ -211,21 +223,103 @@ describe("ErrorReportDialog preview + actions", () => {
 
     it("includes the action-history block in the preview when checked", () => {
         renderDialog();
-        // Enable preview, history is on by default.
+        fireEvent.click(
+            screen.getByTestId("error-report-include-history"),
+        );
         fireEvent.click(screen.getByTestId("error-report-toggle-preview"));
         const preview = screen.getByTestId("error-report-full-preview");
         expect(preview.textContent).toContain("Action history");
         expect(preview.textContent).toContain("Open something");
     });
 
-    it("omits the action-history block when the history checkbox is off", () => {
+    it("omits the action-history block when the history checkbox is unticked again", () => {
+        renderDialog();
+        const history = screen.getByTestId("error-report-include-history");
+        fireEvent.click(history);
+        fireEvent.click(history);
+        fireEvent.click(screen.getByTestId("error-report-toggle-preview"));
+        const preview = screen.getByTestId("error-report-full-preview");
+        expect(preview.textContent).not.toContain("Action history");
+    });
+});
+
+/** The issue body the submit button hands to GitHub, decoded from the URL. */
+function submittedIssueBody(): string {
+    fireEvent.click(screen.getByTestId("error-report-submit"));
+    expect(window.open).toHaveBeenCalledOnce();
+    const url = String(vi.mocked(window.open).mock.calls[0][0]);
+    return new URL(url).searchParams.get("body") ?? "";
+}
+
+// #3804: GitHub receives the prefilled URL as soon as the tab opens, before
+// the learner submits anything, and a submitted issue is public. Only what
+// the learner ticks may travel in it.
+describe("ErrorReportDialog opt-in sections in the GitHub URL (#3804)", () => {
+    it.each([
+        {entry: "an error toast", proactive: false},
+        {entry: "Settings > Diagnostics & Support", proactive: true},
+    ])(
+        "a report opened from $entry without touching any toggle carries neither the environment nor the action history",
+        ({proactive}) => {
+            renderDialog({errorMessage: "Boom", proactive});
+            expect(
+                screen.queryByTestId("error-report-full-preview"),
+            ).not.toBeInTheDocument();
+            const body = submittedIssueBody();
+            expect(body).toContain("## Error description");
+            expect(body).toContain("Boom");
+            expect(body).not.toContain("## Environment");
+            expect(body).not.toContain("## Action history");
+            expect(body).not.toContain("Open something");
+        },
+    );
+
+    it("ticking the action history puts it into the GitHub URL", () => {
         renderDialog();
         fireEvent.click(
             screen.getByTestId("error-report-include-history"),
         );
-        fireEvent.click(screen.getByTestId("error-report-toggle-preview"));
-        const preview = screen.getByTestId("error-report-full-preview");
-        expect(preview.textContent).not.toContain("Action history");
+        const body = submittedIssueBody();
+        expect(body).toContain("## Action history");
+        expect(body).toContain("Open something");
+        expect(body).not.toContain("## Environment");
+    });
+
+    it("ticking the environment info puts it into the GitHub URL", () => {
+        renderDialog();
+        fireEvent.click(screen.getByTestId("error-report-include-env"));
+        const body = submittedIssueBody();
+        expect(body).toContain("## Environment");
+        expect(body).toContain("Adaptive Learner version:");
+        expect(body).not.toContain("## Action history");
+    });
+
+    it("viewing the recorded history does not include it in the report", () => {
+        renderDialog();
+        fireEvent.click(screen.getByTestId("error-report-history-view"));
+        expect(
+            screen.getByTestId("error-report-history-preview").textContent,
+        ).toContain("Open something");
+        expect(
+            screen.getByTestId("error-report-include-history"),
+        ).not.toBeChecked();
+        const body = submittedIssueBody();
+        expect(body).not.toContain("## Action history");
+    });
+
+    it("the JSON download carries the action history only once it is ticked", () => {
+        downloadBlobMock.mockClear();
+        renderDialog();
+        const downloadedEventCount = () => {
+            fireEvent.click(screen.getByTestId("error-report-download-json"));
+            const json = String(downloadBlobMock.mock.lastCall?.[0]);
+            return (JSON.parse(json) as {events: unknown[]}).events.length;
+        };
+        expect(downloadedEventCount()).toBe(0);
+        fireEvent.click(
+            screen.getByTestId("error-report-include-history"),
+        );
+        expect(downloadedEventCount()).toBe(2);
     });
 });
 

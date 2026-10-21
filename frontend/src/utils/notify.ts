@@ -2,12 +2,13 @@
  * Centralized toast notification wrapper with type-specific
  * display durations.
  *
- * Phase 37 — error toasts include a "Report Issue" button that
+ * Phase 37 - error toasts include a "Report Issue" button that
  * dispatches a ``adaptive-learner:open-error-report`` custom
  * event. The App listens for it and mounts
  * ``ErrorReportDialog`` with a pre-filled GitHub issue body
- * (endpoint, status, stacktrace, environment, sanitized action
- * history). The optional ``apiError`` parameter forwards the
+ * (endpoint, status, stacktrace; the environment and the sanitized
+ * action history only once the learner ticks them, #3804). The
+ * optional ``apiError`` parameter forwards the
  * structured context; calls without it still get a working
  * button (the dialog just has less to pre-fill).
  *
