@@ -32,7 +32,7 @@
 
 checks:
   - id: mermaid-diagrams
-    verifies: every ```mermaid block in docs/help parses with the Mermaid the docs site serves and carries accTitle + accDescr, and that vendored file is the pinned mermaid@11.17.2 release referenced by mkdocs.yml, so the site never falls back to a CDN (#3800); self-tests on every run so zero diagrams is not a pass for nothing
+    verifies: every ```mermaid block in docs/help parses with the Mermaid the docs site serves and carries accTitle + accDescr, and that vendored file is the pinned mermaid@11.17.2 release referenced by mkdocs.yml, so the site never falls back to a CDN (#3800), with its pinned notices file carrying the licences of the 75 packages the bundle contains (#3813); self-tests on every run so zero diagrams is not a pass for nothing
     rule: none (mechanism; CONTRIBUTING.md "Diagrams in help pages")
     status: active
     wired_in: scripts/verify_mermaid_blocks.mjs; make verify-mermaid; .github/workflows/ci.yml docs-verification step (#3800)
