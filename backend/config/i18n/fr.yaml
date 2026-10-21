@@ -2887,9 +2887,13 @@ content:
     source_language_heuristic: Le verso des cartes contient des caractères propres à {found}, mais la langue source est '{lang}'.
     target_language_heuristic: Le recto des cartes contient des caractères propres à {found}, mais la langue cible est '{lang}'.
     failed_share_anyway: "Le contrôle qualité a détecté des problèmes. Tu peux quand même partager - les relecteurs verront les remarques notées dans la pull request."
+  ai_privacy_link: "Politique de confidentialité"
   ai_validation:
     intro: Une IA peut en plus vérifier l'exactitude des traductions, la grammaire et le niveau.
-    privacy: Le contenu de ta leçon sera envoyé à {provider}. Aucune donnée personnelle n'est transmise.
+    privacy: "Seul le contenu de ta leçon est envoyé (cartes, textes, exercices), sans ton profil ni ta progression. Comme pour chaque requête, {provider} reçoit aussi ton adresse IP et ta clé API."
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "ton fournisseur d'IA"
     consent: Lancer la validation par IA
     run: Vérifier avec l'IA
     running: L'IA examine ta leçon…
@@ -2932,7 +2936,7 @@ content:
     title: "Vérification du contenu par l'IA"
     loading: "Préparation des cartes..."
     cost_estimate: "~{cards} cartes, ~{tokens} tokens, ~{usd}."
-    privacy: "Tes cartes seront envoyées à ton fournisseur d'IA configuré pour vérification. Aucune donnée personnelle n'est transmise."
+    privacy: "Seules tes cartes sont envoyées (recto, verso, notes), sans ton profil ni ta progression. Comme pour chaque requête, ton fournisseur d'IA reçoit aussi ton adresse IP et ta clé API."
     confirm: "Vérifier"
     progress: "Vérification du lot {current} sur {total}..."
     rate_limited: "Patiente avant de lancer une autre vérification."

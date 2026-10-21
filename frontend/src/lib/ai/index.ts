@@ -11,7 +11,8 @@
  * - `validation/`  — AI content-validation pipeline (validator, runner, cost,
  *   markdown export, provenance, content hash + signature).
  * - `providers/`   — AI provider/model resolution and provider-backed helpers
- *   (active-provider resolution, model recommendations, pronunciation).
+ *   (active-provider resolution, display names, model recommendations,
+ *   pronunciation).
  */
 
 // generation/
@@ -34,5 +35,6 @@ export * from "./validation/validation-runner";
 export * from "./validation/validation-signature";
 
 // providers/
+export * from "./providers/provider-label";
 export * from "./providers/resolve-provider";
 export * from "./providers/pronunciation-ai";

@@ -3466,6 +3466,17 @@ Ort: Settings → Daten → Empfohlene Repositories.
       der neue Zyklus
 - [ ] TC-0733 AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] TC-0734 Kein Button ohne Key führt zu Error-Toast (disabled + Tooltip)
+- [ ] TC-0985 Datenschutz-Hinweis vor dem Senden (#3812): der Hinweis unter der
+      Kostenschätzung der KI-Inhaltsprüfung (`ai-validation-privacy`) und der
+      im Qualitätsschritt beim Teilen (`content-ai-privacy`) nennen, was
+      gesendet wird (nur die Karten bzw. die Inhalte der Lektion, kein Profil,
+      kein Lernfortschritt) und dass der Anbieter dabei IP-Adresse und
+      API-Schlüssel erhält; der Hinweis beim Teilen nennt den Anbieter mit
+      seinem Namen aus den Einstellungen (z. B. "Anthropic Claude"), in jeder
+      UI-Sprache, nie mit der internen ID ("anthropic"); der Link
+      "Datenschutzerklärung" öffnet die Datenschutzerklärung der Docs-Site in
+      der UI-Sprache in einem neuen Tab (Deutsch ohne Präfix, Englisch unter
+      `.../docs/en/legal/privacy/`)
 
 ### TS-0100 Stapel-Generierung "Übungen für alle Lektionen" (#1896)
 - [ ] TC-0735 Meine Inhalte → Meine Lektionen, Set in dem ALLE Lektionen bereits

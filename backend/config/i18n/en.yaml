@@ -2896,9 +2896,13 @@ content:
     source_language_heuristic: Card backs contain {found}-specific characters but the source language is '{lang}'.
     target_language_heuristic: Card fronts contain {found}-specific characters but the target language is '{lang}'.
     failed_share_anyway: "Quality check found issues. You can share anyway - reviewers will see the findings noted in the pull request."
+  ai_privacy_link: "Privacy policy"
   ai_validation:
     intro: An AI can additionally check translation accuracy, grammar and level fit.
-    privacy: Your lesson content will be sent to {provider}. No personal data is transmitted.
+    privacy: "Only your lesson's content is sent (cards, texts, exercises), no profile and no learning progress. As with every request, {provider} also receives your IP address and your API key."
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "your AI provider"
     consent: Run AI validation
     run: Check with AI
     running: AI is reviewing your lesson…
@@ -2941,7 +2945,7 @@ content:
     title: "AI content check"
     loading: "Preparing cards..."
     cost_estimate: "~{cards} cards, ~{tokens} tokens, ~{usd}."
-    privacy: "Your lesson cards will be sent to your configured AI provider for review. No personal data is transmitted."
+    privacy: "Only your cards are sent (front, back, notes), no profile and no learning progress. As with every request, your AI provider also receives your IP address and your API key."
     confirm: "Check"
     progress: "Checking batch {current} of {total}..."
     rate_limited: "Please wait a moment before running another check."

@@ -18,9 +18,33 @@ nichts einrichten. Willst du einen eigenen vorgeben, setze
 `secrets.yaml`) vor dem ersten Start.
 
 Kein Modus sendet Telemetrie, Analytics oder deine Nachrichten
-an Dritte - außer an den von dir gewählten KI-Anbieter, der
-nur das sieht, was du erwarten würdest (System-Prompt + dein
-Text + bisherige KI-Antworten der Sitzung).
+an Dritte - außer an den von dir gewählten KI-Anbieter. In einer
+Lernsitzung erhält dieser Anbieter:
+
+- die Systemanweisung mit Thema und Ziel deines Lernprojekts,
+  einem Profil-Hinweis (deine bevorzugte Lernmethode mit ihrem
+  Gewicht), deinen abgeschlossenen Lektionen mit ihren
+  Ergebnissen, der Lektion und dem Schritt, an denen du gerade
+  arbeitest, deinen letzten Fehlern (jeweils mit deiner Antwort,
+  der richtigen Antwort und der Häufigkeit) und der Sprache, in
+  der die KI antworten soll; eine Sitzung aus einem importierten
+  Chat enthält statt deines Lernfortschritts die Analyse und den
+  Verlauf dieses Chats;
+- deine Nachrichten und die bisherigen Antworten der KI in der
+  Sitzung;
+- wie bei jeder Anfrage deine IP-Adresse und deinen
+  API-Schlüssel.
+
+Deine XP und Abzeichen werden nicht gesendet. Die
+[KI-Inhaltsprüfung](ai-validation.md) sendet nur die Karten des
+geprüften Sets (Vorderseite, Rückseite, Notizen). Die KI-Prüfung
+vor dem Teilen sendet nur die Lektionen, die du teilst: ihre
+Karten, die Texte ihrer Schritte und die Übungen (Aufgabe und
+falsche Antwortoptionen). Beide senden dazu die Sprachen und das
+Niveau des Sets. Was du selbst in diese Inhalte schreibst, geht
+dabei mit und kann selbst persönlich sein. Die
+[Datenschutzerklärung](../legal/privacy.md) nennt jede
+KI-Anfrage.
 
 ## Brauche ich einen API-Schlüssel?
 

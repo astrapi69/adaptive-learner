@@ -3225,6 +3225,16 @@ Location: Settings → Data → Recommended repositories.
       in the desktop app no notice at step 7, the new cycle starts there
 - [ ] TC-0733 AI content validation: report sensible? provider+model shown?
 - [ ] TC-0734 No button without a key leads to an error toast (disabled + tooltip)
+- [ ] TC-0985 Privacy note before sending (#3812): the note below the cost estimate of
+      the AI content check (`ai-validation-privacy`) and the one in the
+      quality step when sharing (`content-ai-privacy`) name what is sent
+      (only the cards or the lesson content, no profile, no learning
+      progress) and that the provider also receives the IP address and the
+      API key; the sharing note names the provider as the settings do (e.g.
+      "Anthropic Claude"), in every UI language, never by its internal id
+      ("anthropic"); the "Privacy policy" link opens the docs site's privacy
+      policy in the UI language in a new tab (German without a prefix,
+      English under `.../docs/en/legal/privacy/`)
 
 ### TS-0100 Batch "Generate for all lessons" (#1896)
 - [ ] TC-0735 My Content → My Lessons, a set where ALL lessons already have
