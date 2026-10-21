@@ -6,6 +6,9 @@
 
 Son güncelleme: 20 Ekim 2026
 
+Hukuki bir metin olduğu için bu politika resmî hitap biçimini kullanır;
+uygulamada ve yardımın geri kalanında sana "sen" diye hitap ediyoruz.
+
 Bu politika, Adaptive Learner'ın `astrapi69.github.io/adaptive-learner`
 adresindeki herkese açık web sürümünü, bir sonraki sürümün
 `astrapi69.github.io/adaptive-learner-content-test` adresindeki herkese açık

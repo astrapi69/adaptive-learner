@@ -6,6 +6,9 @@
 
 最終更新日: 2026年10月20日
 
+法的文書であるため、本ポリシーでは「お客様」という丁寧な呼び方を用いています。
+アプリおよびその他のヘルプでは「あなた」と呼びかけています。
+
 本ポリシーは、`astrapi69.github.io/adaptive-learner` で公開されている
 Adaptive Learner のウェブ版、`astrapi69.github.io/adaptive-learner-content-test`
 で公開されている次期バージョンのプレビュー、およびこれらのドキュメント

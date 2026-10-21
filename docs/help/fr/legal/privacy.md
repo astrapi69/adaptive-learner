@@ -4,6 +4,9 @@
 
 Dernière mise à jour : 20 octobre 2026
 
+En tant que texte juridique, cette politique utilise le vouvoiement ; dans
+l'application et dans le reste de l'aide, nous te tutoyons.
+
 La présente politique s'applique à la version web publique d'Adaptive Learner à
 l'adresse `astrapi69.github.io/adaptive-learner`, à l'aperçu public de la
 prochaine version à l'adresse

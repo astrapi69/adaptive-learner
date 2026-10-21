@@ -4,6 +4,9 @@
 
 Última actualización: 20 de octubre de 2026
 
+Como texto jurídico, esta política utiliza el trato de usted; en la app y en
+el resto de la ayuda te tratamos de tú.
+
 Esta política se aplica a la versión web pública de Adaptive Learner en
 `astrapi69.github.io/adaptive-learner`, a la vista previa pública de la
 próxima versión en `astrapi69.github.io/adaptive-learner-content-test` y a
