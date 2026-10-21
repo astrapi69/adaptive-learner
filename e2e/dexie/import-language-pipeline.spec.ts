@@ -21,10 +21,8 @@
 
 import { expect, test, type Page } from "@playwright/test";
 
+import { saveAnthropicKey } from "../helpers/ai-key";
 import { createTestUser } from "../helpers/onboarding";
-
-// A format-valid Anthropic key (prefix + length) so Settings accepts it.
-const FAKE_KEY = "sk-ant-" + "a".repeat(95);
 
 // Canned analysis JSON the mocked provider returns (content[0].text).
 const ANALYSIS_JSON = JSON.stringify({
@@ -94,18 +92,6 @@ async function mockProvider(page: Page, analysisJson: string): Promise<void> {
   });
 }
 
-async function setAnthropicKey(page: Page): Promise<void> {
-  // The API-key inputs live in the AI tab, which is hidden unless
-  // active — deep-link straight to it (?tab=ai) so the input renders.
-  await page.goto("/settings?tab=ai");
-  const input = page.getByTestId("api-key-input-anthropic");
-  await expect(input).toBeVisible({ timeout: 15000 });
-  await input.fill(FAKE_KEY);
-  await page.getByTestId("api-key-save-anthropic").click();
-  // Give the save/auto-test a moment (mocked provider returns 200).
-  await page.waitForTimeout(500);
-}
-
 test.describe("Language pipeline: import -> analyze -> save -> share", () => {
   test.use({ viewport: { width: 375, height: 720 } });
 
@@ -124,7 +110,7 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
     // Settings + Import need a learner: without one, /settings redirects
     // to onboarding (no api-key UI). Onboard first, then set the key.
     await createTestUser(page);
-    await setAnthropicKey(page);
+    await saveAnthropicKey(page);
 
     // 1-2. Import + paste a German chat about French, then analyze.
     await page.goto("/content?tab=import");
@@ -196,7 +182,7 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
   }) => {
     await mockProvider(page, ANALYSIS_JSON_DE);
     await createTestUser(page);
-    await setAnthropicKey(page);
+    await saveAnthropicKey(page);
 
     // 1-2. Import + paste a German chat about German grammar, then analyze.
     await page.goto("/content?tab=import");

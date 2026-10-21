@@ -3208,8 +3208,16 @@ Location: Settings → Data → Recommended repositories.
       session with the backend stopped → instead of the welcome it says "The
       earlier conversation could not be loaded. Nothing was deleted." with "Try
       again"; once the backend runs, the click loads the history
-- [ ] TC-0732 Imported session opens with the AI asking the first question on its own
+- [ ] TC-0732 Imported session, first open: the AI asks the first question on its own
       (no user turn first), the chat starts clean
+- [ ] TC-0984 Reload an imported session, reopen it via "Continue session" and open the
+      session URL in a second tab (#3806): each time the stored conversation is
+      there (the AI's first question, no user bubble before it), and the AI does
+      not ask again. The developer tools (network) show no new chat request: in
+      the browser version no POST to the AI provider (e.g.
+      api.anthropic.com/v1/messages), in the desktop app no POST
+      .../message/stream. A new tab may still load the model list with a GET;
+      that is not a chat request
 - [ ] TC-0950 Auto-loop in the browser version (#3436): in the Pages build (Dexie)
       take a session to step 7; below the chat a notice with a monitor icon
       appears: in the desktop app a new cycle starts automatically after
