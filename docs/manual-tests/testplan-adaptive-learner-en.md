@@ -3903,6 +3903,11 @@ developer tools open.
 - [ ] TC-0987 In the text editor (e.g. Rate this session → note) paste an image from a web
       page: it is not loaded, the network shows no request to the other
       server
+- [ ] TC-0990 Create lesson, hotspot exercise: under "Advanced: use an asset path"
+      enter `https://example.com/karte.png`. Instead of the image and the
+      drawing canvas a link with an image icon and the text "Stimulus image"
+      appears; the network shows no request to `example.com` until the link
+      is clicked. An uploaded image shows the canvas as before
 - [ ] TC-0988 A set with its own images (a picture-choice exercise with images from
       `assets/`) shows its images as before
 - [ ] TC-0989 GitHub Pages version in normal use: the console shows no

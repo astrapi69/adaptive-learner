@@ -4173,6 +4173,12 @@ Entwicklerwerkzeugen den Netzwerk-Reiter offen lassen.
 - [ ] TC-0987 Im Texteditor (z. B. Sitzung bewerten → Notiz) ein Bild von einer Webseite
       hineinkopieren: es wird nicht geladen, das Netzwerk zeigt keine Anfrage
       an den fremden Server
+- [ ] TC-0990 Lektion erstellen, Hotspot-Übung: unter "Erweitert: Asset-Pfad verwenden"
+      die Adresse `https://example.com/karte.png` eintragen. Statt des Bildes
+      und der Zeichenfläche erscheint ein Link mit Bild-Symbol und dem Text
+      "Stimulus-Bild"; das Netzwerk zeigt keine Anfrage an `example.com`,
+      bis der Link angeklickt wird. Ein hochgeladenes Bild zeigt die
+      Zeichenfläche wie bisher
 - [ ] TC-0988 Ein Set mit eigenen Bildern (Bildauswahl-Übung mit Bildern aus `assets/`)
       zeigt seine Bilder wie bisher
 - [ ] TC-0989 GitHub-Pages-Version im normalen Gebrauch: die Konsole zeigt keine
