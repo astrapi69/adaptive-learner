@@ -261,9 +261,9 @@ immédiatement une clé non valide (article 6, paragraphe 1, point f), du RGPD).
 
 Les fournisseurs peuvent aussi traiter les données hors de l'UE, notamment aux
 États-Unis. Selon ses conditions contractuelles, Anthropic fonde les transferts
-vers des pays tiers sur les clauses contractuelles types de la Commission
-européenne (article 46, paragraphe 2, point c), du RGPD), OpenAI sur des
-clauses contractuelles types ou une décision d'adéquation ; Google LLC est
+vers des pays tiers sur des clauses types de protection des données adoptées
+par la Commission européenne (article 46, paragraphe 2, point c), du RGPD),
+OpenAI sur de telles clauses ou sur une décision d'adéquation ; Google LLC est
 certifiée au titre du cadre de protection des données UE-États-Unis
 (article 45 du RGPD). Politiques de confidentialité des fournisseurs :
 

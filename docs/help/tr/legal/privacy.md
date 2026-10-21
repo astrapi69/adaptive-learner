@@ -244,10 +244,10 @@ anahtarı hemen bildirme yönündeki meşru menfaattir (GDPR md. 6/1-f).
 
 Sağlayıcılar verileri AB dışında, özellikle ABD'de de işleyebilir. Sözleşme
 koşullarına göre Anthropic üçüncü ülkelere aktarımları Avrupa Komisyonu'nun
-standart sözleşme maddelerine (GDPR md. 46/2-c), OpenAI ise standart sözleşme
-maddelerine veya bir yeterlilik kararına dayandırır; Google LLC, AB-ABD Veri
-Gizliliği Çerçevesi (EU-US Data Privacy Framework) kapsamında sertifikalıdır
-(GDPR md. 45). Sağlayıcıların gizlilik bildirimleri:
+kabul ettiği standart veri koruma maddelerine (GDPR md. 46/2-c), OpenAI ise
+standart veri koruma maddelerine veya bir yeterlilik kararına dayandırır;
+Google LLC, AB-ABD Veri Gizliliği Çerçevesi (EU-US Data Privacy Framework)
+kapsamında sertifikalıdır (GDPR md. 45). Sağlayıcıların gizlilik bildirimleri:
 
 - [Anthropic](https://www.anthropic.com/legal/privacy)
 - [OpenAI](https://openai.com/policies/eu-privacy-policy/)

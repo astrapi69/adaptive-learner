@@ -230,10 +230,10 @@ GDPR).
 
 The providers may also process the data outside the EU, in particular in the
 USA. According to its contract terms, Anthropic bases transfers to third
-countries on the European Commission's standard contractual clauses (Art. 46
-(2) (c) GDPR), OpenAI on standard contractual clauses or an adequacy decision;
-Google LLC is certified under the EU-US Data Privacy Framework (Art. 45 GDPR).
-The providers' privacy notices:
+countries on standard data protection clauses adopted by the European
+Commission (Art. 46 (2) (c) GDPR), OpenAI on standard data protection clauses
+or an adequacy decision; Google LLC is certified under the EU-US Data Privacy
+Framework (Art. 45 GDPR). The providers' privacy notices:
 
 - [Anthropic](https://www.anthropic.com/legal/privacy)
 - [OpenAI](https://openai.com/policies/eu-privacy-policy/)

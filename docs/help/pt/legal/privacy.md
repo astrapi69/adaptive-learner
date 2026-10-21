@@ -257,11 +257,11 @@ imediato uma chave inválida (artigo 6.º, n.º 1, alínea f), do RGPD).
 
 Os fornecedores também podem tratar os dados fora da UE, em especial nos EUA.
 Segundo as suas condições contratuais, a Anthropic baseia as transferências
-para países terceiros nas cláusulas contratuais-tipo da Comissão Europeia
-(artigo 46.º, n.º 2, alínea c), do RGPD), e a OpenAI em cláusulas
-contratuais-tipo ou numa decisão de adequação; a Google LLC está certificada
-ao abrigo do Quadro de Privacidade de Dados UE-EUA (artigo 45.º do RGPD).
-Avisos de privacidade dos fornecedores:
+para países terceiros nas cláusulas-tipo de proteção de dados adotadas pela
+Comissão Europeia (artigo 46.º, n.º 2, alínea c), do RGPD), e a OpenAI em
+cláusulas-tipo de proteção de dados ou numa decisão de adequação; a Google LLC
+está certificada ao abrigo do Quadro de Privacidade de Dados UE-EUA
+(artigo 45.º do RGPD). Avisos de privacidade dos fornecedores:
 
 - [Anthropic](https://www.anthropic.com/legal/privacy)
 - [OpenAI](https://openai.com/policies/eu-privacy-policy/)

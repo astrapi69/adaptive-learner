@@ -250,10 +250,11 @@ verfügbaren Modelle anzuzeigen und einen ungültigen Schlüssel sofort zu melde
 
 Die Anbieter können die Daten auch außerhalb der EU verarbeiten, insbesondere
 in den USA. Anthropic stützt Übermittlungen in Drittländer nach seinen
-Vertragsbedingungen auf Standardvertragsklauseln der EU-Kommission (Art. 46
-Abs. 2 lit. c DSGVO), OpenAI auf Standardvertragsklauseln oder einen
-Angemessenheitsbeschluss; die Google LLC ist unter dem EU-US Data Privacy
-Framework zertifiziert (Art. 45 DSGVO). Datenschutzhinweise der Anbieter:
+Vertragsbedingungen auf Standarddatenschutzklauseln der EU-Kommission
+(Art. 46 Abs. 2 lit. c DSGVO), OpenAI auf Standarddatenschutzklauseln oder
+einen Angemessenheitsbeschluss; die Google LLC ist unter dem EU-US Data
+Privacy Framework zertifiziert (Art. 45 DSGVO). Datenschutzhinweise der
+Anbieter:
 
 - [Anthropic](https://www.anthropic.com/legal/privacy)
 - [OpenAI](https://openai.com/policies/eu-privacy-policy/)
