@@ -13,13 +13,12 @@ A presente política abrange a versão web pública do Adaptive Learner em
 `astrapi69.github.io/adaptive-learner`, a pré-visualização pública da próxima
 versão em `astrapi69.github.io/adaptive-learner-content-test` e estas páginas
 de documentação. Se instalar o Adaptive Learner por conta própria (desktop
-launcher ou Docker), a aplicação é executada no seu próprio dispositivo e o
-operador destas páginas só recebe o que o utilizador lhe enviar por iniciativa
-própria, por exemplo uma lição partilhada ou um relatório de erro. Mesmo nesse
-caso, a
-aplicação e o launcher consultam `api.github.com` sobre novas versões, os
-conteúdos de aprendizagem vêm do GitHub e o seu próprio servidor envia os
-pedidos de IA ao fornecedor escolhido.
+launcher ou Docker), opera a aplicação no seu próprio dispositivo e o operador
+destas páginas só recebe o que lhe enviar por iniciativa própria, por exemplo
+uma lição partilhada ou um relatório de erro. Mesmo nesse caso, a aplicação e o
+launcher consultam `api.github.com` sobre novas versões, os conteúdos de
+aprendizagem vêm do GitHub e o seu próprio servidor envia os pedidos de IA ao
+fornecedor escolhido.
 
 ## Responsável pelo tratamento
 
@@ -32,9 +31,9 @@ E-mail: asterios.raptis@web.de
 O Adaptive Learner não tem servidor próprio. A aplicação e estas páginas não
 definem cookies, não utilizam serviços de análise ou de rastreamento e não
 carregam tipos de letra nem scripts de terceiros. O seu progresso, as suas
-estatísticas e as suas definições ficam no seu browser, para si. O operador só
-recebe o que o utilizador lhe enviar por iniciativa própria, e outros só
-recebem partes disso quando uma funcionalidade que utiliza precisa delas, por
+estatísticas e as suas definições ficam no seu browser, para si. Desses dados,
+o operador só recebe o que lhe enviar por iniciativa própria, e outros só
+recebem partes deles quando uma funcionalidade que utiliza precisa delas, por
 exemplo a IA com a sua própria chave.
 
 Os dados só saem do seu dispositivo nos seguintes casos, descritos em
@@ -47,12 +46,12 @@ pormenor mais abaixo:
 - Quando partilha uma lição com a comunidade ou utiliza funcionalidades do
   GitHub com o seu próprio token de acesso, os dados vão para o GitHub; o
   operador também recebe as contribuições partilhadas.
-- O GitHub só recebe um relatório de erro quando o próprio utilizador o abre
-  no GitHub.
+- O GitHub só recebe um relatório de erro quando o abrir no GitHub por
+  iniciativa própria.
 - As funcionalidades de IA enviam os seus pedidos, com a sua própria chave,
   diretamente ao fornecedor que escolheu.
-- Para a entrada por voz e a leitura em voz alta, o seu browser pode utilizar
-  um serviço online, consoante o fabricante.
+- Para a entrada por voz e a leitura em voz alta, o seu browser utiliza um
+  serviço online, consoante o fabricante.
 - Os botões de partilha e as ligações externas só abrem outros sítios depois
   de clicar.
 - Envia um e-mail ao operador.
@@ -63,8 +62,8 @@ A aplicação, a pré-visualização e esta documentação são disponibilizadas
 GitHub Pages, um serviço da GitHub, Inc., 88 Colin P. Kelly Jr. Street, San
 Francisco, CA 94107, EUA. Em cada pedido, o GitHub trata o endereço IP do seu
 dispositivo e os habituais dados de ligação (hora, ficheiro solicitado, tipo
-de browser); segundo as suas próprias indicações, o GitHub regista e conserva
-o endereço IP para fins de segurança. O operador não recebe estes dados.
+de browser); segundo o próprio GitHub, este regista e conserva o endereço IP
+para fins de segurança. O operador não recebe estes dados.
 
 O fundamento jurídico é o interesse legítimo numa disponibilização segura e
 eficiente (artigo 6.º, n.º 1, alínea f), do RGPD (Regulamento Geral sobre a
@@ -78,7 +77,7 @@ Além disso, estas páginas de documentação não carregam nada de outros
 servidores: utilizam os tipos de letra do seu sistema, e a pesquisa é
 executada no seu browser, sem que os seus termos de pesquisa saiam dele.
 
-## Carregamento de conteúdos de lições
+## Carregamento de conteúdos de aprendizagem
 
 Os conteúdos de aprendizagem encontram-se em repositórios de conteúdo no
 GitHub. O seu browser carrega-os diretamente a partir de
@@ -111,8 +110,8 @@ O GitHub recebe o seu endereço IP, os habituais dados do browser (tipo e
 versão do browser, sistema operativo, idioma), em regra a origem do pedido
 (`astrapi69.github.io`) e o caminho do ficheiro solicitado. O caminho mostra
 que repositórios, conjuntos e lições utiliza, incluindo repositórios que
-adicionou por si, e, ao resgatá-lo, o código de convite. Não são definidos nem
-enviados cookies.
+adicionou por si, e, quando resgata um código de convite, esse código. Não são
+definidos nem enviados cookies.
 
 O fundamento jurídico é, para os conteúdos que solicita, a disponibilização
 da funcionalidade (artigo 6.º, n.º 1, alínea b), do RGPD) e, para a
@@ -123,8 +122,8 @@ Quanto à transferência para os EUA, ver acima.
 ## Funcionalidades do GitHub com o seu próprio token de acesso
 
 Algumas funcionalidades utilizam a API do GitHub (`api.github.com`) com um
-token de acesso pessoal que o próprio utilizador introduz, nas "Configurações"
-em "Integrações" ou para um repositório específico. O token permanece no seu
+token de acesso pessoal que introduz por si, nas "Configurações" em
+"Integrações" ou para um repositório específico. O token permanece no seu
 browser e é enviado apenas ao GitHub. Com ele, a aplicação age em seu nome:
 
 - Verifica o token e lê, nesse processo, o seu nome de utilizador do GitHub.
@@ -255,8 +254,8 @@ alínea b), do RGPD); para a consulta de modelos e o pedido de teste, o
 interesse legítimo em mostrar-lhe os modelos disponíveis e assinalar de
 imediato uma chave inválida (artigo 6.º, n.º 1, alínea f), do RGPD).
 
-Os fornecedores também podem tratar os dados fora da UE, em especial nos EUA.
-Segundo as suas condições contratuais, a Anthropic baseia as transferências
+Os fornecedores também podem tratar os dados fora da UE, em especial nos EUA. A
+Anthropic, segundo as próprias condições contratuais, baseia as transferências
 para países terceiros nas cláusulas-tipo de proteção de dados adotadas pela
 Comissão Europeia (artigo 46.º, n.º 2, alínea c), do RGPD), e a OpenAI em
 cláusulas-tipo de proteção de dados ou numa decisão de adequação; a Google LLC
@@ -270,15 +269,15 @@ está certificada ao abrigo do Quadro de Privacidade de Dados UE-EUA
 
 ## Entrada por voz
 
-Quando toca no microfone (no campo de introdução da sessão de aprendizagem e
-na prática de pronúncia), a aplicação utiliza o reconhecimento de voz do seu
+Quando toca no microfone (no campo de introdução da sessão de aprendizagem e na
+prática de pronúncia), a aplicação utiliza o reconhecimento de voz do seu
 browser. A gravação só começa depois de tocar, e o seu browser pede antes
 autorização para usar o microfone. O reconhecimento é feito pelo browser, não
-pela aplicação: o Google Chrome envia para isso a gravação e o idioma
-escolhido a um serviço da Google (`www.google.com`); os outros browsers
-procedem consoante o fabricante. O fabricante do browser é responsável por
-este tratamento, e aplica-se o respetivo aviso de privacidade. No Chrome
-trata-se da Google; para os utilizadores no EEE, segundo a
+pela aplicação: o Google Chrome envia para isso a gravação e o idioma escolhido
+a um serviço da Google (`www.google.com`); os outros browsers procedem
+consoante o fabricante. O responsável por este tratamento é o fabricante do
+browser, e aplica-se o respetivo aviso de privacidade. No Chrome trata-se da
+Google; para os utilizadores no EEE, segundo a
 [política de privacidade da Google](https://policies.google.com/privacy), da
 Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlanda; a
 Google também pode tratar os dados nos EUA, e a Google LLC está certificada ao
@@ -288,27 +287,28 @@ A aplicação recebe apenas o texto reconhecido. Na sessão de aprendizagem, ele
 vai para o campo de introdução e, na prática de pronúncia, para a sua
 tentativa; quando o envia, segue para o seu fornecedor de IA. O fundamento
 jurídico para iniciar o reconhecimento é o seu pedido (artigo 6.º, n.º 1,
-alínea b), do RGPD). Nas "Configurações", em "Aprendizagem", "Mostrar botão do
-microfone" oculta a entrada por voz. As gravações dos exercícios de expressão
-oral, pelo contrário, são feitas pela própria aplicação e ficam no seu
-browser.
+alínea b), do RGPD). Para ocultar a entrada por voz, desative "Mostrar botão do
+microfone" nas "Configurações", em "Aprendizagem". As gravações dos exercícios
+de falar e gravar, pelo contrário, são feitas pela própria aplicação e ficam no
+seu browser.
 
 ## Leitura em voz alta
 
-Inicia a leitura em voz alta com os botões de leitura, a tecla R ou "Ler
-tudo"; a leitura automática só funciona se a ativar. São lidos os textos das
-lições, os enunciados, as perguntas da avaliação do tipo de aprendizagem, as
-respostas da IA e as frases da prática de pronúncia. Para isso, a aplicação
-utiliza a síntese de voz do seu browser ou do seu sistema operativo. Escolhe
-uma voz que funciona no seu dispositivo e só recorre a uma voz online se não
-existir nenhuma voz local para o idioma ou se o próprio utilizador tiver
-escolhido uma voz online nas "Configurações".
+Inicia a leitura em voz alta com os botões de leitura, a tecla R ou "Ler tudo";
+a leitura automática só funciona se a ativar. São lidos os textos das lições,
+os enunciados, as perguntas da avaliação do tipo de aprendizagem, as respostas
+da IA e as frases da prática de pronúncia. Para isso, a aplicação utiliza a
+síntese de voz do seu browser ou do seu sistema operativo. A aplicação escolhe
+uma voz que é executada no seu dispositivo e só recorre a uma voz online se não
+existir nenhuma voz local para o idioma ou se tiver escolhido por si uma voz
+online nas "Configurações".
 
 Uma voz online envia o texto a ler ao respetivo fornecedor. No Google Chrome,
 trata-se de vozes da Google; o texto figura então no endereço do pedido a
 `www.google.com`. No Linux, o Chrome oferece em regra apenas vozes deste tipo.
-O responsável é o fornecedor da voz, no Chrome a Google (ver Entrada por voz).
-O fundamento jurídico é o seu pedido (artigo 6.º, n.º 1, alínea b), do RGPD).
+O responsável pelo tratamento é o fornecedor da voz, no Chrome a Google (ver
+Entrada por voz). O fundamento jurídico é o seu pedido (artigo 6.º, n.º 1,
+alínea b), do RGPD).
 
 ## Botões de partilha
 
@@ -320,14 +320,14 @@ diálogo de partilha própria, a aplicação abre-a, e escolhe aí onde partilha
 Caso contrário, mostra ligações para o Facebook, o LinkedIn, o X e o WhatsApp e
 uma opção para copiar.
 
-Só quando clica numa destas ligações é que o seu browser abre a página da
-rede; a rede recebe então o seu endereço IP, os habituais dados do browser e
-os cookies que ela própria tenha definido no seu dispositivo. O Facebook e o
+Só quando clica numa destas ligações é que o seu browser abre a página da rede;
+a rede recebe então o seu endereço IP, os habituais dados do browser e os
+cookies que ela própria tenha definido no seu dispositivo. O Facebook e o
 LinkedIn recebem apenas o endereço da aplicação; o X e o WhatsApp, um texto
 pré-preenchido com o título da lição, o seu resultado (percentagem e número de
-respostas corretas) e o endereço da aplicação, que ainda pode alterar antes de
-publicar. A aplicação não incorpora scripts nem botões destas redes; a partir
-do clique aplicam-se os respetivos avisos de privacidade. O fundamento
+respostas corretas) e o endereço da aplicação; ainda pode alterar este texto
+antes de o enviar. A aplicação não incorpora scripts nem botões destas redes; a
+partir do clique aplicam-se os respetivos avisos de privacidade. O fundamento
 jurídico é o seu pedido (artigo 6.º, n.º 1, alínea b), do RGPD).
 
 ## Ligações externas
@@ -335,25 +335,25 @@ jurídico é o seu pedido (artigo 6.º, n.º 1, alínea b), do RGPD).
 A aplicação e estas páginas contêm ligações para serviços externos (entre os
 quais GitHub, Amazon, YouTube, AnkiWeb, plataformas de donativos). Os vídeos e
 as imagens dos conteúdos de aprendizagem ou das respostas da IA que remetem
-para outros servidores também são mostrados pela aplicação como ligação; nada
-é carregado antes de clicar. Com o clique, sai da aplicação ou destas
+para outros servidores também são mostrados pela aplicação como ligação; só
+são carregados depois de clicar. Com o clique, sai da aplicação ou destas
 páginas; a partir desse momento aplica-se o aviso de privacidade do respetivo
 fornecedor. Não estão incluídos quaisquer scripts, botões ou conteúdos
 incorporados destes fornecedores.
 
 ## Armazenamento no seu dispositivo
 
-O que cria na aplicação é armazenado localmente pelo seu browser em IndexedDB
-e localStorage: perfil, projetos de aprendizagem, progresso e estatísticas,
-notas, conversas importadas, lições transferidas, gravações dos exercícios de
-expressão oral, cópias de segurança automáticas e as suas definições,
-incluindo as suas chaves de API e o seu token do GitHub, bem como catálogos em
-cache. A aplicação utiliza ainda:
+O que cria na aplicação é armazenado localmente pelo seu browser em IndexedDB e
+localStorage: perfil, projetos de aprendizagem, progresso e estatísticas,
+notas, conversas importadas, lições transferidas, gravações de voz dos
+exercícios de falar e gravar, cópias de segurança automáticas e as suas
+definições, incluindo as suas chaves de API e o seu token do GitHub, bem como
+catálogos em cache. A aplicação utiliza ainda:
 
 - o sessionStorage, que o seu browser apaga ao fechar o separador, para o
   histórico de ações destinado aos relatórios de erro (as suas ações mais
   recentes na aplicação, como botões clicados, mudanças de página, opções
-  escolhidas, mensagens e erros, mas nenhuma introdução pelo teclado) e, se
+  escolhidas, notificações e erros, mas nenhuma introdução pelo teclado) e, se
   tiver introduzido uma chave de IA, para a lista de modelos do seu
   fornecedor, durante uma hora e guardada sob uma impressão digital curta da
   sua chave em vez da própria chave,
@@ -383,7 +383,7 @@ conservação.
 ## Os seus direitos
 
 Perante o responsável pelo tratamento, tem o direito de acesso (artigo 15.º
-do RGPD), de retificação (artigo 16.º), de apagamento (artigo 17.º), à
+do RGPD), de retificação (artigo 16.º), ao apagamento (artigo 17.º), à
 limitação do tratamento (artigo 18.º), de portabilidade dos dados
 (artigo 20.º) e de oposição ao tratamento com base em interesses legítimos
 (artigo 21.º). Pode ainda apresentar reclamação junto de uma autoridade de
