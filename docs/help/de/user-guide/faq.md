@@ -36,9 +36,12 @@ Lernsitzung erhält dieser Anbieter:
   API-Schlüssel.
 
 Deine XP und Abzeichen werden nicht gesendet. Die
-[KI-Inhaltsprüfung](ai-validation.md) und die KI-Prüfung vor dem
-Teilen senden nur die Inhalte der Lektion (Karten, Texte,
-Übungen). Was du selbst in Karten oder Notizen schreibst, geht
+[KI-Inhaltsprüfung](ai-validation.md) sendet nur die Karten des
+geprüften Sets (Vorderseite, Rückseite, Notizen). Die KI-Prüfung
+vor dem Teilen sendet nur die Lektionen, die du teilst: ihre
+Karten, die Texte ihrer Schritte und die Übungen (Aufgabe und
+falsche Antwortoptionen). Beide senden dazu die Sprachen und das
+Niveau des Sets. Was du selbst in diese Inhalte schreibst, geht
 dabei mit und kann selbst persönlich sein. Die
 [Datenschutzerklärung](../legal/privacy.md) nennt jede
 KI-Anfrage.

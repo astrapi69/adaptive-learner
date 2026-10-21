@@ -31,12 +31,15 @@ elegido. En una sesión de aprendizaje ese proveedor recibe:
 - como en cada solicitud, tu dirección IP y tu clave API.
 
 Tus XP e insignias no se envían. La
-[revisión de contenido con IA](ai-validation.md) y la revisión
-con IA antes de compartir envían solo el contenido de la lección
-(tarjetas, textos, ejercicios). Lo que tú mismo escribes en
-tarjetas o notas se envía con él y puede ser personal en sí
-mismo. La [política de privacidad](../legal/privacy.md) enumera
-cada solicitud a la IA.
+[revisión de contenido con IA](ai-validation.md) envía solo las
+tarjetas del set que revisa (anverso, reverso, notas). La revisión
+con IA antes de compartir envía solo las lecciones que compartes:
+sus tarjetas, los textos de sus pasos y los ejercicios (enunciado
+y opciones de respuesta incorrectas). Ambas envían además los
+idiomas y el nivel del set. Lo que tú mismo escribes en este
+contenido se envía con él y puede ser personal en sí mismo. La
+[política de privacidad](../legal/privacy.md) enumera cada
+solicitud a la IA.
 
 ## ¿Necesito una clave API?
 

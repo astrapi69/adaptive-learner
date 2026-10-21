@@ -33,11 +33,13 @@ learning session that provider receives:
 - as with every request, your IP address and your API key.
 
 Your XP and badges are not sent. The
-[AI content check](ai-validation.md) and the AI review before
-sharing send only the lesson content (cards, texts, exercises).
-Whatever you write yourself into cards or notes goes along and
-can itself be personal. The [privacy policy](../legal/privacy.md)
-lists every AI request.
+[AI content check](ai-validation.md) sends only the cards of the
+set it checks (front, back, notes). The AI review before sharing
+sends only the lessons you share: their cards, the texts of their
+steps and the exercises (task and wrong answer options). Both also
+send the set's languages and level. Whatever you write yourself
+into this content goes along and can itself be personal. The
+[privacy policy](../legal/privacy.md) lists every AI request.
 
 ## Do I need an API key?
 

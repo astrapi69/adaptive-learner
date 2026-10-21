@@ -32,10 +32,13 @@ Numa sessão de aprendizagem, esse fornecedor recebe:
 - como em cada pedido, o seu endereço IP e a sua chave de API.
 
 Os seus XP e emblemas não são enviados. A
-[verificação de conteúdo por IA](ai-validation.md) e a revisão
-por IA antes de partilhar enviam apenas o conteúdo da lição
-(cartões, textos, exercícios). O texto que escreve em cartões
-ou notas também é enviado e pode ser, em si, pessoal. A
+[verificação de conteúdo por IA](ai-validation.md) envia apenas os
+cartões do conjunto verificado (frente, verso, notas). A revisão
+por IA antes de partilhar envia apenas as lições que partilha: os
+respetivos cartões, os textos dos respetivos passos e os exercícios
+(enunciado e opções de resposta erradas). Ambas enviam também os
+idiomas e o nível do conjunto. O texto que escreve nestes conteúdos
+também é enviado e pode ser, em si, pessoal. A
 [política de privacidade](../legal/privacy.md) enumera cada
 pedido à IA.
 

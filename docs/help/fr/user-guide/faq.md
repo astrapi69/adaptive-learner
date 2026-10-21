@@ -28,10 +28,13 @@ fournisseur reçoit :
 - comme pour chaque requête, votre adresse IP et votre clé API.
 
 Vos XP et vos badges ne sont pas envoyés. La
-[vérification du contenu par l'IA](ai-validation.md) et la revue IA
-avant le partage n'envoient que le contenu de la leçon (cartes, textes,
-exercices). Ce que vous écrivez vous-même dans des cartes ou des notes est
-envoyé avec ce contenu et peut lui-même être personnel. La
+[vérification du contenu par l'IA](ai-validation.md) n'envoie que les
+cartes du set vérifié (recto, verso, notes). La revue IA avant le
+partage n'envoie que les leçons que vous partagez : leurs cartes, les
+textes de leurs étapes et les exercices (consigne et mauvaises
+réponses proposées). Les deux envoient aussi les langues et le niveau
+du set. Ce que vous écrivez vous-même dans ce contenu est envoyé avec
+lui et peut lui-même être personnel. La
 [politique de confidentialité](../legal/privacy.md) énumère chaque
 requête à l'IA.
 

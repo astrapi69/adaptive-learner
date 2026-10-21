@@ -30,10 +30,13 @@ Her iki mod da seçtiğiniz yapay zeka sağlayıcısı dışında herhangi bir
 - her istekte olduğu gibi IP adresiniz ve API anahtarınız.
 
 XP'niz ve rozetleriniz gönderilmez.
-[Yapay zekâ içerik denetimi](ai-validation.md) ve paylaşmadan önceki
-yapay zekâ denetimi yalnızca dersin içeriğini (kartlar, metinler,
-alıştırmalar) gönderir. Kartlara veya notlara kendiniz
-yazdıklarınız da birlikte gider ve kendi başına kişisel olabilir.
+[Yapay zekâ içerik denetimi](ai-validation.md) yalnızca denetlediği
+setin kartlarını (ön yüz, arka yüz, notlar) gönderir. Paylaşmadan
+önceki yapay zekâ denetimi yalnızca paylaştığınız dersleri gönderir:
+kartlarını, adımlarının metinlerini ve alıştırmaları (soru ve yanlış
+cevap seçenekleri). İkisi de ayrıca setin dillerini ve seviyesini
+gönderir. Bu içeriğe kendiniz yazdıklarınız da birlikte gider ve
+kendi başına kişisel olabilir.
 [Gizlilik politikası](../legal/privacy.md) yapay zekâya giden her
 isteği listeler.
 
