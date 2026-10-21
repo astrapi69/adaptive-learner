@@ -3170,7 +3170,7 @@
       "title": "Yapay zekâ içerik denetimi",
       "loading": "Kartlar hazırlanıyor...",
       "cost_estimate": "~{cards} kart, ~{tokens} token, ~{usd}.",
-      "privacy": "Yalnızca kartlarınız gönderilir (ön yüz, arka yüz, notlar), profiliniz ve ilerlemeniz gönderilmez. Her istekte olduğu gibi yapay zeka sağlayıcınız IP adresinizi ve API anahtarınızı da alır.",
+      "privacy": "Yalnızca kartlarınız gönderilir (ön yüz, arka yüz, notlar), profiliniz ve ilerlemeniz gönderilmez. Her istekte olduğu gibi yapay zekâ sağlayıcınız IP adresinizi ve API anahtarınızı da alır.",
       "confirm": "Denetle",
       "progress": "{total} gruptan {current}. grup denetleniyor...",
       "rate_limited": "Yeni bir denetim çalıştırmadan önce lütfen biraz bekleyin.",
