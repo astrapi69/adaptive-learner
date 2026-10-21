@@ -42,11 +42,13 @@ interface Props {
 /**
  * Modal that lets the user review and submit a GitHub issue with
  * optional action history. The user sees exactly what will be
- * sent before clicking the submit button. Three opt-in toggles:
- * environment info (version + browser + OS + route), action
- * history (the in-memory ring buffer formatted as text), and the
- * full preview itself. The action history can be filtered by
- * coarse category (EVT-01) and exported as JSON (EVT-05).
+ * sent before clicking the submit button. Three opt-in toggles, all
+ * off when the dialog opens: environment info (version + browser +
+ * OS + route), action history (the in-memory ring buffer formatted
+ * as text), and the full preview itself. GitHub receives the
+ * prefilled issue URL as soon as the new tab opens, so only what the
+ * user ticked travels in it (#3804). The action history can be
+ * filtered by coarse category (EVT-01) and exported as JSON (EVT-05).
  */
 export default function ErrorReportDialog({
     open,
@@ -56,8 +58,8 @@ export default function ErrorReportDialog({
     proactive = false,
 }: Props) {
     const {t} = useI18n();
-    const [includeEnv, setIncludeEnv] = useState(true);
-    const [includeHistory, setIncludeHistory] = useState(true);
+    const [includeEnv, setIncludeEnv] = useState(false);
+    const [includeHistory, setIncludeHistory] = useState(false);
     const [showHistory, setShowHistory] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
     const [description, setDescription] = useState("");
@@ -248,20 +250,28 @@ export default function ErrorReportDialog({
                                 "Environment info (version, browser, OS)",
                             )}
                         </label>
-                        <label className="flex cursor-pointer items-center gap-2 text-[0.875rem]">
-                            <input
-                                type="checkbox"
-                                checked={includeHistory}
-                                onChange={(e) =>
-                                    setIncludeHistory(e.target.checked)
-                                }
-                                data-testid="error-report-include-history"
-                            />
-                            {t(
-                                "ui.error_report.include_history",
-                                "Action history",
-                            )}{" "}
-                            ({events.length})
+                        {/* View sits beside the label, not inside it (#3804):
+                            the checkbox's name is then "Action history (n)"
+                            without "View", and looking at the history can
+                            never tick it for sharing, also where a runtime
+                            forwards a click inside a label to its checkbox
+                            (happy-dom does, Chromium does not). */}
+                        <div className="flex items-center gap-2 text-[0.875rem]">
+                            <label className="flex cursor-pointer items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={includeHistory}
+                                    onChange={(e) =>
+                                        setIncludeHistory(e.target.checked)
+                                    }
+                                    data-testid="error-report-include-history"
+                                />
+                                {t(
+                                    "ui.error_report.include_history",
+                                    "Action history",
+                                )}{" "}
+                                ({events.length})
+                            </label>
                             {events.length > 0 && (
                                 <Button
                                     type="button"
@@ -283,7 +293,7 @@ export default function ErrorReportDialog({
                                     )}
                                 </Button>
                             )}
-                        </label>
+                        </div>
                     </div>
 
                     {/* Category filter (EVT-01) */}

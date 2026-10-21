@@ -2833,6 +2833,23 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       Entwicklermodus-Schalter und keine Diagnose-Sektion mehr
 - [ ] TC-0571 Direkter Link `?tab=diagnostics` öffnet den Tab unmittelbar
 
+### TS-0136 Fehlerbericht: Umgebung und Aktionsverlauf nur auf Wunsch (#3804)
+- [ ] TC-0979 Einstellungen > Diagnose & Support > "Fehlerbericht erstellen":
+      "Fehlermeldung und Stacktrace" ist angekreuzt und gesperrt,
+      "Umgebungsinformationen" und "Aktionsverlauf" sind NICHT angekreuzt;
+      ebenso nach "Problem melden" in einem Fehler-Toast
+- [ ] TC-0980 Ohne etwas anzukreuzen: "Vorschau anzeigen" zeigt weder
+      "## Environment" noch "## Action history", und das Issue-Formular,
+      das "Auf GitHub öffnen" öffnet, enthält keinen der beiden Abschnitte
+- [ ] TC-0981 "Ansehen" neben dem Aktionsverlauf zeigt die aufgezeichneten
+      Aktionen, ohne das Kästchen anzukreuzen; der Bericht bleibt ohne
+      Aktionsverlauf
+- [ ] TC-0982 "Aktionsverlauf" angekreuzt: Vorschau und GitHub-Formular enthalten
+      "## Action history"; "Umgebungsinformationen" angekreuzt: beide
+      enthalten "## Environment" (Version, Browser, Betriebssystem, Route)
+- [ ] TC-0983 "JSON herunterladen" ohne Häkchen beim Aktionsverlauf: die Datei
+      enthält keine Ereignisse (`"events": []`); mit Häkchen enthält sie sie
+
 ### TS-0079 Discover + Registry (seit v2.2.0)
 - [ ] TC-0572 Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert

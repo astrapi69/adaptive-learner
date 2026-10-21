@@ -2632,6 +2632,23 @@ switch the section on in Settings first or press "Detailed evaluation"
       toggle and no Diagnostics section anymore
 - [ ] TC-0571 The direct link `?tab=diagnostics` opens the tab immediately
 
+### TS-0136 Error report: environment and action history only on request (#3804)
+- [ ] TC-0979 Settings > Diagnostics & Support > "Create error report": "Error
+      message and stacktrace" is ticked and locked, "Environment info" and
+      "Action history" are NOT ticked; the same after "Report Issue" in an
+      error toast
+- [ ] TC-0980 Without ticking anything: "Show preview" shows neither
+      "## Environment" nor "## Action history", and the issue form that
+      "Open on GitHub" opens contains neither section
+- [ ] TC-0981 "View" next to the action history shows the recorded actions
+      without ticking the box; the report stays without the action
+      history
+- [ ] TC-0982 "Action history" ticked: preview and GitHub form contain
+      "## Action history"; "Environment info" ticked: both contain
+      "## Environment" (version, browser, OS, route)
+- [ ] TC-0983 "Download JSON" with the action history unticked: the file holds
+      no events (`"events": []`); ticked, it holds them
+
 ### TS-0079 Discover + Registry (since v2.2.0)
 - [ ] TC-0572 Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists
