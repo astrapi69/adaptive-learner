@@ -13,12 +13,12 @@ Bu politika, Adaptive Learner'ın `astrapi69.github.io/adaptive-learner`
 adresindeki herkese açık web sürümünü, bir sonraki sürümün
 `astrapi69.github.io/adaptive-learner-content-test` adresindeki herkese açık
 önizlemesini ve bu dokümantasyon sayfalarını kapsar. Adaptive Learner'ı
-kendiniz kurarsanız (masaüstü başlatıcı veya Docker), uygulama kendi
-cihazınızda çalışır ve bu sayfaların işletmecisi o zaman yalnızca sizin ona
-kendiniz gönderdiklerinizi, örneğin paylaşılan bir dersi veya bir hata raporunu
-alır. Bu durumda da uygulama ve başlatıcı yeni sürümleri `api.github.com`
-üzerinden sorgular, öğrenme içerikleri GitHub'dan gelir ve yapay zekâ
-isteklerini kendi sunucunuz seçtiğiniz sağlayıcıya gönderir.
+kendiniz kurarsanız (masaüstü başlatıcı veya Docker), uygulamayı kendi
+cihazınızda siz işletirsiniz ve bu sayfaların işletmecisi o zaman yalnızca
+sizin ona kendiniz gönderdiklerinizi, örneğin paylaşılan bir dersi veya bir
+hata raporunu alır. Bu durumda da uygulama ve başlatıcı yeni sürümleri
+`api.github.com` üzerinden sorgular, öğrenme içerikleri GitHub'dan gelir ve
+yapay zekâ isteklerini kendi sunucunuz seçtiğiniz sağlayıcıya gönderir.
 
 ## Veri sorumlusu
 
@@ -29,7 +29,7 @@ E-posta: asterios.raptis@web.de
 ## Kısaca
 
 Adaptive Learner'ın kendine ait bir sunucusu yoktur. Uygulama ve bu sayfalar
-çerez kullanmaz, hiçbir analiz veya izleme hizmeti kullanmaz ve üçüncü
+çerez ayarlamaz, hiçbir analiz veya izleme hizmeti kullanmaz ve üçüncü
 kişilerden yazı tipi ya da betik yüklemez. Öğrenme ilerlemeniz,
 istatistikleriniz ve ayarlarınız tarayıcınızda, sizin için kalır. İşletmeci
 bunlardan yalnızca sizin ona kendiniz gönderdiklerinizi alır; başkaları ise
@@ -44,13 +44,13 @@ ayrıntılı olarak açıklanmıştır:
 - Uygulama öğrenme içeriklerini GitHub'dan yükler ve orada yeni bir şey olup
   olmadığını kendiliğinden de denetler.
 - Bir dersi toplulukla paylaştığınızda veya GitHub özelliklerini kendi erişim
-  token'ınızla kullandığınızda veriler GitHub'a gider; paylaşılan katkıları
+  belirtecinizle kullandığınızda veriler GitHub'a gider; paylaşılan katkıları
   işletmeci de alır.
 - GitHub bir hata raporunu ancak siz onu GitHub'da kendiniz açtığınızda alır.
 - Yapay zekâ özellikleri isteklerinizi kendi anahtarınızla doğrudan seçtiğiniz
   sağlayıcıya gönderir.
 - Sesli giriş ve sesli okuma için tarayıcınız, üreticisine bağlı olarak
-  çevrimiçi bir hizmet kullanabilir.
+  çevrimiçi bir hizmet kullanır.
 - Paylaşım düğmeleri ve harici bağlantılar başka siteleri ancak siz
   tıkladıktan sonra açar.
 - İşletmeciye e-posta yazarsınız.
@@ -64,7 +64,7 @@ bağlantı verilerini (zaman, istenen dosya, tarayıcı türü) işler; kendi
 beyanına göre GitHub IP adresini güvenlik amacıyla kaydeder ve saklar.
 İşletmeci bu verileri almaz.
 
-Hukuki dayanak, güvenli ve performanslı sunuma ilişkin meşru menfaattir (Genel
+Hukuki sebep, güvenli ve performanslı sunuma ilişkin meşru menfaattir (Genel
 Veri Koruma Tüzüğü, GDPR md. 6/1-f). GitHub, AB-ABD Veri Gizliliği Çerçevesi
 (EU-US Data Privacy Framework) kapsamında sertifikalıdır; bu nedenle ABD'ye
 aktarım bir yeterlilik kararı kapsamındadır (GDPR md. 45). Daha fazla bilgi:
@@ -74,28 +74,27 @@ Bunun ötesinde, bu dokümantasyon sayfaları başka sunuculardan hiçbir şey
 yüklemez: sisteminizin yazı tiplerini kullanır ve arama, arama terimleriniz
 tarayıcınızdan çıkmadan tarayıcınızda çalışır.
 
-## Ders içeriğinin yüklenmesi
+## Öğrenme içeriklerinin yüklenmesi
 
-Öğrenme içerikleri GitHub'daki içerik repository'lerinde bulunur. Tarayıcınız
-bunları doğrudan `raw.githubusercontent.com` adresinden, kendi erişim token'ı
-olan repository'leri ise `api.github.com` üzerinden yükler. Alıcı, kendisi de
-veri sorumlusu olan GitHub, Inc.'dir (yukarıya bakınız). Uygulama şunları
-yükler:
+Öğrenme içerikleri GitHub'daki içerik depolarında bulunur. Tarayıcınız
+bunları doğrudan `raw.githubusercontent.com` adresinden, kendi erişim belirteci
+olan depoları ise `api.github.com` üzerinden yükler. Veri sorumlusu sıfatıyla
+alıcı GitHub, Inc.'dir (yukarıya bakınız). Uygulama şunları yükler:
 
 - bir seti açtığınızda, indirdiğinizde veya güncellediğinizde setin derslerini
   ve görsellerini,
-- "İçerik" sayfasını açtığınızda kataloğu: önerilen repository'ler, arama
+- "İçerik" sayfasını açtığınızda kataloğu: önerilen depolar, arama
   dizinleri, medya ve kitap listeleri ve kitap kapakları,
 - her dersin sonunda tamamlayıcı medya listesini,
-- bir repository eklediğinizde veya denetlediğinizde, bir davet kodunu
-  kullandığınızda ya da bir sete, bir davete veya bir repository'ye giden
+- bir depo eklediğinizde veya denetlediğinizde, bir davet kodunu
+  kullandığınızda ya da bir sete, bir davete veya bir depoya giden
   paylaşılmış bir bağlantıyı açtığınızda, bunun için gereken dosyaları.
 
 Ayrıca uygulama, siz hiçbir şeye tıklamadan, setlerinizin yeni sürümleri olup
 olmadığını ve hangi tekrarların zamanının geldiğini kendiliğinden denetler.
-Bunun için resmi kataloğun ve bağlı repository'lerinizin manifest dosyalarını
+Bunun için resmi kataloğun ve bağlı depolarınızın manifest dosyalarını
 okur: başlangıçta, sayfalar arasında geçiş yaptığınızda ve pencere yeniden ön
-plana geldiğinde; bağlı repository'leri, son eşitlemenin üzerinden bir günden
+plana geldiğinde; bağlı depoları, son eşitlemenin üzerinden bir günden
 fazla geçmişse başlangıçta eşitler. Kısa aralıklarla tekrarlanan istekleri
 tarayıcınız genellikle kendi önbelleğinden yanıtlar. Denetim, başlangıç
 sayfası, ilk öğrenme projenizin oluşturulması ve öğrenme tipi değerlendirmesi
@@ -106,57 +105,55 @@ sayfasında da, /docs/ altında bile.
 GitHub; IP adresinizi, olağan tarayıcı verilerini (tarayıcı türü ve sürümü,
 işletim sistemi, dil ayarı), genellikle isteğin kaynağını
 (`astrapi69.github.io`) ve istenen dosyanın yolunu alır. Bu yol, kendiniz
-eklediğiniz repository'ler dahil hangi repository'leri, setleri ve dersleri
-kullandığınızı ve bir davet kodunu kullandığınızda bu kodu gösterir. Çerez ne
-ayarlanır ne de gönderilir.
+eklediğiniz depolar dahil hangi depoları, setleri ve dersleri kullandığınızı ve
+bir davet kodunu kullandığınızda bu kodu gösterir. Çerez ne ayarlanır ne de
+gönderilir.
 
-Hukuki dayanak, talep ettiğiniz içerikler için özelliğin sağlanması (GDPR md.
-6/1-b), otomatik denetim için ise size güncel içerikleri ve zamanı gelen
-tekrarları gösterme yönündeki meşru menfaattir (GDPR md. 6/1-f). ABD'ye
-aktarım için yukarıya bakınız.
+Hukuki sebep, talep ettiğiniz içerikler için özelliğin sağlanması (GDPR
+md. 6/1-b), otomatik denetim için ise size güncel içerikleri ve zamanı gelen
+tekrarları gösterme yönündeki meşru menfaattir (GDPR md. 6/1-f). ABD'ye aktarım
+için yukarıya bakınız.
 
-## Kendi erişim token'ınızla GitHub özellikleri
+## Kendi erişim belirtecinizle GitHub özellikleri
 
-Bazı özellikler GitHub API'sini (`api.github.com`), kendiniz girdiğiniz
-kişisel bir erişim token'ıyla kullanır: Ayarlar'da "Entegrasyonlar" altında
-veya tek bir repository için. Token tarayıcınızda kalır ve yalnızca GitHub'a
-gönderilir. Uygulama bu token'la sizin adınıza işlem yapar:
+Bazı özellikler GitHub API'sini (`api.github.com`), kendiniz girdiğiniz kişisel
+bir erişim belirteciyle kullanır: Ayarlar'da "Entegrasyonlar" altında veya tek
+bir depo için. Belirteç tarayıcınızda kalır ve yalnızca GitHub'a gönderilir.
+Uygulama bu belirteçle sizin adınıza işlem yapar:
 
-- Token'ı denetler ve bu sırada GitHub kullanıcı adınızı okur.
-- Bağladığınız özel repository'leri, yukarıdaki otomatik denetim sırasında da
+- Belirteci denetler ve bu sırada GitHub kullanıcı adınızı okur.
+- Bağladığınız özel depoları, yukarıdaki otomatik denetim sırasında da
   okur.
 - Bir dersi toplulukla paylaşır: hesabınızdaki bir kopya (fork) üzerinden,
-  işletmecinin herkese açık `astrapi69/adaptive-learner-content`
-  repository'sine bir pull request olarak.
-- Kendi içerik repository'nizi arama için, yine
-  `astrapi69/adaptive-learner-content` repository'sine bir pull request olarak
-  gönderir.
-- Bir seti hesabınızdaki, varsayılan olarak özel olan yeni bir repository'ye
+  işletmecinin herkese açık `astrapi69/adaptive-learner-content` deposuna
+  bir pull request olarak.
+- Kendi içerik deponuzu arama için, yine `astrapi69/adaptive-learner-content`
+  deposuna bir pull request olarak gönderir.
+- Bir seti hesabınızdaki, varsayılan olarak özel olan yeni bir depoya dışa
   aktarır.
-- Koçlar için, kendi repository'lerinin `codes/` klasöründe davet kodları
+- Koçlar için, kendi depolarının `codes/` klasöründe davet kodları
   oluşturur, listeler ve devre dışı bırakır.
 
-Token olmadan "Toplulukla paylaş" bunun yerine GitHub'ın düzenleme sayfasını
-(`github.com`) açar; ders bu sayfanın adresine sığarsa içeriği adreste yer
-alır. "Gönderimi hazırla" (Ayarlar > Veri > Deponuzu kaydedin), belirttiğiniz
-repository'nin son durumunu, kaydettiyseniz o repository'nin token'ıyla
+Belirteç olmadan "Toplulukla paylaş" bunun yerine GitHub'ın düzenleme
+sayfasını (`github.com`) açar; ders bu sayfanın adresine sığarsa içeriği
+adreste yer alır. "Gönderimi hazırla" (Ayarlar > Veri > Deponuzu kaydedin),
+belirttiğiniz deponun son durumunu, kaydettiyseniz o deponun belirteciyle
 `api.github.com` üzerinden sorgular.
 
-GitHub; token'ı, IP adresinizi, olağan tarayıcı verilerini, repository ve
-dosya adlarını ve paylaştığınız veya dışa aktardığınız her şeyi alır: dersi ya
-da setin dosyalarını, commit mesajını, dersin bilgilerini içeren pull request
+GitHub; belirteci, IP adresinizi, olağan tarayıcı verilerini, depo ve dosya
+adlarını ve paylaştığınız veya dışa aktardığınız her şeyi alır: dersi ya da
+setin dosyalarını, commit mesajını, dersin bilgilerini içeren pull request
 başlığını ve açıklamasını, kayıt girdisini ve belirtirseniz yazar olarak
-adınızı. Bir davet kodu; kodu, repository'yi, branch'i, en fazla kullanım
-sayısını, son geçerlilik tarihini, bir notu ve gömerseniz bir okuma token'ını
-içerir; kod dosyasını okuyabilen herkes bu token'ı da okuyabilir.
+adınızı. Bir davet kodu; kodu, depoyu, branch'i, en fazla kullanım sayısını,
+son geçerlilik tarihini, bir notu ve gömerseniz bir okuma belirtecini içerir;
+kod dosyasını okuyabilen herkes bu belirteci de okuyabilir.
 
-`astrapi69/adaptive-learner-content` repository'sine gönderdikleriniz, GitHub
+`astrapi69/adaptive-learner-content` deposuna gönderdikleriniz, GitHub
 kullanıcı adınızı ve belirttiyseniz yazar adınızı gösteren herkese açık bir
-pull request olur. İşletmeci bunu alır, inceler ve gerekirse katkıyı
-içeriklere ekler (GDPR md. 6/1-b ve f). Pull request ve repository'nin sürüm
-geçmişi, repository var olduğu sürece saklanır. Diğer özellikler için hukuki
-dayanak talebinizdir (GDPR md. 6/1-b). Alıcı GitHub, Inc.'dir (yukarıya
-bakınız).
+pull request olur. İşletmeci bunu alır, inceler ve uygun görürse katkıyı
+içeriklere ekler (GDPR md. 6/1-b ve f). Pull request ve deponun sürüm geçmişi,
+depo var olduğu sürece saklanır. Diğer özellikler için hukuki sebep
+talebinizdir (GDPR md. 6/1-b). Alıcı GitHub, Inc.'dir (yukarıya bakınız).
 
 ## Hata raporları
 
@@ -164,11 +161,11 @@ Bir hata raporunu, bir hata mesajının düğmesiyle ("Sorun bildir"), bir gör�
 yüklenemediğinde "Bir sorun bildir" ile ya da Ayarlar'da "Tanılama ve destek"
 altındaki "Hata raporu oluştur" ile hazırlarsınız. Raporu önce siz görürsünüz.
 Uygulama, ancak "GitHub'da aç" düğmesine tıkladığınızda, yeni bir sekmede
-`github.com` üzerindeki `astrapi69/adaptive-learner` repository'sinde yeni bir
-issue için önceden doldurulmuş bir form açar. Rapor bu sayfanın adresinde yer
-alır; bu nedenle GitHub, siz orada bir şey göndermeden önce, sekme açılır
-açılmaz raporu alır. Bir ders oluşturulurken ortaya çıkan dahili bir hatada
-"Sorunu bildir" böyle bir formu, yalnızca bu hata mesajıyla, doğrudan açar.
+`github.com` üzerindeki `astrapi69/adaptive-learner` deposunda yeni bir issue
+için önceden doldurulmuş bir form açar. Rapor bu sayfanın adresinde yer alır;
+bu nedenle GitHub, siz orada bir şey göndermeden önce, sekme açılır açılmaz
+raporu alır. Bir ders oluşturulurken ortaya çıkan dahili bir hatada "Sorunu
+bildir" böyle bir formu, yalnızca bu hata mesajıyla, doğrudan açar.
 
 Rapor, teknik ayrıntılarla (örneğin durum kodu, uç nokta, zaman veya yığın
 izi) birlikte hata mesajını ve kendi açıklamanızı içerir. Ortam bilgilerini
@@ -177,9 +174,8 @@ izi) birlikte hata mesajını ve kendi açıklamanızı içerir. Ortam bilgileri
 ekler; her ikisi de başlangıçta işaretli değildir.
 
 Issue'yu GitHub'da gönderirseniz herkese açık olur ve GitHub hesabınıza
-bağlanır. İşletmeci onu alır ve hatayı gidermek için kullanır (GDPR md.
-6/1-f); issue var olduğu sürece saklanır. Alıcı GitHub, Inc.'dir (yukarıya
-bakınız).
+bağlanır. İşletmeci onu alır ve hatayı gidermek için kullanır (GDPR md. 6/1-f);
+issue var olduğu sürece saklanır. Alıcı GitHub, Inc.'dir (yukarıya bakınız).
 
 ## Kendi anahtarınızla yapay zekâ özellikleri
 
@@ -238,7 +234,7 @@ içerir:
 - telaffuz alıştırmasında hedef cümle ve denemenizin tanınan metni,
 - yapay zekânın cevap vermesi gereken dil.
 
-Hukuki dayanak, kullandığınız özelliktir (GDPR md. 6/1-b); model sorgusu ve
+Hukuki sebep, kullandığınız özelliktir (GDPR md. 6/1-b); model sorgusu ve
 test isteği için ise size kullanılabilir modelleri gösterme ve geçersiz bir
 anahtarı hemen bildirme yönündeki meşru menfaattir (GDPR md. 6/1-f).
 
@@ -261,9 +257,9 @@ alıştırmasında), uygulama tarayıcınızın konuşma tanıma özelliğini ku
 Kayıt ancak dokunduktan sonra başlar ve tarayıcınız önce mikrofon için izin
 ister. Tanımayı uygulama değil tarayıcı yapar: Google Chrome bunun için kaydı
 ve seçilen dili bir Google hizmetine (`www.google.com`) gönderir; diğer
-tarayıcılar üreticilerine göre davranır. Bu işlemden tarayıcının üreticisi
-sorumludur ve onun gizlilik bildirimi geçerlidir. Chrome için bu Google'dır;
-AEA'daki kullanıcılar için,
+tarayıcılar üreticilerine göre davranır. Bu veri işlemenin veri sorumlusu
+tarayıcının üreticisidir ve onun gizlilik bildirimi geçerlidir. Chrome için bu
+Google'dır; AEA'daki kullanıcılar için,
 [Google gizlilik politikası](https://policies.google.com/privacy) uyarınca,
 Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, İrlanda; Google
 verileri ABD'de de işleyebilir ve Google LLC, AB-ABD Veri Gizliliği Çerçevesi
@@ -271,10 +267,10 @@ kapsamında sertifikalıdır.
 
 Uygulama yalnızca tanınan metni alır. Öğrenme oturumunda metin giriş alanına,
 telaffuz alıştırmasında denemenize gelir; gönderdiğinizde yapay zekâ
-sağlayıcınıza gider. Tanımayı başlatmanın hukuki dayanağı talebinizdir (GDPR
+sağlayıcınıza gider. Tanımayı başlatmanın hukuki sebebi talebinizdir (GDPR
 md. 6/1-b). Ayarlar'da "Öğrenme" altındaki "Mikrofon düğmesini göster" sesli
-girişi gizler. Konuşma alıştırmalarındaki kayıtları ise uygulamanın kendisi
-yapar; bunlar tarayıcınızda kalır.
+girişi gizler. Konuşup kaydetme alıştırmalarındaki kayıtları ise uygulamanın
+kendisi yapar; bunlar tarayıcınızda kalır.
 
 ## Sesli okuma
 
@@ -283,14 +279,15 @@ başlatırsınız; otomatik sesli okuma yalnızca siz açarsanız çalışır. D
 metinleri, görevler, öğrenme tipi değerlendirmesinin soruları, yapay zekâ
 cevapları ve telaffuz alıştırmasındaki cümleler okunur. Bunun için uygulama,
 tarayıcınızın veya işletim sisteminizin konuşma sentezini kullanır. Cihazınızda
-çalışan bir ses seçer ve yalnızca dil için yerel bir ses yoksa veya Ayarlar'da
-kendiniz çevrimiçi bir ses seçtiyseniz çevrimiçi bir sese başvurur.
+yerel olarak çalışan bir ses seçer ve yalnızca dil için yerel bir ses yoksa
+veya Ayarlar'da kendiniz çevrimiçi bir ses seçtiyseniz çevrimiçi bir sese
+başvurur.
 
 Çevrimiçi bir ses, okunacak metni sağlayıcısına gönderir. Google Chrome'da
 bunlar Google sesleridir; metin bu durumda `www.google.com` adresine yapılan
 isteğin adresinde yer alır. Linux'ta Chrome genellikle yalnızca bu tür sesler
-sunar. Sorumlu, sesin sağlayıcısıdır; Chrome'da bu Google'dır (bkz. Sesli
-giriş). Hukuki dayanak talebinizdir (GDPR md. 6/1-b).
+sunar. Veri sorumlusu, sesin sağlayıcısıdır; Chrome'da bu Google'dır (bkz.
+Sesli giriş). Hukuki sebep talebinizdir (GDPR md. 6/1-b).
 
 ## Paylaşım düğmeleri
 
@@ -308,16 +305,16 @@ uygulamanın adresini alır; X ve WhatsApp ise dersin başlığını, sonucunuzu
 (yüzde ve doğru cevap sayısı) ve uygulamanın adresini içeren, paylaşmadan önce
 hâlâ değiştirebileceğiniz önceden doldurulmuş bir metin alır. Uygulama bu
 ağların hiçbir betiğini veya düğmesini sayfaya gömmez; tıklamadan itibaren
-onların gizlilik bildirimleri geçerlidir. Hukuki dayanak talebinizdir (GDPR
+onların gizlilik bildirimleri geçerlidir. Hukuki sebep talebinizdir (GDPR
 md. 6/1-b).
 
 ## Harici bağlantılar
 
 Uygulama ve bu sayfalar harici hizmetlere (aralarında GitHub, Amazon, YouTube,
 AnkiWeb, bağış platformları) bağlantılar içerir. Öğrenme içeriklerindeki veya
-yapay zekâ cevaplarındaki, başka sunuculara işaret eden videoları ve
-görselleri de uygulama bağlantı olarak gösterir; siz tıklamadan hiçbir şey
-yüklenmez. Tıklamayla uygulamadan veya bu sayfalardan ayrılırsınız; bu andan
+yapay zekâ cevaplarındaki, başka sunuculara işaret eden videoları ve görselleri
+de uygulama bağlantı olarak gösterir; bunlar ancak siz tıkladıktan sonra
+yüklenir. Tıklamayla uygulamadan veya bu sayfalardan ayrılırsınız; bu andan
 itibaren ilgili sağlayıcının gizlilik bildirimi geçerlidir. Bu sağlayıcılara
 ait hiçbir betik, düğme veya gömülü içerik yer almaz.
 
@@ -325,14 +322,14 @@ ait hiçbir betik, düğme veya gömülü içerik yer almaz.
 
 Uygulamada oluşturduklarınızı tarayıcınız yerel olarak IndexedDB ve
 localStorage içinde saklar: profil, öğrenme projeleri, ilerleme ve
-istatistikler, notlar, içe aktarılan sohbetler, indirilen dersler, konuşma
-alıştırmalarındaki kayıtlar, otomatik yedekler ve API anahtarlarınız ile
-GitHub token'ınız dahil ayarlarınız, ayrıca önbelleğe alınmış kataloglar.
-Uygulama bunlara ek olarak şunları kullanır:
+istatistikler, notlar, içe aktarılan sohbetler, indirilen dersler, konuşup
+kaydetme alıştırmalarındaki ses kayıtları, otomatik yedekler ve API
+anahtarlarınız ile GitHub belirteciniz dahil ayarlarınız, ayrıca önbelleğe
+alınmış kataloglar. Uygulama bunlara ek olarak şunları kullanır:
 
 - sekmeyi kapattığınızda tarayıcınızın sildiği sessionStorage'ı: hata
   raporları için işlem geçmişi (uygulamadaki son işlemleriniz, örneğin
-  tıklanan düğmeler, sayfa geçişleri, seçilen seçenekler, mesajlar ve
+  tıklanan düğmeler, sayfa geçişleri, seçilen seçenekler, bildirimler ve
   hatalar, ancak klavye girişleri değil) ve bir yapay zekâ anahtarı
   girdiyseniz sağlayıcınızın model listesi için; liste bir saat süreyle,
   anahtarın kendisi yerine anahtarınızın kısa bir parmak iziyle saklanır,
@@ -346,8 +343,8 @@ alanını paylaşır.
 
 Bu saklama, kullandığınız özellikler için kesinlikle gereklidir ve Alman TDDDG
 (Telekomünikasyon ve Dijital Hizmetlerde Veri Koruma Kanunu) § 25 fıkra 2 bent
-2'deki istisna kapsamına girer; rıza gerekmez. Saklamanın kendisi hiçbir şey
-iletmez; verilerin cihazınızdan ne zaman çıktığı yukarıdaki bölümlerde
+2'deki istisna kapsamına girer; açık rıza gerekmez. Saklamanın kendisi hiçbir
+şey iletmez; verilerin cihazınızdan ne zaman çıktığı yukarıdaki bölümlerde
 açıklanmıştır. Verileri istediğiniz zaman Ayarlar'dan dışa aktarabilir veya
 silebilir ya da tarayıcınızda site verilerini temizleyebilirsiniz.
 
@@ -359,7 +356,7 @@ yükümlülüğü bulunmadığı sürece silinir.
 
 ## Haklarınız
 
-Veri sorumlusuna karşı erişim hakkına (GDPR md. 15), düzeltme (md. 16),
+Veri sorumlusuna karşı bilgi talep etme (GDPR md. 15), düzeltme (md. 16),
 silme (md. 17), işlemenin kısıtlanması (md. 18), veri taşınabilirliği
 (md. 20) ve meşru menfaatlere dayalı işlemeye itiraz (md. 21) haklarına
 sahipsiniz. Ayrıca bir veri koruma denetim makamına, örneğin genellikle
@@ -367,7 +364,7 @@ yaşadığınız yerdeki veya veri sorumlusunun bulunduğu yerdeki makama,
 şikâyette bulunabilirsiniz (GDPR md. 77).
 
 İşletmeci öğrenme verilerinizi elinde bulundurmadığından, bu verilere ilişkin
-erişim ve silme talepleri kendi cihazınızda gerçekleştirilir: Ayarlar, Veri,
+bilgi ve silme talepleri kendi cihazınızda gerçekleştirilir: Ayarlar, Veri,
 Dışa aktar veya Sil. İşletmecinin sizden aldığı katkılar, hata raporları ve
 e-postalar için yukarıda belirtilen e-posta adresine başvurun.
 
@@ -376,4 +373,4 @@ e-postalar için yukarıda belirtilen e-posta adresine başvurun.
 Bu politika, uygulama veya hukuki durum değiştiğinde güncellenir. Geçerli
 sürümün tarihi en üstte gösterilir.
 
-Ayrıca bkz. [künye](imprint.md).
+Ayrıca bkz. [Künye](imprint.md).
