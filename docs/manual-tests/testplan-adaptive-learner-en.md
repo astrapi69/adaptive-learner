@@ -3382,27 +3382,27 @@ is done with the toggle in the lesson options only.
 - [ ] TC-0962 Switch the toggle in the lesson options off and open another lesson:
       "Auto read-aloud" stays off
 
-#### TS-0137 Read-aloud takes a voice of the device (#3805)
+#### TS-0138 Read-aloud takes a voice of the device (#3805)
 
 An online voice (in Chrome the "Google ..." voices) sends the text being read
 to its provider. With "Default (auto-pick)" the app takes a voice of the
 device whenever there is one for the language; a voice you choose yourself
 always applies.
 
-- [ ] TC-0985 Windows or macOS, Chrome: Settings > Learning > Reading aloud and
+- [ ] TC-0989 Windows or macOS, Chrome: Settings > Learning > Reading aloud and
       dictation > Voice set to "Default (auto-pick)", open a German lesson
       and have the theory step read with the read-aloud button, with the R
       key, with "Read all" and with "Auto read-aloud" on: a system voice
       reads (to compare, briefly pick "Google Deutsch" in the list: the two
       sound clearly different)
-- [ ] TC-0986 "Auto read-aloud" on: close the browser completely, reopen it, open
+- [ ] TC-0990 "Auto read-aloud" on: close the browser completely, reopen it, open
       the lesson straight from the dashboard, without visiting Settings
       first: the very first step is read by a system voice, not "Google
       Deutsch", and R then reads with it as well
-- [ ] TC-0987 Pick "Google Deutsch" in the list: button, R key and "Read all" read
+- [ ] TC-0991 Pick "Google Deutsch" in the list: button, R key and "Read all" read
       with "Google Deutsch" (your own choice applies, also for an online
       voice)
-- [ ] TC-0988 Chrome on Linux (offers only online voices on its own): with "Default
+- [ ] TC-0992 Chrome on Linux (offers only online voices on its own): with "Default
       (auto-pick)" the app still reads aloud, then with "Google Deutsch"
 
 #### TS-0133 "Install as an app" hint as a card on the dashboard (#3765)
