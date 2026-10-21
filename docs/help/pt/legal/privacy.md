@@ -13,12 +13,12 @@ A presente política abrange a versão web pública do Adaptive Learner em
 `astrapi69.github.io/adaptive-learner`, a pré-visualização pública da próxima
 versão em `astrapi69.github.io/adaptive-learner-content-test` e estas páginas
 de documentação. Se instalar o Adaptive Learner por conta própria (desktop
-launcher ou Docker), opera a aplicação no seu próprio dispositivo e o operador
-destas páginas só recebe o que lhe enviar por iniciativa própria, por exemplo
-uma lição partilhada ou um relatório de erro. Mesmo nesse caso, a aplicação e o
-launcher consultam `api.github.com` sobre novas versões, os conteúdos de
-aprendizagem vêm do GitHub e o seu próprio servidor envia os pedidos de IA ao
-fornecedor escolhido.
+launcher ou Docker), opera a aplicação no seu próprio dispositivo e o
+administrador destas páginas só recebe o que lhe enviar por iniciativa própria,
+por exemplo uma lição partilhada ou um relatório de erro. Mesmo nesse caso, a
+aplicação e o launcher consultam `api.github.com` sobre novas versões, os
+conteúdos de aprendizagem vêm do GitHub e o seu próprio servidor envia os
+pedidos de IA ao fornecedor escolhido.
 
 ## Responsável pelo tratamento
 
@@ -32,7 +32,7 @@ O Adaptive Learner não tem servidor próprio. A aplicação e estas páginas n�
 definem cookies, não utilizam serviços de análise ou de rastreamento e não
 carregam tipos de letra nem scripts de terceiros. O seu progresso, as suas
 estatísticas e as suas definições ficam no seu browser, para si. Desses dados,
-o operador só recebe o que lhe enviar por iniciativa própria, e outros só
+o administrador só recebe o que lhe enviar por iniciativa própria, e outros só
 recebem partes deles quando uma funcionalidade que utiliza precisa delas, por
 exemplo a IA com a sua própria chave.
 
@@ -45,7 +45,7 @@ pormenor mais abaixo:
   verifica lá também, por iniciativa própria, se há novidades.
 - Quando partilha uma lição com a comunidade ou utiliza funcionalidades do
   GitHub com o seu próprio token de acesso, os dados vão para o GitHub; o
-  operador também recebe as contribuições partilhadas.
+  administrador também recebe as contribuições partilhadas.
 - O GitHub só recebe um relatório de erro quando o abrir no GitHub por
   iniciativa própria.
 - As funcionalidades de IA enviam os seus pedidos, com a sua própria chave,
@@ -54,7 +54,7 @@ pormenor mais abaixo:
   serviço online, consoante o fabricante.
 - Os botões de partilha e as ligações externas só abrem outros sítios depois
   de clicar.
-- Envia um e-mail ao operador.
+- Envia um e-mail ao administrador.
 
 ## Alojamento no GitHub Pages
 
@@ -63,7 +63,7 @@ GitHub Pages, um serviço da GitHub, Inc., 88 Colin P. Kelly Jr. Street, San
 Francisco, CA 94107, EUA. Em cada pedido, o GitHub trata o endereço IP do seu
 dispositivo e os habituais dados de ligação (hora, ficheiro solicitado, tipo
 de browser); segundo o próprio GitHub, este regista e conserva o endereço IP
-para fins de segurança. O operador não recebe estes dados.
+para fins de segurança. O administrador não recebe estes dados.
 
 O fundamento jurídico é o interesse legítimo numa disponibilização segura e
 eficiente (artigo 6.º, n.º 1, alínea f), do RGPD (Regulamento Geral sobre a
@@ -130,7 +130,7 @@ browser e é enviado apenas ao GitHub. Com ele, a aplicação age em seu nome:
 - Lê os repositórios privados que ligou, também durante a verificação
   automática acima descrita.
 - Partilha uma lição com a comunidade: como pull request para o repositório
-  público `astrapi69/adaptive-learner-content` do operador, através de uma
+  público `astrapi69/adaptive-learner-content` do administrador, através de uma
   cópia (fork) na sua conta.
 - Submete o seu próprio repositório de conteúdo para a pesquisa, também como
   pull request para `astrapi69/adaptive-learner-content`.
@@ -154,14 +154,14 @@ repositório, o ramo, o número máximo de utilizações, a data de expiração,
 nota e, se o incorporar, um token de leitura; qualquer pessoa que possa ler o
 ficheiro do código pode ler esse token.
 
-O que envia para `astrapi69/adaptive-learner-content` torna-se um pull
-request público com o seu nome de utilizador do GitHub e, se o indicar, o seu
-nome de autor. O operador recebe-o, analisa-o e, se for caso disso, integra a
+O que envia para `astrapi69/adaptive-learner-content` torna-se um pull request
+público com o seu nome de utilizador do GitHub e, se o indicar, o seu nome de
+autor. O administrador recebe-o, analisa-o e, se for caso disso, integra a
 contribuição nos conteúdos (artigo 6.º, n.º 1, alíneas b) e f), do RGPD). O
-pull request e o histórico de versões do repositório são conservados enquanto
-o repositório existir. Para as restantes funcionalidades, o fundamento
-jurídico é o seu pedido (artigo 6.º, n.º 1, alínea b), do RGPD). O
-destinatário é a GitHub, Inc. (ver acima).
+pull request e o histórico de versões do repositório são conservados enquanto o
+repositório existir. Para as restantes funcionalidades, o fundamento jurídico é
+o seu pedido (artigo 6.º, n.º 1, alínea b), do RGPD). O destinatário é a
+GitHub, Inc. (ver acima).
 
 ## Relatórios de erro
 
@@ -184,7 +184,7 @@ Armazenamento no seu dispositivo) se assinalar a respetiva caixa; ambas
 começam por não estar assinaladas.
 
 Se submeter o issue no GitHub, este é público e fica associado à sua conta do
-GitHub. O operador recebe-o e utiliza-o para corrigir o erro (artigo 6.º,
+GitHub. O administrador recebe-o e utiliza-o para corrigir o erro (artigo 6.º,
 n.º 1, alínea f), do RGPD); é conservado enquanto o issue existir. O
 destinatário é a GitHub, Inc. (ver acima).
 
@@ -192,9 +192,9 @@ destinatário é a GitHub, Inc. (ver acima).
 
 As funcionalidades assistidas por IA só existem se introduzir nas
 "Configurações", em "IA", a sua própria chave de API de um fornecedor. O seu
-browser envia então os pedidos diretamente a esse fornecedor; o operador não
-recebe estes dados. Tem um contrato próprio com o fornecedor, e aplicam-se as
-condições e o aviso de privacidade deste. O destinatário é o fornecedor cuja
+browser envia então os pedidos diretamente a esse fornecedor; o administrador
+não recebe estes dados. Tem um contrato próprio com o fornecedor, e aplicam-se
+as condições e o aviso de privacidade deste. O destinatário é o fornecedor cuja
 chave utiliza:
 
 - Anthropic (`api.anthropic.com`): para clientes no EEE, a Anthropic Ireland,
@@ -375,8 +375,8 @@ dispositivo. Pode exportar ou eliminar os dados a qualquer momento nas
 
 ## Contacto por e-mail
 
-Se enviar um e-mail ao operador, os seus dados são armazenados para tratar o
-pedido (artigo 6.º, n.º 1, alíneas b) e f), do RGPD) e eliminados assim que o
+Se enviar um e-mail ao administrador, os seus dados são armazenados para tratar
+o pedido (artigo 6.º, n.º 1, alíneas b) e f), do RGPD) e eliminados assim que o
 pedido estiver resolvido e não se aplique nenhuma obrigação legal de
 conservação.
 
@@ -391,11 +391,11 @@ controlo em matéria de proteção de dados (artigo 77.º do RGPD), por exemplo 
 autoridade do seu local de residência habitual ou da sede do responsável pelo
 tratamento.
 
-Uma vez que o operador não detém os seus dados de aprendizagem, os pedidos de
-acesso e de apagamento relativos a esses dados são tratados no seu próprio
-dispositivo: Configurações, Dados, Exportar ou Eliminar. Para as
-contribuições, os relatórios de erro e os e-mails que o operador recebeu de
-si, contacte o endereço de e-mail indicado acima.
+Uma vez que o administrador não detém os seus dados de aprendizagem, os pedidos
+de acesso e de apagamento relativos a esses dados são tratados no seu próprio
+dispositivo: Configurações, Dados, Exportar ou Eliminar. Para as contribuições,
+os relatórios de erro e os e-mails que o administrador recebeu de si, contacte
+o endereço de e-mail indicado acima.
 
 ## Alterações
 
