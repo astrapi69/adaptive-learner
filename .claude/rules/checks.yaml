@@ -150,6 +150,13 @@ checks:
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_help_terms.py
     probe: script_exists=backend/tests/test_verify_docs_help_terms.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
+  - id: privacy-promises
+    verifies: no catalog value (backend YAML, generated frontend JSON), help glossary, help page, other current doc, root Markdown file or UI t() fallback promises that no personal data is sent, in any of the 11 catalog languages; a seeded probe per language must be found and a legitimate sentence per language must pass; historical records (docs/explorations/, docs/review/, docs/journal/, docs/roadmap-archive/, help changelog.md) are exempt; a required group with no file FAILs (#3812)
+    rule: none (owner decision 2026-10-20 in #3812 - the app states what leaves the device instead of promising what does not)
+    status: active
+    wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_privacy_promises.py
+    probe: script_exists=backend/tests/test_verify_docs_privacy_promises.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
   - id: i18n-one-term-per-concept
     verifies: no catalog value uses a term rejected for its concept (de Session/Streak/Strähne, fr séance, ja ストリーク, ko 스트릭); frontend/src/data/i18n-terms.json is where the term decisions live, read by this test and by help-terms (#3433)
     rule: none (term decision of #3433)

@@ -1471,10 +1471,9 @@ async function gotoOwnSetAiCheckButton(page: Page): Promise<boolean> {
     return true;
 }
 
-async function gotoAiFixReview(page: Page): Promise<boolean> {
-    await pinRandomness(page);
-    await seedLearner(page);
-    await mockAnthropicReview(page);
+/** Store an Anthropic key, create an own set and open its AI check up to the
+ *  confirm step (cost estimate + privacy note). Sends nothing to the provider. */
+async function openOwnSetAiCheckConfirm(page: Page): Promise<void> {
     await page.goto("/settings?tab=ai");
     const keyInput = page.getByTestId("api-key-input-anthropic");
     await expect(keyInput).toBeVisible({timeout: 15_000});
@@ -1488,6 +1487,24 @@ async function gotoAiFixReview(page: Page): Promise<boolean> {
     await expect(check).toBeEnabled({timeout: 15_000});
     await check.click();
     await expect(page.getByTestId("ai-validation-estimate")).toBeVisible({timeout: 15_000});
+}
+
+/** The AI check's confirm step (#3812): the note says what the check sends
+ *  (only the cards, no profile, no progress, plus IP address and key) and
+ *  links the privacy policy. The run is not started. */
+async function gotoAiCheckPrivacyNote(page: Page): Promise<boolean> {
+    await pinRandomness(page);
+    await seedLearner(page);
+    await openOwnSetAiCheckConfirm(page);
+    await expect(page.getByTestId("ai-validation-privacy-link")).toBeVisible();
+    return true;
+}
+
+async function gotoAiFixReview(page: Page): Promise<boolean> {
+    await pinRandomness(page);
+    await seedLearner(page);
+    await mockAnthropicReview(page);
+    await openOwnSetAiCheckConfirm(page);
     await page.getByTestId("ai-validation-confirm-run").click();
     await expect(page.getByTestId("ai-validation-report")).toBeVisible({timeout: 20_000});
     await page.getByTestId("ai-validation-fix-open").click();
@@ -1659,6 +1676,11 @@ const FEATURES: FeatureShot[] = [
         path: "ai-check/eigenes-set-pruefen",
         setup: gotoOwnSetAiCheckButton,
         pinTo: "content-my-lessons",
+    },
+    {
+        path: "ai-check/datenschutz-hinweis",
+        setup: gotoAiCheckPrivacyNote,
+        pinTo: "ai-validation-confirm",
     },
     // --- Installed-plugins card, Plugins tab (#3055) ----------------------
     {

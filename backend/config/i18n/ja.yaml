@@ -2885,9 +2885,13 @@ content:
     source_language_heuristic: カードの裏面に {found} 特有の文字が含まれていますが、出発言語は '{lang}' です。
     target_language_heuristic: カードの表面に {found} 特有の文字が含まれていますが、対象言語は '{lang}' です。
     failed_share_anyway: "品質チェックで問題が見つかりました。それでも共有できます。レビュアーはプルリクエストに記載された指摘を確認できます。"
+  ai_privacy_link: "プライバシーポリシー"
   ai_validation:
     intro: AIは翻訳の正確さ、文法、レベルの適切さも確認できます。
-    privacy: レッスンの内容は {provider} に送信されます。個人データは送信されません。
+    privacy: "送信されるのはレッスンの内容（カード、テキスト、練習問題）のみで、プロフィールや学習の進捗は送信されません。すべてのリクエストと同様に、{provider}はあなたの IP アドレスと API キーも受け取ります。"
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "設定済みのAIプロバイダー"
     consent: AI検証を実行
     run: AIで確認
     running: AIがレッスンを確認しています…
@@ -2930,7 +2934,7 @@ content:
     title: "AIコンテンツ確認"
     loading: "カードを準備しています..."
     cost_estimate: "約{cards}枚のカード、約{tokens}トークン、約{usd}。"
-    privacy: "学習カードは確認のため設定済みのAIプロバイダーに送信されます。個人情報は送信されません。"
+    privacy: "送信されるのは学習カード（表面、裏面、メモ）のみで、プロフィールや学習の進捗は送信されません。すべてのリクエストと同様に、設定済みのAIプロバイダーはあなたの IP アドレスと API キーも受け取ります。"
     confirm: "確認する"
     progress: "{total}件中{current}件目のバッチを確認中..."
     rate_limited: "次の確認を実行する前に少しお待ちください。"

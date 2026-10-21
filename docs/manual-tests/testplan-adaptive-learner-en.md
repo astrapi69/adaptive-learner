@@ -3225,6 +3225,16 @@ Location: Settings → Data → Recommended repositories.
       in the desktop app no notice at step 7, the new cycle starts there
 - [ ] TC-0733 AI content validation: report sensible? provider+model shown?
 - [ ] TC-0734 No button without a key leads to an error toast (disabled + tooltip)
+- [ ] TC-0985 Privacy note before sending (#3812): the note below the cost estimate of
+      the AI content check (`ai-validation-privacy`) and the one in the
+      quality step when sharing (`content-ai-privacy`) name what is sent
+      (only the cards or the lesson content, no profile, no learning
+      progress) and that the provider also receives the IP address and the
+      API key; the sharing note names the provider as the settings do (e.g.
+      "Anthropic Claude"), in every UI language, never by its internal id
+      ("anthropic"); the "Privacy policy" link opens the docs site's privacy
+      policy in the UI language in a new tab (German without a prefix,
+      English under `.../docs/en/legal/privacy/`)
 
 ### TS-0100 Batch "Generate for all lessons" (#1896)
 - [ ] TC-0735 My Content → My Lessons, a set where ALL lessons already have
@@ -3891,26 +3901,26 @@ Lesson" whose `resources` carry an entry of type `youtube` with a
 `![Skizze](https://example.com/skizze.png)`. Keep the Network tab of the
 developer tools open.
 
-- [ ] TC-0985 Play the lesson to the summary: the video card under "Explore further"
+- [ ] TC-0986 Play the lesson to the summary: the video card under "Explore further"
       ("Vertiefe das Thema") shows a video icon instead of a preview image,
       and the network shows no request to `img.youtube.com`. A click on the
       card opens the video on YouTube in a new tab
-- [ ] TC-0986 Theory step: the image shows as a link with an image icon and the text
+- [ ] TC-0987 Theory step: the image shows as a link with an image icon and the text
       "Skizze", not as an image; the network shows no request to
       `example.com` until the link is clicked (new tab). The same holds for
       an image in an explanation after an exercise and in an AI reply in the
       session chat
-- [ ] TC-0987 In the text editor (e.g. Rate this session → note) paste an image from a web
+- [ ] TC-0988 In the text editor (e.g. Rate this session → note) paste an image from a web
       page: it is not loaded, the network shows no request to the other
       server
-- [ ] TC-0990 Create lesson, hotspot exercise: under "Advanced: use an asset path"
+- [ ] TC-0989 Create lesson, hotspot exercise: under "Advanced: use an asset path"
       enter `https://example.com/karte.png`. Instead of the image and the
       drawing canvas a link with an image icon and the text "Stimulus image"
       appears; the network shows no request to `example.com` until the link
       is clicked. An uploaded image shows the canvas as before
-- [ ] TC-0988 A set with its own images (a picture-choice exercise with images from
+- [ ] TC-0990 A set with its own images (a picture-choice exercise with images from
       `assets/`) shows its images as before
-- [ ] TC-0989 GitHub Pages version in normal use: the console shows no
+- [ ] TC-0991 GitHub Pages version in normal use: the console shows no
       Content-Security-Policy message, content loads from the repositories,
       AI replies with your own key arrive, and after a reload without network
       the app still starts (service worker)

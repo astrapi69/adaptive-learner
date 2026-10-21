@@ -3466,6 +3466,17 @@ Ort: Settings → Daten → Empfohlene Repositories.
       der neue Zyklus
 - [ ] TC-0733 AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] TC-0734 Kein Button ohne Key führt zu Error-Toast (disabled + Tooltip)
+- [ ] TC-0985 Datenschutz-Hinweis vor dem Senden (#3812): der Hinweis unter der
+      Kostenschätzung der KI-Inhaltsprüfung (`ai-validation-privacy`) und der
+      im Qualitätsschritt beim Teilen (`content-ai-privacy`) nennen, was
+      gesendet wird (nur die Karten bzw. die Inhalte der Lektion, kein Profil,
+      kein Lernfortschritt) und dass der Anbieter dabei IP-Adresse und
+      API-Schlüssel erhält; der Hinweis beim Teilen nennt den Anbieter mit
+      seinem Namen aus den Einstellungen (z. B. "Anthropic Claude"), in jeder
+      UI-Sprache, nie mit der internen ID ("anthropic"); der Link
+      "Datenschutzerklärung" öffnet die Datenschutzerklärung der Docs-Site in
+      der UI-Sprache in einem neuen Tab (Deutsch ohne Präfix, Englisch unter
+      `.../docs/en/legal/privacy/`)
 
 ### TS-0100 Stapel-Generierung "Übungen für alle Lektionen" (#1896)
 - [ ] TC-0735 Meine Inhalte → Meine Lektionen, Set in dem ALLE Lektionen bereits
@@ -4161,27 +4172,27 @@ mit einer `youtube.com/watch?v=`-Adresse tragen und deren Theorie-Schritt
 ein Bild `![Skizze](https://example.com/skizze.png)` enthält. In den
 Entwicklerwerkzeugen den Netzwerk-Reiter offen lassen.
 
-- [ ] TC-0985 Lektion bis zur Zusammenfassung spielen: die Video-Karte unter "Vertiefe
+- [ ] TC-0986 Lektion bis zur Zusammenfassung spielen: die Video-Karte unter "Vertiefe
       das Thema" zeigt ein Video-Symbol statt eines Vorschaubilds, und das
       Netzwerk zeigt keine Anfrage an `img.youtube.com`. Ein Klick auf die
       Karte öffnet das Video auf YouTube in einem neuen Tab
-- [ ] TC-0986 Theorie-Schritt: das Bild erscheint als Link mit Bild-Symbol und dem Text
+- [ ] TC-0987 Theorie-Schritt: das Bild erscheint als Link mit Bild-Symbol und dem Text
       "Skizze", nicht als Bild; das Netzwerk zeigt keine Anfrage an
       `example.com`, bis der Link angeklickt wird (neuer Tab). Dasselbe gilt
       für ein Bild in einer Erklärung nach einer Übung und in einer
       KI-Antwort im Sitzungs-Chat
-- [ ] TC-0987 Im Texteditor (z. B. Sitzung bewerten → Notiz) ein Bild von einer Webseite
+- [ ] TC-0988 Im Texteditor (z. B. Sitzung bewerten → Notiz) ein Bild von einer Webseite
       hineinkopieren: es wird nicht geladen, das Netzwerk zeigt keine Anfrage
       an den fremden Server
-- [ ] TC-0990 Lektion erstellen, Hotspot-Übung: unter "Erweitert: Asset-Pfad verwenden"
+- [ ] TC-0989 Lektion erstellen, Hotspot-Übung: unter "Erweitert: Asset-Pfad verwenden"
       die Adresse `https://example.com/karte.png` eintragen. Statt des Bildes
       und der Zeichenfläche erscheint ein Link mit Bild-Symbol und dem Text
       "Stimulus-Bild"; das Netzwerk zeigt keine Anfrage an `example.com`,
       bis der Link angeklickt wird. Ein hochgeladenes Bild zeigt die
       Zeichenfläche wie bisher
-- [ ] TC-0988 Ein Set mit eigenen Bildern (Bildauswahl-Übung mit Bildern aus `assets/`)
+- [ ] TC-0990 Ein Set mit eigenen Bildern (Bildauswahl-Übung mit Bildern aus `assets/`)
       zeigt seine Bilder wie bisher
-- [ ] TC-0989 GitHub-Pages-Version im normalen Gebrauch: die Konsole zeigt keine
+- [ ] TC-0991 GitHub-Pages-Version im normalen Gebrauch: die Konsole zeigt keine
       Content-Security-Policy-Meldung, Inhalte laden aus den Repositories,
       KI-Antworten mit eigenem Schlüssel kommen an, und nach einem Neuladen
       ohne Netz startet die App weiterhin (Service Worker)
