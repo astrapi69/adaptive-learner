@@ -6,7 +6,7 @@ Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz).
 
 Seestraße 68, 71638 Ludwigsburg, Deutschland
 
-E-Mail: asteri.raptis@gmail.com
+E-Mail: asterios.raptis@web.de
 
 ## Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV
 
