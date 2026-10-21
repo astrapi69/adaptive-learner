@@ -523,8 +523,13 @@ click on an entry opens the full article in the help drawer.
 The **Diagnostics & Support** tab gathers what helps the developer see
 what happened on your device:
 
-- **Support** - **Create error report** collects your recent actions
-  into a report you review before anything leaves your browser.
+- **Support** - **Create error report** prepares a report for the
+  developer. The environment info and the action history (your recent
+  actions in the app) go into it only when you tick them; both start
+  unticked. Nothing leaves your browser until you click
+  **Open on GitHub**: that opens GitHub's issue form with the report
+  filled in, so GitHub receives it from that moment, before you submit
+  the issue there.
 - **Developer Mode** - shows full technical detail (status code,
   endpoint, stack trace) in error toasts, and a "DEV" badge in the
   navigation bar while it is on. Its default depends on the build
