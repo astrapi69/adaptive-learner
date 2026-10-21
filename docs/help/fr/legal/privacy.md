@@ -2,7 +2,7 @@
 
 > Cette page est une traduction automatique de l'original allemand, fournie à titre purement informatif. Seule la version allemande fait foi juridiquement.
 
-Dernière mise à jour : 20 octobre 2026
+Dernière mise à jour : 21 octobre 2026
 
 En tant que texte juridique, cette politique utilise le vouvoiement ; dans
 l'application et dans le reste de l'aide, nous te tutoyons.

@@ -4,7 +4,7 @@
 
 > Esta página é uma tradução automática do original em alemão e serve apenas para informação. Só a versão alemã é juridicamente vinculativa.
 
-Última atualização: 20 de outubro de 2026
+Última atualização: 21 de outubro de 2026
 
 Por se tratar de um texto jurídico, esta política utiliza o tratamento
 formal; na aplicação e no resto da ajuda tratamos-te por tu.

@@ -1,6 +1,6 @@
 # Datenschutzerklärung
 
-Stand: 20. Oktober 2026
+Stand: 21. Oktober 2026
 
 Als Rechtstext verwendet diese Erklärung die förmliche Anrede; in der App und
 in der übrigen Hilfe duzen wir dich.

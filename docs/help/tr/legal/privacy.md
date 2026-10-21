@@ -4,7 +4,7 @@
 
 > Bu sayfa, Almanca aslının yalnızca bilgi amaçlı sunulan bir makine çevirisidir. Hukuken yalnızca Almanca sürüm bağlayıcıdır.
 
-Son güncelleme: 20 Ekim 2026
+Son güncelleme: 21 Ekim 2026
 
 Hukuki bir metin olduğu için bu politika resmî hitap biçimini kullanır;
 uygulamada ve yardımın geri kalanında sana "sen" diye hitap ediyoruz.
