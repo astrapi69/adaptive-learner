@@ -3205,9 +3205,11 @@ Location: Settings → Data → Recommended repositories.
       quality step when sharing (`content-ai-privacy`) name what is sent
       (only the cards or the lesson content, no profile, no learning
       progress) and that the provider also receives the IP address and the
-      API key; the "Privacy policy" link opens the docs site's privacy policy
-      in the UI language in a new tab (German without a prefix, English under
-      `.../docs/en/legal/privacy/`)
+      API key; the sharing note names the provider as the settings do (e.g.
+      "Anthropic Claude"), in every UI language, never by its internal id
+      ("anthropic"); the "Privacy policy" link opens the docs site's privacy
+      policy in the UI language in a new tab (German without a prefix,
+      English under `.../docs/en/legal/privacy/`)
 
 ### TS-0100 Batch "Generate for all lessons" (#1896)
 - [ ] TC-0735 My Content → My Lessons, a set where ALL lessons already have

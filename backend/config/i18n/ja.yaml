@@ -2888,7 +2888,10 @@ content:
   ai_privacy_link: "プライバシーポリシー"
   ai_validation:
     intro: AIは翻訳の正確さ、文法、レベルの適切さも確認できます。
-    privacy: "送信されるのはレッスンの内容（カード、テキスト、練習問題）のみで、プロフィールや学習の進捗は送信されません。すべてのリクエストと同様に、{provider} はあなたの IP アドレスと API キーも受け取ります。"
+    privacy: "送信されるのはレッスンの内容（カード、テキスト、練習問題）のみで、プロフィールや学習の進捗は送信されません。すべてのリクエストと同様に、{provider}はあなたの IP アドレスと API キーも受け取ります。"
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "設定済みのAIプロバイダー"
     consent: AI検証を実行
     run: AIで確認
     running: AIがレッスンを確認しています…

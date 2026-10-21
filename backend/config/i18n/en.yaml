@@ -2900,6 +2900,9 @@ content:
   ai_validation:
     intro: An AI can additionally check translation accuracy, grammar and level fit.
     privacy: "Only your lesson's content is sent (cards, texts, exercises), no profile and no learning progress. As with every request, {provider} also receives your IP address and your API key."
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "your AI provider"
     consent: Run AI validation
     run: Check with AI
     running: AI is reviewing your lesson…

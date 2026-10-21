@@ -2891,6 +2891,9 @@ content:
   ai_validation:
     intro: Une IA peut en plus vérifier l'exactitude des traductions, la grammaire et le niveau.
     privacy: "Seul le contenu de ta leçon est envoyé (cartes, textes, exercices), sans ton profil ni ta progression. Comme pour chaque requête, {provider} reçoit aussi ton adresse IP et ta clé API."
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "ton fournisseur d'IA"
     consent: Lancer la validation par IA
     run: Vérifier avec l'IA
     running: L'IA examine ta leçon…

@@ -28,6 +28,7 @@ import {
   type ValidationMarkdownRow,
 } from "../../../lib/ai/validation/validation-markdown";
 import { checkedWithLine } from "../../../lib/ai/validation/validation-provenance";
+import { aiProviderLabel } from "../../../lib/ai/providers/provider-label";
 import { downloadBlob } from "../../../lib/lesson/export/result-download";
 import type { AIProvider } from "../../../lib/constants";
 import type { ContentSetEntry } from "../../../storage/types";
@@ -88,9 +89,7 @@ export default function AiValidationDialog({
 
   // #940 — surface which provider + model ran the check (read from the run,
   // never hardcoded). Empty for an older cached report without provenance.
-  const providerLabel = state.provider
-    ? t(`settings.provider_${state.provider}`, state.provider)
-    : "";
+  const providerLabel = state.provider ? aiProviderLabel(t, state.provider) : "";
   const checkedWith = checkedWithLine({
     prefix: t("content.ai_check.checked_with", "Checked with"),
     providerLabel,

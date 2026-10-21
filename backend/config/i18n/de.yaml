@@ -2894,6 +2894,9 @@ content:
   ai_validation:
     intro: Eine KI kann zusätzlich Übersetzungsgenauigkeit, Grammatik und Niveau prüfen.
     privacy: "Gesendet werden nur die Inhalte deiner Lektion (Karten, Texte, Übungen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält {provider} dabei deine IP-Adresse und deinen API-Schlüssel."
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "dein KI-Anbieter"
     consent: KI-Validierung durchführen
     run: Mit KI prüfen
     running: Die KI prüft deine Lektion…

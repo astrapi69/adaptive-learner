@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
 import type { UseContentSharingResult } from "../../../hooks/content/useContentSharing";
+import { aiProviderLabel } from "../../../lib/ai/providers/provider-label";
 import type { ContentSetEntry } from "../../../storage/types";
 import AiPrivacyNote from "../AiPrivacyNote";
 import ShareWizard from "./ShareWizard";
@@ -64,6 +65,12 @@ export default function ContentShareDialog({
   } = share;
 
   if (!shareTarget) return null;
+
+  // #3812 - the privacy note names the provider in the UI language: its
+  // settings label, or a localized "your AI provider" when none is active.
+  const providerName = activeProvider
+    ? aiProviderLabel(t, activeProvider)
+    : t("content.ai_validation.provider_fallback", "your AI provider");
 
   // Phase 60 C5b — render the AI review's issue groups. Translation
   // + grammar issues carry a concrete correction, so they get an
@@ -171,7 +178,7 @@ export default function ContentShareDialog({
                   text={t(
                     "content.ai_validation.privacy",
                     "Only your lesson's content is sent (cards, texts, exercises), no profile and no learning progress. As with every request, {provider} also receives your IP address and your API key.",
-                  ).replace("{provider}", activeProvider ?? "the AI provider")}
+                  ).replace("{provider}", providerName)}
                 />
                 <label className="flex items-center justify-between gap-2">
                   <span className="text-[0.95rem] font-medium">

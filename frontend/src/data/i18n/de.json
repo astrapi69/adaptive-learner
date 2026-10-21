@@ -3124,6 +3124,7 @@
     "ai_validation": {
       "intro": "Eine KI kann zusätzlich Übersetzungsgenauigkeit, Grammatik und Niveau prüfen.",
       "privacy": "Gesendet werden nur die Inhalte deiner Lektion (Karten, Texte, Übungen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält {provider} dabei deine IP-Adresse und deinen API-Schlüssel.",
+      "provider_fallback": "dein KI-Anbieter",
       "consent": "KI-Validierung durchführen",
       "run": "Mit KI prüfen",
       "running": "Die KI prüft deine Lektion…",

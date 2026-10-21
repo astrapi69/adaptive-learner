@@ -2889,6 +2889,9 @@ content:
   ai_validation:
     intro: Bir yapay zekâ ayrıca çeviri doğruluğunu, dil bilgisini ve seviye uygunluğunu kontrol edebilir.
     privacy: "Yalnızca dersinizin içeriği gönderilir (kartlar, metinler, alıştırmalar), profiliniz ve ilerlemeniz gönderilmez. Her istekte olduğu gibi {provider} sağlayıcısı IP adresinizi ve API anahtarınızı da alır."
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "yapay zekâ"
     consent: Yapay zekâ doğrulamasını çalıştır
     run: Yapay zekâ ile kontrol et
     running: Yapay zekâ dersinizi inceliyor…

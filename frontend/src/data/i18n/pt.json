@@ -3124,6 +3124,7 @@
     "ai_validation": {
       "intro": "Uma IA pode também verificar a exatidão da tradução, a gramática e a adequação ao nível.",
       "privacy": "Só é enviado o conteúdo da sua lição (cartões, textos, exercícios), sem o seu perfil nem o seu progresso. Como em cada pedido, {provider} recebe também o seu endereço IP e a sua chave de API.",
+      "provider_fallback": "o seu provedor de IA",
       "consent": "Executar validação por IA",
       "run": "Verificar com IA",
       "running": "A IA está a rever a sua lição…",
