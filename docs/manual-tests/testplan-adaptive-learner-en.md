@@ -2632,6 +2632,23 @@ switch the section on in Settings first or press "Detailed evaluation"
       toggle and no Diagnostics section anymore
 - [ ] TC-0571 The direct link `?tab=diagnostics` opens the tab immediately
 
+### TS-0136 Error report: environment and action history only on request (#3804)
+- [ ] TC-0979 Settings > Diagnostics & Support > "Create error report": "Error
+      message and stacktrace" is ticked and locked, "Environment info" and
+      "Action history" are NOT ticked; the same after "Report Issue" in an
+      error toast
+- [ ] TC-0980 Without ticking anything: "Show preview" shows neither
+      "## Environment" nor "## Action history", and the issue form that
+      "Open on GitHub" opens contains neither section
+- [ ] TC-0981 "View" next to the action history shows the recorded actions
+      without ticking the box; the report stays without the action
+      history
+- [ ] TC-0982 "Action history" ticked: preview and GitHub form contain
+      "## Action history"; "Environment info" ticked: both contain
+      "## Environment" (version, browser, OS, route)
+- [ ] TC-0983 "Download JSON" with the action history unticked: the file holds
+      no events (`"events": []`); ticked, it holds them
+
 ### TS-0079 Discover + Registry (since v2.2.0)
 - [ ] TC-0572 Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists
@@ -3191,8 +3208,16 @@ Location: Settings → Data → Recommended repositories.
       session with the backend stopped → instead of the welcome it says "The
       earlier conversation could not be loaded. Nothing was deleted." with "Try
       again"; once the backend runs, the click loads the history
-- [ ] TC-0732 Imported session opens with the AI asking the first question on its own
+- [ ] TC-0732 Imported session, first open: the AI asks the first question on its own
       (no user turn first), the chat starts clean
+- [ ] TC-0984 Reload an imported session, reopen it via "Continue session" and open the
+      session URL in a second tab (#3806): each time the stored conversation is
+      there (the AI's first question, no user bubble before it), and the AI does
+      not ask again. The developer tools (network) show no new chat request: in
+      the browser version no POST to the AI provider (e.g.
+      api.anthropic.com/v1/messages), in the desktop app no POST
+      .../message/stream. A new tab may still load the model list with a GET;
+      that is not a chat request
 - [ ] TC-0950 Auto-loop in the browser version (#3436): in the Pages build (Dexie)
       take a session to step 7; below the chat a notice with a monitor icon
       appears: in the desktop app a new cycle starts automatically after
@@ -3347,27 +3372,27 @@ is done with the toggle in the lesson options only.
 - [ ] TC-0962 Switch the toggle in the lesson options off and open another lesson:
       "Auto read-aloud" stays off
 
-#### TS-0136 Read-aloud takes a voice of the device (#3805)
+#### TS-0137 Read-aloud takes a voice of the device (#3805)
 
 An online voice (in Chrome the "Google ..." voices) sends the text being read
 to its provider. With "Default (auto-pick)" the app takes a voice of the
 device whenever there is one for the language; a voice you choose yourself
 always applies.
 
-- [ ] TC-0979 Windows or macOS, Chrome: Settings > Learning > Reading aloud and
+- [ ] TC-0985 Windows or macOS, Chrome: Settings > Learning > Reading aloud and
       dictation > Voice set to "Default (auto-pick)", open a German lesson
       and have the theory step read with the read-aloud button, with the R
       key, with "Read all" and with "Auto read-aloud" on: a system voice
       reads (to compare, briefly pick "Google Deutsch" in the list: the two
       sound clearly different)
-- [ ] TC-0980 "Auto read-aloud" on: close the browser completely, reopen it, open
+- [ ] TC-0986 "Auto read-aloud" on: close the browser completely, reopen it, open
       the lesson straight from the dashboard, without visiting Settings
       first: the very first step is read by a system voice, not "Google
       Deutsch", and R then reads with it as well
-- [ ] TC-0981 Pick "Google Deutsch" in the list: button, R key and "Read all" read
+- [ ] TC-0987 Pick "Google Deutsch" in the list: button, R key and "Read all" read
       with "Google Deutsch" (your own choice applies, also for an online
       voice)
-- [ ] TC-0982 Chrome on Linux (offers only online voices on its own): with "Default
+- [ ] TC-0988 Chrome on Linux (offers only online voices on its own): with "Default
       (auto-pick)" the app still reads aloud, then with "Google Deutsch"
 
 #### TS-0133 "Install as an app" hint as a card on the dashboard (#3765)
@@ -3492,7 +3517,7 @@ no numbers that could go stale, on purpose.
 
 Legal notice and privacy policy live as help pages on the docs site
 (`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; other languages under
-`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, locales without their own version fall back to German).
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`; UI languages without their own docs version (hi, id, ko) land on the English one).
 
 - [ ] TC-0805 App start page `/` (no signed-in learner): below "Read the
       documentation" the row "Legal notice · Privacy policy"
@@ -3502,10 +3527,28 @@ Legal notice and privacy policy live as help pages on the docs site
 - [ ] TC-0806 Settings → About → card "License & resources": two new rows "Legal
       notice" and "Privacy policy" (`about-imprint-link`,
       `about-privacy-link`), same targets, new tab.
-- [ ] TC-0807 Help panel and docs site: section "Legal" with both pages in the
-      navigation (DE + EN); the legal notice names name, address, email; the
-      privacy policy carries a date and names GitHub Pages, YouTube preview
-      images and the AI providers used with the learner's own key.
+- [ ] TC-0807 Docs site (#3807, #3139): section "Legal" with both pages in the
+      navigation of every language; the legal notice names name, address and
+      the email asterios.raptis@web.de, the privacy policy the same address and
+      its date at the top; it addresses the reader formally in every language,
+      and every version except the English one says under the date that it
+      uses the formal address as a legal text; de, es, el and ja add that the
+      app and the rest of the help address the reader informally (fr, pt and
+      tr do not, as they mix both forms there). Scope: the app, the public preview
+      `astrapi69.github.io/adaptive-learner-content-test` and the docs pages,
+      plus one sentence on self-installed copies (update check at
+      `api.github.com`).
+      "The short version" lists when data leaves the device; one section each
+      for hosting, loading learning content (with the automatic checks), GitHub
+      features with your own access token, error reports, AI features with your
+      own key (`api.anthropic.com`, `api.openai.com`,
+      `generativelanguage.googleapis.com`, each with recipient and address),
+      voice input, read-aloud, share
+      buttons (Facebook, LinkedIn, X, WhatsApp), external links, storage on the
+      device (with sessionStorage, Cache Storage and the docs colour scheme),
+      contact by email and rights; no statement about YouTube preview images
+      any more. Every language version has the same sections in the same
+      order.
 - [ ] TC-0808 Share preview (e.g. in a messenger): title, description and image
       appear (the landing page's Open Graph data, not the app's).
 

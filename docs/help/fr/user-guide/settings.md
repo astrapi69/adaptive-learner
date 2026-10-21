@@ -572,9 +572,14 @@ l'article complet dans le panneau d'aide.
 L'onglet **Diagnostic et assistance** rassemble ce qui aide le
 développeur à voir ce qui s'est passé sur votre appareil :
 
-- **Assistance** - **Créer un rapport d'erreur** rassemble vos actions
-  récentes dans un rapport que vous relisez avant que quoi que ce soit
-  ne quitte votre navigateur.
+- **Assistance** - **Créer un rapport d'erreur** prépare un rapport pour
+  le développeur. Les infos d'environnement et l'historique des actions
+  (vos actions récentes dans l'application) n'y figurent que si vous
+  les cochez ; les deux cases sont décochées au départ. Rien ne quitte
+  votre navigateur avant que vous ne cliquiez sur **Ouvrir sur GitHub** :
+  cela ouvre le formulaire de ticket de GitHub avec le rapport déjà
+  rempli, GitHub le reçoit donc dès ce moment, avant même que vous
+  n'envoyiez le ticket.
 - **Mode développeur** - affiche le détail technique complet (code
   d'état, endpoint, trace) dans les messages d'erreur, et un badge
   « DEV » dans la barre de navigation tant qu'il est actif. Sa valeur

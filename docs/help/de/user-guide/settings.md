@@ -571,9 +571,13 @@ Hilfe-Leiste.
 Der Tab **Diagnose & Support** bündelt, was der Entwicklung hilft zu
 sehen, was auf deinem Gerät passiert ist:
 
-- **Support** - **Fehlerbericht erstellen** sammelt deine letzten
-  Aktionen in einem Bericht, den du prüfst, bevor irgendetwas deinen
-  Browser verlässt.
+- **Support** - **Fehlerbericht erstellen** bereitet einen Bericht für
+  die Entwicklung vor. Umgebungsinformationen und Aktionsverlauf (deine
+  letzten Aktionen in der App) kommen nur hinein, wenn du sie
+  ankreuzt; beide sind anfangs nicht angekreuzt. Nichts verlässt deinen
+  Browser, bevor du auf **Auf GitHub öffnen** klickst: Das öffnet das
+  Issue-Formular von GitHub mit dem ausgefüllten Bericht, GitHub erhält
+  ihn also ab diesem Moment, noch bevor du das Issue dort absendest.
 - **Entwicklermodus** - zeigt in Fehler-Toasts die vollen technischen
   Details (Statuscode, Endpunkt, Stacktrace) und, solange er an ist,
   ein „DEV"-Abzeichen in der Navigationsleiste. Sein Standard hängt vom
