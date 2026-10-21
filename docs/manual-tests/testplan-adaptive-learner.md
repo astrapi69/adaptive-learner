@@ -3785,6 +3785,26 @@ Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 - [ ] TC-0808 Teilen-Vorschau (z. B. in einem Messenger): Titel, Beschreibung und
       Bild erscheinen (Open-Graph-Daten der Landeseite, nicht der App).
 
+### TS-0137 Docs-Site lädt nichts von Dritten (#3802)
+
+Keine Seite der Docs-Site lädt von sich aus etwas von einem anderen Host als
+`astrapi69.github.io`: keine Webschrift, kein Skript, kein Bild, keine
+API-Abfrage. Prüfen auf der veröffentlichten Seite nach dem Release, mit den
+Entwicklerwerkzeugen des Browsers (Netzwerk, Cache deaktiviert).
+
+- [ ] TC-0986 `astrapi69.github.io/adaptive-learner/docs/`, die Datenschutzerklärung,
+      eine englische und eine japanische Seite aufrufen und eine Suche
+      ausführen (z. B. "Backup"): jede Anfrage geht an `astrapi69.github.io`,
+      keine an `fonts.googleapis.com`, `fonts.gstatic.com`, `api.github.com`
+      oder `unpkg.com`.
+- [ ] TC-0987 Kopfzeile: der Verweis "astrapi69/adaptive-learner" mit GitHub-Symbol
+      steht da und öffnet das Repository auf GitHub; Version, Sterne und Forks
+      erscheinen nicht mehr. Der Stift oben rechts auf einer Seite öffnet ihre
+      Quelldatei auf GitHub.
+- [ ] TC-0988 Text und Code erscheinen in der Systemschrift des Geräts (nicht Roboto);
+      in einem schmalen Fenster kein horizontales Scrollen, die Navigation
+      öffnet sich über das Menü.
+
 ---
 
 ## TS-0116 PRIO 10: Selektiver Datenexport - Sprachaufnahmen-Kategorie (#2840)

@@ -3539,6 +3539,25 @@ Legal notice and privacy policy live as help pages on the docs site
 - [ ] TC-0808 Share preview (e.g. in a messenger): title, description and image
       appear (the landing page's Open Graph data, not the app's).
 
+### TS-0137 Docs site loads nothing from a third party (#3802)
+
+No page of the docs site loads anything on its own from a host other than
+`astrapi69.github.io`: no web font, no script, no image, no API call. Check
+on the published site after the release, with the browser's developer tools
+(Network, cache disabled).
+
+- [ ] TC-0986 Open `astrapi69.github.io/adaptive-learner/docs/`, the privacy policy,
+      an English and a Japanese page, and run a search (e.g. "backup"): every
+      request goes to `astrapi69.github.io`, none to `fonts.googleapis.com`,
+      `fonts.gstatic.com`, `api.github.com` or `unpkg.com`.
+- [ ] TC-0987 Header: the link "astrapi69/adaptive-learner" with the GitHub icon is
+      there and opens the repository on GitHub; version, stars and forks no
+      longer appear. The pencil at the top right of a page opens its source
+      file on GitHub.
+- [ ] TC-0988 Text and code use the device's system font (not Roboto); in a narrow
+      window there is no horizontal scrolling and the navigation opens from
+      the menu.
+
 ---
 
 ## TS-0116 PRIO 10: Selective data export - speech recordings category (#2840)

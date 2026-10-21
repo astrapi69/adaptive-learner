@@ -33,7 +33,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        roadmap-header-bump roadmap-header-bump-dry \
        sync-versions sync-versions-dry sync-versions-check \
-       docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
+       docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav verify-docs-external-hosts \
        ci ci-full pre-push rule-change-log rule-change-log-check verify-docs verify-mermaid verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
@@ -866,6 +866,9 @@ sync-mkdocs-nav: ## Regenerate mkdocs.yml nav blocks from docs/help/_meta.yaml
 
 verify-mkdocs-nav: ## Check mkdocs.yml is in sync with docs/help/_meta.yaml (CI-friendly)
 	cd docs && poetry run python ../scripts/generate_mkdocs_nav.py --check
+
+verify-docs-external-hosts: ## Guard (#3802): the built docs site (site/, from make docs-build) fetches nothing from a third-party host
+	@python3 scripts/check_external_hosts.py site
 
 # --- Documentation verification (drift detection) ---
 

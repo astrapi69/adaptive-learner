@@ -639,7 +639,9 @@ jobs:
   docs-verification:
     name: Docs drift verifier
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    # #3802: 10, not 5 - the job now also installs the docs environment and
+    # builds the site, which needs PyPI on top of the stdlib checks.
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -671,6 +673,25 @@ jobs:
         run: python3 scripts/verify_docker_context.py
       - name: Verify mkdocs nav is in sync with _meta.yaml
         run: python3 scripts/generate_mkdocs_nav.py --check
+      # #3802: the docs site is published like the app, so the built site is
+      # scanned for resources a browser fetches from a third-party host on
+      # its own: a Google Fonts link (Material's default unless theme.font is
+      # false), Material's repository widget (its script calls
+      # api.github.com), any external script, image or stylesheet. Built
+      # from docs/poetry.lock and the mkdocs.yml checked above, as
+      # deploy-gh-pages.yml builds it. What Material's JavaScript would load
+      # on its own (the unpkg.com polyfill) no scan of the files can see;
+      # verify_docs' docs-third-party check pins the overrides against it.
+      - name: Install the docs build environment (#3802)
+        working-directory: docs
+        run: |
+          pipx install poetry
+          poetry install --no-interaction
+      - name: Docs site fetches nothing from a third-party host (#3802)
+        run: |
+          set -euo pipefail
+          (cd docs && poetry run mkdocs build -f ../mkdocs.yml)
+          make verify-docs-external-hosts
       # #2075: a gate may not enforce a rule section that does not exist,
       # and a rule may not cite a workflow that is gone. Both directions.
       - name: Verify gate <-> rule links
