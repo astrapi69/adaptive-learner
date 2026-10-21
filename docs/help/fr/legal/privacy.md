@@ -12,12 +12,12 @@ l'adresse `astrapi69.github.io/adaptive-learner`, à l'aperçu public de la
 prochaine version à l'adresse
 `astrapi69.github.io/adaptive-learner-content-test` et aux présentes pages de
 documentation. Si vous installez vous-même Adaptive Learner (lanceur de bureau
-ou Docker), l'application fonctionne sur votre propre appareil et l'exploitant
-de ces pages ne reçoit alors que ce que vous lui envoyez vous-même, par exemple
-une leçon partagée ou un rapport d'erreur. Même dans ce cas, l'application et le
-lanceur interrogent `api.github.com` sur les nouvelles versions, les contenus
-d'apprentissage proviennent de GitHub, et votre propre serveur envoie les
-requêtes d'IA au fournisseur choisi.
+ou Docker), vous exploitez vous-même l'application sur votre propre appareil et
+l'exploitant de ces pages ne reçoit alors que ce que vous lui envoyez
+vous-même, par exemple une leçon partagée ou un rapport d'erreur. Même dans ce
+cas, l'application et le lanceur interrogent `api.github.com` sur les nouvelles
+versions, les contenus d'apprentissage proviennent de GitHub, et votre propre
+serveur envoie les requêtes d'IA au fournisseur choisi.
 
 ## Responsable du traitement
 
@@ -49,8 +49,8 @@ détail plus bas :
   GitHub.
 - Les fonctions d'IA envoient vos requêtes, avec votre propre clé, directement
   au fournisseur que vous avez choisi.
-- Pour la saisie vocale et la lecture à voix haute, votre navigateur peut
-  utiliser un service en ligne, selon son éditeur.
+- Pour la saisie vocale et la lecture à voix haute, votre navigateur
+  utilise, selon son éditeur, un service en ligne.
 - Les boutons de partage et les liens externes n'ouvrent d'autres sites
   qu'après votre clic.
 - Vous écrivez un e-mail à l'exploitant.
@@ -76,7 +76,7 @@ Au-delà, les présentes pages de documentation ne chargent rien depuis d'autres
 serveurs : elles utilisent les polices de votre système, et la recherche
 s'exécute dans votre navigateur, sans que vos termes de recherche le quittent.
 
-## Chargement des contenus de leçons
+## Chargement des contenus d'apprentissage
 
 Les contenus d'apprentissage se trouvent dans des dépôts de contenu sur GitHub.
 Votre navigateur les charge directement depuis `raw.githubusercontent.com`, et
@@ -122,9 +122,10 @@ vers les États-Unis, voir ci-dessus.
 ## Fonctions GitHub avec votre propre jeton d'accès
 
 Certaines fonctions utilisent l'API GitHub (`api.github.com`) avec un jeton
-d'accès personnel que vous saisissez vous-même, dans les Paramètres sous
-Intégrations ou pour un dépôt donné. Le jeton reste dans votre navigateur et
-n'est envoyé qu'à GitHub. Avec lui, l'application agit en votre nom :
+d'accès personnel (« Token GitHub ») que vous saisissez vous-même, dans les
+Paramètres sous Intégrations ou pour un dépôt donné. Le jeton reste dans votre
+navigateur et n'est envoyé qu'à GitHub. Avec lui, l'application agit en votre
+nom :
 
 - Elle vérifie le jeton et lit à cette occasion votre nom d'utilisateur
   GitHub.
@@ -219,15 +220,15 @@ Des requêtes sont envoyées lorsque vous utilisez une fonction d'IA : sessions
 d'apprentissage (y compris l'évaluation automatique de chaque étape),
 « Demander à l'IA » dans les leçons, la vérification de vos réponses par l'IA,
 la génération d'exercices et de leçons, l'analyse de conversations importées,
-les cartes mémoire et le guide d'étude, la pratique de la prononciation ainsi
-que la vérification et la génération de contenus par l'IA. Sans que vous
+les cartes de révision et le guide d'étude, la pratique de la prononciation
+ainsi que la vérification et la génération de contenus par l'IA. Sans que vous
 tapiez quoi que ce soit, l'application envoie en outre :
 
 - une demande de la liste des modèles disponibles lorsque vous ouvrez la page
   Session ou la sélection du modèle dans les Paramètres,
 - une requête de test au fournisseur d'une clé lorsque vous enregistrez la clé,
   restaurez une sauvegarde de clé ou cliquez sur « Tester », même si ce
-  fournisseur n'est pas actif,
+  fournisseur n'est pas actif à ce moment-là,
 - une seule fois, les premières requêtes d'une session d'apprentissage que vous
   démarrez à partir d'une conversation importée ; elles contiennent la
   conversation collée.
@@ -241,7 +242,7 @@ une heure. Les autres requêtes contiennent, selon la fonction :
 
 - vos messages, questions et réponses et l'historique de la session,
 - les contenus d'apprentissage concernés (leçons, exercices, cartes),
-- le thème et l'objectif de votre projet d'apprentissage et votre méthode
+- le sujet et l'objectif de votre projet d'apprentissage et votre méthode
   d'apprentissage préférée avec sa pondération,
 - les titres et résultats de vos leçons terminées, la leçon en cours et vos
   dernières erreurs avec votre réponse et la réponse attendue,
@@ -270,7 +271,7 @@ certifiée au titre du cadre de protection des données UE-États-Unis
 - [Anthropic](https://www.anthropic.com/legal/privacy)
 - [OpenAI](https://openai.com/policies/eu-privacy-policy/)
 - [Google](https://policies.google.com/privacy) et les
-  [conditions de l'API Gemini](https://ai.google.dev/gemini-api/terms)
+  [conditions d'utilisation de l'API Gemini](https://ai.google.dev/gemini-api/terms)
 
 ## Saisie vocale
 
@@ -281,9 +282,10 @@ qu'après ce geste, et votre navigateur demande d'abord l'autorisation
 d'utiliser le micro. C'est le navigateur, et non l'application, qui effectue la
 reconnaissance : Google Chrome envoie à cet effet l'enregistrement et la langue
 choisie à un service de Google (`www.google.com`) ; les autres navigateurs
-procèdent selon leur éditeur. L'éditeur du navigateur est responsable de ce
-traitement, et sa politique de confidentialité s'applique. Pour Chrome, il
-s'agit de Google, pour les utilisateurs de l'EEE, selon la
+procèdent selon leur éditeur. Le responsable du traitement pour cette
+reconnaissance est l'éditeur du navigateur, et sa politique de confidentialité
+s'applique. Pour Chrome, il s'agit de Google, pour les utilisateurs de l'EEE,
+selon la
 [politique de confidentialité de Google](https://policies.google.com/privacy),
 de Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlande ;
 Google peut aussi traiter les données aux États-Unis, et Google LLC est
@@ -295,8 +297,8 @@ votre essai ; lorsque vous l'envoyez, il va à votre fournisseur d'IA. La base
 juridique pour lancer la reconnaissance est votre demande (article 6,
 paragraphe 1, point b), du RGPD). Dans les Paramètres sous Apprentissage,
 « Afficher le bouton micro » permet de masquer la saisie vocale. Les
-enregistrements des exercices d'expression orale sont en revanche réalisés par
-l'application elle-même et restent dans votre navigateur.
+enregistrements des exercices « Parler et enregistrer » sont en revanche
+réalisés par l'application elle-même et restent dans votre navigateur.
 
 ## Lecture à voix haute
 
@@ -306,16 +308,16 @@ Sont lus les textes des leçons, les consignes, les questions de l'évaluation d
 type d'apprentissage, les réponses de l'IA et les phrases de la pratique de la
 prononciation. Pour cela, l'application utilise la synthèse vocale de votre
 navigateur ou de votre système d'exploitation. Elle choisit une voix qui
-fonctionne sur votre appareil et ne recourt à une voix en ligne que s'il
+s'exécute sur votre appareil et ne recourt à une voix en ligne que s'il
 n'existe pas de voix locale pour la langue ou si vous avez vous-même choisi une
 voix en ligne dans les Paramètres.
 
 Une voix en ligne envoie le texte à lire à son fournisseur. Dans Google Chrome,
 ce sont des voix de Google ; le texte figure alors dans l'adresse de la requête
 envoyée à `www.google.com`. Sous Linux, Chrome ne propose en général que de
-telles voix. Le fournisseur de la voix est responsable, pour Chrome Google
-(voir Saisie vocale). La base juridique est votre demande (article 6,
-paragraphe 1, point b), du RGPD).
+telles voix. Le responsable du traitement est le fournisseur de la voix,
+c'est-à-dire Google pour Chrome (voir Saisie vocale). La base juridique est
+votre demande (article 6, paragraphe 1, point b), du RGPD).
 
 ## Boutons de partage
 
@@ -330,13 +332,13 @@ Facebook, LinkedIn, X et WhatsApp et une option de copie.
 Ce n'est que lorsque vous cliquez sur l'un de ces liens que votre navigateur
 ouvre la page du réseau ; le réseau reçoit alors votre adresse IP, les données
 habituelles du navigateur et les cookies qu'il a lui-même déposés chez vous.
-Facebook et LinkedIn ne reçoivent que l'adresse de l'application, X et WhatsApp
-un texte prérempli avec le titre de la leçon, votre résultat (pourcentage et
-nombre de bonnes réponses) et l'adresse de l'application, que vous pouvez
-encore modifier avant de publier. L'application n'intègre aucun script ni
-bouton de ces réseaux ; dès le clic, leurs politiques de confidentialité
-s'appliquent. La base juridique est votre demande (article 6, paragraphe 1,
-point b), du RGPD).
+Facebook et LinkedIn ne reçoivent que l'adresse de l'application ; X et
+WhatsApp, un texte prérempli avec le titre de la leçon, votre résultat
+(pourcentage et nombre de bonnes réponses) et l'adresse de l'application ; vous
+pouvez encore modifier ce texte avant de l'envoyer. L'application n'intègre
+aucun script ni bouton de ces réseaux ; dès le clic, leurs politiques de
+confidentialité s'appliquent. La base juridique est votre demande (article 6,
+paragraphe 1, point b), du RGPD).
 
 ## Liens externes
 
@@ -344,24 +346,24 @@ L'application et les présentes pages contiennent des liens vers des services
 externes (notamment GitHub, Amazon, YouTube, AnkiWeb, des plateformes de dons).
 Les vidéos et les images des contenus d'apprentissage ou des réponses de l'IA
 qui renvoient à d'autres serveurs sont, elles aussi, affichées par
-l'application sous forme de lien ; rien n'est chargé avant votre clic. Avec ce
-clic, vous quittez l'application ou les présentes pages ; à partir de là, la
-politique de confidentialité du fournisseur concerné s'applique. Aucun script,
-bouton ou contenu intégré de ces fournisseurs n'est inclus.
+l'application sous forme de lien ; ils ne sont chargés qu'après votre clic.
+Avec ce clic, vous quittez l'application ou les présentes pages ; à partir de
+là, la politique de confidentialité du fournisseur concerné s'applique. Aucun
+script, bouton ou contenu intégré de ces fournisseurs n'est inclus.
 
 ## Stockage sur votre appareil
 
-Ce que vous créez dans l'application est stocké localement par votre
-navigateur dans IndexedDB et localStorage : profil, projets d'apprentissage,
-progression et statistiques, notes, conversations importées, leçons
-téléchargées, enregistrements des exercices d'expression orale, sauvegardes
+Ce que vous créez dans l'application est stocké localement par votre navigateur
+dans IndexedDB et localStorage : profil, projets d'apprentissage, progression
+et statistiques, notes, conversations importées, leçons téléchargées,
+enregistrements vocaux des exercices « Parler et enregistrer », sauvegardes
 automatiques et vos paramètres, y compris vos clés API et votre jeton GitHub,
 ainsi que des catalogues mis en cache. L'application utilise en outre :
 
 - le sessionStorage, que votre navigateur efface à la fermeture de l'onglet,
   pour l'historique des actions destiné aux rapports d'erreur (vos dernières
   actions dans l'application, par exemple les boutons cliqués, les changements
-  de page, les options choisies, les messages et les erreurs, mais aucune
+  de page, les options choisies, les notifications et les erreurs, mais aucune
   saisie au clavier) et, si vous avez saisi une clé d'IA, pour la liste des
   modèles de votre fournisseur, pendant une heure, enregistrée sous une courte
   empreinte de votre clé plutôt que sous la clé elle-même,
