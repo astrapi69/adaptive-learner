@@ -22,8 +22,10 @@ const SOURCES = import.meta.glob<string>(
   { query: "?raw", import: "default", eager: true },
 );
 
-/** A value import of react-markdown, i.e. a module that renders Markdown. */
-const RENDERS_MARKDOWN = /^import\s+\w+\s+from\s+["']react-markdown["']/m;
+/** A value import of react-markdown (default, named, namespace or dynamic),
+ *  i.e. a module that renders Markdown. A type-only import renders nothing. */
+const RENDERS_MARKDOWN =
+  /^import\s+(?!type\s)[^;]*?\sfrom\s+["']react-markdown["']|\bimport\(\s*["']react-markdown["']\s*\)/m;
 const USES_IMAGE_RENDERER = /\bimg:\s*MarkdownImage\b/;
 
 /** The surfaces #3803 named; the scan must see them, or it sees nothing. */
@@ -47,5 +49,24 @@ describe("Markdown images go through MarkdownImage (#3803)", () => {
 
   it.each(surfaces)("%s renders images with MarkdownImage", (file) => {
     expect(SOURCES[file]).toMatch(USES_IMAGE_RENDERER);
+  });
+});
+
+describe("the scan recognizes every value import of react-markdown", () => {
+  it.each([
+    ["a default import", 'import Markdown from "react-markdown";'],
+    ["a default plus named import", 'import Markdown, { type Components } from "react-markdown";'],
+    ["a named import", 'import { MarkdownHooks } from "react-markdown";'],
+    ["a multi-line named import", 'import {\n  MarkdownAsync,\n} from "react-markdown";'],
+    ["a namespace import", 'import * as ReactMarkdown from "react-markdown";'],
+    ["a lazy import", 'const Markdown = lazy(() => import("react-markdown"));'],
+  ])("counts %s as a Markdown surface", (_name, source) => {
+    expect(source).toMatch(RENDERS_MARKDOWN);
+  });
+
+  it("does not count a type-only import, which renders nothing", () => {
+    expect('import type { ExtraProps } from "react-markdown";').not.toMatch(
+      RENDERS_MARKDOWN,
+    );
   });
 });
