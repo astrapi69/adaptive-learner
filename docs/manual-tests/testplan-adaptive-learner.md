@@ -3785,6 +3785,26 @@ Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 - [ ] TC-0808 Teilen-Vorschau (z. B. in einem Messenger): Titel, Beschreibung und
       Bild erscheinen (Open-Graph-Daten der Landeseite, nicht der App).
 
+### TS-0137 Docs-Site lädt nichts von Dritten (#3802)
+
+Keine Seite der Docs-Site lädt von sich aus etwas von einem anderen Host als
+`astrapi69.github.io`: keine Webschrift, kein Skript, kein Bild, keine
+API-Abfrage. Prüfen auf der veröffentlichten Seite nach dem Release, mit den
+Entwicklerwerkzeugen des Browsers (Netzwerk, Cache deaktiviert).
+
+- [ ] TC-0986 `astrapi69.github.io/adaptive-learner/docs/`, die Datenschutzerklärung,
+      eine englische und eine japanische Seite aufrufen und eine Suche
+      ausführen (z. B. "Backup"): jede Anfrage geht an `astrapi69.github.io`,
+      keine an `fonts.googleapis.com`, `fonts.gstatic.com`, `api.github.com`
+      oder `unpkg.com`.
+- [ ] TC-0987 Kopfzeile: der Verweis "astrapi69/adaptive-learner" mit GitHub-Symbol
+      steht da und öffnet das Repository auf GitHub; Version, Sterne und Forks
+      erscheinen nicht mehr. Der Stift oben rechts auf einer Seite öffnet ihre
+      Quelldatei auf GitHub.
+- [ ] TC-0988 Text und Code erscheinen in der Systemschrift des Geräts (nicht Roboto);
+      in einem schmalen Fenster kein horizontales Scrollen, die Navigation
+      öffnet sich über das Menü.
+
 ---
 
 ## TS-0116 PRIO 10: Selektiver Datenexport - Sprachaufnahmen-Kategorie (#2840)
@@ -4164,7 +4184,7 @@ Hier nur zur Dokumentation was abgedeckt ist.
 - [ ] TC-0948 Browser-Verlauf (Zurück-Knopf lange drücken): die Einträge tragen
       unterschiedliche Seitennamen statt eines gleichen Titels
 
-### TS-0137 Inhalte laden nichts von fremden Servern (#3803)
+### TS-0138 Inhalte laden nichts von fremden Servern (#3803)
 
 Vorbereitung: eine Lektion als `.json` über Meine Inhalte → "Lektion
 importieren" einspielen, deren `resources` einen Eintrag vom Typ `youtube`
@@ -4172,27 +4192,27 @@ mit einer `youtube.com/watch?v=`-Adresse tragen und deren Theorie-Schritt
 ein Bild `![Skizze](https://example.com/skizze.png)` enthält. In den
 Entwicklerwerkzeugen den Netzwerk-Reiter offen lassen.
 
-- [ ] TC-0986 Lektion bis zur Zusammenfassung spielen: die Video-Karte unter "Vertiefe
+- [ ] TC-0989 Lektion bis zur Zusammenfassung spielen: die Video-Karte unter "Vertiefe
       das Thema" zeigt ein Video-Symbol statt eines Vorschaubilds, und das
       Netzwerk zeigt keine Anfrage an `img.youtube.com`. Ein Klick auf die
       Karte öffnet das Video auf YouTube in einem neuen Tab
-- [ ] TC-0987 Theorie-Schritt: das Bild erscheint als Link mit Bild-Symbol und dem Text
+- [ ] TC-0990 Theorie-Schritt: das Bild erscheint als Link mit Bild-Symbol und dem Text
       "Skizze", nicht als Bild; das Netzwerk zeigt keine Anfrage an
       `example.com`, bis der Link angeklickt wird (neuer Tab). Dasselbe gilt
       für ein Bild in einer Erklärung nach einer Übung und in einer
       KI-Antwort im Sitzungs-Chat
-- [ ] TC-0988 Im Texteditor (z. B. Sitzung bewerten → Notiz) ein Bild von einer Webseite
+- [ ] TC-0991 Im Texteditor (z. B. Sitzung bewerten → Notiz) ein Bild von einer Webseite
       hineinkopieren: es wird nicht geladen, das Netzwerk zeigt keine Anfrage
       an den fremden Server
-- [ ] TC-0989 Lektion erstellen, Hotspot-Übung: unter "Erweitert: Asset-Pfad verwenden"
+- [ ] TC-0992 Lektion erstellen, Hotspot-Übung: unter "Erweitert: Asset-Pfad verwenden"
       die Adresse `https://example.com/karte.png` eintragen. Statt des Bildes
       und der Zeichenfläche erscheint ein Link mit Bild-Symbol und dem Text
       "Stimulus-Bild"; das Netzwerk zeigt keine Anfrage an `example.com`,
       bis der Link angeklickt wird. Ein hochgeladenes Bild zeigt die
       Zeichenfläche wie bisher
-- [ ] TC-0990 Ein Set mit eigenen Bildern (Bildauswahl-Übung mit Bildern aus `assets/`)
+- [ ] TC-0993 Ein Set mit eigenen Bildern (Bildauswahl-Übung mit Bildern aus `assets/`)
       zeigt seine Bilder wie bisher
-- [ ] TC-0991 GitHub-Pages-Version im normalen Gebrauch: die Konsole zeigt keine
+- [ ] TC-0994 GitHub-Pages-Version im normalen Gebrauch: die Konsole zeigt keine
       Content-Security-Policy-Meldung, Inhalte laden aus den Repositories,
       KI-Antworten mit eigenem Schlüssel kommen an, und nach einem Neuladen
       ohne Netz startet die App weiterhin (Service Worker)

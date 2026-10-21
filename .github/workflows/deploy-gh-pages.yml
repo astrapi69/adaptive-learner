@@ -193,6 +193,12 @@ jobs:
         # path instead.
         run: poetry run mkdocs build -f ../mkdocs.yml --site-dir frontend/dist/docs
 
+      # #3802: a docs site whose pages contact a third party on load is never
+      # published. The same scan runs on every pull request in ci.yml (Docs
+      # drift verifier); this one checks the very files the upload carries.
+      - name: Docs site fetches nothing from a third-party host (#3802)
+        run: python3 scripts/check_external_hosts.py frontend/dist/docs
+
       # ---- Upload combined artifact ----
 
       - name: Upload Pages artifact

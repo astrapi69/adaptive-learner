@@ -31,6 +31,20 @@
 #              does not SKIP. A guard file no step executes is a silent gate.
 
 checks:
+  - id: docs-third-party
+    verifies: the docs site settings that keep every page free of third-party requests stay in place - mkdocs.yml theme.font false (no Google Fonts), theme.custom_dir docs/help-overrides, its partials/source.html without data-md-component="source" (no api.github.com widget fetch, the repository link stays) and its main.html libs block with a complete ResizeObserver stand-in (no unpkg.com polyfill); the scan of the built site cannot see that polyfill loader, it is JavaScript in Material's bundle (#3802)
+    rule: none (owner decision of 2026-10-20 in #3802, nothing on the docs site contacts a third party)
+    status: active
+    wired_in: scripts/verify_docs_third_party.py; make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_third_party.py
+    probe: script_exists=backend/tests/test_verify_docs_third_party.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
+
+  - id: docs-third-party-scan
+    verifies: no page of the built docs site references a resource the browser fetches from a third-party host on its own (stylesheet, font preconnect, script, image, iframe, CSS url or import, Material's repository widget, and the nine forms of astrapi69/bibliogon#1124 such as a style attribute, a base href or an inline module import); a scan that read no page exits 2 and a pass names how many it read (#3802). The scanner is a copy of bibliogon's at 56c0dcee; bibliogon#1124 is why it is a copy
+    rule: none (owner decision of 2026-10-20 in #3802, nothing on the docs site contacts a third party)
+    status: active
+    wired_in: scripts/check_external_hosts.py; make verify-docs-external-hosts; .github/workflows/ci.yml docs-verification after the docs build; .github/workflows/deploy-gh-pages.yml before the upload; backend/tests/test_external_hosts_guard.py
+    probe: script_exists=backend/tests/test_external_hosts_guard.py | make_target=verify-docs-external-hosts | ci_step=.github/workflows/ci.yml::docs-verification::Docs site fetches nothing from a third-party host (#3802)::verify-docs-external-hosts | ci_step=.github/workflows/deploy-gh-pages.yml::build::Docs site fetches nothing from a third-party host (#3802)::check_external_hosts.py
+
   - id: mermaid-diagrams
     verifies: every ```mermaid block in docs/help parses with the Mermaid the docs site serves and carries accTitle + accDescr, and that vendored file is the pinned mermaid@11.17.2 release referenced by mkdocs.yml, so the site never falls back to a CDN (#3800), with its pinned notices file carrying the licences of the 75 packages the bundle contains (#3813); self-tests on every run so zero diagrams is not a pass for nothing
     rule: none (mechanism; CONTRIBUTING.md "Diagrams in help pages")

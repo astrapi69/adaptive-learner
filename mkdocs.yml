@@ -7,6 +7,16 @@ docs_dir: docs/help
 theme:
   name: material
   language: de
+  # #3802 - no page of this site contacts a third party on load. font: false
+  # keeps Material from linking Roboto from Google Fonts; the pages use the
+  # system font stack. custom_dir holds two overrides: partials/source.html
+  # keeps the repository link but not the widget that fetches release, stars
+  # and forks from api.github.com, and main.html gives browsers without
+  # ResizeObserver a stand-in, so Material never loads its polyfill from
+  # unpkg.com. The docs-third-party check of scripts/verify_docs.py pins all
+  # three; scripts/check_external_hosts.py scans the built site in CI.
+  font: false
+  custom_dir: docs/help-overrides
   palette:
     - media: '(prefers-color-scheme: light)'
       scheme: default

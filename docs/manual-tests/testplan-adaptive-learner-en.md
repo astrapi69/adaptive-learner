@@ -3539,6 +3539,25 @@ Legal notice and privacy policy live as help pages on the docs site
 - [ ] TC-0808 Share preview (e.g. in a messenger): title, description and image
       appear (the landing page's Open Graph data, not the app's).
 
+### TS-0137 Docs site loads nothing from a third party (#3802)
+
+No page of the docs site loads anything on its own from a host other than
+`astrapi69.github.io`: no web font, no script, no image, no API call. Check
+on the published site after the release, with the browser's developer tools
+(Network, cache disabled).
+
+- [ ] TC-0986 Open `astrapi69.github.io/adaptive-learner/docs/`, the privacy policy,
+      an English and a Japanese page, and run a search (e.g. "backup"): every
+      request goes to `astrapi69.github.io`, none to `fonts.googleapis.com`,
+      `fonts.gstatic.com`, `api.github.com` or `unpkg.com`.
+- [ ] TC-0987 Header: the link "astrapi69/adaptive-learner" with the GitHub icon is
+      there and opens the repository on GitHub; version, stars and forks no
+      longer appear. The pencil at the top right of a page opens its source
+      file on GitHub.
+- [ ] TC-0988 Text and code use the device's system font (not Roboto); in a narrow
+      window there is no horizontal scrolling and the navigation opens from
+      the menu.
+
 ---
 
 ## TS-0116 PRIO 10: Selective data export - speech recordings category (#2840)
@@ -3893,7 +3912,7 @@ Documented here only to show what is covered.
 - [ ] TC-0948 Browser history (long-press the back button): the entries carry
       different page names instead of one identical title
 
-### TS-0137 Content loads nothing from other servers (#3803)
+### TS-0138 Content loads nothing from other servers (#3803)
 
 Preparation: import a lesson as `.json` through My content → "Import
 Lesson" whose `resources` carry an entry of type `youtube` with a
@@ -3901,26 +3920,26 @@ Lesson" whose `resources` carry an entry of type `youtube` with a
 `![Skizze](https://example.com/skizze.png)`. Keep the Network tab of the
 developer tools open.
 
-- [ ] TC-0986 Play the lesson to the summary: the video card under "Explore further"
+- [ ] TC-0989 Play the lesson to the summary: the video card under "Explore further"
       ("Vertiefe das Thema") shows a video icon instead of a preview image,
       and the network shows no request to `img.youtube.com`. A click on the
       card opens the video on YouTube in a new tab
-- [ ] TC-0987 Theory step: the image shows as a link with an image icon and the text
+- [ ] TC-0990 Theory step: the image shows as a link with an image icon and the text
       "Skizze", not as an image; the network shows no request to
       `example.com` until the link is clicked (new tab). The same holds for
       an image in an explanation after an exercise and in an AI reply in the
       session chat
-- [ ] TC-0988 In the text editor (e.g. Rate this session → note) paste an image from a web
+- [ ] TC-0991 In the text editor (e.g. Rate this session → note) paste an image from a web
       page: it is not loaded, the network shows no request to the other
       server
-- [ ] TC-0989 Create lesson, hotspot exercise: under "Advanced: use an asset path"
+- [ ] TC-0992 Create lesson, hotspot exercise: under "Advanced: use an asset path"
       enter `https://example.com/karte.png`. Instead of the image and the
       drawing canvas a link with an image icon and the text "Stimulus image"
       appears; the network shows no request to `example.com` until the link
       is clicked. An uploaded image shows the canvas as before
-- [ ] TC-0990 A set with its own images (a picture-choice exercise with images from
+- [ ] TC-0993 A set with its own images (a picture-choice exercise with images from
       `assets/`) shows its images as before
-- [ ] TC-0991 GitHub Pages version in normal use: the console shows no
+- [ ] TC-0994 GitHub Pages version in normal use: the console shows no
       Content-Security-Policy message, content loads from the repositories,
       AI replies with your own key arrive, and after a reload without network
       the app still starts (service worker)
