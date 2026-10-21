@@ -20,7 +20,7 @@ platformdirs = "^4.9.6"
 # the `tray` extra: `pip install adaptive-learner-launcher[tray]`. Without
 # them the launcher falls back to a plain window close - no crash.
 pystray = {version = ">=0.19.4,<0.20.0", optional = true}
-pillow = {version = "^12.2.0", optional = true}
+pillow = {version = ">=12.2,<14.0", optional = true}
 # NO `extras = ["tray"]` here, deliberately: the FROZEN artifact excludes
 # pystray/Pillow (see the .spec) to keep the download small - every learner
 # pays those bytes - and on GNOME a docked icon would additionally need a
@@ -38,7 +38,7 @@ tray = ["pystray", "pillow"]
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.0"
 pyinstaller = "^6.11.0"
-pillow = "^12.2.0"  # Used only by the icon-generation script; bumped from 11.x for CVE-2026-{25990,40192,42308,42309,42310,42311}
+pillow = ">=12.2,<14.0"  # Used only by the icon-generation script; bumped from 11.x for CVE-2026-{25990,40192,42308,42309,42310,42311}
 
 [tool.poetry.scripts]
 adaptive-learner-launcher = "adaptive_learner_launcher.__main__:main"

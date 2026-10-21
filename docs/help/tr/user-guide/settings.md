@@ -529,8 +529,13 @@ olarak gruplanır. Bir girdiye tıklamak tam makaleyi yardım
 **Tanılama ve destek** sekmesi, geliştiricinin cihazında ne olduğunu
 görmesine yardımcı olan şeyleri bir araya getirir:
 
-- **Destek** - **Hata raporu oluştur**, son işlemlerini, tarayıcından
-  bir şey çıkmadan önce gözden geçirdiğin bir raporda toplar.
+- **Destek** - **Hata raporu oluştur**, geliştirici için bir rapor
+  hazırlar. Ortam bilgisi ve işlem geçmişi (uygulamadaki son
+  işlemlerin) yalnızca işaretlersen rapora girer; ikisi de başta
+  işaretsizdir. **GitHub'da aç** düğmesine tıklayana kadar tarayıcından
+  hiçbir şey çıkmaz: bu düğme, raporu doldurulmuş hâlde GitHub'ın sorun
+  formunu açar; yani GitHub raporu o andan itibaren, sen sorunu orada
+  göndermeden önce alır.
 - **Geliştirici Modu** - hata bildirimlerinde tüm teknik ayrıntıları
   (durum kodu, uç nokta, yığın izi) ve açıkken gezinme çubuğunda bir
   "DEV" rozeti gösterir. Varsayılanı derleme koluna bağlıdır:

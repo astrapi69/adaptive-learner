@@ -18,7 +18,7 @@
 # third-party code) is excluded from every hook: whitespace and end-of-file
 # fixers would rewrite it, and scripts/verify_mermaid_blocks.mjs pins it by
 # hash to the npm release.
-exclude: ^docs/help/assets/javascripts/mermaid-[0-9.]+\.min\.js$
+exclude: ^docs/help/assets/javascripts/mermaid-[0-9.]+\.min\.js(\.LICENSE\.txt)?$
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
