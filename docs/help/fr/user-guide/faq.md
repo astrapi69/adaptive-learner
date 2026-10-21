@@ -4,15 +4,35 @@
 
 ## Mes données sont-elles en sécurité ?
 
-**Oui.** Toutes les données restent sur votre propre appareil.
+Vos données sont stockées sur votre propre appareil :
 
 - **Mode API** : base SQLite dans `~/.local/share/adaptive_learner/`
   (Linux/macOS) ou `%LOCALAPPDATA%\adaptive_learner\` (Windows).
 - **Mode Dexie** : IndexedDB dans votre navigateur.
 
 Rien - pas vos sessions, pas vos erreurs, pas votre progression - n'est
-envoyé à un serveur Adaptive Learner. Seuls les appels à votre fournisseur
-IA configuré quittent votre appareil.
+envoyé à un serveur Adaptive Learner. Quand vous utilisez une fonction
+d'IA, votre fournisseur d'IA configuré reçoit des données. Dans une
+session d'apprentissage, il reçoit :
+
+- l'instruction système, avec le sujet et l'objectif de votre projet
+  d'apprentissage, une indication de profil (votre méthode
+  d'apprentissage préférée et son poids), vos leçons terminées avec
+  leurs résultats, la leçon et l'étape en cours, vos erreurs récentes
+  (chacune avec votre réponse, la bonne réponse et sa fréquence) et la
+  langue dans laquelle l'IA doit répondre ; une session lancée depuis un
+  chat importé contient l'analyse et la transcription de ce chat au lieu
+  de votre progression ;
+- vos messages et les réponses précédentes de l'IA dans la session ;
+- comme pour chaque requête, votre adresse IP et votre clé API.
+
+Vos XP et vos badges ne sont pas envoyés. La
+[vérification du contenu par l'IA](ai-validation.md) et la vérification
+par l'IA avant le partage n'envoient que le contenu de la leçon (cartes,
+textes, exercices). Ce que vous écrivez dans vos propres cartes ou notes
+part avec et peut lui-même être personnel. La
+[politique de confidentialité](../legal/privacy.md) détaille chaque
+requête à l'IA.
 
 ---
 

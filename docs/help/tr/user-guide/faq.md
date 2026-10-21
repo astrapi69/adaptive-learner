@@ -16,9 +16,26 @@ içindeki `secret_key:` ile belirlediğiniz bir sır kullanılarak Fernet ile
 dinlenme sırasında şifrelenir.
 
 Her iki mod da seçtiğiniz yapay zeka sağlayıcısı dışında herhangi bir
-üçüncü tarafa telemetri, analitik ya da mesajlarınızı göndermez - ve
-bu sağlayıcı yalnızca beklediğiniz mesaj içeriğini görür (sistem istemi +
-metniniz + oturumdaki yapay zekanın önceki yanıtları).
+üçüncü tarafa telemetri, analitik ya da mesajlarınızı göndermez. Bir
+öğrenme oturumunda bu sağlayıcı şunları alır:
+
+- sistem talimatı: öğrenme projenizin konusu ve hedefi, bir profil
+  ipucu (tercih ettiğiniz öğrenme yöntemi ve ağırlığı), tamamladığınız
+  dersler ve sonuçları, üzerinde çalıştığınız ders ve adım, son
+  hatalarınız (her biri cevabınız, doğru cevap ve kaç kez olduğuyla
+  birlikte) ve yapay zekanın yanıt vereceği dil; içe aktarılan bir
+  sohbetten başlatılan oturumda öğrenme ilerlemeniz yerine o sohbetin
+  analizi ve dökümü yer alır;
+- mesajlarınız ve yapay zekanın oturumdaki önceki yanıtları;
+- her istekte olduğu gibi IP adresiniz ve API anahtarınız.
+
+XP'niz ve rozetleriniz gönderilmez.
+[Yapay zekâ içerik denetimi](ai-validation.md) ve paylaşmadan önceki
+yapay zeka denetimi yalnızca dersin içeriğini (kartlar, metinler,
+alıştırmalar) gönderir. Kendi kartlarınıza veya notlarınıza
+yazdıklarınız da birlikte gider ve kendi başına kişisel olabilir.
+[Gizlilik politikası](../legal/privacy.md) yapay zekaya giden her
+isteği listeler.
 
 ## API anahtarına ihtiyacım var mı?
 

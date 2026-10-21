@@ -18,9 +18,26 @@ anything. To supply your own key instead, set
 `secrets.yaml`) before the first start.
 
 Neither mode sends telemetry, analytics, or your messages to
-any third party other than the AI provider you've chosen - and
-that one only sees the message content you'd expect (system
-prompt + your text + the AI's prior responses in the session).
+any third party other than the AI provider you've chosen. In a
+learning session that provider receives:
+
+- the system instruction, with your learning project's topic and
+  goal, a profile hint (your preferred learning method and its
+  weight), your completed lessons with their scores, the lesson
+  and step you are on, your recent mistakes (each with your
+  answer, the correct one and how often) and the language the AI
+  should reply in; a session started from an imported chat
+  carries that chat's analysis and transcript instead of your
+  lesson progress;
+- your messages and the AI's earlier replies in the session;
+- as with every request, your IP address and your API key.
+
+Your XP and badges are not sent. The
+[AI content check](ai-validation.md) and the AI review before
+sharing send only the lesson content (cards, texts, exercises).
+Whatever you write into your own cards or notes goes along and
+can itself be personal. The [privacy policy](../legal/privacy.md)
+lists every AI request.
 
 ## Do I need an API key?
 

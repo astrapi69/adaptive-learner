@@ -17,10 +17,27 @@ de ambiente `ADAPTIVE_LEARNER_SECRET_KEY`, ou via `secret_key:`
 em `~/.config/adaptive_learner/secrets.yaml`.
 
 Nenhum dos modos envia telemetria, análises ou as suas
-mensagens para terceiros além do fornecedor de IA que escolheu -
-e esse apenas vê o conteúdo da mensagem que esperaria
-(prompt do sistema + o seu texto + as respostas anteriores da
-IA na sessão).
+mensagens para terceiros além do fornecedor de IA que escolheu.
+Numa sessão de aprendizagem, esse fornecedor recebe:
+
+- a instrução de sistema, com o tema e o objetivo do seu projeto
+  de aprendizagem, uma indicação de perfil (o seu método de
+  aprendizagem preferido e o respetivo peso), as lições que
+  concluiu com os resultados, a lição e o passo em que está, os
+  seus erros recentes (cada um com a sua resposta, a correta e
+  quantas vezes) e a língua em que a IA deve responder; uma
+  sessão iniciada a partir de uma conversa importada contém a
+  análise e a transcrição dessa conversa em vez do seu progresso;
+- as suas mensagens e as respostas anteriores da IA na sessão;
+- como em cada pedido, o seu endereço IP e a sua chave de API.
+
+Os seus XP e emblemas não são enviados. A
+[verificação de conteúdo por IA](ai-validation.md) e a revisão
+por IA antes de partilhar enviam apenas o conteúdo da lição
+(cartões, textos, exercícios). O que escreve nos seus próprios
+cartões ou notas vai junto e pode ser, em si, pessoal. A
+[política de privacidade](../legal/privacy.md) enumera cada
+pedido à IA.
 
 ## Preciso de uma chave de API?
 
