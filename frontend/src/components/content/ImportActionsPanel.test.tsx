@@ -425,8 +425,10 @@ describe("ImportActionsPanel — community share", () => {
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     expect(screen.getByTestId("content-ai-validation")).toBeInTheDocument();
     // #3812 - the note names what goes to the provider and links the privacy policy.
+    // How the provider is named is pinned in ContentShareDialog.test.tsx; this
+    // test renders without a catalog, where every label falls back to its id.
     const note = screen.getByTestId("content-ai-privacy");
-    expect(note).toHaveTextContent("anthropic also receives your IP address and your API key");
+    expect(note).toHaveTextContent("also receives your IP address and your API key");
     expect(note).not.toHaveTextContent(/no personal data/i);
     expect(screen.getByTestId("content-ai-privacy-link").getAttribute("href")).toMatch(
       /\/legal\/privacy\/$/,
