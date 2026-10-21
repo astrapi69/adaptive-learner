@@ -79,7 +79,7 @@ navegador sin que sus términos de búsqueda salgan de él.
 Los contenidos de aprendizaje se encuentran en repositorios de contenido en
 GitHub. Su navegador los carga directamente desde `raw.githubusercontent.com`,
 y los repositorios con token de acceso propio a través de `api.github.com`. El
-destinatario, que es a su vez responsable del tratamiento, es GitHub, Inc.
+destinatario, en calidad de responsable del tratamiento, es GitHub, Inc.
 (véase arriba). La app carga:
 
 - al abrir, descargar o actualizar un conjunto, sus lecciones e imágenes,
