@@ -291,6 +291,14 @@ flowchart LR
   3. Update the version and both hashes in `scripts/verify_mermaid_blocks.mjs`, and the file name in `mkdocs.yml`.
 - `make verify-mermaid` (and the Docs drift verifier in CI) parses every block with exactly that file and fails on a broken diagram or a missing `accTitle`/`accDescr`.
 
+## The docs site loads nothing from a third party
+
+No page of the docs site contacts a host other than `astrapi69.github.io` on its own (#3802): no web font, no script, stylesheet or image from a CDN, no API call. Each such request would hand the visitor's IP address to that host.
+
+- A help page links to other sites but never embeds their images, scripts, frames or styles; put the file next to the page instead.
+- `mkdocs.yml` sets `theme.font: false` (the system fonts, not Google Fonts) and `theme.custom_dir: docs/help-overrides`. There, `partials/source.html` keeps the repository link without Material's widget, which would ask api.github.com for stars and forks, and `main.html` gives browsers without `ResizeObserver` a stand-in, so Material never loads its polyfill from unpkg.com.
+- The Docs drift verifier holds both: `verify_docs.py` (check `docs-third-party`) pins the settings and overrides, and `scripts/check_external_hosts.py` scans the built site (`make docs-build`, then `make verify-docs-external-hosts`). `deploy-gh-pages.yml` repeats the scan before it publishes.
+
 ## Commit Conventions
 
 Adaptive Learner uses

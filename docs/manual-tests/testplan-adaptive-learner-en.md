@@ -3225,6 +3225,16 @@ Location: Settings → Data → Recommended repositories.
       in the desktop app no notice at step 7, the new cycle starts there
 - [ ] TC-0733 AI content validation: report sensible? provider+model shown?
 - [ ] TC-0734 No button without a key leads to an error toast (disabled + tooltip)
+- [ ] TC-0985 Privacy note before sending (#3812): the note below the cost estimate of
+      the AI content check (`ai-validation-privacy`) and the one in the
+      quality step when sharing (`content-ai-privacy`) name what is sent
+      (only the cards or the lesson content, no profile, no learning
+      progress) and that the provider also receives the IP address and the
+      API key; the sharing note names the provider as the settings do (e.g.
+      "Anthropic Claude"), in every UI language, never by its internal id
+      ("anthropic"); the "Privacy policy" link opens the docs site's privacy
+      policy in the UI language in a new tab (German without a prefix,
+      English under `.../docs/en/legal/privacy/`)
 
 ### TS-0100 Batch "Generate for all lessons" (#1896)
 - [ ] TC-0735 My Content → My Lessons, a set where ALL lessons already have
@@ -3551,6 +3561,25 @@ Legal notice and privacy policy live as help pages on the docs site
       order.
 - [ ] TC-0808 Share preview (e.g. in a messenger): title, description and image
       appear (the landing page's Open Graph data, not the app's).
+
+### TS-0137 Docs site loads nothing from a third party (#3802)
+
+No page of the docs site loads anything on its own from a host other than
+`astrapi69.github.io`: no web font, no script, no image, no API call. Check
+on the published site after the release, with the browser's developer tools
+(Network, cache disabled).
+
+- [ ] TC-0986 Open `astrapi69.github.io/adaptive-learner/docs/`, the privacy policy,
+      an English and a Japanese page, and run a search (e.g. "backup"): every
+      request goes to `astrapi69.github.io`, none to `fonts.googleapis.com`,
+      `fonts.gstatic.com`, `api.github.com` or `unpkg.com`.
+- [ ] TC-0987 Header: the link "astrapi69/adaptive-learner" with the GitHub icon is
+      there and opens the repository on GitHub; version, stars and forks no
+      longer appear. The pencil at the top right of a page opens its source
+      file on GitHub.
+- [ ] TC-0988 Text and code use the device's system font (not Roboto); in a narrow
+      window there is no horizontal scrolling and the navigation opens from
+      the menu.
 
 ---
 
