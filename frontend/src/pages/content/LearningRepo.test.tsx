@@ -69,7 +69,7 @@ beforeEach(() => {
   renderMock.mockReset();
 });
 
-describe("LearningRepo — shared page container (#1384)", () => {
+describe("LearningRepo - shared page container (#1384)", () => {
   it("renders the rendered repo inside the shared PageContainer", async () => {
     renderMock.mockResolvedValue({
       rendered_at: "2026-07-05T12:00:00Z",
@@ -100,7 +100,7 @@ describe("LearningRepo — shared page container (#1384)", () => {
   });
 });
 
-describe("LearningRepo — see-also links switch the file (#2619)", () => {
+describe("LearningRepo - see-also links switch the file (#2619)", () => {
   const files = {
     "README.md":
       "See [LEARNING_STATS.md](LEARNING_STATS.md) and [site](https://example.com/docs).",
@@ -143,7 +143,7 @@ describe("LearningRepo — see-also links switch the file (#2619)", () => {
   });
 });
 
-describe("LearningRepo — images from another host (#3803)", () => {
+describe("LearningRepo - images from another host (#3803)", () => {
   it("offers a remote image as a link and never loads it", async () => {
     renderMock.mockResolvedValue({
       rendered_at: "2026-10-20T10:00:00Z",
@@ -157,7 +157,7 @@ describe("LearningRepo — images from another host (#3803)", () => {
   });
 });
 
-describe("LearningRepo — file buttons carry styling (#2618)", () => {
+describe("LearningRepo - file buttons carry styling (#2618)", () => {
   beforeEach(() => {
     renderMock.mockImplementation(async () => ({
       rendered_at: "2026-08-15T10:00:00Z",

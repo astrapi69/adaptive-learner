@@ -505,8 +505,9 @@ test.describe("#3803 - the static build contacts no unlisted host", () => {
         await page.goto("/settings?tab=ai");
         await page.getByTestId("api-key-input-anthropic").fill(FAKE_KEY);
         await page.getByTestId("api-key-save-anthropic").click();
-        // The overview row shows the provider as configured once the key is stored.
-        await expect(page.getByTestId("provider-overview-preview-anthropic")).not.toHaveText("—", {
+        // The overview row shows the provider as configured once the key is
+        // stored: a masked key instead of the empty placeholder (U+2014).
+        await expect(page.getByTestId("provider-overview-preview-anthropic")).not.toHaveText("\u2014", {
             timeout: 15_000,
         });
         await visit(page, "/session");
