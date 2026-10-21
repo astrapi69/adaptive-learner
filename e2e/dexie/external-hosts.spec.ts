@@ -31,6 +31,7 @@
 import {expect, test} from "@playwright/test";
 import type {BrowserContext, Page, Route} from "@playwright/test";
 
+import {saveAnthropicKey} from "../helpers/ai-key";
 import {createTestUser} from "../helpers/onboarding";
 import {currentStepTestId, waitForStepAdvance} from "./_step-flow";
 
@@ -58,7 +59,6 @@ const SET_ID = "privacy-probe";
 const SET_PATH = "sets/de/privacy-probe";
 const LESSON_FILE = "01-probe.json";
 const ASSET_FILE = "img/probe.png";
-const FAKE_KEY = "sk-ant-" + "a".repeat(95);
 
 const ROOT_MANIFEST = `
 schema_version: "1.13"
@@ -502,14 +502,7 @@ test.describe("#3803 - the static build contacts no unlisted host", () => {
         await mockAnthropic(context);
 
         await createTestUser(page);
-        await page.goto("/settings?tab=ai");
-        await page.getByTestId("api-key-input-anthropic").fill(FAKE_KEY);
-        await page.getByTestId("api-key-save-anthropic").click();
-        // The overview row shows the provider as configured once the key is
-        // stored: a masked key instead of the empty placeholder (U+2014).
-        await expect(page.getByTestId("provider-overview-preview-anthropic")).not.toHaveText("\u2014", {
-            timeout: 15_000,
-        });
+        await saveAnthropicKey(page);
         await visit(page, "/session");
         await page.getByTestId("chat-input").fill("Hallo");
         await page.getByTestId("chat-send").click();
