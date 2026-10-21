@@ -2890,6 +2890,7 @@ content:
     source_language_heuristic: Kartenrückseiten enthalten {found}-typische Zeichen, aber die Ausgangssprache ist '{lang}'.
     target_language_heuristic: Kartenvorderseiten enthalten {found}-typische Zeichen, aber die Zielsprache ist '{lang}'.
     failed_share_anyway: "Die Qualitätsprüfung hat Probleme gefunden. Du kannst trotzdem teilen - Prüfer sehen die im Pull Request vermerkten Befunde."
+  ai_privacy_link: "Datenschutzerklärung"
   ai_validation:
     intro: Eine KI kann zusätzlich Übersetzungsgenauigkeit, Grammatik und Niveau prüfen.
     privacy: "Gesendet werden nur die Inhalte deiner Lektion (Karten, Texte, Übungen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält {provider} dabei deine IP-Adresse und deinen API-Schlüssel."

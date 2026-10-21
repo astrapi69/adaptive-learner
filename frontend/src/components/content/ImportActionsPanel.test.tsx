@@ -424,6 +424,13 @@ describe("ImportActionsPanel — community share", () => {
     await screen.findByTestId("share-wizard-unique");
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     expect(screen.getByTestId("content-ai-validation")).toBeInTheDocument();
+    // #3812 - the note names what goes to the provider and links the privacy policy.
+    const note = screen.getByTestId("content-ai-privacy");
+    expect(note).toHaveTextContent("anthropic also receives your IP address and your API key");
+    expect(note).not.toHaveTextContent(/no personal data/i);
+    expect(screen.getByTestId("content-ai-privacy-link").getAttribute("href")).toMatch(
+      /\/legal\/privacy\/$/,
+    );
   });
 
   it("records a local contribution after sharing", async () => {

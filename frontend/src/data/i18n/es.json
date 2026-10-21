@@ -3120,6 +3120,7 @@
       "target_language_heuristic": "Los anversos contienen caracteres propios de {found}, pero el idioma de destino es '{lang}'.",
       "failed_share_anyway": "La comprobación de calidad encontró problemas. Puedes compartir de todos modos: los revisores verán los hallazgos anotados en el pull request."
     },
+    "ai_privacy_link": "Política de privacidad",
     "ai_validation": {
       "intro": "Una IA puede comprobar además la precisión de la traducción, la gramática y el nivel.",
       "privacy": "Solo se envía el contenido de tu lección (tarjetas, textos, ejercicios), sin tu perfil ni tu progreso de aprendizaje. Como en cada solicitud, {provider} recibe además tu dirección IP y tu clave API.",

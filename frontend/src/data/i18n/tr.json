@@ -3120,6 +3120,7 @@
       "target_language_heuristic": "Kart ön yüzleri {found} diline özgü karakterler içeriyor, ancak hedef dil '{lang}'.",
       "failed_share_anyway": "Kalite kontrolü sorunlar buldu. Yine de paylaşabilirsiniz - incelemeciler bulguları pull request'te görecek."
     },
+    "ai_privacy_link": "Gizlilik politikası",
     "ai_validation": {
       "intro": "Bir yapay zekâ ayrıca çeviri doğruluğunu, dil bilgisini ve seviye uygunluğunu kontrol edebilir.",
       "privacy": "Yalnızca dersinizin içeriği gönderilir (kartlar, metinler, alıştırmalar), profiliniz ve ilerlemeniz gönderilmez. Her istekte olduğu gibi {provider} sağlayıcısı IP adresinizi ve API anahtarınızı da alır.",

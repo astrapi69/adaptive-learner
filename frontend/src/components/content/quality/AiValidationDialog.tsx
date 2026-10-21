@@ -20,6 +20,7 @@ import { useI18n } from "../../../hooks/ui/useI18n";
 import { useAiCardValidation } from "../../../hooks/content/useAiCardValidation";
 import { useAiFix } from "../../../hooks/content/ai-fix";
 import { isOwnEditableSet } from "../../../lib/lesson/own-set";
+import AiPrivacyNote from "../AiPrivacyNote";
 import AiFixPanel from "./AiFixPanel";
 import AiReportStep from "./AiReportStep";
 import {
@@ -161,12 +162,14 @@ export default function AiValidationDialog({
                 .replace("{tokens}", state.estimate.tokensLabel)
                 .replace("{usd}", state.estimate.usdLabel)}
             </p>
-            <p className="text-xs text-fg-muted">
-              {t(
+            <AiPrivacyNote
+              className="text-xs text-fg-muted"
+              testId="ai-validation-privacy"
+              text={t(
                 "content.ai_check.privacy",
                 "Only your cards are sent (front, back, notes), no profile and no learning progress. As with every request, your AI provider also receives your IP address and your API key.",
               )}
-            </p>
+            />
             {rateLimited && (
               <p className="text-sm text-warning" data-testid="ai-validation-rate-limited">
                 {t(

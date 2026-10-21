@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import type { UseContentSharingResult } from "../../../hooks/content/useContentSharing";
 import type { ContentSetEntry } from "../../../storage/types";
+import AiPrivacyNote from "../AiPrivacyNote";
 import ShareWizard from "./ShareWizard";
 
 interface ContentShareDialogProps {
@@ -164,12 +165,14 @@ export default function ContentShareDialog({
                     "An AI can additionally check translation accuracy, grammar and level fit.",
                   )}
                 </p>
-                <p className="content-ai-privacy">
-                  {t(
+                <AiPrivacyNote
+                  className="content-ai-privacy"
+                  testId="content-ai-privacy"
+                  text={t(
                     "content.ai_validation.privacy",
                     "Only your lesson's content is sent (cards, texts, exercises), no profile and no learning progress. As with every request, {provider} also receives your IP address and your API key.",
                   ).replace("{provider}", activeProvider ?? "the AI provider")}
-                </p>
+                />
                 <label className="flex items-center justify-between gap-2">
                   <span className="text-[0.95rem] font-medium">
                     {t("content.ai_validation.consent", "Run AI validation")}

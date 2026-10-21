@@ -3120,6 +3120,7 @@
       "target_language_heuristic": "As frentes contêm caracteres próprios de {found}, mas o idioma de destino é '{lang}'.",
       "failed_share_anyway": "A verificação de qualidade encontrou problemas. Você pode compartilhar mesmo assim - os revisores verão as observações no pull request."
     },
+    "ai_privacy_link": "Política de privacidade",
     "ai_validation": {
       "intro": "Uma IA pode também verificar a exatidão da tradução, a gramática e a adequação ao nível.",
       "privacy": "Só é enviado o conteúdo da sua lição (cartões, textos, exercícios), sem o seu perfil nem o seu progresso. Como em cada pedido, {provider} recebe também o seu endereço IP e a sua chave de API.",

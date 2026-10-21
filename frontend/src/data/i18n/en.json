@@ -3120,6 +3120,7 @@
       "target_language_heuristic": "Card fronts contain {found}-specific characters but the target language is '{lang}'.",
       "failed_share_anyway": "Quality check found issues. You can share anyway - reviewers will see the findings noted in the pull request."
     },
+    "ai_privacy_link": "Privacy policy",
     "ai_validation": {
       "intro": "An AI can additionally check translation accuracy, grammar and level fit.",
       "privacy": "Only your lesson's content is sent (cards, texts, exercises), no profile and no learning progress. As with every request, {provider} also receives your IP address and your API key.",

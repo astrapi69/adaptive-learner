@@ -2896,6 +2896,7 @@ content:
     source_language_heuristic: Sisi belakang kartu mengandung karakter khas {found} tetapi bahasa sumbernya '{lang}'.
     target_language_heuristic: Sisi depan kartu mengandung karakter khas {found} tetapi bahasa targetnya '{lang}'.
     failed_share_anyway: "Pemeriksaan kualitas menemukan masalah. Kamu tetap dapat membagikannya - peninjau akan melihat temuan yang dicatat dalam pull request."
+  ai_privacy_link: "Kebijakan privasi"
   ai_validation:
     intro: AI juga dapat memeriksa keakuratan terjemahan, tata bahasa, dan kesesuaian tingkat.
     privacy: "Hanya konten pelajaranmu yang dikirim (kartu, teks, latihan), tanpa profil dan kemajuan belajarmu. Seperti pada setiap permintaan, {provider} juga menerima alamat IP dan kunci API-mu."
