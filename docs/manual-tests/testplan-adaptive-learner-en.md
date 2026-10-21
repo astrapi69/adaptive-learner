@@ -3482,12 +3482,15 @@ Legal notice and privacy policy live as help pages on the docs site
 - [ ] TC-0807 Docs site (#3807, #3139): section "Legal" with both pages in the
       navigation of every language; the legal notice names name, address and
       the email asterios.raptis@web.de, the privacy policy the same address and
-      its date at the top. Scope: the app, the public preview
+      its date at the top; it addresses the reader formally in every language,
+      and every version except the English one says in one sentence under the
+      date that the app and the rest of the help address the reader
+      informally. Scope: the app, the public preview
       `astrapi69.github.io/adaptive-learner-content-test` and the docs pages,
       plus one sentence on self-installed copies (update check at
       `api.github.com`).
       "The short version" lists when data leaves the device; one section each
-      for hosting, loading lesson content (with the automatic checks), GitHub
+      for hosting, loading learning content (with the automatic checks), GitHub
       features with your own access token, error reports, AI features with your
       own key (`api.anthropic.com`, `api.openai.com`,
       `generativelanguage.googleapis.com`, each with recipient and address),

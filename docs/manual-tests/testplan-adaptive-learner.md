@@ -3727,7 +3727,9 @@ Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 - [ ] TC-0807 Docs-Site (#3807, #3139): Abschnitt "Rechtliches" mit beiden Seiten in
       der Navigation jeder Sprache; das Impressum nennt Name, Anschrift und die
       E-Mail asterios.raptis@web.de, die Datenschutzerklärung dieselbe Adresse
-      und oben ihr Datum. Geltungsbereich: App, öffentliche Vorschau
+      und oben ihr Datum; sie redet in jeder Sprache förmlich an, und jede
+      Fassung außer der englischen sagt unter dem Datum in einem Satz, dass App
+      und übrige Hilfe duzen. Geltungsbereich: App, öffentliche Vorschau
       `astrapi69.github.io/adaptive-learner-content-test` und Docs-Seiten,
       dazu ein Satz zu selbst installierten Kopien (Update-Prüfung bei
       `api.github.com`).
