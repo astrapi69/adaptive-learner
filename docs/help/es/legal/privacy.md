@@ -11,7 +11,7 @@ Esta política se aplica a la versión web pública de Adaptive Learner en
 `astrapi69.github.io/adaptive-learner`, a la vista previa pública de la
 próxima versión en `astrapi69.github.io/adaptive-learner-content-test` y a
 estas páginas de documentación. Si usted instala Adaptive Learner por su
-cuenta (lanzador de escritorio o Docker), la app se ejecuta en su propio
+cuenta (lanzador de escritorio o Docker), usted opera la app en su propio
 dispositivo y el operador de estas páginas solo recibe lo que usted mismo le
 envíe, por ejemplo una lección compartida o un informe de error. Aun así, la
 app y el lanzador consultan `api.github.com` en busca de nuevas versiones, los
@@ -29,9 +29,9 @@ Correo electrónico: asterios.raptis@web.de
 Adaptive Learner no tiene servidor propio. La app y estas páginas no instalan
 cookies, no utilizan servicios de análisis ni de seguimiento y no cargan
 fuentes ni scripts de terceros. Su progreso, sus estadísticas y sus ajustes se
-quedan en su navegador, para usted. El operador solo recibe lo que usted mismo
-le envíe, y otros solo reciben partes de ello cuando lo necesita una función
-que usted utiliza, por ejemplo la IA con su propia clave.
+quedan en su navegador, para usted. De ellos, el operador solo recibe lo que
+usted mismo le envíe, y otros solo reciben partes de ellos cuando las necesita
+una función que usted utiliza, por ejemplo la IA con su propia clave.
 
 Los datos solo salen de su dispositivo en estos casos, descritos en detalle
 más abajo:
@@ -47,8 +47,8 @@ más abajo:
   GitHub.
 - Las funciones de IA envían sus solicitudes, con su propia clave,
   directamente al proveedor que usted ha elegido.
-- Para la entrada de voz y la lectura en voz alta, su navegador puede usar un
-  servicio en línea, según su fabricante.
+- Para la entrada de voz y la lectura en voz alta, su navegador utiliza, según
+  el fabricante, un servicio en línea.
 - Los botones para compartir y los enlaces externos abren otros sitios solo
   después de que usted haga clic.
 - Usted escribe un correo electrónico al operador.
@@ -63,8 +63,8 @@ navegador); según sus propias indicaciones, GitHub registra y conserva la
 dirección IP con fines de seguridad. El operador no recibe estos datos.
 
 La base jurídica es el interés legítimo en una entrega segura y eficiente
-(art. 6, apartado 1, letra f), del RGPD, Reglamento General de Protección de
-Datos). GitHub está certificado conforme al Marco de Privacidad de Datos
+(art. 6, apartado 1, letra f), del Reglamento general de protección de datos,
+RGPD). GitHub está certificado conforme al Marco de Privacidad de Datos
 UE-EE. UU. (EU-US Data Privacy Framework), por lo que una decisión de
 adecuación ampara la transferencia a Estados Unidos (art. 45 del RGPD). Más
 información:
@@ -74,7 +74,7 @@ Más allá de eso, estas páginas de documentación no cargan nada de otros
 servidores: usan las fuentes de su sistema, y la búsqueda se ejecuta en su
 navegador sin que sus términos de búsqueda salgan de él.
 
-## Carga de contenidos de lecciones
+## Carga de contenidos de aprendizaje
 
 Los contenidos de aprendizaje se encuentran en repositorios de contenido en
 GitHub. Su navegador los carga directamente desde `raw.githubusercontent.com`,
@@ -211,10 +211,9 @@ utiliza:
 Se envían solicitudes cuando usted utiliza una función de IA: sesiones de
 aprendizaje (incluida la evaluación automática de cada paso), «Preguntar a la
 IA» en las lecciones, la revisión de sus respuestas por la IA, la generación
-de ejercicios y lecciones, el análisis de chats importados, las tarjetas de
-estudio y la guía de estudio, la práctica de pronunciación y la revisión y
-generación de contenidos por la IA. Sin que usted escriba nada, la app envía
-además:
+de ejercicios y lecciones, el análisis de chats importados, las tarjetas y la
+guía de estudio, la práctica de pronunciación y la revisión y generación de
+contenidos por la IA. Sin que usted escriba nada, la app envía además:
 
 - una consulta de los modelos disponibles cuando abre la página Sesión o la
   selección de modelo en Ajustes,
@@ -252,10 +251,10 @@ interés legítimo en mostrarle los modelos disponibles y avisarle de inmediato
 de una clave no válida (art. 6, apartado 1, letra f), del RGPD).
 
 Los proveedores también pueden tratar los datos fuera de la UE, en particular
-en Estados Unidos. Según sus condiciones contractuales, Anthropic basa las
-transferencias a terceros países en las cláusulas tipo de protección de datos
-adoptadas por la Comisión Europea (art. 46, apartado 2, letra c), del RGPD), y
-OpenAI en cláusulas tipo de protección de datos o en una decisión de
+en Estados Unidos. Anthropic, según sus propias condiciones contractuales, basa
+las transferencias a terceros países en las cláusulas tipo de protección de
+datos adoptadas por la Comisión Europea (art. 46, apartado 2, letra c), del
+RGPD), y OpenAI en cláusulas tipo de protección de datos o en una decisión de
 adecuación; Google LLC está certificada conforme al Marco de Privacidad de
 Datos UE-EE. UU. (art. 45 del RGPD). Avisos de privacidad de los proveedores:
 
@@ -273,7 +272,7 @@ tocarlo, y su navegador pide antes permiso para usar el micrófono. El
 reconocimiento lo realiza el navegador, no la app: Google Chrome envía para
 ello la grabación y el idioma elegido a un servicio de Google
 (`www.google.com`); los demás navegadores actúan según su fabricante. El
-fabricante del navegador es responsable de este tratamiento, y se aplica su
+responsable de este tratamiento es el fabricante del navegador, y se aplica su
 aviso de privacidad. En Chrome se trata de Google; para los usuarios del EEE,
 según la
 [política de privacidad de Google](https://policies.google.com/privacy), de
@@ -296,7 +295,7 @@ Usted inicia la lectura en voz alta con los botones de lectura, la tecla R o
 los textos de las lecciones, los enunciados, las preguntas de la evaluación
 del tipo de aprendizaje, las respuestas de la IA y las frases de la práctica
 de pronunciación. Para ello, la app utiliza la síntesis de voz de su
-navegador o de su sistema operativo. Elige una voz que funciona en su
+navegador o de su sistema operativo. Elige una voz que se ejecuta en su
 dispositivo y solo recurre a una voz en línea si no hay ninguna voz local para
 el idioma o si usted mismo ha elegido una voz en línea en Ajustes.
 
@@ -322,19 +321,19 @@ página de la red; la red recibe entonces su dirección IP, los datos habituales
 del navegador y las cookies que ella misma haya instalado en su dispositivo.
 Facebook y LinkedIn solo reciben la dirección de la app; X y WhatsApp, un
 texto prerrellenado con el título de la lección, su resultado (porcentaje y
-número de respuestas correctas) y la dirección de la app, que usted aún puede
-modificar antes de publicar. La app no integra scripts ni botones de estas
-redes; a partir del clic se aplican sus avisos de privacidad. La base jurídica
-es su solicitud (art. 6, apartado 1, letra b), del RGPD).
+número de respuestas correctas) y la dirección de la app; usted aún puede
+modificar este texto antes de enviarlo. La app no integra scripts ni botones de
+estas redes; a partir del clic se aplican sus avisos de privacidad. La base
+jurídica es su solicitud (art. 6, apartado 1, letra b), del RGPD).
 
 ## Enlaces externos
 
 La app y estas páginas contienen enlaces a servicios externos (entre ellos
 GitHub, Amazon, YouTube, AnkiWeb y plataformas de donación). Los vídeos y las
 imágenes de los contenidos de aprendizaje o de las respuestas de la IA que
-apuntan a otros servidores también los muestra la app como enlace; no se carga
-nada hasta que usted hace clic. Con el clic, usted abandona la app o estas
-páginas; a partir de ese momento se aplica el aviso de privacidad del
+apuntan a otros servidores también los muestra la app como enlace; solo se
+cargan después de que usted haga clic. Con el clic, usted abandona la app o
+estas páginas; a partir de ese momento se aplica el aviso de privacidad del
 proveedor correspondiente. No se incluyen scripts, botones ni contenidos
 incrustados de estos proveedores.
 
