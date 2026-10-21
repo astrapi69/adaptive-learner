@@ -206,6 +206,19 @@ def test_finds_a_promise_wrapped_over_two_lines_and_names_its_first_line() -> No
     assert [(hit.line, hit.lang) for hit in hits] == [(3, "ja")]
 
 
+@pytest.mark.parametrize(
+    "catalog",
+    [
+        "  ai_privacy_link: 개인정보 처리방침\n  sync: 서버로 전송되지 않습니다\n",
+        '{"ai_privacy_link": "개인정보 처리방침", "sync": "전송되지 않습니다"}',
+        "  label: Keine persönlichen Daten\n  hint: gesendet am Montag\n",
+    ],
+    ids=["ko-yaml", "ko-json", "de-yaml"],
+)
+def test_a_promise_never_spans_two_catalog_values(catalog: str) -> None:
+    assert promise_hits(catalog) == []
+
+
 def test_reports_one_hit_where_two_patterns_overlap() -> None:
     assert len(promise_hits("Hiçbir kişisel veri iletilmez.")) == 1
 

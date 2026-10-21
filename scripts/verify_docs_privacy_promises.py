@@ -48,8 +48,9 @@ HISTORICAL = (
 )
 HISTORICAL_PAGES = ("changelog.md",)
 
-# The gap between the subject and the verb never crosses a sentence end.
-_GAP = r"[^.!?。！？।]{0,60}?"
+# The gap between the subject and the verb never crosses a sentence end, nor
+# a quote or a colon, so it cannot run from one catalog value into the next.
+_GAP = r"[^.!?。！？।\":]{0,60}?"
 
 PROMISE_PATTERNS: dict[str, tuple[str, ...]] = {
     "de": (
@@ -98,8 +99,8 @@ PROMISE_PATTERNS: dict[str, tuple[str, ...]] = {
         r"(?:transmises|envoyées|transférées)",
     ),
     "hi": (
-        r"कोई\s+(?:भी\s+)?(?:व्यक्तिगत|निजी)\s+(?:डेटा|जानकारी)(?=[^।!?]{0,40}?नहीं)"
-        r"[^।!?]{0,40}?(?:प्रेषित|भेज)",
+        r"कोई\s+(?:भी\s+)?(?:व्यक्तिगत|निजी)\s+(?:डेटा|जानकारी)(?=[^।!?\":]{0,40}?नहीं)"
+        r"[^।!?\":]{0,40}?(?:प्रेषित|भेज)",
     ),
     "id": (
         r"\btidak\s+ada\s+data\s+pribadi\b"
@@ -110,10 +111,10 @@ PROMISE_PATTERNS: dict[str, tuple[str, ...]] = {
         r"\btidak\s+(?:mengirim|mengirimkan)\s+data\s+pribadi",
     ),
     "ja": (
-        r"個人(?:データ|情報)(?:は|を|が|も)[^。！？]{0,30}?(?:送信|転送|送付|伝送)(?:され|し)(?:ません|ない)",
+        r"個人(?:データ|情報)(?:は|を|が|も)[^。！？\":]{0,30}?(?:送信|転送|送付|伝送)(?:され|し)(?:ません|ない)",
     ),
     "ko": (
-        r"개인\s*(?:데이터|정보)(?:는|은|가|이|를|도)?[^.。!?]{0,30}?(?:전송|송신|전달)(?:되지|하지)\s*않",
+        r"개인\s*(?:데이터|정보)(?:는|은|가|이|를|도)?[^.。!?\":]{0,30}?(?:전송|송신|전달)(?:되지|하지)\s*않",
     ),
     "pt": (
         r"\bnenhum\s+dado\s+pessoal\b"
