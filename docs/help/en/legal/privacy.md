@@ -346,7 +346,7 @@ rectification (Art. 16), erasure (Art. 17), restriction of processing
 (Art. 18), data portability (Art. 20) and objection to processing based on
 legitimate interests (Art. 21). You may also lodge a complaint with a data
 protection supervisory authority (Art. 77 GDPR), for example the authority at
-your place of residence or at the controller's seat.
+your place of habitual residence or at the controller's seat.
 
 Because the operator does not hold your learning data, access and erasure
 requests concerning that data are handled on your own device: Settings, Data,

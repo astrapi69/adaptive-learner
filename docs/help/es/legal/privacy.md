@@ -384,7 +384,7 @@ del tratamiento (art. 18), a la portabilidad de los datos (art. 20) y de
 oposición al tratamiento basado en intereses legítimos (art. 21). También
 puede presentar una reclamación ante una autoridad de control en materia de
 protección de datos (art. 77 del RGPD), por ejemplo la autoridad de su lugar de
-residencia o la de la sede del responsable del tratamiento.
+residencia habitual o la de la sede del responsable del tratamiento.
 
 Dado que el operador no dispone de sus datos de aprendizaje, las solicitudes de
 acceso y supresión relativas a esos datos se gestionan en su propio

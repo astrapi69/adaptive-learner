@@ -378,7 +378,8 @@ DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der
 Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch gegen
 Verarbeitungen auf Grundlage berechtigter Interessen (Art. 21). Außerdem können
 Sie sich bei einer Datenschutzaufsichtsbehörde beschweren (Art. 77 DSGVO), zum
-Beispiel bei der Behörde Ihres Wohnorts oder des Sitzes des Verantwortlichen.
+Beispiel bei der Behörde Ihres gewöhnlichen Aufenthaltsorts oder des Sitzes des
+Verantwortlichen.
 
 Da der Betreiber Ihre Lerndaten nicht besitzt, richten sich Auskunfts- und
 Löschbegehren zu diesen Daten an Ihr eigenes Gerät: Einstellungen, Daten,

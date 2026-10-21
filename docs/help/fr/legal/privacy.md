@@ -396,8 +396,8 @@ Vous disposez à l'égard du responsable du traitement d'un droit d'accès
 données (article 20) et d'opposition aux traitements fondés sur des intérêts
 légitimes (article 21). Vous pouvez également introduire une réclamation
 auprès d'une autorité de contrôle de la protection des données (article 77 du
-RGPD), par exemple l'autorité de votre lieu de résidence ou celle du siège du
-responsable du traitement.
+RGPD), par exemple l'autorité de votre lieu de résidence habituelle ou celle
+du siège du responsable du traitement.
 
 Comme l'exploitant ne détient pas vos données d'apprentissage, les demandes
 d'accès et d'effacement concernant ces données se traitent sur votre propre

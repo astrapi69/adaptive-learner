@@ -388,7 +388,7 @@ limitação do tratamento (artigo 18.º), de portabilidade dos dados
 (artigo 20.º) e de oposição ao tratamento com base em interesses legítimos
 (artigo 21.º). Pode ainda apresentar reclamação junto de uma autoridade de
 controlo em matéria de proteção de dados (artigo 77.º do RGPD), por exemplo a
-autoridade do seu local de residência ou da sede do responsável pelo
+autoridade do seu local de residência habitual ou da sede do responsável pelo
 tratamento.
 
 Uma vez que o operador não detém os seus dados de aprendizagem, os pedidos de

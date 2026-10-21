@@ -362,8 +362,8 @@ yükümlülüğü bulunmadığı sürece silinir.
 Veri sorumlusuna karşı erişim hakkına (GDPR md. 15), düzeltme (md. 16),
 silme (md. 17), işlemenin kısıtlanması (md. 18), veri taşınabilirliği
 (md. 20) ve meşru menfaatlere dayalı işlemeye itiraz (md. 21) haklarına
-sahipsiniz. Ayrıca bir veri koruma denetim makamına, örneğin ikamet
-ettiğiniz yerdeki veya veri sorumlusunun bulunduğu yerdeki makama,
+sahipsiniz. Ayrıca bir veri koruma denetim makamına, örneğin genellikle
+yaşadığınız yerdeki veya veri sorumlusunun bulunduğu yerdeki makama,
 şikâyette bulunabilirsiniz (GDPR md. 77).
 
 İşletmeci öğrenme verilerinizi elinde bulundurmadığından, bu verilere ilişkin
