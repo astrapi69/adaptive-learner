@@ -3483,9 +3483,10 @@ Legal notice and privacy policy live as help pages on the docs site
       navigation of every language; the legal notice names name, address and
       the email asterios.raptis@web.de, the privacy policy the same address and
       its date at the top; it addresses the reader formally in every language,
-      and every version except the English one says in one sentence under the
-      date that the app and the rest of the help address the reader
-      informally. Scope: the app, the public preview
+      and every version except the English one says under the date that it
+      uses the formal address as a legal text; de, es, el and ja add that the
+      app and the rest of the help address the reader informally (fr, pt and
+      tr do not, as they mix both forms there). Scope: the app, the public preview
       `astrapi69.github.io/adaptive-learner-content-test` and the docs pages,
       plus one sentence on self-installed copies (update check at
       `api.github.com`).

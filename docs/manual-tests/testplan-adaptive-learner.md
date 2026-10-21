@@ -3728,8 +3728,10 @@ Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
       der Navigation jeder Sprache; das Impressum nennt Name, Anschrift und die
       E-Mail asterios.raptis@web.de, die Datenschutzerklärung dieselbe Adresse
       und oben ihr Datum; sie redet in jeder Sprache förmlich an, und jede
-      Fassung außer der englischen sagt unter dem Datum in einem Satz, dass App
-      und übrige Hilfe duzen. Geltungsbereich: App, öffentliche Vorschau
+      Fassung außer der englischen sagt unter dem Datum, dass sie als
+      Rechtstext förmlich anredet; de, es, el und ja fügen hinzu, dass App und
+      übrige Hilfe duzen (fr, pt und tr nicht, dort mischen sie die Anrede).
+      Geltungsbereich: App, öffentliche Vorschau
       `astrapi69.github.io/adaptive-learner-content-test` und Docs-Seiten,
       dazu ein Satz zu selbst installierten Kopien (Update-Prüfung bei
       `api.github.com`).
