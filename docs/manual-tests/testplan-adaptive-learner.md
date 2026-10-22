@@ -3832,6 +3832,9 @@ Entwicklerwerkzeugen des Browsers (Netzwerk, Cache deaktiviert).
 - [ ] TC-0988 Text und Code erscheinen in der Systemschrift des Geräts (nicht Roboto);
       in einem schmalen Fenster kein horizontales Scrollen, die Navigation
       öffnet sich über das Menü.
+- [ ] TC-0999 Ein Wort suchen (z. B. "Backup") und einen Treffer öffnen (#3843): die
+      Adresszeile zeigt die Seite ohne `?h=`, keine Anfrage enthält die
+      Suchbegriffe; die Treffer sind auf der Seite nicht mehr hervorgehoben.
 
 ---
 
