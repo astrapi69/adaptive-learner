@@ -243,7 +243,8 @@ Siehe [Installation](../install/launcher.md).
 - **Tastatur zuerst**: globale Shortcuts mit Hilfe-Overlay, Enter
   schaltet in Lektionen weiter, Tab springt durch Lückentext-Lücken.
 - **Screenreader-Unterstützung**: Landmarks, ARIA-Labels und
-  Live-Regionen, Daten-Tabellen zu Diagrammen,
+  Live-Regionen, ein Seitentitel pro Seite in der UI-Sprache
+  („Einstellungen - Adaptive Learner"), Daten-Tabellen zu Diagrammen,
   Dialog-Fokus-Management.
 - **Reduzierte Bewegung** wird überall respektiert; Vorlesen (TTS) für
   Lektionen und Chat.

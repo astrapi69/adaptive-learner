@@ -138,7 +138,8 @@ Consulta [Resumen de finalización de set](set-summary.md).
   de pendientes en el resumen y se resuelven en el editor, sin tocar tu
   progreso de aprendizaje.
 
-Consulta [Crear lecciones](../content-creation/overview.md).
+Consulta [Crear lecciones](../content-creation/overview.md) y
+[Modo mentor](../content-creation/mentor-mode.md).
 
 ## Importación y análisis
 
@@ -250,8 +251,9 @@ Consulta [Instalación](../install/launcher.md).
 - **Teclado primero**: atajos globales con overlay de ayuda, Enter
   avanza en las lecciones, Tab navega por los huecos del cloze.
 - **Compatibilidad con lectores de pantalla**: landmarks, etiquetas
-  ARIA y regiones vivas, tablas de datos para los gráficos, gestión
-  del foco en los diálogos.
+  ARIA y regiones vivas, un título por página en el idioma de la
+  interfaz ("Ajustes - Adaptive Learner"), tablas de datos para los
+  gráficos, gestión del foco en los diálogos.
 - El **movimiento reducido** se respeta en todas partes; lectura en
   voz alta (TTS) para lecciones y chat.
 - **Ayuda contextual dentro de la app**: el panel de ayuda abre el

@@ -136,7 +136,8 @@ Ver [Revisão de conclusão de set](set-summary.md).
   resumo e resolvem-se no editor, sem mexer no progresso de
   aprendizagem.
 
-Ver [Criar lições](../content-creation/overview.md).
+Ver [Criar lições](../content-creation/overview.md) e
+[Modo mentor](../content-creation/mentor-mode.md).
 
 ## Importação e análise
 
@@ -248,8 +249,9 @@ Ver [Instalação](../install/launcher.md).
   Enter avança nas lições, Tab navega pelas lacunas do texto com
   lacunas.
 - **Suporte a leitores de ecrã**: landmarks, etiquetas ARIA e regiões
-  live, tabelas de dados para os gráficos, gestão de foco nos
-  diálogos.
+  live, um título por página no idioma da interface ("Configurações -
+  Adaptive Learner"), tabelas de dados para os gráficos, gestão de
+  foco nos diálogos.
 - **Movimento reduzido** é respeitado em todo o lado; leitura em voz
   alta (TTS) para lições e chat.
 - **Ajuda contextual na aplicação**: o painel de ajuda abre o artigo

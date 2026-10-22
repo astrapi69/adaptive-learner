@@ -219,7 +219,8 @@ See [Installation](../install/launcher.md).
 - **Keyboard-first**: global shortcuts with a help overlay, Enter
   advances lessons, Tab navigates cloze blanks.
 - **Screen-reader support**: landmarks, ARIA labels and live regions,
-  chart data tables, dialog focus management.
+  a page title per page in the UI language ("Settings - Adaptive
+  Learner"), chart data tables, dialog focus management.
 - **Reduced motion** is honored everywhere; read-aloud (TTS) for
   lessons and chat.
 - **Context-sensitive in-app help**: the help panel opens the article

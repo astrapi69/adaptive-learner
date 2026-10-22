@@ -125,7 +125,8 @@ Bkz. [Set tamamlama incelemesi](set-summary.md).
   not alırsın; notlar özette bir yapılacaklar listesine dönüşür ve
   editörde giderilir, öğrenme ilerlemesine dokunulmaz.
 
-Bkz. [Ders oluşturma](../content-creation/overview.md).
+Bkz. [Ders oluşturma](../content-creation/overview.md) ve
+[Mentor modu](../content-creation/mentor-mode.md).
 
 ## İçe aktarma ve analiz
 
@@ -234,7 +235,8 @@ Bkz. [Kurulum](../install/launcher.md).
   dersleri ilerletir, Tab boşluk doldurma boşlukları arasında
   gezinir.
 - **Ekran okuyucu desteği**: landmark'lar, ARIA etiketleri ve canlı
-  bölgeler, grafikler için veri tabloları, iletişim kutusu odak
+  bölgeler, arayüz dilinde sayfa başına bir başlık ("Ayarlar - Adaptive
+  Learner"), grafikler için veri tabloları, iletişim kutusu odak
   yönetimi.
 - **Azaltılmış hareket** her yerde dikkate alınır; dersler ve sohbet
   için sesli okuma (TTS).
