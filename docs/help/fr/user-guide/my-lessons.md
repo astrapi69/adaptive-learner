@@ -56,6 +56,12 @@ Cliquez sur **Importer une leçon** dans la section Mes leçons :
 
 ## Partager avec la communauté
 
+**Partager avec la communauté** ouvre un **pull request** sur le dépôt de
+contenu officiel. L'export ne demande aucun compte ; le pull request
+demande un compte GitHub. Un token GitHub accélère le pull request et est
+nécessaire pour partager un ensemble entier comme dépôt personnel (voir
+ci-dessous).
+
 L'assistant de partage vous guide à travers :
 
 1. **Validation de contenu** - un validateur côté client vérifie que la leçon
@@ -64,11 +70,41 @@ L'assistant de partage vous guide à travers :
    niveau CECR avec suggestions de correction automatique
 3. **Aperçu de placement** - où la leçon s'inscrirait dans l'arborescence
    des contenus de la communauté
-4. **Soumission** - ouvre l'éditeur de PR web de GitHub avec un formulaire
-   pré-rempli
+4. **Soumission** - le pull request se crée par l'un de deux chemins :
+   - **Sans token** - une leçon seule ouvre l'éditeur de fichiers de
+     GitHub au bon chemin, avec le titre et la description du PR
+     pré-remplis. Une petite leçon apporte aussi son contenu ; pour une
+     plus grande, l'application télécharge d'abord le fichier et vous le
+     collez dans l'éditeur. Un ensemble de plusieurs leçons télécharge
+     les fichiers et ouvre la page d'envoi de GitHub, où vous les faites
+     glisser. GitHub crée le fork et le pull request dès que vous
+     confirmez sur place.
+   - **Avec un token GitHub** (Paramètres > Intégrations, voir
+     [Paramètres](settings.md)) - une leçon seule se partage sans quitter
+     l'application : l'application forke le dépôt, commite la leçon,
+     ouvre le pull request puis vous montre son lien. Un ensemble de
+     plusieurs leçons passe toujours par le chemin sans token. Si GitHub
+     refuse le token, le message renvoie à Paramètres > Intégrations.
 
 La contribution va vers le dépôt de contenu officiel :
-[astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content)
+[astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+La leçon JSON arrive au bon chemin de l'arborescence et la validation du
+dépôt s'exécute automatiquement ; un mainteneur examine le PR et le
+fusionne, pour que tout le monde puisse télécharger la leçon.
+
+### Partager comme dépôt
+
+**Partager comme dépôt** envoie l'ensemble entier, au format dépôt de
+contenu, vers un dépôt GitHub à vous (créé s'il n'existe pas encore) en
+un seul commit. Vous choisissez le dépôt (`owner/name`), privé ou public,
+et la branche. Une vérification de qualité passe d'abord : si elle trouve
+des problèmes que les contrôles d'un dépôt de contenu refuseraient, elle
+les liste et le bouton devient **Exporter quand même**. Vous pouvez
+ensuite connecter le dépôt envoyé comme source de contenu (voir
+[Plusieurs dépôts de contenu](../features/content-repos.md)). Cela
+demande un token GitHub et n'existe que dans la version navigateur de
+l'application ; sinon le bouton reste visible mais désactivé, avec la
+raison en info-bulle.
 
 ---
 

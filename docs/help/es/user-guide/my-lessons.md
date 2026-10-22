@@ -82,16 +82,46 @@ adaptativo cambie en una versión posterior.
 
 ## Exportar y compartir
 
-Cada lección en Mis lecciones se puede compartir, sin cuenta y
-sin servidor:
+Cada lección en Mis lecciones se puede compartir. Exportar no requiere
+ninguna cuenta; el pull request para la comunidad requiere una cuenta de
+GitHub. Un token de GitHub agiliza el pull request y es necesario para
+compartir un conjunto entero como repositorio propio:
 
 - **Exportar** - descarga la lección como un único archivo `.json`.
 - **Exportar como conjunto** - descarga un `.zip` de conjunto de
   contenido (manifiesto + lecciones).
-- **Compartir con la comunidad** - abre un issue de GitHub
-  prerrellenado en el repositorio oficial de contenido. Adjunta el
-  archivo exportado; un mantenedor lo revisa y puede añadirlo al
-  contenido oficial para que todos puedan descargarlo.
+- **Compartir con la comunidad** - abre un **pull request** en el
+  repositorio oficial de contenido. El JSON de la lección queda en la
+  ruta correcta del árbol de contenido y la validación del repositorio
+  se ejecuta automáticamente; un mantenedor revisa el PR y lo fusiona
+  para que todos puedan descargar la lección. El pull request se crea
+  por uno de dos caminos:
+    - **Sin token** - una sola lección abre el editor de archivos de
+      GitHub en la ruta correcta, con el título y la descripción del PR
+      ya rellenados. Una lección pequeña lleva también su contenido; una
+      más grande la descarga primero la app y tú la pegas en el editor.
+      Un conjunto con varias lecciones descarga los archivos y abre la
+      página de subida de GitHub, donde los arrastras. GitHub crea el
+      fork y el pull request en cuanto confirmas allí.
+    - **Con un token de GitHub** (Ajustes > Integraciones, consulta
+      [Ajustes](settings.md)) - compartes una sola lección sin salir de
+      la app: la app hace un fork del repositorio, confirma la lección
+      con un commit, abre el pull request y luego te muestra el enlace.
+      Un conjunto con varias lecciones sigue el camino sin token. Si
+      GitHub rechaza el token, el mensaje te remite a Ajustes >
+      Integraciones.
+- **Compartir como repositorio** - sube el conjunto entero, en el
+  formato de repositorio de contenido, a un repositorio de GitHub tuyo
+  (que se crea si aún no existe) en un solo commit. Eliges el
+  repositorio (`owner/name`), privado o público, y la rama. Antes se
+  ejecuta una comprobación de calidad: si encuentra problemas que las
+  comprobaciones de un repositorio de contenido rechazarían, los
+  enumera y el botón pasa a **Exportar de todos modos**. Después puedes
+  conectar el repositorio como fuente de contenido (consulta
+  [Varios repositorios de contenido](../features/content-repos.md)).
+  Requiere un token de GitHub y solo está disponible en la versión de
+  navegador de la app; si no, el botón sigue visible pero desactivado,
+  con el motivo como descripción emergente.
 
 Los archivos exportados contienen solo el contenido de la lección -
 sin progreso, sin historial de errores, sin datos personales.

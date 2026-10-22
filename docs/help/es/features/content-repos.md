@@ -103,6 +103,37 @@ recomendados con **un clic**. Aparecen con la insignia
 
 ---
 
+## Registrar tu propio repositorio
+
+En **Ajustes → Datos → Fuentes**, **Registra tu repositorio** propone
+tu propio repositorio de contenido para el directorio oficial
+(`recommended-repos.json`) que lee la búsqueda entre repositorios.
+
+1. Elige uno de tus repositorios conectados, o introduce su URL de
+   GitHub y la rama; luego dale un título y, si quieres, una
+   descripción de una línea.
+2. **Preparar envío**: la app consulta el commit actual del
+   repositorio, ejecuta la misma comprobación técnica que al conectar
+   un repositorio, lee los pares de idiomas del `search-index.json` del
+   repositorio y muestra la entrada del directorio terminada. Un estado
+   te indica si la entrada está *Validado localmente* o *Pendiente; la
+   CI validará*.
+3. Envíala por uno de dos caminos:
+    - **Copiar entrada** y **Abrir el directorio para proponer**: GitHub
+      abre el archivo del directorio para editarlo; pega la entrada en
+      el array y elige "Propose changes". GitHub crea el fork por ti. No
+      hace falta ningún token.
+    - **Crear solicitud de incorporación**: con un token de GitHub
+      (Ajustes → Integraciones) la app abre ella misma el pull request y
+      te muestra su enlace. Solo está disponible en la versión de
+      navegador de la app; en la app de escritorio el botón sigue
+      visible pero desactivado.
+
+Un mantenedor revisa el pull request y lo fusiona cuando la CI del
+directorio ha validado el commit fijado.
+
+---
+
 ## Valoraciones locales
 
 Puedes dar **estrellas** a cada repo localmente. Esta valoración

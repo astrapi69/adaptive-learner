@@ -79,15 +79,46 @@ posterior.
 
 ## Exportar e partilhar
 
-Cada Minha Lição pode ser partilhada, sem conta e sem servidor:
+Cada Minha Lição pode ser partilhada. Exportar não precisa de conta; o
+pull request para a comunidade precisa de uma conta GitHub. Um token do
+GitHub acelera o pull request e é necessário para partilhar um conjunto
+inteiro como repositório próprio:
 
 - **Exportar** - descarregar a lição como um único ficheiro `.json`.
 - **Exportar como conjunto** - descarregar um `.zip` de conjunto de
   conteúdo (manifesto + lições).
-- **Partilhar com a Comunidade** - abre uma issue pré-preenchida no
-  GitHub no repositório de conteúdo oficial. Anexe o ficheiro
-  exportado; um mantenedor revê-o e pode adicioná-lo ao conteúdo
-  oficial para que todos o possam descarregar.
+- **Compartilhar com a comunidade** - abre um **pull request** no
+  repositório de conteúdo oficial. O JSON da lição fica no caminho
+  certo da árvore de conteúdo e a validação do repositório corre
+  automaticamente; um mantenedor revê o PR e integra-o, para que todos
+  possam descarregar a lição. O pull request é criado por um de dois
+  caminhos:
+    - **Sem token** - uma lição isolada abre o editor de ficheiros do
+      GitHub no caminho certo, com o título e a descrição do PR já
+      preenchidos. Uma lição pequena leva também o seu conteúdo; uma
+      maior é primeiro descarregada pela aplicação e cola-a no editor.
+      Um conjunto com várias lições descarrega os ficheiros e abre a
+      página de carregamento do GitHub, para onde os arrasta. O GitHub
+      cria o fork e o pull request assim que confirmar lá.
+    - **Com um token do GitHub** (Configurações > Integrações, ver
+      [Configurações](settings.md)) - partilha uma lição isolada sem
+      sair da aplicação: a aplicação faz o fork do repositório, faz
+      commit da lição, abre o pull request e depois mostra-lhe a
+      ligação. Um conjunto com várias lições continua a seguir o
+      caminho sem token. Se o GitHub rejeitar o token, a mensagem
+      remete para Configurações > Integrações.
+- **Compartilhar como repositório** - envia o conjunto inteiro, no
+  formato de repositório de conteúdo, para um repositório GitHub seu
+  (criado se ainda não existir) num único commit. Escolhe o
+  repositório (`owner/name`), privado ou público, e o ramo. Antes corre
+  uma verificação de qualidade: se encontrar problemas que as
+  verificações de um repositório de conteúdo rejeitariam, lista-os e o
+  botão passa a **Exportar mesmo assim**. Depois pode ligar o
+  repositório como fonte de conteúdo (ver
+  [Múltiplos repositórios de conteúdo](../features/content-repos.md)).
+  Precisa de um token do GitHub e só está disponível na versão de
+  navegador da aplicação; caso contrário, o botão fica visível mas
+  desativado, com o motivo como dica.
 
 Os ficheiros exportados contêm apenas o conteúdo da lição - sem
 progresso, sem historial de erros, nada pessoal.

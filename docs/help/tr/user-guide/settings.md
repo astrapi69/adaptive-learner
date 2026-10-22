@@ -523,6 +523,19 @@ token'ın nerede saklandığını söyler (secrets.yaml, bir ortam değişkeni
 ya da bu tarayıcı) ve **Kaldır** onu siler. Bir ortam değişkeninden
 gelen token burada düzenlenemez.
 
+Token üç yerde kullanılır:
+
+- Derslerim'deki **Toplulukla paylaş**, tek bir dersin pull request'ini
+  GitHub düzenleyicisine uğramadan doğrudan açar (bkz.
+  [Derslerim](my-lessons.md)).
+- **Depo olarak paylaş** bütün bir seti sana ait bir depoya gönderir;
+  bir token kaydedilene kadar düğme devre dışı kalır.
+- **Deponuzu kaydedin** (Veri > Kaynaklar), girdiyi GitHub'a senin
+  yapıştırman yerine kendi pull request'ini doğrudan açabilir.
+
+Son ikisi yalnızca uygulamanın tarayıcı sürümünde vardır. Token olmadan
+diğer her şey eskisi gibi çalışır.
+
 ## Yardım
 
 **Yardım** sekmesi uygulama içi sözlüğü içerir: bir arama alanı

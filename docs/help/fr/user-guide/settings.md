@@ -561,6 +561,19 @@ où le token est stocké (secrets.yaml, une variable d'environnement ou
 ce navigateur), avec **Supprimer** pour l'effacer. Un token issu d'une
 variable d'environnement ne peut pas être modifié ici.
 
+Le token sert à trois endroits :
+
+- **Partager avec la communauté** dans Mes leçons ouvre directement le
+  pull request d'une leçon seule, sans passer par l'éditeur de GitHub
+  (voir [Mes leçons](my-lessons.md)).
+- **Partager comme dépôt** envoie un ensemble entier vers un dépôt à
+  vous ; le bouton reste désactivé tant qu'aucun token n'est enregistré.
+- **Enregistrez votre dépôt** (Données > Sources) peut ouvrir son pull
+  request directement, au lieu que vous colliez l'entrée sur GitHub.
+
+Les deux derniers n'existent que dans la version navigateur de
+l'application. Sans token, tout le reste fonctionne comme avant.
+
 ## Aide
 
 L'onglet **Aide** contient le glossaire intégré : un champ de recherche

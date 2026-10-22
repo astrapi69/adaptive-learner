@@ -546,6 +546,19 @@ pertence, e uma linha de origem indica onde o token está guardado
 **Remover** para o apagar. Um token que vem de uma variável de ambiente
 não pode ser editado aqui.
 
+O token é usado em três sítios:
+
+- **Compartilhar com a comunidade** em As Minhas Lições abre
+  diretamente o pull request de uma lição isolada, sem passar pelo
+  editor do GitHub (ver [As Minhas Lições](my-lessons.md)).
+- **Compartilhar como repositório** envia um conjunto inteiro para um
+  repositório seu; o botão fica desativado até guardar um token.
+- **Registe o seu repositório** (Dados > Fontes) pode abrir o seu pull
+  request diretamente, em vez de colar a entrada no GitHub.
+
+Os dois últimos só estão disponíveis na versão de navegador da
+aplicação. Sem token, tudo o resto funciona como antes.
+
 ## Ajuda
 
 O separador **Ajuda** contém o glossário da aplicação: um campo de

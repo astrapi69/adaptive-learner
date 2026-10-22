@@ -82,9 +82,9 @@ generator changes in a later version.
 
 ## Export and share
 
-Each My Lesson can be shared. Exporting and the community pull request
-work without an account; a GitHub token speeds up the pull request and is
-needed for sharing a whole set as your own repository:
+Each My Lesson can be shared. Exporting needs no account; the community
+pull request needs a GitHub account. A GitHub token speeds up the pull
+request and is needed for sharing a whole set as your own repository:
 
 - **Export** - download the lesson as a single `.json` file.
 - **Export as set** - download a content-set `.zip` (manifest +
@@ -94,11 +94,13 @@ needed for sharing a whole set as your own repository:
   content tree and the repository's validation runs automatically; a
   maintainer reviews and merges it so everyone can download it. There
   are two ways the pull request is made:
-    - **Without a token** - small lessons open straight in GitHub's
-      create-file editor (the PR title and description are pre-filled);
-      larger lessons download the file first and open GitHub's upload
-      page so you drag it in. GitHub creates the fork and the pull
-      request for you once you confirm there.
+    - **Without a token** - a single lesson opens GitHub's create-file
+      editor at the right path, with the PR title and description
+      pre-filled. A small lesson brings its content along; for a larger
+      one the app downloads the file first and you paste it into the
+      editor. A set with several lessons downloads the files and opens
+      GitHub's upload page so you drag them in. GitHub creates the fork
+      and the pull request for you once you confirm there.
     - **With a GitHub token** (Settings > Integrations, see
       [Settings](settings.md#integrations)) - a single lesson is shared
       without leaving the app: the app forks the repository, commits the

@@ -560,6 +560,21 @@ que pertenece, y una línea de origen indica dónde está guardado el token
 **Eliminar** para borrarlo. Un token que procede de una variable de
 entorno no se puede editar aquí.
 
+El token se usa en tres lugares:
+
+- **Compartir con la comunidad** en Mis lecciones abre directamente el
+  pull request de una sola lección, sin pasar por el editor de GitHub
+  (consulta [Mis lecciones](my-lessons.md)).
+- **Compartir como repositorio** sube un conjunto entero a un
+  repositorio tuyo; el botón sigue desactivado hasta que guardes un
+  token.
+- **Registra tu repositorio** (Datos > Fuentes) puede abrir su pull
+  request directamente, en lugar de que tengas que pegar la entrada en
+  GitHub.
+
+Los dos últimos solo están disponibles en la versión de navegador de la
+app. Sin token, todo lo demás funciona como siempre.
+
 ## Ayuda
 
 La pestaña **Ayuda** contiene el glosario integrado: un campo de

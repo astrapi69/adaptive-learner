@@ -97,6 +97,36 @@ tıkla** eklediğin bir keşfetme bölümü bulunur. Bunlar **Resmî olarak
 
 ---
 
+## Kendi Repository'ni kaydetme
+
+**Ayarlar > Veri > Kaynaklar** altında **Deponuzu kaydedin**, kendi
+içerik Repository'ni Repository'ler arası aramanın okuduğu resmî dizin
+(`recommended-repos.json`) için önerir.
+
+1. Bağlı Repository'lerinden birini seç ya da GitHub URL'sini ve dalını
+   gir; sonra ona bir başlık ve istersen tek satırlık bir açıklama ver.
+2. **Gönderimi hazırla**: uygulama Repository'nin güncel commit'ini
+   bulur, bir Repository bağlarken yapılan teknik denetimin aynısını
+   çalıştırır, dil çiftlerini Repository'nin `search-index.json`
+   dosyasından okur ve hazır dizin girdisini gösterir. Bir durum
+   göstergesi girdinin *Yerel olarak doğrulandı* mı yoksa *Beklemede;
+   CI doğrulayacak* mı olduğunu söyler.
+3. Girdiyi iki yoldan biriyle gönder:
+    - **Girişi kopyala** ve **Önermek için dizini aç**: GitHub dizin
+      dosyasını düzenleme için açar; girdiyi diziye yapıştır ve
+      "Propose changes" seç. GitHub fork'u senin için oluşturur. Token
+      gerekmez.
+    - **Çekme isteği oluştur**: bir GitHub token'ı ile (Ayarlar >
+      Entegrasyonlar) uygulama pull request'i kendisi açar ve sana
+      bağlantısını gösterir. Bu yalnızca uygulamanın tarayıcı
+      sürümünde vardır; masaüstü uygulamasında düğme görünür kalır ama
+      devre dışıdır.
+
+Bir bakımcı pull request'i inceler ve dizinin CI'ı sabitlenen commit'i
+doğruladıktan sonra birleştirir.
+
+---
+
 ## Yerel değerlendirmeler
 
 Her repoya yerel olarak **yıldız** verebilirsin. Bu değerlendirme

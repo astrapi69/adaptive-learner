@@ -90,9 +90,10 @@ sich der adaptive Generator in einer späteren Version ändert.
 
 ## Exportieren und teilen
 
-Jede eigene Lektion lässt sich teilen. Exportieren und der Pull Request
-für die Community gehen ohne Konto; ein GitHub-Token beschleunigt den Pull
-Request und ist nötig, um ein ganzes Set als eigenes Repository zu teilen:
+Jede eigene Lektion lässt sich teilen. Exportieren geht ohne Konto; für
+den Pull Request an die Community brauchst du ein GitHub-Konto. Ein
+GitHub-Token beschleunigt den Pull Request und ist nötig, um ein ganzes
+Set als eigenes Repository zu teilen:
 
 - **Exportieren** - die Lektion als einzelne `.json`-Datei
   herunterladen.
@@ -104,11 +105,14 @@ Request und ist nötig, um ein ganzes Set als eigenes Repository zu teilen:
   läuft automatisch; ein Maintainer prüft den PR und führt ihn
   zusammen, sodass alle die Lektion herunterladen können. Der Pull
   Request entsteht auf einem von zwei Wegen:
-    - **Ohne Token** - kleine Lektionen öffnen direkt den Datei-Editor
-      von GitHub (PR-Titel und -Beschreibung sind vorausgefüllt);
-      größere Lektionen werden zuerst heruntergeladen und öffnen die
-      Upload-Seite von GitHub, auf die du die Datei ziehst. GitHub
-      erstellt den Fork und den Pull Request, sobald du dort bestätigst.
+    - **Ohne Token** - eine einzelne Lektion öffnet den Datei-Editor
+      von GitHub am richtigen Pfad, PR-Titel und -Beschreibung sind
+      vorausgefüllt. Eine kleine Lektion bringt ihren Inhalt gleich
+      mit; eine größere lädt die App zuerst herunter, und du fügst sie
+      im Editor ein. Ein Set mit mehreren Lektionen lädt die Dateien
+      herunter und öffnet die Upload-Seite von GitHub, auf die du sie
+      ziehst. GitHub erstellt den Fork und den Pull Request, sobald du
+      dort bestätigst.
     - **Mit GitHub-Token** (Einstellungen > Integrationen, siehe
       [Einstellungen](settings.md#integrationen)) - eine einzelne
       Lektion teilst du, ohne die App zu verlassen: die App forkt das
