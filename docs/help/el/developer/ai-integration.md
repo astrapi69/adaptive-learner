@@ -119,7 +119,7 @@ hint: …") προσαρτάται κατά τη σύνθεση.
 
 Για τη λειτουργία Dexie, οι προτροπές εξάγονται αυτούσιες στο
 `frontend/src/data/session-prompts.json` και φορτώνονται από
-`frontend/src/storage/prompts.ts`. Ίδιο κείμενο, ίδια μορφή
+`frontend/src/storage/ai/prompts.ts`. Ίδιο κείμενο, ίδια μορφή
 μπλοκ πλαισίου - δεν είναι δυνατή απόκλιση.
 
 ## Προσθήκη νέου παρόχου
@@ -136,7 +136,7 @@ hint: …") προσαρτάται κατά τη σύνθεση.
 5. Πρόσθεσέ το στο `AI_PROVIDERS` στο
    `frontend/src/lib/constants.ts`.
 6. Για ισοτιμία Dexie-mode: πρόσθεσε client στο
-   `frontend/src/storage/ai-providers.ts` και δρομολόγησε σε αυτό
+   `frontend/src/storage/ai/ai-providers.ts` και δρομολόγησε σε αυτό
    από το `aiComplete()`.
 
 Κάθε plugin παρόχου τεστάρει τον hookimpl + κλήση παρόχου σε

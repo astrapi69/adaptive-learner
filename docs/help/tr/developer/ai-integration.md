@@ -122,7 +122,7 @@ bağlam bloğu ("Öğrenme projesi: 'X' | Hedef: 'Y'. Profil ipucu:
 
 Dexie modu için istemler olduğu gibi
 `frontend/src/data/session-prompts.json` dosyasına aktarılır ve
-`frontend/src/storage/prompts.ts` tarafından yüklenir. Aynı metin,
+`frontend/src/storage/ai/prompts.ts` tarafından yüklenir. Aynı metin,
 aynı bağlam bloğu biçimi - hiçbir kayma mümkün değildir.
 
 ## Yeni sağlayıcı ekleme
@@ -137,7 +137,7 @@ aynı bağlam bloğu biçimi - hiçbir kayma mümkün değildir.
 4. Sağlayıcı adını `app/schemas/__init__.py`'deki `AIProvider`
    enum'una ekleyin.
 5. `frontend/src/lib/constants.ts`'deki `AI_PROVIDERS`'a ekleyin.
-6. Dexie modu paritesi için: `frontend/src/storage/ai-providers.ts`'e
+6. Dexie modu paritesi için: `frontend/src/storage/ai/ai-providers.ts`'e
    bir istemci ekleyin ve `aiComplete()` işlevinden ona yönlendirin.
 
 Her sağlayıcı eklentisi, hookimpl + sağlayıcı çağrısını yalıtılmış

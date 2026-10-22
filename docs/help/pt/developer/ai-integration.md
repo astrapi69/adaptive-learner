@@ -123,7 +123,7 @@ hint: …") é acrescentado no momento da composição.
 
 Para o modo Dexie, os prompts são exportados verbatim para
 `frontend/src/data/session-prompts.json` e carregados por
-`frontend/src/storage/prompts.ts`. Mesmo texto, mesmo formato de
+`frontend/src/storage/ai/prompts.ts`. Mesmo texto, mesmo formato de
 bloco de contexto - sem possibilidade de divergência.
 
 ## Adicionar um novo fornecedor
@@ -140,7 +140,7 @@ bloco de contexto - sem possibilidade de divergência.
 5. Adicioná-lo a `AI_PROVIDERS` em
    `frontend/src/lib/constants.ts`.
 6. Para paridade no modo Dexie: adicionar um cliente a
-   `frontend/src/storage/ai-providers.ts` e roteá-lo a partir de
+   `frontend/src/storage/ai/ai-providers.ts` e roteá-lo a partir de
    `aiComplete()`.
 
 Cada plugin de fornecedor testa o seu hookimpl + chamada de
