@@ -371,7 +371,9 @@ yapılandırma değişikliği gibi, satırda bir işaret olarak görünür.
 Tarayıcı modunda kart, yalnızca masaüstü uygulamasının bir eklenti
 barındırıcısı olduğunu belirten bir bildirimle görünür kalır.
 **Öğrenme deposu** bu eklentinin ayarlarını içerir (git kalıcılığı,
-depo dizini).
+depo dizini). Dizini boş bırakırsan depolar veri dizinindeki `repos`
+klasörüne gider (bkz. **Hakkında > Sistem**); girdiğin bir yol olduğu
+gibi kullanılır.
 
 ## Veri
 
@@ -557,9 +559,12 @@ görmesine yardımcı olan şeyleri bir araya getirir:
   hiçbir şey çıkmaz: bu düğme, raporu doldurulmuş hâlde GitHub'ın sorun
   formunu açar; yani GitHub raporu o andan itibaren, sen sorunu orada
   göndermeden önce alır.
-- **Geliştirici Modu** - hata bildirimlerinde tüm teknik ayrıntıları
-  (durum kodu, uç nokta, yığın izi) ve açıkken gezinme çubuğunda bir
-  "DEV" rozeti gösterir. Varsayılanı derleme koluna bağlıdır:
+- **Geliştirici Modu** - hata bildirimlerinde ve doğrudan sayfada
+  görünen hata mesajlarında (örneğin müfredat, ilerleme, ayarlar ya da
+  bir oturum yüklenmediğinde) tüm teknik ayrıntıları (durum kodu, uç
+  nokta, yığın izi) ve açıkken gezinme çubuğunda bir "DEV" rozeti
+  gösterir. Kapalıyken bu yerlerde sunucunun teknik yanıtı yerine
+  anlaşılır bir mesaj görünür. Varsayılanı derleme koluna bağlıdır:
   **Latest (önizleme) kolunda varsayılan olarak AÇIK**, **Main'de
   KAPALI**; böylece önizleme test edenler tam teknik hata ayrıntılarını
   görürken üretim kullanıcıları anlaşılır mesajlar alır. İki yönde de

@@ -386,7 +386,9 @@ tal como uma alteração de configuração depois da ativação. No modo
 navegador o cartão continua visível com um aviso de que só a aplicação
 de desktop tem um anfitrião de plugins. **Repositório de aprendizagem**
 contém as definições desse plugin (persistência git, diretório dos
-repositórios).
+repositórios). Se deixar o diretório vazio, os repositórios ficam na
+pasta `repos` do seu diretório de dados (ver **Sobre > Sistema**); um
+caminho indicado é usado tal como está.
 
 ## Dados
 
@@ -581,8 +583,12 @@ ver o que aconteceu no seu dispositivo:
   relatório preenchido, por isso o GitHub recebe-o a partir desse
   momento, antes mesmo de submeter a issue lá.
 - **Modo desenvolvedor** - mostra o detalhe técnico completo (código de
-  estado, endpoint, stack trace) nas notificações de erro, e um emblema
-  "DEV" na barra de navegação enquanto está ativo. O seu padrão depende
+  estado, endpoint, stack trace) nas notificações de erro e nas
+  mensagens de erro mostradas na própria página (por exemplo quando o
+  currículo, o progresso, as definições ou uma sessão não carregam), e
+  um emblema "DEV" na barra de navegação enquanto está ativo. Desligado,
+  esses sítios mostram uma mensagem compreensível em vez da resposta
+  técnica do servidor. O seu padrão depende
   do ramo de build: está **LIGADO por padrão no ramo Latest
   (pré-visualização)** e **DESLIGADO em Main**, para que os testadores
   da pré-visualização vejam o detalhe técnico completo dos erros

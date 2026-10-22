@@ -385,7 +385,9 @@ ebenso eine Konfigurationsänderung nach der Aktivierung. Im
 Browser-Modus bleibt die Karte sichtbar mit dem Hinweis, dass nur die
 Desktop-App einen Plugin-Host hat. **Lern-Repository** hält die
 Einstellungen des gleichnamigen Plugins (Git-Persistenz,
-Repository-Verzeichnis).
+Repository-Verzeichnis). Lässt du das Verzeichnis leer, liegen die
+Repositories im Ordner `repos` deines Daten-Verzeichnisses (siehe
+**Über > System**); ein eingetragener Pfad gilt so, wie er dasteht.
 
 ## Daten
 
@@ -581,9 +583,13 @@ sehen, was auf deinem Gerät passiert ist:
   Browser, bevor du auf **Auf GitHub öffnen** klickst: Das öffnet das
   Issue-Formular von GitHub mit dem ausgefüllten Bericht, GitHub erhält
   ihn also ab diesem Moment, noch bevor du das Issue dort absendest.
-- **Entwicklermodus** - zeigt in Fehler-Toasts die vollen technischen
-  Details (Statuscode, Endpunkt, Stacktrace) und, solange er an ist,
-  ein „DEV"-Abzeichen in der Navigationsleiste. Sein Standard hängt vom
+- **Entwicklermodus** - zeigt in Fehler-Toasts und in
+  Fehlermeldungen, die direkt auf der Seite stehen (etwa wenn Lehrplan,
+  Fortschritt, Einstellungen oder eine Sitzung nicht laden), die vollen
+  technischen Details (Statuscode, Endpunkt, Stacktrace) und, solange
+  er an ist, ein „DEV"-Abzeichen in der Navigationsleiste. Ist er aus,
+  steht dort eine verständliche Meldung statt der technischen Antwort
+  des Servers. Sein Standard hängt vom
   Build-Strang ab: Er ist **standardmäßig EIN auf dem Latest-Strang
   (Vorschau)** und **AUS auf Haupt**, damit Vorschau-Tester volle
   technische Fehlerdetails sehen, während Produktionsnutzer freundliche

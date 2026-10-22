@@ -393,7 +393,10 @@ aparece como marca en la fila, igual que un cambio de configuración
 tras la activación. En el modo navegador la tarjeta sigue visible con
 un aviso de que solo la aplicación de escritorio tiene un anfitrión de
 complementos. **Repositorio de aprendizaje** contiene los ajustes de
-ese complemento (persistencia en git, directorio del repositorio).
+ese complemento (persistencia en git, directorio del repositorio). Si
+dejas el directorio vacío, los repositorios van a la carpeta `repos` de
+tu directorio de datos (consulta **Acerca de > Sistema**); una ruta que
+escribas se usa tal cual.
 
 ## Datos
 
@@ -598,8 +601,12 @@ a ver qué ocurrió en tu dispositivo:
   de GitHub con el informe ya rellenado, así que GitHub lo recibe desde
   ese momento, antes de que envíes la incidencia allí.
 - **Modo Desarrollador** - muestra el detalle técnico completo (código
-  de estado, endpoint, traza de pila) en los toasts de error, y una
-  insignia «DEV» en la barra de navegación mientras está activado. Su
+  de estado, endpoint, traza de pila) en los toasts de error y en los
+  mensajes de error que aparecen en la propia página (por ejemplo cuando
+  el plan de estudios, el progreso, los ajustes o una sesión no cargan),
+  y una insignia «DEV» en la barra de navegación mientras está activado.
+  Si está desactivado, esos lugares muestran un mensaje comprensible en
+  vez de la respuesta técnica del servidor. Su
   valor predeterminado depende de la rama de compilación: está
   **ACTIVADO por defecto en la rama Latest (vista previa)** y
   **DESACTIVADO en Main**, para que los probadores de la vista previa

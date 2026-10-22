@@ -397,7 +397,10 @@ apparaît comme marqueur sur la ligne, de même qu'une configuration
 modifiée après l'activation. En mode navigateur, la carte reste visible
 avec la mention que seule l'application de bureau possède un hôte
 d'extensions. **Dépôt d'apprentissage** regroupe les réglages de cette
-extension (persistance git, dossier du dépôt).
+extension (persistance git, dossier du dépôt). Si vous laissez le
+dossier vide, les dépôts vont dans le dossier `repos` de votre dossier
+de données (voir **À propos > Système**) ; un chemin saisi est utilisé
+tel quel.
 
 ## Données
 
@@ -597,8 +600,13 @@ développeur à voir ce qui s'est passé sur votre appareil :
   rempli, GitHub le reçoit donc dès ce moment, avant même que vous
   n'envoyiez le ticket.
 - **Mode développeur** - affiche le détail technique complet (code
-  d'état, endpoint, trace) dans les messages d'erreur, et un badge
-  « DEV » dans la barre de navigation tant qu'il est actif. Sa valeur
+  d'état, endpoint, trace) dans les toasts d'erreur et dans les
+  messages d'erreur affichés sur la page elle-même (par exemple quand le
+  programme, la progression, les paramètres ou une session ne se
+  chargent pas), et un badge
+  « DEV » dans la barre de navigation tant qu'il est actif. Désactivé,
+  ces endroits affichent un message compréhensible au lieu de la
+  réponse technique du serveur. Sa valeur
   par défaut dépend de la branche de build : il est **activé par défaut
   sur la branche Latest (préversion)** et **désactivé sur Main**, si
   bien que les testeurs de la préversion voient le détail technique
