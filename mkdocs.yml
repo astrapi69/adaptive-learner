@@ -32,6 +32,11 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  # #3843 - no search.highlight: it adds the search terms to every result
+  # link as ?h=, so a click sends them to GitHub Pages, while the privacy
+  # policy says they never leave the browser. search.share stays, it copies
+  # a link with the query only when the reader clicks share. Pinned by the
+  # docs-third-party check of scripts/verify_docs.py.
   features:
     - navigation.tabs
     - navigation.sections
@@ -39,7 +44,6 @@ theme:
     - navigation.tracking
     - navigation.indexes
     - search.suggest
-    - search.highlight
     - search.share
     - content.code.copy
     - content.tabs.link
