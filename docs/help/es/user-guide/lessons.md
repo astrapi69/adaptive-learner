@@ -105,6 +105,17 @@ repetición de errores ("Repetir errores").
   al ejercicio" te lleva de nuevo a la tarea. Así consultas una
   regla sin perder el hilo.
 
+### Lectura en voz alta en la lección
+
+Los pasos de teoría se pueden leer en voz alta: con el botón de lectura
+del paso, con **"Leer todo"** o, con **"Lectura automática"** en las
+opciones de la lección, en cada paso por sí solo. Mientras se lee, un
+pequeño reproductor ofrece pausa/reproducir y el paso anterior y el
+siguiente. La **X** termina la lectura para esta lección; con "Lectura
+automática" activada, la siguiente lección vuelve a leerse en voz alta.
+Para desactivarla de forma permanente, usa el interruptor **"Lectura
+automática"**.
+
 ### El resumen
 
 Cuando se completa el último ejercicio, aparece el **resumen de la

@@ -172,6 +172,17 @@ gilt auch im Fehler-Replay („Fehler wiederholen").
   bringt dich „Zurück zur Übung" wieder an die Aufgabe. So
   schlägst du eine Regel nach, ohne den Faden zu verlieren.
 
+### Vorlesen in der Lektion
+
+Theorie-Schritte lassen sich vorlesen: über den Vorlesen-Knopf des
+Schritts, über **„Alle vorlesen"** oder, mit **„Automatisch vorlesen"**
+in den Lektionsoptionen, bei jedem Schritt von selbst. Solange
+vorgelesen wird, zeigt ein kleiner Player Pause/Weiter sowie den
+vorherigen und den nächsten Schritt. Das **X** beendet das Vorlesen für
+diese Lektion; ist „Automatisch vorlesen" an, liest die App in der
+nächsten Lektion wieder vor. Dauerhaft schaltest du es mit dem Schalter
+**„Automatisch vorlesen"** aus.
+
 ### Die Zusammenfassung
 
 Wenn die letzte Übung abgeschlossen ist, erscheint die

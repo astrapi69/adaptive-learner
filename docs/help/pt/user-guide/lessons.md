@@ -101,6 +101,16 @@ precedência. O atalho é comutável em **Definições → Aprendizagem**
   leva-te de novo à tarefa. Assim consultas uma regra sem perder o
   fio.
 
+### Leitura em voz alta na lição
+
+Os passos de teoria podem ser lidos em voz alta: com o botão de leitura
+do passo, com **"Ler tudo"** ou, com **"Leitura automática"** nas opções
+da lição, em cada passo por si só. Enquanto lê, um pequeno leitor
+oferece pausa/reproduzir e o passo anterior e o seguinte. O **X**
+encerra a leitura para esta lição; com "Leitura automática" ativada, a
+lição seguinte volta a ser lida em voz alta. Para a desligar de vez,
+usa o interruptor **"Leitura automática"**.
+
 ### O resumo
 
 Quando o último exercício está concluído, aparece o **resumo da

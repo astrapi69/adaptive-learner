@@ -93,6 +93,16 @@ açık) ve Hata-Replay'inde de ("Hatayı tekrarla") geçerlidir.
   ölçülü bir bağlantı gösterir; oradan "Alıştırmaya geri dön" seni
   tekrar göreve getirir. Böylece, ipi kaybetmeden bir kuralı ararsın.
 
+### Derste sesli okuma
+
+Teori adımları sesli okunabilir: adımın sesli okuma düğmesiyle,
+**"Tümünü oku"** ile ya da ders seçeneklerindeki **"Otomatik sesli
+okuma"** ile her adımda kendiliğinden. Okuma sürerken küçük bir oynatıcı
+duraklat/oynat ile önceki ve sonraki adımı sunar. **X** bu ders için
+sesli okumayı bitirir; "Otomatik sesli okuma" açıksa sonraki ders yine
+sesli okunur. Kalıcı olarak kapatmak için **"Otomatik sesli okuma"**
+anahtarını kullan.
+
 ### Özet
 
 Son alıştırma tamamlandığında **ders özeti** görünür:

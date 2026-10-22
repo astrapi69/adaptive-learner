@@ -144,6 +144,15 @@ applies in Error Replay ("Repeat mistakes").
   you to the task. This lets you look up a rule without losing your
   thread.
 
+### Read-aloud in a lesson
+
+Theory steps can be read aloud: with the step's read-aloud button, with
+**"Read all"** or, with **"Auto read-aloud"** in the lesson options, on
+every step by itself. While it speaks, a small player offers pause/play
+and the previous and next step. The **X** ends read-aloud for this
+lesson; with "Auto read-aloud" on, the next lesson reads aloud again. To
+switch it off for good, use the **"Auto read-aloud"** toggle.
+
 ### The summary
 
 When the last exercise is complete, the **lesson summary**

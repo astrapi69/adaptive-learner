@@ -106,6 +106,17 @@ aussi à la reprise des erreurs (« Répéter les erreurs »).
   l'exercice » te ramène à la tâche. Tu consultes ainsi une règle
   sans perdre le fil.
 
+### Lecture à voix haute dans la leçon
+
+Les étapes de théorie peuvent être lues à voix haute : avec le bouton de
+lecture de l'étape, avec **« Tout lire »** ou, avec **« Lecture
+automatique »** dans les options de la leçon, à chaque étape d'elle-même.
+Pendant la lecture, un petit lecteur propose pause/lecture ainsi que
+l'étape précédente et la suivante. Le **X** arrête la lecture pour cette
+leçon ; si « Lecture automatique » est activée, la leçon suivante est de
+nouveau lue à voix haute. Pour la désactiver durablement, utilise
+l'interrupteur **« Lecture automatique »**.
+
 ### Le récapitulatif
 
 Lorsque le dernier exercice est terminé, le **récapitulatif de la
