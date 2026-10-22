@@ -195,9 +195,9 @@ unter der Haube eine KI nutzt, aber zusätzlich bringt:
    davon nur, wenn eine Funktion sie braucht, die du nutzt. Server
    kontaktiert die App, wenn eine Funktion es braucht, zum Beispiel
    GitHub für Inhalte (verbundene Repositorys gleicht sie dafür auch
-   beim Start ab), deinen KI-Anbieter, und GitHub, wenn du teilst
-   oder einen Fehlerbericht dort öffnest. Welche Fälle das sind und
-   was dabei übertragen wird, beschreibt die
+   beim Start ab), deinen KI-Anbieter, und GitHub, wenn du etwas
+   teilst oder einen Fehlerbericht dort öffnest. Welche Fälle das
+   sind und was dabei übertragen wird, beschreibt die
    [Datenschutzerklärung](../legal/privacy.md).
 
 ## Was, wenn die KI danebenliegt?

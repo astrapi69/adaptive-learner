@@ -171,7 +171,7 @@ sistemidir*:
    ihtiyaç duyduğunda alır. Uygulama, bir özellik gerektirdiğinde
    sunuculara bağlanır; örneğin içerikler için GitHub'a (bağlı
    depoları başlangıçta da eşitler), yapay zeka sağlayıcınıza ve
-   paylaştığınızda ya da bir hata raporunu orada açtığınızda
+   bir şey paylaştığınızda ya da bir hata raporunu orada açtığınızda
    GitHub'a. [Gizlilik politikası](../legal/privacy.md), bunların
    hangi durumlar olduğunu ve neyin aktarıldığını açıklar.
 

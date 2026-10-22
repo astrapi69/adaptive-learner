@@ -181,7 +181,7 @@ under the hood but adds:
    use needs them. The app contacts servers when a feature needs it,
    for example GitHub for content (it also syncs connected
    repositories on start), your AI provider, and GitHub when you
-   share or open an error report there. The
+   share something or open an error report there. The
    [privacy policy](../legal/privacy.md) describes which cases these
    are and what is transferred.
 
