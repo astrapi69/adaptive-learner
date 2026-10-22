@@ -87,13 +87,21 @@ jede Karte und Übung:
    "Weiter", wenn du bereit bist.
 2. **Übungen** prüfen, was du dir gemerkt hast. Die
    Kern-Typen:
-   - **Zuordnen** - ziehe Paare (Wort ↔ Übersetzung). Beide
+   - **Zuordnen** - tippe eine Kachel an und dann ihr
+     Gegenstück in der anderen Spalte (Wort ↔ Übersetzung);
+     du kannst auf beiden Seiten beginnen. Beide
      Kacheln eines gefundenen Paares teilen sich eine
      **eigene Farbe** und ein **Nummern-Badge**, sodass die
      Zuordnung farbenblind-sicher erkennbar ist (nicht nur
      über Farbe), und das Auflösen eines Paares spielt eine
      kurze **Animation**, damit die Verbindung leicht zu
-     verfolgen ist.
+     verfolgen ist. Um ein Paar zu ändern, tippe eine
+     gepaarte Kachel an und dann ihren neuen Partner: Das
+     Paar wird umgehängt. Ist der neue Partner schon
+     gepaart, tauschen die beiden Paare ihre Partner, die
+     Zahl der Paare sinkt also nie. Ein Antippen allein
+     trennt kein Paar; **Strg/Cmd+Z** macht das zuletzt
+     gebildete Paar rückgängig.
    - **Bildauswahl** - wähle das Bild, das zum Hinweis
      passt.
    - **Freitext** - tippe die Antwort.

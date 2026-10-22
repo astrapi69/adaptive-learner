@@ -41,11 +41,21 @@ te guide pas à pas à travers chaque carte et chaque exercice :
    « Suivant » quand tu es prêt.
 2. **Exercices** : vérifient ce que tu as retenu. Les types de
    base :
-   - **Associer** - fais glisser des paires (mot ↔ traduction).
+   - **Associer** - touche une tuile, puis sa partenaire dans
+     l'autre colonne (mot ↔ traduction) ; tu peux commencer d'un
+     côté comme de l'autre.
      Les deux tuiles d'une paire trouvée partagent une **couleur
      propre** et un **badge numéroté**, de sorte que
      l'association est reconnaissable de manière sûre pour le
-     daltonisme (pas seulement par la couleur).
+     daltonisme (pas seulement par la couleur), et la résolution
+     d'une paire joue une courte **animation** pour que le lien
+     soit facile à suivre. Pour changer une paire, touche une
+     tuile déjà associée, puis sa nouvelle partenaire : la paire
+     se déplace. Si la nouvelle partenaire est déjà associée, les
+     deux paires échangent leurs partenaires, le nombre de paires
+     ne baisse donc jamais. Un simple toucher ne défait jamais une
+     paire ; **Ctrl/Cmd+Z** annule la dernière paire que tu as
+     formée.
    - **Choix d'image** - choisis l'image qui correspond à
      l'indice.
    - **Texte libre** - tape la réponse.

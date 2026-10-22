@@ -40,11 +40,19 @@ conduz-te passo a passo por cada cartão e exercício:
    quando estiveres pronto.
 2. **Exercícios** testam o que memorizaste. Os tipos do
    núcleo:
-   - **Correspondência** - arrasta pares (palavra ↔ tradução). Ambas
+   - **Correspondência** - toca numa peça e depois no seu par na
+     outra coluna (palavra ↔ tradução); podes começar por qualquer
+     um dos lados. Ambas
      as peças de um par encontrado partilham uma **cor própria** e
      um **badge numérico**, para que a correspondência seja
      reconhecível de forma segura para daltónicos (não apenas pela
-     cor).
+     cor), e resolver um par reproduz uma breve **animação** para
+     que a ligação seja fácil de seguir. Para mudar um par, toca
+     numa peça já emparelhada e depois no seu novo par: o par
+     passa para lá. Se o novo par já estiver emparelhado, os dois
+     pares trocam de parceiro, por isso o número de pares nunca
+     desce. Um simples toque nunca desfaz um par; **Ctrl/Cmd+Z**
+     desfaz o último par que formaste.
    - **Escolha de imagem** - escolhe a imagem que corresponde à
      pista.
    - **Texto livre** - escreve a resposta.

@@ -37,10 +37,17 @@ alıştırmadan adım adım geçirir:
 1. **Kartlar** okumak için materyal sunar. Hazır olduğunda
    "Devam"a tıkla.
 2. **Alıştırmalar** neyi hatırladığını sınar. Çekirdek türler:
-   - **Eşleştirme** - çiftleri sürükle (kelime ↔ çeviri). Bulunan bir
+   - **Eşleştirme** - bir karoya, sonra diğer sütundaki eşine dokun
+     (kelime ↔ çeviri); iki taraftan da başlayabilirsin. Bulunan bir
      çiftin her iki karosu **kendi rengini** ve bir **numara
      rozetini** paylaşır, böylece eşleştirme renk körlüğüne karşı
-     güvenli biçimde tanınır (yalnızca renkle değil).
+     güvenli biçimde tanınır (yalnızca renkle değil); bir çiftin
+     çözülmesi kısa bir **animasyon** oynatır, böylece bağlantı
+     kolayca izlenir. Bir çifti değiştirmek için eşleşmiş bir
+     karoya, sonra yeni eşine dokun: çift oraya taşınır. Yeni eş
+     zaten eşleşmişse iki çift eşlerini değiştirir, yani çift
+     sayısı hiç düşmez. Tek bir dokunuş bir çifti asla bozmaz;
+     **Ctrl/Cmd+Z** oluşturduğun son çifti geri alır.
    - **Resim seçimi** - ipucuna uyan resmi seç.
    - **Serbest metin** - yanıtı yaz.
    - **Kelime karoları** - karolardan bir cümle oluştur.

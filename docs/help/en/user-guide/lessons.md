@@ -72,11 +72,18 @@ step by step through each card and exercise:
 1. **Cards** present material to read. Click "Next" when you are
    ready.
 2. **Exercises** test what you remembered. The core types:
-   - **Matching** - drag pairs (word ↔ translation). Both tiles of
+   - **Matching** - tap a tile, then its partner in the other
+     column (word ↔ translation); you can start from either side.
+     Both tiles of
      a found pair share a **distinct color** and a **number
      badge**, so the pairing is recognizable in a colorblind-safe
      way (not by color alone), and resolving a pair plays a short
-     **animation** so the link is easy to follow.
+     **animation** so the link is easy to follow. To change a
+     pair, tap a paired tile and then its new partner: the pair
+     moves. If the new partner is already paired, the two pairs
+     swap partners, so the pair count never drops. A tap alone
+     never dissolves a pair; **Ctrl/Cmd+Z** undoes the last pair
+     you formed.
    - **Picture choice** - pick the image that matches the prompt.
    - **Free text** - type the answer.
    - **Word tiles** - assemble a sentence from tiles.

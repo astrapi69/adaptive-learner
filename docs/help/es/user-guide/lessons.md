@@ -41,11 +41,20 @@ guía paso a paso por cada tarjeta y ejercicio:
    "Siguiente" cuando estés listo.
 2. Los **ejercicios** comprueban lo que has recordado. Los tipos
    principales:
-   - **Asociar** - arrastra parejas (palabra ↔ traducción). Las
+   - **Asociar** - toca una ficha y luego su pareja en la otra
+     columna (palabra ↔ traducción); puedes empezar por
+     cualquiera de los dos lados. Las
      dos fichas de una pareja encontrada comparten un **color
      propio** y una **insignia numérica**, de modo que la
      asociación sea reconocible de forma segura para daltónicos
-     (no solo por color).
+     (no solo por color), y al resolver una pareja se reproduce
+     una breve **animación** para que la conexión sea fácil de
+     seguir. Para cambiar una pareja, toca una ficha ya
+     emparejada y luego su nueva pareja: la pareja se traslada.
+     Si la nueva pareja ya estaba emparejada, las dos parejas
+     intercambian sus compañeras, así que el número de parejas
+     nunca baja. Un simple toque nunca deshace una pareja;
+     **Ctrl/Cmd+Z** deshace la última pareja que formaste.
    - **Elección de imagen** - elige la imagen que corresponde a la
      pista.
    - **Texto libre** - escribe la respuesta.
