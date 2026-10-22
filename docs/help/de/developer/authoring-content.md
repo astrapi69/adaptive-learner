@@ -61,16 +61,21 @@ auseinanderdrifteten, können das nicht mehr:
   oberster Ebene, um IDE-Autovervollständigung und Inline-
   Validierung zu bekommen.
 - `schema/quality-rules.json` - die geteilten Qualitäts-Minima
-  (z. B. Übungsanzahl, Anzahl akzeptierter Freitext-Antworten), die
-  der client-seitige Content-Validator nutzt statt einer zweiten,
-  von Hand gepflegten Kopie.
-- Die Frontend-TypeScript-Lektionstypen und die MkDocs-Seite
-  [Lektionsformat-Referenz](lesson-format-reference.md) werden
-  ebenfalls generiert (**nicht von Hand bearbeiten**); sie folgen dem
-  Engine-Spiegel, führe also nach einem Re-Pin den Generator erneut aus.
+  (z. B. Übungsanzahl, Anzahl akzeptierter Freitext-Antworten) als
+  Spiegel der Engine. Der client-seitige Content-Validator liest
+  dieselben Zahlen direkt aus dem Engine-Paket (`QUALITY_MINIMUMS`),
+  nicht aus einer zweiten, von Hand gepflegten Kopie.
+- Die MkDocs-Seite [Lektionsformat-Referenz](lesson-format-reference.md)
+  wird generiert, in allen Hilfesprachen (**nicht von Hand
+  bearbeiten**); sie folgt dem Engine-Spiegel, führe also nach einem
+  Re-Pin `make sync-schema` erneut aus. Die TypeScript-Lektionstypen
+  des Frontends werden nicht generiert: sie kommen direkt aus dem
+  Paket `learn-content-engine`.
 
 Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
-plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
+plus `backend/tests/test_lesson_schema_drift.py` in `make test`; die
+Pydantic-Schicht prüft die Backend-CI zusätzlich bei jedem PR, der
+Backend oder Plugins ändert, mit `generate_pydantic_models.py --check`)
 schlägt fehl, wenn ein generiertes Artefakt vom gepinnten Engine-
 Spiegel abweicht. Den Kettenschluss bildet das App-vs-Engine-Byte-Paritäts-
 Gate: `make engine-parity-check`

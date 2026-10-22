@@ -60,16 +60,22 @@ não o podem fazer:
   para obteres autocompletar do IDE e validação inline.
 - `schema/quality-rules.json`: os mínimos de qualidade partilhados
   (p. ex. número de exercícios, número de respostas aceites de
-  free-text), consumidos pelo validador de conteúdo do lado do
-  cliente em vez de uma segunda cópia mantida à mão.
-- Os tipos de lição TypeScript do frontend e a página MkDocs
-  [Referência do formato de lição](lesson-format-reference.md) também
-  são gerados (**não os edites à mão**); seguem o espelho da engine,
-  portanto volta a correr o gerador depois de cada re-pin.
+  free-text), como espelho da engine. O validador de conteúdo do lado
+  do cliente lê os mesmos valores diretamente do pacote da engine
+  (`QUALITY_MINIMUMS`), não de uma segunda cópia mantida à mão.
+- A página MkDocs [Referência do formato de lição](lesson-format-reference.md)
+  é gerada em todos os idiomas da ajuda (**não a edites à mão**);
+  segue o espelho da engine, portanto volta a correr
+  `make sync-schema` depois de cada re-pin. Os tipos de lição
+  TypeScript do frontend não são gerados: vêm diretamente do pacote
+  `learn-content-engine`.
 
 Um portão contra deriva (`make sync-schema-check`, parte de
 `release-test`, mais `backend/tests/test_lesson_schema_drift.py` em
-`make test`) falha se algum artefacto gerado divergir do espelho
+`make test`; a CI do backend verifica ainda a camada Pydantic em
+cada PR que toca o backend ou um plugin com
+`generate_pydantic_models.py --check`) falha se algum artefacto
+gerado divergir do espelho
 fixado da engine. O fecho da cadeia é o portão de paridade de bytes
 app-contra-engine: `make engine-parity-check`
 (`scripts/check_engine_schema_parity.py`), o pin offline

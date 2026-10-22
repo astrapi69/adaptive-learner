@@ -57,17 +57,24 @@ artefacts, και πύλες byte-ισοτιμίας αποδεικνύουν ό
   `.json` μαθήματος μέσω ενός κλειδιού `"$schema"` κορυφαίου
   επιπέδου, για αυτόματη συμπλήρωση IDE και inline επικύρωση.
 - `schema/quality-rules.json`: τα κοινά ελάχιστα ποιότητας (π.χ.
-  αριθμός ασκήσεων, αριθμός αποδεκτών απαντήσεων free-text), που
-  καταναλώνονται από τον client-side validator περιεχομένου αντί για
-  ένα δεύτερο, χειροκίνητα συντηρούμενο αντίγραφο.
-- Οι τύποι μαθήματος TypeScript του frontend και η σελίδα MkDocs
-  [Lesson format reference](lesson-format-reference.md) παράγονται
-  επίσης (**μην τα επεξεργάζεσαι στο χέρι**)· ακολουθούν τον καθρέφτη
-  του engine, οπότε ξανατρέξε τη γεννήτρια μετά από κάθε re-pin.
+  αριθμός ασκήσεων, αριθμός αποδεκτών απαντήσεων free-text), ως
+  καθρέφτης του engine. Ο client-side validator περιεχομένου διαβάζει
+  τις ίδιες τιμές απευθείας από το πακέτο του engine
+  (`QUALITY_MINIMUMS`), όχι από ένα δεύτερο, χειροκίνητα
+  συντηρούμενο αντίγραφο.
+- Η σελίδα MkDocs [Lesson format reference](lesson-format-reference.md)
+  παράγεται σε όλες τις γλώσσες της βοήθειας (**μην την
+  επεξεργάζεσαι στο χέρι**)· ακολουθεί τον καθρέφτη του engine, οπότε
+  ξανατρέξε το `make sync-schema` μετά από κάθε re-pin. Οι τύποι
+  μαθήματος TypeScript του frontend δεν παράγονται: έρχονται
+  απευθείας από το πακέτο `learn-content-engine`.
 
 Μια πύλη απόκλισης (`make sync-schema-check`, μέρος του
 `release-test`, συν το `backend/tests/test_lesson_schema_drift.py`
-στο `make test`) αποτυγχάνει αν κάποιο παραγόμενο artefact αποκλίνει
+στο `make test`· το CI του backend ελέγχει επιπλέον το επίπεδο
+Pydantic σε κάθε PR που αγγίζει το backend ή ένα plugin με το
+`generate_pydantic_models.py --check`) αποτυγχάνει αν κάποιο
+παραγόμενο artefact αποκλίνει
 από τον καρφιτσωμένο καθρέφτη του engine. Το κλείσιμο της αλυσίδας
 είναι η πύλη byte-ισοτιμίας εφαρμογής-έναντι-engine:
 `make engine-parity-check` (`scripts/check_engine_schema_parity.py`),

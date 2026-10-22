@@ -54,17 +54,23 @@ olduğunu kanıtlar. Eskiden sapabilen yerler artık sapamaz:
   satır içi doğrulama için, bir ders `.json`'ından en üst düzey bir
   `"$schema"` anahtarıyla referans ver.
 - `schema/quality-rules.json`: paylaşılan kalite alt sınırları
-  (örn. alıştırma sayıları, free-text kabul edilen yanıt sayıları);
-  elle tutulan ikinci bir kopya yerine istemci tarafındaki içerik
-  doğrulayıcısı tarafından kullanılır.
-- Frontend'in TypeScript ders tipleri ve
-  [Lesson format reference](lesson-format-reference.md) MkDocs sayfası
-  da üretilir (**elle düzenleme yapma**); engine aynasını takip
-  ederler, bu yüzden her re-pin'den sonra üreteci yeniden çalıştır.
+  (örn. alıştırma sayıları, free-text kabul edilen yanıt sayıları),
+  engine'in aynası olarak. İstemci tarafındaki içerik doğrulayıcısı
+  aynı değerleri doğrudan engine paketinden (`QUALITY_MINIMUMS`)
+  okur, elle tutulan ikinci bir kopyadan değil.
+- [Lesson format reference](lesson-format-reference.md) MkDocs
+  sayfası tüm yardım dillerinde üretilir (**elle düzenleme yapma**);
+  engine aynasını takip eder, bu yüzden her re-pin'den sonra
+  `make sync-schema` komutunu yeniden çalıştır. Frontend'in
+  TypeScript ders tipleri üretilmez: doğrudan `learn-content-engine`
+  paketinden gelir.
 
 Bir sapma kapısı (`make sync-schema-check`, `release-test`'in
 parçası, artı `make test` içindeki
-`backend/tests/test_lesson_schema_drift.py`), üretilen herhangi bir
+`backend/tests/test_lesson_schema_drift.py`; backend CI'ı ayrıca
+backend'e ya da bir eklentiye dokunan her PR'da Pydantic katmanını
+`generate_pydantic_models.py --check` ile denetler), üretilen
+herhangi bir
 artefact sabitlenmiş engine aynasından saparsa başarısız olur.
 Zinciri kapatan, uygulama-engine byte parite kapısıdır:
 `make engine-parity-check` (`scripts/check_engine_schema_parity.py`),

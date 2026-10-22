@@ -60,17 +60,22 @@ Pydantic 層（`adaptive_learner_content_loader.schema`）は、その
   レベルの `"$schema"` キーで参照すると、IDE の自動補完と
   インライン検証が得られます。
 - `schema/quality-rules.json`：共有の品質最低ライン（例：演習数、
-  free-text の許容回答数）。クライアント側のコンテンツ
-  バリデーターがこれを使うので、手で維持される 2 つ目のコピーは
-  ありません。
-- フロントエンドの TypeScript レッスン型と MkDocs ページ
-  [レッスンフォーマットリファレンス](lesson-format-reference.md) も
-  生成されます（**手で編集しない**）。エンジンのミラーに従うので、
-  再ピン後はジェネレーターを再実行してください。
+  free-text の許容回答数）で、エンジンのミラーです。クライアント側の
+  コンテンツバリデーターは同じ値をエンジンパッケージから直接
+  （`QUALITY_MINIMUMS`）読み込むので、手で維持される 2 つ目の
+  コピーはありません。
+- MkDocs ページ [レッスンフォーマットリファレンス](lesson-format-reference.md)
+  は、すべてのヘルプ言語で生成されます（**手で編集しない**）。
+  エンジンのミラーに従うので、再ピン後は `make sync-schema` を
+  再実行してください。フロントエンドの TypeScript レッスン型は
+  生成されません。`learn-content-engine` パッケージから直接来ます。
 
 ドリフトゲート（`make sync-schema-check`、`release-test` の一部、
 さらに `make test` 内の
-`backend/tests/test_lesson_schema_drift.py`）は、生成された
+`backend/tests/test_lesson_schema_drift.py`。さらにバックエンド CI が、
+バックエンドまたはプラグインに触れるすべての PR で
+`generate_pydantic_models.py --check` により Pydantic レイヤーを
+検査します）は、生成された
 アーティファクトがピン留めされたエンジンミラーから乖離すると
 失敗します。チェーンを閉じるのは、アプリ対エンジンのバイト
 パリティゲートです：`make engine-parity-check`

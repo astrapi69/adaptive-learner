@@ -62,17 +62,23 @@ endroits qui dérivaient autrefois ne le peuvent plus :
   l'autocomplétion de l'IDE et la validation en ligne.
 - `schema/quality-rules.json` : les minimums de qualité partagés
   (p. ex. nombre d'exercices, nombre de réponses acceptées en
-  free-text), consommés par le validateur de contenu côté client au
-  lieu d'une seconde copie entretenue à la main.
-- Les types de leçon TypeScript du frontend et la page MkDocs
-  [Lesson format reference](lesson-format-reference.md) sont eux
-  aussi générés (**ne les édite pas à la main**) ; ils suivent le
-  miroir de l'engine, relance donc le générateur après chaque
-  re-pin.
+  free-text), en miroir de l'engine. Le validateur de contenu côté
+  client lit les mêmes valeurs directement dans le paquet de
+  l'engine (`QUALITY_MINIMUMS`), pas dans une seconde copie
+  entretenue à la main.
+- La page MkDocs [Lesson format reference](lesson-format-reference.md)
+  est générée dans toutes les langues de l'aide (**ne l'édite pas à
+  la main**) ; elle suit le miroir de l'engine, relance donc
+  `make sync-schema` après chaque re-pin. Les types de leçon
+  TypeScript du frontend ne sont pas générés : ils viennent
+  directement du paquet `learn-content-engine`.
 
 Une barrière anti-dérive (`make sync-schema-check`, partie de
 `release-test`, plus `backend/tests/test_lesson_schema_drift.py` dans
-`make test`) échoue si un artefact généré diverge du miroir épinglé
+`make test` ; la CI backend vérifie en plus la couche Pydantic sur
+chaque PR qui touche le backend ou un plugin avec
+`generate_pydantic_models.py --check`) échoue si un artefact généré
+diverge du miroir épinglé
 de l'engine. La fermeture de la chaîne est la barrière de parité
 d'octets app-contre-engine : `make engine-parity-check`
 (`scripts/check_engine_schema_parity.py`), le pin hors ligne

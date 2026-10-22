@@ -56,15 +56,21 @@ drift can no longer:
   via a top-level `"$schema"` key to get IDE autocomplete and
   inline validation.
 - `schema/quality-rules.json` - the shared quality minimums (e.g.
-  exercise counts, free-text accept counts), consumed by the
-  client-side content validator instead of a second hand-kept copy.
-- The frontend TypeScript lesson types and the
-  [Lesson format reference](lesson-format-reference.md) MkDocs page
-  are generated too (**do not hand-edit them**); they follow the engine
-  mirror, so re-run the generator after a re-pin.
+  exercise counts, free-text accept counts), mirrored from the
+  engine. The client-side content validator reads the same numbers
+  straight from the engine package (`QUALITY_MINIMUMS`), not from a
+  second hand-kept copy.
+- The [Lesson format reference](lesson-format-reference.md) MkDocs
+  page is generated, in every help language (**do not hand-edit
+  it**); it follows the engine mirror, so re-run `make sync-schema`
+  after a re-pin. The frontend TypeScript lesson types are not
+  generated: they come straight from the `learn-content-engine`
+  package.
 
 A drift gate (`make sync-schema-check`, part of `release-test`,
-plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
+plus `backend/tests/test_lesson_schema_drift.py` in `make test`;
+the backend CI also checks the Pydantic layer on every PR that
+touches the backend or a plugin with `generate_pydantic_models.py --check`)
 fails if any generated artefact diverges from the pinned engine mirror. The chain
 closure is the app-vs-engine byte-parity gate: `make
 engine-parity-check` (`scripts/check_engine_schema_parity.py`), the
