@@ -153,11 +153,11 @@ External       ExternalServiceError(service, message) για provider SDKs
 
 - Backend: SQLAlchemy + SQLite. Μεταναστεύσεις Alembic στο
   `backend/migrations/versions/`.
-- Επιφάνεια συγχρονισμού: κάθε πίνακας στο `sync_service.ALL_SYNC_TABLES`. Γραμμές
-  ιστορικού μόνο-προσάρτησης (sessions, messages, ratings, progress
-  commits, step evaluations, method switches, imported conversations,
-  imported messages, anki cards, study questions) συν μεταβλητές
-  γραμμές settings + curriculum.
+- Επιφάνεια συγχρονισμού: κάθε πίνακας στο `sync_service.ALL_SYNC_TABLES`·
+  αν ένας πίνακας συγχρονίζεται μόνο-προσάρτησης ή μεταβλητά το
+  ορίζει το `TableSpec.append_only` του στο
+  `backend/app/services/sync_tables.py`. Οι ίδιοι οι πίνακες, ανά
+  περιοχή: [Μοντέλο δεδομένων](data-model.md).
 - Μορφή αντιγράφου: JSON· τα API keys εξαιρούνται κατά την εξαγωγή·
   η επαναφορά είναι συγχώνευση.
 - Απομόνωση τεστ: τα directories παραγωγικών δεδομένων φέρουν ένα

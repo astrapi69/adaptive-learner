@@ -101,6 +101,7 @@ plugins:
             Architektur: Architecture
             Plugin-Leitfaden: Plugin guide
             Storage-Layer: Storage layer
+            Datenmodell: Data model
             Theme-System: Theme system
             Lektionen + SRS: Lessons + SRS
             KI-Integration: AI integration
@@ -171,6 +172,7 @@ plugins:
             Setup: Configuración inicial
             Plugin-Leitfaden: Guía de plugins
             Storage-Layer: Capa de almacenamiento
+            Datenmodell: Modelo de datos
             Theme-System: Sistema de temas
             Lektionen + SRS: Lecciones + SRS
             KI-Integration: Integración de IA
@@ -238,6 +240,7 @@ plugins:
             Setup: Installation
             Plugin-Leitfaden: Guide des plugins
             Storage-Layer: Couche de stockage
+            Datenmodell: Modèle de données
             Theme-System: Système de thèmes
             Lektionen + SRS: Leçons + SRS
             KI-Integration: Intégration de l'IA
@@ -310,6 +313,7 @@ plugins:
             Setup: Εγκατάσταση
             Plugin-Leitfaden: Οδηγός προσθέτων
             Storage-Layer: Επίπεδο αποθήκευσης
+            Datenmodell: Μοντέλο δεδομένων
             Theme-System: Σύστημα θεμάτων
             Lektionen + SRS: Μαθήματα + SRS
             KI-Integration: Ενσωμάτωση AI
@@ -382,6 +386,7 @@ plugins:
             Setup: Configuração
             Plugin-Leitfaden: Guia de plugins
             Storage-Layer: Camada de armazenamento
+            Datenmodell: Modelo de dados
             Theme-System: Sistema de temas
             Lektionen + SRS: Lições + SRS
             KI-Integration: Integração de IA
@@ -454,6 +459,7 @@ plugins:
             Setup: Kurulum
             Plugin-Leitfaden: Eklenti kılavuzu
             Storage-Layer: Depolama katmanı
+            Datenmodell: Veri modeli
             Theme-System: Tema sistemi
             Lektionen + SRS: Dersler + SRS
             KI-Integration: Yapay zekâ entegrasyonu
@@ -527,6 +533,7 @@ plugins:
             Setup: セットアップ
             Plugin-Leitfaden: プラグインガイド
             Storage-Layer: ストレージレイヤー
+            Datenmodell: データモデル
             Theme-System: テーマシステム
             Lektionen + SRS: レッスン + SRS
             KI-Integration: AI統合
@@ -634,6 +641,7 @@ nav:
   - Setup: de/developer/setup.md
   - Plugin-Leitfaden: de/developer/plugin-guide.md
   - Storage-Layer: de/developer/storage-layer.md
+  - Datenmodell: de/developer/data-model.md
   - Theme-System: de/developer/themes.md
   - Lektionen + SRS: de/developer/lessons-and-srs.md
   - KI-Integration: de/developer/ai-integration.md

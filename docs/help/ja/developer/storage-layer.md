@@ -50,7 +50,7 @@ export interface IStorageService {
 
 ## DexieStorage
 
-`storage/dexie-storage.ts`はDexie 4.4.2を通じてすべてをIndexedDBに永続化します。`storage/db.ts`のスキーマはSQLAlchemyのモデルを1:1でミラーリングし、関連テーブル（`project_subjects` / `project_tags` / など）も含みます。
+`storage/dexie-storage.ts`はDexie 4.4.2を通じてすべてをIndexedDBに永続化します。`storage/dexie/db.ts`のスキーマはSQLAlchemyのモデルをミラーリングし、ブラウザにしかないストアを加えています。どのストアがどのテーブルに対応するかは、領域ごとに[データモデル](data-model.md)のページにあります。
 
 `storage/`以下のサブモジュールがポートされたロジックを担います。
 
