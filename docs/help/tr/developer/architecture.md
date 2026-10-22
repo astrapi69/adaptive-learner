@@ -39,7 +39,7 @@ karşılar:
 
 - **`apiStorage`** (varsayılan): FastAPI arka ucuyla konuşan
   `api/client.ts` etrafında ince bir sarmalayıcı.
-- **`dexieStorage`** (yerel-öncelikli): `storage/ai-providers.ts`
+- **`dexieStorage`** (yerel-öncelikli): `storage/ai/ai-providers.ts`
   aracılığıyla tarayıcıdan doğrudan AI çağrıları yaparak
   SQLAlchemy modellerini yansıtan tam IndexedDB yığını.
 

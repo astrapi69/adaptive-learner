@@ -124,9 +124,10 @@ siehe `frontend/src/api/client.ts` für den exakten Parser.
 | Curriculum | `/users/{user_id}/curricula`, `/curricula/{id}` | Curriculum + Topics + Lessons CRUD |
 | Plugin-Discovery | `/plugins/manifests`, `/plugins/health`, `/plugins/errors` | Was ist registriert |
 
-Siehe [Core-Endpoints](core-endpoints.md) und
-[Plugin-Endpoints](plugin-endpoints.md) für die volle
-Methodenliste mit Request/Response-Beispielen.
+Ausgearbeitete Request/Response-Beispiele stehen unter
+[Core-Endpoints](core-endpoints.md) und
+[Plugin-Endpoints](plugin-endpoints.md); die vollständige Liste aller
+Endpoints steht unter [Alle Endpoints](endpoints.md).
 
 ## OpenAPI / Swagger
 

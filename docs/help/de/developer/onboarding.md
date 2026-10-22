@@ -127,10 +127,14 @@ cd backend && poetry run pytest tests/pfad/ -v
 make test-plugin-gamification
 ```
 
-Bei backup-relevanten Änderungen gibt es ein zusätzliches Gate: ein
-echter Export-→-Import-Round-Trip in `make dev` mit echten Daten (der
-`BACKUP-AKZEPTANZTEST`). Unit-Tests allein rechtfertigen niemals einen
-Backup-Merge.
+Bei backup-relevanten Änderungen gibt es ein zusätzliches Gate, den
+`BACKUP-AKZEPTANZTEST`: ein echter Export-→-Import-Round-Trip. Als
+Nachweis gilt auch ein grüner `backup-e2e.yml`-Lauf auf dem PR; er
+läuft automatisch, wenn der PR einen Backup-Pfad berührt, und prüft
+jede Backup-Tabelle durch die echte Oberfläche. Den manuellen
+Round-Trip mit echten Daten brauchst du weiterhin für das, was nur ein
+echtes Gerät zeigt (Standalone-Modus, Speicherverdrängung). Unit-Tests
+allein rechtfertigen niemals einen Backup-Merge.
 
 ## 7. Das volle Gate lokal laufen lassen
 

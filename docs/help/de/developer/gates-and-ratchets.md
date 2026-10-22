@@ -76,7 +76,7 @@ Die Ratchet-Familie und wo jede Grundlinie liegt:
 | Regelkorpus-Größe | `.claude/rules/.corpus-baseline.json` | `make verify-rule-corpus-size` |
 | Docs-Umlaut-Ersatzformen | `docs/.docs-hygiene-baseline.json` | `make verify-docs-hygiene` |
 | Kaputte Doc-Referenzen | `docs/.doc-refs-baseline.json` | `make verify-doc-refs` |
-| Größe des veröffentlichten Images | (in `verify-image-size`) | `make verify-image-size` |
+| Größe des veröffentlichten Images | `.image-size-baseline.json` | `make verify-image-size` |
 
 ### Wenn ein Ratchet dich blockiert
 
@@ -157,7 +157,7 @@ make ci-full   # das Obige plus Tore, die ein gebautes Frontend brauchen
 `make ci` fährt der Reihe nach: Docs-Drift, Docs-Hygiene,
 Doc-Referenzen, Tor<->Regel-Kopplung, Check-Inventar, Lessons-Inventar,
 normative Änderungen, Regelkorpus-Größe, Komplexitäts-Ratchet,
-Testid-Referenzen, Docker-Kontext, Dateigrößen und den
+Ordnergrößen, Testid-Referenzen, Docker-Kontext, Dateigrößen und den
 OpenAPI-Schnappschuss. Zwei Tore brauchen ein installiertes + gebautes
 Frontend (sie bauen das Tailwind-Klassen-Orakel), also liegen sie in
 `make ci-full`, nicht in `make ci`. Die Testsuiten sind separat:

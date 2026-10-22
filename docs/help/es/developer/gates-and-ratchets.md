@@ -77,7 +77,7 @@ La familia de ratchets y dónde vive cada línea base:
 | Tamaño del corpus de reglas | `.claude/rules/.corpus-baseline.json` | `make verify-rule-corpus-size` |
 | Sustitutos de diéresis en la documentación | `docs/.docs-hygiene-baseline.json` | `make verify-docs-hygiene` |
 | Referencias rotas en la documentación | `docs/.doc-refs-baseline.json` | `make verify-doc-refs` |
-| Tamaño de la imagen publicada | (en `verify-image-size`) | `make verify-image-size` |
+| Tamaño de la imagen publicada | `.image-size-baseline.json` | `make verify-image-size` |
 
 ### Cuando un ratchet te bloquea
 
@@ -158,7 +158,7 @@ make ci-full   # the above plus gates that need a built frontend
 documentación, referencias de documentación, enlaces barrera<->regla,
 inventario de comprobaciones, inventario de lecciones, cambios
 normativos, tamaño del corpus de reglas, ratchet de complejidad,
-referencias testid, contexto de docker, tamaños de archivo y la
+tamaños de carpeta, referencias testid, contexto de docker, tamaños de archivo y la
 instantánea de OpenAPI. Dos barreras necesitan un frontend instalado y
 compilado (compilan el oráculo de clases de Tailwind), así que están en
 `make ci-full`, no en `make ci`. Las suites de pruebas van aparte:

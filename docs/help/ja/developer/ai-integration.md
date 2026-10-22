@@ -77,30 +77,30 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 
 `plugins/adaptive-learner-plugin-session/adaptive_learner_session/prompts.py`は、`dict[method, dict[step, dict[lang, str]]]` - 6つのメソッド、7つのステップ、2つの言語、84セルを保持します。各セルは1〜2文でAIの役割とステップのタスクを設定します。コンテキストブロック（「学習プロジェクト: 'X' | 目標: 'Y'. プロファイルヒント: …」）が構成時に追加されます。
 
-Dexieモードでは、プロンプトは`frontend/src/data/session-prompts.json`にそのままエクスポートされ、`frontend/src/storage/prompts.ts`で読み込まれます。同じテキスト、同じコンテキストブロック形式 - ドリフトは発生しません。
+Dexieモードでは、プロンプトは`frontend/src/data/session-prompts.json`にそのままエクスポートされ、`frontend/src/storage/ai/prompts.ts`で読み込まれます。同じテキスト、同じコンテキストブロック形式 - ドリフトは発生しません。
 
 ## 新しいプロバイダーの追加
 
 1. `plugins/adaptive-learner-plugin-ai-newprovider/`を作成します。
 2. `ai_complete`フックimplを実装します: モデルプレフィックスを確認し、プロバイダーのHTTP APIを呼び出し、テキストを返します。
-3. `ai_orchestration.py`の`DEFAULT_MODELS`にプロバイダーのプレフィックスと安価なデフォルトモデルを追加します。
+3. `backend/app/services/ai_caller.py`の`DEFAULT_MODELS`に、プロバイダーと安価なデフォルトモデルを追加します。これが唯一のテーブルです（セッションプラグイン、インポート、レッスン検証が読み込み、2つ目のコピーはテストが拒否します）。
 4. `app/schemas/__init__.py`の`AIProvider`列挙型にプロバイダー名を追加します。
 5. `frontend/src/lib/constants.ts`の`AI_PROVIDERS`に追加します。
-6. Dexieモードとの対応のため: `frontend/src/storage/ai-providers.ts`にクライアントを追加し、`aiComplete()`からルーティングします。
+6. Dexieモードとの対応のため: `frontend/src/storage/ai/ai-providers.ts`にクライアントを追加し、`aiComplete()`からルーティングします。
 
 各プロバイダープラグインは、そのフックimplとプロバイダー呼び出しを独立してテストします - テンプレートは`plugins/adaptive-learner-plugin-ai-anthropic/tests/`を参照してください（プロバイダーのHTTP呼び出しはモックされています）。
 
 ## ブラウザ直接呼び出し（Dexieモード）
 
-Dexieモードでは、AI呼び出しはプラグインシステムを通じません。`storage/ai-providers.ts`が直接HTTPリクエストを行います。AnthropicはCORSプリフライトをクリアするために`anthropic-dangerous-direct-browser-access: true`ヘッダーが必要です。OpenAIとGeminiはブラウザからの直接呼び出しをデフォルトで受け入れます。
+Dexieモードでは、AI呼び出しはプラグインシステムを通じません。`storage/ai/ai-providers.ts`が直接HTTPリクエストを行います。AnthropicはCORSプリフライトをクリアするために`anthropic-dangerous-direct-browser-access: true`ヘッダーが必要です。OpenAIとGeminiはブラウザからの直接呼び出しをデフォルトで受け入れます。
 
-デュアルプロンプトのロジックはどちらのモードでも同じです - `storage/session-flow.ts`が`aiComplete()`を2回呼び出し、バックエンドと同じ方法で評価器のJSONを解析します。
+デュアルプロンプトのロジックはどちらのモードでも同じです - `storage/ai/session-flow.ts`が`aiComplete()`を2回呼び出し、バックエンドと同じ方法で評価器のJSONを解析します。
 
 ## 信頼度のしきい値
 
 `backend/config/plugins/session.yaml`の`step_evaluation.confidence_threshold`（デフォルト0.7）は、実際の（フォールバックでない）評価器の判定がサイクルステップを実際に進めるかどうかを制御します。より保守的にするには高く設定し、より積極的にするには低く設定します。フォールバック判定（解析失敗）は、しきい値に関わらず常に+1の進行を適用します。
 
-Dexieポートは`storage/session-flow.ts`にハードコードされた0.7でこれを反映しています。将来のフェーズでSettings UIに公開される予定です。
+Dexieポートは`storage/ai/session-flow.ts`にハードコードされた0.7でこれを反映しています。`session-flow.test.ts`は`session.yaml`から値を読み込み、両者がずれると失敗します。UIの設定は意図的にありません。これらのキーは`# INTERNAL`で、YAMLでのみ変更します（#3436）。
 
 ## その他のAI機能（読み取り専用の概要）
 

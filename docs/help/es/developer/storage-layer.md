@@ -2,12 +2,13 @@
 
 La capa de almacenamiento v0.7.0 (`frontend/src/storage/`) le da
 al frontend dos backends intercambiables detrás de un único
-contrato. El contrato ha crecido hasta 22 espacios de nombres a
-lo largo de las Fases 7–34.
+contrato. El contrato está en
+`frontend/src/storage/types/core/service.ts`; su lista de espacios de
+nombres allí es la referencia.
 
 ## IStorageService
 
-`frontend/src/storage/types.ts` define la interfaz que satisface
+`frontend/src/storage/types/core/service.ts` define la interfaz que satisface
 cada implementación de almacenamiento. Refleja los espacios de
 nombres `api.*` de `api/client.ts` en una correspondencia 1:1:
 
@@ -107,7 +108,7 @@ siguen usando `getStorage()`.
 
 ## Llamadas a la IA directas desde el navegador
 
-`storage/ai-providers.ts` implementa tres clientes de proveedor:
+`storage/ai/ai-providers.ts` implementa tres clientes de proveedor:
 
 - **Anthropic** - POST a `https://api.anthropic.com/v1/messages`
   con el encabezado `anthropic-dangerous-direct-browser-access: true`.

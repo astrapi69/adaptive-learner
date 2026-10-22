@@ -54,17 +54,23 @@ olduğunu kanıtlar. Eskiden sapabilen yerler artık sapamaz:
   satır içi doğrulama için, bir ders `.json`'ından en üst düzey bir
   `"$schema"` anahtarıyla referans ver.
 - `schema/quality-rules.json`: paylaşılan kalite alt sınırları
-  (örn. alıştırma sayıları, free-text kabul edilen yanıt sayıları);
-  elle tutulan ikinci bir kopya yerine istemci tarafındaki içerik
-  doğrulayıcısı tarafından kullanılır.
-- Frontend'in TypeScript ders tipleri ve
-  [Lesson format reference](lesson-format-reference.md) MkDocs sayfası
-  da üretilir (**elle düzenleme yapma**); engine aynasını takip
-  ederler, bu yüzden her re-pin'den sonra üreteci yeniden çalıştır.
+  (örn. alıştırma sayıları, free-text kabul edilen yanıt sayıları),
+  engine'in aynası olarak. İstemci tarafındaki içerik doğrulayıcısı
+  aynı değerleri doğrudan engine paketinden (`QUALITY_MINIMUMS`)
+  okur, elle tutulan ikinci bir kopyadan değil.
+- [Lesson format reference](lesson-format-reference.md) MkDocs
+  sayfası tüm yardım dillerinde üretilir (**elle düzenleme yapma**);
+  engine aynasını takip eder, bu yüzden her re-pin'den sonra
+  `make sync-schema` komutunu yeniden çalıştır. Frontend'in
+  TypeScript ders tipleri üretilmez: doğrudan `learn-content-engine`
+  paketinden gelir.
 
 Bir sapma kapısı (`make sync-schema-check`, `release-test`'in
 parçası, artı `make test` içindeki
-`backend/tests/test_lesson_schema_drift.py`), üretilen herhangi bir
+`backend/tests/test_lesson_schema_drift.py`; backend CI'ı ayrıca
+backend'e ya da bir eklentiye dokunan her PR'da Pydantic katmanını
+`generate_pydantic_models.py --check` ile denetler), üretilen
+herhangi bir
 artefact sabitlenmiş engine aynasından saparsa başarısız olur.
 Zinciri kapatan, uygulama-engine byte parite kapısıdır:
 `make engine-parity-check` (`scripts/check_engine_schema_parity.py`),
@@ -107,8 +113,16 @@ eden bir **`path`** bildirir (`sets/de/fr-a1`). Bir set ayrıca
 **`title`** (başlangıç dilinde, öğrenenin okuduğu) ve
 **`title_native`** (hedef dilde, ikinci başlık olarak) taşır.
 
-Her iki kod da ISO 639-1 (iki harf) olmalıdır ve `source_language`,
-`target_language`'dan farklı olmalıdır. Bu alanlar olmadan v1.2
+Her iki kod da kanonik biçimde BCP 47 dil etiketidir: en kısa kod
+(`de`, `pt-BR`), iki harfli kodu olmayan diller için üç harf (`gsw`,
+`yue`, `fil`). İyi biçimlendirilmemiş bir etiket (`de_DE`, boş) bir
+hatadır (`E-LANG-TAG`); kanonik olmayan bir yazım (`EN`, `deu`) bir
+uyarıdır (`W-LANG-TAG-CANONICAL`). Bir dil setinde (`domain` yok ya
+da `language`) `source_language`, `target_language` ile aynıysa ya da
+`title_native` eksikse engine uyarır (`W-LANG-PAIR-SAME`,
+`W-SET-TITLE-NATIVE`); uygulamanın paylaşma denetimi ikisini de
+engeller. `domain` değeri başka olan bir set ikisine de ihtiyaç
+duymaz. Bu alanlar olmadan v1.2
 öncesi setler yine de yüklenir: eski `language` anahtarı
 `target_language` olarak kabul edilir ve `source_language` `en`'e
 geri döner.
@@ -186,6 +200,15 @@ Akılda tutulması gereken uygulamaya özgü yükleyici davranışı:
       - 02-articles.json
       - ...
   ```
+
+- Bir setin isteğe bağlı `evaluation` bloğu
+  ([engine referansı](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  uygulamada yalnızca **sınav modunda** etkilidir: orada öğrenenin
+  kendi geçme eşiğinin yerini alır ve aynı ilk denemeyi kendi
+  şemasına göre (`percent`, `pass_fail` ya da `grades`)
+  değerlendirir; `title` alanı "Sınav sonucu" başlığının yerine
+  geçer, `report: detailed` ayrıntılı değerlendirmeyi açar ve yıldız
+  puanı gösterilmez. Alıştırma ve diğer modlar bloğu yok sayar.
 
 ## Ders şeması
 
@@ -722,6 +745,18 @@ Asset'siz bir set yayınlarsan, Picture-Choice yine de çalışır - yer
 tutucu SVG üreteci renkleri + sayıları otomatik kapsar ve diğer her
 şey için deterministik bir avatara geri döner.
 
+**Markdown'daki resimler.** Uygulama, diğerlerinin yanı sıra teori
+metinlerini, açıklamaları ve yapay zeka yanıtlarını Markdown olarak
+gösterir. Oraya `data:` URI'si olarak gömülen bir resim doğrudan
+gösterilir. Başka bir sunucudan gelen bir resim, örneğin
+`raw.githubusercontent.com` ya da bir resim sitesi, resim simgesi ve
+alt metniyle bir bağlantı olarak görünür ve ancak bir tıklamadan
+sonra, yeni bir sekmede yüklenir; bu yüzden bu resimlere anlamlı bir
+alt metin ver. Her zaman görünmesi gereken bir resim, aşağıdaki asset
+dosyalarına dayanan bir alıştırma ya da kart resmine aittir.
+`resources[]` içindeki YouTube girdileri küçük resim yerine bir
+video simgesi gösterir; video ancak bir tıklamayla YouTube'da açılır.
+
 ### Dizin düzeni
 
 Set dizini içinde asset'ler `assets/` altında bulunur:
@@ -837,7 +872,7 @@ Yeni bir ders için PR'dan önce kontrol et:
 - [ ] **Kültürel doğruluk**: gerçek dil kullanımı, yalnızca ders kitabı kalıpları değil
 - [ ] **Şema doğrulaması**: ders `dict_to_lesson()` üzerinden temiz yüklenir (Yerel Test'e bak)
 - [ ] **Card-ID bütünlüğü**: her `exercise.card_ids[i]`, dersin `cards[]`'ında var
-- [ ] **Dil çifti**: `target_language` + `source_language` ayarlı (ISO 639-1, farklı), `title_native` mevcut
+- [ ] **Dil çifti**: `target_language` + `source_language` ayarlı (BCP 47, kanonik; dil setlerinde farklı ve `title_native` ile)
 
 ## Doğrulama (iki katman, v1.44.0)
 
@@ -992,7 +1027,10 @@ hızlı yolu, **uygulamada bir ders oluşturmak ve paylaşmaktır**:
    geçmişi yok, kişisel bir şey yok.
 3. **Topluluğa sun**'a tıklayarak içerik repository'sinde önceden
    doldurulmuş bir **Pull Request** aç - ders JSON'ı ağaçtaki doğru
-   yola commit edilir, `.zip` eki gerekmez.
+   yola commit edilir, `.zip` eki gerekmez. Ayarlar > Entegrasyonlar
+   altında bir GitHub token'ı varsa, tek bir dersin Pull Request'ini
+   uygulama kendisi açar; token yoksa GitHub'ın düzenleyicisi ya da
+   yükleme sayfası sana yol gösterir.
 4. Reponun CI'sı PR'ı otomatik doğrular; bir maintainer dersi
    inceler, manifest'i (id, title, language, level, tags) yukarıdaki
    konvansiyonlarla uyumlu hale getirir ve onu `sets/` altında

@@ -154,8 +154,10 @@ auseinanderlaufen.
 1. `plugins/adaptive-learner-plugin-ai-newprovider/` anlegen.
 2. `ai_complete`-Hookimpl umsetzen: Modell-Präfix prüfen,
    HTTP-API des Anbieters rufen, Text zurückgeben.
-3. Anbieter-Präfix in `DEFAULT_MODELS` in
-   `ai_orchestration.py` mit billigem Default eintragen.
+3. Anbieter mit billigem Default-Modell in `DEFAULT_MODELS` in
+   `backend/app/services/ai_caller.py` eintragen; das ist die einzige
+   Tabelle (Session-Plugin, Importe und Lektionsprüfung lesen sie, ein
+   Test verbietet eine zweite Kopie).
 4. Anbieter-Name in `AIProvider`-Enum in
    `app/schemas/__init__.py` ergänzen.
 5. In `AI_PROVIDERS` in `frontend/src/lib/constants.ts`
@@ -195,8 +197,10 @@ Fallback-Urteile (Parse-Fehler) wenden den +1-Advance immer
 an, unabhängig vom Schwellwert.
 
 Der Dexie-Port spiegelt das mit einem hartkodierten 0.7 in
-`storage/ai/session-flow.ts`. Eine spätere Phase wird das in die
-Einstellungen-UI heben.
+`storage/ai/session-flow.ts`; `session-flow.test.ts` liest den Wert aus
+`session.yaml` und schlägt fehl, wenn beide auseinanderlaufen. Eine
+Einstellung in der Oberfläche gibt es bewusst nicht: Die Schlüssel sind
+`# INTERNAL` und werden nur in der YAML geändert (#3436).
 
 ## KI-Übungsgenerierungs-Pipeline (EXP-036 / AIX-01..06)
 

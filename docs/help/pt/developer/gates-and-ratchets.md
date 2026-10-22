@@ -77,7 +77,7 @@ A família de ratchets e onde vive cada baseline:
 | Tamanho do corpus de regras | `.claude/rules/.corpus-baseline.json` | `make verify-rule-corpus-size` |
 | Substitutos de tremas na documentação | `docs/.docs-hygiene-baseline.json` | `make verify-docs-hygiene` |
 | Referências de documentação partidas | `docs/.doc-refs-baseline.json` | `make verify-doc-refs` |
-| Tamanho da imagem publicada | (em `verify-image-size`) | `make verify-image-size` |
+| Tamanho da imagem publicada | `.image-size-baseline.json` | `make verify-image-size` |
 
 ### Quando um ratchet o bloqueia
 
@@ -156,7 +156,7 @@ make ci-full   # the above plus gates that need a built frontend
 documentação, referências de documentação, ligações gate<->regra,
 inventário de verificações, inventário de lições, alterações
 normativas, tamanho do corpus de regras, ratchet de complexidade,
-referências de testid, contexto docker, tamanhos de ficheiro e o
+tamanhos de pastas, referências de testid, contexto docker, tamanhos de ficheiro e o
 snapshot OpenAPI. Dois gates precisam de um frontend instalado +
 construído (constroem o oráculo de classes Tailwind), por isso ficam em
 `make ci-full`, não em `make ci`. As suites de testes são à parte:
