@@ -289,7 +289,7 @@ l'achèvement d'une leçon.
 
 Toute la progression des leçons, les lignes d'erreurs au niveau
 des éléments, les états de la file d'attente de révision et les
-données de planification restent **avec toi** : dans le navigateur
+données de planification sont stockés **chez toi** : dans le navigateur
 (IndexedDB) ou, en mode API, dans la base de données de ton propre
 backend ; d'autres n'en reçoivent des parties que lorsqu'une
 fonction que tu utilises en a besoin. Une session d'apprentissage

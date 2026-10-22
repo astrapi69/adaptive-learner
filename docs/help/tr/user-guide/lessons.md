@@ -258,7 +258,7 @@ yoktur.
 ## Gizlilik
 
 Tüm ders ilerlemeleri, öğe-hata satırları, tekrar-kuyruğu durumları ve
-planlama verileri **sende** kalır: tarayıcıda (IndexedDB) ya da API
+planlama verileri **sende** saklanır: tarayıcıda (IndexedDB) ya da API
 modunda kendi arka ucunun veritabanında; başkaları bunların bölümlerini
 yalnızca kullandığın bir özellik onlara ihtiyaç duyduğunda alır.
 Örneğin bir yapay zeka öğrenme oturumu, yapay zeka sağlayıcına son
