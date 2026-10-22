@@ -14,12 +14,13 @@ Der schnellste Weg, Adaptive Learner kennenzulernen, ist die
 
 [**App öffnen**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-Diese läuft im **Lokal-Modus**: Lernfortschritt, Statistiken und
-Einstellungen bleiben in deinem Browser (IndexedDB); andere
-erhalten Teile davon nur, wenn eine Funktion sie braucht, die du
-nutzt. KI-Aufrufe gehen zum Beispiel direkt von der Seite an
-deinen KI-Anbieter, etwa Anthropic, OpenAI oder Google Gemini, mit
-deinem eigenen API-Schlüssel. Kein Backend dazwischen.
+Diese läuft im **Lokal-Modus**: Lernfortschritt, Statistiken,
+Einstellungen und dein API-Schlüssel werden in deinem Browser
+gespeichert (IndexedDB); andere erhalten Teile davon nur, wenn
+eine Funktion sie braucht, die du nutzt. KI-Aufrufe gehen zum
+Beispiel direkt von der Seite an deinen KI-Anbieter, etwa
+Anthropic, OpenAI oder Google Gemini, mit deinem eigenen
+API-Schlüssel. Kein Backend dazwischen.
 
 ## Als Progressive Web App installieren
 
