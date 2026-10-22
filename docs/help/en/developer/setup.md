@@ -8,7 +8,8 @@
   fail at the build step with `crypto.hash is not a function`.
 - **Poetry** for Python dependency management. Install:
   `curl -sSL https://install.python-poetry.org | python3 -`.
-- **Bun** 1.3+ (the frontend package manager, #1492).
+- **Bun** 1.4+ (the frontend package manager, #1492; `frontend/bun.lock`
+  is lockfile version 3, which Bun 1.3 cannot read).
 - **GNU Make** for the orchestration targets. The Makefile is
   the source of truth - every CI command is in there.
 
@@ -98,8 +99,8 @@ subjects/tags filter, rich-text notes, model picker.
 ## Linting + formatting
 
 ```bash
-cd backend && poetry run ruff check .       # Python lint
-cd backend && poetry run ruff format .      # Python format
+cd backend && poetry run ruff check app/ ../plugins/   # Python lint, as CI runs it
+cd backend && poetry run ruff format app/ ../plugins/  # Python format
 cd frontend && bunx tsc --noEmit             # TypeScript check
 cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier

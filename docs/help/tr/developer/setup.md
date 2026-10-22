@@ -10,7 +10,8 @@
   `crypto.hash is not a function` hatasıyla derleme adımında başarısız olur.
 - **Poetry** Python bağımlılık yönetimi için. Kurulum:
   `curl -sSL https://install.python-poetry.org | python3 -`.
-- **Bun** 1.3+ (frontend paket yöneticisi, #1492).
+- **Bun** 1.4+ (frontend paket yöneticisi, #1492; `frontend/bun.lock`
+  lockfile sürüm 3'tür ve Bun 1.3 bunu okuyamaz).
 - **GNU Make** düzenleme hedefleri için. Makefile tek yetkili
   kaynak - her CI komutu orada bulunur.
 
@@ -104,8 +105,8 @@ konu/etiket filtresi, zengin metin notları, model seçici.
 ## Linting + biçimlendirme
 
 ```bash
-cd backend && poetry run ruff check .       # Python lint
-cd backend && poetry run ruff format .      # Python biçimlendirmesi
+cd backend && poetry run ruff check app/ ../plugins/   # Python lint, CI'daki gibi
+cd backend && poetry run ruff format app/ ../plugins/  # Python biçimlendirmesi
 cd frontend && bunx tsc --noEmit             # TypeScript kontrolü
 cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier
