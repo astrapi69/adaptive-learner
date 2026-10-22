@@ -337,8 +337,10 @@ families:
 - `e2e/dexie/` - the Dexie-mode release gate. Builds the
   frontend with `VITE_STORAGE_MODE=dexie` (the GitHub-Pages
   shape, no backend) and walks every nav-reachable route; any
-  error toast or page crash fails it. Run with
-  `make test-dexie-smoke`.
+  error toast or page crash fails it, and so do more skipped
+  tests than `e2e/.runtime-skip-budget.json` allows for the suite
+  (a spec that cannot reach its surface skips at runtime). Run
+  with `make test-dexie-smoke`.
 - `e2e/visual/` - visual-baseline regression specs.
 - `e2e/manual-automation/` - Playwright automation of the
   manual test plan.
@@ -358,6 +360,10 @@ gh run download --name backend-coverage
 gh run download --name frontend-coverage
 ```
 
+Each plugin gets its own artifact `<plugin-dir>-coverage`, for
+example `gh run download --name adaptive-learner-plugin-session-coverage`;
+a new plugin is covered without editing the workflow.
+
 Targets per `.claude/rules/quality-checks.md`:
 
 - Services + business logic: 95% min
@@ -373,11 +379,14 @@ Overall: 85-95% project-wide.
 cd backend && poetry run pre-commit install
 ```
 
-Hooks: ruff check (auto-fix), ruff format, trailing
-whitespace, end-of-file fixer, check-yaml, check-json,
-check-added-large-files, check-merge-conflict, frontend
-ESLint, a plugin lockfile/pyproject pairing guard, and a
-bundled-content stats validator. In the CI pre-commit job the
+The hooks are listed in `.pre-commit-config.yaml`, for example
+ruff check (auto-fix) and ruff format, whitespace, YAML, JSON and
+merge-conflict checks, frontend ESLint, the docs checks (umlaut
+ratchet, doc references) and `plugin-lock-paired-with-pyproject`
+(blocking): it runs `poetry check --lock` for every plugin whose
+`pyproject.toml` or `poetry.lock` is involved and fails when the
+dependencies changed since the lock was written; it also runs in
+the CI pre-commit job over all files. There the
 `eslint` hook is skipped (the Frontend Tests job runs ESLint
 with deps installed instead). Prettier is not a hook:
 `bun run format:check` runs in the Frontend Tests job,
@@ -396,7 +405,13 @@ and on every PR (Python 3.12):
 2. Plugin tests (`make test-plugins`, every plugin via the backend venv)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`),
    circular-dependency check, Stylelint, Vitest, `vite build`,
-   `npm audit`
+   `bun audit --audit-level=high` (blocks on high and critical
+   findings). An advisory with no patched release that only reaches
+   a dev-only dependency is exempted by ID in
+   `frontend/audit-ignore.txt`: one ID per line, with a comment
+   above it giving the reason and when the entry goes.
+   `make check-security` reads the same list; `security-scan.yml`
+   stays unfiltered.
 4. Pre-commit hooks on all files
 5. Backend ruff + mypy + pip-audit
 6. Docs drift verifier (`verify_docs.py` + mkdocs-nav sync)
@@ -408,7 +423,7 @@ runs, and release runs always run the FULL suite. The fallback
 to the full suite is automatic (unresolvable base ref, or a
 testmon cache miss).
 
-Two more PR gates live in their own workflows:
+More PR gates live in their own workflows:
 
 - `complexity-check.yml` - the complexity ratchet gate
   (`make check-complexity-gate`, radon for Python + ESLint
@@ -416,15 +431,16 @@ Two more PR gates live in their own workflows:
   on NEW or regressed offenders versus `.complexity-baseline`,
   so it blocks new complexity without forcing a sweep of
   pre-existing debt. The full warn-only complexity report runs
-  nightly.
+  nightly. The same job runs the folder-size guard
+  (`scripts/check-folder-size.sh` against `.dirsize-baseline`);
+  locally `make check-folder-size` or as part of `make ci`.
 - `cohesion-check.yml` - the file-size guard (gate against
   `.filesize-whitelist`) plus two class-name gates: dead CSS
   class names (`check-dead-classnames.py` against
   `.dead-classnames-baseline`) and the **unstyled-className
   gate** (`--unstyled`, a ratchet against
   `.unstyled-classnames-baseline`) - a `className` whose tokens
-  are all dead blocks the PR. The companion folder-size guard
-  runs locally via `make check-folder-size`.
+  are all dead blocks the PR.
 - `visual-baseline-gate.yml` - a PR that changes
   visual-critical paths (lesson components, exercise renderers,
   theme/CSS files) must carry the affected baseline screenshots
@@ -439,13 +455,20 @@ Two more PR gates live in their own workflows:
   compose images (the launcher / install.sh path), path-filtered
   on PRs, plus on `release/**`, weekly, and on dispatch;
   locally `make docker-build-smoke`.
+- `dexie-smoke.yml` - the Dexie-mode E2E gate: on every pull
+  request it concerns (`scripts/dexie_smoke_affected.py` decides;
+  the `Dexie smoke (required)` job always reports), plus daily, on
+  `release/**` and by dispatch; locally `make test-dexie-smoke`.
+- `backup-e2e.yml` - runs on PRs that touch a backup path (for
+  example `frontend/src/storage/backup/`, the Dexie stores or the
+  backend backup services; the list is in the workflow) and runs
+  every `e2e/dexie/backup-*.spec.ts`, including the round trip over
+  all backup tables.
 
 **Night shift / release (not on PRs):**
 
-- `dexie-smoke.yml` - Dexie-mode E2E gate (daily + on
-  `release/**` + dispatch; `make test-dexie-smoke` locally)
 - `coverage.yml` - coverage report (daily + dispatch)
-- `security-scan.yml` - pip-audit / npm audit / bandit
+- `security-scan.yml` - pip-audit / bun audit / bandit
   (weekly + on `release/**` + dispatch; warn-only)
 - `content-stats.yml` - content-stats drift vs a fresh content
   checkout (daily + dispatch)
@@ -465,6 +488,12 @@ Two more PR gates live in their own workflows:
   baselines in CI and pushes them as a commit onto the PR
   branch (label `refresh-visual-baselines`, or dispatch with a
   PR number) - image review before merge stays mandatory
+- `smoke-nightly.yml` - nightly run of the mobile-viewport smoke;
+  findings go into one tracking issue
+- `unused-catalog-keys.yml` - nightly report of catalog keys without
+  a consumer that are older than the pre-staging window (`AGE_DAYS` in
+  `frontend/src/i18n/unused-catalog-keys.ts`), in one tracking issue;
+  every key in it is a candidate, checked one by one before removal
 
 `.github/workflows/release-gate.yml` runs on tag pushes:
 verifies version pins are synced across all version-bearing
