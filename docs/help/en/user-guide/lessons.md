@@ -383,6 +383,10 @@ lesson completion.
 ## Privacy
 
 All lesson progress, element-error rows, review-queue states and
-scheduling data stay **on your own device** - in the filesystem
-(API mode) or in the browser (IndexedDB). Nothing about which
-words you struggle with is sent anywhere.
+scheduling data are stored **with you**: in the browser (IndexedDB)
+or, in API mode, in your own backend's database; others get parts
+of them only when a feature you use needs them. An AI learning
+session, for example, sends your AI provider your recent mistakes,
+each with your answer, the correct answer and how often you made
+it. The [privacy policy](../legal/privacy.md) describes when which
+data goes to others.

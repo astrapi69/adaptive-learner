@@ -1,14 +1,24 @@
-"""No catalog value, help page or UI fallback promises that no personal data is sent (#3812).
+"""No catalog value, help page or UI fallback promises more privacy than the app keeps.
 
-Two AI dialogs told the learner, at the moment of deciding, that no personal
-data is transmitted, while the browser sends the request with the learner's
-IP address and API key, and the lesson text can itself be personal. The same
-promise sat in all 11 catalogs and, in another wording, in the Japanese FAQ.
+#3812: two AI dialogs told the learner, at the moment of deciding, that no
+personal data is transmitted, while the browser sends the request with the
+learner's IP address and API key, and the lesson text can itself be personal.
+The same promise sat in all 11 catalogs and, in another wording, in the
+Japanese FAQ.
+
+#3829: four more phrasings in the help and the READMEs: nothing about the
+words you struggle with is sent anywhere, nothing is uploaded to a server,
+all your data stays in your browser, and nothing is sent to a server except
+the AI calls.
 
 The probe table seeds every language with at least one sentence that makes
 the promise (it must be found) and at least one legitimate sentence (it must
 not be found): the replacement text of the dialogs and a sentence that only
-says that text can contain personal data.
+says that text can contain personal data. For #3829 it seeds each phrasing in
+every language it occurred in, as develop had it, line breaks included, and
+the true sentences that come closest to it: the backup note and the Docker
+answer, which say the same words about one feature, and the privacy policy's
+own summary.
 """
 
 from __future__ import annotations
@@ -60,6 +70,98 @@ PROMISES = [
     ("hi", "shipped-check", "कोई व्यक्तिगत डेटा नहीं भेजा जाता।"),
     ("id", "shipped", "Tidak ada data pribadi yang dikirimkan."),
     ("id", "not-sent", "Data pribadi tidak dikirim ke penyedia."),
+    # #3829, user-guide/lessons.md: nothing about your mistakes is sent anywhere.
+    (
+        "de",
+        "3829-struggle",
+        "Nichts darüber,\nmit welchen Wörtern du kämpfst, wird irgendwohin gesendet.",
+    ),
+    ("en", "3829-struggle", "Nothing about which\nwords you struggle with is sent anywhere."),
+    (
+        "es",
+        "3829-struggle",
+        "No\nse envía a ningún sitio nada sobre con qué palabras te cuesta.",
+    ),
+    ("pt", "3829-struggle", "Nada sobre as palavras com que lutas é enviado\npara qualquer lado."),
+    (
+        "tr",
+        "3829-struggle",
+        "Hangi kelimelerle zorlandığına dair\nhiçbir şey herhangi bir yere gönderilmez.",
+    ),
+    (
+        "el",
+        "3829-struggle",
+        "Τίποτα σχετικά με\nτο ποιες λέξεις σε δυσκολεύουν δεν αποστέλλεται πουθενά.",
+    ),
+    (
+        "fr",
+        "3829-struggle",
+        "Rien sur les mots avec lesquels tu luttes n'est envoyé\noù que ce soit.",
+    ),
+    (
+        "ja",
+        "3829-struggle",
+        "あなたがどの単語で苦労しているかについて、何かが\nどこかに送信されることはありません。",
+    ),
+    # #3829, user-guide/my-lessons.md: nothing is uploaded to a server.
+    (
+        "de",
+        "3829-uploaded",
+        "Alles\nfunktioniert offline; nichts wird auf einen Server hochgeladen.",
+    ),
+    ("en", "3829-uploaded", "Everything works offline; nothing is uploaded to a\nserver."),
+    ("es", "3829-uploaded", "Todo funciona sin\nconexión; nada se sube a un servidor."),
+    ("el", "3829-uploaded", "Όλα λειτουργούν offline· τίποτα δεν ανεβαίνει\nσε διακομιστή."),
+    ("ja", "3829-uploaded", "すべてオフラインで動作し、サーバーには何もアップロードされません。"),
+    ("pt", "3829-uploaded", "Tudo funciona offline; nada é enviado para um\nservidor."),
+    ("tr", "3829-uploaded", "Her şey çevrimdışı çalışır; hiçbir şey\nsunucuya yüklenmez."),
+    # #3829, README.md, README-de.md, user-guide/getting-started.md: all your
+    # data stays in your browser.
+    ("en", "3829-stays", "all your data stays in\nyour browser (IndexedDB)"),
+    ("de", "3829-stays-readme", "alle Daten\nbleiben in deinem Browser (IndexedDB)"),
+    ("de", "3829-stays", "alle deine Daten bleiben in\ndeinem Browser (IndexedDB)"),
+    ("es", "3829-stays", "todos tus datos permanecen en\ntu navegador (IndexedDB)"),
+    ("fr", "3829-stays", "toutes tes données restent\ndans ton navigateur (IndexedDB)"),
+    ("pt", "3829-stays", "todos os teus dados permanecem no\nteu browser (IndexedDB)"),
+    ("tr", "3829-stays", "tüm verilerin tarayıcında (IndexedDB)\nkalır"),
+    (
+        "el",
+        "3829-stays",
+        "όλα τα δεδομένα σου παραμένουν\nστο πρόγραμμα περιήγησής σου (IndexedDB)",
+    ),
+    ("ja", "3829-stays", "あなたのデータはすべて\nブラウザ（IndexedDB）に留まり"),
+    # #3829, user-guide/faq.md item 7: nothing is sent to a server, except ...
+    (
+        "de",
+        "3829-except",
+        "alles in deinem Browser, nichts\n   wird an einen Server gesendet (außer deine KI-Aufrufe).",
+    ),
+    (
+        "en",
+        "3829-except",
+        "everything in your browser,\n   nothing sent to a server (except your AI calls).",
+    ),
+    (
+        "es",
+        "3829-except",
+        "todo en tu navegador, nada enviado\n   a un servidor (excepto tus llamadas a la IA).",
+    ),
+    (
+        "pt",
+        "3829-except",
+        "tudo no seu navegador, nada\n   enviado para um servidor (exceto as suas chamadas de IA).",
+    ),
+    (
+        "tr",
+        "3829-except",
+        "her şey tarayıcınızda, hiçbir şey\n"
+        "   bir sunucuya gönderilmez (yapay zeka çağrılarınız hariç).",
+    ),
+    (
+        "el",
+        "3829-except",
+        "όλα στο browser σου, τίποτα\n   δεν αποστέλλεται σε διακομιστή (εκτός από κλήσεις ΤΝ).",
+    ),
 ]
 
 # (language, id, legitimate sentence that must pass)
@@ -149,6 +251,218 @@ LEGITIMATE = [
         "kemajuan belajarmu.",
     ),
     ("id", "may-contain", "Isi kartu yang kamu tulis bisa memuat data pribadi."),
+    # #3829: the backup note says "nothing is sent to a server" about one
+    # feature, where it is true; only the FAQ's "except ..." made it a claim
+    # about the whole app, and only "Tudo funciona offline" makes the pt
+    # sentence of my-lessons one.
+    (
+        "en",
+        "3829-backup-note",
+        "It is only stored\n    wherever you put it - nothing is sent to a server.",
+    ),
+    (
+        "de",
+        "3829-backup-note",
+        "Es wird nur dort\n    gespeichert, wohin du es legst - nichts wird an einen Server\n"
+        "    gesendet.",
+    ),
+    (
+        "es",
+        "3829-backup-note",
+        "Solo se\n    guarda allí donde tú la coloques: no se envía nada a ningún\n    servidor.",
+    ),
+    (
+        "pt",
+        "3829-backup-note",
+        "É guardado apenas\n    onde o colocares - nada é enviado para um servidor.",
+    ),
+    (
+        "tr",
+        "3829-backup-note",
+        "Yalnızca koyduğun yere\n    kaydedilir - hiçbir şey bir sunucuya gönderilmez.",
+    ),
+    (
+        "el",
+        "3829-backup-note",
+        "Αποθηκεύεται\n    μόνο εκεί όπου το βάζεις - τίποτα δεν αποστέλλεται σε κάποιον\n    server.",
+    ),
+    (
+        "ja",
+        "3829-backup-note",
+        "あなたが\n    置いた場所にのみ保存され、サーバーには何も送信されません。",
+    ),
+    # #3829: the Docker answer says "nothing about your data is sent" to one
+    # company, by one act; the book import says "nothing is uploaded" about one
+    # file; a code comment says "nothing is sent to any server" about one buffer.
+    (
+        "en",
+        "3829-docker",
+        "Your learning data stays local; nothing about your data is\n"
+        "sent to Docker, Inc. by installing Docker.",
+    ),
+    (
+        "es",
+        "3829-docker",
+        "Tus datos de aprendizaje permanecen locales;\n"
+        "al instalar Docker no se envía nada sobre tus datos a Docker, Inc.",
+    ),
+    (
+        "tr",
+        "3829-docker",
+        "Öğrenme verilerin yerel\nkalır; Docker'ı kurmakla verilerine ilişkin hiçbir şey "
+        "Docker, Inc.\nşirketine gönderilmez.",
+    ),
+    (
+        "el",
+        "3829-docker",
+        "με την εγκατάσταση του Docker δεν αποστέλλεται\nτίποτα από τα δεδομένα σου στη Docker, Inc.",
+    ),
+    (
+        "ja",
+        "3829-docker",
+        "Docker をインストールしても、あなたのデータに関する\n"
+        "情報が Docker, Inc. に送られることはありません。",
+    ),
+    (
+        "en",
+        "3829-book-import",
+        "The file is parsed\nentirely **in the browser** - nothing is uploaded - and the",
+    ),
+    (
+        "de",
+        "3829-book-import",
+        "vollständig **im Browser** zerlegt - nichts wird hochgeladen - und",
+    ),
+    (
+        "tr",
+        "3829-book-import",
+        "Dosya tamamen\n**tarayıcıda** ayrıştırılır - hiçbir şey bir sunucuya yüklenmez -",
+    ),
+    (
+        "pt",
+        "3829-book-import",
+        "O ficheiro é analisado\ninteiramente **no navegador** - nada é enviado para um servidor - e",
+    ),
+    (
+        "el",
+        "3829-book-import",
+        "αναλύεται εξ ολοκλήρου **στο πρόγραμμα περιήγησης** - τίποτα δεν\n"
+        "αποστέλλεται σε διακομιστή - και",
+    ),
+    (
+        "ja",
+        "3829-book-import",
+        "ファイルは完全に**ブラウザ内で**解析され - 何も\nアップロードされません -",
+    ),
+    ("en", "3829-code-comment", "but still dies with the tab. Nothing is sent to any server."),
+    (
+        "fr",
+        "3829-faq",
+        "Rien - pas vos sessions, pas vos erreurs, pas votre progression - n'est\n"
+        "envoyé à un serveur Adaptive Learner.",
+    ),
+    # #3829: the privacy policy's own summary, which the new help texts reuse.
+    (
+        "en",
+        "3829-policy",
+        "Your learning progress, statistics and settings stay in\nyour browser, for you.",
+    ),
+    (
+        "de",
+        "3829-policy",
+        "Ihr Lernfortschritt, Ihre Statistiken und\nIhre Einstellungen bleiben in Ihrem Browser, "
+        "für Sie.",
+    ),
+    (
+        "es",
+        "3829-policy",
+        "Su progreso, sus estadísticas y sus ajustes se\nquedan en su navegador, para usted.",
+    ),
+    (
+        "fr",
+        "3829-policy",
+        "Votre progression,\nvos statistiques et vos paramètres restent dans votre navigateur, "
+        "pour vous.",
+    ),
+    (
+        "pt",
+        "3829-policy",
+        "O seu progresso, as suas\nestatísticas e as suas definições ficam no seu browser, "
+        "para si.",
+    ),
+    (
+        "tr",
+        "3829-policy",
+        "Öğrenme ilerlemeniz,\nistatistikleriniz ve ayarlarınız tarayıcınızda, sizin için kalır.",
+    ),
+    (
+        "el",
+        "3829-policy",
+        "Η πρόοδός σας, τα στατιστικά σας και οι ρυθμίσεις σας παραμένουν στο\n"
+        "πρόγραμμα περιήγησής σας, για εσάς.",
+    ),
+    (
+        "ja",
+        "3829-policy",
+        "お客様の学習の進捗、統計、設定は、\nお客様のブラウザ内に、お客様のためにとどまります。",
+    ),
+    # #3829: the new master texts.
+    (
+        "en",
+        "3829-lessons",
+        "All lesson progress, element-error rows, review-queue states and\nscheduling data are "
+        "stored **with you**: in the browser (IndexedDB) or, in API mode, in your\nown backend's "
+        "database; others get parts of them only when a feature you use needs them. The "
+        "privacy policy describes when which data goes to others.",
+    ),
+    (
+        "de",
+        "3829-lessons",
+        "Alle Lektionsfortschritte, Element-Fehler-Zeilen,\nWiederholungs-Warteschlangen-Zustände "
+        "und Planungsdaten werden **bei dir** gespeichert: im Browser (IndexedDB) oder, im "
+        "API-Modus, in der "
+        "Datenbank deines eigenen Backends; andere erhalten Teile davon nur, wenn eine Funktion "
+        "sie braucht, die du nutzt.",
+    ),
+    (
+        "en",
+        "3829-my-lessons",
+        "These steps work offline, and your lessons stay on your\ndevice until you use a feature "
+        "that passes them on, for example a community contribution (pull request).",
+    ),
+    (
+        "de",
+        "3829-my-lessons",
+        "Diese Schritte funktionieren offline, und deine Lektionen bleiben auf\ndeinem Gerät, bis "
+        "du eine Funktion nutzt, die sie weitergibt.",
+    ),
+    (
+        "en",
+        "3829-local-mode",
+        "It runs in **local mode**: your progress, statistics, settings and\nyour API key are "
+        "stored in your browser (IndexedDB); others get parts of them only when a feature you\n"
+        "use needs them. AI calls, for example, go straight from the page to your AI provider.",
+    ),
+    (
+        "de",
+        "3829-local-mode",
+        "Die öffentliche PWA läuft im **Local-Modus**: Lernfortschritt,\nStatistiken, "
+        "Einstellungen und dein API-Schlüssel werden in deinem Browser gespeichert (IndexedDB); "
+        "andere erhalten Teile davon nur, wenn eine Funktion sie braucht, die du nutzt.",
+    ),
+    (
+        "en",
+        "3829-faq",
+        "progress, statistics and settings are stored in your browser; others get\n   parts of "
+        "them only when a feature you use needs them. The app contacts servers when a feature "
+        "needs it.",
+    ),
+    (
+        "de",
+        "3829-faq",
+        "Lernfortschritt, Statistiken und Einstellungen werden in deinem\n   Browser gespeichert; "
+        "andere erhalten Teile davon nur, wenn eine Funktion sie braucht, die du nutzt.",
+    ),
 ]
 
 CATALOG_LANGS = sorted(p.stem for p in (REPO / "backend" / "config" / "i18n").glob("*.yaml"))
@@ -280,6 +594,11 @@ def test_passes_a_clean_tree_and_reports_what_it_scanned(tmp_path: Path) -> None
         ("docs/development/ai.md", "The check does not send any personal data.\n"),
         ("README.md", "No personal data is transmitted.\n"),
         ("frontend/src/components/Dialog.tsx", 't("k", "No personal data is transmitted.")\n'),
+        (
+            "README-de.md",
+            "# App\n\nDie öffentliche PWA läuft im **Local-Modus**, alle Daten\n"
+            "bleiben in deinem Browser (IndexedDB).\n",
+        ),
     ],
     ids=[
         "catalog-yaml",
@@ -289,6 +608,7 @@ def test_passes_a_clean_tree_and_reports_what_it_scanned(tmp_path: Path) -> None
         "other-docs",
         "readme",
         "ui-fallback",
+        "readme-3829",
     ],
 )
 def test_fails_on_a_promise_with_file_and_line(tmp_path: Path, rel: str, text: str) -> None:
@@ -299,6 +619,19 @@ def test_fails_on_a_promise_with_file_and_line(tmp_path: Path, rel: str, text: s
     assert len(report.fails) == 1
     assert report.fails[0].startswith(f"{rel}:")
     assert "#3812" in report.fails[0]
+
+
+def test_a_3829_finding_names_the_line_it_starts_on_and_its_issue(tmp_path: Path) -> None:
+    repo = _repo(tmp_path)
+    rel = "docs/help/en/user-guide/my-lessons.md"
+    _write(
+        repo / rel, "# My Lessons\n\nEverything works offline; nothing is uploaded to a\nserver.\n"
+    )
+    report = _Report()
+    check_privacy_promises(report, repo)
+    assert len(report.fails) == 1
+    assert report.fails[0].startswith(f"{rel}:3:")
+    assert "#3829" in report.fails[0]
 
 
 @pytest.mark.parametrize(

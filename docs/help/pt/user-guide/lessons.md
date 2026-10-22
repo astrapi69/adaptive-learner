@@ -331,7 +331,12 @@ funcionalidade entre os modos na conclusão de lições.
 ## Privacidade
 
 Todo o progresso das lições, as linhas de erros de elementos, os
-estados da fila de revisão e os dados de agendamento permanecem **no
-teu próprio dispositivo** - no sistema de ficheiros (modo API) ou no
-browser (IndexedDB). Nada sobre as palavras com que lutas é enviado
-para qualquer lado.
+estados da fila de revisão e os dados de agendamento são
+armazenados **do teu lado**: no browser (IndexedDB) ou, no modo API,
+na base de dados do teu próprio backend; outros recebem partes deles
+só quando uma funcionalidade que utilizas precisa delas. Uma sessão de
+aprendizagem com IA, por exemplo, envia ao teu fornecedor de IA os
+teus erros recentes, cada um com a tua resposta, a resposta correta e
+quantas vezes o cometeste. A
+[política de privacidade](../legal/privacy.md) descreve que dados vão
+para outros e quando.

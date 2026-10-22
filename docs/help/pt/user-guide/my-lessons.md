@@ -7,8 +7,12 @@ mesmo formato offline e jogável que os conjuntos de conteúdo
 descarregados. Pode criar uma lição a partir de uma conversa
 analisada, guardar uma boa lição adaptativa para repetir, exportar
 uma lição para partilhar com outra pessoa e importar lições que
-outros partilharam. Tudo funciona offline; nada é enviado para um
-servidor.
+outros partilharam. Estes passos funcionam offline, e as suas lições
+ficam no seu dispositivo até utilizar uma funcionalidade que as
+transmita, por exemplo uma contribuição para a comunidade
+(pull request) ou "Compartilhar como repositório", que carregam a
+lição para o GitHub, ou uma verificação por IA, que envia o respetivo
+conteúdo ao seu fornecedor de IA.
 
 Encontrará As Minhas Lições no topo do **Navegador de Conjuntos**
 (`/content`), acima dos conjuntos descarregados.

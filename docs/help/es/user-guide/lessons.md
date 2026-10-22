@@ -341,6 +341,11 @@ lección.
 
 Todos los progresos de lecciones, las líneas de errores de
 elementos, los estados de la cola de repaso y los datos de
-programación permanecen **en tu propio dispositivo**, en el
-sistema de archivos (modo API) o en el navegador (IndexedDB). No
-se envía a ningún sitio nada sobre con qué palabras te cuesta.
+programación se almacenan **de tu lado**: en el navegador
+(IndexedDB) o, en el modo API, en la base de datos de tu propio
+backend; otros reciben partes de ellos solo cuando las necesita
+una función que usas. Una sesión de aprendizaje con IA, por
+ejemplo, envía a tu proveedor de IA tus errores recientes, cada
+uno con tu respuesta, la respuesta correcta y cuántas veces lo
+cometiste. La [política de privacidad](../legal/privacy.md)
+describe qué datos van a otros y cuándo.

@@ -4,8 +4,12 @@
 offline-spielbaren Format wie heruntergeladene Inhaltssets. Du kannst
 aus einem analysierten Chat eine Lektion erzeugen, eine gute adaptive
 Lektion zum Wiederholen speichern, eine Lektion zum Teilen
-exportieren und von anderen geteilte Lektionen importieren. Alles
-funktioniert offline; nichts wird auf einen Server hochgeladen.
+exportieren und von anderen geteilte Lektionen importieren. Diese
+Schritte funktionieren offline, und deine Lektionen bleiben auf
+deinem Gerät, bis du eine Funktion nutzt, die sie weitergibt, zum
+Beispiel einen Beitrag zur Community (Pull Request) oder
+„Als Repository teilen", die die Lektion zu GitHub hochladen, oder
+eine KI-Prüfung, die ihren Inhalt an deinen KI-Anbieter schickt.
 
 Du findest „Meine Lektionen" oben im **Set-Browser** (`/content`),
 über den heruntergeladenen Sets.

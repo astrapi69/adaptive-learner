@@ -12,10 +12,12 @@ Adaptive Learner を知る最も手早い方法は、公開オンライン版で
 
 [**アプリを開く**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-これは**ローカルモード**で動作します。あなたのデータはすべて
-ブラウザ（IndexedDB）に留まり、AI の呼び出しはあなた自身の
-API キーを使ってページから直接 Anthropic、OpenAI、Google
-Gemini へ送られます。間にバックエンドはありません。
+これは**ローカルモード**で動作します。あなたの学習の進捗、統計、
+設定、API キーは、ブラウザ（IndexedDB）に保存され、その一部を
+他者が受け取るのは、あなたが使う機能がそれを必要とする場合だけです。
+AI の呼び出しもその一つで、あなた自身の API キーを使って、ページから
+直接あなたの AI プロバイダー（たとえば Anthropic、OpenAI または
+Google Gemini など）へ送られます。間にバックエンドはありません。
 
 ## プログレッシブ・ウェブアプリとしてインストールする
 
