@@ -22,9 +22,14 @@ preferences).
 and whether the Learning Repository is switched on.
 In browser mode the results of your AI content checks come along
 too, so the "AI-checked" badge stays.
-**Not included:** the access token of a private repository (enter it
-again after the restore) and the Learning Repository folder, which
-belongs to the device.
+**Not included** are, for example, the access token of a private
+repository (enter it again after the restore), the Learning Repository
+folder, which belongs to the device, and what only concerns this
+device, such as lesson progress and speech recordings made offline in
+server mode that have not reached the server yet, cached search indexes
+and media lists, the auto-backup bookkeeping and the LAN-sync position.
+Whether auto-backup is switched on does come along. So in server mode,
+make a backup once the app is back online.
 
 Before the export, the app shows a **"Your backup contains …"**
 preview with record counts per area, so you can see what will be

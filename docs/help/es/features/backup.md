@@ -22,9 +22,16 @@ invitaciones canjeadas y si el Learning Repository está activado.
 En el modo navegador también se incluyen los resultados de tus
 revisiones de contenido con IA, así que la insignia "Revisado por IA"
 se conserva.
-**No incluidos:** el token de acceso de un repositorio privado
-(vuelve a introducirlo tras restaurar) y la carpeta del Learning
-Repository, que pertenece al dispositivo.
+**No se incluyen**, por ejemplo, el token de acceso de un repositorio
+privado (vuelve a introducirlo tras restaurar), la carpeta del Learning
+Repository, que pertenece al dispositivo, y lo que solo afecta a este
+dispositivo, como el progreso de lecciones y las grabaciones de voz
+hechas sin conexión en modo servidor que aún no han llegado al
+servidor, los índices de búsqueda y listas de medios en caché, el
+recuento de la copia automática y la posición de la sincronización
+LAN. Si la copia automática está activada sí se incluye. Por eso, en
+modo servidor, crea la copia de seguridad cuando la app vuelva a tener
+conexión.
 
 Antes de exportar, la app muestra una vista previa **"Tu copia de
 seguridad contiene…"** con recuentos de registros por área, para
