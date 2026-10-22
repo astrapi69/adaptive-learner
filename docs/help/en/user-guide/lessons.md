@@ -143,11 +143,13 @@ appears:
   - **2 stars** ≥ 75%
   - **1 star** ≥ 50%
   - **0 stars** below 50%
-- An **exercise-by-exercise breakdown** that shows which exercises
-  you passed and which contained mistakes (with the correct answer
-  for the wrong ones).
-- **Next lesson**, **Retry** and **Back to set** as buttons, so
-  the next action is one click away.
+- An **exercise-by-exercise breakdown** (the answers overview in the
+  detailed evaluation) that shows which exercises you passed and which
+  contained mistakes (with the correct answer for the wrong ones).
+- **"Fix mistakes (N)"** while mistakes of this run are open (see the
+  correction round below).
+- **Next lesson**, **Practice again** and **Back to content browser**
+  as buttons, so the next action is one click away.
 
 If you get 3 stars on the first attempt, a small celebration
 animation plays. (If you have the OS setting "reduce motion"
@@ -254,18 +256,22 @@ reviews and you earn the **Review Master** badge.
 
 ## End-of-lesson correction round
 
-When you finish a lesson with mistakes, the
-summary page shows a small **correction round** between your score
-and the "Next lesson" button. It takes up to five specific
-mistakes from this lesson and offers each as a fresh cloze that
-targets exactly the missed word / missed article.
+When you finish a lesson with mistakes, the compact summary shows
+**"Fix mistakes (N)"** right above the continue actions, where N is the
+number of this run's mistakes that are still open. It opens the
+**correction round** straight at the first drill and changes no
+setting. In the **detailed evaluation**, or when you tick the section
+under **Settings → Learning → Lesson summary**, the round sits in the
+summary as **"Fix your mistakes"** and opens with **"Fix now"**. It
+takes up to five specific mistakes from this lesson and offers each as
+a fresh cloze that targets exactly the missed word / missed article.
 
-- **Skippable at any time.** The "Next lesson" button stays
-  visible - the correction round is voluntary practice, not a
-  gate.
-- **Appears only when there is something to correct.** Lessons
-  with a perfect score skip it entirely. So do lessons whose
-  mistakes cannot be reshaped into a clean cloze (rare).
+- **Skippable at any time.** The continue actions stay visible - the
+  correction round is voluntary practice, not a gate.
+- **Appears only when there is something to correct.** Lessons with a
+  perfect score skip it entirely. If the mistakes cannot be reshaped
+  into a clean cloze (rare), the section is called **"Repeat your
+  mistakes"** and you redo the missed exercises there.
 - **Each completed cloze counts toward mastery.** The correction
   round writes the same element-tracking records as the main
   lesson; your streak on those elements moves toward the
@@ -273,6 +279,18 @@ targets exactly the missed word / missed article.
 
 At the end, a brief "{n} elements improved" line appears, so you
 see the effect of your extra practice.
+
+After the round, or as soon as one of this run's mistakes is corrected,
+**"Your corrections"** appears below it: "First try: X of Y correct",
+"N of M corrected" and every mistake with its status (**Corrected** /
+**Still open**), your first answer next to the correct one and, while
+it is open, the exercise's explanation. The end of **"Retry Errors"**
+shows the same overview when you opened it from the summary. The
+compact summary shows "N of M corrected" once anything is corrected;
+when all mistakes are corrected, the "Fix mistakes (N)" button goes
+away. In the **detailed evaluation**, the answers overview and "Why you
+missed these" mark every mistake **Corrected** or **Still open**; a
+corrected mistake stays listed there.
 
 ## Visual diff feedback
 

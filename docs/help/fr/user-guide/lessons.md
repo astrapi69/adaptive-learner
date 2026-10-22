@@ -110,12 +110,15 @@ leçon** apparaît :
   - **2 étoiles** ≥ 75 %
   - **1 étoile** ≥ 50 %
   - **0 étoile** en dessous de 50 %
-- Une **décomposition exercice par exercice**, qui montre quels
-  exercices tu as réussis et lesquels contenaient des erreurs
-  (avec la bonne réponse pour les faux).
-- **Leçon suivante**, **Recommencer** et **Retour à l'ensemble**
-  sous forme de boutons, afin que la prochaine action soit à un
-  clic.
+- Une **décomposition exercice par exercice** (l'aperçu des réponses
+  de l'évaluation détaillée), qui montre quels exercices tu as réussis
+  et lesquels contenaient des erreurs (avec la bonne réponse pour les
+  faux).
+- **« Corriger les erreurs (N) »** tant que des erreurs de ce passage
+  restent à corriger (voir le tour de correction plus bas).
+- **Leçon suivante**, **S'entraîner à nouveau** et **Retour à
+  l'explorateur de contenu** sous forme de boutons, afin que la
+  prochaine action soit à un clic.
 
 Si tu obtiens 3 étoiles du premier coup, une petite animation de
 célébration se joue. (Si tu as activé le réglage du système
@@ -205,20 +208,27 @@ révision**.
 
 ## Tour de correction en fin de leçon
 
-Lorsque tu termines une leçon avec
-des erreurs, la page de récapitulatif affiche un petit **tour de
-correction** entre ton score et le bouton « Leçon suivante ». Il
-prend jusqu'à cinq erreurs concrètes de cette leçon et propose
-chacune sous forme de nouveau texte à trous visant exactement le
-mot / l'article manqué.
+Lorsque tu termines une leçon avec des erreurs, le récapitulatif
+compact affiche **« Corriger les erreurs (N) »** juste au-dessus des
+actions pour continuer ; N est le nombre d'erreurs de ce passage qui
+restent à corriger. Le bouton ouvre le **tour de correction**
+directement sur le premier exercice et ne modifie aucun réglage. Dans
+l'**évaluation détaillée**, ou si tu coches la section sous
+**Paramètres → Apprentissage → Résumé après les leçons**, le tour
+apparaît dans le récapitulatif comme section **« Corrige tes
+erreurs »** et s'ouvre avec **« Corriger maintenant »**. Il prend
+jusqu'à cinq erreurs concrètes de cette leçon et propose chacune sous
+forme de nouveau texte à trous visant exactement le mot / l'article
+manqué.
 
-- **Ignorable à tout moment.** Le bouton « Leçon suivante » reste
-  visible - le tour de correction est un exercice volontaire, pas
+- **Ignorable à tout moment.** Les actions pour continuer restent
+  visibles - le tour de correction est un exercice volontaire, pas
   un verrou.
 - **N'apparaît que s'il y a quelque chose à corriger.** Les leçons
-  avec un score parfait le sautent entièrement. Les leçons dont
-  les erreurs ne peuvent pas être transformées en un texte à trous
-  propre (rare) également.
+  avec un score parfait le sautent entièrement. Si les erreurs ne
+  peuvent pas être transformées en un texte à trous propre (rare), la
+  section s'appelle **« Refaire vos erreurs »** et tu y refais les
+  exercices manqués.
 - **Chaque texte à trous terminé compte pour la maîtrise.** Le
   tour de correction écrit les mêmes enregistrements de suivi des
   éléments que la leçon principale ; ta série sur ces éléments
@@ -226,6 +236,19 @@ mot / l'article manqué.
 
 À la fin, une courte ligne « {n} éléments améliorés » apparaît,
 afin que tu voies l'effet de ton exercice supplémentaire.
+
+Après le tour, ou dès qu'une erreur de ce passage est corrigée,
+**« Tes corrections »** apparaît en dessous : « Premier essai : X sur Y
+justes », « N sur M corrigés » et chaque erreur avec son état
+(**Corrigé** / **Encore à corriger**), ta première réponse à côté de la
+bonne et, tant qu'elle reste à corriger, l'explication de l'exercice.
+La fin de **« Refaire les erreurs »** montre le même aperçu quand tu
+l'ouvres depuis le récapitulatif. Le récapitulatif compact affiche
+« N sur M corrigés » dès qu'une erreur est corrigée ; quand toutes les
+erreurs sont corrigées, le bouton « Corriger les erreurs (N) »
+disparaît. Dans l'**évaluation détaillée**, l'aperçu des réponses et
+« Pourquoi tu les as ratés » marquent chaque erreur **Corrigé** ou
+**Encore à corriger** ; une erreur corrigée y reste affichée.
 
 ## Retour visuel par diff
 

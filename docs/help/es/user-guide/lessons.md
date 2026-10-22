@@ -111,12 +111,15 @@ lección**:
   - **2 estrellas** ≥ 75 %
   - **1 estrella** ≥ 50 %
   - **0 estrellas** por debajo del 50 %
-- Un **desglose ejercicio por ejercicio** que muestra qué
-  ejercicios has aprobado y cuáles contenían errores (con la
-  respuesta correcta para los fallados).
-- **Siguiente lección**, **Repetir** y **Volver al conjunto** como
-  botones, para que la siguiente acción esté a un clic de
-  distancia.
+- Un **desglose ejercicio por ejercicio** (el resumen de respuestas de
+  la evaluación detallada) que muestra qué ejercicios has aprobado y
+  cuáles contenían errores (con la respuesta correcta para los
+  fallados).
+- **"Corregir errores (N)"** mientras haya errores de este intento sin
+  corregir (consulta la ronda de corrección más abajo).
+- **Lección siguiente**, **Practicar de nuevo** y **Volver al
+  explorador de contenido** como botones, para que la siguiente acción
+  esté a un clic de distancia.
 
 Si logras 3 estrellas al primer intento, se reproduce una pequeña
 animación de celebración. (Si tienes activado el ajuste del SO
@@ -203,20 +206,25 @@ Domina 50 elementos mediante repasos y consigues la insignia
 
 ## Ronda de corrección al final de la lección
 
-Cuando completas una lección con errores,
-la página de resumen muestra una pequeña **ronda de corrección**
-entre tu puntuación y el botón "Siguiente lección". Toma hasta
-cinco errores concretos de esa lección y ofrece cada uno como un
-texto con huecos nuevo que apunta exactamente a la palabra / el
-artículo fallado.
+Cuando completas una lección con errores, el resumen compacto muestra
+**"Corregir errores (N)"** justo encima de las acciones para continuar;
+N es el número de errores de este intento que siguen sin corregir. El
+botón abre la **ronda de corrección** directamente en el primer
+ejercicio y no cambia ningún ajuste. En la **evaluación detallada**, o
+si marcas la sección en **Ajustes → Aprendizaje → Resumen tras las
+lecciones**, la ronda aparece en el resumen como la sección **"Corrige
+tus errores"** y se abre con **"Corregir ahora"**. Toma hasta cinco
+errores concretos de esa lección y ofrece cada uno como un texto con
+huecos nuevo que apunta exactamente a la palabra / el artículo fallado.
 
-- **Omitible en cualquier momento.** El botón "Siguiente lección"
-  permanece visible: la ronda de corrección es práctica
-  voluntaria, no una barrera.
+- **Omitible en cualquier momento.** Las acciones para continuar
+  permanecen visibles: la ronda de corrección es práctica voluntaria,
+  no una barrera.
 - **Aparece solo si hay algo que corregir.** Las lecciones con
-  puntuación perfecta la omiten por completo. También las
-  lecciones cuyos errores no se pueden reformular en un texto con
-  huecos correcto (algo poco frecuente).
+  puntuación perfecta la omiten por completo. Si los errores no se
+  pueden reformular en un texto con huecos correcto (algo poco
+  frecuente), la sección se llama **"Repite tus errores"** y ahí
+  repites los ejercicios fallados.
 - **Cada texto con huecos completado cuenta para el dominio.** La
   ronda de corrección escribe los mismos registros de seguimiento
   de elementos que la lección principal; tu racha en esos
@@ -224,6 +232,19 @@ artículo fallado.
 
 Al final aparece una breve línea "{n} elementos mejorados" para
 que veas el efecto de tu práctica adicional.
+
+Después de la ronda, o en cuanto se corrige un error de este intento,
+aparece debajo **"Tus correcciones"**: "Primer intento: X de Y
+correctas", "N de M corregidos" y cada error con su estado
+(**Corregido** / **Aún pendiente**), tu primera respuesta junto a la
+correcta y, mientras siga pendiente, la explicación del ejercicio. El
+final de **"Repetir errores"** muestra el mismo resumen cuando lo abres
+desde el resumen de la lección. El resumen compacto muestra "N de M
+corregidos" en cuanto hay algo corregido; cuando todos los errores
+están corregidos, el botón "Corregir errores (N)" desaparece. En la
+**evaluación detallada**, el resumen de respuestas y "Por qué fallaste
+estas" marcan cada error como **Corregido** o **Aún pendiente**; un
+error corregido sigue apareciendo ahí.
 
 ## Feedback visual de diferencias
 

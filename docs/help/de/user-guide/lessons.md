@@ -170,11 +170,14 @@ Wenn die letzte Übung abgeschlossen ist, erscheint die
   - **2 Sterne** ≥ 75 %
   - **1 Stern** ≥ 50 %
   - **0 Sterne** unter 50 %
-- Eine **Übungs-für-Übung-Aufschlüsselung**, die zeigt,
-  welche Übungen du bestanden hast und welche Fehler
-  enthielten (mit der richtigen Antwort für die falschen).
-- **Nächste Lektion**, **Wiederholen** und **Zurück zum
-  Satz** als Schaltflächen, damit die nächste Aktion einen
+- Eine **Übungs-für-Übung-Aufschlüsselung** (die Antworten-Übersicht
+  in der ausführlichen Auswertung), die zeigt, welche Übungen du
+  bestanden hast und welche Fehler enthielten (mit der richtigen Antwort
+  für die falschen).
+- **„Fehler korrigieren (N)"**, solange Fehler dieses Durchgangs offen
+  sind (siehe Korrektur-Runde unten).
+- **Nächste Lektion**, **Erneut üben** und **Zurück zur
+  Inhaltsübersicht** als Schaltflächen, damit die nächste Aktion einen
   Klick entfernt ist.
 
 Schaffst du 3 Sterne beim ersten Versuch, spielt eine
@@ -298,21 +301,25 @@ du verdienst das Abzeichen **Wiederholungsmeister**.
 
 ## Korrektur-Runde am Lektionsende
 
-Wenn du eine Lektion mit Fehlern
-abschließt, zeigt die Zusammenfassungsseite eine kleine
-**Korrektur-Runde** zwischen deinem Punktestand und dem
-"Nächste Lektion"-Button. Sie nimmt bis zu fünf konkrete
-Fehler aus dieser Lektion und bietet jeden als frischen
-Lückentext an, der genau das verfehlte Wort / den
-verfehlten Artikel anvisiert.
+Wenn du eine Lektion mit Fehlern abschließt, zeigt die kompakte
+Zusammenfassung direkt über den Weiter-Aktionen **„Fehler korrigieren
+(N)"**; N ist die Zahl der Fehler dieses Durchgangs, die noch offen
+sind. Der Knopf öffnet die **Korrektur-Runde** gleich mit der ersten
+Übung und ändert keine Einstellung. In der **ausführlichen Auswertung**,
+oder wenn du den Abschnitt unter **Einstellungen → Lernen →
+Zusammenfassung nach Lektionen** anhakst, steht die Runde als Abschnitt
+**„Fehler ausbessern"** in der Zusammenfassung und öffnet sich mit
+**„Jetzt ausbessern"**. Sie nimmt bis zu fünf konkrete Fehler aus
+dieser Lektion und bietet jeden als frischen Lückentext an, der genau
+das verfehlte Wort / den verfehlten Artikel anvisiert.
 
-- **Jederzeit überspringbar.** Der "Nächste Lektion"-
-  Button bleibt sichtbar - die Korrektur-Runde ist
-  freiwillige Übung, kein Gate.
-- **Erscheint nur, wenn es etwas zu korrigieren gibt.**
-  Lektionen mit perfektem Punktestand überspringen sie
-  vollständig. Lektionen, deren Fehler sich nicht zu einem
-  sauberen Lückentext umformen lassen (selten), ebenfalls.
+- **Jederzeit überspringbar.** Die Weiter-Aktionen bleiben sichtbar -
+  die Korrektur-Runde ist freiwillige Übung, kein Gate.
+- **Erscheint nur, wenn es etwas zu korrigieren gibt.** Lektionen mit
+  perfektem Punktestand überspringen sie vollständig. Lassen sich die
+  Fehler nicht zu einem sauberen Lückentext umformen (selten), heißt
+  der Abschnitt **„Wiederhole deine Fehler"**, und du machst dort die
+  verfehlten Übungen noch einmal.
 - **Jeder abgeschlossene Lückentext zählt zur
   Beherrschung.** Die Korrektur-Runde schreibt dieselben
   Element-Verfolgungs-Datensätze wie die Hauptlektion;
@@ -322,6 +329,20 @@ verfehlten Artikel anvisiert.
 Am Ende erscheint eine kurze "{n} Elemente verbessert"-
 Zeile, damit du den Effekt deiner zusätzlichen Übung
 siehst.
+
+Nach der Runde, oder sobald ein Fehler dieses Durchgangs korrigiert ist,
+erscheint darunter **„Deine Korrekturen"**: „Erster Versuch: X von Y
+richtig", „N von M korrigiert" und jeder Fehler mit seinem Stand
+(**Korrigiert** / **Noch offen**), deiner ersten Antwort neben der
+richtigen und, solange er offen ist, der Erklärung der Übung. Dieselbe
+Übersicht zeigt das Ende von **„Fehler wiederholen"**, wenn du es aus
+der Zusammenfassung geöffnet hast. In der kompakten Zusammenfassung
+steht „N von M korrigiert", sobald etwas korrigiert ist; sind alle
+Fehler korrigiert, verschwindet der Knopf „Fehler korrigieren (N)". In
+der **ausführlichen Auswertung** tragen die Antworten-Übersicht und
+„Warum du diese verpasst hast" bei jedem Fehler die Marke
+**Korrigiert** oder **Noch offen**; ein korrigierter Fehler bleibt dort
+stehen.
 
 ## Visuelles Diff-Feedback
 

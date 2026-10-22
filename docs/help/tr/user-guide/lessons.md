@@ -99,9 +99,12 @@ Son alıştırma tamamlandığında **ders özeti** görünür:
   - **0 yıldız** %50'nin altında
 - Hangi alıştırmaları geçtiğini ve hangilerinin hata içerdiğini
   (yanlışlar için doğru yanıtla birlikte) gösteren bir
-  **alıştırma-alıştırma dökümü**.
+  **alıştırma-alıştırma dökümü** (ayrıntılı değerlendirmedeki
+  cevaplara genel bakış).
+- Bu denemenin düzeltilmemiş hataları olduğu sürece **"Hataları düzelt
+  (N)"** (aşağıdaki düzeltme turuna bak).
 - Sonraki eylemin bir tık uzakta olması için **Sonraki ders**,
-  **Tekrarla** ve **Sete geri dön** düğmeleri.
+  **Tekrar pratik yap** ve **İçerik tarayıcısına dön** düğmeleri.
 
 İlk denemede 3 yıldız alırsan küçük bir kutlama animasyonu oynar.
 (İşletim sistemi ayarı "Hareketleri azalt" etkinleştirilmişse,
@@ -183,23 +186,42 @@ Bir tekrar oturumunu tamamladığında aynı değerlendirme + yıldız +
 
 ## Ders sonu düzeltme turu
 
-Bir dersi hatalarla tamamladığında, özet sayfası
-puanın ile "Sonraki ders" düğmesi arasında küçük bir **düzeltme turu**
-gösterir. Bu turdan dersteki en fazla beş somut hatayı alır ve her
-birini tam olarak kaçırılan kelimeyi / kaçırılan artikeli hedefleyen
-taze bir boşluk doldurma olarak sunar.
+Bir dersi hatalarla tamamladığında, kompakt özet devam eylemlerinin
+hemen üstünde **"Hataları düzelt (N)"** gösterir; N, bu denemenin henüz
+düzeltilmemiş hatalarının sayısıdır. Düğme **düzeltme turunu** doğrudan
+ilk alıştırmada açar ve hiçbir ayarı değiştirmez. **Ayrıntılı
+değerlendirmede** ya da bölümü **Ayarlar → Öğrenme → Ders sonrası
+özet** altında işaretlersen tur, özette **"Hatalarını düzelt"** bölümü
+olarak yer alır ve **"Şimdi düzelt"** ile açılır. Bu tur dersteki en
+fazla beş somut hatayı alır ve her birini tam olarak kaçırılan
+kelimeyi / kaçırılan artikeli hedefleyen taze bir boşluk doldurma
+olarak sunar.
 
-- **İstediğin zaman atlanabilir.** "Sonraki ders" düğmesi görünür
-  kalır - düzeltme turu gönüllü bir alıştırmadır, bir gate değil.
+- **İstediğin zaman atlanabilir.** Devam eylemleri görünür kalır -
+  düzeltme turu gönüllü bir alıştırmadır, bir gate değil.
 - **Yalnızca düzeltilecek bir şey varsa görünür.** Kusursuz puanlı
-  dersler onu tamamen atlar. Hataları temiz bir boşluk doldurmaya
-  dönüştürülemeyen dersler (nadiren) de.
+  dersler onu tamamen atlar. Hatalar temiz bir boşluk doldurmaya
+  dönüştürülemiyorsa (nadiren), bölümün adı **"Hatalarını tekrarla"**
+  olur ve kaçırdığın alıştırmaları orada yeniden yaparsın.
 - **Tamamlanan her boşluk doldurma, ustalığa sayılır.** Düzeltme turu,
   ana dersle aynı öğe-izleme veri kayıtlarını yazar; bu öğelerdeki
   serin 3-doğru ustalık eşiğine doğru ilerler.
 
 Sonunda, ek alıştırmanın etkisini görmen için kısa bir "{n} öğe
 iyileştirildi" satırı görünür.
+
+Turdan sonra ya da bu denemenin bir hatası düzeltilir düzeltilmez
+altında **"Düzeltmelerin"** görünür: "İlk deneme: Y sorudan X doğru",
+"M hatadan N tanesi düzeltildi" ve her hata, durumuyla birlikte
+(**Düzeltildi** / **Henüz düzeltilmedi**), ilk yanıtın doğrusunun
+yanında ve hata açık kaldığı sürece alıştırmanın açıklaması. Özetten
+açtığında **"Hataları tekrar et"** sonunda da aynı genel bakışı
+gösterir. Kompakt özet, bir şey düzeltilir düzeltilmez "M hatadan N
+tanesi düzeltildi" gösterir; tüm hatalar düzeltildiğinde "Hataları
+düzelt (N)" düğmesi kaybolur. **Ayrıntılı değerlendirmede** cevaplara
+genel bakış ve "Bunları neden kaçırdın" her hatayı **Düzeltildi** ya da
+**Henüz düzeltilmedi** olarak işaretler; düzeltilen bir hata orada
+listelenmeye devam eder.
 
 ## Görsel diff geri bildirimi
 
