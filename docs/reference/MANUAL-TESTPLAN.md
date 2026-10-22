@@ -7,20 +7,21 @@ die nur ein Mensch im echten Browser zuverlässig beurteilt:
 Layout, Lesbarkeit, Touch-Bedienung, Theme-Kontraste und das
 Gesamtgefühl des Lernflusses.
 
-> **Dexie-Smoke-Cadence (#552):** Der Dexie-Mode-E2E-Smoke
+> **Dexie-Smoke-Cadence (#552, #3748):** Der Dexie-Mode-E2E-Smoke
 > (`make test-dexie-smoke`) läuft **täglich** (Scheduled Run, 04:00 UTC),
-> **vor jedem Release** (Gate in `make release-test`) und auf
-> `release/*`-Branches — **nicht auf jedem PR**. Er ist teuer (~6 Min) und im
-> PR-Kontext selten relevant; der Regressions-Schutz bleibt über den täglichen
-> Lauf + das Release-Gate erhalten (gleiche Logik wie die Mutationstests). Bei
-> Bedarf jederzeit manuell via `workflow_dispatch` oder lokal mit
+> **vor jedem Release** (Gate in `make release-test`), auf
+> `release/*`-Branches und seit #3748 auf **jedem PR, den er betrifft**:
+> `scripts/dexie_smoke_affected.py` entscheidet anhand der geänderten
+> Dateien (das ganze `frontend/` außer Unit-Tests, dazu was die Specs
+> außerhalb davon lesen); ein PR, den er nicht betrifft, überspringt ihn.
+> Bei Bedarf jederzeit manuell via `workflow_dispatch` oder lokal mit
 > `make test-dexie-smoke` auslösbar.
 
 > **CI-Nachtschicht (#575):** PRs laufen **nur Korrektheits-Gates** (Backend-/
 > Plugin-/Frontend-Tests, ruff + mypy, Pre-commit, Docs-Drift, der
 > Complexity-Baseline-Gate). Alles Nicht-Merge-Kritische läuft auf der
 > **Nachtschicht** (Schedule + `workflow_dispatch`): **Security-Scan**
-> (pip-audit / npm audit / bandit — wöchentlich + `push: release/**`),
+> (pip-audit / bun audit / bandit, wöchentlich + `push: release/**`),
 > **Coverage** (täglich), **Content-Stats** (täglich; prüft die README gegen
 > ein frisches Content-Repo-Checkout) und der **Complexity-Report**
 > (voller Warn-View, täglich). Faustregel: Schlägt ein Job nicht

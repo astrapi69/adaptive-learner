@@ -160,12 +160,10 @@ domain errors to HTTP status codes. See
 
 - Backend: SQLAlchemy + SQLite. Alembic migrations in
   `backend/migrations/versions/`.
-- Sync surface: every table in `sync_service.ALL_SYNC_TABLES`.
-  Append-only
-  history rows (sessions, messages, ratings, progress
-  commits, step evaluations, method switches, imported
-  conversations, imported messages, anki cards, study
-  questions) plus mutable settings + curriculum rows.
+- Sync surface: every table in `sync_service.ALL_SYNC_TABLES`;
+  whether a table syncs append-only or mutable is its
+  `TableSpec.append_only` in `backend/app/services/sync_tables.py`.
+  The tables themselves, by area: [Data model](data-model.md).
 - Backup format: JSON; API keys stripped on export; restore
   is a merge.
 - Test isolation: production data dirs carry a

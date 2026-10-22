@@ -155,12 +155,11 @@ mapea los errores de dominio a códigos de estado HTTP. Consulta
 
 - Backend: SQLAlchemy + SQLite. Migraciones Alembic en
   `backend/migrations/versions/`.
-- Superficie de sincronización: cada tabla de `sync_service.ALL_SYNC_TABLES`.
-  Filas de historial de solo-adición (sesiones, mensajes,
-  calificaciones, commits de progreso, evaluaciones de pasos,
-  cambios de método, conversaciones importadas, mensajes
-  importados, tarjetas Anki, preguntas de estudio) más ajustes
-  mutables + filas de plan de estudios.
+- Superficie de sincronización: cada tabla de `sync_service.ALL_SYNC_TABLES`;
+  si una tabla se sincroniza como solo-adición o como mutable lo
+  fija su `TableSpec.append_only` en
+  `backend/app/services/sync_tables.py`. Las tablas en sí, por
+  área: [Modelo de datos](data-model.md).
 - Formato de copia de seguridad: JSON; claves API eliminadas en
   la exportación; la restauración es una fusión.
 - Aislamiento de pruebas: los directorios de datos de producción

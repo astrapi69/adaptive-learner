@@ -57,7 +57,7 @@ must be verified against the layer architecture.
 - Complexity Watcher (#400) — radon (Python) + eslint (TS); the Phase 2 radon
   hard gate (#494/#495) **blocks cc > 20, warns > 15**. `.complexity-baseline`
   is also **EMPTY** (burn-down complete).
-- Security-scan watcher (#378) — pip-audit + npm audit + bandit (warn-only).
+- Security-scan watcher (#378): pip-audit + bun audit + bandit (warn-only).
 - plugin-tests CI job (#471) — runs the full plugin suite per PR.
 - `madge` — zero circular dependency guarantee (verified per PR in #354).
 
@@ -134,7 +134,7 @@ AI sometimes suggests outdated, insecure, or nonexistent libraries.
 
 - `security-scan.yml` — CI workflow (warn-only, Phase 1):
   - `pip-audit` for Python dependencies.
-  - `npm audit` for frontend dependencies.
+  - `bun audit` for frontend dependencies.
   - `bandit` for static Python security analysis.
 - Weekly scheduled scan catches new CVEs without code changes.
 - Pre-commit hooks catch formatting/linting issues.
@@ -315,7 +315,7 @@ coordinates handoffs and resolves conflicts with reality.
 | Prompt precision | `.claude/rules/` | Sparring Partner writes/reviews prompts |
 | Layer architecture | `madge` (cycles), cohesion watcher (size) | Code review for boundary violations |
 | Test coverage | CI gates (pytest, vitest, dexie-smoke) | Backup round-trip test |
-| Security/deps | `security-scan.yml` (pip-audit, npm audit, bandit) | Manual dependency review |
+| Security/deps | `security-scan.yml` (pip-audit, bun audit, bandit) | Manual dependency review |
 | Refactoring | Cohesion watcher, ratchet baseline | Refactoring intervals, scope decisions |
 | Git hygiene | Pre-commit hooks, linting | Diff review, issue discipline |
 | Implementation hierarchy (§7) | `security-scan.yml` (vets new deps), cohesion + complexity watchers (Tier-4 limits) | Top-down walk before custom code; PR "tier chosen + why" note |
