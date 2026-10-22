@@ -170,10 +170,11 @@ entries:
 
       ## Çift istem değerlendiricisi ne yapar
 
-      Güven değerlendirmesi hâlâ çalışır, ancak daha toleranslı
-      biçimde — adım ilerlemesine %50 güvende izin verilir
-      (normal %70'e karşılık). Bu yöntem açıkça keşif içindir,
-      sınav için değil.
+      Güven değerlendirmesi hâlâ çalışır, ama kendi ölçütüyle:
+      değerlendirici, doğru yanıtın önce gelip gelmediğine değil,
+      karşılıklı konuşmanın kalitesine bakar. Adım ilerlemesi
+      için eşik her yöntemdekiyle aynıdır: %70 güven. Bu yöntem
+      açıkça keşif içindir, sınav için değil.
 
   - key: method_contextual
     title: Bağlamsal

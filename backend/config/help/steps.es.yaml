@@ -219,10 +219,10 @@ entries:
 
       ## Cuándo termina el paso
 
-      Una vez que el evaluador de doble prompt ve tres variaciones
-      seguidas con confianza > 80 %, avanzas al paso 7. Si la
-      confianza fluctúa, el ciclo permanece en el paso 6 hasta
-      alcanzar la estabilidad.
+      Después de cada intercambio, el evaluador de doble prompt
+      decide si estás listo para el paso 7; el sistema aplica su
+      propuesta cuando su confianza es de al menos el 70 %. Si no,
+      el ciclo permanece en el paso 6.
 
       ## Conexión con la repetición espaciada
 

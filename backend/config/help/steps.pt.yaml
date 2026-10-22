@@ -230,10 +230,10 @@ entries:
 
       ## Quando o passo termina
 
-      Assim que o avaliador de duplo prompt vê três variações
-      seguidas com confiança > 80%, avança para o passo 7.
-      Se a confiança flutuar, o ciclo permanece no passo 6
-      — até que a estabilidade seja atingida.
+      Depois de cada troca, o avaliador de duplo prompt decide
+      se está pronto para o passo 7; o sistema aplica a
+      proposta dele quando a sua confiança é de pelo menos 70%.
+      Caso contrário, o ciclo permanece no passo 6.
 
       ## Ligação à repetição espaçada
 
