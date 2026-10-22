@@ -10,8 +10,8 @@ paylaşmak üzere dışa aktarabilir ve başkalarının paylaştığı dersleri
 içe aktarabilirsiniz. Bu adımlar çevrimdışı çalışır ve dersleriniz,
 onları başkalarına aktaran bir özellik kullanana kadar cihazınızda
 kalır: örneğin bir topluluk katkısı (pull request) ya da
-"Depo olarak paylaş" dersi GitHub'a yükler, bir yapay zekâ denetimi
-ise içeriğini yapay zekâ sağlayıcınıza gönderir.
+"Depo olarak paylaş" özelliği dersi GitHub'a yükler, bir yapay zekâ
+denetimi ise içeriğini yapay zekâ sağlayıcınıza gönderir.
 
 Derslerimi, indirilen setlerin üzerinde **Set Tarayıcısı**'nın
 (`/content`) en üstünde bulabilirsiniz.
