@@ -48,6 +48,18 @@ para o fallback do roteador SPA, depois usa
 `actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`
 para publicar.
 
+Como o GitHub Pages não envia cabeçalhos de segurança, a compilação
+de Pages traz a sua própria política: `frontend/index.html` define
+por `<meta>` uma Content-Security-Policy que limita as imagens e os
+media a poucas fontes, por exemplo a própria origem e
+`https://raw.githubusercontent.com` (o valor exato está no
+ficheiro), além da política de referrer `no-referrer`. O modo API
+envia os mesmos `img-src`/`media-src` como cabeçalhos
+(`backend/app/frontend_static.py`). Uma funcionalidade que carregue
+imagens ou media de outro host fica aí bloqueada. Antes do upload,
+`scripts/check_external_hosts.py` procura recursos de terceiros no
+site de documentação compilado.
+
 O URL do site é `https://astrapi69.github.io/adaptive-learner/`.
 Os utilizadores com domínio personalizado adicionam um ficheiro
 `CNAME` em `frontend/public/` com o nome de domínio; o
@@ -158,8 +170,7 @@ Cada workflow corre em isolamento; sem estado partilhado entre eles:
 | Workflow | Acionador | O que faz |
 |---|---|---|
 | `ci.yml` | push, pull_request | Testes + lint + tsc |
-| `coverage.yml` | push para main | Cobertura HTML + xml |
+| `coverage.yml` | agendamento diário, despacho | Cobertura HTML + xml (backend, frontend, por plugin) |
 | `release-gate.yml` | push de etiqueta | Verificação de deriva de pins de versão |
 | `deploy-gh-pages.yml` | push para main, despacho | Compilação + implementação GH Pages |
 | `launcher-{linux,macos,windows}.yml` | release: created | Compilar + anexar binário do launcher |
-| `docs.yml` | push para main | Compilação MkDocs (atualmente inativa - o site vem do workflow GH Pages) |

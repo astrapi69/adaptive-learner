@@ -48,8 +48,8 @@ with:
   default mode.
 - `VITE_API_BASE=""` - no backend to point at.
 
-The workflow runs on every push to `develop` (the active
-development branch under gitflow) and on manual dispatch. After
+The workflow runs on every push to `main` (the release branch
+under gitflow) and on manual dispatch. After
 build it copies `dist/index.html` to `dist/404.html` for the
 SPA-router fallback, then uses `actions/upload-pages-artifact@v5`
 + `actions/deploy-pages@v5` to publish.
@@ -58,6 +58,18 @@ The result is a fully static, backend-free build: DexieStorage
 holds the canonical data in IndexedDB, AI calls go browser-direct
 to the provider, and the lesson content is bundled into the build
 so the site works offline.
+
+Because GitHub Pages sends no security headers, the Pages build
+carries its own policy: `frontend/index.html` sets a
+Content-Security-Policy `<meta>` that limits images and media to a
+few sources, for example the own origin and
+`https://raw.githubusercontent.com` (the exact value is in the
+file), plus the referrer policy `no-referrer`. API mode sends the
+same `img-src`/`media-src` as headers
+(`backend/app/frontend_static.py`). A feature that loads images or
+media from another host is blocked there. Before the upload,
+`scripts/check_external_hosts.py` scans the built docs site for
+third-party resources.
 
 The site URL is `https://astrapi69.github.io/adaptive-learner/`.
 Custom-domain users add a `CNAME` file to `frontend/public/`
@@ -198,8 +210,8 @@ Each workflow runs in isolation; no shared state between them:
 | Workflow | Trigger | What it does |
 |---|---|---|
 | `ci.yml` | push / PR to `develop`, `main` | Tests + lint + tsc |
-| `coverage.yml` | daily schedule, dispatch | Coverage HTML + xml |
+| `coverage.yml` | daily schedule, dispatch | Coverage HTML + xml (backend, frontend, per plugin) |
 | `release-gate.yml` | `v*.*.*` tag push, dispatch | Version pin drift check |
-| `deploy-gh-pages.yml` | push to `develop`, dispatch | GH Pages build + deploy |
+| `deploy-gh-pages.yml` | push to `main`, dispatch | GH Pages build + deploy |
 | `launcher-{linux,macos,windows}.yml` | release: created | Build + attach launcher binary |
-| `dexie-smoke.yml` | daily schedule, `release/**`, dispatch | Dexie-mode route smoke gate |
+| `dexie-smoke.yml` | PR (when affected), daily schedule, `release/**`, dispatch | Dexie-mode route smoke gate |

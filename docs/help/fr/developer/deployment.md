@@ -33,6 +33,18 @@ les données persistent uniquement dans le navigateur.
 Le build officiel GitHub Pages est à
 `https://astrapi69.github.io/adaptive-learner/`.
 
+Comme GitHub Pages n'envoie aucun en-tête de sécurité, le build
+Pages apporte sa propre politique : `frontend/index.html` définit
+par `<meta>` une Content-Security-Policy qui limite les images et
+les médias à quelques sources, par exemple l'origine propre et
+`https://raw.githubusercontent.com` (la valeur exacte est dans le
+fichier), ainsi que la politique de referrer `no-referrer`. Le mode
+API envoie les mêmes `img-src`/`media-src` comme en-têtes
+(`backend/app/frontend_static.py`). Une fonction qui charge des
+images ou des médias depuis un autre hôte y est bloquée. Avant
+l'upload, `scripts/check_external_hosts.py` recherche des
+ressources tierces dans le site de documentation construit.
+
 ### Contenu bundlé
 
 La commande `copy-bundled-content.mjs` (exécutée automatiquement en prébuild)
@@ -101,9 +113,8 @@ Les workflows GitHub Actions dans `.github/workflows/` :
 | Workflow | Déclencheur | Ce qu'il fait |
 |----------|-------------|---------------|
 | `ci.yml` | Push / PR | Tests backend + plugins + frontend |
-| `coverage.yml` | Push sur main | Génère les rapports de couverture |
+| `coverage.yml` | Planification quotidienne, déclenchement manuel | Génère les rapports de couverture (backend, frontend, par plugin) |
 | `release-gate.yml` | Push de tag | Vérifie la synchronisation des versions, lance la suite complète |
-| `docs.yml` | Push sur main | Build et déploie le site MkDocs |
 
 ---
 

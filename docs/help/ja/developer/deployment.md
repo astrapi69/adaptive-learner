@@ -38,6 +38,8 @@ make dev-down   # 停止
 
 ワークフローは`main`へのすべてのプッシュおよび手動ディスパッチで実行されます。ビルド後に`dist/index.html`を`dist/404.html`にコピーしてSPAルーターのフォールバックとし、`actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`を使用して公開します。
 
+GitHub Pagesはセキュリティヘッダーを送らないため、Pagesビルドは独自のポリシーを持ちます。`frontend/index.html`は`<meta>`でContent-Security-Policyを設定し、画像とメディアを少数の取得元（たとえば自身のオリジンと`https://raw.githubusercontent.com`。正確な値はファイルにあります）に制限し、さらにリファラーポリシー`no-referrer`を設定します。APIモードは同じ`img-src`/`media-src`をヘッダーとして送ります（`backend/app/frontend_static.py`）。ほかのホストから画像やメディアを読み込む機能は、そこでブロックされます。アップロード前に、`scripts/check_external_hosts.py`がビルドされたドキュメントサイトにサードパーティのリソースがないか確認します。
+
 サイトのURLは`https://astrapi69.github.io/adaptive-learner/`です。カスタムドメインのユーザーは`CNAME`ファイルをドメイン名と共に`frontend/public/`に追加します; GitHubのドメイン対応Pagesルーティングが残りを処理します。
 
 ## Docker Compose（フルスタック）
@@ -100,8 +102,7 @@ make prod-down   # docker compose down
 | ワークフロー | トリガー | 実行内容 |
 |---|---|---|
 | `ci.yml` | push、pull_request | テスト + lint + tsc |
-| `coverage.yml` | mainへのpush | カバレッジHTML + xml |
+| `coverage.yml` | 毎日のスケジュール、ディスパッチ | カバレッジHTML + xml（バックエンド、フロントエンド、プラグインごと） |
 | `release-gate.yml` | タグpush | バージョンピンのドリフトチェック |
 | `deploy-gh-pages.yml` | mainへのpush、ディスパッチ | GH Pagesビルド + デプロイ |
 | `launcher-{linux,macos,windows}.yml` | release: created | ビルド + ランチャーバイナリの添付 |
-| `docs.yml` | mainへのpush | MkDocsビルド（現在は非アクティブ - サイトはGH Pagesワークフローから） |
