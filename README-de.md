@@ -37,6 +37,11 @@ Englisch unter `/docs/en/`):
   — alle Endpunkte und Modelle
 - [Konfiguration](docs/configuration.md) — Drei-Schichten-Config-
   Kette (env > `secrets.yaml` > DB)
+- [App-Ablauf](docs/reference/APP-FLOW.md): jeder Bildschirm, wie man
+  ihn erreicht, und die Hauptwege durch die App (englisch)
+- [Design-Brief](docs/reference/DESIGN-BRIEF.md): Zielgruppe,
+  Gestaltungsprinzipien, visuelles System und offene Designfragen
+  (englisch)
 
 ## Was du bekommst
 
@@ -67,7 +72,7 @@ nur zusammen). In Kurzform:
 - **Import + Analyse** - Chat-Verlauf-Import (ChatGPT / Claude /
   Gemini / Markdown) mit KI-Analyse zu Curricula, Sitzungen oder
   Offline-Lektionen.
-- **Gamification** - XP, gestufte Badges, Streaks, tägliche
+- **Gamification** - XP, gestufte Badges, Serien, tägliche
   Missionen, Celebrations.
 - **Exporte + Backup** - Anki, NotebookLM, Learning Repository,
   Markdown-/PDF-Berichte, `.alb`-Backups und verschlüsselter
@@ -92,10 +97,13 @@ eigenen API-Schlüssel. Kein Backend, keine Installation.
 
 [**Live-App öffnen →**](https://astrapi69.github.io/adaptive-learner/)
 
-Auf Chrome / Edge / Safari erscheint beim ersten Besuch
-ein „Zum Startbildschirm hinzufügen"-Prompt — annehmen und
-Adaptive Learner wird zu einer eigenständigen PWA, die du
-vom Desktop oder Handy-Startbildschirm aus startest.
+Sobald du auf dem Dashboard bist, zeigen Chrome, Edge und
+andere Chromium-Browser oben eine Karte „Zum Startbildschirm
+hinzufügen“ mit „Installieren“; auf iPhone und iPad zeigt
+Safari dort den Hinweis „Als App installieren“ (Teilen, dann
+„Zum Home-Bildschirm“). Nimmst du an, wird Adaptive Learner
+zu einer eigenständigen PWA, die du vom Desktop oder
+Handy-Startbildschirm aus startest.
 
 ### 2. Desktop-App (nativer Launcher)
 
@@ -198,7 +206,7 @@ Vollständige Setup-Anleitung unter
 | session | /start, /{id}/message, /message/stream, /rate, /end, /switch, /pronunciation/* | 7-Schritt-Zyklen, Dual-Prompt-Eval, Streaming, Auto-Loop, Aussprache-Bewertung |
 | tracking | /progress/{id}, /commits/{id} | Pro-Projekt-Aggregate + Schritt-Evaluations-Insights |
 | tools | /recommendations/{id}, /spaced/{id} | Methoden-bezogene Tool-Liste + Spaced-Practice |
-| gamification | /xp/*, /badges/*, /streak/*, /reset | XP + 28 abgestufte Abzeichen + Streak-Heatmap |
+| gamification | /xp/*, /badges/*, /streak/*, /reset | XP + 28 abgestufte Abzeichen + Serien-Heatmap |
 | anki | /cards CRUD, /extract/{session,conversation}, /mark-exported | KI-extrahierte Karteikarten + .apkg-Export |
 | notebooklm | /questions CRUD, /generate/{session,project}, /study-guide/{id} | Aktive-Recall-Fragen + Studienführer + ZIP-Export |
 | learning-repo | /render/{id}, /export-zip/{id}, /persist/{id} | Git-gestütztes Lern-Repository (Markdown-Artefakte + optionaler Commit) |

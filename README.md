@@ -149,10 +149,12 @@ no install.
 
 [**Open the live app →**](https://astrapi69.github.io/adaptive-learner/)
 
-On Chrome / Edge / Safari you'll see an "Add to home screen"
-prompt the first time — accept and Adaptive Learner becomes a
-standalone PWA you launch from your desktop or phone home
-screen.
+Once you are on the dashboard, Chrome, Edge and other Chromium
+browsers show an "Add to home screen" card at the top with an
+Install button; on iPhone and iPad, Safari shows an "Install as
+an app" hint there (Share, then "Add to Home Screen"). Accept,
+and Adaptive Learner becomes a standalone PWA you launch from
+your desktop or phone home screen.
 
 ### 2. Desktop app (native launcher)
 
