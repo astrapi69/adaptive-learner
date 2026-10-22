@@ -2,11 +2,13 @@
 
 Το επίπεδο αποθήκευσης v0.7.0 (`frontend/src/storage/`) δίνει στο
 frontend δύο εναλλάξιμα backends πίσω από ένα ενιαίο συμβόλαιο.
-Το συμβόλαιο έχει αναπτυχθεί σε 22 namespaces κατά τις Phases 7–34.
+Το συμβόλαιο βρίσκεται στο
+`frontend/src/storage/types/core/service.ts`· η λίστα namespaces εκεί
+είναι η αναφορά.
 
 ## IStorageService
 
-Το `frontend/src/storage/types.ts` ορίζει τη διεπαφή που κάθε
+Το `frontend/src/storage/types/core/service.ts` ορίζει τη διεπαφή που κάθε
 υλοποίηση αποθήκευσης ικανοποιεί. Αντικατοπτρίζει τα namespaces
 `api.*` από το `api/client.ts` 1:1:
 

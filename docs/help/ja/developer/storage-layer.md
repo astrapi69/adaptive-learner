@@ -2,11 +2,11 @@
 
 # ストレージレイヤー
 
-v0.7.0のストレージレイヤー（`frontend/src/storage/`）は、フロントエンドに単一の契約の背後に2つの交換可能なバックエンドを提供します。この契約はPhase 7〜34を経て22の名前空間に拡大しています。
+v0.7.0のストレージレイヤー（`frontend/src/storage/`）は、フロントエンドに単一の契約の背後に2つの交換可能なバックエンドを提供します。この契約は`frontend/src/storage/types/core/service.ts`にあり、そこにある名前空間の一覧が基準です。
 
 ## IStorageService
 
-`frontend/src/storage/types.ts`はすべてのストレージ実装が満たすインターフェースを定義します。`api/client.ts`の`api.*`名前空間を1:1でミラーリングしています。
+`frontend/src/storage/types/core/service.ts`はすべてのストレージ実装が満たすインターフェースを定義します。`api/client.ts`の`api.*`名前空間を1:1でミラーリングしています。
 
 ```typescript
 export interface IStorageService {

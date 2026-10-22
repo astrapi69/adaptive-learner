@@ -4,12 +4,13 @@
 
 A camada de armazenamento v0.7.0 (`frontend/src/storage/`) dá ao
 frontend dois backends intercambiáveis por trás de um único
-contrato. O contrato cresceu para 22 espaços de nomes ao longo das
-Fases 7–34.
+contrato. O contrato está em
+`frontend/src/storage/types/core/service.ts`; a lista de espaços de nomes
+aí é a referência.
 
 ## IStorageService
 
-`frontend/src/storage/types.ts` define a interface que cada
+`frontend/src/storage/types/core/service.ts` define a interface que cada
 implementação de armazenamento satisfaz. Espelha os espaços de
 nomes `api.*` de `api/client.ts` 1:1:
 
