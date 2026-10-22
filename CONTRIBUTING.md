@@ -22,7 +22,9 @@ the reference details those guides build on.
 - `frontend/` - React + TypeScript + Vite, TipTap editor
 - `plugins/` - the shipped PluginForge plugins, one Poetry package each
 - `launcher/` - cross-platform launcher (PyInstaller)
-- `docs/` - architecture overview, MkDocs site, in-app help
+- `docs/` - architecture overview and the MkDocs site with the help
+  pages; the app's help drawer reads its entries from
+  `backend/config/help/` instead
 - `.claude/rules/` - the project rule set (also the source of truth
   for the norms; injected into every agent session)
 - `e2e/` - Playwright smoke + full suites
@@ -207,8 +209,13 @@ tools = "adaptive_learner_tools.plugin:ToolsPlugin"
 6. If your plugin has runtime settings, drop them at
    `backend/config/plugins/{slug}.yaml` - PluginForge reads them from
    the backend config dir, not from inside the plugin's own directory.
-7. `cd backend && poetry lock && poetry install`, then
-   `make test-plugin-{yourname}`.
+7. Add a `test-plugin-{slug}` target to the `Makefile`, modelled on the
+   existing ones, and list it under `test-plugins`.
+   `backend/tests/test_makefile_plugin_targets.py` (part of `make test`)
+   fails while a plugin with tests is missing there, because its tests
+   would otherwise run nowhere, neither in `make test` nor in CI.
+8. `cd backend && poetry lock && poetry install`, then
+   `make test-plugin-{slug}`.
 
 A green run looks like this (captured from `tools`; `make
 test-plugin-tools` is the wrapper, and runs the same tests once

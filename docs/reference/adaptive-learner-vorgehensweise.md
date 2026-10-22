@@ -126,7 +126,7 @@ flowchart TD
 * **Echte UTF-8-Umlaute:** ä, ö, ü, ß. ae/oe/ue sind als Ersatz strikt verboten.
 * **Ratchet-Guards:** Kohäsions-Watcher (WARN >500, ERROR >1000), File-Size-Baseline, Complexity-Gate (radon E/F, ESLint cx >20). madge 0 Zyklen.
 * **Test Impact Analysis:** `vitest --changed` und `pytest --testmon` auf PRs. Volle Suite (5758+ FE, 1200+ BE) nachts plus bei Release.
-* **CI-Nachtschicht:** Security-Scan (pip-audit, npm audit, bandit), Coverage, Dexie-Smoke, Complexity-Report nachts. Auf PRs nur Korrektheit.
+* **CI-Nachtschicht:** Security-Scan (pip-audit, bun audit, bandit), Coverage, Complexity-Report nachts; der Dexie-Smoke nachts und auf jedem PR, den er betrifft (#3748). Auf PRs nur Korrektheit.
 * **axe-core a11y** plus ESLint bei 0 Warnings.
 
 ## Visual-Nachweis (zwei getrennte Mechanismen, beide Pflicht bei UI)
