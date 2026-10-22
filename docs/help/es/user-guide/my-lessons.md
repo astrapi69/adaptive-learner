@@ -5,12 +5,12 @@ mismo formato reproducible sin conexión que los conjuntos de
 contenido descargados. Puedes crear una lección a partir de un
 chat analizado, guardar una buena lección adaptativa para
 reproducirla, exportar una lección para compartirla con alguien
-e importar lecciones que otros han compartido. Todo funciona sin
-conexión, y tus lecciones se quedan en tu dispositivo hasta que uses
-una función que las transmita, por ejemplo una contribución a la
-comunidad (pull request) o "Compartir como repositorio", que suben la
-lección a GitHub, o una revisión con IA, que envía su contenido a tu
-proveedor de IA.
+e importar lecciones que otros han compartido. Estos pasos
+funcionan sin conexión, y tus lecciones se quedan en tu
+dispositivo hasta que uses una función que las transmita, por
+ejemplo una contribución a la comunidad (pull request) o
+"Compartir como repositorio", que suben la lección a GitHub, o una
+revisión con IA, que envía su contenido a tu proveedor de IA.
 
 Encontrarás Mis lecciones en la parte superior del **Navegador
 de conjuntos** (`/content`), por encima de los conjuntos

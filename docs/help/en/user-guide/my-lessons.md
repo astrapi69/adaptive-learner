@@ -4,7 +4,7 @@
 offline, playable format as downloaded content sets. You can make a
 lesson from an analysed chat, save a good adaptive lesson for replay,
 export a lesson to share with someone else, and import lessons others
-have shared. Everything works offline, and your lessons stay on your
+have shared. These steps work offline, and your lessons stay on your
 device until you use a feature that passes them on, for example a
 community contribution (pull request) or "Share as repository", which
 upload the lesson to GitHub, or an AI check, which sends its content

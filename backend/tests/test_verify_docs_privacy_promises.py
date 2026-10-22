@@ -426,14 +426,14 @@ LEGITIMATE = [
     (
         "en",
         "3829-my-lessons",
-        "Everything works offline, and your lessons stay on your\ndevice until you use a feature "
+        "These steps work offline, and your lessons stay on your\ndevice until you use a feature "
         "that passes them on, for example a community contribution (pull request).",
     ),
     (
         "de",
         "3829-my-lessons",
-        "Alles funktioniert offline, und deine Lektionen bleiben auf\ndeinem Gerät, bis du eine "
-        "Funktion nutzt, die sie weitergibt.",
+        "Diese Schritte funktionieren offline, und deine Lektionen bleiben auf\ndeinem Gerät, bis "
+        "du eine Funktion nutzt, die sie weitergibt.",
     ),
     (
         "en",
