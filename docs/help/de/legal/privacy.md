@@ -26,7 +26,7 @@ E-Mail: asterios.raptis@web.de
 Adaptive Learner hat keinen eigenen Server. Die App und diese Seiten setzen
 keine Cookies, nutzen keine Analyse- oder Tracking-Dienste und laden keine
 Schriften oder Skripte von Dritten. Ihr Lernfortschritt, Ihre Statistiken und
-Ihre Einstellungen bleiben in Ihrem Browser, für Sie. Der Betreiber erhält
+Ihre Einstellungen werden in Ihrem Browser gespeichert. Der Betreiber erhält
 davon nur, was Sie ihm selbst schicken, und andere erhalten Teile davon nur,
 wenn eine Funktion sie braucht, die Sie nutzen, etwa die KI mit Ihrem eigenen
 Schlüssel.
@@ -116,9 +116,9 @@ oben.
 
 Einige Funktionen nutzen die GitHub-API (`api.github.com`) mit einem
 persönlichen Zugangstoken, das Sie selbst eintragen, in den Einstellungen unter
-Integrationen oder für ein einzelnes Repository. Das Token bleibt in Ihrem
-Browser und wird nur an GitHub gesendet. Mit ihm handelt die App in Ihrem
-Namen:
+Integrationen oder für ein einzelnes Repository. Das Token wird in Ihrem
+Browser gespeichert und nur an GitHub gesendet. Mit ihm handelt die App in
+Ihrem Namen:
 
 - Die App prüft das Token und liest dabei Ihren GitHub-Benutzernamen.
 - Die App liest private Repositorys, die Sie verbunden haben, auch bei der
@@ -282,8 +282,8 @@ Eingabefeld, im Aussprachetraining in Ihrem Versuch; wenn Sie ihn abschicken,
 geht er an Ihren KI-Anbieter. Rechtsgrundlage für das Starten der Erkennung
 ist Ihre Anfrage (Art. 6 Abs. 1 lit. b DSGVO). In den Einstellungen unter
 Lernen blenden Sie mit "Mikrofon-Schaltfläche anzeigen" die Spracheingabe aus.
-Aufnahmen in Sprechübungen macht die App dagegen selbst; sie bleiben in Ihrem
-Browser.
+Aufnahmen in Sprechübungen macht die App dagegen selbst; sie werden in Ihrem
+Browser gespeichert.
 
 ## Vorlesen
 

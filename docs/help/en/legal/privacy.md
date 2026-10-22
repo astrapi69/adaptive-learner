@@ -25,10 +25,10 @@ Email: asterios.raptis@web.de
 
 Adaptive Learner has no server of its own. The app and these pages set no
 cookies, use no analytics or tracking services and load no fonts or scripts
-from third parties. Your learning progress, statistics and settings stay in
-your browser, for you. Of these, the operator receives only what you send him
-yourself, and others receive parts of them only when a feature you use needs
-them, such as the AI with your own key.
+from third parties. Your learning progress, your statistics and your settings
+are stored in your browser. Of these, the operator receives only what you send
+him yourself, and others receive parts of them only when a feature you use
+needs them, such as the AI with your own key.
 
 Data leaves your device only in these cases, each described in detail below:
 
@@ -107,7 +107,7 @@ USA, see above.
 
 Some features use the GitHub API (`api.github.com`) with a personal access
 token that you enter yourself, in Settings under Integrations or for a single
-repository. The token stays in your browser and is sent only to GitHub. With
+repository. The token is stored in your browser and sent only to GitHub. With
 it, the app acts in your name:
 
 - It checks the token and reads your GitHub username in the process.
@@ -259,7 +259,7 @@ the input field, in pronunciation practice in your attempt; when you send it,
 it goes to your AI provider. The legal basis for starting the recognition is
 your request (Art. 6(1)(b) GDPR). In Settings under Learning, "Show
 microphone button" hides voice input. Recordings in speaking exercises, on the
-other hand, are made by the app itself and stay in your browser.
+other hand, are made by the app itself; they are stored in your browser.
 
 ## Read-aloud
 

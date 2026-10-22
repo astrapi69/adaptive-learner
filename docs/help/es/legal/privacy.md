@@ -29,7 +29,7 @@ Correo electrónico: asterios.raptis@web.de
 Adaptive Learner no tiene servidor propio. La app y estas páginas no instalan
 cookies, no utilizan servicios de análisis ni de seguimiento y no cargan
 fuentes ni scripts de terceros. Su progreso, sus estadísticas y sus ajustes se
-quedan en su navegador, para usted. De ellos, el operador solo recibe lo que
+almacenan en su navegador. De ellos, el operador solo recibe lo que
 usted mismo le envíe, y otros solo reciben partes de ellos cuando las necesita
 una función que usted utiliza, por ejemplo la IA con su propia clave.
 
@@ -120,7 +120,7 @@ transferencia a Estados Unidos, véase arriba.
 
 Algunas funciones utilizan la API de GitHub (`api.github.com`) con un token de
 acceso personal que usted mismo introduce, en Ajustes, en Integraciones, o
-para un repositorio concreto. El token permanece en su navegador y solo se
+para un repositorio concreto. El token se almacena en su navegador y solo se
 envía a GitHub. Con él, la app actúa en su nombre:
 
 - Comprueba el token y, al hacerlo, lee su nombre de usuario de GitHub.
@@ -286,7 +286,7 @@ lo envía, va a su proveedor de IA. La base jurídica para iniciar el
 reconocimiento es su solicitud (art. 6, apartado 1, letra b), del RGPD). En
 Ajustes, en Aprendizaje, «Mostrar botón de micrófono» oculta la entrada de
 voz. Las grabaciones de los ejercicios de expresión oral, en cambio, las hace
-la propia app y se quedan en su navegador.
+la propia app; se almacenan en su navegador.
 
 ## Lectura en voz alta
 
