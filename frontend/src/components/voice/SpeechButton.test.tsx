@@ -5,7 +5,7 @@
  * pref off → no render) and the click toggle.
  */
 
-import {fireEvent, render, screen} from "@testing-library/react";
+import {act, fireEvent, render, screen} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import {I18nProvider} from "../../hooks/ui/useI18n";
@@ -13,7 +13,7 @@ import {VOICE_PREF_KEYS} from "../../lib/voice/voicePref";
 
 import SpeechButton from "./SpeechButton";
 
-function setMockSynth(): {
+function setMockSynth(voices: SpeechSynthesisVoice[] = []): {
     speak: ReturnType<typeof vi.fn>;
     cancel: ReturnType<typeof vi.fn>;
 } {
@@ -22,7 +22,7 @@ function setMockSynth(): {
     (globalThis as unknown as {window: typeof window}).window = {
         ...((globalThis as unknown as {window: typeof window}).window || {}),
         speechSynthesis: {
-            getVoices: () => [],
+            getVoices: () => [...voices],
             speak,
             cancel,
             pause: vi.fn(),
@@ -130,5 +130,51 @@ describe("SpeechButton click", () => {
         expect(btn.getAttribute("data-speaking")).toBe("false");
         // First click cancels prior + queues; second click cancels.
         expect(cancel).toHaveBeenCalled();
+    });
+});
+
+// #3805: a network voice sends the text read aloud to its provider. Chrome's
+// network voice "Google Deutsch" next to a local espeak-ng voice.
+describe("SpeechButton voice choice (#3805)", () => {
+    const googleDeutsch = {
+        name: "Google Deutsch",
+        lang: "de-DE",
+        localService: false,
+    } as SpeechSynthesisVoice;
+    const espeakGerman = {
+        name: "German espeak-ng",
+        lang: "de",
+        localService: true,
+    } as SpeechSynthesisVoice;
+
+    /** Click the button once the voice list has loaded; return the voice
+     *  the utterance was given. */
+    async function voiceSpokenWith(): Promise<SpeechSynthesisVoice | null> {
+        const {speak} = setMockSynth([googleDeutsch, espeakGerman]);
+        render(
+            <I18nProvider>
+                <SpeechButton text="Hallo Welt" lang="de-DE" testId="t1" />
+            </I18nProvider>,
+        );
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 0));
+        });
+        fireEvent.click(screen.getByTestId("speech-button-t1"));
+        const utter = speak.mock.calls[0][0] as SpeechSynthesisUtterance;
+        return utter.voice;
+    }
+
+    it("speaks with the local voice when a network voice for the language is listed first", async () => {
+        expect(await voiceSpokenWith()).toBe(espeakGerman);
+    });
+
+    it("keeps the voice the learner chose in Settings, even a network voice", async () => {
+        localStorage.setItem(VOICE_PREF_KEYS.voiceName, "Google Deutsch");
+        expect(await voiceSpokenWith()).toBe(googleDeutsch);
+    });
+
+    it("falls back to the local-first pick when the chosen voice is no longer offered", async () => {
+        localStorage.setItem(VOICE_PREF_KEYS.voiceName, "Microsoft Hedda");
+        expect(await voiceSpokenWith()).toBe(espeakGerman);
     });
 });

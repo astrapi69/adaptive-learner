@@ -222,8 +222,15 @@ contient la carte **Voix** :
 - **Lire automatiquement les réponses IA** - lit chaque réponse de l'IA
   automatiquement (désactivé par défaut - un son inattendu est rarement
   souhaité).
-- **Voix** - la voix utilisée pour la lecture ; par défaut, la plus
-  proche de la langue de votre projet est choisie.
+- **Voix** - la voix utilisée pour la lecture. Par défaut, une voix qui
+  s'exécute localement sur votre appareil est privilégiée pour la langue
+  de votre projet ; avec ce réglage par défaut, une voix en ligne ne lit
+  que si votre appareil n'en a aucune pour cette langue, et dans les
+  premiers instants après le chargement d'une page, parce que votre
+  appareil n'a alors pas encore mis à disposition ses propres voix. Une
+  voix en ligne envoie le texte lu à son fournisseur (les voix Google de
+  Chrome, à Google). Une voix que vous choisissez ici est toujours
+  utilisée tant que votre navigateur la propose, même une voix en ligne.
 - **Vitesse** et **Hauteur** - curseurs de 0,5 à 2.
 - **Afficher le bouton micro** - ajoute un bouton microphone au champ
   de saisie de la Session, qui capte la parole et remplit la zone de

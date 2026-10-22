@@ -210,8 +210,15 @@ Karte **Sprachausgabe**:
 - **KI-Antworten automatisch vorlesen** - spricht jede KI-Antwort
   automatisch (Standard AUS - überraschendes Audio ist selten, was man
   will).
-- **Stimme** - die Vorlese-Stimme; der Standard wählt die beste
-  Übereinstimmung für deine Projektsprache.
+- **Stimme** - die Vorlese-Stimme. Der Standard bevorzugt für deine
+  Projektsprache eine Stimme, die auf deinem Gerät arbeitet; eine
+  Online-Stimme liest dabei nur, wenn das Gerät für diese Sprache keine
+  hat, und in den ersten Augenblicken nach dem Laden einer Seite, weil
+  dein Gerät seine eigenen Stimmen dann noch nicht bereitgestellt hat.
+  Eine Online-Stimme schickt den vorgelesenen Text an ihren Anbieter (die
+  Google-Stimmen in Chrome an Google). Eine Stimme, die du hier selbst
+  wählst, gilt immer, solange dein Browser sie anbietet, auch eine
+  Online-Stimme.
 - **Tempo** und **Tonhöhe** - Schieberegler von 0,5 bis 2.
 - **Mikrofon-Schaltfläche anzeigen** - fügt dem Sitzungs-Eingabefeld
   einen Mikrofon-Knopf hinzu, der Sprache aufnimmt und das Textfeld mit

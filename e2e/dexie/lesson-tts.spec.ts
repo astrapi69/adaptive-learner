@@ -1,5 +1,5 @@
 /**
- * Lesson read-aloud (TTS) smoke — Dexie build, no backend.
+ * Lesson read-aloud (TTS) smoke - Dexie build, no backend.
  *
  * Opens the bundled French-A1-for-English set's first lesson
  * (01-greetings, a theory step) and exercises the read-aloud surface:
@@ -11,12 +11,16 @@
  *   - pressing "R" toggles read-aloud from the keyboard;
  *   - auto-read speaks each step on display, and the X ends it for the
  *     current lesson only (the next step stays silent, a fresh load reads
- *     again, #3760).
+ *     again, #3760);
+ *   - every one of them reads with the voice on the device, although the
+ *     engine lists an online voice for the language first, also on a cold
+ *     start where the device voice is listed only after the online one
+ *     (#3805: an online voice sends the text to its provider).
  *
  * speechSynthesis is INJECTED before the app loads so the run does not
  * depend on voices being installed in headless chromium.
  *
- * #165 — flake fix: the set is downloaded ONCE in ``beforeAll`` (a shared
+ * #165 - flake fix: the set is downloaded ONCE in ``beforeAll`` (a shared
  * serial context), out of the per-test critical path; each test
  * re-navigates to the already-cached lesson, which is fast and
  * deterministic. The previous spec re-ran the full UI download (content
@@ -32,15 +36,71 @@ import {expect, test, type BrowserContext, type Page} from "@playwright/test";
 
 const SET_ID = "fr-a1-from-en";
 
-/** Install a deterministic speechSynthesis before any app code runs. */
-async function injectFakeSpeech(page: Page): Promise<void> {
-    await page.addInitScript(() => {
+/** The part of a ``SpeechSynthesisVoice`` the app reads. */
+interface FakeVoice {
+    name: string;
+    lang: string;
+    localService: boolean;
+    default: boolean;
+    voiceURI: string;
+}
+
+/** Both voices speak the lesson's language. The online one is listed first,
+ *  as Chrome lists its "Google ..." voices on some systems (#3805). */
+const ONLINE_VOICE: FakeVoice = {
+    name: "Google français",
+    lang: "fr-FR",
+    localService: false,
+    default: true,
+    voiceURI: "Google français",
+};
+const DEVICE_VOICE: FakeVoice = {
+    name: "French (device)",
+    lang: "fr-FR",
+    localService: true,
+    default: false,
+    voiceURI: "French (device)",
+};
+
+interface FakeSpeechOptions {
+    /** List only the online voice at first and the device voice once the
+     *  page listens for ``voiceschanged``: a cold start on a browser that
+     *  lists its device voices after its online ones (#3805). */
+    deviceVoiceLate?: boolean;
+}
+
+/** Install a deterministic speechSynthesis before any app code runs. It
+ *  records the text and the voice name of every utterance it is handed. */
+async function injectFakeSpeech(
+    page: Page,
+    options: FakeSpeechOptions = {},
+): Promise<void> {
+    const voiceSetup = {
+        online: ONLINE_VOICE,
+        device: DEVICE_VOICE,
+        deviceVoiceLate: options.deviceVoiceLate ?? false,
+    };
+    await page.addInitScript(({online, device, deviceVoiceLate}) => {
         const w = window as unknown as {
             __ttsSpoken: string[];
+            __ttsVoices: (string | null)[];
             speechSynthesis: unknown;
             SpeechSynthesisUtterance: unknown;
         };
         w.__ttsSpoken = [];
+        w.__ttsVoices = [];
+        let voices = deviceVoiceLate ? [online] : [online, device];
+        const voicesChangedListeners = new Set<() => void>();
+        let deviceVoiceScheduled = false;
+        /** The device voice arrives 200 ms after the page first listens. */
+        const scheduleDeviceVoice = () => {
+            if (!deviceVoiceLate || deviceVoiceScheduled) return;
+            deviceVoiceScheduled = true;
+            setTimeout(() => {
+                voices = [online, device];
+                [...voicesChangedListeners].forEach((listener) => listener());
+            }, 200);
+        };
         class FakeUtterance {
             text: string;
             lang = "";
@@ -56,23 +116,30 @@ async function injectFakeSpeech(page: Page): Promise<void> {
             }
         }
         const fakeSynth = {
-            getVoices: () => [
-                {name: "Fake FR", lang: "fr-FR", default: true} as unknown,
-            ],
+            getVoices: () => voices,
             // Record + keep "speaking" (do NOT auto-fire onend) so the
             // UI's speaking state is stable for assertions.
             speak: (u: FakeUtterance) => {
                 w.__ttsSpoken.push(u.text);
+                w.__ttsVoices.push(
+                    u.voice ? (u.voice as {name: string}).name : null,
+                );
             },
             cancel: () => {},
             pause: () => {},
             resume: () => {},
             speaking: false,
             pending: false,
-            addEventListener: () => {},
-            removeEventListener: () => {},
+            addEventListener: (type: string, listener: () => void) => {
+                if (type !== "voiceschanged") return;
+                voicesChangedListeners.add(listener);
+                scheduleDeviceVoice();
+            },
+            removeEventListener: (type: string, listener: () => void) => {
+                if (type === "voiceschanged") voicesChangedListeners.delete(listener);
+            },
         };
-        // ``window.speechSynthesis`` is a read-only accessor — a plain
+        // ``window.speechSynthesis`` is a read-only accessor - a plain
         // assignment silently no-ops, leaving the REAL synth in place
         // while ``SpeechSynthesisUtterance`` (writable) gets replaced by
         // the fake. The real synth then rejects the fake utterance
@@ -88,7 +155,22 @@ async function injectFakeSpeech(page: Page): Promise<void> {
             writable: true,
             value: FakeUtterance as unknown as typeof SpeechSynthesisUtterance,
         });
-    });
+    }, voiceSetup);
+}
+
+/** The voice name of every utterance handed to the engine so far (null:
+ *  no voice set, the browser would choose). */
+async function spokenVoices(page: Page): Promise<(string | null)[]> {
+    return page.evaluate(
+        () => (window as unknown as {__ttsVoices: (string | null)[]}).__ttsVoices,
+    );
+}
+
+/** Something was read, and every utterance used the device voice (#3805). */
+async function expectReadWithDeviceVoice(page: Page): Promise<void> {
+    const voices = await spokenVoices(page);
+    expect(voices.length).toBeGreaterThan(0);
+    expect(voices).toEqual(voices.map(() => DEVICE_VOICE.name));
 }
 
 /** Expand the collapsible lesson-options panel (#1628) so the wrapped
@@ -132,7 +214,7 @@ test.describe("Lesson read-aloud (TTS)", () => {
 
     test.beforeAll(async ({browser}) => {
         // One-time setup: the only place the set is downloaded. Give it
-        // headroom — it is paid once for the whole spec, not per test.
+        // headroom: it is paid once for the whole spec, not per test.
         test.setTimeout(90_000);
         context = await browser.newContext();
         page = await context.newPage();
@@ -144,7 +226,7 @@ test.describe("Lesson read-aloud (TTS)", () => {
         await context.close();
     });
 
-    /** Reset to a fresh lesson render from the cached set — no download. */
+    /** Reset to a fresh lesson render from the cached set, no download. */
     test.beforeEach(async () => {
         await page.goto(lessonUrl);
         await expect(page.getByTestId("lesson-page")).toBeVisible();
@@ -175,6 +257,8 @@ test.describe("Lesson read-aloud (TTS)", () => {
         );
         expect(spoken.length).toBeGreaterThan(0);
         expect(spoken[0].length).toBeGreaterThan(0);
+        // ... with the device voice, not the online voice listed first.
+        await expectReadWithDeviceVoice(page);
 
         // End from the mini-player's X (#3760): the player disappears +
         // speaking ends.
@@ -185,7 +269,7 @@ test.describe("Lesson read-aloud (TTS)", () => {
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
 
-    // #1928 — iOS Safari silently stops a single utterance after ~15s, which
+    // #1928 - iOS Safari silently stops a single utterance after ~15s, which
     // cut a typical theory run (median 1551 chars over the shipped content)
     // off after roughly a tenth of its text. ``speak()`` now hands the engine
     // one utterance PER CHUNK; this pins that it actually happens.
@@ -193,7 +277,7 @@ test.describe("Lesson read-aloud (TTS)", () => {
     // Runs under Chromium rather than the WebKit gate on purpose: the
     // chunking is plain JS, and the fake synth above records every utterance,
     // so the mechanism is observable here. What this canNOT show is the iOS
-    // cutoff itself — that stays a manual device check.
+    // cutoff itself: that stays a manual device check.
     test("a theory block is spoken as several chunked utterances", async () => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));
@@ -234,6 +318,7 @@ test.describe("Lesson read-aloud (TTS)", () => {
             "data-speaking",
             "true",
         );
+        await expectReadWithDeviceVoice(page);
         // R again stops.
         await page.keyboard.press("r");
         await expect(page.getByTestId("lesson-tts-player")).toHaveCount(0);
@@ -267,6 +352,7 @@ test.describe("Lesson read-aloud (TTS)", () => {
                 ),
             )
             .toBeGreaterThan(before);
+        await expectReadWithDeviceVoice(page);
 
         // #3760 - the player's X ends read-aloud for THIS lesson: playback
         // stops, auto-read is off here, and the next step is not read again.
@@ -299,5 +385,35 @@ test.describe("Lesson read-aloud (TTS)", () => {
         );
 
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
+    });
+
+    // #3805 - a cold start straight into a lesson with auto-read on: the
+    // browser lists only its online voice at first and the device voice a
+    // moment later. Auto-read must wait for it instead of reading the first
+    // step with the online voice, which would send the text to its provider.
+    test("auto-read on a cold start waits for the device voice listed late", async () => {
+        // Auto-read on, saved in the preferences the whole context shares.
+        await openLessonOptions(page);
+        const autoRead = page.getByTestId("lesson-tts-autoread");
+        if ((await autoRead.getAttribute("aria-pressed")) !== "true") {
+            await autoRead.click();
+        }
+        await expect(autoRead).toHaveAttribute("aria-pressed", "true");
+
+        const coldPage = await context.newPage();
+        const errors: string[] = [];
+        coldPage.on("pageerror", (e) => errors.push(e.message));
+        try {
+            await injectFakeSpeech(coldPage, {deviceVoiceLate: true});
+            await coldPage.goto(lessonUrl);
+            await expect(coldPage.getByTestId("lesson-page")).toBeVisible();
+            await expect
+                .poll(async () => (await spokenVoices(coldPage)).length)
+                .toBeGreaterThan(0);
+            await expectReadWithDeviceVoice(coldPage);
+            expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
+        } finally {
+            await coldPage.close();
+        }
     });
 });

@@ -2,7 +2,7 @@
 
 > Cette page est une traduction automatique de l'original allemand, fournie à titre purement informatif. Seule la version allemande fait foi juridiquement.
 
-Dernière mise à jour : 21 octobre 2026
+Dernière mise à jour : 22 octobre 2026
 
 En tant que texte juridique, cette politique utilise le vouvoiement.
 
@@ -301,15 +301,17 @@ réalisés par l'application elle-même et restent dans votre navigateur.
 
 ## Lecture à voix haute
 
-Vous lancez la lecture à voix haute avec les boutons de lecture, la touche R
-ou « Tout lire » ; la lecture automatique ne fonctionne que si vous l'activez.
+Vous lancez la lecture à voix haute avec les boutons de lecture, la touche R ou
+« Tout lire » ; la lecture automatique ne fonctionne que si vous l'activez.
 Sont lus les textes des leçons, les consignes, les questions de l'évaluation du
 type d'apprentissage, les réponses de l'IA et les phrases de la pratique de la
 prononciation. Pour cela, l'application utilise la synthèse vocale de votre
-navigateur ou de votre système d'exploitation. Elle choisit une voix qui
-s'exécute sur votre appareil et ne recourt à une voix en ligne que s'il
-n'existe pas de voix locale pour la langue ou si vous avez vous-même choisi une
-voix en ligne dans les Paramètres.
+navigateur ou de votre système d'exploitation. Elle privilégie une voix qui
+s'exécute sur votre appareil. Une voix en ligne ne lit que dans trois cas :
+s'il n'existe pas de voix locale pour la langue, si vous avez vous-même choisi
+une voix en ligne dans les Paramètres, et dans les premiers instants après le
+chargement d'une page, parce que votre appareil n'a alors pas encore mis à
+disposition ses propres voix.
 
 Une voix en ligne envoie le texte à lire à son fournisseur. Dans Google Chrome,
 ce sont des voix de Google ; le texte figure alors dans l'adresse de la requête

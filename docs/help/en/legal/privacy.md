@@ -3,7 +3,7 @@
 > This page is a translation of the German original and is provided for
 > information only. Only the German version is legally binding.
 
-Last updated: 21 October 2026
+Last updated: 22 October 2026
 
 This policy covers the public web version of Adaptive Learner at
 `astrapi69.github.io/adaptive-learner`, the public preview of the next version
@@ -266,10 +266,12 @@ other hand, are made by the app itself and stay in your browser.
 You start read-aloud with the read-aloud buttons, the R key or "Read all"; the
 automatic read-aloud runs only if you switch it on. It reads lesson texts,
 tasks, questions of the learning-type assessment, AI replies and phrases in
-pronunciation practice. For this the app uses the speech output of your
-browser or operating system. It picks a voice that runs on your device and
-falls back to an online voice only if there is no local voice for the
-language or if you chose an online voice yourself in Settings.
+pronunciation practice. For this the app uses the speech output of your browser
+or operating system. It prefers a voice that runs on your device. An online
+voice reads only in three cases: if there is no local voice for the language,
+if you chose an online voice yourself in Settings, and in the first moments
+after a page loads, because your device has not yet made its own voices
+available at that point.
 
 An online voice sends the text to be read to its provider. In Google Chrome
 these are Google voices; the text is then in the address of the request to

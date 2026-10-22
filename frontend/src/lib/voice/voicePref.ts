@@ -2,7 +2,7 @@
  * Voice preferences (Phase 31 / v1.18.0; consolidated #893).
  *
  * Persists user-toggleable voice settings in localStorage. These are
- * presentation-only — the SpeechButton + MicButton + read-aloud engine read
+ * presentation-only: the SpeechButton + MicButton + read-aloud engine read
  * them to decide visibility + rate/pitch/voice/speed; the app's core flow
  * doesn't care.
  *
@@ -26,7 +26,10 @@
  *   - autoPlayAi: false (don't surprise the user with sound)
  *   - ttsRate: 1.0  (Web Speech default)
  *   - ttsPitch: 1.0
- *   - ttsVoiceName: ""  (empty = use ``pickVoice(lang)`` default)
+ *   - ttsVoiceName: ""  (empty = the local-first ``pickVoice(lang)``; a
+ *     stored name wins while the browser offers that voice, even a
+ *     network voice, and falls back to ``pickVoice`` once it is gone;
+ *     see ``resolveVoice``, #3805)
  *   - sttLangOverride: ""  (empty = use project / user lang)
  *   - pronunciationEnabled: true (the page hides anyway if the project
  *     isn't a language project)
@@ -232,7 +235,7 @@ export function writeTtsRate(v: number): void {
 export function writeTtsPitch(v: number): void {
     patch("ttsPitch", Math.max(0.5, Math.min(2.0, v)));
 }
-/** Persist the preferred TTS voice name ("" = pick a default by lang). */
+/** Persist the preferred TTS voice name ("" = the local-first pick by lang). */
 export function writeTtsVoiceName(v: string): void {
     patch("ttsVoiceName", v);
 }

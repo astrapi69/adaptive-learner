@@ -3629,6 +3629,34 @@ abschalten geht nur über den Schalter in den Lektionsoptionen.
 - [ ] TC-0962 Den Schalter in den Lektionsoptionen ausschalten und eine andere Lektion
       öffnen: "Automatisch vorlesen" bleibt aus
 
+#### TS-0139 Vorlesen nimmt eine Stimme des Geräts (#3805)
+
+Eine Online-Stimme (in Chrome die "Google ..."-Stimmen) schickt den
+vorgelesenen Text an ihren Anbieter. Mit "Standard (auto)" nimmt die App eine
+Stimme des Geräts, sobald es eine für die Sprache gibt; eine selbst gewählte
+Stimme gilt immer. In den ersten Augenblicken nach dem Laden einer Seite kann
+ein Tipp noch mit einer Online-Stimme lesen, weil das Gerät seine eigenen
+Stimmen dann noch nicht bereitgestellt hat; so steht es auch in der
+Datenschutzerklärung.
+
+- [ ] TC-0995 Windows oder macOS, Chrome: Einstellungen > Lernen > Vorlesen und
+      Diktieren > Stimme auf "Standard (auto)", eine deutsche Lektion öffnen
+      und den Theorieschritt mit dem Vorlese-Knopf, mit der Taste R, mit
+      "Alle vorlesen" und mit eingeschaltetem "Automatisch vorlesen"
+      vorlesen lassen: es liest eine Systemstimme (zum Vergleich in der
+      Liste kurz "Google Deutsch" wählen: die beiden klingen hörbar
+      verschieden)
+- [ ] TC-0996 "Automatisch vorlesen" eingeschaltet: Browser ganz schließen, neu
+      öffnen, die Lektion direkt vom Dashboard aus öffnen, ohne vorher die
+      Einstellungen zu besuchen: schon den ersten Schritt liest die
+      Systemstimme, nicht "Google Deutsch", und R liest danach ebenso mit ihr
+- [ ] TC-0997 In der Liste "Google Deutsch" wählen: Knopf, Taste R und "Alle
+      vorlesen" lesen mit "Google Deutsch" (die eigene Wahl gilt, auch für
+      eine Online-Stimme)
+- [ ] TC-0998 Chrome unter Linux (bietet von sich aus nur Online-Stimmen an): mit
+      "Standard (auto)" liest die App weiterhin vor, dann mit "Google
+      Deutsch"
+
 #### TS-0133 Hinweis "Als App installieren" als Karte im Dashboard (#3765)
 
 Auf dem iPhone in Safari (nicht vom Home-Bildschirm geöffnet) erscheint der
