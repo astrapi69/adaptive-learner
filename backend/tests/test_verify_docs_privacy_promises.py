@@ -68,7 +68,8 @@ LEGITIMATE = [
         "en",
         "new-note",
         "Only your cards are sent (front, back, notes), no profile and no learning progress. "
-        "As with every request, your AI provider also receives your IP address and your API key.",
+        "As with every request, your AI provider also receives, among other things, your IP "
+        "address and your API key.",
     ),
     ("en", "may-contain", "Text you write into your own cards can itself be personal data."),
     ("en", "export", "The exported file contains no personal data."),
@@ -76,8 +77,8 @@ LEGITIMATE = [
         "de",
         "new-note",
         "Gesendet werden nur deine Lernkarten (Vorderseite, Rückseite, Notizen), kein Profil "
-        "und kein Lernfortschritt. Wie bei jeder Anfrage erhält dein KI-Anbieter dabei deine "
-        "IP-Adresse und deinen API-Schlüssel.",
+        "und kein Lernfortschritt. Wie bei jeder Anfrage erhält dein KI-Anbieter dabei unter "
+        "anderem deine IP-Adresse und deinen API-Schlüssel.",
     ),
     (
         "de",

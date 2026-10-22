@@ -150,7 +150,8 @@ describe("AiValidationDialog", () => {
     await screen.findByTestId("ai-validation-estimate");
     const note = screen.getByTestId("ai-validation-privacy");
     expect(note).toHaveTextContent("Only your cards are sent");
-    expect(note).toHaveTextContent("IP address");
+    // #3840 - IP address and key are named as examples, not as the complete list.
+    expect(note).toHaveTextContent("among other things, your IP address and your API key");
     expect(note).not.toHaveTextContent(/no personal data/i);
     expect(screen.getByTestId("ai-validation-privacy-link").getAttribute("href")).toBe(
       "https://astrapi69.github.io/adaptive-learner/docs/en/legal/privacy/",

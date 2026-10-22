@@ -3123,7 +3123,7 @@
     "ai_privacy_link": "Politique de confidentialité",
     "ai_validation": {
       "intro": "Une IA peut en plus vérifier l'exactitude des traductions, la grammaire et le niveau.",
-      "privacy": "Seul le contenu de ta leçon est envoyé (cartes, textes, exercices), sans ton profil ni ta progression. Comme pour chaque requête, {provider} reçoit aussi ton adresse IP et ta clé API.",
+      "privacy": "Seul le contenu de ta leçon est envoyé (cartes, textes, exercices), sans ton profil ni ta progression. Comme pour chaque requête, {provider} reçoit aussi, entre autres, ton adresse IP et ta clé API.",
       "provider_fallback": "ton fournisseur d'IA",
       "consent": "Lancer la validation par IA",
       "run": "Vérifier avec l'IA",
@@ -3171,7 +3171,7 @@
       "title": "Vérification du contenu par l'IA",
       "loading": "Préparation des cartes...",
       "cost_estimate": "~{cards} cartes, ~{tokens} tokens, ~{usd}.",
-      "privacy": "Seules tes cartes sont envoyées (recto, verso, notes), sans ton profil ni ta progression. Comme pour chaque requête, ton fournisseur d'IA reçoit aussi ton adresse IP et ta clé API.",
+      "privacy": "Seules tes cartes sont envoyées (recto, verso, notes), sans ton profil ni ta progression. Comme pour chaque requête, ton fournisseur d'IA reçoit aussi, entre autres, ton adresse IP et ta clé API.",
       "confirm": "Vérifier",
       "progress": "Vérification du lot {current} sur {total}...",
       "rate_limited": "Patiente avant de lancer une autre vérification.",

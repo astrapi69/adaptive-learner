@@ -177,7 +177,7 @@ export default function ContentShareDialog({
                   testId="content-ai-privacy"
                   text={t(
                     "content.ai_validation.privacy",
-                    "Only your lesson's content is sent (cards, texts, exercises), no profile and no learning progress. As with every request, {provider} also receives your IP address and your API key.",
+                    "Only your lesson's content is sent (cards, texts, exercises), no profile and no learning progress. As with every request, {provider} also receives, among other things, your IP address and your API key.",
                   ).replace("{provider}", providerName)}
                 />
                 <label className="flex items-center justify-between gap-2">
