@@ -118,8 +118,16 @@ idioma de origen (`sets/de/fr-a1`). Un conjunto lleva además
 **`title`** (en el idioma de origen, lo que lee el aprendiz) y
 **`title_native`** (en el idioma de destino, como segundo título).
 
-Ambos códigos deben ser ISO 639-1 (dos letras), y
-`source_language` debe diferir de `target_language`. Los conjuntos
+Ambos códigos son etiquetas de idioma BCP 47 en forma canónica: el
+código más corto (`de`, `pt-BR`), tres letras para los idiomas sin
+código de dos letras (`gsw`, `yue`, `fil`). Una etiqueta mal formada
+(`de_DE`, vacía) es un error (`E-LANG-TAG`); una grafía no canónica
+(`EN`, `deu`) es una advertencia (`W-LANG-TAG-CANONICAL`). En un
+conjunto de idioma (`domain` ausente o `language`), el engine
+advierte cuando `source_language` es igual a `target_language` o
+falta `title_native` (`W-LANG-PAIR-SAME`, `W-SET-TITLE-NATIVE`); la
+comprobación al compartir de la app bloquea ambos casos. Un conjunto
+de otro dominio no necesita ninguno de los dos. Los conjuntos
 anteriores a v1.2 sin estos campos siguen cargándose: la antigua
 clave `language` se acepta como `target_language`, y
 `source_language` recurre a `en`.
@@ -878,7 +886,7 @@ Antes del PR de una nueva lección, comprobar:
 - [ ] **Precisión cultural**: uso real del idioma, no solo frases hechas de libro de texto
 - [ ] **Validación de esquema**: la lección carga limpiamente vía `dict_to_lesson()` (ver Pruebas locales)
 - [ ] **Integridad de las card-id**: cada `exercise.card_ids[i]` existe en los `cards[]` de la lección
-- [ ] **Par de idiomas**: `target_language` + `source_language` definidos (ISO 639-1, distintos), `title_native` presente
+- [ ] **Par de idiomas**: `target_language` + `source_language` definidos (BCP 47, canónicos; en conjuntos de idioma distintos y con `title_native`)
 
 ## Validación (dos niveles, v1.44.0)
 

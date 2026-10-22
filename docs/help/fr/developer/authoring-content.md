@@ -120,8 +120,17 @@ répertoire de langue source (`sets/de/fr-a1`). Un ensemble porte en
 outre **`title`** (dans la langue source, ce que lit l'apprenant)
 et **`title_native`** (dans la langue cible, comme second titre).
 
-Les deux codes doivent être en ISO 639-1 (deux lettres), et
-`source_language` doit être différent de `target_language`. Les
+Les deux codes sont des étiquettes de langue BCP 47 en forme
+canonique : le code le plus court (`de`, `pt-BR`), trois lettres pour
+les langues sans code à deux lettres (`gsw`, `yue`, `fil`). Une
+étiquette mal formée (`de_DE`, vide) est une erreur (`E-LANG-TAG`) ;
+une graphie non canonique (`EN`, `deu`) est un avertissement
+(`W-LANG-TAG-CANONICAL`). Pour un ensemble de langue (`domain` absent
+ou `language`), l'engine avertit quand `source_language` est égal à
+`target_language` ou que `title_native` manque (`W-LANG-PAIR-SAME`,
+`W-SET-TITLE-NATIVE`) ; la vérification au partage de l'app bloque
+les deux cas. Un ensemble d'un autre domaine n'a besoin ni de l'un ni
+de l'autre. Les
 ensembles antérieurs à la v1.2 sans ces champs se chargent toujours :
 l'ancienne clé `language` est acceptée comme `target_language`, et
 `source_language` retombe sur `en`.
@@ -898,7 +907,7 @@ Avant la PR d'une nouvelle leçon, vérifie :
 - [ ] **Exactitude culturelle** : usage réel de la langue, pas seulement des tournures de manuel
 - [ ] **Validation de schéma** : la leçon se charge proprement via `dict_to_lesson()` (voir Tests locaux)
 - [ ] **Intégrité des ID de carte** : chaque `exercise.card_ids[i]` existe dans `cards[]` de la leçon
-- [ ] **Paire de langues** : `target_language` + `source_language` définis (ISO 639-1, différents), `title_native` présent
+- [ ] **Paire de langues** : `target_language` + `source_language` définis (BCP 47, canoniques ; pour les ensembles de langue différents et avec `title_native`)
 
 ## Validation (deux niveaux, v1.44.0)
 

@@ -107,8 +107,16 @@ also carries **`title`** (in the source language, what the learner
 reads) and **`title_native`** (in the target language, as a
 secondary title).
 
-Both codes must be ISO 639-1 (two letters), and `source_language`
-must differ from `target_language`. Sets before v1.2 without these
+Both codes are BCP 47 language tags in canonical form: the shortest
+code (`de`, `pt-BR`), three letters for languages without a
+two-letter code (`gsw`, `yue`, `fil`). A tag that is not well-formed
+(`de_DE`, empty) is an error (`E-LANG-TAG`); a non-canonical spelling
+(`EN`, `deu`) is a warning (`W-LANG-TAG-CANONICAL`). For a language
+set (`domain` absent or `language`) the engine warns when
+`source_language` equals `target_language` or `title_native` is
+missing (`W-LANG-PAIR-SAME`, `W-SET-TITLE-NATIVE`); the app's share
+check blocks both. A set of another domain needs neither.
+Sets before v1.2 without these
 fields still load: the old `language` key is accepted as
 `target_language`, and `source_language` falls back to `en`.
 
@@ -980,7 +988,7 @@ Check before the PR for a new lesson:
 - [ ] **Cultural accuracy**: real language use, not just textbook phrases
 - [ ] **Schema validation**: the lesson loads cleanly via `dict_to_lesson()` (see Local testing)
 - [ ] **Card ID integrity**: every `exercise.card_ids[i]` exists in the lesson's `cards[]`
-- [ ] **Language pair**: `target_language` + `source_language` set (ISO 639-1, different), `title_native` present
+- [ ] **Language pair**: `target_language` + `source_language` set (BCP 47, canonical; for language sets different and with `title_native`)
 
 ## Validation (two layers, v1.44.0)
 
@@ -1164,7 +1172,11 @@ instead of jumping straight to GitHub:
    lesson lands in the tree (`sets/{source}/{target}-{level}/`) and
    an auto-numbered file name (`{nn}-{slug}.json`, the next number
    after the existing lessons). A brand-new pair + level shows
-   *"New set! You're the first."*
+   *"New set! You're the first."* This step also confirms the
+   title, the languages and the level. A language set needs a
+   CEFR level (A1-C2). A set that does not teach a language can
+   choose *"No level (not a language course)"* and is shared
+   without a level.
 2. **Duplicate scan.** The lesson is compared with the lessons
    already present in this path (card and exercise overlap -
    advisory, never blocking). If something similar exists, you

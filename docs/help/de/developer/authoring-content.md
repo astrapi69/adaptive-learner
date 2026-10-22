@@ -116,8 +116,16 @@ Ein Set trägt außerdem **`title`** (in der Ausgangssprache, was der
 Lernende liest) und **`title_native`** (in der Zielsprache, als
 Zweittitel).
 
-Beide Codes müssen ISO-639-1 (zwei Buchstaben) sein, und
-`source_language` muss sich von `target_language` unterscheiden.
+Beide Codes sind BCP-47-Sprach-Tags in kanonischer Form: der
+kürzeste Code (`de`, `pt-BR`), für Sprachen ohne Zwei-Buchstaben-Code
+drei Buchstaben (`gsw`, `yue`, `fil`). Ein nicht wohlgeformter Tag
+(`de_DE`, leer) ist ein Fehler (`E-LANG-TAG`), eine nicht kanonische
+Schreibweise (`EN`, `deu`) eine Warnung (`W-LANG-TAG-CANONICAL`). Bei
+einem Sprach-Set (`domain` fehlt oder ist `language`) warnt die
+Engine, wenn `source_language` gleich `target_language` ist oder
+`title_native` fehlt (`W-LANG-PAIR-SAME`, `W-SET-TITLE-NATIVE`); die
+Teilen-Prüfung der App blockiert beides. Ein Set mit einer anderen
+Domäne braucht beides nicht.
 Sets vor v1.2 ohne diese Felder laden weiterhin: der alte
 `language`-Schlüssel wird als `target_language` akzeptiert, und
 `source_language` fällt auf `en` zurück.
@@ -1018,7 +1026,7 @@ Vor dem PR für eine neue Lektion prüfen:
 - [ ] **Kulturelle Genauigkeit**: realer Sprachgebrauch, nicht nur Lehrbuch-Floskeln
 - [ ] **Schema-Validierung**: die Lektion lädt sauber via `dict_to_lesson()` (siehe Lokales Testen)
 - [ ] **Card-ID-Integrität**: jedes `exercise.card_ids[i]` existiert in `cards[]` der Lektion
-- [ ] **Sprachpaar**: `target_language` + `source_language` gesetzt (ISO 639-1, verschieden), `title_native` vorhanden
+- [ ] **Sprachpaar**: `target_language` + `source_language` gesetzt (BCP 47, kanonisch; bei Sprach-Sets verschieden und mit `title_native`)
 
 ## Validierung (zwei Ebenen, v1.44.0)
 
@@ -1215,7 +1223,10 @@ vierstufigen Assistenten, statt direkt zu GitHub zu springen:
    einen automatisch nummerierten Dateinamen
    (`{nn}-{slug}.json`, die nächste Nummer nach den bestehenden
    Lektionen). Ein ganz neues Paar + Niveau zeigt *"Neues Set! Du
-   bist der Erste."*
+   bist der Erste."* In diesem Schritt prüfst du auch Titel,
+   Sprachen und Niveau. Ein Sprach-Set braucht ein CEFR-Niveau
+   (A1-C2). Ein Set, das keine Sprache lehrt, kann *"Kein Niveau
+   (kein Sprachkurs)"* wählen und lässt sich ohne Niveau teilen.
 2. **Duplikat-Prüfung.** Die Lektion wird mit den bereits in
    diesem Pfad vorhandenen Lektionen verglichen (Karten- und
    Übungs-Überschneidung - beratend, niemals blockierend). Wenn

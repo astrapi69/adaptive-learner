@@ -107,8 +107,16 @@ eden bir **`path`** bildirir (`sets/de/fr-a1`). Bir set ayrıca
 **`title`** (başlangıç dilinde, öğrenenin okuduğu) ve
 **`title_native`** (hedef dilde, ikinci başlık olarak) taşır.
 
-Her iki kod da ISO 639-1 (iki harf) olmalıdır ve `source_language`,
-`target_language`'dan farklı olmalıdır. Bu alanlar olmadan v1.2
+Her iki kod da kanonik biçimde BCP 47 dil etiketidir: en kısa kod
+(`de`, `pt-BR`), iki harfli kodu olmayan diller için üç harf (`gsw`,
+`yue`, `fil`). İyi biçimlendirilmemiş bir etiket (`de_DE`, boş) bir
+hatadır (`E-LANG-TAG`); kanonik olmayan bir yazım (`EN`, `deu`) bir
+uyarıdır (`W-LANG-TAG-CANONICAL`). Bir dil setinde (`domain` yok ya
+da `language`) `source_language`, `target_language` ile aynıysa ya da
+`title_native` eksikse engine uyarır (`W-LANG-PAIR-SAME`,
+`W-SET-TITLE-NATIVE`); uygulamanın paylaşma denetimi ikisini de
+engeller. `domain` değeri başka olan bir set ikisine de ihtiyaç
+duymaz. Bu alanlar olmadan v1.2
 öncesi setler yine de yüklenir: eski `language` anahtarı
 `target_language` olarak kabul edilir ve `source_language` `en`'e
 geri döner.
@@ -837,7 +845,7 @@ Yeni bir ders için PR'dan önce kontrol et:
 - [ ] **Kültürel doğruluk**: gerçek dil kullanımı, yalnızca ders kitabı kalıpları değil
 - [ ] **Şema doğrulaması**: ders `dict_to_lesson()` üzerinden temiz yüklenir (Yerel Test'e bak)
 - [ ] **Card-ID bütünlüğü**: her `exercise.card_ids[i]`, dersin `cards[]`'ında var
-- [ ] **Dil çifti**: `target_language` + `source_language` ayarlı (ISO 639-1, farklı), `title_native` mevcut
+- [ ] **Dil çifti**: `target_language` + `source_language` ayarlı (BCP 47, kanonik; dil setlerinde farklı ve `title_native` ile)
 
 ## Doğrulama (iki katman, v1.44.0)
 
