@@ -79,9 +79,10 @@ Jede Methode delegiert 1:1.
 ## DexieStorage
 
 `storage/dexie-storage.ts` persistiert alles in IndexedDB via
-Dexie 4. Das Schema in `storage/dexie/db.ts` spiegelt alle 30
-SQLAlchemy-Models 1:1, plus die Assoziations-Tabellen
-(`project_subjects` / `project_tags` etc.).
+Dexie 4. Das Schema in `storage/dexie/db.ts` spiegelt die
+SQLAlchemy-Modelle und ergänzt Stores, die es nur im Browser gibt;
+welcher Store für welche Tabelle steht, nach Bereichen, zeigt die
+Seite [Datenmodell](data-model.md).
 
 `DexieStorage` ist KEINE God-Datei. Es ist in
 Per-Domain-Namespace-Module aufgeteilt, nach Belang gruppiert.

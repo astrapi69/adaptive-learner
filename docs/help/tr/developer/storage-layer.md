@@ -58,9 +58,10 @@ Her yöntem birebir devredilir. Davranış v0.6.0 ile özdeştir.
 ## DexieStorage
 
 `storage/dexie-storage.ts`, Dexie 4.4.2 aracılığıyla her şeyi
-IndexedDB'ye kaydeder. `storage/db.ts` içindeki şema, tüm 25
-SQLAlchemy modelini ve 4 ilişki tablosunu (project_subjects /
-project_tags vb.) birebir yansıtır.
+IndexedDB'ye kaydeder. `storage/dexie/db.ts` içindeki şema
+SQLAlchemy modellerini yansıtır ve yalnızca tarayıcıda bulunan
+store'lar ekler; hangi store'un hangi tabloya karşılık geldiğini
+bölümlere göre [Veri modeli](data-model.md) sayfası gösterir.
 
 `storage/` altındaki alt modüller taşınan mantığı taşır:
 
