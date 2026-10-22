@@ -83,7 +83,7 @@ Dexieモードでは、プロンプトは`frontend/src/data/session-prompts.json
 
 1. `plugins/adaptive-learner-plugin-ai-newprovider/`を作成します。
 2. `ai_complete`フックimplを実装します: モデルプレフィックスを確認し、プロバイダーのHTTP APIを呼び出し、テキストを返します。
-3. `ai_orchestration.py`の`DEFAULT_MODELS`にプロバイダーのプレフィックスと安価なデフォルトモデルを追加します。
+3. `backend/app/services/ai_caller.py`の`DEFAULT_MODELS`に、プロバイダーと安価なデフォルトモデルを追加します。これが唯一のテーブルです（セッションプラグイン、インポート、レッスン検証が読み込み、2つ目のコピーはテストが拒否します）。
 4. `app/schemas/__init__.py`の`AIProvider`列挙型にプロバイダー名を追加します。
 5. `frontend/src/lib/constants.ts`の`AI_PROVIDERS`に追加します。
 6. Dexieモードとの対応のため: `frontend/src/storage/ai-providers.ts`にクライアントを追加し、`aiComplete()`からルーティングします。
@@ -92,15 +92,15 @@ Dexieモードでは、プロンプトは`frontend/src/data/session-prompts.json
 
 ## ブラウザ直接呼び出し（Dexieモード）
 
-Dexieモードでは、AI呼び出しはプラグインシステムを通じません。`storage/ai-providers.ts`が直接HTTPリクエストを行います。AnthropicはCORSプリフライトをクリアするために`anthropic-dangerous-direct-browser-access: true`ヘッダーが必要です。OpenAIとGeminiはブラウザからの直接呼び出しをデフォルトで受け入れます。
+Dexieモードでは、AI呼び出しはプラグインシステムを通じません。`storage/ai/ai-providers.ts`が直接HTTPリクエストを行います。AnthropicはCORSプリフライトをクリアするために`anthropic-dangerous-direct-browser-access: true`ヘッダーが必要です。OpenAIとGeminiはブラウザからの直接呼び出しをデフォルトで受け入れます。
 
-デュアルプロンプトのロジックはどちらのモードでも同じです - `storage/session-flow.ts`が`aiComplete()`を2回呼び出し、バックエンドと同じ方法で評価器のJSONを解析します。
+デュアルプロンプトのロジックはどちらのモードでも同じです - `storage/ai/session-flow.ts`が`aiComplete()`を2回呼び出し、バックエンドと同じ方法で評価器のJSONを解析します。
 
 ## 信頼度のしきい値
 
 `backend/config/plugins/session.yaml`の`step_evaluation.confidence_threshold`（デフォルト0.7）は、実際の（フォールバックでない）評価器の判定がサイクルステップを実際に進めるかどうかを制御します。より保守的にするには高く設定し、より積極的にするには低く設定します。フォールバック判定（解析失敗）は、しきい値に関わらず常に+1の進行を適用します。
 
-Dexieポートは`storage/session-flow.ts`にハードコードされた0.7でこれを反映しています。将来のフェーズでSettings UIに公開される予定です。
+Dexieポートは`storage/ai/session-flow.ts`にハードコードされた0.7でこれを反映しています。`session-flow.test.ts`は`session.yaml`から値を読み込み、両者がずれると失敗します。UIの設定は意図的にありません。これらのキーは`# INTERNAL`で、YAMLでのみ変更します（#3436）。
 
 ## その他のAI機能（読み取り専用の概要）
 

@@ -130,8 +130,10 @@ aynı bağlam bloğu biçimi - hiçbir kayma mümkün değildir.
 1. `plugins/adaptive-learner-plugin-ai-newprovider/` oluşturun.
 2. `ai_complete` hookimpl'ini uygulayın: model ön ekini kontrol
    edin, sağlayıcının HTTP API'sini çağırın, metni döndürün.
-3. Sağlayıcının ön ekini `ai_orchestration.py`'deki `DEFAULT_MODELS`'a
-   ucuz bir varsayılan model ile ekleyin.
+3. Sağlayıcıyı ucuz bir varsayılan modelle
+   `backend/app/services/ai_caller.py` içindeki `DEFAULT_MODELS`'a
+   ekleyin; tek tablo budur (oturum eklentisi, içe aktarmalar ve ders
+   doğrulaması onu okur, bir test ikinci bir kopyayı reddeder).
 4. Sağlayıcı adını `app/schemas/__init__.py`'deki `AIProvider`
    enum'una ekleyin.
 5. `frontend/src/lib/constants.ts`'deki `AI_PROVIDERS`'a ekleyin.
@@ -146,13 +148,13 @@ HTTP çağrısı taklit edilir).
 ## Tarayıcı doğrudan çağrılar (Dexie modu)
 
 Dexie modunda yapay zeka çağrısı eklenti sisteminden geçmez.
-`storage/ai-providers.ts` HTTP isteğini doğrudan yapar. Anthropic,
+`storage/ai/ai-providers.ts` HTTP isteğini doğrudan yapar. Anthropic,
 CORS ön uçuşunu geçmek için `anthropic-dangerous-direct-browser-access:
 true` başlığını gerektirir; OpenAI ve Gemini doğrudan tarayıcı
 çağrılarını kutudan çıkar şekilde kabul eder.
 
 Çift istemli mantık her iki modda da aynıdır -
-`storage/session-flow.ts`, `aiComplete()` işlevini iki kez çağırır ve
+`storage/ai/session-flow.ts`, `aiComplete()` işlevini iki kez çağırır ve
 değerlendiricinin JSON'ını arka ucun yaptığıyla aynı şekilde ayrıştırır.
 
 ## Güven eşiği
@@ -165,9 +167,11 @@ görür. Daha muhafazakar olmak için daha yükseğe, daha hevesli
 olmak için daha aşağıya ayarlayın. Geri dönüş kararları (ayrıştırma
 hataları) her zaman +1 ilerlemeyi uygular.
 
-Dexie portu bunu `storage/session-flow.ts`'de sabit kodlanmış 0,7
-ile yansıtır. Gelecekteki bir aşama bunu Ayarlar arayüzünde
-gösterecektir.
+Dexie portu bunu `storage/ai/session-flow.ts`'de sabit kodlanmış 0,7
+ile yansıtır; `session-flow.test.ts` değeri `session.yaml`'dan okur ve
+ikisi birbirinden ayrılırsa başarısız olur. Arayüzde bilerek bir ayar
+yoktur: anahtarlar `# INTERNAL` olarak işaretlidir ve yalnızca
+YAML'da değiştirilir (#3436).
 
 ## Diğer yapay zeka yüzeyleri (salt okunur özet)
 
