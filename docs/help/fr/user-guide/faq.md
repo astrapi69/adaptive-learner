@@ -25,7 +25,8 @@ fournisseur reçoit :
   conversation importée contient l'analyse et l'historique de cette
   conversation au lieu de votre progression ;
 - vos messages et les réponses précédentes de l'IA dans la session ;
-- comme pour chaque requête, votre adresse IP et votre clé API.
+- comme pour chaque requête, entre autres, votre adresse IP et votre
+  clé API.
 
 Vos XP et vos badges ne sont pas envoyés. La
 [vérification du contenu par l'IA](ai-validation.md) n'envoie que les

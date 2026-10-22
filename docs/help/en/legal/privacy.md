@@ -25,15 +25,15 @@ Email: asterios.raptis@web.de
 
 Adaptive Learner has no server of its own. The app and these pages set no
 cookies, use no analytics or tracking services and load no fonts or scripts
-from third parties. Your learning progress, statistics and settings stay in
-your browser, for you. Of these, the operator receives only what you send him
-yourself, and others receive parts of them only when a feature you use needs
-them, such as the AI with your own key.
+from third parties. Your learning progress, your statistics and your settings
+are stored in your browser. Of these, the operator receives only what you send
+him yourself, and others receive parts of them only when a feature you use
+needs them, such as the AI with your own key.
 
 Data leaves your device only in these cases, each described in detail below:
 
 - When you open the app and these pages, GitHub as the hosting provider
-  processes your IP address.
+  processes, among other things, your IP address.
 - The app loads learning content from GitHub and also checks there on its own
   whether anything is new.
 - When you share a lesson with the community or use GitHub features with your
@@ -107,7 +107,7 @@ USA, see above.
 
 Some features use the GitHub API (`api.github.com`) with a personal access
 token that you enter yourself, in Settings under Integrations or for a single
-repository. The token stays in your browser and is sent only to GitHub. With
+repository. The token is stored in your browser and sent only to GitHub. With
 it, the app acts in your name:
 
 - It checks the token and reads your GitHub username in the process.
@@ -245,8 +245,9 @@ When you tap the microphone (in the learning session's input field and in
 pronunciation practice), the app uses your browser's speech recognition.
 Recording starts only after the tap, and your browser asks for permission to
 use the microphone first. The browser does the recognition, not the app:
-Google Chrome sends the recording and the selected language to a Google
-service (`www.google.com`); other browsers behave as their maker decides. The
+Google Chrome sends, among other things, the recording and the selected
+language to a Google service (`www.google.com`); other browsers behave as
+their maker decides. The
 browser's maker is the controller for this processing, and its privacy notice
 applies. For Chrome that is Google, for users in the EEA according to
 [Google's privacy policy](https://policies.google.com/privacy) Google Ireland
@@ -259,7 +260,7 @@ the input field, in pronunciation practice in your attempt; when you send it,
 it goes to your AI provider. The legal basis for starting the recognition is
 your request (Art. 6(1)(b) GDPR). In Settings under Learning, "Show
 microphone button" hides voice input. Recordings in speaking exercises, on the
-other hand, are made by the app itself and stay in your browser.
+other hand, are made by the app itself; they are stored in your browser.
 
 ## Read-aloud
 

@@ -3123,7 +3123,7 @@
     "ai_privacy_link": "Datenschutzerklärung",
     "ai_validation": {
       "intro": "Eine KI kann zusätzlich Übersetzungsgenauigkeit, Grammatik und Niveau prüfen.",
-      "privacy": "Gesendet werden nur die Inhalte deiner Lektion (Karten, Texte, Übungen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält {provider} dabei deine IP-Adresse und deinen API-Schlüssel.",
+      "privacy": "Gesendet werden nur die Inhalte deiner Lektion (Karten, Texte, Übungen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält {provider} dabei unter anderem deine IP-Adresse und deinen API-Schlüssel.",
       "provider_fallback": "dein KI-Anbieter",
       "consent": "KI-Validierung durchführen",
       "run": "Mit KI prüfen",
@@ -3171,7 +3171,7 @@
       "title": "KI-Inhaltsprüfung",
       "loading": "Karten werden vorbereitet...",
       "cost_estimate": "~{cards} Karten, ~{tokens} Tokens, ~{usd}.",
-      "privacy": "Gesendet werden nur deine Lernkarten (Vorderseite, Rückseite, Notizen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält dein KI-Anbieter dabei deine IP-Adresse und deinen API-Schlüssel.",
+      "privacy": "Gesendet werden nur deine Lernkarten (Vorderseite, Rückseite, Notizen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält dein KI-Anbieter dabei unter anderem deine IP-Adresse und deinen API-Schlüssel.",
       "confirm": "Prüfen",
       "progress": "Prüfe Batch {current} von {total}...",
       "rate_limited": "Bitte warte einen Moment, bevor du erneut prüfst.",

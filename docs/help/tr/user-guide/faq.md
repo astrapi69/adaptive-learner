@@ -4,10 +4,11 @@
 
 ## Verilerim güvende mi?
 
-**Yerel modda** tüm verileriniz kendi cihazınızdaki IndexedDB'de bulunur.
-Arka uç yok, üçüncü taraf hizmet yok. Tarayıcı sekmesini kapatmak onu
-silmez; site verilerini temizlemek siler. Cihazı paylaşıyorsanız,
-bu tarayıcı profiline erişimi olan herkes okuyabilir.
+**Yerel modda** tüm verileriniz kendi cihazınızdaki IndexedDB'de, arada
+bir arka uç olmadan saklanır; başkaları bunların bölümlerini yalnızca
+kullandığınız bir özellik onlara ihtiyaç duyduğunda alır. Tarayıcı
+sekmesini kapatmak onu silmez; site verilerini temizlemek siler. Cihazı
+paylaşıyorsanız, bu tarayıcı profiline erişimi olan herkes okuyabilir.
 
 **Sunucu modunda** veriler, FastAPI arka ucunun yönettiği SQLite
 veritabanında bulunur. API anahtarları, `ADAPTIVE_LEARNER_SECRET_KEY`
@@ -27,7 +28,8 @@ Her iki mod da seçtiğiniz yapay zeka sağlayıcısı dışında herhangi bir
   sohbetten başlatılan oturumda öğrenme ilerlemeniz yerine o sohbetin
   analizi ve dökümü yer alır;
 - mesajlarınız ve yapay zekânın oturumdaki önceki yanıtları;
-- her istekte olduğu gibi IP adresiniz ve API anahtarınız.
+- her istekte olduğu gibi, başka şeylerin yanı sıra, IP adresiniz ve API
+  anahtarınız.
 
 XP'niz ve rozetleriniz gönderilmez.
 [Yapay zekâ içerik denetimi](ai-validation.md) yalnızca denetlediği

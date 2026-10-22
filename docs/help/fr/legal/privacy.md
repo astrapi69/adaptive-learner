@@ -29,7 +29,7 @@ E-mail : asterios.raptis@web.de
 Adaptive Learner n'a pas de serveur propre. L'application et les présentes
 pages ne déposent aucun cookie, n'utilisent aucun service d'analyse ou de
 suivi et ne chargent ni polices ni scripts depuis des tiers. Votre progression,
-vos statistiques et vos paramètres restent dans votre navigateur, pour vous.
+vos statistiques et vos paramètres sont stockés dans votre navigateur.
 L'exploitant n'en reçoit que ce que vous lui envoyez vous-même, et d'autres
 n'en reçoivent des parties que lorsqu'une fonction que vous utilisez en a
 besoin, par exemple l'IA avec votre propre clé.
@@ -38,7 +38,7 @@ Des données ne quittent votre appareil que dans les cas suivants, décrits en
 détail plus bas :
 
 - Lorsque vous ouvrez l'application et les présentes pages, GitHub, en tant
-  qu'hébergeur, traite votre adresse IP.
+  qu'hébergeur, traite, entre autres, votre adresse IP.
 - L'application charge les contenus d'apprentissage depuis GitHub et y vérifie
   aussi d'elle-même s'il y a du nouveau.
 - Lorsque vous partagez une leçon avec la communauté ou utilisez des fonctions
@@ -122,9 +122,9 @@ vers les États-Unis, voir ci-dessus.
 
 Certaines fonctions utilisent l'API GitHub (`api.github.com`) avec un jeton
 d'accès personnel (« Token GitHub ») que vous saisissez vous-même, dans les
-Paramètres sous Intégrations ou pour un dépôt donné. Le jeton reste dans votre
-navigateur et n'est envoyé qu'à GitHub. Avec lui, l'application agit en votre
-nom :
+Paramètres sous Intégrations ou pour un dépôt donné. Le jeton est stocké dans
+votre navigateur et n'est envoyé qu'à GitHub. Avec lui, l'application agit en
+votre nom :
 
 - Elle vérifie le jeton et lit à cette occasion votre nom d'utilisateur
   GitHub.
@@ -279,9 +279,9 @@ d'apprentissage et dans la pratique de la prononciation), l'application utilise
 la reconnaissance vocale de votre navigateur. L'enregistrement ne commence
 qu'après ce geste, et votre navigateur demande d'abord l'autorisation
 d'utiliser le micro. C'est le navigateur, et non l'application, qui effectue la
-reconnaissance : Google Chrome envoie à cet effet l'enregistrement et la langue
-choisie à un service de Google (`www.google.com`) ; les autres navigateurs
-procèdent selon leur éditeur. Le responsable du traitement pour cette
+reconnaissance : Google Chrome envoie à cet effet, entre autres, l'enregistrement
+et la langue choisie à un service de Google (`www.google.com`) ; les autres
+navigateurs procèdent selon leur éditeur. Le responsable du traitement pour cette
 reconnaissance est l'éditeur du navigateur, et sa politique de confidentialité
 s'applique. Pour Chrome, il s'agit de Google, pour les utilisateurs de l'EEE,
 selon la
@@ -297,7 +297,7 @@ juridique pour lancer la reconnaissance est votre demande (article 6,
 paragraphe 1, point b), du RGPD). Dans les Paramètres sous Apprentissage,
 « Afficher le bouton micro » permet de masquer la saisie vocale. Les
 enregistrements des exercices « Parler et enregistrer » sont en revanche
-réalisés par l'application elle-même et restent dans votre navigateur.
+réalisés par l'application elle-même ; ils sont stockés dans votre navigateur.
 
 ## Lecture à voix haute
 

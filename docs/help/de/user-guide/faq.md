@@ -3,7 +3,8 @@
 ## Sind meine Daten sicher?
 
 Im **Lokal-Modus** liegen alle deine Daten in IndexedDB auf
-deinem eigenen Gerät. Kein Backend, kein Drittanbieter. Den
+deinem eigenen Gerät, ohne Backend dazwischen; andere erhalten
+Teile davon nur, wenn eine Funktion sie braucht, die du nutzt. Den
 Browser-Tab zu schließen löscht nichts; Site-Daten zu löschen
 schon. Auf einem geteilten Gerät kann jeder mit Zugriff auf
 dieses Browser-Profil sie lesen.
@@ -32,8 +33,8 @@ Lernsitzung erhält dieser Anbieter:
   Verlauf dieses Chats;
 - deine Nachrichten und die bisherigen Antworten der KI in der
   Sitzung;
-- wie bei jeder Anfrage deine IP-Adresse und deinen
-  API-Schlüssel.
+- wie bei jeder Anfrage unter anderem deine IP-Adresse und
+  deinen API-Schlüssel.
 
 Deine XP und Abzeichen werden nicht gesendet. Die
 [KI-Inhaltsprüfung](ai-validation.md) sendet nur die Karten des

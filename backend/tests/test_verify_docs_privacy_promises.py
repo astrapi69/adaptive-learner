@@ -170,7 +170,8 @@ LEGITIMATE = [
         "en",
         "new-note",
         "Only your cards are sent (front, back, notes), no profile and no learning progress. "
-        "As with every request, your AI provider also receives your IP address and your API key.",
+        "As with every request, your AI provider also receives, among other things, your IP "
+        "address and your API key.",
     ),
     ("en", "may-contain", "Text you write into your own cards can itself be personal data."),
     ("en", "export", "The exported file contains no personal data."),
@@ -178,8 +179,8 @@ LEGITIMATE = [
         "de",
         "new-note",
         "Gesendet werden nur deine Lernkarten (Vorderseite, Rückseite, Notizen), kein Profil "
-        "und kein Lernfortschritt. Wie bei jeder Anfrage erhält dein KI-Anbieter dabei deine "
-        "IP-Adresse und deinen API-Schlüssel.",
+        "und kein Lernfortschritt. Wie bei jeder Anfrage erhält dein KI-Anbieter dabei unter "
+        "anderem deine IP-Adresse und deinen API-Schlüssel.",
     ),
     (
         "de",
@@ -361,50 +362,50 @@ LEGITIMATE = [
         "Rien - pas vos sessions, pas vos erreurs, pas votre progression - n'est\n"
         "envoyé à un serveur Adaptive Learner.",
     ),
-    # #3829: the privacy policy's own summary, which the new help texts reuse.
+    # #3829: the privacy policy's own summary, which the new help texts reuse,
+    # in the wording of #3840 ("is stored", no longer "stays ... for you").
     (
         "en",
         "3829-policy",
-        "Your learning progress, statistics and settings stay in\nyour browser, for you.",
+        "Your learning progress, your statistics and your settings\nare stored in your browser.",
     ),
     (
         "de",
         "3829-policy",
-        "Ihr Lernfortschritt, Ihre Statistiken und\nIhre Einstellungen bleiben in Ihrem Browser, "
-        "für Sie.",
+        "Ihr Lernfortschritt, Ihre Statistiken und\nIhre Einstellungen werden in Ihrem Browser "
+        "gespeichert.",
     ),
     (
         "es",
         "3829-policy",
-        "Su progreso, sus estadísticas y sus ajustes se\nquedan en su navegador, para usted.",
+        "Su progreso, sus estadísticas y sus ajustes se\nalmacenan en su navegador.",
     ),
     (
         "fr",
         "3829-policy",
-        "Votre progression,\nvos statistiques et vos paramètres restent dans votre navigateur, "
-        "pour vous.",
+        "Votre progression,\nvos statistiques et vos paramètres sont stockés dans votre navigateur.",
     ),
     (
         "pt",
         "3829-policy",
-        "O seu progresso, as suas\nestatísticas e as suas definições ficam no seu browser, "
-        "para si.",
+        "O seu progresso, as suas\nestatísticas e as suas definições são armazenados no seu "
+        "browser.",
     ),
     (
         "tr",
         "3829-policy",
-        "Öğrenme ilerlemeniz,\nistatistikleriniz ve ayarlarınız tarayıcınızda, sizin için kalır.",
+        "Öğrenme ilerlemeniz,\nistatistikleriniz ve ayarlarınız tarayıcınızda saklanır.",
     ),
     (
         "el",
         "3829-policy",
-        "Η πρόοδός σας, τα στατιστικά σας και οι ρυθμίσεις σας παραμένουν στο\n"
-        "πρόγραμμα περιήγησής σας, για εσάς.",
+        "Η πρόοδός σας, τα στατιστικά σας και οι ρυθμίσεις σας αποθηκεύονται\n"
+        "στο πρόγραμμα περιήγησής σας.",
     ),
     (
         "ja",
         "3829-policy",
-        "お客様の学習の進捗、統計、設定は、\nお客様のブラウザ内に、お客様のためにとどまります。",
+        "お客様の学習の進捗、統計、設定は、\nお客様のブラウザ内に保存されます。",
     ),
     # #3829: the new master texts.
     (

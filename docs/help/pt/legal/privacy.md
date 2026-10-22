@@ -31,7 +31,7 @@ E-mail: asterios.raptis@web.de
 O Adaptive Learner não tem servidor próprio. A aplicação e estas páginas não
 definem cookies, não utilizam serviços de análise ou de rastreamento e não
 carregam tipos de letra nem scripts de terceiros. O seu progresso, as suas
-estatísticas e as suas definições ficam no seu browser, para si. Desses dados,
+estatísticas e as suas definições são armazenados no seu browser. Desses dados,
 o administrador só recebe o que lhe enviar por iniciativa própria, e outros só
 recebem partes deles quando uma funcionalidade que utiliza precisa delas, por
 exemplo a IA com a sua própria chave.
@@ -40,7 +40,7 @@ Os dados só saem do seu dispositivo nos seguintes casos, descritos em
 pormenor mais abaixo:
 
 - Quando abre a aplicação e estas páginas, o GitHub, enquanto prestador de
-  alojamento, trata o seu endereço IP.
+  alojamento, trata, entre outras coisas, o seu endereço IP.
 - A aplicação carrega os conteúdos de aprendizagem a partir do GitHub e
   verifica lá também, por iniciativa própria, se há novidades.
 - Quando partilha uma lição com a comunidade ou utiliza funcionalidades do
@@ -123,7 +123,7 @@ Quanto à transferência para os EUA, ver acima.
 
 Algumas funcionalidades utilizam a API do GitHub (`api.github.com`) com um
 token de acesso pessoal que introduz por si, nas "Configurações" em
-"Integrações" ou para um repositório específico. O token permanece no seu
+"Integrações" ou para um repositório específico. O token é armazenado no seu
 browser e é enviado apenas ao GitHub. Com ele, a aplicação age em seu nome:
 
 - Verifica o token e lê, nesse processo, o seu nome de utilizador do GitHub.
@@ -273,8 +273,9 @@ Quando toca no microfone (no campo de introdução da sessão de aprendizagem e 
 prática de pronúncia), a aplicação utiliza o reconhecimento de voz do seu
 browser. A gravação só começa depois de tocar, e o seu browser pede antes
 autorização para usar o microfone. O reconhecimento é feito pelo browser, não
-pela aplicação: o Google Chrome envia para isso a gravação e o idioma escolhido
-a um serviço da Google (`www.google.com`); os outros browsers procedem
+pela aplicação: o Google Chrome envia para isso, entre outras coisas, a gravação
+e o idioma escolhido a um serviço da Google (`www.google.com`); os outros
+browsers procedem
 consoante o fabricante. O responsável por este tratamento é o fabricante do
 browser, e aplica-se o respetivo aviso de privacidade. No Chrome trata-se da
 Google; para os utilizadores no EEE, segundo a
@@ -289,8 +290,8 @@ tentativa; quando o envia, segue para o seu fornecedor de IA. O fundamento
 jurídico para iniciar o reconhecimento é o seu pedido (artigo 6.º, n.º 1,
 alínea b), do RGPD). Para ocultar a entrada por voz, desative "Mostrar botão do
 microfone" nas "Configurações", em "Aprendizagem". As gravações dos exercícios
-de falar e gravar, pelo contrário, são feitas pela própria aplicação e ficam no
-seu browser.
+de falar e gravar, pelo contrário, são feitas pela própria aplicação; são
+armazenadas no seu browser.
 
 ## Leitura em voz alta
 

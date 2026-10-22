@@ -15,7 +15,7 @@ import type { UseContentSharingResult } from "../../../hooks/content/useContentS
 const catalog = vi.hoisted(
   (): Record<string, string> => ({
     "content.ai_validation.privacy":
-      "Gesendet werden nur die Inhalte deiner Lektion (Karten, Texte, Übungen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält {provider} dabei deine IP-Adresse und deinen API-Schlüssel.",
+      "Gesendet werden nur die Inhalte deiner Lektion (Karten, Texte, Übungen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält {provider} dabei unter anderem deine IP-Adresse und deinen API-Schlüssel.",
     "content.ai_validation.provider_fallback": "dein KI-Anbieter",
     "settings.provider_anthropic": "Anthropic Claude",
     "settings.provider_gemini": "Google Gemini",
@@ -67,13 +67,13 @@ function renderPrivacyNote(activeProvider: string | null): HTMLElement {
 describe("ContentShareDialog privacy note", () => {
   it("names the active provider by its label in the UI language", () => {
     const note = renderPrivacyNote("anthropic");
-    expect(note).toHaveTextContent("erhält Anthropic Claude dabei deine IP-Adresse");
+    expect(note).toHaveTextContent("erhält Anthropic Claude dabei unter anderem deine IP-Adresse");
     expect(note).not.toHaveTextContent(/\banthropic\b/);
   });
 
   it("uses the localized fallback when no provider is active", () => {
     const note = renderPrivacyNote(null);
-    expect(note).toHaveTextContent("erhält dein KI-Anbieter dabei deine IP-Adresse");
+    expect(note).toHaveTextContent("erhält dein KI-Anbieter dabei unter anderem deine IP-Adresse");
     expect(note).not.toHaveTextContent("the AI provider");
   });
 

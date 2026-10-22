@@ -2,8 +2,9 @@
 
 ## ¿Están seguros mis datos?
 
-En el **modo Local** todos tus datos residen en IndexedDB en tu
-propio dispositivo. Sin backend, sin servicio de terceros. Cerrar
+En el **modo Local** todos tus datos se almacenan en IndexedDB en
+tu propio dispositivo, sin backend de por medio; otros reciben
+partes de ellos solo cuando las necesita una función que usas. Cerrar
 la pestaña del navegador no los elimina; borrar los datos del
 sitio sí lo hace. Si compartes el dispositivo, cualquiera con
 acceso a este perfil del navegador puede leerlos.
@@ -28,7 +29,8 @@ elegido. En una sesión de aprendizaje ese proveedor recibe:
   lleva el análisis y la transcripción de esa conversación en
   lugar de tu progreso;
 - tus mensajes y las respuestas anteriores de la IA en la sesión;
-- como en cada solicitud, tu dirección IP y tu clave API.
+- como en cada solicitud, entre otras cosas, tu dirección IP y tu
+  clave API.
 
 Tus XP e insignias no se envían. La
 [revisión de contenido con IA](ai-validation.md) envía solo las

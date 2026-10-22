@@ -30,7 +30,7 @@ E-posta: asterios.raptis@web.de
 Adaptive Learner'ın kendine ait bir sunucusu yoktur. Uygulama ve bu sayfalar
 çerez ayarlamaz, hiçbir analiz veya izleme hizmeti kullanmaz ve üçüncü
 kişilerden yazı tipi ya da betik yüklemez. Öğrenme ilerlemeniz,
-istatistikleriniz ve ayarlarınız tarayıcınızda, sizin için kalır. İşletmeci
+istatistikleriniz ve ayarlarınız tarayıcınızda saklanır. İşletmeci
 bunlardan yalnızca sizin ona kendiniz gönderdiklerinizi alır; başkaları ise
 bunların bölümlerini yalnızca kullandığınız bir özellik onlara ihtiyaç
 duyduğunda alır, örneğin kendi anahtarınızla yapay zekâ.
@@ -38,8 +38,8 @@ duyduğunda alır, örneğin kendi anahtarınızla yapay zekâ.
 Veriler cihazınızdan yalnızca aşağıdaki durumlarda çıkar; her biri aşağıda
 ayrıntılı olarak açıklanmıştır:
 
-- Uygulamayı ve bu sayfaları açtığınızda, barındırma sağlayıcısı olarak GitHub
-  IP adresinizi işler.
+- Uygulamayı ve bu sayfaları açtığınızda, barındırma sağlayıcısı olarak GitHub,
+  başka şeylerin yanı sıra, IP adresinizi işler.
 - Uygulama öğrenme içeriklerini GitHub'dan yükler ve orada yeni bir şey olup
   olmadığını kendiliğinden de denetler.
 - Bir dersi toplulukla paylaştığınızda veya GitHub özelliklerini kendi erişim
@@ -117,8 +117,8 @@ için yukarıya bakınız.
 
 Bazı özellikler GitHub API'sini (`api.github.com`), kendiniz girdiğiniz kişisel
 bir erişim belirteciyle kullanır: Ayarlar'da "Entegrasyonlar" altında veya tek
-bir depo için. Belirteç tarayıcınızda kalır ve yalnızca GitHub'a gönderilir.
-Uygulama bu belirteçle sizin adınıza işlem yapar:
+bir depo için. Belirteç tarayıcınızda saklanır ve yalnızca GitHub'a
+gönderilir. Uygulama bu belirteçle sizin adınıza işlem yapar:
 
 - Belirteci denetler ve bu sırada GitHub kullanıcı adınızı okur.
 - Bağladığınız özel depoları, yukarıdaki otomatik denetim sırasında da
@@ -254,8 +254,9 @@ kapsamında sertifikalıdır (GDPR md. 45). Sağlayıcıların gizlilik bildirim
 Mikrofona dokunduğunuzda (öğrenme oturumunun giriş alanında ve telaffuz
 alıştırmasında), uygulama tarayıcınızın konuşma tanıma özelliğini kullanır.
 Kayıt ancak dokunduktan sonra başlar ve tarayıcınız önce mikrofon için izin
-ister. Tanımayı uygulama değil tarayıcı yapar: Google Chrome bunun için kaydı
-ve seçilen dili bir Google hizmetine (`www.google.com`) gönderir; diğer
+ister. Tanımayı uygulama değil tarayıcı yapar: Google Chrome bunun için, başka
+şeylerin yanı sıra, kaydı ve seçilen dili bir Google hizmetine
+(`www.google.com`) gönderir; diğer
 tarayıcılar üreticilerine göre davranır. Bu veri işlemenin veri sorumlusu
 tarayıcının üreticisidir ve onun gizlilik bildirimi geçerlidir. Chrome için bu
 Google'dır; AEA'daki kullanıcılar için,
@@ -269,7 +270,7 @@ telaffuz alıştırmasında denemenize gelir; gönderdiğinizde yapay zekâ
 sağlayıcınıza gider. Tanımayı başlatmanın hukuki sebebi talebinizdir (GDPR
 md. 6/1-b). Ayarlar'da "Öğrenme" altındaki "Mikrofon düğmesini göster" sesli
 girişi gizler. Konuşup kaydetme alıştırmalarındaki kayıtları ise uygulamanın
-kendisi yapar; bunlar tarayıcınızda kalır.
+kendisi yapar; bunlar tarayıcınızda saklanır.
 
 ## Sesli okuma
 
