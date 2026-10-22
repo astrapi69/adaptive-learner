@@ -104,11 +104,14 @@ Löst aus:
 - `ci.yml` für den neuen Commit (Tests)
 - `release-gate.yml` für den neuen Tag (Version-Pin-Drift-
   Check)
-- `coverage.yml` für den neuen Commit (Coverage-HTML)
 - `deploy-gh-pages.yml` für den neuen Commit (Public-Site
   publizieren)
 - `launcher-{linux,macos,windows}.yml`, sobald GitHub das
   Release aus dem Tag anlegt
+
+`coverage.yml` läuft nicht beim Push, sondern nächtlich und auf
+Abruf; einen Bericht für den Release-Commit holst du mit
+`gh workflow run coverage.yml --ref main`.
 
 ### 8. GitHub-Release erstellen
 

@@ -55,15 +55,16 @@ version = "X.Y.Z"
 make sync-versions
 ```
 
-**18 dosyayı** otomatik olarak günceller:
+Sürümü taşıyan her dosyayı otomatik olarak günceller (tam küme
+`scripts/sync_versions.py` içindedir):
 
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py`
 - `launcher/adaptive-learner-launcher.spec` (CFBundle plist
   + CFBundleShortVersionString)
-- 10× `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- 3× eklenti `__init__.py` `__version__` değişmezleri
+- her `plugins/adaptive-learner-plugin-*/pyproject.toml`
+- `__version__` değişmezi olan her eklenti `__init__.py` dosyası
 - `install.sh` (`install.sh.template`'den yeniden oluşturulur)
 - `install.ps1` (`install.ps1.template`'den yeniden oluşturulur)
 
@@ -71,7 +72,7 @@ make sync-versions
 
 ```bash
 make sync-versions-check     # sapma durumunda sıfır dışı çıkar
-make test                    # 2634 test geçmeli
+make test                    # tüm test takımı geçmeli
 cd frontend && bun run build # başarılı olmalı
 ```
 
@@ -96,10 +97,13 @@ Tetikler:
 
 - Yeni commit'te `ci.yml` (testler)
 - Yeni etikette `release-gate.yml` (sürüm-pin sapma denetimi)
-- Yeni commit'te `coverage.yml` (kapsam HTML)
 - Yeni commit'te `deploy-gh-pages.yml` (genel siteyi yayınla)
 - GitHub etiketten Release oluşturduğunda
   `launcher-{linux,macos,windows}.yml`
+
+`coverage.yml` push'ta çalışmaz; her gece ve manuel tetiklemeyle
+çalışır. Release commit'i için bir rapor istiyorsan
+`gh workflow run coverage.yml --ref main` çalıştır.
 
 ### 8. GitHub Release oluştur
 

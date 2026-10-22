@@ -55,15 +55,16 @@ version = "X.Y.Z"
 make sync-versions
 ```
 
-Ενημερώνει αυτόματα **18 αρχεία**:
+Ενημερώνει αυτόματα κάθε αρχείο που φέρει την έκδοση (το πλήρες
+σύνολο βρίσκεται στο `scripts/sync_versions.py`):
 
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py`
 - `launcher/adaptive-learner-launcher.spec` (CFBundle plist
   + CFBundleShortVersionString)
-- 10× `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- 3× literals `__version__` plugin `__init__.py`
+- κάθε `plugins/adaptive-learner-plugin-*/pyproject.toml`
+- κάθε `__init__.py` plugin με literal `__version__`
 - `install.sh` (αναγεννάται από `install.sh.template`)
 - `install.ps1` (αναγεννάται από `install.ps1.template`)
 
@@ -71,7 +72,7 @@ make sync-versions
 
 ```bash
 make sync-versions-check     # εξέρχεται non-zero σε απόκλιση
-make test                    # 2634 tests πρέπει να περάσουν
+make test                    # όλη η σουίτα πρέπει να περάσει
 cd frontend && bun run build # πρέπει να επιτύχει
 ```
 
@@ -101,11 +102,14 @@ git push origin main --tags
 
 - `ci.yml` στο νέο commit (τεστ)
 - `release-gate.yml` στο νέο tag (έλεγχος απόκλισης version-pin)
-- `coverage.yml` στο νέο commit (coverage HTML)
 - `deploy-gh-pages.yml` στο νέο commit (δημοσίευση δημόσιου
   site)
 - `launcher-{linux,macos,windows}.yml` όταν το GitHub δημιουργεί
   το Release από το tag
+
+Το `coverage.yml` δεν τρέχει με το push, αλλά κάθε νύχτα και
+κατόπιν dispatch· για αναφορά πάνω στο commit του release, τρέξε
+`gh workflow run coverage.yml --ref main`.
 
 ### 8. Δημιουργία GitHub Release
 
@@ -121,11 +125,10 @@ gh release create vX.Y.Z \
 ## Εκδόσεις plugin
 
 Τα plugins κλειδώνουν βήμα-βήμα με την κανονική έκδοση εφαρμογής.
-Ο ίδιος αριθμός σε όλα τα 10 αρχεία `pyproject.toml` plugin
-συν τα τρία literals `__version__` στα `__init__.py` plugin.
-Μια μελλοντική απόφαση "core vs third-party plugin" μπορεί να
-τα αποσυνδέσει, αλλά η ρύθμιση v1.20.0 είναι ενιαία σε όλα τα
-18 διαδιδόμενα αρχεία.
+Ο ίδιος αριθμός σε κάθε `pyproject.toml` plugin συν τα literals
+`__version__` στα `__init__.py` των plugins. Μια μελλοντική απόφαση
+"core vs third-party plugin" μπορεί να τα αποσυνδέσει, αλλά η
+τρέχουσα ρύθμιση είναι ενιαία σε όλα τα διαδιδόμενα αρχεία.
 
 ## Ροή hotfix
 
