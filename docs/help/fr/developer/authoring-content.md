@@ -218,6 +218,15 @@ Comportement spécifique au chargeur de l'app à garder à l'esprit :
       - ...
   ```
 
+- Le bloc optionnel `evaluation` d'un ensemble
+  ([référence de l'engine](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  n'agit dans l'app qu'en **mode examen** : il y remplace le seuil de
+  réussite propre à l'apprenant et note le même premier passage selon
+  son schéma (`percent`, `pass_fail` ou `grades`), son `title`
+  remplace le titre « Résultat de l'examen », `report: detailed`
+  ouvre l'évaluation détaillée, et la notation par étoiles n'est pas
+  affichée. L'entraînement et les autres modes ignorent le bloc.
+
 ## Schéma de leçon
 
 Chaque leçon est un unique fichier JSON : métadonnées de premier

@@ -201,6 +201,15 @@ Akılda tutulması gereken uygulamaya özgü yükleyici davranışı:
       - ...
   ```
 
+- Bir setin isteğe bağlı `evaluation` bloğu
+  ([engine referansı](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  uygulamada yalnızca **sınav modunda** etkilidir: orada öğrenenin
+  kendi geçme eşiğinin yerini alır ve aynı ilk denemeyi kendi
+  şemasına göre (`percent`, `pass_fail` ya da `grades`)
+  değerlendirir; `title` alanı "Sınav sonucu" başlığının yerine
+  geçer, `report: detailed` ayrıntılı değerlendirmeyi açar ve yıldız
+  puanı gösterilmez. Alıştırma ve diğer modlar bloğu yok sayar.
+
 ## Ders şeması
 
 Her ders tek bir JSON dosyasıdır: üst düzey üst veri (`id`, `title`,

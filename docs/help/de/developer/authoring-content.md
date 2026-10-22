@@ -237,6 +237,16 @@ App-spezifisches Loader-Verhalten, das zu beachten ist:
       - ...
   ```
 
+- Der optionale `evaluation`-Block eines Sets
+  ([Engine-Referenz](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  wirkt in der App nur im **Prüfungsmodus**: Dort ersetzt er die
+  eigene Bestehensgrenze des Lernenden und bewertet denselben ersten
+  Durchgang nach seinem Schema (`percent`, `pass_fail` oder
+  `grades`), sein `title` ersetzt die Überschrift „Prüfungsergebnis",
+  `report: detailed` öffnet die ausführliche Auswertung, und die
+  Sterne-Bewertung entfällt. Üben und die anderen Modi ignorieren den
+  Block.
+
 ## Lektionsschema
 
 Jede Lektion ist eine einzelne JSON-Datei: Top-Level-Metadaten (`id`,

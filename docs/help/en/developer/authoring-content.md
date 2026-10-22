@@ -223,6 +223,15 @@ App-specific loader behaviour to keep in mind:
       - ...
   ```
 
+- A set's optional `evaluation` block
+  ([engine reference](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  takes effect in the app only in **exam mode**: there it replaces
+  the learner's own pass threshold and grades the same first pass
+  by its scheme (`percent`, `pass_fail` or `grades`), its `title`
+  replaces the "Exam result" heading, `report: detailed` opens the
+  detailed evaluation, and the star rating is not shown. Practice
+  and the other modes ignore the block.
+
 ## Lesson schema
 
 Each lesson is a single JSON file: top-level metadata (`id`, `title`,

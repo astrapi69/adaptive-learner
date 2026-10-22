@@ -218,6 +218,16 @@ Comportamiento del cargador específico de la app a tener en cuenta:
       - ...
   ```
 
+- El bloque opcional `evaluation` de un conjunto
+  ([referencia del engine](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  solo tiene efecto en la app en el **modo examen**: allí sustituye
+  el umbral de aprobado propio del estudiante y califica el mismo
+  primer intento según su esquema (`percent`, `pass_fail` o
+  `grades`), su `title` sustituye el título «Resultado del examen»,
+  `report: detailed` abre la evaluación detallada y no se muestra la
+  valoración con estrellas. La práctica y los demás modos ignoran el
+  bloque.
+
 ## Esquema de lección
 
 Cada lección es un único archivo JSON: metadatos de nivel superior

@@ -209,6 +209,15 @@ v1.2 以前の `language` エイリアスも引き続き読み込まれますが
       - ...
   ```
 
+- セットの任意の `evaluation` ブロック
+  （[エンジンのリファレンス](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation)）
+  がアプリで効くのは**試験モード**だけです。そこでは学習者自身の
+  合格ラインを置き換え、同じ 1 回目の解答をそのスキーム
+  （`percent`、`pass_fail`、`grades`）で評価します。`title` は
+  見出し「試験結果」を置き換え、`report: detailed` は詳細な評価を
+  開き、星による評価は表示されません。練習やほかのモードは
+  このブロックを無視します。
+
 ## レッスンスキーマ
 
 各レッスンは単一の JSON ファイルです。トップレベルのメタデータ
