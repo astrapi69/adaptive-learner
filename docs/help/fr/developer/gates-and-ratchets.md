@@ -75,7 +75,7 @@ La famille des cliquets et l'emplacement de chaque référence :
 | Taille du corpus de règles | `.claude/rules/.corpus-baseline.json` | `make verify-rule-corpus-size` |
 | Substituts d'umlauts dans les docs | `docs/.docs-hygiene-baseline.json` | `make verify-docs-hygiene` |
 | Références de docs cassées | `docs/.doc-refs-baseline.json` | `make verify-doc-refs` |
-| Taille de l'image publiée | (dans `verify-image-size`) | `make verify-image-size` |
+| Taille de l'image publiée | `.image-size-baseline.json` | `make verify-image-size` |
 
 ### Quand un cliquet vous bloque
 
@@ -155,7 +155,7 @@ make ci-full   # the above plus gates that need a built frontend
 `make ci` exécute, dans l'ordre : dérive des docs, hygiène des docs,
 références de docs, liens porte<->règle, inventaire des vérifications,
 inventaire des leçons, changements normatifs, taille du corpus de règles,
-cliquet de complexité, références testid, contexte docker, tailles de
+cliquet de complexité, tailles de dossiers, références testid, contexte docker, tailles de
 fichiers et l'instantané OpenAPI. Deux portes ont besoin d'un frontend
 installé et construit (elles construisent l'oracle des classes Tailwind),
 elles se trouvent donc dans `make ci-full`, pas dans `make ci`. Les suites

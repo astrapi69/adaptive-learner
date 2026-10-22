@@ -78,7 +78,7 @@ Ratchet ailesi ve her baseline'ın bulunduğu yer:
 | Kural korpusu boyutu | `.claude/rules/.corpus-baseline.json` | `make verify-rule-corpus-size` |
 | Belgelerdeki umlaut yerine geçenler | `docs/.docs-hygiene-baseline.json` | `make verify-docs-hygiene` |
 | Kırık belge referansları | `docs/.doc-refs-baseline.json` | `make verify-doc-refs` |
-| Yayımlanan imaj boyutu | (`verify-image-size` içinde) | `make verify-image-size` |
+| Yayımlanan imaj boyutu | `.image-size-baseline.json` | `make verify-image-size` |
 
 ### Bir ratchet seni engellediğinde
 
@@ -155,7 +155,7 @@ make ci-full   # the above plus gates that need a built frontend
 `make ci` sırasıyla şunları çalıştırır: docs sapması, docs hijyeni, belge
 referansları, kapı<->kural bağlantıları, denetim envanteri, lessons
 envanteri, normatif değişiklikler, kural korpusu boyutu, karmaşıklık
-ratchet'i, testid referansları, docker bağlamı, dosya boyutları ve
+ratchet'i, klasör boyutları, testid referansları, docker bağlamı, dosya boyutları ve
 OpenAPI snapshot'ı. İki kapı kurulu + build edilmiş bir frontend
 gerektirir (Tailwind sınıf kâhinini build ederler), bu yüzden
 `make ci` içinde değil `make ci-full` içinde yer alırlar. Test takımları
