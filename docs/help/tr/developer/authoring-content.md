@@ -1006,7 +1006,10 @@ hızlı yolu, **uygulamada bir ders oluşturmak ve paylaşmaktır**:
    geçmişi yok, kişisel bir şey yok.
 3. **Topluluğa sun**'a tıklayarak içerik repository'sinde önceden
    doldurulmuş bir **Pull Request** aç - ders JSON'ı ağaçtaki doğru
-   yola commit edilir, `.zip` eki gerekmez.
+   yola commit edilir, `.zip` eki gerekmez. Ayarlar > Entegrasyonlar
+   altında bir GitHub token'ı varsa, tek bir dersin Pull Request'ini
+   uygulama kendisi açar; token yoksa GitHub'ın düzenleyicisi ya da
+   yükleme sayfası sana yol gösterir.
 4. Reponun CI'sı PR'ı otomatik doğrular; bir maintainer dersi
    inceler, manifest'i (id, title, language, level, tags) yukarıdaki
    konvansiyonlarla uyumlu hale getirir ve onu `sets/` altında

@@ -1062,7 +1062,10 @@ compartirla**:
 3. Haz clic en **Poner a disposición de la comunidad** para abrir un
    **pull request** precargado en el repositorio de contenido - el
    JSON de la lección se hace commit en la ruta correcta del árbol,
-   sin necesidad de un adjunto `.zip`.
+   sin necesidad de un adjunto `.zip`. Con un token de GitHub en
+   Ajustes > Integraciones, la app abre ella misma el pull request de
+   una sola lección; sin token, el editor o la página de subida de
+   GitHub te guían.
 4. La CI del repo valida el PR automáticamente; un maintainer revisa
    la lección, ajusta el manifiesto (id, title, language, level, tags)
    a las convenciones de arriba y lo fusiona bajo `sets/`. Tras el

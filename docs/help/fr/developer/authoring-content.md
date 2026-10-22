@@ -1084,7 +1084,10 @@ une leçon dans l'application** :
 3. Clique sur **Mettre à disposition de la communauté** pour ouvrir
    une **pull request** pré-remplie dans le dépôt de contenu - le
    JSON de leçon est committé au bon chemin dans l'arbre, sans
-   pièce jointe `.zip` nécessaire.
+   pièce jointe `.zip` nécessaire. Avec un token GitHub dans
+   Paramètres > Intégrations, l'app ouvre elle-même la pull request
+   d'une leçon unique ; sans token, l'éditeur ou la page de
+   téléversement de GitHub te guident.
 4. La CI du dépôt valide automatiquement la PR ; un mainteneur
    vérifie la leçon, met le manifeste (id, title, language, level,
    tags) en accord avec les conventions ci-dessus et le fusionne

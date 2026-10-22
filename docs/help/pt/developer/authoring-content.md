@@ -1046,7 +1046,10 @@ contribuir é **criar e partilhar uma lição na aplicação**:
 3. Clica em **Disponibilizar para a comunidade** para abrir um
    **Pull Request** pré-preenchido no repositório de conteúdo - o
    JSON da lição é committado no caminho correto da árvore, sem
-   necessidade de anexo `.zip`.
+   necessidade de anexo `.zip`. Com um token do GitHub em
+   Configurações > Integrações, a aplicação abre ela própria o Pull
+   Request de uma única lição; sem token, o editor ou a página de
+   carregamento do GitHub guiam-te.
 4. A CI do repo valida o PR automaticamente; um maintainer verifica
    a lição, alinha o manifesto (id, title, language, level, tags) com
    as convenções acima e fá-lo o merge sob `sets/`. Após o merge,
