@@ -259,9 +259,9 @@ yoktur.
 
 Tüm ders ilerlemeleri, öğe-hata satırları, tekrar-kuyruğu durumları ve
 planlama verileri **sende** kalır: tarayıcıda (IndexedDB) ya da API
-modunda kendi arka ucunun veritabanında. Başkaları bunların bölümlerini
+modunda kendi arka ucunun veritabanında; başkaları bunların bölümlerini
 yalnızca kullandığın bir özellik onlara ihtiyaç duyduğunda alır.
 Örneğin bir yapay zeka öğrenme oturumu, yapay zeka sağlayıcına son
 hatalarını, her birini cevabın, doğru cevap ve kaç kez yaptığınla
 birlikte gönderir. [Gizlilik politikası](../legal/privacy.md), hangi
-verilerin cihazından ne zaman çıktığını açıklar.
+verilerin ne zaman başkalarına gittiğini açıklar.

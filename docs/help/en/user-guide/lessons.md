@@ -332,9 +332,9 @@ lesson completion.
 
 All lesson progress, element-error rows, review-queue states and
 scheduling data stay **with you**: in the browser (IndexedDB) or, in
-API mode, in your own backend's database. Others get parts of them
+API mode, in your own backend's database; others get parts of them
 only when a feature you use needs them. An AI learning session, for
 example, sends your AI provider your recent mistakes, each with your
 answer, the correct answer and how often you made it. The
-[privacy policy](../legal/privacy.md) describes when which data
-leaves your device.
+[privacy policy](../legal/privacy.md) describes when which data goes
+to others.

@@ -291,9 +291,9 @@ Toute la progression des leçons, les lignes d'erreurs au niveau
 des éléments, les états de la file d'attente de révision et les
 données de planification restent **avec toi** : dans le navigateur
 (IndexedDB) ou, en mode API, dans la base de données de ton propre
-backend. D'autres n'en reçoivent des parties que lorsqu'une
+backend ; d'autres n'en reçoivent des parties que lorsqu'une
 fonction que tu utilises en a besoin. Une session d'apprentissage
 avec l'IA, par exemple, envoie à ton fournisseur d'IA tes erreurs
 récentes, chacune avec ta réponse, la bonne réponse et sa
 fréquence. La [politique de confidentialité](../legal/privacy.md)
-décrit quelles données quittent ton appareil, et quand.
+décrit quelles données vont à d'autres, et quand.

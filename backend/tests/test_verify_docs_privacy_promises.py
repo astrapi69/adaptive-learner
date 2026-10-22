@@ -412,14 +412,16 @@ LEGITIMATE = [
         "3829-lessons",
         "All lesson progress, element-error rows, review-queue states and\nscheduling data stay "
         "**with you**: in the browser (IndexedDB) or, in API mode, in your\nown backend's "
-        "database. Others get parts of them only when a feature you use needs them.",
+        "database; others get parts of them only when a feature you use needs them. The "
+        "privacy policy describes when which data goes to others.",
     ),
     (
         "de",
         "3829-lessons",
         "Alle Lektionsfortschritte, Element-Fehler-Zeilen,\nWiederholungs-Warteschlangen-Zustände "
         "und Planungsdaten bleiben **bei dir**: im Browser (IndexedDB) oder, im API-Modus, in der "
-        "Datenbank deines eigenen Backends.",
+        "Datenbank deines eigenen Backends; andere erhalten Teile davon nur, wenn eine Funktion "
+        "sie braucht, die du nutzt.",
     ),
     (
         "en",

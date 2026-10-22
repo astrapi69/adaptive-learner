@@ -394,9 +394,9 @@ zwischen den Modi beim Lektionsabschluss.
 Alle Lektionsfortschritte, Element-Fehler-Zeilen,
 Wiederholungs-Warteschlangen-Zustände und Planungsdaten
 bleiben **bei dir**: im Browser (IndexedDB) oder, im API-Modus,
-in der Datenbank deines eigenen Backends. Andere erhalten Teile
+in der Datenbank deines eigenen Backends; andere erhalten Teile
 davon nur, wenn eine Funktion sie braucht, die du nutzt. Eine
 KI-Lernsitzung schickt deinem KI-Anbieter zum Beispiel deine
 letzten Fehler, jeweils mit deiner Antwort, der richtigen Antwort
-und der Häufigkeit. Wann welche Daten dein Gerät verlassen,
-beschreibt die [Datenschutzerklärung](../legal/privacy.md).
+und der Häufigkeit. Wann welche Daten an andere gehen, beschreibt
+die [Datenschutzerklärung](../legal/privacy.md).
