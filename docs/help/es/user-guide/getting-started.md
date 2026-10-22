@@ -15,11 +15,11 @@ pública en línea:
 [**Abrir la app**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
 Esta se ejecuta en **modo local**: tu progreso, tus estadísticas y
-tus ajustes se quedan en tu navegador (IndexedDB). Otros solo
-reciben partes de ellos cuando las necesita una función que usas;
-las llamadas de IA, por ejemplo, van directamente desde la página a
-Anthropic, OpenAI o Google Gemini con tu propia clave de API. Sin
-ningún backend de por medio.
+tus ajustes se quedan en tu navegador (IndexedDB); otros reciben
+partes de ellos solo cuando las necesita una función que usas. Las
+llamadas de IA, por ejemplo, van directamente desde la página a tu
+proveedor de IA, como Anthropic, OpenAI o Google Gemini, con tu
+propia clave de API. Sin ningún backend de por medio.
 
 ## Instalar como aplicación web progresiva
 

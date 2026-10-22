@@ -143,10 +143,10 @@ Four ways to run Adaptive Learner, in order of friction.
 ### 1. Try online (zero install)
 
 The public PWA runs in **Local mode**: your progress, statistics and
-settings stay in your browser (IndexedDB). Others get parts of them
-only when a feature you use needs them; AI calls, for example, go
-straight from the page to Anthropic, OpenAI or Google Gemini using
-your own API key. No backend, no install.
+settings stay in your browser (IndexedDB); others get parts of them
+only when a feature you use needs them. AI calls, for example, go
+straight from the page to your AI provider, such as Anthropic, OpenAI
+or Google Gemini, using your own API key. No backend, no install.
 
 [**Open the live app →**](https://astrapi69.github.io/adaptive-learner/)
 

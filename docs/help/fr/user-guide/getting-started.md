@@ -16,10 +16,11 @@ version en ligne publique :
 
 Celle-ci fonctionne en **mode local** : ta progression, tes
 statistiques et tes paramètres restent dans ton navigateur
-(IndexedDB). D'autres n'en reçoivent des parties que lorsqu'une
-fonction que tu utilises en a besoin ; les appels IA, par exemple,
-partent directement de la page vers Anthropic, OpenAI ou Google
-Gemini avec ta propre clé d'API. Aucun backend entre les deux.
+(IndexedDB) ; d'autres n'en reçoivent des parties que lorsqu'une
+fonction que tu utilises en a besoin. Les appels IA, par exemple,
+partent directement de la page vers ton fournisseur d'IA, comme
+Anthropic, OpenAI ou Google Gemini, avec ta propre clé d'API.
+Aucun backend entre les deux.
 
 ## Installer comme application web progressive
 

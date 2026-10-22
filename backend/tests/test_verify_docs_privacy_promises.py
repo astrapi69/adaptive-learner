@@ -439,13 +439,15 @@ LEGITIMATE = [
         "en",
         "3829-local-mode",
         "It runs in **local mode**: your progress, statistics and settings\nstay in your browser "
-        "(IndexedDB). Others get parts of them only when a feature you\nuse needs them.",
+        "(IndexedDB); others get parts of them only when a feature you\nuse needs them. AI "
+        "calls, for example, go straight from the page to your AI provider.",
     ),
     (
         "de",
         "3829-local-mode",
         "Die öffentliche PWA läuft im **Local-Modus**: Lernfortschritt,\nStatistiken und "
-        "Einstellungen bleiben in deinem Browser (IndexedDB).",
+        "Einstellungen bleiben in deinem Browser (IndexedDB); andere erhalten Teile davon nur, "
+        "wenn eine Funktion sie braucht, die du nutzt.",
     ),
     (
         "en",
