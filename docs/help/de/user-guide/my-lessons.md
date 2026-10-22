@@ -101,18 +101,19 @@ Set als eigenes Repository zu teilen:
   herunterladen (Manifest + Lektionen).
 - **Für die Community bereitstellen** - öffnet einen **Pull Request**
   im offiziellen Inhalts-Repository. Die Lektions-JSON landet am
-  richtigen Pfad im Inhaltsbaum und die Validierung des Repositorys
-  läuft automatisch; ein Maintainer prüft den PR und führt ihn
-  zusammen, sodass alle die Lektion herunterladen können. Der Pull
-  Request entsteht auf einem von zwei Wegen:
+  richtigen Pfad im Inhaltsbaum, und die Validierung des Repositorys
+  läuft automatisch. Der Pull Request ist auf GitHub öffentlich
+  sichtbar, sobald er entsteht. Ein Maintainer prüft ihn; übernimmt er
+  ihn, können alle die Lektion herunterladen. Der Pull Request entsteht
+  auf einem von zwei Wegen:
     - **Ohne Token** - eine einzelne Lektion öffnet den Datei-Editor
       von GitHub am richtigen Pfad, PR-Titel und -Beschreibung sind
-      vorausgefüllt. Eine kleine Lektion bringt ihren Inhalt gleich
-      mit; eine größere lädt die App zuerst herunter, und du fügst sie
-      im Editor ein. Ein Set mit mehreren Lektionen lädt die Dateien
-      herunter und öffnet die Upload-Seite von GitHub, auf die du sie
-      ziehst. GitHub erstellt den Fork und den Pull Request, sobald du
-      dort bestätigst.
+      vorausgefüllt. Bei einer kleinen Lektion steckt ihr Inhalt schon
+      in der GitHub-Adresse, die sich öffnet; bei einer größeren lädt
+      die App die Datei zuerst herunter, und du fügst sie im Editor ein.
+      Ein Set mit mehreren Lektionen lädt die Dateien herunter und
+      öffnet die Upload-Seite von GitHub, auf die du sie ziehst. GitHub
+      erstellt den Fork und den Pull Request, sobald du dort bestätigst.
     - **Mit GitHub-Token** (Einstellungen > Integrationen, siehe
       [Einstellungen](settings.md#integrationen)) - eine einzelne
       Lektion teilst du, ohne die App zu verlassen: die App forkt das
@@ -126,12 +127,12 @@ Set als eigenes Repository zu teilen:
   Repository (`owner/name`), privat oder öffentlich, und den Branch.
   Vorher läuft eine Qualitätsprüfung: findet sie Probleme, die die
   Prüfungen eines Content-Repositorys ablehnen würden, listet sie sie
-  auf, und der Knopf wird zu **Trotzdem exportieren**. Das übertragene
-  Repository kannst du danach als Inhaltsquelle verbinden (siehe
-  [Content-Repositories](../features/content-repos.md)). Das braucht
-  einen GitHub-Token und geht nur in der Browser-Version der App;
-  sonst bleibt der Knopf sichtbar, aber deaktiviert, mit dem Grund als
-  Tooltip.
+  auf, und der Knopf wird zu **Trotzdem exportieren**. Als Repository
+  teilen braucht einen GitHub-Token und geht nur in der Browser-Version
+  der App; sonst bleibt der Knopf sichtbar, aber deaktiviert, mit dem
+  Grund als Tooltip. Das übertragene Repository kannst du danach als
+  Inhaltsquelle verbinden (siehe
+  [Content-Repositories](../features/content-repos.md)).
 
 Exportierte Dateien enthalten nur den Lektionsinhalt - keinen
 Fortschritt, keine Fehlerhistorie, nichts Persönliches.

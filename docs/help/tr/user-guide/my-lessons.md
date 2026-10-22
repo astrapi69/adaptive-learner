@@ -85,16 +85,18 @@ için gereklidir:
   (manifest + dersler) indirin.
 - **Toplulukla paylaş** - resmi içerik deposunda bir **pull request**
   açar. Dersin JSON'u içerik ağacında doğru yola yerleşir ve deponun
-  doğrulaması otomatik olarak çalışır; bir bakımcı PR'ı inceler ve
-  birleştirir, böylece herkes dersi indirebilir. Pull request iki
+  doğrulaması otomatik olarak çalışır. Pull request, oluştuğu andan
+  itibaren GitHub'da herkese açık olarak görünür. Bir bakımcı onu
+  inceler; kabul ederse herkes dersi indirebilir. Pull request iki
   yoldan biriyle oluşturulur:
     - **Token olmadan** - tek bir ders, GitHub'ın dosya düzenleyicisini
       doğru yolda açar; PR başlığı ve açıklaması önceden doldurulmuştur.
-      Küçük bir ders içeriğini de birlikte getirir; daha büyük bir dersi
-      uygulama önce indirir ve siz onu düzenleyiciye yapıştırırsınız.
-      Birden çok dersli bir set dosyaları indirir ve GitHub'ın yükleme
-      sayfasını açar; dosyaları oraya sürüklersiniz. Siz orada
-      onayladığınızda GitHub fork'u ve pull request'i oluşturur.
+      Küçük bir derste içerik, açılan GitHub adresinin içinde zaten
+      bulunur; daha büyük bir derste uygulama dosyayı önce indirir ve
+      siz onu düzenleyiciye yapıştırırsınız. Birden çok dersli bir set
+      dosyaları indirir ve GitHub'ın yükleme sayfasını açar; dosyaları
+      oraya siz sürüklersiniz. Siz orada onayladığınızda GitHub fork'u
+      ve pull request'i oluşturur.
     - **GitHub token'ı ile** (Ayarlar > Entegrasyonlar, bkz.
       [Ayarlar](settings.md)) - tek bir dersi uygulamadan çıkmadan
       paylaşırsınız: uygulama depoyu fork'lar, dersi commit eder, pull
@@ -106,12 +108,12 @@ için gereklidir:
   oluşturulur). Depoyu (`owner/name`), özel mi herkese açık mı olacağını
   ve dalı siz seçersiniz. Önce bir kalite denetimi çalışır: bir içerik
   deposunun denetimlerinin reddedeceği sorunlar bulursa bunları
-  listeler ve düğme **Yine de dışa aktar** olur. Gönderilen depoyu
-  ardından içerik kaynağı olarak bağlayabilirsiniz (bkz.
+  listeler ve düğme **Yine de dışa aktar** olur. Depo olarak paylaşmak
+  için bir GitHub token'ı gerekir ve bu yalnızca uygulamanın tarayıcı
+  sürümünde kullanılabilir; aksi halde düğme görünür kalır ama devre
+  dışıdır, nedeni araç ipucunda yazar. Gönderilen depoyu ardından
+  içerik kaynağı olarak bağlayabilirsiniz (bkz.
   [Birden Çok İçerik Repository'si](../features/content-repos.md)).
-  Bunun için bir GitHub token'ı gerekir ve yalnızca uygulamanın
-  tarayıcı sürümünde kullanılabilir; aksi halde düğme görünür kalır ama
-  devre dışıdır, nedeni araç ipucunda yazar.
 
 Dışa aktarılan dosyalar yalnızca ders içeriğini içerir - ilerleme,
 hata geçmişi, hiçbir kişisel şey yoktur.

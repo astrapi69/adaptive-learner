@@ -56,11 +56,19 @@ Cliquez sur **Importer une leçon** dans la section Mes leçons :
 
 ## Partager avec la communauté
 
-**Partager avec la communauté** ouvre un **pull request** sur le dépôt de
-contenu officiel. L'export ne demande aucun compte ; le pull request
-demande un compte GitHub. Un token GitHub accélère le pull request et est
-nécessaire pour partager un ensemble entier comme dépôt personnel (voir
-ci-dessous).
+Chacune de vos leçons peut être partagée. L'export ne demande aucun
+compte ; pour le pull request vers la communauté, il vous faut un compte
+GitHub. Un token GitHub accélère le pull request et est nécessaire pour
+partager un ensemble entier comme dépôt personnel (voir *Partager comme
+dépôt* ci-dessous).
+
+**Partager avec la communauté** ouvre un **pull request** dans le dépôt
+officiel des contenus,
+[astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+La leçon JSON arrive au bon chemin de l'arborescence des contenus, et la
+validation du dépôt s'exécute automatiquement. Le pull request est
+visible publiquement sur GitHub dès qu'il existe. Un mainteneur
+l'examine ; s'il l'accepte, tout le monde peut télécharger la leçon.
 
 L'assistant de partage vous guide à travers :
 
@@ -73,24 +81,18 @@ L'assistant de partage vous guide à travers :
 4. **Soumission** - le pull request se crée par l'un de deux chemins :
    - **Sans token** - une leçon seule ouvre l'éditeur de fichiers de
      GitHub au bon chemin, avec le titre et la description du PR
-     pré-remplis. Une petite leçon apporte aussi son contenu ; pour une
-     plus grande, l'application télécharge d'abord le fichier et vous le
-     collez dans l'éditeur. Un ensemble de plusieurs leçons télécharge
-     les fichiers et ouvre la page d'envoi de GitHub, où vous les faites
-     glisser. GitHub crée le fork et le pull request dès que vous
-     confirmez sur place.
+     pré-remplis. Pour une petite leçon, son contenu se trouve déjà dans
+     l'adresse GitHub qui s'ouvre ; pour une plus grande, l'application
+     télécharge d'abord le fichier et vous le collez dans l'éditeur. Un
+     ensemble de plusieurs leçons télécharge les fichiers et ouvre la
+     page d'envoi de GitHub, où vous les faites glisser. GitHub crée le
+     fork et le pull request dès que vous confirmez sur place.
    - **Avec un token GitHub** (Paramètres > Intégrations, voir
      [Paramètres](settings.md)) - une leçon seule se partage sans quitter
      l'application : l'application forke le dépôt, commite la leçon,
      ouvre le pull request puis vous montre son lien. Un ensemble de
      plusieurs leçons passe toujours par le chemin sans token. Si GitHub
      refuse le token, le message renvoie à Paramètres > Intégrations.
-
-La contribution va vers le dépôt de contenu officiel :
-[astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
-La leçon JSON arrive au bon chemin de l'arborescence et la validation du
-dépôt s'exécute automatiquement ; un mainteneur examine le PR et le
-fusionne, pour que tout le monde puisse télécharger la leçon.
 
 ### Partager comme dépôt
 
@@ -99,12 +101,15 @@ contenu, vers un dépôt GitHub à vous (créé s'il n'existe pas encore) en
 un seul commit. Vous choisissez le dépôt (`owner/name`), privé ou public,
 et la branche. Une vérification de qualité passe d'abord : si elle trouve
 des problèmes que les contrôles d'un dépôt de contenu refuseraient, elle
-les liste et le bouton devient **Exporter quand même**. Vous pouvez
-ensuite connecter le dépôt envoyé comme source de contenu (voir
-[Plusieurs dépôts de contenu](../features/content-repos.md)). Cela
-demande un token GitHub et n'existe que dans la version navigateur de
-l'application ; sinon le bouton reste visible mais désactivé, avec la
-raison en info-bulle.
+les liste et le bouton devient **Exporter quand même**. Partager comme
+dépôt demande un token GitHub et n'existe que dans la version navigateur
+de l'application ; sinon le bouton reste visible mais désactivé, avec la
+raison en info-bulle. Vous pouvez ensuite connecter le dépôt envoyé comme
+source de contenu (voir
+[Plusieurs dépôts de contenu](../features/content-repos.md)).
+
+Les fichiers exportés ne contiennent que le contenu de la leçon - pas de
+progression, pas d'historique d'erreurs, rien de personnel.
 
 ---
 
