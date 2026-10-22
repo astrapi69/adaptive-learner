@@ -127,8 +127,9 @@ propõe o teu próprio repositório de conteúdo para o diretório oficial
       de navegador da aplicação; na aplicação de computador o botão
       fica visível mas desativado.
 
-Um mantenedor revê o pull request e integra-o depois de a CI do
-diretório validar o commit fixado.
+O pull request fica visível publicamente no GitHub assim que é criado.
+Um mantenedor revê-o e integra-o se a CI do diretório tiver validado com
+sucesso o commit fixado e a entrada for adequada.
 
 ---
 

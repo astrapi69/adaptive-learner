@@ -130,8 +130,9 @@ propose ton propre dépôt de contenu pour le répertoire officiel
       version navigateur de l'application ; dans l'application de
       bureau, le bouton reste visible mais désactivé.
 
-Un mainteneur examine le pull request et le fusionne une fois que la CI
-du répertoire a validé le commit épinglé.
+Le pull request est visible publiquement sur GitHub dès qu'il existe.
+Un mainteneur l'examine et le fusionne si la CI du répertoire a validé
+avec succès le commit épinglé et si l'entrée convient.
 
 ---
 

@@ -129,8 +129,10 @@ tu propio repositorio de contenido para el directorio oficial
       navegador de la app; en la app de escritorio el botón sigue
       visible pero desactivado.
 
-Un mantenedor revisa el pull request y lo fusiona cuando la CI del
-directorio ha validado el commit fijado.
+El pull request es visible públicamente en GitHub desde el momento en
+que se crea. Un mantenedor lo revisa y lo fusiona si la CI del
+directorio ha validado correctamente el commit fijado y la entrada es
+adecuada.
 
 ---
 

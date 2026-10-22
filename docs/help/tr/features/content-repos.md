@@ -122,8 +122,9 @@ içerik Repository'ni Repository'ler arası aramanın okuduğu resmî dizin
       sürümünde vardır; masaüstü uygulamasında düğme görünür kalır ama
       devre dışıdır.
 
-Bir bakımcı pull request'i inceler ve dizinin CI'ı sabitlenen commit'i
-doğruladıktan sonra birleştirir.
+Pull request, oluştuğu andan itibaren GitHub'da herkese açık olarak
+görünür. Bir bakımcı onu inceler; dizinin CI'ı sabitlenen commit'i
+başarıyla doğrulamışsa ve girdi uygunsa birleştirir.
 
 ---
 
