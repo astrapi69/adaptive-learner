@@ -175,7 +175,8 @@ Kim öğreniyor ve hangi dillerde.
 Sen yanıtlarken alıştırmaların nasıl davrandığı.
 
 - **Ders modu** - **Varsayılan mod** (Alıştırma / Sınav / Süreli),
-  sınavın **Geçme eşiği** ve **Süreli mod zorluğu** (Hızlı, Normal,
+  sınavın **Geçme eşiği** (kendi geçme eşiği olan setler sınavda o
+  eşiği kullanır) ve **Süreli mod zorluğu** (Hızlı, Normal,
   Rahat); bkz. [Dersler ve tekrarlar](lessons.md).
 - **İpuçları** - her alıştırmada kademeli bir ipucu düğmesinin görünüp
   görünmeyeceği ve **İpucu başına XP maliyeti** (ücretsiz ipuçları
@@ -370,7 +371,9 @@ yapılandırma değişikliği gibi, satırda bir işaret olarak görünür.
 Tarayıcı modunda kart, yalnızca masaüstü uygulamasının bir eklenti
 barındırıcısı olduğunu belirten bir bildirimle görünür kalır.
 **Öğrenme deposu** bu eklentinin ayarlarını içerir (git kalıcılığı,
-depo dizini).
+depo dizini). Dizini boş bırakırsan depolar veri dizinindeki `repos`
+klasörüne gider (bkz. **Hakkında > Sistem**); girdiğin bir yol olduğu
+gibi kullanılır.
 
 ## Veri
 
@@ -523,6 +526,19 @@ token'ın nerede saklandığını söyler (secrets.yaml, bir ortam değişkeni
 ya da bu tarayıcı) ve **Kaldır** onu siler. Bir ortam değişkeninden
 gelen token burada düzenlenemez.
 
+Token üç yerde kullanılır:
+
+- Derslerim'deki **Toplulukla paylaş**, tek bir dersin pull request'ini
+  GitHub düzenleyicisine uğramadan doğrudan açar (bkz.
+  [Derslerim](my-lessons.md)).
+- **Depo olarak paylaş** bütün bir seti sana ait bir depoya gönderir;
+  bir token kaydedilene kadar düğme devre dışı kalır.
+- **Deponuzu kaydedin** (Veri > Kaynaklar), girdiyi GitHub'a senin
+  yapıştırman yerine kendi pull request'ini doğrudan açabilir.
+
+Son ikisi yalnızca uygulamanın tarayıcı sürümünde vardır. Token olmadan
+diğer her şey eskisi gibi çalışır.
+
 ## Yardım
 
 **Yardım** sekmesi uygulama içi sözlüğü içerir: bir arama alanı
@@ -543,9 +559,12 @@ görmesine yardımcı olan şeyleri bir araya getirir:
   hiçbir şey çıkmaz: bu düğme, raporu doldurulmuş hâlde GitHub'ın sorun
   formunu açar; yani GitHub raporu o andan itibaren, sen sorunu orada
   göndermeden önce alır.
-- **Geliştirici Modu** - hata bildirimlerinde tüm teknik ayrıntıları
-  (durum kodu, uç nokta, yığın izi) ve açıkken gezinme çubuğunda bir
-  "DEV" rozeti gösterir. Varsayılanı derleme koluna bağlıdır:
+- **Geliştirici Modu** - hata bildirimlerinde ve doğrudan sayfada
+  görünen hata mesajlarında (örneğin müfredat, ilerleme, ayarlar ya da
+  bir oturum yüklenmediğinde) tüm teknik ayrıntıları (durum kodu, uç
+  nokta, yığın izi) ve açıkken gezinme çubuğunda bir "DEV" rozeti
+  gösterir. Kapalıyken bu yerlerde sunucunun teknik yanıtı yerine
+  anlaşılır bir mesaj görünür. Varsayılanı derleme koluna bağlıdır:
   **Latest (önizleme) kolunda varsayılan olarak AÇIK**, **Main'de
   KAPALI**; böylece önizleme test edenler tam teknik hata ayrıntılarını
   görürken üretim kullanıcıları anlaşılır mesajlar alır. İki yönde de

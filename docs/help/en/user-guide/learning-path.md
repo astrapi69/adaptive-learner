@@ -105,6 +105,7 @@ least 44 px and the page reflows cleanly down to 375 px wide.
 - The **current lesson** (▶) is always your best next step - based on
   your error history, not just lesson order.
 - A paused lesson stays resumable from its row or the Dashboard Paused
-  Lessons card.
+  Lessons card. The exception is a started exam: it only counts when
+  taken in one sitting, so it starts over.
 - Once both **receptive** and **productive** mastery are reached, a
   lesson counts as fully mastered.

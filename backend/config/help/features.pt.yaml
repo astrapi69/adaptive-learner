@@ -54,7 +54,7 @@ entries:
 
   - key: feature_auto_loop
     title: Auto-Loop
-    short: "Após o passo 7, um novo ciclo com conteúdo novo começa automaticamente."
+    short: "Na aplicação de desktop, após o passo 7 começa automaticamente um novo ciclo com conteúdo novo; na versão de navegador, a sessão fica no passo 7."
     long: |
       ## O que é o auto-loop?
 
@@ -62,6 +62,10 @@ entries:
       iniciar automaticamente um novo ciclo sobre o próximo
       tópico do seu currículo — sem ter de carregar num botão
       "próximo ciclo".
+
+      Só na aplicação de desktop: na versão de navegador, a sessão
+      fica no passo 7, e a página da sessão indica-o. Termine aí a
+      sessão e inicie uma nova para continuar a aprender.
 
       ## Como é escolhido o próximo tópico
 

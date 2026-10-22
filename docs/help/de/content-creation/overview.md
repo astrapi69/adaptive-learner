@@ -35,7 +35,15 @@ Der **Lektions-Creator** unter `/create-lesson` ist ein
 - **Vorlagen** (Leer / Vokabeln / Grammatik / Konversation) und
   **Entwurfs-Autospeicherung**.
 - **Vorschau** im echten Lektions-Viewer vor dem Speichern.
-- **Lokal speichern** oder **per Pull Request teilen**.
+- **Lokal speichern** oder **Speichern und teilen**. Lokal speichern
+  braucht nur eine gültige Lektion (Titel, gültiges Sprachpaar, bei
+  einer neuen Kartenlektion mindestens 4 Karten, gültige Struktur);
+  schon eine Übung genügt, und die Lektion ist sofort spielbar.
+  Speichern und teilen speichert und öffnet den Teilen-Assistenten.
+  Dafür muss die Lektion zusätzlich die Mindestwerte der Content-Engine
+  erfüllen, etwa genug Übungen und Übungstypen und genug Antworten oder
+  Paare in jeder Übung. Der Schritt **„Überprüfen und speichern"**
+  listet sie mit den aktuellen Zahlen unter **„Nötig zum Teilen"**.
 
 Einstiegspunkte gibt es im Content Browser und im Dashboard.
 

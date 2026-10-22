@@ -187,7 +187,8 @@ Quem aprende e em que idiomas.
 Como os exercícios se comportam enquanto responde.
 
 - **Modo de lição** - o **Modo padrão** (Prática / Exame / Cronometrado),
-  o **Limite para aprovação** do exame e a **Dificuldade do modo
+  o **Limite para aprovação** do exame (conjuntos com limite de
+  aprovação próprio usam esse limite no exame) e a **Dificuldade do modo
   cronometrado** (Rápido, Normal, Relaxado); consulte
   [Lições e revisões](lessons.md).
 - **Dicas** - se aparece um botão de dica por etapas em cada exercício, e
@@ -385,7 +386,9 @@ tal como uma alteração de configuração depois da ativação. No modo
 navegador o cartão continua visível com um aviso de que só a aplicação
 de desktop tem um anfitrião de plugins. **Repositório de aprendizagem**
 contém as definições desse plugin (persistência git, diretório dos
-repositórios).
+repositórios). Se deixar o diretório vazio, os repositórios ficam na
+pasta `repos` do seu diretório de dados (ver **Sobre > Sistema**); um
+caminho indicado é usado tal como está.
 
 ## Dados
 
@@ -546,6 +549,19 @@ pertence, e uma linha de origem indica onde o token está guardado
 **Remover** para o apagar. Um token que vem de uma variável de ambiente
 não pode ser editado aqui.
 
+O token é usado em três sítios:
+
+- **Compartilhar com a comunidade** em As Minhas Lições abre
+  diretamente o pull request de uma lição isolada, sem passar pelo
+  editor do GitHub (ver [As Minhas Lições](my-lessons.md)).
+- **Compartilhar como repositório** envia um conjunto inteiro para um
+  repositório seu; o botão fica desativado até guardar um token.
+- **Registe o seu repositório** (Dados > Fontes) pode abrir o seu pull
+  request diretamente, em vez de colar a entrada no GitHub.
+
+Os dois últimos só estão disponíveis na versão de navegador da
+aplicação. Sem token, tudo o resto funciona como antes.
+
 ## Ajuda
 
 O separador **Ajuda** contém o glossário da aplicação: um campo de
@@ -567,8 +583,12 @@ ver o que aconteceu no seu dispositivo:
   relatório preenchido, por isso o GitHub recebe-o a partir desse
   momento, antes mesmo de submeter a issue lá.
 - **Modo desenvolvedor** - mostra o detalhe técnico completo (código de
-  estado, endpoint, stack trace) nas notificações de erro, e um emblema
-  "DEV" na barra de navegação enquanto está ativo. O seu padrão depende
+  estado, endpoint, stack trace) nas notificações de erro e nas
+  mensagens de erro mostradas na própria página (por exemplo quando o
+  currículo, o progresso, as definições ou uma sessão não carregam), e
+  um emblema "DEV" na barra de navegação enquanto está ativo. Desligado,
+  esses sítios mostram uma mensagem compreensível em vez da resposta
+  técnica do servidor. O seu padrão depende
   do ramo de build: está **LIGADO por padrão no ramo Latest
   (pré-visualização)** e **DESLIGADO em Main**, para que os testadores
   da pré-visualização vejam o detalhe técnico completo dos erros

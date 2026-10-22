@@ -16,8 +16,10 @@ leurs propres copies de cette liste.
   adapter, répéter, intégrer. Un évaluateur à double prompt juge
   chaque tour et décide d'avancer, de répéter, de sauter en avant ou
   de revenir en arrière.
-- **Auto-loop** : quand un sujet est intégré, la session choisit un
-  nouveau sous-sujet et démarre un cycle frais (plafonné par session).
+- **Auto-loop** (application de bureau) : quand un sujet est intégré,
+  la session choisit un nouveau sous-sujet et démarre un cycle frais
+  (plafonné par session). Dans la version navigateur, la session reste
+  à l'étape 7 ; la page de la session le signale.
 - **Changement de méthode** : la détection de stagnation recommande
   une autre méthode quand les évaluations plafonnent ; acceptation en
   un clic.
@@ -136,7 +138,8 @@ Voir [Bilan de fin de set](set-summary.md).
   liste de points à traiter dans le résumé et se règlent dans
   l'éditeur, sans toucher à ta progression.
 
-Voir [Créer des leçons](../content-creation/overview.md).
+Voir [Créer des leçons](../content-creation/overview.md) et
+[Mode mentor](../content-creation/mentor-mode.md).
 
 ## Import et analyse
 
@@ -250,8 +253,9 @@ Voir [Installation](../install/launcher.md).
   Entrée fait avancer les leçons, Tab navigue entre les trous du
   texte à trous.
 - **Prise en charge des lecteurs d'écran** : landmarks, étiquettes
-  ARIA et régions live, tableaux de données pour les graphiques,
-  gestion du focus des dialogues.
+  ARIA et régions live, un titre par page dans la langue de
+  l'interface (« Paramètres - Adaptive Learner »), tableaux de données
+  pour les graphiques, gestion du focus des dialogues.
 - La **réduction des animations** est respectée partout ; lecture à
   voix haute (TTS) pour les leçons et le chat.
 - **Aide contextuelle dans l'app** : le panneau d'aide ouvre

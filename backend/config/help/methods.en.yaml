@@ -161,10 +161,12 @@ entries:
 
       ## What the dual-prompt evaluator does
 
-      Confidence evaluation still runs, but more tolerantly —
-      step progression is allowed at 50% confidence (vs the
-      usual 70%). The method is explicitly for exploration, not
-      testing.
+      Confidence evaluation still runs, with its own yardstick:
+      the evaluator looks at the quality of the exchange rather
+      than at whether the correct answer comes first. The
+      threshold for a step advance is the same as for every
+      method: 70% confidence. The method is explicitly for
+      exploration, not testing.
 
   - key: method_contextual
     title: Contextual

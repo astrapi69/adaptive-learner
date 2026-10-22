@@ -226,10 +226,10 @@ entries:
 
       ## When the step ends
 
-      Once the dual-prompt evaluator sees three variations in
-      a row with confidence > 80%, you proceed to step 7. If
-      confidence fluctuates, the cycle stays in step 6 —
-      until stability is reached.
+      After each exchange the dual-prompt evaluator decides
+      whether you are ready for step 7; the system applies its
+      suggestion when its confidence is at least 70%. Otherwise
+      the cycle stays in step 6.
 
       ## Connection to spaced repetition
 
@@ -272,8 +272,8 @@ entries:
 
       - **End the session** and rate it (understanding /
         stress / method fit).
-      - **Auto-loop**: a new cycle with a new topic starts
-        automatically.
+      - **Auto-loop** (desktop app only): a new cycle with a new
+        topic starts automatically.
       - **Method switch**: at low method fit the system
         recommends a method change for the next cycle.
 

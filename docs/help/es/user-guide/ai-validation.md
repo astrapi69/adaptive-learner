@@ -45,6 +45,14 @@ navegador. Necesitas:
 Sin clave, el botón está visible pero desactivado; un aviso enlaza a
 Ajustes.
 
+**Qué se envía:** La revisión envía a tu proveedor las tarjetas del
+conjunto (anverso, reverso, notas) junto con los idiomas y el nivel del
+conjunto; tu perfil y tu progreso de aprendizaje no forman parte de
+ello. Como en cualquier solicitud, tu proveedor recibe además, entre
+otras cosas, tu dirección IP y tu clave de API. El diálogo lo indica
+antes de empezar y enlaza la
+[Política de privacidad](../legal/privacy.md).
+
 > **Coste:** la revisión gasta tokens de tu propia cuenta del
 > proveedor y se factura según las tarifas de ese proveedor. Antes de
 > empezar, el diálogo muestra una **estimación de coste** que debes

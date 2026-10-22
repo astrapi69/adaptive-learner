@@ -4,8 +4,11 @@
  * Two-column tap-to-pair exercise. Left column = terms in
  * authored order; right column = definitions, shuffled.
  * User taps a left tile (or selects via keyboard), then taps
- * a right tile to create a pair. Tapping a paired tile undoes
- * the pair. Submit enables once every pair is made.
+ * a right tile to create a pair (either side can go first).
+ * Tapping a paired tile selects it; tapping its new partner
+ * re-pairs it and a collision swaps partners (#3237), so a tap
+ * never dissolves a pair. Ctrl/Cmd+Z undoes the last pair.
+ * Submit enables once every pair is made.
  *
  * Accessibility:
  * - Each tile is a real ``<button>`` with an aria-pressed

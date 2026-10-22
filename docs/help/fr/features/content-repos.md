@@ -104,6 +104,38 @@ recommandé** (confiance 3).
 
 ---
 
+## Enregistrer ton propre dépôt
+
+Sous **Paramètres → Données → Sources**, **Enregistrez votre dépôt**
+propose ton propre dépôt de contenu pour le répertoire officiel
+(`recommended-repos.json`) que lit la recherche entre dépôts.
+
+1. Choisis l'un de tes dépôts connectés, ou saisis son URL GitHub et
+   sa branche, puis donne-lui un titre et, si tu veux, une description
+   d'une ligne.
+2. **Préparer la soumission** : l'application récupère le commit
+   actuel du dépôt, lance la même vérification technique que pour
+   connecter un dépôt, lit les paires de langues dans le
+   `search-index.json` du dépôt et affiche l'entrée de répertoire
+   terminée. Un statut t'indique si l'entrée est *Validé localement* ou
+   *En attente ; la CI validera*.
+3. Envoie-la par l'un de deux chemins :
+    - **Copier l'entrée** et **Ouvrir le répertoire pour proposer** :
+      GitHub ouvre le fichier du répertoire en édition ; colle l'entrée
+      dans le tableau et choisis « Propose changes ». GitHub crée le
+      fork pour toi. Aucun token n'est nécessaire.
+    - **Créer une demande de fusion** : avec un token GitHub
+      (Paramètres → Intégrations), l'application ouvre elle-même le
+      pull request et te montre son lien. Cela n'existe que dans la
+      version navigateur de l'application ; dans l'application de
+      bureau, le bouton reste visible mais désactivé.
+
+Le pull request est visible publiquement sur GitHub dès qu'il existe.
+Un mainteneur l'examine et le fusionne si la CI du répertoire a validé
+avec succès le commit épinglé et si l'entrée convient.
+
+---
+
 ## Évaluations locales
 
 Tu peux attribuer localement des **étoiles** à chaque dépôt. Cette
