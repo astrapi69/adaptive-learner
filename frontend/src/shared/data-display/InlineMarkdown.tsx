@@ -16,6 +16,8 @@
  *   so the output stays inline inside the caller's element.
  * - Raw HTML is NOT rendered (no ``rehype-raw``): ``react-markdown`` escapes
  *   it, so ``<script>`` in a prompt shows as text — XSS-safe by construction.
+ * - Images are not inline content and render nothing. Should the list ever
+ *   allow them, {@link MarkdownImage} already decides how (#3803).
  *
  * Always-render (no markdown-present pre-check): a string without Markdown
  * syntax passes through unchanged, so there is no edge case to get wrong. The
@@ -31,6 +33,8 @@
  */
 
 import Markdown from "react-markdown";
+
+import MarkdownImage from "./MarkdownImage";
 
 /** Inline elements kept in the output; everything else is unwrapped to text. */
 const INLINE_ELEMENTS = ["p", "a", "strong", "em", "code", "br"];
@@ -55,6 +59,7 @@ export default function InlineMarkdown({ children }: InlineMarkdownProps) {
             {inner}
           </a>
         ),
+        img: MarkdownImage,
       }}
     >
       {children}

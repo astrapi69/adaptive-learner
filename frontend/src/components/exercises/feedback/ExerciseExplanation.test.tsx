@@ -100,6 +100,18 @@ describe("ExerciseExplanation", () => {
         expect(screen.queryByTestId("exercise-explanation")).toBeNull();
     });
 
+    it("offers an image from another host as a link, never loads it (#3803)", () => {
+        render(
+            <ExerciseExplanation
+                explanation={"Siehe ![Skizze](https://probe-image.example/s.png)"}
+                outcome="incorrect"
+            />,
+        );
+        const body = screen.getByTestId("exercise-explanation-body");
+        expect(body.querySelector("img")).toBeNull();
+        expect(screen.getByTestId("markdown-remote-image")).toHaveTextContent("Skizze");
+    });
+
     it("boundary: renders a 2000-char explanation (the schema ceiling)", () => {
         const long = "x".repeat(2000);
         render(<ExerciseExplanation explanation={long} outcome="incorrect" />);

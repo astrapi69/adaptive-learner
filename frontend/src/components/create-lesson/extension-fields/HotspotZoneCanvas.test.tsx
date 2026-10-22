@@ -159,3 +159,44 @@ describe("HotspotZoneCanvas: rendering existing zones", () => {
         );
     });
 });
+
+describe("HotspotZoneCanvas: an image on another host (#3803)", () => {
+    it.each([
+        ["an absolute URL", "https://probe-image.example/hotspot.png"],
+        ["a protocol-relative URL", "//probe-image.example/hotspot.png"],
+    ])("offers %s as a link and never loads it", (_name, src) => {
+        const {container} = render(
+            <HotspotZoneCanvas id="h1" src={src} zones={[]} drawShape="rect" onDraw={vi.fn()} t={T} />,
+        );
+        expect(container.querySelector("img")).toBeNull();
+        const link = screen.getByTestId("markdown-remote-image");
+        expect(link).toHaveAttribute("href", src);
+        expect(link).toHaveAttribute("target", "_blank");
+        expect(link).toHaveTextContent("Stimulus image");
+    });
+
+    it("offers no drawing overlay over an image it does not show", () => {
+        render(
+            <HotspotZoneCanvas
+                id="h1"
+                src="https://probe-image.example/hotspot.png"
+                zones={[]}
+                drawShape="rect"
+                onDraw={vi.fn()}
+                t={T}
+            />,
+        );
+        expect(screen.queryByTestId("exercise-ext-hotspot-canvas-overlay-h1")).toBeNull();
+    });
+
+    it.each([
+        ["an uploaded data URI", "data:image/png;base64,AAAA"],
+        ["a set asset path", "assets/img/map.png"],
+        ["a same-origin URL", `${window.location.origin}/map.png`],
+    ])("still draws on %s", (_name, src) => {
+        render(<HotspotZoneCanvas id="h1" src={src} zones={[]} drawShape="rect" onDraw={vi.fn()} t={T} />);
+        expect(screen.getByTestId("exercise-ext-hotspot-canvas-image-h1")).toHaveAttribute("src", src);
+        expect(screen.getByTestId("exercise-ext-hotspot-canvas-overlay-h1")).toBeInTheDocument();
+        expect(screen.queryByTestId("markdown-remote-image")).toBeNull();
+    });
+});

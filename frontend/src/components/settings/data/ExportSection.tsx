@@ -26,6 +26,7 @@ import {
 } from "../../../lib/export/markdown-renderer";
 import {openPrintWindow} from "../../../lib/export/pdf-generator";
 import {filterStandardProjects} from "../../../lib/learning/learning-project";
+import MarkdownImage from "../../../shared/data-display/MarkdownImage";
 import {getStorage} from "../../../storage";
 import {SettingsSection} from "../SettingsSection";
 import type {
@@ -350,7 +351,10 @@ export default function ExportSection() {
                     {/* Render the Markdown (headings/bold/tables) instead of
                         showing the raw source — #914. */}
                     <div className="export-preview-body markdown-body">
-                        <Markdown remarkPlugins={[remarkGfm]}>
+                        <Markdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{img: MarkdownImage}}
+                        >
                             {shortPreview(preview.markdown, 30)}
                         </Markdown>
                     </div>

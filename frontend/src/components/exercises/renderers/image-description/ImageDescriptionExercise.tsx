@@ -42,8 +42,8 @@ import {useControlledExercise} from "../../../../lib/exercises/useControlledExer
 import {
     asImageDescriptionPayload,
     canonicalImageDescriptionAnswer,
-    isRemoteImageUrl,
 } from "../../../../lib/exercises/payload/image-description";
+import {isRemoteImageUrl} from "../../../../lib/media/remote-image";
 import {
     isFreeTextCorrect,
     isFreeTextNearMiss,

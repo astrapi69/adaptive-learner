@@ -45,6 +45,20 @@ describe("AssistantUiThread resume hydration (Phase 4b-i-b, #1126)", () => {
         expect(screen.queryByText(/You are a tutor\./)).not.toBeInTheDocument();
     });
 
+    it("offers an image in a stored reply as a link on every resume, never loads it (#3803)", async () => {
+        getMessages.mockResolvedValue([
+            {id: "u1", role: "user", content: "Zeig mir ein Bild."},
+            {id: "a1", role: "assistant", content: "Hier: ![Diagramm](https://probe-image.example/d.png)"},
+        ]);
+
+        const {container} = render(<AssistantUiThread sessionId="sess-4" />);
+
+        const link = await screen.findByTestId("markdown-remote-image");
+        expect(link).toHaveTextContent("Diagramm");
+        expect(link).toHaveAttribute("href", "https://probe-image.example/d.png");
+        expect(container.querySelector("img")).toBeNull();
+    });
+
     it("keeps the welcome empty-state for a new session (system prompt only)", async () => {
         getMessages.mockResolvedValue([
             {id: "s", role: "system", content: "You are a tutor."},

@@ -317,4 +317,36 @@ describe("RichTextEditor", () => {
         expect(counter.characters()).toBeGreaterThan(0);
         expect(counter.words()).toBeGreaterThan(0);
     });
+
+    it("reproduction (#3803): an image from another host in a stored note or a paste loads nothing", async () => {
+        let editorRef: Editor | null = null;
+        render(
+            <RichTextEditor
+                content={{
+                    type: "doc",
+                    content: [
+                        {
+                            type: "image",
+                            attrs: {src: "https://probe-image.example/stored.png", alt: "Gespeichert"},
+                        },
+                    ],
+                }}
+                onEditorReady={(e) => {
+                    editorRef = e;
+                }}
+                testidNamespace="rte"
+            />,
+        );
+        await waitFor(() => expect(editorRef).not.toBeNull());
+        act(() => {
+            editorRef!.commands.insertContentAt(
+                editorRef!.state.doc.content.size,
+                '<img src="https://probe-image.example/pasted.png" alt="Eingefügt">',
+            );
+        });
+        const images = screen.getByTestId("rte-content").querySelectorAll("img");
+        expect(images).toHaveLength(2);
+        for (const image of images) expect(image.getAttribute("src")).toBeNull();
+        expect(screen.getByTestId("rte-content").innerHTML).not.toContain("probe-image.example");
+    });
 });

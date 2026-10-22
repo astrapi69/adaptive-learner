@@ -3,9 +3,11 @@
  * supplementary-media {@link MediaResource}.
  *
  * Renders type-appropriate chrome:
- *   - ``youtube``: a static thumbnail (NO embed, NO iframe — privacy) +
- *     title + duration. Falls back to a video-icon placeholder offline or
- *     when the thumbnail fails to load.
+ *   - ``youtube``: a local video placeholder + title + duration. No
+ *     thumbnail, no embed, no iframe: the card loads nothing from YouTube
+ *     (#3803, before that a thumbnail from ``img.youtube.com`` told Google
+ *     which video a lesson recommends, without the visitor asking). The
+ *     video opens on YouTube only when the learner clicks the card.
  *   - ``podcast`` / ``article`` / ``book`` / ``course`` / ``website``: a
  *     Lucide type icon + title.
  *
@@ -35,7 +37,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { useI18n } from "../../hooks/ui/useI18n";
-import YouTubeThumbnail from "./YouTubeThumbnail";
 
 /** Media kinds this card knows how to render. Local (no app import) so the
  *  component stays app-agnostic; the app's ``MediaType`` is the same union
@@ -105,20 +106,13 @@ export default function ResourceCard<T extends DisplayResource>({
         data-testid="resource-card-link"
         data-type={resource.type}
       >
-        {isYouTube ? (
-          <YouTubeThumbnail
-            url={resource.url}
-            title={resource.title}
-            className="h-[72px] w-32 shrink-0 rounded-md"
-          />
-        ) : (
-          <div
-            className="flex size-12 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground"
-            aria-hidden="true"
-          >
-            <Icon className="size-6" />
-          </div>
-        )}
+        <div
+          className={`flex shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground ${isYouTube ? "h-[72px] w-32" : "size-12"}`}
+          aria-hidden="true"
+          data-testid={isYouTube ? "youtube-thumbnail-placeholder" : undefined}
+        >
+          <Icon className="size-6" />
+        </div>
 
         <div className="flex min-w-0 grow flex-col gap-1">
           <div className="flex items-start gap-2">

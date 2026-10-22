@@ -15,6 +15,8 @@
  * - GFM (tables, strikethrough) via ``remark-gfm``, same as the theory body.
  * - Raw HTML is NOT rendered (no ``rehype-raw``): ``react-markdown`` escapes
  *   it, so the output is XSS-safe by construction.
+ * - An image from another host is offered as a link, not loaded
+ *   ({@link MarkdownImage}, #3803).
  *
  * Props-driven + app-agnostic (no app imports); colors come from tokens.
  *
@@ -26,6 +28,8 @@
 
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
+import MarkdownImage from "./MarkdownImage";
 
 export interface BlockMarkdownProps {
   /** The author text to render as block Markdown. */
@@ -58,6 +62,7 @@ export default function BlockMarkdown({ children }: BlockMarkdownProps) {
               {inner}
             </a>
           ),
+          img: MarkdownImage,
         }}
       >
         {children}

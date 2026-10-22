@@ -67,6 +67,7 @@ import {cn} from "@/lib/utils";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {markdownToSpeech} from "../../../lib/lesson/tts-text";
+import MarkdownImage from "../../../shared/data-display/MarkdownImage";
 import {getStorage} from "../../../storage";
 import {notify} from "../../../utils/notify";
 import MicButton from "../../voice/MicButton";
@@ -104,9 +105,11 @@ interface AssistantUiThreadProps {
 }
 
 /**
- * Assistant text part renderer. Mirrors ``SessionChat``'s assistant bubble:
- * react-markdown + remark-gfm with the shared ``chat-message-content-markdown``
- * typography, so an AI reply reads the same as the help system.
+ * Assistant text part renderer: react-markdown + remark-gfm with the shared
+ * ``chat-message-content-markdown`` typography, so an AI reply reads the same
+ * as the help system. An image in a reply is offered as a link when it lives
+ * on another host (#3803): a stored reply re-renders on every resume, and the
+ * model, not the learner, chose that host.
  */
 const AssistantText: TextMessagePartComponent = ({text}) => (
     <div
@@ -121,6 +124,7 @@ const AssistantText: TextMessagePartComponent = ({text}) => (
                         <table {...tableProps} />
                     </div>
                 ),
+                img: MarkdownImage,
             }}
         >
             {text}

@@ -31,6 +31,14 @@ describe("InlineMarkdown", () => {
     expect(container.querySelector("code")?.textContent).toBe("print()");
   });
 
+  it("never loads an image: images are not inline content (#3803)", () => {
+    const { container } = render(
+      <InlineMarkdown>{"![x](https://probe-image.example/p.png) Text"}</InlineMarkdown>,
+    );
+    expect(container.querySelector("img")).toBeNull();
+    expect(container.textContent).toBe(" Text");
+  });
+
   it("renders a [link](url) as a safe new-tab anchor", () => {
     const { container } = render(
       <InlineMarkdown>{"see [docs](https://example.com)"}</InlineMarkdown>,

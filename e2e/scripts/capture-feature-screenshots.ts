@@ -250,12 +250,33 @@ const ORDERING_FIXTURE: FixtureRepo = {
     lessonFile: "01-actions-useactionstate.json",
 };
 
+/**
+ * Content from another server (#3803): ``e2e/fixtures/remote-media.lesson.json``
+ * carries a Markdown image from a foreign host in its theory step and a
+ * YouTube video plus an article in its ``resources``. The app loads none of
+ * it: the image is offered as a link, the video card shows a local
+ * placeholder instead of a thumbnail.
+ */
+const REMOTE_MEDIA_FIXTURE: FixtureRepo = {
+    repo: "e2e/remote-media",
+    setId: "zellteilung-from-de",
+    manifest: {
+        title: "Zellteilung",
+        targetLanguage: "de",
+        sourceLanguage: "de",
+        domain: "knowledge",
+    },
+    setPath: "sets/de/zellteilung",
+    lessonFile: "01-mitose.json",
+};
+
 /** The fixture file on disk is named after its purpose, the served copy
  *  after the lesson (the set manifest lists the served name). */
 const FIXTURE_FILES: Record<string, string> = {
     [EXPLANATION_FIXTURE.lessonFile]: "explanation-post-answer.lesson.json",
     [LONG_WORD_FIXTURE.lessonFile]: "matching-long-word.lesson.json",
     [ORDERING_FIXTURE.lessonFile]: "ordering-review.lesson.json",
+    [REMOTE_MEDIA_FIXTURE.lessonFile]: "remote-media.lesson.json",
 };
 
 /**
@@ -343,6 +364,29 @@ async function openFixtureLesson(page: Page, fixture: FixtureRepo): Promise<void
     await expect(open).toBeVisible({timeout: 15_000});
     await open.click();
     await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 15_000});
+}
+
+/** The theory step with the foreign image, which renders as a link (#3803). */
+async function gotoRemoteImageLink(page: Page): Promise<boolean> {
+    await openFixtureLesson(page, REMOTE_MEDIA_FIXTURE);
+    await expect(page.getByTestId("markdown-remote-image")).toBeVisible({timeout: 10_000});
+    return true;
+}
+
+/** The lesson summary's "Vertiefe das Thema" with the YouTube card's local
+ *  placeholder (#3803). */
+async function gotoVideoCardPlaceholder(page: Page): Promise<boolean> {
+    await openFixtureLesson(page, REMOTE_MEDIA_FIXTURE);
+    await page.getByTestId("lesson-next").click();
+    await expect(page.getByTestId("multiple-choice-exercise")).toBeVisible({timeout: 10_000});
+    await page.getByRole("radio", {name: "Zwei Kerne mit gleicher Erbinformation"}).check();
+    const check = page.getByTestId("lesson-check");
+    await expect(check).toBeEnabled({timeout: 5_000});
+    await check.click();
+    await page.getByTestId("lesson-next").click();
+    await expect(page.getByTestId("lesson-resources")).toBeVisible({timeout: 15_000});
+    await expect(page.getByTestId("youtube-thumbnail-placeholder")).toBeVisible({timeout: 10_000});
+    return true;
 }
 
 async function gotoExerciseExplanation(page: Page): Promise<boolean> {
@@ -1885,6 +1929,9 @@ const FEATURES: FeatureShot[] = [
 
     // --- Post-answer explanation (#2991) --------------------------------
     {path: "exercise-explanation/falsche-antwort", setup: gotoExerciseExplanation, pinTo: "exercise-explanation"},
+    // --- Content from another server loads nothing (#3803) ---------------
+    {path: "content-privacy/bild-als-link", setup: gotoRemoteImageLink, pinTo: "lesson-theory-body"},
+    {path: "content-privacy/video-karte", setup: gotoVideoCardPlaceholder, pinTo: "lesson-resources"},
     // --- Explanation authoring: assistant opt-in + editor field (#2992) --
     // #3088: both motifs are small elements, so the pin sits on the block
     // ABOVE them (type selection / the field's own label) and clears the
