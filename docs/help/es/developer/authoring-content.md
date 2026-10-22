@@ -785,6 +785,19 @@ Si publicas un conjunto sin assets, picture-choice funciona igual: el
 generador de SVG de marcador de posición cubre colores + números
 automáticamente y recurre a un avatar determinista para todo lo demás.
 
+**Imágenes en Markdown.** La app muestra como Markdown, entre otros,
+los textos de teoría, las explicaciones y las respuestas de la IA.
+Una imagen incrustada allí como URI `data:` se muestra directamente.
+Una imagen de otro servidor, por ejemplo `raw.githubusercontent.com`
+o un sitio web de imágenes, aparece como un enlace con un icono de
+imagen y su texto alternativo, y solo se carga tras un clic, en una
+pestaña nueva; por eso, dales a esas imágenes un texto alternativo
+significativo. Una imagen que deba verse siempre va en una imagen de
+ejercicio o de tarjeta basada en los archivos de assets de abajo.
+Las entradas de YouTube en `resources[]` muestran un icono de vídeo
+en lugar de una miniatura; el vídeo solo se abre en YouTube con un
+clic.
+
 ### Disposición de directorios
 
 Dentro del directorio del conjunto, los assets residen en `assets/`:

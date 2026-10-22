@@ -801,6 +801,19 @@ fonctionne quand même - le générateur de SVG d'espace réservé
 couvre automatiquement les couleurs + les nombres et retombe pour
 tout le reste sur un avatar déterministe.
 
+**Images dans le Markdown.** L'app affiche en Markdown, entre
+autres, les textes de théorie, les explications et les réponses de
+l'IA. Une image intégrée comme URI `data:` s'y affiche directement.
+Une image venant d'un autre serveur, par exemple
+`raw.githubusercontent.com` ou un site d'images, apparaît comme un
+lien avec une icône d'image et son texte alternatif, et ne se charge
+qu'après un clic, dans un nouvel onglet ; donne donc à ces images un
+texte alternatif parlant. Une image qui doit toujours être visible
+va dans une image d'exercice ou de carte fondée sur les fichiers de
+ressources ci-dessous. Les entrées YouTube de `resources[]`
+affichent une icône vidéo au lieu d'une miniature ; la vidéo ne
+s'ouvre sur YouTube qu'après un clic.
+
 ### Disposition des répertoires
 
 À l'intérieur du répertoire d'ensemble, les ressources se trouvent

@@ -889,6 +889,17 @@ the placeholder SVG generator covers colors + numbers
 automatically and falls back to a deterministic avatar for
 everything else.
 
+**Images in Markdown.** The app renders theory text, explanations
+and AI replies, among others, as Markdown. An image embedded there
+as a `data:` URI is shown directly. An image from another server,
+for example `raw.githubusercontent.com` or an image website,
+appears as a link with an image icon and its alt text and loads
+only after a click, in a new tab, so give such images a meaningful
+alt text; an image that must always be visible belongs in an
+exercise or card image backed by the asset files below. YouTube
+entries in `resources[]` show a video icon instead of a thumbnail;
+the video opens on YouTube only on a click.
+
 ### Directory layout
 
 Within the set directory, assets live under `assets/`:

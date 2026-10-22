@@ -745,6 +745,18 @@ Asset'siz bir set yayınlarsan, Picture-Choice yine de çalışır - yer
 tutucu SVG üreteci renkleri + sayıları otomatik kapsar ve diğer her
 şey için deterministik bir avatara geri döner.
 
+**Markdown'daki resimler.** Uygulama, diğerlerinin yanı sıra teori
+metinlerini, açıklamaları ve yapay zeka yanıtlarını Markdown olarak
+gösterir. Oraya `data:` URI'si olarak gömülen bir resim doğrudan
+gösterilir. Başka bir sunucudan gelen bir resim, örneğin
+`raw.githubusercontent.com` ya da bir resim sitesi, resim simgesi ve
+alt metniyle bir bağlantı olarak görünür ve ancak bir tıklamadan
+sonra, yeni bir sekmede yüklenir; bu yüzden bu resimlere anlamlı bir
+alt metin ver. Her zaman görünmesi gereken bir resim, aşağıdaki asset
+dosyalarına dayanan bir alıştırma ya da kart resmine aittir.
+`resources[]` içindeki YouTube girdileri küçük resim yerine bir
+video simgesi gösterir; video ancak bir tıklamayla YouTube'da açılır.
+
 ### Dizin düzeni
 
 Set dizini içinde asset'ler `assets/` altında bulunur:

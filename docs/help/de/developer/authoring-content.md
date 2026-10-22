@@ -922,6 +922,18 @@ Picture-Choice trotzdem - der Platzhalter-SVG-Generator deckt
 Farben + Zahlen automatisch ab und fällt für alles andere auf
 einen deterministischen Avatar zurück.
 
+**Bilder in Markdown.** Die App rendert unter anderem Theorie-Texte,
+Erklärungen und KI-Antworten als Markdown. Ein dort eingebettetes
+Bild (`data:`-URI) zeigt sie direkt. Ein Bild von einem anderen
+Server, zum Beispiel von `raw.githubusercontent.com` oder einer
+Bilder-Website, erscheint als Link mit Bild-Symbol und Alt-Text und
+lädt erst nach einem Klick, in einem neuen Tab. Gib solchen Bildern
+deshalb einen aussagekräftigen Alt-Text; ein Bild, das immer
+sichtbar sein soll, gehört in ein Übungs- oder Kartenbild mit den
+Asset-Dateien unten. YouTube-Einträge in `resources[]` zeigen ein
+Video-Symbol statt eines Vorschaubilds; das Video öffnet sich erst
+per Klick auf YouTube.
+
 ### Verzeichnis-Layout
 
 Innerhalb des Set-Verzeichnisses liegen Assets unter
