@@ -53,7 +53,7 @@ entries:
 
   - key: feature_auto_loop
     title: Auto-Loop
-    short: "After step 7, a new cycle with fresh content starts automatically."
+    short: "In the desktop app a new cycle with fresh content starts automatically after step 7; in the browser version the session stays at step 7."
     long: |
       ## What is the auto-loop?
 
@@ -61,6 +61,10 @@ entries:
       automatically start a new cycle on the next topic from
       your curriculum — without you pressing a "next cycle"
       button.
+
+      Desktop app only: in the browser version the session stays
+      at step 7, and the session page tells you so. End the
+      session there and start a new one to keep learning.
 
       ## How the next topic is chosen
 

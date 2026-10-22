@@ -38,7 +38,16 @@ O **Criador de Lições** em `/create-lesson` é um assistente de
   **autoguardar de rascunhos**.
 - **Pré-visualização** no visualizador de lições real antes de
   guardar.
-- **Guardar localmente** ou **partilhar por Pull Request**.
+- **Salvar localmente** ou **Salvar e compartilhar**. Guardar
+  localmente só precisa de uma lição válida (título, par de idiomas
+  válido, pelo menos 4 cartões numa nova lição de cartões, estrutura
+  válida); basta um exercício, e a lição pode ser jogada de imediato.
+  Salvar e compartilhar guarda e abre o assistente de partilha. Para
+  isso, a lição tem ainda de cumprir os mínimos do motor de conteúdo,
+  por exemplo exercícios e tipos de exercício suficientes e respostas
+  ou pares suficientes em cada exercício. O passo **"Revisar e
+  salvar"** lista-os com os valores atuais em **"Necessário para
+  compartilhar"**.
 
 Existem pontos de entrada no Navegador de Conteúdo e no Dashboard.
 

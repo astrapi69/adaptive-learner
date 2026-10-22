@@ -102,6 +102,10 @@ tracejada "Ciclo N" em cada transição. O diálogo de avaliação
 de fim de sessão resume a jornada de múltiplos ciclos quando
 `cycle_count > 1`.
 
+Só na aplicação de ambiente de trabalho: na versão de navegador, a
+sessão fica no passo 7, e a página da sessão indica-o. Termine aí a
+sessão e inicie uma nova.
+
 ## Posso exportar os meus dados?
 
 Sim. Três caminhos de exportação incluídos:

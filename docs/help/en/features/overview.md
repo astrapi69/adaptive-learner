@@ -13,8 +13,10 @@ of this list.
 - **Seven-step session cycle**: input, attempt, error, feedback, adapt,
   repeat, integrate. A dual-prompt evaluator judges every turn and
   decides whether to advance, repeat, skip ahead, or step back.
-- **Auto-loop**: when a topic is integrated, the session picks a new
-  subtopic and starts a fresh cycle (capped per session).
+- **Auto-loop** (desktop app): when a topic is integrated, the session
+  picks a new subtopic and starts a fresh cycle (capped per session).
+  In the browser version the session stays at step 7; the session page
+  says so.
 - **Method switching**: stagnation detection recommends a different
   method when ratings flatline; one-click accept.
 - **Placement assessment** (optional, resumable) that computes a
@@ -217,7 +219,8 @@ See [Installation](../install/launcher.md).
 - **Keyboard-first**: global shortcuts with a help overlay, Enter
   advances lessons, Tab navigates cloze blanks.
 - **Screen-reader support**: landmarks, ARIA labels and live regions,
-  chart data tables, dialog focus management.
+  a page title per page in the UI language ("Settings - Adaptive
+  Learner"), chart data tables, dialog focus management.
 - **Reduced motion** is honored everywhere; read-aloud (TTS) for
   lessons and chat.
 - **Context-sensitive in-app help**: the help panel opens the article

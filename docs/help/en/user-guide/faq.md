@@ -98,6 +98,10 @@ protection). The chat history renders dashed-border "Cycle N"
 cards at each transition. The end-of-session rating dialog
 summarises the multi-cycle journey when `cycle_count > 1`.
 
+Desktop app only: in the browser version the session stays at step 7,
+and the session page says so. End the session there and start a new
+one.
+
 ## Can I export my data?
 
 Yes. Three export paths shipped:

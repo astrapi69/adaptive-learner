@@ -159,10 +159,12 @@ entries:
 
       ## Ce que fait l'évaluateur à double invite
 
-      L'évaluation de la confiance tourne toujours, mais de manière
-      plus tolérante — la progression par étapes est permise à 50 %
-      de confiance (contre 70 % habituel). Cette méthode est
-      explicitement faite pour l'exploration, pas pour le test.
+      L'évaluation de la confiance tourne toujours, avec son propre
+      critère : l'évaluateur regarde la qualité de l'échange plutôt
+      que l'ordre dans lequel arrive la bonne réponse. Le seuil pour
+      avancer d'une étape est le même que pour toute autre méthode :
+      70 % de confiance. Cette méthode est explicitement faite pour
+      l'exploration, pas pour le test.
 
   - key: method_contextual
     title: Contextuelle

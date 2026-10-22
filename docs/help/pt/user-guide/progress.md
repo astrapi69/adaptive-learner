@@ -88,6 +88,9 @@ idênticos em forma nos modos de armazenamento:
 - **Visão Geral do Currículo** - a árvore de tópicos + resumos
   de lições de um único currículo.
 
+Os relatórios saem no idioma da interface, em qualquer um dos idiomas
+que a aplicação oferece.
+
 O Markdown é gerado do lado do cliente; o PDF usa a impressão
 para PDF do navegador (abrir um iframe oculto com uma folha de
 estilo otimizada para impressão, depois `contentWindow.print()`).
