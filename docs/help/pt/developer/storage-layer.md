@@ -59,9 +59,10 @@ método delega 1:1. O comportamento é idêntico ao v0.6.0.
 ## DexieStorage
 
 `storage/dexie-storage.ts` persiste tudo no IndexedDB via Dexie
-4.4.2. O esquema em `storage/db.ts` espelha os modelos
-SQLAlchemy 1:1, mais as tabelas de associação
-(project_subjects / project_tags / etc.).
+4.4.2. O esquema em `storage/dexie/db.ts` espelha os modelos
+SQLAlchemy e acrescenta stores que só existem no navegador; qual
+store corresponde a qual tabela, por área, está na página
+[Modelo de dados](data-model.md).
 
 Submódulos em `storage/` transportam a lógica portada:
 
