@@ -1,7 +1,9 @@
 # Endpoints principaux
 
-Endpoints non enregistrés par un plugin : utilisateurs, projets,
-paramètres, i18n, santé.
+Exemples détaillés pour les endpoints non enregistrés par un
+plugin : utilisateurs, projets, paramètres, i18n, santé. Tous les
+endpoints, cœur et plugins, sont listés dans
+[Tous les endpoints](endpoints.md).
 
 ## Santé
 

@@ -1,7 +1,9 @@
 # Endpoints principales
 
-Endpoints no registrados por ningún plugin: usuarios, proyectos,
-ajustes, i18n, salud.
+Ejemplos desarrollados de endpoints no registrados por ningún
+plugin: usuarios, proyectos, ajustes, i18n, salud. Todos los
+endpoints, del núcleo y de plugins, aparecen en
+[Todos los endpoints](endpoints.md).
 
 ## Salud
 

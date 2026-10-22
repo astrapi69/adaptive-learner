@@ -3,6 +3,8 @@
 # Endpoints de plugins
 
 As rotas de cada plugin montam em `/api/plugins/{plugin-name}/`.
+Esta página mostra exemplos detalhados de alguns plugins; todas as
+rotas de plugins estão listadas em [Todos os endpoints](endpoints.md).
 
 ## Plugin Assessment
 

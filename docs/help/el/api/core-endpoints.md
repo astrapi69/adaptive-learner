@@ -1,7 +1,8 @@
 # Βασικά endpoints
 
-Endpoints που δεν καταχωρούνται από plugin: χρήστες, projects,
-ρυθμίσεις, i18n, health.
+Αναλυτικά παραδείγματα για endpoints που δεν καταχωρούνται από
+plugin: χρήστες, projects, ρυθμίσεις, i18n, health. Κάθε endpoint,
+core και plugin, παρατίθεται στο [Όλα τα endpoints](endpoints.md).
 
 ## Health
 

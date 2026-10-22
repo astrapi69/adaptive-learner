@@ -4,6 +4,8 @@
 
 AdaptiveLearnerのバックエンドはFastAPI REST APIを公開しています。サーバーモードではフロントエンドがそれと通信し、ローカル（Dexie）モードではAPIに到達できません。同じ操作がブラウザ内で実行されます。
 
+すべてのエンドポイントは、リポジトリにコミットされたOpenAPIスナップショットから生成される[すべてのエンドポイント](endpoints.md)に一覧があります。
+
 ## ベースURL
 
 - **ローカル開発**: `http://localhost:18001/api`
@@ -108,7 +110,7 @@ Pydanticバリデーションエラーは構造化されたリストを返しま
 | Curriculum | `/users/{user_id}/curricula`, `/curricula/{id}` | カリキュラム + トピック + レッスンCRUD |
 | Plugin discovery | `/plugins/manifests`, `/plugins/health`, `/plugins/errors` | 登録内容 |
 
-完全なメソッドリストとリクエスト / レスポンスの例については[コアエンドポイント](core-endpoints.md)と[プラグインエンドポイント](plugin-endpoints.md)を参照してください。
+リクエスト / レスポンスの詳しい例は[コアエンドポイント](core-endpoints.md)と[プラグインエンドポイント](plugin-endpoints.md)にあります。すべてのエンドポイントの完全な一覧は[すべてのエンドポイント](endpoints.md)です。
 
 ## OpenAPI / Swagger
 

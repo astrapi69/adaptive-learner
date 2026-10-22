@@ -1,6 +1,8 @@
 # Endpoints de plugins
 
 Las rutas de cada plugin se montan bajo `/api/plugins/{plugin-name}/`.
+Esta página muestra ejemplos desarrollados de algunos plugins; todas
+las rutas de plugins aparecen en [Todos los endpoints](endpoints.md).
 
 ## Plugin de evaluación
 
