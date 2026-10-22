@@ -32,8 +32,8 @@ Lernsitzung erhält dieser Anbieter:
   Verlauf dieses Chats;
 - deine Nachrichten und die bisherigen Antworten der KI in der
   Sitzung;
-- wie bei jeder Anfrage deine IP-Adresse und deinen
-  API-Schlüssel.
+- wie bei jeder Anfrage unter anderem deine IP-Adresse und
+  deinen API-Schlüssel.
 
 Deine XP und Abzeichen werden nicht gesendet. Die
 [KI-Inhaltsprüfung](ai-validation.md) sendet nur die Karten des

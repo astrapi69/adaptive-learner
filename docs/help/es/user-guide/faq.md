@@ -28,7 +28,8 @@ elegido. En una sesión de aprendizaje ese proveedor recibe:
   lleva el análisis y la transcripción de esa conversación en
   lugar de tu progreso;
 - tus mensajes y las respuestas anteriores de la IA en la sesión;
-- como en cada solicitud, tu dirección IP y tu clave API.
+- como en cada solicitud, entre otras cosas, tu dirección IP y tu
+  clave API.
 
 Tus XP e insignias no se envían. La
 [revisión de contenido con IA](ai-validation.md) envía solo las

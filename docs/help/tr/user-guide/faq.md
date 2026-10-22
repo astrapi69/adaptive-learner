@@ -27,7 +27,8 @@ Her iki mod da seçtiğiniz yapay zeka sağlayıcısı dışında herhangi bir
   sohbetten başlatılan oturumda öğrenme ilerlemeniz yerine o sohbetin
   analizi ve dökümü yer alır;
 - mesajlarınız ve yapay zekânın oturumdaki önceki yanıtları;
-- her istekte olduğu gibi IP adresiniz ve API anahtarınız.
+- her istekte olduğu gibi, başka şeylerin yanı sıra, IP adresiniz ve API
+  anahtarınız.
 
 XP'niz ve rozetleriniz gönderilmez.
 [Yapay zekâ içerik denetimi](ai-validation.md) yalnızca denetlediği

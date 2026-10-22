@@ -30,7 +30,8 @@ learning session that provider receives:
   imported chat carries that chat's analysis and transcript
   instead of your learning progress;
 - your messages and the AI's earlier replies in the session;
-- as with every request, your IP address and your API key.
+- as with every request, among other things, your IP address and
+  your API key.
 
 Your XP and badges are not sent. The
 [AI content check](ai-validation.md) sends only the cards of the

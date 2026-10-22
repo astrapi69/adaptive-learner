@@ -29,7 +29,8 @@ Numa sessão de aprendizagem, esse fornecedor recebe:
   sessão iniciada a partir de uma conversa importada contém a
   análise e a transcrição dessa conversa em vez do seu progresso;
 - as suas mensagens e as respostas anteriores da IA na sessão;
-- como em cada pedido, o seu endereço IP e a sua chave de API.
+- como em cada pedido, entre outras coisas, o seu endereço IP e a sua
+  chave de API.
 
 Os seus XP e emblemas não são enviados. A
 [verificação de conteúdo por IA](ai-validation.md) envia apenas os
