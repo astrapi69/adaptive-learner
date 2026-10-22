@@ -165,8 +165,15 @@ sistemidir*:
    unutur.
 6. **Sağlayıcı özgürlüğü** - Anthropic, OpenAI ya da Gemini, ayrıca
    sunucu modunda Perplexity.
-7. **Yerel öncelikli seçenek** - her şey tarayıcınızda, hiçbir şey
-   bir sunucuya gönderilmez (yapay zeka çağrılarınız hariç).
+7. **Yerel öncelikli seçenek** - öğrenme ilerlemeniz,
+   istatistikleriniz ve ayarlarınız tarayıcınızda kalır; başkaları
+   bunların bölümlerini yalnızca kullandığınız bir özellik onlara
+   ihtiyaç duyduğunda alır. Uygulama, bir özellik gerektirdiğinde
+   sunuculara bağlanır; örneğin içerikler için GitHub'a (bağlı
+   depoları başlangıçta da eşitler), yapay zeka sağlayıcınıza ve
+   paylaştığınızda ya da bir hata raporunu orada açtığınızda
+   GitHub'a. [Gizlilik politikası](../legal/privacy.md), bunların
+   hangi durumlar olduğunu ve neyin aktarıldığını açıklar.
 
 ## Yapay zeka yanlış giderse ne olur?
 

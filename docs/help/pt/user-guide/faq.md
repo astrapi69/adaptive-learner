@@ -183,8 +183,15 @@ que usa uma IA internamente mas adiciona:
    passo. O ChatGPT esquece quando fecha o separador.
 6. **Liberdade de fornecedor** - Anthropic, OpenAI ou Gemini, mais
    Perplexity no modo servidor.
-7. **Opção local primeiro** - tudo no seu navegador, nada
-   enviado para um servidor (exceto as suas chamadas de IA).
+7. **Opção local primeiro** - o progresso, as estatísticas e as
+   definições ficam no seu navegador; outros só recebem partes deles
+   quando uma funcionalidade que utiliza precisa delas. A aplicação
+   contacta servidores quando uma funcionalidade precisa disso, por
+   exemplo o GitHub para os conteúdos (também sincroniza os
+   repositórios ligados no arranque), o seu fornecedor de IA e o
+   GitHub quando partilha ou abre lá um relatório de erro. A
+   [política de privacidade](../legal/privacy.md) descreve que casos
+   são esses e o que é transferido.
 
 ## E se a IA correr mal?
 
