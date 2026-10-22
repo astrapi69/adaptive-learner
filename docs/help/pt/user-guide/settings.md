@@ -218,10 +218,13 @@ cartão **Voz**:
 - **Reproduzir respostas da IA automaticamente** - fala cada resposta da
   IA automaticamente (padrão DESLIGADO - áudio surpresa raramente é o
   que quer).
-- **Voz** - a voz de leitura. O padrão usa, para o idioma do seu
-  projeto, uma voz que funciona no seu dispositivo, e uma voz online só
-  quando o dispositivo não tem nenhuma para esse idioma: uma voz online
-  envia o texto lido ao seu fornecedor (as vozes Google do Chrome, à
+- **Voz** - a voz de leitura. O padrão dá preferência, para o idioma do
+  seu projeto, a uma voz que é executada localmente no seu dispositivo;
+  com o padrão, uma voz online só lê quando o dispositivo não tem
+  nenhuma para esse idioma, e nos primeiros instantes após o
+  carregamento de uma página, porque nessa altura o seu dispositivo
+  ainda não disponibilizou as suas próprias vozes. Uma voz online envia
+  o texto lido ao respetivo fornecedor (as vozes Google do Chrome, à
   Google). Uma voz que escolha aqui é sempre usada enquanto o seu
   navegador a oferecer, mesmo uma voz online.
 - **Velocidade** e **Tom** - controlos deslizantes de 0,5 a 2.

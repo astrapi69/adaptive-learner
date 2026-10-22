@@ -217,13 +217,15 @@ contiene la tarjeta **Voz**:
 - **Reproducir respuestas IA automáticamente** - lee cada respuesta de
   la IA automáticamente (predeterminado DESACTIVADO: el audio sorpresa
   raramente es lo que quieres).
-- **Voz** - la voz con la que se lee. El valor predeterminado usa una
-  voz que funciona en tu dispositivo para el idioma de tu proyecto, y
-  una voz en línea solo cuando tu dispositivo no tiene ninguna para ese
-  idioma: una voz en línea envía el texto que se lee a su proveedor
-  (las voces de Google en Chrome, a Google). Una voz que elijas aquí se
-  usa siempre mientras tu navegador la ofrezca, también si es una voz en
-  línea.
+- **Voz** - la voz con la que se lee. El valor predeterminado da
+  preferencia, para el idioma de tu proyecto, a una voz que se ejecuta
+  localmente en tu dispositivo; con él, una voz en línea solo lee cuando
+  tu dispositivo no tiene ninguna para ese idioma, y en los primeros
+  instantes tras la carga de una página, porque en ese momento tu
+  dispositivo aún no ha puesto a disposición sus propias voces. Una voz
+  en línea envía el texto que se lee a su proveedor (las voces de Google
+  en Chrome, a Google). Una voz que elijas aquí se usa siempre mientras
+  tu navegador la ofrezca, incluso si es una voz en línea.
 - **Velocidad** y **Tono** - deslizadores de 0,5 a 2.
 - **Mostrar botón de micrófono** - añade un botón de micrófono a la
   entrada de la Sesión que captura el habla y rellena el área de texto
