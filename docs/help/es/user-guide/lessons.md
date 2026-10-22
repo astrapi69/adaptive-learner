@@ -254,11 +254,15 @@ texto libre y de fichas de palabras muestran ahora una
 canónica. Tres colores, nunca solo color:
 
 - **Rojo tachado** - lo que escribiste y no correspondía (con una
-  marca × para lectores de pantalla y usuarios daltónicos).
+  marca × para usuarios daltónicos).
 - **Verde** - lo que la respuesta canónica contiene y pasaste por
   alto (con una marca +).
 - **Amarillo** con flecha → - una palabra ligeramente incorrecta,
   representada como `tu-palabra` → `esperada`.
+
+Los lectores de pantalla leen cada marca como una frase en el idioma de
+tu interfaz, por ejemplo "Sobra: …", "Falta: …" o "Escribiste …, se
+esperaba …", y se saltan los símbolos visibles.
 
 La misma diferencia aparece en el resumen de la lección, en el
 desglose de cada ejercicio, para cada respuesta de texto libre o

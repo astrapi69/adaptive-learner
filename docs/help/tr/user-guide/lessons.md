@@ -229,12 +229,16 @@ Yanlış serbest metin ve kelime karosu
 yanıtları artık girdin ile kanonik yanıt arasında **Token düzeyinde
 bir diff** gösterir. Üç renk, asla yalnızca renk değil:
 
-- **Kırmızı üstü çizili** - yazdığın ve oraya ait olmayan (ekran
-  okuyucular ve renk körü kullanıcılar için bir × işaretiyle).
+- **Kırmızı üstü çizili** - yazdığın ve oraya ait olmayan (renk körü
+  kullanıcılar için bir × işaretiyle).
 - **Yeşil** - kanonik yanıtın içerdiği ve senin gözden kaçırdığın (bir
   + işaretiyle).
 - **Sarı** ok ile → - hafifçe yanlış bir kelime, `senin-kelimen` →
   `beklenen` olarak gösterilir.
+
+Ekran okuyucular her işareti arayüz dilinde bir cümle olarak okur,
+örneğin "Fazla: …", "Eksik: …" ya da "Yazdığın: …, beklenen: …";
+görünen simgeleri atlarlar.
 
 Aynı diff, ders özetinde her alıştırmanın dökümünde görünür - kullanıcı
 girdisi deposunun bildiği her serbest metin veya kelime karosu

@@ -352,12 +352,16 @@ Diff** zwischen deiner Eingabe und der kanonischen
 Antwort. Drei Farben, nie nur Farbe allein:
 
 - **Rot durchgestrichen** - was du geschrieben hast und
-  nicht hingehört (mit einem ×-Marker für Screenreader
-  und farbenblinde Nutzer:innen).
+  nicht hingehört (mit einem ×-Marker für farbenblinde
+  Nutzer:innen).
 - **Grün** - was die kanonische Antwort enthält und du
   übersehen hast (mit einem +-Marker).
 - **Gelb** mit Pfeil → - ein leicht falsches Wort,
   dargestellt als `dein-wort` → `erwartet`.
+
+Screenreader lesen jede Markierung als Satz in deiner UI-Sprache vor,
+etwa „Zu viel: …", „Fehlt: …" oder „Geschrieben: …, erwartet: …"; die
+sichtbaren Zeichen überspringen sie.
 
 Dieselbe Diff erscheint in der Zusammenfassung der
 Lektion in der Aufschlüsselung jeder Übung - für jede

@@ -249,11 +249,15 @@ entre a tua entrada e a resposta canónica. Três cores, nunca apenas
 a cor sozinha:
 
 - **Vermelho riscado** - o que escreveste e que não pertencia (com
-  um marcador × para leitores de ecrã e utilizadores daltónicos).
+  um marcador × para utilizadores daltónicos).
 - **Verde** - o que a resposta canónica contém e que omitiste (com
   um marcador +).
 - **Amarelo** com seta → - uma palavra ligeiramente errada,
   representada como `tua-palavra` → `esperada`.
+
+Os leitores de ecrã leem cada marca como uma frase no idioma da tua
+interface, por exemplo "A mais: …", "Falta: …" ou "Escrito: …,
+esperado: …", e saltam os símbolos visíveis.
 
 O mesmo diff aparece no resumo da lição no detalhamento de cada
 exercício - para cada resposta de texto livre ou de peças de

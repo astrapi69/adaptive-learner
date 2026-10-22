@@ -299,11 +299,15 @@ show a **token-level diff** between your input and the canonical
 answer. Three colors, never color alone:
 
 - **Red strikethrough** - what you wrote and did not belong (with
-  an × marker for screen readers and colorblind users).
+  an × marker for colorblind users).
 - **Green** - what the canonical answer contains and you missed
   (with a + marker).
 - **Yellow** with an arrow → - a slightly wrong word, shown as
   `your-word` → `expected`.
+
+Screen readers read each mark as a sentence in your UI language, such
+as "Extra: …", "Missing: …" or "You wrote …, expected …", and skip the
+visible symbols.
 
 The same diff appears in the lesson summary in each exercise's
 breakdown - for every free-text or word-tile answer whose user

@@ -258,12 +258,15 @@ niveau des jetons** entre ta saisie et la réponse canonique. Trois
 couleurs, jamais la couleur seule :
 
 - **Rouge barré** - ce que tu as écrit et qui n'avait pas sa place
-  (avec un marqueur × pour les lecteurs d'écran et les
-  utilisateur·rice·s daltoniens).
+  (avec un marqueur × pour les utilisateur·rice·s daltoniens).
 - **Vert** - ce que la réponse canonique contient et que tu as
   oublié (avec un marqueur +).
 - **Jaune** avec flèche → - un mot légèrement faux, présenté sous
   la forme `ton-mot` → `attendu`.
+
+Les lecteurs d'écran lisent chaque marque comme une phrase dans la
+langue de ton interface, par exemple « En trop : … », « Manquant : … »
+ou « Tu as écrit …, attendu : … », et sautent les symboles visibles.
 
 La même diff apparaît dans le récapitulatif de la leçon, dans la
 décomposition de chaque exercice - pour chaque réponse de texte
