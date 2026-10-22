@@ -19,9 +19,11 @@ principles, visual system).
   caught per pathname and shows a reload fallback.
 - Around the routes the app always renders: the skip link, a localized
   document title per route, the top navigation, the offline indicator,
-  the optional bottom tab bar, install prompts, the milestone overlay,
-  the help drawer, global keyboard shortcuts, the error-report dialog and
-  the toast container.
+  the optional bottom tab bar, the milestone overlay, the help drawer,
+  global keyboard shortcuts, the error-report dialog and the toast
+  container. The install hints are not part of the shell: they are
+  dismissible cards at the top of the dashboard (see "Dashboard,
+  progress and help").
 - The top navigation and the bottom tab bar are hidden on exactly three
   routes: `/`, `/onboarding` and `/assessment`. During any lesson-like
   route (`/lesson/`, `/review/`, `/adaptive-lesson/`, `/shuffle-lesson/`,
@@ -152,10 +154,14 @@ that progress is not saved and links to onboarding.
    Previous, Check, Next and Finish; exam mode only moves forward. Exit
    asks whether to pause or abandon and returns to the set page.
 4. **Summary.** After the last step the lesson summary appears.
+   - Reaching the summary completes the lesson; the heading then shows
+     a check mark. There is no separate completion button. A run without
+     a learner profile cannot be saved, and the summary says so.
    - The **compact view** (default) shows the result and XP, a "Fix
-     mistakes (n)" button while mistakes of this run are open, and the
-     always-present actions: Mark as complete, Next lesson, Practice
-     again, Back to content browser.
+     mistakes (n)" button while mistakes of this run are open, Next
+     lesson when there is one and the next-step cards do not already
+     offer it, and the always-present actions Practice again and Back to
+     content browser.
    - The **detailed view** ("Detailed evaluation") shows every section:
      answers overview, explanations ("Why you missed these"), export,
      sharing, the correction section and next-step suggestions, with
@@ -232,6 +238,11 @@ summary.
   method distribution, recommendations, learning repository), Missions
   (daily missions, badges). A footer offers quick start, pronunciation
   (when the project fits), create a lesson and learning path.
+- **Install hints**: above the tabs, a dismissible card offers to
+  install the app while it is not installed: the "Add to home screen"
+  banner where the browser offers installation (Chromium), the
+  "Install as an app" hint in iOS Safari. Never both on one device, and
+  never laid over a page (`frontend/src/components/pwa/`).
 - **Progress** (`/progress`): Overview (timeline, method distribution,
   step insights, history), Statistics (tiles, heatmap, weak areas), Paths
   (curricula).
@@ -253,6 +264,7 @@ that a mode cannot offer is shown disabled with its reason
 |---|---|---|
 | AI features (session, analysis, flashcards, pronunciation, study guide) | available | need the learner's own AI key |
 | Sync, git persistence, plugin management | available | disabled: "Only available with the desktop app." |
+| Auto-loop (a new cycle with the next topic after step 7) | available | disabled: after step 7 the session page says that only the desktop app starts the next cycle and to start a new session |
 | Share as repository, registry pull request | disabled | available |
 | Identity section, migration from the browser version, desktop updates | shown | not shown |
 | Automatic backups, app update banner, AI content check, port-change hint | not shown | shown |
