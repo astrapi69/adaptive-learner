@@ -46,11 +46,11 @@ Yapay zekâ denetimi, bir yapay zekâ sağlayıcısını doğrudan tarayıcıdan
 Anahtar olmadan düğme görünür ama devre dışıdır; bir bildirim
 Ayarlar'a bağlantı verir.
 
-**Ne gönderilir:** denetim, sağlayıcına setin kartlarını gönderir,
-örneğin ön yüz, arka yüz ve notlar, bunlarla birlikte setin dillerini
-ve seviyesini; profilin ve öğrenme ilerlemen buna dahil değildir. Her
-istekte olduğu gibi sağlayıcın IP adresini ve API anahtarını alır.
-İletişim kutusu bunu başlatmadan önce söyler ve
+**Ne gönderilir:** Denetim, sağlayıcına setin kartlarını (ön yüz, arka
+yüz, notlar) setin dilleri ve seviyesiyle birlikte gönderir; profilin ve
+öğrenme ilerlemen buna dahil değildir. Her istekte olduğu gibi
+sağlayıcın ayrıca, başka şeylerin yanı sıra, senin IP adresini ve senin
+API anahtarını alır. İletişim kutusu bunu başlatmadan önce söyler ve
 [Gizlilik politikası](../legal/privacy.md) sayfasına bağlantı verir.
 
 > **Maliyet:** denetim, kendi sağlayıcı hesabında token harcar ve o

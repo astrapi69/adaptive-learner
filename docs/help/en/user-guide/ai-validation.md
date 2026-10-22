@@ -43,11 +43,11 @@ need:
 Without a key the button is visible but disabled; a notice links
 to Settings.
 
-**What is sent:** the check sends your provider the set's cards, for
-example their front, back and notes, along with the set's languages
-and level; your profile and your learning progress are not part of it.
-As with every request, your provider receives your IP address and your
-API key. The dialog says so before the run and links the
+**What is sent:** The check sends your provider the set's cards (front,
+back, notes) together with the set's languages and level; your profile
+and your learning progress are not part of it. As with every request,
+your provider also receives, among other things, your IP address and
+your API key. The dialog says so before it starts and links the
 [privacy policy](../legal/privacy.md).
 
 > **Cost:** the check spends tokens on your own provider account

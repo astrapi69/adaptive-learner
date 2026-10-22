@@ -47,12 +47,11 @@ Ohne Schlüssel ist der Button sichtbar, aber deaktiviert; ein
 Hinweis führt zu den Einstellungen.
 
 **Was gesendet wird:** Die Prüfung schickt deinem Anbieter die Karten
-des Satzes, zum Beispiel Vorderseite, Rückseite und Notizen, dazu die
-Sprachen und das Niveau des Satzes; dein Profil und dein
-Lernfortschritt gehören nicht dazu. Wie bei jeder Anfrage erhält dein
-Anbieter dabei deine IP-Adresse und deinen API-Schlüssel. Der Dialog
-sagt das vor dem Start und verlinkt die
-[Datenschutzerklärung](../legal/privacy.md).
+des Sets (Vorderseite, Rückseite, Notizen) sowie dessen Sprachen und
+Niveau; dein Profil und dein Lernfortschritt gehören nicht dazu. Wie bei
+jeder Anfrage erhält dein Anbieter dabei unter anderem deine IP-Adresse
+und deinen API-Schlüssel. Der Dialog sagt das vor dem Start und
+verlinkt die [Datenschutzerklärung](../legal/privacy.md).
 
 > **Kosten:** Die Prüfung verbraucht Tokens deines eigenen
 > Anbieterkontos und wird nach dessen Preisliste abgerechnet. Vor
