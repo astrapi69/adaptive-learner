@@ -59,17 +59,18 @@ DexieStorage hält die kanonischen Daten in IndexedDB, KI-Aufrufe
 gehen browser-direkt an den Provider, und die Lektions-Inhalte
 sind in den Build gebündelt, sodass die Site offline funktioniert.
 
-Weil GitHub Pages keine Sicherheits-Header sendet, bringt der
-Pages-Build seine eigene Richtlinie mit: `frontend/index.html` setzt
-per `<meta>` eine Content-Security-Policy, die Bilder und Medien auf
-wenige Quellen beschränkt, zum Beispiel die eigene Origin und
-`https://raw.githubusercontent.com` (der genaue Wert steht in der
-Datei), dazu die Referrer-Richtlinie `no-referrer`. Der API-Modus
-sendet dieselben `img-src`/`media-src` als Header
-(`backend/app/frontend_static.py`). Eine Funktion, die Bilder oder
-Medien von einem anderen Host lädt, wird dort blockiert. Vor dem
-Upload prüft `scripts/check_external_hosts.py` die gebaute Docs-Site
-auf Ressourcen von Drittanbietern.
+Auf GitHub Pages lassen sich keine eigenen HTTP-Header setzen,
+deshalb bringt der Pages-Build seine eigene Richtlinie mit:
+`frontend/index.html` setzt per `<meta>` eine Content-Security-Policy,
+die Bilder und Medien auf wenige Quellen beschränkt, zum Beispiel die
+eigene Origin und `https://raw.githubusercontent.com` (der genaue Wert
+steht in der Datei), dazu die Referrer-Richtlinie `no-referrer`. Der
+API-Modus sendet dieselben `img-src`/`media-src` als Header
+(`backend/app/frontend_static.py`). Lädt eine Funktion Bilder oder
+Medien von einem Host, den die Richtlinie nicht nennt, blockiert der
+Browser das, im Pages-Build wie im API-Modus. Vor dem Upload prüft
+`scripts/check_external_hosts.py` die gebaute Docs-Site auf Ressourcen
+von Drittanbietern.
 
 Die Site-URL ist `https://astrapi69.github.io/adaptive-learner/`.
 Bei eigener Domain legen Nutzer eine `CNAME`-Datei in

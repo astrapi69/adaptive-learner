@@ -46,16 +46,19 @@ make dev-down   # διακοπή
 χρησιμοποιεί `actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`
 για δημοσίευση.
 
-Επειδή το GitHub Pages δεν στέλνει headers ασφαλείας, το build του
-Pages φέρνει τη δική του πολιτική: το `frontend/index.html` ορίζει
-μέσω `<meta>` μια Content-Security-Policy που περιορίζει τις εικόνες
-και τα μέσα σε λίγες πηγές, για παράδειγμα το ίδιο origin και το
+Το GitHub Pages δεν επιτρέπει σε έναν ιστότοπο να ορίσει δικά του
+HTTP headers, γι' αυτό το build του Pages φέρνει τη δική του
+πολιτική: το `frontend/index.html` ορίζει μέσω `<meta>` μια
+Content-Security-Policy που περιορίζει τις εικόνες και τα μέσα σε
+λίγες πηγές, για παράδειγμα το ίδιο origin και το
 `https://raw.githubusercontent.com` (η ακριβής τιμή βρίσκεται στο
 αρχείο), καθώς και την πολιτική referrer `no-referrer`. Η λειτουργία
 API στέλνει τα ίδια `img-src`/`media-src` ως headers
-(`backend/app/frontend_static.py`). Μια λειτουργία που φορτώνει
-εικόνες ή μέσα από άλλον host μπλοκάρεται εκεί. Πριν από το upload,
-το `scripts/check_external_hosts.py` ελέγχει το χτισμένο site
+(`backend/app/frontend_static.py`). Αν μια δυνατότητα της εφαρμογής
+φορτώνει εικόνες ή μέσα από έναν host που η πολιτική δεν αναφέρει,
+ο browser το μπλοκάρει, τόσο στο build του Pages όσο και στη
+λειτουργία API. Πριν από το upload, το
+`scripts/check_external_hosts.py` ελέγχει το χτισμένο site
 τεκμηρίωσης για πόρους τρίτων.
 
 Το URL του site είναι `https://astrapi69.github.io/adaptive-learner/`.

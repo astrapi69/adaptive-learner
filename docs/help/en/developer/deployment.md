@@ -59,16 +59,17 @@ holds the canonical data in IndexedDB, AI calls go browser-direct
 to the provider, and the lesson content is bundled into the build
 so the site works offline.
 
-Because GitHub Pages sends no security headers, the Pages build
-carries its own policy: `frontend/index.html` sets a
-Content-Security-Policy `<meta>` that limits images and media to a
-few sources, for example the own origin and
+GitHub Pages does not let a site set its own HTTP headers, so the
+Pages build brings its own policy: `frontend/index.html` sets a
+Content-Security-Policy via `<meta>` that limits images and media to
+a few sources, for example the own origin and
 `https://raw.githubusercontent.com` (the exact value is in the
 file), plus the referrer policy `no-referrer`. API mode sends the
 same `img-src`/`media-src` as headers
-(`backend/app/frontend_static.py`). A feature that loads images or
-media from another host is blocked there. Before the upload,
-`scripts/check_external_hosts.py` scans the built docs site for
+(`backend/app/frontend_static.py`). If a feature loads images or
+media from a host the policy does not name, the browser blocks it,
+in the Pages build as in API mode. Before upload,
+`scripts/check_external_hosts.py` checks the built docs site for
 third-party resources.
 
 The site URL is `https://astrapi69.github.io/adaptive-learner/`.

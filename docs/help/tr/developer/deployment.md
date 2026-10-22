@@ -48,15 +48,16 @@ sonrası, SPA-yönlendirici geri dönüşü için `dist/index.html`'yi
 `actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`
 kullanır.
 
-GitHub Pages güvenlik başlıkları göndermediği için Pages derlemesi
-kendi politikasını getirir: `frontend/index.html`, `<meta>` ile
-resimleri ve medyayı birkaç kaynakla, örneğin kendi origin'i ve
-`https://raw.githubusercontent.com` ile sınırlayan bir
-Content-Security-Policy tanımlar (tam değer dosyadadır); referrer
-politikası da `no-referrer`'dır. API modu aynı `img-src`/`media-src`
-değerlerini başlık olarak gönderir
-(`backend/app/frontend_static.py`). Başka bir host'tan resim ya da
-medya yükleyen bir özellik orada engellenir. Yüklemeden önce
+GitHub Pages bir sitenin kendi HTTP başlıklarını belirlemesine izin
+vermez; bu yüzden Pages derlemesi kendi politikasını getirir:
+`frontend/index.html`, `<meta>` ile resimleri ve medyayı birkaç
+kaynakla, örneğin kendi origin'i ve `https://raw.githubusercontent.com`
+ile sınırlayan bir Content-Security-Policy tanımlar (tam değer
+dosyadadır); referrer politikası da `no-referrer`'dır. API modu aynı
+`img-src`/`media-src` değerlerini başlık olarak gönderir
+(`backend/app/frontend_static.py`). Bir özellik, politikanın adını
+vermediği bir host'tan resim ya da medya yüklerse tarayıcı bunu
+engeller; Pages derlemesinde de API modunda da. Yüklemeden önce
 `scripts/check_external_hosts.py`, derlenen doküman sitesini üçüncü
 taraf kaynaklarına karşı tarar.
 

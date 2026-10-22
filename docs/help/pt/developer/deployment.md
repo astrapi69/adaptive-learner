@@ -48,17 +48,18 @@ para o fallback do roteador SPA, depois usa
 `actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`
 para publicar.
 
-Como o GitHub Pages não envia cabeçalhos de segurança, a compilação
-de Pages traz a sua própria política: `frontend/index.html` define
-por `<meta>` uma Content-Security-Policy que limita as imagens e os
-media a poucas fontes, por exemplo a própria origem e
-`https://raw.githubusercontent.com` (o valor exato está no
-ficheiro), além da política de referrer `no-referrer`. O modo API
-envia os mesmos `img-src`/`media-src` como cabeçalhos
-(`backend/app/frontend_static.py`). Uma funcionalidade que carregue
-imagens ou media de outro host fica aí bloqueada. Antes do upload,
-`scripts/check_external_hosts.py` procura recursos de terceiros no
-site de documentação compilado.
+O GitHub Pages não deixa um site definir os seus próprios cabeçalhos
+HTTP, por isso a compilação de Pages traz a sua própria política:
+`frontend/index.html` define por `<meta>` uma Content-Security-Policy
+que limita as imagens e os media a poucas fontes, por exemplo a
+própria origem e `https://raw.githubusercontent.com` (o valor exato
+está no ficheiro), além da política de referrer `no-referrer`. O
+modo API envia os mesmos `img-src`/`media-src` como cabeçalhos
+(`backend/app/frontend_static.py`). Se uma funcionalidade carregar
+imagens ou media de um host que a política não indica, o navegador
+bloqueia-o, tanto na compilação de Pages como no modo API. Antes do
+upload, `scripts/check_external_hosts.py` procura recursos de
+terceiros no site de documentação compilado.
 
 O URL do site é `https://astrapi69.github.io/adaptive-learner/`.
 Os utilizadores com domínio personalizado adicionam um ficheiro

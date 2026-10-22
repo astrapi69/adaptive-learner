@@ -33,16 +33,17 @@ les données persistent uniquement dans le navigateur.
 Le build officiel GitHub Pages est à
 `https://astrapi69.github.io/adaptive-learner/`.
 
-Comme GitHub Pages n'envoie aucun en-tête de sécurité, le build
-Pages apporte sa propre politique : `frontend/index.html` définit
-par `<meta>` une Content-Security-Policy qui limite les images et
-les médias à quelques sources, par exemple l'origine propre et
-`https://raw.githubusercontent.com` (la valeur exacte est dans le
-fichier), ainsi que la politique de referrer `no-referrer`. Le mode
-API envoie les mêmes `img-src`/`media-src` comme en-têtes
-(`backend/app/frontend_static.py`). Une fonction qui charge des
-images ou des médias depuis un autre hôte y est bloquée. Avant
-l'upload, `scripts/check_external_hosts.py` recherche des
+GitHub Pages ne permet pas à un site de définir ses propres en-têtes
+HTTP, le build Pages apporte donc sa propre politique :
+`frontend/index.html` définit par `<meta>` une Content-Security-Policy
+qui limite les images et les médias à quelques sources, par exemple
+l'origine propre et `https://raw.githubusercontent.com` (la valeur
+exacte est dans le fichier), ainsi que la politique de referrer
+`no-referrer`. Le mode API envoie les mêmes `img-src`/`media-src`
+comme en-têtes (`backend/app/frontend_static.py`). Si une fonction
+charge des images ou des médias depuis un hôte que la politique ne
+nomme pas, le navigateur le bloque, dans le build Pages comme en mode
+API. Avant l'upload, `scripts/check_external_hosts.py` recherche des
 ressources tierces dans le site de documentation construit.
 
 ### Contenu bundlé
