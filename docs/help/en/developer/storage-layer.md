@@ -78,9 +78,10 @@ Every method delegates 1:1.
 ## DexieStorage
 
 `storage/dexie-storage.ts` persists everything to IndexedDB
-via Dexie 4. The schema in `storage/dexie/db.ts` mirrors all 30
-SQLAlchemy models 1:1, plus the association tables
-(`project_subjects` / `project_tags` / etc.).
+via Dexie 4. The schema in `storage/dexie/db.ts` mirrors the
+SQLAlchemy models and adds stores that exist only in the browser;
+which store stands for which table, per area, is on the
+[Data model](data-model.md) page.
 
 `DexieStorage` is NOT a god-file. It is split into per-domain
 namespace modules grouped by concern. The Dexie engine, the

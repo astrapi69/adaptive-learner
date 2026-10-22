@@ -48,8 +48,10 @@ la réponse API - jamais stockée dans le frontend.
 `DexieStorage` implémente la même interface directement via Dexie 4
 (IndexedDB). Aucune requête réseau n'est effectuée pour les données.
 
-**Schéma actuel :** v23 (version Dexie). Les montées de version
-sont gérées par les migrations Dexie dans `DexieStorage.ts`.
+**Schéma :** `storage/dexie/db.ts`, avec une nouvelle version
+Dexie à chaque changement de schéma. Les magasins par domaine, et
+la table du serveur que chacun représente :
+[Modèle de données](data-model.md).
 
 Les appels IA en mode Dexie utilisent `fetch()` directement depuis
 le navigateur vers l'API du fournisseur.

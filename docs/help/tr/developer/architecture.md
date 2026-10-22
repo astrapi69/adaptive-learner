@@ -153,11 +153,11 @@ hatalarını HTTP durum kodlarına eşler. Tam desen için
 
 - Arka uç: SQLAlchemy + SQLite. `backend/migrations/versions/`
   içinde Alembic migrasyonları.
-- Senkronizasyon yüzeyi: `sync_service.ALL_SYNC_TABLES` içindeki her tablo. Yalnızca ekleme
-  geçmişi satırları (oturumlar, mesajlar, derecelendirmeler, ilerleme
-  commitler'i, adım değerlendirmeleri, yöntem geçişleri, içe aktarılan
-  konuşmalar, içe aktarılan mesajlar, anki kartları, çalışma soruları)
-  artı değiştirilebilir ayarlar + müfredat satırları.
+- Senkronizasyon yüzeyi: `sync_service.ALL_SYNC_TABLES` içindeki her tablo;
+  bir tablonun yalnızca ekleme olarak mı yoksa değiştirilebilir
+  olarak mı senkronize edildiğini `backend/app/services/sync_tables.py`
+  içindeki `TableSpec.append_only` belirler. Tabloların kendisi,
+  bölümlere göre: [Veri modeli](data-model.md).
 - Yedek biçimi: JSON; API anahtarları dışa aktarmada çıkarılır;
   geri yükleme bir birleştirmedir.
 - Test yalıtımı: üretim veri dizinleri

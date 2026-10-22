@@ -290,6 +290,7 @@ flowchart LR
   2. Regenerate the notices with learn-content-engine's `scripts/write-mermaid-notices.mjs`. It reads what the bundle contains from its source maps; in a scratch project run `npm install --ignore-scripts mermaid@<version>`, then `node <engine>/scripts/write-mermaid-notices.mjs --mermaid-dir <scratch>/node_modules/mermaid --bundle assets/javascripts/mermaid-<version>.min.js --out docs/help/assets/javascripts/mermaid-<version>.min.js.LICENSE.txt --fetch-missing`.
   3. Update the version and both hashes in `scripts/verify_mermaid_blocks.mjs`, and the file name in `mkdocs.yml`.
 - `make verify-mermaid` (and the Docs drift verifier in CI) parses every block with exactly that file and fails on a broken diagram or a missing `accTitle`/`accDescr`.
+- The [data model](docs/help/en/developer/data-model.md) page is generated, never written by hand (#3828): `make sync-data-model` renders one ER diagram per area and database from the SQLAlchemy models, the Dexie schema and `scripts/data_model_areas.yaml`. That file is the only part a person edits: a new table or store needs an area there, and a new `*_id` field without a foreign key needs an entry. `make sync-data-model-check` (in `make ci`, and in CI on every change to the models, the Dexie schema, the mapping or the pages) fails until it has one.
 
 ## The docs site loads nothing from a third party
 

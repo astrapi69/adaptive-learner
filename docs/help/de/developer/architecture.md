@@ -161,12 +161,11 @@ auf HTTP-Statuscodes. Das vollständige Muster steht in
 
 - Backend: SQLAlchemy + SQLite. Alembic-Migrationen in
   `backend/migrations/versions/`.
-- Sync-Surface: jede Tabelle in `sync_service.ALL_SYNC_TABLES`.
-  Append-only-History-Zeilen (Sessions, Messages, Ratings,
-  Progress-Commits, Step-Evaluations, Method-Switches,
-  importierte Conversations, importierte Messages, Anki-Cards,
-  Study-Questions) plus veränderliche Settings- + Curriculum-
-  Zeilen.
+- Sync-Surface: jede Tabelle in `sync_service.ALL_SYNC_TABLES`;
+  ob eine Tabelle append-only oder veränderlich synchronisiert,
+  legt ihre `TableSpec.append_only` in
+  `backend/app/services/sync_tables.py` fest. Die Tabellen selbst,
+  nach Bereichen: [Datenmodell](data-model.md).
 - Backup-Format: JSON; API-Keys werden beim Export entfernt;
   Restore ist ein Merge.
 - Test-Isolation: Produktionsdaten-Verzeichnisse tragen einen
