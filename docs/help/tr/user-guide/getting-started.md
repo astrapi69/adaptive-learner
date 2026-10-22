@@ -13,10 +13,12 @@ sürümdür:
 
 [**Uygulamayı aç**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-Bu, **Yerel modda** çalışır - tüm verilerin tarayıcında (IndexedDB)
-kalır ve yapay zeka çağrıları doğrudan sayfadan, kendi API anahtarınla
-Anthropic, OpenAI ya da Google Gemini'ye gider. Aradan geçen bir arka
-uç yok.
+Bu, **Yerel modda** çalışır: öğrenme ilerlemen, istatistiklerin ve
+ayarların tarayıcında (IndexedDB) kalır. Başkaları bunların
+bölümlerini yalnızca kullandığın bir özellik onlara ihtiyaç
+duyduğunda alır; örneğin yapay zeka çağrıları doğrudan sayfadan,
+kendi API anahtarınla Anthropic, OpenAI ya da Google Gemini'ye gider.
+Aradan geçen bir arka uç yok.
 
 ## Progressive Web App olarak kurma
 

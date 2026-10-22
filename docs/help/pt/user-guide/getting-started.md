@@ -13,10 +13,12 @@ pública online:
 
 [**Abrir aplicação**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-Esta corre no **modo local** - todos os teus dados permanecem no
-teu browser (IndexedDB), e as chamadas de IA vão diretamente da
-página para a Anthropic, OpenAI ou Google Gemini com a tua própria
-chave de API. Sem backend pelo meio.
+Esta corre no **modo local**: o teu progresso, as tuas estatísticas
+e as tuas definições ficam no teu browser (IndexedDB). Outros só
+recebem partes deles quando uma funcionalidade que utilizas precisa
+delas; as chamadas de IA, por exemplo, vão diretamente da página para
+a Anthropic, OpenAI ou Google Gemini com a tua própria chave de API.
+Sem backend pelo meio.
 
 ## Instalar como Progressive Web App
 

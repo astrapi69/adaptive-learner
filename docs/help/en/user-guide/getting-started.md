@@ -13,10 +13,11 @@ online version:
 
 [**Open the app**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-It runs in **local mode** - all your data stays in your browser
-(IndexedDB), and AI calls go straight from the page to Anthropic,
-OpenAI or Google Gemini using your own API key. No backend in
-between.
+It runs in **local mode**: your progress, statistics and settings
+stay in your browser (IndexedDB). Others get parts of them only when
+a feature you use needs them; AI calls, for example, go straight from
+the page to Anthropic, OpenAI or Google Gemini using your own API
+key. No backend in between.
 
 ## Install as a Progressive Web App
 

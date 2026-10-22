@@ -85,10 +85,12 @@ zunehmenden Aufwands.
 
 ### 1. Online ausprobieren (kein Install)
 
-Die öffentliche PWA läuft im **Local-Modus** — alle Daten
-bleiben in deinem Browser (IndexedDB), KI-Calls gehen direkt
-von der Seite an Anthropic / OpenAI / Gemini mit deinem
-eigenen API-Schlüssel. Kein Backend, keine Installation.
+Die öffentliche PWA läuft im **Local-Modus**: Lernfortschritt,
+Statistiken und Einstellungen bleiben in deinem Browser
+(IndexedDB). Andere erhalten Teile davon nur, wenn eine Funktion
+sie braucht, die du nutzt; KI-Aufrufe gehen zum Beispiel direkt
+von der Seite an Anthropic, OpenAI oder Google Gemini, mit
+deinem eigenen API-Schlüssel. Kein Backend, keine Installation.
 
 [**Live-App öffnen →**](https://astrapi69.github.io/adaptive-learner/)
 
