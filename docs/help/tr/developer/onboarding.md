@@ -126,10 +126,15 @@ cd backend && poetry run pytest tests/path/ -v
 make test-plugin-gamification
 ```
 
-Yedeğe dokunan değişiklikler için ek bir kapı vardır: `make dev` içinde
-gerçek verilerle gerçek bir Dışa aktar → İçe aktar gidiş-dönüşü
-(`BACKUP-AKZEPTANZTEST`). Birim testleri tek başına bir yedekleme
-merge'ünü asla haklı çıkarmaz.
+Yedeğe dokunan değişiklikler için ek bir kapı vardır,
+`BACKUP-AKZEPTANZTEST`: gerçek bir Dışa aktar → İçe aktar
+gidiş-dönüşü. PR üzerindeki yeşil bir `backup-e2e.yml` koşusu da bu
+kanıt sayılır; PR bir yedekleme yoluna dokunduğunda kendiliğinden
+çalışır ve her yedekleme tablosunu gerçek arayüz üzerinden denetler.
+Yalnızca gerçek bir cihazın gösterdikleri için (standalone modu,
+depolamanın boşaltılması) gerçek verilerle elle gidiş-dönüş hâlâ
+gerekir. Birim testleri tek başına bir yedekleme merge'ünü asla haklı
+çıkarmaz.
 
 ## 7. Tam kapıyı yerelde çalıştır
 

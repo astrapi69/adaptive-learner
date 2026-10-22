@@ -127,10 +127,15 @@ make test-plugin-gamification
 ```
 
 Para los cambios que tocan las copias de seguridad hay una barrera
-adicional: un viaje de ida y vuelta real Exportar → Importar en
-`make dev` con datos reales (el `BACKUP-AKZEPTANZTEST`). Las pruebas
-unitarias por sí solas nunca justifican fusionar un cambio de copias de
-seguridad.
+adicional, el `BACKUP-AKZEPTANZTEST`: un viaje de ida y vuelta real
+Exportar → Importar. Una ejecución verde de `backup-e2e.yml` en el PR
+cuenta como esa prueba; se lanza sola cuando el PR toca una ruta de
+copias de seguridad y comprueba cada tabla de la copia de seguridad a
+través de la interfaz real. El viaje de ida y vuelta manual con datos
+reales sigue haciendo falta para lo que solo muestra un dispositivo
+real (modo standalone, desalojo del almacenamiento). Las pruebas
+unitarias por sí solas nunca justifican fusionar un cambio de copias
+de seguridad.
 
 ## 7. Ejecutar la barrera completa en local
 
