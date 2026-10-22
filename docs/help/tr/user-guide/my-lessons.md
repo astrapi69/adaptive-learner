@@ -7,8 +7,11 @@ içerik setleriyle aynı çevrimdışı oynanabilir biçime dönüştürülmüş
 Analiz edilmiş bir sohbetten ders oluşturabilir, iyi bir uyarlamalı
 dersi tekrar oynatmak için kaydedebilir, bir dersi başkasıyla
 paylaşmak üzere dışa aktarabilir ve başkalarının paylaştığı dersleri
-içe aktarabilirsiniz. Her şey çevrimdışı çalışır; hiçbir şey
-sunucuya yüklenmez.
+içe aktarabilirsiniz. Her şey çevrimdışı çalışır ve dersleriniz,
+onları başkalarına aktaran bir özellik kullanana kadar cihazınızda
+kalır: örneğin bir topluluk katkısı (pull request) ya da
+"Depo olarak paylaş" dersi GitHub'a yükler, bir yapay zekâ denetimi
+ise içeriğini yapay zekâ sağlayıcınıza gönderir.
 
 Derslerimi, indirilen setlerin üzerinde **Set Tarayıcısı**'nın
 (`/content`) en üstünde bulabilirsiniz.
