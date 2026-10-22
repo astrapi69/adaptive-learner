@@ -38,8 +38,8 @@ duyduğunda alır, örneğin kendi anahtarınızla yapay zekâ.
 Veriler cihazınızdan yalnızca aşağıdaki durumlarda çıkar; her biri aşağıda
 ayrıntılı olarak açıklanmıştır:
 
-- Uygulamayı ve bu sayfaları açtığınızda, barındırma sağlayıcısı olarak GitHub
-  IP adresinizi işler.
+- Uygulamayı ve bu sayfaları açtığınızda, barındırma sağlayıcısı olarak GitHub,
+  başka şeylerin yanı sıra, IP adresinizi işler.
 - Uygulama öğrenme içeriklerini GitHub'dan yükler ve orada yeni bir şey olup
   olmadığını kendiliğinden de denetler.
 - Bir dersi toplulukla paylaştığınızda veya GitHub özelliklerini kendi erişim

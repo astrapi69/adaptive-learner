@@ -38,7 +38,7 @@ Des données ne quittent votre appareil que dans les cas suivants, décrits en
 détail plus bas :
 
 - Lorsque vous ouvrez l'application et les présentes pages, GitHub, en tant
-  qu'hébergeur, traite votre adresse IP.
+  qu'hébergeur, traite, entre autres, votre adresse IP.
 - L'application charge les contenus d'apprentissage depuis GitHub et y vérifie
   aussi d'elle-même s'il y a du nouveau.
 - Lorsque vous partagez une leçon avec la communauté ou utilisez des fonctions

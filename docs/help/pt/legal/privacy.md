@@ -40,7 +40,7 @@ Os dados só saem do seu dispositivo nos seguintes casos, descritos em
 pormenor mais abaixo:
 
 - Quando abre a aplicação e estas páginas, o GitHub, enquanto prestador de
-  alojamento, trata o seu endereço IP.
+  alojamento, trata, entre outras coisas, o seu endereço IP.
 - A aplicação carrega os conteúdos de aprendizagem a partir do GitHub e
   verifica lá também, por iniciativa própria, se há novidades.
 - Quando partilha uma lição com a comunidade ou utiliza funcionalidades do

@@ -33,7 +33,7 @@ needs them, such as the AI with your own key.
 Data leaves your device only in these cases, each described in detail below:
 
 - When you open the app and these pages, GitHub as the hosting provider
-  processes your IP address.
+  processes, among other things, your IP address.
 - The app loads learning content from GitHub and also checks there on its own
   whether anything is new.
 - When you share a lesson with the community or use GitHub features with your

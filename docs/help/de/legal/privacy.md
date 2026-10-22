@@ -34,8 +34,8 @@ Schlüssel.
 Daten verlassen Ihr Gerät nur in diesen Fällen, die die Abschnitte unten
 genauer beschreiben:
 
-- Beim Aufruf der App und dieser Seiten verarbeitet GitHub als Hoster Ihre
-  IP-Adresse.
+- Beim Aufruf der App und dieser Seiten verarbeitet GitHub als Hoster unter
+  anderem Ihre IP-Adresse.
 - Die App lädt Lerninhalte von GitHub und prüft dort auch von selbst, ob es
   Neues gibt.
 - Wenn Sie eine Lektion mit der Community teilen oder GitHub-Funktionen mit

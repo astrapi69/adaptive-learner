@@ -37,7 +37,7 @@ Los datos solo salen de su dispositivo en estos casos, descritos en detalle
 más abajo:
 
 - Cuando usted abre la app y estas páginas, GitHub, como proveedor de
-  alojamiento, trata su dirección IP.
+  alojamiento, trata, entre otras cosas, su dirección IP.
 - La app carga los contenidos de aprendizaje desde GitHub y comprueba allí,
   también por sí misma, si hay novedades.
 - Cuando usted comparte una lección con la comunidad o utiliza funciones de
