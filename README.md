@@ -224,7 +224,7 @@ cd ~/adaptive-learner
 ### 4. Developer setup (source build)
 
 Manual Poetry + Bun setup for contributors. Prerequisites:
-Python 3.11+, Node ≥24, Poetry, Bun 1.4+, Make.
+Python 3.12, Node ≥24, Poetry, Bun 1.4+, Make.
 
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
@@ -260,13 +260,13 @@ reference lives at
 
 | Layer | Tech |
 |---|---|
-| Backend | Python 3.11+, FastAPI ^0.136, SQLAlchemy ^2.0, Pydantic v2, Alembic, aiosqlite, cryptography (Fernet), platformdirs, Poetry |
-| Frontend | React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, TipTap 2 + 15 extensions, Dexie 4 (IndexedDB), html5-qrcode, sql.js + jszip |
+| Backend | Python 3.12, FastAPI ^0.141, SQLAlchemy ^2.0, Pydantic v2, Alembic, aiosqlite, cryptography (Fernet), platformdirs, Poetry |
+| Frontend | React 19, TypeScript 6 (strict), Vite 8, React Router 8, react-toastify, Recharts 3, TipTap 3 + official extensions, Dexie 4 (IndexedDB), html5-qrcode, sql.js + jszip |
 | PWA | vite-plugin-pwa, Workbox SW, manifest + maskable PNG icons |
 | Plugins | pluginforge ^0.10.0 (PyPI), identity-gated `target_application = "adaptive_learner"` |
 | AI providers | Anthropic SDK, OpenAI SDK, google.genai 2.x |
 | Launcher | PyInstaller, cross-OS (Linux + macOS + Windows) |
-| Testing | pytest ^9, Vitest 4 (happy-dom), Playwright (E2E smoke) |
+| Testing | pytest ^9, Vitest 5 (happy-dom), Playwright (E2E smoke) |
 | Tooling | Poetry, Bun, Docker, Make, ruff, pre-commit |
 
 ## Plugins shipped
@@ -294,16 +294,16 @@ reference lives at
 
 ```bash
 make dev               # backend (18001) + frontend (15174)
-make test              # backend + plugins + Vitest (9708 tests)
+make test              # backend + plugins + Vitest (counts: see Tests)
 make test-coverage     # opt-in coverage (CI runs it nightly)
-make sync-versions     # propagate version across 18 files
+make sync-versions     # propagate the version to every derived file
 make sync-i18n         # backend YAML → frontend JSON bundles
 make docs-serve        # MkDocs preview on :8000 with hot-reload
 make prod / prod-down  # docker compose stack
 ```
 
 E2E smoke: `cd e2e && npx playwright test --project=smoke`
-(17 spec files).
+(the specs under `e2e/smoke/`).
 
 ## Tests
 
@@ -322,7 +322,8 @@ Verified 2026-09-17 (v2.15.0):
 | Frontend (Vitest) | 10438 |
 | **Total** | **13433** |
 
-Plus 17 Playwright smoke spec files covering: landing,
+Plus the Playwright smoke specs under `e2e/smoke/`, covering among
+others: landing,
 onboarding+assessment, session (3-chunk SSE), curriculum,
 settings, mobile viewports, sync pairing, backup roundtrip,
 multi-cycle auto-loop, import + analysis, MD export,
