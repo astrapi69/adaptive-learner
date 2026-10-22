@@ -34,6 +34,7 @@ jobs:
       scripts: ${{ steps.filter.outputs.scripts }}
       plugins: ${{ steps.filter.outputs.plugins }}
       e2e: ${{ steps.filter.outputs.e2e }}
+      data_model: ${{ steps.filter.outputs.data_model }}
       i18n_only: ${{ steps.scope.outputs.i18n_only }}
     steps:
       - uses: actions/checkout@v7
@@ -66,6 +67,17 @@ jobs:
             # backend filter nor testmon ever selects them for it.
             e2e:
               - 'e2e/**/*.ts'
+            # #3828: the ER diagrams of docs/help/<lang>/developer/data-model.md
+            # are generated from the SQLAlchemy models AND the Dexie schema.
+            # A Dexie upgrade touches only frontend/, which the backend filter
+            # does not match, so this output starts the backend install and
+            # the drift gate for it; a hand edit of a page or the mapping too.
+            data_model:
+              - 'backend/app/models/**'
+              - 'frontend/src/storage/dexie/**'
+              - 'scripts/generate_er_diagrams.py'
+              - 'scripts/data_model_*'
+              - 'docs/help/*/developer/data-model.md'
             frontend:
               - 'frontend/**'
               - 'Makefile'
@@ -131,11 +143,11 @@ jobs:
             poetry-backend-${{ runner.os }}-py3.12-
 
       - name: Install Poetry
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true' || needs.changes.outputs.e2e == 'true'
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true' || needs.changes.outputs.e2e == 'true' || needs.changes.outputs.data_model == 'true'
         run: pip install poetry
 
       - name: Install backend dependencies
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true' || needs.changes.outputs.e2e == 'true'
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true' || needs.changes.outputs.e2e == 'true' || needs.changes.outputs.data_model == 'true'
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
 
@@ -245,6 +257,17 @@ jobs:
         if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: poetry run python ../scripts/generate_pydantic_models.py --check
+
+      # Data-model ER diagram drift gate (#3828): docs/help/<lang>/developer/
+      # data-model.md is generated from the SQLAlchemy models and the final
+      # Dexie schema. Fails on a stale page, a table or store without an area,
+      # and a *_id field the mapping does not resolve. Explicit step, so test
+      # selection never skips it, and it runs on a Dexie-only PR through the
+      # data_model filter.
+      - name: Data-model ER diagram drift gate (#3828)
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true' || needs.changes.outputs.data_model == 'true') && needs.changes.outputs.i18n_only != 'true'
+        working-directory: backend
+        run: poetry run python ../scripts/generate_er_diagrams.py --check
 
       # Dead-code ratchet, Python side (#3047): vulture over backend/app plus
       # every plugin package against the list baseline. The weekly

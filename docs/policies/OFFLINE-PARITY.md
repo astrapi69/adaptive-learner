@@ -58,16 +58,18 @@ preferences, reminders, hints, review settings, the learning-direction
 strategy, source languages, the Curriculum-Builder custom paths,
 contributions + contributor name, and so on.
 
-**Excluded** (`BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS`, case-insensitive
-substring match — applied on **both** capture and apply):
+**Excluded**: the substring patterns in
+`BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS` (case-insensitive) and the exact
+keys in `BACKUP_IDENTITY_LOCALSTORAGE_KEYS`, applied on **both** capture
+and apply. Those two constants are the complete list; the table groups
+them by reason, with examples:
 
-| Pattern | Why excluded |
-|---|---|
-| `github_token` | Credential. Kept out of the exportable config (EXP-023). |
-| `content_repo_token` | Per-repo credential (EXP-023). |
-| `api_key` / `apikey` | Any provider key material. |
-| `secret` / `password` | Any other secret. |
-| `storage_mode` | Per-**device** boot setting, not user data — restoring it across devices/modes could force a mode the target can't serve (e.g. API mode onto a PWA-only install). |
+| Class | Examples | Why excluded |
+|---|---|---|
+| Secrets | `github_token`, `content_repo_token`, `api_key`, `password` | Credentials and key material stay out of the exportable config (EXP-023). |
+| Device boot setting | `storage_mode` | Per-**device**, not user data: restoring it across devices or modes could force a mode the target can't serve (e.g. API mode onto a PWA-only install). |
+| Device state: bookkeeping, queues, caches, cursors | `last_backup_at`, `sync-queue`, `search_index::`, `auto_backup_last_at`, `sync.last_sync_at` | Belongs to this device, not to the learner (#792, #3429). The export writes `last_backup_at` itself, so two exports would differ; queued API-mode writes would be posted again, stale, on another device; caches are refetched anyway; a restored sync cursor could make that device skip changes. The `auto_backup_enabled` preference still travels. |
+| Active learner | `adaptive-learner.user_id`, `adaptive-learner.project_id` (exact keys) | A backup restored through Settings lands under the local learner; carrying the backup's ids switched the app to a learner the database did not hold (#3785). |
 
 Non-namespaced (third-party) keys are never captured.
 
@@ -86,9 +88,9 @@ When you add a `localStorage` key, decide its class:
    prefix **and** make sure its name contains one of the excluded
    substrings above (or extend `BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS`).
    Add a test in `localStorageSnapshot.test.ts`.
-3. **Device-local boot config** (which storage mode, dev-mode flag): if it
-   must NOT travel with a backup, add it to the exclusion patterns with a
-   comment, like `storage_mode`.
+3. **Device-local state** (a boot setting, a queue, a cache, a sync
+   cursor): if it must NOT travel with a backup, add it to the exclusion
+   patterns with a comment, like `storage_mode` or `sync-queue`.
 
 ## Migrate true user-data to Dexie (Teil B) ✅
 

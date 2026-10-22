@@ -154,12 +154,11 @@ domínio para códigos de estado HTTP. Consulte
 
 - Backend: SQLAlchemy + SQLite. Migrações Alembic em
   `backend/migrations/versions/`.
-- Superfície de sincronização: cada tabela de `sync_service.ALL_SYNC_TABLES`.
-  Linhas de histórico somente-adição (sessões, mensagens,
-  classificações, commits de progresso, avaliações de passo,
-  mudanças de método, conversas importadas, mensagens importadas,
-  cartões anki, questões de estudo) mais definições mutáveis +
-  linhas de currículo.
+- Superfície de sincronização: cada tabela de `sync_service.ALL_SYNC_TABLES`;
+  se uma tabela sincroniza como somente-adição ou como mutável é
+  definido pelo `TableSpec.append_only` dela em
+  `backend/app/services/sync_tables.py`. As tabelas em si, por
+  área: [Modelo de dados](data-model.md).
 - Formato de backup: JSON; chaves de API removidas na exportação;
   a restauração é uma fusão.
 - Isolamento de testes: os diretórios de dados de produção têm um

@@ -49,8 +49,10 @@ You need:
 - A **public GitHub repository** (private is possible too, via a
   per-repo token -- see [Listing a private repo](#listing-a-private-repo)).
 - A root **`manifest.yaml`** that declares your sets.
-- Lessons that conform to the **lesson format (schema v1.3+; current is
-  v1.4)**.
+- Lessons that conform to the **lesson format**: the schema of the
+  `learn-content-engine` version the app pins, mirrored in
+  `schema/lesson.schema.json` (its `x-schema-version` names the
+  current version).
 - Python 3 with PyYAML, to run the local validator before you publish.
 
 The two authoritative format references live in the official content

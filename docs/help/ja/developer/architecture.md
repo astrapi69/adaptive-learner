@@ -123,7 +123,7 @@ APIクライアント      HTTPエラー → ApiErrorに変換
 ## 永続化
 
 - バックエンド: SQLAlchemy + SQLite。Alembicマイグレーションは`backend/migrations/versions/`。
-- 同期サーフェス: `sync_service.ALL_SYNC_TABLES`のすべてのテーブル。追記専用の履歴行（sessions、messages、ratings、progress commits、step evaluations、method switches、imported conversations、imported messages、anki cards、study questions）とミュータブルな設定+カリキュラム行。
+- 同期サーフェス: `sync_service.ALL_SYNC_TABLES`のすべてのテーブル。テーブルが追記専用かミュータブルかは、`backend/app/services/sync_tables.py`の`TableSpec.append_only`が決めます。テーブルそのものは領域ごとに[データモデル](data-model.md)にあります。
 - バックアップ形式: JSON; APIキーはエクスポート時に除去; リストアはマージ。
 - テスト分離: 本番データディレクトリには`.adaptive-learner-production`マーカーがあり、テストがそれを検出した場合、`pytest.exit(returncode=2)`で実行が中断されます。
 

@@ -476,6 +476,16 @@ navigation:
           ja: ストレージレイヤー
         slug: developer/storage-layer
       - title:
+          de: Datenmodell
+          en: Data model
+          es: Modelo de datos
+          fr: Modèle de données
+          el: Μοντέλο δεδομένων
+          pt: Modelo de dados
+          tr: Veri modeli
+          ja: データモデル
+        slug: developer/data-model
+      - title:
           de: Theme-System
           en: Theme system
           es: Sistema de temas
