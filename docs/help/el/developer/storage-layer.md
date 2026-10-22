@@ -108,7 +108,7 @@ export type StorageMode = "api" | "dexie" | "supabase";
 
 ## Άμεσες κλήσεις ΤΝ από browser
 
-Το `storage/ai-providers.ts` υλοποιεί τρεις clients παρόχων:
+Το `storage/ai/ai-providers.ts` υλοποιεί τρεις clients παρόχων:
 
 - **Anthropic** - POST στο `https://api.anthropic.com/v1/messages`
   με την επικεφαλίδα `anthropic-dangerous-direct-browser-access: true`.

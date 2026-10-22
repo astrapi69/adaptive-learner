@@ -108,7 +108,7 @@ siguen usando `getStorage()`.
 
 ## Llamadas a la IA directas desde el navegador
 
-`storage/ai-providers.ts` implementa tres clientes de proveedor:
+`storage/ai/ai-providers.ts` implementa tres clientes de proveedor:
 
 - **Anthropic** - POST a `https://api.anthropic.com/v1/messages`
   con el encabezado `anthropic-dangerous-direct-browser-access: true`.

@@ -106,7 +106,7 @@ değişikliği gerekmez - sayfalar hâlâ `getStorage()` üzerinden gider.
 
 ## Tarayıcı doğrudan AI çağrıları
 
-`storage/ai-providers.ts` üç sağlayıcı istemcisi uygular:
+`storage/ai/ai-providers.ts` üç sağlayıcı istemcisi uygular:
 
 - **Anthropic** - `https://api.anthropic.com/v1/messages` adresine
   `anthropic-dangerous-direct-browser-access: true` başlığıyla POST

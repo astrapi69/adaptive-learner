@@ -89,7 +89,7 @@ Settings UIのストレージモードセクションに配線します。他の
 
 ## ブラウザ直接AIコール
 
-`storage/ai-providers.ts`は3つのプロバイダークライアントを実装しています。
+`storage/ai/ai-providers.ts`は3つのプロバイダークライアントを実装しています。
 
 - **Anthropic** - `anthropic-dangerous-direct-browser-access: true`ヘッダーを付けて`https://api.anthropic.com/v1/messages`にPOST。これはAnthropicのブラウザ呼び出し元向けの明示的なオプトインです。このヘッダーがないとCORSが拒否します。
 - **OpenAI** - `Authorization: Bearer ${apiKey}`を付けて`https://api.openai.com/v1/chat/completions`にPOST。CORSはデフォルトで開放されています。
