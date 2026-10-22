@@ -254,8 +254,9 @@ kapsamında sertifikalıdır (GDPR md. 45). Sağlayıcıların gizlilik bildirim
 Mikrofona dokunduğunuzda (öğrenme oturumunun giriş alanında ve telaffuz
 alıştırmasında), uygulama tarayıcınızın konuşma tanıma özelliğini kullanır.
 Kayıt ancak dokunduktan sonra başlar ve tarayıcınız önce mikrofon için izin
-ister. Tanımayı uygulama değil tarayıcı yapar: Google Chrome bunun için kaydı
-ve seçilen dili bir Google hizmetine (`www.google.com`) gönderir; diğer
+ister. Tanımayı uygulama değil tarayıcı yapar: Google Chrome bunun için, başka
+şeylerin yanı sıra, kaydı ve seçilen dili bir Google hizmetine
+(`www.google.com`) gönderir; diğer
 tarayıcılar üreticilerine göre davranır. Bu veri işlemenin veri sorumlusu
 tarayıcının üreticisidir ve onun gizlilik bildirimi geçerlidir. Chrome için bu
 Google'dır; AEA'daki kullanıcılar için,

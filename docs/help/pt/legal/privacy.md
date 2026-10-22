@@ -273,8 +273,9 @@ Quando toca no microfone (no campo de introdução da sessão de aprendizagem e 
 prática de pronúncia), a aplicação utiliza o reconhecimento de voz do seu
 browser. A gravação só começa depois de tocar, e o seu browser pede antes
 autorização para usar o microfone. O reconhecimento é feito pelo browser, não
-pela aplicação: o Google Chrome envia para isso a gravação e o idioma escolhido
-a um serviço da Google (`www.google.com`); os outros browsers procedem
+pela aplicação: o Google Chrome envia para isso, entre outras coisas, a gravação
+e o idioma escolhido a um serviço da Google (`www.google.com`); os outros
+browsers procedem
 consoante o fabricante. O responsável por este tratamento é o fabricante do
 browser, e aplica-se o respetivo aviso de privacidade. No Chrome trata-se da
 Google; para os utilizadores no EEE, segundo a

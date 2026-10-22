@@ -267,9 +267,9 @@ Tippen Sie auf das Mikrofon (im Eingabefeld der Lernsitzung und im
 Aussprachetraining), nutzt die App die Spracherkennung Ihres Browsers.
 Aufgenommen wird erst nach dem Tippen, und Ihr Browser fragt vorher nach der
 Erlaubnis für das Mikrofon. Die Erkennung übernimmt der Browser, nicht die
-App: Google Chrome schickt dafür die Aufnahme und die gewählte Sprache an
-einen Dienst von Google (`www.google.com`); andere Browser verfahren je nach
-Hersteller. Für diese Verarbeitung ist der Hersteller des Browsers
+App: Google Chrome schickt dafür unter anderem die Aufnahme und die gewählte
+Sprache an einen Dienst von Google (`www.google.com`); andere Browser verfahren
+je nach Hersteller. Für diese Verarbeitung ist der Hersteller des Browsers
 verantwortlich, und es gelten seine Datenschutzhinweise. Bei Chrome ist das
 Google, für Nutzer im EWR nach der
 [Datenschutzerklärung von Google](https://policies.google.com/privacy) die

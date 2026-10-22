@@ -245,8 +245,9 @@ When you tap the microphone (in the learning session's input field and in
 pronunciation practice), the app uses your browser's speech recognition.
 Recording starts only after the tap, and your browser asks for permission to
 use the microphone first. The browser does the recognition, not the app:
-Google Chrome sends the recording and the selected language to a Google
-service (`www.google.com`); other browsers behave as their maker decides. The
+Google Chrome sends, among other things, the recording and the selected
+language to a Google service (`www.google.com`); other browsers behave as
+their maker decides. The
 browser's maker is the controller for this processing, and its privacy notice
 applies. For Chrome that is Google, for users in the EEA according to
 [Google's privacy policy](https://policies.google.com/privacy) Google Ireland

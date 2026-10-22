@@ -270,7 +270,7 @@ aprendizaje y en la práctica de pronunciación), la app utiliza el
 reconocimiento de voz de su navegador. La grabación empieza solo después de
 tocarlo, y su navegador pide antes permiso para usar el micrófono. El
 reconocimiento lo realiza el navegador, no la app: Google Chrome envía para
-ello la grabación y el idioma elegido a un servicio de Google
+ello, entre otras cosas, la grabación y el idioma elegido a un servicio de Google
 (`www.google.com`); los demás navegadores actúan según su fabricante. El
 responsable de este tratamiento es el fabricante del navegador, y se aplica su
 aviso de privacidad. En Chrome se trata de Google; para los usuarios del EEE,
