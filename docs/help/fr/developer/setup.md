@@ -61,11 +61,16 @@ ai:
 
 ### Fichier de configuration de l'application
 
-`backend/config/app.yaml` (créé au premier démarrage à partir de
-`app.yaml.example`, non versionné) ne contient que des réglages par
-défaut non secrets, par exemple `app.default_language`,
-`server.cors_origins` et les plugins activés ou désactivés ; jamais de
-clés API. Le port du backend vient de `ADAPTIVE_LEARNER_PORT`.
+`backend/config/app.yaml` n'est pas versionné (il figure dans
+`.gitignore`) : s'il manque au démarrage, le backend le crée en copiant
+`backend/config/app.yaml.example`. Ce fichier d'exemple contient des
+réglages par défaut non secrets, par exemple `app.default_language`,
+`server.cors_origins` et les plugins activés ou désactivés. Le backend
+ne lit pas les clés API dans `app.yaml` ; voir « Clés API
+(optionnelles) » ci-dessus. Le port du backend n'y figure pas non plus :
+uvicorn le reçoit par `--port`, que le `Makefile`, le `Dockerfile` du
+backend et les fichiers compose remplissent à partir de
+`ADAPTIVE_LEARNER_PORT`.
 
 ---
 
