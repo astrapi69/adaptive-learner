@@ -20,15 +20,21 @@ notlar ve daha fazlası) **artı indirdiğin İçerik Setlerin**.
 davetler ve Learning Repository'nin açık olup olmadığı.
 Tarayıcı modunda yapay zekâ içerik denetimlerinin sonuçları da yedeğe
 girer, böylece "Yapay zekâ denetimli" rozeti korunur.
-**Dahil olmayanlar** arasında örneğin şunlar var: özel bir
-repository'nin erişim token'ı (geri yüklemeden sonra yeniden gir),
-cihaza ait olan Learning Repository klasörü ve yalnızca bu cihazı
-ilgilendirenler; sunucu modunda çevrimdışıyken oluşan ve henüz sunucuya
-ulaşmamış ders ilerlemesi ve ses kayıtları, önbellekteki arama
-dizinleri ve medya listeleri, otomatik yedeğin sayacı ve LAN
-eşitlemesinin konumu gibi. Otomatik yedeğin açık olup olmadığı ise
-yedeğe girer. Bu yüzden sunucu modunda yedeği, uygulama yeniden
-çevrimiçi olduğunda oluştur.
+
+**Dahil olmayanlar** arasında örneğin şunlar var:
+
+- özel bir repository'nin erişim token'ı (geri yüklemeden sonra yeniden
+  gir);
+- cihaza ait olan Learning Repository klasörü;
+- sunucu modunda, ders ilerlemesi ve ses kayıtlarından çevrimdışıyken
+  oluşup henüz sunucuya ulaşmamış olanlar;
+- önbellekteki arama dizinleri ve medya listeleri, otomatik yedeğin
+  sayacı ve LAN eşitlemesinin konumu.
+
+Buna karşılık, otomatik yedeğin açık olup olmadığını belirten ayar
+yedeğe girer. Çevrimdışıyken oluşan ilerleme yedekte eksik olacağından,
+sunucu modunda yedeği ancak uygulama yeniden çevrimiçi olduğunda
+oluştur, daha önce değil.
 
 Dışa aktarmadan önce uygulama, kaydetmeden önce neyin yedekleneceğini
 görmen için bölüm başına veri kümesi sayılarıyla bir **"Yedeğin

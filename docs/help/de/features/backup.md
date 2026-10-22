@@ -22,15 +22,20 @@ heruntergeladenen Content-Sets** und ein **localStorage-Snapshot**
 Einladungen und ob das Learning Repository eingeschaltet ist.
 Im Browser-Modus kommen auch die Ergebnisse deiner KI-Inhaltsprüfungen
 mit, die Plakette „KI-geprüft" bleibt also erhalten.
-**Nicht enthalten** ist zum Beispiel das Zugriffstoken eines privaten
-Repositories (gib es nach der Wiederherstellung erneut ein), der
-Ordner des Learning Repository, der zum Gerät gehört, und was nur
-dieses Gerät betrifft, etwa Lektionsfortschritt und Sprachaufnahmen,
-die im Server-Modus offline entstanden und noch nicht beim Server
-angekommen sind, zwischengespeicherte Suchindizes und Medienlisten, die
-Zählung des Auto-Backups und der Stand der LAN-Synchronisierung. Ob
-Auto-Backup eingeschaltet ist, kommt mit. Erstelle ein Backup im
-Server-Modus deshalb erst, wenn die App wieder online ist.
+
+**Nicht enthalten** sind zum Beispiel:
+
+- das Zugriffstoken eines privaten Repositorys (gib es nach der
+  Wiederherstellung erneut ein);
+- der Ordner des Learning Repository, der zum Gerät gehört;
+- im Server-Modus Lektionsfortschritt und Sprachaufnahmen, die offline
+  entstanden und noch nicht beim Server angekommen sind;
+- zwischengespeicherte Suchindizes und Medienlisten, die Zählung des
+  Auto-Backups und der Stand der LAN-Synchronisierung.
+
+Die Einstellung, ob Auto-Backup eingeschaltet ist, kommt dagegen mit.
+Weil offline entstandener Fortschritt im Backup fehlen würde, erstelle
+ein Backup im Server-Modus erst, wenn die App wieder online ist.
 
 Vor dem Export zeigt die App eine Vorschau **„Dein Backup
 enthält …"** mit Datensatz-Zählungen pro Bereich, damit du vor dem
