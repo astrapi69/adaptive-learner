@@ -1,6 +1,6 @@
 # Datenschutzerklärung
 
-Stand: 21. Oktober 2026
+Stand: 22. Oktober 2026
 
 Als Rechtstext verwendet diese Erklärung die förmliche Anrede; in der App und
 in der übrigen Hilfe duzen wir dich.
@@ -291,10 +291,12 @@ Vorlesen starten Sie mit den Vorlese-Schaltflächen, mit der Taste R oder mit
 "Alle vorlesen"; das automatische Vorlesen läuft nur, wenn Sie es einschalten.
 Vorgelesen werden Lektionstexte, Aufgaben, Fragen des Lerntyp-Assessments,
 KI-Antworten und Sätze im Aussprachetraining. Dafür nutzt die App die
-Sprachausgabe Ihres Browsers oder Betriebssystems. Die App wählt eine Stimme,
-die auf Ihrem Gerät arbeitet, und greift nur dann auf eine Online-Stimme
-zurück, wenn es für die Sprache keine lokale Stimme gibt oder wenn Sie in den
-Einstellungen selbst eine Online-Stimme gewählt haben.
+Sprachausgabe Ihres Browsers oder Betriebssystems. Die App bevorzugt eine
+Stimme, die auf Ihrem Gerät arbeitet. Eine Online-Stimme liest nur in drei
+Fällen: wenn es für die Sprache keine lokale Stimme gibt, wenn Sie in den
+Einstellungen selbst eine Online-Stimme gewählt haben, und in den ersten
+Augenblicken nach dem Laden einer Seite, weil Ihr Gerät seine eigenen Stimmen
+dann noch nicht bereitgestellt hat.
 
 Eine Online-Stimme schickt den vorzulesenden Text an ihren Anbieter. In Google
 Chrome sind das Stimmen von Google; der Text steht dann in der Adresse der

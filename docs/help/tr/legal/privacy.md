@@ -4,7 +4,7 @@
 
 > Bu sayfa, Almanca aslının yalnızca bilgi amaçlı sunulan bir makine çevirisidir. Hukuken yalnızca Almanca sürüm bağlayıcıdır.
 
-Son güncelleme: 21 Ekim 2026
+Son güncelleme: 22 Ekim 2026
 
 Hukuki bir metin olduğu için bu politika resmî hitap biçimini kullanır.
 
@@ -278,9 +278,10 @@ başlatırsınız; otomatik sesli okuma yalnızca siz açarsanız çalışır. D
 metinleri, görevler, öğrenme tipi değerlendirmesinin soruları, yapay zekâ
 cevapları ve telaffuz alıştırmasındaki cümleler okunur. Bunun için uygulama,
 tarayıcınızın veya işletim sisteminizin konuşma sentezini kullanır. Cihazınızda
-yerel olarak çalışan bir ses seçer ve yalnızca dil için yerel bir ses yoksa
-veya Ayarlar'da kendiniz çevrimiçi bir ses seçtiyseniz çevrimiçi bir sese
-başvurur.
+yerel olarak çalışan bir sesi tercih eder. Çevrimiçi bir ses yalnızca üç
+durumda okur: dil için yerel bir ses olmadığında, Ayarlar'da kendiniz çevrimiçi
+bir ses seçtiğinizde ve bir sayfa yüklendikten sonraki ilk anlarda, çünkü
+cihazınız o sırada kendi seslerini henüz kullanıma sunmamıştır.
 
 Çevrimiçi bir ses, okunacak metni sağlayıcısına gönderir. Google Chrome'da
 bunlar Google sesleridir; metin bu durumda `www.google.com` adresine yapılan

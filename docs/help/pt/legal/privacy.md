@@ -4,7 +4,7 @@
 
 > Esta página é uma tradução automática do original em alemão e serve apenas para informação. Só a versão alemã é juridicamente vinculativa.
 
-Última atualização: 21 de outubro de 2026
+Última atualização: 22 de outubro de 2026
 
 Por se tratar de um texto jurídico, esta política utiliza o tratamento
 formal.
@@ -298,10 +298,12 @@ Inicia a leitura em voz alta com os botões de leitura, a tecla R ou "Ler tudo";
 a leitura automática só funciona se a ativar. São lidos os textos das lições,
 os enunciados, as perguntas da avaliação do tipo de aprendizagem, as respostas
 da IA e as frases da prática de pronúncia. Para isso, a aplicação utiliza a
-síntese de voz do seu browser ou do seu sistema operativo. A aplicação escolhe
-uma voz que é executada no seu dispositivo e só recorre a uma voz online se não
-existir nenhuma voz local para o idioma ou se tiver escolhido por si uma voz
-online nas "Configurações".
+síntese de voz do seu browser ou do seu sistema operativo. A aplicação dá
+preferência a uma voz que é executada no seu dispositivo. Uma voz online só lê
+em três casos: se não existir nenhuma voz local para o idioma, se tiver
+escolhido por si uma voz online nas "Configurações", e nos primeiros instantes
+após o carregamento de uma página, porque nessa altura o seu dispositivo ainda
+não disponibilizou as suas próprias vozes.
 
 Uma voz online envia o texto a ler ao respetivo fornecedor. No Google Chrome,
 trata-se de vozes da Google; o texto figura então no endereço do pedido a

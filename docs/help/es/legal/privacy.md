@@ -2,7 +2,7 @@
 
 > Esta página es una traducción automática del original en alemán y se ofrece solo a título informativo. Únicamente la versión en alemán es jurídicamente vinculante.
 
-Última actualización: 21 de octubre de 2026
+Última actualización: 22 de octubre de 2026
 
 Como texto jurídico, esta política utiliza el trato de usted; en la app y en
 el resto de la ayuda te tratamos de tú.
@@ -292,12 +292,14 @@ la propia app y se quedan en su navegador.
 
 Usted inicia la lectura en voz alta con los botones de lectura, la tecla R o
 «Leer todo»; la lectura automática solo funciona si usted la activa. Se leen
-los textos de las lecciones, los enunciados, las preguntas de la evaluación
-del tipo de aprendizaje, las respuestas de la IA y las frases de la práctica
-de pronunciación. Para ello, la app utiliza la síntesis de voz de su
-navegador o de su sistema operativo. Elige una voz que se ejecuta en su
-dispositivo y solo recurre a una voz en línea si no hay ninguna voz local para
-el idioma o si usted mismo ha elegido una voz en línea en Ajustes.
+los textos de las lecciones, los enunciados, las preguntas de la evaluación del
+tipo de aprendizaje, las respuestas de la IA y las frases de la práctica de
+pronunciación. Para ello, la app utiliza la síntesis de voz de su navegador o
+de su sistema operativo. Da preferencia a una voz que se ejecuta en su
+dispositivo. Una voz en línea solo lee en tres casos: si no hay ninguna voz
+local para el idioma, si usted mismo ha elegido una voz en línea en Ajustes, y
+en los primeros instantes tras la carga de una página, porque en ese momento su
+dispositivo aún no ha puesto a disposición sus propias voces.
 
 Una voz en línea envía el texto que se va a leer a su proveedor. En Google
 Chrome son voces de Google; el texto figura entonces en la dirección de la
