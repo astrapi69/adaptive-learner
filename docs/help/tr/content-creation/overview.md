@@ -34,7 +34,15 @@ Kaydet/Paylaş) ve **bir yapay zeka anahtarına ihtiyaç duymaz**:
 - **Şablonlar** (Boş / Kelime / Gramer / Konuşma) ve **taslak
   otomatik kaydetme**.
 - Kaydetmeden önce gerçek ders görüntüleyicide **önizleme**.
-- **Yerel olarak kaydet** ya da **Pull Request ile paylaş**.
+- **Yerel olarak kaydet** ya da **Kaydet ve paylaş**. Yerel kaydetme
+  yalnızca geçerli bir ders ister (başlık, geçerli dil çifti, yeni bir
+  kart dersinde en az 4 kart, geçerli yapı); tek bir alıştırma yeter
+  ve ders hemen oynanabilir. Kaydet ve paylaş, kaydeder ve paylaşma
+  yardımcısını açar. Bunun için ders ayrıca içerik motorunun alt
+  sınırlarını karşılamalıdır; örneğin yeterli sayıda alıştırma ve
+  alıştırma türü, her alıştırmada yeterli yanıt ya da çift. **"İncele
+  ve kaydet"** adımı bunları güncel sayılarıyla **"Paylaşmak için
+  gerekli"** altında listeler.
 
 İçerik Tarayıcısı'nda ve Dashboard'da giriş noktaları bulunur.
 
