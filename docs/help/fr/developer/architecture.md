@@ -4,7 +4,7 @@
 
 ```
 Couche 1 : Frontend        React 19 + TypeScript 6 (strict) + Vite 8
-Couche 2 : Backend         FastAPI + SQLAlchemy 2.0 + SQLite + Pydantic v2
+Couche 2 : Backend         FastAPI + SQLAlchemy ^2.0 + SQLite + Pydantic v2
 Couche 3 : PluginForge     Framework de plugins externe (pluginforge ^0.10.0)
 Couche 4 : Plugins         packages autonomes enregistrés via entry points
 ```

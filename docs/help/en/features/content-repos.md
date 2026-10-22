@@ -123,8 +123,10 @@ proposes your own content repository for the official directory
       its link. This is only available in the browser version of the
       app; in the desktop app the button stays visible but disabled.
 
-A maintainer reviews the pull request and merges it once the
-directory's CI has validated the pinned commit.
+The pull request is publicly visible on GitHub as soon as it exists.
+A maintainer reviews it and merges it if the directory's CI has
+validated the pinned commit successfully and the entry fits.
+
 ---
 
 ## Local ratings

@@ -74,7 +74,7 @@ baseline - γίνονται commit, άρα και τα δύο μπορούν ν�
 | Μέγεθος σώματος κανόνων | `.claude/rules/.corpus-baseline.json` | `make verify-rule-corpus-size` |
 | Υποκατάστατα umlaut στην τεκμηρίωση | `docs/.docs-hygiene-baseline.json` | `make verify-docs-hygiene` |
 | Σπασμένες αναφορές τεκμηρίωσης | `docs/.doc-refs-baseline.json` | `make verify-doc-refs` |
-| Μέγεθος δημοσιευμένου image | (στο `verify-image-size`) | `make verify-image-size` |
+| Μέγεθος δημοσιευμένου image | `.image-size-baseline.json` | `make verify-image-size` |
 
 ### Όταν ένα ratchet σε μπλοκάρει
 
@@ -154,7 +154,7 @@ make ci-full   # the above plus gates that need a built frontend
 Το `make ci` τρέχει, με τη σειρά: docs drift, docs hygiene, αναφορές
 τεκμηρίωσης, συνδέσεις gate<->rule, απογραφή ελέγχων, απογραφή lessons,
 κανονιστικές αλλαγές, μέγεθος σώματος κανόνων, complexity ratchet,
-αναφορές testid, docker context, μεγέθη αρχείων και το snapshot OpenAPI.
+μεγέθη φακέλων, αναφορές testid, docker context, μεγέθη αρχείων και το snapshot OpenAPI.
 Δύο πύλες χρειάζονται εγκατεστημένο + χτισμένο frontend (χτίζουν το
 Tailwind class oracle), οπότε βρίσκονται στο `make ci-full`, όχι στο
 `make ci`. Οι σουίτες δοκιμών είναι ξεχωριστές: `make test`.

@@ -58,15 +58,16 @@ version = "X.Y.Z"
 make sync-versions
 ```
 
-Actualiza **18 archivos** automáticamente:
+Actualiza automáticamente cada archivo que lleva la versión (el
+conjunto completo está en `scripts/sync_versions.py`):
 
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py`
 - `launcher/adaptive-learner-launcher.spec` (plist CFBundle +
   CFBundleShortVersionString)
-- 10× `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- 3× literales `__version__` en `__init__.py` de plugins
+- cada `plugins/adaptive-learner-plugin-*/pyproject.toml`
+- cada `__init__.py` de plugin con un literal `__version__`
 - `install.sh` (regenerado desde `install.sh.template`)
 - `install.ps1` (regenerado desde `install.ps1.template`)
 
@@ -74,7 +75,7 @@ Actualiza **18 archivos** automáticamente:
 
 ```bash
 make sync-versions-check     # sale con error en caso de deriva
-make test                    # 2634 pruebas deben pasar
+make test                    # la suite completa debe pasar
 cd frontend && bun run build # debe tener éxito
 ```
 
@@ -107,11 +108,14 @@ Activa:
 - `ci.yml` en el nuevo commit (pruebas)
 - `release-gate.yml` en la nueva etiqueta (comprobación de
   deriva de versiones)
-- `coverage.yml` en el nuevo commit (cobertura HTML)
 - `deploy-gh-pages.yml` en el nuevo commit (publicar sitio
   público)
 - `launcher-{linux,macos,windows}.yml` cuando GitHub crea la
   Release a partir de la etiqueta
+
+`coverage.yml` no se ejecuta con el push, sino cada noche y bajo
+demanda; para un informe del commit de la release, ejecuta
+`gh workflow run coverage.yml --ref main`.
 
 ### 8. Crear la GitHub Release
 
@@ -127,11 +131,11 @@ con las notas del lanzamiento confirmadas en el paso 2.
 ## Versiones de plugins
 
 Los plugins avanzan al mismo ritmo que la versión canónica de la
-aplicación. El mismo número en los 10 archivos `pyproject.toml`
-de plugins más los tres literales `__version__` en `__init__.py`
-de plugins. Una futura decisión de «plugins núcleo vs. de terceros»
-podría desvincularlos, pero la configuración de v1.20.0 es uniforme
-en los 18 archivos propagados.
+aplicación. El mismo número en cada `pyproject.toml` de plugin más
+los literales `__version__` en los `__init__.py` de plugins. Una
+futura decisión de «plugins núcleo vs. de terceros» podría
+desvincularlos, pero la configuración actual es uniforme en todos
+los archivos propagados.
 
 ## Flujo de hotfix
 

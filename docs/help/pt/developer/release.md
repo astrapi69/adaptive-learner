@@ -58,15 +58,16 @@ version = "X.Y.Z"
 make sync-versions
 ```
 
-Atualiza **18 ficheiros** automaticamente:
+Atualiza automaticamente cada ficheiro que tem a versão (o conjunto
+completo está em `scripts/sync_versions.py`):
 
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py`
 - `launcher/adaptive-learner-launcher.spec` (plist CFBundle +
   CFBundleShortVersionString)
-- 10× `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- 3× literais `__version__` em `__init__.py` de plugins
+- cada `plugins/adaptive-learner-plugin-*/pyproject.toml`
+- cada `__init__.py` de plugin com um literal `__version__`
 - `install.sh` (regenerado a partir de `install.sh.template`)
 - `install.ps1` (regenerado a partir de `install.ps1.template`)
 
@@ -74,7 +75,7 @@ Atualiza **18 ficheiros** automaticamente:
 
 ```bash
 make sync-versions-check     # sai com valor não zero em caso de deriva
-make test                    # 2634 testes devem passar
+make test                    # a suite completa tem de passar
 cd frontend && bun run build # deve ter sucesso
 ```
 
@@ -107,10 +108,13 @@ Aciona:
 - `ci.yml` no novo commit (testes)
 - `release-gate.yml` na nova etiqueta (verificação de deriva de
   pins de versão)
-- `coverage.yml` no novo commit (HTML de cobertura)
 - `deploy-gh-pages.yml` no novo commit (publicar site público)
 - `launcher-{linux,macos,windows}.yml` quando o GitHub cria o
   Release a partir da etiqueta
+
+O `coverage.yml` não corre no push, mas todas as noites e por
+dispatch; para um relatório do commit de release, executa
+`gh workflow run coverage.yml --ref main`.
 
 ### 8. Criar o GitHub Release
 
@@ -126,11 +130,10 @@ gh release create vX.Y.Z \
 ## Versões de plugins
 
 Os plugins mantêm-se em sincronia com a versão canónica da
-aplicação. O mesmo número em todos os 10 ficheiros
-`pyproject.toml` de plugins mais os três literais `__version__` em
-`__init__.py` de plugins. Uma futura decisão "núcleo vs plugin de
-terceiros" pode desassociá-los, mas a configuração v1.20.0 é
-uniforme nos 18 ficheiros propagados.
+aplicação. O mesmo número em cada `pyproject.toml` de plugin mais
+os literais `__version__` nos `__init__.py` de plugins. Uma futura
+decisão "núcleo vs plugin de terceiros" pode desassociá-los, mas a
+configuração atual é uniforme em todos os ficheiros propagados.
 
 ## Fluxo de hotfix
 

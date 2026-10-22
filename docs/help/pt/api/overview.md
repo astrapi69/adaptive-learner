@@ -6,6 +6,9 @@ O backend do AdaptiveLearner expõe uma API REST FastAPI. No modo
 Servidor, o frontend comunica com ela; no modo Local (Dexie) a API
 não é acessível - as mesmas operações correm no navegador.
 
+A página [Todos os endpoints](endpoints.md), gerada a partir do
+snapshot OpenAPI versionado no repositório, lista cada endpoint.
+
 ## URL base
 
 - **Desenvolvimento local**: `http://localhost:18001/api`
@@ -128,9 +131,10 @@ A classe `ApiError` do frontend consome ambas as formas - consulte
 | Currículo | `/users/{user_id}/curricula`, `/curricula/{id}` | CRUD de Currículo + tópicos + lições |
 | Descoberta de plugins | `/plugins/manifests`, `/plugins/health`, `/plugins/errors` | O que está registado |
 
-Consulte [Endpoints principais](core-endpoints.md) e
-[Endpoints de plugins](plugin-endpoints.md) para a lista completa
-de métodos com exemplos de pedido / resposta.
+Há exemplos detalhados de pedido / resposta em
+[Endpoints principais](core-endpoints.md) e
+[Endpoints de plugins](plugin-endpoints.md); a lista completa de
+todos os endpoints está em [Todos os endpoints](endpoints.md).
 
 ## OpenAPI / Swagger
 

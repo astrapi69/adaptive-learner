@@ -46,6 +46,21 @@ make dev-down   # διακοπή
 χρησιμοποιεί `actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`
 για δημοσίευση.
 
+Το GitHub Pages δεν επιτρέπει σε έναν ιστότοπο να ορίσει δικά του
+HTTP headers, γι' αυτό το build του Pages φέρνει τη δική του
+πολιτική: το `frontend/index.html` ορίζει μέσω `<meta>` μια
+Content-Security-Policy που περιορίζει τις εικόνες και τα μέσα σε
+λίγες πηγές, για παράδειγμα το ίδιο origin και το
+`https://raw.githubusercontent.com` (η ακριβής τιμή βρίσκεται στο
+αρχείο), καθώς και την πολιτική referrer `no-referrer`. Η λειτουργία
+API στέλνει τα ίδια `img-src`/`media-src` ως headers
+(`backend/app/frontend_static.py`). Αν μια δυνατότητα της εφαρμογής
+φορτώνει εικόνες ή μέσα από έναν host που η πολιτική δεν αναφέρει,
+ο browser το μπλοκάρει, τόσο στο build του Pages όσο και στη
+λειτουργία API. Πριν από το upload, το
+`scripts/check_external_hosts.py` ελέγχει το χτισμένο site
+τεκμηρίωσης για πόρους τρίτων.
+
 Το URL του site είναι `https://astrapi69.github.io/adaptive-learner/`.
 Χρήστες με custom domain προσθέτουν αρχείο `CNAME` στο `frontend/public/`
 με το όνομα domain· η Pages routing του GitHub που γνωρίζει domain
@@ -156,8 +171,7 @@ PyInstaller. Το GitHub Actions χτίζει τρία binaries ανά release:
 | Workflow | Εντολή | Τι κάνει |
 |---|---|---|
 | `ci.yml` | push, pull_request | Τεστ + lint + tsc |
-| `coverage.yml` | push στο main | Coverage HTML + xml |
+| `coverage.yml` | καθημερινό schedule, dispatch | Coverage HTML + xml (backend, frontend, ανά plugin) |
 | `release-gate.yml` | tag push | Έλεγχος απόκλισης pin έκδοσης |
 | `deploy-gh-pages.yml` | push στο main, dispatch | Build + deploy GH Pages |
 | `launcher-{linux,macos,windows}.yml` | release: created | Build + επισύναψη binary launcher |
-| `docs.yml` | push στο main | Build MkDocs (αυτή τη στιγμή ανενεργό - το site έρχεται από workflow GH Pages) |

@@ -46,6 +46,20 @@ despacho manual. Después de la compilación copia
 SPA, luego usa `actions/upload-pages-artifact@v5` +
 `actions/deploy-pages@v5` para publicar.
 
+GitHub Pages no permite que un sitio defina sus propias cabeceras
+HTTP, así que la compilación de Pages trae su propia política:
+`frontend/index.html` define mediante `<meta>` una
+Content-Security-Policy que limita las imágenes y los medios a pocas
+fuentes, por ejemplo el propio origen y
+`https://raw.githubusercontent.com` (el valor exacto está en el
+archivo), además de la política de referer `no-referrer`. El modo
+API envía los mismos `img-src`/`media-src` como cabeceras
+(`backend/app/frontend_static.py`). Si una función carga imágenes o
+medios de un host que la política no nombra, el navegador lo
+bloquea, tanto en la compilación de Pages como en el modo API. Antes
+de la subida, `scripts/check_external_hosts.py` revisa el sitio de
+documentación compilado en busca de recursos de terceros.
+
 La URL del sitio es `https://astrapi69.github.io/adaptive-learner/`.
 Los usuarios con dominio personalizado añaden un archivo `CNAME`
 en `frontend/public/` con el nombre de dominio; el enrutamiento
@@ -157,8 +171,7 @@ compartido entre ellos:
 | Flujo de trabajo | Disparador | Qué hace |
 |---|---|---|
 | `ci.yml` | push, pull_request | Pruebas + lint + tsc |
-| `coverage.yml` | push a main | Cobertura HTML + xml |
+| `coverage.yml` | programación diaria, despacho | Cobertura HTML + xml (backend, frontend, por plugin) |
 | `release-gate.yml` | push de etiqueta | Comprobación de deriva de versiones |
 | `deploy-gh-pages.yml` | push a main, despacho | Compilación + despliegue en GH Pages |
 | `launcher-{linux,macos,windows}.yml` | release: created | Compilar + adjuntar binario del lanzador |
-| `docs.yml` | push a main | Compilación de MkDocs (actualmente inactivo - el sitio proviene del flujo de GH Pages) |

@@ -133,13 +133,19 @@ portas próprias e não precisam de uma aplicação em execução. Um
 make test-coverage   # opcional; lento + intensivo para o hardware
 ```
 
-A cobertura corre no CI para cada push para main; descarregue os
-artefactos:
+A cobertura é um relatório, não um gate de merge, por isso não corre
+nos PRs. O workflow `coverage.yml` corre todas as noites (e por
+dispatch); descarregue os artefactos:
 
 ```bash
 gh run download --name backend-coverage
 gh run download --name frontend-coverage
 ```
+
+Cada plugin tem o seu próprio artefacto `<diretório-do-plugin>-coverage`,
+por exemplo
+`gh run download --name adaptive-learner-plugin-session-coverage`; um
+plugin novo fica coberto sem alterar o workflow.
 
 Metas por `.claude/rules/quality-checks.md`:
 
@@ -156,10 +162,19 @@ Global: 85-95% em todo o projeto.
 cd backend && poetry run pre-commit install
 ```
 
-Hooks: ruff check (correção automática), ruff format, espaços em
-branco finais, corretor de fim de ficheiro, check-yaml,
-check-merge-conflict. Apenas backend - o lint do frontend corre
-em tempo de CI, não em pré-commit.
+Os hooks estão em `.pre-commit-config.yaml`, por exemplo ruff check
+(correção automática) e ruff format, verificações de espaços, YAML,
+JSON e conflitos de merge, o ESLint do frontend, as verificações da
+documentação (ratchet de substitutos de tremas, referências da
+documentação) e `plugin-lock-paired-with-pyproject` (bloqueante):
+executa `poetry check --lock` para cada plugin cujo `pyproject.toml`
+ou `poetry.lock` esteja envolvido e falha quando as dependências
+mudaram desde que o lock foi escrito; também corre no job de
+pré-commit do CI sobre todos os ficheiros. Nesse job o hook `eslint`
+é ignorado (o job de testes do frontend corre o ESLint com as
+dependências instaladas). O Prettier não é um hook:
+`bun run format:check` corre no job de testes do frontend, sem
+bloquear até à reformatação única de #3270.
 
 ## CI
 
@@ -175,7 +190,13 @@ em cada PR (Python 3.12):
    venv do backend)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`),
    verificação de dependências circulares, Stylelint, Vitest,
-   `vite build`, `npm audit`
+   `vite build`, `bun audit --audit-level=high` (bloqueia em
+   resultados altos e críticos). Um aviso sem versão corrigida que só
+   atinge uma dependência de desenvolvimento é isentado por ID em
+   `frontend/audit-ignore.txt`: um ID por linha, com um comentário por
+   cima que dá o motivo e quando a entrada sai.
+   `make check-security` lê a mesma lista; `security-scan.yml` continua
+   sem filtro.
 4. Hooks de pré-commit em todos os ficheiros
 5. Backend ruff + mypy + pip-audit
 6. Verificador de deriva da documentação (`verify_docs.py` +
@@ -196,16 +217,17 @@ Mais alguns gates de PR vivem em workflows próprios:
   infratores NOVOS ou regredidos face a `.complexity-baseline`,
   pelo que bloqueia complexidade nova sem forçar uma limpeza da
   dívida pré-existente. O relatório de complexidade completo,
-  apenas de aviso, corre à noite.
+  apenas de aviso, corre à noite. No mesmo job corre a verificação
+  do tamanho das pastas (`scripts/check-folder-size.sh` contra
+  `.dirsize-baseline`); localmente `make check-folder-size` ou como
+  parte de `make ci`.
 - `cohesion-check.yml` - a verificação do tamanho dos ficheiros
   (gate contra `.filesize-whitelist`) mais dois gates de nomes de
   classe: nomes de classe CSS mortos (`check-dead-classnames.py`
   contra `.dead-classnames-baseline`) e o **gate de className sem
   estilo** (`--unstyled`, um ratchet contra
   `.unstyled-classnames-baseline`) - um `className` cujos tokens
-  estão todos mortos bloqueia o PR. A verificação do tamanho das
-  pastas que o acompanha corre localmente via
-  `make check-folder-size`.
+  estão todos mortos bloqueia o PR.
 - `visual-baseline-gate.yml` - um PR que altera caminhos
   visualmente críticos (componentes de lição, renderers de
   exercícios, ficheiros de tema/CSS) tem de trazer os screenshots
@@ -222,13 +244,20 @@ Mais alguns gates de PR vivem em workflows próprios:
   filtrado por caminhos nos PRs, além de em `release/**`,
   semanalmente e por dispatch; localmente
   `make docker-build-smoke`.
+- `dexie-smoke.yml` - o gate E2E do modo Dexie: em cada pull request
+  que lhe diga respeito (`scripts/dexie_smoke_affected.py` decide; o
+  job `Dexie smoke (required)` reporta sempre), além de diariamente,
+  em `release/**` e por dispatch; localmente `make test-dexie-smoke`.
+- `backup-e2e.yml` - corre nos PRs que tocam um caminho de cópias de
+  segurança (por exemplo `frontend/src/storage/backup/`, as stores do
+  Dexie ou os serviços de cópia de segurança do backend; a lista está
+  no workflow) e executa cada `e2e/dexie/backup-*.spec.ts`, incluindo
+  a ida e volta por todas as tabelas da cópia de segurança.
 
 **Turno noturno / release (não nos PRs):**
 
-- `dexie-smoke.yml` - o gate E2E do modo Dexie (diário + em
-  `release/**` + dispatch; localmente `make test-dexie-smoke`)
 - `coverage.yml` - relatório de cobertura (diário + dispatch)
-- `security-scan.yml` - pip-audit / npm audit / bandit (semanal +
+- `security-scan.yml` - pip-audit / bun audit / bandit (semanal +
   em `release/**` + dispatch; apenas aviso)
 - `content-stats.yml` - deriva das estatísticas de conteúdo face a
   um checkout fresco do conteúdo (diário + dispatch)
@@ -249,6 +278,13 @@ Mais alguns gates de PR vivem em workflows próprios:
   PR (label `refresh-visual-baselines`, ou dispatch com um número
   de PR) - a revisão das imagens antes do merge continua
   obrigatória
+- `smoke-nightly.yml` - execução noturna do smoke de viewports
+  móveis; as descobertas vão para um único issue de acompanhamento
+- `unused-catalog-keys.yml` - relatório noturno das chaves de
+  catálogo sem consumidor mais antigas do que a janela de preparação
+  (`AGE_DAYS` em `frontend/src/i18n/unused-catalog-keys.ts`), num
+  único issue de acompanhamento; cada chave é uma candidata e é
+  verificada uma a uma antes de ser removida
 
 `.github/workflows/release-gate.yml` corre em pushes de etiqueta:
 verifica se os pins de versão estão sincronizados em todos os

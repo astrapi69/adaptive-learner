@@ -37,10 +37,17 @@ alıştırmadan adım adım geçirir:
 1. **Kartlar** okumak için materyal sunar. Hazır olduğunda
    "Devam"a tıkla.
 2. **Alıştırmalar** neyi hatırladığını sınar. Çekirdek türler:
-   - **Eşleştirme** - çiftleri sürükle (kelime ↔ çeviri). Bulunan bir
+   - **Eşleştirme** - bir karoya, sonra diğer sütundaki eşine dokun
+     (kelime ↔ çeviri); iki taraftan da başlayabilirsin. Bulunan bir
      çiftin her iki karosu **kendi rengini** ve bir **numara
      rozetini** paylaşır, böylece eşleştirme renk körlüğüne karşı
-     güvenli biçimde tanınır (yalnızca renkle değil).
+     güvenli biçimde tanınır (yalnızca renkle değil); bir çiftin
+     çözülmesi kısa bir **animasyon** oynatır, böylece bağlantı
+     kolayca izlenir. Bir çifti değiştirmek için eşleşmiş bir
+     karoya, sonra yeni eşine dokun: çift oraya taşınır. Yeni eş
+     zaten eşleşmişse iki çift eşlerini değiştirir, yani çift
+     sayısı hiç düşmez. Tek bir dokunuş bir çifti asla bozmaz;
+     **Ctrl/Cmd+Z** oluşturduğun son çifti geri alır.
    - **Resim seçimi** - ipucuna uyan resmi seç.
    - **Serbest metin** - yanıtı yaz.
    - **Kelime karoları** - karolardan bir cümle oluştur.
@@ -61,7 +68,12 @@ asla değiştirmez.
 
 Üstteki bir ilerleme göstergesi, derste ne kadar ilerlediğini izler.
 İstediğin zaman durabilirsin - ilerlemen adım başına kaydedilir ve
-kaldığın yerden devam eder.
+kaldığın yerden devam eder. İstisna sınavdır: Başlanmış bir sınav
+yalnızca tek seferde yapıldığında geçerlidir, bu yüzden yeniden
+açtığında baştan başlar. Başka bir modda başlatılmış bir tur da sınav
+olarak devam etmez, bir sınav turu da alıştırma olarak devam etmez; o
+zaman ders baştan başlar. Modu bir turun ilk cevabına kadar hâlâ
+değiştirebilirsin.
 
 ### Enter kısayolu
 
@@ -81,6 +93,16 @@ açık) ve Hata-Replay'inde de ("Hatayı tekrarla") geçerlidir.
   ölçülü bir bağlantı gösterir; oradan "Alıştırmaya geri dön" seni
   tekrar göreve getirir. Böylece, ipi kaybetmeden bir kuralı ararsın.
 
+### Derste sesli okuma
+
+Teori adımları sesli okunabilir: adımın sesli okuma düğmesiyle,
+**"Tümünü oku"** ile ya da ders seçeneklerindeki **"Otomatik sesli
+okuma"** ile her adımda kendiliğinden. Okuma sürerken küçük bir oynatıcı
+duraklat/oynat ile önceki ve sonraki adımı sunar. **X** bu ders için
+sesli okumayı bitirir; "Otomatik sesli okuma" açıksa sonraki ders yine
+sesli okunur. Kalıcı olarak kapatmak için **"Otomatik sesli okuma"**
+anahtarını kullan.
+
 ### Özet
 
 Son alıştırma tamamlandığında **ders özeti** görünür:
@@ -90,11 +112,17 @@ Son alıştırma tamamlandığında **ders özeti** görünür:
   - **2 yıldız** ≥ %75
   - **1 yıldız** ≥ %50
   - **0 yıldız** %50'nin altında
+
+  Setin kendi değerlendirme kuralları olan bir sınavda yıldız
+  değerlendirmesi yoktur; setin kararı geçerlidir.
 - Hangi alıştırmaları geçtiğini ve hangilerinin hata içerdiğini
   (yanlışlar için doğru yanıtla birlikte) gösteren bir
-  **alıştırma-alıştırma dökümü**.
+  **alıştırma-alıştırma dökümü** (ayrıntılı değerlendirmedeki
+  cevaplara genel bakış).
+- Bu denemenin düzeltilmemiş hataları olduğu sürece **"Hataları düzelt
+  (N)"** (aşağıdaki düzeltme turuna bak).
 - Sonraki eylemin bir tık uzakta olması için **Sonraki ders**,
-  **Tekrarla** ve **Sete geri dön** düğmeleri.
+  **Tekrar pratik yap** ve **İçerik tarayıcısına dön** düğmeleri.
 
 İlk denemede 3 yıldız alırsan küçük bir kutlama animasyonu oynar.
 (İşletim sistemi ayarı "Hareketleri azalt" etkinleştirilmişse,
@@ -176,17 +204,23 @@ Bir tekrar oturumunu tamamladığında aynı değerlendirme + yıldız +
 
 ## Ders sonu düzeltme turu
 
-Bir dersi hatalarla tamamladığında, özet sayfası
-puanın ile "Sonraki ders" düğmesi arasında küçük bir **düzeltme turu**
-gösterir. Bu turdan dersteki en fazla beş somut hatayı alır ve her
-birini tam olarak kaçırılan kelimeyi / kaçırılan artikeli hedefleyen
-taze bir boşluk doldurma olarak sunar.
+Bir dersi hatalarla tamamladığında, kompakt özet devam eylemlerinin
+hemen üstünde **"Hataları düzelt (N)"** gösterir; N, bu denemenin henüz
+düzeltilmemiş hatalarının sayısıdır. Düğme **düzeltme turunu** doğrudan
+ilk alıştırmada açar ve hiçbir ayarı değiştirmez. **Ayrıntılı
+değerlendirmede** ya da bölümü **Ayarlar → Öğrenme → Ders sonrası
+özet** altında işaretlersen tur, özette **"Hatalarını düzelt"** bölümü
+olarak yer alır ve **"Şimdi düzelt"** ile açılır. Bu tur dersteki en
+fazla beş somut hatayı alır ve her birini tam olarak kaçırılan
+kelimeyi / kaçırılan artikeli hedefleyen taze bir boşluk doldurma
+olarak sunar.
 
-- **İstediğin zaman atlanabilir.** "Sonraki ders" düğmesi görünür
-  kalır - düzeltme turu gönüllü bir alıştırmadır, bir gate değil.
+- **İstediğin zaman atlanabilir.** Devam eylemleri görünür kalır -
+  düzeltme turu gönüllü bir alıştırmadır, bir gate değil.
 - **Yalnızca düzeltilecek bir şey varsa görünür.** Kusursuz puanlı
-  dersler onu tamamen atlar. Hataları temiz bir boşluk doldurmaya
-  dönüştürülemeyen dersler (nadiren) de.
+  dersler onu tamamen atlar. Hatalar temiz bir boşluk doldurmaya
+  dönüştürülemiyorsa (nadiren), bölümün adı **"Hatalarını tekrarla"**
+  olur ve kaçırdığın alıştırmaları orada yeniden yaparsın.
 - **Tamamlanan her boşluk doldurma, ustalığa sayılır.** Düzeltme turu,
   ana dersle aynı öğe-izleme veri kayıtlarını yazar; bu öğelerdeki
   serin 3-doğru ustalık eşiğine doğru ilerler.
@@ -194,18 +228,35 @@ taze bir boşluk doldurma olarak sunar.
 Sonunda, ek alıştırmanın etkisini görmen için kısa bir "{n} öğe
 iyileştirildi" satırı görünür.
 
+Turdan sonra ya da bu denemenin bir hatası düzeltilir düzeltilmez
+altında **"Düzeltmelerin"** görünür: "İlk deneme: Y sorudan X doğru",
+"M hatadan N tanesi düzeltildi" ve her hata, durumuyla birlikte
+(**Düzeltildi** / **Henüz düzeltilmedi**), ilk yanıtın doğrusunun
+yanında ve hata açık kaldığı sürece alıştırmanın açıklaması. Özetten
+açtığında **"Hataları tekrar et"** sonunda da aynı genel bakışı
+gösterir. Kompakt özet, bir şey düzeltilir düzeltilmez "M hatadan N
+tanesi düzeltildi" gösterir; tüm hatalar düzeltildiğinde "Hataları
+düzelt (N)" düğmesi kaybolur. **Ayrıntılı değerlendirmede** cevaplara
+genel bakış ve "Bunları neden kaçırdın" her hatayı **Düzeltildi** ya da
+**Henüz düzeltilmedi** olarak işaretler; düzeltilen bir hata orada
+listelenmeye devam eder.
+
 ## Görsel diff geri bildirimi
 
 Yanlış serbest metin ve kelime karosu
 yanıtları artık girdin ile kanonik yanıt arasında **Token düzeyinde
 bir diff** gösterir. Üç renk, asla yalnızca renk değil:
 
-- **Kırmızı üstü çizili** - yazdığın ve oraya ait olmayan (ekran
-  okuyucular ve renk körü kullanıcılar için bir × işaretiyle).
+- **Kırmızı üstü çizili** - yazdığın ve oraya ait olmayan (renk körü
+  kullanıcılar için bir × işaretiyle).
 - **Yeşil** - kanonik yanıtın içerdiği ve senin gözden kaçırdığın (bir
   + işaretiyle).
 - **Sarı** ok ile → - hafifçe yanlış bir kelime, `senin-kelimen` →
   `beklenen` olarak gösterilir.
+
+Ekran okuyucular her işareti arayüz dilinde bir cümle olarak okur,
+örneğin "Fazla: …", "Eksik: …" ya da "Yazdığın: …, beklenen: …";
+görünen simgeleri atlarlar.
 
 Aynı diff, ders özetinde her alıştırmanın dökümünde görünür - kullanıcı
 girdisi deposunun bildiği her serbest metin veya kelime karosu

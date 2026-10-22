@@ -1,6 +1,8 @@
 # Endpoints plugins
 
 Οι διαδρομές κάθε plugin τοποθετούνται κάτω από `/api/plugins/{plugin-name}/`.
+Αυτή η σελίδα δείχνει αναλυτικά παραδείγματα για ορισμένα plugins·
+κάθε διαδρομή plugin παρατίθεται στο [Όλα τα endpoints](endpoints.md).
 
 ## Plugin αξιολόγησης
 

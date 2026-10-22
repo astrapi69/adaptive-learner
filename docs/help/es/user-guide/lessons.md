@@ -41,11 +41,20 @@ guía paso a paso por cada tarjeta y ejercicio:
    "Siguiente" cuando estés listo.
 2. Los **ejercicios** comprueban lo que has recordado. Los tipos
    principales:
-   - **Asociar** - arrastra parejas (palabra ↔ traducción). Las
+   - **Asociar** - toca una ficha y luego su pareja en la otra
+     columna (palabra ↔ traducción); puedes empezar por
+     cualquiera de los dos lados. Las
      dos fichas de una pareja encontrada comparten un **color
      propio** y una **insignia numérica**, de modo que la
      asociación sea reconocible de forma segura para daltónicos
-     (no solo por color).
+     (no solo por color), y al resolver una pareja se reproduce
+     una breve **animación** para que la conexión sea fácil de
+     seguir. Para cambiar una pareja, toca una ficha ya
+     emparejada y luego su nueva pareja: la pareja se traslada.
+     Si la nueva pareja ya estaba emparejada, las dos parejas
+     intercambian sus compañeras, así que el número de parejas
+     nunca baja. Un simple toque nunca deshace una pareja;
+     **Ctrl/Cmd+Z** deshace la última pareja que formaste.
    - **Elección de imagen** - elige la imagen que corresponde a la
      pista.
    - **Texto libre** - escribe la respuesta.
@@ -69,7 +78,12 @@ la insignia no cambia ni la puntuación ni el orden.
 
 Una barra de progreso en la parte superior sigue cuánto has
 avanzado en la lección. Puedes parar en cualquier momento: tu
-progreso se guarda paso a paso y continúa donde lo dejaste.
+progreso se guarda paso a paso y continúa donde lo dejaste. La
+excepción es el examen: un examen empezado solo cuenta si se hace de
+una vez, así que al volver a abrirlo empieza de nuevo. Una ronda
+empezada en otro modo tampoco continúa como examen, ni una ronda de
+examen como práctica; en ese caso la lección empieza de nuevo. Puedes
+cambiar el modo hasta la primera respuesta de la ronda.
 
 ### Atajo Enter
 
@@ -91,6 +105,17 @@ repetición de errores ("Repetir errores").
   al ejercicio" te lleva de nuevo a la tarea. Así consultas una
   regla sin perder el hilo.
 
+### Lectura en voz alta en la lección
+
+Los pasos de teoría se pueden leer en voz alta: con el botón de lectura
+del paso, con **"Leer todo"** o, con **"Lectura automática"** en las
+opciones de la lección, en cada paso por sí solo. Mientras se lee, un
+pequeño reproductor ofrece pausa/reproducir y el paso anterior y el
+siguiente. La **X** termina la lectura para esta lección; con "Lectura
+automática" activada, la siguiente lección vuelve a leerse en voz alta.
+Para desactivarla de forma permanente, usa el interruptor **"Lectura
+automática"**.
+
 ### El resumen
 
 Cuando se completa el último ejercicio, aparece el **resumen de la
@@ -102,12 +127,18 @@ lección**:
   - **2 estrellas** ≥ 75 %
   - **1 estrella** ≥ 50 %
   - **0 estrellas** por debajo del 50 %
-- Un **desglose ejercicio por ejercicio** que muestra qué
-  ejercicios has aprobado y cuáles contenían errores (con la
-  respuesta correcta para los fallados).
-- **Siguiente lección**, **Repetir** y **Volver al conjunto** como
-  botones, para que la siguiente acción esté a un clic de
-  distancia.
+
+  En un examen con reglas de evaluación propias del conjunto no hay
+  valoración de estrellas; cuenta el veredicto del conjunto.
+- Un **desglose ejercicio por ejercicio** (el resumen de respuestas de
+  la evaluación detallada) que muestra qué ejercicios has aprobado y
+  cuáles contenían errores (con la respuesta correcta para los
+  fallados).
+- **"Corregir errores (N)"** mientras haya errores de este intento sin
+  corregir (consulta la ronda de corrección más abajo).
+- **Lección siguiente**, **Practicar de nuevo** y **Volver al
+  explorador de contenido** como botones, para que la siguiente acción
+  esté a un clic de distancia.
 
 Si logras 3 estrellas al primer intento, se reproduce una pequeña
 animación de celebración. (Si tienes activado el ajuste del SO
@@ -194,20 +225,25 @@ Domina 50 elementos mediante repasos y consigues la insignia
 
 ## Ronda de corrección al final de la lección
 
-Cuando completas una lección con errores,
-la página de resumen muestra una pequeña **ronda de corrección**
-entre tu puntuación y el botón "Siguiente lección". Toma hasta
-cinco errores concretos de esa lección y ofrece cada uno como un
-texto con huecos nuevo que apunta exactamente a la palabra / el
-artículo fallado.
+Cuando completas una lección con errores, el resumen compacto muestra
+**"Corregir errores (N)"** justo encima de las acciones para continuar;
+N es el número de errores de este intento que siguen sin corregir. El
+botón abre la **ronda de corrección** directamente en el primer
+ejercicio y no cambia ningún ajuste. En la **evaluación detallada**, o
+si marcas la sección en **Ajustes → Aprendizaje → Resumen tras las
+lecciones**, la ronda aparece en el resumen como la sección **"Corrige
+tus errores"** y se abre con **"Corregir ahora"**. Toma hasta cinco
+errores concretos de esa lección y ofrece cada uno como un texto con
+huecos nuevo que apunta exactamente a la palabra / el artículo fallado.
 
-- **Omitible en cualquier momento.** El botón "Siguiente lección"
-  permanece visible: la ronda de corrección es práctica
-  voluntaria, no una barrera.
+- **Omitible en cualquier momento.** Las acciones para continuar
+  permanecen visibles: la ronda de corrección es práctica voluntaria,
+  no una barrera.
 - **Aparece solo si hay algo que corregir.** Las lecciones con
-  puntuación perfecta la omiten por completo. También las
-  lecciones cuyos errores no se pueden reformular en un texto con
-  huecos correcto (algo poco frecuente).
+  puntuación perfecta la omiten por completo. Si los errores no se
+  pueden reformular en un texto con huecos correcto (algo poco
+  frecuente), la sección se llama **"Repite tus errores"** y ahí
+  repites los ejercicios fallados.
 - **Cada texto con huecos completado cuenta para el dominio.** La
   ronda de corrección escribe los mismos registros de seguimiento
   de elementos que la lección principal; tu racha en esos
@@ -215,6 +251,19 @@ artículo fallado.
 
 Al final aparece una breve línea "{n} elementos mejorados" para
 que veas el efecto de tu práctica adicional.
+
+Después de la ronda, o en cuanto se corrige un error de este intento,
+aparece debajo **"Tus correcciones"**: "Primer intento: X de Y
+correctas", "N de M corregidos" y cada error con su estado
+(**Corregido** / **Aún pendiente**), tu primera respuesta junto a la
+correcta y, mientras siga pendiente, la explicación del ejercicio. El
+final de **"Repetir errores"** muestra el mismo resumen cuando lo abres
+desde el resumen de la lección. El resumen compacto muestra "N de M
+corregidos" en cuanto hay algo corregido; cuando todos los errores
+están corregidos, el botón "Corregir errores (N)" desaparece. En la
+**evaluación detallada**, el resumen de respuestas y "Por qué fallaste
+estas" marcan cada error como **Corregido** o **Aún pendiente**; un
+error corregido sigue apareciendo ahí.
 
 ## Feedback visual de diferencias
 
@@ -224,11 +273,15 @@ texto libre y de fichas de palabras muestran ahora una
 canónica. Tres colores, nunca solo color:
 
 - **Rojo tachado** - lo que escribiste y no correspondía (con una
-  marca × para lectores de pantalla y usuarios daltónicos).
+  marca × para usuarios daltónicos).
 - **Verde** - lo que la respuesta canónica contiene y pasaste por
   alto (con una marca +).
 - **Amarillo** con flecha → - una palabra ligeramente incorrecta,
   representada como `tu-palabra` → `esperada`.
+
+Los lectores de pantalla leen cada marca como una frase en el idioma de
+tu interfaz, por ejemplo "Sobra: …", "Falta: …" o "Escribiste …, se
+esperaba …", y se saltan los símbolos visibles.
 
 La misma diferencia aparece en el resumen de la lección, en el
 desglose de cada ejercicio, para cada respuesta de texto libre o

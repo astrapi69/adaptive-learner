@@ -127,8 +127,11 @@ Suche liest.
       dir den Link. Das gibt es nur in der Browser-Version der App; in
       der Desktop-App bleibt der Knopf sichtbar, aber deaktiviert.
 
-Ein Maintainer prüft den Pull Request und führt ihn zusammen, sobald die
-CI des Verzeichnisses den festgehaltenen Commit validiert hat.
+Der Pull Request ist auf GitHub öffentlich sichtbar, sobald er
+entsteht. Ein Maintainer prüft ihn und führt ihn zusammen, wenn die CI
+des Verzeichnisses den festgehaltenen Commit erfolgreich validiert hat
+und der Eintrag passt.
+
 ---
 
 ## Lokale Bewertungen

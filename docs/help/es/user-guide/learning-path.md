@@ -116,6 +116,8 @@ limpiamente hasta 375 px de ancho.
 - La **lección actual** (▶) es siempre tu mejor siguiente paso, según
   tu historial de errores y no solo según el orden de las lecciones.
 - Una lección pausada se puede seguir retomando desde su fila o desde
-  la tarjeta de lecciones pausadas del Panel.
+  la tarjeta de lecciones pausadas del Panel. La excepción es un
+  examen empezado: solo cuenta si se hace de una vez, así que empieza
+  de nuevo.
 - Cuando se alcanzan tanto el dominio **receptivo** como el
   **productivo**, una lección cuenta como totalmente dominada.

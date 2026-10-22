@@ -121,9 +121,13 @@ cd backend && poetry run pytest tests/path/ -v
 make test-plugin-gamification
 ```
 
-For backup-touching changes there is an extra gate: a real
-Export → Import round-trip in `make dev` with real data (the
-`BACKUP-AKZEPTANZTEST`). Unit tests alone never justify a backup
+For backup-touching changes there is an extra gate, the
+`BACKUP-AKZEPTANZTEST`: a real Export → Import round trip. A green
+`backup-e2e.yml` run on the PR counts as that proof; it runs
+automatically when the PR touches a backup path and checks every
+backup table through the real UI. You still need the manual round
+trip with real data for what only a real device shows (standalone
+mode, storage eviction). Unit tests alone never justify a backup
 merge.
 
 ## 7. Run the full gate locally

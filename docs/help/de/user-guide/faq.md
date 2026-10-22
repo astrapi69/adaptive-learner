@@ -107,6 +107,10 @@ rendert „Zyklus N"-Karten mit gestricheltem Rand an jedem
 Übergang. Der Bewertungsdialog am Ende der Sitzung fasst die
 Multi-Cycle-Reise zusammen, wenn `cycle_count > 1`.
 
+Nur in der Desktop-App: In der Browser-Version bleibt die Sitzung bei
+Schritt 7, und die Sitzungsseite weist darauf hin. Beende die Sitzung
+dort und starte eine neue.
+
 ## Kann ich meine Daten exportieren?
 
 Ja. Drei Export-Pfade ausgeliefert:

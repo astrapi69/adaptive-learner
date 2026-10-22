@@ -62,17 +62,23 @@ endroits qui dérivaient autrefois ne le peuvent plus :
   l'autocomplétion de l'IDE et la validation en ligne.
 - `schema/quality-rules.json` : les minimums de qualité partagés
   (p. ex. nombre d'exercices, nombre de réponses acceptées en
-  free-text), consommés par le validateur de contenu côté client au
-  lieu d'une seconde copie entretenue à la main.
-- Les types de leçon TypeScript du frontend et la page MkDocs
-  [Lesson format reference](lesson-format-reference.md) sont eux
-  aussi générés (**ne les édite pas à la main**) ; ils suivent le
-  miroir de l'engine, relance donc le générateur après chaque
-  re-pin.
+  free-text), en miroir de l'engine. Le validateur de contenu côté
+  client lit les mêmes valeurs directement dans le paquet de
+  l'engine (`QUALITY_MINIMUMS`), pas dans une seconde copie
+  entretenue à la main.
+- La page MkDocs [Lesson format reference](lesson-format-reference.md)
+  est générée dans toutes les langues de l'aide (**ne l'édite pas à
+  la main**) ; elle suit le miroir de l'engine, relance donc
+  `make sync-schema` après chaque re-pin. Les types de leçon
+  TypeScript du frontend ne sont pas générés : ils viennent
+  directement du paquet `learn-content-engine`.
 
 Une barrière anti-dérive (`make sync-schema-check`, partie de
 `release-test`, plus `backend/tests/test_lesson_schema_drift.py` dans
-`make test`) échoue si un artefact généré diverge du miroir épinglé
+`make test` ; la CI backend vérifie en plus la couche Pydantic sur
+chaque PR qui touche le backend ou un plugin avec
+`generate_pydantic_models.py --check`) échoue si un artefact généré
+diverge du miroir épinglé
 de l'engine. La fermeture de la chaîne est la barrière de parité
 d'octets app-contre-engine : `make engine-parity-check`
 (`scripts/check_engine_schema_parity.py`), le pin hors ligne
@@ -120,8 +126,17 @@ répertoire de langue source (`sets/de/fr-a1`). Un ensemble porte en
 outre **`title`** (dans la langue source, ce que lit l'apprenant)
 et **`title_native`** (dans la langue cible, comme second titre).
 
-Les deux codes doivent être en ISO 639-1 (deux lettres), et
-`source_language` doit être différent de `target_language`. Les
+Les deux codes sont des étiquettes de langue BCP 47 en forme
+canonique : le code le plus court (`de`, `pt-BR`), trois lettres pour
+les langues sans code à deux lettres (`gsw`, `yue`, `fil`). Une
+étiquette mal formée (`de_DE`, vide) est une erreur (`E-LANG-TAG`) ;
+une graphie non canonique (`EN`, `deu`) est un avertissement
+(`W-LANG-TAG-CANONICAL`). Pour un ensemble de langue (`domain` absent
+ou `language`), l'engine avertit quand `source_language` est égal à
+`target_language` ou que `title_native` manque (`W-LANG-PAIR-SAME`,
+`W-SET-TITLE-NATIVE`) ; la vérification au partage de l'app bloque
+les deux cas. Un ensemble d'un autre domaine n'a besoin ni de l'un ni
+de l'autre. Les
 ensembles antérieurs à la v1.2 sans ces champs se chargent toujours :
 l'ancienne clé `language` est acceptée comme `target_language`, et
 `source_language` retombe sur `en`.
@@ -202,6 +217,15 @@ Comportement spécifique au chargeur de l'app à garder à l'esprit :
       - 02-articles.json
       - ...
   ```
+
+- Le bloc optionnel `evaluation` d'un ensemble
+  ([référence de l'engine](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  n'agit dans l'app qu'en **mode examen** : il y remplace le seuil de
+  réussite propre à l'apprenant et note le même premier passage selon
+  son schéma (`percent`, `pass_fail` ou `grades`), son `title`
+  remplace le titre « Résultat de l'examen », `report: detailed`
+  ouvre l'évaluation détaillée, et la notation par étoiles n'est pas
+  affichée. L'entraînement et les autres modes ignorent le bloc.
 
 ## Schéma de leçon
 
@@ -777,6 +801,19 @@ fonctionne quand même - le générateur de SVG d'espace réservé
 couvre automatiquement les couleurs + les nombres et retombe pour
 tout le reste sur un avatar déterministe.
 
+**Images dans le Markdown.** L'app affiche en Markdown, entre
+autres, les textes de théorie, les explications et les réponses de
+l'IA. Une image intégrée comme URI `data:` s'y affiche directement.
+Une image venant d'un autre serveur, par exemple
+`raw.githubusercontent.com` ou un site d'images, apparaît comme un
+lien avec une icône d'image et son texte alternatif, et ne se charge
+qu'après un clic, dans un nouvel onglet ; donne donc à ces images un
+texte alternatif parlant. Une image qui doit toujours être visible
+va dans une image d'exercice ou de carte fondée sur les fichiers de
+ressources ci-dessous. Les entrées YouTube de `resources[]`
+affichent une icône vidéo au lieu d'une miniature ; la vidéo ne
+s'ouvre sur YouTube qu'après un clic.
+
 ### Disposition des répertoires
 
 À l'intérieur du répertoire d'ensemble, les ressources se trouvent
@@ -898,7 +935,7 @@ Avant la PR d'une nouvelle leçon, vérifie :
 - [ ] **Exactitude culturelle** : usage réel de la langue, pas seulement des tournures de manuel
 - [ ] **Validation de schéma** : la leçon se charge proprement via `dict_to_lesson()` (voir Tests locaux)
 - [ ] **Intégrité des ID de carte** : chaque `exercise.card_ids[i]` existe dans `cards[]` de la leçon
-- [ ] **Paire de langues** : `target_language` + `source_language` définis (ISO 639-1, différents), `title_native` présent
+- [ ] **Paire de langues** : `target_language` + `source_language` définis (BCP 47, canoniques ; pour les ensembles de langue différents et avec `title_native`)
 
 ## Validation (deux niveaux, v1.44.0)
 
@@ -1069,7 +1106,10 @@ une leçon dans l'application** :
 3. Clique sur **Mettre à disposition de la communauté** pour ouvrir
    une **pull request** pré-remplie dans le dépôt de contenu - le
    JSON de leçon est committé au bon chemin dans l'arbre, sans
-   pièce jointe `.zip` nécessaire.
+   pièce jointe `.zip` nécessaire. Avec un token GitHub dans
+   Paramètres > Intégrations, l'app ouvre elle-même la pull request
+   d'une leçon unique ; sans token, l'éditeur ou la page de
+   téléversement de GitHub te guident.
 4. La CI du dépôt valide automatiquement la PR ; un mainteneur
    vérifie la leçon, met le manifeste (id, title, language, level,
    tags) en accord avec les conventions ci-dessus et le fusionne

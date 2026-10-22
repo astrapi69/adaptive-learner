@@ -41,7 +41,7 @@ contrato:
   `api/client.ts` que comunica com o backend FastAPI.
 - **`dexieStorage`** (local primeiro): pilha IndexedDB completa
   espelhando os modelos SQLAlchemy. As chamadas de IA
-  disparam diretamente do navegador via `storage/ai-providers.ts`.
+  disparam diretamente do navegador via `storage/ai/ai-providers.ts`.
 
 `IStorageService` expõe os seus espaços de nomes (users, projects,
 settings, assessment, session com streaming, tracking, tools,

@@ -41,11 +41,21 @@ te guide pas à pas à travers chaque carte et chaque exercice :
    « Suivant » quand tu es prêt.
 2. **Exercices** : vérifient ce que tu as retenu. Les types de
    base :
-   - **Associer** - fais glisser des paires (mot ↔ traduction).
+   - **Associer** - touche une tuile, puis sa partenaire dans
+     l'autre colonne (mot ↔ traduction) ; tu peux commencer d'un
+     côté comme de l'autre.
      Les deux tuiles d'une paire trouvée partagent une **couleur
      propre** et un **badge numéroté**, de sorte que
      l'association est reconnaissable de manière sûre pour le
-     daltonisme (pas seulement par la couleur).
+     daltonisme (pas seulement par la couleur), et la résolution
+     d'une paire joue une courte **animation** pour que le lien
+     soit facile à suivre. Pour changer une paire, touche une
+     tuile déjà associée, puis sa nouvelle partenaire : la paire
+     se déplace. Si la nouvelle partenaire est déjà associée, les
+     deux paires échangent leurs partenaires, le nombre de paires
+     ne baisse donc jamais. Un simple toucher ne défait jamais une
+     paire ; **Ctrl/Cmd+Z** annule la dernière paire que tu as
+     formée.
    - **Choix d'image** - choisis l'image qui correspond à
      l'indice.
    - **Texte libre** - tape la réponse.
@@ -68,7 +78,13 @@ badge ne change ni la notation ni l'ordre.
 
 Une barre de progression en haut suit ta position dans la leçon.
 Tu peux t'arrêter à tout moment - ta progression est enregistrée
-par étape et reprend là où tu t'es arrêté.
+par étape et reprend là où tu t'es arrêté. L'exception est l'examen :
+un examen commencé ne compte que s'il est fait d'une traite, il
+recommence donc depuis le début quand tu le rouvres. Une session
+commencée dans un autre mode ne se poursuit pas non plus en examen,
+ni une session d'examen en entraînement ; la leçon recommence alors.
+Tu peux encore changer de mode jusqu'à la première réponse de la
+session.
 
 ### Raccourci Entrée
 
@@ -90,6 +106,17 @@ aussi à la reprise des erreurs (« Répéter les erreurs »).
   l'exercice » te ramène à la tâche. Tu consultes ainsi une règle
   sans perdre le fil.
 
+### Lecture à voix haute dans la leçon
+
+Les étapes de théorie peuvent être lues à voix haute : avec le bouton de
+lecture de l'étape, avec **« Tout lire »** ou, avec **« Lecture
+automatique »** dans les options de la leçon, à chaque étape d'elle-même.
+Pendant la lecture, un petit lecteur propose pause/lecture ainsi que
+l'étape précédente et la suivante. Le **X** arrête la lecture pour cette
+leçon ; si « Lecture automatique » est activée, la leçon suivante est de
+nouveau lue à voix haute. Pour la désactiver durablement, utilise
+l'interrupteur **« Lecture automatique »**.
+
 ### Le récapitulatif
 
 Lorsque le dernier exercice est terminé, le **récapitulatif de la
@@ -100,12 +127,19 @@ leçon** apparaît :
   - **2 étoiles** ≥ 75 %
   - **1 étoile** ≥ 50 %
   - **0 étoile** en dessous de 50 %
-- Une **décomposition exercice par exercice**, qui montre quels
-  exercices tu as réussis et lesquels contenaient des erreurs
-  (avec la bonne réponse pour les faux).
-- **Leçon suivante**, **Recommencer** et **Retour à l'ensemble**
-  sous forme de boutons, afin que la prochaine action soit à un
-  clic.
+
+  Dans un examen avec des règles d'évaluation propres à l'ensemble, il
+  n'y a pas de note en étoiles ; c'est le verdict de l'ensemble qui
+  compte.
+- Une **décomposition exercice par exercice** (l'aperçu des réponses
+  de l'évaluation détaillée), qui montre quels exercices tu as réussis
+  et lesquels contenaient des erreurs (avec la bonne réponse pour les
+  faux).
+- **« Corriger les erreurs (N) »** tant que des erreurs de ce passage
+  restent à corriger (voir le tour de correction plus bas).
+- **Leçon suivante**, **S'entraîner à nouveau** et **Retour à
+  l'explorateur de contenu** sous forme de boutons, afin que la
+  prochaine action soit à un clic.
 
 Si tu obtiens 3 étoiles du premier coup, une petite animation de
 célébration se joue. (Si tu as activé le réglage du système
@@ -195,20 +229,27 @@ révision**.
 
 ## Tour de correction en fin de leçon
 
-Lorsque tu termines une leçon avec
-des erreurs, la page de récapitulatif affiche un petit **tour de
-correction** entre ton score et le bouton « Leçon suivante ». Il
-prend jusqu'à cinq erreurs concrètes de cette leçon et propose
-chacune sous forme de nouveau texte à trous visant exactement le
-mot / l'article manqué.
+Lorsque tu termines une leçon avec des erreurs, le récapitulatif
+compact affiche **« Corriger les erreurs (N) »** juste au-dessus des
+actions pour continuer ; N est le nombre d'erreurs de ce passage qui
+restent à corriger. Le bouton ouvre le **tour de correction**
+directement sur le premier exercice et ne modifie aucun réglage. Dans
+l'**évaluation détaillée**, ou si tu coches la section sous
+**Paramètres → Apprentissage → Résumé après les leçons**, le tour
+apparaît dans le récapitulatif comme section **« Corrige tes
+erreurs »** et s'ouvre avec **« Corriger maintenant »**. Il prend
+jusqu'à cinq erreurs concrètes de cette leçon et propose chacune sous
+forme de nouveau texte à trous visant exactement le mot / l'article
+manqué.
 
-- **Ignorable à tout moment.** Le bouton « Leçon suivante » reste
-  visible - le tour de correction est un exercice volontaire, pas
+- **Ignorable à tout moment.** Les actions pour continuer restent
+  visibles - le tour de correction est un exercice volontaire, pas
   un verrou.
 - **N'apparaît que s'il y a quelque chose à corriger.** Les leçons
-  avec un score parfait le sautent entièrement. Les leçons dont
-  les erreurs ne peuvent pas être transformées en un texte à trous
-  propre (rare) également.
+  avec un score parfait le sautent entièrement. Si les erreurs ne
+  peuvent pas être transformées en un texte à trous propre (rare), la
+  section s'appelle **« Refaire vos erreurs »** et tu y refais les
+  exercices manqués.
 - **Chaque texte à trous terminé compte pour la maîtrise.** Le
   tour de correction écrit les mêmes enregistrements de suivi des
   éléments que la leçon principale ; ta série sur ces éléments
@@ -216,6 +257,19 @@ mot / l'article manqué.
 
 À la fin, une courte ligne « {n} éléments améliorés » apparaît,
 afin que tu voies l'effet de ton exercice supplémentaire.
+
+Après le tour, ou dès qu'une erreur de ce passage est corrigée,
+**« Tes corrections »** apparaît en dessous : « Premier essai : X sur Y
+justes », « N sur M corrigés » et chaque erreur avec son état
+(**Corrigé** / **Encore à corriger**), ta première réponse à côté de la
+bonne et, tant qu'elle reste à corriger, l'explication de l'exercice.
+La fin de **« Refaire les erreurs »** montre le même aperçu quand tu
+l'ouvres depuis le récapitulatif. Le récapitulatif compact affiche
+« N sur M corrigés » dès qu'une erreur est corrigée ; quand toutes les
+erreurs sont corrigées, le bouton « Corriger les erreurs (N) »
+disparaît. Dans l'**évaluation détaillée**, l'aperçu des réponses et
+« Pourquoi tu les as ratés » marquent chaque erreur **Corrigé** ou
+**Encore à corriger** ; une erreur corrigée y reste affichée.
 
 ## Retour visuel par diff
 
@@ -225,12 +279,15 @@ niveau des jetons** entre ta saisie et la réponse canonique. Trois
 couleurs, jamais la couleur seule :
 
 - **Rouge barré** - ce que tu as écrit et qui n'avait pas sa place
-  (avec un marqueur × pour les lecteurs d'écran et les
-  utilisateur·rice·s daltoniens).
+  (avec un marqueur × pour les utilisateur·rice·s daltoniens).
 - **Vert** - ce que la réponse canonique contient et que tu as
   oublié (avec un marqueur +).
 - **Jaune** avec flèche → - un mot légèrement faux, présenté sous
   la forme `ton-mot` → `attendu`.
+
+Les lecteurs d'écran lisent chaque marque comme une phrase dans la
+langue de ton interface, par exemple « En trop : … », « Manquant : … »
+ou « Tu as écrit …, attendu : … », et sautent les symboles visibles.
 
 La même diff apparaît dans le récapitulatif de la leçon, dans la
 décomposition de chaque exercice - pour chaque réponse de texte

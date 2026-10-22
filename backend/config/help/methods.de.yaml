@@ -166,10 +166,12 @@ entries:
 
       ## Was der Dual-Prompt-Evaluator tut
 
-      Auch hier läuft die Confidence-Bewertung mit, aber
-      tolerant - Schritt-Fortschritt erlaubt das System schon
-      bei 50% Confidence statt der üblichen 70%. Die Methode
-      ist explizit fürs Entdecken, nicht fürs Prüfen
+      Auch hier läuft die Confidence-Bewertung mit, mit
+      eigenem Maßstab: Der Evaluator achtet auf die Qualität
+      des Austauschs, nicht darauf, ob die richtige Antwort
+      zuerst kommt. Die Schwelle für den Schritt-Fortschritt
+      ist dieselbe wie bei jeder Methode: 70% Confidence. Die
+      Methode ist explizit fürs Entdecken, nicht fürs Prüfen
       gedacht.
 
   - key: method_contextual

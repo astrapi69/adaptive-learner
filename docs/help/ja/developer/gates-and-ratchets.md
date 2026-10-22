@@ -78,7 +78,7 @@
 | ルールコーパスのサイズ | `.claude/rules/.corpus-baseline.json` | `make verify-rule-corpus-size` |
 | ドキュメントのウムラウト代替表記 | `docs/.docs-hygiene-baseline.json` | `make verify-docs-hygiene` |
 | 壊れたドキュメント参照 | `docs/.doc-refs-baseline.json` | `make verify-doc-refs` |
-| 公開イメージのサイズ | （`verify-image-size`内） | `make verify-image-size` |
+| 公開イメージのサイズ | `.image-size-baseline.json` | `make verify-image-size` |
 
 ### ラチェットにブロックされたとき
 
@@ -154,7 +154,7 @@ make ci-full   # the above plus gates that need a built frontend
 `make ci`は次の順に実行します: ドキュメントのドリフト、ドキュメントの
 衛生、ドキュメント参照、ゲート<->ルールのリンク、チェックインベントリー、
 レッスンインベントリー、規範的変更、ルールコーパスのサイズ、複雑度
-ラチェット、testid参照、Dockerコンテキスト、ファイルサイズ、OpenAPI
+ラチェット、フォルダーサイズ、testid参照、Dockerコンテキスト、ファイルサイズ、OpenAPI
 スナップショット。2つのゲートはインストール済みかつビルド済みの
 フロントエンドを必要とする（Tailwindクラスのオラクルをビルドする）ため、
 `make ci`ではなく`make ci-full`に入っています。テストスイートは別です:

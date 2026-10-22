@@ -86,6 +86,9 @@ identischer Shape über beide Speichermodi:
 - **Curriculum-Übersicht** - der Themenbaum + Lektions-
   Zusammenfassungen eines einzelnen Curriculums.
 
+Die Berichte erscheinen in deiner UI-Sprache, in jeder Sprache, die
+die App anbietet.
+
 Markdown wird client-seitig erzeugt; PDF nutzt den Browser-
 Druck-zu-PDF (versteckter Iframe mit druckoptimiertem
 Stylesheet, dann `contentWindow.print()`). Keine externe

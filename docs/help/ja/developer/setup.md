@@ -7,7 +7,7 @@
 - **Python 3.12+**（バックエンドは3.11でも動作しますが、プラグインのテストは3.12で行います）。
 - **Node 24+**（Vite 8が必要）。古いNodeバージョンはビルドステップで`crypto.hash is not a function`というエラーで失敗します。
 - **Poetry**（Python依存関係管理のため）。インストール: `curl -sSL https://install.python-poetry.org | python3 -`
-- **Bun** 1.3+（フロントエンドのパッケージマネージャー、#1492）。
+- **Bun** 1.4+（フロントエンドのパッケージマネージャー、#1492。`frontend/bun.lock`はlockfileバージョン3で、Bun 1.3では読み込めません）。
 - **GNU Make**（オーケストレーションターゲットのため）。MakefileはSOTであり、すべてのCIコマンドはそこに記載されています。
 
 ## クローン + インストール
@@ -73,8 +73,8 @@ v1.20.0では16個のスモークスペックファイル: ランディング、
 ## リント + フォーマット
 
 ```bash
-cd backend && poetry run ruff check .       # Pythonリント
-cd backend && poetry run ruff format .      # Pythonフォーマット
+cd backend && poetry run ruff check app/ ../plugins/   # Pythonリント（CIと同じ）
+cd backend && poetry run ruff format app/ ../plugins/  # Pythonフォーマット
 cd frontend && bunx tsc --noEmit             # TypeScriptチェック
 cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier

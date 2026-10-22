@@ -18,8 +18,10 @@ desta lista.
   feedback, adaptar, repetir, integrar. Um avaliador de
   prompt duplo julga cada interação e decide se avança, repete, salta
   à frente ou recua.
-- **Auto-loop**: quando um tema fica integrado, a sessão escolhe um
-  novo subtema e inicia um ciclo fresco (com limite por sessão).
+- **Auto-loop** (aplicação de ambiente de trabalho): quando um tema
+  fica integrado, a sessão escolhe um novo subtema e inicia um ciclo
+  fresco (com limite por sessão). Na versão de navegador, a sessão fica
+  no passo 7; a página da sessão indica-o.
 - **Mudança de método**: a deteção de estagnação recomenda um método
   diferente quando as avaliações estagnam; aceitação com um clique.
 - **Avaliação de nivelamento** (opcional, retomável) que calcula um
@@ -134,7 +136,8 @@ Ver [Revisão de conclusão de set](set-summary.md).
   resumo e resolvem-se no editor, sem mexer no progresso de
   aprendizagem.
 
-Ver [Criar lições](../content-creation/overview.md).
+Ver [Criar lições](../content-creation/overview.md) e
+[Modo mentor](../content-creation/mentor-mode.md).
 
 ## Importação e análise
 
@@ -246,8 +249,9 @@ Ver [Instalação](../install/launcher.md).
   Enter avança nas lições, Tab navega pelas lacunas do texto com
   lacunas.
 - **Suporte a leitores de ecrã**: landmarks, etiquetas ARIA e regiões
-  live, tabelas de dados para os gráficos, gestão de foco nos
-  diálogos.
+  live, um título por página no idioma da interface ("Configurações -
+  Adaptive Learner"), tabelas de dados para os gráficos, gestão de
+  foco nos diálogos.
 - **Movimento reduzido** é respeitado em todo o lado; leitura em voz
   alta (TTS) para lições e chat.
 - **Ajuda contextual na aplicação**: o painel de ajuda abre o artigo

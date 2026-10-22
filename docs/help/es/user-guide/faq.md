@@ -101,6 +101,10 @@ discontinuo «Ciclo N» en cada transición. El diálogo de
 calificación al final de la sesión resume el viaje de varios
 ciclos cuando `cycle_count > 1`.
 
+Solo en la app de escritorio: en la versión de navegador la sesión se
+queda en el paso 7, y la página de la sesión lo indica. Termina ahí la
+sesión y empieza una nueva.
+
 ## ¿Puedo exportar mis datos?
 
 Sí. Se han implementado tres rutas de exportación:

@@ -150,8 +150,10 @@ port is byte-identical in
 1. Create `plugins/adaptive-learner-plugin-ai-newprovider/`.
 2. Implement the `ai_complete` hookimpl: check the model
    prefix, call the provider's HTTP API, return the text.
-3. Add the provider's prefix to `DEFAULT_MODELS` in
-   `ai_orchestration.py` with a cheap default model.
+3. Add the provider with a cheap default model to
+   `DEFAULT_MODELS` in `backend/app/services/ai_caller.py`; it is the
+   only table (the session plugin, imports and lesson validation read
+   it, and a test rejects a second copy).
 4. Add the provider name to the `AIProvider` enum in
    `app/schemas/__init__.py`.
 5. Add it to `AI_PROVIDERS` in
@@ -192,8 +194,10 @@ lower to be more eager. Fallback verdicts (parse failures)
 always apply the +1 advance regardless.
 
 The Dexie port mirrors this with a hardcoded 0.7 in
-`storage/ai/session-flow.ts`. A future phase will expose this in
-the Settings UI.
+`storage/ai/session-flow.ts`; `session-flow.test.ts` reads the value
+from `session.yaml` and fails when the two drift apart. There is
+deliberately no setting in the UI: the keys are `# INTERNAL` and are
+edited in the YAML only (#3436).
 
 ## AI exercise generation pipeline (EXP-036 / AIX-01..06)
 

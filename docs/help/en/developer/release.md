@@ -102,11 +102,14 @@ Triggers:
 
 - `ci.yml` on the new commit (tests)
 - `release-gate.yml` on the new tag (version-pin drift check)
-- `coverage.yml` on the new commit (coverage HTML)
 - `deploy-gh-pages.yml` on the new commit (publish public
   site)
 - `launcher-{linux,macos,windows}.yml` when GitHub creates
   the Release from the tag
+
+`coverage.yml` does not run on push; it runs nightly and on
+demand. For a report on the release commit, run
+`gh workflow run coverage.yml --ref main`.
 
 ### 8. Create the GitHub Release
 

@@ -66,19 +66,19 @@ Les invites système vivent dans `backend/config/sessions/` sous
 ## Seuil de confiance
 
 L'évaluatrice retourne une valeur de `confidence` entre 0.0 et 1.0.
-Le seuil de passage par défaut varie selon la méthode :
+`step_evaluation.confidence_threshold` dans
+`backend/config/plugins/session.yaml` (0.7 par défaut) décide, pour
+toutes les méthodes, si un verdict réel (hors repli) de l'évaluatrice
+déplace l'étape du cycle : la suggestion ne s'applique que si
+`advance` est vrai et que `confidence` atteint le seuil ; sinon l'étape
+reste la même. Les verdicts de repli (échec d'analyse) appliquent
+toujours l'avance de +1.
 
-| Méthode | Seuil |
-|---------|-------|
-| Déductive | 0.70 |
-| Inductive | 0.70 |
-| Basée sur les erreurs | 0.75 |
-| Dialogique | 0.50 |
-| Contextuelle | 0.65 |
-| IA adaptative | Ajusté dynamiquement |
-
-Si `confidence < seuil`, le cycle répète ou recule d'une étape selon
-le champ `suggested_step` retourné.
+Le portage Dexie reflète cette valeur avec un 0.7 codé en dur dans
+`storage/ai/session-flow.ts` ; `session-flow.test.ts` lit la valeur
+dans `session.yaml` et échoue quand les deux divergent. Il n'y a
+volontairement aucun réglage dans l'interface : les clés sont
+`# INTERNAL` et ne se modifient que dans le YAML (#3436).
 
 ---
 

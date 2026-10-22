@@ -4,11 +4,12 @@
 
 v0.7.0 depolama katmanı (`frontend/src/storage/`), frontend'e
 tek bir sözleşmenin arkasında iki değiştirilebilir arka uç sağlar.
-Sözleşme, Aşamalar 7–34 boyunca 22 ad alanına büyümüştür.
+Sözleşme `frontend/src/storage/types/core/service.ts`
+içindedir; oradaki ad alanı listesi esas alınır.
 
 ## IStorageService
 
-`frontend/src/storage/types.ts`, her depolama uygulamasının
+`frontend/src/storage/types/core/service.ts`, her depolama uygulamasının
 karşıladığı arayüzü tanımlar. Bu, `api/client.ts` içindeki
 `api.*` ad alanlarını birebir yansıtır:
 
@@ -105,7 +106,7 @@ değişikliği gerekmez - sayfalar hâlâ `getStorage()` üzerinden gider.
 
 ## Tarayıcı doğrudan AI çağrıları
 
-`storage/ai-providers.ts` üç sağlayıcı istemcisi uygular:
+`storage/ai/ai-providers.ts` üç sağlayıcı istemcisi uygular:
 
 - **Anthropic** - `https://api.anthropic.com/v1/messages` adresine
   `anthropic-dangerous-direct-browser-access: true` başlığıyla POST

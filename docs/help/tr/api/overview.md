@@ -6,6 +6,9 @@ AdaptiveLearner'ın arka ucu bir FastAPI REST API'si sunar.
 Sunucu modunda frontend buna konuşur; Yerel (Dexie) modda
 API'ye ulaşılamaz - aynı işlemler tarayıcıda çalışır.
 
+Her uç nokta, repodaki OpenAPI anlık görüntüsünden üretilen
+[Tüm endpoint'ler](endpoints.md) sayfasında listelenir.
+
 ## Temel URL
 
 - **Yerel geliştirme**: `http://localhost:18001/api`
@@ -129,9 +132,11 @@ tam ayrıştırıcı için `frontend/src/api/client.ts`'e bakın.
 | Müfredat | `/users/{user_id}/curricula`, `/curricula/{id}` | Müfredat + konular + dersler CRUD |
 | Eklenti keşfi | `/plugins/manifests`, `/plugins/health`, `/plugins/errors` | Kayıtlı olanlar |
 
-Tam yöntem listesi için istek / yanıt örnekleriyle birlikte
+Ayrıntılı istek / yanıt örnekleri
 [Çekirdek uç noktalar](core-endpoints.md) ve
-[Eklenti uç noktaları](plugin-endpoints.md) bölümlerine bakın.
+[Eklenti uç noktaları](plugin-endpoints.md) sayfalarındadır; tüm uç
+noktaların eksiksiz listesi [Tüm endpoint'ler](endpoints.md)
+sayfasındadır.
 
 ## OpenAPI / Swagger
 

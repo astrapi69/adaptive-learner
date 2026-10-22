@@ -21,9 +21,21 @@ XP/série/badges, missions, cartes Anki, notes et plus encore)
 invitations utilisées et l'activation du Learning Repository.
 En mode navigateur, les résultats de tes vérifications de contenu par
 IA sont aussi inclus, le badge « Vérifié par IA » est donc conservé.
-**Non inclus :** le jeton d'accès d'un dépôt privé (saisis-le à
-nouveau après la restauration) et le dossier du Learning Repository,
-qui appartient à l'appareil.
+
+**Ne sont pas inclus**, par exemple :
+
+- le jeton d'accès d'un dépôt privé (saisis-le à nouveau après la
+  restauration) ;
+- le dossier du Learning Repository, qui appartient à l'appareil ;
+- en mode serveur, la progression des leçons et les enregistrements
+  vocaux faits hors ligne qui ne sont pas encore arrivés au serveur ;
+- les index de recherche et les listes de médias en cache, le compteur
+  de la sauvegarde automatique et la position de la synchronisation LAN.
+
+Le réglage qui indique si la sauvegarde automatique est activée est, en
+revanche, inclus. Comme la progression faite hors ligne manquerait dans
+la sauvegarde, en mode serveur, ne crée une sauvegarde qu'une fois
+l'application de nouveau en ligne, pas avant.
 
 Avant l'export, l'application affiche un aperçu **« Ta sauvegarde
 contient … »** avec le nombre d'enregistrements par domaine, afin

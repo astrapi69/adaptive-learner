@@ -40,7 +40,7 @@ lessons / backup / sync / system / import).
 - **`dexieStorage`** (local-first): πλήρης στοίβα IndexedDB
   που αντικατοπτρίζει τα μοντέλα SQLAlchemy. Οι κλήσεις ΤΝ
   εκτελούνται απευθείας από τον browser μέσω
-  `storage/ai-providers.ts`.
+  `storage/ai/ai-providers.ts`.
 
 Το `IStorageService` εκθέτει τα namespaces του (users, projects,
 settings, assessment, session με streaming, tracking, tools,
