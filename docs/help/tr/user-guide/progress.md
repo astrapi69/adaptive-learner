@@ -85,6 +85,9 @@ modları arasında tümü aynı biçimde:
 - **Müfredat Genel Bakışı** - tek bir müfredatın konu ağacı +
   ders özetleri.
 
+Raporlar, uygulamanın sunduğu dillerden hangisi olursa olsun arayüz
+dilinde yazılır.
+
 Markdown istemci tarafında oluşturulur; PDF tarayıcının yazdırma-PDF
 özelliğini kullanır (yazdırma için optimize edilmiş stil sayfasıyla
 gizli bir iframe açılır, ardından `contentWindow.print()`). Harici
