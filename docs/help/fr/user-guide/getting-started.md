@@ -14,10 +14,13 @@ version en ligne publique :
 
 [**Ouvrir l'application**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-Celle-ci fonctionne en **mode local** - toutes tes données restent
-dans ton navigateur (IndexedDB), et les appels IA partent
-directement de la page vers Anthropic, OpenAI ou Google Gemini avec
-ta propre clé d'API. Aucun backend entre les deux.
+Celle-ci fonctionne en **mode local** : ta progression, tes
+statistiques, tes paramètres et ta clé d'API sont stockés dans ton
+navigateur (IndexedDB) ; d'autres n'en reçoivent des parties que
+lorsqu'une fonction que tu utilises en a besoin. Les appels IA, par
+exemple, partent directement de la page vers ton fournisseur d'IA,
+comme Anthropic, OpenAI ou Google Gemini, avec ta propre clé d'API.
+Aucun backend entre les deux.
 
 ## Installer comme application web progressive
 

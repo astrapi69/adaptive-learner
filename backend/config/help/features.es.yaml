@@ -52,7 +52,7 @@ entries:
 
   - key: feature_auto_loop
     title: Auto-bucle
-    short: "Después del paso 7, un nuevo ciclo con contenido nuevo comienza automáticamente."
+    short: "En la aplicación de escritorio, después del paso 7 comienza automáticamente un nuevo ciclo con contenido nuevo; en la versión del navegador la sesión se queda en el paso 7."
     long: |
       ## ¿Qué es el auto-bucle?
 
@@ -60,6 +60,11 @@ entries:
       iniciar automáticamente un nuevo ciclo con el siguiente tema
       de tu plan de estudios, sin que tengas que pulsar el botón
       «siguiente ciclo».
+
+      Solo en la aplicación de escritorio: en la versión del
+      navegador la sesión se queda en el paso 7, y la página de la
+      sesión te lo indica. Termina ahí la sesión y empieza una
+      nueva para seguir aprendiendo.
 
       ## Cómo se elige el siguiente tema
 

@@ -43,7 +43,13 @@ practised:
   recap, auto-read, and the solution reveal are hidden; feedback is
   delayed to the end, where you get a dedicated **result view** with
   a **pass/fail verdict** against a configurable **pass threshold**
-  and a **bonus XP** reward for passing.
+  and a **bonus XP** reward for passing. If the set brings its own
+  evaluation rules, the exam uses them instead of your pass
+  threshold: pass/fail at the set's mark, a grade, or a percent
+  with a recommended mark. The result view then says that the
+  set's rules were applied. Before the first answer a notice
+  reminds you that you only see at the end whether an answer was
+  right, and that you cannot go back.
 - **Timed ("Auf Zeit")** - a countdown per exercise. Difficulty is
   selectable: **Relaxed** (2× time), **Normal**, or **Fast**
   (0.7× time). When time runs out the answer locks; at the end you
@@ -72,11 +78,18 @@ step by step through each card and exercise:
 1. **Cards** present material to read. Click "Next" when you are
    ready.
 2. **Exercises** test what you remembered. The core types:
-   - **Matching** - drag pairs (word ↔ translation). Both tiles of
+   - **Matching** - tap a tile, then its partner in the other
+     column (word ↔ translation); you can start from either side.
+     Both tiles of
      a found pair share a **distinct color** and a **number
      badge**, so the pairing is recognizable in a colorblind-safe
      way (not by color alone), and resolving a pair plays a short
-     **animation** so the link is easy to follow.
+     **animation** so the link is easy to follow. To change a
+     pair, tap a paired tile and then its new partner: the pair
+     moves. If the new partner is already paired, the two pairs
+     swap partners, so the pair count never drops. A tap alone
+     never dissolves a pair; **Ctrl/Cmd+Z** undoes the last pair
+     you formed.
    - **Picture choice** - pick the image that matches the prompt.
    - **Free text** - type the answer.
    - **Word tiles** - assemble a sentence from tiles.
@@ -106,7 +119,12 @@ without a separate "multiple choice" exercise type.
 
 A progress bar at the top tracks how far you are in the lesson.
 You can stop at any time - your progress is saved per step and
-resumes where you left off.
+resumes where you left off. The exception is the exam: a started
+exam only counts when taken in one sitting, so reopening it starts
+it over. A run started in another mode does not continue as an
+exam either, and an exam run does not continue as practice; the
+lesson starts over instead. You can still change the mode until
+the run's first answer.
 
 ### Enter shortcut
 
@@ -126,6 +144,15 @@ applies in Error Replay ("Repeat mistakes").
   you to the task. This lets you look up a rule without losing your
   thread.
 
+### Read-aloud in a lesson
+
+Theory steps can be read aloud: with the step's read-aloud button, with
+**"Read all"** or, with **"Auto read-aloud"** in the lesson options, on
+every step by itself. While it speaks, a small player offers pause/play
+and the previous and next step. The **X** ends read-aloud for this
+lesson; with "Auto read-aloud" on, the next lesson reads aloud again. To
+switch it off for good, use the **"Auto read-aloud"** toggle.
+
 ### The summary
 
 When the last exercise is complete, the **lesson summary**
@@ -136,11 +163,16 @@ appears:
   - **2 stars** ≥ 75%
   - **1 star** ≥ 50%
   - **0 stars** below 50%
-- An **exercise-by-exercise breakdown** that shows which exercises
-  you passed and which contained mistakes (with the correct answer
-  for the wrong ones).
-- **Next lesson**, **Retry** and **Back to set** as buttons, so
-  the next action is one click away.
+
+  In an exam with the set's own evaluation rules there is no star
+  rating; the set's verdict applies.
+- An **exercise-by-exercise breakdown** (the answers overview in the
+  detailed evaluation) that shows which exercises you passed and which
+  contained mistakes (with the correct answer for the wrong ones).
+- **"Fix mistakes (N)"** while mistakes of this run are open (see the
+  correction round below).
+- **Next lesson**, **Practice again** and **Back to content browser**
+  as buttons, so the next action is one click away.
 
 If you get 3 stars on the first attempt, a small celebration
 animation plays. (If you have the OS setting "reduce motion"
@@ -247,18 +279,22 @@ reviews and you earn the **Review Master** badge.
 
 ## End-of-lesson correction round
 
-When you finish a lesson with mistakes, the
-summary page shows a small **correction round** between your score
-and the "Next lesson" button. It takes up to five specific
-mistakes from this lesson and offers each as a fresh cloze that
-targets exactly the missed word / missed article.
+When you finish a lesson with mistakes, the compact summary shows
+**"Fix mistakes (N)"** right above the continue actions, where N is the
+number of this run's mistakes that are still open. It opens the
+**correction round** straight at the first drill and changes no
+setting. In the **detailed evaluation**, or when you tick the section
+under **Settings → Learning → Lesson summary**, the round sits in the
+summary as **"Fix your mistakes"** and opens with **"Fix now"**. It
+takes up to five specific mistakes from this lesson and offers each as
+a fresh cloze that targets exactly the missed word / missed article.
 
-- **Skippable at any time.** The "Next lesson" button stays
-  visible - the correction round is voluntary practice, not a
-  gate.
-- **Appears only when there is something to correct.** Lessons
-  with a perfect score skip it entirely. So do lessons whose
-  mistakes cannot be reshaped into a clean cloze (rare).
+- **Skippable at any time.** The continue actions stay visible - the
+  correction round is voluntary practice, not a gate.
+- **Appears only when there is something to correct.** Lessons with a
+  perfect score skip it entirely. If the mistakes cannot be reshaped
+  into a clean cloze (rare), the section is called **"Repeat your
+  mistakes"** and you redo the missed exercises there.
 - **Each completed cloze counts toward mastery.** The correction
   round writes the same element-tracking records as the main
   lesson; your streak on those elements moves toward the
@@ -267,6 +303,18 @@ targets exactly the missed word / missed article.
 At the end, a brief "{n} elements improved" line appears, so you
 see the effect of your extra practice.
 
+After the round, or as soon as one of this run's mistakes is corrected,
+**"Your corrections"** appears below it: "First try: X of Y correct",
+"N of M corrected" and every mistake with its status (**Corrected** /
+**Still open**), your first answer next to the correct one and, while
+it is open, the exercise's explanation. The end of **"Retry Errors"**
+shows the same overview when you opened it from the summary. The
+compact summary shows "N of M corrected" once anything is corrected;
+when all mistakes are corrected, the "Fix mistakes (N)" button goes
+away. In the **detailed evaluation**, the answers overview and "Why you
+missed these" mark every mistake **Corrected** or **Still open**; a
+corrected mistake stays listed there.
+
 ## Visual diff feedback
 
 Wrong free-text and word-tile answers now
@@ -274,11 +322,15 @@ show a **token-level diff** between your input and the canonical
 answer. Three colors, never color alone:
 
 - **Red strikethrough** - what you wrote and did not belong (with
-  an × marker for screen readers and colorblind users).
+  an × marker for colorblind users).
 - **Green** - what the canonical answer contains and you missed
   (with a + marker).
 - **Yellow** with an arrow → - a slightly wrong word, shown as
   `your-word` → `expected`.
+
+Screen readers read each mark as a sentence in your UI language, such
+as "Extra: …", "Missing: …" or "You wrote …, expected …", and skip the
+visible symbols.
 
 The same diff appears in the lesson summary in each exercise's
 breakdown - for every free-text or word-tile answer whose user
@@ -331,6 +383,10 @@ lesson completion.
 ## Privacy
 
 All lesson progress, element-error rows, review-queue states and
-scheduling data stay **on your own device** - in the filesystem
-(API mode) or in the browser (IndexedDB). Nothing about which
-words you struggle with is sent anywhere.
+scheduling data are stored **with you**: in the browser (IndexedDB)
+or, in API mode, in your own backend's database; others get parts
+of them only when a feature you use needs them. An AI learning
+session, for example, sends your AI provider your recent mistakes,
+each with your answer, the correct answer and how often you made
+it. The [privacy policy](../legal/privacy.md) describes when which
+data goes to others.

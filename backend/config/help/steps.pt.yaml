@@ -230,10 +230,10 @@ entries:
 
       ## Quando o passo termina
 
-      Assim que o avaliador de duplo prompt vê três variações
-      seguidas com confiança > 80%, avança para o passo 7.
-      Se a confiança flutuar, o ciclo permanece no passo 6
-      — até que a estabilidade seja atingida.
+      Depois de cada troca, o avaliador de duplo prompt decide
+      se está pronto para o passo 7; o sistema aplica a
+      proposta dele quando a sua confiança é de pelo menos 70%.
+      Caso contrário, o ciclo permanece no passo 6.
 
       ## Ligação à repetição espaçada
 
@@ -275,8 +275,8 @@ entries:
 
       - **Terminar a sessão** e avaliá-la (compreensão /
         stress / adequação do método).
-      - **Auto-loop**: um novo ciclo com um novo tópico
-        começa automaticamente.
+      - **Auto-loop** (só na aplicação de desktop): um novo ciclo
+        com um novo tópico começa automaticamente.
       - **Mudança de método**: com baixa adequação do método,
         o sistema recomenda uma mudança de método para o
         próximo ciclo.

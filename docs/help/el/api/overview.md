@@ -5,6 +5,9 @@
 Local (Dexie) το API δεν είναι προσβάσιμο - οι ίδιες λειτουργίες
 εκτελούνται στον browser.
 
+Η σελίδα [Όλα τα endpoints](endpoints.md), που παράγεται από το
+snapshot OpenAPI του αποθετηρίου, παραθέτει κάθε endpoint.
+
 ## Βασικό URL
 
 - **Τοπική ανάπτυξη**: `http://localhost:18001/api`
@@ -130,9 +133,10 @@ deployments πρέπει να αφήνουν τη λειτουργία αποσ�
 | Curriculum | `/users/{user_id}/curricula`, `/curricula/{id}` | CRUD curriculum + θεμάτων + μαθημάτων |
 | Ανακάλυψη plugins | `/plugins/manifests`, `/plugins/health`, `/plugins/errors` | Ό,τι είναι καταχωρημένο |
 
-Βλ. [Core endpoints](core-endpoints.md) και
-[Plugin endpoints](plugin-endpoints.md) για την πλήρη λίστα
-μεθόδων με παραδείγματα αίτησης / απόκρισης.
+Αναλυτικά παραδείγματα αίτησης / απόκρισης υπάρχουν στα
+[Core endpoints](core-endpoints.md) και
+[Plugin endpoints](plugin-endpoints.md)· η πλήρης λίστα όλων των
+endpoints είναι το [Όλα τα endpoints](endpoints.md).
 
 ## OpenAPI / Swagger
 

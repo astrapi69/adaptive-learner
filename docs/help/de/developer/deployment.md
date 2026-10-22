@@ -47,8 +47,8 @@ make dev-down   # stoppen
   Standardmodus.
 - `VITE_API_BASE=""` - kein Backend zum Anpeilen.
 
-Der Workflow läuft bei jedem Push auf `develop` (dem aktiven
-Entwicklungs-Branch unter Gitflow) und bei manueller Auslösung.
+Der Workflow läuft bei jedem Push auf `main` (dem Release-Branch
+unter Gitflow) und bei manueller Auslösung.
 Nach dem Build kopiert er `dist/index.html` nach `dist/404.html`
 für den SPA-Router-Fallback und nutzt dann
 `actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`
@@ -58,6 +58,19 @@ Das Ergebnis ist ein voll statischer, backend-freier Build:
 DexieStorage hält die kanonischen Daten in IndexedDB, KI-Aufrufe
 gehen browser-direkt an den Provider, und die Lektions-Inhalte
 sind in den Build gebündelt, sodass die Site offline funktioniert.
+
+Auf GitHub Pages lassen sich keine eigenen HTTP-Header setzen,
+deshalb bringt der Pages-Build seine eigene Richtlinie mit:
+`frontend/index.html` setzt per `<meta>` eine Content-Security-Policy,
+die Bilder und Medien auf wenige Quellen beschränkt, zum Beispiel die
+eigene Origin und `https://raw.githubusercontent.com` (der genaue Wert
+steht in der Datei), dazu die Referrer-Richtlinie `no-referrer`. Der
+API-Modus sendet dieselben `img-src`/`media-src` als Header
+(`backend/app/frontend_static.py`). Lädt eine Funktion Bilder oder
+Medien von einem Host, den die Richtlinie nicht nennt, blockiert der
+Browser das, im Pages-Build wie im API-Modus. Vor dem Upload prüft
+`scripts/check_external_hosts.py` die gebaute Docs-Site auf Ressourcen
+von Drittanbietern.
 
 Die Site-URL ist `https://astrapi69.github.io/adaptive-learner/`.
 Bei eigener Domain legen Nutzer eine `CNAME`-Datei in
@@ -204,8 +217,8 @@ ihnen:
 | Workflow | Trigger | Was er tut |
 |---|---|---|
 | `ci.yml` | push / PR auf `develop`, `main` | Tests + Lint + tsc |
-| `coverage.yml` | täglicher Schedule, dispatch | Coverage HTML + xml |
+| `coverage.yml` | täglicher Schedule, dispatch | Coverage HTML + xml (Backend, Frontend, je Plugin) |
 | `release-gate.yml` | `v*.*.*`-Tag-Push, dispatch | Version-Pin-Drift-Check |
-| `deploy-gh-pages.yml` | push auf `develop`, dispatch | GH-Pages-Build + Deploy |
+| `deploy-gh-pages.yml` | push auf `main`, dispatch | GH-Pages-Build + Deploy |
 | `launcher-{linux,macos,windows}.yml` | release: created | Launcher-Binary bauen + anhängen |
-| `dexie-smoke.yml` | täglicher Schedule, `release/**`, dispatch | Dexie-Modus-Route-Smoke-Gate |
+| `dexie-smoke.yml` | PR (wenn betroffen), täglicher Schedule, `release/**`, dispatch | Dexie-Modus-Route-Smoke-Gate |

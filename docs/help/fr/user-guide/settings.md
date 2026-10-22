@@ -189,7 +189,8 @@ Qui apprend, et dans quelles langues.
 Comment les exercices se comportent pendant que vous répondez.
 
 - **Mode de leçon** - le **Mode par défaut** (Entraînement / Examen /
-  Chronométré), le **Seuil de réussite** de l'examen et la
+  Chronométré), le **Seuil de réussite** de l'examen (les ensembles qui
+  ont leur propre seuil de réussite utilisent ce seuil à l'examen) et la
   **Difficulté du mode chronométré** (Rapide, Normal, Détendu) ; voir
   [Leçons de contenu et révisions](lessons.md).
 - **Indices** - si un bouton d'indice par paliers apparaît sur chaque
@@ -396,7 +397,10 @@ apparaît comme marqueur sur la ligne, de même qu'une configuration
 modifiée après l'activation. En mode navigateur, la carte reste visible
 avec la mention que seule l'application de bureau possède un hôte
 d'extensions. **Dépôt d'apprentissage** regroupe les réglages de cette
-extension (persistance git, dossier du dépôt).
+extension (persistance git, dossier du dépôt). Si vous laissez le
+dossier vide, les dépôts vont dans le dossier `repos` de votre dossier
+de données (voir **À propos > Système**) ; un chemin saisi est utilisé
+tel quel.
 
 ## Données
 
@@ -561,6 +565,19 @@ où le token est stocké (secrets.yaml, une variable d'environnement ou
 ce navigateur), avec **Supprimer** pour l'effacer. Un token issu d'une
 variable d'environnement ne peut pas être modifié ici.
 
+Le token sert à trois endroits :
+
+- **Partager avec la communauté** dans Mes leçons ouvre directement le
+  pull request d'une leçon seule, sans passer par l'éditeur de GitHub
+  (voir [Mes leçons](my-lessons.md)).
+- **Partager comme dépôt** envoie un ensemble entier vers un dépôt à
+  vous ; le bouton reste désactivé tant qu'aucun token n'est enregistré.
+- **Enregistrez votre dépôt** (Données > Sources) peut ouvrir son pull
+  request directement, au lieu que vous colliez l'entrée sur GitHub.
+
+Les deux derniers n'existent que dans la version navigateur de
+l'application. Sans token, tout le reste fonctionne comme avant.
+
 ## Aide
 
 L'onglet **Aide** contient le glossaire intégré : un champ de recherche
@@ -583,8 +600,13 @@ développeur à voir ce qui s'est passé sur votre appareil :
   rempli, GitHub le reçoit donc dès ce moment, avant même que vous
   n'envoyiez le ticket.
 - **Mode développeur** - affiche le détail technique complet (code
-  d'état, endpoint, trace) dans les messages d'erreur, et un badge
-  « DEV » dans la barre de navigation tant qu'il est actif. Sa valeur
+  d'état, endpoint, trace) dans les toasts d'erreur et dans les
+  messages d'erreur affichés sur la page elle-même (par exemple quand le
+  programme, la progression, les paramètres ou une session ne se
+  chargent pas), et un badge
+  « DEV » dans la barre de navigation tant qu'il est actif. Désactivé,
+  ces endroits affichent un message compréhensible au lieu de la
+  réponse technique du serveur. Sa valeur
   par défaut dépend de la branche de build : il est **activé par défaut
   sur la branche Latest (préversion)** et **désactivé sur Main**, si
   bien que les testeurs de la préversion voient le détail technique

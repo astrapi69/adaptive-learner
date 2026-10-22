@@ -47,6 +47,14 @@ navegador. É necessário:
 Sem chave, o botão fica visível mas desativado; uma indicação remete
 para as Configurações.
 
+**O que é enviado:** A verificação envia ao seu fornecedor os cartões
+do conjunto (frente, verso, notas), juntamente com os idiomas e o nível
+do conjunto; o seu perfil e o seu progresso de aprendizagem não fazem
+parte disso. Como em qualquer pedido, o seu fornecedor recebe também,
+entre outras coisas, o seu endereço IP e a sua chave de API. A caixa de
+diálogo indica-o antes de começar e liga para a
+[Política de privacidade](../legal/privacy.md).
+
 > **Custo:** a verificação gasta tokens na conta própria junto do
 > fornecedor e é faturada às tarifas desse fornecedor. Antes de
 > começar, a caixa de diálogo mostra uma **estimativa de custo** que

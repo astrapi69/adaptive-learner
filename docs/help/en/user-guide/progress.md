@@ -80,6 +80,9 @@ shape across storage modes:
 - **Curriculum Overview** - the topic tree + lesson summaries
   for a single curriculum.
 
+The reports are written in your UI language, in every language the
+app offers.
+
 Markdown is generated client-side; PDF uses the browser's
 print-to-PDF (open a hidden iframe with a print-optimised
 stylesheet, then `contentWindow.print()`). No external PDF

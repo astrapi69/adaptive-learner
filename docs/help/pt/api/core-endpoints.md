@@ -2,8 +2,10 @@
 
 # Endpoints principais
 
-Endpoints não registados por um plugin: utilizadores, projetos,
-definições, i18n, saúde.
+Exemplos detalhados de endpoints não registados por um plugin:
+utilizadores, projetos, definições, i18n, saúde. Todos os endpoints,
+do núcleo e de plugins, estão listados em
+[Todos os endpoints](endpoints.md).
 
 ## Saúde
 

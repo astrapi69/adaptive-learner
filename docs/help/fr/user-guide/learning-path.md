@@ -120,6 +120,8 @@ proprement jusqu'à une largeur de 375 px.
   étape : elle se fonde sur ton historique d'erreurs, pas seulement
   sur l'ordre des leçons.
 - Une leçon en pause reste reprenable depuis sa ligne ou depuis la
-  carte des leçons en pause du tableau de bord.
+  carte des leçons en pause du tableau de bord. L'exception est un
+  examen commencé : il ne compte que s'il est fait d'une traite, il
+  recommence donc depuis le début.
 - Dès que la maîtrise **réceptive** et la maîtrise **productive** sont
   toutes deux atteintes, une leçon compte comme entièrement maîtrisée.

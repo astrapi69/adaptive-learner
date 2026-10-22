@@ -185,7 +185,9 @@ Quién aprende y en qué idiomas.
 Cómo se comportan los ejercicios mientras respondes.
 
 - **Modo de lección** - el **Modo predeterminado** (Práctica / Examen /
-  Con tiempo), el **Umbral para aprobar** el examen y la **Dificultad del
+  Con tiempo), el **Umbral para aprobar** el examen (los conjuntos con
+  su propio umbral de aprobado usan ese umbral en el examen) y la
+  **Dificultad del
   modo con tiempo** (Rápido, Normal, Relajado); ver
   [Lecciones y repasos](lessons.md).
 - **Pistas** - si aparece un botón de pista por etapas en cada ejercicio,
@@ -391,7 +393,10 @@ aparece como marca en la fila, igual que un cambio de configuración
 tras la activación. En el modo navegador la tarjeta sigue visible con
 un aviso de que solo la aplicación de escritorio tiene un anfitrión de
 complementos. **Repositorio de aprendizaje** contiene los ajustes de
-ese complemento (persistencia en git, directorio del repositorio).
+ese complemento (persistencia en git, directorio del repositorio). Si
+dejas el directorio vacío, los repositorios van a la carpeta `repos` de
+tu directorio de datos (consulta **Acerca de > Sistema**); una ruta que
+escribas se usa tal cual.
 
 ## Datos
 
@@ -560,6 +565,21 @@ que pertenece, y una línea de origen indica dónde está guardado el token
 **Eliminar** para borrarlo. Un token que procede de una variable de
 entorno no se puede editar aquí.
 
+El token se usa en tres lugares:
+
+- **Compartir con la comunidad** en Mis lecciones abre directamente el
+  pull request de una sola lección, sin pasar por el editor de GitHub
+  (consulta [Mis lecciones](my-lessons.md)).
+- **Compartir como repositorio** sube un conjunto entero a un
+  repositorio tuyo; el botón sigue desactivado hasta que guardes un
+  token.
+- **Registra tu repositorio** (Datos > Fuentes) puede abrir su pull
+  request directamente, en lugar de que tengas que pegar la entrada en
+  GitHub.
+
+Los dos últimos solo están disponibles en la versión de navegador de la
+app. Sin token, todo lo demás funciona como siempre.
+
 ## Ayuda
 
 La pestaña **Ayuda** contiene el glosario integrado: un campo de
@@ -581,8 +601,12 @@ a ver qué ocurrió en tu dispositivo:
   de GitHub con el informe ya rellenado, así que GitHub lo recibe desde
   ese momento, antes de que envíes la incidencia allí.
 - **Modo Desarrollador** - muestra el detalle técnico completo (código
-  de estado, endpoint, traza de pila) en los toasts de error, y una
-  insignia «DEV» en la barra de navegación mientras está activado. Su
+  de estado, endpoint, traza de pila) en los toasts de error y en los
+  mensajes de error que aparecen en la propia página (por ejemplo cuando
+  el plan de estudios, el progreso, los ajustes o una sesión no cargan),
+  y una insignia «DEV» en la barra de navegación mientras está activado.
+  Si está desactivado, esos lugares muestran un mensaje comprensible en
+  vez de la respuesta técnica del servidor. Su
   valor predeterminado depende de la rama de compilación: está
   **ACTIVADO por defecto en la rama Latest (vista previa)** y
   **DESACTIVADO en Main**, para que los probadores de la vista previa

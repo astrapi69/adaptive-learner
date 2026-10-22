@@ -8,7 +8,8 @@
   scheitern beim Build mit `crypto.hash is not a function`.
 - **Poetry** für Python-Dependencies. Installation:
   `curl -sSL https://install.python-poetry.org | python3 -`.
-- **Bun** 1.3+ (Paketmanager des Frontends, #1492).
+- **Bun** 1.4+ (Paketmanager des Frontends, #1492; `frontend/bun.lock`
+  hat Lockfile-Version 3, die Bun 1.3 nicht lesen kann).
 - **GNU Make** für die Orchestrierungs-Targets. Das Makefile
   ist die Source of Truth - jeder CI-Befehl steht dort.
 
@@ -89,8 +90,8 @@ Curriculum und mobile Viewports ab.
 ## Linting + Formatieren
 
 ```bash
-cd backend && poetry run ruff check .       # Python-Lint
-cd backend && poetry run ruff format .      # Python-Formatter
+cd backend && poetry run ruff check app/ ../plugins/   # Python-Lint, wie die CI
+cd backend && poetry run ruff format app/ ../plugins/  # Python-Formatter
 cd frontend && bunx tsc --noEmit             # TypeScript-Check
 cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier

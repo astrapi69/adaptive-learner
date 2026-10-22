@@ -172,7 +172,7 @@ checks:
     probe: script_exists=backend/tests/test_verify_docs_help_terms.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
   - id: privacy-promises
-    verifies: no catalog value (backend YAML, generated frontend JSON), help glossary, help page, other current doc, root Markdown file or UI t() fallback promises that no personal data is sent, in any of the 11 catalog languages; a seeded probe per language must be found and a legitimate sentence per language must pass; historical records (docs/explorations/, docs/review/, docs/journal/, docs/roadmap-archive/, help changelog.md) are exempt; a required group with no file FAILs (#3812)
+    verifies: no catalog value (backend YAML, generated frontend JSON), help glossary, help page, other current doc, root Markdown file or UI t() fallback promises that no personal data is sent, in any of the 11 catalog languages (#3812), or makes one of the four promises of #3829 (nothing about the words you struggle with is sent anywhere, nothing is uploaded to a server, all your data stays in your browser, nothing is sent to a server except ...) in a language it occurred in; a seeded probe per language and phrasing must be found and a legitimate sentence per language must pass; historical records (docs/explorations/, docs/review/, docs/journal/, docs/roadmap-archive/, help changelog.md) are exempt; a required group with no file FAILs; a phrasing list gives precision only, the class is #3830
     rule: none (owner decision 2026-10-20 in #3812 - the app states what leaves the device instead of promising what does not)
     status: active
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_privacy_promises.py

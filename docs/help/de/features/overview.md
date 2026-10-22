@@ -15,8 +15,10 @@ verweisen hierher, statt eigene Kopien dieser Liste zu pflegen.
   Feedback, Anpassung, Wiederholung, Integration. Ein
   Dual-Prompt-Evaluator bewertet jeden Turn und entscheidet über
   Voranschreiten, Wiederholen, Überspringen oder Zurückgehen.
-- **Auto-Loop**: Ist ein Thema integriert, wählt die Sitzung ein neues
-  Unterthema und startet einen frischen Zyklus (pro Sitzung begrenzt).
+- **Auto-Loop** (Desktop-App): Ist ein Thema integriert, wählt die
+  Sitzung ein neues Unterthema und startet einen frischen Zyklus (pro
+  Sitzung begrenzt). In der Browser-Version bleibt die Sitzung bei
+  Schritt 7; die Sitzungsseite weist darauf hin.
 - **Methodenwechsel**: Stagnationserkennung empfiehlt eine andere
   Methode, wenn die Bewertungen abflachen; Annahme per Klick.
 - **Einstufungs-Assessment** (optional, unterbrechbar und fortsetzbar)
@@ -241,7 +243,8 @@ Siehe [Installation](../install/launcher.md).
 - **Tastatur zuerst**: globale Shortcuts mit Hilfe-Overlay, Enter
   schaltet in Lektionen weiter, Tab springt durch Lückentext-Lücken.
 - **Screenreader-Unterstützung**: Landmarks, ARIA-Labels und
-  Live-Regionen, Daten-Tabellen zu Diagrammen,
+  Live-Regionen, ein Seitentitel pro Seite in der UI-Sprache
+  („Einstellungen - Adaptive Learner"), Daten-Tabellen zu Diagrammen,
   Dialog-Fokus-Management.
 - **Reduzierte Bewegung** wird überall respektiert; Vorlesen (TTS) für
   Lektionen und Chat.

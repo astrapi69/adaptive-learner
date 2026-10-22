@@ -39,7 +39,16 @@ IA** :
   **enregistrement automatique du brouillon**.
 - **Aperçu** dans le véritable lecteur de leçons avant
   l'enregistrement.
-- **Enregistrer localement** ou **partager via une pull request**.
+- **Enregistrer localement** ou **Enregistrer et partager**.
+  L'enregistrement local demande seulement une leçon valide (titre,
+  paire de langues valide, au moins 4 cartes pour une nouvelle leçon
+  de cartes, structure valide) ; un seul exercice suffit, et la leçon
+  se joue tout de suite. Enregistrer et partager enregistre puis ouvre
+  l'assistant de partage. Pour cela, la leçon doit en plus respecter
+  les minimums du moteur de contenu, par exemple assez d'exercices et
+  de types d'exercices, et assez de réponses ou de paires dans chaque
+  exercice. L'étape **« Vérifier et enregistrer »** les liste avec les
+  valeurs actuelles sous **« Nécessaire pour partager »**.
 
 Des points d'entrée existent dans le navigateur de contenu et dans
 le tableau de bord.

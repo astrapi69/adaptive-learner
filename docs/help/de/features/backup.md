@@ -5,7 +5,7 @@ Datei sichern und ihn auf einem anderen Gerät, in einer frischen
 Installation oder nach einem Browser-Wechsel wiederherstellen. Du
 findest alles unter **Einstellungen → Daten**.
 
-<!-- TODO: Screenshot - Einstellungen → Daten mit den Knöpfen „Backup erstellen" und „Wiederherstellen" -->
+<!-- TODO: Screenshot - Einstellungen → Daten mit den Knöpfen „Sicherung erstellen" und „Aus Sicherung wiederherstellen" -->
 
 ---
 
@@ -22,9 +22,20 @@ heruntergeladenen Content-Sets** und ein **localStorage-Snapshot**
 Einladungen und ob das Learning Repository eingeschaltet ist.
 Im Browser-Modus kommen auch die Ergebnisse deiner KI-Inhaltsprüfungen
 mit, die Plakette „KI-geprüft" bleibt also erhalten.
-**Nicht enthalten:** das Zugriffstoken eines privaten Repositories
-(gib es nach der Wiederherstellung erneut ein) und der Ordner des
-Learning Repository, der zum Gerät gehört.
+
+**Nicht enthalten** sind zum Beispiel:
+
+- das Zugriffstoken eines privaten Repositorys (gib es nach der
+  Wiederherstellung erneut ein);
+- der Ordner des Learning Repository, der zum Gerät gehört;
+- im Server-Modus Lektionsfortschritt und Sprachaufnahmen, die offline
+  entstanden und noch nicht beim Server angekommen sind;
+- zwischengespeicherte Suchindizes und Medienlisten, die Zählung des
+  Auto-Backups und der Stand der LAN-Synchronisierung.
+
+Die Einstellung, ob Auto-Backup eingeschaltet ist, kommt dagegen mit.
+Weil offline entstandener Fortschritt im Backup fehlen würde, erstelle
+ein Backup im Server-Modus erst, wenn die App wieder online ist.
 
 Vor dem Export zeigt die App eine Vorschau **„Dein Backup
 enthält …"** mit Datensatz-Zählungen pro Bereich, damit du vor dem
@@ -35,7 +46,7 @@ Speichern siehst, was gesichert wird.
 ## Backup erstellen
 
 1. Öffne **Einstellungen → Daten**.
-2. Drücke **Backup erstellen**.
+2. Drücke **Sicherung erstellen**.
 3. Im reinen Browser-Modus kannst du über die
    File-System-Access-API direkt einen Speicherort wählen
    („Auf Datenträger speichern"); unterstützt der Browser das

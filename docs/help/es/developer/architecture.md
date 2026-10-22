@@ -42,7 +42,7 @@ implementaciones satisfacen un mismo contrato:
 - **`dexieStorage`** (local primero): pila completa de IndexedDB
   que refleja los modelos SQLAlchemy. Las llamadas a la IA se
   disparan directamente desde el navegador mediante
-  `storage/ai-providers.ts`.
+  `storage/ai/ai-providers.ts`.
 
 `IStorageService` expone sus espacios de nombres (users, projects,
 settings, assessment, session con streaming, tracking, tools,

@@ -103,6 +103,10 @@ tracejada "Ciclo N" em cada transição. O diálogo de avaliação
 de fim de sessão resume a jornada de múltiplos ciclos quando
 `cycle_count > 1`.
 
+Só na aplicação de ambiente de trabalho: na versão de navegador, a
+sessão fica no passo 7, e a página da sessão indica-o. Termine aí a
+sessão e inicie uma nova.
+
 ## Posso exportar os meus dados?
 
 Sim. Três caminhos de exportação incluídos:
@@ -184,8 +188,15 @@ que usa uma IA internamente mas adiciona:
    passo. O ChatGPT esquece quando fecha o separador.
 6. **Liberdade de fornecedor** - Anthropic, OpenAI ou Gemini, mais
    Perplexity no modo servidor.
-7. **Opção local primeiro** - tudo no seu navegador, nada
-   enviado para um servidor (exceto as suas chamadas de IA).
+7. **Opção local primeiro** - o progresso, as estatísticas e as
+   definições são armazenados no seu navegador; outros recebem
+   partes deles só quando uma funcionalidade que utiliza precisa
+   delas. A aplicação contacta servidores quando uma funcionalidade
+   precisa disso, por exemplo o GitHub para os conteúdos (também
+   sincroniza os repositórios ligados no arranque), o seu fornecedor
+   de IA, e o GitHub quando partilha algo ou abre lá um relatório de
+   erro. A [política de privacidade](../legal/privacy.md) descreve
+   que casos são esses e o que é transferido.
 
 ## E se a IA correr mal?
 

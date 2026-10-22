@@ -21,9 +21,21 @@ descarregados**.
 convites utilizados e se o Learning Repository está ativo.
 No modo de navegador, os resultados das tuas verificações de conteúdo
 por IA também são incluídos, por isso o selo "Verificado por IA" mantém-se.
-**Não incluídos:** o token de acesso de um repositório privado
-(introduz-o de novo depois de restaurar) e a pasta do Learning
-Repository, que pertence ao dispositivo.
+
+**Não são incluídos**, por exemplo:
+
+- o token de acesso de um repositório privado (introduz-o de novo
+  depois de restaurar);
+- a pasta do Learning Repository, que pertence ao dispositivo;
+- no modo servidor, o progresso de lições e as gravações de voz que
+  foram feitos offline e ainda não chegaram ao servidor;
+- os índices de pesquisa e as listas de multimédia em cache, o contador
+  do backup automático e a posição da sincronização LAN.
+
+Já a definição que indica se o backup automático está ligado ou
+desligado vem incluída. Como o progresso feito offline faltaria no
+backup, no modo servidor só cries um backup quando a aplicação voltar a
+estar online, não antes.
 
 Antes da exportação, a aplicação mostra uma pré-visualização
 **"O teu backup contém …"** com contagens de registos por área,

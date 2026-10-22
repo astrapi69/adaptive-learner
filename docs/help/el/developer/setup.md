@@ -8,7 +8,9 @@
   θα αποτυγχάνουν στο βήμα build με `crypto.hash is not a function`.
 - **Poetry** για διαχείριση εξαρτήσεων Python. Εγκατάσταση:
   `curl -sSL https://install.python-poetry.org | python3 -`.
-- **Bun** 1.3+ (διαχειριστής πακέτων του frontend, #1492).
+- **Bun** 1.4+ (διαχειριστής πακέτων του frontend, #1492· το
+  `frontend/bun.lock` έχει lockfile version 3, την οποία το Bun 1.3
+  δεν μπορεί να διαβάσει).
 - **GNU Make** για στόχους ενορχήστρωσης. Το Makefile είναι η πηγή
   αλήθειας - κάθε εντολή CI βρίσκεται εκεί.
 
@@ -99,8 +101,8 @@ viewports, σύνδεση συγχρονισμού, roundtrip αντιγράφο
 ## Lint + μορφοποίηση
 
 ```bash
-cd backend && poetry run ruff check .       # Python lint
-cd backend && poetry run ruff format .      # Python format
+cd backend && poetry run ruff check app/ ../plugins/   # Python lint, όπως στο CI
+cd backend && poetry run ruff format app/ ../plugins/  # Python format
 cd frontend && bunx tsc --noEmit             # TypeScript check
 cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier

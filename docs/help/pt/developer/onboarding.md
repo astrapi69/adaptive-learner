@@ -128,10 +128,15 @@ cd backend && poetry run pytest tests/path/ -v
 make test-plugin-gamification
 ```
 
-Para alterações que tocam nas cópias de segurança há um gate extra: uma
-ida e volta real Exportar → Importar em `make dev` com dados reais (o
-`BACKUP-AKZEPTANZTEST`). Os testes unitários por si só nunca justificam
-um merge relativo a cópias de segurança.
+Para alterações que tocam nas cópias de segurança há um gate extra, o
+`BACKUP-AKZEPTANZTEST`: uma ida e volta real Exportar → Importar. Uma
+execução verde de `backup-e2e.yml` no PR conta como essa prova; corre
+automaticamente quando o PR toca um caminho de cópias de segurança e
+verifica cada tabela da cópia de segurança através da interface real.
+A ida e volta manual com dados reais continua necessária para o que só
+um dispositivo real mostra (modo standalone, despejo do
+armazenamento). Os testes unitários por si só nunca justificam um
+merge relativo a cópias de segurança.
 
 ## 7. Executar o gate completo localmente
 

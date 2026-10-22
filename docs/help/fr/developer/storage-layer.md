@@ -3,33 +3,11 @@
 ## L'interface `IStorageService`
 
 Tous les composants React accèdent aux données via `getStorage()`, qui
-retourne une implémentation de `IStorageService`. L'interface comprend
-22 espaces de noms :
-
-| Espace de noms | Responsabilité |
-|----------------|---------------|
-| `users` | Profils utilisateurs |
-| `projects` | Projets d'apprentissage |
-| `profiles` | Profils d'apprentissage |
-| `sessions` | Sessions d'apprentissage |
-| `messages` | Messages de session |
-| `ratings` | Évaluations de session |
-| `notes` | Notes de session |
-| `commits` | ProgressCommits |
-| `curriculum` | Sujets et leçons de curriculum |
-| `xp` | Points d'expérience et niveaux |
-| `badges` | Badges et jalons |
-| `streak` | Données de série quotidienne |
-| `anki` | Flashcards Anki |
-| `notebooklm` | Questions de rappel actif |
-| `imports` | Conversations importées |
-| `contentLoader` | Ensembles de contenu et leçons |
-| `lessonProgress` | Progression dans les leçons de contenu |
-| `elementErrors` | Suivi des erreurs au niveau des éléments SRS |
-| `learningRepo` | Export du Learning Repository |
-| `pluginSettings` | Configuration des plugins |
-| `missions` | Missions quotidiennes |
-| `getAsset` | Assets binaires des ensembles de contenu |
+retourne une implémentation de `IStorageService`, définie dans
+`frontend/src/storage/types/core/service.ts` ; la liste de ses espaces de noms y
+fait foi (par exemple `users`, `projects`, `session`, `curricula`,
+`lessons`, `gamification`, `anki`, `contentLoader`, `backup`,
+`missions`).
 
 ---
 

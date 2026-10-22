@@ -127,9 +127,14 @@ make test-plugin-gamification
 ```
 
 Pour les changements qui touchent à la sauvegarde, il existe une porte
-supplémentaire : un véritable aller-retour Export → Import dans `make dev`
-avec des données réelles (le `BACKUP-AKZEPTANZTEST`). Les tests unitaires
-seuls ne justifient jamais la fusion d'un changement de sauvegarde.
+supplémentaire, le `BACKUP-AKZEPTANZTEST` : un véritable aller-retour
+Export → Import. Une exécution verte de `backup-e2e.yml` sur la PR
+vaut cette preuve ; elle se lance d'elle-même quand la PR touche un
+chemin de sauvegarde et vérifie chaque table de sauvegarde par la
+vraie interface. L'aller-retour manuel avec des données réelles reste
+nécessaire pour ce que seul un vrai appareil montre (mode standalone,
+éviction du stockage). Les tests unitaires seuls ne justifient jamais
+la fusion d'un changement de sauvegarde.
 
 ## 7. Lancer la porte complète en local
 

@@ -111,6 +111,8 @@ biçimde yeniden düzenlenir.
 - **Güncel ders** (▶) her zaman en iyi sonraki adımındır - yalnızca
   ders sırasına değil, hata geçmişine dayanır.
 - Duraklatılmış bir ders, kendi satırından ya da Pano'daki
-  duraklatılmış dersler kartından devam ettirilebilir kalır.
+  duraklatılmış dersler kartından devam ettirilebilir kalır. İstisna
+  başlanmış bir sınavdır: Yalnızca tek seferde yapıldığında geçerli
+  olduğu için baştan başlar.
 - Hem **alımlayıcı** hem de **üretici** ustalığa ulaşıldığında bir ders
   tamamen ustalaşılmış sayılır.

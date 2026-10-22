@@ -10,7 +10,9 @@
   falharão no passo de compilação com `crypto.hash is not a function`.
 - **Poetry** para gestão de dependências Python. Instale com:
   `curl -sSL https://install.python-poetry.org | python3 -`.
-- **Bun** 1.3+ (gerenciador de pacotes do frontend, #1492).
+- **Bun** 1.4+ (gerenciador de pacotes do frontend, #1492;
+  `frontend/bun.lock` usa a versão 3 do lockfile, que o Bun 1.3 não
+  consegue ler).
 - **GNU Make** para os alvos de orquestração. O Makefile é a fonte
   de verdade - todos os comandos de CI estão lá.
 
@@ -104,8 +106,8 @@ filtro de assuntos/etiquetas, notas em rich-text, seletor de modelo.
 ## Linting + formatação
 
 ```bash
-cd backend && poetry run ruff check .       # lint Python
-cd backend && poetry run ruff format .      # formatar Python
+cd backend && poetry run ruff check app/ ../plugins/   # lint Python, como no CI
+cd backend && poetry run ruff format app/ ../plugins/  # formatar Python
 cd frontend && bunx tsc --noEmit             # verificação TypeScript
 cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier

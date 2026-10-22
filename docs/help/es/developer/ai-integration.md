@@ -123,7 +123,7 @@ Pista del perfil: …») se adjunta en el momento de la composición.
 
 Para el modo Dexie, los prompts se exportan literalmente a
 `frontend/src/data/session-prompts.json` y los carga
-`frontend/src/storage/prompts.ts`. El mismo texto, el mismo
+`frontend/src/storage/ai/prompts.ts`. El mismo texto, el mismo
 formato de bloque de contexto - sin deriva posible.
 
 ## Añadir un nuevo proveedor
@@ -131,14 +131,16 @@ formato de bloque de contexto - sin deriva posible.
 1. Crea `plugins/adaptive-learner-plugin-ai-nuevoproveedor/`.
 2. Implementa el hookimpl `ai_complete`: comprueba el prefijo del
    modelo, llama a la API HTTP del proveedor, devuelve el texto.
-3. Añade el prefijo del proveedor a `DEFAULT_MODELS` en
-   `ai_orchestration.py` con un modelo por defecto económico.
+3. Añade el proveedor con un modelo por defecto económico a
+   `DEFAULT_MODELS` en `backend/app/services/ai_caller.py`; es la única
+   tabla (la leen el plugin de sesión, las importaciones y la
+   validación de lecciones, y una prueba rechaza una segunda copia).
 4. Añade el nombre del proveedor al enum `AIProvider` en
    `app/schemas/__init__.py`.
 5. Añádelo a `AI_PROVIDERS` en
    `frontend/src/lib/constants.ts`.
 6. Para paridad en modo Dexie: añade un cliente a
-   `frontend/src/storage/ai-providers.ts` y enrútalo desde
+   `frontend/src/storage/ai/ai-providers.ts` y enrútalo desde
    `aiComplete()`.
 
 Cada plugin de proveedor prueba su hookimpl + la llamada al
@@ -149,14 +151,14 @@ plantilla (la llamada HTTP al proveedor está simulada).
 ## Llamadas directas desde el navegador (modo Dexie)
 
 En el modo Dexie la llamada a la IA no pasa por el sistema de
-plugins. `storage/ai-providers.ts` realiza la solicitud HTTP
+plugins. `storage/ai/ai-providers.ts` realiza la solicitud HTTP
 directamente. Anthropic requiere el encabezado
 `anthropic-dangerous-direct-browser-access: true` para superar
 la verificación previa CORS; OpenAI y Gemini aceptan llamadas
 directas desde el navegador por defecto.
 
 La lógica de doble prompt es la misma en ambos modos -
-`storage/session-flow.ts` llama a `aiComplete()` dos veces y
+`storage/ai/session-flow.ts` llama a `aiComplete()` dos veces y
 analiza el JSON del evaluador de la misma manera que lo hace el
 backend.
 
@@ -170,8 +172,10 @@ para ser más agresivo. Los veredictos de fallback (fallos de
 análisis) siempre aplican el avance de +1 independientemente.
 
 El puerto Dexie refleja esto con un 0.7 fijo en
-`storage/session-flow.ts`. Una fase futura lo expondrá en la
-interfaz de Ajustes.
+`storage/ai/session-flow.ts`; `session-flow.test.ts` lee el valor de
+`session.yaml` y falla si ambos divergen. A propósito no hay ningún
+ajuste en la interfaz: las claves son `# INTERNAL` y solo se editan
+en el YAML (#3436).
 
 ## Otras superficies de IA (resumen de solo lectura)
 

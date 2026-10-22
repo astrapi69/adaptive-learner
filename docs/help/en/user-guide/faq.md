@@ -99,6 +99,10 @@ protection). The chat history renders dashed-border "Cycle N"
 cards at each transition. The end-of-session rating dialog
 summarises the multi-cycle journey when `cycle_count > 1`.
 
+Desktop app only: in the browser version the session stays at step 7,
+and the session page says so. End the session there and start a new
+one.
+
 ## Can I export my data?
 
 Yes. Three export paths shipped:
@@ -177,8 +181,14 @@ under the hood but adds:
    you close the tab.
 6. **Provider freedom** - Anthropic, OpenAI, or Gemini, plus
    Perplexity in server mode.
-7. **Local-first option** - everything in your browser,
-   nothing sent to a server (except your AI calls).
+7. **Local-first option** - progress, statistics and settings are
+   stored in your browser; others get parts of them only when a
+   feature you use needs them. The app contacts servers when a
+   feature needs it, for example GitHub for content (it also syncs
+   connected repositories on start), your AI provider, and GitHub
+   when you share something or open an error report there. The
+   [privacy policy](../legal/privacy.md) describes which cases these
+   are and what is transferred.
 
 ## What if the AI goes wrong?
 

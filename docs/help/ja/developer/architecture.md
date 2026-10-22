@@ -34,7 +34,7 @@ Adaptive Learnerは4層のプラグイン駆動型アプリケーションです
 フロントエンドには、バッキングストアを選択する単一の接合点があります: `getStorage(): IStorageService`。2つの実装が1つのコントラクトを満たします。
 
 - **`apiStorage`**（デフォルト）: FastAPIバックエンドと通信する`api/client.ts`の薄いラッパー。
-- **`dexieStorage`**（ローカルファースト）: SQLAlchemyモデルをミラーリングする完全なIndexedDBスタック。AI呼び出しは`storage/ai-providers.ts`経由でブラウザから直接実行されます。
+- **`dexieStorage`**（ローカルファースト）: SQLAlchemyモデルをミラーリングする完全なIndexedDBスタック。AI呼び出しは`storage/ai/ai-providers.ts`経由でブラウザから直接実行されます。
 
 `IStorageService`は名前空間を公開します（users、projects、settings、assessment、ストリーミング付きsession、tracking、tools、curricula、topics、lessons、plugins、system、backup、export、subjects、tags、projectTaxonomy、imports、gamification、anki、pronunciation、notebooklm）。両方のバッキングがすべてのメソッドを実装しています。
 

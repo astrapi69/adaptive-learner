@@ -45,14 +45,14 @@ version = "X.Y.Z"
 make sync-versions
 ```
 
-**18個のファイル**を自動的に更新します。
+バージョンを持つすべてのファイルを自動的に更新します（完全な一覧は`scripts/sync_versions.py`にあります）。
 
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py`
 - `launcher/adaptive-learner-launcher.spec`（CFBundle plist + CFBundleShortVersionString）
-- 10× `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- 3× プラグインの`__init__.py`の`__version__`リテラル
+- すべての`plugins/adaptive-learner-plugin-*/pyproject.toml`
+- `__version__`リテラルを持つすべてのプラグインの`__init__.py`
 - `install.sh`（`install.sh.template`から再生成）
 - `install.ps1`（`install.ps1.template`から再生成）
 
@@ -60,7 +60,7 @@ make sync-versions
 
 ```bash
 make sync-versions-check     # ドリフトがあると非ゼロで終了
-make test                    # 2634テストがパスする必要があります
+make test                    # フルスイートがパスする必要があります
 cd frontend && bun run build # 成功する必要があります
 ```
 
@@ -86,9 +86,10 @@ git push origin main --tags
 
 - 新しいコミットに対して`ci.yml`（テスト）
 - 新しいタグに対して`release-gate.yml`（バージョンピンドリフトチェック）
-- 新しいコミットに対して`coverage.yml`（カバレッジHTML）
 - 新しいコミットに対して`deploy-gh-pages.yml`（公開サイトの公開）
 - GitHubがタグからReleaseを作成した際に`launcher-{linux,macos,windows}.yml`
+
+`coverage.yml`はプッシュでは実行されず、毎晩と手動ディスパッチで実行されます。リリースコミットのレポートが必要な場合は`gh workflow run coverage.yml --ref main`を実行してください。
 
 ### 8. GitHub Releaseの作成
 
@@ -102,7 +103,7 @@ gh release create vX.Y.Z \
 
 ## プラグインバージョン
 
-プラグインはカノニカルなアプリバージョンとロックステップします。10個のプラグイン`pyproject.toml`ファイルと3つのプラグイン`__init__.py`の`__version__`リテラルすべてで同じ番号を使用します。将来の「コア vs サードパーティプラグイン」の決定でリンクが解除される可能性がありますが、v1.20.0のセットアップは18個の伝播ファイル全体で統一されています。
+プラグインはカノニカルなアプリバージョンとロックステップします。すべてのプラグインの`pyproject.toml`と、プラグインの`__init__.py`の`__version__`リテラルで同じ番号を使用します。将来の「コア vs サードパーティプラグイン」の決定でリンクが解除される可能性がありますが、現在のセットアップは伝播されるすべてのファイルで統一されています。
 
 ## ホットフィックスフロー
 

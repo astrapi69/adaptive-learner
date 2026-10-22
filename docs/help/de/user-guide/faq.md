@@ -107,6 +107,10 @@ rendert „Zyklus N"-Karten mit gestricheltem Rand an jedem
 Übergang. Der Bewertungsdialog am Ende der Sitzung fasst die
 Multi-Cycle-Reise zusammen, wenn `cycle_count > 1`.
 
+Nur in der Desktop-App: In der Browser-Version bleibt die Sitzung bei
+Schritt 7, und die Sitzungsseite weist darauf hin. Beende die Sitzung
+dort und starte eine neue.
+
 ## Kann ich meine Daten exportieren?
 
 Ja. Drei Export-Pfade ausgeliefert:
@@ -190,8 +194,15 @@ unter der Haube eine KI nutzt, aber zusätzlich bringt:
    vergisst, wenn du den Tab schließt.
 6. **Anbieter-Freiheit** - Anthropic, OpenAI oder Gemini, dazu
    Perplexity im Server-Modus.
-7. **Local-First-Option** - alles in deinem Browser, nichts
-   wird an einen Server gesendet (außer deine KI-Aufrufe).
+7. **Local-First-Option** - Lernfortschritt, Statistiken und
+   Einstellungen werden in deinem Browser gespeichert; andere
+   erhalten Teile davon nur, wenn eine Funktion sie braucht, die du
+   nutzt. Server kontaktiert die App, wenn eine Funktion es braucht,
+   zum Beispiel GitHub für Inhalte (verbundene Repositorys gleicht
+   sie dafür auch beim Start ab), deinen KI-Anbieter, und GitHub,
+   wenn du etwas teilst oder einen Fehlerbericht dort öffnest.
+   Welche Fälle das sind und was dabei übertragen wird, beschreibt
+   die [Datenschutzerklärung](../legal/privacy.md).
 
 ## Was, wenn die KI danebenliegt?
 

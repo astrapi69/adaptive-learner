@@ -136,9 +136,10 @@ The frontend's `ApiError` class consumes both shapes - see
 | Curriculum | `/users/{user_id}/curricula`, `/curricula/{id}` | Curriculum + topics + lessons CRUD |
 | Plugin discovery | `/plugins/manifests`, `/plugins/health`, `/plugins/errors` | What's registered |
 
-See [Core endpoints](core-endpoints.md) and
-[Plugin endpoints](plugin-endpoints.md) for the full method
-list with request / response examples.
+Worked request / response examples are in
+[Core endpoints](core-endpoints.md) and
+[Plugin endpoints](plugin-endpoints.md); the complete list of every
+endpoint is [All endpoints](endpoints.md).
 
 ## OpenAPI / Swagger
 

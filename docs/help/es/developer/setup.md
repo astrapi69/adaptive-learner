@@ -9,7 +9,9 @@
   `crypto.hash is not a function`.
 - **Poetry** para la gestión de dependencias Python. Instalación:
   `curl -sSL https://install.python-poetry.org | python3 -`.
-- **Bun** 1.3+ (gestor de paquetes del frontend, #1492).
+- **Bun** 1.4+ (gestor de paquetes del frontend, #1492;
+  `frontend/bun.lock` usa la versión 3 del lockfile, que Bun 1.3 no
+  puede leer).
 - **GNU Make** para los objetivos de orquestación. El Makefile
   es la fuente de verdad - cada comando de CI está ahí.
 
@@ -107,8 +109,8 @@ enriquecido, selector de modelos.
 ## Linting + formato
 
 ```bash
-cd backend && poetry run ruff check .       # lint Python
-cd backend && poetry run ruff format .      # formato Python
+cd backend && poetry run ruff check app/ ../plugins/   # lint Python, como la CI
+cd backend && poetry run ruff format app/ ../plugins/  # formato Python
 cd frontend && bunx tsc --noEmit             # comprobación TypeScript
 cd frontend && bun run lint                 # ESLint
 cd frontend && bun run format               # Prettier

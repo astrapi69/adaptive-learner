@@ -93,6 +93,10 @@ Non. L'auto-boucle s'arrête lorsque l'un de ces critères est atteint :
   de continuer ou d'arrêter)
 - Une recommandation de changement de méthode est acceptée
 
+L'auto-boucle n'existe que dans l'application de bureau : dans la
+version navigateur, la session reste à l'étape 7, et la page de la
+session l'indique. Terminez-y la session et démarrez-en une nouvelle.
+
 ---
 
 ## Comment exporter mes données ?

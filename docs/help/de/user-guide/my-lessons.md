@@ -4,8 +4,12 @@
 offline-spielbaren Format wie heruntergeladene Inhaltssets. Du kannst
 aus einem analysierten Chat eine Lektion erzeugen, eine gute adaptive
 Lektion zum Wiederholen speichern, eine Lektion zum Teilen
-exportieren und von anderen geteilte Lektionen importieren. Alles
-funktioniert offline; nichts wird auf einen Server hochgeladen.
+exportieren und von anderen geteilte Lektionen importieren. Diese
+Schritte funktionieren offline, und deine Lektionen bleiben auf
+deinem Gerät, bis du eine Funktion nutzt, die sie weitergibt, zum
+Beispiel einen Beitrag zur Community (Pull Request) oder
+„Als Repository teilen", die die Lektion zu GitHub hochladen, oder
+eine KI-Prüfung, die ihren Inhalt an deinen KI-Anbieter schickt.
 
 Du findest „Meine Lektionen" oben im **Set-Browser** (`/content`),
 über den heruntergeladenen Sets.
@@ -90,9 +94,10 @@ sich der adaptive Generator in einer späteren Version ändert.
 
 ## Exportieren und teilen
 
-Jede eigene Lektion lässt sich teilen. Exportieren und der Pull Request
-für die Community gehen ohne Konto; ein GitHub-Token beschleunigt den Pull
-Request und ist nötig, um ein ganzes Set als eigenes Repository zu teilen:
+Jede eigene Lektion lässt sich teilen. Exportieren geht ohne Konto; für
+den Pull Request an die Community brauchst du ein GitHub-Konto. Ein
+GitHub-Token beschleunigt den Pull Request und ist nötig, um ein ganzes
+Set als eigenes Repository zu teilen:
 
 - **Exportieren** - die Lektion als einzelne `.json`-Datei
   herunterladen.
@@ -100,14 +105,18 @@ Request und ist nötig, um ein ganzes Set als eigenes Repository zu teilen:
   herunterladen (Manifest + Lektionen).
 - **Für die Community bereitstellen** - öffnet einen **Pull Request**
   im offiziellen Inhalts-Repository. Die Lektions-JSON landet am
-  richtigen Pfad im Inhaltsbaum und die Validierung des Repositorys
-  läuft automatisch; ein Maintainer prüft den PR und führt ihn
-  zusammen, sodass alle die Lektion herunterladen können. Der Pull
-  Request entsteht auf einem von zwei Wegen:
-    - **Ohne Token** - kleine Lektionen öffnen direkt den Datei-Editor
-      von GitHub (PR-Titel und -Beschreibung sind vorausgefüllt);
-      größere Lektionen werden zuerst heruntergeladen und öffnen die
-      Upload-Seite von GitHub, auf die du die Datei ziehst. GitHub
+  richtigen Pfad im Inhaltsbaum, und die Validierung des Repositorys
+  läuft automatisch. Der Pull Request ist auf GitHub öffentlich
+  sichtbar, sobald er entsteht. Ein Maintainer prüft ihn; übernimmt er
+  ihn, können alle die Lektion herunterladen. Der Pull Request entsteht
+  auf einem von zwei Wegen:
+    - **Ohne Token** - eine einzelne Lektion öffnet den Datei-Editor
+      von GitHub am richtigen Pfad, PR-Titel und -Beschreibung sind
+      vorausgefüllt. Bei einer kleinen Lektion steckt ihr Inhalt schon
+      in der GitHub-Adresse, die sich öffnet; bei einer größeren lädt
+      die App die Datei zuerst herunter, und du fügst sie im Editor ein.
+      Ein Set mit mehreren Lektionen lädt die Dateien herunter und
+      öffnet die Upload-Seite von GitHub, auf die du sie ziehst. GitHub
       erstellt den Fork und den Pull Request, sobald du dort bestätigst.
     - **Mit GitHub-Token** (Einstellungen > Integrationen, siehe
       [Einstellungen](settings.md#integrationen)) - eine einzelne
@@ -122,12 +131,12 @@ Request und ist nötig, um ein ganzes Set als eigenes Repository zu teilen:
   Repository (`owner/name`), privat oder öffentlich, und den Branch.
   Vorher läuft eine Qualitätsprüfung: findet sie Probleme, die die
   Prüfungen eines Content-Repositorys ablehnen würden, listet sie sie
-  auf, und der Knopf wird zu **Trotzdem exportieren**. Das übertragene
-  Repository kannst du danach als Inhaltsquelle verbinden (siehe
-  [Content-Repositories](../features/content-repos.md)). Das braucht
-  einen GitHub-Token und geht nur in der Browser-Version der App;
-  sonst bleibt der Knopf sichtbar, aber deaktiviert, mit dem Grund als
-  Tooltip.
+  auf, und der Knopf wird zu **Trotzdem exportieren**. Als Repository
+  teilen braucht einen GitHub-Token und geht nur in der Browser-Version
+  der App; sonst bleibt der Knopf sichtbar, aber deaktiviert, mit dem
+  Grund als Tooltip. Das übertragene Repository kannst du danach als
+  Inhaltsquelle verbinden (siehe
+  [Content-Repositories](../features/content-repos.md)).
 
 Exportierte Dateien enthalten nur den Lektionsinhalt - keinen
 Fortschritt, keine Fehlerhistorie, nichts Persönliches.

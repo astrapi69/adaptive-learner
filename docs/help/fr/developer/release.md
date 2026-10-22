@@ -54,15 +54,16 @@ version = "X.Y.Z"
 make sync-versions
 ```
 
-Met à jour **18 fichiers** automatiquement :
+Met à jour automatiquement chaque fichier qui porte la version (la
+liste complète est dans `scripts/sync_versions.py`) :
 
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py`
 - `launcher/adaptive-learner-launcher.spec` (plist CFBundle +
   CFBundleShortVersionString)
-- 10× `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- 3× littéraux `__version__` dans les `__init__.py` des plugins
+- chaque `plugins/adaptive-learner-plugin-*/pyproject.toml`
+- chaque `__init__.py` de plugin avec un littéral `__version__`
 - `install.sh` (régénéré depuis `install.sh.template`)
 - `install.ps1` (régénéré depuis `install.ps1.template`)
 
@@ -100,11 +101,14 @@ Déclenche :
 - `ci.yml` sur le nouveau commit (tests)
 - `release-gate.yml` sur le nouveau tag (vérification de dérive
   des pins de version)
-- `coverage.yml` sur le nouveau commit (HTML de couverture)
 - `deploy-gh-pages.yml` sur le nouveau commit (publication du
   site public)
 - `launcher-{linux,macos,windows}.yml` quand GitHub crée la
   Release à partir du tag
+
+`coverage.yml` ne tourne pas au push, mais chaque nuit et à la
+demande ; pour un rapport sur le commit de release, lance
+`gh workflow run coverage.yml --ref main`.
 
 ### 8. Créer la release GitHub
 
@@ -120,10 +124,11 @@ correspond aux notes de publication commitées à l'étape 2.
 ## Versions des plugins
 
 Les plugins suivent en parallèle la version canonique de
-l'application. Le même numéro dans tous les 10 fichiers
-`pyproject.toml` des plugins. Une future décision
-« core vs plugin tiers » pourrait les dissocier, mais la
-configuration actuelle est uniforme sur les 18 fichiers propagés.
+l'application. Le même numéro dans chaque `pyproject.toml` de
+plugin et dans les littéraux `__version__` des `__init__.py` des
+plugins. Une future décision « core vs plugin tiers » pourrait les
+dissocier, mais la configuration actuelle est uniforme sur tous les
+fichiers propagés.
 
 ## Flux de correctif
 

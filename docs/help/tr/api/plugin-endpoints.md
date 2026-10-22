@@ -3,7 +3,9 @@
 # Eklenti uç noktaları
 
 Her eklentinin rotaları `/api/plugins/{plugin-name}/` altına
-monte edilir.
+monte edilir. Bu sayfa bazı eklentiler için ayrıntılı örnekler
+gösterir; her eklenti rotası [Tüm endpoint'ler](endpoints.md)
+sayfasında listelenir.
 
 ## Değerlendirme eklentisi
 

@@ -169,7 +169,8 @@ Who is learning, and in which languages.
 How exercises behave while you answer.
 
 - **Lesson mode** - the **default mode** (Practice / Exam / Timed), the
-  **exam pass threshold** and the **timed mode difficulty** (Fast,
+  **exam pass threshold** (sets with their own pass mark use that mark
+  in the exam instead) and the **timed mode difficulty** (Fast,
   Normal, Relaxed); see [Lessons and reviews](lessons.md).
 - **Hints** - whether a staged hint button appears on each exercise,
   and the **XP cost per hint** (0 for free hints).
@@ -353,7 +354,10 @@ registered directly) and activation time. A load error or a discovery
 filter shows as a marker on the row, as does a config change after
 activation. In browser mode the card stays visible with a notice that
 only the desktop app has a plugin host. **Learning Repository** holds
-that plugin's settings (git persistence, repository directory).
+that plugin's settings (git persistence, repository directory). If you
+leave the directory empty, the repositories go to the `repos` folder in
+your data directory (see **About > System**); a path you enter is used
+as given.
 
 ## Data
 
@@ -537,8 +541,12 @@ what happened on your device:
   filled in, so GitHub receives it from that moment, before you submit
   the issue there.
 - **Developer Mode** - shows full technical detail (status code,
-  endpoint, stack trace) in error toasts, and a "DEV" badge in the
-  navigation bar while it is on. Its default depends on the build
+  endpoint, stack trace) in error toasts and in error messages shown on
+  the page itself (for example when the curriculum, progress, settings
+  or a session fail to load), and a "DEV" badge in the navigation bar
+  while it is on. When it is off, those places show a plain message
+  instead of the server's technical reply. Its default depends on the
+  build
   strand: it is **ON by default on the Latest (preview) strand** and
   **OFF on Main**, so preview testers see full technical error detail
   while production users get friendly messages. You can flip it either
