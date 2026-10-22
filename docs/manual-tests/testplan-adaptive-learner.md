@@ -3634,7 +3634,10 @@ abschalten geht nur über den Schalter in den Lektionsoptionen.
 Eine Online-Stimme (in Chrome die "Google ..."-Stimmen) schickt den
 vorgelesenen Text an ihren Anbieter. Mit "Standard (auto)" nimmt die App eine
 Stimme des Geräts, sobald es eine für die Sprache gibt; eine selbst gewählte
-Stimme gilt immer.
+Stimme gilt immer. In den ersten Augenblicken nach dem Laden einer Seite kann
+ein Tipp noch mit einer Online-Stimme lesen, weil das Gerät seine eigenen
+Stimmen dann noch nicht bereitgestellt hat; so steht es auch in der
+Datenschutzerklärung.
 
 - [ ] TC-0989 Windows oder macOS, Chrome: Einstellungen > Lernen > Vorlesen und
       Diktieren > Stimme auf "Standard (auto)", eine deutsche Lektion öffnen

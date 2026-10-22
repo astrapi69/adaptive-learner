@@ -3387,7 +3387,9 @@ is done with the toggle in the lesson options only.
 An online voice (in Chrome the "Google ..." voices) sends the text being read
 to its provider. With "Default (auto-pick)" the app takes a voice of the
 device whenever there is one for the language; a voice you choose yourself
-always applies.
+always applies. In the first moments after a page loads, a tap can still read
+with an online voice, because the device has not yet made its own voices
+available; the privacy policy says so too.
 
 - [ ] TC-0989 Windows or macOS, Chrome: Settings > Learning > Reading aloud and
       dictation > Voice set to "Default (auto-pick)", open a German lesson
