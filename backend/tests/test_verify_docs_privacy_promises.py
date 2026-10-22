@@ -453,14 +453,15 @@ LEGITIMATE = [
     (
         "en",
         "3829-faq",
-        "progress, statistics and settings stay in your browser; others get\n   parts of them only "
-        "when a feature you use needs them. The app contacts servers when a feature needs it.",
+        "progress, statistics and settings are stored in your browser; others get\n   parts of "
+        "them only when a feature you use needs them. The app contacts servers when a feature "
+        "needs it.",
     ),
     (
         "de",
         "3829-faq",
-        "Lernfortschritt, Statistiken und Einstellungen bleiben in deinem\n   Browser; andere "
-        "erhalten Teile davon nur, wenn eine Funktion sie braucht, die du nutzt.",
+        "Lernfortschritt, Statistiken und Einstellungen werden in deinem\n   Browser gespeichert; "
+        "andere erhalten Teile davon nur, wenn eine Funktion sie braucht, die du nutzt.",
     ),
 ]
 

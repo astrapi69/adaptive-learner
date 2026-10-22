@@ -166,9 +166,9 @@ sistemidir*:
 6. **Sağlayıcı özgürlüğü** - Anthropic, OpenAI ya da Gemini, ayrıca
    sunucu modunda Perplexity.
 7. **Yerel öncelikli seçenek** - öğrenme ilerlemeniz,
-   istatistikleriniz ve ayarlarınız tarayıcınızda kalır; başkaları
-   bunların bölümlerini yalnızca kullandığınız bir özellik onlara
-   ihtiyaç duyduğunda alır. Uygulama, bir özellik gerektirdiğinde
+   istatistikleriniz ve ayarlarınız tarayıcınızda saklanır;
+   başkaları bunların bölümlerini yalnızca kullandığınız bir özellik
+   onlara ihtiyaç duyduğunda alır. Uygulama, bir özellik gerektirdiğinde
    sunuculara bağlanır; örneğin içerikler için GitHub'a (bağlı
    depoları başlangıçta da eşitler), yapay zeka sağlayıcınıza ve
    bir şey paylaştığınızda ya da bir hata raporunu orada açtığınızda

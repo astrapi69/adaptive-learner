@@ -184,11 +184,11 @@ IA internamente pero añade:
 6. **Libertad de proveedor** - Anthropic, OpenAI o Gemini, más
    Perplexity en modo servidor.
 7. **Opción local primero** - el progreso, las estadísticas y los
-   ajustes se quedan en tu navegador; otros reciben partes de ellos
-   solo cuando las necesita una función que usas. La app se conecta
-   a servidores cuando una función lo necesita, por ejemplo a GitHub
-   para los contenidos (también sincroniza los repositorios
-   conectados al iniciarse), a tu proveedor de IA y a GitHub cuando
+   ajustes se almacenan en tu navegador; otros reciben partes de
+   ellos solo cuando las necesita una función que usas. La app se
+   conecta a servidores cuando una función lo necesita, por ejemplo
+   a GitHub para los contenidos (también sincroniza los repositorios
+   conectados al iniciarse), a tu proveedor de IA, y a GitHub cuando
    compartes algo o abres allí un informe de error. La
    [política de privacidad](../legal/privacy.md) describe qué casos
    son y qué se transfiere.
