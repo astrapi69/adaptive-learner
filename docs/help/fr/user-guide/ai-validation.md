@@ -45,6 +45,14 @@ depuis le navigateur. Il te faut :
 Sans clé, le bouton est visible mais désactivé ; un avis renvoie vers
 les Paramètres.
 
+**Ce qui est envoyé :** la vérification envoie à ton fournisseur les
+cartes de l'ensemble, par exemple le recto, le verso et les notes, avec
+les langues et le niveau de l'ensemble ; ton profil et ta progression
+n'en font pas partie. Comme pour toute requête, ton fournisseur reçoit
+ton adresse IP et ta clé API. La boîte de dialogue le dit avant le
+lancement et renvoie à la
+[Politique de confidentialité](../legal/privacy.md).
+
 > **Coût :** la vérification consomme des jetons sur ton propre compte
 > chez le fournisseur et est facturée aux tarifs de ce fournisseur.
 > Avant le démarrage, la boîte de dialogue affiche une **estimation du
