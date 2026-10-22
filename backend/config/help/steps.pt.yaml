@@ -275,8 +275,8 @@ entries:
 
       - **Terminar a sessão** e avaliá-la (compreensão /
         stress / adequação do método).
-      - **Auto-loop**: um novo ciclo com um novo tópico
-        começa automaticamente.
+      - **Auto-loop** (só na aplicação de desktop): um novo ciclo
+        com um novo tópico começa automaticamente.
       - **Mudança de método**: com baixa adequação do método,
         o sistema recomenda uma mudança de método para o
         próximo ciclo.

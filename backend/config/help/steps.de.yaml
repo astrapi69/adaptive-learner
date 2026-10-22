@@ -285,8 +285,8 @@ entries:
 
       - **Sitzung beenden** und Bewertung abgeben
         (Verständnis / Stress / Methodenpassung).
-      - **Auto-Loop**: ein neuer Zyklus mit neuem Thema
-        startet automatisch.
+      - **Auto-Loop** (nur Desktop-App): ein neuer Zyklus mit
+        neuem Thema startet automatisch.
       - **Methodenwechsel**: bei niedriger Methodenpassung
         empfiehlt das System einen Methodenwechsel für den
         nächsten Zyklus.

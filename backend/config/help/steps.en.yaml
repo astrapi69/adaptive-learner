@@ -272,8 +272,8 @@ entries:
 
       - **End the session** and rate it (understanding /
         stress / method fit).
-      - **Auto-loop**: a new cycle with a new topic starts
-        automatically.
+      - **Auto-loop** (desktop app only): a new cycle with a new
+        topic starts automatically.
       - **Method switch**: at low method fit the system
         recommends a method change for the next cycle.
 

@@ -54,7 +54,7 @@ entries:
 
   - key: feature_auto_loop
     title: Auto-Loop
-    short: "Nach Schritt 7 startet automatisch ein neuer Zyklus mit frischem Inhalt."
+    short: "In der Desktop-App startet nach Schritt 7 automatisch ein neuer Zyklus mit frischem Inhalt; in der Browser-Version bleibt die Sitzung bei Schritt 7."
     long: |
       ## Was ist der Auto-Loop?
 
@@ -62,6 +62,11 @@ entries:
       Sitzung automatisch einen neuen Zyklus zum nachfolgenden
       Thema deines Curriculums starten - ohne dass du den
       "Nächster Zyklus"-Button drücken musst.
+
+      Nur in der Desktop-App: In der Browser-Version bleibt die
+      Sitzung bei Schritt 7, und die Sitzungsseite sagt dir das.
+      Beende dort die Sitzung und starte eine neue, um
+      weiterzulernen.
 
       ## Wie das System das nächste Thema wählt
 

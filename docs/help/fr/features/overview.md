@@ -16,8 +16,10 @@ leurs propres copies de cette liste.
   adapter, répéter, intégrer. Un évaluateur à double prompt juge
   chaque tour et décide d'avancer, de répéter, de sauter en avant ou
   de revenir en arrière.
-- **Auto-loop** : quand un sujet est intégré, la session choisit un
-  nouveau sous-sujet et démarre un cycle frais (plafonné par session).
+- **Auto-loop** (application de bureau) : quand un sujet est intégré,
+  la session choisit un nouveau sous-sujet et démarre un cycle frais
+  (plafonné par session). Dans la version navigateur, la session reste
+  à l'étape 7 ; la page de la session le signale.
 - **Changement de méthode** : la détection de stagnation recommande
   une autre méthode quand les évaluations plafonnent ; acceptation en
   un clic.

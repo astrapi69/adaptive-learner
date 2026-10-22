@@ -267,8 +267,8 @@ entries:
 
       - **Oturumu sonlandırın** ve değerlendirin (anlama /
         stres / yönteme uyum).
-      - **Otomatik döngü**: yeni bir konuyla yeni bir döngü
-        otomatik olarak başlar.
+      - **Otomatik döngü** (yalnızca masaüstü uygulaması): yeni
+        bir konuyla yeni bir döngü otomatik olarak başlar.
       - **Yöntem değişikliği**: düşük yönteme uyum durumunda
         sistem bir sonraki döngü için yöntem değişikliği önerir.
 

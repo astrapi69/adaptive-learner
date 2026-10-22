@@ -56,7 +56,7 @@ entries:
 
   - key: feature_auto_loop
     title: Auto-boucle
-    short: "Après l'étape 7, un nouveau cycle avec du contenu nouveau démarre automatiquement."
+    short: "Dans l'application de bureau, un nouveau cycle avec du contenu nouveau démarre automatiquement après l'étape 7 ; dans la version navigateur, la session reste à l'étape 7."
     long: |
       ## Qu'est-ce que l'auto-boucle ?
 
@@ -64,6 +64,11 @@ entries:
       automatiquement démarrer un nouveau cycle sur le sujet suivant
       de votre curriculum — sans que vous ayez à appuyer sur un bouton
       « cycle suivant ».
+
+      Uniquement dans l'application de bureau : dans la version
+      navigateur, la session reste à l'étape 7, et la page de la
+      session vous l'indique. Terminez-y la session et démarrez-en
+      une nouvelle pour continuer à apprendre.
 
       ## Comment le sujet suivant est choisi
 

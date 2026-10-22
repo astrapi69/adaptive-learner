@@ -16,8 +16,10 @@ propias copias de esta lista.
   comentarios, adaptar, repetir, integrar. Un evaluador de doble
   prompt juzga cada turno y decide si avanzar, repetir, saltar hacia
   adelante o retroceder.
-- **Auto-loop**: cuando un tema queda integrado, la sesión elige un
-  nuevo subtema y arranca un ciclo nuevo (con límite por sesión).
+- **Auto-loop** (app de escritorio): cuando un tema queda integrado, la
+  sesión elige un nuevo subtema y arranca un ciclo nuevo (con límite
+  por sesión). En la versión de navegador la sesión se queda en el paso
+  7; la página de la sesión lo indica.
 - **Cambio de método**: la detección de estancamiento recomienda un
   método distinto cuando las valoraciones se aplanan; se acepta con
   un clic.

@@ -15,8 +15,10 @@ listenin kendi kopyalarını tutmak yerine buraya bağlantı verir.
   uyarlama, tekrar, bütünleştirme. Çift istemli bir değerlendirici
   her turu değerlendirir ve ilerleme, tekrar, ileri atlama ya da geri
   dönme kararını verir.
-- **Otomatik döngü**: bir konu entegre edildiğinde oturum yeni bir
-  alt konu seçer ve taze bir döngü başlatır (oturum başına sınırlı).
+- **Otomatik döngü** (masaüstü uygulaması): bir konu entegre
+  edildiğinde oturum yeni bir alt konu seçer ve taze bir döngü başlatır
+  (oturum başına sınırlı). Tarayıcı sürümünde oturum 7. adımda kalır;
+  oturum sayfası bunu belirtir.
 - **Yöntem değiştirme**: durağanlaşma algılama, puanlar yataya
   döndüğünde farklı bir yöntem önerir; tek tıkla kabul.
 - Altı yöntemli bir öğrenme profili hesaplayan **yerleştirme

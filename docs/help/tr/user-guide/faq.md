@@ -95,6 +95,10 @@ her geçişte kesik kenarlı "Döngü N" kartları gösterir. Oturum sonu
 derecelendirme iletişim kutusu, `cycle_count > 1` olduğunda çok döngülü
 yolculuğu özetler.
 
+Yalnızca masaüstü uygulamasında: Tarayıcı sürümünde oturum 7. adımda
+kalır ve oturum sayfası bunu belirtir. Oturumu orada bitirin ve yeni bir
+oturum başlatın.
+
 ## Verilerimi dışa aktarabilir miyim?
 
 Evet. Üç dışa aktarma yolu geldi:

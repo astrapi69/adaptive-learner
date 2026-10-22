@@ -18,8 +18,10 @@ desta lista.
   feedback, adaptar, repetir, integrar. Um avaliador de
   prompt duplo julga cada interação e decide se avança, repete, salta
   à frente ou recua.
-- **Auto-loop**: quando um tema fica integrado, a sessão escolhe um
-  novo subtema e inicia um ciclo fresco (com limite por sessão).
+- **Auto-loop** (aplicação de ambiente de trabalho): quando um tema
+  fica integrado, a sessão escolhe um novo subtema e inicia um ciclo
+  fresco (com limite por sessão). Na versão de navegador, a sessão fica
+  no passo 7; a página da sessão indica-o.
 - **Mudança de método**: a deteção de estagnação recomenda um método
   diferente quando as avaliações estagnam; aceitação com um clique.
 - **Avaliação de nivelamento** (opcional, retomável) que calcula um

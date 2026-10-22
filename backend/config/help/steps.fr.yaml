@@ -268,8 +268,8 @@ entries:
 
       - **Terminer la session** et l'évaluer (compréhension / stress
         / adéquation de la méthode).
-      - **Auto-boucle** : un nouveau cycle avec un nouveau sujet
-        démarre automatiquement.
+      - **Auto-boucle** (application de bureau uniquement) : un
+        nouveau cycle avec un nouveau sujet démarre automatiquement.
       - **Changement de méthode** : en cas de faible adéquation,
         le système recommande un changement pour le prochain cycle.
 

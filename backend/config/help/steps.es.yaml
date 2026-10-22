@@ -264,8 +264,8 @@ entries:
 
       - **Terminar la sesión** y calificarla (comprensión / estrés /
         adecuación del método).
-      - **Auto-bucle**: un nuevo ciclo con un nuevo tema comienza
-        automáticamente.
+      - **Auto-bucle** (solo en la aplicación de escritorio): un
+        nuevo ciclo con un nuevo tema comienza automáticamente.
       - **Cambio de método**: con baja adecuación del método, el
         sistema recomienda un cambio para el siguiente ciclo.
 
