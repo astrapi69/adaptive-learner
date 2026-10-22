@@ -107,9 +107,14 @@ Handy-Startbildschirm aus startest.
 
 ### 2. Desktop-App (nativer Launcher)
 
-Vorgebaute Single-Binary-Executables, die das Backend
-hochfahren und die App in deinem Standardbrowser öffnen.
-Kein Docker, kein Terminal nötig.
+Vorgebaute Single-Binary-Executables, die das Backend für
+dich verwalten und die App in deinem Standardbrowser öffnen.
+Der Launcher steuert Docker selbst: Docker muss installiert
+sein und laufen, Docker- oder Compose-Befehle brauchst du
+aber keine. Die Startanleitung je Plattform (Ausführungsrecht
+unter Linux, Gatekeeper unter macOS, SmartScreen unter
+Windows, Prüfsumme verifizieren) steht unter
+[Desktop-Launcher starten](https://astrapi69.github.io/adaptive-learner/docs/install/launcher/).
 
 Download vom
 [**neuesten GitHub-Release**](https://github.com/astrapi69/adaptive-learner/releases/latest):
@@ -156,6 +161,13 @@ Beide Skripte klonen das getaggte Release nach
 rest), bauen die Docker-Images und starten den Stack unter
 `http://localhost:8501` (ein Port, ein Container; FastAPI
 liefert das statische Frontend und `/api/*` selbst).
+Standardmäßig ist der Port an `127.0.0.1` gebunden, die App
+ist also nur von diesem Rechner aus erreichbar. Sie hat keine
+Anmeldung: Um sie von anderen Geräten aus zu erreichen, setze
+bewusst `ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` in
+`~/adaptive-learner/.env`, nur in einem Netz, dem du
+vertraust, oder hinter einer eigenen Anmeldeschicht (Reverse
+Proxy mit Basic Auth, VPN).
 
 ```bash
 cd ~/adaptive-learner
