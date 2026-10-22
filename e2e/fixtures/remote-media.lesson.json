@@ -1,0 +1,59 @@
+{
+  "id": "01-mitose",
+  "title": "Mitose: wie sich eine Zelle teilt",
+  "description": "Referenz-Lektion für Inhalte von fremden Servern (#3803): ein Theorie-Schritt mit einem Markdown-Bild von einem fremden Host, eine Übung, ein YouTube-Video und ein Artikel unter \"Vertiefe das Thema\". Die App lädt davon nichts, bis die lernende Person einen Link anklickt.",
+  "target_language": "de",
+  "source_language": "de",
+  "domain": "knowledge",
+  "estimated_minutes": 3,
+  "cards": [
+    {
+      "id": "mitose",
+      "front": "Mitose",
+      "back": "Teilung des Zellkerns in zwei Kerne mit gleicher Erbinformation",
+      "media_type": "text",
+      "difficulty": 1,
+      "tags": ["zellbiologie"]
+    }
+  ],
+  "resources": [
+    {
+      "type": "youtube",
+      "title": "Mitose in fünf Minuten",
+      "url": "https://www.youtube.com/watch?v=00000000000",
+      "language": "de",
+      "duration": "5min",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Zellteilung im Überblick",
+      "url": "https://example.com/zellteilung",
+      "language": "de",
+      "free": true
+    }
+  ],
+  "steps": [
+    {
+      "id": "step-mitose",
+      "type": "theory",
+      "title": "Die vier Phasen",
+      "body": "Bei der **Mitose** teilt sich der Zellkern in vier Phasen: Prophase, Metaphase, Anaphase und Telophase.\n\n![Skizze der vier Mitose-Phasen](https://example.com/mitose-phasen.png)\n\nDanach liegen zwei Kerne mit derselben Erbinformation vor."
+    },
+    {
+      "id": "ex-mitose",
+      "type": "exercise",
+      "exercise": {
+        "id": "ex-mitose",
+        "type": "multiple_choice",
+        "prompt": "Was entsteht bei der Mitose?",
+        "card_ids": ["mitose"],
+        "options": [
+          {"text": "Zwei Kerne mit gleicher Erbinformation", "correct": true},
+          {"text": "Vier Kerne mit halber Erbinformation"},
+          {"text": "Ein Kern mit doppelter Erbinformation"}
+        ]
+      }
+    }
+  ]
+}

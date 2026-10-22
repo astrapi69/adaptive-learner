@@ -7,6 +7,7 @@ export * from "./BlockMarkdown";
 export {default as BlockMarkdown} from "./BlockMarkdown";
 export * from "./InlineMarkdown";
 export {default as InlineMarkdown} from "./InlineMarkdown";
+export {default as MarkdownImage} from "./MarkdownImage";
 export * from "./ProgressBar";
 export {default as ProgressBar} from "./ProgressBar";
 export * from "./ProgressByPair";

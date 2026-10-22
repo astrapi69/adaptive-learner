@@ -33,7 +33,7 @@ import {
     HOTSPOT_EXT_TYPE,
     type HotspotZone,
 } from "../../../../lib/exercises/payload/hotspot";
-import {isRemoteImageUrl} from "../../../../lib/exercises/payload/image-description";
+import {isRemoteImageUrl} from "../../../../lib/media/remote-image";
 import {deriveHotspotAttempt} from "../../../../lib/srs/element-attempt";
 import ExercisePromptRow from "../../shell/ExercisePromptRow";
 import ExerciseHint from "../../feedback/ExerciseHint";

@@ -3382,7 +3382,7 @@ is done with the toggle in the lesson options only.
 - [ ] TC-0962 Switch the toggle in the lesson options off and open another lesson:
       "Auto read-aloud" stays off
 
-#### TS-0138 Read-aloud takes a voice of the device (#3805)
+#### TS-0139 Read-aloud takes a voice of the device (#3805)
 
 An online voice (in Chrome the "Google ..." voices) sends the text being read
 to its provider. With "Default (auto-pick)" the app takes a voice of the
@@ -3391,20 +3391,20 @@ always applies. In the first moments after a page loads, a tap can still read
 with an online voice, because the device has not yet made its own voices
 available; the privacy policy says so too.
 
-- [ ] TC-0989 Windows or macOS, Chrome: Settings > Learning > Reading aloud and
+- [ ] TC-0995 Windows or macOS, Chrome: Settings > Learning > Reading aloud and
       dictation > Voice set to "Default (auto-pick)", open a German lesson
       and have the theory step read with the read-aloud button, with the R
       key, with "Read all" and with "Auto read-aloud" on: a system voice
       reads (to compare, briefly pick "Google Deutsch" in the list: the two
       sound clearly different)
-- [ ] TC-0990 "Auto read-aloud" on: close the browser completely, reopen it, open
+- [ ] TC-0996 "Auto read-aloud" on: close the browser completely, reopen it, open
       the lesson straight from the dashboard, without visiting Settings
       first: the very first step is read by a system voice, not "Google
       Deutsch", and R then reads with it as well
-- [ ] TC-0991 Pick "Google Deutsch" in the list: button, R key and "Read all" read
+- [ ] TC-0997 Pick "Google Deutsch" in the list: button, R key and "Read all" read
       with "Google Deutsch" (your own choice applies, also for an online
       voice)
-- [ ] TC-0992 Chrome on Linux (offers only online voices on its own): with "Default
+- [ ] TC-0998 Chrome on Linux (offers only online voices on its own): with "Default
       (auto-pick)" the app still reads aloud, then with "Google Deutsch"
 
 #### TS-0133 "Install as an app" hint as a card on the dashboard (#3765)
@@ -3937,6 +3937,38 @@ Documented here only to show what is covered.
 - [ ] TC-0948 Browser history (long-press the back button): the entries carry
       different page names instead of one identical title
 
+### TS-0138 Content loads nothing from other servers (#3803)
+
+Preparation: import a lesson as `.json` through My content → "Import
+Lesson" whose `resources` carry an entry of type `youtube` with a
+`youtube.com/watch?v=` address and whose theory step contains an image
+`![Skizze](https://example.com/skizze.png)`. Keep the Network tab of the
+developer tools open.
+
+- [ ] TC-0989 Play the lesson to the summary: the video card under "Explore further"
+      ("Vertiefe das Thema") shows a video icon instead of a preview image,
+      and the network shows no request to `img.youtube.com`. A click on the
+      card opens the video on YouTube in a new tab
+- [ ] TC-0990 Theory step: the image shows as a link with an image icon and the text
+      "Skizze", not as an image; the network shows no request to
+      `example.com` until the link is clicked (new tab). The same holds for
+      an image in an explanation after an exercise and in an AI reply in the
+      session chat
+- [ ] TC-0991 In the text editor (e.g. Rate this session → note) paste an image from a web
+      page: it is not loaded, the network shows no request to the other
+      server
+- [ ] TC-0992 Create lesson, hotspot exercise: under "Advanced: use an asset path"
+      enter `https://example.com/karte.png`. Instead of the image and the
+      drawing canvas a link with an image icon and the text "Stimulus image"
+      appears; the network shows no request to `example.com` until the link
+      is clicked. An uploaded image shows the canvas as before
+- [ ] TC-0993 A set with its own images (a picture-choice exercise with images from
+      `assets/`) shows its images as before
+- [ ] TC-0994 GitHub Pages version in normal use: the console shows no
+      Content-Security-Policy message, content loads from the repositories,
+      AI replies with your own key arrive, and after a reload without network
+      the app still starts (service worker)
+
 ## Automated: Unit + Component Tests (Vitest, 7200+;
 ## current number see docs/audits/current-coverage.md)
 
@@ -3979,7 +4011,7 @@ Run: `make test` (backend part)
 
 ---
 
-## Automated: Dexie-Smoke E2E (Playwright TS, 45 spec files)
+## Automated: Dexie-Smoke E2E (Playwright TS, every spec file under `e2e/dexie/`)
 
 Coverage:
 - Full lesson playthrough (all exercise types)
@@ -3999,6 +4031,10 @@ Coverage:
   (`lesson-summary-favorite.spec.ts`, #1649)
 - Combine lessons: select -> dialog -> new set persisted, originals kept
   (`combine-lessons.spec.ts`, #1741)
+- No request to an unlisted host on the main surfaces and in a lesson with
+  foreign images, YouTube resources and an AI reply; set images load, the
+  page's Content-Security-Policy refuses foreign images and media, no
+  Referer to third parties (`external-hosts.spec.ts`, #3803)
 
 Run: `make test-dexie-smoke`
 

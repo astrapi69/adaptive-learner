@@ -36,6 +36,10 @@ import {
     readExplanationsEnabled,
     REVIEW_PREF_CHANGE_EVENT,
 } from "../../../lib/review/reviewPref";
+import MarkdownImage from "../../../shared/data-display/MarkdownImage";
+
+/** Another host's image in an explanation becomes a link (#3803). */
+const MARKDOWN_COMPONENTS = {img: MarkdownImage};
 
 /** How the exercise was resolved, which decides the initial fold state. */
 export type ExplanationOutcome = "correct" | "incorrect" | "reviewed";
@@ -124,7 +128,9 @@ export default function ExerciseExplanation({
                     className="border-t border-[var(--border-subtle)] px-3 py-3 text-[0.95rem] leading-relaxed [&_ol]:mb-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 [&_p:last-child]:mb-0 [&_ul]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ul:last-child]:mb-0"
                     data-testid={bodyId}
                 >
-                    <Markdown remarkPlugins={[remarkGfm]}>{body}</Markdown>
+                    <Markdown remarkPlugins={[remarkGfm]} components={MARKDOWN_COMPONENTS}>
+                        {body}
+                    </Markdown>
                 </div>
             )}
         </section>

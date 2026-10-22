@@ -12,7 +12,12 @@
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import MarkdownImage from "../../shared/data-display/MarkdownImage";
+
 type Translate = (key: string, fallback?: string) => string;
+
+/** A screenshot in the notes stays a link until clicked (#3803). */
+const MARKDOWN_COMPONENTS = { img: MarkdownImage };
 
 /** Default character cap before truncation. */
 export const RELEASE_NOTES_LIMIT = 500;
@@ -49,7 +54,9 @@ export default function ReleaseNotes({
   return (
     <div data-testid="release-notes" className="text-sm text-fg-secondary">
       <div className="prose-sm max-w-none break-words [&_a]:text-accent [&_code]:text-fg-primary">
-        <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
+        <Markdown remarkPlugins={[remarkGfm]} components={MARKDOWN_COMPONENTS}>
+          {text}
+        </Markdown>
       </div>
       {truncated && releaseUrl && (
         <a

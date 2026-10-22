@@ -3629,7 +3629,7 @@ abschalten geht nur über den Schalter in den Lektionsoptionen.
 - [ ] TC-0962 Den Schalter in den Lektionsoptionen ausschalten und eine andere Lektion
       öffnen: "Automatisch vorlesen" bleibt aus
 
-#### TS-0138 Vorlesen nimmt eine Stimme des Geräts (#3805)
+#### TS-0139 Vorlesen nimmt eine Stimme des Geräts (#3805)
 
 Eine Online-Stimme (in Chrome die "Google ..."-Stimmen) schickt den
 vorgelesenen Text an ihren Anbieter. Mit "Standard (auto)" nimmt die App eine
@@ -3639,21 +3639,21 @@ ein Tipp noch mit einer Online-Stimme lesen, weil das Gerät seine eigenen
 Stimmen dann noch nicht bereitgestellt hat; so steht es auch in der
 Datenschutzerklärung.
 
-- [ ] TC-0989 Windows oder macOS, Chrome: Einstellungen > Lernen > Vorlesen und
+- [ ] TC-0995 Windows oder macOS, Chrome: Einstellungen > Lernen > Vorlesen und
       Diktieren > Stimme auf "Standard (auto)", eine deutsche Lektion öffnen
       und den Theorieschritt mit dem Vorlese-Knopf, mit der Taste R, mit
       "Alle vorlesen" und mit eingeschaltetem "Automatisch vorlesen"
       vorlesen lassen: es liest eine Systemstimme (zum Vergleich in der
       Liste kurz "Google Deutsch" wählen: die beiden klingen hörbar
       verschieden)
-- [ ] TC-0990 "Automatisch vorlesen" eingeschaltet: Browser ganz schließen, neu
+- [ ] TC-0996 "Automatisch vorlesen" eingeschaltet: Browser ganz schließen, neu
       öffnen, die Lektion direkt vom Dashboard aus öffnen, ohne vorher die
       Einstellungen zu besuchen: schon den ersten Schritt liest die
       Systemstimme, nicht "Google Deutsch", und R liest danach ebenso mit ihr
-- [ ] TC-0991 In der Liste "Google Deutsch" wählen: Knopf, Taste R und "Alle
+- [ ] TC-0997 In der Liste "Google Deutsch" wählen: Knopf, Taste R und "Alle
       vorlesen" lesen mit "Google Deutsch" (die eigene Wahl gilt, auch für
       eine Online-Stimme)
-- [ ] TC-0992 Chrome unter Linux (bietet von sich aus nur Online-Stimmen an): mit
+- [ ] TC-0998 Chrome unter Linux (bietet von sich aus nur Online-Stimmen an): mit
       "Standard (auto)" liest die App weiterhin vor, dann mit "Google
       Deutsch"
 
@@ -4212,6 +4212,39 @@ Hier nur zur Dokumentation was abgedeckt ist.
 - [ ] TC-0948 Browser-Verlauf (Zurück-Knopf lange drücken): die Einträge tragen
       unterschiedliche Seitennamen statt eines gleichen Titels
 
+### TS-0138 Inhalte laden nichts von fremden Servern (#3803)
+
+Vorbereitung: eine Lektion als `.json` über Meine Inhalte → "Lektion
+importieren" einspielen, deren `resources` einen Eintrag vom Typ `youtube`
+mit einer `youtube.com/watch?v=`-Adresse tragen und deren Theorie-Schritt
+ein Bild `![Skizze](https://example.com/skizze.png)` enthält. In den
+Entwicklerwerkzeugen den Netzwerk-Reiter offen lassen.
+
+- [ ] TC-0989 Lektion bis zur Zusammenfassung spielen: die Video-Karte unter "Vertiefe
+      das Thema" zeigt ein Video-Symbol statt eines Vorschaubilds, und das
+      Netzwerk zeigt keine Anfrage an `img.youtube.com`. Ein Klick auf die
+      Karte öffnet das Video auf YouTube in einem neuen Tab
+- [ ] TC-0990 Theorie-Schritt: das Bild erscheint als Link mit Bild-Symbol und dem Text
+      "Skizze", nicht als Bild; das Netzwerk zeigt keine Anfrage an
+      `example.com`, bis der Link angeklickt wird (neuer Tab). Dasselbe gilt
+      für ein Bild in einer Erklärung nach einer Übung und in einer
+      KI-Antwort im Sitzungs-Chat
+- [ ] TC-0991 Im Texteditor (z. B. Sitzung bewerten → Notiz) ein Bild von einer Webseite
+      hineinkopieren: es wird nicht geladen, das Netzwerk zeigt keine Anfrage
+      an den fremden Server
+- [ ] TC-0992 Lektion erstellen, Hotspot-Übung: unter "Erweitert: Asset-Pfad verwenden"
+      die Adresse `https://example.com/karte.png` eintragen. Statt des Bildes
+      und der Zeichenfläche erscheint ein Link mit Bild-Symbol und dem Text
+      "Stimulus-Bild"; das Netzwerk zeigt keine Anfrage an `example.com`,
+      bis der Link angeklickt wird. Ein hochgeladenes Bild zeigt die
+      Zeichenfläche wie bisher
+- [ ] TC-0993 Ein Set mit eigenen Bildern (Bildauswahl-Übung mit Bildern aus `assets/`)
+      zeigt seine Bilder wie bisher
+- [ ] TC-0994 GitHub-Pages-Version im normalen Gebrauch: die Konsole zeigt keine
+      Content-Security-Policy-Meldung, Inhalte laden aus den Repositories,
+      KI-Antworten mit eigenem Schlüssel kommen an, und nach einem Neuladen
+      ohne Netz startet die App weiterhin (Service Worker)
+
 ## Automatisiert: Unit + Component Tests (Vitest, 7200+;
 ## aktuelle Zahl siehe docs/audits/current-coverage.md)
 
@@ -4254,7 +4287,7 @@ Ausführen: `make test` (Backend-Teil)
 
 ---
 
-## Automatisiert: Dexie-Smoke E2E (Playwright TS, 45 Spec-Dateien)
+## Automatisiert: Dexie-Smoke E2E (Playwright TS, alle Spec-Dateien unter `e2e/dexie/`)
 
 Abdeckung:
 - Vollständiger Lesson-Playthrough (alle Exercise-Typen)
@@ -4274,6 +4307,11 @@ Abdeckung:
   (`lesson-summary-favorite.spec.ts`, #1649)
 - Lektionen kombinieren: Auswahl -> Dialog -> neues Set persistiert,
   Originale bleiben erhalten (`combine-lessons.spec.ts`, #1741)
+- Keine Anfrage an einen nicht gelisteten Host auf den Hauptseiten und in
+  einer Lektion mit fremden Bildern, YouTube-Ressourcen und KI-Antwort;
+  Set-Bilder laden, die Content-Security-Policy der Seite weist fremde
+  Bilder und Medien ab, kein Referer an Dritte
+  (`external-hosts.spec.ts`, #3803)
 
 Ausführen: `make test-dexie-smoke`
 
