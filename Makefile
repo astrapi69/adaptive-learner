@@ -40,6 +40,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        verify-i18n-scripts \
        sync-schema sync-schema-check sync-schema-mirror engine-parity-check \
        sync-openapi sync-openapi-check emit-spa-routes \
+       sync-data-model sync-data-model-check \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
@@ -758,6 +759,12 @@ sync-openapi: ## Regenerate the committed OpenAPI snapshot schema/openapi.json f
 sync-openapi-check: ## Exit non-zero if the app's OpenAPI spec drifts from the committed snapshot (#2281; fails closed, asserts the full plugin set)
 	@cd backend && poetry run python ../scripts/sync_openapi.py --check
 
+sync-data-model: ## Regenerate the ER diagrams of the data model, docs/help/<lang>/developer/data-model.md, from the models, the Dexie schema and scripts/data_model_areas.yaml (#3828)
+	@cd backend && poetry run python ../scripts/generate_er_diagrams.py
+
+sync-data-model-check: ## Exit non-zero on a stale data-model page, a table or store without an area, or an unresolved *_id field (#3828; fails closed)
+	@cd backend && poetry run python ../scripts/generate_er_diagrams.py --check
+
 engine-parity-check: ## Exit non-zero if schema/*.json differs from the pinned learn-content-engine release (mirror decoupling; network)
 	@python3 scripts/check_engine_schema_parity.py
 
@@ -917,6 +924,7 @@ ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-
 	@echo "== docker context"      && $(MAKE) --no-print-directory verify-docker-context
 	@echo "== file sizes"          && $(MAKE) --no-print-directory check-file-sizes
 	@echo "== openapi snapshot"    && $(MAKE) --no-print-directory sync-openapi-check
+	@echo "== data model diagrams" && $(MAKE) --no-print-directory sync-data-model-check
 	@echo ""
 	@echo "All build-free gates passed. Two gates need a frontend build and"
 	@echo "installed deps, so they are NOT in this target: 'make check-dead-classnames'"
@@ -1105,6 +1113,9 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo ""
 	@echo "=== Lesson-schema drift gate (sync-schema --check, EXP-039) ==="
 	@$(MAKE) sync-schema-check
+	@echo ""
+	@echo "=== Data-model diagram drift gate (sync-data-model-check, #3828) ==="
+	@$(MAKE) sync-data-model-check
 	@echo ""
 	@echo "=== Plugin lockfile drift (verify-plugin-locks) ==="
 	@$(MAKE) verify-plugin-locks
