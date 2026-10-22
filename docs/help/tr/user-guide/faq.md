@@ -4,10 +4,11 @@
 
 ## Verilerim güvende mi?
 
-**Yerel modda** tüm verileriniz kendi cihazınızdaki IndexedDB'de bulunur.
-Arka uç yok, üçüncü taraf hizmet yok. Tarayıcı sekmesini kapatmak onu
-silmez; site verilerini temizlemek siler. Cihazı paylaşıyorsanız,
-bu tarayıcı profiline erişimi olan herkes okuyabilir.
+**Yerel modda** tüm verileriniz kendi cihazınızdaki IndexedDB'de, arada
+bir arka uç olmadan saklanır; başkaları bunların bölümlerini yalnızca
+kullandığınız bir özellik onlara ihtiyaç duyduğunda alır. Tarayıcı
+sekmesini kapatmak onu silmez; site verilerini temizlemek siler. Cihazı
+paylaşıyorsanız, bu tarayıcı profiline erişimi olan herkes okuyabilir.
 
 **Sunucu modunda** veriler, FastAPI arka ucunun yönettiği SQLite
 veritabanında bulunur. API anahtarları, `ADAPTIVE_LEARNER_SECRET_KEY`

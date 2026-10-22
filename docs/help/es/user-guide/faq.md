@@ -2,8 +2,9 @@
 
 ## ¿Están seguros mis datos?
 
-En el **modo Local** todos tus datos residen en IndexedDB en tu
-propio dispositivo. Sin backend, sin servicio de terceros. Cerrar
+En el **modo Local** todos tus datos se almacenan en IndexedDB en
+tu propio dispositivo, sin backend de por medio; otros reciben
+partes de ellos solo cuando las necesita una función que usas. Cerrar
 la pestaña del navegador no los elimina; borrar los datos del
 sitio sí lo hace. Si compartes el dispositivo, cualquiera con
 acceso a este perfil del navegador puede leerlos.

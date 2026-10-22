@@ -3,7 +3,8 @@
 ## Sind meine Daten sicher?
 
 Im **Lokal-Modus** liegen alle deine Daten in IndexedDB auf
-deinem eigenen Gerät. Kein Backend, kein Drittanbieter. Den
+deinem eigenen Gerät, ohne Backend dazwischen; andere erhalten
+Teile davon nur, wenn eine Funktion sie braucht, die du nutzt. Den
 Browser-Tab zu schließen löscht nichts; Site-Daten zu löschen
 schon. Auf einem geteilten Gerät kann jeder mit Zugriff auf
 dieses Browser-Profil sie lesen.

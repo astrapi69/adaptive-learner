@@ -2,8 +2,9 @@
 
 ## Is my data safe?
 
-In **Local mode** all your data lives in IndexedDB on your own
-device. No backend, no third-party service. Closing the
+In **Local mode** all your data is stored in IndexedDB on your
+own device, with no backend in between; others get parts of it
+only when a feature you use needs them. Closing the
 browser tab doesn't delete it; clearing site data does. If you
 share the device, anyone with access to this browser profile
 can read it.
