@@ -258,6 +258,10 @@ yoktur.
 ## Gizlilik
 
 Tüm ders ilerlemeleri, öğe-hata satırları, tekrar-kuyruğu durumları ve
-planlama verileri **kendi cihazında** kalır - dosya sisteminde (API
-modu) ya da tarayıcıda (IndexedDB). Hangi kelimelerle zorlandığına dair
-hiçbir şey herhangi bir yere gönderilmez.
+planlama verileri **sende** kalır: tarayıcıda (IndexedDB) ya da API
+modunda kendi arka ucunun veritabanında. Başkaları bunların bölümlerini
+yalnızca kullandığın bir özellik onlara ihtiyaç duyduğunda alır.
+Örneğin bir yapay zeka öğrenme oturumu, yapay zeka sağlayıcına son
+hatalarını, her birini cevabın, doğru cevap ve kaç kez yaptığınla
+birlikte gönderir. [Gizlilik politikası](../legal/privacy.md), hangi
+verilerin cihazından ne zaman çıktığını açıklar.
