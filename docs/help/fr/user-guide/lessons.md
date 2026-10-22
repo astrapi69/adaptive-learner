@@ -78,7 +78,13 @@ badge ne change ni la notation ni l'ordre.
 
 Une barre de progression en haut suit ta position dans la leçon.
 Tu peux t'arrêter à tout moment - ta progression est enregistrée
-par étape et reprend là où tu t'es arrêté.
+par étape et reprend là où tu t'es arrêté. L'exception est l'examen :
+un examen commencé ne compte que s'il est fait d'une traite, il
+recommence donc depuis le début quand tu le rouvres. Une session
+commencée dans un autre mode ne se poursuit pas non plus en examen,
+ni une session d'examen en entraînement ; la leçon recommence alors.
+Tu peux encore changer de mode jusqu'à la première réponse de la
+session.
 
 ### Raccourci Entrée
 
@@ -110,6 +116,10 @@ leçon** apparaît :
   - **2 étoiles** ≥ 75 %
   - **1 étoile** ≥ 50 %
   - **0 étoile** en dessous de 50 %
+
+  Dans un examen avec des règles d'évaluation propres à l'ensemble, il
+  n'y a pas de note en étoiles ; c'est le verdict de l'ensemble qui
+  compte.
 - Une **décomposition exercice par exercice** (l'aperçu des réponses
   de l'évaluation détaillée), qui montre quels exercices tu as réussis
   et lesquels contenaient des erreurs (avec la bonne réponse pour les

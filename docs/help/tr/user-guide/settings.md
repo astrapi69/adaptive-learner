@@ -175,7 +175,8 @@ Kim öğreniyor ve hangi dillerde.
 Sen yanıtlarken alıştırmaların nasıl davrandığı.
 
 - **Ders modu** - **Varsayılan mod** (Alıştırma / Sınav / Süreli),
-  sınavın **Geçme eşiği** ve **Süreli mod zorluğu** (Hızlı, Normal,
+  sınavın **Geçme eşiği** (kendi geçme eşiği olan setler sınavda o
+  eşiği kullanır) ve **Süreli mod zorluğu** (Hızlı, Normal,
   Rahat); bkz. [Dersler ve tekrarlar](lessons.md).
 - **İpuçları** - her alıştırmada kademeli bir ipucu düğmesinin görünüp
   görünmeyeceği ve **İpucu başına XP maliyeti** (ücretsiz ipuçları

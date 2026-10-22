@@ -51,7 +51,14 @@ du geübt hast:
   kommt gebündelt am Ende, mit einer eigenen
   **Ergebnisansicht**, einem **Bestanden/Nicht-bestanden-
   Urteil** gegen eine konfigurierbare **Bestehensschwelle**
-  und einem **Bonus-XP** für das Bestehen.
+  und einem **Bonus-XP** für das Bestehen. Bringt das Set
+  eigene Bewertungsregeln mit, gelten in der Prüfung diese
+  statt deiner Bestehensschwelle: ein Bestanden/Nicht-bestanden
+  mit der Grenze des Sets, eine Note oder ein Prozentwert mit
+  empfohlener Grenze. Die Ergebnisansicht sagt dann, dass die
+  Regeln des Sets angewendet wurden. Vor der ersten Antwort
+  erinnert ein Hinweis daran, dass du erst am Ende siehst, ob
+  eine Antwort richtig war, und nicht zurückblättern kannst.
 - **Auf Zeit (Timed)** - ein Countdown pro Übung. Die
   Schwierigkeit ist wählbar: **Entspannt** (2× Zeit),
   **Normal** oder **Schnell** (0,7× Zeit). Läuft die Zeit
@@ -137,7 +144,13 @@ sind Primzahlen? 2, 4, 5, 9"* schreiben, ohne einen eigenen
 Eine Fortschrittsanzeige oben verfolgt, wie weit du in der
 Lektion bist. Du kannst jederzeit aufhören - dein
 Fortschritt wird pro Schritt gespeichert und setzt dort
-fort, wo du aufgehört hast.
+fort, wo du aufgehört hast. Ausnahme ist die Prüfung: Eine
+angefangene Prüfung zählt nur in einem Zug, deshalb beginnt
+sie beim erneuten Öffnen von vorn. Auch eine Runde, die in
+einem anderen Modus begonnen wurde, setzt nicht als Prüfung
+fort, und eine Prüfungsrunde nicht als Übung; die Lektion
+beginnt dann neu. Den Modus kannst du bis zur ersten Antwort
+einer Runde noch wechseln.
 
 ### Enter-Shortcut
 
@@ -170,6 +183,10 @@ Wenn die letzte Übung abgeschlossen ist, erscheint die
   - **2 Sterne** ≥ 75 %
   - **1 Stern** ≥ 50 %
   - **0 Sterne** unter 50 %
+
+  In einer Prüfung mit eigenen Bewertungsregeln des Sets
+  entfällt die Sterne-Bewertung; dort gilt das Urteil des
+  Sets.
 - Eine **Übungs-für-Übung-Aufschlüsselung** (die Antworten-Übersicht
   in der ausführlichen Auswertung), die zeigt, welche Übungen du
   bestanden hast und welche Fehler enthielten (mit der richtigen Antwort

@@ -180,7 +180,8 @@ Wer lernt, und in welchen Sprachen.
 Wie sich Übungen beim Beantworten verhalten.
 
 - **Lektionsmodus** - der **Standardmodus** (Üben / Prüfung / Auf Zeit),
-  die **Bestehens-Grenze** der Prüfung und die
+  die **Bestehens-Grenze** der Prüfung (Sets mit eigener
+  Bestehensgrenze verwenden in der Prüfung stattdessen diese) und die
   **Zeitmodus-Schwierigkeit** (Schnell, Normal, Entspannt); siehe
   [Lektionen und Wiederholungen](lessons.md).
 - **Tipps** - ob bei jeder Übung ein gestufter Tipp-Button erscheint,

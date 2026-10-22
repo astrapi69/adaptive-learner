@@ -75,7 +75,12 @@ pontuação nem a ordem.
 
 Um indicador de progresso no topo acompanha até onde estás na
 lição. Podes parar a qualquer momento - o teu progresso é guardado
-por passo e continua de onde paraste.
+por passo e continua de onde paraste. A exceção é o exame: um exame
+iniciado só conta quando é feito de uma vez, por isso recomeça do
+início quando o voltas a abrir. Uma tentativa iniciada noutro modo
+também não continua como exame, nem uma tentativa de exame como
+prática; a lição recomeça nesse caso. Podes ainda mudar de modo até
+à primeira resposta da tentativa.
 
 ### Atalho Enter
 
@@ -107,6 +112,9 @@ lição**:
   - **2 estrelas** ≥ 75 %
   - **1 estrela** ≥ 50 %
   - **0 estrelas** abaixo de 50 %
+
+  Num exame com regras de avaliação próprias do conjunto não há
+  classificação por estrelas; vale o veredicto do conjunto.
 - Um **detalhamento exercício a exercício** (a visão geral das
   respostas na avaliação detalhada) que mostra quais exercícios
   passaste e quais continham erros (com a resposta correta para os

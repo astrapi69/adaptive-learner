@@ -169,7 +169,8 @@ Who is learning, and in which languages.
 How exercises behave while you answer.
 
 - **Lesson mode** - the **default mode** (Practice / Exam / Timed), the
-  **exam pass threshold** and the **timed mode difficulty** (Fast,
+  **exam pass threshold** (sets with their own pass mark use that mark
+  in the exam instead) and the **timed mode difficulty** (Fast,
   Normal, Relaxed); see [Lessons and reviews](lessons.md).
 - **Hints** - whether a staged hint button appears on each exercise,
   and the **XP cost per hint** (0 for free hints).

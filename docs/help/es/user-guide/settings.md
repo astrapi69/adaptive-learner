@@ -185,7 +185,9 @@ Quién aprende y en qué idiomas.
 Cómo se comportan los ejercicios mientras respondes.
 
 - **Modo de lección** - el **Modo predeterminado** (Práctica / Examen /
-  Con tiempo), el **Umbral para aprobar** el examen y la **Dificultad del
+  Con tiempo), el **Umbral para aprobar** el examen (los conjuntos con
+  su propio umbral de aprobado usan ese umbral en el examen) y la
+  **Dificultad del
   modo con tiempo** (Rápido, Normal, Relajado); ver
   [Lecciones y repasos](lessons.md).
 - **Pistas** - si aparece un botón de pista por etapas en cada ejercicio,

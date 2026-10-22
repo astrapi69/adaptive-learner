@@ -48,7 +48,8 @@ wer neu anfängt, eine kurze Seite.
   und verlinkt zu den Einstellungen.
 - **Weiterlernen** (pausierte Lektionen) - Lektionen, die du
   pausiert hast, die zuletzt pausierte zuerst. Beim Öffnen fragt
-  die App, ob du fortsetzen oder neu beginnen willst.
+  die App, ob du fortsetzen oder neu beginnen willst; eine
+  angefangene Prüfung beginnt neu, und die App sagt dir, warum.
   Ausgeblendet, wenn keine Lektion pausiert ist.
 - **Übungsschwerpunkt** - eine Auswertung deiner Fehler in den
   Lektionen: deine Herausforderungen, Fehlerzahlen,

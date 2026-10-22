@@ -78,7 +78,12 @@ la insignia no cambia ni la puntuación ni el orden.
 
 Una barra de progreso en la parte superior sigue cuánto has
 avanzado en la lección. Puedes parar en cualquier momento: tu
-progreso se guarda paso a paso y continúa donde lo dejaste.
+progreso se guarda paso a paso y continúa donde lo dejaste. La
+excepción es el examen: un examen empezado solo cuenta si se hace de
+una vez, así que al volver a abrirlo empieza de nuevo. Una ronda
+empezada en otro modo tampoco continúa como examen, ni una ronda de
+examen como práctica; en ese caso la lección empieza de nuevo. Puedes
+cambiar el modo hasta la primera respuesta de la ronda.
 
 ### Atajo Enter
 
@@ -111,6 +116,9 @@ lección**:
   - **2 estrellas** ≥ 75 %
   - **1 estrella** ≥ 50 %
   - **0 estrellas** por debajo del 50 %
+
+  En un examen con reglas de evaluación propias del conjunto no hay
+  valoración de estrellas; cuenta el veredicto del conjunto.
 - Un **desglose ejercicio por ejercicio** (el resumen de respuestas de
   la evaluación detallada) que muestra qué ejercicios has aprobado y
   cuáles contenían errores (con la respuesta correcta para los

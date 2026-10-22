@@ -189,7 +189,8 @@ Qui apprend, et dans quelles langues.
 Comment les exercices se comportent pendant que vous répondez.
 
 - **Mode de leçon** - le **Mode par défaut** (Entraînement / Examen /
-  Chronométré), le **Seuil de réussite** de l'examen et la
+  Chronométré), le **Seuil de réussite** de l'examen (les ensembles qui
+  ont leur propre seuil de réussite utilisent ce seuil à l'examen) et la
   **Difficulté du mode chronométré** (Rapide, Normal, Détendu) ; voir
   [Leçons de contenu et révisions](lessons.md).
 - **Indices** - si un bouton d'indice par paliers apparaît sur chaque

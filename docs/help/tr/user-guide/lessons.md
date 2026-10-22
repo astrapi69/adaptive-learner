@@ -68,7 +68,12 @@ asla değiştirmez.
 
 Üstteki bir ilerleme göstergesi, derste ne kadar ilerlediğini izler.
 İstediğin zaman durabilirsin - ilerlemen adım başına kaydedilir ve
-kaldığın yerden devam eder.
+kaldığın yerden devam eder. İstisna sınavdır: Başlanmış bir sınav
+yalnızca tek seferde yapıldığında geçerlidir, bu yüzden yeniden
+açtığında baştan başlar. Başka bir modda başlatılmış bir tur da sınav
+olarak devam etmez, bir sınav turu da alıştırma olarak devam etmez; o
+zaman ders baştan başlar. Modu bir turun ilk cevabına kadar hâlâ
+değiştirebilirsin.
 
 ### Enter kısayolu
 
@@ -97,6 +102,9 @@ Son alıştırma tamamlandığında **ders özeti** görünür:
   - **2 yıldız** ≥ %75
   - **1 yıldız** ≥ %50
   - **0 yıldız** %50'nin altında
+
+  Setin kendi değerlendirme kuralları olan bir sınavda yıldız
+  değerlendirmesi yoktur; setin kararı geçerlidir.
 - Hangi alıştırmaları geçtiğini ve hangilerinin hata içerdiğini
   (yanlışlar için doğru yanıtla birlikte) gösteren bir
   **alıştırma-alıştırma dökümü** (ayrıntılı değerlendirmedeki

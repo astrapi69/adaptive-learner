@@ -187,7 +187,8 @@ Quem aprende e em que idiomas.
 Como os exercícios se comportam enquanto responde.
 
 - **Modo de lição** - o **Modo padrão** (Prática / Exame / Cronometrado),
-  o **Limite para aprovação** do exame e a **Dificuldade do modo
+  o **Limite para aprovação** do exame (conjuntos com limite de
+  aprovação próprio usam esse limite no exame) e a **Dificuldade do modo
   cronometrado** (Rápido, Normal, Relaxado); consulte
   [Lições e revisões](lessons.md).
 - **Dicas** - se aparece um botão de dica por etapas em cada exercício, e

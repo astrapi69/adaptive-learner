@@ -116,6 +116,7 @@ toque têm pelo menos 44 px e a página reorganiza-se corretamente até
 - A **lição atual** (▶) é sempre o melhor passo seguinte - com base no
   histórico de erros, não apenas na ordem das lições.
 - Uma lição em pausa continua retomável a partir da sua linha ou do
-  cartão de lições em pausa do Painel.
+  cartão de lições em pausa do Painel. A exceção é um exame iniciado:
+  só conta quando é feito de uma vez, por isso recomeça do início.
 - Assim que se alcança o domínio **receptivo** e o **produtivo**, uma
   lição conta como totalmente dominada.

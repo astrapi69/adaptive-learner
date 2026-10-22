@@ -43,7 +43,13 @@ practised:
   recap, auto-read, and the solution reveal are hidden; feedback is
   delayed to the end, where you get a dedicated **result view** with
   a **pass/fail verdict** against a configurable **pass threshold**
-  and a **bonus XP** reward for passing.
+  and a **bonus XP** reward for passing. If the set brings its own
+  evaluation rules, the exam uses them instead of your pass
+  threshold: pass/fail at the set's mark, a grade, or a percent
+  with a recommended mark. The result view then says that the
+  set's rules were applied. Before the first answer a notice
+  reminds you that you only see at the end whether an answer was
+  right, and that you cannot go back.
 - **Timed ("Auf Zeit")** - a countdown per exercise. Difficulty is
   selectable: **Relaxed** (2× time), **Normal**, or **Fast**
   (0.7× time). When time runs out the answer locks; at the end you
@@ -113,7 +119,12 @@ without a separate "multiple choice" exercise type.
 
 A progress bar at the top tracks how far you are in the lesson.
 You can stop at any time - your progress is saved per step and
-resumes where you left off.
+resumes where you left off. The exception is the exam: a started
+exam only counts when taken in one sitting, so reopening it starts
+it over. A run started in another mode does not continue as an
+exam either, and an exam run does not continue as practice; the
+lesson starts over instead. You can still change the mode until
+the run's first answer.
 
 ### Enter shortcut
 
@@ -143,6 +154,9 @@ appears:
   - **2 stars** ≥ 75%
   - **1 star** ≥ 50%
   - **0 stars** below 50%
+
+  In an exam with the set's own evaluation rules there is no star
+  rating; the set's verdict applies.
 - An **exercise-by-exercise breakdown** (the answers overview in the
   detailed evaluation) that shows which exercises you passed and which
   contained mistakes (with the correct answer for the wrong ones).
