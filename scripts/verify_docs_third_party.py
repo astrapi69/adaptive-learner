@@ -21,11 +21,19 @@ the configuration that keeps all three quiet:
 - ``main.html`` there extends ``base.html`` and defines, in the ``libs``
   block that runs before the bundle, a stand-in ``ResizeObserver`` with
   ``observe``, ``unobserve`` and ``disconnect`` for browsers that have
-  none, so the bundle never loads the polyfill.
+  none, so the bundle never loads the polyfill;
+- ``theme.features`` does not hold ``search.highlight`` (#3843). With it,
+  Material adds the search terms to every search result link as
+  ``?h=<terms>``, so a click sends them to GitHub Pages in the request URL,
+  while the privacy policy says the search runs in the browser without the
+  search terms leaving it. Not a third party, the site's own host, but the
+  same promise. ``search.share`` may stay: it copies a link with the query
+  only when the reader clicks the share button.
 
 Stdlib only, like verify_docs: mkdocs.yml is read line by line (its
 ``!!python/name`` tags stop PyYAML's safe loader anyway). A missing
-mkdocs.yml or theme block is a FAIL (#2287).
+mkdocs.yml or theme block is a FAIL (#2287), and so is a ``theme.features``
+value this reader cannot read.
 """
 
 from __future__ import annotations
@@ -38,9 +46,15 @@ CHECK = "docs-third-party"
 OVERRIDES = "docs/help-overrides"
 SOURCE_PARTIAL = "partials/source.html"
 MAIN = "main.html"
+HIGHLIGHT = "search.highlight"
+# The sentence of docs/help/en/legal/privacy.md (and its seven translations)
+# that search.highlight makes false.
+POLICY_SENTENCE = "the search runs in your browser without your search terms leaving it"
 
 _THEME_KEY = re.compile(r"theme:\s*(?:#.*)?")
 _SETTING = re.compile(r"([A-Za-z_][\w-]*):\s*(.*?)\s*(?:#.*)?")
+_LIST_ITEM = re.compile(r"-\s+(.*?)\s*(?:#.*)?")
+_FLOW_LIST = re.compile(r"\[(.*)\]")
 # PyYAML, which MkDocs uses, reads YAML 1.1: each of these is False, and no
 # other spelling is. Its resolver lists them case by case, so a mixed-case
 # "fAlSe" stays a string, and with a string Material loads Google Fonts.
@@ -62,6 +76,39 @@ class _Report(Protocol):
     def note(self, message: str) -> None: ...
 
 
+def _depth(line: str) -> int:
+    return len(line) - len(line.lstrip(" "))
+
+
+def _theme_block(mkdocs_text: str) -> list[str] | None:
+    """The lines of the top-level ``theme:`` mapping, blank and comment lines
+    left out, or None when mkdocs.yml has no block-style ``theme:``."""
+    lines = mkdocs_text.splitlines()
+    start = next((i for i, line in enumerate(lines) if _THEME_KEY.fullmatch(line)), None)
+    if start is None:
+        return None
+    block: list[str] = []
+    for line in lines[start + 1 :]:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if _depth(line) == 0:
+            break
+        block.append(line)
+    return block
+
+
+def _direct_settings(block: list[str]) -> list[tuple[int, str, str]]:
+    """Index, key and value of each setting directly under ``theme:``."""
+    indent = _depth(block[0]) if block else 0
+    settings = []
+    for index, line in enumerate(block):
+        match = _SETTING.fullmatch(line.strip()) if _depth(line) == indent else None
+        if match:
+            settings.append((index, match.group(1), match.group(2)))
+    return settings
+
+
 def theme_settings(mkdocs_text: str) -> dict[str, str] | None:
     """The keys directly under the top-level ``theme:`` mapping of mkdocs.yml.
 
@@ -73,24 +120,60 @@ def theme_settings(mkdocs_text: str) -> dict[str, str] | None:
         The settings, or None when mkdocs.yml has no block-style ``theme:``
         mapping.
     """
-    lines = mkdocs_text.splitlines()
-    start = next((i for i, line in enumerate(lines) if _THEME_KEY.fullmatch(line)), None)
-    if start is None:
+    block = _theme_block(mkdocs_text)
+    if block is None:
         return None
-    settings: dict[str, str] = {}
-    indent: int | None = None
-    for line in lines[start + 1 :]:
+    return {key: value for _, key, value in _direct_settings(block)}
+
+
+def _unquote(value: str) -> str:
+    return value.strip().strip("'\"")
+
+
+def _list_items(block: list[str], key_index: int) -> list[str] | None:
+    """The scalar items of the block list under ``block[key_index]``, also
+    when they sit at the key's own indentation; None for an item that is not
+    a ``- scalar`` on one line."""
+    key_depth = _depth(block[key_index])
+    items = []
+    for line in block[key_index + 1 :]:
         stripped = line.strip()
-        if not stripped or stripped.startswith("#"):
-            continue
-        depth = len(line) - len(line.lstrip(" "))
-        if depth == 0:
+        depth = _depth(line)
+        if depth < key_depth or (depth == key_depth and not stripped.startswith("-")):
             break
-        indent = depth if indent is None else indent
-        match = _SETTING.fullmatch(stripped) if depth == indent else None
-        if match:
-            settings[match.group(1)] = match.group(2)
-    return settings
+        item = _LIST_ITEM.fullmatch(stripped)
+        if item is None:
+            return None
+        items.append(_unquote(item.group(1)))
+    return items
+
+
+def theme_features(mkdocs_text: str) -> list[str] | None:
+    """The entries of ``theme.features`` in mkdocs.yml.
+
+    Reads a block list (indented or not) and a flow list on one line, items
+    unquoted and comments removed.
+
+    Returns:
+        The entries, an empty list when mkdocs.yml has no ``theme:`` block or
+        no ``features`` in it, or None when the value takes another form (a
+        flow list over several lines, a scalar, an item on its own line),
+        which this reader cannot verify.
+    """
+    block = _theme_block(mkdocs_text) or []
+    found = next(
+        ((index, value) for index, key, value in _direct_settings(block) if key == "features"),
+        None,
+    )
+    if found is None:
+        return []
+    index, value = found
+    if not value:
+        return _list_items(block, index)
+    flow = _FLOW_LIST.fullmatch(value)
+    if flow is None:
+        return None
+    return [_unquote(part) for part in flow.group(1).split(",") if part.strip()]
 
 
 def _check_font(report: _Report, value: str | None) -> None:
@@ -113,6 +196,24 @@ def _check_custom_dir(report: _Report, value: str | None) -> None:
         "there keep the repository widget and the ResizeObserver polyfill from contacting "
         "api.github.com and unpkg.com (#3802)",
     )
+
+
+def _check_features(report: _Report, features: list[str] | None) -> None:
+    if features is None:
+        report.fail(
+            CHECK,
+            "mkdocs.yml theme.features is neither a block list nor a flow list on one line - "
+            f"cannot verify that {HIGHLIGHT} is off (#3843)",
+        )
+        return
+    if HIGHLIGHT in features:
+        report.fail(
+            CHECK,
+            f"mkdocs.yml theme.features holds {HIGHLIGHT}: Material then adds the search terms "
+            "to every search result link as ?h=, and a click sends them to GitHub Pages in the "
+            f'request URL, while the privacy policy says "{POLICY_SENTENCE}" '
+            "(docs/help/<lang>/legal/privacy.md, #3843)",
+        )
 
 
 def _code(path: Path) -> str:
@@ -203,16 +304,19 @@ def check_docs_third_party(report: _Report, repo: Path) -> None:
     if not mkdocs.is_file():
         report.fail(CHECK, f"{mkdocs} not found - cannot verify the docs theme settings (#2287)")
         return
-    theme = theme_settings(mkdocs.read_text(encoding="utf-8"))
+    mkdocs_text = mkdocs.read_text(encoding="utf-8")
+    theme = theme_settings(mkdocs_text)
     if theme is None:
         report.fail(
             CHECK,
-            "mkdocs.yml has no block-style theme: mapping - cannot verify theme.font and "
-            "theme.custom_dir (#2287)",
+            "mkdocs.yml has no block-style theme: mapping - cannot verify theme.font, "
+            "theme.custom_dir and theme.features (#2287)",
         )
         return
+    features = theme_features(mkdocs_text)
     _check_font(report, theme.get("font"))
     _check_custom_dir(report, theme.get("custom_dir"))
+    _check_features(report, features)
     overrides = repo / OVERRIDES
     read = [
         name
@@ -222,8 +326,9 @@ def check_docs_third_party(report: _Report, repo: Path) -> None:
         )
         if was_read
     ]
+    shown_features = "unreadable" if features is None else f"count={len(features)}"
     report.note(
         f"{CHECK}: mkdocs.yml theme.font={theme.get('font')}, "
-        f"theme.custom_dir={theme.get('custom_dir')}; "
+        f"theme.custom_dir={theme.get('custom_dir')}, theme.features {shown_features}; "
         f"read {len(read)} of 2 overrides ({', '.join(read) or 'none'})"
     )

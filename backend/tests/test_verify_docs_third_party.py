@@ -8,6 +8,11 @@ inside the bundle. The ``docs-third-party`` check pins the configuration
 that keeps all three quiet: ``theme.font: false``, ``theme.custom_dir``,
 and the two overrides with their key lines.
 
+It also keeps ``search.highlight`` out of ``theme.features`` (#3843): that
+feature puts the search terms into every result link as ``?h=``, so a click
+sends them to GitHub Pages, while the privacy policy says they never leave
+the browser.
+
 Gate test contract (quality-checks.md): each violation is detected, a
 valid tree and the real repository pass, a missing basis fails closed, and
 the note says what was read.
@@ -15,6 +20,7 @@ the note says what was read.
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -46,6 +52,10 @@ theme:
     - navigation.tabs
 edit_uri: edit/main/docs/help/
 """
+
+FEATURES = "  features:\n    - navigation.tabs\n"
+# The sentence of docs/help/en/legal/privacy.md that search.highlight breaks.
+POLICY_SENTENCE = "the search runs in your browser without your search terms leaving it"
 
 VALID_SOURCE = """\
 <a href="{{ config.repo_url }}" title="{{ lang.t('source') }}" class="md-source">
@@ -114,8 +124,8 @@ def test_a_valid_tree_passes_and_the_note_says_what_was_read(tmp_path: Path) -> 
     report = _run(_tree(tmp_path))
     assert report.fails == []
     assert report.notes == [
-        "docs-third-party: mkdocs.yml theme.font=false, theme.custom_dir=docs/help-overrides; "
-        "read 2 of 2 overrides (partials/source.html, main.html)"
+        "docs-third-party: mkdocs.yml theme.font=false, theme.custom_dir=docs/help-overrides, "
+        "theme.features count=1; read 2 of 2 overrides (partials/source.html, main.html)"
     ]
 
 
@@ -175,6 +185,73 @@ def test_a_font_setting_outside_the_theme_does_not_count(tmp_path: Path) -> None
     mkdocs = VALID_MKDOCS.replace("  font: false\n", "") + "extra:\n  font: false\n"
     report = _run(_tree(tmp_path, mkdocs=mkdocs))
     assert len(report.fails) == 1 and "theme.font is unset" in report.fails[0]
+
+
+@pytest.mark.parametrize(
+    "features",
+    [
+        "  features:\n    - navigation.tabs\n    - search.highlight\n    - search.share\n",
+        "  features:\n  - navigation.tabs\n  - search.highlight\n",
+        "  features:\n    - 'search.highlight'  # marks the terms on the target page\n",
+        '  features: [navigation.tabs, "search.highlight"]\n',
+    ],
+    ids=["block-list", "indentless-list", "quoted-with-comment", "flow-list"],
+)
+def test_search_highlight_in_the_theme_features_fails_naming_the_policy_sentence(
+    tmp_path: Path, features: str
+) -> None:
+    """#3843: Material then adds ``?h=<terms>`` to every search result link,
+    and a click sends the terms to GitHub Pages in the request URL."""
+    report = _run(_tree(tmp_path, mkdocs=VALID_MKDOCS.replace(FEATURES, features)))
+    assert len(report.fails) == 1
+    assert "search.highlight" in report.fails[0]
+    assert POLICY_SENTENCE in report.fails[0]
+
+
+@pytest.mark.parametrize(
+    "mkdocs",
+    [
+        VALID_MKDOCS.replace(FEATURES, FEATURES + "    - search.suggest\n    - search.share\n"),
+        VALID_MKDOCS.replace(FEATURES, ""),
+        VALID_MKDOCS.replace(FEATURES, FEATURES + "    # - search.highlight\n"),
+        VALID_MKDOCS + "extra:\n  features:\n    - search.highlight\n",
+    ],
+    ids=["share-and-suggest-stay", "no-features", "commented-out", "outside-the-theme"],
+)
+def test_theme_features_without_search_highlight_pass(tmp_path: Path, mkdocs: str) -> None:
+    """``search.share`` copies a link with the query only when the reader
+    clicks share, a deliberate act; it is not this case."""
+    assert _run(_tree(tmp_path, mkdocs=mkdocs)).fails == []
+
+
+@pytest.mark.parametrize(
+    "features",
+    [
+        "  features: [navigation.tabs,\n    search.highlight]\n",
+        "  features: search.highlight\n",
+        "  features:\n    -\n      search.highlight\n",
+    ],
+    ids=["multi-line-flow-list", "scalar", "item-on-the-next-line"],
+)
+def test_an_unreadable_theme_features_value_fails_closed(tmp_path: Path, features: str) -> None:
+    report = _run(_tree(tmp_path, mkdocs=VALID_MKDOCS.replace(FEATURES, features)))
+    assert len(report.fails) == 1 and "cannot verify" in report.fails[0]
+    assert "theme.features unreadable" in report.notes[0]
+
+
+def test_the_repository_keeps_search_highlight_off() -> None:
+    """#3843: the shipped mkdocs.yml, read by the check's own parser, lists
+    its features and search.highlight is not among them."""
+    report = _run(REPO)
+    assert [fail for fail in report.fails if "search.highlight" in fail] == []
+    assert re.search(r"theme\.features count=[1-9]", report.notes[0])
+
+
+def test_the_quoted_policy_sentence_is_the_policy() -> None:
+    """The failure message quotes the privacy policy; the quote must stay
+    what the policy says, or the message names a sentence nobody wrote."""
+    policy = (REPO / "docs/help/en/legal/privacy.md").read_text(encoding="utf-8")
+    assert POLICY_SENTENCE in " ".join(policy.split())
 
 
 @pytest.mark.parametrize(
