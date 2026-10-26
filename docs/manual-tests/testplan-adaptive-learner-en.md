@@ -3582,6 +3582,9 @@ on the published site after the release, with the browser's developer tools
 - [ ] TC-0988 Text and code use the device's system font (not Roboto); in a narrow
       window there is no horizontal scrolling and the navigation opens from
       the menu.
+- [ ] TC-0999 Search for a word (e.g. "backup") and open a result (#3843): the address
+      bar shows the page without `?h=`, no request carries the search terms;
+      the matched words are no longer highlighted on the page.
 
 ---
 
