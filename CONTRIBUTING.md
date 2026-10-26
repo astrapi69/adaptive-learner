@@ -305,7 +305,8 @@ No page of the docs site contacts a host other than `astrapi69.github.io` on its
 
 - A help page links to other sites but never embeds their images, scripts, frames or styles; put the file next to the page instead.
 - `mkdocs.yml` sets `theme.font: false` (the system fonts, not Google Fonts) and `theme.custom_dir: docs/help-overrides`. There, `partials/source.html` keeps the repository link without Material's widget, which would ask api.github.com for stars and forks, and `main.html` gives browsers without `ResizeObserver` a stand-in, so Material never loads its polyfill from unpkg.com.
-- The Docs drift verifier holds both: `verify_docs.py` (check `docs-third-party`) pins the settings and overrides, and `scripts/check_external_hosts.py` scans the built site (`make docs-build`, then `make verify-docs-external-hosts`). `deploy-gh-pages.yml` repeats the scan before it publishes.
+- The search keeps the terms in the browser, as the privacy policy says: `theme.features` leaves out `search.highlight`, which would add them to every result link as `?h=` and so send them to GitHub Pages on a click (#3843). `search.share` stays; it copies a link with the query only when the reader clicks share.
+- The Docs drift verifier holds all of this: `verify_docs.py` (check `docs-third-party`) pins the settings and overrides, and `scripts/check_external_hosts.py` scans the built site (`make docs-build`, then `make verify-docs-external-hosts`). `deploy-gh-pages.yml` repeats the scan before it publishes.
 
 ## Commit Conventions
 
