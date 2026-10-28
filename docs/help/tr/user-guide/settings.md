@@ -114,9 +114,16 @@ Modu **Tanılama ve destek** sekmesindedir (aşağıya bak).
 *Genel > Depolama modu*, **Sunucu** ile **Yerel (Tarayıcı)** depolama
 arasında geçiş yapar:
 
-- **Sunucu** - her okuma ve yazma FastAPI arka ucuna gider. Çalışan
-  bir arka uç gerektirir. Arka uç taraflı eşitleme ile çoklu cihaz
-  kullanımı için en iyisi.
+- **Sunucu** - uygulama öğrenme verilerini masaüstü uygulamasının arka
+  ucu (FastAPI) üzerinden okur ve kaydeder; çalışan bir arka uç
+  gerektirir. Uygulama bazı ayarları, örneğin seçilen depolama modunu,
+  bu tarayıcıda kaydeder. Bağlantı yokken kaydettiğin ders ilerlemesi
+  ve ses kayıtları, uygulama onları arka uca aktarana kadar bu
+  tarayıcıda bekler; en fazla kaçının bekleyebileceği ve geri kalanına
+  ne olduğu [Yedekleme ve geri yükleme](../features/backup.md)
+  sayfasında anlatılır. Uygulama cihazlar arasında eşitlemeyi şu ana
+  kadar iki depolama modunun hiçbirinde yapamaz (bkz.
+  *Veri > Eşitleme*).
 - **Yerel (Tarayıcı)** - her okuma ve yazma bu tarayıcıdaki
   IndexedDB'ye gider. Yapay zeka çağrıları doğrudan sağlayıcıya
   gider. Arka uç gerekmez. Özel, cihaza yerel kurulum için en iyisi.
@@ -400,18 +407,31 @@ adres bunu yansıtır (`/settings?tab=data&section=backup`; kimlikler:
 
 ### Eşitleme
 
-QR kodu tarayıcısını (arka kamera) kullanarak veya eşleştirme URL'sini
-yapıştırarak bu cihazı yerel ağın üzerinden başka bir cihazla eşleştir.
-Eşleştirildikten sonra gönder + çek düğmeleri veriyi çift yönlü olarak
-değiş tokuş eder. Çakışmalar arka uçta bir yapay zeka birleştirme
-çözücüsünden geçer.
+Uygulama, verilerini henüz cihazlar arasında eşitleyemez: Bir cihazı
+şu ana kadar eşleştiremezsin ve eşleştirme olmadan eşitleme hiçbir
+veri alışverişi yapmaz. Alanın ne gösterdiği depolama moduna bağlıdır:
 
-Kısıtlı tarayıcılar için yedek yol: diğer cihazındaki QR kodunun ekran
-görüntüsünü yükle (`Html5Qrcode.scanFile`).
+- **Yerel (Tarayıcı)** depolama modunda alan görünür kalır, ancak
+  denetimler yerine "Yalnızca masaüstü uygulamasıyla kullanılabilir."
+  bildirimini gösterir. Herkese açık web sürümü, yüklenmiş web
+  uygulaması olarak da, bu depolama modunu her zaman kullanır;
+  masaüstü uygulamasında, **Yerel (Tarayıcı)** olarak ayarlandığı
+  sürece aynı bildirim görünür. Ancak masaüstü uygulaması da şu ana
+  kadar eşitleme yapmaz (bir sonraki maddeye bak).
+- Masaüstü uygulamasının **Sunucu** depolama modunda alan, host ve port
+  için giriş alanlarını ve "Eşleştirme kodu oluştur" düğmesini
+  gösterir. Düğmeye tıklayınca bir eşleştirme bağlantısı, bir QR kodu
+  ve bağlantıyı kopyalamaya yarayan bir düğme görünür. Ancak bu
+  bağlantıyı henüz hiçbir cihaz kullanamaz, QR kodu üzerinden de
+  kullanamaz; yani bununla şu ana kadar ikinci bir cihaz
+  eşleştirilemez.
 
-Eşitleme masaüstü uygulamasını gerektirir. Tarayıcı modunda alan
-görünür kalır, ancak denetimlerinin yerini "Yalnızca masaüstü
-uygulamasıyla kullanılabilir." bildirimi alır.
+Eşitleme kullanılamadığı sürece verilerini bir yedekle başka bir
+cihaza taşırsın, ancak hepsini değil. Bir yedek, başka şeylerin yanı
+sıra API anahtarlarını da içermez; API anahtarlarını nasıl
+aktaracağın aşağıda *Şifreli anahtar dışa aktarma (.alk)* altında
+anlatılır. Bir yedeğin neleri içermediğine dair başka örnekleri
+[Yedekleme ve geri yükleme](../features/backup.md) sayfası verir.
 
 ### Çevrimdışı içerik
 

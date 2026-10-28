@@ -111,9 +111,16 @@ below).
 *General > Storage mode* toggles between **Server** and **Local
 (Browser)** storage:
 
-- **Server** - every read and write hits the FastAPI backend.
-  Requires a running backend. Best for multi-device usage
-  with backend-side sync.
+- **Server** - the app reads and saves your learning data through
+  the desktop app's backend (FastAPI); it requires a running
+  backend. The app saves some settings in this browser, for example
+  the chosen storage mode. Lesson progress and voice recordings that
+  you save without a connection wait in this browser until the app
+  transfers them to the backend; how many wait at most and what
+  happens to the rest is described on the
+  [Backup and restore](../features/backup.md) page. So far the app
+  cannot sync between devices in either of the two storage modes
+  (see *Data > Sync*).
 - **Local (Browser)** - every read and write hits IndexedDB
   in this browser. AI calls fire direct to the provider. No
   backend required. Best for a private, device-local setup.
@@ -383,18 +390,28 @@ mirrors it (`/settings?tab=data&section=backup`; ids: `sources`,
 
 ### Sync
 
-Pair this device with another over your local network using
-the QR-code scanner (rear camera) or paste the pairing URL.
-Once paired, push + pull buttons exchange data
-bidirectionally. Conflicts go through an AI-merge resolver
-on the backend.
+The app cannot sync your data between devices yet: so far you cannot
+pair a device, and without pairing, sync exchanges no data. What the
+area shows depends on the storage mode:
 
-Restricted-browser fallback: upload a screenshot of the QR
-code from your other device (`Html5Qrcode.scanFile`).
+- In the **Local (Browser)** storage mode the area stays visible, but
+  shows no controls, instead the notice "Only available with the
+  desktop app." The public web version always uses this storage mode,
+  also as an installed web app; in the desktop app the same notice
+  appears as long as it is set to **Local (Browser)**. However, the
+  desktop app does not sync yet either (see the next point).
+- In the desktop app's **Server** storage mode the area shows fields
+  for host and port and the button "Generate pairing code". Clicking
+  it shows a pairing link, a QR code and a button for copying the
+  link. But no device can redeem this link yet, not even through the
+  QR code; so a second device cannot be paired with it so far.
 
-Sync needs the desktop app. In browser mode the area stays visible,
-but its controls are replaced by the notice "Only available with the
-desktop app."
+As long as sync is not available, you move your data to another
+device with a backup, though not all of it. Among other things, a
+backup does not contain your API keys; how to transfer the API keys
+is described under *Encrypted key export (.alk)* below. Further
+examples of what a backup does not contain are on the
+[Backup and restore](../features/backup.md) page.
 
 ### Offline content
 

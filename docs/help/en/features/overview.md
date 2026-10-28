@@ -200,8 +200,6 @@ See [Backup and restore](backup.md).
 - **Two storage modes**: local-first (everything in browser IndexedDB,
   AI calls go direct to the provider, no server needed) or server mode
   (FastAPI backend with SQLite, multi-device).
-- **Local-network sync** between devices with QR-code pairing and
-  conflict resolution.
 - **Desktop launcher** for Linux, macOS, and Windows: a Docker-based
   one-click self-hosting setup with context-aware Docker detection and
   self-diagnosis.

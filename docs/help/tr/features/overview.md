@@ -213,8 +213,6 @@ Bkz. [Yedekleme ve geri yükleme](backup.md).
   IndexedDB'sinde, yapay zeka çağrıları doğrudan sağlayıcıya gider,
   sunucu gerekmez) ya da sunucu modu (SQLite'lı FastAPI arka ucu,
   çoklu cihaz).
-- QR kod eşleştirmeli ve çakışma çözümlü, cihazlar arası **yerel ağ
-  eşitlemesi**.
 - Linux, macOS ve Windows için **masaüstü başlatıcı**: bağlama
   duyarlı Docker algılama ve öz tanılamayla Docker tabanlı tek tık
   kendi kendine barındırma kurulumu.

@@ -1,18 +1,23 @@
 # Arquitectura de sincronización
 
-Adaptive Learner es local-first: el modo servidor (API) guarda los
-datos en el sistema de archivos, y el modo navegador puro (Dexie)
-en IndexedDB. La **sincronización** pretende conectar estos
-dispositivos a través de la red local. La referencia completa está
-en
+Adaptive Learner es local-first. En el modo de almacenamiento Servidor
+(internamente API), el backend de la aplicación de escritorio guarda los
+datos de aprendizaje; solo unas pocas cosas se quedan en el navegador,
+por ejemplo algunos ajustes y, hasta que se transfieren, los cambios
+guardados sin conexión (ver [Ajustes](../user-guide/settings.md)). En
+el modo de almacenamiento Local (Navegador), llamado internamente Dexie,
+los datos de aprendizaje residen en el IndexedDB del navegador en el que
+se ejecuta la app. La **sincronización** pretende conectar en el futuro
+dispositivos a través de la red local; todavía no es utilizable (ver la
+sección SYNC-UI-GATE más abajo). La referencia completa está en
 [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md).
 
 ---
 
 ## Tres roles de dispositivo
 
-La interfaz de sincronización tiene un aspecto distinto según el
-rol del dispositivo, y solo se muestra allí donde es utilizable:
+La interfaz de sincronización está prevista de forma distinta según
+el rol del dispositivo:
 
 | Rol | Modo de almacenamiento | Interfaz de sincronización |
 |---|---|---|
@@ -22,20 +27,64 @@ rol del dispositivo, y solo se muestra allí donde es utilizable:
 
 ---
 
-## SYNC-UI-GATE: mostrar solo lo que funciona
+## SYNC-UI-GATE: principio y estado actual
 
-Una función no disponible **no se ofrece**: sin botones muertos,
-sin marcadores de posición atenuados. Actualmente (la fase de
-emparejamiento LAN aún no está implementada), la sección de
-sincronización es por tanto visible **solo en API**; sin un flujo
-de emparejamiento funcional, la interfaz del cliente móvil
-quedaría en el vacío.
+El principio es: mostrar solo lo que funciona. El modo LAN (fase 1)
+solo está implementado en parte y todavía no es utilizable. De las
+vistas de emparejamiento, por ahora solo es accesible la que genera un
+enlace de emparejamiento, y esta, además, solo en el modo de
+almacenamiento Servidor de la aplicación de escritorio; la vista que
+canjea el enlace en otro dispositivo (pegar el enlace, escanear el
+código QR) está desactivada a propósito. El gate se rige por el modo de
+almacenamiento:
 
-Cuando llegue el modo LAN, el gate binario (API frente a Dexie) se
-reconvertirá en el gate de tres valores de la tabla anterior. La
-interfaz de emparejamiento **no** se reactivará antes en el modo
-Dexie, para que en el despliegue solo-PWA no surja ningún control
-muerto.
+- En el modo de almacenamiento **Servidor** (internamente API), que solo
+  existe en la aplicación de escritorio, el área *Ajustes > Datos >
+  Sincronización* solo ofrece generar un enlace de emparejamiento:
+  muestra campos de entrada para el host y el puerto y el botón
+  «Generar código de emparejamiento»; tras hacer clic en él aparecen un
+  código QR, el enlace de emparejamiento y un botón para copiar.
+- En el modo de almacenamiento **Local (Navegador)**, llamado
+  internamente Dexie, el área sigue visible, pero no muestra controles,
+  sino el aviso «Solo disponible con la aplicación de escritorio.» La
+  versión de navegador usa siempre este modo de almacenamiento, también
+  como aplicación web instalada (PWA); en la aplicación de escritorio
+  también se puede elegir. Desde #335/#336, las funciones que solo
+  funcionan con el backend de la aplicación de escritorio se desactivan
+  con un aviso en lugar de ocultarse; si la sincronización está
+  desactivada lo decide aquí el modo de almacenamiento, no el tipo de
+  app.
+- La vista para canjear solo aparecería en el modo de almacenamiento
+  Local (Navegador), donde el área está desactivada; por eso no aparece
+  nunca.
+
+Como no se puede emparejar ningún dispositivo, tampoco aparece la vista
+de un dispositivo emparejado y, con ella, tampoco su botón
+«Sincronizar ahora»; la sincronización no intercambia datos.
+
+Hoy el área se aparta del principio de estas formas, entre otras:
+
+- Su descripción «Vincular dispositivos y mantener los datos al día.»
+  promete vincular dispositivos y mantener los datos al día, y ninguna
+  de las dos cosas existe todavía.
+- En el modo de almacenamiento Servidor, la aplicación de escritorio
+  ofrece generar un enlace de emparejamiento que todavía ningún
+  dispositivo puede canjear.
+- El aviso «Solo disponible con la aplicación de escritorio.» remite a
+  la aplicación de escritorio, con la que tampoco se puede sincronizar
+  todavía; en la propia aplicación de escritorio aparece en el modo de
+  almacenamiento Local (Navegador).
+
+Cuando el modo LAN esté implementado, el gate binario (API frente a
+Dexie) debe convertirse en el gate de tres valores de la tabla
+anterior. La vista para canjear no debe volver a activarse hasta que
+exista este gate. Si se activara mientras siga vigente el gate binario,
+aparecería en todos los dispositivos en el modo de almacenamiento Local
+(Navegador), porque este gate no distingue los roles «Móvil (cliente)»
+y «Solo PWA». Allí sería un control muerto: mientras el modo LAN no
+esté implementado, en cada uno de esos dispositivos, y también después
+de su implementación todavía en los dispositivos con el rol «Solo PWA»,
+mientras siga vigente el gate binario.
 
 ---
 

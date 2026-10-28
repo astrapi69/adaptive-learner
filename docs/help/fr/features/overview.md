@@ -231,8 +231,6 @@ Voir [Sauvegarde et restauration](backup.md).
   du navigateur, les appels IA vont directement au fournisseur, aucun
   serveur nécessaire) ou mode serveur (backend FastAPI avec SQLite,
   multi-appareils).
-- **Synchronisation en réseau local** entre appareils avec appairage
-  par QR code et résolution de conflits.
 - **Lanceur de bureau** pour Linux, macOS et Windows : un
   auto-hébergement en un clic basé sur Docker, avec détection de
   Docker contextuelle et autodiagnostic.

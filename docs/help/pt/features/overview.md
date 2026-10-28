@@ -227,8 +227,6 @@ Ver [Backup e restauro](backup.md).
   browser, as chamadas de IA vão diretas ao fornecedor, sem
   necessidade de servidor) ou modo servidor (backend FastAPI com
   SQLite, vários dispositivos).
-- **Sincronização em rede local** entre dispositivos com
-  emparelhamento por código QR e resolução de conflitos.
 - **Launcher de desktop** para Linux, macOS e Windows: auto-hospedagem
   com um clique baseada em Docker, com deteção de Docker sensível ao
   contexto e autodiagnóstico.

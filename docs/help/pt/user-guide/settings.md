@@ -124,9 +124,16 @@ suporte** (ver abaixo).
 *Geral > Modo de armazenamento* alterna entre armazenamento
 **Servidor** e **Local (Navegador)**:
 
-- **Servidor** - cada leitura e escrita atinge o backend
-  FastAPI. Requer um backend em execução. Melhor para uso em
-  múltiplos dispositivos com sincronização do lado do backend.
+- **Servidor** - a aplicação lê e guarda os seus dados de aprendizagem
+  através do backend da aplicação de desktop (FastAPI); requer um
+  backend em execução. A aplicação guarda algumas definições neste
+  navegador, por exemplo o modo de armazenamento escolhido. O progresso
+  das lições e as gravações de voz que guarda offline esperam neste
+  navegador até a aplicação os enviar para o backend; quantos esperam
+  no máximo e o que acontece aos restantes está descrito na página
+  [Backup e restauro](../features/backup.md). Por enquanto, a aplicação
+  não consegue sincronizar entre dispositivos em nenhum dos dois modos
+  de armazenamento (ver *Dados > Sincronização*).
 - **Local (Navegador)** - cada leitura e escrita atinge o
   IndexedDB neste navegador. As chamadas de IA disparam
   diretamente para o fornecedor. Sem backend necessário. Melhor
@@ -417,18 +424,33 @@ a área visível no ecrã, e o endereço reflete-a
 
 ### Sincronização
 
-Emparelhe este dispositivo com outro pela sua rede local
-usando o leitor de código QR (câmara traseira) ou cole o
-URL de emparelhamento. Uma vez emparelhado, os botões de
-envio + receção trocam dados bidirecionalmente. Os conflitos
-passam por um resolvedor de fusão de IA no backend.
+A aplicação ainda não consegue sincronizar os seus dados entre
+dispositivos: por enquanto não pode emparelhar um dispositivo, e sem
+emparelhamento a sincronização não troca dados. O que a área mostra
+depende do modo de armazenamento:
 
-Fallback de navegador restrito: carregue uma captura de ecrã
-do código QR do seu outro dispositivo (`Html5Qrcode.scanFile`).
+- No modo de armazenamento **Local (Navegador)** a área continua
+  visível, mas, em vez de controlos, mostra o aviso "Disponível apenas
+  com o aplicativo para desktop." A versão web pública usa sempre este
+  modo de armazenamento, também como aplicação web instalada; na
+  aplicação de desktop aparece o mesmo aviso enquanto estiver definida
+  para **Local (Navegador)**. No entanto, a aplicação de desktop também
+  ainda não sincroniza (ver o ponto seguinte).
+- No modo de armazenamento **Servidor** da aplicação de desktop, a área
+  mostra campos para o host e a porta e o botão "Gerar código de
+  pareamento". Um clique nele mostra uma ligação de emparelhamento, um
+  código QR e um botão para copiar a ligação. Mas ainda nenhum
+  dispositivo consegue resgatar esta ligação, nem através do código QR;
+  por isso, por enquanto, não é possível emparelhar um segundo
+  dispositivo com ela.
 
-A sincronização precisa da aplicação de desktop. No modo navegador a
-área continua visível, mas os seus controlos são substituídos por um
-aviso de que só está disponível com a aplicação de desktop.
+Enquanto a sincronização não estiver disponível, leva os seus dados
+para outro dispositivo com uma cópia de segurança, mas não todos.
+Entre outras coisas, uma cópia de segurança não contém as suas chaves
+de API; como transferir as chaves de API está descrito em *Exportação
+cifrada de chaves (.alk)*, mais abaixo. A página
+[Backup e restauro](../features/backup.md) indica outros exemplos do
+que uma cópia de segurança não contém.
 
 ### Conteúdo offline
 

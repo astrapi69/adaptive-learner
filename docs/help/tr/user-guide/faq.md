@@ -120,12 +120,15 @@ oturum başlatın.
 
 ## Verilerimi dışa aktarabilir miyim?
 
-Evet. Üç dışa aktarma yolu geldi:
+Evet, diğerlerinin yanı sıra şu yollarla:
 
 - **Yedek**: Ayarlar > Veri > Yedekleme ve dışa aktarma > Yedek
-  oluştur. Hesabınızdaki her satırla bir `.alb` yedek dosyası indirir.
-  API anahtarları çıkarılır.
-  Her iki depolama modunda da çalışır.
+  oluştur. Bir `.alb` yedek dosyası indirir; her iki depolama modunda
+  da yedek oluşturabilirsiniz. API anahtarlarınız bu dosyada yer almaz;
+  onları nasıl aktaracağınız [Ayarlar](settings.md) sayfasının "Şifreli
+  anahtar dışa aktarma (.alk)" bölümünde anlatılır. Bir yedeğin neleri
+  içermediğine dair başka örnekleri
+  [Yedekleme ve geri yükleme](../features/backup.md) sayfası verir.
 - **İlerleme / Oturum / Müfredat raporları**: Ayarlar > Veri >
   Yedekleme ve dışa aktarma > Dışa aktar.
   Markdown + PDF (tarayıcı yazdırma-PDF).
@@ -165,12 +168,33 @@ hedefli bir oturum başlatılır.
 
 ## Cihazlar arasında senkronizasyon?
 
-Yerel ağ çift yönlü senkronizasyonu. Ayarlar > Veri > Eşitleme'yi açın
-ve bu cihazı eşleştirin: diğer cihazın ekranındaki QR kodunu tarayın (arka
-kamera) ya da eşleştirme URL'sini yapıştırın. Eşleştirildikten sonra
-iter + çeker düğmeleri veri alışverişi yapar; çakışmaları bir iletişim
-kutusunda kendiniz çözersiniz. Senkronizasyon, ders ilerlemesi, öğe bazlı
-hatalar ve görevler dahil tüm verilerini kapsar.
+Henüz değil. Uygulama, verilerinizi henüz cihazlar arasında senkronize
+edemez: Bir cihazı şu ana kadar eşleştiremezsiniz ve eşleştirme
+olmadan senkronizasyon hiçbir veri alışverişi yapmaz. Ayarlar > Veri >
+Eşitleme altında ne gördüğünüz depolama moduna bağlıdır:
+
+- Yerel modda bu bölüm denetimler yerine "Yalnızca masaüstü
+  uygulamasıyla kullanılabilir." bildirimini gösterir. Tarayıcı sürümü,
+  yüklenmiş web uygulaması olarak da, her zaman Yerel modu kullanır;
+  masaüstü uygulamasında, Yerel moda ayarlı olduğu sürece aynı bildirim
+  görünür (Ayarlar > Genel > Depolama modu: "Yerel (Tarayıcı)"). Ancak
+  masaüstü uygulaması da şu ana kadar senkronizasyon yapmaz (bir sonraki
+  maddeye bakın).
+- Masaüstü uygulamasının Sunucu modunda (Ayarlar > Genel > Depolama
+  modu: "Sunucu") bu bölüm, host ve port için giriş alanlarını ve
+  "Eşleştirme kodu oluştur" düğmesini gösterir. Düğmeye tıklandığında
+  bir eşleştirme bağlantısı, bir QR kodu ve bağlantıyı kopyalamaya
+  yarayan bir düğme görünür. Ancak bu bağlantıyı henüz hiçbir cihaz
+  kullanamaz, QR kodu üzerinden de kullanamaz; yani bununla şu ana
+  kadar ikinci bir cihaz eşleştirilemez.
+
+Senkronizasyon kullanılamadığı sürece verilerinizi bir yedekle başka
+bir cihaza taşırsınız, ancak hepsini değil. Bir yedek, başka şeylerin
+yanı sıra API anahtarlarınızı da içermez; API anahtarlarınızı nasıl
+aktaracağınız [Ayarlar](settings.md) sayfasının "Şifreli anahtar dışa
+aktarma (.alk)" bölümünde anlatılır. Bir yedeğin neleri içermediğine
+dair başka örnekleri
+[Yedekleme ve geri yükleme](../features/backup.md) sayfası verir.
 
 ## Bu ChatGPT'den nasıl farklı?
 
