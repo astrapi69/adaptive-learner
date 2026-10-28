@@ -454,6 +454,25 @@ def test_every_diagram_carries_acc_title_and_acc_descr_in_every_locale(
             assert re.search(r"^\s*accDescr: \S", block.code, re.M), (lang, block.area)
 
 
+def test_every_diagram_keeps_its_size_instead_of_shrinking_to_the_column(
+    real_model: DataModel,
+) -> None:
+    """#3828: with Mermaid's default useMaxWidth every diagram was fitted to the
+    688 px content column, 15 of 16 down to an effective 1.8 to 8 px font.
+    Each block turns it off in its own frontmatter, so the text keeps its size
+    and the block scrolls instead (the CSS lives in assets/stylesheets)."""
+    for lang in erd.TEXT:
+        for block in erd.diagrams(lang, real_model):
+            head = block.code.split("erDiagram", 1)[0]
+            assert head.startswith("---\n"), (lang, block.area, block.database)
+            assert re.search(r"^config:\n\s+er:\n\s+useMaxWidth: false$", head, re.M), (
+                lang,
+                block.area,
+                block.database,
+            )
+            assert block.code.count("\n---\n") == 1, (lang, block.area)
+
+
 def test_identifiers_are_the_same_in_every_locale(real_model: DataModel) -> None:
     """Only the frame text is translated; entities, fields and relationships
     stay identifiers."""
