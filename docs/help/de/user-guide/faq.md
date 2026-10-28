@@ -2,15 +2,22 @@
 
 ## Sind meine Daten sicher?
 
-Im **Lokal-Modus** liegen alle deine Daten in IndexedDB auf
-deinem eigenen Gerät, ohne Backend dazwischen; andere erhalten
-Teile davon nur, wenn eine Funktion sie braucht, die du nutzt. Den
-Browser-Tab zu schließen löscht nichts; Site-Daten zu löschen
-schon. Auf einem geteilten Gerät kann jeder mit Zugriff auf
-dieses Browser-Profil sie lesen.
+Im **Lokal-Modus** speichert dein Browser deine Daten auf deinem
+eigenen Gerät (in IndexedDB und localStorage), unter anderem
+deinen Fortschritt, importierte Chats und deine Einstellungen
+samt API-Schlüsseln und GitHub-Token; einen Server des Betreibers
+gibt es dabei nicht. Teile davon erhalten andere nur, wenn eine
+Funktion sie braucht, zum Beispiel dein KI-Anbieter, wenn du die
+KI nutzt, oder GitHub, wenn die App beim Start von selbst nach
+neuen Inhalten fragt. Den Browser-Tab zu schließen löscht diese
+Daten nicht; die Website-Daten im Browser zu löschen entfernt sie
+von deinem Gerät. Auf einem geteilten Gerät kann jeder mit
+Zugriff auf dieses Browser-Profil sie lesen.
 
 Im **Server-Modus** liegen die Daten in der SQLite-Datenbank,
-die das FastAPI-Backend verwaltet. API-Schlüssel liegen
+die das FastAPI-Backend verwaltet. Lektionsfortschritt und
+Sprachaufnahmen, die offline entstehen, warten bis zur
+Übertragung in diesem Browser. API-Schlüssel liegen
 Fernet-verschlüsselt in `~/.config/adaptive_learner/secrets.yaml`.
 Der Verschlüsselungsschlüssel wird beim ersten Start erzeugt und
 in `~/.config/adaptive_learner/secret.key` abgelegt; du musst
@@ -36,14 +43,17 @@ Lernsitzung erhält dieser Anbieter:
 - wie bei jeder Anfrage unter anderem deine IP-Adresse und
   deinen API-Schlüssel.
 
-Deine XP und Abzeichen werden nicht gesendet. Die
-[KI-Inhaltsprüfung](ai-validation.md) sendet nur die Karten des
-geprüften Sets (Vorderseite, Rückseite, Notizen). Die KI-Prüfung
-vor dem Teilen sendet nur die Lektionen, die du teilst: ihre
-Karten, die Texte ihrer Schritte und die Übungen (Aufgabe und
-falsche Antwortoptionen). Beide senden dazu die Sprachen und das
-Niveau des Sets. Was du selbst in diese Inhalte schreibst, geht
-dabei mit und kann selbst persönlich sein. Die
+Deine XP und Abzeichen gehören nicht dazu. Auch andere
+KI-Funktionen schicken deinem Anbieter Daten, zum Beispiel die
+Analyse eines importierten Chats. Die
+[KI-Inhaltsprüfung](ai-validation.md) sendet die Karten des
+geprüften Sets (je Karte ihre Kennung, Vorderseite, Rückseite und
+Notizen). Die KI-Prüfung vor dem Teilen sendet von deinen
+Lektionen nur die, die du teilst, und von ihnen unter anderem die
+Karten, die Texte der Schritte und die Übungen (Aufgabe und
+falsche Antwortoptionen). Beide senden dazu Ausgangssprache,
+Zielsprache und Niveau des Sets. Was du selbst in diese Inhalte
+schreibst, geht dabei mit und kann selbst persönlich sein. Die
 [Datenschutzerklärung](../legal/privacy.md) nennt jede
 KI-Anfrage.
 

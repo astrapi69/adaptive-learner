@@ -4,18 +4,26 @@
 
 ## Os meus dados estão seguros?
 
-No **modo Local** todos os seus dados são armazenados no IndexedDB
-no seu próprio dispositivo, sem backend pelo meio; outros recebem
-partes deles só quando uma funcionalidade que utiliza precisa delas.
-Fechar o separador do navegador não os elimina; limpar os dados
-do site, sim. Se partilha o dispositivo, qualquer pessoa com
-acesso a este perfil do navegador pode lê-los.
+No **modo Local** o seu navegador armazena os seus dados no seu
+próprio dispositivo (no IndexedDB e no localStorage), entre outras
+coisas o seu progresso, as conversas importadas e as suas
+definições, incluindo as chaves de API e o token do GitHub; não há
+nenhum servidor do administrador envolvido. Outros recebem partes
+deles só quando uma funcionalidade precisa delas, por exemplo o
+seu fornecedor de IA, quando utiliza a IA, ou o GitHub, quando a
+aplicação pergunta por iniciativa própria, ao iniciar, se há
+conteúdos novos. Fechar o separador do navegador não elimina estes
+dados; limpar os dados do site no navegador remove-os do seu
+dispositivo. Se partilha o dispositivo, qualquer pessoa com acesso
+a este perfil do navegador pode lê-los.
 
-No **modo Servidor** os dados vivem na base de dados SQLite que
-o backend FastAPI gere. As chaves de API são encriptadas em
-repouso com Fernet usando um segredo que define via a variável
-de ambiente `ADAPTIVE_LEARNER_SECRET_KEY`, ou via `secret_key:`
-em `~/.config/adaptive_learner/secrets.yaml`.
+No **modo Servidor** os dados vivem na base de dados SQLite que o
+backend FastAPI gere. O progresso de lições e as gravações de voz
+feitos offline aguardam neste navegador até serem transferidos. As
+chaves de API são encriptadas em repouso com Fernet usando um
+segredo que define via a variável de ambiente
+`ADAPTIVE_LEARNER_SECRET_KEY`, ou via `secret_key:` em
+`~/.config/adaptive_learner/secrets.yaml`.
 
 Nenhum dos modos envia telemetria, análises ou as suas
 mensagens para terceiros além do fornecedor de IA que escolheu.
@@ -33,16 +41,19 @@ Numa sessão de aprendizagem, esse fornecedor recebe:
 - como em cada pedido, entre outras coisas, o seu endereço IP e a sua
   chave de API.
 
-Os seus XP e emblemas não são enviados. A
-[verificação de conteúdo por IA](ai-validation.md) envia apenas os
-cartões do conjunto verificado (frente, verso, notas). A revisão
-por IA antes de partilhar envia apenas as lições que partilha: os
-respetivos cartões, os textos dos respetivos passos e os exercícios
-(enunciado e opções de resposta erradas). Ambas enviam também os
-idiomas e o nível do conjunto. O texto que escreve nestes conteúdos
-também é enviado e pode ser, em si, pessoal. A
-[política de privacidade](../legal/privacy.md) enumera cada
-pedido à IA.
+Os seus XP e emblemas não fazem parte disto. Também outras
+funcionalidades de IA enviam dados ao seu fornecedor, por exemplo
+a análise de uma conversa importada. A
+[verificação de conteúdo por IA](ai-validation.md) envia os
+cartões do conjunto verificado (de cada cartão, o identificador, a
+frente, o verso e as notas). A revisão por IA antes de partilhar
+envia, das suas lições, apenas as que partilha e, delas, entre
+outras coisas, os cartões, os textos dos passos e os exercícios
+(enunciado e opções de resposta erradas). Ambas enviam também o
+idioma de origem, o idioma de destino e o nível do conjunto. O
+texto que escreve nestes conteúdos também é enviado e pode ser, em
+si, pessoal. A [política de privacidade](../legal/privacy.md)
+enumera cada pedido à IA.
 
 ## Preciso de uma chave de API?
 

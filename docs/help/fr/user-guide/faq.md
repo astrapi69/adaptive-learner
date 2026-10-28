@@ -7,8 +7,21 @@
 Vos données sont stockées sur votre propre appareil :
 
 - **Mode API** : base SQLite dans `~/.local/share/adaptive_learner/`
-  (Linux/macOS) ou `%LOCALAPPDATA%\adaptive_learner\` (Windows).
-- **Mode Dexie** : IndexedDB dans votre navigateur.
+  (Linux/macOS) ou `%LOCALAPPDATA%\adaptive_learner\` (Windows). La
+  progression des leçons et les enregistrements vocaux faits hors ligne
+  attendent dans ce navigateur jusqu'à leur transfert.
+- **Mode Dexie** : votre navigateur stocke vos données sur votre propre
+  appareil (dans IndexedDB et localStorage), entre autres votre
+  progression, les conversations importées et vos paramètres, y compris
+  les clés API et le token GitHub ; aucun serveur de l'exploitant
+  n'intervient. D'autres n'en reçoivent des parties que lorsqu'une
+  fonction en a besoin, par exemple votre fournisseur d'IA lorsque vous
+  utilisez l'IA, ou GitHub lorsque l'application demande d'elle-même, au
+  démarrage, s'il y a de nouveaux contenus. Fermer l'onglet du
+  navigateur ne supprime pas ces données ; effacer les données du site
+  dans le navigateur les retire de votre appareil. Sur un appareil
+  partagé, toute personne ayant accès à ce profil de navigateur peut les
+  lire.
 
 Rien - pas vos sessions, pas vos erreurs, pas votre progression - n'est
 envoyé à un serveur Adaptive Learner. Aucun mode n'envoie de télémétrie,
@@ -28,14 +41,17 @@ fournisseur reçoit :
 - comme pour chaque requête, entre autres, votre adresse IP et votre
   clé API.
 
-Vos XP et vos badges ne sont pas envoyés. La
-[vérification du contenu par l'IA](ai-validation.md) n'envoie que les
-cartes du set vérifié (recto, verso, notes). La revue IA avant le
-partage n'envoie que les leçons que vous partagez : leurs cartes, les
-textes de leurs étapes et les exercices (consigne et mauvaises
-réponses proposées). Les deux envoient aussi les langues et le niveau
-du set. Ce que vous écrivez vous-même dans ce contenu est envoyé avec
-lui et peut lui-même être personnel. La
+Vos XP et vos badges n'en font pas partie. D'autres fonctions d'IA
+envoient elles aussi des données à votre fournisseur, par exemple
+l'analyse d'une conversation importée. La
+[vérification du contenu par l'IA](ai-validation.md) envoie les cartes
+du set vérifié (pour chaque carte, son identifiant, son recto, son verso
+et ses notes). La revue IA avant le partage n'envoie, parmi vos leçons,
+que celles que vous partagez et, de celles-ci, entre autres les cartes,
+les textes des étapes et les exercices (consigne et mauvaises réponses
+proposées). Les deux envoient aussi la langue source, la langue cible et
+le niveau du set. Ce que vous écrivez vous-même dans ce contenu est
+envoyé avec lui et peut lui-même être personnel. La
 [politique de confidentialité](../legal/privacy.md) énumère chaque
 requête à l'IA.
 

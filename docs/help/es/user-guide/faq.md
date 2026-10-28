@@ -2,16 +2,23 @@
 
 ## ¿Están seguros mis datos?
 
-En el **modo Local** todos tus datos se almacenan en IndexedDB en
-tu propio dispositivo, sin backend de por medio; otros reciben
-partes de ellos solo cuando las necesita una función que usas. Cerrar
-la pestaña del navegador no los elimina; borrar los datos del
-sitio sí lo hace. Si compartes el dispositivo, cualquiera con
-acceso a este perfil del navegador puede leerlos.
+En el **modo Local** tu navegador almacena tus datos en tu propio
+dispositivo (en IndexedDB y localStorage), entre otras cosas tu
+progreso, las conversaciones importadas y tus ajustes, incluidas
+las claves API y el token de GitHub; no interviene ningún servidor
+del operador. Otros reciben partes de ellos solo cuando las
+necesita una función, por ejemplo tu proveedor de IA, cuando usas
+la IA, o GitHub, cuando la app pregunta por sí misma al iniciarse
+si hay contenidos nuevos. Cerrar la pestaña del navegador no
+elimina estos datos; borrar los datos del sitio en el navegador
+los quita de tu dispositivo. Si compartes el dispositivo,
+cualquiera con acceso a este perfil del navegador puede leerlos.
 
 En el **modo Servidor** los datos residen en la base de datos
-SQLite que gestiona el backend FastAPI. Las claves API se cifran
-en reposo con Fernet usando un secreto que configuras mediante la
+SQLite que gestiona el backend FastAPI. El progreso de lecciones y
+las grabaciones de voz que se hacen sin conexión esperan en este
+navegador hasta su transferencia. Las claves API se cifran en
+reposo con Fernet usando un secreto que configuras mediante la
 variable de entorno `ADAPTIVE_LEARNER_SECRET_KEY` o mediante
 `secret_key:` en `~/.config/adaptive_learner/secrets.yaml`.
 
@@ -32,14 +39,18 @@ elegido. En una sesión de aprendizaje ese proveedor recibe:
 - como en cada solicitud, entre otras cosas, tu dirección IP y tu
   clave API.
 
-Tus XP e insignias no se envían. La
-[revisión de contenido con IA](ai-validation.md) envía solo las
-tarjetas del set que revisa (anverso, reverso, notas). La revisión
-con IA antes de compartir envía solo las lecciones que compartes:
-sus tarjetas, los textos de sus pasos y los ejercicios (enunciado
-y opciones de respuesta incorrectas). Ambas envían además los
-idiomas y el nivel del set. Lo que tú mismo escribes en este
-contenido se envía con él y puede ser personal en sí mismo. La
+Tus XP e insignias no forman parte de esto. También otras
+funciones de IA envían datos a tu proveedor, por ejemplo el
+análisis de una conversación importada. La
+[revisión de contenido con IA](ai-validation.md) envía las
+tarjetas del set que revisa (de cada tarjeta, su identificador,
+anverso, reverso y notas). La revisión con IA antes de compartir
+envía, de tus lecciones, solo las que compartes y, de ellas, entre
+otras cosas, las tarjetas, los textos de los pasos y los
+ejercicios (enunciado y opciones de respuesta incorrectas). Ambas
+envían además el idioma de origen, el idioma de destino y el nivel
+del set. Lo que tú mismo escribes en este contenido se envía con
+él y puede ser personal en sí mismo. La
 [política de privacidad](../legal/privacy.md) enumera cada
 solicitud a la IA.
 
