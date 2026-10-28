@@ -23,17 +23,18 @@ Email: asterios.raptis@web.de
 
 ## The short version
 
-Adaptive Learner has no server of its own. The app and these pages set no
-cookies, use no analytics or tracking services and load no fonts or scripts
-from third parties. Your learning progress, statistics and settings stay in
-your browser, for you. Of these, the operator receives only what you send him
-yourself, and others receive parts of them only when a feature you use needs
-them, such as the AI with your own key.
+Adaptive Learner has no server run by the operator. The app and these pages set
+no cookies, use no analytics or tracking services and load no fonts or scripts
+from third parties. Stored in your browser are, among other things, your
+learning progress, your statistics and your settings. Of these, the operator
+receives only what you send him yourself, and others receive parts of them only
+when a feature needs them, for example your AI provider when you use the AI
+with your own key, or GitHub when the app asks for new content on its own.
 
 Data leaves your device only in these cases, each described in detail below:
 
 - When you open the app and these pages, GitHub as the hosting provider
-  processes your IP address.
+  processes, among other things, your IP address.
 - The app loads learning content from GitHub and also checks there on its own
   whether anything is new.
 - When you share a lesson with the community or use GitHub features with your
@@ -42,8 +43,8 @@ Data leaves your device only in these cases, each described in detail below:
 - GitHub receives an error report only when you open it on GitHub yourself.
 - AI features send your requests with your own key directly to the provider
   you chose.
-- For voice input and read-aloud, depending on its maker, your browser uses an
-  online service.
+- For voice input and read-aloud, depending on its maker, your browser can use
+  an online service.
 - Share buttons and external links open other sites only after you click.
 - You email the operator.
 
@@ -107,7 +108,7 @@ USA, see above.
 
 Some features use the GitHub API (`api.github.com`) with a personal access
 token that you enter yourself, in Settings under Integrations or for a single
-repository. The token stays in your browser and is sent only to GitHub. With
+repository. The token is stored in your browser and sent only to GitHub. With
 it, the app acts in your name:
 
 - It checks the token and reads your GitHub username in the process.
@@ -243,23 +244,24 @@ Framework (Art. 45 GDPR). The providers' privacy notices:
 
 When you tap the microphone (in the learning session's input field and in
 pronunciation practice), the app uses your browser's speech recognition.
-Recording starts only after the tap, and your browser asks for permission to
-use the microphone first. The browser does the recognition, not the app:
-Google Chrome sends the recording and the selected language to a Google
-service (`www.google.com`); other browsers behave as their maker decides. The
-browser's maker is the controller for this processing, and its privacy notice
-applies. For Chrome that is Google, for users in the EEA according to
-[Google's privacy policy](https://policies.google.com/privacy) Google Ireland
-Limited, Gordon House, Barrow Street, Dublin 4, Ireland; Google may also
-process the data in the USA, and Google LLC is certified under the EU-US Data
-Privacy Framework.
+Recording starts only after the tap; before recording begins, your browser asks
+for permission to use the microphone, unless you have already granted it to this
+site. The browser does the recognition, not the app: Google Chrome sends, among
+other things, the recording and the selected language to a Google service
+(`www.google.com`); other browsers can likewise send the recording to a service
+of their maker. The browser's maker is the controller for this processing, and
+its privacy notice applies. For Chrome that is Google, for users in the EEA
+according to [Google's privacy policy](https://policies.google.com/privacy)
+Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Ireland; Google
+may also process the data in the USA, and Google LLC is certified under the
+EU-US Data Privacy Framework.
 
 The app receives only the recognized text. In the learning session it lands in
 the input field, in pronunciation practice in your attempt; when you send it,
 it goes to your AI provider. The legal basis for starting the recognition is
 your request (Art. 6(1)(b) GDPR). In Settings under Learning, "Show
 microphone button" hides voice input. Recordings in speaking exercises, on the
-other hand, are made by the app itself and stay in your browser.
+other hand, are made by the app itself; they are stored in your browser.
 
 ## Read-aloud
 

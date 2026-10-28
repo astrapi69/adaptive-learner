@@ -3123,7 +3123,7 @@
     "ai_privacy_link": "Política de privacidade",
     "ai_validation": {
       "intro": "Uma IA pode também verificar a exatidão da tradução, a gramática e a adequação ao nível.",
-      "privacy": "Só é enviado o conteúdo da sua lição (cartões, textos, exercícios), sem o seu perfil nem o seu progresso. Como em cada pedido, {provider} recebe também o seu endereço IP e a sua chave de API.",
+      "privacy": "Para a revisão, {provider} recebe as lições que quer compartilhar (entre outras coisas, cartões, textos e exercícios), bem como o idioma de origem, o idioma de destino e o nível do conjunto, mas nem o seu perfil nem o seu progresso. Além disso, como em cada pedido à IA, {provider} recebe, entre outras coisas, o seu endereço IP e a sua chave de API.",
       "provider_fallback": "o seu provedor de IA",
       "consent": "Executar validação por IA",
       "run": "Verificar com IA",
@@ -3171,7 +3171,7 @@
       "title": "Verificação de conteúdo com IA",
       "loading": "Preparando cartões...",
       "cost_estimate": "~{cards} cartões, ~{tokens} tokens, ~{usd}.",
-      "privacy": "Só são enviados os seus cartões (frente, verso, notas), sem o seu perfil nem o seu progresso. Como em cada pedido, o seu provedor de IA recebe também o seu endereço IP e a sua chave de API.",
+      "privacy": "A verificação envia ao seu provedor de IA os cartões do conjunto (identificador, frente, verso, notas), bem como o idioma de origem, o idioma de destino e o nível do conjunto, mas nem o seu perfil nem o seu progresso. Além disso, como em cada pedido à IA, o seu provedor de IA recebe, entre outras coisas, o seu endereço IP e a sua chave de API.",
       "confirm": "Verificar",
       "progress": "Verificando lote {current} de {total}...",
       "rate_limited": "Aguarde um momento antes de executar outra verificação.",

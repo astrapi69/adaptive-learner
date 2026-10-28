@@ -22,7 +22,7 @@ export interface AiPrivacyNoteProps {
  *
  * @example
  * <AiPrivacyNote
- *   text={t("content.ai_check.privacy", "Only your cards are sent ...")}
+ *   text={t("content.ai_check.privacy", "The check sends your AI provider the cards of the set ...")}
  *   testId="ai-validation-privacy"
  *   className="text-xs text-fg-muted"
  * />

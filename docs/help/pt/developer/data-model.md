@@ -35,6 +35,11 @@ O usuário, as configurações dele com as chaves de API e o cache de reversão 
 ### Banco do servidor
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Conta e configurações: banco do servidor
     accDescr: Tabelas da área Conta e configurações: users, user_settings, api_key_backups. Relações: anki_card_suggestions.user_id → users, api_key_backups.user_id → users, curriculums.user_id → users, element_errors.user_id → users, imported_conversations.user_id → users, learning_profiles.user_id → users, learning_projects.user_id → users, lesson_progress.user_id → users, set_runs.user_id → users, speech_recordings.user_id → users, study_questions.user_id → users, tags.user_id → users, user_badges.user_id → users, user_missions.user_id → users, user_settings.user_id → users, user_streaks.user_id → users, user_xp.user_id → users, xp_purchases.user_id → users.
@@ -95,6 +100,11 @@ erDiagram
 ### Banco do navegador
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Conta e configurações: banco do navegador
     accDescr: Stores da área Conta e configurações: users, userSettings, apiKeyBackups, pluginSettings, userData. Relações: userSettings.user_id → users, apiKeyBackups.user_id → users, learningProjects.user_id → users, learningProfiles.user_id → users, tags.user_id → users, lessonProgress.user_id → users, elementErrors.user_id → users, setRuns.user_id → users, speechRecordings.user_id → users, curricula.user_id → users, userXp.user_id → users, xpPurchases.user_id → users, userBadges.user_id → users, userStreaks.user_id → users, userMissions.user_id → users, importedConversations.user_id → users, ankiCards.user_id → users, studyQuestions.user_id → users.
@@ -175,6 +185,11 @@ Um projeto de aprendizagem com o perfil de aprendizagem da avaliação, e as mat
 ### Banco do servidor
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Projetos de aprendizagem: banco do servidor
     accDescr: Tabelas da área Projetos de aprendizagem: learning_projects, learning_profiles, subjects, tags, project_subjects, project_tags. Relações: anki_card_suggestions.project_id → learning_projects, imported_conversations.project_id → learning_projects, learning_profiles.user_id → users, learning_profiles.project_id → learning_projects, learning_projects.user_id → users, learning_sessions.project_id → learning_projects, method_switches.project_id → learning_projects, progress_commits.project_id → learning_projects, project_subjects.project_id → learning_projects, project_subjects.subject_id → subjects, project_tags.project_id → learning_projects, project_tags.tag_id → tags, study_questions.project_id → learning_projects, subjects.parent_id → subjects, tags.user_id → users.
@@ -252,6 +267,11 @@ erDiagram
 ### Banco do navegador
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Projetos de aprendizagem: banco do navegador
     accDescr: Stores da área Projetos de aprendizagem: learningProjects, learningProfiles, subjects, tags, projectSubjects, projectTags. Relações: learningProjects.user_id → users, learningProfiles.user_id → users, learningProfiles.project_id → learningProjects, subjects.parent_id → subjects, tags.user_id → users, projectSubjects.project_id → learningProjects, projectSubjects.subject_id → subjects, projectTags.project_id → learningProjects, projectTags.tag_id → tags, learningSessions.project_id → learningProjects, progressCommits.project_id → learningProjects, methodSwitches.project_id → learningProjects, importedConversations.project_id → learningProjects, ankiCards.project_id → learningProjects, studyQuestions.project_id → learningProjects.
@@ -342,6 +362,11 @@ Uma sessão de aprendizagem com suas mensagens, avaliações, notas e avaliaçõ
 ### Banco do servidor
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Sessões: banco do servidor
     accDescr: Tabelas da área Sessões: learning_sessions, session_messages, session_ratings, session_notes, step_evaluations. Relações: anki_card_suggestions.session_id → learning_sessions, learning_sessions.project_id → learning_projects, learning_sessions.imported_conversation_id → imported_conversations, progress_commits.session_id → learning_sessions, session_messages.session_id → learning_sessions, session_notes.session_id → learning_sessions, session_ratings.session_id → learning_sessions, step_evaluations.session_id → learning_sessions, study_questions.session_id → learning_sessions.
@@ -407,6 +432,11 @@ erDiagram
 ### Banco do navegador
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Sessões: banco do navegador
     accDescr: Stores da área Sessões: learningSessions, sessionMessages, sessionRatings, sessionNotes, stepEvaluations. Relações: learningSessions.project_id → learningProjects, learningSessions.imported_conversation_id → importedConversations, sessionMessages.session_id → learningSessions, sessionRatings.session_id → learningSessions, sessionNotes.session_id → learningSessions, stepEvaluations.session_id → learningSessions, progressCommits.session_id → learningSessions, methodSwitches.session_id → learningSessions, ankiCards.session_id → learningSessions, studyQuestions.session_id → learningSessions.
@@ -484,6 +514,11 @@ Commits de progresso e trocas de método de um projeto, progresso de lições em
 ### Banco do servidor
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Progresso: banco do servidor
     accDescr: Tabelas da área Progresso: progress_commits, method_switches, lesson_progress, element_errors, set_runs, speech_recordings. Relações: element_errors.user_id → users, lesson_progress.user_id → users, method_switches.project_id → learning_projects, progress_commits.project_id → learning_projects, progress_commits.session_id → learning_sessions, set_runs.user_id → users, speech_recordings.user_id → users, element_errors.run_id → set_runs.
@@ -594,6 +629,11 @@ erDiagram
 ### Banco do navegador
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Progresso: banco do navegador
     accDescr: Stores da área Progresso: progressCommits, methodSwitches, lessonProgress, elementErrors, setRuns, speechRecordings. Relações: progressCommits.project_id → learningProjects, progressCommits.session_id → learningSessions, methodSwitches.project_id → learningProjects, methodSwitches.session_id → learningSessions, lessonProgress.user_id → users, elementErrors.user_id → users, elementErrors.run_id → setRuns, setRuns.user_id → users, speechRecordings.user_id → users.
@@ -719,6 +759,11 @@ Currículos com seus tópicos e lições; no navegador, também o cache dos sets
 ### Banco do servidor
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Conteúdo: banco do servidor
     accDescr: Tabelas da área Conteúdo: curriculums, learning_topics, lessons. Relações: curriculums.user_id → users, curriculums.imported_conversation_id → imported_conversations, learning_topics.curriculum_id → curriculums, learning_topics.parent_id → learning_topics, lessons.curriculum_id → curriculums.
@@ -761,6 +806,11 @@ erDiagram
 ### Banco do navegador
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Conteúdo: banco do navegador
     accDescr: Stores da área Conteúdo: curricula, learningTopics, lessons, contentSets, contentSetFiles. Relações: curricula.user_id → users, curricula.imported_conversation_id → importedConversations, learningTopics.curriculum_id → curricula, learningTopics.parent_id → learningTopics, lessons.curriculum_id → curricula, contentSetFiles.set_pk → contentSets.
@@ -849,6 +899,11 @@ XP e compras com XP, o catálogo de emblemas com os emblemas conquistados, sequ�
 ### Banco do servidor
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Gamificação: banco do servidor
     accDescr: Tabelas da área Gamificação: user_xp, xp_purchases, badges, user_badges, user_streaks, user_missions. Relações: user_badges.user_id → users, user_badges.badge_id → badges, user_missions.user_id → users, user_streaks.user_id → users, user_xp.user_id → users, xp_purchases.user_id → users.
@@ -921,6 +976,11 @@ erDiagram
 ### Banco do navegador
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Gamificação: banco do navegador
     accDescr: Stores da área Gamificação: userXp, xpPurchases, badges, userBadges, userStreaks, userMissions. Relações: userXp.user_id → users, xpPurchases.user_id → users, userBadges.user_id → users, userBadges.badge_id → badges, userStreaks.user_id → users, userMissions.user_id → users.
@@ -1006,6 +1066,11 @@ Conversas de chat importadas e suas mensagens.
 ### Banco do servidor
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Importação: banco do servidor
     accDescr: Tabelas da área Importação: imported_conversations, imported_messages. Relações: anki_card_suggestions.conversation_id → imported_conversations, curriculums.imported_conversation_id → imported_conversations, imported_conversations.user_id → users, imported_conversations.project_id → learning_projects, imported_messages.conversation_id → imported_conversations, learning_sessions.imported_conversation_id → imported_conversations.
@@ -1046,6 +1111,11 @@ erDiagram
 ### Banco do navegador
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, Importação: banco do navegador
     accDescr: Stores da área Importação: importedConversations, importedMessages. Relações: learningSessions.imported_conversation_id → importedConversations, curricula.imported_conversation_id → importedConversations, importedConversations.user_id → users, importedConversations.project_id → learningProjects, importedMessages.conversation_id → importedConversations, ankiCards.conversation_id → importedConversations.
@@ -1095,6 +1165,11 @@ Sugestões de cartões Anki e perguntas de estudo geradas por IA; no navegador, 
 ### Banco do servidor
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, IA: banco do servidor
     accDescr: Tabelas da área IA: anki_card_suggestions, study_questions. Relações: anki_card_suggestions.user_id → users, anki_card_suggestions.session_id → learning_sessions, anki_card_suggestions.conversation_id → imported_conversations, anki_card_suggestions.project_id → learning_projects, study_questions.user_id → users, study_questions.project_id → learning_projects, study_questions.session_id → learning_sessions.
@@ -1140,6 +1215,11 @@ erDiagram
 ### Banco do navegador
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Modelo de dados, IA: banco do navegador
     accDescr: Stores da área IA: ankiCards, studyQuestions, aiValidationResults. Relações: ankiCards.user_id → users, ankiCards.session_id → learningSessions, ankiCards.conversation_id → importedConversations, ankiCards.project_id → learningProjects, studyQuestions.user_id → users, studyQuestions.project_id → learningProjects, studyQuestions.session_id → learningSessions.

@@ -26,18 +26,20 @@ Correo electrónico: asterios.raptis@web.de
 
 ## En resumen
 
-Adaptive Learner no tiene servidor propio. La app y estas páginas no instalan
-cookies, no utilizan servicios de análisis ni de seguimiento y no cargan
-fuentes ni scripts de terceros. Su progreso, sus estadísticas y sus ajustes se
-quedan en su navegador, para usted. De ellos, el operador solo recibe lo que
-usted mismo le envíe, y otros solo reciben partes de ellos cuando las necesita
-una función que usted utiliza, por ejemplo la IA con su propia clave.
+Adaptive Learner no tiene ningún servidor del operador. La app y estas páginas
+no instalan cookies, no utilizan servicios de análisis ni de seguimiento y no
+cargan fuentes ni scripts de terceros. En su navegador se almacenan, entre
+otras cosas, su progreso, sus estadísticas y sus ajustes. De ellos, el operador
+solo recibe lo que usted mismo le envíe, y otros reciben partes de ellos solo
+cuando una función las necesita, por ejemplo su proveedor de IA, cuando usted
+utiliza la IA con su propia clave, o GitHub, cuando la app pregunta por sí
+misma si hay contenidos nuevos.
 
 Los datos solo salen de su dispositivo en estos casos, descritos en detalle
 más abajo:
 
 - Cuando usted abre la app y estas páginas, GitHub, como proveedor de
-  alojamiento, trata su dirección IP.
+  alojamiento, trata, entre otras cosas, su dirección IP.
 - La app carga los contenidos de aprendizaje desde GitHub y comprueba allí,
   también por sí misma, si hay novedades.
 - Cuando usted comparte una lección con la comunidad o utiliza funciones de
@@ -47,8 +49,8 @@ más abajo:
   GitHub.
 - Las funciones de IA envían sus solicitudes, con su propia clave,
   directamente al proveedor que usted ha elegido.
-- Para la entrada de voz y la lectura en voz alta, su navegador utiliza, según
-  el fabricante, un servicio en línea.
+- Para la entrada de voz y la lectura en voz alta, su navegador puede utilizar,
+  según el fabricante, un servicio en línea.
 - Los botones para compartir y los enlaces externos abren otros sitios solo
   después de que usted haga clic.
 - Usted escribe un correo electrónico al operador.
@@ -120,7 +122,7 @@ transferencia a Estados Unidos, véase arriba.
 
 Algunas funciones utilizan la API de GitHub (`api.github.com`) con un token de
 acceso personal que usted mismo introduce, en Ajustes, en Integraciones, o
-para un repositorio concreto. El token permanece en su navegador y solo se
+para un repositorio concreto. El token se almacena en su navegador y solo se
 envía a GitHub. Con él, la app actúa en su nombre:
 
 - Comprueba el token y, al hacerlo, lee su nombre de usuario de GitHub.
@@ -268,13 +270,14 @@ Datos UE-EE. UU. (art. 45 del RGPD). Avisos de privacidad de los proveedores:
 Cuando usted toca el micrófono (en el campo de entrada de la sesión de
 aprendizaje y en la práctica de pronunciación), la app utiliza el
 reconocimiento de voz de su navegador. La grabación empieza solo después de
-tocarlo, y su navegador pide antes permiso para usar el micrófono. El
+tocarlo; antes de que comience, su navegador pide permiso para usar el
+micrófono, salvo que usted ya se lo haya concedido a este sitio. El
 reconocimiento lo realiza el navegador, no la app: Google Chrome envía para
-ello la grabación y el idioma elegido a un servicio de Google
-(`www.google.com`); los demás navegadores actúan según su fabricante. El
-responsable de este tratamiento es el fabricante del navegador, y se aplica su
-aviso de privacidad. En Chrome se trata de Google; para los usuarios del EEE,
-según la
+ello, entre otras cosas, la grabación y el idioma elegido a un servicio de
+Google (`www.google.com`); los demás navegadores también pueden enviar la
+grabación a un servicio de su fabricante. El responsable de este tratamiento es
+el fabricante del navegador, y se aplica su aviso de privacidad. En Chrome se
+trata de Google; para los usuarios del EEE, según la
 [política de privacidad de Google](https://policies.google.com/privacy), de
 Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlanda; Google
 también puede tratar los datos en Estados Unidos, y Google LLC está certificada
@@ -286,7 +289,7 @@ lo envía, va a su proveedor de IA. La base jurídica para iniciar el
 reconocimiento es su solicitud (art. 6, apartado 1, letra b), del RGPD). En
 Ajustes, en Aprendizaje, «Mostrar botón de micrófono» oculta la entrada de
 voz. Las grabaciones de los ejercicios de expresión oral, en cambio, las hace
-la propia app y se quedan en su navegador.
+la propia app; se almacenan en su navegador.
 
 ## Lectura en voz alta
 

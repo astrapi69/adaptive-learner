@@ -3123,7 +3123,7 @@
     "ai_privacy_link": "Politique de confidentialité",
     "ai_validation": {
       "intro": "Une IA peut en plus vérifier l'exactitude des traductions, la grammaire et le niveau.",
-      "privacy": "Seul le contenu de ta leçon est envoyé (cartes, textes, exercices), sans ton profil ni ta progression. Comme pour chaque requête, {provider} reçoit aussi ton adresse IP et ta clé API.",
+      "privacy": "Pour la revue, {provider} reçoit les leçons que tu veux partager (entre autres des cartes, des textes et des exercices), ainsi que la langue source, la langue cible et le niveau de l'ensemble, mais ni ton profil ni ta progression. De plus, comme pour chaque requête à l'IA, {provider} reçoit, entre autres, ton adresse IP et ta clé API.",
       "provider_fallback": "ton fournisseur d'IA",
       "consent": "Lancer la validation par IA",
       "run": "Vérifier avec l'IA",
@@ -3171,7 +3171,7 @@
       "title": "Vérification du contenu par l'IA",
       "loading": "Préparation des cartes...",
       "cost_estimate": "~{cards} cartes, ~{tokens} tokens, ~{usd}.",
-      "privacy": "Seules tes cartes sont envoyées (recto, verso, notes), sans ton profil ni ta progression. Comme pour chaque requête, ton fournisseur d'IA reçoit aussi ton adresse IP et ta clé API.",
+      "privacy": "La vérification envoie à ton fournisseur d'IA les cartes de l'ensemble (identifiant, recto, verso, notes) ainsi que la langue source, la langue cible et le niveau de l'ensemble, mais ni ton profil ni ta progression. De plus, comme pour chaque requête à l'IA, ton fournisseur d'IA reçoit, entre autres, ton adresse IP et ta clé API.",
       "confirm": "Vérifier",
       "progress": "Vérification du lot {current} sur {total}...",
       "rate_limited": "Patiente avant de lancer une autre vérification.",

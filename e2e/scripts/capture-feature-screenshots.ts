@@ -1489,9 +1489,11 @@ async function openOwnSetAiCheckConfirm(page: Page): Promise<void> {
     await expect(page.getByTestId("ai-validation-estimate")).toBeVisible({timeout: 15_000});
 }
 
-/** The AI check's confirm step (#3812): the note says what the check sends
- *  (only the cards, no profile, no progress, plus IP address and key) and
- *  links the privacy policy. The run is not started. */
+/** The AI check's confirm step (#3812, #3840): the note says what the check
+ *  sends (the set's cards with identifier, front, back and notes, plus the
+ *  set's source language, target language and level, neither profile nor
+ *  progress, and among other things IP address and key) and links the
+ *  privacy policy. The run is not started. */
 async function gotoAiCheckPrivacyNote(page: Page): Promise<boolean> {
     await pinRandomness(page);
     await seedLearner(page);

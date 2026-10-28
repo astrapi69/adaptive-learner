@@ -129,7 +129,11 @@ def _diagram(lang: str, area: Area, database: Database) -> Diagram:
     descr += " " + (
         text["acc_relations"].format(edges=relations) if edges else text["acc_no_relations"]
     )
-    lines = ["erDiagram", f"    accTitle: {title}", f"    accDescr: {descr}"]
+    # #3828: Mermaid's default useMaxWidth fits a diagram to the content column,
+    # which shrank 15 of 16 to an unreadable 1.8 to 8 px font. Off, the diagram
+    # keeps its size and its block scrolls (docs/help/assets/stylesheets).
+    lines = ["---", "config:", "  er:", "    useMaxWidth: false", "---"]
+    lines += ["erDiagram", f"    accTitle: {title}", f"    accDescr: {descr}"]
     for name in owned:
         lines.append(f"    {name} {{")
         lines.extend(_attribute(column) for column in database.entities[name].columns)

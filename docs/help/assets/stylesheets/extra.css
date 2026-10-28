@@ -1,0 +1,5 @@
+/* #3828: ER diagrams keep their size (useMaxWidth: false in each block) and
+   scroll inside their block instead of shrinking or widening the page. */
+.md-typeset .mermaid {
+  overflow-x: auto;
+}
