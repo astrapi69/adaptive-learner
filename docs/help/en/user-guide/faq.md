@@ -157,8 +157,8 @@ extraction + role boundary preservation for that format.
 Local-network bidirectional sync. Open Settings > Data > Sync
 and pair this device: scan the QR code on the other
 device's screen (rear camera), or paste the pairing URL.
-Once paired, push + pull buttons exchange data; conflicts
-go through an AI-merge resolver. The sync covers all your
+Once paired, push + pull buttons exchange data; you resolve
+conflicts yourself in a dialog. The sync covers all your
 data, including lesson progress, element errors, and
 missions.
 
@@ -180,14 +180,15 @@ under the hood but adds:
    you close the tab.
 6. **Provider freedom** - Anthropic, OpenAI, or Gemini, plus
    Perplexity in server mode.
-7. **Local-first option** - progress, statistics and settings are
-   stored in your browser; others get parts of them only when a
-   feature you use needs them. The app contacts servers when a
-   feature needs it, for example GitHub for content (it also syncs
-   connected repositories on start), your AI provider, and GitHub
-   when you share something or open an error report there. The
-   [privacy policy](../legal/privacy.md) describes which cases these
-   are and what is transferred.
+7. **Local-first option** - in local mode your browser stores,
+   among other things, progress, statistics and settings; others
+   get parts of them only when a feature needs them. The app
+   contacts servers when a feature needs it, for example GitHub
+   for content (for that it also syncs connected repositories on
+   its own at start-up), your AI provider, and GitHub when you
+   share something or open an error report there. The
+   [privacy policy](../legal/privacy.md) describes which cases
+   these are and what is transferred.
 
 ## What if the AI goes wrong?
 

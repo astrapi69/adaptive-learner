@@ -13,12 +13,15 @@ online version:
 
 [**Open the app**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-It runs in **local mode**: your progress, statistics, settings and
-your API key are stored in your browser (IndexedDB); others get parts
-of them only when a feature you use needs them. AI calls, for example,
-go straight from the page to your AI provider, such as Anthropic,
-OpenAI or Google Gemini, using your own API key. No backend in
-between.
+It runs in **local mode**: among other things, your progress, your
+statistics, your settings and your API keys are stored in your
+browser. Others get parts of them only when a feature needs them, for
+example GitHub, when the app asks for new content on its own at
+start-up. AI calls are an example too: they go straight from your
+browser to your AI provider, such as Anthropic, OpenAI or Google
+Gemini, using your own API key and without a detour through a server
+of the operator. The [privacy policy](../legal/privacy.md) describes
+which data goes to whom in these cases, your IP address included.
 
 ## Install as a Progressive Web App
 

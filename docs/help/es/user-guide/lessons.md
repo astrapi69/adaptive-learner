@@ -341,11 +341,20 @@ lección.
 
 Todos los progresos de lecciones, las líneas de errores de
 elementos, los estados de la cola de repaso y los datos de
-programación se almacenan **de tu lado**: en el navegador
-(IndexedDB) o, en el modo API, en la base de datos de tu propio
-backend; otros reciben partes de ellos solo cuando las necesita
-una función que usas. Una sesión de aprendizaje con IA, por
-ejemplo, envía a tu proveedor de IA tus errores recientes, cada
-uno con tu respuesta, la respuesta correcta y cuántas veces lo
-cometiste. La [política de privacidad](../legal/privacy.md)
-describe qué datos van a otros y cuándo.
+programación se almacenan: en el modo local, en tu navegador
+(IndexedDB), y en el modo API, en la base de datos del backend
+al que está conectada la app; quien opera ese backend tiene
+acceso a ella. El progreso de lecciones y las grabaciones de voz
+que se generan sin conexión en el modo API esperan en tu
+navegador hasta su transferencia (consulta
+[Copia de seguridad](../features/backup.md)).
+Otros reciben partes de ellos solo cuando las necesita una
+función. Un ejemplo es la sesión de chat con IA: las lecciones
+en sí no usan IA, pero una sesión de chat con IA envía a tu
+proveedor de IA, entre otras cosas, tus lecciones completadas
+con sus resultados y tus errores recientes, cada uno con tu
+respuesta, la respuesta correcta y el número de veces que lo
+cometiste. Una sesión a partir de un chat importado envía, en
+lugar de tu progreso, el análisis y el historial de ese chat.
+La [política de privacidad](../legal/privacy.md) describe qué
+datos van a otros y cuándo.

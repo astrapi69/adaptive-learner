@@ -163,10 +163,10 @@ Sincronización bidireccional en la red local. Abre Ajustes > Datos >
 Sincronización y empareja este dispositivo: escanea
 el código QR en la pantalla del otro dispositivo (cámara trasera)
 o pega la URL de emparejamiento. Una vez emparejados, los botones
-de enviar y recibir intercambian datos; los conflictos pasan por
-un resolvedor de fusión de IA. La sincronización abarca todos tus
-datos, incluidos el progreso de las lecciones, los errores por
-elemento y las misiones.
+de enviar y recibir intercambian datos; los conflictos los resuelves
+tú mismo en un diálogo. La sincronización abarca todos tus datos,
+incluidos el progreso de las lecciones, los errores por elemento y
+las misiones.
 
 ## ¿En qué se diferencia esto de ChatGPT?
 
@@ -187,13 +187,14 @@ IA internamente pero añade:
    olvida cuando cierras la pestaña.
 6. **Libertad de proveedor** - Anthropic, OpenAI o Gemini, más
    Perplexity en modo servidor.
-7. **Opción local primero** - el progreso, las estadísticas y los
-   ajustes se almacenan en tu navegador; otros reciben partes de
-   ellos solo cuando las necesita una función que usas. La app se
-   conecta a servidores cuando una función lo necesita, por ejemplo
-   a GitHub para los contenidos (también sincroniza los repositorios
-   conectados al iniciarse), a tu proveedor de IA, y a GitHub cuando
-   compartes algo o abres allí un informe de error. La
+7. **Opción local primero** - en el modo local, tu navegador
+   almacena, entre otras cosas, el progreso, las estadísticas y los
+   ajustes; otros reciben partes de ellos solo cuando las necesita
+   una función. La app se conecta a servidores cuando una función lo
+   necesita, por ejemplo a GitHub para los contenidos (para ello
+   también sincroniza por sí sola los repositorios conectados al
+   iniciarse), a tu proveedor de IA, y a GitHub cuando compartes
+   algo o abres allí un informe de error. La
    [política de privacidad](../legal/privacy.md) describe qué casos
    son y qué se transfiere.
 

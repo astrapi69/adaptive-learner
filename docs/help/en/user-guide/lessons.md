@@ -383,10 +383,18 @@ lesson completion.
 ## Privacy
 
 All lesson progress, element-error rows, review-queue states and
-scheduling data are stored **with you**: in the browser (IndexedDB)
-or, in API mode, in your own backend's database; others get parts
-of them only when a feature you use needs them. An AI learning
-session, for example, sends your AI provider your recent mistakes,
-each with your answer, the correct answer and how often you made
-it. The [privacy policy](../legal/privacy.md) describes when which
-data goes to others.
+scheduling data are stored: in local mode in your browser
+(IndexedDB), in API mode in the database of the backend the app is
+connected to; whoever runs that backend has access to it. Lesson
+progress and voice recordings made offline in API mode wait in your
+browser until they are transferred (see
+[Backup](../features/backup.md)).
+Others get parts of them only when a feature needs them. One
+example is the AI chat session: lessons themselves use no AI, but
+an AI chat session sends your AI provider, among other things, your
+completed lessons with their results and your recent mistakes, each
+with your answer, the correct answer and the number of times you
+made it. A session from an imported chat sends that chat's analysis
+and history instead of your progress. The
+[privacy policy](../legal/privacy.md) describes when which data
+goes to others.

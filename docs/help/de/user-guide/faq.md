@@ -170,7 +170,7 @@ Bidirektionaler Lokal-Netz-Sync. Öffne Einstellungen > Daten >
 Synchronisation und kopple dieses Gerät: QR-Code vom anderen
 Gerät-Bildschirm scannen (Rückkamera), oder Pairing-URL
 einfügen. Nach dem Pairing tauschen Push- + Pull-Knöpfe
-Daten aus; Konflikte gehen durch einen KI-Merge-Resolver.
+Daten aus; Konflikte löst du in einem Dialog selbst.
 Die Synchronisation umfasst alle deine Daten, inkl.
 Lektionsfortschritt, Element-Fehler und Missionen.
 
@@ -194,15 +194,15 @@ unter der Haube eine KI nutzt, aber zusätzlich bringt:
    vergisst, wenn du den Tab schließt.
 6. **Anbieter-Freiheit** - Anthropic, OpenAI oder Gemini, dazu
    Perplexity im Server-Modus.
-7. **Local-First-Option** - Lernfortschritt, Statistiken und
-   Einstellungen werden in deinem Browser gespeichert; andere
-   erhalten Teile davon nur, wenn eine Funktion sie braucht, die du
-   nutzt. Server kontaktiert die App, wenn eine Funktion es braucht,
-   zum Beispiel GitHub für Inhalte (verbundene Repositorys gleicht
-   sie dafür auch beim Start ab), deinen KI-Anbieter, und GitHub,
-   wenn du etwas teilst oder einen Fehlerbericht dort öffnest.
-   Welche Fälle das sind und was dabei übertragen wird, beschreibt
-   die [Datenschutzerklärung](../legal/privacy.md).
+7. **Local-First-Option** - Im Lokal-Modus speichert dein Browser
+   unter anderem Lernfortschritt, Statistiken und Einstellungen;
+   Teile davon erhalten andere nur, wenn eine Funktion sie braucht.
+   Die App kontaktiert Server, wenn eine Funktion es braucht, zum
+   Beispiel GitHub für Inhalte (verbundene Repositorys gleicht sie
+   dafür auch beim Start von selbst ab), deinen KI-Anbieter, und
+   GitHub, wenn du etwas teilst oder einen Fehlerbericht dort
+   öffnest. Welche Fälle das sind und was dabei übertragen wird,
+   beschreibt die [Datenschutzerklärung](../legal/privacy.md).
 
 ## Was, wenn die KI danebenliegt?
 
