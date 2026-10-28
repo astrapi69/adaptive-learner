@@ -16,7 +16,7 @@ sección SYNC-UI-GATE más abajo). La referencia completa está en
 
 ## Tres roles de dispositivo
 
-La interfaz de sincronización está prevista de forma distinta según
+La interfaz de sincronización está planificada de forma distinta según
 el rol del dispositivo:
 
 | Rol | Modo de almacenamiento | Interfaz de sincronización |

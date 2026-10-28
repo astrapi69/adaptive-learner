@@ -6,17 +6,17 @@ de aprendizagem; apenas pouca coisa fica no browser, por exemplo
 algumas definições e, até serem transferidas, as alterações guardadas
 offline (ver [Definições](../user-guide/settings.md)). No modo de
 armazenamento Local (Navegador), internamente chamado Dexie, os dados
-ficam no IndexedDB do browser em que a aplicação corre. A
-**sincronização** destina-se, no futuro, a ligar dispositivos através
-da rede local; ainda não é utilizável (ver a secção SYNC-UI-GATE
-abaixo). A referência completa está em
+de aprendizagem ficam no IndexedDB do browser em que a aplicação
+corre. A **sincronização** destina-se, no futuro, a ligar dispositivos
+através da rede local; ainda não é utilizável (ver a secção
+SYNC-UI-GATE abaixo). A referência completa está em
 [`docs/policies/SYNC-ARCHITECTURE.md`](https://github.com/astrapi69/adaptive-learner/blob/main/docs/policies/SYNC-ARCHITECTURE.md).
 
 ---
 
 ## Três papéis de dispositivo
 
-A interface de sincronização está prevista de forma diferente
+A interface de sincronização está planeada de forma diferente
 consoante o papel do dispositivo:
 
 | Papel | Modo de armazenamento | Interface de sync |
