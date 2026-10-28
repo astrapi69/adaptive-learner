@@ -160,6 +160,12 @@ mapea los errores de dominio a códigos de estado HTTP. Consulta
   fija su `TableSpec.append_only` en
   `backend/app/services/sync_tables.py`. Las tablas en sí, por
   área: [Modelo de datos](data-model.md).
+- Ninguna clave API en la sincronización (#3854): las tablas de
+  `SYNC_SECRET_TABLES` (la caché de reversión `api_key_backups`) y los
+  campos `api_key_*` de `user_settings` (`EXCLUDED_USER_SETTINGS_FIELDS`,
+  la misma lista que usa la copia de seguridad) no pasan por la
+  sincronización en ninguna dirección; en el navegador filtra
+  `frontend/src/storage/sync/sync-secrets.ts`.
 - Formato de copia de seguridad: JSON; claves API eliminadas en
   la exportación; la restauración es una fusión.
 - Aislamiento de pruebas: los directorios de datos de producción
