@@ -2890,7 +2890,7 @@ content:
   ai_privacy_link: "Política de privacidad"
   ai_validation:
     intro: Una IA puede comprobar además la precisión de la traducción, la gramática y el nivel.
-    privacy: "Solo se envía el contenido de tu lección (tarjetas, textos, ejercicios), sin tu perfil ni tu progreso de aprendizaje. Como en cada solicitud, {provider} recibe además, entre otras cosas, tu dirección IP y tu clave API."
+    privacy: "Para la revisión, {provider} recibe las lecciones que quieres compartir (entre otras cosas, tarjetas, textos y ejercicios), así como el idioma de origen, el idioma de destino y el nivel del conjunto, pero ni tu perfil ni tu progreso de aprendizaje. Además, como en cada solicitud a la IA, {provider} recibe, entre otras cosas, tu dirección IP y tu clave API."
     # #3812 - stands for {provider} in privacy when no provider is active;
     # it has to read right inside that sentence.
     provider_fallback: "tu proveedor de IA"
@@ -2936,7 +2936,7 @@ content:
     title: "Revisión de contenido con IA"
     loading: "Preparando tarjetas..."
     cost_estimate: "~{cards} tarjetas, ~{tokens} tokens, ~{usd}."
-    privacy: "Solo se envían tus tarjetas (anverso, reverso, notas), sin tu perfil ni tu progreso de aprendizaje. Como en cada solicitud, tu proveedor de IA recibe además, entre otras cosas, tu dirección IP y tu clave API."
+    privacy: "La revisión envía a tu proveedor de IA las tarjetas del conjunto (identificador, anverso, reverso, notas), así como el idioma de origen, el idioma de destino y el nivel del conjunto, pero ni tu perfil ni tu progreso de aprendizaje. Además, como en cada solicitud a la IA, tu proveedor de IA recibe, entre otras cosas, tu dirección IP y tu clave API."
     confirm: "Revisar"
     progress: "Revisando lote {current} de {total}..."
     rate_limited: "Espera un momento antes de ejecutar otra revisión."

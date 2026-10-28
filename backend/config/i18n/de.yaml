@@ -2893,7 +2893,7 @@ content:
   ai_privacy_link: "Datenschutzerklärung"
   ai_validation:
     intro: Eine KI kann zusätzlich Übersetzungsgenauigkeit, Grammatik und Niveau prüfen.
-    privacy: "Gesendet werden nur die Inhalte deiner Lektion (Karten, Texte, Übungen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält {provider} dabei unter anderem deine IP-Adresse und deinen API-Schlüssel."
+    privacy: "Für die Prüfung erhält {provider} die Lektionen, die du teilen willst (unter anderem Karten, Texte und Übungen), dazu Ausgangssprache, Zielsprache und Niveau des Sets, aber weder dein Profil noch deinen Lernfortschritt. Außerdem erhält {provider}, wie bei jeder KI-Anfrage, unter anderem deine IP-Adresse und deinen API-Schlüssel."
     # #3812 - stands for {provider} in privacy when no provider is active;
     # it has to read right inside that sentence.
     provider_fallback: "dein KI-Anbieter"
@@ -2939,7 +2939,7 @@ content:
     title: "KI-Inhaltsprüfung"
     loading: "Karten werden vorbereitet..."
     cost_estimate: "~{cards} Karten, ~{tokens} Tokens, ~{usd}."
-    privacy: "Gesendet werden nur deine Lernkarten (Vorderseite, Rückseite, Notizen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält dein KI-Anbieter dabei unter anderem deine IP-Adresse und deinen API-Schlüssel."
+    privacy: "Die Prüfung schickt deinem KI-Anbieter die Karten des Sets (Kennung, Vorderseite, Rückseite, Notizen) sowie Ausgangssprache, Zielsprache und Niveau des Sets, aber weder dein Profil noch deinen Lernfortschritt. Außerdem erhält dein KI-Anbieter, wie bei jeder KI-Anfrage, unter anderem deine IP-Adresse und deinen API-Schlüssel."
     confirm: "Prüfen"
     progress: "Prüfe Batch {current} von {total}..."
     rate_limited: "Bitte warte einen Moment, bevor du erneut prüfst."

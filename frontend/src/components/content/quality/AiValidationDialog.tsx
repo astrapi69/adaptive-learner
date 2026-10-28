@@ -166,7 +166,7 @@ export default function AiValidationDialog({
               testId="ai-validation-privacy"
               text={t(
                 "content.ai_check.privacy",
-                "Only your cards are sent (front, back, notes), no profile and no learning progress. As with every request, your AI provider also receives, among other things, your IP address and your API key.",
+                "The check sends your AI provider the cards of the set (identifier, front, back, notes) as well as the set's source language, target language and level, but neither your profile nor your learning progress. In addition, as with every AI request, your AI provider receives, among other things, your IP address and your API key.",
               )}
             />
             {rateLimited && (

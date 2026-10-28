@@ -3466,16 +3466,20 @@ Ort: Settings → Daten → Empfohlene Repositories.
       der neue Zyklus
 - [ ] TC-0733 AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] TC-0734 Kein Button ohne Key führt zu Error-Toast (disabled + Tooltip)
-- [ ] TC-0985 Datenschutz-Hinweis vor dem Senden (#3812, #3840): der Hinweis unter der
-      Kostenschätzung der KI-Inhaltsprüfung (`ai-validation-privacy`) und der
-      im Qualitätsschritt beim Teilen (`content-ai-privacy`) nennen, was
-      gesendet wird (nur die Karten bzw. die Inhalte der Lektion, kein Profil,
-      kein Lernfortschritt) und dass der Anbieter dabei unter anderem
-      IP-Adresse und API-Schlüssel erhält (in jeder UI-Sprache mit "unter
-      anderem" oder dessen Entsprechung, nie als vollständige Liste); der
-      Hinweis beim Teilen nennt den Anbieter mit seinem Namen aus den
+- [ ] TC-0985 Datenschutz-Hinweis vor dem Senden (#3812, #3840): der Hinweis
+      unter der Kostenschätzung der KI-Inhaltsprüfung
+      (`ai-validation-privacy`) und der im Qualitätsschritt beim Teilen
+      (`content-ai-privacy`) nennen, was gesendet wird: die KI-Inhaltsprüfung
+      die Karten des Sets (Kennung, Vorderseite, Rückseite, Notizen, als
+      vollständige Liste), die Prüfung beim Teilen die Lektionen, die geteilt
+      werden sollen (unter anderem Karten, Texte und Übungen), beide dazu
+      Ausgangssprache, Zielsprache und Niveau des Sets, aber weder Profil noch
+      Lernfortschritt; und dass der Anbieter außerdem unter anderem IP-Adresse
+      und API-Schlüssel erhält (in jeder UI-Sprache mit "unter anderem" oder
+      dessen Entsprechung, nie als vollständige Liste); der Hinweis beim
+      Teilen nennt den Anbieter in beiden Sätzen mit seinem Namen aus den
       Einstellungen (z. B. "Anthropic Claude"), in jeder UI-Sprache, nie mit
-      der internen ID ("anthropic"); der Link
+      der internen ID ("anthropic") und nie als `{provider}`; der Link
       "Datenschutzerklärung" öffnet die Datenschutzerklärung der Docs-Site in
       der UI-Sprache in einem neuen Tab (Deutsch ohne Präfix, Englisch unter
       `.../docs/en/legal/privacy/`)

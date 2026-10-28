@@ -2899,7 +2899,7 @@ content:
   ai_privacy_link: "Privacy policy"
   ai_validation:
     intro: An AI can additionally check translation accuracy, grammar and level fit.
-    privacy: "Only your lesson's content is sent (cards, texts, exercises), no profile and no learning progress. As with every request, {provider} also receives, among other things, your IP address and your API key."
+    privacy: "For the review, {provider} receives the lessons you want to share (among other things, cards, texts and exercises), plus the set's source language, target language and level, but neither your profile nor your learning progress. In addition, as with every AI request, {provider} receives, among other things, your IP address and your API key."
     # #3812 - stands for {provider} in privacy when no provider is active;
     # it has to read right inside that sentence.
     provider_fallback: "your AI provider"
@@ -2945,7 +2945,7 @@ content:
     title: "AI content check"
     loading: "Preparing cards..."
     cost_estimate: "~{cards} cards, ~{tokens} tokens, ~{usd}."
-    privacy: "Only your cards are sent (front, back, notes), no profile and no learning progress. As with every request, your AI provider also receives, among other things, your IP address and your API key."
+    privacy: "The check sends your AI provider the cards of the set (identifier, front, back, notes) as well as the set's source language, target language and level, but neither your profile nor your learning progress. In addition, as with every AI request, your AI provider receives, among other things, your IP address and your API key."
     confirm: "Check"
     progress: "Checking batch {current} of {total}..."
     rate_limited: "Please wait a moment before running another check."

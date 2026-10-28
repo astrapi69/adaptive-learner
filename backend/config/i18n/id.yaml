@@ -2899,7 +2899,7 @@ content:
   ai_privacy_link: "Kebijakan privasi"
   ai_validation:
     intro: AI juga dapat memeriksa keakuratan terjemahan, tata bahasa, dan kesesuaian tingkat.
-    privacy: "Hanya konten pelajaranmu yang dikirim (kartu, teks, latihan), tanpa profil dan kemajuan belajarmu. Seperti pada setiap permintaan, {provider} juga menerima, antara lain, alamat IP-mu dan kunci API-mu."
+    privacy: "Untuk tinjauan ini, {provider} menerima pelajaran yang ingin kamu bagikan (antara lain kartu, teks, dan latihan), serta bahasa sumber, bahasa target, dan tingkat set, tetapi tidak menerima profilmu maupun kemajuan belajarmu. Selain itu, seperti pada setiap permintaan AI, {provider} juga menerima, antara lain, alamat IP-mu dan kunci API-mu."
     # #3812 - stands for {provider} in privacy when no provider is active;
     # it has to read right inside that sentence.
     provider_fallback: "penyedia AI-mu"
@@ -2945,7 +2945,7 @@ content:
     title: "Pemeriksaan konten AI"
     loading: "Menyiapkan kartu..."
     cost_estimate: "~{cards} kartu, ~{tokens} token, ~{usd}."
-    privacy: "Hanya kartu pelajaranmu yang dikirim (depan, belakang, catatan), tanpa profil dan kemajuan belajarmu. Seperti pada setiap permintaan, penyedia AI-mu juga menerima, antara lain, alamat IP-mu dan kunci API-mu."
+    privacy: "Pemeriksaan ini mengirimkan kepada penyedia AI-mu kartu-kartu set (pengidentifikasi, depan, belakang, catatan) serta bahasa sumber, bahasa target, dan tingkat set, tetapi tidak mengirimkan profilmu maupun kemajuan belajarmu. Selain itu, seperti pada setiap permintaan AI, penyedia AI-mu juga menerima, antara lain, alamat IP-mu dan kunci API-mu."
     confirm: "Periksa"
     progress: "Memeriksa batch {current} dari {total}..."
     rate_limited: "Mohon tunggu sejenak sebelum menjalankan pemeriksaan lagi."

@@ -15,7 +15,7 @@ import type { UseContentSharingResult } from "../../../hooks/content/useContentS
 const catalog = vi.hoisted(
   (): Record<string, string> => ({
     "content.ai_validation.privacy":
-      "Gesendet werden nur die Inhalte deiner Lektion (Karten, Texte, Übungen), kein Profil und kein Lernfortschritt. Wie bei jeder Anfrage erhält {provider} dabei unter anderem deine IP-Adresse und deinen API-Schlüssel.",
+      "Für die Prüfung erhält {provider} die Lektionen, die du teilen willst (unter anderem Karten, Texte und Übungen), dazu Ausgangssprache, Zielsprache und Niveau des Sets, aber weder dein Profil noch deinen Lernfortschritt. Außerdem erhält {provider}, wie bei jeder KI-Anfrage, unter anderem deine IP-Adresse und deinen API-Schlüssel.",
     "content.ai_validation.provider_fallback": "dein KI-Anbieter",
     "settings.provider_anthropic": "Anthropic Claude",
     "settings.provider_gemini": "Google Gemini",
@@ -67,20 +67,35 @@ function renderPrivacyNote(activeProvider: string | null): HTMLElement {
 describe("ContentShareDialog privacy note", () => {
   it("names the active provider by its label in the UI language", () => {
     const note = renderPrivacyNote("anthropic");
-    expect(note).toHaveTextContent("erhält Anthropic Claude dabei unter anderem deine IP-Adresse");
+    expect(note).toHaveTextContent("Für die Prüfung erhält Anthropic Claude die Lektionen");
+    expect(note).toHaveTextContent(
+      "Außerdem erhält Anthropic Claude, wie bei jeder KI-Anfrage, unter anderem deine IP-Adresse",
+    );
     expect(note).not.toHaveTextContent(/\banthropic\b/);
   });
 
   it("uses the localized fallback when no provider is active", () => {
     const note = renderPrivacyNote(null);
-    expect(note).toHaveTextContent("erhält dein KI-Anbieter dabei unter anderem deine IP-Adresse");
+    expect(note).toHaveTextContent("Für die Prüfung erhält dein KI-Anbieter die Lektionen");
+    expect(note).toHaveTextContent(
+      "Außerdem erhält dein KI-Anbieter, wie bei jeder KI-Anfrage, unter anderem deine IP-Adresse",
+    );
     expect(note).not.toHaveTextContent("the AI provider");
   });
 
+  // #3840 - the note names the provider in both of its sentences, so every
+  // {provider} is filled, not only the first.
+  it.each([["anthropic"], [null]])(
+    "leaves no {provider} placeholder unfilled (active provider %s)",
+    (provider) => {
+      expect(renderPrivacyNote(provider)).not.toHaveTextContent("{provider}");
+    },
+  );
+
   it.each([
-    ["gemini", "erhält Google Gemini dabei"],
+    ["gemini", "erhält Google Gemini die Lektionen"],
     // A provider without a label key keeps its id: there is no better name.
-    ["mistral", "erhält mistral dabei"],
+    ["mistral", "erhält mistral die Lektionen"],
   ])("names provider %s as %j", (provider, expected) => {
     expect(renderPrivacyNote(provider)).toHaveTextContent(expected);
   });
