@@ -58,7 +58,7 @@ biçimlendirirsin:
   üzerinde yazar). Kilitli çerçeveler koşullarını gösterir.
 
 Seçimin ve satın aldığın çerçeveler kalıcıdır ve
-[yedeğinle](backup.md) birlikte taşınır.
+[yedeğinle](../features/backup.md) birlikte taşınır.
 
 ## Görünüm
 
