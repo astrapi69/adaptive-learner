@@ -1100,9 +1100,11 @@ une leçon dans l'application** :
    navigateur d'ensembles.
 2. Dans « Mes leçons », clique sur **Exporter comme ensemble de
    contenu** pour télécharger un ensemble de contenu en `.zip`
-   (manifeste + leçons). Les exports ne contiennent que le contenu
-   de la leçon - aucune progression, aucun historique d'erreurs,
-   rien de personnel.
+   (manifeste + leçons). Les exports contiennent le contenu de la
+   leçon, mais pas la progression ni l'historique d'erreurs ; ce qui
+   figure dans la leçon part avec, y compris des éléments personnels
+   comme un nom d'auteur que tu as indiqué (voir
+   [Mes leçons](../user-guide/my-lessons.md)).
 3. Clique sur **Mettre à disposition de la communauté** pour ouvrir
    une **pull request** pré-remplie dans le dépôt de contenu - le
    JSON de leçon est committé au bon chemin dans l'arbre, sans

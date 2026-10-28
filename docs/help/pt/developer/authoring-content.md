@@ -1064,8 +1064,10 @@ contribuir é **criar e partilhar uma lição na aplicação**:
    de conjuntos.
 2. Em "As Minhas Lições", clica em **Exportar como conjunto de
    conteúdo** para descarregar um conjunto de conteúdo como `.zip`
-   (manifesto + lições). As exportações contêm apenas o conteúdo da
-   lição - sem progresso, sem histórico de erros, nada pessoal.
+   (manifesto + lições). As exportações contêm o conteúdo da lição,
+   mas não o progresso nem o histórico de erros; o que está na lição
+   vai junto, incluindo dados pessoais como um nome de autor que
+   tenhas indicado (vê [As Minhas Lições](../user-guide/my-lessons.md)).
 3. Clica em **Disponibilizar para a comunidade** para abrir um
    **Pull Request** pré-preenchido no repositório de conteúdo - o
    JSON da lição é committado no caminho correto da árvore, sem

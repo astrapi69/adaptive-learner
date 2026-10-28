@@ -1168,8 +1168,10 @@ app**:
    lesson appears under **My Lessons** in the set browser.
 2. In "My Lessons", click **Export as content set** to download a
    content set as `.zip` (manifest + lessons). Exports contain
-   only the lesson content - no progress, no error history,
-   nothing personal.
+   the lesson content, but no progress and no error history;
+   whatever is in the lesson goes with it, including personal
+   details such as an author name you gave (see
+   [My Lessons](../user-guide/my-lessons.md)).
 3. Click **Share with Community** to open a pre-filled **pull
    request** in the content repository - the lesson JSON is
    committed at the correct path in the tree, no `.zip` attachment

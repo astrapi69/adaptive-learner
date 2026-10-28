@@ -1079,9 +1079,11 @@ compartirla**:
    conjuntos.
 2. En "Mis lecciones", haz clic en **Exportar como conjunto de
    contenido** para descargar un conjunto de contenido como `.zip`
-   (manifiesto + lecciones). Las exportaciones solo contienen el
-   contenido de la lección - sin progreso, sin historial de errores,
-   nada personal.
+   (manifiesto + lecciones). Las exportaciones contienen el contenido
+   de la lección, pero no el progreso ni el historial de errores; lo
+   que figura en la lección va incluido, también datos personales como
+   un nombre de autor que hayas indicado (consulta
+   [Mis lecciones](../user-guide/my-lessons.md)).
 3. Haz clic en **Poner a disposición de la comunidad** para abrir un
    **pull request** precargado en el repositorio de contenido - el
    JSON de la lección se hace commit en la ruta correcta del árbol,

@@ -1023,8 +1023,10 @@ hızlı yolu, **uygulamada bir ders oluşturmak ve paylaşmaktır**:
    kaydet?**). Ders, Set Tarayıcısı'nda **Derslerim** altında görünür.
 2. "Derslerim"de **İçerik Seti olarak dışa aktar**'a tıklayarak bir
    içerik setini `.zip` olarak indir (manifest + dersler). Dışa
-   aktarmalar yalnızca ders içeriğini içerir - ilerleme yok, hata
-   geçmişi yok, kişisel bir şey yok.
+   aktarmalar ders içeriğini içerir, ancak ilerlemeyi ve hata
+   geçmişini içermez; derste yazan her şey, girdiğin bir yazar adı
+   gibi kişisel bilgiler de dahil, dışa aktarmaya girer (bkz.
+   [Derslerim](../user-guide/my-lessons.md)).
 3. **Topluluğa sun**'a tıklayarak içerik repository'sinde önceden
    doldurulmuş bir **Pull Request** aç - ders JSON'ı ağaçtaki doğru
    yola commit edilir, `.zip` eki gerekmez. Ayarlar > Entegrasyonlar
