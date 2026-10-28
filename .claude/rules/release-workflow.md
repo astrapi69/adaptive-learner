@@ -470,6 +470,15 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
       dexie-smoke + manual-automation, not this project) and specs had been
       failing since May. Naming the numbers is what makes the box unfakeable.
 - [ ] `make test-dexie-smoke` green (MANDATORY since 2026-05-26: DEXIE-MODE-RELEASE-GATE-01 — walks every nav-reachable route against the GH-Pages-shape build with NO backend; any error toast or page crash blocks the release)
+- [ ] The visual regression run on the release commit is green
+      (`visual-regression.yml`, dispatched on the release branch; record the
+      RUN ID and "N passed / M failed"; MANDATORY since v2.17.0, #3745). Why
+      green and not "only the known failures": the nightly run was red for ten
+      days on the same three content-discover shots, and then nobody can tell
+      whether a new deviation came on top. On #3842 that took a comparison with
+      the nightly runs, and every PR would have needed one again. Since #3745
+      the image run serves every content fetch from a snapshot and fails on any
+      external request, so a red run names a real change or a new live source.
 - [ ] `ruff check` clean
 - [ ] `mypy app/` clean (MANDATORY since v0.26.x; not "if active")
 - [ ] `poetry run pre-commit run --all-files` clean (MANDATORY)
