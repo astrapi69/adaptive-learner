@@ -3972,6 +3972,24 @@ developer tools open.
       AI replies with your own key arrive, and after a reload without network
       the app still starts (service worker)
 
+### TS-0140 LAN sync carries no API keys (#3854)
+
+Preparation: the desktop app on the local network with a stored Anthropic
+key; the browser version with a different stored Anthropic key, paired
+with the desktop app under Settings > Synchronisation. In the browser,
+keep the developer tools open on the Network tab.
+
+- [ ] TC-1000 Press "Sync Now": no request to `/api/sync/push` or `/api/sync/pull`
+      and no response to one contains either key or an `api_key_` field, and
+      no request pushes or asks for the `api_key_backups` table
+- [ ] TC-1001 After the sync the AI in the browser still answers with the browser's
+      key and the desktop app still with its own; Settings > AI shows each
+      device's own key on both devices
+- [ ] TC-1002 Change the profile picture on both devices, then sync: the conflict
+      dialog appears, neither version of the entry contains an `api_key_`
+      field, and "Smart Merge (AI)" sends the AI provider no key (Network
+      tab: the request to the provider)
+
 ## Automated: Unit + Component Tests (Vitest, 7200+;
 ## current number see docs/audits/current-coverage.md)
 

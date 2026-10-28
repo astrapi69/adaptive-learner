@@ -164,6 +164,11 @@ domain errors to HTTP status codes. See
   whether a table syncs append-only or mutable is its
   `TableSpec.append_only` in `backend/app/services/sync_tables.py`.
   The tables themselves, by area: [Data model](data-model.md).
+- No API key on the sync wire (#3854): the tables in
+  `SYNC_SECRET_TABLES` (the `api_key_backups` rollback cache) and the
+  `api_key_*` fields of `user_settings` (`EXCLUDED_USER_SETTINGS_FIELDS`,
+  the same list backup uses) cross sync in neither direction; the
+  browser side filters in `frontend/src/storage/sync/sync-secrets.ts`.
 - Backup format: JSON; API keys stripped on export; restore
   is a merge.
 - Test isolation: production data dirs carry a

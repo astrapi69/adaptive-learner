@@ -159,6 +159,12 @@ domínio para códigos de estado HTTP. Consulte
   definido pelo `TableSpec.append_only` dela em
   `backend/app/services/sync_tables.py`. As tabelas em si, por
   área: [Modelo de dados](data-model.md).
+- Nenhuma chave de API na sincronização (#3854): as tabelas de
+  `SYNC_SECRET_TABLES` (o cache de reversão `api_key_backups`) e os
+  campos `api_key_*` de `user_settings` (`EXCLUDED_USER_SETTINGS_FIELDS`,
+  a mesma lista do backup) não passam pela sincronização em nenhum
+  sentido; no navegador, o filtro fica em
+  `frontend/src/storage/sync/sync-secrets.ts`.
 - Formato de backup: JSON; chaves de API removidas na exportação;
   a restauração é uma fusão.
 - Isolamento de testes: os diretórios de dados de produção têm um

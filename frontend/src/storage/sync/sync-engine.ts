@@ -11,14 +11,9 @@
  *   4. The push/pull/resolve protocol that mirrors the backend
  *      ``/api/sync/*`` endpoints.
  *
- * The 12 sync-table set:
- *
- *   MUTABLE   users, user_settings, learning_projects,
- *             learning_profiles, curriculums, learning_topics, lessons
- *   APPEND    learning_sessions, session_messages, session_ratings,
- *             session_notes, progress_commits, method_switches,
- *             step_evaluations, imported_conversations,
- *             imported_messages
+ * The synced tables and their MUTABLE / APPEND-ONLY classification
+ * live in ``sync-tables.ts``. No API key crosses the wire in either
+ * direction (#3854, ``sync-secrets.ts``).
  *
  * v1.8.0 / Phase 21 — closed the v1.0.0 sync gaps. The Dexie
  * schema for ``step_evaluations`` was aligned with the backend
@@ -50,6 +45,7 @@ import {
 } from "./sync-persistence";
 import {parsePairingUri} from "./sync-pairing";
 import {SYNC_TABLES, type SyncTable} from "./sync-tables";
+import {hasSyncSecrets, keepLocalSecrets, stripSyncSecrets} from "./sync-secrets";
 import type {
     ConflictBundle,
     ConflictResolver,
@@ -207,7 +203,15 @@ export class SyncEngine {
                 );
                 pushed += response.accepted.length;
                 if (response.conflicts.length > 0) {
-                    accumulatedConflicts.push(...response.conflicts);
+                    // #3854: an older desktop still sends its key columns;
+                    // the resolver (and its AI merge) never sees them.
+                    accumulatedConflicts.push(
+                        ...response.conflicts.map((conflict) => ({
+                            ...conflict,
+                            local: stripSyncSecrets(conflict.table, conflict.local),
+                            remote: stripSyncSecrets(conflict.table, conflict.remote),
+                        })),
+                    );
                 }
             }
 
@@ -296,7 +300,9 @@ export class SyncEngine {
         if (!tableHandle || typeof tableHandle.toArray !== "function") {
             return [];
         }
-        const all = (await tableHandle.toArray()) as Record<string, unknown>[];
+        const all = ((await tableHandle.toArray()) as Record<string, unknown>[]).map((row) =>
+            stripSyncSecrets(table.name, row),
+        );
         if (since === null) return all;
         return all.filter((row) => {
             const ts = row[table.timestampField];
@@ -353,13 +359,18 @@ export class SyncEngine {
         if (!handle || typeof handle.put !== "function") return 0;
         let applied = 0;
         for (const row of rows) {
+            const id = row.id as string | undefined;
             if (table.appendOnly) {
-                const id = row.id as string | undefined;
                 if (!id) continue;
                 const existing = await handle.get(id);
                 if (existing) continue; // idempotent skip
             }
-            await handle.put(row);
+            // #3854: the local keys survive a pull, the sender's never land.
+            const local =
+                id && hasSyncSecrets(table.name)
+                    ? ((await handle.get(id)) as Record<string, unknown> | undefined)
+                    : undefined;
+            await handle.put(keepLocalSecrets(table.name, row, local));
             applied += 1;
         }
         return applied;

@@ -14,14 +14,14 @@ from typing import Any
 from app import __version__
 from app.exceptions import NotFoundError
 from app.repositories.backup_repo import BackupRepository
-from app.schemas import AIProvider
 from app.services.content_backup import dump_content_sets
 from app.services.sync_service import (
-    TABLES as SYNC_TABLES,
-)
-from app.services.sync_service import (
+    EXCLUDED_USER_SETTINGS_FIELDS,
     _to_iso,
     serialize_row,
+)
+from app.services.sync_service import (
+    TABLES as SYNC_TABLES,
 )
 
 logger = logging.getLogger(__name__)
@@ -49,11 +49,9 @@ BACKUP_VERSION = "1.9.0"
 BACKUP_FORMAT = "adaptive-learner-backup"
 
 # API keys are sensitive; the backup file is meant to travel
-# (cloud, USB, email). Stripped on export, ignored on import. One field
-# per AI provider, derived from the enum so a new provider is covered
-# without a second edit; the frontend derives its list from AI_PROVIDERS
-# the same way, and a parity test pins the two provider lists (#3367).
-EXCLUDED_USER_SETTINGS_FIELDS: set[str] = {f"api_key_{provider.value}" for provider in AIProvider}
+# (cloud, USB, email). Stripped on export, ignored on import. The field
+# list (EXCLUDED_USER_SETTINGS_FIELDS) lives in sync_tables.py, shared with
+# the LAN sync wire (#3854).
 
 
 def _strip_excluded_fields(table: str, record: dict[str, Any]) -> dict[str, Any]:
