@@ -158,6 +158,12 @@ hatalarını HTTP durum kodlarına eşler. Tam desen için
   olarak mı senkronize edildiğini `backend/app/services/sync_tables.py`
   içindeki `TableSpec.append_only` belirler. Tabloların kendisi,
   bölümlere göre: [Veri modeli](data-model.md).
+- Senkronizasyonda API anahtarı yok (#3854): `SYNC_SECRET_TABLES`
+  içindeki tablolar (`api_key_backups` geri alma önbelleği) ve
+  `user_settings` tablosunun `api_key_*` alanları
+  (`EXCLUDED_USER_SETTINGS_FIELDS`, yedeklemenin kullandığı liste) hiçbir
+  yönde senkronizasyondan geçmez; tarayıcı tarafındaki filtre
+  `frontend/src/storage/sync/sync-secrets.ts` içindedir.
 - Yedek biçimi: JSON; API anahtarları dışa aktarmada çıkarılır;
   geri yükleme bir birleştirmedir.
 - Test yalıtımı: üretim veri dizinleri

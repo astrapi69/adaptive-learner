@@ -574,6 +574,10 @@ plugins:
 extra_javascript:
   - assets/javascripts/mermaid-11.17.2.min.js
 
+# #3828: wide diagrams scroll inside their block (assets/stylesheets/extra.css).
+extra_css:
+  - assets/stylesheets/extra.css
+
 markdown_extensions:
   - admonition
   - attr_list

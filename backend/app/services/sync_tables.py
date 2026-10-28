@@ -50,6 +50,7 @@ from app.models import (
     UserXP,
     XpPurchase,
 )
+from app.schemas import AIProvider
 
 # ---------------------------------------------------------------------------
 # Table classification
@@ -732,6 +733,19 @@ TABLES: dict[str, TableSpec] = {
         scope="direct",
     ),
 }
+
+# API keys never leave the install: not in a backup file (#3367) and not on
+# the LAN sync wire (#3854). One field per AI provider, derived from the enum
+# so a new provider is covered without a second edit; the frontend derives
+# its list from AI_PROVIDERS the same way, and a parity test pins the two
+# provider lists (#3367).
+EXCLUDED_USER_SETTINGS_FIELDS: set[str] = {f"api_key_{provider.value}" for provider in AIProvider}
+
+# Tables whose rows are keys (the Fernet rollback cache, #3854). They stay in
+# ``TABLES`` because backup shares the registry, but sync neither serves nor
+# accepts them. Both lists name what is excluded, so a new secret nobody adds
+# to them is synced (#3854, findings).
+SYNC_SECRET_TABLES: frozenset[str] = frozenset({"api_key_backups"})
 
 APPEND_ONLY_TABLES = {name for name, spec in TABLES.items() if spec.append_only}
 MUTABLE_TABLES = {name for name, spec in TABLES.items() if not spec.append_only}
