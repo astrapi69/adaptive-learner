@@ -3123,7 +3123,7 @@
     "ai_privacy_link": "Gizlilik politikası",
     "ai_validation": {
       "intro": "Bir yapay zekâ ayrıca çeviri doğruluğunu, dil bilgisini ve seviye uygunluğunu kontrol edebilir.",
-      "privacy": "Yalnızca dersinizin içeriği gönderilir (kartlar, metinler, alıştırmalar), profiliniz ve ilerlemeniz gönderilmez. Her istekte olduğu gibi {provider} sağlayıcısı IP adresinizi ve API anahtarınızı da alır.",
+      "privacy": "İnceleme için {provider} sağlayıcısı, paylaşmak istediğiniz dersleri (başka şeylerin yanı sıra kartları, metinleri ve alıştırmaları), ayrıca setin kaynak dilini, hedef dilini ve seviyesini alır, ancak ne profilinizi ne de öğrenme ilerlemenizi alır. Ek olarak {provider} sağlayıcısı, her yapay zekâ isteğinde olduğu gibi, başka şeylerin yanı sıra IP adresinizi ve API anahtarınızı da alır.",
       "provider_fallback": "yapay zekâ",
       "consent": "Yapay zekâ doğrulamasını çalıştır",
       "run": "Yapay zekâ ile kontrol et",
@@ -3171,7 +3171,7 @@
       "title": "Yapay zekâ içerik denetimi",
       "loading": "Kartlar hazırlanıyor...",
       "cost_estimate": "~{cards} kart, ~{tokens} token, ~{usd}.",
-      "privacy": "Yalnızca kartlarınız gönderilir (ön yüz, arka yüz, notlar), profiliniz ve ilerlemeniz gönderilmez. Her istekte olduğu gibi yapay zekâ sağlayıcınız IP adresinizi ve API anahtarınızı da alır.",
+      "privacy": "Denetim, yapay zekâ sağlayıcınıza setin kartlarını (tanımlayıcı, ön yüz, arka yüz, notlar), ayrıca setin kaynak dilini, hedef dilini ve seviyesini gönderir, ancak ne profilinizi ne de öğrenme ilerlemenizi gönderir. Ek olarak yapay zekâ sağlayıcınız, her yapay zekâ isteğinde olduğu gibi, başka şeylerin yanı sıra IP adresinizi ve API anahtarınızı da alır.",
       "confirm": "Denetle",
       "progress": "{total} gruptan {current}. grup denetleniyor...",
       "rate_limited": "Yeni bir denetim çalıştırmadan önce lütfen biraz bekleyin.",

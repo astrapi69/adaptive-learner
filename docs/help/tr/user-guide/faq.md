@@ -4,16 +4,32 @@
 
 ## Verilerim güvende mi?
 
-**Yerel modda** tüm verileriniz kendi cihazınızdaki IndexedDB'de bulunur.
-Arka uç yok, üçüncü taraf hizmet yok. Tarayıcı sekmesini kapatmak onu
-silmez; site verilerini temizlemek siler. Cihazı paylaşıyorsanız,
-bu tarayıcı profiline erişimi olan herkes okuyabilir.
+**Yerel modda** tarayıcınız verilerinizi kendi cihazınızda (IndexedDB ve
+localStorage içinde) saklar; bunlar arasında başka şeylerin yanı sıra
+ilerlemeniz, içe aktarılan sohbetler ve API anahtarları ile GitHub
+token'ı dahil ayarlarınız bulunur ve işletmeciye ait bir sunucu
+kullanılmaz. Başkaları bunların bölümlerini yalnızca bir özellik onlara
+ihtiyaç duyduğunda alır, örneğin yapay zekâyı kullandığınızda yapay zekâ
+sağlayıcınız veya uygulama açılışta yeni içerik olup olmadığını
+kendiliğinden GitHub'a sorduğunda GitHub. Tarayıcı sekmesini kapatmak
+bu verileri silmez; tarayıcıdaki site verilerini temizlemek onları
+cihazınızdan kaldırır. Cihazı paylaşıyorsanız, bu tarayıcı profiline
+erişimi olan herkes okuyabilir.
 
-**Sunucu modunda** veriler, FastAPI arka ucunun yönettiği SQLite
-veritabanında bulunur. API anahtarları, `ADAPTIVE_LEARNER_SECRET_KEY`
-ortam değişkeni aracılığıyla ya da `~/.config/adaptive_learner/secrets.yaml`
-içindeki `secret_key:` ile belirlediğiniz bir sır kullanılarak Fernet ile
-dinlenme sırasında şifrelenir.
+**Sunucu modunda** öğrenme verileriniz, FastAPI arka ucunun yönettiği
+SQLite veritabanında bulunur. Ders ilerlemesi ve ses kayıtlarından
+çevrimdışıyken oluşanlar, uygulama bunları aktarana kadar bu tarayıcıda
+bekler; en fazla ne kadarının beklediğini ve geri kalanına ne olduğunu
+[Yedekleme ve geri yükleme](../features/backup.md) sayfası açıklar. API
+anahtarları Fernet ile şifrelenmiş olarak
+`~/.config/adaptive_learner/secrets.yaml` içinde, her sağlayıcı için
+en son çalışan API anahtarının bir yedek kopyası da aynı şekilde
+şifrelenmiş olarak veritabanında bulunur. Şifreleme anahtarı ilk
+başlatmada oluşturulur ve
+`~/.config/adaptive_learner/secret.key` içine kaydedilir; hiçbir şey
+ayarlamanız gerekmez. Kendi anahtarınızı belirlemek isterseniz, ilk
+başlatmadan önce `ADAPTIVE_LEARNER_SECRET_KEY` (ya da `secrets.yaml`
+içinde `secret_key:`) ayarlayın.
 
 Her iki mod da seçtiğiniz yapay zeka sağlayıcısı dışında herhangi bir
 üçüncü tarafa telemetri, analitik ya da mesajlarınızı göndermez. Bir
@@ -27,18 +43,21 @@ Her iki mod da seçtiğiniz yapay zeka sağlayıcısı dışında herhangi bir
   sohbetten başlatılan oturumda öğrenme ilerlemeniz yerine o sohbetin
   analizi ve dökümü yer alır;
 - mesajlarınız ve yapay zekânın oturumdaki önceki yanıtları;
-- her istekte olduğu gibi IP adresiniz ve API anahtarınız.
+- her istekte olduğu gibi, başka şeylerin yanı sıra, IP adresiniz ve API
+  anahtarınız.
 
-XP'niz ve rozetleriniz gönderilmez.
-[Yapay zekâ içerik denetimi](ai-validation.md) yalnızca denetlediği
-setin kartlarını (ön yüz, arka yüz, notlar) gönderir. Paylaşmadan
-önceki yapay zekâ denetimi yalnızca paylaştığınız dersleri gönderir:
-kartlarını, adımlarının metinlerini ve alıştırmaları (soru ve yanlış
-cevap seçenekleri). İkisi de ayrıca setin dillerini ve seviyesini
-gönderir. Bu içeriğe kendiniz yazdıklarınız da birlikte gider ve
-kendi başına kişisel olabilir.
-[Gizlilik politikası](../legal/privacy.md) yapay zekâya giden her
-isteği listeler.
+XP'niz ve rozetleriniz bunlara dahil değildir. Başka yapay zekâ
+özellikleri de sağlayıcınıza veri gönderir, örneğin içe aktarılan bir
+sohbetin analizi. [Yapay zekâ içerik denetimi](ai-validation.md)
+denetlediği setin kartlarını (her kartın tanımlayıcısını, ön yüzünü,
+arka yüzünü ve notlarını) gönderir. Paylaşmadan önceki yapay zekâ
+denetimi derslerinizden yalnızca paylaştıklarınızı, bunlardan da başka
+şeylerin yanı sıra kartları, adımların metinlerini ve alıştırmaları
+(soru ve yanlış cevap seçenekleri) gönderir. İkisi de ayrıca setin
+kaynak dilini, hedef dilini ve seviyesini gönderir. Bu içeriklerde kendi
+yazdığınız her şey de gönderilir ve kişisel bilgi içerebilir.
+[Gizlilik politikası](../legal/privacy.md) yapay zekâya giden her isteği
+listeler.
 
 ## API anahtarına ihtiyacım var mı?
 

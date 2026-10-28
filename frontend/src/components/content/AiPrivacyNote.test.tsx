@@ -20,7 +20,7 @@ vi.mock("../../hooks/ui/useI18n", () => ({
 import AiPrivacyNote from "./AiPrivacyNote";
 
 const NOTE =
-  "Only your cards are sent. Your AI provider also receives your IP address and your API key.";
+  "The check sends your AI provider the cards of the set. In addition, your AI provider receives, among other things, your IP address and your API key.";
 
 beforeEach(() => {
   i18n.lang = "en";

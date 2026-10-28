@@ -2,19 +2,30 @@
 
 ## Is my data safe?
 
-In **Local mode** all your data lives in IndexedDB on your own
-device. No backend, no third-party service. Closing the
-browser tab doesn't delete it; clearing site data does. If you
-share the device, anyone with access to this browser profile
-can read it.
+In **Local mode** your browser stores your data on your own
+device (in IndexedDB and localStorage), among other things your
+progress, imported chats and your settings, including API keys
+and the GitHub token; no server run by the operator is involved.
+Others get parts of it only when a feature needs them, for
+example your AI provider when you use the AI, or GitHub when the
+app asks for new content on its own at startup. Closing the
+browser tab doesn't delete this data; clearing the site data in
+the browser removes it from your device. If you share the
+device, anyone with access to this browser profile can read it.
 
-In **Server mode** the data lives in the SQLite database the
-FastAPI backend manages. API keys are encrypted at rest with
-Fernet in `~/.config/adaptive_learner/secrets.yaml`. The
-encryption key is generated on first start and kept in
-`~/.config/adaptive_learner/secret.key`; you do not have to set
-anything. To supply your own key instead, set
-`ADAPTIVE_LEARNER_SECRET_KEY` (or `secret_key:` in
+In **Server mode** your learning data lives in the SQLite
+database the FastAPI backend manages. Whatever lesson progress
+and voice recordings are created offline wait in this browser
+until the app transfers them; how much waits at most and what
+happens to the rest is described under
+[Backup and restore](../features/backup.md). API keys are
+encrypted at rest with Fernet in
+`~/.config/adaptive_learner/secrets.yaml`, and for each provider
+a backup copy of the API key that last worked is stored in the
+database, also encrypted. The encryption key is generated on
+first start and kept in `~/.config/adaptive_learner/secret.key`;
+you do not have to set anything. To supply your own key
+instead, set `ADAPTIVE_LEARNER_SECRET_KEY` (or `secret_key:` in
 `secrets.yaml`) before the first start.
 
 Neither mode sends telemetry, analytics, or your messages to
@@ -30,14 +41,18 @@ learning session that provider receives:
   imported chat carries that chat's analysis and transcript
   instead of your learning progress;
 - your messages and the AI's earlier replies in the session;
-- as with every request, your IP address and your API key.
+- as with every request, among other things, your IP address and
+  your API key.
 
-Your XP and badges are not sent. The
-[AI content check](ai-validation.md) sends only the cards of the
-set it checks (front, back, notes). The AI review before sharing
-sends only the lessons you share: their cards, the texts of their
-steps and the exercises (task and wrong answer options). Both also
-send the set's languages and level. Whatever you write yourself
+Your XP and badges are not part of this. Other AI features also
+send data to your provider, for example the analysis of an
+imported chat. The [AI content check](ai-validation.md) sends
+the cards of the set it checks (for each card its identifier,
+front, back and notes). The AI review before sharing sends only
+those of your lessons that you share, and of those, among other
+things, the cards, the texts of the steps and the exercises
+(task and wrong answer options). Both also send the set's source
+language, target language and level. Whatever you write yourself
 into this content goes along and can itself be personal. The
 [privacy policy](../legal/privacy.md) lists every AI request.
 
