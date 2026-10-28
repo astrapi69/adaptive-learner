@@ -15,9 +15,10 @@
  * renamed there, update this list (a future enhancement could generate it).
  */
 
-import {existsSync} from "node:fs";
+import {existsSync, readFileSync} from "node:fs";
+import {extname, join, normalize} from "node:path";
 
-import {expect, test, type Locator, type Page} from "@playwright/test";
+import {expect, test, type Locator, type Page, type Route} from "@playwright/test";
 
 import {completeAssessment, completeOnboarding, declineDraftPrompt} from "../helpers";
 import {
@@ -371,6 +372,11 @@ const BOOKS_YAML_FIXTURE = {
  * JSON superset, so the object bodies parse unchanged for the ``.yaml`` files.
  */
 export async function pinContentRegistry(page: Page): Promise<void> {
+    // #3745 - the guard first: Playwright runs matching routes in reverse
+    // registration order, so every fixture below answers its URL and the
+    // guard sees only what nothing answers.
+    await guardExternalRequests(page);
+    await pinOfficialContent(page);
     await page.route("**/recommended-repos.json", (route) =>
         route.fulfill({
             status: 200,
@@ -392,6 +398,77 @@ export async function pinContentRegistry(page: Page): Promise<void> {
             body: JSON.stringify(BOOKS_YAML_FIXTURE),
         }),
     );
+}
+
+/** Requests to a host outside the test environment that {@link guardExternalRequests} stopped, per page. */
+const externalGuardHits = new WeakMap<Page, string[]>();
+
+/**
+ * Abort and record every http(s) request to a host other than the local
+ * preview server, for the rest of the test (#3745).
+ *
+ * The visual run must render from this repository alone. Its live sources
+ * were found one by one, months apart (``recommended-repos.json`` #1653,
+ * ``media.yaml`` and ``books.yaml`` #1696, the official ``manifest.yaml``
+ * #3745), each time as baseline drift. With this guard a new live source
+ * fails its first run and the failure names the URL. Same pattern as
+ * ``guardGitHub`` in ``e2e/scripts/capture-feature-screenshots.ts`` (#3182),
+ * widened from GitHub to every external host. Measured on 2026-10-28: the
+ * Workbox worker sent none of these requests itself, so ``page.route`` sees
+ * them all.
+ */
+export async function guardExternalRequests(page: Page): Promise<void> {
+    const hits: string[] = [];
+    externalGuardHits.set(page, hits);
+    await page.route(
+        (url) =>
+            (url.protocol === "http:" || url.protocol === "https:") &&
+            url.hostname !== "localhost" &&
+            url.hostname !== "127.0.0.1",
+        async (route: Route) => {
+            hits.push(`${route.request().method()} ${route.request().url()}`);
+            await route.abort("blockedbyclient");
+        },
+    );
+}
+
+/**
+ * Fail the test when {@link guardExternalRequests} stopped any request, and
+ * return how many it stopped (0). "The guard was never installed" fails on
+ * its own, so it cannot print the same green as "nothing was stopped"
+ * (gate contract point 4, #2083).
+ */
+export function assertNoExternalRequests(page: Page): number {
+    const hits = externalGuardHits.get(page);
+    expect(hits, "the external-request guard was never installed (pinContentRegistry)").toBeDefined();
+    expect(hits, "requests that left the test environment (#3745)").toEqual([]);
+    return hits?.length ?? 0;
+}
+
+const OFFICIAL_CONTENT_PREFIX = "https://raw.githubusercontent.com/astrapi69/adaptive-learner-content/main/";
+const OFFICIAL_CONTENT_DIR = join(__dirname, "fixtures", "official-content");
+
+/**
+ * Serve the official content repository from the frozen snapshot in
+ * ``fixtures/official-content`` (#3745, see its ``SOURCE.md``): the root
+ * ``manifest.yaml`` and ``search-index.json`` and the ``en/fr-a1`` set that
+ * ``seedLearner`` downloads. A path not in the snapshot falls through to the
+ * next route, and in the end to {@link guardExternalRequests}, which stops it
+ * and fails the test. The synthetic fixtures in {@link pinContentRegistry}
+ * are registered after this route, so they answer their files first.
+ */
+async function pinOfficialContent(page: Page): Promise<void> {
+    await page.route(`${OFFICIAL_CONTENT_PREFIX}**`, async (route: Route) => {
+        const rel = normalize(decodeURIComponent(new URL(route.request().url()).pathname))
+            .replace(/^\/astrapi69\/adaptive-learner-content\/main\//, "");
+        const file = join(OFFICIAL_CONTENT_DIR, rel);
+        if (!file.startsWith(OFFICIAL_CONTENT_DIR + "/") || !existsSync(file)) {
+            await route.fallback();
+            return;
+        }
+        const type = extname(file) === ".json" ? "application/json" : "text/yaml";
+        await route.fulfill({status: 200, contentType: type, body: readFileSync(file)});
+    });
 }
 
 /**

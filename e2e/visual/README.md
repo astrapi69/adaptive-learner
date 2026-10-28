@@ -60,6 +60,15 @@ already applied in `helpers.ts`:
   that renders a baseline and the run that compares against it; pin the
   source to a fixture, as `pinContentRegistry` and `pinLessonCacheEmpty`
   do.
+- **Nothing leaves the test environment** (#3745). `pinContentRegistry`
+  first installs `guardExternalRequests`, which aborts every request to a
+  host other than the local preview server, and every motif ends with
+  `assertNoExternalRequests`. A new live source therefore fails its first
+  run and names the URL, instead of surfacing months later as drift. The
+  official content repository is served from a byte-exact snapshot in
+  `fixtures/official-content/` (commit and refresh steps in its
+  `SOURCE.md`); the synthetic `recommended-repos.json`, `media.yaml` and
+  `books.yaml` fixtures answer before it.
 
 ## Layout
 

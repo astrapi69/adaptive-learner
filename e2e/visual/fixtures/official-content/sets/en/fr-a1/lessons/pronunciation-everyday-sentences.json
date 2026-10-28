@@ -1,0 +1,126 @@
+{
+  "id": "pronunciation-everyday-sentences",
+  "title": "Pronunciation practice: everyday sentences",
+  "description": "Practice pronouncing sentences from lessons 1-9 (greetings, introducing yourself, at the restaurant, directions). Listen to the sentence, look at it, then say it yourself - no new vocabulary, just a new skill: speaking instead of only recognizing.",
+  "target_language": "fr",
+  "source_language": "en",
+  "domain": "language",
+  "estimated_minutes": 10,
+  "requires_extensions": ["ext:al-speak-and-record@1"],
+  "cards": [],
+  "steps": [
+    {
+      "id": "intro-pronunciation",
+      "type": "theory",
+      "title": "Listen, look, speak",
+      "body": "# Listen, look, speak\n\nYou already know these sentences from lessons 1-9 - this lesson isn't about recognizing them again. Instead, listen to each sentence, look at it if you need to, and record yourself saying it.\n\nThis exercise is not graded - there is no right or wrong answer here. Just compare your recording to the original and hear how close you already are."
+    },
+    {
+      "id": "ex-speak-bonjour",
+      "type": "exercise",
+      "theory_ref": "intro-pronunciation",
+      "title": "Introducing yourself",
+      "exercise": {
+        "id": "ex-speak-bonjour",
+        "stable_id": "ex-mtiflmcd001ts",
+        "type": "ext:al-speak-and-record",
+        "prompt": "Listen to the sentence, reveal it, then say it yourself.",
+        "ext_payload": {
+          "sentence": "Bonjour, je m'appelle Sophie."
+        }
+      }
+    },
+    {
+      "id": "ex-speak-age",
+      "type": "exercise",
+      "theory_ref": "intro-pronunciation",
+      "title": "Saying your age",
+      "exercise": {
+        "id": "ex-speak-age",
+        "stable_id": "ex-mtiflmcd002xu",
+        "type": "ext:al-speak-and-record",
+        "prompt": "Listen to the sentence, reveal it, then say it yourself.",
+        "ext_payload": {
+          "sentence": "J'ai dix ans."
+        }
+      }
+    },
+    {
+      "id": "ex-speak-eau",
+      "type": "exercise",
+      "theory_ref": "intro-pronunciation",
+      "title": "Ordering at a restaurant",
+      "exercise": {
+        "id": "ex-speak-eau",
+        "stable_id": "ex-mtiflmcd00355",
+        "type": "ext:al-speak-and-record",
+        "prompt": "Listen to the sentence, reveal it, then say it yourself.",
+        "ext_payload": {
+          "sentence": "Je voudrais de l'eau, s'il vous plaît."
+        }
+      }
+    },
+    {
+      "id": "ex-speak-addition",
+      "type": "exercise",
+      "theory_ref": "intro-pronunciation",
+      "title": "Asking for the bill",
+      "exercise": {
+        "id": "ex-speak-addition",
+        "stable_id": "ex-mtiflmcd0048a",
+        "type": "ext:al-speak-and-record",
+        "prompt": "Listen to the sentence, reveal it, then say it yourself.",
+        "ext_payload": {
+          "sentence": "L'addition, s'il vous plaît."
+        }
+      }
+    },
+    {
+      "id": "ex-speak-direction",
+      "type": "exercise",
+      "theory_ref": "intro-pronunciation",
+      "title": "Giving a direction",
+      "exercise": {
+        "id": "ex-speak-direction",
+        "stable_id": "ex-mtiflmcd00560",
+        "type": "ext:al-speak-and-record",
+        "prompt": "Listen to the sentence, reveal it, then say it yourself.",
+        "ext_payload": {
+          "sentence": "Tournez à droite, s'il vous plaît."
+        }
+      }
+    },
+    {
+      "id": "ex-tiles-eau",
+      "type": "exercise",
+      "theory_ref": "intro-pronunciation",
+      "title": "Build the sentence",
+      "exercise": {
+        "id": "ex-tiles-eau",
+        "stable_id": "ex-mtiflmcd006p8",
+        "type": "word_tiles",
+        "prompt": "Arrange the tiles so it means: *I would like water.*",
+        "card_ids": [],
+        "tiles": ["Je", "voudrais", "de", "l'eau"],
+        "hint": "Starts with the polite request from lesson 8.",
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-tiles-gauche",
+      "type": "exercise",
+      "theory_ref": "intro-pronunciation",
+      "title": "Build the sentence",
+      "exercise": {
+        "id": "ex-tiles-gauche",
+        "stable_id": "ex-mtiflmcd007pw",
+        "type": "word_tiles",
+        "prompt": "Arrange the tiles so it means: *Turn left.*",
+        "card_ids": [],
+        "tiles": ["Tournez", "à", "gauche"],
+        "hint": "The opposite of *à droite*.",
+        "direction": "target_to_source"
+      }
+    }
+  ]
+}

@@ -23,6 +23,7 @@ import {expect, test} from "@playwright/test";
 import {
     THEME_IDS,
     VIEW_NAMES,
+    assertNoExternalRequests,
     expandViewportToDocument,
     freezeClock,
     gotoView,
@@ -58,7 +59,14 @@ for (const theme of THEME_IDS) {
                 type: "covered-height",
                 description: `${view}-${theme}: ${coveredHeight}px`,
             });
+            // #3745 - the image may only show what this repository serves.
+            const stopped = assertNoExternalRequests(page);
+            test.info().annotations.push({
+                type: "external-requests-stopped",
+                description: `${view}-${theme}: ${stopped}`,
+            });
             await expect(page).toHaveScreenshot(`${view}-${theme}.png`);
+            assertNoExternalRequests(page);
         });
     }
 }

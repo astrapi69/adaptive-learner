@@ -1,0 +1,458 @@
+{
+  "id": "11-heure-routine",
+  "title": "L'heure et la routine quotidienne",
+  "description": "Telling the time and talking about your daily routine with reflexive verbs.",
+  "estimated_minutes": 15,
+  "cards": [
+    {
+      "id": "phr-quelle-heure",
+      "stable_id": "card-ms9433kk4pta2",
+      "front": "Quelle heure est-il ?",
+      "back": "What time is it?",
+      "notes": "The standard way to ask the time. Literally *what hour is it?* The **h** in *heure* is silent.",
+      "tags": [
+        "time",
+        "question"
+      ]
+    },
+    {
+      "id": "phr-il-est-une-heure",
+      "stable_id": "card-ms9433kk4pu6p",
+      "front": "Il est une heure",
+      "back": "It is one o'clock",
+      "notes": "Use **il est** + number + *heure(s)* to tell the time. *Une heure* (singular), but *deux heures*, *trois heures*, ... (plural).",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-et-demie",
+      "stable_id": "card-ms9433kk4pvv5",
+      "front": "et demie",
+      "back": "half past",
+      "notes": "*Il est trois heures **et demie***, it is half past three. *Demie* agrees with the feminine *heure*.",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-et-quart",
+      "stable_id": "card-ms9433kk4pwec",
+      "front": "et quart",
+      "back": "quarter past",
+      "notes": "*Il est trois heures **et quart***, it is quarter past three.",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-moins-le-quart",
+      "stable_id": "card-ms9433kk4px9d",
+      "front": "moins le quart",
+      "back": "quarter to",
+      "notes": "*Il est trois heures **moins le quart***, it is quarter to three. *Moins* means *minus*.",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-midi",
+      "stable_id": "card-ms9433kk4pyvv",
+      "front": "midi",
+      "back": "noon",
+      "notes": "*Il est midi*, it is noon (12:00). No need for *heures*: just *midi*.",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-minuit",
+      "stable_id": "card-ms9433kk4pzoh",
+      "front": "minuit",
+      "back": "midnight",
+      "notes": "*Il est minuit*, it is midnight (00:00). Like *midi*, it stands alone.",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-le-matin",
+      "stable_id": "card-ms9433kk4q0uq",
+      "front": "le matin",
+      "back": "(in) the morning",
+      "notes": "*Le matin, je me lève tôt*, in the morning, I get up early.",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-le-soir",
+      "stable_id": "card-ms9433kk4q1ym",
+      "front": "le soir",
+      "back": "(in) the evening",
+      "notes": "*Le soir, je me couche tard*, in the evening, I go to bed late.",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "verb-se-reveiller",
+      "stable_id": "card-ms9433kk4q248",
+      "front": "se réveiller",
+      "back": "to wake up",
+      "notes": "A **reflexive** verb. *Je **me** réveille*, I wake up. The *se* is the reflexive pronoun in the infinitive.",
+      "tags": [
+        "verb",
+        "reflexive"
+      ]
+    },
+    {
+      "id": "verb-se-lever",
+      "stable_id": "card-ms9433kk4q3sa",
+      "front": "se lever",
+      "back": "to get up",
+      "notes": "Reflexive. Note the accent shift: *je me **lève*** (grave accent), but *nous nous **levons*** (no accent).",
+      "tags": [
+        "verb",
+        "reflexive"
+      ]
+    },
+    {
+      "id": "verb-s-habiller",
+      "stable_id": "card-ms9433kk4q4bq",
+      "front": "s'habiller",
+      "back": "to get dressed",
+      "notes": "Reflexive. The **h** is silent, so *se* elides to *s'*: *je **m'**habille*.",
+      "tags": [
+        "verb",
+        "reflexive"
+      ]
+    },
+    {
+      "id": "verb-se-coucher",
+      "stable_id": "card-ms9433kk4q5rd",
+      "front": "se coucher",
+      "back": "to go to bed",
+      "notes": "Reflexive. *Elle **se** couche à dix heures*, she goes to bed at ten o'clock.",
+      "tags": [
+        "verb",
+        "reflexive"
+      ]
+    },
+    {
+      "id": "verb-prendre-petit-dejeuner",
+      "stable_id": "card-ms9433kk4q6qg",
+      "front": "prendre le petit-déjeuner",
+      "back": "to have breakfast",
+      "notes": "Literally *to take the little lunch*. *Je prends le petit-déjeuner le matin.*",
+      "tags": [
+        "verb",
+        "routine"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Telling the time",
+      "body": "# Quelle heure est-il ?\n\nTo ask the time in French:\n\n> **Quelle heure est-il ?** - What time is it?\n\nTo answer, use **il est** + the hour + *heure(s)*:\n\n| French | English |\n|---|---|\n| Il est **une** heure | It is one o'clock |\n| Il est **deux** heures | It is two o'clock |\n| Il est **dix** heures | It is ten o'clock |\n\nNote: *une heure* is **singular** (one hour), but from *deux* up it's *heures* (plural).\n\nFor the half- and quarter-hours, add a short phrase after the hour:\n\n- *Il est trois heures **et demie**.* - It is half past three.\n- *Il est trois heures **et quart**.* - It is quarter past three.\n- *Il est trois heures **moins le quart**.* - It is quarter to three.\n\nAnd two special words with no *heures*:\n\n- *Il est **midi**.* - It is noon (12:00).\n- *Il est **minuit**.* - It is midnight (00:00)."
+    },
+    {
+      "id": "ex-match-time-expr",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "Match time expressions",
+      "exercise": {
+        "id": "ex-match-time-expr",
+        "stable_id": "ex-ms9433kk4q7iv",
+        "type": "matching",
+        "prompt": "Match each French time expression with its English meaning.",
+        "card_ids": [
+          "phr-et-demie",
+          "phr-et-quart",
+          "phr-moins-le-quart",
+          "phr-midi",
+          "phr-minuit"
+        ],
+        "pairs": [
+          {
+            "left": "et demie",
+            "right": "half past"
+          },
+          {
+            "left": "et quart",
+            "right": "quarter past"
+          },
+          {
+            "left": "moins le quart",
+            "right": "quarter to"
+          },
+          {
+            "left": "midi",
+            "right": "noon"
+          },
+          {
+            "left": "minuit",
+            "right": "midnight"
+          }
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-match-reflexive",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "Match the reflexive verbs",
+      "exercise": {
+        "id": "ex-match-reflexive",
+        "stable_id": "ex-ms9433kk4q8qp",
+        "type": "matching",
+        "prompt": "Match each reflexive verb with its meaning.",
+        "card_ids": [
+          "verb-se-reveiller",
+          "verb-se-lever",
+          "verb-s-habiller",
+          "verb-se-coucher"
+        ],
+        "pairs": [
+          {
+            "left": "se réveiller",
+            "right": "to wake up"
+          },
+          {
+            "left": "se lever",
+            "right": "to get up"
+          },
+          {
+            "left": "s'habiller",
+            "right": "to get dressed"
+          },
+          {
+            "left": "se coucher",
+            "right": "to go to bed"
+          }
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "step-reflexive",
+      "type": "theory",
+      "title": "Reflexive (pronominal) verbs",
+      "body": "## Verbs you do *to yourself*\n\nReflexive verbs describe actions you do to yourself, waking up, getting dressed, going to bed. In the dictionary they carry a **se** in front of the infinitive: *se lever*, *se coucher*, *s'habiller*.\n\nWhen you conjugate them, the *se* changes to match the subject. Here is **se lever** (to get up):\n\n| Subject | Pronoun | Verb |\n|---|---|---|\n| je | **me** | je **me lève** |\n| tu | **te** | tu **te lèves** |\n| il / elle | **se** | il **se lève** |\n| nous | **nous** | nous **nous levons** |\n| vous | **vous** | vous **vous levez** |\n| ils / elles | **se** | ils **se lèvent** |\n\n**Accent trap:** *se lever* takes a grave accent (è) in most forms, *je me **lève**, tu te **lèves**, il se **lève**, ils se **lèvent***, but **not** in *nous **levons*** and *vous **levez***.\n\n**Elision:** before a vowel or silent *h*, *me/te/se* become *m'/t'/s'*: *je **m'**habille*, *tu **t'**habilles*."
+    },
+    {
+      "id": "ex-free-i-get-up",
+      "type": "exercise",
+      "theory_ref": "step-reflexive",
+      "title": "I get up at seven",
+      "exercise": {
+        "id": "ex-free-i-get-up",
+        "stable_id": "ex-ms9433kk4q950",
+        "type": "free_text",
+        "prompt": "Translate: *I get up at seven o'clock.*",
+        "card_ids": [
+          "verb-se-lever",
+          "phr-il-est-une-heure"
+        ],
+        "accept": [
+          "Je me lève à sept heures.",
+          "je me lève à sept heures",
+          "Je me leve a sept heures."
+        ],
+        "hint": "*Je me* + the *lève* form + *à sept heures*. Remember the grave accent on *lève*.",
+        "distractors": [
+          "Je lève à sept heures.",
+          "Je me lever à sept heures.",
+          "Je me lève sept heures."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-tile-morning-routine",
+      "type": "exercise",
+      "theory_ref": "step-reflexive",
+      "title": "Build: In the morning I get up at six",
+      "exercise": {
+        "id": "ex-tile-morning-routine",
+        "stable_id": "ex-ms9433kk4qabp",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *In the morning I get up at six o'clock.*",
+        "card_ids": [
+          "phr-le-matin",
+          "verb-se-lever"
+        ],
+        "tiles": [
+          "Le",
+          "matin",
+          "je",
+          "me",
+          "lève",
+          "à",
+          "six",
+          "heures"
+        ],
+        "hint": "Time phrase first (*Le matin*), then subject + reflexive pronoun + verb + *à* + the hour.",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-pick-clock",
+      "type": "exercise",
+      "theory_ref": "step-reflexive",
+      "title": "Which clock?",
+      "exercise": {
+        "id": "ex-pick-clock",
+        "stable_id": "ex-ms9433kk4qb3f",
+        "type": "picture_choice",
+        "prompt": "Which clock shows *il est trois heures et demie* (half past three)?",
+        "card_ids": [
+          "phr-et-demie"
+        ],
+        "images": [
+          {
+            "src": "assets/img/clock-three-oclock.png",
+            "label": "trois heures"
+          },
+          {
+            "src": "assets/img/clock-half-past-three.png",
+            "label": "trois heures et demie",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/clock-quarter-past-three.png",
+            "label": "trois heures et quart"
+          },
+          {
+            "src": "assets/img/clock-quarter-to-three.png",
+            "label": "trois heures moins le quart"
+          }
+        ],
+        "hint": "*Et demie* means half past, the minute hand points straight down at the 6.",
+        "distractors": [
+          "trois heures",
+          "trois heures et quart",
+          "trois heures moins le quart"
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "step-combining",
+      "type": "theory",
+      "title": "Putting time and routine together",
+      "body": "## Describing your day\n\nNow combine the two halves: a **time phrase** plus a **reflexive verb** gives you a full daily-routine sentence.\n\nUse *à* + the hour to say *at* a given time:\n\n- *Le matin, je me lève **à sept heures**.* - In the morning, I get up at seven o'clock.\n- *Je prends le petit-déjeuner **à huit heures**.* - I have breakfast at eight o'clock.\n- *Le soir, je me couche **à dix heures et demie**.* - In the evening, I go to bed at half past ten.\n\nA typical order is: *(time phrase) + subject + reflexive pronoun + verb + à + hour*.\n\nTry describing your own day out loud:\n\n> *Le matin, je me réveille, je me lève, et je m'habille. Le soir, je me couche.*\n\nYou now have the pieces to talk about an entire day in French. Keep going, you're nearly through A1!"
+    },
+    {
+      "id": "ex-free-it-is-noon",
+      "type": "exercise",
+      "theory_ref": "step-combining",
+      "title": "It is noon",
+      "exercise": {
+        "id": "ex-free-it-is-noon",
+        "stable_id": "ex-ms9433kk4qcet",
+        "type": "free_text",
+        "prompt": "How do you say *It is noon*?",
+        "card_ids": [
+          "phr-midi"
+        ],
+        "accept": [
+          "Il est midi.",
+          "il est midi",
+          "Il est midi"
+        ],
+        "hint": "Use *Il est* + the special word for noon. No *heures* needed.",
+        "distractors": [
+          "Il est minuit.",
+          "Il est douze heures.",
+          "Il est midi heures."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-tile-she-goes-to-bed",
+      "type": "exercise",
+      "theory_ref": "step-combining",
+      "title": "Build: She goes to bed at ten",
+      "exercise": {
+        "id": "ex-tile-she-goes-to-bed",
+        "stable_id": "ex-ms9433kk4qdxe",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *She goes to bed at ten o'clock.*",
+        "card_ids": [
+          "verb-se-coucher",
+          "phr-le-soir"
+        ],
+        "tiles": [
+          "Elle",
+          "se",
+          "couche",
+          "à",
+          "dix",
+          "heures"
+        ],
+        "hint": "Subject + reflexive pronoun *se* + the *couche* form + *à* + the hour.",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-i-wake-up-early",
+      "type": "exercise",
+      "theory_ref": "step-combining",
+      "title": "I wake up early",
+      "exercise": {
+        "id": "ex-free-i-wake-up-early",
+        "stable_id": "ex-ms9433kk4qewf",
+        "type": "free_text",
+        "prompt": "Translate: *I wake up early.* (*early* = tôt)",
+        "card_ids": [
+          "verb-se-reveiller"
+        ],
+        "accept": [
+          "Je me réveille tôt.",
+          "je me réveille tôt",
+          "Je me reveille tot."
+        ],
+        "hint": "*Je me* + the *réveille* form + *tôt*.",
+        "distractors": [
+          "Je réveille tôt.",
+          "Je me réveiller tôt.",
+          "Je me lève tôt."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-i-have-breakfast",
+      "type": "exercise",
+      "theory_ref": "step-combining",
+      "title": "I have breakfast in the morning",
+      "exercise": {
+        "id": "ex-free-i-have-breakfast",
+        "stable_id": "ex-ms9433kk4qfrs",
+        "type": "free_text",
+        "prompt": "Translate: *I have breakfast in the morning.*",
+        "card_ids": [
+          "verb-prendre-petit-dejeuner",
+          "phr-le-matin"
+        ],
+        "accept": [
+          "Je prends le petit-déjeuner le matin.",
+          "je prends le petit-déjeuner le matin",
+          "Je prends le petit-dejeuner le matin."
+        ],
+        "hint": "*Je prends* + *le petit-déjeuner* + *le matin*.",
+        "distractors": [
+          "Je prend le petit-déjeuner le matin.",
+          "Je prends le petit-déjeuner le soir.",
+          "Je me prends le petit-déjeuner le matin."
+        ],
+        "direction": "source_to_target"
+      }
+    }
+  ]
+}
