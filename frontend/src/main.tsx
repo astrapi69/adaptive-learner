@@ -81,8 +81,8 @@ if (shouldLoadDebugConsole(window.location.search)) {
     void loadDebugConsole();
 }
 
-// S3 (PWA hardening) — replay any lesson-progress upserts that were
-// queued while offline, on reconnect + once at startup if online.
+// S3 (PWA hardening): replay the lesson-progress upserts and speech-recording
+// saves queued while offline, on reconnect + once at startup if online.
 initSyncQueueReplay(resolveStorageMode());
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

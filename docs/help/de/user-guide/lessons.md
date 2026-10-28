@@ -454,10 +454,19 @@ zwischen den Modi beim Lektionsabschluss.
 
 Alle Lektionsfortschritte, Element-Fehler-Zeilen,
 Wiederholungs-Warteschlangen-Zustände und Planungsdaten
-werden **bei dir** gespeichert: im Browser (IndexedDB) oder, im
-API-Modus, in der Datenbank deines eigenen Backends; andere
-erhalten Teile davon nur, wenn eine Funktion sie braucht, die du
-nutzt. Eine KI-Lernsitzung schickt deinem KI-Anbieter zum Beispiel
-deine letzten Fehler, jeweils mit deiner Antwort, der richtigen
-Antwort und der Häufigkeit. Wann welche Daten an andere gehen,
-beschreibt die [Datenschutzerklärung](../legal/privacy.md).
+werden gespeichert: im Lokal-Modus in deinem Browser (IndexedDB),
+im API-Modus in der Datenbank des Backends, mit dem die App
+verbunden ist; wer dieses Backend betreibt, hat Zugriff darauf.
+Lektionsfortschritt und Sprachaufnahmen, die im API-Modus offline
+entstehen, warten bis zur Übertragung in deinem Browser (siehe
+[Backup](../features/backup.md)).
+Teile davon erhalten andere nur, wenn eine Funktion sie braucht.
+Ein Beispiel ist die KI-Chat-Sitzung: Lektionen selbst nutzen
+keine KI, aber eine KI-Chat-Sitzung schickt deinem KI-Anbieter
+unter anderem deine abgeschlossenen Lektionen mit ihren
+Ergebnissen sowie deine letzten Fehler, jeder mit deiner Antwort,
+der richtigen Antwort und der Zahl, wie oft du ihn gemacht hast.
+Eine Sitzung aus einem importierten Chat schickt statt deines
+Fortschritts die Analyse und den Verlauf dieses Chats. Wann
+welche Daten an andere gehen, beschreibt die
+[Datenschutzerklärung](../legal/privacy.md).

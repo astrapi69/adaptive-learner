@@ -32,9 +32,15 @@ girer, böylece "Yapay zekâ denetimli" rozeti korunur.
   sayacı ve LAN eşitlemesinin konumu.
 
 Buna karşılık, otomatik yedeğin açık olup olmadığını belirten ayar
-yedeğe girer. Çevrimdışıyken oluşan ilerleme yedekte eksik olacağından,
-sunucu modunda yedeği ancak uygulama yeniden çevrimiçi olduğunda
-oluştur, daha önce değil.
+yedeğe girer. Sunucu modunda uygulama, çevrimdışıyken oluşanları bu
+tarayıcıda tutar: ders ilerlemesi ve ses kayıtlarındaki en fazla 50
+değişiklik; daha fazlası birikirse en eskileri silinir. Uygulama
+açıkken bağlantı geri geldiğinde ya da bağlantıyla yapılan bir sonraki
+başlatmada bunları kendiliğinden aktarır. Çevrimdışıyken oluşanlardan
+yedeğe yalnızca sunucuya zaten ulaşmış olanlar girer; bu yüzden sunucu
+modunda yedeği ancak uygulama çevrimdışı öğrenmenin ardından yeniden
+bağlantıyla çalışıp değişiklikleri aktarabildikten sonra oluştur, daha
+önce değil.
 
 Dışa aktarmadan önce uygulama, kaydetmeden önce neyin yedekleneceğini
 görmen için bölüm başına veri kümesi sayılarıyla bir **"Yedeğin

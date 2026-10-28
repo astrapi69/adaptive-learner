@@ -57,7 +57,7 @@ dosyadadır); referrer politikası da `no-referrer`'dır. API modu aynı
 `img-src`/`media-src` değerlerini başlık olarak gönderir
 (`backend/app/frontend_static.py`). Bir özellik, politikanın adını
 vermediği bir host'tan resim ya da medya yüklerse tarayıcı bunu
-engeller; Pages derlemesinde de API modunda da. Yüklemeden önce
+engeller; Pages derlemesinde de API modunda da. Yayınlamadan önce
 `scripts/check_external_hosts.py`, derlenen doküman sitesini üçüncü
 taraf kaynaklarına karşı tarar.
 

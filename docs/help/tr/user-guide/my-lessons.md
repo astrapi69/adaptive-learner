@@ -87,19 +87,23 @@ için gereklidir:
 - **Set olarak dışa aktar** - bir içerik seti `.zip`'i
   (manifest + dersler) indirin.
 - **Toplulukla paylaş** - resmi içerik deposunda bir **pull request**
-  açar. Dersin JSON'u içerik ağacında doğru yola yerleşir ve deponun
-  doğrulaması otomatik olarak çalışır. Pull request, oluştuğu andan
-  itibaren GitHub'da herkese açık olarak görünür. Bir bakımcı onu
-  inceler; kabul ederse herkes dersi indirebilir. Pull request iki
-  yoldan biriyle oluşturulur:
-    - **Token olmadan** - tek bir ders, GitHub'ın dosya düzenleyicisini
-      doğru yolda açar; PR başlığı ve açıklaması önceden doldurulmuştur.
-      Küçük bir derste içerik, açılan GitHub adresinin içinde zaten
-      bulunur; daha büyük bir derste uygulama dosyayı önce indirir ve
-      siz onu düzenleyiciye yapıştırırsınız. Birden çok dersli bir set
-      dosyaları indirir ve GitHub'ın yükleme sayfasını açar; dosyaları
-      oraya siz sürüklersiniz. Siz orada onayladığınızda GitHub fork'u
-      ve pull request'i oluşturur.
+  ile sonuçlanır. Dersin JSON'u içerik ağacında doğru yola yerleşir
+  ve deponun doğrulaması otomatik olarak çalışır. Pull request,
+  oluştuğu andan itibaren GitHub'da herkese açık olarak görünür. Bir
+  bakımcı onu inceler; kabul ederse herkes dersi indirebilir. Pull
+  request iki yoldan biriyle oluşturulur:
+    - **Token olmadan** - tek bir ders için uygulama, GitHub'ın dosya
+      düzenleyicisini doğru yolda açar; PR başlığı ve açıklaması önceden
+      doldurulmuştur. Yol, başlık ve açıklama, uygulamanın düzenleyiciyi
+      açmak için kullandığı adreste yer alır, küçük bir derste dersin
+      içeriği de; GitHub bunların hepsini düzenleyici açılırken, daha
+      siz bir şey onaylamadan alır. Daha büyük bir
+      derste uygulama dosyayı önce indirir ve siz onun içeriğini
+      düzenleyiciye yapıştırırsınız. Birden çok dersli bir sette
+      uygulama dosyaları indirir ve GitHub'ın yükleme sayfasını açar;
+      dosyaları oraya siz sürüklersiniz. Bütün bu durumlarda GitHub,
+      fork'u ve pull request'i ancak siz GitHub'da onayladığınızda
+      oluşturur.
     - **GitHub token'ı ile** (Ayarlar > Entegrasyonlar, bkz.
       [Ayarlar](settings.md)) - tek bir dersi uygulamadan çıkmadan
       paylaşırsınız: uygulama depoyu fork'lar, dersi commit eder, pull
@@ -108,9 +112,10 @@ için gereklidir:
       reddederse mesaj sizi Ayarlar > Entegrasyonlar'a yönlendirir.
 - **Depo olarak paylaş** - bütün seti, içerik deposu biçiminde, tek bir
   commit ile size ait bir GitHub deposuna gönderir (depo henüz yoksa
-  oluşturulur). Depoyu (`owner/name`), özel mi herkese açık mı olacağını
-  ve dalı siz seçersiniz. Önce bir kalite denetimi çalışır: bir içerik
-  deposunun denetimlerinin reddedeceği sorunlar bulursa bunları
+  oluşturulur). Depoyu (`owner/name`) ve dalı siz seçersiniz; depo yeni
+  oluşturuluyorsa özel mi herkese açık mı olacağını da siz seçersiniz, var
+  olan bir depo ise görünürlüğünü korur. Önce bir kalite denetimi çalışır:
+  bir içerik deposunun denetimlerinin reddedeceği sorunlar bulursa bunları
   listeler ve düğme **Yine de dışa aktar** olur. Depo olarak paylaşmak
   için bir GitHub token'ı gerekir ve bu yalnızca uygulamanın tarayıcı
   sürümünde kullanılabilir; aksi halde düğme görünür kalır ama devre
@@ -118,8 +123,14 @@ için gereklidir:
   içerik kaynağı olarak bağlayabilirsiniz (bkz.
   [Birden Çok İçerik Repository'si](../features/content-repos.md)).
 
-Dışa aktarılan dosyalar yalnızca ders içeriğini içerir - ilerleme,
-hata geçmişi, hiçbir kişisel şey yoktur.
+Paylaştığınız ya da dışa aktardığınız şey ders içeriğini içerir, ama
+uygulamadaki öğrenme ilerlemesini ve hata geçmişini içermez. Derste ne
+yazıyorsa onunla birlikte gider, kişisel olanlar da: örneğin adınız,
+paylaşırken onu girer ve gösterilmesini seçerseniz (o zaman ders ve pull
+request içinde yer alır) ve bir sohbet analizinden oluşturulan bir
+derste analizin bulduğu her şey; bunların arasında sohbetinizden
+kelimeler ve örnek cümleler, güçlü ve zayıf yönleriniz ve sık yaptığınız
+hata kalıpları vardır.
 
 ---
 

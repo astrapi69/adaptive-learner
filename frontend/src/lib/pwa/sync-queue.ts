@@ -13,9 +13,11 @@
  * actually works for a localStorage-backed queue. It replays whenever a
  * tab is open and reconnects.
  *
- * Scope (deliberately small — see docs/audits/performance-audit + the
- * PWA work): only lesson-progress upserts are enqueued today (the clear,
- * low-risk win: never lose lesson progress recorded while offline).
+ * Scope (deliberately small, see docs/audits/performance-audit + the
+ * PWA work): only lesson-progress upserts and speech-recording saves
+ * (``api-storage.ts``) are enqueued today (the clear, low-risk win: never
+ * lose progress or a recording made while offline). The queue keeps the
+ * most recent MAX_ITEMS; older entries are dropped.
  * Destructive operations (delete / reset) are NEVER queued — those
  * require an explicit, online, user action.
  */

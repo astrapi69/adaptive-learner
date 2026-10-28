@@ -1216,9 +1216,11 @@ zu erstellen und zu teilen**:
    **Meine Lektionen** im Set-Browser.
 2. Klicke bei „Meine Lektionen" auf **Als Content-Set
    exportieren**, um ein Content-Set als `.zip` herunterzuladen
-   (Manifest + Lektionen). Exporte enthalten nur den
-   Lektionsinhalt - keinen Fortschritt, keine Fehlerhistorie,
-   nichts Persönliches.
+   (Manifest + Lektionen). Exporte enthalten den
+   Lektionsinhalt, aber keinen Fortschritt und keine
+   Fehlerhistorie; was in der Lektion steht, geht mit, auch
+   Persönliches wie ein angegebener Autorenname (siehe
+   [Meine Lektionen](../user-guide/my-lessons.md)).
 3. Klicke auf **Für die Community bereitstellen**, um einen
    vorausgefüllten **Pull Request** im Inhalts-Repository zu öffnen
    - die Lektions-JSON wird am richtigen Pfad im Baum committet,
