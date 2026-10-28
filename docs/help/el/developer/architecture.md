@@ -158,6 +158,12 @@ External       ExternalServiceError(service, message) για provider SDKs
   ορίζει το `TableSpec.append_only` του στο
   `backend/app/services/sync_tables.py`. Οι ίδιοι οι πίνακες, ανά
   περιοχή: [Μοντέλο δεδομένων](data-model.md).
+- Κανένα API key στον συγχρονισμό (#3854): οι πίνακες του
+  `SYNC_SECRET_TABLES` (η κρυφή μνήμη επαναφοράς `api_key_backups`) και
+  τα πεδία `api_key_*` του `user_settings` (`EXCLUDED_USER_SETTINGS_FIELDS`,
+  η ίδια λίστα με το αντίγραφο) δεν περνούν από τον συγχρονισμό προς
+  καμία κατεύθυνση· στον browser φιλτράρει το
+  `frontend/src/storage/sync/sync-secrets.ts`.
 - Μορφή αντιγράφου: JSON· τα API keys εξαιρούνται κατά την εξαγωγή·
   η επαναφορά είναι συγχώνευση.
 - Απομόνωση τεστ: τα directories παραγωγικών δεδομένων φέρουν ένα
