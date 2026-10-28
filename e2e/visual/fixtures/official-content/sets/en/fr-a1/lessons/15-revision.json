@@ -1,0 +1,437 @@
+{
+  "id": "15-revision",
+  "title": "Révision A1",
+  "description": "A consolidating review that pulls together everything from the A1 course: greetings, numbers, gender and articles, être and avoir, family, colors, ordering food, directions, the past, telling time, food shopping, and the near future.",
+  "estimated_minutes": 15,
+  "cards": [
+    {
+      "id": "rev-bonjour",
+      "stable_id": "card-ms9433km4satc",
+      "front": "Bonjour",
+      "back": "hello",
+      "notes": "The all-purpose daytime greeting (Lesson 01). In the evening: **Bonsoir**.",
+      "tags": [
+        "greetings"
+      ]
+    },
+    {
+      "id": "rev-merci",
+      "stable_id": "card-ms9433km4sb89",
+      "front": "merci",
+      "back": "thank you",
+      "notes": "Politeness essential. *Merci beaucoup*, thank you very much.",
+      "tags": [
+        "greetings"
+      ]
+    },
+    {
+      "id": "rev-trois",
+      "stable_id": "card-ms9433km4scuj",
+      "front": "trois",
+      "back": "three",
+      "notes": "Numbers (Lesson 02): un, deux, **trois**, quatre, cinq. *Il est trois heures*, it's three o'clock.",
+      "tags": [
+        "numbers"
+      ]
+    },
+    {
+      "id": "rev-pomme",
+      "stable_id": "card-ms9433km4sd81",
+      "front": "une pomme",
+      "back": "an apple",
+      "notes": "Feminine noun, indefinite article **une** (Lesson 03). Food vocabulary too (Lesson 13).",
+      "tags": [
+        "articles",
+        "food"
+      ]
+    },
+    {
+      "id": "rev-je-suis",
+      "stable_id": "card-ms9433km4se8u",
+      "front": "Je suis",
+      "back": "I am",
+      "notes": "Present of **être** (Lesson 04). *Je suis fatigué*, I am tired.",
+      "tags": [
+        "etre"
+      ]
+    },
+    {
+      "id": "rev-ma-mere",
+      "stable_id": "card-ms9433km4sf4z",
+      "front": "ma mère",
+      "back": "my mother",
+      "notes": "Family + possessives (Lesson 05). *Ma* before a feminine noun: **ma** mère, **mon** père.",
+      "tags": [
+        "family"
+      ]
+    },
+    {
+      "id": "rev-rouge",
+      "stable_id": "card-ms9433km4sg39",
+      "front": "rouge",
+      "back": "red",
+      "notes": "Colors (Lesson 06). *Une pomme rouge*, a red apple. The adjective comes after the noun.",
+      "tags": [
+        "colors"
+      ]
+    },
+    {
+      "id": "rev-addition",
+      "stable_id": "card-ms9433km4sh0e",
+      "front": "l'addition",
+      "back": "the bill",
+      "notes": "At the restaurant (Lesson 07). *L'addition, s'il vous plaît*, the bill, please.",
+      "tags": [
+        "restaurant"
+      ]
+    },
+    {
+      "id": "rev-a-gauche",
+      "stable_id": "card-ms9433km4sioj",
+      "front": "à gauche",
+      "back": "on the left",
+      "notes": "Directions (Lesson 08). Opposite: *à droite*, on the right. *Tout droit*, straight ahead.",
+      "tags": [
+        "directions"
+      ]
+    },
+    {
+      "id": "rev-hier",
+      "stable_id": "card-ms9433km4sjrt",
+      "front": "hier",
+      "back": "yesterday",
+      "notes": "Past-time marker (Lesson 10), pairs with the passé composé. *Hier, j'ai mangé*, yesterday I ate.",
+      "tags": [
+        "time",
+        "past"
+      ]
+    },
+    {
+      "id": "rev-le-matin",
+      "stable_id": "card-ms9433km4skld",
+      "front": "le matin",
+      "back": "(in) the morning",
+      "notes": "Daily routine + telling time (Lesson 11). *Le matin, je bois un café*, in the morning, I drink a coffee.",
+      "tags": [
+        "time",
+        "routine"
+      ]
+    },
+    {
+      "id": "rev-demain",
+      "stable_id": "card-ms9433km4sl74",
+      "front": "demain",
+      "back": "tomorrow",
+      "notes": "Future-time marker, pairs with the futur proche. *Demain, je vais travailler*, tomorrow I'm going to work.",
+      "tags": [
+        "time",
+        "future"
+      ]
+    },
+    {
+      "id": "rev-je-voudrais",
+      "stable_id": "card-ms9433km4smi9",
+      "front": "Je voudrais",
+      "back": "I would like",
+      "notes": "Polite request (Lesson 07/13). *Je voudrais un café*, I would like a coffee. Softer than *Je veux* (I want).",
+      "tags": [
+        "restaurant",
+        "polite"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro-recap",
+      "type": "theory",
+      "title": "What you've learned",
+      "body": "# Révision A1 - you made it!\n\nCongratulations. This is the final lesson of the French A1 course, and it's a chance to bring everything together. Look how much you can now do in French:\n\n- **Greetings**, *Bonjour*, *Bonsoir*, *Merci*, *Au revoir* (Lesson 01)\n- **Numbers**, *un, deux, trois...* (Lesson 02)\n- **Gender and articles**, *le / la / un / une* (Lesson 03)\n- **The present of être and avoir**, *Je suis*, *J'ai* (Lesson 04)\n- **Family and possessives**, *ma mère*, *mon père* (Lesson 05)\n- **Colors and clothing**, *rouge*, *bleu*, *un pull* (Lesson 06)\n- **Ordering food**, *Je voudrais...*, *l'addition* (Lesson 07)\n- **Directions**, *à gauche*, *à droite*, *tout droit* (Lesson 08)\n- **The passé composé**, *avoir* + participle, and *être* + participle for movement verbs (Lessons 10, 12)\n- **Telling time and daily routine**, *Il est trois heures*, *le matin* (Lesson 11)\n- **Food shopping**, *au marché*, *une pomme* (Lesson 13)\n- **The near future (futur proche)**, *je vais* + infinitive (Lesson 14)\n\nThat's a real foundation. In this lesson you'll **produce** French, not just recognise it, short sentences that mix several of these topics together, the way real conversation does."
+    },
+    {
+      "id": "ex-match-mixed",
+      "type": "exercise",
+      "theory_ref": "intro-recap",
+      "title": "Quick recall: French to English",
+      "exercise": {
+        "id": "ex-match-mixed",
+        "stable_id": "ex-ms9433km4snco",
+        "type": "matching",
+        "prompt": "Warm up by matching these key words from across the course with their English meanings.",
+        "card_ids": [
+          "rev-bonjour",
+          "rev-merci",
+          "rev-trois",
+          "rev-rouge",
+          "rev-a-gauche",
+          "rev-demain"
+        ],
+        "pairs": [
+          {
+            "left": "Bonjour",
+            "right": "hello"
+          },
+          {
+            "left": "merci",
+            "right": "thank you"
+          },
+          {
+            "left": "trois",
+            "right": "three"
+          },
+          {
+            "left": "rouge",
+            "right": "red"
+          },
+          {
+            "left": "à gauche",
+            "right": "on the left"
+          },
+          {
+            "left": "demain",
+            "right": "tomorrow"
+          }
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-free-hello-thanks",
+      "type": "exercise",
+      "theory_ref": "intro-recap",
+      "title": "Be polite",
+      "exercise": {
+        "id": "ex-free-hello-thanks",
+        "stable_id": "ex-ms9433km4so7u",
+        "type": "free_text",
+        "prompt": "Say *hello* and *thank you* in one short phrase (greeting first, then thanks).",
+        "card_ids": [
+          "rev-bonjour",
+          "rev-merci"
+        ],
+        "accept": [
+          "Bonjour, merci.",
+          "bonjour, merci.",
+          "Bonjour, merci"
+        ],
+        "hint": "Two of the very first words you learned: *Bonjour* + *merci*.",
+        "distractors": [
+          "Bonsoir, merci.",
+          "Bonjour, s'il vous plaît.",
+          "Salut, pardon."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-tile-introduce",
+      "type": "exercise",
+      "theory_ref": "intro-recap",
+      "title": "Introduce yourself",
+      "exercise": {
+        "id": "ex-tile-introduce",
+        "stable_id": "ex-ms9433km4sp82",
+        "type": "word_tiles",
+        "prompt": "Arrange the tiles to mean: *My name is Marie and I am twenty years old.*",
+        "card_ids": [
+          "rev-je-suis"
+        ],
+        "tiles": [
+          "Je",
+          "m'appelle",
+          "Marie",
+          "et",
+          "j'ai",
+          "vingt",
+          "ans"
+        ],
+        "hint": "*Je m'appelle...* (my name is) + *et* (and) + *j'ai ... ans* (I am ... years old). French uses *avoir* for age!",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-pic-bill",
+      "type": "exercise",
+      "theory_ref": "intro-recap",
+      "title": "At the restaurant",
+      "exercise": {
+        "id": "ex-pic-bill",
+        "stable_id": "ex-ms9433km4sqgy",
+        "type": "picture_choice",
+        "prompt": "Which one means *I would like the bill*?",
+        "card_ids": [
+          "rev-je-voudrais",
+          "rev-addition"
+        ],
+        "images": [
+          {
+            "src": "assets/img/restaurant-bill-1.png",
+            "label": "Je voudrais l'addition",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/restaurant-menu-2.png",
+            "label": "Je voudrais le menu"
+          },
+          {
+            "src": "assets/img/restaurant-water-3.png",
+            "label": "Je voudrais de l'eau"
+          },
+          {
+            "src": "assets/img/restaurant-coffee-4.png",
+            "label": "Je voudrais un café"
+          }
+        ],
+        "hint": "*Je voudrais* (I would like) + *l'addition* (the bill).",
+        "distractors": [
+          "Je voudrais le menu",
+          "Je voudrais de l'eau",
+          "Je voudrais un café"
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-mother-left",
+      "type": "exercise",
+      "theory_ref": "intro-recap",
+      "title": "Family and directions",
+      "exercise": {
+        "id": "ex-free-mother-left",
+        "stable_id": "ex-ms9433km4sr20",
+        "type": "free_text",
+        "prompt": "Translate: *My mother is on the left.*",
+        "card_ids": [
+          "rev-ma-mere",
+          "rev-je-suis",
+          "rev-a-gauche"
+        ],
+        "accept": [
+          "Ma mère est à gauche.",
+          "Ma mère est à gauche",
+          "ma mere est a gauche."
+        ],
+        "hint": "*Ma mère* + *est* (the *il/elle* form of être) + *à gauche*.",
+        "distractors": [
+          "Mon mère est à gauche.",
+          "Ma mère es à gauche.",
+          "Ma mère est à droite."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-three-oclock",
+      "type": "exercise",
+      "theory_ref": "intro-recap",
+      "title": "Telling time",
+      "exercise": {
+        "id": "ex-free-three-oclock",
+        "stable_id": "ex-ms9433km4ssvy",
+        "type": "free_text",
+        "prompt": "Translate: *It is three o'clock.*",
+        "card_ids": [
+          "rev-trois",
+          "rev-le-matin"
+        ],
+        "accept": [
+          "Il est trois heures.",
+          "Il est trois heures",
+          "il est trois heures."
+        ],
+        "hint": "Start with *Il est* + the number + *heures* (hours/o'clock).",
+        "distractors": [
+          "Il est trois heure.",
+          "C'est trois heures.",
+          "Il a trois heures."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-market-yesterday",
+      "type": "exercise",
+      "theory_ref": "intro-recap",
+      "title": "The past (être verbs)",
+      "exercise": {
+        "id": "ex-free-market-yesterday",
+        "stable_id": "ex-ms9433km4stjx",
+        "type": "free_text",
+        "prompt": "Translate: *I went to the market yesterday.* (Use the passé composé. *Aller* takes **être**, not *avoir*.)",
+        "card_ids": [
+          "rev-hier",
+          "rev-pomme"
+        ],
+        "accept": [
+          "Je suis allé au marché hier.",
+          "Je suis allée au marché hier.",
+          "je suis alle au marche hier."
+        ],
+        "hint": "*Je suis* + *allé* (past participle of *aller*) + *au marché* + *hier*. Movement verbs use *être*.",
+        "distractors": [
+          "J'ai allé au marché hier.",
+          "Je vais au marché hier.",
+          "Je suis aller au marché hier."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-tile-visit-paris",
+      "type": "exercise",
+      "theory_ref": "intro-recap",
+      "title": "The near future",
+      "exercise": {
+        "id": "ex-tile-visit-paris",
+        "stable_id": "ex-ms9433km4suv3",
+        "type": "word_tiles",
+        "prompt": "Arrange the tiles to mean: *Tomorrow I am going to visit Paris.*",
+        "card_ids": [
+          "rev-demain"
+        ],
+        "tiles": [
+          "Demain",
+          "je",
+          "vais",
+          "visiter",
+          "Paris"
+        ],
+        "hint": "Time marker first: *Demain* + *je vais* (futur proche) + the infinitive *visiter* + *Paris*.",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-apple-red",
+      "type": "exercise",
+      "theory_ref": "intro-recap",
+      "title": "Articles and colors",
+      "exercise": {
+        "id": "ex-free-apple-red",
+        "stable_id": "ex-ms9433km4sv9u",
+        "type": "free_text",
+        "prompt": "Translate: *a red apple.* (Remember: the color comes after the noun.)",
+        "card_ids": [
+          "rev-pomme",
+          "rev-rouge"
+        ],
+        "accept": [
+          "une pomme rouge",
+          "Une pomme rouge",
+          "une pomme rouge."
+        ],
+        "hint": "*une* (feminine indefinite article) + *pomme* + *rouge*. The adjective follows the noun in French.",
+        "distractors": [
+          "un pomme rouge",
+          "une rouge pomme",
+          "une pomme rouges"
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "step-study-tips",
+      "type": "theory",
+      "title": "Moving toward A2",
+      "body": "## Where to go next\n\nYou've finished A1. Here's how to keep that knowledge alive and grow it toward **A2**:\n\n1. **Use the spaced-repetition deck.** Every word you missed in these lessons comes back for review at just the right moment. Five minutes a day beats an hour once a week.\n2. **Speak aloud.** Read the example sentences out loud. *Bonjour*, *Je voudrais un café*, *Demain je vais visiter Paris.* Hearing your own voice builds confidence and pronunciation faster than silent reading.\n3. **Label things at home.** Stick notes on objects: *la porte* (the door), *la fenêtre* (the window), *le frigo* (the fridge). You'll absorb gender and vocabulary without trying.\n4. **Build tiny sentences daily.** Mix what you know: *Hier, j'ai mangé une pomme rouge.* *Le matin, je bois un café.* Combining topics is exactly what A2 asks of you.\n\n> Language learning is a marathon, not a sprint. You've built a real foundation, *bravo !* Keep going, little by little, and A2 will feel natural before you know it.\n\n**Bonne continuation !** (Keep up the good work!)"
+    }
+  ]
+}

@@ -37,6 +37,7 @@ import {
     VIEWPORTS,
     type SurfaceName,
     type ViewportName,
+    assertNoExternalRequests,
     assertSurfaceStillReady,
     expandViewportToDocument,
     freezeClock,
@@ -60,9 +61,10 @@ for (const surface of SURFACE_NAMES) {
         test(`${surface} renders correctly at ${viewport}`, async ({page}) => {
             await page.setViewportSize(VIEWPORTS[viewport]);
             // Determinism: freeze the clock, pin the default theme, and pin
-            // the content-repo registry fetch to a frozen fixture (#1653 —
-            // the recommended-repos list is otherwise fetched live and
-            // re-stales the settings-data / content-discover baselines) before
+            // every content-repo fetch to a frozen fixture behind the
+            // external-request guard (#1653, #3745; the live lists and the
+            // official manifest re-staled the settings-data / content-discover
+            // baselines) before
             // the first navigation, then seed/await the surface's own ready
             // signal (gotoSurface), then settle fonts + kill animations. The
             // random pin gives every shuffle its own stream (#3214).
@@ -119,7 +121,16 @@ for (const surface of SURFACE_NAMES) {
             // between gotoSurface and here, instead of silently
             // photographing whatever it collapsed into.
             await assertSurfaceStillReady(page, surface);
+            // #3745 - the image may only show what this repository serves:
+            // fail on any request the guard stopped, before and after the
+            // shot, and record the count so "0 stopped" is visible.
+            const stopped = assertNoExternalRequests(page);
+            test.info().annotations.push({
+                type: "external-requests-stopped",
+                description: `${surface}-${viewport}: ${stopped}`,
+            });
             await expect(page).toHaveScreenshot(`${surface}-${viewport}.png`, shotOpts);
+            assertNoExternalRequests(page);
         });
     }
 }

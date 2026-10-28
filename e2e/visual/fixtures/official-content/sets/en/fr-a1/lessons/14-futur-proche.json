@@ -1,0 +1,484 @@
+{
+  "id": "14-futur-proche",
+  "title": "Le futur proche",
+  "description": "The near future: aller + infinitive, for talking about plans and what's about to happen.",
+  "estimated_minutes": 15,
+  "cards": [
+    {
+      "id": "verb-aller",
+      "stable_id": "card-ms9433km4ro3p",
+      "front": "aller",
+      "back": "to go",
+      "notes": "The engine of the futur proche. Conjugate **aller** in the present, then add an infinitive: *Je **vais** manger*, I'm going to eat.",
+      "tags": [
+        "verb",
+        "auxiliary"
+      ]
+    },
+    {
+      "id": "verb-voyager",
+      "stable_id": "card-ms9433km4rpk9",
+      "front": "voyager",
+      "back": "to travel",
+      "notes": "*Je vais **voyager** en France*, I'm going to travel to France.",
+      "tags": [
+        "verb",
+        "infinitive"
+      ]
+    },
+    {
+      "id": "verb-visiter",
+      "stable_id": "card-ms9433km4rqae",
+      "front": "visiter",
+      "back": "to visit",
+      "notes": "Used for places: *visiter Paris*. For people you use *rendre visite à*. *Nous allons **visiter** le musée.*",
+      "tags": [
+        "verb",
+        "infinitive"
+      ]
+    },
+    {
+      "id": "verb-regarder",
+      "stable_id": "card-ms9433km4rrnf",
+      "front": "regarder",
+      "back": "to watch",
+      "notes": "*Tu vas **regarder** un film ?* - Are you going to watch a movie?",
+      "tags": [
+        "verb",
+        "infinitive"
+      ]
+    },
+    {
+      "id": "verb-etudier",
+      "stable_id": "card-ms9433km4rsn6",
+      "front": "étudier",
+      "back": "to study",
+      "notes": "Starts with a vowel. *Elle va **étudier** ce soir*, She's going to study tonight.",
+      "tags": [
+        "verb",
+        "infinitive"
+      ]
+    },
+    {
+      "id": "verb-rencontrer",
+      "stable_id": "card-ms9433km4rtf5",
+      "front": "rencontrer",
+      "back": "to meet",
+      "notes": "*Je vais **rencontrer** mes amis*, I'm going to meet my friends.",
+      "tags": [
+        "verb",
+        "infinitive"
+      ]
+    },
+    {
+      "id": "verb-manger",
+      "stable_id": "card-ms9433km4rur5",
+      "front": "manger",
+      "back": "to eat",
+      "notes": "*Ils vont **manger** une pizza*, They're going to eat a pizza.",
+      "tags": [
+        "verb",
+        "infinitive"
+      ]
+    },
+    {
+      "id": "phr-demain",
+      "stable_id": "card-ms9433km4rv17",
+      "front": "demain",
+      "back": "tomorrow",
+      "notes": "Time marker that pairs naturally with the futur proche: *Je vais voyager **demain**.*",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-ce-soir",
+      "stable_id": "card-ms9433km4rwel",
+      "front": "ce soir",
+      "back": "tonight",
+      "notes": "*Nous allons étudier **ce soir***, We're going to study tonight.",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-ce-week-end",
+      "stable_id": "card-ms9433km4rxzl",
+      "front": "ce week-end",
+      "back": "this weekend",
+      "notes": "French borrows *week-end* from English (with a hyphen). *On va visiter Paris **ce week-end**.*",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-semaine-prochaine",
+      "stable_id": "card-ms9433km4ryvw",
+      "front": "la semaine prochaine",
+      "back": "next week",
+      "notes": "*prochaine* = next. *Je vais rencontrer Marie **la semaine prochaine**.*",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-bientot",
+      "stable_id": "card-ms9433km4rzdy",
+      "front": "bientôt",
+      "back": "soon",
+      "notes": "Note the circumflex on the **ô**. *On va se rencontrer **bientôt***, We're going to meet soon.",
+      "tags": [
+        "time"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Talking about plans",
+      "body": "# Le futur proche\n\nTo say what you're **going to do**, your plans, what's about to happen, French uses the *futur proche* (\"near future\"). It works exactly like the English *going to*:\n\n> **aller** (conjugated in the present) + **INFINITIVE**\n\n- *Je **vais manger**.* - I'm going to eat.\n- *Tu **vas voyager** ?* - Are you going to travel?\n- *Elle **va étudier**.* - She's going to study.\n\nThe second verb stays in its **infinitive** form, you never change it. All the work happens on *aller*.\n\nYou already met *aller* (to go) earlier in the course. Here it stops meaning \"go\" literally and becomes the signal for the near future."
+    },
+    {
+      "id": "step-conjugation",
+      "type": "theory",
+      "title": "Conjugating aller",
+      "body": "## The present tense of aller\n\n| Subject | aller | + infinitive |\n|---|---|---|\n| je | **vais** | je vais voyager |\n| tu | **vas** | tu vas visiter |\n| il / elle | **va** | elle va étudier |\n| nous | **allons** | nous allons manger |\n| vous | **allez** | vous allez regarder |\n| ils / elles | **vont** | ils vont rencontrer |\n\n*aller* is irregular, learn these six forms by heart. Once you know them, the futur proche is easy: just attach any infinitive.\n\nWatch the spelling traps: it's *je **vais***, not *je vai*; *il **va***, not *il vais*; *ils **vont***, not *ils vais*."
+    },
+    {
+      "id": "ex-match-infinitives",
+      "type": "exercise",
+      "theory_ref": "step-conjugation",
+      "title": "Match infinitive to English",
+      "exercise": {
+        "id": "ex-match-infinitives",
+        "stable_id": "ex-ms9433km4s0no",
+        "type": "matching",
+        "prompt": "Match each French infinitive with its English meaning.",
+        "card_ids": [
+          "verb-voyager",
+          "verb-visiter",
+          "verb-etudier",
+          "verb-rencontrer",
+          "verb-manger"
+        ],
+        "pairs": [
+          {
+            "left": "voyager",
+            "right": "to travel"
+          },
+          {
+            "left": "visiter",
+            "right": "to visit"
+          },
+          {
+            "left": "étudier",
+            "right": "to study"
+          },
+          {
+            "left": "rencontrer",
+            "right": "to meet"
+          },
+          {
+            "left": "manger",
+            "right": "to eat"
+          }
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-match-aller-forms",
+      "type": "exercise",
+      "theory_ref": "step-conjugation",
+      "title": "Match aller-form to subject",
+      "exercise": {
+        "id": "ex-match-aller-forms",
+        "stable_id": "ex-ms9433km4s1ia",
+        "type": "matching",
+        "prompt": "Match each form of *aller* with the subject it goes with.",
+        "card_ids": [
+          "verb-aller"
+        ],
+        "pairs": [
+          {
+            "left": "vais",
+            "right": "je"
+          },
+          {
+            "left": "vas",
+            "right": "tu"
+          },
+          {
+            "left": "va",
+            "right": "il / elle"
+          },
+          {
+            "left": "allons",
+            "right": "nous"
+          },
+          {
+            "left": "allez",
+            "right": "vous"
+          },
+          {
+            "left": "vont",
+            "right": "ils / elles"
+          }
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-tile-visit-paris",
+      "type": "exercise",
+      "theory_ref": "step-conjugation",
+      "title": "Build: We're going to visit Paris",
+      "exercise": {
+        "id": "ex-tile-visit-paris",
+        "stable_id": "ex-ms9433km4s2os",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *We're going to visit Paris this weekend.*",
+        "card_ids": [
+          "verb-visiter",
+          "phr-ce-week-end"
+        ],
+        "tiles": [
+          "Nous",
+          "allons",
+          "visiter",
+          "Paris",
+          "ce",
+          "week-end"
+        ],
+        "hint": "*Nous* + form of *aller* + infinitive + place + time marker.",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-travel-tomorrow",
+      "type": "exercise",
+      "theory_ref": "step-conjugation",
+      "title": "I am going to travel tomorrow",
+      "exercise": {
+        "id": "ex-free-travel-tomorrow",
+        "stable_id": "ex-ms9433km4s3tb",
+        "type": "free_text",
+        "prompt": "Translate: *I am going to travel tomorrow.* (Use the futur proche.)",
+        "card_ids": [
+          "verb-aller",
+          "verb-voyager",
+          "phr-demain"
+        ],
+        "accept": [
+          "Je vais voyager demain.",
+          "Je vais voyager demain",
+          "je vais voyager demain"
+        ],
+        "hint": "*Je vais* + the infinitive *voyager* + *demain*.",
+        "distractors": [
+          "Je voyage demain.",
+          "Je vais voyage demain.",
+          "Je vont voyager demain."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "step-negation",
+      "type": "theory",
+      "title": "Saying you're NOT going to",
+      "body": "## Negation: wrap aller, not the infinitive\n\nTo say you're *not* going to do something, put **ne ... pas** around *aller* (the conjugated verb). The infinitive stays put at the end.\n\n> subject + **ne** + aller + **pas** + infinitive\n\n- *Je **ne vais pas** travailler demain.* - I'm not going to work tomorrow.\n- *Elle **ne va pas** étudier ce soir.* - She's not going to study tonight.\n- *Ils **ne vont pas** manger ici.* - They're not going to eat here.\n\nRemember the elision: *ne* becomes **n'** before a vowel, *Je **n'**ai pas* (but here *aller* starts with a consonant, so it stays *ne vais pas*).\n\n## Time markers for the future\n\nThese pair naturally with the futur proche:\n\n- **demain**, tomorrow\n- **ce soir**, tonight\n- **ce week-end**, this weekend\n- **la semaine prochaine**, next week\n- **bientôt**, soon"
+    },
+    {
+      "id": "ex-pick-she-study",
+      "type": "exercise",
+      "theory_ref": "step-negation",
+      "title": "Which means 'she is going to study'?",
+      "exercise": {
+        "id": "ex-pick-she-study",
+        "stable_id": "ex-ms9433km4s4lh",
+        "type": "picture_choice",
+        "prompt": "Which sentence correctly means *She is going to study*?",
+        "card_ids": [
+          "verb-etudier"
+        ],
+        "images": [
+          {
+            "src": "assets/img/study-girl-1.png",
+            "label": "Elle va étudier",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/study-girl-2.png",
+            "label": "Elle vais étudier"
+          },
+          {
+            "src": "assets/img/study-girl-3.png",
+            "label": "Elle va étudie"
+          },
+          {
+            "src": "assets/img/study-girl-4.png",
+            "label": "Elle allez étudier"
+          }
+        ],
+        "hint": "*elle* takes *va*, and the second verb must stay in its infinitive form (*étudier*).",
+        "distractors": [
+          "Elle vais étudier",
+          "Elle va étudie",
+          "Elle allez étudier"
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-eat-tonight",
+      "type": "exercise",
+      "theory_ref": "step-negation",
+      "title": "They are going to eat tonight",
+      "exercise": {
+        "id": "ex-free-eat-tonight",
+        "stable_id": "ex-ms9433km4s5kf",
+        "type": "free_text",
+        "prompt": "Translate: *They are going to eat tonight.* (Use masculine *they*.)",
+        "card_ids": [
+          "verb-aller",
+          "verb-manger",
+          "phr-ce-soir"
+        ],
+        "accept": [
+          "Ils vont manger ce soir.",
+          "Ils vont manger ce soir",
+          "ils vont manger ce soir"
+        ],
+        "hint": "Masculine plural *ils* + *vont* + the infinitive *manger* + *ce soir*.",
+        "distractors": [
+          "Ils mangent ce soir.",
+          "Ils va manger ce soir.",
+          "Ils vont mangent ce soir."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-tile-not-work",
+      "type": "exercise",
+      "theory_ref": "step-negation",
+      "title": "Build: I'm not going to work tomorrow",
+      "exercise": {
+        "id": "ex-tile-not-work",
+        "stable_id": "ex-ms9433km4s66h",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *I'm not going to work tomorrow.*",
+        "card_ids": [
+          "verb-aller",
+          "phr-demain"
+        ],
+        "tiles": [
+          "Je",
+          "ne",
+          "vais",
+          "pas",
+          "travailler",
+          "demain"
+        ],
+        "hint": "*ne ... pas* wraps *vais* (the conjugated verb); the infinitive stays after *pas*.",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-meet-soon",
+      "type": "exercise",
+      "theory_ref": "step-negation",
+      "title": "We are going to meet soon",
+      "exercise": {
+        "id": "ex-free-meet-soon",
+        "stable_id": "ex-ms9433km4s7gk",
+        "type": "free_text",
+        "prompt": "Translate: *We are going to meet soon.* (A natural way uses *se rencontrer*.)",
+        "card_ids": [
+          "verb-aller",
+          "verb-rencontrer",
+          "phr-bientot"
+        ],
+        "accept": [
+          "Nous allons nous rencontrer bientôt.",
+          "On va se rencontrer bientôt.",
+          "nous allons nous rencontrer bientot",
+          "on va se rencontrer bientot"
+        ],
+        "hint": "*Nous allons nous rencontrer* or the more casual *On va se rencontrer* + *bientôt*.",
+        "distractors": [
+          "Nous allons rencontrer bientôt.",
+          "On vont se rencontrer bientôt.",
+          "Nous allons nous rencontre bientôt."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-match-time-markers",
+      "type": "exercise",
+      "theory_ref": "step-negation",
+      "title": "Match future time markers",
+      "exercise": {
+        "id": "ex-match-time-markers",
+        "stable_id": "ex-ms9433km4s89p",
+        "type": "matching",
+        "prompt": "Match each French time expression with its English meaning.",
+        "card_ids": [
+          "phr-demain",
+          "phr-ce-soir",
+          "phr-semaine-prochaine",
+          "phr-bientot"
+        ],
+        "pairs": [
+          {
+            "left": "demain",
+            "right": "tomorrow"
+          },
+          {
+            "left": "ce soir",
+            "right": "tonight"
+          },
+          {
+            "left": "la semaine prochaine",
+            "right": "next week"
+          },
+          {
+            "left": "bientôt",
+            "right": "soon"
+          }
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-tile-watch-tonight",
+      "type": "exercise",
+      "theory_ref": "step-negation",
+      "title": "Build: You're going to watch a film",
+      "exercise": {
+        "id": "ex-tile-watch-tonight",
+        "stable_id": "ex-ms9433km4s99l",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *You're going to watch a film tonight.* (informal *tu*)",
+        "card_ids": [
+          "verb-regarder",
+          "phr-ce-soir"
+        ],
+        "tiles": [
+          "Tu",
+          "vas",
+          "regarder",
+          "un",
+          "film",
+          "ce",
+          "soir"
+        ],
+        "hint": "*tu* takes *vas*; the infinitive *regarder* follows, then object and time.",
+        "direction": "source_to_target"
+      }
+    }
+  ]
+}

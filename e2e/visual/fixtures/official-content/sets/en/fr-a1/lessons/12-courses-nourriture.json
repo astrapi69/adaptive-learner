@@ -1,0 +1,466 @@
+{
+  "id": "12-courses-nourriture",
+  "title": "Les courses et la nourriture",
+  "description": "Food shopping: partitive articles (some), quantities, and polite shopping phrases.",
+  "estimated_minutes": 15,
+  "cards": [
+    {
+      "id": "food-pain",
+      "stable_id": "card-ms9433kl4qgg0",
+      "front": "le pain",
+      "back": "bread",
+      "notes": "Masculine. With *some*: **du pain**. *Je voudrais du pain*, I'd like some bread.",
+      "tags": [
+        "food",
+        "noun-masc"
+      ]
+    },
+    {
+      "id": "food-lait",
+      "stable_id": "card-ms9433kl4qhn2",
+      "front": "le lait",
+      "back": "milk",
+      "notes": "Masculine. With *some*: **du lait**. Often bought *une bouteille de lait* (a bottle of milk).",
+      "tags": [
+        "food",
+        "noun-masc"
+      ]
+    },
+    {
+      "id": "food-fruits",
+      "stable_id": "card-ms9433kl4qiqr",
+      "front": "les fruits",
+      "back": "fruit",
+      "notes": "Plural. With *some*: **des fruits**. French treats fruit as countable: *des fruits*.",
+      "tags": [
+        "food",
+        "noun-plural"
+      ]
+    },
+    {
+      "id": "food-legumes",
+      "stable_id": "card-ms9433kl4qjqh",
+      "front": "les légumes",
+      "back": "vegetables",
+      "notes": "Plural. With *some*: **des légumes**. *J'achète des légumes au marché.*",
+      "tags": [
+        "food",
+        "noun-plural"
+      ]
+    },
+    {
+      "id": "food-viande",
+      "stable_id": "card-ms9433kl4qkja",
+      "front": "la viande",
+      "back": "meat",
+      "notes": "Feminine. With *some*: **de la viande**. *Je mange de la viande*, I eat (some) meat.",
+      "tags": [
+        "food",
+        "noun-fem"
+      ]
+    },
+    {
+      "id": "food-fromage",
+      "stable_id": "card-ms9433kl4ql6l",
+      "front": "le fromage",
+      "back": "cheese",
+      "notes": "Masculine. With *some*: **du fromage**. *beaucoup de fromage*, a lot of cheese.",
+      "tags": [
+        "food",
+        "noun-masc"
+      ]
+    },
+    {
+      "id": "food-eau",
+      "stable_id": "card-ms9433kl4qm87",
+      "front": "l'eau",
+      "back": "water",
+      "notes": "Feminine, but starts with a vowel. With *some*: **de l'eau** (not *de la eau*). *Je voudrais de l'eau.*",
+      "tags": [
+        "food",
+        "noun-fem"
+      ]
+    },
+    {
+      "id": "food-cafe",
+      "stable_id": "card-ms9433kl4qnjo",
+      "front": "le café",
+      "back": "coffee",
+      "notes": "Masculine. With *some*: **du café**. *un café* can also mean a cup of coffee at a café.",
+      "tags": [
+        "food",
+        "noun-masc"
+      ]
+    },
+    {
+      "id": "place-marche",
+      "stable_id": "card-ms9433kl4qods",
+      "front": "le marché",
+      "back": "the market",
+      "notes": "*au marché*, at the market. Outdoor market for fresh produce. *J'achète des fruits au marché.*",
+      "tags": [
+        "place"
+      ]
+    },
+    {
+      "id": "place-supermarche",
+      "stable_id": "card-ms9433kl4qp6v",
+      "front": "le supermarché",
+      "back": "the supermarket",
+      "notes": "*au supermarché*, at the supermarket. *Faire les courses*, to do the (grocery) shopping.",
+      "tags": [
+        "place"
+      ]
+    },
+    {
+      "id": "phr-je-voudrais",
+      "stable_id": "card-ms9433kl4qqat",
+      "front": "Je voudrais",
+      "back": "I would like",
+      "notes": "Polite way to ask for something, softer than *Je veux* (I want). *Je voudrais du pain, s'il vous plaît.*",
+      "tags": [
+        "phrase",
+        "polite"
+      ]
+    },
+    {
+      "id": "phr-cest-combien",
+      "stable_id": "card-ms9433kl4qraw",
+      "front": "C'est combien ?",
+      "back": "How much is it?",
+      "notes": "Essential shopping question. Note the space before **?** - standard in French. Also: *Ça coûte combien ?*",
+      "tags": [
+        "phrase",
+        "question"
+      ]
+    },
+    {
+      "id": "qty-kilo",
+      "stable_id": "card-ms9433kl4qsmz",
+      "front": "un kilo de",
+      "back": "a kilo of",
+      "notes": "Quantity expressions take **de** only (never *du/de la/des*): *un kilo de pommes*, a kilo of apples.",
+      "tags": [
+        "quantity"
+      ]
+    },
+    {
+      "id": "qty-bouteille",
+      "stable_id": "card-ms9433kl4qtsh",
+      "front": "une bouteille de",
+      "back": "a bottle of",
+      "notes": "Another quantity: *une bouteille de lait*, a bottle of milk. Always **de**, no article after.",
+      "tags": [
+        "quantity"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Saying \"some\", the partitive",
+      "body": "# Du, de la, de l', des\n\nIn English you can say *I'd like bread* or *I'd like some bread*, the *some* is optional. In French it is **not** optional. When you mean an unspecified amount of something, you must use a **partitive article**, which all translate as *some* / *any*.\n\nWhich one depends on the noun:\n\n| Noun type | Partitive | Example |\n|---|---|---|\n| masculine | **du** | *du pain*, some bread |\n| feminine | **de la** | *de la viande*, some meat |\n| starts with a vowel | **de l'** | *de l'eau*, some water |\n| plural | **des** | *des légumes*, some vegetables |\n\n- *Je voudrais **du** café.* - I'd like some coffee. (masc.)\n- *Tu manges **de la** viande ?* - Do you eat (any) meat? (fem.)\n- *Il y a **de l'**eau.* - There is some water. (vowel)\n- *J'achète **des** fruits.* - I'm buying some fruit. (plural)\n\nThink of it as **du = de + le**, **des = de + les**. The form follows the noun's gender and number."
+    },
+    {
+      "id": "ex-match-food",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "Match the food words",
+      "exercise": {
+        "id": "ex-match-food",
+        "stable_id": "ex-ms9433kl4qusu",
+        "type": "matching",
+        "prompt": "Match each French food word with its English meaning.",
+        "card_ids": [
+          "food-pain",
+          "food-lait",
+          "food-viande",
+          "food-fromage",
+          "food-eau",
+          "food-legumes"
+        ],
+        "pairs": [
+          {
+            "left": "le pain",
+            "right": "bread"
+          },
+          {
+            "left": "le lait",
+            "right": "milk"
+          },
+          {
+            "left": "la viande",
+            "right": "meat"
+          },
+          {
+            "left": "le fromage",
+            "right": "cheese"
+          },
+          {
+            "left": "l'eau",
+            "right": "water"
+          },
+          {
+            "left": "les légumes",
+            "right": "vegetables"
+          }
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-match-partitive",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "Match partitive to noun type",
+      "exercise": {
+        "id": "ex-match-partitive",
+        "stable_id": "ex-ms9433kl4qv03",
+        "type": "matching",
+        "prompt": "Match each partitive form with when you use it.",
+        "card_ids": [
+          "food-pain",
+          "food-viande",
+          "food-eau",
+          "food-legumes"
+        ],
+        "pairs": [
+          {
+            "left": "du",
+            "right": "masculine (du pain)"
+          },
+          {
+            "left": "de la",
+            "right": "feminine (de la viande)"
+          },
+          {
+            "left": "de l'",
+            "right": "starts with a vowel (de l'eau)"
+          },
+          {
+            "left": "des",
+            "right": "plural (des légumes)"
+          }
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-pick-some-water",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "Some water",
+      "exercise": {
+        "id": "ex-pick-some-water",
+        "stable_id": "ex-ms9433kl4qwm7",
+        "type": "picture_choice",
+        "prompt": "Which one correctly says *some water*?",
+        "card_ids": [
+          "food-eau"
+        ],
+        "images": [
+          {
+            "src": "assets/img/water-glass-1.png",
+            "label": "du eau"
+          },
+          {
+            "src": "assets/img/water-glass-2.png",
+            "label": "de l'eau",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/water-glass-3.png",
+            "label": "de la eau"
+          },
+          {
+            "src": "assets/img/water-glass-4.png",
+            "label": "des eau"
+          }
+        ],
+        "hint": "*Eau* is feminine but starts with a vowel, so *de la* shortens to *de l'*.",
+        "distractors": [
+          "du eau",
+          "de la eau",
+          "des eau"
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-some-bread",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "I'd like some bread",
+      "exercise": {
+        "id": "ex-free-some-bread",
+        "stable_id": "ex-ms9433kl4qx34",
+        "type": "free_text",
+        "prompt": "Translate: *I would like some bread.* (Use the polite form.)",
+        "card_ids": [
+          "phr-je-voudrais",
+          "food-pain"
+        ],
+        "accept": [
+          "Je voudrais du pain.",
+          "je voudrais du pain.",
+          "Je voudrais du pain"
+        ],
+        "hint": "*Je voudrais* + the partitive for masculine *pain*.",
+        "distractors": [
+          "Je voudrais le pain.",
+          "Je voudrais de la pain.",
+          "Je veux pain."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "step-quantities",
+      "type": "theory",
+      "title": "Quantities take \"de\" only",
+      "body": "## A kilo of, a bottle of, a lot of\n\nWhen you give a **precise quantity**, the partitive (*du / de la / des*) disappears. You use plain **de** (or **d'** before a vowel) with no article:\n\n| Expression | Example |\n|---|---|\n| un kilo **de** | *un kilo **de** pommes*, a kilo of apples |\n| une bouteille **de** | *une bouteille **de** lait*, a bottle of milk |\n| beaucoup **de** | *beaucoup **de** fromage*, a lot of cheese |\n| un peu **de** | *un peu **d'**eau*, a little water |\n\nCompare:\n\n- *Je voudrais **du** lait.* - I'd like some milk. (unspecified)\n- *Je voudrais **une bouteille de** lait.* - I'd like a bottle of milk. (quantified)\n\n> Rule of thumb: any time there's a measure word (kilo, bottle, lot, little, glass...), it's followed by **de** alone, never *du*, *de la*, or *des*."
+    },
+    {
+      "id": "ex-tile-bottle-milk",
+      "type": "exercise",
+      "theory_ref": "step-quantities",
+      "title": "Build: a bottle of milk",
+      "exercise": {
+        "id": "ex-tile-bottle-milk",
+        "stable_id": "ex-ms9433kl4qydh",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *I would like a bottle of milk.*",
+        "card_ids": [
+          "phr-je-voudrais",
+          "qty-bouteille",
+          "food-lait"
+        ],
+        "tiles": [
+          "Je",
+          "voudrais",
+          "une",
+          "bouteille",
+          "de",
+          "lait"
+        ],
+        "hint": "Polite phrase + quantity (*une bouteille de*) + the noun. No article after *de*.",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-tile-kilo-apples",
+      "type": "exercise",
+      "theory_ref": "step-quantities",
+      "title": "Build: a kilo of apples",
+      "exercise": {
+        "id": "ex-tile-kilo-apples",
+        "stable_id": "ex-ms9433kl4qz7u",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *a kilo of apples at the market.*",
+        "card_ids": [
+          "qty-kilo",
+          "place-marche"
+        ],
+        "tiles": [
+          "un",
+          "kilo",
+          "de",
+          "pommes",
+          "au",
+          "marché"
+        ],
+        "hint": "Quantity (*un kilo de*) + *pommes*, then *au marché* (at the market).",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "step-shopping-phrases",
+      "type": "theory",
+      "title": "Polite shopping phrases",
+      "body": "## At the shop\n\nA few phrases make shopping in French go smoothly:\n\n- **Je voudrais...** - *I would like...* The polite request. Much softer than *Je veux* (I want), which can sound blunt.\n- **C'est combien ?** - *How much is it?* Note the space before the question mark, French always puts one there.\n- **s'il vous plaît**, *please.* Tack it onto any request: *Je voudrais du fromage, s'il vous plaît.*\n\nWhere you shop:\n\n- **au marché**, at the (open-air) market, for fresh produce.\n- **au supermarché**, at the supermarket.\n- **faire les courses**, to do the grocery shopping.\n\nA tiny dialogue:\n\n>, *Bonjour ! Je voudrais un kilo de pommes, s'il vous plaît.*\n>, *Voilà. Autre chose ?*\n>, *C'est combien ?*"
+    },
+    {
+      "id": "ex-free-how-much",
+      "type": "exercise",
+      "theory_ref": "step-shopping-phrases",
+      "title": "How much is it?",
+      "exercise": {
+        "id": "ex-free-how-much",
+        "stable_id": "ex-ms9433kl4r02v",
+        "type": "free_text",
+        "prompt": "How do you ask *How much is it?* in French?",
+        "card_ids": [
+          "phr-cest-combien"
+        ],
+        "accept": [
+          "C'est combien ?",
+          "c'est combien ?",
+          "C'est combien?"
+        ],
+        "hint": "*C'est* (it is) + *combien* (how much). Remember the space before the question mark.",
+        "distractors": [
+          "Combien c'est ?",
+          "C'est comment ?",
+          "Quel est le prix ?"
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-some-vegetables",
+      "type": "exercise",
+      "theory_ref": "step-shopping-phrases",
+      "title": "Some vegetables",
+      "exercise": {
+        "id": "ex-free-some-vegetables",
+        "stable_id": "ex-ms9433kl4r139",
+        "type": "free_text",
+        "prompt": "Translate: *some vegetables* (just the two words).",
+        "card_ids": [
+          "food-legumes"
+        ],
+        "accept": [
+          "des légumes",
+          "Des légumes",
+          "des legumes"
+        ],
+        "hint": "*Légumes* is plural, so the partitive is *des*.",
+        "distractors": [
+          "du légumes",
+          "de la légumes",
+          "de légumes"
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-buy-meat",
+      "type": "exercise",
+      "theory_ref": "step-shopping-phrases",
+      "title": "I buy some meat",
+      "exercise": {
+        "id": "ex-free-buy-meat",
+        "stable_id": "ex-ms9433kl4r26z",
+        "type": "free_text",
+        "prompt": "Translate: *I buy some meat at the supermarket.*",
+        "card_ids": [
+          "food-viande",
+          "place-supermarche"
+        ],
+        "accept": [
+          "J'achète de la viande au supermarché.",
+          "j'achète de la viande au supermarché.",
+          "J'achete de la viande au supermarche."
+        ],
+        "hint": "*J'achète* + partitive for feminine *viande* + *au supermarché*.",
+        "distractors": [
+          "J'achète du viande au supermarché.",
+          "J'achète la viande au supermarché.",
+          "Je achète de la viande au supermarché."
+        ],
+        "direction": "source_to_target"
+      }
+    }
+  ]
+}
