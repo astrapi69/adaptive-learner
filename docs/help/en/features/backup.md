@@ -41,7 +41,7 @@ the connection comes back while the app is open, or at the next start
 with a connection. Of what is created offline, only what has already
 reached the server goes into the backup, so in server mode create a
 backup only once the app has run with a connection again after
-learning offline.
+learning offline and has been able to transfer the changes.
 
 Before the export, the app shows a **"Your backup contains …"**
 preview with record counts per area, so you can see what will be

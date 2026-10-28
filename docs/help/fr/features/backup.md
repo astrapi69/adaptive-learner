@@ -42,7 +42,7 @@ ouverte, ou au prochain démarrage avec connexion. De ce qui est créé
 hors ligne, seul ce qui est déjà arrivé au serveur entre dans la
 sauvegarde ; en mode serveur, ne crée donc une sauvegarde qu'une fois
 que l'application, après l'apprentissage hors ligne, a de nouveau
-fonctionné avec une connexion.
+fonctionné avec une connexion et a pu transmettre les modifications.
 
 Avant l'export, l'application affiche un aperçu **« Ta sauvegarde
 contient … »** avec le nombre d'enregistrements par domaine, afin

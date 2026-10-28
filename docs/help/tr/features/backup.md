@@ -39,7 +39,8 @@ açıkken bağlantı geri geldiğinde ya da bağlantıyla yapılan bir sonraki
 başlatmada bunları kendiliğinden aktarır. Çevrimdışıyken oluşanlardan
 yedeğe yalnızca sunucuya zaten ulaşmış olanlar girer; bu yüzden sunucu
 modunda yedeği ancak uygulama çevrimdışı öğrenmenin ardından yeniden
-bağlantıyla çalıştıktan sonra oluştur, daha önce değil.
+bağlantıyla çalışıp değişiklikleri aktarabildikten sonra oluştur, daha
+önce değil.
 
 Dışa aktarmadan önce uygulama, kaydetmeden önce neyin yedekleneceğini
 görmen için bölüm başına veri kümesi sayılarıyla bir **"Yedeğin

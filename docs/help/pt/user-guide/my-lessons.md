@@ -100,8 +100,9 @@ inteiro como repositório próprio:
     - **Sem token** - para uma lição isolada, a aplicação abre o editor
       de ficheiros do GitHub no caminho certo, com o título e a
       descrição do PR já preenchidos. O caminho, o título e a descrição
-      estão no endereço dessa página, e numa lição pequena também o seu
-      conteúdo; o GitHub recebe tudo isso logo que a página abre, antes
+      estão no endereço com que a aplicação abre o editor, e numa
+      lição pequena também o seu conteúdo; o GitHub recebe tudo isso
+      logo que o editor abre, antes
       de você confirmar alguma coisa. Numa lição maior, a aplicação
       descarrega primeiro o ficheiro e você cola o conteúdo dele no
       editor. Num conjunto com várias lições, a aplicação descarrega os

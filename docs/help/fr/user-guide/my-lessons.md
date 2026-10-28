@@ -82,15 +82,16 @@ L'assistant de partage vous guide à travers :
    - **Sans token** - pour une leçon seule, l'application ouvre
      l'éditeur de fichiers de GitHub au bon chemin, avec le titre et la
      description du PR pré-remplis. Le chemin, le titre et la
-     description figurent dans l'adresse de cette page, et pour une
-     petite leçon aussi son contenu ; GitHub reçoit tout cela dès
-     l'ouverture, avant que vous ne confirmiez quoi que ce soit. Pour
-     une leçon plus grande, l'application télécharge d'abord le fichier
-     et vous collez son contenu dans l'éditeur. Pour un ensemble de
-     plusieurs leçons, l'application télécharge les fichiers et ouvre la
-     page d'envoi de GitHub, où vous les faites glisser. Dans tous ces
-     cas, GitHub ne crée le fork et le pull request que lorsque vous
-     confirmez sur GitHub.
+     description figurent dans l'adresse avec laquelle l'application
+     ouvre l'éditeur, et pour une petite leçon aussi son contenu ;
+     GitHub reçoit tout cela dès l'ouverture, avant que vous ne
+     confirmiez quoi que ce soit. Pour une leçon plus grande,
+     l'application télécharge d'abord le fichier et vous collez son
+     contenu dans l'éditeur. Pour un ensemble de plusieurs leçons,
+     l'application télécharge les fichiers et ouvre la page d'envoi de
+     GitHub, où vous les faites glisser. Dans tous ces cas, GitHub ne
+     crée le fork et le pull request que lorsque vous confirmez sur
+     GitHub.
    - **Avec un token GitHub** (Paramètres > Intégrations, voir
      [Paramètres](settings.md)) - une leçon seule se partage sans quitter
      l'application : l'application forke le dépôt, commite la leçon,

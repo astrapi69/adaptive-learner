@@ -113,8 +113,9 @@ Set als eigenes Repository zu teilen:
     - **Ohne Token** - für eine einzelne Lektion öffnet die App den
       Datei-Editor von GitHub am richtigen Pfad, PR-Titel und
       -Beschreibung sind vorausgefüllt. Pfad, Titel und Beschreibung
-      stehen in der Adresse dieser Seite, bei einer kleinen Lektion
-      auch ihr Inhalt; GitHub erhält das alles schon beim Öffnen,
+      stehen in der Adresse, mit der die App den Editor öffnet, bei
+      einer kleinen Lektion auch ihr Inhalt; GitHub erhält das alles
+      schon beim Öffnen,
       bevor du etwas bestätigst. Bei einer größeren Lektion lädt die
       App die Datei zuerst herunter, und du fügst ihren Inhalt im
       Editor ein. Bei einem Set mit mehreren Lektionen lädt die App

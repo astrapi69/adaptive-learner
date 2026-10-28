@@ -40,7 +40,8 @@ Sprachaufnahmen; kommen mehr zusammen, fallen die ältesten weg. Sie
 überträgt sie von selbst, wenn die Verbindung zurückkommt, während die
 App offen ist, oder beim nächsten Start mit Verbindung. Von dem, was offline entsteht, kommt nur ins Backup, was schon beim Server
 angekommen ist; erstelle ein Backup im Server-Modus deshalb erst, wenn die
-App nach dem Offline-Lernen wieder mit Verbindung lief.
+App nach dem Offline-Lernen wieder mit Verbindung lief und die Änderungen
+übertragen konnte.
 
 Vor dem Export zeigt die App eine Vorschau **„Dein Backup
 enthält …"** mit Datensatz-Zählungen pro Bereich, damit du vor dem

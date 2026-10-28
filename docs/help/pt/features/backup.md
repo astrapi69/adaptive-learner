@@ -39,9 +39,9 @@ lições e às gravações de voz; se se acumularem mais, as mais antigas
 são descartadas. Transfere-as por si própria quando a ligação volta
 enquanto a aplicação está aberta, ou no próximo arranque com ligação.
 Do que é criado offline, só entra no backup o que já chegou ao
-servidor; por isso, no modo servidor, só cries um backup quando a
+servidor; por isso, no modo servidor, cria um backup só quando a
 aplicação tiver voltado a correr com ligação depois de aprenderes
-offline, não antes.
+offline e tiver conseguido transferir as alterações.
 
 Antes da exportação, a aplicação mostra uma pré-visualização
 **"O teu backup contém …"** com contagens de registos por área,

@@ -40,9 +40,9 @@ las grabaciones de voz; si se acumulan más, se descartan los más
 antiguos. Los transfiere por sí sola cuando vuelve la conexión mientras
 la app está abierta, o en el siguiente inicio con conexión. De lo que se
 genera sin conexión, solo entra en la copia de seguridad lo que ya ha
-llegado al servidor; por eso, en modo servidor crea la copia de
-seguridad solo cuando la app haya estado de nuevo en marcha con conexión
-después de aprender sin conexión.
+llegado al servidor; por eso, en modo servidor, no crees una copia de
+seguridad hasta que la app haya estado de nuevo en marcha con conexión
+después de aprender sin conexión y haya podido transferir los cambios.
 
 Antes de exportar, la app muestra una vista previa **"Tu copia de
 seguridad contiene…"** con recuentos de registros por área, para

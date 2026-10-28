@@ -101,15 +101,15 @@ request and is needed for sharing a whole set as your own repository:
   ways:
     - **Without a token** - for a single lesson the app opens GitHub's
       file editor at the right path, with the PR title and description
-      pre-filled. The path, title and description are in the address of
-      that page, and for a small lesson its content too; GitHub receives
-      all of this as soon as the page opens, before you confirm
-      anything. For a larger lesson the app downloads the file first,
-      and you paste its content into the editor. For a set with several
-      lessons the app downloads the files and opens GitHub's upload
-      page, where you drag them in. In all of these cases, GitHub
-      creates the fork and the pull request only once you confirm on
-      GitHub.
+      pre-filled. The path, title and description are in the address
+      the app opens the editor with, and for a small lesson its content
+      too; GitHub receives all of this as soon as the editor opens,
+      before you confirm anything. For a larger lesson the app
+      downloads the file first, and you paste its content into the
+      editor. For a set with several lessons the app downloads the
+      files and opens GitHub's upload page, where you drag them in. In
+      all of these cases, GitHub creates the fork and the pull request
+      only once you confirm on GitHub.
     - **With a GitHub token** (Settings > Integrations, see
       [Settings](settings.md#integrations)) - a single lesson is shared
       without leaving the app: the app forks the repository, commits the

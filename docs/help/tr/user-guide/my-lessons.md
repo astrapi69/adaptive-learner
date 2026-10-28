@@ -94,9 +94,10 @@ için gereklidir:
   request iki yoldan biriyle oluşturulur:
     - **Token olmadan** - tek bir ders için uygulama, GitHub'ın dosya
       düzenleyicisini doğru yolda açar; PR başlığı ve açıklaması önceden
-      doldurulmuştur. Yol, başlık ve açıklama bu sayfanın adresinde yer
-      alır, küçük bir derste dersin içeriği de; GitHub bunların hepsini
-      sayfa açılırken, daha siz bir şey onaylamadan alır. Daha büyük bir
+      doldurulmuştur. Yol, başlık ve açıklama, uygulamanın düzenleyiciyi
+      açmak için kullandığı adreste yer alır, küçük bir derste dersin
+      içeriği de; GitHub bunların hepsini düzenleyici açılırken, daha
+      siz bir şey onaylamadan alır. Daha büyük bir
       derste uygulama dosyayı önce indirir ve siz onun içeriğini
       düzenleyiciye yapıştırırsınız. Birden çok dersli bir sette
       uygulama dosyaları indirir ve GitHub'ın yükleme sayfasını açar;
