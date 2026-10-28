@@ -263,13 +263,8 @@ export const SYNC_TABLES: SyncTable[] = [
         timestampField: "updated_at",
         appendOnly: false,
     },
-    {
-        // Phase 65 — API-key rollback cache, one row per (user, provider).
-        name: "api_key_backups",
-        dexieTable: "apiKeyBackups",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
+    // #3854: ``api_key_backups`` (the API-key rollback cache) is a
+    // backup SECRET_TABLE and stays off the sync wire: its rows are keys.
 ];
 
 export const APPEND_ONLY_TABLES = new Set(
