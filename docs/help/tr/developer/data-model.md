@@ -35,6 +35,11 @@ Kullanıcı, API anahtarlarıyla birlikte ayarları ve çalışan API anahtarlar
 ### Sunucu veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, Hesap ve ayarlar: sunucu veritabanı
     accDescr: Hesap ve ayarlar bölümünün tabloları: users, user_settings, api_key_backups. İlişkiler: anki_card_suggestions.user_id → users, api_key_backups.user_id → users, curriculums.user_id → users, element_errors.user_id → users, imported_conversations.user_id → users, learning_profiles.user_id → users, learning_projects.user_id → users, lesson_progress.user_id → users, set_runs.user_id → users, speech_recordings.user_id → users, study_questions.user_id → users, tags.user_id → users, user_badges.user_id → users, user_missions.user_id → users, user_settings.user_id → users, user_streaks.user_id → users, user_xp.user_id → users, xp_purchases.user_id → users.
@@ -95,6 +100,11 @@ erDiagram
 ### Tarayıcı veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, Hesap ve ayarlar: tarayıcı veritabanı
     accDescr: Hesap ve ayarlar bölümünün store'ları: users, userSettings, apiKeyBackups, pluginSettings, userData. İlişkiler: userSettings.user_id → users, apiKeyBackups.user_id → users, learningProjects.user_id → users, learningProfiles.user_id → users, tags.user_id → users, lessonProgress.user_id → users, elementErrors.user_id → users, setRuns.user_id → users, speechRecordings.user_id → users, curricula.user_id → users, userXp.user_id → users, xpPurchases.user_id → users, userBadges.user_id → users, userStreaks.user_id → users, userMissions.user_id → users, importedConversations.user_id → users, ankiCards.user_id → users, studyQuestions.user_id → users.
@@ -175,6 +185,11 @@ Değerlendirmeden gelen öğrenme profiliyle bir öğrenme projesi ve projeleri 
 ### Sunucu veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, Öğrenme projeleri: sunucu veritabanı
     accDescr: Öğrenme projeleri bölümünün tabloları: learning_projects, learning_profiles, subjects, tags, project_subjects, project_tags. İlişkiler: anki_card_suggestions.project_id → learning_projects, imported_conversations.project_id → learning_projects, learning_profiles.user_id → users, learning_profiles.project_id → learning_projects, learning_projects.user_id → users, learning_sessions.project_id → learning_projects, method_switches.project_id → learning_projects, progress_commits.project_id → learning_projects, project_subjects.project_id → learning_projects, project_subjects.subject_id → subjects, project_tags.project_id → learning_projects, project_tags.tag_id → tags, study_questions.project_id → learning_projects, subjects.parent_id → subjects, tags.user_id → users.
@@ -252,6 +267,11 @@ erDiagram
 ### Tarayıcı veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, Öğrenme projeleri: tarayıcı veritabanı
     accDescr: Öğrenme projeleri bölümünün store'ları: learningProjects, learningProfiles, subjects, tags, projectSubjects, projectTags. İlişkiler: learningProjects.user_id → users, learningProfiles.user_id → users, learningProfiles.project_id → learningProjects, subjects.parent_id → subjects, tags.user_id → users, projectSubjects.project_id → learningProjects, projectSubjects.subject_id → subjects, projectTags.project_id → learningProjects, projectTags.tag_id → tags, learningSessions.project_id → learningProjects, progressCommits.project_id → learningProjects, methodSwitches.project_id → learningProjects, importedConversations.project_id → learningProjects, ankiCards.project_id → learningProjects, studyQuestions.project_id → learningProjects.
@@ -342,6 +362,11 @@ Mesajları, puanlamaları, notları ve adım değerlendirmeleriyle bir öğrenme
 ### Sunucu veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, Oturumlar: sunucu veritabanı
     accDescr: Oturumlar bölümünün tabloları: learning_sessions, session_messages, session_ratings, session_notes, step_evaluations. İlişkiler: anki_card_suggestions.session_id → learning_sessions, learning_sessions.project_id → learning_projects, learning_sessions.imported_conversation_id → imported_conversations, progress_commits.session_id → learning_sessions, session_messages.session_id → learning_sessions, session_notes.session_id → learning_sessions, session_ratings.session_id → learning_sessions, step_evaluations.session_id → learning_sessions, study_questions.session_id → learning_sessions.
@@ -407,6 +432,11 @@ erDiagram
 ### Tarayıcı veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, Oturumlar: tarayıcı veritabanı
     accDescr: Oturumlar bölümünün store'ları: learningSessions, sessionMessages, sessionRatings, sessionNotes, stepEvaluations. İlişkiler: learningSessions.project_id → learningProjects, learningSessions.imported_conversation_id → importedConversations, sessionMessages.session_id → learningSessions, sessionRatings.session_id → learningSessions, sessionNotes.session_id → learningSessions, stepEvaluations.session_id → learningSessions, progressCommits.session_id → learningSessions, methodSwitches.session_id → learningSessions, ankiCards.session_id → learningSessions, studyQuestions.session_id → learningSessions.
@@ -484,6 +514,11 @@ Bir projenin ilerleme kayıtları ve yöntem değişiklikleri, içerik setlerind
 ### Sunucu veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, İlerleme: sunucu veritabanı
     accDescr: İlerleme bölümünün tabloları: progress_commits, method_switches, lesson_progress, element_errors, set_runs, speech_recordings. İlişkiler: element_errors.user_id → users, lesson_progress.user_id → users, method_switches.project_id → learning_projects, progress_commits.project_id → learning_projects, progress_commits.session_id → learning_sessions, set_runs.user_id → users, speech_recordings.user_id → users, element_errors.run_id → set_runs.
@@ -594,6 +629,11 @@ erDiagram
 ### Tarayıcı veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, İlerleme: tarayıcı veritabanı
     accDescr: İlerleme bölümünün store'ları: progressCommits, methodSwitches, lessonProgress, elementErrors, setRuns, speechRecordings. İlişkiler: progressCommits.project_id → learningProjects, progressCommits.session_id → learningSessions, methodSwitches.project_id → learningProjects, methodSwitches.session_id → learningSessions, lessonProgress.user_id → users, elementErrors.user_id → users, elementErrors.run_id → setRuns, setRuns.user_id → users, speechRecordings.user_id → users.
@@ -719,6 +759,11 @@ Konuları ve dersleriyle müfredatlar; tarayıcıda ayrıca indirilen içerik se
 ### Sunucu veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, İçerik: sunucu veritabanı
     accDescr: İçerik bölümünün tabloları: curriculums, learning_topics, lessons. İlişkiler: curriculums.user_id → users, curriculums.imported_conversation_id → imported_conversations, learning_topics.curriculum_id → curriculums, learning_topics.parent_id → learning_topics, lessons.curriculum_id → curriculums.
@@ -761,6 +806,11 @@ erDiagram
 ### Tarayıcı veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, İçerik: tarayıcı veritabanı
     accDescr: İçerik bölümünün store'ları: curricula, learningTopics, lessons, contentSets, contentSetFiles. İlişkiler: curricula.user_id → users, curricula.imported_conversation_id → importedConversations, learningTopics.curriculum_id → curricula, learningTopics.parent_id → learningTopics, lessons.curriculum_id → curricula, contentSetFiles.set_pk → contentSets.
@@ -849,6 +899,11 @@ XP ve XP ile satın almalar, kazanılan rozetlerle birlikte rozet kataloğu, ser
 ### Sunucu veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, Oyunlaştırma: sunucu veritabanı
     accDescr: Oyunlaştırma bölümünün tabloları: user_xp, xp_purchases, badges, user_badges, user_streaks, user_missions. İlişkiler: user_badges.user_id → users, user_badges.badge_id → badges, user_missions.user_id → users, user_streaks.user_id → users, user_xp.user_id → users, xp_purchases.user_id → users.
@@ -921,6 +976,11 @@ erDiagram
 ### Tarayıcı veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, Oyunlaştırma: tarayıcı veritabanı
     accDescr: Oyunlaştırma bölümünün store'ları: userXp, xpPurchases, badges, userBadges, userStreaks, userMissions. İlişkiler: userXp.user_id → users, xpPurchases.user_id → users, userBadges.user_id → users, userBadges.badge_id → badges, userStreaks.user_id → users, userMissions.user_id → users.
@@ -1006,6 +1066,11 @@ erDiagram
 ### Sunucu veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, İçe aktarma: sunucu veritabanı
     accDescr: İçe aktarma bölümünün tabloları: imported_conversations, imported_messages. İlişkiler: anki_card_suggestions.conversation_id → imported_conversations, curriculums.imported_conversation_id → imported_conversations, imported_conversations.user_id → users, imported_conversations.project_id → learning_projects, imported_messages.conversation_id → imported_conversations, learning_sessions.imported_conversation_id → imported_conversations.
@@ -1046,6 +1111,11 @@ erDiagram
 ### Tarayıcı veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, İçe aktarma: tarayıcı veritabanı
     accDescr: İçe aktarma bölümünün store'ları: importedConversations, importedMessages. İlişkiler: learningSessions.imported_conversation_id → importedConversations, curricula.imported_conversation_id → importedConversations, importedConversations.user_id → users, importedConversations.project_id → learningProjects, importedMessages.conversation_id → importedConversations, ankiCards.conversation_id → importedConversations.
@@ -1095,6 +1165,11 @@ Yapay zekânın ürettiği Anki kartı önerileri ve çalışma soruları; taray
 ### Sunucu veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, Yapay zekâ: sunucu veritabanı
     accDescr: Yapay zekâ bölümünün tabloları: anki_card_suggestions, study_questions. İlişkiler: anki_card_suggestions.user_id → users, anki_card_suggestions.session_id → learning_sessions, anki_card_suggestions.conversation_id → imported_conversations, anki_card_suggestions.project_id → learning_projects, study_questions.user_id → users, study_questions.project_id → learning_projects, study_questions.session_id → learning_sessions.
@@ -1140,6 +1215,11 @@ erDiagram
 ### Tarayıcı veritabanı
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: Veri modeli, Yapay zekâ: tarayıcı veritabanı
     accDescr: Yapay zekâ bölümünün store'ları: ankiCards, studyQuestions, aiValidationResults. İlişkiler: ankiCards.user_id → users, ankiCards.session_id → learningSessions, ankiCards.conversation_id → importedConversations, ankiCards.project_id → learningProjects, studyQuestions.user_id → users, studyQuestions.project_id → learningProjects, studyQuestions.session_id → learningSessions.
