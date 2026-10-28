@@ -56,7 +56,9 @@ from app.models import (
 from app.services.sync_tables import (  # noqa: F401
     ALL_SYNC_TABLES,
     APPEND_ONLY_TABLES,
+    EXCLUDED_USER_SETTINGS_FIELDS,
     MUTABLE_TABLES,
+    SYNC_SECRET_TABLES,
     TABLES,
     TableSpec,
 )
@@ -115,6 +117,20 @@ def serialize_row(table: str, row: Any) -> dict[str, Any]:
             value = _to_iso(value)
         out[col] = value
     return out
+
+
+def strip_sync_secrets(table: str, record: dict[str, Any]) -> dict[str, Any]:
+    """Return ``record`` without the API-key fields (#3854).
+
+    Only ``user_settings`` rows carry any; a record of another table comes
+    back unchanged. Applied to everything that crosses the LAN sync wire in
+    either direction: pulled rows, pushed and resolved payloads, conflict
+    bundles. ``serialize_row`` itself stays complete because backup shares
+    it and strips on its own.
+    """
+    if table != "user_settings":
+        return record
+    return {k: v for k, v in record.items() if k not in EXCLUDED_USER_SETTINGS_FIELDS}
 
 
 def _coerce_field(table: str, col: str, value: Any) -> Any:
@@ -251,14 +267,15 @@ def pull_records(
     since: datetime | None,
 ) -> dict[str, list[dict[str, Any]]]:
     """Return every row in ``tables`` whose timestamp is greater
-    than ``since`` (or all rows when ``since`` is None — first
-    sync)."""
+    than ``since`` (or all rows when ``since`` is None, the first
+    sync). Never an API key (#3854): ``SYNC_SECRET_TABLES`` are left
+    out even when requested, and key fields are stripped."""
     out: dict[str, list[dict[str, Any]]] = {}
     for table in tables:
-        if table not in TABLES:
+        if table not in TABLES or table in SYNC_SECRET_TABLES:
             continue
         rows = repo.scoped_rows_since(table, user_id, since)
-        out[table] = [serialize_row(table, row) for row in rows]
+        out[table] = [strip_sync_secrets(table, serialize_row(table, row)) for row in rows]
     return out
 
 
@@ -297,4 +314,5 @@ __all__ = [
     "record_belongs_to_user",
     "row_belongs_to_user",
     "serialize_row",
+    "strip_sync_secrets",
 ]

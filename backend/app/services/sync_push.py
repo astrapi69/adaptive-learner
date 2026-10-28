@@ -20,11 +20,13 @@ from typing import TYPE_CHECKING, Any
 from app.exceptions import ValidationError
 
 from .sync_service import (
+    SYNC_SECRET_TABLES,
     TABLES,
     _apply_record,
     _from_iso,
     row_belongs_to_user,
     serialize_row,
+    strip_sync_secrets,
 )
 
 if TYPE_CHECKING:
@@ -122,7 +124,7 @@ def _push_mutable_record(
         ConflictBundle(
             table=table,
             record_id=record_id,
-            local=serialize_row(table, existing),
+            local=strip_sync_secrets(table, serialize_row(table, existing)),
             remote=record,
         )
     )
@@ -141,6 +143,11 @@ def push_records(
     known. For a mutable table: insert if unknown, update if
     local was untouched since ``since``, raise as a conflict if
     BOTH sides changed.
+
+    No API key is written (#3854): every record of a
+    ``SYNC_SECRET_TABLES`` table is skipped, and key fields are
+    stripped before a record is applied, so an older client's
+    cleartext keys never land in the ciphertext columns.
     """
     if table not in TABLES:
         raise ValidationError(f"Unknown sync table: {table!r}")
@@ -148,11 +155,15 @@ def push_records(
     model = spec.model
     result = PushResult()
 
-    for record in records:
-        record_id = record.get("id")
+    for raw_record in records:
+        record_id = raw_record.get("id")
         if not isinstance(record_id, str) or not record_id:
             result.skipped.append("<no-id>")
             continue
+        if table in SYNC_SECRET_TABLES:
+            result.skipped.append(record_id)
+            continue
+        record = strip_sync_secrets(table, raw_record)
         existing = repo.get_by_pk(model, record_id)
         if spec.append_only:
             _push_append_only_record(repo, user_id, table, record, record_id, existing, result)
@@ -196,7 +207,8 @@ def apply_resolutions(
     skipped: list[str] = []
     for resolution in resolutions:
         spec = TABLES.get(resolution.table)
-        if spec is None:
+        if spec is None or resolution.table in SYNC_SECRET_TABLES:
+            # #3854: the key rollback cache is never written over sync.
             skipped.append(resolution.record_id)
             continue
         existing = repo.get_by_pk(spec.model, resolution.record_id)
@@ -206,7 +218,7 @@ def apply_resolutions(
                 continue
             applied.append(resolution.record_id)
             continue
-        payload = resolution.merged_data or {}
+        payload = strip_sync_secrets(resolution.table, resolution.merged_data or {})
         if resolution.chosen in {"remote", "merged"}:
             if not payload:
                 skipped.append(resolution.record_id)
