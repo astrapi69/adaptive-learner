@@ -1,10 +1,68 @@
-# Novidades (v1.61 – v2.16)
+# Novidades (v1.61 – v2.17)
 
 Uma visão geral orientada ao utilizador dos lançamentos desde a
 v1.61.0. As notas técnicas completas por versão estão em
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v2.17.0 - O que sai do teu dispositivo, correções e exames
+
+- **Privacidade**: a política de privacidade foi reescrita e está disponível
+  nos oito idiomas da ajuda. Descreve quando e para onde saem dados do teu
+  dispositivo e, como texto jurídico, usa o tratamento formal. As páginas de
+  documentação já não carregam nada de outros servidores além do GitHub
+  Pages, onde estão alojadas, e a sua pesquisa já não acrescenta os teus
+  termos de pesquisa aos endereços dos resultados. As imagens e os vídeos
+  que um conteúdo de aprendizagem ou uma resposta da IA incorpora através de
+  um endereço na web aparecem como ligação e só são carregados depois do teu
+  clique, mesmo quando estão no GitHub; as imagens em exercícios que um
+  conjunto traz como ficheiros próprios vêm com o conjunto, como até agora.
+  As ligações da aplicação não enviam referrer.
+- **Leitura em voz alta**: a aplicação dá preferência a uma voz no teu
+  dispositivo. Uma voz online só lê quando não há nenhuma voz no dispositivo
+  para o idioma, quando tu próprio escolheste uma ou quando o navegador,
+  pouco depois de carregar uma página, ainda não comunicou as suas vozes;
+  nesse caso, o navegador usa a sua própria voz predefinida, que pode ser uma
+  voz online. O X do reprodutor de leitura em voz alta encerra a leitura em
+  voz alta para esta lição.
+- **Relatório de erro e IA**: as informações do ambiente e o histórico de
+  ações já não vêm assinalados previamente e só entram no relatório se os
+  assinalares. Os avisos das verificações por IA dizem agora o que é
+  enviado. Uma sessão iniciada a partir de uma conversa importada envia a
+  sua abertura à IA só uma vez, não em cada recarregamento.
+- **Corrigir erros**: se uma ronda teve erros, o resumo compacto oferece
+  «Corrigir erros». Depois, «As tuas correções» mostra o que está corrigido
+  e o que ainda está por corrigir, e a avaliação detalhada marca cada erro
+  da mesma forma. Quando chegas ao resumo, a lição fica concluída, e o
+  resumo mostra o tempo desta ronda.
+- **Exames**: se um conjunto traz as suas próprias regras de avaliação, o
+  exame é avaliado segundo elas. Um exame começado só conta se for feito de
+  uma só vez e recomeça em vez de ser retomado, e uma ronda começada noutro
+  modo não continua como exame. Podes mudar o modo até à primeira resposta.
+- **Continuar a aprender e tocar**: uma lição em pausa abre no passo que
+  visitaste por último. Um toque acerta no que vês, também no iPhone, e um
+  toque num campo já emparelhado de uma correspondência seleciona-o em vez
+  de desfazer o par. As indicações para instalar a aplicação são cartões no
+  painel e já não tapam nenhum botão.
+- **Cópias de segurança**: se importares a cópia de segurança de outro
+  perfil, o progresso desse perfil vai para o perfil ativo, e a caixa de
+  diálogo di-lo antes. Os emblemas e a sequência mantêm-se, e os
+  repositórios ligados, os convites utilizados e os relatórios das
+  verificações por IA vêm com ela.
+- **Cópias de segurança da v2.17**: restaura uma cópia de segurança desta
+  versão só na v2.17 ou mais recente; as versões anteriores deixam de fora
+  as partes novas sem aviso. Atualiza a aplicação de desktop antes de
+  restaurar nela uma cópia de segurança da versão do navegador.
+- **Criar e partilhar lições**: guardar localmente só precisa de uma lição
+  válida, mesmo com um único exercício; os requisitos mínimos só se aplicam
+  ao partilhar. «Salvar e compartilhar» abre a partilha da lição guardada, e
+  um conjunto que não ensina nenhum idioma partilha-lo sem nível.
+- **No teu idioma**: os erros da validação de repositórios, os relatórios em
+  Markdown e PDF e o título no separador do navegador aparecem no teu idioma
+  da interface, e os leitores de ecrã leem nele a comparação de respostas e
+  as estrelas. Cada página de ajuda existe agora nos oito idiomas da ajuda,
+  e a aplicação e a ajuda dizem de forma uniforme «sessão» e «sequência».
 
 ## v2.16.0 - Erros que dizem o que aconteceu, um só conjunto de regras para as lições
 

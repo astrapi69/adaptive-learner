@@ -1,4 +1,4 @@
-# Yenilikler (v1.61 – v2.16)
+# Yenilikler (v1.61 – v2.17)
 
 v1.61.0'dan bu yana çıkan sürümlere kullanıcı odaklı bir genel bakış.
 Sürüm başına eksiksiz, teknik notlar
@@ -6,6 +6,64 @@ Sürüm başına eksiksiz, teknik notlar
 altında bulunur.
 
 ---
+
+## v2.17.0 - Cihazından çıkanlar, düzeltmeler ve sınavlar
+
+- **Gizlilik**: gizlilik politikası yeniden yazıldı ve sekiz yardım dilinin
+  hepsinde mevcut. Verilerin cihazından ne zaman ve nereye çıktığını anlatır
+  ve hukuki bir metin olarak resmî hitap biçimini kullanır. Dokümantasyon
+  sayfaları artık barındırıldıkları GitHub Pages dışındaki sunuculardan
+  hiçbir şey yüklemez ve aramaları artık senin arama terimlerini sonuçların
+  adreslerine eklemez. Bir öğrenme içeriğinin veya bir yapay zeka yanıtının
+  bir web adresi üzerinden yerleştirdiği görseller ve videolar bağlantı
+  olarak görünür ve GitHub'da olsalar bile ancak sen tıkladıktan sonra
+  yüklenir; bir setin kendi dosyaları olarak getirdiği alıştırma görselleri
+  eskisi gibi setle birlikte gelir. Uygulamadaki bağlantılar referrer
+  göndermez.
+- **Sesli okuma**: uygulama cihazındaki bir sesi tercih eder. Çevrimiçi bir
+  ses yalnızca cihazda o dil için ses olmadığında, kendin bir tane
+  seçtiğinde veya tarayıcı, bir sayfa yüklendikten kısa süre sonra
+  seslerini henüz bildirmemişken okur; bu durumda tarayıcı kendi varsayılan
+  sesini kullanır ve bu ses çevrimiçi bir ses olabilir. Sesli okuma
+  oynatıcısındaki X, bu ders için sesli okumayı bitirir.
+- **Hata raporu ve yapay zeka**: ortam bilgisi ve işlem geçmişi artık
+  önceden işaretli gelmez ve yalnızca sen işaretlersen rapora girer. Yapay
+  zeka denetimlerinin notları artık neyin gönderildiğini söyler. İçe
+  aktarılmış bir sohbetten başlatılan bir oturum, açılışını yapay zekaya
+  yalnızca bir kez gönderir, her yeniden yüklemede değil.
+- **Hataları düzeltme**: bir turda hata olduysa kısa özet «Hataları düzelt»
+  seçeneğini sunar. Ardından «Düzeltmelerin» neyin düzeltildiğini ve neyin
+  henüz düzeltilmediğini gösterir ve ayrıntılı değerlendirme her hatayı aynı
+  şekilde işaretler. Özete ulaştığında ders tamamlanmış olur ve özet bu
+  turun süresini gösterir.
+- **Sınavlar**: bir set kendi değerlendirme kurallarını getiriyorsa sınav bu
+  kurallara göre değerlendirilir. Başlanmış bir sınav yalnızca tek seferde
+  yapılırsa sayılır ve devam ettirilmek yerine baştan başlar; başka bir
+  modda başlanan bir tur da sınav olarak devam etmez. Modu ilk yanıta kadar
+  değiştirebilirsin.
+- **Öğrenmeye devam ve dokunma**: duraklatılmış bir ders, en son ziyaret
+  ettiğin adımda açılır. Bir dokunuş, iPhone'da da, gördüğün şeye isabet
+  eder ve zaten eşlenmiş bir eşleştirme kutusuna dokunuş, çifti bozmak
+  yerine o kutuyu seçer. Uygulamayı yükleme ipuçları panoda kartlar olarak
+  yer alır ve artık hiçbir düğmeyi örtmez.
+- **Yedekler**: başka bir profilin yedeğini içe aktarırsan o profilin
+  öğrenme ilerlemesi etkin profile geçer ve iletişim kutusu bunu önceden
+  söyler. Rozetler ve seri korunur; bağlı depolar, kullanılan davetler ve
+  yapay zeka denetim raporları da yedekle birlikte gelir.
+- **v2.17 yedekleri**: bu sürümden bir yedeği yalnızca v2.17 veya daha yeni
+  bir sürümde geri yükle; eski sürümler yeni kısımları uyarı vermeden atlar.
+  Tarayıcı sürümünden bir yedeği masaüstü uygulamasında geri yüklemeden önce
+  masaüstü uygulamasını güncelle.
+- **Ders oluşturma ve paylaşma**: yerel olarak kaydetmek, tek bir
+  alıştırmayla bile, yalnızca geçerli bir ders gerektirir; asgari
+  gereksinimler ancak paylaşırken geçerlidir. «Kaydet ve paylaş», kaydedilen
+  ders için paylaşımı açar ve dil öğretmeyen bir seti seviye olmadan
+  paylaşırsın.
+- **Kendi dilinde**: depo doğrulamasının hataları, Markdown ve PDF raporları
+  ve tarayıcı sekmesindeki başlık arayüz dilinde görünür ve ekran okuyucular
+  yanıt karşılaştırmasını ve yıldızları bu dilde okur. Her yardım sayfası
+  artık sekiz yardım dilinin hepsinde var ve uygulama ile yardım tutarlı
+  olarak «oturum» ve «seri» der.
 
 ## v2.16.0 - Ne olduğunu söyleyen hatalar, dersler için tek kural seti
 

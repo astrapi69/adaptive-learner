@@ -1,10 +1,62 @@
-# What's new (v1.61 – v2.16)
+# What's new (v1.61 – v2.17)
 
 A user-oriented overview of the releases since v1.61.0. The full,
 technical notes per version are under
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v2.17.0 - What leaves your device, corrections and exams
+
+- **Privacy**: the privacy policy is rewritten and available in all eight
+  help languages. It describes when and where data leaves your device and,
+  as a legal text, uses the formal address where a language has one. The
+  documentation pages load nothing from servers other than GitHub Pages,
+  where they are hosted, and their search no longer adds your search terms
+  to the addresses of the results. Images and videos that learning content
+  or an AI reply embeds through a web address show as a link and load only
+  after you click, even when they are on GitHub; images in exercises that a
+  set brings as its own files still come with the set. Links from the app
+  send no referrer.
+- **Read-aloud**: the app prefers a voice on your device. An online voice
+  reads only when there is no local voice for the language, when you chose
+  one yourself, or when the browser has not yet reported its voices shortly
+  after a page loads; then it uses its own default voice, which can be an
+  online voice. The X in the read-aloud player ends read-aloud for this
+  lesson.
+- **Error report and AI**: environment info and action history are no longer
+  ticked in advance and go into a report only when you tick them. The AI
+  check notes now say what is sent. A session from an imported chat sends
+  its AI opening only once, not on every reload.
+- **Fix mistakes**: when a run had mistakes, the compact summary offers "Fix
+  mistakes". "Your corrections" then shows what is corrected and what is
+  still open, and the detailed evaluation marks every mistake the same way.
+  Reaching the summary completes the lesson, and it shows the time of this
+  run.
+- **Exams**: a set that brings its own evaluation rules grades the exam by
+  them. A started exam counts only in one sitting and starts over instead of
+  continuing, and a run started in another mode does not continue as an
+  exam. You can change the mode until the first answer.
+- **Picking up and tapping**: a paused lesson opens on the step you last
+  visited. A tap hits what you see, also on an iPhone, and a tap on a paired
+  matching tile selects it instead of undoing the pair. The install hints
+  are cards on the dashboard and no longer cover any button.
+- **Backups**: importing another profile's backup puts its progress into the
+  active profile, and the dialog says so first. Badges and the streak are
+  kept, and connected repositories, redeemed invites and AI check reports
+  come along.
+- **Backups from v2.17**: restore a backup made with this version only in
+  v2.17 or newer; older versions leave out the new parts without a message.
+  Update the desktop app before you restore a browser backup in it.
+- **Creating and sharing lessons**: saving locally needs only a valid
+  lesson, even with a single exercise; the minimums apply when you share.
+  "Save and share" opens sharing for the saved lesson, and a set that does
+  not teach a language can be shared without a level.
+- **In your language**: repository check errors, Markdown and PDF reports
+  and the browser tab title appear in your interface language, and screen
+  readers read the answer comparison and stars in it. Every help page now
+  exists in all eight help languages, and the app and the help use one term
+  each for session and streak.
 
 ## v2.16.0 - Errors that say what went wrong, one set of lesson rules
 
