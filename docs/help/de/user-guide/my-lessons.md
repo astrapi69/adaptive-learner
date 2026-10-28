@@ -103,21 +103,25 @@ Set als eigenes Repository zu teilen:
   herunterladen.
 - **Als Content-Set exportieren** - ein Content-Set als `.zip`
   herunterladen (Manifest + Lektionen).
-- **Für die Community bereitstellen** - öffnet einen **Pull Request**
+- **Für die Community bereitstellen** - führt zu einem **Pull Request**
   im offiziellen Inhalts-Repository. Die Lektions-JSON landet am
   richtigen Pfad im Inhaltsbaum, und die Validierung des Repositorys
   läuft automatisch. Der Pull Request ist auf GitHub öffentlich
   sichtbar, sobald er entsteht. Ein Maintainer prüft ihn; übernimmt er
   ihn, können alle die Lektion herunterladen. Der Pull Request entsteht
   auf einem von zwei Wegen:
-    - **Ohne Token** - eine einzelne Lektion öffnet den Datei-Editor
-      von GitHub am richtigen Pfad, PR-Titel und -Beschreibung sind
-      vorausgefüllt. Bei einer kleinen Lektion steckt ihr Inhalt schon
-      in der GitHub-Adresse, die sich öffnet; bei einer größeren lädt
-      die App die Datei zuerst herunter, und du fügst sie im Editor ein.
-      Ein Set mit mehreren Lektionen lädt die Dateien herunter und
-      öffnet die Upload-Seite von GitHub, auf die du sie ziehst. GitHub
-      erstellt den Fork und den Pull Request, sobald du dort bestätigst.
+    - **Ohne Token** - für eine einzelne Lektion öffnet die App den
+      Datei-Editor von GitHub am richtigen Pfad, PR-Titel und
+      -Beschreibung sind vorausgefüllt. Pfad, Titel und Beschreibung
+      stehen in der Adresse dieser Seite, bei einer kleinen Lektion
+      auch ihr Inhalt; GitHub erhält das alles schon beim Öffnen,
+      bevor du etwas bestätigst. Bei einer größeren Lektion lädt die
+      App die Datei zuerst herunter, und du fügst ihren Inhalt im
+      Editor ein. Bei einem Set mit mehreren Lektionen lädt die App
+      die Dateien herunter und öffnet die Upload-Seite von GitHub,
+      auf die du sie ziehst. Auf allen diesen Wegen erstellt GitHub
+      den Fork und den Pull Request erst, wenn du auf GitHub
+      bestätigst.
     - **Mit GitHub-Token** (Einstellungen > Integrationen, siehe
       [Einstellungen](settings.md#integrationen)) - eine einzelne
       Lektion teilst du, ohne die App zu verlassen: die App forkt das
@@ -138,8 +142,14 @@ Set als eigenes Repository zu teilen:
   Inhaltsquelle verbinden (siehe
   [Content-Repositories](../features/content-repos.md)).
 
-Exportierte Dateien enthalten nur den Lektionsinhalt - keinen
-Fortschritt, keine Fehlerhistorie, nichts Persönliches.
+Was du teilst oder exportierst, enthält den Lektionsinhalt, aber
+keinen Lernfortschritt und keine Fehlerhistorie aus der App. Was in
+der Lektion steht, geht mit, auch Persönliches: zum Beispiel dein
+Name, wenn du ihn beim Teilen angibst und anzeigen lässt (er steht
+dann in der Lektion und im Pull Request), und bei einer Lektion aus
+einer Chat-Analyse alles, was die Analyse gefunden hat, darunter
+Vokabeln und Beispielsätze aus deinem Chat, deine Stärken und
+Schwächen und deine häufigen Fehlermuster.
 
 ---
 

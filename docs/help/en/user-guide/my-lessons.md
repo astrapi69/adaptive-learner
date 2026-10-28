@@ -92,20 +92,24 @@ request and is needed for sharing a whole set as your own repository:
 - **Export** - download the lesson as a single `.json` file.
 - **Export as set** - download a content-set `.zip` (manifest +
   lessons).
-- **Share with Community** - opens a **pull request** in the official
-  content repository. The lesson JSON lands at the right path in the
-  content tree, and the repository's validation runs automatically. The
-  pull request is publicly visible on GitHub as soon as it exists. A
-  maintainer reviews it; if they accept it, everyone can download the
-  lesson. The pull request comes about in one of two ways:
-    - **Without a token** - a single lesson opens GitHub's file editor
-      at the right path, with the PR title and description pre-filled.
-      For a small lesson, its content is already in the GitHub address
-      that opens; for a larger one, the app downloads the file first and
-      you paste it into the editor. A set with several lessons downloads
-      the files and opens GitHub's upload page, where you drag them in.
-      GitHub creates the fork and the pull request once you confirm
-      there.
+- **Share with Community** - leads to a **pull request** in the
+  official content repository. The lesson JSON lands at the right path
+  in the content tree, and the repository's validation runs
+  automatically. The pull request is publicly visible on GitHub as soon
+  as it exists. A maintainer reviews it; if they accept it, everyone
+  can download the lesson. The pull request comes about in one of two
+  ways:
+    - **Without a token** - for a single lesson the app opens GitHub's
+      file editor at the right path, with the PR title and description
+      pre-filled. The path, title and description are in the address of
+      that page, and for a small lesson its content too; GitHub receives
+      all of this as soon as the page opens, before you confirm
+      anything. For a larger lesson the app downloads the file first,
+      and you paste its content into the editor. For a set with several
+      lessons the app downloads the files and opens GitHub's upload
+      page, where you drag them in. Whichever of these ways you take,
+      GitHub creates the fork and the pull request only once you confirm
+      on GitHub.
     - **With a GitHub token** (Settings > Integrations, see
       [Settings](settings.md#integrations)) - a single lesson is shared
       without leaving the app: the app forks the repository, commits the
@@ -125,8 +129,13 @@ request and is needed for sharing a whole set as your own repository:
   connected as a content source (see
   [Content repositories](../features/content-repos.md)).
 
-Exported files contain only the lesson content - no progress, no
-error history, nothing personal.
+What you share or export contains the lesson content, but no learning
+progress and no error history from the app. Whatever is in the lesson
+goes along with it, personal content too: for example your name, if you
+enter it when sharing and have it shown (it is then in the lesson and in
+the pull request), and, for a lesson from a chat analysis, everything
+the analysis found, including vocabulary and example sentences from your
+chat, your strengths and weaknesses and your frequent error patterns.
 
 ---
 

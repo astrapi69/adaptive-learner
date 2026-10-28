@@ -62,7 +62,7 @@ GitHub. Un token GitHub accélère le pull request et est nécessaire pour
 partager un ensemble entier comme dépôt personnel (voir *Partager comme
 dépôt* ci-dessous).
 
-**Partager avec la communauté** ouvre un **pull request** dans le dépôt
+**Partager avec la communauté** mène à un **pull request** dans le dépôt
 officiel des contenus,
 [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
 La leçon JSON arrive au bon chemin de l'arborescence des contenus, et la
@@ -79,14 +79,18 @@ L'assistant de partage vous guide à travers :
 3. **Aperçu de placement** - où la leçon s'inscrirait dans l'arborescence
    des contenus de la communauté
 4. **Soumission** - le pull request se crée par l'un de deux chemins :
-   - **Sans token** - une leçon seule ouvre l'éditeur de fichiers de
-     GitHub au bon chemin, avec le titre et la description du PR
-     pré-remplis. Pour une petite leçon, son contenu se trouve déjà dans
-     l'adresse GitHub qui s'ouvre ; pour une plus grande, l'application
-     télécharge d'abord le fichier et vous le collez dans l'éditeur. Un
-     ensemble de plusieurs leçons télécharge les fichiers et ouvre la
-     page d'envoi de GitHub, où vous les faites glisser. GitHub crée le
-     fork et le pull request dès que vous confirmez sur place.
+   - **Sans token** - pour une leçon seule, l'application ouvre
+     l'éditeur de fichiers de GitHub au bon chemin, avec le titre et la
+     description du PR pré-remplis. Le chemin, le titre et la
+     description figurent dans l'adresse de cette page, et pour une
+     petite leçon aussi son contenu ; GitHub reçoit tout cela dès
+     l'ouverture, avant que vous ne confirmiez quoi que ce soit. Pour
+     une leçon plus grande, l'application télécharge d'abord le fichier
+     et vous collez son contenu dans l'éditeur. Pour un ensemble de
+     plusieurs leçons, l'application télécharge les fichiers et ouvre la
+     page d'envoi de GitHub, où vous les faites glisser. Par chacun de
+     ces chemins, GitHub ne crée le fork et le pull request que lorsque
+     vous confirmez sur GitHub.
    - **Avec un token GitHub** (Paramètres > Intégrations, voir
      [Paramètres](settings.md)) - une leçon seule se partage sans quitter
      l'application : l'application forke le dépôt, commite la leçon,
@@ -108,8 +112,15 @@ raison en info-bulle. Vous pouvez ensuite connecter le dépôt envoyé comme
 source de contenu (voir
 [Plusieurs dépôts de contenu](../features/content-repos.md)).
 
-Les fichiers exportés ne contiennent que le contenu de la leçon - pas de
-progression, pas d'historique d'erreurs, rien de personnel.
+Ce que vous partagez ou exportez contient le contenu de la leçon, mais
+aucune progression d'apprentissage et aucun historique d'erreurs de
+l'application. Ce qui figure dans la leçon part avec elle, y compris ce
+qui est personnel : par exemple votre nom, si vous l'indiquez lors du
+partage et le faites afficher (il figure alors dans la leçon et dans le
+pull request), et, pour une leçon issue d'une analyse de chat, tout ce
+que l'analyse a trouvé, notamment le vocabulaire et les phrases
+d'exemple de votre chat, vos points forts et vos points faibles et vos
+schémas d'erreurs fréquents.
 
 ---
 

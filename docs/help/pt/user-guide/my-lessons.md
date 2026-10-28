@@ -91,20 +91,23 @@ inteiro como repositório próprio:
 - **Exportar** - descarregar a lição como um único ficheiro `.json`.
 - **Exportar como conjunto** - descarregar um `.zip` de conjunto de
   conteúdo (manifesto + lições).
-- **Compartilhar com a comunidade** - abre um **pull request** no
+- **Compartilhar com a comunidade** - leva a um **pull request** no
   repositório oficial de conteúdo. O JSON da lição fica no caminho
   certo da árvore de conteúdo, e a validação do repositório corre
   automaticamente. O pull request fica visível publicamente no GitHub
   assim que é criado. Um mantenedor revê-o; se o aceitar, todos podem
   descarregar a lição. O pull request é criado por um de dois caminhos:
-    - **Sem token** - uma lição isolada abre o editor de ficheiros do
-      GitHub no caminho certo, com o título e a descrição do PR já
-      preenchidos. Numa lição pequena, o conteúdo já vai dentro do
-      endereço do GitHub que se abre; numa maior, a aplicação descarrega
-      primeiro o ficheiro e você cola-o no editor. Um conjunto com
-      várias lições descarrega os ficheiros e abre a página de
-      carregamento do GitHub, para onde você os arrasta. O GitHub cria o
-      fork e o pull request assim que você confirmar lá.
+    - **Sem token** - para uma lição isolada, a aplicação abre o editor
+      de ficheiros do GitHub no caminho certo, com o título e a
+      descrição do PR já preenchidos. O caminho, o título e a descrição
+      estão no endereço dessa página, e numa lição pequena também o seu
+      conteúdo; o GitHub recebe tudo isso logo que a página abre, antes
+      de você confirmar alguma coisa. Numa lição maior, a aplicação
+      descarrega primeiro o ficheiro e você cola o conteúdo dele no
+      editor. Num conjunto com várias lições, a aplicação descarrega os
+      ficheiros e abre a página de carregamento do GitHub, para onde
+      você os arrasta. Em qualquer destes caminhos, o GitHub só cria o
+      fork e o pull request quando você confirmar no GitHub.
     - **Com um token do GitHub** (Configurações > Integrações, ver
       [Configurações](settings.md)) - você partilha uma lição isolada
       sem sair da aplicação: a aplicação faz o fork do repositório, faz
@@ -125,8 +128,14 @@ inteiro como repositório próprio:
   repositório enviado como fonte de conteúdo (ver
   [Múltiplos repositórios de conteúdo](../features/content-repos.md)).
 
-Os ficheiros exportados contêm apenas o conteúdo da lição - sem
-progresso, sem historial de erros, nada pessoal.
+O que você partilha ou exporta contém o conteúdo da lição, mas nenhum
+progresso de aprendizagem e nenhum historial de erros da aplicação. O
+que está na lição vai com ela, também o que é pessoal: por exemplo o seu
+nome, se o indicar ao partilhar e o deixar mostrar (fica então na lição
+e no pull request), e, numa lição criada a partir de uma análise de
+conversa, tudo o que a análise encontrou, incluindo vocabulário e frases
+de exemplo da sua conversa, os seus pontos fortes e fracos e os seus
+padrões de erro frequentes.
 
 ---
 
