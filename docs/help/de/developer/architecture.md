@@ -166,6 +166,11 @@ auf HTTP-Statuscodes. Das vollständige Muster steht in
   legt ihre `TableSpec.append_only` in
   `backend/app/services/sync_tables.py` fest. Die Tabellen selbst,
   nach Bereichen: [Datenmodell](data-model.md).
+- Kein API-Schlüssel auf der Sync-Leitung (#3854): die Tabellen in
+  `SYNC_SECRET_TABLES` (der Rollback-Cache `api_key_backups`) und die
+  `api_key_*`-Felder von `user_settings` (`EXCLUDED_USER_SETTINGS_FIELDS`,
+  dieselbe Liste wie beim Backup) gehen in keiner Richtung über den
+  Sync; im Browser filtert `frontend/src/storage/sync/sync-secrets.ts`.
 - Backup-Format: JSON; API-Keys werden beim Export entfernt;
   Restore ist ein Merge.
 - Test-Isolation: Produktionsdaten-Verzeichnisse tragen einen
