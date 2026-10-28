@@ -331,12 +331,19 @@ funcionalidade entre os modos na conclusão de lições.
 ## Privacidade
 
 Todo o progresso das lições, as linhas de erros de elementos, os
-estados da fila de revisão e os dados de agendamento são
-armazenados **do teu lado**: no browser (IndexedDB) ou, no modo API,
-na base de dados do teu próprio backend; outros recebem partes deles
-só quando uma funcionalidade que utilizas precisa delas. Uma sessão de
-aprendizagem com IA, por exemplo, envia ao teu fornecedor de IA os
-teus erros recentes, cada um com a tua resposta, a resposta correta e
-quantas vezes o cometeste. A
+estados da fila de revisão e os dados de agendamento são armazenados:
+no modo local, no teu browser (IndexedDB), e no modo API, na base de
+dados do backend a que a aplicação está ligada; quem opera esse
+backend tem acesso a ela. O progresso de lições e as gravações de voz
+criados offline no modo API ficam à espera no teu browser até serem
+transferidos (ver [Backup](../features/backup.md)).
+Outros recebem partes deles só quando uma funcionalidade precisa
+delas. Um exemplo é a sessão de chat com IA: as lições em si não usam
+IA, mas uma sessão de chat com IA envia ao teu fornecedor de IA, entre
+outras coisas, as tuas lições concluídas com os respetivos resultados
+e os teus erros recentes, cada um com a tua resposta, a resposta
+correta e o número de vezes que o cometeste. Uma sessão a partir de
+uma conversa importada envia, em vez do teu progresso, a análise e o
+histórico dessa conversa. A
 [política de privacidade](../legal/privacy.md) descreve que dados vão
 para outros e quando.

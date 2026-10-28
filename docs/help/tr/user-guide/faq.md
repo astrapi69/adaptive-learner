@@ -168,9 +168,9 @@ hedefli bir oturum başlatılır.
 Yerel ağ çift yönlü senkronizasyonu. Ayarlar > Veri > Eşitleme'yi açın
 ve bu cihazı eşleştirin: diğer cihazın ekranındaki QR kodunu tarayın (arka
 kamera) ya da eşleştirme URL'sini yapıştırın. Eşleştirildikten sonra
-iter + çeker düğmeleri veri alışverişi yapar; çakışmalar yapay zeka
-birleştirme çözücüden geçer. Senkronizasyon, ders ilerlemesi,
-öğe bazlı hatalar ve görevler dahil tüm verilerini kapsar.
+iter + çeker düğmeleri veri alışverişi yapar; çakışmaları bir iletişim
+kutusunda kendiniz çözersiniz. Senkronizasyon, ders ilerlemesi, öğe bazlı
+hatalar ve görevler dahil tüm verilerini kapsar.
 
 ## Bu ChatGPT'den nasıl farklı?
 
@@ -188,15 +188,16 @@ sistemidir*:
    unutur.
 6. **Sağlayıcı özgürlüğü** - Anthropic, OpenAI ya da Gemini, ayrıca
    sunucu modunda Perplexity.
-7. **Yerel öncelikli seçenek** - öğrenme ilerlemeniz,
-   istatistikleriniz ve ayarlarınız tarayıcınızda saklanır;
-   başkaları bunların bölümlerini yalnızca kullandığınız bir özellik
-   onlara ihtiyaç duyduğunda alır. Uygulama, bir özellik gerektirdiğinde
-   sunuculara bağlanır; örneğin içerikler için GitHub'a (bağlı
-   depoları başlangıçta da eşitler), yapay zeka sağlayıcınıza ve
-   bir şey paylaştığınızda ya da bir hata raporunu orada açtığınızda
-   GitHub'a. [Gizlilik politikası](../legal/privacy.md), bunların
-   hangi durumlar olduğunu ve neyin aktarıldığını açıklar.
+7. **Yerel öncelikli seçenek** - Yerel modda tarayıcınız başka şeylerin
+   yanı sıra öğrenme ilerlemenizi, istatistiklerinizi ve ayarlarınızı
+   saklar; başkaları bunların bölümlerini yalnızca bir özellik onlara
+   ihtiyaç duyduğunda alır. Uygulama, bir özellik gerektirdiğinde
+   sunuculara bağlanır; örneğin içerikler için GitHub'a (bunun için
+   bağlı depoları uygulama başlatıldığında da kendiliğinden eşitler),
+   yapay zeka sağlayıcınıza ve bir şey paylaştığınızda ya da bir hata
+   raporunu orada açtığınızda GitHub'a.
+   [Gizlilik politikası](../legal/privacy.md), bunların hangi durumlar
+   olduğunu ve neyin aktarıldığını açıklar.
 
 ## Yapay zeka yanlış giderse ne olur?
 

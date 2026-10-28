@@ -34,8 +34,14 @@ mit, die Plakette „KI-geprüft" bleibt also erhalten.
   Auto-Backups und der Stand der LAN-Synchronisierung.
 
 Die Einstellung, ob Auto-Backup eingeschaltet ist, kommt dagegen mit.
-Weil offline entstandener Fortschritt im Backup fehlen würde, erstelle
-ein Backup im Server-Modus erst, wenn die App wieder online ist.
+Im Server-Modus merkt sich die App, was offline entsteht, in diesem
+Browser: bis zu 50 Änderungen an Lektionsfortschritt und
+Sprachaufnahmen; kommen mehr zusammen, fallen die ältesten weg. Sie
+überträgt sie von selbst, wenn die Verbindung zurückkommt, während die
+App offen ist, oder beim nächsten Start mit Verbindung. Von dem, was offline entsteht, kommt nur ins Backup, was schon beim Server
+angekommen ist; erstelle ein Backup im Server-Modus deshalb erst, wenn die
+App nach dem Offline-Lernen wieder mit Verbindung lief und die Änderungen
+übertragen konnte.
 
 Vor dem Export zeigt die App eine Vorschau **„Dein Backup
 enthält …"** mit Datensatz-Zählungen pro Bereich, damit du vor dem

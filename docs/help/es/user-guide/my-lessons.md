@@ -94,21 +94,25 @@ compartir un conjunto entero como repositorio propio:
 - **Exportar** - descarga la lección como un único archivo `.json`.
 - **Exportar como conjunto** - descarga un `.zip` de conjunto de
   contenido (manifiesto + lecciones).
-- **Compartir con la comunidad** - abre un **pull request** en el
+- **Compartir con la comunidad** - conduce a un **pull request** en el
   repositorio oficial de contenido. El JSON de la lección queda en la
   ruta correcta del árbol de contenido, y la validación del repositorio
   se ejecuta automáticamente. El pull request es visible públicamente en
   GitHub desde el momento en que se crea. Un mantenedor lo revisa; si lo
   acepta, todos pueden descargar la lección. El pull request se crea por
   uno de dos caminos:
-    - **Sin token** - una sola lección abre el editor de archivos de
-      GitHub en la ruta correcta, con el título y la descripción del PR
-      ya rellenados. En una lección pequeña, su contenido ya va dentro
-      de la dirección de GitHub que se abre; en una más grande, la app
-      descarga primero el archivo y tú lo pegas en el editor. Un
-      conjunto con varias lecciones descarga los archivos y abre la
-      página de subida de GitHub, donde tú los arrastras. GitHub crea el
-      fork y el pull request en cuanto tú confirmas allí.
+    - **Sin token** - para una sola lección, la app abre el editor de
+      archivos de GitHub en la ruta correcta, con el título y la
+      descripción del PR ya rellenados. La ruta, el título y la
+      descripción van en la dirección con la que la app abre el editor,
+      y en una lección pequeña también su contenido; GitHub recibe todo
+      eso ya al abrirse el editor, antes de que confirmes nada. En una
+      lección más grande,
+      la app descarga primero el archivo y tú pegas su contenido en el
+      editor. En un conjunto con varias lecciones, la app descarga los
+      archivos y abre la página de subida de GitHub, donde tú los
+      arrastras. En todos estos casos, GitHub crea el fork y el pull
+      request solo cuando tú confirmas en GitHub.
     - **Con un token de GitHub** (Ajustes > Integraciones, consulta
       [Ajustes](settings.md)) - compartes una sola lección sin salir de
       la app: la app hace un fork del repositorio, confirma la lección
@@ -119,9 +123,10 @@ compartir un conjunto entero como repositorio propio:
 - **Compartir como repositorio** - sube el conjunto entero, en el
   formato de repositorio de contenido, a un repositorio de GitHub tuyo
   (que se crea si aún no existe) en un solo commit. Eliges el
-  repositorio (`owner/name`), privado o público, y la rama. Antes se
-  ejecuta una comprobación de calidad: si encuentra problemas que las
-  comprobaciones de un repositorio de contenido rechazarían, los
+  repositorio (`owner/name`) y la rama y, cuando el repositorio se crea,
+  si será privado o público; uno que ya existe conserva su visibilidad.
+  Antes se ejecuta una comprobación de calidad: si encuentra problemas
+  que las comprobaciones de un repositorio de contenido rechazarían, los
   enumera y el botón pasa a **Exportar de todos modos**. Compartir como
   repositorio requiere un token de GitHub y solo está disponible en la
   versión de navegador de la app; si no, el botón sigue visible pero
@@ -129,8 +134,14 @@ compartir un conjunto entero como repositorio propio:
   conectar el repositorio como fuente de contenido (consulta
   [Varios repositorios de contenido](../features/content-repos.md)).
 
-Los archivos exportados contienen solo el contenido de la lección -
-sin progreso, sin historial de errores, sin datos personales.
+Lo que compartes o exportas contiene el contenido de la lección, pero no
+el progreso de aprendizaje ni el historial de errores de la app. Lo que
+está en la lección va con ella, también lo personal: por ejemplo tu
+nombre, si lo indicas al compartir y dejas que se muestre (entonces
+figura en la lección y en el pull request), y, en una lección creada a
+partir de un análisis de chat, todo lo que encontró el análisis,
+incluidos el vocabulario y las frases de ejemplo de tu chat, tus puntos
+fuertes y débiles y tus patrones de error frecuentes.
 
 ---
 

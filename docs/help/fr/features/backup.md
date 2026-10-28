@@ -33,9 +33,16 @@ IA sont aussi inclus, le badge « Vérifié par IA » est donc conservé.
   de la sauvegarde automatique et la position de la synchronisation LAN.
 
 Le réglage qui indique si la sauvegarde automatique est activée est, en
-revanche, inclus. Comme la progression faite hors ligne manquerait dans
-la sauvegarde, en mode serveur, ne crée une sauvegarde qu'une fois
-l'application de nouveau en ligne, pas avant.
+revanche, inclus. En mode serveur, l'application garde en mémoire dans
+ce navigateur ce qui est créé hors ligne : jusqu'à 50 modifications de
+la progression des leçons et des enregistrements vocaux ; s'il y en a
+davantage, les plus anciennes sont supprimées. Elle les transmet
+d'elle-même quand la connexion revient pendant que l'application est
+ouverte, ou au prochain démarrage avec connexion. De ce qui est créé
+hors ligne, seul ce qui est déjà arrivé au serveur entre dans la
+sauvegarde ; en mode serveur, ne crée donc une sauvegarde qu'une fois
+que l'application, après l'apprentissage hors ligne, a de nouveau
+fonctionné avec une connexion et a pu transmettre les modifications.
 
 Avant l'export, l'application affiche un aperçu **« Ta sauvegarde
 contient … »** avec le nombre d'enregistrements par domaine, afin

@@ -309,10 +309,18 @@ yoktur.
 ## Gizlilik
 
 Tüm ders ilerlemeleri, öğe-hata satırları, tekrar-kuyruğu durumları ve
-planlama verileri **sende** saklanır: tarayıcıda (IndexedDB) ya da API
-modunda kendi arka ucunun veritabanında; başkaları bunların bölümlerini
-yalnızca kullandığın bir özellik onlara ihtiyaç duyduğunda alır.
-Örneğin bir yapay zeka öğrenme oturumu, yapay zeka sağlayıcına son
-hatalarını, her birini cevabın, doğru cevap ve kaç kez yaptığınla
-birlikte gönderir. [Gizlilik politikası](../legal/privacy.md), hangi
-verilerin ne zaman başkalarına gittiğini açıklar.
+planlama verileri saklanır: Yerel modda tarayıcında (IndexedDB), API
+modunda uygulamanın bağlı olduğu arka ucun veritabanında; bu arka ucu
+kim işletiyorsa bu veritabanına erişebilir. API modunda çevrimdışıyken
+oluşan ders ilerlemesi ve ses kayıtları, aktarılana kadar tarayıcında
+bekler (bkz. [Yedekleme](../features/backup.md)).
+Başkaları bunların bölümlerini yalnızca bir özellik onlara ihtiyaç
+duyduğunda alır. Buna bir örnek yapay zeka sohbet oturumudur:
+Derslerin kendisi yapay zeka kullanmaz, ama bir yapay zeka sohbet
+oturumu yapay zeka sağlayıcına, başka şeylerin yanı sıra,
+tamamladığın dersleri sonuçlarıyla birlikte ve son hatalarını, her
+birini cevabın, doğru cevap ve onu kaç kez yaptığınla birlikte
+gönderir. İçe aktarılan bir sohbetten başlatılan bir oturum, ilerlemen
+yerine o sohbetin analizini ve geçmişini gönderir.
+[Gizlilik politikası](../legal/privacy.md), hangi verilerin ne zaman
+başkalarına gittiğini açıklar.

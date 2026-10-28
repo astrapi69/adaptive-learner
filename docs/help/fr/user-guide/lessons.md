@@ -344,13 +344,21 @@ l'achèvement d'une leçon.
 
 ## Protection des données
 
-Toute la progression des leçons, les lignes d'erreurs au niveau
-des éléments, les états de la file d'attente de révision et les
-données de planification sont stockés **chez toi** : dans le navigateur
-(IndexedDB) ou, en mode API, dans la base de données de ton propre
-backend ; d'autres n'en reçoivent des parties que lorsqu'une
-fonction que tu utilises en a besoin. Une session d'apprentissage
-avec l'IA, par exemple, envoie à ton fournisseur d'IA tes erreurs
-récentes, chacune avec ta réponse, la bonne réponse et sa
-fréquence. La [politique de confidentialité](../legal/privacy.md)
-décrit quelles données vont à d'autres, et quand.
+Toute la progression des leçons, les lignes d'erreurs au niveau des
+éléments, les états de la file d'attente de révision et les données de
+planification sont stockés : en mode local, dans ton navigateur
+(IndexedDB), et en mode API, dans la base de données du backend auquel
+l'application est connectée ; quiconque exploite ce backend y a accès.
+La progression des leçons et les enregistrements vocaux créés hors
+ligne en mode API attendent dans ton navigateur jusqu'à leur
+transmission (voir [Sauvegarde](../features/backup.md)).
+D'autres n'en reçoivent des parties que lorsqu'une fonction en a
+besoin. Un exemple est la session de chat IA : les leçons elles-mêmes
+n'utilisent pas d'IA, mais une session de chat IA envoie à ton
+fournisseur d'IA, entre autres, tes leçons terminées avec leurs
+résultats ainsi que tes erreurs récentes, chacune avec ta réponse, la
+bonne réponse et le nombre de fois où tu l'as commise. Une session
+issue d'un chat importé envoie, à la place de ta progression, l'analyse
+et l'historique de ce chat. La
+[politique de confidentialité](../legal/privacy.md) décrit quelles
+données vont à d'autres, et quand.
