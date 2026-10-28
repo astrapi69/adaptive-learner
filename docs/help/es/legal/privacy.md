@@ -2,7 +2,7 @@
 
 > Esta página es una traducción automática del original en alemán y se ofrece solo a título informativo. Únicamente la versión en alemán es jurídicamente vinculante.
 
-Última actualización: 22 de octubre de 2026
+Última actualización: 28 de octubre de 2026
 
 Como texto jurídico, esta política utiliza el trato de usted; en la app y en
 el resto de la ayuda te tratamos de tú.

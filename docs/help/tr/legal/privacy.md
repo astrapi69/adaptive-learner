@@ -4,7 +4,7 @@
 
 > Bu sayfa, Almanca aslının yalnızca bilgi amaçlı sunulan bir makine çevirisidir. Hukuken yalnızca Almanca sürüm bağlayıcıdır.
 
-Son güncelleme: 22 Ekim 2026
+Son güncelleme: 28 Ekim 2026
 
 Hukuki bir metin olduğu için bu politika resmî hitap biçimini kullanır.
 

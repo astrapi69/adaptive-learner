@@ -3,7 +3,7 @@
 > This page is a translation of the German original and is provided for
 > information only. Only the German version is legally binding.
 
-Last updated: 22 October 2026
+Last updated: 28 October 2026
 
 This policy covers the public web version of Adaptive Learner at
 `astrapi69.github.io/adaptive-learner`, the public preview of the next version
