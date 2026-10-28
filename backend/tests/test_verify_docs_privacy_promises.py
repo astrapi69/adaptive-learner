@@ -363,49 +363,54 @@ LEGITIMATE = [
         "envoyé à un serveur Adaptive Learner.",
     ),
     # #3829: the privacy policy's own summary, which the new help texts reuse,
-    # in the wording of #3840 ("is stored", no longer "stays ... for you").
+    # in the wording of #3840 ("is stored", no longer "stays ... for you"; what
+    # is stored named "among other things").
     (
         "en",
         "3829-policy",
-        "Your learning progress, your statistics and your settings\nare stored in your browser.",
+        "Stored in your browser are, among other things, your\nlearning progress, your "
+        "statistics and your settings.",
     ),
     (
         "de",
         "3829-policy",
-        "Ihr Lernfortschritt, Ihre Statistiken und\nIhre Einstellungen werden in Ihrem Browser "
-        "gespeichert.",
+        "In Ihrem Browser gespeichert werden\nunter anderem Ihr Lernfortschritt, Ihre Statistiken "
+        "und Ihre Einstellungen.",
     ),
     (
         "es",
         "3829-policy",
-        "Su progreso, sus estadísticas y sus ajustes se\nalmacenan en su navegador.",
+        "En su navegador se almacenan, entre\notras cosas, su progreso, sus estadísticas y sus "
+        "ajustes.",
     ),
     (
         "fr",
         "3829-policy",
-        "Votre progression,\nvos statistiques et vos paramètres sont stockés dans votre navigateur.",
+        "Sont stockés\ndans votre navigateur, entre autres, votre progression, vos statistiques "
+        "et vos\nparamètres.",
     ),
     (
         "pt",
         "3829-policy",
-        "O seu progresso, as suas\nestatísticas e as suas definições são armazenados no seu "
-        "browser.",
+        "No seu\nbrowser são armazenados, entre outras coisas, o seu progresso, as suas\n"
+        "estatísticas e as suas definições.",
     ),
     (
         "tr",
         "3829-policy",
-        "Öğrenme ilerlemeniz,\nistatistikleriniz ve ayarlarınız tarayıcınızda saklanır.",
+        "Tarayıcınızda başka şeylerin yanı\nsıra öğrenme ilerlemeniz, istatistikleriniz ve "
+        "ayarlarınız saklanır.",
     ),
     (
         "el",
         "3829-policy",
-        "Η πρόοδός σας, τα στατιστικά σας και οι ρυθμίσεις σας αποθηκεύονται\n"
-        "στο πρόγραμμα περιήγησής σας.",
+        "Στο πρόγραμμα περιήγησής σας αποθηκεύονται, μεταξύ άλλων, η πρόοδός\n"
+        "σας, τα στατιστικά σας και οι ρυθμίσεις σας.",
     ),
     (
         "ja",
         "3829-policy",
-        "お客様の学習の進捗、統計、設定は、\nお客様のブラウザ内に保存されます。",
+        "お客様のブラウザ内には、お客様の\n学習の進捗、統計、設定などが保存されます。",
     ),
     # #3829: the new master texts.
     (

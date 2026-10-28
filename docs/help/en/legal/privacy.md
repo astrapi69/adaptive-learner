@@ -23,12 +23,13 @@ Email: asterios.raptis@web.de
 
 ## The short version
 
-Adaptive Learner has no server of its own. The app and these pages set no
-cookies, use no analytics or tracking services and load no fonts or scripts
-from third parties. Your learning progress, your statistics and your settings
-are stored in your browser. Of these, the operator receives only what you send
-him yourself, and others receive parts of them only when a feature you use
-needs them, such as the AI with your own key.
+Adaptive Learner has no server run by the operator. The app and these pages set
+no cookies, use no analytics or tracking services and load no fonts or scripts
+from third parties. Stored in your browser are, among other things, your
+learning progress, your statistics and your settings. Of these, the operator
+receives only what you send him yourself, and others receive parts of them only
+when a feature needs them, for example your AI provider when you use the AI
+with your own key, or GitHub when the app asks for new content on its own.
 
 Data leaves your device only in these cases, each described in detail below:
 
@@ -42,8 +43,8 @@ Data leaves your device only in these cases, each described in detail below:
 - GitHub receives an error report only when you open it on GitHub yourself.
 - AI features send your requests with your own key directly to the provider
   you chose.
-- For voice input and read-aloud, depending on its maker, your browser uses an
-  online service.
+- For voice input and read-aloud, depending on its maker, your browser can use
+  an online service.
 - Share buttons and external links open other sites only after you click.
 - You email the operator.
 
@@ -243,17 +244,17 @@ Framework (Art. 45 GDPR). The providers' privacy notices:
 
 When you tap the microphone (in the learning session's input field and in
 pronunciation practice), the app uses your browser's speech recognition.
-Recording starts only after the tap, and your browser asks for permission to
-use the microphone first. The browser does the recognition, not the app:
-Google Chrome sends, among other things, the recording and the selected
-language to a Google service (`www.google.com`); other browsers behave as
-their maker decides. The
-browser's maker is the controller for this processing, and its privacy notice
-applies. For Chrome that is Google, for users in the EEA according to
-[Google's privacy policy](https://policies.google.com/privacy) Google Ireland
-Limited, Gordon House, Barrow Street, Dublin 4, Ireland; Google may also
-process the data in the USA, and Google LLC is certified under the EU-US Data
-Privacy Framework.
+Recording starts only after the tap; before that, your browser asks for
+permission to use the microphone, unless you have already granted it to this
+site. The browser does the recognition, not the app: Google Chrome sends, among
+other things, the recording and the selected language to a Google service
+(`www.google.com`); other browsers can likewise send the recording to a service
+of their maker. The browser's maker is the controller for this processing, and
+its privacy notice applies. For Chrome that is Google, for users in the EEA
+according to [Google's privacy policy](https://policies.google.com/privacy)
+Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Ireland; Google
+may also process the data in the USA, and Google LLC is certified under the
+EU-US Data Privacy Framework.
 
 The app receives only the recognized text. In the learning session it lands in
 the input field, in pronunciation practice in your attempt; when you send it,

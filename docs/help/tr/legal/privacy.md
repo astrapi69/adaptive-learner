@@ -27,13 +27,15 @@ E-posta: asterios.raptis@web.de
 
 ## Kısaca
 
-Adaptive Learner'ın kendine ait bir sunucusu yoktur. Uygulama ve bu sayfalar
-çerez ayarlamaz, hiçbir analiz veya izleme hizmeti kullanmaz ve üçüncü
-kişilerden yazı tipi ya da betik yüklemez. Öğrenme ilerlemeniz,
-istatistikleriniz ve ayarlarınız tarayıcınızda saklanır. İşletmeci
+Adaptive Learner'ın işletmeciye ait bir sunucusu yoktur. Uygulama ve bu
+sayfalar çerez ayarlamaz, hiçbir analiz veya izleme hizmeti kullanmaz ve üçüncü
+kişilerden yazı tipi ya da betik yüklemez. Tarayıcınızda başka şeylerin yanı
+sıra öğrenme ilerlemeniz, istatistikleriniz ve ayarlarınız saklanır. İşletmeci
 bunlardan yalnızca sizin ona kendiniz gönderdiklerinizi alır; başkaları ise
-bunların bölümlerini yalnızca kullandığınız bir özellik onlara ihtiyaç
-duyduğunda alır, örneğin kendi anahtarınızla yapay zekâ.
+bunların bölümlerini yalnızca bir özellik onlara ihtiyaç duyduğunda alır,
+örneğin kendi anahtarınızla yapay zekâyı kullandığınızda yapay zekâ
+sağlayıcınız veya uygulama yeni içerik olup olmadığını kendiliğinden sorduğunda
+GitHub.
 
 Veriler cihazınızdan yalnızca aşağıdaki durumlarda çıkar; her biri aşağıda
 ayrıntılı olarak açıklanmıştır:
@@ -49,7 +51,7 @@ ayrıntılı olarak açıklanmıştır:
 - Yapay zekâ özellikleri isteklerinizi kendi anahtarınızla doğrudan seçtiğiniz
   sağlayıcıya gönderir.
 - Sesli giriş ve sesli okuma için tarayıcınız, üreticisine bağlı olarak
-  çevrimiçi bir hizmet kullanır.
+  çevrimiçi bir hizmet kullanabilir.
 - Paylaşım düğmeleri ve harici bağlantılar başka siteleri ancak siz
   tıkladıktan sonra açar.
 - İşletmeciye e-posta yazarsınız.
@@ -253,13 +255,13 @@ kapsamında sertifikalıdır (GDPR md. 45). Sağlayıcıların gizlilik bildirim
 
 Mikrofona dokunduğunuzda (öğrenme oturumunun giriş alanında ve telaffuz
 alıştırmasında), uygulama tarayıcınızın konuşma tanıma özelliğini kullanır.
-Kayıt ancak dokunduktan sonra başlar ve tarayıcınız önce mikrofon için izin
-ister. Tanımayı uygulama değil tarayıcı yapar: Google Chrome bunun için, başka
-şeylerin yanı sıra, kaydı ve seçilen dili bir Google hizmetine
-(`www.google.com`) gönderir; diğer
-tarayıcılar üreticilerine göre davranır. Bu veri işlemenin veri sorumlusu
-tarayıcının üreticisidir ve onun gizlilik bildirimi geçerlidir. Chrome için bu
-Google'dır; AEA'daki kullanıcılar için,
+Kayıt ancak dokunduktan sonra başlar; izni bu siteye zaten vermiş değilseniz
+tarayıcınız bundan önce mikrofon için izin ister. Tanımayı uygulama değil
+tarayıcı yapar: Google Chrome bunun için, başka şeylerin yanı sıra, kaydı ve
+seçilen dili bir Google hizmetine (`www.google.com`) gönderir; diğer
+tarayıcılar da kaydı üreticilerinin bir hizmetine gönderebilir. Bu veri
+işlemenin veri sorumlusu tarayıcının üreticisidir ve onun gizlilik bildirimi
+geçerlidir. Chrome için bu Google'dır; AEA'daki kullanıcılar için,
 [Google gizlilik politikası](https://policies.google.com/privacy) uyarınca,
 Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, İrlanda; Google
 verileri ABD'de de işleyebilir ve Google LLC, AB-ABD Veri Gizliliği Çerçevesi

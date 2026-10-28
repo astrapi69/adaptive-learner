@@ -26,13 +26,15 @@ E-mail : asterios.raptis@web.de
 
 ## L'essentiel en bref
 
-Adaptive Learner n'a pas de serveur propre. L'application et les présentes
-pages ne déposent aucun cookie, n'utilisent aucun service d'analyse ou de
-suivi et ne chargent ni polices ni scripts depuis des tiers. Votre progression,
-vos statistiques et vos paramètres sont stockés dans votre navigateur.
-L'exploitant n'en reçoit que ce que vous lui envoyez vous-même, et d'autres
-n'en reçoivent des parties que lorsqu'une fonction que vous utilisez en a
-besoin, par exemple l'IA avec votre propre clé.
+Adaptive Learner n'a aucun serveur de l'exploitant. L'application et les
+présentes pages ne déposent aucun cookie, n'utilisent aucun service d'analyse
+ou de suivi et ne chargent ni polices ni scripts depuis des tiers. Sont stockés
+dans votre navigateur, entre autres, votre progression, vos statistiques et vos
+paramètres. L'exploitant n'en reçoit que ce que vous lui envoyez vous-même, et
+d'autres n'en reçoivent des parties que lorsqu'une fonction en a besoin, par
+exemple votre fournisseur d'IA lorsque vous utilisez l'IA avec votre propre
+clé, ou GitHub lorsque l'application demande d'elle-même s'il y a de nouveaux
+contenus.
 
 Des données ne quittent votre appareil que dans les cas suivants, décrits en
 détail plus bas :
@@ -48,8 +50,8 @@ détail plus bas :
   GitHub.
 - Les fonctions d'IA envoient vos requêtes, avec votre propre clé, directement
   au fournisseur que vous avez choisi.
-- Pour la saisie vocale et la lecture à voix haute, votre navigateur
-  utilise, selon son éditeur, un service en ligne.
+- Pour la saisie vocale et la lecture à voix haute, votre navigateur peut
+  utiliser, selon son éditeur, un service en ligne.
 - Les boutons de partage et les liens externes n'ouvrent d'autres sites
   qu'après votre clic.
 - Vous écrivez un e-mail à l'exploitant.
@@ -277,14 +279,15 @@ certifiée au titre du cadre de protection des données UE-États-Unis
 Lorsque vous touchez le micro (dans le champ de saisie de la session
 d'apprentissage et dans la pratique de la prononciation), l'application utilise
 la reconnaissance vocale de votre navigateur. L'enregistrement ne commence
-qu'après ce geste, et votre navigateur demande d'abord l'autorisation
-d'utiliser le micro. C'est le navigateur, et non l'application, qui effectue la
-reconnaissance : Google Chrome envoie à cet effet, entre autres, l'enregistrement
-et la langue choisie à un service de Google (`www.google.com`) ; les autres
-navigateurs procèdent selon leur éditeur. Le responsable du traitement pour cette
-reconnaissance est l'éditeur du navigateur, et sa politique de confidentialité
-s'applique. Pour Chrome, il s'agit de Google, pour les utilisateurs de l'EEE,
-selon la
+qu'après ce geste ; auparavant, votre navigateur demande l'autorisation
+d'utiliser le micro, sauf si vous l'avez déjà accordée à ce site. C'est le
+navigateur, et non l'application, qui effectue la reconnaissance : Google
+Chrome envoie à cet effet, entre autres, l'enregistrement et la langue choisie
+à un service de Google (`www.google.com`) ; les autres navigateurs peuvent eux
+aussi envoyer l'enregistrement à un service de leur éditeur. Le responsable du
+traitement pour cette reconnaissance est l'éditeur du navigateur, et sa
+politique de confidentialité s'applique. Pour Chrome, il s'agit de Google, pour
+les utilisateurs de l'EEE, selon la
 [politique de confidentialité de Google](https://policies.google.com/privacy),
 de Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlande ;
 Google peut aussi traiter les données aux États-Unis, et Google LLC est

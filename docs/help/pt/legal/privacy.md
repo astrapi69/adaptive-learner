@@ -28,13 +28,15 @@ E-mail: asterios.raptis@web.de
 
 ## Resumo
 
-O Adaptive Learner não tem servidor próprio. A aplicação e estas páginas não
-definem cookies, não utilizam serviços de análise ou de rastreamento e não
-carregam tipos de letra nem scripts de terceiros. O seu progresso, as suas
-estatísticas e as suas definições são armazenados no seu browser. Desses dados,
-o administrador só recebe o que lhe enviar por iniciativa própria, e outros só
-recebem partes deles quando uma funcionalidade que utiliza precisa delas, por
-exemplo a IA com a sua própria chave.
+O Adaptive Learner não tem nenhum servidor do administrador. A aplicação e
+estas páginas não definem cookies, não utilizam serviços de análise ou de
+rastreamento e não carregam tipos de letra nem scripts de terceiros. No seu
+browser são armazenados, entre outras coisas, o seu progresso, as suas
+estatísticas e as suas definições. Desses dados, o administrador só recebe o
+que lhe enviar por iniciativa própria, e outros só recebem partes deles quando
+uma funcionalidade precisa delas, por exemplo o seu fornecedor de IA, quando
+utiliza a IA com a sua própria chave, ou o GitHub, quando a aplicação pergunta
+por iniciativa própria se há conteúdos novos.
 
 Os dados só saem do seu dispositivo nos seguintes casos, descritos em
 pormenor mais abaixo:
@@ -50,8 +52,8 @@ pormenor mais abaixo:
   iniciativa própria.
 - As funcionalidades de IA enviam os seus pedidos, com a sua própria chave,
   diretamente ao fornecedor que escolheu.
-- Para a entrada por voz e a leitura em voz alta, o seu browser utiliza um
-  serviço online, consoante o fabricante.
+- Para a entrada por voz e a leitura em voz alta, o seu browser pode utilizar
+  um serviço online, consoante o fabricante.
 - Os botões de partilha e as ligações externas só abrem outros sítios depois
   de clicar.
 - Envia um e-mail ao administrador.
@@ -271,15 +273,15 @@ está certificada ao abrigo do Quadro de Privacidade de Dados UE-EUA
 
 Quando toca no microfone (no campo de introdução da sessão de aprendizagem e na
 prática de pronúncia), a aplicação utiliza o reconhecimento de voz do seu
-browser. A gravação só começa depois de tocar, e o seu browser pede antes
-autorização para usar o microfone. O reconhecimento é feito pelo browser, não
-pela aplicação: o Google Chrome envia para isso, entre outras coisas, a gravação
-e o idioma escolhido a um serviço da Google (`www.google.com`); os outros
-browsers procedem
-consoante o fabricante. O responsável por este tratamento é o fabricante do
-browser, e aplica-se o respetivo aviso de privacidade. No Chrome trata-se da
-Google; para os utilizadores no EEE, segundo a
-[política de privacidade da Google](https://policies.google.com/privacy), da
+browser. A gravação só começa depois de tocar; antes disso, o seu browser pede
+autorização para usar o microfone, a menos que já a tenha concedido a este
+sítio. O reconhecimento é feito pelo browser, não pela aplicação: o Google
+Chrome envia para isso, entre outras coisas, a gravação e o idioma escolhido a
+um serviço da Google (`www.google.com`); os outros browsers também podem enviar
+a gravação a um serviço do respetivo fabricante. O responsável por este
+tratamento é o fabricante do browser, e aplica-se o respetivo aviso de
+privacidade. No Chrome trata-se da Google; para os utilizadores no EEE, segundo
+a [política de privacidade da Google](https://policies.google.com/privacy), da
 Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlanda; a
 Google também pode tratar os dados nos EUA, e a Google LLC está certificada ao
 abrigo do Quadro de Privacidade de Dados UE-EUA.
