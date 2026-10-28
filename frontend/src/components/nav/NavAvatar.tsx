@@ -17,7 +17,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router";
 
-import InitialsAvatar from "../../shared/media/InitialsAvatar";
+import InitialsAvatar, { nameLeadingWithInitials } from "../../shared/media/InitialsAvatar";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { avatarFrameById } from "../../lib/avatar/avatar-frames";
 import { readAvatarFrameState } from "../../lib/avatar/avatar-frame-store";
@@ -74,13 +74,14 @@ export default function NavAvatar() {
   if (!name) return null;
 
   const label = t("nav.profile", "Your profile");
+  const accessibleName = nameLeadingWithInitials(label, name, !avatar);
   return (
     <NavLink
       to="/settings?tab=general"
       className="nav-avatar inline-flex items-center"
       data-testid="nav-avatar"
       title={label}
-      aria-label={label}
+      aria-label={accessibleName}
     >
       <span
         className="m-1 max-sm:mx-0 inline-flex rounded-full"
