@@ -4248,6 +4248,26 @@ Entwicklerwerkzeugen den Netzwerk-Reiter offen lassen.
       KI-Antworten mit eigenem Schlüssel kommen an, und nach einem Neuladen
       ohne Netz startet die App weiterhin (Service Worker)
 
+### TS-0140 LAN-Synchronisation trägt keine API-Schlüssel (#3854)
+
+Vorbereitung: Desktop-App im lokalen Netz mit einem gespeicherten
+Anthropic-Schlüssel; Browser-Version mit einem anderen gespeicherten
+Anthropic-Schlüssel, über Einstellungen > Synchronisation mit der
+Desktop-App gekoppelt. Im Browser die Entwicklerwerkzeuge mit dem
+Netzwerk-Reiter offen.
+
+- [ ] TC-1000 "Jetzt synchronisieren" drücken: keine Anfrage an `/api/sync/push` oder
+      `/api/sync/pull` und keine Antwort darauf enthält einen der beiden
+      Schlüssel oder ein Feld `api_key_`, und keine Anfrage pusht die Tabelle
+      `api_key_backups` oder fragt sie an
+- [ ] TC-1001 Nach dem Sync antwortet die KI im Browser weiterhin mit dem
+      Browser-Schlüssel und in der Desktop-App weiterhin mit deren Schlüssel;
+      Einstellungen > KI zeigt auf beiden Geräten den eigenen Schlüssel
+- [ ] TC-1002 Auf beiden Geräten das Profilbild ändern, dann synchronisieren: der
+      Konfliktdialog erscheint, beide Fassungen des Eintrags enthalten kein
+      Feld `api_key_`, und "Intelligentes Zusammenführen (KI)" schickt dem
+      KI-Anbieter keinen Schlüssel (Netzwerk-Reiter: Anfrage an den Anbieter)
+
 ## Automatisiert: Unit + Component Tests (Vitest, 7200+;
 ## aktuelle Zahl siehe docs/audits/current-coverage.md)
 
