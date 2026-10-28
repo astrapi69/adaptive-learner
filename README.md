@@ -352,20 +352,25 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.17.0**: errors that used to
-vanish now **say what went wrong**. A failed tutor reply shows a message with
-a retry, a history that could not load says so, a crashed page offers a way
-back and a report button, and Settings actions, exports and lesson progress
-no longer fail silently. The exercise editor, the share check and repository
-validation follow **one set of rules**, the content engine's, and the desktop
-app resolves matchings built from cards. **Backups** carry every stored field
-and restore across the desktop app and the browser version, and a round of
-phone fixes covers the compact menu below 1280 px and the dashboard. Full
-notes: [`changelog/releases/v2.16.0.md`](changelog/releases/v2.16.0.md).
+Active development. The current release is **v2.17.0**, a **privacy
+release**: the privacy policy was rewritten in all eight help languages and
+describes when and where data leaves your device, the documentation site
+loads nothing from servers other than GitHub Pages, and an error report
+includes the environment info and the action history only when you tick
+them. The end of a lesson now leads to **fixing it**: when a run had
+mistakes, the compact summary offers Fix mistakes, and the detailed
+evaluation marks each mistake Corrected or Still open. In exam mode, a set
+that brings its own evaluation rules is graded by them. **Backups** now also
+carry connected repositories, redeemed invites and AI content-check reports,
+and importing another learner's backup merges its progress into the active
+profile. Restore a backup made with v2.17.0 only in v2.17.0 or newer. Full
+notes: [`changelog/releases/v2.17.0.md`](changelog/releases/v2.17.0.md).
 
 Earlier releases, newest first (full details in
 [`changelog/releases/`](changelog/releases/)):
 
+- **v2.16.0** - errors that used to vanish say what went wrong (a failed tutor reply, a history that could not load, a crashed page, Settings actions, exports, lesson progress), the exercise editor, the share check and repository validation follow the content engine's rules, backups carry every stored field and restore across the desktop app and the browser version, phone fixes for the compact menu below 1280 px and the dashboard.
+- **v2.15.0** - parametric exercises whose values are drawn fresh for every attempt, three new exercise types (Hotspot, Parsons, Ordering) authorable in the lesson creator, explanations after an answer, a compact lesson summary with a Detailed evaluation, Settings in labelled sections, Refresh in My content applies every available set update at once, a legal notice and privacy policy in German and English.
 - **v2.14.0** - optional Game Mode (combo streaks, checkpoints, answer physics, hearts/countdown) with XP-unlocked arcade minigames, mascot colour variants and avatar presets/frames, set pages with lesson progress and a set-completion review, three audio/speech extension types adoptable from the creation wizard.
 - **v2.13.0** - in-place exercise-type conversion in the lesson editor, a discoverable "Edit as a copy" action on downloaded content sets, a large UI-consolidation pass (shared Settings/Modal/DashboardCard components, shadcn Button), FastAPI 0.141 + TipTap 3.30 dependency refresh.
 - **v2.12.0** - restart a finished set as a fresh run (a "Durchgang") with the spaced-repetition history carried along, key import from a Topos `.alk` export, Perplexity as a backend AI provider.
