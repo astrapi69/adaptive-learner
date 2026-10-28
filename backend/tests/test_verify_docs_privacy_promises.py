@@ -169,17 +169,20 @@ LEGITIMATE = [
     (
         "en",
         "new-note",
-        "Only your cards are sent (front, back, notes), no profile and no learning progress. "
-        "As with every request, your AI provider also receives your IP address and your API key.",
+        "The check sends your AI provider the cards of the set (identifier, front, back, notes) as "
+        "well as the set's source language, target language and level, but neither your profile "
+        "nor your learning progress. In addition, as with every AI request, your AI provider "
+        "receives, among other things, your IP address and your API key.",
     ),
     ("en", "may-contain", "Text you write into your own cards can itself be personal data."),
     ("en", "export", "The exported file contains no personal data."),
     (
         "de",
         "new-note",
-        "Gesendet werden nur deine Lernkarten (Vorderseite, Rückseite, Notizen), kein Profil "
-        "und kein Lernfortschritt. Wie bei jeder Anfrage erhält dein KI-Anbieter dabei deine "
-        "IP-Adresse und deinen API-Schlüssel.",
+        "Die Prüfung schickt deinem KI-Anbieter die Karten des Sets (Kennung, Vorderseite, "
+        "Rückseite, Notizen) sowie Ausgangssprache, Zielsprache und Niveau des Sets, aber weder "
+        "dein Profil noch deinen Lernfortschritt. Außerdem erhält dein KI-Anbieter, wie bei jeder "
+        "KI-Anfrage, unter anderem deine IP-Adresse und deinen API-Schlüssel.",
     ),
     (
         "de",
@@ -189,13 +192,19 @@ LEGITIMATE = [
     (
         "es",
         "new-note",
-        "Solo se envían tus tarjetas (anverso, reverso, notas), sin tu perfil ni tu progreso.",
+        "La revisión envía a tu proveedor de IA las tarjetas del conjunto (identificador, anverso, "
+        "reverso, notas), así como el idioma de origen, el idioma de destino y el nivel del "
+        "conjunto, pero ni tu perfil ni tu progreso de aprendizaje. Además, como en cada solicitud "
+        "a la IA, tu proveedor de IA recibe, entre otras cosas, tu dirección IP y tu clave API.",
     ),
     ("es", "may-contain", "Lo que escribes en tus tarjetas puede contener datos personales."),
     (
         "fr",
         "new-note",
-        "Seules tes cartes sont envoyées (recto, verso, notes), sans ton profil ni ta progression.",
+        "La vérification envoie à ton fournisseur d'IA les cartes de l'ensemble (identifiant, "
+        "recto, verso, notes) ainsi que la langue source, la langue cible et le niveau de "
+        "l'ensemble, mais ni ton profil ni ta progression. De plus, comme pour chaque requête à "
+        "l'IA, ton fournisseur d'IA reçoit, entre autres, ton adresse IP et ta clé API.",
     ),
     (
         "fr",
@@ -205,26 +214,39 @@ LEGITIMATE = [
     (
         "pt",
         "new-note",
-        "Só são enviados os seus cartões (frente, verso, notas), sem o seu perfil nem o seu progresso.",
+        "A verificação envia ao seu provedor de IA os cartões do conjunto (identificador, frente, "
+        "verso, notas), bem como o idioma de origem, o idioma de destino e o nível do conjunto, "
+        "mas nem o seu perfil nem o seu progresso. Além disso, como em cada pedido à IA, o seu "
+        "provedor de IA recebe, entre outras coisas, o seu endereço IP e a sua chave de API.",
     ),
     ("pt", "may-contain", "O que escreve nos seus cartões pode conter dados pessoais."),
     (
         "el",
         "new-note",
-        "Αποστέλλονται μόνο οι κάρτες σου, χωρίς το προφίλ και την πρόοδό σου.",
+        "Ο έλεγχος στέλνει στον πάροχο ΤΝ σου τις κάρτες του σετ (αναγνωριστικό, μπροστινή και "
+        "πίσω όψη, σημειώσεις), καθώς και τη γλώσσα προέλευσης, τη γλώσσα-στόχο και το επίπεδο του "
+        "σετ, αλλά ούτε το προφίλ σου ούτε την πρόοδό σου. Επιπλέον, όπως σε κάθε αίτημα προς την "
+        "ΤΝ, ο πάροχος ΤΝ σου λαμβάνει, μεταξύ άλλων, τη διεύθυνση IP σου και το κλειδί API σου.",
     ),
     ("el", "may-contain", "Ό,τι γράφεις στις κάρτες σου μπορεί να περιέχει προσωπικά δεδομένα."),
     (
         "tr",
         "new-note",
-        "Yalnızca kartlarınız gönderilir (ön yüz, arka yüz, notlar), profiliniz ve "
-        "ilerlemeniz gönderilmez.",
+        "Denetim, yapay zekâ sağlayıcınıza setin kartlarını (tanımlayıcı, ön yüz, arka yüz, "
+        "notlar), ayrıca setin kaynak dilini, hedef dilini ve seviyesini gönderir, ancak ne "
+        "profilinizi ne de öğrenme ilerlemenizi gönderir. Ek olarak yapay zekâ sağlayıcınız, her "
+        "yapay zekâ isteğinde olduğu gibi, başka şeylerin yanı sıra IP adresinizi ve API "
+        "anahtarınızı da alır.",
     ),
     ("tr", "may-contain", "Kartlarınıza yazdıklarınız kişisel veri içerebilir."),
     (
         "ja",
         "new-note",
-        "送信されるのは学習カード（表面、裏面、メモ）のみで、プロフィールや学習の進捗は送信されません。",
+        "この確認では、設定済みのAIプロバイダーに、セットのカード（識別子、表面、裏面、メモ）と、"
+        "セットの出発言語、対象言語、レベルを送信しますが、"
+        "あなたのプロフィールと学習の進捗は送信しません。さらに、すべての AI リクエストと同様に、"
+        "設定済みのAIプロバイダーはほかの情報とともに、あなたの IP アドレスと API "
+        "キーも受け取ります。",
     ),
     (
         "ja",
@@ -235,20 +257,27 @@ LEGITIMATE = [
     (
         "ko",
         "new-note",
-        "레슨 카드(앞면, 뒷면, 메모)만 전송되며, 프로필과 학습 진행 상황은 전송되지 않습니다.",
+        "이 검사는 설정된 AI 제공자에 세트의 카드(식별자, 앞면, 뒷면, 메모)와 세트의 출처 언어, "
+        "목표 언어, 레벨을 보내지만, 프로필도 학습 진행 상황도 보내지 않습니다. 또한 모든 AI "
+        "요청과 마찬가지로 설정된 AI 제공자는 IP 주소와 API 키를 비롯한 여러 정보를 받습니다.",
     ),
     ("ko", "may-contain", "카드에 쓴 내용에는 개인 정보가 포함될 수 있습니다."),
     (
         "hi",
         "new-note",
-        "केवल आपके कार्ड भेजे जाते हैं, आपकी प्रोफ़ाइल और सीखने की प्रगति नहीं।",
+        "जाँच आपके AI प्रदाता को सेट के कार्ड (पहचानकर्ता, आगे का भाग, पीछे का भाग, नोट्स) और साथ "
+        "ही सेट की स्रोत भाषा, लक्ष्य भाषा और स्तर भेजती है, लेकिन न आपकी प्रोफ़ाइल भेजती है और न "
+        "ही आपकी सीखने की प्रगति। इसके अलावा, हर AI अनुरोध की तरह, आपका AI प्रदाता अन्य जानकारी के "
+        "साथ आपका IP पता और आपकी API कुंजी भी प्राप्त करता है।",
     ),
     ("hi", "may-contain", "आपके कार्ड में लिखी बातों में व्यक्तिगत डेटा हो सकता है।"),
     (
         "id",
         "new-note",
-        "Hanya kartu pelajaranmu yang dikirim (depan, belakang, catatan), tanpa profil dan "
-        "kemajuan belajarmu.",
+        "Pemeriksaan ini mengirimkan kepada penyedia AI-mu kartu-kartu set (pengidentifikasi, "
+        "depan, belakang, catatan) serta bahasa sumber, bahasa target, dan tingkat set, tetapi "
+        "tidak mengirimkan profilmu maupun kemajuan belajarmu. Selain itu, seperti pada setiap "
+        "permintaan AI, penyedia AI-mu juga menerima, antara lain, alamat IP-mu dan kunci API-mu.",
     ),
     ("id", "may-contain", "Isi kartu yang kamu tulis bisa memuat data pribadi."),
     # #3829: the backup note says "nothing is sent to a server" about one
@@ -361,50 +390,55 @@ LEGITIMATE = [
         "Rien - pas vos sessions, pas vos erreurs, pas votre progression - n'est\n"
         "envoyé à un serveur Adaptive Learner.",
     ),
-    # #3829: the privacy policy's own summary, which the new help texts reuse.
+    # #3829: the privacy policy's own summary, which the new help texts reuse,
+    # in the wording of #3840 ("is stored", no longer "stays ... for you"; what
+    # is stored named "among other things").
     (
         "en",
         "3829-policy",
-        "Your learning progress, statistics and settings stay in\nyour browser, for you.",
+        "Stored in your browser are, among other things, your\nlearning progress, your "
+        "statistics and your settings.",
     ),
     (
         "de",
         "3829-policy",
-        "Ihr Lernfortschritt, Ihre Statistiken und\nIhre Einstellungen bleiben in Ihrem Browser, "
-        "für Sie.",
+        "In Ihrem Browser gespeichert werden\nunter anderem Ihr Lernfortschritt, Ihre Statistiken "
+        "und Ihre Einstellungen.",
     ),
     (
         "es",
         "3829-policy",
-        "Su progreso, sus estadísticas y sus ajustes se\nquedan en su navegador, para usted.",
+        "En su navegador se almacenan, entre\notras cosas, su progreso, sus estadísticas y sus "
+        "ajustes.",
     ),
     (
         "fr",
         "3829-policy",
-        "Votre progression,\nvos statistiques et vos paramètres restent dans votre navigateur, "
-        "pour vous.",
+        "Sont stockés\ndans votre navigateur, entre autres, votre progression, vos statistiques "
+        "et vos\nparamètres.",
     ),
     (
         "pt",
         "3829-policy",
-        "O seu progresso, as suas\nestatísticas e as suas definições ficam no seu browser, "
-        "para si.",
+        "No seu\nbrowser são armazenados, entre outras coisas, o seu progresso, as suas\n"
+        "estatísticas e as suas definições.",
     ),
     (
         "tr",
         "3829-policy",
-        "Öğrenme ilerlemeniz,\nistatistikleriniz ve ayarlarınız tarayıcınızda, sizin için kalır.",
+        "Tarayıcınızda başka şeylerin yanı\nsıra öğrenme ilerlemeniz, istatistikleriniz ve "
+        "ayarlarınız saklanır.",
     ),
     (
         "el",
         "3829-policy",
-        "Η πρόοδός σας, τα στατιστικά σας και οι ρυθμίσεις σας παραμένουν στο\n"
-        "πρόγραμμα περιήγησής σας, για εσάς.",
+        "Στο πρόγραμμα περιήγησής σας αποθηκεύονται, μεταξύ άλλων, η πρόοδός\n"
+        "σας, τα στατιστικά σας και οι ρυθμίσεις σας.",
     ),
     (
         "ja",
         "3829-policy",
-        "お客様の学習の進捗、統計、設定は、\nお客様のブラウザ内に、お客様のためにとどまります。",
+        "お客様のブラウザ内には、お客様の\n学習の進捗、統計、設定などが保存されます。",
     ),
     # #3829: the new master texts.
     (
@@ -558,10 +592,12 @@ def _write(path: Path, text: str) -> None:
 def _repo(tmp_path: Path) -> Path:
     """A tree with one clean file in every group the check requires."""
     _write(
-        tmp_path / "backend/config/i18n/en.yaml", "content:\n  privacy: Only your cards are sent.\n"
+        tmp_path / "backend/config/i18n/en.yaml",
+        "content:\n  privacy: The check sends the cards of the set.\n",
     )
     _write(
-        tmp_path / "frontend/src/data/i18n/en.json", '{"privacy": "Only your cards are sent."}\n'
+        tmp_path / "frontend/src/data/i18n/en.json",
+        '{"privacy": "The check sends the cards of the set."}\n',
     )
     _write(tmp_path / "backend/config/help/concepts.en.yaml", "x: A learning project.\n")
     _write(tmp_path / "docs/help/en/user-guide/faq.md", "# FAQ\n\nYour IP address goes along.\n")
