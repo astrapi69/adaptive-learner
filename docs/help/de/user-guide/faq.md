@@ -127,12 +127,16 @@ dort und starte eine neue.
 
 ## Kann ich meine Daten exportieren?
 
-Ja. Drei Export-Pfade ausgeliefert:
+Ja, unter anderem auf diesen Wegen:
 
 - **Backup**: Einstellungen > Daten > Sichern und Exportieren >
-  Sicherung erstellen. Lädt eine `.alb`-Sicherungsdatei mit jeder
-  Zeile deines Accounts herunter. API-Schlüssel werden entfernt. Geht in
-  beiden Speichermodi.
+  Sicherung erstellen. Lädt eine `.alb`-Backup-Datei herunter; ein
+  Backup erstellen kannst du in beiden Speichermodi. Deine API-Schlüssel
+  sind darin nicht enthalten; wie du sie überträgst, steht auf der Seite
+  [Einstellungen](settings.md) im Abschnitt „Verschlüsselter
+  Schlüssel-Export (.alk)“. Weitere Beispiele dafür, was ein Backup nicht
+  enthält, nennt die Seite
+  [Backup und Wiederherstellung](../features/backup.md).
 - **Fortschritts- / Sitzungs- / Curriculum-Berichte**:
   Einstellungen > Daten > Sichern und Exportieren > Export.
   Markdown + PDF (Browser-Druck-zu-PDF).
@@ -180,13 +184,34 @@ Extraktion + Rollengrenzen-Erhalt für dieses Format aus.
 
 ## Sync zwischen Geräten?
 
-Bidirektionaler Lokal-Netz-Sync. Öffne Einstellungen > Daten >
-Synchronisation und kopple dieses Gerät: QR-Code vom anderen
-Gerät-Bildschirm scannen (Rückkamera), oder Pairing-URL
-einfügen. Nach dem Pairing tauschen Push- + Pull-Knöpfe
-Daten aus; Konflikte löst du in einem Dialog selbst.
-Die Synchronisation umfasst alle deine Daten, inkl.
-Lektionsfortschritt, Element-Fehler und Missionen.
+Noch nicht. Die App kann deine Daten noch nicht zwischen Geräten
+synchronisieren: Ein Gerät koppeln kannst du bisher nicht, und ohne
+Kopplung tauscht die Synchronisation keine Daten aus. Was du unter
+Einstellungen > Daten > Synchronisation siehst, hängt vom Speichermodus
+ab:
+
+- Im Lokal-Modus zeigt dieser Bereich keine Bedienelemente, sondern den
+  Hinweis „Nur mit der Desktop-App verfügbar.“ Den Lokal-Modus nutzt die
+  Browser-Version immer, auch als installierte Web-App; in der
+  Desktop-App erscheint derselbe Hinweis, solange sie auf den Lokal-Modus
+  gestellt ist (Einstellungen > Allgemein > Speicher-Modus: „Lokal
+  (Browser)“). Die Desktop-App synchronisiert allerdings bisher ebenfalls
+  nicht (siehe den nächsten Punkt).
+- Im Server-Modus der Desktop-App (Einstellungen > Allgemein >
+  Speicher-Modus: „Server“) zeigt dieser Bereich Felder für Host und Port
+  und die Schaltfläche „Kopplungscode erzeugen“. Ein Klick darauf zeigt
+  einen Kopplungslink, einen QR-Code und eine Schaltfläche zum Kopieren
+  des Links. Einlösen kann diesen Link aber noch kein Gerät,
+  auch nicht über den QR-Code; ein zweites Gerät lässt sich damit also
+  bisher nicht koppeln.
+
+Solange die Synchronisation nicht verfügbar ist, bringst du deine Daten
+mit einem Backup auf ein anderes Gerät, allerdings nicht alle. Unter
+anderem enthält ein Backup deine API-Schlüssel nicht; wie du die
+API-Schlüssel überträgst, steht auf der Seite [Einstellungen](settings.md)
+im Abschnitt „Verschlüsselter Schlüssel-Export (.alk)“. Weitere Beispiele
+dafür, was ein Backup nicht enthält, nennt die Seite
+[Backup und Wiederherstellung](../features/backup.md).
 
 ## Wie ist das anders als ChatGPT?
 

@@ -127,12 +127,16 @@ sesión y empieza una nueva.
 
 ## ¿Puedo exportar mis datos?
 
-Sí. Se han implementado tres rutas de exportación:
+Sí, entre otras, de estas formas:
 
 - **Copia de seguridad**: Ajustes > Datos > Copia de seguridad y
   exportación > Crear copia de seguridad. Descarga un archivo de copia
-  de seguridad `.alb` con todas las filas de tu cuenta. Las claves API se eliminan. Funciona en ambos
-  modos de almacenamiento.
+  de seguridad `.alb`; puedes crear una copia de seguridad en ambos
+  modos de almacenamiento. Tus claves API no están incluidas en ella;
+  cómo transferirlas se explica en la página [Ajustes](settings.md), en
+  la sección «Exportación cifrada de claves (.alk)». La página
+  [Copia de seguridad y restauración](../features/backup.md) da más
+  ejemplos de lo que una copia de seguridad no contiene.
 - **Informes de Progreso / Sesión / Plan de estudios**: Ajustes >
   Datos > Copia de seguridad y exportación > Exportar. Markdown + PDF (impresión a PDF del navegador).
 - **Anki .apkg**: revisa las tarjetas de memoria extraídas por la
@@ -179,14 +183,33 @@ para ese formato.
 
 ## ¿Sincronización entre dispositivos?
 
-Sincronización bidireccional en la red local. Abre Ajustes > Datos >
-Sincronización y empareja este dispositivo: escanea
-el código QR en la pantalla del otro dispositivo (cámara trasera)
-o pega la URL de emparejamiento. Una vez emparejados, los botones
-de enviar y recibir intercambian datos; los conflictos los resuelves
-tú mismo en un diálogo. La sincronización abarca todos tus datos,
-incluidos el progreso de las lecciones, los errores por elemento y
-las misiones.
+Todavía no. La app aún no puede sincronizar tus datos entre
+dispositivos: por ahora no puedes emparejar un dispositivo, y sin
+emparejamiento la sincronización no intercambia datos. Lo que ves en
+Ajustes > Datos > Sincronización depende del modo de almacenamiento:
+
+- En el modo Local esta área no muestra controles, sino el aviso
+  «Solo disponible con la aplicación de escritorio.» La versión de
+  navegador usa siempre el modo Local, también como aplicación web
+  instalada; en la app de escritorio aparece el mismo aviso mientras
+  esté configurada en el modo Local (Ajustes > General > Modo de
+  almacenamiento: «Local (Navegador)»). Sin embargo, la app de
+  escritorio tampoco sincroniza por ahora (ver el punto siguiente).
+- En el modo Servidor de la app de escritorio (Ajustes > General >
+  Modo de almacenamiento: «Servidor») esta área muestra campos para el
+  host y el puerto y el botón «Generar código de emparejamiento». Un
+  clic en él muestra un enlace de emparejamiento, un código QR y un
+  botón para copiar el enlace. Pero ningún dispositivo puede canjear
+  todavía este enlace, tampoco a través del código QR; por tanto, por
+  ahora no se puede emparejar un segundo dispositivo con él.
+
+Mientras la sincronización no esté disponible, llevas tus datos a otro
+dispositivo con una copia de seguridad, aunque no todos. Entre otras
+cosas, una copia de seguridad no contiene tus claves API; cómo
+transferir las claves API se explica en la página [Ajustes](settings.md),
+en la sección «Exportación cifrada de claves (.alk)». La página
+[Copia de seguridad y restauración](../features/backup.md) da más
+ejemplos de lo que una copia de seguridad no contiene.
 
 ## ¿En qué se diferencia esto de ChatGPT?
 

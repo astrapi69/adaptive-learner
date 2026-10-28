@@ -78,8 +78,8 @@ nur zusammen). In Kurzform:
   Markdown-/PDF-Berichte, `.alb`-Backups und verschlüsselter
   `.alk`-Schlüssel-Export.
 - **Plattform** - installierbare Offline-PWA, duale Speicherung
-  (Browser-IndexedDB oder self-hosted Server), lokales Netzwerk-Sync,
-  Desktop-Launcher für Linux/macOS/Windows, elf UI-Sprachen.
+  (Browser-IndexedDB oder self-hosted Server), Desktop-Launcher für
+  Linux/macOS/Windows, elf UI-Sprachen.
 - **Barrierefreiheit** - WCAG-AA-Themes, Tastatur-Navigation,
   Screenreader-Unterstützung, reduzierte Bewegung, Vorlesen (TTS).
 

@@ -129,12 +129,16 @@ sessão e inicie uma nova.
 
 ## Posso exportar os meus dados?
 
-Sim. Três caminhos de exportação incluídos:
+Sim, entre outros, por estes caminhos:
 
 - **Backup**: Definições > Dados > Cópia de segurança e
   exportação > Criar backup. Descarrega um ficheiro de cópia de
-  segurança `.alb` com todas as linhas da sua conta. As chaves de
-  API são removidas. Funciona em ambos os modos de armazenamento.
+  segurança `.alb`; pode criar uma cópia de segurança em ambos os
+  modos de armazenamento. As suas chaves de API não estão incluídas
+  nela; como as transferir está descrito na página
+  [Definições](settings.md), na secção "Exportação cifrada de chaves
+  (.alk)". A página [Backup e restauro](../features/backup.md) indica
+  outros exemplos do que uma cópia de segurança não contém.
 - **Relatórios de Progresso / Sessão / Currículo**: Definições >
   Dados > Cópia de segurança e exportação > Exportar. Markdown +
   PDF (impressão para PDF do navegador).
@@ -181,14 +185,34 @@ timestamps + preservação de limite de papel para esse formato.
 
 ## Sincronização entre dispositivos?
 
-Sincronização bidirecional em rede local. Abra
-Definições > Dados > Sincronização e emparelhe este dispositivo:
-digitalize o código QR no ecrã do outro dispositivo (câmara
-traseira), ou cole o URL de emparelhamento. Uma vez emparelhado,
-os botões de envio + receção trocam dados; você próprio resolve os
-conflitos numa caixa de diálogo. A sincronização abrange todos os
-teus dados, incluindo o progresso das lições, os erros por
-elemento e as missões.
+Ainda não. A aplicação ainda não consegue sincronizar os seus dados
+entre dispositivos: por enquanto não pode emparelhar um dispositivo, e
+sem emparelhamento a sincronização não troca dados. O que vê em
+Definições > Dados > Sincronização depende do modo de armazenamento:
+
+- No modo Local, esta área não mostra controlos, mas sim o aviso
+  "Disponível apenas com o aplicativo para desktop." A versão de
+  navegador usa sempre o modo Local, também como aplicação web
+  instalada; na aplicação de ambiente de trabalho aparece o mesmo
+  aviso enquanto estiver definida para o modo Local (Definições >
+  Geral > Modo de armazenamento: "Local (Navegador)"). No entanto, a
+  aplicação de ambiente de trabalho também ainda não sincroniza (ver o
+  ponto seguinte).
+- No modo Servidor da aplicação de ambiente de trabalho (Definições >
+  Geral > Modo de armazenamento: "Servidor"), esta área mostra campos
+  para o host e a porta e o botão "Gerar código de pareamento". Um
+  clique nele mostra uma ligação de emparelhamento, um código QR e um
+  botão para copiar a ligação. Mas ainda nenhum dispositivo consegue
+  resgatar esta ligação, nem através do código QR; por isso, por
+  enquanto, não é possível emparelhar um segundo dispositivo com ela.
+
+Enquanto a sincronização não estiver disponível, leva os seus dados
+para outro dispositivo com uma cópia de segurança, mas não todos.
+Entre outras coisas, uma cópia de segurança não contém as suas chaves
+de API; como transferir as chaves de API está descrito na página
+[Definições](settings.md), na secção "Exportação cifrada de chaves
+(.alk)". A página [Backup e restauro](../features/backup.md) indica
+outros exemplos do que uma cópia de segurança não contém.
 
 ## Como é diferente do ChatGPT?
 

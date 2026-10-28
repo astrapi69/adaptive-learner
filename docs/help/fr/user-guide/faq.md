@@ -126,11 +126,16 @@ session l'indique. Terminez-y la session et démarrez-en une nouvelle.
 
 ## Comment exporter mes données ?
 
-Plusieurs options :
+Entre autres de ces façons :
 
-- **Paramètres > Données > Sauvegarde et export > Créer une
-  sauvegarde** - télécharge un fichier de sauvegarde `.alb` avec toutes
-  les données
+- **Sauvegarde** - Paramètres > Données > Sauvegarde et export >
+  Créer une sauvegarde. Télécharge un fichier de sauvegarde `.alb` ;
+  vous pouvez créer une sauvegarde dans les deux modes de stockage. Vos
+  clés API n'y sont pas incluses ; la façon de les transférer est
+  décrite sur la page [Paramètres](settings.md), dans la section
+  « Export chiffré des clés (.alk) ». La page
+  [Sauvegarde et restauration](../features/backup.md) cite d'autres
+  exemples de ce qu'une sauvegarde ne contient pas.
 - **Plugin Learning Repository** - exporte vers un dépôt Git local avec
   commits sémantiques
 - **Plugin Anki** - exporte les flashcards en fichier `.apkg`
@@ -163,12 +168,34 @@ plus de détails.
 
 ## Puis-je synchroniser entre plusieurs appareils ?
 
-**Mode API** : oui, via la synchronisation locale sur réseau. Allez dans
-**Paramètres → Données → Synchronisation** et configurez l'adresse de
-votre instance de synchronisation.
+Pas encore. L'application ne peut pas encore synchroniser vos données
+entre appareils : vous ne pouvez pour l'instant associer aucun appareil,
+et sans association, la synchronisation n'échange aucune donnée. Ce que
+vous voyez sous Paramètres > Données > Synchronisation dépend du mode de
+stockage :
 
-**Mode Dexie** : non - les données IndexedDB restent dans le navigateur.
-L'exportation/importation manuelle de sauvegarde JSON est la seule option.
+- En mode Dexie, cette zone affiche, au lieu de commandes, l'avis
+  « Disponible uniquement avec l'application de bureau. » La version
+  navigateur utilise toujours le mode Dexie, y compris comme application
+  web installée ; dans l'application de bureau, le même avis apparaît
+  tant qu'elle est réglée sur le mode Dexie (Paramètres > Général >
+  Mode de stockage : « Local (Navigateur) »). L'application de bureau ne
+  synchronise toutefois pas encore non plus (voir le point suivant).
+- En mode API de l'application de bureau (Paramètres > Général >
+  Mode de stockage : « Serveur »), cette zone affiche des champs pour
+  l'hôte et le port et le bouton « Générer un code d’association ». Un
+  clic sur ce bouton affiche un lien d'association, un QR code et un
+  bouton pour copier le lien. Mais aucun appareil ne peut encore
+  utiliser ce lien, pas même via le QR code ; il n'est donc pas encore
+  possible d'associer ainsi un deuxième appareil.
+
+Tant que la synchronisation n'est pas disponible, vous transférez vos
+données vers un autre appareil avec une sauvegarde, mais pas toutes.
+Entre autres, une sauvegarde ne contient pas vos clés API ; la façon de
+transférer les clés API est décrite sur la page [Paramètres](settings.md),
+dans la section « Export chiffré des clés (.alk) ». La page
+[Sauvegarde et restauration](../features/backup.md) cite d'autres
+exemples de ce qu'une sauvegarde ne contient pas.
 
 ---
 

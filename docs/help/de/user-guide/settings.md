@@ -117,9 +117,16 @@ Interaktion*. Der Entwicklermodus liegt im Tab **Diagnose & Support**
 *Allgemein > Speicher-Modus* schaltet zwischen **Server** und
 **Lokal (Browser)** um:
 
-- **Server** - jeder Lese- und Schreibvorgang geht ans
-  FastAPI-Backend. Setzt ein laufendes Backend voraus. Am
-  besten für Multi-Device-Nutzung mit Backend-seitigem Sync.
+- **Server** - die App liest und speichert deine Lerndaten über das
+  Backend der Desktop-App (FastAPI); setzt ein laufendes Backend voraus.
+  Einige Einstellungen, etwa den gewählten Speichermodus, speichert die
+  App in diesem Browser. Lektionsfortschritt und Sprachaufnahmen, die du
+  ohne Verbindung speicherst, warten in diesem Browser, bis die App sie
+  ans Backend überträgt; wie viele höchstens warten und was mit den
+  übrigen geschieht, steht auf der Seite
+  [Backup und Wiederherstellung](../features/backup.md). Zwischen
+  Geräten synchronisieren kann die App bisher in keinem der beiden
+  Speichermodi (siehe *Daten > Synchronisation*).
 - **Lokal (Browser)** - jeder Lese- und Schreibvorgang geht
   an IndexedDB in diesem Browser. KI-Aufrufe gehen direkt an
   den Anbieter. Kein Backend nötig. Am besten für ein
@@ -417,18 +424,31 @@ dem Bereich im Bild, und die Adresse spiegelt ihn
 
 ### Synchronisation
 
-Kopple dieses Gerät mit einem anderen über dein lokales Netz
-per QR-Code-Scanner (Rückkamera) oder eingefügte Pairing-
-URL. Nach dem Pairing tauschen Push- + Pull-Knöpfe Daten
-bidirektional aus. Konflikte gehen durch einen KI-Merge-
-Resolver auf dem Backend.
+Die App kann deine Daten noch nicht zwischen Geräten synchronisieren:
+Ein Gerät koppeln kannst du bisher nicht, und ohne Kopplung tauscht die
+Synchronisation keine Daten aus. Was der Bereich zeigt, hängt vom
+Speichermodus ab:
 
-Eingeschränkter-Browser-Fallback: Lade einen Screenshot des
-QR-Codes vom anderen Gerät hoch (`Html5Qrcode.scanFile`).
+- Im Speichermodus **Lokal (Browser)** bleibt der Bereich sichtbar,
+  zeigt aber keine Bedienelemente, sondern den Hinweis „Nur mit der
+  Desktop-App verfügbar.“ Diesen Speichermodus nutzt die öffentliche
+  Web-Version immer, auch als installierte Web-App; in der Desktop-App
+  erscheint derselbe Hinweis, solange sie auf **Lokal (Browser)**
+  gestellt ist. Die Desktop-App synchronisiert allerdings bisher
+  ebenfalls nicht (siehe den nächsten Punkt).
+- Im Speichermodus **Server** der Desktop-App zeigt der Bereich Felder
+  für Host und Port und die Schaltfläche „Kopplungscode erzeugen“. Ein
+  Klick darauf zeigt einen Kopplungslink, einen QR-Code und eine
+  Schaltfläche zum Kopieren des Links. Einlösen kann diesen Link aber
+  noch kein Gerät, auch nicht über den QR-Code; ein zweites Gerät lässt
+  sich damit also bisher nicht koppeln.
 
-Die Synchronisation braucht die Desktop-App. Im Browser-Modus bleibt
-der Bereich sichtbar, aber statt der Bedienelemente steht dort der
-Hinweis „Nur mit der Desktop-App verfügbar."
+Solange die Synchronisation nicht verfügbar ist, bringst du deine Daten
+mit einem Backup auf ein anderes Gerät, allerdings nicht alle. Unter
+anderem enthält ein Backup deine API-Schlüssel nicht; wie du die
+API-Schlüssel überträgst, steht unter *Verschlüsselter Schlüssel-Export
+(.alk)* unten. Weitere Beispiele dafür, was ein Backup nicht enthält,
+nennt die Seite [Backup und Wiederherstellung](../features/backup.md).
 
 ### Offline-Inhalte
 
