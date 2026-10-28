@@ -14,8 +14,8 @@ A presente política abrange a versão web pública do Adaptive Learner em
 versão em `astrapi69.github.io/adaptive-learner-content-test` e estas páginas
 de documentação. Se instalar o Adaptive Learner por conta própria (desktop
 launcher ou Docker), opera a aplicação no seu próprio dispositivo e o
-administrador destas páginas só recebe o que lhe enviar por iniciativa própria,
-por exemplo uma lição partilhada ou um relatório de erro. Mesmo nesse caso, a
+administrador destas páginas só recebe o que você lhe enviar por iniciativa
+própria, por exemplo uma lição partilhada ou um relatório de erro. Mesmo nesse caso, a
 aplicação e o launcher consultam `api.github.com` sobre novas versões, os
 conteúdos de aprendizagem vêm do GitHub e o seu próprio servidor envia os
 pedidos de IA ao fornecedor escolhido.
@@ -33,10 +33,10 @@ estas páginas não definem cookies, não utilizam serviços de análise ou de
 rastreamento e não carregam tipos de letra nem scripts de terceiros. No seu
 browser são armazenados, entre outras coisas, o seu progresso, as suas
 estatísticas e as suas definições. Desses dados, o administrador só recebe o
-que lhe enviar por iniciativa própria, e outros só recebem partes deles quando
-uma funcionalidade precisa delas, por exemplo o seu fornecedor de IA, quando
-utiliza a IA com a sua própria chave, ou o GitHub, quando a aplicação pergunta
-por iniciativa própria se há conteúdos novos.
+que você lhe enviar por iniciativa própria, e outros recebem partes deles só
+quando uma funcionalidade precisa delas, por exemplo o seu fornecedor de IA,
+quando utiliza a IA com a sua própria chave, ou o GitHub, quando a aplicação
+pergunta por iniciativa própria se há conteúdos novos.
 
 Os dados só saem do seu dispositivo nos seguintes casos, descritos em
 pormenor mais abaixo:
@@ -273,15 +273,16 @@ está certificada ao abrigo do Quadro de Privacidade de Dados UE-EUA
 
 Quando toca no microfone (no campo de introdução da sessão de aprendizagem e na
 prática de pronúncia), a aplicação utiliza o reconhecimento de voz do seu
-browser. A gravação só começa depois de tocar; antes disso, o seu browser pede
-autorização para usar o microfone, a menos que já a tenha concedido a este
-sítio. O reconhecimento é feito pelo browser, não pela aplicação: o Google
-Chrome envia para isso, entre outras coisas, a gravação e o idioma escolhido a
-um serviço da Google (`www.google.com`); os outros browsers também podem enviar
-a gravação a um serviço do respetivo fabricante. O responsável por este
-tratamento é o fabricante do browser, e aplica-se o respetivo aviso de
-privacidade. No Chrome trata-se da Google; para os utilizadores no EEE, segundo
-a [política de privacidade da Google](https://policies.google.com/privacy), da
+browser. A gravação só começa depois de tocar; antes de a gravação começar, o
+seu browser pede autorização para usar o microfone, a menos que já a tenha
+concedido a este sítio. O reconhecimento é feito pelo browser, não pela
+aplicação: o Google Chrome envia para isso, entre outras coisas, a gravação e o
+idioma escolhido a um serviço da Google (`www.google.com`); os outros browsers
+também podem enviar a gravação a um serviço do respetivo fabricante. O
+responsável por este tratamento é o fabricante do browser, e aplica-se o
+respetivo aviso de privacidade. No Chrome trata-se da Google; para os
+utilizadores no EEE, o responsável é, segundo a
+[política de privacidade da Google](https://policies.google.com/privacy), a
 Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlanda; a
 Google também pode tratar os dados nos EUA, e a Google LLC está certificada ao
 abrigo do Quadro de Privacidade de Dados UE-EUA.

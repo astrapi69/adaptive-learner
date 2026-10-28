@@ -30,8 +30,8 @@ Adaptive Learner no tiene ningún servidor del operador. La app y estas páginas
 no instalan cookies, no utilizan servicios de análisis ni de seguimiento y no
 cargan fuentes ni scripts de terceros. En su navegador se almacenan, entre
 otras cosas, su progreso, sus estadísticas y sus ajustes. De ellos, el operador
-solo recibe lo que usted mismo le envíe, y otros solo reciben partes de ellos
-cuando las necesita una función, por ejemplo su proveedor de IA, cuando usted
+solo recibe lo que usted mismo le envíe, y otros reciben partes de ellos solo
+cuando una función las necesita, por ejemplo su proveedor de IA, cuando usted
 utiliza la IA con su propia clave, o GitHub, cuando la app pregunta por sí
 misma si hay contenidos nuevos.
 
@@ -270,14 +270,14 @@ Datos UE-EE. UU. (art. 45 del RGPD). Avisos de privacidad de los proveedores:
 Cuando usted toca el micrófono (en el campo de entrada de la sesión de
 aprendizaje y en la práctica de pronunciación), la app utiliza el
 reconocimiento de voz de su navegador. La grabación empieza solo después de
-tocarlo; antes, su navegador pide permiso para usar el micrófono, salvo que
-usted ya se lo haya concedido a este sitio. El reconocimiento lo realiza el
-navegador, no la app: Google Chrome envía para ello, entre otras cosas, la
-grabación y el idioma elegido a un servicio de Google (`www.google.com`); los
-demás navegadores también pueden enviar la grabación a un servicio de su
-fabricante. El responsable de este tratamiento es el fabricante del navegador,
-y se aplica su aviso de privacidad. En Chrome se trata de Google; para los
-usuarios del EEE, según la
+tocarlo; antes de que comience, su navegador pide permiso para usar el
+micrófono, salvo que usted ya se lo haya concedido a este sitio. El
+reconocimiento lo realiza el navegador, no la app: Google Chrome envía para
+ello, entre otras cosas, la grabación y el idioma elegido a un servicio de
+Google (`www.google.com`); los demás navegadores también pueden enviar la
+grabación a un servicio de su fabricante. El responsable de este tratamiento es
+el fabricante del navegador, y se aplica su aviso de privacidad. En Chrome se
+trata de Google; para los usuarios del EEE, según la
 [política de privacidad de Google](https://policies.google.com/privacy), de
 Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlanda; Google
 también puede tratar los datos en Estados Unidos, y Google LLC está certificada

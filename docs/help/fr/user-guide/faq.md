@@ -4,13 +4,23 @@
 
 ## Mes données sont-elles en sécurité ?
 
-Vos données sont stockées sur votre propre appareil :
+L'endroit où vos données sont stockées dépend du mode de stockage :
 
-- **Mode API** : base SQLite dans `~/.local/share/adaptive_learner/`
-  (Linux/macOS) ou `%LOCALAPPDATA%\adaptive_learner\` (Windows). La
-  progression des leçons et les enregistrements vocaux faits hors ligne
-  attendent dans ce navigateur jusqu'à leur transfert.
-- **Mode Dexie** : votre navigateur stocke vos données sur votre propre
+- **Mode Serveur** : vos données d'apprentissage se trouvent dans la base
+  SQLite que gère le backend FastAPI. Ce qui est créé hors ligne en
+  matière de progression des leçons et d'enregistrements vocaux attend
+  dans ce navigateur jusqu'à ce que l'application le transfère ; la
+  quantité maximale en attente et ce qu'il advient du reste sont
+  indiqués dans [Sauvegarde et restauration](../features/backup.md). Les
+  clés API sont stockées chiffrées (Fernet) dans
+  `~/.config/adaptive_learner/secrets.yaml`, et une copie de sauvegarde
+  de la dernière clé qui a fonctionné se trouve, chiffrée elle aussi,
+  dans la base de données. La clé de chiffrement est générée au premier
+  démarrage et enregistrée dans `~/.config/adaptive_learner/secret.key` ;
+  vous n'avez rien à configurer. Si vous voulez fournir votre propre
+  clé, définissez `ADAPTIVE_LEARNER_SECRET_KEY` (ou `secret_key:` dans
+  `secrets.yaml`) avant le premier démarrage.
+- **Mode Local** : votre navigateur stocke vos données sur votre propre
   appareil (dans IndexedDB et localStorage), entre autres votre
   progression, les conversations importées et vos paramètres, y compris
   les clés API et le token GitHub ; aucun serveur de l'exploitant
@@ -23,10 +33,8 @@ Vos données sont stockées sur votre propre appareil :
   partagé, toute personne ayant accès à ce profil de navigateur peut les
   lire.
 
-Rien - pas vos sessions, pas vos erreurs, pas votre progression - n'est
-envoyé à un serveur Adaptive Learner. Aucun mode n'envoie de télémétrie,
-de mesure d'audience ni vos messages à des tiers, sauf au fournisseur
-d'IA que vous avez choisi. Dans une session d'apprentissage, ce
+Aucun mode n'envoie de télémétrie, de mesure d'audience ni vos messages
+à des tiers, sauf au fournisseur d'IA que vous avez choisi. Dans une session d'apprentissage, ce
 fournisseur reçoit :
 
 - l'instruction système, avec le sujet et l'objectif de votre projet

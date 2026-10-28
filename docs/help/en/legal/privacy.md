@@ -244,8 +244,8 @@ Framework (Art. 45 GDPR). The providers' privacy notices:
 
 When you tap the microphone (in the learning session's input field and in
 pronunciation practice), the app uses your browser's speech recognition.
-Recording starts only after the tap; before that, your browser asks for
-permission to use the microphone, unless you have already granted it to this
+Recording starts only after the tap; before recording begins, your browser asks
+for permission to use the microphone, unless you have already granted it to this
 site. The browser does the recognition, not the app: Google Chrome sends, among
 other things, the recording and the selected language to a Google service
 (`www.google.com`); other browsers can likewise send the recording to a service

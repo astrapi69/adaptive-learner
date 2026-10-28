@@ -17,13 +17,20 @@ dados; limpar os dados do site no navegador remove-os do seu
 dispositivo. Se partilha o dispositivo, qualquer pessoa com acesso
 a este perfil do navegador pode lê-los.
 
-No **modo Servidor** os dados vivem na base de dados SQLite que o
-backend FastAPI gere. O progresso de lições e as gravações de voz
-feitos offline aguardam neste navegador até serem transferidos. As
-chaves de API são encriptadas em repouso com Fernet usando um
-segredo que define via a variável de ambiente
-`ADAPTIVE_LEARNER_SECRET_KEY`, ou via `secret_key:` em
-`~/.config/adaptive_learner/secrets.yaml`.
+No **modo Servidor** os seus dados de aprendizagem ficam na base
+de dados SQLite que o backend FastAPI gere. O progresso de lições
+e as gravações de voz que surgem offline aguardam neste navegador
+até a aplicação os transferir; a quantidade máxima que fica a
+aguardar e o que acontece ao resto estão descritos em
+[Backup e restauro](../features/backup.md). As chaves de API ficam
+encriptadas com Fernet em
+`~/.config/adaptive_learner/secrets.yaml`, e uma cópia de
+segurança da última chave que funcionou fica, também encriptada,
+na base de dados. A chave de encriptação é gerada no primeiro
+arranque e guardada em `~/.config/adaptive_learner/secret.key`;
+não precisa de configurar nada. Se quiser indicar uma chave
+própria, defina `ADAPTIVE_LEARNER_SECRET_KEY` (ou `secret_key:` em
+`secrets.yaml`) antes do primeiro arranque.
 
 Nenhum dos modos envia telemetria, análises ou as suas
 mensagens para terceiros além do fornecedor de IA que escolheu.

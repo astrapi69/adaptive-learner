@@ -266,8 +266,8 @@ Anbieter:
 
 Tippen Sie auf das Mikrofon (im Eingabefeld der Lernsitzung und im
 Aussprachetraining), nutzt die App die Spracherkennung Ihres Browsers.
-Aufgenommen wird erst nach dem Tippen; vorher fragt Ihr Browser nach der
-Erlaubnis für das Mikrofon, sofern Sie sie dieser Seite nicht schon erteilt
+Aufgenommen wird erst nach dem Tippen; bevor die Aufnahme beginnt, fragt Ihr
+Browser nach der Erlaubnis für das Mikrofon, sofern Sie sie dieser Seite nicht schon erteilt
 haben. Die Erkennung übernimmt der Browser, nicht die App: Google Chrome
 schickt dafür unter anderem die Aufnahme und die gewählte Sprache an einen
 Dienst von Google (`www.google.com`); andere Browser können die Aufnahme

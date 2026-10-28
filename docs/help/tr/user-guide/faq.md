@@ -10,19 +10,25 @@ ilerlemeniz, içe aktarılan sohbetler ve API anahtarları ile GitHub
 token'ı dahil ayarlarınız bulunur ve işletmeciye ait bir sunucu
 kullanılmaz. Başkaları bunların bölümlerini yalnızca bir özellik onlara
 ihtiyaç duyduğunda alır, örneğin yapay zekâyı kullandığınızda yapay zekâ
-sağlayıcınız veya uygulama başlangıçta yeni içerik olup olmadığını
+sağlayıcınız veya uygulama başlatıldığında yeni içerik olup olmadığını
 kendiliğinden sorduğunda GitHub. Tarayıcı sekmesini kapatmak bu verileri
 silmez; tarayıcıdaki site verilerini temizlemek onları cihazınızdan
 kaldırır. Cihazı paylaşıyorsanız, bu tarayıcı profiline erişimi olan
 herkes okuyabilir.
 
-**Sunucu modunda** veriler, FastAPI arka ucunun yönettiği SQLite
-veritabanında bulunur. Ders ilerlemesi ve ses kayıtları çevrimdışıyken
-oluşursa, aktarılana kadar bu tarayıcıda bekler. API anahtarları,
-`ADAPTIVE_LEARNER_SECRET_KEY` ortam değişkeni aracılığıyla ya da
-`~/.config/adaptive_learner/secrets.yaml` içindeki `secret_key:` ile
-belirlediğiniz bir sır kullanılarak Fernet ile dinlenme sırasında
-şifrelenir.
+**Sunucu modunda** öğrenme verileriniz, FastAPI arka ucunun yönettiği
+SQLite veritabanında bulunur. Çevrimdışıyken oluşan ders ilerlemesi ve
+ses kayıtları, uygulama bunları aktarana kadar bu tarayıcıda bekler; en
+fazla ne kadarının beklediğini ve geri kalanına ne olduğunu
+[Yedekleme ve geri yükleme](../features/backup.md) sayfası açıklar. API
+anahtarları Fernet ile şifrelenmiş olarak
+`~/.config/adaptive_learner/secrets.yaml` içinde, en son çalışan
+anahtarın bir yedek kopyası da aynı şekilde şifrelenmiş olarak
+veritabanında bulunur. Şifreleme anahtarı ilk başlatmada oluşturulur ve
+`~/.config/adaptive_learner/secret.key` içine kaydedilir; hiçbir şey
+ayarlamanız gerekmez. Kendi anahtarınızı belirlemek isterseniz, ilk
+başlatmadan önce `ADAPTIVE_LEARNER_SECRET_KEY` (ya da `secrets.yaml`
+içinde `secret_key:`) ayarlayın.
 
 Her iki mod da seçtiğiniz yapay zeka sağlayıcısı dışında herhangi bir
 üçüncü tarafa telemetri, analitik ya da mesajlarınızı göndermez. Bir
@@ -47,8 +53,8 @@ arka yüzünü ve notlarını) gönderir. Paylaşmadan önceki yapay zekâ
 denetimi derslerinizden yalnızca paylaştıklarınızı, bunlardan da başka
 şeylerin yanı sıra kartları, adımların metinlerini ve alıştırmaları
 (soru ve yanlış cevap seçenekleri) gönderir. İkisi de ayrıca setin
-kaynak dilini, hedef dilini ve seviyesini gönderir. Bu içeriğe kendiniz
-yazdıklarınız da birlikte gider ve kendi başına kişisel olabilir.
+kaynak dilini, hedef dilini ve seviyesini gönderir. Bu içeriklere kendiniz
+yazdığınız metinler de gönderilir ve kişisel bilgiler içerebilir.
 [Gizlilik politikası](../legal/privacy.md) yapay zekâya giden her isteği
 listeler.
 

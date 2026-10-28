@@ -13,14 +13,18 @@ browser tab doesn't delete this data; clearing the site data in
 the browser removes it from your device. If you share the
 device, anyone with access to this browser profile can read it.
 
-In **Server mode** the data lives in the SQLite database the
-FastAPI backend manages. Lesson progress and voice recordings
-made offline wait in this browser until they are transferred.
-API keys are encrypted at rest with Fernet in
-`~/.config/adaptive_learner/secrets.yaml`. The encryption key is
-generated on first start and kept in
-`~/.config/adaptive_learner/secret.key`; you do not have to set
-anything. To supply your own key instead, set
+In **Server mode** your learning data lives in the SQLite
+database the FastAPI backend manages. Lesson progress and voice
+recordings made offline wait in this browser until the app
+transfers them; how much waits at most and what happens to the
+rest is described under
+[Backup and restore](../features/backup.md). API keys are
+encrypted at rest with Fernet in
+`~/.config/adaptive_learner/secrets.yaml`, and a backup copy of
+the key that last worked is stored in the database, also
+encrypted. The encryption key is generated on first start and
+kept in `~/.config/adaptive_learner/secret.key`; you do not have
+to set anything. To supply your own key instead, set
 `ADAPTIVE_LEARNER_SECRET_KEY` (or `secret_key:` in
 `secrets.yaml`) before the first start.
 

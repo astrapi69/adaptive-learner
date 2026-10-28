@@ -279,12 +279,13 @@ certifiée au titre du cadre de protection des données UE-États-Unis
 Lorsque vous touchez le micro (dans le champ de saisie de la session
 d'apprentissage et dans la pratique de la prononciation), l'application utilise
 la reconnaissance vocale de votre navigateur. L'enregistrement ne commence
-qu'après ce geste ; auparavant, votre navigateur demande l'autorisation
-d'utiliser le micro, sauf si vous l'avez déjà accordée à ce site. C'est le
-navigateur, et non l'application, qui effectue la reconnaissance : Google
-Chrome envoie à cet effet, entre autres, l'enregistrement et la langue choisie
-à un service de Google (`www.google.com`) ; les autres navigateurs peuvent eux
-aussi envoyer l'enregistrement à un service de leur éditeur. Le responsable du
+qu'après ce geste ; avant qu'il ne commence, votre navigateur demande
+l'autorisation d'utiliser le micro, sauf si vous l'avez déjà accordée à ce
+site. C'est le navigateur, et non l'application, qui effectue la
+reconnaissance : Google Chrome envoie à cet effet, entre autres,
+l'enregistrement et la langue choisie à un service de Google
+(`www.google.com`) ; les autres navigateurs peuvent eux aussi envoyer
+l'enregistrement à un service de leur éditeur. Le responsable du
 traitement pour cette reconnaissance est l'éditeur du navigateur, et sa
 politique de confidentialité s'applique. Pour Chrome, il s'agit de Google, pour
 les utilisateurs de l'EEE, selon la

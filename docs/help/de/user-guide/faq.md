@@ -14,11 +14,14 @@ Daten nicht; die Website-Daten im Browser zu löschen entfernt sie
 von deinem Gerät. Auf einem geteilten Gerät kann jeder mit
 Zugriff auf dieses Browser-Profil sie lesen.
 
-Im **Server-Modus** liegen die Daten in der SQLite-Datenbank,
-die das FastAPI-Backend verwaltet. Lektionsfortschritt und
-Sprachaufnahmen, die offline entstehen, warten bis zur
-Übertragung in diesem Browser. API-Schlüssel liegen
-Fernet-verschlüsselt in `~/.config/adaptive_learner/secrets.yaml`.
+Im **Server-Modus** liegen deine Lerndaten in der SQLite-Datenbank, die das
+FastAPI-Backend verwaltet. Was offline an Lektionsfortschritt und
+Sprachaufnahmen entsteht, wartet in diesem Browser, bis die App es
+überträgt; wie viel höchstens wartet und was mit dem Rest geschieht, steht
+unter [Backup und Wiederherstellung](../features/backup.md). API-Schlüssel
+liegen Fernet-verschlüsselt in `~/.config/adaptive_learner/secrets.yaml`,
+eine Sicherungskopie des zuletzt funktionierenden Schlüssels ebenfalls
+verschlüsselt in der Datenbank.
 Der Verschlüsselungsschlüssel wird beim ersten Start erzeugt und
 in `~/.config/adaptive_learner/secret.key` abgelegt; du musst
 nichts einrichten. Willst du einen eigenen vorgeben, setze
