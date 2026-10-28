@@ -83,14 +83,15 @@ GitHub, Inc. (see above). The app loads:
 
 In addition, the app checks on its own, without you clicking anything, whether
 your sets have new versions and which reviews are due. To do so it reads the
-manifest files of the official catalog and of your connected repositories: on
-start, when you move between pages and when the window comes back to the
-foreground; it syncs connected repositories on start when the last sync is more
-than a day old. Your browser usually answers repeated requests in quick
-succession from its cache. The check runs on every page of the app except the
-start page, creating your first learning project and the learning-type
-assessment, so also on a first visit through a shared or direct link and on the
-error page for a mistyped address, including addresses under /docs/.
+manifest files of the official catalog and of your connected repositories,
+for example on start, when you move between pages, when the window comes back
+to the foreground and after your answers in reviews. Your browser usually
+answers repeated requests in quick succession from its cache. The check runs on
+all app pages that show the navigation bar, so also on a first visit
+through a shared or direct link and on the error page for a mistyped address,
+including addresses under /docs/. In addition, the app syncs connected
+repositories whenever a page loads, also without the navigation bar, if the
+last sync is more than a day old.
 
 GitHub receives your IP address, the usual browser data (browser type and
 version, operating system, language setting), usually the origin of the
@@ -189,11 +190,11 @@ the provider whose key you use:
   Amphitheatre Parkway, Mountain View, CA 94043, USA. Here the key travels in
   the request's address, not in its header.
 
-Requests arise when you use an AI feature: learning sessions (including the
-automatic evaluation of every step), "Ask AI" in lessons, the AI check of your
-answers, generating exercises and lessons, analyzing imported chats,
-flashcards and the study guide, pronunciation practice, and the AI check and
-generation of content. Without you typing anything, the app also sends:
+Requests arise when you use an AI feature, for example learning sessions
+(including the automatic evaluation of every step), "Ask AI" in lessons, the AI
+check of your answers, generating exercises and lessons, analyzing imported
+chats, flashcards, study questions and the study guide, pronunciation practice,
+and the AI check and generation of content. Without you typing anything, the app also sends:
 
 - a query for the available models when you open the Session page or the model
   selection in Settings,
@@ -215,9 +216,11 @@ feature:
   method with its weight,
 - titles and results of your completed lessons, the lesson you are working on
   and your recent mistakes with your answer and the expected one,
-- for the study guide additionally the timeframe, minutes per day, all method
-  weights, vocabulary from analyzed chats and up to ten of your latest
-  completed sessions with start time and method,
+- for study questions the history of up to five of your latest completed
+  sessions with start time and method,
+- for the study guide the history of up to ten of your latest completed
+  sessions with start time and method, and additionally the timeframe, minutes
+  per day, all method weights and vocabulary from analyzed chats,
 - for imported chats their title and the full pasted text,
 - in pronunciation practice the target phrase and the recognized text of your
   attempt,
@@ -284,9 +287,9 @@ legal basis is your request (Art. 6(1)(b) GDPR).
 ## Share buttons
 
 A share button appears on the Dashboard in the "Continue Learning" rows once
-you have completed a lesson with a result, and at the end of a lesson if it is
-switched on in Settings under Learning in "Lesson summary" (it is off by
-default). If your device offers its own share dialog, the app opens it, and you
+you have completed a lesson with a result, and at the end of a lesson in the
+detailed evaluation. In the compact summary it appears only if it is switched
+on in Settings under Learning in "Lesson summary" (it is off by default). If your device offers its own share dialog, the app opens it, and you
 choose there where to share. Otherwise it shows links to Facebook, LinkedIn, X
 and WhatsApp and an option to copy.
 

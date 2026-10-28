@@ -97,15 +97,15 @@ ci-dessus). L'application charge :
 En outre, l'application vérifie d'elle-même, sans que vous cliquiez sur quoi
 que ce soit, si vos ensembles ont de nouvelles versions et quelles révisions
 sont dues. Pour cela, elle lit les fichiers manifestes du catalogue officiel et
-de vos dépôts connectés : au démarrage, lorsque vous passez d'une page à
-l'autre et lorsque la fenêtre revient au premier plan ; elle synchronise les
-dépôts connectés au démarrage lorsque la dernière synchronisation date de plus
-d'un jour. Votre navigateur répond généralement aux requêtes répétées à brefs
-intervalles depuis son cache. La vérification s'exécute sur toutes les pages de
-l'application, sauf la page d'accueil, la création de votre premier projet
-d'apprentissage et l'évaluation du type d'apprentissage, donc aussi dès une
+de vos dépôts connectés, par exemple au démarrage, lorsque vous passez d'une
+page à l'autre, lorsque la fenêtre revient au premier plan et après vos réponses
+dans les révisions. Votre navigateur répond généralement aux requêtes répétées à
+brefs intervalles depuis son cache. La vérification s'exécute sur toutes les
+pages de l'application qui affichent la barre de navigation, donc aussi dès une
 première visite via un lien partagé ou direct et sur la page d'erreur d'une
-adresse mal saisie, y compris sous /docs/.
+adresse mal saisie, y compris sous /docs/. En outre, l'application synchronise
+les dépôts connectés au chargement de chaque page, même sans barre de
+navigation, lorsque la dernière synchronisation date de plus d'un jour.
 
 GitHub reçoit votre adresse IP, les données habituelles du navigateur (type et
 version du navigateur, système d'exploitation, langue), en général l'origine
@@ -217,12 +217,13 @@ le fournisseur dont vous utilisez la clé :
   Amphitheatre Parkway, Mountain View, CA 94043, USA. Ici, la clé figure dans
   l'adresse de la requête, et non dans son en-tête.
 
-Des requêtes sont envoyées lorsque vous utilisez une fonction d'IA : sessions
-d'apprentissage (y compris l'évaluation automatique de chaque étape),
-« Demander à l'IA » dans les leçons, la vérification de vos réponses par l'IA,
-la génération d'exercices et de leçons, l'analyse de conversations importées,
-les cartes de révision et le guide d'étude, la pratique de la prononciation
-ainsi que la vérification et la génération de contenus par l'IA. Sans que vous
+Des requêtes sont envoyées lorsque vous utilisez une fonction d'IA, par
+exemple les sessions d'apprentissage (y compris l'évaluation automatique de
+chaque étape), « Demander à l'IA » dans les leçons, la vérification de vos
+réponses par l'IA, la génération d'exercices et de leçons, l'analyse de
+conversations importées, les cartes de révision, les questions d'étude et le
+guide d'étude, la pratique de la prononciation ainsi que la vérification et la
+génération de contenus par l'IA. Sans que vous
 tapiez quoi que ce soit, l'application envoie en outre :
 
 - une demande de la liste des modèles disponibles lorsque vous ouvrez la page
@@ -247,10 +248,12 @@ une heure. Les autres requêtes contiennent, selon la fonction :
   d'apprentissage préférée avec sa pondération,
 - les titres et résultats de vos leçons terminées, la leçon en cours et vos
   dernières erreurs avec votre réponse et la réponse attendue,
-- pour le guide d'étude, en outre, la durée prévue, les minutes par jour,
-  toutes les pondérations des méthodes, le vocabulaire des conversations
-  analysées et jusqu'à dix de vos dernières sessions terminées avec leur heure
-  de début et leur méthode,
+- pour les questions d'étude, l'historique d'au plus cinq de vos dernières
+  sessions terminées avec leur heure de début et leur méthode,
+- pour le guide d'étude, l'historique d'au plus dix de vos dernières sessions
+  terminées avec leur heure de début et leur méthode et, en outre, la durée
+  prévue, les minutes par jour, toutes les pondérations des méthodes et le
+  vocabulaire des conversations analysées,
 - pour les conversations importées, leur titre et le texte collé complet,
 - dans la pratique de la prononciation, la phrase cible et le texte reconnu de
   votre essai,
@@ -328,8 +331,10 @@ votre demande (article 6, paragraphe 1, point b), du RGPD).
 
 Un bouton de partage apparaît sur le Tableau de bord dans les lignes de
 « Continuer l'apprentissage » dès que vous avez terminé une leçon avec un
-résultat, et à la fin d'une leçon s'il est activé dans les Paramètres sous
-Apprentissage, dans « Résumé après les leçons » (il est désactivé par défaut).
+résultat, et à la fin d'une leçon dans l'évaluation détaillée. Dans le
+récapitulatif compact, il n'apparaît que s'il est activé dans les Paramètres
+sous Apprentissage, dans « Résumé après les leçons » (il est désactivé par
+défaut).
 Si votre appareil propose sa propre boîte de dialogue de partage, l'application
 l'ouvre, et vous y choisissez où partager. Sinon, elle affiche des liens vers
 Facebook, LinkedIn, X et WhatsApp et une option de copie.
