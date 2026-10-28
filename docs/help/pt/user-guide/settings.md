@@ -64,7 +64,7 @@ seu **avatar**:
   bloqueadas mostram a sua condição.
 
 A sua escolha e as molduras compradas são guardadas e acompanham a sua
-[cópia de segurança](backup.md).
+[cópia de segurança](../features/backup.md).
 
 ## Aparência
 
