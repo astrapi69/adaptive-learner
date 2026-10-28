@@ -10,21 +10,22 @@ ilerlemeniz, içe aktarılan sohbetler ve API anahtarları ile GitHub
 token'ı dahil ayarlarınız bulunur ve işletmeciye ait bir sunucu
 kullanılmaz. Başkaları bunların bölümlerini yalnızca bir özellik onlara
 ihtiyaç duyduğunda alır, örneğin yapay zekâyı kullandığınızda yapay zekâ
-sağlayıcınız veya uygulama başlatıldığında yeni içerik olup olmadığını
-kendiliğinden sorduğunda GitHub. Tarayıcı sekmesini kapatmak bu verileri
-silmez; tarayıcıdaki site verilerini temizlemek onları cihazınızdan
-kaldırır. Cihazı paylaşıyorsanız, bu tarayıcı profiline erişimi olan
-herkes okuyabilir.
+sağlayıcınız veya uygulama açılışta yeni içerik olup olmadığını
+kendiliğinden GitHub'a sorduğunda GitHub. Tarayıcı sekmesini kapatmak
+bu verileri silmez; tarayıcıdaki site verilerini temizlemek onları
+cihazınızdan kaldırır. Cihazı paylaşıyorsanız, bu tarayıcı profiline
+erişimi olan herkes okuyabilir.
 
 **Sunucu modunda** öğrenme verileriniz, FastAPI arka ucunun yönettiği
-SQLite veritabanında bulunur. Çevrimdışıyken oluşan ders ilerlemesi ve
-ses kayıtları, uygulama bunları aktarana kadar bu tarayıcıda bekler; en
-fazla ne kadarının beklediğini ve geri kalanına ne olduğunu
+SQLite veritabanında bulunur. Ders ilerlemesi ve ses kayıtlarından
+çevrimdışıyken oluşanlar, uygulama bunları aktarana kadar bu tarayıcıda
+bekler; en fazla ne kadarının beklediğini ve geri kalanına ne olduğunu
 [Yedekleme ve geri yükleme](../features/backup.md) sayfası açıklar. API
 anahtarları Fernet ile şifrelenmiş olarak
-`~/.config/adaptive_learner/secrets.yaml` içinde, en son çalışan
-anahtarın bir yedek kopyası da aynı şekilde şifrelenmiş olarak
-veritabanında bulunur. Şifreleme anahtarı ilk başlatmada oluşturulur ve
+`~/.config/adaptive_learner/secrets.yaml` içinde, her sağlayıcı için
+en son çalışan API anahtarının bir yedek kopyası da aynı şekilde
+şifrelenmiş olarak veritabanında bulunur. Şifreleme anahtarı ilk
+başlatmada oluşturulur ve
 `~/.config/adaptive_learner/secret.key` içine kaydedilir; hiçbir şey
 ayarlamanız gerekmez. Kendi anahtarınızı belirlemek isterseniz, ilk
 başlatmadan önce `ADAPTIVE_LEARNER_SECRET_KEY` (ya da `secrets.yaml`
@@ -53,8 +54,8 @@ arka yüzünü ve notlarını) gönderir. Paylaşmadan önceki yapay zekâ
 denetimi derslerinizden yalnızca paylaştıklarınızı, bunlardan da başka
 şeylerin yanı sıra kartları, adımların metinlerini ve alıştırmaları
 (soru ve yanlış cevap seçenekleri) gönderir. İkisi de ayrıca setin
-kaynak dilini, hedef dilini ve seviyesini gönderir. Bu içeriklere kendiniz
-yazdığınız metinler de gönderilir ve kişisel bilgiler içerebilir.
+kaynak dilini, hedef dilini ve seviyesini gönderir. Bu içeriklerde kendi
+yazdığınız her şey de gönderilir ve kişisel bilgi içerebilir.
 [Gizlilik politikası](../legal/privacy.md) yapay zekâya giden her isteği
 listeler.
 

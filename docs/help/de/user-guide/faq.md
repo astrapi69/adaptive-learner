@@ -20,8 +20,8 @@ Sprachaufnahmen entsteht, wartet in diesem Browser, bis die App es
 überträgt; wie viel höchstens wartet und was mit dem Rest geschieht, steht
 unter [Backup und Wiederherstellung](../features/backup.md). API-Schlüssel
 liegen Fernet-verschlüsselt in `~/.config/adaptive_learner/secrets.yaml`,
-eine Sicherungskopie des zuletzt funktionierenden Schlüssels ebenfalls
-verschlüsselt in der Datenbank.
+je Anbieter eine Sicherungskopie des zuletzt funktionierenden
+API-Schlüssels ebenfalls verschlüsselt in der Datenbank.
 Der Verschlüsselungsschlüssel wird beim ersten Start erzeugt und
 in `~/.config/adaptive_learner/secret.key` abgelegt; du musst
 nichts einrichten. Willst du einen eigenen vorgeben, setze

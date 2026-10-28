@@ -18,16 +18,17 @@ dispositivo. Se partilha o dispositivo, qualquer pessoa com acesso
 a este perfil do navegador pode lê-los.
 
 No **modo Servidor** os seus dados de aprendizagem ficam na base
-de dados SQLite que o backend FastAPI gere. O progresso de lições
-e as gravações de voz que surgem offline aguardam neste navegador
-até a aplicação os transferir; a quantidade máxima que fica a
-aguardar e o que acontece ao resto estão descritos em
+de dados SQLite que o backend FastAPI gere. O que é criado offline
+em progresso de lições e em gravações de voz aguarda neste
+navegador até a aplicação o transferir; a quantidade máxima que
+fica a aguardar e o que acontece ao resto estão descritos em
 [Backup e restauro](../features/backup.md). As chaves de API ficam
 encriptadas com Fernet em
-`~/.config/adaptive_learner/secrets.yaml`, e uma cópia de
-segurança da última chave que funcionou fica, também encriptada,
-na base de dados. A chave de encriptação é gerada no primeiro
-arranque e guardada em `~/.config/adaptive_learner/secret.key`;
+`~/.config/adaptive_learner/secrets.yaml`, e, para cada
+fornecedor, uma cópia de segurança da última chave de API que
+funcionou fica, também encriptada, na base de dados. A chave de
+encriptação é gerada no primeiro arranque e guardada em
+`~/.config/adaptive_learner/secret.key`;
 não precisa de configurar nada. Se quiser indicar uma chave
 própria, defina `ADAPTIVE_LEARNER_SECRET_KEY` (ou `secret_key:` em
 `secrets.yaml`) antes do primeiro arranque.

@@ -13,13 +13,14 @@ L'endroit où vos données sont stockées dépend du mode de stockage :
   quantité maximale en attente et ce qu'il advient du reste sont
   indiqués dans [Sauvegarde et restauration](../features/backup.md). Les
   clés API sont stockées chiffrées (Fernet) dans
-  `~/.config/adaptive_learner/secrets.yaml`, et une copie de sauvegarde
-  de la dernière clé qui a fonctionné se trouve, chiffrée elle aussi,
-  dans la base de données. La clé de chiffrement est générée au premier
-  démarrage et enregistrée dans `~/.config/adaptive_learner/secret.key` ;
-  vous n'avez rien à configurer. Si vous voulez fournir votre propre
-  clé, définissez `ADAPTIVE_LEARNER_SECRET_KEY` (ou `secret_key:` dans
-  `secrets.yaml`) avant le premier démarrage.
+  `~/.config/adaptive_learner/secrets.yaml`, et, pour chaque fournisseur,
+  une copie de sauvegarde de la dernière clé API qui a fonctionné se
+  trouve, chiffrée elle aussi, dans la base de données. La clé de
+  chiffrement est générée au premier démarrage et enregistrée dans
+  `~/.config/adaptive_learner/secret.key` ; vous n'avez rien à
+  configurer. Si vous voulez fournir votre propre clé, définissez
+  `ADAPTIVE_LEARNER_SECRET_KEY` (ou `secret_key:` dans `secrets.yaml`)
+  avant le premier démarrage.
 - **Mode Local** : votre navigateur stocke vos données sur votre propre
   appareil (dans IndexedDB et localStorage), entre autres votre
   progression, les conversations importées et vos paramètres, y compris
