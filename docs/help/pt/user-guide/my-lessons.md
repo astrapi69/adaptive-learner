@@ -106,8 +106,8 @@ inteiro como repositório próprio:
       descarrega primeiro o ficheiro e você cola o conteúdo dele no
       editor. Num conjunto com várias lições, a aplicação descarrega os
       ficheiros e abre a página de carregamento do GitHub, para onde
-      você os arrasta. Em qualquer destes caminhos, o GitHub só cria o
-      fork e o pull request quando você confirmar no GitHub.
+      você os arrasta. Em todos estes casos, o GitHub só cria o fork e
+      o pull request quando você confirmar no GitHub.
     - **Com um token do GitHub** (Configurações > Integrações, ver
       [Configurações](settings.md)) - você partilha uma lição isolada
       sem sair da aplicação: a aplicação faz o fork do repositório, faz
@@ -118,7 +118,9 @@ inteiro como repositório próprio:
 - **Compartilhar como repositório** - envia o conjunto inteiro, no
   formato de repositório de conteúdo, para um repositório GitHub seu
   (criado se ainda não existir) num único commit. Você escolhe o
-  repositório (`owner/name`), privado ou público, e o ramo. Antes corre
+  repositório (`owner/name`) e o ramo e, caso o repositório seja criado
+  nesse momento, se é privado ou público; um repositório existente
+  mantém a sua visibilidade. Antes corre
   uma verificação de qualidade: se encontrar problemas que as
   verificações de um repositório de conteúdo rejeitariam, lista-os e o
   botão passa a **Exportar mesmo assim**. Compartilhar como repositório

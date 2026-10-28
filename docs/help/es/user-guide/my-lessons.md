@@ -110,8 +110,8 @@ compartir un conjunto entero como repositorio propio:
       la app descarga primero el archivo y tú pegas su contenido en el
       editor. En un conjunto con varias lecciones, la app descarga los
       archivos y abre la página de subida de GitHub, donde tú los
-      arrastras. Por cualquiera de estos caminos, GitHub crea el fork y
-      el pull request solo cuando tú confirmas en GitHub.
+      arrastras. En todos estos casos, GitHub crea el fork y el pull
+      request solo cuando tú confirmas en GitHub.
     - **Con un token de GitHub** (Ajustes > Integraciones, consulta
       [Ajustes](settings.md)) - compartes una sola lección sin salir de
       la app: la app hace un fork del repositorio, confirma la lección
@@ -122,9 +122,10 @@ compartir un conjunto entero como repositorio propio:
 - **Compartir como repositorio** - sube el conjunto entero, en el
   formato de repositorio de contenido, a un repositorio de GitHub tuyo
   (que se crea si aún no existe) en un solo commit. Eliges el
-  repositorio (`owner/name`), privado o público, y la rama. Antes se
-  ejecuta una comprobación de calidad: si encuentra problemas que las
-  comprobaciones de un repositorio de contenido rechazarían, los
+  repositorio (`owner/name`) y la rama y, cuando el repositorio se crea,
+  si será privado o público; uno que ya existe conserva su visibilidad.
+  Antes se ejecuta una comprobación de calidad: si encuentra problemas
+  que las comprobaciones de un repositorio de contenido rechazarían, los
   enumera y el botón pasa a **Exportar de todos modos**. Compartir como
   repositorio requiere un token de GitHub y solo está disponible en la
   versión de navegador de la app; si no, el botón sigue visible pero

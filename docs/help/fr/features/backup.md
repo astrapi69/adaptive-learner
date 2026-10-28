@@ -38,10 +38,11 @@ ce navigateur ce qui est créé hors ligne : jusqu'à 50 modifications de
 la progression des leçons et des enregistrements vocaux ; s'il y en a
 davantage, les plus anciennes sont supprimées. Elle les transmet
 d'elle-même quand la connexion revient pendant que l'application est
-ouverte, ou au prochain démarrage avec connexion. Seul ce qui est
-arrivé au serveur entre dans la sauvegarde ; en mode serveur, ne crée
-donc une sauvegarde qu'une fois que l'application a été rouverte avec
-une connexion après l'apprentissage hors ligne, pas avant.
+ouverte, ou au prochain démarrage avec connexion. De ce qui est créé
+hors ligne, seul ce qui est déjà arrivé au serveur entre dans la
+sauvegarde ; en mode serveur, ne crée donc une sauvegarde qu'une fois
+que l'application, après l'apprentissage hors ligne, a de nouveau
+fonctionné avec une connexion.
 
 Avant l'export, l'application affiche un aperçu **« Ta sauvegarde
 contient … »** avec le nombre d'enregistrements par domaine, afin

@@ -1022,8 +1022,8 @@ hızlı yolu, **uygulamada bir ders oluşturmak ve paylaşmaktır**:
    olarak kaydet** (ya da adaptif bir dersi bitir ve **Bu dersi
    kaydet?**). Ders, Set Tarayıcısı'nda **Derslerim** altında görünür.
 2. "Derslerim"de **İçerik Seti olarak dışa aktar**'a tıklayarak bir
-   içerik setini `.zip` olarak indir (manifest + dersler). Dışa
-   aktarmalar ders içeriğini içerir, ancak ilerlemeyi ve hata
+   içerik setini `.zip` olarak indir (manifest + dersler).
+   Dışa aktarmalar ders içeriğini içerir, ancak ilerlemeyi ve hata
    geçmişini içermez; derste yazan her şey, girdiğin bir yazar adı
    gibi kişisel bilgiler de dahil, dışa aktarmaya girer (bkz.
    [Derslerim](../user-guide/my-lessons.md)).

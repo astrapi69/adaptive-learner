@@ -174,9 +174,9 @@ sistemidir*:
    saklar; başkaları bunların bölümlerini yalnızca bir özellik onlara
    ihtiyaç duyduğunda alır. Uygulama, bir özellik gerektirdiğinde
    sunuculara bağlanır; örneğin içerikler için GitHub'a (bunun için
-   bağlı depoları başlangıçta kendiliğinden de eşitler), yapay zeka
-   sağlayıcınıza ve bir şey paylaştığınızda ya da bir hata raporunu
-   orada açtığınızda GitHub'a.
+   bağlı depoları uygulama başlatıldığında da kendiliğinden eşitler),
+   yapay zeka sağlayıcınıza ve bir şey paylaştığınızda ya da bir hata
+   raporunu orada açtığınızda GitHub'a.
    [Gizlilik politikası](../legal/privacy.md), bunların hangi durumlar
    olduğunu ve neyin aktarıldığını açıklar.
 

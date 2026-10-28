@@ -341,11 +341,11 @@ lección.
 
 Todos los progresos de lecciones, las líneas de errores de
 elementos, los estados de la cola de repaso y los datos de
-programación se almacenan: en el modo local, en tu navegador
-(IndexedDB), y en el modo API, en la base de datos del backend
-al que está conectada la app; quien opera ese backend tiene
-acceso a ella. El progreso de lecciones y las grabaciones de voz
-que se generan sin conexión en el modo API esperan en tu
+programación de repasos se almacenan: en el modo local, en tu
+navegador (IndexedDB), y en el modo API, en la base de datos del
+backend al que está conectada la app; quien opera ese backend
+tiene acceso a ella. El progreso de lecciones y las grabaciones
+de voz que se generan sin conexión en el modo API esperan en tu
 navegador hasta su transferencia (consulta
 [Copia de seguridad](../features/backup.md)).
 Otros reciben partes de ellos solo cuando las necesita una

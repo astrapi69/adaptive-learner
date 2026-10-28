@@ -88,9 +88,9 @@ L'assistant de partage vous guide à travers :
      une leçon plus grande, l'application télécharge d'abord le fichier
      et vous collez son contenu dans l'éditeur. Pour un ensemble de
      plusieurs leçons, l'application télécharge les fichiers et ouvre la
-     page d'envoi de GitHub, où vous les faites glisser. Par chacun de
-     ces chemins, GitHub ne crée le fork et le pull request que lorsque
-     vous confirmez sur GitHub.
+     page d'envoi de GitHub, où vous les faites glisser. Dans tous ces
+     cas, GitHub ne crée le fork et le pull request que lorsque vous
+     confirmez sur GitHub.
    - **Avec un token GitHub** (Paramètres > Intégrations, voir
      [Paramètres](settings.md)) - une leçon seule se partage sans quitter
      l'application : l'application forke le dépôt, commite la leçon,
@@ -102,14 +102,16 @@ L'assistant de partage vous guide à travers :
 
 **Partager comme dépôt** envoie l'ensemble entier, au format dépôt de
 contenu, vers un dépôt GitHub à vous (créé s'il n'existe pas encore) en
-un seul commit. Vous choisissez le dépôt (`owner/name`), privé ou public,
-et la branche. Une vérification de qualité passe d'abord : si elle trouve
-des problèmes que les contrôles d'un dépôt de contenu refuseraient, elle
-les liste et le bouton devient **Exporter quand même**. Partager comme
-dépôt demande un token GitHub et ne fonctionne que dans la version
-navigateur de l'application ; sinon le bouton reste visible mais
-désactivé, avec la raison en info-bulle. Vous pouvez ensuite connecter le
-dépôt envoyé comme source de contenu (voir
+un seul commit. Vous choisissez le dépôt (`owner/name`) et la branche
+et, si le dépôt est nouvellement créé, s'il est privé ou public ; un
+dépôt existant conserve sa visibilité. Une vérification de qualité
+passe d'abord : si elle trouve des problèmes que les contrôles d'un
+dépôt de contenu refuseraient, elle les liste et le bouton devient
+**Exporter quand même**. Partager comme dépôt demande un token GitHub
+et ne fonctionne que dans la version navigateur de l'application ;
+sinon le bouton reste visible mais désactivé, avec la raison en
+info-bulle. Vous pouvez ensuite connecter le dépôt envoyé comme source
+de contenu (voir
 [Plusieurs dépôts de contenu](../features/content-repos.md)).
 
 Ce que vous partagez ou exportez contient le contenu de la leçon, mais

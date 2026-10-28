@@ -38,10 +38,11 @@ se incluye. En modo servidor, la app guarda en este navegador lo que se
 genera sin conexión: hasta 50 cambios en el progreso de lecciones y en
 las grabaciones de voz; si se acumulan más, se descartan los más
 antiguos. Los transfiere por sí sola cuando vuelve la conexión mientras
-la app está abierta, o en el siguiente inicio con conexión. En la copia
-de seguridad solo entra lo que ha llegado al servidor; por eso, en modo
-servidor crea la copia de seguridad solo cuando la app se haya vuelto a
-abrir con conexión después de aprender sin conexión, no antes.
+la app está abierta, o en el siguiente inicio con conexión. De lo que se
+genera sin conexión, solo entra en la copia de seguridad lo que ya ha
+llegado al servidor; por eso, en modo servidor crea la copia de
+seguridad solo cuando la app haya estado de nuevo en marcha con conexión
+después de aprender sin conexión.
 
 Antes de exportar, la app muestra una vista previa **"Tu copia de
 seguridad contiene…"** con recuentos de registros por área, para

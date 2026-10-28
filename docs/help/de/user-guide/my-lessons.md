@@ -119,9 +119,8 @@ Set als eigenes Repository zu teilen:
       App die Datei zuerst herunter, und du fügst ihren Inhalt im
       Editor ein. Bei einem Set mit mehreren Lektionen lädt die App
       die Dateien herunter und öffnet die Upload-Seite von GitHub,
-      auf die du sie ziehst. Auf allen diesen Wegen erstellt GitHub
-      den Fork und den Pull Request erst, wenn du auf GitHub
-      bestätigst.
+      auf die du sie ziehst. In all diesen Fällen erstellt GitHub den
+      Fork und den Pull Request erst, wenn du auf GitHub bestätigst.
     - **Mit GitHub-Token** (Einstellungen > Integrationen, siehe
       [Einstellungen](settings.md#integrationen)) - eine einzelne
       Lektion teilst du, ohne die App zu verlassen: die App forkt das
@@ -132,7 +131,9 @@ Set als eigenes Repository zu teilen:
 - **Als Repository teilen** - überträgt das ganze Set im
   Content-Repo-Format in einem Commit in ein GitHub-Repository von dir
   (das angelegt wird, falls es noch nicht existiert). Du wählst das
-  Repository (`owner/name`), privat oder öffentlich, und den Branch.
+  Repository (`owner/name`) und den Branch und, wenn das Repository neu
+  angelegt wird, ob es privat oder öffentlich ist; ein bestehendes behält
+  seine Sichtbarkeit.
   Vorher läuft eine Qualitätsprüfung: findet sie Probleme, die die
   Prüfungen eines Content-Repositorys ablehnen würden, listet sie sie
   auf, und der Knopf wird zu **Trotzdem exportieren**. Als Repository

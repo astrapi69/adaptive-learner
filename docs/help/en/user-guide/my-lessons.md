@@ -107,9 +107,9 @@ request and is needed for sharing a whole set as your own repository:
       anything. For a larger lesson the app downloads the file first,
       and you paste its content into the editor. For a set with several
       lessons the app downloads the files and opens GitHub's upload
-      page, where you drag them in. Whichever of these ways you take,
-      GitHub creates the fork and the pull request only once you confirm
-      on GitHub.
+      page, where you drag them in. In all of these cases, GitHub
+      creates the fork and the pull request only once you confirm on
+      GitHub.
     - **With a GitHub token** (Settings > Integrations, see
       [Settings](settings.md#integrations)) - a single lesson is shared
       without leaving the app: the app forks the repository, commits the
@@ -119,14 +119,15 @@ request and is needed for sharing a whole set as your own repository:
       Integrations.
 - **Share as repository** - pushes the whole set, in the content-repo
   format, to a GitHub repository of yours (created if it does not exist
-  yet) in one commit. You choose the repository (`owner/name`), private
-  or public, and the branch. A quality check runs first: if it finds
-  problems that a content repository's checks would reject, it lists
-  them and the button turns into **Export anyway**. Sharing as a
-  repository needs a GitHub token and is only available in the browser
-  version of the app; otherwise the button stays visible but disabled,
-  with the reason as its tooltip. The pushed repository can then be
-  connected as a content source (see
+  yet) in one commit. You choose the repository (`owner/name`) and the
+  branch and, if the repository is newly created, whether it is private
+  or public; an existing one keeps its visibility. A quality check runs
+  first: if it finds problems that a content repository's checks would
+  reject, it lists them and the button turns into **Export anyway**.
+  Sharing as a repository needs a GitHub token and is only available in
+  the browser version of the app; otherwise the button stays visible but
+  disabled, with the reason as its tooltip. The pushed repository can
+  then be connected as a content source (see
   [Content repositories](../features/content-repos.md)).
 
 What you share or export contains the lesson content, but no learning

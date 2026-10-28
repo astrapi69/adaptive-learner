@@ -194,9 +194,9 @@ que usa uma IA internamente mas adiciona:
    quando uma funcionalidade precisa disso, por exemplo o GitHub
    para os conteúdos (para isso, também sincroniza por si própria os
    repositórios ligados no arranque), o seu fornecedor de IA, e o
-   GitHub quando partilha algo ou abre lá um relatório de erro. A
-   [política de privacidade](../legal/privacy.md) descreve que casos
-   são esses e o que é transferido.
+   GitHub quando você partilha algo ou abre lá um relatório de erro.
+   A [política de privacidade](../legal/privacy.md) descreve que
+   casos são esses e o que é transferido.
 
 ## E se a IA correr mal?
 
