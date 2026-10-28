@@ -35,6 +35,11 @@
 ### サーバーデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、アカウントと設定: サーバーデータベース
     accDescr: 領域「アカウントと設定」のテーブル: users, user_settings, api_key_backups。 関係: anki_card_suggestions.user_id → users, api_key_backups.user_id → users, curriculums.user_id → users, element_errors.user_id → users, imported_conversations.user_id → users, learning_profiles.user_id → users, learning_projects.user_id → users, lesson_progress.user_id → users, set_runs.user_id → users, speech_recordings.user_id → users, study_questions.user_id → users, tags.user_id → users, user_badges.user_id → users, user_missions.user_id → users, user_settings.user_id → users, user_streaks.user_id → users, user_xp.user_id → users, xp_purchases.user_id → users。
@@ -95,6 +100,11 @@ erDiagram
 ### ブラウザデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、アカウントと設定: ブラウザデータベース
     accDescr: 領域「アカウントと設定」のストア: users, userSettings, apiKeyBackups, pluginSettings, userData。 関係: userSettings.user_id → users, apiKeyBackups.user_id → users, learningProjects.user_id → users, learningProfiles.user_id → users, tags.user_id → users, lessonProgress.user_id → users, elementErrors.user_id → users, setRuns.user_id → users, speechRecordings.user_id → users, curricula.user_id → users, userXp.user_id → users, xpPurchases.user_id → users, userBadges.user_id → users, userStreaks.user_id → users, userMissions.user_id → users, importedConversations.user_id → users, ankiCards.user_id → users, studyQuestions.user_id → users。
@@ -175,6 +185,11 @@ erDiagram
 ### サーバーデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、学習プロジェクト: サーバーデータベース
     accDescr: 領域「学習プロジェクト」のテーブル: learning_projects, learning_profiles, subjects, tags, project_subjects, project_tags。 関係: anki_card_suggestions.project_id → learning_projects, imported_conversations.project_id → learning_projects, learning_profiles.user_id → users, learning_profiles.project_id → learning_projects, learning_projects.user_id → users, learning_sessions.project_id → learning_projects, method_switches.project_id → learning_projects, progress_commits.project_id → learning_projects, project_subjects.project_id → learning_projects, project_subjects.subject_id → subjects, project_tags.project_id → learning_projects, project_tags.tag_id → tags, study_questions.project_id → learning_projects, subjects.parent_id → subjects, tags.user_id → users。
@@ -252,6 +267,11 @@ erDiagram
 ### ブラウザデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、学習プロジェクト: ブラウザデータベース
     accDescr: 領域「学習プロジェクト」のストア: learningProjects, learningProfiles, subjects, tags, projectSubjects, projectTags。 関係: learningProjects.user_id → users, learningProfiles.user_id → users, learningProfiles.project_id → learningProjects, subjects.parent_id → subjects, tags.user_id → users, projectSubjects.project_id → learningProjects, projectSubjects.subject_id → subjects, projectTags.project_id → learningProjects, projectTags.tag_id → tags, learningSessions.project_id → learningProjects, progressCommits.project_id → learningProjects, methodSwitches.project_id → learningProjects, importedConversations.project_id → learningProjects, ankiCards.project_id → learningProjects, studyQuestions.project_id → learningProjects。
@@ -342,6 +362,11 @@ erDiagram
 ### サーバーデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、セッション: サーバーデータベース
     accDescr: 領域「セッション」のテーブル: learning_sessions, session_messages, session_ratings, session_notes, step_evaluations。 関係: anki_card_suggestions.session_id → learning_sessions, learning_sessions.project_id → learning_projects, learning_sessions.imported_conversation_id → imported_conversations, progress_commits.session_id → learning_sessions, session_messages.session_id → learning_sessions, session_notes.session_id → learning_sessions, session_ratings.session_id → learning_sessions, step_evaluations.session_id → learning_sessions, study_questions.session_id → learning_sessions。
@@ -407,6 +432,11 @@ erDiagram
 ### ブラウザデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、セッション: ブラウザデータベース
     accDescr: 領域「セッション」のストア: learningSessions, sessionMessages, sessionRatings, sessionNotes, stepEvaluations。 関係: learningSessions.project_id → learningProjects, learningSessions.imported_conversation_id → importedConversations, sessionMessages.session_id → learningSessions, sessionRatings.session_id → learningSessions, sessionNotes.session_id → learningSessions, stepEvaluations.session_id → learningSessions, progressCommits.session_id → learningSessions, methodSwitches.session_id → learningSessions, ankiCards.session_id → learningSessions, studyQuestions.session_id → learningSessions。
@@ -484,6 +514,11 @@ erDiagram
 ### サーバーデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、進捗: サーバーデータベース
     accDescr: 領域「進捗」のテーブル: progress_commits, method_switches, lesson_progress, element_errors, set_runs, speech_recordings。 関係: element_errors.user_id → users, lesson_progress.user_id → users, method_switches.project_id → learning_projects, progress_commits.project_id → learning_projects, progress_commits.session_id → learning_sessions, set_runs.user_id → users, speech_recordings.user_id → users, element_errors.run_id → set_runs。
@@ -594,6 +629,11 @@ erDiagram
 ### ブラウザデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、進捗: ブラウザデータベース
     accDescr: 領域「進捗」のストア: progressCommits, methodSwitches, lessonProgress, elementErrors, setRuns, speechRecordings。 関係: progressCommits.project_id → learningProjects, progressCommits.session_id → learningSessions, methodSwitches.project_id → learningProjects, methodSwitches.session_id → learningSessions, lessonProgress.user_id → users, elementErrors.user_id → users, elementErrors.run_id → setRuns, setRuns.user_id → users, speechRecordings.user_id → users。
@@ -719,6 +759,11 @@ erDiagram
 ### サーバーデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、コンテンツ: サーバーデータベース
     accDescr: 領域「コンテンツ」のテーブル: curriculums, learning_topics, lessons。 関係: curriculums.user_id → users, curriculums.imported_conversation_id → imported_conversations, learning_topics.curriculum_id → curriculums, learning_topics.parent_id → learning_topics, lessons.curriculum_id → curriculums。
@@ -761,6 +806,11 @@ erDiagram
 ### ブラウザデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、コンテンツ: ブラウザデータベース
     accDescr: 領域「コンテンツ」のストア: curricula, learningTopics, lessons, contentSets, contentSetFiles。 関係: curricula.user_id → users, curricula.imported_conversation_id → importedConversations, learningTopics.curriculum_id → curricula, learningTopics.parent_id → learningTopics, lessons.curriculum_id → curricula, contentSetFiles.set_pk → contentSets。
@@ -849,6 +899,11 @@ XPとXPでの購入、獲得したバッジを含むバッジカタログ、連�
 ### サーバーデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、ゲーミフィケーション: サーバーデータベース
     accDescr: 領域「ゲーミフィケーション」のテーブル: user_xp, xp_purchases, badges, user_badges, user_streaks, user_missions。 関係: user_badges.user_id → users, user_badges.badge_id → badges, user_missions.user_id → users, user_streaks.user_id → users, user_xp.user_id → users, xp_purchases.user_id → users。
@@ -921,6 +976,11 @@ erDiagram
 ### ブラウザデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、ゲーミフィケーション: ブラウザデータベース
     accDescr: 領域「ゲーミフィケーション」のストア: userXp, xpPurchases, badges, userBadges, userStreaks, userMissions。 関係: userXp.user_id → users, xpPurchases.user_id → users, userBadges.user_id → users, userBadges.badge_id → badges, userStreaks.user_id → users, userMissions.user_id → users。
@@ -1006,6 +1066,11 @@ erDiagram
 ### サーバーデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、インポート: サーバーデータベース
     accDescr: 領域「インポート」のテーブル: imported_conversations, imported_messages。 関係: anki_card_suggestions.conversation_id → imported_conversations, curriculums.imported_conversation_id → imported_conversations, imported_conversations.user_id → users, imported_conversations.project_id → learning_projects, imported_messages.conversation_id → imported_conversations, learning_sessions.imported_conversation_id → imported_conversations。
@@ -1046,6 +1111,11 @@ erDiagram
 ### ブラウザデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、インポート: ブラウザデータベース
     accDescr: 領域「インポート」のストア: importedConversations, importedMessages。 関係: learningSessions.imported_conversation_id → importedConversations, curricula.imported_conversation_id → importedConversations, importedConversations.user_id → users, importedConversations.project_id → learningProjects, importedMessages.conversation_id → importedConversations, ankiCards.conversation_id → importedConversations。
@@ -1095,6 +1165,11 @@ AIが生成したAnkiカードの提案と学習問題。ブラウザではさ�
 ### サーバーデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、AI: サーバーデータベース
     accDescr: 領域「AI」のテーブル: anki_card_suggestions, study_questions。 関係: anki_card_suggestions.user_id → users, anki_card_suggestions.session_id → learning_sessions, anki_card_suggestions.conversation_id → imported_conversations, anki_card_suggestions.project_id → learning_projects, study_questions.user_id → users, study_questions.project_id → learning_projects, study_questions.session_id → learning_sessions。
@@ -1140,6 +1215,11 @@ erDiagram
 ### ブラウザデータベース
 
 ```mermaid
+---
+config:
+  er:
+    useMaxWidth: false
+---
 erDiagram
     accTitle: データモデル、AI: ブラウザデータベース
     accDescr: 領域「AI」のストア: ankiCards, studyQuestions, aiValidationResults。 関係: ankiCards.user_id → users, ankiCards.session_id → learningSessions, ankiCards.conversation_id → importedConversations, ankiCards.project_id → learningProjects, studyQuestions.user_id → users, studyQuestions.project_id → learningProjects, studyQuestions.session_id → learningSessions。
