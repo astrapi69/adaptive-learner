@@ -406,23 +406,26 @@ LEGITIMATE = [
         "3829-policy",
         "お客様の学習の進捗、統計、設定は、\nお客様のブラウザ内に、お客様のためにとどまります。",
     ),
-    # #3829: the new master texts.
+    # #3829: the new master texts, as #3841 reworded the lessons, local-mode
+    # and FAQ passages.
     (
         "en",
         "3829-lessons",
         "All lesson progress, element-error rows, review-queue states and\nscheduling data are "
-        "stored **with you**: in the browser (IndexedDB) or, in API mode, in your\nown backend's "
-        "database; others get parts of them only when a feature you use needs them. The "
-        "privacy policy describes when which data goes to others.",
+        "stored: in local mode in your browser\n(IndexedDB), in API mode in the database of the "
+        "backend the app is\nconnected to; whoever runs that backend has access to it. Lesson\n"
+        "progress and voice recordings made offline in API mode wait in your\nbrowser until "
+        "they are transferred. Others get parts of them only when a feature needs them.",
     ),
     (
         "de",
         "3829-lessons",
         "Alle Lektionsfortschritte, Element-Fehler-Zeilen,\nWiederholungs-Warteschlangen-Zustände "
-        "und Planungsdaten werden **bei dir** gespeichert: im Browser (IndexedDB) oder, im "
-        "API-Modus, in der "
-        "Datenbank deines eigenen Backends; andere erhalten Teile davon nur, wenn eine Funktion "
-        "sie braucht, die du nutzt.",
+        "und Planungsdaten\nwerden gespeichert: im Lokal-Modus in deinem Browser (IndexedDB),\n"
+        "im API-Modus in der Datenbank des Backends, mit dem die App\nverbunden ist; wer dieses "
+        "Backend betreibt, hat Zugriff darauf.\nLektionsfortschritt und Sprachaufnahmen, die im "
+        "API-Modus offline\nentstehen, warten bis zur Übertragung in deinem Browser. Teile davon "
+        "erhalten andere nur, wenn eine Funktion sie braucht.",
     ),
     (
         "en",
@@ -439,29 +442,32 @@ LEGITIMATE = [
     (
         "en",
         "3829-local-mode",
-        "It runs in **local mode**: your progress, statistics, settings and\nyour API key are "
-        "stored in your browser (IndexedDB); others get parts of them only when a feature you\n"
-        "use needs them. AI calls, for example, go straight from the page to your AI provider.",
+        "It runs in **local mode**: among other things, your progress, your\nstatistics, your "
+        "settings and your API keys are stored in your\nbrowser. Others get parts of them only "
+        "when a feature needs them, for\nexample GitHub, when the app asks for new content on "
+        "its own at\nstart-up. AI calls are an example too: they go straight from your\nbrowser "
+        "to your AI provider.",
     ),
     (
         "de",
         "3829-local-mode",
-        "Die öffentliche PWA läuft im **Local-Modus**: Lernfortschritt,\nStatistiken, "
-        "Einstellungen und dein API-Schlüssel werden in deinem Browser gespeichert (IndexedDB); "
-        "andere erhalten Teile davon nur, wenn eine Funktion sie braucht, die du nutzt.",
+        "Die öffentliche PWA läuft im **Local-Modus**: In deinem Browser\ngespeichert werden "
+        "unter anderem dein Lernfortschritt, deine\nStatistiken, deine Einstellungen und deine "
+        "API-Schlüssel. Teile\ndavon erhalten andere nur, wenn eine Funktion sie braucht, zum\n"
+        "Beispiel GitHub, wenn die App beim Start von selbst nach neuen\nInhalten fragt.",
     ),
     (
         "en",
         "3829-faq",
-        "progress, statistics and settings are stored in your browser; others get\n   parts of "
-        "them only when a feature you use needs them. The app contacts servers when a feature "
-        "needs it.",
+        "in local mode your browser stores,\n   among other things, progress, statistics and "
+        "settings; others\n   get parts of them only when a feature needs them. The app\n"
+        "   contacts servers when a feature needs it.",
     ),
     (
         "de",
         "3829-faq",
-        "Lernfortschritt, Statistiken und Einstellungen werden in deinem\n   Browser gespeichert; "
-        "andere erhalten Teile davon nur, wenn eine Funktion sie braucht, die du nutzt.",
+        "Im Lokal-Modus speichert dein Browser\n   unter anderem Lernfortschritt, Statistiken "
+        "und Einstellungen;\n   Teile davon erhalten andere nur, wenn eine Funktion sie braucht.",
     ),
 ]
 
