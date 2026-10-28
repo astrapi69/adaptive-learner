@@ -222,8 +222,6 @@ Siehe [Backup und Wiederherstellung](backup.md).
 - **Zwei Speichermodi**: Local-First (alles im Browser-IndexedDB,
   KI-Calls gehen direkt zum Anbieter, kein Server nötig) oder
   Server-Modus (FastAPI-Backend mit SQLite, mehrere Geräte).
-- **Lokales-Netzwerk-Sync** zwischen Geräten mit QR-Code-Pairing und
-  Konfliktauflösung.
 - **Desktop-Launcher** für Linux, macOS und Windows: Docker-basiertes
   Ein-Klick-Self-Hosting mit kontextbewusster Docker-Erkennung und
   Selbstdiagnose.

@@ -76,8 +76,8 @@ summarizes). In short:
   Markdown/PDF reports, `.alb` backups and encrypted `.alk` key
   export.
 - **Platform** - installable offline PWA, dual storage (browser
-  IndexedDB or self-hosted server), local-network sync, desktop
-  launcher for Linux/macOS/Windows, eleven UI languages.
+  IndexedDB or self-hosted server), desktop launcher for
+  Linux/macOS/Windows, eleven UI languages.
 - **Accessibility** - WCAG-AA themes, keyboard-first navigation,
   screen-reader support, reduced motion, TTS.
 
