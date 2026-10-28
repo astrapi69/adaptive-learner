@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.16.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.17.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Night shift](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -352,7 +352,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.16.0**: errors that used to
+Active development. The current release is **v2.17.0**: errors that used to
 vanish now **say what went wrong**. A failed tutor reply shows a message with
 a retry, a history that could not load says so, a crashed page offers a way
 back and a report button, and Settings actions, exports and lesson progress
