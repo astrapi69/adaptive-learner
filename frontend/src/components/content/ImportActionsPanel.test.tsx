@@ -430,7 +430,7 @@ describe("ImportActionsPanel — community share", () => {
     // #3840 - IP address and key are named as examples, not as the complete list.
     const note = screen.getByTestId("content-ai-privacy");
     expect(note).toHaveTextContent(
-      "also receives, among other things, your IP address and your API key",
+      "as with every AI request, anthropic receives, among other things, your IP address and your API key",
     );
     expect(note).not.toHaveTextContent(/no personal data/i);
     expect(screen.getByTestId("content-ai-privacy-link").getAttribute("href")).toMatch(
