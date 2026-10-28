@@ -45,12 +45,13 @@ navegador. Necesitas:
 Sin clave, el botón está visible pero desactivado; un aviso enlaza a
 Ajustes.
 
-**Qué se envía:** La revisión envía a tu proveedor las tarjetas del
-conjunto (anverso, reverso, notas) junto con los idiomas y el nivel del
-conjunto; tu perfil y tu progreso de aprendizaje no forman parte de
-ello. Como en cualquier solicitud, tu proveedor recibe además, entre
-otras cosas, tu dirección IP y tu clave de API. El diálogo lo indica
-antes de empezar y enlaza la
+**Qué se envía:** La revisión envía a tu proveedor de IA las tarjetas
+del conjunto (de cada tarjeta, su identificador, anverso, reverso y
+notas) junto con el idioma de origen, el idioma de destino y el nivel
+del conjunto; tu perfil y tu progreso de aprendizaje no forman parte de
+ello. Además, como en cualquier solicitud de IA, tu proveedor de IA
+recibe, entre otras cosas, tu dirección IP y tu clave de API. El
+diálogo lo indica antes de empezar y enlaza la
 [Política de privacidad](../legal/privacy.md).
 
 > **Coste:** la revisión gasta tokens de tu propia cuenta del
