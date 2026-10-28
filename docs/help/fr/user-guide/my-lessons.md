@@ -106,10 +106,10 @@ un seul commit. Vous choisissez le dépôt (`owner/name`), privé ou public,
 et la branche. Une vérification de qualité passe d'abord : si elle trouve
 des problèmes que les contrôles d'un dépôt de contenu refuseraient, elle
 les liste et le bouton devient **Exporter quand même**. Partager comme
-dépôt demande un token GitHub et n'existe que dans la version navigateur
-de l'application ; sinon le bouton reste visible mais désactivé, avec la
-raison en info-bulle. Vous pouvez ensuite connecter le dépôt envoyé comme
-source de contenu (voir
+dépôt demande un token GitHub et ne fonctionne que dans la version
+navigateur de l'application ; sinon le bouton reste visible mais
+désactivé, avec la raison en info-bulle. Vous pouvez ensuite connecter le
+dépôt envoyé comme source de contenu (voir
 [Plusieurs dépôts de contenu](../features/content-repos.md)).
 
 Ce que vous partagez ou exportez contient le contenu de la leçon, mais

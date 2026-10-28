@@ -38,7 +38,7 @@ make dev-down   # 停止
 
 ワークフローは`main`へのすべてのプッシュおよび手動ディスパッチで実行されます。ビルド後に`dist/index.html`を`dist/404.html`にコピーしてSPAルーターのフォールバックとし、`actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`を使用して公開します。
 
-GitHub Pagesではサイトが独自のHTTPヘッダーを設定できないため、Pagesビルドは独自のポリシーを持ちます。`frontend/index.html`は`<meta>`でContent-Security-Policyを設定し、画像とメディアを少数の取得元（たとえば自身のオリジンと`https://raw.githubusercontent.com`。正確な値はファイルにあります）に制限し、さらにリファラーポリシー`no-referrer`を設定します。APIモードは同じ`img-src`/`media-src`をヘッダーとして送ります（`backend/app/frontend_static.py`）。ポリシーに記載されていないホストから機能が画像やメディアを読み込もうとすると、PagesビルドでもAPIモードでもブラウザーがそれをブロックします。アップロード前に、`scripts/check_external_hosts.py`がビルドされたドキュメントサイトにサードパーティのリソースがないか確認します。
+GitHub Pagesではサイトが独自のHTTPヘッダーを設定できないため、Pagesビルドは独自のポリシーを持ちます。`frontend/index.html`は`<meta>`でContent-Security-Policyを設定し、画像とメディアを少数の取得元（たとえば自身のオリジンと`https://raw.githubusercontent.com`。正確な値はファイルにあります）に制限し、さらにリファラーポリシー`no-referrer`を設定します。APIモードは同じ`img-src`/`media-src`をヘッダーとして送ります（`backend/app/frontend_static.py`）。ポリシーに記載されていないホストから機能が画像とメディアを読み込もうとすると、PagesビルドでもAPIモードでもブラウザーがそれをブロックします。アップロード前に、`scripts/check_external_hosts.py`がビルドされたドキュメントサイトにサードパーティのリソースがないか確認します。
 
 サイトのURLは`https://astrapi69.github.io/adaptive-learner/`です。カスタムドメインのユーザーは`CNAME`ファイルをドメイン名と共に`frontend/public/`に追加します; GitHubのドメイン対応Pagesルーティングが残りを処理します。
 
