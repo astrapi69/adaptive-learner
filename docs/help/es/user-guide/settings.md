@@ -120,10 +120,17 @@ en la pestaña **Diagnóstico y soporte** (ver más abajo).
 *General > Modo de almacenamiento* alterna entre almacenamiento
 **Servidor** y **Local (Navegador)**:
 
-- **Servidor** - cada lectura y escritura llega al backend
-  FastAPI. Requiere un backend en ejecución. Mejor para el uso
-  en múltiples dispositivos con sincronización del lado del
-  servidor.
+- **Servidor** - la app lee y guarda tus datos de aprendizaje a través
+  del backend de la aplicación de escritorio (FastAPI); requiere un
+  backend en ejecución. Algunos ajustes, por ejemplo el modo de
+  almacenamiento elegido, la app los guarda en este navegador. El
+  progreso de las lecciones y las grabaciones de voz que guardas sin
+  conexión esperan en este navegador hasta que la app los transfiere al
+  backend; cuántos esperan como máximo y qué ocurre con los demás se
+  indica en la página
+  [Copia de seguridad y restauración](../features/backup.md). Por ahora
+  la app no puede sincronizar entre dispositivos en ninguno de los dos
+  modos de almacenamiento (ver *Datos > Sincronización*).
 - **Local (Navegador)** - cada lectura y escritura llega a
   IndexedDB en este navegador. Las llamadas a la IA se disparan
   directamente al proveedor. No se requiere backend. Mejor para
@@ -426,19 +433,34 @@ al área en pantalla y la dirección lo refleja
 
 ### Sincronización
 
-Empareja este dispositivo con otro en tu red local usando el
-escáner de código QR (cámara trasera) o pega la URL de
-emparejamiento. Una vez emparejados, los botones de enviar +
-recibir intercambian datos bidireccionalmente. Los conflictos
-pasan por un resolvedor de fusión de IA en el backend.
+La app aún no puede sincronizar tus datos entre dispositivos: por ahora
+no puedes emparejar un dispositivo, y sin emparejamiento la
+sincronización no intercambia datos. Lo que muestra el área depende del
+modo de almacenamiento:
 
-Alternativa para navegadores restringidos: sube una captura de
-pantalla del código QR desde tu otro dispositivo
-(`Html5Qrcode.scanFile`).
+- En el modo de almacenamiento **Local (Navegador)** el área sigue
+  visible, pero no muestra controles, sino el aviso
+  «Solo disponible con la aplicación de escritorio.» La versión web
+  pública usa siempre este modo de almacenamiento, también como
+  aplicación web instalada; en la aplicación de escritorio aparece el
+  mismo aviso mientras esté configurada en **Local (Navegador)**. Sin
+  embargo, la aplicación de escritorio tampoco sincroniza por ahora
+  (ver el punto siguiente).
+- En el modo de almacenamiento **Servidor** de la aplicación de
+  escritorio, el área muestra campos para el host y el puerto y el
+  botón «Generar código de emparejamiento». Un clic en él muestra un
+  enlace de emparejamiento, un código QR y un botón para copiar el
+  enlace. Pero ningún dispositivo puede canjear todavía este enlace,
+  tampoco a través del código QR; por tanto, por ahora no se puede
+  emparejar un segundo dispositivo con él.
 
-La sincronización necesita la aplicación de escritorio. En el modo
-navegador el área sigue visible, pero sus controles se sustituyen por el
-aviso «Solo disponible con la aplicación de escritorio.»
+Mientras la sincronización no esté disponible, llevas tus datos a otro
+dispositivo con una copia de seguridad, aunque no todos. Entre otras
+cosas, una copia de seguridad no contiene tus claves API; cómo
+transferir las claves API se explica en *Exportación cifrada de claves
+(.alk)* más abajo. La página
+[Copia de seguridad y restauración](../features/backup.md) da más
+ejemplos de lo que una copia de seguridad no contiene.
 
 ### Contenido sin conexión
 

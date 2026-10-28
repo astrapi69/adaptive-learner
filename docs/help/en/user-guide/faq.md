@@ -119,11 +119,15 @@ one.
 
 ## Can I export my data?
 
-Yes. Three export paths shipped:
+Yes, in these ways, among others:
 
 - **Backup**: Settings > Data > Backup and export > Create
-  Backup. Downloads an `.alb` backup file with every row from your
-  account. API keys are stripped. Works in both storage modes.
+  Backup. Downloads an `.alb` backup file; you can create a backup
+  in both storage modes. Your API keys are not included in it; how
+  to transfer them is described on the [Settings](settings.md) page
+  in the section "Encrypted key export (.alk)". Further examples of
+  what a backup does not contain are on the
+  [Backup and restore](../features/backup.md) page.
 - **Progress / Session / Curriculum reports**: Settings > Data >
   Backup and export > Export. Markdown + PDF (browser print-to-PDF).
 - **Anki .apkg**: review AI-extracted flashcards on the
@@ -169,13 +173,32 @@ extraction + role boundary preservation for that format.
 
 ## Sync between devices?
 
-Local-network bidirectional sync. Open Settings > Data > Sync
-and pair this device: scan the QR code on the other
-device's screen (rear camera), or paste the pairing URL.
-Once paired, push + pull buttons exchange data; you resolve
-conflicts yourself in a dialog. The sync covers all your
-data, including lesson progress, element errors, and
-missions.
+Not yet. The app cannot sync your data between devices yet: so
+far you cannot pair a device, and without pairing, sync exchanges
+no data. What you see under Settings > Data > Sync depends on the
+storage mode:
+
+- In Local mode this area shows no controls, but instead the
+  notice "Only available with the desktop app." The browser
+  version always uses Local mode, also as an installed web app;
+  in the desktop app the same notice appears as long as it is set
+  to Local mode (Settings > General > Storage mode: "Local
+  (Browser)"). However, the desktop app does not sync yet either
+  (see the next point).
+- In the desktop app's Server mode (Settings > General >
+  Storage mode: "Server") this area shows fields for host and port
+  and the button "Generate pairing code". Clicking it shows a
+  pairing link, a QR code and a button for copying the link. But
+  no device can redeem this link yet, not even through the QR
+  code; so a second device cannot be paired with it so far.
+
+As long as sync is not available, you move your data to another
+device with a backup, though not all of it. Among other things, a
+backup does not contain your API keys; how to transfer the API
+keys is described on the [Settings](settings.md) page in the
+section "Encrypted key export (.alk)". Further examples of what a
+backup does not contain are on the
+[Backup and restore](../features/backup.md) page.
 
 ## How is this different from ChatGPT?
 

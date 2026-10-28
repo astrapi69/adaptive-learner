@@ -123,9 +123,17 @@ Interaction*. Le mode développeur se trouve dans l'onglet
 *Général > Mode de stockage* bascule entre le stockage **Serveur** et
 **Local (Navigateur)** :
 
-- **Serveur** - chaque lecture et écriture passe par le backend
-  FastAPI. Nécessite un backend en cours d'exécution. Idéal pour un
-  usage sur plusieurs appareils avec synchronisation côté backend.
+- **Serveur** - l'application lit et enregistre vos données
+  d'apprentissage via le backend de l'application de bureau (FastAPI) ;
+  nécessite un backend en cours d'exécution. L'application enregistre
+  certains réglages, par exemple le mode de stockage choisi, dans ce
+  navigateur. La progression des leçons et les enregistrements vocaux
+  que vous enregistrez sans connexion attendent dans ce navigateur
+  jusqu'à ce que l'application les transfère au backend ; la page
+  [Sauvegarde et restauration](../features/backup.md) indique combien
+  peuvent attendre au maximum et ce qu'il advient des autres. Pour
+  l'instant, l'application ne peut synchroniser entre appareils dans
+  aucun des deux modes de stockage (voir *Données > Synchronisation*).
 - **Local (Navigateur)** - chaque lecture et écriture passe par
   IndexedDB dans ce navigateur. Les appels IA partent directement vers
   le fournisseur. Aucun backend nécessaire. Idéal pour une
@@ -429,19 +437,34 @@ identifiants : `sources`, `sync`, `offline`, `backup`, `cleanup`,
 
 ### Synchronisation
 
-Associez cet appareil à un autre sur votre réseau local avec le
-lecteur de QR code (caméra arrière) ou en collant l'URL d'association.
-Une fois associés, les boutons d'envoi et de réception échangent les
-données dans les deux sens. Les conflits passent par un outil de
-fusion IA sur le backend.
+L'application ne peut pas encore synchroniser vos données entre
+appareils : vous ne pouvez pour l'instant associer aucun appareil, et
+sans association, la synchronisation n'échange aucune donnée. Ce
+qu'affiche la zone dépend du mode de stockage :
 
-Solution de repli pour les navigateurs restreints : importez une
-capture d'écran du QR code de votre autre appareil
-(`Html5Qrcode.scanFile`).
+- En mode de stockage **Local (Navigateur)**, la zone reste visible,
+  mais affiche, au lieu de commandes, l'avis
+  « Disponible uniquement avec l'application de bureau. » La version
+  web publique utilise toujours ce mode de stockage, y compris comme
+  application web installée ; dans l'application de bureau, le même
+  avis apparaît tant qu'elle est réglée sur **Local (Navigateur)**.
+  L'application de bureau ne synchronise toutefois pas encore non plus
+  (voir le point suivant).
+- En mode de stockage **Serveur** de l'application de bureau, la zone
+  affiche des champs pour l'hôte et le port et le bouton
+  « Générer un code d’association ». Un clic sur ce bouton affiche un
+  lien d'association, un QR code et un bouton pour copier le lien.
+  Mais aucun appareil ne peut encore utiliser ce lien, pas même via le
+  QR code ; il n'est donc pas encore possible d'associer ainsi un
+  deuxième appareil.
 
-La synchronisation nécessite l'application de bureau. En mode
-navigateur, la zone reste visible, mais ses commandes sont remplacées
-par l'avis « Disponible uniquement avec l'application de bureau. »
+Tant que la synchronisation n'est pas disponible, vous transférez vos
+données vers un autre appareil avec une sauvegarde, mais pas toutes.
+Entre autres, une sauvegarde ne contient pas vos clés API ; la façon de
+transférer les clés API est décrite sous
+*Export chiffré des clés (.alk)* ci-dessous. La page
+[Sauvegarde et restauration](../features/backup.md) cite d'autres
+exemples de ce qu'une sauvegarde ne contient pas.
 
 ### Contenu hors ligne
 

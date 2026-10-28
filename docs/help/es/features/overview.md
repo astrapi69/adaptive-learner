@@ -230,8 +230,6 @@ Consulta [Copia de seguridad y restauración](backup.md).
   IndexedDB del navegador, las llamadas de IA van directas al
   proveedor, sin necesidad de servidor) o modo servidor (backend
   FastAPI con SQLite, varios dispositivos).
-- **Sincronización en red local** entre dispositivos con
-  emparejamiento por código QR y resolución de conflictos.
 - **Launcher de escritorio** para Linux, macOS y Windows: una
   configuración autoalojada de un clic basada en Docker con detección
   de Docker consciente del contexto y autodiagnóstico.
