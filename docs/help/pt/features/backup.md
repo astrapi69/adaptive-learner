@@ -33,9 +33,14 @@ por IA também são incluídos, por isso o selo "Verificado por IA" mantém-se.
   do backup automático e a posição da sincronização LAN.
 
 Já a definição que indica se o backup automático está ligado ou
-desligado vem incluída. Como o progresso feito offline faltaria no
-backup, no modo servidor só cries um backup quando a aplicação voltar a
-estar online, não antes.
+desligado vem incluída. No modo servidor, a aplicação guarda neste
+browser o que é criado offline: até 50 alterações ao progresso de
+lições e às gravações de voz; se se acumularem mais, as mais antigas
+são descartadas. Transfere-as por si própria quando a ligação volta
+enquanto a aplicação está aberta, ou no próximo arranque com ligação.
+No backup só entra o que chegou ao servidor; por isso, no modo
+servidor, só cries um backup quando a aplicação tiver voltado a ser
+aberta com ligação depois de aprenderes offline, não antes.
 
 Antes da exportação, a aplicação mostra uma pré-visualização
 **"O teu backup contém …"** com contagens de registos por área,

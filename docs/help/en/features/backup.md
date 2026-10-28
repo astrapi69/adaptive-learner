@@ -33,9 +33,14 @@ too, so the "AI-checked" badge stays.
 - cached search indexes and media lists, the auto-backup counter and the
   LAN-sync position.
 
-The setting whether auto-backup is on, by contrast, is included. Because
-progress made offline would be missing from the backup, create a backup
-in server mode only once the app is online again.
+The setting whether auto-backup is on, by contrast, is included. In
+server mode the app keeps a record in this browser of what is created
+offline: up to 50 changes to lesson progress and voice recordings; if
+more pile up, the oldest are dropped. It transfers them on its own when
+the connection comes back while the app is open, or at the next start
+with a connection. Only what has reached the server goes into the
+backup, so in server mode create a backup only once the app has been
+opened with a connection again after learning offline.
 
 Before the export, the app shows a **"Your backup contains …"**
 preview with record counts per area, so you can see what will be
