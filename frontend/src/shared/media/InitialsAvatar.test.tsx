@@ -1,7 +1,7 @@
 import {render, screen} from "@testing-library/react";
 import {describe, expect, it} from "vitest";
 
-import InitialsAvatar, {initialsOf} from "./InitialsAvatar";
+import InitialsAvatar, {initialsOf, nameLeadingWithInitials} from "./InitialsAvatar";
 
 describe("initialsOf", () => {
     it("takes the first letters of the first two words, uppercased", () => {
@@ -13,6 +13,20 @@ describe("initialsOf", () => {
     it("falls back to ? for an empty name", () => {
         expect(initialsOf("")).toBe("?");
         expect(initialsOf("   ")).toBe("?");
+    });
+});
+
+describe("nameLeadingWithInitials (#3865)", () => {
+    it("leads a control's name with the initials it shows", () => {
+        expect(nameLeadingWithInitials("Your profile", "Ada Lovelace", true)).toBe("AL, Your profile");
+    });
+
+    it("keeps the label alone when the control shows a picture instead", () => {
+        expect(nameLeadingWithInitials("Your profile", "Ada Lovelace", false)).toBe("Your profile");
+    });
+
+    it("keeps the label alone for an empty name, whose ? is no word to speak", () => {
+        expect(nameLeadingWithInitials("Your profile", "  ", true)).toBe("Your profile");
     });
 });
 

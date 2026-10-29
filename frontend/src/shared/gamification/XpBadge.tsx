@@ -110,11 +110,16 @@ export default function XpBadge({
           {levelLabel} {level}
         </span>
       )}
+      {/* #3865 - a space between the text spans, so their text reads
+          "Level 4 680 XP" (axe, speech input) instead of "Level 4680 XP".
+          Grid and flex layouts do not render whitespace-only text. */}
+      {showLevel && showTotal && " "}
       {showTotal && (
         <span className={xpClassName} data-testid={xpTestId}>
           {xp} {xpLabel}
         </span>
       )}
+      {(showLevel || showTotal) && showGain && " "}
       {showGain && (
         <span className={gainClassName} data-testid={gainTestId}>
           +{gain} {xpLabel}

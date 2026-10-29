@@ -38,6 +38,22 @@ describe("AvatarUpload", () => {
     });
     afterEach(() => vi.restoreAllMocks());
 
+    it("names the trigger with the initials it shows (#3865)", () => {
+        renderUpload(null);
+        expect(screen.getByTestId("avatar-trigger")).toHaveAttribute(
+            "aria-label",
+            "JD, View or change profile picture",
+        );
+    });
+
+    it("names the trigger by its label alone when it shows a picture (#3865)", () => {
+        renderUpload("data:image/png;base64,AAAA");
+        expect(screen.getByTestId("avatar-trigger")).toHaveAttribute(
+            "aria-label",
+            "View or change profile picture",
+        );
+    });
+
     it("shows the initials fallback and no remove button without a value", () => {
         renderUpload(null);
         expect(screen.getByTestId("avatar-preview-initials")).toHaveTextContent("JD");
