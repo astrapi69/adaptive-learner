@@ -2,7 +2,7 @@
 
 > Cette page est une traduction automatique de l'original allemand, fournie à titre purement informatif. Seule la version allemande fait foi juridiquement.
 
-Dernière mise à jour : 28 octobre 2026
+Dernière mise à jour : 29 octobre 2026
 
 En tant que texte juridique, cette politique utilise le vouvoiement.
 
@@ -22,7 +22,7 @@ serveur envoie les requêtes d'IA au fournisseur choisi.
 
 Asterios Raptis, Seestraße 68, 71638 Ludwigsburg, Allemagne
 
-E-mail : asterios.raptis@web.de
+E-mail : asteri.raptis@gmail.com
 
 ## L'essentiel en bref
 

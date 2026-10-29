@@ -1,6 +1,6 @@
 # Datenschutzerklärung
 
-Stand: 28. Oktober 2026
+Stand: 29. Oktober 2026
 
 Als Rechtstext verwendet diese Erklärung die förmliche Anrede; in der App und
 in der übrigen Hilfe duzen wir dich.
@@ -19,7 +19,7 @@ GitHub, und KI-Anfragen schickt der eigene Server an den gewählten Anbieter.
 
 Asterios Raptis, Seestraße 68, 71638 Ludwigsburg, Deutschland
 
-E-Mail: asterios.raptis@web.de
+E-Mail: asteri.raptis@gmail.com
 
 ## Das Wichtigste in Kürze
 

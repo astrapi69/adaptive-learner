@@ -6,6 +6,13 @@ Die vollständigen, technischen Notizen pro Version stehen unter
 
 ---
 
+## v2.17.1 - Kontaktadresse im Impressum
+
+- **Impressum und Datenschutzerklärung**: Sie nennen die richtige
+  Kontaktadresse, asteri.raptis@gmail.com, in allen acht Hilfesprachen.
+  v2.17.0 zeigte dort die Adresse für GitHub-Mails, die nicht für Anfragen
+  gedacht ist.
+
 ## v2.17.0 - Was dein Gerät verlässt; Korrekturen und Prüfungen
 
 - **Datenschutz**: Die Datenschutzerklärung ist neu geschrieben und in allen
