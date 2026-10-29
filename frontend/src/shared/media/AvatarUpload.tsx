@@ -39,7 +39,7 @@ import { Camera, ImagePlus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import InitialsAvatar from "./InitialsAvatar";
+import InitialsAvatar, { nameLeadingWithInitials } from "./InitialsAvatar";
 import ImageCropDialog from "./ImageCropDialog";
 import AvatarPreviewDialog from "./AvatarPreviewDialog";
 import {
@@ -160,7 +160,7 @@ export default function AvatarUpload({
         type="button"
         onClick={handleAvatarClick}
         disabled={busy}
-        aria-label={avatarButtonLabel}
+        aria-label={nameLeadingWithInitials(avatarButtonLabel, name, !value)}
         title={avatarButtonLabel}
         data-testid="avatar-trigger"
         className="group relative inline-flex min-h-11 min-w-11 shrink-0 cursor-pointer rounded-full p-0 leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
