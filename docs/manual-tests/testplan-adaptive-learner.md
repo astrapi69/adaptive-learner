@@ -3796,7 +3796,7 @@ Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
       `about-privacy-link`), gleiche Ziele, neuer Tab.
 - [ ] TC-0807 Docs-Site (#3807, #3139): Abschnitt "Rechtliches" mit beiden Seiten in
       der Navigation jeder Sprache; das Impressum nennt Name, Anschrift und die
-      E-Mail asterios.raptis@web.de, die Datenschutzerklärung dieselbe Adresse
+      E-Mail asteri.raptis@gmail.com (#3878), die Datenschutzerklärung dieselbe Adresse
       und oben ihr Datum; sie redet in jeder Sprache förmlich an, und jede
       Fassung außer der englischen sagt unter dem Datum, dass sie als
       Rechtstext förmlich anredet; de, es, el und ja fügen hinzu, dass App und
