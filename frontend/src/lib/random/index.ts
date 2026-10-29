@@ -9,4 +9,4 @@
  */
 
 export {fnv1a32, mulberry32} from "./prng";
-export {RANDOM_PIN_GLOBAL, mountShuffleSeed, pinnedRandom} from "./pinned-random";
+export {RANDOM_PIN_GLOBAL, missionSeedIdentity, mountShuffleSeed, pinnedRandom} from "./pinned-random";

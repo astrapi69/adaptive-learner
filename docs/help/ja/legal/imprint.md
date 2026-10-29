@@ -10,7 +10,7 @@
 
 Seestraße 68, 71638 Ludwigsburg, Germany
 
-メール: asterios.raptis@web.de
+メール: asteri.raptis@gmail.com
 
 ## ドイツ州間メディア条約（MStV）第18条第2項に基づくコンテンツ責任者
 
