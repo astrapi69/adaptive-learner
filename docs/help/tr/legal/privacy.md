@@ -4,7 +4,7 @@
 
 > Bu sayfa, Almanca aslının yalnızca bilgi amaçlı sunulan bir makine çevirisidir. Hukuken yalnızca Almanca sürüm bağlayıcıdır.
 
-Son güncelleme: 22 Ekim 2026
+Son güncelleme: 28 Ekim 2026
 
 Hukuki bir metin olduğu için bu politika resmî hitap biçimini kullanır.
 
@@ -94,14 +94,14 @@ alıcı GitHub, Inc.'dir (yukarıya bakınız). Uygulama şunları yükler:
 Ayrıca uygulama, siz hiçbir şeye tıklamadan, setlerinizin yeni sürümleri olup
 olmadığını ve hangi tekrarların zamanının geldiğini kendiliğinden denetler.
 Bunun için resmi kataloğun ve bağlı depolarınızın manifest dosyalarını
-okur: başlangıçta, sayfalar arasında geçiş yaptığınızda ve pencere yeniden ön
-plana geldiğinde; bağlı depoları, son eşitlemenin üzerinden bir günden
-fazla geçmişse başlangıçta eşitler. Kısa aralıklarla tekrarlanan istekleri
-tarayıcınız genellikle kendi önbelleğinden yanıtlar. Denetim, başlangıç
-sayfası, ilk öğrenme projenizin oluşturulması ve öğrenme tipi değerlendirmesi
-dışında uygulamanın her sayfasında çalışır; yani paylaşılmış veya doğrudan bir
-bağlantıyla yapılan ilk ziyarette ve yanlış yazılmış bir adresin hata
-sayfasında da, /docs/ altında bile.
+okur, örneğin başlangıçta, sayfalar arasında geçiş yaptığınızda, pencere
+yeniden ön plana geldiğinde ve tekrarlardaki cevaplarınızdan sonra. Kısa
+aralıklarla tekrarlanan istekleri tarayıcınız genellikle kendi önbelleğinden
+yanıtlar. Denetim, uygulamanın gezinme çubuğunu gösteren her sayfasında
+çalışır; yani paylaşılmış veya doğrudan bir bağlantıyla yapılan ilk ziyarette
+ve yanlış yazılmış bir adresin hata sayfasında da, /docs/ altında bile. Ayrıca
+uygulama bağlı depoları, son eşitlemenin üzerinden bir günden fazla geçmişse,
+gezinme çubuğu olmayan sayfalar dahil her sayfa yüklendiğinde eşitler.
 
 GitHub; IP adresinizi, olağan tarayıcı verilerini (tarayıcı türü ve sürümü,
 işletim sistemi, dil ayarı), genellikle isteğin kaynağını
@@ -199,12 +199,12 @@ bildirimi geçerlidir. Alıcı, anahtarını kullandığınız sağlayıcıdır:
   LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA. Burada anahtar
   isteğin başlığında değil, adresinde yer alır.
 
-İstekler, bir yapay zekâ özelliğini kullandığınızda oluşur: öğrenme
+İstekler, bir yapay zekâ özelliğini kullandığınızda oluşur, örneğin öğrenme
 oturumları (her adımın otomatik değerlendirmesi dahil), derslerde "Yapay
 zekâya sor", cevaplarınızın yapay zekâ ile denetlenmesi, alıştırma ve ders
-üretimi, içe aktarılan sohbetlerin analizi, öğrenme kartları ve çalışma
-kılavuzu, telaffuz alıştırması ile içeriklerin yapay zekâ ile denetlenmesi ve
-üretilmesi. Siz hiçbir şey yazmadan uygulama ayrıca şunları gönderir:
+üretimi, içe aktarılan sohbetlerin analizi, öğrenme kartları, çalışma soruları
+ve çalışma kılavuzu, telaffuz alıştırması ile içeriklerin yapay zekâ ile
+denetlenmesi ve üretilmesi. Siz hiçbir şey yazmadan uygulama ayrıca şunları gönderir:
 
 - "Oturum" sayfasını veya Ayarlar'da model seçimini açtığınızda,
   kullanılabilir modeller için bir sorgu,
@@ -228,9 +228,12 @@ içerir:
   ağırlığı,
 - tamamladığınız derslerin başlıkları ve sonuçları, üzerinde çalıştığınız ders
   ve sizin cevabınız ile beklenen cevabı içeren son hatalarınız,
-- çalışma kılavuzu için ayrıca zaman çerçevesi, günlük dakika, tüm yöntem
-  ağırlıkları, analiz edilen sohbetlerden kelimeler ve başlangıç zamanı ile
-  yöntemi belirtilmiş, en son tamamladığınız oturumlardan en fazla on tanesi,
+- çalışma soruları için, başlangıç zamanı ve yöntemiyle birlikte en son
+  tamamladığınız oturumlardan en fazla beş tanesinin geçmişi,
+- çalışma kılavuzu için, başlangıç zamanı ve yöntemiyle birlikte en son
+  tamamladığınız oturumlardan en fazla on tanesinin geçmişi ve ayrıca zaman
+  çerçevesi, günlük dakika, tüm yöntem ağırlıkları ve analiz edilen
+  sohbetlerden kelimeler,
 - içe aktarılan sohbetlerde başlıkları ve yapıştırılan metnin tamamı,
 - telaffuz alıştırmasında hedef cümle ve denemenizin tanınan metni,
 - yapay zekânın cevap vermesi gereken dil.
@@ -295,8 +298,9 @@ Sesli giriş). Hukuki sebep talebinizdir (GDPR md. 6/1-b).
 ## Paylaşım düğmeleri
 
 Pano'da "Öğrenmeye devam et" satırlarında, bir dersi sonuçla tamamladığınız
-anda bir paylaşım düğmesi görünür; Ayarlar'da "Öğrenme" altında "Ders sonrası
-özet" içinde açıksa bir dersin sonunda da görünür (varsayılan olarak
+anda bir paylaşım düğmesi görünür; bir dersin sonunda ayrıntılı
+değerlendirmede de görünür. Kompakt özette ise yalnızca Ayarlar'da "Öğrenme"
+altında "Ders sonrası özet" içinde açıksa görünür (varsayılan olarak
 kapalıdır). Cihazınız kendi paylaşım iletişim kutusunu sunuyorsa uygulama onu
 açar ve nerede paylaşacağınızı orada seçersiniz. Aksi halde Facebook, LinkedIn,
 X ve WhatsApp bağlantılarını ve bir kopyalama seçeneğini gösterir.

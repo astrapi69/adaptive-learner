@@ -1,6 +1,6 @@
 # Datenschutzerklärung
 
-Stand: 22. Oktober 2026
+Stand: 28. Oktober 2026
 
 Als Rechtstext verwendet diese Erklärung die förmliche Anrede; in der App und
 in der übrigen Hilfe duzen wir dich.
@@ -91,14 +91,15 @@ oben). Die App lädt:
 Außerdem prüft die App von selbst, ohne dass Sie etwas anklicken, ob Ihre Sets
 neue Versionen haben und welche Wiederholungen fällig sind. Dafür liest sie die
 Manifest-Dateien des offiziellen Katalogs und Ihrer verbundenen Repositorys,
-beim Start, beim Wechsel zwischen Seiten und wenn das Fenster wieder in den
-Vordergrund kommt; verbundene Repositorys gleicht sie beim Start ab, wenn der
-letzte Abgleich mehr als einen Tag zurückliegt. Wiederholte Abrufe kurz
-hintereinander beantwortet Ihr Browser in der Regel aus seinem
-Zwischenspeicher. Die Prüfung läuft auf jeder Seite der App außer der
-Startseite, dem Anlegen des ersten Lernprojekts und dem Lerntyp-Assessment,
-also auch schon beim ersten Besuch über einen geteilten oder direkten Link und
-auf der Fehlerseite für eine falsch geschriebene Adresse, auch unter /docs/.
+zum Beispiel beim Start, beim Wechsel zwischen Seiten, wenn das Fenster wieder
+in den Vordergrund kommt und nach Ihren Antworten in Wiederholungen. Wiederholte
+Abrufe kurz hintereinander beantwortet Ihr Browser in der Regel aus seinem
+Zwischenspeicher. Die Prüfung läuft auf allen Seiten der App, die die
+Navigationsleiste zeigen, also auch schon beim ersten Besuch über einen
+geteilten oder direkten Link und auf der Fehlerseite für eine falsch
+geschriebene Adresse, auch unter /docs/. Verbundene Repositorys gleicht die App
+außerdem beim Laden jeder Seite ab, auch ohne Navigationsleiste, wenn der
+letzte Abgleich mehr als einen Tag zurückliegt.
 
 GitHub erhält dabei Ihre IP-Adresse, übliche Browserdaten (Browsertyp und
 -version, Betriebssystem, Spracheinstellung), in der Regel die Herkunft der
@@ -207,12 +208,12 @@ Schlüssel Sie nutzen:
   CA 94043, USA. Der Schlüssel steht hier in der Adresse der Anfrage, nicht in
   ihrem Kopf.
 
-Anfragen entstehen, wenn Sie eine KI-Funktion nutzen: Lernsitzungen
-(einschließlich der automatischen Bewertung jedes Schritts), "KI fragen" in
-Lektionen, die KI-Prüfung Ihrer Antworten, das Erzeugen von Übungen und
-Lektionen, die Analyse importierter Chats, Lernkarten und Lernleitfaden, das
-Aussprachetraining sowie die KI-Prüfung und -Erzeugung von Inhalten. Ohne dass
-Sie etwas eintippen, schickt die App außerdem:
+Anfragen entstehen, wenn Sie eine KI-Funktion nutzen, zum Beispiel
+Lernsitzungen (einschließlich der automatischen Bewertung jedes Schritts), "KI
+fragen" in Lektionen, die KI-Prüfung Ihrer Antworten, das Erzeugen von Übungen
+und Lektionen, die Analyse importierter Chats, Lernkarten, Lernfragen und
+Lernleitfaden, das Aussprachetraining sowie die KI-Prüfung und -Erzeugung von
+Inhalten. Ohne dass Sie etwas eintippen, schickt die App außerdem:
 
 - eine Abfrage der verfügbaren Modelle, wenn Sie die Seite Sitzung oder die
   Modellauswahl in den Einstellungen öffnen,
@@ -237,9 +238,12 @@ für denselben Schlüssel im selben Tab eine Stunde lang nicht erneut. Die
 - Titel und Ergebnisse Ihrer abgeschlossenen Lektionen, die Lektion, an der
   Sie gerade arbeiten, und Ihre letzten Fehler mit Ihrer und der erwarteten
   Antwort,
-- für den Lernleitfaden zusätzlich Zeitrahmen, Minuten pro Tag, alle
-  Methodengewichte, Vokabeln aus analysierten Chats und bis zu zehn Ihrer
-  letzten abgeschlossenen Sitzungen mit Startzeit und Methode,
+- für Lernfragen den Verlauf von bis zu fünf Ihrer letzten abgeschlossenen
+  Sitzungen mit Startzeit und Methode,
+- für den Lernleitfaden den Verlauf von bis zu zehn Ihrer letzten
+  abgeschlossenen Sitzungen mit Startzeit und Methode und zusätzlich
+  Zeitrahmen, Minuten pro Tag, alle Methodengewichte und Vokabeln aus
+  analysierten Chats,
 - bei importierten Chats deren Titel und den vollständigen eingefügten Text,
 - im Aussprachetraining den Zielsatz und den erkannten Text Ihres Versuchs,
 - die Sprache, in der die KI antworten soll.
@@ -311,7 +315,8 @@ DSGVO).
 
 Eine Teilen-Schaltfläche steht auf dem Dashboard in den Zeilen von
 "Weitermachen", sobald Sie eine Lektion mit Ergebnis abgeschlossen haben, und
-am Ende einer Lektion, wenn sie in den Einstellungen unter Lernen bei
+am Ende einer Lektion in der ausführlichen Auswertung. In der kompakten
+Zusammenfassung steht sie nur, wenn sie in den Einstellungen unter Lernen bei
 "Zusammenfassung nach Lektionen" eingeschaltet ist (standardmäßig ist sie aus).
 Bietet Ihr Gerät einen eigenen Teilen-Dialog, öffnet die App diesen, und Sie
 wählen dort, womit Sie teilen. Sonst zeigt sie Links zu Facebook, LinkedIn, X

@@ -2,7 +2,7 @@
 
 > Esta página es una traducción automática del original en alemán y se ofrece solo a título informativo. Únicamente la versión en alemán es jurídicamente vinculante.
 
-Última actualización: 22 de octubre de 2026
+Última actualización: 28 de octubre de 2026
 
 Como texto jurídico, esta política utiliza el trato de usted; en la app y en
 el resto de la ayuda te tratamos de tú.
@@ -95,15 +95,16 @@ destinatario, en calidad de responsable del tratamiento, es GitHub, Inc.
 Además, la app comprueba por sí misma, sin que usted haga clic en nada, si sus
 conjuntos tienen versiones nuevas y qué repasos están pendientes. Para ello lee
 los archivos de manifiesto del catálogo oficial y de sus repositorios
-conectados: al iniciarse, al cambiar de página y cuando la ventana vuelve a
-primer plano; sincroniza los repositorios conectados al iniciarse cuando la
-última sincronización tiene más de un día. Su navegador suele responder a las
-solicitudes repetidas en poco tiempo desde su caché. La comprobación se ejecuta
-en todas las páginas de la app excepto la página de inicio, la creación de su
-primer proyecto de aprendizaje y la evaluación del tipo de aprendizaje, es
-decir, también ya en una primera visita a través de un enlace compartido o
-directo y en la página de error de una dirección mal escrita, incluso bajo
-/docs/.
+conectados, por ejemplo al iniciarse, al cambiar de página, cuando la ventana
+vuelve a primer plano y después de sus respuestas en los repasos. Su navegador
+suele responder desde su caché a las solicitudes que se repiten en poco tiempo.
+La
+comprobación se ejecuta en todas las páginas de la app que muestran la barra de
+navegación, es decir, también ya en una primera visita a través de un enlace
+compartido o directo y en la página de error de una dirección mal escrita,
+incluso bajo /docs/. Además, la app sincroniza los repositorios conectados al
+cargarse cualquier página, también sin barra de navegación, si la última
+sincronización tiene más de un día.
 
 GitHub recibe su dirección IP, los datos habituales del navegador (tipo y
 versión del navegador, sistema operativo, idioma), por lo general el origen de
@@ -210,12 +211,12 @@ utiliza:
   94043, USA. Aquí la clave va en la dirección de la solicitud, no en su
   cabecera.
 
-Se envían solicitudes cuando usted utiliza una función de IA: sesiones de
-aprendizaje (incluida la evaluación automática de cada paso), «Preguntar a la
-IA» en las lecciones, la revisión de sus respuestas por la IA, la generación
-de ejercicios y lecciones, el análisis de chats importados, las tarjetas y la
-guía de estudio, la práctica de pronunciación y la revisión y generación de
-contenidos por la IA. Sin que usted escriba nada, la app envía además:
+Se envían solicitudes cuando usted utiliza una función de IA, por ejemplo
+sesiones de aprendizaje (incluida la evaluación automática de cada paso),
+«Preguntar a la IA» en las lecciones, la revisión de sus respuestas por la IA,
+la generación de ejercicios y lecciones, el análisis de chats importados, las
+tarjetas, las preguntas de estudio y la guía de estudio, la práctica de
+pronunciación y la revisión y generación de contenidos por la IA. Sin que usted escriba nada, la app envía además:
 
 - una consulta de los modelos disponibles cuando abre la página Sesión o la
   selección de modelo en Ajustes,
@@ -239,9 +240,11 @@ demás solicitudes contienen, según la función:
   aprendizaje preferido con su peso,
 - los títulos y resultados de sus lecciones completadas, la lección en la que
   está trabajando y sus últimos errores con su respuesta y la esperada,
-- para la guía de estudio, además, el plazo, los minutos al día, todos los
-  pesos de los métodos, el vocabulario de los chats analizados y hasta diez de
-  sus últimas sesiones completadas con hora de inicio y método,
+- para las preguntas de estudio, el historial de hasta cinco de sus últimas
+  sesiones completadas con hora de inicio y método,
+- para la guía de estudio, el historial de hasta diez de sus últimas sesiones
+  completadas con hora de inicio y método y, además, el plazo, los minutos al
+  día, todos los pesos de los métodos y el vocabulario de los chats analizados,
 - en los chats importados, su título y el texto pegado completo,
 - en la práctica de pronunciación, la frase objetivo y el texto reconocido de
   su intento,
@@ -315,8 +318,9 @@ b), del RGPD).
 
 Aparece un botón para compartir en el Panel, en las filas de «Continuar
 aprendiendo», en cuanto usted completa una lección con resultado, y al final de
-una lección si está activado en Ajustes, en Aprendizaje, en «Resumen tras las
-lecciones» (de forma predeterminada está desactivado). Si su dispositivo ofrece
+una lección en la evaluación detallada. En el resumen compacto solo aparece si
+está activado en Ajustes, en Aprendizaje, en «Resumen tras las lecciones» (de
+forma predeterminada está desactivado). Si su dispositivo ofrece
 su propio diálogo para compartir, la app lo abre y usted elige allí dónde
 compartir. Si no, muestra enlaces a Facebook, LinkedIn, X y WhatsApp y una
 opción para copiar.

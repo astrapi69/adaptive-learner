@@ -4,7 +4,7 @@
 
 > Esta página é uma tradução automática do original em alemão e serve apenas para informação. Só a versão alemã é juridicamente vinculativa.
 
-Última atualização: 22 de outubro de 2026
+Última atualização: 28 de outubro de 2026
 
 Por se tratar de um texto jurídico, esta política utiliza o tratamento
 formal.
@@ -99,14 +99,15 @@ pelo tratamento, é a GitHub, Inc. (ver acima). A aplicação carrega:
 Além disso, a aplicação verifica por iniciativa própria, sem que clique em
 nada, se os seus conjuntos têm novas versões e que revisões estão pendentes.
 Para isso, lê os ficheiros de manifesto do catálogo oficial e dos seus
-repositórios ligados: no arranque, ao mudar de página e quando a janela volta
-ao primeiro plano; sincroniza os repositórios ligados no arranque quando a
-última sincronização tem mais de um dia. O seu browser responde normalmente aos
-pedidos repetidos em pouco tempo a partir da sua cache. A verificação é
-executada em todas as páginas da aplicação, exceto a página inicial, a criação
-do seu primeiro projeto de aprendizagem e a avaliação do tipo de aprendizagem,
-ou seja, também logo numa primeira visita através de uma ligação partilhada ou
-direta e na página de erro de um endereço mal escrito, incluindo em /docs/.
+repositórios ligados, por exemplo no arranque, ao mudar de página, quando a
+janela volta ao primeiro plano e depois das suas respostas nas revisões. O seu
+browser responde normalmente aos pedidos repetidos em pouco tempo a partir da
+sua cache. A verificação é executada em todas as páginas da aplicação que
+mostram a barra de navegação, ou seja, também logo numa primeira visita através
+de uma ligação partilhada ou direta e na página de erro de um endereço mal
+escrito, incluindo em /docs/. Além disso, a aplicação sincroniza os
+repositórios ligados ao carregar qualquer página, também sem barra de
+navegação, quando a última sincronização tem mais de um dia.
 
 O GitHub recebe o seu endereço IP, os habituais dados do browser (tipo e
 versão do browser, sistema operativo, idioma), em regra a origem do pedido
@@ -213,12 +214,12 @@ chave utiliza:
   CA 94043, EUA. Aqui a chave segue no endereço do pedido e não no seu
   cabeçalho.
 
-São enviados pedidos quando utiliza uma funcionalidade de IA: sessões de
-aprendizagem (incluindo a avaliação automática de cada passo), "Perguntar à
-IA" nas lições, a verificação das suas respostas pela IA, a geração de
-exercícios e lições, a análise de conversas importadas, os cartões de estudo e
-o guia de estudo, a prática de pronúncia e a verificação e geração de
-conteúdos pela IA. Sem que escreva nada, a aplicação envia ainda:
+São enviados pedidos quando utiliza uma funcionalidade de IA, por exemplo
+sessões de aprendizagem (incluindo a avaliação automática de cada passo),
+"Perguntar à IA" nas lições, a verificação das suas respostas pela IA, a
+geração de exercícios e lições, a análise de conversas importadas, os cartões
+de estudo, as perguntas de estudo e o guia de estudo, a prática de pronúncia e
+a verificação e geração de conteúdos pela IA. Sem que escreva nada, a aplicação envia ainda:
 
 - uma consulta dos modelos disponíveis quando abre a página "Sessão" ou a
   seleção de modelo nas "Configurações",
@@ -243,9 +244,11 @@ pedidos contêm, consoante a funcionalidade:
 - os títulos e resultados das lições que concluiu, a lição em que está a
   trabalhar e os seus erros mais recentes com a sua resposta e a resposta
   esperada,
-- para o guia de estudo, além disso, o prazo, os minutos por dia, todos os
-  pesos dos métodos, o vocabulário das conversas analisadas e até dez das suas
-  últimas sessões concluídas com hora de início e método,
+- para as perguntas de estudo, o histórico de até cinco das suas últimas
+  sessões concluídas com hora de início e método,
+- para o guia de estudo, o histórico de até dez das suas últimas sessões
+  concluídas com hora de início e método e, além disso, o prazo, os minutos por
+  dia, todos os pesos dos métodos e o vocabulário das conversas analisadas,
 - nas conversas importadas, o respetivo título e o texto colado completo,
 - na prática de pronúncia, a frase-alvo e o texto reconhecido da sua
   tentativa,
@@ -319,10 +322,11 @@ alínea b), do RGPD).
 ## Botões de partilha
 
 Aparece um botão de partilha no "Painel", nas linhas de "Continuar a aprender",
-assim que conclui uma lição com resultado, e no final de uma lição, se estiver
-ativado nas "Configurações", em "Aprendizagem", em "Resumo após as lições" (por
+assim que conclui uma lição com resultado, e no final de uma lição, na
+avaliação detalhada. No resumo compacto, só aparece se estiver ativado nas
+"Configurações", em "Aprendizagem", em "Resumo após as lições" (por
 predefinição, está desativado). Se o seu dispositivo oferecer uma caixa de
-diálogo de partilha própria, a aplicação abre-a, e escolhe aí onde partilhar.
+diálogo de partilha própria, a aplicação abre-a, e é aí que escolhe, por si, onde partilhar.
 Caso contrário, mostra ligações para o Facebook, o LinkedIn, o X e o WhatsApp e
 uma opção para copiar.
 

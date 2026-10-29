@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.16.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.17.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Nachtschicht](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -290,23 +290,27 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.16.0**: Fehler, die
-bisher verschwanden, **sagen jetzt, was los ist**. Eine gescheiterte
-Tutor-Antwort zeigt einen Hinweis mit „Erneut versuchen", ein Verlauf, der
-nicht geladen werden konnte, sagt das, eine abgestürzte Seite bietet einen
-Rückweg und eine Fehlermeldung an, und Aktionen in den Einstellungen,
-Exporte und der Lektionsfortschritt scheitern nicht mehr still.
-Übungseditor, Teilen-Prüfung und Repository-Prüfung folgen **einem
-Regelwerk**, dem der Content-Engine, und die Desktop-App löst Zuordnungen
-aus Karten auf. **Backups** enthalten jedes gespeicherte Feld und lassen
-sich zwischen Desktop-App und Browser-Version wiederherstellen, dazu kommen
-Telefon-Korrekturen für das kompakte Menü unter 1280 px und das Dashboard.
-Vollständige Notizen:
-[`changelog/releases/v2.16.0.md`](changelog/releases/v2.16.0.md).
+Aktive Entwicklung. Das aktuelle Release ist **v2.17.0**, ein
+**Datenschutz-Release**: Die Datenschutzerklärung ist neu geschrieben, in
+allen acht Hilfesprachen da und beschreibt, wann und wohin Daten dein Gerät
+verlassen. Die Dokumentationsseiten laden nichts mehr von anderen Servern als
+GitHub Pages, und ein Fehlerbericht enthält Umgebungsinformationen und
+Aktionsverlauf nur, wenn du sie ankreuzt. Das Lektionsende führt jetzt zum
+**Korrigieren**: Hatte ein Durchgang Fehler, bietet die kompakte
+Zusammenfassung „Fehler korrigieren" an, und die ausführliche Auswertung
+zeigt bei jedem Fehler, ob er korrigiert oder noch offen ist. Bringt ein Set
+eigene Bewertungsregeln mit, wird eine Prüfung danach bewertet. **Backups**
+enthalten jetzt auch verbundene Repositories, eingelöste Einladungen und
+KI-Prüfberichte, und das importierte Backup eines anderen Profils landet im
+aktiven Profil. Ein Backup aus v2.17.0 spielst du nur in v2.17.0 oder neuer
+ein. Vollständige Notizen:
+[`changelog/releases/v2.17.0.md`](changelog/releases/v2.17.0.md).
 
 Frühere Releases, neueste zuerst (vollständige Details in
 [`changelog/releases/`](changelog/releases/)):
 
+- **v2.16.0** - Fehler, die bisher verschwanden, sagen, was los ist (eine gescheiterte Tutor-Antwort, ein Verlauf, der nicht geladen werden konnte, eine abgestürzte Seite, Aktionen in den Einstellungen, Exporte, Lektionsfortschritt), Übungseditor, Teilen-Prüfung und Repository-Prüfung folgen dem Regelwerk der Content-Engine, Backups enthalten jedes gespeicherte Feld und lassen sich zwischen Desktop-App und Browser-Version wiederherstellen, Telefon-Korrekturen für das kompakte Menü unter 1280 px und das Dashboard.
+- **v2.15.0** - parametrische Übungen, deren Werte bei jedem Versuch neu gezogen werden, drei neue Übungstypen (Hotspot, Parsons, Sortieren) unter "Lektion erstellen", Erklärungen nach einer Antwort, eine kompakte Zusammenfassung am Lektionsende mit Ausführlicher Auswertung, Einstellungen in beschrifteten Abschnitten, Aktualisieren unter Meine Inhalte spielt alle verfügbaren Set-Updates auf einmal ein, Impressum und Datenschutzerklärung auf Deutsch und Englisch.
 - **v2.14.0** - optionaler Spielmodus (Combo-Streaks, Checkpoints, Antwort-Physik, Herzen/Countdown) mit per XP freigeschalteten Arcade-Minispielen, Farbvarianten für das Maskottchen und Avatar-Presets/-Rahmen, Set-Seiten mit Lektionsfortschritt und eine Set-Abschluss-Übersicht, drei Audio-/Sprach-Extension-Typen im Erstellungs-Assistenten.
 - **v2.13.0** - Aufgaben-Typ-Konvertierung direkt im Lesson-Editor, eine auffindbare "Als Kopie bearbeiten"-Aktion für heruntergeladene Content-Sets, eine große UI-Konsolidierung (gemeinsame Settings-/Modal-/DashboardCard-Komponenten, shadcn Button), FastAPI-0.141- + TipTap-3.30-Dependency-Auffrischung.
 - **v2.12.0** - ein abgeschlossenes Set als neuen Durchgang starten, wobei der Wiederholungsverlauf erhalten bleibt, Schlüssel-Import aus einem Topos-`.alk`-Export, Perplexity als KI-Anbieter im Backend.
