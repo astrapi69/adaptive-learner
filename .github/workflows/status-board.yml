@@ -94,7 +94,9 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add STATUS.md BOARD.md status/unclassified.json 2>/dev/null
+          for f in STATUS.md BOARD.md status/unclassified.json; do
+            if [ -f "$f" ]; then git add "$f"; fi
+          done
           if git diff --cached --quiet; then
             echo "nothing rendered to commit"
           else
