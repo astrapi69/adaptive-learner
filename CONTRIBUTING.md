@@ -350,7 +350,7 @@ larger changes, open an issue first to discuss design.
 
 Adaptive Learner follows
 [Contributor Covenant 2.1](CODE_OF_CONDUCT.md). Reports go to
-asterios.raptis@web.de.
+asteri.raptis@gmail.com.
 
 ## Security
 
