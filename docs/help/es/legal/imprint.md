@@ -9,7 +9,7 @@ alemana de Servicios Digitales).
 
 Seestraße 68, 71638 Ludwigsburg, Alemania
 
-Correo electrónico: asterios.raptis@web.de
+Correo electrónico: asteri.raptis@gmail.com
 
 ## Responsable del contenido conforme al artículo 18, apartado 2, del MStV (Medienstaatsvertrag, Tratado Interestatal alemán sobre Medios)
 

@@ -6,6 +6,8 @@
  * consumer that asks for randomness here gets its OWN seeded generator, so a
  * draw anywhere else on the page (confetti, sound, another consumer) cannot
  * shift its sequence, and the per-mount exercise seed stops reading the clock.
+ * The daily missions take their seed identity from the pin instead of the
+ * learner's random id (#3824).
  *
  * Nothing in the app writes the pin. Without it the seam is inert: no
  * storage, no URL parameter, no UI, and exactly the production randomness
@@ -147,4 +149,26 @@ export function mountShuffleSeed(key: string): string {
     const pin = readRandomPin();
     const salt = pin === null ? Date.now() & 0xffff : pin.mountSalt;
     return `${key}#${salt}`;
+}
+
+/**
+ * The identity the daily-mission PRNG is seeded with (#3824): the user id in
+ * production, one fixed stand-in under a pin.
+ *
+ * The mission generator seeds ``${identity}:${date}:${mix}``. The date is
+ * frozen in a visual run, but the seeded learner gets a fresh random id each
+ * time, so the day's missions, and the XP of a mission the playthrough
+ * completes, changed from run to run and moved about 30 baselines. Under a pin
+ * the identity follows the pin's ``streamSeed``. Without one, or with a
+ * malformed one, it is the user id, unchanged.
+ *
+ * @param userId - The learner the missions are for.
+ * @returns The identity to seed the mission generator with.
+ *
+ * @example
+ * assignDailyMissions(missionSeedIdentity(userId), today, profile);
+ */
+export function missionSeedIdentity(userId: string): string {
+    const pin = readRandomPin();
+    return pin === null ? userId : `random-pin-${pin.streamSeed}`;
 }

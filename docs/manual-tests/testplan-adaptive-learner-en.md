@@ -3546,7 +3546,7 @@ Legal notice and privacy policy live as help pages on the docs site
       `about-privacy-link`), same targets, new tab.
 - [ ] TC-0807 Docs site (#3807, #3139): section "Legal" with both pages in the
       navigation of every language; the legal notice names name, address and
-      the email asterios.raptis@web.de, the privacy policy the same address and
+      the email asteri.raptis@gmail.com (#3878), the privacy policy the same address and
       its date at the top; it addresses the reader formally in every language,
       and every version except the English one says under the date that it
       uses the formal address as a legal text; de, es, el and ja add that the
