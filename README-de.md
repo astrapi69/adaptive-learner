@@ -290,8 +290,9 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.17.1**, ein
-**Datenschutz-Release**: Die Datenschutzerklärung ist neu geschrieben, in
+Aktive Entwicklung. Das aktuelle Release ist **v2.17.1**, eine Korrektur zu
+v2.17.0: Impressum und Datenschutzerklärung nennen die richtige
+Kontaktadresse. v2.17.0 ist ein **Datenschutz-Release**: Die Datenschutzerklärung ist neu geschrieben, in
 allen acht Hilfesprachen da und beschreibt, wann und wohin Daten dein Gerät
 verlassen. Die Dokumentationsseiten laden nichts mehr von anderen Servern als
 GitHub Pages, und ein Fehlerbericht enthält Umgebungsinformationen und
@@ -304,6 +305,7 @@ enthalten jetzt auch verbundene Repositories, eingelöste Einladungen und
 KI-Prüfberichte, und das importierte Backup eines anderen Profils landet im
 aktiven Profil. Ein Backup aus v2.17.0 spielst du nur in v2.17.0 oder neuer
 ein. Vollständige Notizen:
+[`changelog/releases/v2.17.1.md`](changelog/releases/v2.17.1.md) und
 [`changelog/releases/v2.17.0.md`](changelog/releases/v2.17.0.md).
 
 Frühere Releases, neueste zuerst (vollständige Details in

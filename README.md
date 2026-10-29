@@ -352,8 +352,9 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.17.1**, a **privacy
-release**: the privacy policy was rewritten in all eight help languages and
+Active development. The current release is **v2.17.1**, a correction on
+v2.17.0: the legal notice and the privacy policy name the right contact
+address. v2.17.0 is a **privacy release**: the privacy policy was rewritten in all eight help languages and
 describes when and where data leaves your device, the documentation site
 loads nothing from servers other than GitHub Pages, and an error report
 includes the environment info and the action history only when you tick
@@ -364,7 +365,8 @@ that brings its own evaluation rules is graded by them. **Backups** now also
 carry connected repositories, redeemed invites and AI content-check reports,
 and importing another learner's backup merges its progress into the active
 profile. Restore a backup made with v2.17.0 only in v2.17.0 or newer. Full
-notes: [`changelog/releases/v2.17.0.md`](changelog/releases/v2.17.0.md).
+notes: [`changelog/releases/v2.17.1.md`](changelog/releases/v2.17.1.md) and
+[`changelog/releases/v2.17.0.md`](changelog/releases/v2.17.0.md).
 
 Earlier releases, newest first (full details in
 [`changelog/releases/`](changelog/releases/)):
