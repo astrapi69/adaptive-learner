@@ -172,7 +172,11 @@ export async function pinRandomness(page: Page): Promise<void> {
  * the Endless repetitions from ``"endless-repeat"``, and the matching and
  * word-tiles mount seeds use ``VISUAL_RANDOM_PIN.mountSalt`` instead of the
  * page clock. Each stream is a fresh generator only its consumer advances,
- * so a draw anywhere else on the page cannot move a baseline.
+ * so a draw anywhere else on the page cannot move a baseline. The daily
+ * missions seed from the pin instead of the seeded learner's random id
+ * (#3824): a fresh id re-rolled them, and a mission the playthrough
+ * completed moved the XP on every dashboard, learning-path and statistics
+ * baseline.
  *
  * The pin is a frozen, non-writable, non-configurable property
  * (``randomPinInitScript``), so no page script can swap it mid-capture.

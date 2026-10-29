@@ -14,6 +14,7 @@ import {afterEach, describe, expect, it, vi} from "vitest";
 import {
     RANDOM_PIN_GLOBAL,
     isRandomPin,
+    missionSeedIdentity,
     mountShuffleSeed,
     pinnedRandom,
     type RandomPin,
@@ -234,5 +235,32 @@ describe("inertness", () => {
         vi.resetModules();
         await import("./pinned-random");
         expect(RANDOM_PIN_GLOBAL in globalThis).toBe(false);
+    });
+});
+
+describe("missionSeedIdentity (#3824)", () => {
+    it("is the user id without a pin, so production missions stay per user", () => {
+        expect(missionSeedIdentity("user-a")).toBe("user-a");
+        expect(missionSeedIdentity("user-b")).toBe("user-b");
+    });
+
+    it("is one fixed identity under a pin, whatever the random user id", () => {
+        setPin(PIN);
+        const a = missionSeedIdentity("0c2f6f1e-0000-4000-8000-000000000001");
+        const b = missionSeedIdentity("9d41a7b2-0000-4000-8000-000000000002");
+        expect(a).toBe(b);
+        expect(a).not.toContain("0c2f6f1e");
+    });
+
+    it("follows the pin's stream seed, so a new pin is a new identity", () => {
+        setPin(PIN);
+        const first = missionSeedIdentity("user-a");
+        setPin({...PIN, streamSeed: PIN.streamSeed + 1});
+        expect(missionSeedIdentity("user-a")).not.toBe(first);
+    });
+
+    it("falls back to the user id for a malformed pin", () => {
+        setPin({streamSeed: 1.5, mountSalt: 0});
+        expect(missionSeedIdentity("user-a")).toBe("user-a");
     });
 });
