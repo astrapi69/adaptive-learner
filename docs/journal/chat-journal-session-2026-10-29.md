@@ -67,11 +67,35 @@ Release-Session v2.17.0, begonnen am 2026-10-28. Abweichung vom Ablauf: Der Rele
   - **Back-Merge #3867** als Merge-Commit 8e823492a. Die Bäume von main, Release und develop sind gleich.
 - Commit: 82f92db49, 4d96e06cc, 8e823492a.
 
+## 5. Hotfix v2.17.1: Kontaktadresse
+
+- Original prompt: "Hotfix v2.17.1, wenn das nächste reguläre Release mehr als ein paar Tage entfernt ist. Es ist eine Pflichtangabe, sie ist live falsch, und die Änderung liegt fertig auf develop. Beide mitziehen."
+- Optimized prompt: "hotfix/2.17.1 ab main, #3879 und die Korrektur von CODE_OF_CONDUCT/CONTRIBUTING (#3880) per cherry-pick, volle Pre-Tag-Gates, Tag, Veröffentlichung mit allen Assets, Back-Merge per PR."
+- Goal: Impressum und Datenschutzerklärung live mit asteri.raptis@gmail.com, eine einzige Kontaktadresse im Repo.
+- Result:
+  - **Abweichung vom Ablauf:** eigener Worktree statt Haupt-Checkout. `make release-finish` kennt nur `release/*`, deshalb der main-Merge (no-ff) auf einem detached `origin/main`, mit geprüften Eltern.
+  - **Gates lokal:**
+    - Backend 2651 passed, Vitest 12431 passed.
+    - Smoke 45 passed / 0 silenced, Dexie-Smoke 205 passed / 0 skipped, Manual-Automation 79 mit 2 skipped (Budget 2).
+    - PyInstaller und docker-build-smoke grün.
+    - `verify-docs-discipline` brach im ersten Lauf ab, weil `make install` `docs/` nicht installiert. Poetry legte dafür ein leeres venv an.
+  - **Übersetzungen:** zwei blinde Rückübersetzungsrunden über die sieben übersetzten Changelog-Einträge, ohne falsche Aussage. Mehrdeutige Stellen in sechs Sprachen sind präzisiert.
+  - **Live geprüft:** alle 16 Rechtstext-Seiten nennen gmail, keine nennt web.de. Die Datenschutzerklärung zeigt "Stand: 29. Oktober 2026".
+  - **Release:**
+    - v2.17.1 = 57998577d.
+    - publish-image-Lauf 40893492250 grün (amd64 und arm64).
+    - 7 von 7 Assets, um 16:45 UTC als latest veröffentlicht.
+  - **Back-Merge #3883** war durch den Rule-Change-Log-Check blockiert.
+    - Der Fetch mit depth 200 schnitt develop oberhalb der Merge-Basis ab. Ein Hotfix-Zweig trägt die ganze main-Historie, deshalb 2389 statt 10 Commits und 14 alte Deklarationen als "fehlend".
+    - Fix mit #3884/#3885 (`scripts/resolve_pr_range.py`), danach #3883 gemergt.
+- Commit: b57b90289, 93d143478, 82a6dd620, 2388252f6, e66c185d0, c1ccc71ad. main: 57998577d. develop: aa6c87c19 (#3882), d41874959 (#3885), 33b6319f3 (#3883).
+
 ## Lektionen dieser Runde
 
 - Eine Vorprüfung gegen die eigene Faktensammlung findet nur, was gesammelt wurde. Die drei falschen Sätze fand erst die Prüfung vom Code her: Satz für Satz der Test oder die Code-Stelle, und ausgeführt.
 - Ein Dependabot-Bump eines Prüfwerkzeugs (axe) kann eine Suite rot machen, die nur nachts läuft. Der PR zeigt es nicht.
 - Ein Test, der sichtbaren Text prüft, muss lesen wie das Werkzeug: `textContent` statt Span für Span. `aria-hidden` nimmt keinen Text vom Bildschirm.
+- Ein Hotfix-Zweig ab main ist für Checks mit flachem Fetch ein anderer Fall als ein Release-Zweig ab develop: Er trägt die ganze main-Historie. Ein Bereich, der eine flache Wurzel erreicht, ist falsch, egal wie plausibel er aussieht.
 
 ## Zusammenfassung
 
@@ -85,3 +109,4 @@ Release-Session v2.17.0, begonnen am 2026-10-28. Abweichung vom Ablauf: Der Rele
   - `release_outdated.py` druckt ohne Terminal keine Poetry-Versionen.
   - Die Pillow-Alerts des Launchers sind veraltet.
   - virtualenv und setuptools stehen mit ihren Advisories auf der Warteliste.
+- Nachtrag Hotfix: gemergt #3882, #3883, #3885. Geschlossen #3878, #3880, #3884. Angelegt #3881 (Wächter gegen ungepinnten Zufall).
