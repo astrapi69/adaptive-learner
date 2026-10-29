@@ -32,6 +32,8 @@ def test_step_eval_aggregate_matches_the_goldens() -> None:
     expected_path = FIXTURE_DIR / "expected.json"
     actual = _actual()
     if os.environ.get("STEP_EVAL_PARITY_REGEN") == "1":
-        expected_path.write_text(json.dumps(actual, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        expected_path.write_text(
+            json.dumps(actual, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
     assert len(actual) >= 4
     assert json.loads(expected_path.read_text(encoding="utf-8")) == actual

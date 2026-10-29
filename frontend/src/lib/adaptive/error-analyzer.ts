@@ -12,10 +12,9 @@
  *   - ``weakness_profile``: per-element_type share of total errors
  *   - ``suggested_focus``: top-N (default 3) for the Dashboard
  *
- * Pure, deterministic, no I/O. The Python mirror at
- * ``backend/app/services/adaptive_lesson.py`` produces
- * byte-identical output for the same input; the parity test
- * at ``error-analyzer.parity.test.ts`` pins both implementations.
+ * Pure, deterministic, no I/O. ``error-analyzer.parity.test.ts``
+ * pins the output against the goldens in
+ * ``tests/fixtures/adaptive-lesson-parity/``.
  *
  * Mastered elements (``mastered === true``) AND zero-error rows
  * (``error_count === 0``) are excluded — the generator targets

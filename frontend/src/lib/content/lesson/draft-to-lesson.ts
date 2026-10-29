@@ -14,7 +14,7 @@ import {
     requiredExtensionsFor,
     type GeneratorCard,
 } from "../../exercises";
-import {contentDomainToStamp, isKnownContentDomain} from "../content-domains";
+import {contentDomainToStamp, isKnowledgeDomain} from "../content-domains";
 import {LANGUAGE_OPTIONS} from "../language/language-options";
 import type {LessonCardDraft, LessonMeta} from "./lesson-draft";
 import type {
@@ -70,6 +70,43 @@ export interface BuildLessonOptions {
     /** Theory steps to use INSTEAD of the auto-generated ``theory-intro``.
      *  When absent the intro is generated from title/description. */
     theorySteps?: ContentLessonStep[];
+    /** The lesson being edited (#3543). Every field of it the wizard does
+     *  not own ({@link WIZARD_OWNED_LESSON_FIELDS}) passes through the save
+     *  untouched: ``purpose``, ``resources``, the variation pair, and any
+     *  field a later schema adds. Absent for a new lesson. */
+    carryFrom?: ContentLesson;
+}
+
+/** The lesson fields the wizard edits or derives from the draft (#3543).
+ *  An edit-save writes these from the draft; every other field of the
+ *  edited lesson is carried over as it was. A field the wizard writes only
+ *  conditionally (``requires_extensions``, ``domain``) is owned too, so a
+ *  stale value can never survive from the original. */
+const WIZARD_OWNED_LESSON_FIELDS = [
+    "id",
+    "title",
+    "description",
+    "target_language",
+    "source_language",
+    "estimated_minutes",
+    "cards",
+    "steps",
+    "requires_extensions",
+    "domain",
+    "contributed_by",
+    "contributed_at",
+] as const;
+
+/** The fields of ``lesson`` an edit-save carries over unchanged: everything
+ *  except {@link WIZARD_OWNED_LESSON_FIELDS} (#3543).
+ *
+ *  @example
+ *  carriedLessonFields({...lesson, purpose: "bridge"}) // -> {purpose: "bridge"}
+ */
+function carriedLessonFields(lesson: ContentLesson): Partial<ContentLesson> {
+    const carried: Record<string, unknown> = {...lesson};
+    for (const field of WIZARD_OWNED_LESSON_FIELDS) delete carried[field];
+    return carried as Partial<ContentLesson>;
 }
 
 function estimateMinutes(theory: number, exercises: number): number {
@@ -167,6 +204,7 @@ export function buildLessonFromDraft(
     // field (the schema default), so no spurious ``domain: "language"``.
     const contentDomain = contentDomainToStamp(meta.domain);
     const lesson: ContentLesson = {
+        ...(opts.carryFrom ? carriedLessonFields(opts.carryFrom) : {}),
         id: opts.id ?? (slugify(meta.title) || "lesson"),
         title: meta.title.trim(),
         description: meta.description.trim() || null,
@@ -239,7 +277,7 @@ export function lessonToDraftInput(
         // single-content-language / level-less shape). An unknown or absent
         // domain normalises to the default ``"language"``.
         domain:
-            lesson.domain && isKnownContentDomain(lesson.domain)
+            lesson.domain && isKnowledgeDomain(lesson.domain)
                 ? lesson.domain
                 : "language",
     };
@@ -327,8 +365,6 @@ export interface DraftValidationChecks {
      *  an empty or unknown code fails. */
     languagePair: boolean;
     enoughCards: boolean;
-    enoughExercises: boolean;
-    enoughTypes: boolean;
     schemaValid: boolean;
     /** The structural validator's reason when ``schemaValid`` is false
      *  (#1722 — e.g. ``/cards/0/back must NOT have fewer than 1
@@ -358,8 +394,6 @@ const BOOLEAN_CHECK_KEYS = [
     "hasTitle",
     "languagePair",
     "enoughCards",
-    "enoughExercises",
-    "enoughTypes",
     "schemaValid",
 ] as const;
 
@@ -371,18 +405,19 @@ const BOOLEAN_CHECK_KEYS = [
 const VALIDATION_ERROR_PREFIX = "generated lesson invalid: ";
 
 export const MIN_CARDS_FOR_SAVE = 4;
-export const MIN_EXERCISES_FOR_SAVE = 5;
-export const MIN_TYPES_FOR_SAVE = 2;
 
 /** The engine schema's ``Card.front``/``Card.back`` ``maxLength`` (#1722).
  *  The card inputs cap at this so a hand-typed side can never fail the
  *  ajv structure check on length. */
 export const CARD_SIDE_MAX_LENGTH = 500;
 
-/** Run the save-readiness checks for the Step-4 checklist. */
+/** Run the local save-readiness checks for the Step-4 checklist.
+ *
+ *  Validity only (#3389, option 2): the exercise and type counts are the
+ *  engine's quality minimums and gate sharing, see
+ *  ``edit/draft-share-check.ts``. */
 export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
     const {meta, cards, exercises} = input;
-    const types = new Set(exercises.map((e) => e.type));
     let schemaValid: boolean;
     let schemaError: string | null = null;
     let schemaErrorIsInternal = false;
@@ -429,8 +464,6 @@ export function checkDraft(input: DraftLessonInput): DraftValidationChecks {
             meta.targetLanguage,
         ),
         enoughCards: cards.length >= MIN_CARDS_FOR_SAVE,
-        enoughExercises: exercises.length >= MIN_EXERCISES_FOR_SAVE,
-        enoughTypes: types.size >= MIN_TYPES_FOR_SAVE,
         schemaValid,
         schemaError,
         schemaErrorIsInternal,

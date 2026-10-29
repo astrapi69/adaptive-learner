@@ -11,17 +11,37 @@ under **Settings → Data**.
 
 ## What the backup contains
 
-A backup is a **complete snapshot**: all 30 data tables (learning
+A backup is a **complete snapshot**: all data tables (learning
 projects, sessions, lesson progress, element-level errors,
 gamification with XP/streak/badges, missions, Anki cards, notes
 and more), **your downloaded content sets**, and a **localStorage
 snapshot** (your contributions, custom learning paths and local
 preferences).
 
-**Not included yet:** connected content repositories, redeemed
-invites and the Learning Repository settings. After restoring on a
-new device, the content sets are back, but reconnect their
-repositories (and redeem invites again) so updates keep arriving.
+**Also included:** connected content repositories, redeemed invites
+and whether the Learning Repository is switched on.
+In browser mode the results of your AI content checks come along
+too, so the "AI-checked" badge stays.
+
+**Not included** are, for example:
+
+- the access token of a private repository (enter it again after
+  restoring);
+- the Learning Repository folder, which belongs to the device;
+- in server mode, lesson progress and voice recordings that were made
+  offline and have not reached the server yet;
+- cached search indexes and media lists, the auto-backup counter and the
+  LAN-sync position.
+
+The setting whether auto-backup is on, by contrast, is included. In
+server mode the app keeps a record in this browser of what is created
+offline: up to 50 changes to lesson progress and voice recordings; if
+more pile up, the oldest are dropped. It transfers them on its own when
+the connection comes back while the app is open, or at the next start
+with a connection. Of what is created offline, only what has already
+reached the server goes into the backup, so in server mode create a
+backup only once the app has run with a connection again after
+learning offline and has been able to transfer the changes.
 
 Before the export, the app shows a **"Your backup contains …"**
 preview with record counts per area, so you can see what will be
@@ -59,12 +79,19 @@ the message contains the technical details for a GitHub issue.
 
 ## Cross-identity import
 
-You do **not** have to be the same user on the same device. A
-backup can be imported into a **fresh installation** or under a
-**different user profile**. The restore assigns the data to the
-active profile and cleanly re-resolves internal references
-(foreign keys) in the process, so your progress stays coherent -
-including lesson step progress, streak and badges.
+You do **not** have to be the same user on the same device.
+
+- **On an empty device**, import the backup right at the start (see
+  "Backup at first login"). The app then takes over the profile from the
+  backup.
+- **On a device where you already created a profile**, you can import the
+  backup via Settings > Data. If it belongs to another profile, the
+  confirmation dialog tells you so before the import. The progress from the
+  backup is then assigned to your **active profile** and merged with yours:
+  lesson progress, mistakes, runs, recordings, projects and history are
+  added, and your own progress stays. XP, streak and settings are taken
+  from the backup. Your active profile stays active; no second profile is
+  created.
 
 ---
 
@@ -96,4 +123,4 @@ Danger Zone). Older single-JSON backups still import cleanly.
 ## Related pages
 
 - [Settings](../user-guide/settings.md) - an overview of all data actions
-- [Multiple content repositories](content-repos.md) - connected repos are not part of the backup yet, reconnect them after a restore
+- [Multiple content repositories](content-repos.md) - connected repos and redeemed invites travel with the backup

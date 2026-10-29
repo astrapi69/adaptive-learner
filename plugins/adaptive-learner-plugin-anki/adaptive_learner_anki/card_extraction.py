@@ -57,13 +57,31 @@ class ExtractedCard:
     tags: list[str]
 
 
-def build_prompt(content: str, *, limit: int = 8) -> str:
+DEFAULT_EXTRACTION_LIMIT = 8
+
+
+def resolve_extraction_limit(value: object) -> int:
+    """The card limit from ``settings.extraction_limit`` (#3435).
+
+    A positive integer is used as given; anything else (missing,
+    zero, negative, a bool, text) falls back to
+    :data:`DEFAULT_EXTRACTION_LIMIT`, so a typo in the YAML cannot
+    switch extraction off or crash the route.
+    """
+    if isinstance(value, bool):
+        return DEFAULT_EXTRACTION_LIMIT
+    try:
+        limit = int(str(value).strip())
+    except (TypeError, ValueError):
+        return DEFAULT_EXTRACTION_LIMIT
+    return limit if limit > 0 else DEFAULT_EXTRACTION_LIMIT
+
+
+def build_prompt(content: str, *, limit: int = DEFAULT_EXTRACTION_LIMIT) -> str:
     """Render the extraction prompt with the material clipped to
     a sane length (8000 chars ≈ ~2000 tokens, fits in any modern
     LLM's context with room for the response)."""
-    return EXTRACTION_PROMPT.format(
-        limit=limit, content=content[:8000]
-    )
+    return EXTRACTION_PROMPT.format(limit=limit, content=content[:8000])
 
 
 def parse_response(raw: str) -> list[ExtractedCard]:
@@ -79,17 +97,14 @@ def parse_response(raw: str) -> list[ExtractedCard]:
         return []
     stripped = raw.strip()
     # Trim a ```json ... ``` fence if present.
-    fence_match = re.match(
-        r"^```(?:json)?\s*(.*?)\s*```$", stripped, re.DOTALL
-    )
+    fence_match = re.match(r"^```(?:json)?\s*(.*?)\s*```$", stripped, re.DOTALL)
     if fence_match:
         stripped = fence_match.group(1).strip()
     try:
         data = json.loads(stripped)
     except json.JSONDecodeError:
         logger.warning(
-            "Anki card extraction: response is not JSON. "
-            "Returning empty list. raw=%r",
+            "Anki card extraction: response is not JSON. Returning empty list. raw=%r",
             stripped[:200],
         )
         return []
@@ -109,17 +124,9 @@ def parse_response(raw: str) -> list[ExtractedCard]:
         raw_tags = row.get("tags") or []
         if not isinstance(raw_tags, list):
             raw_tags = []
-        tags = [
-            str(t).strip().lower()
-            for t in raw_tags
-            if isinstance(t, (str, int, float))
-        ]
+        tags = [str(t).strip().lower() for t in raw_tags if isinstance(t, (str, int, float))]
         tags = [t for t in tags if t]
-        out.append(
-            ExtractedCard(
-                card_type=card_type, front=front, back=back, tags=tags
-            )
-        )
+        out.append(ExtractedCard(card_type=card_type, front=front, back=back, tags=tags))
     return out
 
 
@@ -197,9 +204,7 @@ def _session_transcript(db: Session, session_id: str) -> tuple[str, str | None, 
         .order_by(SessionMessage.created_at.asc())
         .all()
     )
-    transcript = "\n".join(
-        f"{m.role.upper()}: {m.content}" for m in messages if m.content
-    )
+    transcript = "\n".join(f"{m.role.upper()}: {m.content}" for m in messages if m.content)
     return transcript, project.user_id, project.id
 
 
@@ -218,9 +223,7 @@ def _conversation_transcript(
         .order_by(ImportedMessage.order_index.asc())
         .all()
     )
-    transcript = "\n".join(
-        f"{m.role.upper()}: {m.content}" for m in rows if m.content
-    )
+    transcript = "\n".join(f"{m.role.upper()}: {m.content}" for m in rows if m.content)
     analysis: dict[str, Any] = {}
     if conv.analysis_result:
         try:
@@ -237,21 +240,22 @@ def _conversation_transcript(
 
 
 def extract_from_session(
-    db: Session, session_id: str, ai_call: AICallable
+    db: Session,
+    session_id: str,
+    ai_call: AICallable,
+    *,
+    limit: int = DEFAULT_EXTRACTION_LIMIT,
 ) -> list[Any]:
     """Pull the session transcript, call the injected AI helper,
-    parse, persist. Returns the inserted rows (empty on failure)."""
+    parse, persist. Returns the inserted rows (empty on failure).
+    ``limit`` caps the cards the prompt asks for."""
     transcript, user_id, project_id = _session_transcript(db, session_id)
     if not user_id or not transcript.strip():
         return []
     try:
-        raw = ai_call(
-            [{"role": "user", "content": build_prompt(transcript)}]
-        )
+        raw = ai_call([{"role": "user", "content": build_prompt(transcript, limit=limit)}])
     except Exception:  # noqa: BLE001
-        logger.exception(
-            "AI extraction failed for session %r; returning [].", session_id
-        )
+        logger.exception("AI extraction failed for session %r; returning [].", session_id)
         return []
     cards = parse_response(raw or "")
     return _persist_cards(
@@ -265,7 +269,11 @@ def extract_from_session(
 
 
 def extract_from_conversation(
-    db: Session, conversation_id: str, ai_call: AICallable
+    db: Session,
+    conversation_id: str,
+    ai_call: AICallable,
+    *,
+    limit: int = DEFAULT_EXTRACTION_LIMIT,
 ) -> list[Any]:
     """Build cards from a conversation.
 
@@ -280,9 +288,7 @@ def extract_from_conversation(
 
     Both paths feed the same persistence layer.
     """
-    transcript, user_id, project_id, analysis = _conversation_transcript(
-        db, conversation_id
-    )
+    transcript, user_id, project_id, analysis = _conversation_transcript(db, conversation_id)
     if not user_id:
         return []
 
@@ -293,13 +299,9 @@ def extract_from_conversation(
 
     if not cards and transcript.strip():
         try:
-            raw = ai_call(
-                [{"role": "user", "content": build_prompt(transcript)}]
-            )
+            raw = ai_call([{"role": "user", "content": build_prompt(transcript, limit=limit)}])
         except Exception:  # noqa: BLE001
-            logger.exception(
-                "AI extraction failed for conversation %r.", conversation_id
-            )
+            logger.exception("AI extraction failed for conversation %r.", conversation_id)
             raw = ""
         cards.extend(parse_response(raw or ""))
 
@@ -345,11 +347,7 @@ def _cards_from_vocabulary(entries: list[Any]) -> list[ExtractedCard]:
         raw_tags = entry.get("tags") or []
         if not isinstance(raw_tags, list):
             raw_tags = []
-        tags = [
-            str(t).strip().lower()
-            for t in raw_tags
-            if isinstance(t, (str, int, float))
-        ]
+        tags = [str(t).strip().lower() for t in raw_tags if isinstance(t, (str, int, float))]
         tags = [t for t in tags if t]
         tags.append("vocabulary")
 
@@ -371,9 +369,5 @@ def _cards_from_vocabulary(entries: list[Any]) -> list[ExtractedCard]:
         if phonetic:
             back = f"{translation}\n[{phonetic}]"
 
-        out.append(
-            ExtractedCard(
-                card_type=card_type, front=front, back=back, tags=tags
-            )
-        )
+        out.append(ExtractedCard(card_type=card_type, front=front, back=back, tags=tags))
     return out

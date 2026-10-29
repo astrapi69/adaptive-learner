@@ -5,14 +5,21 @@ name: Dexie smoke
 # backend. The make target builds the dexie frontend and runs the Playwright
 # dexie config (preview-mode, no backend).
 #
-# #552 — this is expensive (~6 min: full dexie build + Playwright) and rarely
-# PR-relevant, so it runs OUT of the per-PR feedback loop (same rationale as
-# the mutation-testing workflows): a daily schedule + release branches + manual
-# dispatch. The regression protection stays — it is ALSO a mandatory gate in
-# `make release-test` (DEXIE-MODE-RELEASE-GATE-01), so no release ships without
-# it passing.
+# #552 kept this out of the per-PR loop as expensive and rarely PR-relevant.
+# #3748 brings it back for the PRs it is relevant to: lesson-flow changes
+# merged without any Dexie run (#3738, #3741), and the one that got a manual
+# dispatch (#3744) went red on a spec defect a PR run would have shown before
+# review. `scripts/dexie_smoke_affected.py` decides per PR from the changed
+# files: all of frontend/ (measured: the specs execute 75 percent of its
+# modules, the rest is spread too thinly to carve out) minus unit tests, plus
+# what the specs read outside it. Not affected -> the smoke job is skipped and
+# the gate job reports "not affected", so the gate can be a required check
+# without leaving unaffected PRs waiting. The schedule, release branches and
+# dispatch always run the smoke, and it stays a mandatory gate in
+# `make release-test` (DEXIE-MODE-RELEASE-GATE-01).
 
 on:
+  pull_request:
   schedule:
     # Daily at 04:00 UTC.
     - cron: "0 4 * * *"
@@ -23,9 +30,40 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
+# A push to the PR replaces a running smoke; scheduled, release and dispatched
+# runs are never cancelled by each other.
+concurrency:
+  group: dexie-smoke-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  scope:
+    name: Dexie smoke scope
+    runs-on: ubuntu-latest
+    outputs:
+      affected: ${{ steps.decide.outputs.affected }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      # Outside a PR the smoke always runs. On a PR the script fails closed:
+      # an unresolved base or an empty diff runs the smoke too.
+      - name: Decide from the changed files
+        id: decide
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "::notice::${{ github.event_name }} - the smoke always runs"
+            echo "affected=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git fetch --no-tags origin "${{ github.base_ref }}" >/dev/null 2>&1 || true
+          python3 scripts/dexie_smoke_affected.py --base "origin/${{ github.base_ref }}" \
+            --github-output "$GITHUB_OUTPUT"
+
   dexie-smoke:
     name: Dexie-mode E2E smoke
+    needs: scope
+    if: needs.scope.outputs.affected == 'true'
     runs-on: ubuntu-latest
     # Run inside the official Playwright image so Chromium + the headless shell
     # are PRE-BAKED -- no cdn.playwright.dev download. #317 was not a
@@ -60,9 +98,9 @@ jobs:
       # --user 1001 (no apt). The npm distribution of Bun carries the binary
       # as a plain npm tarball (no unzip), installed to a user-writable
       # prefix (#1530).
-      - name: Install Bun 1.3.14 (npm; image lacks unzip for setup-bun)
+      - name: Install Bun 1.4.2 (npm; image lacks unzip for setup-bun)
         run: |
-          npm install --global --prefix "$HOME/.bun-npm" bun@1.3.14
+          npm install --global --prefix "$HOME/.bun-npm" bun@1.4.2
           echo "$HOME/.bun-npm/bin" >> "$GITHUB_PATH"
 
       - name: Cache bun install
@@ -93,6 +131,12 @@ jobs:
         working-directory: e2e
         run: npx playwright test --config=playwright.dexie.config.ts
 
+      # #3427 - a spec that cannot reach its surface skips at runtime; the
+      # budget keeps a broken path from turning into a green night.
+      - name: Runtime skip budget (#3427)
+        if: success() || failure()
+        run: python3 scripts/check_e2e_skip_budget.py --suite dexie-smoke --report e2e/test-results/dexie-smoke.json
+
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v7
@@ -106,3 +150,29 @@ jobs:
           # so an empty upload is the correct, expected state — don't warn.
           if-no-files-found: ignore
           retention-days: 14
+
+  # The check to require on develop: it always reports, so a PR the smoke does
+  # not concern is never left waiting for a skipped job. Green only when the
+  # scope job decided "not affected", or the smoke ran and passed.
+  gate:
+    name: Dexie smoke (required)
+    needs: [scope, dexie-smoke]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verdict
+        run: |
+          scope="${{ needs.scope.result }}"
+          affected="${{ needs.scope.outputs.affected }}"
+          smoke="${{ needs.dexie-smoke.result }}"
+          if [ "$scope" != "success" ]; then
+            echo "::error::the scope job did not succeed ($scope)"
+            exit 1
+          fi
+          if [ "$affected" = "false" ]; then
+            echo "Dexie smoke: not affected - no changed file is read by the Dexie build or its specs." >> "$GITHUB_STEP_SUMMARY"
+            echo "::notice::not affected"
+            exit 0
+          fi
+          echo "Dexie smoke: affected, smoke result: $smoke" >> "$GITHUB_STEP_SUMMARY"
+          test "$smoke" = "success"

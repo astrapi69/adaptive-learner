@@ -106,6 +106,10 @@ This is accepted evidence for a PR when EITHER:
   (their call, stated in the PR or the tracking issue), with the automated
   spec as interim evidence and the manual pass still expected before the
   next release ships that data path.
+- the PR's `backup-e2e.yml` run is green (#3693): its generic spec
+  `e2e/dexie/backup-every-table-roundtrip.spec.ts` drives this round trip
+  for every `BACKUP_TABLES` table, a new one included, on the PR itself. A
+  table the spec lists as known broken has no automated proof.
 
 It does NOT cover what only a real device shows: storage eviction under
 pressure and standalone (home-screen) mode - see
@@ -166,8 +170,11 @@ A PR that changes a visually critical path MUST carry the affected
 `e2e/visual/screenshots/` baselines IN THE SAME PR - never hope for the next
 nightly run. Enforced by `.github/workflows/visual-baseline-gate.yml`, whose
 filter is deliberately coarse: all of `frontend/src/pages/**`,
-`frontend/src/components/**`, `frontend/src/shared/**`, and
-`frontend/src/styles/**`. A curated per-directory list (lesson/exercises/CSS
+`frontend/src/components/**`, `frontend/src/shared/**`,
+`frontend/src/styles/**`, and the UI catalogs (`frontend/src/data/i18n/**`,
+`backend/config/i18n/**`; #3687: a text change is a rendering change, and a
+word swap under the diff tolerance leaves baselines that show old words with
+every compare green). A curated per-directory list (lesson/exercises/CSS
 only) missed `components/settings/**` (#2546) after already causing
 #1628/#1638/#1635 in the same shape - view names in `e2e/visual/helpers.ts`
 don't map 1:1 onto source directories (statistics lives under
@@ -439,8 +446,8 @@ Informational, warn-only or externally driven checks run on the night shift
 |---|---|
 | `ci.yml`: backend / plugin / frontend tests, ruff + mypy, pre-commit, docs-drift verifier, dead-code ratchet (#3047) | Security scan (pip-audit / npm audit / bandit), weekly + `push: release/**` |
 | `complexity-check.yml` (baseline ratchet, hard fail) | Coverage (`coverage.yml`) - a report, not a gate |
-| `cohesion-check.yml`, `visual-baseline-gate.yml`, `testid-reference-gate.yml` | Content-stats drift, complexity report, dexie-smoke (#552), mutation testing |
-| `docker-build-smoke.yml` (path-filtered, #1990) | WebKit gate (#1843, `ENABLE_NIGHTLY_WEBKIT`) |
+| `cohesion-check.yml`, `visual-baseline-gate.yml`, `testid-reference-gate.yml` | Content-stats drift, complexity report, full dexie-smoke, mutation testing |
+| `docker-build-smoke.yml` (path-filtered, #1990), `dexie-smoke.yml` (frontend PRs, #3748) | WebKit gate (#1843, `ENABLE_NIGHTLY_WEBKIT`) |
 
 Rule of thumb: if a job's failure should NOT block a merge, it belongs on the
 night shift, not on the `pull_request` trigger.

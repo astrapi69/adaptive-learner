@@ -20,6 +20,7 @@ import { useI18n } from "../../../hooks/ui/useI18n";
 import { useAiCardValidation } from "../../../hooks/content/useAiCardValidation";
 import { useAiFix } from "../../../hooks/content/ai-fix";
 import { isOwnEditableSet } from "../../../lib/lesson/own-set";
+import AiPrivacyNote from "../AiPrivacyNote";
 import AiFixPanel from "./AiFixPanel";
 import AiReportStep from "./AiReportStep";
 import {
@@ -27,6 +28,7 @@ import {
   type ValidationMarkdownRow,
 } from "../../../lib/ai/validation/validation-markdown";
 import { checkedWithLine } from "../../../lib/ai/validation/validation-provenance";
+import { aiProviderLabel } from "../../../lib/ai/providers/provider-label";
 import { downloadBlob } from "../../../lib/lesson/export/result-download";
 import type { AIProvider } from "../../../lib/constants";
 import type { ContentSetEntry } from "../../../storage/types";
@@ -87,9 +89,7 @@ export default function AiValidationDialog({
 
   // #940 — surface which provider + model ran the check (read from the run,
   // never hardcoded). Empty for an older cached report without provenance.
-  const providerLabel = state.provider
-    ? t(`settings.provider_${state.provider}`, state.provider)
-    : "";
+  const providerLabel = state.provider ? aiProviderLabel(t, state.provider) : "";
   const checkedWith = checkedWithLine({
     prefix: t("content.ai_check.checked_with", "Checked with"),
     providerLabel,
@@ -161,12 +161,14 @@ export default function AiValidationDialog({
                 .replace("{tokens}", state.estimate.tokensLabel)
                 .replace("{usd}", state.estimate.usdLabel)}
             </p>
-            <p className="text-xs text-fg-muted">
-              {t(
+            <AiPrivacyNote
+              className="text-xs text-fg-muted"
+              testId="ai-validation-privacy"
+              text={t(
                 "content.ai_check.privacy",
-                "Your lesson cards will be sent to your configured AI provider for review. No personal data is transmitted.",
+                "The check sends your AI provider the cards of the set (identifier, front, back, notes) as well as the set's source language, target language and level, but neither your profile nor your learning progress. In addition, as with every AI request, your AI provider receives, among other things, your IP address and your API key.",
               )}
-            </p>
+            />
             {rateLimited && (
               <p className="text-sm text-warning" data-testid="ai-validation-rate-limited">
                 {t(

@@ -18,25 +18,13 @@
 
 import { expect, test } from "@playwright/test";
 
+import { saveAnthropicKey } from "../helpers/ai-key";
 import { createTestUser } from "../helpers/onboarding";
 
 const PASSPHRASE = "correct-horse-1";
-// Format-valid Anthropic key (sk-ant- prefix, >= 40 chars) so Save is enabled.
+// Format-valid Anthropic key (sk-ant- prefix, >= 40 chars) so Save is enabled;
+// the export source for the round-trip.
 const ANTHROPIC_KEY = "sk-ant-api03-" + "e2eROUNDTRIP".repeat(6);
-
-/** Save an Anthropic key in the AI tab (Dexie storage), used as the export
- *  source for the round-trip. */
-async function saveAnthropicKey(page: import("@playwright/test").Page) {
-  await page.goto("/settings?tab=ai");
-  const input = page.getByTestId("api-key-input-anthropic");
-  await expect(input).toBeVisible({ timeout: 15000 });
-  await input.fill(ANTHROPIC_KEY);
-  await page.getByTestId("api-key-save-anthropic").click();
-  // The overview row shows the provider as active/configured.
-  await expect(
-    page.getByTestId("provider-overview-preview-anthropic"),
-  ).not.toHaveText("—", { timeout: 15000 });
-}
 
 test.describe("AI key import flow (#1765)", () => {
   test("Import button on the AI tab jumps to the Data import block", async ({
@@ -82,7 +70,7 @@ test.describe("AI key import flow (#1765)", () => {
     page,
   }) => {
     await createTestUser(page);
-    await saveAnthropicKey(page);
+    await saveAnthropicKey(page, ANTHROPIC_KEY);
 
     // Export the encrypted vault and capture the downloaded envelope text.
     await page.goto("/settings?tab=data");

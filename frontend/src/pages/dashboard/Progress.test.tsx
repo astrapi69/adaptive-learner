@@ -198,8 +198,9 @@ describe("Progress page", () => {
     apiProgress.mockRejectedValue(new ApiError(500, "DB down"));
     apiCommits.mockResolvedValue([]);
     renderProgress();
-    await screen.findByTestId("progress-error");
-    expect(screen.getByTestId("progress-error").textContent).toContain("DB down");
+    const panel = await screen.findByTestId("progress-error");
+    // #3374 - friendly status text, never the backend detail.
+    expect([panel.textContent?.includes("An internal error occurred."), panel.textContent?.includes("DB down")]).toEqual([true, false]);
   });
 
   // --- v0.5.0 / 8D step-evaluation insights -------------------------

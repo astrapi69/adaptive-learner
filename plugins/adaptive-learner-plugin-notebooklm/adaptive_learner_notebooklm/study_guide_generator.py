@@ -17,7 +17,8 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -127,10 +128,7 @@ def _append_session_blocks(pieces: list[str], sessions: list[dict[str, Any]]) ->
     # total exceeds the budget.
     running = "\n".join(pieces)
     for sess in sessions:
-        header = (
-            f"\n=== Session {sess.get('started_at', '?')} "
-            f"({sess.get('method', '?')}) ==="
-        )
+        header = f"\n=== Session {sess.get('started_at', '?')} ({sess.get('method', '?')}) ==="
         body = str(sess.get("messages") or "")
         block = f"{header}\n{body}"
         if len(running) + len(block) > _MAX_CONTEXT_CHARS:
@@ -157,17 +155,13 @@ def parse_response(raw: str) -> str:
     # Strip an outer fence if the model wrapped its output.
     import re
 
-    fence = re.match(
-        r"^```(?:markdown|md)?\s*(.*?)\s*```$", stripped, re.DOTALL
-    )
+    fence = re.match(r"^```(?:markdown|md)?\s*(.*?)\s*```$", stripped, re.DOTALL)
     if fence:
         return fence.group(1).strip()
     return stripped
 
 
-def generate(
-    ai_call: AICallable, *, project: dict[str, Any]
-) -> str:
+def generate(ai_call: AICallable, *, project: dict[str, Any]) -> str:
     """High-level wrapper: build prompt + fire AI + parse.
 
     Returns the raw Markdown body. Empty string on AI failure

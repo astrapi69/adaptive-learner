@@ -158,7 +158,7 @@ def _fire_on_session_complete(session: dict[str, Any], rating: dict[str, Any]) -
         from app.main import manager
 
         manager._pm.hook.on_session_complete(session=session, rating=rating)
-    except Exception:
+    except Exception:  # noqa: BLE001 - a subscriber crash must not undo the completion
         logger.warning(
             "on_session_complete subscriber raised; lesson completion not affected",
             exc_info=True,

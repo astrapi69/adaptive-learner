@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, date, datetime
+from typing import Any
 
 from sqlalchemy import (
     Boolean,
@@ -122,7 +123,7 @@ class UserSettings(Base):
     api_key_gemini: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_perplexity: Mapped[str | None] = mapped_column(Text, nullable=True)
     # v0.4.0: per-provider model override. NULL means the
-    # session plugin's ai_orchestration.DEFAULT_MODELS pick wins;
+    # app.services.ai_caller.DEFAULT_MODELS pick wins;
     # a non-NULL value replaces it for THAT provider only. Plain
     # text — the model name isn't a secret. String(200) leaves
     # room for fully-qualified upstream model IDs (e.g.
@@ -1046,6 +1047,40 @@ class UserXP(Base):
         return f"<UserXP user={self.user_id!r} xp={self.total_xp} level={self.level}>"
 
 
+class XpPurchase(Base):
+    """One XP purchase: an avatar frame, a mascot variant or an arcade game (#3445).
+
+    Written in the same transaction as the ``UserXP`` deduction, so the
+    spend and the acquisition are one event; ownership is derived from this
+    table. Append-only (a purchase is never undone). The id is a uuid5 of
+    ``(user_id, item_kind, item_id)`` (``adaptive_learner_gamification.
+    purchases.purchase_id``), so the same purchase is the same row on every
+    device: sync skips it and a repeated migration adds nothing.
+    """
+
+    __tablename__ = "xp_purchases"
+    __table_args__ = (
+        UniqueConstraint("user_id", "item_kind", "item_id", name="uq_xp_purchases_item"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    item_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    item_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    cost: Mapped[int] = mapped_column(Integer, nullable=False)
+    purchased_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+
+    def __repr__(self) -> str:
+        return f"<XpPurchase user={self.user_id!r} {self.item_kind}={self.item_id!r}>"
+
+
 class Badge(Base):
     """Catalog of available badges (Phase 29B).
 
@@ -1312,6 +1347,12 @@ class UserBadge(Base):
         )
 
 
+def _run_time_default(context: Any) -> int:
+    """Run time of a row inserted without one (#3747): the lifetime total."""
+    params = context.get_current_parameters() if context is not None else {}
+    return int(params.get("time_spent_seconds") or 0)
+
+
 class LessonProgress(Base):
     """User progress on a single content-set lesson
     (Phase 44 / EXP-002 / P-109).
@@ -1408,6 +1449,16 @@ class LessonProgress(Base):
         nullable=False,
         default=0,
     )
+    # #3747 - seconds of the CURRENT run only: grows with the same deltas
+    # as ``time_spent_seconds`` and starts over on a restart or an abandon.
+    # The summary shows it; statistics and missions keep the lifetime
+    # total. A row inserted without it (a backup from before #3747) takes
+    # the lifetime total, the value the summary showed until then.
+    run_time_seconds: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=_run_time_default,
+    )
     # BUG #41 — the step index the user is currently on, persisted
     # so a paused lesson resumes at the exact step (theory steps
     # never write a step_result, so step_results alone cannot
@@ -1478,6 +1529,15 @@ class LessonProgress(Base):
     # JSON list: [{"at": ISO-8601, "correct": int, "total": int}, ...].
     # Capped at the most recent entries on write so the row stays bounded.
     attempt_history: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+        default="[]",
+        server_default="[]",
+    )
+    # #3365 - JSON list of the last ten learner actions, oldest first:
+    # [{"at", "kind", "step_index", "step_id", "correct"?}, ...]. A
+    # resume lands on the last "step" entry's step_id.
+    recent_steps: Mapped[str] = mapped_column(
         Text,
         nullable=False,
         default="[]",

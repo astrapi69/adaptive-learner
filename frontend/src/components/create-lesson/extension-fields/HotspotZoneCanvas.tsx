@@ -11,12 +11,17 @@
  * makes no sense while authoring it) - fine-tuning position/size and
  * marking a zone correct still happens via the numeric fields + radio in
  * ``HotspotFields``, which this canvas complements rather than replaces.
+ *
+ * A source on another host is not loaded (#3803): the canvas then shows a
+ * link to the image instead, the same rule every Markdown surface follows.
  */
 
 import {useState} from "react";
 
 import {pointToPercent, type HotspotZone} from "../../../lib/exercises/payload/hotspot";
 import {zoneFromDrag, type DragPoint} from "../../../lib/exercises/authoring/hotspot-zone-draw";
+import {isForeignImageUrl} from "../../../lib/media/remote-image";
+import MarkdownImage from "../../../shared/data-display/MarkdownImage";
 
 type Translate = (key: string, fallback?: string) => string;
 
@@ -67,7 +72,24 @@ function DragPreview({shape, start, current}: {shape: "rect" | "circle"; start: 
     return <circle cx={cx} cy={cy} r={radius} strokeWidth={1} {...common} />;
 }
 
+/** An image on another host is offered as a link, never loaded (#3803): a
+ *  lesson imported or opened for editing can carry any ``src``. Nothing is
+ *  drawn on it either; the numeric zone fields still work. */
+function RemoteImageLink({src, t}: {src: string; t: Translate}) {
+    return (
+        <MarkdownImage
+            src={src}
+            alt={t("create_lesson.extensions.edit.hotspot_image_preview_alt", "Stimulus image")}
+        />
+    );
+}
+
 export default function HotspotZoneCanvas({id, src, zones, drawShape, onDraw, t}: HotspotZoneCanvasProps) {
+    if (isForeignImageUrl(src, document.baseURI)) return <RemoteImageLink src={src} t={t} />;
+    return <ZoneCanvas id={id} src={src} zones={zones} drawShape={drawShape} onDraw={onDraw} t={t} />;
+}
+
+function ZoneCanvas({id, src, zones, drawShape, onDraw, t}: HotspotZoneCanvasProps) {
     const [dragStart, setDragStart] = useState<DragPoint | null>(null);
     const [dragCurrent, setDragCurrent] = useState<DragPoint | null>(null);
 

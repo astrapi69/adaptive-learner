@@ -24,44 +24,49 @@ gates:
     body_sha: 0884e60bace9aa5d
     note: hosts the verify-gate-rule-links + verify-lessons-inventory steps
 
+  - workflow: backup-e2e.yml
+    enforces: quality-checks.md#backup-akzeptanztest-acceptance-gate-mandatory
+    body_sha: 3a7e984635fb7660
+    note: runs every e2e/dexie/backup-*.spec.ts on PRs touching backup paths; the generic every-table spec is the round-trip evidence (#3693)
+
   - workflow: visual-baseline-gate.yml
     enforces: quality-checks.md#visual-baseline-duty-for-visually-critical-prs-1640
-    body_sha: 714e348412ded633
-    note: visually critical PRs carry their baseline updates (escape label visual-baselines-unaffected); filter is coarse (pages/components/shared/styles) since #2552
+    body_sha: 6d1ecd4261bdd7c4
+    note: visually critical PRs carry their baseline updates (escape label visual-baselines-unaffected); filter is coarse (pages/components/shared/styles) since #2552, plus the UI catalogs since #3687
 
   - workflow: testid-reference-gate.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
-    body_sha: 63d68207e79c4e2e
+    body_sha: 05e8e053efe0e13c
     note: spec-referenced testids may not be removed without touching the spec (escape label testid-refs-unaffected)
 
   - workflow: docker-build-smoke.yml
     enforces: lessons/ci-gates.md#pr-ci-vs-nightly-gates-different-test-surfaces-green-pr---red-nightlypush
-    body_sha: 63d68207e79c4e2e
+    body_sha: 05e8e053efe0e13c
     note: builds the prod compose path no other gate builds (the #1771 no-cadence class)
 
   - workflow: complexity-check.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
+    body_sha: 2a821a5172a15885
     note: baseline ratchet on PRs, full warn-only report on the night shift
 
   - workflow: dexie-smoke.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
-    note: nightly + release only, never on PRs (expensive, rarely PR-relevant)
+    body_sha: 2a821a5172a15885
+    note: nightly + release; on PRs only when they change what the Dexie build or its specs read (#3748)
 
   - workflow: coverage.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
+    body_sha: 2a821a5172a15885
     note: a report, not a merge gate - night shift by design
 
   - workflow: security-scan.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
+    body_sha: 2a821a5172a15885
     note: warn-only, weekly + release branches
 
   - workflow: webkit-gate.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
+    body_sha: 2a821a5172a15885
     note: real-WebKit layout gate the Chromium gates are blind to
 
   - workflow: engine-schema-parity.yml
@@ -71,7 +76,7 @@ gates:
 
   - workflow: content-stats.yml
     enforces: quality-checks.md#ci-cadence-pr-gates-vs-the-night-shift-575
-    body_sha: 2df6d1c10d797df6
+    body_sha: 2a821a5172a15885
     note: driven by the separate content repo, so a PR cannot predict it - night shift
 
 # Workflows that deliberately enforce no documented rule.
@@ -82,6 +87,8 @@ no_rule:
   mutation-frontend.yml: informational report behind ENABLE_NIGHTLY_MUTATION
   visual-regression.yml: produces baselines; the duty to carry them is visual-baseline-gate.yml
   visual-baseline-sync.yml: housekeeping that pushes CI-rendered baselines onto the PR branch
+  unused-catalog-keys.yml: night-shift report of catalog keys without a consumer older than 14 days (#3444), filed in one issue; not a merge gate so the #2578 translations-first order stays free
+  smoke-nightly.yml: night-shift run of the mobile-viewport smoke spec against backend + dev server (#3544), findings filed in one issue; checks function at narrow widths, not layout, and is not a merge gate
   dead-code.yml: night-shift dead-code report (#2741, vulture+knip list baseline); findings are detector claims, deletion PRs verify individually (#2486)
   manual-automation.yml: executes the manual test plan, does not gate a rule
   deploy-gh-pages.yml: deployment

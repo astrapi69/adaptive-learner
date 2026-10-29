@@ -39,7 +39,7 @@ par une et ne se chevauchent jamais.
 
 ## Intensité des retours
 
-Dans **Paramètres → Interface → Intensité des retours**, vous pouvez choisir :
+Dans **Paramètres > Apprentissage > Intensité du retour**, vous pouvez choisir :
 
 | Niveau | Comportement |
 |--------|-------------|
@@ -54,7 +54,7 @@ toujours **Subtil**, quelle que soit la valeur configurée.
 
 ## Sons
 
-**Désactivés par défaut.** Activez-les dans **Paramètres → Interface → Sons**.
+**Désactivés par défaut.** Activez-les dans **Paramètres > Apprentissage > Sons**.
 
 Les effets sonores sont **synthétisés à l'exécution** via Web Audio API -
 aucun fichier audio n'est embarqué dans l'application. L'AudioContext est
@@ -72,8 +72,9 @@ Pour une expérience épurée :
 
 1. Réglez l'intensité sur **Subtil** pour les animations/phrases
 2. Désactivez **Sons** pour les effets audio
-3. Désactivez **Afficher la gamification** dans **Paramètres → Gamification**
-   pour masquer XP, badges et séries
+3. Désactivez **Afficher les notifications XP** et **Afficher les
+   notifications de badge** dans **Paramètres > Apprentissage >
+   Ludification** pour couper les notifications d'XP et de badges
 
 La couche de célébrations est supplémentaire et son échec ne brisera
 jamais le flux de la leçon.

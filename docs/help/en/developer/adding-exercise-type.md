@@ -33,8 +33,9 @@ draws.
    it refreshes the mirror `schema/*.json` from the installed package and
    regenerates every derived artefact - the structural Pydantic layer
    (`plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema_generated.py`
-   via `scripts/generate_pydantic_models.py`), the TS lesson types
-   (`frontend/src/storage/types/content/lesson-schema.generated.ts`) and the
+   via `scripts/generate_pydantic_models.py`), the browser's ajv
+   schema mirror (`frontend/src/lib/content/validation/lesson.schema.generated.json`)
+   with its standalone validator, and the
    format-reference doc. **Never hand-edit** a mirrored or generated
    artefact; the `make sync-schema-check` drift gate fails if you do.
 4. **Schema version.** Keep `CURRENT_SCHEMA_VERSION` in `models.py` aligned

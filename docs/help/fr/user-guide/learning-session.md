@@ -1,6 +1,6 @@
 # Session d'apprentissage
 
-Une session d'apprentissage est une séance guidée par l'IA suivant le
+Une session d'apprentissage est une session guidée par l'IA suivant le
 [cycle en sept étapes](../concept/seven-steps.md). Elle dure généralement
 entre 20 et 45 minutes.
 
@@ -92,8 +92,9 @@ tourne pendant le streaming.
 
 ## Auto-boucle
 
-Si l'auto-boucle est activée (dans les paramètres), une nouvelle boucle
-démarre automatiquement après chaque cycle complété avec un nouveau sujet
-de curriculum. Vous pouvez interrompre l'auto-boucle à tout moment.
+Dans l'application de bureau, une nouvelle boucle démarre automatiquement
+après chaque cycle complété avec un nouveau sujet de curriculum (5 cycles
+au maximum par session). Vous pouvez l'arrêter à tout moment en terminant
+la session. Dans la version navigateur, la session reste à l'étape 7.
 
 Voir [Auto-boucle](../concept/seven-steps.md#auto-boucle) pour plus de détails.

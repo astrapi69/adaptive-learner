@@ -16,6 +16,7 @@
 
 import {expect, test} from "@playwright/test";
 
+import {expectLandingVisible} from "../helpers/landing";
 import {completeAssessment, completeOnboarding} from "../helpers/onboarding";
 
 interface Viewport {
@@ -51,7 +52,7 @@ for (const vp of VIEWPORTS) {
                 throw new Error(`landing reset failed: ${resp.status()}`);
             }
             await page.goto("/");
-            await expect(page.getByTestId("landing")).toBeVisible();
+            await expectLandingVisible(page);
             const overflow = await page.evaluate(() => {
                 const root = document.documentElement;
                 return {

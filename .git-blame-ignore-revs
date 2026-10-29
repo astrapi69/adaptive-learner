@@ -5,3 +5,6 @@
 #
 # GitHub reads this file on its own. Locally, `make install-hooks` sets
 # `blame.ignoreRevsFile` to it.
+
+# ruff format of every plugin module (#3658, #3665)
+62c904c295fdc6adb8a5ce3c499b54fab49801a6

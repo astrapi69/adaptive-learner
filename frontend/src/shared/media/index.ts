@@ -19,5 +19,3 @@ export * from "./ResourceCard";
 export {default as ResourceCard} from "./ResourceCard";
 export * from "./SetDiscoveryCard";
 export {default as SetDiscoveryCard} from "./SetDiscoveryCard";
-export * from "./YouTubeThumbnail";
-export {default as YouTubeThumbnail} from "./YouTubeThumbnail";

@@ -65,11 +65,12 @@ def _resolve_plugin_settings_path() -> Path | None:
         candidate = get_config_dir() / "plugins" / PLUGIN_SETTINGS_FILENAME
         if candidate.is_file():
             return candidate
-    except Exception:
+    except Exception:  # noqa: BLE001
         # app not importable (pure plugin test, or import
         # ordering issue). Fall through to the repo-relative
-        # search.
-        pass
+        # search; debug level because the standalone plugin
+        # tests take this path on purpose (#3423).
+        logger.debug("app.paths unavailable; searching the repo for the config", exc_info=True)
 
     here = Path(__file__).resolve()
     # plugin pkg → plugin dir → plugins/ → repo root

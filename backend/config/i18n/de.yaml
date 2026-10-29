@@ -7,7 +7,6 @@ app:
   reload: "Neu laden"
   name: Adaptive Learner
   tagline: Adaptives Lernen nach dem Sechs-Methoden-Modell.
-  skeleton_notice: Skeleton-Stand. Domain-Modelle, Plugins und Seiten folgen in den nächsten Phasen - siehe docs/adaptive-learner-project-reference.md.
 common:
   ok: "OK"
   remove: "Entfernen"
@@ -18,17 +17,9 @@ common:
   error: Etwas ist schiefgegangen.
   back: Zurück
   next: Weiter
-  start: Starten
   submit: Absenden
-  continue: Fortfahren
-  done: Fertig
   delete: Löschen
   edit: Bearbeiten
-  confirm: Bestätigen
-  'yes': Ja
-  'no': Nein
-  optional: optional
-  required: Pflichtfeld
   minutes: Minuten
   close: "Schließen"
 avatar:
@@ -62,7 +53,7 @@ data_export:
   cat_imports: "Chat-Importe (mit Nachrichten)"
   cat_anki: "Anki-Karten"
   cat_questions: "Lernfragen"
-  cat_gamification: "XP, Abzeichen, Streak, Missionen"
+  cat_gamification: "XP, Abzeichen, Serie, Missionen"
   cat_settings: "Einstellungen"
   cat_ai_config: "KI-Schlüssel-Sicherung"
   cat_speech_recordings: "Sprachaufnahmen (aus Sprechübungen)"
@@ -79,9 +70,6 @@ nav:
     progress: "Fortschritt"
     more: "Mehr"
   primary: "Hauptnavigation"
-  discover: "Inhalte entdecken"
-  offline_long: "Offline - frühere Sitzungen bleiben lesbar"
-  sync_pending: "{n} Änderung(en) warten auf Sync"
   statistics: "Statistik"
   profile: "Dein Profil"
   learning_path: "Lernpfad"
@@ -94,9 +82,6 @@ nav:
   help: Hilfe
   home: Start
   menu: Menü
-  online: Online
-  offline: Offline
-  anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Entwicklermodus aktiv - Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar."
   content: "Meine Inhalte"
@@ -105,8 +90,6 @@ nav:
   mode_badge_tooltip_content: "Kein API-Schlüssel konfiguriert - nur vorgefertigte Inhalte. Schlüssel in den Einstellungen hinterlegen, um KI-Funktionen zu aktivieren."
   mode_badge_tooltip_ai: "KI-Anbieter konfiguriert - Übungen nutzen KI für Distraktoren und Hinweise. Tippen, um Inhalte zu durchstöbern."
   mode_badge_action: "Inhalte durchsuchen"
-  sync_paired: "Sync: gekoppelt (Einstellungen > Sync)"
-  sync_unpaired: "Sync: nicht gekoppelt (Einstellungen > Sync)"
 import:
   title: Konversation importieren
   subtitle: Füge eine ChatGPT-, Claude- oder Gemini-Konversation ein oder lade sie hoch und erhalte sofort Lern-Erkenntnisse.
@@ -129,12 +112,12 @@ import:
   analysis_title: Analyse
   analysis_ready: Analyse bereit.
   analysis_fallback: Analyse ist gelaufen, aber die KI-Antwort konnte nicht sauber geparst werden.
-  analysis_fallback_long: Die KI-Antwort konnte nicht als strukturiertes JSON geparst werden. Die folgende Zusammenfassung ist ein Fallback.
+  analysis_fallback_long: "Die KI-Antwort ließ sich nicht als strukturierte Analyse lesen. Starte die Analyse erneut oder wähle einen anderen KI-Anbieter."
   analysis_error: Konversation konnte nicht analysiert werden.
   analysis_phase_reading: "Schritt 1/3: Chat wird gelesen…"
   analysis_phase_analyzing: "Schritt 2/3: Inhalte werden analysiert…"
   analysis_phase_preparing: "Schritt 3/3: Ergebnisse werden aufbereitet…"
-  analysis_estimate: "Die Analyse dauert ca. 15-30 Sekunden…"
+  analysis_estimate: "Längere Chats brauchen länger für die Analyse."
   analysis_done: "Fertig!"
   analysis_cancel: "Abbrechen"
   analysis_failed_inline: "Analyse fehlgeschlagen. Bitte versuche es erneut."
@@ -194,6 +177,8 @@ curriculum:
   create: Curriculum anlegen
   created: Curriculum angelegt.
   saved: Gespeichert.
+  topics_load_failed: "Die Themen konnten nicht geladen werden."
+  lessons_load_failed: "Die Lektionen konnten nicht geladen werden."
   deleted: Thema gelöscht.
   add_topic: Thema hinzufügen
   add_root_topic: Hauptthema hinzufügen
@@ -229,7 +214,7 @@ landing:
   privacy_link: "Datenschutzerklärung"
   checking_session: Willkommen zurück …
   recovered_toast: Willkommen zurück! Deine Lerndaten sind noch da.
-  intro: Adaptive Learner findet die für dich passende Methode aus sechs wissenschaftlich fundierten Lernweisen und begleitet dich mit einem 7-Schritte-Zyklus pro Session.
+  intro: Adaptive Learner findet die für dich passende Methode aus sechs wissenschaftlich fundierten Lernweisen und begleitet dich mit einem 7-Schritte-Zyklus pro Sitzung.
   port_change_hint: "Hast du Adaptive Learner schon einmal unter einem anderen Port verwendet? Deine Lerndaten bleiben an der vorherigen Web-Adresse. Wechsle zurück zum vorherigen Port, exportiere ein Backup und importiere es hier."
   port_change_link: "So nimmst du deine Daten mit"
 onboarding:
@@ -245,12 +230,7 @@ onboarding:
   field_name: Dein Name
   field_topic: Thema
   field_topic_hint: z. B. Spanisch B1 oder lineare Algebra.
-  field_goal: Lernziel
   field_goal_hint: Was willst du am Ende können?
-  field_timeframe: Zeitrahmen
-  field_timeframe_hint: z. B. 4 Wochen, 1 Semester.
-  field_daily_minutes: Minuten pro Tag
-  field_current_problem: Aktuelles Problem
   field_current_problem_hint: optional - was bremst dich gerade?
   submit: Projekt anlegen und Assessment starten
   creating: Projekt wird angelegt …
@@ -308,8 +288,7 @@ dashboard:
     missions: "Missionen"
   no_data: "Noch keine Daten vorhanden."
   title: Dashboard
-  welcome: Willkommen zurück
-  quick_start: Neue Session starten
+  quick_start: Neue Sitzung starten
   quick_start_subtitle: Methode kommt aus deinem Profil.
   card_profile: Lernprofil
   profile_incomplete: "Lernprofil unvollständig."
@@ -319,7 +298,7 @@ dashboard:
   card_distribution: Methodenverteilung
   card_counter: "Sitzungen"
   card_tools: Werkzeug-Empfehlungen
-  card_recent_sessions: Letzte Sessions
+  card_recent_sessions: Letzte Sitzungen
   card_spaced: Geplante Übung
   card_review_queue: Zur Wiederholung
   card_focus_areas: Übungsschwerpunkt
@@ -360,7 +339,6 @@ adaptive:
   session_title: "Adaptive Lektion"
   loading: "Deine Fehler werden analysiert…"
   empty_body: "Noch nichts zum Anpassen - übe zuerst eine Lektion, um Daten aufzubauen."
-  not_cached_body: "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen."
   back_to_dashboard: "Zurück zum Dashboard"
   transparency:
     focus_prefix: "Diese Lektion konzentriert sich auf:"
@@ -373,7 +351,6 @@ adaptive:
     mastered_delta: "Verbesserung: +{n} Element(e) in dieser Sitzung gemeistert!"
     note: "Element-Bewertungen wurden aktualisiert. Deine nächste adaptive Lektion wird die Elemente fokussieren, die noch Übung brauchen."
   error:
-    missing_params: "Kein Inhalts-Set ausgewählt."
     load_failed: "Adaptive Lektion konnte nicht erstellt werden."
 review:
   your_answer: "Deine Antwort:"
@@ -398,35 +375,19 @@ review:
   subtitle_capped: "{shown} von {due} Element(en) zur Wiederholung"
   loading: "Wiederholungssitzung wird geladen…"
   empty_body: "Alles erledigt! Keine Elemente für dieses Set zu wiederholen."
-  not_cached_body: "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen."
   back_to_dashboard: "Zurück zum Dashboard"
   back_to_lesson: "Zurück zur Lektion"
   summary:
-    aria_label: "Wiederholungs-Zusammenfassung"
     heading: "Wiederholung abgeschlossen"
-    score: "Punktzahl"
     note: "Element-Werte wurden aktualisiert. Gemeisterte Elemente erscheinen in der nächsten Sitzung nicht mehr."
   error:
-    missing_params: "Kein Inhalts-Set ausgewählt."
     load_failed: "Wiederholungssitzung konnte nicht geladen werden."
-  spaced_empty: Nichts zu wiederholen - guter Rhythmus!
-  spaced_interval_label: Wiederholung in
-  spaced_start: Starten
-  spaced_dismiss: Ausblenden
-  metric_total_sessions: Sessions insgesamt
-  metric_total_minutes: Minuten insgesamt
-  metric_mean_understanding: Mittleres Verstehen
-  metric_mean_stress: Mittlerer Stress
-  metric_streak: Tagesserie
-  no_data: Noch keine Sessions - starte deine erste, um Trends zu sehen.
-  pronunciation_quick_start: Aussprachetraining
 session:
-  title: Lern-Session
+  auto_loop_unavailable: "In der Desktop-App beginnt nach Schritt 7 automatisch ein neuer Zyklus mit dem nächsten Thema. Die Browser-Version kann das noch nicht: Beende die Sitzung und starte eine neue, um weiterzulernen."
+  title: Lernsitzung
   topic_label: "Thema"
-  in_progress: Session läuft
   send_message: Nachricht senden
   message_placeholder: Schreibe deine Antwort …
-  ai_thinking: Denkt nach …
   ai_error: Die KI konnte nicht antworten.
   no_api_key: "Kein KI-Schlüssel gesetzt. Hinterlege in den Einstellungen einen Schlüssel für deinen KI-Anbieter, um mit dem Tutor zu chatten. Lektionen und Wiederholungen funktionieren ohne Schlüssel."
   ai_error_no_model: "Für deinen KI-Anbieter ist kein Modell gewählt. Wähle ein Modell unter Einstellungen > KI."
@@ -437,13 +398,12 @@ session:
   history_failed: "Der bisherige Verlauf konnte nicht geladen werden. Es wurde nichts gelöscht."
   chat_retry: "Erneut versuchen"
   welcome_empty: "Bereit zum Lernen! Schreibe deine erste Nachricht."
-  end_session: Session beenden
-  end_session_confirm: Sicher? Wir können die Session beenden und bewerten.
+  end_session: Sitzung beenden
   switch_recommended: Methodenwechsel empfohlen
   switch_recommended_subtitle: Deine letzten Werte weisen darauf hin, dass eine andere Methode besser passen könnte.
   switch_accept: Methode wechseln
   switch_dismiss: Aktuelle Methode behalten
-  rating_title: Wie war die Session?
+  rating_title: Wie war die Sitzung?
   rating_understanding: Wie gut hast du es verstanden?
   rating_stress: Wie hoch war dein Stress?
   rating_method_fit: Wie gut hat die Methode gepasst?
@@ -456,7 +416,7 @@ session:
   cycle_advanced: Zyklus {n} gestartet
   cycles_completed: Abgeschlossene Zyklen
   next_topic: 'Nächstes Thema:'
-  offline_start_blocked: Du bist offline. Neue Sessions brauchen eine Netzverbindung - bisherige Sessions bleiben über das Dashboard lesbar.
+  offline_start_blocked: Du bist offline. Neue Sitzungen brauchen eine Netzverbindung - bisherige Sitzungen bleiben über das Dashboard lesbar.
   peek_step_prefix: "Schritt"
   rating_notes_aria: "Sitzungsnotizen"
   rating_notes_placeholder: "Was hat funktioniert, was nicht, was beim nächsten Mal versuchen…"
@@ -468,15 +428,15 @@ progress:
   title: Fortschritt
   chart_timeline: Verstehen und Stress über Zeit
   chart_methods: Methodenverteilung
-  commit_history: Session-Historie
+  commit_history: Sitzungshistorie
   commit_method: Methode
   commit_understanding: Verstehen
   commit_stress: Stress
   commit_duration: Dauer
   commit_date: Datum
-  no_commits: Noch keine abgeschlossenen Sessions.
+  no_commits: Noch keine abgeschlossenen Sitzungen.
   step_eval_title: KI-Schritt-Bewertung
-  step_eval_empty: Noch keine KI-Bewertungsdaten - starte eine Session, um Einblicke zu sehen.
+  step_eval_empty: Noch keine KI-Bewertungsdaten - starte eine Sitzung, um Einblicke zu sehen.
   step_eval_avg_confidence: Ø KI-Konfidenz
   step_eval_repeats: Mal sagte die KI 'noch nicht bereit'
   step_eval_advances: Schritt-Vorwärts
@@ -523,6 +483,7 @@ settings:
     error_decrypt: "Passphrase falsch oder Datei beschädigt."
     error_import: "Schlüsseldatei konnte nicht importiert werden."
   lesson_mode:
+    threshold_set_hint: "Sets mit eigener Bestehensgrenze verwenden stattdessen diese."
     title: "Lektionsmodus"
     hint: "Im Übungsmodus bleiben alle Hilfen an. Im Prüfungsmodus werden Tipps, Theorie-Wiederholung, Vorlesen und die Auflösung ausgeblendet, damit du unter realistischen Bedingungen abrufst."
     default_label: "Standardmodus"
@@ -564,7 +525,6 @@ settings:
   summary_section_export: "Ergebnis-Export"
   summary_section_next_steps: "Nächste-Schritte-Vorschläge"
   correction_round_enabled: "Korrektur-Runde nach Lektionen anzeigen"
-  correction_round_enabled_desc: "Am Ende einer Lektion direkt anbieten, deine Fehler zu korrigieren. Wenn aus, bleiben sie im Wiederholungs-/\"Fehler trainieren\"-Modus verfügbar."
   hints_enabled: "Tipps in Übungen anzeigen"
   hints_enabled_desc: "Bietet bei jeder Übung einen gestuften Tipp-Button."
   hint_xp_cost: "XP-Kosten pro Tipp"
@@ -617,7 +577,6 @@ settings:
   mode_coming_soon: "Kommt bald"
   section_provider: KI-Anbieter
   section_api_keys: API-Keys
-  section_danger: Konto
   section_ui: Oberfläche
   section_appearance: "Darstellung"
   section_content_tabs: "Reihenfolge der Inhalte-Tabs"
@@ -696,10 +655,6 @@ settings:
   tab_plugins: "Plugins"
   plugins_installed_title: "Installierte Plugins"
   plugins_installed_desc: "Jedes Plugin, das die Desktop-App geladen hat, mit Version, Quelle und Aktivierungszeitpunkt (PluginForge-Lebenszyklus)."
-  plugins_col_name: "Plugin"
-  plugins_col_version: "Version"
-  plugins_col_source: "Quelle"
-  plugins_col_activated: "Aktiviert"
   plugins_source_entry_point: "Paket"
   plugins_source_direct: "Direkt registriert"
   plugins_marker_load_error: "Ladefehler"
@@ -712,7 +667,6 @@ settings:
   tab_help: "Hilfe"
   tab_diagnostics: "Diagnose & Support"
   tab_about: "Über"
-  tabs_aria: "Einstellungsbereiche"
   section_feedback: "Feedback"
   section_interaction: "Interaktion"
   cluster_basics: "Grundlagen"
@@ -752,7 +706,7 @@ settings:
   missions_reset_done: "Heutige Missionen neu gemischt."
   missions_reset_failed: "Missionen konnten nicht zurückgesetzt werden."
   gestures: Wischgesten
-  gestures_description: Wischen zum Navigieren in Assessment, Session und Curriculum.
+  gestures_description: Wischen zum Navigieren in Assessment, Sitzung und Curriculum.
   profile_title: "Lernprofil"
   profile_resume: "Lernprofil fortsetzen"
   profile_redo: "Lernprofil erneut machen"
@@ -826,7 +780,7 @@ settings:
   playful_special_rounds_description: "Der Abschluss eines Sets (jede Lektion mit mindestens einem Stern) schaltet eine Blitzrunde aus seinen kniffligsten Karten frei, gespielt mit dem Countdown-Ring. Aus blendet die Blitzrunden-Karte komplett aus."
   playful_flash_round_cards: "Blitzrunden-Karten"
   playful_tickets: "Spiel-Tickets"
-  playful_tickets_description: "Verdiene Arcade-Tickets durch Leistung: eine Lektion mit voller Punktzahl, ein Durchlauf mit allen Herzen und Streak-Meilensteine (3/7/14/30 Tage). Ein Ticket spielt eine Runde eines gesperrten Arcade-Spiels. Aus lässt der Arcade nur die XP-Freischaltungen."
+  playful_tickets_description: "Verdiene Arcade-Tickets durch Leistung: eine Lektion mit voller Punktzahl, ein Durchlauf mit allen Herzen und Serien-Meilensteine (3/7/14/30 Tage). Ein Ticket spielt eine Runde eines gesperrten Arcade-Spiels. Aus lässt der Arcade nur die XP-Freischaltungen."
   playful_ticket_cap: "Maximale Tickets"
   playful_bonus_lessons: "Bonus-Lektionen"
   playful_bonus_lessons_description: "Sets können Bonus-Lektionen enthalten (Lektionsdateien, die mit \"bonus-\" beginnen). Bei aktivem Spielmodus erscheinen sie in der Lektionsliste des Sets gesperrt, bis jede reguläre Lektion mindestens einen Stern hat. Aus (oder Spielmodus aus) behandelt sie wie normale Lektionen."
@@ -891,10 +845,6 @@ settings:
     test_rate_limit: "Rate-Limit erreicht. Versuche es später."
     test_no_key: "Kein Schlüssel zum Testen."
     format_invalid: "Ungültiges Format."
-    rollback_warning: "Der neue Schlüssel funktioniert nicht. Alten Schlüssel behalten?"
-    rollback_keep_old: "Alten behalten"
-    rollback_save_anyway: "Trotzdem speichern"
-    rollback_cancel: "Abbrechen"
     rollback_restore: "Letzten funktionierenden Schlüssel wiederherstellen"
     format_hint:
       anthropic: "Beginnt mit sk-ant-"
@@ -906,7 +856,6 @@ settings:
   api_key_delete: Key entfernen
   api_key_confirm_delete: Diesen API-Key wirklich entfernen?
   saved: Gespeichert.
-  save_failed: Speichern fehlgeschlagen.
   provider_active: Aktiv
   active_provider_missing_key: Dies ist dein aktiver Anbieter, aber kein API-Key ist gespeichert. KI-Antworten werden übersprungen, bis ein Key hinterlegt ist.
   # Phase 34 (v1.20.0) - per-provider key-source badges.
@@ -918,7 +867,6 @@ settings:
   api_key_external_hint_env: Dieser Schlüssel wird über die Umgebungsvariable ADAPTIVE_LEARNER_{PROVIDER}_API_KEY konfiguriert.
   section_model_overrides: Modellüberschreibungen
   model_overrides_hint: Leer lassen, um das Standardmodell pro Anbieter zu nutzen. Ein nicht-leerer Wert ersetzt das Standardmodell beim Chat.
-  model_override_placeholder: Modellbezeichner (z. B. claude-3-5-haiku-latest)
   model_override_set: Überschreibung aktiv
   model_override_default: Standardmodell
   model_override_save: Modell speichern
@@ -1027,22 +975,16 @@ settings:
 methods:
   deductive:
     label: Deduktiv
-    summary: Vom Allgemeinen zum Besonderen - Regeln zuerst, Beispiele danach.
   inductive:
     label: Induktiv
-    summary: Vom Besonderen zum Allgemeinen - Beispiele zuerst, Regeln ableiten.
   error_based:
     label: Fehlerzentriert
-    summary: Aus Fehlern lernen - Korrektur mit Erklärung.
   dialogic:
     label: Dialogisch
-    summary: Im Gespräch denken - Stress senken, Motivation aufbauen.
   contextual:
     label: Kontextuell
-    summary: Im echten Kontext anwenden - Transfer üben.
   ai_adaptive:
     label: KI-adaptiv
-    summary: Die KI wählt für dich die jeweils beste Methode.
 cycle_steps:
   input:
     label: "Eingabe"
@@ -1068,15 +1010,11 @@ cycle_steps:
 errors:
   network: Verbindung zum Server fehlgeschlagen.
   not_found: Eintrag nicht gefunden.
-  validation: Eingabe ungültig.
-  conflict: Eintrag existiert bereits.
   server: Serverfehler - bitte später erneut versuchen.
 toast:
   project_created: Projekt angelegt.
   assessment_saved: Profil gespeichert.
-  session_started: Session gestartet.
-  session_ended: Session beendet.
-  rating_saved: Bewertung gespeichert.
+  session_ended: Sitzung beendet.
   api_key_saved: API-Key gespeichert.
   api_key_restored: "Letzter funktionierender Schlüssel wiederhergestellt."
   api_key_deleted: API-Key entfernt.
@@ -1121,7 +1059,6 @@ about:
   check_failed: "Prüfung fehlgeschlagen. Bist du online?"
   last_checked: "Letzte Prüfung: {when}"
   never_checked: "Noch nie geprüft"
-  update_now: "Jetzt aktualisieren"
   system_heading: System
   storage_label: Speicher
   storage_api: Server (FastAPI + SQLite)
@@ -1132,7 +1069,6 @@ about:
   dep_unknown: unbekannt
   identity_heading: Identitätsdatei
   identity_loading: Identitätsstatus wird geladen …
-  identity_error: 'Identitätsstatus konnte nicht geladen werden:'
   identity_path_label: Pfad
   identity_status_label: Status
   identity_status_active: Aktiv
@@ -1178,13 +1114,13 @@ backup:
   not_a_backup_file: 'Diese Datei ist keine gültige Backup-Datei. Bitte wähle eine Datei, die mit „Sicherung erstellen“ exportiert wurde.'
   version_mismatch: "Dieses Backup stammt aus Version {{from}}; diese App ist {{to}}. Prüfe die Änderungen unten und bestätige den Import."
   too_large: 'Diese Backup-Datei ist zu groß (über 100 MB).'
-  export_success: Sicherung heruntergeladen ({{count}} Datensätze).
   export_error: 'Sicherung fehlgeschlagen: {{detail}}'
   export_failed: "Sicherung fehlgeschlagen."
   import_parse_failed: "Sicherung konnte nicht gelesen werden."
   import_failed: "Wiederherstellung fehlgeschlagen."
   comparison_title: Wiederherstellung bestätigen
   comparison_help: Beim Zusammenführen werden neue Datensätze eingefügt, veränderbare Datensätze nur überschrieben, wenn die Sicherung neuer ist, und Historien-Zeilen bleiben unverändert. Nichts wird gelöscht. API-Schlüssel werden ignoriert.
+  foreign_owner_notice: "Diese Sicherung gehört zu einem anderen Lernprofil. Ihr Lernstand wird dem aktiven Profil zugeordnet und mit ihm zusammengeführt: Lektionen, Fehler und Verlauf kommen hinzu, XP, Serie und Einstellungen werden aus der Sicherung übernommen. Das aktive Profil bleibt aktiv."
   table_header: Tabelle
   current_header: Aktuell
   incoming_header: Sicherung
@@ -1199,7 +1135,6 @@ backup:
   col_skipped: 'Übersp.'
   col_errors: 'Fehler'
   error_details: 'Fehlerdetails'
-  restored_with_errors: '{{n}} Datensätze konnten nicht wiederhergestellt werden.'
   last_backup: 'Letzte Sicherung: {{when}}'
   reminder_overdue: Deine letzte Sicherung ist mehr als {{days}} Tage her.
   saved_as: 'Sicherung gespeichert: {{filename}}'
@@ -1259,6 +1194,107 @@ backup:
   compare_auto_label: Auto-Sicherung {{date}}
   auto_compare_missing: Auto-Sicherung ist nicht mehr verfügbar - sie wurde rotiert.
 export:
+  # #3426 - the Markdown/PDF report strings (were a private DE/EN table).
+  report:
+    progress_report_title: "Lernfortschritt"
+    session_detail_title: "Sitzungs-Detail"
+    curriculum_overview_title: "Lehrplan-Übersicht"
+    generated_at: "Erzeugt am"
+    app_version: "App-Version"
+    learner: "Lernende:r"
+    language: "Sprache"
+    method_profile: "Methoden-Profil"
+    dominant_method: "Dominante Methode"
+    assessed_at: "Zuletzt bewertet"
+    no_profile: "Noch keine Bewertung vorhanden. Schließe die Eingangs-Bewertung ab, um dein Profil zu sehen."
+    projects: "Projekte"
+    no_projects: "Noch keine Lernprojekte angelegt."
+    topic: "Thema"
+    goal: "Ziel"
+    timeframe: "Zeitrahmen"
+    daily_minutes: "Tägliche Minuten"
+    current_problem: "Aktuelles Hindernis"
+    status: "Status"
+    active: "aktiv"
+    archived: "archiviert"
+    session_count: "Anzahl Sitzungen"
+    total_minutes: "Gesamtdauer (Minuten)"
+    mean_understanding: "Durchschnittliches Verständnis"
+    mean_stress: "Durchschnittlicher Stress"
+    method_distribution: "Methoden-Verteilung"
+    method_switches: "Methodenwechsel"
+    no_switches: "Keine Methodenwechsel in diesem Projekt."
+    switched_from_to: "Wechsel"
+    reason: "Begründung"
+    recent_sessions: "Letzte Sitzungen"
+    no_sessions: "Noch keine Sitzungen abgeschlossen."
+    method: "Methode"
+    duration: "Dauer"
+    understanding: "Verständnis"
+    stress: "Stress"
+    method_fit: "Methoden-Passung"
+    notes: "Notizen"
+    step_evaluation_insights: "Schritt-Auswertung"
+    no_step_insights: "Noch keine Schritt-Auswertungen verfügbar."
+    step: "Schritt"
+    evaluations_count: "Auswertungen"
+    advance_rate: "Fortschritts-Rate"
+    mean_confidence: "Durchschnittliche Sicherheit"
+    deferred: "zurückgehalten"
+    repeated: "wiederholt"
+    advanced: "vorangeschritten"
+    extractions: "Analysierte Gespräche"
+    no_extractions: "Noch keine analysierten Gespräche."
+    imported_at: "Importiert am"
+    messages: "Nachrichten"
+    source: "Quelle"
+    analysis: "Analyse-Ergebnis"
+    no_session: "Sitzung nicht gefunden."
+    session: "Sitzung"
+    started_at: "Begonnen am"
+    ended_at: "Beendet am"
+    cycle_step: "Aktueller Zyklus-Schritt"
+    transcript: "Gesprächsverlauf"
+    no_messages: "Keine Nachrichten in dieser Sitzung."
+    role_user: "Lernende:r"
+    role_assistant: "KI"
+    role_system: "System"
+    rating: "Bewertung"
+    no_rating: "Sitzung wurde nicht bewertet."
+    step_evaluations: "Schritt-Auswertungen"
+    from_step: "Von Schritt"
+    to_step: "Zu Schritt"
+    confidence: "Sicherheit"
+    applied: "Angewendet"
+    not_applied: "Nicht angewendet"
+    fallback: "Fallback genutzt"
+    evaluated_at: "Bewertet am"
+    curriculum: "Lehrplan"
+    description: "Beschreibung"
+    topics: "Themen"
+    no_topics: "Keine Themen in diesem Lehrplan."
+    lessons: "Lektionen"
+    no_lessons: "Keine Lektionen in diesem Lehrplan."
+    out_of: "von"
+    minutes_short: "Min."
+    scale_5: "auf einer Skala von 1 bis 5"
+    analysis_topic: "Erkanntes Thema"
+    analysis_subtopics: "Unterthemen"
+    analysis_user_level: "Niveau"
+    analysis_strengths: "Stärken"
+    analysis_weaknesses: "Schwächen"
+    analysis_error_patterns: "Fehlermuster"
+    analysis_recommended_method: "Empfohlene Methode"
+    analysis_recommended_focus: "Empfohlener Fokus"
+    analysis_suggested_curriculum: "Lehrplan-Vorschlag"
+    analysis_summary: "Zusammenfassung"
+    analysis_priority: "Priorität"
+    level_beginner: "Anfänger"
+    level_intermediate: "Fortgeschritten"
+    level_advanced: "Experte"
+    linked_project: "Verknüpftes Projekt"
+    status_completed: "abgeschlossen"
+    status_abandoned: "abgebrochen"
   title: Export
   intro: Lade deine Lernreise als Markdown oder PDF herunter. Markdown ist Klartext zum Bearbeiten und Teilen; PDF öffnet den Druckdialog deines Browsers, sodass du eine Kopie speichern kannst.
   progress_label: Lernfortschritt (vollständige Übersicht)
@@ -1373,14 +1409,9 @@ gamification:
     how: "Levels steigen auf einer wachsenden XP-Kurve: 0, 100, 300, 600, 1000 XP - jede Stufe braucht 100 XP mehr als die vorige."
   level_detail_title: "Level-Fortschritt"
   level_up: Level aufgestiegen!
-  reason_session_complete: Sitzung abgeschlossen
-  reason_assessment_complete: Selbsteinschätzung abgeschlossen
-  reason_conversation_imported: Konversation importiert
-  reason_flat: XP gutgeschrieben
   card_badges: Abzeichen
   badges_earned: verdient
   badges_empty: Noch keine Abzeichen verfügbar.
-  badge_earned_toast: 'Abzeichen erhalten: {name}'
   badge_category:
     getting_started: Erste Schritte
     consistency: Konsistenz
@@ -1501,25 +1532,11 @@ gamification:
   reset_done: 'Fortschritt zurückgesetzt: {xp} XP, {badges} Abzeichen, {streak} Serien.'
   reset_failed: Fortschritt konnte nicht zurückgesetzt werden.
   weekend_mode_save_failed: Wochenend-Modus konnte nicht gespeichert werden.
-  danger_zone_heading: Gefahrenzone
-  danger_zone_intro: Lösche alle Lerndaten auf diesem Gerät unwiderruflich.
-  danger_zone_reset_button: Alles zurücksetzen
-  danger_zone_warning: Das löscht ALLE deine Lerndaten unwiderruflich - Sessions, Fortschritt, Profile, Curricula, Imports, Anki-Karten, Einstellungen und API-Schlüssel. Dieser Vorgang kann NICHT rückgängig gemacht werden.
-  danger_zone_confirm_prompt: 'Tippe RESET um zu bestätigen'
-  danger_zone_input_placeholder: RESET
-  danger_zone_final_button: Endgültig löschen
-  danger_zone_backup_offer: Möchtest du vorher ein Backup erstellen?
-  danger_zone_backup_button: Backup erstellen
-  danger_zone_complete_toast: Alle Daten wurden gelöscht.
-  danger_zone_cancel: Abbrechen
-  danger_zone_continue: Weiter
-  danger_zone_failed_toast: 'Zurücksetzen fehlgeschlagen:'
 arcade:
   title: "Arcade"
   subtitle: "Kurze Runden, ein bis zwei Minuten - eine Belohnung des Spielmodus. Keine XP, nur Spaß."
   card_description: "Kurze Runden Lern-Memory und Snake - deine Spielmodus-Belohnung."
   card_open: "Zur Arcade"
-  requires_playful: "Die Arcade gehört zum Spielmodus. Schalte den Spielmodus (und den Arcade-Schalter) in den Einstellungen ein."
   requires_game_mode: "Die Arcade gehört zum Spielmodus, und der Spielmodus ist aus. Schalte ihn in den Einstellungen ein."
   requires_arcade_switch: "Der Spielmodus ist an, aber der Arcade-Schalter ist aus. Schalte die Arcade in den Spielmodus-Details in den Einstellungen ein."
   open_settings: "Einstellungen öffnen"
@@ -1533,7 +1550,7 @@ arcade:
   unlock_not_enough_xp: "Noch nicht genug XP - weiter lernen!"
   tickets_label: "Tickets: {n}"
   ticket_play: "Eine Runde mit Ticket spielen"
-  tickets_hint: "Verdiene Tickets mit perfekten Lektionen, Durchläufen mit allen Herzen und Streak-Meilensteinen."
+  tickets_hint: "Verdiene Tickets mit perfekten Lektionen, Durchläufen mit allen Herzen und Serien-Meilensteinen."
   memory:
     name: "Lern-Memory"
     description: "Finde die passenden Begriff-Übersetzungs-Paare aus deinen Lektionen."
@@ -1574,6 +1591,10 @@ arcade:
     won: "Geschafft - die ganze Folge!"
     lost: "Ups - du kamst bis Länge {n}. Versuch es gleich nochmal!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "Einfach"
+    cloze: "Lückentext"
   title: Anki-Export
   intro: Überprüfe KI-vorgeschlagene Karteikarten, akzeptiere die gewünschten und exportiere sie als .apkg-Datei für Anki.
   filter_project: Projekt
@@ -1738,7 +1759,6 @@ ui:
     open_settings: "Einstellungen öffnen"
     feature_analyze: "um Konversationen zu analysieren"
     feature_anki: "um Anki-Karten zu extrahieren"
-    feature_study_guide: "um einen Lernleitfaden zu generieren"
     feature_study_questions: "um Lernfragen zu generieren"
     feature_pronunciation: "für die Aussprache-Übung"
   common:
@@ -1756,15 +1776,15 @@ ui:
     chart_show_as_table: "Daten als Tabelle anzeigen"
     chart_radar_label: "Lernprofil-Radardiagramm"
     chart_radar_summary: "Deine stärkste Lernmethode: {method} ({value})"
-    chart_timeline_label: "Fortschrittsverlauf der letzten {n} Sessions"
-    chart_timeline_summary: "{n} Sessions; Verständnis-Trend {trend}"
+    chart_timeline_label: "Fortschrittsverlauf der letzten {n} Sitzungen"
+    chart_timeline_summary: "{n} Sitzungen; Verständnis-Trend {trend}"
     chart_timeline_trend_up: "steigend"
     chart_timeline_trend_down: "fallend"
     chart_timeline_trend_flat: "gleichbleibend"
     chart_distribution_label: "Methoden-Verteilung als Balkendiagramm"
-    chart_distribution_summary: "Meistgenutzte Methode: {method} ({count} Sessions, {pct}%)"
-    streak_cell_label: "{count} Sessions am {date}"
-    streak_cell_label_zero: "Keine Sessions am {date}"
+    chart_distribution_summary: "Meistgenutzte Methode: {method} ({count} Sitzungen, {pct}%)"
+    streak_cell_label: "{count} Sitzungen am {date}"
+    streak_cell_label_zero: "Keine Sitzungen am {date}"
     chart_radar_value: "Wert"
   tooltips:
     delete: "Löschen"
@@ -1898,11 +1918,6 @@ repo:
   topic_readme_parent_link: "← [Projektstamm](../README.md)"
   topic_readme_no_sessions: "_Keine Sitzungen zu diesem Thema._"
   loading: "Repository wird generiert…"
-  widget_subtitle: "Versionierter Schnappschuss von Fortschritt, Notizen und Fahrplan dieses Projekts."
-  settings_description: "Generiert pro Projekt automatisch Markdown-Artefakte (README, STATS, CHEATSHEET, ROADMAP) aus deinen Sitzungsdaten. Optionale Git-Integration sichert jeden Renderlauf als Commit."
-  settings_enable_git: "Git-Persistenz aktivieren"
-  dexie_unavailable_body: "Diese Funktion ist nur im Server-Modus verfügbar. Wechsle in den Einstellungen zum Server-Modus, um git-basierte Lern-Repositories zu nutzen."
-  back_to_dashboard: "Zurück zum Dashboard"
   page:
     title: "Lern-Repository"
     rendered_at: "Generiert am"
@@ -1912,7 +1927,6 @@ repo:
     download_zip: "ZIP herunterladen"
     persist: "In Git speichern"
     persisting: "Speichern…"
-    persist_dexie_tooltip: "Git-Versionierung ist nur im Servermodus verfügbar."
   toast:
     zip_downloaded: "ZIP heruntergeladen"
     persisted: "In Git gespeichert"
@@ -1929,6 +1943,7 @@ repo:
     title: "Lern-Repository"
     loading: "Laden…"
     repos_dir: "Repository-Verzeichnis"
+    repos_dir_hint: "Leer lassen für den Standard: repos im Datenverzeichnis (siehe Über)"
     save: "Einstellungen speichern"
     saving: "Speichern…"
     toast:
@@ -1940,6 +1955,11 @@ repo:
     description: "Erzeugt automatisch Markdown-Artefakte (README, STATS, CHEATSHEET, ROADMAP) pro Projekt aus deinen Sitzungsdaten. Die optionale Git-Integration committet jede Erzeugung, sodass du den Verlauf mit jedem Git-Client durchsehen kannst."
     enable_git: "Git-Persistenz aktivieren"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "Fehlt: {word}"
+    extra: "Zu viel: {word}"
+    replaced: "Geschrieben: {wrote}, erwartet: {expected}"
   progress_io:
     save_error: "Dein Fortschritt in dieser Lektion konnte nicht gespeichert werden."
     load_failed: "Dein gespeicherter Fortschritt für diese Lektion konnte nicht geladen werden: {detail}"
@@ -2011,6 +2031,13 @@ lesson:
     suggest_label: "KI-Vorschlag"
     suggest_empty: "Kein brauchbarer Vorschlag. Versuche es erneut oder passe den Schritt manuell an."
   exam:
+    start_notice: "Prüfung: Ob eine Antwort richtig war, siehst du erst am Ende, und zurückblättern geht nicht."
+    author_source: "Bewertet nach den Vorgaben dieses Sets, nicht nach deiner eigenen Bestehensgrenze"
+    grade: "Note: {grade}"
+    no_grade: "Keine Notenstufe erreicht"
+    percent_result: "{pct}% richtig"
+    advisory_reached: "Empfohlene Marke von {pct}% erreicht"
+    advisory_missed: "Empfohlene Marke von {pct}% nicht erreicht"
     passed: "Bestanden"
     not_passed: "Nicht bestanden"
     threshold_hint: "(bestanden ab {pct}%)"
@@ -2048,6 +2075,7 @@ lesson:
     prev_step: "Vorheriger Schritt"
     next_step: "Nächster Schritt"
     step_position: "Schritt {current} von {total} Theorie-Schritten"
+    end: "Vorlesen beenden"
   contributed_by: Bereitgestellt von {name}
   page_title: "Lektion"
   set_label: "Lernset"
@@ -2065,9 +2093,7 @@ lesson:
     aria_label: "Schritt-Navigation"
   action:
     prev: "Zurück"
-    next: "Weiter"
     finish: "Lektion abschließen"
-    back_to_browser: "Zurück zur Inhaltsübersicht"
     pause: "Lektion pausieren"
     open_browser: "Inhalts-Browser öffnen"
     back_to_lesson: "Zurück zur Lektion"
@@ -2340,7 +2366,6 @@ lesson:
     adaptive_focus: "Fokus auf: {topic}"
     adaptive_errors: "{count} Fehler in dieser Lektion"
     error_replay: "Fehler wiederholen"
-    error_replay_detail: "{count} Aufgaben nochmal"
     error_replay_corrected: "{corrected} von {total} korrigiert"
     all_corrected: "Alle Fehler korrigiert!"
     all_corrected_detail: "Stark - keine offenen Fehler mehr."
@@ -2354,10 +2379,8 @@ lesson:
     view_set: "Set ansehen"
     focus_vocabulary: "Vokabeln"
   correction:
-    title: "Korrektur-Runde"
     subtitle: "Ein paar schnelle Übungen zu den Wörtern, die du verwechselt hast."
     skip: "Überspringen"
-    next: "Weiter"
     complete_heading: "Korrektur-Runde abgeschlossen"
     improvement: "{n} Elemente verbessert."
     improvement_singular: "{n} Element verbessert."
@@ -2366,6 +2389,11 @@ lesson:
     replay_all: "Alle Übungen erneut ({count})"
     replay_only_heading: "Wiederhole deine Fehler"
     replay_only_subtitle: "Das lässt sich nicht als Schnellübung anzeigen - wiederhole stattdessen die Übungen."
+    fix_mistakes: "Fehler korrigieren ({count})"
+    summary_heading: "Deine Korrekturen"
+    first_try: "Erster Versuch: {correct} von {total} richtig"
+    status_corrected: "Korrigiert"
+    status_open: "Noch offen"
   summary:
     heading: "Geschafft"
     aria_label: "Lektions-Zusammenfassung"
@@ -2378,7 +2406,6 @@ lesson:
     time: "Zeit"
     minutes: "{n} Min"
     hints_used: "Tipps verwendet"
-    breakdown_heading: "Übungs-Übersicht"
     breakdown_correct_answer: "Richtige Antwort: {answer}"
     breakdown_unattempted: "Nicht versucht"
     detailed_hide: "Kompakte Auswertung"
@@ -2407,7 +2434,6 @@ lesson:
     mark_complete_needs_profile: "Lege ein Lernprofil an, um deinen Fortschritt zu speichern"
     mark_complete_failed: "Abschluss konnte nicht gespeichert werden"
     next_lesson: "Nächste Lektion"
-    repeat: "Lektion wiederholen"
     retry: "Erneut üben"
     retry_heading: "Deine Verbesserung"
     retry_attempt: "Versuch {n}: {pct}%"
@@ -2418,7 +2444,6 @@ lesson:
     retry_best: "Bestes Ergebnis"
     retry_best_value: "{pct}% (Versuch {n})"
     retry_new_record: "Neuer Rekord!"
-    restart: "Neu beginnen"
     back_to_browser: "Zurück zur Inhaltsübersicht"
     encourage_0: "Übung macht den Meister!"
     encourage_1: "Guter Anfang - bleib dran!"
@@ -2447,6 +2472,8 @@ lesson:
     paused_toast: "Lektion pausiert. Du kannst jederzeit weitermachen."
     abandoned_toast: "Lektion aufgegeben."
   resume:
+    exam_single_sitting: "Eine angefangene Prüfung lässt sich nicht fortsetzen: Sie zählt nur, wenn du sie in einem Zug machst. Darum beginnt die Lektion neu."
+    mode_conflict: "Diese Runde wurde in einem anderen Modus begonnen. Prüfungs- und Übungsantworten lassen sich nicht mischen, darum beginnt die Lektion neu."
     heading: "Lektion fortsetzen?"
     body: 'Du hast "{title}" pausiert. Möchtest du dort weitermachen, wo du aufgehört hast, oder neu starten?'
     action_resume: "Weiter"
@@ -2522,6 +2549,7 @@ content:
     public: "Öffentlich"
     branch: "Branch"
     lessons_note: "Alle {n} Lektionen dieses Sets werden einbezogen."
+    lessons_note_one: "Die eine Lektion dieses Sets wird einbezogen."
     invalid_repo: "Gib das Repository als owner/name an."
     submit: "Exportieren"
     working: "Exportiere…"
@@ -2560,10 +2588,7 @@ content:
     no_results: "Keine Ergebnisse für '{query}'"
     hint: "Versuche einen anderen Suchbegriff"
     clear: "Suche löschen"
-    available: "Zum Herunterladen verfügbar"
     your_content: "Deine Inhalte"
-    download_prompt_title: "Dieses Set herunterladen?"
-    download_prompt_body: "Dieses Set ist noch nicht heruntergeladen. Jetzt herunterladen?"
   save_adaptive:
     button: "Diese Lektion speichern?"
   create_lesson:
@@ -2661,10 +2686,8 @@ content:
     active: "Aktiv"
     deferred: "Zurückgestellt"
     completed: "Abgeschlossen"
-    filter_aria: "Nach Status filtern"
     menu_aria: "Aktionen für dieses Set"
     changed: "Status aktualisiert."
-    change_failed: "Status konnte nicht aktualisiert werden."
     deleted: "Set entfernt."
     delete_failed: "Set konnte nicht entfernt werden."
     progress_not_deleted: "Entfernt, aber dein Lernfortschritt konnte nicht gelöscht werden: {detail}"
@@ -2727,7 +2750,6 @@ content:
     button: "Übungen generieren"
     generating: "Übungen werden generiert…"
     regenerate: "Neu generieren"
-    regenerate_confirm: "Die generierten Übungen durch einen neuen Satz ersetzen?"
     generated: "{n} Übungen generiert."
     generated_with_rejected: "{n} Übungen generiert, {r} wegen Qualität verworfen."
     none: "Die KI hat keine brauchbaren Übungen geliefert. Bitte erneut versuchen."
@@ -2745,7 +2767,6 @@ content:
     modal_title: "Als Offline-Lektion speichern"
     title_label: "Titel der Lektion"
     summary: "{exercises} Übungen · {theory} Theorie-Schritte · ~{minutes} Min."
-    theory_only: "Nicht genug Vokabeln für Übungen. Importiere einen längeren Chat für mehr Übungsmaterial."
     save: "Speichern"
     saved: "In „Meine Lektionen“ gespeichert."
     failed: "Die Lektion konnte nicht gespeichert werden."
@@ -2754,7 +2775,6 @@ content:
     source_lang_label: Deine Sprache
     level_label: Niveau
     not_enough_data: Wenige Übungen - für eine vollständige Sprachlektion werden mindestens {min} empfohlen. Du kannst die Lektion trotzdem speichern (z. B. als reine Theorie-Lektion).
-    same_language: Die gelernte Sprache und deine Sprache müssen unterschiedlich sein.
     same_language_hint: "Die Lernsprache und deine Sprache sind identisch - das ist in Ordnung für eine Grammatik- oder Muttersprachen-Lektion. Beim Teilen landet sie im gleichsprachigen Zweig des Inhaltsbaums."
     split_notice: "Diese Lektion hat {steps} Schritte und wird als {parts} Teile gespeichert (max. {max} Schritte pro Teil)."
     part_title: "{title} - Teil {n}"
@@ -2847,8 +2867,8 @@ content:
     no_lessons: Das Set enthält keine Lektionen.
     missing_target_language: Zielsprache fehlt (die gelernte Sprache).
     missing_source_language: Ausgangssprache fehlt (die Sprache der Erklärungen).
-    invalid_target_language: Zielsprache '{code}' ist kein zweibuchstabiger ISO-Code.
-    invalid_source_language: Ausgangssprache '{code}' ist kein zweibuchstabiger ISO-Code.
+    invalid_target_language: Zielsprache '{code}' ist kein gültiges Sprachkürzel (etwa 'de' oder 'pt-BR').
+    invalid_source_language: Ausgangssprache '{code}' ist kein gültiges Sprachkürzel (etwa 'de' oder 'pt-BR').
     same_source_target: Ausgangs- und Zielsprache sind identisch ('{code}').
     missing_title: Titel fehlt.
     missing_title_native: Titel in der Zielsprache fehlt.
@@ -2865,12 +2885,18 @@ content:
     level_too_complex: "Lektion '{lesson}': Text hat im Schnitt {avg} Wörter pro Seite, viel für Niveau {level} (etwa {cap} erwartet)."
     engine_rule: "Lektion '{lesson}': Regel {rule} bei {path}: {message}"
     engine_warning: "Lektion '{lesson}': Hinweis {rule} bei {path}: {message}"
+    engine_set_rule: "Set: Regel {rule} bei {path}: {message}"
+    engine_set_warning: "Set: Hinweis {rule} bei {path}: {message}"
     source_language_heuristic: Kartenrückseiten enthalten {found}-typische Zeichen, aber die Ausgangssprache ist '{lang}'.
     target_language_heuristic: Kartenvorderseiten enthalten {found}-typische Zeichen, aber die Zielsprache ist '{lang}'.
     failed_share_anyway: "Die Qualitätsprüfung hat Probleme gefunden. Du kannst trotzdem teilen - Prüfer sehen die im Pull Request vermerkten Befunde."
+  ai_privacy_link: "Datenschutzerklärung"
   ai_validation:
     intro: Eine KI kann zusätzlich Übersetzungsgenauigkeit, Grammatik und Niveau prüfen.
-    privacy: Der Inhalt deiner Lektion wird an {provider} gesendet. Keine persönlichen Daten werden übermittelt.
+    privacy: "Für die Prüfung erhält {provider} die Lektionen, die du teilen willst (unter anderem Karten, Texte und Übungen), dazu Ausgangssprache, Zielsprache und Niveau des Sets, aber weder dein Profil noch deinen Lernfortschritt. Außerdem erhält {provider}, wie bei jeder KI-Anfrage, unter anderem deine IP-Adresse und deinen API-Schlüssel."
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "dein KI-Anbieter"
     consent: KI-Validierung durchführen
     run: Mit KI prüfen
     running: Die KI prüft deine Lektion…
@@ -2913,7 +2939,7 @@ content:
     title: "KI-Inhaltsprüfung"
     loading: "Karten werden vorbereitet..."
     cost_estimate: "~{cards} Karten, ~{tokens} Tokens, ~{usd}."
-    privacy: "Deine Lernkarten werden zur Prüfung an deinen konfigurierten KI-Anbieter gesendet. Es werden keine personenbezogenen Daten übertragen."
+    privacy: "Die Prüfung schickt deinem KI-Anbieter die Karten des Sets (Kennung, Vorderseite, Rückseite, Notizen) sowie Ausgangssprache, Zielsprache und Niveau des Sets, aber weder dein Profil noch deinen Lernfortschritt. Außerdem erhält dein KI-Anbieter, wie bei jeder KI-Anfrage, unter anderem deine IP-Adresse und deinen API-Schlüssel."
     confirm: "Prüfen"
     progress: "Prüfe Batch {current} von {total}..."
     rate_limited: "Bitte warte einen Moment, bevor du erneut prüfst."
@@ -2945,9 +2971,6 @@ content:
       all_ok: "Keine Probleme gefunden - Akzente, Artikel und Duplikate sind sauber."
       problem: "Problem"
       suggestion: "Vorschlag"
-  placement:
-    lands_under: Deine Lektion wird eingeordnet unter
-    duplicate: 'Eine ähnliche Lektion existiert bereits: {title}. Trotzdem teilen?'
   wizard:
     title: Mit der Community teilen
     metadata_intro: Prüfe und korrigiere die Lektionsdetails vor dem Teilen.
@@ -2962,8 +2985,8 @@ content:
     err_title: Bitte einen Titel angeben.
     err_source: Bitte die Ausgangssprache wählen.
     err_target: Bitte die Zielsprache wählen.
-    err_same_language: Ausgangs- und Zielsprache müssen sich unterscheiden.
     err_level: Bitte ein CEFR-Niveau wählen (A1-C2).
+    level_none: Kein Niveau (kein Sprachkurs)
     err_empty: Diese Lektion hat keine Übungen. Bitte erstelle die Lektion neu.
     regenerate: Neu generieren
     same_language_domain_hint: Gleiche Ausgangs- und Zielsprache - wird als Wissensinhalt (nicht sprachlich) geteilt.
@@ -2971,7 +2994,6 @@ content:
     lands_under: Deine Lektion wird eingeordnet unter
     new_set: Neues Set! Du bist der Erste, der hier beiträgt.
     next_to_existing: Neben {count} bestehenden Lektionen in diesem Set.
-    summary_counts: '{lessons} Lektion(en), {exercises} Übungen, {cards} Karten, ~{minutes} Min'
     checking: Prüfe auf ähnliche Lektionen…
     no_duplicates: Keine Duplikate gefunden. Deine Lektion ist einzigartig!
     near_duplicate: 'Diese Lektion existiert bereits: "{title}".'
@@ -3052,7 +3074,7 @@ missions:
       description: "Wiederhole heute 10 Elemente."
     complete-review-session:
       title: "Wiederholung abschließen"
-      description: "Schließe eine Wiederholungs-Session ab."
+      description: "Schließe eine Wiederholungssitzung ab."
     review-overdue:
       title: "Überfällige aufholen"
       description: "Wiederhole alle überfälligen Elemente."
@@ -3166,7 +3188,6 @@ create_lesson:
     switch_discard: "Verwerfen und wechseln"
   prompts_migrated: "{n} Übungsanweisung(en) wurden automatisch in deine Sprache übertragen."
   prompts_migrated_dismiss: "Schließen"
-  step_pending: "Dieser Schritt kommt im nächsten Update."
   nav_label: "Assistent-Navigation"
   cancel: "Abbrechen"
   back: "Zurück"
@@ -3187,10 +3208,12 @@ create_lesson:
     content_lang_label: "Inhaltssprache"
     level_none: "Kein Niveau"
     domain_hint: "Wissensinhalte nutzen eine einzige Inhaltssprache und benötigen kein GER-Niveau."
-    same_language: "Die gelernte Sprache muss sich von deiner Sprache unterscheiden."
     description_label: "Thema / Beschreibung"
     author_label: "Autorenname"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "Wort oder Ausdruck"
+    back_placeholder: "Bedeutung"
     heading: "Vokabelkarten hinzufügen"
     front_label: "Vorderseite (gelernt)"
     back_label: "Rückseite (deine Sprache)"
@@ -3272,8 +3295,8 @@ create_lesson:
     generate: "Übungen automatisch erstellen"
     regenerate: "Neu generieren"
     count: "{n} Übungen"
-    min_hint: "{n} Übungen nötig"
-    min_to_advance: "Erstelle mindestens {n} Übungen, um fortzufahren."
+    one_to_advance: "Erstelle mindestens eine Übung, um fortzufahren."
+    share_min_hint: "Zum Teilen sind mindestens {n} Übungen nötig"
     min_one_to_advance: "Füge mindestens eine Übung hinzu, um fortzufahren."
     drag: "Zum Umsortieren ziehen"
     delete: "Übung löschen"
@@ -3483,6 +3506,7 @@ create_lesson:
     check_enoughTypes: "Mindestens 2 Übungstypen"
     check_min_types: "Mindestens {n} Übungstypen"
     check_exercise_minimums: "Jede Übung hat genug Antworten oder Paare"
+    share_checks_heading: "Nötig zum Teilen"
     check_schemaValid: "Gültige Lektionsstruktur"
     structure_error: "Technisches Detail"
     structure_internal_error: "Beim Prüfen dieser Lektion ist ein interner Fehler aufgetreten. Das ist ein Problem der App, nicht deiner Lektion. Bitte lade die Seite neu und versuche es erneut; wenn es weiterhin auftritt, melde das Problem unten."
@@ -3548,7 +3572,6 @@ learning_path:
   filter_mine: "Nur meine"
   filter_all: "Alle Sets"
   filter_label: "Sets filtern"
-  adaptive: "Adaptive Lektion starten"
   error_replay: "Fehler wiederholen"
   train_errors: "Fehler trainieren"
   shuffle: "Zufallsmodus"
@@ -3585,7 +3608,6 @@ learning_path:
   mastery:
     receptive: "rezeptiv"
     productive: "produktiv"
-    mastered: "gemeistert"
   title: "Lernpfad"
   subtitle: "Wo du stehst und was als Nächstes kommt."
   aria_canvas: "Lernpfad-Graph"
@@ -3693,7 +3715,6 @@ share:
   app:
     heading: "Die App teilen"
     download: "Herunterladen"
-    qr_intro: "Teile die App per QR-Code, damit andere sie direkt öffnen können."
     show_qr: "QR-Code anzeigen"
     download_qr: "QR-Code herunterladen"
     copy_url: "URL kopieren"
@@ -3718,10 +3739,10 @@ share:
     title: Fortschritt teilen
     copied: In die Zwischenablage kopiert
     lesson_complete: Ich habe gerade eine Lektion bei Adaptive Learner gemeistert!
-    streak: Ich habe eine {days}-Tage-Lernsträhne bei Adaptive Learner!
+    streak: Ich habe eine {days}-Tage-Lernserie bei Adaptive Learner!
     level: Ich habe gerade Level {level} bei Adaptive Learner erreicht!
     badge: Ich habe das Abzeichen „{badge}“ bei Adaptive Learner verdient!
-    progress: Ich lerne mit Adaptive Learner, Level {level}, {days}-Tage-Strähne.
+    progress: Ich lerne mit Adaptive Learner, Level {level}, {days}-Tage-Serie.
     hashtag: '#AdaptiveLearner'
   pr:
     preparing: "Repository wird vorbereitet..."
@@ -3992,9 +4013,6 @@ content_repo:
     filled: "Repository-Daten aus dem QR-Code übernommen."
   synced: "Synchronisiert: {sets} Sets, {lessons} Lektionen."
   token_hint: "Private Repositories benötigen ein Token - füge unten eines ein oder hinterlege ein gemeinsames Token unter Einstellungen → Integrationen."
-  trust_official: "Offiziell: Vom Projektteam kuratierter, qualitätsgesicherter Inhalt."
-  trust_verified: "Verifiziert: Von der Community beigetragen und vom Team geprüft."
-  trust_validated: "Validiert: Technisch korrekt, Inhalt nicht einzeln geprüft."
   official:
     title: "Offizielle Inhalte"
     counts: "{sets} Sets · {lessons} Lektionen"
@@ -4021,7 +4039,6 @@ content_repo:
     sync_all: "Alle synchronisieren"
     add: "Repository hinzufügen"
     cancel: "Abbrechen"
-    confirm_remove: "Entfernen bestätigen"
     connect: "Repository verbinden"
     move_down: "Nach unten"
     move_up: "Nach oben"
@@ -4029,12 +4046,10 @@ content_repo:
     share: "Teilen"
     sync: "Jetzt synchronisieren"
   badge:
-    coach: "Coach"
     private: "Privat"
     official: "Offiziell"
   trust:
     dropped: "Synchronisiert, aber die Validierung schlug fehl - dieses Repository ist jetzt als nicht verifiziert markiert."
-    recommended: "Offiziell empfohlen"
     unknown: "Nicht verifiziert"
     validated: "Validiert"
   status:
@@ -4064,6 +4079,19 @@ content_repo:
     save_failed: "Repository konnte nicht hinzugefügt werden."
     sync_failed: "Synchronisierung fehlgeschlagen. Bitte erneut versuchen."
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "Repository oder manifest.yaml nicht gefunden."
+      access_denied: "Zugriff verweigert - prüfe das Repository und deinen GitHub-Token."
+      unreachable: "Repository nicht erreichbar."
+      unsupported_schema: "Nicht unterstützte Schema-Version {version}."
+      no_sets: "manifest.yaml enthält keine Sets."
+      no_lessons: "In keinem Set wurden Lektionen gefunden."
+      executable_content: "Der Lektionsinhalt enthält unzulässigen ausführbaren Code."
+      lessons_unreadable: "Die Lektionen des ersten Sets konnten nicht gelesen werden."
+      lesson_invalid_json: "Die erste Lektion des ersten Sets ist kein gültiges JSON."
+      validator_unavailable: "Die Lektionsprüfung konnte nicht geladen werden."
+      lesson_invalid: "Die erste Lektion des ersten Sets besteht die Prüfung nicht: {detail}"
     failed: "Validierung fehlgeschlagen: {reason}"
     passed: "Validierung erfolgreich: {sets} Sets, {lessons} Lektionen."
 resource:
@@ -4112,7 +4140,6 @@ discover:
     domain: "Bereich"
     trust: "Vertrauen"
     source: "Quelle"
-    ai_checked: "KI-geprüft"
     review: "Durchsicht"
   trust:
     official: "Offiziell empfohlen"
@@ -4184,7 +4211,6 @@ endless:
   back_to_dashboard: "Zurück zum Dashboard"
   loading: "Übungssitzung wird geladen…"
   empty_body: "Dieses Set hat noch keine Übungen zum Üben."
-  not_cached_body: "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen."
   paused: "Pausiert - mach eine kurze Pause."
   resume: "Fortsetzen"
   pause: "Pause"
@@ -4194,7 +4220,6 @@ endless:
     cards: "{n} Karten"
     correct: "{n} richtig"
   error:
-    missing_params: "Kein Inhalts-Set ausgewählt."
     load_failed: "Übungssitzung konnte nicht geladen werden."
   summary:
     heading: "Übungssitzung abgeschlossen!"
@@ -4210,12 +4235,10 @@ shuffle:
   page_title: "Zufallsmodus"
   loading: "Zufallssitzung wird geladen…"
   empty_body: "Dieses Set braucht mindestens zwei Lektionen mit Übungen zum Mischen."
-  not_cached_body: "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst herunterzuladen."
   back_to_dashboard: "Zurück zum Dashboard"
   subtitle: "{n} Fragen aus {lessons} Lektionen gemischt"
   error:
     load_failed: "Zufallssitzung konnte nicht geladen werden."
-    missing_params: "Kein Inhalts-Set ausgewählt."
   summary:
     heading: "Zufallstraining abgeschlossen!"
     score: "{correct} von {total} richtig"
@@ -4317,7 +4340,6 @@ registry:
     pending: "Ausstehend - CI validiert"
   pr:
     created: "Pull Request geöffnet."
-    failed: "Pull Request konnte nicht geöffnet werden."
     view: "Deinen Pull Request ansehen"
 
 exercise:

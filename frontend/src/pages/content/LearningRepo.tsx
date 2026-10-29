@@ -30,6 +30,7 @@ import { Feature } from "@astrapi69/feature-strategy-react";
 import { api, ApiError } from "../../api/client";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
+import MarkdownImage from "../../shared/data-display/MarkdownImage";
 import PageContainer from "../../shared/layout/PageContainer";
 import { getStorage } from "../../storage";
 import { notify } from "../../utils/notify";
@@ -265,6 +266,7 @@ export default function LearningRepoPage() {
                   </a>
                 );
               },
+              img: MarkdownImage,
             }}
           >
             {activeContent}

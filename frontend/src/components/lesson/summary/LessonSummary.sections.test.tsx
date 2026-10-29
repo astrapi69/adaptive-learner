@@ -170,7 +170,6 @@ function renderSummary(
         source="bundled:x"
         setSlug="x"
         lessonFilename="01-greetings.json"
-        onMarkComplete={vi.fn()}
         onNextLesson={vi.fn()}
         onRepeat={vi.fn()}
         onExit={vi.fn()}
@@ -204,7 +203,6 @@ function allOn(): SummarySectionsConfig {
 const ESSENTIAL_TESTIDS = [
   "lesson-summary-repeat",
   "lesson-summary-exit",
-  "lesson-summary-mark-complete",
 ];
 
 /** True when `a` appears before `b` in document order. */

@@ -1,6 +1,3 @@
-# TEMPLATE: This test is included as adaptable example.
-# Replace with your domain logic when project domain is finalized.
-
 """Verify the SQLite PRAGMA event listener is active on every connection.
 
 These checks are cheap and catch a class of regression where the
@@ -9,22 +6,28 @@ but cascade deletes start failing, commits get slower, and concurrent
 readers start blocking the writer.
 """
 
-import pytest
-from sqlalchemy import text
+from pathlib import Path
 
-from app.database import engine
+from sqlalchemy import create_engine, event, text
 
-# In-memory SQLite cannot use WAL journal mode (needs a real file).
-# The test harness uses sqlite:///:memory: for isolation, which means
-# the WAL check below is a no-op there; only run it against a real
-# file-backed engine.
-_is_memory = ":memory:" in str(engine.url)
+from app.database import _set_sqlite_pragma, engine
 
 
-@pytest.mark.skipif(_is_memory, reason="WAL requires a file-backed DB; test harness uses :memory:")
-def test_journal_mode_is_wal() -> None:
-    with engine.connect() as conn:
-        mode = conn.execute(text("PRAGMA journal_mode")).scalar()
+def test_pragma_listener_is_registered_on_the_app_engine() -> None:
+    assert event.contains(engine, "connect", _set_sqlite_pragma)
+
+
+def test_journal_mode_is_wal_on_a_file_backed_database(tmp_path: Path) -> None:
+    """#3440 - the harness runs on ``:memory:``, which cannot use WAL, so
+    the old check against the app engine was skipped in every run. The
+    production listener runs here on a real file instead."""
+    file_engine = create_engine(f"sqlite:///{tmp_path / 'wal.db'}")
+    event.listen(file_engine, "connect", _set_sqlite_pragma)
+    try:
+        with file_engine.connect() as conn:
+            mode = conn.execute(text("PRAGMA journal_mode")).scalar()
+    finally:
+        file_engine.dispose()
     assert str(mode).lower() == "wal", f"expected wal, got {mode!r}"
 
 

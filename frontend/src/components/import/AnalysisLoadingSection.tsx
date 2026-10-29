@@ -62,7 +62,7 @@ export default function AnalysisLoadingSection({
       </div>
       {!analysisDone && (
         <p className="analysis-loading-estimate">
-          {t("import.analysis_estimate", "Analysis takes approximately 15-30 seconds…")}
+          {t("import.analysis_estimate", "Longer chats take longer to analyze.")}
         </p>
       )}
       {!analysisDone && (

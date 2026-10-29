@@ -7,22 +7,26 @@ cima.
 
 ## Recuentos de pruebas
 
-| Capa | Recuento | Herramienta |
-|---|---|---|
-| Backend unit + integración | 786 | pytest ^9 |
-| Pruebas de plugins (10 plugins) | 615 | pytest ^9 |
-| Frontend unit + integración | 1233 | Vitest 4 |
-| Humo E2E | 16 archivos de especificación | Playwright |
-| **Total (`make test`)** | **2634** | |
+| Capa | Herramienta |
+|---|---|
+| Backend unit + integración | pytest ^9 |
+| Pruebas de plugins (todos los plugins) | pytest ^9 |
+| Frontend unit + integración | Vitest 4 |
+| Humo E2E | Playwright |
+| Puerta de publicación en modo Dexie | Playwright |
 
-Desglose de plugins: assessment 110 + ai-anthropic 34 +
-ai-openai 31 + ai-gemini 33 + session 215 + tracking 64 +
-tools 58 + gamification 23 + anki 20 + notebooklm 27.
+Los recuentos crecen con cada versión. Para evitar números
+duplicados que se desincronizan, esta página NO fija ningún total.
+`docs/audits/current-coverage.md` es la única fuente canónica y
+siempre actual de recuentos de pruebas y cobertura. Los plugins son
+assessment, los proveedores de IA (anthropic / openai / gemini /
+perplexity), session, tracking, tools, gamification, anki,
+notebooklm, learning-repo, content-loader y missions.
 
 ## pytest del backend
 
 ```bash
-make test-backend      # 786 pruebas, ~35s
+make test-backend      # todas las pruebas del backend
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb
 ```
@@ -50,7 +54,7 @@ al probar la activación de hooks.
 ## Vitest del frontend
 
 ```bash
-make test-frontend                # 387 pruebas, ~2s
+make test-frontend                # ejecuta Vitest desde frontend/
 cd frontend && bunx vitest         # modo vigilancia
 cd frontend && bunx vitest run src/storage/  # un directorio
 ```
@@ -129,13 +133,19 @@ propios puertos y no necesitan una aplicación en ejecución. Un
 make test-coverage   # opcional; lento y consume recursos
 ```
 
-La cobertura se ejecuta en CI para cada push a main; descarga los
-artefactos:
+La cobertura es un informe, no un gate de fusión, así que no se
+ejecuta en los PRs. El flujo `coverage.yml` se ejecuta cada noche (y
+bajo demanda); descarga los artefactos:
 
 ```bash
 gh run download --name backend-coverage
 gh run download --name frontend-coverage
 ```
+
+Cada plugin tiene su propio artefacto `<directorio-del-plugin>-coverage`,
+por ejemplo
+`gh run download --name adaptive-learner-plugin-session-coverage`; un
+plugin nuevo queda cubierto sin editar el flujo de trabajo.
 
 Objetivos según `.claude/rules/quality-checks.md`:
 
@@ -152,10 +162,19 @@ Global: 85-95% en todo el proyecto.
 cd backend && poetry run pre-commit install
 ```
 
-Hooks: ruff check (auto-reparación), ruff format, espacios en
-blanco al final, corrector de final de archivo, check-yaml,
-check-merge-conflict. Solo para el backend - el lint del frontend
-se ejecuta en tiempo de CI, no en pre-commit.
+Los hooks están en `.pre-commit-config.yaml`, por ejemplo ruff check
+(auto-reparación) y ruff format, comprobaciones de espacios, YAML,
+JSON y conflictos de fusión, ESLint del frontend, las comprobaciones
+de la documentación (trinquete de sustitutos de diéresis, referencias
+de la documentación) y `plugin-lock-paired-with-pyproject`
+(bloqueante): ejecuta `poetry check --lock` para cada plugin cuyo
+`pyproject.toml` o `poetry.lock` esté implicado y falla cuando las
+dependencias cambiaron desde que se escribió el lock; también se
+ejecuta en el job de pre-commit de la CI sobre todos los archivos.
+En ese job se omite el hook `eslint` (el job de pruebas del frontend
+ejecuta ESLint con las dependencias instaladas). Prettier no es un
+hook: `bun run format:check` se ejecuta en el job de pruebas del
+frontend, sin bloquear hasta el reformateo único de #3270.
 
 ## CI
 
@@ -168,11 +187,17 @@ release.
 `main` y en cada PR (Python 3.12):
 
 1. Pruebas del backend (pytest)
-2. Pruebas de plugins (`make test-plugins`, los 13 mediante el venv
+2. Pruebas de plugins (`make test-plugins`, todos mediante el venv
    del backend)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`),
    comprobación de dependencias circulares, Stylelint, Vitest,
-   `vite build`, `npm audit`
+   `vite build`, `bun audit --audit-level=high` (bloquea ante
+   hallazgos altos y críticos). Un aviso sin versión corregida que
+   solo alcanza una dependencia de desarrollo se exime por ID en
+   `frontend/audit-ignore.txt`: un ID por línea, con un comentario
+   encima que da el motivo y cuándo se retira la entrada.
+   `make check-security` lee la misma lista; `security-scan.yml`
+   sigue sin filtrar.
 4. Hooks de pre-commit sobre todos los archivos
 5. ruff + mypy + pip-audit del backend
 6. Verificador de deriva de la documentación (`verify_docs.py` +
@@ -193,16 +218,17 @@ Otros gates de PR viven en flujos de trabajo propios:
   infractores NUEVOS o que empeoran frente a `.complexity-baseline`,
   de modo que bloquea la complejidad nueva sin forzar una limpieza
   de la deuda preexistente. El informe completo de complejidad, solo
-  de aviso, se ejecuta cada noche.
+  de aviso, se ejecuta cada noche. En el mismo job se ejecuta la
+  comprobación de tamaño de carpeta (`scripts/check-folder-size.sh`
+  contra `.dirsize-baseline`); localmente `make check-folder-size` o
+  como parte de `make ci`.
 - `cohesion-check.yml` - la comprobación de tamaño de archivo
   (gate contra `.filesize-whitelist`) más dos gates de nombres de
   clase: nombres de clase CSS muertos (`check-dead-classnames.py`
   contra `.dead-classnames-baseline`) y el **gate de className sin
   estilos** (`--unstyled`, un trinquete contra
   `.unstyled-classnames-baseline`) - un `className` cuyos tokens
-  están todos muertos bloquea el PR. La comprobación de tamaño de
-  carpeta acompañante se ejecuta localmente con
-  `make check-folder-size`.
+  están todos muertos bloquea el PR.
 - `visual-baseline-gate.yml` - un PR que cambia rutas visualmente
   críticas (componentes de lección, renderizadores de ejercicios,
   archivos de tema/CSS) debe incluir en el mismo PR las capturas
@@ -218,13 +244,21 @@ Otros gates de PR viven en flujos de trabajo propios:
   de Compose de producción (la ruta del launcher / install.sh),
   filtrado por rutas en PRs, además en `release/**`, semanalmente
   y bajo demanda; localmente `make docker-build-smoke`.
+- `dexie-smoke.yml` - el gate E2E del modo Dexie: en cada pull
+  request al que afecta (`scripts/dexie_smoke_affected.py` decide; el
+  job `Dexie smoke (required)` siempre informa), además a diario, en
+  `release/**` y bajo demanda; localmente `make test-dexie-smoke`.
+- `backup-e2e.yml` - se ejecuta en los PRs que tocan una ruta de
+  copias de seguridad (por ejemplo `frontend/src/storage/backup/`, los
+  stores de Dexie o los servicios de copia de seguridad del backend;
+  la lista está en el flujo de trabajo) y ejecuta cada
+  `e2e/dexie/backup-*.spec.ts`, incluido el viaje de ida y vuelta por
+  todas las tablas de la copia de seguridad.
 
 **Turno de noche / release (no en PRs):**
 
-- `dexie-smoke.yml` - el gate E2E del modo Dexie (diario + en
-  `release/**` + bajo demanda; localmente `make test-dexie-smoke`)
 - `coverage.yml` - informe de cobertura (diario + bajo demanda)
-- `security-scan.yml` - pip-audit / npm audit / bandit (semanal +
+- `security-scan.yml` - pip-audit / bun audit / bandit (semanal +
   en `release/**` + bajo demanda; solo de aviso)
 - `content-stats.yml` - deriva de las estadísticas de contenido
   frente a un checkout fresco del contenido (diaria + bajo demanda)
@@ -245,6 +279,13 @@ Otros gates de PR viven en flujos de trabajo propios:
   rama del PR (etiqueta `refresh-visual-baselines`, o bajo demanda
   con un número de PR) - la revisión de las imágenes antes del
   merge sigue siendo obligatoria
+- `smoke-nightly.yml` - ejecución nocturna del smoke de viewports
+  móviles; los hallazgos van a un único issue de seguimiento
+- `unused-catalog-keys.yml` - informe nocturno de las claves de
+  catálogo sin consumidor más antiguas que la ventana previa
+  (`AGE_DAYS` en `frontend/src/i18n/unused-catalog-keys.ts`), en un
+  único issue de seguimiento; cada clave es una candidata y se revisa
+  una a una antes de eliminarla
 
 `.github/workflows/release-gate.yml` se ejecuta en pushes de
 etiquetas: verifica que los pins de versión estén sincronizados en

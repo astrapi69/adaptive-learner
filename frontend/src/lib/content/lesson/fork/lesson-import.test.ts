@@ -34,6 +34,26 @@ function lesson() {
   return generateLessonFromAnalysis(ANALYSIS, { id: "analysis-conv-1" });
 }
 
+describe("parseImportFile — JSON lesson language pair (#3395)", () => {
+  it.each([
+    ["the lesson's own pair", { target_language: "es", source_language: "de" }, "es", "de"],
+    ["en/en when the lesson names no pair", {}, "en", "en"],
+    ["en/en when the lesson's pair is null", { target_language: null, source_language: null }, "en", "en"],
+    ["en as the source when only the target is named", { target_language: "ja" }, "ja", "en"],
+  ])("keeps %s", async (_label, pair, target, source) => {
+    const file = new File([JSON.stringify({ ...lesson(), ...pair })], "lesson.json", {
+      type: "application/json",
+    });
+    const result = await parseImportFile(file);
+    expect(result.ok).toBe(true);
+    expect(result.set).toMatchObject({
+      language: target,
+      target_language: target,
+      source_language: source,
+    });
+  });
+});
+
 describe("parseImportFile — JSON", () => {
   it("accepts a valid lesson JSON file", async () => {
     const file = new File([lessonJson(lesson())], "spanish.json", {

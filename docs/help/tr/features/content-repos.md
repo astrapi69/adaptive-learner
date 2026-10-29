@@ -6,7 +6,7 @@ katalogla sınırlı değilsin: Adaptive Learner aynı anda birden çok
 Repository yükleyebilir, kendi Repository'lerini bağlayabilir ve
 küratörlü olanları önerebilir (EXP-023).
 
-<!-- TODO: Ekran görüntüsü - Ayarlar → Veriler → İçerik Repository'leri bölümü; resmî repo + bir kendi repo -->
+<!-- TODO: Ekran görüntüsü - Ayarlar > Veri > İçerik Repository'leri bölümü; resmî repo + bir kendi repo -->
 
 ---
 
@@ -29,7 +29,7 @@ tercih edilir.
 
 ## Kendi Repository'ni bağlama
 
-**Ayarlar → Veriler → İçerik Repository'leri** altında bir GitHub
+**Ayarlar > Veri > İçerik Repository'leri** altında bir GitHub
 repo URL'si eklersin. Uygulama repoyu otomatik denetler (aşağıdaki
 *Trust seviyeleri*'ne bakın), ders kataloğunu senkronize eder ve
 resmî içerikle aynı önbelleğe yerel olarak depolar (sunucu modunda
@@ -46,7 +46,7 @@ dosya sistemi, yalnızca tarayıcı modunda IndexedDB).
 
 ## Birden çok Repository'yi yönetme
 
-İstediğin kadar repo bağlayabilirsin. **Ayarlar → Veriler** altındaki
+İstediğin kadar repo bağlayabilirsin. **Ayarlar > Veri** altındaki
 listede onları şöyle yapabilirsin:
 
 - Repo URL'si üzerinden **ekleme**,
@@ -91,9 +91,40 @@ gerektirir ve şu anda ertelenmiştir.
 ## Önerilen Repository'ler
 
 Resmî repo küratörlü bir liste (`recommended-repos.json`) tutar.
-**Ayarlar → Veriler** altında buradan, önerilen Repository'leri **tek
+**Ayarlar > Veri** altında buradan, önerilen Repository'leri **tek
 tıkla** eklediğin bir keşfetme bölümü bulunur. Bunlar **Resmî olarak
 önerilen** (Trust 3) rozetiyle görünür.
+
+---
+
+## Kendi Repository'ni kaydetme
+
+**Ayarlar > Veri > Kaynaklar** altında **Deponuzu kaydedin**, kendi
+içerik Repository'ni Repository'ler arası aramanın okuduğu resmî dizin
+(`recommended-repos.json`) için önerir.
+
+1. Bağlı Repository'lerinden birini seç ya da GitHub URL'sini ve dalını
+   gir; sonra ona bir başlık ve istersen tek satırlık bir açıklama ver.
+2. **Gönderimi hazırla**: uygulama Repository'nin güncel commit'ini
+   bulur, bir Repository bağlarken yapılan teknik denetimin aynısını
+   çalıştırır, dil çiftlerini Repository'nin `search-index.json`
+   dosyasından okur ve hazır dizin girdisini gösterir. Bir durum
+   göstergesi girdinin *Yerel olarak doğrulandı* mı yoksa *Beklemede;
+   CI doğrulayacak* mı olduğunu söyler.
+3. Girdiyi iki yoldan biriyle gönder:
+    - **Girişi kopyala** ve **Önermek için dizini aç**: GitHub dizin
+      dosyasını düzenleme için açar; girdiyi diziye yapıştır ve
+      "Propose changes" seç. GitHub fork'u senin için oluşturur. Token
+      gerekmez.
+    - **Çekme isteği oluştur**: bir GitHub token'ı ile (Ayarlar >
+      Entegrasyonlar) uygulama pull request'i kendisi açar ve sana
+      bağlantısını gösterir. Bu yalnızca uygulamanın tarayıcı
+      sürümünde vardır; masaüstü uygulamasında düğme görünür kalır ama
+      devre dışıdır.
+
+Pull request, oluştuğu andan itibaren GitHub'da herkese açık olarak
+görünür. Bir bakımcı onu inceler; dizinin CI'ı sabitlenen commit'i
+başarıyla doğrulamışsa ve girdi uygunsa birleştirir.
 
 ---
 
@@ -120,4 +151,4 @@ verilmemesi için bilinçli olarak dışa aktarılabilir yapılandırmanın
 
 - [İçerik Tarayıcısı](content-browser.md) - set bulma, filtreleme, indirme
 - [Ders oluşturma](../content-creation/overview.md) - kendi içeriklerini katkıla
-- [Yedekleme ve geri yükleme](backup.md) - bağlı repolar henüz yedeğin parçası değil, geri yüklemeden sonra yeniden bağla
+- [Yedekleme ve geri yükleme](backup.md) - bağlı repolar ve kullanılan davetler yedekle birlikte taşınır

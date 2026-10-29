@@ -38,7 +38,16 @@ El **creador de lecciones** en `/create-lesson` es un asistente de
 - **Plantillas** (Vacía / Vocabulario / Gramática / Conversación)
   y **autoguardado de borradores**.
 - **Vista previa** en el visor real de lecciones antes de guardar.
-- **Guardar localmente** o **compartir mediante pull request**.
+- **Guardar localmente** o **Guardar y compartir**. Guardar localmente
+  solo requiere una lección válida (título, par de idiomas válido, al
+  menos 4 tarjetas en una lección de tarjetas nueva, estructura
+  válida); basta con un ejercicio, y la lección se puede jugar al
+  momento. Guardar y compartir guarda y abre el asistente para
+  compartir. Para ello la lección debe cumplir además los mínimos del
+  motor de contenido, por ejemplo suficientes ejercicios y tipos de
+  ejercicio y suficientes respuestas o parejas en cada ejercicio. El
+  paso **"Revisar y guardar"** los enumera con las cifras actuales en
+  **"Necesario para compartir"**.
 
 Hay puntos de entrada en el explorador de contenido y en el
 Dashboard.

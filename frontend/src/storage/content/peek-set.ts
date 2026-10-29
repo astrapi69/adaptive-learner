@@ -22,6 +22,7 @@ import {
     type PeekLesson,
 } from "../../lib/content/update/update-impact";
 import type { ContentSetSource } from "../types";
+import { ApiError } from "../../api/client";
 import {
     DEFAULT_SOURCES,
     fetchText,
@@ -107,7 +108,7 @@ async function peekSet(
     ) as ParsedManifest | null;
     const target = (repoManifest?.sets ?? []).find((s) => s.id === setId);
     if (!target) {
-        throw new Error(`Set ${setId} not advertised by ${source}`);
+        throw new ApiError(404, `Set ${setId} not advertised by ${source}`);
     }
 
     const basePath = setBasePath(target);

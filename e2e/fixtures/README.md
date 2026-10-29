@@ -53,3 +53,22 @@ One theory step, one ordering exercise, domain
 exercise. Served through a page.route-mocked content repo by the feature
 screenshot `ordering-review/falsche-reihenfolge`, which places the first
 two steps swapped and checks in practice mode.
+
+## remote-media.lesson.json
+
+Reference lesson for content from another server (#3803): one theory step
+with a Markdown image from `example.com`, one multiple_choice exercise, and
+`resources` with a YouTube video and an article. The app loads none of it:
+the image renders as a link, the video card shows a local placeholder.
+Hand-written, German knowledge content. Served through a page.route-mocked
+content repo by the feature screenshots `content-privacy/bild-als-link` and
+`content-privacy/video-karte`.
+
+## evaluation-pilot-control.lesson.json
+
+The control lesson of the evaluation pilot, byte-identical to
+`sets/de/evaluation-pilot-control/lessons/01-hauptstadt-quiz-kontrolle.json`
+in `adaptive-learner-content-test`: ten capitals, six multiple_choice and
+four select clozes. e7 (Sweden) and e8 (Norway) carry each other's answer
+as a distractor, the case of #3752. Served through a page.route-mocked
+content repo by `webkit/select-cloze-tap.spec.ts`.

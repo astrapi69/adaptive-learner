@@ -2,8 +2,10 @@
 
 # Endpoints principais
 
-Endpoints não registados por um plugin: utilizadores, projetos,
-definições, i18n, saúde.
+Exemplos detalhados de endpoints não registados por um plugin:
+utilizadores, projetos, definições, i18n, saúde. Todos os endpoints,
+do núcleo e de plugins, estão listados em
+[Todos os endpoints](endpoints.md).
 
 ## Saúde
 
@@ -128,8 +130,8 @@ atualizada.
 GET /api/settings/{user_id}
 ```
 
-Retorna UserSettings com os campos de chave de API **como booleanos
-+ enums de fonte** (o backend nunca envia chaves em texto simples
+Retorna UserSettings com os campos de chave de API **como booleanos + enums
+de fonte** (o backend nunca envia chaves em texto simples
 de volta):
 
 ```json

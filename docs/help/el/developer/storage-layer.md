@@ -2,11 +2,13 @@
 
 Το επίπεδο αποθήκευσης v0.7.0 (`frontend/src/storage/`) δίνει στο
 frontend δύο εναλλάξιμα backends πίσω από ένα ενιαίο συμβόλαιο.
-Το συμβόλαιο έχει αναπτυχθεί σε 22 namespaces κατά τις Phases 7–34.
+Το συμβόλαιο βρίσκεται στο
+`frontend/src/storage/types/core/service.ts`· η λίστα namespaces εκεί
+είναι η αναφορά.
 
 ## IStorageService
 
-Το `frontend/src/storage/types.ts` ορίζει τη διεπαφή που κάθε
+Το `frontend/src/storage/types/core/service.ts` ορίζει τη διεπαφή που κάθε
 υλοποίηση αποθήκευσης ικανοποιεί. Αντικατοπτρίζει τα namespaces
 `api.*` από το `api/client.ts` 1:1:
 
@@ -57,9 +59,11 @@ export interface IStorageService {
 ## DexieStorage
 
 Το `storage/dexie-storage.ts` αποθηκεύει τα πάντα στο IndexedDB
-μέσω Dexie 4.4.2. Το σχήμα στο `storage/db.ts` αντικατοπτρίζει
-και τα 25 μοντέλα SQLAlchemy 1:1, συν τους 4 πίνακες σύνδεσης
-(project_subjects / project_tags / κ.λπ.).
+μέσω Dexie 4.4.2. Το σχήμα στο `storage/dexie/db.ts`
+αντικατοπτρίζει τα μοντέλα SQLAlchemy και προσθέτει stores που
+υπάρχουν μόνο στο πρόγραμμα περιήγησης· ποιο store αντιστοιχεί σε
+ποιον πίνακα, ανά περιοχή, το δείχνει η σελίδα
+[Μοντέλο δεδομένων](data-model.md).
 
 Υπο-modules στο `storage/` φέρουν τη μεταφερμένη λογική:
 
@@ -104,7 +108,7 @@ export type StorageMode = "api" | "dexie" | "supabase";
 
 ## Άμεσες κλήσεις ΤΝ από browser
 
-Το `storage/ai-providers.ts` υλοποιεί τρεις clients παρόχων:
+Το `storage/ai/ai-providers.ts` υλοποιεί τρεις clients παρόχων:
 
 - **Anthropic** - POST στο `https://api.anthropic.com/v1/messages`
   με την επικεφαλίδα `anthropic-dangerous-direct-browser-access: true`.

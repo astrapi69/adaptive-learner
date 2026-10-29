@@ -135,11 +135,15 @@ export function resolveEditLessonIndex(
     return index === -1 ? 0 : index;
 }
 
-/** A short, human label for a lesson in the picker — its title, or a
- *  1-based fallback when a lesson carries no title. */
-export function lessonPickerLabel(lesson: ContentLesson, index: number): string {
+/** A short, human label for a lesson in the picker: its title, or the
+ *  caller's localized ``fallback`` when a lesson carries no title (#3425;
+ *  the picker already prefixes the 1-based position).
+ *
+ *  @example
+ *  lessonPickerLabel(lesson, t("lesson.page_title", "Lesson")); */
+export function lessonPickerLabel(lesson: ContentLesson, fallback: string): string {
     const title = lesson.title?.trim();
-    return title ? title : `Lesson ${index + 1}`;
+    return title ? title : fallback;
 }
 
 /** Merge the edited lesson back into the set's ``SaveUserSetInput``.
@@ -187,6 +191,21 @@ export function withPreservedSetBook(
     return entry?.book ? {...input, book: entry.book} : input;
 }
 
+/** The original lesson's fields a "Save as a copy" carries (#3543): all it
+ *  carries on an in-place edit, minus ``variation_note``. The copy's variation
+ *  pair describes the copy (``variation_of`` is stamped with the original's
+ *  id), so a note about how the ORIGINAL differs from its own parent does not
+ *  travel along. ``undefined`` when the original is not among ``lessons``. */
+function copyCarrySource(
+    lessons: ContentLesson[],
+    lessonId: string,
+): ContentLesson | undefined {
+    const source = lessons.find((candidate) => candidate.id === lessonId);
+    if (!source) return undefined;
+    const {variation_note: _originalNote, ...carried} = source;
+    return carried as ContentLesson;
+}
+
 /** #1740 / #2655 — build the lesson + ``SaveUserSetInput`` for "Save as a
  *  copy": the edited lesson rebuilt with preserved theory, ``variation_of``
  *  stamped to record the fork, the new copy's set id, and the source set's
@@ -199,6 +218,7 @@ export function buildSaveCopyInput(
 ): {lesson: ContentLesson; input: SaveUserSetInput} {
     const builtLesson = buildLessonFromDraft(copyInput, {
         theorySteps: preservedTheorySteps(original.originalSteps, copyInput.meta),
+        carryFrom: copyCarrySource(original.lessons, original.lessonId),
     });
     const lesson = withVariationOf(builtLesson, original.lessonId);
     const input = withPreservedSetBook(

@@ -83,4 +83,4 @@ modda veriler IndexedDB'de yaşar ve site verilerini temizlemediğiniz
 sürece tarayıcı yeniden yüklemelerinde hayatta kalır. Sunucu modunda
 veriler FastAPI arka ucunun SQLite veritabanında yaşar.
 
-[Depolama modları nasıl çalışır](settings.md#storage-mode)
+[Depolama modları nasıl çalışır](settings.md#depolama-modu)

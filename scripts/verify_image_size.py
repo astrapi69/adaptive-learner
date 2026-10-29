@@ -31,6 +31,7 @@ import datetime
 import gzip
 import io
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -254,6 +255,27 @@ def describe_image(image: str, root: Path) -> None:
         print("  uncompressed size and base-image digests: not read (no docker binary)")
 
 
+def annotate_reading(compressed: int, ceiling: int, arch: str | None) -> None:
+    """Emit the reading as a GitHub Actions ``::notice`` annotation (#3730).
+
+    Every reseed so far needed someone to read a job log; annotations are
+    readable over the API. Printed only inside Actions, once per gate run,
+    before the verdict, so a red run carries its number too.
+
+    Example:
+        ``::notice title=Image size [arm64]::measured 128422931 bytes gzipped,
+        ceiling 130466477, delta -2043546 bytes``
+    """
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    title = f"Image size [{arch}]" if arch else "Image size"
+    print(
+        f"::notice title={title}::measured {compressed} bytes gzipped, "
+        f"ceiling {ceiling}, delta {compressed - ceiling:+d} bytes",
+        flush=True,
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--image", default=DEFAULT_IMAGE)
@@ -325,6 +347,7 @@ def main() -> int:
         return 0
 
     assert ceiling is not None
+    annotate_reading(compressed, ceiling, args.arch)
     if compressed > ceiling + JITTER_TOLERANCE:
         sys.stdout.flush()
         print(

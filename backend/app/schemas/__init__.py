@@ -186,7 +186,7 @@ class UserSettingsOut(BaseModel):
     has_gemini_key: bool = False
     has_perplexity_key: bool = False
     # v0.4.0 — nullable override per provider. ``None`` means
-    # "use the session plugin's DEFAULT_MODELS for that provider";
+    # "use app.services.ai_caller.DEFAULT_MODELS for that provider";
     # a non-null string replaces the default at /message time.
     model_override_anthropic: str | None = None
     model_override_openai: str | None = None
@@ -1492,6 +1492,24 @@ class StepResultIn(BaseModel):
     )
 
 
+class StepEventIn(BaseModel):
+    """One learner action on a lesson, logged in ``recent_steps`` (#3365).
+
+    ``step`` is arriving on a step (forward or back), ``answer`` a graded
+    check, ``pause`` the pause dialog or button, ``exit`` leaving the
+    lesson by navigation, ``restart`` a confirmed start-over, ``complete``
+    reaching the summary. Autosave, timers, app switches, mode switches,
+    hints and read-aloud are not actions. The server stamps the time.
+    """
+
+    kind: Literal["step", "answer", "pause", "exit", "restart", "complete"]
+    step_index: int = Field(..., ge=0)
+    # None on the summary, which has no step id.
+    step_id: str | None = Field(default=None, min_length=1, max_length=120)
+    # Only on ``answer``: whether the check was fully correct.
+    correct: bool | None = None
+
+
 class LessonProgressUpsert(BaseModel):
     """Body for the upsert endpoint.
 
@@ -1527,6 +1545,14 @@ class LessonProgressUpsert(BaseModel):
             "BUG #41 — the step index the user is currently on, so a "
             "paused lesson resumes at the exact step. Omitted leaves "
             "the stored value unchanged."
+        ),
+    )
+    step_event: StepEventIn | None = Field(
+        default=None,
+        description=(
+            "#3365 - the learner action this write records. Appended to "
+            "``recent_steps`` (the last ten are kept). Omitted records "
+            "nothing."
         ),
     )
     combo_bonus_xp: int = Field(
@@ -1603,6 +1629,9 @@ class LessonProgressOut(BaseModel):
     score_correct: int
     score_total: int
     time_spent_seconds: int
+    # #3747 - seconds of the current run; ``time_spent_seconds`` is the
+    # lifetime total across restarts.
+    run_time_seconds: int = 0
     current_step: int = 0
     started_at: datetime
     updated_at: datetime
@@ -1616,6 +1645,8 @@ class LessonProgressOut(BaseModel):
     best_score_correct: int = 0
     best_score_total: int = 0
     attempt_history: list[dict[str, Any]] = Field(default_factory=list)
+    # #3365 - the last ten learner actions, oldest first.
+    recent_steps: list[dict[str, Any]] = Field(default_factory=list)
 
 
 # --- SpeechRecording (engine#68 idea 3: speak-and-record) ------------------

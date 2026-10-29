@@ -165,7 +165,9 @@ def _synthesize_manifest_yaml(entry: dict[str, Any]) -> str | None:
         id=entry["set_id"],
         title=title,
         title_native=meta.get("title_native"),
-        target_language=meta.get("target_language") or meta.get("language") or "en",
+        # #3395 - like the engine's resolveLanguagePair: a missing target is
+        # "" (no language was chosen), a missing source is "en".
+        target_language=meta.get("target_language") or meta.get("language") or "",
         source_language=meta.get("source_language") or "en",
         level=meta.get("level") or "A1",
         version=entry["version"],
@@ -174,6 +176,14 @@ def _synthesize_manifest_yaml(entry: dict[str, Any]) -> str | None:
         description=meta.get("description"),
         tags=tags,
         assets=[],
+        # #3395 - a Dexie row carries the manifest entry's display and
+        # review fields; a synthesised manifest keeps them instead of
+        # resetting a hidden set to visible and a generated one to authored.
+        **{
+            field: meta[field]
+            for field in ("visibility", "review_status", "evaluation")
+            if meta.get(field) is not None
+        },
     )
     manifest = ContentManifest(
         schema_version=CURRENT_SCHEMA_VERSION,
@@ -234,8 +244,10 @@ def _write_set(root: Path, entry: dict[str, Any]) -> None:
         relative = file_entry["filename"]
         target = (tmp_dir / relative).resolve()
         # Path-traversal guard: a crafted ``..`` filename must not escape
-        # the set's tmp dir (same invariant as cache.read_asset).
-        if not str(target).startswith(str(tmp_root)):
+        # the set's tmp dir (same invariant as cache.read_asset). A path
+        # comparison, not a string prefix: ``v1.0.0.tmp-x`` starts with the
+        # tmp dir's name but is a sibling (#3428).
+        if not target.is_relative_to(tmp_root):
             raise ValueError(f"file path escapes the set directory: {relative!r}")
         target.parent.mkdir(parents=True, exist_ok=True)
         if file_entry.get("encoding") == "base64":

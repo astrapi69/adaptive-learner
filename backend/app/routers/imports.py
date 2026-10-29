@@ -23,12 +23,10 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Response, status
 
 from app.deps import get_curriculum_repo, get_imports_repo, get_settings_repo
-from app.exceptions import ValidationError
 from app.repositories.curriculum_repo import CurriculumRepository
 from app.repositories.imports_repo import ImportsRepository
 from app.repositories.settings_repo import SettingsRepository
 from app.schemas import (
-    AIProvider,
     CurriculumOut,
     ImportedConversationAnalysis,
     ImportedConversationCreate,
@@ -39,11 +37,7 @@ from app.schemas import (
 )
 from app.services import curriculum as curriculum_service
 from app.services import imports as imports_service
-from app.services import settings as settings_service
-from app.services.conversation_analysis import (
-    Message,
-    analyze_conversation_with_ai,
-)
+from app.services.ai_caller import caller_for, resolve_ai_target
 
 # --- /users/{user_id}/imports ----------------------------------------------
 
@@ -178,33 +172,6 @@ def save_analysis(
     return ImportedConversationDetail.model_validate(imports_service.to_detail_dict(conv))
 
 
-def _build_ai_caller(
-    *,
-    model: str,
-    api_key: str,
-    max_tokens: int = 1500,
-):
-    """Return a ``(messages) -> str | None`` callable that fires the
-    ``ai_complete`` hook against the active provider.
-
-    Lazy ``app.main`` import keeps this router importable from
-    test-client contexts that mount only this router without the
-    full lifespan.
-    """
-    from app.main import manager  # lazy: cycle-avoidance + test isolation
-
-    def _call(messages: list[dict[str, str]]) -> str | None:
-        result = manager._pm.hook.ai_complete(
-            messages=messages,
-            model=model,
-            api_key=api_key,
-            max_tokens=max_tokens,
-        )
-        return result if isinstance(result, str) else None
-
-    return _call
-
-
 @imports_router.post(
     "/{conversation_id}/analyze",
     response_model=ImportedConversationDetail,
@@ -235,66 +202,8 @@ def analyze_import(
     instead of the browser-direct path because cleartext API
     keys never leave the server.
     """
-    conv = imports_service.get_conversation(repo, conversation_id, with_messages=True)
-
-    settings = settings_service.get_or_create_settings(settings_repo, conv.user_id)
-    provider_key = settings.active_provider
-    try:
-        provider_enum = AIProvider(provider_key)
-    except ValueError as exc:
-        raise ValidationError(
-            f"User {conv.user_id!r} has no valid active AI provider configured."
-        ) from exc
-
-    # Phase 34 — env > secrets.yaml > DB resolution.
-    api_key, _source = settings_service.resolve_api_key(settings_repo, conv.user_id, provider_enum)
-    if not api_key:
-        raise ValidationError(
-            f"User {conv.user_id!r} has no stored API key for provider {provider_key!r}."
-        )
-
-    override_attr = f"model_override_{provider_key}"
-    override = getattr(settings, override_attr, None)
-    # Default-models map duplicated from
-    # ``adaptive_learner_session.ai_orchestration.DEFAULT_MODELS``
-    # to avoid importing a plugin from the backend core. Keep in
-    # sync when bumping provider defaults.
-    default_models = {
-        "anthropic": "claude-haiku-4-5-20251001",
-        "openai": "gpt-4o-mini",
-        "gemini": "gemini-2.0-flash",
-        "perplexity": "sonar-pro",
-    }
-    if isinstance(override, str) and override.strip():
-        model: str | None = override.strip()
-    else:
-        model = default_models.get(provider_key)
-    if not model:
-        raise ValidationError(f"Provider {provider_key!r} has no default model registered.")
-
-    # Phase 36 Bug 2 — thread the user's display language through so
-    # the AI emits free-text fields in DE/ES/FR/etc. instead of always
-    # English. Fallback to "de" matches the User.language column
-    # default; ``build_system_prompt`` itself clamps unknown codes to
-    # English so an exotic value never breaks analysis.
-    user = repo.get_user(conv.user_id)
-    lang = user.language if user and user.language else "de"
-
-    messages = [Message(role=m.role, content=m.content) for m in conv.messages]
-    result = analyze_conversation_with_ai(
-        messages,
-        ai_complete_call=_build_ai_caller(model=model, api_key=api_key),
-        title=conv.title,
-        lang=lang,
-        # v1.54.0 — import-time language pair sharpens extraction.
-        source_language=conv.source_language,
-        target_language=conv.target_language,
-    )
-
-    imports_service.save_analysis(
-        repo,
-        conversation_id,
-        ImportedConversationAnalysis(analysis_result=result),
-    )
+    conv = imports_service.get_conversation(repo, conversation_id)
+    target = resolve_ai_target(settings_repo, conv.user_id)
+    imports_service.analyze_with_ai(repo, conversation_id, caller_for(target, max_tokens=1500))
     conv = imports_service.get_conversation(repo, conversation_id, with_messages=True)
     return ImportedConversationDetail.model_validate(imports_service.to_detail_dict(conv))

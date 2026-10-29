@@ -33,13 +33,14 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        roadmap-header-bump roadmap-header-bump-dry \
        sync-versions sync-versions-dry sync-versions-check \
-       docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       ci ci-full pre-push rule-change-log rule-change-log-check verify-docs verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav verify-docs-external-hosts \
+       ci ci-full pre-push rule-change-log rule-change-log-check verify-docs verify-mermaid verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
        sync-schema sync-schema-check sync-schema-mirror engine-parity-check \
        sync-openapi sync-openapi-check emit-spa-routes \
+       sync-data-model sync-data-model-check \
        lock-all-plugins verify-plugin-locks \
        audit-backend audit-frontend bandit-backend security-backend check-security circular-deps \
        release-state release-outdated release-test release-build \
@@ -257,8 +258,8 @@ test: test-backend test-plugins test-frontend ## Run ALL tests, no coverage (eve
 # Needs no running backend -- pytest uses the in-memory TestClient.
 test-fast: ## Fast PR-mirror gate: backend ruff+mypy+pytest, frontend tsc+vitest (no coverage, no plugins) (#1174)
 	@echo ""
-	@echo "=== test-fast: backend ruff check app/ ==="
-	cd backend && poetry run ruff check app/
+	@echo "=== test-fast: ruff check app/ + plugins/ ==="
+	cd backend && poetry run ruff check app/ ../plugins/
 	@echo ""
 	@echo "=== test-fast: backend mypy app/ ==="
 	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run mypy app/
@@ -640,6 +641,7 @@ test-dexie-smoke: ## Dexie-mode release gate (build + Playwright preview-mode sm
 	@echo ""
 	@echo "=== Running Dexie-mode Playwright smoke ==="
 	cd e2e && npx playwright test --config=playwright.dexie.config.ts
+	python3 scripts/check_e2e_skip_budget.py --suite dexie-smoke --report e2e/test-results/dexie-smoke.json
 
 # WebKit engine gate (#1834). Catches iOS/Safari CSS-ENGINE layout bugs
 # that the Chromium gates structurally cannot — e.g. the lesson-footer
@@ -663,6 +665,7 @@ test-manual-automation: ## Automated manual-test-plan suite (#616; build dexie +
 	@echo ""
 	@echo "=== Running manual-test-plan automation (#616) ==="
 	cd e2e && npx playwright test --config=playwright.manual.config.ts
+	python3 scripts/check_e2e_skip_budget.py --suite manual-automation --report e2e/test-results/manual-automation.json
 
 test-visual: ## Visual regression (build dexie + Playwright screenshot matrix)
 	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
@@ -749,11 +752,18 @@ sync-schema-check: ## Exit non-zero if the schema mirror, generated artefacts or
 	@cd backend && poetry run python ../scripts/generate_pydantic_models.py --check
 	@cd frontend && node scripts/sync-schema-mirror.mjs --check
 
-sync-openapi: ## Regenerate the committed OpenAPI snapshot schema/openapi.json from the booted app (#2281; single writer)
+sync-openapi: ## Regenerate the committed OpenAPI snapshot schema/openapi.json from the booted app (#2281; single writer), then the endpoint pages of the help API reference (#3454)
 	@cd backend && poetry run python ../scripts/sync_openapi.py
+	@python3 scripts/generate_api_reference.py
 
 sync-openapi-check: ## Exit non-zero if the app's OpenAPI spec drifts from the committed snapshot (#2281; fails closed, asserts the full plugin set)
 	@cd backend && poetry run python ../scripts/sync_openapi.py --check
+
+sync-data-model: ## Regenerate the ER diagrams of the data model, docs/help/<lang>/developer/data-model.md, from the models, the Dexie schema and scripts/data_model_areas.yaml (#3828)
+	@cd backend && poetry run python ../scripts/generate_er_diagrams.py
+
+sync-data-model-check: ## Exit non-zero on a stale data-model page, a table or store without an area, or an unresolved *_id field (#3828; fails closed)
+	@cd backend && poetry run python ../scripts/generate_er_diagrams.py --check
 
 engine-parity-check: ## Exit non-zero if schema/*.json differs from the pinned learn-content-engine release (mirror decoupling; network)
 	@python3 scripts/check_engine_schema_parity.py
@@ -864,6 +874,9 @@ sync-mkdocs-nav: ## Regenerate mkdocs.yml nav blocks from docs/help/_meta.yaml
 verify-mkdocs-nav: ## Check mkdocs.yml is in sync with docs/help/_meta.yaml (CI-friendly)
 	cd docs && poetry run python ../scripts/generate_mkdocs_nav.py --check
 
+verify-docs-external-hosts: ## Guard (#3802): the built docs site (site/, from make docs-build) fetches nothing from a third-party host
+	@python3 scripts/check_external_hosts.py site
+
 # --- Documentation verification (drift detection) ---
 
 verify-docs: ## Verify documentation for drift (version/counts/features/help/i18n/themes; stdlib only)
@@ -880,6 +893,9 @@ fix-docs-umlauts: ## Trockenlauf: welche ASCII-Ersatzschreibungen der Doku sind 
 
 fix-docs-umlauts-apply: ## Korrektur schreiben - nur wenn der Trockenlauf keine gemischte Zeile meldet (#2311)
 	@cd backend && poetry run python ../scripts/fix_docs_umlauts.py --apply
+
+verify-mermaid: ## Mermaid diagrams in docs/help parse with the vendored script and carry accTitle/accDescr (#3800; needs frontend deps)
+	@node scripts/verify_mermaid_blocks.mjs
 
 verify-doc-refs: ## Doc refs (#2254): make targets, repo paths and constants named in docs must exist
 	@python3 scripts/verify_doc_refs.py
@@ -903,10 +919,12 @@ ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-
 	@echo "== normative changes"   && $(MAKE) --no-print-directory verify-normative-changes
 	@echo "== rule corpus size"    && $(MAKE) --no-print-directory verify-rule-corpus-size
 	@echo "== complexity ratchet"  && $(MAKE) --no-print-directory check-complexity-gate
+	@echo "== folder sizes"        && $(MAKE) --no-print-directory check-folder-size
 	@echo "== testid references"   && $(MAKE) --no-print-directory check-testid-refs
 	@echo "== docker context"      && $(MAKE) --no-print-directory verify-docker-context
 	@echo "== file sizes"          && $(MAKE) --no-print-directory check-file-sizes
 	@echo "== openapi snapshot"    && $(MAKE) --no-print-directory sync-openapi-check
+	@echo "== data model diagrams" && $(MAKE) --no-print-directory sync-data-model-check
 	@echo ""
 	@echo "All build-free gates passed. Two gates need a frontend build and"
 	@echo "installed deps, so they are NOT in this target: 'make check-dead-classnames'"
@@ -1027,7 +1045,7 @@ check-security: ## Blocking dependency gate: pip-audit + bun audit fail on HIGH/
 	@echo "=== check-security: pip-audit (backend, fails on any known vuln) ==="
 	@cd backend && poetry run pip-audit --skip-editable --progress-spinner=off
 	@echo "=== check-security: bun audit --audit-level=high (frontend) ==="
-	@cd frontend && bun audit --audit-level=high
+	@cd frontend && bun audit --audit-level=high $$(grep -vE '^[[:space:]]*(#|$$)' audit-ignore.txt | sed 's/^/--ignore=/')
 	@echo "check-security passed: no high/critical dependency vulnerabilities."
 
 circular-deps: ## Circular-dependency check over frontend/src (madge via the existing check:circular script)
@@ -1059,17 +1077,8 @@ release-state: ## Print state-capture report (release-workflow.md Step 1)
 	@echo "=== Current canonical version ==="
 	@grep "^version" backend/pyproject.toml
 
-release-outdated: ## Dependency currency check across all surfaces (release-workflow.md Step 4b)
-	@echo "=== Backend (poetry show --outdated) ==="
-	@cd backend && COLUMNS=200 poetry show --outdated --no-ansi 2>&1 | grep -v "^adaptive-learner-plugin-" || true
-	@echo ""
-	@echo "=== Launcher (poetry show --outdated) ==="
-	@cd launcher && COLUMNS=200 poetry show --outdated --no-ansi 2>&1 || true
-	@echo ""
-	@echo "=== Frontend (bun outdated) ==="
-	@cd frontend && bun outdated 2>&1 || true
-	@echo ""
-	@echo "Reminder: apply routine bumps (patch+minor within same major) via 'poetry update <allowlist>' (never bare)."
+release-outdated: ## Dependency currency report for every surface (release-workflow.md Step 4b, #3778)
+	@python3 scripts/release_outdated.py
 
 release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@$(MAKE) test
@@ -1104,6 +1113,9 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo ""
 	@echo "=== Lesson-schema drift gate (sync-schema --check, EXP-039) ==="
 	@$(MAKE) sync-schema-check
+	@echo ""
+	@echo "=== Data-model diagram drift gate (sync-data-model-check, #3828) ==="
+	@$(MAKE) sync-data-model-check
 	@echo ""
 	@echo "=== Plugin lockfile drift (verify-plugin-locks) ==="
 	@$(MAKE) verify-plugin-locks

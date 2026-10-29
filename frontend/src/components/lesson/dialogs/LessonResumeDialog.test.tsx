@@ -129,3 +129,65 @@ describe("LessonResumeDialog", () => {
         expect(dialog).toHaveAttribute("aria-modal", "true");
     });
 });
+
+describe("LessonResumeDialog with a run from another mode (#3742)", () => {
+    function renderConflict(onStartOver = vi.fn()) {
+        render(
+            <LessonResumeDialog
+                open
+                lessonTitle="Hauptstädte"
+                blockReason="mode_conflict"
+                onResume={vi.fn()}
+                onStartOver={onStartOver}
+            />,
+        );
+        return onStartOver;
+    }
+
+    it("offers no continue, explains why, and keeps start over", () => {
+        renderConflict();
+        expect(screen.queryByTestId("lesson-resume-continue")).toBeNull();
+        expect(screen.getByTestId("lesson-resume-blocked")).toHaveTextContent(
+            "This run was started in another mode",
+        );
+        expect(screen.getByTestId("lesson-resume-restart")).toBeInTheDocument();
+    });
+
+    it("start over still goes through the confirmation", () => {
+        const onStartOver = renderConflict();
+        fireEvent.click(screen.getByTestId("lesson-resume-restart"));
+        fireEvent.click(screen.getByTestId("lesson-resume-confirm-restart-action"));
+        expect(onStartOver).toHaveBeenCalledTimes(1);
+    });
+
+    it("without a conflict, continue stays", () => {
+        render(
+            <LessonResumeDialog open lessonTitle="X" onResume={vi.fn()} onStartOver={vi.fn()} />,
+        );
+        expect(screen.getByTestId("lesson-resume-continue")).toBeInTheDocument();
+        expect(screen.queryByTestId("lesson-resume-blocked")).toBeNull();
+    });
+});
+
+describe("LessonResumeDialog for a started exam (#3750)", () => {
+    it("explains that an exam is one sitting and offers no continue", () => {
+        render(
+            <LessonResumeDialog
+                open
+                lessonTitle="Hauptstädte"
+                blockReason="exam_single_sitting"
+                onResume={vi.fn()}
+                onStartOver={vi.fn()}
+            />,
+        );
+        expect(screen.queryByTestId("lesson-resume-continue")).toBeNull();
+        expect(screen.getByTestId("lesson-resume-blocked")).toHaveTextContent(
+            "A started exam cannot be continued",
+        );
+        expect(screen.getByTestId("lesson-resume-blocked")).toHaveAttribute(
+            "data-reason",
+            "exam_single_sitting",
+        );
+        expect(screen.getByTestId("lesson-resume-restart")).toBeInTheDocument();
+    });
+});

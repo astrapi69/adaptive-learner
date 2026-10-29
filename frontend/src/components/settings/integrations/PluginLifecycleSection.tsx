@@ -25,7 +25,8 @@ import { Feature } from "@astrapi69/feature-strategy-react";
 import { Monitor } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { ApiError } from "../../../api/client";
+import { isDevMode } from "../../../hooks/settings/useDevMode";
+import { inlineErrorText } from "../../../utils/errorMessages";
 import type { PluginInspection } from "../../../api/client-core";
 import { FEATURES } from "../../../features/featureConfig";
 import { useI18n } from "../../../hooks/ui/useI18n";
@@ -62,7 +63,7 @@ function useInspections(t: Translate): InspectionRead {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        const message = err instanceof ApiError ? err.detail : String(err);
+        const message = inlineErrorText(err, t("common.error"), isDevMode());
         setRead({ rows: null, error: message, loading: false });
         notify.error(t("settings.plugins_error_load", "Could not read the plugin status"), {
           error: err,

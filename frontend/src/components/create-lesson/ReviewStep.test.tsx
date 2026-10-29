@@ -12,6 +12,7 @@ import {describe, expect, it} from "vitest";
 
 import ReviewStep from "./ReviewStep";
 import type {DraftValidationChecks} from "../../lib/content/lesson/draft-to-lesson";
+import type {DraftShareChecks} from "../../lib/content/lesson/edit/draft-share-check";
 import type {LessonCardDraft, LessonMeta} from "../../lib/content/lesson/lesson-draft";
 import type {ContentLessonExercise} from "../../storage/types";
 
@@ -36,8 +37,6 @@ function checks(over: Partial<DraftValidationChecks> = {}): DraftValidationCheck
         hasTitle: true,
         languagePair: true,
         enoughCards: true,
-        enoughExercises: true,
-        enoughTypes: true,
         schemaValid: true,
         schemaError: null,
         schemaErrorIsInternal: false,
@@ -45,13 +44,21 @@ function checks(over: Partial<DraftValidationChecks> = {}): DraftValidationCheck
     };
 }
 
-function renderStep(over: Partial<DraftValidationChecks> = {}) {
+const SHAREABLE: DraftShareChecks = {minExercises: true, minTypes: true, exerciseMinimums: true};
+
+function renderStep(
+    over: Partial<DraftValidationChecks> = {},
+    share: DraftShareChecks = SHAREABLE,
+    editMode = false,
+) {
     render(
         <ReviewStep
             meta={META}
             cards={CARDS}
             exercises={EXERCISES}
             draftChecks={checks(over)}
+            shareChecks={editMode ? undefined : share}
+            editMode={editMode}
             saving={false}
             onSaveLocal={() => {}}
             onSaveShare={() => {}}
@@ -82,10 +89,44 @@ describe("ReviewStep language-pair check (#1929)", () => {
         );
     });
 
-    it("renders six checklist rows (the language-pair row restored)", () => {
+    it("renders four local checklist rows (the language-pair row restored)", () => {
         renderStep();
         const checklist = screen.getByTestId("create-lesson-checklist");
-        expect(checklist.querySelectorAll("li")).toHaveLength(6);
+        expect(checklist.querySelectorAll("li")).toHaveLength(4);
+    });
+});
+
+describe("ReviewStep share rows (#3389)", () => {
+    it("lists the engine's quality minimums apart from the local rows", () => {
+        renderStep();
+        const share = screen.getByTestId("create-lesson-share-checklist");
+        expect(share.querySelectorAll("li")).toHaveLength(3);
+        expect(screen.getByTestId("check-minExercises")).toHaveTextContent("At least 5 exercises");
+    });
+
+    it.each([
+        ["too few exercises", {minExercises: false}],
+        ["too few types", {minTypes: false}],
+        ["an exercise below its minimum", {exerciseMinimums: false}],
+    ])("keeps local save open but blocks sharing on %s", (_name, failing) => {
+        renderStep({}, {...SHAREABLE, ...failing});
+        expect(screen.getByTestId("create-lesson-save-local")).toBeEnabled();
+        expect(screen.getByTestId("create-lesson-save-share")).toBeDisabled();
+    });
+
+    it("enables sharing when every local and share row passes", () => {
+        renderStep();
+        expect(screen.getByTestId("create-lesson-save-share")).toBeEnabled();
+    });
+
+    it("blocks sharing too when a local row fails", () => {
+        renderStep({schemaValid: false});
+        expect(screen.getByTestId("create-lesson-save-share")).toBeDisabled();
+    });
+
+    it("shows no share rows in edit mode", () => {
+        renderStep({}, SHAREABLE, true);
+        expect(screen.queryByTestId("create-lesson-share-checklist")).not.toBeInTheDocument();
     });
 });
 

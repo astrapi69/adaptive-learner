@@ -77,6 +77,7 @@ import { clearHintUsage } from "../../lib/hints/hint-usage";
 import { readLearnerState } from "../../lib/learning/learnerState";
 import { useLessonWakeLock } from "../../hooks/lesson/session/useLessonWakeLock";
 import LessonNoProfileNotice from "../../components/lesson/LessonNoProfileNotice";
+import LessonExamNotice from "../../components/lesson/LessonExamNotice";
 
 interface UrlParams {
   setSlug: string;
@@ -140,7 +141,9 @@ export default function LessonPage() {
     exitOpen,
     setExitOpen,
     isInProgress,
+    modeLocked,
     showResumePrompt,
+    resumeBlocked,
     handleResume,
     handleStartOver,
     handlePauseFromDialog,
@@ -156,6 +159,9 @@ export default function LessonPage() {
     goToStep,
     // #3075 - the summary is the end of the run, not a place to pause.
     atSummary: isAtSummary(lesson, currentStepIndex),
+    // #3742 / #3750 - a run from another mode (exam on either side), or a
+    // started exam reopened as an exam, starts over.
+    lessonMode,
   });
 
   // Phase 46B — userId for the elementErrors.recordBulk
@@ -258,6 +264,7 @@ export default function LessonPage() {
     tts,
     autoRead,
     toggleAutoRead,
+    endReadAloud,
     startContinuous,
     isContinuous,
     theoryBlock,
@@ -294,6 +301,7 @@ export default function LessonPage() {
     setTitle,
     setDomain,
     setBook,
+    setEvaluation,
   } = useLessonSetContext({source, setId, filename});
   // #2793 — the header's backward/forward links; the same route builder the
   // rest of the app uses, so a neighbour opens exactly like any other lesson.
@@ -396,6 +404,7 @@ export default function LessonPage() {
         <LessonResumeDialog
           open={showResumePrompt}
           lessonTitle={lesson.title}
+          blockReason={resumeBlocked}
           onResume={() => void handleResume()}
           onStartOver={() => void handleStartOver()}
         />
@@ -484,7 +493,7 @@ export default function LessonPage() {
             setTitle={setTitle ?? ""}
             lessonMode={lessonMode}
             onModeChange={setLessonMode}
-            modeLocked={isInProgress}
+            modeLocked={modeLocked}
             showReadAloud={modeConfig.showReadAloud}
             lesson={lesson}
             tts={tts}
@@ -525,6 +534,7 @@ export default function LessonPage() {
             lessonFilename={filename}
             setDomain={setDomain}
             setBook={setBook}
+            setEvaluation={setEvaluation}
             comboBonusXp={comboBonusXp}
             fullHeartsRun={tension.fullHeartsRun}
             markCompleted={markCompleted}
@@ -534,6 +544,14 @@ export default function LessonPage() {
           </>
         ) : (
           <>
+          {/* #3742 - exam mode says up front: no feedback until the end,
+              no way back. Self-gating (exam mode, no answer yet). */}
+          <LessonExamNotice
+            lessonMode={lessonMode}
+            progress={progress}
+            steps={played.steps}
+            currentStepIndex={currentStepIndex}
+          />
           {/* #1013 — reverse mode can't gradeably reverse non-matching
               exercise types, so they play in their original format with this
               note (the issue's documented fallback). */}
@@ -615,12 +633,13 @@ export default function LessonPage() {
 
         {/* Floating read-aloud mini-player (C8) — visible while the
                   engine is active; step-based skip through the theory
-                  block + play/pause + stop. */}
+                  block + play/pause + end (#3760). */}
         <LessonTtsMiniPlayerSlot
           tts={tts}
           theoryBlock={theoryBlock}
           currentStepIndex={currentStepIndex}
           onReadStepAt={readTheoryStepAt}
+          onEnd={endReadAloud}
         />
       </FooterStatusProvider>
     </main>

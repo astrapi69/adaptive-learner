@@ -5,6 +5,10 @@ Servidor el frontend se comunica con ella; en modo Local (Dexie) la
 API no está disponible: las mismas operaciones se ejecutan en el
 navegador.
 
+La página [Todos los endpoints](endpoints.md), generada a partir de
+la instantánea de OpenAPI incluida en el repositorio, lista cada
+endpoint.
+
 ## URL base
 
 - **Desarrollo local**: `http://localhost:18001/api`
@@ -129,9 +133,10 @@ La clase `ApiError` del frontend consume ambas formas; consulta
 | Currículo | `/users/{user_id}/curricula`, `/curricula/{id}` | CRUD de currículo + temas + lecciones |
 | Descubrimiento de plugins | `/plugins/manifests`, `/plugins/health`, `/plugins/errors` | Qué está registrado |
 
-Consulta [Endpoints principales](core-endpoints.md) y
-[Endpoints de plugins](plugin-endpoints.md) para la lista completa de
-métodos con ejemplos de petición / respuesta.
+Hay ejemplos desarrollados de petición / respuesta en
+[Endpoints principales](core-endpoints.md) y
+[Endpoints de plugins](plugin-endpoints.md); la lista completa de
+todos los endpoints está en [Todos los endpoints](endpoints.md).
 
 ## OpenAPI / Swagger
 

@@ -38,7 +38,7 @@ export default function SettingsSidebar({ groups, activeTab, onChange }: Setting
           )}
         >
           {group.label && group.variant !== "danger" ? (
-            <h2 className="mb-1 px-2 text-xs font-semibold uppercase tracking-wide text-fg-secondary">
+            <h2 className="mt-0 mb-1 px-2 text-xs font-semibold uppercase tracking-wide text-fg-secondary">
               {group.label}
             </h2>
           ) : null}

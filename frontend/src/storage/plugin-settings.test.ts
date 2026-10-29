@@ -100,7 +100,7 @@ describe("dexieStorage.pluginSettings — lazy YAML defaults", () => {
         // (drift-pinned by plugin-config-sync.test.ts).
         expect(result.settings).toMatchObject({
             enable_git: false,
-            repos_dir: "~/.local/share/adaptive_learner/repos",
+            repos_dir: "",
         });
     });
 

@@ -25,7 +25,7 @@ import {
     type ConflictResolution,
 } from "./sync-engine";
 import {_resetDbForTests, getDb} from "../dexie/db";
-import {BACKUP_TABLES} from "../backup/backup-tables";
+import {BACKUP_TABLES, SECRET_TABLES} from "../backup/backup-tables";
 
 beforeEach(async () => {
     await _resetDbForTests();
@@ -862,10 +862,16 @@ describe("SYNC_TABLES — surface audit", () => {
      * another device (LAN pairing vs a file); keeping them in
      * lock-step means a table added to one and not the other fails
      * here immediately, instead of silently drifting for releases.
+     *
+     * #3854: the backup's SECRET_TABLES (rows that are API keys) are the
+     * one deliberate difference: a backup carries them empty, sync not at
+     * all.
      */
-    const EXPECTED_TABLES = Object.keys(BACKUP_TABLES);
+    const EXPECTED_TABLES = Object.keys(BACKUP_TABLES).filter(
+        (name) => !SECRET_TABLES.has(name),
+    );
 
-    it("covers every domain table that BACKUP_TABLES also carries", () => {
+    it("covers every domain table that BACKUP_TABLES also carries, minus its secrets", () => {
         const actual = SYNC_TABLES.map((t) => t.name).sort();
         const expected = [...EXPECTED_TABLES].sort();
         expect(actual).toEqual(expected);
@@ -892,6 +898,9 @@ describe("SYNC_TABLES — surface audit", () => {
                 // v1.40.0 / Phase 57 promoted it to MUTABLE (a dynamic
                 // badge's tier climbs in place, high-water mark), so it
                 // is no longer in this list.
+                // #3445 — XP purchase ledger: one row per purchase, never
+                // edited; the uuid5 id lets a second device skip it.
+                "xp_purchases",
             ].sort(),
         );
     });

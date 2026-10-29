@@ -198,6 +198,15 @@ export const SYNC_TABLES: SyncTable[] = [
         appendOnly: false,
     },
     {
+        // #3445 — XP purchase ledger. APPEND-ONLY: one row per purchase,
+        // never edited. The uuid5 id of (user, kind, item) is the same on
+        // every device, so the receiving side skips a purchase it already has.
+        name: "xp_purchases",
+        dexieTable: "xpPurchases",
+        timestampField: "purchased_at",
+        appendOnly: true,
+    },
+    {
         // v1.17.0 / Phase 30B — Anki flashcard suggestions.
         // MUTABLE: the user accepts / rejects / edits in-place.
         name: "anki_card_suggestions",
@@ -254,13 +263,8 @@ export const SYNC_TABLES: SyncTable[] = [
         timestampField: "updated_at",
         appendOnly: false,
     },
-    {
-        // Phase 65 — API-key rollback cache, one row per (user, provider).
-        name: "api_key_backups",
-        dexieTable: "apiKeyBackups",
-        timestampField: "updated_at",
-        appendOnly: false,
-    },
+    // #3854: ``api_key_backups`` (the API-key rollback cache) is a
+    // backup SECRET_TABLE and stays off the sync wire: its rows are keys.
 ];
 
 export const APPEND_ONLY_TABLES = new Set(

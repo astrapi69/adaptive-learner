@@ -1,7 +1,8 @@
 # Core endpoints
 
-Endpoints not registered by a plugin: users, projects,
-settings, i18n, health.
+Worked examples for endpoints not registered by a plugin:
+users, projects, settings, i18n, health. Every endpoint, core
+and plugin, is listed in [All endpoints](endpoints.md).
 
 ## Health
 

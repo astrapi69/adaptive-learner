@@ -2,15 +2,26 @@
 
 ## Sind meine Daten sicher?
 
-Im **Lokal-Modus** liegen alle deine Daten in IndexedDB auf
-deinem eigenen Gerät. Kein Backend, kein Drittanbieter. Den
-Browser-Tab zu schließen löscht nichts; Site-Daten zu löschen
-schon. Auf einem geteilten Gerät kann jeder mit Zugriff auf
-dieses Browser-Profil sie lesen.
+Im **Lokal-Modus** speichert dein Browser deine Daten auf deinem
+eigenen Gerät (in IndexedDB und localStorage), unter anderem
+deinen Fortschritt, importierte Chats und deine Einstellungen
+samt API-Schlüsseln und GitHub-Token; einen Server des Betreibers
+gibt es dabei nicht. Teile davon erhalten andere nur, wenn eine
+Funktion sie braucht, zum Beispiel dein KI-Anbieter, wenn du die
+KI nutzt, oder GitHub, wenn die App beim Start von selbst nach
+neuen Inhalten fragt. Den Browser-Tab zu schließen löscht diese
+Daten nicht; die Website-Daten im Browser zu löschen entfernt sie
+von deinem Gerät. Auf einem geteilten Gerät kann jeder mit
+Zugriff auf dieses Browser-Profil sie lesen.
 
-Im **Server-Modus** liegen die Daten in der SQLite-Datenbank,
-die das FastAPI-Backend verwaltet. API-Schlüssel liegen
-Fernet-verschlüsselt in `~/.config/adaptive_learner/secrets.yaml`.
+Im **Server-Modus** liegen deine Lerndaten in der SQLite-Datenbank, die das
+FastAPI-Backend verwaltet. Was offline an Lektionsfortschritt und
+Sprachaufnahmen entsteht, wartet in diesem Browser, bis die App es
+überträgt; wie viel höchstens wartet und was mit dem Rest geschieht, steht
+unter [Backup und Wiederherstellung](../features/backup.md). API-Schlüssel
+liegen Fernet-verschlüsselt in `~/.config/adaptive_learner/secrets.yaml`,
+je Anbieter eine Sicherungskopie des zuletzt funktionierenden
+API-Schlüssels ebenfalls verschlüsselt in der Datenbank.
 Der Verschlüsselungsschlüssel wird beim ersten Start erzeugt und
 in `~/.config/adaptive_learner/secret.key` abgelegt; du musst
 nichts einrichten. Willst du einen eigenen vorgeben, setze
@@ -18,16 +29,44 @@ nichts einrichten. Willst du einen eigenen vorgeben, setze
 `secrets.yaml`) vor dem ersten Start.
 
 Kein Modus sendet Telemetrie, Analytics oder deine Nachrichten
-an Dritte - außer an den von dir gewählten KI-Anbieter, der
-nur das sieht, was du erwarten würdest (System-Prompt + dein
-Text + bisherige KI-Antworten der Sitzung).
+an Dritte - außer an den von dir gewählten KI-Anbieter. In einer
+Lernsitzung erhält dieser Anbieter:
+
+- die Systemanweisung mit Thema und Ziel deines Lernprojekts,
+  einem Profil-Hinweis (deine bevorzugte Lernmethode mit ihrem
+  Gewicht), deinen abgeschlossenen Lektionen mit ihren
+  Ergebnissen, der Lektion und dem Schritt, an denen du gerade
+  arbeitest, deinen letzten Fehlern (jeweils mit deiner Antwort,
+  der richtigen Antwort und der Häufigkeit) und der Sprache, in
+  der die KI antworten soll; eine Sitzung aus einem importierten
+  Chat enthält statt deines Lernfortschritts die Analyse und den
+  Verlauf dieses Chats;
+- deine Nachrichten und die bisherigen Antworten der KI in der
+  Sitzung;
+- wie bei jeder Anfrage unter anderem deine IP-Adresse und
+  deinen API-Schlüssel.
+
+Deine XP und Abzeichen gehören nicht dazu. Auch andere
+KI-Funktionen schicken deinem Anbieter Daten, zum Beispiel die
+Analyse eines importierten Chats. Die
+[KI-Inhaltsprüfung](ai-validation.md) sendet die Karten des
+geprüften Sets (je Karte ihre Kennung, Vorderseite, Rückseite und
+Notizen). Die KI-Prüfung vor dem Teilen sendet von deinen
+Lektionen nur die, die du teilst, und von ihnen unter anderem die
+Karten, die Texte der Schritte und die Übungen (Aufgabe und
+falsche Antwortoptionen). Beide senden dazu Ausgangssprache,
+Zielsprache und Niveau des Sets. Was du selbst in diese Inhalte
+schreibst, geht dabei mit und kann selbst persönlich sein. Die
+[Datenschutzerklärung](../legal/privacy.md) nennt jede
+KI-Anfrage.
 
 ## Brauche ich einen API-Schlüssel?
 
 Ja für KI-Sitzungen. Die App nutzt **Bring-Your-Own-Key** für
-alle drei unterstützten Anbieter: Anthropic Claude, OpenAI
-GPT, Google Gemini. Die kostenlosen Kontingente reichen
-meistens zum Einstieg.
+jeden unterstützten Anbieter: Anthropic Claude, OpenAI GPT und
+Google Gemini, dazu Perplexity im Server-Modus (die Desktop-App;
+die Browser-Version kann Perplexity nicht direkt aufrufen). Die
+kostenlosen Kontingente reichen meistens zum Einstieg.
 
 Drei Stellen für den Schlüssel (höchste Priorität gewinnt):
 eine `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungsvariable,
@@ -47,7 +86,7 @@ sind die, die einen Key brauchen.
 
 Teilweise. Der PWA-Service-Worker cached die statischen
 Assets (HTML, JS, CSS, Icons), sodass die App ohne Internet
-startet. Vergangene Sessions und Dashboard-Daten laden auch
+startet. Vergangene Sitzungen und Dashboard-Daten laden auch
 aus dem lokalen Speicher, sodass das Lesen alter Materialien
 funktioniert.
 
@@ -60,7 +99,7 @@ statt still zu scheitern.
 
 Wenn drei Sitzungen in Folge dein Verständnis stagnieren und
 deinen Stress hoch zeigen, blendet die App ein Banner ein:
-„Willst du für die nächste Session [andere Methode]
+„Willst du für die nächste Sitzung [andere Methode]
 ausprobieren?". Die Empfehlung bevorzugt deine zweitstärkste
 Methode aus dem Test, die du nicht kürzlich genutzt hast.
 
@@ -82,14 +121,22 @@ rendert „Zyklus N"-Karten mit gestricheltem Rand an jedem
 Übergang. Der Bewertungsdialog am Ende der Sitzung fasst die
 Multi-Cycle-Reise zusammen, wenn `cycle_count > 1`.
 
+Nur in der Desktop-App: In der Browser-Version bleibt die Sitzung bei
+Schritt 7, und die Sitzungsseite weist darauf hin. Beende die Sitzung
+dort und starte eine neue.
+
 ## Kann ich meine Daten exportieren?
 
-Ja. Drei Export-Pfade ausgeliefert:
+Ja, unter anderem auf diesen Wegen:
 
 - **Backup**: Einstellungen > Daten > Sichern und Exportieren >
-  Sicherung erstellen. Lädt eine `.alb`-Sicherungsdatei mit jeder
-  Zeile deines Accounts herunter. API-Schlüssel werden entfernt. Geht in
-  beiden Speichermodi.
+  Sicherung erstellen. Lädt eine `.alb`-Backup-Datei herunter; ein
+  Backup erstellen kannst du in beiden Speichermodi. Deine API-Schlüssel
+  sind darin nicht enthalten; wie du sie überträgst, steht auf der Seite
+  [Einstellungen](settings.md) im Abschnitt „Verschlüsselter
+  Schlüssel-Export (.alk)“. Weitere Beispiele dafür, was ein Backup nicht
+  enthält, nennt die Seite
+  [Backup und Wiederherstellung](../features/backup.md).
 - **Fortschritts- / Sitzungs- / Curriculum-Berichte**:
   Einstellungen > Daten > Sichern und Exportieren > Export.
   Markdown + PDF (Browser-Druck-zu-PDF).
@@ -129,7 +176,7 @@ Export), Gemini und beliebigem Markdown. Der Analyzer
 extrahiert dein Thema, Schwächen, Fehlermuster, empfohlene
 Methode, Vokabular (für Sprachgespräche) und einen Lehrplan-
 Vorschlag. Ein Klick sät ein Curriculum + startet eine
-gezielte Session aus der Analyse.
+gezielte Sitzung aus der Analyse.
 
 Der Claude.ai-Single-Conversation-Markdown-Export ist ein
 geprüfter Import-Fall - der Parser liefert volle Zeitstempel-
@@ -137,13 +184,34 @@ Extraktion + Rollengrenzen-Erhalt für dieses Format aus.
 
 ## Sync zwischen Geräten?
 
-Bidirektionaler Lokal-Netz-Sync. Öffne Einstellungen > Daten >
-Synchronisation und kopple dieses Gerät: QR-Code vom anderen
-Gerät-Bildschirm scannen (Rückkamera), oder Pairing-URL
-einfügen. Nach dem Pairing tauschen Push- + Pull-Knöpfe
-Daten aus; Konflikte gehen durch einen KI-Merge-Resolver.
-30 Tabellen auf der Sync-Oberfläche (inkl. Lektions-
-Fortschritt, Element-Fehler und Missionen).
+Noch nicht. Die App kann deine Daten noch nicht zwischen Geräten
+synchronisieren: Ein Gerät koppeln kannst du bisher nicht, und ohne
+Kopplung tauscht die Synchronisation keine Daten aus. Was du unter
+Einstellungen > Daten > Synchronisation siehst, hängt vom Speichermodus
+ab:
+
+- Im Lokal-Modus zeigt dieser Bereich keine Bedienelemente, sondern den
+  Hinweis „Nur mit der Desktop-App verfügbar.“ Den Lokal-Modus nutzt die
+  Browser-Version immer, auch als installierte Web-App; in der
+  Desktop-App erscheint derselbe Hinweis, solange sie auf den Lokal-Modus
+  gestellt ist (Einstellungen > Allgemein > Speicher-Modus: „Lokal
+  (Browser)“). Die Desktop-App synchronisiert allerdings bisher ebenfalls
+  nicht (siehe den nächsten Punkt).
+- Im Server-Modus der Desktop-App (Einstellungen > Allgemein >
+  Speicher-Modus: „Server“) zeigt dieser Bereich Felder für Host und Port
+  und die Schaltfläche „Kopplungscode erzeugen“. Ein Klick darauf zeigt
+  einen Kopplungslink, einen QR-Code und eine Schaltfläche zum Kopieren
+  des Links. Einlösen kann diesen Link aber noch kein Gerät,
+  auch nicht über den QR-Code; ein zweites Gerät lässt sich damit also
+  bisher nicht koppeln.
+
+Solange die Synchronisation nicht verfügbar ist, bringst du deine Daten
+mit einem Backup auf ein anderes Gerät, allerdings nicht alle. Unter
+anderem enthält ein Backup deine API-Schlüssel nicht; wie du die
+API-Schlüssel überträgst, steht auf der Seite [Einstellungen](settings.md)
+im Abschnitt „Verschlüsselter Schlüssel-Export (.alk)“. Weitere Beispiele
+dafür, was ein Backup nicht enthält, nennt die Seite
+[Backup und Wiederherstellung](../features/backup.md).
 
 ## Wie ist das anders als ChatGPT?
 
@@ -160,12 +228,20 @@ unter der Haube eine KI nutzt, aber zusätzlich bringt:
    ist.
 4. **Ein Profil** deiner Lernpräferenzen aus dem 12-Fragen-
    Test.
-5. **Langfristiges Tracking** - ProgressCommits, Streak-
+5. **Langfristiges Tracking** - ProgressCommits, Serien-
    Heatmap, XP, Abzeichen, Zeit-pro-Schritt-Charts. ChatGPT
    vergisst, wenn du den Tab schließt.
-6. **Anbieter-Freiheit** - Anthropic, OpenAI oder Gemini.
-7. **Local-First-Option** - alles in deinem Browser, nichts
-   wird an einen Server gesendet (außer deine KI-Aufrufe).
+6. **Anbieter-Freiheit** - Anthropic, OpenAI oder Gemini, dazu
+   Perplexity im Server-Modus.
+7. **Local-First-Option** - Im Lokal-Modus speichert dein Browser
+   unter anderem Lernfortschritt, Statistiken und Einstellungen;
+   Teile davon erhalten andere nur, wenn eine Funktion sie braucht.
+   Die App kontaktiert Server, wenn eine Funktion es braucht, zum
+   Beispiel GitHub für Inhalte (verbundene Repositorys gleicht sie
+   dafür auch beim Start von selbst ab), deinen KI-Anbieter, und
+   GitHub, wenn du etwas teilst oder einen Fehlerbericht dort
+   öffnest. Welche Fälle das sind und was dabei übertragen wird,
+   beschreibt die [Datenschutzerklärung](../legal/privacy.md).
 
 ## Was, wenn die KI danebenliegt?
 

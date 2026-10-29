@@ -19,6 +19,7 @@ import {
     dedupeBadgesByKey,
     dedupeSingletonByUser,
     dedupeUserBadgesByPair,
+    completeRowsThatReachedSummary,
 } from "./db-migrations";
 
 import type {
@@ -43,6 +44,7 @@ import type {
     ProjectSubjectRow,
     ProjectTagRow,
     UserXPRow,
+    XpPurchaseRow,
     BadgeRow,
     UserBadgeRow,
     StudyQuestionRow,
@@ -91,6 +93,9 @@ export class AdaptiveLearnerDB extends Dexie {
     projectSubjects!: EntityTable<ProjectSubjectRow, "id">;
     projectTags!: EntityTable<ProjectTagRow, "id">;
     userXp!: EntityTable<UserXPRow, "id">;
+    // #3445 — XP purchase ledger; ownership of bought cosmetics derives
+    // from these rows instead of a localStorage-only list.
+    xpPurchases!: EntityTable<XpPurchaseRow, "id">;
     badges!: EntityTable<BadgeRow, "id">;
     userBadges!: EntityTable<UserBadgeRow, "id">;
     userStreaks!: EntityTable<UserStreakRow, "id">;
@@ -666,6 +671,41 @@ export class AdaptiveLearnerDB extends Dexie {
         this.version(33).stores({
             speechRecordings: "id, user_id, set_id, lesson_filename, recorded_at",
         });
+
+        // #3445 — XP purchase ledger. Additive new store; the id is the
+        // uuid5 of (user, kind, item), and the compound unique index is
+        // the DB-level backstop against a second row for one purchase.
+        // Existing local ownership migrates lazily (purchase-ledger.ts),
+        // not here: the price lives in the frontend catalogs.
+        this.version(34).stores({
+            xpPurchases: "id, user_id, &[user_id+item_kind+item_id]",
+        });
+
+        // #3792 — complete the progress rows that reached the summary while
+        // only a "Mark as complete" button wrote ``completed``. Runs once per
+        // browser with this upgrade; no schema change. The counts go to the
+        // console and to ``adaptive-learner.repair.lesson_completion`` so a
+        // device can tell afterwards what was changed. No dynamic import
+        // (the v21 DatabaseClosedError trap).
+        this.version(35)
+            .stores({})
+            .upgrade(async (tx) => {
+                const counts = await completeRowsThatReachedSummary(
+                    tx.table("lessonProgress"),
+                    tx.table("contentSets"),
+                    tx.table("contentSetFiles"),
+                );
+                // eslint-disable-next-line no-console -- the one-time repair reports what it changed (#3792)
+                console.info("[#3792] lesson completion repair:", counts);
+                try {
+                    localStorage.setItem(
+                        "adaptive-learner.repair.lesson_completion",
+                        JSON.stringify({...counts, at: new Date().toISOString()}),
+                    );
+                } catch {
+                    /* the record is diagnostic only */
+                }
+            });
     }
 }
 

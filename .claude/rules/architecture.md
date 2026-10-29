@@ -68,20 +68,13 @@ The request-service layer talks to the database ONLY through a repository interf
 
 Business logic stays in the service: validation, orchestration, transaction-boundary decisions, and raising `AdaptiveLearnerError` subclasses. A repository signals a persistence-level condition (e.g. a UNIQUE violation) in backend-neutral terms via `RepositoryError` / `UniqueViolationError` (`repositories/base.py`); the service maps that onto the appropriate domain error.
 
-**Deliberate exceptions** (not request-layer DB services, so not migrated): `identity_service` / `conversation_analysis` / `adaptive_lesson` are `Session`-free; `subjects_seed` and `secrets_service.migrate_db_keys` are bootstrap code invoked from the lifespan, not via request DI. The one shared data-layer primitive that legitimately keeps a `Session` parameter is `sync_service._scoped_query` (the per-table user-scoping query builder) — consumed by BOTH `SyncRepository` and `BackupRepository` (EXP-024 Option A: one scoping primitive, not rebuilt in two places).
+**Deliberate exceptions** (not request-layer DB services, so not migrated): `identity_service` / `conversation_analysis` are `Session`-free; `subjects_seed` and `secrets_service.migrate_db_keys` are bootstrap code invoked from the lifespan, not via request DI. The one shared data-layer primitive that legitimately keeps a `Session` parameter is `sync_service._scoped_query` (the per-table user-scoping query builder) — consumed by BOTH `SyncRepository` and `BackupRepository` (EXP-024 Option A: one scoping primitive, not rebuilt in two places).
 
 **Plugins are NOT yet migrated** (EXP-024 Phase 2). Plugin route modules still use `Session` directly; where a plugin handler resolves an API key it wraps `SqlAlchemySettingsRepository(db)` inline at the call site. New CORE services use the repository pattern; new plugin services may keep direct `Session` until Phase 2 lands.
 
-### Plugin installation (ZIP)
+### Plugin installation
 
-Third-party plugins are installed as a ZIP through Settings > Plugins:
-
-- The ZIP must contain: plugin.yaml, a Python package with plugin.py
-- Extraction to plugins/installed/{name}/
-- Config to config/plugins/{name}.yaml
-- Dynamic registration via sys.path + PluginManager
-- Plugin names: lowercase letters, digits, hyphens only
-- Path traversal check on ZIP paths
+Plugins ship as packages under `plugins/` and register through entry points. There is no runtime install path: the ZIP install inherited from the Bibliogon foundation was stripped with the skeleton (76baa1147), and its leftover scan of an install directory was removed in #3446. A third-party install path is a new architecture decision.
 
 ### Licensing: removed
 
@@ -128,7 +121,7 @@ Predefined UI slots:
 | dashboard_widget | Dashboard cards (e.g. Learning Repository widget) |
 | session_panel | Session step sidebar |
 
-For complex plugin UIs: Web Components as custom elements (compiled JS bundle in the plugin ZIP).
+For complex plugin UIs: Web Components as custom elements (compiled JS bundle shipped with the plugin).
 
 ### TipTap editor (rich-text in notes / curriculum / lessons)
 

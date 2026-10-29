@@ -21,7 +21,7 @@ Adaptive Learner は、6 つの学習メソッドと 7 ステップの学習サ�
 | [はじめに](user-guide/getting-started.md) | インストール、前提条件、最初の 5 分間 |
 | [アセスメント](user-guide/assessment.md) | 12 の質問、レーダーチャート、学習プロフィール |
 | [オンボーディング](user-guide/onboarding.md) | プロジェクト作成、目標設定 |
-| [ダッシュボード](user-guide/dashboard.md) | XP・ストリーク・バッジ、進捗タイムライン |
+| [ダッシュボード](user-guide/dashboard.md) | XP・連続記録・バッジ、進捗タイムライン |
 | [学習セッション](user-guide/learning-session.md) | 7 ステップサイクル、AI ガイダンス、評価 |
 | [カリキュラム](user-guide/curriculum.md) | トピックツリー、レッスン、リッチテキスト編集 |
 | [進捗](user-guide/progress.md) | トレンド洞察、コミット履歴、エクスポート |

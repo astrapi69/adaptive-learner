@@ -1,10 +1,67 @@
-# Was ist neu (v1.61 – v2.16)
+# Was ist neu (v1.61 – v2.17)
 
 Ein nutzerorientierter Überblick über die Releases seit v1.61.0.
 Die vollständigen, technischen Notizen pro Version stehen unter
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v2.17.0 - Was dein Gerät verlässt; Korrekturen und Prüfungen
+
+- **Datenschutz**: Die Datenschutzerklärung ist neu geschrieben und in allen
+  acht Hilfesprachen da. Sie beschreibt, wann und wohin Daten dein Gerät
+  verlassen, und verwendet als Rechtstext die förmliche Anrede. Die
+  Dokumentationsseiten laden nichts mehr von anderen Servern als GitHub
+  Pages, wo sie liegen, und ihre Suche hängt deine Suchbegriffe nicht mehr
+  an die Adressen der Treffer. Bilder und Videos, die ein Lerninhalt oder
+  eine KI-Antwort über eine Adresse im Netz einbindet, erscheinen als Link
+  und laden erst nach deinem Klick, auch wenn sie auf GitHub liegen; Bilder
+  in Übungen, die ein Set als eigene Dateien mitbringt, kommen wie bisher
+  mit dem Set. Links aus der App senden keinen Referrer.
+- **Vorlesen**: Die App bevorzugt eine Stimme auf deinem Gerät. Eine Online-Stimme liest nur, wenn es für die
+Sprache keine Stimme auf dem Gerät gibt, wenn du selbst eine gewählt hast
+oder wenn der Browser kurz nach dem Laden einer Seite seine Stimmen noch
+nicht gemeldet hat; dann nimmt er seine eigene Standardstimme, und die kann
+eine Online-Stimme sein. Das X im Vorlese-Player beendet das Vorlesen
+  für diese Lektion.
+- **Fehlerbericht und KI**: Umgebungsinformationen und Aktionsverlauf sind
+  nicht mehr vorab angehakt und kommen nur in den Bericht, wenn du sie
+  ankreuzt. Die Hinweise der KI-Prüfungen sagen jetzt, was gesendet wird.
+  Eine Sitzung aus einem importierten Chat schickt ihre KI-Eröffnung nur
+  einmal, nicht bei jedem Neuladen.
+- **Fehler korrigieren**: Hatte ein Durchgang Fehler, bietet die kompakte
+  Zusammenfassung „Fehler korrigieren" an. „Deine Korrekturen" zeigt danach,
+  was korrigiert und was noch offen ist, und die ausführliche Auswertung
+  markiert jeden Fehler genauso. Erreichst du die Zusammenfassung, ist die
+  Lektion abgeschlossen, und sie zeigt die Zeit dieses Durchgangs.
+- **Prüfungen**: Bringt ein Set eigene Bewertungsregeln mit, wird die
+  Prüfung danach bewertet. Eine angefangene Prüfung zählt nur in einem Zug
+  und beginnt neu, statt fortgesetzt zu werden, und eine in einem anderen
+  Modus begonnene Runde läuft nicht als Prüfung weiter. Den Modus kannst du
+  bis zur ersten Antwort wechseln.
+- **Weiterlernen und Tippen**: Eine pausierte Lektion öffnet bei dem
+  Schritt, den du zuletzt besucht hast. Ein Tipp trifft, was du siehst, auch
+  auf dem iPhone, und ein Tipp auf ein schon gepaartes Zuordnungsfeld wählt
+  es aus, statt das Paar zu lösen. Die Hinweise zum Installieren der App
+  sind Karten auf dem Dashboard und verdecken keine Schaltflächen mehr.
+- **Backups**: Importierst du das Backup eines anderen Profils, landet sein
+  Lernstand im aktiven Profil, und der Dialog sagt es vorher. Abzeichen und
+  Serie bleiben erhalten, und verbundene Repositories, eingelöste
+  Einladungen und KI-Prüfberichte kommen mit.
+- **Backups aus v2.17**: Spiele ein Backup aus dieser Version nur in v2.17
+  oder neuer ein; ältere Versionen lassen die neuen Teile ohne Hinweis weg.
+  Aktualisiere die Desktop-App, bevor du dort ein Backup aus der
+  Browser-Version einspielst.
+- **Lektionen erstellen und teilen**: Lokal speichern braucht nur eine
+  gültige Lektion, auch mit einer einzigen Übung; die Mindestanforderungen
+  gelten erst fürs Teilen. „Speichern und teilen" öffnet das Teilen für die
+  gespeicherte Lektion, und ein Set, das keine Sprache lehrt, teilst du ohne
+  Niveau.
+- **In deiner Sprache**: Fehler der Repository-Prüfung, Markdown- und
+  PDF-Berichte und der Titel im Browser-Tab erscheinen in deiner
+  App-Sprache, und Screenreader lesen Antwortvergleich und Sterne darin vor.
+  Jede Hilfeseite gibt es jetzt in allen acht Hilfesprachen, und App und
+  Hilfe sagen einheitlich „Sitzung" und „Serie".
 
 ## v2.16.0 - Fehler, die sagen, was los ist; ein Regelwerk für Lektionen
 

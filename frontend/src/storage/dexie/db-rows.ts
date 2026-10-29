@@ -314,6 +314,21 @@ export interface UserXPRow {
     updated_at: string;
 }
 
+/**
+ * One XP purchase (#3445). Mirrors the backend ``xp_purchases`` table
+ * (Alembic 0040). ``id`` is the uuid5 of (user, kind, item) in both
+ * storage modes, so the same purchase is the same row on every device;
+ * the ``&[user_id+item_kind+item_id]`` index is the DB-level backstop.
+ */
+export interface XpPurchaseRow {
+    id: string;
+    user_id: string;
+    item_kind: "avatar_frame" | "mascot_variant" | "arcade_game";
+    item_id: string;
+    cost: number;
+    purchased_at: string;
+}
+
 /** Badge catalog row (Phase 29B). */
 export interface BadgeRow {
     id: string;
@@ -447,6 +462,14 @@ export interface ContentSetRow {
      *  (structured-cloned, not indexed, so no schema bump). Older rows
      *  read as ``undefined`` -> treated as "no attribution". */
     attribution?: SetAttribution | null;
+    /** #3395 - the manifest entry's ``visibility``, ``review_status`` and
+     *  ``evaluation``, so a cached-only set (source removed or offline)
+     *  still honours ``hidden`` and keeps its review standing. Not indexed,
+     *  so no schema bump; older rows read as ``undefined`` and the engine
+     *  projection fills the defaults. */
+    visibility?: import("../types").ContentSetEntry["visibility"];
+    review_status?: import("../types").ContentSetEntry["review_status"];
+    evaluation?: import("../types").ContentSetEntry["evaluation"];
 }
 
 /**
@@ -495,6 +518,9 @@ export interface LessonProgressRow {
     score_correct: number;
     score_total: number;
     time_spent_seconds: number;
+    /** #3747 - seconds of the current run. Non-indexed, no version bump;
+     *  a pre-#3747 row has none and reads the lifetime total. */
+    run_time_seconds?: number;
     /** BUG #41 — the step the user is on, so a paused lesson resumes
      *  at the exact step. Non-indexed, so no Dexie version bump is
      *  needed; pre-feature rows read back as undefined → coalesced
@@ -514,6 +540,9 @@ export interface LessonProgressRow {
     best_score_correct?: number;
     best_score_total?: number;
     attempt_history?: {at: string; correct: number; total: number}[];
+    /** #3365 - the last ten learner actions. Non-indexed, so no Dexie
+     *  version bump; pre-feature rows read back as undefined (``?? []``). */
+    recent_steps?: import("../types").LessonStepEventStored[];
 }
 
 /**

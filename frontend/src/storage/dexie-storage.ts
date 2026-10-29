@@ -68,6 +68,7 @@ import {
   aiValidateCardsDexie,
   deleteAiValidationCacheDexie,
   getAiValidationCacheDexie,
+  listAiValidationCacheDexie,
   saveAiValidationCacheDexie,
 } from "./content/content-loader-dexie-ai";
 import {
@@ -123,6 +124,7 @@ import { dexieProjects, dexieUsers } from "./dexie/dexie-users";
 import { dexieImports } from "./dexie/dexie-imports";
 import { dexieGithub } from "./github";
 import { dexieLearningRepo } from "./learning-repo";
+import { ApiError } from "../api/client";
 
 // Row <-> wire mappers + requireRow/ensureSettings live in
 // ./dexie-rows (#354), shared with the per-domain namespace modules.
@@ -159,7 +161,8 @@ export const dexieStorage: IStorageService = {
     health: async () => ({}),
     errors: async () => ({}),
     inspect: async (name: string) => {
-      throw new Error(
+      throw new ApiError(
+        501,
         `Plugin lifecycle of ${name} is desktop-only: a browser build has no plugin host`,
       );
     },
@@ -341,6 +344,7 @@ export const dexieStorage: IStorageService = {
     getAiValidationCache: (source, setId) =>
       getAiValidationCacheDexie(source, setId),
     saveAiValidationCache: (record) => saveAiValidationCacheDexie(record),
+    listAiValidationCache: () => listAiValidationCacheDexie(),
     deleteAiValidationCache: (source, setId) =>
       deleteAiValidationCacheDexie(source, setId),
   },

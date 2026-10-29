@@ -25,10 +25,11 @@ Modes::
     validate_bundled_content.py --check-readme   # CI: exit 1 on drift
 
 Both modes also validate orphans + manifest-vs-filesystem consistency
-and exit 1 on any mismatch. When the content repo is not present
-locally (a contributor without the sibling checkout), both modes SKIP
-with a warning and exit 0 — the real guard is the CI job, which checks
-the content repo out fresh.
+and exit 1 on any mismatch. When the sibling checkout is not present
+locally (a contributor without it), both modes SKIP with a warning and
+exit 0 — the real guard is the CI job, which checks the content repo out
+fresh. When ADAPTIVE_LEARNER_CONTENT_DIR is set (as CI does) and names a
+directory without a root manifest, both modes FAIL (#3452).
 """
 
 from __future__ import annotations
@@ -53,15 +54,35 @@ SUBSECTION_HEADING = "### Bundled Content"
 INSERT_BEFORE_HEADING = "## Install"
 
 
+class ContentDirUnreadableError(Exception):
+    """``ADAPTIVE_LEARNER_CONTENT_DIR`` names a checkout that cannot be read."""
+
+
 def resolve_content_dir() -> Path | None:
-    """Resolve the content-repo checkout, or ``None`` when absent."""
+    """Resolve the content-repo checkout.
+
+    Returns ``None`` when the implicit sibling checkout is absent: a
+    contributor without it gets a SKIP.
+
+    Raises:
+        ContentDirUnreadableError: when ``ADAPTIVE_LEARNER_CONTENT_DIR``
+            names a directory that is missing or has no root
+            ``manifest.yaml``. CI sets the variable explicitly, so a content
+            repo that moved or renamed its manifest must fail the run, not
+            read as "nothing to check" (#3452).
+    """
     env = os.environ.get("ADAPTIVE_LEARNER_CONTENT_DIR")
     candidate = (
         Path(env).resolve() if env else (REPO_ROOT.parent / "adaptive-learner-content").resolve()
     )
-    if not candidate.is_dir() or not (candidate / "manifest.yaml").is_file():
-        return None
-    return candidate
+    if candidate.is_dir() and (candidate / "manifest.yaml").is_file():
+        return candidate
+    if env:
+        raise ContentDirUnreadableError(candidate)
+    return None
+
+
+REVIEW_STATUSES = frozenset({"authored", "generated", "reviewed"})
 
 
 def set_review_status(entry: dict, set_dir: Path) -> str:
@@ -69,15 +90,16 @@ def set_review_status(entry: dict, set_dir: Path) -> str:
 
     Primary source is the ROOT manifest's set entry (where the content
     repo stamps it); fallback is the per-set manifest's own ``sets[0]``
-    entry (the nested shape the per-set files carry). Absent, empty or
-    unreadable normalizes to ``"authored"`` - advertisable - mirroring
-    the content repos' index-generator normalization. Only
-    ``"generated"`` marks a set as not yet advertisable (AI-generated,
-    pending native-speaker review).
+    entry (the nested shape the per-set files carry). Absent, empty,
+    unknown or unreadable normalizes to ``"authored"`` - advertisable -
+    as the engine's ``asContentSetEntry`` reads it, so this gate and the
+    app agree on the same manifest (#3395). Only ``"generated"`` marks a
+    set as not yet advertisable (AI-generated, pending native-speaker
+    review).
     """
     value = entry.get("review_status")
-    if isinstance(value, str) and value:
-        return value
+    if value in REVIEW_STATUSES:
+        return str(value)
     try:
         parsed = yaml.safe_load((set_dir / "manifest.yaml").read_text("utf-8"))
     except (OSError, yaml.YAMLError):
@@ -85,8 +107,8 @@ def set_review_status(entry: dict, set_dir: Path) -> str:
     nested = (parsed or {}).get("sets")
     if isinstance(nested, list) and nested and isinstance(nested[0], dict):
         value = nested[0].get("review_status")
-        if isinstance(value, str) and value:
-            return value
+        if value in REVIEW_STATUSES:
+            return str(value)
     return "authored"
 
 
@@ -255,7 +277,16 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    content_dir = resolve_content_dir()
+    try:
+        content_dir = resolve_content_dir()
+    except ContentDirUnreadableError as unreadable:
+        print(
+            "[validate-bundled-content] FAIL: ADAPTIVE_LEARNER_CONTENT_DIR "
+            f"names {unreadable.args[0]}, which is missing or has no root "
+            "manifest.yaml - refusing to report success without checking.",
+            file=sys.stderr,
+        )
+        return 1
     if content_dir is None:
         print(
             "[validate-bundled-content] SKIP: no content checkout "

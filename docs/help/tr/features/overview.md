@@ -15,8 +15,10 @@ listenin kendi kopyalarını tutmak yerine buraya bağlantı verir.
   uyarlama, tekrar, bütünleştirme. Çift istemli bir değerlendirici
   her turu değerlendirir ve ilerleme, tekrar, ileri atlama ya da geri
   dönme kararını verir.
-- **Otomatik döngü**: bir konu entegre edildiğinde oturum yeni bir
-  alt konu seçer ve taze bir döngü başlatır (oturum başına sınırlı).
+- **Otomatik döngü** (masaüstü uygulaması): bir konu entegre
+  edildiğinde oturum yeni bir alt konu seçer ve taze bir döngü başlatır
+  (oturum başına sınırlı). Tarayıcı sürümünde oturum 7. adımda kalır;
+  oturum sayfası bunu belirtir.
 - **Yöntem değiştirme**: durağanlaşma algılama, puanlar yataya
   döndüğünde farklı bir yöntem önerir; tek tıkla kabul.
 - Altı yöntemli bir öğrenme profili hesaplayan **yerleştirme
@@ -33,7 +35,9 @@ Bkz. [Öğrenme oturumları](../user-guide/learning-session.md) ve
 - **Ses**: sohbete mikrofonla dikte, yanıtlar için sesli okuma ve
   özel bir Telaffuz Alıştırması modu.
 - **Kendi anahtarını getir**: ayrı sağlayıcı eklentileri olarak
-  Anthropic Claude, OpenAI GPT ve Google Gemini; önerilen/tümü
+  Anthropic Claude, OpenAI GPT ve Google Gemini, ayrıca sunucu modunda
+  Perplexity (masaüstü uygulaması; tarayıcı Perplexity'yi doğrudan
+  çağıramaz); önerilen/tümü
   seçicisiyle canlı model keşfi; sağlayıcı başına anahtar testi ve
   geri alma destekli bir anahtar kasası.
 - **İçe aktarılan konuşmalar eğitmen oturumu olarak devam eder**,
@@ -90,6 +94,12 @@ beraberinde getirebileceği beş uzantı türü:
 - 0-3 yıldız değerlendirme, favoriler, sonraki adım önerileri, aşırı
   büyük derslerin otomatik bölünmesi ve alıştırmalardan teoriye geri
   bağlantılar.
+- **Set tamamlama incelemesi**: bir setin son dersinden sonra setin
+  tüm hataları tek bir görünümde: toplamlar, derse göre, alıştırma
+  türüne göre ve sürekli yanlış yapılan öğeler, son yanlış cevap doğru
+  cevabın yanında.
+
+Bkz. [Set tamamlama incelemesi](set-summary.md).
 
 ## Ders oluşturma (Create-Lesson)
 
@@ -111,8 +121,12 @@ beraberinde getirebileceği beş uzantı türü:
 - **Kendi derslerini yönetme**: çok dersli bir setin herhangi bir
   dersini ders seçici üzerinden düzenle, kendi derslerini bir sette
   birleştir ve bir içerik alanı seç (diller artı bilgi alanları).
+- **Mentor modu**: kendi dersini oynarken sorunları oldukları yerde
+  not alırsın; notlar özette bir yapılacaklar listesine dönüşür ve
+  editörde giderilir, öğrenme ilerlemesine dokunulmaz.
 
-Bkz. [Ders oluşturma](../content-creation/overview.md).
+Bkz. [Ders oluşturma](../content-creation/overview.md) ve
+[Mentor modu](../content-creation/mentor-mode.md).
 
 ## İçe aktarma ve analiz
 
@@ -158,6 +172,17 @@ Bkz. [İçerik Tarayıcısı](content-browser.md),
 - **Kutlamalar**: hak edilmiş, yoğunluğu ayarlanabilir övgü,
   kilometre taşı katmanları, isteğe bağlı sesler; hepsi azaltılmış
   hareket ayarına saygılı.
+- **Oyun modu**: görünür bir cevap serisi, kendi sesleri, isteğe bağlı
+  kalpler ve geri sayım, seri bonus XP'si ve seviye, rozet veya XP ile
+  açılan renk varyantlarıyla maskot Lernfunke ile oyunlu dersler.
+- **Arcade**: bir pano kartından dört kısa mini oyun: kendi
+  derslerinden çiftlerle Learn Memory (ücretsiz), ayrıca XP ile açılan
+  Tic-Tac-Toe, Snake ve Simon. Oyunların kendisi XP vermez.
+- **Avatar**: bir resim yükle ya da sekiz hazır figürden birini seç;
+  seviye, seri veya XP ile açılan dekoratif çerçeveler.
+
+Bkz. [Övgü ve kutlamalar](../user-guide/celebrations.md) ve
+[Arcade](arcade.md).
 
 ## Dışa aktarmalar ve yedekleme
 
@@ -188,8 +213,6 @@ Bkz. [Yedekleme ve geri yükleme](backup.md).
   IndexedDB'sinde, yapay zeka çağrıları doğrudan sağlayıcıya gider,
   sunucu gerekmez) ya da sunucu modu (SQLite'lı FastAPI arka ucu,
   çoklu cihaz).
-- QR kod eşleştirmeli ve çakışma çözümlü, cihazlar arası **yerel ağ
-  eşitlemesi**.
 - Linux, macOS ve Windows için **masaüstü başlatıcı**: bağlama
   duyarlı Docker algılama ve öz tanılamayla Docker tabanlı tek tık
   kendi kendine barındırma kurulumu.
@@ -210,7 +233,8 @@ Bkz. [Kurulum](../install/launcher.md).
   dersleri ilerletir, Tab boşluk doldurma boşlukları arasında
   gezinir.
 - **Ekran okuyucu desteği**: landmark'lar, ARIA etiketleri ve canlı
-  bölgeler, grafikler için veri tabloları, iletişim kutusu odak
+  bölgeler, arayüz dilinde sayfa başına bir başlık ("Ayarlar - Adaptive
+  Learner"), grafikler için veri tabloları, iletişim kutusu odak
   yönetimi.
 - **Azaltılmış hareket** her yerde dikkate alınır; dersler ve sohbet
   için sesli okuma (TTS).

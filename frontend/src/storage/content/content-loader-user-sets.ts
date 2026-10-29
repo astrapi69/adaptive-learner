@@ -12,7 +12,8 @@ import { USER_GENERATED_SOURCE } from "../types";
 import { getDb } from "../dexie/db";
 import type { ContentSetRow, ContentSetFileRow } from "../dexie/db";
 import { cacheKey, fileKey } from "./content-loader-sources";
-import { rowToCachedEntry } from "./content-loader-listing";
+import { entryToRow } from "./content-loader-listing";
+import { asContentSetEntry, type ParsedSet } from "../../lib/content/engine";
 
 /** User-generated sets carry a single, fixed version: re-saving an
  *  edited lesson overwrites in place rather than accumulating
@@ -29,35 +30,16 @@ export async function saveUserSetDexie(
 ): Promise<ContentSetEntry> {
   const db = getDb();
   const setPk = cacheKey(USER_GENERATED_SOURCE, input.set_id, USER_SET_VERSION);
-  const targetLanguage = input.target_language ?? input.language;
-  const sourceLanguage = input.source_language ?? "en";
-  const row: ContentSetRow = {
-    id: setPk,
-    source: USER_GENERATED_SOURCE,
-    branch: "",
-    set_id: input.set_id,
-    version: USER_SET_VERSION,
-    title: input.title,
-    title_native: input.title_native ?? null,
-    language: targetLanguage,
-    target_language: targetLanguage,
-    source_language: sourceLanguage,
-    level: input.level,
-    domain: input.origin,
-    lesson_count: input.lessons.length,
-    description: input.description ?? null,
-    tags: "[]",
-    cover_image: null,
-    downloaded_at: now,
-    status: "active",
-    manifest_yaml: "",
-    // #1743 — persist the optional set-level book block so a book-authored
-    // set surfaces it in "Vertiefe das Thema", same as a downloaded set.
-    book: input.book ?? null,
-    // #2655 — persist the fork's carried-forward attribution/derivation
-    // chain, if any.
-    attribution: input.attribution ?? null,
-  };
+  // The set entry the engine projects for this set, the same path a
+  // downloaded set takes (#3395): language alias, source default and the
+  // visibility / review_status / evaluation defaults come from the engine.
+  const entry = asContentSetEntry(
+    { source: USER_GENERATED_SOURCE, branch: "" },
+    userSetAsParsedSet(input),
+    USER_SET_VERSION,
+    now,
+  );
+  const row: ContentSetRow = entryToRow(entry, setPk, "");
   const files: ContentSetFileRow[] = input.lessons.map((lesson) => ({
     id: fileKey(setPk, `lessons/${lesson.id}.json`),
     set_pk: setPk,
@@ -70,7 +52,33 @@ export async function saveUserSetDexie(
     await db.contentSets.put(row);
     await db.contentSetFiles.bulkPut(files);
   });
-  return rowToCachedEntry(row);
+  return entry;
+}
+
+/** The manifest set entry a user-generated set stands for. It has no
+ *  manifest file; ``domain`` carries the origin (analysis / adaptive /
+ *  imported), as the backend's ``save_user_set`` writes it. */
+function userSetAsParsedSet(input: SaveUserSetInput): ParsedSet {
+  return {
+    id: input.set_id,
+    title: input.title,
+    ...(input.title_native ? { title_native: input.title_native } : {}),
+    language: input.language,
+    ...(input.target_language ? { target_language: input.target_language } : {}),
+    ...(input.source_language ? { source_language: input.source_language } : {}),
+    level: input.level,
+    version: USER_SET_VERSION,
+    lesson_count: input.lessons.length,
+    domain: input.origin,
+    description: input.description ?? null,
+    tags: [],
+    cover_image: null,
+    // #1743 - a book-authored set surfaces its book block in "Vertiefe das
+    // Thema", same as a downloaded set.
+    ...(input.book ? { book: input.book } : {}),
+    // #2655 - the fork's carried-forward attribution/derivation chain.
+    attribution: input.attribution ?? null,
+  };
 }
 
 /** Delete every cached row (set + files) for a source/set_id pair. */

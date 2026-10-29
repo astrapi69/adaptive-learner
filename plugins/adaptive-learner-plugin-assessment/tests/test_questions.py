@@ -106,8 +106,8 @@ def test_phase6c_language_returns_translated_text(lang: str):
     out = questions_for_lang(lang)
     assert out[0]["text"] != QUESTIONS[0]["text_en"]
     # Every answer's text is now language-specific.
-    for q_out, q_src in zip(out, QUESTIONS):
-        for a_out, a_src in zip(q_out["answers"], q_src["answers"]):
+    for q_out, q_src in zip(out, QUESTIONS, strict=True):
+        for a_out, a_src in zip(q_out["answers"], q_src["answers"], strict=True):
             assert a_out["text"] != a_src["text_en"]
 
 
@@ -119,8 +119,8 @@ def test_phase26_language_returns_translated_text(lang: str):
     the EN text."""
     out = questions_for_lang(lang)
     assert out[0]["text"] != QUESTIONS[0]["text_en"]
-    for q_out, q_src in zip(out, QUESTIONS):
-        for a_out, a_src in zip(q_out["answers"], q_src["answers"]):
+    for q_out, q_src in zip(out, QUESTIONS, strict=True):
+        for a_out, a_src in zip(q_out["answers"], q_src["answers"], strict=True):
             assert a_out["text"] != a_src["text_en"]
 
 
@@ -210,7 +210,5 @@ def test_remaining_questions_default_to_single():
     """The 5 that aren't marked ``multi`` must remain single — a
     missing ``type`` field falls back to "single" in the lang
     output, which is fine."""
-    single_ids = {
-        q["id"] for q in QUESTIONS if q.get("type", "single") == "single"
-    }
+    single_ids = {q["id"] for q in QUESTIONS if q.get("type", "single") == "single"}
     assert single_ids == {"q03", "q07", "q09", "q10", "q11"}

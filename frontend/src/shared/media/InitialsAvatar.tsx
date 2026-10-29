@@ -44,6 +44,22 @@ export function initialsOf(name: string): string {
   return letters.join("").toUpperCase();
 }
 
+/**
+ * The accessible name for a control that shows this avatar (WCAG 2.5.3
+ * "Label in Name", #3865): the initials are visible text, so the name leads
+ * with them ("AL, Your profile"). Returns ``label`` alone when the control
+ * shows a picture instead, or when there is no name and the avatar shows "?".
+ */
+export function nameLeadingWithInitials(
+  label: string,
+  name: string,
+  showsInitials: boolean,
+): string {
+  const initials = initialsOf(name);
+  if (!showsInitials || initials === "?") return label;
+  return `${initials}, ${label}`;
+}
+
 export default function InitialsAvatar({
   name,
   size = 32,

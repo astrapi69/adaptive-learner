@@ -35,6 +35,15 @@ import {MANAGED_USER_DATA_KEYS, mirrorUserData} from "../../storage/dexie/dexie-
  *    writes. Snapshotting it makes a backup non-deterministic (a second
  *    export in the same session differs from the first by this timestamp)
  *    and it carries no learning data — exclude it (#792 regression).
+ *  - #3429, state that belongs to THIS device, not to the learner:
+ *    `sync-queue` (API-mode writes queued while offline; restored on
+ *    another device they would be posted again, stale), the
+ *    `search_index::` and `media-resources` caches (refetched anyway),
+ *    the auto-backup bookkeeping (`auto_backup_session_counter`,
+ *    `auto_backup_last_at`; the `auto_backup_enabled` preference still
+ *    travels) and the LAN-sync cursor `sync.last_sync_at` (restored
+ *    elsewhere it could make that device skip changes). The diagnostics
+ *    keys stay carried on purpose (#2785).
  */
 export const BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS: readonly string[] = [
     "github_token",
@@ -45,14 +54,34 @@ export const BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS: readonly string[] = [
     "password",
     "storage_mode",
     "last_backup_at",
+    "sync-queue",
+    "search_index::",
+    "media-resources",
+    "auto_backup_session_counter",
+    "auto_backup_last_at",
+    "sync.last_sync_at",
+];
+
+/**
+ * The active learner of THIS device (#3785). Exact keys, never carried and
+ * never applied: a backup restored through Settings lands under the local
+ * learner, and writing the backup's ids here switched the app to a learner
+ * the database did not hold. The first-run restore sets both itself before
+ * it imports.
+ */
+const BACKUP_IDENTITY_LOCALSTORAGE_KEYS: readonly string[] = [
+    "adaptive-learner.user_id",
+    "adaptive-learner.project_id",
 ];
 
 /** App namespace — only our own keys are snapshotted, never third-party. */
 const APP_PREFIX = "adaptive-learner.";
 
-/** True when a key must be excluded from backup/restore (a secret or a
- *  device-local boot setting). Case-insensitive substring match. */
+/** True when a key must be excluded from backup/restore (a secret, a
+ *  device-local boot setting or the device's active learner).
+ *  Case-insensitive substring match, exact match for the identity keys. */
 export function isExcludedLocalStorageKey(key: string): boolean {
+    if (BACKUP_IDENTITY_LOCALSTORAGE_KEYS.includes(key)) return true;
     const lower = key.toLowerCase();
     return BACKUP_EXCLUDED_LOCALSTORAGE_PATTERNS.some((pattern) =>
         lower.includes(pattern),
@@ -122,6 +151,33 @@ export function withLocalStorageSnapshot<
     T extends {local_storage?: Record<string, string>},
 >(payload: T): T {
     return {...payload, local_storage: captureLocalStorageSnapshot()};
+}
+
+/**
+ * Return ``snapshot`` with every occurrence of ``sourceUserId`` in a value
+ * replaced by ``targetUserId`` (#3785). Several stores keep a map keyed by
+ * the user id (avatar frames, arcade unlocks and tickets, the avatar photo
+ * stash); a backup of another learner restored onto the local one would
+ * otherwise keep those entries under an id nobody reads. User ids are
+ * UUIDs, so a plain string replacement cannot hit anything else.
+ *
+ * @example
+ * rehomeLocalStorageSnapshot({k: '{"u-b":1}'}, "u-b", "u-a"); // {k: '{"u-a":1}'}
+ */
+export function rehomeLocalStorageSnapshot(
+    snapshot: Record<string, string> | undefined | null,
+    sourceUserId: string | null,
+    targetUserId: string,
+): Record<string, string> | undefined | null {
+    if (snapshot == null || typeof snapshot !== "object") return snapshot;
+    if (sourceUserId === null || sourceUserId === "" || sourceUserId === targetUserId) {
+        return snapshot;
+    }
+    const out: Record<string, string> = {};
+    for (const [key, value] of Object.entries(snapshot)) {
+        out[key] = typeof value === "string" ? value.split(sourceUserId).join(targetUserId) : value;
+    }
+    return out;
 }
 
 /**

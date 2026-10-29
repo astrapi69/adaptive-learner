@@ -141,10 +141,41 @@ describe("validateSetForSharing", () => {
     expect(codes(lang, [goodLesson()])).toContain("same_source_target");
   });
 
-  it("requires a valid ISO 639-1 source language", () => {
-    expect(
-      codes({ ...META, source_language: "deutsch" }, [goodLesson()]),
-    ).toContain("invalid_source_language");
+  it.each([
+    { field: "source_language", tag: "de_DE", code: "invalid_source_language" },
+    { field: "target_language", tag: "e s", code: "invalid_target_language" },
+  ])("rejects a $field that is not a well-formed language tag ($tag)", ({ field, tag, code }) => {
+    // #3356: the rule is the engine's E-LANG-TAG (well-formed BCP 47).
+    const result = validateSetForSharing({ ...META, [field]: tag }, [goodLesson()]);
+    expect(result.issues).toContainEqual({ code, params: { code: tag } });
+  });
+
+  it.each(["gsw", "yue", "fil", "pt-BR"])(
+    "accepts the well-formed target tag %s, which the old 2-letter check rejected",
+    (tag) => {
+      const codesFound = codes({ ...META, target_language: tag }, [goodLesson()]);
+      expect(codesFound).not.toContain("invalid_target_language");
+    },
+  );
+
+  it("requires title_native only for a language set (#3356, engine W-SET-TITLE-NATIVE)", () => {
+    const knowledge: ValidationMeta = {
+      ...META,
+      title_native: null,
+      target_language: "de",
+      source_language: "de",
+      domain: "psychology",
+      level: "none",
+    };
+    expect(codes(knowledge, [goodLesson()])).not.toContain("missing_title_native");
+  });
+
+  it("does not report a same-language pair when the source is missing", () => {
+    // The engine defaults an absent source to "en"; that default must not
+    // add a pair finding next to missing_source_language.
+    const result = codes({ ...META, source_language: "", target_language: "en" }, [goodLesson()]);
+    expect(result).toContain("missing_source_language");
+    expect(result).not.toContain("same_source_target");
   });
 
   it("requires title_native", () => {
@@ -577,6 +608,25 @@ describe("validateSetForSharing — warnings (non-blocking)", () => {
   it("warns when the level is not a CEFR band", () => {
     expect(warnCodes({ ...META, level: "beginner" }, [goodLesson()])).toContain(
       "non_cefr_level",
+    );
+  });
+
+  it.each([
+    { name: "a language set", domain: undefined, warned: true },
+    { name: "a knowledge set", domain: "psychology", warned: false },
+  ])("treats level 'none' on $name as the engine does (W-LEVEL-UNKNOWN)", ({ domain, warned }) => {
+    const meta: ValidationMeta = { ...META, level: "none", ...(domain ? { domain, source_language: "de", target_language: "de" } : {}) };
+    expect(warnCodes(meta, [goodLesson()]).includes("non_cefr_level")).toBe(warned);
+  });
+
+  it("carries a set-level engine warning without an app code, non-blocking", () => {
+    const result = validateSetForSharing({ ...META, target_language: "EN" }, [goodLesson()]);
+    expect(result.ok).toBe(true);
+    expect(result.warnings).toContainEqual(
+      expect.objectContaining({
+        code: "engine_set_warning",
+        params: expect.objectContaining({ rule: "W-LANG-TAG-CANONICAL" }),
+      }),
     );
   });
 

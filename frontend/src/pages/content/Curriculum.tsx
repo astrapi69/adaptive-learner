@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState, type FormEvent} from "react";
-import {useNavigate} from "react-router";
+import {useNavigate, useSearchParams} from "react-router";
 import {DashboardCard, DashboardCardTitle} from "@/shared/layout";
 
 import AddTopicDialog from "../../components/topic/AddTopicDialog";
@@ -9,7 +9,8 @@ import HelpTooltip from "../../components/help/HelpTooltip";
 import LessonList from "../../components/dashboard/LessonList";
 import TopicTree from "../../components/topic/TopicTree";
 import {Button} from "@/components/ui/button";
-import {ApiError} from "../../api/client";
+import {isDevMode} from "../../hooks/settings/useDevMode";
+import {inlineErrorText} from "../../utils/errorMessages";
 import {useI18n} from "../../hooks/ui/useI18n";
 import {useConfirm} from "../../contexts/ConfirmContext";
 import {readLearnerState} from "../../lib/learning/learnerState";
@@ -25,8 +26,9 @@ import type {Curriculum, LearningTopic, Lesson} from "../../types";
  *
  *   1. Mount: read user_id from localStorage; redirect to
  *      /onboarding if missing. List the user's curricula via
- *      GET /api/users/{user_id}/curricula; auto-select the
- *      first one (or expose the create dialog if zero exist).
+ *      GET /api/users/{user_id}/curricula; select the one named by
+ *      ``?curriculum=<id>``, else the first (or expose the create
+ *      dialog if zero exist).
  *   2. For the selected curriculum, load topics via
  *      GET /api/curricula/{id}/topics and render the forest
  *      with TopicTree (uses TypedTreeNode + buildTreeFromFlat).
@@ -44,6 +46,10 @@ export default function Curriculum() {
     const confirm = useConfirm();
     const navigate = useNavigate();
 
+    // ``?curriculum=<id>`` (#3659): the import page links a curriculum it
+    // just created; an unknown id falls back to the first one.
+    const [searchParams] = useSearchParams();
+    const requestedId = searchParams.get("curriculum");
     const [curricula, setCurricula] = useState<Curriculum[]>([]);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [topics, setTopics] = useState<LearningTopic[]>([]);
@@ -60,10 +66,15 @@ export default function Curriculum() {
             const fresh = await getStorage().curricula.listTopics(curriculumId);
             setTopics(fresh);
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : "Failed to load topics.";
-            notify.error(detail);
+            notify.error(
+                t("curriculum.topics_load_failed", "Could not load the topics."),
+                {error: err},
+            );
         }
+        // ``t`` omitted on purpose: the load effect depends on this
+        // callback, and an unstable ``t`` (test i18n mocks) would re-fire
+        // it on every render (lessons/frontend.md, useEffect + i18n mocks).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const reloadLessons = useCallback(async (curriculumId: string) => {
@@ -71,10 +82,13 @@ export default function Curriculum() {
             const fresh = await getStorage().curricula.listLessons(curriculumId);
             setLessons(fresh);
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : "Failed to load lessons.";
-            notify.error(detail);
+            notify.error(
+                t("curriculum.lessons_load_failed", "Could not load the lessons."),
+                {error: err},
+            );
         }
+        // ``t`` omitted on purpose, as in ``reloadTopics``.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleCreateLesson = async (title: string) => {
@@ -85,8 +99,7 @@ export default function Curriculum() {
             await reloadLessons(selectedId);
             notify.success(t("curriculum.lesson_created", "Lesson created."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -104,8 +117,7 @@ export default function Curriculum() {
             await reloadLessons(selectedId);
             notify.success(t("curriculum.lesson_saved", "Lesson saved."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -125,8 +137,7 @@ export default function Curriculum() {
             await reloadLessons(selectedId);
             notify.success(t("curriculum.lesson_deleted", "Lesson deleted."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -146,22 +157,21 @@ export default function Curriculum() {
                 if (cancelled) return;
                 setCurricula(list);
                 if (list.length > 0) {
-                    setSelectedId(list[0].id);
+                    const requested = list.find((c) => c.id === requestedId);
+                    setSelectedId((requested ?? list[0]).id);
                 }
                 setLoading(false);
             })
             .catch((err) => {
                 if (cancelled) return;
-                const detail =
-                    err instanceof ApiError ? err.detail : t("common.error");
-                setError(detail);
+                setError(inlineErrorText(err, t("common.error"), isDevMode()));
                 setLoading(false);
             });
         return () => {
             cancelled = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [navigate]);
+    }, [navigate, requestedId]);
 
     // Load topics + lessons whenever the selected curriculum
     // changes.
@@ -189,8 +199,7 @@ export default function Curriculum() {
             setNewCurriculumTitle("");
             notify.success(t("curriculum.created", "Curriculum created."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setCreatingCurriculum(false);
         }
@@ -217,8 +226,7 @@ export default function Curriculum() {
             setDialog({kind: "closed"});
             notify.success(t("curriculum.saved", "Saved."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -237,9 +245,7 @@ export default function Curriculum() {
                 t("curriculum.description_saved", "Description saved."),
             );
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
             throw err;
         }
     };
@@ -261,8 +267,7 @@ export default function Curriculum() {
             await reloadTopics(selectedId);
             notify.success(t("curriculum.deleted", "Topic deleted."));
         } catch (err) {
-            const detail = err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmitting(false);
         }

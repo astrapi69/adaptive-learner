@@ -76,7 +76,8 @@ pasan sin cambios.
 
 ## Exportaciones
 
-Tres tipos de exportación mediante Ajustes → Exportar, todos
+Tres tipos de exportación mediante Ajustes > Datos > Copia de
+seguridad y exportación > Exportar, todos
 idénticos en forma en todos los modos de almacenamiento:
 
 - **Informe de progreso** - la página completa de Progreso
@@ -85,6 +86,9 @@ idénticos en forma en todos los modos de almacenamiento:
   evaluaciones de pasos de una sola sesión.
 - **Resumen del plan de estudios** - el árbol de temas +
   resúmenes de lecciones para un solo plan de estudios.
+
+Los informes salen en el idioma de tu interfaz, en cualquiera de los
+idiomas que ofrece la app.
 
 El Markdown se genera en el cliente; el PDF usa la función de
 impresión a PDF del navegador (abre un iframe oculto con una hoja

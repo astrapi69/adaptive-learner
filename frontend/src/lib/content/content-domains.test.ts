@@ -4,11 +4,12 @@ import {
     contentDomainToStamp,
     DEFAULT_DOMAIN,
     DOMAIN_OPTIONS,
-    isKnownContentDomain,
+    isKnowledgeDomain,
     KNOWN_CONTENT_DOMAINS,
     LEVEL_NONE,
     normalizeLevel,
 } from "./content-domains";
+import {ENGINE_KNOWN_CONTENT_DOMAINS} from "./engine";
 
 // #1716 — the shared content-domain vocabulary the CreateLesson + Share
 // wizards both consume, so they mirror ONE distinction.
@@ -24,18 +25,27 @@ describe("content-domains (#1716)", () => {
         expect(KNOWN_CONTENT_DOMAINS.has("language")).toBe(false);
     });
 
-    it("isKnownContentDomain recognises non-language domains, case-insensitively", () => {
-        expect(isKnownContentDomain("psychology")).toBe(true);
-        expect(isKnownContentDomain("Psychology")).toBe(true);
-        expect(isKnownContentDomain("traffic-knowledge")).toBe(true);
+    // #3397 - the app's question is "a known NON-language domain?"; the
+    // engine's isKnownContentDomain answers "a known domain?" (language and
+    // empty included). The app helper is named for its own question and
+    // built on the engine's answer.
+    it.each([
+        ["psychology", true],
+        ["Psychology", true],
+        ["traffic-knowledge", true],
+        ["language", false],
+        ["", false],
+        [null, false],
+        [undefined, false],
+        ["not-real", false],
+    ])("isKnowledgeDomain(%s) is %s", (domain, expected) => {
+        expect(isKnowledgeDomain(domain)).toBe(expected);
     });
 
-    it("isKnownContentDomain rejects language, empty, and unknown values", () => {
-        expect(isKnownContentDomain("language")).toBe(false);
-        expect(isKnownContentDomain("")).toBe(false);
-        expect(isKnownContentDomain(null)).toBe(false);
-        expect(isKnownContentDomain(undefined)).toBe(false);
-        expect(isKnownContentDomain("not-real")).toBe(false);
+    it("isKnowledgeDomain agrees with the engine on every canonical domain", () => {
+        for (const domain of ENGINE_KNOWN_CONTENT_DOMAINS) {
+            expect([domain, isKnowledgeDomain(domain)]).toEqual([domain, domain !== "language"]);
+        }
     });
 
     it("contentDomainToStamp returns the lowercased known domain, else undefined", () => {

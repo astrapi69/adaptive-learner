@@ -32,7 +32,7 @@ in einem Git-Repository.
 - Lektionen im **Lektionsformat**.
 - Python 3 mit PyYAML, um vor dem Veroeffentlichen lokal zu validieren.
 
-Die massgeblichen Format-Referenzen liegen im offiziellen Inhalts-Repo:
+Die maßgeblichen Format-Referenzen liegen im offiziellen Inhalts-Repo:
 
 - [`docs/GETTING-STARTED.md`](https://github.com/astrapi69/adaptive-learner-content/blob/main/docs/GETTING-STARTED.md)
 - [`docs/LESSON-FORMAT.md`](https://github.com/astrapi69/adaptive-learner-content/blob/main/docs/LESSON-FORMAT.md)

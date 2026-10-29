@@ -11,17 +11,37 @@ instalação nova ou após uma mudança de browser. Encontras tudo em
 
 ## O que está no backup
 
-Um backup é um **snapshot completo**: todas as 30 tabelas de dados
+Um backup é um **snapshot completo**: todas as tabelas de dados
 (projetos de aprendizagem, sessões, progresso de lições, erros ao
 nível do elemento, gamificação com XP/Streak/Badges, missões,
 cartões Anki, notas e mais) **mais os teus conjuntos de conteúdo
 descarregados**.
 
-**Ainda não incluídos:** os repositórios de conteúdo ligados, os
-convites utilizados e as definições do Learning Repository. Depois
-de restaurar num dispositivo novo, os conjuntos de conteúdo voltam,
-mas volta a ligar os respetivos repositórios (e utiliza de novo os
-convites) para que as atualizações continuem a chegar.
+**Também incluídos:** os repositórios de conteúdo ligados, os
+convites utilizados e se o Learning Repository está ativo.
+No modo de navegador, os resultados das tuas verificações de conteúdo
+por IA também são incluídos, por isso o selo "Verificado por IA" mantém-se.
+
+**Não são incluídos**, por exemplo:
+
+- o token de acesso de um repositório privado (introduz-o de novo
+  depois de restaurar);
+- a pasta do Learning Repository, que pertence ao dispositivo;
+- no modo servidor, o progresso de lições e as gravações de voz que
+  foram feitos offline e ainda não chegaram ao servidor;
+- os índices de pesquisa e as listas de multimédia em cache, o contador
+  do backup automático e a posição da sincronização LAN.
+
+Já a definição que indica se o backup automático está ligado ou
+desligado vem incluída. No modo servidor, a aplicação guarda neste
+browser o que é criado offline: até 50 alterações ao progresso de
+lições e às gravações de voz; se se acumularem mais, as mais antigas
+são descartadas. Transfere-as por si própria quando a ligação volta
+enquanto a aplicação está aberta, ou no próximo arranque com ligação.
+Do que é criado offline, só entra no backup o que já chegou ao
+servidor; por isso, no modo servidor, cria um backup só quando a
+aplicação tiver voltado a correr com ligação depois de aprenderes
+offline e tiver conseguido transferir as alterações.
 
 Antes da exportação, a aplicação mostra uma pré-visualização
 **"O teu backup contém …"** com contagens de registos por área,
@@ -54,21 +74,26 @@ salvaguarda.
 
 Se algo correr mal durante a importação, aparece um **aviso de erro
 permanente** (toast) que não desaparece por si - assim não passas
-nenhum erro despercebido. No modo programador (Definições →
-Interface), a mensagem contém os detalhes técnicos para um issue no
+nenhum erro despercebido. No modo programador (Definições >
+Diagnóstico e suporte), a mensagem contém os detalhes técnicos para um issue no
 GitHub.
 
 ---
 
 ## Importação entre identidades
 
-**Não** tens de ser o mesmo utilizador no mesmo dispositivo. Um
-backup pode ser importado numa **instalação nova** ou sob um
-**perfil de utilizador diferente**. O restauro atribui os dados ao
-perfil ativo e, ao fazê-lo, resolve corretamente de novo as
-referências internas (chaves estrangeiras), para que o teu progresso
-permaneça coerente - incluindo o progresso de passos das lições,
-Streak e Badges.
+**Não** tens de ser o mesmo utilizador no mesmo dispositivo.
+
+- **Num dispositivo vazio**, o melhor é importar o backup logo no início
+  (ver "Backup no primeiro login"). A app assume então o perfil do backup.
+- **Num dispositivo onde já criaste um perfil**, podes importar o backup em
+  Definições > Dados. Se pertencer a outro perfil, o diálogo de confirmação
+  diz-to antes da importação. O progresso do backup é então atribuído ao
+  teu **perfil ativo** e combinado com o teu: o progresso das lições, os
+  erros, as rodadas, as gravações, os projetos e o histórico são
+  acrescentados, e o teu próprio progresso mantém-se. O XP, o Streak e as
+  definições são retirados do backup. O teu perfil ativo continua ativo;
+  não é criado um segundo perfil.
 
 ---
 
@@ -86,8 +111,12 @@ mudança de dispositivo ou browser.
 
 O backup e o restauro funcionam em **ambos** os modos de
 armazenamento - servidor (API) e apenas browser (Dexie/IndexedDB).
-O formato é um único ficheiro JSON; não existe nenhum formato de
-arquivo proprietário.
+O backup é um **ficheiro `.alb`** - um arquivo ZIP que reúne as
+tabelas de dados, o instantâneo do localStorage e os conjuntos de
+conteúdo. Os ficheiros `.alb` são aceites em todos os pontos de
+importação de backup (Definições > Dados e a Zona de perigo). Os
+backups antigos num único ficheiro JSON continuam a ser importados
+sem problemas.
 
 !!! note "Privacidade"
     O backup fica inteiramente nas tuas mãos. É guardado apenas
@@ -98,4 +127,4 @@ arquivo proprietário.
 ## Páginas relacionadas
 
 - [Definições](../user-guide/settings.md) - todas as ações de dados num relance
-- [Múltiplos repositórios de conteúdo](content-repos.md) - os repos ligados ainda não fazem parte do backup, volta a ligá-los depois de restaurar
+- [Múltiplos repositórios de conteúdo](content-repos.md) - os repos ligados e os convites utilizados viajam com o backup

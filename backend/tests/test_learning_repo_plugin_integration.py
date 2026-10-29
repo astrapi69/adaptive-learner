@@ -347,6 +347,38 @@ def test_persist_with_git_enabled_writes_tree_and_returns_commit_sha(
         plugin.config["settings"] = original_settings
 
 
+@pytest.mark.parametrize(
+    "repos_dir",
+    [None, "", "   "],
+    ids=["missing", "empty", "whitespace-only"],
+)
+def test_persist_without_repos_dir_writes_under_the_data_dir(
+    client: TestClient, tmp_path, monkeypatch, repos_dir: str | None
+) -> None:
+    """#3451: an unset ``repos_dir`` resolves to ``get_data_dir() /
+    "repos"`` at call time, so it follows ``ADAPTIVE_LEARNER_DATA_DIR``
+    (and the platform data dir) instead of a fixed Linux path."""
+    _, project_id = _make_user_and_project(client)
+    data_dir = tmp_path / "data-dir-override"
+    monkeypatch.setenv("ADAPTIVE_LEARNER_DATA_DIR", str(data_dir))
+    plugin = manager.get_plugin("learning-repo")
+    assert plugin is not None
+    original_settings = plugin.config.get("settings", {}).copy()
+    settings = {**original_settings, "enable_git": True}
+    settings.pop("repos_dir", None)
+    if repos_dir is not None:
+        settings["repos_dir"] = repos_dir
+    plugin.config["settings"] = settings
+    try:
+        r = client.post(f"/api/plugins/learning-repo/persist/{project_id}")
+        assert r.status_code == 200, r.text
+        expected = data_dir.resolve() / "repos" / project_id
+        assert r.json()["repo_path"] == str(expected)
+        assert (expected / "README.md").exists()
+    finally:
+        plugin.config["settings"] = original_settings
+
+
 def test_persist_unknown_project_returns_404_when_git_enabled(client: TestClient, tmp_path) -> None:
     """Once ``enable_git`` is on, the project-lookup is reached;
     unknown project IDs surface as 404 from there."""

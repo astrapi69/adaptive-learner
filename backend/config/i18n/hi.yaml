@@ -9,7 +9,6 @@ app:
   reload: "फिर से लोड करें"
   name: अडैप्टिव लर्नर
   tagline: ऐसी शिक्षा जो आपके अनुसार ढलती है।
-  skeleton_notice: स्केलेटन अवस्था। डोमेन मॉडल, प्लगइन और पेज आने वाले चरणों में जुड़ेंगे - देखें docs/adaptive-learner-project-reference.md।
 common:
   ok: "ठीक है"
   remove: "हटाएं"
@@ -20,17 +19,9 @@ common:
   error: कुछ गड़बड़ हो गई।
   back: वापस
   next: आगे
-  start: शुरू करें
   submit: सबमिट करें
-  continue: जारी रखें
-  done: हो गया
   delete: हटाएँ
   edit: संपादित करें
-  confirm: पुष्टि करें
-  'yes': "हाँ"
-  'no': "नहीं"
-  optional: वैकल्पिक
-  required: आवश्यक
   minutes: मिनट
   close: बंद करें
 avatar:
@@ -81,9 +72,6 @@ nav:
     progress: "प्रगति"
     more: "अधिक"
   primary: "मुख्य नेविगेशन"
-  discover: "सामग्री खोजें"
-  offline_long: "ऑफ़लाइन - पिछले सत्र पढ़ने योग्य रहते हैं"
-  sync_pending: "{n} परिवर्तन सिंक होने की प्रतीक्षा में"
   statistics: "आँकड़े"
   profile: आपकी प्रोफ़ाइल
   learning_path: अधिगम पथ
@@ -96,9 +84,6 @@ nav:
   help: सहायता
   home: होम
   menu: मेनू
-  online: ऑनलाइन
-  offline: ऑफ़लाइन
-  anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: डेवलपर मोड चालू है - त्रुटि टोस्ट पूरी तकनीकी जानकारी दिखाते हैं। सेटिंग्स में टॉगल करें।
   content: "मेरी सामग्री"
@@ -107,8 +92,6 @@ nav:
   mode_badge_tooltip_content: कोई API कुंजी कॉन्फ़िगर नहीं - केवल पूर्व-निर्मित सामग्री का उपयोग। AI सुविधाएँ सक्षम करने के लिए सेटिंग्स में कुंजी जोड़ें।
   mode_badge_tooltip_ai: AI प्रदाता कॉन्फ़िगर - अभ्यास डिस्ट्रैक्टर + संकेत के लिए AI का उपयोग करते हैं। सामग्री सेट देखने के लिए टैप करें।
   mode_badge_action: "सामग्री ब्राउज़ करें"
-  sync_paired: 'सिंक: युग्मित (सेटिंग्स > सिंक)'
-  sync_unpaired: 'सिंक: युग्मित नहीं (सेटिंग्स > सिंक)'
 import:
   title: बातचीत आयात करें
   subtitle: ChatGPT, Claude या Gemini के साथ हुई बातचीत पेस्ट या अपलोड करें और तुरंत सीखने की अंतर्दृष्टि पाएँ।
@@ -131,12 +114,12 @@ import:
   analysis_title: विश्लेषण
   analysis_ready: विश्लेषण तैयार है।
   analysis_fallback: विश्लेषण चला लेकिन AI प्रतिक्रिया साफ़-साफ़ पार्स नहीं हो सकी।
-  analysis_fallback_long: AI प्रतिक्रिया संरचित JSON के रूप में पार्स नहीं हो सकी। नीचे दिया गया सारांश एक फ़ॉलबैक है।
+  analysis_fallback_long: "AI प्रतिक्रिया को संरचित विश्लेषण के रूप में पढ़ा नहीं जा सका। विश्लेषण फिर से चलाएँ या कोई दूसरा AI प्रदाता चुनें।"
   analysis_error: बातचीत का विश्लेषण नहीं किया जा सका।
   analysis_phase_reading: 'चरण 1/3: चैट पढ़ी जा रही है…'
   analysis_phase_analyzing: 'चरण 2/3: सामग्री का विश्लेषण किया जा रहा है…'
   analysis_phase_preparing: 'चरण 3/3: परिणाम तैयार किए जा रहे हैं…'
-  analysis_estimate: विश्लेषण में लगभग 15-30 सेकंड लगते हैं…
+  analysis_estimate: "लंबी चैट का विश्लेषण करने में अधिक समय लगता है।"
   analysis_done: हो गया!
   analysis_cancel: रद्द करें
   analysis_failed_inline: विश्लेषण विफल रहा। कृपया पुनः प्रयास करें।
@@ -196,6 +179,8 @@ curriculum:
   create: पाठ्यक्रम बनाएँ
   created: पाठ्यक्रम बनाया गया।
   saved: सहेजा गया।
+  topics_load_failed: "विषय लोड नहीं हो सके।"
+  lessons_load_failed: "पाठ लोड नहीं हो सके।"
   deleted: विषय हटाया गया।
   add_topic: विषय जोड़ें
   add_root_topic: मूल विषय जोड़ें
@@ -247,12 +232,7 @@ onboarding:
   field_name: आपका नाम
   field_topic: विषय
   field_topic_hint: जैसे स्पेनिश B1, रेखीय बीजगणित।
-  field_goal: लक्ष्य
   field_goal_hint: आप क्या करने में सक्षम होना चाहते हैं?
-  field_timeframe: समय सीमा
-  field_timeframe_hint: जैसे 4 सप्ताह, एक सेमेस्टर।
-  field_daily_minutes: प्रति दिन मिनट
-  field_current_problem: वर्तमान समस्या
   field_current_problem_hint: वैकल्पिक - अभी आपको क्या रोक रहा है?
   submit: परियोजना बनाएँ और मूल्यांकन शुरू करें
   creating: परियोजना बनाई जा रही है…
@@ -310,7 +290,6 @@ dashboard:
     missions: "मिशन"
   no_data: अभी कोई डेटा नहीं।
   title: डैशबोर्ड
-  welcome: वापसी पर स्वागत है
   quick_start: नया सत्र शुरू करें
   quick_start_subtitle: तरीका आपकी प्रोफ़ाइल से चुना गया।
   card_profile: अधिगम प्रोफ़ाइल
@@ -362,7 +341,6 @@ adaptive:
   session_title: अनुकूली पाठ
   loading: आपकी गलतियों का विश्लेषण हो रहा है…
   empty_body: अभी अनुकूलित करने को कुछ नहीं - डेटा बनाने के लिए कोई पाठ अभ्यास करें।
-  not_cached_body: "यह सेट अभी डाउनलोड नहीं हुआ है। इसे पहले डाउनलोड करने के लिए सामग्री ब्राउज़र खोलें।"
   back_to_dashboard: "डैशबोर्ड पर वापस"
   transparency:
     focus_prefix: 'यह पाठ इन पर केंद्रित है:'
@@ -375,7 +353,6 @@ adaptive:
     mastered_delta: 'सुधार: इस सत्र में +{n} तत्व पर महारत हासिल हुई!'
     note: तत्वों के स्कोर अपडेट हो गए हैं। आपका अगला अनुकूली पाठ उन तत्वों को लक्षित करेगा जिन पर अभी काम बाकी है।
   error:
-    missing_params: "कोई सामग्री सेट चयनित नहीं है।"
     load_failed: अनुकूली पाठ तैयार नहीं हो सका।
 review:
   your_answer: "आपका उत्तर:"
@@ -400,35 +377,19 @@ review:
   subtitle_capped: "{due} में से {shown} तत्व दोहराने के लिए"
   loading: समीक्षा सत्र लोड हो रहा है…
   empty_body: सब हो गया! इस सेट में समीक्षा के लिए कोई तत्व बाकी नहीं है।
-  not_cached_body: "यह सेट अभी डाउनलोड नहीं हुआ है। इसे पहले डाउनलोड करने के लिए सामग्री ब्राउज़र खोलें।"
   back_to_dashboard: "डैशबोर्ड पर वापस"
   back_to_lesson: "पाठ पर वापस"
   summary:
-    aria_label: समीक्षा सारांश
     heading: पुनरावलोकन पूर्ण
-    score: स्कोर
     note: तत्वों के स्कोर अपडेट हो गए हैं। जिन तत्वों पर महारत हासिल है वे अगले सत्र में नहीं दिखेंगे।
   error:
-    missing_params: "कोई सामग्री सेट चयनित नहीं है।"
     load_failed: समीक्षा सत्र लोड नहीं हो सका।
-  spaced_empty: अभी कुछ दोहराने को नहीं है। बढ़िया लय!
-  spaced_interval_label: समीक्षा होगी
-  spaced_start: शुरू करें
-  spaced_dismiss: खारिज करें
-  metric_total_sessions: कुल सत्र
-  metric_total_minutes: कुल मिनट
-  metric_mean_understanding: औसत समझ
-  metric_mean_stress: औसत तनाव
-  metric_streak: दिन की श्रृंखला
-  no_data: अभी कोई सत्र नहीं - रुझान देखने के लिए अपना पहला सत्र शुरू करें।
-  pronunciation_quick_start: उच्चारण अभ्यास
 session:
+  auto_loop_unavailable: "डेस्कटॉप ऐप में चरण 7 के बाद अगले विषय के साथ एक नया चक्र अपने आप शुरू होता है। ब्राउज़र संस्करण अभी ऐसा नहीं कर सकता: आगे सीखने के लिए सत्र समाप्त करें और एक नया सत्र शुरू करें।"
   title: अधिगम सत्र
   topic_label: विषय
-  in_progress: सत्र जारी है
   send_message: संदेश भेजें
   message_placeholder: अपना उत्तर लिखें…
-  ai_thinking: सोच रहा है…
   ai_error: AI प्रदाता उत्तर नहीं दे सका।
   no_api_key: कोई AI कुंजी सेट नहीं है। ट्यूटर से चैट करने के लिए सेटिंग्स में अपने AI प्रदाता की कुंजी जोड़ें। पाठ और समीक्षाएँ बिना कुंजी के काम करती हैं।
   ai_error_no_model: "आपके AI प्रदाता के लिए कोई मॉडल चुना नहीं गया है। सेटिंग्स > एआई में एक मॉडल चुनें।"
@@ -440,7 +401,6 @@ session:
   chat_retry: "फिर से प्रयास करें"
   welcome_empty: सीखने के लिए तैयार! अपना पहला संदेश लिखें।
   end_session: सत्र समाप्त करें
-  end_session_confirm: पक्का? हम सत्र बंद कर देंगे और रेटिंग माँगेंगे।
   switch_recommended: तरीका बदलने की अनुशंसा
   switch_recommended_subtitle: आपकी हाल की रेटिंग बताती हैं कि कोई दूसरा तरीका आपके लिए बेहतर हो सकता है।
   switch_accept: विधि बदलें
@@ -525,6 +485,7 @@ settings:
     error_decrypt: "पासफ़्रेज़ गलत है या फ़ाइल क्षतिग्रस्त है।"
     error_import: "कुंजी फ़ाइल आयात नहीं की जा सकी।"
   lesson_mode:
+    threshold_set_hint: "जिन सेटों की अपनी उत्तीर्ण सीमा है, वे वही सीमा इस्तेमाल करते हैं।"
     title: "पाठ मोड"
     hint: "अभ्यास मोड में सभी सहायताएँ चालू रहती हैं। परीक्षा मोड संकेत, सिद्धांत पुनरावलोकन, स्वतः वाचन और समाधान छिपा देता है ताकि आप वास्तविक परिस्थितियों में याद करें।"
     default_label: "डिफ़ॉल्ट मोड"
@@ -566,7 +527,6 @@ settings:
   summary_section_export: "परिणाम निर्यात"
   summary_section_next_steps: "अगले कदम के सुझाव"
   correction_round_enabled: "पाठों के बाद सुधार चरण दिखाएं"
-  correction_round_enabled_desc: "पाठ के अंत में, अपनी गलतियों को तुरंत ठीक करने का विकल्प दें। बंद होने पर, वे समीक्षा / \"गलतियाँ अभ्यास\" मोड में उपलब्ध रहती हैं।"
   hints_enabled: "अभ्यास के दौरान संकेत दिखाएँ"
   hints_enabled_desc: "हर अभ्यास पर एक क्रमिक संकेत बटन देता है।"
   hint_xp_cost: "प्रति संकेत XP लागत"
@@ -619,7 +579,6 @@ settings:
   mode_coming_soon: जल्द आ रहा है
   section_provider: एआई प्रदाता
   section_api_keys: एपीआई कुंजियाँ
-  section_danger: खाता
   section_ui: इंटरफ़ेस
   section_appearance: रूप-रंग
   section_content_tabs: "सामग्री टैब क्रम"
@@ -698,10 +657,6 @@ settings:
   tab_plugins: प्लगइन्स
   plugins_installed_title: "इंस्टॉल किए गए प्लगइन्स"
   plugins_installed_desc: "डेस्कटॉप ऐप द्वारा लोड किया गया हर प्लगइन, संस्करण, स्रोत और सक्रियण समय के साथ (PluginForge जीवनचक्र)।"
-  plugins_col_name: "प्लगइन"
-  plugins_col_version: "संस्करण"
-  plugins_col_source: "स्रोत"
-  plugins_col_activated: "सक्रिय"
   plugins_source_entry_point: "पैकेज"
   plugins_source_direct: "सीधे पंजीकृत"
   plugins_marker_load_error: "लोड त्रुटि"
@@ -714,7 +669,6 @@ settings:
   tab_help: सहायता
   tab_diagnostics: "निदान और सहायता"
   tab_about: परिचय
-  tabs_aria: सेटिंग्स अनुभाग
   section_feedback: प्रतिक्रिया
   section_interaction: अंतःक्रिया
   cluster_basics: "मूल बातें"
@@ -893,10 +847,6 @@ settings:
     test_rate_limit: दर सीमा तक पहुँच गई। बाद में प्रयास करें।
     test_no_key: परीक्षण के लिए कोई कुंजी नहीं।
     format_invalid: अमान्य प्रारूप।
-    rollback_warning: नई कुंजी काम नहीं करती। पुरानी कुंजी रखें?
-    rollback_keep_old: पुरानी कुंजी रखें
-    rollback_save_anyway: फिर भी सहेजें
-    rollback_cancel: रद्द करें
     rollback_restore: अंतिम काम करने वाली कुंजी पुनर्स्थापित करें
     format_hint:
       anthropic: sk-ant- से शुरू होती है
@@ -908,7 +858,6 @@ settings:
   api_key_delete: कुंजी हटाएँ
   api_key_confirm_delete: क्या वाकई यह API कुंजी हटानी है?
   saved: सहेजा गया।
-  save_failed: सहेजना विफल।
   provider_active: सक्रिय
   active_provider_missing_key: यह आपका सक्रिय प्रदाता है पर कोई API कुंजी संग्रहीत नहीं है। कुंजी सहेजे जाने तक AI उत्तर छोड़ दिए जाएँगे।
   api_key_source_file: 'कुंजी स्रोत: secrets.yaml'
@@ -919,7 +868,6 @@ settings:
   api_key_external_hint_env: यह कुंजी ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable के माध्यम से कॉन्फ़िगर है।
   section_model_overrides: मॉडल ओवरराइड
   model_overrides_hint: प्रत्येक प्रदाता के लिए डिफ़ॉल्ट मॉडल उपयोग करने हेतु खाली छोड़ें। गैर-खाली मान चैट के समय डिफ़ॉल्ट को बदल देता है।
-  model_override_placeholder: मॉडल पहचानकर्ता (जैसे claude-3-5-haiku-latest)
   model_override_set: ओवरराइड सक्रिय
   model_override_default: डिफ़ॉल्ट मॉडल
   model_override_save: मॉडल सहेजें
@@ -1028,22 +976,16 @@ settings:
 methods:
   deductive:
     label: निगमनात्मक
-    summary: सामान्य से विशिष्ट - पहले नियम, बाद में उदाहरण।
   inductive:
     label: आगमनात्मक
-    summary: विशिष्ट से सामान्य - पहले उदाहरण, फिर नियम निकालें।
   error_based:
     label: त्रुटि-आधारित
-    summary: गलतियों से सीखें - सुधार के साथ व्याख्या।
   dialogic:
     label: संवादात्मक
-    summary: बातचीत में सोचें - कम तनाव, प्रेरणा बढ़ाएँ।
   contextual:
     label: प्रासंगिक
-    summary: वास्तविक संदर्भ में लागू करें - स्थानांतरण का अभ्यास।
   ai_adaptive:
     label: AI-अनुकूली
-    summary: AI वह विधि चुनता है जो आपके लिए सबसे उपयुक्त हो।
 cycle_steps:
   input:
     label: इनपुट
@@ -1069,15 +1011,11 @@ cycle_steps:
 errors:
   network: सर्वर तक नहीं पहुँच सके।
   not_found: नहीं मिला।
-  validation: अमान्य इनपुट।
-  conflict: प्रविष्टि पहले से मौजूद है।
   server: सर्वर त्रुटि - कृपया बाद में पुनः प्रयास करें।
 toast:
   project_created: प्रोजेक्ट बनाया गया।
   assessment_saved: प्रोफ़ाइल सहेजी गई।
-  session_started: सत्र शुरू हुआ।
   session_ended: सत्र समाप्त हुआ।
-  rating_saved: रेटिंग सहेजी गई।
   api_key_saved: API key सहेजी गई।
   api_key_restored: अंतिम कार्यशील key पुनर्स्थापित की गई।
   api_key_deleted: API key हटाई गई।
@@ -1122,7 +1060,6 @@ about:
   check_failed: "जांच विफल। क्या आप ऑनलाइन हैं?"
   last_checked: "पिछली जांच: {when}"
   never_checked: "कभी जांच नहीं की गई"
-  update_now: "अभी अपडेट करें"
   system_heading: सिस्टम
   storage_label: भंडारण
   storage_api: सर्वर (FastAPI + SQLite)
@@ -1133,7 +1070,6 @@ about:
   dep_unknown: अज्ञात
   identity_heading: पहचान फ़ाइल
   identity_loading: पहचान स्थिति लोड हो रही है…
-  identity_error: 'पहचान स्थिति लोड नहीं हो सकी:'
   identity_path_label: पथ
   identity_status_label: स्थिति
   identity_status_active: सक्रिय
@@ -1179,13 +1115,13 @@ backup:
   not_a_backup_file: 'यह फ़ाइल मान्य बैकअप फ़ाइल नहीं है। कृपया ''बैकअप बनाएं'' से निर्यात की गई फ़ाइल चुनें।'
   version_mismatch: "यह बैकअप संस्करण {{from}} का है; यह ऐप {{to}} है। नीचे बदलाव देखें और इंपोर्ट की पुष्टि करें।"
   too_large: 'यह बैकअप फ़ाइल बहुत बड़ी है (100 MB से अधिक)।'
-  export_success: बैकअप डाउनलोड हुआ ({{count}} रिकॉर्ड)।
   export_error: 'बैकअप विफल: {{detail}}'
   export_failed: "बैकअप विफल।"
   import_parse_failed: "बैकअप पढ़ा नहीं जा सका।"
   import_failed: "पुनर्स्थापना विफल।"
   comparison_title: पुनर्स्थापना की पुष्टि करें
   comparison_help: 'पुनर्स्थापना विलय करेगी: नए रिकॉर्ड डाले जाएँगे, परिवर्तनीय रिकॉर्ड केवल तभी अपडेट होंगे जब बैकअप नया हो, इतिहास पंक्तियाँ यथावत रखी जाएँगी। कुछ भी हटाया नहीं जाता। API keys अनदेखी की जाती हैं।'
+  foreign_owner_notice: "यह बैकअप किसी दूसरी सीखने की प्रोफ़ाइल का है। इसकी प्रगति सक्रिय प्रोफ़ाइल को सौंपी जाएगी और उसके साथ मिला दी जाएगी: पाठ, गलतियाँ और इतिहास जुड़ जाएँगे, XP, स्ट्रीक और सेटिंग्स बैकअप से ली जाएँगी। सक्रिय प्रोफ़ाइल सक्रिय रहेगी।"
   table_header: तालिका
   current_header: वर्तमान
   incoming_header: बैकअप
@@ -1200,7 +1136,6 @@ backup:
   col_skipped: छोड़ें
   col_errors: त्रुटि
   error_details: त्रुटि विवरण
-  restored_with_errors: '{{n}} रिकॉर्ड पुनर्स्थापित नहीं हो सके।'
   last_backup: 'अंतिम बैकअप: {{when}}'
   reminder_overdue: आपके अंतिम बैकअप को {{days}} दिनों से अधिक हो गए हैं।
   saved_as: 'बैकअप सहेजा गया: {{filename}}'
@@ -1260,6 +1195,107 @@ backup:
   compare_auto_label: स्वतः-बैकअप {{date}}
   auto_compare_missing: स्वतः-बैकअप अब उपलब्ध नहीं है - इसे हटा दिया गया था।
 export:
+  # #3426 - the Markdown/PDF report strings (were a private DE/EN table).
+  report:
+    progress_report_title: "सीखने की प्रगति"
+    session_detail_title: "सत्र विवरण"
+    curriculum_overview_title: "पाठ्यक्रम का सारांश"
+    generated_at: "बनाया गया"
+    app_version: "ऐप संस्करण"
+    learner: "शिक्षार्थी"
+    language: "भाषा"
+    method_profile: "विधि प्रोफ़ाइल"
+    dominant_method: "मुख्य विधि"
+    assessed_at: "अंतिम मूल्यांकन"
+    no_profile: "अभी कोई मूल्यांकन नहीं है। अपनी प्रोफ़ाइल देखने के लिए प्रारंभिक मूल्यांकन पूरा करें।"
+    projects: "परियोजनाएँ"
+    no_projects: "अभी कोई सीखने की परियोजना नहीं है।"
+    topic: "विषय"
+    goal: "लक्ष्य"
+    timeframe: "समय-सीमा"
+    daily_minutes: "दैनिक मिनट"
+    current_problem: "वर्तमान बाधा"
+    status: "स्थिति"
+    active: "सक्रिय"
+    archived: "संग्रहीत"
+    session_count: "सत्र"
+    total_minutes: "कुल मिनट"
+    mean_understanding: "औसत समझ"
+    mean_stress: "औसत तनाव"
+    method_distribution: "विधियों का वितरण"
+    method_switches: "विधि परिवर्तन"
+    no_switches: "इस परियोजना में कोई विधि परिवर्तन नहीं है।"
+    switched_from_to: "परिवर्तन"
+    reason: "कारण"
+    recent_sessions: "हाल के सत्र"
+    no_sessions: "अभी कोई सत्र पूरा नहीं हुआ है।"
+    method: "विधि"
+    duration: "अवधि"
+    understanding: "समझ"
+    stress: "तनाव"
+    method_fit: "विधि की उपयुक्तता"
+    notes: "नोट्स"
+    step_evaluation_insights: "चरण मूल्यांकन"
+    no_step_insights: "अभी कोई चरण मूल्यांकन उपलब्ध नहीं है।"
+    step: "चरण"
+    evaluations_count: "मूल्यांकन"
+    advance_rate: "आगे बढ़ने की दर"
+    mean_confidence: "औसत विश्वास"
+    deferred: "स्थगित"
+    repeated: "दोहराया गया"
+    advanced: "आगे बढ़ा"
+    extractions: "विश्लेषित बातचीत"
+    no_extractions: "अभी कोई विश्लेषित बातचीत नहीं है।"
+    imported_at: "आयात किया गया"
+    messages: "संदेश"
+    source: "स्रोत"
+    analysis: "विश्लेषण"
+    no_session: "सत्र नहीं मिला।"
+    session: "सत्र"
+    started_at: "शुरू हुआ"
+    ended_at: "समाप्त हुआ"
+    cycle_step: "वर्तमान चक्र चरण"
+    transcript: "प्रतिलेख"
+    no_messages: "इस सत्र में कोई संदेश नहीं है।"
+    role_user: "शिक्षार्थी"
+    role_assistant: "एआई"
+    role_system: "सिस्टम"
+    rating: "रेटिंग"
+    no_rating: "इस सत्र को रेट नहीं किया गया।"
+    step_evaluations: "चरण मूल्यांकन"
+    from_step: "चरण से"
+    to_step: "चरण तक"
+    confidence: "विश्वास"
+    applied: "लागू किया गया"
+    not_applied: "लागू नहीं किया गया"
+    fallback: "वैकल्पिक तरीका उपयोग हुआ"
+    evaluated_at: "मूल्यांकन किया गया"
+    curriculum: "पाठ्यक्रम"
+    description: "विवरण"
+    topics: "विषय"
+    no_topics: "इस पाठ्यक्रम में कोई विषय नहीं है।"
+    lessons: "पाठ"
+    no_lessons: "इस पाठ्यक्रम में कोई पाठ नहीं है।"
+    out_of: "में से"
+    minutes_short: "मिनट"
+    scale_5: "1 से 5 के पैमाने पर"
+    analysis_topic: "पहचाना गया विषय"
+    analysis_subtopics: "उप-विषय"
+    analysis_user_level: "स्तर"
+    analysis_strengths: "ताकतें"
+    analysis_weaknesses: "कमज़ोरियाँ"
+    analysis_error_patterns: "त्रुटि पैटर्न"
+    analysis_recommended_method: "अनुशंसित विधि"
+    analysis_recommended_focus: "अनुशंसित फ़ोकस"
+    analysis_suggested_curriculum: "सुझाया गया पाठ्यक्रम"
+    analysis_summary: "सारांश"
+    analysis_priority: "प्राथमिकता"
+    level_beginner: "शुरुआती"
+    level_intermediate: "मध्यम"
+    level_advanced: "उन्नत"
+    linked_project: "जुड़ी परियोजना"
+    status_completed: "पूरा हुआ"
+    status_abandoned: "छोड़ दिया गया"
   title: निर्यात करें
   intro: अपनी सीखने की यात्रा को Markdown या PDF के रूप में डाउनलोड करें। Markdown सादा पाठ है जिसे आप संपादित और साझा कर सकते हैं; PDF आपके ब्राउज़र का प्रिंट संवाद खोलता है ताकि आप एक प्रति सहेज सकें।
   progress_label: प्रगति रिपोर्ट (पूरी यात्रा)
@@ -1374,14 +1410,9 @@ gamification:
     how: "लेवल बढ़ती XP वक्र पर ऊपर जाते हैं: 0, 100, 300, 600, 1000 XP - हर चरण को पिछले से 100 XP अधिक चाहिए।"
   level_detail_title: "स्तर प्रगति"
   level_up: स्तर बढ़ा!
-  reason_session_complete: सत्र पूरा हुआ
-  reason_assessment_complete: मूल्यांकन पूरा हुआ
-  reason_conversation_imported: वार्तालाप आयात किया गया
-  reason_flat: XP प्रदान किया गया
   card_badges: बैज
   badges_earned: अर्जित
   badges_empty: अभी तक कोई बैज उपलब्ध नहीं है।
-  badge_earned_toast: 'बैज अर्जित: {name}'
   badge_category:
     getting_started: शुरुआत करना
     consistency: निरंतरता
@@ -1502,25 +1533,11 @@ gamification:
   reset_done: 'प्रगति रीसेट: {xp} XP, {badges} बैज, {streak} स्ट्रीक।'
   reset_failed: प्रगति रीसेट नहीं की जा सकी।
   weekend_mode_save_failed: वीकेंड-मोड सेटिंग सहेजी नहीं जा सकी।
-  danger_zone_heading: ख़तरनाक क्षेत्र
-  danger_zone_intro: इस डिवाइस पर शिक्षार्थी की सभी स्थिति स्थायी रूप से हटाएँ।
-  danger_zone_reset_button: सब कुछ रीसेट करें
-  danger_zone_warning: यह आपके सभी लर्निंग डेटा को स्थायी रूप से हटा देता है - सत्र, प्रगति, प्रोफ़ाइल, पाठ्यक्रम, आयात, Anki कार्ड, सेटिंग्स और API कुंजियाँ। इस कार्रवाई को पूर्ववत नहीं किया जा सकता।
-  danger_zone_confirm_prompt: पुष्टि करने के लिए RESET टाइप करें
-  danger_zone_input_placeholder: RESET
-  danger_zone_final_button: स्थायी रूप से हटाएँ
-  danger_zone_backup_offer: पहले एक बैकअप बनाएँ?
-  danger_zone_backup_button: बैकअप बनाएँ
-  danger_zone_complete_toast: सभी डेटा हटा दिया गया है।
-  danger_zone_cancel: रद्द करें
-  danger_zone_continue: जारी रखें
-  danger_zone_failed_toast: 'रीसेट विफल:'
 arcade:
   title: "आर्केड"
   subtitle: "छोटे राउंड, एक से दो मिनट: गेम मोड का इनाम। कोई XP नहीं, सिर्फ मज़ा।"
   card_description: "लर्न मेमोरी और स्नेक के छोटे राउंड: आपका गेम मोड इनाम।"
   card_open: "आर्केड पर जाएं"
-  requires_playful: "आर्केड गेम मोड का हिस्सा है। सेटिंग्स में गेम मोड (और आर्केड स्विच) चालू करें।"
   requires_game_mode: "आर्केड गेम मोड का हिस्सा है, और गेम मोड बंद है। इसे सेटिंग्स में चालू करें।"
   requires_arcade_switch: "गेम मोड चालू है, लेकिन आर्केड स्विच बंद है। सेटिंग्स में गेम मोड के विवरण में आर्केड चालू करें।"
   open_settings: "सेटिंग्स खोलें"
@@ -1575,6 +1592,10 @@ arcade:
     won: "कर दिखाया: पूरी शृंखला!"
     lost: "उफ़: आप लंबाई {n} तक पहुँचे। तुरंत फिर कोशिश करें!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "बेसिक"
+    cloze: "रिक्त स्थान भरें"
   title: Anki निर्यात
   intro: एआई द्वारा सुझाए गए फ़्लैशकार्ड की समीक्षा करें, अपनी पसंद के कार्ड स्वीकार करें, फिर Anki के लिए .apkg फ़ाइल के रूप में निर्यात करें।
   filter_project: प्रोजेक्ट
@@ -1738,7 +1759,6 @@ ui:
     open_settings: सेटिंग्स खोलें
     feature_analyze: बातचीत का विश्लेषण करने के लिए
     feature_anki: Anki कार्ड निकालने के लिए
-    feature_study_guide: एक अध्ययन गाइड बनाने के लिए
     feature_study_questions: अध्ययन प्रश्न बनाने के लिए
     feature_pronunciation: उच्चारण अभ्यास के लिए
   common:
@@ -1890,11 +1910,6 @@ repo:
   topic_readme_parent_link: ← [प्रोजेक्ट मूल](../README.md)
   topic_readme_no_sessions: _किसी सत्र ने यह विषय नहीं देखा।_
   loading: रिपॉज़िटरी रेंडर हो रही है…
-  widget_subtitle: इस प्रोजेक्ट की प्रगति, नोट्स और रोडमैप का संस्करणित स्नैपशॉट।
-  settings_description: आपके सत्र डेटा से प्रति प्रोजेक्ट स्वचालित रूप से Markdown आर्टिफैक्ट (README, STATS, CHEATSHEET, ROADMAP) उत्पन्न करता है। वैकल्पिक git एकीकरण प्रत्येक रेंडर को कमिट करता है ताकि आप किसी भी git क्लाइंट के साथ इतिहास ब्राउज़ कर सकें।
-  settings_enable_git: git दृढ़ता सक्षम करें
-  dexie_unavailable_body: यह सुविधा केवल सर्वर मोड में उपलब्ध है। git-समर्थित लर्निंग रिपॉज़िटरी सक्षम करने के लिए सेटिंग्स में सर्वर मोड पर स्विच करें।
-  back_to_dashboard: डैशबोर्ड पर वापस
   page:
     title: लर्निंग रिपॉज़िटरी
     rendered_at: रेंडर किया गया
@@ -1904,7 +1919,6 @@ repo:
     download_zip: ZIP डाउनलोड करें
     persist: git में सहेजें
     persisting: सहेजा जा रहा है…
-    persist_dexie_tooltip: git संस्करणीकरण केवल सर्वर मोड में उपलब्ध है।
   toast:
     zip_downloaded: ZIP डाउनलोड हो गया
     persisted: git में सहेजा गया
@@ -1921,6 +1935,7 @@ repo:
     title: लर्निंग रिपॉज़िटरी
     loading: लोड हो रहा है…
     repos_dir: रिपॉज़िटरी निर्देशिका
+    repos_dir_hint: "डिफ़ॉल्ट के लिए खाली छोड़ें: डेटा निर्देशिका में repos (परिचय देखें)"
     save: सेटिंग्स सहेजें
     saving: सहेजा जा रहा है…
     toast:
@@ -1931,6 +1946,11 @@ repo:
     description: आपके सत्र डेटा से प्रति प्रोजेक्ट स्वचालित रूप से Markdown आर्टिफैक्ट (README, STATS, CHEATSHEET, ROADMAP) उत्पन्न करता है। वैकल्पिक git एकीकरण प्रत्येक रेंडर को कमिट करता है ताकि आप किसी भी git क्लाइंट के साथ इतिहास ब्राउज़ कर सकें।
     enable_git: git दृढ़ता सक्षम करें
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "छूटा हुआ: {word}"
+    extra: "अतिरिक्त: {word}"
+    replaced: "आपने {wrote} लिखा, अपेक्षित: {expected}"
   progress_io:
     save_error: "इस पाठ में आपकी प्रगति सहेजी नहीं जा सकी।"
     load_failed: "इस पाठ के लिए आपकी सहेजी गई प्रगति लोड नहीं हो सकी: {detail}"
@@ -2002,6 +2022,13 @@ lesson:
     suggest_label: "एआई सुझाव"
     suggest_empty: "कुछ उपयोगी नहीं मिला। फिर से कोशिश करें या चरण को स्वयं बदलें।"
   exam:
+    start_notice: "परीक्षा: कोई उत्तर सही था या नहीं, यह आपको अंत में ही पता चलेगा, और आप पीछे नहीं जा सकते।"
+    author_source: "आपकी अपनी उत्तीर्ण सीमा से नहीं, इस सेट के नियमों से मूल्यांकन किया गया"
+    grade: "ग्रेड: {grade}"
+    no_grade: "कोई ग्रेड प्राप्त नहीं हुआ"
+    percent_result: "{pct}% सही"
+    advisory_reached: "अनुशंसित {pct}% का स्तर प्राप्त हुआ"
+    advisory_missed: "अनुशंसित {pct}% का स्तर प्राप्त नहीं हुआ"
     passed: "उत्तीर्ण"
     not_passed: "अनुत्तीर्ण"
     threshold_hint: "(उत्तीर्ण ≥ {pct}%)"
@@ -2039,6 +2066,7 @@ lesson:
     prev_step: पिछला चरण
     next_step: अगला चरण
     step_position: '{total} सिद्धांत चरणों में से चरण {current}'
+    end: "पढ़कर सुनाना बंद करें"
   contributed_by: '{name} द्वारा योगदान'
   page_title: पाठ
   set_label: सेट
@@ -2056,9 +2084,7 @@ lesson:
     aria_label: चरण नेविगेशन
   action:
     prev: पिछला
-    next: आगे
     finish: पाठ समाप्त करें
-    back_to_browser: सामग्री ब्राउज़र पर वापस
     pause: पाठ रोकें
     open_browser: सामग्री ब्राउज़र खोलें
     back_to_lesson: पाठ पर वापस
@@ -2318,7 +2344,6 @@ lesson:
     time: समय
     minutes: '{n} मिनट'
     hints_used: "उपयोग किए गए संकेत"
-    breakdown_heading: अभ्यास विवरण
     breakdown_correct_answer: 'सही उत्तर: {answer}'
     breakdown_unattempted: प्रयास नहीं किया
     detailed_hide: "संक्षिप्त मूल्यांकन"
@@ -2347,7 +2372,6 @@ lesson:
     mark_complete_needs_profile: "अपनी प्रगति सहेजने के लिए एक लर्निंग प्रोफ़ाइल बनाएँ"
     mark_complete_failed: "पूर्णता सहेजने में विफल"
     next_lesson: अगला पाठ
-    repeat: पाठ दोहराएँ
     retry: "फिर से अभ्यास करें"
     retry_heading: "आपकी प्रगति"
     retry_attempt: "प्रयास {n}: {pct}%"
@@ -2358,7 +2382,6 @@ lesson:
     retry_best: "सर्वश्रेष्ठ परिणाम"
     retry_best_value: "{pct}% (प्रयास {n})"
     retry_new_record: "नया रिकॉर्ड!"
-    restart: फिर से शुरू करें
     back_to_browser: सामग्री ब्राउज़र पर वापस
     encourage_0: अभ्यास से ही पूर्णता आती है!
     encourage_1: अच्छी शुरुआत - जारी रखें!
@@ -2395,7 +2418,6 @@ lesson:
     adaptive_focus: 'ध्यान दें: {topic}'
     adaptive_errors: 'इस पाठ में {count} गलतियाँ'
     error_replay: गलतियाँ दोहराएँ
-    error_replay_detail: '{count} अभ्यास फिर से'
     error_replay_corrected: "{total} में से {corrected} ठीक किए गए"
     all_corrected: "सभी गलतियाँ ठीक कर दी गईं!"
     all_corrected_detail: "बढ़िया, कोई बाकी गलती नहीं।"
@@ -2409,10 +2431,8 @@ lesson:
     view_set: सेट देखें
     focus_vocabulary: शब्दावली
   correction:
-    title: सुधार दौर
     subtitle: आपसे छूटे शब्दों पर कुछ त्वरित अभ्यास।
     skip: छोड़ें
-    next: आगे
     complete_heading: सुधार दौर पूर्ण
     improvement: '{n} तत्वों में सुधार हुआ।'
     improvement_singular: '{n} तत्व में सुधार हुआ।'
@@ -2421,6 +2441,11 @@ lesson:
     replay_all: 'सभी अभ्यास फिर से करें ({count})'
     replay_only_heading: 'अपनी गलतियाँ दोहराएँ'
     replay_only_subtitle: 'इन्हें त्वरित अभ्यास के रूप में अभ्यास नहीं किया जा सकता - इसके बजाय अभ्यास फिर से करें।'
+    fix_mistakes: "गलतियाँ सुधारें ({count})"
+    summary_heading: "आपके सुधार"
+    first_try: "पहला प्रयास: {total} में से {correct} सही"
+    status_corrected: "सुधारा गया"
+    status_open: "अभी बाकी"
   error:
     load_failed: पाठ लोड नहीं हो सका।
     invalid_data: "इस पाठ में अमान्य या दूषित डेटा होने के कारण इसे नहीं खोला जा सकता। कृपया सामग्री के लेखक से संपर्क करें।"
@@ -2438,6 +2463,8 @@ lesson:
     paused_toast: पाठ रोका गया। आप कभी भी फिर से शुरू कर सकते हैं।
     abandoned_toast: पाठ छोड़ दिया गया।
   resume:
+    exam_single_sitting: "शुरू की गई परीक्षा को आगे जारी नहीं किया जा सकता: यह तभी गिनी जाती है जब इसे एक ही बार में पूरा किया जाए, इसलिए पाठ फिर से शुरू होता है।"
+    mode_conflict: "यह राउंड किसी दूसरे मोड में शुरू हुआ था। परीक्षा और अभ्यास के उत्तर मिलाए नहीं जा सकते, इसलिए पाठ फिर से शुरू होता है।"
     heading: पाठ फिर से शुरू करें?
     body: आपने "{title}" को रोका था। क्या आप जहाँ छोड़ा था वहीं से जारी रखना चाहेंगे या फिर से शुरू करेंगे?
     action_resume: जारी रखें
@@ -2512,6 +2539,7 @@ content:
     public: "सार्वजनिक"
     branch: "ब्रांच"
     lessons_note: "इस सेट के सभी {n} पाठ शामिल होंगे।"
+    lessons_note_one: "इस सेट का एकमात्र पाठ शामिल होगा।"
     invalid_repo: "रिपॉज़िटरी को owner/name के रूप में दर्ज करें।"
     submit: "निर्यात"
     working: "निर्यात हो रहा…"
@@ -2550,10 +2578,7 @@ content:
     no_results: "'{query}' के लिए कोई परिणाम नहीं"
     hint: कोई अन्य खोज शब्द आज़माएँ
     clear: खोज साफ़ करें
-    available: "डाउनलोड के लिए उपलब्ध"
     your_content: "आपकी सामग्री"
-    download_prompt_title: "यह सेट डाउनलोड करें?"
-    download_prompt_body: "यह सेट अभी डाउनलोड नहीं हुआ है। अभी डाउनलोड करें?"
   save_adaptive:
     button: यह पाठ सहेजें?
   create_lesson:
@@ -2651,10 +2676,8 @@ content:
     active: "सक्रिय"
     deferred: "स्थगित"
     completed: "पूर्ण"
-    filter_aria: "स्थिति के अनुसार फ़िल्टर करें"
     menu_aria: "सेट क्रियाएँ"
     changed: "स्थिति अपडेट हुई।"
-    change_failed: "स्थिति अपडेट नहीं हो सकी।"
     deleted: "सेट हटाया गया।"
     delete_failed: "सेट हटाया नहीं जा सका।"
     progress_not_deleted: "हटा दिया गया, लेकिन आपकी सीखने की प्रगति हटाई नहीं जा सकी: {detail}"
@@ -2717,7 +2740,6 @@ content:
     button: "अभ्यास बनाएँ"
     generating: "अभ्यास बनाए जा रहे हैं…"
     regenerate: "फिर से बनाएँ"
-    regenerate_confirm: "बनाए गए अभ्यासों को नए सेट से बदलें?"
     generated: "{n} अभ्यास बनाए गए।"
     generated_with_rejected: "{n} अभ्यास बनाए गए, {r} गुणवत्ता के कारण अस्वीकृत।"
     none: "AI ने कोई उपयोगी अभ्यास नहीं लौटाया। कृपया फिर से प्रयास करें।"
@@ -2735,7 +2757,6 @@ content:
     modal_title: ऑफ़लाइन पाठ के रूप में सहेजें
     title_label: पाठ का शीर्षक
     summary: '{exercises} अभ्यास · {theory} सिद्धांत चरण · ~{minutes} मिनट'
-    theory_only: अभ्यासों के लिए पर्याप्त शब्दावली नहीं है। अधिक अभ्यास सामग्री के लिए एक लंबी चैट आयात करें।
     save: सहेजें
     saved: मेरे पाठ में सहेजा गया।
     failed: पाठ सहेजा नहीं जा सका।
@@ -2744,7 +2765,6 @@ content:
     source_lang_label: आपकी भाषा
     level_label: स्तर
     not_enough_data: कम अभ्यास - पूर्ण भाषा पाठ के लिए कम से कम {min} की अनुशंसा की जाती है। आप फिर भी इसे सहेज सकते हैं (उदाहरण के लिए, केवल-सिद्धांत पाठ के रूप में)।
-    same_language: सीखी गई भाषा और आपकी भाषा अलग होनी चाहिए।
     same_language_hint: सीखी गई और आपकी भाषा एक समान है - व्याकरण या मातृभाषा पाठ के लिए ठीक है। साझा करने पर यह सामग्री ट्री की समान-भाषा शाखा में जाता है।
     split_notice: इस पाठ में {steps} चरण हैं और इसे {parts} भागों में सहेजा जाएगा (प्रत्येक में अधिकतम {max} चरण)।
     part_title: '{title} - भाग {n}'
@@ -2837,8 +2857,8 @@ content:
     no_lessons: सेट में कोई पाठ नहीं है।
     missing_target_language: लक्ष्य भाषा गायब है (जो भाषा सिखाई जा रही है)।
     missing_source_language: स्रोत भाषा गायब है (व्याख्याओं की भाषा)।
-    invalid_target_language: लक्ष्य भाषा '{code}' एक 2-अक्षर का ISO कोड नहीं है।
-    invalid_source_language: स्रोत भाषा '{code}' एक 2-अक्षर का ISO कोड नहीं है।
+    invalid_target_language: लक्ष्य भाषा '{code}' एक मान्य भाषा कोड नहीं है (जैसे 'de' या 'pt-BR')।
+    invalid_source_language: स्रोत भाषा '{code}' एक मान्य भाषा कोड नहीं है (जैसे 'de' या 'pt-BR')।
     same_source_target: स्रोत और लक्ष्य भाषा एक समान हैं ('{code}')।
     missing_title: शीर्षक गायब है।
     missing_title_native: मूल शीर्षक गायब है (लक्ष्य भाषा में शीर्षक)।
@@ -2855,12 +2875,18 @@ content:
     level_too_complex: 'पाठ ''{lesson}'': पाठ्य प्रति पक्ष औसतन {avg} शब्द है, जो स्तर {level} के लिए अधिक है (लगभग {cap} अपेक्षित)।'
     engine_rule: "पाठ '{lesson}': नियम {rule}, {path} पर: {message}"
     engine_warning: "पाठ '{lesson}': चेतावनी {rule}, {path} पर: {message}"
+    engine_set_rule: "सेट: नियम {rule}, {path} पर: {message}"
+    engine_set_warning: "सेट: चेतावनी {rule}, {path} पर: {message}"
     source_language_heuristic: कार्ड के पिछले भागों में {found}-विशिष्ट अक्षर हैं लेकिन स्रोत भाषा '{lang}' है।
     target_language_heuristic: कार्ड के अगले भागों में {found}-विशिष्ट अक्षर हैं लेकिन लक्ष्य भाषा '{lang}' है।
     failed_share_anyway: गुणवत्ता जाँच में समस्याएँ मिलीं। आप फिर भी साझा कर सकते हैं - समीक्षक pull request में दर्ज निष्कर्ष देखेंगे।
+  ai_privacy_link: "गोपनीयता नीति"
   ai_validation:
     intro: एक AI अतिरिक्त रूप से अनुवाद सटीकता, व्याकरण और स्तर अनुकूलता की जाँच कर सकता है।
-    privacy: आपकी पाठ सामग्री {provider} को भेजी जाएगी। कोई व्यक्तिगत डेटा प्रेषित नहीं किया जाता।
+    privacy: "समीक्षा के लिए {provider} वे पाठ प्राप्त करता है जिन्हें आप साझा करना चाहते हैं (जिनमें अन्य चीज़ों के साथ कार्ड, टेक्स्ट और अभ्यास शामिल हैं), साथ ही सेट की स्रोत भाषा, लक्ष्य भाषा और स्तर, लेकिन न आपकी प्रोफ़ाइल प्राप्त करता है और न ही आपकी सीखने की प्रगति। इसके अलावा, हर AI अनुरोध की तरह, {provider} अन्य जानकारी के साथ आपका IP पता और आपकी API कुंजी भी प्राप्त करता है।"
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "आपका AI प्रदाता"
     consent: AI सत्यापन चलाएँ
     run: AI से जाँचें
     running: AI आपके पाठ की समीक्षा कर रहा है…
@@ -2903,7 +2929,7 @@ content:
     title: "AI सामग्री जाँच"
     loading: "कार्ड तैयार किए जा रहे हैं..."
     cost_estimate: "~{cards} कार्ड, ~{tokens} टोकन, ~{usd}."
-    privacy: "आपके कार्ड जाँच के लिए आपके कॉन्फ़िगर किए गए AI प्रदाता को भेजे जाएंगे। कोई व्यक्तिगत डेटा नहीं भेजा जाता।"
+    privacy: "जाँच आपके AI प्रदाता को सेट के कार्ड (पहचानकर्ता, आगे का भाग, पीछे का भाग, नोट्स) और साथ ही सेट की स्रोत भाषा, लक्ष्य भाषा और स्तर भेजती है, लेकिन न आपकी प्रोफ़ाइल भेजती है और न ही आपकी सीखने की प्रगति। इसके अलावा, हर AI अनुरोध की तरह, आपका AI प्रदाता अन्य जानकारी के साथ आपका IP पता और आपकी API कुंजी भी प्राप्त करता है।"
     confirm: "जाँचें"
     progress: "{total} में से बैच {current} की जाँच हो रही है..."
     rate_limited: "दूसरी जाँच चलाने से पहले कृपया थोड़ा इंतज़ार करें।"
@@ -2935,9 +2961,6 @@ content:
       all_ok: "कोई समस्या नहीं मिली - एक्सेंट, आर्टिकल और डुप्लिकेट सब ठीक।"
       problem: "समस्या"
       suggestion: "सुझाव"
-  placement:
-    lands_under: आपका पाठ यहाँ जाता है
-    duplicate: 'एक समान पाठ पहले से मौजूद है: {title}। फिर भी साझा करें?'
   wizard:
     title: समुदाय के साथ साझा करें
     metadata_intro: साझा करने से पहले पाठ का विवरण जाँचें और सही करें।
@@ -2952,8 +2975,8 @@ content:
     err_title: एक शीर्षक जोड़ें।
     err_source: स्रोत भाषा चुनें।
     err_target: लक्ष्य भाषा चुनें।
-    err_same_language: स्रोत और लक्ष्य भाषा भिन्न होनी चाहिए।
     err_level: एक CEFR स्तर चुनें (A1-C2)।
+    level_none: कोई स्तर नहीं (भाषा पाठ्यक्रम नहीं)
     err_empty: इस पाठ में कोई अभ्यास नहीं है। कृपया पाठ को फिर से बनाएँ।
     regenerate: फिर से बनाएँ
     same_language_domain_hint: स्रोत और लक्ष्य भाषा समान है - इसे ज्ञान (गैर-भाषा) सामग्री के रूप में साझा किया जाएगा।
@@ -2961,7 +2984,6 @@ content:
     lands_under: आपका पाठ यहाँ रखा जाएगा
     new_set: नया सेट! यहाँ योगदान देने वाले आप पहले हैं।
     next_to_existing: इस सेट में {count} मौजूदा पाठ के साथ।
-    summary_counts: '{lessons} पाठ, {exercises} अभ्यास, {cards} कार्ड, ~{minutes} मिनट'
     checking: समान पाठों की जाँच की जा रही है…
     no_duplicates: कोई डुप्लिकेट नहीं मिला। आपका पाठ अनूठा है!
     near_duplicate: 'यह पाठ पहले से मौजूद है: "{title}"।'
@@ -3155,7 +3177,6 @@ create_lesson:
     switch_discard: "छोड़ें और बदलें"
   prompts_migrated: "{n} अभ्यास निर्देश स्वचालित रूप से आपकी भाषा में अनुवादित किए गए।"
   prompts_migrated_dismiss: "बंद करें"
-  step_pending: यह चरण अगले अपडेट में आ रहा है।
   nav_label: विज़ार्ड नेविगेशन
   cancel: रद्द करें
   back: वापस
@@ -3176,10 +3197,12 @@ create_lesson:
     content_lang_label: "सामग्री की भाषा"
     level_none: "कोई स्तर नहीं"
     domain_hint: "ज्ञान सामग्री एक ही सामग्री भाषा का उपयोग करती है और CEFR स्तर को छोड़ सकती है।"
-    same_language: सीखी गई भाषा आपकी भाषा से भिन्न होनी चाहिए।
     description_label: विषय / विवरण
     author_label: लेखक का नाम
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "शब्द या वाक्यांश"
+    back_placeholder: "अर्थ"
     heading: शब्दावली कार्ड जोड़ें
     front_label: आगे (सीखी गई)
     back_label: पीछे (आपकी भाषा)
@@ -3261,8 +3284,8 @@ create_lesson:
     generate: अभ्यास स्वतः बनाएँ
     regenerate: फिर से बनाएँ
     count: '{n} अभ्यास'
-    min_hint: '{n} अभ्यास आवश्यक'
-    min_to_advance: जारी रखने के लिए कम से कम {n} अभ्यास बनाएँ।
+    one_to_advance: "जारी रखने के लिए कम से कम एक अभ्यास बनाएँ।"
+    share_min_hint: "साझा करने के लिए कम से कम {n} अभ्यास आवश्यक"
     min_one_to_advance: "जारी रखने के लिए कम से कम एक अभ्यास जोड़ें।"
     drag: क्रम बदलने के लिए खींचें
     delete: अभ्यास हटाएँ
@@ -3472,6 +3495,7 @@ create_lesson:
     check_enoughTypes: कम से कम 2 अभ्यास प्रकार
     check_min_types: "कम से कम {n} अभ्यास प्रकार"
     check_exercise_minimums: "हर अभ्यास में पर्याप्त उत्तर या जोड़े हैं"
+    share_checks_heading: "साझा करने के लिए आवश्यक"
     check_schemaValid: मान्य पाठ संरचना
     structure_error: "तकनीकी विवरण"
     structure_internal_error: "इस पाठ की जाँच करते समय एक आंतरिक त्रुटि हुई। यह आपके पाठ की नहीं, ऐप की समस्या है। कृपया पृष्ठ पुनः लोड करें और फिर से प्रयास करें; यदि यह बार-बार होता रहे, तो नीचे समस्या की रिपोर्ट करें।"
@@ -3536,7 +3560,6 @@ learning_path:
   filter_mine: केवल मेरे
   filter_all: सभी सेट
   filter_label: सेट फ़िल्टर करें
-  adaptive: अनुकूली पाठ शुरू करें
   error_replay: त्रुटियाँ दोबारा करें
   train_errors: "गलतियाँ अभ्यास करें"
   shuffle: "मिश्रण"
@@ -3573,7 +3596,6 @@ learning_path:
   mastery:
     receptive: ग्रहणशील
     productive: उत्पादक
-    mastered: महारत हासिल
   title: अधिगम पथ
   subtitle: आप कहाँ हैं और आगे क्या आता है।
   aria_canvas: सीखने के पथ का ग्राफ़
@@ -3681,7 +3703,6 @@ share:
   app:
     heading: "ऐप साझा करें"
     download: "डाउनलोड करें"
-    qr_intro: "ऐप को QR कोड के ज़रिए साझा करें ताकि दूसरे इसे सीधे खोल सकें।"
     show_qr: "QR कोड दिखाएं"
     download_qr: "QR कोड डाउनलोड करें"
     copy_url: "URL कॉपी करें"
@@ -3974,9 +3995,6 @@ content_repo:
   added: "रिपॉज़िटरी जोड़ी गई।"
   synced: "समन्वयित: {sets} सेट, {lessons} पाठ।"
   token_hint: "निजी रिपॉज़िटरी के लिए टोकन ज़रूरी है - नीचे एक चिपकाएँ, या सेटिंग्स → इंटीग्रेशन में साझा टोकन सेट करें।"
-  trust_official: "आधिकारिक: प्रोजेक्ट टीम द्वारा क्यूरेट और गुणवत्ता-सुनिश्चित सामग्री।"
-  trust_verified: "सत्यापित: समुदाय द्वारा योगदान और टीम द्वारा समीक्षित।"
-  trust_validated: "मान्य: तकनीकी रूप से सही; सामग्री की अलग से समीक्षा नहीं की गई।"
   official:
     title: "आधिकारिक सामग्री"
     counts: "{sets} सेट · {lessons} पाठ"
@@ -4003,7 +4021,6 @@ content_repo:
     sync_all: "सभी को सिंक करें"
     add: "रिपॉज़िटरी जोड़ें"
     cancel: "रद्द करें"
-    confirm_remove: "हटाने की पुष्टि करें"
     connect: "रिपॉज़िटरी कनेक्ट करें"
     move_down: "नीचे ले जाएँ"
     move_up: "ऊपर ले जाएँ"
@@ -4011,12 +4028,10 @@ content_repo:
     share: "साझा करें"
     sync: "अभी समन्वयित करें"
   badge:
-    coach: "कोच"
     private: "निजी"
     official: "आधिकारिक"
   trust:
     dropped: "समन्वयित हुआ, लेकिन सत्यापन विफल रहा - यह रिपॉज़िटरी अब असत्यापित के रूप में चिह्नित है।"
-    recommended: "आधिकारिक रूप से अनुशंसित"
     unknown: "असत्यापित"
     validated: "सत्यापित"
   status:
@@ -4046,6 +4061,19 @@ content_repo:
     save_failed: "रिपॉज़िटरी जोड़ी नहीं जा सकी।"
     sync_failed: "समन्वयन विफल रहा। फिर से प्रयास करें।"
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "रिपॉज़िटरी या manifest.yaml नहीं मिला।"
+      access_denied: "पहुँच अस्वीकृत - रिपॉज़िटरी और अपना GitHub टोकन जाँचें।"
+      unreachable: "रिपॉज़िटरी तक नहीं पहुँचा जा सका।"
+      unsupported_schema: "असमर्थित स्कीमा संस्करण {version}।"
+      no_sets: "manifest.yaml में कोई सेट नहीं है।"
+      no_lessons: "किसी भी सेट में पाठ नहीं मिले।"
+      executable_content: "पाठ की सामग्री में अनुमति-रहित निष्पादन योग्य कोड है।"
+      lessons_unreadable: "पहले सेट के पाठ पढ़े नहीं जा सके।"
+      lesson_invalid_json: "पहले सेट का पहला पाठ मान्य JSON नहीं है।"
+      validator_unavailable: "पाठ सत्यापक लोड नहीं हो सका।"
+      lesson_invalid: "पहले सेट का पहला पाठ सत्यापन में विफल: {detail}"
     failed: "सत्यापन विफल रहा: {reason}"
     passed: "सत्यापन सफल: {sets} सेट, {lessons} पाठ।"
 resource:
@@ -4094,7 +4122,6 @@ discover:
     domain: "क्षेत्र"
     trust: "विश्वास"
     source: "स्रोत"
-    ai_checked: "एआई-जाँचित"
     review: "समीक्षा"
   trust:
     official: "आधिकारिक रूप से अनुशंसित"
@@ -4166,7 +4193,6 @@ endless:
   back_to_dashboard: "डैशबोर्ड पर वापस"
   loading: "अभ्यास सत्र लोड हो रहा है…"
   empty_body: "इस सेट में अभ्यास के लिए अभी कोई अभ्यास नहीं है।"
-  not_cached_body: "यह सेट अभी डाउनलोड नहीं हुआ है। इसे पहले डाउनलोड करने के लिए सामग्री ब्राउज़र खोलें।"
   paused: "रुका हुआ - थोड़ा विराम लें।"
   resume: "जारी रखें"
   pause: "रोकें"
@@ -4176,7 +4202,6 @@ endless:
     cards: "{n} कार्ड"
     correct: "{n} सही"
   error:
-    missing_params: "कोई सामग्री सेट चयनित नहीं है।"
     load_failed: "अभ्यास सत्र लोड नहीं हो सका।"
   summary:
     heading: "अभ्यास सत्र पूरा हुआ!"
@@ -4192,12 +4217,10 @@ shuffle:
   page_title: "मिश्रण"
   loading: "मिश्रित सत्र लोड हो रहा है…"
   empty_body: "मिश्रण के लिए इस सेट में अभ्यास वाले कम से कम दो पाठ चाहिए।"
-  not_cached_body: "यह सेट अभी डाउनलोड नहीं हुआ है। इसे पहले डाउनलोड करने के लिए सामग्री ब्राउज़र खोलें।"
   back_to_dashboard: "डैशबोर्ड पर वापस"
   subtitle: "{lessons} पाठों से {n} प्रश्न मिश्रित"
   error:
     load_failed: "मिश्रित सत्र लोड नहीं हो सका।"
-    missing_params: "कोई सामग्री सेट चयनित नहीं है।"
   summary:
     heading: "मिश्रित अभ्यास पूर्ण!"
     score: "{total} में से {correct} सही"
@@ -4299,7 +4322,6 @@ registry:
     pending: लंबित - CI सत्यापित करेगा
   pr:
     created: पुल रिक्वेस्ट खोली गई।
-    failed: पुल रिक्वेस्ट नहीं खोली जा सकी।
     view: अपनी पुल रिक्वेस्ट देखें
 
 exercise:

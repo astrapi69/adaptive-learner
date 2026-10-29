@@ -380,4 +380,9 @@
 # @media (max-width: 1279px)-Block statt im 768px-Block, weil die einzeilige
 # Kopfleiste unter xl nicht passt. Oeffner, Schliesser und ein Verweis-
 # kommentar; keine neue Regel, nur der Breakpoint wandert.
-7500
+# 2026-10-03 (#3406): +4 Zeilen in 01-base.css - Base-Layer-Regel
+# :where(h1) { overflow-wrap: anywhere; hyphens: auto }: ein langes Wort im
+# Seitentitel ("Wiederholungssitzung") machte die Seite bei 360/375 px breiter,
+# iOS schnitt dann den Weiter-Knopf ab (#1834). Eine Regel fuer alle h1
+# statt wrap-anywhere je Titel; Silbentrennung zuerst, Utilities gewinnen weiter.
+7504

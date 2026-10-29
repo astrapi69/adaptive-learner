@@ -2,11 +2,11 @@
 
 # ストレージレイヤー
 
-v0.7.0のストレージレイヤー（`frontend/src/storage/`）は、フロントエンドに単一の契約の背後に2つの交換可能なバックエンドを提供します。この契約はPhase 7〜34を経て22の名前空間に拡大しています。
+v0.7.0のストレージレイヤー（`frontend/src/storage/`）は、フロントエンドに単一の契約の背後に2つの交換可能なバックエンドを提供します。この契約は`frontend/src/storage/types/core/service.ts`にあり、そこにある名前空間の一覧が基準です。
 
 ## IStorageService
 
-`frontend/src/storage/types.ts`はすべてのストレージ実装が満たすインターフェースを定義します。`api/client.ts`の`api.*`名前空間を1:1でミラーリングしています。
+`frontend/src/storage/types/core/service.ts`はすべてのストレージ実装が満たすインターフェースを定義します。`api/client.ts`の`api.*`名前空間を1:1でミラーリングしています。
 
 ```typescript
 export interface IStorageService {
@@ -50,7 +50,7 @@ export interface IStorageService {
 
 ## DexieStorage
 
-`storage/dexie-storage.ts`はDexie 4.4.2を通じてすべてをIndexedDBに永続化します。`storage/db.ts`のスキーマはSQLAlchemyの25モデルすべてを1:1でミラーリングし、4つの関連テーブル（`project_subjects` / `project_tags` / など）も含みます。
+`storage/dexie-storage.ts`はDexie 4.4.2を通じてすべてをIndexedDBに永続化します。`storage/dexie/db.ts`のスキーマはSQLAlchemyのモデルをミラーリングし、ブラウザにしかないストアを加えています。どのストアがどのテーブルに対応するかは、領域ごとに[データモデル](data-model.md)のページにあります。
 
 `storage/`以下のサブモジュールがポートされたロジックを担います。
 
@@ -89,7 +89,7 @@ Settings UIのストレージモードセクションに配線します。他の
 
 ## ブラウザ直接AIコール
 
-`storage/ai-providers.ts`は3つのプロバイダークライアントを実装しています。
+`storage/ai/ai-providers.ts`は3つのプロバイダークライアントを実装しています。
 
 - **Anthropic** - `anthropic-dangerous-direct-browser-access: true`ヘッダーを付けて`https://api.anthropic.com/v1/messages`にPOST。これはAnthropicのブラウザ呼び出し元向けの明示的なオプトインです。このヘッダーがないとCORSが拒否します。
 - **OpenAI** - `Authorization: Bearer ${apiKey}`を付けて`https://api.openai.com/v1/chat/completions`にPOST。CORSはデフォルトで開放されています。

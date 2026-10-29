@@ -56,6 +56,8 @@ function apiPayload(data: Record<string, unknown[]>): BackupPayload {
     } as BackupPayload;
 }
 
+const RECENT_STEP = {at: TS, kind: "step", step_index: 4, step_id: "s4"};
+
 function apiLessonProgress(): Record<string, unknown> {
     return {
         id: "5f0c1d2e-0000-4000-8000-000000000001",
@@ -79,6 +81,8 @@ function apiLessonProgress(): Record<string, unknown> {
         best_score_correct: 3,
         best_score_total: 4,
         attempt_history: JSON.stringify([{at: TS, correct: 3, total: 4}]),
+        // #3365 - the resume reads the last step entry, so it must arrive parsed.
+        recent_steps: JSON.stringify([RECENT_STEP]),
     };
 }
 
@@ -123,6 +127,7 @@ describe("restoring an API-mode backup in browser mode (#3362)", () => {
         expect(progress?.current_step).toBe(4);
         expect(progress?.step_results).toEqual({"2": {correct: 3, total: 4}});
         expect(progress?.attempt_history).toEqual([{at: TS, correct: 3, total: 4}]);
+        expect(progress?.recent_steps).toEqual([RECENT_STEP]);
     });
 
     it("a later attempt on a restored element error updates that row instead of adding a second", async () => {

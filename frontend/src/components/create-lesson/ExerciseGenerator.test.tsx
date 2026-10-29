@@ -17,6 +17,7 @@ import ExerciseGenerator, {
     EXERCISE_COUNT_MAX,
     EXERCISE_COUNT_MIN,
     hasIncompleteExercise,
+    minExercisesToAdvance,
 } from "./ExerciseGenerator";
 import {
     DEFAULT_EXERCISE_GEN_CONFIG,
@@ -704,5 +705,30 @@ describe("hasIncompleteExercise", () => {
             distractors: ["x"],
         } as ContentLessonExercise;
         expect(hasIncompleteExercise([broken], [])).toBe(true);
+    });
+});
+
+describe("exercise minimum is a share hint, not a gate (#3389)", () => {
+    const matching = {
+        id: "m1",
+        type: "matching",
+        prompt: "Match.",
+        card_ids: [],
+        distractors: [],
+        pairs: [{left: "chat", right: "Katze"}],
+    } as unknown as ContentLessonExercise;
+
+    it.each([
+        ["create", false],
+        ["edit", true],
+    ])("lets one exercise advance in %s mode", (_mode, editMode) => {
+        expect(minExercisesToAdvance(editMode)).toBe(1);
+    });
+
+    it("names the sharing minimum below five exercises", () => {
+        render(<ListHarness initial={[matching]} />);
+        expect(screen.getByTestId("exercise-min-hint")).toHaveTextContent(
+            "Sharing needs at least 5 exercises",
+        );
     });
 });

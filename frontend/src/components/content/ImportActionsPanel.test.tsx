@@ -424,6 +424,18 @@ describe("ImportActionsPanel — community share", () => {
     await screen.findByTestId("share-wizard-unique");
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     expect(screen.getByTestId("content-ai-validation")).toBeInTheDocument();
+    // #3812 - the note names what goes to the provider and links the privacy policy.
+    // How the provider is named is pinned in ContentShareDialog.test.tsx; this
+    // test renders without a catalog, where every label falls back to its id.
+    // #3840 - IP address and key are named as examples, not as the complete list.
+    const note = screen.getByTestId("content-ai-privacy");
+    expect(note).toHaveTextContent(
+      "as with every AI request, anthropic receives, among other things, your IP address and your API key",
+    );
+    expect(note).not.toHaveTextContent(/no personal data/i);
+    expect(screen.getByTestId("content-ai-privacy-link").getAttribute("href")).toMatch(
+      /\/legal\/privacy\/$/,
+    );
   });
 
   it("records a local contribution after sharing", async () => {

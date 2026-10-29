@@ -110,9 +110,7 @@ def _gather_stats(db: Session, user_id: str, today: str) -> dict[str, int]:
 def _min_stars(completed_today: list[LessonProgress], min_value: int) -> int:
     """Count today's completed lessons scoring at least ``min_value`` stars."""
     return sum(
-        1
-        for r in completed_today
-        if _compute_stars(r.score_correct, r.score_total) >= min_value
+        1 for r in completed_today if _compute_stars(r.score_correct, r.score_total) >= min_value
     )
 
 
@@ -140,9 +138,7 @@ def _lesson_day_stats(lessons: list[LessonProgress], today: str) -> dict[str, in
 def _error_day_stats(errors: list[ElementError], today: str) -> dict[str, int]:
     """Element-error daily mission counters for ``today``."""
     return {
-        "elements_reviewed_today": sum(
-            1 for r in errors if _same_day(r.last_attempt_at, today)
-        ),
+        "elements_reviewed_today": sum(1 for r in errors if _same_day(r.last_attempt_at, today)),
         "elements_mastered_today": sum(
             1 for r in errors if r.mastered and _same_day(r.mastered_at, today)
         ),

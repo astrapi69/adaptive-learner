@@ -7,6 +7,16 @@ docs_dir: docs/help
 theme:
   name: material
   language: de
+  # #3802 - no page of this site contacts a third party on load. font: false
+  # keeps Material from linking Roboto from Google Fonts; the pages use the
+  # system font stack. custom_dir holds two overrides: partials/source.html
+  # keeps the repository link but not the widget that fetches release, stars
+  # and forks from api.github.com, and main.html gives browsers without
+  # ResizeObserver a stand-in, so Material never loads its polyfill from
+  # unpkg.com. The docs-third-party check of scripts/verify_docs.py pins all
+  # three; scripts/check_external_hosts.py scans the built site in CI.
+  font: false
+  custom_dir: docs/help-overrides
   palette:
     - media: '(prefers-color-scheme: light)'
       scheme: default
@@ -22,6 +32,11 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  # #3843 - no search.highlight: it adds the search terms to every result
+  # link as ?h=, so a click sends them to GitHub Pages, while the privacy
+  # policy says they never leave the browser. search.share stays, it copies
+  # a link with the query only when the reader clicks share. Pinned by the
+  # docs-third-party check of scripts/verify_docs.py.
   features:
     - navigation.tabs
     - navigation.sections
@@ -29,7 +44,6 @@ theme:
     - navigation.tracking
     - navigation.indexes
     - search.suggest
-    - search.highlight
     - search.share
     - content.code.copy
     - content.tabs.link
@@ -91,6 +105,7 @@ plugins:
             Architektur: Architecture
             Plugin-Leitfaden: Plugin guide
             Storage-Layer: Storage layer
+            Datenmodell: Data model
             Theme-System: Theme system
             Lektionen + SRS: Lessons + SRS
             KI-Integration: AI integration
@@ -108,6 +123,7 @@ plugins:
             Design-Tokens: Design tokens
             API-Referenz: API reference
             Übersicht: Overview
+            Alle Endpoints: All endpoints
             Core-Endpoints: Core endpoints
             Plugin-Endpoints: Plugin endpoints
             Modelle: Models
@@ -160,6 +176,7 @@ plugins:
             Setup: Configuración inicial
             Plugin-Leitfaden: Guía de plugins
             Storage-Layer: Capa de almacenamiento
+            Datenmodell: Modelo de datos
             Theme-System: Sistema de temas
             Lektionen + SRS: Lecciones + SRS
             KI-Integration: Integración de IA
@@ -179,6 +196,7 @@ plugins:
             Sync: Sincronización
             API-Referenz: Referencia de la API
             Übersicht: Visión general
+            Alle Endpoints: Todos los endpoints
             Core-Endpoints: Endpoints principales
             Plugin-Endpoints: Endpoints de plugins
             Modelle: Modelos
@@ -226,6 +244,7 @@ plugins:
             Setup: Installation
             Plugin-Leitfaden: Guide des plugins
             Storage-Layer: Couche de stockage
+            Datenmodell: Modèle de données
             Theme-System: Système de thèmes
             Lektionen + SRS: Leçons + SRS
             KI-Integration: Intégration de l'IA
@@ -245,6 +264,7 @@ plugins:
             Sync: Synchronisation
             API-Referenz: Référence de l'API
             Übersicht: Vue d'ensemble
+            Alle Endpoints: Tous les endpoints
             Core-Endpoints: Endpoints principaux
             Plugin-Endpoints: Endpoints des plugins
             Modelle: Modèles
@@ -297,6 +317,7 @@ plugins:
             Setup: Εγκατάσταση
             Plugin-Leitfaden: Οδηγός προσθέτων
             Storage-Layer: Επίπεδο αποθήκευσης
+            Datenmodell: Μοντέλο δεδομένων
             Theme-System: Σύστημα θεμάτων
             Lektionen + SRS: Μαθήματα + SRS
             KI-Integration: Ενσωμάτωση AI
@@ -316,6 +337,7 @@ plugins:
             Sync: Συγχρονισμός
             API-Referenz: Αναφορά API
             Übersicht: Επισκόπηση
+            Alle Endpoints: Όλα τα endpoints
             Core-Endpoints: Βασικά endpoints
             Plugin-Endpoints: Endpoints προσθέτων
             Modelle: Μοντέλα
@@ -368,6 +390,7 @@ plugins:
             Setup: Configuração
             Plugin-Leitfaden: Guia de plugins
             Storage-Layer: Camada de armazenamento
+            Datenmodell: Modelo de dados
             Theme-System: Sistema de temas
             Lektionen + SRS: Lições + SRS
             KI-Integration: Integração de IA
@@ -387,6 +410,7 @@ plugins:
             Sync: Sincronização
             API-Referenz: Referência da API
             Übersicht: Visão geral
+            Alle Endpoints: Todos os endpoints
             Core-Endpoints: Endpoints principais
             Plugin-Endpoints: Endpoints de plugins
             Modelle: Modelos
@@ -439,6 +463,7 @@ plugins:
             Setup: Kurulum
             Plugin-Leitfaden: Eklenti kılavuzu
             Storage-Layer: Depolama katmanı
+            Datenmodell: Veri modeli
             Theme-System: Tema sistemi
             Lektionen + SRS: Dersler + SRS
             KI-Integration: Yapay zekâ entegrasyonu
@@ -458,6 +483,7 @@ plugins:
             Sync: Senkronizasyon
             API-Referenz: API başvurusu
             Übersicht: Genel bakış
+            Alle Endpoints: Tüm endpoint'ler
             Core-Endpoints: Temel endpoint'ler
             Plugin-Endpoints: Eklenti endpoint'leri
             Modelle: Modeller
@@ -511,6 +537,7 @@ plugins:
             Setup: セットアップ
             Plugin-Leitfaden: プラグインガイド
             Storage-Layer: ストレージレイヤー
+            Datenmodell: データモデル
             Theme-System: テーマシステム
             Lektionen + SRS: レッスン + SRS
             KI-Integration: AI統合
@@ -530,6 +557,7 @@ plugins:
             Sync: 同期
             API-Referenz: APIリファレンス
             Übersicht: 概要
+            Alle Endpoints: 全エンドポイント
             Core-Endpoints: コアエンドポイント
             Plugin-Endpoints: プラグインエンドポイント
             Modelle: モデル
@@ -539,6 +567,17 @@ plugins:
             Datenschutzerklärung: プライバシーポリシー
             Changelog: 変更履歴
         # AUTO-GENERATED-LANGUAGES-END
+# #3800 - Mermaid is served from this site, a pinned copy of the npm release
+# (mermaid@11.17.2, dist/mermaid.min.js, checked by
+# scripts/verify_mermaid_blocks.mjs). With it loaded, Material never falls
+# back to its CDN, so the docs site gains no foreign host.
+extra_javascript:
+  - assets/javascripts/mermaid-11.17.2.min.js
+
+# #3828: wide diagrams scroll inside their block (assets/stylesheets/extra.css).
+extra_css:
+  - assets/stylesheets/extra.css
+
 markdown_extensions:
   - admonition
   - attr_list
@@ -548,7 +587,13 @@ markdown_extensions:
   - toc:
       permalink: true
   - pymdownx.details
-  - pymdownx.superfences
+  # #3800 - ```mermaid blocks become <pre class="mermaid">, which Material
+  # renders with the Mermaid loaded through extra_javascript below.
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
@@ -604,6 +649,7 @@ nav:
   - Setup: de/developer/setup.md
   - Plugin-Leitfaden: de/developer/plugin-guide.md
   - Storage-Layer: de/developer/storage-layer.md
+  - Datenmodell: de/developer/data-model.md
   - Theme-System: de/developer/themes.md
   - Lektionen + SRS: de/developer/lessons-and-srs.md
   - KI-Integration: de/developer/ai-integration.md
@@ -626,6 +672,7 @@ nav:
   - Sync: de/architecture/sync.md
 - API-Referenz:
   - Übersicht: de/api/overview.md
+  - Alle Endpoints: de/api/endpoints.md
   - Core-Endpoints: de/api/core-endpoints.md
   - Plugin-Endpoints: de/api/plugin-endpoints.md
   - Modelle: de/api/models.md

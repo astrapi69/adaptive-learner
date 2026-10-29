@@ -9,6 +9,7 @@ import {
     applyLocalStorageSnapshot,
     captureLocalStorageSnapshot,
     isExcludedLocalStorageKey,
+    rehomeLocalStorageSnapshot,
     withLocalStorageSnapshot,
 } from "./localStorageSnapshot";
 import {buildAlbBytes, parseAlbBytes} from "./albContainer";
@@ -140,6 +141,23 @@ describe("captureLocalStorageSnapshot", () => {
         expect(snap["adaptive-learner.nav_position"]).toBe("bottom");
     });
 
+    it.each([
+        "adaptive-learner.sync-queue",
+        "adaptive-learner.search_index::astrapi69/adaptive-learner-content",
+        "adaptive-learner.media-resources",
+        "adaptive-learner.auto_backup_session_counter",
+        "adaptive-learner.auto_backup_last_at",
+        "adaptive-learner.sync.last_sync_at",
+    ])("excludes the device-local %s (#3429)", (key) => {
+        localStorage.setItem(key, "x");
+        expect(captureLocalStorageSnapshot()).not.toHaveProperty([key]);
+    });
+
+    it("carries the auto-backup preference itself (#3429: only its bookkeeping stays home)", () => {
+        localStorage.setItem("adaptive-learner.auto_backup_enabled", "true");
+        expect(captureLocalStorageSnapshot()["adaptive-learner.auto_backup_enabled"]).toBe("true");
+    });
+
     it("excludes the device-local storage_mode key", () => {
         localStorage.setItem("adaptive-learner.storage_mode", "dexie");
         expect(captureLocalStorageSnapshot()).not.toHaveProperty(
@@ -183,6 +201,16 @@ describe("applyLocalStorageSnapshot", () => {
         expect(applied).toBe(1);
         expect(localStorage.getItem("adaptive-learner.github_token")).toBeNull();
         expect(localStorage.getItem("adaptive-learner.theme")).toBe("sepia");
+    });
+
+    it("does not write back the offline queue an older backup carried (#3429)", () => {
+        const applied = applyLocalStorageSnapshot({
+            "adaptive-learner.sync-queue": '[{"id":"1","path":"/p","method":"POST","body":{}}]',
+            "adaptive-learner.hint_mode": "off",
+        });
+        expect(applied).toBe(1);
+        expect(localStorage.getItem("adaptive-learner.sync-queue")).toBeNull();
+        expect(localStorage.getItem("adaptive-learner.hint_mode")).toBe("off");
     });
 
     it("is a no-op for a legacy backup with no snapshot", () => {
@@ -263,5 +291,53 @@ describe("isExcludedLocalStorageKey", () => {
         "adaptive-learner.voice.tts_enabled",
     ])("keeps %s", (key) => {
         expect(isExcludedLocalStorageKey(key)).toBe(false);
+    });
+});
+
+describe("the device's active learner (#3785)", () => {
+    const IDENTITY = ["adaptive-learner.user_id", "adaptive-learner.project_id"];
+
+    it.each(IDENTITY)("never captures %s", (key) => {
+        localStorage.setItem(key, "learner-a");
+        expect(captureLocalStorageSnapshot()).not.toHaveProperty(key);
+    });
+
+    it.each(IDENTITY)("never applies %s from a backup that carries it", (key) => {
+        localStorage.setItem(key, "learner-a");
+        applyLocalStorageSnapshot({[key]: "learner-b", "adaptive-learner.theme": "ocean"});
+        expect(localStorage.getItem(key)).toBe("learner-a");
+        expect(localStorage.getItem("adaptive-learner.theme")).toBe("ocean");
+    });
+
+    it.each(["adaptive-learner.user_ids_seen", "adaptive-learner.project_id_hint"])(
+        "keeps the neighbouring key %s (exact match, no substring)",
+        (key) => {
+            expect(isExcludedLocalStorageKey(key)).toBe(false);
+        },
+    );
+});
+
+describe("rehomeLocalStorageSnapshot (#3785)", () => {
+    it("moves values keyed by the backup's learner to the local learner", () => {
+        const snapshot = {
+            "adaptive-learner.avatar.frames": '{"u-b":{"selected":"gold","purchased":["star"]}}',
+            "adaptive-learner.theme": "ocean",
+        };
+        expect(rehomeLocalStorageSnapshot(snapshot, "u-b", "u-a")).toEqual({
+            "adaptive-learner.avatar.frames": '{"u-a":{"selected":"gold","purchased":["star"]}}',
+            "adaptive-learner.theme": "ocean",
+        });
+    });
+
+    it.each([
+        ["same learner", "u-a"],
+        ["unknown owner", null],
+    ])("returns the snapshot unchanged: %s", (_name, source) => {
+        const snapshot = {"adaptive-learner.avatar.frames": '{"u-a":{}}'};
+        expect(rehomeLocalStorageSnapshot(snapshot, source, "u-a")).toBe(snapshot);
+    });
+
+    it.each([undefined, null])("passes a legacy backup without snapshot through (%s)", (snapshot) => {
+        expect(rehomeLocalStorageSnapshot(snapshot, "u-b", "u-a")).toBe(snapshot);
     });
 });

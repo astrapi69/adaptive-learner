@@ -1,10 +1,72 @@
-# Novedades (v1.61 – v2.16)
+# Novedades (v1.61 – v2.17)
 
 Una visión general orientada al usuario de las versiones desde
 v1.61.0. Las notas técnicas completas por versión están en
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v2.17.0 - Lo que sale de tu dispositivo, correcciones y exámenes
+
+- **Privacidad**: la política de privacidad se ha reescrito y está
+  disponible en los ocho idiomas de la ayuda. Describe cuándo y adónde salen
+  datos de tu dispositivo y, como texto jurídico, utiliza el trato de usted.
+  Las páginas de documentación ya no cargan nada de servidores distintos de
+  GitHub Pages, donde están alojadas, y su búsqueda ya no añade tus términos
+  de búsqueda a las direcciones de los resultados. Las imágenes y los vídeos
+  que un contenido de aprendizaje o una respuesta de la IA incrusta mediante
+  una dirección web aparecen como enlace y solo se cargan después de que
+  hagas clic, incluso si están en GitHub; las imágenes de ejercicios que un
+  set trae como archivos propios llegan con el set, como hasta ahora. Los
+  enlaces de la aplicación no envían referrer.
+- **Lectura en voz alta**: la aplicación da preferencia a una voz de tu
+  dispositivo. Una voz en línea solo lee cuando no hay ninguna voz en el
+  dispositivo para el idioma, cuando tú mismo has elegido una o cuando el
+  navegador, poco después de que se cargue una página, aún no ha comunicado
+  sus voces; entonces el navegador usa su propia voz predeterminada, que
+  puede ser una voz en línea. La X del reproductor de lectura en voz alta
+  termina la lectura en voz alta para esta lección.
+- **Informe de error e IA**: la información del entorno y el historial de
+  acciones ya no vienen marcados de antemano y solo entran en el informe si
+  los marcas. Los avisos de las revisiones con IA indican ahora qué se
+  envía. Una sesión iniciada desde un chat importado envía su apertura a la
+  IA solo una vez, no en cada recarga.
+- **Corregir errores**: si una ronda tuvo errores, el resumen compacto
+  ofrece «Corregir errores». Después, «Tus correcciones» muestra qué está
+  corregido y qué sigue pendiente, y la evaluación detallada marca cada
+  error de la misma manera. Si llegas al resumen, la lección queda
+  completada, y el resumen muestra el tiempo de esta ronda.
+- **Exámenes**: si un set trae sus propias reglas de evaluación, el examen
+  se califica según ellas. Un examen empezado solo cuenta si se hace de una
+  sola vez y vuelve a empezar en lugar de reanudarse, y una ronda empezada
+  en otro modo no continúa como examen. Puedes cambiar el modo hasta la
+  primera respuesta.
+- **Seguir aprendiendo y tocar**: una lección pausada se abre en el paso que
+  visitaste por última vez. Un toque acierta en lo que ves, también en el
+  iPhone, y un toque en una casilla ya emparejada de un ejercicio de
+  relacionar la selecciona en lugar de deshacer el par. Los avisos para
+  instalar la aplicación son tarjetas en el panel y ya no tapan ningún
+  botón.
+- **Copias de seguridad**: si importas la copia de seguridad de otro perfil,
+  el progreso de ese perfil pasa al perfil activo, y el diálogo lo indica
+  antes. Las insignias y la racha se conservan, y los repositorios
+  conectados, las invitaciones canjeadas y los informes de las revisiones
+  con IA vienen con ella.
+- **Copias de seguridad de v2.17**: restaura una copia de seguridad de esta
+  versión solo en v2.17 o posterior; las versiones anteriores omiten las
+  partes nuevas sin avisar. Actualiza la aplicación de escritorio antes de
+  restaurar en ella una copia de seguridad de la versión del navegador.
+- **Crear y compartir lecciones**: guardar localmente solo requiere una
+  lección válida, incluso con un único ejercicio; los requisitos mínimos
+  solo se aplican al compartir. «Guardar y compartir» abre la función de
+  compartir para la lección guardada, y un set que no enseña ningún idioma
+  lo compartes sin nivel.
+- **En tu idioma**: los errores de la validación de repositorios, los
+  informes en Markdown y PDF y el título en la pestaña del navegador
+  aparecen en el idioma de tu interfaz, y los lectores de pantalla leen en
+  él la comparación de respuestas y las estrellas. Cada página de ayuda
+  existe ahora en los ocho idiomas de la ayuda, y la aplicación y la ayuda
+  dicen de forma uniforme «sesión» y «racha».
 
 ## v2.16.0 - Errores que dicen qué pasó, un solo conjunto de reglas para las lecciones
 

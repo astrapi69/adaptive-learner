@@ -52,7 +52,10 @@ import {
   type SyncProgress,
   type UserContentRepo,
 } from "../../../lib/content/repos/content-repos";
-import { validateUserRepo } from "../../../lib/content/repos/content-repo-validate";
+import {
+  repoValidationReasonText,
+  validateUserRepo,
+} from "../../../lib/content/repos/content-repo-validate";
 import { clearRepoToken, resolveRepoToken, writeRepoToken } from "../../../lib/content/repos/repo-token";
 import {
   clearRepoRating,
@@ -204,7 +207,7 @@ export default function ContentRepoSettingsSection() {
           message: t(
             "content_repo.validation.failed",
             "Validation failed: {reason}",
-          ).replace("{reason}", validation.reason ?? ""),
+          ).replace("{reason}", repoValidationReasonText(validation, t)),
         });
         return;
       }
@@ -276,7 +279,7 @@ export default function ContentRepoSettingsSection() {
           notify.error(
             t("content_repo.validation.failed", "Validation failed: {reason}").replace(
               "{reason}",
-              validation.reason ?? "",
+              repoValidationReasonText(validation, t),
             ),
           );
           return;

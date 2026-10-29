@@ -9,7 +9,7 @@ Phase 58（v1.41.0）は、旧来のライト／ダークのペアを、単一�
 
 ## 推奨プリセット（Phase 63 / v1.63.0）
 
-設定 → 表示 のピッカーは、**推奨**サブタブが先頭に来ます。
+設定 > 一般 > 外観 のピッカーは、**推奨**サブタブが先頭に来ます。
 
 - **ライト：** `catppuccin-latte`、`supabase`、`graphite`
 - **ダーク：** `catppuccin-mocha`、`soft-pop`、`amethyst-haze`

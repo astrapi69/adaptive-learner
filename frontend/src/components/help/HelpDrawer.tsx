@@ -32,7 +32,12 @@ import { useGlossary } from "../../hooks/content/useGlossary";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { getGlossaryEntry, listGlossaryEntries } from "../../lib/help/help-glossary";
 import { docsUrlForSlug } from "../../lib/help/help-routes";
+import MarkdownImage from "../../shared/data-display/MarkdownImage";
 import type { GlossaryEntry } from "../../types/help";
+
+/** Glossary images go through the shared renderer like every other
+ *  Markdown surface; another host's image becomes a link (#3803). */
+const MARKDOWN_COMPONENTS = { img: MarkdownImage };
 
 /** Heuristic related-concepts extractor: scans the article's
  *  Markdown text for mentions of other glossary entry
@@ -120,6 +125,7 @@ export default function HelpDrawer() {
               rehypeSlug,
               [rehypeAutolinkHeadings, { behavior: "wrap" }],
             ]}
+            components={MARKDOWN_COMPONENTS}
           >
             {entry.long}
           </Markdown>

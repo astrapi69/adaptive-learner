@@ -15,8 +15,10 @@ verweisen hierher, statt eigene Kopien dieser Liste zu pflegen.
   Feedback, Anpassung, Wiederholung, Integration. Ein
   Dual-Prompt-Evaluator bewertet jeden Turn und entscheidet über
   Voranschreiten, Wiederholen, Überspringen oder Zurückgehen.
-- **Auto-Loop**: Ist ein Thema integriert, wählt die Sitzung ein neues
-  Unterthema und startet einen frischen Zyklus (pro Sitzung begrenzt).
+- **Auto-Loop** (Desktop-App): Ist ein Thema integriert, wählt die
+  Sitzung ein neues Unterthema und startet einen frischen Zyklus (pro
+  Sitzung begrenzt). In der Browser-Version bleibt die Sitzung bei
+  Schritt 7; die Sitzungsseite weist darauf hin.
 - **Methodenwechsel**: Stagnationserkennung empfiehlt eine andere
   Methode, wenn die Bewertungen abflachen; Annahme per Klick.
 - **Einstufungs-Assessment** (optional, unterbrechbar und fortsetzbar)
@@ -34,7 +36,9 @@ Siehe [Lernsitzungen](../user-guide/learning-session.md) und
 - **Voice**: Mikrofon-Diktat in den Chat, Vorlesen der Antworten und
   ein eigener Aussprache-Übungsmodus.
 - **Bring your own key**: Anthropic Claude, OpenAI GPT und Google
-  Gemini als separate Provider-Plugins; Live-Modell-Discovery mit
+  Gemini als separate Provider-Plugins, dazu Perplexity im Server-Modus
+  (die Desktop-App; der Browser kann Perplexity nicht direkt aufrufen);
+  Live-Modell-Discovery mit
   Empfohlen/Alle-Auswahl; Schlüsseltest pro Anbieter und ein
   Schlüssel-Tresor mit Rollback.
 - **Importierte Unterhaltungen als Tutor-Sitzung fortsetzen**, mit
@@ -91,9 +95,15 @@ Siehe [Lektionen](../user-guide/lessons.md) für die Lernenden-Sicht.
 - **Lektions-Flusskontrolle**: pausieren, am exakten Schritt
   fortsetzen, Autosave und ein Widget für pausierte Lektionen auf dem
   Dashboard.
+- **Set-Abschluss-Übersicht**: nach der letzten Lektion eines Sets
+  jeder Fehler des ganzen Sets in einer Ansicht - Summen, nach Lektion,
+  nach Übungstyp und die Elemente, die dir immer wieder misslingen, mit
+  deiner letzten falschen Antwort neben der richtigen.
 - 0-3-Sterne-Bewertung, Favoriten, Nächste-Schritte-Vorschläge,
   Auto-Teilung übergroßer Lektionen und Theorie-Rücksprünge aus
   Übungen.
+
+Siehe [Set-Abschluss-Übersicht](set-summary.md).
 
 ## Lektionserstellung (Create-Lesson)
 
@@ -117,8 +127,13 @@ Siehe [Lektionen](../user-guide/lessons.md) für die Lernenden-Sicht.
   Sets über eine Lektionsauswahl bearbeiten, eigene Lektionen zu einem
   Set kombinieren und eine Inhalts-Domäne wählen (Sprachen plus
   Wissensdomänen).
+- **Mentor-Modus**: beim Durchspielen einer eigenen Lektion notierst
+  du, was wo nicht stimmt; die Notizen werden auf der Zusammenfassung
+  zur Abarbeitungsliste und im Editor abgearbeitet, ohne deinen
+  Lernfortschritt anzutasten.
 
-Siehe [Lektionen erstellen](../content-creation/overview.md).
+Siehe [Lektionen erstellen](../content-creation/overview.md) und
+[Mentor-Modus](../content-creation/mentor-mode.md).
 
 ## Import und Analyse
 
@@ -159,11 +174,25 @@ Siehe [Content-Browser](content-browser.md),
 - **XP und Level** mit sichtbarem XP-Badge und Belohnung pro Lektion.
 - **Gestufter Badge-Katalog** (Bronze/Silber/Gold; gesperrte Badges
   bleiben sichtbar mit Freischalt-Hinweis).
-- **Streaks** mit Heatmap und **tägliche Missionen** (bis zu drei
+- **Serien** mit Heatmap und **tägliche Missionen** (bis zu drei
   adaptive Ziele pro Tag).
 - **Celebrations**: verdientes, in der Intensität einstellbares Lob,
   Meilenstein-Overlays, optionale Sounds, alles
   reduced-motion-sicher.
+- **Spielmodus**: verspielte Lektionen mit sichtbarer Antwort-Serie,
+  eigenen Sounds, optionalen Herzen und Countdown, Serien-Bonus-XP und
+  dem Maskottchen Lernfunke mit Farbvarianten, die sich mit Level,
+  Badges oder XP freischalten.
+- **Arcade**: vier kurze Minispiele über eine Dashboard-Karte -
+  Lern-Memory mit Paaren aus deinen eigenen Lektionen (frei), dazu
+  Tic-Tac-Toe, Snake und Simon, freigeschaltet mit XP. Die Spiele selbst
+  bringen keine XP.
+- **Avatar**: ein eigenes Bild hochladen oder eine von acht
+  vorgefertigten Figuren wählen, mit Zierrahmen, die sich mit Level,
+  Serie oder XP freischalten.
+
+Siehe [Lob und Belohnungen](../user-guide/celebrations.md) und
+[Arcade](arcade.md).
 
 ## Exporte und Backup
 
@@ -193,8 +222,6 @@ Siehe [Backup und Wiederherstellung](backup.md).
 - **Zwei Speichermodi**: Local-First (alles im Browser-IndexedDB,
   KI-Calls gehen direkt zum Anbieter, kein Server nötig) oder
   Server-Modus (FastAPI-Backend mit SQLite, mehrere Geräte).
-- **Lokales-Netzwerk-Sync** zwischen Geräten mit QR-Code-Pairing und
-  Konfliktauflösung.
 - **Desktop-Launcher** für Linux, macOS und Windows: Docker-basiertes
   Ein-Klick-Self-Hosting mit kontextbewusster Docker-Erkennung und
   Selbstdiagnose.
@@ -214,7 +241,8 @@ Siehe [Installation](../install/launcher.md).
 - **Tastatur zuerst**: globale Shortcuts mit Hilfe-Overlay, Enter
   schaltet in Lektionen weiter, Tab springt durch Lückentext-Lücken.
 - **Screenreader-Unterstützung**: Landmarks, ARIA-Labels und
-  Live-Regionen, Daten-Tabellen zu Diagrammen,
+  Live-Regionen, ein Seitentitel pro Seite in der UI-Sprache
+  („Einstellungen - Adaptive Learner"), Daten-Tabellen zu Diagrammen,
   Dialog-Fokus-Management.
 - **Reduzierte Bewegung** wird überall respektiert; Vorlesen (TTS) für
   Lektionen und Chat.

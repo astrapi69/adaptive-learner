@@ -25,3 +25,8 @@ install.sh   text eol=lf
 # PR view (as it does for npm's package-lock.json). It is committed and
 # reviewed via `bun install` output, not by hand.
 frontend/bun.lock linguist-generated=true
+
+# #3800 - vendored Mermaid for the docs site: third-party, minified, never
+# edited here. No line diffs, and not counted as this repository's code.
+docs/help/assets/javascripts/mermaid-*.min.js -diff linguist-vendored
+docs/help/assets/javascripts/mermaid-*.min.js.LICENSE.txt linguist-vendored

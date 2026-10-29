@@ -1708,7 +1708,7 @@
       },
       "ExerciseVariable": {
         "additionalProperties": false,
-        "description": "One variable of a parametric exercise (schema v1.14, engine#151). SAMPLED when it carries ``min`` and ``max`` (optional ``step``; integers when ``step`` is absent, else multiples of ``step`` from ``min``): the consumer draws a value per attempt. COMPUTED when it carries ``expression`` (arithmetic over variables declared EARLIER in the same ``variables`` list: decimal numbers, names, ``+ - * /``, parentheses, unary minus): the consumer evaluates it after sampling. Exactly one of the two shapes (semantic rule E-VAR-KIND). ``tolerance`` is the absolute tolerance a consumer applies when this variable's value is an accepted answer. Any string field of the exercise may reference a variable as ``{{name}}``; the consumer substitutes every occurrence before rendering and grading. The engine validates the contract and never samples or evaluates.",
+        "description": "One variable of a parametric exercise (schema v1.14, engine#151). SAMPLED when it carries ``min`` and ``max`` (optional ``step``; integers when ``step`` is absent, else multiples of ``step`` from ``min``): the consumer draws a value per attempt. COMPUTED when it carries ``expression`` (arithmetic over variables declared EARLIER in the same ``variables`` list: decimal numbers, names, ``+ - * /``, parentheses, unary minus): the consumer evaluates it after sampling. Exactly one of the two shapes (semantic rule E-VAR-KIND). ``tolerance`` is the absolute tolerance a consumer applies when this variable's value is an accepted answer. Any string field of the exercise may reference a variable as ``{{name}}``; the consumer substitutes every occurrence before rendering and grading. The engine validates the contract and offers the sampling and evaluation as pure helpers, ``resolveExerciseVariables`` and ``evaluateExpression`` (engine#220), which a consumer may call; the random source is a parameter.",
         "properties": {
           "expression": {
             "anyOf": [
@@ -3582,6 +3582,19 @@
             ],
             "title": "Paused At"
           },
+          "recent_steps": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Recent Steps",
+            "type": "array"
+          },
+          "run_time_seconds": {
+            "default": 0,
+            "title": "Run Time Seconds",
+            "type": "integer"
+          },
           "score_correct": {
             "title": "Score Correct",
             "type": "integer"
@@ -3727,6 +3740,17 @@
             "minLength": 1,
             "title": "Source",
             "type": "string"
+          },
+          "step_event": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StepEventIn"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "#3365 - the learner action this write records. Appended to ``recent_steps`` (the last ten are kept). Omitted records nothing."
           },
           "step_result": {
             "anyOf": [
@@ -5167,6 +5191,18 @@
             ],
             "title": "Downloaded At"
           },
+          "evaluation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluation"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -5181,6 +5217,11 @@
           },
           "level": {
             "title": "Level",
+            "type": "string"
+          },
+          "review_status": {
+            "default": "authored",
+            "title": "Review Status",
             "type": "string"
           },
           "source": {
@@ -5603,6 +5644,58 @@
           "server_time"
         ],
         "title": "StatusResponse",
+        "type": "object"
+      },
+      "StepEventIn": {
+        "description": "One learner action on a lesson, logged in ``recent_steps`` (#3365).\n\n``step`` is arriving on a step (forward or back), ``answer`` a graded\ncheck, ``pause`` the pause dialog or button, ``exit`` leaving the\nlesson by navigation, ``restart`` a confirmed start-over, ``complete``\nreaching the summary. Autosave, timers, app switches, mode switches,\nhints and read-aloud are not actions. The server stamps the time.",
+        "properties": {
+          "correct": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correct"
+          },
+          "kind": {
+            "enum": [
+              "step",
+              "answer",
+              "pause",
+              "exit",
+              "restart",
+              "complete"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "step_id": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step Id"
+          },
+          "step_index": {
+            "minimum": 0.0,
+            "title": "Step Index",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "step_index"
+        ],
+        "title": "StepEventIn",
         "type": "object"
       },
       "StepResultIn": {
@@ -7015,6 +7108,40 @@
           "language"
         ],
         "title": "_PronunciationPhraseOut",
+        "type": "object"
+      },
+      "_PurchaseBody": {
+        "properties": {
+          "already_paid": {
+            "default": false,
+            "title": "Already Paid",
+            "type": "boolean"
+          },
+          "cost": {
+            "maximum": 100000.0,
+            "minimum": 0.0,
+            "title": "Cost",
+            "type": "integer"
+          },
+          "item_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Item Id",
+            "type": "string"
+          },
+          "item_kind": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Item Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_kind",
+          "item_id",
+          "cost"
+        ],
+        "title": "_PurchaseBody",
         "type": "object"
       },
       "_RatingBody": {
@@ -10724,6 +10851,107 @@
           }
         },
         "summary": "Award Import",
+        "tags": [
+          "Gamification"
+        ]
+      }
+    },
+    "/api/plugins/gamification/xp/{user_id}/purchases": {
+      "get": {
+        "description": "#3445 - the purchase ledger; ownership is derived from it.",
+        "operationId": "list_purchases_api_plugins_gamification_xp__user_id__purchases_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response List Purchases Api Plugins Gamification Xp  User Id  Purchases Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Purchases",
+        "tags": [
+          "Gamification"
+        ]
+      },
+      "post": {
+        "description": "#3445 - buy an item: the deduction and the ledger row are one event.",
+        "operationId": "purchase_item_api_plugins_gamification_xp__user_id__purchases_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/_PurchaseBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Purchase Item Api Plugins Gamification Xp  User Id  Purchases Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Purchase Item",
         "tags": [
           "Gamification"
         ]

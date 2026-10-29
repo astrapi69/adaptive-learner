@@ -28,6 +28,7 @@ import {SHARE_URL} from "../../../lib/share/generate-share-text";
 import {notify} from "../../../utils/notify";
 import {readBackupFile} from "../../../lib/backup/validateBackupFile";
 import {SettingsSection} from "../SettingsSection";
+import {backupOwnerId} from "../../../storage/backup";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../../../types/domain";
 import {BackupAutoBackups} from "./BackupAutoBackups";
 import {BackupCompareSection} from "./BackupCompareSection";
@@ -59,9 +60,9 @@ function daysSince(iso: string | null): number | null {
 // DangerZone pre-reset backup button can produce identical files.
 import {saveBackupToDisk, backupFilename} from "../../../utils/backup-download";
 import {
-    restoreLocalStorageSnapshot,
-    withLocalStorageSnapshot,
-} from "../../../lib/backup/localStorageSnapshot";
+    exportPortableBackup,
+    restoreClientSnapshots,
+} from "../../../lib/backup/portableBackup";
 
 interface ComparisonRow {
     table: string;
@@ -170,6 +171,12 @@ function BackupActionToolbar({
 /** The pre-restore confirmation panel: the current-vs-backup row-count
  *  table, the optional per-table diff preview, and the Confirm / Cancel
  *  actions. */
+/** Whether ``payload`` was made by another learner than ``userId`` (#3785). */
+function isForeignBackup(payload: BackupPayload, userId: string): boolean {
+    const owner = backupOwnerId(payload);
+    return owner !== null && owner !== userId;
+}
+
 function RestoreConfirmPanel({
     comparison,
     currentSnapshot,
@@ -179,6 +186,7 @@ function RestoreConfirmPanel({
     onConfirm,
     onCancel,
     onCounts,
+    foreignOwner,
     t,
 }: {
     comparison: ComparisonRow[];
@@ -189,6 +197,8 @@ function RestoreConfirmPanel({
     onConfirm: () => void;
     onCancel: () => void;
     onCounts: (counts: RestoreDiffCounts) => void;
+    /** #3785 - the backup was made by another learner than the active one. */
+    foreignOwner: boolean;
     t: Translate;
 }) {
     return (
@@ -203,6 +213,18 @@ function RestoreConfirmPanel({
                     "Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.",
                 )}
             </p>
+            {foreignOwner && (
+                <p
+                    role="note"
+                    className="rounded-app border border-warning bg-[var(--warning-bg)] px-3 py-2 text-sm text-warning"
+                    data-testid="backup-foreign-owner"
+                >
+                    {t(
+                        "backup.foreign_owner_notice",
+                        "This backup belongs to another learner profile. Its progress is added to the active profile and merged with it: lessons, mistakes and history are added, XP, streak and settings are taken from the backup. The active profile stays active.",
+                    )}
+                </p>
+            )}
             <table className="backup-comparison-table w-full text-sm">
                 <thead>
                     <tr>
@@ -490,12 +512,11 @@ export default function BackupSection() {
         }
         setBusy("export");
         try {
-            // Attach a localStorage snapshot (preferences + contributions
-            // that don't live in the DB tables) so the backup is portable
-            // across a browser reset / device migration (P1 offline parity).
-            const payload = withLocalStorageSnapshot(
-                await storage.backup.export(userId),
-            );
+            // The storage export plus the localStorage snapshot (preferences,
+            // contributions) and the plugin settings (connected repos,
+            // invites; #3412), so the backup is portable across a browser
+            // reset / device migration (P1 offline parity).
+            const payload = await exportPortableBackup(userId);
             const filename = backupFilename(userId);
             const outcome = await saveBackupToDisk(payload, filename);
             if (outcome.method === "cancelled") {
@@ -631,14 +652,12 @@ export default function BackupSection() {
         setBusy("import");
         try {
             const summary = await storage.backup.import(userId, pendingPayload);
-            // Restore the localStorage snapshot (preferences + contributions)
-            // frontend-side, in both storage modes — the backend ignores the
-            // payload's local_storage block. Legacy backups carry none -> no-op.
-            const localApplied = await restoreLocalStorageSnapshot(
-                pendingPayload.local_storage,
-            );
+            // Restore the localStorage snapshot and the plugin settings
+            // (#3412) frontend-side, in both storage modes — the backend
+            // ignores both blocks. Legacy backups carry none -> no-op.
+            const clientApplied = await restoreClientSnapshots(pendingPayload, userId);
             // eslint-disable-next-line no-console -- round-trip trace, see below
-            console.log("[Backup] localStorage keys applied:", localApplied);
+            console.log("[Backup] client snapshots applied:", clientApplied);
             // #126 — surface the full result in the browser console so a
             // real Export -> Import round-trip is debuggable without a
             // backend log. Errors are logged separately as a list.
@@ -837,6 +856,7 @@ export default function BackupSection() {
                     onConfirm={handleConfirmRestore}
                     onCancel={handleCancelRestore}
                     onCounts={setRestoreDiffCounts}
+                    foreignOwner={isForeignBackup(pendingPayload, userId)}
                     t={t}
                 />
             )}

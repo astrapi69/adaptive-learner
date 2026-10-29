@@ -4,8 +4,11 @@
 offline, playable format as downloaded content sets. You can make a
 lesson from an analysed chat, save a good adaptive lesson for replay,
 export a lesson to share with someone else, and import lessons others
-have shared. Everything works offline; nothing is uploaded to a
-server.
+have shared. These steps work offline, and your lessons stay on your
+device until you use a feature that passes them on, for example a
+community contribution (pull request) or "Share as repository", which
+upload the lesson to GitHub, or an AI check, which sends its content
+to your AI provider.
 
 You'll find My Lessons at the top of the **Set Browser** (`/content`),
 above the downloaded sets.
@@ -82,23 +85,58 @@ generator changes in a later version.
 
 ## Export and share
 
-Each My Lesson can be shared, with no account and no server:
+Each My Lesson can be shared. Exporting needs no account; the community
+pull request needs a GitHub account. A GitHub token speeds up the pull
+request and is needed for sharing a whole set as your own repository:
 
 - **Export** - download the lesson as a single `.json` file.
 - **Export as set** - download a content-set `.zip` (manifest +
   lessons).
-- **Share with Community** - opens a pre-filled **pull request** on
-  the official content repository. The lesson JSON lands at the
-  correct path in the content tree and the repository's validation
-  runs automatically; a maintainer reviews and merges it so everyone
-  can download it. Small lessons open straight in GitHub's create-file
-  editor (the PR title and description are pre-filled); larger lessons
-  download the file first and open GitHub's upload page so you drag it
-  in. No account token is needed - GitHub creates the fork and the
-  pull request for you.
+- **Share with Community** - leads to a **pull request** in the
+  official content repository. The lesson JSON lands at the right path
+  in the content tree, and the repository's validation runs
+  automatically. The pull request is publicly visible on GitHub as soon
+  as it exists. A maintainer reviews it; if they accept it, everyone
+  can download the lesson. The pull request comes about in one of two
+  ways:
+    - **Without a token** - for a single lesson the app opens GitHub's
+      file editor at the right path, with the PR title and description
+      pre-filled. The path, title and description are in the address
+      the app opens the editor with, and for a small lesson its content
+      too; GitHub receives all of this as soon as the editor opens,
+      before you confirm anything. For a larger lesson the app
+      downloads the file first, and you paste its content into the
+      editor. For a set with several lessons the app downloads the
+      files and opens GitHub's upload page, where you drag them in. In
+      all of these cases, GitHub creates the fork and the pull request
+      only once you confirm on GitHub.
+    - **With a GitHub token** (Settings > Integrations, see
+      [Settings](settings.md#integrations)) - a single lesson is shared
+      without leaving the app: the app forks the repository, commits the
+      lesson and opens the pull request, then shows you its link. A set
+      with several lessons still takes the way without a token. If
+      GitHub rejects the token, the message points you to Settings >
+      Integrations.
+- **Share as repository** - pushes the whole set, in the content-repo
+  format, to a GitHub repository of yours (created if it does not exist
+  yet) in one commit. You choose the repository (`owner/name`) and the
+  branch and, if the repository is newly created, whether it is private
+  or public; an existing one keeps its visibility. A quality check runs
+  first: if it finds problems that a content repository's checks would
+  reject, it lists them and the button turns into **Export anyway**.
+  Sharing as a repository needs a GitHub token and is only available in
+  the browser version of the app; otherwise the button stays visible but
+  disabled, with the reason as its tooltip. The pushed repository can
+  then be connected as a content source (see
+  [Content repositories](../features/content-repos.md)).
 
-Exported files contain only the lesson content - no progress, no
-error history, nothing personal.
+What you share or export contains the lesson content, but no learning
+progress and no error history from the app. Whatever is in the lesson
+goes along with it, personal content too: for example your name, if you
+enter it when sharing and have it shown (it is then in the lesson and in
+the pull request), and, for a lesson from a chat analysis, everything
+the analysis found, including vocabulary and example sentences from your
+chat, your strengths and weaknesses and your frequent error patterns.
 
 ---
 

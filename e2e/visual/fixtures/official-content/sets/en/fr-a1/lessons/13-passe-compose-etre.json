@@ -1,0 +1,441 @@
+{
+  "id": "13-passe-compose-etre",
+  "title": "Le passé composé avec être",
+  "description": "Past tense for movement and state verbs that take être instead of avoir, with past-participle agreement for the subject.",
+  "estimated_minutes": 15,
+  "cards": [
+    {
+      "id": "verb-aller",
+      "stable_id": "card-ms9433kl4r3yh",
+      "front": "aller",
+      "back": "to go",
+      "notes": "Takes **être** in the passé composé. Irregular past participle: **allé**. *Je suis allé(e)*, I went.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-venir",
+      "stable_id": "card-ms9433kl4r4fx",
+      "front": "venir",
+      "back": "to come",
+      "notes": "Takes **être**. Past participle: **venu**. *Elle est venue*, she came.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-arriver",
+      "stable_id": "card-ms9433kl4r5ay",
+      "front": "arriver",
+      "back": "to arrive",
+      "notes": "Takes **être**. Past participle: **arrivé**. *Nous sommes arrivés*, we arrived.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-partir",
+      "stable_id": "card-ms9433kl4r6qu",
+      "front": "partir",
+      "back": "to leave",
+      "notes": "Takes **être**. Past participle: **parti**. *Ils sont partis*, they left.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-rester",
+      "stable_id": "card-ms9433kl4r7zs",
+      "front": "rester",
+      "back": "to stay",
+      "notes": "A **state** verb, still takes **être**. Past participle: **resté**. *Il est resté*, he stayed.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-tomber",
+      "stable_id": "card-ms9433kl4r8c2",
+      "front": "tomber",
+      "back": "to fall",
+      "notes": "Takes **être**. Past participle: **tombé**. *Elle est tombée*, she fell.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-entrer",
+      "stable_id": "card-ms9433kl4r97k",
+      "front": "entrer",
+      "back": "to enter / go in",
+      "notes": "Takes **être**. Past participle: **entré**. *Je suis entré(e)*, I went in.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-sortir",
+      "stable_id": "card-ms9433kl4rae8",
+      "front": "sortir",
+      "back": "to go out",
+      "notes": "Takes **être**. Past participle: **sorti**. *Nous sommes sortis*, we went out.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-rentrer",
+      "stable_id": "card-ms9433kl4rb7s",
+      "front": "rentrer",
+      "back": "to come home / go back",
+      "notes": "Takes **être**. Past participle: **rentré**. *Elle est rentrée*, she came home.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-monter",
+      "stable_id": "card-ms9433kl4rco7",
+      "front": "monter",
+      "back": "to go up",
+      "notes": "Takes **être**. Past participle: **monté**. *Ils sont montés*, they went up.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-descendre",
+      "stable_id": "card-ms9433kl4rdz1",
+      "front": "descendre",
+      "back": "to go down",
+      "notes": "Takes **être**. Irregular past participle: **descendu**. *Elle est descendue*, she went down.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    },
+    {
+      "id": "verb-naitre",
+      "stable_id": "card-ms9433kl4re99",
+      "front": "naître",
+      "back": "to be born",
+      "notes": "Takes **être**. Irregular past participle: **né**. *Je suis né(e) en 2000*, I was born in 2000.",
+      "tags": [
+        "verb",
+        "etre-verb"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "A small group uses être",
+      "body": "# Le passé composé avec être\n\nIn lesson 10 you built the passé composé with **avoir** + past participle: *J'ai mangé*, *Elle a regardé*. That covers most verbs.\n\nBut a **small, fixed group** uses **être** instead of avoir. These are mostly verbs of **movement** (coming, going, arriving, leaving) and a few of **state** (staying, being born).\n\n> **être** (conjugated) + **past participle**\n\n- *Je **suis allé** au marché.* - I went to the market.\n- *Elle **est venue** hier.* - She came yesterday.\n- *Nous **sommes arrivés** ce matin.* - We arrived this morning.\n\nTeachers call this group **la maison d'être** (the \"house of être\"): **aller, venir, arriver, partir, entrer, sortir, monter, descendre, rester, tomber, naître, mourir**. Most come in opposite pairs (go up / go down, arrive / leave, enter / exit), which makes them easier to remember.\n\nThis lesson focuses on getting comfortable **producing** these forms yourself."
+    },
+    {
+      "id": "ex-match-etre-verbs",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "Match être-verbs to English",
+      "exercise": {
+        "id": "ex-match-etre-verbs",
+        "stable_id": "ex-ms9433kl4rfyk",
+        "type": "matching",
+        "prompt": "Match each être-verb with its English meaning.",
+        "card_ids": [
+          "verb-aller",
+          "verb-venir",
+          "verb-arriver",
+          "verb-partir",
+          "verb-rester"
+        ],
+        "pairs": [
+          {
+            "left": "aller",
+            "right": "to go"
+          },
+          {
+            "left": "venir",
+            "right": "to come"
+          },
+          {
+            "left": "arriver",
+            "right": "to arrive"
+          },
+          {
+            "left": "partir",
+            "right": "to leave"
+          },
+          {
+            "left": "rester",
+            "right": "to stay"
+          }
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "ex-match-participles",
+      "type": "exercise",
+      "theory_ref": "intro",
+      "title": "Match participle to infinitive",
+      "exercise": {
+        "id": "ex-match-participles",
+        "stable_id": "ex-ms9433kl4rgja",
+        "type": "matching",
+        "prompt": "Match each past participle with its infinitive.",
+        "card_ids": [
+          "verb-aller",
+          "verb-venir",
+          "verb-descendre",
+          "verb-naitre",
+          "verb-sortir"
+        ],
+        "pairs": [
+          {
+            "left": "allé",
+            "right": "aller"
+          },
+          {
+            "left": "venu",
+            "right": "venir"
+          },
+          {
+            "left": "descendu",
+            "right": "descendre"
+          },
+          {
+            "left": "né",
+            "right": "naître"
+          },
+          {
+            "left": "sorti",
+            "right": "sortir"
+          }
+        ],
+        "direction": "target_to_source"
+      }
+    },
+    {
+      "id": "step-agreement",
+      "type": "theory",
+      "title": "The participle agrees with the subject",
+      "body": "## Agreement: the big difference from avoir\n\nWith **être**, the past participle **agrees** with the subject, exactly like an adjective.\n\n- **Feminine** subject: add **-e**\n- **Plural** subject: add **-s**\n- **Feminine plural**: add **-es**\n\nUsing **aller** (allé):\n\n| Subject | Form | Meaning |\n|---|---|---|\n| il | il est **allé** | he went |\n| elle | elle est **allée** | she went |\n| ils (masc.) | ils sont **allés** | they went |\n| elles (fem.) | elles sont **allées** | they went |\n\nAll four sound the **same** when spoken, the agreement only shows in **spelling**. But spelling it correctly matters in writing.\n\n*Nous sommes arrivés* (a mixed or male group), *nous sommes arrivées* (an all-female group)."
+    },
+    {
+      "id": "ex-free-she-went",
+      "type": "exercise",
+      "theory_ref": "step-agreement",
+      "title": "She went to Paris",
+      "exercise": {
+        "id": "ex-free-she-went",
+        "stable_id": "ex-ms9433kl4rh7m",
+        "type": "free_text",
+        "prompt": "Translate: *She went to Paris.* (Use être. Watch the feminine agreement on the participle.)",
+        "card_ids": [
+          "verb-aller"
+        ],
+        "accept": [
+          "Elle est allée à Paris.",
+          "elle est allée à Paris",
+          "Elle est allee a Paris."
+        ],
+        "hint": "*Elle est* + *allé* + **-e** (feminine) + *à Paris*.",
+        "distractors": [
+          "Elle a allé à Paris.",
+          "Elle est allé à Paris.",
+          "Elle va à Paris."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-tile-i-arrived",
+      "type": "exercise",
+      "theory_ref": "step-agreement",
+      "title": "Build: I arrived yesterday",
+      "exercise": {
+        "id": "ex-tile-i-arrived",
+        "stable_id": "ex-ms9433kl4rim8",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *I arrived yesterday.* (masculine speaker)",
+        "card_ids": [
+          "verb-arriver"
+        ],
+        "tiles": [
+          "Je",
+          "suis",
+          "arrivé",
+          "hier"
+        ],
+        "hint": "Subject + form of *être* + participle + time marker.",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-pick-they-left",
+      "type": "exercise",
+      "theory_ref": "step-agreement",
+      "title": "They (fem.) left",
+      "exercise": {
+        "id": "ex-pick-they-left",
+        "stable_id": "ex-ms9433kl4rj3t",
+        "type": "picture_choice",
+        "prompt": "Which is correct for *they (feminine) left*?",
+        "card_ids": [
+          "verb-partir"
+        ],
+        "images": [
+          {
+            "src": "assets/img/departure-train-1.png",
+            "label": "Elles sont parties",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/departure-train-2.png",
+            "label": "Elles ont parti"
+          },
+          {
+            "src": "assets/img/departure-train-3.png",
+            "label": "Elles sont parti"
+          },
+          {
+            "src": "assets/img/departure-train-4.png",
+            "label": "Elles est parties"
+          }
+        ],
+        "hint": "*partir* takes *être*; *elles* is feminine plural, so add **-es** to the participle.",
+        "distractors": [
+          "Elles ont parti",
+          "Elles sont parti",
+          "Elles est parties"
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "step-avoir-vs-etre",
+      "type": "theory",
+      "title": "Avoir vs être side by side",
+      "body": "## Choosing the right auxiliary\n\nMost verbs take **avoir** (lesson 10). Only the small être-group takes **être**. Compare:\n\n| With avoir (no agreement) | With être (agreement) |\n|---|---|\n| J'**ai** mangé, I ate | Je **suis** allé(e), I went |\n| Elle **a** regardé, she watched | Elle **est** venue, she came |\n| Ils **ont** travaillé, they worked | Ils **sont** sortis, they went out |\n\nTwo things change with être:\n\n1. The **auxiliary** is *suis / es / est / sommes / êtes / sont* instead of *ai / as / a / avons / avez / ont*.\n2. The **participle agrees** with the subject (-e, -s, -es).\n\n> Quick test: is the verb about **going / coming / moving / staying / being born**? If yes, it probably takes **être**. Everything else takes **avoir**.\n\n- *J'ai mangé* (avoir, eating is not movement)\n- *Je suis allé* (être, going is movement)"
+    },
+    {
+      "id": "ex-free-we-came",
+      "type": "exercise",
+      "theory_ref": "step-avoir-vs-etre",
+      "title": "We came this morning",
+      "exercise": {
+        "id": "ex-free-we-came",
+        "stable_id": "ex-ms9433kl4rk8s",
+        "type": "free_text",
+        "prompt": "Translate: *We came this morning.* (masculine/mixed group)",
+        "card_ids": [
+          "verb-venir"
+        ],
+        "accept": [
+          "Nous sommes venus ce matin.",
+          "nous sommes venus ce matin",
+          "Nous sommes venus ce matin"
+        ],
+        "hint": "*Nous sommes* + *venu* + **-s** (plural) + *ce matin*.",
+        "distractors": [
+          "Nous avons venu ce matin.",
+          "Nous sommes venu ce matin.",
+          "Nous venons ce matin."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-tile-she-came-home",
+      "type": "exercise",
+      "theory_ref": "step-avoir-vs-etre",
+      "title": "Build: She came home",
+      "exercise": {
+        "id": "ex-tile-she-came-home",
+        "stable_id": "ex-ms9433kl4rla9",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *She came home.*",
+        "card_ids": [
+          "verb-rentrer"
+        ],
+        "tiles": [
+          "Elle",
+          "est",
+          "rentrée",
+          "à",
+          "la",
+          "maison"
+        ],
+        "hint": "*Elle est* + feminine participle (*rentré* + **-e**) + *à la maison*.",
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-he-stayed",
+      "type": "exercise",
+      "theory_ref": "step-avoir-vs-etre",
+      "title": "He stayed home",
+      "exercise": {
+        "id": "ex-free-he-stayed",
+        "stable_id": "ex-ms9433kl4rmtl",
+        "type": "free_text",
+        "prompt": "Translate: *He stayed home.* (Remember: *rester* takes être.)",
+        "card_ids": [
+          "verb-rester"
+        ],
+        "accept": [
+          "Il est resté à la maison.",
+          "il est resté à la maison",
+          "Il est reste a la maison."
+        ],
+        "hint": "*Il est* + *resté* + *à la maison*. Masculine subject = no extra ending.",
+        "distractors": [
+          "Il a resté à la maison.",
+          "Il est restée à la maison.",
+          "Il reste à la maison."
+        ],
+        "direction": "source_to_target"
+      }
+    },
+    {
+      "id": "ex-free-they-fell",
+      "type": "exercise",
+      "theory_ref": "step-avoir-vs-etre",
+      "title": "They fell",
+      "exercise": {
+        "id": "ex-free-they-fell",
+        "stable_id": "ex-ms9433kl4rn8r",
+        "type": "free_text",
+        "prompt": "Translate: *They fell.* (Use feminine *they*: elles.)",
+        "card_ids": [
+          "verb-tomber"
+        ],
+        "accept": [
+          "Elles sont tombées.",
+          "elles sont tombées",
+          "Elles sont tombees."
+        ],
+        "hint": "*Elles sont* + *tombé* + **-es** (feminine plural).",
+        "distractors": [
+          "Elles ont tombé.",
+          "Elles sont tombé.",
+          "Elles sont tombés."
+        ],
+        "direction": "source_to_target"
+      }
+    }
+  ]
+}

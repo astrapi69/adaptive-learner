@@ -5,7 +5,10 @@
 # session or imported conversation. This avoids surprise AI cost
 # at session-end.
 settings:
-  # Maximum cards the extractor asks the AI to emit per call.
+  # INTERNAL: power-user cost knob, edit via YAML only.
+  # Maximum cards the extractor asks the AI to emit per call
+  # (session and conversation extraction, both storage modes).
   # Higher values mean longer (more expensive) AI responses with
-  # diminishing returns; 8 is the spec-recommended default.
+  # diminishing returns; 8 is the spec-recommended default. A
+  # value that is not a positive integer falls back to 8.
   extraction_limit: 8

@@ -66,8 +66,10 @@ export default function ContentHub() {
   const [params, setParams] = useSearchParams();
   const order = useContentTabOrder();
 
-  // Deep link wins; otherwise the first configured tab is the start tab.
-  const active = tabFromParam(params.get("tab")) ?? order[0];
+  // Deep link wins; ``?share`` (from "Save & share" in the lesson creator,
+  // #3660) means My content; otherwise the first configured tab.
+  const active =
+    tabFromParam(params.get("tab")) ?? (params.has("share") ? "my" : order[0]);
 
   const labels: Record<TabId, string> = {
     discover: t("discover.tab.discover", "Discover"),

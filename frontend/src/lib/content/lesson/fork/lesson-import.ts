@@ -14,11 +14,10 @@
  * exact schema the viewer expects.
  */
 
-import { parse as parseYaml } from "yaml";
 
 import type { ContentLesson } from "../../../../storage/types";
 import { slugify, validateGeneratedLesson } from "../../analysis/analysis-to-lesson";
-import { resolveLanguagePair } from "../../engine";
+import { parseManifest, resolveLanguagePair, type ParsedManifest } from "../../engine";
 
 export interface ImportedSet {
   set_id: string;
@@ -125,14 +124,22 @@ async function parseJsonLesson(file: File): Promise<ImportParseResult> {
   }
   try {
     const lesson = asValidLesson(parsed);
+    // #3395: the lesson's own pair, resolved like a manifest's; a lesson
+    // that names none keeps the en/en the ZIP path also falls back to.
+    // The lesson schema allows ``null`` here, the engine reads absent.
+    const pair = resolveLanguagePair({
+      target_language: lesson.target_language ?? undefined,
+      source_language: lesson.source_language ?? undefined,
+    });
+    const targetLanguage = pair.target || "en";
     return {
       ok: true,
       set: {
         set_id: importSetId(lesson.title || lesson.id),
         title: lesson.title,
-        language: "en",
-        target_language: "en",
-        source_language: "en",
+        language: targetLanguage,
+        target_language: targetLanguage,
+        source_language: pair.source,
         level: "imported",
         description: lesson.description ?? null,
         lessons: [lesson],
@@ -156,21 +163,11 @@ async function parseZipSet(file: File): Promise<ImportParseResult> {
   if (!manifestFile) {
     return { ok: false, error: "ZIP is missing manifest.yaml" };
   }
-  let manifest: {
-    name?: string;
-    description?: string;
-    sets?: Array<{
-      id?: string;
-      title?: string;
-      language?: string;
-      target_language?: string;
-      source_language?: string;
-      level?: string;
-      description?: string;
-    }>;
-  };
+  // #3395 - the engine's manifest parser, not a second YAML read with its
+  // own shape: one deserialiser for every manifest the app reads.
+  let manifest: ParsedManifest;
   try {
-    manifest = parseYaml(await manifestFile.async("string")) ?? {};
+    manifest = parseManifest(await manifestFile.async("string")) ?? {};
   } catch (err) {
     return {
       ok: false,

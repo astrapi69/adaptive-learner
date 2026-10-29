@@ -15,7 +15,10 @@
  * renamed there, update this list (a future enhancement could generate it).
  */
 
-import {expect, type Locator, type Page} from "@playwright/test";
+import {existsSync, readFileSync} from "node:fs";
+import {extname, join, normalize} from "node:path";
+
+import {expect, test, type Locator, type Page, type Route} from "@playwright/test";
 
 import {completeAssessment, completeOnboarding, declineDraftPrompt} from "../helpers";
 import {
@@ -29,6 +32,29 @@ import {
     randomPinInitScript,
     randomPinProblem,
 } from "../../frontend/src/test-utils/visual-pins";
+
+/**
+ * Skip a shot whose surface could not be reached, unless the shot already
+ * has a committed baseline (#3427, the #2704 rule): then the surface WAS
+ * reachable, so failing to reach it now is a regression, and a skip would
+ * silently drop it from the gate. A surface without a baseline yet (new,
+ * or deleted for a re-render, #3023) may still skip.
+ *
+ * @example
+ * const ready = await gotoSurface(page, surface);
+ * skipUnlessBaselined(ready, `${surface}-${viewport}.png`, surface);
+ */
+export function skipUnlessBaselined(ready: boolean, shotName: string, what: string): void {
+    if (ready) return;
+    const baseline = test.info().snapshotPath(shotName);
+    if (existsSync(baseline)) {
+        throw new Error(
+            `Could not reach ${what}, but ${shotName} has a committed baseline - ` +
+                "a baselined surface must fail, not skip (#3427)",
+        );
+    }
+    test.skip(true, `Could not reach ${what} deterministically (no baseline yet)`);
+}
 
 /** All 12 registered themes (6 recommended + 6 classic). */
 export const THEME_IDS = [
@@ -346,6 +372,11 @@ const BOOKS_YAML_FIXTURE = {
  * JSON superset, so the object bodies parse unchanged for the ``.yaml`` files.
  */
 export async function pinContentRegistry(page: Page): Promise<void> {
+    // #3745 - the guard first: Playwright runs matching routes in reverse
+    // registration order, so every fixture below answers its URL and the
+    // guard sees only what nothing answers.
+    await guardExternalRequests(page);
+    await pinOfficialContent(page);
     await page.route("**/recommended-repos.json", (route) =>
         route.fulfill({
             status: 200,
@@ -367,6 +398,77 @@ export async function pinContentRegistry(page: Page): Promise<void> {
             body: JSON.stringify(BOOKS_YAML_FIXTURE),
         }),
     );
+}
+
+/** Requests to a host outside the test environment that {@link guardExternalRequests} stopped, per page. */
+const externalGuardHits = new WeakMap<Page, string[]>();
+
+/**
+ * Abort and record every http(s) request to a host other than the local
+ * preview server, for the rest of the test (#3745).
+ *
+ * The visual run must render from this repository alone. Its live sources
+ * were found one by one, months apart (``recommended-repos.json`` #1653,
+ * ``media.yaml`` and ``books.yaml`` #1696, the official ``manifest.yaml``
+ * #3745), each time as baseline drift. With this guard a new live source
+ * fails its first run and the failure names the URL. Same pattern as
+ * ``guardGitHub`` in ``e2e/scripts/capture-feature-screenshots.ts`` (#3182),
+ * widened from GitHub to every external host. Measured on 2026-10-28: the
+ * Workbox worker sent none of these requests itself, so ``page.route`` sees
+ * them all.
+ */
+export async function guardExternalRequests(page: Page): Promise<void> {
+    const hits: string[] = [];
+    externalGuardHits.set(page, hits);
+    await page.route(
+        (url) =>
+            (url.protocol === "http:" || url.protocol === "https:") &&
+            url.hostname !== "localhost" &&
+            url.hostname !== "127.0.0.1",
+        async (route: Route) => {
+            hits.push(`${route.request().method()} ${route.request().url()}`);
+            await route.abort("blockedbyclient");
+        },
+    );
+}
+
+/**
+ * Fail the test when {@link guardExternalRequests} stopped any request, and
+ * return how many it stopped (0). "The guard was never installed" fails on
+ * its own, so it cannot print the same green as "nothing was stopped"
+ * (gate contract point 4, #2083).
+ */
+export function assertNoExternalRequests(page: Page): number {
+    const hits = externalGuardHits.get(page);
+    expect(hits, "the external-request guard was never installed (pinContentRegistry)").toBeDefined();
+    expect(hits, "requests that left the test environment (#3745)").toEqual([]);
+    return hits?.length ?? 0;
+}
+
+const OFFICIAL_CONTENT_PREFIX = "https://raw.githubusercontent.com/astrapi69/adaptive-learner-content/main/";
+const OFFICIAL_CONTENT_DIR = join(__dirname, "fixtures", "official-content");
+
+/**
+ * Serve the official content repository from the frozen snapshot in
+ * ``fixtures/official-content`` (#3745, see its ``SOURCE.md``): the root
+ * ``manifest.yaml`` and ``search-index.json`` and the ``en/fr-a1`` set that
+ * ``seedLearner`` downloads. A path not in the snapshot falls through to the
+ * next route, and in the end to {@link guardExternalRequests}, which stops it
+ * and fails the test. The synthetic fixtures in {@link pinContentRegistry}
+ * are registered after this route, so they answer their files first.
+ */
+async function pinOfficialContent(page: Page): Promise<void> {
+    await page.route(`${OFFICIAL_CONTENT_PREFIX}**`, async (route: Route) => {
+        const rel = normalize(decodeURIComponent(new URL(route.request().url()).pathname))
+            .replace(/^\/astrapi69\/adaptive-learner-content\/main\//, "");
+        const file = join(OFFICIAL_CONTENT_DIR, rel);
+        if (!file.startsWith(OFFICIAL_CONTENT_DIR + "/") || !existsSync(file)) {
+            await route.fallback();
+            return;
+        }
+        const type = extname(file) === ".json" ? "application/json" : "text/yaml";
+        await route.fulfill({status: 200, contentType: type, body: readFileSync(file)});
+    });
 }
 
 /**
@@ -485,11 +587,27 @@ export async function settleForScreenshot(
     page: Page,
     options: SettleOptions = {},
 ): Promise<void> {
+    // #3688 - the toast timer bar is spared. react-toastify closes a toast
+    // on that bar's ``animationend``; cutting an animation that is already
+    // running to 0s did not fire it in Chromium (diagnosed: focus and
+    // visibility fine, play state running, duration 0s), so a toast that
+    // appeared just before this tag never closed. Its own autoClose then
+    // ends it inside the cap below.
     await page.addStyleTag({
         content:
-            "*, *::before, *::after { animation-duration: 0s !important;" +
+            "*:not(.Toastify__progress-bar), *::before, *::after {" +
+            " animation-duration: 0s !important;" +
             " animation-delay: 0s !important; transition-duration: 0s !important;" +
             " transition-delay: 0s !important; caret-color: transparent !important; }",
+    });
+    // #3792 - the milestone overlay (MilestoneHost: a badge, a level-up) is
+    // hidden, not waited for. Reaching the summary completes the lesson, and
+    // the celebration that follows can fly in after any absence check, even
+    // between the retried shots of toHaveScreenshot: three refreshes caught
+    // the "first lesson" badge on error replay. It is fixed-position, so
+    // hiding it changes no layout, and no motif covers the overlay itself.
+    await page.addStyleTag({
+        content: '[data-testid="milestone-overlay"] { display: none !important; }',
     });
     await page.evaluate(() => document.fonts.ready);
     // 250ms (was 100ms): the post-font reflow on the mobile lesson surface
@@ -546,8 +664,41 @@ export async function settleForScreenshot(
         throw new Error(
             "settleForScreenshot: a toast is still visible after 8s - " +
                 "either a persistent toast leaked into this surface or an " +
-                "autoClose grew past the cap (#2721).",
+                "autoClose grew past the cap (#2721). " +
+                (await describeStuckToasts(page)),
         );
+    }
+}
+
+/**
+ * Why a toast is still on screen (#3688): its text, whether it is an
+ * auto-closing toast at all (an error toast has no timer bar), and the timer
+ * bar's play state and duration, next to the page's focus and visibility.
+ * react-toastify closes a toast on the bar's ``animationend``; it pauses the
+ * bar on hover and, with ``pauseOnFocusLoss``, while the document has no
+ * focus, and a bar whose running animation was cut to 0s never ends (the
+ * #3688 cause). This names which one held the toast.
+ */
+async function describeStuckToasts(page: Page): Promise<string> {
+    try {
+        const state = await page.evaluate(() => ({
+            hasFocus: document.hasFocus(),
+            visibility: document.visibilityState,
+            toasts: [...document.querySelectorAll(".Toastify__toast")].map((toast) => {
+                const bar = toast.querySelector<HTMLElement>(".Toastify__progress-bar");
+                const style = bar ? getComputedStyle(bar) : null;
+                return {
+                    text: (toast.textContent ?? "").trim().slice(0, 80),
+                    timer: bar !== null,
+                    playState: style?.animationPlayState ?? null,
+                    inlinePlayState: bar?.style.animationPlayState ?? null,
+                    duration: style?.animationDuration ?? null,
+                };
+            }),
+        }));
+        return `State: ${JSON.stringify(state)}`;
+    } catch (err) {
+        return `State unreadable: ${String(err)}`;
     }
 }
 
@@ -753,10 +904,48 @@ export async function playBundledLesson(
         await expect(page.getByTestId("lesson-summary")).toBeVisible({
             timeout: 20_000,
         });
+        await settleLessonCompletion(page);
         return true;
     }
     // Requested a matching result but never hit a matching step.
     return false;
+}
+
+/**
+ * #3792 - reaching the summary completes the lesson, and the completion flow
+ * runs asynchronously: the write, then the milestone celebration (the "first
+ * lesson" badge, a level-up), which the app-root MilestoneHost shows for 3s
+ * plus a 0.5s gap per queued milestone, also on whatever page a motif moves
+ * on to. settleForScreenshot hides the overlay; this wait keeps what follows
+ * deterministic instead: the completion is written (the heading's check
+ * mark) and its follow-ups (XP, celebration, missions refresh) have run, by
+ * waiting until no overlay has been in the DOM for a quiet window longer than
+ * the gap between two milestones. A run without a learner never completes and
+ * skips the wait.
+ */
+async function settleLessonCompletion(page: Page): Promise<void> {
+    try {
+        await page
+            .getByTestId("lesson-summary-completed")
+            .waitFor({state: "visible", timeout: 10_000});
+    } catch {
+        return;
+    }
+    const quietMs = 2_000;
+    const deadline = Date.now() + 20_000;
+    let quietSince = Date.now();
+    for (;;) {
+        const busy = (await page.getByTestId("milestone-overlay").count()) > 0;
+        const now = Date.now();
+        if (busy) quietSince = now;
+        else if (now - quietSince >= quietMs) return;
+        if (now > deadline) {
+            throw new Error(
+                "playBundledLesson: a milestone overlay is still cycling 20s after the completion (#3792)",
+            );
+        }
+        await page.waitForTimeout(100);
+    }
 }
 
 /** Answer whatever exercise the current step renders (any valid answer).
@@ -1803,6 +1992,10 @@ async function playOpenLessonToSummary(page: Page): Promise<void> {
         }
     }
     await expect(page.getByTestId("lesson-summary")).toBeVisible({timeout: 20_000});
+    // #3792 - the error-replay motif leaves the summary right away; let the
+    // completion's milestone overlay come and go first (see
+    // settleLessonCompletion).
+    await settleLessonCompletion(page);
 }
 
 /**

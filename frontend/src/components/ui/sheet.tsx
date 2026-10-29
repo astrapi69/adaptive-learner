@@ -64,18 +64,24 @@ const sheetVariants = cva(
     },
 );
 
-interface SheetContentProps
-    extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
-        VariantProps<typeof sheetVariants> {
-    showCloseButton?: boolean;
-}
+/**
+ * The X button needs a label in the UI language whenever it is shown
+ * (#3425); a sheet without the button takes none.
+ */
+type CloseButtonProps =
+    | {showCloseButton?: true; closeLabel: string}
+    | {showCloseButton: false; closeLabel?: undefined};
+
+type SheetContentProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> &
+    VariantProps<typeof sheetVariants> &
+    CloseButtonProps;
 
 const SheetContent = React.forwardRef<
     React.ElementRef<typeof SheetPrimitive.Content>,
     SheetContentProps
 >(
     (
-        {side = "right", className, children, showCloseButton = true, ...props},
+        {side = "right", className, children, showCloseButton = true, closeLabel, ...props},
         ref,
     ) => (
         <SheetPortal>
@@ -88,11 +94,10 @@ const SheetContent = React.forwardRef<
                 {children}
                 {showCloseButton && (
                     <SheetPrimitive.Close
-                        aria-label="Close"
+                        aria-label={closeLabel}
                         className="absolute right-4 top-4 inline-flex size-11 items-center justify-center rounded-sm text-[var(--fg-muted)] opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     >
-                        <X className="size-5" />
-                        <span className="sr-only">Close</span>
+                        <X className="size-5" aria-hidden="true" />
                     </SheetPrimitive.Close>
                 )}
             </SheetPrimitive.Content>

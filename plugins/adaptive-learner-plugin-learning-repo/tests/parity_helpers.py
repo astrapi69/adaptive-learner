@@ -60,21 +60,11 @@ def load_parity_context(fixture_path: Path) -> RenderContext:
     data = json.loads(fixture_path.read_text(encoding="utf-8"))
 
     project = _ns_with_isos(data["project"], ("created_at", "updated_at"))
-    sessions = tuple(
-        _ns_with_isos(s, ("started_at", "ended_at")) for s in data["sessions"]
-    )
-    ratings = tuple(
-        _ns_with_isos(r, ("created_at",)) for r in data["ratings"]
-    )
-    step_evaluations = tuple(
-        _ns_with_isos(e, ("evaluated_at",)) for e in data["step_evaluations"]
-    )
-    method_switches = tuple(
-        _ns_with_isos(m, ("switched_at",)) for m in data["method_switches"]
-    )
-    notes = tuple(
-        _ns_with_isos(n, ("created_at",)) for n in data["notes"]
-    )
+    sessions = tuple(_ns_with_isos(s, ("started_at", "ended_at")) for s in data["sessions"])
+    ratings = tuple(_ns_with_isos(r, ("created_at",)) for r in data["ratings"])
+    step_evaluations = tuple(_ns_with_isos(e, ("evaluated_at",)) for e in data["step_evaluations"])
+    method_switches = tuple(_ns_with_isos(m, ("switched_at",)) for m in data["method_switches"])
+    notes = tuple(_ns_with_isos(n, ("created_at",)) for n in data["notes"])
 
     rendered_at = _parse_iso(data.get("rendered_at")) or datetime.now()
 

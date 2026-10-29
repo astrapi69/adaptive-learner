@@ -83,6 +83,10 @@ test.describe("Backup - API-mode file restored in browser mode (Dexie, #3362)", 
                         best_score_correct: 0,
                         best_score_total: 0,
                         attempt_history: "[]",
+                        // #3365 - the resume reads the last step entry.
+                        recent_steps: JSON.stringify([
+                            {at: TS, kind: "step", step_index: 4, step_id: "s4"},
+                        ]),
                     },
                 ],
                 element_errors: [
@@ -152,6 +156,9 @@ test.describe("Backup - API-mode file restored in browser mode (Dexie, #3362)", 
         expect(progress, "lesson progress must sit under the lesson page's key").not.toBeNull();
         expect(progress?.current_step).toBe(4);
         expect(progress?.step_results).toEqual({"2": {correct: 3, total: 4}});
+        expect(progress?.recent_steps).toEqual([
+            {at: TS, kind: "step", step_index: 4, step_id: "s4"},
+        ]);
 
         const errorRow = await readRow(
             page,

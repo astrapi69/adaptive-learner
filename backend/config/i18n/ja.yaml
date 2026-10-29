@@ -7,7 +7,6 @@ app:
   reload: "再読み込み"
   name: Adaptive Learner
   tagline: 6メソッドモデルに基づく適応学習。
-  skeleton_notice: スケルトン状態です。ドメインモデル、プラグイン、ページは今後のフェーズで 追加されます - docs/adaptive-learner-project-reference.md を参照してください。
 common:
   ok: "OK"
   remove: "削除"
@@ -18,17 +17,9 @@ common:
   error: 何かがうまくいきませんでした。
   back: 戻る
   next: 次へ
-  start: 開始
   submit: 送信
-  continue: 続ける
-  done: 完了
   delete: 削除
   edit: 編集
-  confirm: 確認
-  'yes': はい
-  'no': いいえ
-  optional: 任意
-  required: 必須
   minutes: 分
   close: "閉じる"
 avatar:
@@ -79,9 +70,6 @@ nav:
     progress: "進捗"
     more: "その他"
   primary: "メインナビゲーション"
-  discover: "コンテンツを見つける"
-  offline_long: "オフライン - 過去のセッションは引き続き閲覧できます"
-  sync_pending: "{n} 件の変更が同期待ちです"
   statistics: "統計"
   profile: "あなたのプロフィール"
   learning_path: "学習パス"
@@ -94,9 +82,6 @@ nav:
   help: ヘルプ
   home: ホーム
   menu: メニュー
-  online: オンライン
-  offline: オフライン
-  anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "開発者モードがオンです - エラー通知に技術的な詳細が表示されます。設定で切り替えてください。"
   content: "マイコンテンツ"
@@ -105,8 +90,6 @@ nav:
   mode_badge_tooltip_content: "API キーが設定されていません - 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。"
   mode_badge_tooltip_ai: "AI プロバイダー設定済み - 演習で AI による誤答候補とヒントを使用します。タップしてコンテンツを閲覧。"
   mode_badge_action: "コンテンツを見る"
-  sync_paired: "同期：ペアリング済み（設定 > 同期）"
-  sync_unpaired: "同期：未ペアリング（設定 > 同期）"
 import:
   title: 会話をインポート
   subtitle: ChatGPT、Claude、Gemini との会話を貼り付けるかアップロードすると、 学習のインサイトをすぐに得られます。
@@ -129,12 +112,12 @@ import:
   analysis_title: 分析
   analysis_ready: 分析の準備ができました。
   analysis_fallback: 分析は実行されましたが、AI の応答をきれいに解析できませんでした。
-  analysis_fallback_long: AI の応答は構造化された JSON として解析できませんでした。下の要約は フォールバックです。
+  analysis_fallback_long: "AI の応答を構造化された分析として読み取れませんでした。分析をもう一度実行するか、別の AI プロバイダーを選んでください。"
   analysis_error: 会話を分析できませんでした。
   analysis_phase_reading: "ステップ1/3: チャットを読み込み中…"
   analysis_phase_analyzing: "ステップ2/3: 内容を分析中…"
   analysis_phase_preparing: "ステップ3/3: 結果を準備中…"
-  analysis_estimate: "分析には約15〜30秒かかります…"
+  analysis_estimate: "長いチャットほど分析に時間がかかります。"
   analysis_done: "完了！"
   analysis_cancel: "キャンセル"
   analysis_failed_inline: "分析に失敗しました。もう一度お試しください。"
@@ -194,6 +177,8 @@ curriculum:
   create: カリキュラムを作成
   created: カリキュラムが作成されました。
   saved: 保存しました。
+  topics_load_failed: "トピックを読み込めませんでした。"
+  lessons_load_failed: "レッスンを読み込めませんでした。"
   deleted: トピックを削除しました。
   add_topic: トピックを追加
   add_root_topic: ルートトピックを追加
@@ -245,12 +230,7 @@ onboarding:
   field_name: お名前
   field_topic: トピック
   field_topic_hint: '例: スペイン語 B1、線形代数。'
-  field_goal: 目標
   field_goal_hint: 何ができるようになりたいですか?
-  field_timeframe: 期間
-  field_timeframe_hint: '例: 4 週間、1 学期。'
-  field_daily_minutes: 1 日あたりの分
-  field_current_problem: 現在の問題
   field_current_problem_hint: 任意 - 今、何が妨げになっていますか?
   submit: プロジェクトを作成して評価を開始
   creating: プロジェクトを作成中…
@@ -308,7 +288,6 @@ dashboard:
     missions: "ミッション"
   no_data: "まだデータがありません。"
   title: ダッシュボード
-  welcome: おかえりなさい
   quick_start: 新しいセッションを開始
   quick_start_subtitle: 方法はプロフィールに基づいています。
   card_profile: 学習プロフィール
@@ -360,7 +339,6 @@ adaptive:
   session_title: "アダプティブレッスン"
   loading: "ミスを分析中…"
   empty_body: "まだ適応するものがありません - レッスンを練習してデータを蓄積してください。"
-  not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。"
   back_to_dashboard: "ダッシュボードに戻る"
   transparency:
     focus_prefix: "このレッスンの焦点:"
@@ -373,7 +351,6 @@ adaptive:
     mastered_delta: "改善: このセッションで+{n}個の要素を習得しました！"
     note: "要素スコアが更新されました。次のアダプティブレッスンは、まだ練習が必要な要素を対象にします。"
   error:
-    missing_params: "コンテンツセットが選択されていません。"
     load_failed: "アダプティブレッスンを生成できませんでした。"
 review:
   your_answer: "あなたの回答:"
@@ -398,35 +375,19 @@ review:
   subtitle_capped: "復習する要素: {due} 件中 {shown} 件"
   loading: "復習セッションを読み込み中…"
   empty_body: "すべて完了！このセットに復習する要素はありません。"
-  not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。"
   back_to_dashboard: "ダッシュボードに戻る"
   back_to_lesson: "レッスンに戻る"
   summary:
-    aria_label: "復習のまとめ"
     heading: "復習完了"
-    score: "スコア"
     note: "要素のスコアが更新されました。マスターした要素は次回のセッションには表示されません。"
   error:
-    missing_params: "コンテンツセットが選択されていません。"
     load_failed: "復習セッションを読み込めませんでした。"
-  spaced_empty: 今、復習するものはありません。良いリズムです!
-  spaced_interval_label: 次の復習
-  spaced_start: 開始
-  spaced_dismiss: 閉じる
-  metric_total_sessions: 合計セッション数
-  metric_total_minutes: 合計分数
-  metric_mean_understanding: 平均理解度
-  metric_mean_stress: 平均ストレス
-  metric_streak: 連続日数
-  no_data: まだセッションがありません - 最初のセッションを始めて傾向を確認しましょう。
-  pronunciation_quick_start: 発音練習
 session:
+  auto_loop_unavailable: "デスクトップアプリでは、ステップ 7 の後に次のトピックで新しいサイクルが自動的に始まります。ブラウザ版ではまだできません。学習を続けるには、セッションを終了して新しいセッションを始めてください。"
   title: 学習セッション
   topic_label: "トピック"
-  in_progress: セッション進行中
   send_message: メッセージを送信
   message_placeholder: 返信を入力…
-  ai_thinking: 考え中…
   ai_error: AI プロバイダーが返信できませんでした。
   no_api_key: "AIキーが設定されていません。チューターとチャットするには、設定でAIプロバイダーのキーを追加してください。レッスンと復習はキーなしで利用できます。"
   ai_error_no_model: "AIプロバイダーのモデルが選択されていません。設定 > AI でモデルを選択してください。"
@@ -438,7 +399,6 @@ session:
   chat_retry: "もう一度試す"
   welcome_empty: "学習を始めましょう！最初のメッセージを書いてください。"
   end_session: セッションを終了
-  end_session_confirm: よろしいですか? セッションを終了して評価をお願いします。
   switch_recommended: 方法の切り替えを推奨
   switch_recommended_subtitle: 最近の評価から、別の方法のほうが合っているかもしれません。
   switch_accept: 方法を切り替える
@@ -523,6 +483,7 @@ settings:
     error_decrypt: "パスフレーズが間違っているか、ファイルが破損しています。"
     error_import: "キーファイルをインポートできませんでした。"
   lesson_mode:
+    threshold_set_hint: "独自の合格ラインを持つセットは、そのラインを使用します。"
     title: "レッスンモード"
     hint: "練習モードではすべての補助が有効です。試験モードではヒント、理論の復習、自動読み上げ、解答の表示を隠し、現実的な条件で思い出せるようにします。"
     default_label: "既定のモード"
@@ -564,7 +525,6 @@ settings:
   summary_section_export: "結果のエクスポート"
   summary_section_next_steps: "次のステップの提案"
   correction_round_enabled: "レッスン後に訂正ラウンドを表示"
-  correction_round_enabled_desc: "レッスンの最後に、間違いをその場で修正できるようにします。オフの場合も、復習／「間違いを練習」モードで利用できます。"
   hints_enabled: "練習中にヒントを表示"
   hints_enabled_desc: "各練習で段階的なヒントボタンを表示します。"
   hint_xp_cost: "ヒント1回あたりのXPコスト"
@@ -617,7 +577,6 @@ settings:
   mode_coming_soon: "近日公開"
   section_provider: AI プロバイダー
   section_api_keys: API キー
-  section_danger: アカウント
   section_ui: インターフェース
   section_appearance: "外観"
   section_content_tabs: "コンテンツタブの順序"
@@ -696,10 +655,6 @@ settings:
   tab_plugins: "プラグイン"
   plugins_installed_title: "インストール済みプラグイン"
   plugins_installed_desc: "デスクトップアプリが読み込んだすべてのプラグインを、バージョン・ソース・有効化時刻とともに表示します（PluginForge ライフサイクル）。"
-  plugins_col_name: "プラグイン"
-  plugins_col_version: "バージョン"
-  plugins_col_source: "ソース"
-  plugins_col_activated: "有効化"
   plugins_source_entry_point: "パッケージ"
   plugins_source_direct: "直接登録"
   plugins_marker_load_error: "読み込みエラー"
@@ -712,7 +667,6 @@ settings:
   tab_help: "ヘルプ"
   tab_diagnostics: "診断とサポート"
   tab_about: "情報"
-  tabs_aria: "設定セクション"
   section_feedback: "フィードバック"
   section_interaction: "操作"
   cluster_basics: "基本"
@@ -891,10 +845,6 @@ settings:
     test_rate_limit: "レート制限に達しました。後でお試しください。"
     test_no_key: "テストするキーがありません。"
     format_invalid: "形式が無効です。"
-    rollback_warning: "新しいキーが機能しません。古いキーを保持しますか？"
-    rollback_keep_old: "古いキーを保持"
-    rollback_save_anyway: "それでも保存"
-    rollback_cancel: "キャンセル"
     rollback_restore: "最後に動作したキーを復元"
     format_hint:
       anthropic: "sk-ant- で始まります"
@@ -906,7 +856,6 @@ settings:
   api_key_delete: キーを削除
   api_key_confirm_delete: 本当にこの API キーを削除しますか?
   saved: 保存しました。
-  save_failed: 保存に失敗しました。
   provider_active: アクティブ
   active_provider_missing_key: これはアクティブなプロバイダーですが、API キーが保存されていません。 キーが保存されるまで AI の応答はスキップされます。
   # Phase 34 (v1.20.0) - per-provider key-source badges.
@@ -918,7 +867,6 @@ settings:
   api_key_external_hint_env: このキーは ADAPTIVE_LEARNER_{PROVIDER}_API_KEY 環境変数で設定されています。
   section_model_overrides: モデルの上書き
   model_overrides_hint: 各プロバイダーのデフォルトモデルを使う場合は空のままにしてください。 空でない値はチャット時にデフォルトを置き換えます。
-  model_override_placeholder: 'モデル識別子 (例: claude-3-5-haiku-latest)'
   model_override_set: 上書きが有効
   model_override_default: デフォルトモデル
   model_override_save: モデルを保存
@@ -941,7 +889,7 @@ settings:
   daily_session_goal: 1日のセッション目標
   daily_session_goal_help: 進捗の目安として1日あたりのセッション数。
   reset_progress: 進捗をリセット
-  reset_progress_help: XP、バッジ、ストリークを完全に削除。元に戻せません。
+  reset_progress_help: XP、バッジ、連続記録を完全に削除。元に戻せません。
   reset_confirm_first: 確認のためもう一度クリック
   reset_confirm_second: 完全削除するにはもう一度クリック
   section_voice: 音声
@@ -1027,22 +975,16 @@ settings:
 methods:
   deductive:
     label: 演繹的
-    summary: 一般から具体へ - まず規則、次に例。
   inductive:
     label: 帰納的
-    summary: 具体から一般へ - まず例、規則は自分で導く。
   error_based:
     label: 誤りベース
-    summary: 間違いから学ぶ - 訂正と説明をセットで。
   dialogic:
     label: 対話的
-    summary: 会話の中で考える - ストレスを下げ、動機を高める。
   contextual:
     label: 文脈的
-    summary: 実際の文脈で応用する - 転移を練習する。
   ai_adaptive:
     label: AI 適応型
-    summary: AI があなたに最適な方法を選びます。
 cycle_steps:
   input:
     label: インプット
@@ -1068,15 +1010,11 @@ cycle_steps:
 errors:
   network: サーバーに接続できませんでした。
   not_found: 見つかりませんでした。
-  validation: 入力が無効です。
-  conflict: エントリーは既に存在します。
   server: サーバーエラー - しばらくしてからもう一度お試しください。
 toast:
   project_created: プロジェクトを作成しました。
   assessment_saved: プロフィールを保存しました。
-  session_started: セッションを開始しました。
   session_ended: セッションを終了しました。
-  rating_saved: 評価を保存しました。
   api_key_saved: API キーを保存しました。
   api_key_restored: "最後に動作したキーを復元しました。"
   api_key_deleted: API キーを削除しました。
@@ -1121,7 +1059,6 @@ about:
   check_failed: "確認に失敗しました。オンラインですか？"
   last_checked: "前回の確認: {when}"
   never_checked: "未確認"
-  update_now: "今すぐ更新"
   system_heading: システム
   storage_label: ストレージ
   storage_api: サーバー (FastAPI + SQLite)
@@ -1132,7 +1069,6 @@ about:
   dep_unknown: 不明
   identity_heading: ID ファイル
   identity_loading: ID ステータスを読み込み中…
-  identity_error: 'ID ステータスを読み込めませんでした:'
   identity_path_label: パス
   identity_status_label: ステータス
   identity_status_active: 有効
@@ -1178,13 +1114,13 @@ backup:
   not_a_backup_file: 'このファイルは有効なバックアップファイルではありません。「バックアップを作成」でエクスポートしたファイルを選択してください。'
   version_mismatch: "このバックアップはバージョン {{from}} のものです。アプリは {{to}} です。下の変更を確認してインポートを実行してください。"
   too_large: 'このバックアップファイルは大きすぎます（100 MB 超）。'
-  export_success: バックアップをダウンロードしました ({{count}} 件)。
   export_error: 'バックアップに失敗しました: {{detail}}'
   export_failed: "バックアップに失敗しました。"
   import_parse_failed: "バックアップを読み込めませんでした。"
   import_failed: "復元に失敗しました。"
   comparison_title: 復元を確認
   comparison_help: 復元はマージ方式です。新しいレコードは挿入され、可変レコードは バックアップのほうが新しい場合のみ更新され、履歴行はそのまま残り ます。何も削除されません。API キーは無視されます。
+  foreign_owner_notice: "このバックアップは別の学習プロフィールのものです。その学習状況は有効なプロフィールに割り当てられ、統合されます。レッスン、間違い、履歴は追加され、XP、連続記録、設定はバックアップから引き継がれます。有効なプロフィールはそのまま有効です。"
   table_header: テーブル
   current_header: 現在
   incoming_header: バックアップ
@@ -1199,7 +1135,6 @@ backup:
   col_skipped: 'スキップ'
   col_errors: 'エラー'
   error_details: 'エラー詳細'
-  restored_with_errors: '{{n}} 件のレコードを復元できませんでした。'
   last_backup: '最終バックアップ: {{when}}'
   reminder_overdue: 前回のバックアップから {{days}} 日以上経過しています。
   saved_as: 'バックアップを保存しました: {{filename}}'
@@ -1259,6 +1194,107 @@ backup:
   compare_auto_label: 自動バックアップ {{date}}
   auto_compare_missing: 自動バックアップは利用できなくなりました - ローテーションで削除されました。
 export:
+  # #3426 - the Markdown/PDF report strings (were a private DE/EN table).
+  report:
+    progress_report_title: "学習の進捗"
+    session_detail_title: "セッションの詳細"
+    curriculum_overview_title: "カリキュラムの概要"
+    generated_at: "作成日時"
+    app_version: "アプリのバージョン"
+    learner: "学習者"
+    language: "言語"
+    method_profile: "学習法プロフィール"
+    dominant_method: "主な学習法"
+    assessed_at: "最終評価"
+    no_profile: "まだ評価がありません。プロフィールを見るには最初の評価を完了してください。"
+    projects: "プロジェクト"
+    no_projects: "学習プロジェクトはまだありません。"
+    topic: "テーマ"
+    goal: "目標"
+    timeframe: "期間"
+    daily_minutes: "1日の分数"
+    current_problem: "現在の課題"
+    status: "状態"
+    active: "有効"
+    archived: "アーカイブ済み"
+    session_count: "セッション"
+    total_minutes: "合計時間（分）"
+    mean_understanding: "平均理解度"
+    mean_stress: "平均ストレス"
+    method_distribution: "学習法の内訳"
+    method_switches: "学習法の切り替え"
+    no_switches: "このプロジェクトでは学習法の切り替えはありません。"
+    switched_from_to: "切り替え"
+    reason: "理由"
+    recent_sessions: "最近のセッション"
+    no_sessions: "完了したセッションはまだありません。"
+    method: "学習法"
+    duration: "所要時間"
+    understanding: "理解度"
+    stress: "ストレス"
+    method_fit: "学習法の適合度"
+    notes: "メモ"
+    step_evaluation_insights: "ステップ評価"
+    no_step_insights: "ステップ評価はまだありません。"
+    step: "ステップ"
+    evaluations_count: "評価数"
+    advance_rate: "進行率"
+    mean_confidence: "平均確信度"
+    deferred: "保留"
+    repeated: "繰り返し"
+    advanced: "進行"
+    extractions: "分析済みの会話"
+    no_extractions: "分析済みの会話はまだありません。"
+    imported_at: "インポート日時"
+    messages: "メッセージ"
+    source: "ソース"
+    analysis: "分析"
+    no_session: "セッションが見つかりません。"
+    session: "セッション"
+    started_at: "開始日時"
+    ended_at: "終了日時"
+    cycle_step: "現在のサイクルステップ"
+    transcript: "会話記録"
+    no_messages: "このセッションにはメッセージがありません。"
+    role_user: "学習者"
+    role_assistant: "AI"
+    role_system: "システム"
+    rating: "評価"
+    no_rating: "このセッションは評価されていません。"
+    step_evaluations: "ステップ評価"
+    from_step: "元のステップ"
+    to_step: "次のステップ"
+    confidence: "確信度"
+    applied: "適用済み"
+    not_applied: "未適用"
+    fallback: "代替手段を使用"
+    evaluated_at: "評価日時"
+    curriculum: "カリキュラム"
+    description: "説明"
+    topics: "テーマ"
+    no_topics: "このカリキュラムにはテーマがありません。"
+    lessons: "レッスン"
+    no_lessons: "このカリキュラムにはレッスンがありません。"
+    out_of: "/"
+    minutes_short: "分"
+    scale_5: "1〜5 の尺度で"
+    analysis_topic: "検出されたテーマ"
+    analysis_subtopics: "サブテーマ"
+    analysis_user_level: "レベル"
+    analysis_strengths: "強み"
+    analysis_weaknesses: "弱み"
+    analysis_error_patterns: "誤りのパターン"
+    analysis_recommended_method: "推奨される学習法"
+    analysis_recommended_focus: "推奨される重点"
+    analysis_suggested_curriculum: "推奨カリキュラム"
+    analysis_summary: "要約"
+    analysis_priority: "優先度"
+    level_beginner: "初級"
+    level_intermediate: "中級"
+    level_advanced: "上級"
+    linked_project: "関連プロジェクト"
+    status_completed: "完了"
+    status_abandoned: "中止"
   title: エクスポート
   intro: 学習の旅を Markdown または PDF としてダウンロードします。Markdown は 編集と共有ができるプレーンテキストです。PDF はブラウザの印刷 ダイアログを開くので、コピーを保存できます。
   progress_label: 進捗レポート (完全な旅)
@@ -1373,14 +1409,9 @@ gamification:
     how: "レベルは増加するXPカーブで上がります：0、100、300、600、1000 XP - 各段階は前より100 XP多く必要です。"
   level_detail_title: "レベルの進捗"
   level_up: レベルアップ！
-  reason_session_complete: セッション完了
-  reason_assessment_complete: アセスメント完了
-  reason_conversation_imported: 会話をインポートしました
-  reason_flat: XPを獲得
   card_badges: バッジ
   badges_earned: 獲得済み
   badges_empty: まだ利用可能なバッジはありません。
-  badge_earned_toast: 'バッジを獲得: {name}'
   badge_category:
     getting_started: 始めの一歩
     consistency: 継続
@@ -1490,36 +1521,22 @@ gamification:
     review_master:
       name: 復習マスター
       description: 分散学習で50要素を習得する。
-  card_streak: ストリーク
-  current_streak: 現在のストリーク
-  longest_streak: 最長ストリーク
+  card_streak: 連続記録
+  current_streak: 現在の連続記録
+  longest_streak: 最長連続記録
   freezes_available: 利用可能なフリーズ
-  streak_no_data: セッションを開始してストリークを始めましょう。
+  streak_no_data: セッションを開始して連続記録を始めましょう。
   streak_calendar: アクティビティ・ヒートマップ
   weekend_mode: 週末モード
-  weekend_mode_help: 週末はストリークの中断にカウントされません。
-  reset_done: '進捗をリセット: {xp} XP、{badges} バッジ、{streak} ストリーク。'
+  weekend_mode_help: 週末は連続記録の中断にカウントされません。
+  reset_done: '進捗をリセット: {xp} XP、{badges} バッジ、{streak} 連続記録。'
   reset_failed: 進捗をリセットできませんでした。
   weekend_mode_save_failed: 週末モードを保存できませんでした。
-  danger_zone_heading: 危険ゾーン
-  danger_zone_intro: このデバイス上のすべての学習データを完全に削除します。
-  danger_zone_reset_button: すべてをリセット
-  danger_zone_warning: すべての学習データを完全に削除します - セッション、進捗、プロフィール、カリキュラム、インポート、Anki カード、設定、API キー。この操作は元に戻せません。
-  danger_zone_confirm_prompt: '確認のため RESET と入力してください'
-  danger_zone_input_placeholder: RESET
-  danger_zone_final_button: 完全に削除
-  danger_zone_backup_offer: 先にバックアップを作成しますか？
-  danger_zone_backup_button: バックアップを作成
-  danger_zone_complete_toast: すべてのデータが削除されました。
-  danger_zone_cancel: キャンセル
-  danger_zone_continue: 続行
-  danger_zone_failed_toast: 'リセットに失敗:'
 arcade:
   title: "アーケード"
   subtitle: "1〜2分の短いラウンド。ゲームモードのごほうびです。XPはなく、楽しむだけ。"
   card_description: "学習メモリーとスネークの短いラウンド。ゲームモードのごほうびです。"
   card_open: "アーケードへ"
-  requires_playful: "アーケードはゲームモードの一部です。設定でゲームモード(とアーケードのスイッチ)をオンにしてください。"
   requires_game_mode: "アーケードはゲームモードの一部ですが、ゲームモードがオフになっています。設定でオンにしてください。"
   requires_arcade_switch: "ゲームモードはオンですが、アーケードのスイッチがオフになっています。設定のゲームモード詳細でアーケードをオンにしてください。"
   open_settings: "設定を開く"
@@ -1574,6 +1591,10 @@ arcade:
     won: "やりました! 全部の順番をクリア!"
     lost: "残念! 長さ {n} まで届きました。すぐ再挑戦!"
 anki:
+  # #3425 - the card-type options of the Anki edit form.
+  card_type_option:
+    basic: "基本"
+    cloze: "穴埋め"
   title: Ankiエクスポート
   intro: AIが提案したフラッシュカードを確認し、好きなものを承認してから.apkgファイルとしてAnkiに出力します。
   filter_project: プロジェクト
@@ -1738,7 +1759,6 @@ ui:
     open_settings: "設定を開く"
     feature_analyze: "会話を分析するため"
     feature_anki: "Ankiカードを抽出するため"
-    feature_study_guide: "学習ガイドを生成するため"
     feature_study_questions: "学習問題を生成するため"
     feature_pronunciation: "発音練習のため"
   common:
@@ -1893,11 +1913,6 @@ repo:
   topic_readme_parent_link: "← [プロジェクトルート](../README.md)"
   topic_readme_no_sessions: "_このトピックを扱ったセッションはありません。_"
   loading: "リポジトリを生成中…"
-  widget_subtitle: "このプロジェクトの進捗・ノート・ロードマップのバージョン管理されたスナップショット。"
-  settings_description: "セッションデータからプロジェクトごとに Markdown 成果物（README, STATS, CHEATSHEET, ROADMAP）を自動生成します。オプションの Git 統合により各生成時にコミットされます。"
-  settings_enable_git: "Git 永続化を有効にする"
-  dexie_unavailable_body: "この機能はサーバーモードでのみ利用できます。git ベースの学習リポジトリを有効にするには、設定でサーバーモードに切り替えてください。"
-  back_to_dashboard: "ダッシュボードに戻る"
   page:
     title: "学習リポジトリ"
     rendered_at: "生成日時"
@@ -1907,7 +1922,6 @@ repo:
     download_zip: "ZIP をダウンロード"
     persist: "Git に保存"
     persisting: "保存中…"
-    persist_dexie_tooltip: "Git バージョン管理はサーバーモードでのみ利用できます。"
   toast:
     zip_downloaded: "ZIP をダウンロードしました"
     persisted: "Git に保存しました"
@@ -1924,6 +1938,7 @@ repo:
     title: "学習リポジトリ"
     loading: "読み込み中…"
     repos_dir: "リポジトリディレクトリ"
+    repos_dir_hint: "空欄のままにすると既定値: データディレクトリ内の repos（「情報」を参照）"
     save: "設定を保存"
     saving: "保存中…"
     toast:
@@ -1935,6 +1950,11 @@ repo:
     description: "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。"
     enable_git: "git 永続化を有効にする"
 lesson:
+  # #3425 - screen-reader text of the answer diff (DiffHighlight).
+  diff:
+    missing: "不足: {word}"
+    extra: "余分: {word}"
+    replaced: "入力: {wrote}、正解: {expected}"
   progress_io:
     save_error: "このレッスンの進捗を保存できませんでした。"
     load_failed: "このレッスンの保存済みの進捗を読み込めませんでした: {detail}"
@@ -2006,6 +2026,13 @@ lesson:
     suggest_label: "AI提案"
     suggest_empty: "使える提案が得られませんでした。もう一度試すか、手動でステップを調整してください。"
   exam:
+    start_notice: "試験：解答が正しかったかは最後にしか分からず、前に戻ることはできません。"
+    author_source: "自分の合格ラインではなく、このセットの基準で評価されました"
+    grade: "評価: {grade}"
+    no_grade: "評価段階に達しませんでした"
+    percent_result: "正答率 {pct}%"
+    advisory_reached: "推奨ライン {pct}% に到達しました"
+    advisory_missed: "推奨ライン {pct}% に届きませんでした"
     passed: "合格"
     not_passed: "不合格"
     threshold_hint: "(合格 ≥ {pct}%)"
@@ -2043,6 +2070,7 @@ lesson:
     prev_step: "前のステップ"
     next_step: "次のステップ"
     step_position: "理論ステップ {total} 中 {current}"
+    end: "読み上げを終了"
   contributed_by: '{name}さんによる貢献'
   page_title: "レッスン"
   set_label: "セット"
@@ -2060,9 +2088,7 @@ lesson:
     aria_label: "ステップナビゲーション"
   action:
     prev: "前へ"
-    next: "次へ"
     finish: "レッスンを終了"
-    back_to_browser: "コンテンツブラウザに戻る"
     pause: "レッスンを一時停止"
     open_browser: "コンテンツブラウザを開く"
     back_to_lesson: "レッスンに戻る"
@@ -2335,7 +2361,6 @@ lesson:
     adaptive_focus: "重点: {topic}"
     adaptive_errors: "このレッスンで {count} 件の誤り"
     error_replay: "間違いをやり直す"
-    error_replay_detail: "{count}問をもう一度"
     error_replay_corrected: "{total} 件中 {corrected} 件を修正"
     all_corrected: "すべての間違いを修正しました！"
     all_corrected_detail: "お見事、未修正の間違いはありません。"
@@ -2349,10 +2374,8 @@ lesson:
     view_set: "セットを見る"
     focus_vocabulary: "語彙"
   correction:
-    title: "修正ラウンド"
     subtitle: "間違えた単語の練習を少しだけ。"
     skip: "スキップ"
-    next: "次へ"
     complete_heading: "修正ラウンド完了"
     improvement: "{n}個の要素が改善されました。"
     improvement_singular: "{n}個の要素が改善されました。"
@@ -2361,6 +2384,11 @@ lesson:
     replay_all: "すべての問題をやり直す（{count}）"
     replay_only_heading: "間違いをやり直す"
     replay_only_subtitle: "これらはクイックドリルとして練習できません。代わりに問題をやり直してください。"
+    fix_mistakes: "間違いを直す ({count})"
+    summary_heading: "あなたの修正"
+    first_try: "1回目: {total}問中{correct}問正解"
+    status_corrected: "修正済み"
+    status_open: "未修正"
   summary:
     heading: "完了"
     aria_label: "レッスンのまとめ"
@@ -2373,7 +2401,6 @@ lesson:
     time: "時間"
     minutes: "{n} 分"
     hints_used: "使用したヒント"
-    breakdown_heading: "演習の内訳"
     breakdown_correct_answer: "正解: {answer}"
     breakdown_unattempted: "未挑戦"
     detailed_hide: "簡易表示"
@@ -2402,7 +2429,6 @@ lesson:
     mark_complete_needs_profile: "進捗を保存するには学習プロファイルを作成してください"
     mark_complete_failed: "完了の保存に失敗しました"
     next_lesson: "次のレッスン"
-    repeat: "レッスンを繰り返す"
     retry: "もう一度練習"
     retry_heading: "あなたの成長"
     retry_attempt: "{n}回目: {pct}%"
@@ -2413,7 +2439,6 @@ lesson:
     retry_best: "最高スコア"
     retry_best_value: "{pct}%（{n}回目）"
     retry_new_record: "新記録！"
-    restart: "最初からやり直す"
     back_to_browser: "コンテンツブラウザに戻る"
     encourage_0: "練習あるのみ!"
     encourage_1: "良いスタート、その調子!"
@@ -2442,6 +2467,8 @@ lesson:
     paused_toast: "レッスンを一時停止しました。いつでも再開できます。"
     abandoned_toast: "レッスンを放棄しました。"
   resume:
+    exam_single_sitting: "開始済みの試験は続きから再開できません。試験は一度に通して受けた場合のみ有効なため、レッスンは最初からやり直しになります。"
+    mode_conflict: "このラウンドは別のモードで開始されました。試験と練習の解答は混在できないため、レッスンは最初からやり直しになります。"
     heading: "レッスンを再開しますか？"
     body: '「{title}」を一時停止しました。続きから再開しますか、それとも最初からやり直しますか？'
     action_resume: "続ける"
@@ -2517,6 +2544,7 @@ content:
     public: "パブリック"
     branch: "ブランチ"
     lessons_note: "このセットの全 {n} レッスンが含まれます。"
+    lessons_note_one: "このセットの1つのレッスンが含まれます。"
     invalid_repo: "リポジトリを owner/name の形式で入力してください。"
     submit: "エクスポート"
     working: "エクスポート中…"
@@ -2555,10 +2583,7 @@ content:
     no_results: "'{query}' の結果がありません"
     hint: "別の検索語を試してください"
     clear: "検索をクリア"
-    available: "ダウンロード可能"
     your_content: "あなたのコンテンツ"
-    download_prompt_title: "このセットをダウンロードしますか？"
-    download_prompt_body: "このセットはまだダウンロードされていません。今すぐダウンロードしますか？"
   save_adaptive:
     button: "このレッスンを保存しますか？"
   create_lesson:
@@ -2656,10 +2681,8 @@ content:
     active: "アクティブ"
     deferred: "保留"
     completed: "完了"
-    filter_aria: "ステータスで絞り込む"
     menu_aria: "セットの操作"
     changed: "ステータスを更新しました。"
-    change_failed: "ステータスを更新できませんでした。"
     deleted: "セットを削除しました。"
     delete_failed: "セットを削除できませんでした。"
     progress_not_deleted: "削除しましたが、学習の進捗は削除できませんでした: {detail}"
@@ -2722,7 +2745,6 @@ content:
     button: "演習を生成"
     generating: "演習を生成中…"
     regenerate: "再生成"
-    regenerate_confirm: "生成された演習を新しいセットに置き換えますか？"
     generated: "{n} 件の演習を生成しました。"
     generated_with_rejected: "{n} 件の演習を生成しました（{r} 件は品質のため除外）。"
     none: "AI から使用可能な演習が返されませんでした。もう一度お試しください。"
@@ -2740,7 +2762,6 @@ content:
     modal_title: "オフラインレッスンとして保存"
     title_label: "レッスンのタイトル"
     summary: "演習{exercises}個 · 理論ステップ{theory}個 · 約{minutes}分"
-    theory_only: "演習に必要な語彙が足りません。練習素材を増やすには、より長いチャットをインポートしてください。"
     save: "保存"
     saved: "「マイレッスン」に保存しました。"
     failed: "レッスンを保存できませんでした。"
@@ -2749,7 +2770,6 @@ content:
     source_lang_label: あなたの言語
     level_label: レベル
     not_enough_data: 演習が少なめです。完全な語学レッスンには少なくとも{min}個を推奨します。それでも保存できます（例：理論のみのレッスンとして）。
-    same_language: 学習する言語とあなたの言語は異なる必要があります。
     same_language_hint: "学習言語とあなたの言語が同じです - 文法や母語のレッスンには問題ありません。共有する場合、コンテンツツリーの同言語ブランチに表示されます。"
     split_notice: "このレッスンには {steps} ステップがあり、{parts} パートとして保存されます（各パート最大 {max} ステップ）。"
     part_title: "{title} - パート{n}"
@@ -2842,8 +2862,8 @@ content:
     no_lessons: セットにレッスンがありません。
     missing_target_language: 対象言語（学習する言語）がありません。
     missing_source_language: 出発言語（説明の言語）がありません。
-    invalid_target_language: 対象言語 '{code}' は2文字のISOコードではありません。
-    invalid_source_language: 出発言語 '{code}' は2文字のISOコードではありません。
+    invalid_target_language: "対象言語 '{code}' は有効な言語コードではありません(例: 'de'、'pt-BR')。"
+    invalid_source_language: "出発言語 '{code}' は有効な言語コードではありません(例: 'de'、'pt-BR')。"
     same_source_target: 出発言語と対象言語が同じです（'{code}'）。
     missing_title: タイトルがありません。
     missing_title_native: 対象言語のタイトルがありません。
@@ -2860,12 +2880,18 @@ content:
     level_too_complex: "レッスン '{lesson}': 片面あたり平均 {avg} 語で、レベル {level} には多めです（目安は約 {cap} 語）。"
     engine_rule: "レッスン「{lesson}」: ルール {rule}({path}): {message}"
     engine_warning: "レッスン「{lesson}」: 警告 {rule}({path}): {message}"
+    engine_set_rule: "セット: ルール {rule}({path}): {message}"
+    engine_set_warning: "セット: 警告 {rule}({path}): {message}"
     source_language_heuristic: カードの裏面に {found} 特有の文字が含まれていますが、出発言語は '{lang}' です。
     target_language_heuristic: カードの表面に {found} 特有の文字が含まれていますが、対象言語は '{lang}' です。
     failed_share_anyway: "品質チェックで問題が見つかりました。それでも共有できます。レビュアーはプルリクエストに記載された指摘を確認できます。"
+  ai_privacy_link: "プライバシーポリシー"
   ai_validation:
     intro: AIは翻訳の正確さ、文法、レベルの適切さも確認できます。
-    privacy: レッスンの内容は {provider} に送信されます。個人データは送信されません。
+    privacy: "この確認のために、{provider}は、あなたが共有しようとしているレッスン（カード、テキスト、練習問題など）と、セットの出発言語、対象言語、レベルを受け取りますが、あなたのプロフィールと学習の進捗は受け取りません。さらに、すべての AI リクエストと同様に、{provider}はほかの情報とともに、あなたの IP アドレスと API キーも受け取ります。"
+    # #3812 - stands for {provider} in privacy when no provider is active;
+    # it has to read right inside that sentence.
+    provider_fallback: "設定済みのAIプロバイダー"
     consent: AI検証を実行
     run: AIで確認
     running: AIがレッスンを確認しています…
@@ -2908,7 +2934,7 @@ content:
     title: "AIコンテンツ確認"
     loading: "カードを準備しています..."
     cost_estimate: "約{cards}枚のカード、約{tokens}トークン、約{usd}。"
-    privacy: "学習カードは確認のため設定済みのAIプロバイダーに送信されます。個人情報は送信されません。"
+    privacy: "この確認では、設定済みのAIプロバイダーに、セットのカード（識別子、表面、裏面、メモ）と、セットの出発言語、対象言語、レベルを送信しますが、あなたのプロフィールと学習の進捗は送信しません。さらに、すべての AI リクエストと同様に、設定済みのAIプロバイダーはほかの情報とともに、あなたの IP アドレスと API キーも受け取ります。"
     confirm: "確認する"
     progress: "{total}件中{current}件目のバッチを確認中..."
     rate_limited: "次の確認を実行する前に少しお待ちください。"
@@ -2940,9 +2966,6 @@ content:
       all_ok: "問題は見つかりませんでした - アクセント、冠詞、重複はすべて良好です。"
       problem: "問題"
       suggestion: "提案"
-  placement:
-    lands_under: あなたのレッスンの配置先
-    duplicate: '類似のレッスンが既に存在します: {title}。それでも共有しますか？'
   wizard:
     title: コミュニティと共有する
     metadata_intro: 共有する前にレッスンの詳細を確認して修正してください。
@@ -2957,8 +2980,8 @@ content:
     err_title: タイトルを追加してください。
     err_source: ソース言語を選択してください。
     err_target: ターゲット言語を選択してください。
-    err_same_language: ソース言語とターゲット言語は異なる必要があります。
     err_level: CEFRレベルを選択してください（A1-C2）。
+    level_none: レベルなし（語学コースではない）
     err_empty: このレッスンには練習問題がありません。レッスンを作り直してください。
     regenerate: 再生成
     same_language_domain_hint: ソース言語とターゲット言語が同じです - 知識（非言語）コンテンツとして共有されます。
@@ -2966,7 +2989,6 @@ content:
     lands_under: あなたのレッスンの配置先
     new_set: 新しいセットです! ここで最初に貢献するのはあなたです。
     next_to_existing: このセットには既に{count}件のレッスンがあります。
-    summary_counts: '{lessons}件のレッスン、{exercises}個の演習、{cards}枚のカード、約{minutes}分'
     checking: 類似のレッスンを確認しています…
     no_duplicates: 重複は見つかりませんでした。あなたのレッスンはユニークです!
     near_duplicate: 'このレッスンは既に存在します: 「{title}」。'
@@ -3162,7 +3184,6 @@ create_lesson:
     switch_discard: "破棄して切り替える"
   prompts_migrated: "{n} 件の演習の指示が自動的にあなたの言語に翻訳されました。"
   prompts_migrated_dismiss: "閉じる"
-  step_pending: "このステップは次回のアップデートで追加されます。"
   nav_label: "ウィザードナビゲーション"
   cancel: "キャンセル"
   back: "戻る"
@@ -3183,10 +3204,12 @@ create_lesson:
     content_lang_label: "コンテンツの言語"
     level_none: "レベルなし"
     domain_hint: "知識コンテンツは単一のコンテンツ言語を使用し、CEFR レベルを省略できます。"
-    same_language: "学習する言語はあなたの言語と異なる必要があります。"
     description_label: "トピック / 説明"
     author_label: "著者名"
   cards:
+    # #3425 - generic placeholders instead of fixed French/German words.
+    front_placeholder: "単語または表現"
+    back_placeholder: "意味"
     heading: "単語カードを追加"
     front_label: "表（学習対象）"
     back_label: "裏（あなたの言語）"
@@ -3268,8 +3291,8 @@ create_lesson:
     generate: "演習を自動生成"
     regenerate: "再生成"
     count: "{n} 個の演習"
-    min_hint: "{n} 個の演習が必要です"
-    min_to_advance: "続けるには少なくとも {n} 個の演習を生成してください。"
+    one_to_advance: "続けるには少なくとも 1 個の演習を生成してください。"
+    share_min_hint: "共有するには少なくとも {n} 個の演習が必要です"
     min_one_to_advance: "続けるには少なくとも1つの演習を追加してください。"
     drag: "ドラッグして並べ替え"
     delete: "演習を削除"
@@ -3479,6 +3502,7 @@ create_lesson:
     check_enoughTypes: "2種類以上の演習タイプ"
     check_min_types: "{n}種類以上の演習タイプ"
     check_exercise_minimums: "各演習に十分な解答またはペアがある"
+    share_checks_heading: "共有に必要"
     check_schemaValid: "有効なレッスン構造"
     structure_error: "技術的な詳細"
     structure_internal_error: "このレッスンの確認中に内部エラーが発生しました。これはレッスンではなくアプリの問題です。ページを再読み込みして再度お試しください。問題が続く場合は、下から報告してください。"
@@ -3544,7 +3568,6 @@ learning_path:
   filter_mine: "自分のみ"
   filter_all: "すべてのセット"
   filter_label: "セットを絞り込む"
-  adaptive: "アダプティブレッスンを開始"
   error_replay: "間違いを復習"
   train_errors: "間違いを練習"
   shuffle: "シャッフル"
@@ -3581,7 +3604,6 @@ learning_path:
   mastery:
     receptive: "受容"
     productive: "産出"
-    mastered: "習得済み"
   title: "学習パス"
   subtitle: "現在地と次のステップ。"
   aria_canvas: "学習パスのグラフ"
@@ -3689,7 +3711,6 @@ share:
   app:
     heading: "アプリを共有"
     download: "ダウンロード"
-    qr_intro: "QRコードでアプリを共有し、他の人がすぐに開けるようにします。"
     show_qr: "QRコードを表示"
     download_qr: "QRコードをダウンロード"
     copy_url: "URLをコピー"
@@ -3714,7 +3735,7 @@ share:
     title: 進捗を共有
     copied: クリップボードにコピーしました
     lesson_complete: Adaptive Learner でレッスンを完璧にこなしました！
-    streak: Adaptive Learner で{days}日連続の学習ストリーク中です！
+    streak: Adaptive Learner で{days}日連続で学習中です！
     level: Adaptive Learner でレベル{level}に到達しました！
     badge: Adaptive Learner で「{badge}」バッジを獲得しました！
     progress: Adaptive Learner で学習中です。レベル{level}、{days}日連続。
@@ -3988,9 +4009,6 @@ content_repo:
   added: "リポジトリを追加しました。"
   synced: "同期しました: {sets} セット、{lessons} レッスン。"
   token_hint: "プライベートリポジトリにはトークンが必要です。下に貼り付けるか、設定 → 連携で共有トークンを設定してください。"
-  trust_official: "公式: プロジェクトチームが厳選し、品質を保証したコンテンツ。"
-  trust_verified: "検証済み: コミュニティから提供され、チームが確認したコンテンツ。"
-  trust_validated: "検証通過: 技術的に正しい。内容は個別には確認されていません。"
   official:
     title: "公式コンテンツ"
     counts: "{sets} セット · {lessons} レッスン"
@@ -4017,7 +4035,6 @@ content_repo:
     sync_all: "すべて同期"
     add: "リポジトリを追加"
     cancel: "キャンセル"
-    confirm_remove: "削除を確認"
     connect: "リポジトリを接続"
     move_down: "下へ移動"
     move_up: "上へ移動"
@@ -4025,12 +4042,10 @@ content_repo:
     share: "共有"
     sync: "今すぐ同期"
   badge:
-    coach: "コーチ"
     private: "プライベート"
     official: "公式"
   trust:
     dropped: "同期しましたが検証に失敗しました。このリポジトリは未検証としてマークされました。"
-    recommended: "公式におすすめ"
     unknown: "未検証"
     validated: "検証済み"
   status:
@@ -4060,6 +4075,19 @@ content_repo:
     save_failed: "リポジトリを追加できませんでした。"
     sync_failed: "同期に失敗しました。もう一度お試しください。"
   validation:
+    # #3424 - validateUserRepo returns a reason code; the UI renders it here.
+    reason:
+      not_found: "リポジトリまたは manifest.yaml が見つかりません。"
+      access_denied: "アクセスが拒否されました。リポジトリと GitHub トークンを確認してください。"
+      unreachable: "リポジトリに接続できません。"
+      unsupported_schema: "サポートされていないスキーマバージョン {version} です。"
+      no_sets: "manifest.yaml にセットがありません。"
+      no_lessons: "どのセットにもレッスンが見つかりません。"
+      executable_content: "レッスン内容に許可されていない実行可能コードが含まれています。"
+      lessons_unreadable: "最初のセットのレッスンを読み込めませんでした。"
+      lesson_invalid_json: "最初のセットの最初のレッスンが有効な JSON ではありません。"
+      validator_unavailable: "レッスン検証ツールを読み込めませんでした。"
+      lesson_invalid: "最初のセットの最初のレッスンが検証に失敗しました: {detail}"
     failed: "検証に失敗しました: {reason}"
     passed: "検証に成功しました: {sets} セット、{lessons} レッスン。"
 resource:
@@ -4108,7 +4136,6 @@ discover:
     domain: "分野"
     trust: "信頼度"
     source: "ソース"
-    ai_checked: "AIチェック済み"
     review: "確認"
   trust:
     official: "公式推奨"
@@ -4180,7 +4207,6 @@ endless:
   back_to_dashboard: "ダッシュボードに戻る"
   loading: "練習セッションを読み込み中…"
   empty_body: "このセットにはまだ練習する問題がありません。"
-  not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。"
   paused: "一時停止中 - ひと休みしましょう。"
   resume: "再開"
   pause: "一時停止"
@@ -4190,7 +4216,6 @@ endless:
     cards: "{n} 枚"
     correct: "{n} 正解"
   error:
-    missing_params: "コンテンツセットが選択されていません。"
     load_failed: "練習セッションを読み込めませんでした。"
   summary:
     heading: "練習セッション完了！"
@@ -4206,12 +4231,10 @@ shuffle:
   page_title: "シャッフル"
   loading: "シャッフルセッションを読み込み中…"
   empty_body: "シャッフルには演習のあるレッスンが2つ以上必要です。"
-  not_cached_body: "このセットはまだダウンロードされていません。コンテンツブラウザを開いて先にダウンロードしてください。"
   back_to_dashboard: "ダッシュボードに戻る"
   subtitle: "{lessons}個のレッスンから{n}問をミックス"
   error:
     load_failed: "シャッフルセッションを読み込めませんでした。"
-    missing_params: "コンテンツセットが選択されていません。"
   summary:
     heading: "シャッフル練習が完了しました！"
     score: "{total}問中{correct}問正解"
@@ -4313,7 +4336,6 @@ registry:
     pending: 保留中 - CI が検証します
   pr:
     created: プルリクエストを開きました。
-    failed: プルリクエストを開けませんでした。
     view: プルリクエストを表示
 
 exercise:

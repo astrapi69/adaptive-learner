@@ -9,7 +9,6 @@
 
 import { useState } from "react";
 
-import { ApiError } from "../../../api/client";
 import { getStorage } from "../../../storage";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import { notify } from "../../../utils/notify";
@@ -18,6 +17,18 @@ import type {
   ImportedConversationDetail,
   LearningSession,
 } from "../../../types/domain";
+
+/**
+ * Where a curriculum opens: the paths tab of the progress hub, which selects
+ * the one named by ``curriculum`` (#3659). ``/curriculum`` is only a legacy
+ * redirect that drops the query.
+ *
+ * @example
+ * go(curriculumPath("c1")); // "/progress?tab=paths&curriculum=c1"
+ */
+function curriculumPath(curriculumId: string): string {
+  return `/progress?tab=paths&curriculum=${encodeURIComponent(curriculumId)}`;
+}
 
 /** i18n translate signature (key + fallback). */
 type Translate = (key: string, fallback: string) => string;
@@ -86,11 +97,10 @@ export function useImportActions({
       setActiveSession(result.session);
       go(`/session?session=${encodeURIComponent(result.session.id)}`);
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("import.session_start_error", "Could not start the session.");
-      notify.error(msg, { persistent: true });
+      notify.error(
+        t("import.session_start_error", "Could not start the session."),
+        { error: err, persistent: true },
+      );
     } finally {
       setStartingSession(false);
     }
@@ -105,7 +115,7 @@ export function useImportActions({
     // user might double-click before the state observed the
     // initial load.
     if (existingCurriculum) {
-      go(`/curriculum?id=${encodeURIComponent(existingCurriculum.id)}`);
+      go(curriculumPath(existingCurriculum.id));
       return;
     }
     const { userId } = readLearnerState();
@@ -149,13 +159,12 @@ export function useImportActions({
       notify.success(
         t("import.curriculum_created", "Curriculum created from the analysis."),
       );
-      go(`/curriculum?id=${encodeURIComponent(curriculum.id)}`);
+      go(curriculumPath(curriculum.id));
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("import.curriculum_error", "Could not create the curriculum.");
-      notify.error(msg);
+      notify.error(
+        t("import.curriculum_error", "Could not create the curriculum."),
+        { error: err },
+      );
     } finally {
       setCreatingCurriculum(false);
     }
@@ -177,11 +186,10 @@ export function useImportActions({
         );
       }
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("import.anki_extract_failed", "Could not extract Anki cards.");
-      notify.error(msg);
+      notify.error(
+        t("import.anki_extract_failed", "Could not extract Anki cards."),
+        { error: err },
+      );
     } finally {
       setExtractingAnki(false);
     }

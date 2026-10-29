@@ -28,7 +28,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from pluginforge import PluginManager
-from pluginforge.config import load_i18n
 
 from app import __version__, config_overlay
 from app.config import (
@@ -80,6 +79,7 @@ from app.routers.taxonomy import (
     users_tags_router,
 )
 from app.routers.users import router as users_router
+from app.services.i18n_catalog import load_catalog
 from app.startup import bootstrap_secrets_template, create_lifespan
 
 setup_logging()
@@ -375,7 +375,7 @@ def health():
 
 @app.get("/api/i18n/{lang}")
 def get_i18n(lang: str) -> dict[str, Any]:
-    return dict(load_i18n(BASE_DIR / "config", lang))
+    return load_catalog(BASE_DIR / "config", lang)
 
 
 @app.get("/api/plugins/manifests")

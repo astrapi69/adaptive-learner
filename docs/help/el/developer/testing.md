@@ -6,22 +6,26 @@
 
 ## Αριθμός δοκιμών
 
-| Επίπεδο | Αριθμός | Εργαλείο |
-|---|---|---|
-| Backend unit + integration | 786 | pytest ^9 |
-| Plugin tests (10 plugins) | 615 | pytest ^9 |
-| Frontend unit + integration | 1233 | Vitest 4 |
-| E2E smoke | 16 spec files | Playwright |
-| **Σύνολο (`make test`)** | **2634** | |
+| Επίπεδο | Εργαλείο |
+|---|---|
+| Backend unit + integration | pytest ^9 |
+| Plugin tests (όλα τα plugins) | pytest ^9 |
+| Frontend unit + integration | Vitest 4 |
+| E2E smoke | Playwright |
+| Πύλη έκδοσης σε λειτουργία Dexie | Playwright |
 
-Ανάλυση plugin: assessment 110 + ai-anthropic 34 + ai-openai 31
-+ ai-gemini 33 + session 215 + tracking 64 + tools 58 +
-gamification 23 + anki 20 + notebooklm 27.
+Οι αριθμοί αυξάνονται σε κάθε έκδοση. Για να μην υπάρχουν διπλοί
+αριθμοί που αποσυγχρονίζονται, αυτή η σελίδα ΔΕΝ γράφει σύνολο.
+Το `docs/audits/current-coverage.md` είναι η μοναδική κανονική και
+πάντα επίκαιρη πηγή για αριθμούς δοκιμών και κάλυψη. Τα plugins
+είναι assessment, οι πάροχοι ΤΝ (anthropic / openai / gemini /
+perplexity), session, tracking, tools, gamification, anki,
+notebooklm, learning-repo, content-loader και missions.
 
 ## Backend pytest
 
 ```bash
-make test-backend      # 786 tests, ~35s
+make test-backend      # όλα τα tests του backend
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb
 ```
@@ -49,7 +53,7 @@ modules του plugin σε απομόνωση. Χρησιμοποίησε mock �
 ## Frontend Vitest
 
 ```bash
-make test-frontend                # 387 tests, ~2s
+make test-frontend                # τρέχει το Vitest από το frontend/
 cd frontend && bunx vitest         # watch mode
 cd frontend && bunx vitest run src/storage/  # ένας κατάλογος
 ```
@@ -128,13 +132,19 @@ cd e2e && npx playwright test smoke/mobile-viewports.spec.ts
 make test-coverage   # opt-in· αργό + θερμικά επιβαρυντικό
 ```
 
-Η κάλυψη τρέχει στο CI για κάθε push στο main· κατέβασε τα
-artifacts:
+Η κάλυψη είναι αναφορά, όχι πύλη merge, οπότε δεν τρέχει σε PRs. Το
+workflow `coverage.yml` τρέχει κάθε νύχτα (και κατόπιν dispatch)·
+κατέβασε τα artifacts:
 
 ```bash
 gh run download --name backend-coverage
 gh run download --name frontend-coverage
 ```
+
+Κάθε plugin έχει δικό του artifact `<plugin-dir>-coverage`, για
+παράδειγμα
+`gh run download --name adaptive-learner-plugin-session-coverage`· ένα
+νέο plugin καλύπτεται χωρίς αλλαγή του workflow.
 
 Στόχοι ανά `.claude/rules/quality-checks.md`:
 
@@ -151,9 +161,19 @@ gh run download --name frontend-coverage
 cd backend && poetry run pre-commit install
 ```
 
-Hooks: ruff check (auto-fix), ruff format, trailing whitespace,
-end-of-file fixer, check-yaml, check-merge-conflict. Μόνο
-backend - το frontend lint τρέχει κατά CI, όχι κατά pre-commit.
+Τα hooks βρίσκονται στο `.pre-commit-config.yaml`, για παράδειγμα
+ruff check (auto-fix) και ruff format, έλεγχοι για κενά, YAML, JSON
+και merge conflicts, το ESLint του frontend, οι έλεγχοι τεκμηρίωσης
+(ratchet υποκατάστατων umlaut, αναφορές τεκμηρίωσης) και το
+`plugin-lock-paired-with-pyproject` (μπλοκάρει): τρέχει
+`poetry check --lock` για κάθε plugin του οποίου το `pyproject.toml`
+ή το `poetry.lock` εμπλέκεται και αποτυγχάνει όταν οι εξαρτήσεις
+άλλαξαν από τότε που γράφτηκε το lock· τρέχει επίσης στο pre-commit
+job του CI σε όλα τα αρχεία. Σε αυτό το job το hook `eslint`
+παραλείπεται (το job των frontend tests τρέχει το ESLint με
+εγκατεστημένες εξαρτήσεις). Το Prettier δεν είναι hook: το
+`bun run format:check` τρέχει στο job των frontend tests, χωρίς να
+μπλοκάρει μέχρι την εφάπαξ αναμορφοποίηση του #3270.
 
 ## CI
 
@@ -166,9 +186,16 @@ PR (πρέπει να περάσουν για να γίνει merge), ενώ ο�
 και σε κάθε PR (Python 3.12):
 
 1. Backend tests (pytest)
-2. Plugin tests (`make test-plugins`, και τα 13 μέσω του backend venv)
+2. Plugin tests (`make test-plugins`, όλα μέσω του backend venv)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`), έλεγχος
-   κυκλικών εξαρτήσεων, Stylelint, Vitest, `vite build`, `npm audit`
+   κυκλικών εξαρτήσεων, Stylelint, Vitest, `vite build`,
+   `bun audit --audit-level=high` (μπλοκάρει σε ευρήματα υψηλής και
+   κρίσιμης σοβαρότητας). Μια ειδοποίηση χωρίς διορθωμένη έκδοση που
+   φτάνει μόνο σε μια εξάρτηση ανάπτυξης εξαιρείται με το ID της στο
+   `frontend/audit-ignore.txt`: ένα ID ανά γραμμή, με ένα σχόλιο από
+   πάνω που δίνει τον λόγο και πότε φεύγει η καταχώριση. Το
+   `make check-security` διαβάζει την ίδια λίστα· το
+   `security-scan.yml` μένει χωρίς φίλτρο.
 4. Pre-commit hooks σε όλα τα αρχεία
 5. Backend ruff + mypy + pip-audit
 6. Ελεγκτής απόκλισης τεκμηρίωσης (`verify_docs.py` + συγχρονισμός
@@ -189,16 +216,17 @@ PR (πρέπει να περάσουν για να γίνει merge), ενώ ο�
   επιδεινωμένους παραβάτες σε σχέση με το `.complexity-baseline`, οπότε
   μπλοκάρει τη νέα πολυπλοκότητα χωρίς να επιβάλλει σάρωση του
   προϋπάρχοντος χρέους. Η πλήρης, μόνο-προειδοποιητική αναφορά
-  πολυπλοκότητας τρέχει νυχτερινά.
+  πολυπλοκότητας τρέχει νυχτερινά. Στο ίδιο job τρέχει ο έλεγχος
+  μεγέθους φακέλων (`scripts/check-folder-size.sh` έναντι του
+  `.dirsize-baseline`)· τοπικά `make check-folder-size` ή ως μέρος
+  του `make ci`.
 - `cohesion-check.yml` - ο έλεγχος μεγέθους αρχείων (πύλη έναντι
   του `.filesize-whitelist`) συν δύο πύλες ονομάτων κλάσεων: νεκρά
   ονόματα κλάσεων CSS (`check-dead-classnames.py` έναντι του
   `.dead-classnames-baseline`) και η **πύλη unstyled-className**
   (`--unstyled`, ratchet έναντι του
   `.unstyled-classnames-baseline`) - ένα `className` του οποίου
-  όλα τα tokens είναι νεκρά μπλοκάρει το PR. Ο συνοδευτικός
-  έλεγχος μεγέθους φακέλων τρέχει τοπικά μέσω
-  `make check-folder-size`.
+  όλα τα tokens είναι νεκρά μπλοκάρει το PR.
 - `visual-baseline-gate.yml` - ένα PR που αλλάζει οπτικά κρίσιμες
   διαδρομές (Lesson-components, exercise renderers, αρχεία
   theme/CSS) πρέπει να φέρνει τα επηρεαζόμενα baseline screenshots
@@ -213,13 +241,21 @@ PR (πρέπει να περάσουν για να γίνει merge), ενώ ο�
   compose images (η διαδρομή launcher / install.sh), φιλτραρισμένο
   κατά διαδρομές σε PRs, επιπλέον σε `release/**`, εβδομαδιαία και
   κατόπιν dispatch· τοπικά `make docker-build-smoke`.
+- `dexie-smoke.yml` - η πύλη E2E της λειτουργίας Dexie: σε κάθε pull
+  request που την αφορά (αποφασίζει το
+  `scripts/dexie_smoke_affected.py`· το job `Dexie smoke (required)`
+  αναφέρει πάντα), καθώς και καθημερινά, σε `release/**` και κατόπιν
+  dispatch· τοπικά `make test-dexie-smoke`.
+- `backup-e2e.yml` - τρέχει σε PRs που αγγίζουν μια διαδρομή backup
+  (για παράδειγμα `frontend/src/storage/backup/`, τα Dexie stores ή
+  τις υπηρεσίες backup του backend· η λίστα βρίσκεται στο workflow)
+  και εκτελεί κάθε `e2e/dexie/backup-*.spec.ts`, μαζί με τον κύκλο
+  export/import για όλους τους πίνακες του backup.
 
 **Νυχτερινή βάρδια / Release (όχι σε PRs):**
 
-- `dexie-smoke.yml` - η πύλη E2E της λειτουργίας Dexie (καθημερινά +
-  σε `release/**` + dispatch· τοπικά `make test-dexie-smoke`)
 - `coverage.yml` - αναφορά κάλυψης (καθημερινά + dispatch)
-- `security-scan.yml` - pip-audit / npm audit / bandit (εβδομαδιαία +
+- `security-scan.yml` - pip-audit / bun audit / bandit (εβδομαδιαία +
   σε `release/**` + dispatch· μόνο προειδοποιητικό)
 - `content-stats.yml` - απόκλιση στατιστικών περιεχομένου έναντι ενός
   φρέσκου checkout του αποθετηρίου περιεχομένου (καθημερινά +
@@ -241,6 +277,14 @@ PR (πρέπει να περάσουν για να γίνει merge), ενώ ο�
   baselines στο CI και τα κάνει push ως commit στο branch του PR
   (label `refresh-visual-baselines`, ή dispatch με αριθμό PR) - η
   εξέταση των εικόνων πριν από το merge παραμένει υποχρεωτική
+- `smoke-nightly.yml` - νυχτερινή εκτέλεση του smoke για mobile
+  viewports· τα ευρήματα καταλήγουν σε ένα συγκεντρωτικό issue
+- `unused-catalog-keys.yml` - νυχτερινή αναφορά για κλειδιά
+  καταλόγου χωρίς καταναλωτή, παλαιότερα από το παράθυρο
+  προετοιμασίας (`AGE_DAYS` στο
+  `frontend/src/i18n/unused-catalog-keys.ts`), σε ένα συγκεντρωτικό
+  issue· κάθε κλειδί εκεί είναι υποψήφιο και ελέγχεται ένα-ένα πριν
+  διαγραφεί
 
 Το `.github/workflows/release-gate.yml` τρέχει σε tag pushes:
 επαληθεύει ότι τα version pins είναι συγχρονισμένα σε όλα τα αρχεία

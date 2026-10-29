@@ -52,7 +52,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 Το `ai_complete_async` χρησιμοποιείται από το session route στο
 όριο κύκλου βήμα 6→7, ώστε η αξιολόγηση βήματος και η μετάβαση
 θέματος να εκτελεστούν ταυτόχρονα μέσω `asyncio.gather`
-(`async_evaluation: true` στο `app.yaml`).
+(`async_evaluation: true` στο `session.yaml`).
 
 Το `ai_complete_stream` τροφοδοτεί το streaming SSE endpoint
 `POST /api/plugins/session/{id}/message/stream` που εκπέμπει
@@ -93,7 +93,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
    την ανταλλαγή και να εκπέμψει ετυμηγορία JSON
    (`advance`, `confidence`, `reason`, `suggested_step`).
    `max_tokens=256`. Η ετυμηγορία καθορίζει την προώθηση
-   `cycle_step` (με πύλη `confidence ≥ 0.6`).
+   `cycle_step` (με πύλη `confidence ≥ 0.7`).
 3. **Μετάβαση θέματος** - μόνο στο βήμα 7. Μια τρίτη κλήση ΤΝ
    κρίνει αν το θέμα ενσωματώθηκε και αν να ξεκινήσει νέος κύκλος
    σε νέο υποθέμα. Όριο `max_cycles=5` ανά συνεδρία.
@@ -119,7 +119,7 @@ hint: …") προσαρτάται κατά τη σύνθεση.
 
 Για τη λειτουργία Dexie, οι προτροπές εξάγονται αυτούσιες στο
 `frontend/src/data/session-prompts.json` και φορτώνονται από
-`frontend/src/storage/prompts.ts`. Ίδιο κείμενο, ίδια μορφή
+`frontend/src/storage/ai/prompts.ts`. Ίδιο κείμενο, ίδια μορφή
 μπλοκ πλαισίου - δεν είναι δυνατή απόκλιση.
 
 ## Προσθήκη νέου παρόχου
@@ -127,14 +127,16 @@ hint: …") προσαρτάται κατά τη σύνθεση.
 1. Δημιούργησε `plugins/adaptive-learner-plugin-ai-newprovider/`.
 2. Υλοποίησε τον hookimpl `ai_complete`: ελέγξε το πρόθεμα
    μοντέλου, κάλεσε το HTTP API του παρόχου, επέστρεψε το κείμενο.
-3. Πρόσθεσε το πρόθεμα του παρόχου στο `DEFAULT_MODELS` στο
-   `ai_orchestration.py` με ένα φθηνό προεπιλεγμένο μοντέλο.
+3. Πρόσθεσε τον πάροχο με ένα φθηνό προεπιλεγμένο μοντέλο στο
+   `DEFAULT_MODELS` στο `backend/app/services/ai_caller.py`· είναι ο
+   μόνος πίνακας (τον διαβάζουν το plugin συνεδρίας, οι εισαγωγές και
+   ο έλεγχος μαθημάτων, και ένα τεστ απορρίπτει δεύτερο αντίγραφο).
 4. Πρόσθεσε το όνομα παρόχου στο enum `AIProvider` στο
    `app/schemas/__init__.py`.
 5. Πρόσθεσέ το στο `AI_PROVIDERS` στο
    `frontend/src/lib/constants.ts`.
 6. Για ισοτιμία Dexie-mode: πρόσθεσε client στο
-   `frontend/src/storage/ai-providers.ts` και δρομολόγησε σε αυτό
+   `frontend/src/storage/ai/ai-providers.ts` και δρομολόγησε σε αυτό
    από το `aiComplete()`.
 
 Κάθε plugin παρόχου τεστάρει τον hookimpl + κλήση παρόχου σε
@@ -144,29 +146,31 @@ hint: …") προσαρτάται κατά τη σύνθεση.
 ## Άμεσες κλήσεις από browser (λειτουργία Dexie)
 
 Στη λειτουργία Dexie η κλήση ΤΝ δεν περνά από το σύστημα plugin.
-Το `storage/ai-providers.ts` κάνει απευθείας το HTTP request.
+Το `storage/ai/ai-providers.ts` κάνει απευθείας το HTTP request.
 Το Anthropic απαιτεί την επικεφαλίδα
 `anthropic-dangerous-direct-browser-access: true` για να ξεπεραστεί
 το CORS preflight· OpenAI και Gemini δέχονται άμεσες κλήσεις
 από browser.
 
 Η λογική διπλής προτροπής είναι ίδια και στις δύο λειτουργίες -
-το `storage/session-flow.ts` καλεί `aiComplete()` δύο φορές και
+το `storage/ai/session-flow.ts` καλεί `aiComplete()` δύο φορές και
 αναλύει το JSON του αξιολογητή με τον ίδιο τρόπο που το κάνει
 το backend.
 
 ## Κατώφλι εμπιστοσύνης
 
-Το `session.step_evaluation.confidence_threshold` (προεπιλογή 0.6)
-του `backend/config/app.yaml` καθορίζει αν μια πραγματική (μη
+Το `step_evaluation.confidence_threshold` (προεπιλογή 0.7)
+του `backend/config/plugins/session.yaml` καθορίζει αν μια πραγματική (μη
 εναλλακτική) ετυμηγορία αξιολογητή μετακινεί πραγματικά το
 cycle_step. Ορίσου υψηλότερα για πιο συντηρητική συμπεριφορά,
 χαμηλότερα για πιο επιθετική. Οι ετυμηγορίες εναλλακτικής
 (αποτυχίες ανάλυσης) εφαρμόζουν πάντα την προώθηση +1.
 
-Η θύρα Dexie αντικατοπτρίζει αυτό με σταθερό 0.6 στο
-`storage/session-flow.ts`. Μια μελλοντική φάση θα εκθέσει αυτό
-στο UI Ρυθμίσεων.
+Η θύρα Dexie αντικατοπτρίζει αυτό με σταθερό 0.7 στο
+`storage/ai/session-flow.ts`· το `session-flow.test.ts` διαβάζει την
+τιμή από το `session.yaml` και αποτυγχάνει όταν οι δύο αποκλίνουν.
+Ρύθμιση στο UI σκόπιμα δεν υπάρχει: τα κλειδιά είναι `# INTERNAL` και
+αλλάζουν μόνο στο YAML (#3436).
 
 ## Άλλες επιφάνειες ΤΝ (σύνοψη μόνο ανάγνωσης)
 

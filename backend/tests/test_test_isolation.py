@@ -15,6 +15,7 @@ from __future__ import annotations
 import os
 
 from app.database import DATABASE_URL, engine
+from tests.conftest import looks_like_test_database
 
 
 def test_test_mode_flag_is_set() -> None:
@@ -23,10 +24,14 @@ def test_test_mode_flag_is_set() -> None:
 
 
 def test_engine_points_at_test_db() -> None:
-    """Live engine URL must not look like the production SQLite file."""
-    url = str(engine.url)
-    assert "adaptive_learner.db" not in url
-    assert ":memory:" in url or "/tmp/" in url or url.endswith("test.db")
+    """Live engine URL must not look like the production SQLite file.
+
+    Reads ``url.database``, not ``str(engine.url)``: SQLAlchemy 2.1
+    percent-encodes ``:memory:`` in the text rendering (#3550).
+    """
+    database = engine.url.database or ""
+    assert "adaptive_learner.db" not in database
+    assert looks_like_test_database(database)
 
 
 def test_database_url_respects_test_flag() -> None:

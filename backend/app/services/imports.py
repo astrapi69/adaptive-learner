@@ -1,16 +1,16 @@
 """ImportedConversation CRUD + analysis service (Phase 12C-D).
 
-The analyze step lives in the frontend (browser-direct AI provider
-calls); the backend only persists the result the frontend hands
-back. This keeps the API-key surface client-side and matches the
-Dexie-mode design.
+Dexie mode analyzes in the browser (browser-direct AI provider calls)
+and hands the result to :func:`save_analysis`. API mode analyzes on
+the server through :func:`analyze_with_ai`, because cleartext keys
+never reach the browser there.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 
 from app.exceptions import ConflictError, NotFoundError, ValidationError
 from app.models import ImportedConversation, LearningSession
@@ -20,6 +20,7 @@ from app.schemas import (
     ImportedConversationCreate,
     ImportedConversationUpdate,
 )
+from app.services.conversation_analysis import Message, analyze_conversation_with_ai
 
 
 def compute_content_hash(messages: Iterable[object]) -> str:
@@ -222,6 +223,45 @@ def save_analysis(
     """
     conv = get_conversation(repo, conversation_id)
     return repo.save_analysis(conv, _serialise_analysis(payload.analysis_result))
+
+
+def analyze_with_ai(
+    repo: ImportsRepository,
+    conversation_id: str,
+    ai_call: Callable[[list[dict[str, str]]], str | None],
+) -> ImportedConversation:
+    """Analyze a conversation through ``ai_call`` and persist the result.
+
+    The analysis prompt is written in the owner's UI language (fallback
+    ``"de"``, the ``User.language`` default) and sharpened by the
+    import-time language pair (v1.54.0).
+
+    Args:
+        repo: The imports repository.
+        conversation_id: The conversation to analyze.
+        ai_call: A ``messages -> str | None`` caller, usually
+            ``app.services.ai_caller.caller_for``.
+
+    Returns:
+        The conversation row with the analysis stored.
+
+    Raises:
+        NotFoundError: When the conversation does not exist.
+    """
+    conv = get_conversation(repo, conversation_id, with_messages=True)
+    user = repo.get_user(conv.user_id)
+    lang = user.language if user and user.language else "de"
+    result = analyze_conversation_with_ai(
+        [Message(role=m.role, content=m.content) for m in conv.messages],
+        ai_complete_call=ai_call,
+        title=conv.title,
+        lang=lang,
+        source_language=conv.source_language,
+        target_language=conv.target_language,
+    )
+    return save_analysis(
+        repo, conversation_id, ImportedConversationAnalysis(analysis_result=result)
+    )
 
 
 def get_active_session_for_conversation(

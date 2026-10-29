@@ -18,9 +18,11 @@ l'apprentissage efficace et est adapté dynamiquement à votre progression.
 7. Integrate  → Vous reliez à des connaissances existantes
 ```
 
-Les étapes 3 et 4 ne sont atteintes **que si** votre tentative à l'étape 2
-ne passe pas le seuil de confiance. En cas de haute confiance, le cycle
-passe directement à l'étape 5.
+L'IA évaluatrice peut aussi proposer de rester sur une étape, d'en sauter
+une (par exemple quand votre tentative à l'étape 2 montre que vous avez
+déjà compris) ou de revenir en arrière. Sa proposition ne s'applique que
+si sa confiance atteint au moins 70 % (voir *Comment l'IA décide*
+ci-dessous).
 
 ---
 
@@ -39,20 +41,34 @@ déterminent le rythme de la session.
 
 ---
 
-## Seuils de confiance
+## Comment l'IA décide
 
-| Méthode | Seuil pour avancer |
-|---------|--------------------|
-| Déductive | 70 % |
-| Inductive | 70 % |
-| Basée sur les erreurs | 75 % |
-| Dialogique | 50 % (plus tolérant - exploration) |
-| Contextuelle | 65 % |
-| IA adaptative | Variable selon l'historique |
+Après chacun de vos messages et la réponse de l'IA, un second appel à
+l'IA lit l'échange et rend un verdict JSON :
+`{advance, confidence, reason, suggested_step}`. Si l'IA renvoie un
+texte illisible, un repli déterministe avance d'une étape (plafonné à
+l'étape 7).
+
+`suggested_step` peut valoir :
+
+- `current + 1` - avancer normalement (le cas le plus fréquent) ;
+- `current` - rester ; vous avez besoin de plus de temps ici ;
+- un saut en avant (par exemple 1 → 3) - vous avez déjà assimilé
+  l'input ;
+- un retour en arrière (par exemple 4 → 2) - vous êtes perdu et devez
+  réessayer.
+
+La proposition ne s'applique que si `confidence >= 0.7` (la valeur par
+défaut de `step_evaluation.confidence_threshold` dans session.yaml). Ce
+seuil est le même pour toutes les méthodes ; la méthode change seulement
+ce que l'évaluateur regarde. Les verdicts de repli appliquent toujours
+l'avance de +1.
 
 ---
 
 ## Auto-boucle
+
+> Dans la version navigateur, la session reste à l'étape 7 : l'auto-boucle ne fonctionne que dans l'application de bureau. La page de la session l'indique lorsque vous atteignez l'étape 7.
 
 Après l'étape 7, une **nouvelle boucle** peut démarrer automatiquement
 avec le sujet suivant de votre curriculum. L'auto-boucle continue jusqu'à

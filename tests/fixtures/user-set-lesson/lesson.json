@@ -1,0 +1,656 @@
+{
+  "cards": [
+    {
+      "audio": null,
+      "back": "the bill",
+      "code_language": null,
+      "code_snippet": null,
+      "difficulty": null,
+      "expected_output": null,
+      "front": "la cuenta",
+      "hint": null,
+      "id": "vocab-0",
+      "stable_id": null,
+      "image": null,
+      "media_type": null,
+      "notes": "La cuenta, por favor.",
+      "tags": [],
+      "token_roles": null
+    },
+    {
+      "audio": null,
+      "back": "the water",
+      "code_language": null,
+      "code_snippet": null,
+      "difficulty": null,
+      "expected_output": null,
+      "front": "el agua",
+      "hint": null,
+      "id": "vocab-1",
+      "stable_id": null,
+      "image": null,
+      "media_type": null,
+      "notes": "Quiero el agua.",
+      "tags": [],
+      "token_roles": null
+    },
+    {
+      "audio": null,
+      "back": "the street",
+      "code_language": null,
+      "code_snippet": null,
+      "difficulty": null,
+      "expected_output": null,
+      "front": "la calle",
+      "hint": null,
+      "id": "vocab-2",
+      "stable_id": null,
+      "image": null,
+      "media_type": null,
+      "notes": "La calle esta cerca.",
+      "tags": [],
+      "token_roles": null
+    },
+    {
+      "audio": null,
+      "back": "left",
+      "code_language": null,
+      "code_snippet": null,
+      "difficulty": null,
+      "expected_output": null,
+      "front": "izquierda",
+      "hint": null,
+      "id": "vocab-3",
+      "stable_id": null,
+      "image": null,
+      "media_type": null,
+      "notes": "Gira a la izquierda.",
+      "tags": [],
+      "token_roles": null
+    },
+    {
+      "audio": null,
+      "back": "thank you",
+      "code_language": null,
+      "code_snippet": null,
+      "difficulty": null,
+      "expected_output": null,
+      "front": "gracias",
+      "hint": null,
+      "id": "vocab-4",
+      "stable_id": null,
+      "image": null,
+      "media_type": null,
+      "notes": null,
+      "tags": [],
+      "token_roles": null
+    }
+  ],
+  "contributed_at": null,
+  "contributed_by": null,
+  "description": "Ordering food and asking directions.",
+  "domain": null,
+  "estimated_minutes": 19,
+  "id": "conv-1",
+  "purpose": "practice",
+  "requires_extensions": null,
+  "resources": null,
+  "source_language": null,
+  "steps": [
+    {
+      "body": "# Spanish travel vocabulary\n\nOrdering food and asking directions.",
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": null,
+      "id": "theory-overview",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": "Spanish travel vocabulary",
+      "type": "theory"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": null,
+        "accept_orderings": null,
+        "blanks": null,
+        "card_ids": [
+          "vocab-0",
+          "vocab-1",
+          "vocab-2",
+          "vocab-3"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": null,
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-match-0",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": [
+          {
+            "left": "la cuenta",
+            "right": "the bill",
+            "stable_id": null
+          },
+          {
+            "left": "el agua",
+            "right": "the water",
+            "stable_id": null
+          },
+          {
+            "left": "la calle",
+            "right": "the street",
+            "stable_id": null
+          },
+          {
+            "left": "izquierda",
+            "right": "left",
+            "stable_id": null
+          }
+        ],
+        "prompt": "Match each word with its translation.",
+        "sentence": null,
+        "tiles": null,
+        "type": "matching",
+        "variables": null
+      },
+      "id": "step-ex-0-ex-match-0",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": [
+          "the bill"
+        ],
+        "accept_orderings": null,
+        "blanks": null,
+        "card_ids": [
+          "vocab-0"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": null,
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-free-0",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Translate: la cuenta",
+        "sentence": null,
+        "tiles": null,
+        "type": "free_text",
+        "variables": null
+      },
+      "id": "step-ex-1-ex-free-0",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": [
+          "the water"
+        ],
+        "accept_orderings": null,
+        "blanks": null,
+        "card_ids": [
+          "vocab-1"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": null,
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-free-1",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Translate: el agua",
+        "sentence": null,
+        "tiles": null,
+        "type": "free_text",
+        "variables": null
+      },
+      "id": "step-ex-2-ex-free-1",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": [
+          "the street"
+        ],
+        "accept_orderings": null,
+        "blanks": null,
+        "card_ids": [
+          "vocab-2"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": null,
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-free-2",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Translate: la calle",
+        "sentence": null,
+        "tiles": null,
+        "type": "free_text",
+        "variables": null
+      },
+      "id": "step-ex-3-ex-free-2",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": [
+          "left"
+        ],
+        "accept_orderings": null,
+        "blanks": null,
+        "card_ids": [
+          "vocab-3"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": null,
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-free-3",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Translate: izquierda",
+        "sentence": null,
+        "tiles": null,
+        "type": "free_text",
+        "variables": null
+      },
+      "id": "step-ex-4-ex-free-3",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": [
+          "thank you"
+        ],
+        "accept_orderings": null,
+        "blanks": null,
+        "card_ids": [
+          "vocab-4"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": null,
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-free-4",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Translate: gracias",
+        "sentence": null,
+        "tiles": null,
+        "type": "free_text",
+        "variables": null
+      },
+      "id": "step-ex-5-ex-free-4",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": null,
+        "accept_orderings": null,
+        "blanks": [
+          {
+            "accept": [
+              "el agua"
+            ],
+            "hint": null,
+            "placeholder": null,
+            "stable_id": null
+          }
+        ],
+        "card_ids": [
+          "vocab-1"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": "type",
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-cloze-1",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Fill in the missing word.",
+        "sentence": "Quiero ___.",
+        "tiles": null,
+        "type": "cloze",
+        "variables": null
+      },
+      "id": "step-ex-6-ex-cloze-1",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": null,
+        "accept_orderings": null,
+        "blanks": [
+          {
+            "accept": [
+              "izquierda"
+            ],
+            "hint": null,
+            "placeholder": null,
+            "stable_id": null
+          }
+        ],
+        "card_ids": [
+          "vocab-3"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": "type",
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-cloze-3",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Fill in the missing word.",
+        "sentence": "Gira a la ___.",
+        "tiles": null,
+        "type": "cloze",
+        "variables": null
+      },
+      "id": "step-ex-7-ex-cloze-3",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": null,
+        "accept_orderings": null,
+        "blanks": null,
+        "card_ids": [
+          "vocab-0"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": null,
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-tiles-0",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Arrange the words into the sentence (la cuenta).",
+        "sentence": null,
+        "tiles": [
+          "La",
+          "cuenta,",
+          "por",
+          "favor."
+        ],
+        "type": "word_tiles",
+        "variables": null
+      },
+      "id": "step-ex-8-ex-tiles-0",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": null,
+        "accept_orderings": null,
+        "blanks": null,
+        "card_ids": [
+          "vocab-1"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": null,
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-tiles-1",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Arrange the words into the sentence (el agua).",
+        "sentence": null,
+        "tiles": [
+          "Quiero",
+          "el",
+          "agua."
+        ],
+        "type": "word_tiles",
+        "variables": null
+      },
+      "id": "step-ex-9-ex-tiles-1",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": null,
+        "accept_orderings": null,
+        "blanks": null,
+        "card_ids": [
+          "vocab-2"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": null,
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-tiles-2",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Arrange the words into the sentence (la calle).",
+        "sentence": null,
+        "tiles": [
+          "La",
+          "calle",
+          "esta",
+          "cerca."
+        ],
+        "type": "word_tiles",
+        "variables": null
+      },
+      "id": "step-ex-10-ex-tiles-2",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    },
+    {
+      "body": null,
+      "example_label": null,
+      "example_url": null,
+      "examples": null,
+      "exercise": {
+        "accept": null,
+        "accept_orderings": null,
+        "blanks": null,
+        "card_ids": [
+          "vocab-3"
+        ],
+        "case_sensitive": false,
+        "cloze_mode": null,
+        "direction": "target_to_source",
+        "distractors": [],
+        "examples": null,
+        "explanation": null,
+        "ext_payload": null,
+        "from_cards": false,
+        "hint": null,
+        "id": "ex-tiles-3",
+        "stable_id": null,
+        "images": null,
+        "multiple": false,
+        "options": null,
+        "pairs": null,
+        "prompt": "Arrange the words into the sentence (izquierda).",
+        "sentence": null,
+        "tiles": [
+          "Gira",
+          "a",
+          "la",
+          "izquierda."
+        ],
+        "type": "word_tiles",
+        "variables": null
+      },
+      "id": "step-ex-11-ex-tiles-3",
+      "review_lesson_id": null,
+      "theory_ref": null,
+      "title": null,
+      "type": "exercise"
+    }
+  ],
+  "target_language": null,
+  "title": "Spanish travel vocabulary",
+  "variation_note": null,
+  "variation_of": null
+}

@@ -4,6 +4,8 @@ import { useNavigate, useSearchParams } from "react-router";
 
 import DashboardFilterBar from "../../components/dashboard/DashboardFilterBar";
 import QuickStartButton from "../../components/dashboard/QuickStartButton";
+import InstallPrompt from "../../components/pwa/InstallPrompt";
+import IosInstallHint from "../../components/pwa/IosInstallHint";
 import { Button } from "@/components/ui/button";
 import { useFeature } from "@astrapi69/feature-strategy-react";
 import { ApiError } from "../../api/client";
@@ -198,6 +200,12 @@ export default function Dashboard() {
         )}
       </header>
 
+      {/* #3765 / #3782 - both install hints are cards in the flow, never
+          laid over a page. Chromium offers the banner, iOS the hint; never
+          both on one device. */}
+      <IosInstallHint />
+      <InstallPrompt />
+
       {/* #1417 — the two stacked API-key messages (blue skip banner + yellow
           ApiKeyRequiredNotice) were consolidated into the single inviting
           AiInviteCard on the Übersicht tab, below Weitermachen. The session-
@@ -255,7 +263,7 @@ export default function Dashboard() {
       {/* #931 — secondary "Quick actions" footer: the learner content (tabs)
           comes first; starting a session + power-user shortcuts live here. */}
       <section className="dashboard-quick-actions mt-6 border-t border-border pt-4">
-        <h2 className="mb-2 text-sm font-semibold text-fg-muted">
+        <h2 className="mt-0 mb-2 text-sm font-semibold text-fg-muted">
           {t("dashboard.quick_actions", "Quick actions")}
         </h2>
         <QuickStartButton

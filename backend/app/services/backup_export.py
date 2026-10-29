@@ -14,14 +14,14 @@ from typing import Any
 from app import __version__
 from app.exceptions import NotFoundError
 from app.repositories.backup_repo import BackupRepository
-from app.schemas import AIProvider
 from app.services.content_backup import dump_content_sets
 from app.services.sync_service import (
-    TABLES as SYNC_TABLES,
-)
-from app.services.sync_service import (
+    EXCLUDED_USER_SETTINGS_FIELDS,
     _to_iso,
     serialize_row,
+)
+from app.services.sync_service import (
+    TABLES as SYNC_TABLES,
 )
 
 logger = logging.getLogger(__name__)
@@ -31,20 +31,27 @@ logger = logging.getLogger(__name__)
 # ``BACKUP_VERSION`` (storage/backup/backup-tables.ts) must match, pinned
 # by a parity test there. The backend said 1.4.0 and the frontend 1.5.0 for
 # the same EXP-051 change until #3363.
+# 1.9.0 - #3412: an optional ai_validation_results block (cached AI
+# content-check reports), captured and applied frontend-side; an API-mode
+# export carries it empty and this import ignores it.
+# 1.8.0 - #3412: an optional plugin_settings block (connected repos, invites,
+# the Learning Repository switch), added and applied frontend-side in both
+# modes like local_storage; this import ignores it.
+# 1.7.0 - #3445: xp_purchases rides the export. Older backups have no
+# ledger; ownership then migrates from the local_storage snapshot the first
+# time a gallery loads (frontend purchase-ledger.ts).
 # 1.6.0 - #3363: paused_at / abandoned_at, content_hash + the import
 # language pair, cycle_count / cycle_topics and the session-note kind ride
 # the export. Older backups lack them and import with the column defaults.
 # 1.5.0 (1.4.0 here) - EXP-051 / #2125: element_errors gains run_id and
 # set_runs rides the export; older backups import with run_id 1.
-BACKUP_VERSION = "1.6.0"
+BACKUP_VERSION = "1.9.0"
 BACKUP_FORMAT = "adaptive-learner-backup"
 
 # API keys are sensitive; the backup file is meant to travel
-# (cloud, USB, email). Stripped on export, ignored on import. One field
-# per AI provider, derived from the enum so a new provider is covered
-# without a second edit; the frontend derives its list from AI_PROVIDERS
-# the same way, and a parity test pins the two provider lists (#3367).
-EXCLUDED_USER_SETTINGS_FIELDS: set[str] = {f"api_key_{provider.value}" for provider in AIProvider}
+# (cloud, USB, email). Stripped on export, ignored on import. The field
+# list (EXCLUDED_USER_SETTINGS_FIELDS) lives in sync_tables.py, shared with
+# the LAN sync wire (#3854).
 
 
 def _strip_excluded_fields(table: str, record: dict[str, Any]) -> dict[str, Any]:

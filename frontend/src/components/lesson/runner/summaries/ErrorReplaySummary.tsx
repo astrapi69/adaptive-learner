@@ -27,6 +27,8 @@ import { Button } from "@/components/ui/button";
 import Confetti from "../../../feedback/Confetti";
 import { useI18n } from "../../../../hooks/ui/useI18n";
 import { prefersReducedMotion } from "../../../../lib/feedback/feedbackPref";
+import type { CorrectionSummary } from "../../../../lib/lesson/correction/correction-summary";
+import CorrectionSummaryPanel from "../../summary/CorrectionSummaryPanel";
 
 export interface ErrorReplaySummaryProps {
   correct: number;
@@ -35,6 +37,10 @@ export interface ErrorReplaySummaryProps {
   stillWrong: number;
   onRetry: () => void;
   onDone: () => void;
+  /** #3575 - what the source run's mistakes look like now; null or absent
+   *  (a set flash round, a reload without router state) keeps the
+   *  score-only recap. */
+  correctionSummary?: CorrectionSummary | null;
 }
 
 /** Replay recap: the score, then the celebration or the retry offer. */
@@ -44,6 +50,7 @@ export default function ErrorReplaySummary({
   stillWrong,
   onRetry,
   onDone,
+  correctionSummary = null,
 }: ErrorReplaySummaryProps) {
   const { t } = useI18n();
   const allCorrected = stillWrong === 0;
@@ -100,6 +107,7 @@ export default function ErrorReplaySummary({
           </>
         )}
       </div>
+      {correctionSummary && <CorrectionSummaryPanel summary={correctionSummary} t={t} />}
     </section>
   );
 }

@@ -23,7 +23,6 @@ import { Button } from "@/components/ui/button";
 import ApiKeyRequiredNotice from "../../components/settings/ai/ApiKeyRequiredNotice";
 import MicButton from "../../components/voice/MicButton";
 import SpeechButton from "../../components/voice/SpeechButton";
-import { ApiError } from "../../api/client";
 import { FEATURES } from "../../features/featureConfig";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { readLearnerState } from "../../lib/learning/learnerState";
@@ -97,11 +96,10 @@ export default function PronunciationPage() {
       setTarget(r.phrase);
       setRecent((prev) => [...prev, r.phrase].slice(-10));
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("pronunciation.phrase_failed", "Could not generate a phrase.");
-      notify.error(msg);
+      notify.error(
+        t("pronunciation.phrase_failed", "Could not generate a phrase."),
+        { error: err },
+      );
     } finally {
       setGenerating(false);
     }
@@ -119,11 +117,10 @@ export default function PronunciationPage() {
       });
       setVerdict(r);
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("pronunciation.judge_failed", "Could not score that attempt.");
-      notify.error(msg);
+      notify.error(
+        t("pronunciation.judge_failed", "Could not score that attempt."),
+        { error: err },
+      );
     } finally {
       setJudging(false);
     }

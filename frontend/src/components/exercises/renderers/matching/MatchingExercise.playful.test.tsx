@@ -93,7 +93,7 @@ describe("MatchingExercise: playful card-snap (#2876)", () => {
         ["classic", false],
         ["playful", true],
     ])(
-        "behaviour parity (%s): undo works and scoring is identical",
+        "behaviour parity (%s): re-pairing works and scoring is identical",
         (_label, playful) => {
             if (playful) setPlayfulMode(true);
             const onComplete = vi.fn();
@@ -105,10 +105,12 @@ describe("MatchingExercise: playful card-snap (#2876)", () => {
             } else {
                 render(ui);
             }
-            // Pair, undo by tapping the paired left, then re-pair all.
+            // Pair wrong, re-pair the left with its right partner (#3237:
+            // a tap selects, the next tap overwrites), then pair all.
             tap("matching-left-0");
             tap("matching-right-1");
             tap("matching-left-0");
+            tap("matching-right-0");
             pairAll();
             fireEvent.click(screen.getByTestId("matching-submit"));
             expect(onComplete).toHaveBeenCalledTimes(1);

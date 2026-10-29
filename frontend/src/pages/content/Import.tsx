@@ -89,11 +89,10 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         if (!cancelled) setConversations(list);
       } catch (err) {
         if (!cancelled) {
-          const msg =
-            err instanceof ApiError
-              ? err.detail
-              : t("import.list_error", "Could not load imported conversations.");
-          notify.error(msg);
+          notify.error(
+            t("import.list_error", "Could not load imported conversations."),
+            { error: err },
+          );
         }
       } finally {
         if (!cancelled) setLoadingList(false);
@@ -156,11 +155,10 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
           return null;
         }
       }
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("import.save_error", "Could not save the conversation.");
-      notify.error(msg, { persistent: true });
+      notify.error(
+        t("import.save_error", "Could not save the conversation."),
+        { error: err, persistent: true },
+      );
       return null;
     }
   }
@@ -188,11 +186,10 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
       setConversations((prev) => prev.filter((c) => c.id !== conv.id));
       notify.success(t("import.delete_success", "Conversation deleted."));
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("import.delete_error", "Could not delete the conversation.");
-      notify.error(msg, { persistent: true });
+      notify.error(
+        t("import.delete_error", "Could not delete the conversation."),
+        { error: err, persistent: true },
+      );
     }
   }
 
@@ -240,11 +237,10 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
   /** A failed analysis (e.g. the provider rejected the key): the friendly
    *  status-mapped message, the technical detail for the report (#3392). */
   function reportAnalysisError(err: unknown): void {
-    if (err instanceof ApiError) {
-      notify.error(err.detail, { apiError: err });
-      return;
-    }
-    notify.error(t("import.analysis_error", "Could not analyze the conversation."));
+    notify.error(
+      t("import.analysis_error", "Could not analyze the conversation."),
+      { error: err },
+    );
   }
 
   async function runAnalysisApiMode(conversationId: string): Promise<boolean> {
@@ -291,11 +287,10 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
             : settings.model_override_gemini;
       providerInfo = { provider, apiKey, modelOverride };
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("import.settings_error", "Could not read AI settings.");
-      notify.error(msg);
+      notify.error(
+        t("import.settings_error", "Could not read AI settings."),
+        { error: err },
+      );
       return false;
     }
 
@@ -325,11 +320,10 @@ export default function Import({ onNavigate }: ImportPageProps = {}) {
         analysis_result: result,
       });
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("import.analysis_save_error", "Could not save the analysis result.");
-      notify.error(msg);
+      notify.error(
+        t("import.analysis_save_error", "Could not save the analysis result."),
+        { error: err },
+      );
       return false;
     }
     await reportAnalysis(Boolean(result.fallback_used));

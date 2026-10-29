@@ -30,10 +30,12 @@ import {
     type MascotVariant,
 } from "../../../../lib/mascot/mascot-variants";
 import {
+    MASCOT_VARIANT_PURCHASES,
     addPurchasedMascotVariant,
     readMascotVariantState,
     setSelectedMascotVariant,
 } from "../../../../lib/mascot/mascot-variant-store";
+import {reconcilePurchases} from "../../../../lib/gamification/purchase-ledger";
 import {getStorage} from "../../../../storage";
 
 interface UnlockData {
@@ -78,6 +80,14 @@ export default function MascotVariantControl({
             } catch {
                 // Decoration only - a failed read leaves the locks closed.
             }
+            // #3445 - ownership follows the XP ledger (another browser,
+            // cleared data, a LAN sync); never throws.
+            await reconcilePurchases(
+                userId!,
+                MASCOT_VARIANT_PURCHASES,
+                getStorage().gamification,
+            );
+            if (!cancelled) setFrameState(readMascotVariantState(userId!));
         }
         void load();
         return () => {
@@ -88,7 +98,7 @@ export default function MascotVariantControl({
     const purchase = useXpPurchase({
         userId: userId ?? "",
         totalXp: data?.totalXp ?? 0,
-        reason: "mascot_variant",
+        kind: "mascot_variant",
         failedText: t("settings.unlock_buy_failed", "Purchase failed."),
         onPurchased: (id, next) => {
             addPurchasedMascotVariant(userId!, id);

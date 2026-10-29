@@ -181,7 +181,6 @@ Summary:
 - Never commit ADAPTIVE_LEARNER_SECRET_KEY.
 - .env files in .gitignore.
 - Validate user uploads (file type, size) before storage.
-- Plugin ZIP installation: name validation + path traversal check.
 
 ## Performance
 

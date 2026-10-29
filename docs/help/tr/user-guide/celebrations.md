@@ -22,7 +22,7 @@ belirgin olur.
 
 ## Geri bildirim yoğunluğu
 
-**Ayarlar > Arayüz > Geri Bildirim Yoğunluğu**, kutlamaların ne
+**Ayarlar > Öğrenme > Geri bildirim yoğunluğu**, kutlamaların ne
 kadar gürültülü olduğunu seçmenize olanak tanır:
 
 - **İnce** - yalnızca doğru/yanlış rengi. Cümle yok, konfeti yok,
@@ -38,7 +38,7 @@ kapatılır ve yoğunluk bu ayardan bağımsız olarak ince tutulur.
 ## Sesler
 
 Sesler **varsayılan olarak kapalıdır** - asla sürpriz bir ses ile
-karşılaşmazsınız. **Ayarlar > Arayüz > Sesler** bölümünden açın,
+karşılaşmazsınız. **Ayarlar > Öğrenme > Sesler** bölümünden açın,
 ardından ses düzeyi kaydırıcısını ve **Test** düğmesini kullanarak
 önizleyin. Sesler kısa sentezlenmiş çıngırak sesleridir ve her zaman
 tamamlayıcıdır: verdikleri her ipucu ekranda da gösterilir.

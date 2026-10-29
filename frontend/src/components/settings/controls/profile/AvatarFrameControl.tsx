@@ -2,7 +2,8 @@
  * AvatarFrameControl (#2850) - the Stufe-C progression reward: a row
  * of decorative avatar frames in Settings > General > Profile. Three
  * unlock by level, one by the streak badge, two are purchasable with
- * XP through ``gamification.spendXp`` (both storage modes).
+ * XP through ``gamification.purchaseItem`` (both storage modes; the
+ * purchase is recorded in the XP ledger, #3445).
  *
  * The guarded two-step purchase lives in the shared
  * ``useXpPurchase`` hook (#2861). Selection and purchases persist
@@ -23,10 +24,12 @@ import {
     type AvatarFrame,
 } from "../../../../lib/avatar/avatar-frames";
 import {
+    AVATAR_FRAME_PURCHASES,
     addPurchasedAvatarFrame,
     readAvatarFrameState,
     setSelectedAvatarFrame,
 } from "../../../../lib/avatar/avatar-frame-store";
+import {reconcilePurchases} from "../../../../lib/gamification/purchase-ledger";
 import {notifyProfileUpdated} from "../../../../lib/learning/profileSignal";
 import {getStorage} from "../../../../storage";
 
@@ -50,7 +53,7 @@ export default function AvatarFrameControl({userId}: AvatarFrameControlProps) {
     const purchase = useXpPurchase({
         userId,
         totalXp: data?.totalXp ?? 0,
-        reason: "avatar_frame",
+        kind: "avatar_frame",
         failedText: t("settings.avatar_frame_buy_failed", "Purchase failed."),
         onPurchased: (id, next) => {
             addPurchasedAvatarFrame(userId, id);
@@ -85,6 +88,14 @@ export default function AvatarFrameControl({userId}: AvatarFrameControlProps) {
             } catch {
                 // Decoration only - a failed read leaves the locks closed.
             }
+            // #3445 - ownership follows the XP ledger (another browser,
+            // cleared data, a LAN sync); never throws.
+            await reconcilePurchases(
+                userId,
+                AVATAR_FRAME_PURCHASES,
+                getStorage().gamification,
+            );
+            if (!cancelled) setFrameState(readAvatarFrameState(userId));
         }
         void load();
         return () => {

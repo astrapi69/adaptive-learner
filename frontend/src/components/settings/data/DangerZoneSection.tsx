@@ -43,7 +43,7 @@ import {clearAllAppLocalStorage, readLearnerState} from "../../../lib/learning/l
 import {clearLessonCache} from "../../../lib/pwa/cache-info";
 import {getStorage} from "../../../storage";
 import {backupFilename, saveBackupToDisk} from "../../../utils/backup-download";
-import {withLocalStorageSnapshot} from "../../../lib/backup/localStorageSnapshot";
+import {exportPortableBackup} from "../../../lib/backup/portableBackup";
 import {notify} from "../../../utils/notify";
 import {SettingsSection} from "../SettingsSection";
 import {ModalOverlay, ModalCard, ModalTitle} from "@/shared/modal";
@@ -88,9 +88,7 @@ export default function DangerZoneSection() {
             // Same export path as Settings > Daten > "Sicherung erstellen"
             // (BackupSection.handleExport): one endpoint, one save helper, so
             // the two buttons can never produce different files (#331).
-            const payload = withLocalStorageSnapshot(
-                await getStorage().backup.export(userId),
-            );
+            const payload = await exportPortableBackup(userId);
             const outcome = await saveBackupToDisk(payload, backupFilename(userId));
             if (outcome.method === "cancelled") {
                 // User dismissed the OS save dialog; nothing was written.

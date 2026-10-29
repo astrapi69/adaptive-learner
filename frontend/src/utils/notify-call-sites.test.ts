@@ -11,7 +11,8 @@
  * The scan reads every non-test ``.ts`` / ``.tsx`` file under
  * ``src/``, extracts each ``notify.error(...)`` argument list with
  * balanced parentheses (multi-line), and flags it when it contains
- * ``.message``, ``String(err``/``String(error``/``String(e)``, or an
+ * ``.message``, ``.detail`` (an ``ApiError``'s backend text, #3374
+ * second slice), ``String(err``/``String(error``/``String(e)``, or an
  * identifier assigned from such an expression in the preceding
  * ``TAINT_WINDOW`` lines of the same file.
  */
@@ -24,7 +25,7 @@ import {describe, expect, it} from "vitest";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SRC = join(HERE, "..");
 const TAINT_WINDOW = 25;
-const RAW_TEXT = /\.message\b|String\(\s*(?:err\b|error\b|e\))/;
+const RAW_TEXT = /\.message\b|\.detail\b|String\(\s*(?:err\b|error\b|e\))/;
 
 /**
  * Sites whose argument matches the raw-text pattern but is a friendly,
@@ -150,9 +151,12 @@ describe("notify.error call-site scanner", () => {
         expect(RAW_TEXT.test("err.message")).toBe(true);
         expect(RAW_TEXT.test("String(err)")).toBe(true);
         expect(RAW_TEXT.test("String(e)")).toBe(true);
+        expect(RAW_TEXT.test("err instanceof ApiError ? err.detail : fallback")).toBe(true);
         expect(RAW_TEXT.test('t("x", "y"), {error: err}')).toBe(false);
         const lines = ['const detail = err instanceof Error ? err.message : "";', "", "x"];
         expect(taintedIdentifiers(lines, 3).has("detail")).toBe(true);
+        const apiLines = ['const msg = err instanceof ApiError ? err.detail : t("k");', "", "x"];
+        expect(taintedIdentifiers(apiLines, 3).has("msg")).toBe(true);
     });
 
     it("extracts balanced multi-line arguments", () => {

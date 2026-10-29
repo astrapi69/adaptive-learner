@@ -26,7 +26,7 @@ entries:
       ## Was du tust
 
       Aufmerksam lesen. Fragen stellen, wenn etwas unklar ist -
-      die Session ist ein Dialog, nicht eine Vorlesung. Wenn
+      die Sitzung ist ein Dialog, nicht eine Vorlesung. Wenn
       du die Confidence der AI zu hoch findest, dranbleiben:
       manchmal wirkt eine Erklärung erst beim zweiten Lesen.
 
@@ -236,10 +236,10 @@ entries:
 
       ## Wann der Schritt zu Ende ist
 
-      Sobald der Dual-Prompt-Evaluator drei Variationen
-      hintereinander mit Confidence > 80% sieht, gehst du zu
-      Schritt 7. Falls die Confidence schwankt, bleibt der
-      Zyklus in Schritt 6 - bis Stabilität erreicht ist.
+      Nach jedem Austausch entscheidet der Dual-Prompt-Evaluator,
+      ob du bereit für Schritt 7 bist; das System übernimmt
+      seinen Vorschlag, wenn seine Confidence mindestens 70%
+      beträgt. Sonst bleibt der Zyklus in Schritt 6.
 
       ## Verbindung zu Spaced Repetition
 
@@ -283,10 +283,10 @@ entries:
 
       Der Zyklus ist abgeschlossen. Drei Optionen:
 
-      - **Session beenden** und Bewertung abgeben
+      - **Sitzung beenden** und Bewertung abgeben
         (Verständnis / Stress / Methodenpassung).
-      - **Auto-Loop**: ein neuer Zyklus mit neuem Thema
-        startet automatisch.
+      - **Auto-Loop** (nur Desktop-App): ein neuer Zyklus mit
+        neuem Thema startet automatisch.
       - **Methodenwechsel**: bei niedriger Methodenpassung
         empfiehlt das System einen Methodenwechsel für den
         nächsten Zyklus.

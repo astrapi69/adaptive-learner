@@ -2,10 +2,9 @@
  * Adaptive-lesson-generator domain types (Phase 53A / EXP-013).
  *
  * Pure data shapes consumed by the error analyzer + exercise
- * pool + lesson generator. Mirrored on the Python side by
- * ``backend/app/services/adaptive_lesson.py``. The fixture at
- * ``tests/fixtures/adaptive-lesson-parity/`` pins both sides
- * to byte-identical output.
+ * pool + lesson generator. The fixture at
+ * ``tests/fixtures/adaptive-lesson-parity/`` pins the analyzer's
+ * output.
  */
 
 /** One element promoted from the raw ``ElementError`` row, with

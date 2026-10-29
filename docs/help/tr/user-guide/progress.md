@@ -74,7 +74,8 @@ notlar değiştirilmeden aktarılır.
 
 ## Dışa aktarmalar
 
-Ayarlar → Dışa Aktar üzerinden üç dışa aktarma türü; depolama
+Ayarlar > Veri > Yedekleme ve dışa aktarma > Dışa aktar üzerinden
+üç dışa aktarma türü; depolama
 modları arasında tümü aynı biçimde:
 
 - **İlerleme Raporu** - tam İlerleme sayfası Markdown veya PDF
@@ -83,6 +84,9 @@ modları arasında tümü aynı biçimde:
   adım değerlendirmeleri.
 - **Müfredat Genel Bakışı** - tek bir müfredatın konu ağacı +
   ders özetleri.
+
+Raporlar, uygulamanın sunduğu dillerden hangisi olursa olsun arayüz
+dilinde yazılır.
 
 Markdown istemci tarafında oluşturulur; PDF tarayıcının yazdırma-PDF
 özelliğini kullanır (yazdırma için optimize edilmiş stil sayfasıyla

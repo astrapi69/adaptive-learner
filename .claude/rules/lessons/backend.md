@@ -77,7 +77,7 @@ Generalises to: any library that ships an env.py-style hook calling `fileConfig`
 
 ## Plugin settings YAML lives in `backend/config/plugins/`, not in the plugin's own directory
 
-PluginForge reads each plugin's settings from the backend-wide `config_dir`, configured in `app.yaml` as `plugins.config_dir: config/plugins`. So the canonical path for a plugin's settings file is:
+PluginForge reads each plugin's settings from `plugins/` next to `app.yaml` (its `config_dir` is the parent of the `app.yaml` path; an `app.yaml` key for it had no reader, #3435). So the canonical path for a plugin's settings file is:
 
 ```
 backend/config/plugins/{plugin_slug}.yaml
@@ -163,7 +163,7 @@ Rule: when adding a new persistent path under `get_data_dir()`, also add it to `
 AdaptiveLearner's plugins are installed two different ways depending on context:
 
 - **`make test` path:** the backend's combined `poetry.lock` resolves every plugin as a path-dep (`adaptive-learner-plugin-{name} = {path = "../plugins/...", develop = true}`). One `poetry install` from `backend/` brings every plugin's external deps in via the backend's lock.
-- **CI plugin-matrix path:** `.github/workflows/ci.yml` and `.github/workflows/coverage.yml` run `poetry install --no-interaction --no-ansi` inside each plugin directory against THAT plugin's own `poetry.lock`. The backend lock is irrelevant here.
+- **Per-plugin lock path:** `poetry install` inside a plugin directory resolves against THAT plugin's own `poetry.lock`; the backend lock is irrelevant. CI used to run this matrix; since #434 CI and nightly coverage run every plugin through the backend venv, so today only `make verify-plugin-locks` exercises this path.
 
 When a shared external dep (e.g. fastapi) bumps in every pyproject (backend + 10 plugins), the backend lock and the per-plugin locks drift independently. If only the backend lock gets regenerated:
 
@@ -177,8 +177,8 @@ Generalization: any time there are two installation paths for the same code, BOT
 ### Mitigation pattern (now enforced)
 
 - `make lock-all-plugins` (Makefile target shipped in PLUGIN-LOCKFILE-DRIFT-01 commit `1b43aec`): iterates `plugins/adaptive-learner-plugin-*/` and runs `poetry lock` in each. Use after any shared-dep pin bump.
-- `make verify-plugin-locks` (Makefile target shipped in the same commit): runs `poetry install --dry-run --no-interaction --no-ansi` per plugin and greps for "changed significantly". Exits 1 with a remediation hint on drift; manual diagnostic, NOT in the pre-tag chain (the pre-commit hook below + the CI per-plugin matrix already cover the right times).
-- Pre-commit hook `plugin-lock-paired-with-pyproject` (shipped in commit `8f6fcea`): scoped via `files: ^plugins/adaptive-learner-plugin-[^/]+/pyproject\.toml$`, fails when a staged plugin pyproject lacks a paired staged `poetry.lock`. Catches the operational mistake at commit time. Verified by 6 hook self-check tests in `backend/tests/test_plugin_lock_drift_hook.py` (commit `e31c4fd`), all green at 0.22 s.
+- `make verify-plugin-locks` (Makefile target shipped in the same commit): runs `poetry install --dry-run --no-interaction --no-ansi` per plugin and greps for "changed significantly". Exits 1 with a remediation hint on drift; manual diagnostic, NOT in the pre-tag chain (the pre-commit hook below covers commit time; no CI job installs a plugin on its own lock since #434).
+- Pre-commit hook `plugin-lock-paired-with-pyproject` (`8f6fcea`; since #3657 a state check): runs `poetry check --lock` for every plugin whose `pyproject.toml` or `poetry.lock` it is handed, in its own environment with the poetry that writes the locks. It used to check the staging, which in CI (`--all-files`, nothing staged) examined nothing and passed. Self-checks: `backend/tests/test_plugin_lock_paired_hook.py`, against a copy of a real plugin.
 
 Discovery channel without these gates: CI red on main, AFTER a release tag has already been cut. The retro's commitment to "discrete pre-release dep sweep commits" pays off (rollback granularity stays intact), but the better gate is to catch the drift before push, not from the GitHub Actions red badge.
 
@@ -245,6 +245,6 @@ This is why the v1.11.0 PluginForge-adoption audit closed the "severity filter" 
 
 ### When this would change
 
-If we ever add a third-party plugin path (Settings → Plugins → Install from ZIP, or any other surface that loads plugins authored against a DIFFERENT host), those plugins would be filtered by `target_application`. To surface the filter event to the user (e.g. "This plugin was built for X, not Adaptive Learner — installation refused"), call `manager.get_last_discovery_result().filtered` directly and emit a UI message. Do NOT promote filter events into the error channel; they are not the same severity class and conflating them re-creates the bug v0.9.0 fixed at the framework level.
+If we ever add a third-party plugin path (an install-from-ZIP flow, or any other surface that loads plugins authored against a DIFFERENT host), those plugins would be filtered by `target_application`. To surface the filter event to the user (e.g. "This plugin was built for X, not Adaptive Learner — installation refused"), call `manager.get_last_discovery_result().filtered` directly and emit a UI message. Do NOT promote filter events into the error channel; they are not the same severity class and conflating them re-creates the bug v0.9.0 fixed at the framework level.
 
-Pairs with `architecture.md` § "Plugin installation (ZIP)" — the future third-party install path is where filter-event surfacing becomes user-visible value. `.claude/rules/code-hygiene.md` § "Error handling architecture" — filters are not errors, the same way a 401 is not a 500. Keep the channels separate.
+Pairs with `architecture.md` § "Plugin installation" — a future third-party install path is where filter-event surfacing becomes user-visible value. `.claude/rules/code-hygiene.md` § "Error handling architecture" — filters are not errors, the same way a 401 is not a 500. Keep the channels separate.

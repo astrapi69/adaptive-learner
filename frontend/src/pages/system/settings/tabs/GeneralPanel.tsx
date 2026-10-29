@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { ApiError } from "../../../../api/client";
 import ContentViewControl from "../../../../components/settings/controls/lesson/ContentViewControl";
 import ContentTabsOrderControl from "../../../../components/settings/controls/content/ContentTabsOrderControl";
 import InstallAppSection from "../../../../components/settings/data/InstallAppSection";
@@ -171,8 +170,7 @@ export default function GeneralPanel({
       setLanguage(newLang);
       notify.success(t("settings.saved", "Saved."));
     } catch (err) {
-      const detail = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(detail);
+      notify.error(t("common.error"), { error: err });
     } finally {
       setBusy(null);
     }
@@ -196,8 +194,7 @@ export default function GeneralPanel({
       notifyProfileUpdated();
       notify.success(t("settings.saved", "Saved."));
     } catch (err) {
-      const detail = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(detail);
+      notify.error(t("common.error"), { error: err });
     } finally {
       setBusy(null);
     }
@@ -224,8 +221,7 @@ export default function GeneralPanel({
       notifyProfileUpdated();
       notify.success(t("settings.saved", "Saved."));
     } catch (err) {
-      const detail = err instanceof ApiError ? err.detail : t("common.error");
-      notify.error(detail);
+      notify.error(t("common.error"), { error: err });
     } finally {
       setBusy(null);
     }

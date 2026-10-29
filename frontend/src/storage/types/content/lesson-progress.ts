@@ -100,6 +100,30 @@ export interface LessonStepResult {
   hint_used?: boolean;
 }
 
+/**
+ * One learner action on a lesson (#3365), as the viewer reports it.
+ * ``step`` is arriving on a step (forward or back), ``answer`` a graded
+ * check, ``pause`` the pause dialog or button, ``exit`` leaving the lesson
+ * by navigation, ``restart`` a confirmed start-over, ``complete`` reaching
+ * the summary. Autosave, timers, app switches, mode switches, hints and
+ * read-aloud are not actions.
+ */
+export interface LessonStepEvent {
+  kind: "step" | "answer" | "pause" | "exit" | "restart" | "complete";
+  step_index: number;
+  /** ``null`` on the summary, which has no step id. */
+  step_id?: string | null;
+  /** Only on ``answer``: whether the check was fully correct. */
+  correct?: boolean;
+}
+
+/** A logged action in ``LessonProgress.recent_steps``: the event plus the
+ *  time the storage layer stamped on it. */
+export interface LessonStepEventStored extends LessonStepEvent {
+  /** ISO-8601 timestamp. */
+  at: string;
+}
+
 export interface LessonProgressUpsertBody {
   source: string;
   set_id: string;
@@ -114,6 +138,10 @@ export interface LessonProgressUpsertBody {
    *  lesson resumes at the exact step. Omitting it leaves the stored
    *  value unchanged. */
   current_step?: number;
+  /** #3365 - the learner action this write records; appended to
+   *  ``recent_steps`` (the last ten are kept). Omitting it records
+   *  nothing. */
+  step_event?: LessonStepEvent;
   mark_completed?: boolean;
   /** #2893 - transient game-mode combo bonus (client-capped, hard
    *  ceiling 20 on both backends). Read only with mark_completed. */
@@ -184,7 +212,13 @@ export interface LessonProgress {
   step_results: Record<string, LessonStepResultStored>;
   score_correct: number;
   score_total: number;
+  /** Lifetime seconds across every run; statistics and missions sum it. */
   time_spent_seconds: number;
+  /** #3747 - seconds of the current run; starts over on a restart or an
+   *  abandon. The summary shows it. Always emitted by both storage
+   *  backends; optional on the wire type so hand-built fixtures that omit
+   *  it still type-check. Read with `?? 0`. */
+  run_time_seconds?: number;
   /** BUG #41 — the step index the user is currently on; drives
    *  resume-at-paused-step. Always emitted by both storage backends
    *  (defaults to 0); optional on the wire type so pre-feature
@@ -208,6 +242,9 @@ export interface LessonProgress {
   /** #983 — completed-attempt history, oldest first. Powers the
    *  improvement comparison after a retry. Read with `?? []`. */
   attempt_history?: LessonAttempt[];
+  /** #3365 - the last ten learner actions, oldest first. A resume lands
+   *  on the last ``step`` entry's ``step_id``. Read with `?? []`. */
+  recent_steps?: LessonStepEventStored[];
 }
 
 /**

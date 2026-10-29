@@ -34,9 +34,9 @@ backup:
 
 1. Go **back to the previous port** (for example
    `http://localhost:8501`). Your data appears again.
-2. Open **Settings > Data > Export backup** and save the `.alb` file.
+2. Open **Settings > Data > Create Backup** and save the `.alb` file.
 3. Switch to the **new port**.
-4. On the welcome screen choose **Restore from backup** and pick the
+4. On the welcome screen choose **Restore from existing backup** and pick the
    `.alb` file. Everything - sets, progress, exercises, and your
    settings - is restored.
 

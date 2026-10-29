@@ -7,8 +7,7 @@
     "crashed": "Something went wrong.",
     "reload": "Reload",
     "name": "Adaptive Learner",
-    "tagline": "Learning that adapts to you.",
-    "skeleton_notice": "Skeleton state. Domain models, plugins and pages land in upcoming phases - see docs/adaptive-learner-project-reference.md."
+    "tagline": "Learning that adapts to you."
   },
   "common": {
     "ok": "OK",
@@ -20,17 +19,9 @@
     "error": "Something went wrong.",
     "back": "Back",
     "next": "Next",
-    "start": "Start",
     "submit": "Submit",
-    "continue": "Continue",
-    "done": "Done",
     "delete": "Delete",
     "edit": "Edit",
-    "confirm": "Confirm",
-    "yes": "Yes",
-    "no": "No",
-    "optional": "optional",
-    "required": "required",
     "minutes": "minutes",
     "close": "Close"
   },
@@ -87,9 +78,6 @@
       "more": "More"
     },
     "primary": "Primary navigation",
-    "discover": "Discover content",
-    "offline_long": "Offline - past sessions stay readable",
-    "sync_pending": "{n} change(s) waiting to sync",
     "statistics": "Statistics",
     "profile": "Your profile",
     "learning_path": "Learning Path",
@@ -102,9 +90,6 @@
     "help": "Help",
     "home": "Home",
     "menu": "Menu",
-    "online": "Online",
-    "offline": "Offline",
-    "anki": "Anki",
     "dev_badge": "DEV",
     "dev_badge_tooltip": "Developer Mode is on - error toasts show full technical detail. Toggle in Settings.",
     "content": "My content",
@@ -112,9 +97,7 @@
     "mode_badge_ai": "AI+Content",
     "mode_badge_tooltip_content": "No API key configured - using pre-built content only. Add a key in Settings to enable AI features.",
     "mode_badge_tooltip_ai": "AI provider configured - exercises use AI for distractors + hints. Tap to browse content sets.",
-    "mode_badge_action": "browse content",
-    "sync_paired": "Sync: paired (Settings > Sync)",
-    "sync_unpaired": "Sync: not paired (Settings > Sync)"
+    "mode_badge_action": "browse content"
   },
   "import": {
     "title": "Import a conversation",
@@ -141,12 +124,12 @@
     "analysis_title": "Analysis",
     "analysis_ready": "Analysis ready.",
     "analysis_fallback": "Analysis ran but the AI response could not be parsed cleanly.",
-    "analysis_fallback_long": "The AI response was not parseable as structured JSON. The summary below is a fallback.",
+    "analysis_fallback_long": "The AI response could not be read as a structured analysis. Run the analysis again or pick a different AI provider.",
     "analysis_error": "Could not analyze the conversation.",
     "analysis_phase_reading": "Step 1/3: Reading chat…",
     "analysis_phase_analyzing": "Step 2/3: Analyzing content…",
     "analysis_phase_preparing": "Step 3/3: Preparing results…",
-    "analysis_estimate": "Analysis takes approximately 15-30 seconds…",
+    "analysis_estimate": "Longer chats take longer to analyze.",
     "analysis_done": "Done!",
     "analysis_cancel": "Cancel",
     "analysis_failed_inline": "Analysis failed. Please try again.",
@@ -207,6 +190,8 @@
     "create": "Create curriculum",
     "created": "Curriculum created.",
     "saved": "Saved.",
+    "topics_load_failed": "Could not load the topics.",
+    "lessons_load_failed": "Could not load the lessons.",
     "deleted": "Topic deleted.",
     "add_topic": "Add topic",
     "add_root_topic": "Add root topic",
@@ -260,12 +245,7 @@
     "field_name": "Your name",
     "field_topic": "Topic",
     "field_topic_hint": "e.g. Spanish B1, linear algebra.",
-    "field_goal": "Goal",
     "field_goal_hint": "What do you want to be able to do?",
-    "field_timeframe": "Time frame",
-    "field_timeframe_hint": "e.g. 4 weeks, one semester.",
-    "field_daily_minutes": "Minutes per day",
-    "field_current_problem": "Current problem",
     "field_current_problem_hint": "optional - what is blocking you right now?",
     "submit": "Create project and start assessment",
     "creating": "Creating project…",
@@ -327,7 +307,6 @@
     },
     "no_data": "No data yet.",
     "title": "Dashboard",
-    "welcome": "Welcome back",
     "quick_start": "Start a new session",
     "quick_start_subtitle": "Method picked from your profile.",
     "card_profile": "Learning profile",
@@ -383,7 +362,6 @@
     "session_title": "Adaptive lesson",
     "loading": "Analyzing your errors…",
     "empty_body": "Nothing to adapt yet - practice a lesson to build up data.",
-    "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
     "back_to_dashboard": "Back to Dashboard",
     "transparency": {
       "focus_prefix": "This lesson focuses on:",
@@ -398,7 +376,6 @@
       "note": "Element scores have been updated. Your next adaptive lesson will target the elements that still need work."
     },
     "error": {
-      "missing_params": "No content set selected.",
       "load_failed": "Could not generate adaptive lesson."
     }
   },
@@ -425,38 +402,22 @@
     "subtitle_capped": "Reviewing {shown} of {due} elements due for SRS",
     "loading": "Loading review session…",
     "empty_body": "All caught up! No elements due for review in this set.",
-    "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
     "back_to_dashboard": "Back to Dashboard",
     "back_to_lesson": "Back to lesson",
     "summary": {
-      "aria_label": "Review summary",
       "heading": "Review complete",
-      "score": "Score",
       "note": "Element scores have been updated. Mastered elements will not appear in the next session."
     },
     "error": {
-      "missing_params": "No content set selected.",
       "load_failed": "Could not load review session."
-    },
-    "spaced_empty": "Nothing to refresh right now. Great rhythm!",
-    "spaced_interval_label": "Review in",
-    "spaced_start": "Start",
-    "spaced_dismiss": "Dismiss",
-    "metric_total_sessions": "Total sessions",
-    "metric_total_minutes": "Total minutes",
-    "metric_mean_understanding": "Mean understanding",
-    "metric_mean_stress": "Mean stress",
-    "metric_streak": "Day streak",
-    "no_data": "No sessions yet - start your first one to see trends.",
-    "pronunciation_quick_start": "Pronunciation Practice"
+    }
   },
   "session": {
+    "auto_loop_unavailable": "In the desktop app a new cycle with the next topic starts automatically after step 7. The browser version cannot do that yet: end the session and start a new one to keep learning.",
     "title": "Learning session",
     "topic_label": "Topic",
-    "in_progress": "Session in progress",
     "send_message": "Send message",
     "message_placeholder": "Write your reply…",
-    "ai_thinking": "Thinking…",
     "ai_error": "The AI provider could not reply.",
     "no_api_key": "No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key.",
     "ai_error_no_model": "No model is selected for your AI provider. Choose a model in Settings > AI.",
@@ -468,7 +429,6 @@
     "chat_retry": "Try again",
     "welcome_empty": "Ready to learn! Write your first message.",
     "end_session": "End session",
-    "end_session_confirm": "Sure? We will close the session and ask for a rating.",
     "switch_recommended": "Method switch recommended",
     "switch_recommended_subtitle": "Your recent ratings suggest a different method might fit you better.",
     "switch_accept": "Switch method",
@@ -559,6 +519,7 @@
       "error_import": "Could not import the key file."
     },
     "lesson_mode": {
+      "threshold_set_hint": "Sets with their own pass mark use that mark instead.",
       "title": "Lesson mode",
       "hint": "Practice keeps every learning aid on. Exam hides hints, theory recap, auto-read and the solution reveal so you retrieve under realistic conditions.",
       "default_label": "Default mode",
@@ -603,7 +564,6 @@
     "summary_section_export": "Result export",
     "summary_section_next_steps": "Next-step suggestions",
     "correction_round_enabled": "Show the correction round after lessons",
-    "correction_round_enabled_desc": "At the end of a lesson, offer to fix your mistakes right away. When off, they stay available in the review / \"Practice errors\" mode.",
     "hints_enabled": "Show hints during exercises",
     "hints_enabled_desc": "Offer a staged hint button on each exercise.",
     "hint_xp_cost": "XP cost per hint",
@@ -658,7 +618,6 @@
     "mode_coming_soon": "Coming Soon",
     "section_provider": "AI provider",
     "section_api_keys": "API keys",
-    "section_danger": "Account",
     "section_ui": "Interface",
     "section_appearance": "Appearance",
     "section_content_tabs": "Content tabs order",
@@ -737,10 +696,6 @@
     "tab_plugins": "Plugins",
     "plugins_installed_title": "Installed plugins",
     "plugins_installed_desc": "Every plugin the desktop app loaded, with version, source and activation time (PluginForge lifecycle).",
-    "plugins_col_name": "Plugin",
-    "plugins_col_version": "Version",
-    "plugins_col_source": "Source",
-    "plugins_col_activated": "Activated",
     "plugins_source_entry_point": "Package",
     "plugins_source_direct": "Registered directly",
     "plugins_marker_load_error": "Load error",
@@ -753,7 +708,6 @@
     "tab_help": "Help",
     "tab_diagnostics": "Diagnostics & Support",
     "tab_about": "About",
-    "tabs_aria": "Settings sections",
     "section_feedback": "Feedback",
     "section_interaction": "Interaction",
     "cluster_basics": "Basics",
@@ -932,10 +886,6 @@
       "test_rate_limit": "Rate limit hit. Try later.",
       "test_no_key": "No key to test.",
       "format_invalid": "Invalid format.",
-      "rollback_warning": "The new key doesn't work. Keep the old key?",
-      "rollback_keep_old": "Keep old key",
-      "rollback_save_anyway": "Save anyway",
-      "rollback_cancel": "Cancel",
       "rollback_restore": "Restore last working key",
       "format_hint": {
         "anthropic": "Starts with sk-ant-",
@@ -949,7 +899,6 @@
     "api_key_delete": "Remove key",
     "api_key_confirm_delete": "Really remove this API key?",
     "saved": "Saved.",
-    "save_failed": "Save failed.",
     "provider_active": "Active",
     "active_provider_missing_key": "This is your active provider but no API key is stored. AI replies will be skipped until a key is saved.",
     "api_key_source_file": "Key from: secrets.yaml",
@@ -960,7 +909,6 @@
     "api_key_external_hint_env": "This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.",
     "section_model_overrides": "Model overrides",
     "model_overrides_hint": "Leave blank to use the default model for each provider. A non-empty value replaces the default at chat time.",
-    "model_override_placeholder": "Model identifier (e.g. claude-3-5-haiku-latest)",
     "model_override_set": "Override active",
     "model_override_default": "Default model",
     "model_override_save": "Save model",
@@ -1079,28 +1027,22 @@
   },
   "methods": {
     "deductive": {
-      "label": "Deductive",
-      "summary": "General to specific - rules first, examples after."
+      "label": "Deductive"
     },
     "inductive": {
-      "label": "Inductive",
-      "summary": "Specific to general - examples first, derive the rule."
+      "label": "Inductive"
     },
     "error_based": {
-      "label": "Error-based",
-      "summary": "Learn from mistakes - correction plus explanation."
+      "label": "Error-based"
     },
     "dialogic": {
-      "label": "Dialogic",
-      "summary": "Think in conversation - lower stress, build motivation."
+      "label": "Dialogic"
     },
     "contextual": {
-      "label": "Contextual",
-      "summary": "Apply in a real context - practice transfer."
+      "label": "Contextual"
     },
     "ai_adaptive": {
-      "label": "AI-adaptive",
-      "summary": "The AI picks the method that fits you best."
+      "label": "AI-adaptive"
     }
   },
   "cycle_steps": {
@@ -1136,16 +1078,12 @@
   "errors": {
     "network": "Could not reach the server.",
     "not_found": "Not found.",
-    "validation": "Invalid input.",
-    "conflict": "Entry already exists.",
     "server": "Server error - please try again later."
   },
   "toast": {
     "project_created": "Project created.",
     "assessment_saved": "Profile saved.",
-    "session_started": "Session started.",
     "session_ended": "Session ended.",
-    "rating_saved": "Rating saved.",
     "api_key_saved": "API key saved.",
     "api_key_restored": "Last working key restored.",
     "api_key_deleted": "API key removed.",
@@ -1195,7 +1133,6 @@
     "check_failed": "Check failed. Are you online?",
     "last_checked": "Last checked: {when}",
     "never_checked": "Never checked",
-    "update_now": "Update now",
     "system_heading": "System",
     "storage_label": "Storage",
     "storage_api": "Server (FastAPI + SQLite)",
@@ -1206,7 +1143,6 @@
     "dep_unknown": "unknown",
     "identity_heading": "Identity file",
     "identity_loading": "Loading identity status…",
-    "identity_error": "Could not load identity status:",
     "identity_path_label": "Path",
     "identity_status_label": "Status",
     "identity_status_active": "Active",
@@ -1254,13 +1190,13 @@
     "not_a_backup_file": "This file is not a valid backup file. Please choose a file exported with 'Create backup'.",
     "version_mismatch": "This backup is from version {{from}}; this app is {{to}}. Review the changes below and confirm to import.",
     "too_large": "This backup file is too large (over 100 MB).",
-    "export_success": "Backup downloaded ({{count}} records).",
     "export_error": "Backup failed: {{detail}}",
     "export_failed": "Backup failed.",
     "import_parse_failed": "Could not read the backup.",
     "import_failed": "Restore failed.",
     "comparison_title": "Confirm restore",
     "comparison_help": "Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.",
+    "foreign_owner_notice": "This backup belongs to another learner profile. Its progress is added to the active profile and merged with it: lessons, mistakes and history are added, XP, streak and settings are taken from the backup. The active profile stays active.",
     "table_header": "Table",
     "current_header": "Current",
     "incoming_header": "Backup",
@@ -1275,7 +1211,6 @@
     "col_skipped": "Skip",
     "col_errors": "Err.",
     "error_details": "Error details",
-    "restored_with_errors": "{{n}} records could not be restored.",
     "last_backup": "Last backup: {{when}}",
     "reminder_overdue": "It has been more than {{days}} days since your last backup.",
     "saved_as": "Backup saved: {{filename}}",
@@ -1336,6 +1271,107 @@
     "auto_compare_missing": "Auto-backup is no longer available - it was rotated out."
   },
   "export": {
+    "report": {
+      "progress_report_title": "Learning Progress",
+      "session_detail_title": "Session Detail",
+      "curriculum_overview_title": "Curriculum Overview",
+      "generated_at": "Generated at",
+      "app_version": "App version",
+      "learner": "Learner",
+      "language": "Language",
+      "method_profile": "Method profile",
+      "dominant_method": "Dominant method",
+      "assessed_at": "Last assessed",
+      "no_profile": "No assessment yet. Complete the entry assessment to see your profile.",
+      "projects": "Projects",
+      "no_projects": "No learning projects yet.",
+      "topic": "Topic",
+      "goal": "Goal",
+      "timeframe": "Timeframe",
+      "daily_minutes": "Daily minutes",
+      "current_problem": "Current obstacle",
+      "status": "Status",
+      "active": "active",
+      "archived": "archived",
+      "session_count": "Sessions",
+      "total_minutes": "Total minutes",
+      "mean_understanding": "Average understanding",
+      "mean_stress": "Average stress",
+      "method_distribution": "Method distribution",
+      "method_switches": "Method switches",
+      "no_switches": "No method switches in this project.",
+      "switched_from_to": "Switch",
+      "reason": "Reason",
+      "recent_sessions": "Recent sessions",
+      "no_sessions": "No sessions completed yet.",
+      "method": "Method",
+      "duration": "Duration",
+      "understanding": "Understanding",
+      "stress": "Stress",
+      "method_fit": "Method fit",
+      "notes": "Notes",
+      "step_evaluation_insights": "Step evaluations",
+      "no_step_insights": "No step evaluations available yet.",
+      "step": "Step",
+      "evaluations_count": "Evaluations",
+      "advance_rate": "Advance rate",
+      "mean_confidence": "Average confidence",
+      "deferred": "deferred",
+      "repeated": "repeated",
+      "advanced": "advanced",
+      "extractions": "Analyzed conversations",
+      "no_extractions": "No analyzed conversations yet.",
+      "imported_at": "Imported at",
+      "messages": "Messages",
+      "source": "Source",
+      "analysis": "Analysis",
+      "no_session": "Session not found.",
+      "session": "Session",
+      "started_at": "Started at",
+      "ended_at": "Ended at",
+      "cycle_step": "Current cycle step",
+      "transcript": "Transcript",
+      "no_messages": "No messages in this session.",
+      "role_user": "Learner",
+      "role_assistant": "AI",
+      "role_system": "System",
+      "rating": "Rating",
+      "no_rating": "Session was not rated.",
+      "step_evaluations": "Step evaluations",
+      "from_step": "From step",
+      "to_step": "To step",
+      "confidence": "Confidence",
+      "applied": "Applied",
+      "not_applied": "Not applied",
+      "fallback": "Fallback used",
+      "evaluated_at": "Evaluated at",
+      "curriculum": "Curriculum",
+      "description": "Description",
+      "topics": "Topics",
+      "no_topics": "No topics in this curriculum.",
+      "lessons": "Lessons",
+      "no_lessons": "No lessons in this curriculum.",
+      "out_of": "out of",
+      "minutes_short": "min",
+      "scale_5": "on a scale from 1 to 5",
+      "analysis_topic": "Detected topic",
+      "analysis_subtopics": "Subtopics",
+      "analysis_user_level": "Level",
+      "analysis_strengths": "Strengths",
+      "analysis_weaknesses": "Weaknesses",
+      "analysis_error_patterns": "Error patterns",
+      "analysis_recommended_method": "Recommended method",
+      "analysis_recommended_focus": "Recommended focus",
+      "analysis_suggested_curriculum": "Suggested curriculum",
+      "analysis_summary": "Summary",
+      "analysis_priority": "Priority",
+      "level_beginner": "Beginner",
+      "level_intermediate": "Intermediate",
+      "level_advanced": "Advanced",
+      "linked_project": "Linked project",
+      "status_completed": "completed",
+      "status_abandoned": "abandoned"
+    },
     "title": "Export",
     "intro": "Download your learning journey as Markdown or PDF. Markdown is plain text you can edit and share; PDF opens your browser's print dialog so you can save a copy.",
     "progress_label": "Progress Report (full journey)",
@@ -1453,14 +1489,9 @@
     },
     "level_detail_title": "Level progress",
     "level_up": "Level up!",
-    "reason_session_complete": "Session completed",
-    "reason_assessment_complete": "Assessment completed",
-    "reason_conversation_imported": "Conversation imported",
-    "reason_flat": "XP awarded",
     "card_badges": "Badges",
     "badges_earned": "earned",
     "badges_empty": "No badges available yet.",
-    "badge_earned_toast": "Badge earned: {name}",
     "badge_category": {
       "getting_started": "Getting Started",
       "consistency": "Consistency",
@@ -1612,27 +1643,13 @@
     "weekend_mode_help": "Weekends don't count toward streak gaps.",
     "reset_done": "Progress reset: {xp} XP, {badges} badges, {streak} streaks.",
     "reset_failed": "Could not reset progress.",
-    "weekend_mode_save_failed": "Could not save the weekend-mode setting.",
-    "danger_zone_heading": "Danger Zone",
-    "danger_zone_intro": "Permanently delete every piece of learner state on this device.",
-    "danger_zone_reset_button": "Reset Everything",
-    "danger_zone_warning": "This deletes ALL your learning data permanently - sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.",
-    "danger_zone_confirm_prompt": "Type RESET to confirm",
-    "danger_zone_input_placeholder": "RESET",
-    "danger_zone_final_button": "Delete permanently",
-    "danger_zone_backup_offer": "Create a backup first?",
-    "danger_zone_backup_button": "Create backup",
-    "danger_zone_complete_toast": "All data has been deleted.",
-    "danger_zone_cancel": "Cancel",
-    "danger_zone_continue": "Continue",
-    "danger_zone_failed_toast": "Reset failed:"
+    "weekend_mode_save_failed": "Could not save the weekend-mode setting."
   },
   "arcade": {
     "title": "Arcade",
     "subtitle": "Short rounds, one to two minutes - a game-mode reward. No XP, just fun.",
     "card_description": "Short rounds of Learn Memory and Snake - your game-mode reward.",
     "card_open": "To the arcade",
-    "requires_playful": "The arcade is part of the game mode. Turn on the game mode (and the arcade switch) in the settings.",
     "requires_game_mode": "The arcade is part of the game mode, and the game mode is off. Turn it on in the settings.",
     "requires_arcade_switch": "The game mode is on, but the arcade switch is off. Turn on the arcade in the game mode details in the settings.",
     "open_settings": "Open settings",
@@ -1692,6 +1709,10 @@
     }
   },
   "anki": {
+    "card_type_option": {
+      "basic": "Basic",
+      "cloze": "Cloze"
+    },
     "title": "Anki Export",
     "intro": "Review AI-suggested flashcards, accept the ones you want, then export as an .apkg file for Anki.",
     "filter_project": "Project",
@@ -1867,7 +1888,6 @@
       "open_settings": "Open Settings",
       "feature_analyze": "to analyze conversations",
       "feature_anki": "to extract Anki cards",
-      "feature_study_guide": "to generate a study guide",
       "feature_study_questions": "to generate study questions",
       "feature_pronunciation": "for pronunciation practice"
     },
@@ -2024,11 +2044,6 @@
     "topic_readme_parent_link": "← [Project root](../README.md)",
     "topic_readme_no_sessions": "_No sessions traversed this topic._",
     "loading": "Rendering repository…",
-    "widget_subtitle": "Versioned snapshot of this project's progress, notes, and roadmap.",
-    "settings_description": "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client.",
-    "settings_enable_git": "Enable git persistence",
-    "dexie_unavailable_body": "This feature is only available in server mode. Switch to server mode in Settings to enable git-backed learning repositories.",
-    "back_to_dashboard": "Back to Dashboard",
     "page": {
       "title": "Learning Repository",
       "rendered_at": "Rendered at",
@@ -2038,8 +2053,7 @@
       "rerender": "Re-render",
       "download_zip": "Download ZIP",
       "persist": "Persist to git",
-      "persisting": "Persisting…",
-      "persist_dexie_tooltip": "Git versioning is only available in server mode."
+      "persisting": "Persisting…"
     },
     "toast": {
       "zip_downloaded": "ZIP downloaded",
@@ -2060,6 +2074,7 @@
       "title": "Learning Repository",
       "loading": "Loading…",
       "repos_dir": "Repositories directory",
+      "repos_dir_hint": "Leave empty for the default: repos in the data directory (see About)",
       "save": "Save settings",
       "saving": "Saving…",
       "toast": {
@@ -2074,6 +2089,11 @@
     }
   },
   "lesson": {
+    "diff": {
+      "missing": "Missing: {word}",
+      "extra": "Extra: {word}",
+      "replaced": "You wrote {wrote}, expected {expected}"
+    },
     "progress_io": {
       "save_error": "Your progress in this lesson could not be saved.",
       "load_failed": "Your saved progress for this lesson could not be loaded: {detail}",
@@ -2155,6 +2175,13 @@
       "suggest_empty": "Nothing usable came back. Try again or adjust the step by hand."
     },
     "exam": {
+      "start_notice": "Exam: you only see at the end whether an answer was right, and you cannot go back.",
+      "author_source": "Evaluated by this set's own rules, not your own pass threshold",
+      "grade": "Grade: {grade}",
+      "no_grade": "No grade reached",
+      "percent_result": "{pct}% correct",
+      "advisory_reached": "Recommended mark of {pct}% reached",
+      "advisory_missed": "Recommended mark of {pct}% not reached",
       "passed": "Passed",
       "not_passed": "Not passed",
       "threshold_hint": "(pass ≥ {pct}%)",
@@ -2196,7 +2223,8 @@
       "pause": "Pause",
       "prev_step": "Previous step",
       "next_step": "Next step",
-      "step_position": "Step {current} of {total} theory steps"
+      "step_position": "Step {current} of {total} theory steps",
+      "end": "End read-aloud"
     },
     "contributed_by": "Contributed by {name}",
     "page_title": "Lesson",
@@ -2217,9 +2245,7 @@
     },
     "action": {
       "prev": "Previous",
-      "next": "Next",
       "finish": "Finish lesson",
-      "back_to_browser": "Back to content browser",
       "pause": "Pause lesson",
       "open_browser": "Open content browser",
       "back_to_lesson": "Back to lesson"
@@ -2508,7 +2534,6 @@
       "time": "Time",
       "minutes": "{n} min",
       "hints_used": "Hints used",
-      "breakdown_heading": "Exercise breakdown",
       "breakdown_correct_answer": "Correct answer: {answer}",
       "breakdown_unattempted": "Not attempted",
       "detailed_hide": "Compact evaluation",
@@ -2538,7 +2563,6 @@
       "mark_complete_needs_profile": "Create a learner profile to save your progress",
       "mark_complete_failed": "Saving the completion failed",
       "next_lesson": "Next lesson",
-      "repeat": "Repeat lesson",
       "retry": "Practice again",
       "retry_heading": "Your improvement",
       "retry_attempt": "Attempt {n}: {pct}%",
@@ -2549,7 +2573,6 @@
       "retry_best": "Best result",
       "retry_best_value": "{pct}% (attempt {n})",
       "retry_new_record": "New record!",
-      "restart": "Start over",
       "back_to_browser": "Back to content browser",
       "encourage_0": "Practice makes perfect!",
       "encourage_1": "Good start - keep going!",
@@ -2589,7 +2612,6 @@
       "adaptive_focus": "Focus on: {topic}",
       "adaptive_errors": "{count} errors in this lesson",
       "error_replay": "Retry Errors",
-      "error_replay_detail": "{count} exercises again",
       "error_replay_corrected": "{corrected} of {total} corrected",
       "all_corrected": "All errors corrected!",
       "all_corrected_detail": "Nice - no open errors left.",
@@ -2604,10 +2626,8 @@
       "focus_vocabulary": "Vocabulary"
     },
     "correction": {
-      "title": "Correction round",
       "subtitle": "A few quick drills on the words you missed.",
       "skip": "Skip",
-      "next": "Next",
       "complete_heading": "Correction round complete",
       "improvement": "{n} elements improved.",
       "improvement_singular": "{n} element improved.",
@@ -2615,7 +2635,12 @@
       "expand": "Fix now",
       "replay_all": "Redo all exercises ({count})",
       "replay_only_heading": "Repeat your mistakes",
-      "replay_only_subtitle": "These can't be practiced as a quick drill - redo the exercises instead."
+      "replay_only_subtitle": "These can't be practiced as a quick drill - redo the exercises instead.",
+      "fix_mistakes": "Fix mistakes ({count})",
+      "summary_heading": "Your corrections",
+      "first_try": "First try: {correct} of {total} correct",
+      "status_corrected": "Corrected",
+      "status_open": "Still open"
     },
     "error": {
       "load_failed": "Could not load lesson.",
@@ -2636,6 +2661,8 @@
       "abandoned_toast": "Lesson abandoned."
     },
     "resume": {
+      "exam_single_sitting": "A started exam cannot be continued: it only counts when taken in one sitting, so the lesson starts over.",
+      "mode_conflict": "This run was started in another mode. Exam and practice answers cannot be mixed, so the lesson starts over.",
       "heading": "Resume lesson?",
       "body": "You paused \"{title}\". Would you like to continue where you left off or start over?",
       "action_resume": "Continue",
@@ -2719,6 +2746,7 @@
       "public": "Public",
       "branch": "Branch",
       "lessons_note": "All {n} lessons of this set will be included.",
+      "lessons_note_one": "The set's one lesson will be included.",
       "invalid_repo": "Enter the repository as owner/name.",
       "submit": "Export",
       "working": "Exporting…",
@@ -2763,10 +2791,7 @@
       "no_results": "No results for '{query}'",
       "hint": "Try a different search term",
       "clear": "Clear search",
-      "available": "Available to download",
-      "your_content": "Your content",
-      "download_prompt_title": "Download this set?",
-      "download_prompt_body": "This set isn't downloaded yet. Download it now?"
+      "your_content": "Your content"
     },
     "save_adaptive": {
       "button": "Save this lesson?"
@@ -2872,10 +2897,8 @@
       "active": "Active",
       "deferred": "Deferred",
       "completed": "Completed",
-      "filter_aria": "Filter by status",
       "menu_aria": "Set actions",
       "changed": "Status updated.",
-      "change_failed": "Could not update the status.",
       "deleted": "Set removed.",
       "delete_failed": "Could not remove the set.",
       "progress_not_deleted": "Removed, but your learning progress could not be deleted: {detail}",
@@ -2945,7 +2968,6 @@
       "button": "Generate exercises",
       "generating": "Generating exercises…",
       "regenerate": "Regenerate",
-      "regenerate_confirm": "Replace the generated exercises with a fresh set?",
       "generated": "{n} exercises generated.",
       "generated_with_rejected": "{n} exercises generated, {r} rejected for quality.",
       "none": "The AI returned no usable exercises. Please try again.",
@@ -2964,7 +2986,6 @@
       "modal_title": "Save as offline lesson",
       "title_label": "Lesson title",
       "summary": "{exercises} exercises · {theory} theory steps · ~{minutes} min",
-      "theory_only": "Not enough vocabulary for exercises. Import a longer chat for more practice material.",
       "save": "Save",
       "saved": "Saved to My Lessons.",
       "failed": "Could not save the lesson.",
@@ -2973,7 +2994,6 @@
       "source_lang_label": "Your language",
       "level_label": "Level",
       "not_enough_data": "Few exercises - at least {min} are recommended for a full language lesson. You can still save it (for example as a theory-only lesson).",
-      "same_language": "The language learned and your language must be different.",
       "same_language_hint": "Learned and your language are the same - fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
       "split_notice": "This lesson has {steps} steps and will be saved as {parts} parts (max {max} steps each).",
       "part_title": "{title} - Part {n}"
@@ -3076,8 +3096,8 @@
       "no_lessons": "The set has no lessons.",
       "missing_target_language": "Missing target language (the language being taught).",
       "missing_source_language": "Missing source language (the language of the explanations).",
-      "invalid_target_language": "Target language '{code}' is not a 2-letter ISO code.",
-      "invalid_source_language": "Source language '{code}' is not a 2-letter ISO code.",
+      "invalid_target_language": "Target language '{code}' is not a valid language tag (such as 'de' or 'pt-BR').",
+      "invalid_source_language": "Source language '{code}' is not a valid language tag (such as 'de' or 'pt-BR').",
       "same_source_target": "Source and target language are the same ('{code}').",
       "missing_title": "Missing title.",
       "missing_title_native": "Missing native title (the title in the target language).",
@@ -3094,13 +3114,17 @@
       "level_too_complex": "Lesson '{lesson}': text averages {avg} words per side, high for level {level} (about {cap} expected).",
       "engine_rule": "Lesson '{lesson}': rule {rule} at {path}: {message}",
       "engine_warning": "Lesson '{lesson}': warning {rule} at {path}: {message}",
+      "engine_set_rule": "Set: rule {rule} at {path}: {message}",
+      "engine_set_warning": "Set: warning {rule} at {path}: {message}",
       "source_language_heuristic": "Card backs contain {found}-specific characters but the source language is '{lang}'.",
       "target_language_heuristic": "Card fronts contain {found}-specific characters but the target language is '{lang}'.",
       "failed_share_anyway": "Quality check found issues. You can share anyway - reviewers will see the findings noted in the pull request."
     },
+    "ai_privacy_link": "Privacy policy",
     "ai_validation": {
       "intro": "An AI can additionally check translation accuracy, grammar and level fit.",
-      "privacy": "Your lesson content will be sent to {provider}. No personal data is transmitted.",
+      "privacy": "For the review, {provider} receives the lessons you want to share (among other things, cards, texts and exercises), plus the set's source language, target language and level, but neither your profile nor your learning progress. In addition, as with every AI request, {provider} receives, among other things, your IP address and your API key.",
+      "provider_fallback": "your AI provider",
       "consent": "Run AI validation",
       "run": "Check with AI",
       "running": "AI is reviewing your lesson…",
@@ -3147,7 +3171,7 @@
       "title": "AI content check",
       "loading": "Preparing cards...",
       "cost_estimate": "~{cards} cards, ~{tokens} tokens, ~{usd}.",
-      "privacy": "Your lesson cards will be sent to your configured AI provider for review. No personal data is transmitted.",
+      "privacy": "The check sends your AI provider the cards of the set (identifier, front, back, notes) as well as the set's source language, target language and level, but neither your profile nor your learning progress. In addition, as with every AI request, your AI provider receives, among other things, your IP address and your API key.",
       "confirm": "Check",
       "progress": "Checking batch {current} of {total}...",
       "rate_limited": "Please wait a moment before running another check.",
@@ -3186,10 +3210,6 @@
         "suggestion": "Suggestion"
       }
     },
-    "placement": {
-      "lands_under": "Your lesson lands under",
-      "duplicate": "A similar lesson already exists: {title}. Share anyway?"
-    },
     "wizard": {
       "title": "Share with the community",
       "metadata_intro": "Check and correct the lesson details before sharing.",
@@ -3204,8 +3224,8 @@
       "err_title": "Add a title.",
       "err_source": "Choose the source language.",
       "err_target": "Choose the target language.",
-      "err_same_language": "Source and target language must differ.",
       "err_level": "Choose a CEFR level (A1-C2).",
+      "level_none": "No level (not a language course)",
       "err_empty": "This lesson has no exercises. Please recreate the lesson.",
       "regenerate": "Regenerate",
       "same_language_domain_hint": "Same source and target language - this will be shared as knowledge (non-language) content.",
@@ -3213,7 +3233,6 @@
       "lands_under": "Your lesson lands under",
       "new_set": "New set! You're the first to contribute here.",
       "next_to_existing": "Next to {count} existing lesson(s) in this set.",
-      "summary_counts": "{lessons} lesson(s), {exercises} exercises, {cards} cards, ~{minutes} min",
       "checking": "Checking for similar lessons…",
       "no_duplicates": "No duplicates found. Your lesson is unique!",
       "near_duplicate": "This lesson already exists: \"{title}\".",
@@ -3440,7 +3459,6 @@
     },
     "prompts_migrated": "{n} exercise instruction(s) were automatically translated to your language.",
     "prompts_migrated_dismiss": "Dismiss",
-    "step_pending": "This step is coming in the next update.",
     "nav_label": "Wizard navigation",
     "cancel": "Cancel",
     "back": "Back",
@@ -3461,11 +3479,12 @@
       "content_lang_label": "Content language",
       "level_none": "No level",
       "domain_hint": "Knowledge content uses a single content language and can skip the CEFR level.",
-      "same_language": "The language learned must differ from your language.",
       "description_label": "Topic / description",
       "author_label": "Author name"
     },
     "cards": {
+      "front_placeholder": "Word or phrase",
+      "back_placeholder": "Meaning",
       "heading": "Add vocabulary cards",
       "front_label": "Front (learned)",
       "back_label": "Back (your language)",
@@ -3554,8 +3573,8 @@
       "generate": "Auto-generate exercises",
       "regenerate": "Regenerate",
       "count": "{n} exercises",
-      "min_hint": "{n} exercises needed",
-      "min_to_advance": "Generate at least {n} exercises to continue.",
+      "one_to_advance": "Generate at least one exercise to continue.",
+      "share_min_hint": "Sharing needs at least {n} exercises",
       "min_one_to_advance": "Add at least one exercise to continue.",
       "drag": "Drag to reorder",
       "delete": "Delete exercise",
@@ -3774,6 +3793,7 @@
       "check_enoughTypes": "At least 2 exercise types",
       "check_min_types": "At least {n} exercise types",
       "check_exercise_minimums": "Every exercise has enough answers or pairs",
+      "share_checks_heading": "Needed for sharing",
       "check_schemaValid": "Valid lesson structure",
       "structure_error": "Technical detail",
       "structure_internal_error": "An internal error occurred while checking this lesson. This is a problem in the app, not in your lesson. Please reload the page and try again; if it keeps happening, report the problem below.",
@@ -3849,7 +3869,6 @@
     "filter_mine": "Only mine",
     "filter_all": "All sets",
     "filter_label": "Filter sets",
-    "adaptive": "Start adaptive lesson",
     "error_replay": "Retry errors",
     "train_errors": "Train errors",
     "shuffle": "Shuffle",
@@ -3889,8 +3908,7 @@
     },
     "mastery": {
       "receptive": "receptive",
-      "productive": "productive",
-      "mastered": "mastered"
+      "productive": "productive"
     },
     "title": "Learning Path",
     "subtitle": "Where you are and what comes next.",
@@ -4010,7 +4028,6 @@
     "app": {
       "heading": "Share the app",
       "download": "Download",
-      "qr_intro": "Share the app via QR code so others can open it.",
       "show_qr": "Show QR code",
       "download_qr": "Download QR code",
       "copy_url": "Copy URL",
@@ -4316,9 +4333,6 @@
     },
     "synced": "Synced: {sets} sets, {lessons} lessons.",
     "token_hint": "Private repositories need a token - paste one below, or set a shared token in Settings → Integrations.",
-    "trust_official": "Official: Curated and quality-assured by the project team.",
-    "trust_verified": "Verified: Contributed by the community and reviewed by the team.",
-    "trust_validated": "Validated: Technically correct; content not individually reviewed.",
     "official": {
       "title": "Official content",
       "counts": "{sets} sets · {lessons} lessons"
@@ -4351,7 +4365,6 @@
       "sync_all": "Sync all",
       "add": "Add repository",
       "cancel": "Cancel",
-      "confirm_remove": "Confirm remove",
       "connect": "Connect repository",
       "move_down": "Move down",
       "move_up": "Move up",
@@ -4360,13 +4373,11 @@
       "sync": "Sync now"
     },
     "badge": {
-      "coach": "Coach",
       "private": "Private",
       "official": "Official"
     },
     "trust": {
       "dropped": "Synced, but validation failed - this repository is now marked Unverified.",
-      "recommended": "Officially recommended",
       "unknown": "Unverified",
       "validated": "Validated"
     },
@@ -4402,6 +4413,19 @@
       "sync_failed": "Sync failed. Try again."
     },
     "validation": {
+      "reason": {
+        "not_found": "Repository or manifest.yaml not found.",
+        "access_denied": "Access denied - check the repository and your GitHub token.",
+        "unreachable": "Repository unreachable.",
+        "unsupported_schema": "Unsupported schema version {version}.",
+        "no_sets": "manifest.yaml lists no sets.",
+        "no_lessons": "No lessons found in any set.",
+        "executable_content": "Lesson content contains disallowed executable code.",
+        "lessons_unreadable": "Could not read the first set's lessons.",
+        "lesson_invalid_json": "The first set's first lesson is not valid JSON.",
+        "validator_unavailable": "Could not load the lesson validator.",
+        "lesson_invalid": "The first set's first lesson fails validation: {detail}"
+      },
       "failed": "Validation failed: {reason}",
       "passed": "Validation passed: {sets} sets, {lessons} lessons."
     }
@@ -4459,7 +4483,6 @@
       "domain": "Domain",
       "trust": "Trust",
       "source": "Source",
-      "ai_checked": "AI-checked",
       "review": "Review"
     },
     "trust": {
@@ -4545,7 +4568,6 @@
     "back_to_dashboard": "Back to Dashboard",
     "loading": "Loading practice session…",
     "empty_body": "This set has no exercises to practise yet.",
-    "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
     "paused": "Paused - take a breather.",
     "resume": "Resume",
     "pause": "Pause",
@@ -4556,7 +4578,6 @@
       "correct": "{n} correct"
     },
     "error": {
-      "missing_params": "No content set selected.",
       "load_failed": "Could not load the practice session."
     },
     "summary": {
@@ -4575,12 +4596,10 @@
     "page_title": "Shuffle",
     "loading": "Loading shuffle session…",
     "empty_body": "This set needs at least two lessons with exercises to shuffle.",
-    "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
     "back_to_dashboard": "Back to Dashboard",
     "subtitle": "Mixing {n} questions from {lessons} lessons",
     "error": {
-      "load_failed": "Could not load shuffle session.",
-      "missing_params": "No content set selected."
+      "load_failed": "Could not load shuffle session."
     },
     "summary": {
       "heading": "Shuffle training complete!",
@@ -4700,7 +4719,6 @@
     },
     "pr": {
       "created": "Pull request opened.",
-      "failed": "Could not open the pull request.",
       "view": "View your pull request"
     }
   },

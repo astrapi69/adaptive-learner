@@ -154,6 +154,22 @@ def test_deterministic_fallback_carries_title():
     assert fb["fallback_used"] is True
 
 
+@pytest.mark.parametrize(
+    ("title", "expected"),
+    [
+        ("Calculus refresher", {"topic": "Calculus refresher", "fallback_used": True}),
+        ("   ", {"fallback_used": True}),
+        (None, {"fallback_used": True}),
+    ],
+    ids=["title", "blank-title", "no-title"],
+)
+def test_deterministic_fallback_persists_no_english_placeholder(
+    title: str | None, expected: dict[str, object]
+) -> None:
+    """#3424: the UI renders the localized notice from fallback_used."""
+    assert deterministic_fallback(title) == expected
+
+
 def test_analyze_conversation_returns_fallback_when_chunks_empty():
     result = analyze_conversation_with_ai(
         [],

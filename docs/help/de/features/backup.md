@@ -5,24 +5,43 @@ Datei sichern und ihn auf einem anderen Gerät, in einer frischen
 Installation oder nach einem Browser-Wechsel wiederherstellen. Du
 findest alles unter **Einstellungen → Daten**.
 
-<!-- TODO: Screenshot - Einstellungen → Daten mit den Knöpfen „Backup erstellen" und „Wiederherstellen" -->
+<!-- TODO: Screenshot - Einstellungen → Daten mit den Knöpfen „Sicherung erstellen" und „Aus Sicherung wiederherstellen" -->
 
 ---
 
 ## Was im Backup steckt
 
-Ein Backup ist ein **vollständiger Snapshot**: alle 30
-Datentabellen (Lernprojekte, Sessions, Lektionsfortschritt,
-element-genaue Fehler, Gamification mit XP/Streak/Badges,
+Ein Backup ist ein **vollständiger Snapshot**: alle
+Datentabellen (Lernprojekte, Sitzungen, Lektionsfortschritt,
+element-genaue Fehler, Gamification mit XP/Serie/Badges,
 Missionen, Anki-Karten, Notizen und mehr), **deine
 heruntergeladenen Content-Sets** und ein **localStorage-Snapshot**
 (deine Beiträge, eigene Lernpfade und lokale Einstellungen).
 
-**Noch nicht enthalten:** verbundene Content-Repositories,
-eingelöste Einladungen und die Einstellungen des Learning
-Repository. Nach der Wiederherstellung auf einem neuen Gerät sind
-die Content-Sets wieder da, verbinde aber ihre Repositories neu
-(und löse Einladungen erneut ein), damit Updates weiter ankommen.
+**Auch enthalten:** verbundene Content-Repositories, eingelöste
+Einladungen und ob das Learning Repository eingeschaltet ist.
+Im Browser-Modus kommen auch die Ergebnisse deiner KI-Inhaltsprüfungen
+mit, die Plakette „KI-geprüft" bleibt also erhalten.
+
+**Nicht enthalten** sind zum Beispiel:
+
+- das Zugriffstoken eines privaten Repositorys (gib es nach der
+  Wiederherstellung erneut ein);
+- der Ordner des Learning Repository, der zum Gerät gehört;
+- im Server-Modus Lektionsfortschritt und Sprachaufnahmen, die offline
+  entstanden und noch nicht beim Server angekommen sind;
+- zwischengespeicherte Suchindizes und Medienlisten, die Zählung des
+  Auto-Backups und der Stand der LAN-Synchronisierung.
+
+Die Einstellung, ob Auto-Backup eingeschaltet ist, kommt dagegen mit.
+Im Server-Modus merkt sich die App, was offline entsteht, in diesem
+Browser: bis zu 50 Änderungen an Lektionsfortschritt und
+Sprachaufnahmen; kommen mehr zusammen, fallen die ältesten weg. Sie
+überträgt sie von selbst, wenn die Verbindung zurückkommt, während die
+App offen ist, oder beim nächsten Start mit Verbindung. Von dem, was offline entsteht, kommt nur ins Backup, was schon beim Server
+angekommen ist; erstelle ein Backup im Server-Modus deshalb erst, wenn die
+App nach dem Offline-Lernen wieder mit Verbindung lief und die Änderungen
+übertragen konnte.
 
 Vor dem Export zeigt die App eine Vorschau **„Dein Backup
 enthält …"** mit Datensatz-Zählungen pro Bereich, damit du vor dem
@@ -33,7 +52,7 @@ Speichern siehst, was gesichert wird.
 ## Backup erstellen
 
 1. Öffne **Einstellungen → Daten**.
-2. Drücke **Backup erstellen**.
+2. Drücke **Sicherung erstellen**.
 3. Im reinen Browser-Modus kannst du über die
    File-System-Access-API direkt einen Speicherort wählen
    („Auf Datenträger speichern"); unterstützt der Browser das
@@ -62,13 +81,20 @@ GitHub-Issue.
 
 ## Cross-Identity-Import
 
-Du musst **nicht** derselbe Nutzer auf demselben Gerät sein. Ein
-Backup lässt sich in eine **frische Installation** oder unter
-einem **anderen Nutzerprofil** importieren. Die Wiederherstellung
-ordnet die Daten dem aktiven Profil zu und löst dabei interne
-Verweise (Fremdschlüssel) sauber neu auf, sodass dein Fortschritt
-zusammenhängend bleibt - Lektions-Schrittfortschritt, Streak und
-Badges inklusive.
+Du musst **nicht** derselbe Nutzer auf demselben Gerät sein.
+
+- **Auf einem leeren Gerät** spielst du das Backup am besten gleich beim
+  Start ein (siehe "Backup beim ersten Login"). Die App übernimmt dann das
+  Profil aus dem Backup.
+- **Auf einem Gerät, auf dem du schon ein Profil angelegt hast**, kannst du
+  das Backup über Einstellungen > Daten importieren. Gehört es zu einem
+  anderen Profil, sagt dir der Bestätigungsdialog das vor dem Import. Der
+  Lernstand aus dem Backup wird dann deinem **aktiven Profil** zugeordnet
+  und mit deinem zusammengeführt: Lektionsfortschritt, Fehler,
+  Durchgänge, Aufnahmen, Projekte und Verlauf kommen hinzu, dein eigener
+  Fortschritt bleibt erhalten. XP, Serie und Einstellungen übernimmt der
+  Import aus dem Backup. Dein aktives Profil bleibt aktiv, es wird kein
+  zweites Profil angelegt.
 
 ---
 
@@ -102,4 +128,4 @@ reine JSON-Backups lassen sich weiterhin sauber importieren.
 ## Verwandte Seiten
 
 - [Einstellungen](../user-guide/settings.md) - alle Daten-Aktionen im Überblick
-- [Mehrere Content-Repositories](content-repos.md) - verbundene Repos sind noch nicht Teil des Backups, nach der Wiederherstellung neu verbinden
+- [Mehrere Content-Repositories](content-repos.md) - verbundene Repos und eingelöste Einladungen reisen mit dem Backup

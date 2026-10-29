@@ -17,6 +17,7 @@ import {
   mimeTypeForAssetPath,
 } from "./content-loader-sources";
 import { latestCachedRow } from "./content-loader-listing";
+import { ApiError } from "../../api/client";
 
 /**
  * The cached set manifest's ``metadata.lessons`` (#2835), mirroring the
@@ -60,11 +61,7 @@ export async function listLessonsDexie(
 ): Promise<ContentLessonList> {
   const cached = await latestCachedRow(source, setId);
   if (!cached) {
-    const err: Error & { status?: number } = new Error(
-      `Set ${source}/${setId} is not cached.`,
-    );
-    err.status = 404;
-    throw err;
+    throw new ApiError(404, `Set ${source}/${setId} is not cached.`);
   }
   const db = getDb();
   const files = await db.contentSetFiles
@@ -91,22 +88,14 @@ export async function getLessonDexie(
 ): Promise<ContentLesson> {
   const cached = await latestCachedRow(source, setId);
   if (!cached) {
-    const err: Error & { status?: number } = new Error(
-      `Set ${source}/${setId} is not cached.`,
-    );
-    err.status = 404;
-    throw err;
+    throw new ApiError(404, `Set ${source}/${setId} is not cached.`);
   }
   const db = getDb();
   const file = await db.contentSetFiles.get(
     fileKey(cached.id, `lessons/${filename}`),
   );
   if (!file) {
-    const err: Error & { status?: number } = new Error(
-      `Lesson ${filename} not found in ${source}/${setId}`,
-    );
-    err.status = 404;
-    throw err;
+    throw new ApiError(404, `Lesson ${filename} not found in ${source}/${setId}`);
   }
   // The single-JSON source adapter (Content-Engine, EXP-042) parses the raw
   // lesson JSON and injects the set-inherited language pair / domain: a lesson

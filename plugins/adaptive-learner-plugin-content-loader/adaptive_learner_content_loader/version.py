@@ -26,7 +26,6 @@ from __future__ import annotations
 import re
 from functools import total_ordering
 
-
 _CORE_RE = re.compile(r"^(\d+)(?:\.(\d+))?(?:\.(\d+))?$")
 
 
@@ -60,7 +59,7 @@ class _Version:
             return NotImplemented
         return (self.core, self.pre) == (other.core, other.pre)
 
-    def __lt__(self, other: "_Version") -> bool:
+    def __lt__(self, other: _Version) -> bool:
         if self.core != other.core:
             return self.core < other.core
         # Same core: release > any pre-release.
@@ -72,7 +71,7 @@ class _Version:
             return True  # we are the pre-release; we are lower
         # Both pre-releases: compare per-identifier, numeric
         # identifiers ranking below alphabetic per semver.
-        for left, right in zip(self.pre, other.pre):
+        for left, right in zip(self.pre, other.pre, strict=False):
             ln, rn = left.isdigit(), right.isdigit()
             if ln and rn:
                 if int(left) != int(right):

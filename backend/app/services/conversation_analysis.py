@@ -351,16 +351,14 @@ def parse_analysis_response(raw: str | None) -> dict[str, Any] | None:
 
 def deterministic_fallback(title: str | None = None) -> dict[str, Any]:
     """Empty analysis with ``fallback_used: True``. The UI surfaces
-    a "we couldn't parse the response" hint when this is returned
-    so the user knows to retry or pick a different provider."""
-    return {
-        "topic": (title or "Unrecognised topic").strip() or "Unrecognised topic",
-        "summary": (
-            "The AI response could not be parsed into structured analysis. "
-            "You can re-run the analysis, or pick a different AI provider."
-        ),
-        "fallback_used": True,
-    }
+    a localized "we couldn't parse the response" hint when this is
+    returned so the user knows to retry or pick a different provider.
+
+    No English placeholder topic or summary is persisted (#3424); a
+    missing topic lets the frontend use its localized default title.
+    """
+    topic = (title or "").strip()
+    return {"topic": topic, "fallback_used": True} if topic else {"fallback_used": True}
 
 
 def _merge_strings(a: list[str] | None, b: list[str] | None) -> list[str] | None:

@@ -23,7 +23,7 @@ from app.database import get_db
 from app.exceptions import NotFoundError
 from app.models import User
 
-from . import badge_service, streak_service, xp_service
+from . import badge_service, purchases, streak_service, xp_service
 
 router = APIRouter(prefix="/plugins/gamification", tags=["gamification"])
 
@@ -85,6 +85,36 @@ def spend_xp(
     amount = int(body.get("amount", 0))
     reason = str(body.get("reason", "spend"))
     return xp_service.spend_xp(db, user_id=user_id, amount=amount, reason=reason)
+
+
+class _PurchaseBody(BaseModel):
+    item_kind: str = Field(min_length=1, max_length=32)
+    item_id: str = Field(min_length=1, max_length=64)
+    cost: int = Field(ge=0, le=100_000)
+    already_paid: bool = False
+
+
+@router.post("/xp/{user_id}/purchases")
+def purchase_item(
+    user_id: str, body: _PurchaseBody, db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    """#3445 - buy an item: the deduction and the ledger row are one event."""
+    _ensure_user(db, user_id)
+    return purchases.purchase_item(
+        db,
+        user_id=user_id,
+        item_kind=body.item_kind,
+        item_id=body.item_id,
+        cost=body.cost,
+        already_paid=body.already_paid,
+    )
+
+
+@router.get("/xp/{user_id}/purchases")
+def list_purchases(user_id: str, db: Session = Depends(get_db)) -> list[dict[str, Any]]:
+    """#3445 - the purchase ledger; ownership is derived from it."""
+    _ensure_user(db, user_id)
+    return purchases.list_purchases(db, user_id)
 
 
 # --- Badges (Phase 29B) ----------------------------------------------------

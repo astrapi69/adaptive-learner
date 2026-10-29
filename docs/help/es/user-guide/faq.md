@@ -2,30 +2,73 @@
 
 ## ¿Están seguros mis datos?
 
-En el **modo Local** todos tus datos residen en IndexedDB en tu
-propio dispositivo. Sin backend, sin servicio de terceros. Cerrar
-la pestaña del navegador no los elimina; borrar los datos del
-sitio sí lo hace. Si compartes el dispositivo, cualquiera con
-acceso a este perfil del navegador puede leerlos.
+En el **modo Local** tu navegador almacena tus datos en tu propio
+dispositivo (en IndexedDB y localStorage), entre otras cosas tu
+progreso, las conversaciones importadas y tus ajustes, incluidas
+las claves API y el token de GitHub; no interviene ningún servidor
+del operador. Otros reciben partes de ellos solo cuando las
+necesita una función, por ejemplo tu proveedor de IA, cuando usas
+la IA, o GitHub, cuando la app pregunta por sí misma al iniciarse
+si hay contenidos nuevos. Cerrar la pestaña del navegador no
+elimina estos datos; borrar los datos del sitio en el navegador
+los quita de tu dispositivo. Si compartes el dispositivo,
+cualquiera con acceso a este perfil del navegador puede leerlos.
 
-En el **modo Servidor** los datos residen en la base de datos
-SQLite que gestiona el backend FastAPI. Las claves API se cifran
-en reposo con Fernet usando un secreto que configuras mediante la
-variable de entorno `ADAPTIVE_LEARNER_SECRET_KEY` o mediante
-`secret_key:` en `~/.config/adaptive_learner/secrets.yaml`.
+En el **modo Servidor** tus datos de aprendizaje residen en la
+base de datos SQLite que gestiona el backend FastAPI. Lo que se
+genera sin conexión en cuanto a progreso de lecciones y grabaciones
+de voz espera en este navegador hasta que la app lo transfiere; qué
+cantidad espera como máximo y qué ocurre con el resto se indica en
+[Copia de seguridad y restauración](../features/backup.md). Las
+claves API se guardan cifradas con Fernet en
+`~/.config/adaptive_learner/secrets.yaml`, y por cada proveedor una
+copia de respaldo de la última clave API que funcionó, también
+cifrada, en la base de datos. La clave de cifrado se genera en el
+primer inicio y se guarda en `~/.config/adaptive_learner/secret.key`;
+no tienes que configurar nada. Si quieres definir una propia, establece
+`ADAPTIVE_LEARNER_SECRET_KEY` (o `secret_key:` en `secrets.yaml`)
+antes del primer inicio.
 
 Ninguno de los dos modos envía telemetría, analíticas ni tus
 mensajes a ningún tercero aparte del proveedor de IA que hayas
-elegido - y ese solo ve el contenido del mensaje que cabría
-esperar (prompt del sistema + tu texto + las respuestas previas
-de la IA en la sesión).
+elegido. En una sesión de aprendizaje ese proveedor recibe:
+
+- la instrucción del sistema, con el tema y el objetivo de tu
+  proyecto de aprendizaje, una indicación de perfil (tu método de
+  aprendizaje preferido y su peso), tus lecciones completadas con
+  sus resultados, la lección y el paso en los que estás
+  trabajando, tus errores recientes (cada uno con tu respuesta, la
+  correcta y cuántas veces) y el idioma en el que debe responder
+  la IA; una sesión iniciada desde una conversación importada
+  lleva el análisis y la transcripción de esa conversación en
+  lugar de tu progreso;
+- tus mensajes y las respuestas anteriores de la IA en la sesión;
+- como en cada solicitud, entre otras cosas, tu dirección IP y tu
+  clave API.
+
+Tus XP e insignias no forman parte de esto. También otras
+funciones de IA envían datos a tu proveedor, por ejemplo el
+análisis de una conversación importada. La
+[revisión de contenido con IA](ai-validation.md) envía las
+tarjetas del set que revisa (de cada tarjeta, su identificador,
+anverso, reverso y notas). La revisión con IA antes de compartir
+envía, de tus lecciones, solo las que compartes y, de ellas, entre
+otras cosas, las tarjetas, los textos de los pasos y los
+ejercicios (enunciado y opciones de respuesta incorrectas). Ambas
+envían además el idioma de origen, el idioma de destino y el nivel
+del set. Lo que tú mismo escribes en este contenido se envía con
+él y puede ser personal en sí mismo. La
+[política de privacidad](../legal/privacy.md) enumera cada
+solicitud a la IA.
 
 ## ¿Necesito una clave API?
 
 Sí, para las sesiones de IA. La aplicación usa el modelo
-**bring-your-own-key** para los tres proveedores compatibles:
-Anthropic Claude, OpenAI GPT, Google Gemini. Los límites del
-nivel gratuito suelen ser suficientes para empezar.
+**bring-your-own-key** para cada proveedor compatible: Anthropic
+Claude, OpenAI GPT y Google Gemini, más Perplexity en modo servidor
+(la app de escritorio; la versión de navegador no puede llamar a
+Perplexity directamente). Los límites del nivel gratuito suelen ser
+suficientes para empezar.
 
 Hay tres lugares donde poner la clave (la prioridad más alta
 gana): una variable de entorno `ADAPTIVE_LEARNER_<PROVEEDOR>_API_KEY`,
@@ -78,16 +121,24 @@ discontinuo «Ciclo N» en cada transición. El diálogo de
 calificación al final de la sesión resume el viaje de varios
 ciclos cuando `cycle_count > 1`.
 
+Solo en la app de escritorio: en la versión de navegador la sesión se
+queda en el paso 7, y la página de la sesión lo indica. Termina ahí la
+sesión y empieza una nueva.
+
 ## ¿Puedo exportar mis datos?
 
-Sí. Se han implementado tres rutas de exportación:
+Sí, entre otras, de estas formas:
 
-- **Copia de seguridad**: Ajustes → Copia de seguridad → Crear
-  copia. Descarga un JSON con marca de tiempo con todas las filas
-  de tu cuenta. Las claves API se eliminan. Funciona en ambos
-  modos de almacenamiento.
-- **Informes de Progreso / Sesión / Plan de estudios**: Ajustes →
-  Exportar. Markdown + PDF (impresión a PDF del navegador).
+- **Copia de seguridad**: Ajustes > Datos > Copia de seguridad y
+  exportación > Crear copia de seguridad. Descarga un archivo de copia
+  de seguridad `.alb`; puedes crear una copia de seguridad en ambos
+  modos de almacenamiento. Tus claves API no están incluidas en ella;
+  cómo transferirlas se explica en la página [Ajustes](settings.md), en
+  la sección «Exportación cifrada de claves (.alk)». La página
+  [Copia de seguridad y restauración](../features/backup.md) da más
+  ejemplos de lo que una copia de seguridad no contiene.
+- **Informes de Progreso / Sesión / Plan de estudios**: Ajustes >
+  Datos > Copia de seguridad y exportación > Exportar. Markdown + PDF (impresión a PDF del navegador).
 - **Anki .apkg**: revisa las tarjetas de memoria extraídas por la
   IA en la página `/anki`, acepta las que te gusten y haz clic en
   Exportar. El archivo funciona directamente en Anki de escritorio.
@@ -110,8 +161,9 @@ Tres integraciones con la Web Speech API:
   `/pronunciation`, la IA genera una frase objetivo, tú hablas y
   una IA evaluadora puntúa la similitud y sugiere mejoras.
 
-Los alternadores de voz se encuentran en Ajustes → Voz. La
-sección se oculta en navegadores que no admiten la API.
+Los alternadores de voz se encuentran en Ajustes > Aprendizaje >
+Lectura en voz alta y dictado. El área se oculta en navegadores que
+no admiten la API.
 
 ## ¿Qué es la importación del historial de chat?
 
@@ -131,14 +183,33 @@ para ese formato.
 
 ## ¿Sincronización entre dispositivos?
 
-Sincronización bidireccional en la red local.
-Ajustes → Sincronización → «Emparejar este dispositivo»: escanea
-el código QR en la pantalla del otro dispositivo (cámara trasera)
-o pega la URL de emparejamiento. Una vez emparejados, los botones
-de enviar y recibir intercambian datos; los conflictos pasan por
-un resolvedor de fusión de IA. 28 tablas en la superficie de
-sincronización (asignaturas, etiquetas y preguntas
-de estudio incluidas).
+Todavía no. La app aún no puede sincronizar tus datos entre
+dispositivos: por ahora no puedes emparejar un dispositivo, y sin
+emparejamiento la sincronización no intercambia datos. Lo que ves en
+Ajustes > Datos > Sincronización depende del modo de almacenamiento:
+
+- En el modo Local esta área no muestra controles, sino el aviso
+  «Solo disponible con la aplicación de escritorio.» La versión de
+  navegador usa siempre el modo Local, también como aplicación web
+  instalada; en la app de escritorio aparece el mismo aviso mientras
+  esté configurada en el modo Local (Ajustes > General > Modo de
+  almacenamiento: «Local (Navegador)»). Sin embargo, la app de
+  escritorio tampoco sincroniza por ahora (ver el punto siguiente).
+- En el modo Servidor de la app de escritorio (Ajustes > General >
+  Modo de almacenamiento: «Servidor») esta área muestra campos para el
+  host y el puerto y el botón «Generar código de emparejamiento». Un
+  clic en él muestra un enlace de emparejamiento, un código QR y un
+  botón para copiar el enlace. Pero ningún dispositivo puede canjear
+  todavía este enlace, tampoco a través del código QR; por tanto, por
+  ahora no se puede emparejar un segundo dispositivo con él.
+
+Mientras la sincronización no esté disponible, llevas tus datos a otro
+dispositivo con una copia de seguridad, aunque no todos. Entre otras
+cosas, una copia de seguridad no contiene tus claves API; cómo
+transferir las claves API se explica en la página [Ajustes](settings.md),
+en la sección «Exportación cifrada de claves (.alk)». La página
+[Copia de seguridad y restauración](../features/backup.md) da más
+ejemplos de lo que una copia de seguridad no contiene.
 
 ## ¿En qué se diferencia esto de ChatGPT?
 
@@ -157,9 +228,18 @@ IA internamente pero añade:
 5. **Seguimiento a largo plazo** - ProgressCommits, mapa de calor
    de racha, XP, insignias, gráficos de tiempo por paso. ChatGPT
    olvida cuando cierras la pestaña.
-6. **Libertad de proveedor** - Anthropic, OpenAI o Gemini.
-7. **Opción local primero** - todo en tu navegador, nada enviado
-   a un servidor (excepto tus llamadas a la IA).
+6. **Libertad de proveedor** - Anthropic, OpenAI o Gemini, más
+   Perplexity en modo servidor.
+7. **Opción local primero** - en el modo local, tu navegador
+   almacena, entre otras cosas, el progreso, las estadísticas y los
+   ajustes; otros reciben partes de ellos solo cuando las necesita
+   una función. La app se conecta a servidores cuando una función lo
+   necesita, por ejemplo a GitHub para los contenidos (para ello
+   también sincroniza por sí sola los repositorios conectados al
+   iniciarse), a tu proveedor de IA, y a GitHub cuando compartes
+   algo o abres allí un informe de error. La
+   [política de privacidad](../legal/privacy.md) describe qué casos
+   son y qué se transfiere.
 
 ## ¿Qué pasa si la IA falla?
 

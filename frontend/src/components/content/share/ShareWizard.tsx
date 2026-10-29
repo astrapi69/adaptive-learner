@@ -59,6 +59,7 @@ export default function ShareWizard(props: ShareWizardProps) {
       }}
     >
       <DialogContent
+        closeLabel={t("common.close", "Close")}
         data-testid="content-share-wizard"
         aria-describedby="share-wizard-description"
         className="max-h-[90vh] overflow-y-auto"

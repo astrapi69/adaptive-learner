@@ -60,16 +60,22 @@ não o podem fazer:
   para obteres autocompletar do IDE e validação inline.
 - `schema/quality-rules.json`: os mínimos de qualidade partilhados
   (p. ex. número de exercícios, número de respostas aceites de
-  free-text), consumidos pelo validador de conteúdo do lado do
-  cliente em vez de uma segunda cópia mantida à mão.
-- Os tipos de lição TypeScript do frontend e a página MkDocs
-  [Referência do formato de lição](lesson-format-reference.md) também
-  são gerados (**não os edites à mão**); seguem o espelho da engine,
-  portanto volta a correr o gerador depois de cada re-pin.
+  free-text), como espelho da engine. O validador de conteúdo do lado
+  do cliente lê os mesmos valores diretamente do pacote da engine
+  (`QUALITY_MINIMUMS`), não de uma segunda cópia mantida à mão.
+- A página MkDocs [Referência do formato de lição](lesson-format-reference.md)
+  é gerada em todos os idiomas da ajuda (**não a edites à mão**);
+  segue o espelho da engine, portanto volta a correr
+  `make sync-schema` depois de cada re-pin. Os tipos de lição
+  TypeScript do frontend não são gerados: vêm diretamente do pacote
+  `learn-content-engine`.
 
 Um portão contra deriva (`make sync-schema-check`, parte de
 `release-test`, mais `backend/tests/test_lesson_schema_drift.py` em
-`make test`) falha se algum artefacto gerado divergir do espelho
+`make test`; a CI do backend verifica ainda a camada Pydantic em
+cada PR que toca o backend ou um plugin com
+`generate_pydantic_models.py --check`) falha se algum artefacto
+gerado divergir do espelho
 fixado da engine. O fecho da cadeia é o portão de paridade de bytes
 app-contra-engine: `make engine-parity-check`
 (`scripts/check_engine_schema_parity.py`), o pin offline
@@ -115,8 +121,17 @@ Um conjunto traz ainda **`title`** (no idioma de origem, o que o
 aprendiz lê) e **`title_native`** (no idioma de destino, como título
 secundário).
 
-Ambos os códigos têm de ser ISO 639-1 (duas letras), e
-`source_language` tem de ser diferente de `target_language`. Os
+Ambos os códigos são etiquetas de idioma BCP 47 na forma canónica: o
+código mais curto (`de`, `pt-BR`), três letras para idiomas sem
+código de duas letras (`gsw`, `yue`, `fil`). Uma etiqueta mal formada
+(`de_DE`, vazia) é um erro (`E-LANG-TAG`); uma grafia não canónica
+(`EN`, `deu`) é um aviso (`W-LANG-TAG-CANONICAL`). Num conjunto de
+idioma (`domain` ausente ou `language`), a engine avisa quando
+`source_language` é igual a `target_language` ou falta
+`title_native` (`W-LANG-PAIR-SAME`, `W-SET-TITLE-NATIVE`); a
+verificação da aplicação no momento da partilha bloqueia ambos os
+casos. Um conjunto de outro domínio não precisa de nenhum dos dois.
+Os
 conjuntos anteriores à v1.2 sem estes campos continuam a carregar: a
 antiga chave `language` é aceite como `target_language`, e
 `source_language` recai em `en`.
@@ -195,6 +210,16 @@ Comportamento do loader específico da app a ter em mente:
       - 02-articles.json
       - ...
   ```
+
+- O bloco opcional `evaluation` de um conjunto
+  ([referência da engine](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  só tem efeito na aplicação no **modo exame**: aí substitui o limiar
+  de aprovação do próprio aprendiz e avalia a mesma primeira
+  passagem segundo o seu esquema (`percent`, `pass_fail` ou
+  `grades`), o seu `title` substitui o título «Resultado do exame»,
+  `report: detailed` abre a avaliação detalhada e a classificação por
+  estrelas não é mostrada. A prática e os outros modos ignoram o
+  bloco.
 
 ## Esquema de lição
 
@@ -752,6 +777,19 @@ Se publicas um conjunto sem assets, o picture-choice funciona na
 mesma - o gerador de SVG de placeholder cobre cores + números
 automaticamente e recai para tudo o resto num avatar determinístico.
 
+**Imagens em Markdown.** A aplicação apresenta em Markdown, entre
+outros, os textos de teoria, as explicações e as respostas da IA.
+Uma imagem incorporada como URI `data:` é mostrada diretamente. Uma
+imagem de outro servidor, por exemplo `raw.githubusercontent.com`
+ou um site de imagens, aparece como uma ligação com um ícone de
+imagem e o seu texto alternativo, e só carrega depois de um clique,
+num novo separador; por isso, dá a essas imagens um texto
+alternativo significativo. Uma imagem que deve estar sempre visível
+pertence a uma imagem de exercício ou de cartão baseada nos
+ficheiros de assets abaixo. As entradas do YouTube em `resources[]`
+mostram um ícone de vídeo em vez de uma miniatura; o vídeo só abre
+no YouTube com um clique.
+
 ### Layout de diretórios
 
 Dentro do diretório do conjunto, os assets ficam sob `assets/`:
@@ -867,7 +905,7 @@ Antes do PR de uma nova lição, verificar:
 - [ ] **Exatidão cultural**: uso real do idioma, não apenas fórmulas de manual
 - [ ] **Validação de esquema**: a lição carrega de forma limpa via `dict_to_lesson()` (ver Testes locais)
 - [ ] **Integridade de Card-ID**: cada `exercise.card_ids[i]` existe em `cards[]` da lição
-- [ ] **Par de idiomas**: `target_language` + `source_language` definidos (ISO 639-1, diferentes), `title_native` presente
+- [ ] **Par de idiomas**: `target_language` + `source_language` definidos (BCP 47, canónicos; em conjuntos de idioma diferentes e com `title_native`)
 
 ## Validação (dois níveis, v1.44.0)
 
@@ -1026,12 +1064,17 @@ contribuir é **criar e partilhar uma lição na aplicação**:
    de conjuntos.
 2. Em "As Minhas Lições", clica em **Exportar como conjunto de
    conteúdo** para descarregar um conjunto de conteúdo como `.zip`
-   (manifesto + lições). As exportações contêm apenas o conteúdo da
-   lição - sem progresso, sem histórico de erros, nada pessoal.
+   (manifesto + lições). As exportações contêm o conteúdo da lição,
+   mas não o progresso nem o histórico de erros; o que está na lição
+   vai junto, incluindo dados pessoais como um nome de autor que
+   tenhas indicado (vê [As Minhas Lições](../user-guide/my-lessons.md)).
 3. Clica em **Disponibilizar para a comunidade** para abrir um
    **Pull Request** pré-preenchido no repositório de conteúdo - o
    JSON da lição é committado no caminho correto da árvore, sem
-   necessidade de anexo `.zip`.
+   necessidade de anexo `.zip`. Com um token do GitHub em
+   Configurações > Integrações, a aplicação abre ela própria o Pull
+   Request de uma única lição; sem token, o editor ou a página de
+   carregamento do GitHub guiam-te.
 4. A CI do repo valida o PR automaticamente; um maintainer verifica
    a lição, alinha o manifesto (id, title, language, level, tags) com
    as convenções acima e fá-lo o merge sob `sets/`. Após o merge,

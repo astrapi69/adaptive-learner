@@ -37,10 +37,10 @@ satisfy one contract:
 - **`apiStorage`** (default): thin wrapper around
   `api/client.ts` that talks to the FastAPI backend.
 - **`dexieStorage`** (local-first): full IndexedDB stack
-  mirroring all 30 SQLAlchemy models. AI calls fire direct
+  mirroring the SQLAlchemy models. AI calls fire direct
   from the browser via the `storage/ai/` namespace.
 
-`IStorageService` (`storage/types/core/service.ts`) exposes 29
+`IStorageService` (`storage/types/core/service.ts`) exposes its
 namespaces (users, projects, settings, assessment, session
 with streaming, tracking, tools, curricula, topics, lessons,
 plugins, imports, system, backup, export, subjects, tags,
@@ -160,12 +160,15 @@ domain errors to HTTP status codes. See
 
 - Backend: SQLAlchemy + SQLite. Alembic migrations in
   `backend/migrations/versions/`.
-- Sync surface: 30 tables (`sync_service.ALL_SYNC_TABLES`).
-  Append-only
-  history rows (sessions, messages, ratings, progress
-  commits, step evaluations, method switches, imported
-  conversations, imported messages, anki cards, study
-  questions) plus mutable settings + curriculum rows.
+- Sync surface: every table in `sync_service.ALL_SYNC_TABLES`;
+  whether a table syncs append-only or mutable is its
+  `TableSpec.append_only` in `backend/app/services/sync_tables.py`.
+  The tables themselves, by area: [Data model](data-model.md).
+- No API key on the sync wire (#3854): the tables in
+  `SYNC_SECRET_TABLES` (the `api_key_backups` rollback cache) and the
+  `api_key_*` fields of `user_settings` (`EXCLUDED_USER_SETTINGS_FIELDS`,
+  the same list backup uses) cross sync in neither direction; the
+  browser side filters in `frontend/src/storage/sync/sync-secrets.ts`.
 - Backup format: JSON; API keys stripped on export; restore
   is a merge.
 - Test isolation: production data dirs carry a

@@ -111,6 +111,31 @@ describe("restoreDexieContentSets", () => {
         ).toBeTruthy();
     });
 
+    it.each([
+        [
+            "the legacy language alias as the target",
+            ["sets:", "  - id: es-a1", "    language: es", "    source_language: de"],
+            {target_language: "es", language: "es", source_language: "de"},
+        ],
+        [
+            "en as the source when the manifest names none",
+            ["sets:", "  - id: es-a1", "    target_language: es"],
+            {target_language: "es", language: "es", source_language: "en"},
+        ],
+    ])("resolves the manifest pair like the engine: %s (#3395)", async (_label, lines, pair) => {
+        const db = getDb();
+        const entry = {
+            source: "x/y",
+            set_id: "es-a1",
+            version: 1,
+            branch: "main",
+            meta: undefined,
+            files: [{filename: "manifest.yaml", body: lines.join("\n"), encoding: "text"}],
+        } as unknown as ContentSetBackupEntry;
+        await restoreDexieContentSets(db, [entry]);
+        expect(await db.contentSets.get("x--y/es-a1/1")).toMatchObject(pair);
+    });
+
     it("falls back to the set_id when there is neither meta nor manifest", async () => {
         const db = getDb();
         const bare = {

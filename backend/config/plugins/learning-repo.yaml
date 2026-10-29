@@ -18,7 +18,10 @@ settings:
   # + /export-zip endpoints remain the only surface.
   enable_git: false
   # Filesystem location for the per-project git repositories.
-  # Resolved with ``~`` expansion. The plugin creates it on
-  # first persist and writes ``{project_id}/`` subdirectories
-  # for each persisted project.
-  repos_dir: "~/.local/share/adaptive_learner/repos"
+  # Empty (default): ``repos/`` inside the app data directory,
+  # resolved at call time so it follows ADAPTIVE_LEARNER_DATA_DIR
+  # and the platform data dir (#3451). A set value is used as
+  # given, with ``~`` expansion. The plugin creates it on first
+  # persist and writes ``{project_id}/`` subdirectories for each
+  # persisted project.
+  repos_dir: ""

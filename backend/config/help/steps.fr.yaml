@@ -221,10 +221,10 @@ entries:
 
       ## Quand l'étape se termine
 
-      Dès que l'évaluateur à double invite constate trois variations
-      consécutives avec une confiance > 80 %, vous passez à l'étape 7.
-      Si la confiance fluctue, le cycle reste à l'étape 6 — jusqu'à
-      ce que la stabilité soit atteinte.
+      Après chaque échange, l'évaluateur à double invite décide si
+      vous êtes prêt pour l'étape 7 ; le système applique sa
+      proposition lorsque sa confiance atteint au moins 70 %.
+      Sinon, le cycle reste à l'étape 6.
 
       ## Lien avec la répétition espacée
 
@@ -268,8 +268,8 @@ entries:
 
       - **Terminer la session** et l'évaluer (compréhension / stress
         / adéquation de la méthode).
-      - **Auto-boucle** : un nouveau cycle avec un nouveau sujet
-        démarre automatiquement.
+      - **Auto-boucle** (application de bureau uniquement) : un
+        nouveau cycle avec un nouveau sujet démarre automatiquement.
       - **Changement de méthode** : en cas de faible adéquation,
         le système recommande un changement pour le prochain cycle.
 

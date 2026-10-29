@@ -1,27 +1,18 @@
+# Copied to app.yaml (gitignored) on first start. Every key here has a
+# reader; a key nothing reads does not belong here (#3435).
 app:
-  name: Adaptive Learner
-  description: Adaptive learning system based on the six-method learning model.
+  # Fallback language of PluginForge's i18n lookup (config/i18n/).
   default_language: de
-  supported_languages:
-    - de
-    - en
-  version: 0.0.0
 server:
-  # Backend dev port. The env var ``ADAPTIVE_LEARNER_PORT`` wins over
-  # this value; the Makefile, Docker compose, e2e Playwright config
-  # and start.sh all read the env var (with this value as fallback).
-  # The default is intentionally non-standard (18001 / 15174) so
-  # Adaptive Learner can coexist on a workstation already running
-  # other projects on 8000 / 5173.
-  port: 18001
   # Allowed CORS origins. Comma-joined into the
   # ``ADAPTIVE_LEARNER_CORS_ORIGINS`` env var by deployment tooling;
   # main.py merges either source. The frontend dev port (15174)
   # is the only entry that has to be here for local development.
+  # The backend port is not configured here: uvicorn takes it from
+  # ``--port``, filled from ``ADAPTIVE_LEARNER_PORT`` (default 18001).
   cors_origins:
     - http://localhost:15174
 plugins:
-  config_dir: config/plugins
   disabled: []
   enabled:
     - assessment
@@ -39,6 +30,3 @@ plugins:
     - content-loader
     - missions
   entry_point_group: adaptive_learner.plugins
-ui:
-  title: Adaptive Learner
-  subtitle: ''

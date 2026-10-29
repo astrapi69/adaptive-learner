@@ -4,15 +4,65 @@
 
 ## Mes données sont-elles en sécurité ?
 
-**Oui.** Toutes les données restent sur votre propre appareil.
+L'endroit où vos données sont stockées dépend du mode de stockage :
 
-- **Mode API** : base SQLite dans `~/.local/share/adaptive_learner/`
-  (Linux/macOS) ou `%LOCALAPPDATA%\adaptive_learner\` (Windows).
-- **Mode Dexie** : IndexedDB dans votre navigateur.
+- **Mode Serveur** : vos données d'apprentissage se trouvent dans la base
+  SQLite que gère le backend FastAPI. Ce qui est créé hors ligne en
+  matière de progression des leçons et d'enregistrements vocaux attend
+  dans ce navigateur jusqu'à ce que l'application le transfère ; la
+  quantité maximale en attente et ce qu'il advient du reste sont
+  indiqués dans [Sauvegarde et restauration](../features/backup.md). Les
+  clés API sont stockées chiffrées (Fernet) dans
+  `~/.config/adaptive_learner/secrets.yaml`, et, pour chaque fournisseur,
+  une copie de sauvegarde de la dernière clé API qui a fonctionné se
+  trouve, chiffrée elle aussi, dans la base de données. La clé de
+  chiffrement est générée au premier démarrage et enregistrée dans
+  `~/.config/adaptive_learner/secret.key` ; vous n'avez rien à
+  configurer. Si vous voulez fournir votre propre clé, définissez
+  `ADAPTIVE_LEARNER_SECRET_KEY` (ou `secret_key:` dans `secrets.yaml`)
+  avant le premier démarrage.
+- **Mode Local** : votre navigateur stocke vos données sur votre propre
+  appareil (dans IndexedDB et localStorage), entre autres votre
+  progression, les conversations importées et vos paramètres, y compris
+  les clés API et le token GitHub ; aucun serveur de l'exploitant
+  n'intervient. D'autres n'en reçoivent des parties que lorsqu'une
+  fonction en a besoin, par exemple votre fournisseur d'IA lorsque vous
+  utilisez l'IA, ou GitHub lorsque l'application demande d'elle-même, au
+  démarrage, s'il y a de nouveaux contenus. Fermer l'onglet du
+  navigateur ne supprime pas ces données ; effacer les données du site
+  dans le navigateur les retire de votre appareil. Sur un appareil
+  partagé, toute personne ayant accès à ce profil de navigateur peut les
+  lire.
 
-Rien - pas vos sessions, pas vos erreurs, pas votre progression - n'est
-envoyé à un serveur Adaptive Learner. Seuls les appels à votre fournisseur
-IA configuré quittent votre appareil.
+Aucun mode n'envoie de télémétrie, de mesure d'audience ni vos messages
+à des tiers, sauf au fournisseur d'IA que vous avez choisi. Dans une session d'apprentissage, ce
+fournisseur reçoit :
+
+- l'instruction système, avec le sujet et l'objectif de votre projet
+  d'apprentissage, une indication de profil (votre méthode
+  d'apprentissage préférée et sa pondération), vos leçons terminées avec
+  leurs résultats, la leçon et l'étape en cours, vos erreurs récentes
+  (chacune avec votre réponse, la bonne réponse et sa fréquence) et la
+  langue dans laquelle l'IA doit répondre ; une session lancée depuis une
+  conversation importée contient l'analyse et l'historique de cette
+  conversation au lieu de votre progression ;
+- vos messages et les réponses précédentes de l'IA dans la session ;
+- comme pour chaque requête, entre autres, votre adresse IP et votre
+  clé API.
+
+Vos XP et vos badges n'en font pas partie. D'autres fonctions d'IA
+envoient elles aussi des données à votre fournisseur, par exemple
+l'analyse d'une conversation importée. La
+[vérification du contenu par l'IA](ai-validation.md) envoie les cartes
+du set vérifié (pour chaque carte, son identifiant, son recto, son verso
+et ses notes). La revue IA avant le partage n'envoie, parmi vos leçons,
+que celles que vous partagez et, de celles-ci, entre autres les cartes,
+les textes des étapes et les exercices (consigne et mauvaises réponses
+proposées). Les deux envoient aussi la langue source, la langue cible et
+le niveau du set. Ce que vous écrivez vous-même dans ce contenu est
+envoyé avec lui et peut lui-même être personnel. La
+[politique de confidentialité](../legal/privacy.md) énumère chaque
+requête à l'IA.
 
 ---
 
@@ -68,14 +118,24 @@ Non. L'auto-boucle s'arrête lorsque l'un de ces critères est atteint :
   de continuer ou d'arrêter)
 - Une recommandation de changement de méthode est acceptée
 
+L'auto-boucle n'existe que dans l'application de bureau : dans la
+version navigateur, la session reste à l'étape 7, et la page de la
+session l'indique. Terminez-y la session et démarrez-en une nouvelle.
+
 ---
 
 ## Comment exporter mes données ?
 
-Plusieurs options :
+Entre autres de ces façons :
 
-- **Paramètres → Données → Sauvegarde** - export JSON complet de toutes
-  les données
+- **Sauvegarde** - Paramètres > Données > Sauvegarde et export >
+  Créer une sauvegarde. Télécharge un fichier de sauvegarde `.alb` ;
+  vous pouvez créer une sauvegarde dans les deux modes de stockage. Vos
+  clés API n'y sont pas incluses ; la façon de les transférer est
+  décrite sur la page [Paramètres](settings.md), dans la section
+  « Export chiffré des clés (.alk) ». La page
+  [Sauvegarde et restauration](../features/backup.md) cite d'autres
+  exemples de ce qu'une sauvegarde ne contient pas.
 - **Plugin Learning Repository** - exporte vers un dépôt Git local avec
   commits sémantiques
 - **Plugin Anki** - exporte les flashcards en fichier `.apkg`
@@ -108,12 +168,34 @@ plus de détails.
 
 ## Puis-je synchroniser entre plusieurs appareils ?
 
-**Mode API** : oui, via la synchronisation locale sur réseau. Allez dans
-**Paramètres → Données → Synchronisation** et configurez l'adresse de
-votre instance de synchronisation.
+Pas encore. L'application ne peut pas encore synchroniser vos données
+entre appareils : vous ne pouvez pour l'instant associer aucun appareil,
+et sans association, la synchronisation n'échange aucune donnée. Ce que
+vous voyez sous Paramètres > Données > Synchronisation dépend du mode de
+stockage :
 
-**Mode Dexie** : non - les données IndexedDB restent dans le navigateur.
-L'exportation/importation manuelle de sauvegarde JSON est la seule option.
+- En mode Dexie, cette zone affiche, au lieu de commandes, l'avis
+  « Disponible uniquement avec l'application de bureau. » La version
+  navigateur utilise toujours le mode Dexie, y compris comme application
+  web installée ; dans l'application de bureau, le même avis apparaît
+  tant qu'elle est réglée sur le mode Dexie (Paramètres > Général >
+  Mode de stockage : « Local (Navigateur) »). L'application de bureau ne
+  synchronise toutefois pas encore non plus (voir le point suivant).
+- En mode API de l'application de bureau (Paramètres > Général >
+  Mode de stockage : « Serveur »), cette zone affiche des champs pour
+  l'hôte et le port et le bouton « Générer un code d’association ». Un
+  clic sur ce bouton affiche un lien d'association, un QR code et un
+  bouton pour copier le lien. Mais aucun appareil ne peut encore
+  utiliser ce lien, pas même via le QR code ; il n'est donc pas encore
+  possible d'associer ainsi un deuxième appareil.
+
+Tant que la synchronisation n'est pas disponible, vous transférez vos
+données vers un autre appareil avec une sauvegarde, mais pas toutes.
+Entre autres, une sauvegarde ne contient pas vos clés API ; la façon de
+transférer les clés API est décrite sur la page [Paramètres](settings.md),
+dans la section « Export chiffré des clés (.alk) ». La page
+[Sauvegarde et restauration](../features/backup.md) cite d'autres
+exemples de ce qu'une sauvegarde ne contient pas.
 
 ---
 

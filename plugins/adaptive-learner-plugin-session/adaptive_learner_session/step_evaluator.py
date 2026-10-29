@@ -46,11 +46,14 @@ layer (8B) does the DB work.
 from __future__ import annotations
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from typing import Any
 
 from .ai_orchestration import call_ai_complete, call_ai_complete_async
+
+logger = logging.getLogger(__name__)
 
 # --- The seven cycle steps -------------------------------------------------
 #
@@ -184,9 +187,7 @@ def build_evaluation_messages(
             continue
         # Map system messages to "(prompt)" so they don't confuse the
         # evaluator into judging the system prompt's own content.
-        label = {"user": "Learner", "assistant": "AI", "system": "(prompt)"}.get(
-            role, role
-        )
+        label = {"user": "Learner", "assistant": "AI", "system": "(prompt)"}.get(role, role)
         turns.append(f"{label}: {content}")
     transcript = "\n".join(turns) if turns else "(no exchanges yet)"
 
@@ -266,9 +267,7 @@ def _clamp_confidence(value: Any) -> float:
     return f
 
 
-def parse_evaluation_response(
-    raw: str | None, *, current_step: int
-) -> StepEvaluation:
+def parse_evaluation_response(raw: str | None, *, current_step: int) -> StepEvaluation:
     """Robustly parse the AI's JSON response into a StepEvaluation.
 
     Strips common markdown fences. On any parse failure or missing
@@ -355,7 +354,12 @@ def evaluate_step(
             api_key=api_key,
             max_tokens=max_tokens,
         )
-    except Exception:  # noqa: BLE001 — defensive: never crash the route
+    except Exception:  # noqa: BLE001 - never crash the route; logged below (#3423)
+        logger.warning(
+            "Step evaluation call failed; advancing with the deterministic fallback",
+            extra={"model": model},
+            exc_info=True,
+        )
         return _deterministic_fallback(current_step, None)
     return parse_evaluation_response(raw, current_step=current_step)
 
@@ -393,6 +397,11 @@ async def evaluate_step_async(
             api_key=api_key,
             max_tokens=max_tokens,
         )
-    except Exception:  # noqa: BLE001 — defensive
+    except Exception:  # noqa: BLE001 - never crash the route; logged below (#3423)
+        logger.warning(
+            "Step evaluation call failed; advancing with the deterministic fallback",
+            extra={"model": model},
+            exc_info=True,
+        )
         return _deterministic_fallback(current_step, None)
     return parse_evaluation_response(raw, current_step=current_step)

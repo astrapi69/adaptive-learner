@@ -74,6 +74,8 @@ EXPECTED_TABLES = {
     "set_runs",
     # engine#68 idea 3 - speak-and-record clip storage.
     "speech_recordings",
+    # #3445 - XP purchase ledger.
+    "xp_purchases",
 }
 
 

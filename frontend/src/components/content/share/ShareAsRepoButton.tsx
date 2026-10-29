@@ -32,7 +32,8 @@ import {
 } from "../../../lib/content/validation/content-validator";
 import {FEATURES} from "../../../features/featureConfig";
 import {getStorage} from "../../../storage";
-import {ApiError} from "../../../api/client";
+import {isDevMode} from "../../../hooks/settings/useDevMode";
+import {inlineErrorText} from "../../../utils/errorMessages";
 import {notify} from "../../../utils/notify";
 import type {ContentSetEntry} from "../../../storage/types";
 
@@ -170,12 +171,14 @@ export default function ShareAsRepoButton({
             setPhase("done");
         } catch (err) {
             setPhase("form");
-            const message =
-                err instanceof ApiError
-                    ? err.detail
-                    : t("content.repo_export.failed", "Export failed.");
-            setError(message);
-            notify.error(message);
+            setError(
+                inlineErrorText(
+                    err,
+                    t("content.repo_export.failed", "Export failed."),
+                    isDevMode(),
+                ),
+            );
+            notify.error(t("content.repo_export.failed", "Export failed."), {error: err});
         }
     };
 
@@ -207,6 +210,7 @@ export default function ShareAsRepoButton({
             <ModalShell
                 open={open}
                 title={t("content.repo_export.title", "Share as repository")}
+                closeLabel={t("common.close", "Close")}
                 onClose={() => setOpen(false)}
             >
                 {phase === "done" ? (
@@ -287,11 +291,19 @@ export default function ShareAsRepoButton({
                                 data-testid="repo-export-branch"
                             />
                         </label>
-                        <p className="m-0 text-sm text-[var(--fg-muted)]">
-                            {t(
-                                "content.repo_export.lessons_note",
-                                "All {n} lessons of this set will be included.",
-                            ).replace("{n}", String(entry.lesson_count))}
+                        <p
+                            className="m-0 text-sm text-[var(--fg-muted)]"
+                            data-testid="repo-export-lessons-note"
+                        >
+                            {entry.lesson_count === 1
+                                ? t(
+                                      "content.repo_export.lessons_note_one",
+                                      "The set's one lesson will be included.",
+                                  )
+                                : t(
+                                      "content.repo_export.lessons_note",
+                                      "All {n} lessons of this set will be included.",
+                                  ).replace("{n}", String(entry.lesson_count))}
                         </p>
                         {validation && validation.issues.length > 0 && (
                             <div

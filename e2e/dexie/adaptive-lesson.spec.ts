@@ -90,9 +90,9 @@ async function playAdaptive(page: Page, maxSteps: number): Promise<void> {
     // exercise reports "answerable" from an effect, the shell stores it in
     // state). An instant isEnabled() read skipped it, the step did not
     // advance, and the next pass tapped every matching tile again, which
-    // undoes pairs by design: 4, 0, 3 of 4 pairs, then a timeout. Wait for
-    // each button, and fail on a step that does not advance instead of
-    // answering it a second time.
+    // then undid pairs (4, 0, 3 of 4 pairs, then a timeout; a tap now
+    // selects instead, #3237). Wait for each button, and fail on a step
+    // that does not advance instead of answering it a second time.
     const check = page.getByTestId("adaptive-lesson-check");
     if (await check.count()) {
       await expect(check).toBeEnabled({ timeout: 5000 });

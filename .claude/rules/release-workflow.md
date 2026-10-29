@@ -167,15 +167,6 @@ scripts/verify_version_pins.sh <new-version>
 
 CI runs the same checks at `release-gate.yml` (on tag push) and again as the first step of every launcher build job (on `release: created`). Artifact attachment is blocked if either fails - this is hard enforcement, not advisory.
 
-### Tag and push
-
-```bash
-git add -A
-git commit -m "chore(release): bump version to v<new-version>"
-git tag v<new-version>
-git push origin main --tags
-```
-
 ### What derives from what (DO NOT EDIT)
 
 | Derived location | Source | Mechanism |
@@ -189,8 +180,6 @@ git push origin main --tags
 | `plugins/*/pyproject.toml:version` | `backend/pyproject.toml` | `make sync-versions` (lock-step; per-plugin independent versions deferred to a future Core-vs-Third-Party decision) |
 | `plugins/adaptive-learner-plugin-git-sync/adaptive_learner_git_sync/__init__.py:__version__` | own pyproject | `importlib.metadata.version` |
 | `frontend/src/components/*` `__APP_VERSION__` | `frontend/package.json` | Vite `define` build-time literal |
-
-(`frontend/bun.lock` carries no app version, unlike npm's `package-lock.json` which duplicated it in two top-level fields; the `make sync-versions` surgery for it was removed when the frontend moved to Bun, #1492.)
 
 If a hardcoded version literal appears anywhere in the "DO NOT EDIT" list, the derivation is broken. Fix the derivation, do not edit the literal. The verify script's regression detectors catch new literals.
 
@@ -226,13 +215,21 @@ The `make sync-versions` step covers all AdaptiveLearner-internal versions. The 
 
 ## Step 4b: Dependency currency check
 
-Before running the test suite, check for outdated dependencies:
+Before running the test suite, check every dependency surface:
 
 ```bash
-cd backend && poetry show --outdated
-cd launcher && poetry show --outdated
-cd frontend && bun outdated
+make release-outdated
 ```
+
+`scripts/release_outdated.py` finds the package surfaces itself (every
+directory with a `pyproject.toml` or `package.json`: backend, launcher, docs,
+each plugin with its own `poetry.lock`, frontend, e2e) and runs
+`poetry show --outdated` / `bun outdated` in each. It also reports the
+pre-commit hook revs and the GitHub Actions refs against their newest tags, the
+Docker `FROM` images, and the pinned Bun against npm. It is a report and always
+exits 0; a surface it cannot check says so. Until #3778 the step listed three
+surfaces by hand while the repository had twenty, and the plugins, docs, e2e,
+pre-commit revs and base images were reported by nothing.
 
 Apply routine bumps (patch + minor within the same major) as part of the release. Major bumps with breaking changes get their own dedicated session, not bundled into a release.
 
@@ -462,6 +459,9 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
       dexie-smoke + manual-automation, not this project) and specs had been
       failing since May. Naming the numbers is what makes the box unfakeable.
 - [ ] `make test-dexie-smoke` green (MANDATORY since 2026-05-26: DEXIE-MODE-RELEASE-GATE-01 — walks every nav-reachable route against the GH-Pages-shape build with NO backend; any error toast or page crash blocks the release)
+- [ ] Visual regression run on the release commit green (`visual-regression.yml`
+      on the release branch; RUN ID + "N passed / M failed"). A run that stays
+      red cannot show a new deviation (#3745).
 - [ ] `ruff check` clean
 - [ ] `mypy app/` clean (MANDATORY since v0.26.x; not "if active")
 - [ ] `poetry run pre-commit run --all-files` clean (MANDATORY)
@@ -521,6 +521,7 @@ AdaptiveLearner follows Semantic Versioning 2.0.0:
 - **Major** (X.0.0): breaking changes in the API or fundamental architectural changes. Rare in the 0.x phase.
 - **Minor** (0.X.0): new features, backward-compatible. Small breaking changes are acceptable in 0.x, but must be called out prominently in the CHANGELOG.
 - **Patch** (0.X.Y): bug fixes, backward-compatible.
+- **Data formats** (backup format, browser schema): a change an older version reads only in part is Minor while the new version reads everything older ones wrote; the release notes' Compatibility section names what older versions lose (#3827, v2.17.0).
 
 Pre-release tags (`-alpha`, `-beta`, `-rc`) are currently not used. Releases are always stable.
 

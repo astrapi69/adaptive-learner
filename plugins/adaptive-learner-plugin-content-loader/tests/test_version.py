@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import pytest
-
 from adaptive_learner_content_loader.version import (
     compare_versions,
     needs_update,

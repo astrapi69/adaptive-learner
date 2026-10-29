@@ -9,7 +9,7 @@ temas**.
 
 ## Presets recomendados (Fase 63 / v1.63.0)
 
-El selector en Ajustes → Apariencia encabeza con una subpestaña
+El selector en Ajustes > General > Apariencia encabeza con una subpestaña
 **Recomendados**:
 
 - **Claros:** `catppuccin-latte`, `supabase`, `graphite`

@@ -12,7 +12,7 @@ scrubbing, what survives) live in
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
 from app.deps import get_reset_repo
@@ -56,10 +56,6 @@ def reset(
     clearing localStorage / sessionStorage and redirecting to the
     Landing page after the response.
     """
-    if payload.confirmation != reset_service.CONFIRMATION_TOKEN:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Confirmation token mismatch.",
-        )
+    reset_service.require_confirmation(payload.confirmation)
     count = reset_service.reset_all(repo)
     return ResetResult(reset=True, tables_cleared=count)

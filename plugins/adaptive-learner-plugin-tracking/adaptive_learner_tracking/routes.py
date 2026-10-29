@@ -58,9 +58,7 @@ def list_commits(project_id: str, db: Session = Depends(get_db)) -> list[Progres
     _ensure_project(db, project_id)
     rows = (
         db.query(ProgressCommit, SessionRating.notes)
-        .outerjoin(
-            SessionRating, SessionRating.session_id == ProgressCommit.session_id
-        )
+        .outerjoin(SessionRating, SessionRating.session_id == ProgressCommit.session_id)
         .filter(ProgressCommit.project_id == project_id)
         .order_by(ProgressCommit.committed_at.asc())
         .all()

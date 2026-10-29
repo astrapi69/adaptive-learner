@@ -12,10 +12,15 @@ Adaptive Learner を知る最も手早い方法は、公開オンライン版で
 
 [**アプリを開く**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-これは**ローカルモード**で動作します。あなたのデータはすべて
-ブラウザ（IndexedDB）に留まり、AI の呼び出しはあなた自身の
-API キーを使ってページから直接 Anthropic、OpenAI、Google
-Gemini へ送られます。間にバックエンドはありません。
+これは**ローカルモード**で動作します。ブラウザには、あなたの学習の進捗、
+統計、設定、API キーなどが保存されます。その一部を他者が受け取るのは、
+機能がそれを必要とする場合だけです。たとえば GitHub は、アプリが起動時に
+自動で新しいコンテンツを問い合わせるときに、その一部を受け取ります。
+AI の呼び出しも一つの例で、あなた自身の API キーを使い、運営者の
+サーバーを経由せずに、ブラウザから直接あなたの AI プロバイダー
+（たとえば Anthropic、OpenAI または Google Gemini など）へ送られます。
+その際にどのデータが誰に渡るか（あなたの IP アドレスも含みます）は、
+[プライバシーポリシー](../legal/privacy.md) に記載されています。
 
 ## プログレッシブ・ウェブアプリとしてインストールする
 
@@ -34,8 +39,9 @@ AI セッションにはインターネットが必要です。
 - **最新のブラウザ**（Chrome 100+、Firefox 100+、Safari 17+、
   Edge 100+）。アプリは IndexedDB、Service Worker、モダンな
   JavaScript を使います。
-- サポートされる 3 つのプロバイダー（Anthropic、OpenAI、Google
-  Gemini）のうち少なくとも 1 つの **AI API キー**。無料の枠で
+- 少なくとも 1 つのプロバイダーの **AI API キー**。ブラウザ版では
+  Anthropic、OpenAI、Google Gemini、デスクトップアプリではさらに
+  Perplexity も使えます。無料の枠で
   たいてい始められます。キーの設定については
   [設定](settings.md)をご覧ください。
 
@@ -70,6 +76,6 @@ AI セッションにはインターネットが必要です。
 - [コンテンツブラウザ](../features/content-browser.md) - レッスンの検索とフィルタ
 - [複数のコンテンツリポジトリ](../features/content-repos.md) - 自分のコンテンツソースを接続する
 - [バックアップと復元](../features/backup.md)
-- [ダッシュボードを理解する](dashboard.md) - 進捗、ストリーク、XP、バッジ
+- [ダッシュボードを理解する](dashboard.md) - 進捗、連続記録、XP、バッジ
 - [FAQ - よくある質問](faq.md)
 - [アプリの背後にある教育的な考え方](../concept/philosophy.md)

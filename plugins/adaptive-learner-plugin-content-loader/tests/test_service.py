@@ -16,7 +16,6 @@ from unittest.mock import patch
 
 import httpx
 import pytest
-
 from adaptive_learner_content_loader.cache import (
     is_set_cached,
     list_cached_versions,
@@ -33,7 +32,6 @@ from adaptive_learner_content_loader.sources import (
     user_source_from_settings,
     user_sources_from_settings,
 )
-
 
 SOURCE = "astrapi69/adaptive-learner-content"
 BRANCH = "main"
@@ -195,10 +193,7 @@ class TestUserSourceFromSettings:
         assert ref == SourceRef(source="jane/x", branch="main")
 
     def test_none_when_owner_or_repo_missing(self) -> None:
-        assert (
-            user_source_from_settings({"owner": "jane", "connected": True})
-            is None
-        )
+        assert user_source_from_settings({"owner": "jane", "connected": True}) is None
 
 
 class TestUserSourcesFromSettings:
@@ -649,10 +644,12 @@ class TestLessonRead:
                 f"/{SOURCE}/{BRANCH}/manifest.yaml": REPO_MANIFEST,
                 f"/{SOURCE}/{BRANCH}/sets/{SET_ID}/manifest.yaml": SET_MANIFEST,
                 f"/{SOURCE}/{BRANCH}/sets/{SET_ID}/lessons/01-greetings.json": _make_lesson(
-                    "01-greetings", "Greetings",
+                    "01-greetings",
+                    "Greetings",
                 ),
                 f"/{SOURCE}/{BRANCH}/sets/{SET_ID}/lessons/02-numbers.json": _make_lesson(
-                    "02-numbers", "Numbers",
+                    "02-numbers",
+                    "Numbers",
                 ),
             },
         )
@@ -663,7 +660,9 @@ class TestLessonRead:
         with _install_mock(transport):
             await service.download_set(SOURCE, BRANCH, SET_ID)
         lesson = service.get_lesson(
-            SOURCE, SET_ID, "01-greetings.json",
+            SOURCE,
+            SET_ID,
+            "01-greetings.json",
         )
         assert lesson.id == "01-greetings"
         assert lesson.title == "Greetings"

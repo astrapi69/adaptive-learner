@@ -39,12 +39,17 @@ const SRS_LABEL: Record<SrsLessonStatus, [string, string]> = {
     mastered: ["srs.status_mastered", "Mastered"],
 };
 
-/** Compact 0-3 star row. */
+/** Compact 0-3 star row, announced as one image with a localized label. */
 function Stars({stars}: {stars: number}) {
+    const {t} = useI18n();
     return (
         <span
             className="inline-flex shrink-0"
-            aria-label={`${stars}/3`}
+            role="img"
+            aria-label={t("lesson.summary.stars_aria", "{n} of 3 stars").replace(
+                "{n}",
+                String(stars),
+            )}
             data-testid="lesson-row-stars"
         >
             {[1, 2, 3].map((n) => (

@@ -38,6 +38,8 @@ make dev-down   # 停止
 
 ワークフローは`main`へのすべてのプッシュおよび手動ディスパッチで実行されます。ビルド後に`dist/index.html`を`dist/404.html`にコピーしてSPAルーターのフォールバックとし、`actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`を使用して公開します。
 
+GitHub Pagesではサイトが独自のHTTPヘッダーを設定できないため、Pagesビルドは独自のポリシーを持ちます。`frontend/index.html`は`<meta>`でContent-Security-Policyを設定し、画像とメディアを少数の取得元（たとえば自身のオリジンと`https://raw.githubusercontent.com`。正確な値はファイルにあります）に制限し、さらにリファラーポリシー`no-referrer`を設定します。APIモードは同じ`img-src`/`media-src`をヘッダーとして送ります（`backend/app/frontend_static.py`）。ポリシーに記載されていないホストから機能が画像とメディアを読み込もうとすると、PagesビルドでもAPIモードでもブラウザーがそれをブロックします。アップロード前に、`scripts/check_external_hosts.py`がビルドされたドキュメントサイトにサードパーティのリソースがないか確認します。
+
 サイトのURLは`https://astrapi69.github.io/adaptive-learner/`です。カスタムドメインのユーザーは`CNAME`ファイルをドメイン名と共に`frontend/public/`に追加します; GitHubのドメイン対応Pagesルーティングが残りを処理します。
 
 ## Docker Compose（フルスタック）
@@ -47,11 +49,11 @@ make prod        # docker compose up -d
 make prod-down   # docker compose down
 ```
 
-`docker-compose.prod.yml`は**単一のサービス`app`**を含みます（#2058
+`docker-compose.prod.yml`は単一のサービス **`app`** を含みます（#2058
 以降は1コンテナ構成 - nginxも独立したフロントエンドコンテナも
 ありません）。
 
-- **FastAPI（Python 3.12イメージ）**がビルド済みフロントエンドの
+- **FastAPI**（Python 3.12イメージ）がビルド済みフロントエンドの
   staticsと`/api/*`の両方を、内部ポート
   `${ADAPTIVE_LEARNER_BACKEND_PORT:-8000}`で提供します。
 - ホストに公開されるのは
@@ -100,8 +102,7 @@ make prod-down   # docker compose down
 | ワークフロー | トリガー | 実行内容 |
 |---|---|---|
 | `ci.yml` | push、pull_request | テスト + lint + tsc |
-| `coverage.yml` | mainへのpush | カバレッジHTML + xml |
+| `coverage.yml` | 毎日のスケジュール、ディスパッチ | カバレッジHTML + xml（バックエンド、フロントエンド、プラグインごと） |
 | `release-gate.yml` | タグpush | バージョンピンのドリフトチェック |
 | `deploy-gh-pages.yml` | mainへのpush、ディスパッチ | GH Pagesビルド + デプロイ |
 | `launcher-{linux,macos,windows}.yml` | release: created | ビルド + ランチャーバイナリの添付 |
-| `docs.yml` | mainへのpush | MkDocsビルド（現在は非アクティブ - サイトはGH Pagesワークフローから） |

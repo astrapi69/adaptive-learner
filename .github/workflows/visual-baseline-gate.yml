@@ -72,6 +72,13 @@ jobs:
               - 'frontend/src/components/**'
               - 'frontend/src/shared/**'
               - 'frontend/src/styles/**'
+              # #3687 - the UI catalogs. Every screenshot renders their text:
+              # a catalog-only PR (#3674) moved a line break on settings-data
+              # mobile, and on further motifs its word changes stayed under
+              # maxDiffPixels, so those baselines kept showing words the UI
+              # no longer has, with every compare green.
+              - 'frontend/src/data/i18n/**'
+              - 'backend/config/i18n/**'
             baselines:
               - 'e2e/visual/screenshots/**'
 

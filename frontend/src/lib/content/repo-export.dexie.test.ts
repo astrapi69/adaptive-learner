@@ -63,7 +63,7 @@ describe("repo export on the Dexie read path (#3242)", () => {
                 })),
             );
             const files = buildRepoExportFiles({set: entry, lessons, ownerRepo: "me/travel"});
-            const lessonFiles = files.filter((file) => file.path.startsWith("lessons/"));
+            const lessonFiles = files.filter((file) => file.path.includes("/lessons/"));
             expect(lessonFiles).toHaveLength(1);
             for (const lessonFile of lessonFiles) {
                 expect(JSON.parse(lessonFile.content).domain).toBe("language");

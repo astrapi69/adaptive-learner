@@ -1,6 +1,8 @@
 # Plugin endpoints
 
 Each plugin's routes mount under `/api/plugins/{plugin-name}/`.
+This page shows worked examples for some plugins; every plugin
+route is listed in [All endpoints](endpoints.md).
 
 ## Assessment plugin
 

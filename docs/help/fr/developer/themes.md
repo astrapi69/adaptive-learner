@@ -9,7 +9,7 @@ WCAG AA recommandés**, de sorte que le sélecteur propose au total
 
 ## Préréglages recommandés (phase 63 / v1.63.0)
 
-Le sélecteur sous Paramètres → Apparence ouvre sur un sous-onglet
+Le sélecteur sous Paramètres > Général > Apparence ouvre sur un sous-onglet
 **Recommandé** :
 
 - **Clair :** `catppuccin-latte`, `supabase`, `graphite`

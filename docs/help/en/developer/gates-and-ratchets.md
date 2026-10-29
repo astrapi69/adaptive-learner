@@ -73,7 +73,7 @@ The ratchet family and where each baseline lives:
 | Rule corpus size | `.claude/rules/.corpus-baseline.json` | `make verify-rule-corpus-size` |
 | Docs umlaut substitutes | `docs/.docs-hygiene-baseline.json` | `make verify-docs-hygiene` |
 | Broken doc references | `docs/.doc-refs-baseline.json` | `make verify-doc-refs` |
-| Published image size | (in `verify-image-size`) | `make verify-image-size` |
+| Published image size | `.image-size-baseline.json` | `make verify-image-size` |
 
 ### When a ratchet blocks you
 
@@ -147,7 +147,8 @@ make ci-full   # the above plus gates that need a built frontend
 
 `make ci` runs, in order: docs drift, docs hygiene, doc references,
 gate<->rule links, check inventory, lessons inventory, normative
-changes, rule-corpus size, complexity ratchet, testid references,
+changes, rule-corpus size, complexity ratchet, folder sizes, testid
+references,
 docker context, file sizes, and the OpenAPI snapshot. Two gates need
 an installed + built frontend (they build the Tailwind class oracle),
 so they sit in `make ci-full`, not `make ci`. Test suites are separate:

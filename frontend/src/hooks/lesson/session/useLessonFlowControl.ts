@@ -5,6 +5,8 @@ import {useI18n} from "../../ui/useI18n";
 import {notify} from "../../../utils/notify";
 import type {LessonLoadStatus} from "./useLesson";
 import type {LessonProgress} from "../../../storage/types";
+import type {LessonMode} from "../../../lib/learning/lessonModePref";
+import {resumeBlock, runHasAnswer, type ResumeBlock} from "../../../lib/lesson/progress/resume-mode";
 
 /**
  * Inputs for {@link useLessonFlowControl} — the lifecycle slice of
@@ -17,7 +19,9 @@ export interface UseLessonFlowControlOptions {
     status: LessonLoadStatus;
     /** Stored progress row, ``null`` until the first upsert lands. */
     progress: LessonProgress | null;
-    markPaused: () => Promise<void>;
+    /** ``"exit"`` marks the pause as leaving the lesson (navigation, tab
+     *  close) rather than a pause the learner chose (#3365). */
+    markPaused: (reason?: "exit") => Promise<void>;
     markAbandoned: () => Promise<void>;
     markResumed: () => Promise<void>;
     /** Reset progress for a fresh run (resume dialog "start over"). */
@@ -33,6 +37,10 @@ export interface UseLessonFlowControlOptions {
      * status (listed under "continue learning", not as paused).
      */
     atSummary?: boolean;
+    /** #3742 / #3750 - the mode the lesson is open in; a stored run from
+     *  another mode with ``exam`` on either side, or a started exam reopened
+     *  as an exam, does not continue. */
+    lessonMode?: LessonMode;
 }
 
 /**
@@ -46,9 +54,16 @@ export interface UseLessonFlowControlResult {
     setExitOpen: (open: boolean) => void;
     /** True while the lesson run can still be paused/abandoned. */
     isInProgress: boolean;
+    /** #3746 - the mode toggle is locked once the run has its first answer,
+     *  not merely ``in_progress``: a restart, or reading the theory, leaves
+     *  a run ``in_progress`` without one, and the mode must stay free. */
+    modeLocked: boolean;
     /** True when the paused-lesson resume prompt must overlay the
      *  step view (Phase 63C). */
     showResumePrompt: boolean;
+    /** #3742 / #3750 - why the stored run must start over (the prompt then
+     *  offers no "continue"), or ``null`` when it may continue. */
+    resumeBlocked: ResumeBlock | null;
     handleResume: () => Promise<void>;
     handleStartOver: () => Promise<void>;
     handlePauseFromDialog: () => Promise<void>;
@@ -76,6 +91,7 @@ export function useLessonFlowControl({
     autosave,
     goToStep,
     atSummary = false,
+    lessonMode = "practice",
 }: UseLessonFlowControlOptions): UseLessonFlowControlResult {
     const navigate = useNavigate();
     const {t} = useI18n();
@@ -111,9 +127,23 @@ export function useLessonFlowControl({
         setChoiceLessonKey(lessonKey);
         setResumeChoiceMade(false);
     }
+    // #3742 - decided once per lesson, on the row as loaded: an autosave
+    // restamps the row with the current mode while the prompt is up, so a
+    // live check would let the conflict vanish under the learner.
+    const [blockAtLoad, setBlockAtLoad] = useState<{key: string | null; block: ResumeBlock | null}>({
+        key: null,
+        block: null,
+    });
+    if (status === "ready" && lessonKey !== null && blockAtLoad.key !== lessonKey) {
+        setBlockAtLoad({key: lessonKey, block: resumeBlock(progress, lessonMode, atSummary)});
+    }
+    const resumeBlocked =
+        blockAtLoad.key === lessonKey
+            ? blockAtLoad.block
+            : resumeBlock(progress, lessonMode, atSummary);
     const showResumePrompt =
         status === "ready" &&
-        progress?.status === "paused" &&
+        (progress?.status === "paused" || resumeBlocked !== null) &&
         !resumeChoiceMade;
 
     const handleResume = async () => {
@@ -141,7 +171,7 @@ export function useLessonFlowControl({
         const onVisibility = () => {
             if (document.visibilityState === "hidden") flush();
         };
-        const onUnload = () => void markPaused();
+        const onUnload = () => void markPaused("exit");
         document.addEventListener("visibilitychange", onVisibility);
         window.addEventListener("pagehide", flush);
         window.addEventListener("beforeunload", onUnload);
@@ -192,7 +222,7 @@ export function useLessonFlowControl({
                 !leftViaDialogRef.current &&
                 !atSummaryRef.current
             ) {
-                void markPausedRef.current();
+                void markPausedRef.current("exit");
             }
         },
         [],
@@ -223,7 +253,9 @@ export function useLessonFlowControl({
         exitOpen,
         setExitOpen,
         isInProgress,
+        modeLocked: runHasAnswer(progress),
         showResumePrompt,
+        resumeBlocked,
         handleResume,
         handleStartOver,
         handlePauseFromDialog,

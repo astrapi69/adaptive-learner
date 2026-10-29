@@ -48,6 +48,7 @@ import BulkDeleteSetsModal from "../../components/content/browser/delete/BulkDel
 import DeleteLessonModal from "../../components/content/lessons/DeleteLessonModal";
 import { useContentFilters } from "../../hooks/content/browse";
 import { useContentSearch } from "../../hooks/content/useContentSearch";
+import { useShareDeepLink } from "../../hooks/content/share";
 import { useContentSharing } from "../../hooks/content/useContentSharing";
 import { useContentSetsData } from "../../hooks/content/useContentSetsData";
 import { useContentSetActions } from "../../hooks/content/useContentSetActions";
@@ -212,6 +213,7 @@ export default function ContentPage() {
   // Phase 60 — community-share + opt-in AI validation (extracted to
   // useContentSharing). The page keeps the contribution history.
   const share = useContentSharing({ sets, fetchSetLessons });
+  useShareDeepLink({ loading, sets, onShare: (e) => void share.handleShare(e) });
 
   const recordShare = (url: string, title: string) => {
     if (!share.shareTarget) return;

@@ -111,18 +111,57 @@ if [ "$MODE" = "gate" ] && [ ! -f "$BASELINE" ]; then
 fi
 
 # --- eslint JSON (only needed for gate / update) -------------------------
+# FAIL-CLOSED in gate mode, like radon above (#3438): a missing or crashed
+# eslint used to become "[]", which read as "no TypeScript offenders" and
+# printed "Complexity gate passed". The gate also refuses output that is not
+# a JSON array and a run that linted zero files, and it reports how many
+# files eslint looked at (gate contract points 3 and 4, #2083).
+ESLINT_LINTED="skipped"
+export ESLINT_LINTED
+
+eslint_cannot_measure() {
+    echo "[]" > "$ESLINT_JSON"
+    if [ "$MODE" = "gate" ] && [ "${COMPLEXITY_GATE_ALLOW_PARTIAL:-0}" != "1" ]; then
+        echo "ERROR: $1 - the gate cannot verify TypeScript complexity." >&2
+        echo "       Refusing to report success (set COMPLEXITY_GATE_ALLOW_PARTIAL=1 to override)." >&2
+        exit 1
+    fi
+    echo "$1 - TypeScript complexity is skipped this run." >&2
+}
+
 produce_eslint_json() {
     echo "[]" > "$ESLINT_JSON"
-    if [ -d frontend/node_modules ]; then
-        (
-            cd frontend
-            npx --no-install eslint src --rule 'complexity: ["warn", 20]' \
-                --format json
-        ) > "$ESLINT_JSON" 2>/dev/null || true
-        [ -s "$ESLINT_JSON" ] || echo "[]" > "$ESLINT_JSON"
-    else
-        echo "frontend/node_modules missing - TypeScript complexity is skipped." >&2
+    if [ ! -d frontend/node_modules ]; then
+        eslint_cannot_measure "frontend/node_modules missing"
+        return
     fi
+    # eslint exits 1 when other rules report errors; the JSON is still
+    # complete. 2 and above means it could not lint.
+    local status=0
+    (
+        cd frontend
+        npx --no-install eslint src --rule 'complexity: ["warn", 20]' \
+            --format json
+    ) > "$ESLINT_JSON" 2>"$TMPDIR/eslint.err" || status=$?
+    if [ "$status" -gt 1 ]; then
+        cat "$TMPDIR/eslint.err" >&2
+        eslint_cannot_measure "eslint exited $status"
+        return
+    fi
+    local linted
+    if ! linted="$(python3 -c 'import json, sys
+report = json.load(open(sys.argv[1], encoding="utf-8"))
+if not isinstance(report, list):
+    raise SystemExit(1)
+print(len(report))' "$ESLINT_JSON" 2>/dev/null)"; then
+        eslint_cannot_measure "eslint output is not a JSON array"
+        return
+    fi
+    if [ "$linted" -eq 0 ]; then
+        eslint_cannot_measure "eslint linted 0 files"
+        return
+    fi
+    ESLINT_LINTED="$linted"
 }
 
 case "$MODE" in

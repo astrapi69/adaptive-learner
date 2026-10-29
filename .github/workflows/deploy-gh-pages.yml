@@ -67,7 +67,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.3.14"
+          bun-version: "1.4.2"
 
       - name: Cache bun install
         uses: actions/cache@v6
@@ -192,6 +192,12 @@ jobs:
         # upload-pages-artifact bundle. Use the repo-root-relative
         # path instead.
         run: poetry run mkdocs build -f ../mkdocs.yml --site-dir frontend/dist/docs
+
+      # #3802: a docs site whose pages contact a third party on load is never
+      # published. The same scan runs on every pull request in ci.yml (Docs
+      # drift verifier); this one checks the very files the upload carries.
+      - name: Docs site fetches nothing from a third-party host (#3802)
+        run: python3 scripts/check_external_hosts.py frontend/dist/docs
 
       # ---- Upload combined artifact ----
 

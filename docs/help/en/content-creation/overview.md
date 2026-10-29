@@ -34,7 +34,14 @@ needs **no AI key**:
 - **Templates** (Blank / Vocabulary / Grammar / Conversation) and
   **draft auto-save**.
 - **Preview** in the real lesson viewer before saving.
-- **Save locally** or **share via pull request**.
+- **Save locally** or **Save and share**. Saving locally only needs a
+  valid lesson (title, valid language pair, at least 4 cards for a new
+  card lesson, valid structure); one exercise is enough, and the lesson
+  is playable right away. Save and share saves and opens the share
+  wizard. For that the lesson must also meet the content engine's
+  minimums, for example enough exercises and exercise types and enough
+  answers or pairs in every exercise. The **"Review and save"** step
+  lists them with the current numbers under **"Needed for sharing"**.
 
 Entry points exist in the Content Browser and on the Dashboard.
 

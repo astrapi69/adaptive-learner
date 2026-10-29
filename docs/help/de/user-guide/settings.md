@@ -58,7 +58,7 @@ gestaltest deinen **Avatar**:
   Gesperrte Rahmen zeigen ihre Bedingung an.
 
 Auswahl und gekaufte Rahmen bleiben erhalten und wandern mit ins
-[Backup](backup.md).
+[Backup](../features/backup.md).
 
 ## Darstellung
 
@@ -117,9 +117,16 @@ Interaktion*. Der Entwicklermodus liegt im Tab **Diagnose & Support**
 *Allgemein > Speicher-Modus* schaltet zwischen **Server** und
 **Lokal (Browser)** um:
 
-- **Server** - jeder Lese- und Schreibvorgang geht ans
-  FastAPI-Backend. Setzt ein laufendes Backend voraus. Am
-  besten für Multi-Device-Nutzung mit Backend-seitigem Sync.
+- **Server** - die App liest und speichert deine Lerndaten über das
+  Backend der Desktop-App (FastAPI); setzt ein laufendes Backend voraus.
+  Einige Einstellungen, etwa den gewählten Speichermodus, speichert die
+  App in diesem Browser. Lektionsfortschritt und Sprachaufnahmen, die du
+  ohne Verbindung speicherst, warten in diesem Browser, bis die App sie
+  ans Backend überträgt; wie viele höchstens warten und was mit den
+  übrigen geschieht, steht auf der Seite
+  [Backup und Wiederherstellung](../features/backup.md). Zwischen
+  Geräten synchronisieren kann die App bisher in keinem der beiden
+  Speichermodi (siehe *Daten > Synchronisation*).
 - **Lokal (Browser)** - jeder Lese- und Schreibvorgang geht
   an IndexedDB in diesem Browser. KI-Aufrufe gehen direkt an
   den Anbieter. Kein Backend nötig. Am besten für ein
@@ -180,13 +187,14 @@ Wer lernt, und in welchen Sprachen.
 Wie sich Übungen beim Beantworten verhalten.
 
 - **Lektionsmodus** - der **Standardmodus** (Üben / Prüfung / Auf Zeit),
-  die **Bestehens-Grenze** der Prüfung und die
+  die **Bestehens-Grenze** der Prüfung (Sets mit eigener
+  Bestehensgrenze verwenden in der Prüfung stattdessen diese) und die
   **Zeitmodus-Schwierigkeit** (Schnell, Normal, Entspannt); siehe
   [Lektionen und Wiederholungen](lessons.md).
 - **Tipps** - ob bei jeder Übung ein gestufter Tipp-Button erscheint,
   und die **XP-Kosten pro Tipp** (0 = kostenlos).
 - **Interaktion** - **Wischgesten** (Wischen zum Navigieren in
-  Assessment, Session und Curriculum; Standard EIN auf touch-fähigen
+  Assessment, Sitzung und Curriculum; Standard EIN auf touch-fähigen
   Geräten), **Tastenkürzel in Lektionen** (Eingabetaste prüft die
   Antwort, erneut drücken geht weiter), **bei richtiger Antwort
   automatisch weiter** und ob der Button **KI fragen** angezeigt wird.
@@ -210,8 +218,15 @@ Karte **Sprachausgabe**:
 - **KI-Antworten automatisch vorlesen** - spricht jede KI-Antwort
   automatisch (Standard AUS - überraschendes Audio ist selten, was man
   will).
-- **Stimme** - die Vorlese-Stimme; der Standard wählt die beste
-  Übereinstimmung für deine Projektsprache.
+- **Stimme** - die Vorlese-Stimme. Der Standard bevorzugt für deine
+  Projektsprache eine Stimme, die auf deinem Gerät arbeitet; eine
+  Online-Stimme liest dabei nur, wenn das Gerät für diese Sprache keine
+  hat, und in den ersten Augenblicken nach dem Laden einer Seite, weil
+  dein Gerät seine eigenen Stimmen dann noch nicht bereitgestellt hat.
+  Eine Online-Stimme schickt den vorgelesenen Text an ihren Anbieter (die
+  Google-Stimmen in Chrome an Google). Eine Stimme, die du hier selbst
+  wählst, gilt immer, solange dein Browser sie anbietet, auch eine
+  Online-Stimme.
 - **Tempo** und **Tonhöhe** - Schieberegler von 0,5 bis 2.
 - **Mikrofon-Schaltfläche anzeigen** - fügt dem Sitzungs-Eingabefeld
   einen Mikrofon-Knopf hinzu, der Sprache aufnimmt und das Textfeld mit
@@ -267,7 +282,7 @@ Spielmodus, Feedback, tägliche Missionen und Erinnerungen.
   Schwierigkeits-Mischung und das Neumischen der heutigen Missionen.
 - **Erinnerungen** - die Erinnerungszeit und die Tage, an denen sie gilt.
 - **Gamification** - XP- und Abzeichen-Toasts, Wochenend-Modus, das
-  tägliche Sessions-Ziel und *Fortschritt zurücksetzen*; die letzte
+  tägliche Sitzungsziel und *Fortschritt zurücksetzen*; die letzte
   Karte, siehe unten.
 
 Die Spielmodus-Karte zeigt den Hauptschalter, die Spielmodus-Sounds und
@@ -279,7 +294,7 @@ ausgegraut.
 
 Der Tab endet mit **Gamification** (unter einer Trennlinie, weil diese
 Karte *Fortschritt zurücksetzen* enthält). Die beiden Aufräum-Einstellungen -
-*Pausierte Lektionen aufbewahren* und *Maximale Lektionsgröße* -
+*Pausierte Lektionen auf dem Dashboard* und *Maximale Lektionsgröße* -
 betreffen den Daten-Lebenszyklus und liegen im **Daten**-Tab (siehe
 *Offline-Inhalte* und *Aufräumen* unter Daten).
 
@@ -291,7 +306,7 @@ Inhalte-Tabs** liegen im **Allgemein**-Tab unter *Darstellung*.
 Toggles für XP- / Badge- / Level-Up-Benachrichtigungen
 (Aus stoppt Toasts, das System speichert den Zustand
 trotzdem), **Wochenend-Modus** (Sa/So-Lücken in der
-Streak-Heatmap überspringen), tägliches Sessions-Ziel
+Serien-Heatmap überspringen), tägliches Sitzungsziel
 (1..10) und **Fortschritt zurücksetzen** (doppelte
 Bestätigung; löscht `user_xp` + `user_badges` +
 `user_streaks`-Zeilen).
@@ -377,7 +392,9 @@ ebenso eine Konfigurationsänderung nach der Aktivierung. Im
 Browser-Modus bleibt die Karte sichtbar mit dem Hinweis, dass nur die
 Desktop-App einen Plugin-Host hat. **Lern-Repository** hält die
 Einstellungen des gleichnamigen Plugins (Git-Persistenz,
-Repository-Verzeichnis).
+Repository-Verzeichnis). Lässt du das Verzeichnis leer, liegen die
+Repositories im Ordner `repos` deines Daten-Verzeichnisses (siehe
+**Über > System**); ein eingetragener Pfad gilt so, wie er dasteht.
 
 ## Daten
 
@@ -407,18 +424,31 @@ dem Bereich im Bild, und die Adresse spiegelt ihn
 
 ### Synchronisation
 
-Kopple dieses Gerät mit einem anderen über dein lokales Netz
-per QR-Code-Scanner (Rückkamera) oder eingefügte Pairing-
-URL. Nach dem Pairing tauschen Push- + Pull-Knöpfe Daten
-bidirektional aus. Konflikte gehen durch einen KI-Merge-
-Resolver auf dem Backend.
+Die App kann deine Daten noch nicht zwischen Geräten synchronisieren:
+Ein Gerät koppeln kannst du bisher nicht, und ohne Kopplung tauscht die
+Synchronisation keine Daten aus. Was der Bereich zeigt, hängt vom
+Speichermodus ab:
 
-Eingeschränkter-Browser-Fallback: Lade einen Screenshot des
-QR-Codes vom anderen Gerät hoch (`Html5Qrcode.scanFile`).
+- Im Speichermodus **Lokal (Browser)** bleibt der Bereich sichtbar,
+  zeigt aber keine Bedienelemente, sondern den Hinweis „Nur mit der
+  Desktop-App verfügbar.“ Diesen Speichermodus nutzt die öffentliche
+  Web-Version immer, auch als installierte Web-App; in der Desktop-App
+  erscheint derselbe Hinweis, solange sie auf **Lokal (Browser)**
+  gestellt ist. Die Desktop-App synchronisiert allerdings bisher
+  ebenfalls nicht (siehe den nächsten Punkt).
+- Im Speichermodus **Server** der Desktop-App zeigt der Bereich Felder
+  für Host und Port und die Schaltfläche „Kopplungscode erzeugen“. Ein
+  Klick darauf zeigt einen Kopplungslink, einen QR-Code und eine
+  Schaltfläche zum Kopieren des Links. Einlösen kann diesen Link aber
+  noch kein Gerät, auch nicht über den QR-Code; ein zweites Gerät lässt
+  sich damit also bisher nicht koppeln.
 
-Die Synchronisation braucht die Desktop-App. Im Browser-Modus bleibt
-der Bereich sichtbar, aber statt der Bedienelemente steht dort der
-Hinweis „Nur mit der Desktop-App verfügbar."
+Solange die Synchronisation nicht verfügbar ist, bringst du deine Daten
+mit einem Backup auf ein anderes Gerät, allerdings nicht alle. Unter
+anderem enthält ein Backup deine API-Schlüssel nicht; wie du die
+API-Schlüssel überträgst, steht unter *Verschlüsselter Schlüssel-Export
+(.alk)* unten. Weitere Beispiele dafür, was ein Backup nicht enthält,
+nennt die Seite [Backup und Wiederherstellung](../features/backup.md).
 
 ### Offline-Inhalte
 
@@ -439,7 +469,7 @@ jedem Export entfernt.
 
 Restore ist ein MERGE, kein Overwrite: neue Zeilen fügen
 ein, mutable Zeilen aktualisieren bei neuerem `updated_at`,
-History-Zeilen (Sessions / Commits / Ratings) deduplizieren
+History-Zeilen (Sitzungen / Commits / Ratings) deduplizieren
 über UUID. Die Vergleichs-Vorschau zeigt pro Tabelle
 hinzugefügt / entfernt / geändert, bevor du auf
 Wiederherstellen klickst; das Knopf-Label liest dann
@@ -447,7 +477,7 @@ Wiederherstellen klickst; das Knopf-Label liest dann
 
 Im Lokal-Modus zeigt die Karte zusätzlich den
 **Auto-Backup**-Block: ein rollender Ring aus 3 Snapshots in
-einer separaten IndexedDB-DB, läuft alle 10 Sessions ODER
+einer separaten IndexedDB-DB, läuft alle 10 Sitzungen ODER
 alle 7 Tage (je nachdem, was zuerst eintritt). Jeder Snapshot
 hat eigene Wiederherstellen- + Löschen- + Vergleich-als-A/B-
 Knöpfe.
@@ -507,17 +537,19 @@ exportierbarer Schlüssel konfiguriert ist.
 
 ### Aufräumen
 
-- **Pausierte Lektionen aufbewahren**: Pausierte Lektionen, die älter
-  sind als dieser Zeitraum, werden beim nächsten Laden des Dashboards
-  automatisch aufgegeben. Zur Wahl stehen 7, 14, 30 oder 60 Tage oder
-  *Nie*; Standard sind 30 Tage. Bis zu 10 pausierte Lektionen bleiben
-  unabhängig vom Alter erhalten.
+- **Pausierte Lektionen auf dem Dashboard**: Die Karte der pausierten
+  Lektionen auf dem Dashboard zeigt nur Lektionen, die innerhalb dieses
+  Zeitraums pausiert wurden (*Pausierte Lektionen ausblenden, wenn älter
+  als* 7, 14, 30 oder 60 Tage oder *Nie*; Standard sind 30 Tage). Eine
+  ältere Lektion verschwindet nur aus der Karte: Es wird nichts
+  aufgegeben, Position und Antworten bleiben erhalten. Die Karte zeigt
+  die fünf zuletzt pausierten Lektionen.
 - **Nicht verbundene Inhalte** (Browser-Modus): Fortschritt, dessen
   Inhalts-Repository nicht mehr verbunden ist, bleibt ausgeblendet, bis
   du ihn hier löschst. Die Karte erscheint nur, wenn es etwas zu
   bereinigen gibt.
 
-*Maximale Lektionsgröße* und *Pausierte Lektionen aufbewahren* werden
+*Maximale Lektionsgröße* und *Pausierte Lektionen auf dem Dashboard* werden
 in diesem Browser gespeichert und gelten im Server- wie im Lokal-Modus.
 
 ### Gefahrenzone
@@ -538,6 +570,19 @@ und eine Quellen-Zeile sagt dir, wo der Token liegt (secrets.yaml, eine
 Umgebungsvariable oder dieser Browser), mit **Entfernen** zum Löschen.
 Ein Token aus einer Umgebungsvariable lässt sich hier nicht bearbeiten.
 
+Der Token wird an drei Stellen genutzt:
+
+- **Für die Community bereitstellen** unter Meine Lektionen öffnet den
+  Pull Request für eine einzelne Lektion direkt, ohne den Umweg über den
+  Editor von GitHub (siehe [Meine Lektionen](my-lessons.md#exportieren-und-teilen)).
+- **Als Repository teilen** überträgt ein ganzes Set in ein Repository
+  von dir; der Knopf bleibt deaktiviert, bis ein Token gespeichert ist.
+- **Eigenes Repository registrieren** (Daten > Quellen) kann seinen Pull
+  Request direkt öffnen, statt dass du den Eintrag auf GitHub einfügst.
+
+Die letzten beiden gibt es nur in der Browser-Version der App. Ohne Token
+funktioniert alles andere wie gewohnt.
+
 ## Hilfe
 
 Der Tab **Hilfe** enthält das integrierte Glossar: ein Suchfeld filtert
@@ -551,12 +596,20 @@ Hilfe-Leiste.
 Der Tab **Diagnose & Support** bündelt, was der Entwicklung hilft zu
 sehen, was auf deinem Gerät passiert ist:
 
-- **Support** - **Fehlerbericht erstellen** sammelt deine letzten
-  Aktionen in einem Bericht, den du prüfst, bevor irgendetwas deinen
-  Browser verlässt.
-- **Entwicklermodus** - zeigt in Fehler-Toasts die vollen technischen
-  Details (Statuscode, Endpunkt, Stacktrace) und, solange er an ist,
-  ein „DEV"-Abzeichen in der Navigationsleiste. Sein Standard hängt vom
+- **Support** - **Fehlerbericht erstellen** bereitet einen Bericht für
+  die Entwicklung vor. Umgebungsinformationen und Aktionsverlauf (deine
+  letzten Aktionen in der App) kommen nur hinein, wenn du sie
+  ankreuzt; beide sind anfangs nicht angekreuzt. Nichts verlässt deinen
+  Browser, bevor du auf **Auf GitHub öffnen** klickst: Das öffnet das
+  Issue-Formular von GitHub mit dem ausgefüllten Bericht, GitHub erhält
+  ihn also ab diesem Moment, noch bevor du das Issue dort absendest.
+- **Entwicklermodus** - zeigt in Fehler-Toasts und in
+  Fehlermeldungen, die direkt auf der Seite stehen (etwa wenn Lehrplan,
+  Fortschritt, Einstellungen oder eine Sitzung nicht laden), die vollen
+  technischen Details (Statuscode, Endpunkt, Stacktrace) und, solange
+  er an ist, ein „DEV"-Abzeichen in der Navigationsleiste. Ist er aus,
+  steht dort eine verständliche Meldung statt der technischen Antwort
+  des Servers. Sein Standard hängt vom
   Build-Strang ab: Er ist **standardmäßig EIN auf dem Latest-Strang
   (Vorschau)** und **AUS auf Haupt**, damit Vorschau-Tester volle
   technische Fehlerdetails sehen, während Produktionsnutzer freundliche

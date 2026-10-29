@@ -217,8 +217,13 @@ describe("ShareAsRepoButton quality gate (#2376)", () => {
     await screen.findByTestId("repo-export-renamed-note");
     const call = storageMock.github.exportSetToRepo.mock.calls[0]?.[0];
     const paths = call!.files.map((f) => f.path);
-    expect(paths).toContain("lessons/01-kapitel-2.json");
-    expect(paths).toContain("lessons/02-kapitel-10.json");
+    // #3403 - lessons live under the set's path, next to its manifest.
+    const lessonPaths = paths.filter((p: string) => p.includes("/lessons/"));
+    expect(lessonPaths.map((p: string) => p.slice(p.lastIndexOf("/") + 1))).toEqual([
+      "01-kapitel-2.json",
+      "02-kapitel-10.json",
+    ]);
+    expect(lessonPaths.every((p: string) => p.startsWith("sets/"))).toBe(true);
   });
 
   it("skips the renamed note when the filenames already sort in order", async () => {
@@ -246,5 +251,21 @@ describe("ShareAsRepoButton in the desktop app (#3398)", () => {
     const button = await screen.findByTestId("user-set-share-repo");
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("title", "Only available in the browser version of the app.");
+  });
+});
+
+describe("ShareAsRepoButton lesson note (#3347)", () => {
+  it.each([
+    ["one lesson takes the singular", 1, "The set's one lesson will be included."],
+    ["two lessons take the plural", 2, "All 2 lessons of this set will be included."],
+    ["no lesson keeps the plural", 0, "All 0 lessons of this set will be included."],
+  ])("%s", async (_name, count, text) => {
+    render(
+      <TestFeatureProvider context={{ mode: "dexie" }}>
+        <ShareAsRepoButton entry={entry({ lesson_count: count })} />
+      </TestFeatureProvider>,
+    );
+    fireEvent.click(await screen.findByTestId("user-set-share-repo"));
+    expect((await screen.findByTestId("repo-export-lessons-note")).textContent).toBe(text);
   });
 });

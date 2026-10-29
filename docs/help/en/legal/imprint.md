@@ -1,12 +1,15 @@
 # Legal notice
 
+> This page is a translation of the German original and is provided for
+> information only. Only the German version is legally binding.
+
 Information pursuant to Section 5 of the German Digital Services Act (DDG).
 
 **Asterios Raptis**
 
 Seestraße 68, 71638 Ludwigsburg, Germany
 
-Email: asteri.raptis@gmail.com
+Email: asterios.raptis@web.de
 
 ## Responsible for the content under Section 18 (2) of the German State Media Treaty (MStV)
 

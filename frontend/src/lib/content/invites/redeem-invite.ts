@@ -18,7 +18,7 @@ import {
   type SyncProgress,
   type UserContentRepo,
 } from "../repos/content-repos";
-import { validateUserRepo } from "../repos/content-repo-validate";
+import { validateUserRepo, type RepoValidationResult } from "../repos/content-repo-validate";
 import { resolveRepoToken, writeRepoToken } from "../repos/repo-token";
 import {
   evaluateInviteStatus,
@@ -44,7 +44,14 @@ export type RedeemFailReason =
 /** Result of {@link redeemInvite}. */
 export type RedeemOutcome =
   | { ok: true; repo: string; setCount: number; lessonCount: number }
-  | { ok: false; reason: RedeemFailReason; detail?: string };
+  | {
+      ok: false;
+      reason: RedeemFailReason;
+      detail?: string;
+      /** The failed repository check behind ``validate_failed`` (#3424),
+       *  so the page can render its reason in the UI language. */
+      validation?: RepoValidationResult;
+    };
 
 /** Injectable I/O for {@link redeemInvite} (tests pass stubs). */
 export interface RedeemDeps {
@@ -108,7 +115,7 @@ export async function redeemInvite(
       deps.resolveRepoToken(source),
     );
     if (!validation.ok) {
-      return { ok: false, reason: "validate_failed", detail: validation.reason };
+      return { ok: false, reason: "validate_failed", detail: validation.reason, validation };
     }
 
     const repo: UserContentRepo = {

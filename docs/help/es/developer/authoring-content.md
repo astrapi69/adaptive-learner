@@ -61,16 +61,23 @@ lugares que antes derivaban ya no pueden hacerlo:
   obtener autocompletado del IDE y validación en línea.
 - `schema/quality-rules.json`: los mínimos de calidad compartidos
   (p. ej. número de ejercicios, número de respuestas aceptadas de
-  free-text), consumidos por el validador de contenido del lado del
-  cliente en lugar de una segunda copia mantenida a mano.
-- Los tipos de lección TypeScript del frontend y la página MkDocs
-  [Lesson format reference](lesson-format-reference.md) también se
-  generan (**no los edites a mano**); siguen el espejo del engine,
-  así que vuelve a ejecutar el generador tras cada re-pin.
+  free-text), como espejo del engine. El validador de contenido del
+  lado del cliente lee los mismos valores directamente del paquete
+  del engine (`QUALITY_MINIMUMS`), no de una segunda copia mantenida
+  a mano.
+- La página MkDocs [Lesson format reference](lesson-format-reference.md)
+  se genera en todos los idiomas de la ayuda (**no la edites a
+  mano**); sigue el espejo del engine, así que vuelve a ejecutar
+  `make sync-schema` tras cada re-pin. Los tipos de lección
+  TypeScript del frontend no se generan: vienen directamente del
+  paquete `learn-content-engine`.
 
 Una barrera contra la deriva (`make sync-schema-check`, parte de
 `release-test`, más `backend/tests/test_lesson_schema_drift.py` en
-`make test`) falla si algún artefacto generado diverge del espejo
+`make test`; la CI del backend comprueba además la capa Pydantic en
+cada PR con cambios de backend o de plugins con
+`generate_pydantic_models.py --check`) falla si algún artefacto
+generado diverge del espejo
 fijado del engine. El cierre de la cadena es la barrera de paridad
 de bytes app-contra-engine: `make engine-parity-check`
 (`scripts/check_engine_schema_parity.py`), el pin offline
@@ -118,8 +125,16 @@ idioma de origen (`sets/de/fr-a1`). Un conjunto lleva además
 **`title`** (en el idioma de origen, lo que lee el aprendiz) y
 **`title_native`** (en el idioma de destino, como segundo título).
 
-Ambos códigos deben ser ISO 639-1 (dos letras), y
-`source_language` debe diferir de `target_language`. Los conjuntos
+Ambos códigos son etiquetas de idioma BCP 47 en forma canónica: el
+código más corto (`de`, `pt-BR`), tres letras para los idiomas sin
+código de dos letras (`gsw`, `yue`, `fil`). Una etiqueta mal formada
+(`de_DE`, vacía) es un error (`E-LANG-TAG`); una grafía no canónica
+(`EN`, `deu`) es una advertencia (`W-LANG-TAG-CANONICAL`). En un
+conjunto de idioma (`domain` ausente o `language`), el engine
+advierte cuando `source_language` es igual a `target_language` o
+falta `title_native` (`W-LANG-PAIR-SAME`, `W-SET-TITLE-NATIVE`); la
+comprobación al compartir de la app bloquea ambos casos. Un conjunto
+de otro dominio no necesita ninguno de los dos. Los conjuntos
 anteriores a v1.2 sin estos campos siguen cargándose: la antigua
 clave `language` se acepta como `target_language`, y
 `source_language` recurre a `en`.
@@ -202,6 +217,16 @@ Comportamiento del cargador específico de la app a tener en cuenta:
       - 02-articles.json
       - ...
   ```
+
+- El bloque opcional `evaluation` de un conjunto
+  ([referencia del engine](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  solo tiene efecto en la app en el **modo examen**: allí sustituye
+  el umbral de aprobado propio del estudiante y califica el mismo
+  primer intento según su esquema (`percent`, `pass_fail` o
+  `grades`), su `title` sustituye el título «Resultado del examen»,
+  `report: detailed` abre la evaluación detallada y no se muestra la
+  valoración con estrellas. La práctica y los demás modos ignoran el
+  bloque.
 
 ## Esquema de lección
 
@@ -760,6 +785,19 @@ Si publicas un conjunto sin assets, picture-choice funciona igual: el
 generador de SVG de marcador de posición cubre colores + números
 automáticamente y recurre a un avatar determinista para todo lo demás.
 
+**Imágenes en Markdown.** La app muestra como Markdown, entre otros,
+los textos de teoría, las explicaciones y las respuestas de la IA.
+Una imagen incrustada allí como URI `data:` se muestra directamente.
+Una imagen de otro servidor, por ejemplo `raw.githubusercontent.com`
+o un sitio web de imágenes, aparece como un enlace con un icono de
+imagen y su texto alternativo, y solo se carga tras un clic, en una
+pestaña nueva; por eso, dales a esas imágenes un texto alternativo
+significativo. Una imagen que deba verse siempre va en una imagen de
+ejercicio o de tarjeta basada en los archivos de assets de abajo.
+Las entradas de YouTube en `resources[]` muestran un icono de vídeo
+en lugar de una miniatura; el vídeo solo se abre en YouTube con un
+clic.
+
 ### Disposición de directorios
 
 Dentro del directorio del conjunto, los assets residen en `assets/`:
@@ -878,7 +916,7 @@ Antes del PR de una nueva lección, comprobar:
 - [ ] **Precisión cultural**: uso real del idioma, no solo frases hechas de libro de texto
 - [ ] **Validación de esquema**: la lección carga limpiamente vía `dict_to_lesson()` (ver Pruebas locales)
 - [ ] **Integridad de las card-id**: cada `exercise.card_ids[i]` existe en los `cards[]` de la lección
-- [ ] **Par de idiomas**: `target_language` + `source_language` definidos (ISO 639-1, distintos), `title_native` presente
+- [ ] **Par de idiomas**: `target_language` + `source_language` definidos (BCP 47, canónicos; en conjuntos de idioma distintos y con `title_native`)
 
 ## Validación (dos niveles, v1.44.0)
 
@@ -1041,13 +1079,18 @@ compartirla**:
    conjuntos.
 2. En "Mis lecciones", haz clic en **Exportar como conjunto de
    contenido** para descargar un conjunto de contenido como `.zip`
-   (manifiesto + lecciones). Las exportaciones solo contienen el
-   contenido de la lección - sin progreso, sin historial de errores,
-   nada personal.
+   (manifiesto + lecciones). Las exportaciones contienen el contenido
+   de la lección, pero no el progreso ni el historial de errores; lo
+   que figura en la lección va incluido, también datos personales como
+   un nombre de autor que hayas indicado (consulta
+   [Mis lecciones](../user-guide/my-lessons.md)).
 3. Haz clic en **Poner a disposición de la comunidad** para abrir un
    **pull request** precargado en el repositorio de contenido - el
    JSON de la lección se hace commit en la ruta correcta del árbol,
-   sin necesidad de un adjunto `.zip`.
+   sin necesidad de un adjunto `.zip`. Con un token de GitHub en
+   Ajustes > Integraciones, la app abre ella misma el pull request de
+   una sola lección; sin token, el editor o la página de subida de
+   GitHub te guían.
 4. La CI del repo valida el PR automáticamente; un maintainer revisa
    la lección, ajusta el manifiesto (id, title, language, level, tags)
    a las convenciones de arriba y lo fusiona bajo `sets/`. Tras el

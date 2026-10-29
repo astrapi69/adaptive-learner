@@ -16,7 +16,12 @@
  * close. The card stops click propagation so a click inside never dismisses.
  *
  * @example
- * <ModalShell open={open} title="AI content check" onClose={() => setOpen(false)}>
+ * <ModalShell
+ *   open={open}
+ *   title="AI content check"
+ *   closeLabel={t("common.close", "Close")}
+ *   onClose={() => setOpen(false)}
+ * >
  *   <ReportList … />
  *   <div className="mt-4 flex justify-end gap-3 max-[769px]:flex-col max-[769px]:items-stretch max-[769px]:gap-2">…</div>
  * </ModalShell>
@@ -38,8 +43,11 @@ export interface ModalShellProps {
   onClose: () => void;
   /** Width class for the card (default ``max-w-2xl``). */
   widthClassName?: string;
-  /** Accessible label for the X button (default ``"Close"``). */
-  closeLabel?: string;
+  /**
+   * Accessible label of the X button, in the UI language. Required: an
+   * English default reached every consumer that forgot it (#3425).
+   */
+  closeLabel: string;
   /** Root test id; the card/body/X derive from it. */
   testId?: string;
 }
@@ -50,7 +58,7 @@ export default function ModalShell({
   children,
   onClose,
   widthClassName = "max-w-2xl",
-  closeLabel = "Close",
+  closeLabel,
   testId = "modal",
 }: ModalShellProps) {
   const onCloseRef = useRef(onClose);

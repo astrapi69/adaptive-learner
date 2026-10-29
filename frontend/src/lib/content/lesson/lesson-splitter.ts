@@ -1,8 +1,6 @@
 /**
  * Lesson splitter (Phase 63G / EXP-020).
  *
- * Python mirror: ``adaptive_learner_content_loader/lesson_splitter.py``
- *
  * Splits a ``ContentLesson`` into multiple parts when it exceeds
  * ``maxStepsPerPart``. Each part is a self-contained
  * ``ContentLesson`` — only the cards referenced by the part's steps

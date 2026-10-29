@@ -3,7 +3,7 @@
 Eine **Inhaltslektion** ist eine kleine, handgefertigte
 Lerneinheit (meist 5–10 Minuten), die aus einem öffentlichen
 Lektionssatz heruntergeladen wird. Sie läuft in einem
-eigenen Viewer, nicht in der KI-Chat-Session. Nach der
+eigenen Viewer, nicht in der KI-Chat-Sitzung. Nach der
 Lektion merkt sich die App genau, welche Wörter, Paare oder
 Phrasen du falsch beantwortet hast, und plant sie für eine
 gezielte Wiederholungssitzung später ein.
@@ -51,7 +51,14 @@ du geübt hast:
   kommt gebündelt am Ende, mit einer eigenen
   **Ergebnisansicht**, einem **Bestanden/Nicht-bestanden-
   Urteil** gegen eine konfigurierbare **Bestehensschwelle**
-  und einem **Bonus-XP** für das Bestehen.
+  und einem **Bonus-XP** für das Bestehen. Bringt das Set
+  eigene Bewertungsregeln mit, gelten in der Prüfung diese
+  statt deiner Bestehensschwelle: ein Bestanden/Nicht-bestanden
+  mit der Grenze des Sets, eine Note oder ein Prozentwert mit
+  empfohlener Grenze. Die Ergebnisansicht sagt dann, dass die
+  Regeln des Sets angewendet wurden. Vor der ersten Antwort
+  erinnert ein Hinweis daran, dass du erst am Ende siehst, ob
+  eine Antwort richtig war, und nicht zurückblättern kannst.
 - **Auf Zeit (Timed)** - ein Countdown pro Übung. Die
   Schwierigkeit ist wählbar: **Entspannt** (2× Zeit),
   **Normal** oder **Schnell** (0,7× Zeit). Läuft die Zeit
@@ -87,13 +94,21 @@ jede Karte und Übung:
    "Weiter", wenn du bereit bist.
 2. **Übungen** prüfen, was du dir gemerkt hast. Die
    Kern-Typen:
-   - **Zuordnen** - ziehe Paare (Wort ↔ Übersetzung). Beide
+   - **Zuordnen** - tippe eine Kachel an und dann ihr
+     Gegenstück in der anderen Spalte (Wort ↔ Übersetzung);
+     du kannst auf beiden Seiten beginnen. Beide
      Kacheln eines gefundenen Paares teilen sich eine
      **eigene Farbe** und ein **Nummern-Badge**, sodass die
      Zuordnung farbenblind-sicher erkennbar ist (nicht nur
      über Farbe), und das Auflösen eines Paares spielt eine
      kurze **Animation**, damit die Verbindung leicht zu
-     verfolgen ist.
+     verfolgen ist. Um ein Paar zu ändern, tippe eine
+     gepaarte Kachel an und dann ihren neuen Partner: Das
+     Paar wird umgehängt. Ist der neue Partner schon
+     gepaart, tauschen die beiden Paare ihre Partner, die
+     Zahl der Paare sinkt also nie. Ein Antippen allein
+     trennt kein Paar; **Strg/Cmd+Z** macht das zuletzt
+     gebildete Paar rückgängig.
    - **Bildauswahl** - wähle das Bild, das zum Hinweis
      passt.
    - **Freitext** - tippe die Antwort.
@@ -129,7 +144,13 @@ sind Primzahlen? 2, 4, 5, 9"* schreiben, ohne einen eigenen
 Eine Fortschrittsanzeige oben verfolgt, wie weit du in der
 Lektion bist. Du kannst jederzeit aufhören - dein
 Fortschritt wird pro Schritt gespeichert und setzt dort
-fort, wo du aufgehört hast.
+fort, wo du aufgehört hast. Ausnahme ist die Prüfung: Eine
+angefangene Prüfung zählt nur in einem Zug, deshalb beginnt
+sie beim erneuten Öffnen von vorn. Auch eine Runde, die in
+einem anderen Modus begonnen wurde, setzt nicht als Prüfung
+fort, und eine Prüfungsrunde nicht als Übung; die Lektion
+beginnt dann neu. Den Modus kannst du bis zur ersten Antwort
+einer Runde noch wechseln.
 
 ### Enter-Shortcut
 
@@ -151,6 +172,17 @@ gilt auch im Fehler-Replay („Fehler wiederholen").
   bringt dich „Zurück zur Übung" wieder an die Aufgabe. So
   schlägst du eine Regel nach, ohne den Faden zu verlieren.
 
+### Vorlesen in der Lektion
+
+Theorie-Schritte lassen sich vorlesen: über den Vorlesen-Knopf des
+Schritts, über **„Alle vorlesen"** oder, mit **„Automatisch vorlesen"**
+in den Lektionsoptionen, bei jedem Schritt von selbst. Solange
+vorgelesen wird, zeigt ein kleiner Player Pause/Weiter sowie den
+vorherigen und den nächsten Schritt. Das **X** beendet das Vorlesen für
+diese Lektion; ist „Automatisch vorlesen" an, liest die App in der
+nächsten Lektion wieder vor. Dauerhaft schaltest du es mit dem Schalter
+**„Automatisch vorlesen"** aus.
+
 ### Die Zusammenfassung
 
 Wenn die letzte Übung abgeschlossen ist, erscheint die
@@ -162,11 +194,18 @@ Wenn die letzte Übung abgeschlossen ist, erscheint die
   - **2 Sterne** ≥ 75 %
   - **1 Stern** ≥ 50 %
   - **0 Sterne** unter 50 %
-- Eine **Übungs-für-Übung-Aufschlüsselung**, die zeigt,
-  welche Übungen du bestanden hast und welche Fehler
-  enthielten (mit der richtigen Antwort für die falschen).
-- **Nächste Lektion**, **Wiederholen** und **Zurück zum
-  Satz** als Schaltflächen, damit die nächste Aktion einen
+
+  In einer Prüfung mit eigenen Bewertungsregeln des Sets
+  entfällt die Sterne-Bewertung; dort gilt das Urteil des
+  Sets.
+- Eine **Übungs-für-Übung-Aufschlüsselung** (die Antworten-Übersicht
+  in der ausführlichen Auswertung), die zeigt, welche Übungen du
+  bestanden hast und welche Fehler enthielten (mit der richtigen Antwort
+  für die falschen).
+- **„Fehler korrigieren (N)"**, solange Fehler dieses Durchgangs offen
+  sind (siehe Korrektur-Runde unten).
+- **Nächste Lektion**, **Erneut üben** und **Zurück zur
+  Inhaltsübersicht** als Schaltflächen, damit die nächste Aktion einen
   Klick entfernt ist.
 
 Schaffst du 3 Sterne beim ersten Versuch, spielt eine
@@ -229,7 +268,7 @@ auf dem Dashboard. Sie zeigt:
 - Wie viele **überfällig** sind (nach dem geplanten
   Wiederholungsdatum)
 - Eine Schaltfläche **Jetzt wiederholen**, die eine
-  fokussierte Mini-Session unter `/review/:setId` öffnet
+  fokussierte Mini-Sitzung unter `/review/:setId` öffnet
 
 Die Planung verwendet drei Stufen, basierend darauf, wie
 oft du das Element hintereinander richtig beantwortet hast:
@@ -290,30 +329,48 @@ du verdienst das Abzeichen **Wiederholungsmeister**.
 
 ## Korrektur-Runde am Lektionsende
 
-Wenn du eine Lektion mit Fehlern
-abschließt, zeigt die Zusammenfassungsseite eine kleine
-**Korrektur-Runde** zwischen deinem Punktestand und dem
-"Nächste Lektion"-Button. Sie nimmt bis zu fünf konkrete
-Fehler aus dieser Lektion und bietet jeden als frischen
-Lückentext an, der genau das verfehlte Wort / den
-verfehlten Artikel anvisiert.
+Wenn du eine Lektion mit Fehlern abschließt, zeigt die kompakte
+Zusammenfassung direkt über den Weiter-Aktionen **„Fehler korrigieren
+(N)"**; N ist die Zahl der Fehler dieses Durchgangs, die noch offen
+sind. Der Knopf öffnet die **Korrektur-Runde** gleich mit der ersten
+Übung und ändert keine Einstellung. In der **ausführlichen Auswertung**,
+oder wenn du den Abschnitt unter **Einstellungen → Lernen →
+Zusammenfassung nach Lektionen** anhakst, steht die Runde als Abschnitt
+**„Fehler ausbessern"** in der Zusammenfassung und öffnet sich mit
+**„Jetzt ausbessern"**. Sie nimmt bis zu fünf konkrete Fehler aus
+dieser Lektion und bietet jeden als frischen Lückentext an, der genau
+das verfehlte Wort / den verfehlten Artikel anvisiert.
 
-- **Jederzeit überspringbar.** Der "Nächste Lektion"-
-  Button bleibt sichtbar - die Korrektur-Runde ist
-  freiwillige Übung, kein Gate.
-- **Erscheint nur, wenn es etwas zu korrigieren gibt.**
-  Lektionen mit perfektem Punktestand überspringen sie
-  vollständig. Lektionen, deren Fehler sich nicht zu einem
-  sauberen Lückentext umformen lassen (selten), ebenfalls.
+- **Jederzeit überspringbar.** Die Weiter-Aktionen bleiben sichtbar -
+  die Korrektur-Runde ist freiwillige Übung, kein Gate.
+- **Erscheint nur, wenn es etwas zu korrigieren gibt.** Lektionen mit
+  perfektem Punktestand überspringen sie vollständig. Lassen sich die
+  Fehler nicht zu einem sauberen Lückentext umformen (selten), heißt
+  der Abschnitt **„Wiederhole deine Fehler"**, und du machst dort die
+  verfehlten Übungen noch einmal.
 - **Jeder abgeschlossene Lückentext zählt zur
   Beherrschung.** Die Korrektur-Runde schreibt dieselben
   Element-Verfolgungs-Datensätze wie die Hauptlektion;
-  dein Streak auf diesen Elementen rückt Richtung
+  deine Serie auf diesen Elementen rückt Richtung
   3-richtig-Beherrschungsschwelle.
 
 Am Ende erscheint eine kurze "{n} Elemente verbessert"-
 Zeile, damit du den Effekt deiner zusätzlichen Übung
 siehst.
+
+Nach der Runde, oder sobald ein Fehler dieses Durchgangs korrigiert ist,
+erscheint darunter **„Deine Korrekturen"**: „Erster Versuch: X von Y
+richtig", „N von M korrigiert" und jeder Fehler mit seinem Stand
+(**Korrigiert** / **Noch offen**), deiner ersten Antwort neben der
+richtigen und, solange er offen ist, der Erklärung der Übung. Dieselbe
+Übersicht zeigt das Ende von **„Fehler wiederholen"**, wenn du es aus
+der Zusammenfassung geöffnet hast. In der kompakten Zusammenfassung
+steht „N von M korrigiert", sobald etwas korrigiert ist; sind alle
+Fehler korrigiert, verschwindet der Knopf „Fehler korrigieren (N)". In
+der **ausführlichen Auswertung** tragen die Antworten-Übersicht und
+„Warum du diese verpasst hast" bei jedem Fehler die Marke
+**Korrigiert** oder **Noch offen**; ein korrigierter Fehler bleibt dort
+stehen.
 
 ## Visuelles Diff-Feedback
 
@@ -323,12 +380,16 @@ Diff** zwischen deiner Eingabe und der kanonischen
 Antwort. Drei Farben, nie nur Farbe allein:
 
 - **Rot durchgestrichen** - was du geschrieben hast und
-  nicht hingehört (mit einem ×-Marker für Screenreader
-  und farbenblinde Nutzer:innen).
+  nicht hingehört (mit einem ×-Marker für farbenblinde
+  Nutzer:innen).
 - **Grün** - was die kanonische Antwort enthält und du
   übersehen hast (mit einem +-Marker).
 - **Gelb** mit Pfeil → - ein leicht falsches Wort,
   dargestellt als `dein-wort` → `erwartet`.
+
+Screenreader lesen jede Markierung als Satz in deiner UI-Sprache vor,
+etwa „Zu viel: …", „Fehlt: …" oder „Geschrieben: …, erwartet: …"; die
+sichtbaren Zeichen überspringen sie.
 
 Dieselbe Diff erscheint in der Zusammenfassung der
 Lektion in der Aufschlüsselung jeder Übung - für jede
@@ -349,7 +410,7 @@ Sterne-Formel:
   erreichst (jeder Schritt mit Versuche = 1, keine
   Wiederholungen)
 - Derselbe **tägliche Serien-Multiplikator** wie bei
-  Chat-Sessions (+25 % pro Tag in Folge, bei 7 Tagen
+  Chat-Sitzungen (+25 % pro Tag in Folge, bei 7 Tagen
   gedeckelt)
 
 Vier neue Abzeichen schalten sich rund um Lektionen frei:
@@ -365,7 +426,7 @@ Vier neue Abzeichen schalten sich rund um Lektionen frei:
 
 Lektionsabschlüsse zählen auch für deine **tägliche Serie**,
 sodass das Lernen mit Inhaltslektionen die Heatmap auf
-dieselbe Weise füllt wie Chat-Sessions.
+dieselbe Weise füllt wie Chat-Sitzungen.
 
 ---
 
@@ -382,7 +443,7 @@ bekommen.
 Auch die Gamification ist angeglichen: Im
 reinen Browser-Modus verdienst du für abgeschlossene
 Lektionen **dieselben XP und Lektions-Abzeichen** wie im
-Server-Modus - die Stern-, Streak- und Abzeichen-Logik ist
+Server-Modus - die Stern-, Serien- und Abzeichen-Logik ist
 in TypeScript portiert und gegen identische Goldwerte
 abgesichert. Es gibt keinen Funktionsunterschied mehr
 zwischen den Modi beim Lektionsabschluss.
@@ -393,6 +454,19 @@ zwischen den Modi beim Lektionsabschluss.
 
 Alle Lektionsfortschritte, Element-Fehler-Zeilen,
 Wiederholungs-Warteschlangen-Zustände und Planungsdaten
-bleiben **auf deinem eigenen Gerät** - im Dateisystem
-(API-Modus) oder im Browser (IndexedDB). Nichts darüber,
-mit welchen Wörtern du kämpfst, wird irgendwohin gesendet.
+werden gespeichert: im Lokal-Modus in deinem Browser (IndexedDB),
+im API-Modus in der Datenbank des Backends, mit dem die App
+verbunden ist; wer dieses Backend betreibt, hat Zugriff darauf.
+Lektionsfortschritt und Sprachaufnahmen, die im API-Modus offline
+entstehen, warten bis zur Übertragung in deinem Browser (siehe
+[Backup](../features/backup.md)).
+Teile davon erhalten andere nur, wenn eine Funktion sie braucht.
+Ein Beispiel ist die KI-Chat-Sitzung: Lektionen selbst nutzen
+keine KI, aber eine KI-Chat-Sitzung schickt deinem KI-Anbieter
+unter anderem deine abgeschlossenen Lektionen mit ihren
+Ergebnissen sowie deine letzten Fehler, jeder mit deiner Antwort,
+der richtigen Antwort und der Zahl, wie oft du ihn gemacht hast.
+Eine Sitzung aus einem importierten Chat schickt statt deines
+Fortschritts die Analyse und den Verlauf dieses Chats. Wann
+welche Daten an andere gehen, beschreibt die
+[Datenschutzerklärung](../legal/privacy.md).

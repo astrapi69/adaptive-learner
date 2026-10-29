@@ -23,7 +23,6 @@ import json
 
 import httpx
 import pytest
-
 from adaptive_learner_content_loader.exceptions import (
     ContentAuthError,
     ContentFetchError,
@@ -34,7 +33,6 @@ from adaptive_learner_content_loader.github_adapter import (
     GitHubRawAdapter,
     build_raw_url,
 )
-
 
 SOURCE = "astrapi69/adaptive-learner-content"
 BRANCH = "main"
@@ -80,7 +78,10 @@ class TestAuthHeader:
         async with httpx.AsyncClient(transport=transport) as client:
             adapter = GitHubRawAdapter()
             text = await adapter.fetch_text(
-                SOURCE, BRANCH, "manifest.yaml", client=client,
+                SOURCE,
+                BRANCH,
+                "manifest.yaml",
+                client=client,
             )
         assert text == "content"
         assert "authorization" not in {k.lower() for k in captured}
@@ -97,7 +98,10 @@ class TestAuthHeader:
         async with httpx.AsyncClient(transport=transport) as client:
             adapter = GitHubRawAdapter(token="ghp_fake_secret")
             await adapter.fetch_text(
-                SOURCE, BRANCH, "manifest.yaml", client=client,
+                SOURCE,
+                BRANCH,
+                "manifest.yaml",
+                client=client,
             )
         # The auth header uses the classic "token X" shape.
         # Fine-grained PATs work with this prefix on
@@ -118,7 +122,10 @@ class TestErrorMapping:
             adapter = GitHubRawAdapter()
             with pytest.raises(ContentNotFoundError) as exc:
                 await adapter.fetch_text(
-                    SOURCE, BRANCH, "missing.yaml", client=client,
+                    SOURCE,
+                    BRANCH,
+                    "missing.yaml",
+                    client=client,
                 )
         assert "missing.yaml" in str(exc.value)
 
@@ -130,7 +137,10 @@ class TestErrorMapping:
             adapter = GitHubRawAdapter(token="bad")
             with pytest.raises(ContentAuthError):
                 await adapter.fetch_text(
-                    SOURCE, BRANCH, "private.yaml", client=client,
+                    SOURCE,
+                    BRANCH,
+                    "private.yaml",
+                    client=client,
                 )
 
     async def test_403_maps_to_auth_error(self) -> None:
@@ -141,7 +151,10 @@ class TestErrorMapping:
             adapter = GitHubRawAdapter()
             with pytest.raises(ContentAuthError):
                 await adapter.fetch_text(
-                    SOURCE, BRANCH, "private.yaml", client=client,
+                    SOURCE,
+                    BRANCH,
+                    "private.yaml",
+                    client=client,
                 )
 
     async def test_500_maps_to_generic_fetch_error(self) -> None:
@@ -152,7 +165,10 @@ class TestErrorMapping:
             adapter = GitHubRawAdapter()
             with pytest.raises(ContentFetchError) as exc:
                 await adapter.fetch_text(
-                    SOURCE, BRANCH, "anything.yaml", client=client,
+                    SOURCE,
+                    BRANCH,
+                    "anything.yaml",
+                    client=client,
                 )
         assert "500" in str(exc.value)
 
@@ -165,7 +181,10 @@ class TestErrorMapping:
             adapter = GitHubRawAdapter()
             with pytest.raises(ContentNetworkError):
                 await adapter.fetch_text(
-                    SOURCE, BRANCH, "anything.yaml", client=client,
+                    SOURCE,
+                    BRANCH,
+                    "anything.yaml",
+                    client=client,
                 )
 
 
@@ -181,7 +200,10 @@ class TestParsingHelpers:
         async with httpx.AsyncClient(transport=transport) as client:
             adapter = GitHubRawAdapter()
             parsed = await adapter.fetch_yaml(
-                SOURCE, BRANCH, "manifest.yaml", client=client,
+                SOURCE,
+                BRANCH,
+                "manifest.yaml",
+                client=client,
             )
         assert parsed["name"] == "Pilot"
         assert parsed["schema_version"] == "1.0"
@@ -194,7 +216,10 @@ class TestParsingHelpers:
         async with httpx.AsyncClient(transport=transport) as client:
             adapter = GitHubRawAdapter()
             parsed = await adapter.fetch_json(
-                SOURCE, BRANCH, "lessons/01.json", client=client,
+                SOURCE,
+                BRANCH,
+                "lessons/01.json",
+                client=client,
             )
         assert parsed == payload
 
@@ -207,7 +232,10 @@ class TestParsingHelpers:
         async with httpx.AsyncClient(transport=transport) as client:
             adapter = GitHubRawAdapter()
             payload = await adapter.fetch_bytes(
-                SOURCE, BRANCH, "assets/cover.png", client=client,
+                SOURCE,
+                BRANCH,
+                "assets/cover.png",
+                client=client,
             )
         assert payload == raw
 
@@ -233,7 +261,10 @@ class TestClientLifecycle:
         )
         async with httpx.AsyncClient(transport=transport) as client:
             text = await adapter.fetch_text(
-                SOURCE, BRANCH, "x.txt", client=client,
+                SOURCE,
+                BRANCH,
+                "x.txt",
+                client=client,
             )
         assert text == "ok"
 
@@ -252,13 +283,22 @@ class TestClientLifecycle:
         adapter = GitHubRawAdapter()
         async with httpx.AsyncClient(transport=transport) as client:
             a = await adapter.fetch_text(
-                SOURCE, BRANCH, "a.txt", client=client,
+                SOURCE,
+                BRANCH,
+                "a.txt",
+                client=client,
             )
             b = await adapter.fetch_text(
-                SOURCE, BRANCH, "b.txt", client=client,
+                SOURCE,
+                BRANCH,
+                "b.txt",
+                client=client,
             )
             c = await adapter.fetch_text(
-                SOURCE, BRANCH, "c.txt", client=client,
+                SOURCE,
+                BRANCH,
+                "c.txt",
+                client=client,
             )
         assert (a, b, c) == ("call-1", "call-2", "call-3")
         assert call_count == 3

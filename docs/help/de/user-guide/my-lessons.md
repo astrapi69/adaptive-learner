@@ -4,8 +4,12 @@
 offline-spielbaren Format wie heruntergeladene Inhaltssets. Du kannst
 aus einem analysierten Chat eine Lektion erzeugen, eine gute adaptive
 Lektion zum Wiederholen speichern, eine Lektion zum Teilen
-exportieren und von anderen geteilte Lektionen importieren. Alles
-funktioniert offline; nichts wird auf einen Server hochgeladen.
+exportieren und von anderen geteilte Lektionen importieren. Diese
+Schritte funktionieren offline, und deine Lektionen bleiben auf
+deinem Gerät, bis du eine Funktion nutzt, die sie weitergibt, zum
+Beispiel einen Beitrag zur Community (Pull Request) oder
+„Als Repository teilen", die die Lektion zu GitHub hochladen, oder
+eine KI-Prüfung, die ihren Inhalt an deinen KI-Anbieter schickt.
 
 Du findest „Meine Lektionen" oben im **Set-Browser** (`/content`),
 über den heruntergeladenen Sets.
@@ -90,25 +94,64 @@ sich der adaptive Generator in einer späteren Version ändert.
 
 ## Exportieren und teilen
 
-Jede eigene Lektion lässt sich teilen - ohne Konto und ohne Server:
+Jede eigene Lektion lässt sich teilen. Exportieren geht ohne Konto; für
+den Pull Request an die Community brauchst du ein GitHub-Konto. Ein
+GitHub-Token beschleunigt den Pull Request und ist nötig, um ein ganzes
+Set als eigenes Repository zu teilen:
 
 - **Exportieren** - die Lektion als einzelne `.json`-Datei
   herunterladen.
 - **Als Content-Set exportieren** - ein Content-Set als `.zip`
   herunterladen (Manifest + Lektionen).
-- **Für die Community bereitstellen** - öffnet einen vorausgefüllten
-  **Pull Request** im offiziellen Inhalts-Repository. Die Lektions-JSON
-  landet am richtigen Pfad im Inhaltsbaum und die Validierung des
-  Repositorys läuft automatisch; ein Maintainer prüft den PR und führt
-  ihn zusammen, sodass alle die Lektion herunterladen können. Kleine
-  Lektionen öffnen direkt den Datei-Editor von GitHub (PR-Titel und
-  -Beschreibung sind vorausgefüllt); größere Lektionen werden zuerst
-  heruntergeladen und öffnen die Upload-Seite von GitHub, auf die du
-  die Datei ziehst. Es ist kein Token nötig - GitHub erstellt den Fork
-  und den Pull Request für dich.
+- **Für die Community bereitstellen** - führt zu einem **Pull Request**
+  im offiziellen Inhalts-Repository. Die Lektions-JSON landet am
+  richtigen Pfad im Inhaltsbaum, und die Validierung des Repositorys
+  läuft automatisch. Der Pull Request ist auf GitHub öffentlich
+  sichtbar, sobald er entsteht. Ein Maintainer prüft ihn; übernimmt er
+  ihn, können alle die Lektion herunterladen. Der Pull Request entsteht
+  auf einem von zwei Wegen:
+    - **Ohne Token** - für eine einzelne Lektion öffnet die App den
+      Datei-Editor von GitHub am richtigen Pfad, PR-Titel und
+      -Beschreibung sind vorausgefüllt. Pfad, Titel und Beschreibung
+      stehen in der Adresse, mit der die App den Editor öffnet, bei
+      einer kleinen Lektion auch ihr Inhalt; GitHub erhält das alles
+      schon beim Öffnen,
+      bevor du etwas bestätigst. Bei einer größeren Lektion lädt die
+      App die Datei zuerst herunter, und du fügst ihren Inhalt im
+      Editor ein. Bei einem Set mit mehreren Lektionen lädt die App
+      die Dateien herunter und öffnet die Upload-Seite von GitHub,
+      auf die du sie ziehst. In all diesen Fällen erstellt GitHub den
+      Fork und den Pull Request erst, wenn du auf GitHub bestätigst.
+    - **Mit GitHub-Token** (Einstellungen > Integrationen, siehe
+      [Einstellungen](settings.md#integrationen)) - eine einzelne
+      Lektion teilst du, ohne die App zu verlassen: die App forkt das
+      Repository, committet die Lektion, öffnet den Pull Request und
+      zeigt dir dann den Link. Ein Set mit mehreren Lektionen nimmt
+      weiterhin den Weg ohne Token. Lehnt GitHub den Token ab, verweist
+      die Meldung auf Einstellungen > Integrationen.
+- **Als Repository teilen** - überträgt das ganze Set im
+  Content-Repo-Format in einem Commit in ein GitHub-Repository von dir
+  (das angelegt wird, falls es noch nicht existiert). Du wählst das
+  Repository (`owner/name`) und den Branch und, wenn das Repository neu
+  angelegt wird, ob es privat oder öffentlich ist; ein bestehendes behält
+  seine Sichtbarkeit.
+  Vorher läuft eine Qualitätsprüfung: findet sie Probleme, die die
+  Prüfungen eines Content-Repositorys ablehnen würden, listet sie sie
+  auf, und der Knopf wird zu **Trotzdem exportieren**. Als Repository
+  teilen braucht einen GitHub-Token und geht nur in der Browser-Version
+  der App; sonst bleibt der Knopf sichtbar, aber deaktiviert, mit dem
+  Grund als Tooltip. Das übertragene Repository kannst du danach als
+  Inhaltsquelle verbinden (siehe
+  [Content-Repositories](../features/content-repos.md)).
 
-Exportierte Dateien enthalten nur den Lektionsinhalt - keinen
-Fortschritt, keine Fehlerhistorie, nichts Persönliches.
+Was du teilst oder exportierst, enthält den Lektionsinhalt, aber
+keinen Lernfortschritt und keine Fehlerhistorie aus der App. Was in
+der Lektion steht, geht mit, auch Persönliches: zum Beispiel dein
+Name, wenn du ihn beim Teilen angibst und anzeigen lässt (er steht
+dann in der Lektion und im Pull Request), und bei einer Lektion aus
+einer Chat-Analyse alles, was die Analyse gefunden hat, darunter
+Vokabeln und Beispielsätze aus deinem Chat, deine Stärken und
+Schwächen und deine häufigen Fehlermuster.
 
 ---
 

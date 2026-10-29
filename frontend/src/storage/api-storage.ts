@@ -267,6 +267,8 @@ export const apiStorage: IStorageService = {
     awardImport: (userId) => api.gamification.awardImport(userId),
     spendXp: (userId, amount, reason) =>
       api.gamification.spendXp(userId, amount, reason),
+    purchaseItem: (userId, input) => api.gamification.purchaseItem(userId, input),
+    listPurchases: (userId) => api.gamification.listPurchases(userId),
     listBadges: (userId) => api.gamification.listBadges(userId),
     evaluateBadges: (userId) => api.gamification.evaluateBadges(userId),
     getStreak: (userId) => api.gamification.getStreak(userId),
@@ -492,6 +494,7 @@ export const apiStorage: IStorageService = {
      *  API mode has no cached reports (the check never runs there). */
     getAiValidationCache: () => Promise.resolve(null),
     saveAiValidationCache: () => Promise.resolve(),
+    listAiValidationCache: () => Promise.resolve([]),
     deleteAiValidationCache: () => Promise.resolve(),
   },
 

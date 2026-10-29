@@ -41,6 +41,7 @@ describe("useLessonSetContext", () => {
                     title: "Französisch A1",
                     domain: "language",
                     book: {title: "Grammaire"},
+                    evaluation: {scheme: "pass_fail", pass_percent: 60},
                 },
             ],
         });
@@ -53,6 +54,8 @@ describe("useLessonSetContext", () => {
         });
         expect(result.current.setDomain).toBe("language");
         expect(result.current.setBook).toEqual({title: "Grammaire"});
+        // #3736 - the evaluation block the exam summary applies.
+        expect(result.current.setEvaluation).toEqual({scheme: "pass_fail", pass_percent: 60});
     });
 
     it("returns null for the last lesson in the set", async () => {
@@ -64,6 +67,7 @@ describe("useLessonSetContext", () => {
         });
         expect(result.current.nextLessonFilename).toBeNull();
         expect(result.current.setTitle).toBeNull();
+        expect(result.current.setEvaluation).toBeNull();
     });
 
     it("degrades silently when both storage reads fail", async () => {
@@ -77,6 +81,7 @@ describe("useLessonSetContext", () => {
         expect(result.current.setTitle).toBeNull();
         expect(result.current.setDomain).toBeNull();
         expect(result.current.setBook).toBeNull();
+        expect(result.current.setEvaluation).toBeNull();
     });
 
     it("skips the reads entirely for empty route params", async () => {

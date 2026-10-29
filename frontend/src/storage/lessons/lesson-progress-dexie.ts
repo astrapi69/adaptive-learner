@@ -17,12 +17,23 @@
 import type {
     LessonProgress,
     LessonProgressUpsertBody,
+    LessonStepEvent,
+    LessonStepEventStored,
 } from "../types";
 import {getDb} from "../dexie/db";
 import type {LessonProgressRow} from "../dexie/db";
+import {ApiError} from "../../api/client";
+import {recordCompletedAttempt} from "./lesson-attempt";
 
 function slugifySource(source: string): string {
     return source.replace(/\//g, "--");
+}
+
+/** #3747 - seconds of the current run. A row from before the field has
+ *  none; it reads the lifetime total, the value the summary showed until
+ *  then (the backend backfills the same way). */
+function runTimeOf(row: LessonProgressRow): number {
+    return row.run_time_seconds ?? row.time_spent_seconds ?? 0;
 }
 
 /** The composite primary key of a ``lessonProgress`` row; the backup
@@ -49,6 +60,7 @@ function rowToWire(row: LessonProgressRow): LessonProgress {
         score_correct: row.score_correct,
         score_total: row.score_total,
         time_spent_seconds: row.time_spent_seconds,
+        run_time_seconds: runTimeOf(row),
         // BUG #41 — coalesce undefined → 0 so pre-feature rows
         // resume at the start (the old behaviour).
         current_step: row.current_step ?? 0,
@@ -68,33 +80,41 @@ function rowToWire(row: LessonProgressRow): LessonProgress {
         best_score_correct: row.best_score_correct ?? 0,
         best_score_total: row.best_score_total ?? 0,
         attempt_history: row.attempt_history ?? [],
+        recent_steps: row.recent_steps ?? [],
     };
 }
 
-/** #983 — account one completed attempt onto the row (mirrors the
- *  backend ``_record_completed_attempt``): bump ``attempts``, append to
- *  ``attempt_history``, and lift ``best_score_*`` only when this attempt
- *  beat the previous best by percentage (ties keep the earlier best). */
-const ATTEMPT_HISTORY_CAP = 50;
-function recordCompletedAttempt(row: LessonProgressRow, nowIso: string): void {
-    row.attempts = (row.attempts ?? 0) + 1;
-    const history = [...(row.attempt_history ?? [])];
-    history.push({
-        at: nowIso,
-        correct: row.score_correct,
-        total: row.score_total,
-    });
-    row.attempt_history = history.slice(-ATTEMPT_HISTORY_CAP);
+/** #3365 - how many learner actions a row keeps (backend
+ *  ``_RECENT_STEPS_CAP``). */
+const RECENT_STEPS_CAP = 10;
 
-    const currentPct = row.score_total
-        ? row.score_correct / row.score_total
-        : 0;
-    const bestTotal = row.best_score_total ?? 0;
-    const bestPct = bestTotal ? (row.best_score_correct ?? 0) / bestTotal : -1;
-    if (bestTotal === 0 || currentPct > bestPct) {
-        row.best_score_correct = row.score_correct;
-        row.best_score_total = row.score_total;
-    }
+/** #3365 - log one learner action in ``recent_steps`` (mirrors the backend
+ *  ``_append_step_event``): keep the newest ten, and let a ``step`` entry
+ *  identical to the one before it replace that one, so a retried position
+ *  write does not push real actions out. */
+function appendStepEvent(
+    row: LessonProgressRow,
+    event: LessonStepEvent,
+    nowIso: string,
+): void {
+    const entry: LessonStepEventStored = {
+        at: nowIso,
+        kind: event.kind,
+        step_index: event.step_index,
+        step_id: event.step_id ?? null,
+    };
+    if (event.correct != null) entry.correct = event.correct;
+    const entries = [...(row.recent_steps ?? [])];
+    const previous = entries.at(-1);
+    const sameStep =
+        previous !== undefined &&
+        entry.kind === "step" &&
+        previous.kind === "step" &&
+        previous.step_index === entry.step_index &&
+        (previous.step_id ?? null) === entry.step_id;
+    if (sameStep) entries[entries.length - 1] = entry;
+    else entries.push(entry);
+    row.recent_steps = entries.slice(-RECENT_STEPS_CAP);
 }
 
 function recomputeScore(
@@ -155,6 +175,7 @@ function buildFreshRow(
         score_correct: 0,
         score_total: 0,
         time_spent_seconds: 0,
+        run_time_seconds: 0,
         current_step: 0,
         started_at: now,
         updated_at: now,
@@ -165,6 +186,7 @@ function buildFreshRow(
         best_score_correct: 0,
         best_score_total: 0,
         attempt_history: [],
+        recent_steps: [],
     };
 }
 
@@ -242,6 +264,7 @@ function applyLifecycle(
         row.score_correct = 0;
         row.score_total = 0;
         row.current_step = 0;
+        row.run_time_seconds = 0;
     } else if (body.mark_resumed && row.status === "paused") {
         row.status = "in_progress";
         row.paused_at = null;
@@ -253,6 +276,7 @@ function applyLifecycle(
         row.score_correct = 0;
         row.score_total = 0;
         row.current_step = 0;
+        row.run_time_seconds = 0;
         row.paused_at = null;
         row.abandoned_at = null;
     }
@@ -276,7 +300,8 @@ export async function upsertLessonProgressDexie(
         (body.mark_resumed ? 1 : 0) +
         (body.mark_restarted ? 1 : 0);
     if (lifecycleCount > 1) {
-        throw new Error(
+        throw new ApiError(
+            400,
             "At most one of mark_completed / mark_paused / " +
                 "mark_abandoned / mark_resumed / mark_restarted " +
                 "may be true per call.",
@@ -303,6 +328,9 @@ export async function upsertLessonProgressDexie(
             body.time_spent_seconds_delta &&
             body.time_spent_seconds_delta > 0
         ) {
+            // Run time first: a pre-#3747 row reads it from the lifetime
+            // total, which must not include this delta yet.
+            row.run_time_seconds = runTimeOf(row) + body.time_spent_seconds_delta;
             row.time_spent_seconds += body.time_spent_seconds_delta;
         }
 
@@ -320,12 +348,17 @@ export async function upsertLessonProgressDexie(
 
         applyLifecycle(row, body, now);
 
+        if (body.step_event) {
+            appendStepEvent(row, body.step_event, now);
+        }
+
         row.updated_at = now;
         await db.lessonProgress.put(row);
         wire = rowToWire(row);
     });
     if (wire === null) {
-        throw new Error(
+        throw new ApiError(
+            500,
             `lessonProgress upsert produced no row for ${key}`,
         );
     }

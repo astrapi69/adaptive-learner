@@ -117,6 +117,8 @@ Seite läuft bis hinunter zu 375 px Breite sauber um.
   - basierend auf deiner Fehlerhistorie, nicht nur auf der
   Lektionsreihenfolge.
 - Eine pausierte Lektion bleibt über ihre Zeile oder die
-  Dashboard-Karte „Pausierte Lektionen" fortsetzbar.
+  Dashboard-Karte „Pausierte Lektionen" fortsetzbar. Ausnahme ist
+  eine angefangene Prüfung: Sie zählt nur in einem Zug und beginnt
+  deshalb neu.
 - Sobald sowohl **rezeptive** als auch **produktive** Beherrschung
   erreicht sind, gilt eine Lektion als vollständig gemeistert.

@@ -24,7 +24,8 @@
  *
  * A surface that can't be reached deterministically (e.g. the bundled set
  * has no cloze exercise) is skipped with a clear message rather than
- * committing a meaningless baseline.
+ * committing a meaningless baseline - but only while it has no baseline.
+ * Once a baseline is committed, not reaching the surface fails (#3427).
  */
 
 import {expect, test} from "@playwright/test";
@@ -36,6 +37,7 @@ import {
     VIEWPORTS,
     type SurfaceName,
     type ViewportName,
+    assertNoExternalRequests,
     assertSurfaceStillReady,
     expandViewportToDocument,
     freezeClock,
@@ -44,8 +46,10 @@ import {
     pinRandomStreams,
     setTheme,
     settleForScreenshot,
+    skipUnlessBaselined,
     surfaceMasks,
 } from "./helpers";
+import {BASELINE_REFRESH} from "./refresh-mode";
 
 /** The viewports a surface renders at: the matrix, plus laptop for a few. */
 function viewportsFor(surface: SurfaceName): readonly ViewportName[] {
@@ -57,9 +61,10 @@ for (const surface of SURFACE_NAMES) {
         test(`${surface} renders correctly at ${viewport}`, async ({page}) => {
             await page.setViewportSize(VIEWPORTS[viewport]);
             // Determinism: freeze the clock, pin the default theme, and pin
-            // the content-repo registry fetch to a frozen fixture (#1653 —
-            // the recommended-repos list is otherwise fetched live and
-            // re-stales the settings-data / content-discover baselines) before
+            // every content-repo fetch to a frozen fixture behind the
+            // external-request guard (#1653, #3745; the live lists and the
+            // official manifest re-staled the settings-data / content-discover
+            // baselines) before
             // the first navigation, then seed/await the surface's own ready
             // signal (gotoSurface), then settle fonts + kill animations. The
             // random pin gives every shuffle its own stream (#3214).
@@ -68,7 +73,7 @@ for (const surface of SURFACE_NAMES) {
             await setTheme(page, "light");
             await pinContentRegistry(page);
             const ready = await gotoSurface(page, surface);
-            test.skip(!ready, `Could not reach ${surface} deterministically`);
+            skipUnlessBaselined(ready, `${surface}-${viewport}.png`, surface);
             await settleForScreenshot(page);
             // #2696 - grow the viewport to the full page height and take a
             // plain shot instead of ``fullPage: true``: captureBeyondViewport
@@ -108,7 +113,7 @@ for (const surface of SURFACE_NAMES) {
             }
             const shotOpts = {
                 mask: masks,
-                ...(surface === "lesson-matching" && viewport === "mobile"
+                ...(surface === "lesson-matching" && viewport === "mobile" && !BASELINE_REFRESH
                     ? {maxDiffPixelRatio: 0.08, maxDiffPixels: 20_000}
                     : {}),
             };
@@ -116,7 +121,16 @@ for (const surface of SURFACE_NAMES) {
             // between gotoSurface and here, instead of silently
             // photographing whatever it collapsed into.
             await assertSurfaceStillReady(page, surface);
+            // #3745 - the image may only show what this repository serves:
+            // fail on any request the guard stopped, before and after the
+            // shot, and record the count so "0 stopped" is visible.
+            const stopped = assertNoExternalRequests(page);
+            test.info().annotations.push({
+                type: "external-requests-stopped",
+                description: `${surface}-${viewport}: ${stopped}`,
+            });
             await expect(page).toHaveScreenshot(`${surface}-${viewport}.png`, shotOpts);
+            assertNoExternalRequests(page);
         });
     }
 }

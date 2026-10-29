@@ -1,7 +1,7 @@
 /**
  * Tests for IosInstallHint — the iOS-only "Add to Home Screen" guidance.
  * Pins: shown on iOS Safari (not installed / not dismissed), hidden when
- * standalone, on non-iOS, or after dismissal.
+ * standalone, on non-iOS, or after dismissal; a card in the flow (#3765).
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -73,5 +73,19 @@ describe("IosInstallHint", () => {
         expect(
             localStorage.getItem("adaptive-learner.ios_install_dismissed"),
         ).toBe("1");
+    });
+
+    // #3765 - fixed at the bottom of every page, the hint covered whatever
+    // ended up there (the assessment's "Nächste Frage" for a new iPhone
+    // user). It is a card in the page's flow now, which cannot cover
+    // anything; no page has to know about it.
+    it("is a card in the page flow, never laid over the page", () => {
+        stubNavigator(IPHONE_SAFARI, "iPhone");
+        render(<IosInstallHint />);
+        const classes = screen.getByTestId("ios-install-hint").className.split(/\s+/);
+        for (const overlay of ["fixed", "absolute", "sticky"]) {
+            expect(classes).not.toContain(overlay);
+        }
+        expect(classes.some((name) => name.startsWith("z-"))).toBe(false);
     });
 });

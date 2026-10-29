@@ -897,10 +897,7 @@ _CONVERSATION_LABELS_DE = _ConversationLabels(
     user="Lerner",
     assistant="Assistent",
     omitted="[... frühere Nachrichten ausgelassen ...]",
-    closing=(
-        "Knüpfe an diese vorherige Konversation an. Der Lerner möchte das "
-        "Thema vertiefen."
-    ),
+    closing=("Knüpfe an diese vorherige Konversation an. Der Lerner möchte das Thema vertiefen."),
 )
 
 _CONVERSATION_LABELS_EN = _ConversationLabels(
@@ -909,8 +906,7 @@ _CONVERSATION_LABELS_EN = _ConversationLabels(
     assistant="Assistant",
     omitted="[... earlier messages omitted ...]",
     closing=(
-        "Continue from this previous conversation. The learner wants to go "
-        "deeper on the topic."
+        "Continue from this previous conversation. The learner wants to go deeper on the topic."
     ),
 )
 

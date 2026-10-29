@@ -43,7 +43,7 @@ O Adaptive Learner implementa o modelo de aprendizagem de seis métodos de Aster
 - **Ciclo de 7 passos** que estrutura cada sessão de aprendizagem
 - **Avaliador de duplo prompt** que avalia a compreensão em tempo real
 - **Funciona offline** - o armazenamento Dexie mantém tudo localmente no navegador
-- **Sem lock-in de fornecedor** - usa Anthropic, OpenAI ou Gemini com a sua própria chave de API
+- **Sem lock-in de fornecedor** - usa Anthropic, OpenAI ou Gemini (e Perplexity na aplicação de ambiente de trabalho) com a sua própria chave de API
 - **Privacidade primeiro** - os seus dados ficam no seu dispositivo
 
 ---

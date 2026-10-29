@@ -16,8 +16,10 @@ leurs propres copies de cette liste.
   adapter, répéter, intégrer. Un évaluateur à double prompt juge
   chaque tour et décide d'avancer, de répéter, de sauter en avant ou
   de revenir en arrière.
-- **Auto-loop** : quand un sujet est intégré, la session choisit un
-  nouveau sous-sujet et démarre un cycle frais (plafonné par session).
+- **Auto-loop** (application de bureau) : quand un sujet est intégré,
+  la session choisit un nouveau sous-sujet et démarre un cycle frais
+  (plafonné par session). Dans la version navigateur, la session reste
+  à l'étape 7 ; la page de la session le signale.
 - **Changement de méthode** : la détection de stagnation recommande
   une autre méthode quand les évaluations plafonnent ; acceptation en
   un clic.
@@ -35,7 +37,9 @@ Voir [Sessions d'apprentissage](../user-guide/learning-session.md) et
 - **Voix** : dictée au micro dans le chat, lecture à voix haute des
   réponses et un mode dédié de pratique de la prononciation.
 - **Bring your own key** : Anthropic Claude, OpenAI GPT et Google
-  Gemini comme plugins fournisseurs séparés ; découverte des modèles
+  Gemini comme plugins fournisseurs séparés, plus Perplexity en mode
+  serveur (l'application de bureau ; le navigateur ne peut pas appeler
+  Perplexity directement) ; découverte des modèles
   en direct avec un sélecteur Recommandés/Tous ; test de clé par
   fournisseur et un coffre de clés avec rollback.
 - **Les conversations importées se poursuivent comme sessions de
@@ -97,6 +101,12 @@ Voir [Leçons](../user-guide/lessons.md) pour la vue de l'apprenant.
 - Notes en étoiles de 0 à 3, favoris, suggestions d'étapes
   suivantes, découpage automatique des leçons trop grandes et liens
   de retour vers la théorie depuis les exercices.
+- **Bilan de fin de set** : après la dernière leçon d'un set, toutes
+  les erreurs du set dans une seule vue : totaux, par leçon, par type
+  d'exercice et les éléments que tu rates encore, avec ta dernière
+  réponse fausse à côté de la bonne.
+
+Voir [Bilan de fin de set](set-summary.md).
 
 ## Création de leçons (Create-Lesson)
 
@@ -123,8 +133,13 @@ Voir [Leçons](../user-guide/lessons.md) pour la vue de l'apprenant.
   multi-leçons via un sélecteur de leçon, regrouper tes leçons dans
   un ensemble et choisir un domaine de contenu (langues plus domaines
   de connaissances).
+- **Mode mentor** : pendant que tu joues l'une de tes propres leçons,
+  tu notes ce qui ne va pas là où ça arrive ; les notes deviennent une
+  liste de points à traiter dans le résumé et se règlent dans
+  l'éditeur, sans toucher à ta progression.
 
-Voir [Créer des leçons](../content-creation/overview.md).
+Voir [Créer des leçons](../content-creation/overview.md) et
+[Mode mentor](../content-creation/mentor-mode.md).
 
 ## Import et analyse
 
@@ -172,6 +187,20 @@ Voir [Navigateur de contenu](content-browser.md),
 - **Célébrations** : des éloges mérités, à intensité réglable, des
   overlays de jalons, des sons optionnels, le tout compatible avec la
   réduction des animations.
+- **Mode jeu** : des leçons ludiques avec une série de réponses
+  visible, ses propres sons, des cœurs et un compte à rebours
+  optionnels, de l'XP bonus de série et la mascotte Lernfunke avec des
+  variantes de couleur débloquées par le niveau, les badges ou l'XP.
+- **Arcade** : quatre mini-jeux courts depuis une carte du tableau de
+  bord : Learn Memory avec des paires tirées de tes propres leçons
+  (gratuit), plus Tic-Tac-Toe, Snake et Simon, débloqués avec de l'XP.
+  Les jeux eux-mêmes ne rapportent pas d'XP.
+- **Avatar** : téléverse une image ou choisis l'une des huit figures
+  prédéfinies, avec des cadres décoratifs débloqués par le niveau, la
+  série ou l'XP.
+
+Voir [Célébrations et encouragements](../user-guide/celebrations.md) et
+[Arcade](arcade.md).
 
 ## Exports et sauvegarde
 
@@ -202,8 +231,6 @@ Voir [Sauvegarde et restauration](backup.md).
   du navigateur, les appels IA vont directement au fournisseur, aucun
   serveur nécessaire) ou mode serveur (backend FastAPI avec SQLite,
   multi-appareils).
-- **Synchronisation en réseau local** entre appareils avec appairage
-  par QR code et résolution de conflits.
 - **Lanceur de bureau** pour Linux, macOS et Windows : un
   auto-hébergement en un clic basé sur Docker, avec détection de
   Docker contextuelle et autodiagnostic.
@@ -224,8 +251,9 @@ Voir [Installation](../install/launcher.md).
   Entrée fait avancer les leçons, Tab navigue entre les trous du
   texte à trous.
 - **Prise en charge des lecteurs d'écran** : landmarks, étiquettes
-  ARIA et régions live, tableaux de données pour les graphiques,
-  gestion du focus des dialogues.
+  ARIA et régions live, un titre par page dans la langue de
+  l'interface (« Paramètres - Adaptive Learner »), tableaux de données
+  pour les graphiques, gestion du focus des dialogues.
 - La **réduction des animations** est respectée partout ; lecture à
   voix haute (TTS) pour les leçons et le chat.
 - **Aide contextuelle dans l'app** : le panneau d'aide ouvre

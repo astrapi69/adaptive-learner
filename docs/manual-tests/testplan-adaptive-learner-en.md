@@ -55,6 +55,16 @@ A real round-trip, not a simulation:
       #2050 path!), completed set correct, own exercise present, settings
       plausible.
 - [ ] TC-0007 Then continue one lesson normally - no follow-on error.
+- [ ] TC-0953 Connected repos and invites (#3412): before the export, connect a
+      content repository of your own, redeem an invite and switch the
+      Learning Repository on. After wipe and import, the repository and the
+      invite are back in Settings > Content, updates load again, and the
+      Learning Repository is switched on. A private repo asks for its token,
+      and the Learning Repository folder is this device's default folder
+- [ ] TC-0954 AI check reports (#3412, browser mode): before the export, run the
+      AI content check on a set; the set shows the "AI-checked" badge. After
+      wipe and import it shows the badge again, without a new check and
+      without an API call
 
 Document the result (partial failures individually too). On ANY deviation:
 screenshot + which step, which becomes an issue with forensics.
@@ -334,6 +344,13 @@ Never run yet. Do it NOW.
 - [ ] TC-0076 API keys NOT in the backup (security check)
 - [ ] TC-0077 After restore: the provider overview (Settings → AI) shows the
       restored settings WITHOUT a reload (settings-refresh-bus, #1769)
+- [ ] TC-0972 Device switch via Settings (#3785): on device B play a lesson and
+      export a backup; on device A create an OWN profile, start and pause a
+      different lesson, then import B's backup via Settings → Data. The
+      confirmation dialog says beforehand that the backup belongs to another
+      profile. Afterwards: profile A stays active, B's lesson shows its
+      progress on the learning path, A's paused lesson is still under
+      "Continue", no error message.
 
 ---
 
@@ -532,6 +549,12 @@ Requires domain knowledge. Not automatable.
       "2 / 5 paired" directly left of "Check" and counts along with every
       pair; it is absent on theory steps, after "Check" and on the summary,
       and the same in the review / shuffle / endless runners
+- [ ] TC-0949 Matching, re-pairing instead of undoing (#3237): tapping a paired tile
+      only selects it (selection ring), the counter stays; then tap a tile
+      in the other column: if it is free, the pair moves there; if it is
+      paired, the two pairs swap partners. The counter never drops, and a
+      full board stays full. The same when starting in the right column;
+      Ctrl/Cmd+Z still undoes the last pair
 
 - [ ] TC-0132 Matching: long words wrap inside the tile (#3174): open a matching
       exercise whose word is wider than the tile on a NARROW device (iPhone,
@@ -606,6 +629,30 @@ preview delivery). In the regular build the mode does not exist.
       beside it on the right; mobile: tightly packed or a clean wrap,
       no overlap) (#1942)
 - [ ] TC-0150 Exam mode: no hints, result at the end, 1.5x XP
+- [ ] TC-0955 Exam mode with the set's evaluation block (#3736, #3740): connect the
+      repo `astrapi69/adaptive-learner-content-test`, default mode Exam, own
+      pass threshold 80%. Pilot lesson (`evaluation-pilot-from-de`) with 7 of
+      10 correct: **Passed**, heading "Hauptstadt-Prüfung", note "Evaluated by
+      this set's own rules, not your own pass threshold", mark "(pass ≥ 60%)";
+      **no stars** and no star message (such as "Good start - keep going!"),
+      the score bar stays. Control lesson (`evaluation-pilot-control-from-de`)
+      with 7 of 10: **Not passed** against your own 80%, no note, stars and
+      message as before. The same pilot lesson in practice mode: no exam
+      card, stars and summary as before. Resume case (#3742): start the pilot
+      lesson in practice mode (a few answers), leave it, set the default mode
+      to Exam, open the lesson again: the dialog says "This run was started
+      in another mode ...", **no "Continue"**, only "Start over"; after
+      starting over the first question shows "Exam: you only see at the end
+      whether an answer was right ...", and 7 of 10 correct gives
+      **Passed**. The reverse (exam started, opened in practice mode) offers
+      no "Continue" either. An exam is one sitting (#3750): start an exam,
+      answer one question, leave, open it again in exam mode: the dialog says
+      "A started exam cannot be continued ...", no "Continue"; after starting
+      over only this sitting's answers count (all correct gives 10 of 10).
+      After "Start over" or "Retry exam" the mode can be chosen again until
+      the first question is answered (#3746).
+      Under the pass threshold in Settings it says
+      "Sets with their own pass mark use that mark instead."
 - [ ] TC-0151 Timed mode: countdown bar visible, color transition
 - [ ] TC-0152 Error mode: only error cards (after at least 1 error)
 - [ ] TC-0153 Reverse: matching columns swapped
@@ -620,6 +667,10 @@ preview delivery). In the regular build the mode does not exist.
       Enter (without a click) triggers the PRIMARY card "Next Lesson ->
       Start" - not a secondary card (e.g. "Review"); clicking the buttons
       still works (#1943)
+- [ ] TC-0963 Time in the summary (#3747): play a lesson for a few minutes, leave,
+      reopen it, choose "Start over" and finish quickly: the summary shows only
+      the minutes of this run, not the sum of all visits. Statistics still
+      count the whole study time
 - [ ] TC-0159 Last lesson of a set (no "Next Lesson"): on the summary, Enter does
       nothing wrong - no error, no navigation to a non-existent lesson
       (#1943)
@@ -774,7 +825,7 @@ preview delivery). In the regular build the mode does not exist.
 - [ ] TC-0205 Game mode on, play a lesson with a streak of at least 3 correct
       answers in a row: the summary shows a green "+N XP" next to
       "Best streak: N"; the displayed lesson XP include the bonus, and
-      "Mark as complete" credits exactly the same value (dashboard XP
+      reaching the summary credits exactly the same value (dashboard XP
       rise by the displayed sum)
 - [ ] TC-0206 The bonus counts from the THIRD streak answer (+1 per further
       correct answer in a row); a wrong answer stops the growth, a new
@@ -960,7 +1011,8 @@ preview delivery). In the regular build the mode does not exist.
       hop with the new word
 - [ ] TC-0258 Matching exercise: a freshly formed pair "snaps" together with a
       pop on both tiles; after checking, correct pairs hop briefly;
-      tapping a pair still undoes it
+      tapping a pair selects it for re-pairing (#3237), as in the
+      classic mode
 - [ ] TC-0259 Behaviour unchanged: selection, checking, score and resolution
       are identical to normal mode in all three exercise types
 - [ ] TC-0260 Game mode off: classic lists/chips/tiles without the game look;
@@ -1380,7 +1432,8 @@ per-card "Export" / "Export as set"; accepts `.json` (a single lesson)
 + `.zip` (a whole set = `manifest.yaml` + `lessons/`).
 
 - [ ] TC-0381 Import a `.json` lesson: preview shows title · language · N
-      lessons · M exercises BEFORE confirming
+      lessons · M exercises BEFORE confirming. The language is the lesson's
+      own (an es/de lesson shows ES), not EN across the board (#3395).
 - [ ] TC-0382 Import a `.zip` set: preview + correct lesson count
 - [ ] TC-0383 Name collision: three-way dialog appears (Overwrite /
       Import as copy / Cancel), NO silent overwrite;
@@ -1513,6 +1566,20 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       double credit)
 - [ ] TC-0380 Check BOTH: desktop/server (API mode) AND iOS PWA / GitHub Pages
       (Dexie mode) - the hint + removal button must work in BOTH modes
+
+### TS-0128 Share wizard - level for sets that do not teach a language (#3356)
+
+Where: Share wizard step 1, the "Level" select. A knowledge set is one
+with the same source and target language or with a knowledge domain
+(such as `knowledge`, `psychology`).
+
+- [ ] TC-0934 Share a knowledge set whose stored level is "none" -> the select
+      shows "No level (not a language course)", no error, "Continue" is
+      enabled (before: an estimated CEFR level)
+- [ ] TC-0935 For a knowledge set, choose "No level (not a language course)" ->
+      no error, "Continue" stays enabled; for a language set the same
+      entry still reads "Select a level…" and blocks "Continue" with
+      "Choose a CEFR level (A1-C2)."
 
 ### TS-0054 Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
@@ -1738,9 +1805,10 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       (`domain: psychology` …); a language lesson carries NO `domain` field.
       Editing a saved knowledge lesson reopens with the right domain +
       content language
-- [ ] TC-0417 **Language-pair check row (#1929):** Review shows SIX checklist rows
-      (title, "Language pair is valid", ≥4 cards, ≥5 exercises, ≥2 types,
-      valid structure). "Language pair is valid" is green once BOTH source
+- [ ] TC-0417 **Language-pair check row (#1929):** Review shows FOUR checklist rows
+      for local save (title, "Language pair is valid", ≥4 cards, valid
+      structure; the exercise and type minimums sit under "Needed for sharing"
+      since #3389). "Language pair is valid" is green once BOTH source
       and target are supported codes — a same-language pair (de → de) is
       VALID (no "source != target" gate)
 - [ ] TC-0418 **Structure-check reason (#1724):** a failing "Valid lesson
@@ -1981,6 +2049,19 @@ lesson carrying a "based on" credit (#2655) or an imported lesson whose
       set with a `from_cards` matching (e.g. `psych-rhetorik`, lesson 1) and
       edit that exercise → Save is enabled (it used to stay blocked). In every
       case: what the editor lets you save also saves as a lesson.
+- [ ] TC-0928 **Local save checks validity, sharing the engine's minimums (#3389):**
+      New lesson with 5 cards; in step 3 generate or keep only **one**
+      matching → the hint reads "Sharing needs at least 5 exercises" and
+      "Next" is enabled. With zero exercises "Next" blocks with "Generate at
+      least one exercise to continue." Step 4 lists three rows under "Needed
+      for sharing" (at least 5 exercises, at least 2 exercise types, every
+      exercise has enough answers or pairs). "Save locally" is enabled, "Save
+      and share" disabled. With the generator (matching + free text, 10
+      exercises) the third row is red while a free-text exercise has only one
+      accepted answer; after a second answer on each it turns green and "Save
+      and share" is enabled. Clicking it opens My content with the share
+      wizard for exactly this lesson (#3660), which reports no minimum. Editing
+      a saved lesson shows no share rows.
 - [ ] TC-0434 **Convert exercise type -> free text (EXP-050 Stage 1, #2511):** In the
       inline editor (Step 3, `ExerciseEditor`) of a **Word tiles** or
       **Multiple choice** exercise, a **"Exercise type"** select at the top
@@ -2136,6 +2217,11 @@ each card row (`CardImageField`).
       appears; "Back to options" returns to the choice and nothing is
       reset; press "Start over" again and "Start over" in the question ->
       the lesson begins at step 1
+- [ ] TC-0930 Going back behind an exercise (#3365): play a lesson past its second
+      exercise, press "Back" to a theory step before it and leave the lesson
+      through the logo -> on the dashboard, in the "Continue learning" card,
+      press "Resume", then "Resume" in the dialog -> the lesson opens exactly
+      that theory step (before: the step after the last exercise)
 - [ ] TC-0452 Auto-advance + "Back" (#1921): with "Advance automatically"
       (Settings -> Learning) ON, answer an exercise correctly so the app
       jumps to the next step by itself -> then click "Back": the previous
@@ -2213,6 +2299,15 @@ each card row (`CardImageField`).
 - [ ] TC-0474 Browser mode (GitHub Pages / Dexie): the card stays visible with
       the notice "Only available with the desktop app."; DevTools >
       Network shows no request to /api/plugins/health
+- [ ] TC-0936 "Learning Repository" card, fresh install: the "Repositories directory"
+      field is empty, below it reads "Leave empty for the default: repos
+      in the data directory (see About)", no fixed Linux path; at 375 px
+      the hint wraps instead of being cut off (#3451)
+- [ ] TC-0937 Desktop app, git persistence on, field left empty, saved, then "Persist
+      to git" on the Learning Repository page: toast "Persisted to git:
+      <commit>"; on disk the folder "repos/<project id>/" with README.md
+      sits below the data directory that Settings > About shows; a custom
+      path entered in the field still wins
 
 ### TS-0061 Diagnostics probe: mis-tap mark + actions (#3043)
 - [ ] TC-0475 Probe ON, measurement bar visible: next to "Werte kopieren" and
@@ -2449,9 +2544,11 @@ each card row (`CardImageField`).
 - [ ] TC-0553 Fresh install (or Settings > Learning > "Lesson summary" with only
       "Result and statistics" and "XP reward" ticked): finish a lesson -
       the summary shows stars, score, time, "+N XP" and directly below
-      "Mark as complete", "Next lesson", "Practice again" and "Back"; no
+      "Next lesson", "Practice again" and "Back"; no
       favorites hint, no sharing, no answers overview, no export, no "Why
-      you missed these", no correction round, no next-step cards
+      you missed these", no correction round, no next-step cards (if the run
+      had mistakes, only the "Fix mistakes (N)" button sits above them,
+      #3575)
 - [ ] TC-0554 On a phone (portrait): everything down to the continue buttons is
       visible without scrolling
 - [ ] TC-0555 "Detailed evaluation": the set-style review and every switched-off
@@ -2468,6 +2565,35 @@ each card row (`CardImageField`).
 - [ ] TC-0558 "Why you missed these" ticked but "Explanations after the answer"
       (Review) off: the block is missing from the compact view and only
       appears in the detailed evaluation
+- [ ] TC-0931 **Fix mistakes from the compact view (#3575):** compact default, finish
+      a lesson with two exercises answered wrong: "Fix mistakes (2)" sits
+      above the continue buttons without any section ticked in Settings.
+      Tap it: the correction round opens directly on the first exercise
+      (no second click on "Fix now"), the button disappears. Solve one
+      correctly, reload or finish the lesson again: "1 of 2 corrected" and
+      "Fix mistakes (1)". All corrected: only "2 of 2 corrected", no
+      button. A lesson without mistakes: neither button nor line. On a
+      phone (375 px) without horizontal scrolling
+- [ ] TC-0932 **Correction summary after correcting (#3575):** finish a lesson with two
+      mistakes (one a free-text exercise with its own explanation), tap
+      "Fix mistakes" and finish the correction round, one right and one
+      wrong: below the round, "Your corrections" appears with "First try:
+      x of y correct", "1 of 2 corrected" and both mistakes; the corrected
+      one carries "Corrected", the open one "Still open" with your own
+      wrong answer, the correct answer and the exercise's explanation.
+      Then "Redo all exercises" to the end: below "Back to lesson" the
+      same summary shows the new state. A set's flash round ends with the
+      score only. Both in API and browser mode, on a phone (375 px)
+      without horizontal scrolling
+- [ ] TC-0933 **Marks in the detailed evaluation (#3575):** finish a lesson with two
+      mistakes, correct one of them (correction round or Retry errors), then
+      open "Detailed evaluation": in the answers overview every wrongly
+      answered exercise carries "Corrected" or "Still open", exercises
+      answered right carry no mark. In "Why you missed these" the open
+      mistake shows "Still open", the corrected one stays in the list with
+      its question, first answer, correct answer and "Corrected". The compact
+      view shows none of these marks. Both in API and browser mode, on a
+      phone (375 px) without horizontal scrolling
 
 Note for every step of this plan that uses export, share, favorite, all
 answers, "Why you missed these", fix mistakes or the next-step cards:
@@ -2506,6 +2632,23 @@ switch the section on in Settings first or press "Detailed evaluation"
       toggle and no Diagnostics section anymore
 - [ ] TC-0571 The direct link `?tab=diagnostics` opens the tab immediately
 
+### TS-0136 Error report: environment and action history only on request (#3804)
+- [ ] TC-0979 Settings > Diagnostics & Support > "Create error report": "Error
+      message and stacktrace" is ticked and locked, "Environment info" and
+      "Action history" are NOT ticked; the same after "Report Issue" in an
+      error toast
+- [ ] TC-0980 Without ticking anything: "Show preview" shows neither
+      "## Environment" nor "## Action history", and the issue form that
+      "Open on GitHub" opens contains neither section
+- [ ] TC-0981 "View" next to the action history shows the recorded actions
+      without ticking the box; the report stays without the action
+      history
+- [ ] TC-0982 "Action history" ticked: preview and GitHub form contain
+      "## Action history"; "Environment info" ticked: both contain
+      "## Environment" (version, browser, OS, route)
+- [ ] TC-0983 "Download JSON" with the action history unticked: the file holds
+      no events (`"events": []`); ticked, it holds them
+
 ### TS-0079 Discover + Registry (since v2.2.0)
 - [ ] TC-0572 Source-language filter as a visible chip on first view
       (no longer hidden behind "Filter"), "All languages" persists
@@ -2534,6 +2677,13 @@ switch the section on in Settings first or press "Detailed evaluation"
       into the source order (kapitel-1..kapitel-10), the success screen
       reports the NN-prefix renaming; the exported repo lists the
       lessons in source order
+- [ ] TC-0929 **"Share as repository" yields a loadable repo (#3403):** after the
+      export, the GitHub repo holds a `manifest.yaml` with a `sets` list
+      (an entry with `path: sets/<set-id>`), a `manifest.yaml` of its own
+      under `sets/<set-id>/` with `metadata.lessons`, and the lessons in
+      `sets/<set-id>/lessons/`. Add this repo under Settings > Data >
+      Sources: the set appears in the content browser, downloads, and
+      every lesson opens
 
 ### TS-0080 Discover Stage 1: facets, marks, empty state (EXP-048, #2320-#2324)
 
@@ -2743,8 +2893,23 @@ step.
 - [ ] TC-0640 Dashboard: the row reads "Resume · Step 4/8" (not "1/8")
 - [ ] TC-0641 Click "Resume" → resume dialog → "Continue" lands on exactly the step
       the row names
-- [ ] TC-0642 Play to the summary without "Mark complete", leave through the logo →
-      the row reads "Step 8/8", never "9/8"
+
+### TS-0135 Completing a lesson without a button (#3792)
+
+Where: lesson summary; then the set view and the dashboard. Before, only the
+"Mark as complete" button completed a lesson; going on with "Next lesson" left
+it open, without lesson XP.
+
+- [ ] TC-0973 Play a lesson to the summary: there is no "Mark as complete" button, the
+      check mark appears next to the heading
+- [ ] TC-0974 Go on with "Next lesson", then open the set view: the played lesson is
+      marked done
+- [ ] TC-0975 Dashboard: the XP rose by the lesson XP the summary showed
+- [ ] TC-0976 Play to the summary and leave through the logo: the lesson is neither
+      under "Continue Learning" nor among the paused lessons, it is completed
+- [ ] TC-0977 Open a completed lesson again: the XP do not rise a second time
+- [ ] TC-0978 Without a learner profile (e.g. through a share link) play to the
+      summary: the hint says that nothing is saved without a learner profile
 
 ### TS-0089 Update guard: no silent progress loss on a set update (#2128)
 
@@ -3043,10 +3208,38 @@ Location: Settings → Data → Recommended repositories.
       session with the backend stopped → instead of the welcome it says "The
       earlier conversation could not be loaded. Nothing was deleted." with "Try
       again"; once the backend runs, the click loads the history
-- [ ] TC-0732 Imported session opens with the AI asking the first question on its own
+- [ ] TC-0732 Imported session, first open: the AI asks the first question on its own
       (no user turn first), the chat starts clean
+- [ ] TC-0984 Reload an imported session, reopen it via "Continue session" and open the
+      session URL in a second tab (#3806): each time the stored conversation is
+      there (the AI's first question, no user bubble before it), and the AI does
+      not ask again. The developer tools (network) show no new chat request: in
+      the browser version no POST to the AI provider (e.g.
+      api.anthropic.com/v1/messages), in the desktop app no POST
+      .../message/stream. A new tab may still load the model list with a GET;
+      that is not a chat request
+- [ ] TC-0950 Auto-loop in the browser version (#3436): in the Pages build (Dexie)
+      take a session to step 7; below the chat a notice with a monitor icon
+      appears: in the desktop app a new cycle starts automatically after
+      that, the browser version cannot do it yet. No notice before step 7;
+      in the desktop app no notice at step 7, the new cycle starts there
 - [ ] TC-0733 AI content validation: report sensible? provider+model shown?
 - [ ] TC-0734 No button without a key leads to an error toast (disabled + tooltip)
+- [ ] TC-0985 Privacy note before sending (#3812, #3840): the note below the
+      cost estimate of the AI content check (`ai-validation-privacy`) and the
+      one in the quality step when sharing (`content-ai-privacy`) name what is
+      sent: the AI content check the set's cards (identifier, front, back,
+      notes, as a complete list), the review when sharing the lessons to be
+      shared (among other things cards, texts and exercises), both also the
+      set's source language, target language and level, but neither profile
+      nor learning progress; and that the provider also receives, among other
+      things, the IP address and the API key (in every UI language with "among
+      other things" or its equivalent, never as a complete list); the sharing
+      note names the provider in both sentences as the settings do (e.g.
+      "Anthropic Claude"), in every UI language, never by its internal id
+      ("anthropic") and never as `{provider}`; the "Privacy policy" link opens
+      the docs site's privacy policy in the UI language in a new tab (German
+      without a prefix, English under `.../docs/en/legal/privacy/`)
 
 ### TS-0100 Batch "Generate for all lessons" (#1896)
 - [ ] TC-0735 My Content → My Lessons, a set where ALL lessons already have
@@ -3175,6 +3368,84 @@ screen auto-locks).
       button still turns the screen off immediately and stops playback -
       no web API can prevent that
 
+#### TS-0132 End read-aloud for this lesson (#3760)
+
+The X in the read-aloud player ends read-aloud for the current lesson. The
+saved "Auto read-aloud" setting is not touched; switching it off for good
+is done with the toggle in the lesson options only.
+
+- [ ] TC-0956 Open a lesson, turn on "Auto read-aloud" in the lesson options: the
+      player appears at the bottom with an X on the right ("End
+      read-aloud"), no separate stop button
+- [ ] TC-0957 Tap the X: playback ends, the player disappears, the "Auto
+      read-aloud" toggle is off in this lesson
+- [ ] TC-0958 "Next" to the following step: nothing is read, the player stays away
+- [ ] TC-0961 Open another lesson: it is read aloud automatically again, the toggle
+      is on
+- [ ] TC-0960 Tap the X there again, then turn the toggle in the lesson options
+      back on: the current step is read at once and the player reappears
+- [ ] TC-0962 Switch the toggle in the lesson options off and open another lesson:
+      "Auto read-aloud" stays off
+
+#### TS-0139 Read-aloud takes a voice of the device (#3805)
+
+An online voice (in Chrome the "Google ..." voices) sends the text being read
+to its provider. With "Default (auto-pick)" the app takes a voice of the
+device whenever there is one for the language; a voice you choose yourself
+always applies. In the first moments after a page loads, a tap can still read
+with an online voice, because the device has not yet made its own voices
+available; the privacy policy says so too.
+
+- [ ] TC-0995 Windows or macOS, Chrome: Settings > Learning > Reading aloud and
+      dictation > Voice set to "Default (auto-pick)", open a German lesson
+      and have the theory step read with the read-aloud button, with the R
+      key, with "Read all" and with "Auto read-aloud" on: a system voice
+      reads (to compare, briefly pick "Google Deutsch" in the list: the two
+      sound clearly different)
+- [ ] TC-0996 "Auto read-aloud" on: close the browser completely, reopen it, open
+      the lesson straight from the dashboard, without visiting Settings
+      first: the very first step is read by a system voice, not "Google
+      Deutsch", and R then reads with it as well
+- [ ] TC-0997 Pick "Google Deutsch" in the list: button, R key and "Read all" read
+      with "Google Deutsch" (your own choice applies, also for an online
+      voice)
+- [ ] TC-0998 Chrome on Linux (offers only online voices on its own): with "Default
+      (auto-pick)" the app still reads aloud, then with "Google Deutsch"
+
+#### TS-0133 "Install as an app" hint as a card on the dashboard (#3765)
+
+On an iPhone in Safari (not opened from the home screen) the hint appears as
+a dismissable card at the top of the dashboard, no longer as a bar fixed at
+the bottom of the screen.
+
+- [ ] TC-0964 Fresh profile on the iPhone in Safari: the start page, onboarding and
+      assessment show no install hint; "Next question" and "Continue later"
+      can be tapped directly
+- [ ] TC-0965 On the dashboard the "Install as an app" card sits at the top in the
+      page flow and scrolls with it; "Learning Path" and "Create a lesson"
+      stay tappable
+- [ ] TC-0966 Content (the last "Download") and Settings > Learning ("Reset
+      progress") can be tapped down to the end of the page
+- [ ] TC-0967 Dismiss the card: it does not come back after a reload; the
+      instructions in Settings stay available
+
+#### TS-0134 "Add to home screen" banner as a card on the dashboard (#3782)
+
+In Chrome on Android or on the desktop (not installed) the banner appears as
+a card at the top of the dashboard, no longer as a bar fixed at the bottom of
+every page.
+
+- [ ] TC-0968 Fresh profile in Chrome on Android: the start page, onboarding and
+      assessment show no banner; "Next question" and "Continue later" can be
+      tapped directly
+- [ ] TC-0969 On the dashboard the "Add to home screen" card sits at the top in the
+      page flow, also when the app only got there later; "Learning Path" and
+      "Create a lesson" stay tappable
+- [ ] TC-0970 Settings > Learning ("Reset progress") can be tapped down to the end of
+      the page, on the phone and on the desktop
+- [ ] TC-0971 "Not now": the card does not come back after a reload (only after
+      7 days); "Install" opens the browser's install dialog
+
 #### TS-0109 App update as an installed iOS PWA (#1357 / #1873) - MANDATORY
 
 The one path no automated test covers: on iOS/WKWebView a new service
@@ -3263,7 +3534,7 @@ no numbers that could go stale, on purpose.
 
 Legal notice and privacy policy live as help pages on the docs site
 (`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; other languages under
-`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, locales without their own version fall back to German).
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`; UI languages without their own docs version (hi, id, ko) land on the English one).
 
 - [ ] TC-0805 App start page `/` (no signed-in learner): below "Read the
       documentation" the row "Legal notice · Privacy policy"
@@ -3273,12 +3544,52 @@ Legal notice and privacy policy live as help pages on the docs site
 - [ ] TC-0806 Settings → About → card "License & resources": two new rows "Legal
       notice" and "Privacy policy" (`about-imprint-link`,
       `about-privacy-link`), same targets, new tab.
-- [ ] TC-0807 Help panel and docs site: section "Legal" with both pages in the
-      navigation (DE + EN); the legal notice names name, address, email; the
-      privacy policy carries a date and names GitHub Pages, YouTube preview
-      images and the AI providers used with the learner's own key.
+- [ ] TC-0807 Docs site (#3807, #3139): section "Legal" with both pages in the
+      navigation of every language; the legal notice names name, address and
+      the email asterios.raptis@web.de, the privacy policy the same address and
+      its date at the top; it addresses the reader formally in every language,
+      and every version except the English one says under the date that it
+      uses the formal address as a legal text; de, es, el and ja add that the
+      app and the rest of the help address the reader informally (fr, pt and
+      tr do not, as they mix both forms there). Scope: the app, the public preview
+      `astrapi69.github.io/adaptive-learner-content-test` and the docs pages,
+      plus one sentence on self-installed copies (update check at
+      `api.github.com`).
+      "The short version" lists when data leaves the device; one section each
+      for hosting, loading learning content (with the automatic checks), GitHub
+      features with your own access token, error reports, AI features with your
+      own key (`api.anthropic.com`, `api.openai.com`,
+      `generativelanguage.googleapis.com`, each with recipient and address),
+      voice input, read-aloud, share
+      buttons (Facebook, LinkedIn, X, WhatsApp), external links, storage on the
+      device (with sessionStorage, Cache Storage and the docs colour scheme),
+      contact by email and rights; no statement about YouTube preview images
+      any more. Every language version has the same sections in the same
+      order.
 - [ ] TC-0808 Share preview (e.g. in a messenger): title, description and image
       appear (the landing page's Open Graph data, not the app's).
+
+### TS-0137 Docs site loads nothing from a third party (#3802)
+
+No page of the docs site loads anything on its own from a host other than
+`astrapi69.github.io`: no web font, no script, no image, no API call. Check
+on the published site after the release, with the browser's developer tools
+(Network, cache disabled).
+
+- [ ] TC-0986 Open `astrapi69.github.io/adaptive-learner/docs/`, the privacy policy,
+      an English and a Japanese page, and run a search (e.g. "backup"): every
+      request goes to `astrapi69.github.io`, none to `fonts.googleapis.com`,
+      `fonts.gstatic.com`, `api.github.com` or `unpkg.com`.
+- [ ] TC-0987 Header: the link "astrapi69/adaptive-learner" with the GitHub icon is
+      there and opens the repository on GitHub; version, stars and forks no
+      longer appear. The pencil at the top right of a page opens its source
+      file on GitHub.
+- [ ] TC-0988 Text and code use the device's system font (not Roboto); in a narrow
+      window there is no horizontal scrolling and the navigation opens from
+      the menu.
+- [ ] TC-0999 Search for a word (e.g. "backup") and open a result (#3843): the address
+      bar shows the page without `?h=`, no request carries the search terms;
+      the matched words are no longer highlighted on the page.
 
 ---
 
@@ -3348,6 +3659,14 @@ Location: Settings > General > Profile, below the figure gallery.
 - [ ] TC-0831 Backup round-trip: pick a frame + buy one, export (`.alb`), wipe
       data, import - selection and purchase are back
 - [ ] TC-0832 Both storage modes behave identically (XP deduction included)
+- [ ] TC-0951 Ownership follows the purchase, not the browser (#3445, API mode):
+      buy the Star frame, then open the same user in a second browser (or
+      after clearing site data) and go to Settings > General > Profile:
+      Star is unlocked and selectable, the XP was deducted only once. The
+      same for the Gold mascot variant and an arcade game
+- [ ] TC-0952 Purchases from before #3445: a frame bought before the update stays
+      unlocked after it, the XP does not change when the gallery first
+      opens, and afterwards the frame is unlocked in a second browser too
 
 ### TS-0120 Review: errors only, no endless round (#3170)
 
@@ -3588,6 +3907,94 @@ Documented here only to show what is covered.
 
 ---
 
+### TS-0129 Progress report as Markdown/PDF in the UI language (#3426)
+
+- [ ] TC-0938 UI language French (or Japanese), Settings > Data > Export,
+      download the progress report as Markdown: title, sections and
+      table headers are in French (e.g. "Progression", "Projets"), not
+      English
+- [ ] TC-0939 Same with the session detail and PDF (print dialog): roles, rating
+      and step evaluations in the UI language
+- [ ] TC-0940 UI language German: the step names in the report match the app's
+      (e.g. "Eingabe" instead of "Input")
+
+### TS-0130 Translated control and screen-reader texts (#3425)
+
+- [ ] TC-0941 Lesson with a free-text exercise, type a wrong answer on purpose
+      (leave out one word, swap another), screen reader on (VoiceOver /
+      NVDA / TalkBack): the answer diff reads "Missing: <word>" and "You
+      wrote <word>, expected <word>" in the UI language (German: "Fehlt:",
+      "Geschrieben: ..., erwartet: ..."); visually the diff looks unchanged
+- [ ] TC-0942 Create lesson > Cards: the empty fields show "Word or phrase" and
+      "Meaning" instead of "Bonjour" / "Guten Tag"
+- [ ] TC-0943 Anki page, edit a card: the type select offers "Basic" and "Cloze"
+      (German: "Einfach", "Lückentext")
+- [ ] TC-0944 Learning path and the dashboard "Continue" card: the screen reader
+      reads the stars as "2 of 3 stars" instead of "2/3"
+- [ ] TC-0945 Share wizard and "Share as repository": the screen reader names the
+      X button "Close" in the UI language (German: "Schließen")
+
+### TS-0131 Page title in the browser tab (#3431)
+
+- [ ] TC-0946 Click through Dashboard, Learning Path, Content, Settings and a
+      lesson: the tab title reads "<page name> - Adaptive Learner" each
+      time (e.g. "Settings - Adaptive Learner", "Lesson - Adaptive
+      Learner"); the landing page shows only "Adaptive Learner"
+- [ ] TC-0947 Settings > General, UI language to German: the tab title switches to
+      "Einstellungen - Adaptive Learner" without a reload
+- [ ] TC-0948 Browser history (long-press the back button): the entries carry
+      different page names instead of one identical title
+
+### TS-0138 Content loads nothing from other servers (#3803)
+
+Preparation: import a lesson as `.json` through My content → "Import
+Lesson" whose `resources` carry an entry of type `youtube` with a
+`youtube.com/watch?v=` address and whose theory step contains an image
+`![Skizze](https://example.com/skizze.png)`. Keep the Network tab of the
+developer tools open.
+
+- [ ] TC-0989 Play the lesson to the summary: the video card under "Explore further"
+      ("Vertiefe das Thema") shows a video icon instead of a preview image,
+      and the network shows no request to `img.youtube.com`. A click on the
+      card opens the video on YouTube in a new tab
+- [ ] TC-0990 Theory step: the image shows as a link with an image icon and the text
+      "Skizze", not as an image; the network shows no request to
+      `example.com` until the link is clicked (new tab). The same holds for
+      an image in an explanation after an exercise and in an AI reply in the
+      session chat
+- [ ] TC-0991 In the text editor (e.g. Rate this session → note) paste an image from a web
+      page: it is not loaded, the network shows no request to the other
+      server
+- [ ] TC-0992 Create lesson, hotspot exercise: under "Advanced: use an asset path"
+      enter `https://example.com/karte.png`. Instead of the image and the
+      drawing canvas a link with an image icon and the text "Stimulus image"
+      appears; the network shows no request to `example.com` until the link
+      is clicked. An uploaded image shows the canvas as before
+- [ ] TC-0993 A set with its own images (a picture-choice exercise with images from
+      `assets/`) shows its images as before
+- [ ] TC-0994 GitHub Pages version in normal use: the console shows no
+      Content-Security-Policy message, content loads from the repositories,
+      AI replies with your own key arrive, and after a reload without network
+      the app still starts (service worker)
+
+### TS-0140 LAN sync carries no API keys (#3854)
+
+Preparation: the desktop app on the local network with a stored Anthropic
+key; the browser version with a different stored Anthropic key, paired
+with the desktop app under Settings > Synchronisation. In the browser,
+keep the developer tools open on the Network tab.
+
+- [ ] TC-1000 Press "Sync Now": no request to `/api/sync/push` or `/api/sync/pull`
+      and no response to one contains either key or an `api_key_` field, and
+      no request pushes or asks for the `api_key_backups` table
+- [ ] TC-1001 After the sync the AI in the browser still answers with the browser's
+      key and the desktop app still with its own; Settings > AI shows each
+      device's own key on both devices
+- [ ] TC-1002 Change the profile picture on both devices, then sync: the conflict
+      dialog appears, neither version of the entry contains an `api_key_`
+      field, and "Smart Merge (AI)" sends the AI provider no key (Network
+      tab: the request to the provider)
+
 ## Automated: Unit + Component Tests (Vitest, 7200+;
 ## current number see docs/audits/current-coverage.md)
 
@@ -3630,7 +4037,7 @@ Run: `make test` (backend part)
 
 ---
 
-## Automated: Dexie-Smoke E2E (Playwright TS, 45 spec files)
+## Automated: Dexie-Smoke E2E (Playwright TS, every spec file under `e2e/dexie/`)
 
 Coverage:
 - Full lesson playthrough (all exercise types)
@@ -3650,6 +4057,10 @@ Coverage:
   (`lesson-summary-favorite.spec.ts`, #1649)
 - Combine lessons: select -> dialog -> new set persisted, originals kept
   (`combine-lessons.spec.ts`, #1741)
+- No request to an unlisted host on the main surfaces and in a lesson with
+  foreign images, YouTube resources and an AI reply; set images load, the
+  page's Content-Security-Policy refuses foreign images and media, no
+  Referer to third parties (`external-hosts.spec.ts`, #3803)
 
 Run: `make test-dexie-smoke`
 

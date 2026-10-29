@@ -1,0 +1,326 @@
+# Data-model areas (#3828): the one human decision behind the generated
+# page docs/help/<lang>/developer/data-model.md. scripts/generate_er_diagrams.py
+# reads the tables, columns and foreign keys from the SQLAlchemy models and the
+# stores, fields and indexes from the final Dexie schema; everything here is
+# what those sources cannot say. `make sync-data-model` writes the pages,
+# `make sync-data-model-check` fails when this file and the sources disagree.
+#
+# areas      Every server table and every browser store belongs to exactly one
+#            area. `stores` maps each store to the server table it stands for,
+#            or to null when it exists only in the browser; both must be in
+#            the same area. Title and summary are frame text, one per help
+#            locale.
+# server_fields
+#            Every *_id column WITHOUT a ForeignKey. Declared foreign keys come
+#            from the models and must not be repeated here.
+# browser_fields
+#            Every *_id field of a browser row shape (the browser database has
+#            no foreign keys), plus any other field that refers to a store.
+#
+# A field entry is exactly one of
+#   {table: <name>, reason: ...} / {store: <name>}  a reference (dashed line)
+#   {external: <reason>}   names something outside this database
+#   {unrelated: <reason>}  an identifier that refers to nothing
+# Reasons are one line of English; the page lists them verbatim.
+
+areas:
+  - key: account
+    title:
+      en: Account and settings
+      de: Konto und Einstellungen
+      es: Cuenta y configuración
+      fr: Compte et paramètres
+      el: Λογαριασμός και ρυθμίσεις
+      pt: Conta e configurações
+      tr: Hesap ve ayarlar
+      ja: アカウントと設定
+    summary:
+      en: The user, the user's settings with the API keys, and the rollback cache of working API keys; in the browser also the plugin settings and device-local user data.
+      de: Der Benutzer, seine Einstellungen mit den API-Schlüsseln und der Rollback-Cache funktionierender API-Schlüssel; im Browser außerdem die Plugin-Einstellungen und gerätelokale Benutzerdaten.
+      es: El usuario, su configuración con las claves de API y la caché de reversión de claves de API que funcionan; en el navegador, además, la configuración de los plugins y los datos de usuario locales del dispositivo.
+      fr: L'utilisateur, ses paramètres avec les clés API et le cache de restauration des clés API qui fonctionnent ; dans le navigateur, en plus, les paramètres des plugins et les données utilisateur locales à l'appareil.
+      el: Ο χρήστης, οι ρυθμίσεις του με τα κλειδιά API και η κρυφή μνήμη επαναφοράς των κλειδιών API που λειτουργούν· στο πρόγραμμα περιήγησης επιπλέον οι ρυθμίσεις των προσθέτων και τα τοπικά δεδομένα χρήστη της συσκευής.
+      pt: O usuário, as configurações dele com as chaves de API e o cache de reversão das chaves de API que funcionam; no navegador, também as configurações dos plugins e os dados de usuário locais do dispositivo.
+      tr: Kullanıcı, API anahtarlarıyla birlikte ayarları ve çalışan API anahtarlarının geri alma önbelleği; tarayıcıda ayrıca eklenti ayarları ve cihaza özgü kullanıcı verileri.
+      ja: ユーザー、APIキーを含むその設定、動作するAPIキーのロールバック用キャッシュ。ブラウザではさらにプラグイン設定と端末ローカルのユーザーデータ。
+    tables: [users, user_settings, api_key_backups]
+    stores:
+      users: users
+      userSettings: user_settings
+      apiKeyBackups: api_key_backups
+      pluginSettings: null
+      userData: null
+
+  - key: projects
+    title:
+      en: Learning projects
+      de: Lernprojekte
+      es: Proyectos de aprendizaje
+      fr: Projets d'apprentissage
+      el: Έργα μάθησης
+      pt: Projetos de aprendizagem
+      tr: Öğrenme projeleri
+      ja: 学習プロジェクト
+    summary:
+      en: A learning project with the learning profile from the assessment, and the subjects and tags that classify projects.
+      de: Ein Lernprojekt mit dem Lernprofil aus dem Lerntyp-Test sowie die Fachgebiete und Tags, die Projekte einordnen.
+      es: Un proyecto de aprendizaje con el perfil de aprendizaje de la evaluación, y las materias y etiquetas que clasifican los proyectos.
+      fr: Un projet d'apprentissage avec le profil d'apprentissage issu de l'évaluation, ainsi que les matières et les étiquettes qui classent les projets.
+      el: Ένα έργο μάθησης με το προφίλ μάθησης από την αξιολόγηση, καθώς και τα γνωστικά αντικείμενα και οι ετικέτες που κατατάσσουν τα έργα.
+      pt: Um projeto de aprendizagem com o perfil de aprendizagem da avaliação, e as matérias e tags que classificam os projetos.
+      tr: Değerlendirmeden gelen öğrenme profiliyle bir öğrenme projesi ve projeleri sınıflandıran konular ile etiketler.
+      ja: 評価から得た学習プロファイルを持つ学習プロジェクトと、プロジェクトを分類する分野とタグ。
+    tables: [learning_projects, learning_profiles, subjects, tags, project_subjects, project_tags]
+    stores:
+      learningProjects: learning_projects
+      learningProfiles: learning_profiles
+      subjects: subjects
+      tags: tags
+      projectSubjects: project_subjects
+      projectTags: project_tags
+
+  - key: sessions
+    title:
+      en: Sessions
+      de: Sitzungen
+      es: Sesiones
+      fr: Sessions
+      el: Συνεδρίες
+      pt: Sessões
+      tr: Oturumlar
+      ja: セッション
+    summary:
+      en: A learning session with its messages, ratings, notes and step evaluations.
+      de: Eine Lern-Sitzung mit ihren Nachrichten, Bewertungen, Notizen und Schritt-Auswertungen.
+      es: Una sesión de aprendizaje con sus mensajes, valoraciones, notas y evaluaciones de pasos.
+      fr: Une session d'apprentissage avec ses messages, évaluations, notes et évaluations d'étapes.
+      el: Μια συνεδρία μάθησης με τα μηνύματα, τις βαθμολογίες, τις σημειώσεις και τις αξιολογήσεις βημάτων της.
+      pt: Uma sessão de aprendizagem com suas mensagens, avaliações, notas e avaliações de etapas.
+      tr: Mesajları, puanlamaları, notları ve adım değerlendirmeleriyle bir öğrenme oturumu.
+      ja: メッセージ、評価、メモ、ステップ評価を持つ学習セッション。
+    tables: [learning_sessions, session_messages, session_ratings, session_notes, step_evaluations]
+    stores:
+      learningSessions: learning_sessions
+      sessionMessages: session_messages
+      sessionRatings: session_ratings
+      sessionNotes: session_notes
+      stepEvaluations: step_evaluations
+
+  - key: progress
+    title:
+      en: Progress
+      de: Fortschritt
+      es: Progreso
+      fr: Progression
+      el: Πρόοδος
+      pt: Progresso
+      tr: İlerleme
+      ja: 進捗
+    summary:
+      en: Progress commits and method switches of a project, lesson progress in content sets, element-level errors for spaced repetition, set runs and speech recordings.
+      de: Fortschritts-Commits und Methodenwechsel eines Projekts, Lektionsfortschritt in Content-Sets, Fehler auf Element-Ebene für die verteilte Wiederholung, Set-Durchgänge und Sprachaufnahmen.
+      es: Commits de progreso y cambios de método de un proyecto, progreso de lecciones en sets de contenido, errores por elemento para la repetición espaciada, pasadas por set y grabaciones de voz.
+      fr: Les commits de progression et les changements de méthode d'un projet, la progression des leçons dans les sets de contenu, les erreurs par élément pour la répétition espacée, les passages d'un set et les enregistrements vocaux.
+      el: Commits προόδου και αλλαγές μεθόδου ενός έργου, πρόοδος μαθημάτων σε σετ περιεχομένου, σφάλματα ανά στοιχείο για την επανάληψη σε διαστήματα, διελεύσεις σετ και ηχογραφήσεις ομιλίας.
+      pt: Commits de progresso e trocas de método de um projeto, progresso de lições em sets de conteúdo, erros por elemento para a repetição espaçada, passagens por set e gravações de voz.
+      tr: Bir projenin ilerleme kayıtları ve yöntem değişiklikleri, içerik setlerindeki ders ilerlemesi, aralıklı tekrar için öğe düzeyindeki hatalar, set turları ve ses kayıtları.
+      ja: プロジェクトの進捗コミットとメソッド切り替え、コンテンツセット内のレッスン進捗、間隔反復のための要素単位のエラー、セットの周回、音声録音。
+    tables: [progress_commits, method_switches, lesson_progress, element_errors, set_runs, speech_recordings]
+    stores:
+      progressCommits: progress_commits
+      methodSwitches: method_switches
+      lessonProgress: lesson_progress
+      elementErrors: element_errors
+      setRuns: set_runs
+      speechRecordings: speech_recordings
+
+  - key: content
+    title:
+      en: Content
+      de: Inhalte
+      es: Contenido
+      fr: Contenu
+      el: Περιεχόμενο
+      pt: Conteúdo
+      tr: İçerik
+      ja: コンテンツ
+    summary:
+      en: Curricula with their topics and lessons; in the browser also the cache of downloaded content sets and their files.
+      de: Curricula mit ihren Themen und Lektionen; im Browser außerdem der Cache heruntergeladener Content-Sets und ihrer Dateien.
+      es: Currículos con sus temas y lecciones; en el navegador, además, la caché de los sets de contenido descargados y sus archivos.
+      fr: Les curriculums avec leurs sujets et leçons ; dans le navigateur, en plus, le cache des sets de contenu téléchargés et de leurs fichiers.
+      el: Προγράμματα σπουδών με τις ενότητες και τα μαθήματά τους· στο πρόγραμμα περιήγησης επιπλέον η κρυφή μνήμη των σετ περιεχομένου που έχουν ληφθεί και των αρχείων τους.
+      pt: Currículos com seus tópicos e lições; no navegador, também o cache dos sets de conteúdo baixados e dos arquivos deles.
+      tr: Konuları ve dersleriyle müfredatlar; tarayıcıda ayrıca indirilen içerik setlerinin ve dosyalarının önbelleği.
+      ja: トピックとレッスンを持つカリキュラム。ブラウザではさらに、ダウンロードしたコンテンツセットとそのファイルのキャッシュ。
+    tables: [curriculums, learning_topics, lessons]
+    stores:
+      curricula: curriculums
+      learningTopics: learning_topics
+      lessons: lessons
+      contentSets: null
+      contentSetFiles: null
+
+  - key: gamification
+    title:
+      en: Gamification
+      de: Gamification
+      es: Gamificación
+      fr: Ludification
+      el: Παιχνιδοποίηση
+      pt: Gamificação
+      tr: Oyunlaştırma
+      ja: ゲーミフィケーション
+    summary:
+      en: XP and XP purchases, the badge catalog with the earned badges, streaks and daily missions.
+      de: XP und XP-Käufe, der Abzeichen-Katalog mit den verdienten Abzeichen, Serien und tägliche Missionen.
+      es: XP y compras con XP, el catálogo de insignias con las insignias obtenidas, rachas y misiones diarias.
+      fr: L'XP et les achats en XP, le catalogue des badges avec les badges obtenus, les séries et les missions quotidiennes.
+      el: XP και αγορές με XP, ο κατάλογος σημάτων με τα σήματα που κερδήθηκαν, σερί και καθημερινές αποστολές.
+      pt: XP e compras com XP, o catálogo de emblemas com os emblemas conquistados, sequências e missões diárias.
+      tr: XP ve XP ile satın almalar, kazanılan rozetlerle birlikte rozet kataloğu, seriler ve günlük görevler.
+      ja: XPとXPでの購入、獲得したバッジを含むバッジカタログ、連続記録、デイリーミッション。
+    tables: [user_xp, xp_purchases, badges, user_badges, user_streaks, user_missions]
+    stores:
+      userXp: user_xp
+      xpPurchases: xp_purchases
+      badges: badges
+      userBadges: user_badges
+      userStreaks: user_streaks
+      userMissions: user_missions
+
+  - key: import
+    title:
+      en: Import
+      de: Import
+      es: Importación
+      fr: Importation
+      el: Εισαγωγή
+      pt: Importação
+      tr: İçe aktarma
+      ja: インポート
+    summary:
+      en: Imported chat conversations and their messages.
+      de: Importierte Chat-Unterhaltungen und ihre Nachrichten.
+      es: Conversaciones de chat importadas y sus mensajes.
+      fr: Les conversations de chat importées et leurs messages.
+      el: Εισαγόμενες συνομιλίες chat και τα μηνύματά τους.
+      pt: Conversas de chat importadas e suas mensagens.
+      tr: İçe aktarılan sohbet konuşmaları ve mesajları.
+      ja: インポートしたチャットの会話とそのメッセージ。
+    tables: [imported_conversations, imported_messages]
+    stores:
+      importedConversations: imported_conversations
+      importedMessages: imported_messages
+
+  - key: ai
+    title:
+      en: AI
+      de: KI
+      es: IA
+      fr: IA
+      el: AI
+      pt: IA
+      tr: Yapay zekâ
+      ja: AI
+    summary:
+      en: AI-generated Anki card suggestions and study questions; in the browser also the cached reports of the AI content check.
+      de: KI-generierte Anki-Kartenvorschläge und Lernfragen; im Browser außerdem die zwischengespeicherten Berichte der KI-Inhaltsprüfung.
+      es: Sugerencias de tarjetas Anki y preguntas de estudio generadas con IA; en el navegador, además, los informes en caché de la verificación de contenido con IA.
+      fr: Les suggestions de cartes Anki et les questions d'étude générées par IA ; dans le navigateur, en plus, les rapports en cache de la vérification de contenu par IA.
+      el: Προτάσεις καρτών Anki και ερωτήσεις μελέτης που δημιουργεί το AI· στο πρόγραμμα περιήγησης επιπλέον οι αποθηκευμένες αναφορές του ελέγχου περιεχομένου με AI.
+      pt: Sugestões de cartões Anki e perguntas de estudo geradas por IA; no navegador, também os relatórios em cache da verificação de conteúdo por IA.
+      tr: Yapay zekânın ürettiği Anki kartı önerileri ve çalışma soruları; tarayıcıda ayrıca yapay zekâ ile içerik denetiminin önbelleğe alınmış raporları.
+      ja: AIが生成したAnkiカードの提案と学習問題。ブラウザではさらに、AIコンテンツチェックのキャッシュ済みレポート。
+    tables: [anki_card_suggestions, study_questions]
+    stores:
+      ankiCards: anki_card_suggestions
+      studyQuestions: study_questions
+      aiValidationResults: null
+
+server_fields:
+  element_errors.run_id:
+    table: set_runs
+    reason: with user_id and set_id names a run in set_runs (unique per user, set and run); no foreign key because rows from before set runs existed get their set_runs row only when the run is first read or written
+  element_errors.set_id: {external: "id of a content set from a content repository; the set lives in the content cache on disk, not in the database"}
+  element_errors.lesson_id: {external: "id of a lesson inside a content set, referenced by its string id"}
+  element_errors.exercise_id: {external: "id of an exercise inside a lesson of a content set"}
+  lesson_progress.set_id: {external: "id of a content set from a content repository; the set lives in the content cache on disk, not in the database"}
+  set_runs.set_id: {external: "id of a content set from a content repository; the set lives in the content cache on disk, not in the database"}
+  set_runs.run_id: {unrelated: "the run's own number within its user and set (1, 2, ...)"}
+  speech_recordings.set_id: {external: "id of a content set from a content repository; the set lives in the content cache on disk, not in the database"}
+  speech_recordings.exercise_id: {external: "id of an exercise inside a lesson of a content set"}
+  user_missions.template_id: {external: "id of a mission template in the missions plugin's catalog (templates.yaml)"}
+  xp_purchases.item_id: {external: "id of an avatar frame, mascot variant or arcade game from the frontend shop catalogs; item_kind says which"}
+
+browser_fields:
+  # account
+  userSettings.user_id: {store: users}
+  apiKeyBackups.user_id: {store: users}
+  # projects
+  learningProjects.user_id: {store: users}
+  learningProfiles.user_id: {store: users}
+  learningProfiles.project_id: {store: learningProjects}
+  subjects.parent_id: {store: subjects}
+  tags.user_id: {store: users}
+  projectSubjects.project_id: {store: learningProjects}
+  projectSubjects.subject_id: {store: subjects}
+  projectTags.project_id: {store: learningProjects}
+  projectTags.tag_id: {store: tags}
+  # sessions
+  learningSessions.project_id: {store: learningProjects}
+  learningSessions.imported_conversation_id: {store: importedConversations}
+  sessionMessages.session_id: {store: learningSessions}
+  sessionRatings.session_id: {store: learningSessions}
+  sessionNotes.session_id: {store: learningSessions}
+  stepEvaluations.session_id: {store: learningSessions}
+  # progress
+  progressCommits.project_id: {store: learningProjects}
+  progressCommits.session_id: {store: learningSessions}
+  methodSwitches.project_id: {store: learningProjects}
+  methodSwitches.session_id: {store: learningSessions}
+  lessonProgress.user_id: {store: users}
+  lessonProgress.set_id: {external: "id of a content set from a content repository; contentSets keys a cached set by source, set_id and version, so set_id alone names no single row"}
+  elementErrors.user_id: {store: users}
+  elementErrors.run_id:
+    store: setRuns
+    reason: with user_id and set_id names a run in setRuns; the run of a row from before set runs existed is created only when it is first read or written
+  elementErrors.set_id: {external: "id of a content set from a content repository; contentSets keys a cached set by source, set_id and version, so set_id alone names no single row"}
+  elementErrors.lesson_id: {external: "id of a lesson inside a content set, referenced by its string id"}
+  elementErrors.exercise_id: {external: "id of an exercise inside a lesson of a content set"}
+  setRuns.user_id: {store: users}
+  setRuns.set_id: {external: "id of a content set from a content repository; contentSets keys a cached set by source, set_id and version, so set_id alone names no single row"}
+  setRuns.run_id: {unrelated: "the run's own number within its user and set (1, 2, ...)"}
+  speechRecordings.user_id: {store: users}
+  speechRecordings.set_id: {external: "id of a content set from a content repository; contentSets keys a cached set by source, set_id and version, so set_id alone names no single row"}
+  speechRecordings.exercise_id: {external: "id of an exercise inside a lesson of a content set"}
+  # content
+  curricula.user_id: {store: users}
+  curricula.imported_conversation_id: {store: importedConversations}
+  learningTopics.curriculum_id: {store: curricula}
+  learningTopics.parent_id: {store: learningTopics}
+  lessons.curriculum_id: {store: curricula}
+  contentSets.set_id: {external: "the set's own id from the content repository manifest; with source and version it forms the cache key id"}
+  contentSetFiles.set_pk: {store: contentSets}
+  # gamification
+  userXp.user_id: {store: users}
+  xpPurchases.user_id: {store: users}
+  xpPurchases.item_id: {external: "id of an avatar frame, mascot variant or arcade game from the frontend shop catalogs; item_kind says which"}
+  userBadges.user_id: {store: users}
+  userBadges.badge_id: {store: badges}
+  userStreaks.user_id: {store: users}
+  userMissions.user_id: {store: users}
+  userMissions.template_id: {external: "id of a mission template in the missions plugin's catalog (templates.yaml)"}
+  # import
+  importedConversations.user_id: {store: users}
+  importedConversations.project_id: {store: learningProjects}
+  importedMessages.conversation_id: {store: importedConversations}
+  # ai
+  ankiCards.user_id: {store: users}
+  ankiCards.session_id: {store: learningSessions}
+  ankiCards.conversation_id: {store: importedConversations}
+  ankiCards.project_id: {store: learningProjects}
+  studyQuestions.user_id: {store: users}
+  studyQuestions.project_id: {store: learningProjects}
+  studyQuestions.session_id: {store: learningSessions}
+  aiValidationResults.set_id: {external: "id of the checked content set; the report's id is source#set_id"}

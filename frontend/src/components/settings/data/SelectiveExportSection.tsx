@@ -144,7 +144,11 @@ export default function SelectiveExportSection() {
 
         <div className="flex flex-col gap-4">
           {EXPORT_GROUPS.map((group) => (
-            <fieldset key={group.id} data-testid={`data-export-group-${group.id}`}>
+            <fieldset
+              key={group.id}
+              className="m-0 border-0 p-0"
+              data-testid={`data-export-group-${group.id}`}
+            >
               <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-fg-secondary">
                 {t(group.labelKey, group.labelFallback)}
               </legend>

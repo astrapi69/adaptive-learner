@@ -21,10 +21,8 @@ O Adaptive Learner é uma aplicação orientada a plugins com 4 camadas.
 └─────────────────────────────────────────────────────────────┘
                             ↑↓ entry_points
 ┌─────────────────────────────────────────────────────────────┐
-│ Plugins            10 pacotes em plugins/                   │
-│                    (ai-{anthropic,openai,gemini}, assessment,│
-│                    session, tracking, tools, gamification,  │
-│                    anki, notebooklm)                        │
+│ Plugins            um pacote Poetry por plugin em plugins/; │
+│                    o catálogo e os níveis estão no CLAUDE.md│
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -42,10 +40,10 @@ contrato:
 - **`apiStorage`** (padrão): invólucro fino em torno de
   `api/client.ts` que comunica com o backend FastAPI.
 - **`dexieStorage`** (local primeiro): pilha IndexedDB completa
-  espelhando todos os 25 modelos SQLAlchemy. As chamadas de IA
-  disparam diretamente do navegador via `storage/ai-providers.ts`.
+  espelhando os modelos SQLAlchemy. As chamadas de IA
+  disparam diretamente do navegador via `storage/ai/ai-providers.ts`.
 
-`IStorageService` expõe 22 espaços de nomes (users, projects,
+`IStorageService` expõe os seus espaços de nomes (users, projects,
 settings, assessment, session com streaming, tracking, tools,
 curricula, topics, lessons, plugins, system, backup, export,
 subjects, tags, projectTaxonomy, imports, gamification, anki,
@@ -156,12 +154,17 @@ domínio para códigos de estado HTTP. Consulte
 
 - Backend: SQLAlchemy + SQLite. Migrações Alembic em
   `backend/migrations/versions/`.
-- Superfície de sincronização: 28 tabelas (linha de base v1.19.0).
-  Linhas de histórico somente-adição (sessões, mensagens,
-  classificações, commits de progresso, avaliações de passo,
-  mudanças de método, conversas importadas, mensagens importadas,
-  cartões anki, questões de estudo) mais definições mutáveis +
-  linhas de currículo.
+- Superfície de sincronização: cada tabela de `sync_service.ALL_SYNC_TABLES`;
+  se uma tabela sincroniza como somente-adição ou como mutável é
+  definido pelo `TableSpec.append_only` dela em
+  `backend/app/services/sync_tables.py`. As tabelas em si, por
+  área: [Modelo de dados](data-model.md).
+- Nenhuma chave de API na sincronização (#3854): as tabelas de
+  `SYNC_SECRET_TABLES` (o cache de reversão `api_key_backups`) e os
+  campos `api_key_*` de `user_settings` (`EXCLUDED_USER_SETTINGS_FIELDS`,
+  a mesma lista do backup) não passam pela sincronização em nenhum
+  sentido; no navegador, o filtro fica em
+  `frontend/src/storage/sync/sync-secrets.ts`.
 - Formato de backup: JSON; chaves de API removidas na exportação;
   a restauração é uma fusão.
 - Isolamento de testes: os diretórios de dados de produção têm um

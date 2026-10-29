@@ -22,7 +22,10 @@ vi.mock("../../lib/content/repos/content-repos", async (orig) => ({
   syncUserRepo,
   findUserRepo,
 }));
-vi.mock("../../lib/content/repos/content-repo-validate", () => ({ validateUserRepo }));
+vi.mock("../../lib/content/repos/content-repo-validate", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../lib/content/repos/content-repo-validate")>()),
+  validateUserRepo,
+}));
 vi.mock("../../storage", () => ({
   getStorage: () => ({ contentLoader: { listSets } }),
 }));
@@ -76,10 +79,16 @@ describe("AddRepo", () => {
   });
 
   it("shows the reason and does not add on failed validation", async () => {
-    validateUserRepo.mockResolvedValue({ ok: false, reason: "no sets" });
+    validateUserRepo.mockResolvedValue({
+      ok: false,
+      reason: "manifest.yaml lists no sets.",
+      reasonCode: "no_sets",
+    });
     renderAt("?url=jane/deck&branch=main");
     fireEvent.click(screen.getByTestId("add-repo-connect"));
-    await screen.findByTestId("add-repo-error");
+    const error = await screen.findByTestId("add-repo-error");
+    // #3424: the reason is rendered from its code, not as a raw sentence.
+    expect(error).toHaveTextContent("manifest.yaml lists no sets.");
     expect(addUserRepo).not.toHaveBeenCalled();
   });
 

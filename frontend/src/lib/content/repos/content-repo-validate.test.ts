@@ -10,7 +10,11 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { hasSuspiciousContent, validateUserRepo } from "./content-repo-validate";
+import {
+  hasSuspiciousContent,
+  repoValidationReasonText,
+  validateUserRepo,
+} from "./content-repo-validate";
 import { SUPPORTED_EXTENSIONS } from "../validation/lesson-schema-validator";
 
 const REF = { owner: "jane", repo: "content", branch: "main" };
@@ -415,5 +419,48 @@ describe("failure classification: transient (I/O) vs structural (#1441)", () => 
     const res = await validateUserRepo(REF, "");
     expect(res.ok).toBe(true);
     expect(res.transient).toBeFalsy();
+  });
+});
+
+
+describe("repoValidationReasonText (#3424)", () => {
+  const german: Record<string, string> = {
+    "content_repo.validation.reason.no_sets": "manifest.yaml enthält keine Sets.",
+    "content_repo.validation.reason.unsupported_schema":
+      "Nicht unterstützte Schema-Version {version}.",
+    "content_repo.validation.reason.lesson_invalid":
+      "Die erste Lektion des ersten Sets besteht die Prüfung nicht: {detail}",
+  };
+  const t = (key: string, fallback?: string) => german[key] ?? fallback ?? key;
+
+  it.each([
+    ["a plain code", { reasonCode: "no_sets" as const }, "manifest.yaml enthält keine Sets."],
+    [
+      "a code with a version",
+      { reasonCode: "unsupported_schema" as const, reasonParams: { version: "3.0" } },
+      "Nicht unterstützte Schema-Version 3.0.",
+    ],
+    [
+      "a code with the engine verdict",
+      { reasonCode: "lesson_invalid" as const, reasonParams: { detail: "steps/1: bad" } },
+      "Die erste Lektion des ersten Sets besteht die Prüfung nicht: steps/1: bad",
+    ],
+    [
+      "a code missing from the catalog (English fallback)",
+      { reasonCode: "unreachable" as const },
+      "Repository unreachable.",
+    ],
+    ["a result without a code (the English reason)", { reason: "Legacy text." }, "Legacy text."],
+  ])("renders %s", (_label, result, expected) => {
+    expect(repoValidationReasonText(result, t)).toBe(expected);
+  });
+
+  it("returns the code and the English reason from validateUserRepo", async () => {
+    mockFetchSequence((url) =>
+      url.endsWith("manifest.yaml") ? ok(`schema_version: "1.3"\nsets: []\n`) : notFound(),
+    );
+    const res = await validateUserRepo(REF, "");
+    expect(res.reasonCode).toBe("no_sets");
+    expect(res.reason).toBe("manifest.yaml lists no sets.");
   });
 });

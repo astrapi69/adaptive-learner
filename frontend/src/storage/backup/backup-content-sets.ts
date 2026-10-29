@@ -10,7 +10,7 @@
  * instead of collapsing to the raw ``set_id``.
  */
 
-import {parse as parseYaml} from "yaml";
+import {parseManifest, resolveLanguagePair} from "../../lib/content/engine";
 
 import {nowIso, type AdaptiveLearnerDB} from "../dexie/db";
 import type {ContentSetRow, ContentSetFileRow} from "../dexie/db";
@@ -86,6 +86,11 @@ interface ManifestSetMeta {
     lesson_count?: number;
     tags?: string[];
     cover_image?: string | null;
+    book?: ContentSetRow["book"];
+    attribution?: ContentSetRow["attribution"];
+    visibility?: ContentSetRow["visibility"];
+    review_status?: ContentSetRow["review_status"];
+    evaluation?: ContentSetRow["evaluation"];
 }
 
 /** Extract a set's metadata from a ``manifest.yaml`` body (#134).
@@ -106,7 +111,9 @@ function parseManifestSetMeta(
 ): ManifestSetMeta | null {
     if (!body) return null;
     try {
-        const doc = parseYaml(body) as {
+        // The engine's manifest parse (#3395); ``title`` at the root is a
+        // restore-synthesised shape the engine type does not name.
+        const doc = parseManifest(body) as {
             name?: string;
             title?: string;
             sets?: ManifestSetMeta[];
@@ -129,29 +136,22 @@ function parseManifestSetMeta(
     }
 }
 
-/** Language fields for a restored ``ContentSetRow``, resolved from the
- *  carried Dexie ``meta`` first, then the parsed manifest, then a
- *  minimal default. ``language`` and ``target_language`` cross-fill so
- *  a row missing one but carrying the other stays usable. */
+/** Language fields for a restored ``ContentSetRow``: the carried Dexie
+ *  ``meta`` first, else the manifest's pair as the engine resolves it
+ *  (``resolveLanguagePair``: the legacy ``language`` alias, target ``""``
+ *  and source ``"en"`` when absent; #3395). ``language`` and
+ *  ``target_language`` cross-fill so a row missing one but carrying the
+ *  other stays usable. */
 function resolveContentSetLanguages(
     meta: Partial<ContentSetRow>,
     fromManifest: ManifestSetMeta,
 ): Pick<ContentSetRow, "language" | "target_language" | "source_language"> {
+    const manifestPair = resolveLanguagePair(fromManifest);
     return {
-        language:
-            meta.language ??
-            meta.target_language ??
-            fromManifest.target_language ??
-            fromManifest.language ??
-            "",
+        language: meta.language ?? meta.target_language ?? manifestPair.target,
         target_language:
-            meta.target_language ??
-            meta.language ??
-            fromManifest.target_language ??
-            fromManifest.language ??
-            "",
-        source_language:
-            meta.source_language ?? fromManifest.source_language ?? "en",
+            meta.target_language ?? meta.language ?? manifestPair.target,
+        source_language: meta.source_language ?? manifestPair.source,
     };
 }
 
@@ -175,6 +175,30 @@ function resolveContentSetText(
         description: meta.description ?? fromManifest.description ?? null,
         cover_image: meta.cover_image ?? fromManifest.cover_image ?? null,
     };
+}
+
+/** The fields a cached row carries beyond the listing basics (#3395):
+ *  the carried Dexie ``meta`` first, else the manifest set entry. A field
+ *  neither has stays absent, so the engine projection fills its default on
+ *  read (``visible``, ``authored``, no evaluation). The lifecycle
+ *  ``status`` is the learner's, so it comes from ``meta`` only. */
+function resolveCarriedSetFields(
+    meta: Partial<ContentSetRow>,
+    fromManifest: ManifestSetMeta,
+): Partial<ContentSetRow> {
+    const carried: Partial<ContentSetRow> = {};
+    if (meta.status) carried.status = meta.status;
+    const book = meta.book ?? fromManifest.book;
+    if (book) carried.book = book;
+    const attribution = meta.attribution ?? fromManifest.attribution;
+    if (attribution) carried.attribution = attribution;
+    const visibility = meta.visibility ?? fromManifest.visibility;
+    if (visibility) carried.visibility = visibility;
+    const reviewStatus = meta.review_status ?? fromManifest.review_status;
+    if (reviewStatus) carried.review_status = reviewStatus;
+    const evaluation = meta.evaluation ?? fromManifest.evaluation;
+    if (evaluation) carried.evaluation = evaluation;
+    return carried;
 }
 
 /** Build a ``ContentSetRow`` for restore: prefer the carried Dexie
@@ -203,5 +227,6 @@ function buildContentSetRow(setPk: string, entry: ContentSetBackupEntry): Conten
         tags: meta.tags ?? manifestTags ?? "[]",
         downloaded_at: meta.downloaded_at ?? nowIso(),
         manifest_yaml: meta.manifest_yaml ?? manifest?.body ?? "",
+        ...resolveCarriedSetFields(meta, fromManifest),
     };
 }

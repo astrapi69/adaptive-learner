@@ -2,7 +2,9 @@
 
 The storage layer (`frontend/src/storage/`) gives the
 frontend two interchangeable backends behind a single
-contract. The contract has grown to 29 namespaces.
+contract. The contract is
+`frontend/src/storage/types/core/service.ts`; its namespace list
+there is the reference.
 
 ## Directory layout
 
@@ -78,9 +80,10 @@ Every method delegates 1:1.
 ## DexieStorage
 
 `storage/dexie-storage.ts` persists everything to IndexedDB
-via Dexie 4. The schema in `storage/dexie/db.ts` mirrors all 30
-SQLAlchemy models 1:1, plus the association tables
-(`project_subjects` / `project_tags` / etc.).
+via Dexie 4. The schema in `storage/dexie/db.ts` mirrors the
+SQLAlchemy models and adds stores that exist only in the browser;
+which store stands for which table, per area, is on the
+[Data model](data-model.md) page.
 
 `DexieStorage` is NOT a god-file. It is split into per-domain
 namespace modules grouped by concern. The Dexie engine, the
@@ -157,9 +160,15 @@ get-spread-put loses concurrent updates. DexieStorage uses:
 ## Backup format
 
 The backup is an `.alb` file - a ZIP, not a single JSON dump.
-The ZIP carries a localStorage snapshot alongside the table
-data, so a restore round-trips both IndexedDB / SQLite state
-and the localStorage-backed preferences. Code lives under
+Next to the table data it carries blocks the frontend captures and
+applies itself in both storage modes (the list is in
+`frontend/src/lib/backup/portableBackup.ts`), for example the
+localStorage snapshot, `plugin_settings` (such as connected content
+repositories, redeemed invites, the Learning Repository switch; a
+repository token and the repository folder do not travel) and
+`ai_validation_results` (cached AI content-check reports, empty in API
+mode). Every full-backup path goes through `exportPortableBackup` /
+`restoreClientSnapshots`; the table logic lives under
 `storage/backup/`.
 
 ## Adding a third storage backend

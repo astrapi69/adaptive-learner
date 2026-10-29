@@ -7,6 +7,9 @@
  * (star ratings, percentages, table rendering).
  */
 
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+
 import {describe, expect, it} from "vitest";
 
 import type {
@@ -17,7 +20,32 @@ import type {
 import {
     exportFilename,
     renderMarkdown,
+    type ExportPayload,
 } from "./markdown-renderer";
+
+/** The app's ``t`` for one UI language, read from its catalog (#3426). */
+function catalogT(lang: string): (key: string, fallback?: string) => string {
+    const catalog = JSON.parse(
+        readFileSync(join(process.cwd(), "src", "data", "i18n", `${lang}.json`), "utf-8"),
+    );
+    return (key, fallback) => {
+        const value = key
+            .split(".")
+            .reduce<unknown>(
+                (node, part) =>
+                    node && typeof node === "object"
+                        ? (node as Record<string, unknown>)[part]
+                        : undefined,
+                catalog,
+            );
+        return typeof value === "string" ? value : (fallback ?? key);
+    };
+}
+
+/** Render with the translator of the payload's language. */
+function render(payload: ExportPayload): string {
+    return renderMarkdown(payload, catalogT(payload.lang));
+}
 
 function envelope<T extends string>(
     type: T,
@@ -52,19 +80,19 @@ function emptyProgressReport(lang = "de"): ProgressReport {
 
 describe("renderMarkdown - progress_report", () => {
     it("uses the DE title when lang=de", () => {
-        const md = renderMarkdown(emptyProgressReport("de"));
+        const md = render(emptyProgressReport("de"));
         expect(md).toMatch(/^# Lernfortschritt/);
         expect(md).toContain("Lernende:r");
     });
 
     it("uses the EN title when lang=en", () => {
-        const md = renderMarkdown(emptyProgressReport("en"));
+        const md = render(emptyProgressReport("en"));
         expect(md).toMatch(/^# Learning Progress/);
         expect(md).toContain("Learner");
     });
 
     it("renders the no-profile fallback when profile is null", () => {
-        const md = renderMarkdown(emptyProgressReport("en"));
+        const md = render(emptyProgressReport("en"));
         expect(md).toContain("No assessment yet");
     });
 
@@ -83,14 +111,14 @@ describe("renderMarkdown - progress_report", () => {
                 version: 1,
             },
         };
-        const md = renderMarkdown(report);
+        const md = render(report);
         expect(md).toContain("Deductive");
         expect(md).toContain("Last assessed");
         expect(md).toContain("70%");
     });
 
     it("renders a no-projects fallback", () => {
-        const md = renderMarkdown(emptyProgressReport("de"));
+        const md = render(emptyProgressReport("de"));
         expect(md).toContain("Noch keine Lernprojekte angelegt.");
     });
 
@@ -123,7 +151,7 @@ describe("renderMarkdown - progress_report", () => {
                 },
             ],
         };
-        const md = renderMarkdown(report);
+        const md = render(report);
         expect(md).toContain("### Bayes");
         expect(md).toContain("80%");
         expect(md).toContain("Method distribution");
@@ -155,7 +183,7 @@ describe("renderMarkdown - progress_report", () => {
                 },
             ],
         };
-        const md = renderMarkdown(report);
+        const md = render(report);
         expect(md).toContain("Recent sessions");
         expect(md).toContain("4/5");
     });
@@ -178,7 +206,7 @@ describe("renderMarkdown - progress_report", () => {
                 },
             ],
         };
-        const md = renderMarkdown(report);
+        const md = render(report);
         expect(md).toContain("Topic \\| with pipe");
     });
 
@@ -197,7 +225,7 @@ describe("renderMarkdown - progress_report", () => {
                 },
             ],
         };
-        const md = renderMarkdown(report);
+        const md = render(report);
         expect(md).toContain("Step evaluations");
         expect(md).toContain("60%");
         expect(md).toContain("75%");
@@ -232,7 +260,7 @@ describe("renderMarkdown - progress_report", () => {
                 },
             ],
         };
-        const md = renderMarkdown(report);
+        const md = render(report);
         expect(md).toContain("### Bayes Tutoring");
         // Structured renderers fired instead of a JSON dump
         expect(md).toContain("**Detected topic:** Bayes inference");
@@ -265,7 +293,7 @@ describe("renderMarkdown - progress_report", () => {
                 },
             ],
         };
-        const md = renderMarkdown(report);
+        const md = render(report);
         expect(md).toContain("**Detected topic:** T");
         // The unknown field falls into the JSON appendix
         expect(md).toContain("```json");
@@ -273,7 +301,7 @@ describe("renderMarkdown - progress_report", () => {
     });
 
     it("envelope footer carries the timestamp + app version", () => {
-        const md = renderMarkdown(emptyProgressReport("en"));
+        const md = render(emptyProgressReport("en"));
         expect(md).toContain("Generated at: 2026-05-20 10:00 UTC");
         expect(md).toContain("App version: 1.3.0");
     });
@@ -303,14 +331,14 @@ describe("renderMarkdown - session_detail", () => {
     }
 
     it("renders meta with method label + duration", () => {
-        const md = renderMarkdown(sessionPayload());
+        const md = render(sessionPayload());
         expect(md).toContain("# Session Detail");
         expect(md).toContain("Deductive");
         expect(md).toContain("30 min");
     });
 
     it("renders transcript as blockquoted role + body", () => {
-        const md = renderMarkdown(
+        const md = render(
             sessionPayload({
                 messages: [
                     {
@@ -334,7 +362,7 @@ describe("renderMarkdown - session_detail", () => {
     });
 
     it("renders star rating when present", () => {
-        const md = renderMarkdown(
+        const md = render(
             sessionPayload({
                 rating: {
                     understanding: 4,
@@ -351,12 +379,12 @@ describe("renderMarkdown - session_detail", () => {
     });
 
     it("renders no-rating fallback when rating is null", () => {
-        const md = renderMarkdown(sessionPayload());
+        const md = render(sessionPayload());
         expect(md).toContain("Session was not rated.");
     });
 
     it("renders step-evaluations table when present", () => {
-        const md = renderMarkdown(
+        const md = render(
             sessionPayload({
                 step_evaluations: [
                     {
@@ -402,13 +430,13 @@ describe("renderMarkdown - curriculum_overview", () => {
     }
 
     it("renders the title + description", () => {
-        const md = renderMarkdown(curriculumPayload());
+        const md = render(curriculumPayload());
         expect(md).toContain("# Curriculum Overview: Spanish Grammar");
         expect(md).toContain("Subjunctive deep dive");
     });
 
     it("indents topics by depth", () => {
-        const md = renderMarkdown(
+        const md = render(
             curriculumPayload({
                 topics: [
                     {
@@ -436,7 +464,7 @@ describe("renderMarkdown - curriculum_overview", () => {
     });
 
     it("renders lessons as sections", () => {
-        const md = renderMarkdown(
+        const md = render(
             curriculumPayload({
                 lessons: [
                     {id: "l1", title: "Intro", content: "Hello world", order_index: 0},
@@ -448,7 +476,7 @@ describe("renderMarkdown - curriculum_overview", () => {
     });
 
     it("renders no-topics / no-lessons fallback", () => {
-        const md = renderMarkdown(curriculumPayload());
+        const md = render(curriculumPayload());
         expect(md).toContain("No topics in this curriculum.");
         expect(md).toContain("No lessons in this curriculum.");
     });
@@ -463,5 +491,38 @@ describe("exportFilename", () => {
     it("uses the chosen extension", () => {
         const name = exportFilename(emptyProgressReport("en"), "pdf");
         expect(name).toBe("adaptive-learner-progress-report-2026-05-20.pdf");
+    });
+});
+
+
+describe("renderMarkdown - every UI language (#3426)", () => {
+    it.each([
+        ["fr", "# Progression"],
+        ["ja", "# 学習の進捗"],
+    ])("titles the %s report in its own language, not English", (lang, title) => {
+        expect(render(emptyProgressReport(lang)).startsWith(title)).toBe(true);
+    });
+
+    it("labels a step with the catalog's cycle-step label", () => {
+        const report: ProgressReport = {
+            ...emptyProgressReport("de"),
+            step_evaluation_insights: [
+                {
+                    step: 3,
+                    count: 1,
+                    advance_count: 1,
+                    repeat_count: 0,
+                    deferred_count: 0,
+                    advance_rate: 1,
+                    mean_confidence: 1,
+                },
+            ],
+        };
+        expect(render(report)).toContain("3. Fehler");
+    });
+
+    it("falls back to English while no catalog is loaded", () => {
+        const md = renderMarkdown(emptyProgressReport("de"), (_key, fallback) => fallback ?? "");
+        expect(md).toMatch(/^# Learning Progress/);
     });
 });

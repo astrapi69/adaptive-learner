@@ -26,7 +26,10 @@ import {
   userRepoSource,
   type SyncProgress,
 } from "../../lib/content/repos/content-repos";
-import { validateUserRepo } from "../../lib/content/repos/content-repo-validate";
+import {
+  repoValidationReasonText,
+  validateUserRepo,
+} from "../../lib/content/repos/content-repo-validate";
 import PageContainer from "../../shared/layout/PageContainer";
 import { getStorage } from "../../storage";
 import { notify } from "../../utils/notify";
@@ -106,7 +109,7 @@ export default function AddRepo() {
         setError(
           t("content_repo.validation.failed", "Validation failed: {reason}").replace(
             "{reason}",
-            validation.reason ?? "",
+            repoValidationReasonText(validation, t),
           ),
         );
         return;

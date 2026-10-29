@@ -138,3 +138,16 @@ describe("ContentHub tab order (#1378)", () => {
     });
   });
 });
+
+describe("ContentHub share deep link (#3660)", () => {
+  it("opens My content when the lesson creator hands over ?share", () => {
+    renderAt("/content?share=set-1");
+    expect(screen.getByTestId("content-tab-my")).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByTestId("page-my")).toBeInTheDocument();
+  });
+
+  it("an explicit ?tab still wins over ?share", () => {
+    renderAt("/content?tab=import&share=set-1");
+    expect(screen.getByTestId("content-tab-import")).toHaveAttribute("aria-selected", "true");
+  });
+});

@@ -36,6 +36,7 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
     lessons,
     minutes,
     sameLanguage,
+    resolvedDomain,
     step1Blocked,
     step1Errors,
     placement,
@@ -175,11 +176,14 @@ export default function ShareWizardStep1({ wiz }: { wiz: UseShareWizardResult })
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {/* Explicit "no level" — suggest a CEFR guess but let
-                  the user clear it; the empty-level gate then blocks
-                  Continue (BUG C). */}
+              {/* Explicit "no level". A language set must declare a
+                  CEFR band, so here it is only the empty choice the gate
+                  blocks (BUG C); any other set may have no level, the
+                  engine's "none" (#3356). */}
               <SelectItem value={LEVEL_NONE}>
-                {t("content.wizard.select_level", "- Select level -")}
+                {resolvedDomain === "language"
+                  ? t("content.wizard.select_level", "- Select level -")
+                  : t("content.wizard.level_none", "No level (not a language course)")}
               </SelectItem>
               {CEFR_LEVELS.map((lvl) => (
                 <SelectItem key={lvl} value={lvl}>

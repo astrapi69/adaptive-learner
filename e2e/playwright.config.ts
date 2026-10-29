@@ -64,6 +64,8 @@ const BACKEND_ENV = [
 ].join(" ");
 
 export default defineConfig({
+    // #3439 - a committed test.only would run one test and report green.
+    forbidOnly: !!process.env.CI,
     testDir: "./tests",
     fullyParallel: false,
     workers: 1,
@@ -114,6 +116,12 @@ export default defineConfig({
     ],
     projects: [
         {name: "chromium", testDir: "./tests", use: {browserName: "chromium"}},
-        {name: "smoke", testDir: "./smoke", use: {browserName: "chromium"}},
+        // #3544 - a screenshot on failure shows what rendered when a page
+        // root is missing after navigation (the intermittent 390 px miss).
+        {
+            name: "smoke",
+            testDir: "./smoke",
+            use: {browserName: "chromium", screenshot: "only-on-failure"},
+        },
     ],
 });

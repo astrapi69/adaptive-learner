@@ -91,6 +91,7 @@ def upsert_lesson_progress(
 ) -> LessonProgressOut:
     """Create or update the user's progress for a lesson and return the resulting record."""
     step_result = payload.step_result.model_dump() if payload.step_result is not None else None
+    step_event = payload.step_event.model_dump() if payload.step_event is not None else None
     update = lesson_progress_service.ProgressUpdate(
         source=payload.source,
         set_id=payload.set_id,
@@ -99,6 +100,7 @@ def upsert_lesson_progress(
         step_result=step_result,
         time_spent_seconds_delta=payload.time_spent_seconds_delta,
         current_step=payload.current_step,
+        step_event=step_event,
         combo_bonus_xp=payload.combo_bonus_xp,
         mark_completed=payload.mark_completed,
         mark_paused=payload.mark_paused,

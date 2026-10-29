@@ -21,6 +21,8 @@ const LAUNCH = EXECUTABLE ? { executablePath: EXECUTABLE } : undefined;
  * Run: ``npm run test:hit-test`` (from e2e/) or ``make test-hit-test``.
  */
 export default defineConfig({
+  // #3439 - a committed test.only would run one test and report green.
+  forbidOnly: !!process.env.CI,
   testDir: "./hit-test",
   testMatch: /hit-test-offset\.spec\.ts$/,
   fullyParallel: true,

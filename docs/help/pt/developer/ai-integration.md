@@ -55,7 +55,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 `ai_complete_async` é usado pela rota de sessão no limite de ciclo
 passo 6→7 para que a avaliação de passo + transição de tópico
 disparem concorrentemente via `asyncio.gather`
-(`async_evaluation: true` em `app.yaml`).
+(`async_evaluation: true` em `session.yaml`).
 
 `ai_complete_stream` alimenta o endpoint SSE de streaming
 `POST /api/plugins/session/{id}/message/stream` que emite eventos
@@ -96,7 +96,7 @@ Cada `POST /api/plugins/session/{id}/message` para um papel
    emitir um veredicto JSON (`advance`, `confidence`, `reason`,
    `suggested_step`). `max_tokens=256`. O veredicto do avaliador
    dirige o avanço de `cycle_step` (com condição de
-   `confidence ≥ 0.6`).
+   `confidence ≥ 0.7`).
 3. **Transição de tópico** - apenas no passo 7. Uma terceira
    chamada de IA julga se o tópico foi integrado e se deve iniciar
    um novo ciclo num novo subtópico. Limite de `max_cycles=5` por
@@ -123,7 +123,7 @@ hint: …") é acrescentado no momento da composição.
 
 Para o modo Dexie, os prompts são exportados verbatim para
 `frontend/src/data/session-prompts.json` e carregados por
-`frontend/src/storage/prompts.ts`. Mesmo texto, mesmo formato de
+`frontend/src/storage/ai/prompts.ts`. Mesmo texto, mesmo formato de
 bloco de contexto - sem possibilidade de divergência.
 
 ## Adicionar um novo fornecedor
@@ -131,14 +131,16 @@ bloco de contexto - sem possibilidade de divergência.
 1. Criar `plugins/adaptive-learner-plugin-ai-newprovider/`.
 2. Implementar o hookimpl `ai_complete`: verificar o prefixo do
    modelo, chamar a API HTTP do fornecedor, retornar o texto.
-3. Adicionar o prefixo do fornecedor a `DEFAULT_MODELS` em
-   `ai_orchestration.py` com um modelo padrão económico.
+3. Adicionar o fornecedor com um modelo padrão económico a
+   `DEFAULT_MODELS` em `backend/app/services/ai_caller.py`; é a única
+   tabela (leem-na o plugin de sessão, as importações e a validação
+   de lições, e um teste rejeita uma segunda cópia).
 4. Adicionar o nome do fornecedor ao enum `AIProvider` em
    `app/schemas/__init__.py`.
 5. Adicioná-lo a `AI_PROVIDERS` em
    `frontend/src/lib/constants.ts`.
 6. Para paridade no modo Dexie: adicionar um cliente a
-   `frontend/src/storage/ai-providers.ts` e roteá-lo a partir de
+   `frontend/src/storage/ai/ai-providers.ts` e roteá-lo a partir de
    `aiComplete()`.
 
 Cada plugin de fornecedor testa o seu hookimpl + chamada de
@@ -149,28 +151,30 @@ modelo (a chamada HTTP do fornecedor é simulada).
 ## Chamadas diretas do navegador (modo Dexie)
 
 No modo Dexie a chamada de IA não passa pelo sistema de plugins.
-`storage/ai-providers.ts` faz o pedido HTTP diretamente. O
+`storage/ai/ai-providers.ts` faz o pedido HTTP diretamente. O
 Anthropic requer o cabeçalho
 `anthropic-dangerous-direct-browser-access: true` para limpar a
 preflight CORS; o OpenAI e o Gemini aceitam chamadas diretas do
 navegador de série.
 
 A lógica de duplo prompt é a mesma em ambos os modos -
-`storage/session-flow.ts` chama `aiComplete()` duas vezes e analisa
+`storage/ai/session-flow.ts` chama `aiComplete()` duas vezes e analisa
 o JSON do avaliador da mesma forma que o backend.
 
 ## Limiar de confiança
 
-`session.step_evaluation.confidence_threshold` do
-`backend/config/app.yaml` (padrão 0.6) condiciona se um veredicto
+`step_evaluation.confidence_threshold` do
+`backend/config/plugins/session.yaml` (padrão 0.7) condiciona se um veredicto
 real do avaliador (não fallback) realmente move o passo do ciclo.
 Defina mais alto para ser mais conservador, mais baixo para ser
 mais ágil. Os veredictos de fallback (falhas de análise) aplicam
 sempre o avanço +1 independentemente.
 
-A porta Dexie espelha isso com um 0.6 fixo em
-`storage/session-flow.ts`. Uma fase futura irá expor isto na
-interface de Definições.
+A porta Dexie espelha isso com um 0.7 fixo em
+`storage/ai/session-flow.ts`; `session-flow.test.ts` lê o valor de
+`session.yaml` e falha quando os dois divergem. De propósito, não há
+nenhuma definição na interface: as chaves são `# INTERNAL` e só se
+editam no YAML (#3436).
 
 ## Outras superfícies de IA (resumo apenas de leitura)
 

@@ -56,7 +56,7 @@ your **avatar**:
   show their condition.
 
 Your choice and purchased frames persist and travel with your
-[backup](backup.md).
+[backup](../features/backup.md).
 
 ## Appearance
 
@@ -111,9 +111,16 @@ below).
 *General > Storage mode* toggles between **Server** and **Local
 (Browser)** storage:
 
-- **Server** - every read and write hits the FastAPI backend.
-  Requires a running backend. Best for multi-device usage
-  with backend-side sync.
+- **Server** - the app reads and saves your learning data through
+  the desktop app's backend (FastAPI); it requires a running
+  backend. The app saves some settings in this browser, for example
+  the chosen storage mode. Lesson progress and voice recordings that
+  you save without a connection wait in this browser until the app
+  transfers them to the backend; how many wait at most and what
+  happens to the rest is described on the
+  [Backup and restore](../features/backup.md) page. So far the app
+  cannot sync between devices in either of the two storage modes
+  (see *Data > Sync*).
 - **Local (Browser)** - every read and write hits IndexedDB
   in this browser. AI calls fire direct to the provider. No
   backend required. Best for a private, device-local setup.
@@ -169,7 +176,8 @@ Who is learning, and in which languages.
 How exercises behave while you answer.
 
 - **Lesson mode** - the **default mode** (Practice / Exam / Timed), the
-  **exam pass threshold** and the **timed mode difficulty** (Fast,
+  **exam pass threshold** (sets with their own pass mark use that mark
+  in the exam instead) and the **timed mode difficulty** (Fast,
   Normal, Relaxed); see [Lessons and reviews](lessons.md).
 - **Hints** - whether a staged hint button appears on each exercise,
   and the **XP cost per hint** (0 for free hints).
@@ -196,8 +204,14 @@ the **Voice** card:
   and Assessment results that reads them aloud.
 - **Auto-play AI responses** - speaks every AI reply automatically
   (default OFF - surprise audio is rarely what you want).
-- **Voice** - the voice to read with; the default picks the closest
-  match for your project language.
+- **Voice** - the voice to read with. The default prefers a voice that
+  runs on your device for your project language; with the default, an
+  online voice reads only when your device has none for that language,
+  and in the first moments after a page loads, because your device has
+  not yet made its own voices available at that point. An online voice
+  sends the text being read to its provider (Chrome's Google voices send
+  it to Google). A voice you choose here is always used while your
+  browser offers it, online voices included.
 - **Rate** and **Pitch** - sliders from 0.5 to 2.
 - **Show microphone button** - adds a microphone button to the Session
   input that captures speech and fills the textarea with interim
@@ -260,7 +274,7 @@ lessons** is off, the options inside are greyed out.
 
 The tab ends with **Gamification** (below a separator, because that card
 holds *Reset progress*). The two housekeeping settings -
-*Paused lesson retention* and *Maximum lesson size* - are data-lifecycle
+*Paused lessons on the Dashboard* and *Maximum lesson size* - are data-lifecycle
 settings and live on the **Data** tab (see [Offline content](#offline-content)
 and [Housekeeping](#housekeeping)).
 
@@ -347,7 +361,10 @@ registered directly) and activation time. A load error or a discovery
 filter shows as a marker on the row, as does a config change after
 activation. In browser mode the card stays visible with a notice that
 only the desktop app has a plugin host. **Learning Repository** holds
-that plugin's settings (git persistence, repository directory).
+that plugin's settings (git persistence, repository directory). If you
+leave the directory empty, the repositories go to the `repos` folder in
+your data directory (see **About > System**); a path you enter is used
+as given.
 
 ## Data
 
@@ -373,18 +390,28 @@ mirrors it (`/settings?tab=data&section=backup`; ids: `sources`,
 
 ### Sync
 
-Pair this device with another over your local network using
-the QR-code scanner (rear camera) or paste the pairing URL.
-Once paired, push + pull buttons exchange data
-bidirectionally. Conflicts go through an AI-merge resolver
-on the backend.
+The app cannot sync your data between devices yet: so far you cannot
+pair a device, and without pairing, sync exchanges no data. What the
+area shows depends on the storage mode:
 
-Restricted-browser fallback: upload a screenshot of the QR
-code from your other device (`Html5Qrcode.scanFile`).
+- In the **Local (Browser)** storage mode the area stays visible, but
+  shows no controls, instead the notice "Only available with the
+  desktop app." The public web version always uses this storage mode,
+  also as an installed web app; in the desktop app the same notice
+  appears as long as it is set to **Local (Browser)**. However, the
+  desktop app does not sync yet either (see the next point).
+- In the desktop app's **Server** storage mode the area shows fields
+  for host and port and the button "Generate pairing code". Clicking
+  it shows a pairing link, a QR code and a button for copying the
+  link. But no device can redeem this link yet, not even through the
+  QR code; so a second device cannot be paired with it so far.
 
-Sync needs the desktop app. In browser mode the area stays visible,
-but its controls are replaced by the notice "Only available with the
-desktop app."
+As long as sync is not available, you move your data to another
+device with a backup, though not all of it. Among other things, a
+backup does not contain your API keys; how to transfer the API keys
+is described under *Encrypted key export (.alk)* below. Further
+examples of what a backup does not contain are on the
+[Backup and restore](../features/backup.md) page.
 
 ### Offline content
 
@@ -467,15 +494,17 @@ export is also disabled when no exportable key is configured yet.
 
 ### Housekeeping
 
-- **Paused lesson retention**: paused lessons older than this are
-  abandoned automatically on the next Dashboard load. Choose 7, 14,
-  30 or 60 days, or *Never*; the default is 30 days. Up to 10 paused
-  lessons are kept regardless of age.
+- **Paused lessons on the Dashboard**: the Dashboard's paused-lessons
+  card only shows lessons paused within this time (*Hide paused lessons
+  older than* 7, 14, 30 or 60 days, or *Never*; the default is 30 days).
+  An older lesson just drops out of the card: nothing is abandoned, and
+  it keeps its position and answers. The card shows the five most
+  recently paused lessons.
 - **Disconnected content** (browser mode): progress whose content
   repository is no longer connected stays hidden until you delete it
   here. The card only appears when there is something to clean up.
 
-*Maximum lesson size* and *Paused lesson retention* are stored in this
+*Maximum lesson size* and *Paused lessons on the Dashboard* are stored in this
 browser and apply in Server and Local mode alike.
 
 ### Danger zone
@@ -496,6 +525,19 @@ line tells you where the token is stored (secrets.yaml, an environment
 variable, or this browser), with **Remove** to delete it. A token that
 comes from an environment variable cannot be edited here.
 
+The token is used in three places:
+
+- **Share with Community** in My Lessons opens the pull request for a
+  single lesson directly, without the detour through GitHub's editor
+  (see [My Lessons](my-lessons.md#export-and-share)).
+- **Share as repository** pushes a whole set to a repository of yours;
+  it stays disabled until a token is saved.
+- **Register your repository** (Data > Sources) can open its pull
+  request directly instead of you pasting the entry on GitHub.
+
+The last two are only available in the browser version of the app.
+Without a token every other feature works as before.
+
 ## Help
 
 The **Help** tab holds the in-app glossary: a search field filters
@@ -508,11 +550,20 @@ click on an entry opens the full article in the help drawer.
 The **Diagnostics & Support** tab gathers what helps the developer see
 what happened on your device:
 
-- **Support** - **Create error report** collects your recent actions
-  into a report you review before anything leaves your browser.
+- **Support** - **Create error report** prepares a report for the
+  developer. The environment info and the action history (your recent
+  actions in the app) go into it only when you tick them; both start
+  unticked. Nothing leaves your browser until you click
+  **Open on GitHub**: that opens GitHub's issue form with the report
+  filled in, so GitHub receives it from that moment, before you submit
+  the issue there.
 - **Developer Mode** - shows full technical detail (status code,
-  endpoint, stack trace) in error toasts, and a "DEV" badge in the
-  navigation bar while it is on. Its default depends on the build
+  endpoint, stack trace) in error toasts and in error messages shown on
+  the page itself (for example when the curriculum, progress, settings
+  or a session fail to load), and a "DEV" badge in the navigation bar
+  while it is on. When it is off, those places show a plain message
+  instead of the server's technical reply. Its default depends on the
+  build
   strand: it is **ON by default on the Latest (preview) strand** and
   **OFF on Main**, so preview testers see full technical error detail
   while production users get friendly messages. You can flip it either

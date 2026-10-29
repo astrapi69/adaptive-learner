@@ -28,9 +28,14 @@ const PREVIEW_PORT =
     Number(process.env.ADAPTIVE_LEARNER_WEBKIT_PREVIEW_PORT) || 4174;
 
 export default defineConfig({
+    // #3439 - a committed test.only would run one test and report green.
+    forbidOnly: !!process.env.CI,
     testDir: "./webkit",
     fullyParallel: false,
     workers: 1,
+    // #3752 - in CI each failing test becomes an annotation naming spec and
+    // assertion (the Dexie config does the same since #3748).
+    reporter: process.env.CI ? [["list"], ["github"]] : "list",
     retries: process.env.CI ? 1 : 0,
     timeout: 45_000,
     use: {

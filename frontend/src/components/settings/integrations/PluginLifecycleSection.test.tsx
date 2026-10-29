@@ -120,11 +120,14 @@ describe("PluginLifecycleSection (#3055)", () => {
   it("surfaces a failed read inline and through the toast layer", async () => {
     healthMock.mockRejectedValue(new ApiError(503, "plugin host unavailable"));
     renderCard();
+    // #3374 - the inline line shows the friendly status text; the backend
+    // detail travels only with the toast's error object.
     await waitFor(() => {
-      expect(screen.getByTestId("settings-plugins-lifecycle-error")).toHaveTextContent(
-        "plugin host unavailable",
-      );
+      expect(screen.getByTestId("settings-plugins-lifecycle-error")).toBeInTheDocument();
     });
+    expect(screen.getByTestId("settings-plugins-lifecycle-error")).not.toHaveTextContent(
+      "plugin host unavailable",
+    );
     expect(notifyError).toHaveBeenCalledTimes(1);
     expect(notifyError.mock.calls[0][1]).toMatchObject({
       error: { detail: "plugin host unavailable" },

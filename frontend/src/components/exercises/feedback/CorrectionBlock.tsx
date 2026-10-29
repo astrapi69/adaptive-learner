@@ -122,6 +122,11 @@ export interface CorrectionBlockProps {
     /** #1372 — every originally-failed exercise is now corrected: show a
      *  short success note instead of a drill or a replay CTA. */
     allCorrected?: boolean;
+    /** #3575 - open straight into the drill. Set when the learner asked
+     *  for the correction explicitly (the compact summary's "Fix mistakes"
+     *  button), so the collapsed opt-in card would be a second click for
+     *  the same intent. Default false keeps the #2496 collapsed landing. */
+    initiallyExpanded?: boolean;
 }
 
 interface PreparedCloze {
@@ -145,6 +150,7 @@ export default function CorrectionBlock({
     errorCount = 0,
     correctedCount = 0,
     allCorrected = false,
+    initiallyExpanded = false,
 }: CorrectionBlockProps) {
     const {t} = useI18n();
     const [status, setStatus] = useState<Status>("loading");
@@ -156,7 +162,7 @@ export default function CorrectionBlock({
     // mobile keyboard, covering the score the moment the user arrives.
     // Collapsed, no input exists to grab focus; expanding is the user's
     // explicit opt-in and only THEN does the cloze mount and take focus.
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(initiallyExpanded);
 
     // #187 — Enter-key shortcut, identical to the lesson + error-replay
     // runners. The cloze runs CONTROLLED (ref + onInteraction) so an

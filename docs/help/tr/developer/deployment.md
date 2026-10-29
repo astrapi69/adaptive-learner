@@ -48,6 +48,19 @@ sonrası, SPA-yönlendirici geri dönüşü için `dist/index.html`'yi
 `actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`
 kullanır.
 
+GitHub Pages bir sitenin kendi HTTP başlıklarını belirlemesine izin
+vermez; bu yüzden Pages derlemesi kendi politikasını getirir:
+`frontend/index.html`, `<meta>` ile resimleri ve medyayı birkaç
+kaynakla, örneğin kendi origin'i ve `https://raw.githubusercontent.com`
+ile sınırlayan bir Content-Security-Policy tanımlar (tam değer
+dosyadadır); referrer politikası da `no-referrer`'dır. API modu aynı
+`img-src`/`media-src` değerlerini başlık olarak gönderir
+(`backend/app/frontend_static.py`). Bir özellik, politikanın adını
+vermediği bir host'tan resim ya da medya yüklerse tarayıcı bunu
+engeller; Pages derlemesinde de API modunda da. Yayınlamadan önce
+`scripts/check_external_hosts.py`, derlenen doküman sitesini üçüncü
+taraf kaynaklarına karşı tarar.
+
 Site URL'si `https://astrapi69.github.io/adaptive-learner/`'dır.
 Özel alan adı kullananlar, `frontend/public/`'a alan adıyla bir
 `CNAME` dosyası ekler; GitHub'ın alana duyarlı Pages yönlendirmesi
@@ -153,8 +166,7 @@ durum yoktur:
 | İş Akışı | Tetikleyici | Ne Yapar |
 |---|---|---|
 | `ci.yml` | push, pull_request | Testler + lint + tsc |
-| `coverage.yml` | main'e push | Kapsam HTML + xml |
+| `coverage.yml` | günlük zamanlama, manuel tetikleme | Kapsam HTML + xml (arka uç, frontend, eklenti başına) |
 | `release-gate.yml` | etiket push | Sürüm pin sapma denetimi |
 | `deploy-gh-pages.yml` | main'e push, dispatch | GH Pages derleme + dağıtım |
 | `launcher-{linux,macos,windows}.yml` | release: created | Derleme + başlatıcı ikilisini ekle |
-| `docs.yml` | main'e push | MkDocs derleme (şu anda etkin değil - site GH Pages iş akışından geliyor) |

@@ -54,7 +54,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 `ai_complete_async` lo usa la ruta de sesión en el límite de
 ciclo paso 6→7 para que la evaluación de pasos y la transición
 de tema se disparen de forma concurrente mediante `asyncio.gather`
-(`async_evaluation: true` en `app.yaml`).
+(`async_evaluation: true` en `session.yaml`).
 
 `ai_complete_stream` alimenta el endpoint SSE en streaming
 `POST /api/plugins/session/{id}/message/stream` que emite eventos
@@ -95,7 +95,7 @@ realiza hasta tres llamadas a la IA:
    intercambio y emitir un veredicto JSON (`advance`,
    `confidence`, `reason`, `suggested_step`). `max_tokens=256`.
    El veredicto del evaluador dirige el avance de `cycle_step`
-   (condicionado a `confidence ≥ 0.6`).
+   (condicionado a `confidence ≥ 0.7`).
 3. **Transición de tema** - solo en el paso 7. Una tercera
    llamada a la IA juzga si el tema fue integrado y si se debe
    iniciar un nuevo ciclo en un nuevo subtema. Límite de
@@ -123,7 +123,7 @@ Pista del perfil: …») se adjunta en el momento de la composición.
 
 Para el modo Dexie, los prompts se exportan literalmente a
 `frontend/src/data/session-prompts.json` y los carga
-`frontend/src/storage/prompts.ts`. El mismo texto, el mismo
+`frontend/src/storage/ai/prompts.ts`. El mismo texto, el mismo
 formato de bloque de contexto - sin deriva posible.
 
 ## Añadir un nuevo proveedor
@@ -131,14 +131,16 @@ formato de bloque de contexto - sin deriva posible.
 1. Crea `plugins/adaptive-learner-plugin-ai-nuevoproveedor/`.
 2. Implementa el hookimpl `ai_complete`: comprueba el prefijo del
    modelo, llama a la API HTTP del proveedor, devuelve el texto.
-3. Añade el prefijo del proveedor a `DEFAULT_MODELS` en
-   `ai_orchestration.py` con un modelo por defecto económico.
+3. Añade el proveedor con un modelo por defecto económico a
+   `DEFAULT_MODELS` en `backend/app/services/ai_caller.py`; es la única
+   tabla (la leen el plugin de sesión, las importaciones y la
+   validación de lecciones, y una prueba rechaza una segunda copia).
 4. Añade el nombre del proveedor al enum `AIProvider` en
    `app/schemas/__init__.py`.
 5. Añádelo a `AI_PROVIDERS` en
    `frontend/src/lib/constants.ts`.
 6. Para paridad en modo Dexie: añade un cliente a
-   `frontend/src/storage/ai-providers.ts` y enrútalo desde
+   `frontend/src/storage/ai/ai-providers.ts` y enrútalo desde
    `aiComplete()`.
 
 Cada plugin de proveedor prueba su hookimpl + la llamada al
@@ -149,29 +151,31 @@ plantilla (la llamada HTTP al proveedor está simulada).
 ## Llamadas directas desde el navegador (modo Dexie)
 
 En el modo Dexie la llamada a la IA no pasa por el sistema de
-plugins. `storage/ai-providers.ts` realiza la solicitud HTTP
+plugins. `storage/ai/ai-providers.ts` realiza la solicitud HTTP
 directamente. Anthropic requiere el encabezado
 `anthropic-dangerous-direct-browser-access: true` para superar
 la verificación previa CORS; OpenAI y Gemini aceptan llamadas
 directas desde el navegador por defecto.
 
 La lógica de doble prompt es la misma en ambos modos -
-`storage/session-flow.ts` llama a `aiComplete()` dos veces y
+`storage/ai/session-flow.ts` llama a `aiComplete()` dos veces y
 analiza el JSON del evaluador de la misma manera que lo hace el
 backend.
 
 ## Umbral de confianza
 
-`session.step_evaluation.confidence_threshold` en
-`backend/config/app.yaml` (por defecto 0.6) determina si un
+`step_evaluation.confidence_threshold` en
+`backend/config/plugins/session.yaml` (por defecto 0.7) determina si un
 veredicto real del evaluador (sin fallback) realmente mueve el
 paso del ciclo. Ponlo más alto para ser más conservador, más bajo
 para ser más agresivo. Los veredictos de fallback (fallos de
 análisis) siempre aplican el avance de +1 independientemente.
 
-El puerto Dexie refleja esto con un 0.6 fijo en
-`storage/session-flow.ts`. Una fase futura lo expondrá en la
-interfaz de Ajustes.
+El puerto Dexie refleja esto con un 0.7 fijo en
+`storage/ai/session-flow.ts`; `session-flow.test.ts` lee el valor de
+`session.yaml` y falla si ambos divergen. A propósito no hay ningún
+ajuste en la interfaz: las claves son `# INTERNAL` y solo se editan
+en el YAML (#3436).
 
 ## Otras superficies de IA (resumen de solo lectura)
 

@@ -222,10 +222,10 @@ entries:
 
       ## Adım ne zaman sona erer
 
-      Çift istem değerlendiricisi arka arkaya üç varyasyonda
-      %80'in üzerinde güven gördüğünde 7. adıma geçersiniz.
-      Güven dalgalanırsa döngü 6. adımda kalır — istikrar
-      sağlanana kadar.
+      Her yanıtınızdan sonra çift istem değerlendiricisi 7. adıma
+      hazır olup olmadığınıza karar verir; sistem, değerlendiricinin
+      güveni en az %70 olduğunda bu öneriyi uygular. Aksi halde
+      döngü 6. adımda kalır.
 
       ## Aralıklı tekrarla bağlantı
 
@@ -267,8 +267,8 @@ entries:
 
       - **Oturumu sonlandırın** ve değerlendirin (anlama /
         stres / yönteme uyum).
-      - **Otomatik döngü**: yeni bir konuyla yeni bir döngü
-        otomatik olarak başlar.
+      - **Otomatik döngü** (yalnızca masaüstü uygulaması): yeni
+        bir konuyla yeni bir döngü otomatik olarak başlar.
       - **Yöntem değişikliği**: düşük yönteme uyum durumunda
         sistem bir sonraki döngü için yöntem değişikliği önerir.
 

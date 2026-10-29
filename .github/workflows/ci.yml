@@ -33,6 +33,8 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       scripts: ${{ steps.filter.outputs.scripts }}
       plugins: ${{ steps.filter.outputs.plugins }}
+      e2e: ${{ steps.filter.outputs.e2e }}
+      data_model: ${{ steps.filter.outputs.data_model }}
       i18n_only: ${{ steps.scope.outputs.i18n_only }}
     steps:
       - uses: actions/checkout@v7
@@ -60,6 +62,22 @@ jobs:
               - 'scripts/**'
             plugins:
               - 'plugins/**'
+            # #3342: e2e TypeScript (configs, specs, helpers) is read by
+            # two backend guard tests through read_text; neither the
+            # backend filter nor testmon ever selects them for it.
+            e2e:
+              - 'e2e/**/*.ts'
+            # #3828: the ER diagrams of docs/help/<lang>/developer/data-model.md
+            # are generated from the SQLAlchemy models AND the Dexie schema.
+            # A Dexie upgrade touches only frontend/, which the backend filter
+            # does not match, so this output starts the backend install and
+            # the drift gate for it; a hand edit of a page or the mapping too.
+            data_model:
+              - 'backend/app/models/**'
+              - 'frontend/src/storage/dexie/**'
+              - 'scripts/generate_er_diagrams.py'
+              - 'scripts/data_model_*'
+              - 'docs/help/*/developer/data-model.md'
             frontend:
               - 'frontend/**'
               - 'Makefile'
@@ -125,11 +143,11 @@ jobs:
             poetry-backend-${{ runner.os }}-py3.12-
 
       - name: Install Poetry
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true' || needs.changes.outputs.e2e == 'true' || needs.changes.outputs.data_model == 'true'
         run: pip install poetry
 
       - name: Install backend dependencies
-        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true'
+        if: github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true' || needs.changes.outputs.e2e == 'true' || needs.changes.outputs.data_model == 'true'
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
 
@@ -207,6 +225,18 @@ jobs:
           # shellcheck disable=SC2086
           poetry run pytest -q $files
 
+      # #3342: the e2e guard tests (run isolation #3316, no committed
+      # test.only #3439) read e2e/playwright*.config.ts and the specs through
+      # read_text. A PR touching only e2e/ trips no backend filter, and
+      # testmon could not select them anyway (the selection gap of
+      # lessons/ci-gates.md, #1620/#1665), so reintroducing a reused server
+      # would merge green and turn develop red afterwards. A push runs the
+      # full suite, which includes both files.
+      - name: E2E guard tests on e2e changes (#3342)
+        if: github.event_name == 'pull_request' && needs.changes.outputs.e2e == 'true'
+        working-directory: backend
+        run: poetry run pytest -q tests/test_e2e_path_isolation.py tests/test_e2e_no_focused_tests.py
+
       # #2281: the committed schema/openapi.json must match the spec the
       # booted app serves (13/13 plugins asserted before comparing; fails
       # closed). Runs as an explicit step, not only via the pytest suite,
@@ -217,6 +247,27 @@ jobs:
         if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: poetry run python ../scripts/sync_openapi.py --check
+
+      # Generated Pydantic layer drift gate (#3650): the content-loader's
+      # schema_generated.py / manifest_generated.py have exactly one writer,
+      # the generator. This ran only inside make release-test, so a ruff
+      # --fix that re-sorted their imports (#3625) sat red until a release.
+      # Explicit step, like the OpenAPI gate, so test selection never skips it.
+      - name: Generated Pydantic layer drift gate (#3650)
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
+        working-directory: backend
+        run: poetry run python ../scripts/generate_pydantic_models.py --check
+
+      # Data-model ER diagram drift gate (#3828): docs/help/<lang>/developer/
+      # data-model.md is generated from the SQLAlchemy models and the final
+      # Dexie schema. Fails on a stale page, a table or store without an area,
+      # and a *_id field the mapping does not resolve. Explicit step, so test
+      # selection never skips it, and it runs on a Dexie-only PR through the
+      # data_model filter.
+      - name: Data-model ER diagram drift gate (#3828)
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true' || needs.changes.outputs.data_model == 'true') && needs.changes.outputs.i18n_only != 'true'
+        working-directory: backend
+        run: poetry run python ../scripts/generate_er_diagrams.py --check
 
       # Dead-code ratchet, Python side (#3047): vulture over backend/app plus
       # every plugin package against the list baseline. The weekly
@@ -284,41 +335,6 @@ jobs:
         if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         run: make test-plugins
 
-  # Plugin matrix job: skeleton ships zero plugins, so this job is
-  # disabled. When the user adds their first plugin, re-enable by
-  # populating the `matrix.plugin` list with the plugin directory
-  # name(s) under plugins/, and remove the `if: false` gate.
-  #
-  # plugin-tests:
-  #   name: Plugin Tests
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 15
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       plugin:
-  #         - adaptive-learner-plugin-<your-plugin-name>
-  #   steps:
-  #     - uses: actions/checkout@v7
-  #     - uses: actions/setup-python@v7
-  #       with:
-  #         python-version: "3.12"
-  #     - name: Cache Poetry virtualenv (${{ matrix.plugin }})
-  #       uses: actions/cache@v6
-  #       with:
-  #         path: ~/.cache/pypoetry/virtualenvs
-  #         key: poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-${{ hashFiles(format('plugins/{0}/poetry.lock', matrix.plugin)) }}
-  #         restore-keys: |
-  #           poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-
-  #     - name: Install Poetry
-  #       run: pip install poetry
-  #     - name: Install plugin dependencies
-  #       working-directory: plugins/${{ matrix.plugin }}
-  #       run: poetry install --no-interaction --no-ansi
-  #     - name: Run plugin tests
-  #       working-directory: plugins/${{ matrix.plugin }}
-  #       run: poetry run pytest tests/ -v
-
   frontend-tests:
     name: Frontend Tests
     # #1658 - symmetric to the #1617 backend gate: on a pure-backend PR the
@@ -344,7 +360,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.3.14"
+          bun-version: "1.4.2"
 
       - name: Cache bun install
         uses: actions/cache@v6
@@ -466,6 +482,16 @@ jobs:
         working-directory: frontend
         run: bunx vitest run src/i18n/full-tree-key-coverage.test.ts
 
+      # #3433: one term per concept in every catalog. The test reads the
+      # catalogs through fs, so `vitest --changed` never selects it, and an
+      # i18n_only PR (exactly where a rejected term comes back) runs only
+      # the parity pins below. A fixed step on every frontend PR, like the
+      # key coverage above; push runs the full suite, which includes it.
+      - name: i18n one term per concept (#3433)
+        if: github.event_name == 'pull_request' && needs.changes.outputs.frontend == 'true'
+        working-directory: frontend
+        run: bunx vitest run src/data/i18n/terms.test.ts
+
       # Test Impact Analysis (#615): on a PR run only the Vitest files related
       # to files changed since the base branch (`--changed origin/<base>`).
       # Real test failures propagate (no masking). The ONLY fallback to the
@@ -526,9 +552,16 @@ jobs:
           # and a failed audit would read as success.
           set -o pipefail
           log="$RUNNER_TEMP/bun-audit.log"
+          # #3549: advisories with no patched release that only reach a
+          # dev-only chain are exempted by ID in audit-ignore.txt, each with
+          # its reason (the pip-audit convention below: document the ID,
+          # never drop the gate). A missing file fails the step here.
+          ignores=$(grep -vE '^[[:space:]]*(#|$)' audit-ignore.txt | sed 's/^/--ignore=/' | tr '\n' ' ')
+          echo "exempted advisories: ${ignores:-none}"
           for attempt in 1 2 3; do
             echo "::group::bun audit --audit-level=high (attempt $attempt/3)"
-            if bun audit --audit-level=high 2>&1 | tee "$log"; then
+            # shellcheck disable=SC2086 # word-split on purpose: one flag per ID
+            if bun audit --audit-level=high $ignores 2>&1 | tee "$log"; then
               echo "::endgroup::"
               exit 0
             fi
@@ -594,10 +627,16 @@ jobs:
         if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: poetry install --no-interaction --no-ansi
+      # #3423: the plugins are linted too, with the backend config (run from
+      # backend/ so ruff falls back to its pyproject). #3658: and formatted.
       - name: ruff check
         if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
-        run: poetry run ruff check app/
+        run: poetry run ruff check app/ ../plugins/
+      - name: ruff format
+        if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
+        working-directory: backend
+        run: poetry run ruff format --check app/ ../plugins/
       - name: mypy
         if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
@@ -623,7 +662,9 @@ jobs:
   docs-verification:
     name: Docs drift verifier
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    # #3802: 10, not 5 - the job now also installs the docs environment and
+    # builds the site, which needs PyPI on top of the stdlib checks.
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -635,6 +676,19 @@ jobs:
         run: pip install pyyaml
       - name: Verify documentation for drift
         run: python3 scripts/verify_docs.py
+      # #3800 - every ```mermaid block in docs/help parses with the Mermaid the
+      # docs site serves (vendored, pinned by hash) and carries accTitle +
+      # accDescr. Mermaid needs a DOM, so happy-dom is installed at the
+      # version frontend/bun.lock pins; the script self-tests on every run.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Verify Mermaid diagrams in the help pages (#3800)
+        run: |
+          set -euo pipefail
+          version=$(grep -m1 -o '"happy-dom@[0-9.]*"' frontend/bun.lock | tr -d '"' | cut -d@ -f2)
+          npm install --no-save --silent --prefix "$RUNNER_TEMP/mermaid-gate" "happy-dom@${version}"
+          node scripts/verify_mermaid_blocks.mjs --happy-dom "$RUNNER_TEMP/mermaid-gate/node_modules/happy-dom"
       # #3253: the Docker-context rules are probed with synthesized paths
       # (a CI checkout has no node_modules to walk), so the check is worth
       # running on every PR, not only behind the Docker path filter.
@@ -642,6 +696,25 @@ jobs:
         run: python3 scripts/verify_docker_context.py
       - name: Verify mkdocs nav is in sync with _meta.yaml
         run: python3 scripts/generate_mkdocs_nav.py --check
+      # #3802: the docs site is published like the app, so the built site is
+      # scanned for resources a browser fetches from a third-party host on
+      # its own: a Google Fonts link (Material's default unless theme.font is
+      # false), Material's repository widget (its script calls
+      # api.github.com), any external script, image or stylesheet. Built
+      # from docs/poetry.lock and the mkdocs.yml checked above, as
+      # deploy-gh-pages.yml builds it. What Material's JavaScript would load
+      # on its own (the unpkg.com polyfill) no scan of the files can see;
+      # verify_docs' docs-third-party check pins the overrides against it.
+      - name: Install the docs build environment (#3802)
+        working-directory: docs
+        run: |
+          pipx install poetry
+          poetry install --no-interaction
+      - name: Docs site fetches nothing from a third-party host (#3802)
+        run: |
+          set -euo pipefail
+          (cd docs && poetry run mkdocs build -f ../mkdocs.yml)
+          make verify-docs-external-hosts
       # #2075: a gate may not enforce a rule section that does not exist,
       # and a rule may not cite a workflow that is gone. Both directions.
       - name: Verify gate <-> rule links

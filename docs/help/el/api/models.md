@@ -1,15 +1,13 @@
 # Μοντέλα δεδομένων
 
-Τα **25 μοντέλα SQLAlchemy** στο
+Τα **μοντέλα SQLAlchemy** στο
 `backend/app/models/__init__.py`, με τα σχήματα Pydantic
 για τη μεταφορά δεδομένων. Η επιφάνεια συγχρονισμού περιλαμβάνει
-28 πίνακες (τα 25 μοντέλα + 3 πίνακες σύνδεσης: `project_subjects`,
-`project_tags`, `user_badges`).
+κάθε πίνακα στο `sync_service.ALL_SYNC_TABLES`.
 
 Τα 14 αρχικά μοντέλα της v0.7.0 τεκμηριώνονται λεπτομερώς
-παρακάτω· τα 11 που προστέθηκαν έκτοτε (Phase 12+ imports,
-Phase 22 subjects/tags, Phase 29-30 gamification + anki,
-Phase 32 notebooklm) αναφέρονται στο τέλος με ονομασία + πίνακα.
+παρακάτω· όσα προστέθηκαν έκτοτε αναφέρονται στο τέλος με
+ονομασία + πίνακα.
 Βλ. το OpenAPI spec στο `/openapi.json` για κάθε πεδίο
 κάθε μοντέλου.
 
@@ -219,6 +217,7 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+    PERPLEXITY = "perplexity"
 
 # Since v1.20.0 / Phase 34
 class ApiKeySource(str, Enum):
@@ -250,8 +249,15 @@ class ImportedConversationSource(str, Enum):
 | ProjectSubject | project_subjects | v1.9.0 | M:N (LearningProject, Subject) |
 | ProjectTag | project_tags | v1.9.0 | M:N (LearningProject, Tag) |
 | UserXP | user_xp | v1.16.0 | XP + singleton επιπέδου ανά χρήστη |
+| XpPurchase | xp_purchases | v2.17.0 | Μία αγορά με XP (πλαίσιο άβαταρ, παραλλαγή μασκότ, παιχνίδι arcade)· η κατοχή προκύπτει από αυτήν |
 | Badge | badges | v1.16.0 | Κατάλογος badge (σπαρμένος από YAML) |
 | UserBadge | user_badges | v1.16.0 | Εγγραφή κερδισμένου badge (μόνο προσθήκη) |
 | UserStreak | user_streaks | v1.16.0 | Κατάσταση streak + παγώματα + λειτουργία Σαββατοκύριακου |
 | AnkiCardSuggestion | anki_card_suggestions | v1.17.0 | Υποψήφια κάρτα flashcard που εξήχθη από ΤΝ |
 | StudyQuestion | study_questions | v1.19.0 | Ερώτηση ενεργής ανάκλησης που δημιουργήθηκε από ΤΝ |
+| ApiKeyBackup | api_key_backups | v1.49.0 | Αποθήκη επαναφοράς για αντικατεστημένα κλειδιά ΤΝ |
+| LessonProgress | lesson_progress | v1.28.0 | Κατάσταση βημάτων ανά μάθημα (in_progress / paused / completed) |
+| ElementError | element_errors | v1.30.0 | Σφάλμα SRS + κατάκτηση ανά στοιχείο |
+| SetRun | set_runs | v2.12.0 | Ένα πέρασμα ενός σετ περιεχομένου· η ανοιχτή γραμμή είναι το ενεργό πέρασμα |
+| UserMission | user_missions | v1.39.0 | Ανάθεση + πρόοδος ημερήσιας αποστολής |
+| SpeechRecording | speech_recordings | v2.14.0 | Η τρέχουσα ηχογράφηση του μαθητή για μια άσκηση «μίλα και ηχογράφησε» |

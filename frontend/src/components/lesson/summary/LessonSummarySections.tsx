@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "../../../shared/data-display/AnimatedCounter";
 import AnswerDiff from "../../../shared/data-display/AnswerDiff";
+import CorrectionMark from "./CorrectionMark";
 import Confetti from "../../feedback/Confetti";
 import LessonExamResult from "./LessonExamResult";
 import LessonFavoriteToggle from "../chrome/LessonFavoriteToggle";
@@ -42,7 +43,9 @@ import { questionForError } from "../../../lib/review/error-question";
 import { readExplanationsEnabled } from "../../../lib/review/reviewPref";
 import type { LessonMode } from "../../../lib/learning/lessonModePref";
 import type { TimedRunStats } from "../../../lib/learning/timedMode";
+import type { CorrectionSummary } from "../../../lib/lesson/correction/correction-summary";
 import type { StarRating } from "../../../lib/lesson/lesson-summary";
+import type { AuthorEvaluationResult } from "../../../lib/lesson/summary/author-evaluation";
 import type { ContentLesson, ElementError } from "../../../storage/types";
 
 /** The i18n lookup signature the parent passes down. */
@@ -105,66 +108,16 @@ export function SummaryFavorite({
   );
 }
 
-/**
- * The result scoreboard: the 0-3 star row, the encouraging headline message
- * and the count-up score bar (#1411 toggleable, part of "Result and
- * statistics" together with {@link SummaryStatsList}).
- *
- * #2479 — the score bar is two-segment: a solid "immediate" fill (correct on
- * the first pass) and a hatched "corrected" fill (previously-wrong elements
- * fixed in the correction round). The two segments are distinguished by a
- * diagonal hatch AND a labelled legend, never by colour alone. When nothing
- * was corrected (``correctedCount === 0``) the bar renders as a single solid
- * fill with no legend, so a run without a correction round looks unchanged.
- * The stars + message follow the correction-adjusted final state.
- */
-export function SummaryScoreboard({
-  enabled,
+/** The fixed star scale (``computeStars``) and its headline message. */
+function StarScale({
   stars,
   message,
-  animatedPct,
-  scorePct,
-  correct,
-  total,
-  immediateCorrect,
-  correctedCount,
-  immediatePct,
   t,
 }: {
-  enabled: boolean;
   stars: StarRating;
   message: string;
-  animatedPct: number;
-  scorePct: number;
-  correct: number;
-  total: number;
-  /** Correct on the first pass (#2479); drives the solid segment's width. */
-  immediateCorrect: number;
-  /** Previously-wrong elements corrected (#2479); drives the hatched
-   *  segment. 0 => single-segment bar, no legend. */
-  correctedCount: number;
-  /** First-pass percentage: the immediate segment's width AND the corrected
-   *  segment's left offset (it stacks straight after). */
-  immediatePct: number;
   t: TFn;
 }) {
-  if (!enabled) return null;
-  const hasCorrections = correctedCount > 0;
-  // The animated count-up runs on the FINAL percentage; split it across the
-  // two segments so the immediate segment never overshoots its own share.
-  const animatedImmediatePct = Math.min(animatedPct, immediatePct);
-  const animatedCorrectedPct = Math.max(0, animatedPct - immediatePct);
-  const barAria = hasCorrections
-    ? t(
-        "lesson.summary.score_bar_aria_corrected",
-        "Score: {pct} percent, of which {corrected} fixed after correction",
-      )
-        .replace("{pct}", String(scorePct))
-        .replace("{corrected}", String(correctedCount))
-    : t("lesson.summary.score_bar_aria", "Score: {pct} percent").replace(
-        "{pct}",
-        String(scorePct),
-      );
   return (
     <>
       <div
@@ -199,6 +152,79 @@ export function SummaryScoreboard({
       >
         {message}
       </p>
+    </>
+  );
+}
+
+/**
+ * The result scoreboard: the 0-3 star row, the encouraging headline message
+ * and the count-up score bar (#1411 toggleable, part of "Result and
+ * statistics" together with {@link SummaryStatsList}).
+ *
+ * #2479 — the score bar is two-segment: a solid "immediate" fill (correct on
+ * the first pass) and a hatched "corrected" fill (previously-wrong elements
+ * fixed in the correction round). The two segments are distinguished by a
+ * diagonal hatch AND a labelled legend, never by colour alone. When nothing
+ * was corrected (``correctedCount === 0``) the bar renders as a single solid
+ * fill with no legend, so a run without a correction round looks unchanged.
+ * The stars + message follow the correction-adjusted final state.
+ */
+export function SummaryScoreboard({
+  enabled,
+  stars,
+  message,
+  showStarScale = true,
+  animatedPct,
+  scorePct,
+  correct,
+  total,
+  immediateCorrect,
+  correctedCount,
+  immediatePct,
+  t,
+}: {
+  enabled: boolean;
+  stars: StarRating;
+  message: string;
+  /** #3740 - ``false`` drops the star row and its message: under a set's
+   *  evaluation the author owns the judgement. The score bar stays. */
+  showStarScale?: boolean;
+  animatedPct: number;
+  scorePct: number;
+  correct: number;
+  total: number;
+  /** Correct on the first pass (#2479); drives the solid segment's width. */
+  immediateCorrect: number;
+  /** Previously-wrong elements corrected (#2479); drives the hatched
+   *  segment. 0 => single-segment bar, no legend. */
+  correctedCount: number;
+  /** First-pass percentage: the immediate segment's width AND the corrected
+   *  segment's left offset (it stacks straight after). */
+  immediatePct: number;
+  t: TFn;
+}) {
+  if (!enabled) return null;
+  const hasCorrections = correctedCount > 0;
+  // The animated count-up runs on the FINAL percentage; split it across the
+  // two segments so the immediate segment never overshoots its own share.
+  const animatedImmediatePct = Math.min(animatedPct, immediatePct);
+  const animatedCorrectedPct = Math.max(0, animatedPct - immediatePct);
+  const barAria = hasCorrections
+    ? t(
+        "lesson.summary.score_bar_aria_corrected",
+        "Score: {pct} percent, of which {corrected} fixed after correction",
+      )
+        .replace("{pct}", String(scorePct))
+        .replace("{corrected}", String(correctedCount))
+    : t("lesson.summary.score_bar_aria", "Score: {pct} percent").replace(
+        "{pct}",
+        String(scorePct),
+      );
+  return (
+    <>
+      {showStarScale && (
+        <StarScale stars={stars} message={message} t={t} />
+      )}
 
       <div
         className="lesson-summary-score-bar"
@@ -343,6 +369,7 @@ export function SummaryExamPanel({
   total,
   examPass,
   examThreshold,
+  authorEvaluation = null,
   correct,
   scorePct,
   minutes,
@@ -355,6 +382,8 @@ export function SummaryExamPanel({
   total: number;
   examPass: boolean;
   examThreshold: number;
+  /** #3736 - the set's evaluation applied to this run, ``null`` without one. */
+  authorEvaluation?: AuthorEvaluationResult | null;
   correct: number;
   scorePct: number;
   minutes: number;
@@ -367,6 +396,7 @@ export function SummaryExamPanel({
     <LessonExamResult
       examPass={examPass}
       examThreshold={examThreshold}
+      authorEvaluation={authorEvaluation}
       correct={correct}
       total={total}
       scorePct={scorePct}
@@ -501,6 +531,7 @@ export function SummaryExplanations({
   sessionErrors,
   lesson,
   detailed = false,
+  correction,
   t,
 }: {
   sessionErrors: ElementError[];
@@ -514,6 +545,10 @@ export function SummaryExplanations({
    *  of its own Settings toggle and without the compact 5-entry cap. The
    *  stored preference is never written; it only stops deciding this render. */
   detailed?: boolean;
+  /** #3575 - the detailed view's correction summary. With it, every entry
+   *  carries a "Still open" mark and the run's corrected exercises stay in
+   *  the list, marked "Corrected", instead of dropping out silently. */
+  correction?: CorrectionSummary;
   t: TFn;
 }) {
   if (!detailed && !readExplanationsEnabled()) return null;
@@ -532,7 +567,8 @@ export function SummaryExplanations({
   // #3031 — the cap exists to keep the compact summary compact. The detailed
   // view is the place where every mistake of the run belongs.
   const mistakes = detailed ? wrong : wrong.slice(0, 5);
-  if (mistakes.length === 0) return null;
+  const corrected = correction?.entries.filter((entry) => entry.corrected) ?? [];
+  if (mistakes.length === 0 && corrected.length === 0) return null;
   return (
     <section
       className="lesson-summary-explanations flex flex-col gap-3 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
@@ -571,11 +607,61 @@ export function SummaryExplanations({
                   {t(expl.key, expl.fallback)}
                 </p>
               )}
+              {correction && (
+                <CorrectionMark
+                  corrected={false}
+                  testId={`lesson-summary-explain-status-${err.id}`}
+                  t={t}
+                />
+              )}
             </li>
           );
         })}
+        {corrected.map((entry) => (
+          <CorrectedExplanation key={entry.stepId} entry={entry} t={t} />
+        ))}
       </ul>
     </section>
+  );
+}
+
+/** #3575 - a corrected mistake in "Why you missed these": its question,
+ *  the first answer against the correct one, and the "Corrected" mark. */
+function CorrectedExplanation({
+  entry,
+  t,
+}: {
+  entry: CorrectionSummary["entries"][number];
+  t: TFn;
+}) {
+  return (
+    <li
+      className="flex flex-col gap-1"
+      data-testid={`lesson-summary-explain-corrected-${entry.stepId}`}
+    >
+      <p className="text-sm">
+        <span className="text-fg-muted">
+          {t("review.question_label", "Question:")}{" "}
+        </span>
+        <span className="font-medium">{entry.question ?? entry.title}</span>
+      </p>
+      {entry.firstAnswer ? (
+        <AnswerDiff
+          userAnswer={entry.firstAnswer}
+          correctAnswer={entry.correctAnswer}
+          yourLabel={t("review.your_answer", "Your answer:")}
+          correctLabel={t("review.correct_answer", "Correct:")}
+        />
+      ) : (
+        <p className="text-sm text-fg-muted">
+          {t(
+            "lesson.summary.breakdown_correct_answer",
+            "Correct answer: {answer}",
+          ).replace("{answer}", entry.correctAnswer)}
+        </p>
+      )}
+      <CorrectionMark corrected t={t} />
+    </li>
   );
 }
 

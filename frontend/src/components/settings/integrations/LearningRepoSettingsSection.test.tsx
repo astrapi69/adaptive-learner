@@ -86,9 +86,13 @@ describe("LearningRepoSettingsSection — Dexie mode", () => {
       expect(screen.getByTestId("learning-repo-settings")).toBeInTheDocument();
     });
     const reposDir = screen.getByTestId("learning-repo-settings-repos-dir") as HTMLInputElement;
-    // The drift-pin in plugin-config-sync.test.ts proves the bundled
-    // default repos_dir=~/.local/share/adaptive_learner/repos.
-    expect(reposDir.value).toBe("~/.local/share/adaptive_learner/repos");
+    // #3451: the bundled default is empty (the server resolves its data
+    // directory); the helper text names the rule, never a fixed path.
+    expect(reposDir.value).toBe("");
+    const hint = screen.getByTestId("learning-repo-settings-repos-dir-hint");
+    expect(reposDir.getAttribute("aria-describedby")).toBe(hint.id);
+    expect(hint.textContent).not.toMatch(/\.local\/share/);
+    expect(hint.textContent).not.toBe("");
 
     await act(async () => {
       fireEvent.change(reposDir, { target: { value: "/my/custom/dir" } });
@@ -103,6 +107,31 @@ describe("LearningRepoSettingsSection — Dexie mode", () => {
     const row = await getDb().pluginSettings.get("learning-repo");
     expect(row).toBeTruthy();
     expect(row?.settings).toMatchObject({ repos_dir: "/my/custom/dir" });
+  });
+});
+
+describe("LearningRepoSettingsSection — empty repos dir (#3451)", () => {
+  it.each([
+    ["an empty field", ""],
+    ["a whitespace-only field", "   "],
+  ])("saves %s as empty, so the server default applies", async (_label, typed) => {
+    renderSection();
+    await waitFor(() => {
+      expect(screen.getByTestId("learning-repo-settings")).toBeInTheDocument();
+    });
+    const reposDir = screen.getByTestId("learning-repo-settings-repos-dir") as HTMLInputElement;
+    await act(async () => {
+      fireEvent.change(reposDir, { target: { value: "/tmp/first" } });
+    });
+    await act(async () => {
+      fireEvent.change(reposDir, { target: { value: typed } });
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("learning-repo-settings-save"));
+    });
+
+    const fresh = await getStorage().pluginSettings.get("learning-repo");
+    expect(fresh.settings.repos_dir).toBe("");
   });
 });
 

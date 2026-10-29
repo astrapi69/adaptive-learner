@@ -16,8 +16,10 @@ propias copias de esta lista.
   comentarios, adaptar, repetir, integrar. Un evaluador de doble
   prompt juzga cada turno y decide si avanzar, repetir, saltar hacia
   adelante o retroceder.
-- **Auto-loop**: cuando un tema queda integrado, la sesión elige un
-  nuevo subtema y arranca un ciclo nuevo (con límite por sesión).
+- **Auto-loop** (app de escritorio): cuando un tema queda integrado, la
+  sesión elige un nuevo subtema y arranca un ciclo nuevo (con límite
+  por sesión). En la versión de navegador la sesión se queda en el paso
+  7; la página de la sesión lo indica.
 - **Cambio de método**: la detección de estancamiento recomienda un
   método distinto cuando las valoraciones se aplanan; se acepta con
   un clic.
@@ -36,7 +38,9 @@ y [El método de aprendizaje](../concept/philosophy.md).
 - **Voz**: dictado por micrófono en el chat, lectura en voz alta de
   las respuestas y un modo dedicado de práctica de pronunciación.
 - **Trae tu propia clave (BYOK)**: Anthropic Claude, OpenAI GPT y
-  Google Gemini como plugins de proveedor separados; descubrimiento
+  Google Gemini como plugins de proveedor separados, más Perplexity en
+  modo servidor (la app de escritorio; el navegador no puede llamar a
+  Perplexity directamente); descubrimiento
   de modelos en vivo con un selector de recomendados/todos; prueba de
   clave por proveedor y un almacén de claves con reversión.
 - **Las conversaciones importadas continúan como sesiones de
@@ -98,6 +102,12 @@ aprendiz.
 - Valoración de 0 a 3 estrellas, favoritos, sugerencias del siguiente
   paso, división automática de lecciones demasiado grandes y enlaces
   de vuelta a la teoría desde los ejercicios.
+- **Resumen de finalización de set**: tras la última lección de un set,
+  todos los errores del set en una sola vista: totales, por lección,
+  por tipo de ejercicio y los elementos que sigues fallando, con tu
+  última respuesta incorrecta junto a la correcta.
+
+Consulta [Resumen de finalización de set](set-summary.md).
 
 ## Creación de lecciones (Create-Lesson)
 
@@ -123,8 +133,13 @@ aprendiz.
   conjunto de varias lecciones mediante un selector de lecciones,
   combina lecciones propias en un conjunto y elige un dominio de
   contenido (idiomas más dominios de conocimiento).
+- **Modo mentor**: mientras juegas una de tus propias lecciones, anotas
+  lo que falla justo donde ocurre; las notas se convierten en una lista
+  de pendientes en el resumen y se resuelven en el editor, sin tocar tu
+  progreso de aprendizaje.
 
-Consulta [Crear lecciones](../content-creation/overview.md).
+Consulta [Crear lecciones](../content-creation/overview.md) y
+[Modo mentor](../content-creation/mentor-mode.md).
 
 ## Importación y análisis
 
@@ -171,6 +186,20 @@ Consulta [Explorador de contenido](content-browser.md),
 - **Celebraciones**: elogios merecidos y de intensidad configurable,
   overlays de hitos, sonidos opcionales, todo seguro con movimiento
   reducido.
+- **Modo juego**: lecciones lúdicas con una racha de respuestas visible,
+  sonidos propios, corazones y cuenta atrás opcionales, XP extra por
+  racha y la mascota Lernfunke con variantes de color que se
+  desbloquean con nivel, insignias o XP.
+- **Arcade**: cuatro minijuegos cortos desde una tarjeta del panel:
+  Learn Memory con parejas de tus propias lecciones (gratis), además de
+  Tic-Tac-Toe, Snake y Simon, que se desbloquean con XP. Los juegos no
+  dan XP.
+- **Avatar**: sube una imagen o elige una de ocho figuras
+  predefinidas, con marcos decorativos que se desbloquean con nivel,
+  racha o XP.
+
+Consulta [Elogios y celebraciones](../user-guide/celebrations.md) y
+[Arcade](arcade.md).
 
 ## Exportaciones y copia de seguridad
 
@@ -201,8 +230,6 @@ Consulta [Copia de seguridad y restauración](backup.md).
   IndexedDB del navegador, las llamadas de IA van directas al
   proveedor, sin necesidad de servidor) o modo servidor (backend
   FastAPI con SQLite, varios dispositivos).
-- **Sincronización en red local** entre dispositivos con
-  emparejamiento por código QR y resolución de conflictos.
 - **Launcher de escritorio** para Linux, macOS y Windows: una
   configuración autoalojada de un clic basada en Docker con detección
   de Docker consciente del contexto y autodiagnóstico.
@@ -222,8 +249,9 @@ Consulta [Instalación](../install/launcher.md).
 - **Teclado primero**: atajos globales con overlay de ayuda, Enter
   avanza en las lecciones, Tab navega por los huecos del cloze.
 - **Compatibilidad con lectores de pantalla**: landmarks, etiquetas
-  ARIA y regiones vivas, tablas de datos para los gráficos, gestión
-  del foco en los diálogos.
+  ARIA y regiones vivas, un título por página en el idioma de la
+  interfaz ("Ajustes - Adaptive Learner"), tablas de datos para los
+  gráficos, gestión del foco en los diálogos.
 - El **movimiento reducido** se respeta en todas partes; lectura en
   voz alta (TTS) para lecciones y chat.
 - **Ayuda contextual dentro de la app**: el panel de ayuda abre el

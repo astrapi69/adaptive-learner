@@ -33,6 +33,7 @@ import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import CodeBlock from "../../content/browser/CodeBlock";
+import MarkdownImage from "../../../shared/data-display/MarkdownImage";
 import StepExamples from "./StepExamples";
 import { useI18n } from "../../../hooks/ui/useI18n";
 import type { ContentLessonExample } from "../../../storage/types";
@@ -60,9 +61,11 @@ export interface TheoryBodyProps {
 
 type MarkdownComponents = NonNullable<Parameters<typeof Markdown>[0]["components"]>;
 
-/** The react-markdown element overrides: code blocks, table wrapper, step anchors. */
+/** The react-markdown element overrides: code blocks, table wrapper, step
+ *  anchors, and images (another host's image becomes a link, #3803). */
 function markdownComponents(onAnchorClick?: (stepId: string) => void): MarkdownComponents {
   return {
+    img: MarkdownImage,
     // Fenced code blocks (```python ...) render via the syntax-highlighted
     // CodeBlock (schema v1.3). Inline `code` stays a plain <code>. ``pre``
     // is collapsed to its children so CodeBlock's own <pre> isn't nested.

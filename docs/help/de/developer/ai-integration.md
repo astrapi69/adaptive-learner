@@ -56,7 +56,7 @@ def ai_complete_stream(messages, model, api_key, max_tokens):
 `ai_complete_async` wird von der Session-Route an der Zyklus-
 Grenze Schritt 6→7 genutzt, damit Schritt-Bewertung und
 Themen-Übergang gleichzeitig über `asyncio.gather` feuern
-(`async_evaluation: true` in `app.yaml`).
+(`async_evaluation: true` in `session.yaml`).
 
 `ai_complete_stream` treibt den Streaming-SSE-Endpunkt
 `POST /api/plugins/session/{id}/message/stream`, der
@@ -99,7 +99,7 @@ Jeder `POST /api/plugins/session/{id}/message` für eine
    zu lesen und ein JSON-Urteil zu emittieren (`advance`,
    `confidence`, `reason`, `suggested_step`). `max_tokens=256`.
    Das Urteil des Bewerters treibt den `cycle_step`-Vorschub
-   (gedeckelt durch `confidence ≥ 0.6`).
+   (gedeckelt durch `confidence ≥ 0.7`).
 3. **Themen-Übergang** - nur bei Schritt 7. Ein dritter KI-Aufruf
    beurteilt, ob das Thema integriert wurde und ob ein neuer
    Zyklus auf einem neuen Unterthema starten soll. Deckel von
@@ -154,8 +154,10 @@ auseinanderlaufen.
 1. `plugins/adaptive-learner-plugin-ai-newprovider/` anlegen.
 2. `ai_complete`-Hookimpl umsetzen: Modell-Präfix prüfen,
    HTTP-API des Anbieters rufen, Text zurückgeben.
-3. Anbieter-Präfix in `DEFAULT_MODELS` in
-   `ai_orchestration.py` mit billigem Default eintragen.
+3. Anbieter mit billigem Default-Modell in `DEFAULT_MODELS` in
+   `backend/app/services/ai_caller.py` eintragen; das ist die einzige
+   Tabelle (Session-Plugin, Importe und Lektionsprüfung lesen sie, ein
+   Test verbietet eine zweite Kopie).
 4. Anbieter-Name in `AIProvider`-Enum in
    `app/schemas/__init__.py` ergänzen.
 5. In `AI_PROVIDERS` in `frontend/src/lib/constants.ts`
@@ -187,16 +189,18 @@ gesamte KI-Oberfläche ohne Backend ausführt.
 
 ## Konfidenz-Schwellenwert
 
-`session.step_evaluation.confidence_threshold` in
-`backend/config/app.yaml` (Standard 0.6) bestimmt, ob ein
+`step_evaluation.confidence_threshold` in
+`backend/config/plugins/session.yaml` (Standard 0.7) bestimmt, ob ein
 echtes (Nicht-Fallback-)Bewerter-Urteil den Zyklus-Schritt
 verschiebt. Höher = konservativer, niedriger = forscher.
 Fallback-Urteile (Parse-Fehler) wenden den +1-Advance immer
 an, unabhängig vom Schwellwert.
 
-Der Dexie-Port spiegelt das mit einem hartkodierten 0.6 in
-`storage/ai/session-flow.ts`. Eine spätere Phase wird das in die
-Einstellungen-UI heben.
+Der Dexie-Port spiegelt das mit einem hartkodierten 0.7 in
+`storage/ai/session-flow.ts`; `session-flow.test.ts` liest den Wert aus
+`session.yaml` und schlägt fehl, wenn beide auseinanderlaufen. Eine
+Einstellung in der Oberfläche gibt es bewusst nicht: Die Schlüssel sind
+`# INTERNAL` und werden nur in der YAML geändert (#3436).
 
 ## KI-Übungsgenerierungs-Pipeline (EXP-036 / AIX-01..06)
 

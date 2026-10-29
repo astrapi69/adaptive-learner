@@ -170,10 +170,12 @@ entries:
 
       ## O que o avaliador de duplo prompt faz
 
-      A avaliação de confiança continua a funcionar, mas de
-      forma mais tolerante — a progressão de passo é permitida
-      com 50% de confiança (vs os habituais 70%). O método é
-      explicitamente para exploração, não para testes.
+      A avaliação de confiança continua a funcionar, com o seu
+      próprio critério: o avaliador olha para a qualidade da
+      troca, não para se a resposta correta surge primeiro. O
+      limiar para avançar de passo é o mesmo de qualquer
+      método: 70% de confiança. O método é explicitamente para
+      exploração, não para testes.
 
   - key: method_contextual
     title: Contextual

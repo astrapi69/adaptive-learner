@@ -9,7 +9,6 @@ import {
 import {useNavigate} from "react-router";
 
 import {Button} from "@/components/ui/button";
-import {ApiError} from "../../api/client";
 import HelpLink from "../../components/help/HelpLink";
 import HelpTooltip from "../../components/help/HelpTooltip";
 import OnboardingWizard, {
@@ -21,7 +20,7 @@ import FormHint from "../../shared/forms/FormHint";
 import {isEmptyInstall, pickAdoptedIdentity} from "../../lib/backup/firstRunRestore";
 import {isMigrationOffered, markMigrationOffered} from "../../lib/backup/migrationFlag";
 import {readBackupFile} from "../../lib/backup/validateBackupFile";
-import {restoreLocalStorageSnapshot} from "../../lib/backup/localStorageSnapshot";
+import {restoreClientSnapshots} from "../../lib/backup/portableBackup";
 import {SHARE_URL} from "../../lib/share/generate-share-text";
 import {
     readLearnerState,
@@ -211,12 +210,14 @@ export default function Onboarding() {
             setProjectId(project.id);
             await assignSubjects(project.id);
             setCreatedProject(project);
-            notify.success(t("toast.project_created", "Project created."));
+            // #3544 - click-through: at 375-390 px the toast lies over the
+            // assessment's Next button for its whole display time.
+            notify.success(t("toast.project_created", "Project created."), {
+                passThrough: true,
+            });
             setPhase("invite");
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : t("common.error", "Something went wrong.");
-            notify.error(detail);
+            notify.error(t("common.error", "Something went wrong."), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -258,9 +259,7 @@ export default function Onboarding() {
                 navigate("/dashboard", {replace: true});
             }
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : t("common.error", "Something went wrong.");
-            notify.error(detail);
+            notify.error(t("common.error", "Something went wrong."), {error: err});
         } finally {
             setSubmitting(false);
         }
@@ -328,9 +327,9 @@ export default function Onboarding() {
                 identity.userId,
                 payload,
             );
-            // Restore the localStorage snapshot (preferences + contributions)
-            // frontend-side. Legacy backups carry none -> no-op.
-            await restoreLocalStorageSnapshot(payload.local_storage);
+            // Restore the localStorage snapshot and the plugin settings
+            // (#3412) frontend-side. Legacy backups carry none -> no-op.
+            await restoreClientSnapshots(payload);
             // #126 parity — surface the round-trip in the console so a
             // real restore is debuggable without a backend log.
             // eslint-disable-next-line no-console -- #126: intentional round-trip trace for backend-less debugging

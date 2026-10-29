@@ -96,9 +96,7 @@ class TrackingPlugin(BasePlugin):
                     # ISO-8601 (UTC) so the aggregator can group
                     # by calendar date for the streak calc and
                     # the frontend can render a localized date.
-                    "committed_at": (
-                        r.committed_at.isoformat() if r.committed_at else None
-                    ),
+                    "committed_at": (r.committed_at.isoformat() if r.committed_at else None),
                 }
                 for r in rows
             ]
@@ -126,9 +124,7 @@ class TrackingPlugin(BasePlugin):
                     "fallback_used": r.fallback_used,
                     "confidence": r.confidence,
                     "reason": r.reason,
-                    "evaluated_at": (
-                        r.evaluated_at.isoformat() if r.evaluated_at else None
-                    ),
+                    "evaluated_at": (r.evaluated_at.isoformat() if r.evaluated_at else None),
                 }
                 for r in eval_rows
             ]

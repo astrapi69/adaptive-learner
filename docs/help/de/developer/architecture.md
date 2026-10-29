@@ -37,11 +37,11 @@ Implementierungen erfüllen einen Vertrag:
 - **`apiStorage`** (Standard): dünner Wrapper um
   `api/client.ts`, der mit dem FastAPI-Backend spricht.
 - **`dexieStorage`** (local-first): vollständiger
-  IndexedDB-Stack, der alle 30 SQLAlchemy-Modelle spiegelt.
+  IndexedDB-Stack, der die SQLAlchemy-Modelle spiegelt.
   KI-Aufrufe gehen direkt aus dem Browser über den
   `storage/ai/`-Namespace.
 
-`IStorageService` (`storage/types/core/service.ts`) stellt 29
+`IStorageService` (`storage/types/core/service.ts`) stellt seine
 Namespaces bereit (users, projects, settings, assessment,
 session mit Streaming, tracking, tools, curricula, topics,
 lessons, plugins, imports, system, backup, export, subjects,
@@ -161,12 +161,16 @@ auf HTTP-Statuscodes. Das vollständige Muster steht in
 
 - Backend: SQLAlchemy + SQLite. Alembic-Migrationen in
   `backend/migrations/versions/`.
-- Sync-Surface: 30 Tabellen (`sync_service.ALL_SYNC_TABLES`).
-  Append-only-History-Zeilen (Sessions, Messages, Ratings,
-  Progress-Commits, Step-Evaluations, Method-Switches,
-  importierte Conversations, importierte Messages, Anki-Cards,
-  Study-Questions) plus veränderliche Settings- + Curriculum-
-  Zeilen.
+- Sync-Surface: jede Tabelle in `sync_service.ALL_SYNC_TABLES`;
+  ob eine Tabelle append-only oder veränderlich synchronisiert,
+  legt ihre `TableSpec.append_only` in
+  `backend/app/services/sync_tables.py` fest. Die Tabellen selbst,
+  nach Bereichen: [Datenmodell](data-model.md).
+- Kein API-Schlüssel auf der Sync-Leitung (#3854): die Tabellen in
+  `SYNC_SECRET_TABLES` (der Rollback-Cache `api_key_backups`) und die
+  `api_key_*`-Felder von `user_settings` (`EXCLUDED_USER_SETTINGS_FIELDS`,
+  dieselbe Liste wie beim Backup) gehen in keiner Richtung über den
+  Sync; im Browser filtert `frontend/src/storage/sync/sync-secrets.ts`.
 - Backup-Format: JSON; API-Keys werden beim Export entfernt;
   Restore ist ein Merge.
 - Test-Isolation: Produktionsdaten-Verzeichnisse tragen einen

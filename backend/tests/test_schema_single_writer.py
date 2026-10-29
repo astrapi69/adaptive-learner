@@ -73,7 +73,6 @@ def test_generator_still_produces_its_derived_artefacts() -> None:
         "schema/card.schema.json",
         "schema/exercise.schema.json",
         "schema/lesson-step.schema.json",
-        "frontend/src/lib/content/validation/quality-rules.generated.ts",
         "docs/help/en/developer/lesson-format-reference.md",
         "docs/help/de/developer/lesson-format-reference.md",
     ):

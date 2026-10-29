@@ -58,8 +58,8 @@ const toastError = vi.fn();
 const toastSuccess = vi.fn();
 vi.mock("../../utils/notify", () => ({
     notify: {
-        error: (msg: string) => toastError(msg),
-        success: (msg: string) => toastSuccess(msg),
+        error: (msg: string, opts?: unknown) => toastError(msg, opts),
+        success: (msg: string, opts?: unknown) => toastSuccess(msg, opts),
         warning: vi.fn(),
         info: vi.fn(),
     },
@@ -185,6 +185,28 @@ describe("Onboarding page", () => {
         expect(localStorage.getItem("adaptive-learner.project_id")).toBe("p-1");
     });
 
+    it("the project-created toast lets taps through to the step below (#3544)", async () => {
+        // At 375 and 390 px the toast lies over the assessment's Next
+        // button for its whole display time; a click-through toast never
+        // intercepts that tap.
+        apiUserCreate.mockResolvedValue({id: "u-3", name: "A", language: "de"});
+        apiProjectCreate.mockResolvedValue({
+            id: "p-3",
+            topic: "T",
+            goal: "g",
+            timeframe: "Flexibel",
+            daily_minutes: 15,
+            current_problem: null,
+        });
+        renderOnboarding();
+        fillForm();
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("onboarding-submit"));
+        });
+        await screen.findByTestId("onboarding-invite");
+        expect(toastSuccess).toHaveBeenCalledWith("Project created.", {passThrough: true});
+    });
+
     it("invite: Jump right in goes to /dashboard without the wizard", async () => {
         apiUserCreate.mockResolvedValue({id: "u-2", name: "A", language: "de"});
         apiProjectCreate.mockResolvedValue({
@@ -260,11 +282,10 @@ describe("Onboarding page", () => {
         expect(body.timeframe.length).toBeGreaterThan(0);
     });
 
-    it("surfaces an ApiError detail to the user", async () => {
+    it("reports an ApiError via notify's error path, not as raw toast text (#3374)", async () => {
         const {ApiError} = await import("../../api/client");
-        apiUserCreate.mockRejectedValue(
-            new ApiError(409, "User with email already exists.", "/users", "POST"),
-        );
+        const failure = new ApiError(409, "User with email already exists.", "/users", "POST");
+        apiUserCreate.mockRejectedValue(failure);
 
         renderOnboarding();
         fillForm();
@@ -274,10 +295,10 @@ describe("Onboarding page", () => {
         });
 
         await waitFor(() => {
-            expect(toastError).toHaveBeenCalledWith(
-                "User with email already exists.",
-            );
+            expect(toastError).toHaveBeenCalledWith(expect.any(String), {error: failure});
         });
+        const [prefix] = toastError.mock.calls[0] as [string];
+        expect(prefix).not.toContain("User with email already exists.");
         expect(mockNavigate).not.toHaveBeenCalledWith("/assessment");
     });
 

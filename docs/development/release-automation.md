@@ -98,7 +98,7 @@ Seven targets compose existing tooling for the mechanical steps of `release-work
 | Target | release-workflow.md Step | What it does |
 |---|---|---|
 | `make release-state` | Step 1 | Print latest tag + commits since + diff stat + current canonical version |
-| `make release-outdated` | Step 4b | `poetry show --outdated` × backend + launcher; `bun outdated` × frontend |
+| `make release-outdated` | Step 4b | `scripts/release_outdated.py` (#3778): `poetry show --outdated` / `bun outdated` in every package surface it finds (backend, launcher, docs, each plugin, frontend, e2e), plus the pre-commit hook revs, the GitHub Actions refs, the Docker `FROM` images and the pinned Bun against npm; a report that always exits 0, not a gate |
 | `make release-test` | Step 5 | `make test` + `bun run build` + `bun run test` (vitest) + `sync-versions-check` + `verify-plugin-locks` |
 | `make release-build` | Step 6 | Conditional backend `poetry build` (skipped iff `package-mode=false`) + frontend `bun run build` |
 | `make release-discover` | Step 4 supplement | Run the open-set version-literal discovery script with verbose output |

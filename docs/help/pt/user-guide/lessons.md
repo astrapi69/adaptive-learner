@@ -40,11 +40,19 @@ conduz-te passo a passo por cada cartão e exercício:
    quando estiveres pronto.
 2. **Exercícios** testam o que memorizaste. Os tipos do
    núcleo:
-   - **Correspondência** - arrasta pares (palavra ↔ tradução). Ambas
+   - **Correspondência** - toca numa peça e depois no seu par na
+     outra coluna (palavra ↔ tradução); podes começar por qualquer
+     um dos lados. Ambas
      as peças de um par encontrado partilham uma **cor própria** e
      um **badge numérico**, para que a correspondência seja
      reconhecível de forma segura para daltónicos (não apenas pela
-     cor).
+     cor), e resolver um par reproduz uma breve **animação** para
+     que a ligação seja fácil de seguir. Para mudar um par, toca
+     numa peça já emparelhada e depois no seu novo par: o par
+     passa para lá. Se o novo par já estiver emparelhado, os dois
+     pares trocam de parceiro, por isso o número de pares nunca
+     desce. Um simples toque nunca desfaz um par; **Ctrl/Cmd+Z**
+     desfaz o último par que formaste.
    - **Escolha de imagem** - escolhe a imagem que corresponde à
      pista.
    - **Texto livre** - escreve a resposta.
@@ -67,7 +75,12 @@ pontuação nem a ordem.
 
 Um indicador de progresso no topo acompanha até onde estás na
 lição. Podes parar a qualquer momento - o teu progresso é guardado
-por passo e continua de onde paraste.
+por passo e continua de onde paraste. A exceção é o exame: um exame
+iniciado só conta quando é feito de uma vez, por isso recomeça do
+início quando o voltas a abrir. Uma tentativa iniciada noutro modo
+também não continua como exame, nem uma tentativa de exame como
+prática; a lição recomeça nesse caso. Podes ainda mudar de modo até
+à primeira resposta da tentativa.
 
 ### Atalho Enter
 
@@ -88,6 +101,16 @@ precedência. O atalho é comutável em **Definições → Aprendizagem**
   leva-te de novo à tarefa. Assim consultas uma regra sem perder o
   fio.
 
+### Leitura em voz alta na lição
+
+Os passos de teoria podem ser lidos em voz alta: com o botão de leitura
+do passo, com **"Ler tudo"** ou, com **"Leitura automática"** nas opções
+da lição, em cada passo por si só. Enquanto lê, um pequeno leitor
+oferece pausa/reproduzir e o passo anterior e o seguinte. O **X**
+encerra a leitura para esta lição; com "Leitura automática" ativada, a
+lição seguinte volta a ser lida em voz alta. Para a desligar de vez,
+usa o interruptor **"Leitura automática"**.
+
 ### O resumo
 
 Quando o último exercício está concluído, aparece o **resumo da
@@ -99,11 +122,18 @@ lição**:
   - **2 estrelas** ≥ 75 %
   - **1 estrela** ≥ 50 %
   - **0 estrelas** abaixo de 50 %
-- Um **detalhamento exercício a exercício** que mostra quais
-  exercícios passaste e quais continham erros (com a resposta
-  correta para os errados).
-- **Próxima lição**, **Repetir** e **Voltar ao conjunto** como
-  botões, para que a próxima ação esteja a um clique de distância.
+
+  Num exame com regras de avaliação próprias do conjunto não há
+  classificação por estrelas; vale o veredicto do conjunto.
+- Um **detalhamento exercício a exercício** (a visão geral das
+  respostas na avaliação detalhada) que mostra quais exercícios
+  passaste e quais continham erros (com a resposta correta para os
+  errados).
+- **"Corrigir erros (N)"** enquanto houver erros desta tentativa por
+  corrigir (ver a ronda de correção mais abaixo).
+- **Próxima lição**, **Praticar novamente** e **Voltar ao explorador
+  de conteúdo** como botões, para que a próxima ação esteja a um
+  clique de distância.
 
 Se consegues 3 estrelas à primeira tentativa, toca uma pequena
 animação de celebração. (Se ativaste a definição do SO "reduzir
@@ -190,18 +220,24 @@ através de revisões e ganhas o badge **Mestre da revisão**.
 
 ## Ronda de correção no fim da lição
 
-Quando concluis uma lição com erros, a
-página de resumo mostra uma pequena **ronda de correção** entre a
-tua pontuação e o botão "Próxima lição". Ela pega em até cinco erros
+Quando concluis uma lição com erros, o resumo compacto mostra
+**"Corrigir erros (N)"** logo acima das ações para continuar; N é o
+número de erros desta tentativa que ainda estão por corrigir. O botão
+abre a **ronda de correção** diretamente no primeiro exercício e não
+altera nenhuma definição. Na **avaliação detalhada**, ou se marcares a
+secção em **Configurações → Aprendizagem → Resumo após as lições**, a
+ronda aparece no resumo como a secção **"Corrija seus erros"** e
+abre-se com **"Corrigir agora"**. Ela pega em até cinco erros
 concretos dessa lição e oferece cada um como um texto com lacunas
 fresco que visa exatamente a palavra / o artigo falhado.
 
-- **Pode saltar-se a qualquer momento.** O botão "Próxima lição"
-  permanece visível - a ronda de correção é exercício voluntário,
+- **Pode saltar-se a qualquer momento.** As ações para continuar
+  permanecem visíveis - a ronda de correção é exercício voluntário,
   não um gate.
 - **Só aparece se houver algo a corrigir.** As lições com pontuação
-  perfeita saltam-na por completo. As lições cujos erros não se
-  podem transformar num texto com lacunas limpo (raro), também.
+  perfeita saltam-na por completo. Se os erros não se puderem
+  transformar num texto com lacunas limpo (raro), a secção chama-se
+  **"Repita seus erros"** e aí refazes os exercícios falhados.
 - **Cada texto com lacunas concluído conta para o domínio.** A ronda
   de correção escreve os mesmos registos de rastreio de elementos
   que a lição principal; a tua sequência nesses elementos avança em
@@ -209,6 +245,19 @@ fresco que visa exatamente a palavra / o artigo falhado.
 
 No final aparece uma breve linha "{n} elementos melhorados", para
 que vejas o efeito do teu exercício adicional.
+
+Depois da ronda, ou assim que um erro desta tentativa é corrigido,
+aparece por baixo **"As tuas correções"**: "Primeira tentativa: X de Y
+certas", "N de M corrigidos" e cada erro com o seu estado
+(**Corrigido** / **Ainda por corrigir**), a tua primeira resposta ao
+lado da correta e, enquanto estiver por corrigir, a explicação do
+exercício. O fim de **"Repetir erros"** mostra a mesma visão geral
+quando o abres a partir do resumo. O resumo compacto mostra "N de M
+corrigidos" assim que algo é corrigido; quando todos os erros estão
+corrigidos, o botão "Corrigir erros (N)" desaparece. Na **avaliação
+detalhada**, a visão geral das respostas e "Porque errou estes" marcam
+cada erro como **Corrigido** ou **Ainda por corrigir**; um erro
+corrigido continua listado aí.
 
 ## Feedback visual de diff
 
@@ -218,11 +267,15 @@ entre a tua entrada e a resposta canónica. Três cores, nunca apenas
 a cor sozinha:
 
 - **Vermelho riscado** - o que escreveste e que não pertencia (com
-  um marcador × para leitores de ecrã e utilizadores daltónicos).
+  um marcador × para utilizadores daltónicos).
 - **Verde** - o que a resposta canónica contém e que omitiste (com
   um marcador +).
 - **Amarelo** com seta → - uma palavra ligeiramente errada,
   representada como `tua-palavra` → `esperada`.
+
+Os leitores de ecrã leem cada marca como uma frase no idioma da tua
+interface, por exemplo "A mais: …", "Falta: …" ou "Escrito: …,
+esperado: …", e saltam os símbolos visíveis.
 
 O mesmo diff aparece no resumo da lição no detalhamento de cada
 exercício - para cada resposta de texto livre ou de peças de
@@ -278,7 +331,19 @@ funcionalidade entre os modos na conclusão de lições.
 ## Privacidade
 
 Todo o progresso das lições, as linhas de erros de elementos, os
-estados da fila de revisão e os dados de agendamento permanecem **no
-teu próprio dispositivo** - no sistema de ficheiros (modo API) ou no
-browser (IndexedDB). Nada sobre as palavras com que lutas é enviado
-para qualquer lado.
+estados da fila de revisão e os dados de agendamento são armazenados:
+no modo local, no teu browser (IndexedDB), e no modo API, na base de
+dados do backend a que a aplicação está ligada; quem opera esse
+backend tem acesso a ela. O progresso de lições e as gravações de voz
+criados offline no modo API ficam à espera no teu browser até serem
+transferidos (ver [Backup](../features/backup.md)).
+Outros recebem partes deles só quando uma funcionalidade precisa
+delas. Um exemplo é a sessão de chat com IA: as lições em si não usam
+IA, mas uma sessão de chat com IA envia ao teu fornecedor de IA, entre
+outras coisas, as tuas lições concluídas com os respetivos resultados
+e os teus erros recentes, cada um com a tua resposta, a resposta
+correta e o número de vezes que o cometeste. Uma sessão a partir de
+uma conversa importada envia, em vez do teu progresso, a análise e o
+histórico dessa conversa. A
+[política de privacidade](../legal/privacy.md) descreve que dados vão
+para outros e quando.

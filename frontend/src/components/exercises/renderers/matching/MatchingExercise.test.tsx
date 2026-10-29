@@ -3,8 +3,9 @@
  * (Phase 44 / EXP-002 / 3C / F-106).
  *
  * Pins the tap-to-pair UX + scoring contract:
- * - Counter updates on each pair / unpair.
- * - Tapping a paired tile undoes the pair.
+ * - Counter updates on each pair.
+ * - Tapping a paired tile selects it; re-pairing overwrites, and a
+ *   collision swaps partners, so the count never drops (#3237).
  * - Submit disabled until all pairs are made.
  * - Submit reports {correct, total} to the parent via
  *   onComplete with the right count.
@@ -65,6 +66,24 @@ const EXERCISE: ContentLessonExercise = {
 beforeEach(() => {
     vi.useRealTimers();
 });
+
+/** Tap left ``left`` then right ``right`` (by original index). */
+function pair(left: number, right: number): void {
+    fireEvent.click(screen.getByTestId(`matching-left-${left}`));
+    fireEvent.click(screen.getByTestId(`matching-right-${right}`));
+}
+
+function counter(): HTMLElement {
+    return screen.getByTestId("matching-counter");
+}
+
+/** The pair number shown on a tile, or null when it is not paired. */
+function badgeOf(testId: string): string | null {
+    const badge = within(screen.getByTestId(testId)).queryByTestId(
+        /^matching-pair-badge-\d+$/,
+    );
+    return badge?.getAttribute("data-testid")?.replace("matching-pair-badge-", "") ?? null;
+}
 
 describe("MatchingExercise: pair lifecycle", () => {
     it("renders the prompt + counter + columns", () => {
@@ -149,23 +168,20 @@ describe("MatchingExercise: pair lifecycle", () => {
         );
     });
 
-    it("tapping a paired left undoes the pair", () => {
-        render(
-            <MatchingExercise
-                exercise={EXERCISE}
-                onComplete={vi.fn()}
-            />,
-        );
-        fireEvent.click(screen.getByTestId("matching-left-0"));
-        fireEvent.click(screen.getByTestId("matching-right-0"));
-        expect(screen.getByTestId("matching-counter")).toHaveTextContent(
-            /1\s*\/\s*3/,
-        );
-        fireEvent.click(screen.getByTestId("matching-left-0"));
-        expect(screen.getByTestId("matching-counter")).toHaveTextContent(
-            /0\s*\/\s*3/,
-        );
-    });
+    it.each(["matching-left-0", "matching-right-0"])(
+        "tapping the paired tile %s selects it instead of undoing (#3237)",
+        (testId) => {
+            render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+            pair(0, 0);
+            const tile = screen.getByTestId(testId);
+            fireEvent.click(tile);
+            expect(counter()).toHaveTextContent(/1\s*\/\s*3/);
+            expect(tile).toHaveAttribute("aria-pressed", "true");
+            fireEvent.click(tile);
+            expect(tile).toHaveAttribute("aria-pressed", "false");
+            expect(counter()).toHaveTextContent(/1\s*\/\s*3/);
+        },
+    );
 
     it("submit button disabled until all pairs made", () => {
         render(
@@ -698,23 +714,78 @@ describe("MatchingExercise: per-pair color + label (#145)", () => {
         ).toHaveLength(2);
     });
 
-    it("assigns the next number to a second pair and frees it on undo", () => {
+    it("assigns the next number to a second pair and reuses a freed one", () => {
         render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pair(0, 0);
+        pair(1, 1);
+        expect(screen.getAllByTestId("matching-pair-badge-1")).toHaveLength(2);
+        expect(screen.getAllByTestId("matching-pair-badge-2")).toHaveLength(2);
+        // left-2 takes right-0 from left-0 (#3237): left-0 is freed, its
+        // number 1 is released and the new pair reuses it, not 3.
+        pair(2, 0);
+        expect(badgeOf("matching-left-0")).toBeNull();
+        expect(badgeOf("matching-left-2")).toBe("1");
+        expect(badgeOf("matching-right-0")).toBe("1");
+    });
+});
+
+describe("MatchingExercise: re-pairing overwrites, a collision swaps (#3237)", () => {
+    it("moves a paired left to a free right; the count stays", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pair(0, 0);
+        pair(0, 1);
+        expect(counter()).toHaveTextContent(/1\s*\/\s*3/);
+        expect(badgeOf("matching-right-0")).toBeNull();
+        expect(badgeOf("matching-right-1")).toBe(badgeOf("matching-left-0"));
+    });
+
+    it("hands a paired right to a free left; the old partner is freed, the count stays", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pair(0, 0);
+        pair(1, 0);
+        expect(counter()).toHaveTextContent(/1\s*\/\s*3/);
+        expect(badgeOf("matching-left-0")).toBeNull();
+        expect(badgeOf("matching-right-0")).toBe(badgeOf("matching-left-1"));
+    });
+
+    it("swaps partners when both tiles are paired, so a full board stays full", () => {
+        const onComplete = vi.fn();
+        render(<MatchingExercise exercise={EXERCISE} onComplete={onComplete} />);
+        pair(0, 0);
+        pair(1, 1);
+        pair(2, 2);
+        expect(counter()).toHaveTextContent(/3\s*\/\s*3/);
+        pair(0, 1);
+        expect(counter()).toHaveTextContent(/3\s*\/\s*3/);
+        expect(badgeOf("matching-right-1")).toBe(badgeOf("matching-left-0"));
+        expect(badgeOf("matching-right-0")).toBe(badgeOf("matching-left-1"));
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 1, total: 3}),
+        );
+    });
+
+    it("re-pairs from the right column the same way", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        fireEvent.click(screen.getByTestId("matching-right-0"));
         fireEvent.click(screen.getByTestId("matching-left-0"));
         fireEvent.click(screen.getByTestId("matching-right-0"));
         fireEvent.click(screen.getByTestId("matching-left-1"));
-        fireEvent.click(screen.getByTestId("matching-right-1"));
-        expect(screen.getAllByTestId("matching-pair-badge-1")).toHaveLength(2);
-        expect(screen.getAllByTestId("matching-pair-badge-2")).toHaveLength(2);
-        // Undo the first pair: its slot (1) is released, so a fresh
-        // pair reuses it rather than climbing to 3.
-        fireEvent.click(screen.getByTestId("matching-left-0"));
-        expect(screen.queryAllByTestId("matching-pair-badge-1")).toHaveLength(
-            0,
+        expect(counter()).toHaveTextContent(/1\s*\/\s*3/);
+        expect(badgeOf("matching-left-0")).toBeNull();
+        expect(badgeOf("matching-left-1")).toBe(badgeOf("matching-right-0"));
+    });
+
+    it("re-tapping a pair's own partner keeps the pair", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        pair(0, 0);
+        pair(0, 0);
+        expect(counter()).toHaveTextContent(/1\s*\/\s*3/);
+        expect(badgeOf("matching-right-0")).toBe(badgeOf("matching-left-0"));
+        expect(screen.getByTestId("matching-left-0")).toHaveAttribute(
+            "aria-pressed",
+            "false",
         );
-        fireEvent.click(screen.getByTestId("matching-left-2"));
-        fireEvent.click(screen.getByTestId("matching-right-2"));
-        expect(screen.getAllByTestId("matching-pair-badge-1")).toHaveLength(2);
     });
 });
 
@@ -750,20 +821,6 @@ describe("MatchingExercise: bidirectional selection (#507)", () => {
         // Tapping the same B tile again clears the selection.
         fireEvent.click(rightTile);
         expect(rightTile).toHaveAttribute("aria-pressed", "false");
-    });
-
-    it("undoes a pair regardless of the side that started it", () => {
-        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
-        // Pair B -> A, then undo by tapping the right tile.
-        fireEvent.click(screen.getByTestId("matching-right-1"));
-        fireEvent.click(screen.getByTestId("matching-left-1"));
-        expect(screen.getByTestId("matching-counter")).toHaveTextContent(
-            /1\s*\/\s*3/,
-        );
-        fireEvent.click(screen.getByTestId("matching-right-1"));
-        expect(screen.getByTestId("matching-counter")).toHaveTextContent(
-            /0\s*\/\s*3/,
-        );
     });
 
     it("accepts duplicate B values when paired B -> A (#507 + #481)", () => {

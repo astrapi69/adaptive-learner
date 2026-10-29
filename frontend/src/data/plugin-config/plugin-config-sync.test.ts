@@ -29,16 +29,15 @@ import {join} from "node:path";
 import {describe, expect, it} from "vitest";
 
 const JSON_DIR = join(__dirname);
-// As of v1.31.0: anki, content-loader, gamification,
-// learning-repo, session. Update this list any time a new
-// plugin YAML lands under backend/config/plugins/.
-const EXPECTED_PLUGINS = [
-    "anki",
-    "content-loader",
-    "gamification",
-    "learning-repo",
-    "session",
-];
+const YAML_DIR = join(__dirname, "..", "..", "..", "..", "backend", "config", "plugins");
+// One JSON per plugin YAML, read from the backend directory so a
+// deleted YAML cannot leave its mirror behind (the sync script only
+// writes, it never removes) and a new YAML cannot ship without one
+// (#3435).
+const EXPECTED_PLUGINS = readdirSync(YAML_DIR)
+    .filter((f) => f.endsWith(".yaml"))
+    .map((f) => f.replace(/\.yaml$/, ""))
+    .sort();
 
 function loadJson(name: string): Record<string, unknown> {
     return JSON.parse(
@@ -47,7 +46,8 @@ function loadJson(name: string): Record<string, unknown> {
 }
 
 describe("plugin-config JSON bundle — Dexie-mode pluginSettings defaults", () => {
-    it("ships exactly the 5 expected plugins", () => {
+    it("ships exactly one JSON per backend plugin YAML", () => {
+        expect(EXPECTED_PLUGINS.length).toBeGreaterThan(0);
         const present = readdirSync(JSON_DIR)
             .filter((f) => f.endsWith(".json"))
             .map((f) => f.replace(/\.json$/, ""))

@@ -36,7 +36,10 @@ import {
   userRepoSource,
   type UserContentRepo,
 } from "../../../lib/content/repos/content-repos";
-import { validateUserRepo } from "../../../lib/content/repos/content-repo-validate";
+import {
+  repoValidationReasonText,
+  validateUserRepo,
+} from "../../../lib/content/repos/content-repo-validate";
 import {
   fetchGitHubFileText,
   fetchLatestCommitSha,
@@ -245,7 +248,7 @@ export default function RegistrySubmitSection() {
         prBody: buildRegistryPrBody(entry),
         editUrl: registryEditUrl(),
         status,
-        reason: validation.ok ? undefined : validation.reason,
+        reason: validation.ok ? undefined : repoValidationReasonText(validation, t),
       });
     } catch {
       notify.error(

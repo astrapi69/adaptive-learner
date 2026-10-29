@@ -12,7 +12,7 @@ alwaysApply: false
 # Documentation + i18n pitfalls
 ## Doc files: existence is not discoverability
 
-When you add a new help page under `docs/help/{lang}/`, verify it appears in `docs/help/_meta.yaml`. The MkDocs nav generator (`scripts/generate_mkdocs_nav.py`) reads that file as the single source of truth; pages not listed there are unreachable from the side nav even though direct URLs and in-text links still work. We hit this with `ai.md` and `developers/plugins.md` - both had been merged for several releases but never showed up in the in-app help panel or the public docs site nav.
+When you add a new help page under `docs/help/{lang}/`, verify it appears in `docs/help/_meta.yaml`. The MkDocs nav generator (`scripts/generate_mkdocs_nav.py`) reads that file as the single source of truth; pages not listed there are unreachable from the side nav even though direct URLs and in-text links still work. We hit this with `ai.md` and `developers/plugins.md` - both had been merged for several releases but never showed up in the public docs site nav (the incident predates this app; the Bibliogon foundation also had an in-app panel reading these pages).
 
 Rule: file existence is not user discoverability. After creating a new help page, the same commit (or a paired one) must add the entry to `_meta.yaml` with a sensible icon and the appropriate placement among siblings.
 
@@ -50,14 +50,14 @@ Features that are not yet implemented but are described in the docs must be mark
 
 Build an audit table with the current state, run a gap analysis in A/B/C categories, then implement. No blind coding.
 
-## Help system: single source of truth
+## Help system: two surfaces, two sources
 
-Help content lives in `docs/help/`, not in plugin code. Both the in-app Help plugin and MkDocs read the same Markdown files.
+The app has two help surfaces, and neither reads the other's source:
 
-- `docs/help/_meta.yaml` is the single source of truth for navigation. `scripts/generate_mkdocs_nav.py` converts it into the MkDocs format.
-- Markdown rendering on the frontend via `react-markdown` with `remark-gfm` + `rehype-slug` + `rehype-autolink-headings`. Never `dangerouslySetInnerHTML` for user content.
-- MkDocs dependencies live in `docs/pyproject.toml` (its own venv), not in the backend venv. `make docs-install` / `docs-build` / `docs-serve` from the root.
-- Context-sensitive help via `<HelpLink slug="export/epub"/>` - opens the HelpPanel directly on the relevant page.
+- **Help pages** (`docs/help/{lang}/**/*.md`) are published only on the MkDocs site (`DOCS_BASE_URL` in `frontend/src/lib/help/help-routes.ts`). The app never renders them; it links to them. `docs/help/_meta.yaml` is the single source of truth for their navigation; `scripts/generate_mkdocs_nav.py` turns it into the MkDocs nav and the per-locale `nav_translations`. MkDocs dependencies live in `docs/pyproject.toml` (its own venv), not in the backend venv. `make docs-install` / `docs-build` / `docs-serve` from the root.
+- **In-app glossary** (the help drawer): concept entries authored in `backend/config/help/concepts.{lang}.yaml`, copied to `frontend/src/data/help/` by `make sync-help`, rendered by `HelpDrawer.tsx` with `react-markdown` + `remark-gfm` + `rehype-slug` + `rehype-autolink-headings`. Never `dangerouslySetInnerHTML` for user content. `<HelpLink glossaryKey="learning_profile" />` opens the drawer on an entry; an entry's `docs_slug` links out to the matching help page.
+
+A change to a help page therefore shows on the docs site only, and a glossary change only in the app. The older wording here ("both read the same Markdown files") came with the Bibliogon foundation (2026-05-17), whose Help plugin read `docs/help`; that plugin was removed the same day. It led to a wrong Mermaid plan (#3798): before deciding where a help change appears, read the code that loads it.
 
 ## German content uses real umlauts
 

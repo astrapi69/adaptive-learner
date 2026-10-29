@@ -128,11 +128,12 @@ def spa_csp_for(index_html: str) -> str:
     attributes; blob/data cover the PWA worker, audio and images. The
     named external hosts are the app's OWN browser-side calls, each
     verified in source: the update check + repo browsing use
-    ``api.github.com`` (update_check, github-fetch), the recommended
-    repos / media catalogs / lesson media load from
-    ``raw.githubusercontent.com``, and YouTube resources render as
-    static thumbnails from ``img.youtube.com`` (deliberately NO iframe,
-    hence no frame-src).
+    ``api.github.com`` (update_check, github-fetch), and the recommended
+    repos / media catalogs / lesson media / book covers load from
+    ``raw.githubusercontent.com``. No other image host: a YouTube resource
+    card shows a local placeholder and loads nothing from YouTube (#3803;
+    deliberately NO iframe, hence no frame-src). The Pages build carries
+    the same ``img-src`` and ``media-src`` as a meta tag in ``index.html``.
     """
     hashes = " ".join(
         "'sha256-" + base64.b64encode(hashlib.sha256(m.group(1).encode()).digest()).decode() + "'"
@@ -143,7 +144,7 @@ def spa_csp_for(index_html: str) -> str:
         "default-src 'self'; "
         f"{script_src}; "
         "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data: blob: https://raw.githubusercontent.com https://img.youtube.com; "
+        "img-src 'self' data: blob: https://raw.githubusercontent.com; "
         "font-src 'self' data:; "
         "connect-src 'self' https://api.github.com https://raw.githubusercontent.com; "
         "media-src 'self' blob: data: https://raw.githubusercontent.com; "

@@ -163,10 +163,12 @@ entries:
 
       ## Lo que hace el evaluador de doble prompt
 
-      La evaluación de confianza sigue ejecutándose, pero con más
-      tolerancia: la progresión de pasos se permite con un 50 % de
-      confianza (frente al 70 % habitual). El método es explícitamente
-      para la exploración, no para la prueba.
+      La evaluación de confianza sigue ejecutándose, con su propio
+      criterio: el evaluador se fija en la calidad del intercambio,
+      no en si la respuesta correcta llega primero. El umbral para
+      avanzar de paso es el mismo que en cualquier método: un 70 %
+      de confianza. El método es explícitamente para la
+      exploración, no para la prueba.
 
   - key: method_contextual
     title: Contextual

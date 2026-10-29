@@ -126,6 +126,8 @@ describe("createDexieBackup", () => {
             set_id: "es-a1",
             lesson_filename: "01-greetings.json",
             current_step: 3,
+            // #3365 - the action log the resume reads.
+            step_event: {kind: "step", step_index: 3, step_id: "s3"},
         });
         await dexieStorage.elementErrors.recordBulk(user.id, [
             {
@@ -159,6 +161,9 @@ describe("createDexieBackup", () => {
             "01-greetings.json",
         );
         expect(progress?.current_step).toBe(3);
+        expect(progress?.recent_steps).toEqual([
+            expect.objectContaining({kind: "step", step_index: 3, step_id: "s3"}),
+        ]);
         const errors = await dexieStorage.elementErrors.list(user.id, {});
         expect(errors.map((row) => [row.element_key, row.error_count])).toEqual([["hola", 1]]);
     });
@@ -506,6 +511,28 @@ describe("content sets in backup (#130)", () => {
             "astrapi69--adaptive-learner-content/fr-a1/1.3.0#lessons/01.json",
         );
         expect(lesson?.body).toBe('{"id":"01"}');
+    });
+
+    it("#3395 - keeps visibility, review status, evaluation, book, attribution and status", async () => {
+        const {user} = await seedUser();
+        const setPk = await seedContentSet();
+        const db = getDb();
+        const carried = {
+            visibility: "hidden" as const,
+            review_status: "generated" as const,
+            evaluation: {pass_percent: 80},
+            book: {title: "Le Petit Prince", author: "Saint-Exupéry"},
+            attribution: {author: "Original Author"},
+            status: "deferred" as const,
+        };
+        await db.contentSets.update(setPk, carried);
+        const payload = await createDexieBackup(user.id, "test");
+        await db.contentSets.clear();
+        await db.contentSetFiles.clear();
+
+        await restoreDexieBackup(user.id, payload);
+        const row = await db.contentSets.get(setPk);
+        expect(row).toMatchObject(carried);
     });
 
     it("skips a content set that is already cached", async () => {

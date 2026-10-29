@@ -13,10 +13,17 @@ pública online:
 
 [**Abrir aplicação**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-Esta corre no **modo local** - todos os teus dados permanecem no
-teu browser (IndexedDB), e as chamadas de IA vão diretamente da
-página para a Anthropic, OpenAI ou Google Gemini com a tua própria
-chave de API. Sem backend pelo meio.
+Esta corre no **modo local**: no teu browser ficam armazenados,
+entre outras coisas, o teu progresso, as tuas estatísticas, as tuas
+definições e as tuas chaves de API. Outros recebem partes deles só
+quando uma funcionalidade precisa delas, por exemplo o GitHub,
+quando a aplicação pergunta por si própria, no arranque, se há
+conteúdos novos. As chamadas de IA também são um exemplo: vão
+diretamente do teu browser para o teu fornecedor de IA, como a
+Anthropic, a OpenAI ou o Google Gemini, com a tua própria chave de
+API e sem passar por um servidor do administrador. A
+[política de privacidade](../legal/privacy.md) descreve que dados
+vão para quem nestes casos, incluindo o teu endereço IP.
 
 ## Instalar como Progressive Web App
 
@@ -35,8 +42,9 @@ fornecedor de IA fica fora do browser.
 - **Um browser moderno** (Chrome 100+, Firefox 100+, Safari 17+,
   Edge 100+). A aplicação usa IndexedDB, service workers e
   JavaScript moderno.
-- **Uma chave de API de IA** para pelo menos um dos três
-  fornecedores suportados (Anthropic, OpenAI ou Google Gemini).
+- **Uma chave de API de IA** para pelo menos um fornecedor:
+  Anthropic, OpenAI ou Google Gemini na versão de navegador; a
+  aplicação de ambiente de trabalho oferece também Perplexity.
   Os planos gratuitos costumam chegar para começar; vê
   [Definições](settings.md) para a configuração da chave.
 

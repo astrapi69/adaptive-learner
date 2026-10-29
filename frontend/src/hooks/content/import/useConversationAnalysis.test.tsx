@@ -27,7 +27,8 @@ import type {ImportedConversationDetail} from "../../../types/domain";
 
 vi.mock("../../../storage", () => ({getStorage: vi.fn()}));
 vi.mock("../../../storage/dexie/db", () => ({getDb: vi.fn()}));
-vi.mock("../../../chat_import/analysis", () => ({
+vi.mock("../../../chat_import/analysis", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../../chat_import/analysis")>()),
     analyzeConversation: vi.fn(),
 }));
 vi.mock("../../../lib/learning/learnerState", () => ({

@@ -2,7 +2,9 @@
 
 Der Storage-Layer (`frontend/src/storage/`) gibt dem
 Frontend zwei austauschbare Backends hinter einem Interface.
-Das Interface umfasst inzwischen 29 Namespaces.
+Das Interface steht in
+`frontend/src/storage/types/core/service.ts`; die Liste seiner
+Namespaces dort ist maßgeblich.
 
 ## Verzeichnis-Aufbau
 
@@ -79,9 +81,10 @@ Jede Methode delegiert 1:1.
 ## DexieStorage
 
 `storage/dexie-storage.ts` persistiert alles in IndexedDB via
-Dexie 4. Das Schema in `storage/dexie/db.ts` spiegelt alle 30
-SQLAlchemy-Models 1:1, plus die Assoziations-Tabellen
-(`project_subjects` / `project_tags` etc.).
+Dexie 4. Das Schema in `storage/dexie/db.ts` spiegelt die
+SQLAlchemy-Modelle und ergänzt Stores, die es nur im Browser gibt;
+welcher Store für welche Tabelle steht, nach Bereichen, zeigt die
+Seite [Datenmodell](data-model.md).
 
 `DexieStorage` ist KEINE God-Datei. Es ist in
 Per-Domain-Namespace-Module aufgeteilt, nach Belang gruppiert.
@@ -160,10 +163,16 @@ naives get-spread-put nebenläufige Updates. DexieStorage nutzt:
 ## Backup-Format
 
 Das Backup ist eine `.alb`-Datei - ein ZIP, kein einzelner
-JSON-Dump. Das ZIP trägt neben den Tabellendaten auch einen
-localStorage-Snapshot, sodass ein Restore sowohl den
-IndexedDB- / SQLite-State als auch die localStorage-gestützten
-Einstellungen wiederherstellt. Der Code liegt unter
+JSON-Dump. Neben den Tabellendaten trägt es Blöcke, die das Frontend
+in beiden Speichermodi selbst erfasst und anwendet (die Liste steht in
+`frontend/src/lib/backup/portableBackup.ts`), zum Beispiel den
+localStorage-Snapshot, `plugin_settings` (etwa verbundene
+Content-Repositories, eingelöste Einladungen, der
+Learning-Repository-Schalter; ein Repository-Token und der
+Repository-Ordner reisen nicht mit) und `ai_validation_results`
+(zwischengespeicherte KI-Prüfberichte, im API-Modus leer). Alle
+Voll-Backup-Pfade laufen über `exportPortableBackup` /
+`restoreClientSnapshots`; die Tabellen-Logik liegt unter
 `storage/backup/`.
 
 ## Drittes Storage-Backend hinzufügen

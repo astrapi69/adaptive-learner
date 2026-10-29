@@ -202,12 +202,12 @@ describe("Assessment page", () => {
         expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
     });
 
-    it("renders an error state when the questions fetch fails", async () => {
+    it("renders a friendly error state, not the backend detail, when the questions fetch fails (#3374)", async () => {
         const {ApiError} = await import("../../api/client");
         apiQuestions.mockRejectedValue(new ApiError(500, "DB down"));
         renderAssessment();
-        await screen.findByTestId("assessment-error");
-        expect(screen.getByTestId("assessment-error").textContent).toContain("DB down");
+        const panel = await screen.findByTestId("assessment-error");
+        expect([panel.textContent?.includes("An internal error occurred."), panel.textContent?.includes("DB down")]).toEqual([true, false]);
     });
 
     it("multi-select question lets the user pick 2 answers", async () => {

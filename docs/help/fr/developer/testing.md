@@ -18,7 +18,7 @@ jour, pour les compteurs de tests et la couverture.
 
 ```bash
 make test-backend                # pytest backend uniquement
-make test-plugins                # toutes les suites des 13 plugins
+make test-plugins                # les suites de tous les plugins
 make test-plugin-gamification    # plugin spécifique
 make test-plugin-content-loader  # plugin spécifique
 ```
@@ -104,13 +104,19 @@ la requête ne dépend pas réellement de `t`.
 make test-coverage    # Optionnel, lourd - la CI l'exécute automatiquement
 ```
 
-Les rapports de couverture sont uploadés comme artefacts GitHub Actions
-(rétention 14 jours) :
+Le workflow `coverage.yml` tourne chaque nuit (et à la demande) ; ses
+rapports sont uploadés comme artefacts GitHub Actions (rétention
+14 jours) :
 
 ```bash
 gh run download --name backend-coverage
 gh run download --name frontend-coverage
 ```
+
+Chaque plugin a son propre artefact `<dossier-du-plugin>-coverage`,
+par exemple
+`gh run download --name adaptive-learner-plugin-session-coverage` ;
+un nouveau plugin est couvert sans modifier le workflow.
 
 ---
 
@@ -120,10 +126,20 @@ gh run download --name frontend-coverage
 cd backend && poetry run pre-commit install
 ```
 
-Les hooks incluent : ruff lint/format, vérifications YAML/JSON,
-`roadmap-archive-reminder` (non bloquant), et
-`plugin-lock-paired-with-pyproject` (bloquant lors d'un push de
-pyproject.toml sans poetry.lock correspondant).
+Les hooks sont listés dans `.pre-commit-config.yaml`, par exemple
+ruff check (correction automatique) et ruff format, des
+vérifications d'espaces, de YAML, de JSON et de conflits de merge,
+ESLint du frontend, les vérifications de la documentation (cliquet
+des substituts de trémas, références de la documentation) et
+`plugin-lock-paired-with-pyproject` (bloquant) : il exécute
+`poetry check --lock` pour chaque plugin dont le `pyproject.toml` ou
+le `poetry.lock` est concerné et échoue quand les dépendances ont
+changé depuis l'écriture du lock ; il tourne aussi dans le job
+pre-commit de la CI sur tous les fichiers. Dans ce job, le hook
+`eslint` est ignoré (le job des tests frontend exécute ESLint avec
+les dépendances installées). Prettier n'est pas un hook :
+`bun run format:check` tourne dans le job des tests frontend, sans
+bloquer jusqu'au reformatage unique de #3270.
 
 ---
 
@@ -138,10 +154,16 @@ release.
 et sur chaque PR (Python 3.12) :
 
 1. Tests backend (pytest)
-2. Tests des plugins (`make test-plugins`, les 13 via le venv backend)
+2. Tests des plugins (`make test-plugins`, tous via le venv backend)
 3. Frontend : `tsc --noEmit`, ESLint (`--max-warnings 0`),
    vérification des dépendances circulaires, Stylelint, Vitest,
-   `vite build`, `npm audit`
+   `vite build`, `bun audit --audit-level=high` (bloque sur les
+   résultats élevés et critiques). Un avis sans version corrigée qui
+   n'atteint qu'une dépendance de développement est exempté par ID
+   dans `frontend/audit-ignore.txt` : un ID par ligne, avec au-dessus
+   un commentaire donnant la raison et quand l'entrée disparaît.
+   `make check-security` lit la même liste ; `security-scan.yml` reste
+   non filtré.
 4. Hooks pre-commit sur tous les fichiers
 5. Backend ruff + mypy + pip-audit
 6. Vérificateur de dérive des docs (`verify_docs.py` + synchronisation
@@ -163,14 +185,16 @@ D'autres gates PR vivent dans leurs propres workflows :
   `.complexity-baseline`, il bloque donc la nouvelle complexité sans
   forcer un nettoyage de la dette préexistante. Le rapport de
   complexité complet, en avertissement seulement, tourne chaque nuit.
+  Le même job exécute la vérification de taille de dossier
+  (`scripts/check-folder-size.sh` contre `.dirsize-baseline`) ;
+  localement `make check-folder-size` ou dans `make ci`.
 - `cohesion-check.yml` - la vérification de taille de fichier (gate
   contre `.filesize-whitelist`) plus deux gates de noms de classe :
   les noms de classe CSS morts (`check-dead-classnames.py` contre
   `.dead-classnames-baseline`) et le **gate des className sans
   style** (`--unstyled`, un cliquet contre
   `.unstyled-classnames-baseline`) - un `className` dont tous les
-  tokens sont morts bloque la PR. La vérification de taille de
-  dossier compagne s'exécute localement via `make check-folder-size`.
+  tokens sont morts bloque la PR.
 - `visual-baseline-gate.yml` - une PR qui modifie des chemins
   visuellement critiques (composants de leçon, renderers
   d'exercices, fichiers de thème/CSS) doit apporter dans la même PR
@@ -186,15 +210,22 @@ D'autres gates PR vivent dans leurs propres workflows :
   production (le chemin launcher / install.sh), filtré par chemins
   sur les PR, en plus sur `release/**`, chaque semaine et à la
   demande ; localement `make docker-build-smoke`.
+- `dexie-smoke.yml` - le gate E2E du mode Dexie : sur chaque pull
+  request qu'il concerne (`scripts/dexie_smoke_affected.py` décide ; le
+  job `Dexie smoke (required)` rend toujours compte), plus chaque jour,
+  sur `release/**` et à la demande ; localement
+  `make test-dexie-smoke`.
+- `backup-e2e.yml` - tourne sur les PR qui touchent un chemin de
+  sauvegarde (par exemple `frontend/src/storage/backup/`, les stores
+  Dexie ou les services de sauvegarde du backend ; la liste est dans
+  le workflow) et exécute chaque `e2e/dexie/backup-*.spec.ts`, dont
+  l'aller-retour sur toutes les tables de sauvegarde.
 
 **Équipe de nuit / release (pas sur les PR) :**
 
-- `dexie-smoke.yml` - le gate E2E du mode Dexie (quotidien + sur
-  `release/**` + à la demande ; localement
-  `make test-dexie-smoke`)
 - `coverage.yml` - rapport de couverture (quotidien + à la
   demande)
-- `security-scan.yml` - pip-audit / npm audit / bandit
+- `security-scan.yml` - pip-audit / bun audit / bandit
   (hebdomadaire + sur `release/**` + à la demande ; en
   avertissement seulement)
 - `content-stats.yml` - dérive des statistiques de contenu contre
@@ -217,6 +248,13 @@ D'autres gates PR vivent dans leurs propres workflows :
   PR (label `refresh-visual-baselines`, ou à la demande avec un
   numéro de PR) - la revue des images avant le merge reste
   obligatoire
+- `smoke-nightly.yml` - exécution nocturne du smoke des viewports
+  mobiles ; les constats vont dans une seule issue de suivi
+- `unused-catalog-keys.yml` - rapport nocturne des clés de catalogue
+  sans consommateur plus anciennes que la fenêtre de préparation
+  (`AGE_DAYS` dans `frontend/src/i18n/unused-catalog-keys.ts`), dans
+  une seule issue de suivi ; chaque clé y est une candidate, vérifiée
+  une par une avant suppression
 
 `.github/workflows/release-gate.yml` s'exécute au push d'un tag :
 il vérifie que les pins de version sont synchronisés dans tous les

@@ -22,7 +22,9 @@ the reference details those guides build on.
 - `frontend/` - React + TypeScript + Vite, TipTap editor
 - `plugins/` - the shipped PluginForge plugins, one Poetry package each
 - `launcher/` - cross-platform launcher (PyInstaller)
-- `docs/` - architecture overview, MkDocs site, in-app help
+- `docs/` - architecture overview and the MkDocs site with the help
+  pages; the app's help drawer reads its entries from
+  `backend/config/help/` instead
 - `.claude/rules/` - the project rule set (also the source of truth
   for the norms; injected into every agent session)
 - `e2e/` - Playwright smoke + full suites
@@ -207,8 +209,13 @@ tools = "adaptive_learner_tools.plugin:ToolsPlugin"
 6. If your plugin has runtime settings, drop them at
    `backend/config/plugins/{slug}.yaml` - PluginForge reads them from
    the backend config dir, not from inside the plugin's own directory.
-7. `cd backend && poetry lock && poetry install`, then
-   `make test-plugin-{yourname}`.
+7. Add a `test-plugin-{slug}` target to the `Makefile`, modelled on the
+   existing ones, and list it under `test-plugins`.
+   `backend/tests/test_makefile_plugin_targets.py` (part of `make test`)
+   fails while a plugin with tests is missing there, because its tests
+   would otherwise run nowhere, neither in `make test` nor in CI.
+8. `cd backend && poetry lock && poetry install`, then
+   `make test-plugin-{slug}`.
 
 A green run looks like this (captured from `tools`; `make
 test-plugin-tools` is the wrapper, and runs the same tests once
@@ -269,6 +276,37 @@ UTF-8 umlauts. ASCII transliterations like `fuer`, `ueber`,
 automated gate (run via `make verify-i18n-scripts` and the
 `i18n-script-sanity` pre-commit hook); the docs-umlaut ratchet
 (`make verify-docs-hygiene`) guards German prose in `docs/`.
+
+## Diagrams in help pages
+
+The help pages under `docs/help/` are published on the MkDocs site only (the app's help drawer shows the glossary from `backend/config/help`). They may carry [Mermaid](https://mermaid.js.org/) diagrams in a fenced block:
+
+````markdown
+```mermaid
+flowchart LR
+  accTitle: Restoring a backup
+  accDescr: The backup's progress flows into the active profile.
+  B[Backup] --> P[Active profile]
+```
+````
+
+- Every diagram needs `accTitle` and `accDescr`: they are what a screen reader reads and what a learner gets when the diagram does not render.
+- Write the labels in the page's language; each language version carries its own diagram.
+- The site serves Mermaid itself (`docs/help/assets/javascripts/mermaid-<version>.min.js`, loaded through `extra_javascript` in `mkdocs.yml`), never from a CDN. Next to it ships `mermaid-<version>.min.js.LICENSE.txt`: the licence and notice texts of every package the bundle contains (75 for 11.17.2, among them chevrotain under Apache-2.0), because the site redistributes their code (#3813). Upgrading means:
+  1. Replace the bundle with the new release's `dist/mermaid.min.js`.
+  2. Regenerate the notices with learn-content-engine's `scripts/write-mermaid-notices.mjs`. It reads what the bundle contains from its source maps; in a scratch project run `npm install --ignore-scripts mermaid@<version>`, then `node <engine>/scripts/write-mermaid-notices.mjs --mermaid-dir <scratch>/node_modules/mermaid --bundle assets/javascripts/mermaid-<version>.min.js --out docs/help/assets/javascripts/mermaid-<version>.min.js.LICENSE.txt --fetch-missing`.
+  3. Update the version and both hashes in `scripts/verify_mermaid_blocks.mjs`, and the file name in `mkdocs.yml`.
+- `make verify-mermaid` (and the Docs drift verifier in CI) parses every block with exactly that file and fails on a broken diagram or a missing `accTitle`/`accDescr`.
+- The [data model](docs/help/en/developer/data-model.md) page is generated, never written by hand (#3828): `make sync-data-model` renders one ER diagram per area and database from the SQLAlchemy models, the Dexie schema and `scripts/data_model_areas.yaml`. That file is the only part a person edits: a new table or store needs an area there, and a new `*_id` field without a foreign key needs an entry. `make sync-data-model-check` (in `make ci`, and in CI on every change to the models, the Dexie schema, the mapping or the pages) fails until it has one.
+
+## The docs site loads nothing from a third party
+
+No page of the docs site contacts a host other than `astrapi69.github.io` on its own (#3802): no web font, no script, stylesheet or image from a CDN, no API call. Each such request would hand the visitor's IP address to that host.
+
+- A help page links to other sites but never embeds their images, scripts, frames or styles; put the file next to the page instead.
+- `mkdocs.yml` sets `theme.font: false` (the system fonts, not Google Fonts) and `theme.custom_dir: docs/help-overrides`. There, `partials/source.html` keeps the repository link without Material's widget, which would ask api.github.com for stars and forks, and `main.html` gives browsers without `ResizeObserver` a stand-in, so Material never loads its polyfill from unpkg.com.
+- The search keeps the terms in the browser, as the privacy policy says: `theme.features` leaves out `search.highlight`, which would add them to every result link as `?h=` and so send them to GitHub Pages on a click (#3843). `search.share` stays; it copies a link with the query only when the reader clicks share.
+- The Docs drift verifier holds all of this: `verify_docs.py` (check `docs-third-party`) pins the settings and overrides, and `scripts/check_external_hosts.py` scans the built site (`make docs-build`, then `make verify-docs-external-hosts`). `deploy-gh-pages.yml` repeats the scan before it publishes.
 
 ## Commit Conventions
 

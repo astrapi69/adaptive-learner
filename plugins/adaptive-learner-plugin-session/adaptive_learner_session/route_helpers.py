@@ -195,9 +195,7 @@ def _analysis_context_for(db: Session, imported_conversation_id: str | None, lan
     return build_analysis_context(parsed, lang)
 
 
-def _conversation_context_for(
-    db: Session, imported_conversation_id: str | None, lang: str
-) -> str:
+def _conversation_context_for(db: Session, imported_conversation_id: str | None, lang: str) -> str:
     """Render the imported chat's raw transcript as a prompt addendum (#1078).
 
     Loads the conversation's ``ImportedMessage`` rows in chronological order

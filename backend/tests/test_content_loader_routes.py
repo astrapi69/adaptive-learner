@@ -31,6 +31,7 @@ import json
 import textwrap
 from collections.abc import Iterator
 from datetime import datetime
+from pathlib import Path
 from typing import NoReturn
 from unittest.mock import patch
 
@@ -272,6 +273,45 @@ def test_list_sets_carries_visibility_flag(client: TestClient) -> None:
     assert by_id["graded-quiz-demo-from-de"]["visibility"] == "hidden"
 
 
+def test_list_sets_carries_review_status_and_evaluation(client: TestClient) -> None:
+    # #3395 - the response dropped both fields, although the set model reads
+    # them; Dexie mode serves them through the engine projection. A set
+    # without them reads as ``authored`` with no evaluation, as there.
+    manifest = textwrap.dedent(
+        """
+        schema_version: '1.0'
+        name: Review Test
+        sets:
+          - id: plain-set
+            title: Plain
+            language: fr
+            level: A1
+            version: '1.0.0'
+            lesson_count: 1
+          - id: generated-set
+            title: Generated
+            language: fr
+            level: A1
+            version: '1.0.0'
+            lesson_count: 1
+            review_status: generated
+            evaluation:
+              pass_percent: 80
+        """
+    ).strip()
+    transport = _make_mock_transport(
+        {f"/{SOURCE}/main/manifest.yaml": manifest},
+    )
+    with _install_mock_transport(transport):
+        r = client.get("/api/plugins/content-loader/sets")
+    assert r.status_code == 200, r.text
+    by_id = {s["id"]: s for s in r.json()["sets"]}
+    assert by_id["plain-set"]["review_status"] == "authored"
+    assert by_id["plain-set"]["evaluation"] is None
+    assert by_id["generated-set"]["review_status"] == "generated"
+    assert by_id["generated-set"]["evaluation"]["pass_percent"] == 80
+
+
 def test_list_sets_degrades_when_upstream_404(
     client: TestClient,
 ) -> None:
@@ -505,29 +545,55 @@ def test_get_asset_unknown_path_returns_404(
     assert r.status_code == 404
 
 
+@pytest.mark.parametrize(
+    ("kind", "path", "named"),
+    [
+        ("lesson", "lessons/missing.json", "missing.json"),
+        ("asset", "assets/img/missing.png", "img/missing.png"),
+    ],
+    ids=["lesson", "asset"],
+)
+def test_cache_miss_404_keeps_server_paths_out_of_detail(
+    client: TestClient,
+    kind: str,
+    path: str,
+    named: str,
+) -> None:
+    """#3374 - a cache miss on a cached set answers 404 with a detail
+    that names what was asked for, never where the server looked: the
+    detail reaches the user (dev mode, the report dialog) and an
+    absolute cache path exposes the home directory."""
+    from app.paths import get_cache_dir
+
+    transport = _make_mock_transport(
+        {
+            f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/manifest.yaml": SET_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/lessons/01-greetings.json": LESSON_JSON,
+        },
+    )
+    with _install_mock_transport(transport):
+        client.post(
+            f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/download",
+        )
+    r = client.get(f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/{path}")
+    detail = r.json()["detail"]
+    assert (r.status_code, "Looked at" in detail, str(get_cache_dir()) in detail) == (
+        404,
+        False,
+        False,
+    ), f"{kind}: {detail}"
+    assert named in detail
+
+
 # --- Phase 59B/C / v1.42.0 — user-generated sets (My Lessons) --------------
 
 
 def _user_lesson_payload(set_id: str = "conv-route") -> dict:
-    """Build a schema-valid lesson dict via the generator."""
-    from adaptive_learner_content_loader.analysis_to_lesson import (
-        generate_lesson_from_analysis,
-    )
-
-    lesson = generate_lesson_from_analysis(
-        {
-            "topic": "Route test",
-            "summary": "x",
-            "vocabulary": [
-                {"word": "a", "translation": "b", "example": "a c"},
-                {"word": "d", "translation": "e", "example": "d f"},
-                {"word": "g", "translation": "h"},
-                {"word": "i", "translation": "j"},
-            ],
-        },
-        lesson_id=set_id,
-    )
-    return lesson.model_dump(mode="json")
+    """A schema-valid lesson dict from the shared fixture (#3446)."""
+    fixture = Path(__file__).resolve().parents[2] / "tests" / "fixtures" / "user-set-lesson"
+    lesson = json.loads((fixture / "lesson.json").read_text(encoding="utf-8"))
+    return {**lesson, "id": set_id}
 
 
 def test_save_user_set_then_list_play_delete(client: TestClient) -> None:

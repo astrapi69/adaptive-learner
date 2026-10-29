@@ -2,7 +2,8 @@
  * Tests for the Arcade page (#2887): the visible-with-reason gate
  * notice outside the game mode, the game list (memory free, snake
  * locked), the affordability guard, and the two-step XP unlock flow
- * through the shared purchase hook.
+ * through the shared purchase hook. Since #3445 an unlock is one ledger
+ * event and ownership follows the ledger.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -17,13 +18,15 @@ import {setPlayfulMode} from "../../lib/learning/playful/playfulModePref";
 import {setPlayfulTickets} from "../../lib/learning/playful/playfulTicketsPref";
 
 const getState = vi.fn();
-const spendXp = vi.fn();
+const purchaseItem = vi.fn();
+const listPurchases = vi.fn();
 
 vi.mock("../../storage", () => ({
     getStorage: () => ({
         gamification: {
             getState: (...args: unknown[]) => getState(...args),
-            spendXp: (...args: unknown[]) => spendXp(...args),
+            purchaseItem: (...args: unknown[]) => purchaseItem(...args),
+            listPurchases: (...args: unknown[]) => listPurchases(...args),
         },
     }),
 }));
@@ -41,7 +44,8 @@ beforeEach(() => {
     localStorage.clear();
     localStorage.setItem("adaptive-learner.user_id", "u1");
     getState.mockResolvedValue({total_xp: 500, level: 3});
-    spendXp.mockResolvedValue({total_xp: 300, level: 3});
+    purchaseItem.mockResolvedValue({xp: {total_xp: 300, level: 3}});
+    listPurchases.mockResolvedValue([]);
 });
 
 describe("Arcade gate", () => {
@@ -106,14 +110,37 @@ describe("Arcade game list", () => {
         await waitFor(() => expect(unlock).not.toBeDisabled());
         fireEvent.click(unlock);
         expect(unlock).toHaveTextContent("Really unlock");
-        expect(spendXp).not.toHaveBeenCalled();
+        expect(purchaseItem).not.toHaveBeenCalled();
         fireEvent.click(unlock);
         await waitFor(() =>
-            expect(spendXp).toHaveBeenCalledWith("u1", 200, "arcade_game"),
+            expect(purchaseItem).toHaveBeenCalledWith("u1", {
+                item_kind: "arcade_game",
+                item_id: "snake",
+                cost: 200,
+            }),
         );
         expect(
             await screen.findByTestId("arcade-play-snake"),
         ).toBeInTheDocument();
+    });
+
+    it("a game unlocked in another browser is playable here (#3445)", async () => {
+        setPlayfulMode(true);
+        listPurchases.mockResolvedValue([
+            {
+                id: "p1",
+                user_id: "u1",
+                item_kind: "arcade_game",
+                item_id: "snake",
+                cost: 200,
+                purchased_at: "2026-10-01T00:00:00Z",
+            },
+        ]);
+        renderArcade();
+        expect(
+            await screen.findByTestId("arcade-play-snake"),
+        ).toBeInTheDocument();
+        expect(purchaseItem).not.toHaveBeenCalled();
     });
 });
 

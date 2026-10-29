@@ -49,8 +49,10 @@ You need:
 - A **public GitHub repository** (private is possible too, via a
   per-repo token -- see [Listing a private repo](#listing-a-private-repo)).
 - A root **`manifest.yaml`** that declares your sets.
-- Lessons that conform to the **lesson format (schema v1.3+; current is
-  v1.4)**.
+- Lessons that conform to the **lesson format**: the schema of the
+  `learn-content-engine` version the app pins, mirrored in
+  `schema/lesson.schema.json` (its `x-schema-version` names the
+  current version).
 - Python 3 with PyYAML, to run the local validator before you publish.
 
 The two authoritative format references live in the official content
@@ -283,14 +285,19 @@ provenance and review, not about whether the lessons are "good".
 | **2** | Verified | Contributed by the community and reviewed by a maintainer for content correctness. | A maintainer reviews and vouches for the content. |
 | **3** | Official | Curated and quality-assured by the project owner. | Listed and maintained by the project team in `recommended-repos.json`. |
 
-The matching in-app strings (localized in all 9 languages) are:
+The app shows the levels in two places, localized in every UI
+language:
 
-- `content_repo.trust_validated` -- "Validated: Technically correct;
-  content not individually reviewed."
-- `content_repo.trust_verified` -- "Verified: Contributed by the
-  community and reviewed by the team."
-- `content_repo.trust_official` -- "Official: Curated and
-  quality-assured by the project team."
+- **Discover results** label each set with `discover.trust.validated`
+  ("Validated"), `discover.trust.verified` ("Verified") or
+  `discover.trust.official` ("Officially recommended")
+  (`DiscoverResults.tsx`).
+- **Repository badges** in the content browser and in Settings use
+  `content_repo.badge.official` ("Official"),
+  `content_repo.trust.validated` ("Validated") and
+  `content_repo.trust.unknown` ("Unverified"), plus
+  `content_repo.badge.private` for private repositories
+  (`RepoCategoryBadge.tsx`).
 
 > Implementation note: today the app assigns **Validated** automatically
 > (a freshly added user repo starts Unverified and becomes Validated

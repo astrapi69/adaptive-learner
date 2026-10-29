@@ -139,6 +139,13 @@ export default function LessonModeControl() {
                         </option>
                     ))}
                 </select>
+                {/* #3742 - a set's own pass mark wins over this threshold. */}
+                <FormHint data-testid="lesson-mode-threshold-set-hint">
+                    {t(
+                        "settings.lesson_mode.threshold_set_hint",
+                        "Sets with their own pass mark use that mark instead.",
+                    )}
+                </FormHint>
             </label>
             <label className="flex flex-col gap-2">
                 <span className="text-[0.95rem] font-medium">

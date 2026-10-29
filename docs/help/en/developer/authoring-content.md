@@ -56,15 +56,21 @@ drift can no longer:
   via a top-level `"$schema"` key to get IDE autocomplete and
   inline validation.
 - `schema/quality-rules.json` - the shared quality minimums (e.g.
-  exercise counts, free-text accept counts), consumed by the
-  client-side content validator instead of a second hand-kept copy.
-- The frontend TypeScript lesson types and the
-  [Lesson format reference](lesson-format-reference.md) MkDocs page
-  are generated too (**do not hand-edit them**); they follow the engine
-  mirror, so re-run the generator after a re-pin.
+  exercise counts, free-text accept counts), mirrored from the
+  engine. The client-side content validator reads the same numbers
+  straight from the engine package (`QUALITY_MINIMUMS`), not from a
+  second hand-kept copy.
+- The [Lesson format reference](lesson-format-reference.md) MkDocs
+  page is generated, in every help language (**do not hand-edit
+  it**); it follows the engine mirror, so re-run `make sync-schema`
+  after a re-pin. The frontend TypeScript lesson types are not
+  generated: they come straight from the `learn-content-engine`
+  package.
 
 A drift gate (`make sync-schema-check`, part of `release-test`,
-plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
+plus `backend/tests/test_lesson_schema_drift.py` in `make test`;
+the backend CI also checks the Pydantic layer on every PR that
+touches the backend or a plugin with `generate_pydantic_models.py --check`)
 fails if any generated artefact diverges from the pinned engine mirror. The chain
 closure is the app-vs-engine byte-parity gate: `make
 engine-parity-check` (`scripts/check_engine_schema_parity.py`), the
@@ -107,8 +113,16 @@ also carries **`title`** (in the source language, what the learner
 reads) and **`title_native`** (in the target language, as a
 secondary title).
 
-Both codes must be ISO 639-1 (two letters), and `source_language`
-must differ from `target_language`. Sets before v1.2 without these
+Both codes are BCP 47 language tags in canonical form: the shortest
+code (`de`, `pt-BR`), three letters for languages without a
+two-letter code (`gsw`, `yue`, `fil`). A tag that is not well-formed
+(`de_DE`, empty) is an error (`E-LANG-TAG`); a non-canonical spelling
+(`EN`, `deu`) is a warning (`W-LANG-TAG-CANONICAL`). For a language
+set (`domain` absent or `language`) the engine warns when
+`source_language` equals `target_language` or `title_native` is
+missing (`W-LANG-PAIR-SAME`, `W-SET-TITLE-NATIVE`); the app's share
+check blocks both. A set of another domain needs neither.
+Sets before v1.2 without these
 fields still load: the old `language` key is accepted as
 `target_language`, and `source_language` falls back to `en`.
 
@@ -208,6 +222,15 @@ App-specific loader behaviour to keep in mind:
       - 02-articles.json
       - ...
   ```
+
+- A set's optional `evaluation` block
+  ([engine reference](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  takes effect in the app only in **exam mode**: there it replaces
+  the learner's own pass threshold and grades the same first pass
+  by its scheme (`percent`, `pass_fail` or `grades`), its `title`
+  replaces the "Exam result" heading, `report: detailed` opens the
+  detailed evaluation, and the star rating is not shown. Practice
+  and the other modes ignore the block.
 
 ## Lesson schema
 
@@ -866,6 +889,17 @@ the placeholder SVG generator covers colors + numbers
 automatically and falls back to a deterministic avatar for
 everything else.
 
+**Images in Markdown.** The app renders theory text, explanations
+and AI replies, among others, as Markdown. An image embedded there
+as a `data:` URI is shown directly. An image from another server,
+for example `raw.githubusercontent.com` or an image website,
+appears as a link with an image icon and its alt text and loads
+only after a click, in a new tab, so give such images a meaningful
+alt text; an image that must always be visible belongs in an
+exercise or card image backed by the asset files below. YouTube
+entries in `resources[]` show a video icon instead of a thumbnail;
+the video opens on YouTube only on a click.
+
 ### Directory layout
 
 Within the set directory, assets live under `assets/`:
@@ -980,7 +1014,7 @@ Check before the PR for a new lesson:
 - [ ] **Cultural accuracy**: real language use, not just textbook phrases
 - [ ] **Schema validation**: the lesson loads cleanly via `dict_to_lesson()` (see Local testing)
 - [ ] **Card ID integrity**: every `exercise.card_ids[i]` exists in the lesson's `cards[]`
-- [ ] **Language pair**: `target_language` + `source_language` set (ISO 639-1, different), `title_native` present
+- [ ] **Language pair**: `target_language` + `source_language` set (BCP 47, canonical; for language sets different and with `title_native`)
 
 ## Validation (two layers, v1.44.0)
 
@@ -1134,12 +1168,17 @@ app**:
    lesson appears under **My Lessons** in the set browser.
 2. In "My Lessons", click **Export as content set** to download a
    content set as `.zip` (manifest + lessons). Exports contain
-   only the lesson content - no progress, no error history,
-   nothing personal.
+   the lesson content, but no progress and no error history;
+   whatever is in the lesson goes with it, including personal
+   details such as an author name you gave (see
+   [My Lessons](../user-guide/my-lessons.md)).
 3. Click **Share with Community** to open a pre-filled **pull
    request** in the content repository - the lesson JSON is
    committed at the correct path in the tree, no `.zip` attachment
-   needed.
+   needed. With a GitHub token under Settings > Integrations, a
+   single lesson's pull request is opened by the app itself;
+   without one, GitHub's editor or upload page takes you through it
+   (see [My Lessons](../user-guide/my-lessons.md#export-and-share)).
 4. The repo's CI validates the PR automatically; a maintainer
    reviews the lesson, brings the manifest (id, title, language,
    level, tags) in line with the conventions above and merges it
@@ -1161,7 +1200,11 @@ instead of jumping straight to GitHub:
    lesson lands in the tree (`sets/{source}/{target}-{level}/`) and
    an auto-numbered file name (`{nn}-{slug}.json`, the next number
    after the existing lessons). A brand-new pair + level shows
-   *"New set! You're the first."*
+   *"New set! You're the first."* This step also confirms the
+   title, the languages and the level. A language set needs a
+   CEFR level (A1-C2). A set that does not teach a language can
+   choose *"No level (not a language course)"* and is shared
+   without a level.
 2. **Duplicate scan.** The lesson is compared with the lessons
    already present in this path (card and exercise overlap -
    advisory, never blocking). If something similar exists, you

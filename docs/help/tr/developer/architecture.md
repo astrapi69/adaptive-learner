@@ -21,10 +21,9 @@ Adaptive Learner, 4 katmanlı, eklenti güdümlü bir uygulamadır.
 └─────────────────────────────────────────────────────────────┘
                             ↑↓ entry_points
 ┌─────────────────────────────────────────────────────────────┐
-│ Plugins            10 packages under plugins/               │
-│                    (ai-{anthropic,openai,gemini}, assessment,│
-│                    session, tracking, tools, gamification,  │
-│                    anki, notebooklm)                        │
+│ Plugins            plugins/ altında eklenti başına bir      │
+│                    Poetry paketi; katalog ve katmanlar      │
+│                    CLAUDE.md içinde                         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -40,11 +39,11 @@ karşılar:
 
 - **`apiStorage`** (varsayılan): FastAPI arka ucuyla konuşan
   `api/client.ts` etrafında ince bir sarmalayıcı.
-- **`dexieStorage`** (yerel-öncelikli): `storage/ai-providers.ts`
-  aracılığıyla tarayıcıdan doğrudan AI çağrıları yaparak tüm 25
-  SQLAlchemy modelini yansıtan tam IndexedDB yığını.
+- **`dexieStorage`** (yerel-öncelikli): `storage/ai/ai-providers.ts`
+  aracılığıyla tarayıcıdan doğrudan AI çağrıları yaparak
+  SQLAlchemy modellerini yansıtan tam IndexedDB yığını.
 
-`IStorageService`, 22 ad alanını açığa çıkarır (users, projects,
+`IStorageService`, ad alanlarını açığa çıkarır (users, projects,
 settings, assessment, session with streaming, tracking, tools,
 curricula, topics, lessons, plugins, system, backup, export,
 subjects, tags, projectTaxonomy, imports, gamification, anki,
@@ -154,11 +153,17 @@ hatalarını HTTP durum kodlarına eşler. Tam desen için
 
 - Arka uç: SQLAlchemy + SQLite. `backend/migrations/versions/`
   içinde Alembic migrasyonları.
-- Senkronizasyon yüzeyi: 28 tablo (v1.19.0 temeli). Yalnızca ekleme
-  geçmişi satırları (oturumlar, mesajlar, derecelendirmeler, ilerleme
-  commitler'i, adım değerlendirmeleri, yöntem geçişleri, içe aktarılan
-  konuşmalar, içe aktarılan mesajlar, anki kartları, çalışma soruları)
-  artı değiştirilebilir ayarlar + müfredat satırları.
+- Senkronizasyon yüzeyi: `sync_service.ALL_SYNC_TABLES` içindeki her tablo;
+  bir tablonun yalnızca ekleme olarak mı yoksa değiştirilebilir
+  olarak mı senkronize edildiğini `backend/app/services/sync_tables.py`
+  içindeki `TableSpec.append_only` belirler. Tabloların kendisi,
+  bölümlere göre: [Veri modeli](data-model.md).
+- Senkronizasyonda API anahtarı yok (#3854): `SYNC_SECRET_TABLES`
+  içindeki tablolar (`api_key_backups` geri alma önbelleği) ve
+  `user_settings` tablosunun `api_key_*` alanları
+  (`EXCLUDED_USER_SETTINGS_FIELDS`, yedeklemenin kullandığı liste) hiçbir
+  yönde senkronizasyondan geçmez; tarayıcı tarafındaki filtre
+  `frontend/src/storage/sync/sync-secrets.ts` içindedir.
 - Yedek biçimi: JSON; API anahtarları dışa aktarmada çıkarılır;
   geri yükleme bir birleştirmedir.
 - Test yalıtımı: üretim veri dizinleri

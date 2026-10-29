@@ -14,15 +14,21 @@
 # Set ``enabled: false`` to fall back to the v0.4.x deterministic
 # +1 advance (capped at 7).
 step_evaluation:
+  # INTERNAL: edit via YAML only (#3436). One source first: the browser
+  # build mirrors these values in session-flow.ts, so a UI here would be
+  # a fourth place that can drift.
   enabled: true
   # Minimum confidence for an AI-suggested transition to apply.
   # Lower = more eager transitions; higher = stickier steps. The
-  # 0.7 default is the Phase 8B spec value.
+  # 0.7 default is the Phase 8B spec value. The browser build mirrors it
+  # in session-flow.ts; session-flow.test.ts reads this line (#3436).
+  # INTERNAL: edit via YAML only.
   confidence_threshold: 0.7
   # max_tokens cap for the evaluator call. The JSON output is tiny
   # (~80-120 tokens in practice); the cap is a safety net against
-  # verbose models. INTERNAL — only bump if logs show truncated
-  # evaluation responses in the wild.
+  # verbose models. Only bump if logs show truncated evaluation
+  # responses in the wild.
+  # INTERNAL: edit via YAML only.
   max_tokens: 256
 
 # v1.4.0 — Auto-loop: continue learning after step 7.
@@ -35,13 +41,17 @@ step_evaluation:
 # and continues with the suggested next topic. Fallback: keeps
 # the v0.5.0 cap-at-7 behaviour.
 auto_loop:
+  # INTERNAL: edit via YAML only (#3436). The browser build has no
+  # auto-loop yet.
   enabled: true
   # Hard cap on cycles per session. Prevents runaway loops; user
   # can always end the session manually. 5 covers a deep learning
   # session without exhausting the learner.
+  # INTERNAL: edit via YAML only.
   max_cycles: 5
   # max_tokens for the topic-transition call. The JSON output is
-  # small (~150-200 tokens); the cap is a safety net. INTERNAL.
+  # small (~150-200 tokens); the cap is a safety net.
+  # INTERNAL: edit via YAML only.
   topic_transition_max_tokens: 256
 
 # v1.5.0 — Parallel evaluation. At the step 6 -> 7 transition,
@@ -49,4 +59,5 @@ auto_loop:
 # asyncio.gather instead of sequentially. Saves ~T2 of latency
 # at the cycle boundary. Set to false to fall back to the
 # v1.4.0 sequential path.
+# INTERNAL: edit via YAML only (#3436).
 async_evaluation: true

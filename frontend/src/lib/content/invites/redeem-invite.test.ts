@@ -115,6 +115,7 @@ describe("redeemInvite", () => {
       ok: false,
       reason: "validate_failed",
       detail: "Repository unreachable.",
+      validation: {ok: false, setCount: 0, lessonCount: 0, reason: "Repository unreachable."},
     });
     expect(deps.addUserRepo).not.toHaveBeenCalled();
   });

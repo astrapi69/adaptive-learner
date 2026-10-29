@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 
 import { ApiError } from "../../../api/client";
 import { getStorage } from "../../../storage";
+import { withoutLegacyFallbackText } from "../../../chat_import/analysis";
 import type {
   Curriculum,
   ImportedConversationDetail,
@@ -58,7 +59,10 @@ export function useImportDetailData({
     (async () => {
       try {
         const d = await getStorage().imports.get(conversationId);
-        if (!cancelled) setDetail(d);
+        // #3424: rows analysed before the fix carry an English placeholder.
+        if (!cancelled) {
+          setDetail({...d, analysis_result: withoutLegacyFallbackText(d.analysis_result)});
+        }
         // Phase 36 Bug 3 — load the linked curriculum in
         // parallel; missing endpoint / null result is
         // non-fatal (the CTA just stays on "Create").

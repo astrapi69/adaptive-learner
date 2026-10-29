@@ -55,6 +55,17 @@ Echter Round-Trip, keine Simulation:
       #2050-Pfad!), abgeschlossenes Set korrekt, eigene Übung vorhanden,
       Einstellungen plausibel.
 - [ ] TC-0007 Danach eine Lektion normal weiterlernen - kein Folgefehler.
+- [ ] TC-0953 Verbundene Repos und Einladungen (#3412): vor dem Export ein eigenes
+      Content-Repository verbunden und eine Einladung eingelöst, Learning
+      Repository eingeschaltet. Nach Wipe und Import stehen Repository und
+      Einladung wieder in Einstellungen > Inhalte, Updates laden wieder,
+      und das Learning Repository ist eingeschaltet. Ein privates Repo
+      fragt nach seinem Token, der Learning-Repository-Ordner ist der
+      Standardordner dieses Geräts
+- [ ] TC-0954 KI-Prüfberichte (#3412, Browser-Modus): vor dem Export für ein Set die
+      KI-Inhaltsprüfung laufen lassen, das Set trägt die Plakette
+      „KI-geprüft". Nach Wipe und Import trägt es die Plakette wieder, ohne
+      neue Prüfung und ohne API-Aufruf
 
 Ergebnis dokumentieren (auch Teilfehler einzeln). Bei JEDEM Abweichen:
 Screenshot + welcher Schritt, daraus wird ein Issue mit Forensik.
@@ -358,6 +369,13 @@ Noch nie durchgefuehrt. JETZT machen.
 - [ ] TC-0076 API-Keys NICHT im Backup (Sicherheits-Check)
 - [ ] TC-0077 Nach Restore: Provider-Übersicht (Settings → KI) zeigt wieder-
       hergestellte Einstellungen OHNE Reload (settings-refresh-bus, #1769)
+- [ ] TC-0972 Geräte-Wechsel über Einstellungen (#3785): auf Gerät B eine Lektion
+      spielen und ein Backup exportieren; auf Gerät A ein EIGENES Profil
+      anlegen, eine andere Lektion anfangen und pausieren, dann B's Backup
+      über Einstellungen → Daten importieren. Der Bestätigungsdialog sagt
+      vorher, dass das Backup zu einem anderen Profil gehört. Danach: Profil
+      A bleibt aktiv, B's Lektion zeigt ihren Fortschritt im Lernpfad, A's
+      pausierte Lektion steht weiter unter "Weitermachen", keine Fehlermeldung.
 
 ---
 
@@ -571,6 +589,13 @@ Erfordert Domaenenwissen. Nicht automatisierbar.
       „Prüfen" und zählt bei jedem Paar mit; auf Theorie-Schritten, nach
       „Prüfen" und auf der Zusammenfassung fehlt er; dasselbe in den Läufen
       Wiederholung / Zufall / Endlos
+- [ ] TC-0949 Zuordnung, Neupaaren statt Lösen (#3237): ein Antippen einer gepaarten
+      Kachel wählt sie nur aus (Auswahlrahmen), der Zähler bleibt gleich;
+      danach eine Kachel der anderen Spalte antippen: ist sie frei, wandert
+      das Paar dorthin; ist sie gepaart, tauschen die beiden Paare ihre
+      Partner. Der Zähler fällt dabei nie, ein volles Brett bleibt voll.
+      Dasselbe, wenn man in der rechten Spalte beginnt; Strg/Cmd+Z macht
+      weiterhin das letzte Paar rückgängig
 
 - [ ] TC-0132 Zuordnung: lange Wörter brechen in der Kachel um (#3174): eine
       Zuordnungsübung mit einem Wort, das breiter als die Kachel ist, auf
@@ -649,6 +674,34 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       Button rechts daneben; Mobile: eng gepackt bzw. sauberer Umbruch,
       kein Ueberlappen) (#1942)
 - [ ] TC-0150 Pruefungsmodus: keine Hilfen, Ergebnis am Ende, 1.5x XP
+- [ ] TC-0955 Prüfungsmodus mit Bewertungsblock des Sets (#3736, #3740): Repo
+      `astrapi69/adaptive-learner-content-test` verbinden, Standard-Modus
+      Prüfung, eigene Bestehensgrenze 80 %. Pilot-Lektion
+      (`evaluation-pilot-from-de`) mit 7 von 10 richtig: **Bestanden**,
+      Überschrift "Hauptstadt-Prüfung", Hinweis "Bewertet nach den Vorgaben
+      dieses Sets, nicht nach deiner eigenen Bestehensgrenze", Schwelle
+      "(bestanden ab 60%)"; **keine Sterne** und kein Sterne-Lobtext (etwa
+      "Guter Anfang - bleib dran!"), der Punktebalken bleibt.
+      Kontroll-Lektion (`evaluation-pilot-control-from-de`) mit 7 von 10:
+      **Nicht bestanden** gegen die eigenen 80 %, kein Hinweis, Sterne und
+      Lobtext wie bisher. Dieselbe Pilot-Lektion im Übungsmodus: keine
+      Prüfungskarte, Sterne und Zusammenfassung wie bisher. Fortsetzen-Fall
+      (#3742): Pilot-Lektion im Übungsmodus anfangen (einige Antworten),
+      verlassen, Standard-Modus Prüfung, Lektion wieder öffnen: der Dialog
+      sagt "Diese Runde wurde in einem anderen Modus begonnen ...", **kein
+      "Weiter"**, nur "Neu starten"; nach Neu starten steht über der ersten
+      Frage "Prüfung: Ob eine Antwort richtig war, siehst du erst am Ende
+      ...", und 7 von 10 richtig ergibt **Bestanden**. Umgekehrt (Prüfung
+      angefangen, im Übungsmodus geöffnet) ebenfalls kein "Weiter". Eine
+      Prüfung ist eine Sitzung (#3750): Prüfung anfangen, eine Frage
+      beantworten, verlassen, im Prüfungsmodus wieder öffnen: der Dialog
+      sagt "Eine angefangene Prüfung lässt sich nicht fortsetzen ...", kein
+      "Weiter"; nach Neu starten zählen nur die Antworten dieser Sitzung
+      (alle richtig ergibt 10 von 10). Nach "Neu starten" oder "Prüfung
+      wiederholen" lässt sich der Modus wieder wählen, bis die erste Frage
+      beantwortet ist (#3746). In den
+      Einstellungen steht unter der Bestehens-Grenze "Sets mit eigener
+      Bestehensgrenze verwenden stattdessen diese."
 - [ ] TC-0151 Zeitmodus: Countdown-Balken sichtbar, Farb-Uebergang
 - [ ] TC-0152 Fehler-Modus: nur Fehlerkarten (nach min. 1 Fehler)
 - [ ] TC-0153 Rueckwaerts: Matching-Spalten getauscht
@@ -664,6 +717,10 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       "Nächste Lektion -> Starten" aus - nicht eine sekundäre Karte
       (z. B. "Wiederholung"); Klick auf die Buttons funktioniert weiterhin
       (#1943)
+- [ ] TC-0963 Zeit in der Zusammenfassung (#3747): eine Lektion einige Minuten spielen,
+      verlassen, wieder öffnen, "Neu starten" wählen und zügig zu Ende spielen:
+      die Zusammenfassung nennt nur die Minuten dieser Runde, nicht die Summe
+      aller Besuche. Die Statistik zählt weiter die gesamte Lernzeit
 - [ ] TC-0159 Letzte Lektion eines Sets (keine "Nächste Lektion"): auf der
       Zusammenfassung passiert bei Enter nichts Falsches - kein Fehler,
       keine Navigation zu einer nicht vorhandenen Lektion (#1943)
@@ -826,8 +883,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
 - [ ] TC-0205 Spielmodus an, Lektion mit einer Serie von mindestens 3 richtigen
       Antworten in Folge spielen: in der Zusammenfassung steht neben
       "Beste Serie: N" ein grünes "+N XP"; die angezeigten Lektions-XP
-      enthalten den Bonus, und "Als erledigt markieren" schreibt exakt
-      denselben Wert gut (Dashboard-XP steigen um die angezeigte Summe)
+      enthalten den Bonus, und das Erreichen der Zusammenfassung schreibt
+      exakt denselben Wert gut (Dashboard-XP steigen um die angezeigte Summe)
 - [ ] TC-0206 Der Bonus zählt ab der DRITTEN Serienantwort (+1 pro weiterer
       richtiger Antwort in Folge); eine falsche Antwort stoppt das
       Wachstum, eine neue Serie ab 3 zählt weiter
@@ -1024,7 +1081,8 @@ Auslieferung). Im regulären Build ist der Modus nicht vorhanden.
       wiederholt den Hüpfer mit dem neuen Wort
 - [ ] TC-0258 Zuordnungsübung: ein frisch gebildetes Paar "schnappt" mit einem
       Pop auf beiden Kacheln zusammen; nach dem Prüfen hüpfen die
-      richtigen Paare kurz; das Antippen eines Paars löst es weiterhin
+      richtigen Paare kurz; das Antippen eines Paars wählt es zum
+      Neupaaren aus (#3237), genau wie im normalen Modus
 - [ ] TC-0259 Verhalten unverändert: Auswahl, Prüfen, Punktzahl und Auflösung
       sind in allen drei Übungstypen identisch zum normalen Modus
 - [ ] TC-0260 Spielmodus aus: klassische Listen/Chips/Kacheln ohne die
@@ -1581,6 +1639,20 @@ gesetzt ist, bevor der Assistent geöffnet wird.
       (Dexie-Modus) - Hinweis + Entfernen-Knopf müssen in BEIDEN Modi
       funktionieren
 
+### TS-0128 Teilen-Assistent - Niveau für Sets, die keine Sprache lehren (#3356)
+
+Ort: Teilen-Assistent Schritt 1, Auswahl "Niveau". Ein Wissens-Set ist
+eines mit gleicher Ausgangs- und Zielsprache oder mit einer
+Wissensdomain (etwa `knowledge`, `psychology`).
+
+- [ ] TC-0934 Ein Wissens-Set mit gespeichertem Niveau "none" teilen -> die
+      Auswahl zeigt "Kein Niveau (kein Sprachkurs)", kein Fehler,
+      "Weiter" ist aktiv (vorher: ein geschätztes CEFR-Niveau)
+- [ ] TC-0935 Bei einem Wissens-Set "Kein Niveau (kein Sprachkurs)" wählen ->
+      kein Fehler, "Weiter" bleibt aktiv; bei einem Sprach-Set heißt
+      derselbe Eintrag weiter "Niveau wählen…" und blockiert "Weiter"
+      mit "Bitte ein CEFR-Niveau wählen (A1-C2)."
+
 ### TS-0053 Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
 
 Ort: Meine Inhalte (`/content?tab=my`) → "Lektion importieren"-Modal +
@@ -1588,7 +1660,8 @@ per-Karte "Exportieren" / "Als Set exportieren"; akzeptiert `.json` (eine
 Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
 
 - [ ] TC-0381 Import einer `.json`-Lektion: Vorschau zeigt Titel · Sprache · N
-      Lektionen · M Übungen VOR dem Bestätigen
+      Lektionen · M Übungen VOR dem Bestätigen. Die Sprache ist die der
+      Lektion (eine es/de-Lektion zeigt ES), nicht pauschal EN (#3395).
 - [ ] TC-0382 Import eines `.zip`-Sets: Vorschau + korrekte Lektionszahl
 - [ ] TC-0383 Namenskollision: Drei-Wege-Dialog erscheint (Überschreiben /
       Als Kopie importieren / Abbrechen), KEIN stilles Überschreiben;
@@ -1862,9 +1935,10 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       die Lektion trägt die gewählte Domain (`domain: psychology` …); eine
       Sprachlektion trägt KEIN `domain`-Feld. Bearbeiten einer gespeicherten
       Wissenslektion öffnet wieder mit der richtigen Domain + Inhaltssprache
-- [ ] TC-0417 **Sprachpaar-Pruefpunkt (#1929):** Review zeigt SECHS Checklisten-
-      Punkte (Titel, "Sprachpaar ist gültig", ≥4 Karten, ≥5 Übungen,
-      ≥2 Typen, gültige Struktur). "Sprachpaar ist gültig" ist grün,
+- [ ] TC-0417 **Sprachpaar-Pruefpunkt (#1929):** Review zeigt VIER Checklisten-
+      Punkte fürs lokale Speichern (Titel, "Sprachpaar ist gültig", ≥4 Karten,
+      gültige Struktur; die Übungs- und Typen-Minima stehen seit #3389 unter
+      "Nötig zum Teilen"). "Sprachpaar ist gültig" ist grün,
       sobald Quell- UND Zielsprache unterstuetzte Codes sind — ein
       Gleiche-Sprache-Paar (de → de) ist GUELTIG (kein "Quelle != Ziel"-
       Gate)
@@ -2131,6 +2205,20 @@ Lektion) + `.zip` (ganzes Set = `manifest.yaml` + `lessons/`).
       `psych-rhetorik`, Lektion 1) öffnen und deren Übung bearbeiten →
       Speichern ist aktiv (früher dauerhaft gesperrt). In jedem Fall gilt:
       Was der Editor speichern lässt, lässt sich auch als Lektion speichern.
+- [ ] TC-0928 **Lokal speichern prüft Gültigkeit, Teilen die Minima der Engine (#3389):**
+      Neue Lektion mit 5 Karten, in Schritt 3 nur **eine** Zuordnung erzeugen
+      oder behalten → der Hinweis lautet „Zum Teilen sind mindestens 5 Übungen
+      nötig", und „Weiter" ist aktiv. Mit null Übungen blockiert „Weiter" mit
+      „Erstelle mindestens eine Übung, um fortzufahren." In Schritt 4 stehen
+      unter „Nötig zum Teilen" drei Zeilen (mindestens 5 Übungen, mindestens 2
+      Übungstypen, jede Übung hat genug Antworten oder Paare). „Lokal speichern"
+      ist aktiv, „Speichern und teilen" gesperrt. Mit dem Generator (Zuordnung +
+      Freitext, 10 Übungen) ist die dritte Zeile rot, solange eine Freitext-Übung
+      nur eine akzeptierte Antwort hat; nach einer zweiten Antwort für jede wird
+      sie grün und „Speichern und teilen" aktiv. Ein Klick darauf öffnet
+      „Meine Inhalte" mit dem Teilen-Assistenten für genau diese Lektion
+      (#3660); er meldet keinen Mindestwert-Fehler. Beim Bearbeiten einer gespeicherten
+      Lektion gibt es keine Teilen-Zeilen.
 - [ ] TC-0434 **Aufgabentyp umwandeln -> Freitext (EXP-050 Stufe 1, #2511):** Im
       Inline-Editor (Schritt 3, `ExerciseEditor`) einer **Wortkacheln**- oder
       **Multiple-Choice**-Übung steht oben ein Auswahlfeld **"Aufgabentyp"** mit
@@ -2299,6 +2387,12 @@ jeder Karten-Zeile (`CardImageField`).
       "Zurück zu den Optionen" führt zur Auswahl zurück, nichts ist
       zurückgesetzt; erneut "Neu starten" und in der Rückfrage "Neu
       starten" -> die Lektion beginnt bei Schritt 1
+- [ ] TC-0930 Zurückblättern hinter eine Übung (#3365): eine Lektion bis hinter die
+      zweite Übung spielen, dann mit "Zurück" auf einen Theorieschritt davor
+      gehen und die Lektion über das Logo verlassen -> auf dem Dashboard in
+      der Karte "Weiterlernen" auf "Fortsetzen", im Dialog "Fortsetzen" ->
+      die Lektion öffnet genau diesen Theorieschritt (vorher: den Schritt
+      nach der letzten Übung)
 - [ ] TC-0452 Auto-Weiter + "Zurück" (#1921): Einstellung "Automatisch weiter"
       (Settings -> Lernen) AN -> eine Übung richtig beantworten, die App
       springt automatisch zur nächsten Aufgabe -> dann "Zurück" klicken:
@@ -2381,6 +2475,16 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0474 Browser-Modus (GitHub Pages / Dexie): die Karte bleibt sichtbar mit
       dem Hinweis "Nur mit der Desktop-App verfügbar."; DevTools >
       Netzwerk zeigt keinen Aufruf von /api/plugins/health
+- [ ] TC-0936 Karte "Lern-Repository", frische Installation: das Feld
+      "Repository-Verzeichnis" ist leer, darunter steht "Leer lassen für
+      den Standard: repos im Datenverzeichnis (siehe Über)", kein fester
+      Linux-Pfad; bei 375 px bricht der Hinweis um statt abgeschnitten
+      zu werden (#3451)
+- [ ] TC-0937 Desktop-App, Git-Persistenz an, Feld leer lassen, speichern, auf der
+      Lern-Repository-Seite "In Git speichern": Toast "In Git gespeichert:
+      <Commit>"; auf der Platte liegt der Ordner "repos/<Projekt-ID>/" mit
+      README.md unterhalb des Datenverzeichnisses, das Einstellungen > Über
+      zeigt; ein eingetragener eigener Pfad gewinnt weiterhin
 
 ### TS-0061 Diagnose-Sonde: Fehltipp-Markierung + Aktionen (#3043)
 - [ ] TC-0475 Sonde AN, Mess-Leiste sichtbar: die Leiste zeigt neben "Werte
@@ -2632,11 +2736,12 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0553 Frische Installation (oder in Einstellungen > Lernen >
       "Zusammenfassung nach Lektionen" nur "Ergebnis und Statistik" und
       "XP-Belohnung" angehakt): Lektion beenden - die Zusammenfassung zeigt
-      Sterne, Punktzahl, Zeit, "+N XP" und direkt darunter "Als
-      abgeschlossen markieren", "Nächste Lektion", "Nochmal üben" und
-      "Zurück"; kein Favoriten-Hinweis, kein Teilen, keine
+      Sterne, Punktzahl, Zeit, "+N XP" und direkt darunter "Nächste
+      Lektion", "Nochmal üben" und "Zurück"; kein Favoriten-Hinweis, kein Teilen, keine
       Antworten-Übersicht, kein Export, kein "Warum du diese verpasst
-      hast", keine Korrekturrunde, keine Nächste-Schritte-Karten
+      hast", keine Korrekturrunde, keine Nächste-Schritte-Karten (hatte der
+      Lauf Fehler, steht zusätzlich nur der Knopf "Fehler korrigieren (N)"
+      darüber, #3575)
 - [ ] TC-0554 Am Telefon (Hochformat): alles bis zu den Weiter-Knöpfen ohne
       Wischen sichtbar
 - [ ] TC-0555 "Ausführliche Auswertung": die Auswertung wie am Set-Ende und alle
@@ -2656,6 +2761,38 @@ jeder Karten-Zeile (`CardImageField`).
 - [ ] TC-0558 "Warum du diese verpasst hast" angehakt, aber "Erklärungen nach der
       Antwort" (Wiederholung) aus: der Block fehlt in der kompakten Fassung
       und erscheint erst in der ausführlichen Auswertung
+- [ ] TC-0931 **Fehler korrigieren aus der kompakten Fassung (#3575):** Kompakte
+      Voreinstellung, eine Lektion mit zwei falsch beantworteten Übungen
+      beenden: über den Weiter-Knöpfen steht "Fehler korrigieren (2)", ohne
+      dass ein Abschnitt in den Einstellungen angehakt ist. Antippen: die
+      Korrekturrunde öffnet sich direkt mit der ersten Übung (kein zweiter
+      Klick auf "Jetzt ausbessern"), der Knopf verschwindet. Eine Übung
+      richtig lösen, Seite neu laden oder die Lektion erneut abschließen:
+      "1 von 2 korrigiert" und "Fehler korrigieren (1)". Alle korrigiert:
+      nur noch "2 von 2 korrigiert", kein Knopf. Lektion ohne Fehler: weder
+      Knopf noch Zeile. Am Telefon (375 px) ohne seitliches Scrollen
+- [ ] TC-0932 **Korrektur-Zusammenfassung nach der Korrektur (#3575):** Lektion mit zwei
+      Fehlern (eine Freitext-Übung mit eigener Erklärung) beenden, "Fehler
+      korrigieren" antippen und die Korrekturrunde abschließen, eine Übung
+      richtig, eine falsch: unter der Runde erscheint "Deine Korrekturen"
+      mit "Erster Versuch: x von y richtig", "1 von 2 korrigiert" und beiden
+      Fehlern; der korrigierte trägt "Korrigiert", der offene "Noch offen"
+      mit der eigenen falschen Antwort, der richtigen Antwort und der
+      Erklärung der Übung. Danach "Alle Übungen erneut" bis zum Ende:
+      unter "Zurück zur Lektion" steht dieselbe Zusammenfassung mit dem
+      neuen Stand. Eine Blitzrunde eines Sets zeigt am Ende nur die
+      Punktzahl. Beides in API- und Browser-Modus, am Telefon (375 px) ohne
+      seitliches Scrollen
+- [ ] TC-0933 **Markierungen in der ausführlichen Auswertung (#3575):** Lektion mit zwei
+      Fehlern beenden, einen davon korrigieren (Korrekturrunde oder "Fehler
+      wiederholen"), dann "Ausführliche Auswertung" öffnen: in der
+      Antwortübersicht trägt jede falsch beantwortete Übung "Korrigiert" oder
+      "Noch offen", richtig beantwortete Übungen tragen keine Markierung. In
+      "Warum du diese verpasst hast" steht der offene Fehler mit "Noch offen",
+      der korrigierte bleibt in der Liste mit Frage, erster Antwort, richtiger
+      Antwort und "Korrigiert". Die kompakte Ansicht zeigt keine dieser
+      Markierungen. Beides in API- und Browser-Modus, am Telefon (375 px)
+      ohne seitliches Scrollen
 
 Hinweis zu allen Schritten dieses Plans, die Export, Teilen, Favorit, Alle
 Antworten, "Warum du diese verpasst hast", Fehler ausbessern oder die
@@ -2696,6 +2833,23 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       Entwicklermodus-Schalter und keine Diagnose-Sektion mehr
 - [ ] TC-0571 Direkter Link `?tab=diagnostics` öffnet den Tab unmittelbar
 
+### TS-0136 Fehlerbericht: Umgebung und Aktionsverlauf nur auf Wunsch (#3804)
+- [ ] TC-0979 Einstellungen > Diagnose & Support > "Fehlerbericht erstellen":
+      "Fehlermeldung und Stacktrace" ist angekreuzt und gesperrt,
+      "Umgebungsinformationen" und "Aktionsverlauf" sind NICHT angekreuzt;
+      ebenso nach "Problem melden" in einem Fehler-Toast
+- [ ] TC-0980 Ohne etwas anzukreuzen: "Vorschau anzeigen" zeigt weder
+      "## Environment" noch "## Action history", und das Issue-Formular,
+      das "Auf GitHub öffnen" öffnet, enthält keinen der beiden Abschnitte
+- [ ] TC-0981 "Ansehen" neben dem Aktionsverlauf zeigt die aufgezeichneten
+      Aktionen, ohne das Kästchen anzukreuzen; der Bericht bleibt ohne
+      Aktionsverlauf
+- [ ] TC-0982 "Aktionsverlauf" angekreuzt: Vorschau und GitHub-Formular enthalten
+      "## Action history"; "Umgebungsinformationen" angekreuzt: beide
+      enthalten "## Environment" (Version, Browser, Betriebssystem, Route)
+- [ ] TC-0983 "JSON herunterladen" ohne Häkchen beim Aktionsverlauf: die Datei
+      enthält keine Ereignisse (`"events": []`); mit Häkchen enthält sie sie
+
 ### TS-0079 Discover + Registry (seit v2.2.0)
 - [ ] TC-0572 Source-Language-Filter als sichtbarer Chip auf erster Ansicht
       (nicht mehr hinter "Filter" versteckt), "Alle Sprachen" persistiert
@@ -2724,6 +2878,14 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       nicht in Quellreihenfolge sortieren (kapitel-1..kapitel-10), meldet
       der Erfolgs-Screen die Umbenennung mit NN-Präfixen; das exportierte
       Repo listet die Lektionen in Quellreihenfolge
+- [ ] TC-0929 **"Als Repository teilen" ergibt ein ladbares Repo (#3403):** Nach dem
+      Export enthält das GitHub-Repo eine `manifest.yaml` mit einer
+      `sets`-Liste (Eintrag mit `path: sets/<set-id>`), unter
+      `sets/<set-id>/` eine eigene `manifest.yaml` mit `metadata.lessons` und
+      die Lektionen in `sets/<set-id>/lessons/`. Dieses Repo unter
+      Einstellungen > Daten > Quellen als Repository hinzufügen: das Set
+      erscheint im Content-Browser, lässt sich herunterladen, und alle
+      Lektionen öffnen sich
 
 ### TS-0080 Discover Stufe 1: Facetten, Marken, Leerzustand (EXP-048, #2320-#2324)
 
@@ -2948,8 +3110,26 @@ einem anderen Schritt.
 - [ ] TC-0640 Dashboard: die Zeile zeigt "Fortsetzen · Schritt 4/8" (nicht "1/8")
 - [ ] TC-0641 Klick auf "Fortsetzen" → Resume-Dialog → "Fortsetzen" landet auf genau
       dem Schritt, den die Zeile nennt
-- [ ] TC-0642 Bis zur Zusammenfassung spielen, ohne "Als abgeschlossen markieren",
-      über das Logo weggehen → die Zeile zeigt "Schritt 8/8", nie "9/8"
+
+### TS-0135 Lektion abschließen ohne Knopf (#3792)
+
+Ort: Lektion, Zusammenfassung; danach Set-Ansicht und Dashboard. Vorher schloss
+nur der Knopf "Als abgeschlossen markieren" eine Lektion ab; wer mit "Nächste
+Lektion" weiterging, behielt sie als offen, ohne Lektions-XP.
+
+- [ ] TC-0973 Eine Lektion bis zur Zusammenfassung spielen: es gibt keinen Knopf "Als
+      abgeschlossen markieren", neben der Überschrift erscheint der Haken
+- [ ] TC-0974 Mit "Nächste Lektion" weitergehen, dann die Set-Ansicht öffnen: die
+      gespielte Lektion ist als erledigt markiert
+- [ ] TC-0975 Dashboard: die XP sind um die in der Zusammenfassung angezeigten
+      Lektions-XP gestiegen
+- [ ] TC-0976 Bis zur Zusammenfassung spielen und über das Logo weggehen: die Lektion
+      steht nicht unter "Weitermachen" und nicht unter den pausierten
+      Lektionen, sie ist abgeschlossen
+- [ ] TC-0977 Eine abgeschlossene Lektion erneut öffnen: die XP steigen nicht ein
+      zweites Mal
+- [ ] TC-0978 Ohne Lernprofil (z. B. über einen Teilen-Link) bis zur Zusammenfassung
+      spielen: der Hinweis sagt, dass ohne Lernprofil nichts gespeichert wird
 
 ### TS-0089 Update-Schutz: kein stiller Fortschrittsverlust beim Set-Update (#2128)
 
@@ -3268,10 +3448,41 @@ Ort: Settings → Daten → Empfohlene Repositories.
       gestopptem Backend fortsetzen → statt der Begrüßung steht „Der bisherige
       Verlauf konnte nicht geladen werden. Es wurde nichts gelöscht." mit
       „Erneut versuchen"; nach dem Start des Backends lädt der Klick den Verlauf
-- [ ] TC-0732 Importierte Sitzung: die KI beginnt von selbst mit der ersten Frage
-      (kein User-Turn zuerst), der Chat startet leer
+- [ ] TC-0732 Importierte Sitzung, erstes Öffnen: die KI beginnt von selbst mit der
+      ersten Frage (kein User-Turn zuerst), der Chat startet leer
+- [ ] TC-0984 Importierte Sitzung neu laden, über „Sitzung fortsetzen" wieder öffnen und
+      die Sitzungs-URL in einem zweiten Tab öffnen (#3806): jedes Mal steht der
+      gespeicherte Verlauf da (die erste Frage der KI, davor keine Nutzer-Blase),
+      und die KI fragt nicht erneut. Die Entwicklertools (Netzwerk) zeigen keine
+      neue Chat-Anfrage: in der Browser-Version kein POST an den KI-Anbieter
+      (z. B. api.anthropic.com/v1/messages), in der Desktop-App kein POST
+      .../message/stream. Ein neuer Tab darf die Modellliste per GET laden; das
+      ist keine Chat-Anfrage
+- [ ] TC-0950 Auto-Loop in der Browser-Version (#3436): im Pages-Build (Dexie) eine
+      Sitzung bis Schritt 7 führen; unter dem Chat erscheint ein Hinweis mit
+      Monitor-Symbol: in der Desktop-App beginnt danach automatisch ein neuer
+      Zyklus, die Browser-Version kann das noch nicht. Vor Schritt 7 kein
+      Hinweis; in der Desktop-App bei Schritt 7 kein Hinweis, dort startet
+      der neue Zyklus
 - [ ] TC-0733 AI Content Validation: Report sinnvoll? Provider+Modell angezeigt?
 - [ ] TC-0734 Kein Button ohne Key führt zu Error-Toast (disabled + Tooltip)
+- [ ] TC-0985 Datenschutz-Hinweis vor dem Senden (#3812, #3840): der Hinweis
+      unter der Kostenschätzung der KI-Inhaltsprüfung
+      (`ai-validation-privacy`) und der im Qualitätsschritt beim Teilen
+      (`content-ai-privacy`) nennen, was gesendet wird: die KI-Inhaltsprüfung
+      die Karten des Sets (Kennung, Vorderseite, Rückseite, Notizen, als
+      vollständige Liste), die Prüfung beim Teilen die Lektionen, die geteilt
+      werden sollen (unter anderem Karten, Texte und Übungen), beide dazu
+      Ausgangssprache, Zielsprache und Niveau des Sets, aber weder Profil noch
+      Lernfortschritt; und dass der Anbieter außerdem unter anderem IP-Adresse
+      und API-Schlüssel erhält (in jeder UI-Sprache mit "unter anderem" oder
+      dessen Entsprechung, nie als vollständige Liste); der Hinweis beim
+      Teilen nennt den Anbieter in beiden Sätzen mit seinem Namen aus den
+      Einstellungen (z. B. "Anthropic Claude"), in jeder UI-Sprache, nie mit
+      der internen ID ("anthropic") und nie als `{provider}`; der Link
+      "Datenschutzerklärung" öffnet die Datenschutzerklärung der Docs-Site in
+      der UI-Sprache in einem neuen Tab (Deutsch ohne Präfix, Englisch unter
+      `.../docs/en/legal/privacy/`)
 
 ### TS-0100 Stapel-Generierung "Übungen für alle Lektionen" (#1896)
 - [ ] TC-0735 Meine Inhalte → Meine Lektionen, Set in dem ALLE Lektionen bereits
@@ -3403,6 +3614,87 @@ Bildschirm automatisch ausgeht).
       Sperr-/Power-Buttons schaltet den Bildschirm trotzdem sofort aus und
       stoppt die Wiedergabe - das kann keine Web-API verhindern
 
+#### TS-0132 Vorlesen für diese Lektion beenden (#3760)
+
+Das X im Vorlese-Player beendet das Vorlesen für die laufende Lektion. Die
+gespeicherte Einstellung "Automatisch vorlesen" bleibt unberührt; dauerhaft
+abschalten geht nur über den Schalter in den Lektionsoptionen.
+
+- [ ] TC-0956 Lektion öffnen, in den Lektionsoptionen "Automatisch vorlesen"
+      einschalten: der Player erscheint unten, rechts steht ein X
+      ("Vorlesen beenden"), kein separater Stopp-Knopf
+- [ ] TC-0957 X antippen: die Wiedergabe endet, der Player verschwindet, der
+      Schalter "Automatisch vorlesen" steht in dieser Lektion auf aus
+- [ ] TC-0958 "Weiter" zum nächsten Schritt: es wird nichts vorgelesen, der Player
+      bleibt weg
+- [ ] TC-0961 Eine andere Lektion öffnen: sie wird wieder automatisch vorgelesen, der
+      Schalter steht auf an
+- [ ] TC-0960 Dort erneut X antippen, dann den Schalter in den Lektionsoptionen
+      wieder einschalten: der aktuelle Schritt wird sofort vorgelesen, der
+      Player erscheint wieder
+- [ ] TC-0962 Den Schalter in den Lektionsoptionen ausschalten und eine andere Lektion
+      öffnen: "Automatisch vorlesen" bleibt aus
+
+#### TS-0139 Vorlesen nimmt eine Stimme des Geräts (#3805)
+
+Eine Online-Stimme (in Chrome die "Google ..."-Stimmen) schickt den
+vorgelesenen Text an ihren Anbieter. Mit "Standard (auto)" nimmt die App eine
+Stimme des Geräts, sobald es eine für die Sprache gibt; eine selbst gewählte
+Stimme gilt immer. In den ersten Augenblicken nach dem Laden einer Seite kann
+ein Tipp noch mit einer Online-Stimme lesen, weil das Gerät seine eigenen
+Stimmen dann noch nicht bereitgestellt hat; so steht es auch in der
+Datenschutzerklärung.
+
+- [ ] TC-0995 Windows oder macOS, Chrome: Einstellungen > Lernen > Vorlesen und
+      Diktieren > Stimme auf "Standard (auto)", eine deutsche Lektion öffnen
+      und den Theorieschritt mit dem Vorlese-Knopf, mit der Taste R, mit
+      "Alle vorlesen" und mit eingeschaltetem "Automatisch vorlesen"
+      vorlesen lassen: es liest eine Systemstimme (zum Vergleich in der
+      Liste kurz "Google Deutsch" wählen: die beiden klingen hörbar
+      verschieden)
+- [ ] TC-0996 "Automatisch vorlesen" eingeschaltet: Browser ganz schließen, neu
+      öffnen, die Lektion direkt vom Dashboard aus öffnen, ohne vorher die
+      Einstellungen zu besuchen: schon den ersten Schritt liest die
+      Systemstimme, nicht "Google Deutsch", und R liest danach ebenso mit ihr
+- [ ] TC-0997 In der Liste "Google Deutsch" wählen: Knopf, Taste R und "Alle
+      vorlesen" lesen mit "Google Deutsch" (die eigene Wahl gilt, auch für
+      eine Online-Stimme)
+- [ ] TC-0998 Chrome unter Linux (bietet von sich aus nur Online-Stimmen an): mit
+      "Standard (auto)" liest die App weiterhin vor, dann mit "Google
+      Deutsch"
+
+#### TS-0133 Hinweis "Als App installieren" als Karte im Dashboard (#3765)
+
+Auf dem iPhone in Safari (nicht vom Home-Bildschirm geöffnet) erscheint der
+Hinweis als schliessbare Karte oben im Dashboard, nicht mehr als feste Leiste
+am unteren Bildschirmrand.
+
+- [ ] TC-0964 Neues Profil auf dem iPhone in Safari: Startseite, Onboarding und
+      Assessment zeigen keinen Installationshinweis; "Nächste Frage" und
+      "Später fortsetzen" sind ohne Umweg antippbar
+- [ ] TC-0965 Im Dashboard steht die Karte "Als App installieren" oben im Seitenfluss
+      und scrollt mit; "Lernpfad" und "Lektion erstellen" bleiben antippbar
+- [ ] TC-0966 Inhalte (letztes "Herunterladen") und Einstellungen > Lernen
+      ("Fortschritt zurücksetzen") sind bis zum Seitenende antippbar
+- [ ] TC-0967 Karte schliessen: sie kommt auch nach einem Neuladen nicht wieder; die
+      Anleitung in Einstellungen bleibt erreichbar
+
+#### TS-0134 Banner "Zum Startbildschirm hinzufügen" als Karte im Dashboard (#3782)
+
+In Chrome auf Android oder am Desktop (nicht installiert) erscheint der Banner
+als Karte oben im Dashboard, nicht mehr als feste Leiste unten auf jeder Seite.
+
+- [ ] TC-0968 Neues Profil in Chrome auf Android: Startseite, Onboarding und Assessment
+      zeigen keinen Banner; "Nächste Frage" und "Später fortsetzen" sind ohne
+      Umweg antippbar
+- [ ] TC-0969 Im Dashboard steht die Karte "Zum Startbildschirm hinzufügen" oben im
+      Seitenfluss, auch wenn die App erst später dorthin gewechselt ist;
+      "Lernpfad" und "Lektion erstellen" bleiben antippbar
+- [ ] TC-0970 Einstellungen > Lernen ("Fortschritt zurücksetzen") ist bis zum
+      Seitenende antippbar, am Telefon und am Desktop
+- [ ] TC-0971 "Nicht jetzt": die Karte kommt nach einem Neuladen nicht wieder (erst nach
+      7 Tagen); "Installieren" öffnet den Installationsdialog des Browsers
+
 #### TS-0109 App-Update als installierte iOS-PWA (#1357 / #1873) - PFLICHT
 
 Der einzige Pfad, den kein Test abdeckt: auf iOS/WKWebView aktiviert
@@ -3492,7 +3784,7 @@ bewusst keine Zahlen, die veralten könnten.
 
 Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 (`astrapi69.github.io/adaptive-learner/docs/legal/imprint/`, `astrapi69.github.io/adaptive-learner/docs/legal/privacy/`; andere Sprachen unter
-`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`, Locales ohne eigene Fassung fallen auf Deutsch zurück).
+`astrapi69.github.io/adaptive-learner/docs/<lang>/legal/…`; UI-Sprachen ohne eigene Docs-Fassung (hi, id, ko) landen auf der englischen).
 
 - [ ] TC-0805 App-Startseite `/` (ohne angemeldeten Lernenden): unter "Dokumentation
       lesen" stehen "Impressum · Datenschutzerklärung"
@@ -3502,12 +3794,53 @@ Impressum und Datenschutzerklärung liegen als Hilfeseiten auf der Docs-Site
 - [ ] TC-0806 Einstellungen → Über → Karte "Lizenz & Ressourcen": zwei neue Zeilen
       "Impressum" und "Datenschutzerklärung" (`about-imprint-link`,
       `about-privacy-link`), gleiche Ziele, neuer Tab.
-- [ ] TC-0807 Hilfepanel und Docs-Site: Abschnitt "Rechtliches" mit beiden Seiten in
-      der Navigation (DE + EN); das Impressum nennt Name, Anschrift, E-Mail;
-      die Datenschutzerklärung trägt ein Datum und nennt GitHub Pages,
-      YouTube-Vorschaubilder und die KI-Anbieter mit eigenem Schlüssel.
+- [ ] TC-0807 Docs-Site (#3807, #3139): Abschnitt "Rechtliches" mit beiden Seiten in
+      der Navigation jeder Sprache; das Impressum nennt Name, Anschrift und die
+      E-Mail asterios.raptis@web.de, die Datenschutzerklärung dieselbe Adresse
+      und oben ihr Datum; sie redet in jeder Sprache förmlich an, und jede
+      Fassung außer der englischen sagt unter dem Datum, dass sie als
+      Rechtstext förmlich anredet; de, es, el und ja fügen hinzu, dass App und
+      übrige Hilfe duzen (fr, pt und tr nicht, dort mischen sie die Anrede).
+      Geltungsbereich: App, öffentliche Vorschau
+      `astrapi69.github.io/adaptive-learner-content-test` und Docs-Seiten,
+      dazu ein Satz zu selbst installierten Kopien (Update-Prüfung bei
+      `api.github.com`).
+      "Das Wichtigste in Kürze" listet, wann Daten das Gerät verlassen; je ein
+      Abschnitt für Hosting, Laden von Lerninhalten (mit den automatischen
+      Prüfungen), GitHub-Funktionen mit eigenem Zugangstoken, Fehlerberichte,
+      KI-Funktionen mit eigenem Schlüssel (`api.anthropic.com`,
+      `api.openai.com`, `generativelanguage.googleapis.com`, je mit
+      Empfänger und Anschrift), Spracheingabe,
+      Vorlesen, Teilen-Schaltflächen (Facebook, LinkedIn, X, WhatsApp),
+      externe Links, Speicherung auf dem Gerät (mit sessionStorage, Cache
+      Storage und dem Farbschema der Docs), E-Mail-Kontakt und Rechte; keine
+      Aussage mehr zu YouTube-Vorschaubildern. Jede Sprachfassung hat dieselben
+      Abschnitte in derselben Reihenfolge.
 - [ ] TC-0808 Teilen-Vorschau (z. B. in einem Messenger): Titel, Beschreibung und
       Bild erscheinen (Open-Graph-Daten der Landeseite, nicht der App).
+
+### TS-0137 Docs-Site lädt nichts von Dritten (#3802)
+
+Keine Seite der Docs-Site lädt von sich aus etwas von einem anderen Host als
+`astrapi69.github.io`: keine Webschrift, kein Skript, kein Bild, keine
+API-Abfrage. Prüfen auf der veröffentlichten Seite nach dem Release, mit den
+Entwicklerwerkzeugen des Browsers (Netzwerk, Cache deaktiviert).
+
+- [ ] TC-0986 `astrapi69.github.io/adaptive-learner/docs/`, die Datenschutzerklärung,
+      eine englische und eine japanische Seite aufrufen und eine Suche
+      ausführen (z. B. "Backup"): jede Anfrage geht an `astrapi69.github.io`,
+      keine an `fonts.googleapis.com`, `fonts.gstatic.com`, `api.github.com`
+      oder `unpkg.com`.
+- [ ] TC-0987 Kopfzeile: der Verweis "astrapi69/adaptive-learner" mit GitHub-Symbol
+      steht da und öffnet das Repository auf GitHub; Version, Sterne und Forks
+      erscheinen nicht mehr. Der Stift oben rechts auf einer Seite öffnet ihre
+      Quelldatei auf GitHub.
+- [ ] TC-0988 Text und Code erscheinen in der Systemschrift des Geräts (nicht Roboto);
+      in einem schmalen Fenster kein horizontales Scrollen, die Navigation
+      öffnet sich über das Menü.
+- [ ] TC-0999 Ein Wort suchen (z. B. "Backup") und einen Treffer öffnen (#3843): die
+      Adresszeile zeigt die Seite ohne `?h=`, keine Anfrage enthält die
+      Suchbegriffe; die Treffer sind auf der Seite nicht mehr hervorgehoben.
 
 ---
 
@@ -3582,6 +3915,16 @@ Ort: Einstellungen > Allgemein > Profil, unter der Figuren-Galerie.
 - [ ] TC-0831 Backup-Round-trip: Rahmen wählen + einen kaufen, Export (`.alb`),
       Daten löschen, Import → Auswahl und Kauf sind wieder da
 - [ ] TC-0832 Beide Speicher-Modi verhalten sich identisch (XP-Abzug inklusive)
+- [ ] TC-0951 Besitz folgt dem Kauf, nicht dem Browser (#3445, API-Modus): Rahmen
+      Stern kaufen, dann denselben Nutzer in einem zweiten Browser (oder
+      nach dem Löschen der Website-Daten) öffnen und Einstellungen >
+      Allgemein > Profil aufrufen: Stern ist freigeschaltet und wählbar,
+      die XP sind nur einmal abgezogen. Dasselbe für die
+      Maskottchen-Variante Gold und ein Arcade-Spiel
+- [ ] TC-0952 Käufe von vor #3445: ein vor dem Update gekaufter Rahmen bleibt nach
+      dem Update freigeschaltet, die XP ändern sich beim ersten Öffnen der
+      Galerie nicht, und danach ist er auch in einem zweiten Browser
+      freigeschaltet
 
 ### TS-0120 Wiederholung: nur Fehler, keine Endlosrunde (#3170)
 
@@ -3840,6 +4183,97 @@ Hier nur zur Dokumentation was abgedeckt ist.
 
 ---
 
+### TS-0129 Fortschrittsbericht als Markdown/PDF in der UI-Sprache (#3426)
+
+- [ ] TC-0938 UI-Sprache Französisch (oder Japanisch), Einstellungen > Daten >
+      Export, Fortschrittsbericht als Markdown herunterladen: Titel,
+      Abschnitte und Tabellenköpfe sind französisch (z. B.
+      "Progression", "Projets"), nicht englisch
+- [ ] TC-0939 Dasselbe mit Sitzungs-Detail und PDF (Druckdialog): Rollen,
+      Bewertung und Schritt-Auswertung in der UI-Sprache
+- [ ] TC-0940 UI-Sprache Deutsch: die Schritt-Namen im Bericht entsprechen denen
+      in der App (z. B. "Eingabe" statt "Input")
+
+### TS-0130 Übersetzte Bedientexte und Vorlesetexte (#3425)
+
+- [ ] TC-0941 Lektion mit Freitext-Aufgabe, absichtlich falsch tippen (ein Wort
+      vergessen, eines vertauschen), Bildschirmleser an (VoiceOver /
+      NVDA / TalkBack): der Antwortvergleich liest "Fehlt: <Wort>" und
+      "Geschrieben: <Wort>, erwartet: <Wort>" auf Deutsch, nicht
+      "missing" / "wrote"; sichtbar sieht der Vergleich unverändert aus
+- [ ] TC-0942 Lektion erstellen > Karten: die leeren Felder zeigen "Wort oder
+      Ausdruck" und "Bedeutung" statt "Bonjour" / "Guten Tag"
+- [ ] TC-0943 Anki-Seite, Karte bearbeiten: die Typ-Auswahl bietet "Einfach" und
+      "Lückentext"
+- [ ] TC-0944 Lernpfad und Dashboard-Karte "Weitermachen": der Bildschirmleser
+      liest die Sterne als "2 von 3 Sternen" statt "2/3"
+- [ ] TC-0945 Teilen-Assistent und "Als Repository teilen": der X-Knopf heißt für
+      den Bildschirmleser "Schließen"
+
+### TS-0131 Seitentitel im Browser-Tab (#3431)
+
+- [ ] TC-0946 Durch Dashboard, Lernpfad, Inhalte, Einstellungen und eine Lektion
+      klicken: der Tab-Titel lautet jeweils "<Seitenname> - Adaptive
+      Learner" (z. B. "Einstellungen - Adaptive Learner", "Lektion -
+      Adaptive Learner"); die Startseite zeigt nur "Adaptive Learner"
+- [ ] TC-0947 Einstellungen > Allgemein, UI-Sprache auf Englisch: der Tab-Titel
+      wechselt ohne Neuladen auf "Settings - Adaptive Learner"
+- [ ] TC-0948 Browser-Verlauf (Zurück-Knopf lange drücken): die Einträge tragen
+      unterschiedliche Seitennamen statt eines gleichen Titels
+
+### TS-0138 Inhalte laden nichts von fremden Servern (#3803)
+
+Vorbereitung: eine Lektion als `.json` über Meine Inhalte → "Lektion
+importieren" einspielen, deren `resources` einen Eintrag vom Typ `youtube`
+mit einer `youtube.com/watch?v=`-Adresse tragen und deren Theorie-Schritt
+ein Bild `![Skizze](https://example.com/skizze.png)` enthält. In den
+Entwicklerwerkzeugen den Netzwerk-Reiter offen lassen.
+
+- [ ] TC-0989 Lektion bis zur Zusammenfassung spielen: die Video-Karte unter "Vertiefe
+      das Thema" zeigt ein Video-Symbol statt eines Vorschaubilds, und das
+      Netzwerk zeigt keine Anfrage an `img.youtube.com`. Ein Klick auf die
+      Karte öffnet das Video auf YouTube in einem neuen Tab
+- [ ] TC-0990 Theorie-Schritt: das Bild erscheint als Link mit Bild-Symbol und dem Text
+      "Skizze", nicht als Bild; das Netzwerk zeigt keine Anfrage an
+      `example.com`, bis der Link angeklickt wird (neuer Tab). Dasselbe gilt
+      für ein Bild in einer Erklärung nach einer Übung und in einer
+      KI-Antwort im Sitzungs-Chat
+- [ ] TC-0991 Im Texteditor (z. B. Sitzung bewerten → Notiz) ein Bild von einer Webseite
+      hineinkopieren: es wird nicht geladen, das Netzwerk zeigt keine Anfrage
+      an den fremden Server
+- [ ] TC-0992 Lektion erstellen, Hotspot-Übung: unter "Erweitert: Asset-Pfad verwenden"
+      die Adresse `https://example.com/karte.png` eintragen. Statt des Bildes
+      und der Zeichenfläche erscheint ein Link mit Bild-Symbol und dem Text
+      "Stimulus-Bild"; das Netzwerk zeigt keine Anfrage an `example.com`,
+      bis der Link angeklickt wird. Ein hochgeladenes Bild zeigt die
+      Zeichenfläche wie bisher
+- [ ] TC-0993 Ein Set mit eigenen Bildern (Bildauswahl-Übung mit Bildern aus `assets/`)
+      zeigt seine Bilder wie bisher
+- [ ] TC-0994 GitHub-Pages-Version im normalen Gebrauch: die Konsole zeigt keine
+      Content-Security-Policy-Meldung, Inhalte laden aus den Repositories,
+      KI-Antworten mit eigenem Schlüssel kommen an, und nach einem Neuladen
+      ohne Netz startet die App weiterhin (Service Worker)
+
+### TS-0140 LAN-Synchronisation trägt keine API-Schlüssel (#3854)
+
+Vorbereitung: Desktop-App im lokalen Netz mit einem gespeicherten
+Anthropic-Schlüssel; Browser-Version mit einem anderen gespeicherten
+Anthropic-Schlüssel, über Einstellungen > Synchronisation mit der
+Desktop-App gekoppelt. Im Browser die Entwicklerwerkzeuge mit dem
+Netzwerk-Reiter offen.
+
+- [ ] TC-1000 "Jetzt synchronisieren" drücken: keine Anfrage an `/api/sync/push` oder
+      `/api/sync/pull` und keine Antwort darauf enthält einen der beiden
+      Schlüssel oder ein Feld `api_key_`, und keine Anfrage pusht die Tabelle
+      `api_key_backups` oder fragt sie an
+- [ ] TC-1001 Nach dem Sync antwortet die KI im Browser weiterhin mit dem
+      Browser-Schlüssel und in der Desktop-App weiterhin mit deren Schlüssel;
+      Einstellungen > KI zeigt auf beiden Geräten den eigenen Schlüssel
+- [ ] TC-1002 Auf beiden Geräten das Profilbild ändern, dann synchronisieren: der
+      Konfliktdialog erscheint, beide Fassungen des Eintrags enthalten kein
+      Feld `api_key_`, und "Intelligentes Zusammenführen (KI)" schickt dem
+      KI-Anbieter keinen Schlüssel (Netzwerk-Reiter: Anfrage an den Anbieter)
+
 ## Automatisiert: Unit + Component Tests (Vitest, 7200+;
 ## aktuelle Zahl siehe docs/audits/current-coverage.md)
 
@@ -3882,7 +4316,7 @@ Ausführen: `make test` (Backend-Teil)
 
 ---
 
-## Automatisiert: Dexie-Smoke E2E (Playwright TS, 45 Spec-Dateien)
+## Automatisiert: Dexie-Smoke E2E (Playwright TS, alle Spec-Dateien unter `e2e/dexie/`)
 
 Abdeckung:
 - Vollständiger Lesson-Playthrough (alle Exercise-Typen)
@@ -3902,6 +4336,11 @@ Abdeckung:
   (`lesson-summary-favorite.spec.ts`, #1649)
 - Lektionen kombinieren: Auswahl -> Dialog -> neues Set persistiert,
   Originale bleiben erhalten (`combine-lessons.spec.ts`, #1741)
+- Keine Anfrage an einen nicht gelisteten Host auf den Hauptseiten und in
+  einer Lektion mit fremden Bildern, YouTube-Ressourcen und KI-Antwort;
+  Set-Bilder laden, die Content-Security-Policy der Seite weist fremde
+  Bilder und Medien ab, kein Referer an Dritte
+  (`external-hosts.spec.ts`, #3803)
 
 Ausführen: `make test-dexie-smoke`
 

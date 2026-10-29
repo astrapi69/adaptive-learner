@@ -5,16 +5,20 @@ repo + a temp README, so the exit-code contract is pinned end-to-end:
 
 - ``--check-readme`` exits 0 when the README matches the content repo;
 - ``--check-readme`` exits 1 when a count in the README is manipulated;
-- both modes SKIP (exit 0) when the content repo is not present.
+- both modes SKIP (exit 0) when the implicit sibling checkout is absent,
+  but FAIL (exit 1) when ``ADAPTIVE_LEARNER_CONTENT_DIR`` names a checkout
+  that is missing or has no root manifest (#3452).
 """
 
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
+import pytest
 import yaml
 
 SCRIPT = (
@@ -202,9 +206,96 @@ def test_check_fails_when_badge_count_manipulated(tmp_path: Path) -> None:
     assert _run("--check-readme", content_dir=content, readme=readme) == 1
 
 
-def test_skips_when_content_repo_absent(tmp_path: Path) -> None:
+@pytest.mark.parametrize("mode", ["--check-readme", "--write-readme"])
+def test_skips_when_the_implicit_sibling_checkout_is_absent(tmp_path: Path, mode: str) -> None:
+    """A contributor without the sibling checkout gets a SKIP. The script is
+    copied into a throwaway repo so its sibling is known to be absent."""
+    app_scripts = tmp_path / "app" / "scripts"
+    app_scripts.mkdir(parents=True)
+    script_copy = app_scripts / SCRIPT.name
+    shutil.copy2(SCRIPT, script_copy)
     readme = tmp_path / "README.md"
     readme.write_text("# App\n\n## Install\n", "utf-8")
-    missing = tmp_path / "does-not-exist"
-    assert _run("--check-readme", content_dir=missing, readme=readme) == 0
-    assert _run("--write-readme", content_dir=missing, readme=readme) == 0
+    env = os.environ.copy()
+    env["VALIDATE_BUNDLED_CONTENT_README"] = str(readme)
+    env.pop("ADAPTIVE_LEARNER_CONTENT_DIR", None)
+    result = subprocess.run(
+        [sys.executable, str(script_copy), mode], env=env, capture_output=True, text=True
+    )
+    assert result.returncode == 0, result.stderr
+    assert "SKIP" in result.stderr
+
+
+@pytest.mark.parametrize("mode", ["--check-readme", "--write-readme"])
+@pytest.mark.parametrize("has_dir", [False, True], ids=["dir-missing", "root-manifest-missing"])
+def test_fails_when_the_named_content_dir_cannot_be_read(
+    tmp_path: Path, mode: str, has_dir: bool
+) -> None:
+    """#3452 - CI sets ADAPTIVE_LEARNER_CONTENT_DIR explicitly. A content
+    repo that moved or renamed its root manifest made that run SKIP and go
+    green having checked nothing."""
+    readme = tmp_path / "README.md"
+    readme.write_text("# App\n\n## Install\n", "utf-8")
+    named = tmp_path / "content"
+    if has_dir:
+        named.mkdir()
+    env = os.environ.copy()
+    env["VALIDATE_BUNDLED_CONTENT_README"] = str(readme)
+    env["ADAPTIVE_LEARNER_CONTENT_DIR"] = str(named)
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), mode], env=env, capture_output=True, text=True
+    )
+    assert result.returncode == 1, result.stderr
+    assert "FAIL" in result.stderr
+    assert str(named) in result.stderr
+
+
+def _load_script():  # type: ignore[no-untyped-def]
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("validate_bundled_content", SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.mark.parametrize(
+    ("root", "nested", "expected"),
+    [
+        ("reviewed", None, "reviewed"),
+        ("generated", None, "generated"),
+        ("draft", None, "authored"),
+        ("Generated", None, "authored"),
+        ("draft", "generated", "generated"),
+        (None, "bogus", "authored"),
+        (None, None, "authored"),
+    ],
+    ids=[
+        "known-root",
+        "generated-root",
+        "unknown-root",
+        "wrong-case-root",
+        "unknown-root-falls-back-to-nested",
+        "unknown-nested",
+        "absent",
+    ],
+)
+def test_review_status_reads_like_the_engine(
+    tmp_path: Path, root: str | None, nested: str | None, expected: str
+) -> None:
+    """Only the engine's values count; anything else reads as absent (#3395).
+
+    The engine's ``asContentSetEntry`` keeps ``generated`` and ``reviewed``
+    and reads every other value as ``authored``, so gate and app agree on a
+    manifest with a typo or an unknown value.
+    """
+    script = _load_script()
+    nested_entry: dict[str, object] = {"id": "x"}
+    if nested is not None:
+        nested_entry["review_status"] = nested
+    (tmp_path / "manifest.yaml").write_text(
+        yaml.safe_dump({"sets": [nested_entry]}), "utf-8"
+    )
+    entry: dict[str, object] = {} if root is None else {"review_status": root}
+    assert script.set_review_status(entry, tmp_path) == expected

@@ -472,3 +472,56 @@ describe("ImportDetail: Short-Circuit 1 (startOrResumeSession)", () => {
     });
   });
 });
+
+function renderDetailWithProgressRoute(conversationId: string) {
+  return render(
+    <I18nProvider>
+      <DerivedFeatureProvider>
+        <MemoryRouter initialEntries={[`/import/${conversationId}`]}>
+          <Routes>
+            <Route path="/import/:conversationId" element={<ImportDetail />} />
+            <Route path="/progress" element={<LocationProbe />} />
+          </Routes>
+        </MemoryRouter>
+      </DerivedFeatureProvider>
+    </I18nProvider>,
+  );
+}
+
+describe("ImportDetail: curriculum navigation (#3659)", () => {
+  it("creating a curriculum opens it on the paths tab", async () => {
+    const conv = await setup(true);
+    const createSpy = vi.spyOn(dexieStorage.curricula, "create");
+
+    renderDetailWithProgressRoute(conv.id);
+    await userEvent.click(await screen.findByTestId("create-curriculum-button"));
+
+    await waitFor(() => expect(createSpy).toHaveBeenCalledTimes(1));
+    const created = await createSpy.mock.results[0].value;
+    await waitFor(() => {
+      expect(screen.getByTestId("loc").textContent).toBe(
+        `/progress?tab=paths&curriculum=${created.id}`,
+      );
+    });
+  });
+
+  it("an existing curriculum opens on the paths tab without a second create", async () => {
+    const conv = await setup(true);
+    const userId = localStorage.getItem("adaptive-learner.user_id") as string;
+    const curriculum = await dexieStorage.curricula.create(userId, {
+      title: "Linked",
+      imported_conversation_id: conv.id,
+    });
+    const createSpy = vi.spyOn(dexieStorage.curricula, "create");
+
+    renderDetailWithProgressRoute(conv.id);
+    await userEvent.click(await screen.findByTestId("goto-curriculum-button"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("loc").textContent).toBe(
+        `/progress?tab=paths&curriculum=${curriculum.id}`,
+      );
+    });
+    expect(createSpy).not.toHaveBeenCalled();
+  });
+});

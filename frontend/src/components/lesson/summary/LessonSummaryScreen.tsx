@@ -3,16 +3,17 @@
  *
  * The whole end-of-lesson screen: the summary card (score, correction
  * round, next-step actions) plus the "Vertiefe das Thema" resources,
- * with the three summary actions wired here — the mark-complete
- * celebration flow (snapshot -> markCompleted with the #1787/#1788
- * error toast -> badge/milestone celebration -> missions refresh),
- * the next-lesson navigation, and the #983 practice-again restart.
+ * with the summary flows wired here: the completion, run once when the
+ * summary is reached (#3792; snapshot -> markCompleted with the
+ * #1787/#1788 error toast -> badge/milestone celebration -> missions
+ * refresh), the next-lesson navigation, and the #983 practice-again
+ * restart.
  * The page passes the lesson-session callbacks; navigation + i18n
  * come from the hooks here.
  */
 
 import { exitRouteForLesson } from "../../../lib/content/browse/continue-learning";
-import type { ComponentProps } from "react";
+import { useCallback, useEffect, useRef, type ComponentProps } from "react";
 import { useNavigate } from "react-router";
 
 import LessonSummary from "./LessonSummary";
@@ -38,6 +39,7 @@ type SummaryPassThroughProps = Pick<
   | "userId"
   | "setId"
   | "setTitle"
+  | "setEvaluation"
   | "source"
   | "setSlug"
   | "lessonFilename"
@@ -78,7 +80,7 @@ export default function LessonSummaryScreen({
   const { userId, setSlug, setId, nextLessonFilename, comboBonusXp } =
     summaryProps;
 
-  const handleMarkComplete = async () => {
+  const handleMarkComplete = useCallback(async () => {
     // Snapshot gamification before completion so
     // any milestone / badge crossed by the award
     // can be detected + celebrated afterwards.
@@ -130,13 +132,27 @@ export default function LessonSummaryScreen({
         /* missions are supplementary */
       }
     }
-  };
+  }, [userId, markCompleted, comboBonusXp, t, lang]);
+
+  // #3792 - reaching the summary completes the lesson. Only a "Mark as
+  // complete" button used to write it, so a learner who went on with "Next
+  // lesson" kept every finished lesson in_progress (later paused) and got no
+  // lesson XP, no mission progress and no flash round. Once per mount: the
+  // screen unmounts when "Practice again" leaves the summary, so a new run
+  // completes again. A revisited, completed lesson is left alone, and an
+  // anonymous run (#1787) has nowhere to persist it.
+  const isCompleted = summaryProps.progress?.status === "completed";
+  const completionRequested = useRef(false);
+  useEffect(() => {
+    if (isCompleted || !userId || completionRequested.current) return;
+    completionRequested.current = true;
+    void handleMarkComplete();
+  }, [isCompleted, userId, handleMarkComplete]);
 
   return (
     <>
       <LessonSummary
         {...summaryProps}
-        onMarkComplete={handleMarkComplete}
         onNextLesson={() => {
           if (nextLessonFilename) {
             navigate(`/lesson/${setSlug}/${setId}/${nextLessonFilename}`);

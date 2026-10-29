@@ -96,6 +96,7 @@ const PROGRESS = {
   score_correct: 0,
   score_total: 0,
   time_spent_seconds: 0,
+  run_time_seconds: 0,
   started_at: "2026-05-26T00:00:00Z",
   updated_at: "2026-05-26T00:00:00Z",
   completed_at: null,
@@ -600,6 +601,8 @@ describe("LessonPage: ready state rendering", () => {
       score_correct: 3,
       score_total: 4,
       time_spent_seconds: 180,
+      // #3747 - the summary shows the run's time; both stores emit it.
+      run_time_seconds: 180,
     });
     renderAtPath(VALID_PATH);
     expect(screen.getByTestId("lesson-summary")).toBeInTheDocument();
@@ -878,9 +881,9 @@ describe("LessonPage: ready state rendering", () => {
     expect(goNext).toHaveBeenCalled();
   });
 
-  it("summary mark-complete calls markCompleted", async () => {
-    // #1787 — the button is disabled for an anonymous run, so the click
-    // test needs a learner in localStorage (read at mount).
+  it("reaching the summary calls markCompleted without a click (#3792)", async () => {
+    // #1787 — an anonymous run is skipped, so the test needs a learner in
+    // localStorage (read at mount).
     localStorage.setItem("adaptive-learner.user_id", "user-1");
     const markCompleted = vi.fn().mockResolvedValue(undefined);
     useLessonMock.mockReturnValue({
@@ -903,15 +906,12 @@ describe("LessonPage: ready state rendering", () => {
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
-    act(() => {
-      fireEvent.click(screen.getByTestId("lesson-summary-mark-complete"));
-    });
     await waitFor(() => {
       expect(markCompleted).toHaveBeenCalled();
     });
   });
 
-  it("summary mark-complete failure surfaces a toast (#1787)", async () => {
+  it("a failed completion on the summary surfaces a toast (#1787, #3792)", async () => {
     localStorage.setItem("adaptive-learner.user_id", "user-1");
     notifyErrorMock.mockReset();
     const markCompleted = vi
@@ -937,9 +937,6 @@ describe("LessonPage: ready state rendering", () => {
       refresh: vi.fn(),
     });
     renderAtPath(VALID_PATH);
-    act(() => {
-      fireEvent.click(screen.getByTestId("lesson-summary-mark-complete"));
-    });
     await waitFor(() => {
       expect(markCompleted).toHaveBeenCalled();
       expect(notifyErrorMock).toHaveBeenCalledTimes(1);

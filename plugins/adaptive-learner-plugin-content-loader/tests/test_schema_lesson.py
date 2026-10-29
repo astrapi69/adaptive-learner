@@ -387,11 +387,10 @@ class TestMatchingFromCards:
     only; the card_ids/pairs cross-field rules are the engine's, #3245)."""
 
     def test_from_cards_without_pairs_is_valid(self) -> None:
-        ex = _exercise_matching(
-            from_cards=True, card_ids=["bonjour", "merci"], pairs=None
-        )
+        ex = _exercise_matching(from_cards=True, card_ids=["bonjour", "merci"], pairs=None)
         assert ex.from_cards is True
         assert ex.pairs is None
+
 
 class TestMultipleChoiceExercise:
     """Native multiple_choice (schema v1.6): option shape and closed enum
@@ -510,10 +509,12 @@ class TestFreeTextExercise:
         ex = _exercise_free()
         assert ex.accept == ["Bonjour", "bonjour"]
 
+
 class TestWordTilesExercise:
     def test_valid(self) -> None:
         ex = _exercise_tiles()
         assert ex.tiles == ["Je", "m'appelle", "Pierre"]
+
 
 def _exercise_cloze(**overrides: object) -> Exercise:
     defaults: dict[str, object] = {
@@ -653,6 +654,7 @@ class TestClozeBackwardCompat:
         ex = _exercise_cloze(cloze_mode="type")
         assert ex.cloze_mode == "type"
         assert ex.blanks is not None and len(ex.blanks) == 1
+
 
 class TestExerciseCommon:
     def test_id_must_be_slug(self) -> None:
@@ -839,6 +841,7 @@ class TestLesson:
         assert revived.target_language == "fr"
         assert revived.source_language == "de"
 
+
 # --- Engine-owned rules (#3245) -----------------------------------------
 
 
@@ -910,9 +913,7 @@ class TestEngineOwnedRulesStayInTheEngine:
         assert exercise is not None and "missing-card" in exercise.card_ids
 
     def test_language_tags_are_the_engines_call(self) -> None:
-        lesson = self._lesson(
-            target_language="sr-Latn-RS", source_language="de_AT"
-        )
+        lesson = self._lesson(target_language="sr-Latn-RS", source_language="de_AT")
         assert lesson.target_language == "sr-Latn-RS"
         assert lesson.source_language == "de_AT"
 
@@ -927,9 +928,7 @@ class TestEngineOwnedRulesStayInTheEngine:
                 body="x",
                 example_url="javascript:alert(1)",
             )
-        step = LessonStep(
-            id="s1", type=StepType.THEORY, body="x", example_url="https://a.b/"
-        )
+        step = LessonStep(id="s1", type=StepType.THEORY, body="x", example_url="https://a.b/")
         assert step.example_url == "https://a.b/"
 
 
@@ -1035,9 +1034,7 @@ class TestInlineExamples:
         assert step.examples[1].language == "jsx"
 
     def test_exercise_accepts_examples(self) -> None:
-        exercise = _exercise_free(
-            examples=[InlineExample(content="Merci = Thank you")]
-        )
+        exercise = _exercise_free(examples=[InlineExample(content="Merci = Thank you")])
         assert exercise.examples is not None
         assert exercise.examples[0].content == "Merci = Thank you"
         assert exercise.examples[0].language is None

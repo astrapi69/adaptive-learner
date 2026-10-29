@@ -85,6 +85,10 @@ import {
     withPreservedSetBook,
 } from "../../lib/content/lesson/edit/edit-session";
 import {carryOverReviewProgress} from "../../lib/content/lesson/edit/edit-remap";
+import {
+    checkDraftForSharing,
+    type DraftShareChecks,
+} from "../../lib/content/lesson/edit/draft-share-check";
 import {useEditLessonSession} from "../../hooks/content/edit/useEditLessonSession";
 import {
     buildBookLessons,
@@ -466,6 +470,10 @@ export default function CreateLesson() {
         () => checkDraft({meta, cards, exercises}),
         [meta, cards, exercises],
     );
+    const shareChecks = useMemo<DraftShareChecks>(
+        () => checkDraftForSharing({meta, cards, exercises}),
+        [meta, cards, exercises],
+    );
 
     /** #1740 — the set ids already taken by user-generated sets, so a
      *  "save as copy" never collides with an existing lesson. */
@@ -515,6 +523,9 @@ export default function CreateLesson() {
                             editContext.originalSteps,
                             meta,
                         ),
+                        // #3543 - purpose, resources, the variation pair
+                        // and any later schema field survive the edit.
+                        carryFrom: editContext.lessons[editContext.editIndex],
                     },
                 );
                 // #1971 — for a multi-lesson set, replace only the edited
@@ -875,6 +886,7 @@ export default function CreateLesson() {
                     cardError={cardError}
                     exerciseError={exerciseError}
                     draftChecks={draftChecks}
+                    shareChecks={shareChecks}
                     saving={saving}
                     editMode={editMode}
                     onAddCard={addCard}

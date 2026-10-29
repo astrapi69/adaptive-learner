@@ -245,7 +245,7 @@ Isolation ist hart - `ADAPTIVE_LEARNER_TEST=1` wird vor jedem
 Jedes Plugin hat sein eigenes `tests/`-Verzeichnis:
 
 ```bash
-make test-plugins              # alle 13
+make test-plugins              # jedes Plugin
 make test-plugin-session       # nur eines
 cd plugins/adaptive-learner-plugin-session && poetry run pytest
 ```
@@ -348,7 +348,10 @@ Spec-Familien:
   Frontend mit `VITE_STORAGE_MODE=dexie` (die GitHub-Pages-Form,
   ohne Backend) und läuft jede über die Navigation erreichbare
   Route ab; jeder Fehler-Toast oder Seitenabsturz lässt es
-  scheitern. Ausführen mit `make test-dexie-smoke`.
+  scheitern, ebenso mehr übersprungene Tests, als
+  `e2e/.runtime-skip-budget.json` für die Suite erlaubt (ein Spec,
+  der seine Oberfläche nicht erreicht, überspringt zur Laufzeit).
+  Ausführen mit `make test-dexie-smoke`.
 - `e2e/visual/` - Visuelle Baseline-Regressions-Specs.
 - `e2e/manual-automation/` - Playwright-Automatisierung des
   manuellen Testplans.
@@ -368,6 +371,11 @@ gh run download --name backend-coverage
 gh run download --name frontend-coverage
 ```
 
+Jedes Plugin bekommt ein eigenes Artefakt `<plugin-verzeichnis>-coverage`,
+zum Beispiel
+`gh run download --name adaptive-learner-plugin-session-coverage`;
+ein neues Plugin ist ohne Workflow-Änderung dabei.
+
 Targets per `.claude/rules/quality-checks.md`:
 
 - Services + Business-Logik: 95% min
@@ -383,11 +391,15 @@ Gesamt: 85-95% projektweit.
 cd backend && poetry run pre-commit install
 ```
 
-Hooks: ruff check (Auto-Fix), ruff format, Trailing
-Whitespace, End-of-File-Fixer, check-yaml, check-json,
-check-added-large-files, check-merge-conflict, Frontend-ESLint,
-eine Plugin-Lockfile/pyproject-Paarungs-Prüfung und ein
-Bundled-Content-Statistik-Validator. Im CI-Pre-Commit-Job
+Die Hooks stehen in `.pre-commit-config.yaml`, zum Beispiel ruff
+check (Auto-Fix) und ruff format, Whitespace-, YAML-, JSON- und
+Merge-Konflikt-Prüfungen, Frontend-ESLint, die Doku-Prüfungen
+(Umlaut-Ratsche, Doc-Referenzen) und
+`plugin-lock-paired-with-pyproject` (blockierend): Er führt für
+jedes Plugin, dessen `pyproject.toml` oder `poetry.lock` betroffen
+ist, `poetry check --lock` aus und schlägt fehl, wenn sich die
+Abhängigkeiten seit dem Schreiben des Locks geändert haben; er läuft
+auch im CI-Pre-Commit-Job über alle Dateien. Dort
 wird der Hook `eslint` übersprungen (der Frontend-Tests-Job
 führt ESLint stattdessen mit installierten Abhängigkeiten
 aus). Prettier ist kein Hook: `bun run format:check` läuft im
@@ -404,11 +416,17 @@ nur-warnenden Suiten laufen zur Nachtschicht und beim Release.
 `main` und bei jedem PR (Python 3.12):
 
 1. Backend-Tests (pytest)
-2. Plugin-Tests (`make test-plugins`, alle 13 über die
+2. Plugin-Tests (`make test-plugins`, jedes Plugin über die
    Backend-venv)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`),
    Circular-Dependency-Prüfung, Stylelint, Vitest,
-   `vite build`, `npm audit`
+   `vite build`, `bun audit --audit-level=high` (blockiert bei hohen
+   und kritischen Funden). Ein Fund ohne gepatchte Version, der nur
+   eine Entwicklungs-Abhängigkeit erreicht, wird per ID in
+   `frontend/audit-ignore.txt` ausgenommen: eine ID pro Zeile,
+   darüber ein Kommentar mit Grund und Bedingung fürs Entfernen.
+   `make check-security` liest dieselbe Liste; `security-scan.yml`
+   bleibt ungefiltert.
 4. Pre-Commit-Hooks über alle Dateien
 5. Backend ruff + mypy + pip-audit
 6. Docs-Drift-Verifizierer (`verify_docs.py` + mkdocs-nav-Sync)
@@ -420,7 +438,7 @@ nächtlichen Läufe und der Release-Lauf führen immer die VOLLE
 Suite aus. Der Rückfall auf die volle Suite ist automatisch
 (nicht auflösbare Basis-Referenz oder ein testmon-Cache-Miss).
 
-Zwei weitere PR-Gates leben in eigenen Workflows:
+Weitere PR-Gates leben in eigenen Workflows:
 
 - `complexity-check.yml` - das Komplexitäts-Ratschen-Gate
   (`make check-complexity-gate`, radon für Python +
@@ -429,16 +447,16 @@ Zwei weitere PR-Gates leben in eigenen Workflows:
   gegenüber `.complexity-baseline`, blockiert also neue
   Komplexität, ohne ein Aufräumen der bestehenden Schuld zu
   erzwingen. Der volle nur-warnende Komplexitätsbericht läuft
-  nächtlich.
+  nächtlich. Im selben Job läuft die Ordnergrößen-Prüfung
+  (`scripts/check-folder-size.sh` gegen `.dirsize-baseline`); lokal
+  `make check-folder-size` oder als Teil von `make ci`.
 - `cohesion-check.yml` - die Dateigrößen-Prüfung (Gate gegen
   `.filesize-whitelist`) plus zwei Klassen-Namens-Gates:
   tote CSS-Klassennamen (`check-dead-classnames.py` gegen
   `.dead-classnames-baseline`) und das
   **Ungestylte-className-Gate** (`--unstyled`, Ratsche gegen
   `.unstyled-classnames-baseline`) - ein `className`, dessen
-  Tokens alle tot sind, blockiert den PR. Die begleitende
-  Ordnergrößen-Prüfung läuft lokal über
-  `make check-folder-size`.
+  Tokens alle tot sind, blockiert den PR.
 - `visual-baseline-gate.yml` - ein PR, der visuell-kritische
   Pfade ändert (Lesson-Komponenten, Exercise-Renderer,
   Theme-/CSS-Dateien), muss die betroffenen
@@ -454,13 +472,21 @@ Zwei weitere PR-Gates leben in eigenen Workflows:
   Produktions-Compose-Images (der Launcher-/install.sh-Pfad),
   pfadgefiltert bei PRs, zusätzlich auf `release/**`,
   wöchentlich und per Abruf; lokal `make docker-build-smoke`.
+- `dexie-smoke.yml` - das Dexie-Modus-E2E-Gate: auf jedem Pull
+  Request, den es betrifft (`scripts/dexie_smoke_affected.py`
+  entscheidet; der Job `Dexie smoke (required)` meldet immer), dazu
+  täglich, auf `release/**` und per Abruf; lokal
+  `make test-dexie-smoke`.
+- `backup-e2e.yml` - läuft auf PRs, die einen Backup-Pfad berühren
+  (zum Beispiel `frontend/src/storage/backup/`, die Dexie-Stores oder
+  die Backend-Backup-Dienste; die Liste steht im Workflow), und führt
+  jede `e2e/dexie/backup-*.spec.ts` aus, darunter den Round-Trip über
+  alle Backup-Tabellen.
 
 **Nachtschicht / Release (nicht bei PRs):**
 
-- `dexie-smoke.yml` - Dexie-Modus-E2E-Gate (täglich + auf
-  `release/**` + Abruf; lokal `make test-dexie-smoke`)
 - `coverage.yml` - Coverage-Bericht (täglich + Abruf)
-- `security-scan.yml` - pip-audit / npm audit / bandit
+- `security-scan.yml` - pip-audit / bun audit / bandit
   (wöchentlich + auf `release/**` + Abruf; nur-warnend)
 - `content-stats.yml` - Content-Statistik-Drift gegen ein
   frisches Content-Checkout (täglich + Abruf)
@@ -479,6 +505,13 @@ Zwei weitere PR-Gates leben in eigenen Workflows:
   Baselines in CI und pusht sie als Commit auf den PR-Branch
   (Label `refresh-visual-baselines` oder Abruf mit
   PR-Nummer) - die Bild-Review vor dem Merge bleibt Pflicht
+- `smoke-nightly.yml` - nächtlicher Lauf der Mobile-Viewport-Smoke;
+  Befunde landen in einem Sammel-Issue
+- `unused-catalog-keys.yml` - nächtlicher Bericht über
+  Katalog-Schlüssel ohne Konsumenten, die älter als das Vorlauf-Fenster
+  sind (`AGE_DAYS` in `frontend/src/i18n/unused-catalog-keys.ts`), in
+  einem Sammel-Issue; jeder Schlüssel darin ist ein Kandidat und wird
+  vor dem Löschen einzeln geprüft
 
 `.github/workflows/release-gate.yml` läuft bei Tag-Pushes:
 verifiziert, dass alle versionstragenden Dateien im Gleichschritt

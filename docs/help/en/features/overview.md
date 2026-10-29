@@ -13,8 +13,10 @@ of this list.
 - **Seven-step session cycle**: input, attempt, error, feedback, adapt,
   repeat, integrate. A dual-prompt evaluator judges every turn and
   decides whether to advance, repeat, skip ahead, or step back.
-- **Auto-loop**: when a topic is integrated, the session picks a new
-  subtopic and starts a fresh cycle (capped per session).
+- **Auto-loop** (desktop app): when a topic is integrated, the session
+  picks a new subtopic and starts a fresh cycle (capped per session).
+  In the browser version the session stays at step 7; the session page
+  says so.
 - **Method switching**: stagnation detection recommends a different
   method when ratings flatline; one-click accept.
 - **Placement assessment** (optional, resumable) that computes a
@@ -30,9 +32,10 @@ See [Learning sessions](../user-guide/learning-session.md) and
 - **Voice**: microphone dictation into the chat, read-aloud for replies,
   and a dedicated pronunciation practice mode.
 - **Bring your own key**: Anthropic Claude, OpenAI GPT, and Google
-  Gemini as separate provider plugins; live model discovery with a
-  recommended/all picker; per-provider key test and a key vault with
-  rollback.
+  Gemini as separate provider plugins, plus Perplexity in server mode
+  (the desktop app; the browser cannot call Perplexity directly); live
+  model discovery with a recommended/all picker; per-provider key test
+  and a key vault with rollback.
 - **Imported conversations continue as tutor sessions**, keeping the
   original topic and analysis context.
 - **"Ask AI"** on theory blocks and exercises, and AI replies always in
@@ -84,8 +87,14 @@ See [Lessons](../user-guide/lessons.md) for the learner view.
   the words you missed.
 - **Lesson flow control**: pause, resume at the exact step, autosave,
   and a paused-lessons widget on the dashboard.
+- **Set-completion review**: after the last lesson of a set, every
+  mistake of the whole set in one view - totals, by lesson, by exercise
+  type, and the items you keep getting wrong with your last wrong answer
+  next to the correct one.
 - 0-3 star ratings, favorites, next-step suggestions, auto-splitting of
   oversized lessons, and theory back-links from exercises.
+
+See [Set-completion review](set-summary.md).
 
 ## Lesson authoring (Create-Lesson)
 
@@ -106,8 +115,13 @@ See [Lessons](../user-guide/lessons.md) for the learner view.
 - **Manage your own lessons**: edit any lesson of a multi-lesson set via
   a lesson picker, combine own lessons into a set, and pick a content
   domain (languages plus knowledge domains).
+- **Mentor mode**: while playing one of your own lessons, note what is
+  wrong where it happens; the notes become a punch list on the summary
+  and are worked off in the editor, without touching your learning
+  progress.
 
-See [Creating lessons](../content-creation/overview.md).
+See [Creating lessons](../content-creation/overview.md) and
+[Mentor mode](../content-creation/mentor-mode.md).
 
 ## Import and analysis
 
@@ -149,6 +163,17 @@ See [Content browser](content-browser.md),
   adaptive goals per day).
 - **Celebrations**: earned, intensity-configurable praise, milestone
   overlays, optional sounds, all reduced-motion-safe.
+- **Game mode**: playful lessons with a visible answer streak, its own
+  sounds, optional hearts and a countdown, streak bonus XP, and the
+  Lernfunke mascot with colour variants unlocked by level, badges or XP.
+- **Arcade**: four short mini-games from a Dashboard card - Learn
+  Memory with pairs from your own lessons (free), plus Tic-Tac-Toe,
+  Snake and Simon unlocked with XP. The games themselves award no XP.
+- **Avatar**: upload a picture or pick one of eight preset figures,
+  with decorative frames unlocked by level, streak or XP.
+
+See [Praise and celebrations](../user-guide/celebrations.md) and
+[Arcade](arcade.md).
 
 ## Exports and backup
 
@@ -175,8 +200,6 @@ See [Backup and restore](backup.md).
 - **Two storage modes**: local-first (everything in browser IndexedDB,
   AI calls go direct to the provider, no server needed) or server mode
   (FastAPI backend with SQLite, multi-device).
-- **Local-network sync** between devices with QR-code pairing and
-  conflict resolution.
 - **Desktop launcher** for Linux, macOS, and Windows: a Docker-based
   one-click self-hosting setup with context-aware Docker detection and
   self-diagnosis.
@@ -194,7 +217,8 @@ See [Installation](../install/launcher.md).
 - **Keyboard-first**: global shortcuts with a help overlay, Enter
   advances lessons, Tab navigates cloze blanks.
 - **Screen-reader support**: landmarks, ARIA labels and live regions,
-  chart data tables, dialog focus management.
+  a page title per page in the UI language ("Settings - Adaptive
+  Learner"), chart data tables, dialog focus management.
 - **Reduced motion** is honored everywhere; read-aloud (TTS) for
   lessons and chat.
 - **Context-sensitive in-app help**: the help panel opens the article

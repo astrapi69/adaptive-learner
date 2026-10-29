@@ -9,7 +9,6 @@
 import {useState} from "react";
 import type {NavigateFunction} from "react-router";
 
-import {ApiError} from "../../api/client";
 import type {RatingValues} from "../../components/session/RatingDialog";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
@@ -54,9 +53,7 @@ export function useSessionRating({
             setShowRating(false);
             navigate("/dashboard");
         } catch (err) {
-            const detail =
-                err instanceof ApiError ? err.detail : t("common.error");
-            notify.error(detail);
+            notify.error(t("common.error"), {error: err});
         } finally {
             setSubmittingRating(false);
         }

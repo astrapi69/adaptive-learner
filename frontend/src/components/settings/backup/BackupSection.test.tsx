@@ -172,6 +172,11 @@ describe("BackupSection", () => {
         const exportSpy = vi
             .spyOn(getStorage().backup, "export")
             .mockResolvedValue(samplePayload);
+        // #3412: the export reads plugin settings for its plugin_settings
+        // block; no network in a unit test.
+        const pluginSpy = vi
+            .spyOn(getStorage().pluginSettings, "get")
+            .mockImplementation(async (name: string) => ({plugin: name, settings: {}}));
 
         const clickSpy = vi.fn();
         const originalCreate = document.createElement.bind(document);
@@ -207,6 +212,7 @@ describe("BackupSection", () => {
         expect(localStorage.getItem("adaptive-learner.last_backup_at")).not.toBe(null);
 
         createSpy.mockRestore();
+        pluginSpy.mockRestore();
     });
 
     it("shows a 'Your backup contains' preview from the row counts", async () => {
@@ -474,5 +480,62 @@ describe("BackupSection", () => {
         await waitFor(() => expect(vi.mocked(notify.warning)).toHaveBeenCalled());
         expect(vi.mocked(notify.error)).not.toHaveBeenCalled();
         expect(screen.queryByTestId("backup-compare")).not.toBeInTheDocument();
+    });
+});
+
+describe("BackupSection - another learner's backup (#3785)", () => {
+    async function pick(payload: BackupPayload) {
+        vi.spyOn(getStorage().backup, "stats").mockResolvedValue({
+            user_id: SEED_USER_ID,
+            total_records: 3,
+            tables: {users: 1, learning_projects: 2},
+        });
+        vi.spyOn(getStorage().backup, "import").mockResolvedValue({
+            user_id: SEED_USER_ID,
+            inserted: 2,
+            updated: 0,
+            skipped: 0,
+            errors: [],
+            tables: {},
+        });
+        renderSection();
+        const input = screen.getByTestId("backup-file-input") as HTMLInputElement;
+        const file = new File([JSON.stringify(payload)], "backup.json", {
+            type: "application/json",
+        });
+        await act(async () => {
+            fireEvent.change(input, {target: {files: [file]}});
+        });
+        await waitFor(() => {
+            expect(screen.getByTestId("backup-comparison")).toBeInTheDocument();
+        });
+    }
+
+    it.each([
+        ["the active learner's own backup", SEED_USER_ID, false],
+        ["another learner's backup", "user-other", true],
+    ])("says before the import what happens: %s", async (_name, owner, shown) => {
+        await pick({...samplePayload, user_id: owner});
+        expect(screen.queryByTestId("backup-foreign-owner") !== null).toBe(shown);
+    });
+
+    it("keeps the active learner after importing another learner's backup", async () => {
+        await pick({
+            ...samplePayload,
+            user_id: "user-other",
+            local_storage: {
+                "adaptive-learner.user_id": "user-other",
+                "adaptive-learner.project_id": "project-other",
+            },
+        });
+        expect(screen.getByTestId("backup-foreign-owner")).toHaveAttribute("role", "note");
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("backup-confirm"));
+        });
+        await waitFor(() => {
+            expect(getStorage().backup.import).toHaveBeenCalled();
+        });
+        expect(localStorage.getItem("adaptive-learner.user_id")).toBe(SEED_USER_ID);
+        expect(localStorage.getItem("adaptive-learner.project_id")).toBeNull();
     });
 });

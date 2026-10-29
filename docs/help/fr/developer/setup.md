@@ -6,7 +6,7 @@
 |-----------|-----------------|-------|
 | Python | 3.11+ | Poetry recommandé pour la gestion des dépendances |
 | Node.js | 24.0.0+ | LTS actif recommandé |
-| Bun | 1.3+ | gestionnaire de paquets du frontend (#1492) |
+| Bun | 1.4+ | gestionnaire de paquets du frontend (#1492) ; `frontend/bun.lock` est au format de lockfile 3, que Bun 1.3 ne sait pas lire |
 | Git | n'importe laquelle | Requis pour les fonctionnalités Learning Repository |
 
 ---
@@ -34,7 +34,7 @@ make install
 ### Clé secrète (obligatoire)
 
 ```bash
-export ADAPTIVE_LEARNER_SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+export ADAPTIVE_LEARNER_SECRET_KEY=$(python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
 ```
 
 L'application refuse de démarrer sans cette variable d'environnement.
@@ -42,24 +42,35 @@ L'application refuse de démarrer sans cette variable d'environnement.
 ### Clés API (optionnelles)
 
 ```bash
-export ANTHROPIC_API_KEY=sk-ant-...
-export OPENAI_API_KEY=sk-...
-export GEMINI_API_KEY=...
+export ADAPTIVE_LEARNER_ANTHROPIC_API_KEY=sk-ant-...
+export ADAPTIVE_LEARNER_OPENAI_API_KEY=sk-...
+export ADAPTIVE_LEARNER_GEMINI_API_KEY=...
 ```
 
 Ou utilisez `~/.config/adaptive_learner/secrets.yaml` :
 
 ```yaml
-anthropic_api_key: sk-ant-...
-openai_api_key: sk-...
-gemini_api_key: ...
+ai:
+  anthropic:
+    api_key: sk-ant-...
+  openai:
+    api_key: sk-...
+  gemini:
+    api_key: ...
 ```
 
 ### Fichier de configuration de l'application
 
-`backend/config/app.yaml` contrôle les plugins activés, les paramètres
-de base de données et les options de déploiement. Lors du premier démarrage
-sans ce fichier, il est créé à partir de `app.yaml.example`.
+`backend/config/app.yaml` n'est pas versionné (il figure dans
+`.gitignore`) : s'il manque au démarrage, le backend le crée en copiant
+`backend/config/app.yaml.example`. Ce fichier d'exemple contient des
+réglages par défaut non secrets, par exemple `app.default_language`,
+`server.cors_origins` et les plugins activés ou désactivés. Le backend
+ne lit pas les clés API dans `app.yaml` ; voir « Clés API
+(optionnelles) » ci-dessus. Le port du backend n'y figure pas non plus :
+uvicorn le reçoit par `--port`, que le `Makefile`, le `Dockerfile` du
+backend et les fichiers compose remplissent à partir de
+`ADAPTIVE_LEARNER_PORT`.
 
 ---
 
@@ -101,8 +112,8 @@ cd e2e && npx playwright test
 
 ```bash
 # Backend Python
-cd backend && poetry run ruff check app/ --fix
-cd backend && poetry run ruff format app/
+cd backend && poetry run ruff check app/ ../plugins/ --fix   # comme la CI
+cd backend && poetry run ruff format app/ ../plugins/
 
 # Frontend TypeScript
 cd frontend && bunx eslint src/ --fix

@@ -26,8 +26,9 @@ from __future__ import annotations
 import json
 import logging
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -78,10 +79,7 @@ def build_phrase_prompt(
     previous_clause = ""
     if previous:
         recent = previous[-5:]
-        previous_clause = (
-            "Avoid these phrases the learner just practised: "
-            + "; ".join(recent)
-        )
+        previous_clause = "Avoid these phrases the learner just practised: " + "; ".join(recent)
     return PHRASE_PROMPT.format(
         language=language,
         level=_level_label(level),
@@ -100,9 +98,7 @@ def parse_phrase_response(raw: str) -> str | None:
     if not raw:
         return None
     stripped = raw.strip()
-    fence_match = re.match(
-        r"^```(?:json)?\s*(.*?)\s*```$", stripped, re.DOTALL
-    )
+    fence_match = re.match(r"^```(?:json)?\s*(.*?)\s*```$", stripped, re.DOTALL)
     if fence_match:
         stripped = fence_match.group(1).strip()
     try:
@@ -128,15 +124,11 @@ def generate_phrase(
     previous: list[str] | None = None,
 ) -> str | None:
     """High-level wrapper: build prompt + fire AI + parse."""
-    prompt = build_phrase_prompt(
-        language=language, level=level, focus=focus, previous=previous
-    )
+    prompt = build_phrase_prompt(language=language, level=level, focus=focus, previous=previous)
     try:
         raw = ai_call([{"role": "user", "content": prompt}])
     except Exception:  # noqa: BLE001
-        logger.exception(
-            "Pronunciation phrase: AI call failed for %r.", language
-        )
+        logger.exception("Pronunciation phrase: AI call failed for %r.", language)
         return None
     return parse_phrase_response(raw or "")
 
@@ -182,9 +174,7 @@ class JudgeVerdict:
 
 
 def build_judge_prompt(*, target: str, actual: str, language: str) -> str:
-    return JUDGE_PROMPT.format(
-        target=target, actual=actual, language=language
-    )
+    return JUDGE_PROMPT.format(target=target, actual=actual, language=language)
 
 
 def parse_judge_response(raw: str) -> JudgeVerdict | None:
@@ -194,9 +184,7 @@ def parse_judge_response(raw: str) -> JudgeVerdict | None:
     if not raw:
         return None
     stripped = raw.strip()
-    fence_match = re.match(
-        r"^```(?:json)?\s*(.*?)\s*```$", stripped, re.DOTALL
-    )
+    fence_match = re.match(r"^```(?:json)?\s*(.*?)\s*```$", stripped, re.DOTALL)
     if fence_match:
         stripped = fence_match.group(1).strip()
     try:
@@ -253,9 +241,7 @@ def judge_attempt(
     """High-level wrapper: build prompt + fire AI + parse."""
     if not target.strip() or not actual.strip():
         return None
-    prompt = build_judge_prompt(
-        target=target, actual=actual, language=language
-    )
+    prompt = build_judge_prompt(target=target, actual=actual, language=language)
     try:
         raw = ai_call([{"role": "user", "content": prompt}])
     except Exception:  # noqa: BLE001

@@ -2,8 +2,10 @@
 
 # Çekirdek uç noktalar
 
-Bir eklenti tarafından kaydedilmeyen uç noktalar: kullanıcılar,
-projeler, ayarlar, i18n, sağlık.
+Bir eklenti tarafından kaydedilmeyen uç noktalar için ayrıntılı
+örnekler: kullanıcılar, projeler, ayarlar, i18n, sağlık. Çekirdek ve
+eklenti, her uç nokta [Tüm endpoint'ler](endpoints.md) sayfasında
+listelenir.
 
 ## Sağlık
 

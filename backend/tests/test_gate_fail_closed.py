@@ -148,3 +148,68 @@ def test_complexity_gate_refuses_a_mismatched_radon_version(tree: Path, tmp_path
     assert result.returncode == 1
     assert "9.9.9" in result.stderr
     assert "pinned" in result.stderr.lower()
+
+
+def _tree_with_shims(tree: Path, shim_dir: Path, npx_body: str | None) -> dict[str, str]:
+    """Pin the Python half to a clean pinned radon and stub the TS half (#3438).
+
+    The mirror's ``frontend`` symlink is replaced by a small real directory,
+    so whether ``node_modules`` exists is the test's choice, not the
+    developer's checkout. ``npx_body`` is the shell body of an ``npx`` shim
+    (``None`` leaves ``node_modules`` out entirely).
+    """
+    shim_dir.mkdir()
+    (shim_dir / "radon").write_text(
+        '#!/bin/sh\nif [ "$1" = "--version" ]; then echo "$RADON_PIN"; exit 0; fi\necho "{}"\n',
+        encoding="utf-8",
+    )
+    (shim_dir / "radon").chmod(0o755)
+    (tree / "frontend").unlink()
+    (tree / "frontend" / "src").mkdir(parents=True)
+    if npx_body is not None:
+        (tree / "frontend" / "node_modules").mkdir()
+        (shim_dir / "npx").write_text(f"#!/bin/sh\n{npx_body}\n", encoding="utf-8")
+        (shim_dir / "npx").chmod(0o755)
+    return {"PATH": f"{shim_dir}:{os.environ['PATH']}", "RADON_PIN": "6.0.1"}
+
+
+@pytest.mark.parametrize(
+    ("npx_body", "reason"),
+    [
+        (None, "node_modules missing"),
+        ("echo 'Oops! Something went wrong!' >&2; exit 2", "eslint exited 2"),
+        ("echo 'not json'; exit 0", "not a JSON array"),
+        ("echo '[]'; exit 0", "linted 0 files"),
+    ],
+    ids=["no-node-modules", "eslint-crash", "non-json-output", "zero-files-linted"],
+)
+def test_complexity_gate_fails_when_eslint_cannot_measure(
+    tree: Path, tmp_path: Path, npx_body: str | None, reason: str
+) -> None:
+    """#3438 - the TypeScript half turned a missing or crashed eslint into
+    '[]', which read as 'no offenders' and printed 'Complexity gate passed'."""
+    env = _tree_with_shims(tree, tmp_path / "shim-ts", npx_body)
+    result = _run(tree, "bash", "scripts/check-complexity.sh", "--gate", env=env)
+    assert result.returncode == 1, result.stdout + result.stderr
+    assert reason in result.stderr
+    assert "cannot verify TypeScript complexity" in result.stderr
+
+
+def test_complexity_gate_partial_run_without_eslint_is_declared(tree: Path, tmp_path: Path) -> None:
+    env = _tree_with_shims(tree, tmp_path / "shim-ts-partial", None)
+    env["COMPLEXITY_GATE_ALLOW_PARTIAL"] = "1"
+    result = _run(tree, "bash", "scripts/check-complexity.sh", "--gate", env=env)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "TypeScript complexity is skipped" in result.stderr
+
+
+def test_complexity_gate_reports_how_many_files_eslint_linted(tree: Path, tmp_path: Path) -> None:
+    """Gate contract point 4: '0 offenders' must say what was looked at."""
+    lint_result = (
+        '[{"filePath": "/x/frontend/src/a.ts", "messages": []}, '
+        '{"filePath": "/x/frontend/src/b.ts", "messages": []}]'
+    )
+    env = _tree_with_shims(tree, tmp_path / "shim-ts-ok", f"echo '{lint_result}'; exit 0")
+    result = _run(tree, "bash", "scripts/check-complexity.sh", "--gate", env=env)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "eslint, 2 file(s) linted" in result.stdout

@@ -93,7 +93,7 @@ Surfaced 2026-06-17 during the v1.86.0 release-test. Five EXP-023 dexie-smoke sp
 
 ### Why it surfaced only at release
 
-The Dexie-mode E2E gate runs nightly + release-only, NOT on PRs (#552 cadence). So #662's PR was green (it doesn't run dexie-smoke), and the drift sat latent until `make release-test` ran the gate. This is the same class as "wired != working" and the stale-assertion rule, with an i18n-specific trigger.
+The Dexie-mode E2E gate ran nightly + release-only, NOT on PRs (#552 cadence; PRs touching `frontend/` run it since #3748). So #662's PR was green (it doesn't run dexie-smoke), and the drift sat latent until `make release-test` ran the gate. This is the same class as "wired != working" and the stale-assertion rule, with an i18n-specific trigger.
 
 ### Rules
 
@@ -103,7 +103,7 @@ The Dexie-mode E2E gate runs nightly + release-only, NOT on PRs (#552 cadence). 
 
 ## PR-CI vs nightly gates: different test surfaces (green PR -> red nightly/push)
 
-A green PR merge proves only that the surface the PR-CI looks at is green. By the #552 cadence, PR-CI runs correctness gates only; the visual-baselines, the e2e specs (dexie-smoke, manual-automation, FeatureShots) and the Dexie-mode journeys run nightly / on develop-push only. So any change to a surface only a nightly covers can merge a clean PR and turn the next nightly/push run red. This is not a one-off chain - it is a recurring risk category (#1661): "green PR -> red nightly/push, because the PR-CI never looked at the affected surface."
+A green PR merge proves only that the surface the PR-CI looks at is green. By the #552 cadence, PR-CI runs correctness gates only; the visual-baselines, the e2e specs (manual-automation, FeatureShots; dexie-smoke until #3748) and the Dexie-mode journeys run nightly / on develop-push only. So any change to a surface only a nightly covers can merge a clean PR and turn the next nightly/push run red. This is not a one-off chain - it is a recurring risk category (#1661): "green PR -> red nightly/push, because the PR-CI never looked at the affected surface."
 
 ### Sub-classes (same signature, different fix lever)
 
@@ -295,16 +295,18 @@ Regeln:
   kein Freibrief. Vor dem Label `visual-baselines-unaffected` prüfen, ob
   die Änderung überhaupt über der Toleranz liegt - das Label behauptet
   "keine visuelle Wirkung", nicht "unter dem Budget".
-- Kleine gewollte Änderungen erzwingen die Neuaufnahme über
-  Löschen-dann-Resync (#2719): betroffene PNGs löschen, committen, Sync
-  erneut anstossen. Eine gelöschte Baseline wird gerendert statt
-  verglichen.
-- Nur die Motive löschen, auf denen die Änderung erscheint (#2682). Ein
-  neu aufgenommenes Bild trägt ausserdem jede seither unter der Toleranz
-  gebliebene Fremd-Drift, deshalb gehört der Alt-gegen-neu-Vergleich
+- Seit #3215 schreiben beide CI-Neuaufnahmen jede Baseline, die in
+  mindestens einem Pixel über dem Rauschboden abweicht (Mengen-Toleranz
+  0, `threshold` 0.05, `e2e/visual/refresh-mode.ts`); Rasterrauschen
+  (gemessen höchstens 2 pro Kanal) bleibt darunter. Jede
+  gewollte Änderung landet, auch unter der Vergleichs-Toleranz.
+  Löschen-dann-Resync (#2719) braucht es nur noch für lokal gerenderte
+  FeatureShots.
+- Der Sync-Commit trägt dafür jede seither gebliebene Fremd-Drift mit.
+  Nicht Zurechenbares zurücksetzen (#2682), und der Alt-gegen-neu-Vergleich
   (Cluster-Analyse der geänderten Pixel, nicht nur der Blick aufs neue
-  Bild) in die Review - sonst wandert unbemerkte Drift als "geprüft"
-  in die Referenz.
+  Bild) gehört in die Review - sonst wandert unbemerkte Drift als
+  "geprüft" in die Referenz.
 
 Passt zu "Ein Bildvergleich prüft nur, was die Referenz unterscheidbar
 macht" (#2696): dort war es die leere Fläche, hier die Toleranz.

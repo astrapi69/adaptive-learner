@@ -1,25 +1,25 @@
 /**
- * assistant-ui adoption — Phase 2 parity (#1126).
+ * assistant-ui adoption: Phase 2 parity (#1126).
  *
  * The assistant-ui Thread wired to the app's session storage via
  * {@link createSessionChatAdapter}. assistant-ui owns the chat UI (composer,
  * streaming bubbles, auto-scroll, a11y, native Enter-to-send); the backend is
- * the app's existing ``getStorage().session.*`` — so Dexie browser-direct mode
+ * the app's existing ``getStorage().session.*``, so Dexie browser-direct mode
  * works with no backend, inheriting the #1122 context rebuild.
  *
  * Phase 2 brings the spike to visual + functional parity with the legacy
  * ``SessionChat`` so a later cutover is a swap, not a rewrite:
  *
- *   - **i18n** — composer placeholder + send label + welcome line come from the
+ *   - **i18n**: composer placeholder + send label + welcome line come from the
  *     shared ``useI18n`` catalog (11 languages), not hardcoded English.
- *   - **Theming** — the thread reuses the SAME token-backed CSS classes as
+ *   - **Theming**: the thread reuses the SAME token-backed CSS classes as
  *     ``SessionChat`` (``session-chat`` / ``chat-messages`` / ``chat-message`` /
  *     ``chat-message-content-markdown`` / ``chat-input-row``), so every one of
  *     the 6 themes recolors it automatically with no new CSS and no hardcoded
  *     colors.
- *   - **Markdown** — assistant bubbles render via react-markdown + remark-gfm
+ *   - **Markdown**: assistant bubbles render via react-markdown + remark-gfm
  *     (the HelpDrawer + LessonViewer pipeline); user text stays verbatim.
- *   - **testid parity** — the composer/list/bubbles carry the same
+ *   - **testid parity**: the composer/list/bubbles carry the same
  *     ``chat-*`` ``data-testid`` selectors the E2E suite already uses, so the
  *     cutover keeps the specs green.
  *
@@ -29,16 +29,21 @@
  * buttons hide themselves when the browser lacks Web Speech or the user has the
  * feature off in Settings, so this never renders a broken control.
  *
- * Still mounted only behind the opt-in ``?ui=assistant`` flag; the default
- * Session path renders the unchanged ``SessionChat``. Domain panels (step-eval,
- * method-switch, XP) are rendered AROUND this thread by ``Session.tsx`` and are
- * shared with the legacy surface.
+ * Since the cutover (#2012) this thread is the session chat: ``Session.tsx``
+ * mounts it for every session, regular and imported, and the legacy
+ * ``SessionChat`` is gone. Domain panels (step-eval, method-switch, XP) are
+ * rendered AROUND this thread by ``Session.tsx``.
  *
  * Phase 3b part 2 (#1126): imported-session AI opening. When ``autoOpen`` is set,
- * the thread fires one ``thread.startRun({parentId: null})`` on init so the AI
+ * the thread fires one ``thread.startRun({parentId: null})`` so the AI
  * produces the first lesson question WITHOUT a preceding user bubble (startRun
  * appends no user message); the adapter recognises the run via
  * ``runConfig.custom[OPENING_RUN_FLAG]`` and sends a hidden opening trigger.
+ *
+ * #3806: one opening per session, not per page load. It fires only while the
+ * stored conversation holds no turn; the sent trigger is persisted before the
+ * provider call, so a reload, a re-open or a second tab resumes the stored
+ * conversation and asks the AI nothing (``session-history``).
  */
 
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
@@ -62,6 +67,7 @@ import {cn} from "@/lib/utils";
 
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {markdownToSpeech} from "../../../lib/lesson/tts-text";
+import MarkdownImage from "../../../shared/data-display/MarkdownImage";
 import {getStorage} from "../../../storage";
 import {notify} from "../../../utils/notify";
 import MicButton from "../../voice/MicButton";
@@ -69,26 +75,28 @@ import SpeechButton from "../../voice/SpeechButton";
 import type {SessionMessageExchangeResult} from "../../../types";
 import {formatCycleTransition} from "./cycle-transition";
 import {OPENING_RUN_FLAG, createSessionChatAdapter} from "./session-chat-adapter";
+import {conversationStarted, visibleTurns} from "./session-history";
 
 interface AssistantUiThreadProps {
     /** LearningSession id the thread streams against. */
     sessionId: string;
     /**
-     * #1143 parity — for an imported-chat session, the welcome empty-state
-     * names the imported chat's topic (e.g. "Reflexive Verben"). The
-     * assistant-ui thread already opens clean (it loads no prior history), so
-     * this is the only imported-session cue it needs. ``null``/absent for a
-     * regular session.
+     * #1143 parity: for an imported-chat session, the welcome empty-state
+     * names the imported chat's topic (e.g. "Reflexive Verben"). It shows
+     * while the thread has no visible turn: before the AI opening arrives, or
+     * when an opening's reply never did. ``null``/absent for a regular session.
      */
     introTopic?: string | null;
     /**
-     * #1126 Phase 3b — when true (an imported-chat session), the AI opens the
+     * #1126 Phase 3b: when true (an imported-chat session), the AI opens the
      * conversation on its own with the next lesson question, so the learner
-     * doesn't have to type first. Fires exactly one opening run per session.
+     * doesn't have to type first. #3806: at most one opening run per session,
+     * sent only while the stored conversation holds no turn; a reload, a
+     * re-open or a second tab resumes what is stored and asks the AI nothing.
      */
     autoOpen?: boolean;
     /**
-     * #1126 Phase 4a — domain wiring. Called once per completed turn with the
+     * #1126 Phase 4a: domain wiring. Called once per completed turn with the
      * full exchange result so the session shell advances the cycle step,
      * surfaces the step-evaluation verdict, and fires the auto-loop /
      * step-advance toasts (parity with SessionChat's ``handleSend``).
@@ -97,9 +105,11 @@ interface AssistantUiThreadProps {
 }
 
 /**
- * Assistant text part renderer. Mirrors ``SessionChat``'s assistant bubble:
- * react-markdown + remark-gfm with the shared ``chat-message-content-markdown``
- * typography, so an AI reply reads the same as the help system.
+ * Assistant text part renderer: react-markdown + remark-gfm with the shared
+ * ``chat-message-content-markdown`` typography, so an AI reply reads the same
+ * as the help system. An image in a reply is offered as a link when it lives
+ * on another host (#3803): a stored reply re-renders on every resume, and the
+ * model, not the learner, chose that host.
  */
 const AssistantText: TextMessagePartComponent = ({text}) => (
     <div
@@ -114,6 +124,7 @@ const AssistantText: TextMessagePartComponent = ({text}) => (
                         <table {...tableProps} />
                     </div>
                 ),
+                img: MarkdownImage,
             }}
         >
             {text}
@@ -239,7 +250,7 @@ export default function AssistantUiThread({
                         ),
                     onExchange: (result) => {
                         onExchangeRef.current?.(result);
-                        // #1126 Phase 4b-i — cycle-transition parity. On an
+                        // #1126 Phase 4b-i: cycle-transition parity. On an
                         // auto-loop, append the cycle summary + next topic as an
                         // inline assistant turn (the assistant thread has no
                         // ``messages`` array for the legacy card), preserving the
@@ -248,7 +259,7 @@ export default function AssistantUiThread({
                         if (transition?.looped && runtimeRef.current) {
                             // Object form with role "assistant" so it is a
                             // STATIC message (no run triggered). The string form
-                            // defaults to role "user" and starts a run — which
+                            // defaults to role "user" and starts a run, which
                             // would both show a user bubble and loop.
                             runtimeRef.current.thread.append({
                                 role: "assistant",
@@ -270,56 +281,53 @@ export default function AssistantUiThread({
     );
     runtimeRef.current = runtime;
 
-    // Imported-session AI opening (#1126 Phase 3b): fire ONE opening run per
-    // session. ``startRun`` with ``parentId: null`` triggers the adapter with no
-    // user message, so the AI's first question appears with no user bubble. The
-    // ref (keyed by session) guards against React StrictMode's double effect
-    // mount so the opening never fires twice.
+    // Imported-session AI opening (#1126 Phase 3b): ``startRun`` with
+    // ``parentId: null`` triggers the adapter with no user message, so the AI's
+    // first question appears with no user bubble. #3806: only ``loadHistory``
+    // calls this, once the stored conversation is read and holds no turn; the
+    // sent trigger is persisted before the provider call, so the next page load
+    // finds it and resumes instead of asking again. The ref (keyed by session)
+    // keeps it to one run within a page, StrictMode's double effect mount
+    // included.
     const openedForSession = useRef<string | null>(null);
-    useEffect(() => {
-        if (!autoOpen) return;
+    const startOpening = useCallback(() => {
         if (openedForSession.current === sessionId) return;
         openedForSession.current = sessionId;
-        runtime.thread.startRun({
+        runtimeRef.current?.thread.startRun({
             parentId: null,
             runConfig: {custom: {[OPENING_RUN_FLAG]: true}},
         });
-    }, [autoOpen, sessionId, runtime]);
+    }, [sessionId]);
 
-    // Resume-history hydration (#1126 Phase 4b-i-b): a resumed REGULAR session
-    // must show its prior conversation — the legacy SessionChat rendered the
-    // full history on resume; the assistant thread otherwise starts empty. Load
-    // the persisted turns once per session and seed the runtime via
-    // ``thread.reset``. Imported sessions are excluded (``autoOpen`` opens them
-    // clean by design, #1143); the system prompt is dropped (orchestrator
-    // metadata, never a bubble). A new session (only the system row) seeds
-    // nothing, so the welcome empty-state stays. Ref-guarded (once per session,
-    // StrictMode-safe). A failed load says so and offers a retry instead of
-    // the fresh welcome, which reads as deleted history (#3377).
+    // Resume-history hydration (#1126 Phase 4b-i-b): a resumed session must show
+    // its prior conversation (the legacy SessionChat rendered the full history
+    // on resume; the assistant thread otherwise starts empty). Load the
+    // persisted turns once per session and seed the runtime via
+    // ``thread.reset``; ``visibleTurns`` drops the system prompt (orchestrator
+    // metadata) and the hidden opening trigger. A new session seeds nothing, so
+    // the welcome empty-state stays. #3806: imported sessions resume the same
+    // way instead of opening clean, and their opening waits for this read, so a
+    // history that cannot be read sends nothing. A failed load says so and
+    // offers a retry instead of the fresh welcome, which reads as deleted
+    // history (#3377). Ref-guarded (once per session, StrictMode-safe).
     const [historyFailed, setHistoryFailed] = useState(false);
     const loadHistory = useCallback(() => {
         setHistoryFailed(false);
         getStorage()
             .session.getMessages(sessionId)
             .then((history) => {
-                const prior = history
-                    .filter((message) => message.role !== "system")
-                    .map((message) => ({
-                        role: message.role as "user" | "assistant",
-                        content: message.content,
-                        id: message.id,
-                    }));
+                const prior = visibleTurns(history);
                 if (prior.length > 0) runtimeRef.current?.thread.reset(prior);
+                if (autoOpen && !conversationStarted(history)) startOpening();
             })
             .catch(() => setHistoryFailed(true));
-    }, [sessionId]);
+    }, [sessionId, autoOpen, startOpening]);
     const hydratedForSession = useRef<string | null>(null);
     useEffect(() => {
-        if (autoOpen) return;
         if (hydratedForSession.current === sessionId) return;
         hydratedForSession.current = sessionId;
         loadHistory();
-    }, [autoOpen, sessionId, loadHistory]);
+    }, [sessionId, loadHistory]);
 
     return (
         <AssistantRuntimeProvider runtime={runtime}>

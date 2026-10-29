@@ -32,7 +32,40 @@ describe("ResourceCard", () => {
     expect(screen.getByText("Wiki AI")).toBeInTheDocument();
   });
 
-  it("renders a YouTube thumbnail (no iframe) for a youtube resource", () => {
+  it("reproduction (#3803): a single YouTube video shows a local placeholder, no thumbnail from img.youtube.com", () => {
+    const { container } = render(
+      <ResourceCard
+        resource={make({
+          type: "youtube",
+          url: "https://www.youtube.com/watch?v=aircAruvnKk",
+        })}
+      />,
+    );
+    const link = screen.getByTestId("resource-card-link");
+    expect(
+      link.querySelector('[data-testid="youtube-thumbnail-placeholder"]'),
+    ).not.toBeNull();
+    expect(container.querySelector("img")).toBeNull();
+    expect(container.innerHTML).not.toContain("img.youtube.com");
+    // No embedded player either.
+    expect(container.querySelector("iframe")).toBeNull();
+  });
+
+  it.each([
+    ["a watch URL inside a playlist", "https://www.youtube.com/watch?v=a0_lo_GDcFw&list=PLZZWrBYkx7Otcjr3eCLZDCgfpqnxMY29s"],
+    ["a youtu.be short link", "https://youtu.be/vo4pMVb0R6M"],
+    ["a shorts URL", "https://www.youtube.com/shorts/aircAruvnKk"],
+    ["an embed URL on the nocookie host", "https://www.youtube-nocookie.com/embed/aircAruvnKk"],
+    ["a channel URL", "https://www.youtube.com/@3blue1brown"],
+  ])("%s gets the same placeholder and loads nothing", (_name, url) => {
+    const { container } = render(
+      <ResourceCard resource={make({ type: "youtube", url })} />,
+    );
+    expect(screen.getByTestId("youtube-thumbnail-placeholder")).toBeInTheDocument();
+    expect(container.querySelector("img")).toBeNull();
+  });
+
+  it("opens the video on YouTube only through the link, in a new tab", () => {
     render(
       <ResourceCard
         resource={make({
@@ -41,19 +74,15 @@ describe("ResourceCard", () => {
         })}
       />,
     );
-    const img = screen.getByTestId("youtube-thumbnail-img");
-    expect(img).toHaveAttribute(
-      "src",
-      "https://img.youtube.com/vi/aircAruvnKk/mqdefault.jpg",
-    );
-    expect(img).toHaveAttribute("loading", "lazy");
-    // No embedded player.
-    expect(document.querySelector("iframe")).toBeNull();
+    const link = screen.getByTestId("resource-card-link");
+    expect(link).toHaveAttribute("href", "https://www.youtube.com/watch?v=aircAruvnKk");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("shows a type icon (not a thumbnail) for non-youtube resources", () => {
+  it("shows a type icon, not the video placeholder, for non-youtube resources", () => {
     render(<ResourceCard resource={make({ type: "podcast" })} />);
-    expect(screen.queryByTestId("youtube-thumbnail-img")).toBeNull();
+    expect(screen.queryByTestId("youtube-thumbnail-placeholder")).toBeNull();
   });
 
   it("renders language + level badges when present", () => {

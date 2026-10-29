@@ -10,8 +10,12 @@
 
 import "fake-indexeddb/auto";
 
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
+import {anthropicSseResponse} from "../../test/anthropic-sse";
 import {_resetDbForTests, getDb} from "../dexie/db";
 import {dexieStorage} from "../dexie-storage";
 
@@ -536,6 +540,45 @@ describe("session.message", () => {
         expect(result.step_evaluation?.applied).toBe(false);
     });
 
+    /**
+     * #3436 - the browser build advances at the same confidence as the
+     * desktop backend, whose threshold is ``step_evaluation.
+     * confidence_threshold`` in ``backend/config/plugins/session.yaml``.
+     * Read from that file, so a change there that the browser does not
+     * follow turns this red instead of drifting silently.
+     */
+    const DESKTOP_THRESHOLD = Number(
+        /confidence_threshold:\s*([0-9.]+)/.exec(
+            readFileSync(
+                join(process.cwd(), "..", "backend", "config", "plugins", "session.yaml"),
+                "utf-8",
+            ),
+        )?.[1],
+    );
+
+    it.each([
+        ["just below the desktop threshold stays", -0.01, 1, false],
+        ["at the desktop threshold advances", 0, 2, true],
+    ])("confidence %s", async (_name, offset, step, applied) => {
+        expect(DESKTOP_THRESHOLD).toBeGreaterThan(0);
+        const {projectId} = await setupUserWithKey();
+        const start = await dexieStorage.session.start({
+            project_id: projectId,
+            lang: "en",
+        });
+        chatReplies.push("Reply");
+        const confidence = Math.round((DESKTOP_THRESHOLD + offset) * 100) / 100;
+        evalReplies.push(
+            `{"advance":true,"confidence":${confidence},"reason":"x","suggested_step":2}`,
+        );
+        const result = await dexieStorage.session.message(start.session.id, {
+            role: "user",
+            content: "x",
+        });
+        expect(result.session.cycle_step).toBe(step);
+        expect(result.step_evaluation?.applied).toBe(applied);
+    });
+
     it("fallback advance applies on unparseable eval JSON", async () => {
         const {projectId} = await setupUserWithKey();
         const start = await dexieStorage.session.start({
@@ -600,43 +643,6 @@ describe("session.message", () => {
 
 // --- session.streamMessage (v1.6.0 / Phase 19B-2) --------------------------
 
-
-/**
- * Build an SSE-shaped Response carrying the given Anthropic
- * ``content_block_delta`` chunks. Used to mock the fetch result
- * for the streaming chat call. The eval call after the stream
- * goes via the same fetch mock — but it sets ``stream: false``,
- * so we leave the non-stream JSON branch in the global mock to
- * handle that.
- */
-function anthropicSseResponse(chunks: string[]): Response {
-    const frames = chunks
-        .map(
-            (c) =>
-                `event: content_block_delta\ndata: ${JSON.stringify({
-                    type: "content_block_delta",
-                    delta: {type: "text_delta", text: c},
-                })}`,
-        )
-        .concat(["event: message_stop\ndata: {\"type\":\"message_stop\"}"]);
-    const wire = frames.map((f) => `${f}\n\n`).join("");
-    const encoder = new TextEncoder();
-    let emitted = false;
-    const stream = new ReadableStream<Uint8Array>({
-        pull(controller) {
-            if (!emitted) {
-                controller.enqueue(encoder.encode(wire));
-                emitted = true;
-            } else {
-                controller.close();
-            }
-        },
-    });
-    return new Response(stream, {
-        status: 200,
-        headers: {"Content-Type": "text/event-stream"},
-    });
-}
 
 describe("session.streamMessage", () => {
     it("invokes onChunk for each streamed delta and persists the full assistant text", async () => {
@@ -730,6 +736,58 @@ describe("session.streamMessage", () => {
         expect(chunks).toEqual([]);
         const final = doneResult as {ai_error: string | null};
         expect(final.ai_error).toMatch(/No API key/i);
+    });
+
+    // #3806 - the session page sends an imported chat's AI opening only while
+    // nothing besides the system prompt is on record, so the sent turn is the
+    // record that keeps a reload from sending it again. It has to be on record
+    // even when no reply comes back. The API-mode twin of these two tests is
+    // test_stream_keeps_the_sent_turn_on_record_when_no_provider_answers.
+    async function streamAndListTurns(projectId: string) {
+        const start = await dexieStorage.session.start({project_id: projectId});
+        let doneResult: {assistant_message: unknown; ai_error: string | null} | null = null;
+        await dexieStorage.session.streamMessage(
+            start.session.id,
+            {role: "user", content: "hidden opening trigger"},
+            {
+                onChunk: () => {},
+                onDone: (r) => {
+                    doneResult = r;
+                },
+            },
+        );
+        const stored = await dexieStorage.session.getMessages(start.session.id);
+        const turns = stored
+            .filter((message) => message.role !== "system")
+            .map((message) => [message.role, message.content]);
+        return {doneResult, turns};
+    }
+
+    it("keeps the sent turn on record when no key is stored (#3806)", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const p = await dexieStorage.users.projects.create(u.id, {
+            topic: "T",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 10,
+        });
+
+        const {doneResult, turns} = await streamAndListTurns(p.id);
+
+        expect(doneResult).toMatchObject({assistant_message: null, ai_error: expect.any(String)});
+        expect(turns).toEqual([["user", "hidden opening trigger"]]);
+    });
+
+    it("keeps the sent turn on record when the provider cannot be reached (#3806)", async () => {
+        const {projectId} = await setupUserWithKey();
+        global.fetch = vi.fn(async () => {
+            throw new TypeError("Failed to fetch");
+        }) as unknown as typeof fetch;
+
+        const {doneResult, turns} = await streamAndListTurns(projectId);
+
+        expect(doneResult).toMatchObject({assistant_message: null, ai_error: expect.any(String)});
+        expect(turns).toEqual([["user", "hidden opening trigger"]]);
     });
 
     it("404 on unknown session (matches the non-stream sendMessage contract)", async () => {

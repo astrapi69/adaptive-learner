@@ -11,7 +11,8 @@
 
 import { useEffect, useState } from "react";
 
-import { ApiError } from "../../api/client";
+import { isDevMode } from "../../hooks/settings/useDevMode";
+import { inlineErrorText } from "../../utils/errorMessages";
 import { useI18n } from "../../hooks/ui/useI18n";
 import { getStorage, resolveStorageMode } from "../../storage";
 import { SettingsSection } from "../settings/SettingsSection";
@@ -42,8 +43,7 @@ export default function AboutTab() {
         setInfo(result);
       } catch (err) {
         if (cancelled) return;
-        const detail = err instanceof ApiError ? err.detail : String(err);
-        setError(detail);
+        setError(inlineErrorText(err, t("common.error"), isDevMode()));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -51,6 +51,9 @@ export default function AboutTab() {
     return () => {
       cancelled = true;
     };
+    // ``t`` omitted on purpose: the fetch runs once on mount; an unstable
+    // ``t`` (test i18n mocks) would re-fire it (lessons/frontend.md).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

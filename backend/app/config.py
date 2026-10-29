@@ -24,12 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 CONFIG_PATH = BASE_DIR / "config" / "app.yaml"
 CONFIG_EXAMPLE_PATH = BASE_DIR / "config" / "app.yaml.example"
 
-# Backend port. Resolution order: ``ADAPTIVE_LEARNER_PORT`` env var >
-# ``server.port`` in app.yaml > 18001 default. Uvicorn still picks the
-# port from its own CLI flag; this constant exists so other code
-# paths (Docker healthcheck, openapi server-url metadata, eventual
-# self-hosted reverse-proxy hint) read the same value.
-DEFAULT_BACKEND_PORT = 18001
+# Frontend dev port, the fallback CORS origin. The backend port is not
+# read here: uvicorn takes it from its own ``--port`` flag, which the
+# Makefile, the backend Dockerfile and the compose files fill from
+# ADAPTIVE_LEARNER_PORT (#3435 removed the unread ``server.port`` key
+# and its resolver).
 DEFAULT_FRONTEND_PORT = 15174
 
 
@@ -176,40 +175,6 @@ def _load_app_config() -> dict[str, Any]:
     merged = _deep_merge(project, user_overlay)
     merged = _deep_merge(merged, override)
     return _apply_env_overrides(merged)
-
-
-def _coerce_port(value: object) -> int | None:
-    """Best-effort int conversion for a port string from env / yaml."""
-    if value is None:
-        return None
-    try:
-        port = int(str(value).strip())
-    except (TypeError, ValueError):
-        return None
-    return port if 1 <= port <= 65535 else None
-
-
-def resolve_backend_port(config: dict[str, Any] | None = None) -> int:
-    """Resolve the backend port.
-
-    Precedence (highest wins):
-      1. ``ADAPTIVE_LEARNER_PORT`` env var
-      2. ``server.port`` in the resolved app config
-      3. ``DEFAULT_BACKEND_PORT`` (18001)
-
-    Uvicorn still reads ``--port`` from its own CLI flag; this
-    function exists so Docker healthchecks, openapi server-url
-    metadata, and any reverse-proxy hint code can agree with what
-    the deployer actually picked.
-    """
-    env_port = _coerce_port(os.environ.get("ADAPTIVE_LEARNER_PORT"))
-    if env_port is not None:
-        return env_port
-    cfg = config if config is not None else _load_app_config()
-    cfg_port = _coerce_port((cfg.get("server") or {}).get("port"))
-    if cfg_port is not None:
-        return cfg_port
-    return DEFAULT_BACKEND_PORT
 
 
 def resolve_cors_origins(config: dict[str, Any] | None = None) -> list[str]:

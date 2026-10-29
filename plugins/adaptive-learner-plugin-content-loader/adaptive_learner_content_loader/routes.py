@@ -105,6 +105,22 @@ def _build_service() -> ContentLoaderService:
     )
 
 
+def _not_found(err: ContentNotFoundError) -> NotFoundError:
+    """404 whose detail names what was asked for, not where it was looked for.
+
+    A cache miss carries the absolute cache path in ``err.detail``
+    ("Looked at: ..."). That detail reaches the user (dev mode, the
+    report dialog), so it goes to the server log and the response keeps
+    the summary, which names the source, set and file (#3374).
+    """
+    if err.detail != err.message:
+        logger.warning(
+            "Content-loader cache miss",
+            extra={"summary": err.message, "looked_at": err.detail},
+        )
+    return NotFoundError(err.message)
+
+
 def _wrap_loader_error(err: ContentLoaderError) -> Exception:
     """Map a plugin-typed error onto the backend hierarchy.
 
@@ -114,7 +130,7 @@ def _wrap_loader_error(err: ContentLoaderError) -> Exception:
     the failure originated on the upstream, not the user.
     """
     if isinstance(err, ContentNotFoundError):
-        return NotFoundError(err.detail)
+        return _not_found(err)
     if isinstance(err, (ContentAuthError, ContentNetworkError)):
         return ExternalServiceError("github", err.detail)
     if isinstance(err, ContentSchemaError):
@@ -139,9 +155,7 @@ class SetBookResponse(BaseModel):
     asin: str | None
 
     @classmethod
-    def from_model(
-        cls, book: ContentSetBook | None
-    ) -> SetBookResponse | None:
+    def from_model(cls, book: ContentSetBook | None) -> SetBookResponse | None:
         if book is None:
             return None
         return cls(
@@ -220,6 +234,11 @@ class SetEntryResponse(BaseModel):
     # #3418 — when the cached version was downloaded (ISO-8601 UTC); drives
     # the "freshly downloaded first" order, as Dexie mode already does.
     downloaded_at: str | None = None
+    # #3395 - the set's review standing and evaluation declaration, as the
+    # engine's ``asContentSetEntry`` projects them in browser mode. A set
+    # without them reads ``authored`` with no evaluation, as there.
+    review_status: str = "authored"
+    evaluation: dict[str, object] | None = None
 
     @classmethod
     def from_entry(cls, entry: SetEntry) -> SetEntryResponse:
@@ -245,6 +264,16 @@ class SetEntryResponse(BaseModel):
             visibility=entry.set.visibility.value,
             attribution=AttributionResponse.from_model(entry.set.attribution),
             downloaded_at=entry.downloaded_at,
+            review_status=(
+                entry.set.review_status.value if entry.set.review_status else "authored"
+            ),
+            evaluation=(
+                # #3711: what the author declared, as the engine passes it
+                # on; the consumer (gradeFor) applies the schema defaults.
+                entry.set.evaluation.model_dump(mode="json", exclude_unset=True)
+                if entry.set.evaluation
+                else None
+            ),
         )
 
 
@@ -349,7 +378,12 @@ async def list_set_lessons(
             source,
             set_id,
         )
-    except Exception:  # pragma: no cover - defensive
+    except Exception:  # noqa: BLE001 - the version is optional in the response
+        logger.warning(
+            "Could not read the cached version of a content set",
+            extra={"source": source, "set_id": set_id},
+            exc_info=True,
+        )
         version_field = None
     return LessonListResponse(
         set_id=set_id,
@@ -435,7 +469,7 @@ async def get_asset(
         # exception handler returns HTTP 404 with the right
         # detail shape (instead of leaking the plugin-typed
         # error).
-        raise NotFoundError(err.detail) from err
+        raise _not_found(err) from err
     return Response(
         content=payload,
         media_type=_mime_for_asset(asset_path),

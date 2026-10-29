@@ -1,12 +1,12 @@
 """FastAPI routes for the Anki plugin (Phase 30).
 
-  GET    /api/plugins/anki/cards/{user_id}                   list (with filters)
-  POST   /api/plugins/anki/cards                              manual insert
-  PATCH  /api/plugins/anki/cards/{card_id}                    inline edit / accept / reject
-  DELETE /api/plugins/anki/cards/{card_id}                    delete suggestion
-  POST   /api/plugins/anki/cards/extract/session/{session_id} AI extract from session
-  POST   /api/plugins/anki/cards/extract/conversation/{conversation_id}  AI + vocab extract
-  POST   /api/plugins/anki/cards/mark-exported                bulk-mark accepted cards as exported
+GET    /api/plugins/anki/cards/{user_id}                   list (with filters)
+POST   /api/plugins/anki/cards                              manual insert
+PATCH  /api/plugins/anki/cards/{card_id}                    inline edit / accept / reject
+DELETE /api/plugins/anki/cards/{card_id}                    delete suggestion
+POST   /api/plugins/anki/cards/extract/session/{session_id} AI extract from session
+POST   /api/plugins/anki/cards/extract/conversation/{conversation_id}  AI + vocab extract
+POST   /api/plugins/anki/cards/mark-exported                bulk-mark accepted cards as exported
 """
 
 from __future__ import annotations
@@ -19,6 +19,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.config_overlay import read_plugin_settings_merged
 from app.database import get_db
 from app.exceptions import NotFoundError, ValidationError
 from app.models import AnkiCardSuggestion, User
@@ -76,9 +77,7 @@ def _get_card(db: Session, card_id: str) -> AnkiCardSuggestion:
 # ---------------------------------------------------------------------------
 
 
-@router.get(
-    "/cards/{user_id}", response_model=list[AnkiCardSuggestionOut]
-)
+@router.get("/cards/{user_id}", response_model=list[AnkiCardSuggestionOut])
 def list_cards(
     user_id: str,
     project_id: str | None = None,
@@ -88,9 +87,7 @@ def list_cards(
 ) -> list[AnkiCardSuggestionOut]:
     """Filterable card list for the review + export UI."""
     _ensure_user(db, user_id)
-    q = db.query(AnkiCardSuggestion).filter(
-        AnkiCardSuggestion.user_id == user_id
-    )
+    q = db.query(AnkiCardSuggestion).filter(AnkiCardSuggestion.user_id == user_id)
     if project_id is not None:
         q = q.filter(AnkiCardSuggestion.project_id == project_id)
     if accepted_only:
@@ -111,9 +108,7 @@ def create_card(
     invoking the extractor)."""
     _ensure_user(db, user_id)
     if body.card_type not in ("basic", "cloze"):
-        raise ValidationError(
-            f"card_type must be 'basic' or 'cloze' (got {body.card_type!r})."
-        )
+        raise ValidationError(f"card_type must be 'basic' or 'cloze' (got {body.card_type!r}).")
     row = AnkiCardSuggestion(
         user_id=user_id,
         session_id=body.session_id,
@@ -132,9 +127,7 @@ def create_card(
     return _to_out(row)
 
 
-@router.patch(
-    "/cards/{card_id}", response_model=AnkiCardSuggestionOut
-)
+@router.patch("/cards/{card_id}", response_model=AnkiCardSuggestionOut)
 def update_card(
     card_id: str,
     body: AnkiCardSuggestionUpdate,
@@ -146,9 +139,7 @@ def update_card(
     row = _get_card(db, card_id)
     if body.card_type is not None:
         if body.card_type not in ("basic", "cloze"):
-            raise ValidationError(
-                f"card_type must be 'basic' or 'cloze' (got {body.card_type!r})."
-            )
+            raise ValidationError(f"card_type must be 'basic' or 'cloze' (got {body.card_type!r}).")
         row.card_type = body.card_type
     if body.front is not None:
         row.front = body.front
@@ -177,9 +168,7 @@ def update_card(
 
 
 @router.delete("/cards/{card_id}")
-def delete_card(
-    card_id: str, db: Session = Depends(get_db)
-) -> dict[str, Any]:
+def delete_card(card_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
     row = _get_card(db, card_id)
     db.delete(row)
     db.commit()
@@ -189,6 +178,15 @@ def delete_card(
 # ---------------------------------------------------------------------------
 # AI extraction
 # ---------------------------------------------------------------------------
+
+
+def _extraction_limit() -> int:
+    """The effective ``settings.extraction_limit`` (bundled YAML plus
+    the user overlay), read per request so a YAML edit applies
+    without a restart (#3435)."""
+    return card_extraction.resolve_extraction_limit(
+        read_plugin_settings_merged("anki").get("extraction_limit")
+    )
 
 
 @router.post(
@@ -206,16 +204,14 @@ def extract_session_cards(
     so the frontend can append them to the review list without a
     second roundtrip.
     """
-    transcript, user_id, _ = card_extraction._session_transcript(
-        db, session_id
-    )
+    transcript, user_id, _ = card_extraction._session_transcript(db, session_id)
     if user_id is None:
         raise NotFoundError(f"LearningSession {session_id!r} not found.")
     if not transcript.strip():
         # No messages → nothing to extract; non-error path.
         return []
     ai_call = build_ai_caller(db, user_id, max_tokens=512)
-    rows = card_extraction.extract_from_session(db, session_id, ai_call)
+    rows = card_extraction.extract_from_session(db, session_id, ai_call, limit=_extraction_limit())
     return [_to_out(r) for r in rows]
 
 
@@ -234,13 +230,9 @@ def extract_conversation_cards(
     when no vocabulary was extracted — and is built LAZILY so
     we don't 400 the vocabulary-only happy path.
     """
-    transcript, user_id, _, analysis = (
-        card_extraction._conversation_transcript(db, conversation_id)
-    )
+    transcript, user_id, _, analysis = card_extraction._conversation_transcript(db, conversation_id)
     if user_id is None:
-        raise NotFoundError(
-            f"ImportedConversation {conversation_id!r} not found."
-        )
+        raise NotFoundError(f"ImportedConversation {conversation_id!r} not found.")
 
     # Lazy AI caller: only built if the vocabulary path comes up
     # empty AND there's a transcript to feed the model. Raises
@@ -254,7 +246,7 @@ def extract_conversation_cards(
         return caller(messages)
 
     rows = card_extraction.extract_from_conversation(
-        db, conversation_id, _ai
+        db, conversation_id, _ai, limit=_extraction_limit()
     )
     return [_to_out(r) for r in rows]
 
@@ -269,9 +261,7 @@ class _MarkExportedBody(BaseModel):
 
 
 @router.post("/cards/mark-exported")
-def mark_exported(
-    body: _MarkExportedBody, db: Session = Depends(get_db)
-) -> dict[str, Any]:
+def mark_exported(body: _MarkExportedBody, db: Session = Depends(get_db)) -> dict[str, Any]:
     """Bulk-stamp ``exported_at`` on the given card ids.
 
     Called after the frontend successfully wrote the .apkg blob

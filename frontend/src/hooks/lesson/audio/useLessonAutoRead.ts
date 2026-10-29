@@ -32,6 +32,8 @@ import {
   theoryBlockAround,
   type TheoryRun,
 } from "../../../lib/lesson/tts-text";
+import { whenDeviceVoicesKnown } from "../../../lib/voice/speech-synthesis";
+import { readVoicePrefs } from "../../../lib/voice/voicePref";
 import type { ContentLesson } from "../../../storage/types";
 
 interface UseLessonAutoReadDeps {
@@ -51,15 +53,27 @@ export function useLessonAutoRead({
   // each new step aloud on display (theory body / exercise prompt);
   // code/formula exercises are skipped. Off by default; remembered.
   const tts = useReadAloud();
-  const [autoRead, setAutoRead] = useState(() => readLessonAutoRead());
+  // ``storedAutoRead`` is the persisted preference (the options toggle).
+  // ``silencedLesson`` is the lesson the player's X ended read-aloud for
+  // (#3760): quiet for the rest of THAT lesson, the preference untouched,
+  // so the next lesson reads again. An X means "end this", not "switch the
+  // feature off".
+  const [storedAutoRead, setStoredAutoRead] = useState(() => readLessonAutoRead());
+  const [silencedLesson, setSilencedLesson] = useState<ContentLesson | null>(null);
+  const autoRead = storedAutoRead && (lesson === null || silencedLesson !== lesson);
+
   const toggleAutoRead = useCallback(() => {
-    setAutoRead((on) => {
-      const next = !on;
-      writeLessonAutoRead(next);
-      if (!next) tts.stop();
-      return next;
-    });
-  }, [tts]);
+    const next = !autoRead;
+    writeLessonAutoRead(next);
+    setStoredAutoRead(next);
+    setSilencedLesson(null);
+    if (!next) tts.stop();
+  }, [autoRead, tts]);
+
+  const endReadAloud = useCallback(() => {
+    tts.stop();
+    setSilencedLesson(lesson);
+  }, [lesson, tts]);
 
   // The speech payload (text + utterance id + lang) for the current
   // step, or null when there's nothing to read (summary, code
@@ -92,7 +106,11 @@ export function useLessonAutoRead({
   // Speak the current step when auto-read is on and the step changes.
   // The ref guard means the effect can safely re-run on unrelated
   // renders (the tts controller object is recreated each render)
-  // without re-speaking the same step.
+  // without re-speaking the same step. No tap starts this read, so it
+  // waits until the device's voices are listed (#3805): on a cold start
+  // the browser may not list them yet when the step mounts, and the
+  // local-first pick cannot choose a voice it does not see. A run
+  // cleaned up before it read clears the guard so the next run reads.
   const autoReadStepRef = useRef(-1);
   useEffect(() => {
     if (!autoRead || !tts.enabled || !lesson) return;
@@ -100,9 +118,16 @@ export function useLessonAutoRead({
     if (autoReadStepRef.current === currentStepIndex) return;
     autoReadStepRef.current = currentStepIndex;
     const payload = currentStepSpeech();
-    if (payload) {
+    if (!payload) return;
+    let started = false;
+    const cancel = whenDeviceVoicesKnown(readVoicePrefs().ttsVoiceName, () => {
+      started = true;
       tts.speak(payload.text, { lang: payload.lang, id: payload.id });
-    }
+    });
+    return () => {
+      cancel();
+      if (!started) autoReadStepRef.current = -1;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     autoRead,
@@ -224,6 +249,7 @@ export function useLessonAutoRead({
     tts,
     autoRead,
     toggleAutoRead,
+    endReadAloud,
     startContinuous,
     isContinuous,
     theoryBlock,

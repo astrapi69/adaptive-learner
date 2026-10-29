@@ -46,7 +46,8 @@ vi.mock("../../../hooks/content/set-actions/deletion-plans", async (orig) => ({
   ...(await orig<typeof import("../../../hooks/content/set-actions/deletion-plans")>()),
   computeRepoDeletionPlan,
 }));
-vi.mock("../../../lib/content/repos/content-repo-validate", () => ({
+vi.mock("../../../lib/content/repos/content-repo-validate", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../../lib/content/repos/content-repo-validate")>()),
   validateUserRepo,
   listRepoManifestSets,
 }));

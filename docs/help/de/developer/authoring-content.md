@@ -61,16 +61,21 @@ auseinanderdrifteten, können das nicht mehr:
   oberster Ebene, um IDE-Autovervollständigung und Inline-
   Validierung zu bekommen.
 - `schema/quality-rules.json` - die geteilten Qualitäts-Minima
-  (z. B. Übungsanzahl, Anzahl akzeptierter Freitext-Antworten), die
-  der client-seitige Content-Validator nutzt statt einer zweiten,
-  von Hand gepflegten Kopie.
-- Die Frontend-TypeScript-Lektionstypen und die MkDocs-Seite
-  [Lektionsformat-Referenz](lesson-format-reference.md) werden
-  ebenfalls generiert (**nicht von Hand bearbeiten**); sie folgen dem
-  Engine-Spiegel, führe also nach einem Re-Pin den Generator erneut aus.
+  (z. B. Übungsanzahl, Anzahl akzeptierter Freitext-Antworten) als
+  Spiegel der Engine. Der client-seitige Content-Validator liest
+  dieselben Zahlen direkt aus dem Engine-Paket (`QUALITY_MINIMUMS`),
+  nicht aus einer zweiten, von Hand gepflegten Kopie.
+- Die MkDocs-Seite [Lektionsformat-Referenz](lesson-format-reference.md)
+  wird generiert, in allen Hilfesprachen (**nicht von Hand
+  bearbeiten**); sie folgt dem Engine-Spiegel, führe also nach einem
+  Re-Pin `make sync-schema` erneut aus. Die TypeScript-Lektionstypen
+  des Frontends werden nicht generiert: sie kommen direkt aus dem
+  Paket `learn-content-engine`.
 
 Ein Drift-Gate (`make sync-schema-check`, Teil von `release-test`,
-plus `backend/tests/test_lesson_schema_drift.py` in `make test`)
+plus `backend/tests/test_lesson_schema_drift.py` in `make test`; die
+Pydantic-Schicht prüft die Backend-CI zusätzlich bei jedem PR, der
+Backend oder Plugins ändert, mit `generate_pydantic_models.py --check`)
 schlägt fehl, wenn ein generiertes Artefakt vom gepinnten Engine-
 Spiegel abweicht. Den Kettenschluss bildet das App-vs-Engine-Byte-Paritäts-
 Gate: `make engine-parity-check`
@@ -116,8 +121,16 @@ Ein Set trägt außerdem **`title`** (in der Ausgangssprache, was der
 Lernende liest) und **`title_native`** (in der Zielsprache, als
 Zweittitel).
 
-Beide Codes müssen ISO-639-1 (zwei Buchstaben) sein, und
-`source_language` muss sich von `target_language` unterscheiden.
+Beide Codes sind BCP-47-Sprach-Tags in kanonischer Form: der
+kürzeste Code (`de`, `pt-BR`), für Sprachen ohne Zwei-Buchstaben-Code
+drei Buchstaben (`gsw`, `yue`, `fil`). Ein nicht wohlgeformter Tag
+(`de_DE`, leer) ist ein Fehler (`E-LANG-TAG`), eine nicht kanonische
+Schreibweise (`EN`, `deu`) eine Warnung (`W-LANG-TAG-CANONICAL`). Bei
+einem Sprach-Set (`domain` fehlt oder ist `language`) warnt die
+Engine, wenn `source_language` gleich `target_language` ist oder
+`title_native` fehlt (`W-LANG-PAIR-SAME`, `W-SET-TITLE-NATIVE`); die
+Teilen-Prüfung der App blockiert beides. Ein Set mit einer anderen
+Domäne braucht beides nicht.
 Sets vor v1.2 ohne diese Felder laden weiterhin: der alte
 `language`-Schlüssel wird als `target_language` akzeptiert, und
 `source_language` fällt auf `en` zurück.
@@ -223,6 +236,16 @@ App-spezifisches Loader-Verhalten, das zu beachten ist:
       - 02-articles.json
       - ...
   ```
+
+- Der optionale `evaluation`-Block eines Sets
+  ([Engine-Referenz](https://github.com/astrapi69/learn-content-engine/blob/main/docs/lesson-format.md#evaluation))
+  wirkt in der App nur im **Prüfungsmodus**: Dort ersetzt er die
+  eigene Bestehensgrenze des Lernenden und bewertet denselben ersten
+  Durchgang nach seinem Schema (`percent`, `pass_fail` oder
+  `grades`), sein `title` ersetzt die Überschrift „Prüfungsergebnis",
+  `report: detailed` öffnet die ausführliche Auswertung, und die
+  Sterne-Bewertung entfällt. Üben und die anderen Modi ignorieren den
+  Block.
 
 ## Lektionsschema
 
@@ -899,6 +922,18 @@ Picture-Choice trotzdem - der Platzhalter-SVG-Generator deckt
 Farben + Zahlen automatisch ab und fällt für alles andere auf
 einen deterministischen Avatar zurück.
 
+**Bilder in Markdown.** Die App rendert unter anderem Theorie-Texte,
+Erklärungen und KI-Antworten als Markdown. Ein dort eingebettetes
+Bild (`data:`-URI) zeigt sie direkt. Ein Bild von einem anderen
+Server, zum Beispiel von `raw.githubusercontent.com` oder einer
+Bilder-Website, erscheint als Link mit Bild-Symbol und Alt-Text und
+lädt erst nach einem Klick, in einem neuen Tab. Gib solchen Bildern
+deshalb einen aussagekräftigen Alt-Text; ein Bild, das immer
+sichtbar sein soll, gehört in ein Übungs- oder Kartenbild mit den
+Asset-Dateien unten. YouTube-Einträge in `resources[]` zeigen ein
+Video-Symbol statt eines Vorschaubilds; das Video öffnet sich erst
+per Klick auf YouTube.
+
 ### Verzeichnis-Layout
 
 Innerhalb des Set-Verzeichnisses liegen Assets unter
@@ -1018,7 +1053,7 @@ Vor dem PR für eine neue Lektion prüfen:
 - [ ] **Kulturelle Genauigkeit**: realer Sprachgebrauch, nicht nur Lehrbuch-Floskeln
 - [ ] **Schema-Validierung**: die Lektion lädt sauber via `dict_to_lesson()` (siehe Lokales Testen)
 - [ ] **Card-ID-Integrität**: jedes `exercise.card_ids[i]` existiert in `cards[]` der Lektion
-- [ ] **Sprachpaar**: `target_language` + `source_language` gesetzt (ISO 639-1, verschieden), `title_native` vorhanden
+- [ ] **Sprachpaar**: `target_language` + `source_language` gesetzt (BCP 47, kanonisch; bei Sprach-Sets verschieden und mit `title_native`)
 
 ## Validierung (zwei Ebenen, v1.44.0)
 
@@ -1181,13 +1216,19 @@ zu erstellen und zu teilen**:
    **Meine Lektionen** im Set-Browser.
 2. Klicke bei „Meine Lektionen" auf **Als Content-Set
    exportieren**, um ein Content-Set als `.zip` herunterzuladen
-   (Manifest + Lektionen). Exporte enthalten nur den
-   Lektionsinhalt - keinen Fortschritt, keine Fehlerhistorie,
-   nichts Persönliches.
+   (Manifest + Lektionen). Exporte enthalten den
+   Lektionsinhalt, aber keinen Fortschritt und keine
+   Fehlerhistorie; was in der Lektion steht, geht mit, auch
+   Persönliches wie ein angegebener Autorenname (siehe
+   [Meine Lektionen](../user-guide/my-lessons.md)).
 3. Klicke auf **Für die Community bereitstellen**, um einen
    vorausgefüllten **Pull Request** im Inhalts-Repository zu öffnen
    - die Lektions-JSON wird am richtigen Pfad im Baum committet,
-   kein `.zip`-Anhang nötig.
+   kein `.zip`-Anhang nötig. Mit einem GitHub-Token unter
+   Einstellungen > Integrationen öffnet die App den Pull Request für
+   eine einzelne Lektion selbst; ohne Token führen dich der Editor
+   oder die Upload-Seite von GitHub hindurch (siehe
+   [Meine Lektionen](../user-guide/my-lessons.md#exportieren-und-teilen)).
 4. Die CI des Repos validiert den PR automatisch; ein Maintainer
    prüft die Lektion, bringt das Manifest (id, title, language,
    level, tags) in Einklang mit den obigen Konventionen und führt
@@ -1211,7 +1252,10 @@ vierstufigen Assistenten, statt direkt zu GitHub zu springen:
    einen automatisch nummerierten Dateinamen
    (`{nn}-{slug}.json`, die nächste Nummer nach den bestehenden
    Lektionen). Ein ganz neues Paar + Niveau zeigt *"Neues Set! Du
-   bist der Erste."*
+   bist der Erste."* In diesem Schritt prüfst du auch Titel,
+   Sprachen und Niveau. Ein Sprach-Set braucht ein CEFR-Niveau
+   (A1-C2). Ein Set, das keine Sprache lehrt, kann *"Kein Niveau
+   (kein Sprachkurs)"* wählen und lässt sich ohne Niveau teilen.
 2. **Duplikat-Prüfung.** Die Lektion wird mit den bereits in
    diesem Pfad vorhandenen Lektionen verglichen (Karten- und
    Übungs-Überschneidung - beratend, niemals blockierend). Wenn

@@ -8,22 +8,26 @@ testleri, ortada entegrasyon, üstte E2E duman testleri.
 
 ## Test sayıları
 
-| Katman | Sayı | Araç |
-|---|---|---|
-| Arka uç birim + entegrasyon | 786 | pytest ^9 |
-| Eklenti testleri (10 eklenti) | 615 | pytest ^9 |
-| Frontend birim + entegrasyon | 1233 | Vitest 4 |
-| E2E duman | 16 dosya | Playwright |
-| **Toplam (`make test`)** | **2634** | |
+| Katman | Araç |
+|---|---|
+| Arka uç birim + entegrasyon | pytest ^9 |
+| Eklenti testleri (tüm eklentiler) | pytest ^9 |
+| Frontend birim + entegrasyon | Vitest 4 |
+| E2E duman | Playwright |
+| Dexie modu sürüm kapısı | Playwright |
 
-Eklenti dağılımı: assessment 110 + ai-anthropic 34 +
-ai-openai 31 + ai-gemini 33 + session 215 + tracking 64 +
-tools 58 + gamification 23 + anki 20 + notebooklm 27.
+Sayılar her sürümde artar. Senkronu bozulan yinelenen sayılardan
+kaçınmak için bu sayfa toplam YAZMAZ. Test sayıları ve kapsam için
+tek kanonik ve her zaman güncel kaynak
+`docs/audits/current-coverage.md` dosyasıdır. Eklentiler:
+assessment, yapay zeka sağlayıcıları (anthropic / openai / gemini /
+perplexity), session, tracking, tools, gamification, anki,
+notebooklm, learning-repo, content-loader ve missions.
 
 ## Arka uç pytest
 
 ```bash
-make test-backend      # 786 test, ~35s
+make test-backend      # tüm arka uç testleri
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb
 ```
@@ -51,7 +55,7 @@ modüllerini izole olarak test eder. Hook tetiklemeyi test ederken
 ## Frontend Vitest
 
 ```bash
-make test-frontend                # 387 test, ~2s
+make test-frontend                # Vitest'i frontend/ içinden çalıştırır
 cd frontend && bunx vitest         # izleme modu
 cd frontend && bunx vitest run src/storage/  # tek dizin
 ```
@@ -128,12 +132,19 @@ uygulama gerektirmez. Çalışan bir `make dev` etkilenmez.
 make test-coverage   # isteğe bağlı; yavaş + ısıl olarak ağır
 ```
 
-Kapsam, main'e her push'ta CI'da çalışır; artefaktları indirin:
+Kapsam bir rapordur, merge kapısı değildir; bu yüzden PR'lerde
+çalışmaz. `coverage.yml` workflow'u her gece (ve manuel tetiklemeyle)
+çalışır; artefaktları indirin:
 
 ```bash
 gh run download --name backend-coverage
 gh run download --name frontend-coverage
 ```
+
+Her eklentinin kendi artefaktı vardır: `<eklenti-dizini>-coverage`,
+örneğin
+`gh run download --name adaptive-learner-plugin-session-coverage`;
+yeni bir eklenti workflow değiştirilmeden kapsanır.
 
 `.claude/rules/quality-checks.md` başına hedefler:
 
@@ -150,10 +161,19 @@ Genel: proje genelinde %85-95.
 cd backend && poetry run pre-commit install
 ```
 
-Kancalar: ruff check (otomatik düzeltme), ruff format, sondaki
-boşluk, dosya sonu düzeltici, check-yaml, check-merge-conflict.
-Yalnızca arka uç - frontend lint, ön teslimde değil CI zamanında
-çalışır.
+Kancalar `.pre-commit-config.yaml` içinde listelenir, örneğin ruff
+check (otomatik düzeltme) ve ruff format, boşluk, YAML, JSON ve
+merge çakışması denetimleri, frontend ESLint, doküman denetimleri
+(umlaut yerine geçen yazımlar için ratchet, doküman referansları) ve
+`plugin-lock-paired-with-pyproject` (engelleyici): `pyproject.toml`
+ya da `poetry.lock` dosyası etkilenen her eklenti için
+`poetry check --lock` çalıştırır ve lock yazıldığından beri
+bağımlılıklar değiştiyse başarısız olur; CI'daki pre-commit işinde
+de tüm dosyalar üzerinde çalışır. Bu işte `eslint` kancası atlanır
+(frontend test işi ESLint'i kurulu bağımlılıklarla çalıştırır).
+Prettier bir kanca değildir: `bun run format:check` frontend test
+işinde çalışır ve #3270'teki tek seferlik yeniden biçimlendirmeye
+kadar engellemez.
 
 ## CI
 
@@ -166,10 +186,16 @@ her PR'de çalışır (Python 3.12):
 
 1. Arka uç testleri (pytest)
 2. Eklenti testleri (`make test-plugins`, arka uç venv'i üzerinden
-   13'ünün tümü)
+   tümü)
 3. Frontend: `tsc --noEmit`, ESLint (`--max-warnings 0`), döngüsel
    bağımlılık denetimi, Stylelint, Vitest, `vite build`,
-   `npm audit`
+   `bun audit --audit-level=high` (yüksek ve kritik bulgularda
+   engeller). Yamalı sürümü olmayan ve yalnızca bir geliştirme
+   bağımlılığına ulaşan bir uyarı, ID'siyle
+   `frontend/audit-ignore.txt` içinde muaf tutulur: satır başına bir
+   ID, üstünde nedeni ve girdinin ne zaman kalkacağını söyleyen bir
+   yorum. `make check-security` aynı listeyi okur;
+   `security-scan.yml` filtresiz kalır.
 4. Tüm dosyalarda pre-commit kancaları
 5. Arka uç ruff + mypy + pip-audit
 6. Dokümantasyon sapma doğrulayıcısı (`verify_docs.py` +
@@ -190,15 +216,17 @@ Diğer PR kapıları kendi workflow'larında yaşar:
   `.complexity-baseline` karşısında YENİ ya da gerileyen ihlallerde
   başarısız olur; böylece var olan borcun topluca temizlenmesini
   zorlamadan yeni karmaşıklığı engeller. Yalnızca uyarı veren tam
-  karmaşıklık raporu gece çalışır.
+  karmaşıklık raporu gece çalışır. Aynı işte klasör boyutu koruması
+  da çalışır (`.dirsize-baseline` karşısında
+  `scripts/check-folder-size.sh`); yerelde `make check-folder-size`
+  ile ya da `make ci` içinde.
 - `cohesion-check.yml` - dosya boyutu koruması
   (`.filesize-whitelist` karşısında kapı) artı iki sınıf adı
   kapısı: ölü CSS sınıf adları (`check-dead-classnames.py`,
   `.dead-classnames-baseline` karşısında) ve **stillenmemiş
   className kapısı** (`--unstyled`, `.unstyled-classnames-baseline`
   karşısında bir ratchet) - tüm token'ları ölü olan bir `className`
-  PR'ı engeller. Eşlik eden klasör boyutu koruması yerelde
-  `make check-folder-size` ile çalışır.
+  PR'ı engeller.
 - `visual-baseline-gate.yml` - görsel açıdan kritik yolları (ders
   bileşenleri, alıştırma renderer'ları, tema/CSS dosyaları)
   değiştiren bir PR, etkilenen baseline ekran görüntülerini aynı
@@ -213,13 +241,21 @@ Diğer PR kapıları kendi workflow'larında yaşar:
   build içeren duman testi (launcher / install.sh yolu), PR'lerde
   yol filtreli, ayrıca `release/**` üzerinde, haftalık ve manuel
   tetiklemeyle; yerelde `make docker-build-smoke`.
+- `dexie-smoke.yml` - Dexie modu E2E kapısı: ilgilendirdiği her pull
+  request'te (`scripts/dexie_smoke_affected.py` karar verir;
+  `Dexie smoke (required)` işi her zaman rapor verir), ayrıca günlük,
+  `release/**` üzerinde ve manuel tetiklemeyle; yerelde
+  `make test-dexie-smoke`.
+- `backup-e2e.yml` - bir yedekleme yoluna dokunan PR'lerde çalışır
+  (örneğin `frontend/src/storage/backup/`, Dexie store'ları ya da arka
+  ucun yedekleme servisleri; liste workflow'dadır) ve her
+  `e2e/dexie/backup-*.spec.ts` dosyasını çalıştırır, tüm yedekleme
+  tabloları üzerinden gidiş-dönüş dahil.
 
 **Gece vardiyası / release (PR'lerde değil):**
 
-- `dexie-smoke.yml` - Dexie modu E2E kapısı (günlük + `release/**`
-  üzerinde + manuel tetikleme; yerelde `make test-dexie-smoke`)
 - `coverage.yml` - kapsam raporu (günlük + manuel tetikleme)
-- `security-scan.yml` - pip-audit / npm audit / bandit (haftalık +
+- `security-scan.yml` - pip-audit / bun audit / bandit (haftalık +
   `release/**` üzerinde + manuel tetikleme; yalnızca uyarı)
 - `content-stats.yml` - taze bir içerik checkout'una karşı içerik
   istatistikleri sapması (günlük + manuel tetikleme)
@@ -240,6 +276,13 @@ Diğer PR kapıları kendi workflow'larında yaşar:
   CI'da render eder ve PR dalına bir commit olarak push'lar
   (`refresh-visual-baselines` etiketi ya da PR numarasıyla manuel
   tetikleme) - merge öncesi görsel inceleme zorunlu kalır
+- `smoke-nightly.yml` - mobil viewport duman testinin gece koşusu;
+  bulgular tek bir takip issue'suna gider
+- `unused-catalog-keys.yml` - hazırlık penceresinden daha eski,
+  tüketicisi olmayan katalog anahtarlarının gece raporu (`AGE_DAYS`,
+  `frontend/src/i18n/unused-catalog-keys.ts` içinde), tek bir takip
+  issue'sunda; içindeki her anahtar bir adaydır ve silinmeden önce
+  tek tek kontrol edilir
 
 `.github/workflows/release-gate.yml`, etiket push'larında çalışır:
 sürüm pinlerinin sürüm taşıyan tüm dosyalarda eşitlendiğini (sapma

@@ -250,12 +250,33 @@ const ORDERING_FIXTURE: FixtureRepo = {
     lessonFile: "01-actions-useactionstate.json",
 };
 
+/**
+ * Content from another server (#3803): ``e2e/fixtures/remote-media.lesson.json``
+ * carries a Markdown image from a foreign host in its theory step and a
+ * YouTube video plus an article in its ``resources``. The app loads none of
+ * it: the image is offered as a link, the video card shows a local
+ * placeholder instead of a thumbnail.
+ */
+const REMOTE_MEDIA_FIXTURE: FixtureRepo = {
+    repo: "e2e/remote-media",
+    setId: "zellteilung-from-de",
+    manifest: {
+        title: "Zellteilung",
+        targetLanguage: "de",
+        sourceLanguage: "de",
+        domain: "knowledge",
+    },
+    setPath: "sets/de/zellteilung",
+    lessonFile: "01-mitose.json",
+};
+
 /** The fixture file on disk is named after its purpose, the served copy
  *  after the lesson (the set manifest lists the served name). */
 const FIXTURE_FILES: Record<string, string> = {
     [EXPLANATION_FIXTURE.lessonFile]: "explanation-post-answer.lesson.json",
     [LONG_WORD_FIXTURE.lessonFile]: "matching-long-word.lesson.json",
     [ORDERING_FIXTURE.lessonFile]: "ordering-review.lesson.json",
+    [REMOTE_MEDIA_FIXTURE.lessonFile]: "remote-media.lesson.json",
 };
 
 /**
@@ -343,6 +364,29 @@ async function openFixtureLesson(page: Page, fixture: FixtureRepo): Promise<void
     await expect(open).toBeVisible({timeout: 15_000});
     await open.click();
     await expect(page.getByTestId("lesson-page")).toBeVisible({timeout: 15_000});
+}
+
+/** The theory step with the foreign image, which renders as a link (#3803). */
+async function gotoRemoteImageLink(page: Page): Promise<boolean> {
+    await openFixtureLesson(page, REMOTE_MEDIA_FIXTURE);
+    await expect(page.getByTestId("markdown-remote-image")).toBeVisible({timeout: 10_000});
+    return true;
+}
+
+/** The lesson summary's "Vertiefe das Thema" with the YouTube card's local
+ *  placeholder (#3803). */
+async function gotoVideoCardPlaceholder(page: Page): Promise<boolean> {
+    await openFixtureLesson(page, REMOTE_MEDIA_FIXTURE);
+    await page.getByTestId("lesson-next").click();
+    await expect(page.getByTestId("multiple-choice-exercise")).toBeVisible({timeout: 10_000});
+    await page.getByRole("radio", {name: "Zwei Kerne mit gleicher Erbinformation"}).check();
+    const check = page.getByTestId("lesson-check");
+    await expect(check).toBeEnabled({timeout: 5_000});
+    await check.click();
+    await page.getByTestId("lesson-next").click();
+    await expect(page.getByTestId("lesson-resources")).toBeVisible({timeout: 15_000});
+    await expect(page.getByTestId("youtube-thumbnail-placeholder")).toBeVisible({timeout: 10_000});
+    return true;
 }
 
 async function gotoExerciseExplanation(page: Page): Promise<boolean> {
@@ -1427,10 +1471,9 @@ async function gotoOwnSetAiCheckButton(page: Page): Promise<boolean> {
     return true;
 }
 
-async function gotoAiFixReview(page: Page): Promise<boolean> {
-    await pinRandomness(page);
-    await seedLearner(page);
-    await mockAnthropicReview(page);
+/** Store an Anthropic key, create an own set and open its AI check up to the
+ *  confirm step (cost estimate + privacy note). Sends nothing to the provider. */
+async function openOwnSetAiCheckConfirm(page: Page): Promise<void> {
     await page.goto("/settings?tab=ai");
     const keyInput = page.getByTestId("api-key-input-anthropic");
     await expect(keyInput).toBeVisible({timeout: 15_000});
@@ -1444,6 +1487,26 @@ async function gotoAiFixReview(page: Page): Promise<boolean> {
     await expect(check).toBeEnabled({timeout: 15_000});
     await check.click();
     await expect(page.getByTestId("ai-validation-estimate")).toBeVisible({timeout: 15_000});
+}
+
+/** The AI check's confirm step (#3812, #3840): the note says what the check
+ *  sends (the set's cards with identifier, front, back and notes, plus the
+ *  set's source language, target language and level, neither profile nor
+ *  progress, and among other things IP address and key) and links the
+ *  privacy policy. The run is not started. */
+async function gotoAiCheckPrivacyNote(page: Page): Promise<boolean> {
+    await pinRandomness(page);
+    await seedLearner(page);
+    await openOwnSetAiCheckConfirm(page);
+    await expect(page.getByTestId("ai-validation-privacy-link")).toBeVisible();
+    return true;
+}
+
+async function gotoAiFixReview(page: Page): Promise<boolean> {
+    await pinRandomness(page);
+    await seedLearner(page);
+    await mockAnthropicReview(page);
+    await openOwnSetAiCheckConfirm(page);
     await page.getByTestId("ai-validation-confirm-run").click();
     await expect(page.getByTestId("ai-validation-report")).toBeVisible({timeout: 20_000});
     await page.getByTestId("ai-validation-fix-open").click();
@@ -1615,6 +1678,11 @@ const FEATURES: FeatureShot[] = [
         path: "ai-check/eigenes-set-pruefen",
         setup: gotoOwnSetAiCheckButton,
         pinTo: "content-my-lessons",
+    },
+    {
+        path: "ai-check/datenschutz-hinweis",
+        setup: gotoAiCheckPrivacyNote,
+        pinTo: "ai-validation-confirm",
     },
     // --- Installed-plugins card, Plugins tab (#3055) ----------------------
     {
@@ -1863,6 +1931,9 @@ const FEATURES: FeatureShot[] = [
 
     // --- Post-answer explanation (#2991) --------------------------------
     {path: "exercise-explanation/falsche-antwort", setup: gotoExerciseExplanation, pinTo: "exercise-explanation"},
+    // --- Content from another server loads nothing (#3803) ---------------
+    {path: "content-privacy/bild-als-link", setup: gotoRemoteImageLink, pinTo: "lesson-theory-body"},
+    {path: "content-privacy/video-karte", setup: gotoVideoCardPlaceholder, pinTo: "lesson-resources"},
     // --- Explanation authoring: assistant opt-in + editor field (#2992) --
     // #3088: both motifs are small elements, so the pin sits on the block
     // ABOVE them (type selection / the field's own label) and clears the

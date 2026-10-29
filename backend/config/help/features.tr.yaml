@@ -53,7 +53,7 @@ entries:
 
   - key: feature_auto_loop
     title: Otomatik Döngü
-    short: "Adım 7'nin ardından, yeni içerikle yeni bir döngü otomatik olarak başlar."
+    short: "Masaüstü uygulamasında adım 7'nin ardından yeni içerikle yeni bir döngü otomatik olarak başlar; tarayıcı sürümünde oturum adım 7'de kalır."
     long: |
       ## Otomatik döngü nedir?
 
@@ -61,6 +61,11 @@ entries:
       müfredatınızdaki bir sonraki konuyla yeni bir döngüyü
       otomatik olarak başlatabilir — "sonraki döngü" düğmesine
       basmanıza gerek kalmadan.
+
+      Yalnızca masaüstü uygulamasında: Tarayıcı sürümünde oturum
+      7. adımda kalır ve oturum sayfası bunu size söyler. Öğrenmeye
+      devam etmek için oturumu orada bitirin ve yeni bir oturum
+      başlatın.
 
       ## Bir sonraki konu nasıl seçilir
 

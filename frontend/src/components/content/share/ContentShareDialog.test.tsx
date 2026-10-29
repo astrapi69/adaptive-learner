@@ -1,0 +1,102 @@
+/**
+ * ContentShareDialog (#3812): the privacy note of the AI review before
+ * sharing names the provider in the UI language. It must never show the raw
+ * provider id ("anthropic") or the English "the AI provider" inside a
+ * sentence of another language.
+ */
+
+import "@testing-library/jest-dom/vitest";
+import type { ReactNode } from "react";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+
+import type { UseContentSharingResult } from "../../../hooks/content/useContentSharing";
+
+const catalog = vi.hoisted(
+  (): Record<string, string> => ({
+    "content.ai_validation.privacy":
+      "Für die Prüfung erhält {provider} die Lektionen, die du teilen willst (unter anderem Karten, Texte und Übungen), dazu Ausgangssprache, Zielsprache und Niveau des Sets, aber weder dein Profil noch deinen Lernfortschritt. Außerdem erhält {provider}, wie bei jeder KI-Anfrage, unter anderem deine IP-Adresse und deinen API-Schlüssel.",
+    "content.ai_validation.provider_fallback": "dein KI-Anbieter",
+    "settings.provider_anthropic": "Anthropic Claude",
+    "settings.provider_gemini": "Google Gemini",
+  }),
+);
+
+vi.mock("../../../hooks/ui/useI18n", () => ({
+  useI18n: () => ({
+    t: (key: string, fallback?: string) => catalog[key] ?? fallback ?? key,
+    lang: "de",
+  }),
+}));
+
+// The wizard itself is covered by its own tests; here it only has to render
+// the AI section the dialog hands it.
+vi.mock("./ShareWizard", () => ({
+  default: ({ aiSection }: { aiSection?: ReactNode }) => <div>{aiSection}</div>,
+}));
+
+import ContentShareDialog from "./ContentShareDialog";
+
+/** Render the dialog at the quality step, before the AI review runs. */
+function renderPrivacyNote(activeProvider: string | null): HTMLElement {
+  const share = {
+    shareTarget: { id: "es-a1", title: "Spanisch A1" },
+    shareResult: { ok: true, issues: [] },
+    aiResult: null,
+    aiRunning: false,
+    aiConsent: false,
+    setAiConsent: vi.fn(),
+    appliedFixes: new Set<string>(),
+  } as unknown as UseContentSharingResult;
+  render(
+    <ContentShareDialog
+      share={share}
+      knownSets={[]}
+      repo="astrapi69/adaptive-learner-content"
+      branch="main"
+      hasKey
+      activeProvider={activeProvider}
+      navigate={vi.fn()}
+      onEditUserSet={vi.fn()}
+      onShared={vi.fn()}
+    />,
+  );
+  return screen.getByTestId("content-ai-privacy");
+}
+
+describe("ContentShareDialog privacy note", () => {
+  it("names the active provider by its label in the UI language", () => {
+    const note = renderPrivacyNote("anthropic");
+    expect(note).toHaveTextContent("Für die Prüfung erhält Anthropic Claude die Lektionen");
+    expect(note).toHaveTextContent(
+      "Außerdem erhält Anthropic Claude, wie bei jeder KI-Anfrage, unter anderem deine IP-Adresse",
+    );
+    expect(note).not.toHaveTextContent(/\banthropic\b/);
+  });
+
+  it("uses the localized fallback when no provider is active", () => {
+    const note = renderPrivacyNote(null);
+    expect(note).toHaveTextContent("Für die Prüfung erhält dein KI-Anbieter die Lektionen");
+    expect(note).toHaveTextContent(
+      "Außerdem erhält dein KI-Anbieter, wie bei jeder KI-Anfrage, unter anderem deine IP-Adresse",
+    );
+    expect(note).not.toHaveTextContent("the AI provider");
+  });
+
+  // #3840 - the note names the provider in both of its sentences, so every
+  // {provider} is filled, not only the first.
+  it.each([["anthropic"], [null]])(
+    "leaves no {provider} placeholder unfilled (active provider %s)",
+    (provider) => {
+      expect(renderPrivacyNote(provider)).not.toHaveTextContent("{provider}");
+    },
+  );
+
+  it.each([
+    ["gemini", "erhält Google Gemini die Lektionen"],
+    // A provider without a label key keeps its id: there is no better name.
+    ["mistral", "erhält mistral die Lektionen"],
+  ])("names provider %s as %j", (provider, expected) => {
+    expect(renderPrivacyNote(provider)).toHaveTextContent(expected);
+  });
+});

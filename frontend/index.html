@@ -2,6 +2,17 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8"/>
+    <!-- #3803: GitHub Pages sends no security headers, so the page carries
+         them itself. Images and media come only from the app, embedded
+         data, object URLs (downloaded set assets) and the content
+         repositories' raw host; the browser refuses any other host, should
+         a renderer regress. Nothing else is restricted: AI providers and
+         GitHub content are fetched by design. API mode sends the same
+         img-src and media-src as a header (backend/app/frontend_static.py).
+         No Referer goes to any host, as in API mode. Both tags stay before
+         every link and script, or they would not govern them. -->
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data: blob: https://raw.githubusercontent.com; media-src 'self' data: blob: https://raw.githubusercontent.com"/>
+    <meta name="referrer" content="no-referrer"/>
     <!-- #1569 — iOS auto-zoom-on-input-focus: suppress via maximum-scale.
          The #1353 16px-floor is the primary (WCAG-safe) defence and stays;
          this is a belt-and-suspenders for the reported case where focus-zoom

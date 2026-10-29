@@ -1,9 +1,22 @@
-import { describe, it, expect } from "vitest";
+import "fake-indexeddb/auto";
 
+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
+
+import { _resetDbForTests } from "../dexie/db";
+import { dexiePluginSettings } from "../dexie/dexie-plugin-settings";
 import {
+  DEFAULT_EXTRACTION_LIMIT,
+  aiExtractCards,
   buildExtractionPrompt,
   parseExtractedCards,
+  resolveExtractionLimit,
 } from "./anki-extraction";
+
+const aiCompleteMock = vi.hoisted(() => vi.fn(async () => "[]"));
+vi.mock("../ai/ai-providers", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../ai/ai-providers")>()),
+  aiComplete: aiCompleteMock,
+}));
 
 describe("buildExtractionPrompt", () => {
   it("injects the limit and the material", () => {
@@ -67,5 +80,51 @@ describe("parseExtractedCards", () => {
     expect(parseExtractedCards('{"front":"Q"}')).toEqual([]);
     expect(parseExtractedCards("")).toEqual([]);
     expect(parseExtractedCards(null)).toEqual([]);
+  });
+});
+
+describe("resolveExtractionLimit (#3435)", () => {
+  it.each([
+    ["a positive integer", 12, 12],
+    ["a numeric string", "12", 12],
+    ["zero", 0, DEFAULT_EXTRACTION_LIMIT],
+    ["a negative number", -3, DEFAULT_EXTRACTION_LIMIT],
+    ["a fraction", 2.5, DEFAULT_EXTRACTION_LIMIT],
+    ["a boolean", true, DEFAULT_EXTRACTION_LIMIT],
+    ["a missing value", undefined, DEFAULT_EXTRACTION_LIMIT],
+    ["text", "many", DEFAULT_EXTRACTION_LIMIT],
+  ])("reads %s as the right limit", (_label, value, expected) => {
+    expect(resolveExtractionLimit(value)).toBe(expected);
+  });
+});
+
+describe("aiExtractCards uses the plugin's extraction_limit (#3435)", () => {
+  const config = { provider: "anthropic" as const, model: "m", apiKey: "k" };
+
+  beforeEach(async () => {
+    await _resetDbForTests();
+    aiCompleteMock.mockClear();
+  });
+
+  afterEach(async () => {
+    await _resetDbForTests();
+  });
+
+  function promptSent(): string {
+    const call = aiCompleteMock.mock.calls[0] as unknown as [
+      { messages: { content: string }[] },
+    ];
+    return call[0].messages[0].content;
+  }
+
+  it("asks for the bundled default on a fresh install", async () => {
+    await aiExtractCards(config, "material");
+    expect(promptSent()).toContain(`extract up to ${DEFAULT_EXTRACTION_LIMIT} high-value`);
+  });
+
+  it("asks for a stored limit", async () => {
+    await dexiePluginSettings.update("anki", { settings: { extraction_limit: 3 } });
+    await aiExtractCards(config, "material");
+    expect(promptSent()).toContain("extract up to 3 high-value");
   });
 });

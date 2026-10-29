@@ -60,6 +60,25 @@ describe("deriveSearchableSet", () => {
     });
   });
 
+  it("defaults an absent source language to en, as the engine and My content do (#3395)", () => {
+    const result = deriveSearchableSet(set({ target_language: "es" }), "jane/deck", "Jane's Deck", 0);
+    expect(result?.source_language).toBe("en");
+  });
+
+  it.each([
+    { given: "generated", expected: "generated" },
+    { given: "reviewed", expected: "reviewed" },
+    { given: "bogus", expected: "authored" },
+  ])("reads review_status $given as the engine does ($expected)", ({ given, expected }) => {
+    const result = deriveSearchableSet(
+      set({ review_status: given as ParsedSet["review_status"] }),
+      "jane/deck",
+      "Jane's Deck",
+      0,
+    );
+    expect(result?.review_status).toBe(expected);
+  });
+
   it("falls back to the legacy 'language' alias when target_language is absent", () => {
     const result = deriveSearchableSet(
       set({ target_language: undefined, language: "es" }),

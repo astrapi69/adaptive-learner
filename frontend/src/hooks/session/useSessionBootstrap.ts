@@ -21,6 +21,8 @@ import {useEffect} from "react";
 import type {NavigateFunction} from "react-router";
 
 import {ApiError} from "../../api/client";
+import {isDevMode} from "../../hooks/settings/useDevMode";
+import {inlineErrorText} from "../../utils/errorMessages";
 import {LEARNING_METHODS} from "../../lib/constants";
 import {readLearnerState} from "../../lib/learning/learnerState";
 import {getStorage} from "../../storage";
@@ -170,9 +172,7 @@ export function useSessionBootstrap({
             })
             .catch((err) => {
                 if (cancelled) return;
-                const detail =
-                    err instanceof ApiError ? err.detail : t("common.error");
-                setStartError(detail);
+                setStartError(inlineErrorText(err, t("common.error"), isDevMode()));
                 setLoading(false);
             });
         return () => {

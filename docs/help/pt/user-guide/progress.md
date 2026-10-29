@@ -77,7 +77,8 @@ passam inalteradas.
 
 ## Exportações
 
-Três tipos de exportação via Definições → Exportar, todos
+Três tipos de exportação via Definições > Dados > Cópia de
+segurança e exportação > Exportar, todos
 idênticos em forma nos modos de armazenamento:
 
 - **Relatório de Progresso** - a página de Progresso completa
@@ -86,6 +87,9 @@ idênticos em forma nos modos de armazenamento:
   de passo de uma única sessão.
 - **Visão Geral do Currículo** - a árvore de tópicos + resumos
   de lições de um único currículo.
+
+Os relatórios saem no idioma da interface, em qualquer um dos idiomas
+que a aplicação oferece.
 
 O Markdown é gerado do lado do cliente; o PDF usa a impressão
 para PDF do navegador (abrir um iframe oculto com uma folha de

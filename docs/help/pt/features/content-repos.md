@@ -101,6 +101,38 @@ badge **Oficialmente recomendado** (Trust 3).
 
 ---
 
+## Registar o teu próprio repositório
+
+Em **Configurações → Dados → Fontes**, **Registe o seu repositório**
+propõe o teu próprio repositório de conteúdo para o diretório oficial
+(`recommended-repos.json`) que a pesquisa entre repositórios lê.
+
+1. Escolhe um dos teus repositórios ligados, ou introduz o URL do
+   GitHub e o ramo; depois dá-lhe um título e, se quiseres, uma
+   descrição de uma linha.
+2. **Preparar envio**: a aplicação consulta o commit atual do
+   repositório, corre a mesma verificação técnica que ao ligar um
+   repositório, lê os pares de idiomas do `search-index.json` do
+   repositório e mostra a entrada de diretório pronta. Um estado
+   diz-te se a entrada está *Validado localmente* ou *Pendente; a CI
+   vai validar*.
+3. Envia-a por um de dois caminhos:
+    - **Copiar entrada** e **Abrir o diretório para propor**: o GitHub
+      abre o ficheiro do diretório para edição; cola a entrada no array
+      e escolhe "Propose changes". O GitHub cria o fork por ti. Não é
+      preciso token.
+    - **Criar pedido de integração**: com um token do GitHub
+      (Configurações → Integrações), a aplicação abre ela própria o
+      pull request e mostra-te a ligação. Só está disponível na versão
+      de navegador da aplicação; na aplicação de computador o botão
+      fica visível mas desativado.
+
+O pull request fica visível publicamente no GitHub assim que é criado.
+Um mantenedor revê-o e integra-o se a CI do diretório tiver validado com
+sucesso o commit fixado e a entrada for adequada.
+
+---
+
 ## Avaliações locais
 
 Podes atribuir **estrelas** localmente a cada repo. Esta avaliação
@@ -125,4 +157,4 @@ partilhar as definições.
 
 - [Navegador de Conteúdo](content-browser.md) - encontrar, filtrar, descarregar conjuntos
 - [Criar lições](../content-creation/overview.md) - contribuir com conteúdos próprios
-- [Backup e restauro](backup.md) - os repos ligados ainda não fazem parte do backup, volta a ligá-los depois de restaurar
+- [Backup e restauro](backup.md) - os repos ligados e os convites utilizados viajam com o backup

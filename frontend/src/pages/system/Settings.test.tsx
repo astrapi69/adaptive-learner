@@ -726,8 +726,9 @@ describe("Settings page", () => {
     const { ApiError } = await import("../../api/client");
     apiGet.mockRejectedValue(new ApiError(500, "DB down"));
     renderSettings();
-    await screen.findByTestId("settings-error");
-    expect(screen.getByTestId("settings-error").textContent).toContain("DB down");
+    const panel = await screen.findByTestId("settings-error");
+    // #3374 - friendly status text, never the backend detail.
+    expect([panel.textContent?.includes("An internal error occurred."), panel.textContent?.includes("DB down")]).toEqual([true, false]);
   });
 
 

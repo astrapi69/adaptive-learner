@@ -214,3 +214,25 @@ def test_post_reset_does_not_call_service_on_wrong_token(client, monkeypatch):
     resp = client.post("/api/reset", json={"confirmation": "rEsEt"})
     assert resp.status_code == 400
     assert called["n"] == 0
+
+
+# --- #3423: the confirmation gate lives in the service ----------------------
+
+
+@pytest.mark.parametrize(
+    "confirmation",
+    ["reset", "", " RESET", "RESET ", "RESETT"],
+    ids=["lowercase", "empty", "leading-space", "trailing-space", "typo"],
+)
+def test_require_confirmation_rejects_anything_but_the_exact_token(confirmation: str) -> None:
+    from app.exceptions import ValidationError
+    from app.services import reset_service
+
+    with pytest.raises(ValidationError, match="mismatch"):
+        reset_service.require_confirmation(confirmation)
+
+
+def test_require_confirmation_accepts_the_exact_token() -> None:
+    from app.services import reset_service
+
+    reset_service.require_confirmation(reset_service.CONFIRMATION_TOKEN)

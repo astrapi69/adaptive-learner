@@ -12,6 +12,7 @@ import {
     buildSystemPrompt,
     chunkMessages,
     deterministicFallback,
+    withoutLegacyFallbackText,
     mergeAnalyses,
     parseAnalysisResponse,
 } from "./analysis";
@@ -371,6 +372,49 @@ describe("deterministicFallback", () => {
         const result = deterministicFallback("Title");
         expect(result.fallback_used).toBe(true);
         expect(result.topic).toBe("Title");
+    });
+
+    it.each([
+        ["a title", "Title", {topic: "Title", fallback_used: true}],
+        ["a blank title", "   ", {fallback_used: true}],
+        ["no title", undefined, {fallback_used: true}],
+    ])("persists no English placeholder for %s (#3424)", (_label, title, expected) => {
+        expect(deterministicFallback(title)).toEqual(expected);
+    });
+});
+
+describe("withoutLegacyFallbackText (#3424)", () => {
+    const legacySummary =
+        "The AI response could not be parsed into structured analysis. " +
+        "You can re-run the analysis, or pick a different AI provider.";
+
+    it.each([
+        [
+            "a legacy fallback with the placeholder topic",
+            {topic: "Unrecognised topic", summary: legacySummary, fallback_used: true},
+            {fallback_used: true},
+        ],
+        [
+            "a legacy fallback with the conversation title",
+            {topic: "Spanish chat", summary: legacySummary, fallback_used: true},
+            {topic: "Spanish chat", fallback_used: true},
+        ],
+        [
+            "a merged result whose summary came from a parsed chunk",
+            {topic: "Bayes", summary: "Real summary.", fallback_used: true},
+            {topic: "Bayes", summary: "Real summary.", fallback_used: true},
+        ],
+        [
+            "a result without fallback",
+            {topic: "Unrecognised topic", summary: legacySummary},
+            {topic: "Unrecognised topic", summary: legacySummary},
+        ],
+    ])("handles %s", (_label, input, expected) => {
+        expect(withoutLegacyFallbackText(input)).toEqual(expected);
+    });
+
+    it("passes null through", () => {
+        expect(withoutLegacyFallbackText(null)).toBeNull();
     });
 });
 

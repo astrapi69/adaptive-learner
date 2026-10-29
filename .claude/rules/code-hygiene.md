@@ -19,42 +19,18 @@ Automated enforcement of code quality. These rules make every commit look consis
 
 ### Python (Backend + Plugins)
 
-```toml
-# backend/pyproject.toml
-[tool.ruff]
-target-version = "py311"
-line-length = 100
+`backend/pyproject.toml` `[tool.ruff]` is the source of truth (#3423):
+py312, line length 100, `select` E, W, F, I, B, UP, BLE. A broad
+`except` logs with `exc_info=True` or carries a reasoned
+`# noqa: BLE001`; `backend/tests/test_no_silent_broad_except.py` also
+fails a handler that neither logs nor raises.
 
-[tool.ruff.lint]
-select = [
-  "E",    # pycodestyle errors
-  "W",    # pycodestyle warnings
-  "F",    # pyflakes
-  "I",    # isort
-  "N",    # pep8-naming
-  "UP",   # pyupgrade
-  "B",    # flake8-bugbear
-  "SIM",  # flake8-simplify
-  "TCH",  # flake8-type-checking
-]
-ignore = [
-  "E501",  # line-length (handled by the formatter)
-]
-
-[tool.ruff.lint.isort]
-known-first-party = ["app"]
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-```
-
-Commands:
+Commands (from `backend/`, so the plugins use the same config):
 
 ```bash
-cd backend && poetry run ruff check .         # lint
-cd backend && poetry run ruff check --fix .   # auto-fix
-cd backend && poetry run ruff format .        # format
+poetry run ruff check app/ ../plugins/          # lint (CI + make test-fast)
+poetry run ruff check --fix app/ ../plugins/    # auto-fix
+poetry run ruff format app/ ../plugins/         # format (CI: --check)
 ```
 
 ### TypeScript (Frontend)
@@ -112,7 +88,8 @@ Automatic checks before every commit, defined in `.pre-commit-config.yaml`
 
 - `pre-commit-hooks`: trailing whitespace, end-of-file, YAML/JSON syntax,
   large files, merge-conflict markers.
-- `ruff` + `ruff-format` (astral-sh/ruff-pre-commit) on `backend/app/`.
+- `ruff-check` + `ruff-format` (astral-sh/ruff-pre-commit) on `backend/app/`
+  and `plugins/` (with `--config=backend/pyproject.toml`, #3658).
 - `eslint`: `cd frontend && npx eslint src/` on staged `frontend/src` `.ts`/`.tsx`.
 - Repo-local guards: `plugin-lock-paired-with-pyproject`,
   `validate-bundled-content`, `i18n-script-sanity` (de/el/hi catalogs),

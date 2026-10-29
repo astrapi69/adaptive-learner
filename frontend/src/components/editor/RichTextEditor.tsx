@@ -6,7 +6,8 @@
  * (paragraphs / headings / lists / bold / italic / strike /
  * code / blockquote / horizontalRule / hardBreak / history),
  * plus Underline, TextAlign, Link, Placeholder, CharacterCount,
- * TaskList + TaskItem, Highlight, Typography, Focus, Image,
+ * TaskList + TaskItem, Highlight, Typography, Focus, Image (as
+ * ``LocalImage``: never loads a picture from another host, #3803),
  * Subscript / Superscript, TextStyle + Color, Tables (table /
  * row / cell / header). Code-block syntax highlighting via
  * CodeBlockLowlight lands in Phase 27D.
@@ -44,7 +45,6 @@ import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import Typography from "@tiptap/extension-typography";
 import Focus from "@tiptap/extension-focus";
-import Image from "@tiptap/extension-image";
 import {Table} from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
@@ -53,6 +53,7 @@ import type {JSONContent} from "@tiptap/core";
 import {useEffect, useRef, type CSSProperties} from "react";
 
 import {codeBlockExtension} from "./code-block-config";
+import LocalImage from "./local-image";
 import EditorContextMenu from "./EditorContextMenu";
 
 interface Props {
@@ -134,7 +135,7 @@ export default function RichTextEditor({
             Superscript,
             Typography,
             Focus.configure({className: "has-focus", mode: "shallowest"}),
-            Image,
+            LocalImage,
             Table.configure({resizable: false}),
             TableRow,
             TableCell,

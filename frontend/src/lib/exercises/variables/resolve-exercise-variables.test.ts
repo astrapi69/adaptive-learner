@@ -8,12 +8,7 @@
 
 import {describe, expect, it} from "vitest";
 
-import {
-    evaluateExpression,
-    formatVariableValue,
-    resolveExerciseVariables,
-    sampleVariable,
-} from "./resolve-exercise-variables";
+import {evaluateExpression, resolveExerciseVariables} from "./resolve-exercise-variables";
 import type {ContentLessonExercise} from "../../../storage/types";
 
 /** A minimal free_text exercise, mirroring the engine docs' own worked
@@ -38,13 +33,38 @@ function makeParametricExercise(
     } as ContentLessonExercise;
 }
 
+type VariableSpec = NonNullable<ContentLessonExercise["variables"]>[number];
+
+/** Resolves a one-variable exercise whose prompt is just the reference, so
+ *  the drawn value and the text the learner reads come back together. The
+ *  sampling and formatting cases below run through the public resolver:
+ *  since #3346 both live in the engine (engine#220), which ported these
+ *  cases unchanged. */
+function resolveOne(
+    variable: VariableSpec,
+    options: Parameters<typeof resolveExerciseVariables>[1],
+): {value: number; text: string} {
+    const {exercise, values} = resolveExerciseVariables(
+        {
+            id: "v",
+            type: "free_text",
+            prompt: `{{${variable.name}}}`,
+            card_ids: [],
+            distractors: [],
+            variables: [variable],
+        } as ContentLessonExercise,
+        options,
+    );
+    return {value: values[variable.name], text: exercise.prompt as string};
+}
+
 // ---------------------------------------------------------------------------
-// sampleVariable — min/max/step, integers by default
+// sampling — min/max/step, integers by default
 // ---------------------------------------------------------------------------
-describe("sampleVariable", () => {
+describe("sampling a variable", () => {
     it("draws an integer in [min, max] when step is absent", () => {
         for (let i = 0; i < 200; i++) {
-            const value = sampleVariable({name: "a", min: 1, max: 20}, Math.random);
+            const {value} = resolveOne({name: "a", min: 1, max: 20}, {random: Math.random});
             expect(Number.isInteger(value)).toBe(true);
             expect(value).toBeGreaterThanOrEqual(1);
             expect(value).toBeLessThanOrEqual(20);
@@ -52,18 +72,18 @@ describe("sampleVariable", () => {
     });
 
     it("draws the minimum when random() returns 0", () => {
-        expect(sampleVariable({name: "a", min: 5, max: 9}, () => 0)).toBe(5);
+        expect(resolveOne({name: "a", min: 5, max: 9}, {random: () => 0}).value).toBe(5);
     });
 
     it("draws the maximum when random() approaches 1", () => {
-        expect(sampleVariable({name: "a", min: 5, max: 9}, () => 0.999999)).toBe(9);
+        expect(resolveOne({name: "a", min: 5, max: 9}, {random: () => 0.999999}).value).toBe(9);
     });
 
     it("respects a fractional step, landing only on the grid", () => {
         for (let i = 0; i < 200; i++) {
-            const value = sampleVariable(
+            const {value} = resolveOne(
                 {name: "b", min: 1, max: 20, step: 0.5},
-                Math.random,
+                {random: Math.random},
             );
             // On the min + k*step grid: (value - min) / step is a whole number.
             expect(Number.isInteger(Math.round((value - 1) / 0.5))).toBe(true);
@@ -75,14 +95,14 @@ describe("sampleVariable", () => {
     it("never exceeds max on a step grid that doesn't divide evenly", () => {
         // (10 - 1) / 3 = 3, so the grid is 1, 4, 7, 10 - stops at 10, never past.
         for (let i = 0; i < 100; i++) {
-            const value = sampleVariable({name: "c", min: 1, max: 10, step: 3}, Math.random);
+            const {value} = resolveOne({name: "c", min: 1, max: 10, step: 3}, {random: Math.random});
             expect(value).toBeLessThanOrEqual(10);
             expect([1, 4, 7, 10]).toContain(value);
         }
     });
 
     it("draws the sole value when min equals max", () => {
-        expect(sampleVariable({name: "a", min: 7, max: 7}, Math.random)).toBe(7);
+        expect(resolveOne({name: "a", min: 7, max: 7}, {random: Math.random}).value).toBe(7);
     });
 });
 
@@ -139,28 +159,79 @@ describe("evaluateExpression", () => {
 });
 
 // ---------------------------------------------------------------------------
-// formatVariableValue — integers without decimals, step-implied precision
+// display text — integers without decimals, step-implied precision
 // ---------------------------------------------------------------------------
-describe("formatVariableValue", () => {
+describe("the text a resolved value reads as", () => {
     it("formats a whole number without a decimal point", () => {
-        expect(formatVariableValue(7, undefined)).toBe("7");
-        expect(formatVariableValue(7, 0.5)).toBe("7");
+        expect(resolveOne({name: "a", min: 1, max: 20}, {values: {a: 7}}).text).toBe("7");
+        expect(resolveOne({name: "a", min: 1, max: 20, step: 0.5}, {values: {a: 7}}).text).toBe("7");
     });
 
     it("formats a step-0.5 value with exactly one decimal, no float noise", () => {
-        // 1 + 1 * 0.5 famously drifts to 1.5000000000000002 in IEEE754 chains.
-        const drifted = 1 + 1 * 0.5 + Number.EPSILON * 1e10 * 0; // representative case below
-        expect(formatVariableValue(1.5, 0.5)).toBe("1.5");
-        expect(formatVariableValue(1.5000000001, 0.5)).toBe("1.5");
-        expect(drifted).toBeCloseTo(1.5);
+        const variable = {name: "a", min: 1, max: 20, step: 0.5};
+        expect(resolveOne(variable, {values: {a: 1.5}}).text).toBe("1.5");
+        expect(resolveOne(variable, {values: {a: 1.5000000001}}).text).toBe("1.5");
     });
 
     it("formats a step-0.25 value with exactly two decimals", () => {
-        expect(formatVariableValue(1.25, 0.25)).toBe("1.25");
+        expect(
+            resolveOne({name: "a", min: 1, max: 20, step: 0.25}, {values: {a: 1.25}}).text,
+        ).toBe("1.25");
     });
 
     it("formats a computed (step-less) non-integer without long float noise", () => {
-        expect(formatVariableValue(0.1 + 0.2, undefined)).toBe("0.3");
+        expect(resolveOne({name: "s", expression: "0.1 + 0.2"}, {}).text).toBe("0.3");
+    });
+});
+
+// ---------------------------------------------------------------------------
+// #3346 - what changed with the engine's single grammar
+// ---------------------------------------------------------------------------
+describe("one grammar with the validator (#3346)", () => {
+    it("substitutes a reference written with spaces, which the validator reads as the name", () => {
+        const {exercise} = resolveExerciseVariables(
+            makeParametricExercise({prompt: "Was ist {{ a }} + {{b}}?"}),
+            {values: {a: 3, b: 4, sum: 7}},
+        );
+        expect(exercise.prompt).toBe("Was ist 3 + 4?");
+    });
+
+    it.each([
+        {name: "a leading-dot literal", expression: ".5 + a"},
+        {name: "a unary plus", expression: "+a"},
+    ])("no longer evaluates $name, which the validator rejects", ({expression}) => {
+        expect(() => evaluateExpression(expression, {a: 2})).toThrow();
+    });
+
+    it("replays values stored by the old resolver to the identical instance", () => {
+        // A value set as lesson progress persisted it before #3346: rounded to
+        // display precision (step 0.5 -> one decimal, computed -> six).
+        const stored = {a: 7, b: 3.5, sum: 10.5};
+        const {exercise, values} = resolveExerciseVariables(makeParametricExercise(), {
+            values: stored,
+        });
+        expect(values).toEqual(stored);
+        expect(exercise.prompt).toBe("Was ist 7 + 3.5?");
+        expect(exercise.explanation).toBe("Die Summe von 7 und 3.5 ist 10.5.");
+        expect(exercise.accept).toEqual(["10.5"]);
+    });
+
+    it("replays a stored six-place computed value without re-rounding it", () => {
+        const exercise = makeParametricExercise({
+            variables: [
+                {name: "a", min: 1, max: 1},
+                {name: "b", min: 3, max: 3},
+                {name: "sum", expression: "a / b"},
+            ],
+            prompt: "{{sum}}",
+            accept: [],
+            explanation: "",
+        });
+        const {exercise: resolved, values} = resolveExerciseVariables(exercise, {
+            values: {a: 1, b: 3, sum: 0.333333},
+        });
+        expect(values.sum).toBe(0.333333);
+        expect(resolved.prompt).toBe("0.333333");
     });
 });
 

@@ -42,7 +42,8 @@ short page.
   settings.
 - **Continue learning** (paused lessons) - lessons you paused,
   most recently paused first. Opening one asks whether to resume
-  or start over. Hidden when no lesson is paused.
+  or start over; a started exam starts over, and the app tells you
+  why. Hidden when no lesson is paused.
 - **Focus areas** - an analysis of the mistakes you made in
   lessons: your challenge areas, error counts, mastery progress
   and **Start adaptive lesson**. Hidden when there are no errors

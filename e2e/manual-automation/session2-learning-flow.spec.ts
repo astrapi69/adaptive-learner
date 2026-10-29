@@ -105,16 +105,18 @@ test.describe("Session 2 — Learning flow", () => {
     // A → B: left then right forms a pair (number badge appears).
     await page.getByTestId("matching-left-0").click();
     await page.getByTestId("matching-right-0").click();
-    await expect(page.getByTestId("matching-pair-badge-1").first()).toBeVisible();
-
-    // Undo by tapping the paired left again.
-    await page.getByTestId("matching-left-0").click();
-    await expect(page.getByTestId("matching-pair-badge-1")).toHaveCount(0);
+    await expect(page.getByTestId("matching-pair-badge-1")).toHaveCount(2);
 
     // B → A: right FIRST, then left — the #509 reverse-direction path.
-    await page.getByTestId("matching-right-0").click();
+    await page.getByTestId("matching-right-1").click();
+    await page.getByTestId("matching-left-1").click();
+    await expect(page.getByTestId("matching-pair-badge-2")).toHaveCount(2);
+
+    // #3237: tapping a paired tile selects it instead of undoing; the
+    // pair count stays.
     await page.getByTestId("matching-left-0").click();
-    await expect(page.getByTestId("matching-pair-badge-1").first()).toBeVisible();
+    await expect(page.getByTestId("matching-left-0")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByTestId("matching-pair-badge-1")).toHaveCount(2);
   });
 
   test("free-text: input + check shows feedback", async ({ page }) => {
@@ -223,13 +225,11 @@ test.describe("Session 2 — Learning flow", () => {
     ]);
     expect(download.suggestedFilename()).toMatch(/\.md$/);
 
-    // Mark complete → the XP award persists asynchronously. Wait for the
-    // button to disappear (completion finished) before navigating, so the
-    // award is committed to IndexedDB before the Dashboard re-reads it.
-    await page.getByTestId("lesson-summary-mark-complete").click();
-    await expect(page.getByTestId("lesson-summary-mark-complete")).toHaveCount(
-      0,
-    );
+    // #3792 - reaching the summary completes the lesson; the XP award
+    // persists asynchronously. Wait for the completed mark before
+    // navigating, so the award is committed to IndexedDB before the
+    // Dashboard re-reads it.
+    await expect(page.getByTestId("lesson-summary-completed")).toBeVisible();
     // Check on the Dashboard, where the header isn't auto-hidden (the
     // lesson route slides it away on scroll).
     await page.goto("/dashboard");
@@ -237,7 +237,7 @@ test.describe("Session 2 — Learning flow", () => {
     await expect(nav.xpTotal.first()).not.toHaveText("0 XP");
   });
 
-  test("anonymous visitor: mark-complete is disabled with a reason (#1787)", async ({
+  test("anonymous visitor: no completion is saved, and the summary says why (#1787, #3792)", async ({
     page,
   }) => {
     // NO seedLearner — lessons are fully reachable without a profile
@@ -249,9 +249,9 @@ test.describe("Session 2 — Learning flow", () => {
     await content.goto();
     await content.openBundledLesson();
     await lesson.playToSummary();
-    await expect(
-      page.getByTestId("lesson-summary-mark-complete"),
-    ).toBeDisabled();
+    // #3792 - there is no completion button any more; an anonymous run
+    // still says why nothing is saved.
+    await expect(page.getByTestId("lesson-summary-mark-complete")).toHaveCount(0);
     await expect(
       page.getByTestId("lesson-summary-mark-complete-hint"),
     ).toBeVisible();

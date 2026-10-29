@@ -18,6 +18,12 @@
  *                                                  checked more weakly: does
  *                                                  ANY catalog key fit the
  *                                                  prefix/suffix shape.
+ *   {key: "static.dot.path"} / labelKey="..."   -> a key HELD AS DATA (#3676):
+ *                                                  a table or prop that a
+ *                                                  later ``t(entry.key)``
+ *                                                  reads. The value is a
+ *                                                  literal, so it is checked
+ *                                                  like a static key.
  *   t(variableName, fallback)                   -> UNVERIFIABLE by any
  *                                                  static tool. Counted, not
  *                                                  checked - the gate must
@@ -34,6 +40,15 @@
  *  reached via dynamic interpolation, e.g. `content.tree.domain_dog-training`
  *  reached via `` t(`content.tree.domain_${domain}`, ...) ``). */
 const STATIC_KEY_PATTERN = /\bt\(\s*["']([a-z0-9_]+(?:\.[a-z0-9_]+)+)["']/g;
+
+/** ``key: "a.b"``, ``labelKey: "a.b"``, ``name_key: "a.b"``, ``titleKey="a.b"``
+ *  - a catalog key held as data in a property or prop whose name ends in
+ *  ``key`` / ``Key`` (#3676). Same value shape as {@link STATIC_KEY_PATTERN},
+ *  so a storage key with a hyphen (``"adaptive-learner.avatar.frames"``) or
+ *  a single segment (``"streak_3_days"``) never matches. Measured before
+ *  adding it: 252 such literals in the tree, every one a leaf string in all
+ *  11 catalogs once the three keys #3636 removed were restored. */
+const DATA_HELD_KEY_PATTERN = /\b\w*[kK]ey\s*[:=]\s*["']([a-z0-9_]+(?:\.[a-z0-9_]+)+)["']/g;
 
 /** ``t(`a.${expr}.b`, ...)`` - captures the whole template-literal body
  *  (everything between the backticks) for {@link splitDynamicTemplate}
@@ -82,6 +97,14 @@ export interface DynamicKeyPattern {
 export function extractStaticKeys(source: string): string[] {
     const keys: string[] = [];
     for (const match of source.matchAll(STATIC_KEY_PATTERN)) keys.push(match[1]);
+    return keys;
+}
+
+/** Extract every catalog key held as a literal in a ``*key`` / ``*Key``
+ *  property or prop (#3676). */
+export function extractDataHeldKeys(source: string): string[] {
+    const keys: string[] = [];
+    for (const match of source.matchAll(DATA_HELD_KEY_PATTERN)) keys.push(match[1]);
     return keys;
 }
 

@@ -44,10 +44,10 @@ describe("LessonRow", () => {
 
     it("shows stars and per-direction mastery when attempted", () => {
         renderRow(lesson());
-        expect(screen.getByTestId("lesson-row-stars")).toHaveAttribute(
-            "aria-label",
-            "2/3",
-        );
+        // #3425: one image with a localized label, not a bare "2/3" on a span.
+        const stars = screen.getByTestId("lesson-row-stars");
+        expect(stars).toHaveAttribute("role", "img");
+        expect(stars).toHaveAttribute("aria-label", "2 of 3 stars");
         const dots = screen
             .getByTestId("lesson-row-psych-03.json")
             .querySelectorAll("[data-mastery]");

@@ -91,4 +91,4 @@ sobreviven a las recargas del navegador mientras no borres los
 datos del sitio. En el modo Servidor los datos viven en la base de
 datos SQLite del backend FastAPI.
 
-[Cómo funcionan los modos de almacenamiento](settings.md#storage-mode)
+[Cómo funcionan los modos de almacenamiento](settings.md#modo-de-almacenamiento)

@@ -48,7 +48,9 @@ from app.models import (
     UserSettings,
     UserStreak,
     UserXP,
+    XpPurchase,
 )
+from app.schemas import AIProvider
 
 # ---------------------------------------------------------------------------
 # Table classification
@@ -570,6 +572,8 @@ TABLES: dict[str, TableSpec] = {
             "score_correct",
             "score_total",
             "time_spent_seconds",
+            # #3747 - the current run's time, apart from the lifetime total.
+            "run_time_seconds",
             "current_step",
             "started_at",
             "updated_at",
@@ -584,6 +588,8 @@ TABLES: dict[str, TableSpec] = {
             "best_score_correct",
             "best_score_total",
             "attempt_history",
+            # #3365 - the last ten learner actions; the resume reads them.
+            "recent_steps",
         ),
         timestamp_field="updated_at",
         append_only=False,
@@ -714,7 +720,32 @@ TABLES: dict[str, TableSpec] = {
         order=34,
         scope="direct",
     ),
+    # #3445 - XP purchases (avatar frames, mascot variants, arcade games).
+    # Append-only: a purchase is never undone. The id is a uuid5 of
+    # (user, kind, item), so the same purchase pushed from a second device
+    # is a known id and skipped, never a unique-key collision.
+    "xp_purchases": TableSpec(
+        model=XpPurchase,
+        columns=("id", "user_id", "item_kind", "item_id", "cost", "purchased_at"),
+        timestamp_field="purchased_at",
+        append_only=True,
+        order=35,
+        scope="direct",
+    ),
 }
+
+# API keys never leave the install: not in a backup file (#3367) and not on
+# the LAN sync wire (#3854). One field per AI provider, derived from the enum
+# so a new provider is covered without a second edit; the frontend derives
+# its list from AI_PROVIDERS the same way, and a parity test pins the two
+# provider lists (#3367).
+EXCLUDED_USER_SETTINGS_FIELDS: set[str] = {f"api_key_{provider.value}" for provider in AIProvider}
+
+# Tables whose rows are keys (the Fernet rollback cache, #3854). They stay in
+# ``TABLES`` because backup shares the registry, but sync neither serves nor
+# accepts them. Both lists name what is excluded, so a new secret nobody adds
+# to them is synced (#3854, findings).
+SYNC_SECRET_TABLES: frozenset[str] = frozenset({"api_key_backups"})
 
 APPEND_ONLY_TABLES = {name for name, spec in TABLES.items() if spec.append_only}
 MUTABLE_TABLES = {name for name, spec in TABLES.items() if not spec.append_only}

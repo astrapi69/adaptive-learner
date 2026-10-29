@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.16.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.17.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Nachtschicht](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -37,6 +37,11 @@ Englisch unter `/docs/en/`):
   — alle Endpunkte und Modelle
 - [Konfiguration](docs/configuration.md) — Drei-Schichten-Config-
   Kette (env > `secrets.yaml` > DB)
+- [App-Ablauf](docs/reference/APP-FLOW.md): jeder Bildschirm, wie man
+  ihn erreicht, und die Hauptwege durch die App (englisch)
+- [Design-Brief](docs/reference/DESIGN-BRIEF.md): Zielgruppe,
+  Gestaltungsprinzipien, visuelles System und offene Designfragen
+  (englisch)
 
 ## Was du bekommst
 
@@ -67,14 +72,14 @@ nur zusammen). In Kurzform:
 - **Import + Analyse** - Chat-Verlauf-Import (ChatGPT / Claude /
   Gemini / Markdown) mit KI-Analyse zu Curricula, Sitzungen oder
   Offline-Lektionen.
-- **Gamification** - XP, gestufte Badges, Streaks, tägliche
+- **Gamification** - XP, gestufte Badges, Serien, tägliche
   Missionen, Celebrations.
 - **Exporte + Backup** - Anki, NotebookLM, Learning Repository,
   Markdown-/PDF-Berichte, `.alb`-Backups und verschlüsselter
   `.alk`-Schlüssel-Export.
 - **Plattform** - installierbare Offline-PWA, duale Speicherung
-  (Browser-IndexedDB oder self-hosted Server), lokales Netzwerk-Sync,
-  Desktop-Launcher für Linux/macOS/Windows, elf UI-Sprachen.
+  (Browser-IndexedDB oder self-hosted Server), Desktop-Launcher für
+  Linux/macOS/Windows, elf UI-Sprachen.
 - **Barrierefreiheit** - WCAG-AA-Themes, Tastatur-Navigation,
   Screenreader-Unterstützung, reduzierte Bewegung, Vorlesen (TTS).
 
@@ -85,23 +90,37 @@ zunehmenden Aufwands.
 
 ### 1. Online ausprobieren (kein Install)
 
-Die öffentliche PWA läuft im **Local-Modus** — alle Daten
-bleiben in deinem Browser (IndexedDB), KI-Calls gehen direkt
-von der Seite an Anthropic / OpenAI / Gemini mit deinem
-eigenen API-Schlüssel. Kein Backend, keine Installation.
+Die öffentliche PWA läuft im **Local-Modus**: In deinem Browser
+gespeichert werden unter anderem dein Lernfortschritt, deine
+Statistiken, deine Einstellungen und deine API-Schlüssel. Teile
+davon erhalten andere nur, wenn eine Funktion sie braucht, zum
+Beispiel GitHub, wenn die App beim Start von selbst nach neuen
+Inhalten fragt. Ein Beispiel sind auch KI-Aufrufe: Sie gehen direkt
+aus deinem Browser an deinen KI-Anbieter, etwa Anthropic, OpenAI
+oder Google Gemini, mit deinem eigenen API-Schlüssel und ohne Umweg
+über einen Server des Betreibers. Eine Installation braucht es
+nicht.
 
 [**Live-App öffnen →**](https://astrapi69.github.io/adaptive-learner/)
 
-Auf Chrome / Edge / Safari erscheint beim ersten Besuch
-ein „Zum Startbildschirm hinzufügen"-Prompt — annehmen und
-Adaptive Learner wird zu einer eigenständigen PWA, die du
-vom Desktop oder Handy-Startbildschirm aus startest.
+Sobald du auf dem Dashboard bist, zeigen Chrome, Edge und
+andere Chromium-Browser oben eine Karte „Zum Startbildschirm
+hinzufügen“ mit „Installieren“; auf iPhone und iPad zeigt
+Safari dort den Hinweis „Als App installieren“ (Teilen, dann
+„Zum Home-Bildschirm“). Nimmst du an, wird Adaptive Learner
+zu einer eigenständigen PWA, die du vom Desktop oder
+Handy-Startbildschirm aus startest.
 
 ### 2. Desktop-App (nativer Launcher)
 
-Vorgebaute Single-Binary-Executables, die das Backend
-hochfahren und die App in deinem Standardbrowser öffnen.
-Kein Docker, kein Terminal nötig.
+Vorgebaute Single-Binary-Executables, die das Backend für
+dich verwalten und die App in deinem Standardbrowser öffnen.
+Der Launcher steuert Docker selbst: Docker muss installiert
+sein und laufen, Docker- oder Compose-Befehle brauchst du
+aber keine. Die Startanleitung je Plattform (Ausführungsrecht
+unter Linux, Gatekeeper unter macOS, SmartScreen unter
+Windows, Prüfsumme verifizieren) steht unter
+[Desktop-Launcher starten](https://astrapi69.github.io/adaptive-learner/docs/install/launcher/).
 
 Download vom
 [**neuesten GitHub-Release**](https://github.com/astrapi69/adaptive-learner/releases/latest):
@@ -148,6 +167,13 @@ Beide Skripte klonen das getaggte Release nach
 rest), bauen die Docker-Images und starten den Stack unter
 `http://localhost:8501` (ein Port, ein Container; FastAPI
 liefert das statische Frontend und `/api/*` selbst).
+Standardmäßig ist der Port an `127.0.0.1` gebunden, die App
+ist also nur von diesem Rechner aus erreichbar. Sie hat keine
+Anmeldung: Um sie von anderen Geräten aus zu erreichen, setze
+bewusst `ADAPTIVE_LEARNER_BIND_ADDRESS=0.0.0.0` in
+`~/adaptive-learner/.env`, nur in einem Netz, dem du
+vertraust, oder hinter einer eigenen Anmeldeschicht (Reverse
+Proxy mit Basic Auth, VPN).
 
 ```bash
 cd ~/adaptive-learner
@@ -159,7 +185,7 @@ cd ~/adaptive-learner
 ### 4. Entwickler-Setup (Source-Build)
 
 Manuelles Poetry-+-Bun-Setup für Mitwirkende.
-Voraussetzungen: Python 3.11+, Node ≥24, Poetry, Bun 1.3+, Make.
+Voraussetzungen: Python 3.12, Node ≥24, Poetry, Bun 1.4+, Make.
 
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
@@ -175,13 +201,13 @@ Vollständige Setup-Anleitung unter
 
 | Schicht | Technologie |
 |---|---|
-| Backend | Python 3.11+, FastAPI ^0.136, SQLAlchemy ^2.0, Pydantic v2, Alembic, aiosqlite, cryptography (Fernet), platformdirs, Poetry |
-| Frontend | React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, TipTap 2 + 15 Erweiterungen, Dexie 4 (IndexedDB), html5-qrcode, sql.js + jszip |
+| Backend | Python 3.12, FastAPI ^0.141, SQLAlchemy ^2.0, Pydantic v2, Alembic, aiosqlite, cryptography (Fernet), platformdirs, Poetry |
+| Frontend | React 19, TypeScript 6 (strict), Vite 8, React Router 8, react-toastify, Recharts 3, TipTap 3 + offizielle Erweiterungen, Dexie 4 (IndexedDB), html5-qrcode, sql.js + jszip |
 | PWA | vite-plugin-pwa, Workbox SW, Manifest + Maskable-PNG-Icons |
 | Plugins | pluginforge ^0.10.0 (PyPI), identitätsgegated über `target_application = "adaptive_learner"` |
 | KI-Anbieter | Anthropic SDK, OpenAI SDK, google.genai 2.x |
 | Launcher | PyInstaller, cross-OS (Linux + macOS + Windows) |
-| Testing | pytest ^9, Vitest 4 (happy-dom), Playwright (E2E-Smoke) |
+| Testing | pytest ^9, Vitest 5 (happy-dom), Playwright (E2E-Smoke) |
 | Tooling | Poetry, Bun, Docker, Make, ruff, pre-commit |
 
 ## Ausgelieferte Plugins
@@ -198,7 +224,7 @@ Vollständige Setup-Anleitung unter
 | session | /start, /{id}/message, /message/stream, /rate, /end, /switch, /pronunciation/* | 7-Schritt-Zyklen, Dual-Prompt-Eval, Streaming, Auto-Loop, Aussprache-Bewertung |
 | tracking | /progress/{id}, /commits/{id} | Pro-Projekt-Aggregate + Schritt-Evaluations-Insights |
 | tools | /recommendations/{id}, /spaced/{id} | Methoden-bezogene Tool-Liste + Spaced-Practice |
-| gamification | /xp/*, /badges/*, /streak/*, /reset | XP + 28 abgestufte Abzeichen + Streak-Heatmap |
+| gamification | /xp/*, /badges/*, /streak/*, /reset | XP + 28 abgestufte Abzeichen + Serien-Heatmap |
 | anki | /cards CRUD, /extract/{session,conversation}, /mark-exported | KI-extrahierte Karteikarten + .apkg-Export |
 | notebooklm | /questions CRUD, /generate/{session,project}, /study-guide/{id} | Aktive-Recall-Fragen + Studienführer + ZIP-Export |
 | learning-repo | /render/{id}, /export-zip/{id}, /persist/{id} | Git-gestütztes Lern-Repository (Markdown-Artefakte + optionaler Commit) |
@@ -209,16 +235,16 @@ Vollständige Setup-Anleitung unter
 
 ```bash
 make dev               # Backend (18001) + Frontend (15174)
-make test              # Backend + Plugins + Vitest (9708 Tests)
+make test              # Backend + Plugins + Vitest (Anzahl: siehe Tests)
 make test-coverage     # Opt-In-Coverage (CI nachts)
-make sync-versions     # Version über 19 Dateien propagieren
+make sync-versions     # Version in jede abgeleitete Datei übertragen
 make sync-i18n         # Backend-YAML → Frontend-JSON-Bundles
 make docs-serve        # MkDocs-Preview auf :8000 mit Hot-Reload
 make prod / prod-down  # docker-compose-Stack
 ```
 
 E2E-Smoke: `cd e2e && npx playwright test --project=smoke`
-(17 Spec-Dateien).
+(die Specs unter `e2e/smoke/`).
 
 ## Tests
 
@@ -237,7 +263,8 @@ Verifiziert am 2026-09-17 (v2.15.0):
 | Frontend (Vitest) | 10438 |
 | **Gesamt** | **13433** |
 
-Plus 17 Playwright-Smoke-Spec-Dateien, die abdecken: Landing,
+Plus die Playwright-Smoke-Specs unter `e2e/smoke/`, die unter
+anderem abdecken: Landing,
 Onboarding+Assessment, Sitzung (3-Chunk-SSE), Curriculum,
 Einstellungen, Mobile-Viewports, Sync-Pairing, Backup-Roundtrip,
 Multi-Cycle-Auto-Loop, Import + Analyse, MD-Export, Subjects/
@@ -263,23 +290,27 @@ die In-Repo-Dateien oben sind für Mitwirkende.
 
 ## Status
 
-Aktive Entwicklung. Das aktuelle Release ist **v2.16.0**: Fehler, die
-bisher verschwanden, **sagen jetzt, was los ist**. Eine gescheiterte
-Tutor-Antwort zeigt einen Hinweis mit „Erneut versuchen", ein Verlauf, der
-nicht geladen werden konnte, sagt das, eine abgestürzte Seite bietet einen
-Rückweg und eine Fehlermeldung an, und Aktionen in den Einstellungen,
-Exporte und der Lektionsfortschritt scheitern nicht mehr still.
-Übungseditor, Teilen-Prüfung und Repository-Prüfung folgen **einem
-Regelwerk**, dem der Content-Engine, und die Desktop-App löst Zuordnungen
-aus Karten auf. **Backups** enthalten jedes gespeicherte Feld und lassen
-sich zwischen Desktop-App und Browser-Version wiederherstellen, dazu kommen
-Telefon-Korrekturen für das kompakte Menü unter 1280 px und das Dashboard.
-Vollständige Notizen:
-[`changelog/releases/v2.16.0.md`](changelog/releases/v2.16.0.md).
+Aktive Entwicklung. Das aktuelle Release ist **v2.17.0**, ein
+**Datenschutz-Release**: Die Datenschutzerklärung ist neu geschrieben, in
+allen acht Hilfesprachen da und beschreibt, wann und wohin Daten dein Gerät
+verlassen. Die Dokumentationsseiten laden nichts mehr von anderen Servern als
+GitHub Pages, und ein Fehlerbericht enthält Umgebungsinformationen und
+Aktionsverlauf nur, wenn du sie ankreuzt. Das Lektionsende führt jetzt zum
+**Korrigieren**: Hatte ein Durchgang Fehler, bietet die kompakte
+Zusammenfassung „Fehler korrigieren" an, und die ausführliche Auswertung
+zeigt bei jedem Fehler, ob er korrigiert oder noch offen ist. Bringt ein Set
+eigene Bewertungsregeln mit, wird eine Prüfung danach bewertet. **Backups**
+enthalten jetzt auch verbundene Repositories, eingelöste Einladungen und
+KI-Prüfberichte, und das importierte Backup eines anderen Profils landet im
+aktiven Profil. Ein Backup aus v2.17.0 spielst du nur in v2.17.0 oder neuer
+ein. Vollständige Notizen:
+[`changelog/releases/v2.17.0.md`](changelog/releases/v2.17.0.md).
 
 Frühere Releases, neueste zuerst (vollständige Details in
 [`changelog/releases/`](changelog/releases/)):
 
+- **v2.16.0** - Fehler, die bisher verschwanden, sagen, was los ist (eine gescheiterte Tutor-Antwort, ein Verlauf, der nicht geladen werden konnte, eine abgestürzte Seite, Aktionen in den Einstellungen, Exporte, Lektionsfortschritt), Übungseditor, Teilen-Prüfung und Repository-Prüfung folgen dem Regelwerk der Content-Engine, Backups enthalten jedes gespeicherte Feld und lassen sich zwischen Desktop-App und Browser-Version wiederherstellen, Telefon-Korrekturen für das kompakte Menü unter 1280 px und das Dashboard.
+- **v2.15.0** - parametrische Übungen, deren Werte bei jedem Versuch neu gezogen werden, drei neue Übungstypen (Hotspot, Parsons, Sortieren) unter "Lektion erstellen", Erklärungen nach einer Antwort, eine kompakte Zusammenfassung am Lektionsende mit Ausführlicher Auswertung, Einstellungen in beschrifteten Abschnitten, Aktualisieren unter Meine Inhalte spielt alle verfügbaren Set-Updates auf einmal ein, Impressum und Datenschutzerklärung auf Deutsch und Englisch.
 - **v2.14.0** - optionaler Spielmodus (Combo-Streaks, Checkpoints, Antwort-Physik, Herzen/Countdown) mit per XP freigeschalteten Arcade-Minispielen, Farbvarianten für das Maskottchen und Avatar-Presets/-Rahmen, Set-Seiten mit Lektionsfortschritt und eine Set-Abschluss-Übersicht, drei Audio-/Sprach-Extension-Typen im Erstellungs-Assistenten.
 - **v2.13.0** - Aufgaben-Typ-Konvertierung direkt im Lesson-Editor, eine auffindbare "Als Kopie bearbeiten"-Aktion für heruntergeladene Content-Sets, eine große UI-Konsolidierung (gemeinsame Settings-/Modal-/DashboardCard-Komponenten, shadcn Button), FastAPI-0.141- + TipTap-3.30-Dependency-Auffrischung.
 - **v2.12.0** - ein abgeschlossenes Set als neuen Durchgang starten, wobei der Wiederholungsverlauf erhalten bleibt, Schlüssel-Import aus einem Topos-`.alk`-Export, Perplexity als KI-Anbieter im Backend.

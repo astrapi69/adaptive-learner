@@ -20,11 +20,23 @@ const PREVIEW_PORT =
     Number(process.env.ADAPTIVE_LEARNER_DEXIE_PREVIEW_PORT) || 4173;
 
 export default defineConfig({
+    // #3439 - a committed test.only would run one test and report green.
+    forbidOnly: !!process.env.CI,
     testDir: "./dexie",
     fullyParallel: false,
     workers: 1,
     retries: process.env.CI ? 1 : 0,
     timeout: 30_000,
+    // #3427 - the JSON report feeds the runtime skip budget
+    // (scripts/check_e2e_skip_budget.py); the first entry keeps the default.
+    // #3748 - in CI the github reporter turns each failing test into an
+    // annotation on the PR, so a red smoke names its spec and assertion
+    // without the downloaded report.
+    reporter: [
+        [process.env.CI ? "dot" : "list"],
+        ...(process.env.CI ? [["github"] as ["github"]] : []),
+        ["json", {outputFile: "test-results/dexie-smoke.json"}],
+    ],
     use: {
         baseURL: `http://localhost:${PREVIEW_PORT}`,
         actionTimeout: 10_000,

@@ -47,6 +47,13 @@ all backend files).
 | Visual regression | `e2e/playwright.visual.config.ts` | `make test-visual` |
 | **Per-feature screenshots** | `e2e/playwright.features.config.ts` | `make verify-screenshots` |
 
+In CI the Dexie-mode gate (`dexie-smoke.yml`) runs nightly, on `release/**`
+pushes, on dispatch, and on every pull request that changes a file the Dexie
+build or its specs read: `frontend/` except unit tests, plus `schema/`,
+`e2e/dexie/`, the shared e2e helpers and fixtures (#3748,
+`scripts/dexie_smoke_affected.py`). A pull request it does not concern gets
+"not affected" from the `Dexie smoke (required)` job without the run.
+
 The smoke specs call `POST /api/reset`, which wipes every learner row. So
 the smoke config starts its own backend and frontend on ports of their own
 with a throwaway data dir, never reuses a server it did not start, and
@@ -90,7 +97,16 @@ the actual export/download/re-import UI path, and reproducible/CI-able
 unlike the manual pass. Accepted as evidence when the manual pass has
 already run once for the data shape (this becomes the regression pin), or
 when the project owner explicitly defers the manual pass for a given PR
-(their call, stated in the PR/issue) - see the rule for the exact two cases.
+(their call, stated in the PR/issue) - see the rule for the exact cases.
+
+Since #3693 a green `backup-e2e.yml` run on the PR counts as well. The
+workflow runs on every PR that touches a backup path and executes every
+`e2e/dexie/backup-*.spec.ts`, among them
+`backup-every-table-roundtrip.spec.ts`, which drives export, wipe and
+import through the real UI for every `BACKUP_TABLES` table, a new one
+included. A table the spec lists as known broken (`KNOWN_BROKEN`) has no
+automated proof, and the device-only limits below stay with the manual
+pass.
 
 Worked example: `e2e/dexie/backup-speech-recording-roundtrip.spec.ts`
 (written for the #2824 fix - `speech_recordings` silently missing from the
@@ -158,10 +174,15 @@ machine:
 
 ### Refreshing visual-regression baselines (CI-rendered, #1532/#1662)
 
-A visual-critical PR (lesson components/pages, exercise renderers,
-`global.css`/theme CSS) must carry the affected `e2e/visual/screenshots/`
-PNGs — the "Visual baseline gate" (#1640) blocks the merge otherwise. The
-PNGs must come from CI so their anti-aliasing matches the nightly diff.
+A visual-critical PR (anything under `frontend/src/pages`, `components`,
+`shared` and `styles`, plus the UI catalogs `frontend/src/data/i18n/**`
+and `backend/config/i18n/**`) must carry the affected
+`e2e/visual/screenshots/` PNGs: the "Visual baseline gate" (#1640)
+blocks the merge otherwise. Since #3687 a catalog-only PR is
+visual-critical too, because every screenshot renders catalog text; it
+carries baselines or the `visual-baselines-unaffected` label with a
+reason why the changed strings appear in no screenshot. The PNGs must
+come from CI so their anti-aliasing matches the nightly diff.
 
 **Preferred — auto-sync (#1662).** Add the `refresh-visual-baselines`
 label to the PR (or `gh workflow run visual-baseline-sync.yml -f

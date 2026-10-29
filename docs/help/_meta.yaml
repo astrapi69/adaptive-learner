@@ -26,10 +26,10 @@ languages:
 #   - Developer Docs / Entwickler-Dokumentation - for contributors
 #   - API Reference / API-Referenz - for integrators
 #
-# The in-app help panel reads this file directly; mkdocs.yml's
-# nav block is regenerated from here by scripts/generate_mkdocs_nav.py.
-# (mkdocs.yml uses only the de + en titles; the other languages are
-# carried for the in-app panel + future use.)
+# Only the MkDocs build reads this file: scripts/generate_mkdocs_nav.py
+# regenerates mkdocs.yml's nav (German titles) and the nav_translations of
+# every other built locale from it. The app does not read it; its help
+# drawer shows the glossary from backend/config/help (#3798).
 
 navigation:
   - title:
@@ -476,6 +476,16 @@ navigation:
           ja: ストレージレイヤー
         slug: developer/storage-layer
       - title:
+          de: Datenmodell
+          en: Data model
+          es: Modelo de datos
+          fr: Modèle de données
+          el: Μοντέλο δεδομένων
+          pt: Modelo de dados
+          tr: Veri modeli
+          ja: データモデル
+        slug: developer/data-model
+      - title:
           de: Theme-System
           en: Theme system
           es: Sistema de temas
@@ -698,6 +708,16 @@ navigation:
           tr: Genel bakış
           ja: 概要
         slug: api/overview
+      - title:
+          de: Alle Endpoints
+          en: All endpoints
+          es: Todos los endpoints
+          fr: Tous les endpoints
+          el: Όλα τα endpoints
+          pt: Todos os endpoints
+          tr: Tüm endpoint'ler
+          ja: 全エンドポイント
+        slug: api/endpoints
       - title:
           de: Core-Endpoints
           en: Core endpoints

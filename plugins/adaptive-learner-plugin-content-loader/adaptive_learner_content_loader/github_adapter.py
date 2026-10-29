@@ -91,8 +91,7 @@ def _wrap_http_error(
         )
     return ContentFetchError(
         f"Upstream HTTP {status} for {url}",
-        detail=f"GitHub returned {status} for {url}: "
-        f"{err.response.text[:200]}",
+        detail=f"GitHub returned {status} for {url}: {err.response.text[:200]}",
     )
 
 
@@ -181,7 +180,10 @@ class GitHubRawAdapter:
         this convention).
         """
         payload = await self.fetch_bytes(
-            source, branch, path, client=client,
+            source,
+            branch,
+            path,
+            client=client,
         )
         return payload.decode(encoding)
 

@@ -95,5 +95,14 @@ python3 scripts/check-dead-classnames.py --consumers <selector-name>
 ```
 
 Reports every file (src OR a listed package's dist) that references the
-name. `0 Konsumenten` is real evidence for removal; a plain
-`frontend/src` grep is not - see the incident above.
+name as a static className. A plain `frontend/src` grep is not enough -
+see the incident above.
+
+- It refuses a verdict (exit 1) when a listed package dist is missing:
+  run `cd frontend && bun install` first (#3422).
+- A `0 Konsumenten` verdict prints how many src and package files it read
+  and how many dynamic className expressions it could not check. It is
+  not proof on its own: a class glued to a template expression, such as
+  `` `api-key-row${isActive ? " is-active-provider" : ""}` `` in
+  ai-key-vault-react, counts as unchecked, not as a use. Grep the name in
+  the listed dists before deleting a rule.

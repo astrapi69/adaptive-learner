@@ -51,6 +51,7 @@ vi.mock("../../../lib/learning/learnerState", () => ({
     }),
 }));
 
+import {ApiError} from "../../../api/client";
 import {useLesson} from "./useLesson";
 
 const SOURCE = "astrapi69/adaptive-learner-content";
@@ -112,8 +113,9 @@ describe("useLesson: load + status transitions", () => {
     });
 
     it("surfaces status=not-cached when the lesson isn't downloaded", async () => {
+        // #3443: both storage modes reject a missing lesson with ApiError 404.
         getLessonMock.mockRejectedValue(
-            new Error("Set astrapi69/adaptive-learner-content/language-fr-a1 is not cached"),
+            new ApiError(404, "Set astrapi69/adaptive-learner-content/language-fr-a1 is not cached."),
         );
         const {result} = renderHook(() =>
             useLesson({
@@ -460,6 +462,105 @@ describe("useLesson: position persistence on step change (#3075)", () => {
         act(() => result.current.goToStep(1));
         await new Promise((resolve) => setTimeout(resolve, 20));
         expect(upsertProgressMock).not.toHaveBeenCalled();
+    });
+});
+
+describe("useLesson: the action log (#3365)", () => {
+    async function _ready(progressRow: unknown = null) {
+        getLessonMock.mockResolvedValue(LESSON_PAYLOAD);
+        getProgressMock.mockResolvedValue(progressRow);
+        upsertProgressMock.mockImplementation(
+            async (_userId: string, body: {current_step?: number}) => ({
+                ...FRESH_PROGRESS,
+                current_step: body.current_step ?? 0,
+            }),
+        );
+        const {result} = renderHook(() =>
+            useLesson({source: SOURCE, setId: SET_ID, lessonFilename: LESSON}),
+        );
+        await waitFor(() => {
+            expect(result.current.status).toBe("ready");
+        });
+        return result;
+    }
+    const lastEvent = () => upsertProgressMock.mock.calls.at(-1)?.[1].step_event;
+
+    it("logs arriving on a step, forward and back, by index and id", async () => {
+        const result = await _ready();
+        act(() => result.current.goNext());
+        await waitFor(() => expect(upsertProgressMock).toHaveBeenCalledTimes(1));
+        expect(lastEvent()).toEqual({kind: "step", step_index: 1, step_id: "step-formality"});
+        act(() => result.current.goPrev());
+        await waitFor(() => expect(upsertProgressMock).toHaveBeenCalledTimes(2));
+        expect(lastEvent()).toEqual({kind: "step", step_index: 0, step_id: "intro"});
+    });
+
+    it.each([
+        {name: "fully correct", correct: 4, total: 4, expected: true},
+        {name: "partly wrong", correct: 2, total: 4, expected: false},
+    ])("logs a graded check as an answer: $name", async ({correct, total, expected}) => {
+        const result = await _ready();
+        act(() => result.current.goToStep(2));
+        await waitFor(() => expect(upsertProgressMock).toHaveBeenCalledTimes(1));
+        await act(async () => {
+            await result.current.recordStepResult({step_id: "ex-1", correct, total});
+        });
+        expect(lastEvent()).toEqual({
+            kind: "answer",
+            step_index: 2,
+            step_id: "ex-1",
+            correct: expected,
+        });
+    });
+
+    it("logs reaching the summary as complete, without a step id", async () => {
+        const result = await _ready();
+        act(() => result.current.goToStep(LESSON_PAYLOAD.steps.length));
+        await act(async () => {
+            await result.current.markCompleted();
+        });
+        expect(lastEvent()).toEqual({
+            kind: "complete",
+            step_index: LESSON_PAYLOAD.steps.length,
+            step_id: null,
+        });
+    });
+
+    it.each([
+        {name: "pause", run: (r: ReturnType<typeof useLesson>) => r.markPaused(), kind: "pause"},
+        {name: "exit", run: (r: ReturnType<typeof useLesson>) => r.markPaused("exit"), kind: "exit"},
+        {name: "restart", run: (r: ReturnType<typeof useLesson>) => r.markRestarted(), kind: "restart"},
+    ])("logs $name", async ({run, kind}) => {
+        const result = await _ready();
+        await act(async () => {
+            await run(result.current);
+        });
+        expect(lastEvent()).toEqual({kind, step_index: 0, step_id: "intro"});
+    });
+
+    it.each([
+        {name: "resume", run: (r: ReturnType<typeof useLesson>) => r.markResumed()},
+        {name: "abandon", run: (r: ReturnType<typeof useLesson>) => r.markAbandoned()},
+    ])("does not log $name", async ({run}) => {
+        const result = await _ready();
+        await act(async () => {
+            await run(result.current);
+        });
+        expect(upsertProgressMock).toHaveBeenCalledTimes(1);
+        expect(lastEvent()).toBeUndefined();
+    });
+
+    it("resumes on the step last arrived on, not the further position", async () => {
+        const result = await _ready({
+            ...FRESH_PROGRESS,
+            status: "paused",
+            current_step: 2,
+            recent_steps: [
+                {at: "2026-05-26T00:01:00Z", kind: "step", step_index: 2, step_id: "ex-1"},
+                {at: "2026-05-26T00:02:00Z", kind: "step", step_index: 1, step_id: "step-formality"},
+            ],
+        });
+        expect(result.current.currentStepIndex).toBe(1);
     });
 });
 

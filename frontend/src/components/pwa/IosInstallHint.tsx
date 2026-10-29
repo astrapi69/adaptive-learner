@@ -6,9 +6,15 @@
  * "Share → Add to Home Screen" — but ONLY on iOS Safari and ONLY before the app
  * is installed (FUNKTION-NICHT-VERFUEGBAR: never shown where it cannot apply).
  *
- * Dezent + bottom-anchored, dismissable once (persisted). Client-only and
- * storage-mode-agnostic — it reads nothing but the platform + a localStorage
- * flag.
+ * A dismissable card in the page's flow, mounted at the top of the
+ * dashboard; dismissal is persisted. Client-only and storage-mode-agnostic:
+ * it reads nothing but the platform and a localStorage flag.
+ *
+ * Never laid over a page (#3765): it used to sit fixed at the bottom of
+ * every page and covered whatever ended up there, the assessment's
+ * "Nächste Frage" for a new iPhone user among it. In the flow it cannot
+ * cover anything, and no page has to know about it. The Settings section
+ * (InstallAppSection) keeps the full instructions.
  */
 
 import { Share, X } from "lucide-react";
@@ -62,7 +68,7 @@ export default function IosInstallHint() {
 
     return (
         <div
-            className="fixed inset-x-0 bottom-0 z-[9998] flex items-start gap-3 border-t border-border bg-card p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] text-sm shadow-[var(--shadow-elevated)]"
+            className="mb-4 flex items-start gap-3 rounded-app border border-border bg-card p-3 text-sm"
             role="region"
             aria-label={t("install.ios.aria_label", "Install on your iPhone")}
             data-testid="ios-install-hint"

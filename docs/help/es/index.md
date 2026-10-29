@@ -99,7 +99,7 @@ contenido a tu perfil.
 | [Endpoints del núcleo](api/core-endpoints.md) | Usuarios, proyectos, ajustes, currículum |
 | [Endpoints de plugins](api/plugin-endpoints.md) | Evaluación, sesión, seguimiento, gamificación |
 | [Especificaciones de hooks](api/hooks.md) | Los 10 hookspecs de PluginForge |
-| [Modelos de datos](api/models.md) | 25 modelos SQLAlchemy y sus esquemas Pydantic |
+| [Modelos de datos](api/models.md) | Modelos SQLAlchemy y sus esquemas Pydantic |
 
 ---
 
@@ -108,6 +108,6 @@ contenido a tu perfil.
 ```
 Almacenamiento : SQLite (ApiStorage) · IndexedDB (DexieStorage)
 Idiomas UI     : DE · EN · ES · FR · EL · PT · TR · JA
-Proveedores IA : Anthropic · OpenAI · Gemini (clave propia)
+Proveedores IA : Anthropic · OpenAI · Gemini · Perplexity (escritorio) (clave propia)
 Licencia       : MIT
 ```

@@ -1,10 +1,74 @@
-# Quoi de neuf (v1.61 – v2.16)
+# Quoi de neuf (v1.61 – v2.17)
 
 Un aperçu orienté utilisateur des versions depuis la v1.61.0. Les
 notes techniques complètes par version se trouvent sous
 [GitHub Releases](https://github.com/astrapi69/adaptive-learner/releases).
 
 ---
+
+## v2.17.0 - Ce qui quitte ton appareil, corrections et examens
+
+- **Confidentialité** : la politique de confidentialité a été réécrite et
+  est disponible dans les huit langues de l'aide. Elle décrit quand et vers
+  où des données quittent ton appareil et, en tant que texte juridique,
+  utilise le vouvoiement. Les pages de documentation ne chargent plus rien
+  depuis d'autres serveurs que GitHub Pages, où elles sont hébergées, et
+  leur recherche n'ajoute plus tes termes de recherche aux adresses des
+  résultats. Les images et les vidéos qu'un contenu d'apprentissage ou une
+  réponse de l'IA intègre via une adresse web s'affichent sous forme de lien
+  et ne se chargent qu'après ton clic, même si elles se trouvent sur
+  GitHub ; les images d'exercices qu'un set apporte sous forme de ses
+  propres fichiers arrivent, comme jusqu'ici, avec le set. Les liens de
+  l'application n'envoient pas de referrer.
+- **Lecture à voix haute** : l'application privilégie une voix de ton
+  appareil. Une voix en ligne ne lit que s'il n'existe aucune voix sur
+  l'appareil pour la langue, si tu en as toi-même choisi une ou si,
+  peu après le chargement d'une page, le navigateur n'a pas encore
+  signalé ses voix ; il prend alors sa propre voix par défaut, qui peut
+  être une voix en ligne. Le X du lecteur vocal arrête la lecture à voix
+  haute pour cette leçon.
+- **Rapport d'erreur et IA** : les infos d'environnement et l'historique des
+  actions ne sont plus cochés d'avance et n'entrent dans le rapport que si
+  tu les coches. Les notes des vérifications par IA disent maintenant ce qui
+  est envoyé. Une session lancée depuis un chat importé n'envoie son
+  ouverture à l'IA qu'une seule fois, et non à chaque rechargement.
+- **Corriger les erreurs** : si un passage comportait des erreurs, le résumé
+  compact propose « Corriger les erreurs ». « Tes corrections » montre
+  ensuite ce qui est corrigé et ce qui reste à corriger, et l'évaluation
+  détaillée marque chaque erreur de la même façon. Quand tu atteins le
+  résumé, la leçon est terminée, et le résumé affiche le temps de ce
+  passage.
+- **Examens** : si un set apporte ses propres règles d'évaluation, l'examen
+  est noté selon elles. Un examen commencé ne compte que s'il est fait d'une
+  seule traite et recommence au lieu d'être repris, et un passage commencé
+  dans un autre mode ne continue pas en tant qu'examen. Tu peux changer de
+  mode jusqu'à la première réponse.
+- **Continuer à apprendre et toucher** : une leçon en pause s'ouvre à
+  l'étape que tu as visitée en dernier. Un appui touche ce que tu vois, y
+  compris sur iPhone, et un appui sur une case d'association déjà appariée
+  la sélectionne au lieu de défaire la paire. Les indications pour installer
+  l'application sont des cartes sur le tableau de bord et ne masquent plus
+  aucun bouton.
+- **Sauvegardes** : si tu importes la sauvegarde d'un autre profil, la
+  progression de ce profil arrive dans le profil actif, et la boîte de
+  dialogue le signale à l'avance. Les badges et la série sont conservés, et
+  les dépôts connectés, les invitations utilisées et les rapports des
+  vérifications par IA voyagent avec elle.
+- **Sauvegardes de la v2.17** : ne restaure une sauvegarde de cette version
+  que dans la v2.17 ou plus récente ; les versions plus anciennes omettent
+  les nouvelles parties sans avertissement. Mets à jour l'application de
+  bureau avant d'y restaurer une sauvegarde de la version navigateur.
+- **Créer et partager des leçons** : enregistrer localement ne demande
+  qu'une leçon valide, même avec un seul exercice ; les exigences minimales
+  ne s'appliquent qu'au partage. « Enregistrer et partager » ouvre le
+  partage pour la leçon enregistrée, et un set qui n'enseigne aucune langue,
+  tu le partages sans niveau.
+- **Dans ta langue** : les erreurs de la validation des dépôts, les rapports
+  Markdown et PDF et le titre dans l'onglet du navigateur s'affichent dans
+  la langue de ton interface, et les lecteurs d'écran y lisent la
+  comparaison des réponses et les étoiles. Chaque page d'aide existe
+  désormais dans les huit langues de l'aide, et l'application et l'aide
+  disent uniformément « session » et « série ».
 
 ## v2.16.0 - Des erreurs qui disent ce qui s'est passé, un seul jeu de règles pour les leçons
 

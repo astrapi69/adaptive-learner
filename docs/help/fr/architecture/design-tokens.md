@@ -51,8 +51,8 @@ référence complète des jetons se trouve dans
 2. Définis les 44 jetons canoniques (la parité est obligatoire).
 3. Veille au **contraste WCAG AA** - `contrast.test.ts` vérifie
    tous les thèmes par le calcul.
-4. Enregistre le thème ; le sélecteur sous Paramètres → Apparence
-   le reprend.
+4. Enregistre le thème ; le sélecteur sous Paramètres > Général >
+   Apparence le reprend.
 
 Si une nouvelle fonctionnalité a besoin d'une nouvelle couleur :
 **ajoute un jeton**, pas un littéral. S'il varie selon le thème,

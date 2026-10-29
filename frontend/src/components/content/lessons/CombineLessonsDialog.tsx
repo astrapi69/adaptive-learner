@@ -119,7 +119,7 @@ export default function CombineLessonsDialog({
                     </FormHint>
                 )}
 
-                <fieldset className="flex flex-col gap-2">
+                <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
                     <legend className="sr-only">
                         {t("content.combine.target_legend", "Target set")}
                     </legend>

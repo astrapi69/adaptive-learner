@@ -2,8 +2,8 @@
  * Tests for MascotVariantControl (#2861): the five variants render
  * with their lock states, selecting persists and recolors live via
  * the store's change event, and the XP purchase is the guarded
- * two-step shared flow (affordability check first - spendXp never
- * rejects on its own).
+ * two-step shared flow (affordability check first). Since #3445 the
+ * purchase is one ledger event and ownership follows the ledger.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -12,9 +12,12 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const getState = vi.fn();
 const listBadges = vi.fn();
-const spendXp = vi.fn();
+const purchaseItem = vi.fn();
+const listPurchases = vi.fn();
 vi.mock("../../../../storage", () => ({
-    getStorage: () => ({gamification: {getState, listBadges, spendXp}}),
+    getStorage: () => ({
+        gamification: {getState, listBadges, purchaseItem, listPurchases},
+    }),
 }));
 
 const notifySuccess = vi.fn();
@@ -50,7 +53,8 @@ beforeEach(() => {
         {key: "streak_3_days", earned: false},
         {key: "first_session", earned: false},
     ]);
-    spendXp.mockReset().mockResolvedValue(xpState(50, 3));
+    purchaseItem.mockReset().mockResolvedValue({xp: xpState(50, 3)});
+    listPurchases.mockReset().mockResolvedValue([]);
     notifySuccess.mockClear();
     notifyError.mockClear();
 });
@@ -102,22 +106,47 @@ describe("MascotVariantControl", () => {
         // gold costs 250, total_xp 300 -> affordable.
         const buy = screen.getByTestId("settings-mascot-variant-buy-gold");
         fireEvent.click(buy);
-        expect(spendXp).not.toHaveBeenCalled();
+        expect(purchaseItem).not.toHaveBeenCalled();
         await act(async () => {
             fireEvent.click(buy);
         });
-        expect(spendXp).toHaveBeenCalledWith("u1", 250, "mascot_variant");
+        expect(purchaseItem).toHaveBeenCalledWith("u1", {
+            item_kind: "mascot_variant",
+            item_id: "gold",
+            cost: 250,
+        });
         expect(readMascotVariantState("u1").purchased).toContain("gold");
         expect(readMascotVariantState("u1").selected).toBe("gold");
     });
 
-    it("an unaffordable variant cannot be bought (spendXp clamps, so we must guard)", async () => {
+    it("an unaffordable variant cannot be bought", async () => {
         getState.mockResolvedValue(xpState(100, 3));
         await renderControl();
         expect(
             screen.getByTestId("settings-mascot-variant-buy-gold"),
         ).toBeDisabled();
-        expect(spendXp).not.toHaveBeenCalled();
+        expect(purchaseItem).not.toHaveBeenCalled();
+    });
+
+    it("a variant bought in another browser shows as owned (#3445)", async () => {
+        getState.mockResolvedValue(xpState(100, 3));
+        listPurchases.mockResolvedValue([
+            {
+                id: "p1",
+                user_id: "u1",
+                item_kind: "mascot_variant",
+                item_id: "gold",
+                cost: 250,
+                purchased_at: "2026-10-01T00:00:00Z",
+            },
+        ]);
+        await renderControl();
+        await waitFor(() =>
+            expect(
+                screen.queryByTestId("settings-mascot-variant-buy-gold"),
+            ).not.toBeInTheDocument(),
+        );
+        expect(readMascotVariantState("u1").purchased).toEqual(["gold"]);
     });
 
     it("renders nothing without an onboarded user", async () => {

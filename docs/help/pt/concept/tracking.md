@@ -133,7 +133,8 @@ motivacionais são incluídas:
   que ignora lacunas de Sáb/Dom.
 
 A gamificação é **opcional**. Desativar as notificações
-toast em Definições → Gamificação silencia os prompts; o sistema
+toast em Definições > Aprendizagem > Motivação e rotina >
+Gamificação silencia os prompts; o sistema
 continua a registar o estado. As informações de avaliação de
 passo + historial de commits ao estilo Git permanecem a análise
 de carga.

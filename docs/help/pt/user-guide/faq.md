@@ -4,29 +4,72 @@
 
 ## Os meus dados estão seguros?
 
-No **modo Local** todos os seus dados vivem no IndexedDB no seu
-próprio dispositivo. Sem backend, sem serviço de terceiros.
-Fechar o separador do navegador não os elimina; limpar os dados
-do site, sim. Se partilha o dispositivo, qualquer pessoa com
-acesso a este perfil do navegador pode lê-los.
+No **modo Local** o seu navegador armazena os seus dados no seu
+próprio dispositivo (no IndexedDB e no localStorage), entre outras
+coisas o seu progresso, as conversas importadas e as suas
+definições, incluindo as chaves de API e o token do GitHub; não há
+nenhum servidor do administrador envolvido. Outros recebem partes
+deles só quando uma funcionalidade precisa delas, por exemplo o
+seu fornecedor de IA, quando utiliza a IA, ou o GitHub, quando a
+aplicação pergunta por iniciativa própria, ao iniciar, se há
+conteúdos novos. Fechar o separador do navegador não elimina estes
+dados; limpar os dados do site no navegador remove-os do seu
+dispositivo. Se partilha o dispositivo, qualquer pessoa com acesso
+a este perfil do navegador pode lê-los.
 
-No **modo Servidor** os dados vivem na base de dados SQLite que
-o backend FastAPI gere. As chaves de API são encriptadas em
-repouso com Fernet usando um segredo que define via a variável
-de ambiente `ADAPTIVE_LEARNER_SECRET_KEY`, ou via `secret_key:`
-em `~/.config/adaptive_learner/secrets.yaml`.
+No **modo Servidor** os seus dados de aprendizagem ficam na base
+de dados SQLite que o backend FastAPI gere. O que é criado offline
+em progresso de lições e em gravações de voz aguarda neste
+navegador até a aplicação o transferir; a quantidade máxima que
+fica a aguardar e o que acontece ao resto estão descritos em
+[Backup e restauro](../features/backup.md). As chaves de API ficam
+encriptadas com Fernet em
+`~/.config/adaptive_learner/secrets.yaml`, e, para cada
+fornecedor, uma cópia de segurança da última chave de API que
+funcionou fica, também encriptada, na base de dados. A chave de
+encriptação é gerada no primeiro arranque e guardada em
+`~/.config/adaptive_learner/secret.key`;
+não precisa de configurar nada. Se quiser indicar uma chave
+própria, defina `ADAPTIVE_LEARNER_SECRET_KEY` (ou `secret_key:` em
+`secrets.yaml`) antes do primeiro arranque.
 
 Nenhum dos modos envia telemetria, análises ou as suas
-mensagens para terceiros além do fornecedor de IA que escolheu -
-e esse apenas vê o conteúdo da mensagem que esperaria
-(prompt do sistema + o seu texto + as respostas anteriores da
-IA na sessão).
+mensagens para terceiros além do fornecedor de IA que escolheu.
+Numa sessão de aprendizagem, esse fornecedor recebe:
+
+- a instrução de sistema, com o tema e o objetivo do seu projeto
+  de aprendizagem, uma indicação de perfil (o seu método de
+  aprendizagem preferido e o respetivo peso), as lições que
+  concluiu com os resultados, a lição e o passo em que está, os
+  seus erros recentes (cada um com a sua resposta, a correta e
+  quantas vezes) e o idioma em que a IA deve responder; uma
+  sessão iniciada a partir de uma conversa importada contém a
+  análise e a transcrição dessa conversa em vez do seu progresso;
+- as suas mensagens e as respostas anteriores da IA na sessão;
+- como em cada pedido, entre outras coisas, o seu endereço IP e a sua
+  chave de API.
+
+Os seus XP e emblemas não fazem parte disto. Também outras
+funcionalidades de IA enviam dados ao seu fornecedor, por exemplo
+a análise de uma conversa importada. A
+[verificação de conteúdo por IA](ai-validation.md) envia os
+cartões do conjunto verificado (de cada cartão, o identificador, a
+frente, o verso e as notas). A revisão por IA antes de partilhar
+envia, das suas lições, apenas as que partilha e, delas, entre
+outras coisas, os cartões, os textos dos passos e os exercícios
+(enunciado e opções de resposta erradas). Ambas enviam também o
+idioma de origem, o idioma de destino e o nível do conjunto. O
+texto que escreve nestes conteúdos também é enviado e pode ser, em
+si, pessoal. A [política de privacidade](../legal/privacy.md)
+enumera cada pedido à IA.
 
 ## Preciso de uma chave de API?
 
 Sim para sessões de IA. A aplicação usa **traga a sua própria
-chave** para todos os três fornecedores suportados: Anthropic
-Claude, OpenAI GPT, Google Gemini. Os limites do tier gratuito
+chave** para cada fornecedor suportado: Anthropic Claude, OpenAI
+GPT e Google Gemini, mais Perplexity no modo servidor (a aplicação de
+ambiente de trabalho; a versão de navegador não consegue chamar o
+Perplexity diretamente). Os limites do tier gratuito
 costumam ser suficientes para começar.
 
 Três lugares para colocar a chave (maior prioridade ganha):
@@ -80,16 +123,25 @@ tracejada "Ciclo N" em cada transição. O diálogo de avaliação
 de fim de sessão resume a jornada de múltiplos ciclos quando
 `cycle_count > 1`.
 
+Só na aplicação de ambiente de trabalho: na versão de navegador, a
+sessão fica no passo 7, e a página da sessão indica-o. Termine aí a
+sessão e inicie uma nova.
+
 ## Posso exportar os meus dados?
 
-Sim. Três caminhos de exportação incluídos:
+Sim, entre outros, por estes caminhos:
 
-- **Backup**: Definições → Backup → Criar Backup. Descarrega
-  um JSON com timestamp com todas as linhas da sua conta. As
-  chaves de API são removidas. Funciona em ambos os modos de
-  armazenamento.
-- **Relatórios de Progresso / Sessão / Currículo**: Definições
-  → Exportar. Markdown + PDF (impressão para PDF do navegador).
+- **Backup**: Definições > Dados > Cópia de segurança e
+  exportação > Criar backup. Descarrega um ficheiro de cópia de
+  segurança `.alb`; pode criar uma cópia de segurança em ambos os
+  modos de armazenamento. As suas chaves de API não estão incluídas
+  nela; como as transferir está descrito na página
+  [Definições](settings.md), na secção "Exportação cifrada de chaves
+  (.alk)". A página [Backup e restauro](../features/backup.md) indica
+  outros exemplos do que uma cópia de segurança não contém.
+- **Relatórios de Progresso / Sessão / Currículo**: Definições >
+  Dados > Cópia de segurança e exportação > Exportar. Markdown +
+  PDF (impressão para PDF do navegador).
 - **Anki .apkg**: reveja os flashcards extraídos pela IA na
   página `/anki`, aceite os que gosta, clique em Exportar.
   O ficheiro funciona diretamente no Anki desktop.
@@ -112,8 +164,9 @@ Três integrações da Web Speech API:
   `/pronunciation`, a IA gera uma frase alvo, você fala, e
   uma IA juiz pontua a semelhança + sugere melhorias.
 
-As alternâncias de voz ficam em Definições → Voz. A secção
-oculta-se nos navegadores que não suportam a API.
+As alternâncias de voz ficam em Definições > Aprendizagem >
+Leitura em voz alta e ditado. A área oculta-se nos navegadores que
+não suportam a API.
 
 ## O que é a importação de historial de chat?
 
@@ -132,14 +185,34 @@ timestamps + preservação de limite de papel para esse formato.
 
 ## Sincronização entre dispositivos?
 
-Sincronização bidirecional em rede local.
-Definições → Sincronização → "Emparelhar este dispositivo":
-digitalize o código QR no ecrã do outro dispositivo (câmara
-traseira), ou cole o URL de emparelhamento. Uma vez emparelhado,
-os botões de envio + receção trocam dados; os conflitos passam
-por um resolvedor de fusão de IA. 28 tabelas na superfície de
-sincronização (assuntos + etiquetas +
-questões de estudo incluídas).
+Ainda não. A aplicação ainda não consegue sincronizar os seus dados
+entre dispositivos: por enquanto não pode emparelhar um dispositivo, e
+sem emparelhamento a sincronização não troca dados. O que vê em
+Definições > Dados > Sincronização depende do modo de armazenamento:
+
+- No modo Local, esta área não mostra controlos, mas sim o aviso
+  "Disponível apenas com o aplicativo para desktop." A versão de
+  navegador usa sempre o modo Local, também como aplicação web
+  instalada; na aplicação de ambiente de trabalho aparece o mesmo
+  aviso enquanto estiver definida para o modo Local (Definições >
+  Geral > Modo de armazenamento: "Local (Navegador)"). No entanto, a
+  aplicação de ambiente de trabalho também ainda não sincroniza (ver o
+  ponto seguinte).
+- No modo Servidor da aplicação de ambiente de trabalho (Definições >
+  Geral > Modo de armazenamento: "Servidor"), esta área mostra campos
+  para o host e a porta e o botão "Gerar código de pareamento". Um
+  clique nele mostra uma ligação de emparelhamento, um código QR e um
+  botão para copiar a ligação. Mas ainda nenhum dispositivo consegue
+  resgatar esta ligação, nem através do código QR; por isso, por
+  enquanto, não é possível emparelhar um segundo dispositivo com ela.
+
+Enquanto a sincronização não estiver disponível, leva os seus dados
+para outro dispositivo com uma cópia de segurança, mas não todos.
+Entre outras coisas, uma cópia de segurança não contém as suas chaves
+de API; como transferir as chaves de API está descrito na página
+[Definições](settings.md), na secção "Exportação cifrada de chaves
+(.alk)". A página [Backup e restauro](../features/backup.md) indica
+outros exemplos do que uma cópia de segurança não contém.
 
 ## Como é diferente do ChatGPT?
 
@@ -157,9 +230,18 @@ que usa uma IA internamente mas adiciona:
 5. **Rastreamento a longo prazo** - ProgressCommits, mapa de
    calor de sequência, XP, emblemas, gráficos de tempo por
    passo. O ChatGPT esquece quando fecha o separador.
-6. **Liberdade de fornecedor** - Anthropic, OpenAI ou Gemini.
-7. **Opção local primeiro** - tudo no seu navegador, nada
-   enviado para um servidor (exceto as suas chamadas de IA).
+6. **Liberdade de fornecedor** - Anthropic, OpenAI ou Gemini, mais
+   Perplexity no modo servidor.
+7. **Opção local primeiro** - no modo local, o seu navegador
+   armazena, entre outras coisas, o progresso, as estatísticas e as
+   definições; outros recebem partes deles só quando uma
+   funcionalidade precisa delas. A aplicação contacta servidores
+   quando uma funcionalidade precisa disso, por exemplo o GitHub
+   para os conteúdos (para isso, também sincroniza por si própria os
+   repositórios ligados no arranque), o seu fornecedor de IA, e o
+   GitHub quando você partilha algo ou abre lá um relatório de erro.
+   A [política de privacidade](../legal/privacy.md) descreve que
+   casos são esses e o que é transferido.
 
 ## E se a IA correr mal?
 

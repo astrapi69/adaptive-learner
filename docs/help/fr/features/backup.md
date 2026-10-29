@@ -11,17 +11,38 @@ navigateur. Tu trouves tout cela sous **Paramètres → Données**.
 
 ## Ce que contient la sauvegarde
 
-Une sauvegarde est un **instantané complet** : les 30 tables de
+Une sauvegarde est un **instantané complet** : toutes les tables de
 données (projets d'apprentissage, sessions, progression des
 leçons, erreurs au niveau des éléments, gamification avec
 XP/série/badges, missions, cartes Anki, notes et plus encore)
 **plus tes ensembles de contenu téléchargés**.
 
-**Pas encore inclus :** les dépôts de contenu connectés, les
-invitations utilisées et les réglages du Learning Repository. Après
-une restauration sur un nouvel appareil, les ensembles de contenu
-sont de retour, mais reconnecte leurs dépôts (et utilise à nouveau
-les invitations) pour continuer à recevoir les mises à jour.
+**Également inclus :** les dépôts de contenu connectés, les
+invitations utilisées et l'activation du Learning Repository.
+En mode navigateur, les résultats de tes vérifications de contenu par
+IA sont aussi inclus, le badge « Vérifié par IA » est donc conservé.
+
+**Ne sont pas inclus**, par exemple :
+
+- le jeton d'accès d'un dépôt privé (saisis-le à nouveau après la
+  restauration) ;
+- le dossier du Learning Repository, qui appartient à l'appareil ;
+- en mode serveur, la progression des leçons et les enregistrements
+  vocaux faits hors ligne qui ne sont pas encore arrivés au serveur ;
+- les index de recherche et les listes de médias en cache, le compteur
+  de la sauvegarde automatique et la position de la synchronisation LAN.
+
+Le réglage qui indique si la sauvegarde automatique est activée est, en
+revanche, inclus. En mode serveur, l'application garde en mémoire dans
+ce navigateur ce qui est créé hors ligne : jusqu'à 50 modifications de
+la progression des leçons et des enregistrements vocaux ; s'il y en a
+davantage, les plus anciennes sont supprimées. Elle les transmet
+d'elle-même quand la connexion revient pendant que l'application est
+ouverte, ou au prochain démarrage avec connexion. De ce qui est créé
+hors ligne, seul ce qui est déjà arrivé au serveur entre dans la
+sauvegarde ; en mode serveur, ne crée donc une sauvegarde qu'une fois
+que l'application, après l'apprentissage hors ligne, a de nouveau
+fonctionné avec une connexion et a pu transmettre les modifications.
 
 Avant l'export, l'application affiche un aperçu **« Ta sauvegarde
 contient … »** avec le nombre d'enregistrements par domaine, afin
@@ -55,20 +76,27 @@ retrouves jamais totalement sans sauvegarde.
 Si quelque chose se passe mal pendant l'import, un **avis d'erreur
 permanent** (toast) apparaît, qui ne disparaît pas de lui-même -
 ainsi tu ne manques aucune erreur. En mode développeur
-(Paramètres → Interface), le message contient les détails
+(Paramètres > Diagnostic et assistance), le message contient les détails
 techniques pour un ticket GitHub.
 
 ---
 
 ## Import inter-identités
 
-Tu n'as **pas** besoin d'être le même utilisateur sur le même
-appareil. Une sauvegarde peut être importée dans une
-**installation neuve** ou sous un **autre profil utilisateur**. La
-restauration rattache les données au profil actif et résout
-proprement au passage les références internes (clés étrangères),
-de sorte que ta progression reste cohérente - y compris la
-progression par étape des leçons, la série et les badges.
+Tu n'as **pas** besoin d'être le même utilisateur sur le même appareil.
+
+- **Sur un appareil vide**, le mieux est d'importer la sauvegarde dès le
+  départ (voir "Sauvegarde lors de la première connexion"). L'app reprend
+  alors le profil de la sauvegarde.
+- **Sur un appareil où tu as déjà créé un profil**, tu peux importer la
+  sauvegarde via Paramètres > Données. Si elle appartient à un autre
+  profil, la fenêtre de confirmation te le signale avant l'import. La
+  progression de la sauvegarde est alors rattachée à ton **profil actif**
+  et fusionnée avec la tienne : la progression des leçons, les erreurs, les
+  passages, les enregistrements, les projets et l'historique s'ajoutent, et
+  ta propre progression est conservée. Les XP, la série et les paramètres
+  sont repris de la sauvegarde. Ton profil actif reste actif ; aucun
+  deuxième profil n'est créé.
 
 ---
 
@@ -86,8 +114,12 @@ tu retrouves immédiatement ton flux d'apprentissage.
 
 La sauvegarde et la restauration fonctionnent dans les **deux**
 modes de stockage - serveur (API) et purement navigateur
-(Dexie/IndexedDB). Le format est un unique fichier JSON ; il n'y a
-aucun format d'archive propriétaire.
+(Dexie/IndexedDB). La sauvegarde est un **fichier `.alb`** : une
+archive ZIP qui regroupe les tables de données, l'instantané du
+localStorage et les ensembles de contenu. Les fichiers `.alb` sont
+acceptés partout où l'on importe une sauvegarde (Paramètres > Données
+et la Zone de danger). Les anciennes sauvegardes en un seul fichier
+JSON s'importent toujours sans problème.
 
 !!! note "Protection des données"
     La sauvegarde reste entièrement entre tes mains. Elle n'est
@@ -99,4 +131,4 @@ aucun format d'archive propriétaire.
 ## Pages connexes
 
 - [Paramètres](../user-guide/settings.md) - un aperçu de toutes les actions sur les données
-- [Plusieurs dépôts de contenu](content-repos.md) - les dépôts connectés ne font pas encore partie de la sauvegarde, reconnecte-les après une restauration
+- [Plusieurs dépôts de contenu](content-repos.md) - les dépôts connectés et les invitations utilisées voyagent avec la sauvegarde

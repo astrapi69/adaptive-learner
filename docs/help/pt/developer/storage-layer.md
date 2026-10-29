@@ -4,12 +4,13 @@
 
 A camada de armazenamento v0.7.0 (`frontend/src/storage/`) dá ao
 frontend dois backends intercambiáveis por trás de um único
-contrato. O contrato cresceu para 22 espaços de nomes ao longo das
-Fases 7–34.
+contrato. O contrato está em
+`frontend/src/storage/types/core/service.ts`; a lista de espaços de nomes
+aí é a referência.
 
 ## IStorageService
 
-`frontend/src/storage/types.ts` define a interface que cada
+`frontend/src/storage/types/core/service.ts` define a interface que cada
 implementação de armazenamento satisfaz. Espelha os espaços de
 nomes `api.*` de `api/client.ts` 1:1:
 
@@ -59,9 +60,10 @@ método delega 1:1. O comportamento é idêntico ao v0.6.0.
 ## DexieStorage
 
 `storage/dexie-storage.ts` persiste tudo no IndexedDB via Dexie
-4.4.2. O esquema em `storage/db.ts` espelha todos os 25 modelos
-SQLAlchemy 1:1, mais as 4 tabelas de associação
-(project_subjects / project_tags / etc.).
+4.4.2. O esquema em `storage/dexie/db.ts` espelha os modelos
+SQLAlchemy e acrescenta stores que só existem no navegador; qual
+store corresponde a qual tabela, por área, está na página
+[Modelo de dados](data-model.md).
 
 Submódulos em `storage/` transportam a lógica portada:
 
@@ -107,7 +109,7 @@ passam por `getStorage()`.
 
 ## Chamadas de IA diretas do navegador
 
-`storage/ai-providers.ts` implementa três clientes de fornecedores:
+`storage/ai/ai-providers.ts` implementa três clientes de fornecedores:
 
 - **Anthropic** - POST para `https://api.anthropic.com/v1/messages`
   com o cabeçalho `anthropic-dangerous-direct-browser-access: true`.

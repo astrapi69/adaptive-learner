@@ -1,7 +1,7 @@
 # Tracking: Git fürs Lernen
 
 Die meisten Lern-Apps tracken "Prozent abgeschlossen" oder
-"Streak-Tage". Diese Zahlen sind leicht zu berechnen, sagen
+"Serientage". Diese Zahlen sind leicht zu berechnen, sagen
 aber fast nichts darüber, wie du tatsächlich lernst.
 AdaptiveLearner leiht stattdessen Gits mentales Modell.
 
@@ -9,37 +9,37 @@ AdaptiveLearner leiht stattdessen Gits mentales Modell.
 
 | Git | Lernen |
 |---|---|
-| Commit | Schnappschuss einer Session (Methode, Bewertungen, Dauer) |
-| Diff | Delta zur vorherigen Session im selben Thema |
+| Commit | Schnappschuss einer Sitzung (Methode, Bewertungen, Dauer) |
+| Diff | Delta zur vorherigen Sitzung im selben Thema |
 | Branch | Ein Methodenwechsel (deduktiv → dialogisch) |
 | Log | Volle chronologische Historie der Commits |
-| Blame | Welche Session ein bestimmtes Muster eingeführt hat |
-| Bisect | Die Session finden, in der Verständnis aufhörte zu wachsen |
+| Blame | Welche Sitzung ein bestimmtes Muster eingeführt hat |
+| Bisect | Die Sitzung finden, in der Verständnis aufhörte zu wachsen |
 
 Wir nutzen Git nicht wörtlich. Wir nutzen seine Disziplin
 von versioniertem, wiederherstellbarem, vergleichbarem
-Zustand. Sessions sind dauerhaft; sie verschwinden nicht beim
+Zustand. Sitzungen sind dauerhaft; sie verschwinden nicht beim
 Schließen des Tabs. Du kannst zurückschauen, vergleichen und
 Muster finden.
 
 ## Was committet wird
 
-Jede Session, die mit einer Bewertung endet, erzeugt eine
+Jede Sitzung, die mit einer Bewertung endet, erzeugt eine
 `ProgressCommit`-Zeile:
 
 | Spalte | Was sie erfasst |
 |---|---|
-| method | Welche der sechs Methoden diese Session nutzte |
+| method | Welche der sechs Methoden diese Sitzung nutzte |
 | understanding | Deine 1-5-Bewertung, skaliert auf 0.0-1.0 |
 | stress | Gleiche Skalierung |
 | error_rate | 0.0-1.0 (aktuell immer 0.0; reserviert für eine zukünftige Pro-Schritt-Fehlerquote) |
 | duration_minutes | Verstrichene Zeit zwischen started_at und ended_at |
 | committed_at | Wann der Commit geschrieben wurde |
 | project_id | Welches Lernprojekt |
-| session_id | Welche Session |
+| session_id | Welche Sitzung |
 
 Das war's. Sieben Felder, keine NULLs (Rating-Werte sind
-Pflicht zum Beenden). Eine Handvoll Bytes pro Session.
+Pflicht zum Beenden). Eine Handvoll Bytes pro Sitzung.
 
 ## Was du damit machen kannst
 
@@ -66,10 +66,10 @@ entdecken, dass sie auf eine Methode zurückgreifen (oft
 deduktiv) und die anderen nie probieren. Das Balkendiagramm
 im Dashboard ist ein Spiegel - kein Wettbewerb.
 
-### Streak
+### Serie
 
 Aufeinanderfolgende Kalendertage mit mindestens einer
-Session. Setzt zurück, sobald ein Tag ohne Session
+Sitzung. Setzt zurück, sobald ein Tag ohne Sitzung
 vergeht. Das ist die einzige "Gamification"-Kennzahl in
 AdaptiveLearner und sie ist bewusst zurückhaltend. Die
 andere Seite des Charts ist wichtiger.
@@ -116,20 +116,20 @@ Die Fortschritts-Seite rendert all das als Balkendiagramme.
 Auf der ProgressCommit-als-Git-Grundlage liegen drei
 Motivationsschichten:
 
-- **XP + Levels** - Basis 50 XP pro beendeter Session,
+- **XP + Levels** - Basis 50 XP pro beendeter Sitzung,
   plus +10 pro abgeschlossenem Zyklus, +25 pro
   Zyklus-Schritt-7, +50 First-Method-Bonus, alles
-  multipliziert mit dem Streak-Multiplikator (bis 2,75×
-  bei 7-Tage-Streak). Levels folgen
+  multipliziert mit dem Serien-Multiplikator (bis 2,75×
+  bei 7-Tage-Serie). Levels folgen
   `threshold(n) = 50 * n * (n - 1)`; Level 1–5 liegen
   bei 0 / 100 / 300 / 600 / 1000 XP.
 - **24 Abzeichen** in 5 Kategorien
   (getting_started 3 / consistency 4 /
   method_explorer 7 / depth 7 / polyglot 3), beim ersten
   Start aus `badges.yaml` geseedet. Prädikate werden nach
-  jeder Session ausgewertet.
-- **Streak-Heatmap** - 365 Tage, GitHub-Stil, Wochen-
-  spalten. Freezes: 1 pro 7 Streak-Tage, max. 3
+  jeder Sitzung ausgewertet.
+- **Serien-Heatmap** - 365 Tage, GitHub-Stil, Wochen-
+  spalten. Freezes: 1 pro 7 Serientage, max. 3
   stockpiled, Pause-statt-Reset-Semantik. Wochenend-
   Modus-Toggle überspringt Sa/So-Lücken.
 
@@ -156,8 +156,8 @@ Drittanbieter-Analytics- oder Telemetrie-Dienst.
 
 ## Warum das fürs Lernen wichtig ist
 
-Streak-Zähler in den meisten Apps sind süchtigmachend, aber
-flach. Aus einem 90-Tage-Duolingo-Streak lernst du nichts
+Serien-Zähler in den meisten Apps sind süchtigmachend, aber
+flach. Aus einer 90-Tage-Duolingo-Serie lernst du nichts
 darüber, *was* du gelernt hast. Das Git-Modell gibt dir
 Muster:
 
@@ -167,7 +167,7 @@ Muster:
 - "Ich habe 40% meiner Zeit auf Schritt 3 (Fehler)
   verbracht. Das Thema hat mehr Fallen als ich erwartet
   hatte."
-- "Ich hatte drei Wochen keine kontextuelle Session; die
+- "Ich hatte drei Wochen keine kontextuelle Sitzung; die
   Spaced-Empfehlungskarte hat recht, mich zu schubsen."
 
 Das sind die Fragen, die ein ernsthafter Lerner sich selbst
