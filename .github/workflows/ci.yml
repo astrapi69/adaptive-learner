@@ -752,9 +752,12 @@ jobs:
             # date" for every PR (#3480, #3333 merged without their row). Fetch
             # the PR head itself and walk base..head; fail closed when that
             # range holds none of the PR's commits.
-            git fetch --no-tags --depth=200 origin "${{ github.event.pull_request.base.ref }}" "${{ github.event.pull_request.head.sha }}"
+            # #3884: a depth-200 fetch cut develop above the merge base of a
+            # hotfix branch (cut from main), and the range listed 2389 commits
+            # instead of 10. The resolver fetches the full history only when
+            # the range reaches a shallow root, and fails when it still does.
             HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-            RANGE="origin/${{ github.event.pull_request.base.ref }}..${HEAD_SHA}"
+            RANGE="$(python3 scripts/resolve_pr_range.py --base "${{ github.event.pull_request.base.ref }}" --head "${HEAD_SHA}")"
             if [ "$(git rev-list --count "$RANGE")" -eq 0 ]; then
               echo "::error::rule-change-log check: $RANGE holds no commits, nothing was checked"
               exit 1
