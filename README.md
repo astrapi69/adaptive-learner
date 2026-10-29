@@ -1,6 +1,6 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v2.17.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Version](https://img.shields.io/badge/version-v2.17.1-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
 [![CI (develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/astrapi69/adaptive-learner/actions/workflows/ci.yml?query=branch%3Adevelop)
 [![Night shift](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml/badge.svg)](https://github.com/astrapi69/adaptive-learner/actions/workflows/red-runs-rollup.yml)
 [![Image](https://img.shields.io/github/v/release/astrapi69/adaptive-learner?label=image)](https://github.com/astrapi69/adaptive-learner/pkgs/container/adaptive-learner)
@@ -352,7 +352,7 @@ the in-repo files above are for contributors.
 
 ## Status
 
-Active development. The current release is **v2.17.0**, a **privacy
+Active development. The current release is **v2.17.1**, a **privacy
 release**: the privacy policy was rewritten in all eight help languages and
 describes when and where data leaves your device, the documentation site
 loads nothing from servers other than GitHub Pages, and an error report
