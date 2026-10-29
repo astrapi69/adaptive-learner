@@ -99,7 +99,7 @@ checks:
     rule: none (night-shift report; every merge and comment moves the state, so a merge gate would block unrelated PRs)
     status: active
     wired_in: scripts/status_board.py; make status-check; .github/workflows/status-board.yml; backend/tests/test_status_board.py
-    probe: script_exists=backend/tests/test_status_board.py | make_target=status-check | ci_step=.github/workflows/status-board.yml::status::Check the status files::status-check
+    probe: script_exists=backend/tests/test_status_board.py | make_target=status-check | ci_step=.github/workflows/status-board.yml::status::Check the status files::status_board.py check
 
   - id: testplan-parity
     verifies: the DE and EN manual test plans stay in sync - equal checkpoint and section counts, and the same multiset of issue references; compares content, never order, because the two plans order their sections differently (#3069, after #3065 found two DE-only checkpoints by hand)
