@@ -10,8 +10,8 @@ v1.61.0. As notas técnicas completas por versão estão em
 
 - **Aviso legal e política de privacidade**: indicam o endereço de
   contacto correto, asteri.raptis@gmail.com, nos oito idiomas da ajuda. A
-  v2.17.0 mostrava o endereço dos e-mails do GitHub, que não se destina a
-  pedidos de contacto.
+  v2.17.0 mostrava o endereço usado para os e-mails do GitHub, que não se
+  destina a pedidos de contacto.
 
 ## v2.17.0 - O que sai do teu dispositivo, correções e exames
 

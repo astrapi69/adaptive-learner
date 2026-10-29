@@ -11,7 +11,7 @@ altında bulunur.
 
 - **Künye ve gizlilik politikası**: doğru iletişim adresini,
   asteri.raptis@gmail.com, sekiz yardım dilinin hepsinde gösterir. v2.17.0
-  orada GitHub e-postaları için kullanılan ve sorular için düşünülmemiş
+  orada GitHub e-postaları için kullanılan ve sorulara yönelik olmayan
   adresi gösteriyordu.
 
 ## v2.17.0 - Cihazından çıkanlar, düzeltmeler ve sınavlar

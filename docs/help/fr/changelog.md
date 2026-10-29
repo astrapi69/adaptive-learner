@@ -10,8 +10,8 @@ notes techniques complètes par version se trouvent sous
 
 - **Mentions légales et politique de confidentialité** : elles indiquent
   la bonne adresse de contact, asteri.raptis@gmail.com, dans les huit
-  langues de l'aide. La v2.17.0 affichait l'adresse des e-mails GitHub, qui
-  n'est pas prévue pour les demandes.
+  langues de l'aide. La v2.17.0 affichait l'adresse utilisée pour les
+  e-mails de GitHub, qui n'est pas prévue pour les demandes.
 
 ## v2.17.0 - Ce qui quitte ton appareil, corrections et examens
 
