@@ -67,13 +67,14 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
           if [ "$code" -eq 2 ]; then
-            echo "::error::the check could not read GitHub; nothing is filed"
+            reason=$(grep -m1 "could not check" "$RUNNER_TEMP/report.txt" || echo "no reason printed")
+            echo "::error::the check could not read GitHub, nothing is filed: $reason"
             exit 2
           fi
           exit 0
 
       - name: Render fresh status files (mode=render)
-        if: github.event.inputs.mode == 'render'
+        if: always() && github.event.inputs.mode == 'render'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -86,7 +87,7 @@ jobs:
           exit 0
 
       - name: Upload the rendered files (mode=render)
-        if: github.event.inputs.mode == 'render'
+        if: always() && github.event.inputs.mode == 'render'
         uses: actions/upload-artifact@v7
         with:
           name: status-board
