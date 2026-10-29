@@ -1,0 +1,45 @@
+# Repositories of the Adaptive Learner ecosystem (#3889).
+#
+# scripts/status_board.py reads every open issue of these repositories into
+# BOARD.md and STATUS.md, and renders this list as "Where things are".
+# The order is the board's repository order. `make status-check` fails when a
+# non-archived repository of the owner matches ecosystem_pattern and is
+# missing here.
+#
+# release: github (latest GitHub Release), tag (newest vX.Y.Z tag, plus the
+# npm package when npm is set) or none. STATUS.md "Now" holds at most three
+# lines: one per releasing repository plus the open pull requests.
+
+owner: astrapi69
+ecosystem_pattern: ^(adaptive-learner|learn-content-engine|alc-)
+
+repos:
+  - name: adaptive-learner
+    role: the app (FastAPI backend, React frontend, plugins, launcher), docs and help
+    release: github
+  - name: learn-content-engine
+    role: the content engine (lesson schema, validation, quality rules), published to npm
+    release: tag
+    npm: learn-content-engine
+  - name: adaptive-learner-content-template
+    role: template for new content repositories (layout, CI, schema mirror)
+  - name: adaptive-learner-content
+    role: the official content sets bundled with the app
+  - name: adaptive-learner-content-test
+    role: test content the app's end-to-end specs read
+  - name: alc-ai
+    role: content repository, artificial intelligence
+  - name: alc-books
+    role: content repository, sets for books
+  - name: alc-die-waehrung-des-geistes
+    role: content repository, the book "Die Währung des Geistes"
+  - name: alc-dog-training
+    role: content repository, dog training
+  - name: alc-programming
+    role: content repository, programming
+  - name: alc-psychology
+    role: content repository, psychology
+  - name: alc-technology
+    role: content repository, technology
+  - name: alc-traffic-knowledge
+    role: content repository, traffic knowledge

@@ -1,0 +1,406 @@
+# What each open issue of the ecosystem waits for (#3889).
+#
+# One entry per open issue in a repository of status/repos.yaml, keyed repo#N.
+# Read by scripts/status_board.py into BOARD.md and STATUS.md; `make status-check`
+# fails when an open issue has no entry, an entry belongs to a closed issue, or an
+# issue moved after `checked` (check the classification again).
+#
+#   summary     the title as half a sentence
+#   waits       decision (an answer from the owner), external (a device, a key, an
+#               upstream release, a waiting period), issue (needs blocked_by), nothing
+#   detail      one sentence: what exactly it waits for, or why nothing
+#   evidence    link to the comment or place in the issue that shows it
+#   checked     the day the classification was last checked
+#   blocked_by  [repo#N, ...], only with waits: issue
+#   needed_by   optional, shown in STATUS.md 'Waiting for you'
+
+issues:
+  adaptive-learner#3889:
+    summary: "generated ecosystem STATUS.md and BOARD.md, checked nightly"
+    waits: nothing
+    detail: "Being built in the pull request that adds these files."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3889
+    checked: 2026-10-29
+  adaptive-learner#3881:
+    summary: "visual capture fails on any random draw the pin does not cover"
+    waits: nothing
+    detail: "The issue names the guard and the retirement of pinRandomness as its steps."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3881
+    checked: 2026-10-29
+  adaptive-learner#3876:
+    summary: "data-model help gets an area map as overview"
+    waits: nothing
+    detail: "The solution and acceptance are stated in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3876
+    checked: 2026-10-29
+  adaptive-learner#3875:
+    summary: "ER diagrams need a zoom and pan viewer instead of horizontal scroll"
+    waits: nothing
+    detail: "The acceptance asks for a viewer that shows every diagram whole."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3875
+    checked: 2026-10-29
+  adaptive-learner#3874:
+    summary: "release_outdated prints poetry surfaces without versions off a terminal"
+    waits: nothing
+    detail: "A tooling bug with a measured cause."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3874
+    checked: 2026-10-29
+  adaptive-learner#3873:
+    summary: "lesson-complete-on-summary spec counts done marks before the list loads"
+    waits: nothing
+    detail: "The fix (let the assertion wait) is written in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3873
+    checked: 2026-10-29
+  adaptive-learner#3872:
+    summary: "the auto-read switch for AI replies does nothing"
+    waits: decision
+    detail: "Implement auto-read of AI replies, or remove the switch and its help text in all eight languages?"
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3872
+    checked: 2026-10-29
+  adaptive-learner#3871:
+    summary: "a direct link to onboarding or assessment shows the navigation bar"
+    waits: nothing
+    detail: "The fix (normalise the trailing slash in HIDE_ON) is written in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3871
+    checked: 2026-10-29
+  adaptive-learner#3870:
+    summary: "Vitest and the Dexie smoke reach the network"
+    waits: nothing
+    detail: "The issue states the fix for both suites."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3870
+    checked: 2026-10-29
+  adaptive-learner#3858:
+    summary: "Sync UI promises pairing and sync the app cannot do"
+    waits: decision
+    detail: "Which of the listed text and button changes ship until LAN mode lands (options in the issue, decision open)?"
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3858
+    checked: 2026-10-29
+  adaptive-learner#3853:
+    summary: "maximum lesson length rule with a justified exception, in the engine"
+    waits: issue
+    detail: "Needs the lesson-length audit for the maximum value; the engine issue is drafted, not yet filed."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3853#issuecomment-6450574009
+    checked: 2026-10-29
+    blocked_by: [adaptive-learner#3850]
+  adaptive-learner#3852:
+    summary: "daily plan that packs lessons and reviews into the daily budget"
+    waits: issue
+    detail: "Needs the daily goal (the budget) and the audit (whether estimated_minutes is reliable)."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3852
+    checked: 2026-10-29
+    blocked_by: [adaptive-learner#3850, adaptive-learner#3851]
+  adaptive-learner#3851:
+    summary: "daily goal in minutes with progress ring and setting"
+    waits: nothing
+    detail: "The streak question is decided: not coupled to the goal."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3851#issuecomment-6450570755
+    checked: 2026-10-29
+  adaptive-learner#3850:
+    summary: "audit of lesson length across all content sets"
+    waits: nothing
+    detail: "Measurement over the content repositories; the method note is in the comment."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3850#issuecomment-6450572954
+    checked: 2026-10-29
+  adaptive-learner#3849:
+    summary: "daily goal and today plan (umbrella)"
+    waits: issue
+    detail: "Closes when its four sub-issues are done."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3849
+    checked: 2026-10-29
+    blocked_by: [adaptive-learner#3850, adaptive-learner#3851, adaptive-learner#3852, adaptive-learner#3853]
+  adaptive-learner#3839:
+    summary: "a small shared lesson travels to GitHub in the URL before confirmation"
+    waits: decision
+    detail: "Drop the content prefill (recommended) or keep it and say so in the dialog and the policy?"
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3839
+    checked: 2026-10-29
+  adaptive-learner#3835:
+    summary: "content loader uses one schema version constant for three numbers"
+    waits: nothing
+    detail: "The issue lists the correct value for each use."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3835
+    checked: 2026-10-29
+  adaptive-learner#3831:
+    summary: "documentation brought to the state of v2.17.0 (release audit)"
+    waits: decision
+    detail: "v2.17.0 and v2.17.1 are released; is the audit done, or do the groups still marked 'to follow' stay open here?"
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3831
+    checked: 2026-10-29
+  adaptive-learner#3830:
+    summary: "privacy-promises gate checks phrasings, not statements"
+    waits: decision
+    detail: "The issue is open on purpose with 'not to build now'; when should the allowlist check be built?"
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3830
+    checked: 2026-10-29
+  adaptive-learner#3827:
+    summary: "restore of a newer backup does not say what it skipped"
+    waits: nothing
+    detail: "The fix is written in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3827
+    checked: 2026-10-29
+  adaptive-learner#3824:
+    summary: "XP in visual baselines differs between refresh runs"
+    waits: external
+    detail: "Fixed in #3877; confirmation needs one refresh run on a day after 2026-10-29."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3824#issuecomment-6496440735
+    checked: 2026-10-29
+  adaptive-learner#3823:
+    summary: "privacy check fails when the policy changes and its date does not"
+    waits: nothing
+    detail: "The fix is written in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3823
+    checked: 2026-10-29
+  adaptive-learner#3820:
+    summary: "FAQ translations miss the key-storage update"
+    waits: nothing
+    detail: "The fix lists the files per language."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3820
+    checked: 2026-10-29
+  adaptive-learner#3819:
+    summary: "short set link /content/set/<id> finds sets of registry repositories"
+    waits: nothing
+    detail: "Scope confirmed by the owner on 2026-10-21."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3819#issuecomment-6315651438
+    checked: 2026-10-29
+  adaptive-learner#3795:
+    summary: "catalog keys without a consumer, nightly report"
+    waits: nothing
+    detail: "One key older than 14 days to check by hand."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3795
+    checked: 2026-10-29
+  adaptive-learner#3792:
+    summary: "finished lessons stay in progress in API mode"
+    waits: nothing
+    detail: "The Dexie part is done; the API-mode closing condition is stated in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3792#issuecomment-6286977731
+    checked: 2026-10-29
+  adaptive-learner#3790:
+    summary: "a backup saves the current user, not the device"
+    waits: nothing
+    detail: "Next step is the measurement the acceptance names; the scope decision follows it."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3790
+    checked: 2026-10-29
+  adaptive-learner#3789:
+    summary: "localStorage snapshot overwrites every key on restore"
+    waits: nothing
+    detail: "The acceptance names a policy per key group."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3789
+    checked: 2026-10-29
+  adaptive-learner#3788:
+    summary: "restore can revive old or retired content"
+    waits: nothing
+    detail: "The acceptance lists the fixes."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3788
+    checked: 2026-10-29
+  adaptive-learner#3787:
+    summary: "restore merges by timestamp only"
+    waits: nothing
+    detail: "The acceptance names the two restore modes and the merge rules."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3787
+    checked: 2026-10-29
+  adaptive-learner#3786:
+    summary: "backup format version is never checked"
+    waits: nothing
+    detail: "The acceptance names fixtures, a version gate and migrations."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3786
+    checked: 2026-10-29
+  adaptive-learner#3783:
+    summary: "the visual suite has no phone"
+    waits: decision
+    detail: "A touch project in the visual config, or the device check as deliberate coverage?"
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3783
+    checked: 2026-10-29
+  adaptive-learner#3780:
+    summary: "Bun lockfile guard reads a format table instead of asking Bun"
+    waits: nothing
+    detail: "The acceptance is stated in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3780
+    checked: 2026-10-29
+  adaptive-learner#3777:
+    summary: "two Radix lines in the frontend lock"
+    waits: nothing
+    detail: "An existing duplicate with a known fix, split out of #3776."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3776#issuecomment-6210646433
+    checked: 2026-10-29
+  adaptive-learner#3776:
+    summary: "no gate reports a package installed twice"
+    waits: nothing
+    detail: "The issue describes a shrink-only duplicate baseline."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3776
+    checked: 2026-10-29
+  adaptive-learner#3773:
+    summary: "listSetsDexie fetches manifests one after another"
+    waits: nothing
+    detail: "The fix (concurrent fetches) is written in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3773
+    checked: 2026-10-29
+  adaptive-learner#3772:
+    summary: "lesson header set line shifts step 1 after first paint"
+    waits: nothing
+    detail: "Option 1 (reserve the line's height) is chosen in the comment."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3772#issuecomment-6209270180
+    checked: 2026-10-29
+  adaptive-learner#3763:
+    summary: "rule change log keys a commit by the last (#N) of its subject"
+    waits: nothing
+    detail: "A parsing bug with a known cause."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3763
+    checked: 2026-10-29
+  adaptive-learner#3733:
+    summary: "image-size runners move to ubuntu-26.04 once it is GA"
+    waits: external
+    detail: "Waits for ubuntu-26.04 to be generally available on GitHub runners."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3733
+    checked: 2026-10-29
+  adaptive-learner#3544:
+    summary: "app root intermittently missing at 390 px in the mobile smoke"
+    waits: external
+    detail: "Stays open until a nightly failure screenshot shows what rendered."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3544
+    checked: 2026-10-29
+  adaptive-learner#3407:
+    summary: "engine features the app does not use yet"
+    waits: nothing
+    detail: "The direction (stable ids on export and share first) is stated in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3407
+    checked: 2026-10-29
+  adaptive-learner#3270:
+    summary: "frontend Prettier reformat and blocking check"
+    waits: issue
+    detail: "Decided by the owner: the reformat comes after slice 4 of the runner shell (#3169)."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3270
+    checked: 2026-10-29
+    blocked_by: [adaptive-learner#3169]
+  adaptive-learner#3173:
+    summary: "iPhone keyboard covers the input; compact lesson header"
+    waits: issue
+    detail: "The compact header follows slice 4 of the runner shell, as the owner set the order in #3169."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3169
+    checked: 2026-10-29
+    blocked_by: [adaptive-learner#3169]
+  adaptive-learner#3172:
+    summary: "iPhone page stays half shifted after Next with the keyboard open"
+    waits: nothing
+    detail: "A device bug with the suspected mechanism named in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3172
+    checked: 2026-10-29
+  adaptive-learner#3169:
+    summary: "one runner shell for all lesson and review runs"
+    waits: nothing
+    detail: "Slices are approved and in progress; slice 1 is merged."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3169#issuecomment-5793412742
+    checked: 2026-10-29
+  adaptive-learner#3163:
+    summary: "Portuguese catalog and help mix Brazilian and European variants"
+    waits: decision
+    detail: "Which variant does the pt locale use: Brazilian or European Portuguese?"
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3163
+    checked: 2026-10-29
+  adaptive-learner#3151:
+    summary: "websockets 17, isort 9 and filelock 4 bumps"
+    waits: external
+    detail: "websockets and isort wait for their upstream caps, filelock for its 4.x line to settle."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3151#issuecomment-6098113008
+    checked: 2026-10-29
+  adaptive-learner#3150:
+    summary: "TypeScript 7"
+    waits: external
+    detail: "Blocked by the typescript-eslint peer range (typescript-eslint#10940)."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3150
+    checked: 2026-10-29
+  adaptive-learner#3149:
+    summary: "openai SDK 3.x for ai-openai and ai-perplexity"
+    waits: external
+    detail: "Needs a live streamed call per provider with a real key."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3149
+    checked: 2026-10-29
+  adaptive-learner#3148:
+    summary: "anthropic SDK 1.x"
+    waits: external
+    detail: "Needs a live streamed call with a real key and a Retry-After cap."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3148
+    checked: 2026-10-29
+  adaptive-learner#1087:
+    summary: "manual test plan executed for launch readiness"
+    waits: external
+    detail: "Needs a tester to run the manual plan on real devices."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/1087
+    checked: 2026-10-29
+  learn-content-engine#282:
+    summary: "picture_choice image paths are never checked for existence"
+    waits: nothing
+    detail: "The fix (E-ASSET-MISSING in the repository validator) is written in the issue."
+    evidence: https://github.com/astrapi69/learn-content-engine/issues/282
+    checked: 2026-10-29
+  learn-content-engine#281:
+    summary: "manifest schema_version description makes two false claims"
+    waits: nothing
+    detail: "Ships with the next engine release."
+    evidence: https://github.com/astrapi69/learn-content-engine/issues/281
+    checked: 2026-10-29
+  learn-content-engine#275:
+    summary: "host gate misses five fetch spellings and exits 1 on a non-directory"
+    waits: nothing
+    detail: "Each form gets a seeded failing test first."
+    evidence: https://github.com/astrapi69/learn-content-engine/issues/275
+    checked: 2026-10-29
+  learn-content-engine#232:
+    summary: "sung and chanted lessons with audio provenance"
+    waits: decision
+    detail: "Planned, not started: the owner starts it later, and five decisions in the proposal are open."
+    evidence: https://github.com/astrapi69/learn-content-engine/issues/232
+    checked: 2026-10-29
+  adaptive-learner-content-test#117:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/adaptive-learner-content-test/issues/117
+    checked: 2026-10-29
+  alc-ai#47:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/alc-ai/issues/47
+    checked: 2026-10-29
+  alc-books#46:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/alc-books/issues/46
+    checked: 2026-10-29
+  alc-die-waehrung-des-geistes#75:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/alc-die-waehrung-des-geistes/issues/75
+    checked: 2026-10-29
+  alc-dog-training#54:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/alc-dog-training/issues/54
+    checked: 2026-10-29
+  alc-programming#58:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/alc-programming/issues/58
+    checked: 2026-10-29
+  alc-psychology#86:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/alc-psychology/issues/86
+    checked: 2026-10-29
+  alc-technology#47:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/alc-technology/issues/47
+    checked: 2026-10-29
+  alc-traffic-knowledge#47:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/alc-traffic-knowledge/issues/47
+    checked: 2026-10-29

@@ -30,7 +30,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-types check-types-backend check-types-frontend check-file-sizes check-css-size css-identity-ref css-identity-check check-dead-classnames check-testid-refs audit-legacy-conflicts check-complexity check-complexity-gate check-complexity-gate-update \
        check-directory-size check-directory-size-gate \
        check-folder-size check-folder-size-update \
-       check-blockers archive-task archive-task-dry install-hooks \
+       check-blockers archive-task archive-task-dry install-hooks status status-check \
        roadmap-header-bump roadmap-header-bump-dry \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav verify-docs-external-hosts \
@@ -953,6 +953,12 @@ verify-normative-changes: ## Normative/gate-status changes (#2079) must be decla
 
 verify-check-inventory: ## Check inventory (#2077): an active check may not be silently unwired or degraded
 	@python3 scripts/verify_check_inventory.py
+
+status: ## Generate STATUS.md and BOARD.md from GitHub and status/waits.yaml (#3889)
+	@python3 scripts/status_board.py render
+
+status-check: ## Fail when STATUS.md, BOARD.md or status/waits.yaml no longer match GitHub (#3889); nightly, not a merge gate
+	@python3 scripts/status_board.py check $(if $(DUMP),--dump-unclassified $(DUMP))
 
 verify-lessons-inventory: ## Lessons catalogue completeness (#2073): every section present + byte-identical
 	@python3 scripts/verify_lessons_inventory.py --compare .claude/rules/lessons/.inventory-baseline.json

@@ -94,6 +94,13 @@ checks:
     wired_in: .github/workflows/smoke-nightly.yml; scripts/smoke_nightly_report.py; backend/tests/test_smoke_nightly_report.py
     probe: script_exists=scripts/smoke_nightly_report.py | ci_step=.github/workflows/smoke-nightly.yml::smoke::Read the night::smoke_nightly_report.py
 
+  - id: status-board
+    verifies: STATUS.md and BOARD.md cover every open issue of the repositories in status/repos.yaml and match GitHub - every open issue has a status/waits.yaml entry, no entry belongs to a closed or unknown issue, no issue moved after its entry was checked, no blocked_by names a closed or unknown issue, both files are no older than the newest issue movement and equal a fresh render, no ecosystem repository is unlisted; exits 2 when it cannot read GitHub (#3889)
+    rule: none (night-shift report; every merge and comment moves the state, so a merge gate would block unrelated PRs)
+    status: active
+    wired_in: scripts/status_board.py; make status-check; .github/workflows/status-board.yml; backend/tests/test_status_board.py
+    probe: script_exists=backend/tests/test_status_board.py | make_target=status-check | ci_step=.github/workflows/status-board.yml::status::Check the status files::status-check
+
   - id: testplan-parity
     verifies: the DE and EN manual test plans stay in sync - equal checkpoint and section counts, and the same multiset of issue references; compares content, never order, because the two plans order their sections differently (#3069, after #3065 found two DE-only checkpoints by hand)
     rule: ai-workflow/testplan-policy.md#core-rules

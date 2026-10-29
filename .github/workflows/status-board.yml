@@ -1,0 +1,135 @@
+# Status board (#3889) - night shift (#575), NOT a merge gate.
+#
+# STATUS.md and BOARD.md cover every open issue of the repositories in
+# status/repos.yaml. `make status-check` fails when they, or the
+# classification in status/waits.yaml, no longer match GitHub: an open
+# issue without an entry, an entry for a closed issue, an issue that moved
+# after its entry was checked, a blocked_by on a closed or unknown issue, a
+# file older than the newest issue movement or different from a fresh run,
+# an ecosystem repository that is not listed.
+#
+# Every merge and every comment moves that state, so a merge gate would block
+# unrelated PRs. The result is filed instead: on develop the run opens or
+# updates ONE issue (found by its marker) and closes it once the check is
+# green. A run that cannot read GitHub exits 2, fails red and leaves the
+# issue alone (gate contract point 3, #2083).
+#
+# Dispatch with mode=render to get freshly generated STATUS.md and BOARD.md,
+# plus the open issues that have no entry yet, as an artifact. The run reads
+# public repositories only, so GITHUB_TOKEN is enough.
+
+name: Status board
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check (default) files the result; render uploads fresh STATUS.md and BOARD.md as an artifact"
+        required: false
+        default: "check"
+  schedule:
+    # Nightly 05:17 UTC - inside the night-shift window (#575).
+    - cron: "17 5 * * *"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  status:
+    name: Status files match the open issues
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Check the status files
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          make status-check DUMP="$RUNNER_TEMP/unclassified.json" 2>&1 | tee "$RUNNER_TEMP/report.txt"
+          code=${PIPESTATUS[0]}
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          {
+            echo '```'
+            cat "$RUNNER_TEMP/report.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$code" -eq 2 ]; then
+            echo "::error::the check could not read GitHub; nothing is filed"
+            exit 2
+          fi
+          exit 0
+
+      - name: Render fresh status files (mode=render)
+        if: github.event.inputs.mode == 'render'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          make status
+          echo "render exit $?"
+          mkdir -p "$RUNNER_TEMP/status-board"
+          cp STATUS.md BOARD.md "$RUNNER_TEMP/status-board/" 2>/dev/null
+          cp "$RUNNER_TEMP/unclassified.json" "$RUNNER_TEMP/report.txt" "$RUNNER_TEMP/status-board/" 2>/dev/null
+          exit 0
+
+      - name: Upload the rendered files (mode=render)
+        if: github.event.inputs.mode == 'render'
+        uses: actions/upload-artifact@v7
+        with:
+          name: status-board
+          path: ${{ runner.temp }}/status-board/
+          retention-days: 7
+
+      - name: File the result in one issue (develop only)
+        if: github.ref == 'refs/heads/develop' && github.event.inputs.mode != 'render'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          CODE: ${{ steps.check.outputs.code }}
+        run: |
+          marker='<!-- status-board-report (#3889) -->'
+          number=$(gh api "repos/$REPO/issues?state=open&labels=tooling&per_page=100" \
+            --jq "[.[] | select(.body != null and (.body | contains(\"$marker\")))][0].number // empty")
+          if [ "$CODE" = "1" ]; then
+            {
+              echo "\`make status-check\` found that STATUS.md, BOARD.md or status/waits.yaml no longer match GitHub (#3889)."
+              echo
+              echo "Fix: check each finding, update \`status/waits.yaml\` where the classification changed, run \`make status\` and open a PR labelled \`status-board\`."
+              echo
+              echo '```'
+              cat "$RUNNER_TEMP/report.txt"
+              echo '```'
+              echo
+              echo "Run: $GITHUB_SERVER_URL/$REPO/actions/runs/$GITHUB_RUN_ID"
+              echo
+              echo "$marker"
+            } > "$RUNNER_TEMP/body.md"
+            if [ -n "$number" ]; then
+              gh api -X PATCH "repos/$REPO/issues/$number" -F body=@"$RUNNER_TEMP/body.md" --silent
+              echo "updated #$number"
+            else
+              gh api -X POST "repos/$REPO/issues" \
+                -f title="Status board out of date (nightly report)" \
+                -F body=@"$RUNNER_TEMP/body.md" -f "labels[]=tooling" -f "labels[]=P3" --jq '.html_url'
+            fi
+          elif [ -n "$number" ]; then
+            gh api -X POST "repos/$REPO/issues/$number/comments" \
+              -f body="The nightly status check is green: STATUS.md, BOARD.md and status/waits.yaml match GitHub. Closing." --silent
+            gh api -X PATCH "repos/$REPO/issues/$number" -f state=closed -f state_reason=completed --silent
+            echo "closed #$number"
+          else
+            echo "nothing to file"
+          fi
