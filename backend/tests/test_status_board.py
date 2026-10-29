@@ -161,6 +161,38 @@ def test_last_movement_falls_back_to_creation_when_nothing_moved():
     ) == datetime(2026, 10, 1, tzinfo=UTC)
 
 
+def test_board_own_references_are_not_movement_and_not_in_progress():
+    """A PR listing the board's data links every issue; that is not movement (#3889)."""
+    board_pr = {
+        "html_url": "https://x/pull/3890",
+        "state": "open",
+        "pull_request": {},
+        "labels": [{"name": "status-board"}],
+        "body": "| app#1 | ...",
+    }
+    report = {
+        "html_url": "https://x/issues/9",
+        "state": "open",
+        "labels": [],
+        "body": f"findings {STATUS_REPORT_MARKER}",
+    }
+    events = [
+        {"event": "commented", "created_at": "2026-10-02T10:00:00Z"},
+        {
+            "event": "cross-referenced",
+            "created_at": "2026-10-29T10:00:00Z",
+            "source": {"issue": board_pr},
+        },
+        {
+            "event": "cross-referenced",
+            "created_at": "2026-10-28T10:00:00Z",
+            "source": {"issue": report},
+        },
+    ]
+    assert last_movement(events, "2026-10-01T00:00:00Z") == datetime(2026, 10, 2, 10, tzinfo=UTC)
+    assert open_pr_refs(events) == ()
+
+
 def test_open_pr_refs_lists_only_open_pull_requests():
     events = [
         {
