@@ -72,6 +72,7 @@ jobs:
             cat "$RUNNER_TEMP/report.txt"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+          grep "^FAIL " "$RUNNER_TEMP/report.txt" | sed 's/^FAIL /::warning::/' || true
           if [ "$code" -eq 2 ]; then
             reason=$(grep -m1 "could not check" "$RUNNER_TEMP/report.txt" || echo "no reason printed")
             echo "::error::the check could not read GitHub, nothing is filed: $reason"
