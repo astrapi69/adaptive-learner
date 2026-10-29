@@ -180,16 +180,29 @@ def _clean(text: str) -> str:
     return " ".join(text.split()).replace("|", "/")
 
 
+def _is_board_own(event: dict[str, Any]) -> bool:
+    """True for a reference made by the board itself.
+
+    A PR labelled ``status-board`` lists every issue it classifies, and the
+    nightly report issue names the ones it flags; GitHub records each such
+    link as a cross-reference. Counted as movement, one regeneration PR
+    would make every issue look fresh and empty the Stale block.
+    """
+    source = (event.get("source") or {}).get("issue") or {}
+    labels = {label.get("name") for label in source.get("labels") or []}
+    return REGENERATION_LABEL in labels or STATUS_REPORT_MARKER in (source.get("body") or "")
+
+
 def last_movement(events: list[dict[str, Any]], created_at: str) -> datetime:
     """Return the newest comment, reference or commit; the creation time if none.
 
     Label, title and assignment changes are not movement, which is why
-    ``updated_at`` is never used.
+    ``updated_at`` is never used; nor are the board's own references.
     """
     stamps = [created_at]
     for event in events:
         kind = event.get("event")
-        if kind not in MOVEMENT_EVENTS:
+        if kind not in MOVEMENT_EVENTS or _is_board_own(event):
             continue
         if kind == "committed":
             stamp = (event.get("committer") or {}).get("date") or (event.get("author") or {}).get(
@@ -206,7 +219,7 @@ def open_pr_refs(events: list[dict[str, Any]]) -> tuple[str, ...]:
     """Return the open pull requests that reference the issue in its timeline."""
     refs: list[str] = []
     for event in events:
-        if event.get("event") != "cross-referenced":
+        if event.get("event") != "cross-referenced" or _is_board_own(event):
             continue
         source = (event.get("source") or {}).get("issue") or {}
         if "pull_request" in source and source.get("state") == "open":
@@ -383,7 +396,8 @@ BOARD_RULES = """\
   `blocked_by` or in GitHub's own blocked-by relation), `nothing`.
 - Blocks is computed as the inverse of every `blocked_by`, never written by hand.
 - Last movement is the newest comment, reference or commit in the issue's timeline, not
-  its `updated_at` (a label change is not movement).
+  its `updated_at` (a label change is not movement). References from PRs labelled
+  `status-board` and from the nightly report issue do not count.
 - In progress lists open issues that an open pull request references; they leave Doable now.
 - Stale lists issues that wait for nothing and have not moved for more than 14 days before
   the issue state above; they also stay in their own block, so a decision is made on them.

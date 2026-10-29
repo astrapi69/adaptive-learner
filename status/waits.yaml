@@ -15,12 +15,6 @@
 #   needed_by   optional, shown in STATUS.md 'Waiting for you'
 
 issues:
-  adaptive-learner#3889:
-    summary: "generated ecosystem STATUS.md and BOARD.md, checked nightly"
-    waits: nothing
-    detail: "Being built in the pull request that adds these files."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3889
-    checked: 2026-10-29
   adaptive-learner#3881:
     summary: "visual capture fails on any random draw the pin does not cover"
     waits: nothing
@@ -403,4 +397,41 @@ issues:
     waits: nothing
     detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
     evidence: https://github.com/astrapi69/alc-traffic-knowledge/issues/47
+    checked: 2026-10-29
+  adaptive-learner-content-template#109:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/adaptive-learner-content-template/issues/109
+    checked: 2026-10-29
+  adaptive-learner-content-template#91:
+    summary: "validate_content.py takes quality minimums and language rules from the engine"
+    waits: issue
+    detail: "Decided to ship only with or after the blocking-warnings switch in #83."
+    evidence: https://github.com/astrapi69/adaptive-learner-content-template/issues/91
+    checked: 2026-10-29
+    blocked_by: [adaptive-learner-content-template#83]
+  adaptive-learner-content-template#83:
+    summary: "a quality-state switch that makes selected warning ids blocking"
+    waits: nothing
+    detail: "The gap and the proposal are written in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner-content-template/issues/83
+    checked: 2026-10-29
+  adaptive-learner-content-template#64:
+    summary: "mirror the corrected prose lines into the nine content repositories"
+    waits: nothing
+    detail: "Replace lines, not files; best together with each repository's re-pin."
+    evidence: https://github.com/astrapi69/adaptive-learner-content-template/issues/64
+    checked: 2026-10-29
+  adaptive-learner-content#257:
+    summary: "engine pin 0.42.0 behind the latest 0.42.2"
+    waits: nothing
+    detail: "Moving the pin is a deliberate PR; the issue closes itself once the pin catches up."
+    evidence: https://github.com/astrapi69/adaptive-learner-content/issues/257
+    checked: 2026-10-29
+  adaptive-learner-content#222:
+    summary: "author lint findings after the engine re-pin"
+    waits: nothing
+    detail: "Point 2 waited for learn-content-engine#254, which is closed, so the cloze conversion can be rebuilt without retirement."
+    evidence: https://github.com/astrapi69/adaptive-learner-content/issues/222#issuecomment-6098055490
     checked: 2026-10-29

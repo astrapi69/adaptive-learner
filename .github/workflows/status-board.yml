@@ -14,9 +14,10 @@
 # green. A run that cannot read GitHub exits 2, fails red and leaves the
 # issue alone (gate contract point 3, #2083).
 #
-# Dispatch with mode=render to get freshly generated STATUS.md and BOARD.md,
-# plus the open issues that have no entry yet, as an artifact. The run reads
-# public repositories only, so GITHUB_TOKEN is enough.
+# Dispatch with mode=render on a working branch to get freshly generated
+# STATUS.md and BOARD.md committed to that branch, plus status/unclassified.json
+# with the open issues that have no entry yet (remove it before merging). The
+# run reads public repositories only, so GITHUB_TOKEN is enough.
 
 name: Status board
 
@@ -24,7 +25,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "check (default) files the result; render uploads fresh STATUS.md and BOARD.md as an artifact"
+        description: "check (default) files the result; render commits fresh STATUS.md and BOARD.md to the dispatched working branch"
         required: false
         default: "check"
   schedule:
@@ -35,7 +36,9 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 permissions:
-  contents: read
+  # contents: write only for mode=render on a working branch, which commits
+  # the rendered files there; the step refuses develop and main.
+  contents: write
   issues: write
 
 jobs:
@@ -52,13 +55,16 @@ jobs:
       - name: Install PyYAML
         run: pip install pyyaml
 
+      # The script is called directly, not through make: make turns every
+      # failing recipe into exit 2, which would read a finding (exit 1) as
+      # "could not check" (exit 2).
       - name: Check the status files
         id: check
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set +e
-          make status-check DUMP="$RUNNER_TEMP/unclassified.json" 2>&1 | tee "$RUNNER_TEMP/report.txt"
+          python3 scripts/status_board.py check --dump-unclassified "$RUNNER_TEMP/unclassified.json" 2>&1 | tee "$RUNNER_TEMP/report.txt"
           code=${PIPESTATUS[0]}
           echo "code=$code" >> "$GITHUB_OUTPUT"
           {
@@ -66,32 +72,38 @@ jobs:
             cat "$RUNNER_TEMP/report.txt"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+          grep "^FAIL " "$RUNNER_TEMP/report.txt" | sed 's/^FAIL /::warning::/' || true
           if [ "$code" -eq 2 ]; then
-            echo "::error::the check could not read GitHub; nothing is filed"
+            reason=$(grep -m1 "could not check" "$RUNNER_TEMP/report.txt" || echo "no reason printed")
+            echo "::error::the check could not read GitHub, nothing is filed: $reason"
             exit 2
           fi
           exit 0
 
-      - name: Render fresh status files (mode=render)
+      - name: Render and commit the status files (mode=render, working branches only)
         if: github.event.inputs.mode == 'render'
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
         run: |
-          set +e
-          make status
-          echo "render exit $?"
-          mkdir -p "$RUNNER_TEMP/status-board"
-          cp STATUS.md BOARD.md "$RUNNER_TEMP/status-board/" 2>/dev/null
-          cp "$RUNNER_TEMP/unclassified.json" "$RUNNER_TEMP/report.txt" "$RUNNER_TEMP/status-board/" 2>/dev/null
-          exit 0
-
-      - name: Upload the rendered files (mode=render)
-        if: github.event.inputs.mode == 'render'
-        uses: actions/upload-artifact@v7
-        with:
-          name: status-board
-          path: ${{ runner.temp }}/status-board/
-          retention-days: 7
+          case "$BRANCH" in
+            develop|main) echo "::error::render commits only to a working branch, not $BRANCH"; exit 1 ;;
+          esac
+          python3 scripts/status_board.py render || echo "render refused, see the open issues without an entry"
+          if [ -s "$RUNNER_TEMP/unclassified.json" ] && [ "$(jq length "$RUNNER_TEMP/unclassified.json")" -gt 0 ]; then
+            cp "$RUNNER_TEMP/unclassified.json" status/unclassified.json
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for f in STATUS.md BOARD.md status/unclassified.json; do
+            if [ -f "$f" ]; then git add "$f"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "nothing rendered to commit"
+          else
+            git commit -m "chore(status): render STATUS.md and BOARD.md (#3889)"
+            git push origin "HEAD:$BRANCH"
+          fi
 
       - name: File the result in one issue (develop only)
         if: github.ref == 'refs/heads/develop' && github.event.inputs.mode != 'render'
