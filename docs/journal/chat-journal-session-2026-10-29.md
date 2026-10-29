@@ -110,3 +110,9 @@ Release-Session v2.17.0, begonnen am 2026-10-28. Abweichung vom Ablauf: Der Rele
   - Die Pillow-Alerts des Launchers sind veraltet.
   - virtualenv und setuptools stehen mit ihren Advisories auf der Warteliste.
 - Nachtrag Hotfix: gemergt #3882, #3883, #3885. Geschlossen #3878, #3880, #3884. Angelegt #3881 (Wächter gegen ungepinnten Zufall).
+- Nachtrag Abhängigkeiten:
+  - Auf Asters Anweisung ("manche pr sind grün kannst du schon mergen") gemergt: setuptools 84.1.0 (#3848) und virtualenv 21.14.13 (#3869).
+    - Beide lagen noch innerhalb der 14 Tage. Sie schließen die zwei Advisories der Warteliste und ändern je nur ihre eigene Lock-Zeile.
+  - Nicht gemergt, die Gründe stehen im jeweiligen PR:
+    - #3847 hätte happy-dom von 21.0.4 auf 21.0.3 zurückgedreht.
+    - #3846 enthält datamodel-code-generator 0.83 → 0.86, einen 0.x-Minor.
