@@ -4,7 +4,7 @@
 
 > Bu sayfa, Almanca aslının yalnızca bilgi amaçlı sunulan bir makine çevirisidir. Hukuken yalnızca Almanca sürüm bağlayıcıdır.
 
-Son güncelleme: 28 Ekim 2026
+Son güncelleme: 29 Ekim 2026
 
 Hukuki bir metin olduğu için bu politika resmî hitap biçimini kullanır.
 
@@ -23,7 +23,7 @@ yapay zekâ isteklerini kendi sunucunuz seçtiğiniz sağlayıcıya gönderir.
 
 Asterios Raptis, Seestraße 68, 71638 Ludwigsburg, Almanya
 
-E-posta: asterios.raptis@web.de
+E-posta: asteri.raptis@gmail.com
 
 ## Kısaca
 

@@ -4,7 +4,7 @@
 
 > Esta página é uma tradução automática do original em alemão e serve apenas para informação. Só a versão alemã é juridicamente vinculativa.
 
-Última atualização: 28 de outubro de 2026
+Última atualização: 29 de outubro de 2026
 
 Por se tratar de um texto jurídico, esta política utiliza o tratamento
 formal.
@@ -24,7 +24,7 @@ pedidos de IA ao fornecedor escolhido.
 
 Asterios Raptis, Seestraße 68, 71638 Ludwigsburg, Alemanha
 
-E-mail: asterios.raptis@web.de
+E-mail: asteri.raptis@gmail.com
 
 ## Resumo
 

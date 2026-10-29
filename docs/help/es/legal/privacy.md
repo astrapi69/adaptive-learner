@@ -2,7 +2,7 @@
 
 > Esta página es una traducción automática del original en alemán y se ofrece solo a título informativo. Únicamente la versión en alemán es jurídicamente vinculante.
 
-Última actualización: 28 de octubre de 2026
+Última actualización: 29 de octubre de 2026
 
 Como texto jurídico, esta política utiliza el trato de usted; en la app y en
 el resto de la ayuda te tratamos de tú.
@@ -22,7 +22,7 @@ solicitudes de IA al proveedor elegido.
 
 Asterios Raptis, Seestraße 68, 71638 Ludwigsburg, Alemania
 
-Correo electrónico: asterios.raptis@web.de
+Correo electrónico: asteri.raptis@gmail.com
 
 ## En resumen
 
