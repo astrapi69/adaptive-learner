@@ -3,7 +3,7 @@
 > This page is a translation of the German original and is provided for
 > information only. Only the German version is legally binding.
 
-Last updated: 28 October 2026
+Last updated: 29 October 2026
 
 This policy covers the public web version of Adaptive Learner at
 `astrapi69.github.io/adaptive-learner`, the public preview of the next version
@@ -19,7 +19,7 @@ requests to the provider you chose.
 
 Asterios Raptis, Seestraße 68, 71638 Ludwigsburg, Germany
 
-Email: asterios.raptis@web.de
+Email: asteri.raptis@gmail.com
 
 ## The short version
 
