@@ -8,6 +8,7 @@
 import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it} from "vitest";
 
+import {RANDOM_PIN_GLOBAL} from "../../lib/random/pinned-random";
 import {_resetDbForTests, getDb, newId} from "../dexie/db";
 import {
     getDailyMissionsDexie,
@@ -151,5 +152,31 @@ describe("getDailyMissionsDexie", () => {
             .equals([USER, TODAY])
             .toArray();
         expect(stored).toHaveLength(3);
+    });
+});
+
+describe("daily missions under the visual random pin (#3824)", () => {
+    // Two learners whose ids pick different missions without a pin: the
+    // visual runs seed a fresh random user id each time, so this difference
+    // is what re-rolled the missions (and a completed mission's XP) per run.
+    const LEARNER_A = "0c2f6f1e-5b1d-4c8a-9f3e-2a7d1c9b4e01";
+    const LEARNER_B = "3f9a2c10-7d4e-4b6a-8e21-5c0d9b7f1a33";
+
+    async function templateIds(userId: string): Promise<string[]> {
+        const {missions} = await getDailyMissionsDexie(userId, {todayIso: TODAY});
+        return missions.map((m) => m.template.id).sort();
+    }
+
+    it("without a pin, two learners get different missions", async () => {
+        expect(await templateIds(LEARNER_A)).not.toEqual(await templateIds(LEARNER_B));
+    });
+
+    it("under the pin, two learners get the same missions on the same day", async () => {
+        (globalThis as Record<string, unknown>)[RANDOM_PIN_GLOBAL] = {streamSeed: 0x1567, mountSalt: 13056};
+        try {
+            expect(await templateIds(LEARNER_A)).toEqual(await templateIds(LEARNER_B));
+        } finally {
+            delete (globalThis as Record<string, unknown>)[RANDOM_PIN_GLOBAL];
+        }
     });
 });

@@ -14,6 +14,7 @@
 import {computeStars} from "../../lib/gamification/lesson-xp";
 import {awardXPFlat} from "./gamification";
 import {assignDailyMissions} from "../../lib/missions/generator";
+import {missionSeedIdentity} from "../../lib/random";
 import {evaluateProgress} from "../../lib/missions/progress";
 import type {
     DailyMission,
@@ -149,7 +150,8 @@ async function assignForDay(
         .where("[user_id+assigned_date]")
         .equals([userId, yesterday])
         .toArray();
-    const templates = assignDailyMissions(userId, today, profile, {
+    // #3824 - a visual run seeds a fixed identity instead of its random id.
+    const templates = assignDailyMissions(missionSeedIdentity(userId), today, profile, {
         count: options.count,
         difficultyMix: options.difficultyMix,
         excludeIds: yRows.map((r) => r.template_id),
