@@ -6,6 +6,13 @@ technical notes per version are under
 
 ---
 
+## v2.17.1 - Contact address in the legal notice
+
+- **Legal notice and privacy policy**: they name the right contact
+  address, asteri.raptis@gmail.com, in all eight help languages. v2.17.0
+  showed the address used for GitHub mail there, which is not meant for
+  inquiries.
+
 ## v2.17.0 - What leaves your device, corrections and exams
 
 - **Privacy**: the privacy policy is rewritten and available in all eight
