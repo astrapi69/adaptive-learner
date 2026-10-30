@@ -422,6 +422,7 @@ tests run - `vitest run --changed origin/<base>` and
 runs, and release runs always run the FULL suite. The fallback
 to the full suite is automatic (unresolvable base ref, or a
 testmon cache miss).
+A PR's first run is selective too: it restores the testmon data that the `testmon-seed` job writes on every push to `develop` (#3901).
 
 More PR gates live in their own workflows:
 

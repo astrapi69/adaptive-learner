@@ -207,6 +207,7 @@ testler çalışır - `vitest run --changed origin/<base>` ve
 release koşuları her zaman TAM takımı çalıştırır. Tam takıma geri
 dönüş otomatiktir (çözülemeyen base ref'i ya da testmon önbellek
 kaçırması).
+Bir PR'ın ilk koşusu da seçicidir: `testmon-seed` işinin `develop`'a her push'ta yazdığı testmon verilerini geri yükler (#3901).
 
 Diğer PR kapıları kendi workflow'larında yaşar:
 

@@ -208,6 +208,7 @@ impactados - `vitest run --changed origin/<base>` e
 noturnas e as execuções de release correm sempre a suíte COMPLETA.
 O fallback para a suíte completa é automático (ref de base não
 resolúvel, ou um cache miss do testmon).
+Também a primeira execução de um PR é seletiva: restaura os dados do testmon que o job `testmon-seed` grava em cada push para `develop` (#3901).
 
 Mais alguns gates de PR vivem em workflows próprios:
 
