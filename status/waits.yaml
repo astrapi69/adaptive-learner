@@ -132,12 +132,6 @@ issues:
     detail: "The fix is written in the issue."
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3827
     checked: 2026-10-29
-  adaptive-learner#3824:
-    summary: "XP in visual baselines differs between refresh runs"
-    waits: external
-    detail: "Fixed in #3877; confirmation needs one refresh run on a day after 2026-10-29."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3824#issuecomment-6496440735
-    checked: 2026-10-29
   adaptive-learner#3823:
     summary: "privacy check fails when the policy changes and its date does not"
     waits: nothing
