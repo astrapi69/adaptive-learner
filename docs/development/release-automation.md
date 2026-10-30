@@ -93,7 +93,7 @@ For each `plugins/adaptive-learner-plugin-*/`, runs `poetry install --dry-run --
 
 ## Aggregate `make release-*` targets
 
-Seven targets compose existing tooling for the mechanical steps of `release-workflow.md`:
+Eight targets compose existing tooling for the mechanical steps of `release-workflow.md`:
 
 | Target | release-workflow.md Step | What it does |
 |---|---|---|
@@ -103,6 +103,7 @@ Seven targets compose existing tooling for the mechanical steps of `release-work
 | `make release-build` | Step 6 | Conditional backend `poetry build` (skipped iff `package-mode=false`) + frontend `bun run build` |
 | `make release-discover` | Step 4 supplement | Run the open-set version-literal discovery script with verbose output |
 | `make release-tag VERSION=X.Y.Z` | Step 7 | `verify_version_pins.sh $(VERSION)` + `git tag -a` + push main + push tag |
+| `make release-finish VERSION=X.Y.Z [FINISH_BRANCH=hotfix/vX.Y.Z]` | Gitflow, Step 7 | `verify_version_pins.sh`, then `scripts/release_finish_merge.sh` (#3904): merges `release/X.Y.Z` (or the hotfix branch) into a detached `origin/main` with `--no-ff`, checks both parents, tags, pushes `HEAD:main` and the tag, without checking main out; then opens the develop back-merge PR (#2182) |
 | `make release-publish VERSION=X.Y.Z` | Step 8 | `gh release create v$(VERSION) --draft --notes-file changelog/releases/v$(VERSION).md` (#3159) |
 
 **Not automated (LLM/human value-add):**

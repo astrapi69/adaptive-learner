@@ -1214,25 +1214,25 @@ endif
 	@echo "draft changelog/releases/v$(VERSION).md, run make release-test, commit."
 	@echo "Then: make release-finish VERSION=$(VERSION)"
 
-release-finish: ## Gitflow: merge release/$(VERSION) to main (tag) + back to develop. Usage: make release-finish VERSION=X.Y.Z
+# The branch release-finish merges: release/<version> by default, a hotfix
+# branch for a hotfix (#3904): make release-finish VERSION=2.17.2 FINISH_BRANCH=hotfix/v2.17.2
+FINISH_BRANCH ?= release/$(VERSION)
+
+release-finish: ## Gitflow: merge $(FINISH_BRANCH) to main (tag) + back to develop. Usage: make release-finish VERSION=X.Y.Z [FINISH_BRANCH=hotfix/vX.Y.Z]
 ifndef VERSION
 	$(error VERSION is required, e.g. make release-finish VERSION=1.77.0)
 endif
 	@echo "=== Pre-tag verification (verify_version_pins.sh) ==="
 	@bash scripts/verify_version_pins.sh $(VERSION)
-	@echo "=== Merge release/$(VERSION) into main (no-ff) + tag ==="
-	git checkout main
-	git pull origin main
-	git merge --no-ff release/$(VERSION) -m "Release v$(VERSION)"
-	git tag -a v$(VERSION) -m "Release v$(VERSION)"
-	git push origin main --tags
-	@echo "=== Back-merge release/$(VERSION) -> develop via PR (#2182: no direct push) ==="
+	@echo "=== Merge $(FINISH_BRANCH) into main (no-ff) + tag ==="
+	@bash scripts/release_finish_merge.sh $(VERSION) $(FINISH_BRANCH)
+	@echo "=== Back-merge $(FINISH_BRANCH) -> develop via PR (#2182: no direct push) ==="
 # Variante 1 (decided in #2182): the develop back-merge no longer direct-pushes.
 # A direct push bypassed the required checks (enforce_admins=false), which is how
 # ratchet-tripping changes reached develop ungated (#2180). It now opens a PR so
 # the required checks - incl. the ratchet gates - evaluate the merge. release-finish
 # STOPS here for develop; merge the PR once green. If a ratchet blocks, raise its
-# baseline in release/$(VERSION) and push - that is the desired behaviour, not a fault.
+# baseline in $(FINISH_BRANCH) and push - that is the desired behaviour, not a fault.
 # (The release-test ratchet gates, #2190, catch the normal case before the tag, so a
 # blocked back-merge PR should be rare.)
 #
@@ -1247,24 +1247,23 @@ endif
 # error as "already exists". An existing open PR is reused; anything else fails
 # the target, and main is already tagged at that point, so the message says what
 # is left to do.
-	git push origin release/$(VERSION)
-	@existing=$$(gh pr list --state open --base develop --head release/$(VERSION) --json number --jq length) || { \
+	@existing=$$(gh pr list --state open --base develop --head $(FINISH_BRANCH) --json number --jq length) || { \
 		echo "ERROR: cannot query PRs (gh pr list failed). main is tagged; open the develop back-merge PR by hand."; exit 1; }; \
 	if [ "$$existing" = "0" ]; then \
-		gh pr create --base develop --head release/$(VERSION) \
-			--title "Merge release/$(VERSION) back into develop" \
-			--body "Automated back-merge of v$(VERSION) into develop (#2182). Merges once the required checks pass; if a ratchet gate blocks, raise its baseline in this branch. Delete release/$(VERSION) after this merges." \
-		|| { echo "ERROR: gh pr create failed (token permission?). main is tagged + pushed; open the PR release/$(VERSION) -> develop by hand, then run make release-publish VERSION=$(VERSION)."; exit 1; }; \
+		gh pr create --base develop --head $(FINISH_BRANCH) \
+			--title "Merge $(FINISH_BRANCH) back into develop" \
+			--body "Automated back-merge of v$(VERSION) into develop (#2182). Merges once the required checks pass; if a ratchet gate blocks, raise its baseline in this branch. Delete $(FINISH_BRANCH) after this merges." \
+		|| { echo "ERROR: gh pr create failed (token permission?). main is tagged + pushed; open the PR $(FINISH_BRANCH) -> develop by hand, then run make release-publish VERSION=$(VERSION)."; exit 1; }; \
 	else \
-		echo "Back-merge PR release/$(VERSION) -> develop already open - reusing it."; \
+		echo "Back-merge PR $(FINISH_BRANCH) -> develop already open - reusing it."; \
 	fi; \
-	count=$$(gh pr list --state open --base develop --head release/$(VERSION) --json number --jq length); \
+	count=$$(gh pr list --state open --base develop --head $(FINISH_BRANCH) --json number --jq length); \
 	if [ "$$count" != "1" ]; then \
-		echo "ERROR: expected exactly 1 open back-merge PR release/$(VERSION) -> develop, found '$$count'."; exit 1; \
+		echo "ERROR: expected exactly 1 open back-merge PR $(FINISH_BRANCH) -> develop, found '$$count'."; exit 1; \
 	fi
 	@echo ""
 	@echo "main is tagged + pushed. The develop back-merge is now a PR - merge it once"
-	@echo "green, THEN delete release/$(VERSION) (local: git branch -D release/$(VERSION);"
+	@echo "green, THEN delete $(FINISH_BRANCH) (local: git branch -D $(FINISH_BRANCH);"
 	@echo "the remote branch auto-deletes on PR merge if the repo is configured to)."
 	@echo "Next: make release-publish VERSION=$(VERSION)"
 
