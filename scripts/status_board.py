@@ -14,7 +14,8 @@ with a link to the evidence and the date it was checked. Everything else is
 read from GitHub: the level (the ``P0``..``P5`` label), the last movement
 (the newest comment, commit or pull request that works on the issue, from
 the timeline API, never ``updated_at``: a label change is not movement, and
-neither is a mention, #3898), GitHub's own ``dependencies/blocked_by``, and
+neither is a mention in a PR or a commit, #3898, #3902), GitHub's own
+``dependencies/blocked_by``, and
 the open pull requests that work on an issue. ``Blocks`` is computed as the inverse of every ``blocked_by``.
 
 ``check`` fails (exit 1) when the files or the classification no longer
@@ -225,16 +226,46 @@ def works_on(source: dict[str, Any], target: IssueRef) -> bool:
         return False
     own = (source.get("repository") or {}).get("full_name") or ""
     text = f"{source.get('title') or ''}\n{source.get('body') or ''}"
+    return names_as_work(text, own, target)
+
+
+def names_as_work(text: str, own_repo: str, target: IssueRef) -> bool:
+    """Whether a closing keyword or ``Refs`` in ``text`` names ``target``.
+
+    A short ``#N`` means ``own_repo``; ``owner/repo#N`` and the full issue URL
+    name another one. The shared test of :func:`works_on` and
+    :func:`commit_works_on`.
+    """
     wanted = (f"{target[0]}/{target[1]}".lower(), target[2])
     for match in WORK_REF_RE.finditer(text):
         for ref in ISSUE_REF_RE.finditer(match.group("refs")):
             if ref.group("url_number"):
                 named = (ref.group("url_repo").lower(), int(ref.group("url_number")))
             else:
-                named = ((ref.group("repo") or own).lower(), int(ref.group("number")))
+                named = ((ref.group("repo") or own_repo).lower(), int(ref.group("number")))
             if named == wanted:
                 return True
     return False
+
+
+def commit_works_on(event: dict[str, Any], target: IssueRef) -> bool:
+    """Whether a ``referenced`` event's commit works on ``target`` (#3902).
+
+    The same rule as for pull requests: the commit message names the issue
+    with a closing keyword or ``Refs``. A mention in its prose is not work, nor
+    is a commit whose message could not be fetched (``commit_message`` is
+    attached by :func:`_attach_commit_messages`).
+    """
+    message = event.get("commit_message")
+    if not message:
+        return False
+    return names_as_work(message, _commit_repo(event.get("commit_url") or ""), target)
+
+
+def _commit_repo(commit_url: str) -> str:
+    """``owner/repo`` of an API commit URL (``.../repos/owner/repo/commits/sha``)."""
+    parts = commit_url.split("/repos/", 1)[-1].split("/")
+    return f"{parts[0]}/{parts[1]}" if len(parts) >= 2 else ""
 
 
 def last_movement(events: list[dict[str, Any]], created_at: str, target: IssueRef) -> datetime:
@@ -243,8 +274,9 @@ def last_movement(events: list[dict[str, Any]], created_at: str, target: IssueRe
     Label, title and assignment changes are not movement, which is why
     ``updated_at`` is never used; nor are the board's own references. A
     cross-reference counts only from a pull request that works on the issue
-    (:func:`works_on`, #3898): a mention from an issue or in a PR's prose moves
-    nothing.
+    (:func:`works_on`, #3898), a commit reference only from a commit whose
+    message does (:func:`commit_works_on`, #3902): a mention from an issue, in
+    a PR's prose or in a commit's prose moves nothing.
     """
     stamps = [created_at]
     for event in events:
@@ -252,6 +284,8 @@ def last_movement(events: list[dict[str, Any]], created_at: str, target: IssueRe
         if kind not in MOVEMENT_EVENTS or _is_board_own(event):
             continue
         if kind == "cross-referenced" and not works_on(_source(event), target):
+            continue
+        if kind == "referenced" and not commit_works_on(event, target):
             continue
         if kind == "committed":
             stamp = (event.get("committer") or {}).get("date") or (event.get("author") or {}).get(
@@ -447,7 +481,8 @@ BOARD_RULES = """\
 - Last movement is the newest comment, commit or pull request that works on the issue,
   from its timeline, not its `updated_at` (a label change is not movement). A PR works on
   an issue when a closing keyword (`Closes`, `Fixes`, `Resolves`) or `Refs` in its title
-  or body names it; a mention in a PR's prose or in another issue is not movement.
+  or body names it, a commit when its message does; a mention in the prose of a PR or a
+  commit, or in another issue, is not movement.
   PRs labelled `status-board` and the nightly report issue never count.
 - In progress lists open issues that an open pull request works on; they leave Doable now.
 - Stale lists issues that wait for nothing and have not moved for more than 14 days before
@@ -657,6 +692,16 @@ class GitHub:
         url = path if path.startswith("https://") else f"https://api.github.com/{path}"
         return self._request(url)[0]
 
+    def get_optional(self, path: str) -> Any | None:
+        """Like :meth:`get`, but ``None`` for HTTP 404; every other failure raises."""
+        try:
+            return self.get(path)
+        except FetchError as exc:
+            cause = exc.__cause__
+            if isinstance(cause, urllib.error.HTTPError) and cause.code == 404:
+                return None
+            raise
+
     def get_all(self, path: str) -> list[Any]:
         url: str | None = f"https://api.github.com/{path}"
         items: list[Any] = []
@@ -673,6 +718,21 @@ def _repo_of(url: str, owner: str) -> str:
     return parts[-1] if parts[-2] == owner else f"{parts[-2]}/{parts[-1]}"
 
 
+def _attach_commit_messages(gh: GitHub, events: list[dict[str, Any]]) -> None:
+    """Give each ``referenced`` event its commit message (#3902).
+
+    The timeline carries only ``commit_id`` and ``commit_url``, so this costs
+    one request per such event. A commit that no longer exists (404) stays
+    without a message and is not movement; any other failure raises FetchError.
+    """
+    for event in events:
+        if event.get("event") != "referenced" or not event.get("commit_url"):
+            continue
+        commit = gh.get_optional(event["commit_url"])
+        if commit is not None:
+            event["commit_message"] = (commit.get("commit") or {}).get("message") or ""
+
+
 def _fetch_issues(gh: GitHub, owner: str, repo: str) -> tuple[dict[str, Issue], dict[str, dict]]:
     issues: dict[str, Issue] = {}
     raw: dict[str, dict] = {}
@@ -681,6 +741,7 @@ def _fetch_issues(gh: GitHub, owner: str, repo: str) -> tuple[dict[str, Issue], 
             continue
         number = item["number"]
         events = gh.get_all(f"repos/{owner}/{repo}/issues/{number}/timeline?per_page=100")
+        _attach_commit_messages(gh, events)
         deps = gh.get_all(
             f"repos/{owner}/{repo}/issues/{number}/dependencies/blocked_by?per_page=100"
         )

@@ -10,6 +10,7 @@ clean fixture must stay green - a check that cannot fail proves nothing
 from __future__ import annotations
 
 import sys
+import urllib.error
 from datetime import UTC, date, datetime
 from pathlib import Path
 
@@ -21,10 +22,13 @@ sys.path.insert(0, str(REPO / "scripts"))
 from status_board import (  # noqa: E402
     STATUS_REPORT_MARKER,
     Entry,
+    FetchError,
+    GitHub,
     Issue,
     RepoConfig,
     Snapshot,
     WaitsError,
+    _attach_commit_messages,
     build_rows,
     check,
     compute_blocks,
@@ -267,6 +271,113 @@ def test_a_pr_that_works_on_the_issue_is_movement_and_in_progress(title, body):
 )
 def test_a_reference_to_another_issue_is_not_work_on_this_one(body, repo):
     assert not works_on(_pr(body, repo=repo), TARGET)
+
+
+def _commit_ref(
+    message: str | None,
+    *,
+    repo: str = "astrapi69/app",
+    created_at: str = "2026-10-25T10:00:00Z",
+) -> dict:
+    event = {
+        "event": "referenced",
+        "created_at": created_at,
+        "commit_id": "abc123",
+        "commit_url": f"https://api.github.com/repos/{repo}/commits/abc123",
+    }
+    if message is not None:
+        event["commit_message"] = message
+    return event
+
+
+def test_a_commit_that_only_mentions_the_issue_is_not_movement():
+    """#3902: the squash of #3899 named #3881 and #3896 in its prose."""
+    message = "fix(status): only a PR that works on an issue counts (#3898)\n\nSee also #5."
+    events = [{"event": "commented", "created_at": "2026-10-02T10:00:00Z"}, _commit_ref(message)]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 2, 10, tzinfo=UTC
+    )
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "fix: x\n\nCloses #5",
+        "fix: x (refs #5)",
+        "fix: x\n\nFixes #4, #5",
+        "fix: x\n\nResolves astrapi69/app#5",
+        "fix: x\n\nRefs https://github.com/astrapi69/app/issues/5",
+    ],
+    ids=["closes", "refs-in-subject", "fixes-list", "cross-repo-form", "full-url"],
+)
+def test_a_commit_that_names_the_issue_as_work_is_movement(message):
+    events = [_commit_ref(message)]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 25, 10, tzinfo=UTC
+    )
+
+
+def test_a_short_ref_in_another_repositorys_commit_is_not_this_issue():
+    events = [_commit_ref("fix: x\n\nCloses #5", repo="astrapi69/other")]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 1, tzinfo=UTC
+    )
+
+
+def test_a_commit_without_a_message_is_not_movement():
+    """A commit that no longer exists (404 on fetch) carries no message."""
+    events = [_commit_ref(None)]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 1, tzinfo=UTC
+    )
+
+
+class _FakeCommits:
+    """A ``GitHub`` stand-in answering commit reads from a dict (None = 404)."""
+
+    def __init__(self, messages: dict[str, str | None]) -> None:
+        self.messages = messages
+        self.calls: list[str] = []
+
+    def get_optional(self, path: str):
+        self.calls.append(path)
+        message = self.messages[path]
+        return None if message is None else {"commit": {"message": message}}
+
+
+def test_attach_commit_messages_reads_only_referenced_commits():
+    found = "https://api.github.com/repos/astrapi69/app/commits/a"
+    gone = "https://api.github.com/repos/astrapi69/app/commits/b"
+    events = [
+        {"event": "referenced", "commit_url": found},
+        {"event": "commented", "created_at": "2026-10-02T10:00:00Z"},
+        {"event": "referenced", "commit_url": gone},
+    ]
+    gh = _FakeCommits({found: "fix: x\n\nCloses #5", gone: None})
+    _attach_commit_messages(gh, events)
+    assert gh.calls == [found, gone]
+    assert events[0]["commit_message"] == "fix: x\n\nCloses #5"
+    assert "commit_message" not in events[1]
+    assert "commit_message" not in events[2]
+
+
+def _fail_with(code: int):
+    def request(self, url):
+        cause = urllib.error.HTTPError(url, code, "x", {}, None)
+        raise FetchError(f"GET {url}: {cause}") from cause
+
+    return request
+
+
+def test_get_optional_answers_none_for_a_missing_commit(monkeypatch):
+    monkeypatch.setattr(GitHub, "_request", _fail_with(404))
+    assert GitHub(None).get_optional("repos/o/r/commits/x") is None
+
+
+def test_get_optional_raises_every_other_failure(monkeypatch):
+    monkeypatch.setattr(GitHub, "_request", _fail_with(502))
+    with pytest.raises(FetchError):
+        GitHub(None).get_optional("repos/o/r/commits/x")
 
 
 def test_board_own_references_are_not_movement_and_not_in_progress():
