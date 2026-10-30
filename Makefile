@@ -226,7 +226,7 @@ dev-frontend:
 
 # --- Install ---
 
-install: install-plugins install-backend install-frontend install-e2e ## Install all dependencies
+install: install-plugins install-backend install-frontend install-e2e docs-install ## Install all dependencies (docs/ too: the release gate's verify-mkdocs-nav runs there, #3903)
 
 install-backend:
 	cd backend && poetry install
