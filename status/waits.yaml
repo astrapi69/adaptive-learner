@@ -15,12 +15,18 @@
 #   needed_by   optional, shown in STATUS.md 'Waiting for you'
 
 issues:
+  adaptive-learner#3896:
+    summary: "settings-about baselines move with every version bump"
+    waits: nothing
+    detail: "The issue names the fix (the displayed version from the visual pin), the binding test and a seeded probe across a version bump."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3896
+    checked: 2026-10-30
   adaptive-learner#3881:
     summary: "visual capture fails on any random draw the pin does not cover"
     waits: nothing
     detail: "The issue names the guard and the retirement of pinRandomness as its steps."
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3881
-    checked: 2026-10-29
+    checked: 2026-10-30
   adaptive-learner#3876:
     summary: "data-model help gets an area map as overview"
     waits: nothing
