@@ -90,6 +90,32 @@ Release-Session v2.17.0, begonnen am 2026-10-28. Abweichung vom Ablauf: Der Rele
     - Fix mit #3884/#3885 (`scripts/resolve_pr_range.py`), danach #3883 gemergt.
 - Commit: b57b90289, 93d143478, 82a6dd620, 2388252f6, e66c185d0, c1ccc71ad. main: 57998577d. develop: aa6c87c19 (#3882), d41874959 (#3885), 33b6319f3 (#3883).
 
+## 6. Status-Board über alle Repos des Ökosystems (#3889, Cloud-Sitzung)
+
+- Original prompt: STATUS.md und BOARD.md im Root, die alle offenen Issues über alle 13 Repos abdecken, erzeugt und geprüft, nie von Hand gepflegt; Konfiguration in `status/repos.yaml`, Klassifizierung in `status/waits.yaml`, nach grüner CI selbst mergen. Nachgereicht: "Das Gate soll melden, wenn BOARD.md älter ist als der jüngste Issue-Stand, nicht nur ob die Datei existiert."
+- Optimized prompt: "Pro offenem Issue Stufe, Halbsatz-Titel, Wartegrund mit Beleg-Link und Prüfdatum; Blocks als Umkehrung aller blocked_by; letzte Bewegung aus der Timeline. `make status-check` prüft Alter und Inhalt gegen einen frischen Lauf und schlägt bei jeder Drift fehl."
+- Goal: Ein Blick zeigt, was jetzt machbar ist, was auf eine Entscheidung wartet und was eingeschlafen ist.
+- Result:
+  - `scripts/status_board.py` mit `render` und `check`, 42 Tests ohne Netz, jede Fehlerklasse mit einer Gegenprobe, die rot werden muss.
+  - `status-board.yml` nachts plus Dispatch, Befund in einem Tracking-Issue, kein Merge-Gate. Einträge in `checks.yaml` und `gates.yaml`.
+  - Erstklassifizierung von 65 Issues aus 11 Repos. Unklare Fälle als `decision`: #3831, #3830, engine#232.
+  - Zwei Repos (`adaptive-learner-content`, `-template`) durfte die Cloud-Sitzung nicht anhängen; ihre Issues kamen über einen CI-Lauf.
+  - Der erste Live-Lauf fand sofort einen echten Befund: #3887 war während der Klassifizierung geschlossen worden.
+- Commit: 1c7b1c852 (#3890).
+
+## 7. Status-Board: vier Fehler aus den ersten echten Läufen (#3891)
+
+- Original prompt: (Fortsetzung von 6, nach dem Merge)
+- Optimized prompt: "Render-Lauf auf develop, die Issues der zwei gesperrten Repos klassifizieren, Dateien rendern, mergen, Check auf dem gemergten Stand."
+- Goal: STATUS.md und BOARD.md auf develop, Check grün.
+- Result:
+  - `make` macht aus jedem fehlgeschlagenen Rezept Exit 2. Ein Lauf mit Befunden (Exit 1) las sich wie "konnte GitHub nicht lesen" und meldete nichts. Der Workflow ruft das Skript direkt auf.
+  - Ein Abbruch nannte keinen Grund; jetzt Annotationen für den Grund und jede FAIL-Zeile.
+  - Artefakte liegen auf Blob-Speicher, den die Cloud-Sitzung nicht erreicht. Der Render-Modus committet auf den Arbeits-Branch, nie auf develop oder main.
+  - Die Klassifizierungstabelle im PR-Text von #3890 verlinkte jedes Issue. GitHub zählte das als Querverweis, alle Issues sahen am 29.10. bewegt aus, Stale war leer. Querverweise aus PRs mit Label `status-board` zählen nicht mehr (am 30.10. zur allgemeinen Regel #3898 erweitert).
+  - Check auf develop 8572ed46b, Lauf 40935500151: grün, kein Tracking-Issue. 69 offene Issues: 47 machbar, 8 Entscheidung, 14 extern oder anderes Issue, 7 stale.
+- Commit: 8572ed46b (#3891).
+
 ## Lektionen dieser Runde
 
 - Eine Vorprüfung gegen die eigene Faktensammlung findet nur, was gesammelt wurde. Die drei falschen Sätze fand erst die Prüfung vom Code her: Satz für Satz der Test oder die Code-Stelle, und ausgeführt.
@@ -116,3 +142,4 @@ Release-Session v2.17.0, begonnen am 2026-10-28. Abweichung vom Ablauf: Der Rele
   - Nicht gemergt, die Gründe stehen im jeweiligen PR:
     - #3847 hätte happy-dom von 21.0.4 auf 21.0.3 zurückgedreht.
     - #3846 enthält datamodel-code-generator 0.83 → 0.86, einen 0.x-Minor.
+- Nachtrag Status-Board (Cloud-Sitzung): gemergt #3890, #3891. Geschlossen #3889. Ein Fehler der eigenen Arbeit, gefunden erst im echten Lauf: Ein PR, der die Board-Daten verlinkt, verfälscht die Daten, die er beschreibt.
