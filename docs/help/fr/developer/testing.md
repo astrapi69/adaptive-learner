@@ -175,6 +175,7 @@ impactés s'exécutent - `vitest run --changed origin/<base>` et
 nocturnes et les exécutions de release lancent toujours la suite
 COMPLÈTE. Le repli vers la suite complète est automatique (référence
 de base non résoluble, ou cache testmon manquant).
+La première exécution d'une PR est elle aussi sélective : elle restaure les données testmon que le job `testmon-seed` écrit à chaque push sur `develop` (#3901).
 
 D'autres gates PR vivent dans leurs propres workflows :
 

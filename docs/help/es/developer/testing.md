@@ -209,6 +209,7 @@ pruebas afectadas - `vitest run --changed origin/<base>` y
 nocturnas y las de release ejecutan siempre la suite COMPLETA. El
 retorno a la suite completa es automático (una referencia base no
 resoluble o un fallo de la caché de testmon).
+También la primera ejecución de un PR es selectiva: restaura los datos de testmon que el job `testmon-seed` escribe en cada push a `develop` (#3901).
 
 Otros gates de PR viven en flujos de trabajo propios:
 
