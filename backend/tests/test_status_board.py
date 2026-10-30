@@ -43,8 +43,8 @@ from status_board import (  # noqa: E402
     render_board,
     render_status,
     stale_rows,
-    works_on,
 )
+from status_movement import works_on  # noqa: E402
 
 T0 = datetime(2026, 10, 29, 12, 0, tzinfo=UTC)
 GEN = datetime(2026, 10, 29, 13, 0, tzinfo=UTC)
