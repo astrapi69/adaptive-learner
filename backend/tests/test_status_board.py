@@ -39,6 +39,7 @@ from status_board import (  # noqa: E402
     render_board,
     render_status,
     stale_rows,
+    works_on,
 )
 
 T0 = datetime(2026, 10, 29, 12, 0, tzinfo=UTC)
@@ -144,21 +145,128 @@ def test_level_of_reads_the_tier_label(labels, expected):
     assert level_of(labels) == expected
 
 
-def test_last_movement_counts_comments_references_and_commits_only():
+TARGET = ("astrapi69", "app", 5)
+
+
+def _pr(body: str, *, title: str = "chore: x", repo: str = "astrapi69/app", state: str = "open"):
+    return {
+        "html_url": f"https://github.com/{repo}/pull/77",
+        "state": state,
+        "pull_request": {},
+        "labels": [],
+        "title": title,
+        "body": body,
+        "repository": {"full_name": repo},
+    }
+
+
+def _xref(source: dict, created_at: str = "2026-10-25T10:00:00Z") -> dict:
+    return {"event": "cross-referenced", "created_at": created_at, "source": {"issue": source}}
+
+
+def test_last_movement_counts_comments_and_commits():
     events = [
         {"event": "labeled", "created_at": "2026-10-28T10:00:00Z"},
         {"event": "commented", "created_at": "2026-10-20T10:00:00Z"},
         {"event": "committed", "committer": {"date": "2026-10-22T09:00:00Z"}},
-        {"event": "cross-referenced", "created_at": "2026-10-21T10:00:00Z"},
+        {"event": "referenced", "created_at": "2026-10-21T10:00:00Z"},
         {"event": "renamed", "created_at": "2026-10-29T10:00:00Z"},
     ]
-    assert last_movement(events, "2026-10-01T00:00:00Z") == datetime(2026, 10, 22, 9, tzinfo=UTC)
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 22, 9, tzinfo=UTC
+    )
 
 
 def test_last_movement_falls_back_to_creation_when_nothing_moved():
     assert last_movement(
-        [{"event": "labeled", "created_at": "2026-10-28T10:00:00Z"}], "2026-10-01T00:00:00Z"
+        [{"event": "labeled", "created_at": "2026-10-28T10:00:00Z"}],
+        "2026-10-01T00:00:00Z",
+        TARGET,
     ) == datetime(2026, 10, 1, tzinfo=UTC)
+
+
+def test_an_issue_mention_is_not_movement():
+    """#3898: #3896 naming #3881 under Related moved nothing on #3881."""
+    mention = {
+        "html_url": "https://github.com/astrapi69/app/issues/9",
+        "state": "open",
+        "labels": [],
+        "title": "x",
+        "body": "Related: #5, Closes #5",
+        "repository": {"full_name": "astrapi69/app"},
+    }
+    events = [{"event": "commented", "created_at": "2026-10-02T10:00:00Z"}, _xref(mention)]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 2, 10, tzinfo=UTC
+    )
+
+
+def test_a_pr_that_only_mentions_the_issue_is_not_movement_nor_in_progress():
+    events = [
+        {"event": "commented", "created_at": "2026-10-02T10:00:00Z"},
+        _xref(_pr("The same class as #5, see there.")),
+    ]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 2, 10, tzinfo=UTC
+    )
+    assert open_pr_refs(events, TARGET) == ()
+
+
+@pytest.mark.parametrize(
+    ("title", "body"),
+    [
+        ("chore: x", "Closes #5"),
+        ("chore: x", "closes #5"),
+        ("chore: x", "Fixes #5"),
+        ("chore: x", "Resolved: #5"),
+        ("chore: x", "Refs #5"),
+        ("chore: x", "Refs #4, #5"),
+        ("chore: x", "Refs #4 and #5"),
+        ("chore: x", "Closes astrapi69/app#5"),
+        ("chore: x", "Refs https://github.com/astrapi69/app/issues/5"),
+        ("fix: x, fixes #5", ""),
+    ],
+    ids=[
+        "closes",
+        "lower-case",
+        "fixes",
+        "resolved-colon",
+        "refs",
+        "refs-list-comma",
+        "refs-list-and",
+        "cross-repo-form",
+        "full-url",
+        "in-title",
+    ],
+)
+def test_a_pr_that_works_on_the_issue_is_movement_and_in_progress(title, body):
+    events = [_xref(_pr(body, title=title))]
+    assert works_on(_pr(body, title=title), TARGET)
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 25, 10, tzinfo=UTC
+    )
+    assert open_pr_refs(events, TARGET) == ("https://github.com/astrapi69/app/pull/77",)
+
+
+@pytest.mark.parametrize(
+    ("body", "repo"),
+    [
+        ("Closes #6", "astrapi69/app"),
+        ("Closes astrapi69/other#5", "astrapi69/app"),
+        ("Closes #5", "astrapi69/other"),
+        ("Refs https://github.com/astrapi69/other/issues/5", "astrapi69/app"),
+        ("four fixes from the first runs (#5)", "astrapi69/app"),
+    ],
+    ids=[
+        "other-number",
+        "same-number-other-repo",
+        "short-ref-means-the-prs-own-repo",
+        "url-to-other-repo",
+        "keyword-not-followed-by-the-ref",
+    ],
+)
+def test_a_reference_to_another_issue_is_not_work_on_this_one(body, repo):
+    assert not works_on(_pr(body, repo=repo), TARGET)
 
 
 def test_board_own_references_are_not_movement_and_not_in_progress():
@@ -189,30 +297,19 @@ def test_board_own_references_are_not_movement_and_not_in_progress():
             "source": {"issue": report},
         },
     ]
-    assert last_movement(events, "2026-10-01T00:00:00Z") == datetime(2026, 10, 2, 10, tzinfo=UTC)
-    assert open_pr_refs(events) == ()
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 2, 10, tzinfo=UTC
+    )
+    assert open_pr_refs(events, TARGET) == ()
 
 
 def test_open_pr_refs_lists_only_open_pull_requests():
-    events = [
-        {
-            "event": "cross-referenced",
-            "source": {
-                "issue": {"html_url": "https://x/pull/7", "state": "open", "pull_request": {}}
-            },
-        },
-        {
-            "event": "cross-referenced",
-            "source": {
-                "issue": {"html_url": "https://x/pull/8", "state": "closed", "pull_request": {}}
-            },
-        },
-        {
-            "event": "cross-referenced",
-            "source": {"issue": {"html_url": "https://x/issues/9", "state": "open"}},
-        },
-    ]
-    assert open_pr_refs(events) == ("https://x/pull/7",)
+    closed = _pr("Closes #5", state="closed")
+    closed["html_url"] = "https://github.com/astrapi69/app/pull/78"
+    issue = {**_pr("Closes #5"), "html_url": "https://github.com/astrapi69/app/issues/9"}
+    del issue["pull_request"]
+    events = [_xref(_pr("Closes #5")), _xref(closed), _xref(issue)]
+    assert open_pr_refs(events, TARGET) == ("https://github.com/astrapi69/app/pull/77",)
 
 
 # --- waits.yaml parsing -------------------------------------------------------
