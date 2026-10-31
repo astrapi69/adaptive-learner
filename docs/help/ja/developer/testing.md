@@ -150,7 +150,7 @@ CIは2つの層に分かれます。正しさのゲートはすべてのPRで実
 5. バックエンドのruff + mypy + pip-audit
 6. ドキュメントのドリフト検証（`verify_docs.py` + mkdocs-navの同期）
 
-**Test Impact Analysis (#615):** PRでは影響を受けるテストのみが実行されます - `vitest run --changed origin/<base>`と`pytest --testmon`。`develop` / `main`へのプッシュ、ナイトリー実行、リリース実行では常にフルスイートが実行されます。フルスイートへのフォールバックは自動です（ベース参照を解決できない場合、またはtestmonのキャッシュミス）。
+**Test Impact Analysis (#615):** PRでは影響を受けるテストのみが実行されます - `vitest run --changed origin/<base>`と`pytest --testmon`。`develop` / `main`へのプッシュ、ナイトリー実行、リリース実行では常にフルスイートが実行されます。フルスイートへのフォールバックは自動です（ベース参照を解決できない場合、またはtestmonのキャッシュミス）。PRの初回実行も選択的です。`develop`へのプッシュのたびに`testmon-seed`ジョブが書き込むtestmonデータを復元します（#3901）。
 
 さらに、いくつかのPRゲートは独自のワークフローにあります。
 

@@ -376,6 +376,19 @@ Noch nie durchgefuehrt. JETZT machen.
       vorher, dass das Backup zu einem anderen Profil gehört. Danach: Profil
       A bleibt aktiv, B's Lektion zeigt ihren Fortschritt im Lernpfad, A's
       pausierte Lektion steht weiter unter "Weitermachen", keine Fehlermeldung.
+- [ ] TC-1003 Backup aus einer neueren Version (#3827): ein `.alb` exportieren, die
+      `data.json` daraus entpacken, darin `version` auf `1.99.0` setzen und
+      einen Block `"zukunft": {"x": 1}` ergänzen, die Datei als `.json` über
+      Einstellungen → Daten importieren. Der Import läuft durch, danach nennt
+      ein Hinweis das Backup-Format 1.99.0 und "übersprungen: zukunft". Ohne
+      den Zusatzblock sagt der Hinweis "Alles darin wurde wiederhergestellt."
+      Ein unverändertes Backup zeigt keinen Hinweis. Einmal im Server- und
+      einmal im Browser-Modus.
+- [ ] TC-1004 Unlesbares oder zu neues Backup (#3827): dieselbe `data.json` mit
+      `version` `2.0.0` importieren → abgelehnt, die Meldung nennt 2.0.0 und
+      1.x, nichts wird übernommen. Mit `version` `abc` → "Die Formatversion
+      dieses Backups ist nicht lesbar". Beides auch im Onboarding über
+      "Aus bestehendem Backup wiederherstellen".
 
 ---
 

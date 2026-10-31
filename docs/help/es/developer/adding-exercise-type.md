@@ -43,10 +43,10 @@ línea que traza la lista de "excluidos deliberadamente" del catálogo.
    con su validador independiente, y el documento de referencia de formato. **Nunca edites a mano** un
    artefacto espejado o generado; la barrera de deriva
    `make sync-schema-check` falla si lo haces.
-4. **Versión del esquema.** Mantén `CURRENT_SCHEMA_VERSION` en `models.py`
-   alineada con la versión del esquema del engine fijado (**minor** =
-   aditiva; el contenido antiguo sigue validando gracias a la coincidencia
-   de versión mayor). No añadas reglas entre campos del lado de la app a
+4. **Versión del esquema.** No hay nada que subir a mano: los números de
+   versión vienen de los espejos del engine en `schema/` (`make sync-schema`
+   tras un re-pin; **minor** = aditiva, el contenido antiguo sigue validando
+   gracias a la coincidencia de versión mayor). No añadas reglas entre campos del lado de la app a
    `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`:
    las reglas semánticas son del engine y se ejecutan en tiempo de
    autoría y en el frontend antes de guardar un conjunto de usuario

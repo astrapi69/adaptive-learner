@@ -153,7 +153,8 @@ jobs:
 
       # Test Impact Analysis (#615): on a PR we run only the tests whose
       # covered source changed, via pytest-testmon. The .testmondata DB is
-      # cached so successive PR runs reuse it. The key carries the run id so
+      # cached; a PR's first run restores the one the testmon-seed job wrote
+      # on the develop push (#3901), later runs their own. The key carries the run id so
       # each run writes a FRESH cache entry; restore-keys falls back to the
       # most recent matching prefix, keeping the DB warm + current. A
       # cache-miss leaves no .testmondata, so testmon runs the FULL suite and
@@ -278,6 +279,63 @@ jobs:
         if: (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') && needs.changes.outputs.i18n_only != 'true'
         working-directory: backend
         run: poetry run python ../scripts/check_dead_code.py --only python
+
+  # Testmon seed (#3901). The PR step above restores .testmondata, but a run
+  # reads only the caches of its own ref and of the base branch, and only PR
+  # runs wrote one: every PR's first run started cold and ran the whole suite
+  # (#3899: 2716 tests in 11:00 against the 15-minute job limit). This job
+  # writes the data on the develop push, under the key the PR step restores.
+  # It starts from the previous develop data, so after its first (cold) run
+  # testmon re-runs only what the push affected. The full merge run above
+  # stays without testmon: testmon roughly doubles a full run (develop pushes
+  # took 3:49 to 6:56 without it, the cold PR run 11:00 with it).
+  testmon-seed:
+    name: Testmon seed (develop)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Cache Poetry virtualenv (backend)
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}
+          restore-keys: |
+            poetry-backend-${{ runner.os }}-py3.12-
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Restore and save testmon data (develop)
+        uses: actions/cache@v6
+        with:
+          path: backend/.testmondata
+          key: testmon-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}-${{ github.run_id }}
+          restore-keys: |
+            testmon-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}-
+
+      - name: Record testmon data
+        working-directory: backend
+        run: |
+          set +e
+          poetry run pytest tests/ -q --testmon
+          code=$?
+          set -e
+          if [ "$code" = "5" ]; then
+            echo "::notice::testmon found nothing impacted since the last seed, data unchanged"
+            exit 0
+          fi
+          exit $code
 
   # Plugin tests (#434 Goal A): run every plugin's own suite in CI via
   # `make test-plugins`, which executes each `plugins/*/tests/` through the
@@ -676,6 +734,18 @@ jobs:
         run: pip install pyyaml
       - name: Verify documentation for drift
         run: python3 scripts/verify_docs.py
+      # #3823: a changed privacy policy carries a date no older than its
+      # change. The checkout is the depth-1 synthetic merge commit, so the
+      # resolver (#3884) fetches the PR head and enough history for the merge
+      # base; the check exits 2 (cannot check) when it still finds none.
+      - name: Changed privacy policies carry the date of their change (#3823)
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          BASE="${{ github.event.pull_request.base.ref }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          python3 scripts/resolve_pr_range.py --base "$BASE" --head "$HEAD_SHA" > /dev/null
+          python3 scripts/check_privacy_date.py --base "origin/$BASE" --head "$HEAD_SHA"
       # #3800 - every ```mermaid block in docs/help parses with the Mermaid the
       # docs site serves (vendored, pinned by hash) and carries accTitle +
       # accDescr. Mermaid needs a DOM, so happy-dom is installed at the

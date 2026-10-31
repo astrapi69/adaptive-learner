@@ -437,6 +437,7 @@ betroffenen Tests - `vitest run --changed origin/<base>` und
 nächtlichen Läufe und der Release-Lauf führen immer die VOLLE
 Suite aus. Der Rückfall auf die volle Suite ist automatisch
 (nicht auflösbare Basis-Referenz oder ein testmon-Cache-Miss).
+Auch der erste Lauf eines PRs ist selektiv: Er liest die testmon-Daten, die der Job `testmon-seed` bei jedem Push auf `develop` schreibt (#3901).
 
 Weitere PR-Gates leben in eigenen Workflows:
 

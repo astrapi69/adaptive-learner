@@ -15,12 +15,18 @@
 #   needed_by   optional, shown in STATUS.md 'Waiting for you'
 
 issues:
+  adaptive-learner#3896:
+    summary: "settings-about baselines move with every version bump"
+    waits: nothing
+    detail: "The issue names the fix (the displayed version from the visual pin), the binding test and a seeded probe across a version bump."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3896
+    checked: 2026-10-30
   adaptive-learner#3881:
     summary: "visual capture fails on any random draw the pin does not cover"
     waits: nothing
     detail: "The issue names the guard and the retirement of pinRandomness as its steps."
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3881
-    checked: 2026-10-29
+    checked: 2026-10-30
   adaptive-learner#3876:
     summary: "data-model help gets an area map as overview"
     waits: nothing
@@ -108,12 +114,6 @@ issues:
     detail: "Drop the content prefill (recommended) or keep it and say so in the dialog and the policy?"
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3839
     checked: 2026-10-29
-  adaptive-learner#3835:
-    summary: "content loader uses one schema version constant for three numbers"
-    waits: nothing
-    detail: "The issue lists the correct value for each use."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3835
-    checked: 2026-10-29
   adaptive-learner#3831:
     summary: "documentation brought to the state of v2.17.0 (release audit)"
     waits: decision
@@ -125,30 +125,6 @@ issues:
     waits: decision
     detail: "The issue is open on purpose with 'not to build now'; when should the allowlist check be built?"
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3830
-    checked: 2026-10-29
-  adaptive-learner#3827:
-    summary: "restore of a newer backup does not say what it skipped"
-    waits: nothing
-    detail: "The fix is written in the issue."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3827
-    checked: 2026-10-29
-  adaptive-learner#3824:
-    summary: "XP in visual baselines differs between refresh runs"
-    waits: external
-    detail: "Fixed in #3877; confirmation needs one refresh run on a day after 2026-10-29."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3824#issuecomment-6496440735
-    checked: 2026-10-29
-  adaptive-learner#3823:
-    summary: "privacy check fails when the policy changes and its date does not"
-    waits: nothing
-    detail: "The fix is written in the issue."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3823
-    checked: 2026-10-29
-  adaptive-learner#3820:
-    summary: "FAQ translations miss the key-storage update"
-    waits: nothing
-    detail: "The fix lists the files per language."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3820
     checked: 2026-10-29
   adaptive-learner#3819:
     summary: "short set link /content/set/<id> finds sets of registry repositories"
@@ -193,11 +169,11 @@ issues:
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3787
     checked: 2026-10-29
   adaptive-learner#3786:
-    summary: "backup format version is never checked"
+    summary: "backup restore has no fixture per format version and no migration chain"
     waits: nothing
-    detail: "The acceptance names fixtures, a version gate and migrations."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3786
-    checked: 2026-10-29
+    detail: "The version gate landed with #3919; the fixtures per released format version and the migration steps are written in the acceptance."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3786#issuecomment-6542280195
+    checked: 2026-10-31
   adaptive-learner#3783:
     summary: "the visual suite has no phone"
     waits: decision

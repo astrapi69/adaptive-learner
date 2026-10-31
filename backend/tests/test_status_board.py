@@ -10,6 +10,7 @@ clean fixture must stay green - a check that cannot fail proves nothing
 from __future__ import annotations
 
 import sys
+import urllib.error
 from datetime import UTC, date, datetime
 from pathlib import Path
 
@@ -21,10 +22,13 @@ sys.path.insert(0, str(REPO / "scripts"))
 from status_board import (  # noqa: E402
     STATUS_REPORT_MARKER,
     Entry,
+    FetchError,
+    GitHub,
     Issue,
     RepoConfig,
     Snapshot,
     WaitsError,
+    _attach_commit_messages,
     build_rows,
     check,
     compute_blocks,
@@ -40,6 +44,7 @@ from status_board import (  # noqa: E402
     render_status,
     stale_rows,
 )
+from status_movement import works_on  # noqa: E402
 
 T0 = datetime(2026, 10, 29, 12, 0, tzinfo=UTC)
 GEN = datetime(2026, 10, 29, 13, 0, tzinfo=UTC)
@@ -144,21 +149,235 @@ def test_level_of_reads_the_tier_label(labels, expected):
     assert level_of(labels) == expected
 
 
-def test_last_movement_counts_comments_references_and_commits_only():
+TARGET = ("astrapi69", "app", 5)
+
+
+def _pr(body: str, *, title: str = "chore: x", repo: str = "astrapi69/app", state: str = "open"):
+    return {
+        "html_url": f"https://github.com/{repo}/pull/77",
+        "state": state,
+        "pull_request": {},
+        "labels": [],
+        "title": title,
+        "body": body,
+        "repository": {"full_name": repo},
+    }
+
+
+def _xref(source: dict, created_at: str = "2026-10-25T10:00:00Z") -> dict:
+    return {"event": "cross-referenced", "created_at": created_at, "source": {"issue": source}}
+
+
+def test_last_movement_counts_comments_and_commits():
     events = [
         {"event": "labeled", "created_at": "2026-10-28T10:00:00Z"},
         {"event": "commented", "created_at": "2026-10-20T10:00:00Z"},
         {"event": "committed", "committer": {"date": "2026-10-22T09:00:00Z"}},
-        {"event": "cross-referenced", "created_at": "2026-10-21T10:00:00Z"},
+        {"event": "referenced", "created_at": "2026-10-21T10:00:00Z"},
         {"event": "renamed", "created_at": "2026-10-29T10:00:00Z"},
     ]
-    assert last_movement(events, "2026-10-01T00:00:00Z") == datetime(2026, 10, 22, 9, tzinfo=UTC)
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 22, 9, tzinfo=UTC
+    )
 
 
 def test_last_movement_falls_back_to_creation_when_nothing_moved():
     assert last_movement(
-        [{"event": "labeled", "created_at": "2026-10-28T10:00:00Z"}], "2026-10-01T00:00:00Z"
+        [{"event": "labeled", "created_at": "2026-10-28T10:00:00Z"}],
+        "2026-10-01T00:00:00Z",
+        TARGET,
     ) == datetime(2026, 10, 1, tzinfo=UTC)
+
+
+def test_an_issue_mention_is_not_movement():
+    """#3898: #3896 naming #3881 under Related moved nothing on #3881."""
+    mention = {
+        "html_url": "https://github.com/astrapi69/app/issues/9",
+        "state": "open",
+        "labels": [],
+        "title": "x",
+        "body": "Related: #5, Closes #5",
+        "repository": {"full_name": "astrapi69/app"},
+    }
+    events = [{"event": "commented", "created_at": "2026-10-02T10:00:00Z"}, _xref(mention)]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 2, 10, tzinfo=UTC
+    )
+
+
+def test_a_pr_that_only_mentions_the_issue_is_not_movement_nor_in_progress():
+    events = [
+        {"event": "commented", "created_at": "2026-10-02T10:00:00Z"},
+        _xref(_pr("The same class as #5, see there.")),
+    ]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 2, 10, tzinfo=UTC
+    )
+    assert open_pr_refs(events, TARGET) == ()
+
+
+@pytest.mark.parametrize(
+    ("title", "body"),
+    [
+        ("chore: x", "Closes #5"),
+        ("chore: x", "closes #5"),
+        ("chore: x", "Fixes #5"),
+        ("chore: x", "Resolved: #5"),
+        ("chore: x", "Refs #5"),
+        ("chore: x", "Refs #4, #5"),
+        ("chore: x", "Refs #4 and #5"),
+        ("chore: x", "Closes astrapi69/app#5"),
+        ("chore: x", "Refs https://github.com/astrapi69/app/issues/5"),
+        ("fix: x, fixes #5", ""),
+    ],
+    ids=[
+        "closes",
+        "lower-case",
+        "fixes",
+        "resolved-colon",
+        "refs",
+        "refs-list-comma",
+        "refs-list-and",
+        "cross-repo-form",
+        "full-url",
+        "in-title",
+    ],
+)
+def test_a_pr_that_works_on_the_issue_is_movement_and_in_progress(title, body):
+    events = [_xref(_pr(body, title=title))]
+    assert works_on(_pr(body, title=title), TARGET)
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 25, 10, tzinfo=UTC
+    )
+    assert open_pr_refs(events, TARGET) == ("https://github.com/astrapi69/app/pull/77",)
+
+
+@pytest.mark.parametrize(
+    ("body", "repo"),
+    [
+        ("Closes #6", "astrapi69/app"),
+        ("Closes astrapi69/other#5", "astrapi69/app"),
+        ("Closes #5", "astrapi69/other"),
+        ("Refs https://github.com/astrapi69/other/issues/5", "astrapi69/app"),
+        ("four fixes from the first runs (#5)", "astrapi69/app"),
+    ],
+    ids=[
+        "other-number",
+        "same-number-other-repo",
+        "short-ref-means-the-prs-own-repo",
+        "url-to-other-repo",
+        "keyword-not-followed-by-the-ref",
+    ],
+)
+def test_a_reference_to_another_issue_is_not_work_on_this_one(body, repo):
+    assert not works_on(_pr(body, repo=repo), TARGET)
+
+
+def _commit_ref(
+    message: str | None,
+    *,
+    repo: str = "astrapi69/app",
+    created_at: str = "2026-10-25T10:00:00Z",
+) -> dict:
+    event = {
+        "event": "referenced",
+        "created_at": created_at,
+        "commit_id": "abc123",
+        "commit_url": f"https://api.github.com/repos/{repo}/commits/abc123",
+    }
+    if message is not None:
+        event["commit_message"] = message
+    return event
+
+
+def test_a_commit_that_only_mentions_the_issue_is_not_movement():
+    """#3902: the squash of #3899 named #3881 and #3896 in its prose."""
+    message = "fix(status): only a PR that works on an issue counts (#3898)\n\nSee also #5."
+    events = [{"event": "commented", "created_at": "2026-10-02T10:00:00Z"}, _commit_ref(message)]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 2, 10, tzinfo=UTC
+    )
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "fix: x\n\nCloses #5",
+        "fix: x (refs #5)",
+        "fix: x\n\nFixes #4, #5",
+        "fix: x\n\nResolves astrapi69/app#5",
+        "fix: x\n\nRefs https://github.com/astrapi69/app/issues/5",
+    ],
+    ids=["closes", "refs-in-subject", "fixes-list", "cross-repo-form", "full-url"],
+)
+def test_a_commit_that_names_the_issue_as_work_is_movement(message):
+    events = [_commit_ref(message)]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 25, 10, tzinfo=UTC
+    )
+
+
+def test_a_short_ref_in_another_repositorys_commit_is_not_this_issue():
+    events = [_commit_ref("fix: x\n\nCloses #5", repo="astrapi69/other")]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 1, tzinfo=UTC
+    )
+
+
+def test_a_commit_without_a_message_is_not_movement():
+    """A commit that no longer exists (404 on fetch) carries no message."""
+    events = [_commit_ref(None)]
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 1, tzinfo=UTC
+    )
+
+
+class _FakeCommits:
+    """A ``GitHub`` stand-in answering commit reads from a dict (None = 404)."""
+
+    def __init__(self, messages: dict[str, str | None]) -> None:
+        self.messages = messages
+        self.calls: list[str] = []
+
+    def get_optional(self, path: str):
+        self.calls.append(path)
+        message = self.messages[path]
+        return None if message is None else {"commit": {"message": message}}
+
+
+def test_attach_commit_messages_reads_only_referenced_commits():
+    found = "https://api.github.com/repos/astrapi69/app/commits/a"
+    gone = "https://api.github.com/repos/astrapi69/app/commits/b"
+    events = [
+        {"event": "referenced", "commit_url": found},
+        {"event": "commented", "created_at": "2026-10-02T10:00:00Z"},
+        {"event": "referenced", "commit_url": gone},
+    ]
+    gh = _FakeCommits({found: "fix: x\n\nCloses #5", gone: None})
+    _attach_commit_messages(gh, events)
+    assert gh.calls == [found, gone]
+    assert events[0]["commit_message"] == "fix: x\n\nCloses #5"
+    assert "commit_message" not in events[1]
+    assert "commit_message" not in events[2]
+
+
+def _fail_with(code: int):
+    def request(self, url):
+        cause = urllib.error.HTTPError(url, code, "x", {}, None)
+        raise FetchError(f"GET {url}: {cause}") from cause
+
+    return request
+
+
+def test_get_optional_answers_none_for_a_missing_commit(monkeypatch):
+    monkeypatch.setattr(GitHub, "_request", _fail_with(404))
+    assert GitHub(None).get_optional("repos/o/r/commits/x") is None
+
+
+def test_get_optional_raises_every_other_failure(monkeypatch):
+    monkeypatch.setattr(GitHub, "_request", _fail_with(502))
+    with pytest.raises(FetchError):
+        GitHub(None).get_optional("repos/o/r/commits/x")
 
 
 def test_board_own_references_are_not_movement_and_not_in_progress():
@@ -189,30 +408,19 @@ def test_board_own_references_are_not_movement_and_not_in_progress():
             "source": {"issue": report},
         },
     ]
-    assert last_movement(events, "2026-10-01T00:00:00Z") == datetime(2026, 10, 2, 10, tzinfo=UTC)
-    assert open_pr_refs(events) == ()
+    assert last_movement(events, "2026-10-01T00:00:00Z", TARGET) == datetime(
+        2026, 10, 2, 10, tzinfo=UTC
+    )
+    assert open_pr_refs(events, TARGET) == ()
 
 
 def test_open_pr_refs_lists_only_open_pull_requests():
-    events = [
-        {
-            "event": "cross-referenced",
-            "source": {
-                "issue": {"html_url": "https://x/pull/7", "state": "open", "pull_request": {}}
-            },
-        },
-        {
-            "event": "cross-referenced",
-            "source": {
-                "issue": {"html_url": "https://x/pull/8", "state": "closed", "pull_request": {}}
-            },
-        },
-        {
-            "event": "cross-referenced",
-            "source": {"issue": {"html_url": "https://x/issues/9", "state": "open"}},
-        },
-    ]
-    assert open_pr_refs(events) == ("https://x/pull/7",)
+    closed = _pr("Closes #5", state="closed")
+    closed["html_url"] = "https://github.com/astrapi69/app/pull/78"
+    issue = {**_pr("Closes #5"), "html_url": "https://github.com/astrapi69/app/issues/9"}
+    del issue["pull_request"]
+    events = [_xref(_pr("Closes #5")), _xref(closed), _xref(issue)]
+    assert open_pr_refs(events, TARGET) == ("https://github.com/astrapi69/app/pull/77",)
 
 
 # --- waits.yaml parsing -------------------------------------------------------

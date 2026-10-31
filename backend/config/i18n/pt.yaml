@@ -1113,6 +1113,10 @@ backup:
   invalid_format: Este arquivo não é um backup válido do Adaptive Learner.
   not_a_backup_file: 'Este arquivo não é um arquivo de backup válido. Escolha um arquivo exportado com ''Criar backup''.'
   version_mismatch: "Esta cópia é da versão {{from}}; esta app é a {{to}}. Reveja as alterações abaixo e confirme a importação."
+  newer_version_restored: "Esta cópia foi criada por uma versão mais recente da app (formato de cópia {{version}}). Todo o seu conteúdo foi restaurado."
+  newer_version_skipped: "Esta cópia foi criada por uma versão mais recente da app (formato de cópia {{version}}). Foi restaurado tudo o que esta versão conhece; ignorado: {{segments}}."
+  newer_major_rejected: "Esta cópia usa o formato de cópia {{version}} e esta versão da app lê o formato {{supported}}. Atualize a app e importe a cópia novamente."
+  unknown_version_rejected: "Não é possível ler a versão de formato desta cópia, por isso não foi importada."
   too_large: 'Este arquivo de backup é muito grande (mais de 100 MB).'
   export_error: 'Falha no backup: {{detail}}'
   export_failed: "Falha no backup."

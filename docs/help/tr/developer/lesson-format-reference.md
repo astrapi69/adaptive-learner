@@ -4,7 +4,7 @@
 
 > Kanonik `learn-content-engine` şema aynasından (`schema/lesson.schema.json`, sabitlenmiş engine release'inin byte aynası) `make sync-schema` üzerinden **üretilmiştir** (EXP-039). Uygulamanın yapısal Pydantic katmanı bu aynadan yeniden üretilir; yalnızca anlamsal doğrulayıcılar elle yazılır. Elle düzenleme; bir format değişikliği engine'de başlar, ardından pin yükseltilir ve üreteç yeniden çalışır.
 
-Şema sürümü: **1.9** (JSON Schema 2020-12). Makine tarafından okunabilir şema `schema/lesson.schema.json` konumundadır; IDE otomatik tamamlama + doğrulama için bir ders `.json`'ından `"$schema"` üzerinden ona referans ver.
+Şema sürümü: **1.20** (JSON Schema 2020-12). Makine tarafından okunabilir şema `schema/lesson.schema.json` konumundadır; IDE otomatik tamamlama + doğrulama için bir ders `.json`'ından `"$schema"` üzerinden ona referans ver.
 
 Aşağıdaki alan açıklamaları, model tanımlarından olduğu gibi (İngilizce) alınmıştır.
 

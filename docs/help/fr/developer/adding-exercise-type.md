@@ -43,10 +43,10 @@ limite que trace la liste « délibérément exclus » du catalogue.
    documentation de référence du format. **Ne modifiez jamais à la main** un
    artefact miroir ou généré ; la porte de dérive `make sync-schema-check`
    échoue si vous le faites.
-4. **Version du schéma.** Gardez `CURRENT_SCHEMA_VERSION` dans `models.py`
-   aligné sur la version de schéma du moteur épinglé (**mineure** = additive ;
-   l'ancien contenu reste valide grâce à la correspondance de version
-   majeure). N'ajoutez pas de règles inter-champs côté application dans
+4. **Version du schéma.** Rien à relever à la main : les numéros de version
+   viennent des miroirs du moteur dans `schema/` (`make sync-schema` après un
+   re-pin ; **mineure** = additive, l'ancien contenu reste valide grâce à la
+   correspondance de version majeure). N'ajoutez pas de règles inter-champs côté application dans
    `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py` :
    les règles sémantiques appartiennent au moteur et s'exécutent au moment de
    la rédaction et dans le frontend avant l'enregistrement d'un set

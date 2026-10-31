@@ -120,6 +120,12 @@ aceptan en todos los puntos de importación de copias de seguridad
 (Ajustes > Datos y la Zona de peligro). Las copias antiguas en un
 único archivo JSON se siguen importando sin problemas.
 
+Una copia de una versión más reciente de la app se restaura con
+todo lo que conoce esta versión, y después un aviso indica qué se
+omitió. Una copia que esta versión no puede leer, porque su
+formato es demasiado nuevo o su versión no se puede leer, no se
+importa, y un mensaje explica el motivo.
+
 !!! note "Privacidad"
     La copia de seguridad queda por completo en tus manos. Solo se
     guarda allí donde tú la coloques: no se envía nada a ningún

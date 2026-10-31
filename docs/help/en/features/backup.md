@@ -114,6 +114,12 @@ localStorage snapshot and the content sets. `.alb` files are
 accepted at every backup-import surface (Settings → Data and the
 Danger Zone). Older single-JSON backups still import cleanly.
 
+A backup from a newer version of the app is restored with
+everything this version knows, and a note afterwards names what it
+skipped. A backup this version cannot read, because its format is
+too new or its version cannot be read, is not imported, and a
+message says why.
+
 !!! note "Privacy"
     The backup stays entirely in your hands. It is only stored
     wherever you put it - nothing is sent to a server.
