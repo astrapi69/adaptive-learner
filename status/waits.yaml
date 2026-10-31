@@ -16,6 +16,18 @@
 #               BOARD.md 'Waiting (external / other issue)' next to the detail
 
 issues:
+  adaptive-learner#3933:
+    summary: "the origin value imported carries three meanings, a self-authored lesson shows the fork badge"
+    waits: nothing
+    detail: "The issue names the three readings, the class and the tests to add in both modes."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3933
+    checked: 2026-10-31
+  adaptive-learner#3932:
+    summary: "restore cannot bring back a lesson removed from an own set, the set key never changes"
+    waits: nothing
+    detail: "Both probes are in the issue; the fix decides between a content-based set identity and a content compare."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3932
+    checked: 2026-10-31
   adaptive-learner#3927:
     summary: "pattern drill: a cloze with worked examples, answered by typing or word tiles"
     waits: issue
@@ -195,16 +207,10 @@ issues:
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3788
     checked: 2026-10-29
   adaptive-learner#3787:
-    summary: "restore merges by timestamp only"
+    summary: "restore has no exact mode, its preview counts by id only, deletions are not carried"
     waits: nothing
-    detail: "The acceptance names the two restore modes and the merge rules."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3787
-    checked: 2026-10-29
-  adaptive-learner#3786:
-    summary: "backup restore has no fixture per format version and no migration chain"
-    waits: nothing
-    detail: "The version gate landed with #3919; the fixtures per released format version and the migration steps are written in the acceptance."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3786#issuecomment-6542280195
+    detail: "The progress merge landed with #3931; the two restore modes and the preview are doable now; whether deletions are carried or documented is an owner decision."
+    evidence: https://github.com/astrapi69/adaptive-learner/pull/3931
     checked: 2026-10-31
   adaptive-learner#3783:
     summary: "the visual suite has no phone"
