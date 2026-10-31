@@ -35,7 +35,7 @@ type Row = Record<string, unknown>;
 export const PROGRESS_TABLE = "lesson_progress";
 
 /** The run state, taken together from one side so it stays consistent. */
-export const LIFECYCLE_FIELDS: readonly string[] = [
+const LIFECYCLE_FIELDS: readonly string[] = [
     "status",
     "lesson_mode",
     "step_results",
