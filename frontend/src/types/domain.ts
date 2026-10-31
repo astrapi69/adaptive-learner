@@ -801,6 +801,12 @@ export interface RestoreSummary {
     /** Content-set cache restore counts (#130). Absent for pre-1.3.0
      *  backups / older backends. */
     content_sets?: {restored: number; skipped: number; errors: string[]};
+    /** The backup's format version when it is newer than the app's, else
+     *  null (#3827). Absent for older backends. */
+    newer_version?: string | null;
+    /** Segments with data a newer backup carries that this build skipped,
+     *  sorted (#3827). Absent for older backends. */
+    skipped_segments?: string[];
 }
 
 // --- Taxonomy: Subject + Tag (Phase 22) ---------------------------------

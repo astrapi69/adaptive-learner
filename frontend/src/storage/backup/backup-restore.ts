@@ -43,6 +43,7 @@ import {
     SECRET_TABLES,
     type BackupTableSpec,
 } from "./backup-tables";
+import {assertReadableVersion, newerBackupReport} from "./backup-version";
 
 /** Fresh all-zero per-table summary. */
 export function emptyTableSummary(): RestoreTableSummary {
@@ -52,7 +53,8 @@ export function emptyTableSummary(): RestoreTableSummary {
 /**
  * Validate the wire-shape. Throws a plain ``Error`` (the storage
  * layer is consumed by toast handlers that translate to user-
- * friendly messages).
+ * friendly messages), or a ``BackupVersionError`` for a format
+ * version this build cannot read (#3827).
  */
 export function validateBackupPayload(payload: unknown): asserts payload is BackupPayload {
     if (typeof payload !== "object" || payload === null) {
@@ -64,9 +66,7 @@ export function validateBackupPayload(payload: unknown): asserts payload is Back
             `Unrecognized backup format: ${JSON.stringify(obj.format)}. Expected ${JSON.stringify(BACKUP_FORMAT)}.`,
         );
     }
-    if (typeof obj.version !== "string" || obj.version === "") {
-        throw new Error("Backup payload missing 'version'.");
-    }
+    assertReadableVersion(obj.version);
     if (typeof obj.data !== "object" || obj.data === null) {
         throw new Error("Backup payload missing 'data' segment.");
     }
@@ -214,5 +214,7 @@ export async function restoreDexieBackup(
         errors: allErrors,
         tables: perTable,
         content_sets: contentSummary,
+        // #3827 - a newer backup names what this build skipped in it.
+        ...newerBackupReport(payload as unknown as Record<string, unknown>),
     };
 }

@@ -20,6 +20,7 @@
 
 import type {BackupPayload} from "../../types/domain";
 import {validateBackupPayload} from "../../storage/backup/backup";
+import {BackupVersionError} from "../../storage/backup/backup-version";
 import {
     type AlbManifest,
     isZipBytes,
@@ -35,7 +36,7 @@ import {
 export const MAX_BACKUP_BYTES = 100 * 1024 * 1024;
 
 /** Why a file was rejected — maps to a `backup.*` i18n key in the UI. */
-export type BackupFileError = "too_large" | "not_a_backup";
+export type BackupFileError = "too_large" | "not_a_backup" | "unknown_version" | "newer_major";
 
 export type BackupFileResult =
     | {
@@ -46,19 +47,35 @@ export type BackupFileResult =
           /** Present only for an ``.alb`` file (BAK-03 version check). */
           manifest?: AlbManifest;
       }
-    | {ok: false; error: BackupFileError};
+    | {
+          ok: false;
+          error: BackupFileError;
+          /** The backup's format version, for a ``newer_major`` rejection (#3827). */
+          version?: string;
+      };
+
+/** The result for a payload ``validateBackupPayload`` refused. */
+function rejection(error: unknown): BackupFileResult {
+    if (error instanceof BackupVersionError) {
+        return error.kind === "newer_major"
+            ? {ok: false, error: "newer_major", version: error.version}
+            : {ok: false, error: "unknown_version"};
+    }
+    return {ok: false, error: "not_a_backup"};
+}
 
 /**
  * Validate the text content of a candidate backup file.
  *
  * Handles every malformed shape gracefully (returns a result, never
  * throws): invalid/truncated JSON, a non-object (`42`, `"hello"`,
- * `null`), an array, an empty object `{}`, a foreign `format`, a
- * missing/empty `version`, or a missing `data` segment.
+ * `null`), an array, an empty object `{}`, a foreign `format`, or a
+ * missing `data` segment. A missing or unreadable `version` is
+ * `unknown_version`, a newer major one `newer_major` (#3827).
  *
  * @param text - Raw file contents.
  * @returns `{ok: true, payload}` for a valid backup, else
- *   `{ok: false, error: "not_a_backup"}`.
+ *   `{ok: false, error}`.
  */
 export function validateBackupText(text: string): BackupFileResult {
     let parsed: unknown;
@@ -70,8 +87,8 @@ export function validateBackupText(text: string): BackupFileResult {
     try {
         // Throws on any non-conforming shape; narrows `parsed` on success.
         validateBackupPayload(parsed);
-    } catch {
-        return {ok: false, error: "not_a_backup"};
+    } catch (error) {
+        return rejection(error);
     }
     return {ok: true, payload: parsed, container: "json"};
 }
@@ -91,8 +108,8 @@ export function validateAlbBytes(bytes: Uint8Array): BackupFileResult {
     }
     try {
         validateBackupPayload(parsed.payload);
-    } catch {
-        return {ok: false, error: "not_a_backup"};
+    } catch (error) {
+        return rejection(error);
     }
     return {
         ok: true,

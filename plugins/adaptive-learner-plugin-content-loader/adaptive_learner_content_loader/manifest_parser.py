@@ -29,7 +29,8 @@ from pydantic import ValidationError
 
 from .exceptions import ContentSchemaError
 from .models import (
-    CURRENT_SCHEMA_VERSION,
+    MANIFEST_SCHEMA_VERSION,
+    SUPPORTED_SCHEMA_MAJOR,
     ContentManifest,
     is_supported_schema_version,
 )
@@ -64,10 +65,10 @@ def parse_manifest_yaml(text: str) -> ContentManifest:
         )
 
     # Pre-Pydantic schema-version gate. The
-    # ``schema_version`` field defaults to the current
-    # version (1.0) when omitted, so an absent field is
-    # NOT an error here — it just inherits the default.
-    declared = raw.get("schema_version", CURRENT_SCHEMA_VERSION)
+    # ``schema_version`` field defaults to the mirror's
+    # default (``MANIFEST_SCHEMA_VERSION``, #3835) when omitted,
+    # so an absent field is NOT an error here.
+    declared = raw.get("schema_version", MANIFEST_SCHEMA_VERSION)
     if not isinstance(declared, str):
         raise ContentSchemaError(
             "Manifest schema_version must be a string.",
@@ -78,12 +79,12 @@ def parse_manifest_yaml(text: str) -> ContentManifest:
             (
                 f"Manifest schema_version {declared!r} is not "
                 f"supported by this Content-Loader (handles "
-                f"{CURRENT_SCHEMA_VERSION}.x). Please upgrade "
+                f"{SUPPORTED_SCHEMA_MAJOR}.x). Please upgrade "
                 "Adaptive Learner to read this manifest."
             ),
             detail=(
                 f"Upstream declared schema_version={declared}; "
-                f"loader supports {CURRENT_SCHEMA_VERSION}.x"
+                f"loader supports {SUPPORTED_SCHEMA_MAJOR}.x"
             ),
         )
 

@@ -175,6 +175,50 @@ describe("restoreDexieBackup edges", () => {
     });
 });
 
+describe("restoreDexieBackup across format versions (#3827)", () => {
+    it("restores a newer backup and names the segments it skipped", async () => {
+        await seedUserAndProject();
+        const payload = {
+            ...payloadWith({
+                tags: [{id: "t-1", user_id: "u-1", name: "kept", created_at: nowIso()}],
+                future_table: [{id: "f-1"}],
+            }),
+            version: "1.10.0",
+            future_block: {anything: true},
+        } as unknown as BackupPayload;
+        const summary = await restoreDexieBackup("u-1", payload);
+        expect(summary.tables.tags.inserted).toBe(1);
+        expect(summary.newer_version).toBe("1.10.0");
+        expect(summary.skipped_segments).toEqual(["future_block", "future_table"]);
+    });
+
+    it("stays quiet for a backup of the app's own version", async () => {
+        const summary = await restoreDexieBackup("u-1", payloadWith({future_table: [{id: "f"}]}));
+        expect(summary.newer_version).toBeNull();
+        expect(summary.skipped_segments).toEqual([]);
+    });
+
+    it("rejects a newer major version before writing anything", async () => {
+        const payload = {
+            ...payloadWith({tags: [{id: "t-2", user_id: "u-1", name: "x", created_at: nowIso()}]}),
+            version: "2.0.0",
+        } as unknown as BackupPayload;
+        await expect(restoreDexieBackup("u-1", payload)).rejects.toThrow("2.0.0");
+        expect(await getDb().tags.get("t-2")).toBeUndefined();
+    });
+
+    it.each(["abc", "1.x", "1", " "])("rejects the unreadable version %j before writing", async (version) => {
+        const payload = {
+            ...payloadWith({tags: [{id: "t-3", user_id: "u-1", name: "x", created_at: nowIso()}]}),
+            version,
+        } as unknown as BackupPayload;
+        await expect(restoreDexieBackup("u-1", payload)).rejects.toMatchObject({
+            kind: "unknown_version",
+        });
+        expect(await getDb().tags.get("t-3")).toBeUndefined();
+    });
+});
+
 describe("emptyTableSummary", () => {
     it("starts all counters at zero with no errors", () => {
         expect(emptyTableSummary()).toEqual({

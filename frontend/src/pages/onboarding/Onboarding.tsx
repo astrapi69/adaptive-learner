@@ -20,6 +20,7 @@ import FormHint from "../../shared/forms/FormHint";
 import {isEmptyInstall, pickAdoptedIdentity} from "../../lib/backup/firstRunRestore";
 import {isMigrationOffered, markMigrationOffered} from "../../lib/backup/migrationFlag";
 import {readBackupFile} from "../../lib/backup/validateBackupFile";
+import {backupFileErrorText, newerBackupNotice} from "../../lib/backup/backupVersionNotice";
 import {restoreClientSnapshots} from "../../lib/backup/portableBackup";
 import {SHARE_URL} from "../../lib/share/generate-share-text";
 import {
@@ -292,17 +293,7 @@ export default function Onboarding() {
             // reads like a bug.
             const result = await readBackupFile(file);
             if (!result.ok) {
-                notify.warning(
-                    result.error === "too_large"
-                        ? t(
-                              "backup.too_large",
-                              "This backup file is too large (over 100 MB).",
-                          )
-                        : t(
-                              "backup.not_a_backup_file",
-                              "This file is not a valid backup file. Please choose a file exported with 'Create backup'.",
-                          ),
-                );
+                notify.warning(backupFileErrorText(result, t));
                 return;
             }
             const payload = result.payload;
@@ -343,6 +334,11 @@ export default function Onboarding() {
             notify.success(
                 t("onboarding.restore_success", "Backup restored. Welcome back!"),
             );
+            // #3827 - a backup from a newer app says what this version skipped.
+            const newerNote = newerBackupNotice(summary, t, lang);
+            if (newerNote !== null) {
+                notify.warning(newerNote);
+            }
             navigate("/dashboard", {replace: true});
         } catch (err) {
             // Reached only when a VALID Adaptive Learner backup failed to

@@ -48,6 +48,28 @@ logger = logging.getLogger(__name__)
 BACKUP_VERSION = "1.9.0"
 BACKUP_FORMAT = "adaptive-learner-backup"
 
+#: The top-level keys of a backup this build knows (#3827). A newer backup's
+#: other keys are skipped and named in the restore summary. The client-side
+#: blocks count as known: the frontend applies them in both modes. The
+#: frontend keeps the same set (``PAYLOAD_SEGMENTS`` in
+#: storage/backup/backup-version.ts), pinned by a parity test there.
+PAYLOAD_SEGMENTS: frozenset[str] = frozenset(
+    {
+        "format",
+        "version",
+        "app_version",
+        "created_at",
+        "user_id",
+        "storage_mode",
+        "data",
+        "content_sets",
+        "local_storage",
+        "plugin_settings",
+        "ai_validation_results",
+        "stats",
+    }
+)
+
 # API keys are sensitive; the backup file is meant to travel
 # (cloud, USB, email). Stripped on export, ignored on import. The field
 # list (EXCLUDED_USER_SETTINGS_FIELDS) lives in sync_tables.py, shared with
