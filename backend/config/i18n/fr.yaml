@@ -1113,6 +1113,10 @@ backup:
   invalid_format: "Ce fichier n’est pas une sauvegarde Adaptive Learner valide."
   not_a_backup_file: 'Ce fichier n''est pas une sauvegarde valide. Choisis un fichier exporté avec « Créer une sauvegarde ».'
   version_mismatch: "Cette sauvegarde provient de la version {{from}} ; cette appli est en {{to}}. Vérifie les changements ci-dessous et confirme l'import."
+  newer_version_restored: "Cette sauvegarde a été créée par une version plus récente de l'appli (format de sauvegarde {{version}}). Tout son contenu a été restauré."
+  newer_version_skipped: "Cette sauvegarde a été créée par une version plus récente de l'appli (format de sauvegarde {{version}}). Tout ce que cette version connaît a été restauré ; ignoré : {{segments}}."
+  newer_major_rejected: "Cette sauvegarde utilise le format de sauvegarde {{version}}, et cette version de l'appli lit le format {{supported}}. Mets l'appli à jour, puis importe à nouveau la sauvegarde."
+  unknown_version_rejected: "La version de format de cette sauvegarde est illisible, elle n'a donc pas été importée."
   too_large: 'Ce fichier de sauvegarde est trop volumineux (plus de 100 Mo).'
   export_error: "La sauvegarde a échoué : {{detail}}"
   export_failed: "La sauvegarde a échoué."
