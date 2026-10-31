@@ -62,71 +62,15 @@ logger = logging.getLogger(__name__)
 _KNOWN_VISIBILITY = frozenset({"visible", "hidden"})
 _KNOWN_REVIEW_STATUS = frozenset({"authored", "generated", "reviewed"})
 
-CURRENT_SCHEMA_VERSION = "1.9"
-# v1.8 -> v1.9 (stable identity + attribution + review status,
-# engine 0.16.0 / engine#90, app pin bump #2265):
-#   - Additive ``stable_id`` on Exercise and Card: an opaque,
-#     author-owned, mint-once identity that never moves when the
-#     content text is corrected. Progress/SRS still key on the
-#     content-derived element_key; switching that key is a separate
-#     decision with its own release condition (#2130), NOT this bump.
-#   - Additive ``attribution`` (author + derived_from chain) and
-#     ``review_status`` on the manifest set entry.
-#   Still a MINOR bump - major-version match means v1.8 readers load
-#   v1.9 content (they ignore the new optional fields).
-# v1.7 → v1.8 (uploaded picture_choice images, engine 0.13.0 / #1774):
-#   - A ``picture_choice`` image reference accepts, besides the
-#     ``assets/`` relative path, an inline base64 data URI so an
-#     uploaded image can be carried in the lesson itself. Additive,
-#     engine-owned; the app is a schema consumer of the pinned engine.
-#   Still a MINOR bump — major-version match means v1.7 readers load
-#   v1.8 content (they ignore the new optional image format).
-# v1.4 → v1.5 (inline examples):
-#   - New optional ``InlineExample`` list ``examples`` on BOTH the
-#     theory step (``LessonStep``) and the ``Exercise``. An example
-#     carries real inline content (a sample sentence, or a syntax-
-#     highlighted code snippet when ``language`` is set) — distinct
-#     from the ``example_url`` LINK variant added in v1.4. All optional,
-#     so pre-v1.5 lessons validate unchanged.
-#   Still a MINOR bump — major-version match means older v1.x readers
-#   load v1.5 content (they ignore the new optional fields).
-# v1.3 → v1.4 (external example link, #139):
-#   - ``LessonStep`` gained the optional ``example_url`` + ``example_label``
-#     fields (a link button under a THEORY step's content). Additive.
-# v1.2 → v1.3 (technical / programming content):
-#   - ``Card`` gained optional code fields: ``code_snippet``,
-#     ``code_language``, ``expected_output``, ``hint``,
-#     ``difficulty`` (1-5), and ``media_type`` ("text" | "code" |
-#     "formula" | "diagram"). All optional, so pre-v1.3 lessons
-#     validate unchanged.
-#   - ``Lesson`` gained an optional ``domain`` mirror of the parent
-#     set's domain. Non-language domains (psychology, programming)
-#     allow source == target (enforced in the content validator).
-#   Still a MINOR bump — major-version match means v1.2 readers load
-#   v1.3 content (they just ignore the new optional fields).
-# v1.0 → v1.1 (Phase 52D / v1.35.0 / P-127):
-#   - ExerciseType gained the CLOZE = "cloze" variant + the
-#     ``sentence`` / ``blanks`` / ``cloze_mode`` fields on
-#     ``Exercise`` to back it.
-#   - Card gained the optional ``token_roles`` field (Phase 52I
-#     / P-130) for the cloze generator's role-aware blank
-#     selection.
-# v1.1 → v1.2 (Phase 60 / v1.44.0):
-#   - ``ContentSet`` (and ``Lesson``) gained the language-PAIR
-#     fields. The old single ``language`` field is renamed to
-#     ``target_language`` (what the learner is LEARNING) and a
-#     new ``source_language`` field (what the learner ALREADY
-#     SPEAKS) is added. ``language`` stays accepted as a read
-#     alias for ``target_language`` so pre-v1.2 content loads
-#     unchanged; ``source_language`` defaults to ``"en"`` when
-#     a pre-v1.2 manifest omits it (the pilot content was all
-#     authored with English explanations). A ``language`` read
-#     property keeps existing ``set.language`` call sites green.
-# Bump is MINOR — ``is_supported_schema_version`` does a major-
-# version match so v1.x lessons still load on older v1.x apps at
-# the manifest level. Failure surfaces per-exercise when a 1.0 app
-# encounters a ``cloze`` step (closed-enum rejection by
-# Pydantic), which is the intended clean break.
+#: The manifest ``schema_version`` a writer declares and the major this loader
+#: reads: the default of the model generated from the engine mirror
+#: ``schema/content-manifest.schema.json`` (#3835), not a literal. It is not the
+#: lesson ``x-schema-version``; the two are independent counters (engine docs,
+#: "schema_version vs x-schema-version"), and the lesson format's history lives
+#: in the engine's changelog.
+MANIFEST_SCHEMA_VERSION: str = ContentManifestBase.model_fields["schema_version"].default
+#: Manifests of this major load; another major is rejected with an upgrade hint.
+SUPPORTED_SCHEMA_MAJOR: str = MANIFEST_SCHEMA_VERSION.split(".", 1)[0]
 
 # Semver-style major.minor.patch with optional ``-pre`` /
 # ``+meta`` suffix. Loose by design — content authors should
@@ -415,4 +359,4 @@ def is_supported_schema_version(version: str) -> bool:
     """
     if not _VERSION_RE.fullmatch(version):
         return False
-    return version.split(".", 1)[0] == CURRENT_SCHEMA_VERSION.split(".", 1)[0]
+    return version.split(".", 1)[0] == SUPPORTED_SCHEMA_MAJOR

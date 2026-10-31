@@ -19,7 +19,7 @@ import yaml
 from adaptive_learner_content_loader.exceptions import ContentSchemaError
 from adaptive_learner_content_loader.manifest_parser import parse_manifest_yaml
 from adaptive_learner_content_loader.models import (
-    CURRENT_SCHEMA_VERSION,
+    MANIFEST_SCHEMA_VERSION,
     MAX_ASSET_SIZE_KB,
     SET_ASSETS_SOFT_LIMIT_KB,
     ContentManifest,
@@ -377,8 +377,7 @@ class TestContentManifest:
     def test_minimal_manifest(self) -> None:
         m = ContentManifest(name="Adaptive Learner Content Pilot")
         # #1744: the manifest schema_version default is the ENGINE-generated
-        # field default (1.6), decoupled from the lesson-format
-        # CURRENT_SCHEMA_VERSION (1.8 since the engine 0.13.0 pin, #1830).
+        # field default, decoupled from the lesson mirror's x-schema-version.
         assert m.schema_version == ContentManifest.model_fields["schema_version"].default
         assert m.sets == []
         assert m.metadata == {}
@@ -577,7 +576,7 @@ class TestManifestEvaluationBlock:
 
 class TestIsSupportedSchemaVersion:
     def test_current_version_is_supported(self) -> None:
-        assert is_supported_schema_version(CURRENT_SCHEMA_VERSION) is True
+        assert is_supported_schema_version(MANIFEST_SCHEMA_VERSION) is True
 
     def test_same_major_is_supported(self) -> None:
         # 1.x.y -- all forward-compatible

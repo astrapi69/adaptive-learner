@@ -40,7 +40,7 @@ from adaptive_learner_content_loader.cache import (
     unslugify_source,
 )
 from adaptive_learner_content_loader.models import (
-    CURRENT_SCHEMA_VERSION,
+    MANIFEST_SCHEMA_VERSION,
     ContentManifest,
     ContentSet,
 )
@@ -186,7 +186,7 @@ def _synthesize_manifest_yaml(entry: dict[str, Any]) -> str | None:
         },
     )
     manifest = ContentManifest(
-        schema_version=CURRENT_SCHEMA_VERSION,
+        schema_version=MANIFEST_SCHEMA_VERSION,
         name=title,
         description=meta.get("description"),
         sets=[content_set],

@@ -45,7 +45,7 @@ from .exceptions import (
 from .github_adapter import GitHubRawAdapter
 from .manifest_generated import Attribution
 from .models import (
-    CURRENT_SCHEMA_VERSION,
+    MANIFEST_SCHEMA_VERSION,
     ContentManifest,
     ContentSet,
     ContentSetBook,
@@ -656,7 +656,7 @@ class ContentLoaderService:
             attribution=attribution,
         )
         manifest = ContentManifest(
-            schema_version=CURRENT_SCHEMA_VERSION,
+            schema_version=MANIFEST_SCHEMA_VERSION,
             name=title,
             description=description,
             sets=[content_set],
