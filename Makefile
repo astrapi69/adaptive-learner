@@ -34,7 +34,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        roadmap-header-bump roadmap-header-bump-dry \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav verify-docs-external-hosts \
-       ci ci-full pre-push rule-change-log rule-change-log-check verify-docs verify-mermaid verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
+       ci ci-full pre-push rule-change-log rule-change-log-check verify-docs check-privacy-date verify-mermaid verify-docs-fix verify-docs-hygiene verify-docs-hygiene-raise verify-doc-refs verify-doc-refs-bank verify-gate-rule-links verify-lessons-inventory verify-check-inventory verify-normative-changes verify-rule-corpus-size verify-rule-corpus-size-raise verify-docker-context verify-image-size verify-image-size-raise check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        i18n-quality-check i18n-quality-check-dry i18n-csv-export \
        verify-i18n-scripts \
@@ -882,6 +882,9 @@ verify-docs-external-hosts: ## Guard (#3802): the built docs site (site/, from m
 verify-docs: ## Verify documentation for drift (version/counts/features/help/i18n/themes; stdlib only)
 	@python3 scripts/verify_docs.py
 
+check-privacy-date: ## A changed legal/privacy.md carries a date no older than its change (#3823). BASE=<ref>, working tree included
+	@python3 scripts/check_privacy_date.py --base $(or $(BASE),origin/develop)
+
 verify-docs-hygiene: ## Docs hygiene: German-umlaut substitute ratchet (manuscript-tools) + exploration-index orphans
 	@cd backend && poetry run python ../scripts/verify_docs_hygiene.py
 
@@ -911,6 +914,7 @@ verify-workflow-health: ## Red-runs rollup (#2225): latest schedule/push run per
 
 ci: ## Run every gate locally, in the CI order (#2083). BASE=<ref> for the diff-based gates
 	@echo "== docs drift"          && $(MAKE) --no-print-directory verify-docs
+	@echo "== privacy date"        && $(MAKE) --no-print-directory check-privacy-date
 	@echo "== docs hygiene"        && $(MAKE) --no-print-directory verify-docs-hygiene
 	@echo "== doc references"     && $(MAKE) --no-print-directory verify-doc-refs
 	@echo "== gate <-> rule links" && $(MAKE) --no-print-directory verify-gate-rule-links

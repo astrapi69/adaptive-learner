@@ -734,6 +734,18 @@ jobs:
         run: pip install pyyaml
       - name: Verify documentation for drift
         run: python3 scripts/verify_docs.py
+      # #3823: a changed privacy policy carries a date no older than its
+      # change. The checkout is the depth-1 synthetic merge commit, so the
+      # resolver (#3884) fetches the PR head and enough history for the merge
+      # base; the check exits 2 (cannot check) when it still finds none.
+      - name: Changed privacy policies carry the date of their change (#3823)
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          BASE="${{ github.event.pull_request.base.ref }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          python3 scripts/resolve_pr_range.py --base "$BASE" --head "$HEAD_SHA" > /dev/null
+          python3 scripts/check_privacy_date.py --base "origin/$BASE" --head "$HEAD_SHA"
       # #3800 - every ```mermaid block in docs/help parses with the Mermaid the
       # docs site serves (vendored, pinned by hash) and carries accTitle +
       # accDescr. Mermaid needs a DOM, so happy-dom is installed at the
