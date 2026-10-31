@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from datetime import UTC, datetime
 from typing import Any
 
@@ -29,13 +30,93 @@ from app.services.sync_service import (
     row_belongs_to_user,
 )
 
-from .backup_export import BACKUP_FORMAT, EXCLUDED_USER_SETTINGS_FIELDS
+from .backup_export import (
+    BACKUP_FORMAT,
+    BACKUP_VERSION,
+    EXCLUDED_USER_SETTINGS_FIELDS,
+    PAYLOAD_SEGMENTS,
+)
 
 logger = logging.getLogger(__name__)
 
 
 def _spec(table: str) -> TableSpec:
     return SYNC_TABLES[table]
+
+
+_VERSION_PATTERN = re.compile(r"(\d+)\.(\d+)\.(\d+)")
+
+
+def _parse_version(raw: Any) -> tuple[int, int, int] | None:
+    """Parse a format version strictly as ``MAJOR.MINOR.PATCH``, else ``None``."""
+    if not isinstance(raw, str):
+        return None
+    match = _VERSION_PATTERN.fullmatch(raw)
+    if match is None:
+        return None
+    major, minor, patch = (int(part) for part in match.groups())
+    return major, minor, patch
+
+
+def _require_version(raw: str) -> tuple[int, int, int]:
+    """Parse this build's own format version; a malformed one is a build defect."""
+    parsed = _parse_version(raw)
+    if parsed is None:
+        raise RuntimeError(f"BACKUP_VERSION {raw!r} is not MAJOR.MINOR.PATCH.")
+    return parsed
+
+
+_APP_VERSION = _require_version(BACKUP_VERSION)
+
+
+def _supported_format() -> str:
+    """The formats this build reads, e.g. ``"1.x"``."""
+    return f"{BACKUP_VERSION.split('.', 1)[0]}.x"
+
+
+def _check_version(raw: Any) -> None:
+    """Reject a format version this build cannot read (#3827).
+
+    A missing or unreadable version is unknown, not old; a newer major is a
+    layout this build does not know. Every 1.x change is additive, so a newer
+    minor or patch passes and is read with whatever this build knows.
+
+    Raises:
+        ValidationError: for an unknown or a newer-major version.
+    """
+    version = _parse_version(raw)
+    if version is None:
+        raise ValidationError(f"Backup format version {raw!r} cannot be read.")
+    if version[0] > _APP_VERSION[0]:
+        raise ValidationError(
+            f"Backup format {raw} is newer than this app reads ({_supported_format()})."
+        )
+
+
+def _has_data(value: Any) -> bool:
+    """Whether a payload segment carries anything to restore."""
+    if value is None or value == "":
+        return False
+    if isinstance(value, (list, dict)):
+        return len(value) > 0
+    return True
+
+
+def _newer_backup_report(payload: dict[str, Any]) -> dict[str, Any]:
+    """Name the segments a newer backup carries that this build skips (#3827).
+
+    A current or older backup reports nothing, so the safe paths stay quiet.
+
+    Returns:
+        ``{"newer_version": str | None, "skipped_segments": [sorted names]}``.
+    """
+    version = _parse_version(payload.get("version"))
+    if version is None or version <= _APP_VERSION:
+        return {"newer_version": None, "skipped_segments": []}
+    data: dict[str, Any] = payload.get("data") or {}
+    tables = {t for t, rows in data.items() if t not in SYNC_TABLES and _has_data(rows)}
+    blocks = {k for k, v in payload.items() if k not in PAYLOAD_SEGMENTS and _has_data(v)}
+    return {"newer_version": payload["version"], "skipped_segments": sorted(tables | blocks)}
 
 
 def _validate_payload(payload: Any) -> dict[str, Any]:
@@ -46,11 +127,7 @@ def _validate_payload(payload: Any) -> dict[str, Any]:
         raise ValidationError(
             f"Unrecognized backup format: {payload.get('format')!r}. Expected {BACKUP_FORMAT!r}."
         )
-    version = str(payload.get("version", ""))
-    if not version:
-        raise ValidationError("Backup payload missing 'version'.")
-    # Forward-compat: a future 1.x backup is read with whatever
-    # tables this build knows. Unknown segments are skipped.
+    _check_version(payload.get("version"))
     data = payload.get("data")
     if not isinstance(data, dict):
         raise ValidationError("Backup payload missing 'data' segment.")
@@ -807,4 +884,5 @@ def restore_backup(
         "errors": all_errors,
         "tables": per_table,
         "content_sets": content_summary,
+        **_newer_backup_report(payload),
     }

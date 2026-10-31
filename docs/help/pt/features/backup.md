@@ -118,6 +118,12 @@ importação de backup (Definições > Dados e a Zona de perigo). Os
 backups antigos num único ficheiro JSON continuam a ser importados
 sem problemas.
 
+Uma cópia de uma versão mais recente da app é restaurada com tudo
+o que esta versão conhece e, em seguida, um aviso indica o que foi
+ignorado. Uma cópia que esta versão não consegue ler, porque o
+formato é demasiado recente ou a versão não é legível, não é
+importada, e uma mensagem explica porquê.
+
 !!! note "Privacidade"
     O backup fica inteiramente nas tuas mãos. É guardado apenas
     onde o colocares - nada é enviado para um servidor.
