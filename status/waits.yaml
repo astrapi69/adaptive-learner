@@ -12,7 +12,8 @@
 #   evidence    link to the comment or place in the issue that shows it
 #   checked     the day the classification was last checked
 #   blocked_by  [repo#N, ...], only with waits: issue
-#   needed_by   optional, shown in STATUS.md 'Waiting for you'
+#   needed_by   optional, shown in STATUS.md 'Waiting for you' (decisions) and in
+#               BOARD.md 'Waiting (external / other issue)' next to the detail
 
 issues:
   adaptive-learner#3922:
