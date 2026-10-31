@@ -114,12 +114,6 @@ issues:
     detail: "Drop the content prefill (recommended) or keep it and say so in the dialog and the policy?"
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3839
     checked: 2026-10-29
-  adaptive-learner#3835:
-    summary: "content loader uses one schema version constant for three numbers"
-    waits: nothing
-    detail: "The issue lists the correct value for each use."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3835
-    checked: 2026-10-29
   adaptive-learner#3831:
     summary: "documentation brought to the state of v2.17.0 (release audit)"
     waits: decision
@@ -137,18 +131,6 @@ issues:
     waits: nothing
     detail: "The fix is written in the issue."
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3827
-    checked: 2026-10-29
-  adaptive-learner#3823:
-    summary: "privacy check fails when the policy changes and its date does not"
-    waits: nothing
-    detail: "The fix is written in the issue."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3823
-    checked: 2026-10-29
-  adaptive-learner#3820:
-    summary: "FAQ translations miss the key-storage update"
-    waits: nothing
-    detail: "The fix lists the files per language."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3820
     checked: 2026-10-29
   adaptive-learner#3819:
     summary: "short set link /content/set/<id> finds sets of registry repositories"
