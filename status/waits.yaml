@@ -16,6 +16,25 @@
 #               BOARD.md 'Waiting (external / other issue)' next to the detail
 
 issues:
+  adaptive-learner#3927:
+    summary: "pattern drill: a cloze with worked examples, answered by typing or word tiles"
+    waits: issue
+    detail: "Needs the inline examples in every lesson runner (#3926) and the engine's tiles mode (engine#283); the pilot condition stays in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3927
+    checked: 2026-10-31
+    blocked_by: [adaptive-learner#3926, learn-content-engine#283]
+  adaptive-learner#3926:
+    summary: "review, endless, shuffle, adaptive and error-replay runners skip an exercise's inline examples"
+    waits: nothing
+    detail: "The fix and its test are written in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3926
+    checked: 2026-10-31
+  learn-content-engine#283:
+    summary: "cloze_mode tiles: blanks filled from a word bank"
+    waits: nothing
+    detail: "The proposal and its rules are written in the issue; the author picks the form through cloze_mode."
+    evidence: https://github.com/astrapi69/learn-content-engine/issues/283
+    checked: 2026-10-31
   adaptive-learner#3922:
     summary: "a change under scripts/ runs the tests of every script"
     waits: nothing
