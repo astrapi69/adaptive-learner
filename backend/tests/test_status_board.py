@@ -588,6 +588,38 @@ def test_board_groups_issues_and_writes_the_header():
     assert board.endswith("\n") and not board.endswith("\n\n")
 
 
+def _cells(section: str, needle: str) -> list[str]:
+    row = next(line for line in section.split("\n") if needle in line)
+    return [cell.strip() for cell in row.split("|")]
+
+
+def test_the_waiting_table_says_what_each_entry_waits_for_and_by_when():
+    snap = _snapshot([_issue("app", 6), _issue("app", 7), _issue("engine", 5)])
+    entries = {
+        "app#6": _entry("app#6", "external", needed_by="next release (v2.18.0)"),
+        "app#7": _entry("app#7", "issue", blocked_by=("engine#5",)),
+        "engine#5": _entry("engine#5"),
+    }
+    sections = render_board(snap, build_rows(snap, entries)).split("\n---\n")
+    doable, waiting = sections[2], sections[4]
+    assert _cells(waiting, "| Repo")[1:-1] == [
+        "Repo",
+        "#",
+        "Title",
+        "Level",
+        "Waits for",
+        "What",
+        "Needed by",
+        "Blocks",
+        "Last movement",
+    ]
+    external = _cells(waiting, "summary of app#6")
+    assert external[5:8] == ["external", "detail of app#6", "next release (v2.18.0)"]
+    blocked = _cells(waiting, "summary of app#7")
+    assert blocked[5:8] == ["issue: engine#5", "detail of app#7", "-"]
+    assert "What" not in _cells(doable, "| Repo"), "only the waiting table grows"
+
+
 def test_board_warns_when_more_than_five_issues_are_in_progress():
     issues = [_issue("app", n, prs=(f"https://x/pull/{n}",)) for n in range(1, 7)]
     snap = _snapshot(issues)
