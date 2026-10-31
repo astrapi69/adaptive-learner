@@ -7,7 +7,9 @@
  *     key, a per-user singleton) finds the local row; then that row is the
  *     known row, keeps its id, and children follow it (#3694).
  *   - Known id, append-only row: skip (history is immutable).
- *   - Known id, mutable row: keep the newer side
+ *   - Known id, lesson progress: merge field by field, whichever side is
+ *     newer; a completion is never lost (``lessons/progress-merge.ts``, #3787).
+ *   - Known id, other mutable row: keep the newer side
  *     (compare ``updated_at`` / ``assessed_at``).
  *
  * Live API keys are never overwritten by a backup file, even a
@@ -15,6 +17,7 @@
  */
 
 import {getDb, type AdaptiveLearnerDB} from "../dexie/db";
+import {PROGRESS_TABLE, mergeLessonProgress} from "../lessons/progress-merge";
 import type {
     BackupPayload,
     RestoreSummary,
@@ -119,6 +122,13 @@ async function restoreRecord(
         return "skipped";
     }
     if (spec.appendOnly) return "skipped";
+    if (table === PROGRESS_TABLE) {
+        // Learner progress merges field by field, whichever side is newer (#3787).
+        const {row, changed} = mergeLessonProgress(existing, writableRow(table, record));
+        if (!changed) return "skipped";
+        await store.put({...row, id: localId} as never);
+        return "updated";
+    }
     const matchedByUniqueKey = localId !== recordId;
     if (!matchedByUniqueKey && !backupIsNewer(record, existing, spec)) return "skipped";
     // Keep the local PK; the spread keeps local-only fields.

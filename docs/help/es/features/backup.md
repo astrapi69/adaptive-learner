@@ -79,6 +79,13 @@ que no se te pase ningún error. En modo desarrollador (Ajustes >
 Diagnóstico y soporte), el mensaje incluye los detalles técnicos para abrir un
 issue en GitHub.
 
+Si la misma lección está en este dispositivo y en la copia, ambas
+se combinan: una lección completada sigue completada, salvo que se
+haya reiniciado después de esa finalización. De dos lecciones en
+curso se conserva la que llegó más lejos. Se conservan los
+intentos, el mejor resultado y el historial de intentos de ambos
+lados.
+
 ---
 
 ## Importación entre identidades

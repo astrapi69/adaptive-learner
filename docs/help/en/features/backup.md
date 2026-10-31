@@ -75,6 +75,12 @@ notice** (toast) appears that does not disappear on its own - so
 you never miss an error. In Developer Mode (Settings > Diagnostics & Support)
 the message contains the technical details for a GitHub issue.
 
+If the same lesson is on this device and in the backup, the two
+are merged: a completed lesson stays completed, unless it was
+restarted after that completion. Of two lessons in progress, the
+one that got further is kept. The attempts, the best result and
+the attempt history of both sides are kept.
+
 ---
 
 ## Cross-identity import
