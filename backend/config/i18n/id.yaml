@@ -1113,6 +1113,10 @@ backup:
   invalid_format: File ini bukan cadangan Adaptive Learner yang valid.
   not_a_backup_file: 'File ini bukan file cadangan yang valid. Silakan pilih file yang diekspor dengan ''Buat cadangan''.'
   version_mismatch: "Cadangan ini berasal dari versi {{from}}; aplikasi ini adalah {{to}}. Tinjau perubahan di bawah ini dan konfirmasi untuk mengimpor."
+  newer_version_restored: "Cadangan ini dibuat oleh versi aplikasi yang lebih baru (format cadangan {{version}}). Semua isinya telah dipulihkan."
+  newer_version_skipped: "Cadangan ini dibuat oleh versi aplikasi yang lebih baru (format cadangan {{version}}). Semua yang dikenal versi ini telah dipulihkan; dilewati: {{segments}}."
+  newer_major_rejected: "Cadangan ini memakai format cadangan {{version}}, sedangkan versi aplikasi ini membaca format {{supported}}. Perbarui aplikasi, lalu impor cadangan ini lagi."
+  unknown_version_rejected: "Versi format cadangan ini tidak dapat dibaca, sehingga cadangan tidak diimpor."
   too_large: 'File cadangan ini terlalu besar (lebih dari 100 MB).'
   export_error: 'Pencadangan gagal: {{detail}}'
   export_failed: "Pencadangan gagal."
