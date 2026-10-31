@@ -1,0 +1,472 @@
+{
+  "format": "adaptive-learner-backup",
+  "version": "1.6.0",
+  "app_version": "2.16.0",
+  "created_at": "2026-10-31T14:13:26.967073+00:00",
+  "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+  "storage_mode": "api",
+  "data": {
+    "users": [
+      {
+        "id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "name": "Aster",
+        "email": null,
+        "language": "de",
+        "created_at": "2026-10-31T14:13:26.926053+00:00",
+        "updated_at": "2026-10-31T14:13:26.926056+00:00"
+      }
+    ],
+    "user_settings": [
+      {
+        "id": "24728167-7729-4476-bc1e-7228f24e3163",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "active_provider": "anthropic",
+        "model_override_anthropic": null,
+        "model_override_openai": null,
+        "model_override_gemini": null,
+        "model_override_perplexity": null,
+        "avatar": null,
+        "created_at": "2026-10-31T14:13:26.927473+00:00",
+        "updated_at": "2026-10-31T14:13:26.927474+00:00"
+      }
+    ],
+    "learning_projects": [
+      {
+        "id": "08db84e1-cfe6-4198-bb5a-a98f9de9becf",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "topic": "Bayes",
+        "goal": "Master it",
+        "timeframe": "2 weeks",
+        "daily_minutes": 30,
+        "current_problem": null,
+        "active": true,
+        "kind": "standard",
+        "created_at": "2026-10-31T14:13:26.926990+00:00",
+        "updated_at": "2026-10-31T14:13:26.926992+00:00"
+      }
+    ],
+    "learning_profiles": [
+      {
+        "id": "0a96c764-8789-488b-a0f8-35edab5469f9",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "project_id": "08db84e1-cfe6-4198-bb5a-a98f9de9becf",
+        "deductive": 0.5,
+        "inductive": 0.5,
+        "error_based": 0.0,
+        "dialogic": 0.0,
+        "contextual": 0.0,
+        "ai_adaptive": 0.0,
+        "assessed_at": "2026-10-31T14:13:26.928558+00:00",
+        "version": 1
+      }
+    ],
+    "curriculums": [
+      {
+        "id": "2d568f03-3946-40a9-8352-cedf9682faab",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "imported_conversation_id": null,
+        "title": "Intro",
+        "description": null,
+        "language": "de",
+        "created_at": "2026-10-31T14:13:26.928160+00:00",
+        "updated_at": "2026-10-31T14:13:26.928161+00:00"
+      }
+    ],
+    "learning_topics": [
+      {
+        "id": "bb235a47-130f-472f-887f-50c41e0d61d3",
+        "curriculum_id": "2d568f03-3946-40a9-8352-cedf9682faab",
+        "parent_id": null,
+        "title": "Section 1",
+        "description": null,
+        "order_index": 0,
+        "created_at": "2026-10-31T14:13:26.929150+00:00",
+        "updated_at": "2026-10-31T14:13:26.929151+00:00"
+      }
+    ],
+    "lessons": [
+      {
+        "id": "1de71447-1bc8-4936-b6f7-beebb00d0ef4",
+        "curriculum_id": "2d568f03-3946-40a9-8352-cedf9682faab",
+        "title": "Lesson 1",
+        "content": "Hello",
+        "order_index": 0,
+        "created_at": "2026-10-31T14:13:26.929555+00:00",
+        "updated_at": "2026-10-31T14:13:26.929556+00:00"
+      }
+    ],
+    "learning_sessions": [
+      {
+        "id": "91902120-ae30-4333-bcde-d3c3c58ec99f",
+        "project_id": "08db84e1-cfe6-4198-bb5a-a98f9de9becf",
+        "imported_conversation_id": null,
+        "method": "deductive",
+        "started_at": "2026-10-31T14:13:26.930124+00:00",
+        "ended_at": null,
+        "cycle_step": 1,
+        "status": "active",
+        "cycle_count": 1,
+        "cycle_topics": "[]"
+      }
+    ],
+    "session_messages": [
+      {
+        "id": "cc4ef1b5-cae0-4dde-8e49-f37076b49bc0",
+        "session_id": "91902120-ae30-4333-bcde-d3c3c58ec99f",
+        "role": "user",
+        "content": "Hi",
+        "created_at": "2026-10-31T14:13:26.930992+00:00"
+      }
+    ],
+    "session_ratings": [
+      {
+        "id": "64d64972-5ee6-4ded-9e3c-3c7244dd82db",
+        "session_id": "91902120-ae30-4333-bcde-d3c3c58ec99f",
+        "understanding": 4,
+        "stress": 2,
+        "method_fit": 5,
+        "notes": null,
+        "created_at": "2026-10-31T14:13:26.931371+00:00"
+      }
+    ],
+    "session_notes": [
+      {
+        "id": "d62197d6-722b-4a26-87fa-8be12c39ed91",
+        "session_id": "91902120-ae30-4333-bcde-d3c3c58ec99f",
+        "content": "A note I took",
+        "kind": "note",
+        "created_at": "2026-10-31T14:13:26.936180+00:00",
+        "updated_at": "2026-10-31T14:13:26.936181+00:00"
+      }
+    ],
+    "progress_commits": [
+      {
+        "id": "880797ce-8972-4e99-9bd4-fed7b4072bed",
+        "project_id": "08db84e1-cfe6-4198-bb5a-a98f9de9becf",
+        "session_id": "91902120-ae30-4333-bcde-d3c3c58ec99f",
+        "method": "deductive",
+        "understanding": 0.8,
+        "stress": 0.2,
+        "error_rate": 0.1,
+        "duration_minutes": 25,
+        "committed_at": "2026-10-31T14:13:26.930700+00:00"
+      }
+    ],
+    "method_switches": [
+      {
+        "id": "44a24208-4f19-4af5-acae-5f9b2c1d4cd2",
+        "project_id": "08db84e1-cfe6-4198-bb5a-a98f9de9becf",
+        "from_method": "deductive",
+        "to_method": "inductive",
+        "reason": "stagnation detected",
+        "switched_at": "2026-10-31T14:13:26.935787+00:00"
+      }
+    ],
+    "step_evaluations": [
+      {
+        "id": "0b19cf66-f27c-4572-8f5f-c42c4d3b366b",
+        "session_id": "91902120-ae30-4333-bcde-d3c3c58ec99f",
+        "from_step": 1,
+        "to_step": 2,
+        "advance": true,
+        "confidence": 0.9,
+        "applied": true,
+        "fallback_used": false,
+        "reason": "",
+        "evaluated_at": "2026-10-31T14:13:26.936678+00:00"
+      }
+    ],
+    "imported_conversations": [
+      {
+        "id": "31d1707d-fea5-4445-8df2-32950715ae98",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "project_id": "08db84e1-cfe6-4198-bb5a-a98f9de9becf",
+        "source": "chatgpt",
+        "title": "Imported chat",
+        "message_count": 1,
+        "imported_at": "2026-10-31T14:13:26.935399+00:00",
+        "analyzed": false,
+        "analysis_result": null,
+        "topic_tag": null,
+        "model": null,
+        "source_created_at": null,
+        "content_hash": null,
+        "source_language": null,
+        "target_language": null
+      }
+    ],
+    "imported_messages": [
+      {
+        "id": "62f4c4f1-296d-4bb1-8607-14367c386ab3",
+        "conversation_id": "31d1707d-fea5-4445-8df2-32950715ae98",
+        "role": "user",
+        "content": "What is Bayes' theorem?",
+        "timestamp": null,
+        "order_index": 0,
+        "created_at": "2026-10-31T14:13:26.937321+00:00"
+      }
+    ],
+    "subjects": [
+      {
+        "id": "249e687b-ed2a-4f9a-9998-cb36e71ab29b",
+        "parent_id": null,
+        "name": "Mathematics",
+        "description": null,
+        "icon": null,
+        "created_at": "2026-10-31T14:13:26.937697+00:00",
+        "updated_at": "2026-10-31T14:13:26.937698+00:00"
+      }
+    ],
+    "tags": [
+      {
+        "id": "8961d330-48c5-45dc-9a6f-b519c92c9a6a",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "name": "exam-prep",
+        "color": "#ff0000",
+        "created_at": "2026-10-31T14:13:26.938005+00:00"
+      }
+    ],
+    "project_subjects": [
+      {
+        "id": "c46dafa4-6e4e-4d36-b5f2-c00f2d9358e6",
+        "project_id": "08db84e1-cfe6-4198-bb5a-a98f9de9becf",
+        "subject_id": "249e687b-ed2a-4f9a-9998-cb36e71ab29b",
+        "created_at": "2026-10-31T14:13:26.938981+00:00"
+      }
+    ],
+    "project_tags": [
+      {
+        "id": "05b986c7-d387-414c-89e3-280942b3e52e",
+        "project_id": "08db84e1-cfe6-4198-bb5a-a98f9de9becf",
+        "tag_id": "8961d330-48c5-45dc-9a6f-b519c92c9a6a",
+        "created_at": "2026-10-31T14:13:26.939284+00:00"
+      }
+    ],
+    "user_xp": [
+      {
+        "id": "7c6ced5a-448e-4892-a52f-8f9f308b47fa",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "total_xp": 100,
+        "level": 2,
+        "updated_at": "2026-10-31T14:13:26.939577+00:00"
+      }
+    ],
+    "badges": [
+      {
+        "id": "dc44a97e-2deb-408a-936e-27f48d5a65bb",
+        "key": "streak_7",
+        "name_key": "badges.streak_7.name",
+        "description_key": "badges.streak_7.desc",
+        "icon": "",
+        "category": "general",
+        "base_tier": "bronze",
+        "tier_thresholds": null,
+        "created_at": "2026-10-31T14:13:26.938640+00:00",
+        "updated_at": "2026-10-31T14:13:26.938641+00:00"
+      }
+    ],
+    "user_badges": [
+      {
+        "id": "2a9274c2-ce07-4f2f-9a0d-2028dcfe90cc",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "badge_id": "dc44a97e-2deb-408a-936e-27f48d5a65bb",
+        "tier": "silver",
+        "earned_at": "2026-10-31T14:13:26.944502+00:00",
+        "updated_at": "2026-10-31T14:13:26.944502+00:00"
+      }
+    ],
+    "anki_card_suggestions": [
+      {
+        "id": "5fd47df9-05c0-4464-976d-fac7811cfda3",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "session_id": null,
+        "conversation_id": null,
+        "project_id": null,
+        "card_type": "basic",
+        "front": "Q front",
+        "back": "A back",
+        "tags": "[]",
+        "accepted": true,
+        "rejected": false,
+        "exported_at": null,
+        "created_at": "2026-10-31T14:13:26.940456+00:00",
+        "updated_at": "2026-10-31T14:13:26.940457+00:00"
+      }
+    ],
+    "study_questions": [
+      {
+        "id": "242f9160-0309-440c-995d-3f437bf8f5b0",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "project_id": "08db84e1-cfe6-4198-bb5a-a98f9de9becf",
+        "session_id": null,
+        "question": "Why does the prior matter?",
+        "expected_answer": "It encodes belief before evidence.",
+        "question_type": "open",
+        "difficulty": "medium",
+        "topic": "",
+        "edited": false,
+        "created_at": "2026-10-31T14:13:26.944164+00:00",
+        "updated_at": "2026-10-31T14:13:26.944165+00:00"
+      }
+    ],
+    "user_streaks": [
+      {
+        "id": "40fadb68-997a-44e9-bb33-4feaa190543f",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "freezes_available": 1,
+        "last_freeze_earned_on": null,
+        "last_freeze_used_on": null,
+        "weekend_mode": false,
+        "current_streak_days": 5,
+        "longest_streak_days": 12,
+        "updated_at": "2026-10-31T14:13:26.945344+00:00"
+      }
+    ],
+    "lesson_progress": [
+      {
+        "id": "e134707a-446a-412d-aa7e-8dbecd1a9dce",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "source": "astrapi69/adaptive-learner-content",
+        "set_id": "fr-a1",
+        "lesson_filename": "01-intro.json",
+        "status": "completed",
+        "lesson_mode": "practice",
+        "step_results": "{}",
+        "score_correct": 8,
+        "score_total": 10,
+        "time_spent_seconds": 0,
+        "current_step": 0,
+        "started_at": "2026-10-31T14:13:26.942865+00:00",
+        "updated_at": "2026-10-31T14:13:26.942866+00:00",
+        "completed_at": null,
+        "paused_at": null,
+        "abandoned_at": null,
+        "attempts": 0,
+        "best_score_correct": 0,
+        "best_score_total": 0,
+        "attempt_history": "[]"
+      }
+    ],
+    "element_errors": [
+      {
+        "id": "f88117c7-39a1-45e9-822e-cecf3645356d",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "run_id": 1,
+        "set_id": "fr-a1",
+        "lesson_id": "01-intro.json",
+        "exercise_id": "ex-1",
+        "element_key": "merci",
+        "direction": "target_to_source",
+        "element_type": "vocabulary",
+        "user_answer": "",
+        "correct_answer": "",
+        "error_count": 2,
+        "correct_streak": 1,
+        "last_error_at": null,
+        "last_attempt_at": "2026-10-31T14:13:26.941572+00:00",
+        "mastered": false,
+        "mastered_at": null,
+        "hint_used": false,
+        "hint_used_count": 0,
+        "last_attempt_exam": false,
+        "attempt_count": 0,
+        "attempt_history": null,
+        "retired_at": null,
+        "created_at": "2026-10-31T14:13:26.941573+00:00",
+        "updated_at": "2026-10-31T14:13:26.941574+00:00"
+      }
+    ],
+    "user_missions": [
+      {
+        "id": "9b098dab-2506-44c0-816e-149135520793",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "template_id": "daily_lessons_1",
+        "assigned_date": "2026-06-02",
+        "progress": 0,
+        "completed": false,
+        "completed_at": null,
+        "xp_awarded": false,
+        "created_at": "2026-10-31T14:13:26.944909+00:00",
+        "updated_at": "2026-10-31T14:13:26.944910+00:00"
+      }
+    ],
+    "api_key_backups": [
+      {
+        "id": "268da620-5348-4d41-99e2-9be717ad54db",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "provider": "anthropic",
+        "encrypted_key": "gAAAAAB-ciphertext-blob",
+        "tested_at": "2026-10-31T14:13:26.940931+00:00",
+        "works": true,
+        "created_at": "2026-10-31T14:13:26.940932+00:00",
+        "updated_at": "2026-10-31T14:13:26.940933+00:00"
+      }
+    ],
+    "set_runs": [
+      {
+        "id": "0fc58e99-82da-40af-b33e-cb839a5c2f5c",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "set_id": "fr-a1",
+        "run_id": 1,
+        "content_version_at_start": null,
+        "started_at": "2026-10-31T14:13:26.943291+00:00",
+        "closed_at": null,
+        "updated_at": "2026-10-31T14:13:26.943292+00:00"
+      }
+    ],
+    "speech_recordings": [
+      {
+        "id": "4ee184b4-6b2c-451a-b582-e7848e455d1c",
+        "user_id": "8e2ffeff-dd22-440b-b911-5e4e2768baa2",
+        "source": "astrapi69/adaptive-learner-content",
+        "set_id": "fr-a1",
+        "lesson_filename": "01-intro.json",
+        "exercise_id": "ex-speak-1",
+        "audio_base64": "UklGRiQAAABXQVZFZm10IBAAAAABAAEA",
+        "mime_type": "audio/webm",
+        "duration_ms": 2500,
+        "recorded_at": "2026-10-31T14:13:26.943702+00:00",
+        "updated_at": "2026-10-31T14:13:26.943703+00:00"
+      }
+    ]
+  },
+  "content_sets": [],
+  "stats": {
+    "total_records": 32,
+    "tables": {
+      "users": 1,
+      "user_settings": 1,
+      "learning_projects": 1,
+      "learning_profiles": 1,
+      "curriculums": 1,
+      "learning_topics": 1,
+      "lessons": 1,
+      "learning_sessions": 1,
+      "session_messages": 1,
+      "session_ratings": 1,
+      "session_notes": 1,
+      "progress_commits": 1,
+      "method_switches": 1,
+      "step_evaluations": 1,
+      "imported_conversations": 1,
+      "imported_messages": 1,
+      "subjects": 1,
+      "tags": 1,
+      "project_subjects": 1,
+      "project_tags": 1,
+      "user_xp": 1,
+      "badges": 1,
+      "user_badges": 1,
+      "anki_card_suggestions": 1,
+      "study_questions": 1,
+      "user_streaks": 1,
+      "lesson_progress": 1,
+      "element_errors": 1,
+      "user_missions": 1,
+      "api_key_backups": 1,
+      "set_runs": 1,
+      "speech_recordings": 1
+    },
+    "content_sets": 0
+  }
+}
