@@ -269,6 +269,14 @@ These activate when a specific condition is met:
 | BL-11 PT/TR/JA | First non-DE/EN/ES/FR/EL user request |
 | BL-14..17 SaaS | Decision to go commercial |
 | BL-18..19 Social | 100+ active users |
+| LESSON-CONTENT-ID-01 Content-based lesson identity | #3932 gives own sets a content-dependent identity |
+
+- **LESSON-CONTENT-ID-01** (finding from #3932, 2026-10-31): once own sets get
+  a content-dependent identity, single lessons could get one too. A restore
+  merge could then tell whether a lesson changed on one side or on both,
+  instead of assuming it. Today it keeps the device's version, and that is not
+  a preference but the only assumption available: a lesson carries no
+  timestamp. Not part of #3932.
 
 ## Blocked / Upstream Wait
 
