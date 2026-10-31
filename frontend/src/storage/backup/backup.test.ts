@@ -293,15 +293,15 @@ describe("validateBackupPayload", () => {
         expect(() => validateBackupPayload(null)).toThrow();
     });
 
-    it("rejects missing version", () => {
+    it("rejects missing version as unreadable (#3827)", () => {
         expect(() =>
             validateBackupPayload({format: BACKUP_FORMAT, data: {}}),
-        ).toThrow(/'version'/);
+        ).toThrow(/cannot be read/);
     });
 
     it("rejects missing data segment", () => {
         expect(() =>
-            validateBackupPayload({format: BACKUP_FORMAT, version: "1.0"}),
+            validateBackupPayload({format: BACKUP_FORMAT, version: BACKUP_VERSION}),
         ).toThrow(/'data'/);
     });
 });

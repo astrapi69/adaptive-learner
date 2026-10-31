@@ -351,6 +351,18 @@ Never run yet. Do it NOW.
       profile. Afterwards: profile A stays active, B's lesson shows its
       progress on the learning path, A's paused lesson is still under
       "Continue", no error message.
+- [ ] TC-1003 Backup from a newer version (#3827): export an `.alb`, unpack its
+      `data.json`, set `version` to `1.99.0` and add a block
+      `"future": {"x": 1}`, then import the file as `.json` via Settings →
+      Data. The import completes, and a note names backup format 1.99.0 and
+      "skipped: future". Without the extra block the note says "Everything
+      in it was restored." An unchanged backup shows no note. Once in
+      server mode and once in browser mode.
+- [ ] TC-1004 Unreadable or too new backup (#3827): import the same `data.json`
+      with `version` `2.0.0` → rejected, the message names 2.0.0 and 1.x,
+      nothing is applied. With `version` `abc` → "The format version of
+      this backup cannot be read". Both also in onboarding via "Restore
+      from existing backup".
 
 ---
 

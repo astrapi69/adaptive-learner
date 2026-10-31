@@ -112,6 +112,12 @@ görüntüsünü ve içerik setlerini bir araya getiren bir ZIP arşivi.
 (Ayarlar > Veri ve Tehlike bölgesi). Tek bir JSON dosyasından oluşan
 eski yedekler de sorunsuz içe aktarılır.
 
+Uygulamanın daha yeni bir sürümünden gelen bir yedek, bu sürümün
+tanıdığı her şeyle geri yüklenir ve ardından bir bildirim nelerin
+atlandığını söyler. Biçimi çok yeni olduğu ya da sürümü
+okunamadığı için bu sürümün okuyamadığı bir yedek içe aktarılmaz
+ve bir mesaj nedenini açıklar.
+
 !!! note "Gizlilik"
     Yedek tamamen senin elinde kalır. Yalnızca koyduğun yere
     kaydedilir - hiçbir şey bir sunucuya gönderilmez.

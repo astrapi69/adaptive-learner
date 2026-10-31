@@ -121,6 +121,12 @@ acceptés partout où l'on importe une sauvegarde (Paramètres > Données
 et la Zone de danger). Les anciennes sauvegardes en un seul fichier
 JSON s'importent toujours sans problème.
 
+Une sauvegarde d'une version plus récente de l'appli est restaurée
+avec tout ce que cette version connaît, puis un message indique ce
+qui a été ignoré. Une sauvegarde que cette version ne peut pas
+lire, parce que son format est trop récent ou que sa version est
+illisible, n'est pas importée, et un message en donne la raison.
+
 !!! note "Protection des données"
     La sauvegarde reste entièrement entre tes mains. Elle n'est
     enregistrée que là où tu la places - rien n'est envoyé à un
