@@ -15,6 +15,18 @@
 #   needed_by   optional, shown in STATUS.md 'Waiting for you'
 
 issues:
+  adaptive-learner#3922:
+    summary: "a change under scripts/ runs the tests of every script"
+    waits: nothing
+    detail: "The issue names the fix (select by changed file, imports counted, fail closed) and two probes."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3922
+    checked: 2026-10-31
+  adaptive-learner#3921:
+    summary: "131 dead repo paths in the developer help under the doc-refs ceiling"
+    waits: nothing
+    detail: "The fix lists the 12 paths and the two exempt ones; strict doc-refs for docs/help is the open question inside."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3921
+    checked: 2026-10-31
   adaptive-learner#3896:
     summary: "settings-about baselines move with every version bump"
     waits: nothing
@@ -293,9 +305,10 @@ issues:
   adaptive-learner#1087:
     summary: "manual test plan executed for launch readiness"
     waits: external
-    detail: "Needs a tester to run the manual plan on real devices."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/1087
-    checked: 2026-10-29
+    detail: "Needs a tester on real devices; due before the next release: the manual backup round trip of #3919 (TC-1003, TC-1004, server and browser mode)."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/1087#issuecomment-6542451773
+    checked: 2026-10-31
+    needed_by: "next release (v2.18.0)"
   learn-content-engine#282:
     summary: "picture_choice image paths are never checked for existence"
     waits: nothing
