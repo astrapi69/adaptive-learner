@@ -102,7 +102,7 @@ def test_restore_rejects_a_newer_major_version_and_writes_nothing(db_session: Se
 
 @pytest.mark.parametrize(
     "version",
-    ["abc", "1.x", "1", " ", "1.9", " 1.9.0", "", None, 13],
+    ["abc", "1.x", "1", " ", "1.9", " 1.9.0", "", None, 13, "0" * 50_000, "1.0000000000.0"],
     ids=[
         "word",
         "wildcard",
@@ -113,6 +113,8 @@ def test_restore_rejects_a_newer_major_version_and_writes_nothing(db_session: Se
         "empty",
         "none",
         "number",
+        "long-digit-run",
+        "overlong-part",
     ],
 )
 def test_restore_rejects_an_unreadable_version_and_writes_nothing(

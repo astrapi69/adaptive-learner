@@ -44,12 +44,16 @@ def _spec(table: str) -> TableSpec:
     return SYNC_TABLES[table]
 
 
-_VERSION_PATTERN = re.compile(r"(\d+)\.(\d+)\.(\d+)")
+#: Each part is bounded and the input length is checked first, so a long run
+#: of digits from an uploaded file cannot make the match slow (CodeQL
+#: py/polynomial-redos on the unbounded pattern).
+_VERSION_PATTERN = re.compile(r"(\d{1,9})\.(\d{1,9})\.(\d{1,9})")
+_MAX_VERSION_LENGTH = 32
 
 
 def _parse_version(raw: Any) -> tuple[int, int, int] | None:
     """Parse a format version strictly as ``MAJOR.MINOR.PATCH``, else ``None``."""
-    if not isinstance(raw, str):
+    if not isinstance(raw, str) or len(raw) > _MAX_VERSION_LENGTH:
         return None
     match = _VERSION_PATTERN.fullmatch(raw)
     if match is None:
@@ -86,7 +90,8 @@ def _check_version(raw: Any) -> None:
     """
     version = _parse_version(raw)
     if version is None:
-        raise ValidationError(f"Backup format version {raw!r} cannot be read.")
+        shown = str(raw)[:_MAX_VERSION_LENGTH]
+        raise ValidationError(f"Backup format version {shown!r} cannot be read.")
     if version[0] > _APP_VERSION[0]:
         raise ValidationError(
             f"Backup format {raw} is newer than this app reads ({_supported_format()})."

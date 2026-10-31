@@ -35,6 +35,8 @@ describe("parseFormatVersion", () => {
         ["four parts", "1.9.0.1"],
         ["empty", ""],
         ["a number", 13],
+        ["a long run of digits", "0".repeat(50_000)],
+        ["a part longer than nine digits", "1.0000000000.0"],
         ["null", null],
         ["missing", undefined],
     ])("returns null for %s", (_label, raw) => {

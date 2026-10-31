@@ -57,7 +57,9 @@ export const PAYLOAD_SEGMENTS: ReadonlySet<string> = new Set([
     "stats",
 ]);
 
-const VERSION_PATTERN = /^(\d+)\.(\d+)\.(\d+)$/;
+/** Bounded parts and a length check first, as in the backend (CodeQL polynomial-redos). */
+const VERSION_PATTERN = /^(\d{1,9})\.(\d{1,9})\.(\d{1,9})$/;
+const MAX_VERSION_LENGTH = 32;
 
 /** A backup this build refuses for its format version. */
 export class BackupVersionError extends Error {
@@ -68,7 +70,7 @@ export class BackupVersionError extends Error {
         super(
             kind === "newer_major"
                 ? `Backup format ${version} is newer than this app reads (${supportedFormat()}).`
-                : `Backup format version ${JSON.stringify(version)} cannot be read.`,
+                : `Backup format version ${JSON.stringify(version.slice(0, MAX_VERSION_LENGTH))} cannot be read.`,
         );
         this.name = "BackupVersionError";
         this.kind = kind;
@@ -83,7 +85,7 @@ export class BackupVersionError extends Error {
  * @returns The parsed version, or null when it cannot be read.
  */
 export function parseFormatVersion(raw: unknown): FormatVersion | null {
-    if (typeof raw !== "string") {
+    if (typeof raw !== "string" || raw.length > MAX_VERSION_LENGTH) {
         return null;
     }
     const match = VERSION_PATTERN.exec(raw);
