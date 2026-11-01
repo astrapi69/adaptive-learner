@@ -6,8 +6,8 @@
  * search index and its branch content, so no real network is touched for
  * that repo. Pins: ``/content/set/<id>`` shows the set from the index with
  * the repo it comes from; "Add & start" connects the repo, downloads the set
- * and opens its first lesson; an id no repo carries ends in the not-found
- * state.
+ * and opens its first lesson; sharing that set then gives the short link; an
+ * id no repo carries ends in the not-found state.
  */
 
 import { expect, test } from "@playwright/test";
@@ -125,6 +125,14 @@ test.describe("#3819 short set link for a registry repo", () => {
     await page.getByTestId("set-deep-link-start").click();
     await expect(page).toHaveURL(/\/lesson\/jane--alpha\/alpha\/01\.json$/, { timeout: 20_000 });
     await expect(page.getByTestId("lesson-page")).toBeVisible({ timeout: 20_000 });
+
+    // Sharing the set now gives the short link: the registry lists it in
+    // the repo it came from, so any recipient can resolve the id.
+    await page.goto("/content/set/alpha");
+    await expect(page.getByTestId("set-deep-link-found")).toBeVisible({ timeout: 20_000 });
+    await page.getByTestId("set-share-alpha").click();
+    await expect(page.getByTestId("set-share-modal-url")).toHaveText(/\/content\/set\/alpha$/);
+    await page.keyboard.press("Escape");
 
     // The repo is now one of the learner's content sources.
     await page.goto("/settings?tab=data");

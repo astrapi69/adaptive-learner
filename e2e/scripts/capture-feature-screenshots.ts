@@ -1696,12 +1696,32 @@ async function gotoRegistrySetCard(page: Page): Promise<boolean> {
     return true;
 }
 
+/**
+ * The share dialog of an official set (#3819): the short link
+ * ``…/content/set/<id>`` and the note that it stays valid while the set
+ * keeps its id. An official set needs no registry lookup.
+ */
+async function gotoShareShortLink(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto(`/content/set/${BUNDLED_SET_ID}`);
+    await expect(page.getByTestId("set-deep-link-found")).toBeVisible({timeout: 20_000});
+    await page.getByTestId(`set-share-${BUNDLED_SET_ID}`).click();
+    await expect(page.getByTestId("set-share-modal-url")).toHaveText(
+        new RegExp(`/content/set/${BUNDLED_SET_ID}$`),
+    );
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
     // --- Short set link: set of a registry repo not added yet (#3819) ------
     {
         path: "set-short-link/register-set",
         setup: gotoRegistrySetCard,
         pinTo: "set-deep-link-page",
+    },
+    {
+        path: "set-short-link/teilen-kurzlink",
+        setup: gotoShareShortLink,
     },
     // --- Keep the screen on in lessons, Settings > Learning (#3358) -------
     {

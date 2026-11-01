@@ -2678,6 +2678,15 @@ switch the section on in Settings first or press "Detailed evaluation"
       link of a repository not added yet whose registry was never loaded -
       "Set not found" appears with the note about being offline; online,
       with an unknown id, the note does not appear
+- [ ] TC-1007 Sharing gives the short link where the recipient can resolve it (#3819):
+      share an official set and a set of an added recommended repository -
+      the dialog shows `…/content/set/<id>` and the note that the link stays
+      valid as long as the set keeps its id; a set of your own repository
+      outside the recommendations shows
+      `…/add-repo?repo=<owner>/<repo>&set=<id>` (without `branch=main`) and
+      the note about public repositories
+- [ ] TC-1008 A link shared before #3819 with `url=` (`/add-repo?url=<owner>%2F<repo>&branch=main`)
+      still opens the "Add repository" dialog with the right repository
 - [ ] TC-0575 Add a registered content repo (register-a-repo #1511)
 - [ ] TC-0576 Manifest fallback for own repos without a search-index.json (#2562):
       connect your own repo via Settings → Data → "Add a repository" that

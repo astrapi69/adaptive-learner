@@ -68,6 +68,15 @@ direkt den „Repository hinzufügen"-Dialog mit vorausgefüllter URL;
 der QR-Code macht dasselbe auf dem Smartphone. So teilst du einen
 Kurs mit deiner Lerngruppe ohne manuelles Abtippen.
 
+Einen einzelnen Satz teilst du über den Knopf **Teilen** daneben.
+Ein Satz aus dem offiziellen Repository oder aus einem empfohlenen
+Repository bekommt einen kurzen Link der Form `/content/set/<id>`.
+Er öffnet den Satz direkt; stammt der Satz aus einem Repository, das
+die Empfängerin noch nicht hinzugefügt hat, bietet die App an, es
+hinzuzufügen. Der Link bleibt gültig, solange der Satz seine Kennung
+behält. Jeder andere Satz bekommt einen `/add-repo`-Link, der zuerst
+sein Repository hinzufügt.
+
 <!-- TODO: Screenshot - Teilen-Dialog mit QR-Code -->
 
 ---

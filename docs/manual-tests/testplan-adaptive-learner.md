@@ -2881,6 +2881,16 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       eines nicht hinzugefügten Repositorys öffnen, dessen Register noch nie
       geladen wurde - "Set nicht gefunden" erscheint mit dem Hinweis, offline
       zu sein; online mit einer unbekannten Kennung erscheint der Hinweis nicht
+- [ ] TC-1007 Teilen gibt den kurzen Link, wo der Empfänger ihn auflösen kann (#3819):
+      ein offizielles Set und ein Set eines hinzugefügten empfohlenen
+      Repositorys teilen - der Dialog zeigt `…/content/set/<id>` und den
+      Hinweis, dass der Link gültig bleibt, solange das Set seine Kennung
+      behält; ein Set eines eigenen, nicht empfohlenen Repositorys zeigt
+      `…/add-repo?repo=<owner>/<repo>&set=<id>` (ohne `branch=main`) und den
+      Hinweis zu öffentlichen Repositorys
+- [ ] TC-1008 Ein vor #3819 geteilter Link mit `url=` (`/add-repo?url=<owner>%2F<repo>&branch=main`)
+      öffnet weiterhin den Dialog "Repository hinzufügen" mit dem richtigen
+      Repository
 - [ ] TC-0575 Registrierten Content-Repo hinzufügen (register-a-repo #1511)
 - [ ] TC-0576 Manifest-Fallback für eigene Repos ohne search-index.json (#2562):
       eigenes Repo über Settings → Daten → "Repository hinzufügen" verbinden,

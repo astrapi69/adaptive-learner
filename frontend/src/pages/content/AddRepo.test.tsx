@@ -98,6 +98,15 @@ describe("AddRepo", () => {
     await waitFor(() => expect(screen.getByTestId("dashboard")).toBeInTheDocument());
   });
 
+  it.each([
+    ["the repo param, branch left out (#3819)", "?repo=jane/deck", "main"],
+    ["the url param of links shared before #3819", "?url=jane%2Fdeck&branch=dev", "dev"],
+  ])("reads %s", (_label, search, branch) => {
+    renderAt(search);
+    expect(screen.getByTestId("add-repo-name")).toHaveTextContent("jane/deck");
+    expect(screen.getByTestId("add-repo-name")).toHaveTextContent(`@${branch}`);
+  });
+
   it("rejects a link with no valid repo", () => {
     renderAt("?url=not-a-repo");
     expect(screen.getByTestId("add-repo-invalid")).toBeInTheDocument();

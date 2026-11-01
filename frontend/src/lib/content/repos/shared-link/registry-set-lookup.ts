@@ -7,12 +7,14 @@
  * This module looks the id up in those repos' search indices and names the
  * repo to connect.
  *
- * The official repo is skipped: its sets are always in the app's listing, so
- * a miss there is a genuine miss. The indices load in parallel; the first repo
- * in {@link collectDiscoveryRepos} order that carries the id wins.
+ * Only the registry repos count ({@link collectRegistryRepos}): the list is the
+ * same on every device, so a sharer can tell whether a recipient's link will
+ * resolve. The official repo is skipped, its sets are always in the app's
+ * listing; the learner's own connected repos are listed too. The indices load
+ * in parallel; the first repo in registry order that carries the id wins.
  */
 
-import { collectDiscoveryRepos } from "../discover-repos";
+import { collectRegistryRepos } from "../discover-repos";
 import { OFFICIAL_SOURCE } from "../source-identity";
 import {
   fetchSearchIndex,
@@ -46,7 +48,7 @@ export interface RegistrySetLookupDeps {
 }
 
 const DEFAULT_DEPS: RegistrySetLookupDeps = {
-  collectRepos: collectDiscoveryRepos,
+  collectRepos: collectRegistryRepos,
   fetchIndex: (repo) => fetchSearchIndex(repo),
   isOnline: () => typeof navigator === "undefined" || navigator.onLine !== false,
 };

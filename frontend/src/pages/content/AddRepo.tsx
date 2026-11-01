@@ -1,10 +1,10 @@
 /**
  * Deep-link "Add repository?" page (EXP-023 Phase B).
  *
- * Opened by a share link ``/add-repo?url=…&branch=…``. Shows a confirm
- * dialog for the named repo; "Connect" validates it, adds it to the user's
- * repo list, syncs it, and goes to the Content Browser; "Cancel" returns to
- * the Dashboard. No token travels in the link — only public repos connect
+ * Opened by a share link ``/add-repo?repo=…[&branch=…]`` (``url=`` in links
+ * shared before #3819). Shows a confirm dialog for the named repo;
+ * "Connect" validates it, adds it to the user's repo list, syncs it, and
+ * goes to the Content Browser; "Cancel" returns to the Dashboard. No token travels in the link — only public repos connect
  * this way (a private/coach repo is added manually in Settings with its
  * token).
  */
@@ -42,7 +42,8 @@ export default function AddRepo() {
     total: number;
   } | null>(null);
 
-  const url = params.get("url") ?? "";
+  // #3819 - new links say ``repo=``; links shared before say ``url=``.
+  const url = params.get("repo") || params.get("url") || "";
   const branch = params.get("branch") || "main";
   const set = params.get("set") ?? "";
   const parsed = useMemo(() => parseGitHubRepoUrl(url), [url]);

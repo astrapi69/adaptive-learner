@@ -4,98 +4,111 @@
 
 import { describe, expect, it } from "vitest";
 
-import { buildAddRepoLink, buildSetShareLink, parseAddRepoQr } from "./share-link";
+import { buildAddRepoLink, buildSetLink, buildSetShareLink, parseAddRepoQr } from "./share-link";
 import { OFFICIAL_SOURCE } from "../repos/source-identity";
 
 describe("buildAddRepoLink", () => {
-  it("builds an absolute add-repo deep link with url + branch", () => {
+  it("builds an absolute add-repo deep link with a readable repo param (#3819)", () => {
     const link = buildAddRepoLink(
-      { url: "jane/deck", branch: "main" },
+      { url: "jane/deck", branch: "dev" },
       "https://astrapi69.github.io",
       "/adaptive-learner/",
     );
-    expect(link).toBe(
-      "https://astrapi69.github.io/adaptive-learner/add-repo?url=jane%2Fdeck&branch=main",
-    );
+    expect(link).toBe("https://astrapi69.github.io/adaptive-learner/add-repo?repo=jane/deck&branch=dev");
   });
 
-  it("normalises a base path without a trailing slash + defaults branch", () => {
-    const link = buildAddRepoLink(
-      { url: "jane/deck", branch: "" },
-      "https://x.dev",
-      "/app",
-    );
-    expect(link).toBe("https://x.dev/app/add-repo?url=jane%2Fdeck&branch=main");
+  it.each([
+    ["main", "main"],
+    ["an empty branch", ""],
+  ])("leaves out the branch when it is %s", (_label, branch) => {
+    const link = buildAddRepoLink({ url: "jane/deck", branch }, "https://x.dev", "/app");
+    expect(link).toBe("https://x.dev/app/add-repo?repo=jane/deck");
   });
 
-  it("carries no token (only url + branch params)", () => {
-    const link = buildAddRepoLink(
-      { url: "jane/deck", branch: "dev" },
-      "https://x.dev",
-      "/",
-    );
+  it("carries no token (only repo + branch params)", () => {
+    const link = buildAddRepoLink({ url: "jane/deck", branch: "dev" }, "https://x.dev", "/");
     const qs = new URL(link).searchParams;
-    expect([...qs.keys()].sort()).toEqual(["branch", "url"]);
+    expect([...qs.keys()].sort()).toEqual(["branch", "repo"]);
   });
 
-  it("appends an optional set slug (RED: set deep link, #1572)", () => {
+  it("appends an optional set slug (#1572)", () => {
     const link = buildAddRepoLink(
       { url: "jane/deck", branch: "main", set: "fr-a1" },
       "https://x.dev",
       "/app/",
     );
-    const qs = new URL(link).searchParams;
-    expect(qs.get("url")).toBe("jane/deck");
-    expect(qs.get("branch")).toBe("main");
-    expect(qs.get("set")).toBe("fr-a1");
+    expect(link).toBe("https://x.dev/app/add-repo?repo=jane/deck&set=fr-a1");
   });
 
-  it("omits the set param when no set is given (backwards compatible)", () => {
-    const link = buildAddRepoLink({ url: "jane/deck", branch: "main" }, "https://x.dev", "/");
-    expect(new URL(link).searchParams.has("set")).toBe(false);
+  it("still encodes what a query value cannot carry", () => {
+    const link = buildAddRepoLink(
+      { url: "jane/deck", branch: "feat/a&b", set: "x y" },
+      "https://x.dev",
+      "/",
+    );
+    const qs = new URL(link).searchParams;
+    expect(qs.get("branch")).toBe("feat/a&b");
+    expect(qs.get("set")).toBe("x y");
   });
 });
 
-describe("buildSetShareLink (#1572)", () => {
-  it("maps an official-source set onto the official repo url", () => {
+describe("buildSetLink (#3819)", () => {
+  it("builds the short set link", () => {
+    expect(buildSetLink("ki-einsteiger-from-de", "https://astrapi69.github.io", "/adaptive-learner/")).toBe(
+      "https://astrapi69.github.io/adaptive-learner/content/set/ki-einsteiger-from-de",
+    );
+  });
+
+  it("encodes an id that is no plain path segment", () => {
+    expect(buildSetLink("coach/lesson 1", "https://x.dev", "/app")).toBe(
+      "https://x.dev/app/content/set/coach%2Flesson%201",
+    );
+  });
+});
+
+describe("buildSetShareLink (#1572, #3819)", () => {
+  it("gives a short link when the recipient can resolve the set", () => {
     const link = buildSetShareLink(
-      { source: OFFICIAL_SOURCE, branch: "main", id: "psychologie-a1" },
+      { source: "astrapi69/alc-ai", branch: "main", id: "ki-einsteiger-from-de" },
+      { short: true },
       "https://x.dev",
       "/app/",
     );
-    const qs = new URL(link).searchParams;
-    expect(qs.get("url")).toBe(OFFICIAL_SOURCE);
-    expect(qs.get("set")).toBe("psychologie-a1");
+    expect(link).toBe("https://x.dev/app/content/set/ki-einsteiger-from-de");
   });
 
-  it("maps a bundled-source set onto the official repo url", () => {
-    const link = buildSetShareLink(
-      { source: "bundled:adaptive-learner-content", branch: "main", id: "app-tutorial" },
-      "https://x.dev",
-      "/",
-    );
-    expect(new URL(link).searchParams.get("url")).toBe(OFFICIAL_SOURCE);
+  it("maps an official or bundled set onto the official repo in an add-repo link", () => {
+    for (const source of [OFFICIAL_SOURCE, "bundled:adaptive-learner-content"]) {
+      const link = buildSetShareLink(
+        { source, branch: "main", id: "psychologie-a1" },
+        { short: false },
+        "https://x.dev",
+        "/",
+      );
+      expect(new URL(link).searchParams.get("repo")).toBe(OFFICIAL_SOURCE);
+    }
   });
 
-  it("uses the user repo source verbatim for a non-official set", () => {
+  it("uses the user repo source verbatim for a set only an add-repo link opens", () => {
     const link = buildSetShareLink(
       { source: "coach/deck", branch: "dev", id: "coach/lesson-1" },
+      { short: false },
       "https://x.dev",
       "/",
     );
     const qs = new URL(link).searchParams;
-    expect(qs.get("url")).toBe("coach/deck");
+    expect(qs.get("repo")).toBe("coach/deck");
     expect(qs.get("branch")).toBe("dev");
     expect(qs.get("set")).toBe("coach/lesson-1");
   });
 
-  it("NEVER leaks a token — only url, branch and set params (security)", () => {
+  it.each([true, false])("NEVER leaks a token (short: %s)", (short) => {
     const link = buildSetShareLink(
       { source: "coach/private-deck", branch: "main", id: "secret-set" },
+      { short },
       "https://x.dev",
       "/",
     );
-    expect([...new URL(link).searchParams.keys()].sort()).toEqual(["branch", "set", "url"]);
     expect(link.toLowerCase()).not.toContain("token");
   });
 });
@@ -108,6 +121,13 @@ describe("parseAddRepoQr (#1317)", () => {
       "/adaptive-learner/",
     );
     expect(parseAddRepoQr(link)).toEqual({ url: "jane/deck", branch: "dev" });
+  });
+
+  it.each([
+    ["the repo param", "https://x.dev/app/add-repo?repo=jane/deck&set=fr-a1"],
+    ["the url param of links shared before #3819", "https://x.dev/app/add-repo?url=jane%2Fdeck&branch=main&set=fr-a1"],
+  ])("reads %s", (_label, link) => {
+    expect(parseAddRepoQr(link)).toEqual({ url: "jane/deck", branch: "main", set: "fr-a1" });
   });
 
   it("defaults the branch to main when the deep link omits it", () => {
@@ -146,6 +166,7 @@ describe("parseAddRepoQr (#1317)", () => {
   it("carries the set slug through when present (#1572)", () => {
     const link = buildSetShareLink(
       { source: "coach/deck", branch: "dev", id: "coach/lesson-1" },
+      { short: false },
       "https://x.dev",
       "/app/",
     );

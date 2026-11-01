@@ -2,12 +2,13 @@
  * SetShareButton — a per-set "Share" control (#1572).
  *
  * Renders a share icon button next to a content set; clicking it opens the
- * shared {@link QrCodeModal} carrying a per-set deep link
- * (``…/add-repo?url=…&branch=…&set=…``) built by {@link buildSetShareLink}.
- * The link opens the set directly for the recipient (connecting the repo
- * first if needed). A token is NEVER part of the link — for a private repo
- * the modal shows the standard "public only / hand the token over
- * separately" hint.
+ * shared {@link QrCodeModal} carrying a per-set link chosen by
+ * {@link resolveSetShareLink} (#3819): the short ``…/content/set/<id>`` when
+ * the recipient can resolve the set by its id, else the
+ * ``…/add-repo?repo=…&set=…`` deep link that connects the repo first. The
+ * modal's note says which: a short link stays valid while the set keeps its
+ * id; an add-repo link carries the "public only / hand the token over
+ * separately" hint. A token is NEVER part of the link.
  *
  * Self-contained + props-driven (just the set entry), so it drops into both
  * the grid {@link ContentSetRow} and the list {@link ContentSetListView} as
@@ -19,11 +20,14 @@
  * <SetShareButton entry={entry} />
  */
 
-import { Share2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Loader2, Share2 } from "lucide-react";
+import { useState } from "react";
 
 import { useI18n } from "../../../hooks/ui/useI18n";
-import { buildSetShareLink } from "../../../lib/content/placement/share-link";
+import {
+  resolveSetShareLink,
+  type SetShareLink,
+} from "../../../lib/content/placement/resolve-set-share-link";
 import QrCodeModal from "../../../shared/feedback/QrCodeModal";
 import type { ContentSetEntry } from "../../../storage/types";
 import { notify } from "../../../utils/notify";
@@ -37,12 +41,20 @@ export interface SetShareButtonProps {
 
 export default function SetShareButton({ entry, testId }: SetShareButtonProps) {
   const { t } = useI18n();
-  const [open, setOpen] = useState(false);
+  const [link, setLink] = useState<SetShareLink | null>(null);
+  const [resolving, setResolving] = useState(false);
 
-  const link = useMemo(
-    () => buildSetShareLink({ source: entry.source, branch: entry.branch, id: entry.id }),
-    [entry.source, entry.branch, entry.id],
-  );
+  /** Resolve the link on demand: the registry is asked only when sharing. */
+  const openShare = async () => {
+    setResolving(true);
+    try {
+      setLink(
+        await resolveSetShareLink({ source: entry.source, branch: entry.branch, id: entry.id }),
+      );
+    } finally {
+      setResolving(false);
+    }
+  };
 
   const ariaLabel = t("content.share.aria", "Share set '{title}'").replace(
     "{title}",
@@ -59,20 +71,33 @@ export default function SetShareButton({ entry, testId }: SetShareButtonProps) {
         onClick={(event) => {
           // Never let the tap bubble to a row-level navigation target.
           event.stopPropagation();
-          setOpen(true);
+          void openShare();
         }}
+        disabled={resolving}
+        aria-busy={resolving || undefined}
         data-testid={testId ?? `set-share-${entry.id}`}
       >
-        <Share2 size={18} aria-hidden="true" />
+        {resolving ? (
+          <Loader2 size={18} className="animate-spin" aria-hidden="true" />
+        ) : (
+          <Share2 size={18} aria-hidden="true" />
+        )}
       </button>
-      {open && (
+      {link && (
         <QrCodeModal
-          url={link}
+          url={link.url}
           title={t("content.share.title", "Share set")}
-          note={t(
-            "content_repo.share.hint",
-            "Share this link so others can add this PUBLIC repository. For a private repository, send the URL and a read-only token separately.",
-          )}
+          note={
+            link.short
+              ? t(
+                  "content.share.short_hint",
+                  "This link opens the set directly. It stays valid as long as the set keeps its id.",
+                )
+              : t(
+                  "content_repo.share.hint",
+                  "Share this link so others can add this PUBLIC repository. For a private repository, send the URL and a read-only token separately.",
+                )
+          }
           labels={{
             close: t("common.close", "Close"),
             copy: t("share.app.copy_url", "Copy URL"),
@@ -83,7 +108,7 @@ export default function SetShareButton({ entry, testId }: SetShareButtonProps) {
           }}
           fileName="adaptive-learner-set.png"
           onCopied={() => notify.success(t("content_repo.share.copied", "Link copied."))}
-          onClose={() => setOpen(false)}
+          onClose={() => setLink(null)}
           testId="set-share-modal"
         />
       )}
