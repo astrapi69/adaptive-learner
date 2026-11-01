@@ -32,7 +32,7 @@ vi.mock("./content-repos", async () => {
 
 vi.mock("./repo-token", () => ({ resolveRepoToken: () => "" }));
 
-import { collectDiscoveryRepos } from "./discover-repos";
+import { collectDiscoveryRepos, collectRegistryRepos } from "./discover-repos";
 
 afterEach(() => {
   vi.clearAllMocks();
@@ -151,5 +151,39 @@ describe("collectDiscoveryRepos", () => {
     expect(jane).toBeDefined();
     expect(official?.allowManifestFallback).toBeUndefined();
     expect(jane?.allowManifestFallback).toBeUndefined();
+  });
+});
+
+describe("collectRegistryRepos (#3819)", () => {
+  it("holds only the validated, pinned external registry repos", async () => {
+    const commit = "a".repeat(40);
+    fetchRecommendedRepos.mockResolvedValue([
+      { url: `https://github.com/${OFFICIAL}`, branch: "main", self: true, trust_level: 3 },
+      {
+        url: "https://github.com/jane/content",
+        branch: "main",
+        title: "Jane",
+        commit,
+        trust_level: 1,
+        validation: { status: "validated", validated_at: "2026-07-09T00:00:00Z" },
+      },
+      {
+        url: "https://github.com/pending/x",
+        branch: "main",
+        commit: "b".repeat(40),
+        validation: { status: "pending", validated_at: "2026-07-09T00:00:00Z" },
+      },
+    ]);
+    // A connected user repo is the sharer's own; a recipient's lookup
+    // never sees it, so it is no registry repo.
+    readUserRepos.mockResolvedValue([{ owner: "me", repo: "sets", branch: "dev" }]);
+    const repos = await collectRegistryRepos();
+    expect(repos.map((r) => r.url)).toEqual(["https://github.com/jane/content"]);
+    expect(repos[0]).toMatchObject({ ref: commit, trustLevel: 1, name: "Jane" });
+  });
+
+  it("is empty when the registry cannot be read", async () => {
+    fetchRecommendedRepos.mockRejectedValue(new Error("offline"));
+    expect(await collectRegistryRepos()).toEqual([]);
   });
 });

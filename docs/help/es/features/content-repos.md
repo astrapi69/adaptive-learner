@@ -70,6 +70,15 @@ con la URL precargada; el código QR hace lo mismo en el
 smartphone. Así compartes un curso con tu grupo de estudio sin
 teclear nada a mano.
 
+Para compartir un solo conjunto, usa el botón **Compartir** que
+está a su lado. Un conjunto del repositorio oficial, o de un
+repositorio recomendado, recibe un enlace corto del tipo
+`/content/set/<id>`. Abre el conjunto directamente; si el conjunto
+procede de un repositorio que el receptor aún no ha añadido, la app
+ofrece añadirlo. El enlace sigue siendo válido mientras el conjunto
+conserve su identificador. Cualquier otro conjunto recibe un enlace
+`/add-repo` que primero añade su repositorio.
+
 <!-- TODO: Captura de pantalla - Cuadro de diálogo para compartir con código QR -->
 
 ---
