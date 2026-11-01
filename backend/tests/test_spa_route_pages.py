@@ -16,6 +16,7 @@ hide exactly that.
 from __future__ import annotations
 
 import importlib.util
+import sys
 from pathlib import Path
 
 import pytest
@@ -25,6 +26,8 @@ _SCRIPT = REPO / "scripts" / "emit_spa_route_pages.py"
 
 _spec = importlib.util.spec_from_file_location("emit_spa_route_pages", _SCRIPT)
 emit_spa_route_pages = importlib.util.module_from_spec(_spec)
+# ``@dataclass`` resolves its module through sys.modules.
+sys.modules[_spec.name] = emit_spa_route_pages
 _spec.loader.exec_module(emit_spa_route_pages)
 
 
@@ -131,3 +134,145 @@ def test_the_real_router_still_exposes_static_routes() -> None:
     assert "/dashboard" in routes
     assert "/settings" in routes
     assert not [route for route in routes if ":" in route]
+
+
+# --- #3819: one page per known set, so a short set link answers 200 -------
+
+RAW = "https://raw.githubusercontent.com"
+OFFICIAL = "astrapi69/adaptive-learner-content"
+PIN = "a" * 40
+
+#: Registry and indices in the shapes the content repos publish them.
+REGISTRY = {
+    "repos": [
+        {"url": f"https://github.com/{OFFICIAL}", "branch": "main", "self": True},
+        {
+            "url": "https://github.com/astrapi69/alc-ai",
+            "branch": "main",
+            "commit": PIN,
+            "validation": {"status": "validated", "validated_at": "2026-10-01T00:00:00Z"},
+        },
+        {
+            "url": "https://github.com/jane/pending",
+            "branch": "main",
+            "commit": "b" * 40,
+            "validation": {"status": "pending", "validated_at": "2026-10-01T00:00:00Z"},
+        },
+        {
+            "url": "https://github.com/jane/unpinned",
+            "branch": "main",
+            "validation": {"status": "validated", "validated_at": "2026-10-01T00:00:00Z"},
+        },
+    ]
+}
+
+
+def _index(*ids: str, hidden: tuple[str, ...] = ()) -> dict:
+    sets = [{"id": set_id, "name": set_id} for set_id in ids]
+    sets += [{"id": set_id, "visibility": "hidden"} for set_id in hidden]
+    return {"schema_version": "1.9", "sets": sets}
+
+
+def _fetcher(documents: dict[str, dict]):
+    """A fetch_json stand-in serving ``documents`` by URL; others fail."""
+    requested: list[str] = []
+
+    def fetch_json(url: str) -> object:
+        requested.append(url)
+        if url not in documents:
+            raise OSError(f"404 {url}")
+        return documents[url]
+
+    fetch_json.requested = requested  # type: ignore[attr-defined]
+    return fetch_json
+
+
+def _documents() -> dict[str, dict]:
+    return {
+        f"{RAW}/{OFFICIAL}/main/recommended-repos.json": REGISTRY,
+        f"{RAW}/{OFFICIAL}/main/search-index.json": _index(
+            "fr-a1", "es-a1", hidden=("graded-quiz-demo",)
+        ),
+        f"{RAW}/astrapi69/alc-ai/{PIN}/search-index.json": _index("ki-einsteiger-from-de"),
+        f"{RAW}/jane/pending/{'b' * 40}/search-index.json": _index("pending-set"),
+        f"{RAW}/jane/unpinned/main/search-index.json": _index("unpinned-set"),
+    }
+
+
+def test_set_ids_follow_the_registry_contract_of_the_app() -> None:
+    fetch = _fetcher(_documents())
+    report = emit_spa_route_pages.registry_set_ids(fetch)
+    # The official repo is branch-tracked, an external one is read at its
+    # pinned commit; pending and unpinned entries are not searched by the
+    # app, so a page for their sets would promise a set it cannot find.
+    assert report.set_ids == ["es-a1", "fr-a1", "ki-einsteiger-from-de"]
+    assert report.repos_read == 2
+    assert report.repos_failed == []
+    assert f"{RAW}/jane/pending/{'b' * 40}/search-index.json" not in fetch.requested
+
+
+@pytest.mark.parametrize(
+    "bad_id",
+    ["../escape", "with space", "", "-leading-dash", "a/b", "x" * 129],
+    ids=["dot-dot", "space", "empty", "leading-dash", "slash", "too-long"],
+)
+def test_an_id_that_is_no_safe_path_segment_gets_no_page(bad_id: str) -> None:
+    documents = _documents()
+    documents[f"{RAW}/astrapi69/alc-ai/{PIN}/search-index.json"] = _index(
+        "ki-einsteiger-from-de", bad_id
+    )
+    report = emit_spa_route_pages.registry_set_ids(_fetcher(documents))
+    assert bad_id not in report.set_ids
+    assert report.skipped_ids == [bad_id]
+
+
+def test_a_failing_repo_is_reported_and_the_others_still_count() -> None:
+    documents = _documents()
+    del documents[f"{RAW}/astrapi69/alc-ai/{PIN}/search-index.json"]
+    report = emit_spa_route_pages.registry_set_ids(_fetcher(documents))
+    assert report.set_ids == ["es-a1", "fr-a1"]
+    assert report.repos_failed == ["astrapi69/alc-ai"]
+
+
+def test_an_unreachable_registry_still_reads_the_official_repo() -> None:
+    documents = _documents()
+    del documents[f"{RAW}/{OFFICIAL}/main/recommended-repos.json"]
+    report = emit_spa_route_pages.registry_set_ids(_fetcher(documents))
+    assert report.set_ids == ["es-a1", "fr-a1"]
+    assert report.registry_read is False
+
+
+def test_set_pages_are_written_only_when_asked_for(
+    fake_build: Path, capsys: pytest.CaptureFixture
+) -> None:
+    dist = fake_build / "frontend" / "dist"
+    assert emit_spa_route_pages.main(["--repo-root", str(fake_build)]) == 0
+    # The default run stays offline, as the local make target expects.
+    assert not (dist / "content" / "set").exists()
+
+    exit_code = emit_spa_route_pages.main(
+        ["--repo-root", str(fake_build), "--set-pages"], fetch_json=_fetcher(_documents())
+    )
+    assert exit_code == 0
+    for set_id in ("es-a1", "fr-a1", "ki-einsteiger-from-de"):
+        page = dist / "content" / "set" / set_id / "index.html"
+        assert page.read_text(encoding="utf-8") == INDEX_HTML
+    out = capsys.readouterr().out
+    assert "3 set page(s)" in out
+    assert "2 repo(s) read" in out
+
+
+def test_an_unreadable_registry_does_not_fail_the_deploy_but_says_so(
+    fake_build: Path, capsys: pytest.CaptureFixture
+) -> None:
+    exit_code = emit_spa_route_pages.main(
+        ["--repo-root", str(fake_build), "--set-pages"], fetch_json=_fetcher({})
+    )
+    # Without the pages a short link still opens the set, through the
+    # 404.html fallback; failing the deploy over a network error would be
+    # the worse outcome. The log names the gap instead.
+    assert exit_code == 0
+    out = capsys.readouterr().out
+    assert "0 set page(s)" in out
+    assert "WARNING" in out
+    assert (fake_build / "frontend" / "dist" / "dashboard" / "index.html").is_file()
