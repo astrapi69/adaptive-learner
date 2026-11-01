@@ -14,13 +14,13 @@
  * in parallel; the first repo in registry order that carries the id wins.
  */
 
-import { collectRegistryRepos } from "./discover-repos";
-import { OFFICIAL_SOURCE } from "./source-identity";
+import { collectRegistryRepos } from "../discover-repos";
+import { OFFICIAL_SOURCE } from "../source-identity";
 import {
   fetchSearchIndex,
   type SearchableSet,
   type SearchIndexRepo,
-} from "./search-index-loader";
+} from "../search-index-loader";
 
 /** The repo to connect so a found set becomes loadable. */
 export interface RegistryRepoRef {

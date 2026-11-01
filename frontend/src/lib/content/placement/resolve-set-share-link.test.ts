@@ -5,7 +5,7 @@
 
 import { describe, expect, it, vi } from "vitest";
 
-import type { RegistrySetLookup } from "../repos/registry-set-lookup";
+import type { RegistrySetLookup } from "../repos/shared-link/registry-set-lookup";
 import type { SearchableSet } from "../repos/search-index-loader";
 import { OFFICIAL_SOURCE } from "../repos/source-identity";
 import { resolveSetShareLink } from "./resolve-set-share-link";

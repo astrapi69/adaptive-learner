@@ -49,8 +49,8 @@ const { findSetInRegistry, connectPublicRepo } = vi.hoisted(() => ({
   findSetInRegistry: vi.fn(),
   connectPublicRepo: vi.fn(),
 }));
-vi.mock("../../lib/content/repos/registry-set-lookup", () => ({ findSetInRegistry }));
-vi.mock("../../lib/content/repos/connect-repo", () => ({ connectPublicRepo }));
+vi.mock("../../lib/content/repos/shared-link/registry-set-lookup", () => ({ findSetInRegistry }));
+vi.mock("../../lib/content/repos/shared-link/connect-repo", () => ({ connectPublicRepo }));
 
 const notifyError = vi.fn();
 const notifyWarning = vi.fn();

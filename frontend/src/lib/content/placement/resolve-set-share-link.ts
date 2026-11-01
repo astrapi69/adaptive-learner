@@ -10,7 +10,10 @@
  */
 
 import { parseGitHubRepoUrl, userRepoSource } from "../repos/content-repos";
-import { findSetInRegistry, type RegistrySetLookup } from "../repos/registry-set-lookup";
+import {
+  findSetInRegistry,
+  type RegistrySetLookup,
+} from "../repos/shared-link/registry-set-lookup";
 import { isOfficialSource } from "../repos/source-identity";
 import { buildSetShareLink, type ShareableSet } from "./share-link";
 

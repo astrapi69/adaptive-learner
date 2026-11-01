@@ -55,7 +55,7 @@ import { undismissSet } from "../../lib/content/browse/lifecycle/dismissed-sets"
 import {
   findSetInRegistry,
   type RegistrySetLookup,
-} from "../../lib/content/repos/registry-set-lookup";
+} from "../../lib/content/repos/shared-link/registry-set-lookup";
 import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
 import { notify } from "../../utils/notify";

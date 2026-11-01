@@ -18,7 +18,7 @@ vi.mock("qrcode", () => ({
 const { notify } = vi.hoisted(() => ({ notify: { success: vi.fn(), error: vi.fn() } }));
 vi.mock("../../../utils/notify", () => ({ notify }));
 const { findSetInRegistry } = vi.hoisted(() => ({ findSetInRegistry: vi.fn() }));
-vi.mock("../../../lib/content/repos/registry-set-lookup", () => ({ findSetInRegistry }));
+vi.mock("../../../lib/content/repos/shared-link/registry-set-lookup", () => ({ findSetInRegistry }));
 
 import SetShareButton from "./SetShareButton";
 import type { ContentSetEntry } from "../../../storage/types";

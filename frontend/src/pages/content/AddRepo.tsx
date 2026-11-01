@@ -16,7 +16,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import { Button } from "@/components/ui/button";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
-import { connectPublicRepo } from "../../lib/content/repos/connect-repo";
+import { connectPublicRepo } from "../../lib/content/repos/shared-link/connect-repo";
 import {
   findUserRepo,
   isOfficialSource,
