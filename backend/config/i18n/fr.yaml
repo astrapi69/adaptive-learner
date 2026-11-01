@@ -2515,6 +2515,7 @@ content:
     button: "Partager"
     aria: "Partager le set '{title}'"
     title: "Partager le set"
+    short_hint: "Ce lien ouvre directement le set. Il reste valable tant que le set garde son identifiant."
   filter:
     all_sources: "Toutes les sources"
     official: "Officiel"
@@ -2541,6 +2542,10 @@ content:
     progress_done: "{done} leçons sur {total} terminées"
     current_lesson: "Continuer ici"
     lesson_completed: "Terminé"
+    from_repo: "Du dépôt {repo}"
+    add_explain: "Ce set provient d'un dépôt que tu n'as pas encore ajouté. En le démarrant, ce dépôt est ajouté à tes sources de contenu."
+    add_start: "Ajouter et commencer"
+    offline_hint: "Tu sembles être hors ligne. Réessaie une fois en ligne."
   repo_export:
     button: "Partager comme dépôt"
     title: "Partager comme dépôt"
