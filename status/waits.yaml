@@ -16,6 +16,18 @@
 #               BOARD.md 'Waiting (external / other issue)' next to the detail
 
 issues:
+  learn-content-engine#284:
+    summary: "quality check for development provenance in text learners see"
+    waits: nothing
+    detail: "The pattern list is decided by a measurement across the fleet, as the issue describes; type names in titles are a separate, differently built check."
+    evidence: https://github.com/astrapi69/learn-content-engine/issues/284
+    checked: 2026-11-01
+  adaptive-learner-content#258:
+    summary: "step titles show a development marker and the schema term Cloze in German sets"
+    waits: nothing
+    detail: "The issue lists the seven titles to fix with file and line."
+    evidence: https://github.com/astrapi69/adaptive-learner-content/issues/258
+    checked: 2026-11-01
   adaptive-learner#3933:
     summary: "the origin value imported carries three meanings, a self-authored lesson shows the fork badge"
     waits: nothing
