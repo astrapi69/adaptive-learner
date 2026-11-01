@@ -2668,6 +2668,16 @@ switch the section on in Settings first or press "Detailed evaluation"
 - [ ] TC-0573 Reference/demo sets (graded-quiz-demo) do NOT appear in
       Discover/My Content (#1702/#1706)
 - [ ] TC-0574 Per-set share link opens the set detail page directly (#1572)
+- [ ] TC-1005 Short set link for a set of a recommended repository not added yet
+      (#3819): open `/content/set/ki-einsteiger-from-de` in a fresh profile -
+      the card shows the title, level, lesson count and "From the repository
+      KI", plus the note that starting adds the repository; "Add & start"
+      connects the repository, downloads the set and opens the first lesson;
+      afterwards the repository is listed under Settings → Data
+- [ ] TC-1006 Short set link offline (#3819): with the device offline, open a set
+      link of a repository not added yet whose registry was never loaded -
+      "Set not found" appears with the note about being offline; online,
+      with an unknown id, the note does not appear
 - [ ] TC-0575 Add a registered content repo (register-a-repo #1511)
 - [ ] TC-0576 Manifest fallback for own repos without a search-index.json (#2562):
       connect your own repo via Settings → Data → "Add a repository" that

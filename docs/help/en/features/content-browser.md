@@ -87,9 +87,15 @@ and you land on the set - in both storage modes. This is what makes
 **per-set sharing** possible: a set-level QR code or share link can
 now point at a specific set, not just the app root.
 
-If the link refers to a set that does not exist (or that you have
-not downloaded yet), the page shows a friendly **not-found state**
-with a way back to the catalog, rather than an error.
+If the set comes from a recommended repository you have not added
+yet, the page shows the set and names the repository it comes from.
+**Add & start** adds that repository to your content sources,
+downloads the set and opens its first lesson.
+
+If no repository carries the set, the page shows a friendly
+**not-found state** with a way back to the catalog, rather than an
+error. When you are offline, it also says so: the recommended
+repositories could not be checked.
 
 ---
 

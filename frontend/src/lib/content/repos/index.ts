@@ -9,3 +9,4 @@ export * from "./registry-types";
 export * from "./repo-rating";
 export * from "./repo-token";
 export * from "./search-index-loader";
+export * from "./shared-link";
