@@ -2709,7 +2709,8 @@
     "share": {
       "button": "Compartir",
       "aria": "Compartir el conjunto '{title}'",
-      "title": "Compartir conjunto"
+      "title": "Compartir conjunto",
+      "short_hint": "Este enlace abre el set directamente. Sigue siendo válido mientras el set conserve su identificador."
     },
     "filter": {
       "all_sources": "Todas las fuentes",
@@ -2739,7 +2740,11 @@
       "bonus_locked_tooltip": "Termina cada lección regular de este set con al menos una estrella para desbloquear esta lección extra.",
       "progress_done": "{done} de {total} lecciones completadas",
       "current_lesson": "Continuar aquí",
-      "lesson_completed": "Completado"
+      "lesson_completed": "Completado",
+      "from_repo": "Del repositorio {repo}",
+      "add_explain": "Este set procede de un repositorio que aún no has añadido. Al empezar, ese repositorio se añade a tus fuentes de contenido.",
+      "add_start": "Añadir y empezar",
+      "offline_hint": "Parece que no tienes conexión. Vuelve a intentarlo cuando estés en línea."
     },
     "repo_export": {
       "button": "Compartir como repositorio",

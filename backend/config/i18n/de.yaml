@@ -2518,6 +2518,7 @@ content:
     button: "Teilen"
     aria: "Set '{title}' teilen"
     title: "Set teilen"
+    short_hint: "Dieser Link öffnet das Set direkt. Er bleibt gültig, solange das Set seine Kennung behält."
   filter:
     all_sources: "Alle Quellen"
     official: "Offiziell"
@@ -2544,6 +2545,10 @@ content:
     progress_done: "{done} von {total} Lektionen abgeschlossen"
     current_lesson: "Hier weitermachen"
     lesson_completed: "Abgeschlossen"
+    from_repo: "Aus dem Repository {repo}"
+    add_explain: "Dieses Set stammt aus einem Repository, das du noch nicht hinzugefügt hast. Beim Starten wird es zu deinen Inhaltsquellen hinzugefügt."
+    add_start: "Hinzufügen & starten"
+    offline_hint: "Du scheinst offline zu sein. Versuche es noch einmal, sobald du online bist."
   repo_export:
     button: "Als Repository teilen"
     title: "Als Repository teilen"

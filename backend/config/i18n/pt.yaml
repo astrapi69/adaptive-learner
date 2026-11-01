@@ -2513,6 +2513,7 @@ content:
     button: "Compartilhar"
     aria: "Compartilhar o conjunto '{title}'"
     title: "Compartilhar conjunto"
+    short_hint: "Este link abre o set diretamente. Ele continua válido enquanto o set mantiver o seu identificador."
   filter:
     all_sources: "Todas as fontes"
     official: "Oficial"
@@ -2539,6 +2540,10 @@ content:
     progress_done: "{done} de {total} lições concluídas"
     current_lesson: "Continuar aqui"
     lesson_completed: "Concluído"
+    from_repo: "Do repositório {repo}"
+    add_explain: "Este set vem de um repositório que você ainda não adicionou. Ao começar, esse repositório é adicionado às suas fontes de conteúdo."
+    add_start: "Adicionar e começar"
+    offline_hint: "Parece que você está offline. Tente novamente quando estiver online."
   repo_export:
     button: "Compartilhar como repositório"
     title: "Compartilhar como repositório"
