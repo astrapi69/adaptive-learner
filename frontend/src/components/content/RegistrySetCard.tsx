@@ -14,10 +14,10 @@ import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { useI18n } from "../../hooks/ui/useI18n";
-import { connectPublicRepo } from "../../lib/content/repos/connect-repo";
+import { connectPublicRepo } from "../../lib/content/repos/shared-link/connect-repo";
 import { repoValidationReasonText } from "../../lib/content/repos/content-repo-validate";
 import { syncPhaseI18n, type SyncProgress } from "../../lib/content/repos/content-repos";
-import type { RegistryRepoRef } from "../../lib/content/repos/registry-set-lookup";
+import type { RegistryRepoRef } from "../../lib/content/repos/shared-link/registry-set-lookup";
 import type { SearchableSet } from "../../lib/content/repos/search-index-loader";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { getStorage } from "../../storage";

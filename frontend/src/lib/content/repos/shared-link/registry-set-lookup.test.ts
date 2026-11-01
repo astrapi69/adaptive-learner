@@ -10,7 +10,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { findSetInRegistry } from "./registry-set-lookup";
-import type { SearchableSet, SearchIndexRepo } from "./search-index-loader";
+import type { SearchableSet, SearchIndexRepo } from "../search-index-loader";
 
 const OFFICIAL: SearchIndexRepo = {
   url: "astrapi69/adaptive-learner-content",

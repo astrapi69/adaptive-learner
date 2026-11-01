@@ -10,13 +10,13 @@ const { addUserRepo, syncUserRepo, validateUserRepo } = vi.hoisted(() => ({
   syncUserRepo: vi.fn(),
   validateUserRepo: vi.fn(),
 }));
-vi.mock("./content-repos", async (orig) => ({
-  ...(await orig<typeof import("./content-repos")>()),
+vi.mock("../content-repos", async (orig) => ({
+  ...(await orig<typeof import("../content-repos")>()),
   addUserRepo,
   syncUserRepo,
 }));
-vi.mock("./content-repo-validate", async (orig) => ({
-  ...(await orig<typeof import("./content-repo-validate")>()),
+vi.mock("../content-repo-validate", async (orig) => ({
+  ...(await orig<typeof import("../content-repo-validate")>()),
   validateUserRepo,
 }));
 

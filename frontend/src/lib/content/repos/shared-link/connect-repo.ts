@@ -7,14 +7,14 @@
  * No token is involved; a private repo is added in Settings with its token.
  */
 
-import { validateUserRepo, type RepoValidationResult } from "./content-repo-validate";
+import { validateUserRepo, type RepoValidationResult } from "../content-repo-validate";
 import {
   addUserRepo,
   parseGitHubRepoUrl,
   syncUserRepo,
   userRepoSource,
   type SyncProgress,
-} from "./content-repos";
+} from "../content-repos";
 
 /** The repo to connect, as a link names it. */
 export interface ConnectRepoInput {

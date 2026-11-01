@@ -14,7 +14,7 @@ const { connectPublicRepo, listSets } = vi.hoisted(() => ({
   connectPublicRepo: vi.fn(),
   listSets: vi.fn(),
 }));
-vi.mock("../../lib/content/repos/connect-repo", () => ({ connectPublicRepo }));
+vi.mock("../../lib/content/repos/shared-link/connect-repo", () => ({ connectPublicRepo }));
 vi.mock("../../storage", () => ({
   getStorage: () => ({ contentLoader: { listSets } }),
 }));
