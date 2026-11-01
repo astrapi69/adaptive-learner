@@ -2709,7 +2709,8 @@
     "share": {
       "button": "Paylaş",
       "aria": "'{title}' setini paylaş",
-      "title": "Seti paylaş"
+      "title": "Seti paylaş",
+      "short_hint": "Bu bağlantı seti doğrudan açar. Set kimliğini koruduğu sürece geçerli kalır."
     },
     "filter": {
       "all_sources": "Tüm kaynaklar",
@@ -2739,7 +2740,11 @@
       "bonus_locked_tooltip": "Bu bonus dersin kilidini açmak için bu setin her normal dersini en az bir yıldızla bitir.",
       "progress_done": "{total} dersten {done} tanesi tamamlandı",
       "current_lesson": "Buradan devam et",
-      "lesson_completed": "Tamamlandı"
+      "lesson_completed": "Tamamlandı",
+      "from_repo": "{repo} deposundan",
+      "add_explain": "Bu set henüz eklemediğiniz bir depodan geliyor. Başlattığınızda bu depo içerik kaynaklarınıza eklenir.",
+      "add_start": "Ekle ve başla",
+      "offline_hint": "Çevrimdışı görünüyorsunuz. Çevrimiçi olduğunuzda yeniden deneyin."
     },
     "repo_export": {
       "button": "Depo olarak paylaş",

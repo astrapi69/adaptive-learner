@@ -2524,6 +2524,7 @@ content:
     button: "공유"
     aria: "세트 '{title}' 공유"
     title: "세트 공유"
+    short_hint: "이 링크는 세트를 바로 엽니다. 세트의 ID가 바뀌지 않는 한 계속 유효합니다."
   filter:
     all_sources: "모든 소스"
     official: "공식"
@@ -2550,6 +2551,10 @@ content:
     progress_done: "{total}개 중 {done}개 레슨 완료"
     current_lesson: "여기서 계속하기"
     lesson_completed: "완료됨"
+    from_repo: "{repo} 저장소에서"
+    add_explain: "이 세트는 아직 추가하지 않은 저장소에 있습니다. 시작하면 해당 저장소가 콘텐츠 소스에 추가됩니다."
+    add_start: "추가하고 시작"
+    offline_hint: "오프라인 상태인 것 같습니다. 온라인이 되면 다시 시도하세요."
   repo_export:
     button: "저장소로 공유"
     title: "저장소로 공유"

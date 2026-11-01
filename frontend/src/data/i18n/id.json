@@ -2709,7 +2709,8 @@
     "share": {
       "button": "Bagikan",
       "aria": "Bagikan set '{title}'",
-      "title": "Bagikan set"
+      "title": "Bagikan set",
+      "short_hint": "Tautan ini membuka set secara langsung. Tautan tetap berlaku selama set mempertahankan ID-nya."
     },
     "filter": {
       "all_sources": "Semua sumber",
@@ -2739,7 +2740,11 @@
       "bonus_locked_tooltip": "Selesaikan setiap pelajaran reguler set ini dengan minimal satu bintang untuk membuka pelajaran bonus ini.",
       "progress_done": "{done} dari {total} pelajaran selesai",
       "current_lesson": "Lanjutkan di sini",
-      "lesson_completed": "Selesai"
+      "lesson_completed": "Selesai",
+      "from_repo": "Dari repositori {repo}",
+      "add_explain": "Set ini berasal dari repositori yang belum Anda tambahkan. Saat dimulai, repositori itu ditambahkan ke sumber konten Anda.",
+      "add_start": "Tambah & mulai",
+      "offline_hint": "Sepertinya Anda sedang offline. Coba lagi setelah online."
     },
     "repo_export": {
       "button": "Bagikan sebagai repositori",

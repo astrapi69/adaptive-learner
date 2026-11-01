@@ -2524,6 +2524,7 @@ content:
     button: "Share"
     aria: "Share set '{title}'"
     title: "Share set"
+    short_hint: "This link opens the set directly. It stays valid as long as the set keeps its id."
   filter:
     all_sources: "All sources"
     official: "Official"
@@ -2550,6 +2551,10 @@ content:
     progress_done: "{done} of {total} lessons completed"
     current_lesson: "Continue here"
     lesson_completed: "Completed"
+    from_repo: "From the repository {repo}"
+    add_explain: "This set comes from a repository you have not added yet. Starting it adds that repository to your content sources."
+    add_start: "Add & start"
+    offline_hint: "You seem to be offline. Try again once you are online."
   repo_export:
     button: "Share as repository"
     title: "Share as repository"

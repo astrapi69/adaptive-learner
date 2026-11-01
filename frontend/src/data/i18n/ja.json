@@ -2709,7 +2709,8 @@
     "share": {
       "button": "共有",
       "aria": "セット「{title}」を共有",
-      "title": "セットを共有"
+      "title": "セットを共有",
+      "short_hint": "このリンクはセットを直接開きます。セットのIDが変わらない限り有効です。"
     },
     "filter": {
       "all_sources": "すべてのソース",
@@ -2739,7 +2740,11 @@
       "bonus_locked_tooltip": "このボーナスレッスンをアンロックするには、このセットの通常レッスンをすべて星1つ以上でクリアしてください。",
       "progress_done": "{total} 件中 {done} 件のレッスンが完了",
       "current_lesson": "ここから続ける",
-      "lesson_completed": "完了"
+      "lesson_completed": "完了",
+      "from_repo": "リポジトリ {repo} から",
+      "add_explain": "このセットは、まだ追加していないリポジトリのものです。開始すると、そのリポジトリがコンテンツのソースに追加されます。",
+      "add_start": "追加して開始",
+      "offline_hint": "オフラインのようです。オンラインになってからもう一度お試しください。"
     },
     "repo_export": {
       "button": "リポジトリとして共有",
