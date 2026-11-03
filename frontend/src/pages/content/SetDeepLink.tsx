@@ -9,8 +9,12 @@
  *   - found + downloaded     → jump straight to the set's first lesson.
  *   - found + not downloaded → show the set card with a "Download &
  *     start" action (downloads, then opens the first lesson).
+ *   - not listed, but a registry repo the learner has not added carries
+ *     it (#3819) → the registry card: "Add & start" connects that repo,
+ *     then downloads and opens the set.
  *   - unknown set id         → a clean "Set not found" state linking to
- *     Discover, NOT a crash or a dead error toast.
+ *     Discover, NOT a crash or a dead error toast. Offline, the page says
+ *     so, because the registry could not be asked.
  *
  * Storage-mode-agnostic: every call routes through
  * ``getStorage().contentLoader.*`` so the same page works in API mode
@@ -30,6 +34,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import { Button } from "@/components/ui/button";
 
 import FlashRoundCard from "../../components/content/FlashRoundCard";
+import RegistrySetCard from "../../components/content/RegistrySetCard";
 import SetShareButton from "../../components/content/share/SetShareButton";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
@@ -47,11 +52,28 @@ import {
   playfulBonusActive,
 } from "../../lib/learning/playful/playfulBonusPref";
 import { undismissSet } from "../../lib/content/browse/lifecycle/dismissed-sets";
+import {
+  findSetInRegistry,
+  type RegistrySetLookup,
+} from "../../lib/content/repos/shared-link/registry-set-lookup";
 import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
 import { notify } from "../../utils/notify";
 
-type Resolution = "loading" | "found" | "not_found";
+type Resolution = "loading" | "found" | "registry" | "not_found";
+
+type RegistryFound = Extract<RegistrySetLookup, { status: "found" }>;
+
+/** The set from the app's own listing, or ``null`` when it is not there or
+ *  the listing cannot be read. */
+async function findListedSet(setId: string): Promise<ContentSetEntry | null> {
+  try {
+    const { sets } = await getStorage().contentLoader.listSets();
+    return sets.find((set) => set.id === setId) ?? null;
+  } catch {
+    return null;
+  }
+}
 
 /** Build the ``/lesson/...`` route slug from a set source. */
 function setSlug(source: string): string {
@@ -65,6 +87,8 @@ export default function SetDeepLink() {
 
   const [resolution, setResolution] = useState<Resolution>("loading");
   const [entry, setEntry] = useState<ContentSetEntry | null>(null);
+  const [registry, setRegistry] = useState<RegistryFound | null>(null);
+  const [offline, setOffline] = useState(false);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(null);
   // #2793 - the set page stops being a pure launcher: it lists the set's
@@ -92,22 +116,27 @@ export default function SetDeepLink() {
     let cancelled = false;
     setResolution("loading");
     setEntry(null);
+    setRegistry(null);
+    setOffline(false);
     (async () => {
-      try {
-        const { sets } = await getStorage().contentLoader.listSets();
-        if (cancelled) return;
-        const match = sets.find((set) => set.id === setId) ?? null;
-        if (match) {
-          setEntry(match);
-          setResolution("found");
-        } else {
-          setResolution("not_found");
-        }
-      } catch {
-        // A failed set listing (offline + nothing cached) is the same
-        // user-facing outcome as an unknown id: the set isn't reachable
-        // here. Show the clean not-found state instead of crashing.
-        if (!cancelled) setResolution("not_found");
+      // A failed listing (offline + nothing cached) is treated like a miss:
+      // the registry may still answer from its cached indices, and if not,
+      // the page shows the clean not-found state instead of crashing.
+      const match = await findListedSet(setId);
+      if (cancelled) return;
+      if (match) {
+        setEntry(match);
+        setResolution("found");
+        return;
+      }
+      const lookup = await findSetInRegistry(setId);
+      if (cancelled) return;
+      if (lookup.status === "found") {
+        setRegistry(lookup);
+        setResolution("registry");
+      } else {
+        setOffline(lookup.status === "unreachable");
+        setResolution("not_found");
       }
     })();
     return () => {
@@ -202,28 +231,46 @@ export default function SetDeepLink() {
     [navigate, t, lessonList],
   );
 
-  const handleStart = useCallback(async () => {
-    if (!entry) return;
-    setBusy(true);
-    try {
-      const downloaded = entry.cached_version != null;
-      if (!downloaded) {
-        setProgress({ current: 0, total: 0 });
-        await getStorage().contentLoader.downloadSet(entry.source, entry.id, (p) =>
-          setProgress(p),
-        );
-        // #1709 — an explicit deep-link download revives a previously
-        // deleted set; clear any stale dismissal record.
-        undismissSet(entry.source, entry.id);
+  const startSet = useCallback(
+    async (set: ContentSetEntry) => {
+      setBusy(true);
+      try {
+        const downloaded = set.cached_version != null;
+        if (!downloaded) {
+          setProgress({ current: 0, total: 0 });
+          await getStorage().contentLoader.downloadSet(set.source, set.id, (p) =>
+            setProgress(p),
+          );
+          // #1709 — an explicit deep-link download revives a previously
+          // deleted set; clear any stale dismissal record.
+          undismissSet(set.source, set.id);
+        }
+        await openFirstLesson(set);
+      } catch (err) {
+        notify.error(t("content.error.open_failed", "Could not open the lesson."), { error: err });
+      } finally {
+        setBusy(false);
+        setProgress(null);
       }
-      await openFirstLesson(entry);
-    } catch (err) {
-      notify.error(t("content.error.open_failed", "Could not open the lesson."), { error: err });
-    } finally {
-      setBusy(false);
-      setProgress(null);
-    }
-  }, [entry, openFirstLesson, t]);
+    },
+    [openFirstLesson, t],
+  );
+
+  const handleStart = useCallback(() => {
+    if (entry) void startSet(entry);
+  }, [entry, startSet]);
+
+  /** #3819 - the registry repo is connected now: show the set as a listed
+   *  one and carry on with "start", which downloads and opens it. */
+  const handleRegistryConnected = useCallback(
+    (connected: ContentSetEntry) => {
+      setEntry(connected);
+      setRegistry(null);
+      setResolution("found");
+      void startSet(connected);
+    },
+    [startSet],
+  );
 
   const goDiscover = useCallback(() => navigate("/content?tab=discover"), [navigate]);
 
@@ -253,6 +300,14 @@ export default function SetDeepLink() {
                 "This set isn’t available - it may not be downloaded yet, or it doesn’t exist.",
               )}
             </p>
+            {offline && (
+              <p className="mt-2 text-sm" data-testid="set-deep-link-offline">
+                {t(
+                  "content.set_link.offline_hint",
+                  "You seem to be offline. Try again once you are online.",
+                )}
+              </p>
+            )}
             <Button
               type="button"
               className="mt-5 min-h-11"
@@ -262,6 +317,15 @@ export default function SetDeepLink() {
               {t("content.set_link.go_discover", "Discover content")}
             </Button>
           </div>
+        )}
+
+        {resolution === "registry" && registry && (
+          <RegistrySetCard
+            set={registry.set}
+            repo={registry.repo}
+            onConnected={handleRegistryConnected}
+            onDiscover={goDiscover}
+          />
         )}
 
         {resolution === "found" && entry && (

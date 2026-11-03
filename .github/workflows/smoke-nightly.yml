@@ -128,7 +128,7 @@ jobs:
     if: github.ref == 'refs/heads/develop' && needs.smoke.outputs.findings != '0'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: smoke-nightly-report
 

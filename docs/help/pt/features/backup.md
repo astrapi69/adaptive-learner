@@ -78,6 +78,12 @@ nenhum erro despercebido. No modo programador (Definições >
 Diagnóstico e suporte), a mensagem contém os detalhes técnicos para um issue no
 GitHub.
 
+Se a mesma lição estiver neste dispositivo e na cópia, as duas são
+combinadas: uma lição concluída continua concluída, a menos que
+tenha sido recomeçada depois dessa conclusão. De duas lições em
+curso, fica a que avançou mais. As tentativas, o melhor resultado
+e o histórico de tentativas de ambos os lados são mantidos.
+
 ---
 
 ## Importação entre identidades

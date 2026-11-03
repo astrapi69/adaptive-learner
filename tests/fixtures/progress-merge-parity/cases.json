@@ -1,0 +1,1184 @@
+{
+  "_comment": "Shared cases for merging two lesson_progress rows on restore (#3787). Run by backend/tests/test_progress_merge.py and frontend/src/storage/lessons/progress-merge.test.ts; expected lists only the fields a case is about, plus whether the merge changed the local row.",
+  "cases": [
+    {
+      "name": "completed elsewhere, only opened here: the completion wins",
+      "local": {
+        "status": "in_progress",
+        "attempts": 0,
+        "attempt_history": [],
+        "best_score_correct": 0,
+        "best_score_total": 0,
+        "completed_at": null,
+        "current_step": 1,
+        "score_correct": 0,
+        "score_total": 0,
+        "step_results": {},
+        "updated_at": "2026-10-05T10:00:00+00:00",
+        "started_at": "2026-10-05T09:59:00+00:00",
+        "time_spent_seconds": 30
+      },
+      "backup": {
+        "status": "completed",
+        "attempts": 1,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 8,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 8,
+        "best_score_total": 10,
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "current_step": 0,
+        "score_correct": 8,
+        "score_total": 10,
+        "step_results": {
+          "s1": {
+            "correct": 8,
+            "total": 10
+          }
+        },
+        "updated_at": "2026-10-01T10:00:00+00:00",
+        "started_at": "2026-10-01T09:50:00+00:00",
+        "time_spent_seconds": 600
+      },
+      "expected": {
+        "status": "completed",
+        "attempts": 1,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 8,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 8,
+        "best_score_total": 10,
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "current_step": 0,
+        "score_correct": 8,
+        "score_total": 10,
+        "updated_at": "2026-10-01T10:00:00+00:00",
+        "started_at": "2026-10-01T09:50:00+00:00",
+        "time_spent_seconds": 600,
+        "changed": true
+      }
+    },
+    {
+      "name": "completed here, only opened on the backup's device: nothing changes",
+      "local": {
+        "status": "completed",
+        "attempts": 1,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 8,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 8,
+        "best_score_total": 10,
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "current_step": 0,
+        "score_correct": 8,
+        "score_total": 10,
+        "step_results": {
+          "s1": {
+            "correct": 8,
+            "total": 10
+          }
+        },
+        "updated_at": "2026-10-01T10:00:00+00:00",
+        "started_at": "2026-10-01T09:50:00+00:00",
+        "time_spent_seconds": 600
+      },
+      "backup": {
+        "status": "in_progress",
+        "attempts": 0,
+        "attempt_history": [],
+        "best_score_correct": 0,
+        "best_score_total": 0,
+        "completed_at": null,
+        "current_step": 1,
+        "score_correct": 0,
+        "score_total": 0,
+        "step_results": {},
+        "updated_at": "2026-10-05T10:00:00+00:00",
+        "started_at": "2026-10-05T09:59:00+00:00",
+        "time_spent_seconds": 30
+      },
+      "expected": {
+        "status": "completed",
+        "attempts": 1,
+        "current_step": 0,
+        "updated_at": "2026-10-01T10:00:00+00:00",
+        "started_at": "2026-10-01T09:50:00+00:00",
+        "time_spent_seconds": 600,
+        "changed": false
+      }
+    },
+    {
+      "name": "restarted here after that completion: the restart stays",
+      "local": {
+        "status": "in_progress",
+        "attempts": 1,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 8,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 8,
+        "best_score_total": 10,
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "current_step": 2,
+        "score_correct": 1,
+        "score_total": 2,
+        "step_results": {
+          "s1": {
+            "correct": 1,
+            "total": 2
+          }
+        },
+        "updated_at": "2026-10-06T10:00:00+00:00",
+        "started_at": "2026-10-01T09:50:00+00:00",
+        "time_spent_seconds": 700
+      },
+      "backup": {
+        "status": "completed",
+        "attempts": 1,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 8,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 8,
+        "best_score_total": 10,
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "current_step": 0,
+        "score_correct": 8,
+        "score_total": 10,
+        "step_results": {
+          "s1": {
+            "correct": 8,
+            "total": 10
+          }
+        },
+        "updated_at": "2026-10-01T10:00:00+00:00",
+        "started_at": "2026-10-01T09:50:00+00:00",
+        "time_spent_seconds": 600
+      },
+      "expected": {
+        "status": "in_progress",
+        "current_step": 2,
+        "attempts": 1,
+        "best_score_correct": 8,
+        "best_score_total": 10,
+        "updated_at": "2026-10-06T10:00:00+00:00",
+        "changed": false
+      }
+    },
+    {
+      "name": "restarted later on the backup's device: the newer restart wins",
+      "local": {
+        "status": "completed",
+        "attempts": 1,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 8,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 8,
+        "best_score_total": 10,
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "current_step": 0,
+        "score_correct": 8,
+        "score_total": 10,
+        "step_results": {
+          "s1": {
+            "correct": 8,
+            "total": 10
+          }
+        },
+        "updated_at": "2026-10-01T10:00:00+00:00",
+        "started_at": "2026-10-01T09:50:00+00:00",
+        "time_spent_seconds": 600
+      },
+      "backup": {
+        "status": "in_progress",
+        "attempts": 1,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 8,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 8,
+        "best_score_total": 10,
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "current_step": 2,
+        "score_correct": 1,
+        "score_total": 2,
+        "step_results": {
+          "s1": {
+            "correct": 1,
+            "total": 2
+          }
+        },
+        "updated_at": "2026-10-06T10:00:00+00:00",
+        "started_at": "2026-10-01T09:50:00+00:00",
+        "time_spent_seconds": 700
+      },
+      "expected": {
+        "status": "in_progress",
+        "current_step": 2,
+        "attempts": 1,
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "updated_at": "2026-10-06T10:00:00+00:00",
+        "time_spent_seconds": 700,
+        "changed": true
+      }
+    },
+    {
+      "name": "two runs in progress: the furthest step wins over the newer one",
+      "local": {
+        "status": "in_progress",
+        "attempts": 0,
+        "attempt_history": [],
+        "best_score_correct": 0,
+        "best_score_total": 0,
+        "completed_at": null,
+        "current_step": 3,
+        "score_correct": 3,
+        "score_total": 3,
+        "step_results": {
+          "s1": {
+            "correct": 1,
+            "total": 1
+          },
+          "s2": {
+            "correct": 1,
+            "total": 1
+          },
+          "s3": {
+            "correct": 1,
+            "total": 1
+          }
+        },
+        "updated_at": "2026-10-06T10:00:00+00:00",
+        "started_at": "2026-10-01T10:00:00+00:00",
+        "time_spent_seconds": 180
+      },
+      "backup": {
+        "status": "in_progress",
+        "attempts": 0,
+        "attempt_history": [],
+        "best_score_correct": 0,
+        "best_score_total": 0,
+        "completed_at": null,
+        "current_step": 5,
+        "score_correct": 5,
+        "score_total": 5,
+        "step_results": {
+          "s1": {
+            "correct": 1,
+            "total": 1
+          },
+          "s2": {
+            "correct": 1,
+            "total": 1
+          },
+          "s3": {
+            "correct": 1,
+            "total": 1
+          },
+          "s4": {
+            "correct": 1,
+            "total": 1
+          },
+          "s5": {
+            "correct": 1,
+            "total": 1
+          }
+        },
+        "updated_at": "2026-10-04T10:00:00+00:00",
+        "started_at": "2026-10-01T10:00:00+00:00",
+        "time_spent_seconds": 300
+      },
+      "expected": {
+        "status": "in_progress",
+        "current_step": 5,
+        "score_correct": 5,
+        "updated_at": "2026-10-04T10:00:00+00:00",
+        "time_spent_seconds": 300,
+        "changed": true
+      }
+    },
+    {
+      "name": "two completed rows: balances join, the newer run state wins",
+      "local": {
+        "status": "completed",
+        "attempts": 2,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 6,
+            "total": 10
+          },
+          {
+            "at": "2026-10-03T10:00:00+00:00",
+            "correct": 6,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 6,
+        "best_score_total": 10,
+        "completed_at": "2026-10-03T10:00:00+00:00",
+        "current_step": 0,
+        "score_correct": 6,
+        "score_total": 10,
+        "step_results": {},
+        "updated_at": "2026-10-03T10:00:00+00:00",
+        "started_at": "2026-10-01T10:00:00+00:00",
+        "time_spent_seconds": 300
+      },
+      "backup": {
+        "status": "completed",
+        "attempts": 3,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 6,
+            "total": 10
+          },
+          {
+            "at": "2026-10-02T10:00:00+00:00",
+            "correct": 9,
+            "total": 10
+          },
+          {
+            "at": "2026-10-04T10:00:00+00:00",
+            "correct": 7,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 9,
+        "best_score_total": 10,
+        "completed_at": "2026-10-04T10:00:00+00:00",
+        "current_step": 0,
+        "score_correct": 7,
+        "score_total": 10,
+        "step_results": {},
+        "updated_at": "2026-10-04T10:00:00+00:00",
+        "started_at": "2026-10-01T10:00:00+00:00",
+        "time_spent_seconds": 300
+      },
+      "expected": {
+        "status": "completed",
+        "attempts": 3,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 6,
+            "total": 10
+          },
+          {
+            "at": "2026-10-02T10:00:00+00:00",
+            "correct": 9,
+            "total": 10
+          },
+          {
+            "at": "2026-10-03T10:00:00+00:00",
+            "correct": 6,
+            "total": 10
+          },
+          {
+            "at": "2026-10-04T10:00:00+00:00",
+            "correct": 7,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 9,
+        "best_score_total": 10,
+        "completed_at": "2026-10-04T10:00:00+00:00",
+        "updated_at": "2026-10-04T10:00:00+00:00",
+        "changed": true
+      }
+    },
+    {
+      "name": "an equal best keeps the local pair",
+      "local": {
+        "status": "completed",
+        "attempts": 1,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 8,
+            "total": 10
+          }
+        ],
+        "best_score_correct": 8,
+        "best_score_total": 10,
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "current_step": 0,
+        "score_correct": 8,
+        "score_total": 10,
+        "step_results": {},
+        "updated_at": "2026-10-02T10:00:00+00:00",
+        "started_at": "2026-10-01T10:00:00+00:00",
+        "time_spent_seconds": 300
+      },
+      "backup": {
+        "status": "completed",
+        "attempts": 1,
+        "attempt_history": [
+          {
+            "at": "2026-10-03T10:00:00+00:00",
+            "correct": 4,
+            "total": 5
+          }
+        ],
+        "best_score_correct": 4,
+        "best_score_total": 5,
+        "completed_at": "2026-10-03T10:00:00+00:00",
+        "current_step": 0,
+        "score_correct": 4,
+        "score_total": 5,
+        "step_results": {},
+        "updated_at": "2026-10-03T10:00:00+00:00",
+        "started_at": "2026-10-01T10:00:00+00:00",
+        "time_spent_seconds": 300
+      },
+      "expected": {
+        "best_score_correct": 8,
+        "best_score_total": 10,
+        "attempts": 1,
+        "attempt_history": [
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 8,
+            "total": 10
+          },
+          {
+            "at": "2026-10-03T10:00:00+00:00",
+            "correct": 4,
+            "total": 5
+          }
+        ],
+        "updated_at": "2026-10-03T10:00:00+00:00",
+        "changed": true
+      }
+    },
+    {
+      "name": "a 1.2.0 completion without attempts still counts as one",
+      "local": {
+        "status": "in_progress",
+        "attempts": 0,
+        "attempt_history": [],
+        "best_score_correct": 0,
+        "best_score_total": 0,
+        "completed_at": null,
+        "current_step": 1,
+        "score_correct": 0,
+        "score_total": 0,
+        "step_results": {},
+        "updated_at": "2026-10-05T10:00:00+00:00",
+        "started_at": "2026-10-05T09:59:00+00:00",
+        "time_spent_seconds": 30
+      },
+      "backup": {
+        "status": "completed",
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "current_step": 0,
+        "score_correct": 7,
+        "score_total": 10,
+        "step_results": {
+          "s1": {
+            "correct": 7,
+            "total": 10
+          }
+        },
+        "updated_at": "2026-10-01T10:00:00+00:00",
+        "started_at": "2026-10-01T09:40:00+00:00",
+        "time_spent_seconds": 400
+      },
+      "expected": {
+        "status": "completed",
+        "current_step": 0,
+        "score_correct": 7,
+        "score_total": 10,
+        "attempts": 0,
+        "attempt_history": [],
+        "completed_at": "2026-10-01T10:00:00+00:00",
+        "updated_at": "2026-10-01T10:00:00+00:00",
+        "changed": true
+      }
+    },
+    {
+      "name": "an unreadable local timestamp: the backup wins as before",
+      "local": {
+        "status": "in_progress",
+        "attempts": 0,
+        "attempt_history": [],
+        "best_score_correct": 0,
+        "best_score_total": 0,
+        "completed_at": null,
+        "current_step": 2,
+        "score_correct": 0,
+        "score_total": 2,
+        "step_results": {
+          "s1": {
+            "correct": 1,
+            "total": 1
+          },
+          "s2": {
+            "correct": 1,
+            "total": 1
+          }
+        },
+        "updated_at": null,
+        "started_at": "2026-10-01T10:00:00+00:00",
+        "time_spent_seconds": 120
+      },
+      "backup": {
+        "status": "in_progress",
+        "attempts": 0,
+        "attempt_history": [],
+        "best_score_correct": 0,
+        "best_score_total": 0,
+        "completed_at": null,
+        "current_step": 2,
+        "score_correct": 2,
+        "score_total": 2,
+        "step_results": {
+          "s1": {
+            "correct": 1,
+            "total": 1
+          },
+          "s2": {
+            "correct": 1,
+            "total": 1
+          }
+        },
+        "updated_at": "2026-10-02T10:00:00+00:00",
+        "started_at": "2026-10-01T10:00:00+00:00",
+        "time_spent_seconds": 120
+      },
+      "expected": {
+        "current_step": 2,
+        "score_correct": 2,
+        "updated_at": "2026-10-02T10:00:00+00:00",
+        "changed": true
+      }
+    },
+    {
+      "name": "the joined history keeps the newest 50",
+      "local": {
+        "status": "in_progress",
+        "attempts": 30,
+        "attempt_history": [
+          {
+            "at": "2026-09-01T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-02T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-03T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-04T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-05T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-06T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-07T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-08T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-09T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-10T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-11T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-12T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-13T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-14T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-15T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-16T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-17T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-18T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-19T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-20T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-21T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-22T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-23T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-24T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-25T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-26T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-27T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-28T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-29T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-30T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          }
+        ],
+        "best_score_correct": 0,
+        "best_score_total": 0,
+        "completed_at": null,
+        "current_step": 1,
+        "score_correct": 1,
+        "score_total": 1,
+        "step_results": {
+          "s1": {
+            "correct": 1,
+            "total": 1
+          }
+        },
+        "updated_at": "2026-10-02T10:00:00+00:00",
+        "started_at": "2026-10-01T10:00:00+00:00",
+        "time_spent_seconds": 60
+      },
+      "backup": {
+        "status": "in_progress",
+        "attempts": 30,
+        "attempt_history": [
+          {
+            "at": "2026-09-26T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-27T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-28T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-29T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-30T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-02T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-03T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-04T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-05T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-06T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-07T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-08T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-09T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-10T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-11T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-12T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-13T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-14T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-15T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-16T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-17T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-18T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-19T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-20T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-21T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-22T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-23T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-24T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-25T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          }
+        ],
+        "best_score_correct": 0,
+        "best_score_total": 0,
+        "completed_at": null,
+        "current_step": 1,
+        "score_correct": 1,
+        "score_total": 1,
+        "step_results": {
+          "s1": {
+            "correct": 1,
+            "total": 1
+          }
+        },
+        "updated_at": "2026-10-01T10:00:00+00:00",
+        "started_at": "2026-10-01T10:00:00+00:00",
+        "time_spent_seconds": 60
+      },
+      "expected": {
+        "attempt_history": [
+          {
+            "at": "2026-09-06T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-07T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-08T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-09T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-10T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-11T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-12T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-13T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-14T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-15T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-16T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-17T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-18T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-19T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-20T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-21T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-22T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-23T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-24T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-25T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-26T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-27T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-28T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-29T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-09-30T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-01T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-02T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-03T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-04T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-05T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-06T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-07T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-08T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-09T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-10T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-11T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-12T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-13T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-14T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-15T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-16T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-17T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-18T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-19T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-20T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-21T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-22T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-23T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-24T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          },
+          {
+            "at": "2026-10-25T10:00:00+00:00",
+            "correct": 1,
+            "total": 1
+          }
+        ],
+        "attempts": 30,
+        "changed": true
+      }
+    }
+  ]
+}

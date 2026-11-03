@@ -79,6 +79,13 @@ ainsi tu ne manques aucune erreur. En mode développeur
 (Paramètres > Diagnostic et assistance), le message contient les détails
 techniques pour un ticket GitHub.
 
+Si la même leçon se trouve sur cet appareil et dans la sauvegarde,
+les deux sont fusionnées : une leçon terminée reste terminée, sauf
+si elle a été recommencée après cette fin. De deux leçons en
+cours, c'est celle qui est allée le plus loin qui est conservée.
+Les tentatives, le meilleur résultat et l'historique des
+tentatives des deux côtés sont conservés.
+
 ---
 
 ## Import inter-identités

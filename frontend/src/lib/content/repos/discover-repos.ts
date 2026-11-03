@@ -20,7 +20,12 @@
  * is deliberately kept free of.
  */
 
-import { OFFICIAL_SOURCE, readUserRepos } from "./content-repos";
+import {
+  OFFICIAL_SOURCE,
+  parseGitHubRepoUrl,
+  readUserRepos,
+  userRepoSource,
+} from "./content-repos";
 import {
   fetchRecommendedRepos,
   isValidatedForSearch,
@@ -30,24 +35,22 @@ import {
 import { resolveRepoToken } from "./repo-token";
 import type { SearchIndexRepo } from "./search-index-loader";
 
-/**
- * Build the de-duplicated {@link SearchIndexRepo}[] for discovery. Never
- * throws — a failed recommended-repos fetch or user-repo read degrades to
- * whatever resolved (at minimum the official repo).
- *
- * Registry (``recommended-repos.json``) entries are honoured per the
- * federated-search contract: only a repo whose snapshot is validated
- * ({@link isValidatedForSearch}) is searched, and every EXTERNAL repo is read
- * at its pinned ``commit`` — never the moving branch HEAD (the official
- * ``self`` entry stays branch-tracked). The registry ``trust_level`` seeds the
- * repo's ranking floor.
- */
-export async function collectDiscoveryRepos(): Promise<SearchIndexRepo[]> {
-  const repos: SearchIndexRepo[] = [
-    { url: OFFICIAL_SOURCE, branch: "main", name: OFFICIAL_SOURCE, trustLevel: 3 },
-  ];
-  const seen = new Set<string>([OFFICIAL_SOURCE]);
+/** ``owner/repo`` of a repo URL or shorthand (the URL itself when unparsable). */
+function sourceOf(url: string): string {
+  const parsed = parseGitHubRepoUrl(url);
+  return parsed ? userRepoSource(parsed.owner, parsed.repo) : url;
+}
 
+/**
+ * The external registry repos every learner searches (#3819): the
+ * ``recommended-repos.json`` entries with a validated snapshot and a pinned
+ * ``commit``, read at that commit. The official ``self`` entry and the
+ * learner's own connected repos are not part of it, so the list is the same
+ * on every device. Never throws: an unreadable registry yields ``[]``.
+ */
+export async function collectRegistryRepos(): Promise<SearchIndexRepo[]> {
+  const repos: SearchIndexRepo[] = [];
+  const seen = new Set<string>([OFFICIAL_SOURCE]);
   const recommended = await fetchRecommendedRepos().catch(() => []);
   for (const rec of recommended) {
     // Only a validated snapshot is federated; a pending/rejected/pre-governance
@@ -68,6 +71,27 @@ export async function collectDiscoveryRepos(): Promise<SearchIndexRepo[]> {
       trustLevel: rec.trust_level,
     });
   }
+  return repos;
+}
+
+/**
+ * Build the de-duplicated {@link SearchIndexRepo}[] for discovery. Never
+ * throws — a failed recommended-repos fetch or user-repo read degrades to
+ * whatever resolved (at minimum the official repo).
+ *
+ * Registry (``recommended-repos.json``) entries are honoured per the
+ * federated-search contract: only a repo whose snapshot is validated
+ * ({@link isValidatedForSearch}) is searched, and every EXTERNAL repo is read
+ * at its pinned ``commit`` — never the moving branch HEAD (the official
+ * ``self`` entry stays branch-tracked). The registry ``trust_level`` seeds the
+ * repo's ranking floor.
+ */
+export async function collectDiscoveryRepos(): Promise<SearchIndexRepo[]> {
+  const repos: SearchIndexRepo[] = [
+    { url: OFFICIAL_SOURCE, branch: "main", name: OFFICIAL_SOURCE, trustLevel: 3 },
+    ...(await collectRegistryRepos()),
+  ];
+  const seen = new Set<string>(repos.map((repo) => sourceOf(repo.url)));
 
   const userRepos = await readUserRepos().catch(() => []);
   for (const repo of userRepos) {

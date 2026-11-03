@@ -75,6 +75,12 @@ tutar.
 gözden kaçırmazsın. Geliştirici modunda (Ayarlar > Tanılama ve destek), mesaj bir
 GitHub Issue için teknik ayrıntıları içerir.
 
+Aynı ders hem bu cihazda hem yedekte varsa ikisi birleştirilir:
+Tamamlanmış bir ders, bu tamamlamadan sonra yeniden
+başlatılmadıysa tamamlanmış olarak kalır. Devam eden iki dersten
+daha ileri gitmiş olan korunur. İki tarafın denemeleri, en iyi
+sonucu ve deneme geçmişi korunur.
+
 ---
 
 ## Cross-Identity içe aktarma

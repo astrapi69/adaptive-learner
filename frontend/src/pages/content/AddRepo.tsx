@@ -1,10 +1,10 @@
 /**
  * Deep-link "Add repository?" page (EXP-023 Phase B).
  *
- * Opened by a share link ``/add-repo?url=…&branch=…``. Shows a confirm
- * dialog for the named repo; "Connect" validates it, adds it to the user's
- * repo list, syncs it, and goes to the Content Browser; "Cancel" returns to
- * the Dashboard. No token travels in the link — only public repos connect
+ * Opened by a share link ``/add-repo?repo=…[&branch=…]`` (``url=`` in links
+ * shared before #3819). Shows a confirm dialog for the named repo;
+ * "Connect" validates it, adds it to the user's repo list, syncs it, and
+ * goes to the Content Browser; "Cancel" returns to the Dashboard. No token travels in the link — only public repos connect
  * this way (a private/coach repo is added manually in Settings with its
  * token).
  */
@@ -16,20 +16,16 @@ import { useNavigate, useSearchParams } from "react-router";
 import { Button } from "@/components/ui/button";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
+import { connectPublicRepo } from "../../lib/content/repos/shared-link/connect-repo";
 import {
-  addUserRepo,
   findUserRepo,
   isOfficialSource,
   parseGitHubRepoUrl,
-  syncUserRepo,
   syncPhaseI18n,
   userRepoSource,
   type SyncProgress,
 } from "../../lib/content/repos/content-repos";
-import {
-  repoValidationReasonText,
-  validateUserRepo,
-} from "../../lib/content/repos/content-repo-validate";
+import { repoValidationReasonText } from "../../lib/content/repos/content-repo-validate";
 import PageContainer from "../../shared/layout/PageContainer";
 import { getStorage } from "../../storage";
 import { notify } from "../../utils/notify";
@@ -46,7 +42,8 @@ export default function AddRepo() {
     total: number;
   } | null>(null);
 
-  const url = params.get("url") ?? "";
+  // #3819 - new links say ``repo=``; links shared before say ``url=``.
+  const url = params.get("repo") || params.get("url") || "";
   const branch = params.get("branch") || "main";
   const set = params.get("set") ?? "";
   const parsed = useMemo(() => parseGitHubRepoUrl(url), [url]);
@@ -99,36 +96,20 @@ export default function AddRepo() {
       total: 0,
     });
     try {
-      const source = userRepoSource(parsed.owner, parsed.repo);
-      const validation = await validateUserRepo({
-        owner: parsed.owner,
-        repo: parsed.repo,
-        branch,
+      const result = await connectPublicRepo({ url, branch }, (p: SyncProgress) => {
+        const { key, fallback } = syncPhaseI18n(p.phase);
+        setProgress({ label: t(key, fallback), current: p.current, total: p.total });
       });
-      if (!validation.ok) {
+      if (!result.ok) {
         setError(
           t("content_repo.validation.failed", "Validation failed: {reason}").replace(
             "{reason}",
-            repoValidationReasonText(validation, t),
+            repoValidationReasonText(result.validation, t),
           ),
         );
         return;
       }
-      await addUserRepo({
-        url,
-        owner: parsed.owner,
-        repo: parsed.repo,
-        branch,
-        connected: true,
-        last_synced: null,
-        set_count: validation.setCount,
-        lesson_count: validation.lessonCount,
-        trust: 1,
-      });
-      await syncUserRepo(source, (p: SyncProgress) => {
-        const { key, fallback } = syncPhaseI18n(p.phase);
-        setProgress({ label: t(key, fallback), current: p.current, total: p.total });
-      });
+      const { source } = result;
       notify.success(
         t("content_repo.added", "Repository added."),
       );

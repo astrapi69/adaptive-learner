@@ -45,6 +45,13 @@ vi.mock("../../hooks/ui/useI18n", () => ({
   useI18n: () => ({ t: (_k: string, fb: string) => fb, lang: "en" }),
 }));
 
+const { findSetInRegistry, connectPublicRepo } = vi.hoisted(() => ({
+  findSetInRegistry: vi.fn(),
+  connectPublicRepo: vi.fn(),
+}));
+vi.mock("../../lib/content/repos/shared-link/registry-set-lookup", () => ({ findSetInRegistry }));
+vi.mock("../../lib/content/repos/shared-link/connect-repo", () => ({ connectPublicRepo }));
+
 const notifyError = vi.fn();
 const notifyWarning = vi.fn();
 vi.mock("../../utils/notify", () => ({
@@ -125,6 +132,9 @@ beforeEach(() => {
   listLessonsMock.mockResolvedValue({ lessons: ["01.json", "02.json"] });
   getLessonMock.mockRejectedValue(new Error("not mocked for this test"));
   listProgressMock.mockResolvedValue([]);
+  findSetInRegistry.mockReset();
+  connectPublicRepo.mockReset();
+  findSetInRegistry.mockResolvedValue({ status: "absent" });
 });
 
 describe("SetDeepLink (#892)", () => {
@@ -261,6 +271,89 @@ describe("SetDeepLink (#892)", () => {
     renderAt("fr-a1");
 
     await screen.findByTestId("set-deep-link-not-found");
+    expect(notifyError).not.toHaveBeenCalled();
+  });
+});
+
+describe("SetDeepLink: a set of a repo not added yet (#3819)", () => {
+  const registrySet = {
+    id: "ki-einsteiger-from-de",
+    name: "KI für Einsteiger",
+    description: "",
+    source_language: "de",
+    target_language: "de",
+    level: "A1",
+    domain: "ai",
+    lesson_count: 6,
+    card_count: 0,
+    tags: [],
+    ai_validated: false,
+    trust_level: 3,
+    book: null,
+    updated_at: null,
+    repo_url: "astrapi69/alc-ai",
+    repo_name: "KI",
+    review_status: "authored",
+  };
+  const repo = { url: "https://github.com/astrapi69/alc-ai", branch: "main" };
+
+  it("shows the registry card when only a registry repo carries the set", async () => {
+    listSetsMock.mockResolvedValue({ sets: [makeEntry({ id: "fr-a1" })] });
+    findSetInRegistry.mockResolvedValue({ status: "found", set: registrySet, repo });
+    renderAt("ki-einsteiger-from-de");
+
+    await screen.findByTestId("registry-set");
+    expect(findSetInRegistry).toHaveBeenCalledWith("ki-einsteiger-from-de");
+    expect(screen.getByTestId("registry-set-repo")).toHaveTextContent("KI");
+    expect(screen.queryByTestId("set-deep-link-not-found")).not.toBeInTheDocument();
+  });
+
+  it("does not ask the registry for a set the app lists already", async () => {
+    listSetsMock.mockResolvedValue({ sets: [makeEntry({ id: "fr-a1" })] });
+    renderAt("fr-a1");
+
+    await screen.findByTestId("set-deep-link-found");
+    expect(findSetInRegistry).not.toHaveBeenCalled();
+  });
+
+  it("asks the registry when the app's own listing cannot be read", async () => {
+    listSetsMock.mockRejectedValue(new Error("offline"));
+    findSetInRegistry.mockResolvedValue({ status: "found", set: registrySet, repo });
+    renderAt("ki-einsteiger-from-de");
+
+    await screen.findByTestId("registry-set");
+  });
+
+  it("downloads and opens the set once its repo is connected", async () => {
+    const connected = makeEntry({ id: "ki-einsteiger-from-de", source: "astrapi69/alc-ai" });
+    listSetsMock
+      .mockResolvedValueOnce({ sets: [] })
+      .mockResolvedValue({ sets: [connected] });
+    findSetInRegistry.mockResolvedValue({ status: "found", set: registrySet, repo });
+    connectPublicRepo.mockResolvedValue({ ok: true, source: "astrapi69/alc-ai" });
+    downloadSetMock.mockResolvedValue(undefined);
+    renderAt("ki-einsteiger-from-de");
+
+    fireEvent.click(await screen.findByTestId("set-deep-link-start"));
+    expect(await screen.findByTestId("lesson-page")).toHaveTextContent("01.json");
+    expect(connectPublicRepo).toHaveBeenCalledWith(repo, expect.any(Function));
+    expect(downloadSetMock).toHaveBeenCalledWith(
+      "astrapi69/alc-ai",
+      "ki-einsteiger-from-de",
+      expect.any(Function),
+    );
+  });
+
+  it.each([
+    ["absent", false],
+    ["unreachable", true],
+  ])("shows not-found for a registry miss (%s), with the offline hint only offline", async (status, offline) => {
+    listSetsMock.mockResolvedValue({ sets: [] });
+    findSetInRegistry.mockResolvedValue({ status });
+    renderAt("ki-einsteiger-from-de");
+
+    await screen.findByTestId("set-deep-link-not-found");
+    expect(screen.queryByTestId("set-deep-link-offline") !== null).toBe(offline);
     expect(notifyError).not.toHaveBeenCalled();
   });
 });

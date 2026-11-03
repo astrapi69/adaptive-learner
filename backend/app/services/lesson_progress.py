@@ -51,7 +51,7 @@ def _decode_results(row: LessonProgress) -> dict[str, Any]:
 
 #: Cap on the number of attempt-history entries kept per row, so a
 #: heavily-retried lesson can't grow the JSON column without bound.
-_ATTEMPT_HISTORY_CAP = 50
+ATTEMPT_HISTORY_CAP = 50
 
 #: #3365 - how many learner actions a row keeps in ``recent_steps``.
 _RECENT_STEPS_CAP = 10
@@ -121,7 +121,7 @@ def _record_completed_attempt(row: LessonProgress, now: datetime) -> None:
             "total": row.score_total,
         }
     )
-    row.attempt_history = json.dumps(history[-_ATTEMPT_HISTORY_CAP:])
+    row.attempt_history = json.dumps(history[-ATTEMPT_HISTORY_CAP:])
 
     current_pct = row.score_correct / row.score_total if row.score_total else 0.0
     best_pct = row.best_score_correct / row.best_score_total if row.best_score_total else -1.0

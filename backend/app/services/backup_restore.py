@@ -20,6 +20,7 @@ from app.exceptions import ValidationError
 from app.repositories.backup_repo import BackupRepository
 from app.services import crypto
 from app.services.content_backup import restore_content_sets
+from app.services.progress_merge import PROGRESS_TABLE, merge_lesson_progress
 from app.services.sync_service import (
     TABLES as SYNC_TABLES,
 )
@@ -637,6 +638,10 @@ def _apply_record(
         # History is immutable; an append-only row already present (by id OR
         # by its unique key) is left untouched.
         return "skipped", None
+    if table == PROGRESS_TABLE:
+        # Learner progress merges field by field, whether the row was found
+        # by id or, from another device, by its unique key (#3787).
+        return _merge_progress(table, existing, record)
     if matched_by_unique:
         # The row exists only under a DIFFERENT id — a placeholder the install
         # auto-seeded (e.g. an empty user_settings / user_xp) occupying the
@@ -653,6 +658,16 @@ def _apply_record(
         return "updated", None
     # Same row by id, local is newer (or equal). Merge keeps the newer side.
     return "skipped", None
+
+
+def _merge_progress(table: str, existing: Any, record: dict[str, Any]) -> tuple[str, str | None]:
+    """Merge a backup's progress row into the local one (#3787)."""
+    local = {col: getattr(existing, col) for col in _spec(table).columns}
+    merged, changed = merge_lesson_progress(local, record)
+    if not changed:
+        return "skipped", None
+    _apply_columns(table, merged, existing, allow_pk=False)
+    return "updated", None
 
 
 def _insert_new_record(

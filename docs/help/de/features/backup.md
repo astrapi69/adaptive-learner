@@ -77,6 +77,13 @@ Fehler-Hinweis** (Toast), der nicht von selbst verschwindet - so
 Diagnose & Support) enthält die Meldung die technischen Details für einen
 GitHub-Issue.
 
+Ist dieselbe Lektion auf diesem Gerät und im Backup, werden beide
+zusammengeführt: Eine abgeschlossene Lektion bleibt abgeschlossen,
+außer sie wurde nach diesem Abschluss neu gestartet. Von zwei
+laufenden Lektionen bleibt die, die weiter gekommen ist. Die
+Versuche, das beste Ergebnis und der Verlauf beider Seiten bleiben
+erhalten.
+
 ---
 
 ## Cross-Identity-Import
