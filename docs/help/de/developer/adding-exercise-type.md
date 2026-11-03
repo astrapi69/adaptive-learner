@@ -41,9 +41,10 @@ korrekt/falsch-Ergebnis pro Element) - das ist die Grenze, die die
    Format-Referenz-Doku. Ein gespiegeltes oder generiertes Artefakt **nie von
    Hand editieren**; das Drift-Gate `make sync-schema-check` schlägt sonst
    fehl.
-4. **Schema-Version.** `CURRENT_SCHEMA_VERSION` in `models.py` an der
-   Schema-Version des gepinnten Engine-Release halten (**Minor** = additiv;
-   alter Content bleibt über den Major-Version-Match gültig). Keine
+4. **Schema-Version.** Nichts von Hand anzuheben: die Versionsnummern
+   kommen aus den Engine-Spiegeln unter `schema/` (`make sync-schema` nach
+   einem Re-Pin; **Minor** = additiv, alter Content bleibt über den
+   Major-Version-Match gültig). Keine
    App-seitigen feldübergreifenden Regeln in
    `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`
    ergänzen: die semantischen Regeln gehören der Engine und laufen beim

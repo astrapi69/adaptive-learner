@@ -38,9 +38,10 @@ draws.
    with its standalone validator, and the
    format-reference doc. **Never hand-edit** a mirrored or generated
    artefact; the `make sync-schema-check` drift gate fails if you do.
-4. **Schema version.** Keep `CURRENT_SCHEMA_VERSION` in `models.py` aligned
-   with the pinned engine schema version (**minor** = additive; old content
-   keeps validating via the major-version match). Do not add app-side
+4. **Schema version.** Nothing to bump by hand: the version numbers come
+   from the engine mirrors under `schema/` (`make sync-schema` after a
+   re-pin; **minor** = additive, old content keeps validating via the
+   major-version match). Do not add app-side
    cross-field rules to
    `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`:
    the semantic rules are the engine's and run at authoring time and in the

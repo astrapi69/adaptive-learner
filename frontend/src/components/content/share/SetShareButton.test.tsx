@@ -2,9 +2,10 @@
  * SetShareButton (#1572) — the per-set "Share" button + QR modal.
  *
  * Pins: the button renders with an accessible label; clicking it opens the
- * QR modal carrying the correct ``…/add-repo?url=…&branch=…&set=…`` deep
- * link; the link NEVER carries a token (security); copy writes the link to
- * the clipboard and reports the "Link copied" feedback.
+ * QR modal carrying the short ``…/content/set/<id>`` link when the recipient
+ * can resolve the set (#3819), else the ``…/add-repo?repo=…&branch=…&set=…``
+ * deep link; the link NEVER carries a token (security); copy writes the link
+ * to the clipboard and reports the "Link copied" feedback.
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -16,6 +17,8 @@ vi.mock("qrcode", () => ({
 }));
 const { notify } = vi.hoisted(() => ({ notify: { success: vi.fn(), error: vi.fn() } }));
 vi.mock("../../../utils/notify", () => ({ notify }));
+const { findSetInRegistry } = vi.hoisted(() => ({ findSetInRegistry: vi.fn() }));
+vi.mock("../../../lib/content/repos/shared-link/registry-set-lookup", () => ({ findSetInRegistry }));
 
 import SetShareButton from "./SetShareButton";
 import type { ContentSetEntry } from "../../../storage/types";
@@ -44,6 +47,7 @@ function entry(over: Partial<ContentSetEntry> = {}): ContentSetEntry {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  findSetInRegistry.mockResolvedValue({ status: "absent" });
   Object.defineProperty(navigator, "clipboard", {
     value: { writeText: vi.fn().mockResolvedValue(undefined) },
     configurable: true,
@@ -58,15 +62,36 @@ describe("SetShareButton (#1572)", () => {
     expect(btn).toHaveAttribute("aria-label", expect.stringContaining("Coach Deck"));
   });
 
-  it("opens the QR modal with the set deep link on click", async () => {
+  it("opens the QR modal with the add-repo link for a set outside the registry", async () => {
     render(<SetShareButton entry={entry()} />);
     fireEvent.click(screen.getByTestId("set-share-coach/lesson-1"));
     const url = await screen.findByTestId("set-share-modal-url");
     const parsed = new URL(url.textContent ?? "");
     expect(parsed.pathname).toContain("add-repo");
-    expect(parsed.searchParams.get("url")).toBe("coach/deck");
+    expect(parsed.searchParams.get("repo")).toBe("coach/deck");
     expect(parsed.searchParams.get("branch")).toBe("dev");
     expect(parsed.searchParams.get("set")).toBe("coach/lesson-1");
+    expect(screen.getByTestId("set-share-modal-note")).toHaveTextContent("PUBLIC repository");
+  });
+
+  it("opens the QR modal with the short link for a set the registry lists (#3819)", async () => {
+    findSetInRegistry.mockResolvedValue({
+      status: "found",
+      set: { id: "ki-einsteiger-from-de" },
+      repo: { url: "https://github.com/astrapi69/alc-ai", branch: "main" },
+    });
+    render(
+      <SetShareButton
+        entry={entry({ source: "astrapi69/alc-ai", branch: "main", id: "ki-einsteiger-from-de" })}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("set-share-ki-einsteiger-from-de"));
+    const url = await screen.findByTestId("set-share-modal-url");
+    expect(new URL(url.textContent ?? "").pathname).toMatch(/\/content\/set\/ki-einsteiger-from-de$/);
+    expect(findSetInRegistry).toHaveBeenCalledWith("ki-einsteiger-from-de");
+    expect(screen.getByTestId("set-share-modal-note")).toHaveTextContent(
+      "stays valid as long as the set keeps its id",
+    );
   });
 
   it("never carries a token in the generated link (security)", async () => {
@@ -76,8 +101,8 @@ describe("SetShareButton (#1572)", () => {
     expect((url.textContent ?? "").toLowerCase()).not.toContain("token");
     expect([...new URL(url.textContent ?? "").searchParams.keys()].sort()).toEqual([
       "branch",
+      "repo",
       "set",
-      "url",
     ]);
   });
 
@@ -87,7 +112,7 @@ describe("SetShareButton (#1572)", () => {
     fireEvent.click(await screen.findByTestId("set-share-modal-copy"));
     await waitFor(() =>
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-        expect.stringContaining("set=coach%2Flesson-1"),
+        expect.stringContaining("set=coach/lesson-1"),
       ),
     );
     expect(notify.success).toHaveBeenCalled();

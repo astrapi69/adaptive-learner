@@ -376,6 +376,19 @@ Noch nie durchgefuehrt. JETZT machen.
       vorher, dass das Backup zu einem anderen Profil gehört. Danach: Profil
       A bleibt aktiv, B's Lektion zeigt ihren Fortschritt im Lernpfad, A's
       pausierte Lektion steht weiter unter "Weitermachen", keine Fehlermeldung.
+- [ ] TC-1003 Backup aus einer neueren Version (#3827): ein `.alb` exportieren, die
+      `data.json` daraus entpacken, darin `version` auf `1.99.0` setzen und
+      einen Block `"zukunft": {"x": 1}` ergänzen, die Datei als `.json` über
+      Einstellungen → Daten importieren. Der Import läuft durch, danach nennt
+      ein Hinweis das Backup-Format 1.99.0 und "übersprungen: zukunft". Ohne
+      den Zusatzblock sagt der Hinweis "Alles darin wurde wiederhergestellt."
+      Ein unverändertes Backup zeigt keinen Hinweis. Einmal im Server- und
+      einmal im Browser-Modus.
+- [ ] TC-1004 Unlesbares oder zu neues Backup (#3827): dieselbe `data.json` mit
+      `version` `2.0.0` importieren → abgelehnt, die Meldung nennt 2.0.0 und
+      1.x, nichts wird übernommen. Mit `version` `abc` → "Die Formatversion
+      dieses Backups ist nicht lesbar". Beides auch im Onboarding über
+      "Aus bestehendem Backup wiederherstellen".
 
 ---
 
@@ -2857,6 +2870,27 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
 - [ ] TC-0573 Referenz-/Demo-Sets (graded-quiz-demo) erscheinen NICHT in
       Discover/Meine Inhalte (#1702/#1706)
 - [ ] TC-0574 Per-Set Share-Link öffnet direkt die Set-Detailseite (#1572)
+- [ ] TC-1005 Kurzer Set-Link für ein Set aus einem empfohlenen Repository, das noch
+      nicht hinzugefügt ist (#3819): `/content/set/ki-einsteiger-from-de` in
+      einem frischen Profil öffnen - die Karte zeigt Titel, Niveau,
+      Lektionsanzahl und "Aus dem Repository KI" sowie den Hinweis, dass
+      Starten das Repository hinzufügt; "Hinzufügen & starten" verbindet das
+      Repository, lädt das Set und öffnet die erste Lektion; danach steht
+      das Repository unter Einstellungen → Daten
+- [ ] TC-1006 Kurzer Set-Link offline (#3819): mit dem Gerät offline einen Set-Link
+      eines nicht hinzugefügten Repositorys öffnen, dessen Register noch nie
+      geladen wurde - "Set nicht gefunden" erscheint mit dem Hinweis, offline
+      zu sein; online mit einer unbekannten Kennung erscheint der Hinweis nicht
+- [ ] TC-1007 Teilen gibt den kurzen Link, wo der Empfänger ihn auflösen kann (#3819):
+      ein offizielles Set und ein Set eines hinzugefügten empfohlenen
+      Repositorys teilen - der Dialog zeigt `…/content/set/<id>` und den
+      Hinweis, dass der Link gültig bleibt, solange das Set seine Kennung
+      behält; ein Set eines eigenen, nicht empfohlenen Repositorys zeigt
+      `…/add-repo?repo=<owner>/<repo>&set=<id>` (ohne `branch=main`) und den
+      Hinweis zu öffentlichen Repositorys
+- [ ] TC-1008 Ein vor #3819 geteilter Link mit `url=` (`/add-repo?url=<owner>%2F<repo>&branch=main`)
+      öffnet weiterhin den Dialog "Repository hinzufügen" mit dem richtigen
+      Repository
 - [ ] TC-0575 Registrierten Content-Repo hinzufügen (register-a-repo #1511)
 - [ ] TC-0576 Manifest-Fallback für eigene Repos ohne search-index.json (#2562):
       eigenes Repo über Settings → Daten → "Repository hinzufügen" verbinden,

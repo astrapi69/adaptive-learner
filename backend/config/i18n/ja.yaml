@@ -1113,6 +1113,10 @@ backup:
   invalid_format: このファイルは有効な Adaptive Learner バックアップではありません。
   not_a_backup_file: 'このファイルは有効なバックアップファイルではありません。「バックアップを作成」でエクスポートしたファイルを選択してください。'
   version_mismatch: "このバックアップはバージョン {{from}} のものです。アプリは {{to}} です。下の変更を確認してインポートを実行してください。"
+  newer_version_restored: "このバックアップは新しいバージョンのアプリで作成されました（バックアップ形式 {{version}}）。すべての内容を復元しました。"
+  newer_version_skipped: "このバックアップは新しいバージョンのアプリで作成されました（バックアップ形式 {{version}}）。このバージョンが扱える内容はすべて復元しました。スキップした項目: {{segments}}。"
+  newer_major_rejected: "このバックアップはバックアップ形式 {{version}} を使用していますが、このバージョンのアプリが読めるのは形式 {{supported}} です。アプリを更新してから、もう一度バックアップをインポートしてください。"
+  unknown_version_rejected: "このバックアップの形式バージョンを読み取れないため、インポートしませんでした。"
   too_large: 'このバックアップファイルは大きすぎます（100 MB 超）。'
   export_error: 'バックアップに失敗しました: {{detail}}'
   export_failed: "バックアップに失敗しました。"
@@ -2509,6 +2513,7 @@ content:
     button: "共有"
     aria: "セット「{title}」を共有"
     title: "セットを共有"
+    short_hint: "このリンクはセットを直接開きます。セットのIDが変わらない限り有効です。"
   filter:
     all_sources: "すべてのソース"
     official: "公式"
@@ -2535,6 +2540,10 @@ content:
     progress_done: "{total} 件中 {done} 件のレッスンが完了"
     current_lesson: "ここから続ける"
     lesson_completed: "完了"
+    from_repo: "リポジトリ {repo} から"
+    add_explain: "このセットは、まだ追加していないリポジトリのものです。開始すると、そのリポジトリがコンテンツのソースに追加されます。"
+    add_start: "追加して開始"
+    offline_hint: "オフラインのようです。オンラインになってからもう一度お試しください。"
   repo_export:
     button: "リポジトリとして共有"
     title: "リポジトリとして共有"

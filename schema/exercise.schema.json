@@ -623,5 +623,5 @@
   ],
   "title": "Exercise",
   "type": "object",
-  "x-schema-version": "1.9"
+  "x-schema-version": "1.20"
 }

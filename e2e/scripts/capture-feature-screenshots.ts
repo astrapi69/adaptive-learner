@@ -1637,7 +1637,92 @@ async function gotoHeldBackToast(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Registry pin of the repo the short-link shot resolves (#3819). */
+const SHORT_LINK_COMMIT = "c".repeat(40);
+
+/**
+ * The card a short set link shows for a set of a registry repo the learner
+ * has not added yet (#3819): the registry and that repo's pinned search
+ * index are mocked in the shapes the content repos publish, so the shot
+ * does not depend on the live registry.
+ */
+async function gotoRegistrySetCard(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.route(
+        "**/raw.githubusercontent.com/astrapi69/adaptive-learner-content/main/recommended-repos.json",
+        (route: Route) =>
+            route.fulfill({
+                status: 200,
+                body: JSON.stringify({
+                    repos: [
+                        {
+                            url: "https://github.com/astrapi69/alc-ai",
+                            branch: "main",
+                            title: "KI",
+                            commit: SHORT_LINK_COMMIT,
+                            trust_level: 3,
+                            validation: {status: "validated", validated_at: "2026-10-01T00:00:00Z"},
+                        },
+                    ],
+                }),
+            }),
+    );
+    await page.route(
+        `**/raw.githubusercontent.com/astrapi69/alc-ai/${SHORT_LINK_COMMIT}/search-index.json`,
+        (route: Route) =>
+            route.fulfill({
+                status: 200,
+                body: JSON.stringify({
+                    schema_version: "1.9",
+                    sets: [
+                        {
+                            id: "ki-einsteiger-from-de",
+                            name: "KI für Einsteiger",
+                            description:
+                                "Was künstliche Intelligenz kann, wo ihre Grenzen liegen und wie du sie im Alltag sinnvoll nutzt.",
+                            source_language: "de",
+                            target_language: "de",
+                            level: "A1",
+                            domain: "ai",
+                            lesson_count: 12,
+                            card_count: 48,
+                        },
+                    ],
+                }),
+            }),
+    );
+    await page.goto("/content/set/ki-einsteiger-from-de");
+    await expect(page.getByTestId("registry-set")).toBeVisible({timeout: 20_000});
+    return true;
+}
+
+/**
+ * The share dialog of an official set (#3819): the short link
+ * ``…/content/set/<id>`` and the note that it stays valid while the set
+ * keeps its id. An official set needs no registry lookup.
+ */
+async function gotoShareShortLink(page: Page): Promise<boolean> {
+    await seedLearner(page);
+    await page.goto(`/content/set/${BUNDLED_SET_ID}`);
+    await expect(page.getByTestId("set-deep-link-found")).toBeVisible({timeout: 20_000});
+    await page.getByTestId(`set-share-${BUNDLED_SET_ID}`).click();
+    await expect(page.getByTestId("set-share-modal-url")).toHaveText(
+        new RegExp(`/content/set/${BUNDLED_SET_ID}$`),
+    );
+    return true;
+}
+
 const FEATURES: FeatureShot[] = [
+    // --- Short set link: set of a registry repo not added yet (#3819) ------
+    {
+        path: "set-short-link/register-set",
+        setup: gotoRegistrySetCard,
+        pinTo: "set-deep-link-page",
+    },
+    {
+        path: "set-short-link/teilen-kurzlink",
+        setup: gotoShareShortLink,
+    },
     // --- Keep the screen on in lessons, Settings > Learning (#3358) -------
     {
         path: "keep-screen-on/settings",

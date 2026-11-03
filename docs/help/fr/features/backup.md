@@ -79,6 +79,13 @@ ainsi tu ne manques aucune erreur. En mode développeur
 (Paramètres > Diagnostic et assistance), le message contient les détails
 techniques pour un ticket GitHub.
 
+Si la même leçon se trouve sur cet appareil et dans la sauvegarde,
+les deux sont fusionnées : une leçon terminée reste terminée, sauf
+si elle a été recommencée après cette fin. De deux leçons en
+cours, c'est celle qui est allée le plus loin qui est conservée.
+Les tentatives, le meilleur résultat et l'historique des
+tentatives des deux côtés sont conservés.
+
 ---
 
 ## Import inter-identités
@@ -120,6 +127,12 @@ localStorage et les ensembles de contenu. Les fichiers `.alb` sont
 acceptés partout où l'on importe une sauvegarde (Paramètres > Données
 et la Zone de danger). Les anciennes sauvegardes en un seul fichier
 JSON s'importent toujours sans problème.
+
+Une sauvegarde d'une version plus récente de l'appli est restaurée
+avec tout ce que cette version connaît, puis un message indique ce
+qui a été ignoré. Une sauvegarde que cette version ne peut pas
+lire, parce que son format est trop récent ou que sa version est
+illisible, n'est pas importée, et un message en donne la raison.
 
 !!! note "Protection des données"
     La sauvegarde reste entièrement entre tes mains. Elle n'est

@@ -78,6 +78,12 @@ nenhum erro despercebido. No modo programador (Definições >
 Diagnóstico e suporte), a mensagem contém os detalhes técnicos para um issue no
 GitHub.
 
+Se a mesma lição estiver neste dispositivo e na cópia, as duas são
+combinadas: uma lição concluída continua concluída, a menos que
+tenha sido recomeçada depois dessa conclusão. De duas lições em
+curso, fica a que avançou mais. As tentativas, o melhor resultado
+e o histórico de tentativas de ambos os lados são mantidos.
+
 ---
 
 ## Importação entre identidades
@@ -117,6 +123,12 @@ conteúdo. Os ficheiros `.alb` são aceites em todos os pontos de
 importação de backup (Definições > Dados e a Zona de perigo). Os
 backups antigos num único ficheiro JSON continuam a ser importados
 sem problemas.
+
+Uma cópia de uma versão mais recente da app é restaurada com tudo
+o que esta versão conhece e, em seguida, um aviso indica o que foi
+ignorado. Uma cópia que esta versão não consegue ler, porque o
+formato é demasiado recente ou a versão não é legível, não é
+importada, e uma mensagem explica porquê.
 
 !!! note "Privacidade"
     O backup fica inteiramente nas tuas mãos. É guardado apenas

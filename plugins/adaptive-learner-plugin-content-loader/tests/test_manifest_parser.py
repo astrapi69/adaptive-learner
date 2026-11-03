@@ -14,22 +14,20 @@ from adaptive_learner_content_loader.manifest_parser import (
     parse_manifest_yaml,
 )
 from adaptive_learner_content_loader.models import (
-    CURRENT_SCHEMA_VERSION,
+    MANIFEST_SCHEMA_VERSION,
+    SUPPORTED_SCHEMA_MAJOR,
     ContentManifest,
     is_supported_schema_version,
 )
 
 
 class TestSchemaVersion:
-    def test_current_is_1_9(self) -> None:
-        # #2265: the engine 0.17.0 pin moved the engine to 1.9 (stable_id on
-        # Exercise + Card, attribution, review_status). Additive, so
-        # major-match keeps every 1.x lesson loadable. The constant is not
-        # cosmetic: the generator stamps it into the derived artefacts, and
-        # leaving it at 1.8 wrote a stale version over the mirrored
-        # quality-rules.json. Prior deliberate bumps: #1830 (1.7 -> 1.8),
-        # #1744 (1.6 -> 1.7), #1525 (1.5 -> 1.6, native multiple_choice).
-        assert CURRENT_SCHEMA_VERSION == "1.9"
+    def test_the_declared_version_is_the_mirrors_manifest_default(self) -> None:
+        # #3835: the version a writer declares is read from the generated
+        # model, not kept as a literal that has to follow every re-pin.
+        default = ContentManifest.model_fields["schema_version"].default
+        assert MANIFEST_SCHEMA_VERSION == default
+        assert default.split(".", 1)[0] == SUPPORTED_SCHEMA_MAJOR
 
     def test_every_1x_minor_is_supported(self) -> None:
         for v in [
@@ -128,10 +126,8 @@ class TestParseManifestYaml:
 
     def test_missing_schema_version_defaults_to_engine_default(self) -> None:
         # #1744: when the author omits schema_version, the ENGINE-generated
-        # model default applies (the manifest field is the loader's own
-        # contract and moves independently of the lesson-format
-        # CURRENT_SCHEMA_VERSION - engine 0.12.3 keeps the manifest default
-        # at 1.6 while the lesson schema is 1.7).
+        # model default applies; it moves independently of the lesson
+        # mirror's x-schema-version.
         yaml_no_version = "name: Pilot\nsets: []\n"
         manifest = parse_manifest_yaml(yaml_no_version)
         engine_default = ContentManifest.model_fields["schema_version"].default

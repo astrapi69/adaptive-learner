@@ -75,6 +75,12 @@ tutar.
 gözden kaçırmazsın. Geliştirici modunda (Ayarlar > Tanılama ve destek), mesaj bir
 GitHub Issue için teknik ayrıntıları içerir.
 
+Aynı ders hem bu cihazda hem yedekte varsa ikisi birleştirilir:
+Tamamlanmış bir ders, bu tamamlamadan sonra yeniden
+başlatılmadıysa tamamlanmış olarak kalır. Devam eden iki dersten
+daha ileri gitmiş olan korunur. İki tarafın denemeleri, en iyi
+sonucu ve deneme geçmişi korunur.
+
 ---
 
 ## Cross-Identity içe aktarma
@@ -111,6 +117,12 @@ görüntüsünü ve içerik setlerini bir araya getiren bir ZIP arşivi.
 `.alb` dosyaları tüm yedek içe aktarma noktalarında kabul edilir
 (Ayarlar > Veri ve Tehlike bölgesi). Tek bir JSON dosyasından oluşan
 eski yedekler de sorunsuz içe aktarılır.
+
+Uygulamanın daha yeni bir sürümünden gelen bir yedek, bu sürümün
+tanıdığı her şeyle geri yüklenir ve ardından bir bildirim nelerin
+atlandığını söyler. Biçimi çok yeni olduğu ya da sürümü
+okunamadığı için bu sürümün okuyamadığı bir yedek içe aktarılmaz
+ve bir mesaj nedenini açıklar.
 
 !!! note "Gizlilik"
     Yedek tamamen senin elinde kalır. Yalnızca koyduğun yere

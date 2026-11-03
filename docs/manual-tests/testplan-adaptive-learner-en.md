@@ -351,6 +351,18 @@ Never run yet. Do it NOW.
       profile. Afterwards: profile A stays active, B's lesson shows its
       progress on the learning path, A's paused lesson is still under
       "Continue", no error message.
+- [ ] TC-1003 Backup from a newer version (#3827): export an `.alb`, unpack its
+      `data.json`, set `version` to `1.99.0` and add a block
+      `"future": {"x": 1}`, then import the file as `.json` via Settings →
+      Data. The import completes, and a note names backup format 1.99.0 and
+      "skipped: future". Without the extra block the note says "Everything
+      in it was restored." An unchanged backup shows no note. Once in
+      server mode and once in browser mode.
+- [ ] TC-1004 Unreadable or too new backup (#3827): import the same `data.json`
+      with `version` `2.0.0` → rejected, the message names 2.0.0 and 1.x,
+      nothing is applied. With `version` `abc` → "The format version of
+      this backup cannot be read". Both also in onboarding via "Restore
+      from existing backup".
 
 ---
 
@@ -2656,6 +2668,25 @@ switch the section on in Settings first or press "Detailed evaluation"
 - [ ] TC-0573 Reference/demo sets (graded-quiz-demo) do NOT appear in
       Discover/My Content (#1702/#1706)
 - [ ] TC-0574 Per-set share link opens the set detail page directly (#1572)
+- [ ] TC-1005 Short set link for a set of a recommended repository not added yet
+      (#3819): open `/content/set/ki-einsteiger-from-de` in a fresh profile -
+      the card shows the title, level, lesson count and "From the repository
+      KI", plus the note that starting adds the repository; "Add & start"
+      connects the repository, downloads the set and opens the first lesson;
+      afterwards the repository is listed under Settings → Data
+- [ ] TC-1006 Short set link offline (#3819): with the device offline, open a set
+      link of a repository not added yet whose registry was never loaded -
+      "Set not found" appears with the note about being offline; online,
+      with an unknown id, the note does not appear
+- [ ] TC-1007 Sharing gives the short link where the recipient can resolve it (#3819):
+      share an official set and a set of an added recommended repository -
+      the dialog shows `…/content/set/<id>` and the note that the link stays
+      valid as long as the set keeps its id; a set of your own repository
+      outside the recommendations shows
+      `…/add-repo?repo=<owner>/<repo>&set=<id>` (without `branch=main`) and
+      the note about public repositories
+- [ ] TC-1008 A link shared before #3819 with `url=` (`/add-repo?url=<owner>%2F<repo>&branch=main`)
+      still opens the "Add repository" dialog with the right repository
 - [ ] TC-0575 Add a registered content repo (register-a-repo #1511)
 - [ ] TC-0576 Manifest fallback for own repos without a search-index.json (#2562):
       connect your own repo via Settings → Data → "Add a repository" that

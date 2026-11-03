@@ -69,6 +69,15 @@ diretamente o diálogo "Adicionar repositório" com o URL
 pré-preenchido; o código QR faz o mesmo no smartphone. Assim
 partilhas um curso com o teu grupo de estudo sem digitação manual.
 
+Para partilhar um único conjunto, usa o botão **Compartilhar** ao
+lado dele. Um conjunto do repositório oficial, ou de um repositório
+recomendado, recebe um link curto no formato `/content/set/<id>`.
+Ele abre o conjunto diretamente; se o conjunto vier de um
+repositório que a pessoa destinatária ainda não adicionou, a app
+oferece adicioná-lo. O link continua válido enquanto o conjunto
+mantiver o seu identificador. Qualquer outro conjunto recebe um link
+`/add-repo` que primeiro adiciona o seu repositório.
+
 <!-- TODO: Captura de ecrã - diálogo de partilha com código QR -->
 
 ---

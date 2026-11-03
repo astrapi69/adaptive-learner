@@ -67,6 +67,14 @@ Bir repoyu **derin bağlantı** ve **QR kod** ile paylaşabilirsin.
 aynısını akıllı telefonda yapar. Böylece bir kursu, manuel yazma
 gerekmeden öğrenme grubunla paylaşırsın.
 
+Tek bir seti, yanındaki **Paylaş** düğmesiyle paylaşırsın. Resmi
+repository'den ya da önerilen bir repository'den gelen bir set,
+`/content/set/<id>` biçiminde kısa bir bağlantı alır. Bu bağlantı
+seti doğrudan açar; set, alıcının henüz eklemediği bir repository'den
+geliyorsa uygulama onu eklemeyi önerir. Bağlantı, set kimliğini
+koruduğu sürece geçerli kalır. Diğer her set, önce repository'sini
+ekleyen bir `/add-repo` bağlantısı alır.
+
 <!-- TODO: Ekran görüntüsü - QR kodlu paylaşma iletişim kutusu -->
 
 ---

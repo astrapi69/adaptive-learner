@@ -1189,6 +1189,10 @@
     "invalid_format": "Este archivo no es una copia de seguridad válida de Adaptive Learner.",
     "not_a_backup_file": "Este archivo no es un archivo de copia de seguridad válido. Elige un archivo exportado con 'Crear copia de seguridad'.",
     "version_mismatch": "Esta copia es de la versión {{from}}; esta app es la {{to}}. Revisa los cambios abajo y confirma la importación.",
+    "newer_version_restored": "Esta copia la creó una versión más reciente de la app (formato de copia {{version}}). Se restauró todo su contenido.",
+    "newer_version_skipped": "Esta copia la creó una versión más reciente de la app (formato de copia {{version}}). Se restauró todo lo que conoce esta versión; omitido: {{segments}}.",
+    "newer_major_rejected": "Esta copia usa el formato de copia {{version}} y esta versión de la app lee el formato {{supported}}. Actualiza la app y vuelve a importar la copia.",
+    "unknown_version_rejected": "No se puede leer la versión de formato de esta copia, así que no se importó.",
     "too_large": "Este archivo de copia de seguridad es demasiado grande (más de 100 MB).",
     "export_error": "La copia de seguridad falló: {{detail}}",
     "export_failed": "La copia de seguridad falló.",
@@ -2705,7 +2709,8 @@
     "share": {
       "button": "Compartir",
       "aria": "Compartir el conjunto '{title}'",
-      "title": "Compartir conjunto"
+      "title": "Compartir conjunto",
+      "short_hint": "Este enlace abre el set directamente. Sigue siendo válido mientras el set conserve su identificador."
     },
     "filter": {
       "all_sources": "Todas las fuentes",
@@ -2735,7 +2740,11 @@
       "bonus_locked_tooltip": "Termina cada lección regular de este set con al menos una estrella para desbloquear esta lección extra.",
       "progress_done": "{done} de {total} lecciones completadas",
       "current_lesson": "Continuar aquí",
-      "lesson_completed": "Completado"
+      "lesson_completed": "Completado",
+      "from_repo": "Del repositorio {repo}",
+      "add_explain": "Este set procede de un repositorio que aún no has añadido. Al empezar, ese repositorio se añade a tus fuentes de contenido.",
+      "add_start": "Añadir y empezar",
+      "offline_hint": "Parece que no tienes conexión. Vuelve a intentarlo cuando estés en línea."
     },
     "repo_export": {
       "button": "Compartir como repositorio",

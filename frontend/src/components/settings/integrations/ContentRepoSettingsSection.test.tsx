@@ -451,7 +451,7 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     );
     expect(panel).toBeInTheDocument();
     const link = screen.getByTestId("content-repo-share-link") as HTMLInputElement;
-    expect(link.value).toContain("/add-repo?url=jane%2Fdeck");
+    expect(link.value).toContain("/add-repo?repo=jane/deck");
     expect(await screen.findByTestId("content-repo-share-qr")).toBeInTheDocument();
   });
 });

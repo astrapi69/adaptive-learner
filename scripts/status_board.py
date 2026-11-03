@@ -310,6 +310,12 @@ TABLE_HEAD = (
     "| Repo | # | Title | Level | Waits for | Blocks | Last movement |\n"
     "|---|---|---|---|---|---|---|"
 )
+#: The waiting table also says what each entry waits for and by when, so the row
+#: answers it without opening the issue.
+WAITING_HEAD = (
+    "| Repo | # | Title | Level | Waits for | What | Needed by | Blocks | Last movement |\n"
+    "|---|---|---|---|---|---|---|---|---|"
+)
 
 
 def _waits_cell(row: Row) -> str:
@@ -318,15 +324,25 @@ def _waits_cell(row: Row) -> str:
     return row.entry.waits
 
 
-def _table(rows: list[Row], *, since: bool = False) -> str:
+def _table(rows: list[Row], *, since: bool = False, what: bool = False) -> str:
+    """Render ``rows`` as a board table.
+
+    Args:
+        rows: The rows of one section.
+        since: Prefix the last movement with "since" (the Stale section).
+        what: Add the entry's ``detail`` and ``needed_by`` (the waiting section).
+    """
     if not rows:
         return "None."
-    lines = [TABLE_HEAD]
+    lines = [WAITING_HEAD if what else TABLE_HEAD]
     for row in rows:
         moved = row.issue.last_movement.strftime("%Y-%m-%d")
+        extra = (
+            f"| {_clean(row.entry.detail)} | {_clean(row.entry.needed_by or '-')} " if what else ""
+        )
         lines.append(
             f"| {row.issue.repo} | [#{row.issue.number}]({row.issue.url}) | {_clean(row.entry.summary)} "
-            f"| {row.level} | {_clean(_waits_cell(row))} | {', '.join(row.blocks) or '-'} "
+            f"| {row.level} | {_clean(_waits_cell(row))} {extra}| {', '.join(row.blocks) or '-'} "
             f"| {'since ' + moved if since else moved} |"
         )
     return "\n".join(lines)
@@ -344,6 +360,9 @@ BOARD_RULES = """\
 - Waits for is the entry's `waits`: `decision` (an answer from the owner), `external`
   (a device, a key, an upstream release, a waiting period), `issue` (the issues named in
   `blocked_by` or in GitHub's own blocked-by relation), `nothing`.
+- In Waiting (external / other issue), What is the entry's `detail` (what exactly it
+  waits for) and Needed by its optional `needed_by`, so the row says it without opening
+  the issue.
 - Blocks is computed as the inverse of every `blocked_by`, never written by hand.
 - Last movement is the newest comment, commit or pull request that works on the issue,
   from its timeline, not its `updated_at` (a label change is not movement). A PR works on
@@ -388,7 +407,7 @@ def render_board(snap: Snapshot, rows: list[Row]) -> str:
         f"## Doable now\n\nWaits for nothing.\n\n{_table(doable)}",
         "## Waiting only for a decision\n\nThe cheapest progress: each needs an answer, not work.\n\n"
         f"{_table(decision)}",
-        f"## Waiting (external / other issue)\n\n{_table(waiting)}",
+        f"## Waiting (external / other issue)\n\n{_table(waiting, what=True)}",
         "## Stale\n\nWaits for nothing and no movement for more than 14 days.\n\n"
         f"{_table(stale, since=True)}",
         f"## Rules\n\n{BOARD_RULES}",

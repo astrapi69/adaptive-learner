@@ -1113,6 +1113,10 @@ backup:
   invalid_format: Bu dosya geçerli bir Adaptive Learner yedeği değil.
   not_a_backup_file: 'Bu dosya geçerli bir yedek dosyası değil. Lütfen ''Yedek oluştur'' ile dışa aktarılmış bir dosya seçin.'
   version_mismatch: "Bu yedek {{from}} sürümünden; bu uygulama {{to}}. Aşağıdaki değişiklikleri inceleyip içe aktarmayı onaylayın."
+  newer_version_restored: "Bu yedek uygulamanın daha yeni bir sürümüyle oluşturuldu (yedek biçimi {{version}}). İçindeki her şey geri yüklendi."
+  newer_version_skipped: "Bu yedek uygulamanın daha yeni bir sürümüyle oluşturuldu (yedek biçimi {{version}}). Bu sürümün tanıdığı her şey geri yüklendi; atlananlar: {{segments}}."
+  newer_major_rejected: "Bu yedek {{version}} yedek biçimini kullanıyor, uygulamanın bu sürümü ise {{supported}} biçimini okuyor. Uygulamayı güncelleyin, ardından yedeği yeniden içe aktarın."
+  unknown_version_rejected: "Bu yedeğin biçim sürümü okunamadığı için içe aktarılmadı."
   too_large: 'Bu yedek dosyası çok büyük (100 MB''tan fazla).'
   export_error: 'Yedekleme başarısız oldu: {{detail}}'
   export_failed: "Yedekleme başarısız oldu."
@@ -2509,6 +2513,7 @@ content:
     button: "Paylaş"
     aria: "'{title}' setini paylaş"
     title: "Seti paylaş"
+    short_hint: "Bu bağlantı seti doğrudan açar. Set kimliğini koruduğu sürece geçerli kalır."
   filter:
     all_sources: "Tüm kaynaklar"
     official: "Resmî"
@@ -2535,6 +2540,10 @@ content:
     progress_done: "{total} dersten {done} tanesi tamamlandı"
     current_lesson: "Buradan devam et"
     lesson_completed: "Tamamlandı"
+    from_repo: "{repo} deposundan"
+    add_explain: "Bu set henüz eklemediğiniz bir depodan geliyor. Başlattığınızda bu depo içerik kaynaklarınıza eklenir."
+    add_start: "Ekle ve başla"
+    offline_hint: "Çevrimdışı görünüyorsunuz. Çevrimiçi olduğunuzda yeniden deneyin."
   repo_export:
     button: "Depo olarak paylaş"
     title: "Depo olarak paylaş"

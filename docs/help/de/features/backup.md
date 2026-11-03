@@ -77,6 +77,13 @@ Fehler-Hinweis** (Toast), der nicht von selbst verschwindet - so
 Diagnose & Support) enthält die Meldung die technischen Details für einen
 GitHub-Issue.
 
+Ist dieselbe Lektion auf diesem Gerät und im Backup, werden beide
+zusammengeführt: Eine abgeschlossene Lektion bleibt abgeschlossen,
+außer sie wurde nach diesem Abschluss neu gestartet. Von zwei
+laufenden Lektionen bleibt die, die weiter gekommen ist. Die
+Versuche, das beste Ergebnis und der Verlauf beider Seiten bleiben
+erhalten.
+
 ---
 
 ## Cross-Identity-Import
@@ -117,6 +124,12 @@ Datentabellen, den localStorage-Snapshot und die Content-Sets
 bündelt. `.alb`-Dateien werden an jeder Backup-Import-Stelle
 akzeptiert (Einstellungen → Daten und die Danger Zone). Ältere
 reine JSON-Backups lassen sich weiterhin sauber importieren.
+
+Ein Backup aus einer neueren Version der App wird mit allem
+wiederhergestellt, was diese Version kennt; ein Hinweis nennt
+danach, was übersprungen wurde. Ein Backup, das diese Version
+nicht lesen kann, weil sein Format zu neu oder seine Version
+unlesbar ist, wird nicht importiert, und eine Meldung sagt, warum.
 
 !!! note "Datenschutz"
     Das Backup bleibt vollständig in deiner Hand. Es wird nur dort

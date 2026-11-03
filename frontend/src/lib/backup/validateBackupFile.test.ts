@@ -47,24 +47,38 @@ describe("validateBackupText (#642)", () => {
         });
     });
 
-    it("rejects a missing version", () => {
+    it("rejects a missing version as unknown (#3827)", () => {
         const {version: _v, ...noVersion} = validBackup;
         expect(validateBackupText(JSON.stringify(noVersion))).toEqual({
             ok: false,
-            error: "not_a_backup",
+            error: "unknown_version",
         });
     });
 
-    it("rejects an empty version", () => {
-        expect(
-            validateBackupText(JSON.stringify({...validBackup, version: ""})),
-        ).toEqual({ok: false, error: "not_a_backup"});
+    it.each<[string, unknown]>([
+        ["an empty version", ""],
+        ["a non-string version", 13],
+        ["a word", "abc"],
+        ["a wildcard", "1.x"],
+        ["a bare major", "1"],
+        ["whitespace", " "],
+    ])("rejects %s as unknown (#3827)", (_label, version) => {
+        expect(validateBackupText(JSON.stringify({...validBackup, version}))).toEqual({
+            ok: false,
+            error: "unknown_version",
+        });
     });
 
-    it("rejects a non-string version", () => {
+    it("rejects a newer major version and names it (#3827)", () => {
         expect(
-            validateBackupText(JSON.stringify({...validBackup, version: 13})),
-        ).toEqual({ok: false, error: "not_a_backup"});
+            validateBackupText(JSON.stringify({...validBackup, version: "2.0.0"})),
+        ).toEqual({ok: false, error: "newer_major", version: "2.0.0"});
+    });
+
+    it("accepts a newer minor version (#3827)", () => {
+        expect(
+            validateBackupText(JSON.stringify({...validBackup, version: "1.99.0"})).ok,
+        ).toBe(true);
     });
 
     it("rejects a missing data segment", () => {
@@ -150,6 +164,12 @@ describe("readBackupFile — .alb container", () => {
         const r = await readBackupFile(fileOf(JSON.stringify(validBackup)));
         expect(r.ok).toBe(true);
         if (r.ok) expect(r.container).toBe("json");
+    });
+
+    it("rejects an .alb with a newer major version (#3827)", async () => {
+        const bytes = buildAlbBytes({...validBackup, version: "2.0.0"} as never, "full");
+        const r = await readBackupFile(new File([bytes], "backup.alb"));
+        expect(r).toEqual({ok: false, error: "newer_major", version: "2.0.0"});
     });
 
     it("rejects a foreign ZIP as not_a_backup", async () => {

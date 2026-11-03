@@ -12,9 +12,65 @@
 #   evidence    link to the comment or place in the issue that shows it
 #   checked     the day the classification was last checked
 #   blocked_by  [repo#N, ...], only with waits: issue
-#   needed_by   optional, shown in STATUS.md 'Waiting for you'
+#   needed_by   optional, shown in STATUS.md 'Waiting for you' (decisions) and in
+#               BOARD.md 'Waiting (external / other issue)' next to the detail
 
 issues:
+  learn-content-engine#284:
+    summary: "quality check for development provenance in text learners see"
+    waits: nothing
+    detail: "The pattern list is decided by a measurement across the fleet, as the issue describes; type names in titles are a separate, differently built check."
+    evidence: https://github.com/astrapi69/learn-content-engine/issues/284
+    checked: 2026-11-01
+  adaptive-learner-content#258:
+    summary: "step titles show a development marker and the schema term Cloze in German sets"
+    waits: nothing
+    detail: "The issue lists the seven titles to fix with file and line."
+    evidence: https://github.com/astrapi69/adaptive-learner-content/issues/258
+    checked: 2026-11-01
+  adaptive-learner#3933:
+    summary: "the origin value imported carries three meanings, a self-authored lesson shows the fork badge"
+    waits: nothing
+    detail: "The issue names the three readings, the class and the tests to add in both modes."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3933
+    checked: 2026-10-31
+  adaptive-learner#3932:
+    summary: "restore cannot bring back a lesson removed from an own set, the set key never changes"
+    waits: nothing
+    detail: "Both probes are in the issue; the fix decides between a content-based set identity and a content compare."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3932
+    checked: 2026-10-31
+  adaptive-learner#3927:
+    summary: "pattern drill: a cloze with worked examples, answered by typing or word tiles"
+    waits: issue
+    detail: "Needs the inline examples in every lesson runner (#3926) and the engine's tiles mode (engine#283); the pilot condition stays in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3927
+    checked: 2026-10-31
+    blocked_by: [adaptive-learner#3926, learn-content-engine#283]
+  adaptive-learner#3926:
+    summary: "review, endless, shuffle, adaptive and error-replay runners skip an exercise's inline examples"
+    waits: nothing
+    detail: "The fix and its test are written in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3926
+    checked: 2026-10-31
+  learn-content-engine#283:
+    summary: "cloze_mode tiles: blanks filled from a word bank"
+    waits: nothing
+    detail: "The proposal and its rules are written in the issue; the author picks the form through cloze_mode."
+    evidence: https://github.com/astrapi69/learn-content-engine/issues/283
+    checked: 2026-10-31
+  adaptive-learner#3922:
+    summary: "a change under scripts/ runs the tests of every script"
+    waits: nothing
+    detail: "The issue names the fix (select by changed file, imports counted, fail closed) and two probes."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3922
+    checked: 2026-10-31
+  adaptive-learner#3921:
+    summary: "131 dead repo paths in the developer help under the doc-refs ceiling"
+    waits: nothing
+    detail: "The fix lists the 12 paths and the two exempt ones; strict doc-refs for docs/help is the open question inside."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3921
+    checked: 2026-10-31
   adaptive-learner#3896:
     summary: "settings-about baselines move with every version bump"
     waits: nothing
@@ -114,12 +170,6 @@ issues:
     detail: "Drop the content prefill (recommended) or keep it and say so in the dialog and the policy?"
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3839
     checked: 2026-10-29
-  adaptive-learner#3835:
-    summary: "content loader uses one schema version constant for three numbers"
-    waits: nothing
-    detail: "The issue lists the correct value for each use."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3835
-    checked: 2026-10-29
   adaptive-learner#3831:
     summary: "documentation brought to the state of v2.17.0 (release audit)"
     waits: decision
@@ -131,24 +181,6 @@ issues:
     waits: decision
     detail: "The issue is open on purpose with 'not to build now'; when should the allowlist check be built?"
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3830
-    checked: 2026-10-29
-  adaptive-learner#3827:
-    summary: "restore of a newer backup does not say what it skipped"
-    waits: nothing
-    detail: "The fix is written in the issue."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3827
-    checked: 2026-10-29
-  adaptive-learner#3823:
-    summary: "privacy check fails when the policy changes and its date does not"
-    waits: nothing
-    detail: "The fix is written in the issue."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3823
-    checked: 2026-10-29
-  adaptive-learner#3820:
-    summary: "FAQ translations miss the key-storage update"
-    waits: nothing
-    detail: "The fix lists the files per language."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3820
     checked: 2026-10-29
   adaptive-learner#3819:
     summary: "short set link /content/set/<id> finds sets of registry repositories"
@@ -187,17 +219,11 @@ issues:
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3788
     checked: 2026-10-29
   adaptive-learner#3787:
-    summary: "restore merges by timestamp only"
+    summary: "restore has no exact mode, its preview counts by id only, deletions are not carried"
     waits: nothing
-    detail: "The acceptance names the two restore modes and the merge rules."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3787
-    checked: 2026-10-29
-  adaptive-learner#3786:
-    summary: "backup format version is never checked"
-    waits: nothing
-    detail: "The acceptance names fixtures, a version gate and migrations."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3786
-    checked: 2026-10-29
+    detail: "The progress merge landed with #3931; the two restore modes and the preview are doable now; whether deletions are carried or documented is an owner decision."
+    evidence: https://github.com/astrapi69/adaptive-learner/pull/3931
+    checked: 2026-10-31
   adaptive-learner#3783:
     summary: "the visual suite has no phone"
     waits: decision
@@ -317,9 +343,10 @@ issues:
   adaptive-learner#1087:
     summary: "manual test plan executed for launch readiness"
     waits: external
-    detail: "Needs a tester to run the manual plan on real devices."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/1087
-    checked: 2026-10-29
+    detail: "Needs a tester on real devices; due before the next release: the manual backup round trip of #3919 (TC-1003, TC-1004, server and browser mode)."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/1087#issuecomment-6542451773
+    checked: 2026-10-31
+    needed_by: "next release (v2.18.0)"
   learn-content-engine#282:
     summary: "picture_choice image paths are never checked for existence"
     waits: nothing

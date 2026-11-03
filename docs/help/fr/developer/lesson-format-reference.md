@@ -2,7 +2,7 @@
 
 > **Généré** à partir du miroir canonique du schéma `learn-content-engine` (`schema/lesson.schema.json`, un miroir octet par octet de la version épinglée du moteur) via `make sync-schema` (EXP-039). La couche structurelle Pydantic de l'application est régénérée depuis ce miroir ; seuls les validateurs sémantiques sont écrits à la main. Ne pas modifier à la main ; un changement de format commence dans le moteur, puis l'épinglage est relevé et le générateur est relancé.
 
-Version du schéma : **1.9** (JSON Schema 2020-12). Le schéma lisible par machine se trouve dans `schema/lesson.schema.json` ; référencez-le depuis un `.json` de leçon via `"$schema"` pour l'autocomplétion et la validation dans l'IDE.
+Version du schéma : **1.20** (JSON Schema 2020-12). Le schéma lisible par machine se trouve dans `schema/lesson.schema.json` ; référencez-le depuis un `.json` de leçon via `"$schema"` pour l'autocomplétion et la validation dans l'IDE.
 
 Les descriptions de champs ci-dessous proviennent mot pour mot des définitions des modèles (en anglais).
 

@@ -169,8 +169,10 @@ jobs:
       # router, so a new route is covered without editing this workflow.
       # Runs AFTER the build on purpose: the copies must not enter the
       # service worker's precache manifest.
+      # ``--set-pages`` adds one page per set the registry names, so a
+      # short set link (``/content/set/<id>``) answers 200 too (#3819).
       - name: Configure SPA fallback
-        run: python3 scripts/emit_spa_route_pages.py
+        run: python3 scripts/emit_spa_route_pages.py --set-pages
 
       # ---- Docs build ----
 

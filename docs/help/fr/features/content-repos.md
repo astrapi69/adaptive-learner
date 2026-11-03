@@ -72,6 +72,15 @@ pré-remplie ; le code QR fait de même sur le smartphone. Tu
 partages ainsi un cours avec ton groupe d'apprentissage sans
 ressaisie manuelle.
 
+Pour partager un seul ensemble, utilise le bouton **Partager** à
+côté de lui. Un ensemble du dépôt officiel, ou d'un dépôt
+recommandé, reçoit un lien court de la forme `/content/set/<id>`.
+Il ouvre directement l'ensemble ; si l'ensemble provient d'un dépôt
+que le destinataire n'a pas encore ajouté, l'app propose de
+l'ajouter. Le lien reste valable tant que l'ensemble garde son
+identifiant. Tout autre ensemble reçoit un lien `/add-repo` qui
+ajoute d'abord son dépôt.
+
 <!-- TODO: Screenshot - Boîte de dialogue de partage avec code QR -->
 
 ---

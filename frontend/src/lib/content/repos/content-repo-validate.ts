@@ -28,7 +28,7 @@ import {
 import { fetchGitHubFileText } from "./github-fetch";
 import { resolveRepoToken } from "./repo-token";
 
-/** Schema major the app understands (CURRENT_SCHEMA_VERSION is 1.x). */
+/** Schema major the app understands (the engine mirrors carry 1.x). */
 const SUPPORTED_SCHEMA_MAJOR = 1;
 
 /**

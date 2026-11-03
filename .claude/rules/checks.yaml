@@ -185,6 +185,13 @@ checks:
     wired_in: make verify-docs; .github/workflows/ci.yml; backend/tests/test_verify_docs_privacy_promises.py
     probe: script_exists=backend/tests/test_verify_docs_privacy_promises.py | ci_step=.github/workflows/ci.yml::docs-verification::Verify documentation for drift::verify_docs.py
 
+  - id: privacy-date
+    verifies: every docs/help/<lang>/legal/privacy.md that differs from the merge base carries a readable date line, and when its text changed, a date no older than the change (the newest commit's author date, today for an uncommitted change); a body change under an unchanged date fails in all eight languages, a dated change, a same-day second edit and a date-only change pass, a file outside legal/ is ignored, and an unresolvable base exits 2 (cannot check) (#3823)
+    rule: none (#3823 - a policy whose text changes while its date stays is a silent false statement)
+    status: active
+    wired_in: make check-privacy-date; make ci; .github/workflows/ci.yml; backend/tests/test_check_privacy_date.py
+    probe: script_exists=backend/tests/test_check_privacy_date.py | make_target=check-privacy-date | ci_step=.github/workflows/ci.yml::docs-verification::Changed privacy policies carry the date of their change (#3823)::check_privacy_date.py
+
   - id: i18n-one-term-per-concept
     verifies: no catalog value uses a term rejected for its concept (de Session/Streak/Strähne, fr séance, ja ストリーク, ko 스트릭); frontend/src/data/i18n-terms.json is where the term decisions live, read by this test and by help-terms (#3433)
     rule: none (term decision of #3433)

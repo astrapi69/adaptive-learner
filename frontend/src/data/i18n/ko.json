@@ -1189,6 +1189,10 @@
     "invalid_format": "이 파일은 유효한 Adaptive Learner 백업이 아닙니다.",
     "not_a_backup_file": "이 파일은 유효한 백업 파일이 아닙니다. '백업 만들기'로 내보낸 파일을 선택하세요.",
     "version_mismatch": "이 백업은 버전 {{from}}에서 만들어졌으며, 이 앱은 {{to}}입니다. 아래 변경 사항을 검토하고 가져오기를 확인하세요.",
+    "newer_version_restored": "이 백업은 더 새로운 버전의 앱에서 만들어졌습니다(백업 형식 {{version}}). 모든 내용을 복원했습니다.",
+    "newer_version_skipped": "이 백업은 더 새로운 버전의 앱에서 만들어졌습니다(백업 형식 {{version}}). 이 버전이 아는 내용은 모두 복원했으며, 건너뛴 항목: {{segments}}.",
+    "newer_major_rejected": "이 백업은 백업 형식 {{version}}을(를) 사용하지만, 이 버전의 앱은 형식 {{supported}}만 읽을 수 있습니다. 앱을 업데이트한 다음 백업을 다시 가져오세요.",
+    "unknown_version_rejected": "이 백업의 형식 버전을 읽을 수 없어 가져오지 않았습니다.",
     "too_large": "이 백업 파일이 너무 큽니다 (100MB 초과).",
     "export_error": "백업 실패: {{detail}}",
     "export_failed": "백업에 실패했습니다.",
@@ -2705,7 +2709,8 @@
     "share": {
       "button": "공유",
       "aria": "세트 '{title}' 공유",
-      "title": "세트 공유"
+      "title": "세트 공유",
+      "short_hint": "이 링크는 세트를 바로 엽니다. 세트의 ID가 바뀌지 않는 한 계속 유효합니다."
     },
     "filter": {
       "all_sources": "모든 소스",
@@ -2735,7 +2740,11 @@
       "bonus_locked_tooltip": "이 보너스 수업을 잠금 해제하려면 이 세트의 모든 일반 수업을 별 1개 이상으로 완료하세요.",
       "progress_done": "{total}개 중 {done}개 레슨 완료",
       "current_lesson": "여기서 계속하기",
-      "lesson_completed": "완료됨"
+      "lesson_completed": "완료됨",
+      "from_repo": "{repo} 저장소에서",
+      "add_explain": "이 세트는 아직 추가하지 않은 저장소에 있습니다. 시작하면 해당 저장소가 콘텐츠 소스에 추가됩니다.",
+      "add_start": "추가하고 시작",
+      "offline_hint": "오프라인 상태인 것 같습니다. 온라인이 되면 다시 시도하세요."
     },
     "repo_export": {
       "button": "저장소로 공유",

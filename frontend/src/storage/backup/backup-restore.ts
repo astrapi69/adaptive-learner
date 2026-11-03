@@ -7,7 +7,9 @@
  *     key, a per-user singleton) finds the local row; then that row is the
  *     known row, keeps its id, and children follow it (#3694).
  *   - Known id, append-only row: skip (history is immutable).
- *   - Known id, mutable row: keep the newer side
+ *   - Known id, lesson progress: merge field by field, whichever side is
+ *     newer; a completion is never lost (``lessons/progress-merge.ts``, #3787).
+ *   - Known id, other mutable row: keep the newer side
  *     (compare ``updated_at`` / ``assessed_at``).
  *
  * Live API keys are never overwritten by a backup file, even a
@@ -15,6 +17,7 @@
  */
 
 import {getDb, type AdaptiveLearnerDB} from "../dexie/db";
+import {PROGRESS_TABLE, mergeLessonProgress} from "../lessons/progress-merge";
 import type {
     BackupPayload,
     RestoreSummary,
@@ -43,6 +46,7 @@ import {
     SECRET_TABLES,
     type BackupTableSpec,
 } from "./backup-tables";
+import {assertReadableVersion, newerBackupReport} from "./backup-version";
 
 /** Fresh all-zero per-table summary. */
 export function emptyTableSummary(): RestoreTableSummary {
@@ -52,7 +56,8 @@ export function emptyTableSummary(): RestoreTableSummary {
 /**
  * Validate the wire-shape. Throws a plain ``Error`` (the storage
  * layer is consumed by toast handlers that translate to user-
- * friendly messages).
+ * friendly messages), or a ``BackupVersionError`` for a format
+ * version this build cannot read (#3827).
  */
 export function validateBackupPayload(payload: unknown): asserts payload is BackupPayload {
     if (typeof payload !== "object" || payload === null) {
@@ -64,9 +69,7 @@ export function validateBackupPayload(payload: unknown): asserts payload is Back
             `Unrecognized backup format: ${JSON.stringify(obj.format)}. Expected ${JSON.stringify(BACKUP_FORMAT)}.`,
         );
     }
-    if (typeof obj.version !== "string" || obj.version === "") {
-        throw new Error("Backup payload missing 'version'.");
-    }
+    assertReadableVersion(obj.version);
     if (typeof obj.data !== "object" || obj.data === null) {
         throw new Error("Backup payload missing 'data' segment.");
     }
@@ -119,6 +122,13 @@ async function restoreRecord(
         return "skipped";
     }
     if (spec.appendOnly) return "skipped";
+    if (table === PROGRESS_TABLE) {
+        // Learner progress merges field by field, whichever side is newer (#3787).
+        const {row, changed} = mergeLessonProgress(existing, writableRow(table, record));
+        if (!changed) return "skipped";
+        await store.put({...row, id: localId} as never);
+        return "updated";
+    }
     const matchedByUniqueKey = localId !== recordId;
     if (!matchedByUniqueKey && !backupIsNewer(record, existing, spec)) return "skipped";
     // Keep the local PK; the spread keeps local-only fields.
@@ -214,5 +224,7 @@ export async function restoreDexieBackup(
         errors: allErrors,
         tables: perTable,
         content_sets: contentSummary,
+        // #3827 - a newer backup names what this build skipped in it.
+        ...newerBackupReport(payload as unknown as Record<string, unknown>),
     };
 }

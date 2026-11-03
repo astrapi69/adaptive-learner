@@ -15,5 +15,7 @@ export { exportPortableBackup, restoreClientSnapshots } from "./portableBackup";
 export type { ClientSnapshotsApplied } from "./portableBackup";
 export { ALWAYS_INCLUDED_TABLES, EXPORT_GROUPS, allCategoryIds, categoryById, filterBackupPayload, resolveSelectedTables, selectiveExportFilename } from "./selective-export";
 export type { ExportCategory, ExportGroup } from "./selective-export";
+export { backupFileErrorText, newerBackupNotice } from "./backupVersionNotice";
+export type { Translate } from "./backupVersionNotice";
 export { MAX_BACKUP_BYTES, readBackupFile, validateAlbBytes, validateBackupText } from "./validateBackupFile";
 export type { BackupFileError, BackupFileResult } from "./validateBackupFile";

@@ -2,7 +2,7 @@
 
 > **Generado** a partir del espejo canónico del esquema de `learn-content-engine` (`schema/lesson.schema.json`, un espejo de bytes de la release fijada del engine) mediante `make sync-schema` (EXP-039). La capa Pydantic estructural de la app se regenera a partir de ese espejo; solo los validadores semánticos se escriben a mano. No editar a mano; un cambio de formato empieza en el engine, después se sube el pin y el generador se vuelve a ejecutar.
 
-Versión del esquema: **1.9** (JSON Schema 2020-12). El esquema legible por máquina está en `schema/lesson.schema.json`; referéncialo desde un `.json` de lección mediante `"$schema"` para tener autocompletado + validación en el IDE.
+Versión del esquema: **1.20** (JSON Schema 2020-12). El esquema legible por máquina está en `schema/lesson.schema.json`; referéncialo desde un `.json` de lección mediante `"$schema"` para tener autocompletado + validación en el IDE.
 
 Las descripciones de campos de abajo proceden literalmente de las definiciones de los modelos (en inglés).
 

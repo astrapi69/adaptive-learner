@@ -45,9 +45,9 @@ a lista de "deliberadamente excluídos" do catálogo traça.
    com o seu validador autónomo, e o documento de referência de formato. **Nunca edite à mão** um
    artefacto espelhado ou gerado; o gate de desvio
    `make sync-schema-check` falha se o fizer.
-4. **Versão do esquema.** Mantenha `CURRENT_SCHEMA_VERSION` em
-   `models.py` alinhado com a versão de esquema do motor fixado
-   (**minor** = aditiva; o conteúdo antigo continua a validar através da
+4. **Versão do esquema.** Nada a subir à mão: os números de versão vêm
+   dos espelhos do motor em `schema/` (`make sync-schema` após um re-pin;
+   **minor** = aditiva, o conteúdo antigo continua a validar através da
    correspondência de versão major). Não adicione regras entre campos do
    lado da app a
    `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`:

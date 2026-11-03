@@ -1189,6 +1189,10 @@
     "invalid_format": "This file is not a valid Adaptive Learner backup.",
     "not_a_backup_file": "This file is not a valid backup file. Please choose a file exported with 'Create backup'.",
     "version_mismatch": "This backup is from version {{from}}; this app is {{to}}. Review the changes below and confirm to import.",
+    "newer_version_restored": "This backup was made by a newer version of the app (backup format {{version}}). Everything in it was restored.",
+    "newer_version_skipped": "This backup was made by a newer version of the app (backup format {{version}}). Everything this version knows was restored; skipped: {{segments}}.",
+    "newer_major_rejected": "This backup uses backup format {{version}}, and this version of the app reads format {{supported}}. Update the app, then import the backup again.",
+    "unknown_version_rejected": "The format version of this backup cannot be read, so it was not imported.",
     "too_large": "This backup file is too large (over 100 MB).",
     "export_error": "Backup failed: {{detail}}",
     "export_failed": "Backup failed.",
@@ -2705,7 +2709,8 @@
     "share": {
       "button": "Share",
       "aria": "Share set '{title}'",
-      "title": "Share set"
+      "title": "Share set",
+      "short_hint": "This link opens the set directly. It stays valid as long as the set keeps its id."
     },
     "filter": {
       "all_sources": "All sources",
@@ -2735,7 +2740,11 @@
       "bonus_locked_tooltip": "Finish every regular lesson of this set with at least one star to unlock this bonus lesson.",
       "progress_done": "{done} of {total} lessons completed",
       "current_lesson": "Continue here",
-      "lesson_completed": "Completed"
+      "lesson_completed": "Completed",
+      "from_repo": "From the repository {repo}",
+      "add_explain": "This set comes from a repository you have not added yet. Starting it adds that repository to your content sources.",
+      "add_start": "Add & start",
+      "offline_hint": "You seem to be offline. Try again once you are online."
     },
     "repo_export": {
       "button": "Share as repository",

@@ -66,6 +66,14 @@ directly on the recipient's side with the URL pre-filled; the QR
 code does the same on a smartphone. This lets you share a course
 with your learning group without manual typing.
 
+To share a single set, use the **Share** button next to it. A set
+from the official repository, or one a recommended repository lists,
+gets a short link of the form `/content/set/<id>`. It opens the set
+directly; if the set comes from a repository the recipient has not
+added yet, the app offers to add it. The link stays valid as long as
+the set keeps its id. Any other set gets an `/add-repo` link that
+adds its repository first.
+
 <!-- TODO: Screenshot - Share dialog with QR code -->
 
 ---

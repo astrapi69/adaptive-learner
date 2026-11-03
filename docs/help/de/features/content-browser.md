@@ -91,10 +91,16 @@ beim Satz - in beiden Speichermodi. Genau das ermöglicht das
 Satz-Ebene kann jetzt auf einen bestimmten Satz zeigen, nicht nur
 auf die App-Startseite.
 
-Verweist der Link auf einen Satz, der nicht existiert (oder den du
-noch nicht heruntergeladen hast), zeigt die Seite einen
-freundlichen **Nicht-gefunden-Zustand** mit einem Weg zurück zum
-Katalog statt eines Fehlers.
+Stammt der Satz aus einem empfohlenen Repository, das du noch
+nicht hinzugefügt hast, zeigt die Seite den Satz und nennt das
+Repository, aus dem er stammt. **Hinzufügen & starten** fügt das
+Repository zu deinen Inhaltsquellen hinzu, lädt den Satz und
+öffnet seine erste Lektion.
+
+Trägt kein Repository den Satz, zeigt die Seite einen freundlichen
+**Nicht-gefunden-Zustand** mit einem Weg zurück zum Katalog statt
+eines Fehlers. Bist du offline, sagt sie auch das: die empfohlenen
+Repositories ließen sich nicht prüfen.
 
 ---
 

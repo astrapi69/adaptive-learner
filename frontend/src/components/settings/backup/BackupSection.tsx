@@ -27,6 +27,7 @@ import {getStorage, resolveStorageMode} from "../../../storage";
 import {SHARE_URL} from "../../../lib/share/generate-share-text";
 import {notify} from "../../../utils/notify";
 import {readBackupFile} from "../../../lib/backup/validateBackupFile";
+import {backupFileErrorText, newerBackupNotice} from "../../../lib/backup/backupVersionNotice";
 import {SettingsSection} from "../SettingsSection";
 import {backupOwnerId} from "../../../storage/backup";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../../../types/domain";
@@ -428,7 +429,7 @@ function RestoreSummaryPanel({
 }
 
 export default function BackupSection() {
-    const {t} = useI18n();
+    const {t, lang} = useI18n();
     const storage = getStorage();
     const storageMode = resolveStorageMode();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -575,17 +576,7 @@ export default function BackupSection() {
             // for "is this ours?".
             const result = await readBackupFile(file);
             if (!result.ok) {
-                notify.warning(
-                    result.error === "too_large"
-                        ? t(
-                              "backup.too_large",
-                              "This backup file is too large (over 100 MB).",
-                          )
-                        : t(
-                              "backup.not_a_backup_file",
-                              "This file is not a valid backup file. Please choose a file exported with 'Create backup'.",
-                          ),
-                );
+                notify.warning(backupFileErrorText(result, t));
                 return;
             }
             const parsed = result.payload;
@@ -706,6 +697,11 @@ export default function BackupSection() {
             // keys are stripped on export; rollback-cache rows without a
             // usable key are skipped). Tell the user to re-enter them
             // instead of leaving the keys silently missing.
+            // #3827 - a backup from a newer app says what this version skipped.
+            const newerNote = newerBackupNotice(summary, t, lang);
+            if (newerNote !== null) {
+                notify.warning(newerNote);
+            }
             if ((summary.api_keys_skipped ?? 0) > 0) {
                 notify.warning(
                     t(

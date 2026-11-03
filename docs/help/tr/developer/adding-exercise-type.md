@@ -43,9 +43,10 @@ dışlanan" listesinin çizdiği sınır budur.
    format referansı belgesi. Aynalanan ya da üretilen bir artefact'ı
    **asla elle düzenleme**; düzenlersen `make sync-schema-check` sapma
    kapısı başarısız olur.
-4. **Şema sürümü.** `models.py` içindeki `CURRENT_SCHEMA_VERSION`'ı
-   sabitlenmiş engine şema sürümüyle uyumlu tut (**minor** = additif;
-   eski içerik major sürüm eşleşmesi üzerinden doğrulanmaya devam eder).
+4. **Şema sürümü.** Elle yükseltilecek bir şey yok: sürüm numaraları
+   `schema/` altındaki engine aynalarından gelir (yeniden sabitlemeden sonra
+   `make sync-schema`; **minor** = additif, eski içerik major sürüm
+   eşleşmesi üzerinden doğrulanmaya devam eder).
    Uygulama tarafında alanlar arası kuralları
    `plugins/adaptive-learner-plugin-content-loader/adaptive_learner_content_loader/schema.py`
    dosyasına ekleme: anlamsal kurallar engine'e aittir ve yazım zamanında

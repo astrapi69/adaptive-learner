@@ -53,7 +53,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from adaptive_learner_content_loader.models import CURRENT_SCHEMA_VERSION
 from adaptive_learner_content_loader.schema_export import (
     card_schema,
     exercise_schema,
@@ -76,21 +75,41 @@ DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
 SCHEMA_ID_BASE = "https://astrapi69.github.io/learn-content-engine/schema"
 
 
-def _decorate(schema: dict[str, Any], slug: str) -> dict[str, Any]:
+def mirror_version(name: str) -> str:
+    """Return the ``x-schema-version`` the engine mirror ``schema/<name>`` carries.
+
+    The derived schemas and the developer pages take their version from the
+    mirror they are cut from (#3835), never from a constant of the app's own.
+
+    Args:
+        name: A mirror file name, e.g. ``lesson.schema.json``.
+
+    Returns:
+        The mirror's version string, e.g. ``"1.20"``.
+    """
+    mirror = json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))
+    return str(mirror["x-schema-version"])
+
+
+def _decorate(schema: dict[str, Any], slug: str, version: str) -> dict[str, Any]:
     """Add the 2020-12 ``$schema`` / ``$id`` / version header to a schema.
 
     The defaults come first and the mirror ``schema`` is spread LAST, so any
     ``$schema`` / ``$id`` / ``x-schema-version`` the mirror already carries
     WINS, so the emitted lesson/manifest schema stays byte-identical to the
     pinned engine release (``engine-parity-check``).
+
+    Args:
+        schema: The exported JSON Schema.
+        slug: The file name the schema is published under.
+        version: The ``x-schema-version`` of the mirror the schema derives from.
     """
-    decorated = {
+    return {
         "$schema": DRAFT_2020_12,
         "$id": f"{SCHEMA_ID_BASE}/{slug}",
-        "x-schema-version": CURRENT_SCHEMA_VERSION,
+        "x-schema-version": version,
         **schema,
     }
-    return decorated
 
 
 def _json(payload: Any) -> str:
@@ -157,7 +176,7 @@ def _model_section(name: str, node: dict[str, Any], required: list[str]) -> str:
 # Per-locale intro (#3647). Only the intro and the models heading are
 # translated; the model descriptions and field tables below come verbatim
 # from the schema and stay English in every locale. ``{version}`` is filled
-# with ``CURRENT_SCHEMA_VERSION``.
+# with the lesson mirror's ``x-schema-version`` (#3835).
 _INTROS = {
     "en": (
         "# Lesson format reference\n\n"
@@ -308,8 +327,9 @@ def build_doc(lang: str) -> str:
         The page text; locales in ``MARKED_LOCALES`` open with the
         translation marker their other help pages carry.
     """
-    schema = _decorate(lesson_schema(), "lesson.schema.json")
-    intro = _INTROS[lang].replace("{version}", str(CURRENT_SCHEMA_VERSION))
+    version = mirror_version("lesson.schema.json")
+    schema = _decorate(lesson_schema(), "lesson.schema.json", version)
+    intro = _INTROS[lang].replace("{version}", version)
     sections = [intro, "", _MODELS_HEADING[lang], ""]
     sections.append(_model_section("Lesson", schema, schema.get("required", [])))
     for def_name in sorted(schema.get("$defs", {})):
@@ -333,11 +353,15 @@ def build_artefacts() -> dict[str, str]:
     # rather than the mirror; that only ever passed because the engine happened
     # to serialize the same way up to 0.14.0 (#2265). Pinned by
     # ``backend/tests/test_schema_single_writer.py``.
+    lesson = mirror_version("lesson.schema.json")
+    manifest = mirror_version("content-manifest.schema.json")
     schemas = {
-        "content-set.schema.json": _decorate(set_schema(), "content-set.schema.json"),
-        "card.schema.json": _decorate(card_schema(), "card.schema.json"),
-        "exercise.schema.json": _decorate(exercise_schema(), "exercise.schema.json"),
-        "lesson-step.schema.json": _decorate(lesson_step_schema(), "lesson-step.schema.json"),
+        "content-set.schema.json": _decorate(set_schema(), "content-set.schema.json", manifest),
+        "card.schema.json": _decorate(card_schema(), "card.schema.json", lesson),
+        "exercise.schema.json": _decorate(exercise_schema(), "exercise.schema.json", lesson),
+        "lesson-step.schema.json": _decorate(
+            lesson_step_schema(), "lesson-step.schema.json", lesson
+        ),
     }
     artefacts: dict[str, str] = {
         f"{SCHEMA_REL}/{name}": _json(schema) for name, schema in schemas.items()
