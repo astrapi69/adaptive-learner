@@ -2678,6 +2678,13 @@ switch the section on in Settings first or press "Detailed evaluation"
       link of a repository not added yet whose registry was never loaded -
       "Set not found" appears with the note about being offline; online,
       with an unknown id, the note does not appear
+- [ ] TC-1009 Short set link in an out-of-date app (#3819): in the installed app
+      (browser mode) on an older build while a newer one is deployed, open a
+      set link that build cannot resolve - below "Set not found", "A new
+      version is available" appears with "Update", also when the update
+      banner was closed with "Later" before; "Update" reloads the same
+      address and the set appears; with a current app or the device offline
+      the note does not appear
 - [ ] TC-1007 Sharing gives the short link where the recipient can resolve it (#3819):
       share an official set and a set of an added recommended repository -
       the dialog shows `…/content/set/<id>` and the note that the link stays

@@ -2881,6 +2881,14 @@ einschalten oder "Ausführliche Auswertung" drücken (#3124).
       eines nicht hinzugefügten Repositorys öffnen, dessen Register noch nie
       geladen wurde - "Set nicht gefunden" erscheint mit dem Hinweis, offline
       zu sein; online mit einer unbekannten Kennung erscheint der Hinweis nicht
+- [ ] TC-1009 Kurzer Set-Link in einer veralteten App (#3819): in der installierten
+      App (Browser-Modus) mit einem älteren Stand, während ein neuerer
+      ausgeliefert ist, einen Set-Link öffnen, den dieser Stand nicht auflöst -
+      unter "Set nicht gefunden" erscheint "Eine neue Version ist verfügbar"
+      mit "Aktualisieren", auch wenn das Update-Banner zuvor mit "Später"
+      geschlossen wurde; "Aktualisieren" lädt dieselbe Adresse neu und das
+      Set erscheint; ist die App aktuell oder das Gerät offline, erscheint
+      der Hinweis nicht
 - [ ] TC-1007 Teilen gibt den kurzen Link, wo der Empfänger ihn auflösen kann (#3819):
       ein offizielles Set und ein Set eines hinzugefügten empfohlenen
       Repositorys teilen - der Dialog zeigt `…/content/set/<id>` und den

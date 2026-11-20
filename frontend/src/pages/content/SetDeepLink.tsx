@@ -15,6 +15,9 @@
  *   - unknown set id         → a clean "Set not found" state linking to
  *     Discover, NOT a crash or a dead error toast. Offline, the page says
  *     so, because the registry could not be asked.
+ *     An app build that is out of date offers its update there first
+ *     ({@link SetLinkUpdateHint}): a newer build may resolve the set, and
+ *     updating reloads this same address.
  *
  * Storage-mode-agnostic: every call routes through
  * ``getStorage().contentLoader.*`` so the same page works in API mode
@@ -35,6 +38,7 @@ import { Button } from "@/components/ui/button";
 
 import FlashRoundCard from "../../components/content/FlashRoundCard";
 import RegistrySetCard from "../../components/content/RegistrySetCard";
+import SetLinkUpdateHint from "../../components/content/SetLinkUpdateHint";
 import SetShareButton from "../../components/content/share/SetShareButton";
 import DownloadProgress from "../../shared/feedback/DownloadProgress";
 import { useI18n } from "../../hooks/ui/useI18n";
@@ -308,6 +312,7 @@ export default function SetDeepLink() {
                 )}
               </p>
             )}
+            <SetLinkUpdateHint />
             <Button
               type="button"
               className="mt-5 min-h-11"
