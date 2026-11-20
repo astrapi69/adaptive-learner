@@ -46,9 +46,9 @@ jobs:
       options: --user 1001
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "24"
 
@@ -60,7 +60,7 @@ jobs:
           echo "$HOME/.bun-npm/bin" >> "$GITHUB_PATH"
 
       # The smoke config starts the backend through `poetry run uvicorn`.
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
 
@@ -110,7 +110,7 @@ jobs:
 
       - name: Upload screenshots, traces and the report
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: smoke-nightly-report
           path: |
@@ -128,7 +128,7 @@ jobs:
     if: github.ref == 'refs/heads/develop' && needs.smoke.outputs.findings != '0'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: smoke-nightly-report
 
