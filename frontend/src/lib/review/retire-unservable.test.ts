@@ -36,13 +36,27 @@ function lessonWith(exerciseIds: string[]): ContentLesson {
             id: `step-${id}`,
             type: "exercise" as const,
             title: null,
-            exercise: {id, type: "matching", prompt: "p", card_ids: [], pairs: [], distractors: []},
+            exercise: {
+                id,
+                type: "matching",
+                prompt: "p",
+                card_ids: [],
+                pairs: [{left: "libro", right: "book"}],
+                distractors: [],
+            },
         })),
     } as ContentLesson;
 }
 
-function row(id: string, lessonId: string, exerciseId: string): ElementError {
-    return {id, lesson_id: lessonId, exercise_id: exerciseId, element_key: id} as ElementError;
+function row(id: string, lessonId: string, exerciseId: string, elementKey = "libro"): ElementError {
+    return {
+        id,
+        lesson_id: lessonId,
+        exercise_id: exerciseId,
+        element_key: elementKey,
+        direction: "target_to_source",
+        last_attempt_at: "2026-11-01T00:00:00Z",
+    } as ElementError;
 }
 
 beforeEach(() => {
@@ -61,6 +75,7 @@ describe("retireUnservableInSet", () => {
             row("kept", "01.json", "ex-1"),
             row("ex-gone", "01.json", "ex-removed"),
             row("lesson-gone", "09-removed.json", "ex-9"),
+            row("element-gone", "01.json", "ex-1", "perro"),
         ]);
 
         await retireUnservableInSet("u1", "owner/repo", "ja-a1");
@@ -70,8 +85,48 @@ describe("retireUnservableInSet", () => {
         expect(listMock).toHaveBeenCalledWith("u1", {setId: "ja-a1", includeMastered: false});
         expect(retireUnservableMock).toHaveBeenCalledWith("u1", ["ex-gone"], "exercise_missing");
         expect(retireUnservableMock).toHaveBeenCalledWith("u1", ["lesson-gone"], "lesson_missing");
-        expect(retireUnservableMock).toHaveBeenCalledTimes(2);
+        // #3958 - the exercise is still there, the pair is not.
+        expect(retireUnservableMock).toHaveBeenCalledWith("u1", ["element-gone"], "element_missing");
+        expect(retireUnservableMock).toHaveBeenCalledTimes(3);
         expect(notifyReviewsChangedMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("leaves a row the #2161 recovery can still re-key, although its key is gone (#3958)", async () => {
+        // The learner has not chosen between restore and restart yet;
+        // retiring the row would take the restore away.
+        getLessonMock.mockResolvedValue({
+            ...lessonWith(["ex-match-begruessung"]),
+            steps: [
+                {
+                    id: "s",
+                    type: "exercise",
+                    title: null,
+                    exercise: {
+                        id: "ex-match-begruessung",
+                        type: "matching",
+                        prompt: "p",
+                        card_ids: [],
+                        pairs: [{left: "こんにちは (konnichiwa)", right: "Hallo"}],
+                        distractors: [],
+                    },
+                },
+            ],
+        });
+        listMock.mockResolvedValue([
+            {
+                ...row("awaits-recovery", "01-begruessungen.json", "ex-match-begruessung", "こんにちは"),
+                set_id: "ja-a1-from-de",
+            },
+            {
+                ...row("plain-gone", "01-begruessungen.json", "ex-match-begruessung", "さようなら-removed"),
+                set_id: "ja-a1-from-de",
+            },
+        ]);
+
+        await retireUnservableInSet("u1", "official", "ja-a1-from-de");
+
+        expect(retireUnservableMock).toHaveBeenCalledTimes(1);
+        expect(retireUnservableMock).toHaveBeenCalledWith("u1", ["plain-gone"], "element_missing");
     });
 
     it("loads each referenced lesson once", async () => {

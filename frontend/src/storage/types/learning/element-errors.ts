@@ -102,11 +102,13 @@ export interface ElementError {
  * - ``exercise_missing`` / ``lesson_missing``: the installed set no longer
  *   holds the exercise or the lesson the row points at, so no question can
  *   be built for it.
+ * - ``element_missing`` (#3958): the exercise is still there but no longer
+ *   holds the element, so answering its question never reaches the row.
  */
 export type RetiredReason = "author" | UnservableReason;
 
 /** The reasons the app itself retires a row for. */
-export type UnservableReason = "exercise_missing" | "lesson_missing";
+export type UnservableReason = "exercise_missing" | "lesson_missing" | "element_missing";
 
 /**
  * One Durchgang (run/pass) of a content set (EXP-051 / #2125). Mirrors

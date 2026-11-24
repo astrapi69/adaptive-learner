@@ -710,7 +710,7 @@ def test_an_active_row_has_no_retirement_reason(client: TestClient, user_id: str
     assert [row["retired_reason"] for row in _all_rows(client, user_id)] == [None]
 
 
-@pytest.mark.parametrize("reason", ["exercise_missing", "lesson_missing"])
+@pytest.mark.parametrize("reason", ["exercise_missing", "lesson_missing", "element_missing"])
 def test_retire_unservable_hides_the_rows_and_records_why(
     client: TestClient, user_id: str, reason: str
 ) -> None:

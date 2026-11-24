@@ -109,8 +109,8 @@ beforeEach(() => {
 describe("#3952 useReviewLesson retires what it cannot serve", () => {
     it("retires a row whose exercise the loaded lesson no longer holds, with the reason", async () => {
         reviewQueueMock.mockResolvedValue([
-            qItem({element_key: "a"}),
-            qItem({element_key: "gone", exercise_id: "ex-removed"}),
+            qItem({id: "row-a"}),
+            qItem({id: "row-gone", exercise_id: "ex-removed"}),
         ]);
         const {result} = mount();
         await waitFor(() => expect(result.current.status).toBe("ready"));
@@ -127,10 +127,28 @@ describe("#3952 useReviewLesson retires what it cannot serve", () => {
         await waitFor(() => expect(notifyReviewsChangedMock).toHaveBeenCalled());
     });
 
+    it("retires a row whose element the still existing exercise no longer holds (#3958)", async () => {
+        reviewQueueMock.mockResolvedValue([
+            qItem({id: "row-a"}),
+            qItem({id: "row-perro", element_key: "perro"}),
+        ]);
+        const {result} = mount();
+        await waitFor(() => expect(result.current.status).toBe("ready"));
+
+        await waitFor(() =>
+            expect(retireUnservableMock).toHaveBeenCalledWith(
+                "user-1",
+                ["row-perro"],
+                "element_missing",
+            ),
+        );
+        expect(retireUnservableMock).toHaveBeenCalledTimes(1);
+    });
+
     it("retires a row whose lesson the set no longer lists", async () => {
         reviewQueueMock.mockResolvedValue([
-            qItem({element_key: "a"}),
-            qItem({element_key: "gone", lesson_id: "09-removed.json"}),
+            qItem({id: "row-a"}),
+            qItem({id: "row-gone", lesson_id: "09-removed.json"}),
         ]);
         const {result} = mount();
         await waitFor(() => expect(result.current.status).toBe("ready"));
@@ -150,8 +168,8 @@ describe("#3952 useReviewLesson retires what it cannot serve", () => {
     ])("leaves a row whose lesson only failed to load (%s)", async (_label, listing) => {
         listLessonsMock.mockResolvedValue(listing);
         reviewQueueMock.mockResolvedValue([
-            qItem({element_key: "a"}),
-            qItem({element_key: "later", lesson_id: "02.json"}),
+            qItem({id: "row-a"}),
+            qItem({id: "row-later", lesson_id: "02.json"}),
         ]);
         const {result} = mount();
         await waitFor(() => expect(result.current.status).toBe("ready"));
@@ -165,8 +183,8 @@ describe("#3952 useReviewLesson retires what it cannot serve", () => {
     it("leaves the row when the listing cannot be read", async () => {
         listLessonsMock.mockRejectedValue(new Error("offline"));
         reviewQueueMock.mockResolvedValue([
-            qItem({element_key: "a"}),
-            qItem({element_key: "later", lesson_id: "02.json"}),
+            qItem({id: "row-a"}),
+            qItem({id: "row-later", lesson_id: "02.json"}),
         ]);
         const {result} = mount();
         await waitFor(() => expect(result.current.status).toBe("ready"));
@@ -175,7 +193,7 @@ describe("#3952 useReviewLesson retires what it cannot serve", () => {
     });
 
     it("does not ask for the listing when every lesson loaded", async () => {
-        reviewQueueMock.mockResolvedValue([qItem({element_key: "a"})]);
+        reviewQueueMock.mockResolvedValue([qItem({id: "row-a"})]);
         const {result} = mount();
         await waitFor(() => expect(result.current.status).toBe("ready"));
         expect(listLessonsMock).not.toHaveBeenCalled();
@@ -185,8 +203,8 @@ describe("#3952 useReviewLesson retires what it cannot serve", () => {
     it("keeps the session running when retiring fails", async () => {
         retireUnservableMock.mockRejectedValue(new Error("storage down"));
         reviewQueueMock.mockResolvedValue([
-            qItem({element_key: "a"}),
-            qItem({element_key: "gone", exercise_id: "ex-removed"}),
+            qItem({id: "row-a"}),
+            qItem({id: "row-gone", exercise_id: "ex-removed"}),
         ]);
         const {result} = mount();
         await waitFor(() => expect(result.current.status).toBe("ready"));
@@ -197,7 +215,7 @@ describe("#3952 useReviewLesson retires what it cannot serve", () => {
 
     it("retires even when nothing is left to serve, and the session ends empty", async () => {
         reviewQueueMock.mockResolvedValue([
-            qItem({element_key: "gone", exercise_id: "ex-removed"}),
+            qItem({id: "row-gone", exercise_id: "ex-removed"}),
         ]);
         const {result} = mount();
         await waitFor(() => expect(result.current.status).toBe("empty"));

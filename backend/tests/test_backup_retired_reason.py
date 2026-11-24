@@ -74,7 +74,9 @@ def test_the_format_version_names_the_new_field() -> None:
     assert BACKUP_VERSION == "1.10.0"
 
 
-@pytest.mark.parametrize("reason", ["author", "exercise_missing", "lesson_missing"])
+@pytest.mark.parametrize(
+    "reason", ["author", "exercise_missing", "lesson_missing", "element_missing"]
+)
 def test_the_reason_survives_export_and_restore(
     db_session: Session, user: User, reason: str
 ) -> None:

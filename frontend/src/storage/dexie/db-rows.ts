@@ -637,7 +637,7 @@ export interface ElementErrorRow {
      *  Stored inline (non-indexed) so no Dexie version bump is needed. */
     retired_at?: string | null;
     /** #3952 — why the row was retired ("author", "exercise_missing",
-     *  "lesson_missing"). Absent on a row retired before the field existed;
+     *  "lesson_missing", "element_missing"). Absent on a row retired before the field existed;
      *  such a row reads as "author". Stored inline (non-indexed). */
     retired_reason?: string | null;
     created_at: string;

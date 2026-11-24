@@ -244,12 +244,32 @@ function _findSourceCard(
     return firstRef ?? null;
 }
 
+/** What a review step is built from: the fields a queue item and a stored
+ *  row share, so the same rule judges both (#3958). */
+export type ReviewSourceRow = Pick<
+    ReviewQueueItem,
+    | "id"
+    | "user_id"
+    | "set_id"
+    | "lesson_id"
+    | "exercise_id"
+    | "element_key"
+    | "direction"
+    | "element_type"
+    | "user_answer"
+    | "correct_answer"
+    | "error_count"
+    | "correct_streak"
+    | "last_error_at"
+    | "last_attempt_at"
+>;
+
 /** Adapter: ReviewQueueItem already carries every SRS field the
  *  cloze generator needs, but the generator's API is typed on
  *  ``ElementError`` (the persisted shape) so this wraps the queue
  *  item with the missing mastered/created/updated fields. Pure
  *  shape transform — no IO. */
-function _itemToError(item: ReviewQueueItem): ElementError {
+function _itemToError(item: ReviewSourceRow): ElementError {
     return {
         id: item.id,
         user_id: item.user_id,
@@ -279,7 +299,7 @@ function _itemToError(item: ReviewQueueItem): ElementError {
  *  located in the cached lesson (the existing C14 semantics
  *  for "lesson evicted from cache"). */
 export function _buildReviewStep(
-    item: ReviewQueueItem,
+    item: ReviewSourceRow,
     sourceLesson: ContentLesson | undefined,
 ): ContentLessonStep | null {
     const exercise = _findExercise(sourceLesson, item.exercise_id);
