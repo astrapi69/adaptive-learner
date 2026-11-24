@@ -22,7 +22,9 @@ import type {
     ElementError,
     ElementKeyRemap,
     ExerciseIdRemap,
+    RetiredReason,
     ReviewQueueItem,
+    UnservableReason,
 } from "../types";
 import {
     ensureActiveRunDexie,
@@ -106,6 +108,7 @@ function rowToWire(row: ElementErrorRow): ElementError {
         attempt_count: row.attempt_count ?? 0,
         attempt_history: row.attempt_history ?? [],
         retired_at: row.retired_at ?? null,
+        retired_reason: retiredReasonOf(row),
         created_at: row.created_at,
         updated_at: row.updated_at,
     };
@@ -462,11 +465,52 @@ export async function archiveRetiredDexie(
         const nowIso = new Date().toISOString();
         for (const row of rows) {
             if (!retired.has(row.exercise_id) || row.retired_at) continue;
-            await db.elementErrors.put({...row, retired_at: nowIso});
+            await db.elementErrors.put({...row, retired_at: nowIso, retired_reason: "author"});
             archived += 1;
         }
     });
     return {archived};
+}
+
+/** The reason of a stored row: a row retired before #3952 carries none and
+ *  was retired by its author, the only cause there was. */
+function retiredReasonOf(row: {
+    retired_at?: string | null;
+    retired_reason?: string | null;
+}): RetiredReason | null {
+    if (!row.retired_at) return null;
+    return (row.retired_reason as RetiredReason | null | undefined) ?? "author";
+}
+
+/**
+ * #3952 — retire rows the installed set can no longer serve a question for,
+ * recording why. ONE ``rw`` transaction; a row already retired keeps its
+ * first reason, an unknown id or another learner's row is ignored. A closed
+ * run's rows are frozen history and stay untouched, like the backend.
+ * Returns the count of rows newly retired.
+ */
+export async function retireUnservableDexie(
+    userId: string,
+    rowIds: readonly string[],
+    reason: UnservableReason,
+): Promise<{retired: number}> {
+    if (rowIds.length === 0) return {retired: 0};
+    const db = getDb();
+    const openBySet = await openRunBySetDexie(userId);
+    let retired = 0;
+    await db.transaction("rw", db.elementErrors, async () => {
+        const rows = (await db.elementErrors.bulkGet([...rowIds])).filter(
+            (row): row is NonNullable<typeof row> => row !== undefined,
+        );
+        const nowIso = new Date().toISOString();
+        for (const row of rows) {
+            if (row.user_id !== userId || row.retired_at) continue;
+            if (!isActiveRunRow(row, openBySet)) continue;
+            await db.elementErrors.put({...row, retired_at: nowIso, retired_reason: reason});
+            retired += 1;
+        }
+    });
+    return {retired};
 }
 
 // --- Phase 46C / C12: SRS review-queue computation ---------------------

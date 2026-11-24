@@ -1830,6 +1830,22 @@ class ArchiveRetiredResult(BaseModel):
     archived: int
 
 
+class RetireUnservableIn(BaseModel):
+    """#3952: retire rows the installed set can no longer serve a question
+    for. ``reason`` says which part is gone; "author" is not accepted here,
+    that reason belongs to the manifest's ``retired_ids`` path."""
+
+    row_ids: list[str] = Field(..., min_length=1, max_length=1000)
+    reason: Literal["exercise_missing", "lesson_missing"]
+
+
+class RetireUnservableResult(BaseModel):
+    """Outcome of a retire-unservable call: rows newly retired. Rows already
+    retired keep their first reason and are not counted."""
+
+    retired: int
+
+
 class StartRunIn(BaseModel):
     """Start a new Durchgang (run/pass) of a set (EXP-051 / #2125).
 
@@ -1902,6 +1918,8 @@ class ElementErrorOut(BaseModel):
     # #2188 — author-declared retirement: set = archived (out of scheduling
     # + due counts, history kept). None = active.
     retired_at: datetime | None = None
+    # #3952 - why: "author", "exercise_missing" or "lesson_missing".
+    retired_reason: str | None = None
     created_at: datetime
     updated_at: datetime
 

@@ -143,6 +143,7 @@ backend. Worked examples: [Core endpoints](core-endpoints.md) and
 | `POST` | `/api/users/{user_id}/element-errors/archive-retired` | Archive Retired |
 | `POST` | `/api/users/{user_id}/element-errors/remap` | Remap Element Keys |
 | `POST` | `/api/users/{user_id}/element-errors/remap-exercise-ids` | Remap Exercise Ids |
+| `POST` | `/api/users/{user_id}/element-errors/retire-unservable` | Retire Unservable |
 | `GET` | `/api/users/{user_id}/element-errors/review-queue` | Review Queue |
 | `GET` | `/api/users/{user_id}/lesson-progress` | List Lesson Progress |
 | `POST` | `/api/users/{user_id}/lesson-progress` | Upsert Lesson Progress |

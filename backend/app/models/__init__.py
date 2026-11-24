@@ -1745,6 +1745,14 @@ class ElementError(Base):
         DateTime(timezone=True),
         nullable=True,
     )
+    # #3952 - why the row was retired: "author" (manifest ``retired_ids``),
+    # "exercise_missing" or "lesson_missing" (the installed set no longer
+    # holds what the row points at, so no question can be built for it).
+    # NULL on an active row.
+    retired_reason: Mapped[str | None] = mapped_column(
+        String(32),
+        nullable=True,
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,

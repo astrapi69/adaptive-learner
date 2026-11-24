@@ -18,6 +18,7 @@ from sqlalchemy import Date, DateTime, String, Text, UniqueConstraint
 from app.database import Base
 from app.exceptions import ValidationError
 from app.repositories.backup_repo import BackupRepository
+from app.repositories.element_errors_repo import RETIRED_BY_AUTHOR
 from app.services import crypto
 from app.services.content_backup import restore_content_sets
 from app.services.progress_merge import PROGRESS_TABLE, merge_lesson_progress
@@ -274,6 +275,21 @@ def _coerce_record(table: str, record: dict[str, Any]) -> dict[str, Any]:
     return coerced
 
 
+def _with_retirement_reason(table: str, record: dict[str, Any]) -> dict[str, Any]:
+    """Give a retired element row of an older backup its reason (#3952).
+
+    A backup older than format 1.10.0 has no ``retired_reason``; its retired
+    rows were retired by an author, the only cause there was.
+    """
+    if (
+        table != "element_errors"
+        or record.get("retired_at") is None
+        or record.get("retired_reason") is not None
+    ):
+        return record
+    return {**record, "retired_reason": RETIRED_BY_AUTHOR}
+
+
 def _row_timestamp(spec: TableSpec, row: Any) -> datetime | None:
     value: datetime | None = getattr(row, spec.timestamp_field, None)
     if value is None:
@@ -297,6 +313,7 @@ def _apply_columns(table: str, record: dict[str, Any], target: Any, *, allow_pk:
     flips on for inserts (so the UUID survives) and off for updates.
     """
     spec = _spec(table)
+    record = _with_retirement_reason(table, record)
     coerced = _coerce_record(table, record)
     for col in spec.columns:
         if col == "id" and not allow_pk:
