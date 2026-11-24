@@ -104,10 +104,16 @@ export interface ElementError {
  *   be built for it.
  * - ``element_missing`` (#3958): the exercise is still there but no longer
  *   holds the element, so answering its question never reaches the row.
+ * - ``superseded`` (#3960): the row sits on the element's text while the
+ *   element's ``stable_id`` row exists already; this one is a second, stale
+ *   history of the same element.
  */
-export type RetiredReason = "author" | UnservableReason;
+export type RetiredReason = "author" | AppRetiredReason;
 
-/** The reasons the app itself retires a row for. */
+/** Every reason the app itself retires a row for. */
+export type AppRetiredReason = UnservableReason | "superseded";
+
+/** The reasons a row is retired for because no question reaches it. */
 export type UnservableReason = "exercise_missing" | "lesson_missing" | "element_missing";
 
 /**
@@ -244,7 +250,7 @@ export interface IElementErrorsNamespace {
   retireUnservable(
     userId: string,
     rowIds: readonly string[],
-    reason: UnservableReason,
+    reason: AppRetiredReason,
   ): Promise<{ retired: number }>;
   /** Projected review queue: active (non-mastered) elements with
    *  computed suggested_review_at + overdue flag, sorted by urgency

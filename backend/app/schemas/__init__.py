@@ -1836,7 +1836,7 @@ class RetireUnservableIn(BaseModel):
     that reason belongs to the manifest's ``retired_ids`` path."""
 
     row_ids: list[str] = Field(..., min_length=1, max_length=1000)
-    reason: Literal["exercise_missing", "lesson_missing", "element_missing"]
+    reason: Literal["exercise_missing", "lesson_missing", "element_missing", "superseded"]
 
 
 class RetireUnservableResult(BaseModel):
@@ -1919,7 +1919,7 @@ class ElementErrorOut(BaseModel):
     # + due counts, history kept). None = active.
     retired_at: datetime | None = None
     # #3952 - why: "author", "exercise_missing", "lesson_missing" or
-    # "element_missing" (#3958).
+    # "element_missing" (#3958), or "superseded" (#3960).
     retired_reason: str | None = None
     created_at: datetime
     updated_at: datetime

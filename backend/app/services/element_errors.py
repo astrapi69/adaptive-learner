@@ -337,7 +337,8 @@ def retire_unservable(
         repo: the element-errors repository.
         user_id: the learner.
         row_ids: ids of the rows to retire.
-        reason: "exercise_missing", "lesson_missing" or "element_missing".
+        reason: "exercise_missing", "lesson_missing", "element_missing" or
+            "superseded".
 
     Returns:
         The number of rows newly retired.

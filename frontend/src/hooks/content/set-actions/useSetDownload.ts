@@ -22,6 +22,7 @@ import {
 } from "../../../lib/content/update/assess-set-update";
 import { planSetUpdate, type SetUpdatePlan } from "../../../lib/content/update/plan-set-update";
 import { migrateSetExerciseIds } from "../../../lib/content/update/stable-id-migration";
+import { migrateSetElementKeys } from "../../../lib/content/update/element-key-migration";
 import type { UpdateImpact } from "../../../lib/content/update/update-impact";
 import { readLearnerState } from "../../../lib/learning/learnerState";
 import { retireUnservableInSet } from "../../../lib/review/retire-unservable";
@@ -158,6 +159,10 @@ export function useSetDownload({ setSets, setPerSetState }: UseSetDownloadDeps) 
       if (learnerId) {
         // #2130 migration first, so archival (#2188) meets stable-keyed rows.
         await migrateSetExerciseIds(learnerId, entry.source, entry.id).catch(
+          () => undefined,
+        );
+        // #3960 — then the element level, onto the exercise's settled id.
+        await migrateSetElementKeys(learnerId, entry.source, entry.id).catch(
           () => undefined,
         );
       }

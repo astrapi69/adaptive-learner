@@ -24,7 +24,7 @@ import type {
     ExerciseIdRemap,
     RetiredReason,
     ReviewQueueItem,
-    UnservableReason,
+    AppRetiredReason,
 } from "../types";
 import {
     ensureActiveRunDexie,
@@ -492,7 +492,7 @@ function retiredReasonOf(row: {
 export async function retireUnservableDexie(
     userId: string,
     rowIds: readonly string[],
-    reason: UnservableReason,
+    reason: AppRetiredReason,
 ): Promise<{retired: number}> {
     if (rowIds.length === 0) return {retired: 0};
     const db = getDb();
