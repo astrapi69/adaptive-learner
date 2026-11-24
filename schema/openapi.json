@@ -4738,7 +4738,8 @@
             "enum": [
               "exercise_missing",
               "lesson_missing",
-              "element_missing"
+              "element_missing",
+              "superseded"
             ],
             "title": "Reason",
             "type": "string"

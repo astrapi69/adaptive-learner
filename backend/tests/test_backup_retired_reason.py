@@ -75,7 +75,8 @@ def test_the_format_version_names_the_new_field() -> None:
 
 
 @pytest.mark.parametrize(
-    "reason", ["author", "exercise_missing", "lesson_missing", "element_missing"]
+    "reason",
+    ["author", "exercise_missing", "lesson_missing", "element_missing", "superseded"],
 )
 def test_the_reason_survives_export_and_restore(
     db_session: Session, user: User, reason: str

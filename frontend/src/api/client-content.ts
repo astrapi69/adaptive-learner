@@ -207,7 +207,7 @@ export const contentApi = {
     retireUnservable: (
       userId: string,
       rowIds: readonly string[],
-      reason: import("../storage/types").UnservableReason,
+      reason: import("../storage/types").AppRetiredReason,
     ) =>
       apiCall<{ retired: number }>(
         `/users/${encodeURIComponent(userId)}/element-errors/retire-unservable`,

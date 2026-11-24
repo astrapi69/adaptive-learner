@@ -109,7 +109,7 @@ describe("retirement reason (#3952)", () => {
         expect((await all()).map((r) => r.retired_reason)).toEqual(["author"]);
     });
 
-    it.each(["exercise_missing", "lesson_missing", "element_missing"] as const)(
+    it.each(["exercise_missing", "lesson_missing", "element_missing", "superseded"] as const)(
         "retireUnservable hides the rows and records %s",
         async (reason) => {
             await record("こんにちは", "gone-ex");
