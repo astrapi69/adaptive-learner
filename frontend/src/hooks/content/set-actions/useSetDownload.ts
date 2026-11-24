@@ -24,6 +24,7 @@ import { planSetUpdate, type SetUpdatePlan } from "../../../lib/content/update/p
 import { migrateSetExerciseIds } from "../../../lib/content/update/stable-id-migration";
 import type { UpdateImpact } from "../../../lib/content/update/update-impact";
 import { readLearnerState } from "../../../lib/learning/learnerState";
+import { retireUnservableInSet } from "../../../lib/review/retire-unservable";
 import { getStorage } from "../../../storage";
 import type { ContentSetEntry } from "../../../storage/types";
 import { notify } from "../../../utils/notify";
@@ -209,12 +210,23 @@ export function useSetDownload({ setSets, setPerSetState }: UseSetDownloadDeps) 
     const target = updateGuard;
     setUpdateGuard(null);
     if (!target) return;
-    await applyDownload(target.entry, target.retiredIds);
+    const downloaded = await applyDownload(target.entry, target.retiredIds);
+    const userId = readLearnerState().userId;
+    // A failed download leaves the old version installed: its rows still
+    // resolve, so there is nothing to carry over or to retire.
+    if (!downloaded || !userId) return;
     const totalCertain =
       target.plan.exercise.certain.length + target.plan.element.certain.length;
-    if (!carryOver || totalCertain === 0) return;
-    const userId = readLearnerState().userId;
-    if (!userId) return;
+    if (carryOver && totalCertain > 0) await carryProgressOver(userId, target.plan);
+    // #3952 — the rows this update orphans (what the plan could not re-key)
+    // leave the due counts now, with the reason, instead of staying due
+    // until a review session trips over them. After the carry-over, so a
+    // re-keyed row is judged under its new key.
+    await retireUnservableInSet(userId, target.entry.source, target.entry.id);
+  };
+
+  /** #2308 — re-key the rows the plan could assign with confidence. */
+  const carryProgressOver = async (userId: string, plan: SetUpdatePlan) => {
     try {
       const storage = getStorage();
       // AUTH-05 — exercise_id resolved first: the element-key plan's
@@ -223,11 +235,11 @@ export function useSetDownload({ setSets, setPerSetState }: UseSetDownloadDeps) 
       // under an exercise_id storage does not have yet.
       const exerciseResult = await storage.elementErrors.remapExerciseIds(
         userId,
-        target.plan.exercise.certain,
+        plan.exercise.certain,
       );
       const elementResult = await storage.elementErrors.remapKeys(
         userId,
-        target.plan.element.certain,
+        plan.element.certain,
       );
       const applied = exerciseResult.applied + elementResult.applied;
       notify.success(
