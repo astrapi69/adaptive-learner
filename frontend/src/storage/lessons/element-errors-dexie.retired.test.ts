@@ -15,6 +15,7 @@ import {
     computeReviewQueueDexie,
     listElementErrorsDexie,
     recordElementAttemptsDexie,
+    retireUnservableDexie,
 } from "./element-errors-dexie";
 import type {ElementAttempt} from "../types";
 
@@ -82,5 +83,63 @@ describe("archiveRetiredDexie (#2188)", () => {
         await record("こんにちは");
         await archiveRetiredDexie(USER, SET, ["greetings-match-x7"]);
         expect(await computeReviewQueueDexie(USER)).toEqual([]);
+    });
+});
+
+// Mirrors the backend router tests (retire-unservable section), so both
+// storage modes hold the same contract (#2053).
+describe("retirement reason (#3952)", () => {
+    const all = () => listElementErrorsDexie(USER, {includeRetired: true});
+
+    it("an author retirement records its reason", async () => {
+        await record("こんにちは");
+        await archiveRetiredDexie(USER, SET, ["greetings-match-x7"]);
+        expect((await all()).map((r) => r.retired_reason)).toEqual(["author"]);
+    });
+
+    it("an active row has no reason", async () => {
+        await record("いち", "numbers-pic-b2");
+        expect((await all()).map((r) => r.retired_reason)).toEqual([null]);
+    });
+
+    it("a row retired before the reason existed reads as author-retired", async () => {
+        await record("こんにちは");
+        const [row] = await getDb().elementErrors.toArray();
+        await getDb().elementErrors.put({...row, retired_at: "2026-08-01T00:00:00.000Z"});
+        expect((await all()).map((r) => r.retired_reason)).toEqual(["author"]);
+    });
+
+    it.each(["exercise_missing", "lesson_missing"] as const)(
+        "retireUnservable hides the rows and records %s",
+        async (reason) => {
+            await record("こんにちは", "gone-ex");
+            await record("いち", "numbers-pic-b2");
+            const gone = (await all()).find((r) => r.exercise_id === "gone-ex")!;
+
+            expect(await retireUnservableDexie(USER, [gone.id], reason)).toEqual({retired: 1});
+
+            const rows = new Map((await all()).map((r) => [r.exercise_id, r]));
+            expect(rows.get("gone-ex")?.retired_reason).toBe(reason);
+            expect(rows.get("gone-ex")?.retired_at).toBeTruthy();
+            expect(rows.get("numbers-pic-b2")?.retired_at ?? null).toBeNull();
+            const queue = await computeReviewQueueDexie(USER);
+            expect(queue.map((item) => item.exercise_id)).toEqual(["numbers-pic-b2"]);
+        },
+    );
+
+    it("is idempotent and keeps the first reason", async () => {
+        await record("こんにちは", "gone-ex");
+        const [row] = await all();
+        expect(await retireUnservableDexie(USER, [row.id], "exercise_missing")).toEqual({retired: 1});
+        expect(await retireUnservableDexie(USER, [row.id], "lesson_missing")).toEqual({retired: 0});
+        expect((await all())[0].retired_reason).toBe("exercise_missing");
+    });
+
+    it("ignores unknown ids and another learner's rows", async () => {
+        await record("こんにちは", "gone-ex");
+        const [row] = await all();
+        expect(await retireUnservableDexie(USER, ["no-such-row"], "exercise_missing")).toEqual({retired: 0});
+        expect(await retireUnservableDexie("other-user", [row.id], "exercise_missing")).toEqual({retired: 0});
+        expect((await all())[0].retired_at ?? null).toBeNull();
     });
 });

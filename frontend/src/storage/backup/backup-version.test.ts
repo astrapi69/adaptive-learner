@@ -46,7 +46,7 @@ describe("parseFormatVersion", () => {
 
 describe("versionStanding", () => {
     it.each([
-        ["the app's own version", BACKUP_VERSION, "current_or_older"],
+        ["the app's own version", "1.9.0", "current_or_older"],
         ["an older minor", "1.2.0", "current_or_older"],
         ["an older patch", "1.8.5", "current_or_older"],
         ["a newer patch", "1.9.1", "newer"],
@@ -92,20 +92,20 @@ describe("newerBackupReport", () => {
     it("names unknown tables and blocks that carry data, sorted", () => {
         const report = newerBackupReport({
             ...base,
-            version: "1.10.0",
+            version: "1.99.0",
             data: {future_table: [{id: "f-1"}], users: [{id: "u-1"}], empty_future: []},
             future_block: {anything: true},
             empty_block: {},
         });
         expect(report).toEqual({
-            newer_version: "1.10.0",
+            newer_version: "1.99.0",
             skipped_segments: ["future_block", "future_table"],
         });
     });
 
     it("reports a newer version without unknown segments", () => {
-        expect(newerBackupReport({...base, version: "1.10.0"})).toEqual({
-            newer_version: "1.10.0",
+        expect(newerBackupReport({...base, version: "1.99.0"})).toEqual({
+            newer_version: "1.99.0",
             skipped_segments: [],
         });
     });

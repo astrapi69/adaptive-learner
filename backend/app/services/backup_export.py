@@ -31,6 +31,8 @@ logger = logging.getLogger(__name__)
 # ``BACKUP_VERSION`` (storage/backup/backup-tables.ts) must match, pinned
 # by a parity test there. The backend said 1.4.0 and the frontend 1.5.0 for
 # the same EXP-051 change until #3363.
+# 1.10.0 - #3952: element_errors gains retired_reason. A backup without it
+# has its retired rows restored as "author", the only cause there was.
 # 1.9.0 - #3412: an optional ai_validation_results block (cached AI
 # content-check reports), captured and applied frontend-side; an API-mode
 # export carries it empty and this import ignores it.
@@ -45,7 +47,7 @@ logger = logging.getLogger(__name__)
 # the export. Older backups lack them and import with the column defaults.
 # 1.5.0 (1.4.0 here) - EXP-051 / #2125: element_errors gains run_id and
 # set_runs rides the export; older backups import with run_id 1.
-BACKUP_VERSION = "1.9.0"
+BACKUP_VERSION = "1.10.0"
 BACKUP_FORMAT = "adaptive-learner-backup"
 
 #: The top-level keys of a backup this build knows (#3827). A newer backup's

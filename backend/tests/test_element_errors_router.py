@@ -683,6 +683,86 @@ def test_archived_rows_leave_the_review_queue(
     assert r.json() == []
 
 
+# --- #3952: retiring rows no question can be built for ----------------------
+
+
+def _all_rows(client: TestClient, user_id: str) -> list[dict]:
+    r = client.get(f"/api/users/{user_id}/element-errors", params={"include_retired": "true"})
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def _retire(client: TestClient, user_id: str, row_ids: list[str], reason: str):
+    return client.post(
+        f"/api/users/{user_id}/element-errors/retire-unservable",
+        json={"row_ids": row_ids, "reason": reason},
+    )
+
+
+def test_author_retirement_records_its_reason(client: TestClient, user_id: str) -> None:
+    _record_ex(client, user_id, exercise_id="greetings-match-x7", element_key="こんにちは")
+    _archive(client, user_id, ["greetings-match-x7"])
+    assert [row["retired_reason"] for row in _all_rows(client, user_id)] == ["author"]
+
+
+def test_an_active_row_has_no_retirement_reason(client: TestClient, user_id: str) -> None:
+    _record_ex(client, user_id, exercise_id="numbers-pic-b2", element_key="いち")
+    assert [row["retired_reason"] for row in _all_rows(client, user_id)] == [None]
+
+
+@pytest.mark.parametrize("reason", ["exercise_missing", "lesson_missing"])
+def test_retire_unservable_hides_the_rows_and_records_why(
+    client: TestClient, user_id: str, reason: str
+) -> None:
+    _record_ex(client, user_id, exercise_id="gone-ex", element_key="こんにちは")
+    _record_ex(client, user_id, exercise_id="numbers-pic-b2", element_key="いち")
+    gone = next(row for row in _all_rows(client, user_id) if row["exercise_id"] == "gone-ex")
+
+    r = _retire(client, user_id, [gone["id"]], reason)
+    assert r.status_code == 200, r.text
+    assert r.json() == {"retired": 1}
+
+    rows = {row["exercise_id"]: row for row in _all_rows(client, user_id)}
+    assert rows["gone-ex"]["retired_reason"] == reason
+    assert rows["gone-ex"]["retired_at"] is not None
+    assert rows["numbers-pic-b2"]["retired_at"] is None
+    # Out of the review queue, history kept.
+    queue = client.get(f"/api/users/{user_id}/element-errors/review-queue").json()
+    assert [item["exercise_id"] for item in queue] == ["numbers-pic-b2"]
+
+
+def test_retire_unservable_is_idempotent_and_keeps_the_first_reason(
+    client: TestClient, user_id: str
+) -> None:
+    _record_ex(client, user_id, exercise_id="gone-ex", element_key="こんにちは")
+    row_id = _all_rows(client, user_id)[0]["id"]
+    assert _retire(client, user_id, [row_id], "exercise_missing").json() == {"retired": 1}
+    assert _retire(client, user_id, [row_id], "lesson_missing").json() == {"retired": 0}
+    assert _all_rows(client, user_id)[0]["retired_reason"] == "exercise_missing"
+
+
+def test_retire_unservable_ignores_unknown_ids(client: TestClient, user_id: str) -> None:
+    _record_ex(client, user_id, exercise_id="gone-ex", element_key="こんにちは")
+    assert _retire(client, user_id, ["no-such-row"], "exercise_missing").json() == {"retired": 0}
+    assert _all_rows(client, user_id)[0]["retired_at"] is None
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {"row_ids": ["x"], "reason": "author"},
+        {"row_ids": ["x"], "reason": "because"},
+        {"row_ids": [], "reason": "exercise_missing"},
+    ],
+    ids=["author-is-not-for-this-route", "unknown-reason", "no-rows"],
+)
+def test_retire_unservable_rejects_a_bad_request(
+    client: TestClient, user_id: str, body: dict
+) -> None:
+    r = client.post(f"/api/users/{user_id}/element-errors/retire-unservable", json=body)
+    assert r.status_code == 422
+
+
 # --- #3170: the review queue holds errors only unless opted in -------------
 
 
