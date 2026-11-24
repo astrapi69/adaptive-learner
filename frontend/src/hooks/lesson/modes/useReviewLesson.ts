@@ -37,6 +37,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 import {readLearnerState} from "../../../lib/learning/learnerState";
 import {
+    coveredElementKeys,
     dedupeReviewQueueByElement,
     synthesizeReviewLesson,
 } from "../../../lib/review/review-lesson";
@@ -85,7 +86,8 @@ export interface UseReviewLessonResult {
     currentStepIndex: number;
     /** #664 — total UNIQUE elements due for review in this round (deduped
      *  by ``element_key``, uncapped; #3170: minus the elements already
-     *  played earlier in this session). The session presents at most
+     *  played earlier in this session; minus the elements no question can
+     *  be built for). The session presents at most
      *  ``limit`` questions covering these; the page shows "{covered} of
      *  {dueCount}" so the cap is transparent. */
     dueCount: number;
@@ -249,8 +251,26 @@ export function useReviewLesson(
                     }
                 }
                 if (cancelled) return;
+                // An element whose exercise is gone (the set was updated,
+                // the lesson is no longer cached) gets no question. Count
+                // and offer only what the session can serve; otherwise the
+                // summary says "still N due" and "another round" lands on
+                // an empty page.
+                const servableKeys = new Set(
+                    coveredElementKeys(
+                        synthesizeReviewLesson(dedupedQueue, lessonMap, {
+                            title: titleRef.current,
+                            limit: Number.POSITIVE_INFINITY,
+                        }).steps,
+                    ),
+                );
+                const servableQueue = dedupedQueue.filter((item) =>
+                    servableKeys.has(item.element_key),
+                );
+                setQueue(servableQueue);
+                setDueCount(servableQueue.length);
                 const synthesised = synthesizeReviewLesson(
-                    dedupedQueue,
+                    servableQueue,
                     lessonMap,
                     {title: titleRef.current, description: descriptionRef.current, limit},
                 );
