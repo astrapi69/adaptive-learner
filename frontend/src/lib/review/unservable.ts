@@ -19,10 +19,17 @@
  */
 
 import {matchesExerciseIdentity} from "../srs/exercise-identity";
-import type {ContentLesson, ReviewQueueItem, UnservableReason} from "../../storage/types";
+import type {ContentLesson, UnservableReason} from "../../storage/types";
 
 /** Row ids to retire, per permanent reason. */
 export type UnservableRows = Record<UnservableReason, string[]>;
+
+/** What the classification reads of a row (a queue item or a stored row). */
+export interface ElementRowRef {
+    id: string;
+    lesson_id: string;
+    exercise_id: string;
+}
 
 function holdsExercise(lesson: ContentLesson, exerciseId: string): boolean {
     return lesson.steps.some(
@@ -33,8 +40,8 @@ function holdsExercise(lesson: ContentLesson, exerciseId: string): boolean {
 /**
  * Sort the queue's unservable rows by permanent cause.
  *
- * @param queue every due row of the set (not de-duplicated: each direction
- *   of an element is its own row).
+ * @param queue the rows to judge (not de-duplicated: each direction of an
+ *   element is its own row).
  * @param loadedLessons the lessons that loaded, keyed by ``lesson_id``.
  * @param listedLessons the set's lesson listing, or ``null`` when it could
  *   not be read.
@@ -42,7 +49,7 @@ function holdsExercise(lesson: ContentLesson, exerciseId: string): boolean {
  * const {exercise_missing, lesson_missing} = classifyUnservable(queue, lessons, listing);
  */
 export function classifyUnservable(
-    queue: readonly ReviewQueueItem[],
+    queue: readonly ElementRowRef[],
     loadedLessons: ReadonlyMap<string, ContentLesson>,
     listedLessons: readonly string[] | null,
 ): UnservableRows {

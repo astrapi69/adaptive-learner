@@ -9,9 +9,9 @@
  */
 
 import {getStorage} from "../../storage";
-import type {ContentLesson, ReviewQueueItem, UnservableReason} from "../../storage/types";
+import type {ContentLesson, UnservableReason} from "../../storage/types";
 import {notifyReviewsChanged} from "./reviewsChanged";
-import {classifyUnservable} from "./unservable";
+import {classifyUnservable, type ElementRowRef} from "./unservable";
 
 const REASONS: readonly UnservableReason[] = ["exercise_missing", "lesson_missing"];
 
@@ -36,7 +36,7 @@ export async function retireUnservableRows(
     userId: string,
     source: string,
     setId: string,
-    queue: readonly ReviewQueueItem[],
+    queue: readonly ElementRowRef[],
     loadedLessons: ReadonlyMap<string, ContentLesson>,
 ): Promise<void> {
     try {
@@ -52,5 +52,52 @@ export async function retireUnservableRows(
         if (asked) notifyReviewsChanged();
     } catch (err) {
         console.warn("review: could not retire unservable rows", err);
+    }
+}
+
+/** Load the lessons the rows point at; a lesson that does not load is left out. */
+async function loadReferencedLessons(
+    source: string,
+    setId: string,
+    rows: readonly ElementRowRef[],
+): Promise<Map<string, ContentLesson>> {
+    const lessons = new Map<string, ContentLesson>();
+    for (const lessonId of new Set(rows.map((row) => row.lesson_id))) {
+        try {
+            lessons.set(lessonId, await getStorage().contentLoader.getLesson(source, setId, lessonId));
+        } catch {
+            // Judged by the listing instead (see classifyUnservable).
+        }
+    }
+    return lessons;
+}
+
+/**
+ * Retire a set's rows that its installed version can no longer serve.
+ *
+ * Called right after a set update the learner confirmed although the guard
+ * reported lost progress (#2128): the rows the update orphans are retired at
+ * the moment the app knowingly orphans them, with the reason, instead of
+ * staying due until a review session trips over them. Mastered rows are left
+ * alone: they are out of scheduling already. Never throws.
+ *
+ * @example
+ * await retireUnservableInSet(userId, entry.source, entry.id);
+ */
+export async function retireUnservableInSet(
+    userId: string,
+    source: string,
+    setId: string,
+): Promise<void> {
+    try {
+        const rows = await getStorage().elementErrors.list(userId, {
+            setId,
+            includeMastered: false,
+        });
+        if (rows.length === 0) return;
+        const lessons = await loadReferencedLessons(source, setId, rows);
+        await retireUnservableRows(userId, source, setId, rows, lessons);
+    } catch (err) {
+        console.warn("review: could not check the set for unservable rows", err);
     }
 }
