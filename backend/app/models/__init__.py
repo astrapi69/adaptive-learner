@@ -1747,7 +1747,8 @@ class ElementError(Base):
     )
     # #3952 - why the row was retired: "author" (manifest ``retired_ids``),
     # "exercise_missing" or "lesson_missing" (the installed set no longer
-    # holds what the row points at, so no question can be built for it).
+    # holds what the row points at, so no question can be built for it), or
+    # "element_missing" (#3958: the exercise no longer holds the element).
     # NULL on an active row.
     retired_reason: Mapped[str | None] = mapped_column(
         String(32),

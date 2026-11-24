@@ -4737,7 +4737,8 @@
           "reason": {
             "enum": [
               "exercise_missing",
-              "lesson_missing"
+              "lesson_missing",
+              "element_missing"
             ],
             "title": "Reason",
             "type": "string"

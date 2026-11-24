@@ -149,3 +149,38 @@ describe("stable_id-keyed rows (#2467)", () => {
         expect(a?.applicableCount).toBe(1);
     });
 });
+
+describe("isRecoverableRow (#3958)", () => {
+    // The first entry of the incident table: the pair's left side was
+    // rewritten from "こんにちは" to "こんにちは (konnichiwa)".
+    const ROW = {
+        set_id: "ja-a1-from-de",
+        lesson_id: "01-begruessungen.json",
+        exercise_id: "ex-match-begruessung",
+        element_key: "こんにちは",
+    };
+    const lessonWith = (exercise: Record<string, unknown>) =>
+        ({steps: [{id: "s", type: "exercise", exercise}]}) as never;
+
+    it("names a row still keyed by the originally published key", async () => {
+        const {isRecoverableRow} = await import("./jkz-recovery-service");
+        expect(isRecoverableRow(ROW, lessonWith({id: "ex-match-begruessung"}))).toBe(true);
+    });
+
+    it("names it under the exercise's stable_id as well (#2467)", async () => {
+        const {isRecoverableRow} = await import("./jkz-recovery-service");
+        const lesson = lessonWith({id: "ex-match-begruessung", stable_id: "match-x7"});
+        expect(isRecoverableRow({...ROW, exercise_id: "match-x7"}, lesson)).toBe(true);
+    });
+
+    it.each([
+        ["a key the table does not hold", {element_key: "いぬ"}],
+        ["the same key in another set", {set_id: "es-a1"}],
+        ["the same key in another lesson", {lesson_id: "02-zahlen.json"}],
+    ])("does not name %s", async (_label, over) => {
+        const {isRecoverableRow} = await import("./jkz-recovery-service");
+        expect(isRecoverableRow({...ROW, ...over}, lessonWith({id: "ex-match-begruessung"}))).toBe(
+            false,
+        );
+    });
+});

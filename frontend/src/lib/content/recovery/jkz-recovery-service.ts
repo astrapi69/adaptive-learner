@@ -22,13 +22,38 @@ import {
     type CurrentKeyLookup,
     type IncidentMapping,
     type Remap,
+    type SrsKeyRow,
 } from "./jkz-recovery";
+import type {ContentLesson} from "../../../storage/types";
 
 const MAPPINGS = incidentData.mappings as IncidentMapping[];
 /** The set ids this incident touched (ja/ko/zh A1). */
 export const RECOVERY_SET_IDS = incidentData.set_ids as string[];
 /** How many table entries exist in total (Endbericht: the incident size). */
 export const INCIDENT_MAPPING_COUNT = MAPPINGS.length;
+
+/**
+ * Whether ``row`` is one this recovery can still re-key: it sits on a key the
+ * incident table lists as originally published. Such a row looks orphaned
+ * (its exercise no longer holds the key), but the learner has not yet chosen
+ * between restore and restart, so nothing else may retire it (#3958).
+ *
+ * @param lesson the row's cached lesson; it supplies the authored-id to
+ *   stable_id alias (#2467).
+ * @example
+ * if (isRecoverableRow(row, lesson)) return; // leave it to the notice
+ */
+export function isRecoverableRow(row: SrsKeyRow, lesson: ContentLesson): boolean {
+    if (!RECOVERY_SET_IDS.includes(row.set_id)) return false;
+    const inLesson = MAPPINGS.filter(
+        (mapping) => mapping.set_id === row.set_id && mapping.lesson_id === row.lesson_id,
+    );
+    if (inLesson.length === 0) return false;
+    const aliasOf: AuthoredIdAlias = (_setId, _lessonId, exerciseId) =>
+        (lesson.steps ?? []).find((step) => step.exercise?.id === exerciseId)?.exercise
+            ?.stable_id ?? undefined;
+    return detectRecoverable([row], inLesson, aliasOf).count > 0;
+}
 
 export interface RecoveryAssessment {
     /** Sets with at least one applicable (content-verified) remap, sorted. */
