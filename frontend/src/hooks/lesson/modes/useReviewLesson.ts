@@ -41,6 +41,7 @@ import {
     dedupeReviewQueueByElement,
     synthesizeReviewLesson,
 } from "../../../lib/review/review-lesson";
+import {retireUnservableRows} from "../../../lib/review/retire-unservable";
 import {loadReviewQueue} from "../../../lib/review/review-queue";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
 import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
@@ -269,6 +270,9 @@ export function useReviewLesson(
                 );
                 setQueue(servableQueue);
                 setDueCount(servableQueue.length);
+                // #3952 — what is provably gone leaves the due counts for
+                // good; a lesson that only failed to load is left alone.
+                void retireUnservableRows(userId, match.source, setId, fetchedQueue, lessonMap);
                 const synthesised = synthesizeReviewLesson(
                     servableQueue,
                     lessonMap,
