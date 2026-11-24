@@ -19,6 +19,9 @@ from sqlalchemy.orm import Session
 from app.models import ElementError, SetRun, User
 from app.repositories.base import Repository
 
+#: ``retired_reason`` of a row the set's author retired (#2188, #3952).
+RETIRED_BY_AUTHOR = "author"
+
 
 def _active_run_only() -> ColumnElement[bool]:
     """SQL predicate that keeps only the rows of each set's ACTIVE run
@@ -110,6 +113,13 @@ class ElementErrorsRepository(Repository):
         whose ``exercise_id`` is in ``retired_ids``. Already-archived rows are
         left untouched (idempotent). Does not commit — the caller owns the
         transaction boundary. Returns the number of rows archived."""
+
+    @abstractmethod
+    def retire_rows(self, user_id: str, row_ids: list[str], reason: str) -> int:
+        """#3952: stamp ``retired_at`` and ``retired_reason`` on the user's
+        active rows with these ids. A row already retired keeps its first
+        reason; an unknown id or another user's row is ignored. Does not
+        commit. Returns the number of rows retired."""
 
     @abstractmethod
     def delete_by_set_ids(self, user_id: str, set_ids: list[str]) -> int:
@@ -270,6 +280,30 @@ class SqlAlchemyElementErrorsRepository(ElementErrorsRepository):
         now = datetime.now(UTC)
         for row in rows:
             row.retired_at = now
+            row.retired_reason = RETIRED_BY_AUTHOR
+        return len(rows)
+
+    def retire_rows(self, user_id: str, row_ids: list[str], reason: str) -> int:
+        """See the abstract contract."""
+        if not row_ids:
+            return 0
+        rows = list(
+            self._db.execute(
+                select(ElementError).where(
+                    ElementError.user_id == user_id,
+                    ElementError.id.in_(row_ids),
+                    ElementError.retired_at.is_(None),
+                    # A closed run's rows are frozen history (#2125).
+                    _active_run_only(),
+                )
+            )
+            .scalars()
+            .all()
+        )
+        now = datetime.now(UTC)
+        for row in rows:
+            row.retired_at = now
+            row.retired_reason = reason
         return len(rows)
 
     def delete_by_set_ids(self, user_id: str, set_ids: list[str]) -> int:

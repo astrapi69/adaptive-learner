@@ -202,6 +202,17 @@ export const contentApi = {
         `/users/${encodeURIComponent(userId)}/element-errors/archive-retired`,
         { method: "POST", body: { set_id: setId, retired_ids: retiredIds } },
       ),
+    /** POST /api/users/{user_id}/element-errors/retire-unservable
+     *  (#3952 rows no question can be built for) */
+    retireUnservable: (
+      userId: string,
+      rowIds: readonly string[],
+      reason: import("../storage/types").AppRetiredReason,
+    ) =>
+      apiCall<{ retired: number }>(
+        `/users/${encodeURIComponent(userId)}/element-errors/retire-unservable`,
+        { method: "POST", body: { row_ids: rowIds, reason } },
+      ),
     /** GET /api/users/{user_id}/element-errors/review-queue */
     reviewQueue: (
       userId: string,

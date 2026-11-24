@@ -99,7 +99,7 @@ test.describe("Backup - AI content-check reports round trip (Dexie, #3412)", () 
             version?: string;
             ai_validation_results?: unknown[];
         };
-        expect(payload.version).toBe("1.9.0");
+        expect(payload.version).toBe("1.10.0");
         expect(payload.ai_validation_results).toEqual([REPORT]);
 
         // --- Wipe: a fresh device has no cached report ---------------------

@@ -51,6 +51,9 @@ const { findSetInRegistry, connectPublicRepo } = vi.hoisted(() => ({
 }));
 vi.mock("../../lib/content/repos/shared-link/registry-set-lookup", () => ({ findSetInRegistry }));
 vi.mock("../../lib/content/repos/shared-link/connect-repo", () => ({ connectPublicRepo }));
+vi.mock("../../components/content/SetLinkUpdateHint", () => ({
+  default: () => <div data-testid="set-link-update-hint-stub" />,
+}));
 
 const notifyError = vi.fn();
 const notifyWarning = vi.fn();
@@ -252,6 +255,8 @@ describe("SetDeepLink (#892)", () => {
 
     await screen.findByTestId("set-deep-link-not-found");
     expect(screen.getByTestId("set-deep-link-discover")).toBeInTheDocument();
+    // An out-of-date app offers its update before sending the learner away.
+    expect(screen.getByTestId("set-link-update-hint-stub")).toBeInTheDocument();
     expect(notifyError).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByTestId("set-deep-link-discover"));
@@ -306,6 +311,7 @@ describe("SetDeepLink: a set of a repo not added yet (#3819)", () => {
     expect(findSetInRegistry).toHaveBeenCalledWith("ki-einsteiger-from-de");
     expect(screen.getByTestId("registry-set-repo")).toHaveTextContent("KI");
     expect(screen.queryByTestId("set-deep-link-not-found")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("set-link-update-hint-stub")).not.toBeInTheDocument();
   });
 
   it("does not ask the registry for a set the app lists already", async () => {

@@ -18,6 +18,7 @@ const assessSetUpdateMock = vi.fn();
 const planSetUpdateMock = vi.fn();
 const remapKeysMock = vi.fn();
 const remapExerciseIdsMock = vi.fn();
+const retireUnservableInSetMock = vi.fn();
 
 vi.mock("../../storage", () => ({
     getStorage: () => ({
@@ -27,6 +28,9 @@ vi.mock("../../storage", () => ({
             remapExerciseIds: (...a: unknown[]) => remapExerciseIdsMock(...a),
         },
     }),
+}));
+vi.mock("../../lib/review/retire-unservable", () => ({
+    retireUnservableInSet: (...a: unknown[]) => retireUnservableInSetMock(...a),
 }));
 vi.mock("../../lib/learning/learnerState", () => ({
     readLearnerState: () => ({userId: "u1"}),
@@ -105,6 +109,7 @@ beforeEach(() => {
     planSetUpdateMock.mockResolvedValue(EMPTY_PLAN);
     remapKeysMock.mockResolvedValue({applied: 1, skipped: 0});
     remapExerciseIdsMock.mockResolvedValue({applied: 0, skipped: 0});
+    retireUnservableInSetMock.mockResolvedValue(undefined);
 });
 
 describe("handleDownload update guard (#2128)", () => {
@@ -297,5 +302,63 @@ describe("handleDownload update guard (#2128)", () => {
                 expect.stringContaining("(2)"),
             );
         });
+    });
+});
+
+describe("#3952: a confirmed breaking update retires what it orphans", () => {
+    async function confirm(carryOver: boolean) {
+        assessSetUpdateMock.mockResolvedValue(breaking);
+        planSetUpdateMock.mockResolvedValue({
+            exercise: {certain: [], uncertain: []},
+            element: {certain: [REMAP], uncertain: []},
+        });
+        const hook = setup();
+        await act(async () => {
+            await hook.result.current.handleDownload(entry());
+        });
+        await act(async () => {
+            await hook.result.current.confirmUpdate(carryOver);
+        });
+    }
+
+    it.each([
+        ["without carry-over", false],
+        ["with carry-over", true],
+    ])("checks the set for unservable rows after the download, %s", async (_label, carryOver) => {
+        await confirm(carryOver);
+        expect(retireUnservableInSetMock).toHaveBeenCalledWith("u1", "owner/repo", "ja-a1");
+        expect(retireUnservableInSetMock).toHaveBeenCalledTimes(1);
+        expect(downloadSetMock.mock.invocationCallOrder[0]).toBeLessThan(
+            retireUnservableInSetMock.mock.invocationCallOrder[0],
+        );
+    });
+
+    it("runs after the carry-over, so a re-keyed row is judged under its new key", async () => {
+        await confirm(true);
+        expect(remapKeysMock.mock.invocationCallOrder[0]).toBeLessThan(
+            retireUnservableInSetMock.mock.invocationCallOrder[0],
+        );
+    });
+
+    it("still runs when the carry-over fails", async () => {
+        remapKeysMock.mockRejectedValue(new Error("down"));
+        await confirm(true);
+        expect(retireUnservableInSetMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not run when the download failed: the old version is still installed", async () => {
+        downloadSetMock.mockRejectedValue(new Error("offline"));
+        await confirm(false);
+        expect(retireUnservableInSetMock).not.toHaveBeenCalled();
+    });
+
+    it("does not run for a held update the learner dismisses", async () => {
+        assessSetUpdateMock.mockResolvedValue(breaking);
+        const {result} = setup();
+        await act(async () => {
+            await result.current.handleDownload(entry());
+        });
+        act(() => result.current.dismissUpdateGuard());
+        expect(retireUnservableInSetMock).not.toHaveBeenCalled();
     });
 });

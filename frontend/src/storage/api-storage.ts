@@ -386,6 +386,8 @@ export const apiStorage: IStorageService = {
       api.elementErrors.remapExerciseIds(userId, remaps),
     archiveRetired: (userId, setId, retiredIds) =>
       api.elementErrors.archiveRetired(userId, setId, retiredIds),
+    retireUnservable: (userId, rowIds, reason) =>
+      api.elementErrors.retireUnservable(userId, rowIds, reason),
   },
 
   // --- Learner-data maintenance (#1445 / #1821) ------------------------

@@ -590,6 +590,7 @@ erDiagram
         Integer attempt_count
         Text attempt_history
         DateTime retired_at
+        String retired_reason
         DateTime created_at
         DateTime updated_at
     }
@@ -706,6 +707,7 @@ erDiagram
         number attempt_count
         AttemptRecord[] attempt_history
         string retired_at
+        string retired_reason
         string created_at
         string updated_at "updated_at"
     }

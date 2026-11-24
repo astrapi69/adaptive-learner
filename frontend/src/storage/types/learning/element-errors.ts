@@ -88,9 +88,33 @@ export interface ElementError {
   /** #2188 — author-declared retirement: set = archived (out of scheduling
    *  + due counts, history kept). Null/absent = active. */
   retired_at?: string | null;
+  /** #3952 — why the row was retired. Null/absent on an active row. */
+  retired_reason?: RetiredReason | null;
   created_at: string;
   updated_at: string;
 }
+
+/**
+ * Why an element row left review scheduling (#3952).
+ *
+ * - ``author``: the set's author retired the exercise (manifest
+ *   ``retired_ids``, #2188).
+ * - ``exercise_missing`` / ``lesson_missing``: the installed set no longer
+ *   holds the exercise or the lesson the row points at, so no question can
+ *   be built for it.
+ * - ``element_missing`` (#3958): the exercise is still there but no longer
+ *   holds the element, so answering its question never reaches the row.
+ * - ``superseded`` (#3960): the row sits on the element's text while the
+ *   element's ``stable_id`` row exists already; this one is a second, stale
+ *   history of the same element.
+ */
+export type RetiredReason = "author" | AppRetiredReason;
+
+/** Every reason the app itself retires a row for. */
+export type AppRetiredReason = UnservableReason | "superseded";
+
+/** The reasons a row is retired for because no question reaches it. */
+export type UnservableReason = "exercise_missing" | "lesson_missing" | "element_missing";
 
 /**
  * One Durchgang (run/pass) of a content set (EXP-051 / #2125). Mirrors
@@ -218,6 +242,16 @@ export interface IElementErrorsNamespace {
     setId: string,
     retiredIds: readonly string[],
   ): Promise<{ archived: number }>;
+  /** #3952 — retire rows the installed set can no longer serve a question
+   *  for, recording why. Idempotent: a row already retired keeps its first
+   *  reason. Retired rows keep their history but leave the default list +
+   *  review queue. Works in both storage modes. Returns the count of rows
+   *  newly retired. */
+  retireUnservable(
+    userId: string,
+    rowIds: readonly string[],
+    reason: AppRetiredReason,
+  ): Promise<{ retired: number }>;
   /** Projected review queue: active (non-mastered) elements with
    *  computed suggested_review_at + overdue flag, sorted by urgency
    *  (overdue → weakness tier → error frequency → oldest error first,

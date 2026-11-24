@@ -30,7 +30,10 @@ export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
 // 1.9.0 — #3412: an optional ``ai_validation_results`` block (cached AI
 // content-check reports with their AIV-09 signatures), captured and applied
 // frontend-side; empty from an API-mode export (lib/backup/aiValidationSnapshot.ts).
-export const BACKUP_VERSION = "1.9.0";
+// 1.10.0 — #3952: ``element_errors`` gains ``retired_reason``. A backup
+// without it restores its retired rows with no reason; such a row reads as
+// "author" (storage/lessons/element-errors-dexie.ts).
+export const BACKUP_VERSION = "1.10.0";
 
 /**
  * The ``user_settings`` fields that never travel in a backup and that a

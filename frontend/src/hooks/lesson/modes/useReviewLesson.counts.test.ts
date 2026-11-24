@@ -2,13 +2,14 @@
  * #664 — count + dedup consistency for the SRS review hook.
  *
  * Pins, through the real pipeline (reviewQueue → dedup → synthesize):
- *   - ``dueCount`` = unique elements due (deduped by element_key, uncapped).
+ *   - ``dueCount`` = unique elements due that a question can be built for
+ *     (deduped by element_key, uncapped).
  *   - ``lesson.steps.length`` (presented) = unique QUESTIONS after the
  *     matching/picture_choice collapse and the cap.
  *   - the header source (presented) can never exceed ``dueCount``.
  *   - a matching exercise covering several due cards yields ONE step.
- *   - unresolvable elements drop out (steps < dueCount), so the header
- *     and the progress bar agree.
+ *   - unresolvable elements drop out of the steps and of ``dueCount``, so
+ *     the header, the progress bar and the summary agree.
  *
  * Storage is mocked so the same assertions hold for BOTH storage modes -
  * the hook routes everything through ``getStorage()`` and the synthesizer
@@ -154,7 +155,7 @@ describe("#664 useReviewLesson: count + dedup consistency", () => {
         expect(result.current.lesson?.steps).toHaveLength(3);
     });
 
-    it("inconsistency 1: unresolvable elements drop → steps < dueCount", async () => {
+    it("unresolvable elements drop out of the steps AND of dueCount", async () => {
         reviewQueueMock.mockResolvedValue([
             qItem({element_key: "a", exercise_id: "ex-present", lesson_id: "L1"}),
             qItem({element_key: "b", exercise_id: "ex-missing", lesson_id: "L1"}),
@@ -171,8 +172,10 @@ describe("#664 useReviewLesson: count + dedup consistency", () => {
             useReviewLesson({setId: SET_ID, title: "Review", limit: 20}),
         );
         await waitFor(() => expect(result.current.status).toBe("ready"));
-        // 3 unique elements due, but only 1 has a resolvable question.
-        expect(result.current.dueCount).toBe(3);
+        // 3 unique elements due, but only 1 has a resolvable question. The
+        // count follows what the session can serve: counting the other two
+        // made the summary offer a round that then had nothing to show.
+        expect(result.current.dueCount).toBe(1);
         expect(result.current.lesson?.steps).toHaveLength(1);
     });
 

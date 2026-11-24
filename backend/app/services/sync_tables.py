@@ -631,6 +631,8 @@ TABLES: dict[str, TableSpec] = {
             "attempt_history",
             # #2188 - author-declared retirement (archived rows ride along).
             "retired_at",
+            # #3952 - why the row was retired.
+            "retired_reason",
             "created_at",
             "updated_at",
         ),
