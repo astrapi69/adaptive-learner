@@ -23,8 +23,7 @@
  * Pure: the caller loads the lessons and the listing.
  */
 
-import {elementIdentityKeysOf} from "../srs/element-identity";
-import {elementKeysOf} from "../srs/element-keys";
+import {elementFormerKeysOf, elementIdentityKeysOf} from "../srs/element-identity";
 import {matchesExerciseIdentity} from "../srs/exercise-identity";
 import type {ContentLesson, UnservableReason} from "../../storage/types";
 import {_buildReviewStep, type ReviewSourceRow} from "./review-lesson";
@@ -44,9 +43,10 @@ function holdsExercise(lesson: ContentLesson, exerciseId: string): boolean {
 /**
  * Whether answering the question built for ``row`` can record under the
  * row's own key. Judged on the step the session would really serve, so a
- * generated cloze (which carries the row's key) counts as reaching it. The
- * text key counts beside the stable id: a row written before the id was
- * minted is a re-key case (#2128), not a missing element. An exercise type
+ * generated cloze (which carries the row's key) counts as reaching it. A
+ * former key counts beside the current one (the element's text, or a
+ * multiple choice's text-or-id mix, #3962): a row written before the id was
+ * minted is a re-key case (#3960), not a missing element. An exercise type
  * whose key rule is not known here is no evidence, so it reaches.
  */
 function answerReachesRow(row: ElementRowRef, lesson: ContentLesson): boolean {
@@ -56,7 +56,7 @@ function answerReachesRow(row: ElementRowRef, lesson: ContentLesson): boolean {
     if (identityKeys === null) return true;
     return (
         identityKeys.includes(row.element_key) ||
-        (elementKeysOf(exercise) ?? []).includes(row.element_key)
+        (elementFormerKeysOf(exercise) ?? []).flat().includes(row.element_key)
     );
 }
 

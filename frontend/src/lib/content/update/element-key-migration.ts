@@ -15,6 +15,11 @@
  * not name exactly one element: the text occurs twice in the exercise, or the
  * text or the id is also another element's key.
  *
+ * A multiple choice has one collapsed key over its correct options, so a row
+ * can also sit on a mix of texts and ids (the options were minted one after
+ * the other). Those mixes are former keys too (#3962); elementFormerKeysOf
+ * names them.
+ *
  * ``remapKeys`` never collapses two rows. A text-keyed row whose ``stable_id``
  * row exists already is a second, stale history of the same element; it is
  * retired as ``superseded`` unless it is mastered (it keeps its place in the
@@ -33,8 +38,7 @@
 import {getStorage} from "../../../storage";
 import type {ElementError, ElementKeyRemap} from "../../../storage/types";
 import {notifyReviewsChanged} from "../../review/reviewsChanged";
-import {elementIdentityKeysOf} from "../../srs/element-identity";
-import {elementKeysOf} from "../../srs/element-keys";
+import {elementFormerKeysOf, elementIdentityKeysOf} from "../../srs/element-identity";
 import {cachedLessonToPeek} from "./plan-set-update";
 import type {PeekExercise, PeekLesson} from "./update-impact";
 
@@ -56,21 +60,27 @@ function exerciseIdsOf(exercise: PeekExercise): string[] {
     return [...new Set(ids)];
 }
 
-/** The text -> stable_id pairs one exercise declares without ambiguity. */
+/** The former key -> current key pairs one exercise declares without
+ *  ambiguity (a former key is the element's text, or for a multiple choice
+ *  one of its text-or-id mixes, #3962). */
 function exerciseKeyPairs(exercise: PeekExercise): {old: string; new: string}[] {
-    const texts = elementKeysOf(exercise);
+    const formerKeys = elementFormerKeysOf(exercise);
     const identities = elementIdentityKeysOf(exercise);
-    if (texts === null || identities === null) return [];
+    if (formerKeys === null || identities === null) return [];
+    const allFormer = formerKeys.flat();
     const pairs: {old: string; new: string}[] = [];
-    texts.forEach((text, index) => {
-        const identity = identities[index];
-        if (!text || !identity || text === identity) return;
-        const namesOneElement =
-            texts.filter((other) => other === text).length === 1 &&
-            !identities.includes(text) &&
+    identities.forEach((identity, index) => {
+        if (!identity) return;
+        const identityNamesOneElement =
             identities.filter((other) => other === identity).length === 1 &&
-            !texts.includes(identity);
-        if (namesOneElement) pairs.push({old: text, new: identity});
+            !allFormer.includes(identity);
+        if (!identityNamesOneElement) return;
+        for (const former of formerKeys[index] ?? []) {
+            const formerNamesOneElement =
+                allFormer.filter((other) => other === former).length === 1 &&
+                !identities.includes(former);
+            if (formerNamesOneElement) pairs.push({old: former, new: identity});
+        }
     });
     return pairs;
 }
