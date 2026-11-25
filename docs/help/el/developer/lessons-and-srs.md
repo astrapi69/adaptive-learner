@@ -124,7 +124,7 @@ class ElementError(Base):
 
 ### Mirror Dexie
 
-Το ``frontend/src/storage/element-errors-dexie.ts`` κατοπτρίζει
+Το ``frontend/src/storage/lessons/element-errors-dexie.ts`` κατοπτρίζει
 την υπηρεσία backend 1:1 έναντι IndexedDB. Το συμβόλαιο στο
 ``IElementErrorsNamespace`` είναι πανομοιότυπο μεταξύ και των
 δύο υλοποιήσεων αποθήκευσης, οπότε η πύλη έκδοσης λειτουργίας

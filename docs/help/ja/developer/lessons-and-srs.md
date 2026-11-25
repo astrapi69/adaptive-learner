@@ -111,7 +111,7 @@ class ElementError(Base):
 
 ### Dexieミラー
 
-``frontend/src/storage/element-errors-dexie.ts``はバックエンドサービスをIndexedDBに1:1でミラーリングします。``IElementErrorsNamespace``のコントラクトは両方のストレージ実装で同一のため、Dexieモードのリリースゲート（``make test-dexie-smoke``）がドリフトを検出します。
+``frontend/src/storage/lessons/element-errors-dexie.ts``はバックエンドサービスをIndexedDBに1:1でミラーリングします。``IElementErrorsNamespace``のコントラクトは両方のストレージ実装で同一のため、Dexieモードのリリースゲート（``make test-dexie-smoke``）がドリフトを検出します。
 
 ---
 

@@ -126,7 +126,7 @@ sie intrinsisch zur SRS-Semantik, kein Config-Knopf.
 
 ### Dexie-Spiegel
 
-``frontend/src/storage/element-errors-dexie.ts`` spiegelt
+``frontend/src/storage/lessons/element-errors-dexie.ts`` spiegelt
 den Backend-Service 1:1 gegen IndexedDB. Der Vertrag auf
 ``IElementErrorsNamespace`` ist über beide Storage-
 Implementierungen identisch, sodass das Dexie-Mode-Release-

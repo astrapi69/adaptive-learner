@@ -122,7 +122,7 @@ intrinsic to the SRS semantics, not a config knob.
 
 ### Dexie mirror
 
-``frontend/src/storage/element-errors-dexie.ts`` mirrors the
+``frontend/src/storage/lessons/element-errors-dexie.ts`` mirrors the
 backend service 1:1 against IndexedDB. The contract on
 ``IElementErrorsNamespace`` is identical across both storage
 implementations, so the dexie-mode release gate

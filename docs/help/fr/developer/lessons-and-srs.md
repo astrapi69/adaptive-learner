@@ -123,7 +123,7 @@ configurable.
 
 ### Miroir Dexie
 
-`frontend/src/storage/element-errors-dexie.ts` reproduit le
+`frontend/src/storage/lessons/element-errors-dexie.ts` reproduit le
 service backend 1:1 contre IndexedDB. Le contrat sur
 `IElementErrorsNamespace` est identique dans les deux
 implémentations de stockage, de sorte que la porte de sortie
