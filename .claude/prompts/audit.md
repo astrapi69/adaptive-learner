@@ -89,8 +89,7 @@ If the convention itself is stale, flag it as Outdated under section 4.
   `poetry show --outdated` in each. Distinguish patch/minor (release-prep
   candidates per `release-workflow.md` Step 4b) from major bumps (own session).
 - Frontend: `frontend/package.json`. Run `npm outdated`. Stability filter:
-  no beta/RC/alpha; minimum 2 weeks since release for major bumps; LTS over
-  Current for Node.js.
+  no beta/RC/alpha; LTS over Current for Node.js.
 - BLOCKED items: cross-check against `docs/backlog.md` "Blocked or waiting"
   table. Run `make check-blockers` if available — surfaces upstream-resolved
   blockers automatically (DEP-02 npm publish, DEP-09 vite-plugin-pwa peer-dep,
