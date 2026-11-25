@@ -125,16 +125,6 @@ const EVENT_CATEGORIES: Record<EventType, EventCategory> = {
     toast: "ui",
 };
 
-/** Every category, in display order. */
-const EVENT_CATEGORY_ORDER: EventCategory[] = [
-    "navigation",
-    "ui",
-    "network",
-    "storage",
-    "exercise",
-    "error",
-];
-
 /**
  * Resolve the coarse category for an event. Honours an explicit
  * ``category`` when present, otherwise derives it from ``type`` —
