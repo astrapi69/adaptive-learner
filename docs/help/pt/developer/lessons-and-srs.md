@@ -126,7 +126,7 @@ semântica do SRS, não um parâmetro configurável.
 
 ### Espelho Dexie
 
-`frontend/src/storage/element-errors-dexie.ts` espelha o serviço
+`frontend/src/storage/lessons/element-errors-dexie.ts` espelha o serviço
 do backend 1:1 contra IndexedDB. O contrato em
 `IElementErrorsNamespace` é idêntico nas duas implementações de
 armazenamento, por isso o portão de lançamento do modo Dexie

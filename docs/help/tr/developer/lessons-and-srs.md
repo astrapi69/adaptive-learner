@@ -121,7 +121,7 @@ semantiğine özgüdür, yapılandırma düğmesi değildir.
 
 ### Dexie aynası
 
-``frontend/src/storage/element-errors-dexie.ts``, arka uç
+``frontend/src/storage/lessons/element-errors-dexie.ts``, arka uç
 servisini IndexedDB'ye karşı 1:1 yansıtır.
 
 ---
