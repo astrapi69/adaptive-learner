@@ -48,7 +48,7 @@ jobs:
     runs-on: ${{ inputs.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Confirm the runner is native for this architecture
         # A measurement taken under emulation is a different number than the
@@ -77,12 +77,12 @@ jobs:
           docker info --format 'Storage Driver: {{.Driver}}' || true
           docker info 2>/dev/null | grep -i "driver-type" || echo "driver-type: (none reported - classic graphdriver)"
 
-      - uses: docker/setup-buildx-action@v4
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
         if: inputs.pull_image == ''
 
       - name: Build this architecture only, into the local daemon
         if: inputs.pull_image == ''
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           file: backend/Dockerfile
