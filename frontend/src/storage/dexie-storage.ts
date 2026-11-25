@@ -106,6 +106,7 @@ import {
   recordElementAttemptsDexie,
   remapElementKeysDexie,
   remapExerciseIdsDexie,
+  retireUnservableDexie,
 } from "./lessons/element-errors-dexie";
 import { listRunsDexie, startRunDexie } from "./lessons/set-runs-dexie";
 import { deleteLearningDataDexie } from "./lessons/orphan-data-dexie";
@@ -287,6 +288,8 @@ export const dexieStorage: IStorageService = {
     remapExerciseIds: (userId, remaps) => remapExerciseIdsDexie(userId, remaps),
     archiveRetired: (userId, setId, retiredIds) =>
       archiveRetiredDexie(userId, setId, retiredIds),
+    retireUnservable: (userId, rowIds, reason) =>
+      retireUnservableDexie(userId, rowIds, reason),
   },
 
   // --- Learner-data maintenance (#1445) --------------------------------

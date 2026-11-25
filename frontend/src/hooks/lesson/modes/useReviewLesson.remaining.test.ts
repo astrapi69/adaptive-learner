@@ -221,4 +221,31 @@ describe("#3170 useReviewLesson: remaining follows the played elements", () => {
         expect(result.current.sessionScoreTotal).toBe(1);
         expect(result.current.sessionScoreCorrect).toBe(1);
     });
+
+    it("repro: elements whose exercise is gone are not offered as 'still due' (no dead 'another round')", async () => {
+        // The set was updated: two rows still point at an exercise the
+        // lesson no longer holds, so no question can be built for them.
+        reviewQueueMock.mockResolvedValue([
+            qItem({element_key: "a", exercise_id: "ex-1"}),
+            qItem({element_key: "gone-1", exercise_id: "ex-removed"}),
+            qItem({element_key: "gone-2", exercise_id: "ex-removed-2"}),
+        ]);
+        getLessonMock.mockResolvedValue(lessonWith([matching("ex-1")]));
+        const {result} = renderHook(() =>
+            useReviewLesson({setId: SET_ID, title: "Review", limit: 20}),
+        );
+        await waitFor(() => expect(result.current.status).toBe("ready"));
+        expect(result.current.lesson?.steps).toHaveLength(1);
+        // The header and the summary count what the session can serve.
+        expect(result.current.dueCount).toBe(1);
+        expect(result.current.remaining).toBe(1);
+
+        await act(async () => {
+            await result.current.recordStepAttempts(
+                [attempt("a", true, "ex-1")],
+                result.current.lesson!.steps[0],
+            );
+        });
+        expect(result.current.remaining).toBe(0);
+    });
 });
