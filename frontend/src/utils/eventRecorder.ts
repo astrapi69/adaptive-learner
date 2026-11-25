@@ -26,7 +26,7 @@
 // Types
 // ---------------------------------------------------------------------------
 
-export type EventType =
+type EventType =
     | "click"
     | "navigation"
     | "dialog_open"
@@ -125,8 +125,8 @@ const EVENT_CATEGORIES: Record<EventType, EventCategory> = {
     toast: "ui",
 };
 
-/** Every category, in display order. Exported for the filter UI. */
-export const EVENT_CATEGORY_ORDER: EventCategory[] = [
+/** Every category, in display order. */
+const EVENT_CATEGORY_ORDER: EventCategory[] = [
     "navigation",
     "ui",
     "network",
