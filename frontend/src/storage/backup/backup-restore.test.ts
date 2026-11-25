@@ -183,12 +183,12 @@ describe("restoreDexieBackup across format versions (#3827)", () => {
                 tags: [{id: "t-1", user_id: "u-1", name: "kept", created_at: nowIso()}],
                 future_table: [{id: "f-1"}],
             }),
-            version: "1.10.0",
+            version: "1.99.0",
             future_block: {anything: true},
         } as unknown as BackupPayload;
         const summary = await restoreDexieBackup("u-1", payload);
         expect(summary.tables.tags.inserted).toBe(1);
-        expect(summary.newer_version).toBe("1.10.0");
+        expect(summary.newer_version).toBe("1.99.0");
         expect(summary.skipped_segments).toEqual(["future_block", "future_table"]);
     });
 

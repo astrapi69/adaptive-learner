@@ -65,21 +65,21 @@ def test_restore_names_skipped_segments_when_the_backup_is_newer(db_session: Ses
         db_session,
         _payload(
             user.id,
-            "1.10.0",
+            "1.99.0",
             data={"future_table": [{"id": "f-1"}], "empty_future": []},
             future_block={"anything": True},
             empty_block={},
         ),
     )
     assert summary["tables"]["tags"]["inserted"] == 1
-    assert summary["newer_version"] == "1.10.0"
+    assert summary["newer_version"] == "1.99.0"
     assert summary["skipped_segments"] == ["future_block", "future_table"]
 
 
 def test_restore_reports_a_newer_version_without_unknown_segments(db_session: Session) -> None:
     user = _user(db_session)
-    summary = _restore(db_session, _payload(user.id, "1.10.0"))
-    assert summary["newer_version"] == "1.10.0"
+    summary = _restore(db_session, _payload(user.id, "1.99.0"))
+    assert summary["newer_version"] == "1.99.0"
     assert summary["skipped_segments"] == []
 
 
@@ -152,10 +152,10 @@ def _api_user(client: TestClient) -> str:
 
 def test_import_endpoint_returns_the_newer_backup_report(client: TestClient) -> None:
     user_id = _api_user(client)
-    payload = _payload(user_id, "1.10.0", future_block=[{"x": 1}])
+    payload = _payload(user_id, "1.99.0", future_block=[{"x": 1}])
     resp = client.post("/api/backup/import", params={"user_id": user_id}, json=payload)
     assert resp.status_code == 200, resp.text
-    assert resp.json()["newer_version"] == "1.10.0"
+    assert resp.json()["newer_version"] == "1.99.0"
     assert resp.json()["skipped_segments"] == ["future_block"]
 
 

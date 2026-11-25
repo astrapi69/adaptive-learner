@@ -30,6 +30,8 @@ from app.schemas import (
     ElementKeyRemapResult,
     ElementKeyRemapsIn,
     ExerciseIdRemapsIn,
+    RetireUnservableIn,
+    RetireUnservableResult,
     ReviewQueueItemOut,
     SetRunOut,
     StartRunIn,
@@ -247,6 +249,25 @@ def archive_retired(
         repo, user_id, payload.set_id, payload.retired_ids
     )
     return ArchiveRetiredResult(archived=archived)
+
+
+@router.post(
+    "/{user_id}/element-errors/retire-unservable",
+    response_model=RetireUnservableResult,
+)
+def retire_unservable(
+    user_id: str,
+    payload: RetireUnservableIn,
+    repo: ElementErrorsRepository = Depends(get_element_errors_repo),
+) -> RetireUnservableResult:
+    """#3952: retire rows whose exercise or lesson the installed set no
+    longer holds, with the reason. Retired rows keep their history but leave
+    review scheduling + due counts. Idempotent; one call is one transaction."""
+    _require_user(repo, user_id)
+    retired = element_errors_service.retire_unservable(
+        repo, user_id, payload.row_ids, payload.reason
+    )
+    return RetireUnservableResult(retired=retired)
 
 
 def _require_user_for_runs(repo: SetRunsRepository, user_id: str) -> None:

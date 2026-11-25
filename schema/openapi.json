@@ -1250,6 +1250,17 @@
             ],
             "title": "Retired At"
           },
+          "retired_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retired Reason"
+          },
           "run_id": {
             "default": 1,
             "title": "Run Id",
@@ -4718,6 +4729,50 @@
           "skipped"
         ],
         "title": "ResolveResponse",
+        "type": "object"
+      },
+      "RetireUnservableIn": {
+        "description": "#3952: retire rows the installed set can no longer serve a question\nfor. ``reason`` says which part is gone; \"author\" is not accepted here,\nthat reason belongs to the manifest's ``retired_ids`` path.",
+        "properties": {
+          "reason": {
+            "enum": [
+              "exercise_missing",
+              "lesson_missing",
+              "element_missing",
+              "superseded"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "row_ids": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "title": "Row Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "row_ids",
+          "reason"
+        ],
+        "title": "RetireUnservableIn",
+        "type": "object"
+      },
+      "RetireUnservableResult": {
+        "description": "Outcome of a retire-unservable call: rows newly retired. Rows already\nretired keep their first reason and are not counted.",
+        "properties": {
+          "retired": {
+            "title": "Retired",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "retired"
+        ],
+        "title": "RetireUnservableResult",
         "type": "object"
       },
       "ReviewQueueItemOut": {
@@ -14770,6 +14825,59 @@
           }
         },
         "summary": "Remap Exercise Ids",
+        "tags": [
+          "Progress"
+        ]
+      }
+    },
+    "/api/users/{user_id}/element-errors/retire-unservable": {
+      "post": {
+        "description": "#3952: retire rows whose exercise or lesson the installed set no\nlonger holds, with the reason. Retired rows keep their history but leave\nreview scheduling + due counts. Idempotent; one call is one transaction.",
+        "operationId": "retire_unservable_api_users__user_id__element_errors_retire_unservable_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetireUnservableIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetireUnservableResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retire Unservable",
         "tags": [
           "Progress"
         ]

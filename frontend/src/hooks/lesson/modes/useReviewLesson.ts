@@ -41,6 +41,8 @@ import {
     dedupeReviewQueueByElement,
     synthesizeReviewLesson,
 } from "../../../lib/review/review-lesson";
+import {migrateSetElementKeys} from "../../../lib/content/update/element-key-migration";
+import {retireUnservableRows} from "../../../lib/review/retire-unservable";
 import {loadReviewQueue} from "../../../lib/review/review-queue";
 import {notifyReviewsChanged} from "../../../lib/review/reviewsChanged";
 import {clearHintUsage, stampHintUsage} from "../../../lib/hints/hint-usage";
@@ -269,6 +271,13 @@ export function useReviewLesson(
                 );
                 setQueue(servableQueue);
                 setDueCount(servableQueue.length);
+                // #3952 — what is provably gone leaves the due counts for
+                // good; a lesson that only failed to load is left alone.
+                void retireUnservableRows(userId, match.source, setId, fetchedQueue, lessonMap);
+                // #3960 — a row still keyed by an element's text moves onto the
+                // element's stable_id, where this session's answers land. Sets
+                // no sync touches (bundled, official) are reached only here.
+                void migrateSetElementKeys(userId, match.source, setId).catch(() => undefined);
                 const synthesised = synthesizeReviewLesson(
                     servableQueue,
                     lessonMap,

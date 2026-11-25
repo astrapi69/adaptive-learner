@@ -23,6 +23,7 @@ import { invalidateContentUpdateCount } from "../browse/content-updates-badge";
 import { readLearnerState } from "../../learning/learnerState";
 import { assessSetUpdate } from "../update/assess-set-update";
 import { migrateSetExerciseIds } from "../update/stable-id-migration";
+import { migrateSetElementKeys } from "../update/element-key-migration";
 import { listRepoManifestSets, validateUserRepo } from "./content-repo-validate";
 import { resolveRepoToken } from "./repo-token";
 import {
@@ -385,6 +386,8 @@ export async function syncUserRepo(
     if (userId) {
       try {
         await migrateSetExerciseIds(userId, source, manifestSet.id);
+        // #3960 — then the element level, onto the exercise's settled id.
+        await migrateSetElementKeys(userId, source, manifestSet.id);
       } catch {
         // Rows keep their current key; the next cycle retries.
       }

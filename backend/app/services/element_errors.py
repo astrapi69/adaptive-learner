@@ -321,6 +321,35 @@ def archive_retired(
     return archived
 
 
+def retire_unservable(
+    repo: ElementErrorsRepository,
+    user_id: str,
+    row_ids: list[str],
+    reason: str,
+) -> int:
+    """#3952: retire the user's rows the installed set can no longer serve a
+    question for, recording why.
+
+    Idempotent: a row already retired keeps its first reason. One call is
+    one transaction.
+
+    Args:
+        repo: the element-errors repository.
+        user_id: the learner.
+        row_ids: ids of the rows to retire.
+        reason: "exercise_missing", "lesson_missing", "element_missing" or
+            "superseded".
+
+    Returns:
+        The number of rows newly retired.
+    """
+    if not row_ids:
+        return 0
+    retired = repo.retire_rows(user_id, row_ids, reason)
+    repo.commit()
+    return retired
+
+
 def is_fully_mastered(rows: Iterable[ElementError]) -> bool:
     """EXP-018 / Phase 62: a card is FULLY mastered only when BOTH
     its receptive (``target_to_source``) and productive
