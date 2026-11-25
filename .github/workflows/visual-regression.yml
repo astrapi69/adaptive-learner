@@ -48,9 +48,9 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.61.1-noble
       options: --user 1001
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "24"
 
@@ -65,7 +65,7 @@ jobs:
           echo "$HOME/.bun-npm/bin" >> "$GITHUB_PATH"
 
       - name: Cache bun install
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
           key: bun-${{ runner.os }}-${{ hashFiles('frontend/bun.lock', 'e2e/bun.lock') }}
@@ -111,7 +111,7 @@ jobs:
 
       - name: Upload report + diffs
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: visual-regression-report
           path: |
@@ -129,7 +129,7 @@ jobs:
       # are lost. Matches the precedent on "Upload report + diffs" above.
       - name: Upload regenerated baselines
         if: always() && inputs.update_baselines == true
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: visual-baselines
           path: e2e/visual/screenshots
