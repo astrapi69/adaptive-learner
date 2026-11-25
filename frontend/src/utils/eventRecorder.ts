@@ -26,7 +26,7 @@
 // Types
 // ---------------------------------------------------------------------------
 
-export type EventType =
+type EventType =
     | "click"
     | "navigation"
     | "dialog_open"
@@ -124,16 +124,6 @@ const EVENT_CATEGORIES: Record<EventType, EventCategory> = {
     file_upload: "ui",
     toast: "ui",
 };
-
-/** Every category, in display order. Exported for the filter UI. */
-export const EVENT_CATEGORY_ORDER: EventCategory[] = [
-    "navigation",
-    "ui",
-    "network",
-    "storage",
-    "exercise",
-    "error",
-];
 
 /**
  * Resolve the coarse category for an event. Honours an explicit
