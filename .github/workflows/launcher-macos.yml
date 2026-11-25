@@ -15,7 +15,8 @@ name: Launcher (macOS)
 # source code is platform-agnostic; only the spec file's BUNDLE block
 # is macOS-specific.
 #
-# arm64 only for initial D-02 (macos-14 runner = Apple Silicon). Intel
+# arm64 only for initial D-02 (macos-15 runner = Apple Silicon; macos-14 was
+# withdrawn, #3964). Intel
 # Mac support would require universal2 builds or a separate macos-13
 # job - deferred until users request it.
 #
@@ -70,7 +71,7 @@ env:
 jobs:
   build:
     name: Build launcher .app bundle
-    runs-on: macos-14  # Apple Silicon (arm64)
+    runs-on: macos-15  # Apple Silicon (arm64)
     defaults:
       run:
         working-directory: launcher
