@@ -79,17 +79,16 @@ describe("planElementKeyMigration (#3960)", () => {
             {old: "soy", new: "blank-b1"},
         ],
         [
-            "the collapsed key of a multiple choice",
+            "the collapsed key of a multiple choice with one minted option",
             {
                 id: "ex",
                 type: "multiple_choice",
                 options: [
                     {text: "si", correct: true, stable_id: "opt-2"},
-                    {text: "claro", correct: true, stable_id: "opt-1"},
                     {text: "no", correct: false},
                 ],
             },
-            {old: "claro, si", new: "opt-1, opt-2"},
+            {old: "si", new: "opt-2"},
         ],
     ])("covers %s", (_label, exercise, expected) => {
         const remaps = planElementKeyMigration("es-a1", [{filename: "01.json", exercises: [exercise]}]);
@@ -134,6 +133,22 @@ describe("planElementKeyMigration (#3960)", () => {
     ])("proposes nothing when %s", (_label, exercise) => {
         const remaps = planElementKeyMigration("es-a1", [{filename: "01.json", exercises: [exercise]}]);
         expect(remaps).toEqual([]);
+    });
+});
+
+describe("planElementKeyMigration: a multiple choice minted in steps (#3962)", () => {
+    const options = [
+        {text: "si", correct: true, stable_id: "opt-2"},
+        {text: "claro", correct: true, stable_id: "opt-1"},
+        {text: "no", correct: false},
+    ];
+
+    it("maps the mixed keys onto the current key, beside the all-text one", () => {
+        const remaps = planElementKeyMigration("es-a1", [
+            {filename: "01.json", exercises: [{id: "ex", type: "multiple_choice", options}]},
+        ]);
+        expect(remaps.map((remap) => remap.new)).toEqual(["opt-1, opt-2", "opt-1, opt-2", "opt-1, opt-2"]);
+        expect(remaps.map((remap) => remap.old).sort()).toEqual(["claro, opt-2", "claro, si", "opt-1, si"]);
     });
 });
 

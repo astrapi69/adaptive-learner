@@ -234,3 +234,32 @@ describe("classifyUnservable: a row another mechanism can still re-key (#3958)",
         expect(result).toEqual({...NONE, exercise_missing: ["gone"]});
     });
 });
+
+describe("classifyUnservable: a multiple-choice row keyed while its options were partly minted (#3962)", () => {
+    const options = [
+        {text: "si", correct: true, stable_id: "opt-2"},
+        {text: "claro", correct: true, stable_id: "opt-1"},
+        {text: "no", correct: false},
+    ];
+
+    it.each(["claro, opt-2", "opt-1, si", "claro, si", "opt-1, opt-2"])(
+        "leaves the row keyed %s: the migration re-keys it",
+        (key) => {
+            const result = classifyUnservable(
+                [row("kept", "01.json", "ex-1", key)],
+                lessonOf({type: "multiple_choice", options}),
+                ["01.json"],
+            );
+            expect(result).toEqual(NONE);
+        },
+    );
+
+    it("still names a key no mix of the options yields", () => {
+        const result = classifyUnservable(
+            [row("gone", "01.json", "ex-1", "claro, vale")],
+            lessonOf({type: "multiple_choice", options}),
+            ["01.json"],
+        );
+        expect(result).toEqual({...NONE, element_missing: ["gone"]});
+    });
+});

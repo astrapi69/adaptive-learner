@@ -14,7 +14,7 @@
 
 import { describe, expect, it } from "vitest";
 import { elementKeysOf } from "./element-keys";
-import { elementIdentityKeysOf } from "./element-identity";
+import { elementFormerKeysOf, elementIdentityKeysOf } from "./element-identity";
 import type { ContentLessonExercise } from "../../storage/types";
 
 /** Minimal exercise carrying only what the key rule reads. */
@@ -155,5 +155,73 @@ describe("elementIdentityKeysOf fails closed on an unknown type, same as element
 
   it("returns null for a missing type", () => {
     expect(elementIdentityKeysOf(ex({}))).toBeNull();
+  });
+});
+
+describe("elementFormerKeysOf - the keys an element was stored under before (#3962)", () => {
+  const former = (exercise: unknown) => elementFormerKeysOf(exercise as ContentLessonExercise);
+
+  it("names a minted pair's text, and nothing for a pair without an id", () => {
+    expect(
+      former({
+        type: "matching",
+        pairs: [
+          { left: "casa", right: "Haus", stable_id: "pair-x1" },
+          { left: "perro", right: "Hund" },
+        ],
+      }),
+    ).toEqual([["casa"], []]);
+  });
+
+  it("names a minted cloze blank's text", () => {
+    expect(
+      former({ type: "cloze", cloze_mode: "type", blanks: [{ accept: ["soy"], stable_id: "blank-b1" }] }),
+    ).toEqual([["soy"]]);
+  });
+
+  it("names every text-or-id mix of a multiple choice except the current key", () => {
+    const keys = former({
+      type: "multiple_choice",
+      options: [
+        { text: "si", correct: true, stable_id: "opt-2" },
+        { text: "claro", correct: true, stable_id: "opt-1" },
+        { text: "no", correct: false, stable_id: "opt-3" },
+      ],
+    });
+    expect(keys).toHaveLength(1);
+    expect([...keys![0]].sort()).toEqual(["claro, opt-2", "claro, si", "opt-1, si"]);
+  });
+
+  it("mixes only the options that carry an id", () => {
+    expect(
+      former({
+        type: "multiple_choice",
+        options: [
+          { text: "si", correct: true, stable_id: "opt-2" },
+          { text: "claro", correct: true },
+        ],
+      }),
+    ).toEqual([["claro, si"]]);
+  });
+
+  it("names nothing for a multiple choice without ids", () => {
+    expect(former({ type: "multiple_choice", options: [{ text: "si", correct: true }] })).toEqual([[]]);
+  });
+
+  it("names only the all-text key when more correct options are minted than it enumerates", () => {
+    const options = Array.from({ length: 7 }, (_, i) => ({
+      text: `t${i}`,
+      correct: true,
+      stable_id: `o${i}`,
+    }));
+    expect(former({ type: "multiple_choice", options })).toEqual([["t0, t1, t2, t3, t4, t5, t6"]]);
+  });
+
+  it("names nothing for a type without an element-level id", () => {
+    expect(former({ type: "free_text", accept: ["hola"] })).toEqual([[]]);
+  });
+
+  it("fails closed on an unknown type", () => {
+    expect(former({ type: "ext:not-adopted" })).toBeNull();
   });
 });
