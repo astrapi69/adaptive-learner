@@ -80,3 +80,56 @@ export function elementIdentityKeysOf(exercise: KeyBearingExercise): string[] | 
       return canonical;
   }
 }
+
+/** Above this many minted correct options the text-or-id mixes of a
+ *  multiple choice are not enumerated (they double per option); only the
+ *  all-text key is named then. */
+const MAX_MIXED_OPTIONS = 6;
+
+/** Every key a multiple choice had while its correct options were minted
+ *  one after the other: each minted option contributes its text or its id. */
+function multipleChoiceFormerKeys(exercise: KeyBearingExercise, current: string): string[] {
+  const correct = (exercise.options ?? []).filter((option) => option?.correct === true);
+  const minted = correct.filter((option) => option?.stable_id);
+  const mixable = minted.length <= MAX_MIXED_OPTIONS;
+  let mixes: string[][] = [[]];
+  for (const option of correct) {
+    const text = option?.text ?? "";
+    const forms = option?.stable_id && mixable ? [text, option.stable_id] : [text];
+    mixes = mixes.flatMap((mix) => forms.map((form) => [...mix, form]));
+  }
+  const keys = new Set(mixes.map((mix) => [...mix].sort().join(", ")));
+  keys.delete(current);
+  keys.delete("");
+  return [...keys];
+}
+
+/**
+ * The keys each element of ``exercise`` was stored under BEFORE it had its
+ * current identity key, in the order of {@link elementIdentityKeysOf}
+ * (#3960, #3962). A row still on one of them is the same element under an
+ * older name: it is re-keyed, never read as a missing element.
+ *
+ * For a pair or a blank that is its text. A multiple choice has one collapsed
+ * key, so its former keys are every text-or-id mix of its correct options.
+ * An element without a ``stable_id`` has none. Same ``null`` contract as
+ * elementIdentityKeysOf: the type is not known here.
+ *
+ * @example
+ * ```ts
+ * elementFormerKeysOf({type: "matching", pairs: [{left: "merci", right: "danke", stable_id: "pair-x1"}]});
+ * // -> [["merci"]]
+ * ```
+ */
+export function elementFormerKeysOf(exercise: KeyBearingExercise): string[][] | null {
+  const identities = elementIdentityKeysOf(exercise);
+  const canonical = elementKeysOf(exercise);
+  if (identities === null || canonical === null) return null;
+  if (exercise.type === "multiple_choice") {
+    return identities.map((identity) => multipleChoiceFormerKeys(exercise, identity));
+  }
+  return identities.map((identity, index) => {
+    const text = canonical[index];
+    return text && text !== identity ? [text] : [];
+  });
+}
