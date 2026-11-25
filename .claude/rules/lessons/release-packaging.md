@@ -27,7 +27,7 @@ In active development projects, dependency versions should be kept current from 
 ### Rules
 
 - Only stable releases, no beta/RC/alpha versions ever in production code
-- "Latest stable" means most recent version that has proven stable (minimum 2 weeks since release)
+- "Latest stable" means the most recent stable release
 - For LTS products (Node.js), prefer Active LTS over Current
 - Review dependencies at each release cycle: run `poetry show --outdated` and `bun outdated` before cutting any release
 - Major version bumps get their own commit with migration notes
@@ -58,7 +58,6 @@ Never ship with:
 
 Stability filter:
 - Latest stable only, never beta/RC/alpha
-- Minimum 2 weeks since release for new major versions
 - For LTS products (Node.js), prefer Active LTS over Current
 
 ## install.sh VERSION drift

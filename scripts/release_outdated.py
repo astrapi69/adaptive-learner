@@ -216,7 +216,7 @@ def main(root: Path = REPO_ROOT) -> int:
     )
     print(
         "\nApply routine bumps (patch + minor within a major) with 'poetry update <allowlist>' / bun, never bare;"
-        " majors get their own session. Mind the two-week rule for fresh releases."
+        " majors get their own session."
     )
     return 0
 
