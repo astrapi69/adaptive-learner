@@ -30,7 +30,7 @@ import {readBackupFile} from "../../../lib/backup/validateBackupFile";
 import {backupFileErrorText, newerBackupNotice} from "../../../lib/backup/backupVersionNotice";
 import {SettingsSection} from "../SettingsSection";
 import {backupOwnerId} from "../../../storage/backup";
-import {planMergeRestore} from "../../../lib/backup/merge-restore-plan";
+import {planMergeRestore} from "../../../lib/backup/restore/merge-restore-plan";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../../../types/domain";
 import {BackupAutoBackups} from "./BackupAutoBackups";
 import {BackupCompareSection} from "./BackupCompareSection";

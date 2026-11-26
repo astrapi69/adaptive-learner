@@ -21,18 +21,18 @@
 import {
   backupOwnerId,
   rehomeBackupData,
-} from "../../storage/backup/backup-rehome";
-import { normalizeRestoreRecord } from "../../storage/backup/backup-normalize";
-import { mergeOutcome } from "../../storage/backup/backup-restore";
+} from "../../../storage/backup/backup-rehome";
+import { normalizeRestoreRecord } from "../../../storage/backup/backup-normalize";
+import { mergeOutcome } from "../../../storage/backup/backup-restore";
 import {
   recordBelongsToUser,
   type RowDict,
-} from "../../storage/backup/backup-scope";
+} from "../../../storage/backup/backup-scope";
 import {
   BACKUP_TABLES,
   SECRET_TABLES,
-} from "../../storage/backup/backup-tables";
-import type { BackupPayload } from "../../types/domain";
+} from "../../../storage/backup/backup-tables";
+import type { BackupPayload } from "../../../types/domain";
 
 /** The rows a merge restore inserts and updates. */
 export interface MergeRestorePlan {

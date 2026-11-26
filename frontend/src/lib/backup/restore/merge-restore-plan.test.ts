@@ -12,14 +12,14 @@ import "fake-indexeddb/auto";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { diffBackups } from "./backup-diff";
+import { diffBackups } from "../backup-diff";
 import { planMergeRestore } from "./merge-restore-plan";
-import { createDexieBackup, restoreDexieBackup } from "../../storage/backup";
-import { BACKUP_TABLES } from "../../storage/backup/backup-tables";
-import { _resetDbForTests, getDb } from "../../storage/dexie/db";
-import { dexieStorage } from "../../storage/dexie-storage";
-import { recordElementAttemptsDexie } from "../../storage/lessons/element-errors-dexie";
-import type { BackupPayload } from "../../types/domain";
+import { createDexieBackup, restoreDexieBackup } from "../../../storage/backup";
+import { BACKUP_TABLES } from "../../../storage/backup/backup-tables";
+import { _resetDbForTests, getDb } from "../../../storage/dexie/db";
+import { dexieStorage } from "../../../storage/dexie-storage";
+import { recordElementAttemptsDexie } from "../../../storage/lessons/element-errors-dexie";
+import type { BackupPayload } from "../../../types/domain";
 
 const TABLE = "element_errors";
 const STAMP = BACKUP_TABLES[TABLE].timestampField;
