@@ -28,7 +28,14 @@ async function freshDb() {
     (globalThis as unknown as {indexedDB: IDBFactory}).indexedDB = new IDBFactory();
 }
 
-beforeEach(freshDb);
+// fake-indexeddb keeps its data across a reset (it only closes the handle),
+// so the two tables are cleared explicitly, as backup-content-sets.test.ts
+// does; without it one case counts the files of the case before it.
+beforeEach(async () => {
+    await freshDb();
+    const db = getDb();
+    await Promise.all([db.contentSets.clear(), db.contentSetFiles.clear()]);
+});
 afterEach(_resetDbForTests);
 
 const USER = "u-1";
@@ -132,6 +139,6 @@ describe("restoring an own set that exists on the device (#3932)", () => {
         ]);
 
         expect(result).toEqual({restored: 0, skipped: 1, errors: []});
-        expect(await db.contentSetFiles.count()).toBe(1);
+        expect(await db.contentSetFiles.where("set_pk").equals(setPk).count()).toBe(1);
     });
 });
