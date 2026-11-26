@@ -2,6 +2,7 @@
 import {readFileSync} from "node:fs";
 import {fileURLToPath} from "node:url";
 import {defineConfig} from "vite";
+import {configDefaults} from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import {VitePWA} from "vite-plugin-pwa";
@@ -245,6 +246,11 @@ export default defineConfig({
         environment: "happy-dom",
         globals: true,
         setupFiles: ["./src/test/setup.ts"],
+        // #3968: Stryker in-place mode keeps the original sources under
+        // .stryker-tmp/backup-<id>/. A test run from that copy resolves its
+        // relative imports inside the backup, where only the files Stryker
+        // rewrote exist. An override REPLACES the defaults, hence the spread.
+        exclude: [...configDefaults.exclude, ".stryker-tmp/**"],
         // #1620/#1665: guard tests read these files via readFileSync, which
         // the module graph behind `vitest --changed` (#615 selective PR CI)
         // cannot see - a change to a read target silently skipped the guard
