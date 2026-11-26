@@ -23,6 +23,12 @@ name: Release — prepare (gate)
 #   branch.
 #
 # NOT used for v1.97.0 (finalized manually); effective from the next release.
+#
+# REHEARSAL (#3976): the gate is read-only, so it can also be dispatched on
+# `develop` with the version develop carries, before any branch is cut. That
+# proves this container and the suites on develop's tree; the messages below
+# that speak of `release/<version>` and of 'Release - finish' do not apply to
+# such a run. See the Final checklist in .claude/rules/release-workflow.md.
 
 on:
   workflow_dispatch:

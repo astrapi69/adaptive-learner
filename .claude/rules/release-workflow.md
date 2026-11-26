@@ -19,6 +19,8 @@ The permanent workflow for AdaptiveLearner releases. Claude Code reads this file
 
 `main` holds releases only; `develop` is the active branch (the GitHub default). A release is prepared on a `release/*` branch cut from `develop`, then merged to `main` (where it is tagged) and back to `develop`:
 
+Before the cut, rehearse the gate on develop (Final checklist, first item).
+
 ```bash
 make release-prepare VERSION=X.Y.Z     # checkout develop, create release/X.Y.Z
 # on release/X.Y.Z: bump backend/pyproject.toml, make sync-versions,
@@ -441,6 +443,13 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
       user's database, uploads and Fernet key sit invisible in the other one.
       The "no user notification needed" answer holds only while no release
       goes out carrying the bare name.
+- [ ] Gate rehearsed before the branch is cut (#3976): `gh workflow run
+      release-prepare.yml --ref develop -f version=<version in develop's
+      backend/pyproject.toml>` (read-only), green on the commit the branch
+      is cut from, RUN ID in the release journal entry. It proves the
+      container and the suites on develop's tree. `release.yml` stage
+      `prepare` has no rehearsal (it pushes `release/<version>` first) and
+      gates the bumped tree: a ratchet the bump trips shows only there.
 - [ ] Reviewed the commits since the last tag
 - [ ] Version number picked per SemVer and confirmed by the user
 - [ ] CHANGELOG.md with the new entry committed
