@@ -22,11 +22,12 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends, status  # noqa: F401  (Body used as Body(...))
+from fastapi import APIRouter, Body, Depends, Query, status
 from fastapi.responses import Response
 
 from app.deps import get_backup_repo
 from app.repositories.backup_repo import BackupRepository
+from app.services.backup_reset import RestoreMode
 from app.services.backup_service import (
     create_backup,
     get_backup_stats,
@@ -36,6 +37,10 @@ from app.services.backup_service import (
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/backup", tags=["backup"])
+
+RESTORE_MODE_DOC = (
+    "merge: add and update, delete nothing. reset: end up exactly at the backup, all or nothing."
+)
 
 
 def _filename_for(user_id: str) -> str:
@@ -99,6 +104,7 @@ def backup_stats(user_id: str, repo: BackupRepository = Depends(get_backup_repo)
 def import_backup(
     user_id: str,
     payload: dict[str, Any] = Body(...),
+    mode: RestoreMode = Query("merge", description=RESTORE_MODE_DOC),
     repo: BackupRepository = Depends(get_backup_repo),
 ) -> dict[str, Any]:
     """Restore a previously-exported JSON backup payload.
@@ -110,8 +116,10 @@ def import_backup(
     ``python-multipart`` runtime dependency that ``UploadFile``
     drags in.
 
-    Merge semantics: never deletes, only inserts new records or
-    updates mutable rows where the backup's timestamp is newer.
-    API keys are ignored even if present in the payload.
+    ``mode=merge`` (default): never deletes, only inserts new records
+    or updates mutable rows where the backup's timestamp is newer.
+    ``mode=reset`` (#3787): the installation ends up exactly at the
+    backup's state, all or nothing. API keys are ignored even if
+    present in the payload, and are kept in both modes.
     """
-    return restore_backup(repo, payload, target_user_id=user_id)
+    return restore_backup(repo, payload, target_user_id=user_id, mode=mode)
