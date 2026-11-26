@@ -147,3 +147,7 @@ docs/review/i18n-csv/
 
 # Credential-free docker client config the launcher prepares (#2126).
 .docker/
+
+# Knowledge graph the graphify tool builds from the code (graph.json, report,
+# HTML view, cache). Local and rebuilt on demand, never committed.
+graphify-out/
