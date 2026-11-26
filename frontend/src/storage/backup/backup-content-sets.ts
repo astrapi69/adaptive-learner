@@ -4,7 +4,8 @@
  *
  * Restores the install-global content cache carried in a backup
  * (#130): a set already present locally is skipped; a missing set is
- * written to ``contentSets`` + ``contentSetFiles``. For API-origin
+ * written to ``contentSets`` + ``contentSetFiles``. An own set that is
+ * present gets the lessons the device lacks (#3932). For API-origin
  * backups without Dexie ``meta`` the row is recovered from the
  * carried ``manifest.yaml`` (#134) so titles + language pairs survive
  * instead of collapsing to the raw ``set_id``.
@@ -15,6 +16,7 @@ import {parseManifest, resolveLanguagePair} from "../../lib/content/engine";
 import {nowIso, type AdaptiveLearnerDB} from "../dexie/db";
 import type {ContentSetRow, ContentSetFileRow} from "../dexie/db";
 import type {ContentSetBackupEntry} from "../../types/domain";
+import {USER_GENERATED_SOURCE} from "../types";
 
 /** Slugify a ``owner/name`` source the same way the content cache key
  *  does (matches the backend ``slugify_source`` + Dexie ``cacheKey``). */
@@ -23,8 +25,44 @@ function slugifyContentSource(source: string): string {
 }
 
 /**
+ * Add the lessons of a backed-up own set that the device's copy lacks
+ * (#3932). An own set always carries the same version, so its key cannot
+ * tell the backup's set from the device's; the lessons are compared
+ * instead. A lesson both sides hold keeps the device's version: a lesson
+ * carries no timestamp, and the device is the side in use (owner decision
+ * on #3787). One ``rw`` transaction, so the count never disagrees with the
+ * files. Returns how many lessons were added.
+ */
+async function addMissingLessons(
+    db: AdaptiveLearnerDB,
+    setPk: string,
+    entry: ContentSetBackupEntry,
+): Promise<number> {
+    return db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
+        const present = await db.contentSetFiles.where("set_pk").equals(setPk).toArray();
+        const held = new Set(present.map((file) => file.filename));
+        const missing: ContentSetFileRow[] = entry.files
+            .filter((file) => file.filename.startsWith("lessons/") && !held.has(file.filename))
+            .map((file) => ({
+                id: `${setPk}#${file.filename}`,
+                set_pk: setPk,
+                filename: file.filename,
+                body: file.body,
+                encoding: file.encoding,
+            }));
+        if (missing.length === 0) return 0;
+        await db.contentSetFiles.bulkPut(missing);
+        const lessonCount =
+            present.filter((file) => file.filename.startsWith("lessons/")).length + missing.length;
+        await db.contentSets.where("id").equals(setPk).modify({lesson_count: lessonCount});
+        return missing.length;
+    });
+}
+
+/**
  * Restore downloaded content sets into IndexedDB (#130). A set already
- * present locally is skipped; a missing set is written to ``contentSets``
+ * present locally is skipped, except an own set, which gets the lessons
+ * it lacks (#3932); a missing set is written to ``contentSets``
  * + ``contentSetFiles``. When the entry carries Dexie ``meta`` (a
  * Dexie-origin backup) the row is restored verbatim; otherwise (an
  * API-origin backup) a minimal row is synthesised from the manifest so
@@ -46,7 +84,12 @@ export async function restoreDexieContentSets(
                     ? (entry.meta.id as string)
                     : `${slugifyContentSource(entry.source)}/${entry.set_id}/${entry.version}`;
             if ((await db.contentSets.get(setPk)) != null) {
-                result.skipped += 1;
+                const added =
+                    entry.source === USER_GENERATED_SOURCE
+                        ? await addMissingLessons(db, setPk, entry)
+                        : 0;
+                if (added > 0) result.restored += 1;
+                else result.skipped += 1;
                 continue;
             }
             const row = buildContentSetRow(setPk, entry);

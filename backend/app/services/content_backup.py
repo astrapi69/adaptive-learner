@@ -51,6 +51,10 @@ logger = logging.getLogger(__name__)
 
 CONTENT_LOADER_DIR = "content-loader"
 MANIFEST_FILENAME = "manifest.yaml"
+# The source of the learner's own sets (the content-loader's
+# ``USER_GENERATED_SOURCE``; the frontend holds the same constant).
+OWN_SET_SOURCE = "user-generated"
+LESSONS_PREFIX = "lessons/"
 
 # Suffixes stored verbatim as text; everything else travels base64.
 _TEXT_SUFFIXES = {".json", ".yaml", ".yml", ".md", ".txt", ".csv", ".svg"}
@@ -264,12 +268,87 @@ def _write_set(root: Path, entry: dict[str, Any]) -> None:
     shutil.move(str(tmp_dir), str(version_dir))
 
 
+def _missing_lesson_files(version_dir: Path, entry: dict[str, Any]) -> list[dict[str, Any]]:
+    """The backup's lesson files the cached set does not hold.
+
+    Only a plain file name directly under ``lessons/`` counts: a name with
+    a path separator could leave the set directory.
+    """
+    lessons_dir = version_dir / "lessons"
+    held = {path.name for path in lessons_dir.iterdir()} if lessons_dir.is_dir() else set()
+    missing: list[dict[str, Any]] = []
+    for file_entry in entry.get("files", []):
+        if not isinstance(file_entry, dict):
+            continue
+        filename = str(file_entry.get("filename", ""))
+        name = filename.removeprefix(LESSONS_PREFIX)
+        if not filename.startswith(LESSONS_PREFIX) or not name or name in held:
+            continue
+        if Path(name).name != name:
+            raise ValueError(f"file path escapes the set directory: {filename!r}")
+        missing.append(file_entry)
+    return missing
+
+
+def _record_added_lessons(version_dir: Path, added: list[str]) -> None:
+    """Bring the cached manifest in line with the lessons now on disk.
+
+    ``lesson_count`` of the set entry follows the files; a declared
+    ``metadata.lessons`` order gets the added names appended. Written to a
+    sibling file and renamed, so a reader never sees half a manifest.
+    """
+    manifest_path = version_dir / MANIFEST_FILENAME
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    if not isinstance(manifest, dict):
+        return
+    sets = manifest.get("sets")
+    if isinstance(sets, list) and sets and isinstance(sets[0], dict):
+        sets[0]["lesson_count"] = sum(1 for _ in (version_dir / "lessons").iterdir())
+    metadata = manifest.get("metadata")
+    if isinstance(metadata, dict) and isinstance(metadata.get("lessons"), list):
+        metadata["lessons"] = [*metadata["lessons"], *added]
+    tmp_path = manifest_path.with_name(MANIFEST_FILENAME + ".tmp")
+    tmp_path.write_text(
+        yaml.safe_dump(manifest, allow_unicode=True, sort_keys=False), encoding="utf-8"
+    )
+    tmp_path.replace(manifest_path)
+
+
+def _add_missing_lessons(version_dir: Path, entry: dict[str, Any]) -> int:
+    """Add the lessons of a backed-up own set that the cached copy lacks (#3932).
+
+    An own set always carries the same version, so its path cannot tell the
+    backup's set from the device's; the lessons are compared instead. A
+    lesson both sides hold keeps the device's version: a lesson carries no
+    timestamp, and the device is the side in use (owner decision on #3787).
+
+    Returns:
+        The number of lessons added.
+    """
+    missing = _missing_lesson_files(version_dir, entry)
+    if not missing:
+        return 0
+    lessons_dir = version_dir / "lessons"
+    lessons_dir.mkdir(exist_ok=True)
+    added: list[str] = []
+    for file_entry in missing:
+        name = file_entry["filename"].removeprefix(LESSONS_PREFIX)
+        if file_entry.get("encoding") == "base64":
+            (lessons_dir / name).write_bytes(base64.b64decode(file_entry["body"]))
+        else:
+            (lessons_dir / name).write_text(file_entry["body"], encoding="utf-8")
+        added.append(name)
+    _record_added_lessons(version_dir, added)
+    return len(added)
+
+
 def restore_content_sets(entries: Any) -> dict[str, Any]:
     """Restore cached content sets from the backup wire model.
 
     Merge semantics: a set already present locally (its version dir holds
-    a manifest) is left untouched; missing sets are written. Returns a
-    per-call summary so the restore endpoint can report it.
+    a manifest) is left untouched, except an own set, which gets the
+    lessons it lacks (#3932); missing sets are written. Returns a per-call
+    summary so the restore endpoint can report it.
     """
     summary: dict[str, Any] = {"restored": 0, "skipped": 0, "errors": []}
     if not isinstance(entries, list):
@@ -283,9 +362,18 @@ def restore_content_sets(entries: Any) -> dict[str, Any]:
             version_dir = cache_path_for_set(
                 root, entry["source"], entry["set_id"], entry["version"]
             )
-            if (version_dir / "manifest.yaml").exists():
-                summary["skipped"] += 1
-                logger.info("Content set already cached, skipping: %s", label)
+            if (version_dir / MANIFEST_FILENAME).exists():
+                added = (
+                    _add_missing_lessons(version_dir, entry)
+                    if entry["source"] == OWN_SET_SOURCE
+                    else 0
+                )
+                if added:
+                    summary["restored"] += 1
+                    logger.info("Own set already cached, added %d lesson(s): %s", added, label)
+                else:
+                    summary["skipped"] += 1
+                    logger.info("Content set already cached, skipping: %s", label)
                 continue
             _write_set(root, entry)
             summary["restored"] += 1
