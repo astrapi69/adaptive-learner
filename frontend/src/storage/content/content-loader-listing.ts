@@ -189,7 +189,8 @@ export async function latestCachedRow(
     .filter((r) => r.source === source)
     .toArray();
   if (rows.length === 0) return null;
-  rows.sort((a, b) => (a.version < b.version ? -1 : 1));
+  // Numerically: as strings, "1.9.3" sorts above "1.10.0" (#3788).
+  rows.sort((a, b) => compareVersions(a.version, b.version));
   return rows[rows.length - 1];
 }
 
@@ -265,7 +266,9 @@ export async function listSetsDexie(
     if (seenIds.has(row.set_id)) continue;
     const key = `${row.source}#${row.set_id}`;
     const prev = latestBySet.get(key);
-    if (!prev || prev.version < row.version) latestBySet.set(key, row);
+    if (!prev || compareVersions(prev.version, row.version) < 0) {
+      latestBySet.set(key, row);
+    }
   }
   for (const row of latestBySet.values()) {
     deduped.push(await rowToCachedEntry(row));
