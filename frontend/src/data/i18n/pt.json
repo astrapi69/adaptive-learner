@@ -1279,7 +1279,7 @@
     "reset_confirm_button": "Redefinir para o backup",
     "reset_summary": "Redefinição concluída. Este dispositivo agora corresponde ao backup.",
     "reset_shared_sets_note": "Todos os perfis deste dispositivo compartilham os sets. A redefinição os altera para todos os perfis.",
-    "reset_foreign_unavailable": "Um backup de outro perfil de aprendizagem só pode ser mesclado.",
+    "reset_foreign_unavailable": "Este backup pertence a outro perfil de aprendizagem. Uma redefinição substituiria tudo no perfil ativo pelos dados do outro, por isso ele só pode ser mesclado.",
     "reset_failed": "A redefinição não foi aplicada. Nada foi alterado.",
     "auto_compare_as_a": "Comparar como A",
     "auto_compare_as_b": "Comparar como B",
