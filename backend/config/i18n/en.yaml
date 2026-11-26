@@ -1193,6 +1193,15 @@ backup:
   compare_markdown_downloaded: Diff exported.
   compare_export_failed: "Could not export the comparison."
   confirm_with_counts: Restore ({{added}} added, {{updated}} updated)
+  restore_mode_label: "How should the backup be applied?"
+  restore_mode_merge: "Merge"
+  restore_mode_merge_hint: "Adds what this device lacks and deletes nothing. Something you deleted after the backup comes back."
+  restore_mode_reset: "Reset to the backup"
+  restore_mode_reset_hint: "This device ends up exactly as in the backup. Everything newer is removed."
+  reset_confirm_title: "Reset this device to the backup?"
+  reset_confirm_body: "Your progress, your own lessons and your downloaded sets will be exactly as in the backup. Anything added or changed since then is removed and cannot be brought back. Your AI keys stay."
+  reset_confirm_button: "Reset to the backup"
+  reset_summary: "Reset complete. This device now matches the backup."
   auto_compare_as_a: Compare as A
   auto_compare_as_b: Compare as B
   compare_auto_label: Auto-backup {{date}}
