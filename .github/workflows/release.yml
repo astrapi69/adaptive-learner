@@ -13,9 +13,18 @@ name: Release
 #                    (release-prepare does NOT bump): set backend/pyproject.toml
 #                    -> make sync-versions -> sync-versions-check ->
 #                    verify_version_pins.sh; fix the doc headers / version
-#                    badges via scripts/verify_docs.py --fix; commit + push the
-#                    release branch; run the full gate (make release-test, plus
-#                    make test-e2e-smoke unless skip_e2e). Then STOP for review.
+#                    badges via scripts/verify_docs.py --fix; commit; run the
+#                    full gate (make release-test) on that bumped tree; and
+#                    only then, and only with push_branch=true, push the
+#                    release branch (plus make test-e2e-smoke unless skip_e2e).
+#                    Then STOP for review.
+#
+# REHEARSAL IS THE DEFAULT. Without push_branch=true the prepare stage does
+# everything on the runner and pushes nothing: no release branch appears, no
+# release freeze starts. That is how the job is rehearsed before a release, on
+# the bumped tree. The switch is named for the dangerous direction and
+# defaults to false, so a condition that evaluates wrongly falls to "nothing
+# pushed". A red gate pushes nothing in either mode.
 #   stage=finish  -> make release-finish (merge to main no-ff + tag v<version> +
 #                    open the develop back-merge PR, #2182) and
 #                    make release-publish (DRAFT GitHub Release, #3159).
@@ -44,6 +53,11 @@ on:
           - prepare
           - finish
         default: prepare
+      push_branch:
+        description: "prepare only: after a GREEN gate, push release/<version>. Default false = rehearsal: bump and gate on the runner, push nothing."
+        required: false
+        type: boolean
+        default: false
       skip_e2e:
         description: "prepare only: skip the advisory extra Playwright smoke (make test-e2e-smoke). Default true — it is API-mode and flakes on container dev-server cold-start (#1254); the mandatory make release-test gate already covers Playwright. Set false to run it."
         required: false
@@ -197,22 +211,37 @@ jobs:
         # ROADMAP / backlog version badges + headers to the canonical version.
         run: python3 scripts/verify_docs.py --fix
 
-      - name: Commit + push the release branch
-        # --force: the release branch is ephemeral and always regenerated from
-        # develop by this job. A prepare run that failed AFTER this push (e.g.
-        # in the gate below) leaves a stale release/<version> on origin; a
-        # re-dispatch cuts a fresh branch that diverges from it, so a plain
-        # push would be rejected non-fast-forward and permanently block retry.
-        # Force lets a re-dispatch overwrite the stale branch. Safe because
-        # releases are single-flight (release-freeze) and the branch carries no
-        # work that is not reproduced from develop.
+      - name: Commit the release branch (on the runner)
+        # The gate below reads the committed, bumped tree. Nothing leaves the
+        # runner here.
         run: |
           git add -A
           git commit -m "chore(release): prepare v${{ inputs.version }}" || echo "nothing to commit"
-          git push -u --force origin release/${{ inputs.version }}
 
       - name: Full release gate (make release-test)
+        # BEFORE the push: a red gate leaves no release branch on origin, so
+        # it starts no release freeze and needs no cleanup.
         run: make release-test
+
+      - name: Push the release branch
+        # Only on push_branch=true; the default is a rehearsal. The step is
+        # guarded twice, by its `if` and by the test inside the script, so
+        # that one wrong evaluation still pushes nothing.
+        # --force: the release branch is ephemeral and always regenerated from
+        # develop by this job. A branch left by an earlier prepare run diverges
+        # from a fresh cut, so a plain push would be rejected non-fast-forward
+        # and block the retry. Safe because releases are single-flight
+        # (release-freeze) and the branch carries no work that is not
+        # reproduced from develop.
+        if: ${{ inputs.push_branch == true }}
+        env:
+          PUSH_BRANCH: ${{ inputs.push_branch }}
+        run: |
+          if [ "$PUSH_BRANCH" != "true" ]; then
+            echo "::error::push step reached with push_branch=$PUSH_BRANCH; not pushing"
+            exit 1
+          fi
+          git push -u --force origin release/${{ inputs.version }}
 
       # The extra API-mode Playwright smoke runs in its OWN job
       # (extra-smoke, below) on a fresh runner instead of being appended
@@ -222,9 +251,16 @@ jobs:
       # gates); the extra smoke is the skippable (skip_e2e) advisory.
 
       - name: Next step
+        env:
+          PUSH_BRANCH: ${{ inputs.push_branch }}
         run: |
-          echo "release/${{ inputs.version }} prepared + gated."
-          echo "Review this job AND the 'extra-smoke' job (unless skip_e2e), then re-dispatch with stage=finish."
+          if [ "$PUSH_BRANCH" = "true" ]; then
+            echo "release/${{ inputs.version }} prepared, gated and pushed."
+            echo "Review this job AND the 'extra-smoke' job (unless skip_e2e), then re-dispatch with stage=finish."
+          else
+            echo "REHEARSAL: v${{ inputs.version }} bumped and gated on the runner; nothing was pushed."
+            echo "For the release itself, dispatch again with push_branch=true."
+          fi
 
   extra-smoke:
     name: Extra Playwright smoke (API mode)
@@ -233,7 +269,9 @@ jobs:
     # longer flakes under container resource contention (#1254). Gated by
     # skip_e2e exactly as before. `make release-test` in `prepare` remains the
     # mandatory gate; a red extra-smoke is reviewed before stage=finish.
-    if: ${{ inputs.stage == 'prepare' && inputs.skip_e2e == false }}
+    # push_branch: the job checks out release/<version>, which a rehearsal
+    # never pushes.
+    if: ${{ inputs.stage == 'prepare' && inputs.skip_e2e == false && inputs.push_branch == true }}
     needs: prepare
     # #3971: ubuntu-24.04, not ubuntu-latest. setup-python hands the HOST's
     # Python build into the noble (24.04) container below; on the 26.04 host
