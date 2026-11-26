@@ -222,7 +222,16 @@ export const apiStorage: IStorageService = {
 
   backup: {
     export: (userId) => api.backup.export(userId),
-    import: (userId, payload) => api.backup.import(userId, payload),
+    import: (userId, payload, options) => {
+      // #3787 - the reset is built in browser mode first. Until the backend
+      // has it, a reset here is refused, never run as a merge.
+      if (options?.mode === "reset") {
+        return Promise.reject(
+          new ApiError(501, "Resetting to a backup is not available in server mode yet."),
+        );
+      }
+      return api.backup.import(userId, payload);
+    },
     stats: (userId) => api.backup.stats(userId),
   },
 

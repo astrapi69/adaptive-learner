@@ -14,12 +14,21 @@
  *
  * Live API keys are never overwritten by a backup file, even a
  * hand-edited one.
+ *
+ * The reset mode (#3787) is the other way to apply a backup: the device ends
+ * up exactly at the backup's state. The learner's rows the backup does not
+ * hold are deleted first (``reset/reset-prune.ts``), then every backup row
+ * overwrites its local row whatever the timestamps say. It runs in one
+ * transaction and is all or nothing.
  */
 
 import {getDb, type AdaptiveLearnerDB} from "../dexie/db";
 import {PROGRESS_TABLE, mergeLessonProgress} from "../lessons/progress-merge";
+import {pruneRowsNotInBackup} from "./reset/reset-prune";
 import type {
     BackupPayload,
+    RestoreMode,
+    RestoreOptions,
     RestoreSummary,
     RestoreTableSummary,
 } from "../../types/domain";
@@ -131,6 +140,7 @@ async function restoreRecord(
     recordId: string,
     userId: string,
     idRemap: IdRemap,
+    mode: RestoreMode,
 ): Promise<RowOutcome> {
     const existing =
         ((await store.get(recordId)) as RowDict | undefined) ??
@@ -145,6 +155,17 @@ async function restoreRecord(
     // Existing row. Defensive scope check.
     if (spec.scope !== "self" && existing.user_id != null && existing.user_id !== userId) {
         return "skipped";
+    }
+    if (mode === "reset") {
+        // The backup's row replaces the local one, whichever is newer. The
+        // settings row keeps the fields no backup carries (the AI keys).
+        const row = writableRow(table, record);
+        await store.put(
+            (table === "user_settings"
+                ? {...existing, ...row, id: localId}
+                : {...row, id: localId}) as never,
+        );
+        return "updated";
     }
     if (spec.appendOnly) return "skipped";
     if (table === PROGRESS_TABLE) {
@@ -170,6 +191,7 @@ async function restoreOneTable(
     spec: BackupTableSpec,
     userId: string,
     idRemap: IdRemap,
+    mode: RestoreMode,
 ): Promise<RestoreTableSummary> {
     const summary = emptyTableSummary();
     const store = getTable(db, spec);
@@ -182,7 +204,9 @@ async function restoreOneTable(
             continue;
         }
         try {
-            summary[await restoreRecord(store, table, spec, record, recordId, userId, idRemap)] += 1;
+            summary[
+                await restoreRecord(store, table, spec, record, recordId, userId, idRemap, mode)
+            ] += 1;
         } catch (err) {
             const message = err instanceof Error ? err.message : String(err);
             summary.errors.push(`${table}/${recordId}: ${message}`);
@@ -193,18 +217,50 @@ async function restoreOneTable(
 }
 
 /**
- * Apply a backup payload to the local IndexedDB. Merge semantics:
- * insert unknown ids, update mutable rows where the backup is
- * newer, skip duplicates for append-only rows. Never deletes.
+ * Apply a backup payload to the local IndexedDB.
+ *
+ * ``merge`` (the default): insert unknown ids, update mutable rows where the
+ * backup is newer, skip duplicates for append-only rows. Never deletes.
+ *
+ * ``reset`` (#3787): the device ends up exactly at the backup's state. One
+ * transaction over every store: if any row cannot be applied, nothing is
+ * changed and the call rejects.
+ *
+ * @example
+ * await restoreDexieBackup(userId, payload, {mode: "reset"});
  */
 export async function restoreDexieBackup(
     userId: string,
     payload: BackupPayload,
+    options: RestoreOptions = {},
 ): Promise<RestoreSummary> {
     validateBackupPayload(payload);
     const db = getDb();
     // #3785 - another learner's backup lands under the local learner.
     const data = rehomeBackupData(payload.data, backupOwnerId(payload), userId);
+    if (options.mode !== "reset") return applyBackup(db, userId, payload, data, "merge");
+    return db.transaction("rw", db.tables, async () => {
+        await pruneRowsNotInBackup(db, data, userId);
+        const summary = await applyBackup(db, userId, payload, data, "reset");
+        if (summary.errors.length > 0) {
+            // Throwing aborts the transaction: the rows deleted above are back.
+            throw new Error(
+                `The reset was not applied and the device is unchanged: ${summary.errors[0]}` +
+                    (summary.errors.length > 1 ? ` (and ${summary.errors.length - 1} more)` : ""),
+            );
+        }
+        return summary;
+    });
+}
+
+/** Write a backup's rows and sets; the shared body of both modes. */
+async function applyBackup(
+    db: AdaptiveLearnerDB,
+    userId: string,
+    payload: BackupPayload,
+    data: ReturnType<typeof rehomeBackupData>,
+    mode: RestoreMode,
+): Promise<RestoreSummary> {
     const perTable: Record<string, RestoreTableSummary> = {};
     let totalInserted = 0;
     let totalUpdated = 0;
@@ -233,7 +289,7 @@ export async function restoreDexieBackup(
         // ciphertext); each one counts as skipped.
         const summary = SECRET_TABLES.has(table)
             ? {...emptyTableSummary(), skipped: records.length}
-            : await restoreOneTable(db, table, records as RowDict[], spec, userId, idRemap);
+            : await restoreOneTable(db, table, records as RowDict[], spec, userId, idRemap, mode);
         perTable[table] = summary;
         totalInserted += summary.inserted;
         totalUpdated += summary.updated;
@@ -241,7 +297,7 @@ export async function restoreDexieBackup(
         allErrors.push(...summary.errors);
     }
     // Restore downloaded content sets into the cache (#130).
-    const contentSummary = await restoreDexieContentSets(db, payload.content_sets);
+    const contentSummary = await restoreDexieContentSets(db, payload.content_sets, mode);
     allErrors.push(...contentSummary.errors);
     return {
         user_id: userId,
