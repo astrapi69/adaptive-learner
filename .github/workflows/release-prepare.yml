@@ -52,7 +52,11 @@ env:
 jobs:
   gate:
     name: Release gate (release-test)
-    runs-on: ubuntu-latest
+    # #3971: ubuntu-24.04, not ubuntu-latest. setup-python hands the HOST's
+    # Python build into the noble (24.04) container below; on the 26.04 host
+    # that build has no usable ssl module there and pip cannot reach PyPI.
+    # Host and container move together when the Playwright image moves.
+    runs-on: ubuntu-24.04
     # Run inside the official Playwright image so Chromium + the headless shell
     # are PRE-BAKED — no cdn.playwright.dev download (the #317 failure mode: the
     # CDN was unreachable from the runner, so `npx playwright install` hung at
