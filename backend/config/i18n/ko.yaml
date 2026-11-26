@@ -1203,7 +1203,7 @@ backup:
   reset_confirm_button: "백업 상태로 초기화"
   reset_summary: "초기화가 완료되었습니다. 이 기기는 이제 백업과 같습니다."
   reset_shared_sets_note: "세트는 이 기기의 모든 프로필이 공유합니다. 초기화하면 모든 프로필에서 변경됩니다."
-  reset_foreign_unavailable: "다른 학습 프로필의 백업은 병합만 할 수 있습니다."
+  reset_foreign_unavailable: "이 백업은 다른 학습 프로필의 것입니다. 초기화하면 활성 프로필의 모든 내용이 다른 프로필의 데이터로 바뀌므로 병합만 할 수 있습니다."
   reset_failed: "초기화가 적용되지 않았습니다. 변경된 것은 없습니다."
   auto_compare_as_a: A로 비교
   auto_compare_as_b: B로 비교

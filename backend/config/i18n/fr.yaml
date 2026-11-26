@@ -1203,7 +1203,7 @@ backup:
   reset_confirm_button: "Réinitialiser à la sauvegarde"
   reset_summary: "Réinitialisation terminée. Cet appareil correspond maintenant à la sauvegarde."
   reset_shared_sets_note: "Tous les profils de cet appareil partagent les sets. La réinitialisation les modifie pour chaque profil."
-  reset_foreign_unavailable: "Une sauvegarde d'un autre profil d'apprentissage ne peut être que fusionnée."
+  reset_foreign_unavailable: "Cette sauvegarde appartient à un autre profil d'apprentissage. Une réinitialisation remplacerait tout le profil actif par les données de l'autre ; elle ne peut donc être que fusionnée."
   reset_failed: "La réinitialisation n'a pas été appliquée. Rien n'a été modifié."
   auto_compare_as_a: "Comparer comme A"
   auto_compare_as_b: "Comparer comme B"

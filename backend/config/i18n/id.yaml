@@ -1203,7 +1203,7 @@ backup:
   reset_confirm_button: "Setel ulang ke cadangan"
   reset_summary: "Penyetelan ulang selesai. Perangkat ini sekarang sama dengan cadangan."
   reset_shared_sets_note: "Set dibagikan oleh semua profil di perangkat ini. Penyetelan ulang mengubahnya untuk setiap profil."
-  reset_foreign_unavailable: "Cadangan dari profil belajar lain hanya dapat digabungkan."
+  reset_foreign_unavailable: "Cadangan ini milik profil belajar lain. Penyetelan ulang akan mengganti semua isi profil aktif dengan data profil lain itu, sehingga cadangan ini hanya dapat digabungkan."
   reset_failed: "Penyetelan ulang tidak diterapkan. Tidak ada yang diubah."
   auto_compare_as_a: Bandingkan sebagai A
   auto_compare_as_b: Bandingkan sebagai B
