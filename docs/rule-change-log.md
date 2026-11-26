@@ -87,3 +87,4 @@ predates the PR-only channel to develop and is keyed by its commit.
 | 2026-11-25 | `f2efcd1ad` | #3967 | the two-week minimum age for dependency versions is removed from lessons/release-packaging.md, on the maintainer's decision of 2026-11-25. |
 | 2026-11-26 | `092607a36` | #3970 | lessons/ci-gates.md pins a GitHub Action to the full commit SHA of the newest release (family rule RL-120) instead of the lowest new major that meets the deprecation target. |
 | 2026-11-26 | `2f93d6845` | #3978 | release-workflow.md adds a step before the release branch is cut, a dispatched rehearsal of the release gate on develop with its run id recorded, as the first item of the Final checklist. |
+| 2026-11-26 | `637ac86cf` | #3983 | release-workflow.md no longer says that release.yml's prepare stage cannot be rehearsed; the checklist item names its rehearsal (no push without push_branch=true) beside the read-only gate rehearsal on develop. |
