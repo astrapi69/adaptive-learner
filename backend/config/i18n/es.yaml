@@ -1203,7 +1203,7 @@ backup:
   reset_confirm_button: "Restablecer a la copia"
   reset_summary: "Restablecimiento completado. Este dispositivo coincide ahora con la copia."
   reset_shared_sets_note: "Todos los perfiles de este dispositivo comparten los sets. El restablecimiento los cambia para todos los perfiles."
-  reset_foreign_unavailable: "Una copia de otro perfil de aprendizaje solo se puede combinar."
+  reset_foreign_unavailable: "Esta copia pertenece a otro perfil de aprendizaje. Un restablecimiento sustituiría todo el perfil activo por los datos del otro, por eso solo se puede combinar."
   reset_failed: "El restablecimiento no se aplicó. No se cambió nada."
   auto_compare_as_a: "Comparar como A"
   auto_compare_as_b: "Comparar como B"

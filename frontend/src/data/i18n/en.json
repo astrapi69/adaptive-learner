@@ -1279,7 +1279,7 @@
     "reset_confirm_button": "Reset to the backup",
     "reset_summary": "Reset complete. This device now matches the backup.",
     "reset_shared_sets_note": "The sets are shared by all profiles on this device. The reset changes them for every profile.",
-    "reset_foreign_unavailable": "A backup from another learner profile can only be merged.",
+    "reset_foreign_unavailable": "This backup belongs to another learner profile. A reset would replace everything in the active profile with the other profile's data, so it can only be merged.",
     "reset_failed": "The reset was not applied. Nothing was changed.",
     "auto_compare_as_a": "Compare as A",
     "auto_compare_as_b": "Compare as B",

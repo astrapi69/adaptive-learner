@@ -1203,7 +1203,7 @@ backup:
   reset_confirm_button: "Auf die Sicherung zurücksetzen"
   reset_summary: "Zurücksetzen abgeschlossen. Dieses Gerät entspricht jetzt der Sicherung."
   reset_shared_sets_note: "Die Sets teilen sich alle Profile auf diesem Gerät. Das Zurücksetzen ändert sie für jedes Profil."
-  reset_foreign_unavailable: "Eine Sicherung aus einem anderen Lernprofil lässt sich nur zusammenführen."
+  reset_foreign_unavailable: "Diese Sicherung gehört zu einem anderen Lernprofil. Ein Zurücksetzen würde alles im aktiven Profil durch die Daten des anderen ersetzen, deshalb lässt sie sich nur zusammenführen."
   reset_failed: "Das Zurücksetzen wurde nicht ausgeführt. Es wurde nichts geändert."
   auto_compare_as_a: Als A vergleichen
   auto_compare_as_b: Als B vergleichen

@@ -1203,7 +1203,7 @@ backup:
   reset_confirm_button: "Yedeğe sıfırla"
   reset_summary: "Sıfırlama tamamlandı. Bu cihaz artık yedekle aynı."
   reset_shared_sets_note: "Setleri bu cihazdaki tüm profiller paylaşır. Sıfırlama onları her profil için değiştirir."
-  reset_foreign_unavailable: "Başka bir öğrenme profiline ait yedek yalnızca birleştirilebilir."
+  reset_foreign_unavailable: "Bu yedek başka bir öğrenme profiline ait. Sıfırlama, etkin profildeki her şeyi diğer profilin verileriyle değiştirirdi; bu yüzden yalnızca birleştirilebilir."
   reset_failed: "Sıfırlama uygulanmadı. Hiçbir şey değiştirilmedi."
   auto_compare_as_a: A olarak karşılaştır
   auto_compare_as_b: B olarak karşılaştır
