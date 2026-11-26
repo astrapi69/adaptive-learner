@@ -787,6 +787,18 @@ export interface RestoreTableSummary {
     errors: string[];
 }
 
+/**
+ * How a backup is applied (#3787). ``merge`` adds what the device lacks and
+ * never deletes; ``reset`` brings the device exactly to the backup's state.
+ */
+export type RestoreMode = "merge" | "reset";
+
+/** Options of a restore. */
+export interface RestoreOptions {
+    /** Defaults to ``merge``. */
+    mode?: RestoreMode;
+}
+
 export interface RestoreSummary {
     user_id: string;
     inserted: number;

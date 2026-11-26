@@ -12,6 +12,7 @@ import type {
 } from "../../../api/request-types";
 import type {
   BackupPayload,
+  RestoreOptions,
   BackupStats,
   RestoreSummary,
   Subject,
@@ -34,7 +35,11 @@ export interface ISystemNamespace {
  */
 export interface IBackupNamespace {
   export(userId: string): Promise<BackupPayload>;
-  import(userId: string, payload: BackupPayload): Promise<RestoreSummary>;
+  import(
+    userId: string,
+    payload: BackupPayload,
+    options?: RestoreOptions,
+  ): Promise<RestoreSummary>;
   stats(userId: string): Promise<BackupStats & { user_id: string }>;
 }
 

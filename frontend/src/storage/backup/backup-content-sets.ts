@@ -15,7 +15,7 @@ import {parseManifest, resolveLanguagePair} from "../../lib/content/engine";
 
 import {nowIso, type AdaptiveLearnerDB} from "../dexie/db";
 import type {ContentSetRow, ContentSetFileRow} from "../dexie/db";
-import type {ContentSetBackupEntry} from "../../types/domain";
+import type {ContentSetBackupEntry, RestoreMode} from "../../types/domain";
 import {USER_GENERATED_SOURCE} from "../types";
 
 /** Slugify a ``owner/name`` source the same way the content cache key
@@ -71,10 +71,21 @@ async function addMissingLessons(
 export async function restoreDexieContentSets(
     db: AdaptiveLearnerDB,
     entries: ContentSetBackupEntry[] | undefined,
+    mode: RestoreMode = "merge",
 ): Promise<{restored: number; skipped: number; errors: string[]}> {
     const result = {restored: 0, skipped: 0, errors: [] as string[]};
     if (!Array.isArray(entries)) {
+        // A backup without the block says nothing about the sets; a reset
+        // leaves them as they are too.
         return result;
+    }
+    if (mode === "reset") {
+        // #3787 - the sets end up exactly as in the backup, own and
+        // downloaded alike: every set goes, then the backup's are written.
+        await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
+            await db.contentSets.clear();
+            await db.contentSetFiles.clear();
+        });
     }
     for (const entry of entries) {
         const label = `${entry.source}/${entry.set_id}@v${entry.version}`;

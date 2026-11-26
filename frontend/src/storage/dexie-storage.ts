@@ -181,7 +181,7 @@ export const dexieStorage: IStorageService = {
 
   backup: {
     export: (userId) => createDexieBackup(userId, __APP_VERSION__),
-    import: (userId, payload) => restoreDexieBackup(userId, payload),
+    import: (userId, payload, options) => restoreDexieBackup(userId, payload, options),
     stats: (userId) => getDexieBackupStats(userId),
   },
 
