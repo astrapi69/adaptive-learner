@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
-import re
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
@@ -20,23 +20,35 @@ from app.exceptions import ValidationError
 from app.repositories.backup_repo import BackupRepository
 from app.repositories.element_errors_repo import RETIRED_BY_AUTHOR
 from app.services import crypto
+from app.services.backup_payload import (
+    newer_backup_report,
+    remap_user_identity,
+    validate_payload,
+)
+from app.services.backup_reset import (
+    FOREIGN_BACKUP_RESET_REFUSED,
+    SHARED_ROWS_KEEP_THE_MERGE_RULE,
+    RestoreMode,
+    StagedContentReset,
+    prune_rows_not_in_backup,
+    rows_differing_from_backup,
+    stage_content_reset,
+)
 from app.services.content_backup import restore_content_sets
 from app.services.progress_merge import PROGRESS_TABLE, merge_lesson_progress
 from app.services.sync_service import (
-    TABLES as SYNC_TABLES,
-)
-from app.services.sync_service import (
+    SYNC_SECRET_TABLES,
     TableSpec,
     _from_iso,
     record_belongs_to_user,
     row_belongs_to_user,
 )
+from app.services.sync_service import (
+    TABLES as SYNC_TABLES,
+)
 
 from .backup_export import (
-    BACKUP_FORMAT,
-    BACKUP_VERSION,
     EXCLUDED_USER_SETTINGS_FIELDS,
-    PAYLOAD_SEGMENTS,
 )
 
 logger = logging.getLogger(__name__)
@@ -44,101 +56,6 @@ logger = logging.getLogger(__name__)
 
 def _spec(table: str) -> TableSpec:
     return SYNC_TABLES[table]
-
-
-#: Each part is bounded and the input length is checked first, so a long run
-#: of digits from an uploaded file cannot make the match slow (CodeQL
-#: py/polynomial-redos on the unbounded pattern).
-_VERSION_PATTERN = re.compile(r"(\d{1,9})\.(\d{1,9})\.(\d{1,9})")
-_MAX_VERSION_LENGTH = 32
-
-
-def _parse_version(raw: Any) -> tuple[int, int, int] | None:
-    """Parse a format version strictly as ``MAJOR.MINOR.PATCH``, else ``None``."""
-    if not isinstance(raw, str) or len(raw) > _MAX_VERSION_LENGTH:
-        return None
-    match = _VERSION_PATTERN.fullmatch(raw)
-    if match is None:
-        return None
-    major, minor, patch = (int(part) for part in match.groups())
-    return major, minor, patch
-
-
-def _require_version(raw: str) -> tuple[int, int, int]:
-    """Parse this build's own format version; a malformed one is a build defect."""
-    parsed = _parse_version(raw)
-    if parsed is None:
-        raise RuntimeError(f"BACKUP_VERSION {raw!r} is not MAJOR.MINOR.PATCH.")
-    return parsed
-
-
-_APP_VERSION = _require_version(BACKUP_VERSION)
-
-
-def _supported_format() -> str:
-    """The formats this build reads, e.g. ``"1.x"``."""
-    return f"{BACKUP_VERSION.split('.', 1)[0]}.x"
-
-
-def _check_version(raw: Any) -> None:
-    """Reject a format version this build cannot read (#3827).
-
-    A missing or unreadable version is unknown, not old; a newer major is a
-    layout this build does not know. Every 1.x change is additive, so a newer
-    minor or patch passes and is read with whatever this build knows.
-
-    Raises:
-        ValidationError: for an unknown or a newer-major version.
-    """
-    version = _parse_version(raw)
-    if version is None:
-        shown = str(raw)[:_MAX_VERSION_LENGTH]
-        raise ValidationError(f"Backup format version {shown!r} cannot be read.")
-    if version[0] > _APP_VERSION[0]:
-        raise ValidationError(
-            f"Backup format {raw} is newer than this app reads ({_supported_format()})."
-        )
-
-
-def _has_data(value: Any) -> bool:
-    """Whether a payload segment carries anything to restore."""
-    if value is None or value == "":
-        return False
-    if isinstance(value, (list, dict)):
-        return len(value) > 0
-    return True
-
-
-def _newer_backup_report(payload: dict[str, Any]) -> dict[str, Any]:
-    """Name the segments a newer backup carries that this build skips (#3827).
-
-    A current or older backup reports nothing, so the safe paths stay quiet.
-
-    Returns:
-        ``{"newer_version": str | None, "skipped_segments": [sorted names]}``.
-    """
-    version = _parse_version(payload.get("version"))
-    if version is None or version <= _APP_VERSION:
-        return {"newer_version": None, "skipped_segments": []}
-    data: dict[str, Any] = payload.get("data") or {}
-    tables = {t for t, rows in data.items() if t not in SYNC_TABLES and _has_data(rows)}
-    blocks = {k for k, v in payload.items() if k not in PAYLOAD_SEGMENTS and _has_data(v)}
-    return {"newer_version": payload["version"], "skipped_segments": sorted(tables | blocks)}
-
-
-def _validate_payload(payload: Any) -> dict[str, Any]:
-    """Surface-shape check. Defends restore against random JSON."""
-    if not isinstance(payload, dict):
-        raise ValidationError("Backup payload must be a JSON object.")
-    if payload.get("format") != BACKUP_FORMAT:
-        raise ValidationError(
-            f"Unrecognized backup format: {payload.get('format')!r}. Expected {BACKUP_FORMAT!r}."
-        )
-    _check_version(payload.get("version"))
-    data = payload.get("data")
-    if not isinstance(data, dict):
-        raise ValidationError("Backup payload missing 'data' segment.")
-    return payload
 
 
 _DATETIME_FIELDS_CACHE: dict[str, frozenset[str]] = {}
@@ -527,6 +444,7 @@ def _restore_table(
     records: list[dict[str, Any]],
     user_id: str,
     id_remap: dict[str, dict[str, str]],
+    mode: RestoreMode = "merge",
 ) -> dict[str, Any]:
     """Restore one table's worth of records. Returns per-table summary.
 
@@ -553,7 +471,7 @@ def _restore_table(
         tally["api_keys_skipped"] = api_keys_skipped
     for record in records:
         outcome, error = _restore_one_record(
-            repo, spec, table, record, user_id, id_remap, fk_remap, self_ref_cols
+            repo, spec, table, record, user_id, id_remap, fk_remap, self_ref_cols, mode
         )
         tally[outcome] += 1
         if error is not None:
@@ -570,6 +488,7 @@ def _restore_one_record(
     id_remap: dict[str, dict[str, str]],
     fk_remap: dict[str, str],
     self_ref_cols: tuple[str, ...],
+    mode: RestoreMode = "merge",
 ) -> tuple[str, str | None]:
     """Restore one record. Returns ``(outcome, error)`` where outcome is one of
     ``"inserted"`` / ``"updated"`` / ``"skipped"`` and error is an optional
@@ -579,8 +498,11 @@ def _restore_one_record(
         return "skipped", f"{table}: record missing 'id'"
     record = _redirect_record_fks(record, table, fk_remap, self_ref_cols, id_remap)
     try:
-        return _apply_record(repo, spec, table, record, record_id, user_id, id_remap)
+        return _apply_record(repo, spec, table, record, record_id, user_id, id_remap, mode)
     except Exception as exc:  # pragma: no cover — defensive
+        if mode == "reset":
+            # All or nothing: the reset's caller rolls everything back.
+            raise
         repo.rollback()
         logger.error(
             "Failed to restore row in %r (id=%s): %s",
@@ -630,8 +552,12 @@ def _apply_record(
     record_id: str,
     user_id: str,
     id_remap: dict[str, dict[str, str]],
+    mode: RestoreMode = "merge",
 ) -> tuple[str, str | None]:
-    """Insert or merge one already-FK-redirected record. Returns ``(outcome, error)``."""
+    """Insert, merge or (reset) overwrite one already-FK-redirected record.
+
+    Returns ``(outcome, error)``.
+    """
     model = spec.model
     existing = repo.get_by_pk(model, record_id)
     # Unique-key fallback (#115, generalises the #49 badges fix): the backup
@@ -651,6 +577,17 @@ def _apply_record(
     # Existing row. Defensive scope check on the row itself.
     if not row_belongs_to_user(table, existing, user_id):
         return "skipped", None
+    if (
+        mode == "reset"
+        and table not in SYNC_SECRET_TABLES
+        and spec.scope != SHARED_ROWS_KEEP_THE_MERGE_RULE
+    ):
+        # The backup's row replaces the local one, whichever is newer
+        # (#3787). ``_apply_columns`` keeps the AI keys of the settings row.
+        # Shared rows keep the merge rule below; why they differ from the
+        # sets is in ``backup_reset.SHARED_ROWS_KEEP_THE_MERGE_RULE``.
+        _apply_columns(table, record, existing, allow_pk=False)
+        return "updated", None
     if spec.append_only:
         # History is immutable; an append-only row already present (by id OR
         # by its unique key) is left untouched.
@@ -737,80 +674,25 @@ _RESTORE_ORDER: tuple[str, ...] = tuple(
 )
 
 
-def _remap_user_identity(
-    data: dict[str, Any], source_user_id: str, target_user_id: str
-) -> dict[str, list[dict[str, Any]]]:
-    """Re-home every backup row from ``source_user_id`` to ``target_user_id``.
+@dataclass
+class _TableTotals:
+    """What restoring every table came to."""
 
-    The disaster-recovery case (#129): the backup was made under a prior
-    identity (a wiped/re-created install, or a Dexie-origin file), so its
-    ``users.id`` and every ``user_id`` column carry the OLD id. The merge
-    restore scopes by user, so without re-homing, every user-scoped PARENT
-    (conversations, curriculums, projects, sessions) is rejected and all
-    their children cascade-fail with "missing parent". Substituting the
-    user identity makes the whole backup belong to the importing user, so
-    parents insert and children resolve.
-
-    Only the user identity is remapped; all other ids (project, session,
-    conversation, ...) keep their backup values and reconcile through the
-    existing id/natural-key matching.
-    """
-    remapped: dict[str, list[dict[str, Any]]] = {}
-    for table, records in data.items():
-        if not isinstance(records, list):
-            remapped[table] = records
-            continue
-        new_records: list[dict[str, Any]] = []
-        for record in records:
-            if not isinstance(record, dict):
-                new_records.append(record)
-                continue
-            updated = dict(record)
-            if table == "users" and updated.get("id") == source_user_id:
-                updated["id"] = target_user_id
-            if updated.get("user_id") == source_user_id:
-                updated["user_id"] = target_user_id
-            new_records.append(updated)
-        remapped[table] = new_records
-    return remapped
+    per_table: dict[str, Any]
+    inserted: int
+    updated: int
+    skipped: int
+    api_keys_skipped: int
+    errors: list[str]
 
 
-def restore_backup(
-    repo: BackupRepository, payload: Any, *, target_user_id: str | None = None
-) -> dict[str, Any]:
-    """Apply a backup payload to the database. Merge semantics.
-
-    ``target_user_id`` overrides the user_id stored in the backup file.
-    Default behaviour uses the backup's own ``user_id`` so a user can
-    restore on the same install they exported from. When the override
-    differs from the backup's own ``user_id`` (disaster recovery onto a
-    fresh/re-created install, or a Dexie-origin backup), the entire backup
-    is re-homed to the importing user via :func:`_remap_user_identity`
-    (#129).
-    """
-    payload = _validate_payload(payload)
-    source_user_id = payload.get("user_id")
-    user_id = target_user_id or source_user_id
-    if not isinstance(user_id, str) or not user_id:
-        raise ValidationError("Backup payload missing 'user_id'.")
-
-    data: dict[str, list[dict[str, Any]]] = payload["data"]
-
-    # Re-home a cross-identity backup to the importing user (#129).
-    if isinstance(source_user_id, str) and source_user_id and source_user_id != user_id:
-        logger.info("Backup restore re-homing identity %s -> %s", source_user_id, user_id)
-        data = _remap_user_identity(data, source_user_id, user_id)
-
-    # Defer FK enforcement to the final commit for THIS transaction.
-    # _RESTORE_ORDER already inserts parent TABLES before child tables,
-    # but self-referential FKs (learning_topics.parent_id,
-    # subjects.parent_id) can still see a child row inserted before its
-    # parent row within the same table — table ordering can't fix that.
-    # Deferring checks until commit lets the rows land in any order as
-    # long as the final, fully-restored state is FK-consistent. SQLite
-    # resets this pragma at the end of the transaction automatically.
-    repo.begin_deferred_fk()
-
+def _restore_tables(
+    repo: BackupRepository,
+    data: dict[str, list[dict[str, Any]]],
+    user_id: str,
+    mode: RestoreMode,
+) -> _TableTotals:
+    """Write every table of the backup, parents before children. No commit."""
     per_table: dict[str, Any] = {}
     total_inserted = 0
     total_updated = 0
@@ -821,14 +703,6 @@ def restore_backup(
     # matches so child FKs are redirected to the local id (issue #49).
     id_remap: dict[str, dict[str, str]] = {}
 
-    incoming = sum(len(v) for v in data.values() if isinstance(v, list))
-    logger.info(
-        "Backup restore starting for user %s: %d records across %d tables in payload",
-        user_id,
-        incoming,
-        len(data),
-    )
-
     for table in _RESTORE_ORDER:
         records = data.get(table, [])
         if not isinstance(records, list):
@@ -838,7 +712,12 @@ def restore_backup(
             )
             continue
         summary: dict[str, Any]
-        if records:
+        if records and mode == "reset":
+            # One transaction, no savepoint: SQLite opens its transaction with
+            # the first write, and a SAVEPOINT before it commits on release.
+            summary = _restore_table(repo, table, records, user_id, id_remap, mode)
+            repo.flush()
+        elif records:
             # Restore + flush each table inside its own SAVEPOINT so a
             # single table's unexpected flush failure (a constraint we did
             # not anticipate from a foreign / cross-mode backup) rolls back
@@ -854,7 +733,7 @@ def restore_backup(
             # per table in our own order sidesteps that entirely.
             try:
                 with repo.savepoint():
-                    summary = _restore_table(repo, table, records, user_id, id_remap)
+                    summary = _restore_table(repo, table, records, user_id, id_remap, mode)
                     repo.flush()
             except Exception as exc:
                 logger.error(
@@ -889,37 +768,181 @@ def restore_backup(
         total_api_keys_skipped += summary.get("api_keys_skipped", 0)
         all_errors.extend(summary["errors"])
 
-    repo.commit()
+    return _TableTotals(
+        per_table=per_table,
+        inserted=total_inserted,
+        updated=total_updated,
+        skipped=total_skipped,
+        api_keys_skipped=total_api_keys_skipped,
+        errors=all_errors,
+    )
+
+
+def _commit_reset(
+    repo: BackupRepository,
+    data: dict[str, list[dict[str, Any]]],
+    user_id: str,
+    staged: StagedContentReset | None,
+) -> _TableTotals:
+    """Prune, write and commit a reset; the sets are swapped in with the commit.
+
+    Raises:
+        _ResetNotApplied: A row could not be written. Nothing is committed.
+    """
+    deleted = prune_rows_not_in_backup(repo, data, user_id, _RESTORE_ORDER)
+    logger.info(
+        "Backup reset for user %s: %d rows the backup does not hold removed", user_id, deleted
+    )
+    totals = _restore_tables(repo, data, user_id, "reset")
+    if totals.errors:
+        more = len(totals.errors) - 1
+        raise _ResetNotApplied(totals.errors[0] + (f" (and {more} more)" if more else ""))
+    differing = rows_differing_from_backup(repo, data, user_id, _RESTORE_ORDER)
+    if differing is not None:
+        raise _ResetNotApplied(differing)
+    if staged is None:
+        repo.commit()
+        return totals
+    staged.swap_in()
+    try:
+        repo.commit()
+    except Exception:
+        staged.swap_back()
+        raise
+    staged.finish()
+    return totals
+
+
+class _ResetNotApplied(Exception):
+    """A reset met a row it cannot write."""
+
+
+def _reset_backup(
+    repo: BackupRepository,
+    payload: dict[str, Any],
+    data: dict[str, list[dict[str, Any]]],
+    user_id: str,
+) -> tuple[_TableTotals, dict[str, Any]]:
+    """Bring the installation exactly to the backup's state, or change nothing.
+
+    A reset deletes before it writes, so unlike a merge it does not collect
+    the rows it cannot write and go on: one such row rolls everything back.
+
+    Returns:
+        The table totals and the content-set summary.
+
+    Raises:
+        ValidationError: The backup cannot be applied in full. Rows and
+            sets are as they were.
+    """
+    staged = stage_content_reset(payload.get("content_sets"))
+    try:
+        totals = _commit_reset(repo, data, user_id, staged)
+    except Exception as exc:
+        repo.rollback()
+        if staged is not None:
+            staged.discard()
+        logger.error("Backup reset for user %s not applied: %s", user_id, exc, exc_info=True)
+        # The driver's own message, not SQLAlchemy's, which appends the
+        # statement and its parameters.
+        reason = getattr(exc, "orig", None) or exc
+        raise ValidationError(
+            f"The reset was not applied and nothing was changed: {reason}"
+        ) from exc
+    restored = staged.count if staged is not None else 0
+    return totals, {"restored": restored, "skipped": 0, "errors": []}
+
+
+def restore_backup(
+    repo: BackupRepository,
+    payload: Any,
+    *,
+    target_user_id: str | None = None,
+    mode: RestoreMode = "merge",
+) -> dict[str, Any]:
+    """Apply a backup payload to the database.
+
+    ``mode`` is ``"merge"`` (default): nothing is deleted, rows are inserted
+    or updated where the backup is newer. ``"reset"`` (#3787) brings the
+    installation exactly to the backup's state, all or nothing; see
+    :func:`_reset_backup`.
+
+    ``target_user_id`` overrides the user_id stored in the backup file.
+    Default behaviour uses the backup's own ``user_id`` so a user can
+    restore on the same install they exported from. When the override
+    differs from the backup's own ``user_id`` (disaster recovery onto a
+    fresh/re-created install, or a Dexie-origin backup), the entire backup
+    is re-homed to the importing user via :func:`remap_user_identity`
+    (#129).
+    """
+    payload = validate_payload(payload)
+    source_user_id = payload.get("user_id")
+    user_id = target_user_id or source_user_id
+    if not isinstance(user_id, str) or not user_id:
+        raise ValidationError("Backup payload missing 'user_id'.")
+
+    data: dict[str, list[dict[str, Any]]] = payload["data"]
+
+    # Re-home a cross-identity backup to the importing user (#129).
+    if isinstance(source_user_id, str) and source_user_id and source_user_id != user_id:
+        logger.info("Backup restore re-homing identity %s -> %s", source_user_id, user_id)
+        data = remap_user_identity(data, source_user_id, user_id)
+
+    # Defer FK enforcement to the final commit for THIS transaction.
+    # _RESTORE_ORDER already inserts parent TABLES before child tables,
+    # but self-referential FKs (learning_topics.parent_id,
+    # subjects.parent_id) can still see a child row inserted before its
+    # parent row within the same table — table ordering can't fix that.
+    # Deferring checks until commit lets the rows land in any order as
+    # long as the final, fully-restored state is FK-consistent. SQLite
+    # resets this pragma at the end of the transaction automatically.
+    if mode == "reset" and isinstance(source_user_id, str) and source_user_id != user_id:
+        raise ValidationError(FOREIGN_BACKUP_RESET_REFUSED)
+
+    repo.begin_deferred_fk()
+
+    incoming = sum(len(v) for v in data.values() if isinstance(v, list))
+    logger.info(
+        "Backup restore (%s) starting for user %s: %d records across %d tables in payload",
+        mode,
+        user_id,
+        incoming,
+        len(data),
+    )
+
+    if mode == "reset":
+        totals, content_summary = _reset_backup(repo, payload, data, user_id)
+    else:
+        totals = _restore_tables(repo, data, user_id, "merge")
+        repo.commit()
+        # Restore downloaded content sets into the cache (#130). Done AFTER the
+        # DB commit so a content-write failure can never roll back user data;
+        # the content cache is a filesystem store, independent of the DB
+        # transaction. Absent in pre-1.3.0 backups -> a no-op.
+        content_summary = restore_content_sets(payload.get("content_sets"))
     logger.info(
         "Restore complete: %d total, %d inserted, %d updated, %d skipped, %d errors",
-        total_inserted + total_updated + total_skipped,
-        total_inserted,
-        total_updated,
-        total_skipped,
-        len(all_errors),
+        totals.inserted + totals.updated + totals.skipped,
+        totals.inserted,
+        totals.updated,
+        totals.skipped,
+        len(totals.errors),
     )
-    if all_errors:
-        for err in all_errors:
-            logger.error("Restore error: %s", err)
-
-    # Restore downloaded content sets into the cache (#130). Done AFTER the
-    # DB commit so a content-write failure can never roll back user data;
-    # the content cache is a filesystem store, independent of the DB
-    # transaction. Absent in pre-1.3.0 backups -> a no-op.
-    content_summary = restore_content_sets(payload.get("content_sets"))
-    all_errors.extend(content_summary["errors"])
+    for err in totals.errors:
+        logger.error("Restore error: %s", err)
+    all_errors = [*totals.errors, *content_summary["errors"]]
 
     return {
         "user_id": user_id,
-        "inserted": total_inserted,
-        "updated": total_updated,
-        "skipped": total_skipped,
+        "inserted": totals.inserted,
+        "updated": totals.updated,
+        "skipped": totals.skipped,
         # Count of API-key rollback-cache rows that could not be imported
         # (no usable key in the backup). Non-zero -> the UI tells the user
         # to re-enter their API keys in Settings (#787).
-        "api_keys_skipped": total_api_keys_skipped,
+        "api_keys_skipped": totals.api_keys_skipped,
         "errors": all_errors,
-        "tables": per_table,
+        "tables": totals.per_table,
         "content_sets": content_summary,
-        **_newer_backup_report(payload),
+        **newer_backup_report(payload),
     }

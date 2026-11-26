@@ -101,6 +101,21 @@ describe("ApiStorage delegation", () => {
         });
     });
 
+    it("backup.import asks the server for a reset only when a reset is chosen (#3787)", async () => {
+        const payload = {format: "adaptive-learner-backup"} as never;
+
+        await apiStorage.backup.import("u1", payload);
+        await apiStorage.backup.import("u1", payload, {mode: "merge"});
+        await apiStorage.backup.import("u1", payload, {mode: "reset"});
+
+        expect(calls.map((call) => call.url)).toEqual([
+            "/api/backup/import?user_id=u1",
+            "/api/backup/import?user_id=u1",
+            "/api/backup/import?user_id=u1&mode=reset",
+        ]);
+        expect(calls.every((call) => call.method === "POST")).toBe(true);
+    });
+
     it("reset POSTs the confirmation token to /api/reset", async () => {
         // Phase 41F Danger Zone: pass-through to the backend.
         // The 400 gate on wrong tokens is server-side.
