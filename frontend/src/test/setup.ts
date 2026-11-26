@@ -2,6 +2,35 @@
 // Extends vitest matchers with jest-dom matchers (toBeDisabled, toBeVisible, etc.)
 import "@testing-library/jest-dom/vitest"
 
+// #3973 / #3870: no unit test reaches the network.
+//
+// A fetch no test mocked used to go out for real: a relative URL against
+// happy-dom's default origin http://localhost:3000 (nothing listens there),
+// an absolute one to its host. The connection error came back seconds later
+// and was logged into whatever was running by then; when that was a
+// worker's teardown, Vitest failed the whole run ("Closing rpc while
+// onUserConsoleLog was pending") with every test green.
+//
+// So an un-mocked fetch rejects at once, naming the URL, like a network
+// failure does (a TypeError). A test that needs a response installs its own
+// mock (vi.stubGlobal, vi.spyOn, plain assignment), which replaces this one;
+// vi.unstubAllGlobals brings it back. data: and blob: URLs never leave the
+// process and keep the real fetch.
+if (typeof globalThis.fetch === "function") {
+    const realFetch = globalThis.fetch.bind(globalThis)
+    const urlOf = (input: RequestInfo | URL): string => {
+        if (typeof input === "string") return input
+        return input instanceof URL ? input.href : input.url
+    }
+    globalThis.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+        const url = urlOf(input)
+        if (url.startsWith("data:") || url.startsWith("blob:")) return realFetch(input, init)
+        return Promise.reject(
+            new TypeError(`fetch("${url}") is not mocked: unit tests do not reach the network`),
+        )
+    }
+}
+
 // Radix UI primitives (Select, etc.) rely on a few DOM APIs that
 // happy-dom does not implement. Polyfill them so portal-based
 // components can open/close and scroll in the test environment.
