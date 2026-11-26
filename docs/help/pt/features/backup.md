@@ -84,6 +84,34 @@ tenha sido recomeçada depois dessa conclusão. De duas lições em
 curso, fica a que avançou mais. As tentativas, o melhor resultado
 e o histórico de tentativas de ambos os lados são mantidos.
 
+### Mesclar ou redefinir
+
+Depois de escolher o arquivo, o app pergunta como o backup é aplicado:
+
+- **Mesclar** vem pré-selecionado. Adiciona o que falta neste dispositivo e
+  não apaga nada. O que você apagou depois do backup volta.
+- **Redefinir para o backup** deixa este dispositivo exatamente no estado
+  do backup: seu progresso, suas próprias lições e seus sets baixados. Tudo
+  o que foi adicionado ou alterado desde o backup é removido e não pode ser
+  recuperado. Um diálogo pede confirmação antes que algo aconteça.
+
+Uma redefinição não toca em: suas chaves de IA, os outros perfis de
+aprendizagem deste dispositivo e as listas que todos os perfis compartilham
+(matérias, catálogo de insígnias).
+
+Todos os perfis de um dispositivo compartilham os sets, então uma
+redefinição os altera para todos os perfis.
+
+Uma redefinição acontece por completo ou não acontece. Se o backup não
+puder ser aplicado por inteiro, nada é alterado e o app avisa.
+
+Um backup que pertence a outro perfil só pode ser mesclado: uma
+redefinição substituiria tudo no seu perfil ativo pelos dados do outro.
+
+Valores guardados apenas neste navegador, como as configurações de
+exibição, são aplicados como numa mesclagem: o que o backup contém
+substitui o seu, o que ele não contém permanece.
+
 ---
 
 ## Importação entre identidades

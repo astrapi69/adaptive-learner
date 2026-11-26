@@ -81,6 +81,33 @@ restarted after that completion. Of two lessons in progress, the
 one that got further is kept. The attempts, the best result and
 the attempt history of both sides are kept.
 
+### Merge or reset
+
+After you choose the file, the app asks how the backup is applied:
+
+- **Merge** is preselected. It adds what this device lacks and deletes
+  nothing. Something you deleted after the backup comes back.
+- **Reset to the backup** brings this device exactly to the state of the
+  backup: your progress, your own lessons and your downloaded sets.
+  Anything added or changed since the backup is removed and cannot be
+  brought back. A dialog asks you to confirm before anything happens.
+
+A reset leaves alone: your AI keys, the other learner profiles on this
+device, and the lists every profile shares (subjects, badge catalog).
+
+The sets are shared by all profiles on a device, so a reset changes them
+for every profile.
+
+A reset happens completely or not at all. If the backup cannot be applied
+in full, nothing is changed, and the app tells you so.
+
+A backup that belongs to another profile can only be merged: a reset would
+replace everything in your active profile with the other profile's data.
+
+Values kept only in this browser, such as display settings, are applied as
+in a merge: what the backup holds replaces yours, what it does not hold
+stays.
+
 ---
 
 ## Cross-identity import

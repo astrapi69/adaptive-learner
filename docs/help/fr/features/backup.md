@@ -86,6 +86,38 @@ cours, c'est celle qui est allée le plus loin qui est conservée.
 Les tentatives, le meilleur résultat et l'historique des
 tentatives des deux côtés sont conservés.
 
+### Fusionner ou réinitialiser
+
+Après le choix du fichier, l'application demande comment appliquer la
+sauvegarde :
+
+- **Fusionner** est présélectionné. Cela ajoute ce qui manque à cet appareil
+  et ne supprime rien. Ce que tu as supprimé après la sauvegarde revient.
+- **Réinitialiser à la sauvegarde** remet cet appareil exactement dans
+  l'état de la sauvegarde : ta progression, tes propres leçons et tes sets
+  téléchargés. Tout ce qui a été ajouté ou modifié depuis la sauvegarde est
+  supprimé et ne peut pas être récupéré. Une boîte de dialogue demande une
+  confirmation avant que quoi que ce soit ne se passe.
+
+Une réinitialisation ne touche pas : tes clés d'IA, les autres profils
+d'apprentissage de cet appareil et les listes que tous les profils
+partagent (matières, catalogue de badges).
+
+Tous les profils d'un appareil partagent les sets ; une réinitialisation
+les modifie donc pour chaque profil.
+
+Une réinitialisation se fait entièrement ou pas du tout. Si la sauvegarde
+ne peut pas être appliquée en entier, rien n'est modifié et l'application
+te le dit.
+
+Une sauvegarde qui appartient à un autre profil ne peut être que
+fusionnée : une réinitialisation remplacerait tout ton profil actif par les
+données de l'autre.
+
+Les valeurs conservées uniquement dans ce navigateur, comme les réglages
+d'affichage, sont appliquées comme lors d'une fusion : ce que contient la
+sauvegarde remplace les tiennes, ce qu'elle ne contient pas reste.
+
 ---
 
 ## Import inter-identités
