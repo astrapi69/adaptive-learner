@@ -1193,6 +1193,15 @@ backup:
   compare_markdown_downloaded: Fark dışa aktarıldı.
   compare_export_failed: "Karşılaştırma dışa aktarılamadı."
   confirm_with_counts: Geri yükle ({{added}} eklenecek, {{updated}} güncellenecek)
+  restore_mode_label: "Yedek nasıl uygulansın?"
+  restore_mode_merge: "Birleştir"
+  restore_mode_merge_hint: "Bu cihazda eksik olanı ekler ve hiçbir şeyi silmez. Yedekten sonra sildiğin şeyler geri gelir."
+  restore_mode_reset: "Yedeğe sıfırla"
+  restore_mode_reset_hint: "Bu cihaz tam olarak yedekteki duruma gelir. Daha yeni olan her şey kaldırılır."
+  reset_confirm_title: "Bu cihaz yedeğe sıfırlansın mı?"
+  reset_confirm_body: "İlerlemen, kendi derslerin ve indirdiğin setler tam olarak yedekteki gibi olacak. O zamandan beri eklenen veya değiştirilen her şey kaldırılır ve geri getirilemez. Yapay zeka anahtarların korunur."
+  reset_confirm_button: "Yedeğe sıfırla"
+  reset_summary: "Sıfırlama tamamlandı. Bu cihaz artık yedekle aynı."
   auto_compare_as_a: A olarak karşılaştır
   auto_compare_as_b: B olarak karşılaştır
   compare_auto_label: Otomatik yedek {{date}}

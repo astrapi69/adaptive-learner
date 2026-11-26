@@ -1193,6 +1193,15 @@ backup:
   compare_markdown_downloaded: 差分をエクスポートしました。
   compare_export_failed: "比較をエクスポートできませんでした。"
   confirm_with_counts: 復元 ({{added}} 件追加、{{updated}} 件更新)
+  restore_mode_label: "バックアップをどのように適用しますか？"
+  restore_mode_merge: "統合"
+  restore_mode_merge_hint: "この端末に足りないものを追加し、何も削除しません。バックアップ後に削除したものは戻ってきます。"
+  restore_mode_reset: "バックアップの状態に戻す"
+  restore_mode_reset_hint: "この端末はバックアップとまったく同じ状態になります。それより新しいものはすべて削除されます。"
+  reset_confirm_title: "この端末をバックアップの状態に戻しますか？"
+  reset_confirm_body: "学習の進捗、自分で作ったレッスン、ダウンロードしたセットは、バックアップとまったく同じになります。それ以降に追加または変更したものはすべて削除され、元に戻せません。AI キーはそのまま残ります。"
+  reset_confirm_button: "バックアップの状態に戻す"
+  reset_summary: "リセットが完了しました。この端末はバックアップと同じ状態です。"
   auto_compare_as_a: A として比較
   auto_compare_as_b: B として比較
   compare_auto_label: 自動バックアップ {{date}}
