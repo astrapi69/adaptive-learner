@@ -1193,6 +1193,15 @@ backup:
   compare_markdown_downloaded: 비교 결과를 내보냈습니다.
   compare_export_failed: "비교 결과를 내보내지 못했습니다."
   confirm_with_counts: 복원 ({{added}}개 추가, {{updated}}개 업데이트)
+  restore_mode_label: "백업을 어떻게 적용할까요?"
+  restore_mode_merge: "병합"
+  restore_mode_merge_hint: "이 기기에 없는 것을 추가하고 아무것도 삭제하지 않습니다. 백업 이후에 삭제한 항목은 다시 돌아옵니다."
+  restore_mode_reset: "백업 상태로 초기화"
+  restore_mode_reset_hint: "이 기기가 백업과 정확히 같은 상태가 됩니다. 그보다 새로운 것은 모두 삭제됩니다."
+  reset_confirm_title: "이 기기를 백업 상태로 초기화할까요?"
+  reset_confirm_body: "학습 진행 상황, 직접 만든 레슨, 다운로드한 세트가 백업과 정확히 같아집니다. 그 이후에 추가하거나 변경한 것은 모두 삭제되며 되돌릴 수 없습니다. AI 키는 그대로 유지됩니다."
+  reset_confirm_button: "백업 상태로 초기화"
+  reset_summary: "초기화가 완료되었습니다. 이 기기는 이제 백업과 같습니다."
   auto_compare_as_a: A로 비교
   auto_compare_as_b: B로 비교
   compare_auto_label: 자동 백업 {{date}}
