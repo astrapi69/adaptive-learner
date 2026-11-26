@@ -36,9 +36,16 @@ DATE_LINES = {
 
 
 def _env(root: Path) -> dict[str, str]:
+    """A clean environment with a known git identity.
+
+    ``LD_LIBRARY_PATH`` is the one variable carried over beside ``PATH``
+    (#3976): in the release container ``python3`` is a build with a shared
+    libpython that it finds only through it, and without it the script the
+    tests start dies with exit 127 before it runs.
+    """
     home = root / "home"
     home.mkdir(exist_ok=True)
-    return {
+    env = {
         "PATH": os.environ["PATH"],
         "HOME": str(home),
         "GIT_CONFIG_NOSYSTEM": "1",
@@ -47,6 +54,9 @@ def _env(root: Path) -> dict[str, str]:
         "GIT_COMMITTER_NAME": "Test",
         "GIT_COMMITTER_EMAIL": "test@example.invalid",
     }
+    if "LD_LIBRARY_PATH" in os.environ:
+        env["LD_LIBRARY_PATH"] = os.environ["LD_LIBRARY_PATH"]
+    return env
 
 
 def _git(repo: Path, *args: str, when: str = "2026-10-20T10:00:00") -> str:
