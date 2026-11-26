@@ -37,7 +37,11 @@ permissions:
 jobs:
   smoke:
     name: Mobile-viewport smoke against backend + dev server
-    runs-on: ubuntu-latest
+    # #3971: ubuntu-24.04, not ubuntu-latest. setup-python hands the HOST's
+    # Python build into the noble (24.04) container below; on the 26.04 host
+    # that build has no usable ssl module there and pip cannot reach PyPI.
+    # Host and container move together when the Playwright image moves.
+    runs-on: ubuntu-24.04
     # Official Playwright image so Chromium is pre-baked (no CDN download,
     # #317). Pin the tag to the @playwright/test version in e2e/bun.lock
     # (1.61.1); bump both together.

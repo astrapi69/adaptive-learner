@@ -65,7 +65,11 @@ jobs:
   prepare:
     name: Prepare release branch (bump + gate, then review)
     if: ${{ inputs.stage == 'prepare' }}
-    runs-on: ubuntu-latest
+    # #3971: ubuntu-24.04, not ubuntu-latest. setup-python hands the HOST's
+    # Python build into the noble (24.04) container below; on the 26.04 host
+    # that build has no usable ssl module there and pip cannot reach PyPI.
+    # Host and container move together when the Playwright image moves.
+    runs-on: ubuntu-24.04
     # Pre-baked Playwright browsers (mcr.microsoft.com image) instead of the
     # flaky cdn.playwright.dev download — the established #317 fix, same as the
     # release-prepare gate + dexie-smoke/manual-automation. This job is
@@ -231,7 +235,11 @@ jobs:
     # mandatory gate; a red extra-smoke is reviewed before stage=finish.
     if: ${{ inputs.stage == 'prepare' && inputs.skip_e2e == false }}
     needs: prepare
-    runs-on: ubuntu-latest
+    # #3971: ubuntu-24.04, not ubuntu-latest. setup-python hands the HOST's
+    # Python build into the noble (24.04) container below; on the 26.04 host
+    # that build has no usable ssl module there and pip cannot reach PyPI.
+    # Host and container move together when the Playwright image moves.
+    runs-on: ubuntu-24.04
     # Same pre-baked-browser image as prepare (#317/#1248); runs the smoke
     # against the release/<version> branch prepare just pushed.
     container:
