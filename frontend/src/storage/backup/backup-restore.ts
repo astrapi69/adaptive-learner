@@ -90,6 +90,31 @@ function backupIsNewer(record: RowDict, existing: RowDict, spec: BackupTableSpec
 }
 
 /**
+ * What the merge does with a backup record whose id the device holds: the
+ * one rule the restore and the pre-restore count share (#3787). An
+ * append-only row is never rewritten, learner progress merges field by field
+ * and counts only when that changes something, every other row follows the
+ * newer timestamp.
+ *
+ * @example
+ * if (mergeOutcome("tags", spec, record, existing) === "updated") updated += 1;
+ */
+export function mergeOutcome(
+    table: string,
+    spec: BackupTableSpec,
+    record: RowDict,
+    existing: RowDict,
+): "updated" | "skipped" {
+    if (spec.appendOnly) return "skipped";
+    if (table === PROGRESS_TABLE) {
+        return mergeLessonProgress(existing, writableRow(table, record)).changed
+            ? "updated"
+            : "skipped";
+    }
+    return backupIsNewer(record, existing, spec) ? "updated" : "skipped";
+}
+
+/**
  * Restore one record. A record unknown by id is looked up by the store's
  * unique index too (#3694): a catalog row or a singleton the device already
  * holds under another id is merged into that row and its id is remembered
@@ -130,7 +155,9 @@ async function restoreRecord(
         return "updated";
     }
     const matchedByUniqueKey = localId !== recordId;
-    if (!matchedByUniqueKey && !backupIsNewer(record, existing, spec)) return "skipped";
+    if (!matchedByUniqueKey && mergeOutcome(table, spec, record, existing) === "skipped") {
+        return "skipped";
+    }
     // Keep the local PK; the spread keeps local-only fields.
     await store.put({...existing, ...writableRow(table, record), id: localId} as never);
     return "updated";
