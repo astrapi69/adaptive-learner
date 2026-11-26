@@ -1202,6 +1202,9 @@ backup:
   reset_confirm_body: "Seu progresso, suas próprias lições e seus sets baixados ficarão exatamente como no backup. Tudo o que foi adicionado ou alterado desde então é removido e não pode ser recuperado. Suas chaves de IA são mantidas."
   reset_confirm_button: "Redefinir para o backup"
   reset_summary: "Redefinição concluída. Este dispositivo agora corresponde ao backup."
+  reset_shared_sets_note: "Todos os perfis deste dispositivo compartilham os sets. A redefinição os altera para todos os perfis."
+  reset_foreign_unavailable: "Um backup de outro perfil de aprendizagem só pode ser mesclado."
+  reset_failed: "A redefinição não foi aplicada. Nada foi alterado."
   auto_compare_as_a: Comparar como A
   auto_compare_as_b: Comparar como B
   compare_auto_label: Backup automático {{date}}
