@@ -1202,6 +1202,9 @@ backup:
   reset_confirm_body: "Dein Lernstand, deine eigenen Lektionen und deine heruntergeladenen Sets sind danach genau wie in der Sicherung. Alles, was seitdem dazukam oder geändert wurde, wird entfernt und lässt sich nicht zurückholen. Deine KI-Schlüssel bleiben erhalten."
   reset_confirm_button: "Auf die Sicherung zurücksetzen"
   reset_summary: "Zurücksetzen abgeschlossen. Dieses Gerät entspricht jetzt der Sicherung."
+  reset_shared_sets_note: "Die Sets teilen sich alle Profile auf diesem Gerät. Das Zurücksetzen ändert sie für jedes Profil."
+  reset_foreign_unavailable: "Eine Sicherung aus einem anderen Lernprofil lässt sich nur zusammenführen."
+  reset_failed: "Das Zurücksetzen wurde nicht ausgeführt. Es wurde nichts geändert."
   auto_compare_as_a: Als A vergleichen
   auto_compare_as_b: Als B vergleichen
   compare_auto_label: Auto-Sicherung {{date}}
