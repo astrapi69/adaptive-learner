@@ -443,13 +443,13 @@ This checklist MUST be fully checked off before the release counts as "done". Mi
       user's database, uploads and Fernet key sit invisible in the other one.
       The "no user notification needed" answer holds only while no release
       goes out carrying the bare name.
-- [ ] Gate rehearsed before the branch is cut (#3976): `gh workflow run
-      release-prepare.yml --ref develop -f version=<version in develop's
-      backend/pyproject.toml>` (read-only), green on the commit the branch
-      is cut from, RUN ID in the release journal entry. It proves the
-      container and the suites on develop's tree. `release.yml` stage
-      `prepare` has no rehearsal (it pushes `release/<version>` first) and
-      gates the bumped tree: a ratchet the bump trips shows only there.
+- [ ] Gate rehearsed before the branch is cut (#3976), RUN ID kept for
+      the journal: `gh workflow run release-prepare.yml --ref develop -f
+      version=<version in develop's backend/pyproject.toml>` (read-only
+      token) proves container and suites on develop's tree. Releasing via
+      `release.yml`: `stage=prepare` without `push_branch=true` rehearses
+      the bumped tree and pushes nothing; it needs the new version's
+      changelog on develop.
 - [ ] Reviewed the commits since the last tag
 - [ ] Version number picked per SemVer and confirmed by the user
 - [ ] CHANGELOG.md with the new entry committed
