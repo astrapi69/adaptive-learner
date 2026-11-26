@@ -270,4 +270,68 @@ describe("restoreDexieBackup in reset mode (#3787)", () => {
 
     expect(await elementKeys(userId)).toEqual(["bonjour", "merci"]);
   });
+
+  it("leaves a row shared by all learners as the device has it", async () => {
+    // Subjects belong to no learner alone, and other learners' rows point
+    // at them; a reset merges them like a merge does (decision 2026-11-26).
+    const { userId } = await seed();
+    const subject = await dexieStorage.subjects.create({ name: "Mathematics" });
+    const backup = await createDexieBackup(userId, "9.9.9");
+    const db = getDb();
+    await db.subjects.put({
+      ...(await db.subjects.get(subject.id))!,
+      name: "Maths",
+      updated_at: "2099-01-01T00:00:00.000Z",
+    });
+
+    await restoreDexieBackup(userId, backup, { mode: "reset" });
+
+    expect((await db.subjects.get(subject.id))?.name).toBe("Maths");
+  });
+
+  it("refuses the backup of another learner and says why", async () => {
+    const { userId, backup } = await seed();
+    const other = await dexieStorage.users.create({
+      name: "Other",
+      language: "de",
+    });
+    await recordWrong(other.id, "gracias");
+
+    await expect(
+      restoreDexieBackup(other.id, backup, { mode: "reset" }),
+    ).rejects.toThrow(/would replace everything of the active learner/);
+
+    expect(await elementKeys(other.id)).toEqual(["gracias"]);
+    expect(await elementKeys(userId)).toEqual(["merci", "salut"]);
+  });
+
+  it("is not applied when another learner holds a row of the backup", async () => {
+    // Two learners in one browser can hold the same row id (one restored
+    // the other's backup). The merge rules skip such a row without an
+    // error; a reset would then delete without bringing back.
+    const { userId } = await seed();
+    const db = getDb();
+    const tag = {
+      id: "tag-1",
+      user_id: userId,
+      name: "exam",
+      color: null,
+      created_at: "2026-10-01T00:00:00.000Z",
+    };
+    await db.tags.put(tag as never);
+    const backup = await createDexieBackup(userId, "9.9.9");
+    const other = await dexieStorage.users.create({
+      name: "Other",
+      language: "de",
+    });
+    await db.tags.put({ ...tag, user_id: other.id, name: "theirs now" } as never);
+    await changeDevice(userId);
+
+    await expect(
+      restoreDexieBackup(userId, backup, { mode: "reset" }),
+    ).rejects.toThrow(/not applied/);
+
+    expect((await db.tags.get("tag-1"))?.name).toBe("theirs now");
+    expect(await elementKeys(userId)).toEqual(["bonjour", "merci"]);
+  });
 });
