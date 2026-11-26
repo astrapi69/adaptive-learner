@@ -259,13 +259,9 @@ describe("restoreDexieBackup in reset mode (#3787)", () => {
     await changeDevice(userId);
     const broken = {
       ...backup,
-      data: {
-        ...backup.data,
-        element_errors: [
-          ...(backup.data.element_errors ?? []),
-          { element_key: "no-id" },
-        ],
-      },
+      // A row without an id cannot be written. (Not an element row: those
+      // get their id from their fields on the way in.)
+      data: { ...backup.data, tags: [{ name: "no id" }] },
     } as BackupPayload;
 
     await expect(

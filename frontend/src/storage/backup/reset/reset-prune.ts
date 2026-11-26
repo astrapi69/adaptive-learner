@@ -29,6 +29,7 @@ import {
   scopedIdSets,
   type RowDict,
 } from "../backup-scope";
+import { normalizeRestoreRecord } from "../backup-normalize";
 import { BACKUP_TABLES, RESTORE_ORDER, SECRET_TABLES } from "../backup-tables";
 
 /** Tables whose rows a reset overwrites in place and never deletes. */
@@ -36,11 +37,13 @@ const KEPT_TABLES: ReadonlySet<string> = new Set(["users", "user_settings"]);
 
 /** The ids the backup holds for one table, or ``null`` when it does not
  *  carry the table. */
-function backupIds(records: unknown): Set<string> | null {
+function backupIds(table: string, records: unknown): Set<string> | null {
   if (!Array.isArray(records)) return null;
+  // The id a record is written under, which for some tables is built from
+  // its fields on the way in (backup-normalize.ts).
   return new Set(
     records
-      .map((record) => (record as RowDict).id)
+      .map((record) => normalizeRestoreRecord(table, record as RowDict).id)
       .filter((id): id is string => typeof id === "string"),
   );
 }
@@ -63,7 +66,7 @@ export async function pruneRowsNotInBackup(
     const spec = BACKUP_TABLES[table];
     if (spec == null || spec.scope === "global") continue;
     if (KEPT_TABLES.has(table) || SECRET_TABLES.has(table)) continue;
-    const keep = backupIds(data[table]);
+    const keep = backupIds(table, data[table]);
     if (keep === null) continue;
     const store = getTable(db, spec);
     const own = rowsBelongToUser(spec, await store.toArray(), userId, scopes);
