@@ -7745,7 +7745,7 @@
     },
     "/api/backup/import": {
       "post": {
-        "description": "Restore a previously-exported JSON backup payload.\n\nThe body IS the backup JSON object — the frontend reads the\nuser-picked ``.json`` file client-side (FileReader.readAsText)\nand POSTs the parsed object directly. Matches the existing\nJSON-body pattern used by the other routers and avoids the\n``python-multipart`` runtime dependency that ``UploadFile``\ndrags in.\n\nMerge semantics: never deletes, only inserts new records or\nupdates mutable rows where the backup's timestamp is newer.\nAPI keys are ignored even if present in the payload.",
+        "description": "Restore a previously-exported JSON backup payload.\n\nThe body IS the backup JSON object — the frontend reads the\nuser-picked ``.json`` file client-side (FileReader.readAsText)\nand POSTs the parsed object directly. Matches the existing\nJSON-body pattern used by the other routers and avoids the\n``python-multipart`` runtime dependency that ``UploadFile``\ndrags in.\n\n``mode=merge`` (default): never deletes, only inserts new records\nor updates mutable rows where the backup's timestamp is newer.\n``mode=reset`` (#3787): the installation ends up exactly at the\nbackup's state, all or nothing. API keys are ignored even if\npresent in the payload, and are kept in both modes.",
         "operationId": "import_backup_api_backup_import_post",
         "parameters": [
           {
@@ -7754,6 +7754,22 @@
             "required": true,
             "schema": {
               "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "merge: add and update, delete nothing. reset: end up exactly at the backup, all or nothing.",
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "default": "merge",
+              "description": "merge: add and update, delete nothing. reset: end up exactly at the backup, all or nothing.",
+              "enum": [
+                "merge",
+                "reset"
+              ],
+              "title": "Mode",
               "type": "string"
             }
           }
