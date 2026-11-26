@@ -1140,14 +1140,14 @@ xml-validation = ["lxml (>=4,<7)"]
 
 [[package]]
 name = "datamodel-code-generator"
-version = "0.99.0"
+version = "0.100.0"
 description = "Datamodel Code Generator"
 optional = false
 python-versions = ">=3.11"
 groups = ["dev"]
 files = [
-    {file = "datamodel_code_generator-0.99.0-py3-none-any.whl", hash = "sha256:21c2938ea94cac3be3ccd6ed993cdb191343d20459d34eef4f854a1af006d6da"},
-    {file = "datamodel_code_generator-0.99.0.tar.gz", hash = "sha256:bc921db4cf4a02b74692c33237831014d9281e7e0c18c491ad091cc3ea395af5"},
+    {file = "datamodel_code_generator-0.100.0-py3-none-any.whl", hash = "sha256:741cf80bc55d0d9633da9d022418dec25f5195b538a31fe615b76c4e5e93ca8d"},
+    {file = "datamodel_code_generator-0.100.0.tar.gz", hash = "sha256:3ce827baa887fc362711c7b9876cd5b2e3754a38e54f639f85495963ffaa3351"},
 ]
 
 [package.dependencies]
@@ -3929,4 +3929,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "~3.12"
-content-hash = "d2ea3928c500a8ccbe8942969778bd3b48ebf7c7c9830de40d5f04858d39ffa9"
+content-hash = "e2ff623b02fc675f26a41a4c5699ac0db90120f5822a48e7df4adb90571b9d48"
