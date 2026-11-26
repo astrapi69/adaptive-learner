@@ -30,6 +30,7 @@ import {readBackupFile} from "../../../lib/backup/validateBackupFile";
 import {backupFileErrorText, newerBackupNotice} from "../../../lib/backup/backupVersionNotice";
 import {SettingsSection} from "../SettingsSection";
 import {backupOwnerId} from "../../../storage/backup";
+import {planMergeRestore} from "../../../lib/backup/restore/merge-restore-plan";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../../../types/domain";
 import {BackupAutoBackups} from "./BackupAutoBackups";
 import {BackupCompareSection} from "./BackupCompareSection";
@@ -186,7 +187,6 @@ function RestoreConfirmPanel({
     restoreDiffCounts,
     onConfirm,
     onCancel,
-    onCounts,
     foreignOwner,
     t,
 }: {
@@ -197,7 +197,6 @@ function RestoreConfirmPanel({
     restoreDiffCounts: RestoreDiffCounts | null;
     onConfirm: () => void;
     onCancel: () => void;
-    onCounts: (counts: RestoreDiffCounts) => void;
     /** #3785 - the backup was made by another learner than the active one. */
     foreignOwner: boolean;
     t: Translate;
@@ -259,13 +258,6 @@ function RestoreConfirmPanel({
                     labelA={t("backup.compare_current_label", "Current state")}
                     labelB={t("backup.incoming_header", "Backup")}
                     hideExport
-                    onDiffReady={(diff) =>
-                        onCounts({
-                            added: diff.totals.added,
-                            removed: diff.totals.removed,
-                            changed: diff.totals.changed,
-                        })
-                    }
                 />
             )}
 
@@ -457,6 +449,14 @@ export default function BackupSection() {
     const [restoreSummary, setRestoreSummary] = useState<RestoreSummary | null>(
         null,
     );
+    // #3787 - the restore button counts with the merge's own rule. The
+    // plain diff below it calls every differing row changed; the merge
+    // updates only where the backup is newer and never deletes.
+    useEffect(() => {
+        if (currentSnapshot === null || pendingPayload === null || !userId) return;
+        const plan = planMergeRestore(currentSnapshot, pendingPayload, userId);
+        setRestoreDiffCounts({added: plan.added, removed: 0, changed: plan.updated});
+    }, [currentSnapshot, pendingPayload, userId]);
     // BACKUP-DIR-EXPORT-01 — "Your backup contains" preview. Read-
     // only row counts so the user knows what a backup will hold
     // before they save it.
@@ -851,7 +851,6 @@ export default function BackupSection() {
                     restoreDiffCounts={restoreDiffCounts}
                     onConfirm={handleConfirmRestore}
                     onCancel={handleCancelRestore}
-                    onCounts={setRestoreDiffCounts}
                     foreignOwner={isForeignBackup(pendingPayload, userId)}
                     t={t}
                 />
