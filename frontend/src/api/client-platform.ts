@@ -71,9 +71,19 @@ export const platformApi = {
       apiCall<import("../types/domain").BackupStats & { user_id: string }>(
         `/backup/stats?user_id=${encodeURIComponent(userId)}`,
       ),
-    import: (userId: string, payload: import("../types/domain").BackupPayload) =>
+    /**
+     * Restore a backup. ``options.mode`` ``"reset"`` (#3787) asks the
+     * server to end up exactly at the backup's state; without it the
+     * server merges.
+     */
+    import: (
+      userId: string,
+      payload: import("../types/domain").BackupPayload,
+      options?: import("../types/domain").RestoreOptions,
+    ) =>
       apiCall<import("../types/domain").RestoreSummary>(
-        `/backup/import?user_id=${encodeURIComponent(userId)}`,
+        `/backup/import?user_id=${encodeURIComponent(userId)}` +
+          (options?.mode === "reset" ? "&mode=reset" : ""),
         { method: "POST", body: payload },
       ),
   },
