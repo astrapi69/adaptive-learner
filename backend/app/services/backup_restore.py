@@ -26,6 +26,8 @@ from app.services.backup_payload import (
     validate_payload,
 )
 from app.services.backup_reset import (
+    FOREIGN_BACKUP_RESET_REFUSED,
+    SHARED_ROWS_KEEP_THE_MERGE_RULE,
     RestoreMode,
     StagedContentReset,
     prune_rows_not_in_backup,
@@ -575,11 +577,15 @@ def _apply_record(
     # Existing row. Defensive scope check on the row itself.
     if not row_belongs_to_user(table, existing, user_id):
         return "skipped", None
-    if mode == "reset" and table not in SYNC_SECRET_TABLES and spec.scope != "global":
+    if (
+        mode == "reset"
+        and table not in SYNC_SECRET_TABLES
+        and spec.scope != SHARED_ROWS_KEEP_THE_MERGE_RULE
+    ):
         # The backup's row replaces the local one, whichever is newer
         # (#3787). ``_apply_columns`` keeps the AI keys of the settings row.
-        # A row shared by all learners is not this learner's to reset and
-        # keeps the merge rule below.
+        # Shared rows keep the merge rule below; why they differ from the
+        # sets is in ``backup_reset.SHARED_ROWS_KEEP_THE_MERGE_RULE``.
         _apply_columns(table, record, existing, allow_pk=False)
         return "updated", None
     if spec.append_only:
@@ -891,10 +897,7 @@ def restore_backup(
     # long as the final, fully-restored state is FK-consistent. SQLite
     # resets this pragma at the end of the transaction automatically.
     if mode == "reset" and isinstance(source_user_id, str) and source_user_id != user_id:
-        # It would turn this learner into a copy of the other one.
-        raise ValidationError(
-            "A backup of another learner can only be merged, not used for a reset."
-        )
+        raise ValidationError(FOREIGN_BACKUP_RESET_REFUSED)
 
     repo.begin_deferred_fk()
 

@@ -286,7 +286,8 @@ def test_reset_is_refused_for_the_backup_of_another_learner(db):
     backup = create_backup(_repo(db), user.id)
     before = _topics(db, other)
 
-    with pytest.raises(ValidationError, match="another learner"):
+    # The message names the reason, not only the refusal.
+    with pytest.raises(ValidationError, match="would replace everything of the active learner"):
         restore_backup(_repo(db), backup, target_user_id=other.id, mode="reset")
 
     assert _topics(db, other) == before

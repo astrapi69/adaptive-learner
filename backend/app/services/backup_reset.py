@@ -33,6 +33,31 @@ RestoreMode = Literal["merge", "reset"]
 # the AI keys no backup holds.
 KEPT_TABLES: frozenset[str] = frozenset({"users", "user_settings"})
 
+# Why a reset treats the shared tables (subject taxonomy, badge catalog)
+# differently from the content sets, although both are one store for every
+# learner of an installation (maintainer's decisions of 2026-11-26):
+#
+# - The sets are what the learner made or chose to download. A reset is
+#   asked to bring them exactly to the backup, and the dialog says that the
+#   other profiles see the same sets.
+# - Subjects and the badge catalog belong to no learner alone, and other
+#   learners' rows point at them (project_subjects, user_badges). A reset
+#   neither deletes nor overwrites them; a backup's shared row is merged in
+#   as in a merge: added when missing, updated only when the backup is newer.
+#
+# This is a rule, not an oversight: do not align the two without a decision.
+SHARED_ROWS_KEEP_THE_MERGE_RULE = "global"
+
+# A reset makes the learner's data exactly the backup's. With the backup of
+# another learner that would replace this learner by a copy of the other
+# one, which nobody asking for a reset means. The message names the reason,
+# not only the refusal; the browser half holds the same sentence.
+FOREIGN_BACKUP_RESET_REFUSED = (
+    "This backup belongs to another learner. A reset would replace everything of "
+    "the active learner with the other learner's data, so such a backup can only "
+    "be merged."
+)
+
 _STAGING_SUFFIX = ".reset-new"
 _REPLACED_SUFFIX = ".reset-old"
 
@@ -52,7 +77,7 @@ def _is_reset_table(table: str) -> bool:
     """Whether a reset makes this table's rows exactly the backup's."""
     if table in KEPT_TABLES or table in SYNC_SECRET_TABLES:
         return False
-    return TABLES[table].scope != "global"
+    return TABLES[table].scope != SHARED_ROWS_KEEP_THE_MERGE_RULE
 
 
 def prune_rows_not_in_backup(
@@ -244,6 +269,7 @@ def stage_content_reset(entries: Any) -> StagedContentReset | None:
 
 
 __all__ = [
+    "FOREIGN_BACKUP_RESET_REFUSED",
     "KEPT_TABLES",
     "RestoreMode",
     "StagedContentReset",
