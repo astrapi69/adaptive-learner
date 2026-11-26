@@ -30,14 +30,13 @@ The original test-infrastructure audit categorized "all standard actions at curr
 
 ### Periodic CI-hygiene check (every ~quarter, or after any GitHub runtime/platform deprecation announcement)
 
-1. List every pinned action:
+1. List every external action (one pinned by a tag instead of a commit SHA is itself a finding):
 
 ```bash
-grep -rE 'uses: [a-zA-Z][a-zA-Z0-9-]+/[a-zA-Z][a-zA-Z0-9-]+@v[0-9]+' \
-  .github/workflows/ | sort -u
+grep -rhoE 'uses: +[^ ]+@[^ ]+( # v[0-9.]+)?' .github/ | sort -u
 ```
 
-2. For each, check the latest released major against the pin via `gh release list --repo <owner>/<repo> --limit 5`.
+2. For each, check the newest release against the pin via `gh release list --repo <owner>/<repo> --limit 5`.
 
 3. For each candidate version, read the action.yml runtime declaration directly (not the release-note prose). This is the authoritative source for "does this action actually run on Node N?":
 
@@ -50,7 +49,7 @@ Returns e.g. `using: 'node24'` (or `node20`, or `composite`). This is the field 
 
 4. Cross-reference the release notes via `gh api repos/<owner>/<repo>/releases/tags/v<N>.0.0 --jq .body` for breaking-change context, but treat the notes as advisory — see "Release-notes-vs-action.yml trap" below.
 
-5. Pin to the lowest new major that satisfies the deprecation target AND declares the target Node version in its action.yml. The latest major often bundles additional unrelated breaking changes — taking the minimum-Node-N major lets you adopt those changes deliberately later, not by accident.
+5. Pin every `uses:` to the full commit SHA of the newest release, with the version as a comment (family rule RL-120; pinned by SHA since #3950). The newest major can bundle unrelated breaking changes: read its release notes against the inputs our workflows pass before crossing it.
 
 6. One commit per action class for traceable bisect; push as a batch.
 
