@@ -363,6 +363,26 @@ Never run yet. Do it NOW.
       nothing is applied. With `version` `abc` → "The format version of
       this backup cannot be read". Both also in onboarding via "Restore
       from existing backup".
+- [ ] TC-1010 Merge or reset (#3787): after choosing a backup file in Settings →
+      Data, "How should the backup be applied?" offers "Merge" and "Reset to
+      the backup", with "Merge" chosen. Left alone, the restore button merges
+      at once
+      as before: nothing is deleted, a lesson started after the backup is
+      still there.
+- [ ] TC-1011 Reset to the backup (#3787): export a backup; afterwards start a new
+      lesson, delete one of your own lessons and download another set.
+      Import the backup, choose "Reset to the backup": the button now reads
+      "Reset to the backup" and opens a dialog that says what is removed,
+      that the AI keys stay, and that the sets are shared by all profiles.
+      "Cancel" changes nothing. After confirming: "Reset complete. This
+      device now matches the backup."; the new lesson's progress is gone,
+      the deleted own lesson is back, the set downloaded later is gone, the
+      AI key still works. Once in server mode and once in browser mode.
+- [ ] TC-1012 Reset with another profile's backup (#3787): import a backup made
+      under a different learner profile. "Reset to the backup" cannot be
+      chosen, and the text below it says why (a reset would replace
+      everything in the active profile with the other profile's data).
+      "Merge" still works.
 
 ---
 

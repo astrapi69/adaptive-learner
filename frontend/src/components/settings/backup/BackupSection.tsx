@@ -19,7 +19,12 @@ import {Download, ExternalLink, Upload} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/button";
-import {BackupCompare} from "./BackupCompare";
+import {
+    RestoreConfirmPanel,
+    isForeignBackup,
+    type ComparisonRow,
+} from "./RestoreConfirmPanel";
+import ConfirmDialog from "../../../shared/feedback/ConfirmDialog";
 import {useI18n} from "../../../hooks/ui/useI18n";
 import {readLearnerState} from "../../../lib/learning/learnerState";
 import {emitSettingsRefresh} from "../../../lib/settings/settings-refresh-bus";
@@ -29,9 +34,13 @@ import {notify} from "../../../utils/notify";
 import {readBackupFile} from "../../../lib/backup/validateBackupFile";
 import {backupFileErrorText, newerBackupNotice} from "../../../lib/backup/backupVersionNotice";
 import {SettingsSection} from "../SettingsSection";
-import {backupOwnerId} from "../../../storage/backup";
 import {planMergeRestore} from "../../../lib/backup/restore/merge-restore-plan";
-import type {BackupPayload, BackupStats, RestoreSummary} from "../../../types/domain";
+import type {
+    BackupPayload,
+    BackupStats,
+    RestoreMode,
+    RestoreSummary,
+} from "../../../types/domain";
 import {BackupAutoBackups} from "./BackupAutoBackups";
 import {BackupCompareSection} from "./BackupCompareSection";
 import {useBackupCompare} from "../../../hooks/system/useBackupCompare";
@@ -66,12 +75,6 @@ import {
     restoreClientSnapshots,
 } from "../../../lib/backup/portableBackup";
 
-interface ComparisonRow {
-    table: string;
-    current: number;
-    incoming: number;
-}
-
 // BACKUP-DIR-EXPORT-01 — the high-signal tables surfaced in the
 // "Your backup contains" preview. Each maps a backup-table name to
 // an i18n label key; only non-zero counts are shown. The full row
@@ -102,7 +105,6 @@ function buildComparison(
 }
 
 type Translate = (key: string, fallback?: string) => string;
-type RestoreDiffCounts = {added: number; removed: number; changed: number};
 
 /** The two primary backup actions (Create / Restore) + the hidden
  *  file input. The busy state drives the per-button label / spinner
@@ -166,136 +168,6 @@ function BackupActionToolbar({
                 className="hidden"
                 data-testid="backup-file-input"
             />
-        </div>
-    );
-}
-
-/** The pre-restore confirmation panel: the current-vs-backup row-count
- *  table, the optional per-table diff preview, and the Confirm / Cancel
- *  actions. */
-/** Whether ``payload`` was made by another learner than ``userId`` (#3785). */
-function isForeignBackup(payload: BackupPayload, userId: string): boolean {
-    const owner = backupOwnerId(payload);
-    return owner !== null && owner !== userId;
-}
-
-function RestoreConfirmPanel({
-    comparison,
-    currentSnapshot,
-    pendingPayload,
-    busy,
-    restoreDiffCounts,
-    onConfirm,
-    onCancel,
-    foreignOwner,
-    t,
-}: {
-    comparison: ComparisonRow[];
-    currentSnapshot: BackupPayload | null;
-    pendingPayload: BackupPayload;
-    busy: "export" | "import" | null;
-    restoreDiffCounts: RestoreDiffCounts | null;
-    onConfirm: () => void;
-    onCancel: () => void;
-    /** #3785 - the backup was made by another learner than the active one. */
-    foreignOwner: boolean;
-    t: Translate;
-}) {
-    return (
-        <div
-            className="backup-comparison flex flex-col gap-3 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
-            data-testid="backup-comparison"
-        >
-            <h3>{t("backup.comparison_title", "Confirm restore")}</h3>
-            <p className="muted">
-                {t(
-                    "backup.comparison_help",
-                    "Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.",
-                )}
-            </p>
-            {foreignOwner && (
-                <p
-                    role="note"
-                    className="rounded-app border border-warning bg-[var(--warning-bg)] px-3 py-2 text-sm text-warning"
-                    data-testid="backup-foreign-owner"
-                >
-                    {t(
-                        "backup.foreign_owner_notice",
-                        "This backup belongs to another learner profile. Its progress is added to the active profile and merged with it: lessons, mistakes and history are added, XP, streak and settings are taken from the backup. The active profile stays active.",
-                    )}
-                </p>
-            )}
-            <table className="backup-comparison-table w-full text-sm">
-                <thead>
-                    <tr>
-                        <th scope="col" className="text-left">
-                            {t("backup.table_header", "Table")}
-                        </th>
-                        <th scope="col" className="text-right">
-                            {t("backup.current_header", "Current")}
-                        </th>
-                        <th scope="col" className="text-right">
-                            {t("backup.incoming_header", "Backup")}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {comparison.map((row) => (
-                        <tr key={row.table}>
-                            <td className="text-left">{row.table}</td>
-                            <td className="text-right">{row.current}</td>
-                            <td className="text-right">{row.incoming}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-            {/* v1.12.0 / Phase 25C — pre-restore diff preview */}
-            {currentSnapshot !== null && (
-                <BackupCompare
-                    backupA={currentSnapshot}
-                    backupB={pendingPayload}
-                    labelA={t("backup.compare_current_label", "Current state")}
-                    labelB={t("backup.incoming_header", "Backup")}
-                    hideExport
-                />
-            )}
-
-            <div className="backup-actions flex flex-wrap gap-2">
-                <Button
-                    type="button"
-                    variant="default"
-                    onClick={onConfirm}
-                    disabled={busy !== null}
-                    data-testid="backup-confirm"
-                >
-                    {busy === "import"
-                        ? t("backup.importing", "Restoring…")
-                        : restoreDiffCounts !== null
-                          ? t(
-                                "backup.confirm_with_counts",
-                                "Restore ({{added}} added, {{updated}} updated)",
-                            )
-                                .replace(
-                                    "{{added}}",
-                                    String(restoreDiffCounts.added),
-                                )
-                                .replace(
-                                    "{{updated}}",
-                                    String(restoreDiffCounts.changed),
-                                )
-                          : t("backup.confirm", "Confirm restore")}
-                </Button>
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={onCancel}
-                    disabled={busy !== null}
-                    data-testid="backup-cancel"
-                >
-                    {t("common.cancel", "Cancel")}
-                </Button>
-            </div>
         </div>
     );
 }
@@ -446,6 +318,10 @@ export default function BackupSection() {
         removed: number;
         changed: number;
     } | null>(null);
+    // #3787 - a backup is merged unless the learner chooses the reset, and a
+    // reset is confirmed in a dialog before anything is sent.
+    const [restoreMode, setRestoreMode] = useState<RestoreMode>("merge");
+    const [confirmingReset, setConfirmingReset] = useState(false);
     const [restoreSummary, setRestoreSummary] = useState<RestoreSummary | null>(
         null,
     );
@@ -636,13 +512,26 @@ export default function BackupSection() {
         });
     }
 
-    async function handleConfirmRestore() {
+    /** The panel's button: a merge runs at once, a reset asks first. */
+    function handleRestoreButton() {
+        if (restoreMode === "reset") {
+            setConfirmingReset(true);
+            return;
+        }
+        void handleConfirmRestore("merge");
+    }
+
+    async function handleConfirmRestore(mode: RestoreMode) {
         if (pendingPayload === null || userId === null) {
             return;
         }
+        setConfirmingReset(false);
         setBusy("import");
         try {
-            const summary = await storage.backup.import(userId, pendingPayload);
+            const summary =
+                mode === "reset"
+                    ? await storage.backup.import(userId, pendingPayload, {mode: "reset"})
+                    : await storage.backup.import(userId, pendingPayload);
             // Restore the localStorage snapshot and the plugin settings
             // (#3412) frontend-side, in both storage modes — the backend
             // ignores both blocks. Legacy backups carry none -> no-op.
@@ -662,6 +551,7 @@ export default function BackupSection() {
             setComparison(null);
             setCurrentSnapshot(null);
             setRestoreDiffCounts(null);
+            setRestoreMode("merge");
             // #1765 (class fix) — a restore can change user settings (keys,
             // provider, model overrides). Signal the Settings page to re-read
             // so the AI tab reflects the restore without a manual reload.
@@ -684,7 +574,13 @@ export default function BackupSection() {
                     String(summary.errors.length),
                 ),
             ];
-            const summaryMsg = parts.join(" - ");
+            const summaryMsg =
+                mode === "reset"
+                    ? t(
+                          "backup.reset_summary",
+                          "Reset complete. This device now matches the backup.",
+                      )
+                    : parts.join(" - ");
             if (summary.errors.length > 0) {
                 // Persistent error toast (does not auto-dismiss): the user
                 // must see that some rows failed. Per-table + per-row detail
@@ -711,7 +607,13 @@ export default function BackupSection() {
                 );
             }
         } catch (err) {
-            notify.error(t("backup.import_failed", "Restore failed."), {error: err});
+            // A reset is all or nothing: say that nothing was changed.
+            notify.error(
+                mode === "reset"
+                    ? t("backup.reset_failed", "The reset was not applied. Nothing was changed.")
+                    : t("backup.import_failed", "Restore failed."),
+                {error: err},
+            );
         } finally {
             setBusy(null);
             scrollSectionToTop();
@@ -719,6 +621,8 @@ export default function BackupSection() {
     }
 
     function handleCancelRestore() {
+        setRestoreMode("merge");
+        setConfirmingReset(false);
         setPendingPayload(null);
         setComparison(null);
         setCurrentSnapshot(null);
@@ -849,12 +753,36 @@ export default function BackupSection() {
                     pendingPayload={pendingPayload}
                     busy={busy}
                     restoreDiffCounts={restoreDiffCounts}
-                    onConfirm={handleConfirmRestore}
+                    onConfirm={handleRestoreButton}
                     onCancel={handleCancelRestore}
                     foreignOwner={isForeignBackup(pendingPayload, userId)}
+                    mode={restoreMode}
+                    onModeChange={setRestoreMode}
                     t={t}
                 />
             )}
+
+            <ConfirmDialog
+                open={confirmingReset && pendingPayload !== null}
+                title={t("backup.reset_confirm_title", "Reset this device to the backup?")}
+                message={t(
+                    "backup.reset_confirm_body",
+                    "Your progress, your own lessons and your downloaded sets will be exactly as in the backup. Anything added or changed since then is removed and cannot be brought back. Your AI keys stay.",
+                )}
+                variant="danger"
+                confirmLabel={t("backup.reset_confirm_button", "Reset to the backup")}
+                cancelLabel={t("common.cancel", "Cancel")}
+                onConfirm={() => void handleConfirmRestore("reset")}
+                onCancel={() => setConfirmingReset(false)}
+                testId="backup-reset-confirm"
+            >
+                <p className="m-0 text-sm text-fg-secondary" data-testid="backup-reset-shared-sets">
+                    {t(
+                        "backup.reset_shared_sets_note",
+                        "The sets are shared by all profiles on this device. The reset changes them for every profile.",
+                    )}
+                </p>
+            </ConfirmDialog>
 
             {restoreSummary !== null && (
                 <RestoreSummaryPanel summary={restoreSummary} t={t} />
