@@ -48,6 +48,13 @@ def _backup_ids(records: Any) -> set[str] | None:
     }
 
 
+def _is_reset_table(table: str) -> bool:
+    """Whether a reset makes this table's rows exactly the backup's."""
+    if table in KEPT_TABLES or table in SYNC_SECRET_TABLES:
+        return False
+    return TABLES[table].scope != "global"
+
+
 def prune_rows_not_in_backup(
     repo: BackupRepository,
     data: dict[str, Any],
@@ -59,11 +66,13 @@ def prune_rows_not_in_backup(
     Deliberately not removed: the rows of :data:`KEPT_TABLES`, the secret
     tables, the tables shared across learners, every other learner's rows,
     and the rows of a table the backup does not carry at all (a backup
-    written before the table existed says nothing about it).
+    written before the table existed says nothing about it). One limit to
+    the last: a row that hangs below a deleted row goes with it, whether
+    the backup carries its table or not; a child cannot outlive its parent.
 
     Runs in the caller's transaction, children before parents, and flushes
-    per table so a row the restore writes under the same unique key does
-    not collide with the one deleted here.
+    per table, so that the rows of a table without an ORM relationship to
+    its parent are deleted in the database before the parent is.
 
     Args:
         repo: Backup repository over the restore's session.
@@ -76,9 +85,7 @@ def prune_rows_not_in_backup(
     """
     deleted = 0
     for table in reversed(restore_order):
-        if table in KEPT_TABLES or table in SYNC_SECRET_TABLES:
-            continue
-        if TABLES[table].scope == "global":
+        if not _is_reset_table(table):
             continue
         keep = _backup_ids(data.get(table))
         if keep is None:
@@ -89,6 +96,44 @@ def prune_rows_not_in_backup(
         repo.flush()
         deleted += len(gone)
     return deleted
+
+
+def rows_differing_from_backup(
+    repo: BackupRepository,
+    data: dict[str, Any],
+    user_id: str,
+    restore_order: Sequence[str],
+) -> str | None:
+    """Name the first table whose rows are not exactly the backup's, else None.
+
+    The check a reset runs before it commits. Pruning and writing follow
+    rules made for the merge, which skips a row without an error when it
+    is another learner's. On an installation where two learners hold the
+    same row ids (one restored the other's backup) the reset would then
+    delete the learner's own rows and not bring the backup's back, or
+    overwrite a row of the other learner. Whatever the cause: when the
+    learner's rows are not the backup's rows afterwards, the reset is not
+    applied.
+
+    Args:
+        repo: Backup repository over the restore's session, flushed.
+        data: The backup's tables, already re-homed onto ``user_id``.
+        user_id: The learner the restore runs for.
+        restore_order: The tables, parents before children.
+    """
+    for table in restore_order:
+        if not _is_reset_table(table):
+            continue
+        expected = _backup_ids(data.get(table))
+        if expected is None:
+            continue
+        held = {row.id for row in repo.scoped_rows(table, user_id)}
+        if held != expected:
+            return (
+                f"{table}: {len(expected - held)} row(s) of the backup could not be made "
+                f"this learner's and {len(held - expected)} row(s) outside it remained"
+            )
+    return None
 
 
 @dataclass(frozen=True)
@@ -119,16 +164,29 @@ class StagedContentReset:
         return self.root.with_name(self.root.name + _REPLACED_SUFFIX)
 
     def swap_in(self) -> None:
-        """Put the staged sets in the cache's place; the old cache is kept aside."""
+        """Put the staged sets in the cache's place; the old cache is kept aside.
+
+        Renames, never moves: a rename onto a directory that a content
+        request recreated meanwhile replaces an empty one and fails on a
+        filled one, where a move would put the sets inside it.
+
+        Raises:
+            OSError: The sets could not be put in place; the cache is as
+                it was.
+        """
         if self.root.exists():
-            shutil.move(str(self.root), str(self._replaced))
-        shutil.move(str(self.staging), str(self.root))
+            self.root.rename(self._replaced)
+        try:
+            self.staging.rename(self.root)
+        except OSError:
+            self.swap_back()
+            raise
 
     def swap_back(self) -> None:
         """Undo :meth:`swap_in`: the cache is as it was before."""
         shutil.rmtree(self.root, ignore_errors=True)
         if self._replaced.exists():
-            shutil.move(str(self._replaced), str(self.root))
+            self._replaced.rename(self.root)
 
     def finish(self) -> None:
         """Drop the cache that :meth:`swap_in` put aside."""
@@ -160,9 +218,13 @@ def stage_content_reset(entries: Any) -> StagedContentReset | None:
         return None
     root = _cache_root()
     staging = root.with_name(root.name + _STAGING_SUFFIX)
-    # Leftovers of a reset that was interrupted.
+    # Leftovers of a reset that was interrupted. A cache put aside while
+    # no cache is in place is the only copy: it goes back, it is not deleted.
     shutil.rmtree(staging, ignore_errors=True)
-    shutil.rmtree(root.with_name(root.name + _REPLACED_SUFFIX), ignore_errors=True)
+    replaced = root.with_name(root.name + _REPLACED_SUFFIX)
+    if replaced.exists() and not root.exists():
+        replaced.rename(root)
+    shutil.rmtree(replaced, ignore_errors=True)
     staging.mkdir(parents=True)
     count = 0
     for entry in entries:
@@ -186,5 +248,6 @@ __all__ = [
     "RestoreMode",
     "StagedContentReset",
     "prune_rows_not_in_backup",
+    "rows_differing_from_backup",
     "stage_content_reset",
 ]

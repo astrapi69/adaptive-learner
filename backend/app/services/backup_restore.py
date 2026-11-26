@@ -29,6 +29,7 @@ from app.services.backup_reset import (
     RestoreMode,
     StagedContentReset,
     prune_rows_not_in_backup,
+    rows_differing_from_backup,
     stage_content_reset,
 )
 from app.services.content_backup import restore_content_sets
@@ -497,6 +498,9 @@ def _restore_one_record(
     try:
         return _apply_record(repo, spec, table, record, record_id, user_id, id_remap, mode)
     except Exception as exc:  # pragma: no cover — defensive
+        if mode == "reset":
+            # All or nothing: the reset's caller rolls everything back.
+            raise
         repo.rollback()
         logger.error(
             "Failed to restore row in %r (id=%s): %s",
@@ -702,7 +706,12 @@ def _restore_tables(
             )
             continue
         summary: dict[str, Any]
-        if records:
+        if records and mode == "reset":
+            # One transaction, no savepoint: SQLite opens its transaction with
+            # the first write, and a SAVEPOINT before it commits on release.
+            summary = _restore_table(repo, table, records, user_id, id_remap, mode)
+            repo.flush()
+        elif records:
             # Restore + flush each table inside its own SAVEPOINT so a
             # single table's unexpected flush failure (a constraint we did
             # not anticipate from a foreign / cross-mode backup) rolls back
@@ -782,6 +791,9 @@ def _commit_reset(
     if totals.errors:
         more = len(totals.errors) - 1
         raise _ResetNotApplied(totals.errors[0] + (f" (and {more} more)" if more else ""))
+    differing = rows_differing_from_backup(repo, data, user_id, _RESTORE_ORDER)
+    if differing is not None:
+        raise _ResetNotApplied(differing)
     if staged is None:
         repo.commit()
         return totals
@@ -825,7 +837,12 @@ def _reset_backup(
         if staged is not None:
             staged.discard()
         logger.error("Backup reset for user %s not applied: %s", user_id, exc, exc_info=True)
-        raise ValidationError(f"The reset was not applied and nothing was changed: {exc}") from exc
+        # The driver's own message, not SQLAlchemy's, which appends the
+        # statement and its parameters.
+        reason = getattr(exc, "orig", None) or exc
+        raise ValidationError(
+            f"The reset was not applied and nothing was changed: {reason}"
+        ) from exc
     restored = staged.count if staged is not None else 0
     return totals, {"restored": restored, "skipped": 0, "errors": []}
 
@@ -873,6 +890,12 @@ def restore_backup(
     # Deferring checks until commit lets the rows land in any order as
     # long as the final, fully-restored state is FK-consistent. SQLite
     # resets this pragma at the end of the transaction automatically.
+    if mode == "reset" and isinstance(source_user_id, str) and source_user_id != user_id:
+        # It would turn this learner into a copy of the other one.
+        raise ValidationError(
+            "A backup of another learner can only be merged, not used for a reset."
+        )
+
     repo.begin_deferred_fk()
 
     incoming = sum(len(v) for v in data.values() if isinstance(v, list))

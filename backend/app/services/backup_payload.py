@@ -8,7 +8,6 @@ another identity (#129).
 
 from __future__ import annotations
 
-import logging
 import re
 from typing import Any
 
@@ -16,9 +15,6 @@ from app.exceptions import ValidationError
 from app.services.sync_service import TABLES as SYNC_TABLES
 
 from .backup_export import BACKUP_FORMAT, BACKUP_VERSION, PAYLOAD_SEGMENTS
-
-logger = logging.getLogger(__name__)
-
 
 #: Each part is bounded and the input length is checked first, so a long run
 #: of digits from an uploaded file cannot make the match slow (CodeQL
