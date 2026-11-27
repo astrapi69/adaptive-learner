@@ -34,12 +34,6 @@ issues:
     detail: "The issue names the three readings, the class and the tests to add in both modes."
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3933
     checked: 2026-10-31
-  adaptive-learner#3932:
-    summary: "restore cannot bring back a lesson removed from an own set, the set key never changes"
-    waits: nothing
-    detail: "Both probes are in the issue; the fix decides between a content-based set identity and a content compare."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3932
-    checked: 2026-10-31
   adaptive-learner#3927:
     summary: "pattern drill: a cloze with worked examples, answered by typing or word tiles"
     waits: issue
@@ -104,15 +98,15 @@ issues:
   adaptive-learner#3873:
     summary: "lesson-complete-on-summary spec counts done marks before the list loads"
     waits: nothing
-    detail: "The fix (let the assertion wait) is written in the issue."
+    detail: "Second occurrence on 2026-11-01; the fix (let the assertion wait) is still the one in the issue."
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3873
-    checked: 2026-10-29
+    checked: 2026-11-27
   adaptive-learner#3872:
     summary: "the auto-read switch for AI replies does nothing"
-    waits: decision
-    detail: "Implement auto-read of AI replies, or remove the switch and its help text in all eight languages?"
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3872
-    checked: 2026-10-29
+    waits: nothing
+    detail: "Decided 2026-11-26: remove the switch and its help text in all eight languages, pinned by a test."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3872#issuecomment-7200997246
+    checked: 2026-11-27
   adaptive-learner#3871:
     summary: "a direct link to onboarding or assessment shows the navigation bar"
     waits: nothing
@@ -122,15 +116,15 @@ issues:
   adaptive-learner#3870:
     summary: "Vitest and the Dexie smoke reach the network"
     waits: nothing
-    detail: "The issue states the fix for both suites."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3870
-    checked: 2026-10-29
+    detail: "The unit-test half landed with #3974; open are the 54 settings-page mounts that test the ledger failure state unmocked, and the Dexie smoke half."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3870#issuecomment-7192278619
+    checked: 2026-11-27
   adaptive-learner#3858:
     summary: "Sync UI promises pairing and sync the app cannot do"
-    waits: decision
-    detail: "Which of the listed text and button changes ship until LAN mode lands (options in the issue, decision open)?"
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3858
-    checked: 2026-10-29
+    waits: nothing
+    detail: "Decided 2026-11-26: all three text and button changes until LAN mode lands."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3858#issuecomment-7200997475
+    checked: 2026-11-27
   adaptive-learner#3853:
     summary: "maximum lesson length rule with a justified exception, in the engine"
     waits: issue
@@ -166,28 +160,16 @@ issues:
     blocked_by: [adaptive-learner#3850, adaptive-learner#3851, adaptive-learner#3852, adaptive-learner#3853]
   adaptive-learner#3839:
     summary: "a small shared lesson travels to GitHub in the URL before confirmation"
-    waits: decision
-    detail: "Drop the content prefill (recommended) or keep it and say so in the dialog and the policy?"
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3839
-    checked: 2026-10-29
-  adaptive-learner#3831:
-    summary: "documentation brought to the state of v2.17.0 (release audit)"
-    waits: decision
-    detail: "v2.17.0 and v2.17.1 are released; is the audit done, or do the groups still marked 'to follow' stay open here?"
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3831
-    checked: 2026-10-29
+    waits: nothing
+    detail: "Decided 2026-11-26: drop the content prefill; the tests are listed in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3839#issuecomment-7200996975
+    checked: 2026-11-27
   adaptive-learner#3830:
     summary: "privacy-promises gate checks phrasings, not statements"
-    waits: decision
-    detail: "The issue is open on purpose with 'not to build now'; when should the allowlist check be built?"
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3830
-    checked: 2026-10-29
-  adaptive-learner#3819:
-    summary: "short set link /content/set/<id> finds sets of registry repositories"
     waits: nothing
-    detail: "Scope confirmed by the owner on 2026-10-21."
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3819#issuecomment-6315651438
-    checked: 2026-10-29
+    detail: "Decided 2026-11-26: regular P3 work, the allowlist check is built in queue order."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3830#issuecomment-7200996680
+    checked: 2026-11-27
   adaptive-learner#3795:
     summary: "catalog keys without a consumer, nightly report"
     waits: nothing
@@ -215,21 +197,21 @@ issues:
   adaptive-learner#3788:
     summary: "restore can revive old or retired content"
     waits: nothing
-    detail: "The acceptance lists the fixes."
+    detail: "The numeric version order landed with #3986; retired sets, what the backup carries and repository removal remain."
     evidence: https://github.com/astrapi69/adaptive-learner/issues/3788
-    checked: 2026-10-29
+    checked: 2026-11-27
   adaptive-learner#3787:
     summary: "restore has no exact mode, its preview counts by id only, deletions are not carried"
     waits: nothing
-    detail: "The progress merge landed with #3931; the two restore modes and the preview are doable now; whether deletions are carried or documented is an owner decision."
-    evidence: https://github.com/astrapi69/adaptive-learner/pull/3931
-    checked: 2026-10-31
+    detail: "Progress merge (#3931) and the reset mode (#3982, #3984, #3988) landed; the choice dialog is #3989; whether deletions are carried or documented is still open in the issue."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3787
+    checked: 2026-11-27
   adaptive-learner#3783:
     summary: "the visual suite has no phone"
-    waits: decision
-    detail: "A touch project in the visual config, or the device check as deliberate coverage?"
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3783
-    checked: 2026-10-29
+    waits: nothing
+    detail: "Decided 2026-11-26: a touch project in the visual config for the critical surfaces."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3783#issuecomment-7200996393
+    checked: 2026-11-27
   adaptive-learner#3780:
     summary: "Bun lockfile guard reads a format table instead of asking Bun"
     waits: nothing
@@ -312,10 +294,10 @@ issues:
     checked: 2026-10-29
   adaptive-learner#3163:
     summary: "Portuguese catalog and help mix Brazilian and European variants"
-    waits: decision
-    detail: "Which variant does the pt locale use: Brazilian or European Portuguese?"
-    evidence: https://github.com/astrapi69/adaptive-learner/issues/3163
-    checked: 2026-10-29
+    waits: nothing
+    detail: "Decided 2026-11-26: pt is Brazilian Portuguese; the help under docs/help/pt is aligned to the catalog."
+    evidence: https://github.com/astrapi69/adaptive-learner/issues/3163#issuecomment-7200996104
+    checked: 2026-11-27
   adaptive-learner#3151:
     summary: "websockets 17, isort 9 and filelock 4 bumps"
     waits: external
@@ -367,10 +349,10 @@ issues:
     checked: 2026-10-29
   learn-content-engine#232:
     summary: "sung and chanted lessons with audio provenance"
-    waits: decision
-    detail: "Planned, not started: the owner starts it later, and five decisions in the proposal are open."
-    evidence: https://github.com/astrapi69/learn-content-engine/issues/232
-    checked: 2026-10-29
+    waits: nothing
+    detail: "Deferred by the owner on 2026-11-26 (P4); the five open questions are answered when the work starts."
+    evidence: https://github.com/astrapi69/learn-content-engine/issues/232#issuecomment-7200997753
+    checked: 2026-11-27
   adaptive-learner-content-test#117:
     summary: "engine pin 0.42.0 behind the latest 0.42.2"
     waits: nothing
