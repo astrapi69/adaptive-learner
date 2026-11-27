@@ -1,9 +1,6 @@
 # Ροή εργασίας release
 
-Το AdaptiveLearner εκδίδει release σε κάθε ολοκλήρωση κύριας
-υποφάσης. Η πλήρης διαδικασία αυτοματοποιείται από το
-`make sync-versions` και μια CI εργασία release-gate· τα
-ανθρώπινα βήματα είναι απλώς επιλογή έκδοσης, CHANGELOG και tag.
+Ένα release γίνεται από δύο workflows, όχι με το χέρι. Το `release.yml` κόβει το branch του release, ορίζει την έκδοση και τρέχει τον πλήρη έλεγχο πριν στείλει οτιδήποτε. Το `release-finish.yml` κάνει merge στο `main`, βάζει το tag και δημιουργεί το release ως πρόχειρο. Η δεσμευτική, βήμα προς βήμα περιγραφή είναι το `.claude/rules/release-workflow.md`· αυτή η σελίδα είναι η επισκόπηση.
 
 ## Σύμβαση εκδόσεων
 
@@ -19,108 +16,26 @@
 Τα pre-release tags (`-alpha`, `-beta`, `-rc`) δεν χρησιμοποιούνται.
 Τα releases είναι πάντα σταθερά.
 
-## Τα 8 βήματα release
+## Η διαδρομή
 
-### 1. Καταγραφή κατάστασης
+1. **Στο develop, με pull request**: οι σημειώσεις `changelog/releases/vX.Y.Z.md`, η ενότητα «Τι νέο υπάρχει» των σελίδων βοήθειας και οι ενημερώσεις εξαρτήσεων. Χωρίς το αρχείο σημειώσεων το workflow δεν ξεκινά.
+2. **Δοκιμή**: το `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare` κόβει, ορίζει την έκδοση και ελέγχει στον runner, και δεν στέλνει τίποτα.
+3. **Κοπή**: `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare -f push_branch=true`. Με πράσινο έλεγχο στέλνεται το branch `release/X.Y.Z`· από εκεί και πέρα το develop είναι παγωμένο.
+4. **Έλεγχος του branch**: η κατασκευή του image, ο έλεγχος ασφαλείας, ο έλεγχος WebKit, η οπτική σύγκριση και οι τρεις κατασκευές του launcher ξεκινούν χειροκίνητα στο branch του release. Ένα branch που έστειλε ένα workflow δεν ξεκινά καμία από μόνο του.
+5. **Ολοκλήρωση**: το `gh workflow run release-finish.yml --ref release/X.Y.Z -f version=X.Y.Z` κάνει merge στο `main` χωρίς fast-forward, βάζει το tag στο merge commit, ανοίγει το pull request που επιστρέφει το release στο develop και δημιουργεί το GitHub release ως πρόχειρο.
+6. **Δημοσίευση**: το `publish-image.yml` δημοσιεύει και επαληθεύει το image, επισυνάπτονται τα εκτελέσιμα του launcher από τις πράσινες κατασκευές του `main`, και μόνο τότε το πρόχειρο γίνεται ορατό.
 
-```bash
-git log --oneline $(git describe --tags --abbrev=0)..HEAD
-git diff --stat $(git describe --tags --abbrev=0)..HEAD
-```
+### Η έκδοση ορίζεται σε ένα σημείο
 
-Αναθεώρησε τι προστέθηκε από το τελευταίο tag. Αποφάσισε το
-επίπεδο αύξησης.
+Το `backend/pyproject.toml` είναι η μόνη πηγή. Η κοπή την ορίζει και το `make sync-versions` γράφει κάθε άλλο αρχείο με πεδίο έκδοσης (το πλήρες σύνολο είναι η `collect_targets()` στο `scripts/sync_versions.py`). Κανείς δεν αλλάζει πεδίο έκδοσης με το χέρι. Το `release-gate.yml` ελέγχει ξανά τις εκδόσεις στο tag.
 
-### 2. Συγγραφή notes ανά release
+### Τι ξεκινά τι
 
-Πρόσθεσε αρχείο `changelog/releases/vX.Y.Z.md` ακολουθώντας
-τη μορφή του πιο πρόσφατου release (Added / Fixed / Tests /
-Closed backlog items / Commits / Upgrade notes). Το CI release-gate
-ελέγχει ότι αυτό το αρχείο υπάρχει για το tag που ωθείται.
+- ένα push στο `main`: `ci.yml`, `deploy-gh-pages.yml` και οι κατασκευές του launcher
+- το tag: `release-gate.yml`
+- το πρόχειρο release: τίποτα· το image και τα εκτελέσιμα έρχονται από το βήμα της δημοσίευσης
 
-### 3. Χειροκίνητη επεξεργασία κανονικής έκδοσης
-
-Το μόνο χειροκίνητα επεξεργαζόμενο πεδίο έκδοσης στο σύνολο
-του repo:
-
-```toml
-# backend/pyproject.toml
-[tool.poetry]
-version = "X.Y.Z"
-```
-
-### 4. Διάδοση
-
-```bash
-make sync-versions
-```
-
-Ενημερώνει αυτόματα κάθε αρχείο που φέρει την έκδοση (το πλήρες
-σύνολο βρίσκεται στο `scripts/sync_versions.py`):
-
-- `frontend/package.json`
-- `launcher/pyproject.toml`
-- `launcher/adaptive_learner_launcher/__init__.py`
-- `launcher/adaptive-learner-launcher.spec` (CFBundle plist
-  + CFBundleShortVersionString)
-- κάθε `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- κάθε `__init__.py` plugin με literal `__version__`
-- `install.sh` (αναγεννάται από `install.sh.template`)
-- `install.ps1` (αναγεννάται από `install.ps1.template`)
-
-### 5. Επαλήθευση
-
-```bash
-make sync-versions-check     # εξέρχεται non-zero σε απόκλιση
-make test                    # όλη η σουίτα πρέπει να περάσει
-cd frontend && bun run build # πρέπει να επιτύχει
-```
-
-Το workflow CI release-gate (`.github/workflows/release-gate.yml`)
-τρέχει το ίδιο `sync-versions-check` σε κάθε tag push. Αν
-τοπικά συμφωνεί αλλά το CI αποτυγχάνει, η απόκλιση εισήχθη
-μεταξύ τοπικού ελέγχου και push - διερεύνησε.
-
-### 6. Commit + tag
-
-```bash
-git add -A
-git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z - phase headline + summary"
-```
-
-Τα μηνύματα tag είναι annotated, πολυγραμμικά και συνοψίζουν
-το release. Γίνονται τα GitHub Release notes κατά το επόμενο βήμα.
-
-### 7. Push
-
-```bash
-git push origin main --tags
-```
-
-Ενεργοποιεί:
-
-- `ci.yml` στο νέο commit (τεστ)
-- `release-gate.yml` στο νέο tag (έλεγχος απόκλισης version-pin)
-- `deploy-gh-pages.yml` στο νέο commit (δημοσίευση δημόσιου
-  site)
-- `launcher-{linux,macos,windows}.yml` όταν το GitHub δημιουργεί
-  το Release από το tag
-
-Το `coverage.yml` δεν τρέχει με το push, αλλά κάθε νύχτα και
-κατόπιν dispatch· για αναφορά πάνω στο commit του release, τρέξε
-`gh workflow run coverage.yml --ref main`.
-
-### 8. Δημιουργία GitHub Release
-
-```bash
-gh release create vX.Y.Z \
-  --title "Adaptive Learner vX.Y.Z" \
-  --notes-file changelog/releases/vX.Y.Z.md
-```
-
-Το `--notes-file` διασφαλίζει ότι η σελίδα GitHub Release
-ταιριάζει με τα notes ανά release που commitαρίστηκαν στο βήμα 2.
+Το `coverage.yml` δεν τρέχει στο push· τρέχει κάθε νύχτα και κατά παραγγελία (`gh workflow run coverage.yml --ref main`).
 
 ## Εκδόσεις plugin
 
@@ -132,10 +47,9 @@ gh release create vX.Y.Z \
 
 ## Ροή hotfix
 
-Τα releases επιπέδου patch (0.X.1, 0.X.2) ακολουθούν τα ίδια
-8 βήματα. Η ενότητα "Hotfix history" του release CHANGELOG
-καταγράφει την αλυσίδα όταν προσγειώνονται πολλά hotfixes
-διαδοχικά.
+Το hotfix είναι το μόνο release που γίνεται με το χέρι: κανένα από τα δύο workflows δεν μπορεί να κόψει από το `main`. Branch `hotfix/vX.Y.Z` από το `main`, διόρθωση, ορισμός της έκδοσης και σύνταξη των σημειώσεων, έλεγχος του branch με το `release-prepare.yml`, έπειτα `make release-finish VERSION=X.Y.Z FINISH_BRANCH=hotfix/vX.Y.Z` και `make release-publish VERSION=X.Y.Z`.
+
+Ένα tag που έχει σταλεί δεν διαγράφεται και δεν μετακινείται ποτέ. Ένα λανθασμένο release το διορθώνει η επόμενη έκδοση.
 
 ## Διακριτά commits αύξησης deps pre-release
 

@@ -1,8 +1,8 @@
 # AdaptiveLearner vX.Y.Z
 
 > **Static reference template.** Copy the relevant sections into
-> `changelog/releases/vX.Y.Z.md` before invoking
-> `gh release create --notes-file ...` (release-workflow.md Step 8).
+> `changelog/releases/vX.Y.Z.md` when the changelog is written on
+> develop (release-workflow.md Step 3); finish builds the draft from it.
 > No automation reads this file; it exists so every release reuses
 > the same prerequisites + verification block instead of being
 > rewritten from memory.

@@ -361,8 +361,12 @@ exist. Checked whether a release branch's existence locks other tracks:
   release branch is open), followed by humans, not enforced by a gate.
 - **The remote release branch is already the status quo.** `release.yml`
   (`release-prepare`) already `git push -u --force origin release/<version>` during
-  prep, and the `release/**`-triggered gates (dexie-smoke, webkit-gate,
-  security-scan, manual-automation, docker-build-smoke) already run there. The
+  prep. Correction of 2026-11-26: that push is made with the workflow's own
+  token and starts NO workflow (0 runs on `release/2.17.1` after run
+  45832107793), so the `release/**`-triggered gates (dexie-smoke, webkit-gate,
+  security-scan, manual-automation, docker-build-smoke) do not run there by
+  themselves; `release-workflow.md` Step 6 dispatches three of them, the other
+  two repeat what the gate ran. The
   finish-time push is a no-op in the automated flow; in the local-only flow it is
   the first push, and it triggers those same release-branch gates once — harmless,
   the release is already tagged.

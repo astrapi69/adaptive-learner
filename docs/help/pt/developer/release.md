@@ -2,10 +2,7 @@
 
 # Fluxo de lançamento
 
-O AdaptiveLearner faz um lançamento em cada conclusão de sub-fase
-principal. O processo completo é automatizado por `make sync-versions`
-e um job de CI de portão de lançamento; as etapas humanas são apenas
-a escolha de versão, CHANGELOG e etiqueta.
+Um lançamento é feito por dois workflows, não à mão. `release.yml` corta o branch de lançamento, define a versão e executa a verificação completa antes de enviar qualquer coisa. `release-finish.yml` faz o merge em `main`, cria a tag e cria o lançamento como rascunho. A versão vinculante, passo a passo, é `.claude/rules/release-workflow.md`; esta página é o resumo.
 
 ## Convenção de versões
 
@@ -22,110 +19,26 @@ O Adaptive Learner segue o Versionamento Semântico 2.0.0:
 As etiquetas pré-lançamento (`-alpha`, `-beta`, `-rc`) não são
 utilizadas. Os lançamentos são sempre estáveis.
 
-## O lançamento em 8 passos
+## O caminho
 
-### 1. Capturar o estado
+1. **Em develop, por pull request**: as notas `changelog/releases/vX.Y.Z.md`, a seção "Novidades" das páginas de ajuda e as atualizações de dependências. Sem o arquivo de notas o workflow não inicia.
+2. **Ensaiar**: `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare` corta, define a versão e verifica no runner, e não envia nada.
+3. **Cortar**: `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare -f push_branch=true`. Com a verificação verde, o branch `release/X.Y.Z` é enviado; a partir daí develop fica congelado.
+4. **Verificar o branch**: a construção da imagem, a análise de segurança, a verificação WebKit, a comparação visual e as três construções do launcher são disparadas no branch de lançamento. Um branch enviado por um workflow não inicia nenhuma delas sozinho.
+5. **Finalizar**: `gh workflow run release-finish.yml --ref release/X.Y.Z -f version=X.Y.Z` faz o merge em `main` sem fast-forward, cria a tag no commit de merge, abre o pull request que devolve o lançamento a develop e cria o lançamento do GitHub como rascunho.
+6. **Publicar**: `publish-image.yml` publica e verifica a imagem, os binários do launcher das construções verdes de `main` são anexados, e só então o rascunho fica visível.
 
-```bash
-git log --oneline $(git describe --tags --abbrev=0)..HEAD
-git diff --stat $(git describe --tags --abbrev=0)..HEAD
-```
+### A versão é definida em um só lugar
 
-Reveja o que chegou desde a última etiqueta. Decida o nível de
-incremento.
+`backend/pyproject.toml` é a única fonte. O corte a define e `make sync-versions` escreve todos os outros arquivos com campo de versão (o conjunto completo é `collect_targets()` em `scripts/sync_versions.py`). Ninguém edita um campo de versão à mão. `release-gate.yml` verifica os pins de novo na tag.
 
-### 2. Escrever as notas do lançamento
+### O que inicia o quê
 
-Adicione um ficheiro `changelog/releases/vX.Y.Z.md` seguindo a
-forma do lançamento mais recente (Adicionado / Corrigido / Testes /
-Itens de backlog fechados / Commits / Notas de atualização). O CI
-do portão de lançamento verifica que este ficheiro existe para a
-etiqueta que está a ser enviada.
+- um push para `main`: `ci.yml`, `deploy-gh-pages.yml` e as construções do launcher
+- a tag: `release-gate.yml`
+- o rascunho do lançamento: nada; a imagem e os binários vêm do passo de publicação
 
-### 3. Editar manualmente a versão canónica
-
-O único campo de versão editado manualmente em todo o repositório:
-
-```toml
-# backend/pyproject.toml
-[tool.poetry]
-version = "X.Y.Z"
-```
-
-### 4. Propagar
-
-```bash
-make sync-versions
-```
-
-Atualiza automaticamente cada ficheiro que tem a versão (o conjunto
-completo está em `scripts/sync_versions.py`):
-
-- `frontend/package.json`
-- `launcher/pyproject.toml`
-- `launcher/adaptive_learner_launcher/__init__.py`
-- `launcher/adaptive-learner-launcher.spec` (plist CFBundle +
-  CFBundleShortVersionString)
-- cada `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- cada `__init__.py` de plugin com um literal `__version__`
-- `install.sh` (regenerado a partir de `install.sh.template`)
-- `install.ps1` (regenerado a partir de `install.ps1.template`)
-
-### 5. Verificar
-
-```bash
-make sync-versions-check     # sai com valor não zero em caso de deriva
-make test                    # a suite completa tem de passar
-cd frontend && bun run build # deve ter sucesso
-```
-
-O workflow de CI do portão de lançamento
-(`.github/workflows/release-gate.yml`) executa o mesmo
-`sync-versions-check` em cada push de etiqueta. Se o local
-concorda mas o CI falha, a deriva foi introduzida entre a sua
-verificação local e o push - investigue.
-
-### 6. Commit + etiqueta
-
-```bash
-git add -A
-git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z - destaque da fase + resumo"
-```
-
-As mensagens de etiqueta são anotadas, multi-linha e resumem o
-lançamento. Tornam-se as notas do GitHub Release quando o próximo
-passo é executado.
-
-### 7. Enviar
-
-```bash
-git push origin main --tags
-```
-
-Aciona:
-
-- `ci.yml` no novo commit (testes)
-- `release-gate.yml` na nova etiqueta (verificação de deriva de
-  pins de versão)
-- `deploy-gh-pages.yml` no novo commit (publicar site público)
-- `launcher-{linux,macos,windows}.yml` quando o GitHub cria o
-  Release a partir da etiqueta
-
-O `coverage.yml` não corre no push, mas todas as noites e por
-dispatch; para um relatório do commit de release, executa
-`gh workflow run coverage.yml --ref main`.
-
-### 8. Criar o GitHub Release
-
-```bash
-gh release create vX.Y.Z \
-  --title "Adaptive Learner vX.Y.Z" \
-  --notes-file changelog/releases/vX.Y.Z.md
-```
-
-`--notes-file` garante que a página do GitHub Release corresponde
-às notas por lançamento comprometidas no passo 2.
+`coverage.yml` não roda no push; roda toda noite e sob demanda (`gh workflow run coverage.yml --ref main`).
 
 ## Versões de plugins
 
@@ -137,10 +50,9 @@ configuração atual é uniforme em todos os ficheiros propagados.
 
 ## Fluxo de hotfix
 
-Os lançamentos ao nível de correção (0.X.1, 0.X.2) seguem os
-mesmos 8 passos. A secção "Historial de hotfix" do CHANGELOG do
-lançamento regista a cadeia quando vários hotfixes chegam
-consecutivamente.
+Um hotfix é o único lançamento feito à mão: nenhum dos dois workflows consegue cortar a partir de `main`. Branch `hotfix/vX.Y.Z` a partir de `main`, correção, definir a versão e escrever as notas, verificar o branch com `release-prepare.yml`, depois `make release-finish VERSION=X.Y.Z FINISH_BRANCH=hotfix/vX.Y.Z` e `make release-publish VERSION=X.Y.Z`.
+
+Uma tag enviada nunca é apagada nem movida. Um lançamento errado é corrigido pela versão seguinte.
 
 ## Commits de varredura de dependências pré-lançamento discretos
 

@@ -5,15 +5,12 @@ name: Release Gate
 # Runs on every v*.*.* tag push so failure is visible before the
 # GitHub Release event triggers downstream artifact builds.
 #
-# This workflow is informational + advisory: tag pushes cannot be
-# blocked by CI, so a failure here does NOT prevent the tag from
-# existing on origin. But the launcher build workflows
-# (launcher-{linux,macos,windows}.yml) re-run the same gate as the
-# first step of their release-event jobs, which DOES block artifact
-# attachment on failure.
+# This workflow reports after the fact: a tag push cannot be blocked by CI,
+# so a failure here does not undo the tag. The launcher workflows have had no
+# release trigger since v2.8.0 and do not repeat this check.
 #
-# release-workflow.md Step 4 is the human-side checklist; this is
-# the machine-side enforcement.
+# The cut (release.yml) runs the same script before anything is pushed;
+# this is the check on the tag itself (release-workflow.md Step 4).
 
 on:
   push:
@@ -67,8 +64,8 @@ jobs:
           echo "OK: tag matches canonical."
 
       - name: Verify version pins
-        # The same script the release-workflow rule's Step 4 calls
-        # locally before tagging. Catches every regression class:
+        # The same script the cut (release.yml) runs before the push.
+        # Catches every regression class:
         # canonical-pin drift, install.sh template drift, hardcoded
         # __version__ literals, deprecated COMPATIBLE_VERSION,
         # frontend APP_VERSION constants.

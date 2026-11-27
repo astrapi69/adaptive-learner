@@ -1,9 +1,6 @@
 # Processus de publication
 
-Adaptive Learner publie une nouvelle version à chaque complétion
-de sous-phase majeure. Le processus est automatisé par
-`make sync-versions` et un job CI de porte de sortie ; les étapes
-humaines se limitent au choix de version, au CHANGELOG et au tag.
+Une publication est faite par deux workflows, pas à la main. `release.yml` coupe la branche de publication, fixe la version et exécute la porte complète avant de pousser quoi que ce soit. `release-finish.yml` fusionne dans `main`, pose le tag et crée la publication en brouillon. La version contraignante, étape par étape, est `.claude/rules/release-workflow.md` ; cette page en est l'aperçu.
 
 ## Convention de versionnement
 
@@ -19,107 +16,26 @@ Adaptive Learner suit le Versionnement Sémantique 2.0.0 :
 Les tags de pré-publication (`-alpha`, `-beta`, `-rc`) ne sont
 pas utilisés. Les publications sont toujours stables.
 
-## Les 8 étapes d'une publication
+## Le chemin
 
-### 1. Capturer l'état
+1. **Sur develop, par pull request** : les notes `changelog/releases/vX.Y.Z.md`, la section « Nouveautés » des pages d'aide et les mises à jour de dépendances. Sans le fichier de notes, le workflow ne démarre pas.
+2. **Répéter** : `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare` coupe, fixe la version et vérifie sur le runner, et ne pousse rien.
+3. **Couper** : `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare -f push_branch=true`. Quand la porte est verte, la branche `release/X.Y.Z` est poussée ; à partir de là, develop est gelé.
+4. **Vérifier la branche** : la construction de l'image, l'analyse de sécurité, la porte WebKit, la comparaison visuelle et les trois constructions du launcher sont lancées sur la branche de publication. Une branche poussée par un workflow n'en démarre aucune d'elle-même.
+5. **Terminer** : `gh workflow run release-finish.yml --ref release/X.Y.Z -f version=X.Y.Z` fusionne dans `main` sans fast-forward, pose le tag sur le commit de fusion, ouvre la pull request qui ramène la publication dans develop et crée la publication GitHub en brouillon.
+6. **Publier** : `publish-image.yml` publie et vérifie l'image, les binaires du launcher des constructions vertes de `main` sont joints, et alors seulement le brouillon devient visible.
 
-```bash
-git log --oneline $(git describe --tags --abbrev=0)..HEAD
-git diff --stat $(git describe --tags --abbrev=0)..HEAD
-```
+### La version est fixée à un seul endroit
 
-Passer en revue ce qui a été intégré depuis le dernier tag.
-Décider du niveau de bump.
+`backend/pyproject.toml` est la seule source. La coupe la fixe et `make sync-versions` écrit tous les autres fichiers portant une version (l'ensemble complet est `collect_targets()` dans `scripts/sync_versions.py`). Personne ne modifie un champ de version à la main. `release-gate.yml` vérifie de nouveau les versions sur le tag.
 
-### 2. Rédiger les notes de publication
+### Ce qui déclenche quoi
 
-Ajouter un fichier `changelog/releases/vX.Y.Z.md` en s'inspirant
-de la publication la plus récente (Added / Fixed / Tests /
-Backlog items closed / Commits / Upgrade notes). Le CI de porte
-de sortie vérifie que ce fichier existe pour le tag poussé.
+- un push sur `main` : `ci.yml`, `deploy-gh-pages.yml` et les constructions du launcher
+- le tag : `release-gate.yml`
+- le brouillon de publication : rien ; l'image et les binaires viennent de l'étape de publication
 
-### 3. Modifier manuellement la version canonique
-
-Le seul champ de version à éditer manuellement dans tout le dépôt :
-
-```toml
-# backend/pyproject.toml
-[tool.poetry]
-version = "X.Y.Z"
-```
-
-### 4. Propager
-
-```bash
-make sync-versions
-```
-
-Met à jour automatiquement chaque fichier qui porte la version (la
-liste complète est dans `scripts/sync_versions.py`) :
-
-- `frontend/package.json`
-- `launcher/pyproject.toml`
-- `launcher/adaptive_learner_launcher/__init__.py`
-- `launcher/adaptive-learner-launcher.spec` (plist CFBundle +
-  CFBundleShortVersionString)
-- chaque `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- chaque `__init__.py` de plugin avec un littéral `__version__`
-- `install.sh` (régénéré depuis `install.sh.template`)
-- `install.ps1` (régénéré depuis `install.ps1.template`)
-
-### 5. Vérifier
-
-```bash
-make sync-versions-check     # sort avec un code non nul en cas de dérive
-make test                    # les tests doivent passer
-cd frontend && bun run build # doit réussir
-```
-
-Le workflow CI de porte de sortie (`.github/workflows/release-gate.yml`)
-exécute le même `sync-versions-check` à chaque push de tag.
-
-### 6. Commit + tag
-
-```bash
-git add -A
-git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z - titre de phase + résumé"
-```
-
-Les messages de tag sont annotés, multi-lignes et résument la
-publication. Ils deviennent les notes de la release GitHub à
-l'étape suivante.
-
-### 7. Pousser
-
-```bash
-git push origin main --tags
-```
-
-Déclenche :
-
-- `ci.yml` sur le nouveau commit (tests)
-- `release-gate.yml` sur le nouveau tag (vérification de dérive
-  des pins de version)
-- `deploy-gh-pages.yml` sur le nouveau commit (publication du
-  site public)
-- `launcher-{linux,macos,windows}.yml` quand GitHub crée la
-  Release à partir du tag
-
-`coverage.yml` ne tourne pas au push, mais chaque nuit et à la
-demande ; pour un rapport sur le commit de release, lance
-`gh workflow run coverage.yml --ref main`.
-
-### 8. Créer la release GitHub
-
-```bash
-gh release create vX.Y.Z \
-  --title "Adaptive Learner vX.Y.Z" \
-  --notes-file changelog/releases/vX.Y.Z.md
-```
-
-`--notes-file` garantit que la page de la release GitHub
-correspond aux notes de publication commitées à l'étape 2.
+`coverage.yml` ne s'exécute pas au push ; il s'exécute chaque nuit et à la demande (`gh workflow run coverage.yml --ref main`).
 
 ## Versions des plugins
 
@@ -132,10 +48,9 @@ fichiers propagés.
 
 ## Flux de correctif
 
-Les publications de niveau correctif (0.X.1, 0.X.2) suivent les
-mêmes 8 étapes. La section « Historique des correctifs » du
-CHANGELOG de la publication documente la chaîne quand plusieurs
-correctifs s'enchaînent.
+Un correctif est la seule publication faite à la main : aucun des deux workflows ne peut couper depuis `main`. Branche `hotfix/vX.Y.Z` depuis `main`, correction, fixer la version et écrire les notes, vérifier la branche avec `release-prepare.yml`, puis `make release-finish VERSION=X.Y.Z FINISH_BRANCH=hotfix/vX.Y.Z` et `make release-publish VERSION=X.Y.Z`.
+
+Un tag poussé n'est jamais supprimé ni déplacé. Une publication erronée est corrigée par la version suivante.
 
 ## Commits discrets de mise à jour des dépendances
 

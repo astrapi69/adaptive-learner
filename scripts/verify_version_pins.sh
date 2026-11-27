@@ -9,7 +9,7 @@
 #
 # Architecture (post-2026-05-04 SSoT refactor):
 #
-# Two canonical sources are hand-edited per release:
+# Two canonical sources, set by the cut (release.yml), by hand only in a hotfix:
 #   - backend/pyproject.toml      (Python subsystem)
 #   - frontend/package.json       (JS subsystem)
 # Plugin versions live in plugins/<name>/pyproject.toml and are
@@ -63,7 +63,7 @@ check_canonical() {
     fi
 }
 
-# -------- Canonical pins (hand-edited at release) --------
+# -------- Canonical pins (set by the cut, release.yml) --------
 
 check_canonical "backend/pyproject.toml" \
     '^version = ' \

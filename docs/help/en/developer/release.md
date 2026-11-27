@@ -1,9 +1,6 @@
 # Release workflow
 
-AdaptiveLearner cuts a release on every major sub-phase
-completion. The full process is automated by `make sync-versions`
-and a release-gate CI job; the human steps are just version
-choice, CHANGELOG, and tag.
+A release is made by two workflows, not by hand. `release.yml` cuts the release branch, sets the version and runs the full gate before it pushes anything. `release-finish.yml` merges to `main`, tags and creates the draft release. The binding step-by-step version is `.claude/rules/release-workflow.md`; this page is the overview.
 
 ## Versioning convention
 
@@ -19,108 +16,26 @@ Adaptive Learner follows Semantic Versioning 2.0.0:
 Pre-release tags (`-alpha`, `-beta`, `-rc`) are not used.
 Releases are always stable.
 
-## The 8-step release
+## The path
 
-### 1. Capture state
+1. **On develop, by pull request**: the release notes `changelog/releases/vX.Y.Z.md`, the "What's new" section of the help pages, and the dependency updates. The workflow refuses to start without the notes file.
+2. **Rehearse**: `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare` cuts, sets the version and gates on the runner, and pushes nothing.
+3. **Cut**: `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare -f push_branch=true`. On a green gate the branch `release/X.Y.Z` is pushed; from then on develop is frozen.
+4. **Check the branch**: the image build, the security scan, the WebKit gate, the visual comparison and the three launcher builds are dispatched on the release branch. A branch pushed by a workflow starts none of them by itself.
+5. **Finish**: `gh workflow run release-finish.yml --ref release/X.Y.Z -f version=X.Y.Z` merges into `main` without fast-forward, tags the merge commit, opens the pull request that merges the release back into develop, and creates the GitHub Release as a draft.
+6. **Publish**: `publish-image.yml` publishes and verifies the image, the launcher binaries of the green `main` builds are attached, and only then the draft becomes visible.
 
-```bash
-git log --oneline $(git describe --tags --abbrev=0)..HEAD
-git diff --stat $(git describe --tags --abbrev=0)..HEAD
-```
+### The version is set in one place
 
-Review what landed since the last tag. Decide the bump tier.
+`backend/pyproject.toml` is the only source. The cut sets it, and `make sync-versions` writes every other version-bearing file (the full set is `collect_targets()` in `scripts/sync_versions.py`). Nobody edits a version field by hand. `release-gate.yml` checks the pins again on the tag.
 
-### 2. Write the per-release notes
+### What starts what
 
-Add a `changelog/releases/vX.Y.Z.md` file following the
-shape of the most recent release (Added / Fixed / Tests /
-Closed backlog items / Commits / Upgrade notes). The
-release-gate CI checks that this file exists for the tag
-being pushed.
+- a push to `main`: `ci.yml`, `deploy-gh-pages.yml` and the launcher builds
+- the tag: `release-gate.yml`
+- the draft release: nothing; image and binaries come from the publish step
 
-### 3. Hand-edit the canonical version
-
-The only hand-edited version field in the entire repo:
-
-```toml
-# backend/pyproject.toml
-[tool.poetry]
-version = "X.Y.Z"
-```
-
-### 4. Propagate
-
-```bash
-make sync-versions
-```
-
-Updates every version-bearing file automatically (the full set is
-enumerated in `scripts/sync_versions.py`):
-
-- `frontend/package.json`
-- `launcher/pyproject.toml`
-- `launcher/adaptive_learner_launcher/__init__.py`
-- `launcher/adaptive-learner-launcher.spec` (CFBundle plist
-  + CFBundleShortVersionString)
-- every `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- each plugin `__init__.py` that carries a `__version__` literal
-- `install.sh` (regenerated from `install.sh.template`)
-- `install.ps1` (regenerated from `install.ps1.template`)
-
-### 5. Verify
-
-```bash
-make sync-versions-check     # exits non-zero on drift
-make test                    # the full suite must pass
-cd frontend && bun run build # must succeed
-```
-
-The release-gate CI workflow (`.github/workflows/release-gate.yml`)
-runs the same `sync-versions-check` on every tag push. If
-local agrees but CI fails, the drift was introduced between
-your local check and the push - investigate.
-
-### 6. Commit + tag
-
-```bash
-git add -A
-git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z - phase headline + summary"
-```
-
-Tag messages are annotated, multi-line, and summarise the
-release. They become the GitHub Release notes when the next
-step runs.
-
-### 7. Push
-
-```bash
-git push origin main --tags
-```
-
-Triggers:
-
-- `ci.yml` on the new commit (tests)
-- `release-gate.yml` on the new tag (version-pin drift check)
-- `deploy-gh-pages.yml` on the new commit (publish public
-  site)
-- `launcher-{linux,macos,windows}.yml` when GitHub creates
-  the Release from the tag
-
-`coverage.yml` does not run on push; it runs nightly and on
-demand. For a report on the release commit, run
-`gh workflow run coverage.yml --ref main`.
-
-### 8. Create the GitHub Release
-
-```bash
-gh release create vX.Y.Z \
-  --title "Adaptive Learner vX.Y.Z" \
-  --notes-file changelog/releases/vX.Y.Z.md
-```
-
-`--notes-file` ensures the GitHub Release page matches the
-per-release notes committed in step 2.
+`coverage.yml` does not run on push; it runs nightly and on demand (`gh workflow run coverage.yml --ref main`).
 
 ## Plugin versions
 
@@ -132,9 +47,9 @@ setup is uniform across all propagated files.
 
 ## Hotfix flow
 
-Patch-level releases (0.X.1, 0.X.2) follow the same 8 steps.
-The "Hotfix history" section of the release CHANGELOG records
-the chain when multiple hotfixes land back-to-back.
+A hotfix is the one release made by hand: neither workflow can cut from `main`. Branch `hotfix/vX.Y.Z` from `main`, fix, set the version and write the notes, gate the branch with `release-prepare.yml`, then `make release-finish VERSION=X.Y.Z FINISH_BRANCH=hotfix/vX.Y.Z` and `make release-publish VERSION=X.Y.Z`.
+
+A pushed tag is never deleted or moved. A wrong release is corrected by the next version.
 
 ## Discrete pre-release dep-sweep commits
 

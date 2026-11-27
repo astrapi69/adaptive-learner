@@ -1,9 +1,6 @@
 # Release-Prozess
 
-AdaptiveLearner schneidet pro abgeschlossener Hauptphase ein
-Release. Der volle Prozess ist durch `make sync-versions` und
-einen Release-Gate-CI-Job automatisiert; die menschlichen
-Schritte sind nur Versionswahl, CHANGELOG und Tag.
+Ein Release entsteht durch zwei Workflows, nicht von Hand. `release.yml` schneidet den Release-Branch, setzt die Version und lässt das volle Gate laufen, bevor irgendetwas gepusht wird. `release-finish.yml` merged nach `main`, taggt und legt das Release als Entwurf an. Die verbindliche Schritt-für-Schritt-Fassung ist `.claude/rules/release-workflow.md`; diese Seite ist der Überblick.
 
 ## Versions-Konvention
 
@@ -19,110 +16,26 @@ AdaptiveLearner folgt Semantic Versioning 2.0.0:
 Pre-Release-Tags (`-alpha`, `-beta`, `-rc`) werden nicht
 genutzt. Releases sind immer stabil.
 
-## Der 8-Schritte-Release
+## Der Weg
 
-### 1. Zustand erfassen
+1. **Auf develop, per Pull Request**: die Release-Notizen `changelog/releases/vX.Y.Z.md`, der Abschnitt "Was ist neu" der Hilfe-Seiten und die Abhängigkeits-Updates. Ohne die Notizen-Datei startet der Workflow nicht.
+2. **Proben**: `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare` schneidet, setzt die Version und prüft auf dem Runner, und pusht nichts.
+3. **Schneiden**: `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare -f push_branch=true`. Bei grünem Gate wird der Branch `release/X.Y.Z` gepusht; ab da ist develop gesperrt.
+4. **Den Branch prüfen**: Image-Build, Sicherheits-Scan, WebKit-Gate, Bildvergleich und die drei Launcher-Builds werden auf dem Release-Branch angestoßen. Ein von einem Workflow gepushter Branch startet keinen davon von selbst.
+5. **Finish**: `gh workflow run release-finish.yml --ref release/X.Y.Z -f version=X.Y.Z` merged ohne Fast-Forward nach `main`, taggt den Merge-Commit, öffnet den Pull Request, der das Release nach develop zurückführt, und legt das GitHub-Release als Entwurf an.
+6. **Veröffentlichen**: `publish-image.yml` veröffentlicht und prüft das Image, die Launcher-Binaries der grünen `main`-Builds werden angehängt, und erst dann wird der Entwurf sichtbar.
 
-```bash
-git log --oneline $(git describe --tags --abbrev=0)..HEAD
-git diff --stat $(git describe --tags --abbrev=0)..HEAD
-```
+### Die Version steht an einer Stelle
 
-Sichten, was seit dem letzten Tag gelandet ist. Bump-Stufe
-entscheiden.
+`backend/pyproject.toml` ist die einzige Quelle. Das Schneiden setzt sie, und `make sync-versions` schreibt jede andere Datei mit Versionsfeld (die volle Menge ist `collect_targets()` in `scripts/sync_versions.py`). Niemand ändert ein Versionsfeld von Hand. `release-gate.yml` prüft die Pins am Tag noch einmal.
 
-### 2. CHANGELOG-Eintrag
+### Was was auslöst
 
-Top-Block-Eintrag in `docs/CHANGELOG.md` hinzufügen (aktuell
-unstrukturierte Prosa; der Projektplan verfolgt
-versionsweise Notizen unter "Phase history"). Nach
-Hinzugefügt / Geändert / Behoben gruppieren.
+- ein Push nach `main`: `ci.yml`, `deploy-gh-pages.yml` und die Launcher-Builds
+- der Tag: `release-gate.yml`
+- der Release-Entwurf: nichts; Image und Binaries kommen aus dem Veröffentlichen-Schritt
 
-### 3. Kanonische Version hand-editieren
-
-Das einzige hand-editierte Versions-Feld im gesamten Repo:
-
-```toml
-# backend/pyproject.toml
-[tool.poetry]
-version = "0.X.Y"
-```
-
-### 4. Propagieren
-
-```bash
-make sync-versions
-```
-
-Aktualisiert jede versionstragende Datei automatisch (die
-vollständige Menge steht in `scripts/sync_versions.py`):
-
-- `frontend/package.json`
-- `launcher/pyproject.toml`
-- `launcher/adaptive_learner_launcher/__init__.py`
-- `launcher/adaptive-learner-launcher.spec`
-  (CFBundle-plist + CFBundleShortVersionString)
-- jede `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- jede Plugin-`__init__.py` mit `__version__`-Literal
-- `install.sh` (aus `install.sh.template` neu generiert)
-- `install.ps1` (aus `install.ps1.template` neu generiert)
-
-### 5. Verifizieren
-
-```bash
-make sync-versions-check     # Exit-Code != 0 bei Drift
-make test                    # die vollständige Suite muss passieren
-cd frontend && bun run build # muss durchlaufen
-```
-
-Der Release-Gate-CI-Workflow
-(`.github/workflows/release-gate.yml`) führt den gleichen
-`sync-versions-check` bei jedem Tag-Push aus. Wenn lokal
-zustimmt, aber CI scheitert, wurde der Drift zwischen
-deinem lokalen Check und dem Push eingeführt - investigieren.
-
-### 6. Committen + taggen
-
-```bash
-git add -A
-git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z - Phase-Headline + Zusammenfassung"
-```
-
-Tag-Messages sind annotiert, mehrzeilig und fassen das
-Release zusammen. Sie werden zu den GitHub-Release-Notes,
-wenn der nächste Schritt läuft.
-
-### 7. Pushen
-
-```bash
-git push origin main --tags
-```
-
-Löst aus:
-
-- `ci.yml` für den neuen Commit (Tests)
-- `release-gate.yml` für den neuen Tag (Version-Pin-Drift-
-  Check)
-- `deploy-gh-pages.yml` für den neuen Commit (Public-Site
-  publizieren)
-- `launcher-{linux,macos,windows}.yml`, sobald GitHub das
-  Release aus dem Tag anlegt
-
-`coverage.yml` läuft nicht beim Push, sondern nächtlich und auf
-Abruf; einen Bericht für den Release-Commit holst du mit
-`gh workflow run coverage.yml --ref main`.
-
-### 8. GitHub-Release erstellen
-
-```bash
-gh release create vX.Y.Z \
-  --title "Adaptive Learner vX.Y.Z" \
-  --notes-file changelog/releases/vX.Y.Z.md
-```
-
-`--notes-file` sorgt dafür, dass die GitHub-Release-Seite
-den in Schritt 2 committeten Per-Release-Notes entspricht.
+`coverage.yml` läuft nicht beim Push, sondern nachts und auf Anforderung (`gh workflow run coverage.yml --ref main`).
 
 ## Plugin-Versionen
 
@@ -136,9 +49,9 @@ Dateien.
 
 ## Hotfix-Flow
 
-Patch-Releases (0.X.1, 0.X.2) folgen denselben 8 Schritten.
-Der "Hotfix-Historie"-Abschnitt im Release-CHANGELOG zeichnet
-die Kette auf, wenn mehrere Hotfixes Rücken-an-Rücken landen.
+Ein Hotfix ist das eine Release von Hand: Keiner der beiden Workflows kann von `main` schneiden. Branch `hotfix/vX.Y.Z` von `main`, Fix, Version setzen und Notizen schreiben, den Branch mit `release-prepare.yml` prüfen, dann `make release-finish VERSION=X.Y.Z FINISH_BRANCH=hotfix/vX.Y.Z` und `make release-publish VERSION=X.Y.Z`.
+
+Ein gepushter Tag wird nie gelöscht oder verschoben. Ein falsches Release korrigiert die nächste Version.
 
 ## Diskrete Pre-Release-Dep-Sweep-Commits
 

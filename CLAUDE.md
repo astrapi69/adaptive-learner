@@ -34,7 +34,7 @@ Full reference: .claude/rules/architecture.md
 | design-tokens.md | frontend CSS/TSX | CSS variables, no hardcoded colors, theme enforcement |
 | lessons-learned.md + lessons/*.md | always | Pitfall catalogue: index + 7 themed files (core, backend, frontend, content-storage, ci-gates, release-packaging, docs-i18n) |
 | quality-checks.md | tests | Test strategy, coverage targets, mutation testing |
-| release-workflow.md | on release | 11-step release process |
+| release-workflow.md | on release | Release path: cut by release.yml, finish by release-finish.yml |
 | reusability.md | backend/plugins/frontend | Props-driven, barrel exports, implementation hierarchy |
 | tdd.md | tests | Red-Green-Refactor workflow, four-test guideline |
 | text-formatting.md | always | Text (not code): em-dash/UTF-8/emoji rules, doc prose style, commit/PR text, GitHub artifacts in English |

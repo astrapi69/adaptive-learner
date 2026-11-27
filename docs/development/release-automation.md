@@ -2,7 +2,7 @@
 
 How Adaptive Learner's release-cycle mechanics work: version propagation, pre-tag verification, aggregate Makefile targets, and the CI gate. The companion human-side flow lives at [.claude/rules/release-workflow.md](../../.claude/rules/release-workflow.md); this document is the architecture + tooling reference.
 
-**TL;DR:** `backend/pyproject.toml` is the canonical single-source-of-truth. `make sync-versions` propagates to every derived version-bearing file (the authoritative set is `collect_targets()` in `scripts/sync_versions.py`). `scripts/verify_version_pins.sh` is the pre-tag validation chain. Seven aggregate `make release-*` targets cover the Step 1 / 4b / 5 / 6 / 7 / 8 mechanics. The `release-gate.yml` CI workflow re-runs the same checks on every tag push.
+**TL;DR:** `backend/pyproject.toml` is the canonical single-source-of-truth. `make sync-versions` propagates to every derived version-bearing file (the authoritative set is `collect_targets()` in `scripts/sync_versions.py`). `scripts/verify_version_pins.sh` is the pre-tag validation chain. Nine aggregate `make release-*` targets cover the Step 1 / 4b / 5 / 6 / 7 / 8 mechanics. The `release-gate.yml` CI workflow re-runs the same checks on every tag push.
 
 ---
 
@@ -14,7 +14,7 @@ Adaptive Learner implements the Maven-property pattern in a multi-language repo:
 
 | File | Field | Mechanism |
 |---|---|---|
-| `backend/pyproject.toml` | `version = "..."` | Hand-edited at line 3, ONCE per release |
+| `backend/pyproject.toml` | `version = "..."` | The one source. Set by the cut (`release.yml`); by hand only in a hotfix |
 
 ### Tier 2 — Auto-propagated by `make sync-versions`
 
@@ -93,16 +93,17 @@ For each `plugins/adaptive-learner-plugin-*/`, runs `poetry install --dry-run --
 
 ## Aggregate `make release-*` targets
 
-Eight targets compose existing tooling for the mechanical steps of `release-workflow.md`:
+Nine targets compose existing tooling for the mechanical steps of `release-workflow.md`. In a regular release the two workflows call them: `release.yml` (stage `prepare`) runs `release-prepare` and `release-test`, `release-finish.yml` runs `release-finish` and `release-publish`. By hand, `release-finish` and `release-publish` are run only for a hotfix; `release-state`, `release-outdated` and `release-discover` are reports and can be run at any time.
 
 | Target | release-workflow.md Step | What it does |
 |---|---|---|
 | `make release-state` | Step 1 | Print latest tag + commits since + diff stat + current canonical version |
 | `make release-outdated` | Step 4b | `scripts/release_outdated.py` (#3778): `poetry show --outdated` / `bun outdated` in every package surface it finds (backend, launcher, docs, each plugin, frontend, e2e), plus the pre-commit hook revs, the GitHub Actions refs, the Docker `FROM` images and the pinned Bun against npm; a report that always exits 0, not a gate |
-| `make release-test` | Step 5 | `make test` + `bun run build` + `bun run test` (vitest) + `sync-versions-check` + `verify-plugin-locks` |
-| `make release-build` | Step 6 | Conditional backend `poetry build` (skipped iff `package-mode=false`) + frontend `bun run build` |
+| `make release-prepare VERSION=X.Y.Z` | the cut | Checks out develop and creates `release/X.Y.Z`; cuts only, never bumps or pushes |
+| `make release-test` | Step 5 | The gate `release.yml` runs on the bumped tree; its parts are listed in `release-workflow.md` ("Step 5, the gate") |
+| `make release-build` | not part of the path | Conditional backend `poetry build` (skipped iff `package-mode=false`) + frontend `bun run build` |
 | `make release-discover` | Step 4 supplement | Run the open-set version-literal discovery script with verbose output |
-| `make release-tag VERSION=X.Y.Z` | Step 7 | `verify_version_pins.sh $(VERSION)` + `git tag -a` + push main + push tag |
+| `make release-tag VERSION=X.Y.Z` | not part of the path (`release-finish` tags) | `verify_version_pins.sh $(VERSION)` + `git tag -a` + push main + push tag |
 | `make release-finish VERSION=X.Y.Z [FINISH_BRANCH=hotfix/vX.Y.Z]` | Gitflow, Step 7 | `verify_version_pins.sh`, then `scripts/release_finish_merge.sh` (#3904): merges `release/X.Y.Z` (or the hotfix branch) into a detached `origin/main` with `--no-ff`, checks both parents, tags, pushes `HEAD:main` and the tag, without checking main out; then opens the develop back-merge PR (#2182) |
 | `make release-publish VERSION=X.Y.Z` | Step 8 | `gh release create v$(VERSION) --draft --notes-file changelog/releases/v$(VERSION).md` (#3159) |
 
@@ -130,7 +131,7 @@ Runs on every `v*` tag push + manual `workflow_dispatch`. One job:
 
 **Cost:** ~1 CI min per gate run.
 
-**Note:** The gate is advisory in the sense that tag pushes themselves cannot be blocked by CI. But the launcher build workflows (`launcher-{linux,macos,windows}.yml`) re-run the same checks before uploading binaries — failure there DOES block artifact attachment.
+**Note:** A tag push cannot be blocked by CI, so `release-gate.yml` reports on it after the fact. The launcher workflows build on the `main` push and do not repeat the check; the binaries are attached by hand from those green builds (`release-workflow.md`, Step 8).
 
 ---
 
