@@ -117,6 +117,12 @@ interface FeatureShot {
      *  scroller, and it is taller than the header, so a pin on a heading
      *  would still be clipped under it (#3260). */
     pinBelow?: string;
+    /** Like ``pinBelow``, for a bar that sticks BELOW the app header and
+     *  only on wide viewports (the settings section bar, sticky from
+     *  ``md``). Where the bar sticks, the pin lands under its stuck lower
+     *  edge (its CSS ``top`` plus its height); where it scrolls with the
+     *  page, under the app header, as ``pinBelowHeader`` does (#3787). */
+    pinBelowStuck?: string;
     /** Runs after the screenshot, for a check that has to hold while the
      *  shot is taken, not only while the setup drives the page (#3182). */
     afterShot?: (page: Page) => void | Promise<void>;
@@ -1234,6 +1240,46 @@ async function gotoDataSubNav(page: Page): Promise<boolean> {
     return true;
 }
 
+/** Load a backup of the active learner in Settings → Data, so the
+ *  confirmation panel with the mode choice is open (#3787). The backup is a
+ *  fixed, empty one: the shot shows the choice, not a learner's data. */
+async function gotoRestoreModeChoice(page: Page): Promise<boolean> {
+    if (!(await gotoDataSubNav(page))) return false;
+    const userId = await page.evaluate(() => localStorage.getItem("adaptive-learner.user_id"));
+    if (userId === null) return false;
+    const backup = {
+        format: "adaptive-learner-backup",
+        version: "1.9.0",
+        app_version: "2.17.1",
+        created_at: "2026-11-01T10:00:00.000Z",
+        user_id: userId,
+        storage_mode: "dexie",
+        data: {users: [], learning_projects: []},
+        stats: {total_records: 0, tables: {users: 0, learning_projects: 0}},
+    };
+    await page.getByTestId("backup-file-input").setInputFiles({
+        name: "backup.json",
+        mimeType: "application/json",
+        buffer: Buffer.from(JSON.stringify(backup)),
+    });
+    await expect(page.getByTestId("backup-restore-mode")).toBeVisible({timeout: 10_000});
+    await expect(page.getByTestId("backup-restore-mode-merge")).toBeChecked();
+    await page.waitForTimeout(400);
+    return true;
+}
+
+/** Choose the reset and open its confirmation dialog (#3787). Nothing is
+ *  confirmed: the shot is the question, and the capture changes no data. */
+async function gotoResetConfirmDialog(page: Page): Promise<boolean> {
+    if (!(await gotoRestoreModeChoice(page))) return false;
+    await page.getByTestId("backup-restore-mode-reset").check();
+    await page.getByTestId("backup-confirm").click();
+    await expect(page.getByTestId("backup-reset-confirm")).toBeVisible({timeout: 10_000});
+    await expect(page.getByTestId("backup-reset-shared-sets")).toBeVisible();
+    await page.waitForTimeout(400);
+    return true;
+}
+
 /** Finish the bundled lesson and open the detailed evaluation (#3124): the
  *  set-style review of the lesson sits first under the toggle. */
 async function gotoDetailedLessonSummary(page: Page): Promise<boolean> {
@@ -1798,6 +1844,18 @@ const FEATURES: FeatureShot[] = [
         setup: gotoDataSubNav,
         pinTo: "settings-cluster-data-backup",
     },
+    // --- Restore: merge or reset, and the reset's confirmation (#3787) ---
+    {
+        path: "backup-restore/mode-choice",
+        setup: gotoRestoreModeChoice,
+        pinTo: "backup-comparison",
+        pinBelowStuck: "settings-subnav",
+    },
+    {
+        path: "backup-restore/reset-confirm",
+        setup: gotoResetConfirmDialog,
+        pinTo: "backup-reset-confirm",
+    },
     // --- "Repeat everything" confirmation on the set panel (#3171) --------
     {
         path: "reset-set-results/dialog",
@@ -2244,19 +2302,37 @@ for (const feature of FEATURES) {
                   ? page.getByTestId(feature.pinTo)
                   : null;
             if (pin) {
+                const stuck = feature.pinBelowStuck ?? null;
                 const overlay = feature.pinBelow
                     ? `[data-testid="${feature.pinBelow}"]`
-                    : feature.pinBelowHeader
+                    : feature.pinBelowHeader || stuck !== null
                       ? ".app-nav"
                       : null;
-                await pin.first().evaluate((el, overlaySelector) => {
-                    if (overlaySelector) {
-                        const bar = document.querySelector(overlaySelector);
-                        const barHeight = bar ? Math.round(bar.getBoundingClientRect().height) : 0;
-                        el.style.scrollMarginTop = `${barHeight}px`;
-                    }
-                    el.scrollIntoView({block: "start"});
-                }, overlay);
+                await pin.first().evaluate(
+                    (el, [overlaySelector, stuckTestId]) => {
+                        const heightOf = (node: Element | null) =>
+                            node ? Math.round(node.getBoundingClientRect().height) : 0;
+                        if (overlaySelector) {
+                            let margin = heightOf(document.querySelector(overlaySelector));
+                            // The first RENDERED match: every settings tab
+                            // stays mounted, so a hidden bar comes first.
+                            const bar = stuckTestId
+                                ? ([
+                                      ...document.querySelectorAll(
+                                          `[data-testid="${stuckTestId}"]`,
+                                      ),
+                                  ].find((node) => heightOf(node) > 0) ?? null)
+                                : null;
+                            if (bar && getComputedStyle(bar).position === "sticky") {
+                                const top = Number.parseFloat(getComputedStyle(bar).top) || 0;
+                                margin = Math.round(top) + heightOf(bar);
+                            }
+                            el.style.scrollMarginTop = `${margin}px`;
+                        }
+                        el.scrollIntoView({block: "start"});
+                    },
+                    [overlay, stuck] as const,
+                );
                 await page.waitForTimeout(100);
             }
             // Pass the snapshot name as an ARRAY of path segments, not a

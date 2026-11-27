@@ -43,7 +43,7 @@ export function RestoreModeChoice({
                 <input
                     type="radio"
                     name="backup-restore-mode"
-                    className="mt-1"
+                    className="mt-1 size-4 shrink-0"
                     checked={mode === "merge"}
                     disabled={disabled}
                     onChange={() => onChange("merge")}
@@ -65,7 +65,7 @@ export function RestoreModeChoice({
                 <input
                     type="radio"
                     name="backup-restore-mode"
-                    className="mt-1"
+                    className="mt-1 size-4 shrink-0"
                     checked={mode === "reset"}
                     disabled={disabled || foreignOwner}
                     onChange={() => onChange("reset")}
