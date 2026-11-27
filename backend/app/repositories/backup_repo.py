@@ -65,6 +65,10 @@ class BackupRepository(Repository):
         """Stage a new row for insertion."""
 
     @abstractmethod
+    def delete(self, entity: Any) -> None:
+        """Stage ``entity`` for deletion in the current transaction."""
+
+    @abstractmethod
     def flush(self) -> None:
         """Flush pending changes (per-table FK-safe insert ordering)."""
 
@@ -140,6 +144,10 @@ class SqlAlchemyBackupRepository(BackupRepository):
     def add(self, entity: Any) -> None:
         """Stage ``entity`` for insertion in the current transaction."""
         self._db.add(entity)
+
+    def delete(self, entity: Any) -> None:
+        """Stage ``entity`` for deletion in the current transaction."""
+        self._db.delete(entity)
 
     def flush(self) -> None:
         """Flush pending changes to the database without committing."""

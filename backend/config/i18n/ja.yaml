@@ -1203,7 +1203,7 @@ backup:
   reset_confirm_button: "バックアップの状態に戻す"
   reset_summary: "リセットが完了しました。この端末はバックアップと同じ状態です。"
   reset_shared_sets_note: "セットはこの端末のすべてのプロフィールで共有されています。リセットするとすべてのプロフィールで変更されます。"
-  reset_foreign_unavailable: "別の学習プロフィールのバックアップは統合のみ可能です。"
+  reset_foreign_unavailable: "このバックアップは別の学習プロフィールのものです。リセットすると有効なプロフィールのすべてが別のプロフィールのデータに置き換わるため、統合のみ可能です。"
   reset_failed: "リセットは適用されませんでした。何も変更されていません。"
   auto_compare_as_a: A として比較
   auto_compare_as_b: B として比較
