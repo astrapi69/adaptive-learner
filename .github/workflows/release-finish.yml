@@ -1,7 +1,8 @@
 name: Release — finish (merge + tag + publish)
 
-# The MUTATING half of the two-step release flow, run from the Actions tab
-# AFTER `release-prepare.yml` is green and the release has been reviewed.
+# The MUTATING half of the release path (release-workflow.md, owner decision
+# 2026-11-27): dispatched AFTER release.yml (stage=prepare, push_branch=true)
+# pushed a green `release/<version>` and the branch has been reviewed.
 #
 # It CALLS the existing Make targets — `make release-finish` (merge
 # release/<version> → main no-ff, tag, push main + tag, open the develop
@@ -14,9 +15,7 @@ name: Release — finish (merge + tag + publish)
 # builds (the launcher workflows have no release trigger since v2.8.0), runs
 # the completeness checkpoint, and only then publishes.
 #
-# Run this FROM the `release/<version>` branch (the same branch the prepare
-# gate validated). NOT used for v1.97.0 (finalized manually); effective from
-# the next release.
+# Run this FROM the `release/<version>` branch (the branch the cut pushed).
 
 on:
   workflow_dispatch:

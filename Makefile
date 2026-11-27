@@ -1062,9 +1062,10 @@ circular-deps: ## Circular-dependency check over frontend/src (madge via the exi
 	@cd frontend && bun run check:circular
 
 # --- Release ---
-# Aggregate Makefile targets for the release-workflow.md mechanical
-# steps (Step 1 state capture, Step 4b dep currency, Step 5 test
-# gate, Step 6 builds, Step 7 tag+push, Step 8 GitHub release).
+# Aggregate Makefile targets for the mechanical steps of
+# release-workflow.md. In a regular release the workflows call them
+# (release.yml: release-prepare, release-test; release-finish.yml:
+# release-finish, release-publish); by hand only for a hotfix.
 # Composes existing tools; does NOT replace the canonical
 # sync-versions / verify_version_pins chain. The LLM/human-content
 # steps (CHANGELOG draft, per-release notes composition, CLAUDE.md
@@ -1108,11 +1109,9 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@$(MAKE) verify-docs-discipline
 	@echo ""
 	@echo "=== Ratchet gates (#2182: close the release-branch ratchet gap) ==="
-	@echo "The PR-CI ratchets never run against a release/hotfix branch's own"
-	@echo "commits (the back-merge to develop is a direct admin merge, not a PR)."
-	@echo "Run them here so release-finish cannot ship a tripped ratchet onto"
-	@echo "develop. Prevention only - the channel stays open until enforce_admins"
-	@echo "is on (the closure; see issue #2182)."
+	@echo "The PR-CI ratchets do not run against a release/hotfix branch's own"
+	@echo "commits before the tag. Run them here, so a tripped ratchet shows"
+	@echo "before the release and not on the back-merge PR (#2182)."
 	@$(MAKE) check-css-size
 	@$(MAKE) verify-rule-corpus-size
 	@$(MAKE) check-complexity-gate
@@ -1138,7 +1137,7 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo ""
 	@echo "Release test gate green. Run the full Playwright smoke separately: make test-e2e-smoke"
 
-release-build: ## Build release artifacts (release-workflow.md Step 6)
+release-build: ## Build release artifacts locally (not part of the release path)
 	@PACKAGE_MODE=$$(grep "^package-mode" backend/pyproject.toml | head -1 | awk '{print $$3}' | tr -d ' '); \
 		if [ "$$PACKAGE_MODE" = "false" ]; then \
 			echo "=== Backend poetry build: SKIPPED (package-mode=false) ==="; \
@@ -1214,9 +1213,8 @@ endif
 	git pull origin develop
 	git checkout -b release/$(VERSION)
 	@echo ""
-	@echo "On release/$(VERSION). Now: bump backend/pyproject.toml, make sync-versions,"
-	@echo "draft changelog/releases/v$(VERSION).md, run make release-test, commit."
-	@echo "Then: make release-finish VERSION=$(VERSION)"
+	@echo "On release/$(VERSION), cut only. In a regular release release.yml calls this"
+	@echo "target and then bumps, gates and pushes (release-workflow.md); do not go on by hand."
 
 # The branch release-finish merges: release/<version> by default, a hotfix
 # branch for a hotfix (#3904): make release-finish VERSION=2.17.2 FINISH_BRANCH=hotfix/v2.17.2

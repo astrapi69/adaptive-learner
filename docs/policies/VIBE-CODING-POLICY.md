@@ -288,8 +288,8 @@ release is tagged AND published:
 
 - No new PRs opened against `develop`.
 - No merges into `develop`.
-- No new code — only the release workflow (`release-test`, `release-finish`,
-  `release-publish`, journal).
+- No new code — only the release workflow (`release-workflow.md`: dispatches,
+  review, journal).
 - Exception: a P0 hotfix that blocks the release itself.
 
 Tag first, then resume. This prevents a moving base (and parallel-session

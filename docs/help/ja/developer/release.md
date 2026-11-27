@@ -2,7 +2,7 @@
 
 # リリースワークフロー
 
-AdaptiveLearnerは主要なサブフェーズの完了ごとにリリースを行います。プロセス全体は`make sync-versions`とリリースゲートCIジョブによって自動化されており、人間が行う手順はバージョンの選択、CHANGELOG、タグの付与のみです。
+リリースは手作業ではなく、2つのワークフローで行います。`release.yml` はリリースブランチを切り、バージョンを設定し、何かをプッシュする前に完全なゲートを実行します。`release-finish.yml` は `main` にマージし、タグを付け、リリースを下書きとして作成します。拘束力のある手順は `.claude/rules/release-workflow.md` にあり、このページはその概要です。
 
 ## バージョニング規則
 
@@ -14,92 +14,26 @@ Adaptive LearnerはSemantic Versioning 2.0.0に従います。
 
 プレリリースタグ（`-alpha`、`-beta`、`-rc`）は使用しません。リリースは常に安定版です。
 
-## 8ステップのリリース
+## 手順の流れ
 
-### 1. 状態の確認
+1. **develop 上で、プルリクエストによって**: リリースノート `changelog/releases/vX.Y.Z.md`、ヘルプページの「新機能」セクション、依存関係の更新。ノートのファイルがなければワークフローは開始しません。
+2. **リハーサル**: `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare` はブランチを切り、バージョンを設定し、ランナー上でゲートを実行しますが、何もプッシュしません。
+3. **カット**: `gh workflow run release.yml -f version=X.Y.Z -f stage=prepare -f push_branch=true`。ゲートが緑であれば `release/X.Y.Z` ブランチがプッシュされ、それ以降 develop は凍結されます。
+4. **ブランチの確認**: イメージのビルド、セキュリティスキャン、WebKit ゲート、画像比較、3つのランチャービルドをリリースブランチ上で手動起動します。ワークフローがプッシュしたブランチは、これらを自動では開始しません。
+5. **フィニッシュ**: `gh workflow run release-finish.yml --ref release/X.Y.Z -f version=X.Y.Z` は fast-forward なしで `main` にマージし、マージコミットにタグを付け、リリースを develop に戻すプルリクエストを開き、GitHub リリースを下書きとして作成します。
+6. **公開**: `publish-image.yml` がイメージを公開して検証し、緑の `main` ビルドのランチャーバイナリを添付し、その後に初めて下書きを公開します。
 
-```bash
-git log --oneline $(git describe --tags --abbrev=0)..HEAD
-git diff --stat $(git describe --tags --abbrev=0)..HEAD
-```
+### バージョンは1か所で設定する
 
-最後のタグ以降にマージされた内容を確認し、バンプの種類を決定します。
+`backend/pyproject.toml` が唯一の情報源です。カットがそれを設定し、`make sync-versions` がバージョンを持つ他のすべてのファイルを書き換えます（全体の集合は `scripts/sync_versions.py` の `collect_targets()`）。バージョンのフィールドを手で編集する人はいません。`release-gate.yml` がタグでもう一度確認します。
 
-### 2. リリースノートの作成
+### 何が何を起動するか
 
-最新のリリースの形式（Added / Fixed / Tests / Closed backlog items / Commits / Upgrade notes）に従って`changelog/releases/vX.Y.Z.md`ファイルを追加します。リリースゲートCIは、プッシュされるタグに対してこのファイルが存在することを確認します。
+- `main` へのプッシュ: `ci.yml`、`deploy-gh-pages.yml`、ランチャービルド
+- タグ: `release-gate.yml`
+- 下書きのリリース: 何も起動しない。イメージとバイナリは公開の手順で付く
 
-### 3. カノニカルバージョンの手動編集
-
-リポジトリ全体で手動編集が必要なバージョンフィールドはここだけです。
-
-```toml
-# backend/pyproject.toml
-[tool.poetry]
-version = "X.Y.Z"
-```
-
-### 4. 伝播
-
-```bash
-make sync-versions
-```
-
-バージョンを持つすべてのファイルを自動的に更新します（完全な一覧は`scripts/sync_versions.py`にあります）。
-
-- `frontend/package.json`
-- `launcher/pyproject.toml`
-- `launcher/adaptive_learner_launcher/__init__.py`
-- `launcher/adaptive-learner-launcher.spec`（CFBundle plist + CFBundleShortVersionString）
-- すべての`plugins/adaptive-learner-plugin-*/pyproject.toml`
-- `__version__`リテラルを持つすべてのプラグインの`__init__.py`
-- `install.sh`（`install.sh.template`から再生成）
-- `install.ps1`（`install.ps1.template`から再生成）
-
-### 5. 検証
-
-```bash
-make sync-versions-check     # ドリフトがあると非ゼロで終了
-make test                    # フルスイートがパスする必要があります
-cd frontend && bun run build # 成功する必要があります
-```
-
-リリースゲートCIワークフロー（`.github/workflows/release-gate.yml`）は、すべてのタグプッシュ時に同じ`sync-versions-check`を実行します。ローカルでは一致するがCIで失敗する場合、ローカルの確認とプッシュの間にドリフトが発生しています。
-
-### 6. コミット + タグ
-
-```bash
-git add -A
-git commit -m "chore(release): bump version to vX.Y.Z"
-git tag -a vX.Y.Z -m "vX.Y.Z - phase headline + summary"
-```
-
-タグメッセージはアノテーション付きで複数行とし、リリースの概要を記載します。次のステップでGitHub Releasesのノートになります。
-
-### 7. プッシュ
-
-```bash
-git push origin main --tags
-```
-
-以下がトリガーされます。
-
-- 新しいコミットに対して`ci.yml`（テスト）
-- 新しいタグに対して`release-gate.yml`（バージョンピンドリフトチェック）
-- 新しいコミットに対して`deploy-gh-pages.yml`（公開サイトの公開）
-- GitHubがタグからReleaseを作成した際に`launcher-{linux,macos,windows}.yml`
-
-`coverage.yml`はプッシュでは実行されず、毎晩と手動ディスパッチで実行されます。リリースコミットのレポートが必要な場合は`gh workflow run coverage.yml --ref main`を実行してください。
-
-### 8. GitHub Releaseの作成
-
-```bash
-gh release create vX.Y.Z \
-  --title "Adaptive Learner vX.Y.Z" \
-  --notes-file changelog/releases/vX.Y.Z.md
-```
-
-`--notes-file`により、GitHub Releaseページがステップ2でコミットされたリリースノートと一致することを保証します。
+`coverage.yml` はプッシュでは実行されず、毎晩および必要に応じて実行されます（`gh workflow run coverage.yml --ref main`）。
 
 ## プラグインバージョン
 
@@ -107,7 +41,9 @@ gh release create vX.Y.Z \
 
 ## ホットフィックスフロー
 
-パッチレベルのリリース（0.X.1、0.X.2）は同じ8ステップに従います。複数のホットフィックスが連続してリリースされる場合、リリースCHANGELOGの「Hotfix history」セクションにそのチェーンを記録します。
+ホットフィックスは手作業で行う唯一のリリースです。2つのワークフローはどちらも `main` から切ることができません。`main` から `hotfix/vX.Y.Z` ブランチを作り、修正し、バージョンを設定してノートを書き、`release-prepare.yml` でブランチを検証し、その後 `make release-finish VERSION=X.Y.Z FINISH_BRANCH=hotfix/vX.Y.Z` と `make release-publish VERSION=X.Y.Z` を実行します。
+
+プッシュ済みのタグは決して削除も移動もしません。誤ったリリースは次のバージョンで訂正します。
 
 ## 離散的なプレリリース依存関係スイープコミット
 

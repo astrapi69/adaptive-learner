@@ -15,8 +15,8 @@ Usage:
   python3 scripts/generate_docs_checklist.py 1.41.0
   python3 scripts/generate_docs_checklist.py v1.41.0   # 'v' optional
 
-Printed automatically after ``make release-tag`` so the releaser sees
-the doc to-do list inline.
+Run after a release with ``make docs-checklist VERSION=X.Y.Z``
+(release-workflow.md Step 11).
 """
 
 from __future__ import annotations

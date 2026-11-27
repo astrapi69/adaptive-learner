@@ -143,22 +143,22 @@ Agenten können keine Browser öffnen. Jedes sichtbare/interaktive Feature wird 
 * **BACKUP-AKZEPTANZTEST (manuell, QA-Tester):** Echter Round-Trip-Beweis (Backup erstellen -> Browser-Daten komplett löschen -> Wiederherstellen -> Sets/Fortschritt/Settings/Theme prüfen, inkl. Cross-Mode GH-Pages -> Lokal) VOR backup-bezogenen Merges und vor Release.
 * **E2E Smoke grün** vor Release-Tag.
 * **Visual-Device-Check** der release-relevanten UI-Features (QA-Tester).
-* **Release-Reihenfolge (Release-Manager):** alle Agenten-PRs gemergt -> Gates bestanden -> `release/x.y.z` schneiden (`make release-prepare` -> Changelog -> `release-test` -> `release-finish`).
+* **Release-Reihenfolge (Release-Manager):** alle Agenten-PRs gemergt -> Gates bestanden -> Changelog auf develop -> `release/x.y.z` schneiden lassen (`release.yml`, Stufe `prepare`: Bump und Gate vor dem Push) -> Finish über `release-finish.yml`; Reihenfolge und Befehle in `.claude/rules/release-workflow.md`.
 * **Rollback-Strategie (Release-Manager):** Bei P0-Fehlern in Production sofortiger Rollback auf den letzten stabilen `main`-Tag. Hotfix-Branch wird erst nach dem Rollback erstellt, vom stabilen Tag aus, und folgt demselben Gate-Satz wie ein regulärer Release.
 
 ```mermaid
 flowchart TD
-    A[develop release-fähig] --> B[release-prepare VERSION]
-    B --> C[sync-versions + verify-pins]
-    C --> D[Changelog eintragen]
-    D --> E[release-test: Vitest + Dexie-Smoke]
+    A[develop release-fähig] --> D[Changelog auf develop, per PR]
+    D --> B[release.yml prepare: Branch schneiden]
+    B --> C[Version setzen: sync-versions + verify-pins]
+    C --> E[release-test: Vitest + Dexie-Smoke, vor dem Push]
     E --> F{grün?}
     F -->|nein| G[Fix auf develop, NICHT taggen]
     G --> E
     F -->|ja| H[BACKUP-AKZEPTANZTEST manuell]
     H --> I{bestanden?}
     I -->|nein| G
-    I -->|ja| J[release-finish + release-publish]
+    I -->|ja| J[release-finish.yml: Merge, Tag, Release-Entwurf]
     J --> K[Tag auf main + GitHub Release]
     K --> L{P0 in Production?}
     L -->|nein| M[stabil]

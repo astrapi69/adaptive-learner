@@ -93,8 +93,9 @@ make docs-checklist VERSION=1.41.0
 It reads `changelog/releases/v{VERSION}.md`, extracts the `###`
 feature headings, and prints a Markdown checklist (README/README-de
 mentions, CLAUDE.md notes, bilingual help pages) plus the standard
-version/count/archive checks. `make release-tag` prints it
-automatically after pushing the tag.
+version/count/archive checks. Print it with `make docs-checklist
+VERSION=X.Y.Z` after the release; `make release-tag`, which printed it, is
+not part of the release path any more.
 
 ## CI + release wiring
 

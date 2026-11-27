@@ -50,7 +50,7 @@ When a release branch is cut (release/X.XX.0 exists), until the release is tagge
 
 - No new PRs against develop
 - No merges to develop
-- No new code, only release workflow (release-test, release-finish, release-publish, journal)
+- No new code, only the release workflow (`release-workflow.md`: dispatches, review, journal)
 - Exception: a P0 hotfix that blocks the release itself
 
 Tag first, then continue working.

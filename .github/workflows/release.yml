@@ -1,12 +1,13 @@
 name: Release
 
-# One-click, workflow_dispatch-only release driver for FUTURE releases.
-# v1.97.0 is released manually (make release-finish); this workflow is
-# infrastructure from the next release onward.
+# Dispatch-only release driver. The release path (release-workflow.md, owner
+# decision 2026-11-27): stage=prepare HERE, finish through release-finish.yml.
+# The finish stage below is kept working but is not the path.
 #
 # Two dispatchable stages (the deliberate "prepare -> review -> finish"
-# pattern). Dispatch once with stage=prepare, review the release branch + its
-# CI, then dispatch again with stage=finish:
+# pattern). Dispatch stage=prepare, dispatch the checks on the pushed branch
+# by hand (a branch pushed with this workflow's token starts none), review,
+# then finish through release-finish.yml:
 #
 #   stage=prepare -> cut release/<version> from develop (make release-prepare,
 #                    which only cuts the branch), then SELF-bump the version
@@ -256,7 +257,7 @@ jobs:
         run: |
           if [ "$PUSH_BRANCH" = "true" ]; then
             echo "release/${{ inputs.version }} prepared, gated and pushed."
-            echo "Review this job AND the 'extra-smoke' job (unless skip_e2e), then re-dispatch with stage=finish."
+            echo "Next: dispatch the release-branch checks by hand, review, then finish with release-finish.yml (release-workflow.md Step 6 and 7)."
           else
             echo "REHEARSAL: v${{ inputs.version }} bumped and gated on the runner; nothing was pushed."
             echo "For the release itself, dispatch again with push_branch=true."
@@ -354,6 +355,12 @@ jobs:
       # own. Secrets cannot be referenced directly in `if:`, so surface the
       # boolean through the job env.
       HAS_RELEASE_PAT: ${{ secrets.RELEASE_PAT != '' }}
+      # gh, called by `make release-finish` for the back-merge PR and by
+      # `make release-publish`. Without it the first of the two fails after
+      # main is tagged: the target stops on a gh error since #3276, and this
+      # job set the token only on the publish step. release-finish.yml sets
+      # it for its whole workflow; this mirrors it.
+      GH_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
     steps:
       - name: Validate version input
         run: |
@@ -394,7 +401,7 @@ jobs:
         run: |
           f="changelog/releases/v${{ inputs.version }}.md"
           if [ ! -f "$f" ]; then
-            echo "::error::$f is missing on develop. The prepare stage should have added it."
+            echo "::error::$f is missing on release/${{ inputs.version }}. It is written on develop before the cut; no stage adds it."
             exit 1
           fi
 
@@ -418,14 +425,12 @@ jobs:
         # `gh release create --draft` (#3159). Nothing fires on a draft; the
         # launcher binaries and the image are attached in release-workflow.md
         # Step 8 before the draft is published.
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
         run: make release-publish VERSION=${{ inputs.version }}
 
       - name: Deploy note
         run: |
           if [ "$HAS_RELEASE_PAT" = "true" ]; then
-            echo "Done. The PAT push to main fired deploy-gh-pages.yml; the PAT-published Release fired launcher-*.yml (binaries attach automatically)."
+            echo "Done. The PAT push to main fired deploy-gh-pages.yml. The release is a DRAFT: release-workflow.md Step 8 attaches the launcher binaries and publishes."
           else
             echo "::warning::Published with GITHUB_TOKEN (no RELEASE_PAT). Now MANUALLY: dispatch deploy-gh-pages.yml on main, and attach the launcher binaries to the Release."
           fi

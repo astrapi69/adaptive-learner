@@ -113,7 +113,7 @@ When a release tag fails CI for a mechanical reason (chmod bit missing, formatte
 
 Current cluster preserved as-is: `v0.26.0` (release-gate failed on chmod), `v0.26.1` (launcher builds failed on PyInstaller spec `__file__`, CI failed on mypy), `v0.26.2` (CI failed on ruff-format), `v0.26.3` (all green; the shippable tag).
 
-Do delete a tag only when it was pushed in the last few minutes and the user explicitly confirms no one could have pulled. The default is keep + document.
+A pushed tag is NEVER deleted, moved or recreated, however fresh it is (family rule RL-056; this paragraph allowed it until 2026-11-27). Keep, document, and release the next version.
 
 ## Subsystem lock-step + tooling, not checklists
 

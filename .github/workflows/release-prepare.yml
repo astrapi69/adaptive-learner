@@ -1,28 +1,18 @@
 name: Release — prepare (gate)
 
-# One-click PRE-RELEASE gate for FUTURE releases, run from the Actions tab.
-#
-# This is the SAFE half of the two-step release flow (the architect's
-# deliberate "prepare, then finalize after review" pattern, #334): it runs the
-# full pre-tag gate against an already-prepared `release/<version>` branch and
-# STOPS. It never merges to main, never tags, never publishes — that is
-# `release-finish.yml`, triggered separately after review.
+# The read-only release gate, dispatched on a ref: it runs the full pre-tag
+# gate (`make release-test`) on that ref's tree and STOPS. It never bumps,
+# pushes, merges, tags or publishes.
 #
 # It CALLS the existing Make targets (`make release-test`, `make
 # test-e2e-smoke`) rather than re-implementing any release logic, so it cannot
 # drift from the Makefile.
 #
-# IMPORTANT — what this workflow does NOT do (verified against the Makefile):
-#   `make release-prepare` only cuts the branch and prints manual instructions;
-#   it does NOT bump the version, finalize the changelog, or update the doc
-#   headers. Those are human-authored. So this workflow VERIFIES a
-#   human-prepared `release/<version>` branch — it does not generate it. Before
-#   dispatching: bump `backend/pyproject.toml`, run `make sync-versions`, write
-#   `changelog/releases/v<version>.md`, refresh the doc version headers, commit
-#   on `release/<version>`, and push. Then dispatch this workflow FROM that
-#   branch.
-#
-# NOT used for v1.97.0 (finalized manually); effective from the next release.
+# Since the owner decision of 2026-11-27 the release is cut by release.yml
+# (stage=prepare), which bumps and gates before it pushes. This workflow is
+# no longer a step of the path. It stays for the rehearsal below and can
+# still gate a `release/<version>` branch that exists; it never bumps a
+# version, writes a changelog or pushes anything.
 #
 # REHEARSAL (#3976): the gate is read-only, so it can also be dispatched on
 # `develop` with the version develop carries, before any branch is cut. That
@@ -184,4 +174,4 @@ jobs:
         if: always()
         run: |
           echo "Release-prepare gate finished for v$VERSION."
-          echo "On green: review, then dispatch 'Release — finish (merge + tag + publish)' with the same version."
+          echo "On green: this ref passes the release gate. What comes next is in release-workflow.md."
