@@ -70,7 +70,10 @@ async function loadSqlJs(): Promise<SqlJsStatic> {
     // ?url; this resolves to the asset URL at build time.
     const wasmUrl = (await import("sql.js/dist/sql-wasm.wasm?url"))
         .default as string;
-    _sqlJs = await initSqlJs({locateFile: () => wasmUrl});
+    // The option is required by @types/sql.js 1.16 although sql.js treats a
+    // missing one as true (sql-wasm.js 1.17.0: ``!== false``). Naming the
+    // default keeps the math functions the app has always built decks with.
+    _sqlJs = await initSqlJs({locateFile: () => wasmUrl, useOldExtensionFunctions: true});
     return _sqlJs;
 }
 
