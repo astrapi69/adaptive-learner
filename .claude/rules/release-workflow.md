@@ -26,9 +26,10 @@ Why not by hand: `release.yml` gates the bumped tree in a clean container BEFORE
 Say so in the journal when a release is the first run of one of these:
 
 - **No workflow finish since 2026-09-17** (v2.15.0). Since then the make target stops on a `gh` error (#3276) and merges through `scripts/release_finish_merge.sh` (#3904); v2.16.0 to v2.17.1 were finished by hand. The first finish run is its own proof.
-- **The token's right to open a pull request.** In v2.15.0 finish tagged `main` and did not open the back-merge PR. Before the first finish the owner checks that `RELEASE_PAT` has "Pull requests: Read and write".
+- **The token's right to open a pull request: a known failure, never fixed.** In v2.15.0 finish tagged `main` and did not open the back-merge PR; the cause was not removed. This is no precaution: until the owner has checked that `RELEASE_PAT` has "Pull requests: Read and write", no finish is dispatched, or `main` stands tagged without its back-merge.
 - If finish stops after the tag ("main is tagged"): do NOT dispatch it again. Open the back-merge PR by hand and run `make release-publish VERSION=X.Y.Z`.
 - **The cut has pushed once**, in a proof run from a fix branch (run 45832107793), never yet for a new version.
+- **The full Playwright smoke was a mandatory checklist item and never passed in CI**: four runs, none green (#1254). The item asked for a run "in this session", so it was ticked from local runs nobody else can read, and once without any run (v2.6.1). A mandatory check without a readable green run is no check. It stays an open gap, named in every release, until it is green in CI (Step 6).
 
 ## Ground rules
 
@@ -111,7 +112,7 @@ The branch is pushed with the workflow's own token, and such a push starts no wo
 
 `dexie-smoke.yml` and `manual-automation.yml` repeat what the gate ran. Review the branch. All green, and the owner's go: finish.
 
-**The full Playwright smoke** runs only with `-f skip_e2e=false` on the cut dispatch (job `extra-smoke`, after the push, one retry). It has never been green in CI (#1254: four runs, none green). Until it is, that is an open gap of every release: record its RUN ID and Playwright's passed / skipped / flaky counts, and the owner decides on a red run. The silenced-spec budget (#2170, `e2e/.smoke-skip-baseline.json`) is checked inside `make test`.
+**The full Playwright smoke** runs only with `-f skip_e2e=false` on the cut dispatch (job `extra-smoke`, after the push, one retry). Record its RUN ID and Playwright's passed / skipped / flaky counts; the owner decides on a red run (see "What has never run"). The silenced-spec budget (#2170, `e2e/.smoke-skip-baseline.json`) is checked inside `make test`.
 
 **A fix after the push** goes onto the release branch by a push of your own (that push does start the `release/**` workflows), and is gated again with `gh workflow run release-prepare.yml --ref release/X.Y.Z -f version=X.Y.Z`. NEVER dispatch the cut again afterwards: it force-pushes the branch and erases the fix. **A red gate** pushed nothing: fix on develop by PR, then dispatch again.
 
@@ -167,7 +168,8 @@ Missing items block the release. A tick for work a workflow did carries its RUN 
 - [ ] The cut dispatch green, RUN ID: its `make release-test` is the gate
 - [ ] Playwright smoke (`skip_e2e=false`): RUN ID and the counts, or the gap named with the owner's decision. A tick without numbers is the v2.6.1 false tick: that release checked this box while the suite never ran.
 - [ ] On the release branch, each with its RUN ID: `docker-build-smoke`, `security-scan`, `webkit-gate`, `visual-regression` ("N passed / M failed"; a run that stays red cannot show a new deviation, #3745), the three `launcher-*` builds
-- [ ] The owner's go for finish; `RELEASE_PAT` checked before the first one
+- [ ] `RELEASE_PAT` has "Pull requests: Read and write", checked by the owner (the v2.15.0 failure)
+- [ ] The owner's go for finish
 - [ ] `release-finish.yml` green, RUN ID; the tag is on a merge commit of `main`
 - [ ] Back-merge PR merged (not squashed), release branch deleted
 - [ ] `publish-image.yml` green, RUN ID: it proves the anonymous pull, the arm64 start, the per-arch size gates and the version agreement
