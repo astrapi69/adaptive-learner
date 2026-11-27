@@ -24,7 +24,12 @@
 
 import {getDb, type AdaptiveLearnerDB} from "../dexie/db";
 import {PROGRESS_TABLE, mergeLessonProgress} from "../lessons/progress-merge";
-import {pruneRowsNotInBackup} from "./reset/reset-prune";
+import {
+    FOREIGN_BACKUP_RESET_REFUSED,
+    SHARED_ROWS_KEEP_THE_MERGE_RULE,
+    pruneRowsNotInBackup,
+    tableDifferingFromBackup,
+} from "./reset/reset-prune";
 import type {
     BackupPayload,
     RestoreMode,
@@ -156,7 +161,8 @@ async function restoreRecord(
     if (spec.scope !== "self" && existing.user_id != null && existing.user_id !== userId) {
         return "skipped";
     }
-    if (mode === "reset") {
+    if (mode === "reset" && spec.scope !== SHARED_ROWS_KEEP_THE_MERGE_RULE) {
+        // Shared rows keep the merge rule below (why: reset-prune.ts).
         // The backup's row replaces the local one, whichever is newer. The
         // settings row keeps the fields no backup carries (the AI keys).
         const row = writableRow(table, record);
@@ -237,8 +243,10 @@ export async function restoreDexieBackup(
     validateBackupPayload(payload);
     const db = getDb();
     // #3785 - another learner's backup lands under the local learner.
-    const data = rehomeBackupData(payload.data, backupOwnerId(payload), userId);
+    const owner = backupOwnerId(payload);
+    const data = rehomeBackupData(payload.data, owner, userId);
     if (options.mode !== "reset") return applyBackup(db, userId, payload, data, "merge");
+    if (owner !== null && owner !== userId) throw new Error(FOREIGN_BACKUP_RESET_REFUSED);
     return db.transaction("rw", db.tables, async () => {
         await pruneRowsNotInBackup(db, data, userId);
         const summary = await applyBackup(db, userId, payload, data, "reset");
@@ -247,6 +255,12 @@ export async function restoreDexieBackup(
             throw new Error(
                 `The reset was not applied and the device is unchanged: ${summary.errors[0]}` +
                     (summary.errors.length > 1 ? ` (and ${summary.errors.length - 1} more)` : ""),
+            );
+        }
+        const differing = await tableDifferingFromBackup(db, data, userId);
+        if (differing !== null) {
+            throw new Error(
+                `The reset was not applied and the device is unchanged: ${differing}`,
             );
         }
         return summary;
