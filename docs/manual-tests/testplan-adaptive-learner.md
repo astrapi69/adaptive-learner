@@ -1667,6 +1667,19 @@ Wissensdomain (etwa `knowledge`, `psychology`).
       derselbe Eintrag weiter "Niveau wählen…" und blockiert "Weiter"
       mit "Bitte ein CEFR-Niveau wählen (A1-C2)."
 
+### TS-0141 Teilen-Assistent - der Lektionsinhalt steht nie in der GitHub-Adresse (#3839)
+
+Ort: Teilen-Assistent Schritt 4, ohne GitHub-Token unter Einstellungen >
+Integrationen. Eine kleine eigene Lektion (eine Karte, ein Theorie-Schritt).
+
+- [ ] TC-1010 "Teilen" drücken: GitHub öffnet den Datei-Editor am richtigen Pfad, Titel
+      und Beschreibung sind ausgefüllt, das Inhaltsfeld des Editors ist leer;
+      die Adresszeile enthält `filename`, `message` und `description`, aber
+      kein `value` und keinen Text aus der Lektion
+- [ ] TC-1011 Dieselbe Aktion lädt die Lektionsdatei herunter; der Assistent zeigt die
+      Anleitung zum Einfügen des Datei-Inhalts und den Knopf
+      "Pull-Request-Beschreibung kopieren"
+
 ### TS-0053 Import/Export von Lektionen/Sets (#1672 / #1681 / #1685-Haertung)
 
 Ort: Meine Inhalte (`/content?tab=my`) → "Lektion importieren"-Modal +

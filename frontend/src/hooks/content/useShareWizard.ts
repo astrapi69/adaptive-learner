@@ -172,11 +172,6 @@ export function useShareWizard({
   // generated PR body, surfaced on step 4 (the upload path can't
   // pre-fill the body, so we offer a copy button).
   const [shareMethod, setShareMethod] = useState<ShareMethod | null>(null);
-  // True when the create-file editor opened with the lesson CONTENT
-  // pre-filled (small single lesson). False when the user must
-  // paste/attach the downloaded file (large lesson) or drag it into the
-  // upload page (multi-lesson set).
-  const [prefilled, setPrefilled] = useState(true);
   const [prBody, setPrBody] = useState("");
   const [copied, setCopied] = useState(false);
   // GitHub PR automation. ``tokenConfigured`` is loaded async; only a
@@ -529,7 +524,6 @@ export function useShareWizard({
       });
       setPrStage("done");
       // The file is committed on the PR branch — no download / paste.
-      setPrefilled(true);
       setPopupBlocked(false);
       setSharedUrl(result.url);
       onShared(result.url, editTitle);
@@ -576,33 +570,21 @@ export function useShareWizard({
     // A SINGLE lesson always goes through the create-file (`/new/`)
     // flow: it creates the new nested path (the "you're the first"
     // case — the set's lessons/ directory doesn't exist yet) and
-    // auto-forks for non-collaborators. Content is pre-filled when it
-    // fits in the URL; otherwise only the path + commit metadata are
-    // pre-filled and we download the JSON for the user to paste. A
+    // auto-forks for non-collaborators. Only the path + commit metadata
+    // are pre-filled; the lesson's content never rides in the URL
+    // (#3839), so we download the JSON for the user to paste. A
     // MULTI-lesson set drag-drops several files via the upload page.
     let method: ShareMethod;
     let url: string;
-    let contentPrefilled: boolean;
     if (singleLesson && primaryShip) {
       method = "pr";
-      const pr = communityPrUrl({
-        repo,
-        branch,
-        filePath,
-        lesson: primaryShip,
-        prTitle,
-        prBody: body,
-      });
-      url = pr.url;
-      contentPrefilled = pr.prefilled;
+      url = communityPrUrl({ repo, branch, filePath, prTitle, prBody: body });
     } else {
       method = "upload";
       url = communityUploadUrl(repo, branch, `${placement.path}/lessons`);
-      contentPrefilled = false;
     }
 
     setShareMethod(method);
-    setPrefilled(contentPrefilled);
     setSharedUrl(url);
 
     // Open the GitHub page FIRST, while the click's user-activation is
@@ -614,21 +596,17 @@ export function useShareWizard({
     const opened = (openUrl ?? defaultOpen)(url);
     setPopupBlocked(opened === false);
 
-    // Download the lesson file(s) whenever the content is NOT pre-filled
-    // into the editor — the contributor needs the exact, correctly-named
-    // JSON to paste into the create-file editor (large single lesson) or
-    // drag into the upload page (multi-lesson set). Small pre-filled
-    // single lessons need no download (the editor already has the JSON).
-    if (!contentPrefilled) {
-      const download = downloadLesson ?? downloadLessonJson;
-      shipped.forEach((lesson, i) => {
-        const filename =
-          singleLesson && i === 0
-            ? placement.filename
-            : suggestFilename(placement.number + i, lesson.title);
-        download(lesson, filename);
-      });
-    }
+    // Always download the lesson file(s): the contributor needs the
+    // exact, correctly-named JSON to paste into the create-file editor
+    // (single lesson) or drag into the upload page (multi-lesson set).
+    const download = downloadLesson ?? downloadLessonJson;
+    shipped.forEach((lesson, i) => {
+      const filename =
+        singleLesson && i === 0
+          ? placement.filename
+          : suggestFilename(placement.number + i, lesson.title);
+      download(lesson, filename);
+    });
 
     onShared(url, editTitle);
     emitCelebration({ type: "confetti" });
@@ -702,7 +680,6 @@ export function useShareWizard({
     sharedUrl,
     automated,
     shareMethod,
-    prefilled,
     prBody,
     copied,
     popupBlocked,

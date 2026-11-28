@@ -10,7 +10,6 @@ import {
   buildPrTitle,
   communityPrUrl,
   communityUploadUrl,
-  MAX_PR_URL_LENGTH,
   contentSetFileName,
   lessonFileName,
   lessonJson,
@@ -198,26 +197,16 @@ describe("communityUploadUrl", () => {
 });
 
 describe("communityPrUrl", () => {
-  // A minimal lesson — the JSON stays small so it fits comfortably
-  // under MAX_PR_URL_LENGTH.
-  const LESSON = {
-    id: "01",
-    title: "Greetings",
-    estimated_minutes: 10,
-    cards: [{ id: "c1", front: "hello", back: "hola", tags: [] }],
-    steps: [{ id: "s1", type: "theory" as const, body: "Hola = hello." }],
+  const ARGS = {
+    repo: "astrapi69/adaptive-learner-content",
+    branch: "main",
+    filePath: "sets/en/es-a1/lessons/16-greetings.json",
+    prTitle: "content: Greetings (en->es A1)",
+    prBody: "## New lesson\n...",
   };
 
-  it("builds a create-file PR URL with the placement path + pre-filled title/body/content", () => {
-    const { url, prefilled } = communityPrUrl({
-      repo: "astrapi69/adaptive-learner-content",
-      branch: "main",
-      filePath: "sets/en/es-a1/lessons/16-greetings.json",
-      lesson: LESSON,
-      prTitle: "content: Greetings (en->es A1)",
-      prBody: "## New lesson\n...",
-    });
-    expect(prefilled).toBe(true);
+  it("builds a create-file URL with the placement path + pre-filled title/body", () => {
+    const url = communityPrUrl(ARGS);
     expect(url).toMatch(
       /^https:\/\/github\.com\/astrapi69\/adaptive-learner-content\/new\/main\?/,
     );
@@ -226,47 +215,14 @@ describe("communityPrUrl", () => {
     expect(qs.get("filename")).toBe("sets/en/es-a1/lessons/16-greetings.json");
     expect(qs.get("message")).toBe("content: Greetings (en->es A1)");
     expect(qs.get("description")).toContain("New lesson");
-    const value = qs.get("value") ?? "";
-    expect(value).toContain('"id": "01"');
-    expect(value).toContain('"title": "Greetings"');
   });
 
-  it("keeps a small lesson's create-file URL under the length cap", () => {
-    const { url, prefilled } = communityPrUrl({
-      repo: "astrapi69/adaptive-learner-content",
-      branch: "main",
-      filePath: "sets/en/es-a1/lessons/16-greetings.json",
-      lesson: LESSON,
-      prTitle: "content: Greetings (en->es A1)",
-      prBody: "## New lesson\n\nA small A1 lesson.\n",
-    });
-    expect(prefilled).toBe(true);
-    expect(url.length).toBeLessThan(MAX_PR_URL_LENGTH);
-  });
-
-  it("omits the content (prefilled:false) but keeps the create-file path when too large", () => {
-    // BUG (P0): a realistic lesson's JSON exceeds the URL cap. The
-    // create-file editor must STILL open at the correct nested path
-    // (so a new set's directory gets created + the file lands there);
-    // only the content is dropped — the caller downloads it to paste.
-    // Previously this returned null and fell back to the upload page,
-    // which 404s on a not-yet-existing set directory.
-    const big = "x".repeat(MAX_PR_URL_LENGTH * 2);
-    const { url, prefilled } = communityPrUrl({
-      repo: "o/r",
-      branch: "main",
-      filePath: "sets/en/es-a1/lessons/16-greetings.json",
-      lesson: { ...LESSON, steps: [{ id: "s1", type: "theory", body: big }] },
-      prTitle: "content: Greetings (en->es A1)",
-      prBody: "## New lesson",
-    });
-    expect(prefilled).toBe(false);
-    expect(url).toContain("https://github.com/o/r/new/main?");
-    const qs = new URL(url).searchParams;
-    expect(qs.get("filename")).toBe("sets/en/es-a1/lessons/16-greetings.json");
-    expect(qs.get("message")).toBe("content: Greetings (en->es A1)");
-    // Content was dropped — no value param.
+  it("never carries the lesson content: path, message and description only (#3839)", () => {
+    // GitHub receives this address the moment the editor opens, before the
+    // learner confirms anything, and it lands in the browser history. So
+    // the function does not even take the lesson.
+    const qs = new URL(communityPrUrl(ARGS)).searchParams;
     expect(qs.get("value")).toBeNull();
-    expect(url.length).toBeLessThan(MAX_PR_URL_LENGTH);
+    expect([...qs.keys()].sort()).toEqual(["description", "filename", "message"]);
   });
 });

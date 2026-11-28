@@ -102,11 +102,12 @@ request and is needed for sharing a whole set as your own repository:
     - **Without a token** - for a single lesson the app opens GitHub's
       file editor at the right path, with the PR title and description
       pre-filled. The path, title and description are in the address
-      the app opens the editor with, and for a small lesson its content
-      too; GitHub receives all of this as soon as the editor opens,
-      before you confirm anything. For a larger lesson the app
-      downloads the file first, and you paste its content into the
-      editor. For a set with several lessons the app downloads the
+      the app opens the editor with; GitHub receives these as soon as
+      the editor opens, before you confirm anything. The lesson's
+      content is not in that address: the app downloads the file, and
+      you paste its content into the editor, so the content reaches
+      GitHub only when you confirm there. For a set with several
+      lessons the app downloads the
       files and opens GitHub's upload page, where you drag them in. In
       all of these cases, GitHub creates the fork and the pull request
       only once you confirm on GitHub.

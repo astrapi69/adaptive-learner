@@ -688,7 +688,7 @@ settings:
   cluster_data_sources: "Sumber"
   cluster_data_sources_desc: "Repositori konten dan entrimu di direktori."
   cluster_data_sync: "Sinkronisasi"
-  cluster_data_sync_desc: "Pasangkan perangkat dan selaraskan data."
+  cluster_data_sync_desc: "Memasangkan perangkat dan menyinkronkan data: dalam persiapan."
   cluster_data_offline: "Konten offline"
   cluster_data_offline_desc: "Cache pelajaran dan ukuran pelajaran tersimpan."
   cluster_data_backup: "Cadangan dan ekspor"
@@ -1369,8 +1369,10 @@ sync:
   no_camera: Tidak ada kamera tersedia
   no_camera_hint: Perangkat ini tidak memiliki kamera yang tersedia. Gunakan opsi tempel-tautan sebagai gantinya.
   no_user: Selesaikan pengenalan sebelum menghasilkan kode pemasangan.
+  not_available_yet: "Sinkronisasi belum tersedia."
   now: Sinkronkan Sekarang
   pair_error: Tidak dapat memasangkan perangkat.
+  pairing_unavailable: "Pemasangan sedang dalam persiapan: belum ada perangkat yang dapat menggunakan kode pemasangan."
   paired: Perangkat dipasangkan.
   paired_at: Dipasangkan
   pairing: Memasangkan…

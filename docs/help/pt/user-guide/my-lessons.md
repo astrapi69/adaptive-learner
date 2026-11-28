@@ -100,12 +100,12 @@ inteiro como repositório próprio:
     - **Sem token** - para uma lição isolada, a aplicação abre o editor
       de ficheiros do GitHub no caminho certo, com o título e a
       descrição do PR já preenchidos. O caminho, o título e a descrição
-      estão no endereço com que a aplicação abre o editor, e numa
-      lição pequena também o seu conteúdo; o GitHub recebe tudo isso
-      logo que o editor abre, antes
-      de você confirmar alguma coisa. Numa lição maior, a aplicação
-      descarrega primeiro o ficheiro e você cola o conteúdo dele no
-      editor. Num conjunto com várias lições, a aplicação descarrega os
+      estão no endereço com que a aplicação abre o editor; o GitHub
+      recebe-os logo que o editor abre, antes de você confirmar alguma
+      coisa. O conteúdo da lição não está nesse endereço: a aplicação
+      descarrega o ficheiro e você cola o conteúdo dele no editor, de
+      modo que o conteúdo só chega ao GitHub quando você confirmar lá.
+      Num conjunto com várias lições, a aplicação descarrega os
       ficheiros e abre a página de carregamento do GitHub, para onde
       você os arrasta. Em todos estes casos, o GitHub só cria o fork e
       o pull request quando você confirmar no GitHub.

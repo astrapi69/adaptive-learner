@@ -1,6 +1,9 @@
 // Vitest setup file
 // Extends vitest matchers with jest-dom matchers (toBeDisabled, toBeVisible, etc.)
 import "@testing-library/jest-dom/vitest"
+import {afterEach, expect} from "vitest"
+
+import {isBaselinedTestFile, recordUnmockedFetch, takeUnmockedFetches} from "./network-guard"
 
 // #3973 / #3870: no unit test reaches the network.
 //
@@ -25,11 +28,34 @@ if (typeof globalThis.fetch === "function") {
     globalThis.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
         const url = urlOf(input)
         if (url.startsWith("data:") || url.startsWith("blob:")) return realFetch(input, init)
+        recordUnmockedFetch(url)
         return Promise.reject(
             new TypeError(`fetch("${url}") is not mocked: unit tests do not reach the network`),
         )
     }
 }
+
+// #3870: rejecting the request made it harmless, it did not make the test
+// mock it. 53 tests of the settings page ran with their purchase ledger
+// unreachable, every time, and presented themselves as tests of the normal
+// case: the code under test caught the rejection and went on. So a test in
+// which a request found no mock fails, and names the URLs. A test that
+// means the network to be unreachable says so with
+// ``expectUnmockedFetch()`` from ./network-guard.
+//
+// The measuring run found 471 such tests in 61 files, not 53. Those files
+// are listed in ./unmocked-fetch-baseline.json and are not failed yet; the
+// list only shrinks. Every other file, and every new one, is held to it.
+afterEach(() => {
+    const {urls, expected} = takeUnmockedFetches()
+    if (urls.length === 0 || expected) return
+    if (isBaselinedTestFile(expect.getState().testPath)) return
+    const unique = [...new Set(urls)]
+    throw new Error(
+        `${urls.length} request(s) in this test found no mock: ${unique.join(", ")}. ` +
+            "Mock the call, or call expectUnmockedFetch() if the test means the network to be unreachable.",
+    )
+})
 
 // Radix UI primitives (Select, etc.) rely on a few DOM APIs that
 // happy-dom does not implement. Polyfill them so portal-based

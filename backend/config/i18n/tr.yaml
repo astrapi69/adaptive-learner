@@ -682,7 +682,7 @@ settings:
   cluster_data_sources: "Kaynaklar"
   cluster_data_sources_desc: "İçerik depoları ve dizindeki kaydın."
   cluster_data_sync: "Eşitleme"
-  cluster_data_sync_desc: "Cihazları eşleştir ve verileri güncel tut."
+  cluster_data_sync_desc: "Cihaz eşleştirme ve veri eşitleme: hazırlık aşamasında."
   cluster_data_offline: "Çevrimdışı içerik"
   cluster_data_offline_desc: "Ders önbelleği ve kaydedilen derslerin boyutu."
   cluster_data_backup: "Yedekleme ve dışa aktarma"
@@ -1369,8 +1369,10 @@ sync:
   no_camera: Kamera yok
   no_camera_hint: Bu cihazda kamera yok. Bağlantıyı yapıştır seçeneğini kullan.
   no_user: Bir eşleştirme kodu oluşturmadan önce başlangıç sürecini tamamla.
+  not_available_yet: "Eşitleme henüz kullanılamıyor."
   now: Şimdi Senkronize Et
   pair_error: Cihaz eşleştirilemedi.
+  pairing_unavailable: "Eşleştirme hazırlık aşamasında: henüz hiçbir cihaz eşleştirme kodunu kullanamıyor."
   paired: Cihaz eşleştirildi.
   paired_at: Eşleştirilme
   pairing: Eşleştiriliyor…
