@@ -113,12 +113,12 @@ Set als eigenes Repository zu teilen:
     - **Ohne Token** - für eine einzelne Lektion öffnet die App den
       Datei-Editor von GitHub am richtigen Pfad, PR-Titel und
       -Beschreibung sind vorausgefüllt. Pfad, Titel und Beschreibung
-      stehen in der Adresse, mit der die App den Editor öffnet, bei
-      einer kleinen Lektion auch ihr Inhalt; GitHub erhält das alles
-      schon beim Öffnen,
-      bevor du etwas bestätigst. Bei einer größeren Lektion lädt die
-      App die Datei zuerst herunter, und du fügst ihren Inhalt im
-      Editor ein. Bei einem Set mit mehreren Lektionen lädt die App
+      stehen in der Adresse, mit der die App den Editor öffnet; GitHub
+      erhält sie schon beim Öffnen, bevor du etwas bestätigst. Der
+      Inhalt der Lektion steht nicht in dieser Adresse: die App lädt
+      die Datei herunter, und du fügst ihren Inhalt im Editor ein. So
+      erreicht der Inhalt GitHub erst, wenn du dort bestätigst. Bei
+      einem Set mit mehreren Lektionen lädt die App
       die Dateien herunter und öffnet die Upload-Seite von GitHub,
       auf die du sie ziehst. In all diesen Fällen erstellt GitHub den
       Fork und den Pull Request erst, wenn du auf GitHub bestätigst.

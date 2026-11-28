@@ -104,12 +104,12 @@ compartir un conjunto entero como repositorio propio:
     - **Sin token** - para una sola lección, la app abre el editor de
       archivos de GitHub en la ruta correcta, con el título y la
       descripción del PR ya rellenados. La ruta, el título y la
-      descripción van en la dirección con la que la app abre el editor,
-      y en una lección pequeña también su contenido; GitHub recibe todo
-      eso ya al abrirse el editor, antes de que confirmes nada. En una
-      lección más grande,
-      la app descarga primero el archivo y tú pegas su contenido en el
-      editor. En un conjunto con varias lecciones, la app descarga los
+      descripción van en la dirección con la que la app abre el editor;
+      GitHub los recibe ya al abrirse el editor, antes de que confirmes
+      nada. El contenido de la lección no va en esa dirección: la app
+      descarga el archivo y tú pegas su contenido en el editor, de modo
+      que el contenido llega a GitHub solo cuando confirmas allí. En un
+      conjunto con varias lecciones, la app descarga los
       archivos y abre la página de subida de GitHub, donde tú los
       arrastras. En todos estos casos, GitHub crea el fork y el pull
       request solo cuando tú confirmas en GitHub.

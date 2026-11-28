@@ -1593,6 +1593,19 @@ with the same source and target language or with a knowledge domain
       entry still reads "Select a level…" and blocks "Continue" with
       "Choose a CEFR level (A1-C2)."
 
+### TS-0141 Share wizard - the lesson content is never in the GitHub address (#3839)
+
+Where: share wizard step 4, without a GitHub token under Settings >
+Integrations. A small lesson of your own (one card, one theory step).
+
+- [ ] TC-1010 Press "Share": GitHub opens the file editor at the right path, title and
+      description are filled in, the content field of the editor is empty; the
+      address bar holds `filename`, `message` and `description`, but no
+      `value` and no text from the lesson
+- [ ] TC-1011 The same action downloads the lesson file; the wizard shows the
+      instructions for pasting the file's content and the button "Copy
+      pull-request description"
+
 ### TS-0054 Create-Lesson wizard (`/create-lesson`, v2.3.0)
 
 - [ ] TC-0392 **Step-1 order + template disclosure (#2755):** In step 1 the
